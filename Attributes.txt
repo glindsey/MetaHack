@@ -1,0 +1,20 @@
+Attributes
+==========
+
+STR - Strength
+CON - Constitution
+AGI - Agility
+INT - Intelligence
+PER - Perception (of surrounding environment)
+MAG - Magic ability
+CHA - Charm (ability to charm anybody)
+APP - Appearance (physical attractiveness)
+LUC - Luck
+
+For any of these, 5000 is normal, although this number is divided by 50 when displayed to the player (thus showing 100).  Min stat is 0; max stat is 49999 (which results in a display of 999).
+
+Experience levels
+=================
+
+experience needed to gain a level = ROUND(2 * (1.5 ^ current level), 0) * 10
+
