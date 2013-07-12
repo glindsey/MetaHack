@@ -1,0 +1,689 @@
+=============================
+THE ETHERS
+=============================
+There are a multitude of "ethers" which can be mixed (in pairs) to produce effects.  When two ethers are mixed, they produce either a new ether, one or more magions, or plain water (if the ethers cancel each other out).  Ethers can also be mixed with plain water to produce magions.
+
+Note that the ether of water is distinct from water itself.
+
+Magions release spells when struck with enough force.  They can thus be thrown or fired at something to cause an area effect, or a sort of weapon (magiarm) can generate a beam or cone effect.
+
+This universe has no "wands", or indeed, any magical items other than the ethers and magions.  A magion must be equipped to an item to imbue the item with its power, although not all magions will produce an effect when used in this manner, nor can all items have magions equipped to them.
+
+Some creatures DO have innate magic abilities, and they can also acquire innate conditions.
+
+Rather than blessed/uncursed/cursed status, magions can be "locked", meaning they cannot be unequipped without first being unlocked, nor can the item they have been equipped to be unequipped (or, in some cases, dropped).  Thus, "locked" acts analogously to "cursed" in NetHack, although without the "evil" connotations.  Typically, magions with detrimental effects will be generated to auto-lock when equipped.  Note that the equipment itself is not locked, the magions are.
+
+The 18 ethers:
+terra - Earth / Matter
+atmos - Air
+pyros - Fire
+hydro - Water
+magio - Magic
+flora - Plants
+fauna - Animals
+arcti - Cold
+luces - Light
+vitae - Life
+morti - Death
+noein - Mind
+riule - Control / Order
+khaos - Chaos
+docto - Space / Time
+antis - Anti-
+pleos - Amplify
+minus - Diminish
+
+If you also consider mixing with pure water, these ethers allow for 171 unique combinations!  Not all of these combinations are useful, though, and some will produce dubiously useful, or even detrimental, effects.
+
+If a particular action is not listed, there is no effect.  In the case of a spell ray or field, this also means the magion is destroyed.  In the case of equipping the magion, it simply does nothing.
+
+=======================================
+THE COMBINATIONS
+=======================================
+terra + WATER .................................. pebble
+
+terra + atmos .................................. Duststorm
+	* Ray/Proj: Choking dust storm.
+
+terra + pyros .................................. Magma
+	* Ray/Proj: Stream of molten lava.
+
+terra + hydro .................................. Lahar
+	* Ray/Proj: Torrent of mud.
+
+terra + magio .................................. Magicwall
+	* Weapon: On hit, +DAMAGE:Physical:10-30
+	* Ray: A wall of boulders are formed perpendicular to the direction of fire.
+	* Proj: Eight giant boulders appear around the magion.
+
+terra + flora .................................. Tendrils
+	* Ray/Proj: Plant tendrils shoot up from the earth and envelop the target.
+
+terra + fauna .................................. Petrify
+	* Auto-locks
+	* Armor: Entity CONDITION:Petrify:5t
+	* Weapon: On hit, 5% chance of EFFECT:InstaPetrify
+	* Adorn: Entity CONDITION:Petrify:5t
+	* Ray/Proj: Radius 3 field, 25% chance of EFFECT:InstaPetrify
+	
+terra + arcti .................................. Permafrost ??
+
+terra + luces .................................. Lumistone
+	* Glows a dim amber.
+	* Adorn: Entity CONDITION:WallGlow
+			 Walls glow with a dim amber light.
+			 [WARNING -- This may be far beyond the engine's capabilities!
+			  One option might be to just have all walls show @ 100% brightness.]
+	* Ray: Creates a large boulder with CONDITION: GlowAmber, 80-100t
+	* Proj: 3x3 small boulders with CONDITION: GlowAmber, 10-30t
+
+terra + vitae .................................. Animate
+	* Ray: A tame golem is created from each eligible item/pile of items.
+
+terra + morti .................................. Bury
+
+terra + noein .................................. ?? Earthsense ??
+
+terra + riule .................................. Stone To Flesh
+	* Armor/Adorn: Entity CONDITION:!Petrify
+				   Entity CONDITION:AntiPetrify
+	* Weapon: On hit, Target CONDITION:!Petrify
+	* Ray: Target CONDITION:!Petrify
+	       EFFECT:StoneToFlesh
+terra + khaos .................................. Earthquake
+
+terra + docto .................................. Phasing
+	* Adorn: Entity CONDITION:Phased
+			 Entity becomes insubstantial and able to pass through matter.
+	         However Entity cannot interact with matter in this state, and
+			 movement is impossible unless Entity has Flight Control.
+	* Ray: ??
+
+terra + antis .................................. Dig
+	* Adorn: Entity CONDITION:DigSpeed 200%
+	* Ray: Target DESTROY:Stone
+		   EFFECT:Dig
+		   Space is dug out to be a passageway.
+
+terra + pleos .................................. Strength
+	* Armor: Entity CONDITION:St+1
+	* Weapon: Entity CONDITION:St+2
+	* Adorn: Entity CONDITION:St+1
+	* Ray: Target CONDITION:St+3:10-30t
+	* Proj: Radius 3 Field, Target CONDITION:St+2:5-15t
+	
+terra + minus .................................. Weakness
+	* Auto-locks
+	* Armor: Entity CONDITION:St-1
+	* Weapon: Entity CONDITION:St-2
+	* Adorn: Entity CONDITION:St-1
+	* Ray: Target CONDITION:St-3:10-30t
+	* Proj: Radius 3 Field, Target CONDITION:St-2:5-15t
+	
+atmos + WATER .................................. seltzer water
+
+atmos + pyros .................................. Smoke
+	* Ray: Create adj choking cloud of smoke at Entity's position.
+	* Proj: Radius 2 Field, Generate choking clouds of smoke.
+	
+atmos + hydro ..................................
+
+atmos + magio .................................. Air Hammer
+	* Weapon: On hit, +DAMAGE:Wind:10-30
+	* Ray: Target +DAMAGE:Wind:20-60
+	* Proj: Radius 2 Field, +DAMAGE:Wind:10-30
+	
+atmos + flora .................................. Pollen
+
+atmos + fauna .................................. Insect Swarm
+
+atmos + arcti .................................. Freezing Fog
+
+atmos + luces .................................. Mistglow
+	* Glows a dim green.
+	* Adorn: Entity CONDITION:AmbientLight +green
+	* Ray: Create adj cloud of mist w/ CONDITION:GlowGreen, LIFE:80-100t
+	* Proj: Radius 2 Field, clouds of mist w/ CONDITION:GlowGreen, LIFE:10-30t
+	
+atmos + vitae .................................. Magic Breath
+	* Adorn: Entity CONDITION:MagicBreath
+	         Inventory DESTROY:Suffocation
+			 
+atmos + death .................................. Suffocation
+	* Auto-locks
+	* Adorn: Entity CONDITION:Suffocate:5t
+	         Inventory DIEIF:MagicBreath			 
+			 
+atmos + noein .................................. Olfaction
+	* Adorn: Entity CONDITION:Scentvision
+			 The entity can detect scent trails of animals/sentient beings.
+			 
+atmos + riule .................................. Flight Control
+	* Equip: Entity CONDITION:FlightControl
+			 The entity has the capability to control flight.
+	         However, the Entity needs some other ability to actually
+			 fly, such as wings, Levitation, Phasing, et cetera.
+			 
+atmos + khaos .................................. Windstorm
+	* Auto-locks
+	* Equip: Entity CONDITION:WindGusts
+			 The entity is buffeted by winds that make it impossible to
+	         levitate or fly straight.
+	* Ray: Entity CONDITION:WindGusts:20-60t
+	* Proj: Radius 2 Field, Entity CONDITION:WindGusts:10-30t
+	
+atmos + docto
+
+atmos + antis .................................. Vacuum
+	* Container: Item CONDITION:VacuumSeal
+	             Items inside container stay fresh 5x as long, but cannot
+				 be removed while magion is equipped.
+	* Ray: DESTROY:Equipper
+	       Magiarm is crushed by implosion.
+	* Proj: Radius 3 Field, EFFECT:Vacuum:5t
+	        Items/entities within radius are sucked toward magion.
+			 
+atmos + pleos .................................. Levitation
+    * Equip: Entity CONDITION:Levitate
+	         The entity begins to float in the air.
+			 
+atmos + minus ..................................
+
+pyros + WATER .................................. cloud of steam + empty flask
+
+pyros + hydro .................................. Steam
+	* Ray/Field: Generates a scalding cloud of steam.
+	
+pyros + magio .................................. Firestorm
+	* Weapon: On hit, +DAMAGE:Fire:10-30
+	* Ray/Field: Searing blast of fire hits the target.
+	
+pyros + flora .................................. Fire Flower
+
+pyros + fauna .................................. Phoenix
+
+pyros + arcti .................................. empty flask
+
+pyros + luces .................................. Magic Flame
+	* Glows a dim red.
+	* Adorn: Entity CONDITION:Fireglow:200%
+		     Fire sources glow twice as bright.
+	* Ray: Fires a magical fireball with CONDITION:GlowRed, LIFE:80-100t
+	* Field: Creates 3x3 magic flames with CONDITION:GlowRed, LIFE:10-30t
+	
+pyros + vitae .................................. Heartburn
+
+pyros + morti .................................. 
+
+pyros + noein .................................. Heatsense
+	* Adorn: Entity can sense heat sources within a certain radius.
+	
+pyros + riule ..................................
+
+pyros + khaos ..................................
+
+pyros + docto ..................................
+
+pyros + antis .................................. Fireproof
+	* Adorn: Entity/Item CONDITION:AntiFire
+	* Item (other): Item CONDITION:AntiFire
+	* Ray/Field: Target DESTROY:Fire
+				 All fires in the area are extinguished.
+				 Fire-based creatures are instantly killed.
+				 
+pyros + pleos .................................. Perseverance
+	* Adorn: Entity CONDITION:En+2
+	* Armor: Entity CONDITION:En+1
+	* Ray/Field: Entity CONDITION:En+3:10-30t
+	
+pyros + minus .................................. Exhaustion
+	* Auto-locks
+	* Adorn: Entity CONDITION:En-2
+	* Armor: Entity CONDITION:En-1
+	* Ray/Field: Entity CONDITION:En-3:10-30t
+	
+hydro + WATER .................................. pure water
+
+hydro + magio .................................. Deluge
+	* Weapon: On hit, +DAMAGE:Water:10-30
+	* Ray/Field: Wall of water smashes into the target.
+	
+hydro + flora ..................................
+
+hydro + fauna ..................................
+
+hydro + arcti ..................................
+
+hydro + luces .................................. Rainbow Light
+	* Glows a dim blue.
+	* Adorn: Entity CONDITION:WaterGlow
+			 All water within entity's radius glows blue.
+	* Ray: Fires a stream of rainbow water.
+		   On hit, CONDITION:RainbowGlow:80-100t
+		   On hit, +DAMAGE:Water:20-60
+	* Proj: Radius 5 Field, CONDITION:RainbowGlow:10-30t
+							+DAMAGE:Water:10-30
+	
+hydro + vitae .................................. Magigills
+	* Adorn: Entity CONDITION:Waterbreathing
+	
+hydro + morti .................................. Acid Spray
+
+hydro + noein .................................. Hydrosense
+	* Adorn: Entity CONDITION:SenseWater
+	
+hydro + riule ..................................
+
+hydro + khaos ..................................
+
+hydro + docto ..................................
+
+hydro + antis .................................. Waterproof
+	* Adorn: Entity/Item CONDITION:AntiWater
+	* Item (other): Item CONDITION:AntiWater
+	* Ray/Field: Target DESTROY: Water
+				 All water in the area is dried up.
+				 Water-based creatures are instantly killed.
+				 
+hydro + pleos ..................................
+
+hydro + minus ..................................
+
+magio + WATER .................................. the water sparkles for a bit 
+
+magio + flora .................................. 
+
+magio + fauna ..................................
+
+magio + arcti .................................. Frost
+	* Weapon: On hit, Target +DAMAGE:Cold:10-30
+	* Ray/Field: MDef save.  Field of intense cold envelops the target.
+	
+magio + luces .................................. Brilliance
+	* Armor: On Entity hit, 5% chance of Attacker CONDITION:Blind:10-30t
+	* Weapon: On hit, 5% chance of Target CONDITION:Blind:10-30t
+	* Ray/Field: MDef save.  A beam of searing light hits the target.
+	
+magio + vitae .................................. Health
+	* Chest: Entity CONDITION:HPGeneration:110%
+	* Adorn/Armor (other): Entity CONDITION:HPGeneration:105%
+	* Ray/Field: HEAL:10-30
+	
+magio + morti .................................. Death
+	* Weapon: On hit, 5% chance of Target CONDITION:Death
+	* Ray/Field: Target CONDITION:Death
+	
+magio + noein .................................. Magisense
+	* Adorn: Entity CONDITION:SenseMagions
+	
+magio + riule .................................. Absorb Magions
+    * Armor/Adorn: Entity EFFECT:AbsorbMagions
+	               All conditions associated with the magions on the equipped
+			       item become intrinsic to the wearer.  The magions then
+				   disintegrate.
+				   
+magio + khaos .................................. Extract Magions
+	* Ray/Throw: Target EFFECT:ExtractMagions
+				 When a corpse is hit, it is converted to one or more magions
+				 that represent its intrinsics, if any.  The chance of multiple
+				 magions being produced is a repeated 40% chance for each
+				 additional magion.
+				 Thus, for four magions, the probabilities are:
+				 1: 1 - (2/5) = 60% chance
+				 2: (2/5) - (4/25) = 16% chance
+				 3: (4/25) - (8/125) = 9.6% chance
+				 4: (8/125) = 6.4% chance
+magio + docto .................................. Teleport
+	* Auto-locks
+	* Adorn: Entity CONDITION:Teleport:every 5 to 25 turns
+	* Container: Item CONDITION:TeleportContents
+	* Ray/Field: Target EFFECT:Teleport
+
+magio + antis .................................. Dispel
+	* Item (any): 
+		Item CONDITION:Dispel
+		Becomes a pebble, along with any others equipped on item.		
+	* Ray/Field:
+		Entity CONDITION:Dispel
+		All magions caught in blast, equipped or otherwise, become pebbles.
+		All ethers become pure water.  All non-intrinsic conditions 
+		on entities are nullified.
+
+magio + pleos .................................. Mysticism
+	* Armor: Entity CONDITION:Ma+1
+	* Adorn: Entity CONDITION:Ma+2
+	* Ray/Field: Target CONDITION:Ma+3:10-30t
+
+magio + minus .................................. Mundanity
+	* Auto-locks
+	* Armor: Entity CONDITION:Ma-1
+	* Adorn: Entity CONDITION:Ma-2
+	* Ray/Field: Target CONDITION:Ma-3:10-30t
+
+flora + WATER .................................. a random fruit
+
+flora + fauna ..................................
+
+flora + arcti ..................................
+
+flora + luces ..................................
+
+flora + vitae .................................. Greenthumb
+	* Ray: A row of small plants is generated.
+	* Field: A tree is generated where the magion lands.
+
+flora + morti .................................. Famine
+	* Ray/Field: Target DESTROY: Plant
+	             Plants in the area are destroyed with no trace.
+
+flora + noein .................................. Floraffinity
+	* Adorn: Entity CONDITION:SensePlants
+	         Entity can sense plants (alive or dead) within a certain radius.
+
+flora + riule ..................................
+
+flora + khaos ..................................
+
+flora + docto ..................................
+
+flora + antis ..................................
+
+flora + pleos ..................................
+
+flora + minus ..................................
+
+fauna + WATER .................................. a random small animal
+
+fauna + arcti ..................................
+
+fauna + luces ..................................
+
+fauna + vitae .................................. Summoning
+	* Ray: A medium-sized animal is generated.
+	* Field: A large-sized animal is generated.
+
+fauna + morti ..................................
+
+fauna + noein .................................. Faunaffinity
+	* Adorn: Entity CONDITION:SenseAnimals
+	         Entity can sense non-sentient animals within a certain radius.
+
+fauna + riule .................................. Taming
+	* Adorn: Entity CONDITION:Calm
+	         Animals/sentients have a chance of turning peaceful,
+			 based on their IQ.
+	* Ray/Field: Target EFFECT:Calm
+	             Hostile animals/sentients made peaceful; 
+				 peaceful animals tamed.
+
+fauna + khaos .................................. Aggravation
+	* Adorn: Entity CONDITION:Aggravate
+	         Entities within a certain radius become hostile to everyone.
+	* Ray/Field: Target EFFECT:Aggravate
+				 All entities hit become hostile to everyone.
+
+fauna + docto ..................................
+
+fauna + antis ..................................
+
+fauna + pleos .................................. Venus Drug
+	* Adorn: Entity CONDITION:Al+2
+	* Armor: Entity CONDITION:Al+1
+	* Ray/Field: Target CONDITION:Al+3:10-30t
+
+fauna + minus .................................. Revulsion
+	* Auto-locks
+	* Adorn: Entity CONDITION:Al-2
+	* Armor: Entity CONDITION:Al-1
+	* Ray/Field: Target CONDITION:Al-3:10-30t
+
+arcti + WATER .................................. chunk of ice
+
+arcti + luces ..................................
+
+arcti + vitae ..................................
+
+arcti + morti ..................................
+
+arcti + noein .................................. ?? Coldsense ??
+
+arcti + riule ..................................
+
+arcti + khaos ..................................
+
+arcti + docto ..................................
+
+arcti + antis .................................. Antifreeze
+	* Adorn: Item/Entity CONDITION:AntiCold
+	* Item (other): Item CONDITION:AntiCold
+	* Ray/Field: Target DESTROY:Cold
+				 All ice/snow in the area instantly melts.
+				 Cold-based creatures are instantly killed.
+	
+arcti + pleos .................................. Refrigeration
+	* Container: Item CONDITION:Refrigerator
+				 Perishable items within container last 3x as long.
+
+arcti + minus .................................. Oven ??
+
+luces + WATER .................................. the water glows brightly for a bit
+
+luces + vitae .................................. panacea (full healing)
+
+luces + morti ..................................
+
+luces + noein .................................. Enlightenment
+	* Adorn: Entity CONDITION:Enlightened
+			 Entity can see enemy statistics, and own conditions.			 
+
+luces + riule .................................. Perception
+	* Helmet: Entity CONDITION:At+2
+	* Armor (other): Entity CONDIION:At+1
+	* Adorn: Entity CONDITION:At+1
+	* Ray/Field: Target CONDITION:At+3:10-30t
+
+luces + khaos .................................. Ignorance
+	* Auto-locks
+	* Helmet: Entity CONDITION:At-2
+	* Armor (other): Entity CONDITION:At-1
+	* Adorn: Entity CONDITION:At-1
+	* Ray/Field: Entity CONDITION:At-3:10-30t
+
+luces + docto ..................................
+
+luces + antis .................................. Blinding
+	* Adorn: Entity CONDITION:Blind
+	* Ray/Field: Target CONDITION:Blind:10-30t
+
+luces + pleos .................................. Catseye
+	* Adorn: Entity CONDITION:AdjustLight * 4
+
+luces + minus .................................. Batseye
+	* Auto-locks
+	* Adorn: Entity CONDITION:AdjustLight / 4
+
+vitae + WATER .................................. medicine
+
+vitae + morti .................................. pure water
+
+vitae + noein .................................. Gaiasync
+	* Adorn: Entity CONDITION:SenseLife
+			 Entity can sense any life within a certain radius.
+		     [Needs some sort of debuff to balance]
+
+vitae + riule .................................. Antimorph
+	* Adorn: Entity CONDITION:Antimorph
+			 Entity CONDITION:!Morphed
+			 If entity is already polymorphed, returns to normal.
+	* Ray/Field: Target CONDITION:!Morphed
+
+vitae + khaos .................................. Morph
+	* Adorn: Entity CONDITION:Morphed:Random
+	         Magion disintegrates when used.
+			 New form remains until entity is killed.
+	* Ray/Field: Target CONDITION:Morphed:Random
+	             New forms remain until entities are killed.
+
+vitae + docto .................................. Eye of Harmony
+
+vitae + antis .................................. Genocide
+	Throw: All instances of the entity hit by the magion are eliminated.
+
+vitae + pleos .................................. Fortitude
+	* Chest: +2 to Vitality
+	* Armor (other): +1 to Vitality
+	* Adorn: +1 to Vitality
+	* Ray/Field: +3 to Vitality for 10-30 turns
+
+vitae + minus .................................. Frailty
+	* Auto-locks
+	* Chest: -2 to Vitality
+	* Armor (other): -1 to Vitality
+	* Adorn: -1 to Vitality
+	* Ray/Field: -3 to Vitality for 10-30 turns
+
+morti + WATER .................................. poison
+
+morti + noein .................................. Thanataura
+	* Adorn: Entity can see where creatures were slain.
+	         [A nifty idea, but what's the use?]
+
+morti + riule .................................. Reanimate
+	* Adorn: ??? [Can't raise self from dead this way as you'd be mindless]
+	* Ray/Field: Target Corpse EFFECT:ReanimateDead
+
+morti + khaos .................................. Disruption
+	* Ray/Field: Target DAMAGE:Disintegrate:20-60
+
+morti + docto .................................. Regeneration
+	Adorn: All attributes are summed and randomly redistributed.
+	       Gender remains the same, but other features (hair/eye/skin color)
+		   are randomly altered.
+
+morti + antis .................................. Lifeguard
+	* Armor/Adorn: The entity is protected from death.  
+	               Magion disintegrates after use.
+
+morti + pleos .................................. 
+
+morti + minus .................................. 
+
+noein + WATER .................................. pure water, but you have the
+                                                 insight identifying ether
+
+noein + riule .................................. Focus
+	* Adorn: Entity is protected against confusion.
+	         Any existing equipped Befuddle magion disintegrates.
+	* Ray/Field: Targets lose temporary confusion status if present.
+
+noein + khaos .................................. Befuddle
+	* Auto-locks
+	* Adorn: Entity is confused.
+	* Ray/Field: Targets are confused for 10-30 turns.
+
+noein + docto .................................. Cartography
+	* Adorn: Level is mapped, magion disintegrates.
+
+noein + antis .................................. Amnesia
+	* Adorn: Mapping lost, 33% of each identified item lost
+	* Ray/Field: Targets experience above symptoms
+
+noein + pleos .................................. Genius
+	* Hat: +2 to Intelligence
+	* Armor (other): +1 to Intelligence
+	* Adorn: +1 to Intelligence
+	* Ray/Field: +3 to Intelligence for 10-30 turns
+
+noein + minus .................................. Stupidity
+	* Auto-locks
+	* Hat: -2 to Intelligence
+	* Armor (other): -1 to Intelligence
+	* Adorn: -1 to Intelligence
+	* Ray/Field: MDef save.
+		-3 to Intelligence for 10-30 turns
+
+riule + WATER .................................. hydros ether
+
+riule + khaos .................................. pure water
+
+riule + docto .................................. Astral Control
+	* Adorn: Entity has control over where it is teleported to
+
+riule + antis .................................. khaos ether
+
+riule + pleos .................................. Gravitas
+	* Armor: +1 to Charisma
+	* Adorn: +2 to Charisma
+	* Ray/Field: +3 to Charisma for 10-30 turns
+
+riule + minus .................................. Abrasiveness
+	* Auto-locks
+	* Armor: -1 to Charisma
+	* Adorn: -2 to Charisma
+	* Ray/Field: -3 to Charisma for 10-30 turns
+
+khaos + WATER .................................. a random ether
+
+khaos + docto .................................. Transmute
+	* Item (any): Magion becomes a different, random magion when equipped.
+	* Ray/Field: Any magions caught in the field become different ones.
+
+khaos + antis .................................. riule ether
+
+khaos + pleos .................................. Misfortune
+	* Auto-locks
+	* Armor: Entity CONDITION:Lu-1
+	* Adorn: Entity CONDITION:Lu-2
+	* Weapon: Entity CONDITION:Lu-1
+
+khaos + minus .................................. Luck
+	* Armor: Entity CONDITION:Lu+1
+	* Adorn: Entity CONDITION:Lu+2
+	* Weapon: Item CONDITION:CriticalHit+1
+
+docto + WATER .................................. "the flask appears bigger on the inside"
+
+docto + antis .................................. Stop
+    * Auto-locks
+	* Armor/Weapon: CONDITION:Stasis:every 10-30t:for 5-10t
+	* Container: items in container vanish
+	* Ray/Field: CONDITION:Stasis:10-30t
+	
+docto + pleos .................................. Haste
+	* Boots: Entity CONDITION:Ag+2
+	* Armor (other): Entity CONDITION:Ag+1
+	* Weapon: Entity CONDITION:Ag+1
+	* Adorn: Entity CONDITION:Ag+1
+	* Container: Item CONDITION:AlterInventoryWeight:20%
+	* Ray/Field: Target CONDITION:Ag+3:10-30t
+	
+docto + minus .................................. Slow
+    * Auto-locks
+	* Boots: Entity CONDITION:Ag-2
+	* Armor (other): Entity CONDITION:Ag-1
+	* Weapon: Entity CONDITION:Ag-1
+	* Adorn: Entity CONDITION:Ag-1
+	* Container: Item CONDITION:AlterInventoryWeight:200%
+	* Ray/Field: Target CONDITION:Ag-3:10-30t
+		
+antis + WATER .................................. empty flask
+
+antis + pleos .................................. Anti-Magion
+	* Auto-locks
+	* Armor/Weapon/Adorn (any):
+		All magions on entity are forcibly de-equipped, with the exception
+		of Anti-Magion itself, and teleported to random places in the level.
+		No other magions may be equipped until Anti-Magion is removed.
+	* Ray/Field: All entities impacted by field have magions de-equipped and
+		teleported to random places in the level.
+		
+antis + minus .................................. Anti-Dispel
+	* Armor/Weapon/Adorn (any):
+		Entity is protected against dispelling.  Magion disintegrates
+		after one use.
+		
+pleos + WATER .................................. the flask overflows
+
+pleos + minus .................................. pure water
+
+minus + WATER .................................. water shrinks until gone

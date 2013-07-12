@@ -1,0 +1,20 @@
+Random MetaHack Thoughts
+========================
+
+* Fictional things from all sorts of universes can exist here, as the idea of MetaHack is that the walls between fiction and non-fiction are breaking down.
+
+* I decree here and now that you won't be able to kill yourself by kicking something.  Your leg will become too sore to kick before that happens, and kicking something will never reduce your HP below 1.  Dying by kicking something, while a funny YASD, is rather stupid.
+
+* "X gave up in the face of certain death" -- genocide base type while polymorphed
+
+* Polymorphing should be handled in the code by some sort of sub-object, since it is reversible.
+
+
+Nifty ideas that may or may not fit into the game
+=================================================
+
+? Rings can be worn on ring fingers, other fingers, or toes, but they have progressively weaker effects based on where they are worn.
+
+? "X of phasing" / "phasing cloak" (see, it's a lame ST:TNG pun)
+
+? "X of youth" -- revert monsters/items to younger forms.  This might be the same as "X of drain level" though.	  	  

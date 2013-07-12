@@ -1,3 +1,5 @@
+GSL NOTE -- this is a bit out of date as I have decided Attributes will go from 0 to 31.  Keeping this though for the experience level info.
+
 Attributes
 ==========
 
