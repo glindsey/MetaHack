@@ -58,10 +58,6 @@ extern std::unique_ptr<TileSheet> tile_sheet_;
 /// Global shader instance
 extern std::unique_ptr<sf::Shader> shader_;
 
-/// Global window background color
-extern sf::Color the_window_bg_color;
-
-
 // Here are a few macros to save on typing.
 #define the_app               (*(app_.get()))
 #define the_window            (*(app_window_.get()))

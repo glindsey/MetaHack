@@ -83,9 +83,6 @@ class MapTile : public Thing
     virtual bool can_be_read_by(Entity const& entity) const override;
     virtual ActionResult do_action_read_by(Entity& entity) override;
 
-    /// Get the current tile size.
-    static int const get_tile_size();
-
     /// Get the coordinates associated with a tile.
     static sf::Vector2f get_pixel_coords(int x, int y);
 
@@ -100,8 +97,6 @@ class MapTile : public Thing
   private:
     struct Impl;
     std::unique_ptr<Impl> impl;
-
-    static int const tileSize_;
 };
 
 #endif // MAPTILE_H

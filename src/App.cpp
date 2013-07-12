@@ -22,8 +22,6 @@ std::unique_ptr<MessageLog> message_log_;
 std::unique_ptr<boost::random::mt19937> rng_;
 std::unique_ptr<TileSheet> tile_sheet_;
 
-sf::Color the_window_bg_color = sf::Color(48, 24, 8, 192);
-
 sf::IntRect calc_message_log_dimensions()
 {
   sf::IntRect messageLogDims;

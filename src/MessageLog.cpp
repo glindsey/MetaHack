@@ -1,21 +1,37 @@
 #include "MessageLog.h"
 
 #include "App.h"
+#include "ConfigSettings.h"
 #include "ErrorHandler.h"
 
 #include <deque>
 
 struct MessageLog::Impl
 {
-    bool focus;
-    unsigned int font_size;
-    sf::IntRect dims;
-    sf::Color area_bg_color;
-    unsigned int history_lines_saved;
+  /// Boolean indicating whether log window has the focus.
+  bool focus;
 
-    std::deque<std::string> message_queue;
-    std::unique_ptr<sf::RenderTexture> area_bg_texture;
-    sf::RectangleShape area_bg_shape;
+  /// Size of font to render messages in.
+  unsigned int font_size;
+
+  /// Dimensions of the message log window.
+  sf::IntRect dims;
+
+  /// Maximum number of history lines saved before they start falling off
+  /// the back end of the queue.
+  unsigned int history_lines_saved;
+
+  /// Queue of previous messages.
+  std::deque<std::string> message_queue;
+
+  /// Background texture used in rendering.
+  std::unique_ptr<sf::RenderTexture> area_bg_texture;
+
+  /// Rectangle shape used in rendering.
+  sf::RectangleShape area_bg_shape;
+
+  /// The current command being typed into the log.
+  std::string current_command;
 };
 
 MessageLog::MessageLog(sf::IntRect dimensions)
@@ -23,8 +39,7 @@ MessageLog::MessageLog(sf::IntRect dimensions)
 {
   impl->focus = false;
   impl->font_size = 16;
-  impl->area_bg_color = the_window_bg_color;
-  impl->history_lines_saved = 50;
+  impl->history_lines_saved = 250;
 
   this->set_dimensions(dimensions);
 }
@@ -91,7 +106,20 @@ bool MessageLog::render(sf::RenderTarget& target, int frame)
   renderText.setCharacterSize(impl->font_size);
 
   // Clear background texture.
-  impl->area_bg_texture->clear(impl->area_bg_color);
+  impl->area_bg_texture->clear(Settings.window_bg_color);
+
+  // If we have the focus, put the current command at the bottom of the log.
+  if (impl->focus)
+  {
+    renderText.setString("> " + impl->current_command + "_");
+    renderText.setPosition(text_coord_x - 2, text_coord_y - 2);
+    renderText.setColor(Settings.text_shadow_color);
+    impl->area_bg_texture->draw(renderText);
+    renderText.setPosition(text_coord_x, text_coord_y);
+    renderText.setColor(Settings.text_highlight_color);
+    impl->area_bg_texture->draw(renderText);
+    text_coord_y -= lineSpacing;
+  }
 
   // Draw each of the message_queue in the queue.
   // TODO: At the moment this does not split lines that are too long, instead
@@ -101,10 +129,10 @@ bool MessageLog::render(sf::RenderTarget& target, int frame)
   {
     renderText.setString(*iter);
     renderText.setPosition(text_coord_x - 2, text_coord_y - 2);
-    renderText.setColor(sf::Color::Black);
+    renderText.setColor(Settings.text_shadow_color);
     impl->area_bg_texture->draw(renderText);
     renderText.setPosition(text_coord_x, text_coord_y);
-    renderText.setColor(sf::Color::White);
+    renderText.setColor(Settings.text_color);
     impl->area_bg_texture->draw(renderText);
     if (text_coord_y < text_offset_y) break;
     text_coord_y -= lineSpacing;
@@ -119,21 +147,21 @@ bool MessageLog::render(sf::RenderTarget& target, int frame)
 
   sf::FloatRect const& text_bounds = title_text.getLocalBounds();
 
-  title_rect.setFillColor(the_window_bg_color);
+  title_rect.setFillColor(Settings.window_bg_color);
   title_rect.setOutlineColor(impl->focus ?
-                            sf::Color::Yellow :
-                            sf::Color::White);
-  title_rect.setOutlineThickness(2.0f);
+                             Settings.window_focused_border_color :
+                             Settings.window_border_color);
+  title_rect.setOutlineThickness(Settings.window_border_width);
   title_rect.setPosition(sf::Vector2f(0, 0));
   title_rect.setSize(sf::Vector2f(text_bounds.width + (text_offset_x * 2),
-                                 text_bounds.height + (text_offset_y * 2)));
+                                  text_bounds.height + (text_offset_y * 2)));
 
   impl->area_bg_texture->draw(title_rect);
 
-  title_text.setColor(sf::Color::Black);
+  title_text.setColor(Settings.text_shadow_color);
   title_text.setPosition(sf::Vector2f(text_offset_x - 2, text_offset_y - 2));
   impl->area_bg_texture->draw(title_text);
-  title_text.setColor(sf::Color::White);
+  title_text.setColor(Settings.text_color);
   title_text.setPosition(sf::Vector2f(text_offset_x, text_offset_y));
   impl->area_bg_texture->draw(title_text);
 
@@ -141,16 +169,18 @@ bool MessageLog::render(sf::RenderTarget& target, int frame)
   impl->area_bg_texture->display();
 
   // Draw the rectangle.
-  impl->area_bg_shape.setPosition(sf::Vector2f(impl->dims.left, impl->dims.top));
-  impl->area_bg_shape.setSize(sf::Vector2f(impl->dims.width, impl->dims.height));
+  impl->area_bg_shape.setPosition(sf::Vector2f(impl->dims.left,
+                                               impl->dims.top));
+  impl->area_bg_shape.setSize(sf::Vector2f(impl->dims.width,
+                                           impl->dims.height));
   impl->area_bg_shape.setTexture(&(impl->area_bg_texture->getTexture()));
   impl->area_bg_shape.setTextureRect(sf::IntRect(0, 0,
-                                               impl->dims.width,
-                                               impl->dims.height));
+                                     impl->dims.width,
+                                     impl->dims.height));
   impl->area_bg_shape.setOutlineColor(impl->focus ?
-                                    sf::Color::Yellow :
-                                    sf::Color::White);
-  impl->area_bg_shape.setOutlineThickness(2.0f);
+                                      Settings.window_focused_border_color :
+                                      Settings.window_border_color);
+  impl->area_bg_shape.setOutlineThickness(Settings.window_border_width);
 
   target.setView(sf::View(sf::FloatRect(0, 0,
                           target.getSize().x,

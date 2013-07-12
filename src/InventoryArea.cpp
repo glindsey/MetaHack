@@ -1,6 +1,7 @@
 #include "InventoryArea.h"
 
 #include "App.h"
+#include "ConfigSettings.h"
 #include "ErrorHandler.h"
 #include "Inventory.h"
 #include "MapTile.h"
@@ -14,15 +15,27 @@ struct InventoryArea::Impl
   Impl(std::vector<ThingId>& s)
     : selected_things(s) {}
 
+  /// Boolean indicating whether this area has the focus.
   bool focus;
+
+  /// If true this inventory enumerates Things using capital letters.
+  /// If false it uses lower-case letters.
   bool use_capitals;
+
   unsigned int font_size;
   sf::IntRect dims;
-  sf::Color area_bg_color;
+
+  /// Things whose contents (or surroundings) are currently being viewed.
   ThingId viewed_id;
+
+  /// Type indicating whether we're looking at contents or surroundings.
   InventoryType inventory_type;
+
   std::unique_ptr<sf::RenderTexture> area_bg_texture;
+
   sf::RectangleShape area_bg_shape;
+
+  /// Vector of Things selected to perform an action on.
   std::vector<ThingId>& selected_things;
 };
 
@@ -32,7 +45,6 @@ InventoryArea::InventoryArea(sf::IntRect dimensions,
 {
   impl->focus = false;
   impl->font_size = 16;
-  impl->area_bg_color = the_window_bg_color;
   impl->viewed_id = TF.limbo_id;
   impl->inventory_type = InventoryType::Inside;
   impl->use_capitals = false;
@@ -149,14 +161,14 @@ EventResult InventoryArea::handle_event(sf::Event& event)
 bool InventoryArea::render(sf::RenderTarget& target, int frame)
 {
   int line_spacing_y = std::max(the_default_font.getLineSpacing(impl->font_size),
-                                MapTile::get_tile_size());
+                                static_cast<int>(Settings.map_tile_size));
 
   // Text offsets relative to the background rectangle.
   float text_offset_x = 3;
   float text_offset_y = 3;
 
   // Clear background texture.
-  impl->area_bg_texture->clear(impl->area_bg_color);
+  impl->area_bg_texture->clear(Settings.window_bg_color);
 
   // Get a reference to the location we're referring to.
   Thing& location = TF.get(impl->viewed_id);
@@ -169,7 +181,6 @@ bool InventoryArea::render(sf::RenderTarget& target, int frame)
 
   renderText.setFont(the_default_font);
   renderText.setCharacterSize(impl->font_size);
-  renderText.setColor(sf::Color::White);
 
   Inventory* inventory_ptr = &(TF.get_limbo().get_inventory());
 
@@ -200,7 +211,7 @@ bool InventoryArea::render(sf::RenderTarget& target, int frame)
     char item_char;
 
     // 1. Figure out whether this is selected or not, and set FG color.
-    sf::Color fg_color = sf::Color::White;
+    sf::Color fg_color = Settings.text_color;
     unsigned int selection_order = 0;
     std::vector<ThingId>::iterator thing_iter;
     thing_iter = std::find(impl->selected_things.begin(),
@@ -209,7 +220,7 @@ bool InventoryArea::render(sf::RenderTarget& target, int frame)
 
     if (thing_iter != impl->selected_things.end())
     {
-      fg_color = sf::Color::Yellow;
+      fg_color = Settings.text_highlight_color;
       selection_order = (thing_iter - impl->selected_things.begin()) + 1;
     }
 
@@ -223,7 +234,7 @@ bool InventoryArea::render(sf::RenderTarget& target, int frame)
       item_string.append(buf);
       renderText.setString(item_string);
       renderText.setPosition(text_coord_x - 1, text_coord_y - 1);
-      renderText.setColor(sf::Color::Black);
+      renderText.setColor(Settings.text_shadow_color);
       impl->area_bg_texture->draw(renderText);
       renderText.setPosition(text_coord_x + 1, text_coord_y + 1);
       renderText.setColor(fg_color);
@@ -247,7 +258,7 @@ bool InventoryArea::render(sf::RenderTarget& target, int frame)
       item_string.push_back(':');
       renderText.setString(item_string);
       renderText.setPosition(text_coord_x + 23, text_coord_y - 1);
-      renderText.setColor(sf::Color::Black);
+      renderText.setColor(Settings.text_shadow_color);
       impl->area_bg_texture->draw(renderText);
       renderText.setPosition(text_coord_x + 25, text_coord_y + 1);
       renderText.setColor(fg_color);
@@ -267,7 +278,7 @@ bool InventoryArea::render(sf::RenderTarget& target, int frame)
     renderText.setString(item_string);
     renderText.setPosition(text_coord_x + 50 + line_spacing_y,
                            text_coord_y - 1);
-    renderText.setColor(sf::Color::Black);
+    renderText.setColor(Settings.text_shadow_color);
     impl->area_bg_texture->draw(renderText);
     renderText.setPosition(text_coord_x + 52 + line_spacing_y,
                            text_coord_y + 1);
@@ -305,11 +316,11 @@ bool InventoryArea::render(sf::RenderTarget& target, int frame)
   title_text.setFont(the_default_bold_font);
   title_text.setCharacterSize(impl->font_size);
 
-  title_rect.setFillColor(impl->area_bg_color);
+  title_rect.setFillColor(Settings.window_bg_color);
   title_rect.setOutlineColor(impl->focus ?
-                            sf::Color::Yellow :
-                            sf::Color::White);
-  title_rect.setOutlineThickness(2.0f);
+                            Settings.window_focused_border_color :
+                            Settings.window_border_color);
+  title_rect.setOutlineThickness(Settings.window_border_width);
   title_rect.setPosition(sf::Vector2f(0, 0));
   title_rect.setSize(sf::Vector2f(impl->dims.width,
                                   line_spacing_y + (text_offset_y * 2)));
@@ -321,11 +332,11 @@ bool InventoryArea::render(sf::RenderTarget& target, int frame)
                    line_spacing_y - 1, false, frame);
 
 
-  title_text.setColor(sf::Color::Black);
+  title_text.setColor(Settings.text_shadow_color);
   title_text.setPosition(sf::Vector2f(text_offset_x + line_spacing_y,
                                       text_offset_y - 1));
   impl->area_bg_texture->draw(title_text);
-    title_text.setColor(sf::Color::White);
+    title_text.setColor(Settings.text_color);
   title_text.setPosition(sf::Vector2f(text_offset_x + line_spacing_y + 2,
                                       text_offset_y + 1));
   impl->area_bg_texture->draw(title_text);
@@ -343,9 +354,9 @@ bool InventoryArea::render(sf::RenderTarget& target, int frame)
                                                 impl->dims.width,
                                                 impl->dims.height));
   impl->area_bg_shape.setOutlineColor(impl->focus ?
-                                     sf::Color::Yellow :
-                                     sf::Color::White);
-  impl->area_bg_shape.setOutlineThickness(2.0f);
+                                      Settings.window_focused_border_color :
+                                      Settings.window_border_color);
+  impl->area_bg_shape.setOutlineThickness(Settings.window_border_width);
 
   target.setView(sf::View(sf::FloatRect(0, 0,
                           target.getSize().x,

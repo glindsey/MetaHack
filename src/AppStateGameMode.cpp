@@ -5,6 +5,7 @@
 
 #include "Action.h"
 #include "App.h"
+#include "ConfigSettings.h"
 #include "Entity.h"
 #include "ErrorHandler.h"
 #include "Human.h"
@@ -21,22 +22,22 @@
 #include "Rock.h"
 #include "SackLarge.h"
 
-// Some defines that make writing keyboard handling easier.
-
-#define ALT   key.alt &&
-#define CTRL  key.control &&
-#define SHIFT key.shift &&
-#define CODE(x)  (key.code == sf::Keyboard::Key:: ## x)
-
 struct AppStateGameMode::Impl
 {
+  /// Map the player is currently on.
   MapId current_map_id;
+
+  /// True if the application window is in focus, false otherwise.
   bool window_in_focus;
+
+  /// Instance of the player status area.
   std::unique_ptr<StatusArea> status_area;
+
+  /// Instance of the left ("surroundings") inventory area.
   std::unique_ptr<InventoryArea> left_inventory_area;
+
+  /// Instance of the right ("player") inventory area.
   std::unique_ptr<InventoryArea> right_inventory_area;
-  int inventory_area_width;
-  int status_area_height;
 
   /// Map zoom level.  1.0 equals 100 percent zoom.
   float map_zoom_level;
@@ -74,10 +75,11 @@ struct AppStateGameMode::Impl
     sf::IntRect leftInvAreaDims = left_inventory_area->get_dimensions();
     sf::IntRect rightInvAreaDims = right_inventory_area->get_dimensions();
     statusAreaDims.width = the_window.getSize().x -
-                            (leftInvAreaDims.width +
-                             rightInvAreaDims.width + 18);
-    statusAreaDims.height = status_area_height;
-    statusAreaDims.top = the_window.getSize().y - (status_area_height + 3);
+                           (leftInvAreaDims.width +
+                            rightInvAreaDims.width + 18);
+    statusAreaDims.height = Settings.status_area_height;
+    statusAreaDims.top = the_window.getSize().y -
+                         (Settings.status_area_height + 3);
     statusAreaDims.left = leftInvAreaDims.width + 9;
     return statusAreaDims;
   }
@@ -86,7 +88,7 @@ struct AppStateGameMode::Impl
   {
     sf::IntRect messageLogDims = the_message_log.get_dimensions();
     sf::IntRect inventoryAreaDims;
-    inventoryAreaDims.width = inventory_area_width;
+    inventoryAreaDims.width = Settings.inventory_area_width;
     inventoryAreaDims.height = the_window.getSize().y -
                                 (messageLogDims.height + 12);
     inventoryAreaDims.left = 3;
@@ -99,7 +101,7 @@ struct AppStateGameMode::Impl
   {
     sf::IntRect messageLogDims = the_message_log.get_dimensions();
     sf::IntRect inventoryAreaDims;
-    inventoryAreaDims.width = inventory_area_width;
+    inventoryAreaDims.width = Settings.inventory_area_width;
     inventoryAreaDims.height = the_window.getSize().y -
                                 (messageLogDims.height + 12);
     inventoryAreaDims.left = the_window.getSize().x -
@@ -142,8 +144,6 @@ AppStateGameMode::AppStateGameMode(StateMachine* state_machine)
 {
   impl->current_area_focus = AreaFocus::Map;
   impl->nav_mode_player = true;
-  impl->inventory_area_width = 220;
-  impl->status_area_height = 80;
   impl->map_zoom_level = 1.0f;
 
   impl->left_inventory_area.reset(new InventoryArea(impl->calc_left_inven_dims(),
@@ -250,8 +250,8 @@ bool AppStateGameMode::render(sf::RenderTarget& target, int frame)
         MapTile& cursor_tile = game_map.get_tile(impl->cursor_coords);
         cursor_tile.draw_highlight(target,
                                    cursor_pixel_coords,
-                                   sf::Color(255, 255, 0, 255),
-                                   sf::Color(255, 255, 0, 32),
+                                   Settings.cursor_border_color,
+                                   Settings.cursor_bg_color,
                                    frame);
       }
     }

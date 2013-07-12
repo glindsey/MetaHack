@@ -336,7 +336,7 @@
 	<string>
 	<vector>
 
-1372695317 c:\dropbox\projects\metahack\include\app.h
+1373645241 c:\dropbox\projects\metahack\include\app.h
 	<boost/noncopyable.hpp>
 	<boost/random/mersenne_twister.hpp>
 	<memory>
@@ -405,7 +405,7 @@
 
 1093018626 c:\dropbox\projects\libraries\\boost\noncopyable.hpp
 
-1373383468 source:c:\dropbox\projects\metahack\src\app.cpp
+1373645250 source:c:\dropbox\projects\metahack\src\app.cpp
 	"App.h"
 	<ctime>
 	<SFML/Graphics.hpp>
@@ -2904,12 +2904,13 @@
 	<memory>
 	"State.h"
 
-1373390802 source:c:\dropbox\projects\metahack\src\appstategamemode.cpp
+1373646852 source:c:\dropbox\projects\metahack\src\appstategamemode.cpp
 	"AppStateGameMode.h"
 	<memory>
 	<set>
 	"Action.h"
 	"App.h"
+	"ConfigSettings.h"
 	"Entity.h"
 	"ErrorHandler.h"
 	"Human.h"
@@ -2937,13 +2938,14 @@
 1363024906 source:c:\dropbox\projects\metahack\src\renderable.cpp
 	"Renderable.h"
 
-1373401771 source:c:\dropbox\projects\metahack\src\entity.cpp
+1373646559 source:c:\dropbox\projects\metahack\src\entity.cpp
 	"Entity.h"
 	<algorithm>
 	<cmath>
 	<deque>
 	<sstream>
 	"App.h"
+	"ConfigSettings.h"
 	"ErrorHandler.h"
 	"Gender.h"
 	"Inventory.h"
@@ -2981,13 +2983,14 @@
 
 1363288259 c:\dropbox\projects\metahack\include\playfield.h
 
-1373399610 source:c:\dropbox\projects\metahack\src\thing.cpp
+1373646533 source:c:\dropbox\projects\metahack\src\thing.cpp
 	"Thing.h"
 	<boost/lexical_cast.hpp>
 	<iomanip>
 	<sstream>
 	<vector>
 	"App.h"
+	"ConfigSettings.h"
 	"ErrorHandler.h"
 	"Gender.h"
 	"Inventory.h"
@@ -3098,7 +3101,7 @@
 	<string>
 	<unordered_map>
 
-1373386010 c:\dropbox\projects\metahack\include\thingfactory.h
+1373644955 c:\dropbox\projects\metahack\include\thingfactory.h
 	<memory>
 	<vector>
 	"MapId.h"
@@ -3631,18 +3634,18 @@
 1092564828 c:\dropbox\projects\libraries\\boost\io_fwd.hpp
 	<iosfwd>
 
-1373378882 source:c:\dropbox\projects\metahack\src\maptile.cpp
+1373646677 source:c:\dropbox\projects\metahack\src\maptile.cpp
 	"MapTile.h"
 	<boost/random/uniform_int_distribution.hpp>
-	<sstream>
 	<string>
 	"App.h"
+	"ConfigSettings.h"
 	"ErrorHandler.h"
 	"Map.h"
 	"MathUtils.h"
 	"ThingFactory.h"
 
-1373380142 c:\dropbox\projects\metahack\include\maptile.h
+1373646474 c:\dropbox\projects\metahack\include\maptile.h
 	<SFML/Graphics.hpp>
 	"Entity.h"
 	"Inventory.h"
@@ -3662,9 +3665,10 @@
 	"EventHandler.h"
 	"Renderable.h"
 
-1372695493 source:c:\dropbox\projects\metahack\src\messagelog.cpp
+1373646271 source:c:\dropbox\projects\metahack\src\messagelog.cpp
 	"MessageLog.h"
 	"App.h"
+	"ConfigSettings.h"
 	"ErrorHandler.h"
 	<deque>
 
@@ -3893,9 +3897,10 @@
 	"EventHandler.h"
 	"Renderable.h"
 
-1373397993 source:c:\dropbox\projects\metahack\src\statusarea.cpp
+1373646271 source:c:\dropbox\projects\metahack\src\statusarea.cpp
 	"StatusArea.h"
 	"App.h"
+	"ConfigSettings.h"
 	"Entity.h"
 	"ThingFactory.h"
 
@@ -3913,9 +3918,10 @@
 	"Direction.h"
 	"Thing.h"
 
-1373314105 source:c:\dropbox\projects\metahack\src\inventoryarea.cpp
+1373646602 source:c:\dropbox\projects\metahack\src\inventoryarea.cpp
 	"InventoryArea.h"
 	"App.h"
+	"ConfigSettings.h"
 	"ErrorHandler.h"
 	"Inventory.h"
 	"MapTile.h"
@@ -5517,4 +5523,11 @@
 
 1373460050 c:\dropbox\projects\metahack\include\thingregistrator.h
 	"ThingFactory.h"
+
+1373646837 source:c:\dropbox\projects\metahack\src\configsettings.cpp
+	"ConfigSettings.h"
+
+1373647177 c:\dropbox\projects\metahack\include\configsettings.h
+	<memory>
+	<SFML/Graphics.hpp>
 

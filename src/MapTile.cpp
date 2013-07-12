@@ -1,19 +1,16 @@
 #include "MapTile.h"
 
 #include <boost/random/uniform_int_distribution.hpp>
-#include <sstream>
 #include <string>
 
 #include "App.h"
+#include "ConfigSettings.h"
 #include "ErrorHandler.h"
 #include "Map.h"
 #include "MathUtils.h"
 #include "ThingFactory.h"
 
 typedef boost::random::uniform_int_distribution<> uniform_int_dist;
-
-// Static definitions
-int const MapTile::tileSize_ = 32;
 
 struct MapTile::Impl
 {
@@ -58,10 +55,7 @@ MapTile::~MapTile()
 
 std::string MapTile::get_description() const
 {
-  std::stringstream stream;
-  //stream << "map tile at (" << x_ << ", " << y_ << ")";
-  stream << getMapTileTypeDescription(impl->type);
-  return stream.str();
+  return getMapTileTypeDescription(impl->type);
 }
 
 sf::Vector2u MapTile::get_tile_sheet_coords(int frame) const
@@ -195,7 +189,7 @@ void MapTile::draw_highlight(sf::RenderTarget& target,
                             sf::Color bgColor,
                             int frame)
 {
-  float ts2 = static_cast<float>(tileSize_) / 2.0;
+  float ts2 = static_cast<float>(Settings.map_tile_size) / 2.0;
   sf::Vector2f vSW(location.x - ts2, location.y + ts2);
   sf::Vector2f vSE(location.x + ts2, location.y + ts2);
   sf::Vector2f vNW(location.x - ts2, location.y - ts2);
@@ -203,14 +197,14 @@ void MapTile::draw_highlight(sf::RenderTarget& target,
 
   sf::RectangleShape box_shape;
   sf::Vector2f box_position;
-  sf::Vector2f box_size(MapTile::tileSize_, MapTile::tileSize_);
+  sf::Vector2f box_size(Settings.map_tile_size, Settings.map_tile_size);
   sf::Vector2f box_half_size(box_size.x / 2, box_size.y / 2);
   box_position.x = (location.x - box_half_size.x);
   box_position.y = (location.y - box_half_size.y);
   box_shape.setPosition(box_position);
   box_shape.setSize(box_size);
   box_shape.setOutlineColor(fgColor);
-  box_shape.setOutlineThickness(2.0f);
+  box_shape.setOutlineThickness(Settings.tile_highlight_border_width);
   box_shape.setFillColor(bgColor);
 
   target.draw(box_shape);
@@ -234,14 +228,10 @@ ActionResult MapTile::do_action_read_by(Entity& entity)
   return ActionResult::Failure;
 }
 
-int const MapTile::get_tile_size(void)
-{
-  return tileSize_;
-}
-
 sf::Vector2f MapTile::get_pixel_coords(int x, int y)
 {
-  return sf::Vector2f(x * tileSize_, y * tileSize_);
+  return sf::Vector2f(x * Settings.map_tile_size,
+                      y * Settings.map_tile_size);
 }
 
 sf::Vector2f MapTile::get_pixel_coords(sf::Vector2i tile)

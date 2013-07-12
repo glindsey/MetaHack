@@ -6,6 +6,7 @@
 #include <sstream>
 
 #include "App.h"
+#include "ConfigSettings.h"
 #include "ErrorHandler.h"
 #include "Gender.h"
 #include "Inventory.h"
@@ -551,7 +552,7 @@ void Entity::add_memory_vertices_to(sf::VertexArray& vertices,
   Map& game_map = MF.get(map_id);
 
   static sf::Vertex new_vertex;
-  float ts = static_cast<float>(MapTile::get_tile_size());
+  float ts = static_cast<float>(Settings.map_tile_size);
   float ts2 = ts / 2.0;
 
   sf::Vector2f location(x * ts, y * ts);

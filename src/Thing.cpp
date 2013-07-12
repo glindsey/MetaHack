@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "App.h"
+#include "ConfigSettings.h"
 #include "ErrorHandler.h"
 #include "Gender.h"
 #include "Inventory.h"
@@ -299,7 +300,7 @@ void Thing::add_vertices_to(sf::VertexArray& vertices,
                             int frame)
 {
   static sf::Vertex new_vertex;
-  float ts = static_cast<float>(MapTile::get_tile_size());
+  float ts = static_cast<float>(Settings.map_tile_size);
   float ts2 = ts / 2.0;
 
   ThingId root_id = this->get_root_id();
@@ -371,10 +372,10 @@ void Thing::draw_to(sf::RenderTexture& target,
 
   if (target_size == 0)
   {
-    target_size = MapTile::get_tile_size();
+    target_size = Settings.map_tile_size;
   }
 
-  float tile_size = static_cast<float>(MapTile::get_tile_size());
+  float tile_size = static_cast<float>(Settings.map_tile_size);
 
   sf::Vector2u tile_coords = this->get_tile_sheet_coords(frame);
   texture_coords.left = tile_coords.x * tile_size;

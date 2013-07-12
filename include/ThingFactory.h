@@ -139,7 +139,7 @@ class ThingFactory
     static std::unique_ptr<ThingFactory> instance_;
 };
 
-/// The following is a shortcut for something that will be typed A LOT.
+/// Shortcut to the singleton instance, to save on typing.
 #define TF        ThingFactory::instance()
 
 #endif // THINGFACTORY_H

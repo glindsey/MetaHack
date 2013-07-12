@@ -1,6 +1,7 @@
 #include "StatusArea.h"
 
 #include "App.h"
+#include "ConfigSettings.h"
 #include "Entity.h"
 #include "ThingFactory.h"
 
@@ -9,7 +10,6 @@ struct StatusArea::Impl
   bool focus;
   unsigned int font_size;
   sf::IntRect dims;
-  sf::Color area_bg_color;
   sf::RectangleShape area_bg_shape;
 };
 
@@ -19,7 +19,6 @@ StatusArea::StatusArea(sf::IntRect dimensions)
   impl->focus = false;
   impl->font_size = 14;
   impl->dims = dimensions;
-  impl->area_bg_color = the_window_bg_color;
 }
 
 StatusArea::~StatusArea()
@@ -57,11 +56,11 @@ bool StatusArea::render(sf::RenderTarget& target, int frame)
   // Draw the rectangle.
   impl->area_bg_shape.setPosition(sf::Vector2f(impl->dims.left, impl->dims.top));
   impl->area_bg_shape.setSize(sf::Vector2f(impl->dims.width, impl->dims.height));
-  impl->area_bg_shape.setFillColor(impl->area_bg_color);
+  impl->area_bg_shape.setFillColor(Settings.window_bg_color);
   impl->area_bg_shape.setOutlineColor(impl->focus ?
-                                    sf::Color::Yellow :
-                                    sf::Color::White);
-  impl->area_bg_shape.setOutlineThickness(2.0f);
+                                      Settings.window_focused_border_color :
+                                      Settings.window_border_color);
+  impl->area_bg_shape.setOutlineThickness(Settings.window_border_width);
 
   target.setView(sf::View(sf::FloatRect(0, 0,
                           target.getSize().x,
@@ -76,7 +75,7 @@ bool StatusArea::render(sf::RenderTarget& target, int frame)
   sf::Text renderText;
   renderText.setFont(the_default_font);
   renderText.setCharacterSize(lineSpacing);
-  renderText.setColor(sf::Color::White);
+  renderText.setColor(Settings.text_color);
   renderText.setPosition(impl->dims.left + xTextOffset,
                          impl->dims.top + yTextOffset);
 
