@@ -218,4 +218,4 @@ pip-log.txt
 .cccc/
 
 #Doxygen
-doxygen/html/
+html/
