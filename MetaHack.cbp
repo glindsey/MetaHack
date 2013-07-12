@@ -84,6 +84,7 @@
 		<Unit filename="include/AttributeSet.h" />
 		<Unit filename="include/BodyPart.h" />
 		<Unit filename="include/Cloneable.h" />
+		<Unit filename="include/ConfigSettings.h" />
 		<Unit filename="include/Creatable.h" />
 		<Unit filename="include/Direction.h" />
 		<Unit filename="include/Entity.h" />
@@ -99,10 +100,12 @@
 		<Unit filename="include/Map.h" />
 		<Unit filename="include/MapCorridor.h" />
 		<Unit filename="include/MapDiamond.h" />
+		<Unit filename="include/MapDonutRoom.h" />
 		<Unit filename="include/MapFactory.h" />
 		<Unit filename="include/MapFeature.h" />
 		<Unit filename="include/MapGenerator.h" />
 		<Unit filename="include/MapId.h" />
+		<Unit filename="include/MapLRoom.h" />
 		<Unit filename="include/MapRoom.h" />
 		<Unit filename="include/MapTile.h" />
 		<Unit filename="include/MapTileType.h" />
@@ -114,7 +117,6 @@
 		<Unit filename="include/State.h" />
 		<Unit filename="include/StateMachine.h" />
 		<Unit filename="include/StatusArea.h" />
-		<Unit filename="include/TextureAtlas.h" />
 		<Unit filename="include/Thing.h" />
 		<Unit filename="include/ThingFactory.h" />
 		<Unit filename="include/ThingId.h" />
@@ -141,6 +143,7 @@
 		<Unit filename="src/AppStateMainMenu.cpp" />
 		<Unit filename="src/AppStateSplashScreen.cpp" />
 		<Unit filename="src/AttributeSet.cpp" />
+		<Unit filename="src/ConfigSettings.cpp" />
 		<Unit filename="src/Entity.cpp" />
 		<Unit filename="src/ErrorHandler.cpp" />
 		<Unit filename="src/Gender.cpp" />
@@ -150,9 +153,11 @@
 		<Unit filename="src/Map.cpp" />
 		<Unit filename="src/MapCorridor.cpp" />
 		<Unit filename="src/MapDiamond.cpp" />
+		<Unit filename="src/MapDonutRoom.cpp" />
 		<Unit filename="src/MapFactory.cpp" />
 		<Unit filename="src/MapFeature.cpp" />
 		<Unit filename="src/MapGenerator.cpp" />
+		<Unit filename="src/MapLRoom.cpp" />
 		<Unit filename="src/MapRoom.cpp" />
 		<Unit filename="src/MapTile.cpp" />
 		<Unit filename="src/MapTileType.cpp" />
@@ -160,7 +165,6 @@
 		<Unit filename="src/State.cpp" />
 		<Unit filename="src/StateMachine.cpp" />
 		<Unit filename="src/StatusArea.cpp" />
-		<Unit filename="src/TextureAtlas.cpp" />
 		<Unit filename="src/Thing.cpp" />
 		<Unit filename="src/ThingFactory.cpp" />
 		<Unit filename="src/TileSheet.cpp" />
