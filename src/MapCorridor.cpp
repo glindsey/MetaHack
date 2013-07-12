@@ -35,7 +35,7 @@ bool MapCorridor::create(GeoVector vec)
     unsigned int numTries = 0;
     uniform_int_dist lenDist(minLength, maxLength);
 
-    sf::Vector2i& startingCoords = vec.startPoint;
+    sf::Vector2i& startingCoords = vec.start_point;
     Direction& direction = vec.direction;
 
     while (numTries < maxRetries)

@@ -11,25 +11,25 @@ struct GeoVector
 {
   GeoVector()
   {
-    startPoint = sf::Vector2i(0, 0);
+    start_point = sf::Vector2i(0, 0);
     direction = Direction::Self;
   }
 
   GeoVector(sf::Vector2i start, Direction dir)
   {
-    startPoint = start;
+    start_point = start;
     direction = dir;
   }
 
   GeoVector(int x, int y, Direction dir)
   {
-    startPoint = sf::Vector2i(x, y);
+    start_point = sf::Vector2i(x, y);
     direction = dir;
   }
 
   bool operator==(const GeoVector &other) const
   {
-    return (startPoint == other.startPoint) &&
+    return (start_point == other.start_point) &&
            (direction == other.direction);
   }
 
@@ -38,7 +38,7 @@ struct GeoVector
     return !(*this == other);
   }
 
-  sf::Vector2i startPoint;
+  sf::Vector2i start_point;
   Direction direction;
 };
 

@@ -1,11 +1,16 @@
 #ifndef _MATHUTILS_H_
 #define _MATHUTILS_H_
 
+#include <boost/random/uniform_int_distribution.hpp>
+
+#include "App.h"
 #include "Direction.h"
 
 const double PI = 3.14159265359;
 constexpr double PI_HALF = PI / 2.0;
 constexpr double PI_QUARTER = PI / 4.0;
+
+typedef boost::random::uniform_int_distribution<> uniform_int_dist;
 
 inline unsigned int next_power_of_two(unsigned int n)
 {
@@ -91,6 +96,35 @@ inline unsigned char saturation_add(unsigned char const& a,
   unsigned int temp;
   temp = (static_cast<unsigned int>(a) + static_cast<unsigned int>(b));
   return static_cast<unsigned char>((temp <= 255U) ? temp : 255U);
+}
+
+inline bool flip_coin()
+{
+  uniform_int_dist coin(0, 1);
+  return coin(the_RNG);
+}
+
+/// Choose one of two alternatives at random.
+template <class T> T choose_random (T a, T b)
+{
+  uniform_int_dist choose(0, 1);
+  int choice = choose(the_RNG);
+  return (choice ? a : b);
+}
+
+/// Choose one of three alternatives at random.
+template <class T> T choose_random (T a, T b, T c)
+{
+  uniform_int_dist choose(0, 2);
+  int choice = choose(the_RNG);
+  switch (choice)
+  {
+    case 0: return a;
+    case 1: return b;
+    case 2: return c;
+
+    default: return b;  // should not happen, here to shut compiler up
+  }
 }
 
 #endif // _MATHUTILS_H_

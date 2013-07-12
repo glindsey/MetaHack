@@ -1,17 +1,17 @@
-#ifndef MAPROOM_H
-#define MAPROOM_H
+#ifndef MAPDONUTROOM_H
+#define MAPDONUTROOM_H
 
 #include <SFML/Graphics.hpp>
 
 #include "MapFeature.h"
 
-class MapRoom : public MapFeature
+class MapDonutRoom : public MapFeature
 {
   public:
-    MapRoom(Map& m);
-    virtual ~MapRoom();
+    MapDonutRoom(Map& m);
+    virtual ~MapDonutRoom();
 
-    /// Create a rectangular room of random size adjacent to starting
+    /// Create a donut-shaped room of random size adjacent to starting
     /// coordinates in the direction indicated.
     /// Checks to make sure the box does not intersect any existing features.
     /// Attempts to create the box max_retries times before giving up.
@@ -23,7 +23,8 @@ class MapRoom : public MapFeature
     static unsigned int min_width;
     static unsigned int max_height;
     static unsigned int min_height;
+    static unsigned int min_hole_size;
     static unsigned int max_retries;
 };
 
-#endif // MAPROOM_H
+#endif // MAPDONUTROOM_H

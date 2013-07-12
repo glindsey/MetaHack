@@ -2904,7 +2904,7 @@
 	<memory>
 	"State.h"
 
-1373646852 source:c:\dropbox\projects\metahack\src\appstategamemode.cpp
+1373647190 source:c:\dropbox\projects\metahack\src\appstategamemode.cpp
 	"AppStateGameMode.h"
 	<memory>
 	<set>
@@ -3849,7 +3849,9 @@
 1366218779 c:\dropbox\projects\metahack\include\usercommand.h
 	"Direction.h"
 
-1372344316 c:\dropbox\projects\metahack\include\mathutils.h
+1373651515 c:\dropbox\projects\metahack\include\mathutils.h
+	<boost/random/uniform_int_distribution.hpp>
+	"App.h"
 	"Direction.h"
 
 1221385588 c:\dropbox\projects\libraries\\boost\dynamic_bitset.hpp
@@ -3952,30 +3954,33 @@
 	<memory>
 	"Map.h"
 
-1372127499 source:c:\dropbox\projects\metahack\src\mapgenerator.cpp
+1373654231 source:c:\dropbox\projects\metahack\src\mapgenerator.cpp
 	"MapGenerator.h"
 	<boost/random/uniform_int_distribution.hpp>
 	"App.h"
 	"ErrorHandler.h"
 	"MapCorridor.h"
 	"MapDiamond.h"
+	"MapDonutRoom.h"
+	"MapLRoom.h"
 	"MapRoom.h"
 	"MapTile.h"
+	"MathUtils.h"
 
-1373379764 source:c:\dropbox\projects\metahack\src\maproom.cpp
+1373654406 source:c:\dropbox\projects\metahack\src\maproom.cpp
 	"MapRoom.h"
 	<boost/random/uniform_int_distribution.hpp>
 	"App.h"
 	"ErrorHandler.h"
 	"MapTile.h"
+	"MathUtils.h"
 	"ThingFactory.h"
-	"Sconce.h"
 
-1371153608 c:\dropbox\projects\metahack\include\maproom.h
+1373652266 c:\dropbox\projects\metahack\include\maproom.h
 	<SFML/Graphics.hpp>
 	"MapFeature.h"
 
-1372127161 source:c:\dropbox\projects\metahack\src\mapcorridor.cpp
+1373648496 source:c:\dropbox\projects\metahack\src\mapcorridor.cpp
 	"MapCorridor.h"
 	<boost/random/uniform_int_distribution.hpp>
 	"App.h"
@@ -4105,7 +4110,7 @@
 	<deque>
 	<boost/ptr_container/ptr_sequence_adapter.hpp>
 
-1370026393 c:\dropbox\projects\metahack\include\geovector.h
+1373648496 c:\dropbox\projects\metahack\include\geovector.h
 	<SFML/Graphics.hpp>
 	"Direction.h"
 
@@ -4523,7 +4528,7 @@
 	<map>
 	"ErrorHandler.h"
 
-1372127161 source:c:\dropbox\projects\metahack\src\mapdiamond.cpp
+1373648496 source:c:\dropbox\projects\metahack\src\mapdiamond.cpp
 	"MapDiamond.h"
 	<boost/random/uniform_int_distribution.hpp>
 	"App.h"
@@ -5524,10 +5529,36 @@
 1373460050 c:\dropbox\projects\metahack\include\thingregistrator.h
 	"ThingFactory.h"
 
-1373646837 source:c:\dropbox\projects\metahack\src\configsettings.cpp
+1373647112 source:c:\dropbox\projects\metahack\src\configsettings.cpp
 	"ConfigSettings.h"
 
 1373647177 c:\dropbox\projects\metahack\include\configsettings.h
 	<memory>
 	<SFML/Graphics.hpp>
+
+1373654427 source:c:\dropbox\projects\metahack\src\maplroom.cpp
+	"MapLRoom.h"
+	<boost/random/uniform_int_distribution.hpp>
+	"App.h"
+	"ErrorHandler.h"
+	"MapTile.h"
+	"MathUtils.h"
+	"ThingFactory.h"
+
+1373651334 c:\dropbox\projects\metahack\include\maplroom.h
+	<SFML/Graphics.hpp>
+	"MapFeature.h"
+
+1373654418 source:c:\dropbox\projects\metahack\src\mapdonutroom.cpp
+	"MapDonutRoom.h"
+	<boost/random/uniform_int_distribution.hpp>
+	"App.h"
+	"ErrorHandler.h"
+	"MapTile.h"
+	"MathUtils.h"
+	"ThingFactory.h"
+
+1373654018 c:\dropbox\projects\metahack\include\mapdonutroom.h
+	<SFML/Graphics.hpp>
+	"MapFeature.h"
 

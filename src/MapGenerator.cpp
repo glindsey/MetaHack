@@ -6,46 +6,26 @@
 #include "ErrorHandler.h"
 #include "MapCorridor.h"
 #include "MapDiamond.h"
+#include "MapDonutRoom.h"
+#include "MapLRoom.h"
 #include "MapRoom.h"
 #include "MapTile.h"
+#include "MathUtils.h"
 
 typedef boost::random::uniform_int_distribution<> uniform_int_dist;
 
 struct MapGenerator::Impl
 {
-  Impl(Map& m) : gameMap(m) {}
-
-  /// Choose one of two alternatives at random.
-  template <class T> T chooseRandom (T a, T b)
-  {
-    uniform_int_dist choose(0, 1);
-    int choice = choose(the_RNG);
-    return (choice ? a : b);
-  }
-
-  /// Choose one of three alternatives at random.
-  template <class T> T chooseRandom (T a, T b, T c)
-  {
-    uniform_int_dist choose(0, 2);
-    int choice = choose(the_RNG);
-    switch (choice)
-    {
-      case 0: return a;
-      case 1: return b;
-      case 2: return c;
-
-      default: return b;  // should not happen, here to shut compiler up
-    }
-  }
+  Impl(Map& m) : game_map(m) {}
 
   /// Fill map with stone.
   void clearMap()
   {
-    for (int y = 0; y < gameMap.get_size().y; ++y)
+    for (int y = 0; y < game_map.get_size().y; ++y)
     {
-      for (int x = 0; x < gameMap.get_size().x; ++x)
+      for (int x = 0; x < game_map.get_size().x; ++x)
       {
-        MapTile& tile = gameMap.get_tile(x, y);
+        MapTile& tile = game_map.get_tile(x, y);
         tile.set_type(MapTileType::WallStone);
       }
     }
@@ -55,13 +35,13 @@ struct MapGenerator::Impl
   bool getGrowthVector(GeoVector& growthVector)
   {
     unsigned int numRetries = 0;
-    sf::Vector2i const& mapSize = gameMap.get_size();
+    sf::Vector2i const& mapSize = game_map.get_size();
 
     while (numRetries < limits.maxAdjacentRetries)
     {
       ++numRetries;
 
-      MapFeature& feature = gameMap.get_random_map_feature();
+      MapFeature& feature = game_map.get_random_map_feature();
       if (feature.get_num_growth_vectors() > 0)
       {
         GeoVector vec = feature.get_random_growth_vector();
@@ -72,34 +52,34 @@ struct MapGenerator::Impl
         switch (vec.direction)
         {
         case Direction::North:
-          if (vec.startPoint.y > 0)
+          if (vec.start_point.y > 0)
           {
-            MapTile& checkTile = gameMap.get_tile(vec.startPoint.x,
-                                                 vec.startPoint.y - 1);
+            MapTile& checkTile = game_map.get_tile(vec.start_point.x,
+                                                 vec.start_point.y - 1);
             vecOkay = !checkTile.is_empty_space();
           }
           break;
         case Direction::East:
-          if (vec.startPoint.x < mapSize.x - 1)
+          if (vec.start_point.x < mapSize.x - 1)
           {
-            MapTile& checkTile = gameMap.get_tile(vec.startPoint.x + 1,
-                                                 vec.startPoint.y);
+            MapTile& checkTile = game_map.get_tile(vec.start_point.x + 1,
+                                                 vec.start_point.y);
             vecOkay = !checkTile.is_empty_space();
           }
           break;
         case Direction::South:
-          if (vec.startPoint.y < mapSize.y - 1)
+          if (vec.start_point.y < mapSize.y - 1)
           {
-            MapTile& checkTile = gameMap.get_tile(vec.startPoint.x,
-                                                 vec.startPoint.y + 1);
+            MapTile& checkTile = game_map.get_tile(vec.start_point.x,
+                                                 vec.start_point.y + 1);
             vecOkay = !checkTile.is_empty_space();
           }
           break;
         case Direction::West:
-          if (vec.startPoint.x > 0)
+          if (vec.start_point.x > 0)
           {
-            MapTile& checkTile = gameMap.get_tile(vec.startPoint.x - 1,
-                                                 vec.startPoint.y);
+            MapTile& checkTile = game_map.get_tile(vec.start_point.x - 1,
+                                                 vec.start_point.y);
             vecOkay = !checkTile.is_empty_space();
           }
           break;
@@ -110,7 +90,7 @@ struct MapGenerator::Impl
         if (vecOkay)
         {
           // Use this growth point.
-          growthVector.startPoint = vec.startPoint;
+          growthVector.start_point = vec.start_point;
           growthVector.direction = vec.direction;
           return true;
         }
@@ -129,7 +109,7 @@ struct MapGenerator::Impl
   /// boundaries.
   sf::Vector2i getRandomSquare()
   {
-    sf::Vector2i mapSize = gameMap.get_size();
+    sf::Vector2i mapSize = game_map.get_size();
     uniform_int_dist xDist(1, mapSize.x - 2);
     uniform_int_dist yDist(1, mapSize.y - 2);
 
@@ -144,7 +124,7 @@ struct MapGenerator::Impl
   ///          or function will loop indefinitely!
   sf::Vector2i getRandomFilledSquare()
   {
-    sf::Vector2i mapSize = gameMap.get_size();
+    sf::Vector2i mapSize = game_map.get_size();
     uniform_int_dist xDist(1, mapSize.x - 2);
     uniform_int_dist yDist(1, mapSize.y - 2);
 
@@ -154,13 +134,13 @@ struct MapGenerator::Impl
     {
       coords.x = xDist(the_RNG);
       coords.y = yDist(the_RNG);
-    } while (gameMap.get_tile(coords.x, coords.y).is_empty_space());
+    } while (game_map.get_tile(coords.x, coords.y).is_empty_space());
 
     return coords;
   }
 
   /// Reference to game map.
-  Map& gameMap;
+  Map& game_map;
 
   /// Map feature variables.
   FeatureLimits limits;
@@ -187,7 +167,7 @@ void MapGenerator::generate()
   TRACE("Making starting room...");
 
   MapFeature& startingRoom =
-    impl->gameMap.add_map_feature(new MapRoom(impl->gameMap));
+    impl->game_map.add_map_feature(new MapRoom(impl->game_map));
 
   if (!startingRoom.create(GeoVector(impl->getRandomFilledSquare(),
                                      Direction::Self)))
@@ -202,7 +182,7 @@ void MapGenerator::generate()
   sf::Vector2i startCoords(startBox.left + (startBox.width / 2),
                            startBox.top + (startBox.height / 2));
 
-  impl->gameMap.set_start_location(startCoords);
+  impl->game_map.set_start_location(startCoords);
 
   // Continue with additional map features.
   TRACE("Making additional map features...");
@@ -216,26 +196,41 @@ void MapGenerator::generate()
 
     if (impl->getGrowthVector(nextGrowthVector))
     {
-      uniform_int_dist chooseAFeature(0, 4);
-      int chosenFeature = chooseAFeature(the_RNG);
+      uniform_int_dist chooseAFeature(0, 6);
+      int chosen_feature = chooseAFeature(the_RNG);
 
-      switch (chosenFeature)
+      // DEBUG TESTING CODE
+      //int chosen_feature = 6;
+
+      switch (chosen_feature)
       {
       case 3:
         {
-          feature = new MapDiamond(impl->gameMap);
+          feature = new MapDiamond(impl->game_map);
         }
         break;
 
       case 4:
         {
-          feature = new MapCorridor(impl->gameMap);
+          feature = new MapCorridor(impl->game_map);
+        }
+        break;
+
+      case 5:
+        {
+          feature = new MapLRoom(impl->game_map);
+        }
+        break;
+
+      case 6:
+        {
+          feature = new MapDonutRoom(impl->game_map);
         }
         break;
 
       default:
         {
-          feature = new MapRoom(impl->gameMap);
+          feature = new MapRoom(impl->game_map);
         }
         break;
       }
@@ -245,7 +240,7 @@ void MapGenerator::generate()
     {
       if (feature->create(nextGrowthVector))
       {
-        impl->gameMap.add_map_feature(feature);
+        impl->game_map.add_map_feature(feature);
       }
       else
       {
