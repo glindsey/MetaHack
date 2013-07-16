@@ -9,6 +9,10 @@ Random MetaHack Thoughts
 
 * Polymorphing should be handled in the code by some sort of sub-object, since it is reversible.
 
+* Instead of stairs up/down, portals of some kind to travel between levels?  And some sort of magical barrier around the level to prevent you (and only you) from leaving.  Or perhaps a number of parallel worlds accessible from the starting level.  I want multiple types of levels, including expansive caves, forests, et cetera, and this seems the best way to do that.
+
+* "Town" map creator creates a grid (not exact -- separation would vary a bit, some streets would dead-end, etc) and populates it with buildings.
+
 
 Nifty ideas that may or may not fit into the game
 =================================================

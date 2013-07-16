@@ -3,6 +3,7 @@
 #include "App.h"
 #include "ConfigSettings.h"
 #include "ErrorHandler.h"
+#include "KeyBuffer.h"
 
 #include <deque>
 
@@ -30,8 +31,8 @@ struct MessageLog::Impl
   /// Rectangle shape used in rendering.
   sf::RectangleShape area_bg_shape;
 
-  /// The current command being typed into the log.
-  std::string current_command;
+  /// Key buffer for the current command.
+  KeyBuffer buffer;
 };
 
 MessageLog::MessageLog(sf::IntRect dimensions)
@@ -85,6 +86,14 @@ void MessageLog::add(std::string message)
 
 EventResult MessageLog::handle_event(sf::Event& event)
 {
+  switch (event.type)
+  {
+  case sf::Event::EventType::KeyPressed:
+    return impl->buffer.handle_key_press(event.key);
+  default:
+    break;
+  }
+
   return EventResult::Ignored;
 }
 
@@ -100,10 +109,10 @@ bool MessageLog::render(sf::RenderTarget& target, int frame)
   float text_coord_x = text_offset_x;
   float text_coord_y = impl->dims.height - (lineSpacing + text_offset_y);
 
-  sf::Text renderText;
+  sf::Text render_text;
 
-  renderText.setFont(the_default_font);
-  renderText.setCharacterSize(impl->font_size);
+  render_text.setFont(the_default_font);
+  render_text.setCharacterSize(impl->font_size);
 
   // Clear background texture.
   impl->area_bg_texture->clear(Settings.window_bg_color);
@@ -111,13 +120,13 @@ bool MessageLog::render(sf::RenderTarget& target, int frame)
   // If we have the focus, put the current command at the bottom of the log.
   if (impl->focus)
   {
-    renderText.setString("> " + impl->current_command + "_");
-    renderText.setPosition(text_coord_x - 2, text_coord_y - 2);
-    renderText.setColor(Settings.text_shadow_color);
-    impl->area_bg_texture->draw(renderText);
-    renderText.setPosition(text_coord_x, text_coord_y);
-    renderText.setColor(Settings.text_highlight_color);
-    impl->area_bg_texture->draw(renderText);
+    impl->buffer.render(*(impl->area_bg_texture.get()),
+                        sf::Vector2f(text_coord_x, text_coord_y),
+                        frame,
+                        the_default_font,
+                        impl->font_size,
+                        Settings.text_highlight_color);
+
     text_coord_y -= lineSpacing;
   }
 
@@ -127,13 +136,13 @@ bool MessageLog::render(sf::RenderTarget& target, int frame)
   for (std::deque<std::string>::iterator iter = impl->message_queue.begin();
        iter != impl->message_queue.end(); ++iter)
   {
-    renderText.setString(*iter);
-    renderText.setPosition(text_coord_x - 2, text_coord_y - 2);
-    renderText.setColor(Settings.text_shadow_color);
-    impl->area_bg_texture->draw(renderText);
-    renderText.setPosition(text_coord_x, text_coord_y);
-    renderText.setColor(Settings.text_color);
-    impl->area_bg_texture->draw(renderText);
+    render_text.setString(*iter);
+    render_text.setPosition(text_coord_x - 2, text_coord_y - 2);
+    render_text.setColor(Settings.text_shadow_color);
+    impl->area_bg_texture->draw(render_text);
+    render_text.setPosition(text_coord_x, text_coord_y);
+    render_text.setColor(Settings.text_color);
+    impl->area_bg_texture->draw(render_text);
     if (text_coord_y < text_offset_y) break;
     text_coord_y -= lineSpacing;
   }

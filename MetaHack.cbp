@@ -96,6 +96,7 @@
 		<Unit filename="include/InventoryArea.h" />
 		<Unit filename="include/InventorySlot.h" />
 		<Unit filename="include/IsType.h" />
+		<Unit filename="include/KeyBuffer.h" />
 		<Unit filename="include/LightSource.h" />
 		<Unit filename="include/Map.h" />
 		<Unit filename="include/MapCorridor.h" />
@@ -149,6 +150,7 @@
 		<Unit filename="src/Gender.cpp" />
 		<Unit filename="src/Inventory.cpp" />
 		<Unit filename="src/InventoryArea.cpp" />
+		<Unit filename="src/KeyBuffer.cpp" />
 		<Unit filename="src/LightSource.cpp" />
 		<Unit filename="src/Map.cpp" />
 		<Unit filename="src/MapCorridor.cpp" />

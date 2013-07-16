@@ -10,11 +10,11 @@
 #include "StatusArea.h"
 #include "Thing.h"
 
+/// Area which currently has keyboard focus.
 enum class AreaFocus
 {
   Map,
-  LeftInv,
-  RightInv,
+  Cursor,
   MessageLog
 };
 
