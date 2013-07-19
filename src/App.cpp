@@ -16,6 +16,7 @@
 std::unique_ptr<sf::RenderWindow> app_window_;
 std::unique_ptr<sf::Font> default_font_;
 std::unique_ptr<sf::Font> default_bold_font_;
+std::unique_ptr<sf::Font> default_mono_font_;
 std::unique_ptr<sf::Shader> shader_;
 std::unique_ptr<App> app_;
 std::unique_ptr<MessageLog> message_log_;
@@ -47,6 +48,7 @@ int main()
   app_window_.reset(new sf::RenderWindow(sf::VideoMode(1066, 600), "Magionic Bonds"));
 
   // Create the default fonts.
+  /// @todo Font names should be moved into ConfigSettings.
   default_font_.reset(new sf::Font());
   if (default_font_->loadFromFile("resources/fonts/berylium rg.ttf") == false)
   {
@@ -57,6 +59,12 @@ int main()
   if (default_bold_font_->loadFromFile("resources/fonts/berylium bd.ttf") == false)
   {
     FATAL_ERROR("Could not load the default bold font (berylium bd.ttf)");
+  }
+
+  default_mono_font_.reset(new sf::Font());
+  if (default_mono_font_->loadFromFile("resources/fonts/DejaVuSansMono.ttf") == false)
+  {
+    FATAL_ERROR("Could not load the default monospace font (DejaVuSansMono.ttf)");
   }
 
   // Create the shader program.
@@ -217,15 +225,14 @@ void App::run()
 
     impl->state_machine->execute();
 
-    // Limit frame rate to 40 fps.
-    if (clock.getElapsedTime().asMilliseconds() > 25)
+    // Limit frame rate to 62.5 fps.
+    if (clock.getElapsedTime().asMilliseconds() > 16)
     {
       clock.restart();
       the_window.clear();
       impl->state_machine->render(the_window, frame_counter);
       the_window.display();
+      ++frame_counter;
     }
-
-    ++frame_counter;
   }
 }

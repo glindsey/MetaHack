@@ -80,8 +80,8 @@ bool MapDiamond::create(GeoVector vec)
       bool okay = true;
 
       // Verify that box and surrounding area are solid walls.
-      // TODO: Constrain this to only check around the edges of the
-      //       diamond, instead of the entire enclosing box.
+      /// @todo: Constrain this to only check around the edges of the
+      ///        diamond, instead of the entire enclosing box.
       for (int xCheck = xCenter - (diamondHalfSize + 1);
                xCheck <= xCenter + (diamondHalfSize + 1); ++xCheck)
       {
@@ -131,8 +131,8 @@ bool MapDiamond::create(GeoVector vec)
         add_growth_vector(GeoVector(xCenter + (diamondHalfSize + 1), yCenter,
                                   Direction::East));
 
-        // TODO: Put either a door or an open area at the starting coords.
-        // Right now we just make it an open area.
+        /// @todo Put either a door or an open area at the starting coords.
+        ///       Right now we just make it an open area.
         MapTile& startTile = get_map().get_tile(startingCoords.x,
                                               startingCoords.y);
         startTile.set_type(MapTileType::FloorStone);

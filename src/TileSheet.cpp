@@ -51,7 +51,7 @@ sf::IntRect TileSheet::get_tile(sf::Vector2u tile) const
   return rect;
 }
 
-sf::Texture const& TileSheet::getTexture(void) const
+sf::Texture& TileSheet::getTexture(void)
 {
   return impl->texture;
 }

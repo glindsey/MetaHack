@@ -17,7 +17,7 @@ StatusArea::StatusArea(sf::IntRect dimensions)
   : impl(new Impl())
 {
   impl->focus = false;
-  impl->font_size = 14;
+  impl->font_size = 16;   ///< @todo Move to ConfigSettings
   impl->dims = dimensions;
 }
 

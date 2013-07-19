@@ -152,7 +152,7 @@ bool Entity::move_into(ThingId new_location_id)
     {
       if (old_map_id != MapFactory::null_map_id)
       {
-        // TODO: save old map memory.
+        /// @todo Save old map memory.
       }
       impl->memory.clear();
       if (new_map_id != MapFactory::null_map_id)
@@ -160,7 +160,7 @@ bool Entity::move_into(ThingId new_location_id)
         Map& new_map = MF.get(new_map_id);
         sf::Vector2i new_map_size = new_map.get_size();
         impl->memory.resize(new_map_size.x * new_map_size.y);
-        // TODO: load new map memory if it exists somewhere.
+        /// @todo Load new map memory if it exists somewhere.
       }
     }
     this->find_seen_tiles();
@@ -236,7 +236,6 @@ void Entity::do_recursive_visibility(int octant,
   int eX = tile_coords.x;
   int eY = tile_coords.y;
 
-  // TODO: make these globals or something, I dunno, whatever
   static const int mv = 128;
   static constexpr int mw = (mv * mv);
 
@@ -835,7 +834,10 @@ bool Entity::drink(ThingId thing_id, unsigned int& action_time)
   case ActionResult::FailureSelfReference:
     if (this->get_id() == TF.get_player_id())
     {
-      // TODO: special message if we're a liquid-based organism
+      message = _YOU_TRY_ + " to drink " + thing.get_name() + ".";
+      the_message_log.add(message);
+
+      /// @todo When drinking self, special message if we're a liquid-based organism.
       message = "That is a particularly unsettling image.";
       the_message_log.add(message);
     }
@@ -900,11 +902,11 @@ bool Entity::drop(ThingId thing_id, unsigned int& action_time)
         {
           if (thing.do_action_dropped_by(*this))
           {
+            message = _YOU_ + choose_verb(" drop ", " drops ") +
+                      thing.get_name() + ".";
+            the_message_log.add(message);
             if (thing.move_into(entity_location))
             {
-              message = _YOU_ + choose_verb(" drop ", " drops ") +
-                        thing.get_name() + ".";
-              the_message_log.add(message);
               return true;
             }
             else
@@ -1029,7 +1031,7 @@ bool Entity::eat(ThingId thing_id, unsigned int& action_time)
       message = _YOU_TRY_ + " to eat " + thing.get_name() + ".";
       the_message_log.add(message);
 
-      // TODO: special message if we're a liquid-based organism
+      /// @todo When eating self, special message if we're a liquid-based organism.
       message = "But you really aren't that tasty, so you stop.";
       the_message_log.add(message);
     }
@@ -1060,9 +1062,14 @@ ActionResult Entity::can_fire(ThingId thing_id, unsigned int& action_time)
     return ActionResult::FailureSelfReference;
   }
 
-  // TODO: check that the Thing is in our inventory
+  // Check that it's in our inventory.
+  if (!this->get_inventory().contains(thing_id))
+  {
+    return ActionResult::FailureNotPresent;
+  }
 
-  // TODO: write me
+  /// @todo Write can_fire() behavior.
+
   return ActionResult::Success;
 }
 
@@ -1081,7 +1088,7 @@ bool Entity::fire(ThingId thing_id, Direction& direction,
     {
       if (thing.do_action_fired_by(*this, direction))
       {
-        // TODO: write me
+        /// @todo Write Entity::fire() behavior
         return true;
       }
     }
@@ -1146,19 +1153,19 @@ ActionResult Entity::can_mix(ThingId thing1_id, ThingId thing2_id,
     return ActionResult::FailureThingOutOfReach;
   }
 
-  // TODO: write me
+  /// @todo write Entity::can_mix
   return ActionResult::Success;
 }
 
 bool Entity::mix(ThingId thing1_id, ThingId thing2_id, unsigned int& action_time)
 {
-  // TODO: write me
+  /// @todo write Entity::mix
   return false;
 }
 
 bool Entity::move(Direction direction, bool turn, unsigned int& action_time)
 {
-  // TODO: update action time
+  /// @todo Update action time based on direction, speed, etc.
 
   std::string message;
 
@@ -1184,14 +1191,14 @@ bool Entity::move(Direction direction, bool turn, unsigned int& action_time)
     }
     else if (direction == Direction::Up)
     {
-      //TODO: write me!
+      /// @todo Write up/down movement code
       message = "Up/down movement is not yet supported!";
       the_message_log.add(message);
       return false;
     }
     else if (direction == Direction::Down)
     {
-      //TODO: write me!
+      /// @todo Write up/down movement code
       message = "Up/down movement is not yet supported!";
       the_message_log.add(message);
       return false;
@@ -1305,7 +1312,7 @@ ActionResult Entity::can_pick_up(ThingId thing_id, unsigned int& action_time)
     return ActionResult::FailureThingOutOfReach;
   }
 
-  // TODO: Check if our inventory is full-up.
+  /// @todo When picking up, check if our inventory is full-up.
   return ActionResult::Success;
 }
 
@@ -1324,11 +1331,11 @@ bool Entity::pick_up(ThingId thing_id, unsigned int& action_time)
       {
         if (thing.do_action_picked_up_by(*this))
         {
+          message = _YOU_ + choose_verb(" pick", " picks") + " up " +
+                    thing.get_name() + ".";
+          the_message_log.add(message);
           if (thing.move_into(*this))
           {
-            message = _YOU_ + choose_verb(" pick", " picks") + " up " +
-                      thing.get_name() + ".";
-            the_message_log.add(message);
             return true;
           }
           else // could not add to inventory
@@ -1446,7 +1453,7 @@ ActionResult Entity::can_put_into(ThingId thing_id, ThingId container_id,
     return ActionResult::FailureContainerOutOfReach;
   }
 
-  // TODO: Make sure the container can hold this thing.
+  /// @todo Make sure the container can hold this thing.
   return ActionResult::Success;
 }
 
@@ -1467,16 +1474,16 @@ bool Entity::put_into(ThingId thing_id, ThingId container_id,
       {
         if (thing.do_action_put_into(container))
         {
+          message = _YOU_ + choose_verb(" place ", "places ") +
+                    thing.get_name() + " into " +
+                    container.get_name() + ".";
+          the_message_log.add(message);
           if (!thing.move_into(container_id))
           {
             MAJOR_ERROR("Could not move Thing into Container");
           }
           else
           {
-            message = _YOU_ + choose_verb(" place ", "places ") +
-                      thing.get_name() + " into " +
-                      container.get_name() + ".";
-            the_message_log.add(message);
             return true;
           }
         }
@@ -1498,7 +1505,7 @@ bool Entity::put_into(ThingId thing_id, ThingId container_id,
     {
       if (TF.get_player_id() == this->get_id())
       {
-        // TODO: allow this?
+        /// @todo Possibly allow player to voluntarily enter a container?
         message = "I'm afraid you can't do that.  "
                   "(At least, not in this version...)";
       }
@@ -1575,7 +1582,7 @@ ActionResult Entity::can_read(ThingId thing_id, unsigned int& action_time)
     return ActionResult::FailureThingOutOfReach;
   }
 
-  if (0) // TODO: intelligence tests
+  if (0) ///< @todo Intelligence tests for reading.
   {
     return ActionResult::FailureTooStupid;
   }
@@ -1680,7 +1687,6 @@ ActionResult Entity::can_take_out(ThingId thing_id,
     return ActionResult::FailureContainerOutOfReach;
   }
 
-  // TODO: write me
   return ActionResult::Success;
 }
 
@@ -1723,7 +1729,7 @@ bool Entity::take_out(ThingId thing_id,
     {
       if (TF.get_player_id() == this->get_id())
       {
-        // TODO: allow this?
+        /// @todo Maybe allow player to voluntarily exit a container?
         message = "I'm afraid you can't do that.  "
                   "(At least, not in this version...)";
       }
@@ -1811,7 +1817,7 @@ bool Entity::toss(ThingId thing_id, Direction& direction,
                         thing.get_name();
               the_message_log.add(message);
 
-              // TODO: set thing's direction and velocity
+              /// @todo When throwing, set Thing's direction and velocity
               return true;
             }
             else
@@ -1874,9 +1880,13 @@ ActionResult Entity::can_wear(ThingId thing_id, unsigned int& action_time)
     return ActionResult::FailureSelfReference;
   }
 
-  // TODO: Check that the thing is in our inventory.
+  // Check that it's within reach.
+  if (!this->can_reach(thing_id))
+  {
+    return ActionResult::FailureThingOutOfReach;
+  }
 
-  // TODO: write me
+  /// @todo Finish Entity::can_wear code
   return ActionResult::Success;
 }
 
@@ -1894,7 +1904,7 @@ bool Entity::wear(ThingId thing_id, unsigned int& action_time)
         {
           if (thing.do_action_equipped_onto(*this))
           {
-            // TODO: set worn item?
+            /// @todo Implement wearing items
             return true;
           }
         }
@@ -1927,7 +1937,11 @@ ActionResult Entity::can_wield(ThingId thing_id, unsigned int& action_time)
     return ActionResult::SuccessSelfReference;
   }
 
-  // TODO: Check that the thing is in our inventory.
+  // Check that it's within reach.
+  if (!this->can_reach(thing_id))
+  {
+    return ActionResult::FailureThingOutOfReach;
+  }
 
   return ActionResult::Success;
 }
@@ -1946,7 +1960,7 @@ bool Entity::wield(ThingId thing_id, unsigned int& action_time)
       {
         if (thing.do_action_wielded_by(*this))
         {
-          // TODO: set wielded item?
+          /// @todo Implement wielding items.
 
           message = _YOU_ARE_ + " now wielding " + thing.get_name() + ".";
           the_message_log.add(message);
@@ -1958,7 +1972,7 @@ bool Entity::wield(ThingId thing_id, unsigned int& action_time)
 
   case ActionResult::SuccessSelfReference:
     {
-      // TODO: unwield everything
+      /// @todo Implement unwielding everything.
       message = _YOU_ARE_ + "no longer wielding any weapons.";
       the_message_log.add(message);
     }

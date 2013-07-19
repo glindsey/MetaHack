@@ -10,6 +10,7 @@
 #include "ErrorHandler.h"
 #include "Human.h"
 #include "IsType.h"
+#include "KeyBuffer.h"
 #include "Map.h"
 #include "MapFactory.h"
 #include "MapTile.h"
@@ -71,11 +72,11 @@ struct AppStateGameMode::Impl
     sf::IntRect rightInvAreaDims = right_inventory_area->get_dimensions();
     statusAreaDims.width = the_window.getSize().x -
                            (leftInvAreaDims.width +
-                            rightInvAreaDims.width + 18);
+                            rightInvAreaDims.width + 24);
     statusAreaDims.height = Settings.status_area_height;
     statusAreaDims.top = the_window.getSize().y -
-                         (Settings.status_area_height + 3);
-    statusAreaDims.left = leftInvAreaDims.width + 9;
+                         (Settings.status_area_height + 5);
+    statusAreaDims.left = leftInvAreaDims.width + 12;
     return statusAreaDims;
   }
 
@@ -85,9 +86,9 @@ struct AppStateGameMode::Impl
     sf::IntRect inventoryAreaDims;
     inventoryAreaDims.width = Settings.inventory_area_width;
     inventoryAreaDims.height = the_window.getSize().y -
-                                (messageLogDims.height + 12);
+                                (messageLogDims.height + 18);
     inventoryAreaDims.left = 3;
-    inventoryAreaDims.top = messageLogDims.top + messageLogDims.height + 6;
+    inventoryAreaDims.top = messageLogDims.top + messageLogDims.height + 10;
 
     return inventoryAreaDims;
   }
@@ -98,10 +99,10 @@ struct AppStateGameMode::Impl
     sf::IntRect inventoryAreaDims;
     inventoryAreaDims.width = Settings.inventory_area_width;
     inventoryAreaDims.height = the_window.getSize().y -
-                                (messageLogDims.height + 12);
+                                (messageLogDims.height + 18);
     inventoryAreaDims.left = the_window.getSize().x -
                                 (inventoryAreaDims.width + 3);
-    inventoryAreaDims.top = messageLogDims.top + messageLogDims.height + 6;
+    inventoryAreaDims.top = messageLogDims.top + messageLogDims.height + 10;
 
     return inventoryAreaDims;
   }
@@ -158,6 +159,16 @@ AppStateGameMode::~AppStateGameMode()
 
 void AppStateGameMode::execute()
 {
+  // First, check for debug commands ready to be run.
+  KeyBuffer& debug_buffer = the_message_log.get_key_buffer();
+
+  if (debug_buffer.get_enter())
+  {
+    /// @todo Implement debug command processing.
+    the_message_log.add("** Sorry, debug command processing is not yet implemented.");
+    debug_buffer.clear_buffer();
+  }
+
   Entity& player = TF.get_player();
 
   if (player.pending_action())
@@ -249,7 +260,7 @@ bool AppStateGameMode::render(sf::RenderTarget& target, int frame)
     }
     else
     {
-      // TODO: handle rendering if we're inside, um, something else
+      /// @todo Handle rendering if we're inside something other than a map.
     }
 
     the_message_log.render(target, frame);
@@ -834,10 +845,6 @@ void AppStateGameMode::add_zoom(float zoom_amount)
 
 EventResult AppStateGameMode::handle_event(sf::Event& event)
 {
-  // TODO: Obviously we need to make this more state-dependent, as we'll
-  //       handle keys differently if we're issuing commands, at a prompt, in
-  //       a menu, et cetera.
-
   EventResult result = EventResult::Ignored;
 
   switch (event.type)

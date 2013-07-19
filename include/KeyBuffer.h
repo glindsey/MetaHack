@@ -32,6 +32,9 @@ class KeyBuffer
     /// Clear the current buffer contents.
     void clear_buffer();
 
+    /// Get whether the buffer is ready for processing.
+    bool get_enter();
+
     /// Render onto a target.
     /// @param target Target to render onto.
     /// @param coords Coordinates to render at.

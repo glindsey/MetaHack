@@ -81,7 +81,8 @@ bool MapTile::is_empty_space() const
   return getMapTileTypePassable(impl->type);
 }
 
-// TODO: implement this to cover different entity types.
+/// @todo: Implement this to cover different entity types.
+///        For example, a non-corporeal Entity can move through solid matter.
 bool MapTile::can_be_traversed_by(Entity& entity) const
 {
   return is_empty_space();
@@ -178,8 +179,8 @@ sf::Color MapTile::get_light_level() const
 
 bool MapTile::is_opaque() const
 {
-  // TODO: check the tile's inventory to see if there's anything huge enough
-  //       to block the view of stuff behind it.
+  /// @todo Check the tile's inventory to see if there's anything huge enough
+  ///       to block the view of stuff behind it.
   return getMapTileTypeOpaque(get_type());
 }
 
@@ -212,19 +213,19 @@ void MapTile::draw_highlight(sf::RenderTarget& target,
 
 bool MapTile::can_contain(Thing& thing) const
 {
-  // TODO: write me
+  /// @todo Implement can_contain.  Right now a MapTile can contain any Thing.
   return true;
 }
 
 bool MapTile::can_be_read_by(Entity const& entity) const
 {
-  // TODO: write me
+  /// @todo Implement can_be_read_by (e.g. writing/engraving on walls).
   return false;
 }
 
 ActionResult MapTile::do_action_read_by(Entity& entity)
 {
-  // TODO: write me
+  /// @todo Implement do_action_read_by (e.g. writing/engraving on walls).
   return ActionResult::Failure;
 }
 

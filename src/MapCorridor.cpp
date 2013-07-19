@@ -133,8 +133,8 @@ bool MapCorridor::create(GeoVector vec)
             add_growth_vector(GeoVector(xMax + 1, yCoord, Direction::East));
           }
 
-          // TODO: Put either a door or an open area at the starting coords.
-          // Right now we just make it an open area.
+          /// @todo: Put either a door or an open area at the starting coords.
+          ///        Right now we just make it an open area.
           MapTile& startTile = get_map().get_tile(startingCoords.x,
                                                 startingCoords.y);
           startTile.set_type(MapTileType::FloorStone);

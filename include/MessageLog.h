@@ -6,6 +6,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "EventHandler.h"
+#include "KeyBuffer.h"
 #include "Renderable.h"
 
 /// A class that keeps track of game messages, and is renderable on-screen.
@@ -24,6 +25,9 @@ class MessageLog : public EventHandler, public Renderable
     /// Add a message to the message log.
     /// The message added is automatically capitalized if it isn't already.
     void add(std::string message);
+
+    /// Get the key buffer used for entering debug commands.
+    KeyBuffer& get_key_buffer();
 
     virtual EventResult handle_event(sf::Event& event);
 

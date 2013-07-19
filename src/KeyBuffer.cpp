@@ -232,6 +232,12 @@ void KeyBuffer::clear_buffer()
 {
   impl->buffer.clear();
   impl->cursor_position = 0;
+  impl->enter = false;
+}
+
+bool KeyBuffer::get_enter()
+{
+  return impl->enter;
 }
 
 void KeyBuffer::render(sf::RenderTarget& target,
@@ -256,45 +262,51 @@ void KeyBuffer::render(sf::RenderTarget& target,
 
   x_position += render_text.getLocalBounds().width;
 
-  // *** BEFORE CURSOR ********************************************************
-  if (impl->cursor_position > 0)
+  // *** RENDER TEXT **********************************************************
+  render_text.setString(impl->buffer);
+  render_text.setPosition(x_position, coords.y);
+  render_text.setStyle(sf::Text::Style::Regular);
+  target.draw(render_text);
+
+  // *** CURSOR ***************************************************************
+  sf::Vector2f cursor_coords;
+  sf::Vector2f cursor_size;
+  sf::Color cursor_color = fg_color;
+
+  if (impl->replacing)
   {
-    std::string before_cursor = impl->buffer.substr(0, impl->cursor_position);
-
-    render_text.setString(before_cursor);
-    render_text.setPosition(x_position, coords.y);
-    render_text.setStyle(sf::Text::Style::Regular);
-    target.draw(render_text);
-
-    x_position += render_text.getLocalBounds().width;
+    cursor_color.r *= 0.5;
+    cursor_color.g *= 0.5;
+    cursor_color.b *= 0.5;
+    cursor_color.a *= 0.5;
   }
 
-  // *** UNDER CURSOR *********************************************************
-  std::string under_cursor;
-  if (impl->cursor_position < impl->buffer.size())
+  // Nice flashy cursor
+  cursor_color.a *= (21 - (frame % 21)) * 0.05;
+
+  // This little hack ensures that trailing spaces in the string are considered
+  // when figuring out the cursor location.
+  render_text.setStyle(sf::Text::Style::Underlined);
+
+  int font_height = font.getLineSpacing(font_size);
+
+  cursor_coords = render_text.findCharacterPos(impl->cursor_position);
+
+
+  if (impl->replacing)
   {
-    under_cursor = impl->buffer.substr(impl->cursor_position, 1);
+    sf::Glyph glyph = font.getGlyph(impl->buffer[impl->cursor_position],
+                                    font_size, false);
+    cursor_size = sf::Vector2f(glyph.bounds.width, font_height);
   }
   else
   {
-    under_cursor = " ";
+    cursor_size = sf::Vector2f(2, font_height);
   }
-  render_text.setString(under_cursor);
-  render_text.setPosition(x_position, coords.y);
-  render_text.setStyle(sf::Text::Style::Underlined);
-  target.draw(render_text);
 
-  x_position += render_text.getLocalBounds().width;
-
-  // *** AFTER CURSOR *********************************************************
-  if ((impl->buffer.size() > 0) &&
-      (impl->cursor_position < impl->buffer.size() - 1))
-  {
-    std::string after_cursor = impl->buffer.substr(impl->cursor_position + 1);
-
-    render_text.setString(after_cursor);
-    render_text.setPosition(x_position, coords.y);
-    render_text.setStyle(sf::Text::Style::Regular);
-    target.draw(render_text);
-  }
+  sf::RectangleShape cursor_rect;
+  cursor_rect.setPosition(cursor_coords);
+  cursor_rect.setSize(cursor_size);
+  cursor_rect.setFillColor(cursor_color);
+  target.draw(cursor_rect);
 }

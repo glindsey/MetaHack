@@ -31,6 +31,6 @@ sf::Vector2u Sconce::get_tile_sheet_coords(int frame) const
 
 bool Sconce::do_process()
 {
-  // TODO: sconces should eventually wear out or something
+  /// @todo: Sconces should eventually wear out or something.
   return true;
 }

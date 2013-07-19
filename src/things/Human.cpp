@@ -14,13 +14,13 @@ Human::~Human() {}
 
 std::string Human::get_description() const
 {
-  // TODO: make this more descriptive
+  /// @todo Make this more descriptive based on character features.
   return "human";
 }
 
 sf::Vector2u Human::get_tile_sheet_coords(int frame) const
 {
-  // TODO: male/female variants
+  /// @todo Male/female variants; maybe skin color too?
   int x_pos = get_appropriate_4way_tile(this->get_facing_direction());
   return sf::Vector2u(x_pos, 5);
 }

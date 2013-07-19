@@ -7,6 +7,7 @@
 #include "MapTile.h"
 #include "Thing.h"
 #include "ThingFactory.h"
+#include "TileSheet.h"
 
 #include <string>
 
@@ -44,7 +45,7 @@ InventoryArea::InventoryArea(sf::IntRect dimensions,
   : impl(new Impl(selected_things))
 {
   impl->focus = false;
-  impl->font_size = 16;
+  impl->font_size = 18;   ///< @todo move to ConfigSettings
   impl->viewed_id = TF.limbo_id;
   impl->inventory_type = InventoryType::Inside;
   impl->use_capitals = false;
@@ -160,8 +161,11 @@ EventResult InventoryArea::handle_event(sf::Event& event)
 
 bool InventoryArea::render(sf::RenderTarget& target, int frame)
 {
-  int line_spacing_y = std::max(the_default_font.getLineSpacing(impl->font_size),
-                                static_cast<int>(Settings.map_tile_size));
+  //int line_spacing_y = std::max(the_default_font.getLineSpacing(impl->font_size),
+  //                              static_cast<int>(Settings.map_tile_size));
+
+  int line_spacing_y = the_default_font.getLineSpacing(impl->font_size);
+  int item_spacing_y = 4;
 
   // Text offsets relative to the background rectangle.
   float text_offset_x = 3;
@@ -177,10 +181,7 @@ bool InventoryArea::render(sf::RenderTarget& target, int frame)
   float text_coord_x = text_offset_x;
   float text_coord_y = text_offset_y + (line_spacing_y * 1.5);
 
-  sf::Text renderText;
-
-  renderText.setFont(the_default_font);
-  renderText.setCharacterSize(impl->font_size);
+  sf::Text render_text;
 
   Inventory* inventory_ptr = &(TF.get_limbo().get_inventory());
 
@@ -196,10 +197,10 @@ bool InventoryArea::render(sf::RenderTarget& target, int frame)
     break;
   }
 
-  // TODO: At the moment this does not split lines that are too long, instead
-  //       truncating them at the edge of the box.  This must be fixed.
-  // TODO: Also need to display some details about the item, such as whether it
-  //       is equipped, what magions are equipped to it, et cetera.
+  /// @todo At the moment this does not split lines that are too long, instead
+  ///       truncating them at the edge of the box.  This must be fixed.
+  /// @todo Also need to display some details about the item, such as whether it
+  ///       is equipped, what magions are equipped to it, et cetera.
   for (ThingMapBySlot::const_iterator iter = inventory_ptr->by_slot_cbegin();
        iter != inventory_ptr->by_slot_cend(); ++iter)
   {
@@ -232,13 +233,12 @@ bool InventoryArea::render(sf::RenderTarget& target, int frame)
       char buf[5];
       snprintf(buf, 4, "[%u]", selection_order);
       item_string.append(buf);
-      renderText.setString(item_string);
-      renderText.setPosition(text_coord_x - 1, text_coord_y - 1);
-      renderText.setColor(Settings.text_shadow_color);
-      impl->area_bg_texture->draw(renderText);
-      renderText.setPosition(text_coord_x + 1, text_coord_y + 1);
-      renderText.setColor(fg_color);
-      impl->area_bg_texture->draw(renderText);
+      render_text.setFont(the_default_mono_font);
+      render_text.setCharacterSize(impl->font_size - 3);
+      render_text.setString(item_string);
+      render_text.setPosition(text_coord_x + 1, text_coord_y);
+      render_text.setColor(fg_color);
+      impl->area_bg_texture->draw(render_text);
     }
 
     // 3. Display the slot ID.
@@ -256,39 +256,45 @@ bool InventoryArea::render(sf::RenderTarget& target, int frame)
       item_string.clear();
       item_string.push_back(item_char);
       item_string.push_back(':');
-      renderText.setString(item_string);
-      renderText.setPosition(text_coord_x + 23, text_coord_y - 1);
-      renderText.setColor(Settings.text_shadow_color);
-      impl->area_bg_texture->draw(renderText);
-      renderText.setPosition(text_coord_x + 25, text_coord_y + 1);
-      renderText.setColor(fg_color);
-      impl->area_bg_texture->draw(renderText);
+      render_text.setFont(the_default_mono_font);
+      render_text.setCharacterSize(impl->font_size - 3);
+      render_text.setString(item_string);
+      render_text.setPosition(text_coord_x + 35, text_coord_y);
+      render_text.setColor(fg_color);
+      impl->area_bg_texture->draw(render_text);
     }
 
     // 4. Display the tile representing the item.
     Thing& thing = TF.get(id);
 
+    the_tile_sheet.getTexture().setSmooth(true);
     thing.draw_to(*(impl->area_bg_texture.get()),
-                  sf::Vector2f(text_coord_x + 50, text_coord_y),
+                  sf::Vector2f(text_coord_x + 55, text_coord_y),
                   line_spacing_y - 1, false, frame);
+    the_tile_sheet.getTexture().setSmooth(false);
 
     // 5. Display the item name.
     item_string.clear();
     item_string = thing.get_indef_name();
-    renderText.setString(item_string);
-    renderText.setPosition(text_coord_x + 50 + line_spacing_y,
-                           text_coord_y - 1);
-    renderText.setColor(Settings.text_shadow_color);
-    impl->area_bg_texture->draw(renderText);
-    renderText.setPosition(text_coord_x + 52 + line_spacing_y,
-                           text_coord_y + 1);
-    renderText.setColor(fg_color);
-    impl->area_bg_texture->draw(renderText);
-
-    // 6. (TODO) Display a nice separator line.
+    render_text.setFont(the_default_font);
+    render_text.setCharacterSize(impl->font_size);
+    render_text.setString(item_string);
+    render_text.setPosition(text_coord_x + 60 + line_spacing_y,
+                            text_coord_y + 1);
+    render_text.setColor(fg_color);
+    impl->area_bg_texture->draw(render_text);
 
     if (text_coord_y > impl->dims.height) break;
-    text_coord_y += line_spacing_y;
+    text_coord_y += line_spacing_y + item_spacing_y;
+
+    // 6. Display a nice separator line.
+    sf::RectangleShape separator_line;
+    separator_line.setPosition(text_coord_x + 10, text_coord_y);
+    separator_line.setSize(sf::Vector2f(impl->dims.width - 25, 1));
+    separator_line.setFillColor(Settings.window_border_color);
+    impl->area_bg_texture->draw(separator_line);
+
+    text_coord_y += item_spacing_y;
   }
 
   // Draw a little window title in the upper-left corner.

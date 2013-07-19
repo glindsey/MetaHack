@@ -33,7 +33,7 @@ ThingFactory::ThingFactory()
 ThingFactory::~ThingFactory()
 {
   // Clean up any Things that haven't yet been deleted.
-  // TODO: may want to speed this up using a memory pool or something
+  /// @todo May want to speed up thing alloc/dealloc using a memory pool.
   for (unsigned int num = 0; num < impl->things.size(); ++num)
   {
     if (impl->things[num] != nullptr)

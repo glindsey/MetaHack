@@ -17,7 +17,7 @@ Inventory::~Inventory()
   //dtor
 }
 
-// TODO: check that something can actually be added to the inventory.
+/// @todo Check that inventory is not full.
 bool Inventory::add(ThingId id)
 {
   // If the thing is the player, it goes into slot 0.
@@ -25,7 +25,8 @@ bool Inventory::add(ThingId id)
   {
     if (things_by_slot_.count(INVSLOT_ZERO) != 0)
     {
-      // TODO: Move anything in this slot to a new slot.
+      /// @todo Move anything in this slot to a new slot.  This will be required
+      ///       if it's possible to change the ID of the player Entity.
       MAJOR_ERROR("Slot 0 of inventory already contains the player!");
     }
     things_by_id_[id] = INVSLOT_ZERO;

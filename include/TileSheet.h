@@ -21,7 +21,7 @@ class TileSheet
     sf::IntRect get_tile(sf::Vector2u tile) const;
 
     /// Get a reference to the texture to render.
-    sf::Texture const& getTexture(void) const;
+    sf::Texture& getTexture(void);
 
     static int const TileSize;
   protected:

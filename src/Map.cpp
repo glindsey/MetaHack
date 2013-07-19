@@ -608,13 +608,13 @@ void Map::add_light(ThingId thing_id)
     sf::Color light_color = source.get_light_color();
     Direction light_direction = source.get_light_direction();
 
-    // TODO: handle special case of Direction::Self.
-    // If a light source's direction is set to "Self", it should be treated as
-    // omnidirectional but dimmer when not held by an Entity, and the same
-    // direction as the Entity when it is held.
+    /// @todo Handle the special case of Direction::Self.
+    /// If a light source's direction is set to "Self", it should be treated as
+    /// omnidirectional but dimmer when not held by an Entity, and the same
+    /// direction as the Entity when it is held.
 
-    // TODO: handle "dark sources" with negative light strength properly --
-    //       right now they'll cause Very Bad Behavior!
+    /// @todo: Handle "dark sources" with negative light strength properly --
+    ///        right now they'll cause Very Bad Behavior!
     int max_depth_squared = source.get_light_strength();
 
     // Add a light influence to the tile the light is on.
@@ -726,8 +726,8 @@ void Map::update_tile_vertices(Entity& entity)
   if (!isType(&TF.get(entity_location_id), MapTile) ||
       (TF.get_tile(entity_location_id).get_map_id() != impl->map_id))
   {
-    // Return, as the entity isn't actually on this map!
-    // TODO: possibly throw an exception or something as this should not occur
+    // Error, as the entity isn't actually on this map!
+    MAJOR_ERROR("Map::update_tile_vertices called for an entity which isn't on that map!");
     return;
   }
 
@@ -764,9 +764,8 @@ void Map::update_thing_vertices(Entity& entity, int frame)
   if (!isType(&TF.get(entity_location_id), MapTile) ||
       (TF.get_tile(entity_location_id).get_map_id() != impl->map_id))
   {
+    // Error, as the entity isn't actually on this map!
     MAJOR_ERROR("Map::update_thing_vertices called for entity that isn't on that map!");
-    // Return, as the entity isn't actually on this map!
-    // TODO: possibly throw an exception or something as this should not occur
     return;
   }
 

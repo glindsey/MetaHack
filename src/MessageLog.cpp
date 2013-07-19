@@ -39,8 +39,8 @@ MessageLog::MessageLog(sf::IntRect dimensions)
   : impl(new Impl())
 {
   impl->focus = false;
-  impl->font_size = 16;
-  impl->history_lines_saved = 250;
+  impl->font_size = 16; ///< @todo Move to ConfigSettings
+  impl->history_lines_saved = 250;  ///< @todo Move to ConfigSettings
 
   this->set_dimensions(dimensions);
 }
@@ -82,6 +82,11 @@ void MessageLog::add(std::string message)
   {
     impl->message_queue.pop_back();
   }
+}
+
+KeyBuffer& MessageLog::get_key_buffer()
+{
+  return impl->buffer;
 }
 
 EventResult MessageLog::handle_event(sf::Event& event)
@@ -131,8 +136,7 @@ bool MessageLog::render(sf::RenderTarget& target, int frame)
   }
 
   // Draw each of the message_queue in the queue.
-  // TODO: At the moment this does not split lines that are too long, instead
-  //       truncating them at the edge of the message box.  This must be fixed.
+  /// @todo Split lines that are too long instead of truncating them.
   for (std::deque<std::string>::iterator iter = impl->message_queue.begin();
        iter != impl->message_queue.end(); ++iter)
   {

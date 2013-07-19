@@ -7,7 +7,8 @@ ConfigSettings::ConfigSettings()
   window_border_color         = sf::Color(255, 255, 240, 255);
   window_focused_border_color = sf::Color(255, 255,  64, 255);
   window_bg_color             = sf::Color( 48,  24,   8, 192);
-  text_shadow_color           = sf::Color(  0,   0,   0, 240);
+  //text_shadow_color           = sf::Color(  0,   0,   0, 240);
+  text_shadow_color           = sf::Color(  0,   0,   0,   0);
   text_color                  = sf::Color(255, 255, 240, 255);
   text_highlight_color        = sf::Color(255, 255,  64, 255);
   cursor_border_color         = sf::Color(255, 255, 240, 255);
