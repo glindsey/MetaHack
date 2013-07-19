@@ -56,9 +56,8 @@ struct AppStateGameMode::Impl
 
   void reset_inventory_info()
   {
-    ThingId player_id = TF.get_player_id();
-    left_inventory_area->set_viewed_id(player_id);
-    right_inventory_area->set_viewed_id(player_id);
+    left_inventory_area->set_viewed_container(TF.get_player());
+    right_inventory_area->set_viewed_container(TF.get_player());
     left_inventory_area->set_inventory_type(InventoryType::Around);
     right_inventory_area->set_inventory_type(InventoryType::Inside);
     selected_things.clear();
@@ -112,14 +111,13 @@ struct AppStateGameMode::Impl
     if (current_area_focus == AreaFocus::Cursor)
     {
       Map& game_map = MF.get(current_map_id);
-      ThingId tileId = game_map.get_tile_id(cursor_coords.x, cursor_coords.y);
-      left_inventory_area->set_viewed_id(tileId);
+      MapTile& tile = game_map.get_tile(cursor_coords);
+      left_inventory_area->set_viewed_container(tile);
       left_inventory_area->set_inventory_type(InventoryType::Inside);
     }
     else
     {
-      ThingId player_id = TF.get_player_id();
-      left_inventory_area->set_viewed_id(player_id);
+      left_inventory_area->set_viewed_container(TF.get_player());
       left_inventory_area->set_inventory_type(InventoryType::Around);
     }
   }
@@ -180,11 +178,11 @@ void AppStateGameMode::execute()
 
     // Get the root of the player's location.
     ThingId root_id = player.get_root_id();
-    Thing& root_thing = TF.get(root_id);
-    if (isType(&root_thing, MapTile))
+    Container& root_container = TF.get_container(root_id);
+    if (root_container.is_maptile())
     {
       // Process everything on the map.
-      MapId root_map_id = root_thing.get_map_id();
+      MapId root_map_id = root_container.get_map_id();
       Map& root_map = MF.get(root_map_id);
 
       std::vector<ThingId> thing_ids;
@@ -200,11 +198,13 @@ void AppStateGameMode::execute()
     else
     {
       // Hmm.  This shouldn't happen unless the player is in Limbo.
-      MAJOR_ERROR("Player's root location isn't a MapTile?  Uh, player, where did you go?");
+      MAJOR_ERROR("Player's root location isn't a MapTile?"
+                  "  Uh, player, where did you go?");
     }
 
     // If player is directly on a map...
-    if (isType(&TF.get(player.get_location_id()), MapTile))
+    Container& location = TF.get_container(player.get_location_id());
+    if (location.is_maptile())
     {
       Map& player_map = MF.get(TF.get_tile(player.get_location_id()).get_map_id());
 
@@ -227,9 +227,9 @@ bool AppStateGameMode::render(sf::RenderTarget& target, int frame)
   {
     Entity& player = TF.get_player();
     ThingId player_location_id = player.get_location_id();
-    Thing& location = TF.get(player_location_id);
+    Container& location = TF.get_container(player_location_id);
 
-    if (isType(&location, MapTile))
+    if (location.is_maptile())
     {
       MapTile& tile = TF.get_tile(player_location_id);
       Map& game_map = MF.get(tile.get_map_id());
@@ -325,26 +325,31 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             ThingId thing_id = impl->selected_things.back();
             Thing& thing = TF.get(thing_id);
 
-            if (thing.get_inventory_size() != 0)
+            if (thing.is_container())
             {
+              Container& container = TF.get_container(thing_id);
               ThingId owner_id = thing.get_owner_id();
-              Thing& owner = TF.get(owner_id);
-              if (isType(&owner, MapTile))
+              Container& owner = TF.get_container(owner_id);
+              if (owner.is_maptile())
               {
-                impl->left_inventory_area->set_viewed_id(thing_id);
+                impl->left_inventory_area->set_viewed_container(container);
                 impl->left_inventory_area->set_inventory_type(InventoryType::Inside);
               }
               else
               {
-                impl->right_inventory_area->set_viewed_id(thing_id);
+                impl->right_inventory_area->set_viewed_container(container);
               }
 
               impl->selected_things.clear();
             }
+            else
+            {
+              the_message_log.add("The last selection is not a container.");
+            }
           }
           else
           {
-            the_message_log.add("The last-selected thing is not a container.");
+            the_message_log.add("Nothing is currently selected.");
           }
           break;
 

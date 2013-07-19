@@ -12,7 +12,7 @@
 // Forward declarations
 class Entity;
 
-class MapTile : public Thing
+class MapTile : public Container
 {
   friend class ThingFactory;
 

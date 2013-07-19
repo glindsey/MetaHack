@@ -7,6 +7,7 @@
 
 #include "App.h"
 #include "ConfigSettings.h"
+#include "Container.h"
 #include "ErrorHandler.h"
 #include "Gender.h"
 #include "Inventory.h"
@@ -54,14 +55,14 @@ struct Entity::Impl
 
 };
 
-Entity::Entity()
-  : Thing(), impl(new Impl())
+Entity::Entity() :
+  Container(), impl(new Impl())
 {
 
 }
 
 Entity::Entity(const Entity& original) :
-  Thing(), impl(new Impl())
+  Container(), impl(new Impl())
 {
   impl->attributes = original.get_attributes();
   impl->busy_counter = original.get_busy_counter();
@@ -225,7 +226,9 @@ void Entity::do_recursive_visibility(int octant,
   int y = 0;
 
   // Are we on a map?  Bail out if we aren't.
-  if (!isType(&TF.get(get_location_id()), MapTile))
+  Container& location = TF.get_container(get_location_id());
+
+  if (!location.is_maptile())
   {
     return;
   }
@@ -492,14 +495,17 @@ void Entity::find_seen_tiles()
 
   elapsed.restart();
 
+  // Are we on a map?  Bail out if we aren't.
+  Container& location = TF.get_container(get_location_id());
+
   // Size and clear the "tile seen" bitset.
-  if (!isType(&TF.get(get_location_id()), MapTile))
+  if (!location.is_maptile())
   {
     impl->tile_seen.clear();
   }
   else
   {
-    MapId ourId = TF.get_tile(get_location_id()).get_map_id();
+    MapId ourId = location.get_map_id();
 
     if (ourId != lastId)
     {
@@ -888,7 +894,7 @@ bool Entity::drop(ThingId thing_id, unsigned int& action_time)
 {
   std::string message;
   Thing& thing = TF.get(thing_id);
-  Thing& entity_location = TF.get(get_location_id());
+  Container& entity_location = TF.get_container(get_location_id());
 
   ActionResult drop_try = this->can_drop(thing_id, action_time);
 
@@ -1171,7 +1177,7 @@ bool Entity::move(Direction direction, bool turn, unsigned int& action_time)
 
   // First: make sure we aren't inside something
   Thing& location = TF.get(get_location_id());
-  if (!isType(&location, MapTile))
+  if (!location.is_maptile())
   {
     message = _YOU_ARE_ + " inside " + location.get_indef_name() +
               " and " + _ARE_ + " not going anywhere!";
@@ -1435,8 +1441,7 @@ ActionResult Entity::can_put_into(ThingId thing_id, ThingId container_id,
   }
 
   // Check that the container is, well, a container!
-  Thing& container = TF.get(container_id);
-  if (container.get_inventory_size() == 0)
+  if (!TF.get(container_id).is_container())
   {
     return ActionResult::FailureTargetNotAContainer;
   }
@@ -1607,7 +1612,7 @@ bool Entity::read(ThingId thing_id, unsigned int& action_time)
         switch (thing.do_action_read_by(*this))
         {
         case ActionResult::SuccessDestroyed:
-          if (!isType(&thing, MapTile))
+          if (!thing.is_maptile())
           {
             if (!thing.move_into(TF.limbo_id))
             {
@@ -1675,8 +1680,8 @@ ActionResult Entity::can_take_out(ThingId thing_id,
   }
 
   // Check that the container is not a MapTile or Entity.
-  Thing& container = TF.get(container_id);
-  if (isType(&container, MapTile) || (isType(&container, Entity)))
+  Container& container = TF.get_container(container_id);
+  if (container.is_maptile() || container.is_entity())
   {
     return ActionResult::FailureNotInsideContainer;
   }
@@ -1804,7 +1809,7 @@ bool Entity::toss(ThingId thing_id, Direction& direction,
   {
   case ActionResult::Success:
     {
-      Thing& new_location = TF.get(this->get_location_id());
+      Container& new_location = TF.get_container(this->get_location_id());
       if (thing.can_be_moved())
       {
         if (thing.can_be_thrown_by(*this))

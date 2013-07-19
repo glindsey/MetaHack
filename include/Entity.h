@@ -4,6 +4,7 @@
 #include "Action.h"
 #include "AttributeSet.h"
 #include "BodyPart.h"
+#include "Container.h"
 #include "Direction.h"
 #include "Gender.h"
 #include "MapTileType.h"
@@ -15,7 +16,7 @@
 
 /// Interface class representing something that can perform actions.
 class Entity :
-  public Thing
+  public Container
 {
   friend class ThingFactory;
 

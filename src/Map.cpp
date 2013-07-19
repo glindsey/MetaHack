@@ -594,16 +594,16 @@ void Map::add_light(ThingId thing_id)
     LightSource& source = dynamic_cast<LightSource&>(thing);
 
     // Get the thing's absolute location.
-    ThingId thingLocation = thing.get_root_id();
+    ThingId thing_location = thing.get_root_id();
+    Container& location = TF.get_container(thing_location);
 
-    if (!isType(&TF.get(thingLocation), MapTile) ||
-        (TF.get_tile(thingLocation).get_map_id() != impl->map_id))
+    if (!location.is_maptile() || (location.get_map_id() != impl->map_id))
     {
       // Return, as the light source is not on the map proper.
       return;
     }
 
-    sf::Vector2i coords = TF.get_tile(thingLocation).get_coords();
+    sf::Vector2i coords = TF.get_tile(thing_location).get_coords();
 
     sf::Color light_color = source.get_light_color();
     Direction light_direction = source.get_light_direction();
@@ -712,19 +712,26 @@ void Map::add_light(ThingId thing_id)
     }
   }
 
-  for (ThingMapById::iterator iter = thing.get_inventory().by_id_begin();
-       iter != thing.get_inventory().by_id_end(); ++iter)
+  if (thing.is_container())
   {
-    add_light((*iter).first);
+    /// @todo Check container's opacity; otherwise we get stuff shining right
+    ///       through boxes and bags!
+    Container& container = static_cast<Container&>(thing);
+
+    for (ThingMapById::iterator iter = container.get_inventory().by_id_begin();
+         iter != container.get_inventory().by_id_end(); ++iter)
+    {
+      add_light((*iter).first);
+    }
   }
 }
 
 void Map::update_tile_vertices(Entity& entity)
 {
   ThingId entity_location_id = entity.get_location_id();
+  Container& location = TF.get_container(entity_location_id);
 
-  if (!isType(&TF.get(entity_location_id), MapTile) ||
-      (TF.get_tile(entity_location_id).get_map_id() != impl->map_id))
+  if (!location.is_maptile() || (location.get_map_id() != impl->map_id))
   {
     // Error, as the entity isn't actually on this map!
     MAJOR_ERROR("Map::update_tile_vertices called for an entity which isn't on that map!");
@@ -760,9 +767,9 @@ void Map::update_thing_vertices(Entity& entity, int frame)
 {
   ThingId entity_location_id = entity.get_location_id();
   ThingId entity_id = entity.get_id();
+  Container& location = TF.get_container(entity_location_id);
 
-  if (!isType(&TF.get(entity_location_id), MapTile) ||
-      (TF.get_tile(entity_location_id).get_map_id() != impl->map_id))
+  if (!location.is_maptile() || (location.get_map_id() != impl->map_id))
   {
     // Error, as the entity isn't actually on this map!
     MAJOR_ERROR("Map::update_thing_vertices called for entity that isn't on that map!");

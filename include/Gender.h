@@ -11,11 +11,13 @@ enum class Gender
   Male = 1,
   Female = 2,
   Neuter = 3,
-  FirstPerson = 4,
-  SecondPerson = 5,
-  Plural = 6,
-  UnknownThing = 7,
-  UnknownPerson = 8,
+  Spivak = 4,
+  FirstPerson = 5,
+  SecondPerson = 6,
+  Plural = 7,
+  Hanar = 8,
+  UnknownThing = 9,
+  UnknownPerson = 10,
   Count
 };
 

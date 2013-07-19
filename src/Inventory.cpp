@@ -17,7 +17,6 @@ Inventory::~Inventory()
   //dtor
 }
 
-/// @todo Check that inventory is not full.
 bool Inventory::add(ThingId id)
 {
   // If the thing is the player, it goes into slot 0.

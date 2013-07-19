@@ -1,12 +1,12 @@
 #include "Thing.h"
 
-#include <boost/lexical_cast.hpp>
 #include <iomanip>
 #include <sstream>
 #include <vector>
 
 #include "App.h"
 #include "ConfigSettings.h"
+#include "Container.h"
 #include "ErrorHandler.h"
 #include "Gender.h"
 #include "Inventory.h"
@@ -23,7 +23,6 @@ struct Thing::Impl
   ThingId location_id;
   int physical_size;
   int physical_mass;
-  unsigned int quantity;
   std::string proper_name;
   Inventory inventory;
 };
@@ -46,7 +45,6 @@ Thing::Thing()
   impl->location_id = static_cast<ThingId>(0);
   impl->physical_size = 1;
   impl->physical_mass = 1;
-  impl->quantity = 1;
 }
 
 Thing::Thing(const Thing& original)
@@ -54,7 +52,6 @@ Thing::Thing(const Thing& original)
 {
   impl->physical_size = original.get_size();
   impl->physical_mass = original.get_mass();
-  impl->quantity = 0;
   impl->proper_name = original.get_proper_name();
   // GSL NOTE: Inventory is NOT copied!
 }
@@ -90,9 +87,9 @@ ThingId Thing::get_root_id() const
 ThingId Thing::get_owner_id() const
 {
   ThingId location_id = get_location_id();
-  Thing& location = TF.get(location_id);
-  if (isType(&location, MapTile) ||
-      isType(&location, Entity) ||
+  Container& location = TF.get_container(location_id);
+  if (location.is_maptile() ||
+      location.is_entity() ||
       location_id == this->get_id())
   {
     return location_id;
@@ -105,8 +102,8 @@ ThingId Thing::get_owner_id() const
 
 MapId Thing::get_map_id() const
 {
-  Thing& location = TF.get(get_location_id());
-  if (isType(&location, MapTile))
+  Container& location = TF.get_container(get_location_id());
+  if (location.is_maptile())
   {
     MapTile& tile = TF.get_tile(get_location_id());
     return tile.get_map_id();
@@ -127,34 +124,24 @@ void Thing::set_proper_name(std::string name)
   impl->proper_name = name;
 }
 
-unsigned int Thing::get_quantity() const
-{
-  return impl->quantity;
-}
-
-int Thing::get_size() const
-{
-  return impl->physical_size;
-}
-
-int Thing::get_mass() const
-{
-  return impl->physical_mass;
-}
-
-void Thing::set_quantity(unsigned int quantity)
-{
-  impl->quantity = quantity;
-}
-
-void Thing::set_size(int s)
+void Thing::set_single_size(int s)
 {
   impl->physical_size = s;
 }
 
-void Thing::set_mass(int mass)
+void Thing::set_single_mass(int mass)
 {
   impl->physical_mass = mass;
+}
+
+int Thing::get_single_size() const
+{
+  return impl->physical_size;
+}
+
+int Thing::get_single_mass() const
+{
+  return impl->physical_mass;
 }
 
 std::string Thing::get_name() const
@@ -166,12 +153,12 @@ std::string Thing::get_name() const
   }
 
   std::string name;
-  Thing& owner = TF.get(get_owner_id());
+  Container& owner = TF.get_container(get_owner_id());
 
   // If the Thing has a proper name, use that.
   if (!get_proper_name().empty())
   {
-    if (isType(&owner, Entity))
+    if (owner.is_entity())
     {
       name = owner.get_possessive() + " ";
     }
@@ -180,17 +167,13 @@ std::string Thing::get_name() const
   }
   else
   {
-    if (isType(&owner, Entity))
+    if (owner.is_entity())
     {
       name = owner.get_possessive() + " ";
     }
-    else if (get_quantity() == 1)
-    {
-      name = "the ";
-    }
     else
     {
-      name = boost::lexical_cast<std::string>(get_quantity()) + " ";
+      name = "the ";
     }
 
     name += get_description();
@@ -217,17 +200,7 @@ std::string Thing::get_indef_name() const
   else
   {
     std::string description = get_description();
-
-    if (get_quantity() == 1)
-    {
-      name = getIndefArt(description) + " ";
-    }
-    else
-    {
-      name = boost::lexical_cast<std::string>(get_quantity()) + " ";
-    }
-
-    name += description;
+    name = getIndefArt(description) + " " + description;
   }
 
   return name;
@@ -244,6 +217,16 @@ std::string const& Thing::choose_verb(std::string const& verb12,
   {
     return verb3;
   }
+}
+
+int Thing::get_size() const
+{
+  return get_single_size();
+}
+
+int Thing::get_mass() const
+{
+  return get_single_mass();
 }
 
 std::string Thing::get_plural() const
@@ -402,24 +385,38 @@ void Thing::draw_to(sf::RenderTexture& target,
   target.draw(rectangle);
 }
 
-bool Thing::move_into(ThingId newLocationId)
+bool Thing::is_container() const
 {
-  return move_into(TF.get(newLocationId));
+  return isType(this, Container const);
 }
 
-bool Thing::move_into(Thing& newLocation)
+bool Thing::is_entity() const
 {
-  Thing& oldLocation = TF.get(this->get_location_id());
+  return isType(this, Entity const);
+}
+
+bool Thing::is_maptile() const
+{
+  return isType(this, MapTile const);
+}
+
+bool Thing::move_into(ThingId new_location_id)
+{
+  return move_into(TF.get_container(new_location_id));
+}
+
+bool Thing::move_into(Container& new_location)
+{
+  Container& old_location = TF.get_container(this->get_location_id());
 
   if (can_be_moved())
   {
-    Thing& us = dynamic_cast<Thing&>(*this);
-    if (newLocation.can_contain(us))
+    if (new_location.can_contain(*this))
     {
-      if (newLocation.get_inventory().add(impl->thing_id))
+      if (new_location.get_inventory().add(impl->thing_id))
       {
-        oldLocation.get_inventory().remove(impl->thing_id);
-        impl->location_id = newLocation.get_id();
+        old_location.get_inventory().remove(impl->thing_id);
+        impl->location_id = new_location.get_id();
         return true;
       }
     }
@@ -500,18 +497,7 @@ bool Thing::do_process()
 
 void Thing::gather_thing_ids(std::vector<ThingId>& ids)
 {
-  // Get all IDs in the Thing's inventory first.
-  Inventory& inv = this->get_inventory();
-
-  ThingMapById::iterator iter = inv.by_id_begin();
-
-  while (iter != inv.by_id_end())
-  {
-    ids.push_back((*iter).first);
-    ++iter;
-  }
-
-  // Then add this.
+  // Not a Container, so just add this one ID.
   ids.push_back(impl->thing_id);
 }
 
@@ -590,24 +576,9 @@ char const* Thing::get_thing_type() const
   return typeid(*this).name();
 }
 
-Inventory& Thing::get_inventory()
-{
-  return impl->inventory;
-}
-
 bool Thing::is_liquid_carrier() const
 {
   return false;
-}
-
-int Thing::get_inventory_size() const
-{
-  return 0;
-}
-
-bool Thing::can_contain(Thing& thing) const
-{
-  return true;
 }
 
 void Thing::set_id(ThingId id)

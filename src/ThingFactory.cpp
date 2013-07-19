@@ -18,7 +18,7 @@ struct ThingFactory::Impl
 {
   std::vector<Thing*> things;
 
-  Thing* limbo_thing_ptr;
+  Container* limbo_thing_ptr;
   Entity* player_ptr;
   ThingId player_id;
 
@@ -51,7 +51,7 @@ void ThingFactory::initialize()
   new_limbo->set_location_id(limbo_id);
 
   impl->things.push_back(new_limbo);
-  impl->limbo_thing_ptr = impl->things[limbo_id];
+  impl->limbo_thing_ptr = dynamic_cast<Container*>(impl->things[limbo_id]);
 }
 
 ThingFactory& ThingFactory::instance()
@@ -78,6 +78,27 @@ Thing& ThingFactory::get(ThingId thing_id)
   }
 }
 
+Container& ThingFactory::get_container(ThingId thing_id)
+{
+  if ((static_cast<unsigned int>(thing_id) >= impl->things.size()) ||
+      (impl->things[thing_id] == nullptr))
+  {
+    return *(impl->limbo_thing_ptr);
+  }
+  else
+  {
+    Thing& thing = *(impl->things[thing_id]);
+    if (!thing.is_container())
+    {
+      MAJOR_ERROR("get_container(%u) called, but that Thing is not a Container;"
+                  " returning Limbo", static_cast<unsigned int>(thing_id));
+      return *(impl->limbo_thing_ptr);
+    }
+
+    return dynamic_cast<Container&>(thing);
+  }
+}
+
 bool ThingFactory::is_a_tile(ThingId thing_id)
 {
   if ((static_cast<unsigned int>(thing_id) >= impl->things.size()) ||
@@ -98,7 +119,7 @@ MapTile& ThingFactory::get_tile(ThingId thing_id)
     FATAL_ERROR("MapTile with ThingId %u is missing!",
                 static_cast<unsigned int>(thing_id));
   }
-  else if (!isType(impl->things[thing_id], MapTile))
+  else if (!impl->things[thing_id]->is_maptile())
   {
     FATAL_ERROR("Requested ThingId %u, but that isn't a MapTile!",
                 static_cast<unsigned int>(thing_id));
@@ -179,7 +200,7 @@ bool ThingFactory::set_player_id(ThingId thing_id)
   if (impl->things[thing_id] != nullptr)
   {
     Thing* thing = impl->things[thing_id];
-    if (isType(thing, Entity))
+    if (thing->is_entity())
     {
       impl->player_id = thing_id;
       impl->player_ptr = dynamic_cast<Entity*>(thing);
@@ -208,7 +229,7 @@ Entity& ThingFactory::get_player()
   return *(impl->player_ptr);
 }
 
-Thing& ThingFactory::get_limbo()
+Container& ThingFactory::get_limbo()
 {
   return *(impl->limbo_thing_ptr);
 }

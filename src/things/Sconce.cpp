@@ -5,7 +5,7 @@ Sconce Sconce::prototype;
 Sconce::Sconce()
   : LightSource()
 {
-  set_size(1);
+  set_single_size(1);
   set_light_color(sf::Color(160, 128, 112, 255));
   set_max_light_strength(48);
 }

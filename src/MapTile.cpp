@@ -37,7 +37,7 @@ struct MapTile::Impl
 };
 
 MapTile::MapTile(MapId mapId, int x, int y)
-  : Thing(), impl(new Impl())
+  : Container(), impl(new Impl())
 {
   uniform_int_dist vDist(0, 3);
 

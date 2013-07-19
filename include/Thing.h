@@ -3,6 +3,7 @@
 
 #include "ActionResult.h"
 #include "Direction.h"
+#include "IsType.h"
 #include "MapId.h"
 #include "ThingId.h"
 
@@ -11,6 +12,7 @@
 #include <SFML/Graphics.hpp>
 
 // Forward declarations
+class Container;
 class Entity;
 class MapTile;
 class Inventory;
@@ -53,25 +55,17 @@ class Thing
     /// Set this thing's proper name.
     void set_proper_name(std::string name);
 
-    /// Return this thing's volume.
-    /// Volumes are represented as the diameter of an equivalent sphere, where
-    /// a diameter of 1 would be a single tile, 2 would be two tiles, etc.
-    int get_size() const;
-
-    /// Return this thing's mass.
-    int get_mass() const;
-
-    /// Get the quantity this thing represents.
-    unsigned int get_quantity() const;
-
     /// Set this thing's volume.
-    void set_size(int volume);
+    void set_single_size(int volume);
 
     /// Set this thing's mass.
-    void set_mass(int mass);
+    void set_single_mass(int mass);
 
-    /// Set the quantity this thing represents.
-    void set_quantity(unsigned int quantity);
+    /// Return this thing's volume.
+    int get_single_size() const;
+
+    /// Return this thing's mass.
+    int get_single_mass() const;
 
     /// Return a string that identifies this thing.
     /// By default, this returns the thing's proper name.  If the thing
@@ -81,7 +75,7 @@ class Thing
     /// If it IS the player, it'll return "you".
     /// Likewise, if it is carried by another Entity it'll return
     /// "(Entity)'s (thing)".
-    std::string get_name() const;
+    virtual std::string get_name() const;
 
     /// Return a string that identifies this thing.
     /// By default, this returns the thing's proper name.  If the thing
@@ -89,7 +83,7 @@ class Thing
     /// of the thing, such as "a chair" or "an orange".
     /// If it IS the player, it'll return "you".
     /// Unlike get_name, get_indef_name does NOT check for possession.
-    std::string get_indef_name() const;
+    virtual std::string get_indef_name() const;
 
     /// Choose which verb form to use based on first/second/third person.
     /// This function checks to see if this Thing is currently designated as
@@ -99,6 +93,14 @@ class Thing
     /// @param verb3 The third person verb form, such as "shakes"
     std::string const& choose_verb(std::string const& verb2,
                                    std::string const& verb3) const;
+
+    /// Return this thing's volume.
+    /// Volumes are represented as the diameter of an equivalent sphere, where
+    /// a diameter of 1 would be a single tile, 2 would be two tiles, etc.
+    virtual int get_size() const;
+
+    /// Return this thing's mass.
+    virtual int get_mass() const;
 
     /// Return this object's plural.
     /// By default, returns get_description() plus "s", but this can be
@@ -156,12 +158,20 @@ class Thing
                  bool use_lighting = true,
                  int frame = 0);
 
+    /// Simple check to see if a Thing is a Container.
+    bool is_container() const;
+
+    /// Simple check to see if a Thing is an Entity.
+    bool is_entity() const;
+
+    /// Simple check to see if a Thing is a MapTile.
+    bool is_maptile() const;
 
     /// Attempt to move this Thing to a location.
     virtual bool move_into(ThingId location_id);
 
     /// Attempt to move this Thing into a location, by reference.
-    virtual bool move_into(Thing& location);
+    virtual bool move_into(Container& location);
 
     /// Return whether or not this thing can move from its current location.
     /// The default behavior for this is to return true.
@@ -228,7 +238,7 @@ class Thing
     /// Gather the ThingIds of this Thing and those underneath it.
     /// This function is used to enumerate all Things on a map in order to
     /// process them for a single game tick.
-    void gather_thing_ids(std::vector<ThingId>& ids);
+    virtual void gather_thing_ids(std::vector<ThingId>& ids);
 
     /// Perform an action when this thing is activated.
     /// If this function returns false, the action is aborted.
@@ -304,20 +314,8 @@ class Thing
     /// Return the type of this thing.
     virtual char const* get_thing_type() const final;
 
-    /// Returns a reference to the inventory.
-    Inventory& get_inventory();
-
-    /// Returns whether this Thing's inventory can hold a liquid.
+    /// Returns whether this Thing can hold a liquid.
     virtual bool is_liquid_carrier() const;
-
-    /// Returns the size of this Thing's inventory.
-    /// The size is a total volume count.
-    /// If 0, this Thing cannot hold other things.
-    /// If -1, this Thing has an infinite inventory size.
-    virtual int get_inventory_size() const;
-
-    /// Returns whether the inventory can hold a certain thing.
-    virtual bool can_contain(Thing& thing) const;
 
   protected:
     /// Constructor, callable only by ThingFactory.
@@ -348,5 +346,4 @@ class Thing
 
   private:
 };
-
 #endif // THING_H

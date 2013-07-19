@@ -77,6 +77,7 @@
 		<Unit filename="cb.bmp" />
 		<Unit filename="include/Action.h" />
 		<Unit filename="include/ActionResult.h" />
+		<Unit filename="include/Aggregate.h" />
 		<Unit filename="include/App.h" />
 		<Unit filename="include/AppStateGameMode.h" />
 		<Unit filename="include/AppStateMainMenu.h" />
@@ -85,6 +86,7 @@
 		<Unit filename="include/BodyPart.h" />
 		<Unit filename="include/Cloneable.h" />
 		<Unit filename="include/ConfigSettings.h" />
+		<Unit filename="include/Container.h" />
 		<Unit filename="include/Creatable.h" />
 		<Unit filename="include/Direction.h" />
 		<Unit filename="include/Entity.h" />
@@ -114,6 +116,7 @@
 		<Unit filename="include/MessageLog.h" />
 		<Unit filename="include/Renderable.h" />
 		<Unit filename="include/ShaderEffect.h" />
+		<Unit filename="include/Splittable.h" />
 		<Unit filename="include/SpritePrototype.h" />
 		<Unit filename="include/State.h" />
 		<Unit filename="include/StateMachine.h" />
@@ -139,12 +142,14 @@
 		<Unit filename="resources/graphics/tilesheet.png" />
 		<Unit filename="resources/shaders/default.frag" />
 		<Unit filename="resources/shaders/default.vert" />
+		<Unit filename="src/Aggregate.cpp" />
 		<Unit filename="src/App.cpp" />
 		<Unit filename="src/AppStateGameMode.cpp" />
 		<Unit filename="src/AppStateMainMenu.cpp" />
 		<Unit filename="src/AppStateSplashScreen.cpp" />
 		<Unit filename="src/AttributeSet.cpp" />
 		<Unit filename="src/ConfigSettings.cpp" />
+		<Unit filename="src/Container.cpp" />
 		<Unit filename="src/Entity.cpp" />
 		<Unit filename="src/ErrorHandler.cpp" />
 		<Unit filename="src/Gender.cpp" />

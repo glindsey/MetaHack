@@ -9,6 +9,7 @@
 #include "ThingId.h"
 
 // Forward declarations
+class Container;
 class Entity;
 class MapTile;
 
@@ -38,7 +39,16 @@ class ThingFactory
     }
 
     /// Gets a reference to a Thing by ID.
+    /// @param thing_id ID of thing to retrieve.
+    /// @return Reference to Thing associated with that ID.
     Thing& get(ThingId thing_id);
+
+    /// Gets a reference to a Container by ID.
+    /// If the ID requested is not that of a Container, this function will
+    /// throw a MAJOR_ERROR and return a reference to Limbo.
+    /// @param thing_id ID of thing to retrieve.
+    /// @return Reference to Container associated with that ID.
+    Container& get_container(ThingId thing_id);
 
     /// Checks if a particular ID refers to a MapTile.
     bool is_a_tile(ThingId thing_id);
@@ -111,7 +121,7 @@ class ThingFactory
     /// This function is faster than ThingFactory::get(limbo_id) because
     /// a reference to Limbo is cached.
     /// @return A reference to Limbo.
-    Thing& get_limbo();
+    Container& get_limbo();
 
     /// The Limbo ID.
     /// The implementation sets this to 0; however, using limbo_id is both

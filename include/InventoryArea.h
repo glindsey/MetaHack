@@ -15,6 +15,9 @@ enum class InventoryType
   Around
 };
 
+// Forward declarations
+class Container;
+
 class InventoryArea :
   public EventHandler,
   public Renderable
@@ -33,8 +36,8 @@ class InventoryArea :
     sf::IntRect get_dimensions();
     void set_dimensions(sf::IntRect dimensions);
 
-    ThingId get_viewed_id();
-    void set_viewed_id(ThingId location_id);
+    Container& get_viewed_container();
+    void set_viewed_container(Container& container);
 
     void toggle_selection(unsigned int selection);
 

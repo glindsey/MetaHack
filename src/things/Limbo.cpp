@@ -1,10 +1,10 @@
 #include "Limbo.h"
 
 Limbo::Limbo() :
-  Thing()
+  Container()
 {
-  set_size(0);
-  set_mass(0);
+  set_single_size(0);
+  set_single_mass(0);
 }
 
 Limbo::~Limbo() {}

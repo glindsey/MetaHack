@@ -2904,7 +2904,7 @@
 	<memory>
 	"State.h"
 
-1374248925 source:c:\dropbox\projects\metahack\src\appstategamemode.cpp
+1374261554 source:c:\dropbox\projects\metahack\src\appstategamemode.cpp
 	"AppStateGameMode.h"
 	<memory>
 	<set>
@@ -2939,7 +2939,7 @@
 1363024906 source:c:\dropbox\projects\metahack\src\renderable.cpp
 	"Renderable.h"
 
-1374247928 source:c:\dropbox\projects\metahack\src\entity.cpp
+1374261743 source:c:\dropbox\projects\metahack\src\entity.cpp
 	"Entity.h"
 	<algorithm>
 	<cmath>
@@ -2947,6 +2947,7 @@
 	<sstream>
 	"App.h"
 	"ConfigSettings.h"
+	"Container.h"
 	"ErrorHandler.h"
 	"Gender.h"
 	"Inventory.h"
@@ -2958,10 +2959,11 @@
 	"MessageLog.h"
 	"ThingFactory.h"
 
-1373401737 c:\dropbox\projects\metahack\include\entity.h
+1374260654 c:\dropbox\projects\metahack\include\entity.h
 	"Action.h"
 	"AttributeSet.h"
 	"BodyPart.h"
+	"Container.h"
 	"Direction.h"
 	"Gender.h"
 	"MapTileType.h"
@@ -2970,9 +2972,10 @@
 	<boost/dynamic_bitset.hpp>
 	<set>
 
-1373401479 c:\dropbox\projects\metahack\include\thing.h
+1374263677 c:\dropbox\projects\metahack\include\thing.h
 	"ActionResult.h"
 	"Direction.h"
+	"IsType.h"
 	"MapId.h"
 	"ThingId.h"
 	<memory>
@@ -2984,14 +2987,14 @@
 
 1363288259 c:\dropbox\projects\metahack\include\playfield.h
 
-1373646533 source:c:\dropbox\projects\metahack\src\thing.cpp
+1374264133 source:c:\dropbox\projects\metahack\src\thing.cpp
 	"Thing.h"
-	<boost/lexical_cast.hpp>
 	<iomanip>
 	<sstream>
 	<vector>
 	"App.h"
 	"ConfigSettings.h"
+	"Container.h"
 	"ErrorHandler.h"
 	"Gender.h"
 	"Inventory.h"
@@ -3002,7 +3005,7 @@
 	"ThingFactory.h"
 	"TileSheet.h"
 
-1374247394 source:c:\dropbox\projects\metahack\src\inventory.cpp
+1374254987 source:c:\dropbox\projects\metahack\src\inventory.cpp
 	"Inventory.h"
 	<algorithm>
 	<climits>
@@ -3017,7 +3020,7 @@
 	"InventorySlot.h"
 	"ThingId.h"
 
-1374248202 source:c:\dropbox\projects\metahack\src\map.cpp
+1374261889 source:c:\dropbox\projects\metahack\src\map.cpp
 	"Map.h"
 	<boost/random/uniform_int_distribution.hpp>
 	<climits>
@@ -3091,7 +3094,7 @@
 	<limits.h>
 	<limits.h>
 
-1374248419 source:c:\dropbox\projects\metahack\src\thingfactory.cpp
+1374261527 source:c:\dropbox\projects\metahack\src\thingfactory.cpp
 	"ThingFactory.h"
 	"Entity.h"
 	"ErrorHandler.h"
@@ -3102,7 +3105,7 @@
 	<string>
 	<unordered_map>
 
-1373644955 c:\dropbox\projects\metahack\include\thingfactory.h
+1374257355 c:\dropbox\projects\metahack\include\thingfactory.h
 	<memory>
 	<vector>
 	"MapId.h"
@@ -3635,7 +3638,7 @@
 1092564828 c:\dropbox\projects\libraries\\boost\io_fwd.hpp
 	<iosfwd>
 
-1374248380 source:c:\dropbox\projects\metahack\src\maptile.cpp
+1374257805 source:c:\dropbox\projects\metahack\src\maptile.cpp
 	"MapTile.h"
 	<boost/random/uniform_int_distribution.hpp>
 	<string>
@@ -3646,7 +3649,7 @@
 	"MathUtils.h"
 	"ThingFactory.h"
 
-1373646474 c:\dropbox\projects\metahack\include\maptile.h
+1374260648 c:\dropbox\projects\metahack\include\maptile.h
 	<SFML/Graphics.hpp>
 	"Entity.h"
 	"Inventory.h"
@@ -3776,7 +3779,7 @@
 	"Gender.h"
 	<cctype>
 
-1365708370 c:\dropbox\projects\metahack\include\gender.h
+1374264559 c:\dropbox\projects\metahack\include\gender.h
 	<string>
 
 1368234991 source:c:\dropbox\projects\metahack\src\human.cpp
@@ -3909,7 +3912,7 @@
 	"Entity.h"
 	"ThingFactory.h"
 
-1373313622 c:\dropbox\projects\metahack\include\inventoryarea.h
+1374258737 c:\dropbox\projects\metahack\include\inventoryarea.h
 	<SFML/Graphics.hpp>
 	<memory>
 	<vector>
@@ -3923,7 +3926,7 @@
 	"Direction.h"
 	"Thing.h"
 
-1374250630 source:c:\dropbox\projects\metahack\src\inventoryarea.cpp
+1374258680 source:c:\dropbox\projects\metahack\src\inventoryarea.cpp
 	"InventoryArea.h"
 	"App.h"
 	"ConfigSettings.h"
@@ -4026,9 +4029,9 @@
 	"Entity.h"
 	"ThingId.h"
 
-1373460195 c:\dropbox\projects\metahack\include\things\limbo.h
+1374257337 c:\dropbox\projects\metahack\include\things\limbo.h
 	<memory>
-	"Thing.h"
+	"Container.h"
 	"Creatable.h"
 	"ThingRegistrator.h"
 
@@ -4063,10 +4066,10 @@
 	"Human.h"
 	"App.h"
 
-1373401243 source:c:\dropbox\projects\metahack\src\things\lightorb.cpp
+1374263299 source:c:\dropbox\projects\metahack\src\things\lightorb.cpp
 	"LightOrb.h"
 
-1373401133 source:c:\dropbox\projects\metahack\src\things\limbo.cpp
+1374263307 source:c:\dropbox\projects\metahack\src\things\limbo.cpp
 	"Limbo.h"
 
 1373390715 source:c:\dropbox\projects\metahack\src\things\thing.cpp
@@ -4085,7 +4088,7 @@
 	"ThingFactory.h"
 	"TileSheet.h"
 
-1374248495 source:c:\dropbox\projects\metahack\src\things\sconce.cpp
+1374263311 source:c:\dropbox\projects\metahack\src\things\sconce.cpp
 	"Sconce.h"
 
 1373460195 c:\dropbox\projects\metahack\include\things\sconce.h
@@ -4574,13 +4577,13 @@
 
 1373085926 c:\dropbox\projects\metahack\include\actionresult.h
 
-1373460195 c:\dropbox\projects\metahack\include\things\sacklarge.h
-	"Thing.h"
+1374256722 c:\dropbox\projects\metahack\include\things\sacklarge.h
+	"Container.h"
 	"Cloneable.h"
 	"Creatable.h"
 	"ThingRegistrator.h"
 
-1373400995 source:c:\dropbox\projects\metahack\src\things\sacklarge.cpp
+1374256715 source:c:\dropbox\projects\metahack\src\things\sacklarge.cpp
 	"SackLarge.h"
 
 1373459959 c:\dropbox\projects\metahack\include\registrator.h
@@ -5574,4 +5577,23 @@
 	<SFML/Graphics.hpp>
 	<memory>
 	"EventHandler.h"
+
+1374261065 c:\dropbox\projects\metahack\include\container.h
+	"Thing.h"
+
+1374262533 source:c:\dropbox\projects\metahack\src\container.cpp
+	"Container.h"
+	<vector>
+	"Inventory.h"
+
+1374264011 source:c:\dropbox\projects\metahack\src\aggregate.cpp
+	"Aggregate.h"
+	<boost/lexical_cast.hpp>
+	"Container.h"
+	"Gender.h"
+	"ThingFactory.h"
+
+1374263707 c:\dropbox\projects\metahack\include\aggregate.h
+	"Thing.h"
+	<memory>
 

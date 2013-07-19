@@ -3,7 +3,7 @@
 
 #include <memory>
 
-#include "Thing.h"
+#include "Container.h"
 
 #include "Creatable.h"
 #include "ThingRegistrator.h"
@@ -14,7 +14,7 @@ class ThingFactory;
 /// Limbo represents nothing or nowhere.  There should only be one Limbo in the
 /// ThingFactory.
 class Limbo :
-  public Thing,
+  public Container,
   public ThingRegistrator<Limbo>,
   public Creatable<Thing, Limbo>
 {

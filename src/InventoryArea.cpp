@@ -26,8 +26,8 @@ struct InventoryArea::Impl
   unsigned int font_size;
   sf::IntRect dims;
 
-  /// Things whose contents (or surroundings) are currently being viewed.
-  ThingId viewed_id;
+  /// Container whose contents (or surroundings) are currently being viewed.
+  Container* viewed_container_ptr;
 
   /// Type indicating whether we're looking at contents or surroundings.
   InventoryType inventory_type;
@@ -46,7 +46,7 @@ InventoryArea::InventoryArea(sf::IntRect dimensions,
 {
   impl->focus = false;
   impl->font_size = 18;   ///< @todo move to ConfigSettings
-  impl->viewed_id = TF.limbo_id;
+  impl->viewed_container_ptr = &(TF.get_limbo());
   impl->inventory_type = InventoryType::Inside;
   impl->use_capitals = false;
 
@@ -100,20 +100,23 @@ void InventoryArea::set_dimensions(sf::IntRect rect)
   impl->area_bg_texture->create(rect.width, rect.height);
 }
 
-ThingId InventoryArea::get_viewed_id()
+Container& InventoryArea::get_viewed_container()
 {
-  return impl->viewed_id;
+  return *(impl->viewed_container_ptr);
 }
 
-void InventoryArea::set_viewed_id(ThingId viewed_id)
+void InventoryArea::set_viewed_container(Container& container)
 {
-  impl->viewed_id = viewed_id;
+  impl->viewed_container_ptr = &container;
 }
 
 void InventoryArea::toggle_selection(unsigned int selection)
 {
   // Get a reference to the location we're referring to.
-  Thing& location = TF.get(impl->viewed_id);
+  Container& location = *(impl->viewed_container_ptr);
+
+  // Get a reference to the location's location!
+  Container& around = TF.get_container(location.get_location_id());
 
   Inventory* inventory_ptr = &(TF.get_limbo().get_inventory());
 
@@ -123,7 +126,7 @@ void InventoryArea::toggle_selection(unsigned int selection)
     inventory_ptr = &(location.get_inventory());
     break;
   case InventoryType::Around:
-    inventory_ptr = &(TF.get(location.get_location_id()).get_inventory());
+    inventory_ptr = &(around.get_inventory());
     break;
   default:
     break;
@@ -161,9 +164,6 @@ EventResult InventoryArea::handle_event(sf::Event& event)
 
 bool InventoryArea::render(sf::RenderTarget& target, int frame)
 {
-  //int line_spacing_y = std::max(the_default_font.getLineSpacing(impl->font_size),
-  //                              static_cast<int>(Settings.map_tile_size));
-
   int line_spacing_y = the_default_font.getLineSpacing(impl->font_size);
   int item_spacing_y = 4;
 
@@ -175,7 +175,10 @@ bool InventoryArea::render(sf::RenderTarget& target, int frame)
   impl->area_bg_texture->clear(Settings.window_bg_color);
 
   // Get a reference to the location we're referring to.
-  Thing& location = TF.get(impl->viewed_id);
+  Container& location = *(impl->viewed_container_ptr);
+
+  // Get a reference to the location's location!
+  Container& around = TF.get_container(location.get_location_id());
 
   // Start at the top and work down.
   float text_coord_x = text_offset_x;
@@ -191,7 +194,7 @@ bool InventoryArea::render(sf::RenderTarget& target, int frame)
     inventory_ptr = &(location.get_inventory());
     break;
   case InventoryType::Around:
-    inventory_ptr = &(TF.get(location.get_location_id()).get_inventory());
+    inventory_ptr = &(around.get_inventory());
     break;
   default:
     break;

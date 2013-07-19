@@ -4,31 +4,77 @@
 
 std::string const subjectPronounArray[] =
 {
-  "it", "he", "she", "ze", "I", "you", "they", "something", "someone"
+  "it",
+  "he",
+  "she",
+  "ze",
+  "ey",
+  "I",
+  "you",
+  "they",
+  "this one",
+  "something",
+  "someone"
 };
 
 std::string const objectPronounArray[] =
 {
-  "it", "him", "her", "hir", "me", "you", "them", "something", "someone"
+  "it",
+  "him",
+  "her",
+  "hir",
+  "em",
+  "me",
+  "you",
+  "them",
+  "this one",
+  "something",
+  "someone"
 };
 
 std::string const reflexivePronounArray[] =
 {
-  "itself", "himself",
-  "herself", "hirself",
-  "myself", "yourself",
-  "themselves", "itself",
+  "itself",
+  "himself",
+  "herself",
+  "hirself",
+  "emself",
+  "myself",
+  "yourself",
+  "themselves",
+  "itself",
+  "itself",
   "him/herself"
 };
 
 std::string const possessiveAdjectiveArray[] =
 {
-  "its", "his", "her", "hir", "my", "your", "their", "its", "his/her"
+  "its",
+  "his",
+  "her",
+  "hir",
+  "eir",
+  "my",
+  "your",
+  "their",
+  "its",
+  "its",
+  "his/her"
 };
 
 std::string const possessivePronounArray[] =
 {
-  "its", "his", "hers", "hirs", "mine", "yours", "theirs", "its", "his/hers"
+  "its",
+  "his",
+  "hers",
+  "hirs",
+  "eirs",
+  "mine",
+  "yours",
+  "theirs",
+  "this one's",
+  "its",
+  "his/hers"
 };
 
 std::string const& getSubjPro(Gender gender)
