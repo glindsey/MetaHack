@@ -1,23 +1,17 @@
 #ifndef ROCK_H
 #define ROCK_H
 
-#include "Thing.h"
-
-#include "Cloneable.h"
-#include "Creatable.h"
-#include "ThingRegistrator.h"
+#include "Aggregate.h"
+#include "CreatableThing.h"
 
 /// Forward declarations
 class ThingFactory;
 
 class Rock :
-  public Thing,
-  public ThingRegistrator<Rock>,
-  public Cloneable<Thing, Rock>,
-  public Creatable<Thing, Rock>
+  public Aggregate,
+  public CreatableThing<Rock>
 {
-  friend class Creatable;
-  friend class Cloneable;
+  friend class CreatableThing;
 
   public:
     virtual ~Rock();
@@ -28,6 +22,7 @@ class Rock :
 
   protected:
     Rock();
+    Rock(Rock const& original);
 
   private:
     static Rock prototype;

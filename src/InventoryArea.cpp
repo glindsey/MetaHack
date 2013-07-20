@@ -14,7 +14,12 @@
 struct InventoryArea::Impl
 {
   Impl(std::vector<ThingId>& s)
-    : selected_things(s) {}
+    : focus(false),
+      use_capitals(false),
+      font_size(18), ///< @todo move to ConfigSettings
+      viewed_container_ptr(nullptr),
+      inventory_type(InventoryType::Inside),
+      selected_things(s) {}
 
   /// Boolean indicating whether this area has the focus.
   bool focus;
@@ -44,12 +49,6 @@ InventoryArea::InventoryArea(sf::IntRect dimensions,
                              std::vector<ThingId>& selected_things)
   : impl(new Impl(selected_things))
 {
-  impl->focus = false;
-  impl->font_size = 18;   ///< @todo move to ConfigSettings
-  impl->viewed_container_ptr = &(TF.get_limbo());
-  impl->inventory_type = InventoryType::Inside;
-  impl->use_capitals = false;
-
   this->set_dimensions(dimensions);
 }
 

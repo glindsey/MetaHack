@@ -84,10 +84,9 @@
 		<Unit filename="include/AppStateSplashScreen.h" />
 		<Unit filename="include/AttributeSet.h" />
 		<Unit filename="include/BodyPart.h" />
-		<Unit filename="include/Cloneable.h" />
 		<Unit filename="include/ConfigSettings.h" />
 		<Unit filename="include/Container.h" />
-		<Unit filename="include/Creatable.h" />
+		<Unit filename="include/CreatableThing.h" />
 		<Unit filename="include/Direction.h" />
 		<Unit filename="include/Entity.h" />
 		<Unit filename="include/ErrorHandler.h" />
@@ -124,7 +123,6 @@
 		<Unit filename="include/Thing.h" />
 		<Unit filename="include/ThingFactory.h" />
 		<Unit filename="include/ThingId.h" />
-		<Unit filename="include/ThingRegistrator.h" />
 		<Unit filename="include/TileSheet.h" />
 		<Unit filename="include/common_enums.h" />
 		<Unit filename="include/things/Biped.h" />

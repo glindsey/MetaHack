@@ -2,18 +2,13 @@
 #define HUMAN_H
 
 #include "Biped.h"
-#include "Cloneable.h"
-#include "Creatable.h"
-#include "ThingRegistrator.h"
+#include "CreatableThing.h"
 
 class Human :
   public Biped,
-  public ThingRegistrator<Human>,
-  public Cloneable<Thing, Human>,
-  public Creatable<Thing, Human>
+  public CreatableThing<Human>
 {
-  friend class Cloneable;
-  friend class Creatable;
+  friend class CreatableThing;
 
   public:
     virtual ~Human();

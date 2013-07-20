@@ -4,14 +4,14 @@
 #include <memory>
 #include <SFML/Graphics.hpp>
 
+#include "Aggregate.h"
 #include "Direction.h"
-#include "Thing.h"
 
 // Forward declarations
 class Entity;
 
 /// Interface class representing a thing that emits or absorbs light.
-class LightSource : public Thing
+class LightSource : public Aggregate
 {
   public:
     virtual ~LightSource();

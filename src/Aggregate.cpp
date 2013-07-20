@@ -23,17 +23,6 @@ Aggregate::Aggregate(Aggregate const& original) :
   impl->quantity = original.get_quantity();
 }
 
-Aggregate::Aggregate(Aggregate& original, unsigned int number) :
-  Thing(original), impl(new Impl())
-{
-  unsigned int original_number = original.get_quantity();
-
-  if (number > original_number) number = original_number;
-
-  impl->quantity = number;
-  original.set_quantity(original_number - number);
-}
-
 unsigned int Aggregate::get_quantity() const
 {
   return impl->quantity;

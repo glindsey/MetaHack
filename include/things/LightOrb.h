@@ -2,20 +2,15 @@
 #define LIGHTORB_H
 
 #include "LightSource.h"
-#include "Cloneable.h"
-#include "Creatable.h"
-#include "ThingRegistrator.h"
+#include "CreatableThing.h"
 
 /// A test object, used for testing LightSources.  The final class will just be
 /// an "orb".
 class LightOrb :
   public LightSource,
-  public ThingRegistrator<LightOrb>,
-  public Cloneable<Thing, LightOrb>,
-  public Creatable<Thing, LightOrb>
+  public CreatableThing<LightOrb>
 {
-  friend class Cloneable;
-  friend class Creatable;
+  friend class CreatableThing;
 
   public:
     virtual ~LightOrb();

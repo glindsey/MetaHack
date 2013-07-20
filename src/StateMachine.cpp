@@ -115,7 +115,6 @@ EventResult StateMachine::handle_event(sf::Event& event)
 bool StateMachine::change_to(State* state)
 {
   bool terminator_result = true;
-  bool initializer_result = false;
 
   if (impl->current_state != nullptr)
   {
@@ -134,7 +133,7 @@ bool StateMachine::change_to(State* state)
 
     if (state != nullptr)
     {
-      initializer_result = impl->current_state->initialize();
+      bool initializer_result = impl->current_state->initialize();
       if (initializer_result == false)
       {
         MINOR_ERROR("Initializer for state \"%s\" in state machine \"%s\" returned false",

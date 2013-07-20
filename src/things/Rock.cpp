@@ -2,8 +2,13 @@
 
 Rock Rock::prototype;
 
-Rock::Rock() : Thing() {}
-Rock::~Rock()          {}
+Rock::Rock() :
+  Aggregate() {}
+
+Rock::Rock(Rock const& original) :
+  Aggregate(original) {}
+
+Rock::~Rock()              {}
 
 std::string Rock::get_description() const
 {

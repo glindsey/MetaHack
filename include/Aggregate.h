@@ -14,23 +14,17 @@
 /// In practice I can't think of a reason for a Thing to be neither an
 /// Aggregate nor a Container, unless you wanted to absolutely preclude the
 /// possibility of a certain item being consolidated into aggregate groups.
+///
+/// For the ThingFactory to "split" an aggregate, it does the following:
+/// 1. Calls original_thing.clone() to get a copy of the original Aggregate.
+/// 2. Calls original_thing.get_quantity() to get the thing's quantity.
+/// 3. Splits the quantity into two variables, old_quantity and new_quantity.
+/// 4. Calls new_thing.set_quantity(new_quantity).
+/// 5. Calls old_thing.set_quantity(old_quantity).
 class Aggregate : public Thing
 {
   public:
     virtual ~Aggregate();
-
-  protected:
-    Aggregate();
-    Aggregate(Aggregate const& original);
-
-    /// Split constructor (used by the Splittable template class)
-    Aggregate(Aggregate& source, unsigned int number);
-
-    /// Get the quantity this thing represents.
-    unsigned int get_quantity() const;
-
-    /// Set the quantity this thing represents.
-    void set_quantity(unsigned int quantity);
 
     /// Return the aggregate's volume.
     virtual int get_size() const override final;
@@ -49,6 +43,16 @@ class Aggregate : public Thing
     /// quantity into account.
     /// @see Thing::get_indef_name
     virtual std::string get_indef_name() const override final;
+
+    /// Get the quantity this thing represents.
+    unsigned int get_quantity() const;
+
+    /// Set the quantity this thing represents.
+    void set_quantity(unsigned int quantity);
+
+  protected:
+    Aggregate();
+    Aggregate(Aggregate const& original);
 
   private:
     struct Impl;

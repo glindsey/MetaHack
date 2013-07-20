@@ -2,20 +2,14 @@
 #define SCONCE_H
 
 #include "LightSource.h"
-
-#include "Cloneable.h"
-#include "Creatable.h"
-#include "ThingRegistrator.h"
+#include "CreatableThing.h"
 
 /// A mounted torch.
 class Sconce :
   public LightSource,
-  public ThingRegistrator<Sconce>,
-  public Creatable<Thing, Sconce>,
-  public Cloneable<Thing, Sconce>
+  public CreatableThing<Sconce>
 {
-  friend class Creatable;
-  friend class Cloneable;
+  friend class CreatableThing;
 
   public:
     virtual ~Sconce();

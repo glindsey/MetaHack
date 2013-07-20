@@ -2,21 +2,16 @@
 #define SACK_LARGE_H
 
 #include "Container.h"
-#include "Cloneable.h"
-#include "Creatable.h"
-#include "ThingRegistrator.h"
+#include "CreatableThing.h"
 
 /// Forward declarations
 class ThingFactory;
 
 class SackLarge :
   public Container,
-  public ThingRegistrator<SackLarge>,
-  public Cloneable<Thing, SackLarge>,
-  public Creatable<Thing, SackLarge>
+  public CreatableThing<SackLarge>
 {
-  friend class Cloneable;
-  friend class Creatable;
+  friend class CreatableThing;
 
   public:
     virtual ~SackLarge();

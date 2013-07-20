@@ -12,7 +12,7 @@ struct LightSource::Impl
 };
 
 LightSource::LightSource()
-  : Thing(), impl(new Impl())
+  : Aggregate(), impl(new Impl())
 {
   impl->direction = Direction::Up;
   impl->level = 256;
@@ -22,7 +22,7 @@ LightSource::LightSource()
 }
 
 LightSource::LightSource(LightSource const& original)
-  : Thing(), impl(new Impl())
+  : Aggregate(), impl(new Impl())
 {
   impl->direction = original.get_light_direction();
   impl->level = original.get_light_level();
