@@ -82,6 +82,7 @@
 		<Unit filename="include/AppStateGameMode.h" />
 		<Unit filename="include/AppStateMainMenu.h" />
 		<Unit filename="include/AppStateSplashScreen.h" />
+		<Unit filename="include/Attribute.h" />
 		<Unit filename="include/AttributeSet.h" />
 		<Unit filename="include/BodyPart.h" />
 		<Unit filename="include/ConfigSettings.h" />

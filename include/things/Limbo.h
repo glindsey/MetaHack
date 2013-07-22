@@ -4,9 +4,7 @@
 #include <memory>
 
 #include "Container.h"
-
-#include "Creatable.h"
-#include "ThingRegistrator.h"
+#include "CreatableThing.h"
 
 /// Forward declarations
 class ThingFactory;
@@ -15,10 +13,9 @@ class ThingFactory;
 /// ThingFactory.
 class Limbo :
   public Container,
-  public ThingRegistrator<Limbo>,
-  public Creatable<Thing, Limbo>
+  public CreatableThing <Limbo>
 {
-  friend class Creatable;
+  friend class CreatableThing;
 
   public:
     virtual ~Limbo();
