@@ -25,6 +25,9 @@ struct Thing::Impl
   int physical_mass;
   std::string proper_name;
   Inventory inventory;
+
+  bool magic_autolocking;
+  bool magic_locked;
 };
 
 // Static member initialization.
@@ -142,6 +145,26 @@ int Thing::get_single_size() const
 int Thing::get_single_mass() const
 {
   return impl->physical_mass;
+}
+
+void Thing::set_magically_locked(bool locked)
+{
+  impl->magic_locked = locked;
+}
+
+void Thing::set_magic_autolocking(bool autolocks)
+{
+  impl->magic_autolocking = autolocks;
+}
+
+bool Thing::get_magically_locked() const
+{
+  return impl->magic_locked;
+}
+
+bool Thing::get_magic_autolocking() const
+{
+  return impl->magic_autolocking;
 }
 
 std::string Thing::get_name() const
@@ -409,7 +432,7 @@ bool Thing::move_into(Container& new_location)
 {
   Container& old_location = TF.get_container(this->get_location_id());
 
-  if (can_be_moved())
+  if (movable())
   {
     if (new_location.can_contain(*this))
     {
@@ -425,67 +448,32 @@ bool Thing::move_into(Container& new_location)
   return false;
 }
 
-bool Thing::can_be_moved() const
+bool Thing::movable() const
 {
   return true;
 }
 
-bool Thing::can_be_activated_by(Entity const& entity) const
+bool Thing::usable_by(Entity const& entity) const
 {
   return false;
 }
 
-bool Thing::can_be_drank_by(Entity const& entity) const
+bool Thing::drinkable_by(Entity const& entity) const
 {
   return false;
 }
 
-bool Thing::can_be_eaten_by(Entity const& entity) const
+bool Thing::edible_by(Entity const& entity) const
 {
   return false;
 }
 
-bool Thing::can_be_put_into(Thing const& container) const
-{
-  return true;
-}
-
-bool Thing::can_be_taken_out() const
-{
-  return true;
-}
-
-bool Thing::can_be_read_by(Entity const& entity) const
+bool Thing::readable_by(Entity const& entity) const
 {
   return false;
 }
 
-bool Thing::can_be_deequipped_from(Thing const& thing) const
-{
-  return false;
-}
-
-bool Thing::can_be_thrown_by(Entity const& entity) const
-{
-  return true;
-}
-
-bool Thing::can_be_wielded_by(Entity const& entity) const
-{
-  return true;
-}
-
-bool Thing::can_be_equipped_on(Thing const& thing) const
-{
-  return false;
-}
-
-bool Thing::can_be_fired_by(Entity const& entity) const
-{
-  return false;
-}
-
-bool Thing::can_be_mixed_with(Thing const& thing) const
+bool Thing::miscible_with(Thing const& thing) const
 {
   return false;
 }
@@ -501,74 +489,107 @@ void Thing::gather_thing_ids(std::vector<ThingId>& ids)
   ids.push_back(impl->thing_id);
 }
 
-bool Thing::do_action_activated_by(Entity& entity)
+bool Thing::perform_action_activated_by(Entity& entity)
 {
-  return false;
+  return _perform_action_activated_by(entity);
 }
 
-bool Thing::do_action_collided_with(Thing& thing)
+void Thing::perform_action_collided_with(Thing& thing)
 {
-  return true;
+  _perform_action_collided_with(thing);
 }
 
-bool Thing::do_action_drank_by(Entity& entity)
+bool Thing::perform_action_drank_by(Entity& entity)
 {
-  return false;
+  return _perform_action_drank_by(entity);
 }
 
-bool Thing::do_action_dropped_by(Entity& entity)
+bool Thing::perform_action_dropped_by(Entity& entity)
 {
-  return true;
+  return _perform_action_dropped_by(entity);
 }
 
-bool Thing::do_action_eaten_by(Entity& entity)
+bool Thing::perform_action_eaten_by(Entity& entity)
 {
-  return false;
+  return _perform_action_eaten_by(entity);
 }
 
-bool Thing::do_action_picked_up_by(Entity& entity)
+bool Thing::perform_action_picked_up_by(Entity& entity)
 {
-  return true;
+  return _perform_action_picked_up_by(entity);
 }
 
-bool Thing::do_action_put_into(Thing& container)
+bool Thing::perform_action_put_into(Thing& container)
 {
-  return true;
+  return _perform_action_put_into(container);
 }
 
-bool Thing::do_action_take_out()
+bool Thing::perform_action_take_out()
 {
-  return true;
+  return _perform_action_take_out();
 }
 
-ActionResult Thing::do_action_read_by(Entity& entity)
+ActionResult Thing::perform_action_read_by(Entity& entity)
 {
-  return ActionResult::Failure;
+  return _perform_action_read_by(entity);
 }
 
-bool Thing::do_action_deequipped_from(Thing& thing)
+bool Thing::perform_action_deequipped_from(Thing& thing)
 {
-  return true;
+  return _perform_action_deequipped_from(thing);
 }
 
-bool Thing::do_action_thrown_by(Entity& thing, Direction direction)
+bool Thing::perform_action_thrown_by(Entity& entity, Direction direction)
 {
-  return true;
+  return _perform_action_thrown_by(entity, direction);
 }
 
-bool Thing::do_action_equipped_onto(Thing& thing)
+bool Thing::perform_action_equipped_onto(Thing& thing)
 {
-  return false;
+  return _perform_action_equipped_onto(thing);
 }
 
-bool Thing::do_action_wielded_by(Entity& entity)
+bool Thing::perform_action_unwielded_by(Entity& entity)
 {
-  return true;
+  if (impl->magic_locked == true)
+  {
+    std::string message;
+    message = entity.get_name() + " cannot unwield " + this->get_name() +
+              "; it is magically welded onto " +
+              entity.get_possessive_adjective() + " " +
+              entity.get_bodypart_name(BodyPart::Hand) + "!";
+    the_message_log.add(message);
+    return false;
+  }
+  else
+  {
+    return _perform_action_unwielded_by(entity);
+  }
 }
 
-bool Thing::do_action_fired_by(Entity& entity, Direction direction)
+bool Thing::perform_action_wielded_by(Entity& entity)
 {
-  return false;
+  bool subclass_result = _perform_action_wielded_by(entity);
+
+  if (subclass_result == true)
+  {
+    if (impl->magic_autolocking == true)
+    {
+      impl->magic_locked = true;
+      std::string message;
+      message = this->get_name() + " magically welds itself onto " +
+                entity.get_possessive() + " " +
+                entity.get_bodypart_name(BodyPart::Hand) + "!";
+      the_message_log.add(message);
+    }
+  }
+
+  return subclass_result;
+}
+
+bool Thing::perform_action_fired_by(Entity& entity, Direction direction)
+{
+  return _perform_action_fired_by(entity, direction);
 }
 
 char const* Thing::get_thing_type() const
@@ -589,4 +610,78 @@ void Thing::set_id(ThingId id)
 void Thing::set_location_id(ThingId target)
 {
   impl->location_id = target;
+}
+
+bool Thing::_perform_action_activated_by(Entity& entity)
+{
+  return false;
+}
+
+void Thing::_perform_action_collided_with(Thing& thing)
+{
+}
+
+bool Thing::_perform_action_drank_by(Entity& entity)
+{
+  return false;
+}
+
+bool Thing::_perform_action_dropped_by(Entity& entity)
+{
+  return true;
+}
+
+bool Thing::_perform_action_eaten_by(Entity& entity)
+{
+  return false;
+}
+
+bool Thing::_perform_action_picked_up_by(Entity& entity)
+{
+  return true;
+}
+
+bool Thing::_perform_action_put_into(Thing& container)
+{
+  return true;
+}
+
+bool Thing::_perform_action_take_out()
+{
+  return true;
+}
+
+ActionResult Thing::_perform_action_read_by(Entity& entity)
+{
+  return ActionResult::Failure;
+}
+
+bool Thing::_perform_action_deequipped_from(Thing& thing)
+{
+  return true;
+}
+
+bool Thing::_perform_action_thrown_by(Entity& thing, Direction direction)
+{
+  return true;
+}
+
+bool Thing::_perform_action_equipped_onto(Thing& thing)
+{
+  return false;
+}
+
+bool Thing::_perform_action_unwielded_by(Entity& entity)
+{
+  return true;
+}
+
+bool Thing::_perform_action_wielded_by(Entity& entity)
+{
+  return true;
+}
+
+bool Thing::_perform_action_fired_by(Entity& entity, Direction direction)
+{
+  return false;
 }

@@ -53,6 +53,8 @@ struct Entity::Impl
   /// Queue of actions to be performed.
   std::deque<Action> actions;
 
+  /// Vector of items wielded.
+  std::vector<ThingId> wielded_items;
 };
 
 Entity::Entity() :
@@ -820,12 +822,12 @@ bool Entity::drink(ThingId thing_id, unsigned int& action_time)
   switch (drink_try)
   {
   case ActionResult::Success:
-    if (thing.can_be_drank_by(*this))
+    if (thing.drinkable_by(*this))
     {
       message = _YOU_ + " drink " + thing.get_name();
       the_message_log.add(message);
 
-      if (thing.do_action_drank_by(*this))
+      if (thing.perform_action_drank_by(*this))
       {
         return true;
       }
@@ -887,6 +889,19 @@ ActionResult Entity::can_drop(ThingId thing_id, unsigned int& action_time)
     return ActionResult::FailureNotPresent;
   }
 
+  // Check that we're not wielding the item.
+  for (unsigned int counter = 0;
+       counter < this->get_bodypart_number(BodyPart::Hand);
+       ++counter)
+  {
+    if (impl->wielded_items[counter] == thing_id)
+    {
+      return ActionResult::FailureItemWielded;
+    }
+  }
+
+  /// @todo Check that we're not wearing the item.
+
   return ActionResult::Success;
 }
 
@@ -902,11 +917,11 @@ bool Entity::drop(ThingId thing_id, unsigned int& action_time)
   {
   case ActionResult::Success:
     {
-      if (thing.can_be_moved())
+      if (thing.movable())
       {
         if (entity_location.can_contain(thing))
         {
-          if (thing.do_action_dropped_by(*this))
+          if (thing.perform_action_dropped_by(*this))
           {
             message = _YOU_ + choose_verb(" drop ", " drops ") +
                       thing.get_name() + ".";
@@ -924,7 +939,7 @@ bool Entity::drop(ThingId thing_id, unsigned int& action_time)
           }
           else // Drop failed
           {
-            // do_action_dropped_by() will print any relevant messages
+            // perform_action_dropped_by() will print any relevant messages
           }
         }
         else // can't contain the thing
@@ -977,6 +992,21 @@ bool Entity::drop(ThingId thing_id, unsigned int& action_time)
     }
     break;
 
+  case ActionResult::FailureItemEquipped:
+    {
+      message = _YOU_ + " cannot drop something that is currently being worn.";
+      the_message_log.add(message);
+    }
+    break;
+
+  case ActionResult::FailureItemWielded:
+    {
+      /// @todo Perhaps automatically try to unwield the item before dropping?
+      message = _YOU_ + " cannot drop something that is currently being wielded.";
+      the_message_log.add(message);
+    }
+    break;
+
   default:
     MINOR_ERROR("Unknown ActionResult %d", drop_try);
     break;
@@ -1014,9 +1044,9 @@ bool Entity::eat(ThingId thing_id, unsigned int& action_time)
   switch (eat_try)
   {
   case ActionResult::Success:
-    if (thing.can_be_eaten_by(*this))
+    if (thing.edible_by(*this))
     {
-      if (thing.do_action_eaten_by(*this))
+      if (thing.perform_action_eaten_by(*this))
       {
         return true;
       }
@@ -1055,90 +1085,6 @@ bool Entity::eat(ThingId thing_id, unsigned int& action_time)
     MINOR_ERROR("Unknown ActionResult %d", eat_try);
     break;
   }
-  return false;
-}
-
-ActionResult Entity::can_fire(ThingId thing_id, unsigned int& action_time)
-{
-  action_time = 1;
-
-  // Check that it isn't US!
-  if (thing_id == this->get_id())
-  {
-    return ActionResult::FailureSelfReference;
-  }
-
-  // Check that it's in our inventory.
-  if (!this->get_inventory().contains(thing_id))
-  {
-    return ActionResult::FailureNotPresent;
-  }
-
-  /// @todo Write can_fire() behavior.
-
-  return ActionResult::Success;
-}
-
-bool Entity::fire(ThingId thing_id, Direction& direction,
-                  unsigned int& action_time)
-{
-  std::string message;
-  Thing& thing = TF.get(thing_id);
-
-  ActionResult fire_try = this->can_fire(thing_id, action_time);
-
-  switch (fire_try)
-  {
-  case ActionResult::Success:
-    if (thing.can_be_fired_by(*this))
-    {
-      if (thing.do_action_fired_by(*this, direction))
-      {
-        /// @todo Write Entity::fire() behavior
-        return true;
-      }
-    }
-    else
-    {
-      message = _YOU_TRY_ + " to fire " + thing.get_name();
-      the_message_log.add(message);
-
-      message = _YOU_ + " cannot fire that.";
-      the_message_log.add(message);
-    }
-    break;
-
-  case ActionResult::FailureNotEnoughHands:
-    message = _YOU_TRY_ + " to fire " + thing.get_name();
-    the_message_log.add(message);
-
-    message = _YOU_ + choose_verb(" lack", " lacks") +
-              " the free " + this->get_bodypart_plural(BodyPart::Hand) +
-              " to fire things!";
-    the_message_log.add(message);
-    break;
-
-  case ActionResult::FailureSelfReference:
-    if (TF.get_player_id() == this->get_id())
-    {
-      message = "You aren't your own boss, "
-                "so you have no authority to fire yourself.";
-    }
-    else
-    {
-      message = _YOU_TRY_ +
-                " to fire " + _YOURSELF_ +
-                ", which seriously shouldn't happen.";
-      MINOR_ERROR("Non-player Entity tried to fire self!?");
-    }
-    the_message_log.add(message);
-    break;
-
-  default:
-    MINOR_ERROR("Unknown ActionResult %d", fire_try);
-    break;
-  }
-
   return false;
 }
 
@@ -1333,9 +1279,9 @@ bool Entity::pick_up(ThingId thing_id, unsigned int& action_time)
   switch (pick_up_try)
   {
     case ActionResult::Success:
-      if (thing.can_be_moved())
+      if (thing.movable())
       {
-        if (thing.do_action_picked_up_by(*this))
+        if (thing.perform_action_picked_up_by(*this))
         {
           message = _YOU_ + choose_verb(" pick", " picks") + " up " +
                     thing.get_name() + ".";
@@ -1351,9 +1297,9 @@ bool Entity::pick_up(ThingId thing_id, unsigned int& action_time)
             break;
           }
         }
-        else // do_action_picked_up_by(*this) returned false
+        else // perform_action_picked_up_by(*this) returned false
         {
-          // do_action_picked_up_by() will print any relevant messages
+          // perform_action_picked_up_by() will print any relevant messages
         }
       }
       else // thing cannot be moved
@@ -1475,33 +1421,20 @@ bool Entity::put_into(ThingId thing_id, ThingId container_id,
   {
   case ActionResult::Success:
     {
-      if (thing.can_be_put_into(container))
+      if (thing.perform_action_put_into(container))
       {
-        if (thing.do_action_put_into(container))
-        {
-          message = _YOU_ + choose_verb(" place ", "places ") +
-                    thing.get_name() + " into " +
-                    container.get_name() + ".";
-          the_message_log.add(message);
-          if (!thing.move_into(container_id))
-          {
-            MAJOR_ERROR("Could not move Thing into Container");
-          }
-          else
-          {
-            return true;
-          }
-        }
-      }
-      else
-      {
-        message = _YOU_TRY_ + " to place " + thing.get_name() + " into " +
+        message = _YOU_ + choose_verb(" place ", "places ") +
+                  thing.get_name() + " into " +
                   container.get_name() + ".";
         the_message_log.add(message);
-
-        message = thing.get_name() + " cannot be put into " +
-                  container.get_name();
-        the_message_log.add(message);
+        if (!thing.move_into(container_id))
+        {
+          MAJOR_ERROR("Could not move Thing into Container");
+        }
+        else
+        {
+          return true;
+        }
       }
     }
     break;
@@ -1607,9 +1540,9 @@ bool Entity::read(ThingId thing_id, unsigned int& action_time)
   {
   case ActionResult::Success:
     {
-      if (thing.can_be_read_by(*this))
+      if (thing.readable_by(*this))
       {
-        switch (thing.do_action_read_by(*this))
+        switch (thing.perform_action_read_by(*this))
         {
         case ActionResult::SuccessDestroyed:
           if (!thing.is_maptile())
@@ -1622,7 +1555,7 @@ bool Entity::read(ThingId thing_id, unsigned int& action_time)
           }
           else
           {
-            MINOR_ERROR("do_action_read_by returned SuccessDestroyed "
+            MINOR_ERROR("perform_action_read_by returned SuccessDestroyed "
                         "on a MapTile, which can't be destroyed.");
           }
           return true;
@@ -1710,21 +1643,18 @@ bool Entity::take_out(ThingId thing_id,
   {
   case ActionResult::Success:
     {
-      if (thing.can_be_taken_out())
+      if (thing.perform_action_take_out())
       {
-        if (thing.do_action_take_out())
+        if (!thing.move_into(new_location_id))
         {
-          if (!thing.move_into(new_location_id))
-          {
-            MAJOR_ERROR("Could not move Thing out of Container");
-          }
-          else
-          {
-            message = _YOU_ + choose_verb(" remove ", "removes ") +
-                      thing.get_name() + " from " +
-                      container.get_name() + ".";
-            the_message_log.add(message);
-          }
+          MAJOR_ERROR("Could not move Thing out of Container");
+        }
+        else
+        {
+          message = _YOU_ + choose_verb(" remove ", "removes ") +
+                    thing.get_name() + " from " +
+                    container.get_name() + ".";
+          the_message_log.add(message);
         }
       }
     }
@@ -1795,6 +1725,8 @@ ActionResult Entity::can_toss(ThingId thing_id,
     return ActionResult::FailureNotPresent;
   }
 
+  /// @todo Check that we're not wearing the item.
+
   return ActionResult::Success;
 }
 
@@ -1810,26 +1742,23 @@ bool Entity::toss(ThingId thing_id, Direction& direction,
   case ActionResult::Success:
     {
       Container& new_location = TF.get_container(this->get_location_id());
-      if (thing.can_be_moved())
+      if (thing.movable())
       {
-        if (thing.can_be_thrown_by(*this))
+        if (thing.perform_action_thrown_by(*this, direction))
         {
-          if (thing.do_action_thrown_by(*this, direction))
+          if (thing.move_into(new_location))
           {
-            if (thing.move_into(new_location))
-            {
-              message = _YOU_ + choose_verb(" throw ", " throws ") +
-                        thing.get_name();
-              the_message_log.add(message);
+            message = _YOU_ + choose_verb(" throw ", " throws ") +
+                      thing.get_name();
+            the_message_log.add(message);
 
-              /// @todo When throwing, set Thing's direction and velocity
-              return true;
-            }
-            else
-            {
-              MAJOR_ERROR("Could not move Thing even though "
-                          "can_toss returned Success");
-            }
+            /// @todo When throwing, set Thing's direction and velocity
+            return true;
+          }
+          else
+          {
+            MAJOR_ERROR("Could not move Thing even though "
+                        "movable returned Success");
           }
         }
       }
@@ -1852,10 +1781,15 @@ bool Entity::toss(ThingId thing_id, Direction& direction,
     }
     break;
 
+  case ActionResult::FailureItemEquipped:
+    {
+      message = _YOU_ + " cannot throw something " + _YOU_ARE_ + "wearing.";
+      the_message_log.add(message);
+    }
+    break;
+
   case ActionResult::FailureNotPresent:
     {
-      std::string message;
-
       message = _YOU_TRY_ + " to throw " + thing.get_name() + ".";
       the_message_log.add(message);
 
@@ -1905,21 +1839,10 @@ bool Entity::wear(ThingId thing_id, unsigned int& action_time)
   {
     case ActionResult::Success:
       {
-        if (thing.can_be_equipped_on(*this))
+        if (thing.perform_action_equipped_onto(*this))
         {
-          if (thing.do_action_equipped_onto(*this))
-          {
-            /// @todo Implement wearing items
-            return true;
-          }
-        }
-        else
-        {
-          message = _YOU_TRY_ + " to wear" + thing.get_name();
-          the_message_log.add(message);
-
-          message = _YOU_ + " cannot wear " + thing.get_name();
-          the_message_log.add(message);
+          /// @todo Implement wearing items
+          return true;
         }
       }
       break;
@@ -1932,7 +1855,9 @@ bool Entity::wear(ThingId thing_id, unsigned int& action_time)
   return false;
 }
 
-ActionResult Entity::can_wield(ThingId thing_id, unsigned int& action_time)
+ActionResult Entity::can_wield(ThingId thing_id,
+                               unsigned int hand,
+                               unsigned int& action_time)
 {
   action_time = 1;
 
@@ -1940,6 +1865,11 @@ ActionResult Entity::can_wield(ThingId thing_id, unsigned int& action_time)
   if (thing_id == this->get_id())
   {
     return ActionResult::SuccessSelfReference;
+  }
+
+  if (thing_id == impl->wielded_items[hand])
+  {
+    return ActionResult::FailureAlreadyPresent;
   }
 
   // Check that it's within reach.
@@ -1951,34 +1881,61 @@ ActionResult Entity::can_wield(ThingId thing_id, unsigned int& action_time)
   return ActionResult::Success;
 }
 
-bool Entity::wield(ThingId thing_id, unsigned int& action_time)
+bool Entity::wield(ThingId thing_id,
+                   unsigned int hand,
+                   unsigned int& action_time)
 {
   std::string message;
   Thing& thing = TF.get(thing_id);
-  ActionResult wield_try = this->can_wield(thing_id, action_time);
+
+  // First, check if we're already wielding something.
+  ThingId wielded_id = impl->wielded_items[hand];
+
+  bool unwield_success = true;
+  if (wielded_id != TF.limbo_id)
+  {
+    unwield_success = false;
+    Thing& wielded_thing = TF.get(wielded_id);
+    if (wielded_thing.perform_action_unwielded_by(*this))
+    {
+      impl->wielded_items[hand] = TF.limbo_id;
+      unwield_success = true;
+    }
+  }
+
+  if (!unwield_success)
+  {
+    return false;
+  }
+
+  // Try to wield the new item.
+  ActionResult wield_try = this->can_wield(thing_id, hand, action_time);
 
   switch (wield_try)
   {
   case ActionResult::Success:
     {
-      if (thing.can_be_wielded_by(*this))
+      if (thing.perform_action_wielded_by(*this))
       {
-        if (thing.do_action_wielded_by(*this))
-        {
-          /// @todo Implement wielding items.
-
-          message = _YOU_ARE_ + " now wielding " + thing.get_name() + ".";
-          the_message_log.add(message);
-          return true;
-        }
+        impl->wielded_items[hand] = thing_id;
+        message = _YOU_ARE_ + " now wielding " + thing.get_name() + ".";
+        the_message_log.add(message);
+        return true;
       }
     }
     break;
 
   case ActionResult::SuccessSelfReference:
     {
-      /// @todo Implement unwielding everything.
+      impl->wielded_items[hand] = TF.limbo_id;
       message = _YOU_ARE_ + "no longer wielding any weapons.";
+      the_message_log.add(message);
+    }
+    break;
+
+  case ActionResult::FailureAlreadyPresent:
+    {
+      message = _YOU_ARE_ + " already wielding " + thing.get_name() + ".";
       the_message_log.add(message);
     }
     break;

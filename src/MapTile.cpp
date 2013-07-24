@@ -217,15 +217,14 @@ bool MapTile::can_contain(Thing& thing) const
   return true;
 }
 
-bool MapTile::can_be_read_by(Entity const& entity) const
+bool MapTile::readable_by(Entity const& entity) const
 {
-  /// @todo Implement can_be_read_by (e.g. writing/engraving on walls).
-  return false;
+  return true;
 }
 
-ActionResult MapTile::do_action_read_by(Entity& entity)
+ActionResult MapTile::_perform_action_read_by(Entity& entity)
 {
-  /// @todo Implement do_action_read_by (e.g. writing/engraving on walls).
+  /// @todo Implement perform_action_read_by (e.g. writing/engraving on walls).
   return ActionResult::Failure;
 }
 

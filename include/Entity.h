@@ -218,17 +218,6 @@ class Entity :
     virtual bool move(Direction direction, bool turn,
                       unsigned int& action_time);
 
-    /// Return whether the Entity can fire the requested Thing.
-    /// It is recommended that any derived classes first call the base method
-    /// before proceeding with their own checks.
-    /// @param[in] thing_id Thing to try to fire
-    /// @param[out] action_time The time it will take to fire it
-    /// @return ActionResult indicating what happened.
-    virtual ActionResult can_fire(ThingId thing_id, unsigned int& action_time);
-
-    virtual bool fire(ThingId thing_id, Direction& direction,
-                      unsigned int& action_time);
-
     /// Return whether the Entity can pick up the requested Thing.
     /// The base method checks to make sure the Thing is at the same location
     /// as the Entity, and that the Entity's inventory can contain it.
@@ -261,10 +250,17 @@ class Entity :
     /// Attempt to wear a thing.
     bool wear(ThingId thing_id, unsigned int& action_time);
 
-    virtual ActionResult can_wield(ThingId thing_id, unsigned int& action_time);
+    virtual ActionResult can_wield(ThingId thing_id,
+                                   unsigned int hand,
+                                   unsigned int& action_time);
 
     /// Attempt to wield a thing.
-    bool wield(ThingId thing_id, unsigned int& action_time);
+    /// @param[in] thing_id Thing to wield, or 0 if unwielding everything.
+    /// @param[in] hand Hand to wield it in.
+    /// @param[out] action_time Time it takes to wield.
+    bool wield(ThingId thing_id,
+               unsigned int hand,
+               unsigned int& action_time);
 
   protected:
     Entity();

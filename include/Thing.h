@@ -67,6 +67,18 @@ class Thing
     /// Return this thing's mass.
     int get_single_mass() const;
 
+    /// Set whether this item is magically locked.
+    void set_magically_locked(bool locked);
+
+    /// Set whether this item autolocks.
+    void set_magic_autolocking(bool autolocks);
+
+    /// Get whether this item is magically locked.
+    bool get_magically_locked() const;
+
+    /// Get whether this item autolocks.
+    bool get_magic_autolocking() const;
+
     /// Return a string that identifies this thing.
     /// By default, this returns the thing's proper name.  If the thing
     /// does not have a proper name, it returns "the" and a description
@@ -175,55 +187,27 @@ class Thing
 
     /// Return whether or not this thing can move from its current location.
     /// The default behavior for this is to return true.
-    virtual bool can_be_moved() const;
+    virtual bool movable() const;
 
     /// Return whether or not this thing can be activated by this Entity.
     /// The default behavior for this is to return false.
-    virtual bool can_be_activated_by(Entity const& entity) const;
+    virtual bool usable_by(Entity const& entity) const;
 
     /// Return whether or not this thing can be drank by this Entity.
     /// The default behavior for this is to return false.
-    virtual bool can_be_drank_by(Entity const& entity) const;
+    virtual bool drinkable_by(Entity const& entity) const;
 
     /// Return whether or not this thing can be eaten by this Entity.
     /// The default behavior for this is to return false.
-    virtual bool can_be_eaten_by(Entity const& entity) const;
-
-    /// Return whether or not this thing can be put into this container.
-    /// The default behavior for this is to return true.
-    virtual bool can_be_put_into(Thing const& container) const;
-
-    /// Return whether or not this thing can be taken out of its container.
-    /// The default behavior for this is to return true.
-    virtual bool can_be_taken_out() const;
+    virtual bool edible_by(Entity const& entity) const;
 
     /// Return whether or not this thing can be read by this Entity.
     /// The default behavior for this is to return false.
-    virtual bool can_be_read_by(Entity const& entity) const;
-
-    /// Return whether or not this thing can be deequipped from this Thing.
-    /// The default behavior for this is to return false.
-    virtual bool can_be_deequipped_from(Thing const& thing) const;
-
-    /// Return whether or not this thing can be thrown.
-    /// The default behavior for this is to return true.
-    virtual bool can_be_thrown_by(Entity const& entity) const;
-
-    /// Return whether or not this thing can be wielded by this Entity.
-    /// The default behavior for this is to return true.
-    virtual bool can_be_wielded_by(Entity const& entity) const;
-
-    /// Return whether or not this thing can be equipped on this Thing.
-    /// The default behavior for this is to return false.
-    virtual bool can_be_equipped_on(Thing const& thing) const;
-
-    /// Return whether or not this thing can be fired by this Entity.
-    /// The default behavior for this is to return false.
-    virtual bool can_be_fired_by(Entity const& entity) const;
+    virtual bool readable_by(Entity const& entity) const;
 
     /// Return whether or not this thing can be mixed with another Thing.
     /// The default behavior for this is to return false.
-    virtual bool can_be_mixed_with(Thing const& thing) const;
+    virtual bool miscible_with(Thing const& thing) const;
 
     /// Process this Thing for a single tick.
     /// By default, does nothing and returns true.
@@ -243,73 +227,75 @@ class Thing
     /// Perform an action when this thing is activated.
     /// If this function returns false, the action is aborted.
     /// The default behavior is to do nothing and return false.
-    virtual bool do_action_activated_by(Entity& entity);
+    bool perform_action_activated_by(Entity& entity);
 
     /// Perform an action when this thing collides with another thing.
-    /// If this function returns false, the action is aborted.
-    /// The default behavior is to do nothing and return true.
-    /// @todo How does one abort a collision?  Does this make sense at all?
-    virtual bool do_action_collided_with(Thing& thing);
+    void perform_action_collided_with(Thing& thing);
 
     /// Perform an action when this thing is eaten.
     /// If this function returns false, the action is aborted.
     /// The default behavior is to do nothing and return false.
-    virtual bool do_action_drank_by(Entity& entity);
+    bool perform_action_drank_by(Entity& entity);
 
     /// Perform an action when this thing is dropped.
     /// If this function returns false, the action is aborted.
     /// The default behavior is to do nothing and return true.
-    virtual bool do_action_dropped_by(Entity& entity);
+    bool perform_action_dropped_by(Entity& entity);
 
     /// Perform an action when this thing is eaten.
     /// If this function returns false, the action is aborted.
     /// The default behavior is to do nothing and return false.
-    virtual bool do_action_eaten_by(Entity& entity);
+    bool perform_action_eaten_by(Entity& entity);
 
     /// Perform an action when this thing is picked up.
     /// If this function returns false, the action is aborted.
     /// The default behavior is to do nothing and return true.
-    virtual bool do_action_picked_up_by(Entity& entity);
+    bool perform_action_picked_up_by(Entity& entity);
 
     /// Perform an action when this thing is put into another thing.
     /// If this function returns false, the action is aborted.
     /// The default behavior is to do nothing and return true.
-    virtual bool do_action_put_into(Thing& container);
+    bool perform_action_put_into(Thing& container);
 
     /// Perform an action when this thing is taken out its container.
     /// If this function returns false, the action is aborted.
     /// The default behavior is to do nothing and return true.
-    virtual bool do_action_take_out();
+    bool perform_action_take_out();
 
     /// Perform an action when this thing is read.
     /// If this function returns Failure, the action is aborted.
     /// The default behavior is to do nothing and return Failure.
-    virtual ActionResult do_action_read_by(Entity& entity);
+    ActionResult perform_action_read_by(Entity& entity);
 
     /// Perform an action when this thing is de-equipped (taken off).
     /// If this function returns false, the action is aborted.
     /// The default behavior is to do nothing and return true.
-    virtual bool do_action_deequipped_from(Thing& thing);
+    bool perform_action_deequipped_from(Thing& thing);
 
     /// Perform an action when this thing is thrown.
     /// If this function returns false, the action is aborted.
     /// The default behavior is to do nothing and return true.
-    virtual bool do_action_thrown_by(Entity& entity, Direction direction);
+    bool perform_action_thrown_by(Entity& entity, Direction direction);
 
     /// Perform an action when this thing is equipped.
     /// If this function returns false, the action is aborted.
     /// The default behavior is to do nothing and return false.
-    virtual bool do_action_equipped_onto(Thing& thing);
+    bool perform_action_equipped_onto(Thing& thing);
+
+    /// Perform an action when this thing is unwielded.
+    /// If this function returns false, the action is aborted.
+    /// The default behavior is to do nothing and return true.
+    bool perform_action_unwielded_by(Entity& entity);
 
     /// Perform an action when this thing is wielded.
     /// If this function returns false, the action is aborted.
     /// The default behavior is to do nothing and return true.
-    virtual bool do_action_wielded_by(Entity& entity);
+    bool perform_action_wielded_by(Entity& entity);
 
     /// Perform an action when this thing is fired.
     /// If this function returns false, the action is aborted.
     /// The default behavior is to do nothing and return false.
-    virtual bool do_action_fired_by(Entity& entity, Direction direction);
+    bool perform_action_fired_by(Entity& entity, Direction direction);
 
     /// Return the type of this thing.
     virtual char const* get_thing_type() const final;
@@ -345,5 +331,21 @@ class Thing
     static sf::Color const wall_outline_color_;
 
   private:
+    virtual bool _perform_action_activated_by(Entity& entity);
+    virtual void _perform_action_collided_with(Thing& thing);
+    virtual bool _perform_action_drank_by(Entity& entity);
+    virtual bool _perform_action_dropped_by(Entity& entity);
+    virtual bool _perform_action_eaten_by(Entity& entity);
+    virtual bool _perform_action_picked_up_by(Entity& entity);
+    virtual bool _perform_action_put_into(Thing& container);
+    virtual bool _perform_action_take_out();
+    virtual ActionResult _perform_action_read_by(Entity& entity);
+    virtual bool _perform_action_deequipped_from(Thing& thing);
+    virtual bool _perform_action_thrown_by(Entity& entity, Direction direction);
+    virtual bool _perform_action_equipped_onto(Thing& thing);
+    virtual bool _perform_action_unwielded_by(Entity& entity);
+    virtual bool _perform_action_wielded_by(Entity& entity);
+    virtual bool _perform_action_fired_by(Entity& entity, Direction direction);
+
 };
 #endif // THING_H

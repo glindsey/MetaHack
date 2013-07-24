@@ -53,12 +53,12 @@ class LightSource : public Aggregate
     /// Return whether or not this light source can be turned on/off by this
     /// Entity.
     /// The default behavior for this is to return false.
-    virtual bool can_be_activated_by(Entity const& entity) const override;
+    virtual bool usable_by(Entity const& entity) const override;
 
     /// Perform an action when this light source is turned on/off.
     /// If this function returns false, the action is aborted.
     /// The default behavior is to do nothing and return false.
-    virtual bool do_action_activated_by(Entity& entity) override;
+    virtual bool _perform_action_activated_by(Entity& entity) override;
 
     /// Set whether this light source is currently lit.
     void set_lit(bool lit);

@@ -81,12 +81,12 @@ void LightSource::set_light_color(sf::Color color)
   impl->color = color;
 }
 
-bool LightSource::can_be_activated_by(Entity const& entity) const
+bool LightSource::usable_by(Entity const& entity) const
 {
   return true;
 }
 
-bool LightSource::do_action_activated_by(Entity& entity)
+bool LightSource::_perform_action_activated_by(Entity& entity)
 {
   impl->lit = !(impl->lit);
   return true;

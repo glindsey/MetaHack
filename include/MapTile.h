@@ -80,8 +80,7 @@ class MapTile : public Container
 
     virtual bool can_contain(Thing& thing) const override;
 
-    virtual bool can_be_read_by(Entity const& entity) const override;
-    virtual ActionResult do_action_read_by(Entity& entity) override;
+    virtual bool readable_by(Entity const& entity) const override;
 
     /// Get the coordinates associated with a tile.
     static sf::Vector2f get_pixel_coords(int x, int y);
@@ -97,6 +96,8 @@ class MapTile : public Container
   private:
     struct Impl;
     std::unique_ptr<Impl> impl;
+
+    virtual ActionResult _perform_action_read_by(Entity& entity) override;
 };
 
 #endif // MAPTILE_H
