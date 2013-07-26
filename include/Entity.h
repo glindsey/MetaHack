@@ -92,6 +92,17 @@ class Entity :
     /// Get the appropriate body part plural for the Entity.
     virtual std::string get_bodypart_plural(BodyPart part) const = 0;
 
+    /// Get the appropriate description for a body part.
+    /// This takes the body part name and the number referencing the particular
+    /// part and comes up with a description.
+    /// For example, for most creatures with two hands, hand #0 will be the
+    /// "right hand" and hand #1 will be the "left hand".
+    /// In most cases the default implementation here will work, but if a
+    /// creature has (for example) a strange configuration of limbs this can be
+    /// overridden.
+    virtual std::string get_bodypart_description(BodyPart part,
+                                                 unsigned int number);
+
     /// Get the appropriate subject pronoun for the Entity.
     std::string const& get_subject_pronoun() const;
 
@@ -121,6 +132,19 @@ class Entity :
 
     /// Process this Entity for one tick.
     virtual bool do_process() override final;
+
+    /// Return whether a Thing is wielded by this Entity.
+    /// This is used by InventoryArea to show wielded status.
+    /// @param[in] thing_id Thing to check
+    /// @return true if the Thing is wielded by the Entity.
+    bool is_wielded(ThingId thing_id);
+
+    /// Return whether a Thing is wielded by this Entity.
+    /// This is used by InventoryArea to show wielded status.
+    /// @param[in] thing_id Thing to check
+    /// @param[out] number Hand number it is wielded in.
+    /// @return true if the Thing is wielded by the Entity.
+    bool is_wielded(ThingId thing_id, unsigned int* number_ptr);
 
     /// Return whether a Thing is within reach of the Entity.
     /// @param[in] thing_id Thing to check

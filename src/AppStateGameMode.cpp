@@ -787,6 +787,14 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           result = EventResult::Handled;
           break;
 
+        // CTRL-W -- wield item
+          action.type = Action::Type::Wield;
+          action.thing_ids = impl->selected_things;
+          player.queue_action(action);
+          impl->reset_inventory_info();
+          result = EventResult::Handled;
+          break;
+
         default:
           break;
         }

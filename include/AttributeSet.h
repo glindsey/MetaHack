@@ -17,7 +17,7 @@ class AttributeSet
 {
   public:
     /// Static array containing attribute constants.
-    static std::map<Attribute, AttributeData const> constants;
+    static std::map<unsigned int, AttributeData const> constants;
 
     AttributeSet();
     virtual ~AttributeSet();
@@ -51,7 +51,7 @@ class AttributeSet
 
   protected:
   private:
-    std::map<Attribute, int> value;
+    std::map<unsigned int, int> value;
     bool negative_okay;
 };
 

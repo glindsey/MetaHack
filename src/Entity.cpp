@@ -17,6 +17,7 @@
 #include "MapTile.h"
 #include "MathUtils.h"
 #include "MessageLog.h"
+#include "Ordinal.h"
 #include "ThingFactory.h"
 
 // Local definitions to make reading/writing status info a bit easier.
@@ -591,6 +592,112 @@ void Entity::add_memory_vertices_to(sf::VertexArray& vertices,
   vertices.append(new_vertex);
 }
 
+std::string Entity::get_bodypart_description(BodyPart part,
+                                             unsigned int number)
+{
+  unsigned int total_number = this->get_bodypart_number(part);
+  std::string part_name = this->get_bodypart_name(part);
+  std::string result;
+
+  ASSERT_CONDITION(number < total_number);
+  switch (total_number)
+  {
+  case 0: // none of them!?  shouldn't occur!
+    result = "non-existent " + part_name;
+    MINOR_ERROR("Request for description of %s!?", result.c_str());
+    break;
+
+  case 1: // only one of them
+    result = part_name;
+    break;
+
+  case 2: // assume a right and left one.
+    switch (number)
+    {
+      case 0: result = "right " + part_name; break;
+      case 1: result = "left " + part_name; break;
+      default: break;
+    }
+    break;
+
+  case 3: // assume right, center, and left.
+    switch (number)
+    {
+      case 0: result = "right " + part_name; break;
+      case 1: result = "center " + part_name; break;
+      case 2: result = "left " + part_name; break;
+      default: break;
+    }
+    break;
+
+  case 4: // Legs/feet assume front/rear, others assume upper/lower.
+    if ((part == BodyPart::Leg) || (part == BodyPart::Foot))
+    {
+      switch (number)
+      {
+        case 0: result = "front right " + part_name; break;
+        case 1: result = "front left " + part_name; break;
+        case 2: result = "rear right " + part_name; break;
+        case 3: result = "rear left " + part_name; break;
+        default: break;
+      }
+    }
+    else
+    {
+      switch (number)
+      {
+        case 0: result = "upper right " + part_name; break;
+        case 1: result = "upper left " + part_name; break;
+        case 2: result = "lower right " + part_name; break;
+        case 3: result = "lower left " + part_name; break;
+        default: break;
+      }
+    }
+    break;
+
+  case 6: // Legs/feet assume front/middle/rear, others upper/middle/lower.
+    if ((part == BodyPart::Leg) || (part == BodyPart::Foot))
+    {
+      switch (number)
+      {
+        case 0: result = "front right " + part_name; break;
+        case 1: result = "front left " + part_name; break;
+        case 2: result = "middle right " + part_name; break;
+        case 3: result = "middle left " + part_name; break;
+        case 4: result = "rear right " + part_name; break;
+        case 5: result = "rear left " + part_name; break;
+        default: break;
+      }
+    }
+    else
+    {
+      switch (number)
+      {
+        case 0: result = "upper right " + part_name; break;
+        case 1: result = "upper left " + part_name; break;
+        case 2: result = "middle right " + part_name; break;
+        case 3: result = "middle left " + part_name; break;
+        case 4: result = "lower right " + part_name; break;
+        case 5: result = "lower left " + part_name; break;
+        default: break;
+      }
+    }
+    break;
+
+  default:
+    break;
+  }
+
+  // Anything else and we just return the ordinal name.
+  if (result.empty())
+  {
+    result = Ordinal::get(number) + " " + part_name;
+  }
+
+  return result;
+}
+
+
 std::string const& Entity::get_subject_pronoun() const
 {
   return getSubjPro(get_gender());
@@ -758,12 +865,48 @@ bool Entity::do_process()
     }
     break;
 
+  case Action::Type::Wield:
+    if (number_of_things > 1)
+    {
+      the_message_log.add("NOTE: Only wielding the last item selected.");
+    }
+    /// @todo Implement wielding using other hands.
+    success = this->wield(action.thing_ids[number_of_things - 1],
+                          0, action_time);
+    if (success)
+    {
+      impl->busy_counter += action_time;
+    }
+    break;
+
   default:
     MINOR_ERROR("Unimplemented action.type %d", action.type);
     break;
   }
 
   return true;
+}
+
+bool Entity::is_wielded(ThingId thing_id)
+{
+  unsigned int dummy;
+  return is_wielded(thing_id, &dummy);
+}
+
+bool Entity::is_wielded(ThingId thing_id, unsigned int* number_ptr)
+{
+  ASSERT_NOT_NULL(number_ptr);
+
+  for (unsigned int number = 0;
+       number < impl->wielded_items.size(); ++number)
+  {
+    if (impl->wielded_items[number] == thing_id)
+    {
+      *number_ptr = number;
+      return true;
+    }
+  }
+  return false;
 }
 
 bool Entity::can_reach(ThingId thing_id)
@@ -1867,9 +2010,22 @@ ActionResult Entity::can_wield(ThingId thing_id,
     return ActionResult::SuccessSelfReference;
   }
 
-  if (thing_id == impl->wielded_items[hand])
+  // Check if you're already holding it.
+  for (unsigned int check_hand = 0;
+       check_hand < this->get_bodypart_number(BodyPart::Hand);
+       ++check_hand)
   {
-    return ActionResult::FailureAlreadyPresent;
+    if (thing_id == impl->wielded_items[hand])
+    {
+      if (hand == check_hand)
+      {
+        return ActionResult::FailureAlreadyPresent;
+      }
+      else
+      {
+        return ActionResult::SuccessSwapHands;
+      }
+    }
   }
 
   // Check that it's within reach.
@@ -1914,11 +2070,14 @@ bool Entity::wield(ThingId thing_id,
   switch (wield_try)
   {
   case ActionResult::Success:
+  case ActionResult::SuccessSwapHands:
     {
       if (thing.perform_action_wielded_by(*this))
       {
         impl->wielded_items[hand] = thing_id;
-        message = _YOU_ARE_ + " now wielding " + thing.get_name() + ".";
+        message = _YOU_ARE_ + " now wielding " + thing.get_name() +
+                  " with " + _YOUR_ + " " +
+                  this->get_bodypart_description(BodyPart::Hand, hand) + ".";
         the_message_log.add(message);
         return true;
       }
@@ -1928,14 +2087,18 @@ bool Entity::wield(ThingId thing_id,
   case ActionResult::SuccessSelfReference:
     {
       impl->wielded_items[hand] = TF.limbo_id;
-      message = _YOU_ARE_ + "no longer wielding any weapons.";
+      message = _YOU_ARE_ + "no longer wielding any weapons with " +
+                _YOUR_ + " " +
+                this->get_bodypart_description(BodyPart::Hand, hand) + ".";
       the_message_log.add(message);
     }
     break;
 
   case ActionResult::FailureAlreadyPresent:
     {
-      message = _YOU_ARE_ + " already wielding " + thing.get_name() + ".";
+      message = _YOU_ARE_ + " already wielding " + thing.get_name() + " with " +
+                _YOUR_ + " " +
+                this->get_bodypart_description(BodyPart::Hand, hand) + ".";
       the_message_log.add(message);
     }
     break;

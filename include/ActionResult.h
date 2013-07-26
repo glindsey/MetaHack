@@ -21,7 +21,9 @@ enum class ActionResult
   Failure                     = -1,
   Success                     = 0,
   SuccessDestroyed            = 1,
-  SuccessSelfReference        = 2
+  SuccessSelfReference        = 2,
+  SuccessSwapHands            = 3 ///< For wield, indicates already-wielded
+                                  ///< weapon is just changing hands.
 };
 
 #endif // ACTIONRESULT_H

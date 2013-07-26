@@ -1,32 +1,31 @@
 #include "AttributeSet.h"
 
-std::map<Attribute, AttributeData const> AttributeSet::constants =
+std::map<unsigned int, AttributeData const> AttributeSet::constants =
 {
-  { Attribute::XP,                {   0, 2147483647 } },
-  { Attribute::HP,                {  10,      65535 } },
-  { Attribute::MaxHP,             {  10,      65535 } },
-  { Attribute::FoodTimeout,       { 512,      65535 } },
-  { Attribute::DrinkTimeout,      { 512,      65535 } },
-  { Attribute::Strength,          {  15,         31 } },
-  { Attribute::Endurance,         {  15,         31 } },
-  { Attribute::Vitality,          {  15,         31 } },
-  { Attribute::Agility,           {  15,         31 } },
-  { Attribute::Intelligence,      {  15,         31 } },
-  { Attribute::MagicDefense,      {  15,         31 } },
-  { Attribute::Charisma,          {  15,         31 } },
-  { Attribute::Allure,            {  15,         31 } },
-  { Attribute::Attentiveness,     {  15,         31 } },
-  { Attribute::Luck,              {  15,         31 } }
+  { static_cast<unsigned int>(Attribute::XP),             {   0, 2147483647 } },
+  { static_cast<unsigned int>(Attribute::HP),             {  10,      65535 } },
+  { static_cast<unsigned int>(Attribute::MaxHP),          {  10,      65535 } },
+  { static_cast<unsigned int>(Attribute::FoodTimeout),    { 512,      65535 } },
+  { static_cast<unsigned int>(Attribute::DrinkTimeout),   { 512,      65535 } },
+  { static_cast<unsigned int>(Attribute::Strength),       {  15,         31 } },
+  { static_cast<unsigned int>(Attribute::Endurance),      {  15,         31 } },
+  { static_cast<unsigned int>(Attribute::Vitality),       {  15,         31 } },
+  { static_cast<unsigned int>(Attribute::Agility),        {  15,         31 } },
+  { static_cast<unsigned int>(Attribute::Intelligence),   {  15,         31 } },
+  { static_cast<unsigned int>(Attribute::MagicDefense),   {  15,         31 } },
+  { static_cast<unsigned int>(Attribute::Charisma),       {  15,         31 } },
+  { static_cast<unsigned int>(Attribute::Allure),         {  15,         31 } },
+  { static_cast<unsigned int>(Attribute::Attentiveness),  {  15,         31 } },
+  { static_cast<unsigned int>(Attribute::Luck),           {  15,         31 } }
 };
 
 AttributeSet::AttributeSet()
 {
-  for (unsigned int counter = 0;
-       counter < static_cast<unsigned int>(Attribute::Count);
-       ++counter)
+  for (unsigned int index = 0;
+       index < static_cast<unsigned int>(Attribute::Count);
+       ++index)
   {
-    Attribute attrib = static_cast<Attribute>(counter);
-    this->value[attrib] = AttributeSet::constants[attrib].default_value;
+    this->value[index] = AttributeSet::constants.at(index).default_value;
   }
 
   this->negative_okay = false;
@@ -49,7 +48,7 @@ bool AttributeSet::get_negative_okay()
 
 void AttributeSet::add(Attribute attrib, int new_value)
 {
-  this->set_to(attrib, new_value + value[attrib]);
+  this->set_to(attrib, new_value + value[static_cast<unsigned int>(attrib)]);
 }
 
 void AttributeSet::set_to(Attribute attrib, int new_value)
@@ -60,21 +59,22 @@ void AttributeSet::set_to(Attribute attrib, int new_value)
   }
   if (attrib == Attribute::HP)
   {
-    if (new_value > value[Attribute::MaxHP])
+    if (new_value > value[static_cast<unsigned int>(Attribute::MaxHP)])
     {
-      new_value = value[Attribute::MaxHP];
+      new_value = value[static_cast<unsigned int>(Attribute::MaxHP)];
     }
   }
   else
   {
-    if (new_value > constants[attrib].maximum_value)
+    unsigned int index = static_cast<unsigned int>(attrib);
+    if (new_value > constants.at(index).maximum_value)
     {
-      new_value = constants[attrib].maximum_value;
+      new_value = constants.at(index).maximum_value;
     }
   }
 }
 
 unsigned int AttributeSet::get(Attribute attrib)
 {
-  return value[attrib];
+  return value[static_cast<unsigned int>(attrib)];
 }

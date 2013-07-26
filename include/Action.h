@@ -25,6 +25,7 @@ struct Action
     Quaff,
     Store,
     TakeOut,
+    Wield,
     Count
   } type;
 

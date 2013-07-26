@@ -448,12 +448,12 @@
 	"ErrorHandler.h"
 	<cstdlib>
 
-1368199505 c:\dropbox\projects\metahack\include\errorhandler.h
+1374850556 c:\dropbox\projects\metahack\include\errorhandler.h
 	<boost/noncopyable.hpp>
 	<cstdio>
 	<memory>
 
-1374291194 source:c:\dropbox\projects\metahack\src\statemachine.cpp
+1374850497 source:c:\dropbox\projects\metahack\src\statemachine.cpp
 	"StateMachine.h"
 	<boost/ptr_container/ptr_map.hpp>
 	<string>
@@ -2904,7 +2904,7 @@
 	<memory>
 	"State.h"
 
-1374261554 source:c:\dropbox\projects\metahack\src\appstategamemode.cpp
+1374853107 source:c:\dropbox\projects\metahack\src\appstategamemode.cpp
 	"AppStateGameMode.h"
 	<memory>
 	<set>
@@ -2939,7 +2939,7 @@
 1363024906 source:c:\dropbox\projects\metahack\src\renderable.cpp
 	"Renderable.h"
 
-1374696847 source:c:\dropbox\projects\metahack\src\entity.cpp
+1374854081 source:c:\dropbox\projects\metahack\src\entity.cpp
 	"Entity.h"
 	<algorithm>
 	<cmath>
@@ -2957,9 +2957,10 @@
 	"MapTile.h"
 	"MathUtils.h"
 	"MessageLog.h"
+	"Ordinal.h"
 	"ThingFactory.h"
 
-1374696800 c:\dropbox\projects\metahack\include\entity.h
+1374853876 c:\dropbox\projects\metahack\include\entity.h
 	"Action.h"
 	"AttributeSet.h"
 	"BodyPart.h"
@@ -2987,7 +2988,7 @@
 
 1363288259 c:\dropbox\projects\metahack\include\playfield.h
 
-1374691600 source:c:\dropbox\projects\metahack\src\thing.cpp
+1374697333 source:c:\dropbox\projects\metahack\src\thing.cpp
 	"Thing.h"
 	<iomanip>
 	<sstream>
@@ -3070,10 +3071,10 @@
 1363638647 source:c:\dropbox\projects\metahack\src\tile.cpp
 	"Tile.h"
 
-1374519583 source:c:\dropbox\projects\metahack\src\attributeset.cpp
+1374871635 source:c:\dropbox\projects\metahack\src\attributeset.cpp
 	"AttributeSet.h"
 
-1374519527 c:\dropbox\projects\metahack\include\attributeset.h
+1374871575 c:\dropbox\projects\metahack\include\attributeset.h
 	<map>
 	"Attribute.h"
 
@@ -4551,7 +4552,7 @@
 1374289322 source:c:\dropbox\projects\metahack\src\things\rock.cpp
 	"Rock.h"
 
-1373044479 c:\dropbox\projects\metahack\include\action.h
+1374853155 c:\dropbox\projects\metahack\include\action.h
 	<vector>
 	"Direction.h"
 	"ThingId.h"
@@ -4568,7 +4569,7 @@
 1372442602 c:\dropbox\projects\metahack\include\inventoryslot.h
 	<boost/strong_typedef.hpp>
 
-1374692744 c:\dropbox\projects\metahack\include\actionresult.h
+1374849498 c:\dropbox\projects\metahack\include\actionresult.h
 
 1374288038 c:\dropbox\projects\metahack\include\things\sacklarge.h
 	"Container.h"
@@ -5588,12 +5589,14 @@
 	"Thing.h"
 	<memory>
 
-1374288486 c:\dropbox\projects\metahack\include\creatablething.h
+1374850497 c:\dropbox\projects\metahack\include\creatablething.h
 	"ErrorHandler.h"
 	"ThingFactory.h"
 
 1374292726 c:\dropbox\projects\metahack\include\splittable.h
 	"Aggregate.h"
 
-1374518961 c:\dropbox\projects\metahack\include\attribute.h
+1374871381 c:\dropbox\projects\metahack\include\attribute.h
+
+1374852775 c:\dropbox\projects\metahack\include\ordinal.h
 

@@ -33,7 +33,7 @@ class CreatableThing
     virtual Thing* clone() const
     {
       Subclass const* subclass = dynamic_cast<Subclass const*>(this);
-      ASSERT_NOT_NULL(subclass, "subclass");
+      ASSERT_NOT_NULL(subclass);
       return new Subclass(*subclass);
     }
 };

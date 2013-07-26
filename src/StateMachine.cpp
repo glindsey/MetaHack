@@ -35,7 +35,7 @@ std::string const& StateMachine::get_name()
 
 bool StateMachine::add_state(State* state)
 {
-  ASSERT_NOT_NULL(state, "state");
+  ASSERT_NOT_NULL(state);
 
   std::string state_name = state->get_name();
 
@@ -54,7 +54,7 @@ bool StateMachine::add_state(State* state)
 
 bool StateMachine::delete_state(State* state)
 {
-  ASSERT_NOT_NULL(state, "state");
+  ASSERT_NOT_NULL(state);
 
   return delete_state(state->get_name());
 }
