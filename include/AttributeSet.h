@@ -5,10 +5,12 @@
 
 #include "Attribute.h"
 
+#define uint_cast(x) static_cast<unsigned int>(x)
+
 struct AttributeData
 {
-  int default_value;
-  int maximum_value;
+  int const default_value;
+  int const maximum_value;
 };
 
 /// Class representing the attributes an Entity can have.
@@ -17,7 +19,7 @@ class AttributeSet
 {
   public:
     /// Static array containing attribute constants.
-    static std::map<unsigned int, AttributeData const> constants;
+    static AttributeData const constants[];
 
     AttributeSet();
     virtual ~AttributeSet();
@@ -51,7 +53,7 @@ class AttributeSet
 
   protected:
   private:
-    std::map<unsigned int, int> value;
+    int value[uint_cast(Attribute::Count)];
     bool negative_okay;
 };
 

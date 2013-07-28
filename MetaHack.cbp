@@ -114,6 +114,7 @@
 		<Unit filename="include/MapTileType.h" />
 		<Unit filename="include/MathUtils.h" />
 		<Unit filename="include/MessageLog.h" />
+		<Unit filename="include/Ordinal.h" />
 		<Unit filename="include/Renderable.h" />
 		<Unit filename="include/ShaderEffect.h" />
 		<Unit filename="include/Splittable.h" />
