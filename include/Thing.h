@@ -180,7 +180,7 @@ class Thing
 
     /// Return whether or not this thing can move from its current location.
     /// The default behavior for this is to return true.
-    virtual bool movable() const;
+    virtual bool is_movable() const;
 
     /// Return whether or not this thing can be activated by this Entity.
     /// The default behavior for this is to return false.

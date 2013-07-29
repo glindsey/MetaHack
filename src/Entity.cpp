@@ -1173,7 +1173,7 @@ bool Entity::drop(ThingId thing_id, unsigned int& action_time)
   {
   case ActionResult::Success:
     {
-      if (thing.movable())
+      if (thing.is_movable())
       {
         if (entity_location.can_contain(thing))
         {
@@ -1189,7 +1189,7 @@ bool Entity::drop(ThingId thing_id, unsigned int& action_time)
             else
             {
               MAJOR_ERROR("Could not move Thing even though "
-                          "can_drop returned Success");
+                          "is_movable returned Success");
               break;
             }
           }
@@ -1537,7 +1537,7 @@ bool Entity::pick_up(ThingId thing_id, unsigned int& action_time)
   switch (pick_up_try)
   {
     case ActionResult::Success:
-      if (thing.movable())
+      if (thing.is_movable())
       {
         if (thing.perform_action_picked_up_by(*this))
         {
@@ -1551,7 +1551,7 @@ bool Entity::pick_up(ThingId thing_id, unsigned int& action_time)
           else // could not add to inventory
           {
             MAJOR_ERROR("Could not move Thing even though "
-                        "can_pick_up returned Success");
+                        "is_movable returned Success");
             break;
           }
         }
@@ -2000,7 +2000,7 @@ bool Entity::toss(ThingId thing_id, Direction& direction,
   case ActionResult::Success:
     {
       Container& new_location = TF.get_container(this->get_location_id());
-      if (thing.movable())
+      if (thing.is_movable())
       {
         if (thing.perform_action_thrown_by(*this, direction))
         {
@@ -2016,7 +2016,7 @@ bool Entity::toss(ThingId thing_id, Direction& direction,
           else
           {
             MAJOR_ERROR("Could not move Thing even though "
-                        "movable returned Success");
+                        "is_movable returned Success");
           }
         }
       }

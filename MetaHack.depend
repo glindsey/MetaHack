@@ -2939,7 +2939,7 @@
 1363024906 source:c:\dropbox\projects\metahack\src\renderable.cpp
 	"Renderable.h"
 
-1375122362 source:c:\dropbox\projects\metahack\src\entity.cpp
+1375123058 source:c:\dropbox\projects\metahack\src\entity.cpp
 	"Entity.h"
 	<algorithm>
 	<cmath>
@@ -2973,7 +2973,7 @@
 	<boost/dynamic_bitset.hpp>
 	<set>
 
-1375121548 c:\dropbox\projects\metahack\include\thing.h
+1375123011 c:\dropbox\projects\metahack\include\thing.h
 	"ActionResult.h"
 	"BodyPart.h"
 	"Direction.h"

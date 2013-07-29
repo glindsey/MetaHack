@@ -399,7 +399,7 @@ bool Thing::move_into(Container& new_location)
 {
   Container& old_location = TF.get_container(this->get_location_id());
 
-  if (movable())
+  if (is_movable())
   {
     if (new_location.can_contain(*this))
     {
@@ -415,7 +415,7 @@ bool Thing::move_into(Container& new_location)
   return false;
 }
 
-bool Thing::movable() const
+bool Thing::is_movable() const
 {
   return true;
 }
