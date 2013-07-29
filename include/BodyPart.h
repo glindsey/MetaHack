@@ -3,7 +3,7 @@
 
 #include <string>
 
-// Enum class representing body parts or their analogous equivalents.
+/// Enum class representing body parts or their analogous equivalents.
 enum class BodyPart
 {
   Body,
@@ -21,6 +21,19 @@ enum class BodyPart
   Foot,
   Wing,
   Count
+};
+
+/// Struct identifying a place that an item is worn.
+struct WearLocation
+{
+  WearLocation()
+  {
+    part = BodyPart::Count;
+    number = 0;
+  }
+
+  BodyPart part;
+  unsigned int number;
 };
 
 #endif // BODYPART_H_INCLUDED

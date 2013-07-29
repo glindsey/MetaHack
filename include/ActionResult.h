@@ -4,6 +4,8 @@
 // Enum representing possible results from an action.
 enum class ActionResult
 {
+  FailureItemNotEquippable    = -17,
+  FailureItemNotEquipped      = -16,
   FailureItemWielded          = -15,
   FailureItemEquipped         = -14,
   FailureNotEnoughHands       = -13,

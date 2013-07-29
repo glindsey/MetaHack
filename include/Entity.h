@@ -146,6 +146,17 @@ class Entity :
     /// @return true if the Thing is wielded by the Entity.
     bool is_wielding(ThingId thing_id, unsigned int& number_ref);
 
+    /// Return whether a Thing is equipped (worn) by this Entity.
+    /// @param[in] thing_id Thing to check
+    /// @return true if the Thing is being worn.
+    bool has_equipped(ThingId thing_id);
+
+    /// Return whether a Thing is being worn by this Entity.
+    /// @param[in] thing_id Thing to check
+    /// @param[out] location of the worn Thing, if worn
+    /// @return true if the Thing is being worn.
+    bool has_equipped(ThingId thing_id, WearLocation& location);
+
     /// Return whether a Thing is within reach of the Entity.
     /// @param[in] thing_id Thing to check
     /// @return true if the Thing is in the Entity's inventory or is at the
@@ -276,10 +287,16 @@ class Entity :
     bool toss(ThingId thing_id, Direction& direction,
               unsigned int& action_time);
 
-    virtual ActionResult can_wear(ThingId thing_id, unsigned int& action_time);
+    virtual ActionResult can_deequip(ThingId thing_id,
+                                     unsigned int& action_time);
 
-    /// Attempt to wear a thing.
-    bool wear(ThingId thing_id, unsigned int& action_time);
+    /// Attempt to de-equip (remove) a thing.
+    bool deequip(ThingId thing_id, unsigned int& action_time);
+
+    virtual ActionResult can_equip(ThingId thing_id, unsigned int& action_time);
+
+    /// Attempt to equip (wear) a thing.
+    bool equip(ThingId thing_id, unsigned int& action_time);
 
     virtual ActionResult can_wield(ThingId thing_id,
                                    unsigned int hand,

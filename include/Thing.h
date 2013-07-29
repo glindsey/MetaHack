@@ -2,6 +2,7 @@
 #define THING_H
 
 #include "ActionResult.h"
+#include "BodyPart.h"
 #include "Direction.h"
 #include "IsType.h"
 #include "MapId.h"
@@ -201,6 +202,10 @@ class Thing
     /// The default behavior for this is to return false.
     virtual bool miscible_with(Thing const& thing) const;
 
+    /// Return the body part this thing is equippable on.
+    /// If thing is not equippable, return BodyPart::Count.
+    virtual BodyPart equippable_on() const;
+
     /// Process this Thing for a single tick.
     /// By default, does nothing and returns true.
     /// The function returns false to indicate to its caller that it no longer
@@ -259,11 +264,6 @@ class Thing
     /// The default behavior is to do nothing and return Failure.
     ActionResult perform_action_read_by(Entity& entity);
 
-    /// Perform an action when this thing is de-equipped (taken off).
-    /// If this function returns false, the action is aborted.
-    /// The default behavior is to do nothing and return true.
-    bool perform_action_deequipped_from(Thing& thing);
-
     /// Perform an action when this thing hits an entity.
     /// This action executes when the thing is wielded by an entity, and an
     /// attack successfully hits its target.  It is a side-effect in addition
@@ -277,10 +277,15 @@ class Thing
     /// The default behavior is to do nothing and return true.
     bool perform_action_thrown_by(Entity& entity, Direction direction);
 
+    /// Perform an action when this thing is de-equipped (taken off).
+    /// If this function returns false, the action is aborted.
+    /// The default behavior is to do nothing and return true.
+    bool perform_action_deequipped_by(Entity& thing, WearLocation& location);
+
     /// Perform an action when this thing is equipped.
     /// If this function returns false, the action is aborted.
     /// The default behavior is to do nothing and return false.
-    bool perform_action_equipped_onto(Thing& thing);
+    bool perform_action_equipped_by(Entity& entity, WearLocation& location);
 
     /// Perform an action when this thing is unwielded.
     /// If this function returns false, the action is aborted.
@@ -340,10 +345,12 @@ class Thing
     virtual bool _perform_action_put_into(Thing& container);
     virtual bool _perform_action_take_out();
     virtual ActionResult _perform_action_read_by(Entity& entity);
-    virtual bool _perform_action_deequipped_from(Thing& thing);
     virtual void _perform_action_attack_hits(Entity& entity);
     virtual bool _perform_action_thrown_by(Entity& entity, Direction direction);
-    virtual bool _perform_action_equipped_onto(Thing& thing);
+    virtual bool _perform_action_deequipped_by(Entity& entity,
+                                               WearLocation& location);
+    virtual bool _perform_action_equipped_by(Entity& entity,
+                                             WearLocation& location);
     virtual bool _perform_action_unwielded_by(Entity& entity);
     virtual bool _perform_action_wielded_by(Entity& entity);
     virtual bool _perform_action_fired_by(Entity& entity, Direction direction);

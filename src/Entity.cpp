@@ -60,6 +60,9 @@ struct Entity::Impl
   /// Map of items wielded, by hand number.
   std::map<unsigned int, ThingId> wielded_items_by_hand;
 
+  /// Map of things worn, by ThingId.
+  std::map<ThingId, WearLocation> equipped_items_by_thing_id;
+
   bool is_wielding_thing(ThingId thing_id, unsigned int& hand)
   {
     if (wielded_items_by_thing_id.count(thing_id) == 0)
@@ -82,6 +85,19 @@ struct Entity::Impl
     else
     {
       thing_id = wielded_items_by_hand[hand];
+      return true;
+    }
+  }
+
+  bool is_wearing_thing(ThingId thing_id, WearLocation& location)
+  {
+    if (equipped_items_by_thing_id.count(thing_id) == 0)
+    {
+      return false;
+    }
+    else
+    {
+      location = equipped_items_by_thing_id[thing_id];
       return true;
     }
   }
@@ -122,6 +138,23 @@ struct Entity::Impl
     }
   }
 
+  void equip(ThingId thing_id, WearLocation location)
+  {
+    equipped_items_by_thing_id[thing_id] = location;
+  }
+
+  bool deequip(ThingId thing_id)
+  {
+    if (equipped_items_by_thing_id.count(thing_id) == 0)
+    {
+      return false;
+    }
+    else
+    {
+      equipped_items_by_thing_id.erase(thing_id);
+      return true;
+    }
+  }
 };
 
 Entity::Entity() :
@@ -579,8 +612,8 @@ void Entity::find_seen_tiles()
     {
       lastId = ourId;
       Map& game_map = MF.get(ourId);
-      sf::Vector2i mapSize = game_map.get_size();
-      impl->tile_seen.resize(mapSize.x * mapSize.y);
+      sf::Vector2i map_size = game_map.get_size();
+      impl->tile_seen.resize(map_size.x * map_size.y);
     }
 
     impl->tile_seen.reset();
@@ -965,6 +998,19 @@ bool Entity::is_wielding(ThingId thing_id, unsigned int& hand)
   return wielding;
 }
 
+bool Entity::has_equipped(ThingId thing_id)
+{
+  WearLocation dummy;
+  return has_equipped(thing_id, dummy);
+}
+
+bool Entity::has_equipped(ThingId thing_id, WearLocation& location)
+{
+  bool wearing = impl->is_wearing_thing(thing_id, location);
+
+  return wearing;
+}
+
 bool Entity::can_reach(ThingId thing_id)
 {
   // Check if it's at our location.
@@ -1204,6 +1250,9 @@ bool Entity::drop(ThingId thing_id, unsigned int& action_time)
 
   case ActionResult::FailureItemEquipped:
     {
+      message = _YOU_TRY_ + " to drop " + thing.get_name() + ".";
+      the_message_log.add(message);
+
       message = _YOU_ + " cannot drop something that is currently being worn.";
       the_message_log.add(message);
     }
@@ -1211,6 +1260,9 @@ bool Entity::drop(ThingId thing_id, unsigned int& action_time)
 
   case ActionResult::FailureItemWielded:
     {
+      message = _YOU_TRY_ + " to drop " + thing.get_name() + ".";
+      the_message_log.add(message);
+
       /// @todo Perhaps automatically try to unwield the item before dropping?
       message = _YOU_ + " cannot drop something that is currently being wielded.";
       the_message_log.add(message);
@@ -1251,6 +1303,9 @@ bool Entity::eat(ThingId thing_id, unsigned int& action_time)
 
   ActionResult eat_try = this->can_eat(thing_id, action_time);
 
+  message = _YOU_TRY_ + " to eat " + thing.get_name() + ".";
+  the_message_log.add(message);
+
   switch (eat_try)
   {
   case ActionResult::Success:
@@ -1263,9 +1318,6 @@ bool Entity::eat(ThingId thing_id, unsigned int& action_time)
     }
     else
     {
-      message = _YOU_TRY_ + " to eat " + thing.get_name() + ".";
-      the_message_log.add(message);
-
       message = _YOU_ + " can't eat that!";
       the_message_log.add(message);
     }
@@ -1274,17 +1326,13 @@ bool Entity::eat(ThingId thing_id, unsigned int& action_time)
   case ActionResult::FailureSelfReference:
     if (this->get_id() == TF.get_player_id())
     {
-      message = _YOU_TRY_ + " to eat " + thing.get_name() + ".";
-      the_message_log.add(message);
-
       /// @todo When eating self, special message if we're a liquid-based organism.
       message = "But you really aren't that tasty, so you stop.";
       the_message_log.add(message);
     }
     else
     {
-      message = _YOU_TRY_ + " to eat " + _YOURSELF_ +
-                ", which seriously shouldn't happen.";
+      message = "That seriously shouldn't happen!";
       the_message_log.add(message);
 
       MINOR_ERROR("Non-player Entity tried to eat self!?");
@@ -1367,38 +1415,38 @@ bool Entity::move(Direction direction, bool turn, unsigned int& action_time)
     }
     else
     {
-      bool moveToNewSquare = true;
+      bool move_to_new_square = true;
       if (turn)
       {
         switch (direction)
         {
         case Direction::North:
-          moveToNewSquare = (impl->direction == Direction::North);
+          move_to_new_square = (impl->direction == Direction::North);
           break;
         case Direction::Northeast:
-          moveToNewSquare = ((impl->direction == Direction::North) ||
-                             (impl->direction == Direction::East));
+          move_to_new_square = ((impl->direction == Direction::North) ||
+                                (impl->direction == Direction::East));
           break;
         case Direction::East:
-          moveToNewSquare = (impl->direction == Direction::East);
+          move_to_new_square = (impl->direction == Direction::East);
           break;
         case Direction::Southeast:
-          moveToNewSquare = ((impl->direction == Direction::South) ||
-                             (impl->direction == Direction::East));
+          move_to_new_square = ((impl->direction == Direction::South) ||
+                                (impl->direction == Direction::East));
           break;
         case Direction::South:
-          moveToNewSquare = (impl->direction == Direction::South);
+          move_to_new_square = (impl->direction == Direction::South);
           break;
         case Direction::Southwest:
-          moveToNewSquare = ((impl->direction == Direction::South) ||
-                             (impl->direction == Direction::West));
+          move_to_new_square = ((impl->direction == Direction::South) ||
+                                (impl->direction == Direction::West));
           break;
         case Direction::West:
-          moveToNewSquare = (impl->direction == Direction::West);
+          move_to_new_square = (impl->direction == Direction::West);
           break;
         case Direction::Northwest:
-          moveToNewSquare = ((impl->direction == Direction::North) ||
-                             (impl->direction == Direction::West));
+          move_to_new_square = ((impl->direction == Direction::North) ||
+                                (impl->direction == Direction::West));
           break;
         default:
           /// This should not happen.
@@ -1409,41 +1457,41 @@ bool Entity::move(Direction direction, bool turn, unsigned int& action_time)
         impl->direction = update_direction(impl->direction, direction);
       }
 
-      if (moveToNewSquare)
+      if (move_to_new_square)
       {
         // Figure out our target location.
         MapTile& target_tile = TF.get_tile(get_location_id());
         sf::Vector2i coords = target_tile.get_coords();
-        int xOffset = get_x_offset(direction);
-        int yOffset = get_y_offset(direction);
-        int xNew = coords.x + xOffset;
-        int yNew = coords.y + yOffset;
-        Map& currentMap = MF.get(target_tile.get_map_id());
-        sf::Vector2i mapSize = currentMap.get_size();
+        int x_offset = get_x_offset(direction);
+        int y_offset = get_y_offset(direction);
+        int x_new = coords.x + x_offset;
+        int y_new = coords.y + y_offset;
+        Map& current_map = MF.get(target_tile.get_map_id());
+        sf::Vector2i map_size = current_map.get_size();
 
         // Check boundaries.
-        if ((xNew < 0) || (yNew < 0) ||
-            (xNew >= mapSize.x) || (yNew >= mapSize.y))
+        if ((x_new < 0) || (y_new < 0) ||
+            (x_new >= map_size.x) || (y_new >= map_size.y))
         {
           message = _YOU_ + " can't move there; it is out of bounds!";
           the_message_log.add(message);
           return false;
         }
 
-        MapTile& newTile = currentMap.get_tile(xNew, yNew);
-        ThingId newTileId = currentMap.get_tile_id(xNew, yNew);
+        MapTile& new_tile = current_map.get_tile(x_new, y_new);
+        ThingId new_tile_id = current_map.get_tile_id(x_new, y_new);
 
-        if (newTile.can_be_traversed_by(*this))
+        if (new_tile.can_be_traversed_by(*this))
         {
-          return move_into(newTileId);
+          return move_into(new_tile_id);
         }
         else
         {
-          message = _YOU_ARE_ + " stopped by " + newTile.get_name() + ".";
+          message = _YOU_ARE_ + " stopped by " + new_tile.get_name() + ".";
           the_message_log.add(message);
           return false;
         }
-      } // end if (moveToNewSquare)
+      } // end if (move_to_new_square)
       else
       {
         return true;
@@ -2019,7 +2067,76 @@ bool Entity::toss(ThingId thing_id, Direction& direction,
   return false;
 }
 
-ActionResult Entity::can_wear(ThingId thing_id, unsigned int& action_time)
+ActionResult Entity::can_deequip(ThingId thing_id, unsigned int& action_time)
+{
+  action_time = 1;
+
+  // Check that it isn't US!
+  if (thing_id == this->get_id())
+  {
+    return ActionResult::FailureSelfReference;
+  }
+
+  // Check that it's already being worn.
+  if (!this->has_equipped(thing_id))
+  {
+    return ActionResult::FailureItemNotEquipped;
+  }
+
+  /// @todo Finish Entity::can_deequip code
+  return ActionResult::Success;
+}
+
+bool Entity::deequip(ThingId thing_id, unsigned int& action_time)
+{
+  std::string message;
+  Thing& thing = TF.get(thing_id);
+  ActionResult deequip_try = this->can_deequip(thing_id, action_time);
+  std::string thing_name = thing.get_name();
+
+  message = _YOU_TRY_ + " to take off " + thing_name;
+  the_message_log.add(message);
+
+  switch (deequip_try)
+  {
+    case ActionResult::Success:
+      {
+        // Get the body part this item is equipped on.
+        WearLocation location;
+        this->has_equipped(thing_id, location);
+
+        if (thing.perform_action_deequipped_by(*this, location))
+        {
+          WearLocation location = impl->equipped_items_by_thing_id[thing_id];
+          impl->deequip(thing_id);
+
+          std::string wear_desc = get_bodypart_description(location.part,
+                                                           location.number);
+          message = _YOU_ARE_ + " no longer wearing " + thing_name +
+                    " on " + _YOUR_ + " " + wear_desc + ".";
+          the_message_log.add(message);
+          return true;
+        }
+      }
+      break;
+
+    case ActionResult::FailureItemNotEquipped:
+      {
+        message = _YOU_ARE_ + " not wearing " + thing_name + ".";
+        the_message_log.add(message);
+        return true;
+      }
+      break;
+
+    default:
+      MINOR_ERROR("Unknown ActionResult %d", deequip_try);
+      break;
+  }
+
+  return false;
+}
+
+ActionResult Entity::can_equip(ThingId thing_id, unsigned int& action_time)
 {
   action_time = 1;
 
@@ -2035,30 +2152,85 @@ ActionResult Entity::can_wear(ThingId thing_id, unsigned int& action_time)
     return ActionResult::FailureThingOutOfReach;
   }
 
-  /// @todo Finish Entity::can_wear code
+  std::string message;
+  Thing& thing = TF.get(thing_id);
+  BodyPart part = thing.equippable_on();
+
+  if (part == BodyPart::Count)
+  {
+    return ActionResult::FailureItemNotEquippable;
+  }
+  else
+  {
+    /// @todo Check that entity has free body part(s) to equip item on.
+  }
+
+  /// @todo Finish Entity::can_equip code
   return ActionResult::Success;
 }
 
-bool Entity::wear(ThingId thing_id, unsigned int& action_time)
+bool Entity::equip(ThingId thing_id, unsigned int& action_time)
 {
   std::string message;
   Thing& thing = TF.get(thing_id);
-  ActionResult wear_try = this->can_wear(thing_id, action_time);
+  ActionResult equip_try = this->can_equip(thing_id, action_time);
+  std::string thing_name = thing.get_name();
 
-  switch (wear_try)
+  switch (equip_try)
   {
     case ActionResult::Success:
       {
-        if (thing.perform_action_equipped_onto(*this))
+        WearLocation location;
+
+        if (thing.perform_action_equipped_by(*this, location))
         {
-          /// @todo Implement wearing items
+          impl->equip(thing_id, location);
+          std::string wear_desc = get_bodypart_description(location.part,
+                                                           location.number);
+          message = _YOU_ARE_ + " now wearing " + thing_name +
+                    " on " + _YOUR_ + " " + wear_desc + ".";
+          the_message_log.add(message);
           return true;
         }
       }
       break;
 
+    case ActionResult::FailureSelfReference:
+      if (TF.get_player_id() == this->get_id())
+      {
+        message = "To equip yourself, choose what you want to equip first.";
+      }
+      else
+      {
+        message = _YOU_TRY_ + " to take " + _YOURSELF_ +
+                  "out, which seriously shouldn't happen.";
+        MINOR_ERROR("Non-player Entity tried to equip self!?");
+      }
+      the_message_log.add(message);
+      break;
+
+    case ActionResult::FailureThingOutOfReach:
+      {
+        message = _YOU_TRY_ + " to equip " + thing_name + ".";
+        the_message_log.add(message);
+
+        message = _YOU_ + " cannot reach " + thing_name + ".";
+        the_message_log.add(message);
+      }
+      break;
+
+    case ActionResult::FailureItemNotEquippable:
+      {
+        message = _YOU_TRY_ + " to equip " + thing_name + ".";
+        the_message_log.add(message);
+
+        message = thing_name + " is not an equippable item.";
+        the_message_log.add(message);
+      }
+      break;
+
     default:
-      MINOR_ERROR("Unknown ActionResult %d", wear_try);
+      MINOR_ERROR("Unknown ActionResult %d", equip_try);
       break;
   }
 
@@ -2094,6 +2266,7 @@ bool Entity::wield(ThingId thing_id,
   std::string bodypart_desc =
     this->get_bodypart_description(BodyPart::Hand, hand);
   Thing& thing = TF.get(thing_id);
+  std::string thing_name = thing.get_name();
 
   // First, check if we're already wielding something.
   ThingId wielded_id;
@@ -2102,7 +2275,7 @@ bool Entity::wield(ThingId thing_id,
   // Now, check if the thing we're already wielding is THIS thing.
   if (wielded_id == thing_id)
   {
-    message = _YOU_ARE_ + " already wielding " + thing.get_name() + " with " +
+    message = _YOU_ARE_ + " already wielding " + thing_name + " with " +
               _YOUR_ + " " + bodypart_desc + ".";
     the_message_log.add(message);
     return true;
@@ -2139,7 +2312,6 @@ bool Entity::wield(ThingId thing_id,
       if (thing.perform_action_wielded_by(*this))
       {
         impl->wield(thing_id, hand);
-        std::string thing_name = thing.get_name();
         message = _YOU_ARE_ + " now wielding " + thing_name +
                   " with " + _YOUR_ + " " + bodypart_desc + ".";
         the_message_log.add(message);
@@ -2157,15 +2329,24 @@ bool Entity::wield(ThingId thing_id,
     }
     break;
 
+  case ActionResult::FailureThingOutOfReach:
+    {
+      message = _YOU_TRY_ + " to wield " + thing_name + ".";
+      the_message_log.add(message);
+
+      message = _YOU_ + " cannot reach " + thing_name + ".";
+      the_message_log.add(message);
+    }
+    break;
+
   case ActionResult::FailureNotEnoughHands:
     {
-      message = _YOU_TRY_ + " to wield " + thing.get_name();
+      message = _YOU_TRY_ + " to wield " + thing_name;
       the_message_log.add(message);
 
       message = _YOU_ + choose_verb(" don't", " doesn't") +
                 " have enough free " +
-                this->get_bodypart_plural(BodyPart::Hand) +
-                " to wield " + thing.get_indef_name() + ".";
+                this->get_bodypart_plural(BodyPart::Hand) + ".";
       the_message_log.add(message);
     }
     break;

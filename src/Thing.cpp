@@ -445,6 +445,11 @@ bool Thing::miscible_with(Thing const& thing) const
   return false;
 }
 
+BodyPart Thing::equippable_on() const
+{
+  return BodyPart::Count;
+}
+
 bool Thing::do_process()
 {
   return true;
@@ -501,11 +506,6 @@ ActionResult Thing::perform_action_read_by(Entity& entity)
   return _perform_action_read_by(entity);
 }
 
-bool Thing::perform_action_deequipped_from(Thing& thing)
-{
-  return _perform_action_deequipped_from(thing);
-}
-
 void Thing::perform_action_attack_hits(Entity& entity)
 {
   _perform_action_attack_hits(entity);
@@ -516,9 +516,44 @@ bool Thing::perform_action_thrown_by(Entity& entity, Direction direction)
   return _perform_action_thrown_by(entity, direction);
 }
 
-bool Thing::perform_action_equipped_onto(Thing& thing)
+bool Thing::perform_action_deequipped_by(Entity& entity, WearLocation& location)
 {
-  return _perform_action_equipped_onto(thing);
+  if (impl->magic_locked == true)
+  {
+    std::string message;
+    message = entity.get_name() + " cannot take off " + this->get_name() +
+              "; it is magically welded onto " +
+              entity.get_possessive_adjective() + " " +
+              entity.get_bodypart_description(location.part,
+                                              location.number) + "!";
+    the_message_log.add(message);
+    return false;
+  }
+  else
+  {
+    return _perform_action_deequipped_by(entity, location);
+  }
+}
+
+bool Thing::perform_action_equipped_by(Entity& entity, WearLocation& location)
+{
+  bool subclass_result = _perform_action_equipped_by(entity, location);
+
+  if (subclass_result == true)
+  {
+    if (impl->magic_autolocking == true)
+    {
+        impl->magic_locked = true;
+        std::string message;
+        message = this->get_name() + " magically welds itself onto " +
+                  entity.get_possessive() + " " +
+                  entity.get_bodypart_description(location.part,
+                                                  location.number) + "!";
+        the_message_log.add(message);
+    }
+  }
+
+  return subclass_result;
 }
 
 bool Thing::perform_action_unwielded_by(Entity& entity)
@@ -628,11 +663,6 @@ ActionResult Thing::_perform_action_read_by(Entity& entity)
   return ActionResult::Failure;
 }
 
-bool Thing::_perform_action_deequipped_from(Thing& thing)
-{
-  return true;
-}
-
 void Thing::_perform_action_attack_hits(Entity& entity)
 {
 }
@@ -642,7 +672,13 @@ bool Thing::_perform_action_thrown_by(Entity& thing, Direction direction)
   return true;
 }
 
-bool Thing::_perform_action_equipped_onto(Thing& thing)
+bool Thing::_perform_action_deequipped_by(Entity& entity,
+                                          WearLocation& location)
+{
+  return true;
+}
+
+bool Thing::_perform_action_equipped_by(Entity& entity, WearLocation& location)
 {
   return false;
 }
