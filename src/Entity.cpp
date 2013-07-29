@@ -984,6 +984,22 @@ bool Entity::can_reach(ThingId thing_id)
   return false;
 }
 
+bool Entity::attack(ThingId thing_id, unsigned int& action_time)
+{
+  std::string message;
+  Thing& thing = TF.get(thing_id);
+
+  bool reachable = this->can_reach(thing_id);
+  /// @todo deal with Entities in your Inventory -- WTF do you do THEN?
+
+  if (reachable)
+  {
+    /// @todo Write attack code.
+  }
+
+  return false;
+}
+
 ActionResult Entity::can_drink(ThingId thing_id, unsigned int& action_time)
 {
   action_time = 1;

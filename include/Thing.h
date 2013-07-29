@@ -264,6 +264,14 @@ class Thing
     /// The default behavior is to do nothing and return true.
     bool perform_action_deequipped_from(Thing& thing);
 
+    /// Perform an action when this thing hits an entity.
+    /// This action executes when the thing is wielded by an entity, and an
+    /// attack successfully hits its target.  It is a side-effect in addition
+    /// to the damage done by Entity::attack(entity).
+    /// The default behavior is to do nothing.
+    /// @see Entity::attack
+    void perform_action_attack_hits(Entity& entity);
+
     /// Perform an action when this thing is thrown.
     /// If this function returns false, the action is aborted.
     /// The default behavior is to do nothing and return true.
@@ -333,6 +341,7 @@ class Thing
     virtual bool _perform_action_take_out();
     virtual ActionResult _perform_action_read_by(Entity& entity);
     virtual bool _perform_action_deequipped_from(Thing& thing);
+    virtual void _perform_action_attack_hits(Entity& entity);
     virtual bool _perform_action_thrown_by(Entity& entity, Direction direction);
     virtual bool _perform_action_equipped_onto(Thing& thing);
     virtual bool _perform_action_unwielded_by(Entity& entity);

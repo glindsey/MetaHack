@@ -2960,7 +2960,7 @@
 	"Ordinal.h"
 	"ThingFactory.h"
 
-1375039289 c:\dropbox\projects\metahack\include\entity.h
+1375068922 c:\dropbox\projects\metahack\include\entity.h
 	"Action.h"
 	"AttributeSet.h"
 	"BodyPart.h"
@@ -2973,7 +2973,7 @@
 	<boost/dynamic_bitset.hpp>
 	<set>
 
-1375066148 c:\dropbox\projects\metahack\include\thing.h
+1375068572 c:\dropbox\projects\metahack\include\thing.h
 	"ActionResult.h"
 	"Direction.h"
 	"IsType.h"

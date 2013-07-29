@@ -506,6 +506,11 @@ bool Thing::perform_action_deequipped_from(Thing& thing)
   return _perform_action_deequipped_from(thing);
 }
 
+void Thing::perform_action_attack_hits(Entity& entity)
+{
+  _perform_action_attack_hits(entity);
+}
+
 bool Thing::perform_action_thrown_by(Entity& entity, Direction direction)
 {
   return _perform_action_thrown_by(entity, direction);
@@ -626,6 +631,10 @@ ActionResult Thing::_perform_action_read_by(Entity& entity)
 bool Thing::_perform_action_deequipped_from(Thing& thing)
 {
   return true;
+}
+
+void Thing::_perform_action_attack_hits(Entity& entity)
+{
 }
 
 bool Thing::_perform_action_thrown_by(Entity& thing, Direction direction)

@@ -152,6 +152,13 @@ class Entity :
     ///         same location as the Entity, false otherwise.
     bool can_reach(ThingId thing_id);
 
+    /// Attempt to attack a thing.
+    /// @param[in] thing_id Thing to attack.
+    /// @param[out] action_time The time it took to attack it.
+    /// @return true if attack was performed (whether it succeeded or not),
+    ///         false if it wasn't performed
+    bool attack(ThingId thing_id, unsigned int& action_time);
+
     /// Return whether the Entity can drink the requested Thing.
     /// The base method checks to make sure the Thing is a liquid, but beyond
     /// that, assumes it can drink anything.
