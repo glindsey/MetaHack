@@ -53,32 +53,27 @@ std::string Aggregate::get_name() const
 
   std::string name;
   Container& owner = TF.get_container(get_owner_id());
+  bool is_owned = owner.is_entity();
+  unsigned int quantity = this->get_quantity();
 
-  // If the Thing has a proper name, use that.
-  if (!get_proper_name().empty())
+  if ((quantity == 1) && (is_owned))
   {
-    if (owner.is_entity())
-    {
-      name = owner.get_possessive() + " ";
-    }
-
-    name += get_proper_name();
+    name = owner.get_possessive() + " " + get_description();
   }
-  else
+  else if ((quantity == 1) && (!(is_owned)))
   {
-    if (owner.is_entity())
-    {
-      name = owner.get_possessive() + " ";
-    }
-    else if (get_quantity() == 1)
-    {
-      name = "the " + get_description();
-    }
-    else
-    {
-      name = boost::lexical_cast<std::string>(get_quantity()) + " " +
-             get_plural();
-    }
+    name = "the " + get_description();
+  }
+  else if ((quantity > 1) && (is_owned))
+  {
+    name = owner.get_possessive() + " " +
+           boost::lexical_cast<std::string>(get_quantity()) + " " +
+           get_plural();
+  }
+  else if ((quantity > 1) && (!is_owned))
+  {
+    name = boost::lexical_cast<std::string>(get_quantity()) + " " +
+           get_plural();
   }
 
   return name;
@@ -95,22 +90,15 @@ std::string Aggregate::get_indef_name() const
   std::string name;
 
   // If the Thing has a proper name, use that.
-  if (!get_proper_name().empty())
+  if (get_quantity() == 1)
   {
-    name = get_proper_name();
+    std::string description = get_description();
+    name = getIndefArt(description) + " " + description;
   }
   else
   {
-    if (get_quantity() == 1)
-    {
-      std::string description = get_description();
-      name = getIndefArt(description) + " " + description;
-    }
-    else
-    {
-      name = boost::lexical_cast<std::string>(get_quantity()) + " " +
-            get_plural();
-    }
+    name = boost::lexical_cast<std::string>(get_quantity()) + " " +
+          get_plural();
   }
 
   return name;

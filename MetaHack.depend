@@ -448,7 +448,7 @@
 	"ErrorHandler.h"
 	<cstdlib>
 
-1374854156 c:\dropbox\projects\metahack\include\errorhandler.h
+1375063615 c:\dropbox\projects\metahack\include\errorhandler.h
 	<boost/noncopyable.hpp>
 	<cstdio>
 	<memory>
@@ -2904,7 +2904,7 @@
 	<memory>
 	"State.h"
 
-1374856707 source:c:\dropbox\projects\metahack\src\appstategamemode.cpp
+1375037529 source:c:\dropbox\projects\metahack\src\appstategamemode.cpp
 	"AppStateGameMode.h"
 	<memory>
 	<set>
@@ -2939,7 +2939,7 @@
 1363024906 source:c:\dropbox\projects\metahack\src\renderable.cpp
 	"Renderable.h"
 
-1374857681 source:c:\dropbox\projects\metahack\src\entity.cpp
+1375067412 source:c:\dropbox\projects\metahack\src\entity.cpp
 	"Entity.h"
 	<algorithm>
 	<cmath>
@@ -2960,7 +2960,7 @@
 	"Ordinal.h"
 	"ThingFactory.h"
 
-1374857476 c:\dropbox\projects\metahack\include\entity.h
+1375039289 c:\dropbox\projects\metahack\include\entity.h
 	"Action.h"
 	"AttributeSet.h"
 	"BodyPart.h"
@@ -2973,7 +2973,7 @@
 	<boost/dynamic_bitset.hpp>
 	<set>
 
-1374700322 c:\dropbox\projects\metahack\include\thing.h
+1375066148 c:\dropbox\projects\metahack\include\thing.h
 	"ActionResult.h"
 	"Direction.h"
 	"IsType.h"
@@ -2988,7 +2988,7 @@
 
 1363288259 c:\dropbox\projects\metahack\include\playfield.h
 
-1374700933 source:c:\dropbox\projects\metahack\src\thing.cpp
+1375066369 source:c:\dropbox\projects\metahack\src\thing.cpp
 	"Thing.h"
 	<iomanip>
 	<sstream>
@@ -3015,7 +3015,7 @@
 	"ThingFactory.h"
 	"ThingId.h"
 
-1373403105 c:\dropbox\projects\metahack\include\inventory.h
+1375041470 c:\dropbox\projects\metahack\include\inventory.h
 	<map>
 	<memory>
 	"InventorySlot.h"
@@ -3930,7 +3930,7 @@
 	"Aggregate.h"
 	"Direction.h"
 
-1374294900 source:c:\dropbox\projects\metahack\src\inventoryarea.cpp
+1375067685 source:c:\dropbox\projects\metahack\src\inventoryarea.cpp
 	"InventoryArea.h"
 	"App.h"
 	"ConfigSettings.h"
@@ -5571,22 +5571,23 @@
 	<memory>
 	"EventHandler.h"
 
-1374264243 c:\dropbox\projects\metahack\include\container.h
+1375066169 c:\dropbox\projects\metahack\include\container.h
 	"Thing.h"
 
-1374266133 source:c:\dropbox\projects\metahack\src\container.cpp
+1375066450 source:c:\dropbox\projects\metahack\src\container.cpp
 	"Container.h"
 	<vector>
 	"Inventory.h"
+	"ThingFactory.h"
 
-1374293121 source:c:\dropbox\projects\metahack\src\aggregate.cpp
+1375065669 source:c:\dropbox\projects\metahack\src\aggregate.cpp
 	"Aggregate.h"
 	<boost/lexical_cast.hpp>
 	"Container.h"
 	"Gender.h"
 	"ThingFactory.h"
 
-1374293085 c:\dropbox\projects\metahack\include\aggregate.h
+1375065915 c:\dropbox\projects\metahack\include\aggregate.h
 	"Thing.h"
 	<memory>
 

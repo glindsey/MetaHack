@@ -183,8 +183,6 @@ bool InventoryArea::render(sf::RenderTarget& target, int frame)
   float text_coord_x = text_offset_x;
   float text_coord_y = text_offset_y + (line_spacing_y * 1.5);
 
-  sf::Text render_text;
-
   Inventory* inventory_ptr = &(TF.get_limbo().get_inventory());
 
   switch (impl->inventory_type)
@@ -209,6 +207,7 @@ bool InventoryArea::render(sf::RenderTarget& target, int frame)
     InventorySlot slot = (*iter).first;
     ThingId id = (*iter).second;
     unsigned int slot_number = static_cast<unsigned int>(slot);
+    sf::Text render_text;
 
     std::string item_string;
     char item_char;

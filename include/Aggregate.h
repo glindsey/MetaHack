@@ -11,6 +11,10 @@
 /// both (because the members of the Aggregate must be identical, and having
 /// individual inventories precludes this).
 ///
+/// The Aggregate class is designed for small, numerous things: coins, pebbles,
+/// candles, darts, arrows, et cetera, which would otherwise be cumbersome to
+/// list in an inventory.
+///
 /// In practice I can't think of a reason for a Thing to be neither an
 /// Aggregate nor a Container, unless you wanted to absolutely preclude the
 /// possibility of a certain item being consolidated into aggregate groups.

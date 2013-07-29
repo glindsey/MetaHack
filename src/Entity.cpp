@@ -54,14 +54,79 @@ struct Entity::Impl
   /// Queue of actions to be performed.
   std::deque<Action> actions;
 
-  /// Vector of items wielded.
-  std::vector<ThingId> wielded_items;
+  /// Map of items wielded, by ThingId.
+  std::map<ThingId, unsigned int> wielded_items_by_thing_id;
+
+  /// Map of items wielded, by hand number.
+  std::map<unsigned int, ThingId> wielded_items_by_hand;
+
+  bool is_wielding_thing(ThingId thing_id, unsigned int& hand)
+  {
+    if (wielded_items_by_thing_id.count(thing_id) == 0)
+    {
+      return false;
+    }
+    else
+    {
+      hand = wielded_items_by_thing_id[thing_id];
+      return true;
+    }
+  }
+
+  bool is_wielding_in(unsigned int hand, ThingId& thing_id)
+  {
+    if (wielded_items_by_hand.count(hand) == 0)
+    {
+      return false;
+    }
+    else
+    {
+      thing_id = wielded_items_by_hand[hand];
+      return true;
+    }
+  }
+
+  void wield(ThingId thing_id, unsigned int hand)
+  {
+    wielded_items_by_hand[hand] = thing_id;
+    wielded_items_by_thing_id[thing_id] = hand;
+  }
+
+  bool unwield(ThingId thing_id)
+  {
+    if (wielded_items_by_thing_id.count(thing_id) == 0)
+    {
+      return false;
+    }
+    else
+    {
+      unsigned int hand = wielded_items_by_thing_id[thing_id];
+      wielded_items_by_thing_id.erase(thing_id);
+      wielded_items_by_hand.erase(hand);
+      return true;
+    }
+  }
+
+  bool unwield(unsigned int hand)
+  {
+    if (wielded_items_by_hand.count(hand) == 0)
+    {
+      return false;
+    }
+    else
+    {
+      ThingId thing_id = wielded_items_by_hand[hand];
+      wielded_items_by_hand.erase(hand);
+      wielded_items_by_thing_id.erase(thing_id);
+      return true;
+    }
+  }
+
 };
 
 Entity::Entity() :
   Container(), impl(new Impl())
 {
-
 }
 
 Entity::Entity(const Entity& original) :
@@ -887,26 +952,17 @@ bool Entity::do_process()
   return true;
 }
 
-bool Entity::is_wielded(ThingId thing_id)
+bool Entity::is_wielding(ThingId thing_id)
 {
   unsigned int dummy;
-  return is_wielded(thing_id, &dummy);
+  return is_wielding(thing_id, dummy);
 }
 
-bool Entity::is_wielded(ThingId thing_id, unsigned int* number_ptr)
+bool Entity::is_wielding(ThingId thing_id, unsigned int& hand)
 {
-  ASSERT_NOT_NULL(number_ptr);
+  bool wielding = impl->is_wielding_thing(thing_id, hand);
 
-  for (unsigned int number = 0;
-       number < impl->wielded_items.size(); ++number)
-  {
-    if (impl->wielded_items[number] == thing_id)
-    {
-      *number_ptr = number;
-      return true;
-    }
-  }
-  return false;
+  return wielding;
 }
 
 bool Entity::can_reach(ThingId thing_id)
@@ -1033,14 +1089,9 @@ ActionResult Entity::can_drop(ThingId thing_id, unsigned int& action_time)
   }
 
   // Check that we're not wielding the item.
-  for (unsigned int counter = 0;
-       counter < this->get_bodypart_number(BodyPart::Hand);
-       ++counter)
+  if (this->is_wielding(thing_id))
   {
-    if (impl->wielded_items[counter] == thing_id)
-    {
-      return ActionResult::FailureItemWielded;
-    }
+    return ActionResult::FailureItemWielded;
   }
 
   /// @todo Check that we're not wearing the item.
@@ -2010,24 +2061,6 @@ ActionResult Entity::can_wield(ThingId thing_id,
     return ActionResult::SuccessSelfReference;
   }
 
-  // Check if you're already holding it.
-  for (unsigned int check_hand = 0;
-       check_hand < this->get_bodypart_number(BodyPart::Hand);
-       ++check_hand)
-  {
-    if (thing_id == impl->wielded_items[hand])
-    {
-      if (hand == check_hand)
-      {
-        return ActionResult::FailureAlreadyPresent;
-      }
-      else
-      {
-        return ActionResult::SuccessSwapHands;
-      }
-    }
-  }
-
   // Check that it's within reach.
   if (!this->can_reach(thing_id))
   {
@@ -2042,26 +2075,41 @@ bool Entity::wield(ThingId thing_id,
                    unsigned int& action_time)
 {
   std::string message;
+  std::string bodypart_desc =
+    this->get_bodypart_description(BodyPart::Hand, hand);
   Thing& thing = TF.get(thing_id);
 
   // First, check if we're already wielding something.
-  ThingId wielded_id = impl->wielded_items[hand];
+  ThingId wielded_id;
+  bool already_wielding = impl->is_wielding_in(hand, wielded_id);
 
-  bool unwield_success = true;
-  if (wielded_id != TF.limbo_id)
+  // Now, check if the thing we're already wielding is THIS thing.
+  if (wielded_id == thing_id)
   {
-    unwield_success = false;
-    Thing& wielded_thing = TF.get(wielded_id);
-    if (wielded_thing.perform_action_unwielded_by(*this))
-    {
-      impl->wielded_items[hand] = TF.limbo_id;
-      unwield_success = true;
-    }
+    message = _YOU_ARE_ + " already wielding " + thing.get_name() + " with " +
+              _YOUR_ + " " + bodypart_desc + ".";
+    the_message_log.add(message);
+    return true;
   }
-
-  if (!unwield_success)
+  else
   {
-    return false;
+    // Try to unwield the old item.
+    bool unwield_success = true;
+    if (already_wielding)
+    {
+      unwield_success = false;
+      Thing& wielded_thing = TF.get(wielded_id);
+      if (wielded_thing.perform_action_unwielded_by(*this))
+      {
+        impl->unwield(wielded_id);
+        unwield_success = true;
+      }
+    }
+
+    if (!unwield_success)
+    {
+      return false;
+    }
   }
 
   // Try to wield the new item.
@@ -2074,10 +2122,10 @@ bool Entity::wield(ThingId thing_id,
     {
       if (thing.perform_action_wielded_by(*this))
       {
-        impl->wielded_items[hand] = thing_id;
-        message = _YOU_ARE_ + " now wielding " + thing.get_name() +
-                  " with " + _YOUR_ + " " +
-                  this->get_bodypart_description(BodyPart::Hand, hand) + ".";
+        impl->wield(thing_id, hand);
+        std::string thing_name = thing.get_name();
+        message = _YOU_ARE_ + " now wielding " + thing_name +
+                  " with " + _YOUR_ + " " + bodypart_desc + ".";
         the_message_log.add(message);
         return true;
       }
@@ -2086,17 +2134,7 @@ bool Entity::wield(ThingId thing_id,
 
   case ActionResult::SuccessSelfReference:
     {
-      impl->wielded_items[hand] = TF.limbo_id;
-      message = _YOU_ARE_ + "no longer wielding any weapons with " +
-                _YOUR_ + " " +
-                this->get_bodypart_description(BodyPart::Hand, hand) + ".";
-      the_message_log.add(message);
-    }
-    break;
-
-  case ActionResult::FailureAlreadyPresent:
-    {
-      message = _YOU_ARE_ + " already wielding " + thing.get_name() + " with " +
+      message = _YOU_ARE_ + " no longer wielding any weapons with " +
                 _YOUR_ + " " +
                 this->get_bodypart_description(BodyPart::Hand, hand) + ".";
       the_message_log.add(message);

@@ -9,6 +9,18 @@ class Container : public Thing
   public:
     virtual ~Container();
 
+    /// Get the thing's proper name (if any).
+    std::string get_proper_name() const;
+
+    /// Set this thing's proper name.
+    void set_proper_name(std::string name);
+
+    /// Return a string that identifies this thing.
+    virtual std::string get_name() const;
+
+    /// Return a string that identifies this thing, using indefinite articles.
+    virtual std::string get_indef_name() const;
+
     /// Returns a reference to the inventory.
     Inventory& get_inventory();
 

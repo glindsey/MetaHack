@@ -49,12 +49,6 @@ class Thing
     /// Return the MapId this Thing is currently on, or 0 if not on a map.
     MapId get_map_id() const;
 
-    /// Get the thing's proper name (if any).
-    std::string get_proper_name() const;
-
-    /// Set this thing's proper name.
-    void set_proper_name(std::string name);
-
     /// Set this thing's volume.
     void set_single_size(int volume);
 
@@ -80,9 +74,8 @@ class Thing
     bool get_magic_autolocking() const;
 
     /// Return a string that identifies this thing.
-    /// By default, this returns the thing's proper name.  If the thing
-    /// does not have a proper name, it returns "the" and a description
-    /// of the thing, such as "the chair".
+    /// By default, returns "the" and a description of the thing, such as
+    /// "the chair".
     /// If it is carried by the player, it'll return "your (thing)".
     /// If it IS the player, it'll return "you".
     /// Likewise, if it is carried by another Entity it'll return
@@ -90,9 +83,8 @@ class Thing
     virtual std::string get_name() const;
 
     /// Return a string that identifies this thing.
-    /// By default, this returns the thing's proper name.  If the thing
-    /// does not have a proper name, it returns "a" or "an" and a description
-    /// of the thing, such as "a chair" or "an orange".
+    /// By default, returns "a" or "an" and a description of the thing, such as
+    /// "a chair" or "an orange".
     /// If it IS the player, it'll return "you".
     /// Unlike get_name, get_indef_name does NOT check for possession.
     virtual std::string get_indef_name() const;

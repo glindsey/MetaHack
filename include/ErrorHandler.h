@@ -54,7 +54,7 @@
 
 #define ASSERT_CONDITION(condition)                                       \
 {                                                                         \
-  if (condition)                                                          \
+  if (!(condition))                                                       \
   {                                                                       \
     FATAL_ERROR("Assertion failed: \"" #condition "\"");                  \
   }                                                                       \

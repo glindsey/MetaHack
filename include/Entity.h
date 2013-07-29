@@ -137,14 +137,14 @@ class Entity :
     /// This is used by InventoryArea to show wielded status.
     /// @param[in] thing_id Thing to check
     /// @return true if the Thing is wielded by the Entity.
-    bool is_wielded(ThingId thing_id);
+    bool is_wielding(ThingId thing_id);
 
     /// Return whether a Thing is wielded by this Entity.
     /// This is used by InventoryArea to show wielded status.
     /// @param[in] thing_id Thing to check
     /// @param[out] number Hand number it is wielded in.
     /// @return true if the Thing is wielded by the Entity.
-    bool is_wielded(ThingId thing_id, unsigned int* number_ptr);
+    bool is_wielding(ThingId thing_id, unsigned int& number_ref);
 
     /// Return whether a Thing is within reach of the Entity.
     /// @param[in] thing_id Thing to check

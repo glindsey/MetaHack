@@ -788,6 +788,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           break;
 
         // CTRL-W -- wield item
+        case sf::Keyboard::Key::W:
           action.type = Action::Type::Wield;
           action.thing_ids = impl->selected_things;
           player.queue_action(action);

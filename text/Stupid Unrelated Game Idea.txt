@@ -12,6 +12,10 @@ Armed with an endless supply of vaccination missiles, Vax Force must fly through
 Onion Belt
 ===============================================================================
 It was the style, at the time.
-
 I don't know what the hell this would be, honestly.  I just like the idea of a game with this name.
 
+
+Sn8
+===============================================================================
+A Snake-style game, but with eight-directional movement instead of four, and
+with various power-ups and the like that can be picked up.

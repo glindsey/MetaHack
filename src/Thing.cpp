@@ -23,8 +23,6 @@ struct Thing::Impl
   ThingId location_id;
   int physical_size;
   int physical_mass;
-  std::string proper_name;
-  Inventory inventory;
 
   bool magic_autolocking;
   bool magic_locked;
@@ -55,7 +53,6 @@ Thing::Thing(const Thing& original)
 {
   impl->physical_size = original.get_size();
   impl->physical_mass = original.get_mass();
-  impl->proper_name = original.get_proper_name();
   // GSL NOTE: Inventory is NOT copied!
 }
 
@@ -117,16 +114,6 @@ MapId Thing::get_map_id() const
   }
 }
 
-std::string Thing::get_proper_name() const
-{
-  return impl->proper_name;
-}
-
-void Thing::set_proper_name(std::string name)
-{
-  impl->proper_name = name;
-}
-
 void Thing::set_single_size(int s)
 {
   impl->physical_size = s;
@@ -179,28 +166,16 @@ std::string Thing::get_name() const
   Container& owner = TF.get_container(get_owner_id());
 
   // If the Thing has a proper name, use that.
-  if (!get_proper_name().empty())
+  if (owner.is_entity())
   {
-    if (owner.is_entity())
-    {
-      name = owner.get_possessive() + " ";
-    }
-
-    name += get_proper_name();
+    name = owner.get_possessive() + " ";
   }
   else
   {
-    if (owner.is_entity())
-    {
-      name = owner.get_possessive() + " ";
-    }
-    else
-    {
-      name = "the ";
-    }
-
-    name += get_description();
+    name = "the ";
   }
+
+  name += get_description();
 
   return name;
 }
@@ -215,16 +190,8 @@ std::string Thing::get_indef_name() const
 
   std::string name;
 
-  // If the Thing has a proper name, use that.
-  if (!get_proper_name().empty())
-  {
-    name = get_proper_name();
-  }
-  else
-  {
-    std::string description = get_description();
-    name = getIndefArt(description) + " " + description;
-  }
+  std::string description = get_description();
+  name = getIndefArt(description) + " " + description;
 
   return name;
 }
