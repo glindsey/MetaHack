@@ -16,7 +16,6 @@ struct InventoryArea::Impl
   Impl(std::vector<ThingId>& s)
     : focus(false),
       use_capitals(false),
-      font_size(18), ///< @todo move to ConfigSettings
       viewed_container_ptr(nullptr),
       inventory_type(InventoryType::Inside),
       selected_things(s) {}
@@ -28,7 +27,6 @@ struct InventoryArea::Impl
   /// If false it uses lower-case letters.
   bool use_capitals;
 
-  unsigned int font_size;
   sf::IntRect dims;
 
   /// Container whose contents (or surroundings) are currently being viewed.
@@ -163,7 +161,7 @@ EventResult InventoryArea::handle_event(sf::Event& event)
 
 bool InventoryArea::render(sf::RenderTarget& target, int frame)
 {
-  int line_spacing_y = the_default_font.getLineSpacing(impl->font_size);
+  int line_spacing_y = the_default_font.getLineSpacing(Settings.text_default_size);
   int item_spacing_y = 4;
 
   // Text offsets relative to the background rectangle.
@@ -235,7 +233,7 @@ bool InventoryArea::render(sf::RenderTarget& target, int frame)
       snprintf(buf, 4, "[%u]", selection_order);
       item_string.append(buf);
       render_text.setFont(the_default_mono_font);
-      render_text.setCharacterSize(impl->font_size - 3);
+      render_text.setCharacterSize(Settings.text_mono_default_size);
       render_text.setString(item_string);
       render_text.setPosition(text_coord_x + 1, text_coord_y);
       render_text.setColor(fg_color);
@@ -258,7 +256,7 @@ bool InventoryArea::render(sf::RenderTarget& target, int frame)
       item_string.push_back(item_char);
       item_string.push_back(':');
       render_text.setFont(the_default_mono_font);
-      render_text.setCharacterSize(impl->font_size - 3);
+      render_text.setCharacterSize(Settings.text_mono_default_size);
       render_text.setString(item_string);
       render_text.setPosition(text_coord_x + 35, text_coord_y);
       render_text.setColor(fg_color);
@@ -278,7 +276,7 @@ bool InventoryArea::render(sf::RenderTarget& target, int frame)
     item_string.clear();
     item_string = thing.get_indef_name();
     render_text.setFont(the_default_font);
-    render_text.setCharacterSize(impl->font_size);
+    render_text.setCharacterSize(Settings.text_default_size);
     render_text.setString(item_string);
     render_text.setPosition(text_coord_x + 60 + line_spacing_y,
                             text_coord_y + 1);
@@ -321,7 +319,7 @@ bool InventoryArea::render(sf::RenderTarget& target, int frame)
   title_string[0] = toupper(title_string[0]);
   title_text.setString(title_string);
   title_text.setFont(the_default_bold_font);
-  title_text.setCharacterSize(impl->font_size);
+  title_text.setCharacterSize(Settings.text_default_size);
 
   title_rect.setFillColor(Settings.window_bg_color);
   title_rect.setOutlineColor(impl->focus ?
@@ -339,13 +337,9 @@ bool InventoryArea::render(sf::RenderTarget& target, int frame)
                    line_spacing_y - 1, false, frame);
 
 
-  title_text.setColor(Settings.text_shadow_color);
+  title_text.setColor(Settings.text_color);
   title_text.setPosition(sf::Vector2f(text_offset_x + line_spacing_y,
-                                      text_offset_y - 1));
-  impl->area_bg_texture->draw(title_text);
-    title_text.setColor(Settings.text_color);
-  title_text.setPosition(sf::Vector2f(text_offset_x + line_spacing_y + 2,
-                                      text_offset_y + 1));
+                                      text_offset_y));
   impl->area_bg_texture->draw(title_text);
 
   // Render to the texture.

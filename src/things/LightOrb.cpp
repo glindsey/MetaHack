@@ -5,7 +5,7 @@ LightOrb LightOrb::prototype;
 LightOrb::LightOrb() :
   LightSource()
 {
-  set_single_size(2);
+  set_single_mass(2);
 }
 
 LightOrb::~LightOrb() {}

@@ -23,9 +23,6 @@ class Entity :
   public:
     virtual ~Entity();
 
-    /// Return the coordinates of the tile representing the entity.
-    virtual sf::Vector2u get_tile_sheet_coords(int frame) const override;
-
     /// Get the number of game cycles until this Entity can process a new
     /// command.
     int get_busy_counter() const;
@@ -42,12 +39,6 @@ class Entity :
     /// If the entity is the active player, it will return Gender::SecondPerson
     /// instead of whatever gender is set.
     Gender get_gender() const;
-
-    /// Set the direction the entity is facing.
-    void set_facing_direction(Direction d);
-
-    /// Get the direction the entity is facing.
-    Direction get_facing_direction() const;
 
     /// Traverse the line of sight to a map tile, setting visibility
     /// for the tiles between.
@@ -253,11 +244,9 @@ class Entity :
 
     /// Attempt to move in a particular direction.
     /// @param[in] direction Direction to move in
-    /// @param[in] turn If true, turn prior to moving.  If false, continue to
-    ///                 face the same direction.
     /// @param[out] action_time The time it took to move
     /// @return true on success; false if the move was prevented.
-    virtual bool move(Direction direction, bool turn,
+    virtual bool move(Direction direction,
                       unsigned int& action_time);
 
     /// Return whether the Entity can pick up the requested Thing.

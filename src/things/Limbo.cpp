@@ -3,7 +3,6 @@
 Limbo::Limbo() :
   Container()
 {
-  set_single_size(0);
   set_single_mass(0);
 }
 

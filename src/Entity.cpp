@@ -42,9 +42,6 @@ struct Entity::Impl
   /// Gender of this entity.
   Gender gender = Gender::None;
 
-  /// Direction the entity is facing.
-  Direction direction = Direction::South;
-
   /// Entity's memory of map tiles.
   std::vector<MapTileType> memory;
 
@@ -168,20 +165,12 @@ Entity::Entity(const Entity& original) :
   impl->attributes = original.get_attributes();
   impl->busy_counter = original.get_busy_counter();
   impl->gender = original.get_gender();
-  impl->direction = original.get_facing_direction();
-
   // Memory, seen tiles, and actions are not copied over.
 }
 
 Entity::~Entity()
 {
   //dtor
-}
-
-sf::Vector2u Entity::get_tile_sheet_coords(int frame) const
-{
-  int x_pos = get_appropriate_4way_tile(this->get_facing_direction());
-  return sf::Vector2u(x_pos, 3);  // The "unknown directional" tile
 }
 
 int Entity::get_busy_counter() const
@@ -210,16 +199,6 @@ Gender Entity::get_gender() const
   {
     return impl->gender;
   }
-}
-
-void Entity::set_facing_direction(Direction d)
-{
-  impl->direction = d;
-}
-
-Direction Entity::get_facing_direction() const
-{
-  return impl->direction;
 }
 
 bool Entity::can_move(Direction direction)
@@ -867,7 +846,7 @@ bool Entity::do_process()
   switch (action.type)
   {
   case Action::Type::Wait:
-    success = this->move(Direction::Self, false, action_time);
+    success = this->move(Direction::Self, action_time);
     if (success)
     {
       impl->busy_counter += action_time;
@@ -875,7 +854,7 @@ bool Entity::do_process()
     break;
 
   case Action::Type::Move:
-    success = this->move(action.move_info.direction, true, action_time);
+    success = this->move(action.move_info.direction, action_time);
     if (success)
     {
       impl->busy_counter += action_time;
@@ -1373,7 +1352,8 @@ bool Entity::mix(ThingId thing1_id, ThingId thing2_id, unsigned int& action_time
   return false;
 }
 
-bool Entity::move(Direction direction, bool turn, unsigned int& action_time)
+bool Entity::move(Direction new_direction,
+                  unsigned int& action_time)
 {
   /// @todo Update action time based on direction, speed, etc.
 
@@ -1392,21 +1372,21 @@ bool Entity::move(Direction direction, bool turn, unsigned int& action_time)
   else
   {
     // Next: check direction.
-    if (direction == Direction::Self)
+    if (new_direction == Direction::Self)
     {
       message = _YOU_ + " successfully" + choose_verb(" stay", " stays") +
                 " where " + get_subject_pronoun() + _ARE_ + ".";
       the_message_log.add(message);
       return true;
     }
-    else if (direction == Direction::Up)
+    else if (new_direction == Direction::Up)
     {
       /// @todo Write up/down movement code
       message = "Up/down movement is not yet supported!";
       the_message_log.add(message);
       return false;
     }
-    else if (direction == Direction::Down)
+    else if (new_direction == Direction::Down)
     {
       /// @todo Write up/down movement code
       message = "Up/down movement is not yet supported!";
@@ -1415,86 +1395,37 @@ bool Entity::move(Direction direction, bool turn, unsigned int& action_time)
     }
     else
     {
-      bool move_to_new_square = true;
-      if (turn)
-      {
-        switch (direction)
-        {
-        case Direction::North:
-          move_to_new_square = (impl->direction == Direction::North);
-          break;
-        case Direction::Northeast:
-          move_to_new_square = ((impl->direction == Direction::North) ||
-                                (impl->direction == Direction::East));
-          break;
-        case Direction::East:
-          move_to_new_square = (impl->direction == Direction::East);
-          break;
-        case Direction::Southeast:
-          move_to_new_square = ((impl->direction == Direction::South) ||
-                                (impl->direction == Direction::East));
-          break;
-        case Direction::South:
-          move_to_new_square = (impl->direction == Direction::South);
-          break;
-        case Direction::Southwest:
-          move_to_new_square = ((impl->direction == Direction::South) ||
-                                (impl->direction == Direction::West));
-          break;
-        case Direction::West:
-          move_to_new_square = (impl->direction == Direction::West);
-          break;
-        case Direction::Northwest:
-          move_to_new_square = ((impl->direction == Direction::North) ||
-                                (impl->direction == Direction::West));
-          break;
-        default:
-          /// This should not happen.
-          break;
-        }
+      // Figure out our target location.
+      MapTile& target_tile = TF.get_tile(get_location_id());
+      sf::Vector2i coords = target_tile.get_coords();
+      int x_offset = get_x_offset(new_direction);
+      int y_offset = get_y_offset(new_direction);
+      int x_new = coords.x + x_offset;
+      int y_new = coords.y + y_offset;
+      Map& current_map = MF.get(target_tile.get_map_id());
+      sf::Vector2i map_size = current_map.get_size();
 
-        // Update new direction based on old direction.
-        impl->direction = update_direction(impl->direction, direction);
+      // Check boundaries.
+      if ((x_new < 0) || (y_new < 0) ||
+          (x_new >= map_size.x) || (y_new >= map_size.y))
+      {
+        message = _YOU_ + " can't move there; it is out of bounds!";
+        the_message_log.add(message);
+        return false;
       }
 
-      if (move_to_new_square)
+      MapTile& new_tile = current_map.get_tile(x_new, y_new);
+      ThingId new_tile_id = current_map.get_tile_id(x_new, y_new);
+
+      if (new_tile.can_be_traversed_by(*this))
       {
-        // Figure out our target location.
-        MapTile& target_tile = TF.get_tile(get_location_id());
-        sf::Vector2i coords = target_tile.get_coords();
-        int x_offset = get_x_offset(direction);
-        int y_offset = get_y_offset(direction);
-        int x_new = coords.x + x_offset;
-        int y_new = coords.y + y_offset;
-        Map& current_map = MF.get(target_tile.get_map_id());
-        sf::Vector2i map_size = current_map.get_size();
-
-        // Check boundaries.
-        if ((x_new < 0) || (y_new < 0) ||
-            (x_new >= map_size.x) || (y_new >= map_size.y))
-        {
-          message = _YOU_ + " can't move there; it is out of bounds!";
-          the_message_log.add(message);
-          return false;
-        }
-
-        MapTile& new_tile = current_map.get_tile(x_new, y_new);
-        ThingId new_tile_id = current_map.get_tile_id(x_new, y_new);
-
-        if (new_tile.can_be_traversed_by(*this))
-        {
-          return move_into(new_tile_id);
-        }
-        else
-        {
-          message = _YOU_ARE_ + " stopped by " + new_tile.get_name() + ".";
-          the_message_log.add(message);
-          return false;
-        }
-      } // end if (move_to_new_square)
+        return move_into(new_tile_id);
+      }
       else
       {
-        return true;
+        message = _YOU_ARE_ + " stopped by " + new_tile.get_name() + ".";
+        the_message_log.add(message);
+        return false;
       }
     } // end else if (other direction)
   } // end else (on map)

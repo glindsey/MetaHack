@@ -3,6 +3,7 @@
 
 enum class Direction
 {
+  None,
   North,
   Northeast,
   East,

@@ -152,5 +152,5 @@ bool Inventory::is_smaller_than(ThingId a, ThingId b)
   Thing const& thingA = TF.get(a);
   Thing const& thingB = TF.get(b);
 
-  return (thingA.get_size() < thingB.get_size());
+  return (thingA.get_mass() < thingB.get_mass());
 }

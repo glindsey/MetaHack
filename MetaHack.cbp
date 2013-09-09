@@ -62,8 +62,8 @@
 			<Add option="-Wall" />
 			<Add directory="include" />
 			<Add directory="include/things" />
-			<Add directory="../libraries/" />
-			<Add directory="../libraries/SFML/include" />
+			<Add directory="../libraries/boost_1_54_0" />
+			<Add directory="../libraries/SFML-2.1/include" />
 		</Compiler>
 		<Linker>
 			<Add library="mingw32" />
@@ -71,8 +71,8 @@
 			<Add library="gdi32" />
 			<Add library="winmm" />
 			<Add library="dxguid" />
-			<Add directory="../libraries/SFML/build/lib" />
-			<Add directory="../libraries/boost/stage/lib" />
+			<Add directory="../libraries/SFML-2.1/build/lib" />
+			<Add directory="../libraries/boost_1_54_0/boost/stage/lib" />
 		</Linker>
 		<Unit filename="cb.bmp" />
 		<Unit filename="include/Action.h" />
@@ -128,6 +128,7 @@
 		<Unit filename="include/TileSheet.h" />
 		<Unit filename="include/common_enums.h" />
 		<Unit filename="include/things/Biped.h" />
+		<Unit filename="include/things/CoinGold.h" />
 		<Unit filename="include/things/Human.h" />
 		<Unit filename="include/things/LightOrb.h" />
 		<Unit filename="include/things/Limbo.h" />
@@ -176,6 +177,7 @@
 		<Unit filename="src/ThingFactory.cpp" />
 		<Unit filename="src/TileSheet.cpp" />
 		<Unit filename="src/things/Biped.cpp" />
+		<Unit filename="src/things/CoinGold.cpp" />
 		<Unit filename="src/things/Human.cpp" />
 		<Unit filename="src/things/LightOrb.cpp" />
 		<Unit filename="src/things/Limbo.cpp" />

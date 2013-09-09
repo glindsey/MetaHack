@@ -30,9 +30,6 @@ class Aggregate : public Thing
   public:
     virtual ~Aggregate();
 
-    /// Return the aggregate's volume.
-    virtual int get_size() const override final;
-
     /// Return this aggregate's mass.
     virtual int get_mass() const override final;
 
@@ -53,6 +50,12 @@ class Aggregate : public Thing
 
     /// Set the quantity this thing represents.
     void set_quantity(unsigned int quantity);
+
+    /// Attempt to move this Aggregate into a location, by reference.
+    /// @todo If an equivalent Aggregate exists in the new location, combine the
+    ///       two into a single object.
+    virtual bool move_into(Container& location) override final;
+
 
   protected:
     Aggregate();

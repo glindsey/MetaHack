@@ -5,8 +5,7 @@ Biped::~Biped() {}
 
 sf::Vector2u Biped::get_tile_sheet_coords(int frame) const
 {
-  int x_pos = get_appropriate_4way_tile(this->get_facing_direction());
-  return sf::Vector2u(x_pos, 4);
+  return sf::Vector2u(0, 4);
 }
 
 unsigned int Biped::get_bodypart_number(BodyPart part) const

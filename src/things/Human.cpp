@@ -21,6 +21,5 @@ std::string Human::get_description() const
 sf::Vector2u Human::get_tile_sheet_coords(int frame) const
 {
   /// @todo Male/female variants; maybe skin color too?
-  int x_pos = get_appropriate_4way_tile(this->get_facing_direction());
-  return sf::Vector2u(x_pos, 5);
+  return sf::Vector2u(0, 5);
 }

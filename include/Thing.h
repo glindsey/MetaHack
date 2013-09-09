@@ -28,6 +28,17 @@ class Thing
 {
   friend class ThingFactory;
 
+  /// Qualities that are duplicated when an item is copied.  Also used to
+  /// compare two things when combining Aggregates.
+  struct Qualities
+  {
+    int physical_mass;                      ///< Mass of the object
+    Direction direction = Direction::None;  ///< Direction the thing is facing.
+    bool magic_autolocking;                 ///< True = magic locks on equip
+    bool magic_locked;
+    bool invisible;
+  };
+
   public:
     virtual ~Thing();
 
@@ -50,14 +61,14 @@ class Thing
     /// Return the MapId this Thing is currently on, or 0 if not on a map.
     MapId get_map_id() const;
 
-    /// Set this thing's volume.
-    void set_single_size(int volume);
+    /// Set the direction the thing is facing.
+    void set_facing_direction(Direction d);
+
+    /// Get the direction the thing is facing.
+    Direction get_facing_direction() const;
 
     /// Set this thing's mass.
     void set_single_mass(int mass);
-
-    /// Return this thing's volume.
-    int get_single_size() const;
 
     /// Return this thing's mass.
     int get_single_mass() const;
@@ -66,13 +77,25 @@ class Thing
     void set_magically_locked(bool locked);
 
     /// Set whether this item autolocks.
-    void set_magic_autolocking(bool autolocks);
+    void set_magically_autolocks(bool autolocks);
 
     /// Get whether this item is magically locked.
-    bool get_magically_locked() const;
+    bool is_magically_locked() const;
 
     /// Get whether this item autolocks.
-    bool get_magic_autolocking() const;
+    bool magically_autolocks() const;
+
+    /// Get a const pointer to the Qualities struct.
+    /// This is used by Aggregates to compare when combining objects.
+    Qualities const* get_qualities_pointer() const;
+
+    /// Compare this Thing's type with another one, and return true if they are
+    /// identical.
+    bool has_same_type_as(Thing const& other) const;
+
+    /// Compare this Thing's qualities with another one, and return true if
+    /// they are identical.
+    bool has_same_qualities_as(Thing const& other) const;
 
     /// Return a string that identifies this thing.
     /// By default, returns "the" and a description of the thing, such as
@@ -98,11 +121,6 @@ class Thing
     /// @param verb3 The third person verb form, such as "shakes"
     std::string const& choose_verb(std::string const& verb2,
                                    std::string const& verb3) const;
-
-    /// Return this thing's volume.
-    /// Volumes are represented as the diameter of an equivalent sphere, where
-    /// a diameter of 1 would be a single tile, 2 would be two tiles, etc.
-    virtual int get_size() const;
 
     /// Return this thing's mass.
     virtual int get_mass() const;

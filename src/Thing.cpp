@@ -7,6 +7,7 @@
 #include "App.h"
 #include "ConfigSettings.h"
 #include "Container.h"
+#include "Direction.h"
 #include "ErrorHandler.h"
 #include "Gender.h"
 #include "Inventory.h"
@@ -21,11 +22,7 @@ struct Thing::Impl
 {
   ThingId thing_id;
   ThingId location_id;
-  int physical_size;
-  int physical_mass;
-
-  bool magic_autolocking;
-  bool magic_locked;
+  Qualities qualities;
 };
 
 // Static member initialization.
@@ -44,15 +41,14 @@ Thing::Thing()
 {
   impl->thing_id = static_cast<ThingId>(0);
   impl->location_id = static_cast<ThingId>(0);
-  impl->physical_size = 1;
-  impl->physical_mass = 1;
+  impl->qualities.physical_mass = 1;
 }
 
 Thing::Thing(const Thing& original)
   : impl(new Impl())
 {
-  impl->physical_size = original.get_size();
-  impl->physical_mass = original.get_mass();
+  impl->qualities.direction = original.get_facing_direction();
+  impl->qualities.physical_mass = original.get_mass();
   // GSL NOTE: Inventory is NOT copied!
 }
 
@@ -114,44 +110,62 @@ MapId Thing::get_map_id() const
   }
 }
 
-void Thing::set_single_size(int s)
+void Thing::set_facing_direction(Direction d)
 {
-  impl->physical_size = s;
+  impl->qualities.direction = d;
+}
+
+Direction Thing::get_facing_direction() const
+{
+  return impl->qualities.direction;
 }
 
 void Thing::set_single_mass(int mass)
 {
-  impl->physical_mass = mass;
-}
-
-int Thing::get_single_size() const
-{
-  return impl->physical_size;
+  impl->qualities.physical_mass = mass;
 }
 
 int Thing::get_single_mass() const
 {
-  return impl->physical_mass;
+  return impl->qualities.physical_mass;
 }
 
 void Thing::set_magically_locked(bool locked)
 {
-  impl->magic_locked = locked;
+  impl->qualities.magic_locked = locked;
 }
 
-void Thing::set_magic_autolocking(bool autolocks)
+void Thing::set_magically_autolocks(bool autolocks)
 {
-  impl->magic_autolocking = autolocks;
+  impl->qualities.magic_autolocking = autolocks;
 }
 
-bool Thing::get_magically_locked() const
+bool Thing::is_magically_locked() const
 {
-  return impl->magic_locked;
+  return impl->qualities.magic_locked;
 }
 
-bool Thing::get_magic_autolocking() const
+bool Thing::magically_autolocks() const
 {
-  return impl->magic_autolocking;
+  return impl->qualities.magic_autolocking;
+}
+
+Thing::Qualities const* Thing::get_qualities_pointer() const
+{
+  return &(impl->qualities);
+}
+
+bool Thing::has_same_type_as(Thing const& other) const
+{
+  return (typeid(*this) == typeid(other));
+}
+
+bool Thing::has_same_qualities_as(Thing const& other) const
+{
+  int compare_result = memcmp(this->get_qualities_pointer(),
+                              other.get_qualities_pointer(),
+                              sizeof(Qualities));
+  return (compare_result == 0);
 }
 
 std::string Thing::get_name() const
@@ -209,11 +223,6 @@ std::string const& Thing::choose_verb(std::string const& verb12,
   }
 }
 
-int Thing::get_size() const
-{
-  return get_single_size();
-}
-
 int Thing::get_mass() const
 {
   return get_single_mass();
@@ -265,7 +274,16 @@ std::string Thing::get_possessive() const
 
 sf::Vector2u Thing::get_tile_sheet_coords(int frame) const
 {
-  return sf::Vector2u(0, 0);  // The "unknown thing" tile
+  Direction direction = this->get_facing_direction();
+  if (direction == Direction::None)
+  {
+    return sf::Vector2u(4, 3); // The "unknown thing" tile
+  }
+  else
+  {
+    int x_pos = get_appropriate_4way_tile(this->get_facing_direction());
+    return sf::Vector2u(x_pos, 3);  // The "unknown directional" tile
+  }
 }
 
 void Thing::add_vertices_to(sf::VertexArray& vertices,
@@ -518,7 +536,7 @@ bool Thing::perform_action_thrown_by(Entity& entity, Direction direction)
 
 bool Thing::perform_action_deequipped_by(Entity& entity, WearLocation& location)
 {
-  if (impl->magic_locked == true)
+  if (this->is_magically_locked())
   {
     std::string message;
     message = entity.get_name() + " cannot take off " + this->get_name() +
@@ -541,9 +559,9 @@ bool Thing::perform_action_equipped_by(Entity& entity, WearLocation& location)
 
   if (subclass_result == true)
   {
-    if (impl->magic_autolocking == true)
+    if (this->magically_autolocks())
     {
-        impl->magic_locked = true;
+        this->set_magically_locked(true);
         std::string message;
         message = this->get_name() + " magically welds itself onto " +
                   entity.get_possessive() + " " +
@@ -558,7 +576,7 @@ bool Thing::perform_action_equipped_by(Entity& entity, WearLocation& location)
 
 bool Thing::perform_action_unwielded_by(Entity& entity)
 {
-  if (impl->magic_locked == true)
+  if (this->is_magically_locked())
   {
     std::string message;
     message = entity.get_name() + " cannot unwield " + this->get_name() +
@@ -580,9 +598,9 @@ bool Thing::perform_action_wielded_by(Entity& entity)
 
   if (subclass_result == true)
   {
-    if (impl->magic_autolocking == true)
+    if (this->magically_autolocks())
     {
-      impl->magic_locked = true;
+      this->set_magically_locked(true);
       std::string message;
       message = this->get_name() + " magically welds itself onto " +
                 entity.get_possessive() + " " +

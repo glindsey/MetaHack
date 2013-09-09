@@ -1,5 +1,7 @@
 #include "StatusArea.h"
 
+#include <boost/lexical_cast.hpp>
+
 #include "App.h"
 #include "ConfigSettings.h"
 #include "Entity.h"
@@ -8,7 +10,6 @@
 struct StatusArea::Impl
 {
   bool focus;
-  unsigned int font_size;
   sf::IntRect dims;
   sf::RectangleShape area_bg_shape;
 };
@@ -17,7 +18,6 @@ StatusArea::StatusArea(sf::IntRect dimensions)
   : impl(new Impl())
 {
   impl->focus = false;
-  impl->font_size = 16;   ///< @todo Move to ConfigSettings
   impl->dims = dimensions;
 }
 
@@ -53,6 +53,8 @@ EventResult StatusArea::handle_event(sf::Event& event)
 
 bool StatusArea::render(sf::RenderTarget& target, int frame)
 {
+  Entity& player = TF.get_player();
+
   // Draw the rectangle.
   impl->area_bg_shape.setPosition(sf::Vector2f(impl->dims.left, impl->dims.top));
   impl->area_bg_shape.setSize(sf::Vector2f(impl->dims.width, impl->dims.height));
@@ -68,25 +70,53 @@ bool StatusArea::render(sf::RenderTarget& target, int frame)
 
   target.draw(impl->area_bg_shape);
 
-  int lineSpacing = the_default_font.getLineSpacing(impl->font_size);
-  // Text offsets relative to the background rectangle.
-  float xTextOffset = 3;
-  float yTextOffset = 3;
-  sf::Text renderText;
-  renderText.setFont(the_default_font);
-  renderText.setCharacterSize(lineSpacing);
-  renderText.setColor(Settings.text_color);
-  renderText.setPosition(impl->dims.left + xTextOffset,
-                         impl->dims.top + yTextOffset);
+  int line_spacing = the_default_font.getLineSpacing(Settings.text_default_size);
 
-  std::string name = TF.get_player().get_proper_name();
+  // Text offsets relative to the background rectangle.
+  sf::Text render_text;
+  render_text.setFont(the_default_font);
+  render_text.setCharacterSize(Settings.text_default_size);
+  render_text.setColor(Settings.text_color);
+  render_text.setPosition(impl->dims.left + 3, impl->dims.top + 3);
+
+  std::string name = player.get_proper_name();
   name[0] = std::toupper(name[0]);
 
-  std::string type = TF.get_player().get_description();
+  std::string type = player.get_description();
   type[0] = std::toupper(type[0]);
 
-  renderText.setString(name + " the " + type);
-  target.draw(renderText);
+  render_text.setString(name + " the " + type);
+  target.draw(render_text);
+
+  render_text.setFont(the_default_mono_font);
+  render_text.setPosition(impl->dims.left + 3, impl->dims.top + 23);
+  render_text.setString("HP");
+  target.draw(render_text);
+
+  int hp = player.get_attributes().get(Attribute::HP);
+  int max_hp = player.get_attributes().get(Attribute::MaxHP);
+
+  float hp_percentage = static_cast<float>(hp) / static_cast<float>(max_hp);
+
+  if (hp_percentage > 0.6)
+  {
+    render_text.setColor(Settings.text_color);
+  }
+  else if (hp_percentage > 0.3)
+  {
+    render_text.setColor(Settings.text_warning_color);
+  }
+  else
+  {
+    render_text.setColor(Settings.text_danger_color);
+  }
+
+  std::string hp_string = boost::lexical_cast<std::string>(hp) +
+                    "/" + boost::lexical_cast<std::string>(max_hp);
+
+  render_text.setPosition(impl->dims.left + 33, impl->dims.top + 23);
+  render_text.setString(hp_string);
+  target.draw(render_text);
 
   return true;
 }

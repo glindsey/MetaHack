@@ -12,9 +12,6 @@ struct MessageLog::Impl
   /// Boolean indicating whether log window has the focus.
   bool focus;
 
-  /// Size of font to render messages in.
-  unsigned int font_size;
-
   /// Dimensions of the message log window.
   sf::IntRect dims;
 
@@ -39,7 +36,6 @@ MessageLog::MessageLog(sf::IntRect dimensions)
   : impl(new Impl())
 {
   impl->focus = false;
-  impl->font_size = 16; ///< @todo Move to ConfigSettings
   impl->history_lines_saved = 250;  ///< @todo Move to ConfigSettings
 
   this->set_dimensions(dimensions);
@@ -104,7 +100,7 @@ EventResult MessageLog::handle_event(sf::Event& event)
 
 bool MessageLog::render(sf::RenderTarget& target, int frame)
 {
-  int lineSpacing = the_default_font.getLineSpacing(impl->font_size);
+  int lineSpacing = the_default_font.getLineSpacing(Settings.text_default_size);
 
   // Text offsets relative to the background rectangle.
   float text_offset_x = 3;
@@ -117,7 +113,7 @@ bool MessageLog::render(sf::RenderTarget& target, int frame)
   sf::Text render_text;
 
   render_text.setFont(the_default_font);
-  render_text.setCharacterSize(impl->font_size);
+  render_text.setCharacterSize(Settings.text_default_size);
 
   // Clear background texture.
   impl->area_bg_texture->clear(Settings.window_bg_color);
@@ -129,7 +125,7 @@ bool MessageLog::render(sf::RenderTarget& target, int frame)
                         sf::Vector2f(text_coord_x, text_coord_y),
                         frame,
                         the_default_font,
-                        impl->font_size,
+                        Settings.text_default_size,
                         Settings.text_highlight_color);
 
     text_coord_y -= lineSpacing;
@@ -141,9 +137,6 @@ bool MessageLog::render(sf::RenderTarget& target, int frame)
        iter != impl->message_queue.end(); ++iter)
   {
     render_text.setString(*iter);
-    render_text.setPosition(text_coord_x - 2, text_coord_y - 2);
-    render_text.setColor(Settings.text_shadow_color);
-    impl->area_bg_texture->draw(render_text);
     render_text.setPosition(text_coord_x, text_coord_y);
     render_text.setColor(Settings.text_color);
     impl->area_bg_texture->draw(render_text);
@@ -156,9 +149,9 @@ bool MessageLog::render(sf::RenderTarget& target, int frame)
   sf::Text title_text;
   title_text.setString("Message Log");
   title_text.setFont(the_default_bold_font);
-  title_text.setCharacterSize(impl->font_size);
+  title_text.setCharacterSize(Settings.text_default_size);
 
-  sf::FloatRect const& text_bounds = title_text.getLocalBounds();
+  sf::FloatRect const& text_bounds = title_text.getGlobalBounds();
 
   title_rect.setFillColor(Settings.window_bg_color);
   title_rect.setOutlineColor(impl->focus ?
@@ -167,13 +160,10 @@ bool MessageLog::render(sf::RenderTarget& target, int frame)
   title_rect.setOutlineThickness(Settings.window_border_width);
   title_rect.setPosition(sf::Vector2f(0, 0));
   title_rect.setSize(sf::Vector2f(text_bounds.width + (text_offset_x * 2),
-                                  text_bounds.height + (text_offset_y * 2)));
+                                  (text_bounds.height * 1.25) + (text_offset_y * 2)));
 
   impl->area_bg_texture->draw(title_rect);
 
-  title_text.setColor(Settings.text_shadow_color);
-  title_text.setPosition(sf::Vector2f(text_offset_x - 2, text_offset_y - 2));
-  impl->area_bg_texture->draw(title_text);
   title_text.setColor(Settings.text_color);
   title_text.setPosition(sf::Vector2f(text_offset_x, text_offset_y));
   impl->area_bg_texture->draw(title_text);

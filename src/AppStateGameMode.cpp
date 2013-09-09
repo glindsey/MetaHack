@@ -19,6 +19,7 @@
 #include "ThingFactory.h"
 
 // Includes required for test code.
+#include "CoinGold.h"
 #include "LightOrb.h"
 #include "Rock.h"
 #include "SackLarge.h"
@@ -42,6 +43,9 @@ struct AppStateGameMode::Impl
 
   /// Map zoom level.  1.0 equals 100 percent zoom.
   float map_zoom_level;
+
+  /// Selected quantity.
+  unsigned int selected_quantity;
 
   /// Current screen area that has keyboard focus.
   AreaFocus current_area_focus;
@@ -138,6 +142,8 @@ AppStateGameMode::AppStateGameMode(StateMachine* state_machine)
 {
   impl->current_area_focus = AreaFocus::Map;
   impl->map_zoom_level = 1.0f;
+
+  impl->selected_quantity = 1;
 
   impl->left_inventory_area.reset(new InventoryArea(impl->calc_left_inven_dims(),
                                                     impl->selected_things));
@@ -676,6 +682,51 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           result = EventResult::Handled;
           break;
 
+        // "-" - subtract quantity
+        case sf::Keyboard::Key::Dash:
+        case sf::Keyboard::Key::Subtract:
+          if (impl->selected_quantity > 1)
+          {
+            --(impl->selected_quantity);
+          }
+          result = EventResult::Handled;
+          break;
+
+        // "+"/"=" - add quantity
+        case sf::Keyboard::Key::Equal:
+        case sf::Keyboard::Key::Add:
+          {
+            unsigned int max_quantity;
+            if (impl->selected_things.size() > 0)
+            {
+              ThingId thing_id = impl->selected_things.back();
+              Thing& thing = TF.get(thing_id);
+
+              if (isType(&thing, Aggregate))
+              {
+                Aggregate& agg = dynamic_cast<Aggregate&>(thing);
+                max_quantity = agg.get_quantity();
+              }
+              else
+              {
+                max_quantity = 1;
+              }
+            }
+            else
+            {
+              max_quantity = 1;
+            }
+
+            if (impl->selected_quantity < max_quantity)
+            {
+              ++(impl->selected_quantity);
+            }
+
+          }
+
+          result = EventResult::Handled;
+          break;
+
         // "." - wait a turn
         case sf::Keyboard::Key::Period:
         case sf::Keyboard::Key::Delete:
@@ -945,11 +996,27 @@ bool AppStateGameMode::initialize()
 
   // TESTING CODE: Create a rock immediately south of the player.
   ThingId rock_id = TF.create<Rock>();
-  TF.get(rock_id).move_into(game_map.get_tile_id(start_coords.x, start_coords.y + 1));
+  TF.get(rock_id).move_into(game_map.get_tile_id(start_coords.x,
+                                                 start_coords.y + 1));
 
   // TESTING CODE: Create a sack immediately east of the player.
   ThingId sack_id = TF.create<SackLarge>();
-  TF.get(sack_id).move_into(game_map.get_tile_id(start_coords.x + 1, start_coords.y));
+  TF.get(sack_id).move_into(game_map.get_tile_id(start_coords.x + 1,
+                                                 start_coords.y));
+
+  // TESTING CODE: Create five gold coins west of the player.
+  ThingId coins_id = TF.create<CoinGold>();
+  Aggregate& coins_agg = dynamic_cast<Aggregate&>(TF.get(coins_id));
+  coins_agg.set_quantity(5);
+  TF.get(coins_id).move_into(game_map.get_tile_id(start_coords.x - 1,
+                                                  start_coords.y));
+
+  // TESTING CODE: Create ten gold coins northwest of the player.
+  ThingId coins2_id = TF.create<CoinGold>();
+  Aggregate& coins2_agg = dynamic_cast<Aggregate&>(TF.get(coins2_id));
+  coins2_agg.set_quantity(10);
+  TF.get(coins2_id).move_into(game_map.get_tile_id(start_coords.x - 1,
+                                                   start_coords.y - 1));
 
   // END TESTING CODE
 
