@@ -2133,8 +2133,8 @@ bool Entity::equip(ThingId thing_id, unsigned int& action_time)
       }
       else
       {
-        message = _YOU_TRY_ + " to take " + _YOURSELF_ +
-                  "out, which seriously shouldn't happen.";
+        message = _YOU_TRY_ + " to equip " + _YOURSELF_ +
+                  ", which seriously shouldn't happen.";
         MINOR_ERROR("Non-player Entity tried to equip self!?");
       }
       the_message_log.add(message);
