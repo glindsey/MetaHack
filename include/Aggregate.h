@@ -46,7 +46,7 @@ class Aggregate : public Thing
     virtual std::string get_indef_name() const override final;
 
     /// Get the quantity this thing represents.
-    unsigned int get_quantity() const;
+    virtual unsigned int get_quantity() const;
 
     /// Set the quantity this thing represents.
     void set_quantity(unsigned int quantity);

@@ -9,16 +9,18 @@
 #include "ThingFactory.h"
 #include "TileSheet.h"
 
+#include <sstream>
 #include <string>
 
 struct InventoryArea::Impl
 {
-  Impl(std::vector<ThingId>& s)
+  Impl(std::vector<ThingId>& s, unsigned int& q)
     : focus(false),
       use_capitals(false),
       viewed_container_ptr(nullptr),
       inventory_type(InventoryType::Inside),
-      selected_things(s) {}
+      selected_things(s),
+      selected_quantity(q) {}
 
   /// Boolean indicating whether this area has the focus.
   bool focus;
@@ -39,13 +41,17 @@ struct InventoryArea::Impl
 
   sf::RectangleShape area_bg_shape;
 
-  /// Vector of Things selected to perform an action on.
+  /// Reference to Vector of Things selected to perform an action on.
   std::vector<ThingId>& selected_things;
+
+  /// Reference to quantity of topmost selected item.
+  unsigned int& selected_quantity;
 };
 
 InventoryArea::InventoryArea(sf::IntRect dimensions,
-                             std::vector<ThingId>& selected_things)
-  : impl(new Impl(selected_things))
+                             std::vector<ThingId>& selected_things,
+                             unsigned int& selected_quantity)
+  : impl(new Impl(selected_things, selected_quantity))
 {
   this->set_dimensions(dimensions);
 }
@@ -207,9 +213,6 @@ bool InventoryArea::render(sf::RenderTarget& target, int frame)
     unsigned int slot_number = static_cast<unsigned int>(slot);
     sf::Text render_text;
 
-    std::string item_string;
-    char item_char;
-
     // 1. Figure out whether this is selected or not, and set FG color.
     sf::Color fg_color = Settings.text_color;
     unsigned int selection_order = 0;
@@ -227,14 +230,11 @@ bool InventoryArea::render(sf::RenderTarget& target, int frame)
     // 2. Display the selection order.
     if (selection_order != 0)
     {
-      // GSL: std::to_string is broken in the version of MinGW I'm currently
-      //      using, so here's a horrible workaround!
-      char buf[5];
-      snprintf(buf, 4, "[%u]", selection_order);
-      item_string.append(buf);
+      std::stringstream selection_number;
+      selection_number << "[" << selection_order << "]" << std::endl;
       render_text.setFont(the_default_mono_font);
       render_text.setCharacterSize(Settings.text_mono_default_size);
-      render_text.setString(item_string);
+      render_text.setString(selection_number.str());
       render_text.setPosition(text_coord_x + 1, text_coord_y);
       render_text.setColor(fg_color);
       impl->area_bg_texture->draw(render_text);
@@ -243,6 +243,9 @@ bool InventoryArea::render(sf::RenderTarget& target, int frame)
     // 3. Display the slot ID.
     if (slot_number < 27)
     {
+      std::stringstream slot_id;
+      char item_char;
+
       if (impl->use_capitals)
       {
         item_char = '@' + static_cast<char>(slot_number);
@@ -252,12 +255,10 @@ bool InventoryArea::render(sf::RenderTarget& target, int frame)
         item_char = '`' + static_cast<char>(slot_number);
       }
 
-      item_string.clear();
-      item_string.push_back(item_char);
-      item_string.push_back(':');
+      slot_id << item_char << ":";
       render_text.setFont(the_default_mono_font);
       render_text.setCharacterSize(Settings.text_mono_default_size);
-      render_text.setString(item_string);
+      render_text.setString(slot_id.str());
       render_text.setPosition(text_coord_x + 35, text_coord_y);
       render_text.setColor(fg_color);
       impl->area_bg_texture->draw(render_text);
@@ -272,12 +273,36 @@ bool InventoryArea::render(sf::RenderTarget& target, int frame)
                   line_spacing_y - 1, false, frame);
     the_tile_sheet.getTexture().setSmooth(false);
 
-    // 5. Display the item name.
-    item_string.clear();
-    item_string = thing.get_indef_name();
+    // 5. TODO: Display "worn" or "equipped" icon if necessary.
+    // 5a. First, the inventory location must be an Entity.
+    if (isType(&location, Entity))
+    {
+      Entity& location_entity = dynamic_cast<Entity&>(location);
+      if (location_entity.is_wielding(id))
+      {
+        // TODO: draw wielding icon
+      }
+      else if (location_entity.has_equipped(id))
+      {
+        // TODO: draw equipped icon
+      }
+    }
+
+    // 6. Display the item name.
+    std::stringstream item_name;
+    if (selection_order == 1)
+    {
+      unsigned int max_quantity = thing.get_quantity();
+      if ((max_quantity > 1) && (impl->selected_quantity < max_quantity))
+      {
+        item_name << "(Sel: " << impl->selected_quantity << ") ";
+      }
+    }
+
+    item_name << thing.get_indef_name();
     render_text.setFont(the_default_font);
     render_text.setCharacterSize(Settings.text_default_size);
-    render_text.setString(item_string);
+    render_text.setString(item_name.str());
     render_text.setPosition(text_coord_x + 60 + line_spacing_y,
                             text_coord_y + 1);
     render_text.setColor(fg_color);
@@ -286,7 +311,7 @@ bool InventoryArea::render(sf::RenderTarget& target, int frame)
     if (text_coord_y > impl->dims.height) break;
     text_coord_y += line_spacing_y + item_spacing_y;
 
-    // 6. Display a nice separator line.
+    // 7. Display a nice separator line.
     sf::RectangleShape separator_line;
     separator_line.setPosition(text_coord_x + 10, text_coord_y);
     separator_line.setSize(sf::Vector2f(impl->dims.width - 25, 1));

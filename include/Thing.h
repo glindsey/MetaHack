@@ -125,6 +125,10 @@ class Thing
     /// Return this thing's mass.
     virtual int get_mass() const;
 
+    /// Get the quantity this thing represents.
+    /// For a Thing that isn't an Aggregate, this is always 1.
+    virtual unsigned int get_quantity() const;
+
     /// Return this object's plural.
     /// By default, returns get_description() plus "s", but this can be
     /// overridden by child classes (for example "djinn" -> "djinni").
@@ -374,4 +378,5 @@ class Thing
     virtual bool _perform_action_fired_by(Entity& entity, Direction direction);
 
 };
+
 #endif // THING_H

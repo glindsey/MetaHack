@@ -10,11 +10,12 @@
 #include "StatusArea.h"
 #include "Thing.h"
 
-/// Area which currently has keyboard focus.
-enum class AreaFocus
+/// Current input state for the game.
+enum class GameInputState
 {
   Map,
-  Cursor,
+  TargetSelection,
+  CursorLook,
   MessageLog
 };
 

@@ -228,6 +228,11 @@ int Thing::get_mass() const
   return get_single_mass();
 }
 
+unsigned int Thing::get_quantity() const
+{
+  return 1;
+}
+
 std::string Thing::get_plural() const
 {
   return get_description() + "s";

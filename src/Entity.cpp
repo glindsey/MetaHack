@@ -854,17 +854,11 @@ bool Entity::do_process()
     break;
 
   case Action::Type::Move:
-    success = this->move(action.move_info.direction, action_time);
+    success = this->move(action.direction, action_time);
     if (success)
     {
       impl->busy_counter += action_time;
     }
-
-    // If player is on a map, update cursor location to be at the player.
-    //if (isType(&TF.get(player.get_location_id()), MapTile))
-    //{
-    //  impl->cursor_coords = TF.get_tile(player.get_location_id()).get_coords();
-    //}
     break;
 
   case Action::Type::Drop:

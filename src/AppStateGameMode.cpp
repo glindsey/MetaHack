@@ -26,6 +26,26 @@
 
 struct AppStateGameMode::Impl
 {
+  Impl()
+  {
+    map_zoom_level = 1.0f;
+    current_input_state = GameInputState::Map;
+    selected_quantity = 1;
+    action_in_progress.type = Action::Type::None;
+
+    left_inventory_area.reset(new InventoryArea(calc_left_inven_dims(),
+                              selected_things,
+                              selected_quantity));
+    right_inventory_area.reset(new InventoryArea(calc_right_inven_dims(),
+                               selected_things,
+                               selected_quantity));
+
+    left_inventory_area->set_capital_letters(true);
+    right_inventory_area->set_capital_letters(false);
+
+    status_area.reset(new StatusArea(calc_status_area_dims()));
+  }
+
   /// Map the player is currently on.
   MapId current_map_id;
 
@@ -44,11 +64,8 @@ struct AppStateGameMode::Impl
   /// Map zoom level.  1.0 equals 100 percent zoom.
   float map_zoom_level;
 
-  /// Selected quantity.
-  unsigned int selected_quantity;
-
   /// Current screen area that has keyboard focus.
-  AreaFocus current_area_focus;
+  GameInputState current_input_state;
 
   /// Current location of the cursor on the map.
   sf::Vector2i cursor_coords;
@@ -58,6 +75,16 @@ struct AppStateGameMode::Impl
   /// selected in is important for some actions (such as "put-into').
   std::vector<ThingId> selected_things;
 
+  /// Item that is the "object" of an action (if any).
+  ThingId object_thing;
+
+  /// Selected quantity.
+  unsigned int selected_quantity;
+
+  /// Action in progress.
+  /// Used for an action that needs a "target".
+  Action action_in_progress;
+
   void reset_inventory_info()
   {
     left_inventory_area->set_viewed_container(TF.get_player());
@@ -65,7 +92,31 @@ struct AppStateGameMode::Impl
     left_inventory_area->set_inventory_type(InventoryType::Around);
     right_inventory_area->set_inventory_type(InventoryType::Inside);
     selected_things.clear();
+    update_selected_quantity();
     update_left_inventory();
+  }
+
+  void update_selected_quantity()
+  {
+    if (selected_things.size() > 0)
+    {
+      ThingId thing_id = selected_things.back();
+      Thing& thing = TF.get(thing_id);
+
+      if (isType(&thing, Aggregate))
+      {
+        Aggregate& agg = dynamic_cast<Aggregate&>(thing);
+        selected_quantity = agg.get_quantity();
+      }
+      else
+      {
+        selected_quantity = 1;
+      }
+    }
+    else
+    {
+      selected_quantity = 0;
+    }
   }
 
   sf::IntRect calc_status_area_dims()
@@ -89,7 +140,7 @@ struct AppStateGameMode::Impl
     sf::IntRect inventoryAreaDims;
     inventoryAreaDims.width = Settings.inventory_area_width;
     inventoryAreaDims.height = the_window.getSize().y -
-                                (messageLogDims.height + 18);
+                               (messageLogDims.height + 18);
     inventoryAreaDims.left = 3;
     inventoryAreaDims.top = messageLogDims.top + messageLogDims.height + 10;
 
@@ -102,9 +153,9 @@ struct AppStateGameMode::Impl
     sf::IntRect inventoryAreaDims;
     inventoryAreaDims.width = Settings.inventory_area_width;
     inventoryAreaDims.height = the_window.getSize().y -
-                                (messageLogDims.height + 18);
+                               (messageLogDims.height + 18);
     inventoryAreaDims.left = the_window.getSize().x -
-                                (inventoryAreaDims.width + 3);
+                             (inventoryAreaDims.width + 3);
     inventoryAreaDims.top = messageLogDims.top + messageLogDims.height + 10;
 
     return inventoryAreaDims;
@@ -112,7 +163,7 @@ struct AppStateGameMode::Impl
 
   void update_left_inventory()
   {
-    if (current_area_focus == AreaFocus::Cursor)
+    if (current_input_state == GameInputState::CursorLook)
     {
       Map& game_map = MF.get(current_map_id);
       MapTile& tile = game_map.get_tile(cursor_coords);
@@ -140,20 +191,6 @@ struct AppStateGameMode::Impl
 AppStateGameMode::AppStateGameMode(StateMachine* state_machine)
   : State(state_machine), impl(new Impl())
 {
-  impl->current_area_focus = AreaFocus::Map;
-  impl->map_zoom_level = 1.0f;
-
-  impl->selected_quantity = 1;
-
-  impl->left_inventory_area.reset(new InventoryArea(impl->calc_left_inven_dims(),
-                                                    impl->selected_things));
-  impl->right_inventory_area.reset(new InventoryArea(impl->calc_right_inven_dims(),
-                                                     impl->selected_things));
-
-  impl->left_inventory_area->set_capital_letters(true);
-  impl->right_inventory_area->set_capital_letters(false);
-
-  impl->status_area.reset(new StatusArea(impl->calc_status_area_dims()));
 }
 
 AppStateGameMode::~AppStateGameMode()
@@ -226,8 +263,8 @@ void AppStateGameMode::execute()
 bool AppStateGameMode::render(sf::RenderTarget& target, int frame)
 {
   // Set focus for areas.
-  the_message_log.set_focus(impl->current_area_focus == AreaFocus::MessageLog);
-  impl->status_area->set_focus(impl->current_area_focus == AreaFocus::Map);
+  the_message_log.set_focus(impl->current_input_state == GameInputState::MessageLog);
+  impl->status_area->set_focus(impl->current_input_state == GameInputState::Map);
 
   try
   {
@@ -246,7 +283,7 @@ bool AppStateGameMode::render(sf::RenderTarget& target, int frame)
       // Update thing vertex array.
       game_map.update_thing_vertices(player, frame);
 
-      if (impl->current_area_focus == AreaFocus::Cursor)
+      if (impl->current_input_state == GameInputState::CursorLook)
       {
         game_map.set_view(target, cursor_pixel_coords, impl->map_zoom_level);
         game_map.draw_to(target);
@@ -292,14 +329,14 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
   {
     if (key.code == sf::Keyboard::Key::Tab)
     {
-      switch (impl->current_area_focus)
+      switch (impl->current_input_state)
       {
-      case AreaFocus::Map:
-        impl->current_area_focus = AreaFocus::MessageLog;
+      case GameInputState::Map:
+        impl->current_input_state = GameInputState::MessageLog;
         return EventResult::Handled;
 
-      case AreaFocus::MessageLog:
-        impl->current_area_focus = AreaFocus::Map;
+      case GameInputState::MessageLog:
+        impl->current_input_state = GameInputState::Map;
         return EventResult::Handled;
 
       default:
@@ -308,577 +345,630 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
     }
   }
 
-  // *** Handle keys processed in either Cursor or Map mode.
-  if ((impl->current_area_focus == AreaFocus::Cursor) ||
-      (impl->current_area_focus == AreaFocus::Map))
-  {
-    if (!key.alt && !key.control)
-    {
-      // Letter selections...
-      if (!key.shift)
-      {
-        switch (key.code)
-        {
-        case sf::Keyboard::Key::LBracket:
-          {
-            impl->reset_inventory_info();
-          }
-          break;
-
-        case sf::Keyboard::Key::RBracket:
-          if (impl->selected_things.size() > 0)
-          {
-            ThingId thing_id = impl->selected_things.back();
-            Thing& thing = TF.get(thing_id);
-
-            if (thing.is_container())
-            {
-              Container& container = TF.get_container(thing_id);
-              ThingId owner_id = thing.get_owner_id();
-              Container& owner = TF.get_container(owner_id);
-              if (owner.is_maptile())
-              {
-                impl->left_inventory_area->set_viewed_container(container);
-                impl->left_inventory_area->set_inventory_type(InventoryType::Inside);
-              }
-              else
-              {
-                impl->right_inventory_area->set_viewed_container(container);
-              }
-
-              impl->selected_things.clear();
-            }
-            else
-            {
-              the_message_log.add("The last selection is not a container.");
-            }
-          }
-          else
-          {
-            the_message_log.add("Nothing is currently selected.");
-          }
-          break;
-
-        case sf::Keyboard::Key::A:
-          impl->right_inventory_area->toggle_selection(1);
-          break;
-        case sf::Keyboard::Key::B:
-          impl->right_inventory_area->toggle_selection(2);
-          break;
-        case sf::Keyboard::Key::C:
-          impl->right_inventory_area->toggle_selection(3);
-          break;
-        case sf::Keyboard::Key::D:
-          impl->right_inventory_area->toggle_selection(4);
-          break;
-        case sf::Keyboard::Key::E:
-          impl->right_inventory_area->toggle_selection(5);
-          break;
-        case sf::Keyboard::Key::F:
-          impl->right_inventory_area->toggle_selection(6);
-          break;
-        case sf::Keyboard::Key::G:
-          impl->right_inventory_area->toggle_selection(7);
-          break;
-        case sf::Keyboard::Key::H:
-          impl->right_inventory_area->toggle_selection(8);
-          break;
-        case sf::Keyboard::Key::I:
-          impl->right_inventory_area->toggle_selection(9);
-          break;
-        case sf::Keyboard::Key::J:
-          impl->right_inventory_area->toggle_selection(10);
-          break;
-        case sf::Keyboard::Key::K:
-          impl->right_inventory_area->toggle_selection(11);
-          break;
-        case sf::Keyboard::Key::L:
-          impl->right_inventory_area->toggle_selection(12);
-          break;
-        case sf::Keyboard::Key::M:
-          impl->right_inventory_area->toggle_selection(13);
-          break;
-        case sf::Keyboard::Key::N:
-          impl->right_inventory_area->toggle_selection(14);
-          break;
-        case sf::Keyboard::Key::O:
-          impl->right_inventory_area->toggle_selection(15);
-          break;
-        case sf::Keyboard::Key::P:
-          impl->right_inventory_area->toggle_selection(16);
-          break;
-        case sf::Keyboard::Key::Q:
-          impl->right_inventory_area->toggle_selection(17);
-          break;
-        case sf::Keyboard::Key::R:
-          impl->right_inventory_area->toggle_selection(18);
-          break;
-        case sf::Keyboard::Key::S:
-          impl->right_inventory_area->toggle_selection(19);
-          break;
-        case sf::Keyboard::Key::T:
-          impl->right_inventory_area->toggle_selection(20);
-          break;
-        case sf::Keyboard::Key::U:
-          impl->right_inventory_area->toggle_selection(21);
-          break;
-        case sf::Keyboard::Key::V:
-          impl->right_inventory_area->toggle_selection(22);
-          break;
-        case sf::Keyboard::Key::W:
-          impl->right_inventory_area->toggle_selection(23);
-          break;
-        case sf::Keyboard::Key::X:
-          impl->right_inventory_area->toggle_selection(24);
-          break;
-        case sf::Keyboard::Key::Y:
-          impl->right_inventory_area->toggle_selection(25);
-          break;
-        case sf::Keyboard::Key::Z:
-          impl->right_inventory_area->toggle_selection(26);
-          break;
-        default:
-          break;
-        }
-      }
-      else
-      {
-        switch (key.code)
-        {
-        case sf::Keyboard::Key::Num2:
-          impl->left_inventory_area->toggle_selection(0);
-          break;
-        case sf::Keyboard::Key::A:
-          impl->left_inventory_area->toggle_selection(1);
-          break;
-        case sf::Keyboard::Key::B:
-          impl->left_inventory_area->toggle_selection(2);
-          break;
-        case sf::Keyboard::Key::C:
-          impl->left_inventory_area->toggle_selection(3);
-          break;
-        case sf::Keyboard::Key::D:
-          impl->left_inventory_area->toggle_selection(4);
-          break;
-        case sf::Keyboard::Key::E:
-          impl->left_inventory_area->toggle_selection(5);
-          break;
-        case sf::Keyboard::Key::F:
-          impl->left_inventory_area->toggle_selection(6);
-          break;
-        case sf::Keyboard::Key::G:
-          impl->left_inventory_area->toggle_selection(7);
-          break;
-        case sf::Keyboard::Key::H:
-          impl->left_inventory_area->toggle_selection(8);
-          break;
-        case sf::Keyboard::Key::I:
-          impl->left_inventory_area->toggle_selection(9);
-          break;
-        case sf::Keyboard::Key::J:
-          impl->left_inventory_area->toggle_selection(10);
-          break;
-        case sf::Keyboard::Key::K:
-          impl->left_inventory_area->toggle_selection(11);
-          break;
-        case sf::Keyboard::Key::L:
-          impl->left_inventory_area->toggle_selection(12);
-          break;
-        case sf::Keyboard::Key::M:
-          impl->left_inventory_area->toggle_selection(13);
-          break;
-        case sf::Keyboard::Key::N:
-          impl->left_inventory_area->toggle_selection(14);
-          break;
-        case sf::Keyboard::Key::O:
-          impl->left_inventory_area->toggle_selection(15);
-          break;
-        case sf::Keyboard::Key::P:
-          impl->left_inventory_area->toggle_selection(16);
-          break;
-        case sf::Keyboard::Key::Q:
-          impl->left_inventory_area->toggle_selection(17);
-          break;
-        case sf::Keyboard::Key::R:
-          impl->left_inventory_area->toggle_selection(18);
-          break;
-        case sf::Keyboard::Key::S:
-          impl->left_inventory_area->toggle_selection(19);
-          break;
-        case sf::Keyboard::Key::T:
-          impl->left_inventory_area->toggle_selection(20);
-          break;
-        case sf::Keyboard::Key::U:
-          impl->left_inventory_area->toggle_selection(21);
-          break;
-        case sf::Keyboard::Key::V:
-          impl->left_inventory_area->toggle_selection(22);
-          break;
-        case sf::Keyboard::Key::W:
-          impl->left_inventory_area->toggle_selection(23);
-          break;
-        case sf::Keyboard::Key::X:
-          impl->left_inventory_area->toggle_selection(24);
-          break;
-        case sf::Keyboard::Key::Y:
-          impl->left_inventory_area->toggle_selection(25);
-          break;
-        case sf::Keyboard::Key::Z:
-          impl->left_inventory_area->toggle_selection(26);
-          break;
-        default:
-          break;
-        }
-      }
-
-      if (key.code == sf::Keyboard::Key::BackSpace)
-      {
-        impl->reset_inventory_info();
-      }
-    }
-  }
-
   // *** Handle keys unique to a particular focus.
-  switch (impl->current_area_focus)
+  switch (impl->current_input_state)
   {
-  case AreaFocus::Cursor:
+  case GameInputState::TargetSelection:
+  {
+    /// @todo Allow selecting a single object if the action permits it.
+    /// @todo Allow choosing directions if the action permits it.
+    break;
+  } // end case GameInputState::TargetSelection
+
+  case GameInputState::CursorLook:
+  {
+    // *** NON-MODIFIED KEYS ***********************************************
+    if (!key.alt && !key.control && !key.shift)
     {
-      // *** NON-MODIFIED KEYS ***********************************************
-      if (!key.alt && !key.control && !key.shift)
+      switch (key.code)
       {
-        switch (key.code)
-        {
-        case sf::Keyboard::Key::Up:
-          impl->move_cursor(Direction::North);
-          impl->reset_inventory_info();
-          result = EventResult::Handled;
-          break;
+      case sf::Keyboard::Key::Up:
+        impl->move_cursor(Direction::North);
+        impl->reset_inventory_info();
+        result = EventResult::Handled;
+        break;
 
-        case sf::Keyboard::Key::PageUp:
-          impl->move_cursor(Direction::Northeast);
-          impl->reset_inventory_info();
-          result = EventResult::Handled;
-          break;
+      case sf::Keyboard::Key::PageUp:
+        impl->move_cursor(Direction::Northeast);
+        impl->reset_inventory_info();
+        result = EventResult::Handled;
+        break;
 
-        case sf::Keyboard::Key::Right:
-          impl->move_cursor(Direction::East);
-          impl->reset_inventory_info();
-          result = EventResult::Handled;
-          break;
+      case sf::Keyboard::Key::Right:
+        impl->move_cursor(Direction::East);
+        impl->reset_inventory_info();
+        result = EventResult::Handled;
+        break;
 
-        case sf::Keyboard::Key::PageDown:
-          impl->move_cursor(Direction::Southeast);
-          impl->reset_inventory_info();
-          result = EventResult::Handled;
-          break;
+      case sf::Keyboard::Key::PageDown:
+        impl->move_cursor(Direction::Southeast);
+        impl->reset_inventory_info();
+        result = EventResult::Handled;
+        break;
 
-        case sf::Keyboard::Key::Down:
-          impl->move_cursor(Direction::South);
-          impl->reset_inventory_info();
-          result = EventResult::Handled;
-          break;
+      case sf::Keyboard::Key::Down:
+        impl->move_cursor(Direction::South);
+        impl->reset_inventory_info();
+        result = EventResult::Handled;
+        break;
 
-        case sf::Keyboard::Key::End:
-          impl->move_cursor(Direction::Southwest);
-          impl->reset_inventory_info();
-          result = EventResult::Handled;
-          break;
+      case sf::Keyboard::Key::End:
+        impl->move_cursor(Direction::Southwest);
+        impl->reset_inventory_info();
+        result = EventResult::Handled;
+        break;
 
-        case sf::Keyboard::Key::Left:
-          impl->move_cursor(Direction::West);
-          impl->reset_inventory_info();
-          result = EventResult::Handled;
-          break;
+      case sf::Keyboard::Key::Left:
+        impl->move_cursor(Direction::West);
+        impl->reset_inventory_info();
+        result = EventResult::Handled;
+        break;
 
-        case sf::Keyboard::Key::Home:
-          impl->move_cursor(Direction::Northwest);
-          impl->reset_inventory_info();
-          result = EventResult::Handled;
-          break;
+      case sf::Keyboard::Key::Home:
+        impl->move_cursor(Direction::Northwest);
+        impl->reset_inventory_info();
+        result = EventResult::Handled;
+        break;
 
         // "/" - go back to Map focus.
-        case sf::Keyboard::Key::Slash:
-          impl->current_area_focus = AreaFocus::Map;
-          impl->reset_inventory_info();
-          result = EventResult::Handled;
-          break;
+      case sf::Keyboard::Key::Slash:
+        impl->current_input_state = GameInputState::Map;
+        impl->reset_inventory_info();
+        result = EventResult::Handled;
+        break;
 
-        default:
-          break;
-        } // end switch (key.code)
-      } // end if (no modifier keys)
-    } // end case AreaFocus::Cursor
+      default:
+        break;
+      } // end switch (key.code)
+    } // end if (no modifier keys)
     break;
+  } // end case GameInputState::CursorLook
 
-  case AreaFocus::Map:
+  case GameInputState::Map:
+  {
+    Action action;
+
+    // *** NON-MODIFIED KEYS ***********************************************
+    if (!key.alt && !key.control && !key.shift)
     {
-      Action action;
-
-      // *** NON-MODIFIED KEYS ***********************************************
-      if (!key.alt && !key.control && !key.shift)
+      switch (key.code)
       {
-        switch (key.code)
-        {
-        case sf::Keyboard::Key::Up:
-          action.type = Action::Type::Move;
-          action.move_info.direction = Direction::North;
-          player.queue_action(action);
-          result = EventResult::Handled;
-          break;
+      case sf::Keyboard::Key::A:
+        impl->right_inventory_area->toggle_selection(1);
+        impl->update_selected_quantity();
+        break;
+      case sf::Keyboard::Key::B:
+        impl->right_inventory_area->toggle_selection(2);
+        impl->update_selected_quantity();
+        break;
+      case sf::Keyboard::Key::C:
+        impl->right_inventory_area->toggle_selection(3);
+        impl->update_selected_quantity();
+        break;
+      case sf::Keyboard::Key::D:
+        impl->right_inventory_area->toggle_selection(4);
+        impl->update_selected_quantity();
+        break;
+      case sf::Keyboard::Key::E:
+        impl->right_inventory_area->toggle_selection(5);
+        impl->update_selected_quantity();
+        break;
+      case sf::Keyboard::Key::F:
+        impl->right_inventory_area->toggle_selection(6);
+        impl->update_selected_quantity();
+        break;
+      case sf::Keyboard::Key::G:
+        impl->right_inventory_area->toggle_selection(7);
+        impl->update_selected_quantity();
+        break;
+      case sf::Keyboard::Key::H:
+        impl->right_inventory_area->toggle_selection(8);
+        impl->update_selected_quantity();
+        break;
+      case sf::Keyboard::Key::I:
+        impl->right_inventory_area->toggle_selection(9);
+        impl->update_selected_quantity();
+        break;
+      case sf::Keyboard::Key::J:
+        impl->right_inventory_area->toggle_selection(10);
+        impl->update_selected_quantity();
+        break;
+      case sf::Keyboard::Key::K:
+        impl->right_inventory_area->toggle_selection(11);
+        impl->update_selected_quantity();
+        break;
+      case sf::Keyboard::Key::L:
+        impl->right_inventory_area->toggle_selection(12);
+        impl->update_selected_quantity();
+        break;
+      case sf::Keyboard::Key::M:
+        impl->right_inventory_area->toggle_selection(13);
+        impl->update_selected_quantity();
+        break;
+      case sf::Keyboard::Key::N:
+        impl->right_inventory_area->toggle_selection(14);
+        impl->update_selected_quantity();
+        break;
+      case sf::Keyboard::Key::O:
+        impl->right_inventory_area->toggle_selection(15);
+        impl->update_selected_quantity();
+        break;
+      case sf::Keyboard::Key::P:
+        impl->right_inventory_area->toggle_selection(16);
+        impl->update_selected_quantity();
+        break;
+      case sf::Keyboard::Key::Q:
+        impl->right_inventory_area->toggle_selection(17);
+        impl->update_selected_quantity();
+        break;
+      case sf::Keyboard::Key::R:
+        impl->right_inventory_area->toggle_selection(18);
+        impl->update_selected_quantity();
+        break;
+      case sf::Keyboard::Key::S:
+        impl->right_inventory_area->toggle_selection(19);
+        impl->update_selected_quantity();
+        break;
+      case sf::Keyboard::Key::T:
+        impl->right_inventory_area->toggle_selection(20);
+        impl->update_selected_quantity();
+        break;
+      case sf::Keyboard::Key::U:
+        impl->right_inventory_area->toggle_selection(21);
+        impl->update_selected_quantity();
+        break;
+      case sf::Keyboard::Key::V:
+        impl->right_inventory_area->toggle_selection(22);
+        impl->update_selected_quantity();
+        break;
+      case sf::Keyboard::Key::W:
+        impl->right_inventory_area->toggle_selection(23);
+        impl->update_selected_quantity();
+        break;
+      case sf::Keyboard::Key::X:
+        impl->right_inventory_area->toggle_selection(24);
+        impl->update_selected_quantity();
+        break;
+      case sf::Keyboard::Key::Y:
+        impl->right_inventory_area->toggle_selection(25);
+        impl->update_selected_quantity();
+        break;
+      case sf::Keyboard::Key::Z:
+        impl->right_inventory_area->toggle_selection(26);
+        impl->update_selected_quantity();
+        break;
 
-        case sf::Keyboard::Key::PageUp:
-          action.type = Action::Type::Move;
-          action.move_info.direction = Direction::Northeast;
-          player.queue_action(action);
-          result = EventResult::Handled;
-          break;
+      case sf::Keyboard::Key::BackSpace:
+        impl->reset_inventory_info();
+        break;
 
-        case sf::Keyboard::Key::Right:
-          action.type = Action::Type::Move;
-          action.move_info.direction = Direction::East;
-          player.queue_action(action);
-          result = EventResult::Handled;
-          break;
+      case sf::Keyboard::Key::Up:
+        action.type = Action::Type::Move;
+        action.direction = Direction::North;
+        player.queue_action(action);
+        result = EventResult::Handled;
+        break;
 
-        case sf::Keyboard::Key::PageDown:
-          action.type = Action::Type::Move;
-          action.move_info.direction = Direction::Southeast;
-          player.queue_action(action);
-          result = EventResult::Handled;
-          break;
+      case sf::Keyboard::Key::PageUp:
+        action.type = Action::Type::Move;
+        action.direction = Direction::Northeast;
+        player.queue_action(action);
+        result = EventResult::Handled;
+        break;
 
-        case sf::Keyboard::Key::Down:
-          action.type = Action::Type::Move;
-          action.move_info.direction = Direction::South;
-          player.queue_action(action);
-          result = EventResult::Handled;
-          break;
+      case sf::Keyboard::Key::Right:
+        action.type = Action::Type::Move;
+        action.direction = Direction::East;
+        player.queue_action(action);
+        result = EventResult::Handled;
+        break;
 
-        case sf::Keyboard::Key::End:
-          action.type = Action::Type::Move;
-          action.move_info.direction = Direction::Southwest;
-          player.queue_action(action);
-          result = EventResult::Handled;
-          break;
+      case sf::Keyboard::Key::PageDown:
+        action.type = Action::Type::Move;
+        action.direction = Direction::Southeast;
+        player.queue_action(action);
+        result = EventResult::Handled;
+        break;
 
-        case sf::Keyboard::Key::Left:
-          action.type = Action::Type::Move;
-          action.move_info.direction = Direction::West;
-          player.queue_action(action);
-          result = EventResult::Handled;
-          break;
+      case sf::Keyboard::Key::Down:
+        action.type = Action::Type::Move;
+        action.direction = Direction::South;
+        player.queue_action(action);
+        result = EventResult::Handled;
+        break;
 
-        case sf::Keyboard::Key::Home:
-          action.type = Action::Type::Move;
-          action.move_info.direction = Direction::Northwest;
-          player.queue_action(action);
-          result = EventResult::Handled;
-          break;
+      case sf::Keyboard::Key::End:
+        action.type = Action::Type::Move;
+        action.direction = Direction::Southwest;
+        player.queue_action(action);
+        result = EventResult::Handled;
+        break;
+
+      case sf::Keyboard::Key::Left:
+        action.type = Action::Type::Move;
+        action.direction = Direction::West;
+        player.queue_action(action);
+        result = EventResult::Handled;
+        break;
+
+      case sf::Keyboard::Key::Home:
+        action.type = Action::Type::Move;
+        action.direction = Direction::Northwest;
+        player.queue_action(action);
+        result = EventResult::Handled;
+        break;
 
         // "/" - go to cursor look mode.
-        case sf::Keyboard::Key::Slash:
-          impl->current_area_focus = AreaFocus::Cursor;
-          impl->reset_inventory_info();
-          result = EventResult::Handled;
-          break;
+      case sf::Keyboard::Key::Slash:
+        impl->current_input_state = GameInputState::CursorLook;
+        impl->reset_inventory_info();
+        result = EventResult::Handled;
+        break;
 
         // "-" - subtract quantity
-        case sf::Keyboard::Key::Dash:
-        case sf::Keyboard::Key::Subtract:
+      case sf::Keyboard::Key::Dash:
+      case sf::Keyboard::Key::Subtract:
+        if (impl->selected_things.size() < 1)
+        {
+          the_message_log.add("You have to have something selected "
+                              "before you can choose a quantity.");
+        }
+        else if (impl->selected_things.size() > 1)
+        {
+          the_message_log.add("You can only have one thing selected "
+                              "when choosing a quantity.");
+        }
+        else
+        {
           if (impl->selected_quantity > 1)
           {
             --(impl->selected_quantity);
           }
-          result = EventResult::Handled;
-          break;
+        }
+        result = EventResult::Handled;
+        break;
 
         // "+"/"=" - add quantity
-        case sf::Keyboard::Key::Equal:
-        case sf::Keyboard::Key::Add:
-          {
-            unsigned int max_quantity;
-            if (impl->selected_things.size() > 0)
-            {
-              ThingId thing_id = impl->selected_things.back();
-              Thing& thing = TF.get(thing_id);
+      case sf::Keyboard::Key::Equal:
+      case sf::Keyboard::Key::Add:
+      {
+        unsigned int max_quantity;
+        if (impl->selected_things.size() < 1)
+        {
+          the_message_log.add("You have to have something selected "
+                              "before you can choose a quantity.");
+          max_quantity = 1;
+        }
+        else if (impl->selected_things.size() > 1)
+        {
+          the_message_log.add("You can only have one thing selected "
+                              "when choosing a quantity.");
+          max_quantity = 1;
+        }
+        else
+        {
+          ThingId thing_id = impl->selected_things.back();
+          Thing& thing = TF.get(thing_id);
 
-              if (isType(&thing, Aggregate))
-              {
-                Aggregate& agg = dynamic_cast<Aggregate&>(thing);
-                max_quantity = agg.get_quantity();
-              }
-              else
-              {
-                max_quantity = 1;
-              }
+          if (isType(&thing, Aggregate))
+          {
+            Aggregate& agg = dynamic_cast<Aggregate&>(thing);
+            max_quantity = agg.get_quantity();
+          }
+          else
+          {
+            max_quantity = 1;
+          }
+
+          if (impl->selected_quantity < max_quantity)
+          {
+            ++(impl->selected_quantity);
+          }
+        }
+      }
+
+      result = EventResult::Handled;
+      break;
+
+      // "." - wait a turn
+      case sf::Keyboard::Key::Period:
+      case sf::Keyboard::Key::Delete:
+        action.type = Action::Type::Wait;
+        player.queue_action(action);
+
+        result = EventResult::Handled;
+        break;
+
+        // "," - NH-style shortcut for "pick up"
+      case sf::Keyboard::Key::Comma:
+        key.alt = false;
+        key.control = true;
+        key.shift = false;
+        key.code = sf::Keyboard::Key::P;
+        break;
+
+      default:
+        break;
+      } // end switch (key.code)
+    } // end if (!key.alt && !key.control && !key.shift)
+
+    // *** SHIFTED KEYS *****************************************************
+    if (!key.alt && !key.control && key.shift)
+    {
+      switch (key.code)
+      {
+      case sf::Keyboard::Key::Num2:
+        impl->left_inventory_area->toggle_selection(0);
+        impl->update_selected_quantity();
+        break;
+      case sf::Keyboard::Key::A:
+        impl->left_inventory_area->toggle_selection(1);
+        impl->update_selected_quantity();
+        break;
+      case sf::Keyboard::Key::B:
+        impl->left_inventory_area->toggle_selection(2);
+        impl->update_selected_quantity();
+        break;
+      case sf::Keyboard::Key::C:
+        impl->left_inventory_area->toggle_selection(3);
+        impl->update_selected_quantity();
+        break;
+      case sf::Keyboard::Key::D:
+        impl->left_inventory_area->toggle_selection(4);
+        impl->update_selected_quantity();
+        break;
+      case sf::Keyboard::Key::E:
+        impl->left_inventory_area->toggle_selection(5);
+        impl->update_selected_quantity();
+        break;
+      case sf::Keyboard::Key::F:
+        impl->left_inventory_area->toggle_selection(6);
+        impl->update_selected_quantity();
+        break;
+      case sf::Keyboard::Key::G:
+        impl->left_inventory_area->toggle_selection(7);
+        impl->update_selected_quantity();
+        break;
+      case sf::Keyboard::Key::H:
+        impl->left_inventory_area->toggle_selection(8);
+        impl->update_selected_quantity();
+        break;
+      case sf::Keyboard::Key::I:
+        impl->left_inventory_area->toggle_selection(9);
+        impl->update_selected_quantity();
+        break;
+      case sf::Keyboard::Key::J:
+        impl->left_inventory_area->toggle_selection(10);
+        impl->update_selected_quantity();
+        break;
+      case sf::Keyboard::Key::K:
+        impl->left_inventory_area->toggle_selection(11);
+        impl->update_selected_quantity();
+        break;
+      case sf::Keyboard::Key::L:
+        impl->left_inventory_area->toggle_selection(12);
+        impl->update_selected_quantity();
+        break;
+      case sf::Keyboard::Key::M:
+        impl->left_inventory_area->toggle_selection(13);
+        impl->update_selected_quantity();
+        break;
+      case sf::Keyboard::Key::N:
+        impl->left_inventory_area->toggle_selection(14);
+        impl->update_selected_quantity();
+        break;
+      case sf::Keyboard::Key::O:
+        impl->left_inventory_area->toggle_selection(15);
+        impl->update_selected_quantity();
+        break;
+      case sf::Keyboard::Key::P:
+        impl->left_inventory_area->toggle_selection(16);
+        impl->update_selected_quantity();
+        break;
+      case sf::Keyboard::Key::Q:
+        impl->left_inventory_area->toggle_selection(17);
+        impl->update_selected_quantity();
+        break;
+      case sf::Keyboard::Key::R:
+        impl->left_inventory_area->toggle_selection(18);
+        impl->update_selected_quantity();
+        break;
+      case sf::Keyboard::Key::S:
+        impl->left_inventory_area->toggle_selection(19);
+        impl->update_selected_quantity();
+        break;
+      case sf::Keyboard::Key::T:
+        impl->left_inventory_area->toggle_selection(20);
+        impl->update_selected_quantity();
+        break;
+      case sf::Keyboard::Key::U:
+        impl->left_inventory_area->toggle_selection(21);
+        impl->update_selected_quantity();
+        break;
+      case sf::Keyboard::Key::V:
+        impl->left_inventory_area->toggle_selection(22);
+        impl->update_selected_quantity();
+        break;
+      case sf::Keyboard::Key::W:
+        impl->left_inventory_area->toggle_selection(23);
+        impl->update_selected_quantity();
+        break;
+      case sf::Keyboard::Key::X:
+        impl->left_inventory_area->toggle_selection(24);
+        impl->update_selected_quantity();
+        break;
+      case sf::Keyboard::Key::Y:
+        impl->left_inventory_area->toggle_selection(25);
+        impl->update_selected_quantity();
+        break;
+      case sf::Keyboard::Key::Z:
+        impl->left_inventory_area->toggle_selection(26);
+        impl->update_selected_quantity();
+        break;
+
+      case sf::Keyboard::Key::LBracket:
+        impl->reset_inventory_info();
+        break;
+
+      case sf::Keyboard::Key::RBracket:
+        if (impl->selected_things.size() > 0)
+        {
+          ThingId thing_id = impl->selected_things.back();
+          Thing& thing = TF.get(thing_id);
+
+          if (thing.is_container())
+          {
+            Container& container = TF.get_container(thing_id);
+            ThingId owner_id = thing.get_owner_id();
+            Container& owner = TF.get_container(owner_id);
+            if (owner.is_maptile())
+            {
+              impl->left_inventory_area->set_viewed_container(container);
+              impl->left_inventory_area->set_inventory_type(InventoryType::Inside);
             }
             else
             {
-              max_quantity = 1;
+              impl->right_inventory_area->set_viewed_container(container);
             }
 
-            if (impl->selected_quantity < max_quantity)
-            {
-              ++(impl->selected_quantity);
-            }
-
+            impl->selected_things.clear();
           }
-
-          result = EventResult::Handled;
-          break;
-
-        // "." - wait a turn
-        case sf::Keyboard::Key::Period:
-        case sf::Keyboard::Key::Delete:
-          action.type = Action::Type::Wait;
-          player.queue_action(action);
-
-          result = EventResult::Handled;
-          break;
-
-        // "," - NH-style shortcut for "pick up"
-        case sf::Keyboard::Key::Comma:
-          key.alt = false;
-          key.control = true;
-          key.shift = false;
-          key.code = sf::Keyboard::Key::P;
-          break;
-
-        default:
-          break;
+          else
+          {
+            the_message_log.add("The last selection is not a container.");
+          }
         }
-      }
-
-      // *** SHIFTED KEYS *****************************************************
-      if (!key.alt && !key.control && key.shift)
-      {
-        switch (key.code)
+        else
         {
+          the_message_log.add("Nothing is currently selected.");
+        }
+        break;
+
         // "<" - go up a level (or thru magic portal)
-        case sf::Keyboard::Key::Comma:
-          action.type = Action::Type::Move;
-          action.move_info.direction = Direction::Up;
-          player.queue_action(action);
-          result = EventResult::Handled;
-          break;
+      case sf::Keyboard::Key::Comma:
+        action.type = Action::Type::Move;
+        action.direction = Direction::Up;
+        player.queue_action(action);
+        result = EventResult::Handled;
+        break;
 
         // ">" - go down a level (or thru magic portal)
-        case sf::Keyboard::Key::Period:
-          action.type = Action::Type::Move;
-          action.move_info.direction = Direction::Down;
-          player.queue_action(action);
-          result = EventResult::Handled;
-          break;
+      case sf::Keyboard::Key::Period:
+        action.type = Action::Type::Move;
+        action.direction = Direction::Down;
+        player.queue_action(action);
+        result = EventResult::Handled;
+        break;
 
-        default:
-          break;
-        }
-      }
+      default:
+        break;
+      } // end switch (key.code)
+    } // end if (!key.alt && !key.control && key.shift)
 
-      // *** CONTROL KEYS *******************************************************
-      // (Shift key is IGNORED here, keys are not case-sensitive.)
-      if (!key.alt && key.control)
+    // *** CONTROL KEYS *******************************************************
+    // (Shift key is IGNORED here, keys are not case-sensitive.)
+    if (!key.alt && key.control)
+    {
+      switch (key.code)
       {
-        switch (key.code)
-        {
         // CTRL-MINUS -- Zoom out
-        case sf::Keyboard::Key::Dash:
-        case sf::Keyboard::Key::Subtract:
-          add_zoom(-0.05);
-          break;
+      case sf::Keyboard::Key::Dash:
+      case sf::Keyboard::Key::Subtract:
+        add_zoom(-0.05);
+        break;
 
         // CTRL-PLUS -- Zoom in
-        case sf::Keyboard::Key::Equal:
-        case sf::Keyboard::Key::Add:
-          add_zoom(0.05);
-          break;
+      case sf::Keyboard::Key::Equal:
+      case sf::Keyboard::Key::Add:
+        add_zoom(0.05);
+        break;
 
         // CTRL-D -- drop items
-        case sf::Keyboard::Key::D:    // Drop
-          action.type = Action::Type::Drop;
-          action.thing_ids = impl->selected_things;
-          player.queue_action(action);
-          impl->reset_inventory_info();
-          result = EventResult::Handled;
-          break;
+      case sf::Keyboard::Key::D:    // Drop
+        action.type = Action::Type::Drop;
+        action.thing_ids = impl->selected_things;
+        player.queue_action(action);
+        impl->reset_inventory_info();
+        result = EventResult::Handled;
+        break;
 
         // CTRL-P -- pick up items
-        case sf::Keyboard::Key::P:    // Pick up
-          action.type = Action::Type::Pickup;
-          action.thing_ids = impl->selected_things;
-          player.queue_action(action);
-          impl->reset_inventory_info();
-          result = EventResult::Handled;
-          break;
+      case sf::Keyboard::Key::P:    // Pick up
+        action.type = Action::Type::Pickup;
+        action.thing_ids = impl->selected_things;
+        player.queue_action(action);
+        impl->reset_inventory_info();
+        result = EventResult::Handled;
+        break;
 
         // CTRL-Q -- quaff (drink) items
-        case sf::Keyboard::Key::Q:
-          action.type = Action::Type::Quaff;
-          action.thing_ids = impl->selected_things;
-          player.queue_action(action);
-          impl->reset_inventory_info();
-          result = EventResult::Handled;
-          break;
+      case sf::Keyboard::Key::Q:
+        action.type = Action::Type::Quaff;
+        action.thing_ids = impl->selected_things;
+        player.queue_action(action);
+        impl->reset_inventory_info();
+        result = EventResult::Handled;
+        break;
 
         // CTRL-S -- store item in another item
-        case sf::Keyboard::Key::S:
-          action.type = Action::Type::Store;
-          action.thing_ids = impl->selected_things;
-          player.queue_action(action);
-          impl->reset_inventory_info();
-          result = EventResult::Handled;
-          break;
+      case sf::Keyboard::Key::S:
+        action.type = Action::Type::Store;
+        action.thing_ids = impl->selected_things;
+        player.queue_action(action);
+        impl->reset_inventory_info();
+        result = EventResult::Handled;
+        break;
 
         // CTRL-T -- take item out of container
-        case sf::Keyboard::Key::T:
-          action.type = Action::Type::TakeOut;
-          action.thing_ids = impl->selected_things;
-          player.queue_action(action);
-          impl->reset_inventory_info();
-          result = EventResult::Handled;
-          break;
+      case sf::Keyboard::Key::T:
+        action.type = Action::Type::TakeOut;
+        action.thing_ids = impl->selected_things;
+        player.queue_action(action);
+        impl->reset_inventory_info();
+        result = EventResult::Handled;
+        break;
 
         // CTRL-W -- wield item
-        case sf::Keyboard::Key::W:
-          action.type = Action::Type::Wield;
-          action.thing_ids = impl->selected_things;
-          player.queue_action(action);
-          impl->reset_inventory_info();
-          result = EventResult::Handled;
-          break;
+      case sf::Keyboard::Key::W:
+        action.type = Action::Type::Wield;
+        action.thing_ids = impl->selected_things;
+        player.queue_action(action);
+        impl->reset_inventory_info();
+        result = EventResult::Handled;
+        break;
 
-        default:
-          break;
-        }
+      default:
+        break;
       }
+    } // end if (!key.alt && key.control)
 
-      // *** ALT KEYS ***********************************************************
-      // (Shift key is IGNORED here, keys are not case-sensitive.)
-      if (key.alt && !key.control)
+    // *** ALT KEYS ***********************************************************
+    // (Shift key is IGNORED here, keys are not case-sensitive.)
+    if (key.alt && !key.control)
+    {
+      switch (key.code)
       {
-        switch (key.code)
-        {
-        default:
-          break;
-        }
+      default:
+        break;
       }
+    }
 
-      // *** CONTROL + ALT KEYS *************************************************
-      // (Shift key is IGNORED here, keys are not case-sensitive.)
-      if (key.alt && key.control)
+    // *** CONTROL + ALT KEYS *************************************************
+    // (Shift key is IGNORED here, keys are not case-sensitive.)
+    if (key.alt && key.control)
+    {
+      switch (key.code)
       {
-        switch (key.code)
-        {
-        default:
-          break;
-        }
+      default:
+        break;
       }
-    } // end case AreaFocus::Map
+    }
     break;
+  } // end case GameInputState::Map
 
   default:
     break;
-  } // end switch (impl->current_area_focus)
+  } // end switch (impl->current_input_state)
 
   return result;
 }
@@ -914,25 +1004,25 @@ EventResult AppStateGameMode::handle_event(sf::Event& event)
 
   switch (event.type)
   {
-    case sf::Event::EventType::Resized:
-      {
-        impl->left_inventory_area->set_dimensions(impl->calc_left_inven_dims());
-        impl->right_inventory_area->set_dimensions(impl->calc_right_inven_dims());
-        impl->status_area->set_dimensions(impl->calc_status_area_dims());
-        result = EventResult::Handled;
-        break;
-      }
+  case sf::Event::EventType::Resized:
+  {
+    impl->left_inventory_area->set_dimensions(impl->calc_left_inven_dims());
+    impl->right_inventory_area->set_dimensions(impl->calc_right_inven_dims());
+    impl->status_area->set_dimensions(impl->calc_status_area_dims());
+    result = EventResult::Handled;
+    break;
+  }
 
-    case sf::Event::EventType::KeyPressed:
-      result = this->handle_key_press(event.key);
-      break;
+  case sf::Event::EventType::KeyPressed:
+    result = this->handle_key_press(event.key);
+    break;
 
-    case sf::Event::EventType::KeyReleased:
-      break;
+  case sf::Event::EventType::KeyReleased:
+    break;
 
-    case sf::Event::EventType::MouseWheelMoved:
-      result = this->handle_mouse_wheel(event.mouseWheel);
-      break;
+  case sf::Event::EventType::MouseWheelMoved:
+    result = this->handle_mouse_wheel(event.mouseWheel);
+    break;
 
   default:
     break;
@@ -940,13 +1030,13 @@ EventResult AppStateGameMode::handle_event(sf::Event& event)
 
   if (result != EventResult::Handled)
   {
-    switch (impl->current_area_focus)
+    switch (impl->current_input_state)
     {
-    case AreaFocus::Map:
+    case GameInputState::Map:
       result = impl->status_area->handle_event(event);
       break;
 
-    case AreaFocus::MessageLog:
+    case GameInputState::MessageLog:
       result = the_message_log.handle_event(event);
       break;
 
@@ -997,26 +1087,26 @@ bool AppStateGameMode::initialize()
   // TESTING CODE: Create a rock immediately south of the player.
   ThingId rock_id = TF.create<Rock>();
   TF.get(rock_id).move_into(game_map.get_tile_id(start_coords.x,
-                                                 start_coords.y + 1));
+                            start_coords.y + 1));
 
   // TESTING CODE: Create a sack immediately east of the player.
   ThingId sack_id = TF.create<SackLarge>();
   TF.get(sack_id).move_into(game_map.get_tile_id(start_coords.x + 1,
-                                                 start_coords.y));
+                            start_coords.y));
 
   // TESTING CODE: Create five gold coins west of the player.
   ThingId coins_id = TF.create<CoinGold>();
   Aggregate& coins_agg = dynamic_cast<Aggregate&>(TF.get(coins_id));
   coins_agg.set_quantity(5);
   TF.get(coins_id).move_into(game_map.get_tile_id(start_coords.x - 1,
-                                                  start_coords.y));
+                             start_coords.y));
 
   // TESTING CODE: Create ten gold coins northwest of the player.
   ThingId coins2_id = TF.create<CoinGold>();
   Aggregate& coins2_agg = dynamic_cast<Aggregate&>(TF.get(coins2_id));
   coins2_agg.set_quantity(10);
   TF.get(coins2_id).move_into(game_map.get_tile_id(start_coords.x - 1,
-                                                   start_coords.y - 1));
+                              start_coords.y - 1));
 
   // END TESTING CODE
 

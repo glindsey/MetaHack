@@ -24,7 +24,8 @@ class InventoryArea :
 {
   public:
     InventoryArea(sf::IntRect dimensions,
-                  std::vector<ThingId>& selected_things);
+                  std::vector<ThingId>& selected_things,
+                  unsigned int& selected_quantity);
     virtual ~InventoryArea();
 
     void set_focus(bool focus);

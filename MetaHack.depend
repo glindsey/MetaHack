@@ -2887,7 +2887,7 @@
 1363023469 source:c:\dropbox\projects\metahack\src\executable.cpp
 	"Executable.h"
 
-1373987101 c:\dropbox\projects\metahack\include\appstategamemode.h
+1389753203 c:\dropbox\projects\metahack\include\appstategamemode.h
 	<memory>
 	"InventoryArea.h"
 	"MapId.h"
@@ -2904,7 +2904,7 @@
 	<memory>
 	"State.h"
 
-1377395469 source:c:\dropbox\projects\metahack\src\appstategamemode.cpp
+1389754298 source:c:\dropbox\projects\metahack\src\appstategamemode.cpp
 	"AppStateGameMode.h"
 	<memory>
 	<set>
@@ -2940,7 +2940,7 @@
 1363024906 source:c:\dropbox\projects\metahack\src\renderable.cpp
 	"Renderable.h"
 
-1378755624 source:c:\dropbox\projects\metahack\src\entity.cpp
+1386524716 source:c:\dropbox\projects\metahack\src\entity.cpp
 	"Entity.h"
 	<algorithm>
 	<cmath>
@@ -2961,7 +2961,7 @@
 	"Ordinal.h"
 	"ThingFactory.h"
 
-1377272812 c:\dropbox\projects\metahack\include\entity.h
+1386524391 c:\dropbox\projects\metahack\include\entity.h
 	"Action.h"
 	"AttributeSet.h"
 	"BodyPart.h"
@@ -2974,7 +2974,7 @@
 	<boost/dynamic_bitset.hpp>
 	<set>
 
-1377390742 c:\dropbox\projects\metahack\include\thing.h
+1386523272 c:\dropbox\projects\metahack\include\thing.h
 	"ActionResult.h"
 	"BodyPart.h"
 	"Direction.h"
@@ -2990,7 +2990,7 @@
 
 1363288259 c:\dropbox\projects\metahack\include\playfield.h
 
-1377390751 source:c:\dropbox\projects\metahack\src\thing.cpp
+1386522608 source:c:\dropbox\projects\metahack\src\thing.cpp
 	"Thing.h"
 	<iomanip>
 	<sstream>
@@ -3621,7 +3621,7 @@
 
 1259859036 c:\dropbox\projects\libraries\\boost\memory_order.hpp
 
-1372422778 c:\dropbox\projects\metahack\include\thingid.h
+1386524447 c:\dropbox\projects\metahack\include\thingid.h
 	<boost/strong_typedef.hpp>
 
 1278981436 c:\dropbox\projects\libraries\\boost\uuid\uuid_io.hpp
@@ -3920,7 +3920,7 @@
 	"Entity.h"
 	"ThingFactory.h"
 
-1374258737 c:\dropbox\projects\metahack\include\inventoryarea.h
+1386728336 c:\dropbox\projects\metahack\include\inventoryarea.h
 	<SFML/Graphics.hpp>
 	<memory>
 	<vector>
@@ -3934,7 +3934,7 @@
 	"Aggregate.h"
 	"Direction.h"
 
-1375315496 source:c:\dropbox\projects\metahack\src\inventoryarea.cpp
+1386730580 source:c:\dropbox\projects\metahack\src\inventoryarea.cpp
 	"InventoryArea.h"
 	"App.h"
 	"ConfigSettings.h"
@@ -3944,6 +3944,7 @@
 	"Thing.h"
 	"ThingFactory.h"
 	"TileSheet.h"
+	<sstream>
 	<string>
 
 1368220268 source:c:\dropbox\projects\metahack\src\lightorb.cpp
@@ -4557,7 +4558,7 @@
 1374289322 source:c:\dropbox\projects\metahack\src\things\rock.cpp
 	"Rock.h"
 
-1374853155 c:\dropbox\projects\metahack\include\action.h
+1389754262 c:\dropbox\projects\metahack\include\action.h
 	<vector>
 	"Direction.h"
 	"ThingId.h"
@@ -5594,7 +5595,7 @@
 	"Inventory.h"
 	"ThingFactory.h"
 
-1377366141 c:\dropbox\projects\metahack\include\aggregate.h
+1386522552 c:\dropbox\projects\metahack\include\aggregate.h
 	"Thing.h"
 	<memory>
 
