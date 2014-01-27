@@ -4,6 +4,7 @@ const float EFFECT_LIGHTING = 1.0;
 const float EFFECT_GRAYSCALE = 2.0;
 const float EFFECT_SEPIA = 3.0;
 const float EFFECT_PARCHMENT = 4.0;
+const float EFFECT_REDSCALE = 5.0;
 
 uniform sampler2D texture;
 uniform float effect;
@@ -31,6 +32,14 @@ void main()
     fragment_color.r = luminance;
     fragment_color.g = luminance;
     fragment_color.b = luminance;
+    fragment_color.a = gl_Color.a * pixel.a;
+  }
+  else if (effect == EFFECT_REDSCALE)
+  {
+    // Red rendering (for dead entities)
+    fragment_color.r = luminance;
+    fragment_color.g = 0;
+    fragment_color.b = 0;
     fragment_color.a = gl_Color.a * pixel.a;
   }
   else if (effect == EFFECT_SEPIA)

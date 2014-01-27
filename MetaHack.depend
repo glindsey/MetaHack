@@ -3026,7 +3026,7 @@
 	"InventorySlot.h"
 	"ThingId.h"
 
-1374261889 source:c:\dropbox\projects\metahack\src\map.cpp
+1390864128 source:c:\dropbox\projects\metahack\src\map.cpp
 	"Map.h"
 	<boost/random/uniform_int_distribution.hpp>
 	<climits>
@@ -3037,13 +3037,13 @@
 	"Inventory.h"
 	"IsType.h"
 	"LightSource.h"
-	"MapFeature.h"
-	"MapGenerator.h"
 	"MapTile.h"
 	"MathUtils.h"
 	"ShaderEffect.h"
 	"ThingFactory.h"
 	"TileSheet.h"
+	"mapfeatures/MapFeature.h"
+	"mapfeatures/MapGenerator.h"
 
 1372425652 c:\dropbox\projects\metahack\include\map.h
 	<boost/ptr_container/ptr_deque.hpp>
@@ -3080,7 +3080,7 @@
 	"AttributeSet.h"
 	"ErrorHandler.h"
 
-1378753049 c:\dropbox\projects\metahack\include\attributeset.h
+1390864224 c:\dropbox\projects\metahack\include\attributeset.h
 	<map>
 	"Attribute.h"
 
@@ -4548,7 +4548,7 @@
 	<SFML/Graphics.hpp>
 	"MapFeature.h"
 
-1372343334 c:\dropbox\projects\metahack\include\shadereffect.h
+1390863289 c:\dropbox\projects\metahack\include\shadereffect.h
 
 1390861337 c:\dropbox\projects\metahack\include\things\rock.h
 	"Aggregate.h"

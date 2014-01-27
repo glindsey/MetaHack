@@ -49,7 +49,7 @@ class AttributeSet
     void set_to(Attribute attrib, int new_value);
 
     /// Get the value of an attribute.
-    unsigned int get(Attribute attrib);
+    unsigned int get(Attribute attrib) const;
 
   protected:
   private:

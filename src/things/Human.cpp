@@ -21,5 +21,12 @@ std::string Human::_get_description() const
 sf::Vector2u Human::get_tile_sheet_coords(int frame) const
 {
   /// @todo Male/female variants; maybe skin color too?
-  return sf::Vector2u(0, 5);
+  if (get_attributes().get(Attribute::HP) > 0)
+  {
+    return sf::Vector2u(0, 5);
+  }
+  else
+  {
+    return sf::Vector2u(1, 5);
+  }
 }

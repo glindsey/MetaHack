@@ -10,13 +10,14 @@
 #include "Inventory.h"
 #include "IsType.h"
 #include "LightSource.h"
-#include "MapFeature.h"
-#include "MapGenerator.h"
 #include "MapTile.h"
 #include "MathUtils.h"
 #include "ShaderEffect.h"
 #include "ThingFactory.h"
 #include "TileSheet.h"
+
+#include "mapfeatures/MapFeature.h"
+#include "mapfeatures/MapGenerator.h"
 
 #define TILEID(x, y) (impl->tiles[get_index((x), (y))])
 #define TILE(x, y) TF.get_tile(TILEID(x, y))

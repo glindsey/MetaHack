@@ -82,7 +82,7 @@ void AttributeSet::set_to(Attribute attrib, int new_value)
   value[index] = new_value;
 }
 
-unsigned int AttributeSet::get(Attribute attrib)
+unsigned int AttributeSet::get(Attribute attrib) const
 {
   return value[uint_cast(attrib)];
 }

@@ -5,7 +5,14 @@ Biped::~Biped() {}
 
 sf::Vector2u Biped::get_tile_sheet_coords(int frame) const
 {
-  return sf::Vector2u(0, 4);
+  if (get_attributes().get(Attribute::HP) > 0)
+  {
+    return sf::Vector2u(0, 4);
+  }
+  else
+  {
+    return sf::Vector2u(1, 4);
+  }
 }
 
 unsigned int Biped::get_bodypart_number(BodyPart part) const

@@ -10,6 +10,7 @@ namespace ShaderEffect
   const float Grayscale = 2.0f;
   const float Sepia = 3.0f;
   const float Parchment = 4.0f;
+  const float Redscale = 5.0f;
 }
 
 #endif // SHADEREFFECT_H_INCLUDED
