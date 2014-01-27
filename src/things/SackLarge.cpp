@@ -9,7 +9,7 @@ SackLarge::SackLarge() : Container()
 
 SackLarge::~SackLarge()           {}
 
-std::string SackLarge::get_description() const
+std::string SackLarge::_get_description() const
 {
   return "large sack";
 }

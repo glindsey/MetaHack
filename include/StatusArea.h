@@ -4,27 +4,19 @@
 #include <memory>
 #include <SFML/Graphics.hpp>
 
-#include "EventHandler.h"
-#include "Renderable.h"
+#include "gui/GUIPane.h"
 
-class StatusArea :
-  public EventHandler,
-  public Renderable
+class StatusArea : public GUIPane
 {
   public:
     StatusArea(sf::IntRect dimensions);
     virtual ~StatusArea();
 
-    void set_focus(bool focus);
-    bool get_focus();
-    sf::IntRect get_dimensions();
-    void set_dimensions(sf::IntRect dimensions);
-
-    virtual EventResult handle_event(sf::Event& event);
-
-    virtual bool render(sf::RenderTarget& target, int frame);
+    virtual EventResult handle_event(sf::Event& event) override;
 
   protected:
+    virtual std::string render_contents(int frame) override;
+
   private:
     struct Impl;
     std::unique_ptr<Impl> impl;

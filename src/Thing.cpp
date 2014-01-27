@@ -168,6 +168,12 @@ bool Thing::has_same_qualities_as(Thing const& other) const
   return (compare_result == 0);
 }
 
+std::string Thing::get_description() const
+{
+  /// @todo Implement adding adjectives.
+  return _get_description();
+}
+
 std::string Thing::get_name() const
 {
   // If the thing is YOU, use YOU.
@@ -182,14 +188,12 @@ std::string Thing::get_name() const
   // If the Thing has a proper name, use that.
   if (owner.is_entity())
   {
-    name = owner.get_possessive() + " ";
+    name = owner.get_possessive() + " " + get_description();
   }
   else
   {
-    name = "the ";
+    name = "the "+ get_description();
   }
-
-  name += get_description();
 
   return name;
 }
@@ -235,7 +239,7 @@ unsigned int Thing::get_quantity() const
 
 std::string Thing::get_plural() const
 {
-  return get_description() + "s";
+  return _get_description() + "s";
 }
 
 std::string const& Thing::get_subject_pronoun()
@@ -632,6 +636,21 @@ bool Thing::is_liquid_carrier() const
   return false;
 }
 
+bool Thing::is_flammable() const
+{
+  return false;
+}
+
+bool Thing::is_corrodible() const
+{
+  return false;
+}
+
+bool Thing::is_shatterable() const
+{
+  return false;
+}
+
 void Thing::set_id(ThingId id)
 {
   impl->thing_id = id;
@@ -641,6 +660,8 @@ void Thing::set_location_id(ThingId target)
 {
   impl->location_id = target;
 }
+
+// *** PRIVATE METHODS ********************************************************
 
 bool Thing::_perform_action_activated_by(Entity& entity)
 {

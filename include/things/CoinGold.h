@@ -17,13 +17,13 @@ class CoinGold :
   public:
     virtual ~CoinGold();
 
-    virtual std::string get_description() const override;
     virtual sf::Vector2u get_tile_sheet_coords(int frame) const override;
 
   protected:
     CoinGold();
 
   private:
+    virtual std::string _get_description() const override;
     static CoinGold prototype;
 };
 

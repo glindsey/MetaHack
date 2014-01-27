@@ -109,19 +109,22 @@ class ThingFactory
 
     /// Get the ID associated with the game player.
     /// @return The player ID.
-    ThingId get_player_id();
+    ThingId get_player_id() const;
 
     /// Get a reference to the player Entity.
     /// This function is faster than ThingFactory::get(get_player_id()) because
     /// a reference to the player Entity is cached.
     /// @return A reference to the player Entity.
-    Entity& get_player();
+    Entity& get_player() const;
+
+    /// Returns true if the Entity pointed to is the player.
+    bool is_player(Entity const * const entity_ptr) const;
 
     /// Get a reference to Limbo.
     /// This function is faster than ThingFactory::get(limbo_id) because
     /// a reference to Limbo is cached.
     /// @return A reference to Limbo.
-    Container& get_limbo();
+    Container& get_limbo() const;
 
     /// The Limbo ID.
     /// The implementation sets this to 0; however, using limbo_id is both

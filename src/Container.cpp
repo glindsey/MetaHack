@@ -10,12 +10,16 @@ struct Container::Impl
   std::string proper_name;
   Inventory inventory;
   int inventory_size;
+  bool open;
+  bool locked;
 };
 
 Container::Container() :
   Thing(), impl(new Impl())
 {
   impl->inventory_size = -1;
+  impl->open = true;
+  impl->locked = false;
 }
 
 Container::Container(Container const& original) :
@@ -119,4 +123,44 @@ void Container::gather_thing_ids(std::vector<ThingId>& ids)
 
   // Then add this.
   ids.push_back(this->get_id());
+}
+
+bool Container::is_openable() const
+{
+  return false;
+}
+
+bool Container::is_lockable() const
+{
+  return false;
+}
+
+bool Container::is_open() const
+{
+  return impl->open;
+}
+
+bool Container::set_open(bool open)
+{
+  if (is_openable())
+  {
+    impl->open = open;
+  }
+
+  return impl->open;
+}
+
+bool Container::is_locked() const
+{
+  return impl->locked;
+}
+
+bool Container::set_locked(bool locked)
+{
+  if (is_lockable())
+  {
+    impl->locked = locked;
+  }
+
+  return impl->locked;
 }

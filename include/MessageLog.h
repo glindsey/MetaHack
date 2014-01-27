@@ -5,22 +5,15 @@
 #include <string>
 #include <SFML/Graphics.hpp>
 
-#include "EventHandler.h"
+#include "gui/GUIPane.h"
 #include "KeyBuffer.h"
-#include "Renderable.h"
 
 /// A class that keeps track of game messages, and is renderable on-screen.
-class MessageLog : public EventHandler, public Renderable
+class MessageLog : public GUIPane
 {
   public:
     MessageLog(sf::IntRect dimensions);
     virtual ~MessageLog();
-
-    void set_focus(bool focus);
-    bool get_focus();
-
-    sf::IntRect get_dimensions();
-    void set_dimensions(sf::IntRect dimensions);
 
     /// Add a message to the message log.
     /// The message added is automatically capitalized if it isn't already.
@@ -29,9 +22,10 @@ class MessageLog : public EventHandler, public Renderable
     /// Get the key buffer used for entering debug commands.
     KeyBuffer& get_key_buffer();
 
-    virtual EventResult handle_event(sf::Event& event);
+    virtual EventResult handle_event(sf::Event& event) override;
 
-    virtual bool render(sf::RenderTarget& target, int frame);
+  protected:
+    virtual std::string render_contents(int frame) override;
 
   private:
     struct Impl;

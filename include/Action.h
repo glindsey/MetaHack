@@ -9,6 +9,16 @@
 // Struct describing an action to execute.
 struct Action
 {
+  Action()
+  {
+    type = Type::None;
+    thing_ids.clear();
+    target_can_be_direction = false;
+    target_can_be_thing = false;
+    target = static_cast<ThingId>(0);
+    direction = Direction::None;
+  }
+
   enum class Type
   {
     None,
@@ -27,6 +37,12 @@ struct Action
 
   /// Thing(s) to perform the action on.
   std::vector<ThingId> thing_ids;
+
+  /// If true, action can take a Thing as a target.
+  bool target_can_be_thing;
+
+  /// If true, action can take a Direction as a target.
+  bool target_can_be_direction;
 
   /// Target Thing for the action (if any).
   ThingId target;

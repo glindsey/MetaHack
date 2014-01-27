@@ -15,13 +15,13 @@ class LightOrb :
   public:
     virtual ~LightOrb();
 
-    virtual std::string get_description() const override;
     virtual sf::Vector2u get_tile_sheet_coords(int frame) const override;
 
   protected:
     LightOrb();
 
   private:
+    virtual std::string _get_description() const override;
     static LightOrb prototype;
 };
 

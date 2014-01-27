@@ -45,7 +45,7 @@ int main()
   }
 
   // Create and open the main window.
-  app_window_.reset(new sf::RenderWindow(sf::VideoMode(1066, 600), "Magionic Bonds"));
+  app_window_.reset(new sf::RenderWindow(sf::VideoMode(1066, 600), "Magicule Saga"));
 
   // Create the default fonts.
   /// @todo Font names should be moved into ConfigSettings.

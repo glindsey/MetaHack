@@ -26,9 +26,6 @@ class MapTile : public Container
       float intensity;   ///< Intensity of the light.
     };
 
-    /// Return this tile's description.
-    virtual std::string get_description() const override;
-
     /// Return the coordinates of the tile representing the thing.
     virtual sf::Vector2u get_tile_sheet_coords(int frame) const;
 
@@ -92,10 +89,12 @@ class MapTile : public Container
     /// Constructor, callable only by ThingFactory.
     MapTile(MapId mapId, int x, int y);
 
-
   private:
     struct Impl;
     std::unique_ptr<Impl> impl;
+
+    /// Return this tile's description.
+    virtual std::string _get_description() const override;
 
     virtual ActionResult _perform_action_read_by(Entity& entity) override;
 };

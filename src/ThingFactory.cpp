@@ -219,17 +219,22 @@ bool ThingFactory::set_player_id(ThingId thing_id)
   }
 }
 
-ThingId ThingFactory::get_player_id()
+ThingId ThingFactory::get_player_id() const
 {
   return impl->player_id;
 }
 
-Entity& ThingFactory::get_player()
+Entity& ThingFactory::get_player() const
 {
   return *(impl->player_ptr);
 }
 
-Container& ThingFactory::get_limbo()
+bool ThingFactory::is_player(Entity const * const entity_ptr) const
+{
+  return (entity_ptr == impl->player_ptr);
+}
+
+Container& ThingFactory::get_limbo() const
 {
   return *(impl->limbo_thing_ptr);
 }

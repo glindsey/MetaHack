@@ -15,7 +15,6 @@ class Sconce :
     virtual ~Sconce();
 
     // Thing overrides
-    virtual std::string get_description() const override;
     virtual sf::Vector2u get_tile_sheet_coords(int frame) const override;
 
     virtual bool do_process() override;
@@ -24,6 +23,7 @@ class Sconce :
     Sconce();
 
   private:
+    virtual std::string _get_description() const override;
     static Sconce prototype;
 };
 

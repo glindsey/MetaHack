@@ -12,7 +12,7 @@ Human::Human() :
 
 Human::~Human() {}
 
-std::string Human::get_description() const
+std::string Human::_get_description() const
 {
   /// @todo Make this more descriptive based on character features.
   return "human";

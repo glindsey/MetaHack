@@ -1,4 +1,4 @@
-#include "MapLRoom.h"
+#include "mapfeatures/MapLRoom.h"
 
 #include <boost/random/uniform_int_distribution.hpp>
 

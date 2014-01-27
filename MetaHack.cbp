@@ -94,6 +94,7 @@
 		<Unit filename="include/EventHandler.h" />
 		<Unit filename="include/Gender.h" />
 		<Unit filename="include/GeoVector.h" />
+		<Unit filename="include/GetLetterKey.h" />
 		<Unit filename="include/Inventory.h" />
 		<Unit filename="include/InventoryArea.h" />
 		<Unit filename="include/InventorySlot.h" />
@@ -127,6 +128,7 @@
 		<Unit filename="include/ThingId.h" />
 		<Unit filename="include/TileSheet.h" />
 		<Unit filename="include/common_enums.h" />
+		<Unit filename="include/gui/GUIPane.h" />
 		<Unit filename="include/things/Biped.h" />
 		<Unit filename="include/things/CoinGold.h" />
 		<Unit filename="include/things/Human.h" />
@@ -176,6 +178,7 @@
 		<Unit filename="src/Thing.cpp" />
 		<Unit filename="src/ThingFactory.cpp" />
 		<Unit filename="src/TileSheet.cpp" />
+		<Unit filename="src/gui/GUIPane.cpp" />
 		<Unit filename="src/things/Biped.cpp" />
 		<Unit filename="src/things/CoinGold.cpp" />
 		<Unit filename="src/things/Human.cpp" />

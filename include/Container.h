@@ -47,6 +47,34 @@ class Container : public Thing
     /// process them for a single game tick.
     virtual void gather_thing_ids(std::vector<ThingId>& ids) override final;
 
+    /// Returns true if this container can be opened/closed.
+    /// By default, returns false. Derived classes can override this.
+    virtual bool is_openable() const;
+
+    /// Returns true if this container can be locked/unlocked.
+    virtual bool is_lockable() const;
+
+    /// Get whether this container is opened.
+    /// If is_openable() is false, this function always returns true.
+    /// @return True if the container is open, false otherwise.
+    bool is_open() const;
+
+    /// Set whether this container is open.
+    /// If is_openable() is false, this function does nothing.
+    /// @return True if the container is open, false otherwise.
+    bool set_open(bool open);
+
+    /// Get whether this container is locked.
+    /// If is_openable() or is_lockable() is false, this function always
+    /// returns false.
+    /// @return True if the container is locked, false otherwise.
+    bool is_locked() const;
+
+    /// Set whether this container is locked.
+    /// If is_openable() or is_lockable() is false, this function does nothing.
+    /// @return True if the container is locked, false otherwise.
+    bool set_locked(bool open);
+
   protected:
     Container();
     Container(const Container& original);

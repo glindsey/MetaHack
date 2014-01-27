@@ -8,7 +8,7 @@ Limbo::Limbo() :
 
 Limbo::~Limbo() {}
 
-std::string Limbo::get_description() const
+std::string Limbo::_get_description() const
 {
   return "nothingness";
 }

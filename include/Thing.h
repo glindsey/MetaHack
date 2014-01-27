@@ -97,6 +97,11 @@ class Thing
     /// they are identical.
     bool has_same_qualities_as(Thing const& other) const;
 
+    /// Return this thing's description.
+    /// Calls the overridden _get_description() and adds adjective qualifiers
+    /// (such as "fireproof", "waterproof", etc.)
+    std::string get_description() const;
+
     /// Return a string that identifies this thing.
     /// By default, returns "the" and a description of the thing, such as
     /// "the chair".
@@ -130,12 +135,9 @@ class Thing
     virtual unsigned int get_quantity() const;
 
     /// Return this object's plural.
-    /// By default, returns get_description() plus "s", but this can be
+    /// By default, returns _get_description() plus "s", but this can be
     /// overridden by child classes (for example "djinn" -> "djinni").
     virtual std::string get_plural() const;
-
-    /// Return this thing's description.
-    virtual std::string get_description() const = 0;
 
     /// Get the appropriate subject pronoun for the Thing.
     virtual std::string const& get_subject_pronoun();
@@ -330,6 +332,15 @@ class Thing
     /// Returns whether this Thing can hold a liquid.
     virtual bool is_liquid_carrier() const;
 
+    /// Returns whether this Thing is flammable.
+    virtual bool is_flammable() const;
+
+    /// Returns whether this Thing is corrodible.
+    virtual bool is_corrodible() const;
+
+    /// Returns whether this Thing is shatterable.
+    virtual bool is_shatterable() const;
+
   protected:
     /// Constructor, callable only by ThingFactory.
     Thing();
@@ -358,6 +369,9 @@ class Thing
     static sf::Color const wall_outline_color_;
 
   private:
+    /// Return this thing's description.
+    virtual std::string _get_description() const = 0;
+
     virtual bool _perform_action_activated_by(Entity& entity);
     virtual void _perform_action_collided_with(Thing& thing);
     virtual bool _perform_action_drank_by(Entity& entity);
@@ -376,7 +390,6 @@ class Thing
     virtual bool _perform_action_unwielded_by(Entity& entity);
     virtual bool _perform_action_wielded_by(Entity& entity);
     virtual bool _perform_action_fired_by(Entity& entity, Direction direction);
-
 };
 
 #endif // THING_H

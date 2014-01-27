@@ -20,12 +20,11 @@ class Limbo :
   public:
     virtual ~Limbo();
 
-    virtual std::string get_description() const override;
-
   protected:
     Limbo();
 
   private:
+    virtual std::string _get_description() const override;
 };
 
 #endif // LIMBO_H

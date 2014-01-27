@@ -12,7 +12,7 @@ CoinGold::~CoinGold()
   //dtor
 }
 
-std::string CoinGold::get_description() const
+std::string CoinGold::_get_description() const
 {
   return "gold coin";
 }

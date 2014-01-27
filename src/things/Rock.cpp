@@ -10,7 +10,7 @@ Rock::Rock(Rock const& original) :
 
 Rock::~Rock()              {}
 
-std::string Rock::get_description() const
+std::string Rock::_get_description() const
 {
   return "small rock";
 }

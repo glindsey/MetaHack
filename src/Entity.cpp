@@ -20,6 +20,8 @@
 #include "Ordinal.h"
 #include "ThingFactory.h"
 
+#include "ai/AIStrategy.h"
+
 // Local definitions to make reading/writing status info a bit easier.
 #define _YOU_   (this->get_name())
 #define _ARE_   (this->choose_verb(" are", " is"))
@@ -43,10 +45,13 @@ struct Entity::Impl
   Gender gender = Gender::None;
 
   /// Entity's memory of map tiles.
-  std::vector<MapTileType> memory;
+  std::vector<MapTileType> map_memory;
 
   /// Bitset for seen tiles.
   boost::dynamic_bitset<> tile_seen;
+
+  /// AI strategy associated with this Entity (if any).
+  std::shared_ptr<AIStrategy> ai_strategy;
 
   /// Queue of actions to be performed.
   std::deque<Action> actions;
@@ -173,6 +178,112 @@ Entity::~Entity()
   //dtor
 }
 
+std::string Entity::get_name() const
+{
+  // If the thing is YOU, use YOU.
+  if (TF.is_player(this))
+  {
+    if (impl->attributes.get(Attribute::HP) > 0)
+    {
+      return "you";
+    }
+    else
+    {
+      return "your corpse";
+    }
+  }
+
+  std::string name;
+  Container& owner = TF.get_container(get_owner_id());
+
+  if (impl->attributes.get(Attribute::HP) > 0)
+  {
+    if (owner.is_entity())
+    {
+      name = owner.get_possessive() + " " + get_description();
+    }
+    else
+    {
+      name = "the " + get_description();
+    }
+
+    // If the Thing has a proper name, use that.
+    if (get_proper_name().empty() == false)
+    {
+      name += " named " + get_proper_name();
+    }
+  }
+  else
+  {
+    if (get_proper_name().empty() == false)
+    {
+      name = get_possessive() + " corpse";
+    }
+    else
+    {
+      if (owner.is_entity())
+      {
+        name = owner.get_possessive() + " dead " + get_description();
+      }
+      else
+      {
+        name = "the dead " + get_description();
+      }
+    }
+  }
+
+  return name;
+}
+
+std::string Entity::get_indef_name() const
+{
+  // If the thing is YOU, use YOU.
+  if (TF.is_player(this))
+  {
+    if (impl->attributes.get(Attribute::HP) > 0)
+    {
+      return "you";
+    }
+    else
+    {
+      return "your corpse";
+    }
+  }
+
+  std::string name;
+
+  if (impl->attributes.get(Attribute::HP) > 0)
+  {
+    std::string description = get_description();
+    name = getIndefArt(description) + " " + description;
+
+    // If the Thing has a proper name, use that.
+    if (get_proper_name().empty() == false)
+    {
+      // e.g. "a hill orc named Thrag"
+      name += " named " + get_proper_name();
+    }
+  }
+  else
+  {
+    // If the Thing has a proper name, use that.
+    if (get_proper_name().empty() == false)
+    {
+      // e.g. "Fluffy's corpse"
+      name = get_possessive() + " corpse";
+    }
+    else
+    {
+      // e.g. "a dead rat"
+      std::string description = get_description();
+      name = getIndefArt(description) + " dead " + description;
+    }
+  }
+
+  return name;
+}
+
+
 int Entity::get_busy_counter() const
 {
   return impl->busy_counter;
@@ -235,12 +346,12 @@ bool Entity::move_into(ThingId new_location_id)
       {
         /// @todo Save old map memory.
       }
-      impl->memory.clear();
+      impl->map_memory.clear();
       if (new_map_id != MapFactory::null_map_id)
       {
         Map& new_map = MF.get(new_map_id);
         sf::Vector2i new_map_size = new_map.get_size();
-        impl->memory.resize(new_map_size.x * new_map_size.y);
+        impl->map_memory.resize(new_map_size.x * new_map_size.y);
         /// @todo Load new map memory if it exists somewhere.
       }
     }
@@ -297,277 +408,6 @@ bool Entity::can_see(int xTile, int yTile)
   return impl->tile_seen[game_map.get_index(xTile, yTile)];
 }
 
-void Entity::do_recursive_visibility(int octant,
-                                   int depth,
-                                   float slope_A,
-                                   float slope_B)
-{
-  int x = 0;
-  int y = 0;
-
-  // Are we on a map?  Bail out if we aren't.
-  Container& location = TF.get_container(get_location_id());
-
-  if (!location.is_maptile())
-  {
-    return;
-  }
-
-  MapTile& tile = TF.get_tile(get_location_id());
-  sf::Vector2i tile_coords = tile.get_coords();
-  Map& game_map = MF.get(tile.get_map_id());
-  int eX = tile_coords.x;
-  int eY = tile_coords.y;
-
-  static const int mv = 128;
-  static constexpr int mw = (mv * mv);
-
-  switch (octant)
-  {
-    case 1:
-      y = eY - depth;
-      x = rintf(static_cast<float>(eX) - (slope_A * static_cast<float>(depth)));
-      while (calc_slope(x, y, eX, eY) >= slope_B)
-      {
-        if (calc_vis_distance(x, y, eX, eY) <= mw)
-        {
-          if (game_map.get_tile(x, y).is_opaque())
-          {
-            if (!game_map.get_tile(x - 1, y).is_opaque())
-            {
-              do_recursive_visibility(1, depth + 1, slope_A,
-                                      calc_slope(x - 0.5, y + 0.5, eX, eY));
-            }
-          }
-          else
-          {
-            if (game_map.get_tile(x - 1, y).is_opaque())
-            {
-              slope_A = calc_slope(x - 0.5, y - 0.5, eX, eY);
-            }
-          }
-          impl->tile_seen[game_map.get_index(x, y)] = true;
-          impl->memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
-        }
-        ++x;
-      }
-      --x;
-      break;
-    case 2:
-      y = eY - depth;
-      x = rintf(static_cast<float>(eX) + (slope_A * static_cast<float>(depth)));
-      while (calc_slope(x, y, eX, eY) <= slope_B)
-      {
-        if (calc_vis_distance(x, y, eX, eY) <= mw)
-        {
-          if (game_map.get_tile(x, y).is_opaque())
-          {
-            if (!game_map.get_tile(x + 1, y).is_opaque())
-            {
-              do_recursive_visibility(2, depth + 1, slope_A,
-                                      calc_slope(x + 0.5, y + 0.5, eX, eY));
-            }
-          }
-          else
-          {
-            if (game_map.get_tile(x + 1, y).is_opaque())
-            {
-              slope_A = -calc_slope(x + 0.5, y - 0.5, eX, eY);
-            }
-          }
-          impl->tile_seen[game_map.get_index(x, y)] = true;
-          impl->memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
-        }
-        --x;
-      }
-      ++x;
-      break;
-    case 3:
-      x = eX + depth;
-      y = rintf(static_cast<float>(eY) - (slope_A * static_cast<float>(depth)));
-      while (calc_inv_slope(x, y, eX, eY) <= slope_B)
-      {
-        if (calc_vis_distance(x, y, eX, eY) <= mw)
-        {
-          if (game_map.get_tile(x, y).is_opaque())
-          {
-            if (!game_map.get_tile(x, y - 1).is_opaque())
-            {
-              do_recursive_visibility(3, depth + 1, slope_A,
-                                      calc_inv_slope(x - 0.5, y - 0.5, eX, eY));
-            }
-          }
-          else
-          {
-            if (game_map.get_tile(x, y - 1).is_opaque())
-            {
-              slope_A = -calc_inv_slope(x + 0.5, y - 0.5, eX, eY);
-            }
-          }
-          impl->tile_seen[game_map.get_index(x, y)] = true;
-          impl->memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
-        }
-        ++y;
-      }
-      --y;
-      break;
-    case 4:
-      x = eX + depth;
-      y = rintf(static_cast<float>(eY) + (slope_A * static_cast<float>(depth)));
-      while (calc_inv_slope(x, y, eX, eY) >= slope_B)
-      {
-        if (calc_vis_distance(x, y, eX, eY) <= mw)
-        {
-          if (game_map.get_tile(x, y).is_opaque())
-          {
-            if (!game_map.get_tile(x, y + 1).is_opaque())
-            {
-              do_recursive_visibility(4, depth + 1, slope_A,
-                                      calc_inv_slope(x - 0.5, y + 0.5, eX, eY));
-            }
-          }
-          else
-          {
-            if (game_map.get_tile(x, y + 1).is_opaque())
-            {
-              slope_A = calc_inv_slope(x + 0.5, y + 0.5, eX, eY);
-            }
-          }
-          impl->tile_seen[game_map.get_index(x, y)] = true;
-          impl->memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
-        }
-        --y;
-      }
-      ++y;
-      break;
-    case 5:
-      y = eY + depth;
-      x = rintf(static_cast<float>(eX) + (slope_A * static_cast<float>(depth)));
-      while (calc_slope(x, y, eX, eY) >= slope_B)
-      {
-        if (calc_vis_distance(x, y, eX, eY) <= mw)
-        {
-          if (game_map.get_tile(x, y).is_opaque())
-          {
-            if (!game_map.get_tile(x + 1, y).is_opaque())
-            {
-              do_recursive_visibility(5, depth + 1, slope_A,
-                                      calc_slope(x + 0.5, y - 0.5, eX, eY));
-            }
-          }
-          else
-          {
-            if (game_map.get_tile(x + 1, y).is_opaque())
-            {
-              slope_A = calc_slope(x + 0.5, y + 0.5, eX, eY);
-            }
-          }
-          impl->tile_seen[game_map.get_index(x, y)] = true;
-          impl->memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
-        }
-        --x;
-      }
-      ++x;
-      break;
-    case 6:
-      y = eY + depth;
-      x = rintf(static_cast<float>(eX) - (slope_A * static_cast<float>(depth)));
-      while (calc_slope(x, y, eX, eY) <= slope_B)
-      {
-        if (calc_vis_distance(x, y, eX, eY) <= mw)
-        {
-          if (game_map.get_tile(x, y).is_opaque())
-          {
-            if (!game_map.get_tile(x - 1, y).is_opaque())
-            {
-              do_recursive_visibility(6, depth + 1, slope_A,
-                                      calc_slope(x - 0.5, y - 0.5, eX, eY));
-            }
-          }
-          else
-          {
-            if (game_map.get_tile(x - 1, y).is_opaque())
-            {
-              slope_A = -calc_slope(x - 0.5, y + 0.5, eX, eY);
-            }
-          }
-          impl->tile_seen[game_map.get_index(x, y)] = true;
-          impl->memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
-        }
-        ++x;
-      }
-      --x;
-      break;
-    case 7:
-      x = eX - depth;
-      y = rintf(static_cast<float>(eY) + (slope_A * static_cast<float>(depth)));
-      while (calc_inv_slope(x, y, eX, eY) <= slope_B)
-      {
-        if (calc_vis_distance(x, y, eX, eY) <= mw)
-        {
-          if (game_map.get_tile(x, y).is_opaque())
-          {
-            if (!game_map.get_tile(x, y + 1).is_opaque())
-            {
-              do_recursive_visibility(7, depth + 1, slope_A,
-                                      calc_inv_slope(x + 0.5, y + 0.5, eX, eY));
-            }
-          }
-          else
-          {
-            if (game_map.get_tile(x, y + 1).is_opaque())
-            {
-              slope_A = -calc_inv_slope(x - 0.5, y + 0.5, eX, eY);
-            }
-          }
-          impl->tile_seen[game_map.get_index(x, y)] = true;
-          impl->memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
-        }
-        --y;
-      }
-      ++y;
-      break;
-    case 8:
-      x = eX - depth;
-      y = rintf(static_cast<float>(eY) - (slope_A * static_cast<float>(depth)));
-      while (calc_inv_slope(x, y, eX, eY) >= slope_B)
-      {
-        if (calc_vis_distance(x, y, eX, eY) <= mw)
-        {
-          if (game_map.get_tile(x, y).is_opaque())
-          {
-            if (!game_map.get_tile(x, y - 1).is_opaque())
-            {
-              do_recursive_visibility(8, depth + 1, slope_A,
-                                      calc_inv_slope(x + 0.5, y - 0.5, eX, eY));
-            }
-          }
-          else
-          {
-            if (game_map.get_tile(x, y - 1).is_opaque())
-            {
-              slope_A = calc_inv_slope(x - 0.5, y - 0.5, eX, eY);
-            }
-          }
-          impl->tile_seen[game_map.get_index(x, y)] = true;
-          impl->memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
-        }
-        ++y;
-      }
-      --y;
-      break;
-    default:
-      MAJOR_ERROR("Octant passed to do_recursive_visibility was %d (not 1 to 8)!", octant);
-      break;
-  }
-
-  if ((depth < mv) && (!game_map.get_tile(x, y).is_opaque()))
-  {
-    do_recursive_visibility(octant, depth + 1, slope_A, slope_B);
-  }
-}
-
-
 void Entity::find_seen_tiles()
 {
   static MapId lastId = static_cast<MapId>(0);
@@ -618,7 +458,7 @@ MapTileType Entity::get_memory_at(int x, int y) const
   }
 
   Map& game_map = MF.get(this->get_map_id());
-  return impl->memory[game_map.get_index(x, y)];
+  return impl->map_memory[game_map.get_index(x, y)];
 }
 
 MapTileType Entity::get_memory_at(sf::Vector2i coords) const
@@ -646,7 +486,7 @@ void Entity::add_memory_vertices_to(sf::VertexArray& vertices,
   sf::Vector2f vNW(location.x - ts2, location.y - ts2);
   sf::Vector2f vNE(location.x + ts2, location.y - ts2);
 
-  MapTileType tile_type = impl->memory[game_map.get_index(x, y)];
+  MapTileType tile_type = impl->map_memory[game_map.get_index(x, y)];
   sf::Vector2u tile_coords = getMapTileTypeTileSheetCoords(tile_type);
   sf::Vector2f texNW = sf::Vector2f(tile_coords.x * ts,
                                     tile_coords.y * ts);
@@ -832,130 +672,155 @@ bool Entity::do_process()
     return true;
   }
 
-  // If no pending actions, just return.
-  if (impl->actions.empty())
+  // Perform any subclass-specific processing.
+  // Useful if, for example, your Entity can rise from the dead.
+  _do_process();
+
+  // Is the entity dead?
+  if (impl->attributes.get(Attribute::HP) > 0)
   {
-    return true;
-  }
-
-  Action action = impl->actions.front();
-  impl->actions.pop_front();
-
-  unsigned int number_of_things = action.thing_ids.size();
-
-  switch (action.type)
-  {
-  case Action::Type::Wait:
-    success = this->move(Direction::Self, action_time);
-    if (success)
+    // If the entity is not the player, perform the AI strategy associated with
+    // it.
+    if (!TF.is_player(this))
     {
-      impl->busy_counter += action_time;
+      if (impl->ai_strategy.get() != nullptr)
+      impl->ai_strategy->execute();
     }
-    break;
 
-  case Action::Type::Move:
-    success = this->move(action.direction, action_time);
-    if (success)
+    // If actions are pending...
+    if (!impl->actions.empty())
     {
-      impl->busy_counter += action_time;
-    }
-    break;
+      Action action = impl->actions.front();
+      impl->actions.pop_front();
 
-  case Action::Type::Drop:
-    for (ThingId const& id : action.thing_ids)
-    {
-      success = this->drop(id, action_time);
-      if (success)
+      unsigned int number_of_things = action.thing_ids.size();
+
+      switch (action.type)
       {
-        impl->busy_counter += action_time;
-      }
-    }
-    break;
+      case Action::Type::Wait:
+        success = this->move(Direction::Self, action_time);
+        if (success)
+        {
+          impl->busy_counter += action_time;
+        }
+        break;
 
-  case Action::Type::Eat:
-    for (ThingId const& id : action.thing_ids)
-    {
-      success = this->eat(id, action_time);
-      if (success)
-      {
-        impl->busy_counter += action_time;
-      }
-    }
+      case Action::Type::Move:
+        success = this->move(action.direction, action_time);
+        if (success)
+        {
+          impl->busy_counter += action_time;
+        }
+        break;
 
-  case Action::Type::Pickup:
-    for (ThingId const& id : action.thing_ids)
-    {
-      success = this->pick_up(id, action_time);
-      if (success)
-      {
-        impl->busy_counter += action_time;
-      }
-    }
-    break;
-
-  case Action::Type::Quaff:
-    for (ThingId const& id : action.thing_ids)
-    {
-      success = this->drink(id, action_time);
-      if (success)
-      {
-        impl->busy_counter += action_time;
-      }
-    }
-    break;
-
-  case Action::Type::Store:
-    if (number_of_things > 1)
-    {
-      ThingId target_id = action.thing_ids[number_of_things - 1];
-      for (unsigned int index = 0; index < number_of_things - 1; ++index)
-      {
-        success = this->put_into(action.thing_ids[index],
-                                 target_id, action_time);
+      case Action::Type::Drop:
+        for (ThingId const& id : action.thing_ids)
+        {
+        success = this->drop(id, action_time);
         if (success)
         {
           impl->busy_counter += action_time;
         }
       }
-    }
-    else
-    {
-      the_message_log.add("You need to select at least two items, "
-                          "the last being the destination of all the others.");
-    }
-    break;
+      break;
 
-  case Action::Type::TakeOut:
-    for (ThingId const& id : action.thing_ids)
-    {
-      success = this->take_out(id, action_time);
-      if (success)
-      {
-        impl->busy_counter += action_time;
-      }
-    }
-    break;
+      case Action::Type::Eat:
+        for (ThingId const& id : action.thing_ids)
+        {
+          success = this->eat(id, action_time);
+          if (success)
+          {
+            impl->busy_counter += action_time;
+          }
+        }
 
-  case Action::Type::Wield:
-    if (number_of_things > 1)
-    {
-      the_message_log.add("NOTE: Only wielding the last item selected.");
-    }
-    /// @todo Implement wielding using other hands.
-    success = this->wield(action.thing_ids[number_of_things - 1],
-                          0, action_time);
-    if (success)
-    {
-      impl->busy_counter += action_time;
-    }
-    break;
+      case Action::Type::Pickup:
+        for (ThingId const& id : action.thing_ids)
+        {
+          success = this->pick_up(id, action_time);
+          if (success)
+          {
+            impl->busy_counter += action_time;
+          }
+        }
+        break;
 
-  default:
-    MINOR_ERROR("Unimplemented action.type %d", action.type);
-    break;
-  }
+      case Action::Type::Quaff:
+        for (ThingId const& id : action.thing_ids)
+        {
+          success = this->drink(id, action_time);
+          if (success)
+          {
+            impl->busy_counter += action_time;
+          }
+        }
+        break;
+
+      case Action::Type::Store:
+        if (isType(&TF.get(action.target), Container))
+        {
+          for (unsigned int index = 0; index < number_of_things; ++index)
+          {
+            ThingId thing = action.thing_ids[index];
+            success = this->put_into(thing, action.target, action_time);
+            if (success)
+            {
+              impl->busy_counter += action_time;
+            }
+          }
+        }
+        else
+        {
+          the_message_log.add("That target is not a container.");
+        }
+        break;
+
+      case Action::Type::TakeOut:
+        for (ThingId const& id : action.thing_ids)
+        {
+          success = this->take_out(id, action_time);
+          if (success)
+          {
+            impl->busy_counter += action_time;
+          }
+        }
+        break;
+
+      case Action::Type::Wield:
+        if (number_of_things > 1)
+        {
+          the_message_log.add("NOTE: Only wielding the last item selected.");
+        }
+        /// @todo Implement wielding using other hands.
+        success = this->wield(action.thing_ids[number_of_things - 1],
+                              0, action_time);
+        if (success)
+        {
+          impl->busy_counter += action_time;
+        }
+        break;
+
+      default:
+        MINOR_ERROR("Unimplemented action.type %d", action.type);
+        break;
+      } // end switch (action)
+    } // end if (actions pending)
+  } // end if (HP > 0)
 
   return true;
+}
+
+bool Entity::set_ai_strategy(AIStrategy* strategy_ptr)
+{
+  if (strategy_ptr != nullptr)
+  {
+    impl->ai_strategy.reset(strategy_ptr);
+    return true;
+  }
+  else
+  {
+    return false;
+  }
 }
 
 bool Entity::is_wielding(ThingId thing_id)
@@ -1324,6 +1189,12 @@ ActionResult Entity::can_mix(ThingId thing1_id, ThingId thing2_id,
 {
   action_time = 1;
 
+  // Check that they aren't both the same thing.
+  if (thing1_id == thing2_id)
+  {
+    return ActionResult::FailureCircularReference;
+  }
+
   // Check that neither of them is us.
   if (thing1_id == this->get_id() || thing2_id == this->get_id())
   {
@@ -1556,8 +1427,14 @@ ActionResult Entity::can_put_into(ThingId thing_id, ThingId container_id,
 {
   action_time = 1;
 
-  // Check that the thing isn't US!
-  if (thing_id == this->get_id())
+  // Check that the thing and container aren't the same thing.
+  if (thing_id == container_id)
+  {
+    return ActionResult::FailureCircularReference;
+  }
+
+  // Check that the thing and the container are not US!
+  if ((thing_id == this->get_id()) || (container_id == this->get_id()))
   {
     return ActionResult::FailureSelfReference;
   }
@@ -1626,15 +1503,34 @@ bool Entity::put_into(ThingId thing_id, ThingId container_id,
     {
       if (TF.get_player_id() == this->get_id())
       {
-        /// @todo Possibly allow player to voluntarily enter a container?
-        message = "I'm afraid you can't do that.  "
-                  "(At least, not in this version...)";
+        if (thing_id == TF.get_player_id())
+        {
+          /// @todo Possibly allow player to voluntarily enter a container?
+          message = "I'm afraid you can't do that.  "
+                    "(At least, not in this version...)";
+        }
+        else if (container_id == TF.get_player_id())
+        {
+          message = "Store something in yourself?  "
+                    "What do you think you are, a drug mule?";
+        }
       }
       else
       {
-        message = _YOU_TRY_ + " to store " + _YOURSELF_ +
-                  ", which seriously shouldn't happen.";
-        MINOR_ERROR("Non-player Entity tried to store self!?");
+        if (thing_id == TF.get_player_id())
+        {
+          message = _YOU_TRY_ + " to store " + _YOURSELF_ +
+                    "into the " + thing.get_name() +
+                    ", which seriously shouldn't happen.";
+          MINOR_ERROR("Non-player Entity tried to store self!?");
+        }
+        else if (container_id == TF.get_player_id())
+        {
+          message = _YOU_TRY_ + " to store " + thing.get_name() +
+                    "into " + _YOURSELF_ +
+                    ", which seriously shouldn't happen.";
+          MINOR_ERROR("Non-player Entity tried to store into self!?");
+        }
       }
       the_message_log.add(message);
     }
@@ -1682,6 +1578,21 @@ bool Entity::put_into(ThingId thing_id, ThingId container_id,
 
       message = _YOU_ + " cannot reach " + container.get_name() + ".";
       the_message_log.add(message);
+    }
+    break;
+
+  case ActionResult::FailureCircularReference:
+    {
+      if (TF.get_player_id() == this->get_id())
+      {
+        message = "That would be an interesting topological exercise.";
+      }
+      else
+      {
+        message = _YOU_TRY_ + " to store " + thing.get_name() +
+                  "in itself, which seriously shouldn't happen.";
+        MINOR_ERROR("Non-player Entity tried to store a container in itself!?");
+      }
     }
     break;
 
@@ -2283,6 +2194,13 @@ bool Entity::wield(ThingId thing_id,
   return false;
 }
 
+// *** PROTECTED METHODS ******************************************************
+
+void Entity::_do_process()
+{
+  // Default implementation does nothing.
+}
+
 bool Entity::dec_busy_counter()
 {
   if (impl->busy_counter != 0)
@@ -2296,4 +2214,279 @@ bool Entity::dec_busy_counter()
 void Entity::set_busy_counter(int value)
 {
   impl->busy_counter = value;
+}
+
+std::vector<MapTileType>& Entity::get_map_memory()
+{
+  return impl->map_memory;
+}
+
+void Entity::do_recursive_visibility(int octant,
+                                   int depth,
+                                   float slope_A,
+                                   float slope_B)
+{
+  int x = 0;
+  int y = 0;
+
+  // Are we on a map?  Bail out if we aren't.
+  Container& location = TF.get_container(get_location_id());
+
+  if (!location.is_maptile())
+  {
+    return;
+  }
+
+  MapTile& tile = TF.get_tile(get_location_id());
+  sf::Vector2i tile_coords = tile.get_coords();
+  Map& game_map = MF.get(tile.get_map_id());
+  int eX = tile_coords.x;
+  int eY = tile_coords.y;
+
+  static const int mv = 128;
+  static constexpr int mw = (mv * mv);
+
+  switch (octant)
+  {
+    case 1:
+      y = eY - depth;
+      x = rintf(static_cast<float>(eX) - (slope_A * static_cast<float>(depth)));
+      while (calc_slope(x, y, eX, eY) >= slope_B)
+      {
+        if (calc_vis_distance(x, y, eX, eY) <= mw)
+        {
+          if (game_map.get_tile(x, y).is_opaque())
+          {
+            if (!game_map.get_tile(x - 1, y).is_opaque())
+            {
+              do_recursive_visibility(1, depth + 1, slope_A,
+                                      calc_slope(x - 0.5, y + 0.5, eX, eY));
+            }
+          }
+          else
+          {
+            if (game_map.get_tile(x - 1, y).is_opaque())
+            {
+              slope_A = calc_slope(x - 0.5, y - 0.5, eX, eY);
+            }
+          }
+          impl->tile_seen[game_map.get_index(x, y)] = true;
+          impl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
+        }
+        ++x;
+      }
+      --x;
+      break;
+    case 2:
+      y = eY - depth;
+      x = rintf(static_cast<float>(eX) + (slope_A * static_cast<float>(depth)));
+      while (calc_slope(x, y, eX, eY) <= slope_B)
+      {
+        if (calc_vis_distance(x, y, eX, eY) <= mw)
+        {
+          if (game_map.get_tile(x, y).is_opaque())
+          {
+            if (!game_map.get_tile(x + 1, y).is_opaque())
+            {
+              do_recursive_visibility(2, depth + 1, slope_A,
+                                      calc_slope(x + 0.5, y + 0.5, eX, eY));
+            }
+          }
+          else
+          {
+            if (game_map.get_tile(x + 1, y).is_opaque())
+            {
+              slope_A = -calc_slope(x + 0.5, y - 0.5, eX, eY);
+            }
+          }
+          impl->tile_seen[game_map.get_index(x, y)] = true;
+          impl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
+        }
+        --x;
+      }
+      ++x;
+      break;
+    case 3:
+      x = eX + depth;
+      y = rintf(static_cast<float>(eY) - (slope_A * static_cast<float>(depth)));
+      while (calc_inv_slope(x, y, eX, eY) <= slope_B)
+      {
+        if (calc_vis_distance(x, y, eX, eY) <= mw)
+        {
+          if (game_map.get_tile(x, y).is_opaque())
+          {
+            if (!game_map.get_tile(x, y - 1).is_opaque())
+            {
+              do_recursive_visibility(3, depth + 1, slope_A,
+                                      calc_inv_slope(x - 0.5, y - 0.5, eX, eY));
+            }
+          }
+          else
+          {
+            if (game_map.get_tile(x, y - 1).is_opaque())
+            {
+              slope_A = -calc_inv_slope(x + 0.5, y - 0.5, eX, eY);
+            }
+          }
+          impl->tile_seen[game_map.get_index(x, y)] = true;
+          impl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
+        }
+        ++y;
+      }
+      --y;
+      break;
+    case 4:
+      x = eX + depth;
+      y = rintf(static_cast<float>(eY) + (slope_A * static_cast<float>(depth)));
+      while (calc_inv_slope(x, y, eX, eY) >= slope_B)
+      {
+        if (calc_vis_distance(x, y, eX, eY) <= mw)
+        {
+          if (game_map.get_tile(x, y).is_opaque())
+          {
+            if (!game_map.get_tile(x, y + 1).is_opaque())
+            {
+              do_recursive_visibility(4, depth + 1, slope_A,
+                                      calc_inv_slope(x - 0.5, y + 0.5, eX, eY));
+            }
+          }
+          else
+          {
+            if (game_map.get_tile(x, y + 1).is_opaque())
+            {
+              slope_A = calc_inv_slope(x + 0.5, y + 0.5, eX, eY);
+            }
+          }
+          impl->tile_seen[game_map.get_index(x, y)] = true;
+          impl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
+        }
+        --y;
+      }
+      ++y;
+      break;
+    case 5:
+      y = eY + depth;
+      x = rintf(static_cast<float>(eX) + (slope_A * static_cast<float>(depth)));
+      while (calc_slope(x, y, eX, eY) >= slope_B)
+      {
+        if (calc_vis_distance(x, y, eX, eY) <= mw)
+        {
+          if (game_map.get_tile(x, y).is_opaque())
+          {
+            if (!game_map.get_tile(x + 1, y).is_opaque())
+            {
+              do_recursive_visibility(5, depth + 1, slope_A,
+                                      calc_slope(x + 0.5, y - 0.5, eX, eY));
+            }
+          }
+          else
+          {
+            if (game_map.get_tile(x + 1, y).is_opaque())
+            {
+              slope_A = calc_slope(x + 0.5, y + 0.5, eX, eY);
+            }
+          }
+          impl->tile_seen[game_map.get_index(x, y)] = true;
+          impl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
+        }
+        --x;
+      }
+      ++x;
+      break;
+    case 6:
+      y = eY + depth;
+      x = rintf(static_cast<float>(eX) - (slope_A * static_cast<float>(depth)));
+      while (calc_slope(x, y, eX, eY) <= slope_B)
+      {
+        if (calc_vis_distance(x, y, eX, eY) <= mw)
+        {
+          if (game_map.get_tile(x, y).is_opaque())
+          {
+            if (!game_map.get_tile(x - 1, y).is_opaque())
+            {
+              do_recursive_visibility(6, depth + 1, slope_A,
+                                      calc_slope(x - 0.5, y - 0.5, eX, eY));
+            }
+          }
+          else
+          {
+            if (game_map.get_tile(x - 1, y).is_opaque())
+            {
+              slope_A = -calc_slope(x - 0.5, y + 0.5, eX, eY);
+            }
+          }
+          impl->tile_seen[game_map.get_index(x, y)] = true;
+          impl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
+        }
+        ++x;
+      }
+      --x;
+      break;
+    case 7:
+      x = eX - depth;
+      y = rintf(static_cast<float>(eY) + (slope_A * static_cast<float>(depth)));
+      while (calc_inv_slope(x, y, eX, eY) <= slope_B)
+      {
+        if (calc_vis_distance(x, y, eX, eY) <= mw)
+        {
+          if (game_map.get_tile(x, y).is_opaque())
+          {
+            if (!game_map.get_tile(x, y + 1).is_opaque())
+            {
+              do_recursive_visibility(7, depth + 1, slope_A,
+                                      calc_inv_slope(x + 0.5, y + 0.5, eX, eY));
+            }
+          }
+          else
+          {
+            if (game_map.get_tile(x, y + 1).is_opaque())
+            {
+              slope_A = -calc_inv_slope(x - 0.5, y + 0.5, eX, eY);
+            }
+          }
+          impl->tile_seen[game_map.get_index(x, y)] = true;
+          impl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
+        }
+        --y;
+      }
+      ++y;
+      break;
+    case 8:
+      x = eX - depth;
+      y = rintf(static_cast<float>(eY) - (slope_A * static_cast<float>(depth)));
+      while (calc_inv_slope(x, y, eX, eY) >= slope_B)
+      {
+        if (calc_vis_distance(x, y, eX, eY) <= mw)
+        {
+          if (game_map.get_tile(x, y).is_opaque())
+          {
+            if (!game_map.get_tile(x, y - 1).is_opaque())
+            {
+              do_recursive_visibility(8, depth + 1, slope_A,
+                                      calc_inv_slope(x + 0.5, y - 0.5, eX, eY));
+            }
+          }
+          else
+          {
+            if (game_map.get_tile(x, y - 1).is_opaque())
+            {
+              slope_A = calc_inv_slope(x - 0.5, y - 0.5, eX, eY);
+            }
+          }
+          impl->tile_seen[game_map.get_index(x, y)] = true;
+          impl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
+        }
+        ++y;
+      }
+      --y;
+      break;
+    default:
+      MAJOR_ERROR("Octant passed to do_recursive_visibility was %d (not 1 to 8)!", octant);
+      break;
+  }
+
+  if ((depth < mv) && (!game_map.get_tile(x, y).is_opaque()))
+  {
+    do_recursive_visibility(octant, depth + 1, slope_A, slope_B);
+  }
 }

@@ -1,4 +1,4 @@
-#include "MapFeature.h"
+#include "mapfeatures/MapFeature.h"
 
 #include <algorithm>
 #include <boost/random/uniform_int_distribution.hpp>

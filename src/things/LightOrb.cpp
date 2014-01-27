@@ -10,7 +10,7 @@ LightOrb::LightOrb() :
 
 LightOrb::~LightOrb() {}
 
-std::string LightOrb::get_description() const
+std::string LightOrb::_get_description() const
 {
   return "test lighting orb";
 }

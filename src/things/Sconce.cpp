@@ -12,7 +12,7 @@ Sconce::Sconce()
 
 Sconce::~Sconce() {}
 
-std::string Sconce::get_description() const
+std::string Sconce::_get_description() const
 {
   return "torch sconce";
 }

@@ -20,6 +20,7 @@ class ConfigSettings
     sf::Color window_border_color;          ///< Window border color.
     sf::Color window_focused_border_color;  ///< Focused window border color.
     sf::Color window_bg_color;              ///< Window background color.
+    sf::Color window_focused_bg_color;      ///< Focused window bg color.
     std::string font_name_default;          ///< Default font name.
     std::string font_name_bold;             ///< Default bold font name.
     std::string font_name_mono;             ///< Default mono font name.

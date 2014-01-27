@@ -14,14 +14,28 @@
 #include <boost/dynamic_bitset.hpp>
 #include <set>
 
+/// Forward declarations
+class AIStrategy;
+
 /// Interface class representing something that can perform actions.
 class Entity :
   public Container
 {
+  friend class AIStrategy;
   friend class ThingFactory;
 
   public:
     virtual ~Entity();
+
+    /// Return a string that identifies this thing.
+    /// Extends Thing::get_name() to handle hit points, so values 0 or below
+    /// return "the dead (thing)" or "(thing)'s corpse".
+    virtual std::string get_name() const override;
+
+    /// Return a string that identifies this thing.
+    /// Extends Thing::get_name() to handle hit points, so values 0 or below
+    /// return "a dead (thing)" or "(thing)'s corpse".
+    virtual std::string get_indef_name() const override;
 
     /// Get the number of game cycles until this Entity can process a new
     /// command.
@@ -123,6 +137,20 @@ class Entity :
 
     /// Process this Entity for one tick.
     virtual bool do_process() override final;
+
+    /// Set the AI strategy associated with this Entity.
+    /// The Entity assumes responsibility for maintenance of the new object.
+    /// Any old strategy in use will be discarded.
+    /// @note While it is possible to use the same AIStrategy instance with
+    ///       more than one Entity, doing this with probably not result in the
+    ///       desired behavior, as the AIStrategy may maintain state information
+    ///       which would be shared across multiple Entities.  However, this
+    ///       MIGHT be desirable if dealing with an Entity type with a hive
+    ///       mind (thus sharing all of its knowledge across the species).
+    /// @param[in] strategy_ptr Pointer to a newly created AIStrategy object.
+    /// @return True if strategy was set; false if not (e.g. if the pointer
+    ///         passed in was not valid).
+    bool set_ai_strategy(AIStrategy* strategy_ptr);
 
     /// Return whether a Thing is wielded by this Entity.
     /// This is used by InventoryArea to show wielded status.
@@ -303,12 +331,24 @@ class Entity :
     Entity();
     Entity(Entity const& original);
 
+    /// Do any subclass-specific processing; called by do_process().
+    /// This function is particularly useful if the subclass is able to do
+    /// specialized actions such as rise from the dead after a time (as in
+    /// NetHack trolls).
+    /// @warning In order to support the aforementioned rising from the dead,
+    ///          this function is called <i>regardless of the Entity's HP</>!
+    ///          Keep this in mind when implementing specialized behavior.
+    virtual void _do_process();
+
     /// Decrement the busy counter if greater than 0.
     /// Returns true if the counter has reached 0, false otherwise.
     bool dec_busy_counter();
 
     /// Set the busy counter to a value.
     void set_busy_counter(int value);
+
+    /// Get a reference to this Entity's map memory.
+    std::vector<MapTileType>& get_map_memory();
 
     /// Perform the recursive visibility scan for an octant.
     /// Used by find_seen_tiles.

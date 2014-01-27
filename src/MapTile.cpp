@@ -53,7 +53,7 @@ MapTile::~MapTile()
 {
 }
 
-std::string MapTile::get_description() const
+std::string MapTile::_get_description() const
 {
   return getMapTileTypeDescription(impl->type);
 }
