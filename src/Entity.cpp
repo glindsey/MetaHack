@@ -50,6 +50,8 @@ struct Entity::Impl
   /// Bitset for seen tiles.
   boost::dynamic_bitset<> tile_seen;
 
+  /// @todo Blind counter.
+
   /// AI strategy associated with this Entity (if any).
   std::shared_ptr<AIStrategy> ai_strategy;
 
@@ -347,11 +349,13 @@ bool Entity::move_into(ThingId new_location_id)
         /// @todo Save old map memory.
       }
       impl->map_memory.clear();
+      impl->tile_seen.clear();
       if (new_map_id != MapFactory::null_map_id)
       {
         Map& new_map = MF.get(new_map_id);
         sf::Vector2i new_map_size = new_map.get_size();
         impl->map_memory.resize(new_map_size.x * new_map_size.y);
+        impl->tile_seen.resize(new_map_size.x * new_map_size.y);
         /// @todo Load new map memory if it exists somewhere.
       }
     }
@@ -404,13 +408,19 @@ bool Entity::can_see(int xTile, int yTile)
 
   Map& game_map = MF.get(tile.get_map_id());
 
-  // Return seen data.
-  return impl->tile_seen[game_map.get_index(xTile, yTile)];
+  if (can_currently_see())
+  {
+    // Return seen data.
+    return impl->tile_seen[game_map.get_index(xTile, yTile)];
+  }
+  else
+  {
+    return false;
+  }
 }
 
 void Entity::find_seen_tiles()
 {
-  static MapId lastId = static_cast<MapId>(0);
   sf::Clock elapsed;
 
   elapsed.restart();
@@ -418,25 +428,8 @@ void Entity::find_seen_tiles()
   // Are we on a map?  Bail out if we aren't.
   Container& location = TF.get_container(get_location_id());
 
-  // Size and clear the "tile seen" bitset.
-  if (!location.is_maptile())
-  {
-    impl->tile_seen.clear();
-  }
-  else
-  {
-    MapId ourId = location.get_map_id();
-
-    if (ourId != lastId)
-    {
-      lastId = ourId;
-      Map& game_map = MF.get(ourId);
-      sf::Vector2i map_size = game_map.get_size();
-      impl->tile_seen.resize(map_size.x * map_size.y);
-    }
-
-    impl->tile_seen.reset();
-  }
+  // Clear the "tile seen" bitset.
+  impl->tile_seen.reset();
 
   do_recursive_visibility(1, 1, 1, 0);
   do_recursive_visibility(2, 1, 1, 0);
@@ -879,6 +872,7 @@ bool Entity::attack(ThingId thing_id, unsigned int& action_time)
   if (reachable)
   {
     /// @todo Write attack code.
+    the_message_log.add("TODO: This is where you would attack something.");
   }
 
   return false;
@@ -1224,7 +1218,25 @@ bool Entity::move(Direction new_direction,
 
   std::string message;
 
-  // First: make sure we aren't inside something
+  // First: check direction.
+  if (new_direction == Direction::Self)
+  {
+    message = _YOU_ + " successfully" + choose_verb(" stay", " stays") +
+              " where " + get_subject_pronoun() + _ARE_ + ".";
+    the_message_log.add(message);
+    return true;
+  }
+
+  // Next: make sure we CAN move!
+  if (!can_currently_move())
+  {
+    message = _YOU_ + choose_verb(" do", " does") +
+              " not have the capability of movement.";
+    the_message_log.add(message);
+    return false;
+  }
+
+  // Next: make sure we aren't inside something
   Thing& location = TF.get(get_location_id());
   if (!location.is_maptile())
   {
@@ -1234,66 +1246,56 @@ bool Entity::move(Direction new_direction,
     the_message_log.add(message);
     return false;
   }
+
+  if (new_direction == Direction::Up)
+  {
+    /// @todo Write up/down movement code
+    message = "Up/down movement is not yet supported!";
+    the_message_log.add(message);
+    return false;
+  }
+  else if (new_direction == Direction::Down)
+  {
+    /// @todo Write up/down movement code
+    message = "Up/down movement is not yet supported!";
+    the_message_log.add(message);
+    return false;
+  }
   else
   {
-    // Next: check direction.
-    if (new_direction == Direction::Self)
+    // Figure out our target location.
+    MapTile& target_tile = TF.get_tile(get_location_id());
+    sf::Vector2i coords = target_tile.get_coords();
+    int x_offset = get_x_offset(new_direction);
+    int y_offset = get_y_offset(new_direction);
+    int x_new = coords.x + x_offset;
+    int y_new = coords.y + y_offset;
+    Map& current_map = MF.get(target_tile.get_map_id());
+    sf::Vector2i map_size = current_map.get_size();
+
+    // Check boundaries.
+    if ((x_new < 0) || (y_new < 0) ||
+        (x_new >= map_size.x) || (y_new >= map_size.y))
     {
-      message = _YOU_ + " successfully" + choose_verb(" stay", " stays") +
-                " where " + get_subject_pronoun() + _ARE_ + ".";
-      the_message_log.add(message);
-      return true;
-    }
-    else if (new_direction == Direction::Up)
-    {
-      /// @todo Write up/down movement code
-      message = "Up/down movement is not yet supported!";
-      the_message_log.add(message);
-      return false;
-    }
-    else if (new_direction == Direction::Down)
-    {
-      /// @todo Write up/down movement code
-      message = "Up/down movement is not yet supported!";
+      message = _YOU_ + " can't move there; it is out of bounds!";
       the_message_log.add(message);
       return false;
+    }
+
+    MapTile& new_tile = current_map.get_tile(x_new, y_new);
+    ThingId new_tile_id = current_map.get_tile_id(x_new, y_new);
+
+    if (new_tile.can_be_traversed_by(*this))
+    {
+      return move_into(new_tile_id);
     }
     else
     {
-      // Figure out our target location.
-      MapTile& target_tile = TF.get_tile(get_location_id());
-      sf::Vector2i coords = target_tile.get_coords();
-      int x_offset = get_x_offset(new_direction);
-      int y_offset = get_y_offset(new_direction);
-      int x_new = coords.x + x_offset;
-      int y_new = coords.y + y_offset;
-      Map& current_map = MF.get(target_tile.get_map_id());
-      sf::Vector2i map_size = current_map.get_size();
-
-      // Check boundaries.
-      if ((x_new < 0) || (y_new < 0) ||
-          (x_new >= map_size.x) || (y_new >= map_size.y))
-      {
-        message = _YOU_ + " can't move there; it is out of bounds!";
-        the_message_log.add(message);
-        return false;
-      }
-
-      MapTile& new_tile = current_map.get_tile(x_new, y_new);
-      ThingId new_tile_id = current_map.get_tile_id(x_new, y_new);
-
-      if (new_tile.can_be_traversed_by(*this))
-      {
-        return move_into(new_tile_id);
-      }
-      else
-      {
-        message = _YOU_ARE_ + " stopped by " + new_tile.get_name() + ".";
-        the_message_log.add(message);
-        return false;
-      }
-    } // end else if (other direction)
-  } // end else (on map)
+      message = _YOU_ARE_ + " stopped by " + new_tile.get_name() + ".";
+      the_message_log.add(message);
+      return false;
+    }
+  } // end else if (other direction)
 }
 
 ActionResult Entity::can_pick_up(ThingId thing_id, unsigned int& action_time)
@@ -2192,6 +2194,16 @@ bool Entity::wield(ThingId thing_id,
     break;
   }
   return false;
+}
+
+bool Entity::can_currently_see() const
+{
+  return true;
+}
+
+bool Entity::can_currently_move() const
+{
+  return true;
 }
 
 // *** PROTECTED METHODS ******************************************************

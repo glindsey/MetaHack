@@ -2904,7 +2904,7 @@
 	<memory>
 	"State.h"
 
-1390847178 source:c:\dropbox\projects\metahack\src\appstategamemode.cpp
+1390876664 source:c:\dropbox\projects\metahack\src\appstategamemode.cpp
 	"AppStateGameMode.h"
 	<memory>
 	<set>
@@ -2926,6 +2926,7 @@
 	"CoinGold.h"
 	"LightOrb.h"
 	"Rock.h"
+	"RockLichen.h"
 	"SackLarge.h"
 
 1378753052 source:c:\dropbox\projects\metahack\src\appstatemainmenu.cpp
@@ -2941,7 +2942,7 @@
 1363024906 source:c:\dropbox\projects\metahack\src\renderable.cpp
 	"Renderable.h"
 
-1390860913 source:c:\dropbox\projects\metahack\src\entity.cpp
+1390877777 source:c:\dropbox\projects\metahack\src\entity.cpp
 	"Entity.h"
 	<algorithm>
 	<cmath>
@@ -2963,7 +2964,7 @@
 	"ThingFactory.h"
 	"ai/AIStrategy.h"
 
-1390859377 c:\dropbox\projects\metahack\include\entity.h
+1390875561 c:\dropbox\projects\metahack\include\entity.h
 	"Action.h"
 	"AttributeSet.h"
 	"BodyPart.h"
@@ -3076,7 +3077,7 @@
 1363638647 source:c:\dropbox\projects\metahack\src\tile.cpp
 	"Tile.h"
 
-1378753030 source:c:\dropbox\projects\metahack\src\attributeset.cpp
+1390864224 source:c:\dropbox\projects\metahack\src\attributeset.cpp
 	"AttributeSet.h"
 	"ErrorHandler.h"
 
@@ -4031,7 +4032,7 @@
 	"Biped.h"
 	"CreatableThing.h"
 
-1375117734 c:\dropbox\projects\metahack\include\things\biped.h
+1390873571 c:\dropbox\projects\metahack\include\things\biped.h
 	"Entity.h"
 	"ThingId.h"
 
@@ -4044,7 +4045,7 @@
 	"LightSource.h"
 	"CreatableThing.h"
 
-1377272724 source:c:\dropbox\projects\metahack\src\things\biped.cpp
+1390864078 source:c:\dropbox\projects\metahack\src\things\biped.cpp
 	"Biped.h"
 
 1373378622 source:c:\dropbox\projects\metahack\src\things\entity.cpp
@@ -4065,7 +4066,7 @@
 	"MessageLog.h"
 	"ThingFactory.h"
 
-1390860631 source:c:\dropbox\projects\metahack\src\things\human.cpp
+1390873593 source:c:\dropbox\projects\metahack\src\things\human.cpp
 	"Human.h"
 	"App.h"
 
@@ -9871,4 +9872,19 @@
 	"MapTile.h"
 	"MathUtils.h"
 	"ThingFactory.h"
+
+1390875604 source:c:\dropbox\projects\metahack\src\things\blob.cpp
+	"Blob.h"
+
+1390875593 c:\dropbox\projects\metahack\include\things\blob.h
+	"Entity.h"
+	"ThingId.h"
+
+1390876125 source:c:\dropbox\projects\metahack\src\things\rocklichen.cpp
+	"RockLichen.h"
+	"App.h"
+
+1390875824 c:\dropbox\projects\metahack\include\things\rocklichen.h
+	"Blob.h"
+	"CreatableThing.h"
 

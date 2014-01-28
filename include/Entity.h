@@ -64,12 +64,14 @@ class Entity :
     bool can_see(Thing& thing);
 
     /// Return whether the Entity can see the requested tile.
-    bool can_see(int x, int y);
-
-    /// Return whether the Entity can see the requested tile.
     bool can_see(sf::Vector2i coords);
 
+    /// Return whether the Entity can see the requested tile.
+    bool can_see(int x, int y);
+
     /// Find out which tiles on the map can be seen by this Entity.
+    /// This method uses a recursive raycasting algorithm to figure out what
+    /// can be seen at a particular position.
     void find_seen_tiles();
 
     /// Get the remembered tile type at the specified coordinates.
@@ -326,6 +328,15 @@ class Entity :
     bool wield(ThingId thing_id,
                unsigned int hand,
                unsigned int& action_time);
+
+    /// Return whether this Entity can currently see.
+    /// @todo Implement blindness counter, blindness due to wearing blindfold,
+    ///       et cetera.
+    virtual bool can_currently_see() const;
+
+    /// Return whether this Entity can currently move.
+    /// @todo Implement paralysis counter, and/or other reasons to be immobile.
+    virtual bool can_currently_move() const;
 
   protected:
     Entity();

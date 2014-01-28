@@ -23,6 +23,7 @@
 #include "CoinGold.h"
 #include "LightOrb.h"
 #include "Rock.h"
+#include "RockLichen.h"
 #include "SackLarge.h"
 
 struct AppStateGameMode::Impl
@@ -922,6 +923,11 @@ bool AppStateGameMode::initialize()
   Aggregate& coins2_agg = dynamic_cast<Aggregate&>(TF.get(coins2_id));
   coins2_agg.set_quantity(10);
   TF.get(coins2_id).move_into(game_map.get_tile_id(start_coords.x - 1,
+                              start_coords.y - 1));
+
+  // TESTING CODE: Create ten gold coins northeast of the player.
+  ThingId lichen_id = TF.create<RockLichen>();
+  TF.get(lichen_id).move_into(game_map.get_tile_id(start_coords.x + 1,
                               start_coords.y - 1));
 
   // END TESTING CODE
