@@ -9,6 +9,7 @@
 #include "Map.h"
 #include "MathUtils.h"
 #include "ThingFactory.h"
+#include "TileSheet.h"
 
 typedef boost::random::uniform_int_distribution<> uniform_int_dist;
 
@@ -33,16 +34,16 @@ struct MapTile::Impl
     std::map<ThingId, LightInfluence> lights;
 
     MapTileType type;
-    unsigned int variant;
+    //unsigned int variant;
 };
 
 MapTile::MapTile(MapId mapId, int x, int y)
   : Container(), impl(new Impl())
 {
-  uniform_int_dist vDist(0, 3);
+  //uniform_int_dist vDist(0, 3);
 
   impl->type = MapTileType::FloorStone;
-  impl->variant = vDist(the_RNG);
+  //impl->variant = vDist(the_RNG);
   impl->map_id = mapId;
   impl->coords.x = x;
   impl->coords.y = y;
@@ -61,7 +62,7 @@ std::string MapTile::_get_description() const
 sf::Vector2u MapTile::get_tile_sheet_coords(int frame) const
 {
   sf::Vector2u result = getMapTileTypeTileSheetCoords(impl->type);
-  result.x += impl->variant;
+  //result.x += impl->variant;
 
   return result;
 }
@@ -190,7 +191,7 @@ void MapTile::draw_highlight(sf::RenderTarget& target,
                             sf::Color bgColor,
                             int frame)
 {
-  float ts2 = static_cast<float>(Settings.map_tile_size) / 2.0;
+  float ts2(static_cast<float>(Settings.map_tile_size) * 0.5);
   sf::Vector2f vSW(location.x - ts2, location.y + ts2);
   sf::Vector2f vSE(location.x + ts2, location.y + ts2);
   sf::Vector2f vNW(location.x - ts2, location.y - ts2);
@@ -209,6 +210,167 @@ void MapTile::draw_highlight(sf::RenderTarget& target,
   box_shape.setFillColor(bgColor);
 
   target.draw(box_shape);
+}
+
+void MapTile::add_walls_to(sf::VertexArray& vertices,
+                           bool use_lighting,
+                           bool nw_is_empty, bool n_is_empty,
+                           bool ne_is_empty, bool e_is_empty,
+                           bool se_is_empty, bool s_is_empty,
+                           bool sw_is_empty, bool w_is_empty)
+{
+  // Tile color.
+  sf::Color tile_color;
+
+  // Full tile size.
+  float ts(static_cast<float>(Settings.map_tile_size));
+
+  // Half of the tile size.
+  float ts2(static_cast<float>(Settings.map_tile_size) * 0.5);
+
+
+  // Wall size (configurable).
+  float ws(static_cast<float>(Settings.map_tile_size) * 0.4);
+
+  // Tile vertices.
+  sf::Vector2f location(impl->coords.x * ts,
+                        impl->coords.y * ts);
+  sf::Vector2f vTileNW(location.x - ts2, location.y - ts2);
+  sf::Vector2f vTileNE(location.x + ts2, location.y - ts2);
+  sf::Vector2f vTileSW(location.x - ts2, location.y + ts2);
+  sf::Vector2f vTileSE(location.x + ts2, location.y + ts2);
+  sf::Vector2u tile_coords = this->get_tile_sheet_coords(0);
+
+  if (use_lighting)
+  {
+    tile_color = get_light_level();
+  }
+  else
+  {
+    tile_color = sf::Color::White;
+  }
+
+  // NORTH WALL
+  if (n_is_empty)
+  {
+    sf::Vector2f vSW(vTileNW.x, vTileNW.y + ws);
+    if (w_is_empty)
+    {
+      vSW.x += ws;
+    }
+    else if (!nw_is_empty)
+    {
+      vSW.x -= ws;
+    }
+    sf::Vector2f vSE(vTileNE.x, vTileNE.y + ws);
+    if (e_is_empty)
+    {
+      vSE.x -= ws;
+    }
+    else if (!ne_is_empty)
+    {
+      vSE.x += ws;
+    }
+
+    // DEBUG
+    //tile_color = sf::Color::Red;
+
+    TileSheet::add_vertices(vertices,
+                            tile_coords, tile_color,
+                            vTileNW, vTileNE, vSW, vSE);
+  }
+
+  // EAST WALL
+  if (e_is_empty)
+  {
+    sf::Vector2f vNW(vTileNE.x - ws, vTileNE.y);
+    if (n_is_empty)
+    {
+      vNW.y += ws;
+    }
+    else if (!ne_is_empty)
+    {
+      vNW.y -= ws;
+    }
+    sf::Vector2f vSW(vTileSE.x - ws, vTileSE.y);
+    if (s_is_empty)
+    {
+      vSW.y -= ws;
+    }
+    else if (!se_is_empty)
+    {
+      vSW.y += ws;
+    }
+
+    // DEBUG
+    //tile_color = sf::Color::Yellow;
+
+    TileSheet::add_vertices(vertices,
+                            tile_coords, tile_color,
+                            vNW, vTileNE, vSW, vTileSE);
+  }
+
+  // SOUTH WALL
+  if (s_is_empty)
+  {
+    sf::Vector2f vNW(vTileSW.x, vTileSW.y - ws);
+    if (w_is_empty)
+    {
+      vNW.x += ws;
+    }
+    else if (!sw_is_empty)
+    {
+      vNW.x -= ws;
+    }
+    sf::Vector2f vNE(vTileSE.x, vTileSE.y - ws);
+    if (e_is_empty)
+    {
+      vNE.x -= ws;
+    }
+    else if (!se_is_empty)
+    {
+      vNE.x += ws;
+    }
+
+    // DEBUG
+    //tile_color = sf::Color::Green;
+
+    TileSheet::add_vertices(vertices,
+                            tile_coords, tile_color,
+                            vNW, vNE, vTileSW, vTileSE);
+  }
+
+  // WEST WALL
+  if (w_is_empty)
+  {
+    sf::Vector2f vNE(vTileNW.x + ws, vTileNW.y);
+    if (n_is_empty)
+    {
+      vNE.y += ws;
+    }
+    else if (!nw_is_empty)
+    {
+      vNE.y -= ws;
+    }
+    sf::Vector2f vSE(vTileSW.x + ws, vTileSW.y);
+    if (s_is_empty)
+    {
+      vSE.y -= ws;
+    }
+    else if (!sw_is_empty)
+    {
+      vSE.y += ws;
+    }
+
+    // DEBUG
+    //tile_color = sf::Color::Blue;
+
+    TileSheet::add_vertices(vertices,
+                            tile_coords, tile_color,
+                            vTileNW, vNE, vTileSW, vSE);
+  }
+
+  /// @todo Implement me.
 }
 
 bool MapTile::can_contain(Thing& thing) const

@@ -70,10 +70,29 @@ class MapTile : public Container
     bool is_opaque() const;
 
     void draw_highlight(sf::RenderTarget& target,
-                       sf::Vector2f location,
-                       sf::Color fgColor,
-                       sf::Color bgColor,
-                       int frame);
+                        sf::Vector2f location,
+                        sf::Color fgColor,
+                        sf::Color bgColor,
+                        int frame);
+
+    /// Add this MapTile's walls to a VertexArray to be drawn.
+    /// @param vertices Array to add vertices to.
+    /// @param use_lighting If true, calculate lighting when adding.
+    ///                     If false, store directly w/white bg color.
+    /// @param nw_is_empty  Whether tile to the northwest is empty.
+    /// @param n_is_empty   Whether tile to the north is empty.
+    /// @param ne_is_empty  Whether tile to the northeast is empty.
+    /// @param e_is_empty   Whether tile to the east is empty.
+    /// @param se_is_empty  Whether tile to the southeast is empty.
+    /// @param s_is_empty   Whether tile to the south is empty.
+    /// @param sw_is_empty  Whether tile to the southwest is empty.
+    /// @param w_is_empty   Whether tile to the west is empty.
+    void add_walls_to(sf::VertexArray& vertices,
+                      bool use_lighting,
+                      bool nw_is_empty, bool n_is_empty,
+                      bool ne_is_empty, bool e_is_empty,
+                      bool se_is_empty, bool s_is_empty,
+                      bool sw_is_empty, bool w_is_empty);
 
     virtual bool can_contain(Thing& thing) const override;
 

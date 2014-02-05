@@ -1,5 +1,6 @@
 #include "App.h"
 
+#include <boost/random/uniform_int_distribution.hpp>
 #include <ctime>
 #include <SFML/Graphics.hpp>
 
@@ -22,6 +23,9 @@ std::unique_ptr<App> app_;
 std::unique_ptr<MessageLog> message_log_;
 std::unique_ptr<boost::random::mt19937> rng_;
 std::unique_ptr<TileSheet> tile_sheet_;
+
+// Local typedefs
+typedef boost::random::uniform_int_distribution<> uniform_int_dist;
 
 sf::IntRect calc_message_log_dimensions()
 {
@@ -235,4 +239,10 @@ void App::run()
       ++frame_counter;
     }
   }
+}
+
+int App::get_rand(int minimum, int maximum)
+{
+   uniform_int_dist dist(minimum, maximum);
+   return dist(the_RNG);
 }

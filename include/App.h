@@ -25,6 +25,8 @@ class App : public EventHandler, public boost::noncopyable
 
     bool has_window_focus();
 
+    int get_rand(int minimum, int maximum);
+
   protected:
   private:
     struct Impl;

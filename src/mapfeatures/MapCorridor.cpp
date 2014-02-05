@@ -139,6 +139,44 @@ bool MapCorridor::create(GeoVector vec)
                                                 startingCoords.y);
           startTile.set_type(MapTileType::FloorStone);
 
+          /// Check the tile two past the ending tile.
+          /// If it is open space, there should be a small chance
+          /// (maybe 5%) that the corridor opens up into it.  This
+          /// will allow for some loops in the map instead of it being
+          /// nothing but a tree.
+          sf::Vector2i checkCoords;
+          switch (direction)
+          {
+          case Direction::North:
+            checkCoords.x = startingCoords.x;
+            checkCoords.y = impl->endingCoords.y - 1;
+            break;
+          case Direction::South:
+            checkCoords.x = startingCoords.x;
+            checkCoords.y = impl->endingCoords.y + 1;
+            break;
+          case Direction::West:
+            checkCoords.x = impl->endingCoords.x - 1;
+            checkCoords.y = startingCoords.y;
+            break;
+          case Direction::East:
+            checkCoords.x = impl->endingCoords.x + 1;
+            checkCoords.y = startingCoords.y;
+            break;
+          default:
+            // shouldn't happen at this point
+            MINOR_ERROR("Invalid Direction passed into createCorridor");
+            return false;
+          }
+          if (get_map().is_in_bounds(checkCoords.x, checkCoords.y))
+          {
+            MapTile& checkTile = get_map().get_tile(checkCoords.x, checkCoords.y);
+            if (checkTile.is_empty_space())
+            {
+              /// @todo Keep going here
+            }
+          }
+
           return true;
         }
       }

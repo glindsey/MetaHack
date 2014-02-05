@@ -17,23 +17,23 @@ class MapGenerator
     struct FeatureLimits
     {
       /// Maximum number of features present on the map.
-      unsigned int maxFeatures = 1000;
+      unsigned int maxFeatures = 500;
 
       /// Total times to retry getting an adjacent feature before giving up.
-      unsigned int maxAdjacentRetries = 20000;
+      unsigned int maxAdjacentRetries = 10000;
 
       /// Total times to retry making a feature before giving up.
-      unsigned int maxFeatureRetries = 100;
+      unsigned int maxFeatureRetries = 50;
 
       // *** Standard rectangular rooms ***************************************
-      unsigned int maxBoxWidth = 20;
-      unsigned int maxBoxHeight = 20;
+      unsigned int maxBoxWidth = 16;
+      unsigned int maxBoxHeight = 16;
       unsigned int minBoxWidth = 3;
       unsigned int minBoxHeight = 3;
 
       // *** Narrow corridors *************************************************
       unsigned int minCorridorLen = 3;
-      unsigned int maxCorridorLen = 60;
+      unsigned int maxCorridorLen = 50;
     };
 
   protected:

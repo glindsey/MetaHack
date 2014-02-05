@@ -4,7 +4,7 @@ struct TileTypeInfo
 {
   std::string name;
   std::string description;
-  unsigned int x_coord;     ///< X coordinate, divided by 4
+  unsigned int x_coord;     ///< X coordinate
   unsigned int y_coord;     ///< Y coordinate
   bool opaque;
   bool passable;

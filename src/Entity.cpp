@@ -19,6 +19,7 @@
 #include "MessageLog.h"
 #include "Ordinal.h"
 #include "ThingFactory.h"
+#include "TileSheet.h"
 
 #include "ai/AIStrategy.h"
 
@@ -471,7 +472,7 @@ void Entity::add_memory_vertices_to(sf::VertexArray& vertices,
 
   static sf::Vertex new_vertex;
   float ts = static_cast<float>(Settings.map_tile_size);
-  float ts2 = ts / 2.0;
+  float ts2 = ts * 0.5;
 
   sf::Vector2f location(x * ts, y * ts);
   sf::Vector2f vSW(location.x - ts2, location.y + ts2);
@@ -481,25 +482,10 @@ void Entity::add_memory_vertices_to(sf::VertexArray& vertices,
 
   MapTileType tile_type = impl->map_memory[game_map.get_index(x, y)];
   sf::Vector2u tile_coords = getMapTileTypeTileSheetCoords(tile_type);
-  sf::Vector2f texNW = sf::Vector2f(tile_coords.x * ts,
-                                    tile_coords.y * ts);
 
-  new_vertex.color = sf::Color::White;
-  new_vertex.position = vNW;
-  new_vertex.texCoords = texNW;
-  vertices.append(new_vertex);
-
-  new_vertex.position = vNE;
-  new_vertex.texCoords = sf::Vector2f(texNW.x + ts, texNW.y);
-  vertices.append(new_vertex);
-
-  new_vertex.position = vSE;
-  new_vertex.texCoords = sf::Vector2f(texNW.x + ts, texNW.y + ts);
-  vertices.append(new_vertex);
-
-  new_vertex.position = vSW;
-  new_vertex.texCoords = sf::Vector2f(texNW.x, texNW.y + ts);
-  vertices.append(new_vertex);
+  TileSheet::add_vertices(vertices,
+                          tile_coords, sf::Color::White,
+                          vNW, vNE, vSW, vSE);
 }
 
 std::string Entity::get_bodypart_description(BodyPart part,

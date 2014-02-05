@@ -36,7 +36,11 @@ struct Map::Impl
     /// "Seen" map vertex array.
     sf::VertexArray map_seen_vertices;
 
+    /// Outlines map vertex array.
+    sf::VertexArray map_outline_vertices;
+
     /// "Hidden" map vertex array.
+    /// @deprecated
     sf::VertexArray map_hidden_vertices;
 
     /// "Memory" map vertex array.
@@ -745,6 +749,7 @@ void Map::update_tile_vertices(Entity& entity)
   impl->map_seen_vertices.clear();
   impl->map_hidden_vertices.clear();
   impl->map_memory_vertices.clear();
+
   for (int y = 0; y < impl->map_size.y; ++y)
   {
     for (int x = 0; x < impl->map_size.x; ++x)
@@ -757,11 +762,70 @@ void Map::update_tile_vertices(Entity& entity)
       }
       else
       {
-        tile.add_vertices_to(impl->map_hidden_vertices, false);
+        //tile.add_vertices_to(impl->map_hidden_vertices, false);
         entity.add_memory_vertices_to(impl->map_memory_vertices, x, y);
       }
-    }
-  }
+    } // end for (int x)
+  } // end for (int y)
+
+  // Do walls.
+  for (int y = 0; y < impl->map_size.y; ++y)
+  {
+    for (int x = 0; x < impl->map_size.x; ++x)
+    {
+      MapTile& tile = TILE(x, y);
+
+      bool this_is_empty = tile.is_empty_space();
+      if (!this_is_empty)
+      {
+        bool nw_is_empty = ((x > 0) && (y > 0))
+                            ? (entity.can_see(x-1, y-1) &&
+                               TILE(x-1, y-1).is_empty_space()) : false;
+        bool n_is_empty  = (y > 0)
+                            ? (entity.can_see(x, y-1) &&
+                               TILE(x, y-1).is_empty_space()) : false;
+        bool ne_is_empty = ((x < impl->map_size.x - 1) && (y > 0))
+                            ? (entity.can_see(x+1, y-1) &&
+                               TILE(x+1, y-1).is_empty_space()) : false;
+        bool e_is_empty  = (x < impl->map_size.x - 1)
+                            ? (entity.can_see(x+1, y) &&
+                               TILE(x+1, y).is_empty_space()) : false;
+        bool se_is_empty = ((x < impl->map_size.x - 1) &&
+                            (y < impl->map_size.y - 1))
+                            ? (entity.can_see(x+1, y+1) &&
+                               TILE(x+1, y+1).is_empty_space()) : false;
+        bool s_is_empty  = (y < impl->map_size.y - 1)
+                            ? (entity.can_see(x, y+1) &&
+                               TILE(x, y+1).is_empty_space()) : false;
+        bool sw_is_empty = ((x > 0) && (y < impl->map_size.y - 1))
+                            ? (entity.can_see(x-1, y+1) &&
+                               TILE(x-1, y+1).is_empty_space()) : false;
+        bool w_is_empty  = (x > 0)
+                            ? (entity.can_see(x-1, y) &&
+                               TILE(x-1, y).is_empty_space()) : false;
+
+        if (entity.can_see(x, y))
+        {
+          tile.add_walls_to(impl->map_seen_vertices, true,
+                            nw_is_empty, n_is_empty,
+                            ne_is_empty, e_is_empty,
+                            se_is_empty, s_is_empty,
+                            sw_is_empty, w_is_empty);
+        }
+        else
+        {
+          //tile.add_walls_to(impl->map_hidden_vertices, false,
+          //                  nw_is_empty, n_is_empty,
+          //                  ne_is_empty, e_is_empty,
+          //                  se_is_empty, s_is_empty,
+          //                  sw_is_empty, w_is_empty);
+
+          //entity.add_memory_walls_to(impl->map_memory_vertices, x, y);
+        }
+      } // end if (this_is_empty)
+    } // end for (int x)
+  } // end for (int y)
+
 }
 
 void Map::update_thing_vertices(Entity& entity, int frame)

@@ -299,9 +299,9 @@ void Thing::add_vertices_to(sf::VertexArray& vertices,
                             bool use_lighting,
                             int frame)
 {
-  static sf::Vertex new_vertex;
+  sf::Vertex new_vertex;
   float ts = static_cast<float>(Settings.map_tile_size);
-  float ts2 = ts / 2.0;
+  float ts2 = ts * 0.5;
 
   ThingId root_id = this->get_root_id();
   if (!TF.is_a_tile(root_id))
@@ -316,7 +316,18 @@ void Thing::add_vertices_to(sf::VertexArray& vertices,
   sf::Color thing_color;
   if (use_lighting)
   {
-    thing_color = root_tile.get_light_level();
+    if (TF.is_a_tile(this->get_id()))
+    {
+      sf::Color light = root_tile.get_light_level();
+      thing_color.r = light.r * 0.8;
+      thing_color.g = light.g * 0.8;
+      thing_color.b = light.b * 0.8;
+      thing_color.a = light.a * 0.8;
+    }
+    else
+    {
+      thing_color = root_tile.get_light_level();
+    }
   }
   else
   {
@@ -329,28 +340,10 @@ void Thing::add_vertices_to(sf::VertexArray& vertices,
   sf::Vector2f vNW(location.x - ts2, location.y - ts2);
   sf::Vector2f vNE(location.x + ts2, location.y - ts2);
   sf::Vector2u tile_coords = this->get_tile_sheet_coords(frame);
-  sf::Vector2f texNW = sf::Vector2f(tile_coords.x * ts,
-                                    tile_coords.y * ts);
 
-  new_vertex.color = thing_color;
-  new_vertex.position = vNW;
-  new_vertex.texCoords = texNW;
-  vertices.append(new_vertex);
-
-  new_vertex.position = vNE;
-  new_vertex.texCoords = sf::Vector2f(texNW.x + ts,
-                                      texNW.y);
-  vertices.append(new_vertex);
-
-  new_vertex.position = vSE;
-  new_vertex.texCoords = sf::Vector2f(texNW.x + ts,
-                                      texNW.y + ts);
-  vertices.append(new_vertex);
-
-  new_vertex.position = vSW;
-  new_vertex.texCoords = sf::Vector2f(texNW.x,
-                                      texNW.y + ts);
-  vertices.append(new_vertex);
+  TileSheet::add_vertices(vertices,
+                          tile_coords, thing_color,
+                          vNW, vNE, vSW, vSE);
 }
 
 void Thing::draw_to(sf::RenderTexture& target,

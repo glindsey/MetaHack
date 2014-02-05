@@ -336,7 +336,7 @@
 	<string>
 	<vector>
 
-1374249219 c:\dropbox\projects\metahack\include\app.h
+1391362312 c:\dropbox\projects\metahack\include\app.h
 	<boost/noncopyable.hpp>
 	<boost/random/mersenne_twister.hpp>
 	<memory>
@@ -405,8 +405,9 @@
 
 1093018626 c:\dropbox\projects\libraries\\boost\noncopyable.hpp
 
-1390420258 source:c:\dropbox\projects\metahack\src\app.cpp
+1391362300 source:c:\dropbox\projects\metahack\src\app.cpp
 	"App.h"
+	<boost/random/uniform_int_distribution.hpp>
 	<ctime>
 	<SFML/Graphics.hpp>
 	"AppStateGameMode.h"
@@ -2942,7 +2943,7 @@
 1363024906 source:c:\dropbox\projects\metahack\src\renderable.cpp
 	"Renderable.h"
 
-1390877777 source:c:\dropbox\projects\metahack\src\entity.cpp
+1391296913 source:c:\dropbox\projects\metahack\src\entity.cpp
 	"Entity.h"
 	<algorithm>
 	<cmath>
@@ -2962,6 +2963,7 @@
 	"MessageLog.h"
 	"Ordinal.h"
 	"ThingFactory.h"
+	"TileSheet.h"
 	"ai/AIStrategy.h"
 
 1390875561 c:\dropbox\projects\metahack\include\entity.h
@@ -2993,7 +2995,7 @@
 
 1363288259 c:\dropbox\projects\metahack\include\playfield.h
 
-1390861337 source:c:\dropbox\projects\metahack\src\thing.cpp
+1391314498 source:c:\dropbox\projects\metahack\src\thing.cpp
 	"Thing.h"
 	<iomanip>
 	<sstream>
@@ -3027,7 +3029,7 @@
 	"InventorySlot.h"
 	"ThingId.h"
 
-1390864128 source:c:\dropbox\projects\metahack\src\map.cpp
+1391358717 source:c:\dropbox\projects\metahack\src\map.cpp
 	"Map.h"
 	<boost/random/uniform_int_distribution.hpp>
 	<climits>
@@ -3648,7 +3650,7 @@
 1092564828 c:\dropbox\projects\libraries\\boost\io_fwd.hpp
 	<iosfwd>
 
-1390860631 source:c:\dropbox\projects\metahack\src\maptile.cpp
+1391359507 source:c:\dropbox\projects\metahack\src\maptile.cpp
 	"MapTile.h"
 	<boost/random/uniform_int_distribution.hpp>
 	<string>
@@ -3658,8 +3660,9 @@
 	"Map.h"
 	"MathUtils.h"
 	"ThingFactory.h"
+	"TileSheet.h"
 
-1390861337 c:\dropbox\projects\metahack\include\maptile.h
+1391308417 c:\dropbox\projects\metahack\include\maptile.h
 	<SFML/Graphics.hpp>
 	"Entity.h"
 	"Inventory.h"
@@ -3691,7 +3694,7 @@
 	<SFML/Graphics.hpp>
 	<string>
 
-1372348805 source:c:\dropbox\projects\metahack\src\maptiletype.cpp
+1391304783 source:c:\dropbox\projects\metahack\src\maptiletype.cpp
 	"MapTileType.h"
 
 1369946296 source:c:\dropbox\projects\metahack\src\thingtype.cpp
@@ -4527,14 +4530,15 @@
 	<map>
 	"ErrorHandler.h"
 
-1374249759 c:\dropbox\projects\metahack\include\tilesheet.h
+1391359047 c:\dropbox\projects\metahack\include\tilesheet.h
 	<memory>
 	<string>
 	<SFML/Graphics.hpp>
 
-1374249752 source:c:\dropbox\projects\metahack\src\tilesheet.cpp
+1391359509 source:c:\dropbox\projects\metahack\src\tilesheet.cpp
 	"TileSheet.h"
 	<map>
+	"ConfigSettings.h"
 	"ErrorHandler.h"
 
 1374248246 source:c:\dropbox\projects\metahack\src\mapdiamond.cpp
@@ -9778,7 +9782,7 @@
 1390857683 c:\dropbox\projects\metahack\include\ai\aisessile.h
 	"ai/AIStrategy.h"
 
-1390862029 source:c:\dropbox\projects\metahack\src\mapfeatures\mapcorridor.cpp
+1391363617 source:c:\dropbox\projects\metahack\src\mapfeatures\mapcorridor.cpp
 	"mapfeatures/MapCorridor.h"
 	<boost/random/uniform_int_distribution.hpp>
 	"App.h"
@@ -9830,7 +9834,7 @@
 	"App.h"
 	"ErrorHandler.h"
 
-1390862171 source:c:\dropbox\projects\metahack\src\mapfeatures\mapgenerator.cpp
+1391365187 source:c:\dropbox\projects\metahack\src\mapfeatures\mapgenerator.cpp
 	"mapfeatures/MapGenerator.h"
 	<boost/random/uniform_int_distribution.hpp>
 	"mapfeatures/MapCorridor.h"
@@ -9843,7 +9847,7 @@
 	"MapTile.h"
 	"MathUtils.h"
 
-1369940087 c:\dropbox\projects\metahack\include\mapfeatures\mapgenerator.h
+1391361470 c:\dropbox\projects\metahack\include\mapfeatures\mapgenerator.h
 	<memory>
 	"Map.h"
 

@@ -2,9 +2,8 @@
 
 #include <map>
 
+#include "ConfigSettings.h"
 #include "ErrorHandler.h"
-
-int const TileSheet::TileSize = 32;
 
 struct TileSheet::Impl
 {
@@ -33,10 +32,10 @@ bool TileSheet::load(std::string const& filename)
 sf::IntRect TileSheet::get_tile(sf::Vector2u tile) const
 {
   sf::IntRect rect;
-  rect.left = tile.x * TileSheet::TileSize;
-  rect.top = tile.y * TileSheet::TileSize;
-  rect.width = TileSheet::TileSize;
-  rect.height = TileSheet::TileSize;
+  rect.left = tile.x * Settings.map_tile_size;
+  rect.top = tile.y * Settings.map_tile_size;
+  rect.width = Settings.map_tile_size;
+  rect.height = Settings.map_tile_size;
 
   #ifdef DEBUG
   if ((rect.left < 0) || (rect.top < 0) ||
@@ -54,4 +53,66 @@ sf::IntRect TileSheet::get_tile(sf::Vector2u tile) const
 sf::Texture& TileSheet::getTexture(void)
 {
   return impl->texture;
+}
+
+void TileSheet::add_vertices(sf::VertexArray& vertices,
+                             sf::Vector2u tile_coords, sf::Color bg_color,
+                             sf::Vector2f ul_coord, sf::Vector2f ur_coord,
+                             sf::Vector2f ll_coord, sf::Vector2f lr_coord)
+{
+  sf::Vertex new_vertex;
+  float ts(static_cast<float>(Settings.map_tile_size));
+  sf::Vector2f texNW(tile_coords.x * ts, tile_coords.y * ts);
+
+  new_vertex.color = bg_color;
+  new_vertex.position = ul_coord;
+  new_vertex.texCoords = texNW;
+  vertices.append(new_vertex);
+
+  new_vertex.position = ur_coord;
+  new_vertex.texCoords = sf::Vector2f(texNW.x + ts,
+                                      texNW.y);
+  vertices.append(new_vertex);
+
+  new_vertex.position = lr_coord;
+  new_vertex.texCoords = sf::Vector2f(texNW.x + ts,
+                                      texNW.y + ts);
+  vertices.append(new_vertex);
+
+  new_vertex.position = ll_coord;
+  new_vertex.texCoords = sf::Vector2f(texNW.x,
+                                      texNW.y + ts);
+  vertices.append(new_vertex);
+}
+
+void TileSheet::add_outline_vertices(sf::VertexArray& vertices,
+                                     sf::Color bg_color,
+                                     sf::Vector2f ul_coord,
+                                     sf::Vector2f ur_coord,
+                                     sf::Vector2f ll_coord,
+                                     sf::Vector2f lr_coord)
+{
+
+
+  sf::Vertex new_vertex;
+
+  new_vertex.color = bg_color;
+  new_vertex.position = ul_coord;
+  vertices.append(new_vertex);
+
+  new_vertex.position = ur_coord;
+  vertices.append(new_vertex);
+  vertices.append(new_vertex);
+
+  new_vertex.position = lr_coord;
+  vertices.append(new_vertex);
+  vertices.append(new_vertex);
+
+  new_vertex.position = ll_coord;
+  vertices.append(new_vertex);
+  vertices.append(new_vertex);
+
+  new_vertex.color = bg_color;
+  new_vertex.position = ul_coord;
+  vertices.append(new_vertex);
 }

@@ -23,7 +23,38 @@ class TileSheet
     /// Get a reference to the texture to render.
     sf::Texture& getTexture(void);
 
-    static int const TileSize;
+    /// Add vertices to the requested vertex array.
+    /// This method maps the requested tile onto a quadrilateral specified
+    /// by the four coordinate pairs passed in.  This allows for pseudo-3D
+    /// walls to be drawn.
+    /// @param vertices Vertex array to add to.
+    /// @param tile_coords Coordinates of the tile to render.
+    /// @param bg_color Color to blend with (for lighting).
+    /// @param ul_coord Upper-left coordinates.
+    /// @param ur_coord Upper-right coordinates.
+    /// @param ll_coord Lower-left coordinates.
+    /// @param lr_coord Lower-right coordinates.
+    static void add_vertices(sf::VertexArray& vertices,
+                             sf::Vector2u tile_coords, sf::Color bg_color,
+                             sf::Vector2f ul_coord, sf::Vector2f ur_coord,
+                             sf::Vector2f ll_coord, sf::Vector2f lr_coord);
+
+    /// Add outline vertices to the requested vertex array.
+    /// This method draws a hollow quadrilateral in the color specified by
+    /// bg_color.
+    /// @param vertices Vertex array to add to.
+    /// @param bg_color Color to blend with (for lighting).
+    /// @param ul_coord Upper-left coordinates.
+    /// @param ur_coord Upper-right coordinates.
+    /// @param ll_coord Lower-left coordinates.
+    /// @param lr_coord Lower-right coordinates.
+    static void add_outline_vertices(sf::VertexArray& vertices,
+                                     sf::Color bg_color,
+                                     sf::Vector2f ul_coord,
+                                     sf::Vector2f ur_coord,
+                                     sf::Vector2f ll_coord,
+                                     sf::Vector2f lr_coord);
+
   protected:
   private:
     struct Impl;
