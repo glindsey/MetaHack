@@ -12,6 +12,7 @@
 #include "Gender.h"
 #include "Inventory.h"
 #include "IsType.h"
+#include "LightSource.h"
 #include "Map.h"
 #include "MapTile.h"
 #include "MessageLog.h"
@@ -408,6 +409,21 @@ bool Thing::is_entity() const
 bool Thing::is_maptile() const
 {
   return isType(this, MapTile const);
+}
+
+bool Thing::is_opaque() const
+{
+  return true;
+}
+
+void Thing::light_up_surroundings()
+{
+  // Default behavior does nothing
+}
+
+void Thing::be_lit_by(LightSource& light)
+{
+  // Default behavior does nothing
 }
 
 bool Thing::move_into(ThingId new_location_id)

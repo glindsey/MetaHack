@@ -17,6 +17,7 @@ class Container;
 class Entity;
 class MapTile;
 class Inventory;
+class LightSource;
 class ThingFactory;
 
 // Typedef for the factory method.
@@ -195,6 +196,17 @@ class Thing
 
     /// Simple check to see if a Thing is a MapTile.
     bool is_maptile() const;
+
+    /// Simple check to see if a Thing is opaque.
+    virtual bool is_opaque() const;
+
+    /// Provide light to this Thing's surroundings.
+    /// The default behavior is to do nothing.
+    virtual void light_up_surroundings();
+
+    /// Receive light from the specified LightSource.
+    /// The default behavior is to do nothing.
+    virtual void be_lit_by(LightSource& light);
 
     /// Attempt to move this Thing to a location.
     virtual bool move_into(ThingId location_id);

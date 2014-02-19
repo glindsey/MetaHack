@@ -1,5 +1,4 @@
 #include "Map.h"
-
 #include <boost/random/uniform_int_distribution.hpp>
 #include <climits>
 #include <memory>
@@ -19,6 +18,7 @@
 #include "mapfeatures/MapFeature.h"
 #include "mapfeatures/MapGenerator.h"
 
+#define VERTEX(x, y) (20 * (impl->map_size.x * y) + x)
 #define TILEID(x, y) (impl->tiles[get_index((x), (y))])
 #define TILE(x, y) TF.get_tile(TILEID(x, y))
 
@@ -38,10 +38,6 @@ struct Map::Impl
 
     /// Outlines map vertex array.
     sf::VertexArray map_outline_vertices;
-
-    /// "Hidden" map vertex array.
-    /// @deprecated
-    sf::VertexArray map_hidden_vertices;
 
     /// "Memory" map vertex array.
     sf::VertexArray map_memory_vertices;
@@ -73,6 +69,9 @@ Map::Map(MapId mapId, int width, int height)
 
   impl->tiles.resize(width * height);
 
+  impl->map_seen_vertices.resize(impl->map_size.x * impl->map_size.y * 20);
+  impl->map_memory_vertices.resize(impl->map_size.x * impl->map_size.y * 20);
+
   for (int y = 0; y < height; ++y)
   {
     for (int x = 0; x < width; ++x)
@@ -88,8 +87,6 @@ Map::Map(MapId mapId, int width, int height)
   // Create the vertex arrays.
   impl->map_seen_vertices.clear();
   impl->map_seen_vertices.setPrimitiveType(sf::PrimitiveType::Quads);
-  impl->map_hidden_vertices.clear();
-  impl->map_hidden_vertices.setPrimitiveType(sf::PrimitiveType::Quads);
   impl->map_memory_vertices.clear();
   impl->map_memory_vertices.setPrimitiveType(sf::PrimitiveType::Quads);
   impl->thing_vertices.clear();
@@ -254,12 +251,14 @@ void Map::update_lighting()
     for (int x = 0; x < impl->map_size.x; ++x)
     {
       MapTile& tile = TILE(x, y);
-      for (ThingMapById::iterator iter = tile.get_inventory().by_id_begin();
+      for (auto iter = tile.get_inventory().by_id_begin();
            iter != tile.get_inventory().by_id_end();
            ++iter)
       {
+        TF.get((*iter).first).light_up_surroundings();
+
         /****** GSL -- LEFT OFF HERE **********************/
-        add_light((*iter).first);
+        //add_light((*iter).first);
       }
     }
   }
@@ -589,145 +588,125 @@ void Map::do_recursive_lighting(ThingId source,
   }
 }
 
-void Map::add_light(ThingId thing_id)
+void Map::add_light(LightSource& source)
 {
-  Thing& thing = TF.get(thing_id);
+  // Get the light source's absolute location.
+  ThingId source_id = source.get_id();
+  ThingId source_location = source.get_root_id();
+  Container& location = TF.get_container(source_location);
 
-  // First make sure the thing is a light source.
-  if (isType(&thing, LightSource))
+  if (!location.is_maptile() || (location.get_map_id() != impl->map_id))
   {
-    LightSource& source = dynamic_cast<LightSource&>(thing);
-
-    // Get the thing's absolute location.
-    ThingId thing_location = thing.get_root_id();
-    Container& location = TF.get_container(thing_location);
-
-    if (!location.is_maptile() || (location.get_map_id() != impl->map_id))
-    {
-      // Return, as the light source is not on the map proper.
-      return;
-    }
-
-    sf::Vector2i coords = TF.get_tile(thing_location).get_coords();
-
-    sf::Color light_color = source.get_light_color();
-    Direction light_direction = source.get_light_direction();
-
-    /// @todo Handle the special case of Direction::Self.
-    /// If a light source's direction is set to "Self", it should be treated as
-    /// omnidirectional but dimmer when not held by an Entity, and the same
-    /// direction as the Entity when it is held.
-
-    /// @todo: Handle "dark sources" with negative light strength properly --
-    ///        right now they'll cause Very Bad Behavior!
-    int max_depth_squared = source.get_light_strength();
-
-    // Add a light influence to the tile the light is on.
-    MapTile::LightInfluence influence;
-    influence.coords = coords;
-    influence.color = light_color;
-    influence.intensity = max_depth_squared;
-    get_tile(coords.x, coords.y).add_light_influence(thing_id, influence);
-
-    // Octant is an integer representing the following:
-    // \ 1|2 /  |
-    //  \ | /   |
-    // 8 \|/ 3  |
-    // ---+---  |
-    // 7 /|\ 4  |
-    //  / | \   |
-    // / 6|5 \  |
-
-    // Directional lighting:
-    // Direction  1 2 3 4 5 6 7 8
-    // ==========================
-    // Self/Up/Dn x x x x x x x x
-    // North      x x - - - - - -
-    // Northeast  - x x - - - - -
-    // East       - - x x - - - -
-    // Southeast  - - - x x - - -
-    // South      - - - - x x - -
-    // Southwest  - - - - - x x -
-    // West       - - - - - - x x
-    // Northwest  x - - - - - - x
-
-    if ((light_direction == Direction::Self) ||
-        (light_direction == Direction::Up) ||
-        (light_direction == Direction::Down) ||
-        (light_direction == Direction::Northwest) ||
-        (light_direction == Direction::North))
-    {
-      do_recursive_lighting(thing_id, coords, light_color, max_depth_squared, 1);
-    }
-    if ((light_direction == Direction::Self) ||
-        (light_direction == Direction::Up) ||
-        (light_direction == Direction::Down) ||
-        (light_direction == Direction::North) ||
-        (light_direction == Direction::Northeast))
-    {
-      do_recursive_lighting(thing_id, coords, light_color, max_depth_squared, 2);
-    }
-    if ((light_direction == Direction::Self) ||
-        (light_direction == Direction::Up) ||
-        (light_direction == Direction::Down) ||
-        (light_direction == Direction::Northeast) ||
-        (light_direction == Direction::East))
-    {
-      do_recursive_lighting(thing_id, coords, light_color, max_depth_squared, 3);
-    }
-    if ((light_direction == Direction::Self) ||
-        (light_direction == Direction::Up) ||
-        (light_direction == Direction::Down) ||
-        (light_direction == Direction::East) ||
-        (light_direction == Direction::Southeast))
-    {
-      do_recursive_lighting(thing_id, coords, light_color, max_depth_squared, 4);
-    }
-    if ((light_direction == Direction::Self) ||
-        (light_direction == Direction::Up) ||
-        (light_direction == Direction::Down) ||
-        (light_direction == Direction::Southeast) ||
-        (light_direction == Direction::South))
-    {
-      do_recursive_lighting(thing_id, coords, light_color, max_depth_squared, 5);
-    }
-    if ((light_direction == Direction::Self) ||
-        (light_direction == Direction::Up) ||
-        (light_direction == Direction::Down) ||
-        (light_direction == Direction::South) ||
-        (light_direction == Direction::Southwest))
-    {
-      do_recursive_lighting(thing_id, coords, light_color, max_depth_squared, 6);
-    }
-    if ((light_direction == Direction::Self) ||
-        (light_direction == Direction::Up) ||
-        (light_direction == Direction::Down) ||
-        (light_direction == Direction::Southwest) ||
-        (light_direction == Direction::West))
-    {
-      do_recursive_lighting(thing_id, coords, light_color, max_depth_squared, 7);
-    }
-    if ((light_direction == Direction::Self) ||
-        (light_direction == Direction::Up) ||
-        (light_direction == Direction::Down) ||
-        (light_direction == Direction::West) ||
-        (light_direction == Direction::Northwest))
-    {
-      do_recursive_lighting(thing_id, coords, light_color, max_depth_squared, 8);
-    }
+    // Return, as the light source is not on the map proper.
+    return;
   }
 
-  if (thing.is_container())
-  {
-    /// @todo Check container's opacity; otherwise we get stuff shining right
-    ///       through boxes and bags!
-    Container& container = static_cast<Container&>(thing);
+  sf::Vector2i coords = TF.get_tile(source_location).get_coords();
 
-    for (ThingMapById::iterator iter = container.get_inventory().by_id_begin();
-         iter != container.get_inventory().by_id_end(); ++iter)
-    {
-      add_light((*iter).first);
-    }
+  sf::Color light_color = source.get_light_color();
+  Direction light_direction = source.get_light_direction();
+
+  /// @todo Handle the special case of Direction::Self.
+  /// If a light source's direction is set to "Self", it should be treated as
+  /// omnidirectional but dimmer when not held by an Entity, and the same
+  /// direction as the Entity when it is held.
+
+  /// @todo: Handle "dark sources" with negative light strength properly --
+  ///        right now they'll cause Very Bad Behavior!
+  int max_depth_squared = source.get_light_strength();
+
+  // Add a light influence to the tile the light is on.
+  MapTile::LightInfluence influence;
+  influence.coords = coords;
+  influence.color = light_color;
+  influence.intensity = max_depth_squared;
+  get_tile(coords.x, coords.y).add_light_influence(source_id, influence);
+
+  // Octant is an integer representing the following:
+  // \ 1|2 /  |
+  //  \ | /   |
+  // 8 \|/ 3  |
+  // ---+---  |
+  // 7 /|\ 4  |
+  //  / | \   |
+  // / 6|5 \  |
+
+  // Directional lighting:
+  // Direction  1 2 3 4 5 6 7 8
+  // ==========================
+  // Self/Up/Dn x x x x x x x x
+  // North      x x - - - - - -
+  // Northeast  - x x - - - - -
+  // East       - - x x - - - -
+  // Southeast  - - - x x - - -
+  // South      - - - - x x - -
+  // Southwest  - - - - - x x -
+  // West       - - - - - - x x
+  // Northwest  x - - - - - - x
+
+  if ((light_direction == Direction::Self) ||
+      (light_direction == Direction::Up) ||
+      (light_direction == Direction::Down) ||
+      (light_direction == Direction::Northwest) ||
+      (light_direction == Direction::North))
+  {
+    do_recursive_lighting(source_id, coords, light_color, max_depth_squared, 1);
+  }
+  if ((light_direction == Direction::Self) ||
+      (light_direction == Direction::Up) ||
+      (light_direction == Direction::Down) ||
+      (light_direction == Direction::North) ||
+      (light_direction == Direction::Northeast))
+  {
+    do_recursive_lighting(source_id, coords, light_color, max_depth_squared, 2);
+  }
+  if ((light_direction == Direction::Self) ||
+      (light_direction == Direction::Up) ||
+      (light_direction == Direction::Down) ||
+      (light_direction == Direction::Northeast) ||
+      (light_direction == Direction::East))
+  {
+    do_recursive_lighting(source_id, coords, light_color, max_depth_squared, 3);
+  }
+  if ((light_direction == Direction::Self) ||
+      (light_direction == Direction::Up) ||
+      (light_direction == Direction::Down) ||
+      (light_direction == Direction::East) ||
+      (light_direction == Direction::Southeast))
+  {
+    do_recursive_lighting(source_id, coords, light_color, max_depth_squared, 4);
+  }
+  if ((light_direction == Direction::Self) ||
+      (light_direction == Direction::Up) ||
+      (light_direction == Direction::Down) ||
+      (light_direction == Direction::Southeast) ||
+      (light_direction == Direction::South))
+  {
+    do_recursive_lighting(source_id, coords, light_color, max_depth_squared, 5);
+  }
+  if ((light_direction == Direction::Self) ||
+      (light_direction == Direction::Up) ||
+      (light_direction == Direction::Down) ||
+      (light_direction == Direction::South) ||
+      (light_direction == Direction::Southwest))
+  {
+    do_recursive_lighting(source_id, coords, light_color, max_depth_squared, 6);
+  }
+  if ((light_direction == Direction::Self) ||
+      (light_direction == Direction::Up) ||
+      (light_direction == Direction::Down) ||
+      (light_direction == Direction::Southwest) ||
+      (light_direction == Direction::West))
+  {
+    do_recursive_lighting(source_id, coords, light_color, max_depth_squared, 7);
+  }
+  if ((light_direction == Direction::Self) ||
+      (light_direction == Direction::Up) ||
+      (light_direction == Direction::Down) ||
+      (light_direction == Direction::West) ||
+      (light_direction == Direction::Northwest))
+  {
+    do_recursive_lighting(source_id, coords, light_color, max_depth_squared, 8);
   }
 }
 
@@ -747,7 +726,6 @@ void Map::update_tile_vertices(Entity& entity)
 
   // Loop through and draw tiles.
   impl->map_seen_vertices.clear();
-  impl->map_hidden_vertices.clear();
   impl->map_memory_vertices.clear();
 
   for (int y = 0; y < impl->map_size.y; ++y)
@@ -762,7 +740,6 @@ void Map::update_tile_vertices(Entity& entity)
       }
       else
       {
-        //tile.add_vertices_to(impl->map_hidden_vertices, false);
         entity.add_memory_vertices_to(impl->map_memory_vertices, x, y);
       }
     } // end for (int x)
@@ -814,18 +791,11 @@ void Map::update_tile_vertices(Entity& entity)
         }
         else
         {
-          //tile.add_walls_to(impl->map_hidden_vertices, false,
-          //                  nw_is_empty, n_is_empty,
-          //                  ne_is_empty, e_is_empty,
-          //                  se_is_empty, s_is_empty,
-          //                  sw_is_empty, w_is_empty);
-
           //entity.add_memory_walls_to(impl->map_memory_vertices, x, y);
         }
       } // end if (this_is_empty)
     } // end for (int x)
   } // end for (int y)
-
 }
 
 void Map::update_thing_vertices(Entity& entity, int frame)

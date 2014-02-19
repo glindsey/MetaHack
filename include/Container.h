@@ -36,6 +36,14 @@ class Container : public Thing
     /// @see get_inventory_size
     void set_inventory_size(int number);
 
+    /// Provide light to this Container's surroundings.
+    /// The default behavior is to do nothing.
+    virtual void light_up_surroundings() override;
+
+    /// Receive light from the specified LightSource.
+    /// The default behavior is to do nothing.
+    virtual void be_lit_by(LightSource& light) override;
+
     /// Returns whether the inventory can hold a certain thing.
     /// Overridden by subclasses; defaults to returning true.
     /// @param thing Thing to check.

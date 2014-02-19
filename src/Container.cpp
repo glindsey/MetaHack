@@ -108,6 +108,23 @@ void Container::set_inventory_size(int number)
   impl->inventory_size = number;
 }
 
+void Container::light_up_surroundings()
+{
+  // Call function on all children
+  for (auto iter = get_inventory().by_id_begin();
+       iter != get_inventory().by_id_end();
+       ++iter)
+  {
+    TF.get((*iter).first).light_up_surroundings();
+  }
+}
+
+void Container::be_lit_by(LightSource& light)
+{
+  /// @todo If container is opaque, do not pass the light up to parent location.
+  TF.get(get_location_id()).be_lit_by(light);
+}
+
 void Container::gather_thing_ids(std::vector<ThingId>& ids)
 {
   // Get all IDs in the Thing's inventory first.

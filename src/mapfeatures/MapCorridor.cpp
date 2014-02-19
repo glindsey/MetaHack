@@ -173,6 +173,10 @@ bool MapCorridor::create(GeoVector vec)
             MapTile& checkTile = get_map().get_tile(checkCoords.x, checkCoords.y);
             if (checkTile.is_empty_space())
             {
+              MapTile& endTile = get_map().get_tile(impl->endingCoords.x,
+                                                    impl->endingCoords.y);
+              endTile.set_type(MapTileType::FloorStone);
+
               /// @todo Keep going here
             }
           }

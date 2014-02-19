@@ -110,6 +110,12 @@ void MapTile::set_ambient_light_level(sf::Color level)
   impl->ambient_light_color = level;
 }
 
+void MapTile::be_lit_by(LightSource& light)
+{
+  MF.get(get_map_id()).add_light(light);
+}
+
+
 void MapTile::clear_light_influences()
 {
   impl->lights.clear();

@@ -57,6 +57,11 @@ class MapTile : public Container
     /// Set the current tile's light level.
     void set_ambient_light_level(sf::Color level);
 
+    /// Receive light from the specified LightSource.
+    /// Gets the Map this tile belongs to and does a recursive
+    /// raycasting algorithm on it.
+    virtual void be_lit_by(LightSource& light);
+
     /// Clear light influences.
     void clear_light_influences();
 
@@ -67,7 +72,7 @@ class MapTile : public Container
     sf::Color get_light_level() const;
 
     /// Get whether the tile is opaque or not.
-    bool is_opaque() const;
+    virtual bool is_opaque() const override;
 
     void draw_highlight(sf::RenderTarget& target,
                         sf::Vector2f location,

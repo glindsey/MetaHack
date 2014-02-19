@@ -10,6 +10,7 @@
 #include "Renderable.h"
 
 // Forward declarations
+class LightSource;
 class MapFeature;
 class MapTile;
 
@@ -37,7 +38,7 @@ class Map
 
     void update_lighting();
 
-    void add_light(ThingId thing_id);
+    void add_light(LightSource& source);
 
     void update_tile_vertices(Entity& entity);
 

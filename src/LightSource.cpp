@@ -1,6 +1,7 @@
 #include "LightSource.h"
 
 #include "Entity.h"
+#include "ThingFactory.h"
 
 struct LightSource::Impl
 {
@@ -79,6 +80,12 @@ sf::Color LightSource::get_light_color() const
 void LightSource::set_light_color(sf::Color color)
 {
   impl->color = color;
+}
+
+void LightSource::light_up_surroundings()
+{
+  // Use visitor pattern.
+  TF.get(get_location_id()).be_lit_by(*this);
 }
 
 bool LightSource::usable_by(Entity const& entity) const

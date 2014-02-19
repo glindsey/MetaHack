@@ -50,6 +50,9 @@ class LightSource : public Aggregate
     /// Returns a boolean indicating whether setting was allowed.
     void set_light_color(sf::Color color);
 
+    /// Provide light to this LightSource's surroundings.
+    virtual void light_up_surroundings() override;
+
     /// Return whether or not this light source can be turned on/off by this
     /// Entity.
     /// The default behavior for this is to return false.
