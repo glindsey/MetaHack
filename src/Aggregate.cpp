@@ -41,7 +41,7 @@ bool Aggregate::move_into(Container& new_location)
 
   if (is_movable())
   {
-    if (new_location.can_contain(*this))
+    if (new_location.can_contain(*this) == ActionResult::Success)
     {
       Inventory& new_inventory = new_location.get_inventory();
 

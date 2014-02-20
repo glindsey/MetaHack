@@ -201,14 +201,7 @@ std::string Entity::get_name() const
 
   if (impl->attributes.get(Attribute::HP) > 0)
   {
-    if (owner.is_entity())
-    {
-      name = owner.get_possessive() + " " + get_description();
-    }
-    else
-    {
-      name = "the " + get_description();
-    }
+    name = owner.get_possessive() + " " + get_description();
 
     // If the Thing has a proper name, use that.
     if (get_proper_name().empty() == false)
@@ -224,14 +217,55 @@ std::string Entity::get_name() const
     }
     else
     {
-      if (owner.is_entity())
-      {
-        name = owner.get_possessive() + " dead " + get_description();
-      }
-      else
-      {
-        name = "the dead " + get_description();
-      }
+      name = owner.get_possessive() + " dead " + get_description();
+    }
+  }
+
+  return name;
+}
+
+std::string Entity::get_def_name() const
+{
+  // If the thing is YOU, use YOU.
+  if (TF.is_player(this))
+  {
+    if (impl->attributes.get(Attribute::HP) > 0)
+    {
+      return "you";
+    }
+    else
+    {
+      return "your corpse";
+    }
+  }
+
+  std::string name;
+
+  if (impl->attributes.get(Attribute::HP) > 0)
+  {
+    std::string description = get_description();
+    name = "the " + description;
+
+    // If the Thing has a proper name, use that.
+    if (get_proper_name().empty() == false)
+    {
+      // e.g. "the hill orc named Thrag"
+      name += " named " + get_proper_name();
+    }
+  }
+  else
+  {
+    // If the Thing has a proper name, use that.
+    if (get_proper_name().empty() == false)
+    {
+      // e.g. "Fluffy's corpse"
+      name = get_possessive() + " corpse";
+    }
+    else
+    {
+      // e.g. "the dead rat"
+      std::string description = get_description();
+      name = "the dead " + description;
     }
   }
 
@@ -285,7 +319,6 @@ std::string Entity::get_indef_name() const
 
   return name;
 }
-
 
 int Entity::get_busy_counter() const
 {
@@ -993,7 +1026,7 @@ bool Entity::drop(ThingId thing_id, unsigned int& action_time)
     {
       if (thing.is_movable())
       {
-        if (entity_location.can_contain(thing))
+        if (entity_location.can_contain(thing) == ActionResult::Success)
         {
           if (thing.perform_action_dropped_by(*this))
           {
@@ -1429,15 +1462,11 @@ ActionResult Entity::can_put_into(ThingId thing_id, ThingId container_id,
 
   // Check that the thing's location isn't already the container.
   Thing& thing = TF.get(thing_id);
+  Thing& container = TF.get(container_id);
+
   if (thing.get_location_id() == container_id)
   {
     return ActionResult::FailureAlreadyPresent;
-  }
-
-  // Check that the container is, well, a container!
-  if (!TF.get(container_id).is_container())
-  {
-    return ActionResult::FailureTargetNotAContainer;
   }
 
   // Check that the thing is within reach.
@@ -1452,8 +1481,8 @@ ActionResult Entity::can_put_into(ThingId thing_id, ThingId container_id,
     return ActionResult::FailureContainerOutOfReach;
   }
 
-  /// @todo Make sure the container can hold this thing.
-  return ActionResult::Success;
+  // Make sure the container can hold this thing.
+  return container.can_contain(*this);
 }
 
 bool Entity::put_into(ThingId thing_id, ThingId container_id,

@@ -186,15 +186,25 @@ std::string Thing::get_name() const
   std::string name;
   Container& owner = TF.get_container(get_owner_id());
 
-  // If the Thing has a proper name, use that.
-  if (owner.is_entity())
+  name = owner.get_possessive() + " " + get_description();
+
+  /// @todo If the Thing has a proper name, use that.
+
+  return name;
+}
+
+std::string Thing::get_def_name() const
+{
+  // If the thing is YOU, use YOU.
+  if (impl->thing_id == TF.get_player_id())
   {
-    name = owner.get_possessive() + " " + get_description();
+    return "you";
   }
-  else
-  {
-    name = "the "+ get_description();
-  }
+
+  std::string name;
+
+  std::string description = get_description();
+  name = "the " + description;
 
   return name;
 }
@@ -278,9 +288,10 @@ std::string Thing::get_possessive() const
   }
   else
   {
-    return get_name() + "'s";
+    return get_def_name() + "'s";
   }
 }
+
 
 sf::Vector2u Thing::get_tile_sheet_coords(int frame) const
 {
@@ -416,6 +427,11 @@ bool Thing::is_opaque() const
   return true;
 }
 
+ActionResult Thing::can_contain(Thing& thing) const
+{
+  return ActionResult::FailureTargetNotAContainer;
+}
+
 void Thing::light_up_surroundings()
 {
   // Default behavior does nothing
@@ -437,7 +453,7 @@ bool Thing::move_into(Container& new_location)
 
   if (is_movable())
   {
-    if (new_location.can_contain(*this))
+    if (new_location.can_contain(*this) == ActionResult::Success)
     {
       if (new_location.get_inventory().add(impl->thing_id))
       {

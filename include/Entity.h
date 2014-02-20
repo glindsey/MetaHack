@@ -33,7 +33,12 @@ class Entity :
     virtual std::string get_name() const override;
 
     /// Return a string that identifies this thing.
-    /// Extends Thing::get_name() to handle hit points, so values 0 or below
+    /// Extends Thing::get_def_name() to handle hit points, so values 0 or below
+    /// return "the dead (thing)" or "(thing)'s corpse".
+    virtual std::string get_def_name() const;
+
+    /// Return a string that identifies this thing.
+    /// Extends Thing::get_indef_name() to handle hit points, so values 0 or below
     /// return "a dead (thing)" or "(thing)'s corpse".
     virtual std::string get_indef_name() const override;
 

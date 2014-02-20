@@ -44,11 +44,11 @@ class Container : public Thing
     /// The default behavior is to do nothing.
     virtual void be_lit_by(LightSource& light) override;
 
-    /// Returns whether the inventory can hold a certain thing.
+    /// Returns whether the container can hold a certain thing.
     /// Overridden by subclasses; defaults to returning true.
     /// @param thing Thing to check.
     /// @return true if the Container can hold the Thing, false otherwise.
-    virtual bool can_contain(Thing& thing) const { return true; }
+    virtual ActionResult can_contain(Thing& thing) const override;
 
     /// Gather the ThingIds of this Thing and those underneath it.
     /// This function is used to enumerate all Things on a map in order to

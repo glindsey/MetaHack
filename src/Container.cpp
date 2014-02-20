@@ -57,7 +57,7 @@ std::string Container::get_name() const
   // If the Thing has a proper name, use that.
   if (!get_proper_name().empty())
   {
-    if (owner.is_entity())
+    //if (owner.is_entity())
     {
       name = owner.get_possessive() + " ";
     }
@@ -123,6 +123,11 @@ void Container::be_lit_by(LightSource& light)
 {
   /// @todo If container is opaque, do not pass the light up to parent location.
   TF.get(get_location_id()).be_lit_by(light);
+}
+
+ActionResult Container::can_contain(Thing& thing) const
+{
+  return ActionResult::Success;
 }
 
 void Container::gather_thing_ids(std::vector<ThingId>& ids)

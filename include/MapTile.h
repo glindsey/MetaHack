@@ -99,7 +99,7 @@ class MapTile : public Container
                       bool se_is_empty, bool s_is_empty,
                       bool sw_is_empty, bool w_is_empty);
 
-    virtual bool can_contain(Thing& thing) const override;
+    virtual ActionResult can_contain(Thing& thing) const override;
 
     virtual bool readable_by(Entity const& entity) const override;
 

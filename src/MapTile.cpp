@@ -379,10 +379,10 @@ void MapTile::add_walls_to(sf::VertexArray& vertices,
   /// @todo Implement me.
 }
 
-bool MapTile::can_contain(Thing& thing) const
+ActionResult MapTile::can_contain(Thing& thing) const
 {
   /// @todo Implement can_contain.  Right now a MapTile can contain any Thing.
-  return true;
+  return ActionResult::Success;
 }
 
 bool MapTile::readable_by(Entity const& entity) const

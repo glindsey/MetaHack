@@ -59,7 +59,6 @@
 			<Add option="-march=core2" />
 			<Add option="-pedantic" />
 			<Add option="-std=c++11" />
-			<Add option="-Wall" />
 			<Add directory="include" />
 			<Add directory="include/things" />
 			<Add directory="../libraries/boost_1_54_0" />

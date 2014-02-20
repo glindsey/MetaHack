@@ -113,11 +113,28 @@ class Thing
     virtual std::string get_name() const;
 
     /// Return a string that identifies this thing.
+    /// By default, returns "the" and a description of the thing, such as
+    /// "the chair" or "the orange".
+    /// If it IS the player, it'll return "you".
+    /// Unlike get_name, get_def_name does NOT check for possession.
+    virtual std::string get_def_name() const;
+
+    /// Return a string that identifies this thing.
     /// By default, returns "a" or "an" and a description of the thing, such as
     /// "a chair" or "an orange".
     /// If it IS the player, it'll return "you".
     /// Unlike get_name, get_indef_name does NOT check for possession.
     virtual std::string get_indef_name() const;
+
+    /// Choose the proper possessive form
+    /// For a Thing, this is simply "the", as Things cannot own things.
+    /// This function checks to see if this Thing is currently designated as
+    /// the player (in the ThingFactory).  If so, it returns "your".  If not,
+    /// it returns get_name() + "'s".
+    /// @note If you want a possessive pronoun like his/her/its/etc., use
+    /// get_possessive_adjective().
+    virtual std::string get_possessive() const;
+
 
     /// Choose which verb form to use based on first/second/third person.
     /// This function checks to see if this Thing is currently designated as
@@ -155,14 +172,6 @@ class Thing
     /// Get the appropriate possessive pronoun for the Thing.
     virtual std::string const& get_possessive_pronoun();
 
-    /// Choose the proper possessive form.
-    /// This function checks to see if this Thing is currently designated as
-    /// the player (in the ThingFactory).  If so, it returns "your".  If not,
-    /// it returns get_name() + "'s".
-    /// @note If you want a possessive pronoun like his/her/its/etc., use
-    /// get_possessive_adjective().
-    virtual std::string get_possessive() const;
-
     /// Return the coordinates of the tile representing the thing.
     virtual sf::Vector2u get_tile_sheet_coords(int frame) const;
 
@@ -199,6 +208,12 @@ class Thing
 
     /// Simple check to see if a Thing is opaque.
     virtual bool is_opaque() const;
+
+    /// Returns whether the container can hold a certain thing.
+    /// Overridden by subclasses; defaults to returning false.
+    /// @param thing Thing to check.
+    /// @return true if the Container can hold the Thing, false otherwise.
+    virtual ActionResult can_contain(Thing& thing) const;
 
     /// Provide light to this Thing's surroundings.
     /// The default behavior is to do nothing.
