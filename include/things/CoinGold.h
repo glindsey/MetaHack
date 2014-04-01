@@ -1,26 +1,26 @@
 #ifndef COINGOLD_H
 #define COINGOLD_H
 
-#include "Aggregate.h"
-
 #include <string>
 #include <SFML/Graphics.hpp>
 
-#include "CreatableThing.h"
+#include "Thing.h"
+#include "Registered.h"
 
 class CoinGold :
-  public Aggregate,
-  public CreatableThing<CoinGold>
+  public Thing,
+  public Registered<CoinGold>
 {
-  friend class CreatableThing;
-
   public:
+    CoinGold();
     virtual ~CoinGold();
+    CoinGold(CoinGold const&) = default;
+    CoinGold const& operator=(CoinGold const&) = delete;
 
     virtual sf::Vector2u get_tile_sheet_coords(int frame) const override;
 
   protected:
-    CoinGold();
+
 
   private:
     virtual std::string _get_description() const override;

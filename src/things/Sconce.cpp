@@ -2,8 +2,7 @@
 
 Sconce Sconce::prototype;
 
-Sconce::Sconce()
-  : LightSource()
+Sconce::Sconce() : LightSource(0)
 {
   set_single_mass(1);
   set_light_color(sf::Color(160, 128, 112, 255));
@@ -29,7 +28,7 @@ sf::Vector2u Sconce::get_tile_sheet_coords(int frame) const
   }
 }
 
-bool Sconce::do_process()
+bool Sconce::_do_process()
 {
   /// @todo: Sconces should eventually wear out or something.
   return true;

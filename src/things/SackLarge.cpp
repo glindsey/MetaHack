@@ -2,7 +2,7 @@
 
 SackLarge SackLarge::prototype;
 
-SackLarge::SackLarge() : Container()
+SackLarge::SackLarge() : Thing(-1)
 {
   this->set_inventory_size(10);
 }

@@ -14,6 +14,8 @@
 				<Compiler>
 					<Add option="-g" />
 					<Add option="-DDEBUG" />
+					<Add directory="include" />
+					<Add directory="include/things" />
 				</Compiler>
 				<Linker>
 					<Add library="sfml-graphics-d" />
@@ -29,6 +31,8 @@
 				<Compiler>
 					<Add option="-fomit-frame-pointer" />
 					<Add option="-O3" />
+					<Add directory="include" />
+					<Add directory="include/things" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -46,6 +50,8 @@
 					<Add option="-pg" />
 					<Add option="-g" />
 					<Add option="-DDEBUG" />
+					<Add directory="include" />
+					<Add directory="include/things" />
 				</Compiler>
 				<Linker>
 					<Add option="-pg -lgmon" />
@@ -73,11 +79,9 @@
 			<Add directory="../libraries/SFML-2.1/build/lib" />
 			<Add directory="../libraries/boost_1_54_0/boost/stage/lib" />
 		</Linker>
-		<Unit filename="ai/AIStrategy.h" />
 		<Unit filename="cb.bmp" />
 		<Unit filename="include/Action.h" />
 		<Unit filename="include/ActionResult.h" />
-		<Unit filename="include/Aggregate.h" />
 		<Unit filename="include/App.h" />
 		<Unit filename="include/AppStateGameMode.h" />
 		<Unit filename="include/AppStateMainMenu.h" />
@@ -86,12 +90,11 @@
 		<Unit filename="include/AttributeSet.h" />
 		<Unit filename="include/BodyPart.h" />
 		<Unit filename="include/ConfigSettings.h" />
-		<Unit filename="include/Container.h" />
-		<Unit filename="include/CreatableThing.h" />
 		<Unit filename="include/Direction.h" />
 		<Unit filename="include/Entity.h" />
 		<Unit filename="include/ErrorHandler.h" />
 		<Unit filename="include/EventHandler.h" />
+		<Unit filename="include/GameObject.h" />
 		<Unit filename="include/Gender.h" />
 		<Unit filename="include/GeoVector.h" />
 		<Unit filename="include/GetLetterKey.h" />
@@ -109,9 +112,9 @@
 		<Unit filename="include/MathUtils.h" />
 		<Unit filename="include/MessageLog.h" />
 		<Unit filename="include/Ordinal.h" />
+		<Unit filename="include/Registered.h" />
 		<Unit filename="include/Renderable.h" />
 		<Unit filename="include/ShaderEffect.h" />
-		<Unit filename="include/Splittable.h" />
 		<Unit filename="include/SpritePrototype.h" />
 		<Unit filename="include/State.h" />
 		<Unit filename="include/StateMachine.h" />
@@ -135,9 +138,9 @@
 		<Unit filename="include/things/Blob.h" />
 		<Unit filename="include/things/ChestWooden.h" />
 		<Unit filename="include/things/CoinGold.h" />
+		<Unit filename="include/things/Floor.h" />
 		<Unit filename="include/things/Human.h" />
 		<Unit filename="include/things/LightOrb.h" />
-		<Unit filename="include/things/Limbo.h" />
 		<Unit filename="include/things/Rock.h" />
 		<Unit filename="include/things/RockLichen.h" />
 		<Unit filename="include/things/SackLarge.h" />
@@ -150,16 +153,15 @@
 		<Unit filename="resources/graphics/tilesheet.png" />
 		<Unit filename="resources/shaders/default.frag" />
 		<Unit filename="resources/shaders/default.vert" />
-		<Unit filename="src/Aggregate.cpp" />
 		<Unit filename="src/App.cpp" />
 		<Unit filename="src/AppStateGameMode.cpp" />
 		<Unit filename="src/AppStateMainMenu.cpp" />
 		<Unit filename="src/AppStateSplashScreen.cpp" />
 		<Unit filename="src/AttributeSet.cpp" />
 		<Unit filename="src/ConfigSettings.cpp" />
-		<Unit filename="src/Container.cpp" />
 		<Unit filename="src/Entity.cpp" />
 		<Unit filename="src/ErrorHandler.cpp" />
+		<Unit filename="src/GameObject.cpp" />
 		<Unit filename="src/Gender.cpp" />
 		<Unit filename="src/Inventory.cpp" />
 		<Unit filename="src/InventoryArea.cpp" />
@@ -190,9 +192,9 @@
 		<Unit filename="src/things/Blob.cpp" />
 		<Unit filename="src/things/ChestWooden.cpp" />
 		<Unit filename="src/things/CoinGold.cpp" />
+		<Unit filename="src/things/Floor.cpp" />
 		<Unit filename="src/things/Human.cpp" />
 		<Unit filename="src/things/LightOrb.cpp" />
-		<Unit filename="src/things/Limbo.cpp" />
 		<Unit filename="src/things/Rock.cpp" />
 		<Unit filename="src/things/RockLichen.cpp" />
 		<Unit filename="src/things/SackLarge.cpp" />

@@ -114,8 +114,8 @@ bool MapRoom::create(GeoVector vec)
                   y_check <= rect.top + rect.height;
                   ++y_check)
          {
-           MapTile& tile = get_map().get_tile(x_check, y_check);
-           if (tile.is_empty_space())
+           auto& tile = get_map().get_tile(x_check, y_check);
+           if (tile->is_empty_space())
            {
              okay = false;
              break;
@@ -135,8 +135,8 @@ bool MapRoom::create(GeoVector vec)
                     y_coord <= rect.top + rect.height - 1;
                     ++y_coord)
            {
-             MapTile& tile = get_map().get_tile(x_coord, y_coord);
-             tile.set_type(MapTileType::FloorStone);
+             auto& tile = get_map().get_tile(x_coord, y_coord);
+             tile->set_type(MapTileType::FloorStone);
            }
         }
 
@@ -163,9 +163,9 @@ bool MapRoom::create(GeoVector vec)
 
         /// @todo Put either a door or an open area at the starting coords.
         ///       Right now we just make it an open area.
-        MapTile& startTile = get_map().get_tile(starting_coords.x,
-                                                   starting_coords.y);
-        startTile.set_type(MapTileType::FloorStone);
+        auto& startTile = get_map().get_tile(starting_coords.x,
+                                             starting_coords.y);
+        startTile->set_type(MapTileType::FloorStone);
 
         return true;
       }

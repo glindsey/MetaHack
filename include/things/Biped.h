@@ -2,13 +2,10 @@
 #define BIPED_H
 
 #include "Entity.h"
-#include "ThingId.h"
 
 class Biped :
   public Entity
 {
-  friend class ThingFactory;
-
   public:
     virtual ~Biped();
 

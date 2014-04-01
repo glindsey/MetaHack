@@ -67,7 +67,7 @@ void main()
   {
     // Default -- no effect
     // multiply it by the color
-    fragment_color = gl_Color * pixel;
+    fragment_color =  pixel;
   }
 
   gl_FragColor = fragment_color;

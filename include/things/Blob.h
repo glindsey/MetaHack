@@ -3,14 +3,10 @@
 
 #include "Entity.h"
 
-#include "ThingId.h"
-
 /// A Blob is an Entity type with no discernible features whatsoever.
 class Blob :
   public Entity
 {
-  friend class ThingFactory;
-
   public:
     virtual ~Blob();
 

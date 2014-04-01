@@ -12,8 +12,8 @@ struct LightSource::Impl
   bool lit;             ///< Whether the light is lit or not.
 };
 
-LightSource::LightSource()
-  : Aggregate(), impl(new Impl())
+LightSource::LightSource(unsigned int inventory_size)
+  : Thing(inventory_size), impl(new Impl())
 {
   impl->direction = Direction::Up;
   impl->level = 256;
@@ -23,7 +23,7 @@ LightSource::LightSource()
 }
 
 LightSource::LightSource(LightSource const& original)
-  : Aggregate(), impl(new Impl())
+  : Thing(get_inventory_size()), impl(new Impl())
 {
   impl->direction = original.get_light_direction();
   impl->level = original.get_light_level();
@@ -82,12 +82,6 @@ void LightSource::set_light_color(sf::Color color)
   impl->color = color;
 }
 
-void LightSource::light_up_surroundings()
-{
-  // Use visitor pattern.
-  TF.get(get_location_id()).be_lit_by(*this);
-}
-
 bool LightSource::usable_by(Entity const& entity) const
 {
   return true;
@@ -107,4 +101,14 @@ void LightSource::set_lit(bool lit)
 bool LightSource::is_lit() const
 {
   return impl->lit;
+}
+
+void LightSource::_light_up_surroundings()
+{
+  auto location = get_location();
+  // Use visitor pattern.
+  if (location && is_lit())
+  {
+    location->be_lit_by(*this);
+  }
 }

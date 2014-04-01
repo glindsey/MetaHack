@@ -2,13 +2,15 @@
 
 Rock Rock::prototype;
 
-Rock::Rock() :
-  Aggregate() {}
+Rock::Rock() : Thing(0)
+{
+  // ctor
+}
 
-Rock::Rock(Rock const& original) :
-  Aggregate(original) {}
-
-Rock::~Rock()              {}
+Rock::~Rock()
+{
+  // dtor
+}
 
 std::string Rock::_get_description() const
 {

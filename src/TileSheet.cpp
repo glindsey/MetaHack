@@ -55,7 +55,7 @@ sf::Texture& TileSheet::getTexture(void)
   return impl->texture;
 }
 
-void TileSheet::add_vertices(sf::VertexArray& vertices,
+void TileSheet::add_quad(sf::VertexArray& vertices,
                              sf::Vector2u tile_coords, sf::Color bg_color,
                              sf::Vector2f ul_coord, sf::Vector2f ur_coord,
                              sf::Vector2f ll_coord, sf::Vector2f lr_coord)
@@ -65,6 +65,7 @@ void TileSheet::add_vertices(sf::VertexArray& vertices,
   sf::Vector2f texNW(tile_coords.x * ts, tile_coords.y * ts);
 
   new_vertex.color = bg_color;
+
   new_vertex.position = ul_coord;
   new_vertex.texCoords = texNW;
   vertices.append(new_vertex);
@@ -79,6 +80,41 @@ void TileSheet::add_vertices(sf::VertexArray& vertices,
                                       texNW.y + ts);
   vertices.append(new_vertex);
 
+  new_vertex.position = ll_coord;
+  new_vertex.texCoords = sf::Vector2f(texNW.x,
+                                      texNW.y + ts);
+  vertices.append(new_vertex);
+}
+
+void TileSheet::add_gradient_quad(sf::VertexArray& vertices,
+                                  sf::Vector2u tile_coords,
+                                  sf::Color ul_color, sf::Vector2f ul_coord,
+                                  sf::Color ur_color, sf::Vector2f ur_coord,
+                                  sf::Color ll_color, sf::Vector2f ll_coord,
+                                  sf::Color lr_color, sf::Vector2f lr_coord)
+{
+  sf::Vertex new_vertex;
+  float ts(static_cast<float>(Settings.map_tile_size));
+  sf::Vector2f texNW(tile_coords.x * ts, tile_coords.y * ts);
+
+  new_vertex.color = ul_color;
+  new_vertex.position = ul_coord;
+  new_vertex.texCoords = texNW;
+  vertices.append(new_vertex);
+
+  new_vertex.color = ur_color;
+  new_vertex.position = ur_coord;
+  new_vertex.texCoords = sf::Vector2f(texNW.x + ts,
+                                      texNW.y);
+  vertices.append(new_vertex);
+
+  new_vertex.color = lr_color;
+  new_vertex.position = lr_coord;
+  new_vertex.texCoords = sf::Vector2f(texNW.x + ts,
+                                      texNW.y + ts);
+  vertices.append(new_vertex);
+
+  new_vertex.color = ll_color;
   new_vertex.position = ll_coord;
   new_vertex.texCoords = sf::Vector2f(texNW.x,
                                       texNW.y + ts);

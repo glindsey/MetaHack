@@ -6,6 +6,7 @@
 #include "App.h"
 #include "ConfigSettings.h"
 #include "ErrorHandler.h"
+#include "Floor.h"
 #include "Map.h"
 #include "MathUtils.h"
 #include "ThingFactory.h"
@@ -18,6 +19,9 @@ struct MapTile::Impl
     MapId map_id;
     sf::Vector2i coords;
 
+    /// Thing that represents this tile's floor.
+    std::shared_ptr<Floor> floor;
+
     /// Tile's light level.
     /// Levels for the various color channels are interpreted as such:
     /// 0 <= value <= 128: result = (original * (value / 128))
@@ -25,28 +29,32 @@ struct MapTile::Impl
     /// The alpha channel is ignored.
     sf::Color ambient_light_color;
 
-    /// A map of (thing_id, LightInfluence) pairs, representing the amount of
-    /// light that each thing_id is contributing to this map tile.
+    /// A map of LightInfluences, representing the amount of light that
+    /// each thing is contributing to this map tile.
     /// Levels for the various color channels are interpreted as such:
     /// 0 <= value <= 128: result = (original * (value / 128))
     /// 128 < value <= 255: result = max(original + (value - 128), 255)
     /// The alpha channel is ignored.
-    std::map<ThingId, LightInfluence> lights;
+    /// Using the raw pointer to LightSource is okay here as I am only
+    /// using it as a key to ensure that one source can't be accounted
+    /// for twice -- the recursive lighting algorithm visits tiles on
+    /// the cardinal directions more than once.
+    std::map<LightSource*, LightInfluence> lights;
 
     MapTileType type;
     //unsigned int variant;
 };
 
-MapTile::MapTile(MapId mapId, int x, int y)
-  : Container(), impl(new Impl())
+MapTile::MapTile(sf::Vector2i coords, MapId mapId)
+  : impl(new Impl())
 {
   //uniform_int_dist vDist(0, 3);
 
+  impl->floor.reset(new Floor(this));
   impl->type = MapTileType::FloorStone;
   //impl->variant = vDist(the_RNG);
   impl->map_id = mapId;
-  impl->coords.x = x;
-  impl->coords.y = y;
+  impl->coords = coords;
   impl->ambient_light_color = sf::Color(192, 192, 192, 255);
 }
 
@@ -54,7 +62,12 @@ MapTile::~MapTile()
 {
 }
 
-std::string MapTile::_get_description() const
+std::shared_ptr<Thing> MapTile::get_floor() const
+{
+  return std::static_pointer_cast<Floor>(impl->floor);
+}
+
+std::string MapTile::get_description() const
 {
   return getMapTileTypeDescription(impl->type);
 }
@@ -65,6 +78,86 @@ sf::Vector2u MapTile::get_tile_sheet_coords(int frame) const
   //result.x += impl->variant;
 
   return result;
+}
+
+void MapTile::add_vertices_to(sf::VertexArray& vertices,
+                              bool use_lighting,
+                              int frame)
+{
+  sf::Vertex new_vertex;
+  float ts = static_cast<float>(Settings.map_tile_size);
+  float ts2 = ts * 0.5;
+
+  sf::Vector2i const& coords = get_coords();
+
+  sf::Color light { sf::Color::White };
+
+  if (use_lighting)
+  {
+    light = get_light_level();
+    if (is_opaque())
+    {
+      light.r *= 0.5;
+      light.g *= 0.5;
+      light.b *= 0.5;
+    }
+  }
+  else
+  {
+    light = sf::Color::White;
+  }
+
+  sf::Vector2f location(coords.x * ts, coords.y * ts);
+  sf::Vector2f vSW(location.x - ts2, location.y + ts2);
+  sf::Vector2f vSE(location.x + ts2, location.y + ts2);
+  sf::Vector2f vNW(location.x - ts2, location.y - ts2);
+  sf::Vector2f vNE(location.x + ts2, location.y - ts2);
+  sf::Vector2u tile_coords = this->get_tile_sheet_coords(frame);
+
+  TileSheet::add_quad(vertices,
+                          tile_coords, light,
+                          vNW, vNE, vSW, vSE);
+}
+
+void MapTile::draw_to(sf::RenderTexture& target,
+                      sf::Vector2f target_coords,
+                      unsigned int target_size,
+                      bool use_lighting,
+                      int frame)
+{
+  sf::RectangleShape rectangle;
+  sf::IntRect texture_coords;
+
+  if (target_size == 0)
+  {
+    target_size = Settings.map_tile_size;
+  }
+
+  float tile_size = static_cast<float>(Settings.map_tile_size);
+
+  sf::Vector2u tile_coords = this->get_tile_sheet_coords(frame);
+  texture_coords.left = tile_coords.x * tile_size;
+  texture_coords.top = tile_coords.y * tile_size;
+  texture_coords.width = tile_size;
+  texture_coords.height = tile_size;
+
+  sf::Color thing_color;
+  if (use_lighting)
+  {
+    thing_color = get_light_level();
+  }
+  else
+  {
+    thing_color = sf::Color::White;
+  }
+
+  rectangle.setPosition(target_coords);
+  rectangle.setSize(sf::Vector2f(target_size, target_size));
+  rectangle.setTexture(&(the_tile_sheet.getTexture()));
+  rectangle.setTextureRect(texture_coords);
+  rectangle.setFillColor(thing_color);
+
+  target.draw(rectangle);
 }
 
 void MapTile::set_type(MapTileType tileType)
@@ -115,13 +208,13 @@ void MapTile::be_lit_by(LightSource& light)
   MF.get(get_map_id()).add_light(light);
 }
 
-
 void MapTile::clear_light_influences()
 {
   impl->lights.clear();
 }
 
-void MapTile::add_light_influence(ThingId source, LightInfluence influence)
+void MapTile::add_light_influence(LightSource* source,
+                                  LightInfluence influence)
 {
   impl->lights[source] = influence;
 }
@@ -130,18 +223,20 @@ sf::Color MapTile::get_light_level() const
 {
   sf::Color color = impl->ambient_light_color;
 
-  for (std::map<ThingId, LightInfluence>::const_iterator iter = impl->lights.begin();
-       iter != impl->lights.end();
+  auto player = TF.get_player();
+
+  for (auto iter = std::begin(impl->lights);
+       iter != std::end(impl->lights);
        ++iter)
   {
-    sf::Vector2i const& source_coords = (*iter).second.coords;
-    int dist_squared = calc_vis_distance(get_coords().x, get_coords().y,
+    sf::Vector2i const& source_coords = iter->second.coords;
+    float dist_squared = calc_vis_distance(get_coords().x, get_coords().y,
                                          source_coords.x, source_coords.y);
 
-    sf::Color light_color = (*iter).second.color;
-    int light_intensity = (*iter).second.intensity;
+    sf::Color light_color = iter->second.color;
+    float light_intensity = iter->second.intensity;
 
-    bool light_is_visible = TF.get_player().can_see(source_coords.x, source_coords.y);
+    bool light_is_visible = player && player->can_see(source_coords.x, source_coords.y);
 
     sf::Color addColor;
 
@@ -154,24 +249,22 @@ sf::Color MapTile::get_light_level() const
     // "bleed through" wall tiles.
     if (!is_opaque() || light_is_visible)
     {
-
-      // Although called "percentage" this actually ranges from 0 to 65536.
-      int dist_percentage;
+      float dist_factor;
 
       if (light_intensity == 0)
       {
-        dist_percentage = 65536;
+        dist_factor = 1.0f;
       }
       else
       {
-        dist_percentage = (dist_squared * 65536) / light_intensity;
+        dist_factor = dist_squared / light_intensity;
       }
 
-      int light_factor = (65536 - dist_percentage);
+      float light_factor = (1.0f - dist_factor);
 
-      addColor.r = (static_cast<int>(light_color.r) * light_factor) / 65536;
-      addColor.g = (static_cast<int>(light_color.g) * light_factor) / 65536;
-      addColor.b = (static_cast<int>(light_color.b) * light_factor) / 65536;
+      addColor.r = (light_color.r * light_factor);
+      addColor.g = (light_color.g * light_factor);
+      addColor.b = (light_color.b * light_factor);
       addColor.a = 255;
 
       color.r = saturation_add(color.r, addColor.r);
@@ -179,6 +272,60 @@ sf::Color MapTile::get_light_level() const
       color.b = saturation_add(color.b, addColor.b);
       color.a = saturation_add(color.a, addColor.a);
     }
+  }
+
+  return color;
+}
+
+sf::Color MapTile::get_wall_light_level(Direction direction) const
+{
+  sf::Color color = impl->ambient_light_color;
+
+  auto player = TF.get_player();
+
+  for (auto iter = std::begin(impl->lights);
+       iter != std::end(impl->lights);
+       ++iter)
+  {
+    sf::Vector2i const& source_coords = iter->second.coords;
+    float dist_squared = calc_vis_distance(get_coords().x, get_coords().y,
+                                         source_coords.x, source_coords.y);
+
+    sf::Color light_color = iter->second.color;
+    float light_intensity = iter->second.intensity;
+
+    bool light_is_visible = player && player->can_see(source_coords.x, source_coords.y);
+
+    sf::Color addColor;
+
+    // LightIntensity is the distance at which the calculated light would be
+    // zero.
+    //
+
+    float dist_factor;
+
+    if (light_intensity == 0)
+    {
+      dist_factor = 1.0f;
+    }
+    else
+    {
+      dist_factor = dist_squared / light_intensity;
+    }
+
+    float light_factor = (1.0f - dist_factor);
+
+    float wall_factor = calculate_light_factor(source_coords, get_coords(), direction);
+
+    addColor.r = (light_color.r * wall_factor * light_factor);
+    addColor.g = (light_color.g * wall_factor * light_factor);
+    addColor.b = (light_color.b * wall_factor * light_factor);
+    addColor.a = 255;
+
+    color.r = saturation_add(color.r, addColor.r);
+    color.g = saturation_add(color.g, addColor.g);
+    color.b = saturation_add(color.b, addColor.b);
+    color.a = saturation_add(color.a, addColor.a);
   }
 
   return color;
@@ -225,8 +372,37 @@ void MapTile::add_walls_to(sf::VertexArray& vertices,
                            bool se_is_empty, bool s_is_empty,
                            bool sw_is_empty, bool w_is_empty)
 {
+  // Checks to see N/S/E/W walls.
+  bool player_sees_n_wall { false };
+  bool player_sees_s_wall { false };
+  bool player_sees_e_wall { false };
+  bool player_sees_w_wall { false };
+
+  // Player.
+  auto player = TF.get_player();
+  if (player)
+  {
+    auto player_tile = player->get_maptile();
+    if (player_tile != nullptr)
+    {
+      player_sees_n_wall = (player_tile->get_coords().y <= get_coords().y);
+      player_sees_s_wall = (player_tile->get_coords().y >= get_coords().y);
+      player_sees_e_wall = (player_tile->get_coords().x >= get_coords().x);
+      player_sees_w_wall = (player_tile->get_coords().x <= get_coords().x);
+    }
+  }
+
   // Tile color.
-  sf::Color tile_color;
+  sf::Color tile_color    { sf::Color::White };
+
+  // Wall colors.
+  sf::Color wall_color_n  { sf::Color::White };
+  sf::Color wall_color_e  { sf::Color::White };
+  sf::Color wall_color_s  { sf::Color::White };
+  sf::Color wall_color_w  { sf::Color::White };
+
+  // Wall light factor.
+  float wall_factor;
 
   // Full tile size.
   float ts(static_cast<float>(Settings.map_tile_size));
@@ -250,14 +426,14 @@ void MapTile::add_walls_to(sf::VertexArray& vertices,
   if (use_lighting)
   {
     tile_color = get_light_level();
-  }
-  else
-  {
-    tile_color = sf::Color::White;
+    wall_color_n = get_wall_light_level(Direction::North);
+    wall_color_e = get_wall_light_level(Direction::East);
+    wall_color_s = get_wall_light_level(Direction::South);
+    wall_color_w = get_wall_light_level(Direction::West);
   }
 
   // NORTH WALL
-  if (n_is_empty)
+  if (n_is_empty && player_sees_n_wall)
   {
     sf::Vector2f vSW(vTileNW.x, vTileNW.y + ws);
     if (w_is_empty)
@@ -278,16 +454,13 @@ void MapTile::add_walls_to(sf::VertexArray& vertices,
       vSE.x += ws;
     }
 
-    // DEBUG
-    //tile_color = sf::Color::Red;
-
-    TileSheet::add_vertices(vertices,
-                            tile_coords, tile_color,
+    TileSheet::add_quad(vertices,
+                            tile_coords, wall_color_n,
                             vTileNW, vTileNE, vSW, vSE);
   }
 
   // EAST WALL
-  if (e_is_empty)
+  if (e_is_empty && player_sees_e_wall)
   {
     sf::Vector2f vNW(vTileNE.x - ws, vTileNE.y);
     if (n_is_empty)
@@ -311,13 +484,13 @@ void MapTile::add_walls_to(sf::VertexArray& vertices,
     // DEBUG
     //tile_color = sf::Color::Yellow;
 
-    TileSheet::add_vertices(vertices,
-                            tile_coords, tile_color,
+    TileSheet::add_quad(vertices,
+                            tile_coords, wall_color_e,
                             vNW, vTileNE, vSW, vTileSE);
   }
 
   // SOUTH WALL
-  if (s_is_empty)
+  if (s_is_empty && player_sees_s_wall)
   {
     sf::Vector2f vNW(vTileSW.x, vTileSW.y - ws);
     if (w_is_empty)
@@ -341,13 +514,13 @@ void MapTile::add_walls_to(sf::VertexArray& vertices,
     // DEBUG
     //tile_color = sf::Color::Green;
 
-    TileSheet::add_vertices(vertices,
-                            tile_coords, tile_color,
+    TileSheet::add_quad(vertices,
+                            tile_coords, wall_color_s,
                             vNW, vNE, vTileSW, vTileSE);
   }
 
   // WEST WALL
-  if (w_is_empty)
+  if (w_is_empty && player_sees_w_wall)
   {
     sf::Vector2f vNE(vTileNW.x + ws, vTileNW.y);
     if (n_is_empty)
@@ -371,29 +544,10 @@ void MapTile::add_walls_to(sf::VertexArray& vertices,
     // DEBUG
     //tile_color = sf::Color::Blue;
 
-    TileSheet::add_vertices(vertices,
-                            tile_coords, tile_color,
+    TileSheet::add_quad(vertices,
+                            tile_coords, wall_color_w,
                             vTileNW, vNE, vTileSW, vSE);
   }
-
-  /// @todo Implement me.
-}
-
-ActionResult MapTile::can_contain(Thing& thing) const
-{
-  /// @todo Implement can_contain.  Right now a MapTile can contain any Thing.
-  return ActionResult::Success;
-}
-
-bool MapTile::readable_by(Entity const& entity) const
-{
-  return true;
-}
-
-ActionResult MapTile::_perform_action_read_by(Entity& entity)
-{
-  /// @todo Implement perform_action_read_by (e.g. writing/engraving on walls).
-  return ActionResult::Failure;
 }
 
 sf::Vector2f MapTile::get_pixel_coords(int x, int y)

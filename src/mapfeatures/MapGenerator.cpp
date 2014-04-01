@@ -26,8 +26,8 @@ struct MapGenerator::Impl
     {
       for (int x = 0; x < game_map.get_size().x; ++x)
       {
-        MapTile& tile = game_map.get_tile(x, y);
-        tile.set_type(MapTileType::WallStone);
+        auto& tile = game_map.get_tile(x, y);
+        tile->set_type(MapTileType::WallStone);
       }
     }
   }
@@ -55,33 +55,33 @@ struct MapGenerator::Impl
         case Direction::North:
           if (vec.start_point.y > 0)
           {
-            MapTile& checkTile = game_map.get_tile(vec.start_point.x,
-                                                 vec.start_point.y - 1);
-            vecOkay = !checkTile.is_empty_space();
+            auto& checkTile = game_map.get_tile(vec.start_point.x,
+                                                vec.start_point.y - 1);
+            vecOkay = !checkTile->is_empty_space();
           }
           break;
         case Direction::East:
           if (vec.start_point.x < mapSize.x - 1)
           {
-            MapTile& checkTile = game_map.get_tile(vec.start_point.x + 1,
-                                                 vec.start_point.y);
-            vecOkay = !checkTile.is_empty_space();
+            auto& checkTile = game_map.get_tile(vec.start_point.x + 1,
+                                                vec.start_point.y);
+            vecOkay = !checkTile->is_empty_space();
           }
           break;
         case Direction::South:
           if (vec.start_point.y < mapSize.y - 1)
           {
-            MapTile& checkTile = game_map.get_tile(vec.start_point.x,
-                                                 vec.start_point.y + 1);
-            vecOkay = !checkTile.is_empty_space();
+            auto& checkTile = game_map.get_tile(vec.start_point.x,
+                                                vec.start_point.y + 1);
+            vecOkay = !checkTile->is_empty_space();
           }
           break;
         case Direction::West:
           if (vec.start_point.x > 0)
           {
-            MapTile& checkTile = game_map.get_tile(vec.start_point.x - 1,
-                                                 vec.start_point.y);
-            vecOkay = !checkTile.is_empty_space();
+            auto& checkTile = game_map.get_tile(vec.start_point.x - 1,
+                                                vec.start_point.y);
+            vecOkay = !checkTile->is_empty_space();
           }
           break;
         default:
@@ -135,7 +135,7 @@ struct MapGenerator::Impl
     {
       coords.x = xDist(the_RNG);
       coords.y = yDist(the_RNG);
-    } while (game_map.get_tile(coords.x, coords.y).is_empty_space());
+    } while (game_map.get_tile(coords.x, coords.y)->is_empty_space());
 
     return coords;
   }
@@ -183,7 +183,7 @@ void MapGenerator::generate()
   sf::Vector2i startCoords(startBox.left + (startBox.width / 2),
                            startBox.top + (startBox.height / 2));
 
-  impl->game_map.set_start_location(startCoords);
+  impl->game_map.set_start_coords(startCoords);
 
   // Continue with additional map features.
   TRACE("Making additional map features...");

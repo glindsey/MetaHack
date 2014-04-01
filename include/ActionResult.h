@@ -4,6 +4,7 @@
 // Enum representing possible results from an action.
 enum class ActionResult
 {
+  FailureContainerCantBeSelf  = -19,
   FailureCircularReference    = -18, ///< e.g. Putting a container into itself
   FailureItemNotEquippable    = -17,
   FailureItemNotEquipped      = -16,

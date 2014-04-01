@@ -1,20 +1,21 @@
 #ifndef CHESTWOODEN_H
 #define CHESTWOODEN_H
 
-#include "Container.h"
-#include "CreatableThing.h"
+#include "Thing.h"
+#include "Registered.h"
 
 /// Forward declarations
 class ThingFactory;
 
 class ChestWooden :
-  public Container,
-  public CreatableThing<ChestWooden>
+  public Thing,
+  public Registered<ChestWooden>
 {
-  friend class CreatableThing;
-
   public:
+    ChestWooden();
     virtual ~ChestWooden();
+    ChestWooden(ChestWooden const&) = default;
+    ChestWooden const& operator=(ChestWooden const&) = delete;
 
     // Thing overrides
     virtual sf::Vector2u get_tile_sheet_coords(int frame) const override;
@@ -24,7 +25,6 @@ class ChestWooden :
     virtual bool is_flammable() const override;
 
   protected:
-    ChestWooden();
 
   private:
     virtual std::string _get_description() const override;

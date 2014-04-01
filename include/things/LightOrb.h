@@ -2,23 +2,23 @@
 #define LIGHTORB_H
 
 #include "LightSource.h"
-#include "CreatableThing.h"
+#include "Registered.h"
 
 /// A test object, used for testing LightSources.  The final class will just be
 /// an "orb".
 class LightOrb :
   public LightSource,
-  public CreatableThing<LightOrb>
+  public Registered<LightOrb>
 {
-  friend class CreatableThing;
-
   public:
+    LightOrb();
     virtual ~LightOrb();
+    LightOrb(LightOrb const&) = default;
+    LightOrb const& operator=(LightOrb const&) = delete;
 
     virtual sf::Vector2u get_tile_sheet_coords(int frame) const override;
 
   protected:
-    LightOrb();
 
   private:
     virtual std::string _get_description() const override;

@@ -3,21 +3,21 @@
 #include <algorithm>
 #include <cmath>
 #include <deque>
+#include <memory>
 #include <sstream>
 
 #include "App.h"
 #include "ConfigSettings.h"
-#include "Container.h"
 #include "ErrorHandler.h"
 #include "Gender.h"
 #include "Inventory.h"
-#include "IsType.h"
 #include "Map.h"
 #include "MapFactory.h"
 #include "MapTile.h"
 #include "MathUtils.h"
 #include "MessageLog.h"
 #include "Ordinal.h"
+#include "Thing.h"
 #include "ThingFactory.h"
 #include "TileSheet.h"
 
@@ -26,13 +26,22 @@
 // Local definitions to make reading/writing status info a bit easier.
 #define _YOU_   (this->get_name())
 #define _ARE_   (this->choose_verb(" are", " is"))
+#define _DO_    (this->choose_verb(" do", " does"))
 #define _YOUR_  (this->get_possessive())
 #define _HAVE_  (this->choose_verb(" have", " has"))
 #define _YOURSELF_ (this->get_reflexive_pronoun())
 #define _TRY_   (this->choose_verb(" try", " tries"))
 
 #define _YOU_ARE_ _YOU_ + _ARE_
+#define _YOU_DO_ _YOU_ + _DO_
 #define _YOU_TRY_ _YOU_ + _TRY_
+
+// Using declarations.
+using WieldingMap = std::map<unsigned int, std::weak_ptr<Thing>>;
+using WieldingPair = std::pair<unsigned int, std::weak_ptr<Thing>>;
+
+using WearingMap = std::map<WearLocation, std::weak_ptr<Thing>>;
+using WearingPair = std::pair<WearLocation, std::weak_ptr<Thing>>;
 
 struct Entity::Impl
 {
@@ -59,116 +68,135 @@ struct Entity::Impl
   /// Queue of actions to be performed.
   std::deque<Action> actions;
 
-  /// Map of items wielded, by ThingId.
-  std::map<ThingId, unsigned int> wielded_items_by_thing_id;
+  /// Map of items wielded.
+  WieldingMap wielded_items;
 
-  /// Map of items wielded, by hand number.
-  std::map<unsigned int, ThingId> wielded_items_by_hand;
+  /// Map of things worn.
+  WearingMap equipped_items;
 
-  /// Map of things worn, by ThingId.
-  std::map<ThingId, WearLocation> equipped_items_by_thing_id;
-
-  bool is_wielding_thing(ThingId thing_id, unsigned int& hand)
+  bool is_wielding(Thing* thing, unsigned int& hand)
   {
-    if (wielded_items_by_thing_id.count(thing_id) == 0)
+    if (thing == nullptr)
+    {
+      return false;
+    }
+    auto found_item = std::find_if(wielded_items.cbegin(),
+                                   wielded_items.cend(),
+                                   [&](WieldingPair const& p)
+                                   { return p.second.lock().get() == thing; });
+
+    if (found_item == wielded_items.cend())
     {
       return false;
     }
     else
     {
-      hand = wielded_items_by_thing_id[thing_id];
+      hand = found_item->first;
       return true;
     }
   }
 
-  bool is_wielding_in(unsigned int hand, ThingId& thing_id)
+  std::shared_ptr<Thing> wielding_in(unsigned int hand)
   {
-    if (wielded_items_by_hand.count(hand) == 0)
+    if (wielded_items.count(hand) == 0)
+    {
+      return std::shared_ptr<Thing>();
+    }
+    else
+    {
+      return wielded_items[hand].lock();
+    }
+  }
+
+  bool is_wearing(Thing* thing, WearLocation& location)
+  {
+    if (thing == nullptr)
+    {
+      return false;
+    }
+    auto found_item = std::find_if(equipped_items.cbegin(),
+                                   equipped_items.cend(),
+                                   [&](WearingPair const& p)
+                                   { return p.second.lock().get() == thing; });
+
+    if (found_item == equipped_items.cend())
     {
       return false;
     }
     else
     {
-      thing_id = wielded_items_by_hand[hand];
+      location = found_item->first;
       return true;
     }
   }
 
-  bool is_wearing_thing(ThingId thing_id, WearLocation& location)
+  void wield(std::shared_ptr<Thing> thing, unsigned int hand)
   {
-    if (equipped_items_by_thing_id.count(thing_id) == 0)
+    wielded_items[hand] = thing;
+  }
+
+  bool unwield(Thing& thing)
+  {
+    unsigned int hand;
+    if (is_wielding(&thing, hand) == false)
     {
       return false;
     }
     else
     {
-      location = equipped_items_by_thing_id[thing_id];
-      return true;
-    }
-  }
-
-  void wield(ThingId thing_id, unsigned int hand)
-  {
-    wielded_items_by_hand[hand] = thing_id;
-    wielded_items_by_thing_id[thing_id] = hand;
-  }
-
-  bool unwield(ThingId thing_id)
-  {
-    if (wielded_items_by_thing_id.count(thing_id) == 0)
-    {
-      return false;
-    }
-    else
-    {
-      unsigned int hand = wielded_items_by_thing_id[thing_id];
-      wielded_items_by_thing_id.erase(thing_id);
-      wielded_items_by_hand.erase(hand);
+      wielded_items.erase(hand);
       return true;
     }
   }
 
   bool unwield(unsigned int hand)
   {
-    if (wielded_items_by_hand.count(hand) == 0)
+    if (wielded_items.count(hand) == 0)
     {
       return false;
     }
     else
     {
-      ThingId thing_id = wielded_items_by_hand[hand];
-      wielded_items_by_hand.erase(hand);
-      wielded_items_by_thing_id.erase(thing_id);
+      wielded_items.erase(hand);
       return true;
     }
   }
 
-  void equip(ThingId thing_id, WearLocation location)
+  bool equip(std::shared_ptr<Thing> thing, WearLocation location)
   {
-    equipped_items_by_thing_id[thing_id] = location;
+    if (equipped_items.count(location) == 0)
+    {
+      equipped_items[location] = thing;
+      return true;
+    }
+    else
+    {
+      return false;
+    }
   }
 
-  bool deequip(ThingId thing_id)
+  bool deequip(Thing& thing)
   {
-    if (equipped_items_by_thing_id.count(thing_id) == 0)
+    WearLocation location;
+    if (is_wearing(&thing, location) == false)
     {
       return false;
     }
     else
     {
-      equipped_items_by_thing_id.erase(thing_id);
+      equipped_items.erase(location);
       return true;
     }
   }
 };
 
 Entity::Entity() :
-  Container(), impl(new Impl())
+  Thing(-1), impl(new Impl())
 {
 }
 
 Entity::Entity(const Entity& original) :
-  Container(), impl(new Impl())
+  Thing(original.get_inventory_size()), impl(new Impl())
 {
   impl->attributes = original.get_attributes();
   impl->busy_counter = original.get_busy_counter();
@@ -183,51 +211,14 @@ Entity::~Entity()
 
 std::string Entity::get_name() const
 {
-  // If the thing is YOU, use YOU.
-  if (TF.is_player(this))
-  {
-    if (impl->attributes.get(Attribute::HP) > 0)
-    {
-      return "you";
-    }
-    else
-    {
-      return "your corpse";
-    }
-  }
-
-  std::string name;
-  Container& owner = TF.get_container(get_owner_id());
-
-  if (impl->attributes.get(Attribute::HP) > 0)
-  {
-    name = owner.get_possessive() + " " + get_description();
-
-    // If the Thing has a proper name, use that.
-    if (get_proper_name().empty() == false)
-    {
-      name += " named " + get_proper_name();
-    }
-  }
-  else
-  {
-    if (get_proper_name().empty() == false)
-    {
-      name = get_possessive() + " corpse";
-    }
-    else
-    {
-      name = owner.get_possessive() + " dead " + get_description();
-    }
-  }
-
-  return name;
+  /// @todo Handle tamed entities, e.g. "Bilbo's pet cockatrice"
+  return get_def_name();
 }
 
 std::string Entity::get_def_name() const
 {
   // If the thing is YOU, use YOU.
-  if (TF.is_player(this))
+  if (is_player())
   {
     if (impl->attributes.get(Attribute::HP) > 0)
     {
@@ -275,7 +266,7 @@ std::string Entity::get_def_name() const
 std::string Entity::get_indef_name() const
 {
   // If the thing is YOU, use YOU.
-  if (TF.is_player(this))
+  if (is_player())
   {
     if (impl->attributes.get(Attribute::HP) > 0)
     {
@@ -337,8 +328,7 @@ Gender Entity::get_true_gender() const
 
 Gender Entity::get_gender() const
 {
-  ThingId playerId = TF.get_player_id();
-  if (get_id() == playerId)
+  if (is_player())
   {
     return Gender::SecondPerson;
   }
@@ -353,8 +343,13 @@ bool Entity::can_move(Direction direction)
   MapId game_map_id = this->get_map_id();
   if (game_map_id != MapFactory::null_map_id)
   {
-    MapTile& tile = TF.get_tile(get_location_id());
-    sf::Vector2i coords = tile.get_coords();
+    auto tile = get_maptile();
+    if (tile == nullptr)
+    {
+      return false;
+    }
+
+    sf::Vector2i coords = tile->get_coords();
     sf::Vector2i check_coords;
 
     Map& game_map = MF.get(game_map_id);
@@ -362,18 +357,18 @@ bool Entity::can_move(Direction direction)
 
     if (is_in_bounds)
     {
-      MapTile& new_tile = game_map.get_tile(check_coords);
-      return new_tile.can_be_traversed_by(*this);
+      auto& new_tile = game_map.get_tile(check_coords);
+      return new_tile->can_be_traversed_by(*this);
     }
   }
   return false;
 }
 
-bool Entity::move_into(ThingId new_location_id)
+bool Entity::move_into(std::shared_ptr<Thing> new_location)
 {
   MapId old_map_id = this->get_map_id();
-  bool moveOkay = Thing::move_into(new_location_id);
-  if (moveOkay)
+  bool move_okay = Thing::move_into(new_location);
+  if (move_okay)
   {
     MapId new_map_id = this->get_map_id();
     if (old_map_id != new_map_id)
@@ -395,7 +390,7 @@ bool Entity::move_into(ThingId new_location_id)
     }
     this->find_seen_tiles();
   }
-  return moveOkay;
+  return move_okay;
 }
 
 bool Entity::can_see(Thing& thing)
@@ -411,9 +406,13 @@ bool Entity::can_see(Thing& thing)
     return false;
   }
 
-  MapTile& thing_location = TF.get_tile(thing.get_location_id());
+  auto thing_location = thing.get_maptile();
+  if (thing_location == nullptr)
+  {
+    return false;
+  }
 
-  sf::Vector2i thing_coords = thing_location.get_coords();
+  sf::Vector2i thing_coords = thing_location->get_coords();
 
   return can_see(thing_coords.x, thing_coords.y);
 }
@@ -425,22 +424,29 @@ bool Entity::can_see(sf::Vector2i coords)
 
 bool Entity::can_see(int xTile, int yTile)
 {
+  MapId map_id = get_map_id();
+
   // Are we on a map?  Bail out if we aren't.
-  if (this->get_map_id() == MapFactory::null_map_id)
+  if (map_id == MapFactory::null_map_id)
   {
     return false;
   }
 
   // If the coordinates are where we are, then yes, we can indeed see the tile.
-  MapTile& tile = TF.get_tile(get_location_id());
-  sf::Vector2i tile_coords = tile.get_coords();
+  auto tile = get_maptile();
+  if (tile == nullptr)
+  {
+    return false;
+  }
+
+  sf::Vector2i tile_coords = tile->get_coords();
 
   if ((tile_coords.x == xTile) && (tile_coords.y == yTile))
   {
     return true;
   }
 
-  Map& game_map = MF.get(tile.get_map_id());
+  Map& game_map = MF.get(map_id);
 
   if (can_currently_see())
   {
@@ -460,7 +466,11 @@ void Entity::find_seen_tiles()
   elapsed.restart();
 
   // Are we on a map?  Bail out if we aren't.
-  Container& location = TF.get_container(get_location_id());
+  auto location = get_location();
+  if (!location)
+  {
+    return;
+  }
 
   // Clear the "tile seen" bitset.
   impl->tile_seen.reset();
@@ -516,7 +526,7 @@ void Entity::add_memory_vertices_to(sf::VertexArray& vertices,
   MapTileType tile_type = impl->map_memory[game_map.get_index(x, y)];
   sf::Vector2u tile_coords = getMapTileTypeTileSheetCoords(tile_type);
 
-  TileSheet::add_vertices(vertices,
+  TileSheet::add_quad(vertices,
                           tile_coords, sf::Color::White,
                           vNW, vNE, vSW, vSE);
 }
@@ -662,164 +672,19 @@ AttributeSet const& Entity::get_attributes() const
   return impl->attributes;
 }
 
+bool Entity::is_player() const
+{
+  return (TF.get_player().get() == this);
+}
+
 void Entity::queue_action(Action action)
 {
   impl->actions.push_back(action);
 }
 
-bool Entity::pending_action()
+bool Entity::pending_action() const
 {
   return !(impl->actions.empty());
-}
-
-bool Entity::do_process()
-{
-  unsigned int action_time = 0;
-  bool success = false;
-
-  // If entity is currently busy, decrement by one and return.
-  if (impl->busy_counter > 0)
-  {
-    --(impl->busy_counter);
-    return true;
-  }
-
-  // Perform any subclass-specific processing.
-  // Useful if, for example, your Entity can rise from the dead.
-  _do_process();
-
-  // Is the entity dead?
-  if (impl->attributes.get(Attribute::HP) > 0)
-  {
-    // If the entity is not the player, perform the AI strategy associated with
-    // it.
-    if (!TF.is_player(this))
-    {
-      if (impl->ai_strategy.get() != nullptr)
-      impl->ai_strategy->execute();
-    }
-
-    // If actions are pending...
-    if (!impl->actions.empty())
-    {
-      Action action = impl->actions.front();
-      impl->actions.pop_front();
-
-      unsigned int number_of_things = action.thing_ids.size();
-
-      switch (action.type)
-      {
-      case Action::Type::Wait:
-        success = this->move(Direction::Self, action_time);
-        if (success)
-        {
-          impl->busy_counter += action_time;
-        }
-        break;
-
-      case Action::Type::Move:
-        success = this->move(action.direction, action_time);
-        if (success)
-        {
-          impl->busy_counter += action_time;
-        }
-        break;
-
-      case Action::Type::Drop:
-        for (ThingId const& id : action.thing_ids)
-        {
-        success = this->drop(id, action_time);
-        if (success)
-        {
-          impl->busy_counter += action_time;
-        }
-      }
-      break;
-
-      case Action::Type::Eat:
-        for (ThingId const& id : action.thing_ids)
-        {
-          success = this->eat(id, action_time);
-          if (success)
-          {
-            impl->busy_counter += action_time;
-          }
-        }
-
-      case Action::Type::Pickup:
-        for (ThingId const& id : action.thing_ids)
-        {
-          success = this->pick_up(id, action_time);
-          if (success)
-          {
-            impl->busy_counter += action_time;
-          }
-        }
-        break;
-
-      case Action::Type::Quaff:
-        for (ThingId const& id : action.thing_ids)
-        {
-          success = this->drink(id, action_time);
-          if (success)
-          {
-            impl->busy_counter += action_time;
-          }
-        }
-        break;
-
-      case Action::Type::Store:
-        if (isType(&TF.get(action.target), Container))
-        {
-          for (unsigned int index = 0; index < number_of_things; ++index)
-          {
-            ThingId thing = action.thing_ids[index];
-            success = this->put_into(thing, action.target, action_time);
-            if (success)
-            {
-              impl->busy_counter += action_time;
-            }
-          }
-        }
-        else
-        {
-          the_message_log.add("That target is not a container.");
-        }
-        break;
-
-      case Action::Type::TakeOut:
-        for (ThingId const& id : action.thing_ids)
-        {
-          success = this->take_out(id, action_time);
-          if (success)
-          {
-            impl->busy_counter += action_time;
-          }
-        }
-        break;
-
-      case Action::Type::Wield:
-        if (number_of_things > 1)
-        {
-          the_message_log.add("NOTE: Only wielding the last item selected.");
-        }
-        /// @todo Implement wielding using other hands.
-        success = this->wield(action.thing_ids[number_of_things - 1],
-                              0, action_time);
-        if (success)
-        {
-          impl->busy_counter += action_time;
-        }
-        break;
-
-      default:
-        MINOR_ERROR("Unimplemented action.type %d", action.type);
-        break;
-      } // end switch (action)
-    } // end if (actions pending)
-  } // end if (HP > 0)
-
-  return true;
 }
 
 bool Entity::set_ai_strategy(AIStrategy* strategy_ptr)
@@ -835,44 +700,46 @@ bool Entity::set_ai_strategy(AIStrategy* strategy_ptr)
   }
 }
 
-bool Entity::is_wielding(ThingId thing_id)
+bool Entity::is_wielding(Thing& thing)
 {
   unsigned int dummy;
-  return is_wielding(thing_id, dummy);
+  return is_wielding(thing, dummy);
 }
 
-bool Entity::is_wielding(ThingId thing_id, unsigned int& hand)
+bool Entity::is_wielding(Thing& thing, unsigned int& hand)
 {
-  bool wielding = impl->is_wielding_thing(thing_id, hand);
-
-  return wielding;
+  return impl->is_wielding(&thing, hand);
 }
 
-bool Entity::has_equipped(ThingId thing_id)
+bool Entity::has_equipped(Thing& thing)
 {
   WearLocation dummy;
-  return has_equipped(thing_id, dummy);
+  return has_equipped(thing, dummy);
 }
 
-bool Entity::has_equipped(ThingId thing_id, WearLocation& location)
+bool Entity::has_equipped(Thing& thing, WearLocation& location)
 {
-  bool wearing = impl->is_wearing_thing(thing_id, location);
-
-  return wearing;
+  return impl->is_wearing(&thing, location);
 }
 
-bool Entity::can_reach(ThingId thing_id)
+bool Entity::can_reach(Thing& thing)
 {
+  // Check if it is our location.
+  auto our_location = get_location();
+  if (our_location.get() == &thing)
+  {
+    return true;
+  }
+
   // Check if it's at our location.
-  ThingId our_location_id = this->get_location_id();
-  ThingId thing_location_id = TF.get(thing_id).get_location_id();
-  if (our_location_id == thing_location_id)
+  auto thing_location = thing.get_location();
+  if (our_location == thing_location)
   {
     return true;
   }
 
   // Check if it's in our inventory.
-  if (this->get_inventory().contains(thing_id))
+  if (this->get_inventory().contains(thing))
   {
     return true;
   }
@@ -880,12 +747,11 @@ bool Entity::can_reach(ThingId thing_id)
   return false;
 }
 
-bool Entity::attack(ThingId thing_id, unsigned int& action_time)
+bool Entity::attack(Thing& thing, unsigned int& action_time)
 {
   std::string message;
-  Thing& thing = TF.get(thing_id);
 
-  bool reachable = this->can_reach(thing_id);
+  bool reachable = this->can_reach(thing);
   /// @todo deal with Entities in your Inventory -- WTF do you do THEN?
 
   if (reachable)
@@ -897,23 +763,21 @@ bool Entity::attack(ThingId thing_id, unsigned int& action_time)
   return false;
 }
 
-ActionResult Entity::can_drink(ThingId thing_id, unsigned int& action_time)
+ActionResult Entity::can_drink(Thing& thing, unsigned int& action_time)
 {
   action_time = 1;
 
   // Check that it isn't US!
-  if (thing_id == this->get_id())
+  if (&thing == this)
   {
     return ActionResult::FailureSelfReference;
   }
 
   // Check that the thing is within reach.
-  if (!this->can_reach(thing_id))
+  if (!this->can_reach(thing))
   {
     return ActionResult::FailureThingOutOfReach;
   }
-
-  Thing& thing = TF.get(thing_id);
 
   // Check that it is something that contains a liquid.
   if (!thing.is_liquid_carrier())
@@ -924,12 +788,11 @@ ActionResult Entity::can_drink(ThingId thing_id, unsigned int& action_time)
   return ActionResult::Success;
 }
 
-bool Entity::drink(ThingId thing_id, unsigned int& action_time)
+bool Entity::drink(Thing& thing, unsigned int& action_time)
 {
   std::string message;
-  Thing& thing = TF.get(thing_id);
 
-  ActionResult drink_try = this->can_drink(thing_id, action_time);
+  ActionResult drink_try = this->can_drink(thing, action_time);
 
   switch (drink_try)
   {
@@ -952,7 +815,7 @@ bool Entity::drink(ThingId thing_id, unsigned int& action_time)
     break;
 
   case ActionResult::FailureSelfReference:
-    if (this->get_id() == TF.get_player_id())
+    if (this == TF.get_player().get())
     {
       message = _YOU_TRY_ + " to drink " + thing.get_name() + ".";
       the_message_log.add(message);
@@ -985,24 +848,24 @@ bool Entity::drink(ThingId thing_id, unsigned int& action_time)
   return false;
 }
 
-ActionResult Entity::can_drop(ThingId thing_id, unsigned int& action_time)
+ActionResult Entity::can_drop(Thing& thing, unsigned int& action_time)
 {
   action_time = 1;
 
   // Check that it isn't US!
-  if (thing_id == this->get_id())
+  if (&thing == this)
   {
     return ActionResult::FailureSelfReference;
   }
 
   // Check that it's in our inventory.
-  if (!this->get_inventory().contains(thing_id))
+  if (!this->get_inventory().contains(thing))
   {
     return ActionResult::FailureNotPresent;
   }
 
   // Check that we're not wielding the item.
-  if (this->is_wielding(thing_id))
+  if (this->is_wielding(thing))
   {
     return ActionResult::FailureItemWielded;
   }
@@ -1012,13 +875,12 @@ ActionResult Entity::can_drop(ThingId thing_id, unsigned int& action_time)
   return ActionResult::Success;
 }
 
-bool Entity::drop(ThingId thing_id, unsigned int& action_time)
+bool Entity::drop(Thing& thing, unsigned int& action_time)
 {
   std::string message;
-  Thing& thing = TF.get(thing_id);
-  Container& entity_location = TF.get_container(get_location_id());
+  std::shared_ptr<Thing> entity_location = get_location();
 
-  ActionResult drop_try = this->can_drop(thing_id, action_time);
+  ActionResult drop_try = this->can_drop(thing, action_time);
 
   switch (drop_try)
   {
@@ -1026,7 +888,7 @@ bool Entity::drop(ThingId thing_id, unsigned int& action_time)
     {
       if (thing.is_movable())
       {
-        if (entity_location.can_contain(thing) == ActionResult::Success)
+        if (entity_location->can_contain(thing) == ActionResult::Success)
         {
           if (thing.perform_action_dropped_by(*this))
           {
@@ -1056,7 +918,7 @@ bool Entity::drop(ThingId thing_id, unsigned int& action_time)
           message = _YOU_TRY_ + " to drop " + thing.get_name() + ".";
           the_message_log.add(message);
 
-          message = entity_location.get_name() + " cannot hold " +
+          message = entity_location->get_name() + " cannot hold " +
                     thing.get_name() + ".";
           the_message_log.add(message);
         }
@@ -1074,7 +936,7 @@ bool Entity::drop(ThingId thing_id, unsigned int& action_time)
 
   case ActionResult::FailureSelfReference:
     {
-      if (TF.get_player_id() == this->get_id())
+      if (this == TF.get_player().get())
       {
         message = "Drop yourself?  What, you mean commit suicide?  Uh, no.";
       }
@@ -1128,18 +990,18 @@ bool Entity::drop(ThingId thing_id, unsigned int& action_time)
   return false;
 }
 
-ActionResult Entity::can_eat(ThingId thing_id, unsigned int& action_time)
+ActionResult Entity::can_eat(Thing& thing, unsigned int& action_time)
 {
   action_time = 1;
 
   // Check that it isn't US!
-  if (thing_id == this->get_id())
+  if (&thing == this)
   {
     return ActionResult::FailureSelfReference;
   }
 
   // Check that the thing is within reach.
-  if (!this->can_reach(thing_id))
+  if (!this->can_reach(thing))
   {
     return ActionResult::FailureThingOutOfReach;
   }
@@ -1147,12 +1009,11 @@ ActionResult Entity::can_eat(ThingId thing_id, unsigned int& action_time)
   return ActionResult::Success;
 }
 
-bool Entity::eat(ThingId thing_id, unsigned int& action_time)
+bool Entity::eat(Thing& thing, unsigned int& action_time)
 {
   std::string message;
-  Thing& thing = TF.get(thing_id);
 
-  ActionResult eat_try = this->can_eat(thing_id, action_time);
+  ActionResult eat_try = this->can_eat(thing, action_time);
 
   message = _YOU_TRY_ + " to eat " + thing.get_name() + ".";
   the_message_log.add(message);
@@ -1175,7 +1036,7 @@ bool Entity::eat(ThingId thing_id, unsigned int& action_time)
     break;
 
   case ActionResult::FailureSelfReference:
-    if (this->get_id() == TF.get_player_id())
+    if (this == TF.get_player().get())
     {
       /// @todo When eating self, special message if we're a liquid-based organism.
       message = "But you really aren't that tasty, so you stop.";
@@ -1197,25 +1058,25 @@ bool Entity::eat(ThingId thing_id, unsigned int& action_time)
   return false;
 }
 
-ActionResult Entity::can_mix(ThingId thing1_id, ThingId thing2_id,
+ActionResult Entity::can_mix(Thing& thing1, Thing& thing2,
                              unsigned int& action_time)
 {
   action_time = 1;
 
   // Check that they aren't both the same thing.
-  if (thing1_id == thing2_id)
+  if (&thing1 == &thing2)
   {
     return ActionResult::FailureCircularReference;
   }
 
   // Check that neither of them is us.
-  if (thing1_id == this->get_id() || thing2_id == this->get_id())
+  if (&thing1 == this || &thing2 == this)
   {
     return ActionResult::FailureSelfReference;
   }
 
   // Check that both are within reach.
-  if (!this->can_reach(thing1_id) || !this->can_reach(thing2_id))
+  if (!this->can_reach(thing1) || !this->can_reach(thing2))
   {
     return ActionResult::FailureThingOutOfReach;
   }
@@ -1224,7 +1085,7 @@ ActionResult Entity::can_mix(ThingId thing1_id, ThingId thing2_id,
   return ActionResult::Success;
 }
 
-bool Entity::mix(ThingId thing1_id, ThingId thing2_id, unsigned int& action_time)
+bool Entity::mix(Thing& thing1, Thing& thing2, unsigned int& action_time)
 {
   /// @todo write Entity::mix
   return false;
@@ -1246,7 +1107,18 @@ bool Entity::move(Direction new_direction,
     return true;
   }
 
-  // Next: make sure we CAN move!
+  std::shared_ptr<Thing> location = get_location();
+  MapTile* current_tile = get_maptile();
+
+  // Make sure we're not in limbo!
+  if (!location || (current_tile == nullptr))
+  {
+    message = _YOU_ + " can't move because " + _YOU_DO_ + " not exist physically!";
+    the_message_log.add(message);
+    return false;
+  }
+
+  // Make sure we CAN move!
   if (!can_currently_move())
   {
     message = _YOU_ + choose_verb(" do", " does") +
@@ -1255,11 +1127,10 @@ bool Entity::move(Direction new_direction,
     return false;
   }
 
-  // Next: make sure we aren't inside something
-  Thing& location = TF.get(get_location_id());
-  if (!location.is_maptile())
+  // Make sure we're not confined inside another thing.
+  if (is_inside_another_thing())
   {
-    message = _YOU_ARE_ + " inside " + location.get_indef_name() +
+    message = _YOU_ARE_ + " inside " + location->get_indef_name() +
               " and " + _ARE_ + " not going anywhere!";
 
     the_message_log.add(message);
@@ -1283,13 +1154,12 @@ bool Entity::move(Direction new_direction,
   else
   {
     // Figure out our target location.
-    MapTile& target_tile = TF.get_tile(get_location_id());
-    sf::Vector2i coords = target_tile.get_coords();
+    sf::Vector2i coords = current_tile->get_coords();
     int x_offset = get_x_offset(new_direction);
     int y_offset = get_y_offset(new_direction);
     int x_new = coords.x + x_offset;
     int y_new = coords.y + y_offset;
-    Map& current_map = MF.get(target_tile.get_map_id());
+    Map& current_map = MF.get(get_map_id());
     sf::Vector2i map_size = current_map.get_size();
 
     // Check boundaries.
@@ -1301,40 +1171,43 @@ bool Entity::move(Direction new_direction,
       return false;
     }
 
-    MapTile& new_tile = current_map.get_tile(x_new, y_new);
-    ThingId new_tile_id = current_map.get_tile_id(x_new, y_new);
+    auto& new_tile = current_map.get_tile(x_new, y_new);
+    auto new_floor = new_tile->get_floor();
 
-    if (new_tile.can_be_traversed_by(*this))
+    if (new_tile->can_be_traversed_by(*this))
     {
-      return move_into(new_tile_id);
+      return move_into(new_floor);
     }
     else
     {
-      message = _YOU_ARE_ + " stopped by " + new_tile.get_name() + ".";
+      std::string tile_description = getMapTileTypeDescription(new_tile->get_type());
+      message = _YOU_ARE_ + " stopped by " +
+                getIndefArt(tile_description) + " " +
+                tile_description + ".";
       the_message_log.add(message);
       return false;
     }
   } // end else if (other direction)
 }
 
-ActionResult Entity::can_pick_up(ThingId thing_id, unsigned int& action_time)
+ActionResult Entity::can_pick_up(Thing& thing, unsigned int& action_time)
 {
   action_time = 1;
 
   // Check that it isn't US!
-  if (thing_id == this->get_id())
+  if (&thing == this)
   {
     return ActionResult::FailureSelfReference;
   }
 
   // Check if it's already in our inventory.
-  if (this->get_inventory().contains(thing_id))
+  if (this->get_inventory().contains(thing))
   {
     return ActionResult::FailureAlreadyPresent;
   }
 
   // Check that it's within reach.
-  if (!this->can_reach(thing_id))
+  if (!this->can_reach(thing))
   {
     return ActionResult::FailureThingOutOfReach;
   }
@@ -1343,13 +1216,11 @@ ActionResult Entity::can_pick_up(ThingId thing_id, unsigned int& action_time)
   return ActionResult::Success;
 }
 
-bool Entity::pick_up(ThingId thing_id, unsigned int& action_time)
+bool Entity::pick_up(Thing& thing, unsigned int& action_time)
 {
   std::string message;
 
-  Thing& thing = TF.get(thing_id);
-
-  ActionResult pick_up_try = this->can_pick_up(thing_id, action_time);
+  ActionResult pick_up_try = this->can_pick_up(thing, action_time);
 
   switch (pick_up_try)
   {
@@ -1361,7 +1232,7 @@ bool Entity::pick_up(ThingId thing_id, unsigned int& action_time)
           message = _YOU_ + choose_verb(" pick", " picks") + " up " +
                     thing.get_name() + ".";
           the_message_log.add(message);
-          if (thing.move_into(*this))
+          if (thing.move_into(shared_from_this()))
           {
             return true;
           }
@@ -1389,7 +1260,7 @@ bool Entity::pick_up(ThingId thing_id, unsigned int& action_time)
       break;
     case ActionResult::FailureSelfReference:
       {
-        if (TF.get_player_id() == this->get_id())
+        if (is_player())
         {
           message = "Oh, ha ha, I get it, \"pick me up\".  Nice try.";
         }
@@ -1443,40 +1314,49 @@ bool Entity::pick_up(ThingId thing_id, unsigned int& action_time)
   return false;
 }
 
-ActionResult Entity::can_put_into(ThingId thing_id, ThingId container_id,
+ActionResult Entity::can_put_into(Thing& thing, Thing& container,
                                   unsigned int& action_time)
 {
   action_time = 1;
 
   // Check that the thing and container aren't the same thing.
-  if (thing_id == container_id)
+  if (&thing == &container)
   {
     return ActionResult::FailureCircularReference;
   }
 
-  // Check that the thing and the container are not US!
-  if ((thing_id == this->get_id()) || (container_id == this->get_id()))
+  // Check that the thing is not US!
+  if ((&thing == this) || (&container == this))
   {
     return ActionResult::FailureSelfReference;
   }
 
-  // Check that the thing's location isn't already the container.
-  Thing& thing = TF.get(thing_id);
-  Thing& container = TF.get(container_id);
+  // Check that the container is not US!
+  if ((&thing == this) || (&container == this))
+  {
+    return ActionResult::FailureContainerCantBeSelf;
+  }
 
-  if (thing.get_location_id() == container_id)
+  // Check that the container actually IS a container.
+  if (container.get_inventory_size() == 0)
+  {
+    return ActionResult::FailureTargetNotAContainer;
+  }
+
+  // Check that the thing's location isn't already the container.
+  if (thing.get_location().get() == &container)
   {
     return ActionResult::FailureAlreadyPresent;
   }
 
   // Check that the thing is within reach.
-  if (!this->can_reach(thing_id))
+  if (!this->can_reach(thing))
   {
     return ActionResult::FailureThingOutOfReach;
   }
 
   // Check that the container is within reach.
-  if (!this->can_reach(container_id))
+  if (!this->can_reach(container))
   {
     return ActionResult::FailureContainerOutOfReach;
   }
@@ -1485,14 +1365,15 @@ ActionResult Entity::can_put_into(ThingId thing_id, ThingId container_id,
   return container.can_contain(*this);
 }
 
-bool Entity::put_into(ThingId thing_id, ThingId container_id,
+bool Entity::put_into(Thing& thing, std::shared_ptr<Thing> container_sptr,
                       unsigned int& action_time)
 {
   std::string message;
 
-  ActionResult put_try = this->can_put_into(thing_id, container_id, action_time);
-  Thing& thing = TF.get(thing_id);
-  Thing& container = TF.get(container_id);
+  ASSERT_CONDITION(container_sptr);
+  auto& container = *(container_sptr.get());
+
+  ActionResult put_try = this->can_put_into(thing, container, action_time);
 
   switch (put_try)
   {
@@ -1504,7 +1385,7 @@ bool Entity::put_into(ThingId thing_id, ThingId container_id,
                   thing.get_name() + " into " +
                   container.get_name() + ".";
         the_message_log.add(message);
-        if (!thing.move_into(container_id))
+        if (!thing.move_into(container_sptr))
         {
           MAJOR_ERROR("Could not move Thing into Container");
         }
@@ -1518,36 +1399,36 @@ bool Entity::put_into(ThingId thing_id, ThingId container_id,
 
   case ActionResult::FailureSelfReference:
     {
-      if (TF.get_player_id() == this->get_id())
+      if (is_player())
       {
-        if (thing_id == TF.get_player_id())
-        {
-          /// @todo Possibly allow player to voluntarily enter a container?
-          message = "I'm afraid you can't do that.  "
-                    "(At least, not in this version...)";
-        }
-        else if (container_id == TF.get_player_id())
-        {
-          message = "Store something in yourself?  "
-                    "What do you think you are, a drug mule?";
-        }
+        /// @todo Possibly allow player to voluntarily enter a container?
+        message = "I'm afraid you can't do that.  "
+                  "(At least, not in this version...)";
       }
       else
       {
-        if (thing_id == TF.get_player_id())
-        {
-          message = _YOU_TRY_ + " to store " + _YOURSELF_ +
-                    "into the " + thing.get_name() +
-                    ", which seriously shouldn't happen.";
-          MINOR_ERROR("Non-player Entity tried to store self!?");
-        }
-        else if (container_id == TF.get_player_id())
-        {
-          message = _YOU_TRY_ + " to store " + thing.get_name() +
-                    "into " + _YOURSELF_ +
-                    ", which seriously shouldn't happen.";
-          MINOR_ERROR("Non-player Entity tried to store into self!?");
-        }
+        message = _YOU_TRY_ + " to store " + _YOURSELF_ +
+                  "into the " + thing.get_name() +
+                  ", which seriously shouldn't happen.";
+        MINOR_ERROR("Non-player Entity tried to store self!?");
+      }
+      the_message_log.add(message);
+    }
+    break;
+
+  case ActionResult::FailureContainerCantBeSelf:
+    {
+      if (is_player())
+      {
+        message = "Store something in yourself?  "
+                  "What do you think you are, a drug mule?";
+      }
+      else
+      {
+        message = _YOU_TRY_ + " to store " + thing.get_name() +
+                  "into " + _YOURSELF_ +
+                  ", which seriously shouldn't happen.";
+        MINOR_ERROR("Non-player Entity tried to store into self!?");
       }
       the_message_log.add(message);
     }
@@ -1600,7 +1481,7 @@ bool Entity::put_into(ThingId thing_id, ThingId container_id,
 
   case ActionResult::FailureCircularReference:
     {
-      if (TF.get_player_id() == this->get_id())
+      if (is_player())
       {
         message = "That would be an interesting topological exercise.";
       }
@@ -1621,12 +1502,12 @@ bool Entity::put_into(ThingId thing_id, ThingId container_id,
   return false;
 }
 
-ActionResult Entity::can_read(ThingId thing_id, unsigned int& action_time)
+ActionResult Entity::can_read(Thing& thing, unsigned int& action_time)
 {
   action_time = 1;
 
-  // Check that the thing is within reach and is not the MapTile we're on.
-  if (!this->can_reach(thing_id) && thing_id != this->get_location_id())
+  // Check that the thing is within reach.
+  if (!this->can_reach(thing))
   {
     return ActionResult::FailureThingOutOfReach;
   }
@@ -1639,13 +1520,11 @@ ActionResult Entity::can_read(ThingId thing_id, unsigned int& action_time)
   return ActionResult::Success;
 }
 
-bool Entity::read(ThingId thing_id, unsigned int& action_time)
+bool Entity::read(Thing& thing, unsigned int& action_time)
 {
   std::string message;
 
-  Thing& thing = TF.get(thing_id);
-
-  ActionResult read_try = this->can_read(thing_id, action_time);
+  ActionResult read_try = this->can_read(thing, action_time);
 
   switch (read_try)
   {
@@ -1656,19 +1535,7 @@ bool Entity::read(ThingId thing_id, unsigned int& action_time)
         switch (thing.perform_action_read_by(*this))
         {
         case ActionResult::SuccessDestroyed:
-          if (!thing.is_maptile())
-          {
-            if (!thing.move_into(TF.limbo_id))
-            {
-              MAJOR_ERROR("Could not move Thing to Limbo, when trying to "
-                          "destroy it after reading");
-            }
-          }
-          else
-          {
-            MINOR_ERROR("perform_action_read_by returned SuccessDestroyed "
-                        "on a MapTile, which can't be destroyed.");
-          }
+          thing.destroy();
           return true;
 
         case ActionResult::Success:
@@ -1709,29 +1576,28 @@ bool Entity::read(ThingId thing_id, unsigned int& action_time)
   return false;
 }
 
-ActionResult Entity::can_take_out(ThingId thing_id,
+ActionResult Entity::can_take_out(Thing& thing,
                                   unsigned int& action_time)
 {
-  Thing& thing = TF.get(thing_id);
-  ThingId container_id = thing.get_location_id();
-
   action_time = 1;
 
   // Check that the thing isn't US!
-  if (thing_id == this->get_id())
+  if (thing.is_player())
   {
     return ActionResult::FailureSelfReference;
   }
 
   // Check that the container is not a MapTile or Entity.
-  Container& container = TF.get_container(container_id);
-  if (container.is_maptile() || container.is_entity())
+  if (!thing.is_inside_another_thing())
   {
     return ActionResult::FailureNotInsideContainer;
   }
 
+  std::shared_ptr<Thing> container = thing.get_location();
+  ASSERT_CONDITION(container);
+
   // Check that the container is within reach.
-  if (!this->can_reach(container_id))
+  if (!can_reach(*(container.get())))
   {
     return ActionResult::FailureContainerOutOfReach;
   }
@@ -1740,15 +1606,17 @@ ActionResult Entity::can_take_out(ThingId thing_id,
 }
 
 
-bool Entity::take_out(ThingId thing_id,
-                         unsigned int& action_time)
+bool Entity::take_out(Thing &thing,
+                      unsigned int& action_time)
 {
   std::string message;
 
-  ActionResult takeout_try = this->can_take_out(thing_id, action_time);
-  Thing& thing = TF.get(thing_id);
-  Thing& container = TF.get(thing.get_location_id());
-  ThingId new_location_id = container.get_location_id();
+  ActionResult takeout_try = this->can_take_out(thing, action_time);
+
+  std::shared_ptr<Thing> container = thing.get_location();
+  ASSERT_CONDITION(container);
+
+  auto new_location = container->get_location();
 
   switch (takeout_try)
   {
@@ -1756,7 +1624,7 @@ bool Entity::take_out(ThingId thing_id,
     {
       if (thing.perform_action_take_out())
       {
-        if (!thing.move_into(new_location_id))
+        if (!thing.move_into(new_location))
         {
           MAJOR_ERROR("Could not move Thing out of Container");
         }
@@ -1764,7 +1632,7 @@ bool Entity::take_out(ThingId thing_id,
         {
           message = _YOU_ + choose_verb(" remove ", "removes ") +
                     thing.get_name() + " from " +
-                    container.get_name() + ".";
+                    container->get_name() + ".";
           the_message_log.add(message);
         }
       }
@@ -1773,7 +1641,7 @@ bool Entity::take_out(ThingId thing_id,
 
   case ActionResult::FailureSelfReference:
     {
-      if (TF.get_player_id() == this->get_id())
+      if (is_player())
       {
         /// @todo Maybe allow player to voluntarily exit a container?
         message = "I'm afraid you can't do that.  "
@@ -1803,10 +1671,10 @@ bool Entity::take_out(ThingId thing_id,
   case ActionResult::FailureContainerOutOfReach:
     {
       message = _YOU_TRY_ + " to remove " + thing.get_name() + " from " +
-                container.get_name() + ".";
+                container->get_name() + ".";
       the_message_log.add(message);
 
-      message = _YOU_ + " cannot reach " + container.get_name() + ".";
+      message = _YOU_ + " cannot reach " + container->get_name() + ".";
       the_message_log.add(message);
     }
     break;
@@ -1819,19 +1687,19 @@ bool Entity::take_out(ThingId thing_id,
   return false;
 }
 
-ActionResult Entity::can_toss(ThingId thing_id,
+ActionResult Entity::can_toss(Thing& thing,
                               unsigned int& action_time)
 {
   action_time = 1;
 
   // Check that it isn't US!
-  if (thing_id == this->get_id())
+  if (thing.is_player())
   {
     return ActionResult::FailureSelfReference;
   }
 
   // Check that it's in our inventory.
-  if (!this->get_inventory().contains(thing_id))
+  if (!this->get_inventory().contains(thing))
   {
     return ActionResult::FailureNotPresent;
   }
@@ -1841,18 +1709,17 @@ ActionResult Entity::can_toss(ThingId thing_id,
   return ActionResult::Success;
 }
 
-bool Entity::toss(ThingId thing_id, Direction& direction,
+bool Entity::toss(Thing& thing, Direction& direction,
                   unsigned int& action_time)
 {
   std::string message;
-  Thing& thing = TF.get(thing_id);
-  ActionResult toss_try = this->can_toss(thing_id, action_time);
+  ActionResult toss_try = this->can_toss(thing, action_time);
 
   switch (toss_try)
   {
   case ActionResult::Success:
     {
-      Container& new_location = TF.get_container(this->get_location_id());
+      auto new_location = get_location();
       if (thing.is_movable())
       {
         if (thing.perform_action_thrown_by(*this, direction))
@@ -1878,7 +1745,7 @@ bool Entity::toss(ThingId thing_id, Direction& direction,
 
   case ActionResult::FailureSelfReference:
     {
-      if (TF.get_player_id() == this->get_id())
+      if (is_player())
       {
         message = "Throw yourself?  Throw yourself what, a party?";
       }
@@ -1920,18 +1787,18 @@ bool Entity::toss(ThingId thing_id, Direction& direction,
   return false;
 }
 
-ActionResult Entity::can_deequip(ThingId thing_id, unsigned int& action_time)
+ActionResult Entity::can_deequip(Thing& thing, unsigned int& action_time)
 {
   action_time = 1;
 
   // Check that it isn't US!
-  if (thing_id == this->get_id())
+  if (thing.is_player())
   {
     return ActionResult::FailureSelfReference;
   }
 
   // Check that it's already being worn.
-  if (!this->has_equipped(thing_id))
+  if (!this->has_equipped(thing))
   {
     return ActionResult::FailureItemNotEquipped;
   }
@@ -1940,11 +1807,10 @@ ActionResult Entity::can_deequip(ThingId thing_id, unsigned int& action_time)
   return ActionResult::Success;
 }
 
-bool Entity::deequip(ThingId thing_id, unsigned int& action_time)
+bool Entity::deequip(Thing& thing, unsigned int& action_time)
 {
   std::string message;
-  Thing& thing = TF.get(thing_id);
-  ActionResult deequip_try = this->can_deequip(thing_id, action_time);
+  ActionResult deequip_try = this->can_deequip(thing, action_time);
   std::string thing_name = thing.get_name();
 
   message = _YOU_TRY_ + " to take off " + thing_name;
@@ -1956,12 +1822,11 @@ bool Entity::deequip(ThingId thing_id, unsigned int& action_time)
       {
         // Get the body part this item is equipped on.
         WearLocation location;
-        this->has_equipped(thing_id, location);
+        this->has_equipped(thing, location);
 
         if (thing.perform_action_deequipped_by(*this, location))
         {
-          WearLocation location = impl->equipped_items_by_thing_id[thing_id];
-          impl->deequip(thing_id);
+          impl->deequip(thing);
 
           std::string wear_desc = get_bodypart_description(location.part,
                                                            location.number);
@@ -1989,24 +1854,23 @@ bool Entity::deequip(ThingId thing_id, unsigned int& action_time)
   return false;
 }
 
-ActionResult Entity::can_equip(ThingId thing_id, unsigned int& action_time)
+ActionResult Entity::can_equip(Thing& thing, unsigned int& action_time)
 {
   action_time = 1;
 
   // Check that it isn't US!
-  if (thing_id == this->get_id())
+  if (&thing == this)
   {
     return ActionResult::FailureSelfReference;
   }
 
   // Check that it's within reach.
-  if (!this->can_reach(thing_id))
+  if (!this->can_reach(thing))
   {
     return ActionResult::FailureThingOutOfReach;
   }
 
   std::string message;
-  Thing& thing = TF.get(thing_id);
   BodyPart part = thing.equippable_on();
 
   if (part == BodyPart::Count)
@@ -2022,12 +1886,14 @@ ActionResult Entity::can_equip(ThingId thing_id, unsigned int& action_time)
   return ActionResult::Success;
 }
 
-bool Entity::equip(ThingId thing_id, unsigned int& action_time)
+bool Entity::equip(std::shared_ptr<Thing> thing, unsigned int& action_time)
 {
   std::string message;
-  Thing& thing = TF.get(thing_id);
-  ActionResult equip_try = this->can_equip(thing_id, action_time);
-  std::string thing_name = thing.get_name();
+
+  ASSERT_CONDITION(thing);
+
+  ActionResult equip_try = this->can_equip(*(thing.get()), action_time);
+  std::string thing_name = thing->get_name();
 
   switch (equip_try)
   {
@@ -2035,9 +1901,9 @@ bool Entity::equip(ThingId thing_id, unsigned int& action_time)
       {
         WearLocation location;
 
-        if (thing.perform_action_equipped_by(*this, location))
+        if (thing->perform_action_equipped_by(*this, location))
         {
-          impl->equip(thing_id, location);
+          impl->equip(thing, location);
           std::string wear_desc = get_bodypart_description(location.part,
                                                            location.number);
           message = _YOU_ARE_ + " now wearing " + thing_name +
@@ -2049,7 +1915,7 @@ bool Entity::equip(ThingId thing_id, unsigned int& action_time)
       break;
 
     case ActionResult::FailureSelfReference:
-      if (TF.get_player_id() == this->get_id())
+      if (is_player())
       {
         message = "To equip yourself, choose what you want to equip first.";
       }
@@ -2090,81 +1956,72 @@ bool Entity::equip(ThingId thing_id, unsigned int& action_time)
   return false;
 }
 
-ActionResult Entity::can_wield(ThingId thing_id,
+ActionResult Entity::can_wield(Thing& thing,
                                unsigned int hand,
                                unsigned int& action_time)
 {
   action_time = 1;
 
-  // GSL: Actually, it CAN be us in this case; wielding self means bare hands.
-  if (thing_id == this->get_id())
-  {
-    return ActionResult::SuccessSelfReference;
-  }
-
   // Check that it's within reach.
-  if (!this->can_reach(thing_id))
+  if (!this->can_reach(thing))
   {
     return ActionResult::FailureThingOutOfReach;
   }
 
+  /// @todo Check that we have hands capable of wielding anything.
+
   return ActionResult::Success;
 }
 
-bool Entity::wield(ThingId thing_id,
+bool Entity::wield(std::shared_ptr<Thing> thing,
                    unsigned int hand,
                    unsigned int& action_time)
 {
   std::string message;
   std::string bodypart_desc =
     this->get_bodypart_description(BodyPart::Hand, hand);
-  Thing& thing = TF.get(thing_id);
-  std::string thing_name = thing.get_name();
+
+  auto currently_wielded = impl->wielding_in(hand);
+
+  std::string thing_name = thing ? thing->get_name() : "nothing";
 
   // First, check if we're already wielding something.
-  ThingId wielded_id;
-  bool already_wielding = impl->is_wielding_in(hand, wielded_id);
-
-  // Now, check if the thing we're already wielding is THIS thing.
-  if (wielded_id == thing_id)
+  if (currently_wielded)
   {
-    message = _YOU_ARE_ + " already wielding " + thing_name + " with " +
-              _YOUR_ + " " + bodypart_desc + ".";
-    the_message_log.add(message);
-    return true;
-  }
-  else
-  {
-    // Try to unwield the old item.
-    bool unwield_success = true;
-    if (already_wielding)
+    // Now, check if the thing we're already wielding is THIS thing.
+    if (currently_wielded.get() == thing.get())
     {
-      unwield_success = false;
-      Thing& wielded_thing = TF.get(wielded_id);
-      if (wielded_thing.perform_action_unwielded_by(*this))
+      message = _YOU_ARE_ + " already wielding " + thing_name + " with " +
+                _YOUR_ + " " + bodypart_desc + ".";
+      the_message_log.add(message);
+      return true;
+    }
+    else
+    {
+      // Try to unwield the old item.
+      if (currently_wielded->perform_action_unwielded_by(*this))
       {
-        impl->unwield(wielded_id);
-        unwield_success = true;
+        impl->unwield(*(currently_wielded.get()));
+      }
+      else
+      {
+        return false;
       }
     }
-
-    if (!unwield_success)
-    {
-      return false;
-    }
   }
 
-  // Try to wield the new item.
-  ActionResult wield_try = this->can_wield(thing_id, hand, action_time);
+  // If we HAVE a new item, try to wield it.
+  ActionResult wield_try = thing ? this->can_wield(*(thing.get()), hand, action_time)
+                                 : ActionResult::SuccessSelfReference;
 
   switch (wield_try)
   {
   case ActionResult::Success:
   case ActionResult::SuccessSwapHands:
     {
-      if (thing.perform_action_wielded_by(*this))
+      if (thing->perform_action_wielded_by(*this))
       {
-        impl->wield(thing_id, hand);
+        impl->wield(thing, hand);
         message = _YOU_ARE_ + " now wielding " + thing_name +
                   " with " + _YOUR_ + " " + bodypart_desc + ".";
         the_message_log.add(message);
@@ -2179,6 +2036,7 @@ bool Entity::wield(ThingId thing_id,
                 _YOUR_ + " " +
                 this->get_bodypart_description(BodyPart::Hand, hand) + ".";
       the_message_log.add(message);
+      return true;
     }
     break;
 
@@ -2221,9 +2079,217 @@ bool Entity::can_currently_move() const
   return true;
 }
 
+void Entity::light_up_surroundings()
+{
+  if (get_inventory_size() != 0)
+  {
+    auto& things = get_inventory().get_things();
+    for (auto& thing : things)
+    {
+      thing.second->light_up_surroundings();
+    }
+  }
+
+  _light_up_surroundings();
+}
+
+void Entity::be_lit_by(LightSource& light)
+{
+  _be_lit_by(light);
+
+  auto location = get_location();
+  if (location)
+  {
+    location->be_lit_by(light);
+  }
+}
+
 // *** PROTECTED METHODS ******************************************************
 
-void Entity::_do_process()
+bool Entity::_do_process()
+{
+  unsigned int action_time = 0;
+  bool success = false;
+
+  // If entity is currently busy, decrement by one and return.
+  if (impl->busy_counter > 0)
+  {
+    --(impl->busy_counter);
+    return true;
+  }
+
+  // Perform any subclass-specific processing.
+  // Useful if, for example, your Entity can rise from the dead.
+  _do_process_specific();
+
+  // Is the entity dead?
+  if (impl->attributes.get(Attribute::HP) > 0)
+  {
+    // If the entity is not the player, perform the AI strategy associated with
+    // it.
+    if (!is_player())
+    {
+      if (impl->ai_strategy.get() != nullptr)
+      impl->ai_strategy->execute();
+    }
+
+    // If actions are pending...
+    if (!impl->actions.empty())
+    {
+      Action action = impl->actions.front();
+      impl->actions.pop_front();
+
+      unsigned int number_of_things = action.things.size();
+
+      switch (action.type)
+      {
+      case Action::Type::Wait:
+        success = this->move(Direction::Self, action_time);
+        if (success)
+        {
+          impl->busy_counter += action_time;
+        }
+        break;
+
+      case Action::Type::Move:
+        success = this->move(action.direction, action_time);
+        if (success)
+        {
+          impl->busy_counter += action_time;
+        }
+        break;
+
+      case Action::Type::Drop:
+        for (auto thing_wptr : action.things)
+        {
+          auto thing = thing_wptr.lock();
+          if (thing != nullptr)
+          {
+            success = this->drop(*thing, action_time);
+            if (success)
+            {
+              impl->busy_counter += action_time;
+            }
+          }
+        }
+        break;
+
+      case Action::Type::Eat:
+        for (auto thing_wptr : action.things)
+        {
+          auto thing = thing_wptr.lock();
+          if (thing != nullptr)
+          {
+            success = this->eat(*thing, action_time);
+            if (success)
+            {
+              impl->busy_counter += action_time;
+            }
+          }
+        }
+        break;
+
+      case Action::Type::Pickup:
+        for (auto thing_wptr : action.things)
+        {
+          auto thing = thing_wptr.lock();
+          if (thing != nullptr)
+          {
+            success = this->pick_up(*thing, action_time);
+            if (success)
+            {
+              impl->busy_counter += action_time;
+            }
+          }
+        }
+        break;
+
+      case Action::Type::Quaff:
+        for (auto thing_wptr : action.things)
+        {
+          auto thing = thing_wptr.lock();
+          if (thing != nullptr)
+          {
+            success = this->drink(*thing, action_time);
+            if (success)
+            {
+              impl->busy_counter += action_time;
+            }
+          }
+        }
+        break;
+
+      case Action::Type::Store:
+      {
+        auto container = action.target.lock();
+        if (container && container->get_inventory_size() != 0)
+        {
+          for (auto thing_wptr : action.things)
+          {
+            auto thing = thing_wptr.lock();
+            if (thing != nullptr)
+            {
+              success = this->put_into(*thing, container, action_time);
+              if (success)
+              {
+                impl->busy_counter += action_time;
+              }
+            }
+          }
+        }
+        else
+        {
+          the_message_log.add("That target is not a container.");
+        }
+        break;
+      }
+
+      case Action::Type::TakeOut:
+        for (auto thing_wptr : action.things)
+        {
+          auto thing = thing_wptr.lock();
+          if (thing != nullptr)
+          {
+            success = this->take_out(*thing, action_time);
+            if (success)
+            {
+              impl->busy_counter += action_time;
+            }
+          }
+        }
+        break;
+
+      case Action::Type::Wield:
+      {
+        if (number_of_things > 1)
+        {
+          the_message_log.add("NOTE: Only wielding the last item selected.");
+        }
+
+        auto thing = action.things[number_of_things - 1].lock();
+        if (thing != nullptr)
+        {
+          /// @todo Implement wielding using other hands.
+          success = this->wield(thing, 0, action_time);
+          if (success)
+          {
+            impl->busy_counter += action_time;
+          }
+        }
+        break;
+      }
+
+      default:
+        MINOR_ERROR("Unimplemented action.type %d", action.type);
+        break;
+      } // end switch (action)
+    } // end if (actions pending)
+  } // end if (HP > 0)
+
+  return true;
+}
+
+void Entity::_do_process_specific()
 {
   // Default implementation does nothing.
 }
@@ -2249,24 +2315,22 @@ std::vector<MapTileType>& Entity::get_map_memory()
 }
 
 void Entity::do_recursive_visibility(int octant,
-                                   int depth,
-                                   float slope_A,
-                                   float slope_B)
+                                     int depth,
+                                     float slope_A,
+                                     float slope_B)
 {
   int x = 0;
   int y = 0;
 
   // Are we on a map?  Bail out if we aren't.
-  Container& location = TF.get_container(get_location_id());
-
-  if (!location.is_maptile())
+  if (is_inside_another_thing())
   {
     return;
   }
 
-  MapTile& tile = TF.get_tile(get_location_id());
-  sf::Vector2i tile_coords = tile.get_coords();
-  Map& game_map = MF.get(tile.get_map_id());
+  MapTile* tile = get_maptile();
+  sf::Vector2i tile_coords = tile->get_coords();
+  Map& game_map = MF.get(get_map_id());
   int eX = tile_coords.x;
   int eY = tile_coords.y;
 
@@ -2282,9 +2346,9 @@ void Entity::do_recursive_visibility(int octant,
       {
         if (calc_vis_distance(x, y, eX, eY) <= mw)
         {
-          if (game_map.get_tile(x, y).is_opaque())
+          if (game_map.get_tile(x, y)->is_opaque())
           {
-            if (!game_map.get_tile(x - 1, y).is_opaque())
+            if (!game_map.get_tile(x - 1, y)->is_opaque())
             {
               do_recursive_visibility(1, depth + 1, slope_A,
                                       calc_slope(x - 0.5, y + 0.5, eX, eY));
@@ -2292,13 +2356,13 @@ void Entity::do_recursive_visibility(int octant,
           }
           else
           {
-            if (game_map.get_tile(x - 1, y).is_opaque())
+            if (game_map.get_tile(x - 1, y)->is_opaque())
             {
               slope_A = calc_slope(x - 0.5, y - 0.5, eX, eY);
             }
           }
           impl->tile_seen[game_map.get_index(x, y)] = true;
-          impl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
+          impl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y)->get_type();
         }
         ++x;
       }
@@ -2311,9 +2375,9 @@ void Entity::do_recursive_visibility(int octant,
       {
         if (calc_vis_distance(x, y, eX, eY) <= mw)
         {
-          if (game_map.get_tile(x, y).is_opaque())
+          if (game_map.get_tile(x, y)->is_opaque())
           {
-            if (!game_map.get_tile(x + 1, y).is_opaque())
+            if (!game_map.get_tile(x + 1, y)->is_opaque())
             {
               do_recursive_visibility(2, depth + 1, slope_A,
                                       calc_slope(x + 0.5, y + 0.5, eX, eY));
@@ -2321,13 +2385,13 @@ void Entity::do_recursive_visibility(int octant,
           }
           else
           {
-            if (game_map.get_tile(x + 1, y).is_opaque())
+            if (game_map.get_tile(x + 1, y)->is_opaque())
             {
               slope_A = -calc_slope(x + 0.5, y - 0.5, eX, eY);
             }
           }
           impl->tile_seen[game_map.get_index(x, y)] = true;
-          impl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
+          impl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y)->get_type();
         }
         --x;
       }
@@ -2340,9 +2404,9 @@ void Entity::do_recursive_visibility(int octant,
       {
         if (calc_vis_distance(x, y, eX, eY) <= mw)
         {
-          if (game_map.get_tile(x, y).is_opaque())
+          if (game_map.get_tile(x, y)->is_opaque())
           {
-            if (!game_map.get_tile(x, y - 1).is_opaque())
+            if (!game_map.get_tile(x, y - 1)->is_opaque())
             {
               do_recursive_visibility(3, depth + 1, slope_A,
                                       calc_inv_slope(x - 0.5, y - 0.5, eX, eY));
@@ -2350,13 +2414,13 @@ void Entity::do_recursive_visibility(int octant,
           }
           else
           {
-            if (game_map.get_tile(x, y - 1).is_opaque())
+            if (game_map.get_tile(x, y - 1)->is_opaque())
             {
               slope_A = -calc_inv_slope(x + 0.5, y - 0.5, eX, eY);
             }
           }
           impl->tile_seen[game_map.get_index(x, y)] = true;
-          impl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
+          impl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y)->get_type();
         }
         ++y;
       }
@@ -2369,9 +2433,9 @@ void Entity::do_recursive_visibility(int octant,
       {
         if (calc_vis_distance(x, y, eX, eY) <= mw)
         {
-          if (game_map.get_tile(x, y).is_opaque())
+          if (game_map.get_tile(x, y)->is_opaque())
           {
-            if (!game_map.get_tile(x, y + 1).is_opaque())
+            if (!game_map.get_tile(x, y + 1)->is_opaque())
             {
               do_recursive_visibility(4, depth + 1, slope_A,
                                       calc_inv_slope(x - 0.5, y + 0.5, eX, eY));
@@ -2379,13 +2443,13 @@ void Entity::do_recursive_visibility(int octant,
           }
           else
           {
-            if (game_map.get_tile(x, y + 1).is_opaque())
+            if (game_map.get_tile(x, y + 1)->is_opaque())
             {
               slope_A = calc_inv_slope(x + 0.5, y + 0.5, eX, eY);
             }
           }
           impl->tile_seen[game_map.get_index(x, y)] = true;
-          impl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
+          impl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y)->get_type();
         }
         --y;
       }
@@ -2398,9 +2462,9 @@ void Entity::do_recursive_visibility(int octant,
       {
         if (calc_vis_distance(x, y, eX, eY) <= mw)
         {
-          if (game_map.get_tile(x, y).is_opaque())
+          if (game_map.get_tile(x, y)->is_opaque())
           {
-            if (!game_map.get_tile(x + 1, y).is_opaque())
+            if (!game_map.get_tile(x + 1, y)->is_opaque())
             {
               do_recursive_visibility(5, depth + 1, slope_A,
                                       calc_slope(x + 0.5, y - 0.5, eX, eY));
@@ -2408,13 +2472,13 @@ void Entity::do_recursive_visibility(int octant,
           }
           else
           {
-            if (game_map.get_tile(x + 1, y).is_opaque())
+            if (game_map.get_tile(x + 1, y)->is_opaque())
             {
               slope_A = calc_slope(x + 0.5, y + 0.5, eX, eY);
             }
           }
           impl->tile_seen[game_map.get_index(x, y)] = true;
-          impl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
+          impl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y)->get_type();
         }
         --x;
       }
@@ -2427,9 +2491,9 @@ void Entity::do_recursive_visibility(int octant,
       {
         if (calc_vis_distance(x, y, eX, eY) <= mw)
         {
-          if (game_map.get_tile(x, y).is_opaque())
+          if (game_map.get_tile(x, y)->is_opaque())
           {
-            if (!game_map.get_tile(x - 1, y).is_opaque())
+            if (!game_map.get_tile(x - 1, y)->is_opaque())
             {
               do_recursive_visibility(6, depth + 1, slope_A,
                                       calc_slope(x - 0.5, y - 0.5, eX, eY));
@@ -2437,13 +2501,13 @@ void Entity::do_recursive_visibility(int octant,
           }
           else
           {
-            if (game_map.get_tile(x - 1, y).is_opaque())
+            if (game_map.get_tile(x - 1, y)->is_opaque())
             {
               slope_A = -calc_slope(x - 0.5, y + 0.5, eX, eY);
             }
           }
           impl->tile_seen[game_map.get_index(x, y)] = true;
-          impl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
+          impl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y)->get_type();
         }
         ++x;
       }
@@ -2456,9 +2520,9 @@ void Entity::do_recursive_visibility(int octant,
       {
         if (calc_vis_distance(x, y, eX, eY) <= mw)
         {
-          if (game_map.get_tile(x, y).is_opaque())
+          if (game_map.get_tile(x, y)->is_opaque())
           {
-            if (!game_map.get_tile(x, y + 1).is_opaque())
+            if (!game_map.get_tile(x, y + 1)->is_opaque())
             {
               do_recursive_visibility(7, depth + 1, slope_A,
                                       calc_inv_slope(x + 0.5, y + 0.5, eX, eY));
@@ -2466,13 +2530,13 @@ void Entity::do_recursive_visibility(int octant,
           }
           else
           {
-            if (game_map.get_tile(x, y + 1).is_opaque())
+            if (game_map.get_tile(x, y + 1)->is_opaque())
             {
               slope_A = -calc_inv_slope(x - 0.5, y + 0.5, eX, eY);
             }
           }
           impl->tile_seen[game_map.get_index(x, y)] = true;
-          impl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
+          impl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y)->get_type();
         }
         --y;
       }
@@ -2485,9 +2549,9 @@ void Entity::do_recursive_visibility(int octant,
       {
         if (calc_vis_distance(x, y, eX, eY) <= mw)
         {
-          if (game_map.get_tile(x, y).is_opaque())
+          if (game_map.get_tile(x, y)->is_opaque())
           {
-            if (!game_map.get_tile(x, y - 1).is_opaque())
+            if (!game_map.get_tile(x, y - 1)->is_opaque())
             {
               do_recursive_visibility(8, depth + 1, slope_A,
                                       calc_inv_slope(x + 0.5, y - 0.5, eX, eY));
@@ -2495,13 +2559,13 @@ void Entity::do_recursive_visibility(int octant,
           }
           else
           {
-            if (game_map.get_tile(x, y - 1).is_opaque())
+            if (game_map.get_tile(x, y - 1)->is_opaque())
             {
               slope_A = calc_inv_slope(x - 0.5, y - 0.5, eX, eY);
             }
           }
           impl->tile_seen[game_map.get_index(x, y)] = true;
-          impl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
+          impl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y)->get_type();
         }
         ++y;
       }
@@ -2512,7 +2576,7 @@ void Entity::do_recursive_visibility(int octant,
       break;
   }
 
-  if ((depth < mv) && (!game_map.get_tile(x, y).is_opaque()))
+  if ((depth < mv) && (!game_map.get_tile(x, y)->is_opaque()))
   {
     do_recursive_visibility(octant, depth + 1, slope_A, slope_B);
   }

@@ -6,7 +6,7 @@
 #include <vector>
 
 #include "gui/GUIPane.h"
-#include "ThingId.h"
+#include "InventorySlot.h"
 
 enum class InventoryType
 {
@@ -16,25 +16,32 @@ enum class InventoryType
 
 // Forward declarations
 class Container;
+class Thing;
 
 class InventoryArea :
   public GUIPane
 {
   public:
-    InventoryArea(sf::IntRect dimensions,
-                  std::vector<ThingId>& selected_things,
-                  unsigned int& selected_quantity);
+    InventoryArea(sf::IntRect dimensions);
     virtual ~InventoryArea();
 
-    void set_capital_letters(bool use_capitals);
-    bool get_capital_letters();
+    std::weak_ptr<Thing> get_viewed() const;
+    void set_viewed(std::weak_ptr<Thing> thing);
 
-    Container& get_viewed_container();
-    void set_viewed_container(Container& container);
+    void toggle_selection(InventorySlot selection);
+    unsigned int get_selected_slot_count() const;
+    std::vector<InventorySlot> const& get_selected_slots();
+    std::vector<std::weak_ptr<Thing>> get_selected_things();
+    void clear_selected_slots();
 
-    void toggle_selection(unsigned int selection);
+    unsigned int get_selected_quantity() const;
+    unsigned int get_max_quantity() const;
+    unsigned int reset_selected_quantity();
+    bool set_selected_quantity(unsigned int amount);
+    bool inc_selected_quantity();
+    bool dec_selected_quantity();
 
-    ThingId get_thingid(unsigned int selection);
+    std::weak_ptr<Thing> get_thing(InventorySlot selection);
 
     InventoryType get_inventory_type();
     void set_inventory_type(InventoryType type);

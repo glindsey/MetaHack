@@ -127,4 +127,33 @@ template <class T> T choose_random (T a, T b, T c)
   }
 }
 
+/// Determine light factor based on light source, wall location, and which wall
+/// the light is hitting.
+inline float calculate_light_factor(sf::Vector2i source, sf::Vector2i target, Direction direction)
+{
+  float x_diff = fabsf(source.x - target.x);
+  float y_diff = fabsf(source.y - target.y);
+
+  if ((x_diff == 0) && (y_diff == 0)) return 0;
+
+  float h_diff = sqrtf((x_diff * x_diff) + (y_diff * y_diff));
+
+  float diff_ratio;
+
+  switch (direction)
+  {
+  case Direction::North:
+    return (source.y < target.y) ? (y_diff / h_diff) : 0;
+  case Direction::South:
+    return (source.y > target.y) ? (y_diff / h_diff) : 0;
+  case Direction::West:
+    return (source.x < target.x) ? (x_diff / h_diff) : 0;
+  case Direction::East:
+    return (source.x > target.x) ? (x_diff / h_diff) : 0;
+  default:
+    FATAL_ERROR("Invalid direction %u passed to calculate_light_factor",
+                static_cast<unsigned int>(direction));
+  }
+}
+
 #endif // _MATHUTILS_H_

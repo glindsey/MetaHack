@@ -14,35 +14,73 @@
 
 struct InventoryArea::Impl
 {
-  Impl(std::vector<ThingId>& s, unsigned int& q)
-    : use_capitals(false),
-      viewed_container_ptr(nullptr),
-      inventory_type(InventoryType::Inside),
-      selected_things(s),
-      selected_quantity(q) {}
+  /// Thing whose contents (or surroundings) are currently being viewed.
+  std::weak_ptr<Thing> viewed_ptr;
 
-  /// If true this inventory enumerates Things using capital letters.
-  /// If false it uses lower-case letters.
-  bool use_capitals;
-
-  /// Container whose contents (or surroundings) are currently being viewed.
-  Container* viewed_container_ptr;
-
-  /// Type indicating whether we're looking at contents or surroundings.
-  InventoryType inventory_type;
-
-  /// Reference to Vector of Things selected to perform an action on.
-  std::vector<ThingId>& selected_things;
+  /// Vector of selected inventory slots.
+  std::vector< InventorySlot > selected_slots;
 
   /// Reference to quantity of topmost selected item.
-  unsigned int& selected_quantity;
+  unsigned int selected_quantity;
+
+  char get_character(InventorySlot slot)
+  {
+    return get_character(static_cast<unsigned int>(slot));
+  }
+
+  char get_character(unsigned int slot_number)
+  {
+    char character;
+
+    if (slot_number == 0)
+    {
+      character = '@';
+    }
+    else if (slot_number < 26)
+    {
+      character = '`' + static_cast<char>(slot_number);
+    }
+    else if (slot_number < 52)
+    {
+      character = '@' + static_cast<char>(slot_number - 26);
+    }
+    else
+    {
+      character = ' ';
+    }
+
+    return character;
+  }
+
+  InventorySlot get_slot(char character)
+  {
+    unsigned int slot_number;
+    unsigned int char_number = static_cast<unsigned int>(character);
+
+    ASSERT_CONDITION(((char_number >= 0x40) && (char_number <= 0x5a)) ||
+                     ((char_number >= 0x61) && (char_number <= 0x7a)));
+
+    if (char_number == 0x40)
+    {
+      slot_number = 0;
+    }
+    else if (char_number <= 0x5a)
+    {
+      slot_number = char_number - 64;
+    }
+    else
+    {
+      slot_number = char_number - 70;
+    }
+
+    return static_cast<InventorySlot>(slot_number);
+  }
+
 };
 
-InventoryArea::InventoryArea(sf::IntRect dimensions,
-                             std::vector<ThingId>& selected_things,
-                             unsigned int& selected_quantity)
+InventoryArea::InventoryArea(sf::IntRect dimensions)
   : GUIPane(dimensions),
-    impl(new Impl(selected_things, selected_quantity))
+    impl(new Impl())
 {}
 
 InventoryArea::~InventoryArea()
@@ -50,116 +88,187 @@ InventoryArea::~InventoryArea()
   //dtor
 }
 
-void InventoryArea::set_capital_letters(bool use_capitals)
+std::weak_ptr<Thing> InventoryArea::get_viewed() const
 {
-  impl->use_capitals = use_capitals;
+  return impl->viewed_ptr;
 }
 
-bool InventoryArea::get_capital_letters()
+void InventoryArea::set_viewed(std::weak_ptr<Thing> thing)
 {
-  return impl->use_capitals;
+  impl->viewed_ptr = thing;
+  impl->selected_slots.clear();
 }
 
-void InventoryArea::set_inventory_type(InventoryType type)
+void InventoryArea::toggle_selection(InventorySlot selection)
 {
-  impl->inventory_type = type;
-}
+  auto viewed_ptr = impl->viewed_ptr.lock();
 
-InventoryType InventoryArea::get_inventory_type()
-{
-  return impl->inventory_type;
-}
-
-Container& InventoryArea::get_viewed_container()
-{
-  return *(impl->viewed_container_ptr);
-}
-
-void InventoryArea::set_viewed_container(Container& container)
-{
-  impl->viewed_container_ptr = &container;
-}
-
-void InventoryArea::toggle_selection(unsigned int selection)
-{
-  // Get a reference to the location we're referring to.
-  Container& location = *(impl->viewed_container_ptr);
-
-  // Get a reference to the location's location!
-  Container& around = TF.get_container(location.get_location_id());
-
-  Inventory* inventory_ptr = &(TF.get_limbo().get_inventory());
-
-  switch (impl->inventory_type)
+  if (!viewed_ptr)
   {
-  case InventoryType::Inside:
-    inventory_ptr = &(location.get_inventory());
-    break;
-  case InventoryType::Around:
-    inventory_ptr = &(around.get_inventory());
-    break;
-  default:
-    break;
+    return;
   }
 
-  InventorySlot slot = static_cast<InventorySlot>(selection);
+  Inventory& inventory = viewed_ptr->get_inventory();
 
-  if (inventory_ptr->contains(slot))
+  if (inventory.contains(selection))
   {
-    ThingId id = inventory_ptr->get(slot);
-
-    std::vector<ThingId>::iterator iter;
-    iter = std::find(impl->selected_things.begin(),
-                     impl->selected_things.end(),
-                     id);
-    if ( iter == impl->selected_things.end())
+    auto iter = std::find(std::begin(impl->selected_slots),
+                          std::end(impl->selected_slots),
+                          selection);
+    if ( iter == std::end(impl->selected_slots))
     {
       //TRACE("Adding thing %u to selected things",
       //      static_cast<unsigned int>(id));
-      impl->selected_things.push_back(id);
+      impl->selected_slots.push_back(selection);
     }
     else
     {
       //TRACE("Removing thing %u from selected things",
       //      static_cast<unsigned int>(id));
-      impl->selected_things.erase(iter);
+      impl->selected_slots.erase(iter);
     }
+
+    reset_selected_quantity();
   }
 }
 
-ThingId InventoryArea::get_thingid(unsigned int selection)
+unsigned int InventoryArea::get_selected_slot_count() const
 {
-  // Get a reference to the location we're referring to.
-  Container& location = *(impl->viewed_container_ptr);
+  return impl->selected_slots.size();
+}
 
-  // Get a reference to the location's location!
-  Container& around = TF.get_container(location.get_location_id());
+std::vector<InventorySlot> const& InventoryArea::get_selected_slots()
+{
+  return impl->selected_slots;
+}
 
-  Inventory* inventory_ptr = &(TF.get_limbo().get_inventory());
+std::vector<std::weak_ptr<Thing>> InventoryArea::get_selected_things()
+{
+  std::vector<std::weak_ptr<Thing>> things;
 
-  switch (impl->inventory_type)
+  auto viewed_ptr = impl->viewed_ptr.lock();
+
+  if (viewed_ptr)
   {
-  case InventoryType::Inside:
-    inventory_ptr = &(location.get_inventory());
-    break;
-  case InventoryType::Around:
-    inventory_ptr = &(around.get_inventory());
-    break;
-  default:
-    break;
+    Inventory& inventory = viewed_ptr->get_inventory();
+
+    for (auto iter = std::begin(impl->selected_slots);
+              iter != std::end(impl->selected_slots);
+              ++iter)
+    {
+      std::weak_ptr<Thing> thing = inventory.get(*iter);
+      things.push_back(thing);
+    }
   }
 
-  InventorySlot slot = static_cast<InventorySlot>(selection);
+  return things;
+}
 
-  if (inventory_ptr->contains(slot))
+void InventoryArea::clear_selected_slots()
+{
+  impl->selected_slots.clear();
+}
+
+unsigned int InventoryArea::get_selected_quantity() const
+{
+  return impl->selected_quantity;
+}
+
+unsigned int InventoryArea::get_max_quantity() const
+{
+  unsigned int result;
+
+  auto viewed_ptr = impl->viewed_ptr.lock();
+
+  if (!viewed_ptr)
   {
-    return inventory_ptr->get(slot);
+    return 0;
+  }
+
+  Inventory& inventory = viewed_ptr->get_inventory();
+
+  if (impl->selected_slots.size() == 0)
+  {
+    result = 0;
   }
   else
   {
-    TRACE("Requested non-existent inventory slot %u, returning limbo!",
-          selection);
-    return TF.limbo_id;
+    auto thing = inventory.get(impl->selected_slots[0]).lock();
+
+    if (!thing)
+    {
+      result = 0;
+    }
+    else
+    {
+      result = thing->get_quantity();
+    }
+  }
+
+  return result;
+}
+
+unsigned int InventoryArea::reset_selected_quantity()
+{
+  impl->selected_quantity = get_max_quantity();
+  return impl->selected_quantity;
+}
+
+bool InventoryArea::set_selected_quantity(unsigned int amount)
+{
+  if (amount > 0)
+  {
+    unsigned int maximum = get_max_quantity();
+    if (amount <= maximum)
+    {
+      impl->selected_quantity = amount;
+      return true;
+    }
+  }
+  return false;
+}
+
+bool InventoryArea::inc_selected_quantity()
+{
+  unsigned int maximum = get_max_quantity();
+  if (impl->selected_quantity < maximum)
+  {
+    ++(impl->selected_quantity);
+    return true;
+  }
+  return false;
+}
+
+bool InventoryArea::dec_selected_quantity()
+{
+  if (impl->selected_quantity > 1)
+  {
+    --(impl->selected_quantity);
+    return true;
+  }
+  return false;
+}
+
+std::weak_ptr<Thing> InventoryArea::get_thing(InventorySlot selection)
+{
+  auto viewed_ptr = impl->viewed_ptr.lock();
+
+  if (!viewed_ptr)
+  {
+    return std::weak_ptr<Thing>();
+  }
+
+  Inventory& inventory = viewed_ptr->get_inventory();
+
+  if (inventory.contains(selection))
+  {
+    return inventory.get(selection);
+  }
+  else
+  {
+    TRACE("Requested non-existent inventory slot %u, returning nullptr!",
+          static_cast<unsigned int>(selection));
+    return std::weak_ptr<Thing>();
   }
 }
 
@@ -184,53 +293,43 @@ std::string InventoryArea::render_contents(int frame)
   float text_offset_y = 3;
 
   // Get a reference to the location we're referring to.
-  Container& location = *(impl->viewed_container_ptr);
-
-  // Get a reference to the location's location!
-  Container& around = TF.get_container(location.get_location_id());
+  auto viewed_ptr = impl->viewed_ptr.lock();
+  if (!viewed_ptr)
+  {
+    return "Invalid Viewed Object!";
+  }
 
   // Start at the top and work down.
   float text_coord_x = text_offset_x;
   float text_coord_y = text_offset_y + (line_spacing_y * 1.5);
 
-  Inventory* inventory_ptr = &(TF.get_limbo().get_inventory());
-
-  switch (impl->inventory_type)
-  {
-  case InventoryType::Inside:
-    inventory_ptr = &(location.get_inventory());
-    break;
-  case InventoryType::Around:
-    inventory_ptr = &(around.get_inventory());
-    break;
-  default:
-    break;
-  }
+  Inventory& inventory = viewed_ptr->get_inventory();
 
   /// @todo At the moment this does not split lines that are too long, instead
   ///       truncating them at the edge of the box.  This must be fixed.
   /// @todo Also need to display some details about the item, such as whether it
-  ///       is equipped, what magions are equipped to it, et cetera.
-  for (ThingMapBySlot::const_iterator iter = inventory_ptr->by_slot_cbegin();
-       iter != inventory_ptr->by_slot_cend(); ++iter)
+  ///       is equipped, what magicules are equipped to it, et cetera.
+  auto& things = inventory.get_things();
+
+  for (auto iter = things.cbegin();
+       iter != things.cend(); ++iter)
   {
-    InventorySlot slot = (*iter).first;
-    ThingId id = (*iter).second;
+    auto& slot = (*iter).first;
+    auto& thing = (*iter).second;
     unsigned int slot_number = static_cast<unsigned int>(slot);
     sf::Text render_text;
 
     // 1. Figure out whether this is selected or not, and set FG color.
     sf::Color fg_color = Settings.text_color;
     unsigned int selection_order = 0;
-    std::vector<ThingId>::iterator thing_iter;
-    thing_iter = std::find(impl->selected_things.begin(),
-                           impl->selected_things.end(),
-                           id);
+    auto slot_iter = std::find(impl->selected_slots.begin(),
+                                impl->selected_slots.end(),
+                                slot);
 
-    if (thing_iter != impl->selected_things.end())
+    if (slot_iter != impl->selected_slots.end())
     {
       fg_color = Settings.text_highlight_color;
-      selection_order = (thing_iter - impl->selected_things.begin()) + 1;
+      selection_order = (slot_iter - impl->selected_slots.begin()) + 1;
     }
 
     // 2. Display the selection order.
@@ -252,14 +351,7 @@ std::string InventoryArea::render_contents(int frame)
       std::stringstream slot_id;
       char item_char;
 
-      if (impl->use_capitals)
-      {
-        item_char = '@' + static_cast<char>(slot_number);
-      }
-      else
-      {
-        item_char = '`' + static_cast<char>(slot_number);
-      }
+      item_char = impl->get_character(slot_number);
 
       slot_id << item_char << ":";
       render_text.setFont(the_default_mono_font);
@@ -271,16 +363,15 @@ std::string InventoryArea::render_contents(int frame)
     }
 
     // 4. Display the tile representing the item.
-    Thing& thing = TF.get(id);
-
     the_tile_sheet.getTexture().setSmooth(true);
-    thing.draw_to(bg_texture,
-                  sf::Vector2f(text_coord_x + 55, text_coord_y),
-                  line_spacing_y - 1, false, frame);
+    thing->draw_to(bg_texture,
+                   sf::Vector2f(text_coord_x + 55, text_coord_y),
+                   line_spacing_y - 1, false, frame);
     the_tile_sheet.getTexture().setSmooth(false);
 
     // 5. TODO: Display "worn" or "equipped" icon if necessary.
     // 5a. First, the inventory location must be an Entity.
+    #if 0
     if (isType(&location, Entity))
     {
       Entity& location_entity = dynamic_cast<Entity&>(location);
@@ -293,19 +384,20 @@ std::string InventoryArea::render_contents(int frame)
         // TODO: draw equipped icon
       }
     }
+    #endif
 
     // 6. Display the item name.
     std::stringstream item_name;
     if (selection_order == 1)
     {
-      unsigned int max_quantity = thing.get_quantity();
+      unsigned int max_quantity = thing->get_quantity();
       if ((max_quantity > 1) && (impl->selected_quantity < max_quantity))
       {
         item_name << "(Sel: " << impl->selected_quantity << ") ";
       }
     }
 
-    item_name << thing.get_indef_name();
+    item_name << thing->get_indef_name();
     render_text.setFont(the_default_font);
     render_text.setCharacterSize(Settings.text_default_size);
     render_text.setString(item_name.str());
@@ -328,23 +420,10 @@ std::string InventoryArea::render_contents(int frame)
   }
 
   // Figure out the title.
-  sf::String title_string;
-
-  switch (impl->inventory_type)
-  {
-  case InventoryType::Inside:
-    title_string = location.get_possessive() + " inventory";
-    break;
-
-  case InventoryType::Around:
-    title_string = "Things at " + location.get_possessive() + " location";
-    break;
-
-  default:
-    title_string = "Limbo (Unknown InventoryType!)";
-    break;
-  }
-
+  // TODO: Might want to define a specific "get_inventory_name()" method
+  //       for Thing that defaults to "XXXX's inventory" but can be
+  //       overridden to say stuff like "Things on the floor".
+  sf::String title_string = viewed_ptr->get_possessive() + " inventory";
   title_string[0] = toupper(title_string[0]);
   return title_string;
 }

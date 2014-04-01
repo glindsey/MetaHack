@@ -2,8 +2,7 @@
 
 LightOrb LightOrb::prototype;
 
-LightOrb::LightOrb() :
-  LightSource()
+LightOrb::LightOrb() : LightSource(0)
 {
   set_single_mass(2);
 }

@@ -4,8 +4,7 @@
 
 Human Human::prototype;
 
-Human::Human() :
-  Biped()
+Human::Human() : Biped()
 {
   set_proper_name("John Doe");
 }

@@ -2,21 +2,22 @@
 #define ROCKLICHEN_H
 
 #include "Blob.h"
-#include "CreatableThing.h"
+#include "Registered.h"
 
 class RockLichen :
   public Blob,
-  public CreatableThing<RockLichen>
+  public Registered<RockLichen>
 {
-  friend class CreatableThing;
-
   public:
+    RockLichen();
     virtual ~RockLichen();
+    RockLichen(RockLichen const&) = default;
+    RockLichen const& operator=(RockLichen const&) = delete;
 
     virtual sf::Vector2u get_tile_sheet_coords(int frame) const override;
 
   protected:
-    RockLichen();
+
 
   private:
     virtual std::string _get_description() const override;

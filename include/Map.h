@@ -20,6 +20,8 @@ class Map
   friend class MapFactory;
 
   public:
+    virtual ~Map();
+
     /// The maximum length of one side.
     static constexpr int max_dimension = 128;
 
@@ -29,12 +31,8 @@ class Map
     /// The default ambient light level.
     static const sf::Color ambient_light_level;
 
-    virtual ~Map();
-
-    /// Gather up all ThingIds on this map, MapTiles included.
-    /// This function is used to enumerate all Things that need to
-    /// be processed for a game tick.
-    void gather_thing_ids(std::vector<ThingId>& ids);
+    /// Process all Things on this map.
+    void do_process();
 
     void update_lighting();
 
@@ -50,11 +48,9 @@ class Map
 
     void draw_to(sf::RenderTarget& target);
 
-    ThingId get_tile_id(int x, int y) const;
+    std::unique_ptr<MapTile>& get_tile(int x, int y) const;
 
-    MapTile& get_tile(int x, int y) const;
-
-    MapTile& get_tile(sf::Vector2i tile) const;
+    std::unique_ptr<MapTile>& get_tile(sf::Vector2i tile) const;
 
     /// Get the map's size.
     sf::Vector2i const& get_size() const;
@@ -63,7 +59,7 @@ class Map
     sf::Vector2i const& get_start_coords() const;
 
     /// Set player's starting location.
-    bool set_start_location(sf::Vector2i startLocation);
+    bool set_start_coords(sf::Vector2i start_coords);
 
     /// Get the index of a particular X/Y coordinate.
     int get_index(int x, int y) const;
@@ -106,7 +102,7 @@ class Map
     ///  / | \   |
     /// / 6|5 \  |
 
-    void do_recursive_lighting(ThingId source,
+    void do_recursive_lighting(LightSource& source,
                                sf::Vector2i const& origin,
                                sf::Color const& light_color,
                                int const max_depth_squared,

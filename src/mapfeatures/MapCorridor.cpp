@@ -93,8 +93,8 @@ bool MapCorridor::create(GeoVector vec)
         {
            for (int yCheck = yMin - 1; yCheck <= yMax + 1; ++yCheck)
            {
-             MapTile& tile = get_map().get_tile(xCheck, yCheck);
-             if (tile.is_empty_space())
+             auto& tile = get_map().get_tile(xCheck, yCheck);
+             if (tile->is_empty_space())
              {
                okay = false;
                break;
@@ -110,8 +110,8 @@ bool MapCorridor::create(GeoVector vec)
           {
              for (int yCheck = yMin; yCheck <= yMax; ++yCheck)
              {
-               MapTile& tile = get_map().get_tile(xCheck, yCheck);
-               tile.set_type(MapTileType::FloorStone);
+               auto& tile = get_map().get_tile(xCheck, yCheck);
+               tile->set_type(MapTileType::FloorStone);
              }
           }
 
@@ -135,9 +135,9 @@ bool MapCorridor::create(GeoVector vec)
 
           /// @todo: Put either a door or an open area at the starting coords.
           ///        Right now we just make it an open area.
-          MapTile& startTile = get_map().get_tile(startingCoords.x,
+          auto& startTile = get_map().get_tile(startingCoords.x,
                                                 startingCoords.y);
-          startTile.set_type(MapTileType::FloorStone);
+          startTile->set_type(MapTileType::FloorStone);
 
           /// Check the tile two past the ending tile.
           /// If it is open space, there should be a small chance
@@ -170,12 +170,12 @@ bool MapCorridor::create(GeoVector vec)
           }
           if (get_map().is_in_bounds(checkCoords.x, checkCoords.y))
           {
-            MapTile& checkTile = get_map().get_tile(checkCoords.x, checkCoords.y);
-            if (checkTile.is_empty_space())
+            auto& checkTile = get_map().get_tile(checkCoords.x, checkCoords.y);
+            if (checkTile->is_empty_space())
             {
-              MapTile& endTile = get_map().get_tile(impl->endingCoords.x,
-                                                    impl->endingCoords.y);
-              endTile.set_type(MapTileType::FloorStone);
+              auto& endTile = get_map().get_tile(impl->endingCoords.x,
+                                                 impl->endingCoords.y);
+              endTile->set_type(MapTileType::FloorStone);
 
               /// @todo Keep going here
             }

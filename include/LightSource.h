@@ -4,14 +4,14 @@
 #include <memory>
 #include <SFML/Graphics.hpp>
 
-#include "Aggregate.h"
 #include "Direction.h"
+#include "Thing.h"
 
 // Forward declarations
 class Entity;
 
 /// Interface class representing a thing that emits or absorbs light.
-class LightSource : public Aggregate
+class LightSource : public Thing
 {
   public:
     virtual ~LightSource();
@@ -50,9 +50,6 @@ class LightSource : public Aggregate
     /// Returns a boolean indicating whether setting was allowed.
     void set_light_color(sf::Color color);
 
-    /// Provide light to this LightSource's surroundings.
-    virtual void light_up_surroundings() override;
-
     /// Return whether or not this light source can be turned on/off by this
     /// Entity.
     /// The default behavior for this is to return false.
@@ -70,8 +67,11 @@ class LightSource : public Aggregate
     bool is_lit() const;
 
   protected:
-    LightSource();
+    LightSource(unsigned int inventory_size);
     LightSource(LightSource const& original);
+
+    /// Provide light to this LightSource's surroundings.
+    virtual void _light_up_surroundings() override;
 
   private:
     struct Impl;

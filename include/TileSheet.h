@@ -34,10 +34,31 @@ class TileSheet
     /// @param ur_coord Upper-right coordinates.
     /// @param ll_coord Lower-left coordinates.
     /// @param lr_coord Lower-right coordinates.
-    static void add_vertices(sf::VertexArray& vertices,
+    static void add_quad(sf::VertexArray& vertices,
                              sf::Vector2u tile_coords, sf::Color bg_color,
                              sf::Vector2f ul_coord, sf::Vector2f ur_coord,
                              sf::Vector2f ll_coord, sf::Vector2f lr_coord);
+
+    /// Add vertices to the requested vertex array.
+    /// This method is similar to add_quad but allows the caller to specify
+    /// the color of each vertex individually, allowing for gradients across
+    /// the quadrilateral.
+    /// @param vertices Vertex array to add to.
+    /// @param tile_coords Coordinates of the tile to render.
+    /// @param ul_color Color of upper-left vertex.
+    /// @param ul_coord Upper-left coordinates.
+    /// @param ur_color Color of upper-right vertex.
+    /// @param ur_coord Upper-right coordinates.
+    /// @param ll_color Color of lower-left vertex.
+    /// @param ll_coord Lower-left coordinates.
+    /// @param lr_color Color of lower-right vertex.
+    /// @param lr_coord Lower-right coordinates.
+    static void add_gradient_quad(sf::VertexArray& vertices,
+                                  sf::Vector2u tile_coords,
+                                  sf::Color ul_color, sf::Vector2f ul_coord,
+                                  sf::Color ur_color, sf::Vector2f ur_coord,
+                                  sf::Color ll_color, sf::Vector2f ll_coord,
+                                  sf::Color lr_color, sf::Vector2f lr_coord);
 
     /// Add outline vertices to the requested vertex array.
     /// This method draws a hollow quadrilateral in the color specified by

@@ -2,7 +2,7 @@
 
 CoinGold CoinGold::prototype;
 
-CoinGold::CoinGold()
+CoinGold::CoinGold() : Thing(0)
 {
   //ctor
 }

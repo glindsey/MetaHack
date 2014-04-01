@@ -4,8 +4,7 @@
 
 RockLichen RockLichen::prototype;
 
-RockLichen::RockLichen() :
-  Blob()
+RockLichen::RockLichen() : Blob()
 {
   //ctor
 }

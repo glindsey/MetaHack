@@ -4,12 +4,10 @@
 #include "Action.h"
 #include "AttributeSet.h"
 #include "BodyPart.h"
-#include "Container.h"
 #include "Direction.h"
 #include "Gender.h"
 #include "MapTileType.h"
 #include "Thing.h"
-#include "ThingId.h"
 
 #include <boost/dynamic_bitset.hpp>
 #include <set>
@@ -19,7 +17,7 @@ class AIStrategy;
 
 /// Interface class representing something that can perform actions.
 class Entity :
-  public Container
+  public Thing
 {
   friend class AIStrategy;
   friend class ThingFactory;
@@ -93,7 +91,7 @@ class Entity :
     virtual bool can_move(Direction direction);
 
     /// Attempt to move this Entity to a new location.
-    virtual bool move_into(ThingId location_id) override final;
+    virtual bool move_into(std::shared_ptr<Thing> location) override final;
 
     /// Get the number of a particular body part the Entity has.
     virtual unsigned int get_bodypart_number(BodyPart part) const = 0;
@@ -136,14 +134,14 @@ class Entity :
     /// Return the attribute set for this Entity.
     virtual AttributeSet const& get_attributes() const;
 
+    /// Return whether this Entity is the current player.
+    virtual bool is_player() const override;
+
     /// Queue an action for this Entity to perform.
     void queue_action(Action action);
 
     /// Return whether this is an action pending for this Entity.
-    bool pending_action();
-
-    /// Process this Entity for one tick.
-    virtual bool do_process() override final;
+    bool pending_action() const;
 
     /// Set the AI strategy associated with this Entity.
     /// The Entity assumes responsibility for maintenance of the new object.
@@ -161,121 +159,126 @@ class Entity :
 
     /// Return whether a Thing is wielded by this Entity.
     /// This is used by InventoryArea to show wielded status.
-    /// @param[in] thing_id Thing to check
+    /// @param[in] thing Thing to check
     /// @return true if the Thing is wielded by the Entity.
-    bool is_wielding(ThingId thing_id);
+    bool is_wielding(Thing& thing);
 
     /// Return whether a Thing is wielded by this Entity.
     /// This is used by InventoryArea to show wielded status.
-    /// @param[in] thing_id Thing to check
+    /// @param[in] thing Thing to check
     /// @param[out] number Hand number it is wielded in.
     /// @return true if the Thing is wielded by the Entity.
-    bool is_wielding(ThingId thing_id, unsigned int& number_ref);
+    bool is_wielding(Thing& thing, unsigned int& number_ref);
 
     /// Return whether a Thing is equipped (worn) by this Entity.
-    /// @param[in] thing_id Thing to check
+    /// @param[in] thing Thing to check
     /// @return true if the Thing is being worn.
-    bool has_equipped(ThingId thing_id);
+    bool has_equipped(Thing& thing);
 
     /// Return whether a Thing is being worn by this Entity.
-    /// @param[in] thing_id Thing to check
+    /// @param[in] thing Thing to check
     /// @param[out] location of the worn Thing, if worn
     /// @return true if the Thing is being worn.
-    bool has_equipped(ThingId thing_id, WearLocation& location);
+    bool has_equipped(Thing& thing, WearLocation& location);
 
     /// Return whether a Thing is within reach of the Entity.
-    /// @param[in] thing_id Thing to check
+    /// @param[in] thing Thing to check
     /// @return true if the Thing is in the Entity's inventory or is at the
     ///         same location as the Entity, false otherwise.
-    bool can_reach(ThingId thing_id);
+    bool can_reach(Thing& thing);
 
     /// Attempt to attack a thing.
-    /// @param[in] thing_id Thing to attack.
+    /// @param[in] thing Thing to attack.
     /// @param[out] action_time The time it took to attack it.
     /// @return true if attack was performed (whether it succeeded or not),
     ///         false if it wasn't performed
-    bool attack(ThingId thing_id, unsigned int& action_time);
+    bool attack(Thing& thing, unsigned int& action_time);
 
     /// Return whether the Entity can drink the requested Thing.
     /// The base method checks to make sure the Thing is a liquid, but beyond
     /// that, assumes it can drink anything.
     /// It is recommended that any derived classes first call the base method
     /// before proceeding with their own checks.
-    /// @param[in] thing_id Thing to try to drink
+    /// @param[in] thing Thing to try to drink
     /// @param[out] action_time The time it will take to drink it
     /// @return ActionResult indicating what happened.
-    virtual ActionResult can_drink(ThingId thing_id, unsigned int& action_time);
+    virtual ActionResult can_drink(Thing& thing, unsigned int& action_time);
 
     /// Attempt to drink a thing.
-    /// @param[in] thing_id Thing to try to drink
+    /// @param[in] thing Thing to try to drink
     /// @param[out] action_time The time it took to drink it.
     /// @return true if object is drank, false if not
-    bool drink(ThingId thing_id, unsigned int& action_time);
+    bool drink(Thing& thing, unsigned int& action_time);
 
     /// Return whether the Entity can drop the requested Thing.
     /// The base method checks to make sure the Entity is actually holding the
     /// thing in its Inventory.
     /// It is recommended that any derived classes first call the base method
     /// before proceeding with their own checks.
-    /// @param[in] thing_id Thing to try to drop
+    /// @param[in] thing Thing to try to drop
     /// @param[out] action_time The time it will take to drop it
     /// @return ActionResult indicating what happened.
-    virtual ActionResult can_drop(ThingId thing_id,
+    virtual ActionResult can_drop(Thing& thing,
                                   unsigned int& action_time);
 
     /// Attampt to drop a thing.
-    /// @param[in] thing_id Thing to try to drop
+    /// @param[in] thing Thing to try to drop
     /// @param[out] action_time The time it took to drop it.
     /// @return true if object is dropped, false if not
-    bool drop(ThingId thing_id, unsigned int& action_time);
+    bool drop(Thing& thing, unsigned int& action_time);
 
     /// Return whether the Entity can eat the requested Thing.
     /// It is recommended that any derived classes first call the base method
     /// before proceeding with their own checks.
-    /// @param[in] thing_id Thing to try to eat
+    /// @param[in] thing Thing to try to eat
     /// @param[out] action_time The time it will take to eat it
     /// @return ActionResult indicating what happened.
-    virtual ActionResult can_eat(ThingId thing_id, unsigned int& action_time);
+    virtual ActionResult can_eat(Thing& thing, unsigned int& action_time);
 
     /// Attempt to eat a thing.
-    bool eat(ThingId thing_id, unsigned int& action_time);
+    bool eat(Thing& thing, unsigned int& action_time);
 
     /// Return whether the Entity can mix these two Things.
     /// It is recommended that any derived classes first call the base method
     /// before proceeding with their own checks.
-    /// @param[in] thing1_id First thing to mix.
-    /// @param[in] thing2_id Second thing to mix.
+    /// @param[in] thing1 First thing to mix.
+    /// @param[in] thing2 Second thing to mix.
     /// @param[out] action_time The time it will take to mix.
     /// @return ActionResult indicating what happened.
-    virtual ActionResult can_mix(ThingId thing1_id, ThingId thing2_id,
+    virtual ActionResult can_mix(Thing& thing1,
+                                 Thing& thing2,
                                  unsigned int& action_time);
 
     /// Return whether the Entity can put thing into container.
     /// It is recommended that any derived classes first call the base method
     /// before proceeding with their own checks.
-    /// @param[in] thing_id Thing to put in.
-    /// @param[in] container_id Thing to put it into.
+    /// @param[in] thing Thing to put in.
+    /// @param[in] container Thing to put it into.
     /// @return ActionResult indicating what happened.
-    virtual ActionResult can_put_into(ThingId thing_id, ThingId container_id,
+    virtual ActionResult can_put_into(Thing& thing,
+                                      Thing& container,
                                       unsigned int& action_time);
 
     /// Attempt to put a thing into a container.
-    bool put_into(ThingId thing_id, ThingId container_id,
+    bool put_into(Thing& thing,
+                  std::shared_ptr<Thing> container_sptr,
                   unsigned int& action_time);
 
     /// Return whether the Entity can take a thing out of its container.
     /// It is recommended that any derived classes first call the base method
     /// before proceeding with their own checks.
-    /// @param[in] thing_id Thing to take out.
+    /// @param[in] thing Thing to take out.
     /// @return ActionResult indicating what happened.
-    virtual ActionResult can_take_out(ThingId thing_id,
+    virtual ActionResult can_take_out(Thing& thing,
                                       unsigned int& action_time);
 
     /// Attempt to take a thing out of its container.
-    bool take_out(ThingId thing_id, unsigned int& action_time);
+    bool take_out(Thing& thing, unsigned int& action_time);
 
     /// Attempt to mix two things.
-    bool mix(ThingId thing1_id, ThingId thing2_id, unsigned int& action_time);
+    bool mix(Thing& thing1,
+             Thing& thing2,
+             unsigned int& action_time);
 
     /// Attempt to move in a particular direction.
     /// @param[in] direction Direction to move in
@@ -289,48 +292,49 @@ class Entity :
     /// as the Entity, and that the Entity's inventory can contain it.
     /// It is recommended that any derived classes first call the base method
     /// before proceeding with their own checks.
-    /// @param[in] thing_id Thing to try to pick up
+    /// @param[in] thing Thing to try to pick up
     /// @param[out] action_time The time it will take to pick it up
     /// @return ActionResult indicating what happened.
-    virtual ActionResult can_pick_up(ThingId thing_id,
+    virtual ActionResult can_pick_up(Thing& thing,
                                      unsigned int& action_time);
 
     /// Attempt to pick a thing up.
-    /// @param[in] thing_id Thing to try to pick up
+    /// @param[in] thing Thing to try to pick up
     /// @param[out] action_time The time it took to pick up
     /// @return true if object is picked up, false if not
-    bool pick_up(ThingId thing_id, unsigned int& action_time);
+    bool pick_up(Thing& thing, unsigned int& action_time);
 
-    virtual ActionResult can_read(ThingId thing_id, unsigned int& action_time);
+    virtual ActionResult can_read(Thing& thing, unsigned int& action_time);
 
-    bool read(ThingId thing_id, unsigned int& action_time);
+    bool read(Thing& thing, unsigned int& action_time);
 
-    virtual ActionResult can_toss(ThingId thing_id, unsigned int& action_time);
+    virtual ActionResult can_toss(Thing& thing, unsigned int& action_time);
 
     /// Attempt to toss/throw a thing in a particular direction.
-    bool toss(ThingId thing_id, Direction& direction,
+    bool toss(Thing& thing,
+              Direction& direction,
               unsigned int& action_time);
 
-    virtual ActionResult can_deequip(ThingId thing_id,
+    virtual ActionResult can_deequip(Thing& thing,
                                      unsigned int& action_time);
 
     /// Attempt to de-equip (remove) a thing.
-    bool deequip(ThingId thing_id, unsigned int& action_time);
+    bool deequip(Thing& thing, unsigned int& action_time);
 
-    virtual ActionResult can_equip(ThingId thing_id, unsigned int& action_time);
+    virtual ActionResult can_equip(Thing& thing, unsigned int& action_time);
 
     /// Attempt to equip (wear) a thing.
-    bool equip(ThingId thing_id, unsigned int& action_time);
+    bool equip(std::shared_ptr<Thing> thing, unsigned int& action_time);
 
-    virtual ActionResult can_wield(ThingId thing_id,
+    virtual ActionResult can_wield(Thing& thing,
                                    unsigned int hand,
                                    unsigned int& action_time);
 
     /// Attempt to wield a thing.
-    /// @param[in] thing_id Thing to wield, or 0 if unwielding everything.
+    /// @param[in] thing Thing to wield, or empty ptr if unwielding everything.
     /// @param[in] hand Hand to wield it in.
     /// @param[out] action_time Time it takes to wield.
-    bool wield(ThingId thing_id,
+    bool wield(std::shared_ptr<Thing> thing,
                unsigned int hand,
                unsigned int& action_time);
 
@@ -343,18 +347,38 @@ class Entity :
     /// @todo Implement paralysis counter, and/or other reasons to be immobile.
     virtual bool can_currently_move() const;
 
+    /// Provide light to this Entity's surroundings.
+    /// Calls light_up_surroundings() for each Thing in its inventory,
+    /// regardless of whether the Entity is opaque.
+    /// @todo Change this so only wielded or worn items can contribute to
+    ///       lighting the surroundings, unless the Entity is
+    ///       semi-transparent. Might be a pain in the ass to players,
+    ///       though, even if it is a bit more realistic.
+    virtual void light_up_surroundings();
+
+    /// Receive light from the specified LightSource.
+    /// The default behavior is to pass the light source to the location.
+    /// @todo Change this so only wielded or worn items can contribute to
+    ///       lighting the surroundings, unless the Entity is
+    ///       semi-transparent. Might be a pain in the ass to players,
+    ///       though, even if it is a bit more realistic.
+    virtual void be_lit_by(LightSource& light);
+
   protected:
     Entity();
     Entity(Entity const& original);
 
-    /// Do any subclass-specific processing; called by do_process().
+    /// Process this Entity for one tick.
+    virtual bool _do_process() override final;
+
+    /// Do any subclass-specific processing; called by _do_process().
     /// This function is particularly useful if the subclass is able to do
     /// specialized actions such as rise from the dead after a time (as in
     /// NetHack trolls).
     /// @warning In order to support the aforementioned rising from the dead,
     ///          this function is called <i>regardless of the Entity's HP</>!
     ///          Keep this in mind when implementing specialized behavior.
-    virtual void _do_process();
+    virtual void _do_process_specific();
 
     /// Decrement the busy counter if greater than 0.
     /// Returns true if the counter has reached 0, false otherwise.

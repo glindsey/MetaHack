@@ -88,8 +88,8 @@ bool MapDiamond::create(GeoVector vec)
          for (int yCheck = yCenter - (diamondHalfSize + 1);
                   yCheck <= yCenter + (diamondHalfSize + 1); ++yCheck)
          {
-           MapTile& tile = get_map().get_tile(xCheck, yCheck);
-           if (tile.is_empty_space())
+           auto& tile = get_map().get_tile(xCheck, yCheck);
+           if (tile->is_empty_space())
            {
              okay = false;
              break;
@@ -111,8 +111,8 @@ bool MapDiamond::create(GeoVector vec)
           {
             int xCoord = xCenter + xCounter;
             int yCoord = yCenter + yCounter;
-            MapTile& tile = get_map().get_tile(xCoord, yCoord);
-            tile.set_type(MapTileType::FloorStone);
+            auto& tile = get_map().get_tile(xCoord, yCoord);
+            tile->set_type(MapTileType::FloorStone);
           }
         }
 
@@ -133,9 +133,9 @@ bool MapDiamond::create(GeoVector vec)
 
         /// @todo Put either a door or an open area at the starting coords.
         ///       Right now we just make it an open area.
-        MapTile& startTile = get_map().get_tile(startingCoords.x,
-                                              startingCoords.y);
-        startTile.set_type(MapTileType::FloorStone);
+        auto& startTile = get_map().get_tile(startingCoords.x,
+                                             startingCoords.y);
+        startTile->set_type(MapTileType::FloorStone);
 
         return true;
       }

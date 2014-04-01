@@ -4,16 +4,14 @@
 #include "ActionResult.h"
 #include "BodyPart.h"
 #include "Direction.h"
-#include "IsType.h"
+#include "GameObject.h"
 #include "MapId.h"
-#include "ThingId.h"
 
 #include <memory>
 #include <string>
 #include <SFML/Graphics.hpp>
 
 // Forward declarations
-class Container;
 class Entity;
 class MapTile;
 class Inventory;
@@ -22,10 +20,12 @@ class ThingFactory;
 
 // Typedef for the factory method.
 class Thing;
-typedef Thing* (*ThingCreator)();
+using ThingCreator = std::shared_ptr<Thing>(*)(void);
 
 // Thing is any object in the game, animate or not.
-class Thing
+class Thing :
+  public GameObject,
+  public std::enable_shared_from_this<Thing>
 {
   friend class ThingFactory;
 
@@ -34,30 +34,52 @@ class Thing
   struct Qualities
   {
     int physical_mass;                      ///< Mass of the object
-    Direction direction = Direction::None;  ///< Direction the thing is facing.
-    bool magic_autolocking;                 ///< True = magic locks on equip
-    bool magic_locked;
+    bool open;
+    bool locked;
+    bool autobinds;                         ///< True = magically binds on equip
+    bool bound;
     bool invisible;
   };
 
   public:
     virtual ~Thing();
 
-    // Get this thing's number.
-    ThingId get_id() const;
+    /// Copy this Thing and return a shared pointer to it.
+    virtual std::shared_ptr<Thing> clone();
+
+    /// Returns true if this thing is the current player.
+    /// By default, returns false. Overridden by Entity class.
+    virtual bool is_player() const;
+
+    /// Get the quantity this thing represents.
+    virtual unsigned int get_quantity() const;
+
+    /// Set the quantity this thing represents.
+    void set_quantity(unsigned int quantity);
 
     /// Return the location of this thing.
-    ThingId get_location_id() const;
+    std::shared_ptr<Thing> get_location() const;
 
-    /// Trace this thing's location back to map coordinates, if possible.
-    /// This function calls itself recursively, tracing up the location chain
-    /// until it gets to a MapTile or to itself.  (The only Thing that is
-    /// allowed to have itself as its location is Limbo.)
-    ThingId get_root_id() const;
+    /// Returns a reference to the inventory.
+    Inventory& get_inventory();
 
-    /// Trace this thing's location back to either a MapTile, an Entity, or
-    /// Limbo.  Used to determine who "owns" the current object, if anybody.
-    ThingId get_owner_id() const;
+    /// Returns the size of this Thing's inventory.
+    /// @return The inventory size, or a special value.
+    /// @retval 0 This Location cannot hold other things (but still remains
+    ///           a Location).
+    /// @retval -1 This Location has an infinite inventory size.
+    int const get_inventory_size() const;
+
+    /// Sets the size of this Thing's inventory.
+    /// @param number Size of the inventory, or a special value.
+    /// @see get_inventory_size
+    void set_inventory_size(int number);
+
+    /// Returns true if this thing is inside another Thing.
+    bool is_inside_another_thing() const;
+
+    /// Get the MapTile this thing is on, or nullptr if not on a map.
+    MapTile* get_maptile() const;
 
     /// Return the MapId this Thing is currently on, or 0 if not on a map.
     MapId get_map_id() const;
@@ -74,25 +96,49 @@ class Thing
     /// Return this thing's mass.
     int get_single_mass() const;
 
-    /// Set whether this item is magically locked.
-    void set_magically_locked(bool locked);
+    /// Set whether this item is magically bound.
+    void set_bound(bool bound);
 
-    /// Set whether this item autolocks.
-    void set_magically_autolocks(bool autolocks);
+    /// Set whether this item autobinds.
+    void set_autobinds(bool autobinds);
 
-    /// Get whether this item is magically locked.
-    bool is_magically_locked() const;
+    /// Get whether this item is magically bound.
+    bool is_bound() const;
 
     /// Get whether this item autolocks.
-    bool magically_autolocks() const;
+    bool get_autobinds() const;
+
+    /// Returns true if this thing can be opened/closed.
+    /// By default, returns false. Derived classes can override this.
+    virtual bool is_openable() const;
+
+    /// Returns true if this thing can be locked/unlocked.
+    virtual bool is_lockable() const;
+
+    /// Get whether this thing is opened.
+    /// If is_openable() is false, this function always returns true.
+    /// @return True if the thing is open, false otherwise.
+    bool is_open() const;
+
+    /// Set whether this thing is open.
+    /// If is_openable() is false, this function does nothing.
+    /// @return True if the thing is open, false otherwise.
+    bool set_open(bool open);
+
+    /// Get whether this thing is locked.
+    /// If is_openable() or is_lockable() is false, this function always
+    /// returns false.
+    /// @return True if the thing is locked, false otherwise.
+    bool is_locked() const;
+
+    /// Set whether this thing is locked.
+    /// If is_openable() or is_lockable() is false, this function does nothing.
+    /// @return True if the thing is locked, false otherwise.
+    bool set_locked(bool open);
 
     /// Get a const pointer to the Qualities struct.
     /// This is used by Aggregates to compare when combining objects.
     Qualities const* get_qualities_pointer() const;
-
-    /// Compare this Thing's type with another one, and return true if they are
-    /// identical.
-    bool has_same_type_as(Thing const& other) const;
 
     /// Compare this Thing's qualities with another one, and return true if
     /// they are identical.
@@ -101,7 +147,13 @@ class Thing
     /// Return this thing's description.
     /// Calls the overridden _get_description() and adds adjective qualifiers
     /// (such as "fireproof", "waterproof", etc.)
-    std::string get_description() const;
+    virtual std::string get_description() const override final;
+
+    /// Get the thing's proper name (if any).
+    std::string get_proper_name() const;
+
+    /// Set this thing's proper name.
+    void set_proper_name(std::string name);
 
     /// Return a string that identifies this thing.
     /// By default, returns "the" and a description of the thing, such as
@@ -148,10 +200,6 @@ class Thing
     /// Return this thing's mass.
     virtual int get_mass() const;
 
-    /// Get the quantity this thing represents.
-    /// For a Thing that isn't an Aggregate, this is always 1.
-    virtual unsigned int get_quantity() const;
-
     /// Return this object's plural.
     /// By default, returns _get_description() plus "s", but this can be
     /// overridden by child classes (for example "djinn" -> "djinni").
@@ -180,9 +228,9 @@ class Thing
     /// @param use_lighting If true, calculate lighting when adding.
     ///                     If false, store directly w/white bg color.
     /// @param frame Animation frame number.
-    void add_vertices_to(sf::VertexArray& vertices,
-                         bool use_lighting = true,
-                         int frame = 0);
+    virtual void add_vertices_to(sf::VertexArray& vertices,
+                                 bool use_lighting = true,
+                                 int frame = 0) override;
 
     /// Draw this Thing onto a RenderTexture, at the specified coordinates.
     /// @param target Texture to draw onto.
@@ -197,37 +245,24 @@ class Thing
                  bool use_lighting = true,
                  int frame = 0);
 
-    /// Simple check to see if a Thing is a Container.
-    bool is_container() const;
-
-    /// Simple check to see if a Thing is an Entity.
-    bool is_entity() const;
-
-    /// Simple check to see if a Thing is a MapTile.
-    bool is_maptile() const;
-
     /// Simple check to see if a Thing is opaque.
     virtual bool is_opaque() const;
 
-    /// Returns whether the container can hold a certain thing.
-    /// Overridden by subclasses; defaults to returning false.
-    /// @param thing Thing to check.
-    /// @return true if the Container can hold the Thing, false otherwise.
-    virtual ActionResult can_contain(Thing& thing) const;
-
     /// Provide light to this Thing's surroundings.
-    /// The default behavior is to do nothing.
+    /// If Thing is not opaque, calls light_up_surroundings() for each Thing
+    /// in its inventory.
     virtual void light_up_surroundings();
 
     /// Receive light from the specified LightSource.
-    /// The default behavior is to do nothing.
+    /// The default behavior is to pass the light source to the location if
+    /// this Thing is opaque.
     virtual void be_lit_by(LightSource& light);
 
-    /// Attempt to move this Thing to a location.
-    virtual bool move_into(ThingId location_id);
+    /// Attempt to destroy this Thing.
+    virtual void destroy();
 
-    /// Attempt to move this Thing into a location, by reference.
-    virtual bool move_into(Container& location);
+    /// Attempt to move this Thing into a location.
+    virtual bool move_into(std::shared_ptr<Thing> new_location);
 
     /// Return whether or not this thing can move from its current location.
     /// The default behavior for this is to return true.
@@ -257,20 +292,8 @@ class Thing
     /// If thing is not equippable, return BodyPart::Count.
     virtual BodyPart equippable_on() const;
 
-    /// Process this Thing for a single tick.
-    /// By default, does nothing and returns true.
-    /// The function returns false to indicate to its caller that it no longer
-    /// exists.  This is <i>a courtesy only</i> -- it is up to the Thing to
-    /// move itself into Limbo ("this->move_into(TF.limbo_id)") if it
-    /// self-destructs!
-    /// @return true if the Thing continues to exist after the tick;
-    ///         false if the Thing ceases to exist.
-    virtual bool do_process();
-
-    /// Gather the ThingIds of this Thing and those underneath it.
-    /// This function is used to enumerate all Things on a map in order to
-    /// process them for a single game tick.
-    virtual void gather_thing_ids(std::vector<ThingId>& ids);
+    /// Process this Thing and its inventory for a single tick.
+    bool do_process();
 
     /// Perform an action when this thing is activated.
     /// If this function returns false, the action is aborted.
@@ -353,8 +376,20 @@ class Thing
     /// The default behavior is to do nothing and return false.
     bool perform_action_fired_by(Entity& entity, Direction direction);
 
+    /// Returns whether the Thing can merge with another Thing.
+    /// Calls an overridden subclass function.
+    bool can_merge_with(Thing const& thing) const;
+
+    /// Returns whether the Thing can hold a certain thing.
+    /// If Thing's inventory size is 0, returns
+    /// ActionResult::FailureTargetNotAContainer.
+    /// Otherwise, calls private virtual method _can_contain().
+    /// @param thing Thing to check.
+    /// @return ActionResult specifying whether the thing can be held here.
+    ActionResult can_contain(Thing& thing) const;
+
     /// Return the type of this thing.
-    virtual char const* get_thing_type() const final;
+    //virtual char const* get_thing_type() const final;
 
     /// Returns whether this Thing can hold a liquid.
     virtual bool is_liquid_carrier() const;
@@ -369,8 +404,8 @@ class Thing
     virtual bool is_shatterable() const;
 
   protected:
-    /// Constructor, callable only by ThingFactory.
-    Thing();
+    /// Constructor
+    Thing(int inventory_size);
 
     /// Copy Constructor
     Thing(const Thing& original);
@@ -378,16 +413,21 @@ class Thing
     struct Impl;
     std::unique_ptr<Impl> impl;
 
-    // Set this thing's number.
-    void set_id(ThingId id);
-
     /// Set the location of this thing.
     /// Does no checks, nor does it update the source/target inventories.
     /// Those are the responsibility of the caller.
-    void set_location_id(ThingId target);
+    void set_location(std::weak_ptr<Thing> target);
 
     /// Static method initializing font sizes.
     static void initialize_font_sizes();
+
+    /// Does the actual call to light surroundings.
+    /// Default behavior is to do nothing.
+    virtual void _light_up_surroundings();
+
+    /// Receive light from the specified LightSource.
+    /// The default behavior is to do nothing.
+    virtual void _be_lit_by(LightSource& light);
 
     /// Ratio of desired height to font size.
     static float font_line_to_point_ratio_;
@@ -396,6 +436,12 @@ class Thing
     static sf::Color const wall_outline_color_;
 
   private:
+    /// Returns whether the Thing can hold a certain thing.
+    virtual ActionResult _can_contain(Thing& thing) const;
+
+    /// Gets this location's maptile.
+    virtual MapTile* _get_maptile() const;
+
     /// Return this thing's description.
     virtual std::string _get_description() const = 0;
 
@@ -417,6 +463,14 @@ class Thing
     virtual bool _perform_action_unwielded_by(Entity& entity);
     virtual bool _perform_action_wielded_by(Entity& entity);
     virtual bool _perform_action_fired_by(Entity& entity, Direction direction);
+
+    /// Process this Thing for a single tick.
+    /// By default, does nothing and returns true.
+    /// The function returns false to indicate to its parent that it no longer
+    /// exists and should be deleted.
+    /// @return true if the Thing continues to exist after the tick;
+    ///         false if the Thing ceases to exist.
+    virtual bool _do_process();
 };
 
 #endif // THING_H

@@ -2,10 +2,9 @@
 
 ChestWooden ChestWooden::prototype;
 
-ChestWooden::ChestWooden() : Container()
+ChestWooden::ChestWooden() : Thing(-1)
 {
   this->set_open(false);
-  this->set_inventory_size(30);
 }
 
 ChestWooden::~ChestWooden()           {}

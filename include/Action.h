@@ -1,10 +1,13 @@
 #ifndef ACTION_H
 #define ACTION_H
 
+#include <memory>
 #include <vector>
 
 #include "Direction.h"
-#include "ThingId.h"
+
+// Forward declarations
+class Thing;
 
 // Struct describing an action to execute.
 struct Action
@@ -12,10 +15,10 @@ struct Action
   Action()
   {
     type = Type::None;
-    thing_ids.clear();
+    things.clear();
     target_can_be_direction = false;
     target_can_be_thing = false;
-    target = static_cast<ThingId>(0);
+    target.reset();
     direction = Direction::None;
   }
 
@@ -36,7 +39,7 @@ struct Action
   } type;
 
   /// Thing(s) to perform the action on.
-  std::vector<ThingId> thing_ids;
+  std::vector< std::weak_ptr<Thing> > things;
 
   /// If true, action can take a Thing as a target.
   bool target_can_be_thing;
@@ -45,7 +48,7 @@ struct Action
   bool target_can_be_direction;
 
   /// Target Thing for the action (if any).
-  ThingId target;
+  std::weak_ptr<Thing> target;
 
   /// Direction for the action (if any).
   Direction direction;

@@ -3,7 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "Entity.h"
+#include "GameObject.h"
 #include "Inventory.h"
 #include "MapId.h"
 #include "MapTileType.h"
@@ -11,10 +11,12 @@
 
 // Forward declarations
 class Entity;
+class Floor;
+class LightSource;
 
-class MapTile : public Container
+class MapTile : public GameObject
 {
-  friend class ThingFactory;
+  friend class Map;
 
   public:
     virtual ~MapTile();
@@ -26,8 +28,36 @@ class MapTile : public Container
       float intensity;   ///< Intensity of the light.
     };
 
+    /// Get the tile's floor object.
+    std::shared_ptr<Thing> get_floor() const;
+
+    /// Return this tile's description.
+    virtual std::string get_description() const override final;
+
     /// Return the coordinates of the tile representing the thing.
     virtual sf::Vector2u get_tile_sheet_coords(int frame) const;
+
+    /// Add this MapTile to a VertexArray to be drawn.
+    /// @param vertices Array to add vertices to.
+    /// @param use_lighting If true, calculate lighting when adding.
+    ///                     If false, store directly w/white bg color.
+    /// @param frame Animation frame number.
+    virtual void add_vertices_to(sf::VertexArray& vertices,
+                                 bool use_lighting = true,
+                                 int frame = 0) override;
+
+    /// Draw this MapTile onto a RenderTexture, at the specified coordinates.
+    /// @param target Texture to draw onto.
+    /// @param target_coords Coordinates to draw the MapTile at.
+    /// @param target_size Target size of thing, in pixels.
+    /// @param use_lighting If true, calculate lighting when adding.
+    ///                     If false, store directly w/white bg color.
+    /// @param frame Animation frame number.
+    virtual void draw_to(sf::RenderTexture& target,
+                         sf::Vector2f target_coords,
+                         unsigned int target_size = 0,
+                         bool use_lighting = true,
+                         int frame = 0) override;
 
     /// Sets the map tile type, without doing gameplay checks.
     /// Used to set up the map before gameplay begins.
@@ -66,13 +96,17 @@ class MapTile : public Container
     void clear_light_influences();
 
     /// Add a light influence to the tile.
-    void add_light_influence(ThingId source, LightInfluence influence);
+    void add_light_influence(LightSource* source,
+                             LightInfluence influence);
 
     /// Get the light shining on a tile.
     sf::Color get_light_level() const;
 
+    /// Get the light shining on a tile wall.
+    sf::Color get_wall_light_level(Direction direction) const;
+
     /// Get whether the tile is opaque or not.
-    virtual bool is_opaque() const override;
+    bool is_opaque() const;
 
     void draw_highlight(sf::RenderTarget& target,
                         sf::Vector2f location,
@@ -99,10 +133,6 @@ class MapTile : public Container
                       bool se_is_empty, bool s_is_empty,
                       bool sw_is_empty, bool w_is_empty);
 
-    virtual ActionResult can_contain(Thing& thing) const override;
-
-    virtual bool readable_by(Entity const& entity) const override;
-
     /// Get the coordinates associated with a tile.
     static sf::Vector2f get_pixel_coords(int x, int y);
 
@@ -111,16 +141,11 @@ class MapTile : public Container
 
   protected:
     /// Constructor, callable only by ThingFactory.
-    MapTile(MapId mapId, int x, int y);
+    MapTile(sf::Vector2i coords, MapId mapId);
 
   private:
     struct Impl;
     std::unique_ptr<Impl> impl;
-
-    /// Return this tile's description.
-    virtual std::string _get_description() const override;
-
-    virtual ActionResult _perform_action_read_by(Entity& entity) override;
 };
 
 #endif // MAPTILE_H

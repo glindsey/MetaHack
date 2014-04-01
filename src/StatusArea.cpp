@@ -38,7 +38,7 @@ std::string StatusArea::render_contents(int frame)
   sf::RenderTexture& bg_texture = get_bg_texture();
 
   // The player.
-  Entity& player = TF.get_player();
+  Entity& player = *(TF.get_player().get());
 
   int line_spacing = the_default_font.getLineSpacing(Settings.text_default_size);
 

@@ -1,17 +1,17 @@
 #include "Thing.h"
 
+#include <boost/lexical_cast.hpp>
 #include <iomanip>
+#include <memory>
 #include <sstream>
 #include <vector>
 
 #include "App.h"
 #include "ConfigSettings.h"
-#include "Container.h"
 #include "Direction.h"
 #include "ErrorHandler.h"
 #include "Gender.h"
 #include "Inventory.h"
-#include "IsType.h"
 #include "LightSource.h"
 #include "Map.h"
 #include "MapTile.h"
@@ -21,9 +21,13 @@
 
 struct Thing::Impl
 {
-  ThingId thing_id;
-  ThingId location_id;
+  std::weak_ptr<Thing> location;
+  Inventory inventory;
+  int inventory_size;
+  unsigned int quantity;
+  Direction direction = Direction::None;  ///< Direction the thing is facing.
   Qualities qualities;
+  std::string proper_name;
 };
 
 // Static member initialization.
@@ -37,88 +41,128 @@ void Thing::initialize_font_sizes()
   font_line_to_point_ratio_ = 100.0f / static_cast<float>(the_default_font.getLineSpacing(100));
 }
 
-Thing::Thing()
+Thing::Thing(int inventory_size)
   : impl(new Impl())
 {
-  impl->thing_id = static_cast<ThingId>(0);
-  impl->location_id = static_cast<ThingId>(0);
+  impl->inventory_size = inventory_size;
   impl->qualities.physical_mass = 1;
+  impl->quantity = 1;
 }
 
 Thing::Thing(const Thing& original)
   : impl(new Impl())
 {
-  impl->qualities.direction = original.get_facing_direction();
-  impl->qualities.physical_mass = original.get_mass();
-  // GSL NOTE: Inventory is NOT copied!
+  impl->inventory_size = original.get_inventory_size();
+  impl->location = original.get_location();
+  impl->direction = original.get_facing_direction();
+  impl->quantity = original.get_quantity();
+  impl->qualities = *(original.get_qualities_pointer());
 }
 
 Thing::~Thing()
 {
-  //dtor
 }
 
-ThingId Thing::get_id() const
+std::shared_ptr<Thing> Thing::clone()
 {
-  return impl->thing_id;
+  return std::shared_ptr<Thing>();
 }
 
-ThingId Thing::get_location_id() const
+bool Thing::is_player() const
 {
-  return impl->location_id;
+  return false;
 }
 
-ThingId Thing::get_root_id() const
+unsigned int Thing::get_quantity() const
 {
-  if (this->get_location_id() != this->get_id())
+  return impl->quantity;
+}
+
+void Thing::set_quantity(unsigned int quantity)
+{
+  impl->quantity = quantity;
+}
+
+std::shared_ptr<Thing> Thing::get_location() const
+{
+  return impl->location.lock();
+}
+
+Inventory& Thing::get_inventory()
+{
+  return impl->inventory;
+}
+
+int const Thing::get_inventory_size() const
+{
+  return impl->inventory_size;
+}
+
+void Thing::set_inventory_size(int number)
+{
+  /// @todo Don't allow shrinking below current inventory size, or perhaps
+  ///       automatically pop things out that don't fit!
+  impl->inventory_size = number;
+}
+
+bool Thing::is_inside_another_thing() const
+{
+  auto location = impl->location.lock();
+  if (location == nullptr)
   {
-    Thing& parentThing = TF.get(this->get_location_id());
-    return parentThing.get_root_id();
+    // Thing is a part of the MapTile such as the floor.
+    return false;
+  }
+  auto location2 = location->get_location();
+  if (location2 == nullptr)
+  {
+    // Thing is directly on the floor.
+    return false;
+  }
+  return true;
+}
+MapTile* Thing::get_maptile() const
+{
+  auto location = impl->location.lock();
+  if (location == nullptr)
+  {
+    return _get_maptile();
   }
   else
   {
-    return this->get_id();
-  }
-}
-
-ThingId Thing::get_owner_id() const
-{
-  ThingId location_id = get_location_id();
-  Container& location = TF.get_container(location_id);
-  if (location.is_maptile() ||
-      location.is_entity() ||
-      location_id == this->get_id())
-  {
-    return location_id;
-  }
-  else
-  {
-    return location.get_owner_id();
+    return location->get_maptile();
   }
 }
 
 MapId Thing::get_map_id() const
 {
-  Container& location = TF.get_container(get_location_id());
-  if (location.is_maptile())
+  auto location = impl->location.lock();
+  if (location == nullptr)
   {
-    MapTile& tile = TF.get_tile(get_location_id());
-    return tile.get_map_id();
+    MapTile* maptile = _get_maptile();
+    if (maptile != nullptr)
+    {
+      return maptile->get_map_id();
+    }
+    else
+    {
+      return static_cast<MapId>(0);
+    }
   }
   else
   {
-    return MapFactory::null_map_id;
+    return location->get_map_id();
   }
 }
 
 void Thing::set_facing_direction(Direction d)
 {
-  impl->qualities.direction = d;
+  impl->direction = d;
 }
 
 Direction Thing::get_facing_direction() const
 {
-  return impl->qualities.direction;
+  return impl->direction;
 }
 
 void Thing::set_single_mass(int mass)
@@ -131,34 +175,69 @@ int Thing::get_single_mass() const
   return impl->qualities.physical_mass;
 }
 
-void Thing::set_magically_locked(bool locked)
+void Thing::set_bound(bool bound)
 {
-  impl->qualities.magic_locked = locked;
+  impl->qualities.bound = bound;
 }
 
-void Thing::set_magically_autolocks(bool autolocks)
+void Thing::set_autobinds(bool autobinds)
 {
-  impl->qualities.magic_autolocking = autolocks;
+  impl->qualities.autobinds = autobinds;
 }
 
-bool Thing::is_magically_locked() const
+bool Thing::is_bound() const
 {
-  return impl->qualities.magic_locked;
+  return impl->qualities.bound;
 }
 
-bool Thing::magically_autolocks() const
+bool Thing::get_autobinds() const
 {
-  return impl->qualities.magic_autolocking;
+  return impl->qualities.autobinds;
+}
+
+bool Thing::is_openable() const
+{
+  return false;
+}
+
+bool Thing::is_lockable() const
+{
+  return false;
+}
+
+bool Thing::is_open() const
+{
+  return impl->qualities.open;
+}
+
+bool Thing::set_open(bool open)
+{
+  if (is_openable())
+  {
+    impl->qualities.open = open;
+  }
+
+  return impl->qualities.open;
+}
+
+bool Thing::is_locked() const
+{
+  return impl->qualities.locked;
+}
+
+bool Thing::set_locked(bool locked)
+{
+  if (is_lockable())
+  {
+    impl->qualities.locked = locked;
+  }
+
+  return impl->qualities.locked;
 }
 
 Thing::Qualities const* Thing::get_qualities_pointer() const
 {
   return &(impl->qualities);
-}
-
-bool Thing::has_same_type_as(Thing const& other) const
-{
-  return (typeid(*this) == typeid(other));
 }
 
 bool Thing::has_same_qualities_as(Thing const& other) const
@@ -175,60 +254,83 @@ std::string Thing::get_description() const
   return _get_description();
 }
 
+std::string Thing::get_proper_name() const
+{
+  return impl->proper_name;
+}
+
+void Thing::set_proper_name(std::string name)
+{
+  impl->proper_name = name;
+}
+
 std::string Thing::get_name() const
 {
-  // If the thing is YOU, use YOU.
-  if (impl->thing_id == TF.get_player_id())
+  std::string name;
+
+  auto location = this->get_location();
+  unsigned int quantity = this->get_quantity();
+
+  if (location)
   {
-    return "you";
+    name = location->get_possessive() + " ";
   }
 
-  std::string name;
-  Container& owner = TF.get_container(get_owner_id());
-
-  name = owner.get_possessive() + " " + get_description();
-
-  /// @todo If the Thing has a proper name, use that.
+  if (quantity == 1)
+  {
+    name += get_description();
+  }
+  else if (quantity > 1)
+  {
+    name += boost::lexical_cast<std::string>(get_quantity()) + " " +
+            get_plural();
+  }
 
   return name;
 }
 
 std::string Thing::get_def_name() const
 {
-  // If the thing is YOU, use YOU.
-  if (impl->thing_id == TF.get_player_id())
-  {
-    return "you";
-  }
-
   std::string name;
 
-  std::string description = get_description();
-  name = "the " + description;
+  // If the Thing has a proper name, use that.
+  if (get_quantity() == 1)
+  {
+    std::string description = get_description();
+    name = "the " + description;
+  }
+  else
+  {
+    name = boost::lexical_cast<std::string>(get_quantity()) + " " +
+          get_plural();
+  }
 
   return name;
 }
 
 std::string Thing::get_indef_name() const
 {
-  // If the thing is YOU, use YOU.
-  if (impl->thing_id == TF.get_player_id())
-  {
-    return "you";
-  }
-
   std::string name;
 
-  std::string description = get_description();
-  name = getIndefArt(description) + " " + description;
+  // If the Thing has a proper name, use that.
+  if (get_quantity() == 1)
+  {
+    std::string description = get_description();
+    name = getIndefArt(description) + " " + description;
+  }
+  else
+  {
+    name = boost::lexical_cast<std::string>(get_quantity()) + " " +
+          get_plural();
+  }
 
   return name;
 }
 
 std::string const& Thing::choose_verb(std::string const& verb12,
-                                     std::string const& verb3) const
+                                      std::string const& verb3) const
 {
-  if (get_id() == TF.get_player_id())
+  if (this == TF.get_player().get())
   {
     return verb12;
   }
@@ -241,11 +343,6 @@ std::string const& Thing::choose_verb(std::string const& verb12,
 int Thing::get_mass() const
 {
   return get_single_mass();
-}
-
-unsigned int Thing::get_quantity() const
-{
-  return 1;
 }
 
 std::string Thing::get_plural() const
@@ -282,7 +379,7 @@ std::string Thing::get_possessive() const
 {
   static std::string const your = std::string("your");
 
-  if (get_id() == TF.get_player_id())
+  if (this == TF.get_player().get())
   {
     return your;
   }
@@ -315,31 +412,19 @@ void Thing::add_vertices_to(sf::VertexArray& vertices,
   float ts = static_cast<float>(Settings.map_tile_size);
   float ts2 = ts * 0.5;
 
-  ThingId root_id = this->get_root_id();
-  if (!TF.is_a_tile(root_id))
+  MapTile* root_tile = this->get_maptile();
+  if (!root_tile)
   {
     // Item's root location isn't a MapTile, so it can't be rendered.
     return;
   }
 
-  MapTile& root_tile = dynamic_cast<MapTile&>(TF.get(root_id));
-  sf::Vector2i const& coords = root_tile.get_coords();
+  sf::Vector2i const& coords = root_tile->get_coords();
 
   sf::Color thing_color;
   if (use_lighting)
   {
-    if (TF.is_a_tile(this->get_id()))
-    {
-      sf::Color light = root_tile.get_light_level();
-      thing_color.r = light.r * 0.8;
-      thing_color.g = light.g * 0.8;
-      thing_color.b = light.b * 0.8;
-      thing_color.a = light.a * 0.8;
-    }
-    else
-    {
-      thing_color = root_tile.get_light_level();
-    }
+    thing_color = root_tile->get_light_level();
   }
   else
   {
@@ -353,7 +438,7 @@ void Thing::add_vertices_to(sf::VertexArray& vertices,
   sf::Vector2f vNE(location.x + ts2, location.y - ts2);
   sf::Vector2u tile_coords = this->get_tile_sheet_coords(frame);
 
-  TileSheet::add_vertices(vertices,
+  TileSheet::add_quad(vertices,
                           tile_coords, thing_color,
                           vNW, vNE, vSW, vSE);
 }
@@ -364,14 +449,14 @@ void Thing::draw_to(sf::RenderTexture& target,
                     bool use_lighting,
                     int frame)
 {
-  ThingId root_id = this->get_root_id();
-  if (!TF.is_a_tile(root_id))
+  MapTile* root_tile = this->get_maptile();
+
+  if (!root_tile)
   {
     // Item's root location isn't a MapTile, so it can't be rendered.
     return;
   }
 
-  MapTile& root_tile = dynamic_cast<MapTile&>(TF.get(root_id));
   sf::RectangleShape rectangle;
   sf::IntRect texture_coords;
 
@@ -391,7 +476,7 @@ void Thing::draw_to(sf::RenderTexture& target,
   sf::Color thing_color;
   if (use_lighting)
   {
-    thing_color = root_tile.get_light_level();
+    thing_color = root_tile->get_light_level();
   }
   else
   {
@@ -407,58 +492,97 @@ void Thing::draw_to(sf::RenderTexture& target,
   target.draw(rectangle);
 }
 
-bool Thing::is_container() const
-{
-  return isType(this, Container const);
-}
-
-bool Thing::is_entity() const
-{
-  return isType(this, Entity const);
-}
-
-bool Thing::is_maptile() const
-{
-  return isType(this, MapTile const);
-}
-
 bool Thing::is_opaque() const
 {
   return true;
 }
 
-ActionResult Thing::can_contain(Thing& thing) const
-{
-  return ActionResult::FailureTargetNotAContainer;
-}
-
 void Thing::light_up_surroundings()
 {
-  // Default behavior does nothing
+  if (get_inventory_size() != 0)
+  {
+    if (!is_opaque())
+    {
+      auto& things = get_inventory().get_things();
+      for (auto& thing : things)
+      {
+        thing.second->light_up_surroundings();
+      }
+    }
+  }
+
+  _light_up_surroundings();
 }
 
 void Thing::be_lit_by(LightSource& light)
 {
-  // Default behavior does nothing
+  _be_lit_by(light);
+
+  if (!is_opaque())
+  {
+    auto location = get_location();
+    if (location)
+    {
+      location->be_lit_by(light);
+    }
+  }
 }
 
-bool Thing::move_into(ThingId new_location_id)
+void Thing::destroy()
 {
-  return move_into(TF.get_container(new_location_id));
+  // Try to lock our old location.
+  auto old_location = impl->location.lock();
+
+  if (get_inventory_size() != 0)
+  {
+    Inventory& inventory = get_inventory();
+    ThingMap const& things = inventory.get_things();
+
+    // Step through all contents of this Thing.
+    for (ThingPair thing : things)
+    {
+      if (old_location)
+      {
+        // Try to move this into the Thing's location.
+        bool success = thing.second->move_into(old_location);
+        if (!success)
+        {
+          // We couldn't move it, so just destroy it.
+          thing.second->destroy();
+        }
+      }
+      else
+      {
+        thing.second->destroy();
+      }
+    }
+  }
+
+  if (old_location)
+  {
+    old_location->get_inventory().remove(*this);
+  }
 }
 
-bool Thing::move_into(Container& new_location)
+bool Thing::move_into(std::shared_ptr<Thing> new_location)
 {
-  Container& old_location = TF.get_container(this->get_location_id());
+  ASSERT_CONDITION(new_location);
 
   if (is_movable())
   {
-    if (new_location.can_contain(*this) == ActionResult::Success)
+    if (new_location->can_contain(*this) == ActionResult::Success)
     {
-      if (new_location.get_inventory().add(impl->thing_id))
+      if (new_location->get_inventory().add(shared_from_this()))
       {
-        old_location.get_inventory().remove(impl->thing_id);
-        impl->location_id = new_location.get_id();
+        // Try to lock our old location.
+        auto old_location = impl->location.lock();
+        if (old_location != nullptr)
+        {
+          old_location->get_inventory().remove(*this);
+        }
+
+        // Set the location to the new location.
+        impl->location = new_location;
         return true;
       }
     }
@@ -504,13 +628,26 @@ BodyPart Thing::equippable_on() const
 
 bool Thing::do_process()
 {
-  return true;
-}
+  // Process inventory.
+  auto things = impl->inventory.get_things();
 
-void Thing::gather_thing_ids(std::vector<ThingId>& ids)
-{
-  // Not a Container, so just add this one ID.
-  ids.push_back(impl->thing_id);
+  for (auto iter = std::begin(things);
+            iter != std::end(things);
+            /* no increment */)
+  {
+    bool dead = iter->second->do_process();
+    if (dead)
+    {
+      things.erase(iter++);
+    }
+    else
+    {
+      ++iter;
+    }
+  }
+
+  // Process self last.
+  return _do_process();
 }
 
 bool Thing::perform_action_activated_by(Entity& entity)
@@ -570,11 +707,11 @@ bool Thing::perform_action_thrown_by(Entity& entity, Direction direction)
 
 bool Thing::perform_action_deequipped_by(Entity& entity, WearLocation& location)
 {
-  if (this->is_magically_locked())
+  if (this->is_bound())
   {
     std::string message;
     message = entity.get_name() + " cannot take off " + this->get_name() +
-              "; it is magically welded onto " +
+              "; it is magically bound to " +
               entity.get_possessive_adjective() + " " +
               entity.get_bodypart_description(location.part,
                                               location.number) + "!";
@@ -593,11 +730,11 @@ bool Thing::perform_action_equipped_by(Entity& entity, WearLocation& location)
 
   if (subclass_result == true)
   {
-    if (this->magically_autolocks())
+    if (this->get_autobinds())
     {
-        this->set_magically_locked(true);
+        this->set_bound(true);
         std::string message;
-        message = this->get_name() + " magically welds itself onto " +
+        message = this->get_name() + " magically binds itself to " +
                   entity.get_possessive() + " " +
                   entity.get_bodypart_description(location.part,
                                                   location.number) + "!";
@@ -610,11 +747,11 @@ bool Thing::perform_action_equipped_by(Entity& entity, WearLocation& location)
 
 bool Thing::perform_action_unwielded_by(Entity& entity)
 {
-  if (this->is_magically_locked())
+  if (this->is_bound())
   {
     std::string message;
     message = entity.get_name() + " cannot unwield " + this->get_name() +
-              "; it is magically welded onto " +
+              "; it is magically bound to " +
               entity.get_possessive_adjective() + " " +
               entity.get_bodypart_name(BodyPart::Hand) + "!";
     the_message_log.add(message);
@@ -632,11 +769,11 @@ bool Thing::perform_action_wielded_by(Entity& entity)
 
   if (subclass_result == true)
   {
-    if (this->magically_autolocks())
+    if (this->get_autobinds())
     {
-      this->set_magically_locked(true);
+      this->set_bound(true);
       std::string message;
-      message = this->get_name() + " magically welds itself onto " +
+      message = this->get_name() + " magically binds itself to " +
                 entity.get_possessive() + " " +
                 entity.get_bodypart_name(BodyPart::Hand) + "!";
       the_message_log.add(message);
@@ -651,10 +788,50 @@ bool Thing::perform_action_fired_by(Entity& entity, Direction direction)
   return _perform_action_fired_by(entity, direction);
 }
 
-char const* Thing::get_thing_type() const
+bool Thing::can_merge_with(Thing const& other) const
 {
-  return typeid(*this).name();
+  // FUCK IT, I'M USING RTTI HERE.
+  // I can probably craft a solution using CRTP and double-dispatch but I will
+  // almost certainly go insane figuring it out AND waste a ton of time.
+
+  // Things with different types can't merge (obviously).
+  if (typeid(other) != typeid(*this))
+  {
+    return false;
+  }
+
+  // Things with inventories can never merge.
+  if ((impl->inventory_size != 0) ||
+      (other.get_inventory_size() != 0))
+  {
+    return false;
+  }
+
+  // If the things have the same qualities, merge is okay.
+  if (this->has_same_qualities_as(other))
+  {
+    return true;
+  }
+
+  return false;
 }
+
+ActionResult Thing::can_contain(Thing& thing) const
+{
+  if (impl->inventory_size == 0)
+  {
+    return ActionResult::FailureTargetNotAContainer;
+  }
+  else
+  {
+    return _can_contain(thing);
+  }
+}
+
+//char const* Thing::get_thing_type() const
+//{
+//  return typeid(*this).name();
+//}
 
 bool Thing::is_liquid_carrier() const
 {
@@ -676,17 +853,32 @@ bool Thing::is_shatterable() const
   return false;
 }
 
-void Thing::set_id(ThingId id)
+void Thing::set_location(std::weak_ptr<Thing> target)
 {
-  impl->thing_id = id;
+  impl->location = target;
 }
 
-void Thing::set_location_id(ThingId target)
+void Thing::_light_up_surroundings()
 {
-  impl->location_id = target;
+  // default behavior does nothing
+}
+
+void Thing::_be_lit_by(LightSource& light)
+{
+  // default behavior does nothing
 }
 
 // *** PRIVATE METHODS ********************************************************
+
+MapTile* Thing::_get_maptile() const
+{
+  return nullptr;
+}
+
+ActionResult Thing::_can_contain(Thing& thing) const
+{
+  return ActionResult::Success;
+}
 
 bool Thing::_perform_action_activated_by(Entity& entity)
 {
@@ -766,3 +958,9 @@ bool Thing::_perform_action_fired_by(Entity& entity, Direction direction)
 {
   return false;
 }
+
+bool Thing::_do_process()
+{
+  return true;
+}
+

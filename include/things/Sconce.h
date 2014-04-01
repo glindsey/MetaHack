@@ -2,27 +2,26 @@
 #define SCONCE_H
 
 #include "LightSource.h"
-#include "CreatableThing.h"
+#include "Registered.h"
 
 /// A mounted torch.
 class Sconce :
   public LightSource,
-  public CreatableThing<Sconce>
+  public Registered<Sconce>
 {
-  friend class CreatableThing;
-
   public:
+    Sconce();
     virtual ~Sconce();
+    Sconce(Sconce const&) = default;
+    Sconce const& operator=(Sconce const&) = delete;
 
     // Thing overrides
     virtual sf::Vector2u get_tile_sheet_coords(int frame) const override;
 
-    virtual bool do_process() override;
-
   protected:
-    Sconce();
 
   private:
+    virtual bool _do_process() override;
     virtual std::string _get_description() const override;
     static Sconce prototype;
 };
