@@ -9,7 +9,6 @@
 #include "Entity.h"
 #include "ErrorHandler.h"
 #include "GetLetterKey.h"
-#include "Human.h"
 #include "KeyBuffer.h"
 #include "Map.h"
 #include "MapFactory.h"
@@ -18,12 +17,14 @@
 #include "Thing.h"
 #include "ThingFactory.h"
 
+#include "things/Human.h"
+
 // Includes required for test code.
-#include "CoinGold.h"
-#include "LightOrb.h"
-#include "Rock.h"
-#include "RockLichen.h"
-#include "SackLarge.h"
+#include "things/CoinGold.h"
+#include "things/LightOrb.h"
+#include "things/Rock.h"
+#include "things/RockLichen.h"
+#include "things/SackLarge.h"
 
 struct AppStateGameMode::Impl
 {

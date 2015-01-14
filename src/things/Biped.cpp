@@ -1,4 +1,4 @@
-#include "Biped.h"
+#include "things/Biped.h"
 
 Biped::Biped() : Entity() {}
 Biped::~Biped() {}

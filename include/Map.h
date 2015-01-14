@@ -14,6 +14,11 @@ class LightSource;
 class MapFeature;
 class MapTile;
 
+// VS compatibility
+#ifdef WIN32   //WINDOWS
+#define constexpr const
+#endif
+
 /// Class representing a map, which is a grid of locations for Things.
 class Map
 {

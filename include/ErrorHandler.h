@@ -5,11 +5,21 @@
 #include <cstdio>
 #include <memory>
 
+#ifndef __FUNCTION_NAME__
+#ifdef WIN32   //WINDOWS
+#define __FUNCTION_NAME__   __FUNCTION__
+#define snprintf _snprintf_s
+#else          //*NIX
+#define __FUNCTION_NAME__   __func__ 
+#endif
+#endif
+
 #define TRACE(...)                                                        \
 {                                                                         \
   char buf[1024];                                                         \
   snprintf(buf, 1024, __VA_ARGS__);                                       \
-  ErrorHandler::instance().printTrace(buf, __FILE__, __LINE__, __func__); \
+  ErrorHandler::instance().printTrace(buf, __FILE__, __LINE__,            \
+                                      __FUNCTION_NAME__);                 \
 }
 
 #define MINOR_ERROR(...)                                                  \
@@ -19,7 +29,7 @@
   ErrorHandler::instance().handleMinorError(buf,                          \
                                              __FILE__,                    \
                                              __LINE__,                    \
-                                             __func__);                   \
+                                             __FUNCTION_NAME__);          \
 }
 
 #define MAJOR_ERROR(...)                                                  \
@@ -29,7 +39,7 @@
   ErrorHandler::instance().handleMajorError(buf,                          \
                                              __FILE__,                    \
                                              __LINE__,                    \
-                                             __func__);                   \
+                                             __FUNCTION_NAME__);          \
 }
 
 #define FATAL_ERROR(...)                                                  \
@@ -39,7 +49,7 @@
   ErrorHandler::instance().handleFatalError(buf,                          \
                                              __FILE__,                    \
                                              __LINE__,                    \
-                                             __func__);                   \
+                                             __FUNCTION_NAME__);          \
 }
 
 #ifndef NDEBUG

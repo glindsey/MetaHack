@@ -6,11 +6,11 @@
 #include "App.h"
 #include "ConfigSettings.h"
 #include "ErrorHandler.h"
-#include "Floor.h"
 #include "Map.h"
 #include "MathUtils.h"
 #include "ThingFactory.h"
 #include "TileSheet.h"
+#include "things/Floor.h"
 
 typedef boost::random::uniform_int_distribution<> uniform_int_dist;
 

@@ -1,6 +1,7 @@
 #include "StatusArea.h"
 
 #include <boost/lexical_cast.hpp>
+#include <locale>
 
 #include "App.h"
 #include "ConfigSettings.h"
@@ -50,10 +51,10 @@ std::string StatusArea::render_contents(int frame)
   render_text.setPosition(3, 3);
 
   std::string name = player.get_proper_name();
-  name[0] = std::toupper(name[0]);
+  name[0] = std::toupper(name[0], std::locale());
 
   std::string type = player.get_description();
-  type[0] = std::toupper(type[0]);
+  type[0] = std::toupper(type[0], std::locale());
 
   render_text.setString(name + " the " + type);
   bg_texture.draw(render_text);

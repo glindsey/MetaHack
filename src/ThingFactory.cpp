@@ -69,6 +69,7 @@ bool ThingFactory::set_player(std::shared_ptr<Entity> entity)
   ASSERT_CONDITION(entity);
 
   impl->player = entity;
+  return true;
 }
 
 std::shared_ptr<Entity> ThingFactory::get_player() const

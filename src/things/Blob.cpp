@@ -1,4 +1,4 @@
-#include "Blob.h"
+#include "things/Blob.h"
 
 Blob::Blob() : Entity() {}
 Blob::~Blob() {}

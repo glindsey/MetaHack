@@ -1,0 +1,205 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{47CB10E6-60E3-49D0-8201-F525FABB8844}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>MetaHack</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>C:\GDrive\hobby\gamedev\libraries\boost_1_57_0;C:\GDrive\hobby\gamedev\libraries\SFML-2.2\include;C:\GDrive\hobby\gamedev\projects\MetaHack\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\GDrive\hobby\gamedev\libraries\boost_1_57_0\stage\lib;C:\GDrive\hobby\gamedev\libraries\SFML-2.2\build\lib\Debug;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <IncludePath>C:\GDrive\hobby\gamedev\libraries\boost_1_57_0;C:\GDrive\hobby\gamedev\libraries\SFML-2.2\include;C:\GDrive\hobby\gamedev\projects\MetaHack\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\GDrive\hobby\gamedev\libraries\boost_1_57_0\stage\lib;C:\GDrive\hobby\gamedev\libraries\SFML-2.2\build\lib\Release;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>C:\GDrive\hobby\gamedev\projects\MetaHack\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>sfml-graphics-d.lib;sfml-system-d.lib;sfml-window-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>sfml-graphics.lib;sfml-system.lib;sfml-window.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="include\Action.h" />
+    <ClInclude Include="include\ActionResult.h" />
+    <ClInclude Include="include\ai\AISessile.h" />
+    <ClInclude Include="include\ai\AIStrategy.h" />
+    <ClInclude Include="include\App.h" />
+    <ClInclude Include="include\AppStateGameMode.h" />
+    <ClInclude Include="include\AppStateMainMenu.h" />
+    <ClInclude Include="include\AppStateSplashScreen.h" />
+    <ClInclude Include="include\Attribute.h" />
+    <ClInclude Include="include\AttributeSet.h" />
+    <ClInclude Include="include\Beatitude.h" />
+    <ClInclude Include="include\BodyPart.h" />
+    <ClInclude Include="include\common_enums.h" />
+    <ClInclude Include="include\ConfigSettings.h" />
+    <ClInclude Include="include\Direction.h" />
+    <ClInclude Include="include\Entity.h" />
+    <ClInclude Include="include\ErrorHandler.h" />
+    <ClInclude Include="include\EventHandler.h" />
+    <ClInclude Include="include\GameObject.h" />
+    <ClInclude Include="include\Gender.h" />
+    <ClInclude Include="include\GeoVector.h" />
+    <ClInclude Include="include\GetLetterKey.h" />
+    <ClInclude Include="include\gui\GUIPane.h" />
+    <ClInclude Include="include\Inventory.h" />
+    <ClInclude Include="include\InventoryArea.h" />
+    <ClInclude Include="include\InventorySlot.h" />
+    <ClInclude Include="include\KeyBuffer.h" />
+    <ClInclude Include="include\LightSource.h" />
+    <ClInclude Include="include\Map.h" />
+    <ClInclude Include="include\MapFactory.h" />
+    <ClInclude Include="include\mapfeatures\MapCorridor.h" />
+    <ClInclude Include="include\mapfeatures\MapDiamond.h" />
+    <ClInclude Include="include\mapfeatures\MapDonutRoom.h" />
+    <ClInclude Include="include\mapfeatures\MapFeature.h" />
+    <ClInclude Include="include\mapfeatures\MapGenerator.h" />
+    <ClInclude Include="include\mapfeatures\MapLRoom.h" />
+    <ClInclude Include="include\mapfeatures\MapRoom.h" />
+    <ClInclude Include="include\MapId.h" />
+    <ClInclude Include="include\MapTile.h" />
+    <ClInclude Include="include\MapTileType.h" />
+    <ClInclude Include="include\MathUtils.h" />
+    <ClInclude Include="include\MessageLog.h" />
+    <ClInclude Include="include\Ordinal.h" />
+    <ClInclude Include="include\Registered.h" />
+    <ClInclude Include="include\Renderable.h" />
+    <ClInclude Include="include\ShaderEffect.h" />
+    <ClInclude Include="include\SpritePrototype.h" />
+    <ClInclude Include="include\State.h" />
+    <ClInclude Include="include\StateMachine.h" />
+    <ClInclude Include="include\StatusArea.h" />
+    <ClInclude Include="include\Thing.h" />
+    <ClInclude Include="include\ThingFactory.h" />
+    <ClInclude Include="include\things\Biped.h" />
+    <ClInclude Include="include\things\Blob.h" />
+    <ClInclude Include="include\things\ChestWooden.h" />
+    <ClInclude Include="include\things\CoinGold.h" />
+    <ClInclude Include="include\things\Floor.h" />
+    <ClInclude Include="include\things\Human.h" />
+    <ClInclude Include="include\things\LightOrb.h" />
+    <ClInclude Include="include\things\Rock.h" />
+    <ClInclude Include="include\things\RockLichen.h" />
+    <ClInclude Include="include\things\SackLarge.h" />
+    <ClInclude Include="include\things\Sconce.h" />
+    <ClInclude Include="include\TileSheet.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="src\ai\AISessile.cpp" />
+    <ClCompile Include="src\ai\AIStrategy.cpp" />
+    <ClCompile Include="src\App.cpp" />
+    <ClCompile Include="src\AppStateGameMode.cpp" />
+    <ClCompile Include="src\AppStateMainMenu.cpp" />
+    <ClCompile Include="src\AppStateSplashScreen.cpp" />
+    <ClCompile Include="src\AttributeSet.cpp" />
+    <ClCompile Include="src\ConfigSettings.cpp" />
+    <ClCompile Include="src\Entity.cpp" />
+    <ClCompile Include="src\ErrorHandler.cpp" />
+    <ClCompile Include="src\GameObject.cpp" />
+    <ClCompile Include="src\Gender.cpp" />
+    <ClCompile Include="src\gui\GUIPane.cpp" />
+    <ClCompile Include="src\Inventory.cpp" />
+    <ClCompile Include="src\InventoryArea.cpp" />
+    <ClCompile Include="src\KeyBuffer.cpp" />
+    <ClCompile Include="src\LightSource.cpp" />
+    <ClCompile Include="src\Map.cpp" />
+    <ClCompile Include="src\MapFactory.cpp" />
+    <ClCompile Include="src\mapfeatures\MapCorridor.cpp" />
+    <ClCompile Include="src\mapfeatures\MapDiamond.cpp" />
+    <ClCompile Include="src\mapfeatures\MapDonutRoom.cpp" />
+    <ClCompile Include="src\mapfeatures\MapFeature.cpp" />
+    <ClCompile Include="src\mapfeatures\MapGenerator.cpp" />
+    <ClCompile Include="src\mapfeatures\MapLRoom.cpp" />
+    <ClCompile Include="src\mapfeatures\MapRoom.cpp" />
+    <ClCompile Include="src\MapTile.cpp" />
+    <ClCompile Include="src\MapTileType.cpp" />
+    <ClCompile Include="src\MessageLog.cpp" />
+    <ClCompile Include="src\State.cpp" />
+    <ClCompile Include="src\StateMachine.cpp" />
+    <ClCompile Include="src\StatusArea.cpp" />
+    <ClCompile Include="src\Thing.cpp" />
+    <ClCompile Include="src\ThingFactory.cpp" />
+    <ClCompile Include="src\things\Biped.cpp" />
+    <ClCompile Include="src\things\Blob.cpp" />
+    <ClCompile Include="src\things\ChestWooden.cpp" />
+    <ClCompile Include="src\things\CoinGold.cpp" />
+    <ClCompile Include="src\things\Floor.cpp" />
+    <ClCompile Include="src\things\Human.cpp" />
+    <ClCompile Include="src\things\LightOrb.cpp" />
+    <ClCompile Include="src\things\Rock.cpp" />
+    <ClCompile Include="src\things\RockLichen.cpp" />
+    <ClCompile Include="src\things\SackLarge.cpp" />
+    <ClCompile Include="src\things\Sconce.cpp" />
+    <ClCompile Include="src\TileSheet.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

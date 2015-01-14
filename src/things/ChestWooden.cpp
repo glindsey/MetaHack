@@ -1,4 +1,4 @@
-#include "ChestWooden.h"
+#include "things/ChestWooden.h"
 
 ChestWooden ChestWooden::prototype;
 

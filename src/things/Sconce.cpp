@@ -1,4 +1,4 @@
-#include "Sconce.h"
+#include "things/Sconce.h"
 
 Sconce Sconce::prototype;
 

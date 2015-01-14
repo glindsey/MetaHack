@@ -1,4 +1,4 @@
-#include "Rock.h"
+#include "things/Rock.h"
 
 Rock Rock::prototype;
 

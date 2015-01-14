@@ -1,4 +1,4 @@
-#include "LightOrb.h"
+#include "things/LightOrb.h"
 
 LightOrb LightOrb::prototype;
 

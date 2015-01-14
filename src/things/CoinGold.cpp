@@ -1,4 +1,4 @@
-#include "CoinGold.h"
+#include "things/CoinGold.h"
 
 CoinGold CoinGold::prototype;
 
