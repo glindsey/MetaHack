@@ -9,6 +9,7 @@
 
 #include <memory>
 #include <string>
+#include <boost/strong_typedef.hpp>
 #include <SFML/Graphics.hpp>
 
 // Forward declarations
@@ -17,6 +18,10 @@ class MapTile;
 class Inventory;
 class LightSource;
 class ThingFactory;
+
+// Strong typedef for ThingIDs.
+BOOST_STRONG_TYPEDEF(unsigned int, ThingID)
+
 
 // Typedef for the factory method.
 class Thing;

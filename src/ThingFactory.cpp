@@ -57,10 +57,10 @@ std::shared_ptr<Thing> ThingFactory::create(char const* name)
   return new_thing;
 }
 
-void ThingFactory::register_by_typename(char const* name,
+void ThingFactory::register_by_typename(std::string name,
                                         ThingCreator creator)
 {
-  TRACE("Registered type %s", name);
+  TRACE("Registered type %s", name.c_str());
   impl->thing_types[name] = creator;
 }
 

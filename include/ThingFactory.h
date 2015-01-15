@@ -1,6 +1,7 @@
 #ifndef THINGFACTORY_H
 #define THINGFACTORY_H
 
+#include <boost/core/demangle.hpp>
 #include <memory>
 #include <vector>
 
@@ -32,7 +33,7 @@ class ThingFactory
     /// ThingFactory::create to make new instances of a particular class.
     template<class Subclass> void register_class()
     {
-      this->register_by_typename(typeid(Subclass).name(),
+      this->register_by_typename(boost::core::demangle(typeid(Subclass).name()),
                                  &(Subclass::create_thing));
     }
 
@@ -63,7 +64,7 @@ class ThingFactory
     /// @param type String corresponding to a subclass typeid.
     /// @param creator Creator function that returns a reference to a new,
     ///                dynamically-allocated Thing.
-    void register_by_typename(char const* type, ThingCreator creator);
+    void register_by_typename(std::string type, ThingCreator creator);
 
   private:
     /// Constructor; private because ThingFactory is a singleton.
