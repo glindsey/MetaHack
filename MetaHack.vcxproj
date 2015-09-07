@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -19,13 +19,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -41,13 +41,13 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\GDrive\hobby\gamedev\libraries\boost_1_57_0;C:\GDrive\hobby\gamedev\libraries\SFML-2.2\include;C:\GDrive\hobby\gamedev\projects\MetaHack\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\GDrive\hobby\gamedev\libraries\boost_1_57_0\stage\lib;C:\GDrive\hobby\gamedev\libraries\SFML-2.2\build\lib\Debug;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Dropbox\gamedev\projects\MetaHack\include;C:\Dropbox\gamedev\libraries\SFML-feature-VS2015\include;C:\Dropbox\gamedev\libraries\boost_1_59_0;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <LibraryPath>C:\Dropbox\gamedev\libraries\SFML-feature-VS2015\lib;C:\Dropbox\gamedev\libraries\boost_1_59_0\stage\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\GDrive\hobby\gamedev\libraries\boost_1_57_0;C:\GDrive\hobby\gamedev\libraries\SFML-2.2\include;C:\GDrive\hobby\gamedev\projects\MetaHack\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\GDrive\hobby\gamedev\libraries\boost_1_57_0\stage\lib;C:\GDrive\hobby\gamedev\libraries\SFML-2.2\build\lib\Release;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Dropbox\gamedev\projects\MetaHack\include;C:\Dropbox\gamedev\libraries\SFML-feature-VS2015\include;C:\Dropbox\gamedev\libraries\boost_1_59_0;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <LibraryPath>C:\Dropbox\gamedev\libraries\SFML-feature-VS2015\lib;C:\Dropbox\gamedev\libraries\boost_1_59_0\stage\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -55,9 +55,10 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_SCL_SECURE_NO_WARNINGS;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\GDrive\hobby\gamedev\projects\MetaHack\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>
+      </AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -73,8 +74,10 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_SCL_SECURE_NO_WARNINGS;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>
+      </AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -100,7 +103,6 @@
     <ClInclude Include="include\common_enums.h" />
     <ClInclude Include="include\ConfigSettings.h" />
     <ClInclude Include="include\Direction.h" />
-    <ClInclude Include="include\Entity.h" />
     <ClInclude Include="include\ErrorHandler.h" />
     <ClInclude Include="include\EventHandler.h" />
     <ClInclude Include="include\GameObject.h" />
@@ -112,7 +114,6 @@
     <ClInclude Include="include\InventoryArea.h" />
     <ClInclude Include="include\InventorySlot.h" />
     <ClInclude Include="include\KeyBuffer.h" />
-    <ClInclude Include="include\LightSource.h" />
     <ClInclude Include="include\Map.h" />
     <ClInclude Include="include\MapFactory.h" />
     <ClInclude Include="include\mapfeatures\MapCorridor.h" />
@@ -128,7 +129,6 @@
     <ClInclude Include="include\MathUtils.h" />
     <ClInclude Include="include\MessageLog.h" />
     <ClInclude Include="include\Ordinal.h" />
-    <ClInclude Include="include\Registered.h" />
     <ClInclude Include="include\Renderable.h" />
     <ClInclude Include="include\ShaderEffect.h" />
     <ClInclude Include="include\SpritePrototype.h" />
@@ -136,18 +136,9 @@
     <ClInclude Include="include\StateMachine.h" />
     <ClInclude Include="include\StatusArea.h" />
     <ClInclude Include="include\Thing.h" />
-    <ClInclude Include="include\ThingFactory.h" />
-    <ClInclude Include="include\things\Biped.h" />
-    <ClInclude Include="include\things\Blob.h" />
-    <ClInclude Include="include\things\ChestWooden.h" />
-    <ClInclude Include="include\things\CoinGold.h" />
-    <ClInclude Include="include\things\Floor.h" />
-    <ClInclude Include="include\things\Human.h" />
-    <ClInclude Include="include\things\LightOrb.h" />
-    <ClInclude Include="include\things\Rock.h" />
-    <ClInclude Include="include\things\RockLichen.h" />
-    <ClInclude Include="include\things\SackLarge.h" />
-    <ClInclude Include="include\things\Sconce.h" />
+    <ClInclude Include="include\ThingRef.h" />
+    <ClInclude Include="include\ThingManager.h" />
+    <ClInclude Include="include\ThingMetadata.h" />
     <ClInclude Include="include\TileSheet.h" />
   </ItemGroup>
   <ItemGroup>
@@ -160,7 +151,6 @@
     <ClCompile Include="src\AppStateSplashScreen.cpp" />
     <ClCompile Include="src\AttributeSet.cpp" />
     <ClCompile Include="src\ConfigSettings.cpp" />
-    <ClCompile Include="src\Entity.cpp" />
     <ClCompile Include="src\ErrorHandler.cpp" />
     <ClCompile Include="src\GameObject.cpp" />
     <ClCompile Include="src\Gender.cpp" />
@@ -168,7 +158,6 @@
     <ClCompile Include="src\Inventory.cpp" />
     <ClCompile Include="src\InventoryArea.cpp" />
     <ClCompile Include="src\KeyBuffer.cpp" />
-    <ClCompile Include="src\LightSource.cpp" />
     <ClCompile Include="src\Map.cpp" />
     <ClCompile Include="src\MapFactory.cpp" />
     <ClCompile Include="src\mapfeatures\MapCorridor.cpp" />
@@ -185,19 +174,31 @@
     <ClCompile Include="src\StateMachine.cpp" />
     <ClCompile Include="src\StatusArea.cpp" />
     <ClCompile Include="src\Thing.cpp" />
-    <ClCompile Include="src\ThingFactory.cpp" />
-    <ClCompile Include="src\things\Biped.cpp" />
-    <ClCompile Include="src\things\Blob.cpp" />
-    <ClCompile Include="src\things\ChestWooden.cpp" />
-    <ClCompile Include="src\things\CoinGold.cpp" />
-    <ClCompile Include="src\things\Floor.cpp" />
-    <ClCompile Include="src\things\Human.cpp" />
-    <ClCompile Include="src\things\LightOrb.cpp" />
-    <ClCompile Include="src\things\Rock.cpp" />
-    <ClCompile Include="src\things\RockLichen.cpp" />
-    <ClCompile Include="src\things\SackLarge.cpp" />
-    <ClCompile Include="src\things\Sconce.cpp" />
+    <ClCompile Include="src\ThingRef.cpp" />
+    <ClCompile Include="src\ThingManager.cpp" />
+    <ClCompile Include="src\ThingMetadata.cpp" />
     <ClCompile Include="src\TileSheet.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="resources\things\Biped.xml" />
+    <Xml Include="resources\things\Blob.xml" />
+    <Xml Include="resources\things\ChestWooden.xml" />
+    <Xml Include="resources\things\CoinGold.xml" />
+    <Xml Include="resources\things\Entity.xml" />
+    <Xml Include="resources\things\Floor.xml">
+      <SubType>Designer</SubType>
+    </Xml>
+    <Xml Include="resources\things\Human.xml" />
+    <Xml Include="resources\things\LightOrb.xml" />
+    <Xml Include="resources\things\LightSource.xml" />
+    <Xml Include="resources\things\Mu.xml" />
+    <Xml Include="resources\things\Rock.xml" />
+    <Xml Include="resources\things\RockLichen.xml" />
+    <Xml Include="resources\things\SackLarge.xml" />
+    <Xml Include="resources\things\Sconce.xml" />
+    <Xml Include="resources\things\Thing.xml">
+      <SubType>Designer</SubType>
+    </Xml>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

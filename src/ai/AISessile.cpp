@@ -1,8 +1,8 @@
 #include "ai/AISessile.h"
 
-#include "Entity.h"
+#include "Thing.h"
 
-AISessile::AISessile(Entity* entity_ptr)
+AISessile::AISessile(Thing* entity_ptr)
   : AIStrategy(entity_ptr)
 {
   //ctor

@@ -1,10 +1,7 @@
 #include "things/LightOrb.h"
 
-LightOrb LightOrb::prototype;
-
-LightOrb::LightOrb() : LightSource(0)
+LightOrb::LightOrb(UUID id) : Thing("light_orb", id)
 {
-  set_single_mass(2);
 }
 
 LightOrb::~LightOrb() {}

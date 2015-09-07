@@ -2,9 +2,7 @@
 
 #include "App.h"
 
-RockLichen RockLichen::prototype;
-
-RockLichen::RockLichen() : Blob()
+RockLichen::RockLichen(UUID id) : Blob("rock lichen", id)
 {
   //ctor
 }

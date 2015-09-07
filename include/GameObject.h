@@ -12,7 +12,7 @@ class GameObject
     virtual ~GameObject();
 
     /// Return this game object's description.
-    virtual std::string get_description() const = 0;
+    virtual std::string get_pretty_name() const = 0;
 
     /// Add this game object to a VertexArray to be drawn.
     /// @param vertices Array to add vertices to.

@@ -1,7 +1,7 @@
 #ifndef INVENTORYSLOT_H_INCLUDED
 #define INVENTORYSLOT_H_INCLUDED
 
-#include <boost/strong_typedef.hpp>
+#include <boost/serialization/strong_typedef.hpp>
 
 /// ID of a slot in an Inventory.
 BOOST_STRONG_TYPEDEF(int, InventorySlot)

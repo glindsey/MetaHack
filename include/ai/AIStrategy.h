@@ -4,13 +4,13 @@
 #include <memory>
 
 // Forward declarations
-class Entity;
+class Thing;
 
 /// Pure virtual class representing an AI strategy.
 class AIStrategy
 {
   public:
-    AIStrategy(Entity* entity_ptr);
+    AIStrategy(Thing* thing_ptr);
     virtual ~AIStrategy();
 
     /// Execute this AI strategy.
@@ -21,7 +21,7 @@ class AIStrategy
 
   private:
     struct Impl;
-    std::unique_ptr<Impl> impl;
+    std::unique_ptr<Impl> pImpl;
 };
 
 #endif // AISTRATEGY_H

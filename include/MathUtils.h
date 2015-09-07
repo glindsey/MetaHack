@@ -26,12 +26,19 @@ inline unsigned int next_power_of_two(unsigned int n)
 return n;
 }
 
-inline float calc_slope(float x1, float y1, float x2, float y2)
+inline unsigned int iabs(int value)
+{
+	return (value >= 0) ? 
+		static_cast<unsigned int>(value) : 
+		static_cast<unsigned int>(-value);
+}
+
+inline double calc_slope(double x1, double y1, double x2, double y2)
 {
   return (x1 - x2) / (y1 - y2);
 }
 
-inline float calc_inv_slope(float x1, float y1, float x2, float y2)
+inline double calc_inv_slope(double x1, double y1, double x2, double y2)
 {
   return (y1 - y2) / (x1 - x2);
 }
@@ -101,7 +108,7 @@ inline unsigned char saturation_add(unsigned char const& a,
 inline bool flip_coin()
 {
   uniform_int_dist coin(0, 1);
-  return coin(the_RNG);
+  return (coin(the_RNG) == 0 ? false : true);
 }
 
 /// Choose one of two alternatives at random.
@@ -129,16 +136,14 @@ template <class T> T choose_random (T a, T b, T c)
 
 /// Determine light factor based on light source, wall location, and which wall
 /// the light is hitting.
-inline float calculate_light_factor(sf::Vector2i source, sf::Vector2i target, Direction direction)
+inline double calculate_light_factor(sf::Vector2i source, sf::Vector2i target, Direction direction)
 {
-  float x_diff = fabsf(source.x - target.x);
-  float y_diff = fabsf(source.y - target.y);
+  double x_diff = static_cast<double>(iabs(source.x - target.x));
+  double y_diff = static_cast<double>(iabs(source.y - target.y));
 
   if ((x_diff == 0) && (y_diff == 0)) return 0;
 
-  float h_diff = sqrtf((x_diff * x_diff) + (y_diff * y_diff));
-
-  float diff_ratio;
+  double h_diff = sqrt((x_diff * x_diff) + (y_diff * y_diff));
 
   switch (direction)
   {
@@ -153,6 +158,7 @@ inline float calculate_light_factor(sf::Vector2i source, sf::Vector2i target, Di
   default:
     FATAL_ERROR("Invalid direction %u passed to calculate_light_factor",
                 static_cast<unsigned int>(direction));
+    return 0;
   }
 }
 

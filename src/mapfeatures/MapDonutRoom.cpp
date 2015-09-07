@@ -1,12 +1,12 @@
 #include "mapfeatures/MapDonutRoom.h"
 
+#include <boost/log/trivial.hpp>
 #include <boost/random/uniform_int_distribution.hpp>
 
 #include "App.h"
-#include "ErrorHandler.h"
 #include "MapTile.h"
 #include "MathUtils.h"
-#include "ThingFactory.h"
+#include "ThingManager.h"
 
 // Static declarations
 unsigned int MapDonutRoom::max_width = 20;

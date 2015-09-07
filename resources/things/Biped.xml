@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<thing>
+  <name>[Biped]</name>
+  <parent>Entity</parent>
+  <description>The generic Biped class.</description>
+  <intrinsics>
+    <flags>
+    </flags>
+    <values>
+      <bodypart_count_body>1</bodypart_count_body>
+      <bodypart_count_skin>1</bodypart_count_skin>
+      <bodypart_count_head>1</bodypart_count_head>
+      <bodypart_count_ear>2</bodypart_count_ear>
+      <bodypart_count_eye>2</bodypart_count_eye>
+      <bodypart_count_nose>1</bodypart_count_nose>
+      <bodypart_count_mouth>1</bodypart_count_mouth>
+      <bodypart_count_neck>1</bodypart_count_neck>
+      <bodypart_count_chest>1</bodypart_count_chest>
+      <bodypart_count_arm>2</bodypart_count_arm>
+      <bodypart_count_hand>2</bodypart_count_hand>
+      <bodypart_count_leg>2</bodypart_count_leg>
+      <bodypart_count_foot>2</bodypart_count_foot>
+    </values>
+  </intrinsics>
+  <properties>
+    <values>
+      <tile_sheet_x>0</tile_sheet_x>
+      <tile_sheet_y>4</tile_sheet_y>
+    </values>
+  </properties>
+</thing>

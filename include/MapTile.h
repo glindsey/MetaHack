@@ -8,11 +8,11 @@
 #include "MapId.h"
 #include "MapTileType.h"
 #include "Thing.h"
+#include "ThingRef.h"
 
 // Forward declarations
 class Entity;
 class Floor;
-class LightSource;
 
 class MapTile : public GameObject
 {
@@ -25,14 +25,14 @@ class MapTile : public GameObject
     {
       sf::Vector2i coords;  ///< Coordinates of the light.
       sf::Color color;      ///< Color of the light.
-      float intensity;   ///< Intensity of the light.
+      double intensity;     ///< Intensity of the light.
     };
 
     /// Get the tile's floor object.
-    std::shared_ptr<Thing> get_floor() const;
+    ThingRef get_floor() const;
 
     /// Return this tile's description.
-    virtual std::string get_description() const override final;
+    virtual std::string get_pretty_name() const override final;
 
     /// Return the coordinates of the tile representing the thing.
     virtual sf::Vector2u get_tile_sheet_coords(int frame) const;
@@ -73,7 +73,7 @@ class MapTile : public GameObject
     bool is_empty_space() const;
 
     /// Returns whether a tile can be traversed by a certain Entity.
-    bool can_be_traversed_by(Entity& entity) const;
+    bool can_be_traversed_by(ThingRef thing) const;
 
     /// Set the current tile's location.
     void set_coords(int x, int y);
@@ -90,13 +90,13 @@ class MapTile : public GameObject
     /// Receive light from the specified LightSource.
     /// Gets the Map this tile belongs to and does a recursive
     /// raycasting algorithm on it.
-    virtual void be_lit_by(LightSource& light);
+    virtual void be_lit_by(ThingRef light);
 
     /// Clear light influences.
     void clear_light_influences();
 
     /// Add a light influence to the tile.
-    void add_light_influence(LightSource* source,
+    void add_light_influence(ThingRef source,
                              LightInfluence influence);
 
     /// Get the light shining on a tile.
@@ -145,7 +145,7 @@ class MapTile : public GameObject
 
   private:
     struct Impl;
-    std::unique_ptr<Impl> impl;
+    std::unique_ptr<Impl> pImpl;
 };
 
 #endif // MAPTILE_H

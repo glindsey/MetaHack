@@ -1,8 +1,6 @@
 #include "things/Rock.h"
 
-Rock Rock::prototype;
-
-Rock::Rock() : Thing(0)
+Rock::Rock(UUID id) : Thing("rock", id)
 {
   // ctor
 }

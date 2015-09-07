@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include <memory>
 #include <vector>
+#include <boost/uuid/uuid.hpp>
 
 #include "gui/GUIPane.h"
 #include "InventorySlot.h"
@@ -17,6 +18,7 @@ enum class InventoryType
 // Forward declarations
 class Container;
 class Thing;
+class ThingRef;
 
 class InventoryArea :
   public GUIPane
@@ -25,13 +27,13 @@ class InventoryArea :
     InventoryArea(sf::IntRect dimensions);
     virtual ~InventoryArea();
 
-    std::weak_ptr<Thing> get_viewed() const;
-    void set_viewed(std::weak_ptr<Thing> thing);
+    ThingRef get_viewed() const;
+    void set_viewed(ThingRef thing);
 
     void toggle_selection(InventorySlot selection);
     unsigned int get_selected_slot_count() const;
     std::vector<InventorySlot> const& get_selected_slots();
-    std::vector<std::weak_ptr<Thing>> get_selected_things();
+    std::vector<ThingRef> get_selected_things();
     void clear_selected_slots();
 
     unsigned int get_selected_quantity() const;
@@ -41,7 +43,7 @@ class InventoryArea :
     bool inc_selected_quantity();
     bool dec_selected_quantity();
 
-    std::weak_ptr<Thing> get_thing(InventorySlot selection);
+    ThingRef get_thing(InventorySlot selection);
 
     InventoryType get_inventory_type();
     void set_inventory_type(InventoryType type);
@@ -53,7 +55,7 @@ class InventoryArea :
 
   private:
     struct Impl;
-    std::unique_ptr<Impl> impl;
+    std::unique_ptr<Impl> pImpl;
 };
 
 #endif // STATUSAREA_H

@@ -36,11 +36,11 @@ class AppStateGameMode : public State
     EventResult handle_key_press(sf::Event::KeyEvent& key);
     EventResult handle_mouse_wheel(sf::Event::MouseWheelEvent& wheel);
 
-    void add_zoom(float zoom_amount);
+    void add_zoom(double zoom_amount);
 
   private:
     struct Impl;
-    std::unique_ptr<Impl> impl;
+    std::unique_ptr<Impl> pImpl;
 };
 
 #endif // APPSTATEGAMEMODE_H

@@ -5,14 +5,14 @@
 #include <memory>
 #include <SFML/Graphics.hpp>
 
-#include "Entity.h"
 #include "MapFactory.h"
 #include "Renderable.h"
+#include "Thing.h"
 
 // Forward declarations
-class LightSource;
 class MapFeature;
 class MapTile;
+class ThingRef;
 
 // VS compatibility
 #ifdef WIN32   //WINDOWS
@@ -37,19 +37,19 @@ class Map
     static const sf::Color ambient_light_level;
 
     /// Process all Things on this map.
-    void do_process();
+    void process();
 
     void update_lighting();
 
-    void add_light(LightSource& source);
+    void add_light(ThingRef source);
 
-    void update_tile_vertices(Entity& entity);
+    void update_tile_vertices(ThingRef thing);
 
-    void update_thing_vertices(Entity& entity, int frame);
+    void update_thing_vertices(ThingRef thing, int frame);
 
     void set_view(sf::RenderTarget& target,
                   sf::Vector2f center,
-                  float zoom_level);
+                  double zoom_level);
 
     void draw_to(sf::RenderTarget& target);
 
@@ -107,18 +107,18 @@ class Map
     ///  / | \   |
     /// / 6|5 \  |
 
-    void do_recursive_lighting(LightSource& source,
+    void do_recursive_lighting(ThingRef source,
                                sf::Vector2i const& origin,
                                sf::Color const& light_color,
                                int const max_depth_squared,
                                int octant,
                                int depth = 1,
-                               float slope_A = 1,
-                               float slope_B = 0);
+                               double slope_A = 1,
+                               double slope_B = 0);
 
   private:
     struct Impl;
-    std::unique_ptr<Impl> impl;
+    std::unique_ptr<Impl> pImpl;
 
 };
 

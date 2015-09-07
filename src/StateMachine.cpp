@@ -1,5 +1,6 @@
 #include "StateMachine.h"
 
+#include <boost/log/trivial.hpp>
 #include <boost/ptr_container/ptr_map.hpp>
 #include <string>
 
@@ -14,10 +15,10 @@ struct StateMachine::Impl
 };
 
 StateMachine::StateMachine(std::string const& machine_name)
-  : impl(new Impl())
+  : pImpl(new Impl())
 {
-  impl->current_state = nullptr;
-  impl->machine_name = machine_name;
+  pImpl->current_state = nullptr;
+  pImpl->machine_name = machine_name;
 
   //ctor
 }
@@ -30,7 +31,7 @@ StateMachine::~StateMachine()
 
 std::string const& StateMachine::get_name()
 {
-  return impl->machine_name;
+  return pImpl->machine_name;
 }
 
 bool StateMachine::add_state(State* state)
@@ -39,9 +40,9 @@ bool StateMachine::add_state(State* state)
 
   std::string state_name = state->get_name();
 
-  if (impl->state_map.count(state_name) == 0)
+  if (pImpl->state_map.count(state_name) == 0)
   {
-    impl->state_map.insert(state_name, state);
+    pImpl->state_map.insert(state_name, state);
     return true;
   }
   else
@@ -61,13 +62,13 @@ bool StateMachine::delete_state(State* state)
 
 bool StateMachine::delete_state(std::string const& state_name)
 {
-  if (state_name == impl->current_state->get_name())
+  if (state_name == pImpl->current_state->get_name())
   {
     MAJOR_ERROR("Attempted to delete state \"%s\" while it was the current state",
                 state_name.c_str());
   }
 
-  if (impl->state_map.count(state_name) == 0)
+  if (pImpl->state_map.count(state_name) == 0)
   {
     MAJOR_ERROR("Attempted to delete state \"%s\" to state machine \"%s\" when it wasn't in there",
                 state_name.c_str(), this->get_name().c_str());
@@ -75,40 +76,40 @@ bool StateMachine::delete_state(std::string const& state_name)
   }
   else
   {
-    impl->state_map.erase(state_name);
+    pImpl->state_map.erase(state_name);
     return true;
   }
 }
 
 void StateMachine::execute()
 {
-  if (impl->current_state != nullptr)
+  if (pImpl->current_state != nullptr)
   {
-    impl->current_state->execute();
+    pImpl->current_state->execute();
   }
 }
 
 bool StateMachine::render(sf::RenderTarget& target, int frame)
 {
-  if (impl->current_state == nullptr)
+  if (pImpl->current_state == nullptr)
   {
     return false;
   }
   else
   {
-    return impl->current_state->render(target, frame);
+    return pImpl->current_state->render(target, frame);
   }
 }
 
 EventResult StateMachine::handle_event(sf::Event& event)
 {
-  if (impl->current_state == nullptr)
+  if (pImpl->current_state == nullptr)
   {
     return EventResult::Ignored;
   }
   else
   {
-    return impl->current_state->handle_event(event);
+    return pImpl->current_state->handle_event(event);
   }
 }
 
@@ -116,28 +117,28 @@ bool StateMachine::change_to(State* state)
 {
   bool terminator_result = true;
 
-  if (impl->current_state != nullptr)
+  if (pImpl->current_state != nullptr)
   {
-    terminator_result = impl->current_state->terminate();
+    terminator_result = pImpl->current_state->terminate();
     if (terminator_result == false)
     {
       MINOR_ERROR("Terminator for state \"%s\" in state machine \"%s\" returned false",
-                  impl->current_state->get_name().c_str(),
+                  pImpl->current_state->get_name().c_str(),
                   this->get_name().c_str());
     }
   }
 
   if (terminator_result == true)
   {
-    impl->current_state = state;
+    pImpl->current_state = state;
 
     if (state != nullptr)
     {
-      bool initializer_result = impl->current_state->initialize();
+      bool initializer_result = pImpl->current_state->initialize();
       if (initializer_result == false)
       {
         MINOR_ERROR("Initializer for state \"%s\" in state machine \"%s\" returned false",
-                    impl->current_state->get_name().c_str(),
+                    pImpl->current_state->get_name().c_str(),
                     this->get_name().c_str());
       }
     }
@@ -148,7 +149,7 @@ bool StateMachine::change_to(State* state)
 
 bool StateMachine::change_to(std::string const& new_state_name)
 {
-  if (impl->state_map.count(new_state_name) == 0)
+  if (pImpl->state_map.count(new_state_name) == 0)
   {
     MAJOR_ERROR("Attempted to change to state \"%s\" to state machine \"%s\" when it wasn't in there",
                 new_state_name.c_str(), this->get_name().c_str());
@@ -156,25 +157,25 @@ bool StateMachine::change_to(std::string const& new_state_name)
   }
   else
   {
-    return change_to(&(impl->state_map.at(new_state_name)));
+    return change_to(&(pImpl->state_map.at(new_state_name)));
   }
 }
 
 State* StateMachine::get_current_state()
 {
-  return impl->current_state;
+  return pImpl->current_state;
 }
 
 std::string const& StateMachine::get_current_state_name()
 {
   static std::string const noneDesc = std::string("(none)");
 
-  if (impl->current_state == nullptr)
+  if (pImpl->current_state == nullptr)
   {
     return noneDesc;
   }
   else
   {
-    return impl->current_state->get_name();
+    return pImpl->current_state->get_name();
   }
 }

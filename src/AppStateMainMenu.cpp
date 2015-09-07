@@ -9,7 +9,7 @@ struct AppStateMainMenu::Impl
 };
 
 AppStateMainMenu::AppStateMainMenu(StateMachine* state_machine)
-  : State(state_machine), impl(new Impl())
+  : State(state_machine), pImpl(new Impl())
 {
 }
 
@@ -23,8 +23,8 @@ void AppStateMainMenu::execute()
 
 bool AppStateMainMenu::render(sf::RenderTarget& target, int frame)
 {
-  target.draw(impl->title);
-  target.draw(impl->subtitle);
+  target.draw(pImpl->title);
+  target.draw(pImpl->subtitle);
   return true;
 }
 
@@ -62,12 +62,12 @@ std::string const& AppStateMainMenu::get_name()
 
 bool AppStateMainMenu::initialize()
 {
-  impl->title.setString("Hey y'all main menu in the hizzouse");
-  impl->title.setFont(the_default_font);
-  impl->subtitle.setString("But actually there's no main menu yet so just press Spacebar.");
-  impl->subtitle.setFont(the_default_font);
-  impl->subtitle.setCharacterSize(16);
-  impl->subtitle.setPosition(0, 100);
+  pImpl->title.setString("Hey y'all main menu in the hizzouse");
+  pImpl->title.setFont(the_default_font);
+  pImpl->subtitle.setString("But actually there's no main menu yet so just press Spacebar.");
+  pImpl->subtitle.setFont(the_default_font);
+  pImpl->subtitle.setCharacterSize(16);
+  pImpl->subtitle.setPosition(0, 100);
 
   return true;
 }

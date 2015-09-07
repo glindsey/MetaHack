@@ -2,9 +2,7 @@
 
 #include "App.h"
 
-Human Human::prototype;
-
-Human::Human() : Biped()
+Human::Human(UUID id) : Biped("human", id)
 {
   set_proper_name("John Doe");
 }

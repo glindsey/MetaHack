@@ -21,7 +21,7 @@ class AppStateSplashScreen : public State
   protected:
   private:
     struct Impl;
-    std::unique_ptr<Impl> impl;
+    std::unique_ptr<Impl> pImpl;
 };
 
 #endif // APPSTATESPLASHSCREEN_H

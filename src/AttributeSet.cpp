@@ -1,5 +1,6 @@
 #include "AttributeSet.h"
-#include "ErrorHandler.h"
+
+#include <boost/log/trivial.hpp>
 
 // I have been TRYING to get a std::map to work here, but the STL seems to
 // hate me, so I'm going to cheat and use a const array instead.

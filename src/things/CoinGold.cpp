@@ -1,8 +1,6 @@
 #include "things/CoinGold.h"
 
-CoinGold CoinGold::prototype;
-
-CoinGold::CoinGold() : Thing(0)
+CoinGold::CoinGold(UUID id) : Thing("gold_coin", id)
 {
   //ctor
 }

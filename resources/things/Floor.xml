@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<thing>
+  <name>floor</name>
+  <description>A dirt floor.</description>
+  <intrinsics>
+    <flags>
+      <movable>false</movable>
+      <opaque>false</opaque>
+    </flags>
+	  <values>
+      <inventory_size>-1</inventory_size>
+    </values>
+  </intrinsics>
+  <properties>
+    <values>      
+    </values>
+  </properties>
+</thing>

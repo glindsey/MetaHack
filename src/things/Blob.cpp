@@ -1,6 +1,6 @@
 #include "things/Blob.h"
 
-Blob::Blob() : Entity() {}
+Blob::Blob(std::string type, UUID id) : Thing(type, id) {}
 Blob::~Blob() {}
 
 unsigned int Blob::get_bodypart_number(BodyPart part) const

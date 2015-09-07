@@ -83,7 +83,7 @@ class StateMachine :
   protected:
   private:
     struct Impl;
-    boost::scoped_ptr<Impl> impl;
+    boost::scoped_ptr<Impl> pImpl;
 };
 
 #endif // STATEMACHINE_H

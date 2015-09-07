@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<thing>
+  <name>gold coin</name>
+  <description>A gold coin.</description>
+  <intrinsics>
+    <flags>
+    </flags>
+	  <values>
+	    <physical_mass>1</physical_mass>
+	  </values>
+  </intrinsics>
+  <properties>
+    <values>
+      <tile_sheet_x>0</tile_sheet_x>
+      <tile_sheet_y>15</tile_sheet_y>
+    </values>
+  </properties>
+</thing>

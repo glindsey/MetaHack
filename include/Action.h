@@ -3,8 +3,10 @@
 
 #include <memory>
 #include <vector>
+#include <boost/uuid/uuid.hpp>
 
 #include "Direction.h"
+#include "ThingManager.h"
 
 // Forward declarations
 class Thing;
@@ -18,7 +20,7 @@ struct Action
     things.clear();
     target_can_be_direction = false;
     target_can_be_thing = false;
-    target.reset();
+    target = TM.get_mu();
     direction = Direction::None;
   }
 
@@ -39,7 +41,7 @@ struct Action
   } type;
 
   /// Thing(s) to perform the action on.
-  std::vector< std::weak_ptr<Thing> > things;
+  std::vector< ThingRef > things;
 
   /// If true, action can take a Thing as a target.
   bool target_can_be_thing;
@@ -48,7 +50,7 @@ struct Action
   bool target_can_be_direction;
 
   /// Target Thing for the action (if any).
-  std::weak_ptr<Thing> target;
+  ThingRef target;
 
   /// Direction for the action (if any).
   Direction direction;

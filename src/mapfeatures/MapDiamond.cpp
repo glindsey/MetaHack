@@ -1,11 +1,11 @@
 #include "mapfeatures/MapDiamond.h"
 
+#include <boost/log/trivial.hpp>
 #include <boost/random/uniform_int_distribution.hpp>
 
 #include "App.h"
-#include "ErrorHandler.h"
 #include "MapTile.h"
-#include "ThingFactory.h"
+#include "ThingManager.h"
 
 // Static declarations
 unsigned int MapDiamond::maxHalfSize = 4;
@@ -21,7 +21,7 @@ struct MapDiamond::Impl
 };
 
 MapDiamond::MapDiamond(Map& m)
-  : MapFeature(m), impl(new Impl())
+  : MapFeature(m), pImpl(new Impl())
 {
   //ctor
 }

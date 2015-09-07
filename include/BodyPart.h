@@ -21,6 +21,7 @@ enum class BodyPart
   Leg,
   Foot,
   Wing,
+  Tail,
   Count
 };
 

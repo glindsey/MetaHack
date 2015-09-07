@@ -1,6 +1,6 @@
 #include "things/Biped.h"
 
-Biped::Biped() : Entity() {}
+Biped::Biped(std::string type, UUID id) : Thing(type, id) {}
 Biped::~Biped() {}
 
 sf::Vector2u Biped::get_tile_sheet_coords(int frame) const

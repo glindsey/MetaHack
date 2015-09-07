@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<thing>
+  <name>[Mu]</name>
+  <description>The class that represents "Nothingness".</description>
+  <intrinsics>
+    <flags>
+      <lockable>false</lockable>
+      <movable>false</movable>
+      <opaque>false</opaque>
+      <openable>false</openable>
+    </flags>
+	  <values>
+	  </values>
+    <strings>      
+    </strings>
+  </intrinsics>
+  <properties>
+  </properties>
+</thing>

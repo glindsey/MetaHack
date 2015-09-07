@@ -1,8 +1,5 @@
 #include "LightSource.h"
 
-#include "Entity.h"
-#include "ThingFactory.h"
-
 struct LightSource::Impl
 {
   Direction direction;  ///< The direction the light is facing.
@@ -12,8 +9,8 @@ struct LightSource::Impl
   bool lit;             ///< Whether the light is lit or not.
 };
 
-LightSource::LightSource(unsigned int inventory_size)
-  : Thing(inventory_size), impl(new Impl())
+LightSource::LightSource(std::string type, UUID id)
+  : Thing(type, id), impl(new Impl())
 {
   impl->direction = Direction::Up;
   impl->level = 256;
@@ -23,7 +20,7 @@ LightSource::LightSource(unsigned int inventory_size)
 }
 
 LightSource::LightSource(LightSource const& original)
-  : Thing(get_inventory_size()), impl(new Impl())
+  : Thing(original), impl(new Impl())
 {
   impl->direction = original.get_light_direction();
   impl->level = original.get_light_level();
@@ -82,12 +79,12 @@ void LightSource::set_light_color(sf::Color color)
   impl->color = color;
 }
 
-bool LightSource::usable_by(Entity const& entity) const
+bool LightSource::is_usable_by(Thing const& thing) const
 {
   return true;
 }
 
-bool LightSource::_perform_action_activated_by(Entity& entity)
+bool LightSource::_perform_action_activated_by(UUID thing_id)
 {
   impl->lit = !(impl->lit);
   return true;
@@ -101,14 +98,4 @@ void LightSource::set_lit(bool lit)
 bool LightSource::is_lit() const
 {
   return impl->lit;
-}
-
-void LightSource::_light_up_surroundings()
-{
-  auto location = get_location();
-  // Use visitor pattern.
-  if (location && is_lit())
-  {
-    location->be_lit_by(*this);
-  }
 }

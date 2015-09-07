@@ -1,16 +1,16 @@
 #include "ai/AIStrategy.h"
 
-#include "Entity.h"
+#include "Thing.h"
 
 struct AIStrategy::Impl
 {
-  Entity* entity_ptr;
+  Thing* thing_ptr;
 };
 
-AIStrategy::AIStrategy(Entity* entity_ptr) :
-  impl(new Impl())
+AIStrategy::AIStrategy(Thing* thing_ptr) :
+  pImpl(new Impl())
 {
-  impl->entity_ptr = entity_ptr;  //ctor
+  pImpl->thing_ptr = thing_ptr;  //ctor
 }
 
 AIStrategy::~AIStrategy()

@@ -1,9 +1,9 @@
 #include "mapfeatures/MapCorridor.h"
 
+#include <boost/log/trivial.hpp>
 #include <boost/random/uniform_int_distribution.hpp>
 
 #include "App.h"
-#include "ErrorHandler.h"
 #include "MapTile.h"
 
 // Static declarations
@@ -20,7 +20,7 @@ struct MapCorridor::Impl
 };
 
 MapCorridor::MapCorridor(Map& m)
-  : MapFeature(m), impl(new Impl())
+  : MapFeature(m), pImpl(new Impl())
 {
   //ctor
 }
@@ -51,32 +51,32 @@ bool MapCorridor::create(GeoVector vec)
         yMin = yMax - (corridorLen - 1);
         xMin = startingCoords.x;
         xMax = startingCoords.x;
-        impl->endingCoords.x = startingCoords.x;
-        impl->endingCoords.y = yMin - 1;
+        pImpl->endingCoords.x = startingCoords.x;
+        pImpl->endingCoords.y = yMin - 1;
         break;
       case Direction::South:
         yMin = startingCoords.y + 1;
         yMax = yMin + (corridorLen - 1);
         xMin = startingCoords.x;
         xMax = startingCoords.x;
-        impl->endingCoords.x = startingCoords.x;
-        impl->endingCoords.y = yMax + 1;
+        pImpl->endingCoords.x = startingCoords.x;
+        pImpl->endingCoords.y = yMax + 1;
         break;
       case Direction::West:
         xMax = startingCoords.x - 1;
         xMin = xMax - (corridorLen - 1);
         yMin = startingCoords.y;
         yMax = startingCoords.y;
-        impl->endingCoords.x = xMin - 1;
-        impl->endingCoords.y = startingCoords.y;
+        pImpl->endingCoords.x = xMin - 1;
+        pImpl->endingCoords.y = startingCoords.y;
         break;
       case Direction::East:
         xMin = startingCoords.x + 1;
         xMax = xMin + (corridorLen - 1);
         yMin = startingCoords.y;
         yMax = startingCoords.y;
-        impl->endingCoords.x = xMax + 1;
-        impl->endingCoords.y = startingCoords.y;
+        pImpl->endingCoords.x = xMax + 1;
+        pImpl->endingCoords.y = startingCoords.y;
         break;
       default:
         MINOR_ERROR("Invalid Direction passed into createCorridor");
@@ -149,18 +149,18 @@ bool MapCorridor::create(GeoVector vec)
           {
           case Direction::North:
             checkCoords.x = startingCoords.x;
-            checkCoords.y = impl->endingCoords.y - 1;
+            checkCoords.y = pImpl->endingCoords.y - 1;
             break;
           case Direction::South:
             checkCoords.x = startingCoords.x;
-            checkCoords.y = impl->endingCoords.y + 1;
+            checkCoords.y = pImpl->endingCoords.y + 1;
             break;
           case Direction::West:
-            checkCoords.x = impl->endingCoords.x - 1;
+            checkCoords.x = pImpl->endingCoords.x - 1;
             checkCoords.y = startingCoords.y;
             break;
           case Direction::East:
-            checkCoords.x = impl->endingCoords.x + 1;
+            checkCoords.x = pImpl->endingCoords.x + 1;
             checkCoords.y = startingCoords.y;
             break;
           default:
@@ -173,8 +173,8 @@ bool MapCorridor::create(GeoVector vec)
             auto& checkTile = get_map().get_tile(checkCoords.x, checkCoords.y);
             if (checkTile->is_empty_space())
             {
-              auto& endTile = get_map().get_tile(impl->endingCoords.x,
-                                                 impl->endingCoords.y);
+              auto& endTile = get_map().get_tile(pImpl->endingCoords.x,
+                                                 pImpl->endingCoords.y);
               endTile->set_type(MapTileType::FloorStone);
 
               /// @todo Keep going here
@@ -193,5 +193,5 @@ bool MapCorridor::create(GeoVector vec)
 
 sf::Vector2i const& MapCorridor::getEndingCoords() const
 {
-  return impl->endingCoords;
+  return pImpl->endingCoords;
 }

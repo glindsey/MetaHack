@@ -1,6 +1,7 @@
 #include "MapFactory.h"
 
-#include "ErrorHandler.h"
+#include <boost/log/trivial.hpp>
+
 #include "Map.h"
 
 std::unique_ptr<MapFactory> MapFactory::instance_;

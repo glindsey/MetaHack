@@ -2,9 +2,9 @@
 
 #include "App.h"
 #include "ConfigSettings.h"
-#include "ErrorHandler.h"
 #include "KeyBuffer.h"
 
+#include <boost/log/trivial.hpp>
 #include <deque>
 
 struct MessageLog::Impl
@@ -22,9 +22,9 @@ struct MessageLog::Impl
 
 MessageLog::MessageLog(sf::IntRect dimensions)
   : GUIPane(dimensions),
-    impl(new Impl())
+    pImpl(new Impl())
 {
-  impl->history_lines_saved = 250;  ///< @todo Move to ConfigSettings
+  pImpl->history_lines_saved = 250;  ///< @todo Move to ConfigSettings
 }
 
 MessageLog::~MessageLog()
@@ -36,17 +36,17 @@ void MessageLog::add(std::string message)
 {
   message[0] = toupper(message[0]);
 
-  impl->message_queue.push_front(message);
+  pImpl->message_queue.push_front(message);
 
-  while (impl->message_queue.size() > impl->history_lines_saved)
+  while (pImpl->message_queue.size() > pImpl->history_lines_saved)
   {
-    impl->message_queue.pop_back();
+    pImpl->message_queue.pop_back();
   }
 }
 
 KeyBuffer& MessageLog::get_key_buffer()
 {
-  return impl->buffer;
+  return pImpl->buffer;
 }
 
 EventResult MessageLog::handle_event(sf::Event& event)
@@ -54,7 +54,7 @@ EventResult MessageLog::handle_event(sf::Event& event)
   switch (event.type)
   {
   case sf::Event::EventType::KeyPressed:
-    return impl->buffer.handle_key_press(event.key);
+    return pImpl->buffer.handle_key_press(event.key);
   default:
     break;
   }
@@ -88,7 +88,7 @@ std::string MessageLog::render_contents(int frame)
   // If we have the focus, put the current command at the bottom of the log.
   if (get_focus() == true)
   {
-    impl->buffer.render(bg_texture,
+    pImpl->buffer.render(bg_texture,
                         sf::Vector2f(text_coord_x, text_coord_y),
                         frame,
                         the_default_font,
@@ -100,8 +100,8 @@ std::string MessageLog::render_contents(int frame)
 
   // Draw each of the message_queue in the queue.
   /// @todo Split lines that are too long instead of truncating them.
-  for (std::deque<std::string>::iterator iter = impl->message_queue.begin();
-       iter != impl->message_queue.end(); ++iter)
+  for (std::deque<std::string>::iterator iter = pImpl->message_queue.begin();
+       iter != pImpl->message_queue.end(); ++iter)
   {
     render_text.setString(*iter);
     render_text.setPosition(text_coord_x, text_coord_y);

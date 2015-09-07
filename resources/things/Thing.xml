@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<thing>
+  <name>[Thing]</name>
+  <description>The generic Thing class.</description>
+  <intrinsics>
+    <flags>
+      <lockable>false</lockable>
+      <movable>true</movable>
+      <opaque>true</opaque>
+      <openable>false</openable>
+    </flags>
+	  <values>
+	    <inventory_size>0</inventory_size>
+	    <physical_mass>0</physical_mass>
+	  </values>
+    <strings>
+      <bodypart_name_body>body</bodypart_name_body>
+      <bodypart_name_skin>skin</bodypart_name_skin>
+      <bodypart_name_head>head</bodypart_name_head>
+      <bodypart_name_ear>ear</bodypart_name_ear>
+      <bodypart_name_eye>eye</bodypart_name_eye>
+      <bodypart_name_nose>nose</bodypart_name_nose>
+      <bodypart_name_mouth>mouth</bodypart_name_mouth>
+      <bodypart_name_neck>neck</bodypart_name_neck>
+      <bodypart_name_chest>chest</bodypart_name_chest>
+      <bodypart_name_arm>arm</bodypart_name_arm>
+      <bodypart_name_hand>hand</bodypart_name_hand>
+      <bodypart_name_leg>leg</bodypart_name_leg>
+      <bodypart_name_foot>foot</bodypart_name_foot>
+      <bodypart_name_wing>wing</bodypart_name_wing>
+      <bodypart_name_tail>tail</bodypart_name_tail>
+      
+      <bodypart_plural_body>bodies</bodypart_plural_body>
+      <bodypart_plural_skin>skin</bodypart_plural_skin>
+      <bodypart_plural_head>heads</bodypart_plural_head>
+      <bodypart_plural_ear>ears</bodypart_plural_ear>
+      <bodypart_plural_eye>eyes</bodypart_plural_eye>
+      <bodypart_plural_nose>noses</bodypart_plural_nose>
+      <bodypart_plural_mouth>mouths</bodypart_plural_mouth>
+      <bodypart_plural_neck>necks</bodypart_plural_neck>
+      <bodypart_plural_chest>chests</bodypart_plural_chest>
+      <bodypart_plural_arm>arms</bodypart_plural_arm>
+      <bodypart_plural_hand>hands</bodypart_plural_hand>
+      <bodypart_plural_leg>legs</bodypart_plural_leg>
+      <bodypart_plural_foot>feet</bodypart_plural_foot>
+      <bodypart_plural_wing>wings</bodypart_plural_wing>
+      <bodypart_plural_tail>tails</bodypart_plural_tail>
+    </strings>
+  </intrinsics>
+  <properties>
+    <values>
+      <tile_sheet_x>4</tile_sheet_x>
+      <tile_sheet_y>3</tile_sheet_y>
+    </values>
+  </properties>
+</thing>

@@ -1,5 +1,6 @@
 #include "mapfeatures/MapGenerator.h"
 
+#include <boost/log/trivial.hpp>
 #include <boost/random/uniform_int_distribution.hpp>
 
 #include "mapfeatures/MapCorridor.h"
@@ -9,7 +10,6 @@
 #include "mapfeatures/MapRoom.h"
 
 #include "App.h"
-#include "ErrorHandler.h"
 #include "MapTile.h"
 #include "MathUtils.h"
 
@@ -148,7 +148,7 @@ struct MapGenerator::Impl
 };
 
 MapGenerator::MapGenerator(Map& m)
-  : impl(new Impl(m))
+  : pImpl(new Impl(m))
 {
 
 }
@@ -162,15 +162,15 @@ void MapGenerator::generate()
 {
   TRACE("Filling map...");
   // Fill the map with stone.
-  impl->clearMap();
+  pImpl->clearMap();
 
   // Create the initial room.
   TRACE("Making starting room...");
 
   MapFeature& startingRoom =
-    impl->game_map.add_map_feature(new MapRoom(impl->game_map));
+    pImpl->game_map.add_map_feature(new MapRoom(pImpl->game_map));
 
-  if (!startingRoom.create(GeoVector(impl->getRandomFilledSquare(),
+  if (!startingRoom.create(GeoVector(pImpl->getRandomFilledSquare(),
                                      Direction::Self)))
   {
     FATAL_ERROR("Could not make starting room for player!");
@@ -183,19 +183,19 @@ void MapGenerator::generate()
   sf::Vector2i startCoords(startBox.left + (startBox.width / 2),
                            startBox.top + (startBox.height / 2));
 
-  impl->game_map.set_start_coords(startCoords);
+  pImpl->game_map.set_start_coords(startCoords);
 
   // Continue with additional map features.
   TRACE("Making additional map features...");
 
   unsigned int mapFeatures = 0;
 
-  while (mapFeatures < impl->limits.maxFeatures)
+  while (mapFeatures < pImpl->limits.maxFeatures)
   {
     GeoVector nextGrowthVector;
     MapFeature* feature = nullptr;
 
-    if (impl->getGrowthVector(nextGrowthVector))
+    if (pImpl->getGrowthVector(nextGrowthVector))
     {
       uniform_int_dist chooseAFeature(0, 6);
       int chosen_feature = chooseAFeature(the_RNG);
@@ -207,31 +207,31 @@ void MapGenerator::generate()
       {
       case 3:
         {
-          feature = new MapDiamond(impl->game_map);
+          feature = new MapDiamond(pImpl->game_map);
         }
         break;
 
       case 4:
         {
-          feature = new MapCorridor(impl->game_map);
+          feature = new MapCorridor(pImpl->game_map);
         }
         break;
 
       case 5:
         {
-          feature = new MapLRoom(impl->game_map);
+          feature = new MapLRoom(pImpl->game_map);
         }
         break;
 
       case 6:
         {
-          feature = new MapDonutRoom(impl->game_map);
+          feature = new MapDonutRoom(pImpl->game_map);
         }
         break;
 
       default:
         {
-          feature = new MapRoom(impl->game_map);
+          feature = new MapRoom(pImpl->game_map);
         }
         break;
       }
@@ -241,7 +241,7 @@ void MapGenerator::generate()
     {
       if (feature->create(nextGrowthVector))
       {
-        impl->game_map.add_map_feature(feature);
+        pImpl->game_map.add_map_feature(feature);
       }
       else
       {

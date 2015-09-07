@@ -2,20 +2,20 @@
 
 #include "App.h"
 #include "ConfigSettings.h"
-#include "ErrorHandler.h"
 #include "Inventory.h"
 #include "MapTile.h"
 #include "Thing.h"
-#include "ThingFactory.h"
+#include "ThingManager.h"
 #include "TileSheet.h"
 
+#include <boost/log/trivial.hpp>
 #include <sstream>
 #include <string>
 
 struct InventoryArea::Impl
 {
   /// Thing whose contents (or surroundings) are currently being viewed.
-  std::weak_ptr<Thing> viewed_ptr;
+  ThingRef viewed;
 
   /// Vector of selected inventory slots.
   std::vector< InventorySlot > selected_slots;
@@ -80,7 +80,7 @@ struct InventoryArea::Impl
 
 InventoryArea::InventoryArea(sf::IntRect dimensions)
   : GUIPane(dimensions),
-    impl(new Impl())
+    pImpl(new Impl())
 {}
 
 InventoryArea::~InventoryArea()
@@ -88,44 +88,42 @@ InventoryArea::~InventoryArea()
   //dtor
 }
 
-std::weak_ptr<Thing> InventoryArea::get_viewed() const
+ThingRef InventoryArea::get_viewed() const
 {
-  return impl->viewed_ptr;
+  return pImpl->viewed;
 }
 
-void InventoryArea::set_viewed(std::weak_ptr<Thing> thing)
+void InventoryArea::set_viewed(ThingRef thing)
 {
-  impl->viewed_ptr = thing;
-  impl->selected_slots.clear();
+  pImpl->viewed = thing;
+  pImpl->selected_slots.clear();
 }
 
 void InventoryArea::toggle_selection(InventorySlot selection)
 {
-  auto viewed_ptr = impl->viewed_ptr.lock();
-
-  if (!viewed_ptr)
+  if (pImpl->viewed == TM.get_mu())
   {
     return;
   }
 
-  Inventory& inventory = viewed_ptr->get_inventory();
+  Inventory& inventory = pImpl->viewed->get_inventory();
 
   if (inventory.contains(selection))
   {
-    auto iter = std::find(std::begin(impl->selected_slots),
-                          std::end(impl->selected_slots),
+    auto iter = std::find(std::begin(pImpl->selected_slots),
+                          std::end(pImpl->selected_slots),
                           selection);
-    if ( iter == std::end(impl->selected_slots))
+    if ( iter == std::end(pImpl->selected_slots))
     {
       //TRACE("Adding thing %u to selected things",
       //      static_cast<unsigned int>(id));
-      impl->selected_slots.push_back(selection);
+      pImpl->selected_slots.push_back(selection);
     }
     else
     {
       //TRACE("Removing thing %u from selected things",
       //      static_cast<unsigned int>(id));
-      impl->selected_slots.erase(iter);
+      pImpl->selected_slots.erase(iter);
     }
 
     reset_selected_quantity();
@@ -134,29 +132,27 @@ void InventoryArea::toggle_selection(InventorySlot selection)
 
 unsigned int InventoryArea::get_selected_slot_count() const
 {
-  return impl->selected_slots.size();
+  return pImpl->selected_slots.size();
 }
 
 std::vector<InventorySlot> const& InventoryArea::get_selected_slots()
 {
-  return impl->selected_slots;
+  return pImpl->selected_slots;
 }
 
-std::vector<std::weak_ptr<Thing>> InventoryArea::get_selected_things()
+std::vector<ThingRef> InventoryArea::get_selected_things()
 {
-  std::vector<std::weak_ptr<Thing>> things;
+  std::vector<ThingRef> things;
 
-  auto viewed_ptr = impl->viewed_ptr.lock();
-
-  if (viewed_ptr)
+  if (pImpl->viewed != TM.get_mu())
   {
-    Inventory& inventory = viewed_ptr->get_inventory();
+    Inventory& inventory = pImpl->viewed->get_inventory();
 
-    for (auto iter = std::begin(impl->selected_slots);
-              iter != std::end(impl->selected_slots);
+    for (auto iter = std::begin(pImpl->selected_slots);
+              iter != std::end(pImpl->selected_slots);
               ++iter)
     {
-      std::weak_ptr<Thing> thing = inventory.get(*iter);
+      ThingRef thing = inventory.get(*iter);
       things.push_back(thing);
     }
   }
@@ -166,36 +162,34 @@ std::vector<std::weak_ptr<Thing>> InventoryArea::get_selected_things()
 
 void InventoryArea::clear_selected_slots()
 {
-  impl->selected_slots.clear();
+  pImpl->selected_slots.clear();
 }
 
 unsigned int InventoryArea::get_selected_quantity() const
 {
-  return impl->selected_quantity;
+  return pImpl->selected_quantity;
 }
 
 unsigned int InventoryArea::get_max_quantity() const
 {
   unsigned int result;
 
-  auto viewed_ptr = impl->viewed_ptr.lock();
-
-  if (!viewed_ptr)
+  if (pImpl->viewed == TM.get_mu())
   {
     return 0;
   }
 
-  Inventory& inventory = viewed_ptr->get_inventory();
+  Inventory& inventory = pImpl->viewed->get_inventory();
 
-  if (impl->selected_slots.size() == 0)
+  if (pImpl->selected_slots.size() == 0)
   {
     result = 0;
   }
   else
   {
-    auto thing = inventory.get(impl->selected_slots[0]).lock();
+    ThingRef thing = inventory.get(pImpl->selected_slots[0]);
 
-    if (!thing)
+    if (thing == TM.get_mu())
     {
       result = 0;
     }
@@ -210,8 +204,8 @@ unsigned int InventoryArea::get_max_quantity() const
 
 unsigned int InventoryArea::reset_selected_quantity()
 {
-  impl->selected_quantity = get_max_quantity();
-  return impl->selected_quantity;
+  pImpl->selected_quantity = get_max_quantity();
+  return pImpl->selected_quantity;
 }
 
 bool InventoryArea::set_selected_quantity(unsigned int amount)
@@ -221,7 +215,7 @@ bool InventoryArea::set_selected_quantity(unsigned int amount)
     unsigned int maximum = get_max_quantity();
     if (amount <= maximum)
     {
-      impl->selected_quantity = amount;
+      pImpl->selected_quantity = amount;
       return true;
     }
   }
@@ -231,9 +225,9 @@ bool InventoryArea::set_selected_quantity(unsigned int amount)
 bool InventoryArea::inc_selected_quantity()
 {
   unsigned int maximum = get_max_quantity();
-  if (impl->selected_quantity < maximum)
+  if (pImpl->selected_quantity < maximum)
   {
-    ++(impl->selected_quantity);
+    ++(pImpl->selected_quantity);
     return true;
   }
   return false;
@@ -241,24 +235,24 @@ bool InventoryArea::inc_selected_quantity()
 
 bool InventoryArea::dec_selected_quantity()
 {
-  if (impl->selected_quantity > 1)
+  if (pImpl->selected_quantity > 1)
   {
-    --(impl->selected_quantity);
+    --(pImpl->selected_quantity);
     return true;
   }
   return false;
 }
 
-std::weak_ptr<Thing> InventoryArea::get_thing(InventorySlot selection)
+ThingRef InventoryArea::get_thing(InventorySlot selection)
 {
-  auto viewed_ptr = impl->viewed_ptr.lock();
+  ThingRef viewed = pImpl->viewed;
 
-  if (!viewed_ptr)
+  if (viewed == TM.get_mu())
   {
-    return std::weak_ptr<Thing>();
+    return TM.get_mu();
   }
 
-  Inventory& inventory = viewed_ptr->get_inventory();
+  Inventory& inventory = pImpl->viewed->get_inventory();
 
   if (inventory.contains(selection))
   {
@@ -266,9 +260,9 @@ std::weak_ptr<Thing> InventoryArea::get_thing(InventorySlot selection)
   }
   else
   {
-    TRACE("Requested non-existent inventory slot %u, returning nullptr!",
+    TRACE("Requested non-existent inventory slot %u, returning mu!",
           static_cast<unsigned int>(selection));
-    return std::weak_ptr<Thing>();
+    return TM.get_mu();
   }
 }
 
@@ -293,8 +287,7 @@ std::string InventoryArea::render_contents(int frame)
   float text_offset_y = 3;
 
   // Get a reference to the location we're referring to.
-  auto viewed_ptr = impl->viewed_ptr.lock();
-  if (!viewed_ptr)
+  if (pImpl->viewed == TM.get_mu())
   {
     return "Invalid Viewed Object!";
   }
@@ -303,7 +296,7 @@ std::string InventoryArea::render_contents(int frame)
   float text_coord_x = text_offset_x;
   float text_coord_y = text_offset_y + (line_spacing_y * 1.5);
 
-  Inventory& inventory = viewed_ptr->get_inventory();
+  Inventory& inventory = pImpl->viewed->get_inventory();
 
   /// @todo At the moment this does not split lines that are too long, instead
   ///       truncating them at the edge of the box.  This must be fixed.
@@ -315,21 +308,21 @@ std::string InventoryArea::render_contents(int frame)
        iter != things.cend(); ++iter)
   {
     auto& slot = (*iter).first;
-    auto& thing = (*iter).second;
+    ThingRef thing = (*iter).second;
     unsigned int slot_number = static_cast<unsigned int>(slot);
     sf::Text render_text;
 
     // 1. Figure out whether this is selected or not, and set FG color.
     sf::Color fg_color = Settings.text_color;
     unsigned int selection_order = 0;
-    auto slot_iter = std::find(impl->selected_slots.begin(),
-                                impl->selected_slots.end(),
+    auto slot_iter = std::find(pImpl->selected_slots.begin(),
+                                pImpl->selected_slots.end(),
                                 slot);
 
-    if (slot_iter != impl->selected_slots.end())
+    if (slot_iter != pImpl->selected_slots.end())
     {
       fg_color = Settings.text_highlight_color;
-      selection_order = (slot_iter - impl->selected_slots.begin()) + 1;
+      selection_order = (slot_iter - pImpl->selected_slots.begin()) + 1;
     }
 
     // 2. Display the selection order.
@@ -351,7 +344,7 @@ std::string InventoryArea::render_contents(int frame)
       std::stringstream slot_id;
       char item_char;
 
-      item_char = impl->get_character(slot_number);
+      item_char = pImpl->get_character(slot_number);
 
       slot_id << item_char << ":";
       render_text.setFont(the_default_mono_font);
@@ -391,13 +384,13 @@ std::string InventoryArea::render_contents(int frame)
     if (selection_order == 1)
     {
       unsigned int max_quantity = thing->get_quantity();
-      if ((max_quantity > 1) && (impl->selected_quantity < max_quantity))
+      if ((max_quantity > 1) && (pImpl->selected_quantity < max_quantity))
       {
-        item_name << "(Sel: " << impl->selected_quantity << ") ";
+        item_name << "(Sel: " << pImpl->selected_quantity << ") ";
       }
     }
 
-    item_name << thing->get_indef_name();
+    item_name << thing->get_identifying_string_without_possessives(false);
     render_text.setFont(the_default_font);
     render_text.setCharacterSize(Settings.text_default_size);
     render_text.setString(item_name.str());
@@ -423,7 +416,7 @@ std::string InventoryArea::render_contents(int frame)
   // TODO: Might want to define a specific "get_inventory_name()" method
   //       for Thing that defaults to "XXXX's inventory" but can be
   //       overridden to say stuff like "Things on the floor".
-  sf::String title_string = viewed_ptr->get_possessive() + " inventory";
+  sf::String title_string = pImpl->viewed->get_possessive() + " inventory";
   title_string[0] = toupper(title_string[0]);
   return title_string;
 }

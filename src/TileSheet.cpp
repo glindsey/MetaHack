@@ -1,9 +1,9 @@
 #include "TileSheet.h"
 
+#include <boost/log/trivial.hpp>
 #include <map>
 
 #include "ConfigSettings.h"
-#include "ErrorHandler.h"
 
 struct TileSheet::Impl
 {
@@ -11,7 +11,7 @@ struct TileSheet::Impl
 };
 
 TileSheet::TileSheet()
-  : impl(new Impl())
+  : pImpl(new Impl())
 {
   //ctor
 }
@@ -26,7 +26,7 @@ bool TileSheet::load(std::string const& filename)
   sf::Image image;
   image.loadFromFile(filename);
   image.createMaskFromColor(sf::Color(192, 32, 64));
-  return impl->texture.loadFromImage(image);
+  return pImpl->texture.loadFromImage(image);
 }
 
 sf::IntRect TileSheet::get_tile(sf::Vector2u tile) const
@@ -39,8 +39,8 @@ sf::IntRect TileSheet::get_tile(sf::Vector2u tile) const
 
   #ifdef DEBUG
   if ((rect.left < 0) || (rect.top < 0) ||
-      (rect.left + rect.width >= static_cast<int>(impl->texture.getSize().x)) ||
-      (rect.top + rect.height >= static_cast<int>(impl->texture.getSize().y)))
+      (rect.left + rect.width >= static_cast<int>(pImpl->texture.getSize().x)) ||
+      (rect.top + rect.height >= static_cast<int>(pImpl->texture.getSize().y)))
   {
     MAJOR_ERROR("Request for tile (%d, %d) is out of bounds on the sprite sheet!",
                 tile.x, tile.y);
@@ -52,7 +52,7 @@ sf::IntRect TileSheet::get_tile(sf::Vector2u tile) const
 
 sf::Texture& TileSheet::getTexture(void)
 {
-  return impl->texture;
+  return pImpl->texture;
 }
 
 void TileSheet::add_quad(sf::VertexArray& vertices,

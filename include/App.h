@@ -30,7 +30,7 @@ class App : public EventHandler, public boost::noncopyable
   protected:
   private:
     struct Impl;
-    std::unique_ptr<Impl> impl;
+    std::unique_ptr<Impl> pImpl;
 };
 
 /// Global app instance

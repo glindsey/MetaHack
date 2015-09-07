@@ -1,13 +1,12 @@
 #include "AppStateGameMode.h"
 
+#include <boost/log/trivial.hpp>
 #include <memory>
 #include <set>
 
 #include "Action.h"
 #include "App.h"
 #include "ConfigSettings.h"
-#include "Entity.h"
-#include "ErrorHandler.h"
 #include "GetLetterKey.h"
 #include "KeyBuffer.h"
 #include "Map.h"
@@ -15,16 +14,7 @@
 #include "MapTile.h"
 #include "MessageLog.h"
 #include "Thing.h"
-#include "ThingFactory.h"
-
-#include "things/Human.h"
-
-// Includes required for test code.
-#include "things/CoinGold.h"
-#include "things/LightOrb.h"
-#include "things/Rock.h"
-#include "things/RockLichen.h"
-#include "things/SackLarge.h"
+#include "ThingManager.h"
 
 struct AppStateGameMode::Impl
 {
@@ -55,7 +45,7 @@ struct AppStateGameMode::Impl
   std::unique_ptr<InventoryArea> inventory_area;
 
   /// Map zoom level.  1.0 equals 100 percent zoom.
-  float map_zoom_level;
+  double map_zoom_level;
 
   /// Current screen area that has keyboard focus.
   GameInputState current_input_state;
@@ -72,8 +62,8 @@ struct AppStateGameMode::Impl
 
   void reset_inventory_area()
   {
-    auto player = TF.get_player();
-    auto& game_map = MF.get(player->get_map_id());
+    ThingRef player = TM.get_player();
+    Map& game_map = MF.get(player->get_map_id());
     if (inventory_area_shows_player == true)
     {
       inventory_area->set_viewed(player);
@@ -82,7 +72,8 @@ struct AppStateGameMode::Impl
     {
       if (current_input_state == GameInputState::CursorLook)
       {
-        inventory_area->set_viewed(game_map.get_tile(cursor_coords)->get_floor());
+        ThingRef floor_id = game_map.get_tile(cursor_coords)->get_floor();
+        inventory_area->set_viewed(floor_id);
       }
       else
       {
@@ -130,7 +121,7 @@ struct AppStateGameMode::Impl
 };
 
 AppStateGameMode::AppStateGameMode(StateMachine* state_machine)
-  : State(state_machine), impl(new Impl())
+  : State(state_machine), pImpl(new Impl())
 {
 }
 
@@ -151,9 +142,9 @@ void AppStateGameMode::execute()
     debug_buffer.clear_buffer();
   }
 
-  auto& player = *(TF.get_player().get());
+  ThingRef player = TM.get_player();
 
-  if (player.pending_action())
+  if (player->pending_action())
   {
     // QUESTION: Do we want to update all Things, PERIOD?  In other words, should
     //           other maps keep playing themselves if the player is not on them?
@@ -161,12 +152,12 @@ void AppStateGameMode::execute()
     //           lag would quickly grow intolerable.
 
     // Get the map the player is on.
-    MapId current_map_id = player.get_map_id();
+    MapId current_map_id = player->get_map_id();
     Map& current_map = MF.get(current_map_id);
 
     // Process everything on the map.
-    current_map.do_process();
-    impl->reset_inventory_area();
+    current_map.process();
+    pImpl->reset_inventory_area();
 
     // If player can see the map...
     /// @todo IMPLEMENT THIS CHECK
@@ -186,15 +177,15 @@ void AppStateGameMode::execute()
 bool AppStateGameMode::render(sf::RenderTarget& target, int frame)
 {
   // Set focus for areas.
-  the_message_log.set_focus(impl->current_input_state == GameInputState::MessageLog);
-  impl->status_area->set_focus(impl->current_input_state == GameInputState::Map);
+  the_message_log.set_focus(pImpl->current_input_state == GameInputState::MessageLog);
+  pImpl->status_area->set_focus(pImpl->current_input_state == GameInputState::Map);
 
   try
   {
-    Entity& player = *(TF.get_player().get());
-    std::shared_ptr<Thing> location = player.get_location();
+    ThingRef player = TM.get_player();
+    ThingRef location = player->get_location();
 
-    if (!location)
+    if (location == TM.get_mu())
     {
       FATAL_ERROR("Uh oh, the player's location appears to have been deleted!");
     }
@@ -204,25 +195,25 @@ bool AppStateGameMode::render(sf::RenderTarget& target, int frame)
     ///       Should probably use an overridden "render_surroundings" method
     ///       for Things.
 
-    if (!player.is_inside_another_thing())
+    if (!player->is_inside_another_thing())
     {
-      MapTile* tile = player.get_maptile();
+      MapTile* tile = player->get_maptile();
       if (tile != nullptr)
       {
         Map& game_map = MF.get(tile->get_map_id());
         sf::Vector2i tile_coords = tile->get_coords();
         sf::Vector2f player_pixel_coords = MapTile::get_pixel_coords(tile_coords);
-        sf::Vector2f cursor_pixel_coords = MapTile::get_pixel_coords(impl->cursor_coords);
+        sf::Vector2f cursor_pixel_coords = MapTile::get_pixel_coords(pImpl->cursor_coords);
 
         // Update thing vertex array.
         game_map.update_thing_vertices(player, frame);
 
-        if (impl->current_input_state == GameInputState::CursorLook)
+        if (pImpl->current_input_state == GameInputState::CursorLook)
         {
-          game_map.set_view(target, cursor_pixel_coords, impl->map_zoom_level);
+          game_map.set_view(target, cursor_pixel_coords, pImpl->map_zoom_level);
           game_map.draw_to(target);
 
-          auto& cursor_tile = game_map.get_tile(impl->cursor_coords);
+          auto& cursor_tile = game_map.get_tile(pImpl->cursor_coords);
           cursor_tile->draw_highlight(target,
                                       cursor_pixel_coords,
                                       Settings.cursor_border_color,
@@ -231,15 +222,15 @@ bool AppStateGameMode::render(sf::RenderTarget& target, int frame)
         }
         else
         {
-          game_map.set_view(target, player_pixel_coords, impl->map_zoom_level);
+          game_map.set_view(target, player_pixel_coords, pImpl->map_zoom_level);
           game_map.draw_to(target);
         }
       }
     }
 
     the_message_log.render(target, frame);
-    impl->status_area->render(target, frame);
-    impl->inventory_area->render(target, frame);
+    pImpl->status_area->render(target, frame);
+    pImpl->inventory_area->render(target, frame);
   }
   catch (std::exception const& e)
   {
@@ -252,21 +243,21 @@ bool AppStateGameMode::render(sf::RenderTarget& target, int frame)
 EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 {
   EventResult result = EventResult::Ignored;
-  auto player = TF.get_player();
+  ThingRef player = TM.get_player();
 
   // *** Handle keys processed in any mode.
   if (!key.alt && !key.control)
   {
     if (key.code == sf::Keyboard::Key::Tilde)
     {
-      switch (impl->current_input_state)
+      switch (pImpl->current_input_state)
       {
       case GameInputState::Map:
-        impl->current_input_state = GameInputState::MessageLog;
+        pImpl->current_input_state = GameInputState::MessageLog;
         return EventResult::Handled;
 
       case GameInputState::MessageLog:
-        impl->current_input_state = GameInputState::Map;
+        pImpl->current_input_state = GameInputState::Map;
         return EventResult::Handled;
 
       default:
@@ -276,7 +267,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
   }
 
   // *** Handle keys unique to a particular focus.
-  switch (impl->current_input_state)
+  switch (pImpl->current_input_state)
   {
   case GameInputState::TargetSelection:
   {
@@ -285,33 +276,33 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
     if (!key.alt && !key.control && key.code == sf::Keyboard::Key::Tab)
     {
-      impl->inventory_area_shows_player = !impl->inventory_area_shows_player;
-      impl->reset_inventory_area();
+      pImpl->inventory_area_shows_player = !pImpl->inventory_area_shows_player;
+      pImpl->reset_inventory_area();
     }
 
-    if (impl->action_in_progress.target_can_be_thing)
+    if (pImpl->action_in_progress.target_can_be_thing)
     {
       if (!key.alt && !key.control && key_number != -1)
       {
-        impl->action_in_progress.target =
-          impl->inventory_area->get_thing(static_cast<InventorySlot>(key_number));
-        player->queue_action(impl->action_in_progress);
-        impl->inventory_area_shows_player = false;
-        impl->reset_inventory_area();
-        impl->current_input_state = GameInputState::Map;
+        pImpl->action_in_progress.target =
+          pImpl->inventory_area->get_thing(static_cast<InventorySlot>(key_number));
+        player->queue_action(pImpl->action_in_progress);
+        pImpl->inventory_area_shows_player = false;
+        pImpl->reset_inventory_area();
+        pImpl->current_input_state = GameInputState::Map;
         result = EventResult::Handled;
       }
-    } // end if (impl->action_in_progress.target_can_be_thing)
+    } // end if (pImpl->action_in_progress.target_can_be_thing)
 
-    if (impl->action_in_progress.target_can_be_direction)
+    if (pImpl->action_in_progress.target_can_be_direction)
     {
       if (!key.alt && !key.control && key_direction != Direction::None)
       {
-        impl->action_in_progress.direction = key_direction;
-        player->queue_action(impl->action_in_progress);
-        impl->inventory_area_shows_player = false;
-        impl->reset_inventory_area();
-        impl->current_input_state = GameInputState::Map;
+        pImpl->action_in_progress.direction = key_direction;
+        player->queue_action(pImpl->action_in_progress);
+        pImpl->inventory_area_shows_player = false;
+        pImpl->reset_inventory_area();
+        pImpl->current_input_state = GameInputState::Map;
         return EventResult::Handled;
       }
     }
@@ -325,66 +316,66 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
       switch (key.code)
       {
       case sf::Keyboard::Key::Up:
-        impl->move_cursor(Direction::North);
-        impl->inventory_area_shows_player = false;
-        impl->reset_inventory_area();
+        pImpl->move_cursor(Direction::North);
+        pImpl->inventory_area_shows_player = false;
+        pImpl->reset_inventory_area();
         result = EventResult::Handled;
         break;
 
       case sf::Keyboard::Key::PageUp:
-        impl->move_cursor(Direction::Northeast);
-        impl->inventory_area_shows_player = false;
-        impl->reset_inventory_area();
+        pImpl->move_cursor(Direction::Northeast);
+        pImpl->inventory_area_shows_player = false;
+        pImpl->reset_inventory_area();
         result = EventResult::Handled;
         break;
 
       case sf::Keyboard::Key::Right:
-        impl->move_cursor(Direction::East);
-        impl->inventory_area_shows_player = false;
-        impl->reset_inventory_area();
+        pImpl->move_cursor(Direction::East);
+        pImpl->inventory_area_shows_player = false;
+        pImpl->reset_inventory_area();
         result = EventResult::Handled;
         break;
 
       case sf::Keyboard::Key::PageDown:
-        impl->move_cursor(Direction::Southeast);
-        impl->inventory_area_shows_player = false;
-        impl->reset_inventory_area();
+        pImpl->move_cursor(Direction::Southeast);
+        pImpl->inventory_area_shows_player = false;
+        pImpl->reset_inventory_area();
         result = EventResult::Handled;
         break;
 
       case sf::Keyboard::Key::Down:
-        impl->move_cursor(Direction::South);
-        impl->inventory_area_shows_player = false;
-        impl->reset_inventory_area();
+        pImpl->move_cursor(Direction::South);
+        pImpl->inventory_area_shows_player = false;
+        pImpl->reset_inventory_area();
         result = EventResult::Handled;
         break;
 
       case sf::Keyboard::Key::End:
-        impl->move_cursor(Direction::Southwest);
-        impl->inventory_area_shows_player = false;
-        impl->reset_inventory_area();
+        pImpl->move_cursor(Direction::Southwest);
+        pImpl->inventory_area_shows_player = false;
+        pImpl->reset_inventory_area();
         result = EventResult::Handled;
         break;
 
       case sf::Keyboard::Key::Left:
-        impl->move_cursor(Direction::West);
-        impl->inventory_area_shows_player = false;
-        impl->reset_inventory_area();
+        pImpl->move_cursor(Direction::West);
+        pImpl->inventory_area_shows_player = false;
+        pImpl->reset_inventory_area();
         result = EventResult::Handled;
         break;
 
       case sf::Keyboard::Key::Home:
-        impl->move_cursor(Direction::Northwest);
-        impl->inventory_area_shows_player = false;
-        impl->reset_inventory_area();
+        pImpl->move_cursor(Direction::Northwest);
+        pImpl->inventory_area_shows_player = false;
+        pImpl->reset_inventory_area();
         result = EventResult::Handled;
         break;
 
         // "/" - go back to Map focus.
       case sf::Keyboard::Key::Slash:
-        impl->current_input_state = GameInputState::Map;
-        impl->inventory_area_shows_player = false;
-        impl->reset_inventory_area();
+        pImpl->current_input_state = GameInputState::Map;
+        pImpl->inventory_area_shows_player = false;
+        pImpl->reset_inventory_area();
         result = EventResult::Handled;
         break;
 
@@ -406,13 +397,13 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
     {
       if (key_number != -1)
       {
-        impl->inventory_area->toggle_selection(static_cast<InventorySlot>(key_number));
+        pImpl->inventory_area->toggle_selection(static_cast<InventorySlot>(key_number));
         result = EventResult::Handled;
       }
       else if (key.code == sf::Keyboard::Key::Tab)
       {
-        impl->inventory_area_shows_player = !impl->inventory_area_shows_player;
-        impl->reset_inventory_area();
+        pImpl->inventory_area_shows_player = !pImpl->inventory_area_shows_player;
+        pImpl->reset_inventory_area();
       }
     }
 
@@ -438,14 +429,14 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
       else switch (key.code)
       {
       case sf::Keyboard::Key::BackSpace:
-        impl->reset_inventory_area();
+        pImpl->reset_inventory_area();
         break;
 
         // "/" - go to cursor look mode.
       case sf::Keyboard::Key::Slash:
-        impl->current_input_state = GameInputState::CursorLook;
-        impl->inventory_area_shows_player = false;
-        impl->reset_inventory_area();
+        pImpl->current_input_state = GameInputState::CursorLook;
+        pImpl->inventory_area_shows_player = false;
+        pImpl->reset_inventory_area();
         result = EventResult::Handled;
         break;
 
@@ -454,7 +445,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
       case sf::Keyboard::Key::Subtract:
         {
           /// @todo Need a way to choose which inventory we're affecting.
-          unsigned int slot_count = impl->inventory_area->get_selected_slot_count();
+          unsigned int slot_count = pImpl->inventory_area->get_selected_slot_count();
           if (slot_count < 1)
           {
             the_message_log.add("You have to have something selected "
@@ -467,7 +458,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           }
           else
           {
-            impl->inventory_area->dec_selected_quantity();
+            pImpl->inventory_area->dec_selected_quantity();
           }
         }
         result = EventResult::Handled;
@@ -477,7 +468,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
       case sf::Keyboard::Key::Equal:
       case sf::Keyboard::Key::Add:
         {
-          unsigned int slot_count = impl->inventory_area->get_selected_slot_count();
+          unsigned int slot_count = pImpl->inventory_area->get_selected_slot_count();
           if (slot_count < 1)
           {
             the_message_log.add("You have to have something selected "
@@ -490,7 +481,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           }
           else
           {
-            impl->inventory_area->inc_selected_quantity();
+            pImpl->inventory_area->inc_selected_quantity();
           }
         }
         result = EventResult::Handled;
@@ -498,12 +489,11 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
       case sf::Keyboard::Key::LBracket:
         {
-          auto thing = impl->inventory_area->get_viewed().lock();
-          ASSERT_CONDITION(thing);
-          auto location = thing->get_location();
-          if (location)
+          ThingRef thing = pImpl->inventory_area->get_viewed();
+          ThingRef location = thing->get_location();
+          if (location != TM.get_mu())
           {
-            impl->inventory_area->set_viewed(location);
+            pImpl->inventory_area->set_viewed(location);
           }
           else
           {
@@ -514,37 +504,36 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
       case sf::Keyboard::Key::RBracket:
         {
-          unsigned int slot_count = impl->inventory_area->get_selected_slot_count();
+          unsigned int slot_count = pImpl->inventory_area->get_selected_slot_count();
 
           if (slot_count > 0)
           {
-            auto thing = impl->inventory_area->get_selected_things().back().lock();
-            ASSERT_CONDITION(thing);
-            if (thing->get_inventory_size() != 0)
+            ThingRef thing = pImpl->inventory_area->get_viewed();
+            if (thing->get_intrinsic_value("inventory_size") != 0)
             {
-              if (thing->is_open())
+              if (thing->get_property_value("open"))
               {
-                if (!thing->is_locked())
+                if (!thing->get_property_value("locked"))
                 {
-                  impl->inventory_area->set_viewed(thing);
+                  pImpl->inventory_area->set_viewed(thing);
                 }
                 else // if (container.is_locked())
                 {
-                  the_message_log.add(thing->get_name() +
+                  the_message_log.add(thing->get_identifying_string() +
                                       thing->choose_verb(" are", " is") +
                                       " locked.");
                 }
               }
               else // if (!container.is_open())
               {
-                the_message_log.add(thing->get_name() +
+                the_message_log.add(thing->get_identifying_string() +
                                     thing->choose_verb(" are", " is") +
                                     " closed.");
               }
             }
             else // if (!thing.is_container())
             {
-              the_message_log.add(thing->get_name() +
+              the_message_log.add(thing->get_identifying_string() +
                                   thing->choose_verb(" are", " is") +
                                   " not a container.");
             }
@@ -588,44 +577,44 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
         // CTRL-D -- drop items
       case sf::Keyboard::Key::D:    // Drop
         action.type = Action::Type::Drop;
-        action.things = impl->inventory_area->get_selected_things();
+        action.things = pImpl->inventory_area->get_selected_things();
         player->queue_action(action);
-        impl->inventory_area_shows_player = false;
-        impl->reset_inventory_area();
+        pImpl->inventory_area_shows_player = false;
+        pImpl->reset_inventory_area();
         result = EventResult::Handled;
         break;
 
         // CTRL-P -- pick up items
       case sf::Keyboard::Key::P:    // Pick up
         action.type = Action::Type::Pickup;
-        action.things = impl->inventory_area->get_selected_things();
+        action.things = pImpl->inventory_area->get_selected_things();
         player->queue_action(action);
-        impl->inventory_area_shows_player = false;
-        impl->reset_inventory_area();
+        pImpl->inventory_area_shows_player = false;
+        pImpl->reset_inventory_area();
         result = EventResult::Handled;
         break;
 
         // CTRL-Q -- quaff (drink) items
       case sf::Keyboard::Key::Q:
         action.type = Action::Type::Quaff;
-        action.things = impl->inventory_area->get_selected_things();
+        action.things = pImpl->inventory_area->get_selected_things();
         player->queue_action(action);
-        impl->inventory_area_shows_player = false;
-        impl->reset_inventory_area();
+        pImpl->inventory_area_shows_player = false;
+        pImpl->reset_inventory_area();
         result = EventResult::Handled;
         break;
 
         // CTRL-S -- store item in another item
       case sf::Keyboard::Key::S:
         action.type = Action::Type::Store;
-        action.things = impl->inventory_area->get_selected_things();
+        action.things = pImpl->inventory_area->get_selected_things();
         if (action.things.size() > 0)
         {
-          impl->action_in_progress = action;
+          pImpl->action_in_progress = action;
           the_message_log.add("Choose a container to store into.");
-          impl->current_input_state = GameInputState::TargetSelection;
-          impl->action_in_progress.target_can_be_thing = true;
-          impl->inventory_area->clear_selected_slots();
+          pImpl->current_input_state = GameInputState::TargetSelection;
+          pImpl->action_in_progress.target_can_be_thing = true;
+          pImpl->inventory_area->clear_selected_slots();
         }
         else
         {
@@ -637,20 +626,20 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
         // CTRL-T -- take item out of container
       case sf::Keyboard::Key::T:
         action.type = Action::Type::TakeOut;
-        action.things = impl->inventory_area->get_selected_things();
+        action.things = pImpl->inventory_area->get_selected_things();
         player->queue_action(action);
-        impl->inventory_area_shows_player = false;
-        impl->reset_inventory_area();
+        pImpl->inventory_area_shows_player = false;
+        pImpl->reset_inventory_area();
         result = EventResult::Handled;
         break;
 
         // CTRL-W -- wield item
       case sf::Keyboard::Key::W:
         action.type = Action::Type::Wield;
-        action.things = impl->inventory_area->get_selected_things();
+        action.things = pImpl->inventory_area->get_selected_things();
         player->queue_action(action);
-        impl->inventory_area_shows_player = false;
-        impl->reset_inventory_area();
+        pImpl->inventory_area_shows_player = false;
+        pImpl->reset_inventory_area();
         result = EventResult::Handled;
         break;
 
@@ -683,7 +672,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
   default:
     break;
-  } // end switch (impl->current_input_state)
+  } // end switch (pImpl->current_input_state)
 
   return result;
 }
@@ -694,9 +683,9 @@ EventResult AppStateGameMode::handle_mouse_wheel(sf::Event::MouseWheelEvent& whe
   return EventResult::Handled;
 }
 
-void AppStateGameMode::add_zoom(float zoom_amount)
+void AppStateGameMode::add_zoom(double zoom_amount)
 {
-  float current_zoom_level = impl->map_zoom_level;
+  double current_zoom_level = pImpl->map_zoom_level;
 
   current_zoom_level += zoom_amount;
 
@@ -710,7 +699,7 @@ void AppStateGameMode::add_zoom(float zoom_amount)
     current_zoom_level = 3.0f;
   }
 
-  impl->map_zoom_level = current_zoom_level;
+  pImpl->map_zoom_level = current_zoom_level;
 }
 
 EventResult AppStateGameMode::handle_event(sf::Event& event)
@@ -721,8 +710,8 @@ EventResult AppStateGameMode::handle_event(sf::Event& event)
   {
   case sf::Event::EventType::Resized:
   {
-    impl->inventory_area->set_dimensions(impl->calc_inventory_dims());
-    impl->status_area->set_dimensions(impl->calc_status_area_dims());
+    pImpl->inventory_area->set_dimensions(pImpl->calc_inventory_dims());
+    pImpl->status_area->set_dimensions(pImpl->calc_status_area_dims());
     result = EventResult::Handled;
     break;
   }
@@ -744,10 +733,10 @@ EventResult AppStateGameMode::handle_event(sf::Event& event)
 
   if (result != EventResult::Handled)
   {
-    switch (impl->current_input_state)
+    switch (pImpl->current_input_state)
     {
     case GameInputState::Map:
-      result = impl->status_area->handle_event(event);
+      result = pImpl->status_area->handle_event(event);
       break;
 
     case GameInputState::MessageLog:
@@ -770,16 +759,17 @@ std::string const& AppStateGameMode::get_name()
 
 bool AppStateGameMode::initialize()
 {
-  impl->current_map_id = MF.create(64, 64);
-  Map& game_map = MF.get(impl->current_map_id);
+  pImpl->current_map_id = MF.create(64, 64);
+  Map& game_map = MF.get(pImpl->current_map_id);
 
   // Move player to start position on the map.
-  auto player = Human::create();
-  TF.set_player(player);
+  ThingRef player = TM.create("human");
+  player->set_proper_name("John Doe");
+  TM.set_player(player);
   sf::Vector2i const& start_coords = game_map.get_start_coords();
 
   auto start = game_map.get_tile(start_coords)->get_floor();
-  bool player_moved = TF.get_player()->move_into(start);
+  bool player_moved = player->move_into(start);
 
   if (player_moved == false)
   {
@@ -788,50 +778,55 @@ bool AppStateGameMode::initialize()
   }
 
   // Set cursor to starting location.
-  impl->cursor_coords = start_coords;
+  pImpl->cursor_coords = start_coords;
 
   // Set the viewed inventory location to the player's location.
-  impl->inventory_area_shows_player = false;
-  impl->reset_inventory_area();
+  pImpl->inventory_area_shows_player = false;
+  pImpl->reset_inventory_area();
 
   // TESTING CODE: Create a lighting orb held in player inventory.
   TRACE("Creating lighting orb...");
-  auto player_orb = LightOrb::create();
+  ThingRef player_orb = TM.create("LightOrb");
   player_orb->move_into(player);
+
+  // TESTING CODE: Create a sconce immediately north of the player.
+  TRACE("Creating sconce...");
+  ThingRef sconce = TM.create("Sconce");
+  sconce->move_into(game_map.get_tile(start_coords.x, start_coords.y - 1)->get_floor());
 
   // TESTING CODE: Create a rock immediately south of the player.
   TRACE("Creating rock...");
-  auto rock = Rock::create();
+  ThingRef rock = TM.create("Rock");
   rock->move_into(game_map.get_tile(start_coords.x, start_coords.y + 1)->get_floor());
 
   // TESTING CODE: Create a sack immediately east of the player.
   TRACE("Creating sack...");
-  auto sack = SackLarge::create();
+  ThingRef sack = TM.create("SackLarge");
   sack->move_into(game_map.get_tile(start_coords.x + 1, start_coords.y)->get_floor());
 
   // TESTING CODE: Create five gold coins west of the player.
   TRACE("Creating 5 coins...");
-  auto coins = CoinGold::create();
+  ThingRef coins = TM.create("CoinGold");
   coins->set_quantity(5);
   coins->move_into(game_map.get_tile(start_coords.x - 1, start_coords.y)->get_floor());
 
   // TESTING CODE: Create ten gold coins northwest of the player.
   TRACE("Creating 10 coins...");
-  auto coins2 = CoinGold::create();
+  ThingRef coins2 = TM.create("CoinGold");
   coins2->set_quantity(10);
   coins2->move_into(game_map.get_tile(start_coords.x - 1, start_coords.y - 1)->get_floor());
 
   // TESTING CODE: Create a rock lichen northeast of the player.
   TRACE("Creating rock lichen...");
-  auto lichen = RockLichen::create();
+  ThingRef lichen = TM.create("RockLichen");
   lichen->move_into(game_map.get_tile(start_coords.x + 1, start_coords.y - 1)->get_floor());
 
   // END TESTING CODE
 
   // Get the map ready.
   game_map.update_lighting();
-  game_map.update_tile_vertices(*(player.get()));
-  game_map.update_thing_vertices(*(player.get()), 0);
+  game_map.update_tile_vertices(player);
+  game_map.update_thing_vertices(player, 0);
 
   the_message_log.add("Welcome to the Etheric Catacombs!");
 

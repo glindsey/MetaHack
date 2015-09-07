@@ -1,10 +1,7 @@
 #include "things/SackLarge.h"
 
-SackLarge SackLarge::prototype;
-
-SackLarge::SackLarge() : Thing(-1)
+SackLarge::SackLarge(UUID id) : Thing("sack_large", id)
 {
-  this->set_inventory_size(10);
 }
 
 SackLarge::~SackLarge()           {}

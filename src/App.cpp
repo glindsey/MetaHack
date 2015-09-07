@@ -10,7 +10,7 @@
 #include "ErrorHandler.h"
 #include "MessageLog.h"
 #include "StateMachine.h"
-#include "ThingFactory.h"
+#include "ThingManager.h"
 #include "TileSheet.h"
 
 // Static declarations
@@ -31,7 +31,7 @@ sf::IntRect calc_message_log_dimensions()
 {
   sf::IntRect messageLogDims;
   messageLogDims.width = the_window.getSize().x - 6;
-  messageLogDims.height = (the_window.getSize().y * 0.2) - 6;
+  messageLogDims.height = static_cast<int>(the_window.getSize().y * 0.2f) - 6;
   messageLogDims.left = 3;
   messageLogDims.top = 3;
   return messageLogDims;
@@ -89,9 +89,6 @@ int main()
     FATAL_ERROR("Could not load the tile sheet (tilesheet.png)");
   }
 
-  // Initialize the Thing Factory.
-  TF.initialize();
-
   // Create and run the app instance.
   app_.reset(new App());
   app_->run();
@@ -110,24 +107,24 @@ struct App::Impl
 };
 
 App::App()
-  : impl(new Impl())
+  : pImpl(new Impl())
 {
   // Create the main state machine.
-  impl->state_machine.reset(new StateMachine("state_machine"));
+  pImpl->state_machine.reset(new StateMachine("state_machine"));
 
-  StateMachine* sm = impl->state_machine.get();
+  StateMachine* sm = pImpl->state_machine.get();
   // Add states to the state machine.
-  impl->state_machine->add_state(new AppStateSplashScreen(sm));
-  impl->state_machine->add_state(new AppStateMainMenu(sm));
-  impl->state_machine->add_state(new AppStateGameMode(sm));
+  pImpl->state_machine->add_state(new AppStateSplashScreen(sm));
+  pImpl->state_machine->add_state(new AppStateMainMenu(sm));
+  pImpl->state_machine->add_state(new AppStateGameMode(sm));
 
   // Switch to initial state.
   // DEBUG: Go right to game mode for now.
-  //impl->state_machine->change_to("AppStateSplashScreen");
-  impl->state_machine->change_to("AppStateGameMode");
+  //pImpl->state_machine->change_to("AppStateSplashScreen");
+  pImpl->state_machine->change_to("AppStateGameMode");
 
   // Set "window has focus" boolean to true.
-  impl->has_window_focus = true;
+  pImpl->has_window_focus = true;
 }
 
 App::~App()
@@ -142,14 +139,14 @@ EventResult App::handle_event(sf::Event& event)
   {
   case sf::Event::EventType::GainedFocus:
     {
-      impl->has_window_focus = true;
+      pImpl->has_window_focus = true;
       result = EventResult::Handled;
       break;
     }
 
   case sf::Event::EventType::LostFocus:
     {
-      impl->has_window_focus = false;
+      pImpl->has_window_focus = false;
       result = EventResult::Handled;
       break;
     }
@@ -157,8 +154,8 @@ EventResult App::handle_event(sf::Event& event)
   case sf::Event::EventType::Resized:
     {
       app_window_->setView(sf::View(sf::FloatRect(0, 0,
-                                                 event.size.width,
-                                                 event.size.height)));
+                                                 static_cast<float>(event.size.width),
+                                                 static_cast<float>(event.size.height))));
       the_message_log.set_dimensions(calc_message_log_dimensions());
 
       result = EventResult::Acknowledged;
@@ -167,10 +164,10 @@ EventResult App::handle_event(sf::Event& event)
 
   case sf::Event::EventType::Closed:
     {
-      impl->is_running = false;
+      pImpl->is_running = false;
       app_window_->setView(sf::View(sf::FloatRect(0, 0,
-                                                 event.size.width,
-                                                 event.size.height)));
+												  static_cast<float>(event.size.width),
+												  static_cast<float>(event.size.height))));
       result = EventResult::Handled;
       break;
     }
@@ -180,7 +177,7 @@ EventResult App::handle_event(sf::Event& event)
       switch (event.key.code)
       {
       case sf::Keyboard::Key::Escape:
-        impl->is_running = false;
+        pImpl->is_running = false;
         result = EventResult::Handled;
         break;
 
@@ -196,7 +193,7 @@ EventResult App::handle_event(sf::Event& event)
 
   if (result != EventResult::Handled)
   {
-      result = impl->state_machine->handle_event(event);
+      result = pImpl->state_machine->handle_event(event);
   }
 
   return result;
@@ -204,7 +201,7 @@ EventResult App::handle_event(sf::Event& event)
 
 bool App::has_window_focus()
 {
-  return impl->has_window_focus;
+  return pImpl->has_window_focus;
 }
 
 void App::run()
@@ -213,12 +210,12 @@ void App::run()
   static sf::Clock clock;
 
   // Set running boolean.
-  impl->is_running = true;
+  pImpl->is_running = true;
 
   clock.restart();
 
   // Start the loop
-  while (impl->is_running)
+  while (pImpl->is_running)
   {
     // Process events
     sf::Event event;
@@ -227,14 +224,14 @@ void App::run()
       handle_event(event);
     }
 
-    impl->state_machine->execute();
+    pImpl->state_machine->execute();
 
     // Limit frame rate to 62.5 fps.
     if (clock.getElapsedTime().asMilliseconds() > 16)
     {
       clock.restart();
       the_window.clear();
-      impl->state_machine->render(the_window, frame_counter);
+      pImpl->state_machine->render(the_window, frame_counter);
       the_window.display();
       ++frame_counter;
     }

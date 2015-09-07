@@ -1,6 +1,7 @@
-#include "ErrorHandler.h"
-
+#include <boost/log/trivial.hpp>
 #include <cstdlib>
+
+#include "ErrorHandler.h"
 
 struct ErrorHandler::Impl
 {
@@ -12,6 +13,7 @@ struct ErrorHandler::Impl
 std::unique_ptr<ErrorHandler> ErrorHandler::Impl::handler_instance;
 
 ErrorHandler::ErrorHandler()
+  : pImpl(new Impl())
 {
   //ctor
 }
@@ -36,7 +38,7 @@ void ErrorHandler::printTrace(char* buf,
                               int line,
                               char const* func)
 {
-  printf("%s:%d (%s): %s\n", file, line, func, buf);
+  printf("%s (%d): %s\n", func, line, buf);
 }
 
 
@@ -45,9 +47,9 @@ void ErrorHandler::handleMinorError(char* buf,
                                     int line,
                                     char const* func)
 {
-  printf("%s:%d (%s): MINOR error: %s\n", file, line, func, buf);
+  printf("%s (%d): WARNING: %s\n", func, line, buf);
 
-  if (impl->die_on_minor_error)
+  if (pImpl->die_on_minor_error)
   {
     printf("Dying because die_on_minor_error is true.\n");
     printf("Press Enter to exit.\n");
@@ -61,9 +63,9 @@ void ErrorHandler::handleMajorError(char* buf,
                                     int line,
                                     char const* func)
 {
-  printf("%s:%d (%s): MAJOR error: %s\n", file, line, func, buf);
+  printf("%s (%d): ERROR: %s\n", func, line, buf);
 
-  if (impl->die_on_major_error)
+  if (pImpl->die_on_major_error)
   {
     printf("Dying because die_on_major_error is true.\n");
     printf("Press Enter to exit.\n");
@@ -77,7 +79,7 @@ void ErrorHandler::handleFatalError(char* buf,
                                     int line,
                                     char const* func)
 {
-  printf("%s:%d (%s): FATAL error: %s\n", file, line, func, buf);
+  printf("%s (%d): FATAL: %s\n", func, line, buf);
 
   printf("Dying because this is an unrecoverable error.\n");
   printf("Press Enter to exit.\n");
@@ -87,7 +89,7 @@ void ErrorHandler::handleFatalError(char* buf,
 
 void ErrorHandler::setErrorHandlingFlags(bool minor, bool major)
 {
-  impl->die_on_minor_error = minor;
-  impl->die_on_major_error = major;
+  pImpl->die_on_minor_error = minor;
+  pImpl->die_on_major_error = major;
 }
 

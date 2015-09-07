@@ -8,7 +8,7 @@ struct AppStateSplashScreen::Impl
 };
 
 AppStateSplashScreen::AppStateSplashScreen(StateMachine* state_machine)
-  : State(state_machine), impl(new Impl())
+  : State(state_machine), pImpl(new Impl())
 {
   //ctor
 }
@@ -20,7 +20,7 @@ AppStateSplashScreen::~AppStateSplashScreen()
 
 void AppStateSplashScreen::execute()
 {
-  if (impl->clock.getElapsedTime().asSeconds() >= 1 /*3*/)
+  if (pImpl->clock.getElapsedTime().asSeconds() >= 1 /*3*/)
   {
     this->change_to("AppStateMainMenu");
   }
@@ -28,7 +28,7 @@ void AppStateSplashScreen::execute()
 
 bool AppStateSplashScreen::render(sf::RenderTarget& target, int frame)
 {
-  target.draw(impl->splash_sprite);
+  target.draw(pImpl->splash_sprite);
   return true;
 }
 
@@ -45,13 +45,13 @@ std::string const& AppStateSplashScreen::get_name()
 
 bool AppStateSplashScreen::initialize()
 {
-  if (!impl->splash_graphic.loadFromFile("cb.bmp"))
+  if (!pImpl->splash_graphic.loadFromFile("cb.bmp"))
   {
     return false;
   }
 
-  impl->splash_sprite.setTexture(impl->splash_graphic);
-  impl->clock.restart();
+  pImpl->splash_sprite.setTexture(pImpl->splash_graphic);
+  pImpl->clock.restart();
   return true;
 }
 

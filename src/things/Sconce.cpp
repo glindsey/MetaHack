@@ -1,10 +1,7 @@
 #include "things/Sconce.h"
 
-Sconce Sconce::prototype;
-
-Sconce::Sconce() : LightSource(0)
+Sconce::Sconce(UUID id) : Thing("sconce", id)
 {
-  set_single_mass(1);
   set_light_color(sf::Color(160, 128, 112, 255));
   set_max_light_strength(48);
 }
@@ -28,7 +25,7 @@ sf::Vector2u Sconce::get_tile_sheet_coords(int frame) const
   }
 }
 
-bool Sconce::_do_process()
+bool Sconce::_process()
 {
   /// @todo: Sconces should eventually wear out or something.
   return true;

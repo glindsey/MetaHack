@@ -1,16 +1,15 @@
 #include "MapTile.h"
 
+#include <boost/log/trivial.hpp>
 #include <boost/random/uniform_int_distribution.hpp>
 #include <string>
 
 #include "App.h"
 #include "ConfigSettings.h"
-#include "ErrorHandler.h"
 #include "Map.h"
 #include "MathUtils.h"
-#include "ThingFactory.h"
+#include "ThingManager.h"
 #include "TileSheet.h"
-#include "things/Floor.h"
 
 typedef boost::random::uniform_int_distribution<> uniform_int_dist;
 
@@ -19,8 +18,8 @@ struct MapTile::Impl
     MapId map_id;
     sf::Vector2i coords;
 
-    /// Thing that represents this tile's floor.
-    std::shared_ptr<Floor> floor;
+    /// Reference to the Thing that represents this tile's floor.
+    ThingRef floor;
 
     /// Tile's light level.
     /// Levels for the various color channels are interpreted as such:
@@ -35,47 +34,43 @@ struct MapTile::Impl
     /// 0 <= value <= 128: result = (original * (value / 128))
     /// 128 < value <= 255: result = max(original + (value - 128), 255)
     /// The alpha channel is ignored.
-    /// Using the raw pointer to LightSource is okay here as I am only
-    /// using it as a key to ensure that one source can't be accounted
-    /// for twice -- the recursive lighting algorithm visits tiles on
-    /// the cardinal directions more than once.
-    std::map<LightSource*, LightInfluence> lights;
+    std::map<ThingRef, LightInfluence> lights;
 
     MapTileType type;
     //unsigned int variant;
 };
 
 MapTile::MapTile(sf::Vector2i coords, MapId mapId)
-  : impl(new Impl())
+  : pImpl(new Impl())
 {
   //uniform_int_dist vDist(0, 3);
 
-  impl->floor.reset(new Floor(this));
-  impl->type = MapTileType::FloorStone;
-  //impl->variant = vDist(the_RNG);
-  impl->map_id = mapId;
-  impl->coords = coords;
-  impl->ambient_light_color = sf::Color(192, 192, 192, 255);
+  pImpl->floor = TM.create_floor(this);
+  pImpl->type = MapTileType::FloorStone;
+  //pImpl->variant = vDist(the_RNG);
+  pImpl->map_id = mapId;
+  pImpl->coords = coords;
+  pImpl->ambient_light_color = sf::Color(192, 192, 192, 255);
 }
 
 MapTile::~MapTile()
 {
 }
 
-std::shared_ptr<Thing> MapTile::get_floor() const
+ThingRef MapTile::get_floor() const
 {
-  return std::static_pointer_cast<Floor>(impl->floor);
+  return pImpl->floor;
 }
 
-std::string MapTile::get_description() const
+std::string MapTile::get_pretty_name() const
 {
-  return getMapTileTypeDescription(impl->type);
+  return getMapTileTypeDescription(pImpl->type);
 }
 
 sf::Vector2u MapTile::get_tile_sheet_coords(int frame) const
 {
-  sf::Vector2u result = getMapTileTypeTileSheetCoords(impl->type);
-  //result.x += impl->variant;
+  sf::Vector2u result = getMapTileTypeTileSheetCoords(pImpl->type);
+  //result.x += pImpl->variant;
 
   return result;
 }
@@ -162,93 +157,152 @@ void MapTile::draw_to(sf::RenderTexture& target,
 
 void MapTile::set_type(MapTileType tileType)
 {
-  impl->type = tileType;
+  pImpl->type = tileType;
 }
 
 MapTileType MapTile::get_type() const
 {
-  return impl->type;
+  return pImpl->type;
 }
 
 bool MapTile::is_empty_space() const
 {
-  return getMapTileTypePassable(impl->type);
+  return getMapTileTypePassable(pImpl->type);
 }
 
 /// @todo: Implement this to cover different entity types.
 ///        For example, a non-corporeal Entity can move through solid matter.
-bool MapTile::can_be_traversed_by(Entity& entity) const
+bool MapTile::can_be_traversed_by(ThingRef thing) const
 {
   return is_empty_space();
 }
 
 void MapTile::set_coords(int x, int y)
 {
-  impl->coords.x = x;
-  impl->coords.y = y;
+  pImpl->coords.x = x;
+  pImpl->coords.y = y;
 }
 
 sf::Vector2i const& MapTile::get_coords() const
 {
-  return impl->coords;
+  return pImpl->coords;
 }
 
 MapId MapTile::get_map_id() const
 {
-  return impl->map_id;
+  return pImpl->map_id;
 }
 
 void MapTile::set_ambient_light_level(sf::Color level)
 {
-  impl->ambient_light_color = level;
+  pImpl->ambient_light_color = level;
 }
 
-void MapTile::be_lit_by(LightSource& light)
+void MapTile::be_lit_by(ThingRef light)
 {
   MF.get(get_map_id()).add_light(light);
 }
 
 void MapTile::clear_light_influences()
 {
-  impl->lights.clear();
+  pImpl->lights.clear();
 }
 
-void MapTile::add_light_influence(LightSource* source,
+void MapTile::add_light_influence(ThingRef source,
                                   LightInfluence influence)
 {
-  impl->lights[source] = influence;
+
+  pImpl->lights[source] = influence;
 }
 
 sf::Color MapTile::get_light_level() const
 {
-  sf::Color color = impl->ambient_light_color;
+  sf::Color color = pImpl->ambient_light_color;
 
-  auto player = TF.get_player();
+  ThingRef player = TM.get_player();
 
-  for (auto iter = std::begin(impl->lights);
-       iter != std::end(impl->lights);
-       ++iter)
+  if (player != TM.get_mu())
   {
-    sf::Vector2i const& source_coords = iter->second.coords;
-    float dist_squared = calc_vis_distance(get_coords().x, get_coords().y,
-                                         source_coords.x, source_coords.y);
-
-    sf::Color light_color = iter->second.color;
-    float light_intensity = iter->second.intensity;
-
-    bool light_is_visible = player && player->can_see(source_coords.x, source_coords.y);
-
-    sf::Color addColor;
-
-    // LightIntensity is the distance at which the calculated light would be
-    // zero.
-    //
-
-    // If this tile is opaque, make sure we can see the light source.
-    // This is a crude but effective way of making sure light does not
-    // "bleed through" wall tiles.
-    if (!is_opaque() || light_is_visible)
+    for (auto iter = std::begin(pImpl->lights);
+      iter != std::end(pImpl->lights);
+      ++iter)
     {
+      sf::Vector2i const& source_coords = iter->second.coords;
+      float dist_squared = calc_vis_distance(get_coords().x, get_coords().y,
+        source_coords.x, source_coords.y);
+
+      sf::Color light_color = iter->second.color;
+      float light_intensity = iter->second.intensity;
+
+      bool light_is_visible = player->can_see(source_coords.x, source_coords.y);
+
+      sf::Color addColor;
+
+      // LightIntensity is the distance at which the calculated light would be
+      // zero.
+      //
+
+      // If this tile is opaque, make sure we can see the light source.
+      // This is a crude but effective way of making sure light does not
+      // "bleed through" wall tiles.
+      if (!is_opaque() || light_is_visible)
+      {
+        float dist_factor;
+
+        if (light_intensity == 0)
+        {
+          dist_factor = 1.0f;
+        }
+        else
+        {
+          dist_factor = dist_squared / light_intensity;
+        }
+
+        float light_factor = (1.0f - dist_factor);
+
+        addColor.r = (light_color.r * light_factor);
+        addColor.g = (light_color.g * light_factor);
+        addColor.b = (light_color.b * light_factor);
+        addColor.a = 255;
+
+        color.r = saturation_add(color.r, addColor.r);
+        color.g = saturation_add(color.g, addColor.g);
+        color.b = saturation_add(color.b, addColor.b);
+        color.a = saturation_add(color.a, addColor.a);
+      }
+    }
+  }
+
+  return color;
+}
+
+sf::Color MapTile::get_wall_light_level(Direction direction) const
+{
+  sf::Color color = pImpl->ambient_light_color;
+
+  ThingRef player = TM.get_player();
+
+  if (player != TM.get_mu())
+  {
+    for (auto iter = std::begin(pImpl->lights);
+      iter != std::end(pImpl->lights);
+      ++iter)
+    {
+      sf::Vector2i const& source_coords = iter->second.coords;
+      float dist_squared = calc_vis_distance(get_coords().x, get_coords().y,
+        source_coords.x, source_coords.y);
+
+      sf::Color light_color = iter->second.color;
+      float light_intensity = iter->second.intensity;
+
+      bool light_is_visible = player->can_see(source_coords.x, source_coords.y);
+
+      sf::Color addColor;
+
+      // LightIntensity is the distance at which the calculated light would be
+      // zero.
+      //
+
       float dist_factor;
 
       if (light_intensity == 0)
@@ -262,9 +316,11 @@ sf::Color MapTile::get_light_level() const
 
       float light_factor = (1.0f - dist_factor);
 
-      addColor.r = (light_color.r * light_factor);
-      addColor.g = (light_color.g * light_factor);
-      addColor.b = (light_color.b * light_factor);
+      float wall_factor = calculate_light_factor(source_coords, get_coords(), direction);
+
+      addColor.r = (light_color.r * wall_factor * light_factor);
+      addColor.g = (light_color.g * wall_factor * light_factor);
+      addColor.b = (light_color.b * wall_factor * light_factor);
       addColor.a = 255;
 
       color.r = saturation_add(color.r, addColor.r);
@@ -272,60 +328,6 @@ sf::Color MapTile::get_light_level() const
       color.b = saturation_add(color.b, addColor.b);
       color.a = saturation_add(color.a, addColor.a);
     }
-  }
-
-  return color;
-}
-
-sf::Color MapTile::get_wall_light_level(Direction direction) const
-{
-  sf::Color color = impl->ambient_light_color;
-
-  auto player = TF.get_player();
-
-  for (auto iter = std::begin(impl->lights);
-       iter != std::end(impl->lights);
-       ++iter)
-  {
-    sf::Vector2i const& source_coords = iter->second.coords;
-    float dist_squared = calc_vis_distance(get_coords().x, get_coords().y,
-                                         source_coords.x, source_coords.y);
-
-    sf::Color light_color = iter->second.color;
-    float light_intensity = iter->second.intensity;
-
-    bool light_is_visible = player && player->can_see(source_coords.x, source_coords.y);
-
-    sf::Color addColor;
-
-    // LightIntensity is the distance at which the calculated light would be
-    // zero.
-    //
-
-    float dist_factor;
-
-    if (light_intensity == 0)
-    {
-      dist_factor = 1.0f;
-    }
-    else
-    {
-      dist_factor = dist_squared / light_intensity;
-    }
-
-    float light_factor = (1.0f - dist_factor);
-
-    float wall_factor = calculate_light_factor(source_coords, get_coords(), direction);
-
-    addColor.r = (light_color.r * wall_factor * light_factor);
-    addColor.g = (light_color.g * wall_factor * light_factor);
-    addColor.b = (light_color.b * wall_factor * light_factor);
-    addColor.a = 255;
-
-    color.r = saturation_add(color.r, addColor.r);
-    color.g = saturation_add(color.g, addColor.g);
-    color.b = saturation_add(color.b, addColor.b);
-    color.a = saturation_add(color.a, addColor.a);
   }
 
   return color;
@@ -379,8 +381,9 @@ void MapTile::add_walls_to(sf::VertexArray& vertices,
   bool player_sees_w_wall { false };
 
   // Player.
-  auto player = TF.get_player();
-  if (player)
+  ThingRef player = TM.get_player();
+
+  if (player != TM.get_mu())
   {
     auto player_tile = player->get_maptile();
     if (player_tile != nullptr)
@@ -410,13 +413,12 @@ void MapTile::add_walls_to(sf::VertexArray& vertices,
   // Half of the tile size.
   float ts2(static_cast<float>(Settings.map_tile_size) * 0.5);
 
-
   // Wall size (configurable).
   float ws(static_cast<float>(Settings.map_tile_size) * 0.4);
 
   // Tile vertices.
-  sf::Vector2f location(impl->coords.x * ts,
-                        impl->coords.y * ts);
+  sf::Vector2f location(pImpl->coords.x * ts,
+                        pImpl->coords.y * ts);
   sf::Vector2f vTileNW(location.x - ts2, location.y - ts2);
   sf::Vector2f vTileNE(location.x + ts2, location.y - ts2);
   sf::Vector2f vTileSW(location.x - ts2, location.y + ts2);

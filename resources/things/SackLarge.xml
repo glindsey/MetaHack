@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<thing>
+  <name>large sack</name>
+  <description>A large sack.</description>
+  <intrinsics>
+    <flags>
+    </flags>
+	  <values>
+	    <inventory_size>10</inventory_size>
+	  </values>
+  </intrinsics>
+  <properties>
+    <values>
+      <tile_sheet_x>2</tile_sheet_x>
+      <tile_sheet_y>8</tile_sheet_y>
+    </values>
+  </properties>
+</thing>

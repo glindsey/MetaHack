@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<thing>
+  <name>[Entity]</name>
+  <parent>Thing</parent>
+  <description>The generic Entity class.</description>
+  <intrinsics>
+    <flags>
+      <opaque>false</opaque>
+      <living>true</living>
+    </flags>
+    <values>
+      <inventory_size>-1</inventory_size>
+    </values>
+  </intrinsics>
+  <properties>
+    <values>
+      <level>1</level>
+      <xp>0</xp>
+
+      <tile_sheet_x>0</tile_sheet_x>
+      <tile_sheet_y>4</tile_sheet_y>
+    </values>
+  </properties>
+</thing>

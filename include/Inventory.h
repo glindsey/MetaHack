@@ -3,14 +3,19 @@
 
 #include <map>
 #include <memory>
+#include <boost/uuid/uuid.hpp>
 
 #include "InventorySlot.h"
+#include "ThingRef.h"
 
 /// Forward declarations
 class Thing;
 
-typedef std::map< InventorySlot, std::shared_ptr<Thing> > ThingMap;
-typedef std::pair< InventorySlot, std::shared_ptr<Thing> > ThingPair;
+// Using Declarations
+using UUID = boost::uuids::uuid;
+
+typedef std::map< InventorySlot, ThingRef > ThingMap;
+typedef std::pair< InventorySlot, ThingRef > ThingPair;
 
 /// An Inventory is a collection of Things.  It has an unchangeable owner.
 class Inventory
@@ -22,7 +27,7 @@ class Inventory
     /// Adds the passed Thing to the inventory.
     /// @param thing Thing to add to the inventory.
     /// @return True if the add succeeded; false otherwise.
-    bool add(std::shared_ptr<Thing> thing);
+    bool add(ThingRef thing);
 
     /// Clears this inventory.
     void clear();
@@ -42,13 +47,12 @@ class Inventory
     /// aggregate item.
     void consolidate_items();
 
-    bool contains(std::weak_ptr<Thing> thing);
-    bool contains(Thing& thing);
+    bool contains(ThingRef thing);
     bool contains(InventorySlot slot);
 
-    InventorySlot get(std::weak_ptr<Thing> thing);
+    InventorySlot get(ThingRef thing);
 
-    std::weak_ptr<Thing> get(InventorySlot slot);
+    ThingRef get(InventorySlot slot);
 
     /// Splits an inventory item with a quantity > 1 into two items.
     /// This function clones the item in question, and splits the
@@ -56,29 +60,22 @@ class Inventory
     /// the newly cloned item as a shared pointer. This is used when
     /// a player needs to perform an action on a portion of an item group
     /// (such as dropping 50 gold coins).
-    /// The newly created object is <i>not</i> included in the inventory;
-    /// if it goes out of scope, it <i>will</i> be destroyed.
-    /// @param thing The thing to split.
+    /// The newly created object is <i>not</i> included in the inventory.
+    /// @param thing_id ID of the thing to split.
     /// @param target_quantity Target quantity to split out.
-    /// @return A shared_ptr to the new Thing.
-    /// @note The target quantity must be between 1 and source quantity - 1.
-    ///       If it isn't, no split is performed and an empty shared_ptr is
-    ///       returned.
-    std::shared_ptr<Thing> split(Thing& thing,
-                                 unsigned int target_quantity);
+    /// @return The UUID of the new Thing.
+    ThingRef split(ThingRef thing, unsigned int target_quantity);
 
-    std::shared_ptr<Thing> remove(Thing& thing);
+    ThingRef remove(ThingRef thing);
 
-    std::shared_ptr<Thing> remove(InventorySlot slot);
+    ThingRef remove(InventorySlot slot);
 
-    std::weak_ptr<Thing> get_largest_thing();
+    ThingRef get_largest_thing();
 
   protected:
-    ThingMap::iterator find_ptr(std::shared_ptr<Thing> target);
-    ThingMap::iterator find_ref(Thing& target);
+    ThingMap::iterator find(ThingRef target);
 
-    static bool is_smaller_than(std::shared_ptr<Thing> const& a,
-                                std::shared_ptr<Thing> const& b);
+    static bool is_smaller_than(ThingRef a, ThingRef b);
 
   private:
     /// Things contained in this Inventory, using slot number as key.

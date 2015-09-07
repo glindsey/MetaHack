@@ -77,10 +77,10 @@ struct KeyBuffer::Impl
 };
 
 KeyBuffer::KeyBuffer() :
-  impl(new Impl())
+  pImpl(new Impl())
 {
   this->clear_buffer();
-  impl->replacing = false;
+  pImpl->replacing = false;
 }
 
 KeyBuffer::~KeyBuffer()
@@ -90,7 +90,7 @@ KeyBuffer::~KeyBuffer()
 
 #define INSERT(x, y)                                               \
 {                                                                  \
-  impl->set_character((key.shift ? x : y));                        \
+  pImpl->set_character((key.shift ? x : y));                        \
   result = EventResult::Handled;                                   \
   break;                                                           \
 }
@@ -152,34 +152,34 @@ EventResult KeyBuffer::handle_key_press(sf::Event::KeyEvent& key)
     case sf::Keyboard::Key::Slash:      INSERT('?', '/');
     case sf::Keyboard::Key::Space:      INSERT(' ', ' ');
     case sf::Keyboard::Key::Left:
-      impl->left_cursor();
+      pImpl->left_cursor();
       result = EventResult::Handled;
       break;
     case sf::Keyboard::Key::Right:
-      impl->right_cursor();
+      pImpl->right_cursor();
       result = EventResult::Handled;
       break;
     case sf::Keyboard::Key::BackSpace:
-      if (impl->left_cursor())
+      if (pImpl->left_cursor())
       {
-        impl->del_character();
+        pImpl->del_character();
       }
       result = EventResult::Handled;
       break;
     case sf::Keyboard::Key::Insert:
-      impl->replacing = !(impl->replacing);
+      pImpl->replacing = !(pImpl->replacing);
       result = EventResult::Handled;
       break;
     case sf::Keyboard::Key::Delete:
-      impl->del_character();
+      pImpl->del_character();
       result = EventResult::Handled;
       break;
     case sf::Keyboard::Key::Home:
-      impl->cursor_position = 0;
+      pImpl->cursor_position = 0;
       result = EventResult::Handled;
       break;
     case sf::Keyboard::Key::End:
-      impl->cursor_position = impl->buffer.size();
+      pImpl->cursor_position = pImpl->buffer.size();
       result = EventResult::Handled;
       break;
     case sf::Keyboard::Key::Divide:     INSERT('/', '/');
@@ -197,7 +197,7 @@ EventResult KeyBuffer::handle_key_press(sf::Event::KeyEvent& key)
     case sf::Keyboard::Key::Numpad8:    INSERT('8', '8');
     case sf::Keyboard::Key::Numpad9:    INSERT('9', '9');
     case sf::Keyboard::Key::Return:
-      impl->enter = true;
+      pImpl->enter = true;
       result = EventResult::Handled;
       break;
     default: break;
@@ -209,35 +209,35 @@ EventResult KeyBuffer::handle_key_press(sf::Event::KeyEvent& key)
 
 unsigned int KeyBuffer::get_cursor_position() const
 {
-  return impl->cursor_position;
+  return pImpl->cursor_position;
 }
 
 void KeyBuffer::set_cursor_position(unsigned int position)
 {
-  impl->cursor_position = std::min(impl->buffer.size(), position);
+  pImpl->cursor_position = std::min(pImpl->buffer.size(), position);
 }
 
 std::string const& KeyBuffer::get_buffer() const
 {
-  return impl->buffer;
+  return pImpl->buffer;
 }
 
 void KeyBuffer::set_buffer(std::string buf)
 {
-  impl->buffer = buf;
-  impl->cursor_position = buf.size();
+  pImpl->buffer = buf;
+  pImpl->cursor_position = buf.size();
 }
 
 void KeyBuffer::clear_buffer()
 {
-  impl->buffer.clear();
-  impl->cursor_position = 0;
-  impl->enter = false;
+  pImpl->buffer.clear();
+  pImpl->cursor_position = 0;
+  pImpl->enter = false;
 }
 
 bool KeyBuffer::get_enter()
 {
-  return impl->enter;
+  return pImpl->enter;
 }
 
 void KeyBuffer::render(sf::RenderTarget& target,
@@ -263,7 +263,7 @@ void KeyBuffer::render(sf::RenderTarget& target,
   x_position += render_text.getLocalBounds().width;
 
   // *** RENDER TEXT **********************************************************
-  render_text.setString(impl->buffer);
+  render_text.setString(pImpl->buffer);
   render_text.setPosition(x_position, coords.y);
   render_text.setStyle(sf::Text::Style::Regular);
   target.draw(render_text);
@@ -273,7 +273,7 @@ void KeyBuffer::render(sf::RenderTarget& target,
   sf::Vector2f cursor_size;
   sf::Color cursor_color = fg_color;
 
-  if (impl->replacing)
+  if (pImpl->replacing)
   {
     cursor_color.r *= 0.5;
     cursor_color.g *= 0.5;
@@ -290,12 +290,12 @@ void KeyBuffer::render(sf::RenderTarget& target,
 
   int font_height = font.getLineSpacing(font_size);
 
-  cursor_coords = render_text.findCharacterPos(impl->cursor_position);
+  cursor_coords = render_text.findCharacterPos(pImpl->cursor_position);
 
 
-  if (impl->replacing)
+  if (pImpl->replacing)
   {
-    sf::Glyph glyph = font.getGlyph(impl->buffer[impl->cursor_position],
+    sf::Glyph glyph = font.getGlyph(pImpl->buffer[pImpl->cursor_position],
                                     font_size, false);
     cursor_size = sf::Vector2f(glyph.bounds.width, font_height);
   }

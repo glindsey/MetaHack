@@ -1,12 +1,11 @@
 #include "Inventory.h"
 
 #include <algorithm>
+#include <boost/log/trivial.hpp>
 #include <climits>
 
-#include "Entity.h"
-#include "ErrorHandler.h"
 #include "Thing.h"
-#include "ThingFactory.h"
+#include "ThingManager.h"
 
 Inventory::Inventory()
 {
@@ -17,16 +16,16 @@ Inventory::~Inventory()
   //dtor
 }
 
-bool Inventory::add(std::shared_ptr<Thing> thing)
+bool Inventory::add(ThingRef thing)
 {
-  // If pointer is null, exit returning false.
-  if (!thing)
+  // If thing is Mu, exit returning false.
+  if (thing == TM.get_mu())
   {
     return false;
   }
 
   // If the thing is the player, it goes into slot 0.
-  if (thing->is_player())
+  if (thing == TM.get_player())
   {
     if (things_.count(INVSLOT_ZERO) != 0)
     {
@@ -38,9 +37,9 @@ bool Inventory::add(std::shared_ptr<Thing> thing)
     return true;
   }
 
-  auto found_thing = find_ptr(thing);
+  auto found_thing_id = find(thing);
 
-  if (found_thing == things_.cend())
+  if (found_thing_id == things_.cend())
   {
     for (InventorySlot slot = INVSLOT_MIN; slot < INVSLOT_MAX; ++slot)
     {
@@ -82,14 +81,14 @@ void Inventory::consolidate_items()
 
     while (second_iter != std::end(things_))
     {
-      Thing& first_thing = *(first_iter->second.get());
-      Thing& second_thing = *(second_iter->second.get());
+      ThingRef first_thing = first_iter->second;
+      ThingRef second_thing = second_iter->second;
 
-      if (first_thing.can_merge_with(second_thing))
+      if (first_thing->can_merge_with(second_thing))
       {
-        auto first_quantity = first_thing.get_quantity();
-        auto second_quantity = second_thing.get_quantity();
-        first_thing.set_quantity(first_quantity + second_quantity);
+        auto first_quantity = first_thing->get_quantity();
+        auto second_quantity = second_thing->get_quantity();
+        first_thing->set_quantity(first_quantity + second_quantity);
 
         auto second_iter_copy = second_iter;
         --second_iter;
@@ -101,17 +100,11 @@ void Inventory::consolidate_items()
   }
 }
 
-bool Inventory::contains(std::weak_ptr<Thing> thing)
+bool Inventory::contains(ThingRef thing)
 {
-  auto locked_thing = thing.lock();
-  if (locked_thing == nullptr) return false;
+  if (TM.exists(thing) == false) return false;
 
-  return (find_ptr(locked_thing) != things_.cend());
-}
-
-bool Inventory::contains(Thing& thing)
-{
-  return (find_ref(thing) != things_.cend());
+  return (find(thing) != things_.cend());
 }
 
 bool Inventory::contains(InventorySlot slot)
@@ -119,12 +112,12 @@ bool Inventory::contains(InventorySlot slot)
   return (things_.count(slot) != 0);
 }
 
-InventorySlot Inventory::get(std::weak_ptr<Thing> thing)
+InventorySlot Inventory::get(ThingRef thing)
 {
-  auto locked_thing = thing.lock();
-  if (locked_thing == nullptr) return INVSLOT_INVALID;
+  if (TM.exists(thing) == false) return INVSLOT_INVALID;
 
-  auto iter = find_ptr(locked_thing);
+  auto iter = find(thing);
+
   if (iter != things_.cend())
   {
     return iter->first;
@@ -133,39 +126,38 @@ InventorySlot Inventory::get(std::weak_ptr<Thing> thing)
   return INVSLOT_INVALID;
 }
 
-std::weak_ptr<Thing> Inventory::get(InventorySlot slot)
+ThingRef Inventory::get(InventorySlot slot)
 {
   return (things_.at(slot));
 }
 
-std::shared_ptr<Thing> Inventory::split(Thing& thing,
-                                        unsigned int target_quantity)
+ThingRef Inventory::split(ThingRef thing, unsigned int target_quantity)
 {
-  std::shared_ptr<Thing> source_thing;
-  std::shared_ptr<Thing> target_thing;
-  unsigned int source_quantity;
+  ThingRef target_thing = TM.get_mu();
 
   if (target_quantity > 0)
   {
-    auto iter = find_ref(thing);
+    auto iter = find(thing);
+
     if (iter != things_.cend())
     {
-      source_thing = iter->second;
-      source_quantity = source_thing->get_quantity();
+      ThingRef source_thing = iter->second;
+      unsigned int source_quantity = source_thing->get_quantity();
       if (target_quantity < source_quantity)
       {
-        target_thing = source_thing->clone();
+        ThingRef target_thing = TM.clone(source_thing);
         source_thing->set_quantity(source_quantity - target_quantity);
         target_thing->set_quantity(target_quantity);
       }
     }
   }
+
   return target_thing;
 }
 
-std::shared_ptr<Thing> Inventory::remove(InventorySlot slot)
+ThingRef Inventory::remove(InventorySlot slot)
 {
-  std::shared_ptr<Thing> removed_thing;
+  ThingRef removed_thing;
   if (things_.count(slot) != 0)
   {
     removed_thing = things_[slot];
@@ -174,11 +166,11 @@ std::shared_ptr<Thing> Inventory::remove(InventorySlot slot)
   return removed_thing;
 }
 
-std::shared_ptr<Thing> Inventory::remove(Thing& thing)
+ThingRef Inventory::remove(ThingRef thing)
 {
-  std::shared_ptr<Thing> removed_thing;
+  ThingRef removed_thing;
 
-  auto iter = find_ref(thing);
+  auto iter = find(thing);
   if (iter != things_.cend())
   {
     removed_thing = iter->second;
@@ -187,7 +179,7 @@ std::shared_ptr<Thing> Inventory::remove(Thing& thing)
   return removed_thing;
 }
 
-std::weak_ptr<Thing> Inventory::get_largest_thing()
+ThingRef Inventory::get_largest_thing()
 {
   auto iter_largest = things_.cbegin();
 
@@ -202,33 +194,20 @@ std::weak_ptr<Thing> Inventory::get_largest_thing()
   return iter_largest->second;
 }
 
-ThingMap::iterator Inventory::find_ptr(std::shared_ptr<Thing> target)
+ThingMap::iterator Inventory::find(ThingRef target_id)
 {
   ThingMap::iterator iter = find_if(things_.begin(),
                                     things_.end(),
                                     [&](ThingPair const& thing_pair)
                                     {
-                                        return thing_pair.second.get() ==
-                                               target.get();
+                                      return thing_pair.second == target_id;
                                     });
   return iter;
 }
 
-ThingMap::iterator Inventory::find_ref(Thing& target)
+bool Inventory::is_smaller_than(ThingRef a, ThingRef b)
 {
-  ThingMap::iterator iter = find_if(things_.begin(),
-                                    things_.end(),
-                                    [&](ThingPair const& thing_pair)
-                                    {
-                                        return thing_pair.second.get() ==
-                                               &target;
-                                    });
-  return iter;
-}
-
-bool Inventory::is_smaller_than(std::shared_ptr<Thing> const& a, std::shared_ptr<Thing> const& b)
-{
-  if (!a || !b) return false;
+  if ((a == TM.get_mu()) || (b == TM.get_mu())) return false;
 
   return (a->get_mass() < b->get_mass());
 }
