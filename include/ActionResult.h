@@ -3,6 +3,8 @@
 
 #include <iostream>
 
+#include "Lua.h"
+
 // Enum representing possible results from an action.
 enum class ActionResult
 {
@@ -65,4 +67,33 @@ inline std::ostream& operator<<(std::ostream& os, ActionResult result)
 	return os;
 }
 
+inline void ActionResult_add_to_lua()
+{
+  the_lua_instance.add_enum("ActionResult",
+    "FailureContainerCantBeSelf",   ActionResult::FailureContainerCantBeSelf,
+    "FailureCircularReference",     ActionResult::FailureCircularReference,
+    "FailureItemNotEquippable",     ActionResult::FailureItemNotEquippable,
+    "FailureItemNotEquipped",       ActionResult::FailureItemNotEquipped,
+    "FailureItemWielded",           ActionResult::FailureItemWielded,
+    "FailureItemEquipped",          ActionResult::FailureItemEquipped,
+    "FailureNotEnoughHands",        ActionResult::FailureNotEnoughHands,
+    "FailureTooStupid",             ActionResult::FailureTooStupid,
+    "FailureNotLiquidCarrier",      ActionResult::FailureNotLiquidCarrier,
+    "FailureSelfReference",         ActionResult::FailureSelfReference,
+    "FailureTargetNotAContainer",   ActionResult::FailureTargetNotAContainer,
+    "FailureNotInsideContainer",    ActionResult::FailureNotInsideContainer,
+    "FailureContainerOutOfReach",   ActionResult::FailureContainerOutOfReach,
+    "FailureThingOutOfReach",       ActionResult::FailureThingOutOfReach,
+    "FailureAlreadyPresent",        ActionResult::FailureAlreadyPresent,
+    "FailureInventoryCantContain",  ActionResult::FailureInventoryCantContain,
+    "FailureInventoryFull",         ActionResult::FailureInventoryFull,
+    "FailureNotPresent",            ActionResult::FailureNotPresent,
+    "Failure",                      ActionResult::Failure,
+    "Success",                      ActionResult::Success,
+    "SuccessDestroyed",             ActionResult::SuccessDestroyed,
+    "SuccessSelfReference",         ActionResult::SuccessSelfReference,
+    "SuccessSwapHands",             ActionResult::SuccessSwapHands,
+    0
+    );
+}
 #endif // ACTIONRESULT_H

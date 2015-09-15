@@ -92,6 +92,7 @@ int main()
   the_lua_instance.do_file("test.lua");
 
   // Populate Lua enums.
+  ActionResult_add_to_lua();
   Gender_add_to_lua();
 
   // Create and run the app instance.
