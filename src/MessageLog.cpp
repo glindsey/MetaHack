@@ -147,11 +147,11 @@ std::string MessageLog::render_contents(int frame)
 
 int MessageLog::LUA_add(lua_State* L)
 {
-  int arg_num = lua_gettop(L);
+  int num_args = lua_gettop(L);
 
-  if (arg_num != 1)
+  if (num_args != 1)
   {
-    MINOR_ERROR("Lua function messageLog_add expects 1 argument, got %d", arg_num);
+    MINOR_ERROR("Lua function messageLog_add expects 1 argument, got %d", num_args);
   }
   else
   {

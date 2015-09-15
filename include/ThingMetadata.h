@@ -55,6 +55,7 @@ public:
 private:
   struct Impl;
   std::unique_ptr<Impl> pImpl;
+
 };
 
 #endif // THINGMETADATA_H
