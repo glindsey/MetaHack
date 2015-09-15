@@ -204,7 +204,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\default.lua" />
-    <None Include="test.lua" />
+    <None Include="resources\things\Biped.lua" />
+    <None Include="resources\things\Rock.lua" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

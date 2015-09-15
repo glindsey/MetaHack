@@ -8,6 +8,7 @@
 #include <boost/property_tree/xml_parser.hpp>
 
 #include "ErrorHandler.h"
+#include "Lua.h"
 #include "ThingManager.h"
 
 #define BOOST_FILESYSTEM_NO_DEPRECATED
@@ -20,6 +21,9 @@ namespace pt = boost::property_tree;
 
 struct ThingMetadata::Impl
 {
+  /// Thing's own name.
+  std::string name;
+
   /// Thing pretty name.
   std::string pretty_name;
 
@@ -55,9 +59,9 @@ struct ThingMetadata::Impl
 ThingMetadata::ThingMetadata(std::string type)
   : pImpl(new Impl())
 {
-  boost::algorithm::to_lower(type);
-
   TRACE("Loading metadata for type \"%s\"...", type.c_str());
+
+  pImpl->name = type;
 
   /// Try to open the XML file to populate this thing's metadata.
   std::string thing_string = "resources/things/" + type + ".xml";
@@ -107,7 +111,6 @@ ThingMetadata::ThingMetadata(std::string type)
 
       pImpl->parent = "";
     }
-    boost::algorithm::to_lower(pImpl->parent);
 
     // Get thing's description.
     try
@@ -247,6 +250,17 @@ ThingMetadata::ThingMetadata(std::string type)
   else
   {
     FATAL_ERROR("File \"%s\" not found", thing_string.c_str());
+  }
+
+  /// Now try to load and run a Lua script for this Thing if one exists.
+
+  std::string lua_string = "resources/things/" + type + ".lua";
+  fs::path lua_path = fs::path(lua_string);
+
+  if (fs::exists(lua_path))
+  {
+    TRACE("Loading Lua script for type \"%s\"...", type.c_str());
+    the_lua_instance.do_file(lua_string);
   }
 
 }
@@ -430,4 +444,50 @@ ValuesMap const& ThingMetadata::get_default_values() const
 StringsMap const& ThingMetadata::get_default_strings() const
 {
   return pImpl->default_strings;
+}
+
+ActionResult ThingMetadata::call_lua_function(std::string function_name,
+                                              ThingId id,
+                                              ActionResult default_result)
+{
+  ActionResult return_value = default_result;
+
+  std::string name = pImpl->name;
+  lua_getglobal(the_lua_state, name.c_str());        // <1 Push name of class
+
+  if (!lua_isnoneornil(the_lua_state, -1))
+  {
+    lua_getfield(the_lua_state, -1, function_name.c_str()); // <2  Push the function name
+    lua_remove(the_lua_state, -2);                          // >1  Get rid of name of class
+    lua_pushinteger(the_lua_state, id.full_id);             // <2  Push the thing's ID
+    int result = lua_pcall(the_lua_state, 1, 1, 0);         // >><1 Call with one argument, one result
+    if (result == LUA_OK)
+    {
+      return_value = (ActionResult)lua_tointeger(the_lua_state, -1);
+      lua_pop(the_lua_state, 1);
+    }
+    else
+    {
+      char const* error_message = lua_tostring(the_lua_state, -1);
+      MAJOR_ERROR("Error calling %s.%s: %s", name.c_str(), function_name.c_str(), error_message);
+      lua_pop(the_lua_state, 1);
+    }    
+  }
+  else // didn't find a function of that name here, so try parent...
+  {
+    lua_pop(the_lua_state, 1);                      // >0 Pop the name back off the stack
+
+    if (pImpl->parent.empty())
+    {
+      return_value = default_result;
+    }
+    else
+    { 
+      return_value = TM.get_metadata(pImpl->parent).call_lua_function(function_name, 
+                                                                      id, 
+                                                                      default_result);
+    }
+  }
+
+  return return_value;
 }

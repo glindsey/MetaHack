@@ -64,8 +64,6 @@ ThingManager& ThingManager::instance()
 
 ThingRef ThingManager::create(std::string type)
 {
-  boost::algorithm::to_lower(type);
-
   if (pImpl->thing_metadata.count(type) == 0)
   {
     pImpl->thing_metadata[type].reset(new ThingMetadata(type));
@@ -74,6 +72,9 @@ ThingRef ThingManager::create(std::string type)
   ThingId new_id = ThingRef::create();
   Thing* new_thing = pImpl->thing_pool.construct(type, ThingRef(new_id));
   pImpl->thing_map[new_id] = new_thing;
+
+  // Temporary test of Lua call
+  pImpl->thing_metadata[type]->call_lua_function("on_create", new_id);
 
   return ThingRef(new_id);
 }
@@ -106,8 +107,6 @@ ThingRef ThingManager::clone(ThingRef original_ref)
 
 ThingMetadata& ThingManager::get_metadata(std::string type)
 {
-  boost::algorithm::to_lower(type);
-
   if (pImpl->thing_metadata.count(type) == 0)
   {
     pImpl->thing_metadata[type].reset(new ThingMetadata(type));

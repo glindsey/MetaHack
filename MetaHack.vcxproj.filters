@@ -339,7 +339,10 @@
     <None Include="resources\default.lua">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="test.lua">
+    <None Include="resources\things\Rock.lua">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\things\Biped.lua">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

@@ -6,6 +6,9 @@
 #include <unordered_map>
 #include <string>
 
+#include "ActionResult.h"
+#include "ThingRef.h"
+
 using FlagsMap = std::map < std::string, bool > ;
 using ValuesMap = std::map < std::string, int > ;
 using StringsMap = std::map < std::string, std::string > ;
@@ -36,6 +39,18 @@ public:
   FlagsMap const& get_default_flags() const;
   ValuesMap const& get_default_values() const;
   StringsMap const& get_default_strings() const;
+
+  /// Try to call a Lua function that takes no arguments other than ThingId.
+  /// If the function does not exist, attempts to step up to the parent type
+  /// and call the function there, up until there's no parent to call.
+  /// @param function_name  Name of the function to call
+  /// @param id             ThingId of the thing calling the function
+  /// @param default_result The default result if function is not found 
+  ///                       (defaults to ActionResult::Success).
+  /// @return An ActionResult containing the result of the call.
+  ActionResult call_lua_function(std::string function_name,
+                                 ThingId id,
+                                 ActionResult default_result = ActionResult::Success);
 
 private:
   struct Impl;

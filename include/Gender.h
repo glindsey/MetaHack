@@ -60,7 +60,8 @@ inline void Gender_add_to_lua()
     "Hanar", Gender::Hanar,
     "UnknownThing", Gender::UnknownThing,
     "UnknownPerson", Gender::UnknownPerson,
-    "Count", Gender::Count
+    "Count", Gender::Count,
+    0
     );
 }
 
