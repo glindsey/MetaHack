@@ -27,6 +27,9 @@ public:
   ThingId::ThingId(uint32_t id_, uint16_t version_)
     : id(id_), version(version_) {}
 
+  ThingId::ThingId(uint64_t full_id_)
+    : full_id(full_id_) {}
+
   bool ThingId::operator<(ThingId const& other) const
   {
     return (this->full_id < other.full_id);

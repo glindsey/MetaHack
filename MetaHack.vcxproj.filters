@@ -171,6 +171,9 @@
     <ClInclude Include="include\ThingRef.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\Lua.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">
@@ -281,6 +284,9 @@
     <ClCompile Include="src\ThingRef.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Lua.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="resources\things\Thing.xml">
@@ -328,5 +334,16 @@
     <Xml Include="resources\things\Entity.xml">
       <Filter>Resource Files</Filter>
     </Xml>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="resources\default.lua">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\things\Rock.lua">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\things\Biped.lua">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

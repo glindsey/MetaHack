@@ -1,5 +1,6 @@
 #include "Thing.h"
 
+#include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/log/trivial.hpp>
 
@@ -1777,82 +1778,93 @@ StringsMap const& Thing::get_property_strings() const
   return pImpl->property_strings;
 }
 
-bool Thing::get_property_flag(std::string name, bool default_value) const
+bool Thing::get_property_flag(std::string key, bool default_value) const
 {
+  boost::algorithm::to_lower(key);
+
   bool value;
 
-  if (pImpl->property_flags.count(name) != 0)
+  if (pImpl->property_flags.count(key) != 0)
   {
-    value = pImpl->property_flags[name];
+    value = pImpl->property_flags[key];
   }
   else
   {
-    value = TM.get_metadata(pImpl->type).get_default_flag(name, default_value);
+    value = TM.get_metadata(pImpl->type).get_default_flag(key, default_value);
   }
 
   return value;
 }
 
-int Thing::get_property_value(std::string name, int default_value) const
+int Thing::get_property_value(std::string key, int default_value) const
 {
+  boost::algorithm::to_lower(key);
+
   int value;
 
-  if (pImpl->property_values.count(name) != 0)
+  if (pImpl->property_values.count(key) != 0)
   {
-    value = pImpl->property_values[name];
+    value = pImpl->property_values[key];
   }
   else
   {
-	value = TM.get_metadata(pImpl->type).get_default_value(name, default_value);
+	value = TM.get_metadata(pImpl->type).get_default_value(key, default_value);
   }
 
   return value;
 }
 
-std::string Thing::get_property_string(std::string name, std::string default_value) const
+std::string Thing::get_property_string(std::string key, std::string default_value) const
 {
+  boost::algorithm::to_lower(key);
+
   std::string value;
 
-  if (pImpl->property_strings.count(name) != 0)
+  if (pImpl->property_strings.count(key) != 0)
   {
-    value = pImpl->property_strings[name];
+    value = pImpl->property_strings[key];
   }
   else
   {
-    value = TM.get_metadata(pImpl->type).get_default_string(name, default_value);
+    value = TM.get_metadata(pImpl->type).get_default_string(key, default_value);
   }
 
   return value;
 }
 
-bool Thing::get_intrinsic_flag(std::string name, bool default_value) const
+bool Thing::get_intrinsic_flag(std::string key, bool default_value) const
 {
-  return TM.get_metadata(pImpl->type).get_intrinsic_flag(name, default_value);
+  boost::algorithm::to_lower(key);
+  return TM.get_metadata(pImpl->type).get_intrinsic_flag(key, default_value);
 }
 
-int Thing::get_intrinsic_value(std::string name, int default_value) const
+int Thing::get_intrinsic_value(std::string key, int default_value) const
 {
-  return TM.get_metadata(pImpl->type).get_intrinsic_value(name, default_value);
+  boost::algorithm::to_lower(key);
+  return TM.get_metadata(pImpl->type).get_intrinsic_value(key, default_value);
 }
 
-std::string Thing::get_intrinsic_string(std::string name, std::string default_value) const
+std::string Thing::get_intrinsic_string(std::string key, std::string default_value) const
 {
-  return TM.get_metadata(pImpl->type).get_intrinsic_string(name, default_value);
+  boost::algorithm::to_lower(key);
+  return TM.get_metadata(pImpl->type).get_intrinsic_string(key, default_value);
 }
 
-void Thing::set_property_flag(std::string name, bool value)
+void Thing::set_property_flag(std::string key, bool value)
 {
-  pImpl->property_flags[name] = value;
+  pImpl->property_flags[key] = value;
 }
 
-void Thing::set_property_value(std::string name, int value)
+void Thing::set_property_value(std::string key, int value)
 {
-  pImpl->property_values[name] = value;
+  boost::algorithm::to_lower(key);
+  pImpl->property_values[key] = value;
 }
 
-void Thing::set_property_string(std::string name, std::string value)
+void Thing::set_property_string(std::string key, std::string value)
 {
-  pImpl->property_strings[name] = value;
+  boost::algorithm::to_lower(key);
+  pImpl->property_strings[key] = value;
 }
 
 unsigned int Thing::get_quantity() const
@@ -3562,4 +3574,167 @@ bool Thing::_perform_action_wielded_by(ThingRef thing)
 bool Thing::_perform_action_fired_by(ThingRef thing, Direction direction)
 {
   return false;
+}
+
+int Thing::LUA_get_intrinsic_flag(lua_State* L)
+{
+  int num_args = lua_gettop(L);
+
+  if (num_args != 2)
+  {
+    MINOR_ERROR("LUA_get_intrinsic_flag expects 2 arguments, got %d", num_args);
+    return 0;
+  }
+
+  ThingRef thing = ThingRef(lua_tonumber(L, 1));
+  const char* key = lua_tostring(L, 2);
+  bool result = thing->get_intrinsic_flag(key);
+  lua_pushboolean(L, result);
+
+  return 1;
+}
+
+int Thing::LUA_get_intrinsic_value(lua_State* L)
+{
+  int num_args = lua_gettop(L);
+
+  if (num_args != 2)
+  {
+    MINOR_ERROR("LUA_get_intrinsic_value expects 2 arguments, got %d", num_args);
+    return 0;
+  }
+
+  ThingRef thing = ThingRef(lua_tonumber(L, 1));
+  const char* key = lua_tostring(L, 2);
+  int result = thing->get_intrinsic_value(key);
+  lua_pushinteger(L, result);
+
+  return 1;
+}
+
+int Thing::LUA_get_intrinsic_string(lua_State* L)
+{
+  int num_args = lua_gettop(L);
+
+  if (num_args != 2)
+  {
+    MINOR_ERROR("LUA_get_intrinsic_string expects 2 arguments, got %d", num_args);
+    return 0;
+  }
+
+  ThingRef thing = ThingRef(lua_tonumber(L, 1));
+  const char* key = lua_tostring(L, 2);
+  const char* result = thing->get_intrinsic_string(key).c_str();
+  lua_pushstring(L, result);
+
+  return 1;
+}
+
+int Thing::LUA_get_property_flag(lua_State* L)
+{
+  int num_args = lua_gettop(L);
+
+  if (num_args != 2)
+  {
+    MINOR_ERROR("LUA_get_property_flag expects 2 arguments, got %d", num_args);
+    return 0;
+  }
+
+  ThingRef thing = ThingRef(lua_tonumber(L, 1));
+  const char* key = lua_tostring(L, 2);
+  bool result = thing->get_property_flag(key);
+  lua_pushboolean(L, result);
+
+  return 1;
+}
+
+int Thing::LUA_get_property_value(lua_State* L)
+{
+  int num_args = lua_gettop(L);
+
+  if (num_args != 2)
+  {
+    MINOR_ERROR("LUA_get_property_value expects 2 arguments, got %d", num_args);
+    return 0;
+  }
+
+  ThingRef thing = ThingRef(lua_tonumber(L, 1));
+  const char* key = lua_tostring(L, 2);
+  int result = thing->get_property_value(key);
+  lua_pushinteger(L, result);
+
+  return 1;
+}
+
+int Thing::LUA_get_property_string(lua_State* L)
+{
+  int num_args = lua_gettop(L);
+
+  if (num_args != 2)
+  {
+    MINOR_ERROR("LUA_get_property_string expects 2 arguments, got %d", num_args);
+    return 0;
+  }
+
+  ThingRef thing = ThingRef(lua_tonumber(L, 1));
+  const char* key = lua_tostring(L, 2);
+  const char* result = thing->get_property_string(key).c_str();
+  lua_pushstring(L, result);
+
+  return 1;
+}
+
+int Thing::LUA_set_property_flag(lua_State* L)
+{
+  int num_args = lua_gettop(L);
+
+  if (num_args != 3)
+  {
+    MINOR_ERROR("LUA_set_property_flag expects 3 arguments, got %d", num_args);
+    return 0;
+  }
+
+  ThingRef thing = ThingRef(lua_tonumber(L, 1));
+  const char* key = lua_tostring(L, 2);
+  bool value = lua_toboolean(L, 3);
+  thing->set_property_flag(key, value);
+
+  return 0;
+}
+
+int Thing::LUA_set_property_value(lua_State* L)
+{
+  int num_args = lua_gettop(L);
+
+  if (num_args != 3)
+  {
+    MINOR_ERROR("LUA_set_property_value expects 3 arguments, got %d", num_args);
+    return 0;
+  }
+
+  ThingRef thing = ThingRef(lua_tonumber(L, 1));
+  const char* key = lua_tostring(L, 2);
+  bool value = lua_tointeger(L, 3);
+  thing->set_property_value(key, value);
+
+  return 0;
+}
+
+int Thing::LUA_set_property_string(lua_State* L)
+{
+  int num_args = lua_gettop(L);
+
+  if (num_args != 3)
+  {
+    MINOR_ERROR("LUA_set_property_string expects 3 arguments, got %d", num_args);
+    return 0;
+  }
+
+  ThingRef thing = ThingRef(lua_tonumber(L, 1));
+  const char* key = lua_tostring(L, 2);
+  const char* value = lua_tostring(L, 3);
+  std::string svalue = std::string(value);
+  thing->set_property_string(key, svalue);
+
+  return 0;
 }

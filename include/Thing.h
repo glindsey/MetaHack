@@ -707,6 +707,18 @@ class Thing :
     /// @return true if the Thing continues to exist after the tick;
     ///         false if the Thing ceases to exist.
     virtual bool _process();
+
+    // Static Lua functions.
+    // @todo (Maybe these should be part of ThingManager instead?)
+    static int LUA_get_intrinsic_flag(lua_State* L);
+    static int LUA_get_intrinsic_value(lua_State* L);
+    static int LUA_get_intrinsic_string(lua_State* L);
+    static int LUA_get_property_flag(lua_State* L);
+    static int LUA_get_property_value(lua_State* L);
+    static int LUA_get_property_string(lua_State* L);
+    static int LUA_set_property_flag(lua_State* L);
+    static int LUA_set_property_value(lua_State* L);
+    static int LUA_set_property_string(lua_State* L);
 };
 
 #endif // THING_H

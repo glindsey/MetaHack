@@ -1,7 +1,10 @@
 #ifndef GENDER_H
 #define GENDER_H
 
+#include <iostream>
 #include <string>
+
+#include "Lua.h"
 
 /// Enumeration of not just genders, but also other modes of speech that might
 /// be required.
@@ -20,6 +23,47 @@ enum class Gender
   UnknownPerson = 10,
   Count
 };
+
+inline std::ostream& operator<<(std::ostream& os, Gender gender)
+{
+	switch (gender)
+	{
+	case Gender::None: os << "None"; break;
+	case Gender::Male: os << "Male"; break;
+	case Gender::Female: os << "Female"; break;
+	case Gender::Neuter: os << "Neuter"; break;
+	case Gender::Spivak: os << "Spivak"; break;
+	case Gender::FirstPerson: os << "FirstPerson"; break;
+	case Gender::SecondPerson: os << "SecondPerson"; break;
+	case Gender::Plural: os << "Plural"; break;
+	case Gender::Hanar: os << "Hanar"; break;
+	case Gender::UnknownThing: os << "UnknownThing"; break;
+	case Gender::UnknownPerson: os << "UnknownPerson"; break;
+	case Gender::Count: os << "Count"; break;
+	default: os << "???"; break;
+	}
+
+	return os;
+}
+
+inline void Gender_add_to_lua()
+{
+  the_lua_instance.add_enum("Gender",
+    "None", Gender::None,
+    "Male", Gender::Male,
+    "Female", Gender::Female,
+    "Neuter", Gender::Neuter,
+    "Spivak", Gender::Spivak,
+    "FirstPerson", Gender::FirstPerson,
+    "SecondPerson", Gender::SecondPerson,
+    "Plural", Gender::Plural,
+    "Hanar", Gender::Hanar,
+    "UnknownThing", Gender::UnknownThing,
+    "UnknownPerson", Gender::UnknownPerson,
+    "Count", Gender::Count,
+    0
+    );
+}
 
 std::string const& getSubjPro(Gender gender);
 std::string const& getObjPro(Gender gender);

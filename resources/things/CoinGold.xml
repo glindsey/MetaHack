@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <thing>
   <name>gold coin</name>
+  <parent>Thing</parent>
   <description>A gold coin.</description>
   <intrinsics>
     <flags>

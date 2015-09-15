@@ -1,10 +1,12 @@
 #include "ThingManager.h"
 
 #include "ErrorHandler.h"
+#include "Lua.h"
 #include "Thing.h"
 #include "ThingRef.h"
 #include "ThingMetadata.h"
 
+#include <boost/algorithm/string.hpp>
 #include <boost/bimap.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/log/trivial.hpp>
@@ -38,7 +40,16 @@ struct ThingManager::Impl
 ThingManager::ThingManager()
   : pImpl(new Impl())
 {
-
+  // Register the Thing Lua functions.
+  the_lua_instance.register_function("thing_get_intrinsic_flag", Thing::LUA_get_intrinsic_flag);
+  the_lua_instance.register_function("thing_get_intrinsic_value", Thing::LUA_get_intrinsic_value);
+  the_lua_instance.register_function("thing_get_intrinsic_string", Thing::LUA_get_intrinsic_string);
+  the_lua_instance.register_function("thing_get_property_flag", Thing::LUA_get_property_flag);
+  the_lua_instance.register_function("thing_get_property_value", Thing::LUA_get_property_value);
+  the_lua_instance.register_function("thing_get_property_string", Thing::LUA_get_property_string);
+  the_lua_instance.register_function("thing_set_property_flag", Thing::LUA_set_property_flag);
+  the_lua_instance.register_function("thing_set_property_value", Thing::LUA_set_property_value);
+  the_lua_instance.register_function("thing_set_property_string", Thing::LUA_set_property_string);
 }
 
 ThingManager::~ThingManager()
@@ -72,6 +83,9 @@ ThingRef ThingManager::create(std::string type)
   ThingId new_id = ThingRef::create();
   Thing* new_thing = pImpl->thing_pool.construct(type, ThingRef(new_id));
   pImpl->thing_map[new_id] = new_thing;
+
+  // Temporary test of Lua call
+  pImpl->thing_metadata[type]->call_lua_function("on_create", new_id);
 
   return ThingRef(new_id);
 }
