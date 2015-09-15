@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <thing>
   <name>rock</name>
+  <parent>Thing</parent>
   <description>A small rock. That's all.</description>
   <intrinsics>
     <flags>

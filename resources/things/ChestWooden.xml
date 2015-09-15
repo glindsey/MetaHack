@@ -2,14 +2,14 @@
 <thing>
   <name>wooden chest</name>
   <description>An unremarkable wooden chest.</description>
+  <parent>Container</parent>
   <intrinsics>
     <flags>
       <lockable>true</lockable>
-      <openable>true</openable>
       <flammable>true</flammable>
     </flags>
 	  <values>
-	    <inventory_size>-1</inventory_size>
+	    <inventory_size>20</inventory_size>
 	    <physical_mass>0</physical_mass>
 	  </values>
   </intrinsics>

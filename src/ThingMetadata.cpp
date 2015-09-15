@@ -62,13 +62,13 @@ ThingMetadata::ThingMetadata(std::string type)
 
   if (fs::exists(thing_path))
   {
-    TRACE("Found file \"%s\"", thing_string.c_str());
+    //TRACE("Found file \"%s\"", thing_string.c_str());
     
     /// @todo Load file.
     pt::ptree data;
     pt::xml_parser::read_xml(thing_string, data);
 
-    TRACE("Loaded property tree for \"%s\"", type.c_str());
+    //TRACE("Loaded property tree for \"%s\"", type.c_str());
 
     // Get thing's pretty name.
     try
@@ -137,12 +137,12 @@ ThingMetadata::ThingMetadata(std::string type)
         bool value = child_tree.second.get_value<bool>(false);
 
         pImpl->intrinsic_flags[key] = value;
-        TRACE("Found intrinsic flag: %s = %s", key.c_str(), (value == true) ? "true" : "false");
+        //TRACE("Found intrinsic flag: %s = %s", key.c_str(), (value == true) ? "true" : "false");
       }
     }
     catch (pt::ptree_bad_path&)
     {
-      MINOR_ERROR("\"%s\" has no intrinsic flags section; assuming empty", type.c_str());
+      //MINOR_ERROR("\"%s\" has no intrinsic flags section; assuming empty", type.c_str());
     }
 
     // Get intrinsic values.
@@ -154,12 +154,12 @@ ThingMetadata::ThingMetadata(std::string type)
         int value = child_tree.second.get_value<int>(0);
 
         pImpl->intrinsic_values[key] = value;
-        TRACE("Found intrinsic value: %s = %d", key.c_str(), value);
+        //TRACE("Found intrinsic value: %s = %d", key.c_str(), value);
       }
     }
     catch (pt::ptree_bad_path&)
     {
-      MINOR_ERROR("\"%s\" has no intrinsic values section; assuming empty", type.c_str());
+      //MINOR_ERROR("\"%s\" has no intrinsic values section; assuming empty", type.c_str());
     }
 
     // Get intrinsic strings.
@@ -173,12 +173,12 @@ ThingMetadata::ThingMetadata(std::string type)
         std::string value = child_tree.second.get_value<std::string>("");
 
         pImpl->intrinsic_strings[key] = value;
-        TRACE("Found intrinsic string: %s = \"%s\"", key.c_str(), value.c_str());
+        //TRACE("Found intrinsic string: %s = \"%s\"", key.c_str(), value.c_str());
       }
     }
     catch (pt::ptree_bad_path&)
     {
-      MINOR_ERROR("\"%s\" has no intrinsic strings section; assuming empty", type.c_str());
+      //MINOR_ERROR("\"%s\" has no intrinsic strings section; assuming empty", type.c_str());
     }
 
     // Get default property flags.
@@ -190,12 +190,12 @@ ThingMetadata::ThingMetadata(std::string type)
         bool value = child_tree.second.get_value<bool>(false);
 
         pImpl->default_flags[key] = value;
-        TRACE("Found default flag: %s = %s", key.c_str(), (value == true) ? "true" : "false");
+        //TRACE("Found default flag: %s = %s", key.c_str(), (value == true) ? "true" : "false");
       }
     }
     catch (pt::ptree_bad_path&)
     {
-      MINOR_ERROR("\"%s\" has no property flags section; assuming empty", type.c_str());
+      //MINOR_ERROR("\"%s\" has no property flags section; assuming empty", type.c_str());
     }
 
     // Get default property values.
@@ -207,12 +207,12 @@ ThingMetadata::ThingMetadata(std::string type)
         int value = child_tree.second.get_value<int>(0);
 
         pImpl->default_values[key] = value;
-        TRACE("Found default value: %s = %d", key.c_str(), value);
+        //TRACE("Found default value: %s = %d", key.c_str(), value);
       }
     }
     catch (pt::ptree_bad_path&)
     {
-      MINOR_ERROR("\"%s\" has no property values section; assuming empty", type.c_str());
+      //MINOR_ERROR("\"%s\" has no property values section; assuming empty", type.c_str());
     }
 
     // Get default property strings.
@@ -224,15 +224,15 @@ ThingMetadata::ThingMetadata(std::string type)
         std::string value = child_tree.second.get_value<std::string>("");
 
         pImpl->default_strings[key] = value;
-        TRACE("Found default string: %s = \"%s\"", key.c_str(), value.c_str());
+        //TRACE("Found default string: %s = \"%s\"", key.c_str(), value.c_str());
       }
     }
     catch (pt::ptree_bad_path&)
     {
-      MINOR_ERROR("\"%s\" has no property strings section; assuming empty", type.c_str());
+      //MINOR_ERROR("\"%s\" has no property strings section; assuming empty", type.c_str());
     }
 
-    TRACE("done");
+    //TRACE("done");
   }
   else
   {
