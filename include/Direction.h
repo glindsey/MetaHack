@@ -1,6 +1,8 @@
 #ifndef DIRECTION_H
 #define DIRECTION_H
 
+#include <iostream>
+
 enum class Direction
 {
   None,
@@ -17,6 +19,29 @@ enum class Direction
   Self,
   Count
 };
+
+inline std::ostream& operator<<(std::ostream& os, const Direction& d)
+{
+  switch (d)
+  {
+  case Direction::None:       os << "None"; break;
+  case Direction::North:      os << "North"; break;
+  case Direction::Northeast:  os << "Northeast"; break;
+  case Direction::East:       os << "East"; break;
+  case Direction::Southeast:  os << "Southeast"; break;
+  case Direction::South:      os << "South"; break;
+  case Direction::Southwest:  os << "Southwest"; break;
+  case Direction::West:       os << "West"; break;
+  case Direction::Northwest:  os << "Northwest"; break;
+  case Direction::Up:         os << "Up"; break;
+  case Direction::Down:       os << "Down"; break;
+  case Direction::Self:       os << "Self"; break;
+  case Direction::Count:      os << "Count"; break;
+  default:                    os << "???"; break;
+  }
+
+  return os;
+}
 
 inline Direction update_direction(Direction current_direction,
                                   Direction new_direction)

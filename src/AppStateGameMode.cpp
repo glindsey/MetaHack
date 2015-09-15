@@ -180,62 +180,55 @@ bool AppStateGameMode::render(sf::RenderTarget& target, int frame)
   the_message_log.set_focus(pImpl->current_input_state == GameInputState::MessageLog);
   pImpl->status_area->set_focus(pImpl->current_input_state == GameInputState::Map);
 
-  try
+  ThingRef player = TM.get_player();
+  ThingRef location = player->get_location();
+
+  if (location == TM.get_mu())
   {
-    ThingRef player = TM.get_player();
-    ThingRef location = player->get_location();
+    throw std::exception("Uh oh, the player's location appears to have been deleted!");
+  }
 
-    if (location == TM.get_mu())
+  /// @todo We need a way to determine if the player is directly on a map,
+  ///       and render either the map, or a container interior.
+  ///       Should probably use an overridden "render_surroundings" method
+  ///       for Things.
+
+  if (!player->is_inside_another_thing())
+  {
+    MapTile* tile = player->get_maptile();
+    if (tile != nullptr)
     {
-      FATAL_ERROR("Uh oh, the player's location appears to have been deleted!");
-    }
+      Map& game_map = MF.get(tile->get_map_id());
+      sf::Vector2i tile_coords = tile->get_coords();
+      sf::Vector2f player_pixel_coords = MapTile::get_pixel_coords(tile_coords);
+      sf::Vector2f cursor_pixel_coords = MapTile::get_pixel_coords(pImpl->cursor_coords);
 
-    /// @todo We need a way to determine if the player is directly on a map,
-    ///       and render either the map, or a container interior.
-    ///       Should probably use an overridden "render_surroundings" method
-    ///       for Things.
+      // Update thing vertex array.
+      game_map.update_thing_vertices(player, frame);
 
-    if (!player->is_inside_another_thing())
-    {
-      MapTile* tile = player->get_maptile();
-      if (tile != nullptr)
+      if (pImpl->current_input_state == GameInputState::CursorLook)
       {
-        Map& game_map = MF.get(tile->get_map_id());
-        sf::Vector2i tile_coords = tile->get_coords();
-        sf::Vector2f player_pixel_coords = MapTile::get_pixel_coords(tile_coords);
-        sf::Vector2f cursor_pixel_coords = MapTile::get_pixel_coords(pImpl->cursor_coords);
+        game_map.set_view(target, cursor_pixel_coords, pImpl->map_zoom_level);
+        game_map.draw_to(target);
 
-        // Update thing vertex array.
-        game_map.update_thing_vertices(player, frame);
-
-        if (pImpl->current_input_state == GameInputState::CursorLook)
-        {
-          game_map.set_view(target, cursor_pixel_coords, pImpl->map_zoom_level);
-          game_map.draw_to(target);
-
-          auto& cursor_tile = game_map.get_tile(pImpl->cursor_coords);
-          cursor_tile->draw_highlight(target,
-                                      cursor_pixel_coords,
-                                      Settings.cursor_border_color,
-                                      Settings.cursor_bg_color,
-                                      frame);
-        }
-        else
-        {
-          game_map.set_view(target, player_pixel_coords, pImpl->map_zoom_level);
-          game_map.draw_to(target);
-        }
+        auto& cursor_tile = game_map.get_tile(pImpl->cursor_coords);
+        cursor_tile->draw_highlight(target,
+                                    cursor_pixel_coords,
+                                    Settings.cursor_border_color,
+                                    Settings.cursor_bg_color,
+                                    frame);
+      }
+      else
+      {
+        game_map.set_view(target, player_pixel_coords, pImpl->map_zoom_level);
+        game_map.draw_to(target);
       }
     }
+  }
 
-    the_message_log.render(target, frame);
-    pImpl->status_area->render(target, frame);
-    pImpl->inventory_area->render(target, frame);
-  }
-  catch (std::exception const& e)
-  {
-    FATAL_ERROR("Exception while rendering: %s", e.what());
-  }
+  the_message_log.render(target, frame);
+  pImpl->status_area->render(target, frame);
+  pImpl->inventory_area->render(target, frame);
 
   return true;
 }
@@ -773,7 +766,7 @@ bool AppStateGameMode::initialize()
 
   if (player_moved == false)
   {
-    FATAL_ERROR("Could not move player to start position!");
+    throw std::exception("Could not move player to start position!");
     return false;
   }
 

@@ -12,8 +12,11 @@ class TileSheet
     TileSheet();
     virtual ~TileSheet();
 
-    /// Load a sprite sheet from disk.
-    bool load(std::string const& filename);
+    /// Load an entire sprite sheet from disk.
+    void load(std::string const& filename);
+
+    /// Load a sprite collection from disk and find a place to put them.
+    sf::Vector2u load_sprites(std::string const& filename);
 
     /// Get a particular tile from the sheet.
     /// @warning Assumes tile is within the bounds of the loaded texture,

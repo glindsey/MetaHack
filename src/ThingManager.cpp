@@ -125,7 +125,7 @@ void ThingManager::destroy(ThingRef ref)
   }
   else
   {
-    FATAL_ERROR("Attempted to destroy Mu object!");
+    throw std::exception("Attempted to destroy Mu object!");
   }
 }
 

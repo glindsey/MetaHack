@@ -1,19 +1,69 @@
 #include "TileSheet.h"
 
+#include <boost/dynamic_bitset.hpp>
 #include <boost/log/trivial.hpp>
 #include <map>
 
 #include "ConfigSettings.h"
+#include "MathUtils.h"
 
 struct TileSheet::Impl
 {
   sf::Texture texture;
+  unsigned int texture_size;
+  boost::dynamic_bitset<> used;
+
+  /// Return bitset index based on coordinates.
+  unsigned int get_index(unsigned int x, unsigned int y)
+  {
+    return (y * texture_size) + x;
+  }
+
+  /// Return true if the requested area is totally unused.
+  bool area_is_unused(sf::Vector2u start, sf::Vector2u size)
+  {
+    for (unsigned int y = start.y; y < start.y + size.y; ++y)
+    {
+      for (unsigned int x = start.x; x < start.x + size.x; ++x)
+      {
+        if (used[get_index(x, y)])
+        {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  /// Find the first free area of the size specified.
+  /// @todo This is an extremely naive algorithm and can definitely be optimized.
+  sf::Vector2u find_unused_area(sf::Vector2u size)
+  {
+    sf::Vector2u start(0, 0);
+
+    while (start.y < texture_size)
+    {
+      while (start.x < texture_size)
+      {
+        if (area_is_unused(start, size))
+        {
+          return start;
+        }
+        ++start.x;
+      }
+      ++start.y;
+    }
+
+    /// If we got here, there's no free space.
+    throw std::out_of_range("Out of space on tile sheet");
+  }
 };
 
 TileSheet::TileSheet()
   : pImpl(new Impl())
 {
-  //ctor
+  pImpl->texture_size = pImpl->texture.getMaximumSize();
+  pImpl->texture.create(pImpl->texture_size, pImpl->texture_size);
 }
 
 TileSheet::~TileSheet()
@@ -21,12 +71,39 @@ TileSheet::~TileSheet()
   //dtor
 }
 
-bool TileSheet::load(std::string const& filename)
+void TileSheet::load(std::string const& filename)
 {
   sf::Image image;
-  image.loadFromFile(filename);
+  if (!image.loadFromFile(filename))
+  {
+    throw std::exception(std::string("Sprite file not found: \"" + filename + "\"").c_str());
+  }
+
   image.createMaskFromColor(sf::Color(192, 32, 64));
-  return pImpl->texture.loadFromImage(image);
+  pImpl->texture.update(image, 0, 0);
+}
+
+sf::Vector2u TileSheet::load_sprites(std::string const& filename)
+{
+  sf::Image image;
+  if (!image.loadFromFile(filename))
+  {
+    throw std::exception(std::string("Sprite file not found: \"" + filename + "\"").c_str());
+  }
+
+  image.createMaskFromColor(sf::Color(192, 32, 64));
+
+  sf::Vector2u image_size = image.getSize();
+
+  sf::Vector2u image_size_in_tiles =
+    sf::Vector2u(divide_and_round_up(image_size.x, Settings.map_tile_size),
+                 divide_and_round_up(image_size.y, Settings.map_tile_size));
+
+  sf::Vector2u free_coords = pImpl->find_unused_area(image.getSize());
+
+  pImpl->texture.update(image, 
+                        free_coords.x * Settings.map_tile_size, 
+                        free_coords.y * Settings.map_tile_size);
 }
 
 sf::IntRect TileSheet::get_tile(sf::Vector2u tile) const

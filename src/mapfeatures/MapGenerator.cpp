@@ -173,7 +173,7 @@ void MapGenerator::generate()
   if (!startingRoom.create(GeoVector(pImpl->getRandomFilledSquare(),
                                      Direction::Self)))
   {
-    FATAL_ERROR("Could not make starting room for player!");
+    throw std::exception("Could not make starting room for player!");
   }
 
   sf::IntRect startBox = startingRoom.get_coords();

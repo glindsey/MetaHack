@@ -39,62 +39,66 @@ sf::IntRect calc_message_log_dimensions()
 
 int main()
 {
-  // Create the random number generator.
-  rng_.reset(new boost::random::mt19937(static_cast<unsigned int>(std::time(0))));
-
-  // Check to make sure shaders are available.
-  if (!sf::Shader::isAvailable())
+  try
   {
-    FATAL_ERROR("Shaders are not available on this platform");
+    // Create the random number generator.
+    rng_.reset(new boost::random::mt19937(static_cast<unsigned int>(std::time(0))));
+
+    // Check to make sure shaders are available.
+    if (!sf::Shader::isAvailable())
+    {
+      throw std::exception("Shaders are not available on this platform");
+    }
+
+    // Create and open the main window.
+    app_window_.reset(new sf::RenderWindow(sf::VideoMode(1066, 600), "Magicule Saga"));
+
+    // Create the default fonts.
+    /// @todo Font names should be moved into ConfigSettings.
+    default_font_.reset(new sf::Font());
+    if (default_font_->loadFromFile("resources/fonts/berylium rg.ttf") == false)
+    {
+      throw std::exception("Could not load the default font (berylium rg.ttf)");
+    }
+
+    default_bold_font_.reset(new sf::Font());
+    if (default_bold_font_->loadFromFile("resources/fonts/berylium bd.ttf") == false)
+    {
+      throw std::exception("Could not load the default bold font (berylium bd.ttf)");
+    }
+
+    default_mono_font_.reset(new sf::Font());
+    if (default_mono_font_->loadFromFile("resources/fonts/DejaVuSansMono.ttf") == false)
+    {
+      throw std::exception("Could not load the default monospace font (DejaVuSansMono.ttf)");
+    }
+
+    // Create the shader program.
+    shader_.reset(new sf::Shader());
+    if (shader_->loadFromFile("resources/shaders/default.vert",
+      "resources/shaders/default.frag") == false)
+    {
+      throw std::exception("Could not load the shaders");
+    }
+
+    // Create the message log.
+    message_log_.reset(new MessageLog(calc_message_log_dimensions()));
+
+    // Create the tile sheet.
+    tile_sheet_.reset(new TileSheet());
+    tile_sheet_->load("resources/graphics/tilesheet.png");
+
+    // Create and run the app instance.
+    app_.reset(new App());
+    app_->run();
+
+    // Close the app window.
+    app_window_->close();
   }
-
-  // Create and open the main window.
-  app_window_.reset(new sf::RenderWindow(sf::VideoMode(1066, 600), "Magicule Saga"));
-
-  // Create the default fonts.
-  /// @todo Font names should be moved into ConfigSettings.
-  default_font_.reset(new sf::Font());
-  if (default_font_->loadFromFile("resources/fonts/berylium rg.ttf") == false)
+  catch (std::exception& e)
   {
-    FATAL_ERROR("Could not load the default font (berylium rg.ttf)");
+    FATAL_ERROR("Caught top-level exception: %s", e.what());
   }
-
-  default_bold_font_.reset(new sf::Font());
-  if (default_bold_font_->loadFromFile("resources/fonts/berylium bd.ttf") == false)
-  {
-    FATAL_ERROR("Could not load the default bold font (berylium bd.ttf)");
-  }
-
-  default_mono_font_.reset(new sf::Font());
-  if (default_mono_font_->loadFromFile("resources/fonts/DejaVuSansMono.ttf") == false)
-  {
-    FATAL_ERROR("Could not load the default monospace font (DejaVuSansMono.ttf)");
-  }
-
-  // Create the shader program.
-  shader_.reset(new sf::Shader());
-  if (shader_->loadFromFile("resources/shaders/default.vert",
-                            "resources/shaders/default.frag") == false)
-  {
-    FATAL_ERROR("Could not load the shaders");
-  }
-
-  // Create the message log.
-  message_log_.reset(new MessageLog(calc_message_log_dimensions()));
-
-  // Create the tile sheet.
-  tile_sheet_.reset(new TileSheet());
-  if (tile_sheet_->load("resources/graphics/tilesheet.png") == false)
-  {
-    FATAL_ERROR("Could not load the tile sheet (tilesheet.png)");
-  }
-
-  // Create and run the app instance.
-  app_.reset(new App());
-  app_->run();
-
-  // Close the app window.
-  app_window_->close();
 
   return EXIT_SUCCESS;
 }

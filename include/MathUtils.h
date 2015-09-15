@@ -1,6 +1,7 @@
 #ifndef _MATHUTILS_H_
 #define _MATHUTILS_H_
 
+#include <boost/lexical_cast.hpp>
 #include <boost/random/uniform_int_distribution.hpp>
 
 #include "App.h"
@@ -134,6 +135,12 @@ template <class T> T choose_random (T a, T b, T c)
   }
 }
 
+/// Divide and round up.
+inline unsigned int divide_and_round_up(unsigned int value, unsigned int multiple)
+{
+  return ((value / multiple) + ((value % multiple == 0) ? 0 : 1));
+}
+
 /// Determine light factor based on light source, wall location, and which wall
 /// the light is hitting.
 inline double calculate_light_factor(sf::Vector2i source, sf::Vector2i target, Direction direction)
@@ -156,9 +163,7 @@ inline double calculate_light_factor(sf::Vector2i source, sf::Vector2i target, D
   case Direction::East:
     return (source.x > target.x) ? (x_diff / h_diff) : 0;
   default:
-    FATAL_ERROR("Invalid direction %u passed to calculate_light_factor",
-                static_cast<unsigned int>(direction));
-    return 0;
+    throw std::out_of_range(std::string("Invalid direction " + boost::lexical_cast<std::string>(direction) + " passed to calculate_light_factor").c_str());
   }
 }
 
