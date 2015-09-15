@@ -7,13 +7,21 @@
 
 #include "gui/GUIPane.h"
 #include "KeyBuffer.h"
+#include "Lua.h"
 
 /// A class that keeps track of game messages, and is renderable on-screen.
 class MessageLog : public GUIPane
 {
   public:
-    MessageLog(sf::IntRect dimensions);
     virtual ~MessageLog();
+
+    /// Create the message log, if it doesn't exist.
+    /// If it does, throw an exception.
+    static MessageLog& create(sf::IntRect dimensions);
+
+    /// Get the message log instance, if it exists.
+    /// If it does not, throw an exception. (We cannot create it on the fly.)
+    static MessageLog& instance();
 
     /// Add a message to the message log.
     /// The message added is automatically capitalized if it isn't already.
@@ -28,8 +36,20 @@ class MessageLog : public GUIPane
     virtual std::string render_contents(int frame) override;
 
   private:
+    MessageLog(sf::IntRect dimensions);
+
+    void initialize();
+
     struct Impl;
     std::unique_ptr<Impl> pImpl;
+
+    /// Static instance.
+    static std::unique_ptr<MessageLog> instance_;
+
+    /// Lua function to add a message to the message log.
+    static int LUA_add(lua_State* L);
 };
+
+#define the_message_log   (MessageLog::instance())
 
 #endif // MESSAGELOG_H

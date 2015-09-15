@@ -48,9 +48,6 @@ extern std::unique_ptr<sf::Font> default_bold_font_;
 /// Global default monospace font instance
 extern std::unique_ptr<sf::Font> default_mono_font_;
 
-/// Global message log instance
-extern std::unique_ptr<MessageLog> message_log_;
-
 /// Global RNG instance
 extern std::unique_ptr<boost::random::mt19937> rng_;
 
@@ -67,7 +64,6 @@ extern std::unique_ptr<sf::Shader> shader_;
 #define the_default_bold_font (*(default_bold_font_.get()))
 #define the_default_mono_font (*(default_mono_font_.get()))
 #define the_shader            (*(shader_.get()))
-#define the_message_log       (*(message_log_.get()))
 #define the_RNG               (*(rng_.get()))
 #define the_tile_sheet        (*(tile_sheet_.get()))
 

@@ -2,10 +2,13 @@
 
 #include "App.h"
 #include "ConfigSettings.h"
+#include "ErrorHandler.h"
 #include "KeyBuffer.h"
 
 #include <boost/log/trivial.hpp>
 #include <deque>
+
+std::unique_ptr<MessageLog> MessageLog::instance_;
 
 struct MessageLog::Impl
 {
@@ -30,6 +33,34 @@ MessageLog::MessageLog(sf::IntRect dimensions)
 MessageLog::~MessageLog()
 {
   //dtor
+}
+
+MessageLog& MessageLog::create(sf::IntRect dimensions)
+{
+  if (MessageLog::instance_ != nullptr)
+  {
+    throw std::bad_function_call();
+  }
+
+  MessageLog::instance_.reset(new MessageLog(dimensions));
+  MessageLog::instance_->initialize();
+
+  return *(MessageLog::instance_.get());
+}
+
+MessageLog& MessageLog::instance()
+{
+  if (MessageLog::instance_ == nullptr)
+  {
+    throw std::bad_function_call();
+  }
+
+  return *(MessageLog::instance_.get());
+}
+
+void MessageLog::initialize()
+{
+  the_lua_instance.register_function("messageLog_add", MessageLog::LUA_add);
 }
 
 void MessageLog::add(std::string message)
@@ -112,4 +143,21 @@ std::string MessageLog::render_contents(int frame)
   }
 
   return "Message Log";
+}
+
+int MessageLog::LUA_add(lua_State* L)
+{
+  int arg_num = lua_gettop(L);
+
+  if (arg_num != 1)
+  {
+    MINOR_ERROR("Lua function messageLog_add expects 1 argument, got %d", arg_num);
+  }
+  else
+  {
+    std::string str = lua_tostring(L, 1);
+    MessageLog::instance().add(str);
+  }
+
+  return 0;
 }

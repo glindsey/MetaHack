@@ -13,14 +13,13 @@
 #include "ThingManager.h"
 #include "TileSheet.h"
 
-// Static declarations
+// Global declarations
 std::unique_ptr<sf::RenderWindow> app_window_;
 std::unique_ptr<sf::Font> default_font_;
 std::unique_ptr<sf::Font> default_bold_font_;
 std::unique_ptr<sf::Font> default_mono_font_;
 std::unique_ptr<sf::Shader> shader_;
 std::unique_ptr<App> app_;
-std::unique_ptr<MessageLog> message_log_;
 std::unique_ptr<boost::random::mt19937> rng_;
 std::unique_ptr<TileSheet> tile_sheet_;
 
@@ -80,7 +79,7 @@ int main()
   }
 
   // Create the message log.
-  message_log_.reset(new MessageLog(calc_message_log_dimensions()));
+  MessageLog::create(calc_message_log_dimensions());
 
   // Create the tile sheet.
   tile_sheet_.reset(new TileSheet());
@@ -88,6 +87,9 @@ int main()
   {
     FATAL_ERROR("Could not load the tile sheet (tilesheet.png)");
   }
+
+  // Run a Lua test.
+  the_lua_instance.do_file("test.lua");
 
   // Create and run the app instance.
   app_.reset(new App());

@@ -33,28 +33,15 @@ struct ThingManager::Impl
 
   /// ThingRef that means "nothing".
   ThingRef mu;
-
-  /// The Lua interpreter.
-  lua_State* L;
 };
 
 ThingManager::ThingManager()
   : pImpl(new Impl())
 {
-	// Initialize the Lua interpreter.
-	pImpl->L = luaL_newstate();
-
-	// Load the base libraries.
-	luaL_openlibs(pImpl->L);
-
-	/// @todo All of the other registration required... which will be a lot.
-	luaL_dofile(pImpl->L, "resources/default.lua");
 }
 
 ThingManager::~ThingManager()
 {
-	/// Clean up Lua.
-	lua_close(pImpl->L);
 }
 
 void ThingManager::initialize()
@@ -72,11 +59,6 @@ ThingManager& ThingManager::instance()
   }
 
   return *(ThingManager::instance_.get());
-}
-
-lua_State* ThingManager::L()
-{
-	return pImpl->L;
 }
 
 ThingRef ThingManager::create(std::string type)

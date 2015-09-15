@@ -114,6 +114,7 @@
     <ClInclude Include="include\InventoryArea.h" />
     <ClInclude Include="include\InventorySlot.h" />
     <ClInclude Include="include\KeyBuffer.h" />
+    <ClInclude Include="include\Lua.h" />
     <ClInclude Include="include\Map.h" />
     <ClInclude Include="include\MapFactory.h" />
     <ClInclude Include="include\mapfeatures\MapCorridor.h" />
@@ -158,6 +159,7 @@
     <ClCompile Include="src\Inventory.cpp" />
     <ClCompile Include="src\InventoryArea.cpp" />
     <ClCompile Include="src\KeyBuffer.cpp" />
+    <ClCompile Include="src\Lua.cpp" />
     <ClCompile Include="src\Map.cpp" />
     <ClCompile Include="src\MapFactory.cpp" />
     <ClCompile Include="src\mapfeatures\MapCorridor.cpp" />
@@ -202,6 +204,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\default.lua" />
+    <None Include="test.lua" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -5,13 +5,6 @@
 #include <string>
 #include <unordered_map>
 
-extern "C"
-{
-#include <lua.h>
-#include <lualib.h>
-#include <lauxlib.h>
-}
-
 #include "ThingRef.h"
 
 // Forward declarations
@@ -33,9 +26,6 @@ public:
 
     /// Get the singleton instance of ThingManager.
   	static ThingManager& instance();
-
-	/// Get the Lua interpreter.
-	lua_State* L();
 
     /// Create a particular object given the type name.
     /// @param type The type name of the object to create.
