@@ -1,5 +1,6 @@
 #include "Thing.h"
 
+#include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/log/trivial.hpp>
 
@@ -1777,82 +1778,93 @@ StringsMap const& Thing::get_property_strings() const
   return pImpl->property_strings;
 }
 
-bool Thing::get_property_flag(std::string name, bool default_value) const
+bool Thing::get_property_flag(std::string key, bool default_value) const
 {
+  boost::algorithm::to_lower(key);
+
   bool value;
 
-  if (pImpl->property_flags.count(name) != 0)
+  if (pImpl->property_flags.count(key) != 0)
   {
-    value = pImpl->property_flags[name];
+    value = pImpl->property_flags[key];
   }
   else
   {
-    value = TM.get_metadata(pImpl->type).get_default_flag(name, default_value);
+    value = TM.get_metadata(pImpl->type).get_default_flag(key, default_value);
   }
 
   return value;
 }
 
-int Thing::get_property_value(std::string name, int default_value) const
+int Thing::get_property_value(std::string key, int default_value) const
 {
+  boost::algorithm::to_lower(key);
+
   int value;
 
-  if (pImpl->property_values.count(name) != 0)
+  if (pImpl->property_values.count(key) != 0)
   {
-    value = pImpl->property_values[name];
+    value = pImpl->property_values[key];
   }
   else
   {
-	value = TM.get_metadata(pImpl->type).get_default_value(name, default_value);
+	value = TM.get_metadata(pImpl->type).get_default_value(key, default_value);
   }
 
   return value;
 }
 
-std::string Thing::get_property_string(std::string name, std::string default_value) const
+std::string Thing::get_property_string(std::string key, std::string default_value) const
 {
+  boost::algorithm::to_lower(key);
+
   std::string value;
 
-  if (pImpl->property_strings.count(name) != 0)
+  if (pImpl->property_strings.count(key) != 0)
   {
-    value = pImpl->property_strings[name];
+    value = pImpl->property_strings[key];
   }
   else
   {
-    value = TM.get_metadata(pImpl->type).get_default_string(name, default_value);
+    value = TM.get_metadata(pImpl->type).get_default_string(key, default_value);
   }
 
   return value;
 }
 
-bool Thing::get_intrinsic_flag(std::string name, bool default_value) const
+bool Thing::get_intrinsic_flag(std::string key, bool default_value) const
 {
-  return TM.get_metadata(pImpl->type).get_intrinsic_flag(name, default_value);
+  boost::algorithm::to_lower(key);
+  return TM.get_metadata(pImpl->type).get_intrinsic_flag(key, default_value);
 }
 
-int Thing::get_intrinsic_value(std::string name, int default_value) const
+int Thing::get_intrinsic_value(std::string key, int default_value) const
 {
-  return TM.get_metadata(pImpl->type).get_intrinsic_value(name, default_value);
+  boost::algorithm::to_lower(key);
+  return TM.get_metadata(pImpl->type).get_intrinsic_value(key, default_value);
 }
 
-std::string Thing::get_intrinsic_string(std::string name, std::string default_value) const
+std::string Thing::get_intrinsic_string(std::string key, std::string default_value) const
 {
-  return TM.get_metadata(pImpl->type).get_intrinsic_string(name, default_value);
+  boost::algorithm::to_lower(key);
+  return TM.get_metadata(pImpl->type).get_intrinsic_string(key, default_value);
 }
 
-void Thing::set_property_flag(std::string name, bool value)
+void Thing::set_property_flag(std::string key, bool value)
 {
-  pImpl->property_flags[name] = value;
+  pImpl->property_flags[key] = value;
 }
 
-void Thing::set_property_value(std::string name, int value)
+void Thing::set_property_value(std::string key, int value)
 {
-  pImpl->property_values[name] = value;
+  boost::algorithm::to_lower(key);
+  pImpl->property_values[key] = value;
 }
 
-void Thing::set_property_string(std::string name, std::string value)
+void Thing::set_property_string(std::string key, std::string value)
 {
-  pImpl->property_strings[name] = value;
+  boost::algorithm::to_lower(key);
+  pImpl->property_strings[key] = value;
 }
 
 unsigned int Thing::get_quantity() const

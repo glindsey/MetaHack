@@ -2,6 +2,7 @@
 
 #include <unordered_map>
 
+#include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
@@ -54,6 +55,8 @@ struct ThingMetadata::Impl
 ThingMetadata::ThingMetadata(std::string type)
   : pImpl(new Impl())
 {
+  boost::algorithm::to_lower(type);
+
   TRACE("Loading metadata for type \"%s\"...", type.c_str());
 
   /// Try to open the XML file to populate this thing's metadata.
@@ -104,6 +107,7 @@ ThingMetadata::ThingMetadata(std::string type)
 
       pImpl->parent = "";
     }
+    boost::algorithm::to_lower(pImpl->parent);
 
     // Get thing's description.
     try
@@ -134,6 +138,7 @@ ThingMetadata::ThingMetadata(std::string type)
       for (auto& child_tree : intrinsics_tree.get_child("flags"))
       {
         std::string key = child_tree.first;
+        boost::algorithm::to_lower(key);
         bool value = child_tree.second.get_value<bool>(false);
 
         pImpl->intrinsic_flags[key] = value;
@@ -151,6 +156,7 @@ ThingMetadata::ThingMetadata(std::string type)
       for (auto& child_tree : intrinsics_tree.get_child("values"))
       {
         std::string key = child_tree.first;
+        boost::algorithm::to_lower(key);
         int value = child_tree.second.get_value<int>(0);
 
         pImpl->intrinsic_values[key] = value;
@@ -170,6 +176,7 @@ ThingMetadata::ThingMetadata(std::string type)
       for (auto& child_tree : intrinsics_tree.get_child("strings"))
       {
         std::string key = child_tree.first;
+        boost::algorithm::to_lower(key);
         std::string value = child_tree.second.get_value<std::string>("");
 
         pImpl->intrinsic_strings[key] = value;
@@ -187,6 +194,7 @@ ThingMetadata::ThingMetadata(std::string type)
       for (auto& child_tree : properties_tree.get_child("flags"))
       {
         std::string key = child_tree.first;
+        boost::algorithm::to_lower(key);
         bool value = child_tree.second.get_value<bool>(false);
 
         pImpl->default_flags[key] = value;
@@ -204,6 +212,7 @@ ThingMetadata::ThingMetadata(std::string type)
       for (auto& child_tree : properties_tree.get_child("values"))
       {
         std::string key = child_tree.first;
+        boost::algorithm::to_lower(key);
         int value = child_tree.second.get_value<int>(0);
 
         pImpl->default_values[key] = value;
@@ -221,6 +230,7 @@ ThingMetadata::ThingMetadata(std::string type)
       for (auto& child_tree : properties_tree.get_child("strings"))
       {
         std::string key = child_tree.first;
+        boost::algorithm::to_lower(key);
         std::string value = child_tree.second.get_value<std::string>("");
 
         pImpl->default_strings[key] = value;
@@ -266,11 +276,13 @@ std::string const& ThingMetadata::get_parent() const
   return pImpl->parent;
 }
 
-bool ThingMetadata::get_intrinsic_flag(std::string name, bool default_value) const
+bool ThingMetadata::get_intrinsic_flag(std::string key, bool default_value) const
 {
+  boost::algorithm::to_lower(key);
+
   try
   {
-    return pImpl->intrinsic_flags.at(name);
+    return pImpl->intrinsic_flags.at(key);
   }
   catch (std::out_of_range&)
   {
@@ -280,16 +292,18 @@ bool ThingMetadata::get_intrinsic_flag(std::string name, bool default_value) con
     }
     else
     {
-      return TM.get_metadata(pImpl->parent).get_intrinsic_flag(name, default_value);
+      return TM.get_metadata(pImpl->parent).get_intrinsic_flag(key, default_value);
     }
   }
 }
 
-int ThingMetadata::get_intrinsic_value(std::string name, int default_value) const
+int ThingMetadata::get_intrinsic_value(std::string key, int default_value) const
 {
+  boost::algorithm::to_lower(key);
+
   try
   {
-    return pImpl->intrinsic_values.at(name);
+    return pImpl->intrinsic_values.at(key);
   }
   catch (std::out_of_range&)
   {
@@ -299,16 +313,18 @@ int ThingMetadata::get_intrinsic_value(std::string name, int default_value) cons
     }
     else
     {
-      return TM.get_metadata(pImpl->parent).get_intrinsic_value(name, default_value);
+      return TM.get_metadata(pImpl->parent).get_intrinsic_value(key, default_value);
     }
   }
 }
 
-std::string ThingMetadata::get_intrinsic_string(std::string name, std::string default_value) const
+std::string ThingMetadata::get_intrinsic_string(std::string key, std::string default_value) const
 {
+  boost::algorithm::to_lower(key);
+
   try
   {
-    return pImpl->intrinsic_strings.at(name);
+    return pImpl->intrinsic_strings.at(key);
   }
   catch (std::out_of_range&)
   {
@@ -318,7 +334,7 @@ std::string ThingMetadata::get_intrinsic_string(std::string name, std::string de
     }
     else
     {
-      return TM.get_metadata(pImpl->parent).get_intrinsic_string(name, default_value);
+      return TM.get_metadata(pImpl->parent).get_intrinsic_string(key, default_value);
     }
   }
 }
@@ -338,11 +354,13 @@ StringsMap const& ThingMetadata::get_intrinsic_strings() const
   return pImpl->intrinsic_strings;
 }
 
-bool ThingMetadata::get_default_flag(std::string name, bool default_value) const
+bool ThingMetadata::get_default_flag(std::string key, bool default_value) const
 {
+  boost::algorithm::to_lower(key);
+
   try
   {
-    return pImpl->default_flags.at(name);
+    return pImpl->default_flags.at(key);
   }
   catch (std::out_of_range&)
   {
@@ -352,16 +370,18 @@ bool ThingMetadata::get_default_flag(std::string name, bool default_value) const
     }
     else
     {
-      return TM.get_metadata(pImpl->parent).get_default_flag(name, default_value);
+      return TM.get_metadata(pImpl->parent).get_default_flag(key, default_value);
     }
   }
 }
 
-int ThingMetadata::get_default_value(std::string name, int default_value) const
+int ThingMetadata::get_default_value(std::string key, int default_value) const
 {
+  boost::algorithm::to_lower(key);
+
   try
   {
-    return pImpl->default_values.at(name);
+    return pImpl->default_values.at(key);
   }
   catch (std::out_of_range&)
   {
@@ -371,16 +391,18 @@ int ThingMetadata::get_default_value(std::string name, int default_value) const
     }
     else
     {
-      return TM.get_metadata(pImpl->parent).get_default_value(name, default_value);
+      return TM.get_metadata(pImpl->parent).get_default_value(key, default_value);
     }
   }
 }
 
-std::string ThingMetadata::get_default_string(std::string name, std::string default_value) const
+std::string ThingMetadata::get_default_string(std::string key, std::string default_value) const
 {
+  boost::algorithm::to_lower(key);
+
   try
   {
-    return pImpl->default_strings[name];
+    return pImpl->default_strings.at(key);
   }
   catch (std::out_of_range&)
   {
@@ -390,7 +412,7 @@ std::string ThingMetadata::get_default_string(std::string name, std::string defa
     }
     else
     {
-      return TM.get_metadata(pImpl->parent).get_default_string(name, default_value);
+      return TM.get_metadata(pImpl->parent).get_default_string(key, default_value);
     }
   }
 }

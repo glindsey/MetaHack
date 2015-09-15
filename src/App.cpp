@@ -91,6 +91,9 @@ int main()
   // Run a Lua test.
   the_lua_instance.do_file("test.lua");
 
+  // Populate Lua enums.
+  Gender_add_to_lua();
+
   // Create and run the app instance.
   app_.reset(new App());
   app_->run();

@@ -5,6 +5,7 @@
 #include "ThingRef.h"
 #include "ThingMetadata.h"
 
+#include <boost/algorithm/string.hpp>
 #include <boost/bimap.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/log/trivial.hpp>
@@ -63,6 +64,8 @@ ThingManager& ThingManager::instance()
 
 ThingRef ThingManager::create(std::string type)
 {
+  boost::algorithm::to_lower(type);
+
   if (pImpl->thing_metadata.count(type) == 0)
   {
     pImpl->thing_metadata[type].reset(new ThingMetadata(type));
@@ -103,6 +106,8 @@ ThingRef ThingManager::clone(ThingRef original_ref)
 
 ThingMetadata& ThingManager::get_metadata(std::string type)
 {
+  boost::algorithm::to_lower(type);
+
   if (pImpl->thing_metadata.count(type) == 0)
   {
     pImpl->thing_metadata[type].reset(new ThingMetadata(type));

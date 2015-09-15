@@ -21,17 +21,17 @@ public:
   std::string const& get_description() const;
   std::string const& get_parent() const;
 
-  bool get_intrinsic_flag(std::string name, bool default_value = false) const;
-  int get_intrinsic_value(std::string name, int default_value = 0) const;
-  std::string get_intrinsic_string(std::string name, std::string default_value = "") const;
+  bool get_intrinsic_flag(std::string key, bool default_value = false) const;
+  int get_intrinsic_value(std::string key, int default_value = 0) const;
+  std::string get_intrinsic_string(std::string key, std::string default_value = "") const;
 
   FlagsMap const& get_intrinsic_flags() const;
   ValuesMap const& get_intrinsic_values() const;
   StringsMap const& get_intrinsic_strings() const;
 
-  bool get_default_flag(std::string name, bool default_value = false) const;
-  int get_default_value(std::string name, int default_value = 0) const;
-  std::string get_default_string(std::string name, std::string default_value = "") const;
+  bool get_default_flag(std::string key, bool default_value = false) const;
+  int get_default_value(std::string key, int default_value = 0) const;
+  std::string get_default_string(std::string key, std::string default_value = "") const;
 
   FlagsMap const& get_default_flags() const;
   ValuesMap const& get_default_values() const;
