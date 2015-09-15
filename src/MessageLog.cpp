@@ -151,7 +151,7 @@ int MessageLog::LUA_add(lua_State* L)
 
   if (num_args != 1)
   {
-    MINOR_ERROR("Lua function messageLog_add expects 1 argument, got %d", num_args);
+    MINOR_ERROR("MessageLog::LUA_add expects 1 argument, got %d", num_args);
   }
   else
   {

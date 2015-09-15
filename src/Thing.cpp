@@ -3582,7 +3582,8 @@ int Thing::LUA_get_intrinsic_flag(lua_State* L)
 
   if (num_args != 2)
   {
-    MINOR_ERROR("Lua function thing_get_intrinsic_flag expects 2 arguments, got %d", num_args);
+    MINOR_ERROR("LUA_get_intrinsic_flag expects 2 arguments, got %d", num_args);
+    return 0;
   }
 
   ThingRef thing = ThingRef(lua_tonumber(L, 1));
@@ -3599,7 +3600,8 @@ int Thing::LUA_get_intrinsic_value(lua_State* L)
 
   if (num_args != 2)
   {
-    MINOR_ERROR("Lua function thing_get_intrinsic_value expects 2 arguments, got %d", num_args);
+    MINOR_ERROR("LUA_get_intrinsic_value expects 2 arguments, got %d", num_args);
+    return 0;
   }
 
   ThingRef thing = ThingRef(lua_tonumber(L, 1));
@@ -3616,7 +3618,8 @@ int Thing::LUA_get_intrinsic_string(lua_State* L)
 
   if (num_args != 2)
   {
-    MINOR_ERROR("Lua function thing_get_intrinsic_string expects 2 arguments, got %d", num_args);
+    MINOR_ERROR("LUA_get_intrinsic_string expects 2 arguments, got %d", num_args);
+    return 0;
   }
 
   ThingRef thing = ThingRef(lua_tonumber(L, 1));
@@ -3633,7 +3636,8 @@ int Thing::LUA_get_property_flag(lua_State* L)
 
   if (num_args != 2)
   {
-    MINOR_ERROR("Lua function thing_get_property_flag expects 2 arguments, got %d", num_args);
+    MINOR_ERROR("LUA_get_property_flag expects 2 arguments, got %d", num_args);
+    return 0;
   }
 
   ThingRef thing = ThingRef(lua_tonumber(L, 1));
@@ -3650,7 +3654,8 @@ int Thing::LUA_get_property_value(lua_State* L)
 
   if (num_args != 2)
   {
-    MINOR_ERROR("Lua function thing_get_property_value expects 2 arguments, got %d", num_args);
+    MINOR_ERROR("LUA_get_property_value expects 2 arguments, got %d", num_args);
+    return 0;
   }
 
   ThingRef thing = ThingRef(lua_tonumber(L, 1));
@@ -3667,7 +3672,8 @@ int Thing::LUA_get_property_string(lua_State* L)
 
   if (num_args != 2)
   {
-    MINOR_ERROR("Lua function thing_get_string expects 2 arguments, got %d", num_args);
+    MINOR_ERROR("LUA_get_property_string expects 2 arguments, got %d", num_args);
+    return 0;
   }
 
   ThingRef thing = ThingRef(lua_tonumber(L, 1));
@@ -3684,7 +3690,8 @@ int Thing::LUA_set_property_flag(lua_State* L)
 
   if (num_args != 3)
   {
-    MINOR_ERROR("Lua function thing_set_flag expects 3 arguments, got %d", num_args);
+    MINOR_ERROR("LUA_set_property_flag expects 3 arguments, got %d", num_args);
+    return 0;
   }
 
   ThingRef thing = ThingRef(lua_tonumber(L, 1));
@@ -3701,7 +3708,8 @@ int Thing::LUA_set_property_value(lua_State* L)
 
   if (num_args != 3)
   {
-    MINOR_ERROR("Lua function thing_set_value expects 3 arguments, got %d", num_args);
+    MINOR_ERROR("LUA_set_property_value expects 3 arguments, got %d", num_args);
+    return 0;
   }
 
   ThingRef thing = ThingRef(lua_tonumber(L, 1));
@@ -3718,7 +3726,8 @@ int Thing::LUA_set_property_string(lua_State* L)
 
   if (num_args != 3)
   {
-    MINOR_ERROR("Lua function thing_set_string expects 3 arguments, got %d", num_args);
+    MINOR_ERROR("LUA_set_property_string expects 3 arguments, got %d", num_args);
+    return 0;
   }
 
   ThingRef thing = ThingRef(lua_tonumber(L, 1));

@@ -1,6 +1,7 @@
 #include "ThingManager.h"
 
 #include "ErrorHandler.h"
+#include "Lua.h"
 #include "Thing.h"
 #include "ThingRef.h"
 #include "ThingMetadata.h"
@@ -39,6 +40,16 @@ struct ThingManager::Impl
 ThingManager::ThingManager()
   : pImpl(new Impl())
 {
+  // Register the Thing Lua functions.
+  the_lua_instance.register_function("thing_get_intrinsic_flag", Thing::LUA_get_intrinsic_flag);
+  the_lua_instance.register_function("thing_get_intrinsic_value", Thing::LUA_get_intrinsic_value);
+  the_lua_instance.register_function("thing_get_intrinsic_string", Thing::LUA_get_intrinsic_string);
+  the_lua_instance.register_function("thing_get_property_flag", Thing::LUA_get_property_flag);
+  the_lua_instance.register_function("thing_get_property_value", Thing::LUA_get_property_value);
+  the_lua_instance.register_function("thing_get_property_string", Thing::LUA_get_property_string);
+  the_lua_instance.register_function("thing_set_property_flag", Thing::LUA_set_property_flag);
+  the_lua_instance.register_function("thing_set_property_value", Thing::LUA_set_property_value);
+  the_lua_instance.register_function("thing_set_property_string", Thing::LUA_set_property_string);
 }
 
 ThingManager::~ThingManager()

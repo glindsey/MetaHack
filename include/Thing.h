@@ -708,6 +708,8 @@ class Thing :
     ///         false if the Thing ceases to exist.
     virtual bool _process();
 
+    // Static Lua functions.
+    // @todo (Maybe these should be part of ThingManager instead?)
     static int LUA_get_intrinsic_flag(lua_State* L);
     static int LUA_get_intrinsic_value(lua_State* L);
     static int LUA_get_intrinsic_string(lua_State* L);
