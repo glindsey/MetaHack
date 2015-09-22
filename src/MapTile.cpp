@@ -13,6 +13,8 @@
 
 typedef boost::random::uniform_int_distribution<> uniform_int_dist;
 
+bool MapTile::initialized = false;
+
 struct MapTile::Impl
 {
     MapId map_id;
@@ -43,6 +45,11 @@ struct MapTile::Impl
 MapTile::MapTile(sf::Vector2i coords, MapId mapId)
   : pImpl(new Impl())
 {
+  if (!initialized)
+  {
+    // TODO: initialization
+  }
+
   //uniform_int_dist vDist(0, 3);
 
   pImpl->floor = TM.create_floor(this);
@@ -148,7 +155,7 @@ void MapTile::draw_to(sf::RenderTexture& target,
 
   rectangle.setPosition(target_coords);
   rectangle.setSize(sf::Vector2f(target_size, target_size));
-  rectangle.setTexture(&(the_tile_sheet.getTexture()));
+  rectangle.setTexture(&(TS.getTexture()));
   rectangle.setTextureRect(texture_coords);
   rectangle.setFillColor(thing_color);
 

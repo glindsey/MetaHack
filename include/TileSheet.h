@@ -1,6 +1,7 @@
 #ifndef TILESHEET_H
 #define TILESHEET_H
 
+#include <boost/noncopyable.hpp>
 #include <memory>
 #include <string>
 #include <SFML/Graphics.hpp>
@@ -9,14 +10,17 @@
 class TileSheet
 {
   public:
-    TileSheet();
     virtual ~TileSheet();
+
+    /// Get the singleton tilesheet instance.
+    static TileSheet& instance();
 
     /// Load an entire sprite sheet from disk.
     void load(std::string const& filename);
 
-    /// Load a sprite collection from disk and find a place to put them.
-    sf::Vector2u load_sprites(std::string const& filename);
+    /// Load a collection from disk and find a place to put them.
+    /// @return The location that the sprites were placed on the sheet.
+    sf::Vector2u load_collection(std::string const& filename);
 
     /// Get a particular tile from the sheet.
     /// @warning Assumes tile is within the bounds of the loaded texture,
@@ -80,9 +84,17 @@ class TileSheet
                                      sf::Vector2f lr_coord);
 
   protected:
+    TileSheet();
+
   private:
     struct Impl;
     std::unique_ptr<Impl> pImpl;
+
+    /// Static instance.
+    static std::unique_ptr<TileSheet> instance_;
 };
+
+/// Macro to ease typing.
+#define  TS       TileSheet::instance()
 
 #endif // TILESHEET_H

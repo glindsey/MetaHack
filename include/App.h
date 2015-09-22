@@ -65,6 +65,5 @@ extern std::unique_ptr<sf::Shader> shader_;
 #define the_default_mono_font (*(default_mono_font_.get()))
 #define the_shader            (*(shader_.get()))
 #define the_RNG               (*(rng_.get()))
-#define the_tile_sheet        (*(tile_sheet_.get()))
 
 #endif // APP_H

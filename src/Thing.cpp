@@ -2535,7 +2535,7 @@ void Thing::draw_to(sf::RenderTexture& target,
   rectangle.setPosition(target_coords);
   rectangle.setSize(sf::Vector2f(static_cast<float>(target_size), 
 								 static_cast<float>(target_size)));
-  rectangle.setTexture(&(the_tile_sheet.getTexture()));
+  rectangle.setTexture(&(TS.getTexture()));
   rectangle.setTextureRect(texture_coords);
   rectangle.setFillColor(thing_color);
 

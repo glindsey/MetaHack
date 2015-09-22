@@ -7,6 +7,9 @@
 #include "ConfigSettings.h"
 #include "MathUtils.h"
 
+// Static declarations.
+std::unique_ptr<TileSheet> TileSheet::instance_;
+
 struct TileSheet::Impl
 {
   sf::Texture texture;
@@ -71,6 +74,16 @@ TileSheet::~TileSheet()
   //dtor
 }
 
+TileSheet& TileSheet::instance()
+{
+  if (!instance_)
+  {
+    instance_.reset(new TileSheet());
+  }
+
+  return *(instance_.get());
+}
+
 void TileSheet::load(std::string const& filename)
 {
   sf::Image image;
@@ -83,12 +96,12 @@ void TileSheet::load(std::string const& filename)
   pImpl->texture.update(image, 0, 0);
 }
 
-sf::Vector2u TileSheet::load_sprites(std::string const& filename)
+sf::Vector2u TileSheet::load_collection(std::string const& filename)
 {
   sf::Image image;
   if (!image.loadFromFile(filename))
   {
-    throw std::exception(std::string("Sprite file not found: \"" + filename + "\"").c_str());
+    throw std::exception(std::string("Collection file not found: \"" + filename + "\"").c_str());
   }
 
   image.createMaskFromColor(sf::Color(192, 32, 64));

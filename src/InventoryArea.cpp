@@ -356,11 +356,11 @@ std::string InventoryArea::render_contents(int frame)
     }
 
     // 4. Display the tile representing the item.
-    the_tile_sheet.getTexture().setSmooth(true);
+    TS.getTexture().setSmooth(true);
     thing->draw_to(bg_texture,
                    sf::Vector2f(text_coord_x + 55, text_coord_y),
                    line_spacing_y - 1, false, frame);
-    the_tile_sheet.getTexture().setSmooth(false);
+    TS.getTexture().setSmooth(false);
 
     // 5. TODO: Display "worn" or "equipped" icon if necessary.
     // 5a. First, the inventory location must be an Entity.

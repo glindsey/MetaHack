@@ -1,6 +1,7 @@
 #ifndef MAPTILE_H
 #define MAPTILE_H
 
+#include <cstdbool>
 #include <SFML/Graphics.hpp>
 
 #include "GameObject.h"
@@ -9,6 +10,7 @@
 #include "MapTileType.h"
 #include "Thing.h"
 #include "ThingRef.h"
+#include "TileSheet.h"
 
 // Forward declarations
 class Entity;
@@ -140,10 +142,12 @@ class MapTile : public GameObject
     static sf::Vector2f get_pixel_coords(sf::Vector2i tile);
 
   protected:
-    /// Constructor, callable only by ThingFactory.
+    /// Constructor, callable only by Map class.
     MapTile(sf::Vector2i coords, MapId mapId);
 
   private:
+    static bool initialized;
+
     struct Impl;
     std::unique_ptr<Impl> pImpl;
 };

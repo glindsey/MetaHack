@@ -8,15 +8,17 @@ struct TileTypeInfo
   unsigned int y_coord;     ///< Y coordinate
   bool opaque;
   bool passable;
+  bool room_floor_material; ///< If true this material may be used by the map generator to floor an entire room
+  bool room_wall_material;  ///< If true this material may be used by the map generator to wall an entire room
 };
 
 TileTypeInfo const mapTileTypeInfo[] =
 {
-  { "Unknown",    "unexplored space",     1, 0, true,  false },
-  { "FloorStone", "stone floor",          0, 1, false, true },
-  { "WallStone",  "stone wall",           0, 2, true,  false },
+  { "Unknown",    "unexplored space",     1, 0, true,  false, false, false },
+  { "FloorStone", "stone floor",          0, 1, false, true,  true,  false },
+  { "WallStone",  "stone wall",           0, 2, true,  false, false, true  },
 
-  { "???",        "indescribable place",  0, 0, false, false }
+  { "???",        "indescribable place",  0, 0, false, false, false, false }
 };
 
 std::string const& getMapTileTypeName(MapTileType type)

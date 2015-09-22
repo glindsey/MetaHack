@@ -21,7 +21,6 @@ std::unique_ptr<sf::Font> default_mono_font_;
 std::unique_ptr<sf::Shader> shader_;
 std::unique_ptr<App> app_;
 std::unique_ptr<boost::random::mt19937> rng_;
-std::unique_ptr<TileSheet> tile_sheet_;
 
 // Local typedefs
 typedef boost::random::uniform_int_distribution<> uniform_int_dist;
@@ -84,8 +83,7 @@ int main()
     MessageLog::create(calc_message_log_dimensions());
 
     // Create the tile sheet.
-    tile_sheet_.reset(new TileSheet());
-    tile_sheet_->load("resources/graphics/tilesheet.png");
+    TS.load("resources/graphics/tilesheet.png");
 
     // Run a Lua test.
     the_lua_instance.do_file("test.lua");
