@@ -7,7 +7,6 @@
 #include "GameObject.h"
 #include "Inventory.h"
 #include "MapId.h"
-#include "MapTileType.h"
 #include "Thing.h"
 #include "ThingRef.h"
 #include "TileSheet.h"
@@ -63,13 +62,13 @@ class MapTile : public GameObject
 
     /// Sets the map tile type, without doing gameplay checks.
     /// Used to set up the map before gameplay begins.
-    /// @param tileType MapTileType of the tile.
+    /// @param tileType Type of the tile.
     /// @return None.
-    void set_type(MapTileType tileType);
+    void set_type(std::string tileType);
 
     /// Gets the current map tile type.
-    /// @return MapTileType of the tile.
-    MapTileType get_type() const;
+    /// @return Type of the tile.
+    std::string get_type() const;
 
     /// Returns whether a tile is empty space, e.g. no wall in the way.
     bool is_empty_space() const;

@@ -7,6 +7,7 @@
 #include "App.h"
 #include "ConfigSettings.h"
 #include "Map.h"
+#include "MapTileMetadata.h"
 #include "MathUtils.h"
 #include "ThingManager.h"
 #include "TileSheet.h"
@@ -38,8 +39,8 @@ struct MapTile::Impl
     /// The alpha channel is ignored.
     std::map<ThingRef, LightInfluence> lights;
 
-    MapTileType type;
-    //unsigned int variant;
+    std::string type;
+    MapTileMetadata* pMetadata;
 };
 
 MapTile::MapTile(sf::Vector2i coords, MapId mapId)
@@ -53,7 +54,7 @@ MapTile::MapTile(sf::Vector2i coords, MapId mapId)
   //uniform_int_dist vDist(0, 3);
 
   pImpl->floor = TM.create_floor(this);
-  pImpl->type = MapTileType::FloorStone;
+  this->set_type("FloorStone");
   //pImpl->variant = vDist(the_RNG);
   pImpl->map_id = mapId;
   pImpl->coords = coords;
@@ -71,15 +72,15 @@ ThingRef MapTile::get_floor() const
 
 std::string MapTile::get_pretty_name() const
 {
-  return getMapTileTypeDescription(pImpl->type);
+  return pImpl->pMetadata->get_pretty_name();
 }
 
 sf::Vector2u MapTile::get_tile_sheet_coords(int frame) const
 {
-  sf::Vector2u result = getMapTileTypeTileSheetCoords(pImpl->type);
-  //result.x += pImpl->variant;
+  int x = pImpl->pMetadata->get_value("tileX");
+  int y = pImpl->pMetadata->get_value("tileY");
 
-  return result;
+  return sf::Vector2u(x, y);
 }
 
 void MapTile::add_vertices_to(sf::VertexArray& vertices,
@@ -162,19 +163,20 @@ void MapTile::draw_to(sf::RenderTexture& target,
   target.draw(rectangle);
 }
 
-void MapTile::set_type(MapTileType tileType)
+void MapTile::set_type(std::string type)
 {
-  pImpl->type = tileType;
+  pImpl->type = type;
+  pImpl->pMetadata = MapTileMetadata::get(type);
 }
 
-MapTileType MapTile::get_type() const
+std::string MapTile::get_type() const
 {
   return pImpl->type;
 }
 
 bool MapTile::is_empty_space() const
 {
-  return getMapTileTypePassable(pImpl->type);
+  return pImpl->pMetadata->get_flag("passable");
 }
 
 /// @todo: Implement this to cover different entity types.
@@ -344,7 +346,7 @@ bool MapTile::is_opaque() const
 {
   /// @todo Check the tile's inventory to see if there's anything huge enough
   ///       to block the view of stuff behind it.
-  return getMapTileTypeOpaque(get_type());
+  return pImpl->pMetadata->get_flag("opaque");
 }
 
 void MapTile::draw_highlight(sf::RenderTarget& target,

@@ -11,7 +11,7 @@ class MapTileMetadata
 public:
   virtual ~MapTileMetadata();
 
-  MapTileMetadata& get(std::string type);
+  static MapTileMetadata* get(std::string type);
 
   std::string const& get_pretty_name() const;
   std::string const& get_description() const;
@@ -29,7 +29,7 @@ private:
   std::unique_ptr<Impl> pImpl;
 
   /// Static collection of MapTileMetadata instances.
-  static std::map< std::string, std::unique_ptr<MapTileMetadata> > collection;
+  static std::unordered_map< std::string, std::unique_ptr<MapTileMetadata> > collection;
 };
 
 #endif // MAPTILEMETADATA_H

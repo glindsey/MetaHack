@@ -27,7 +27,7 @@ struct MapGenerator::Impl
       for (int x = 0; x < game_map.get_size().x; ++x)
       {
         auto& tile = game_map.get_tile(x, y);
-        tile->set_type(MapTileType::WallStone);
+        tile->set_type("WallStone");
       }
     }
   }

@@ -12,7 +12,7 @@
 #define BOOST_FILESYSTEM_NO_DEPRECATED
 
 // Static declarations
-std::map< std::string, std::unique_ptr<MapTileMetadata> > MapTileMetadata::collection;
+std::unordered_map< std::string, std::unique_ptr<MapTileMetadata> > MapTileMetadata::collection;
 
 // Namespace aliases
 namespace fs = boost::filesystem;
@@ -154,15 +154,21 @@ MapTileMetadata::MapTileMetadata(std::string type)
   }
 }
 
-MapTileMetadata& MapTileMetadata::get(std::string type)
+MapTileMetadata* MapTileMetadata::get(std::string type)
 {
+  if (type.empty())
+  {
+    type = "Unknown";
+  }
+
   try
   {
-    return *(collection.at(type));
+    return collection.at(type).get();
   }
   catch (std::out_of_range&)
   {
     collection.emplace(std::make_pair(type, std::unique_ptr<MapTileMetadata>(new MapTileMetadata(type))));
+    return collection.at(type).get();
   }
 }
 

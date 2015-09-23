@@ -17,6 +17,7 @@
 #include "Inventory.h"
 #include "Map.h"
 #include "MapTile.h"
+#include "MapTileMetadata.h"
 #include "MathUtils.h"
 #include "MessageLog.h"
 #include "Ordinal.h"
@@ -83,7 +84,7 @@ struct Thing::Impl
   Gender gender = Gender::None;
 
   /// Entity's memory of map tiles.
-  std::vector<MapTileType> map_memory;
+  std::vector<std::string> map_memory;
 
   /// Bitset for seen tiles.
   boost::dynamic_bitset<> tile_seen;
@@ -775,7 +776,7 @@ bool Thing::do_move(Direction new_direction, unsigned int& action_time)
     }
     else
     {
-      std::string tile_description = getMapTileTypeDescription(new_tile->get_type());
+      std::string tile_description = new_tile->get_pretty_name();
       message = _YOU_ARE_ + " stopped by " +
         getIndefArt(tile_description) + " " +
         tile_description + ".";
@@ -1981,18 +1982,18 @@ void Thing::find_seen_tiles()
   //TRACE("find_seen_tiles took %d ms", elapsed.getElapsedTime().asMilliseconds());
 }
 
-MapTileType Thing::get_memory_at(int x, int y) const
+std::string Thing::get_memory_at(int x, int y) const
 {
   if (this->get_map_id() == MapFactory::null_map_id)
   {
-    return MapTileType::Unknown;
+    return "???";
   }
 
   Map& game_map = MF.get(this->get_map_id());
   return pImpl->map_memory[game_map.get_index(x, y)];
 }
 
-MapTileType Thing::get_memory_at(sf::Vector2i coords) const
+std::string Thing::get_memory_at(sf::Vector2i coords) const
 {
   return this->get_memory_at(coords.x, coords.y);
 }
@@ -2017,8 +2018,11 @@ void Thing::add_memory_vertices_to(sf::VertexArray& vertices,
   sf::Vector2f vNW(location.x - ts2, location.y - ts2);
   sf::Vector2f vNE(location.x + ts2, location.y - ts2);
 
-  MapTileType tile_type = pImpl->map_memory[game_map.get_index(x, y)];
-  sf::Vector2u tile_coords = getMapTileTypeTileSheetCoords(tile_type);
+  std::string tile_type = pImpl->map_memory[game_map.get_index(x, y)];
+  MapTileMetadata* tile_metadata = MapTileMetadata::get(tile_type);
+
+  sf::Vector2u tile_coords = sf::Vector2u(tile_metadata->get_value("tileX"),
+                                          tile_metadata->get_value("tileY"));
 
   TileSheet::add_quad(vertices,
     tile_coords, sf::Color::White,
@@ -3212,7 +3216,7 @@ void Thing::set_busy_counter(int value)
   pImpl->busy_counter = value;
 }
 
-std::vector<MapTileType>& Thing::get_map_memory()
+std::vector<std::string>& Thing::get_map_memory()
 {
   return pImpl->map_memory;
 }

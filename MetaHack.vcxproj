@@ -127,7 +127,6 @@
     <ClInclude Include="include\MapId.h" />
     <ClInclude Include="include\MapTile.h" />
     <ClInclude Include="include\MapTileMetadata.h" />
-    <ClInclude Include="include\MapTileType.h" />
     <ClInclude Include="include\MathUtils.h" />
     <ClInclude Include="include\MessageLog.h" />
     <ClInclude Include="include\Ordinal.h" />
@@ -172,7 +171,6 @@
     <ClCompile Include="src\mapfeatures\MapRoom.cpp" />
     <ClCompile Include="src\MapTile.cpp" />
     <ClCompile Include="src\MapTileMetadata.cpp" />
-    <ClCompile Include="src\MapTileType.cpp" />
     <ClCompile Include="src\MessageLog.cpp" />
     <ClCompile Include="src\State.cpp" />
     <ClCompile Include="src\StateMachine.cpp" />

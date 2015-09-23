@@ -10,7 +10,6 @@
 #include "GameObject.h"
 #include "Gender.h"
 #include "MapId.h"
-#include "MapTileType.h"
 #include "ThingMetadata.h"
 
 #include <memory>
@@ -238,10 +237,10 @@ class Thing :
     void find_seen_tiles();
 
     /// Get the remembered tile type at the specified coordinates.
-    MapTileType get_memory_at(int x, int y) const;
+    std::string get_memory_at(int x, int y) const;
 
     /// Get the remembered tile type at the specified coordinates.
-    MapTileType get_memory_at(sf::Vector2i coords) const;
+    std::string get_memory_at(sf::Vector2i coords) const;
 
     /// Add the memory of a particular tile to a VertexArray.
     void add_memory_vertices_to(sf::VertexArray& vertices, int x, int y);
@@ -643,7 +642,7 @@ class Thing :
     void set_busy_counter(int value);
 
     /// Get a reference to this Entity's map memory.
-    std::vector<MapTileType>& get_map_memory();
+    std::vector<std::string>& get_map_memory();
 
     /// Perform the recursive visibility scan for an octant.
     /// Used by find_seen_tiles.
