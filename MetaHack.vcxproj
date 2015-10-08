@@ -141,6 +141,7 @@
     <ClInclude Include="include\ThingManager.h" />
     <ClInclude Include="include\ThingMetadata.h" />
     <ClInclude Include="include\TileSheet.h" />
+    <ClInclude Include="src\Exceptions.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

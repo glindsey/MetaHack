@@ -10,6 +10,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "ErrorHandler.h"
+#include "Exceptions.h"
 #include "Lua.h"
 #include "ThingManager.h"
 
@@ -56,6 +57,9 @@ struct ThingMetadata::Impl
   /// Map of default property strings.
   StringsMap default_strings;
 
+  /// Boolean indicating whether this Thing has graphics associated with it.
+  bool has_tiles;
+
   /// Location of this Thing's graphics on the tilesheet.
   sf::Vector2u tile_location;
 };
@@ -68,204 +72,212 @@ ThingMetadata::ThingMetadata(std::string type)
 
   pImpl->name = type;
 
-  /// Try to open the XML file to populate this thing's metadata.
-  std::string thing_string = "resources/things/" + type + ".xml";
-  fs::path thing_path = fs::path(thing_string);
+  // Look for the XML/PNG files for this thing.
+  std::string xmlfile_string = "resources/things/" + type + ".xml";
+  fs::path xmlfile_path = fs::path(xmlfile_string);
+  std::string pngfile_string = "resources/things/" + type + ".png";
+  fs::path pngfile_path = fs::path(pngfile_string);
+  std::string luafile_string = "resources/things/" + type + ".lua";
+  fs::path luafile_path = fs::path(luafile_string);
 
-  if (fs::exists(thing_path))
+  if (!fs::exists(xmlfile_path))
   {
-    //TRACE("Found file \"%s\"", thing_string.c_str());
+    throw ExceptionMissingFile("XML", "Thing", type);
+  }
+
+  //TRACE("Found file \"%s\"", xmlfile_string.c_str());
     
-    /// @todo Load file.
-    pt::ptree data;
-    pt::xml_parser::read_xml(thing_string, data);
+  /// @todo Load file.
+  pt::ptree data;
+  pt::xml_parser::read_xml(xmlfile_string, data);
 
-    //TRACE("Loaded property tree for \"%s\"", type.c_str());
+  //TRACE("Loaded property tree for \"%s\"", type.c_str());
 
-    // Get thing's pretty name.
-    try
-    { 
-      pImpl->pretty_name = data.get_child("thing.name").get_value<std::string>("[" + type + "]");
-    }
-    catch (pt::ptree_bad_path&)
-    {
-      pImpl->pretty_name = "[" + type + "]";
-    }
+  // Get thing's pretty name.
+  try
+  { 
+    pImpl->pretty_name = data.get_child("thing.name").get_value<std::string>("[" + type + "]");
+  }
+  catch (pt::ptree_bad_path&)
+  {
+    pImpl->pretty_name = "[" + type + "]";
+  }
 
-    // Get thing's pretty plural, if present. Otherwise add "s" to the normal pretty name.
-    try
-    {
-      pImpl->pretty_plural = data.get_child("thing.plural").get_value<std::string>(pImpl->pretty_name + "s");
-    }
-    catch (pt::ptree_bad_path&)
-    {
-      pImpl->pretty_plural = pImpl->pretty_name + "s";
-    }
+  // Get thing's pretty plural, if present. Otherwise add "s" to the normal pretty name.
+  try
+  {
+    pImpl->pretty_plural = data.get_child("thing.plural").get_value<std::string>(pImpl->pretty_name + "s");
+  }
+  catch (pt::ptree_bad_path&)
+  {
+    pImpl->pretty_plural = pImpl->pretty_name + "s";
+  }
 
-    // Get thing's parent.
-    try
+  // Get thing's parent.
+  try
+  {
+    pImpl->parent = data.get_child("thing.parent").get_value<std::string>("");
+  }
+  catch (pt::ptree_bad_path&)
+  {
+    if (type != "Mu" && type != "Thing")
     {
-      pImpl->parent = data.get_child("thing.parent").get_value<std::string>("");
-    }
-    catch (pt::ptree_bad_path&)
-    {
-      if (type != "Mu" && type != "Thing")
-      {
-        MINOR_ERROR("\"%s\" has no specified parent; this is probably not intentional", type.c_str());
-      }
-
-      pImpl->parent = "";
+      MINOR_ERROR("\"%s\" has no specified parent; this is probably not intentional", type.c_str());
     }
 
-    // Get thing's description.
-    try
-    {
-      pImpl->description = data.get_child("thing.description").get_value<std::string>("(No description found.)");
-    }
-    catch (pt::ptree_bad_path&)
-    {
-      pImpl->description = "(No description found.)";
-    }
+    pImpl->parent = "";
+  }
 
-    // Look for intrinsics, properties sections. Both must be present for any Thing.
-    pt::ptree intrinsics_tree = data.get_child("thing.intrinsics");
-    pt::ptree properties_tree = data.get_child("thing.properties");
-    try
-    {
-      intrinsics_tree = data.get_child("thing.intrinsics");
-      properties_tree = data.get_child("thing.properties");
-    }
-    catch (pt::ptree_bad_path& p)
-    {
-      FATAL_ERROR(p.what());
-    }
+  // Get thing's description.
+  try
+  {
+    pImpl->description = data.get_child("thing.description").get_value<std::string>("(No description found.)");
+  }
+  catch (pt::ptree_bad_path&)
+  {
+    pImpl->description = "(No description found.)";
+  }
 
-    // Get intrinsic flags.
-    try
+  // Look for intrinsics, properties sections. Both must be present for any Thing.
+  pt::ptree intrinsics_tree = data.get_child("thing.intrinsics");
+  pt::ptree properties_tree = data.get_child("thing.properties");
+  try
+  {
+    intrinsics_tree = data.get_child("thing.intrinsics");
+    properties_tree = data.get_child("thing.properties");
+  }
+  catch (pt::ptree_bad_path& p)
+  {
+    FATAL_ERROR(p.what());
+  }
+
+  // Get intrinsic flags.
+  try
+  {
+    for (auto& child_tree : intrinsics_tree.get_child("flags"))
     {
-      for (auto& child_tree : intrinsics_tree.get_child("flags"))
-      {
-        std::string key = child_tree.first;
-        boost::algorithm::to_lower(key);
-        bool value = child_tree.second.get_value<bool>(false);
+      std::string key = child_tree.first;
+      boost::algorithm::to_lower(key);
+      bool value = child_tree.second.get_value<bool>(false);
 
-        pImpl->intrinsic_flags[key] = value;
-        //TRACE("Found intrinsic flag: %s = %s", key.c_str(), (value == true) ? "true" : "false");
-      }
+      pImpl->intrinsic_flags[key] = value;
+      //TRACE("Found intrinsic flag: %s = %s", key.c_str(), (value == true) ? "true" : "false");
     }
-    catch (pt::ptree_bad_path&)
+  }
+  catch (pt::ptree_bad_path&)
+  {
+    //MINOR_ERROR("\"%s\" has no intrinsic flags section; assuming empty", type.c_str());
+  }
+
+  // Get intrinsic values.
+  try
+  {
+    for (auto& child_tree : intrinsics_tree.get_child("values"))
     {
-      //MINOR_ERROR("\"%s\" has no intrinsic flags section; assuming empty", type.c_str());
-    }
+      std::string key = child_tree.first;
+      boost::algorithm::to_lower(key);
+      int value = child_tree.second.get_value<int>(0);
 
-    // Get intrinsic values.
-    try
+      pImpl->intrinsic_values[key] = value;
+      //TRACE("Found intrinsic value: %s = %d", key.c_str(), value);
+    }
+  }
+  catch (pt::ptree_bad_path&)
+  {
+    //MINOR_ERROR("\"%s\" has no intrinsic values section; assuming empty", type.c_str());
+  }
+
+  // Get intrinsic strings.
+  try
+  {
+    pt::ptree intrinsic_strings = intrinsics_tree.get_child("strings");
+
+    for (auto& child_tree : intrinsics_tree.get_child("strings"))
     {
-      for (auto& child_tree : intrinsics_tree.get_child("values"))
-      {
-        std::string key = child_tree.first;
-        boost::algorithm::to_lower(key);
-        int value = child_tree.second.get_value<int>(0);
+      std::string key = child_tree.first;
+      boost::algorithm::to_lower(key);
+      std::string value = child_tree.second.get_value<std::string>("");
 
-        pImpl->intrinsic_values[key] = value;
-        //TRACE("Found intrinsic value: %s = %d", key.c_str(), value);
-      }
+      pImpl->intrinsic_strings[key] = value;
+      //TRACE("Found intrinsic string: %s = \"%s\"", key.c_str(), value.c_str());
     }
-    catch (pt::ptree_bad_path&)
+  }
+  catch (pt::ptree_bad_path&)
+  {
+    //MINOR_ERROR("\"%s\" has no intrinsic strings section; assuming empty", type.c_str());
+  }
+
+  // Get default property flags.
+  try
+  {
+    for (auto& child_tree : properties_tree.get_child("flags"))
     {
-      //MINOR_ERROR("\"%s\" has no intrinsic values section; assuming empty", type.c_str());
-    }
+      std::string key = child_tree.first;
+      boost::algorithm::to_lower(key);
+      bool value = child_tree.second.get_value<bool>(false);
 
-    // Get intrinsic strings.
-    try
+      pImpl->default_flags[key] = value;
+      //TRACE("Found default flag: %s = %s", key.c_str(), (value == true) ? "true" : "false");
+    }
+  }
+  catch (pt::ptree_bad_path&)
+  {
+    //MINOR_ERROR("\"%s\" has no property flags section; assuming empty", type.c_str());
+  }
+
+  // Get default property values.
+  try
+  {
+    for (auto& child_tree : properties_tree.get_child("values"))
     {
-      pt::ptree intrinsic_strings = intrinsics_tree.get_child("strings");
+      std::string key = child_tree.first;
+      boost::algorithm::to_lower(key);
+      int value = child_tree.second.get_value<int>(0);
 
-      for (auto& child_tree : intrinsics_tree.get_child("strings"))
-      {
-        std::string key = child_tree.first;
-        boost::algorithm::to_lower(key);
-        std::string value = child_tree.second.get_value<std::string>("");
-
-        pImpl->intrinsic_strings[key] = value;
-        //TRACE("Found intrinsic string: %s = \"%s\"", key.c_str(), value.c_str());
-      }
+      pImpl->default_values[key] = value;
+      //TRACE("Found default value: %s = %d", key.c_str(), value);
     }
-    catch (pt::ptree_bad_path&)
+  }
+  catch (pt::ptree_bad_path&)
+  {
+    //MINOR_ERROR("\"%s\" has no property values section; assuming empty", type.c_str());
+  }
+
+  // Get default property strings.
+  try
+  {
+    for (auto& child_tree : properties_tree.get_child("strings"))
     {
-      //MINOR_ERROR("\"%s\" has no intrinsic strings section; assuming empty", type.c_str());
-    }
+      std::string key = child_tree.first;
+      boost::algorithm::to_lower(key);
+      std::string value = child_tree.second.get_value<std::string>("");
 
-    // Get default property flags.
-    try
-    {
-      for (auto& child_tree : properties_tree.get_child("flags"))
-      {
-        std::string key = child_tree.first;
-        boost::algorithm::to_lower(key);
-        bool value = child_tree.second.get_value<bool>(false);
-
-        pImpl->default_flags[key] = value;
-        //TRACE("Found default flag: %s = %s", key.c_str(), (value == true) ? "true" : "false");
-      }
+      pImpl->default_strings[key] = value;
+      //TRACE("Found default string: %s = \"%s\"", key.c_str(), value.c_str());
     }
-    catch (pt::ptree_bad_path&)
-    {
-      //MINOR_ERROR("\"%s\" has no property flags section; assuming empty", type.c_str());
-    }
+  }
+  catch (pt::ptree_bad_path&)
+  {
+    //MINOR_ERROR("\"%s\" has no property strings section; assuming empty", type.c_str());
+  }
 
-    // Get default property values.
-    try
-    {
-      for (auto& child_tree : properties_tree.get_child("values"))
-      {
-        std::string key = child_tree.first;
-        boost::algorithm::to_lower(key);
-        int value = child_tree.second.get_value<int>(0);
+  //TRACE("done");
 
-        pImpl->default_values[key] = value;
-        //TRACE("Found default value: %s = %d", key.c_str(), value);
-      }
-    }
-    catch (pt::ptree_bad_path&)
-    {
-      //MINOR_ERROR("\"%s\" has no property values section; assuming empty", type.c_str());
-    }
-
-    // Get default property strings.
-    try
-    {
-      for (auto& child_tree : properties_tree.get_child("strings"))
-      {
-        std::string key = child_tree.first;
-        boost::algorithm::to_lower(key);
-        std::string value = child_tree.second.get_value<std::string>("");
-
-        pImpl->default_strings[key] = value;
-        //TRACE("Found default string: %s = \"%s\"", key.c_str(), value.c_str());
-      }
-    }
-    catch (pt::ptree_bad_path&)
-    {
-      //MINOR_ERROR("\"%s\" has no property strings section; assuming empty", type.c_str());
-    }
-
-    //TRACE("done");
+  if (fs::exists(pngfile_path))
+  {
+    pImpl->has_tiles = true;
+    /// @todo Load PNG graphics.
   }
   else
   {
-    FATAL_ERROR("File \"%s\" not found", thing_string.c_str());
+    pImpl->has_tiles = false;
   }
 
   /// Now try to load and run a Lua script for this Thing if one exists.
-
-  std::string lua_string = "resources/things/" + type + ".lua";
-  fs::path lua_path = fs::path(lua_string);
-
-  if (fs::exists(lua_path))
+  if (fs::exists(luafile_path))
   {
     TRACE("Loading Lua script for type \"%s\"...", type.c_str());
-    the_lua_instance.do_file(lua_string);
+    the_lua_instance.do_file(luafile_string);
   }
 
 }

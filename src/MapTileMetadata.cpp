@@ -10,6 +10,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "ErrorHandler.h"
+#include "Exceptions.h"
 
 #define BOOST_FILESYSTEM_NO_DEPRECATED
 
@@ -45,6 +46,9 @@ struct MapTileMetadata::Impl
   /// Map of strings.
   StringsMap strings;
 
+  /// Boolean indicating whether this MapTile has graphics associated with it.
+  bool has_tiles;
+
   /// Location of this MapTile's graphics on the tilesheet.
   sf::Vector2u tile_location;
 };
@@ -57,104 +61,114 @@ MapTileMetadata::MapTileMetadata(std::string type)
 
   pImpl->name = type;
 
-  /// Try to open the XML file to populate this thing's metadata.
-  std::string maptile_string = "resources/maptiles/" + type + ".xml";
-  fs::path maptile_path = fs::path(maptile_string);
+  // Look for the XML/PNG files for this maptile.
+  std::string xmlfile_string = "resources/maptiles/" + type + ".xml";
+  fs::path xmlfile_path = fs::path(xmlfile_string);
+  std::string pngfile_string = "resources/maptiles/" + type + ".png";
+  fs::path pngfile_path = fs::path(pngfile_string);
 
-  if (fs::exists(maptile_path))
+  if (!fs::exists(xmlfile_path))
   {
-    //TRACE("Found file \"%s\"", thing_string.c_str());
+    throw ExceptionMissingFile("XML", "MapTile", type);
+  }
 
-    /// Load file.
-    pt::ptree data;
-    pt::xml_parser::read_xml(maptile_string, data);
+  //TRACE("Found file \"%s\"", thing_string.c_str());
 
-    //TRACE("Loaded property tree for \"%s\"", type.c_str());
+  /// Load file.
+  pt::ptree data;
+  pt::xml_parser::read_xml(xmlfile_string, data);
 
-    // Get thing's pretty name.
-    try
-    {
-      pImpl->pretty_name = data.get_child("maptile.name").get_value<std::string>("[" + type + "]");
-    }
-    catch (pt::ptree_bad_path&)
-    {
-      pImpl->pretty_name = "[" + type + "]";
-    }
+  //TRACE("Loaded property tree for \"%s\"", type.c_str());
 
-    // Get thing's description, if present. Otherwise set it equal to the name.
-    try
-    {
-      pImpl->description = data.get_child("maptile.description").get_value<std::string>(pImpl->pretty_name);
-    }
-    catch (pt::ptree_bad_path&)
-    {
-      pImpl->description = pImpl->pretty_name;
-    }
+  // Get thing's pretty name.
+  try
+  {
+    pImpl->pretty_name = data.get_child("maptile.name").get_value<std::string>("[" + type + "]");
+  }
+  catch (pt::ptree_bad_path&)
+  {
+    pImpl->pretty_name = "[" + type + "]";
+  }
 
-    // Look for properties section. It must be present for any MapTile.
-    pt::ptree properties_tree = data.get_child("maptile.properties");
-    try
-    {
-      properties_tree = data.get_child("maptile.properties");
-    }
-    catch (pt::ptree_bad_path& p)
-    {
-      FATAL_ERROR(p.what());
-    }
+  // Get thing's description, if present. Otherwise set it equal to the name.
+  try
+  {
+    pImpl->description = data.get_child("maptile.description").get_value<std::string>(pImpl->pretty_name);
+  }
+  catch (pt::ptree_bad_path&)
+  {
+    pImpl->description = pImpl->pretty_name;
+  }
 
-    // Get flags.
-    try
-    {
-      for (auto& child_tree : properties_tree.get_child("flags"))
-      {
-        std::string key = child_tree.first;
-        boost::algorithm::to_lower(key);
-        bool value = child_tree.second.get_value<bool>(false);
+  // Look for properties section. It must be present for any MapTile.
+  pt::ptree properties_tree = data.get_child("maptile.properties");
+  try
+  {
+    properties_tree = data.get_child("maptile.properties");
+  }
+  catch (pt::ptree_bad_path& p)
+  {
+    FATAL_ERROR(p.what());
+  }
 
-        pImpl->flags[key] = value;
-      }
-    }
-    catch (pt::ptree_bad_path&)
+  // Get flags.
+  try
+  {
+    for (auto& child_tree : properties_tree.get_child("flags"))
     {
-    }
+      std::string key = child_tree.first;
+      boost::algorithm::to_lower(key);
+      bool value = child_tree.second.get_value<bool>(false);
 
-    // Get values.
-    try
+      pImpl->flags[key] = value;
+    }
+  }
+  catch (pt::ptree_bad_path&)
+  {
+  }
+
+  // Get values.
+  try
+  {
+    for (auto& child_tree : properties_tree.get_child("values"))
     {
-      for (auto& child_tree : properties_tree.get_child("values"))
-      {
-        std::string key = child_tree.first;
-        boost::algorithm::to_lower(key);
-        int value = child_tree.second.get_value<int>(0);
+      std::string key = child_tree.first;
+      boost::algorithm::to_lower(key);
+      int value = child_tree.second.get_value<int>(0);
 
-        pImpl->values[key] = value;
-      }
+      pImpl->values[key] = value;
     }
-    catch (pt::ptree_bad_path&)
+  }
+  catch (pt::ptree_bad_path&)
+  {
+  }
+
+  // Get strings.
+  try
+  {
+    pt::ptree intrinsic_strings = properties_tree.get_child("strings");
+
+    for (auto& child_tree : properties_tree.get_child("strings"))
     {
-    }
+      std::string key = child_tree.first;
+      boost::algorithm::to_lower(key);
+      std::string value = child_tree.second.get_value<std::string>("");
 
-    // Get strings.
-    try
-    {
-      pt::ptree intrinsic_strings = properties_tree.get_child("strings");
-
-      for (auto& child_tree : properties_tree.get_child("strings"))
-      {
-        std::string key = child_tree.first;
-        boost::algorithm::to_lower(key);
-        std::string value = child_tree.second.get_value<std::string>("");
-
-        pImpl->strings[key] = value;
-      }
+      pImpl->strings[key] = value;
     }
-    catch (pt::ptree_bad_path&)
-    {
-    }
+  }
+  catch (pt::ptree_bad_path&)
+  {
+  }
+
+  if (fs::exists(pngfile_path))
+  {
+    pImpl->has_tiles = true;
+    /// @todo Load PNG graphics.
   }
   else
   {
-    FATAL_ERROR("File \"%s\" not found", maptile_string.c_str());
+    pImpl->has_tiles = false;
   }
 }
 
