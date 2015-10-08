@@ -7,6 +7,8 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
+#include <SFML/Graphics.hpp>
+
 #include "ErrorHandler.h"
 
 #define BOOST_FILESYSTEM_NO_DEPRECATED
@@ -43,6 +45,8 @@ struct MapTileMetadata::Impl
   /// Map of strings.
   StringsMap strings;
 
+  /// Location of this MapTile's graphics on the tilesheet.
+  sf::Vector2u tile_location;
 };
 
 

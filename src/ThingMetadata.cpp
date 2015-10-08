@@ -7,6 +7,8 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
+#include <SFML/Graphics.hpp>
+
 #include "ErrorHandler.h"
 #include "Lua.h"
 #include "ThingManager.h"
@@ -53,6 +55,9 @@ struct ThingMetadata::Impl
 
   /// Map of default property strings.
   StringsMap default_strings;
+
+  /// Location of this Thing's graphics on the tilesheet.
+  sf::Vector2u tile_location;
 };
 
 
