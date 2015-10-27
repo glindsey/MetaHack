@@ -353,12 +353,6 @@ class Thing :
     /// Return the MapId this Thing is currently on, or 0 if not on a map.
     MapId get_map_id() const;
 
-    /// Set the direction the thing is facing.
-    void set_facing_direction(Direction d);
-
-    /// Get the direction the thing is facing.
-    Direction get_facing_direction() const;
-
     /// Return this thing's description.
     /// Adds adjective qualifiers (such as "fireproof", "waterproof", etc.)
     /// @todo Add adjective qualifiers.s

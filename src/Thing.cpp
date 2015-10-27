@@ -47,11 +47,18 @@ using WearingPair = std::pair<WearLocation, ThingRef>;
 
 struct Thing::Impl
 {
+  Impl(std::string type_, ThingRef ref_)
+    : type(type_), ref(ref_), metadata(TM.get_metadata(type_)) 
+  {}
+
   /// This Thing's type.
   std::string type;
 
   /// Reference to this Thing.
   ThingRef ref;
+
+  /// Reference to this Thing's metadata.
+  ThingMetadata& metadata;
 
   /// Reference to this Thing's location.
   ThingRef location;
@@ -231,40 +238,35 @@ void Thing::initialize_font_sizes()
 }
 
 Thing::Thing(std::string type, ThingRef ref)
-  : pImpl(new Impl())
+  : pImpl(new Impl(type, ref))
 {
-  pImpl->type = type;
-  pImpl->ref = ref;
   pImpl->map_tile = nullptr;
   pImpl->location = TM.get_mu();
   pImpl->quantity = 1;
 
-  ThingMetadata& metadata = TM.get_metadata(pImpl->type);
-  pImpl->property_flags = metadata.get_default_flags();
-  pImpl->property_strings = metadata.get_default_strings();
-  pImpl->property_values = metadata.get_default_values();
+  // Set properties to the type defaults.
+  pImpl->property_flags = pImpl->metadata.get_default_flags();
+  pImpl->property_strings = pImpl->metadata.get_default_strings();
+  pImpl->property_values = pImpl->metadata.get_default_values();
 }
 
 Thing::Thing(MapTile* map_tile, ThingRef ref)
-  : pImpl(new Impl())
+  : pImpl(new Impl("floor", ref))
 {
-  pImpl->type = "floor";
-  pImpl->ref = ref;
   pImpl->map_tile = map_tile;
   pImpl->location = TM.get_mu();
   pImpl->quantity = 1;
 
-  ThingMetadata& metadata = TM.get_metadata(pImpl->type);
-  pImpl->property_flags = metadata.get_default_flags();
-  pImpl->property_strings = metadata.get_default_strings();
-  pImpl->property_values = metadata.get_default_values();
+  // Set properties to the type defaults.
+  pImpl->property_flags = pImpl->metadata.get_default_flags();
+  pImpl->property_strings = pImpl->metadata.get_default_strings();
+  pImpl->property_values = pImpl->metadata.get_default_values();
 }
 
 Thing::Thing(const Thing& original)
-  : pImpl(new Impl())
+  : pImpl(new Impl(original.get_type(), original.get_ref()))
 {
   pImpl->location = original.get_location();
-  pImpl->direction = original.get_facing_direction();
   pImpl->quantity = original.get_quantity();
   pImpl->property_flags = original.get_property_flags();
   pImpl->property_strings = original.get_property_strings();
@@ -1791,7 +1793,7 @@ bool Thing::get_property_flag(std::string key, bool default_value) const
   }
   else
   {
-    value = TM.get_metadata(pImpl->type).get_default_flag(key, default_value);
+    value = pImpl->metadata.get_default_flag(key, default_value);
   }
 
   return value;
@@ -1809,7 +1811,7 @@ int Thing::get_property_value(std::string key, int default_value) const
   }
   else
   {
-	value = TM.get_metadata(pImpl->type).get_default_value(key, default_value);
+	value = pImpl->metadata.get_default_value(key, default_value);
   }
 
   return value;
@@ -1827,7 +1829,7 @@ std::string Thing::get_property_string(std::string key, std::string default_valu
   }
   else
   {
-    value = TM.get_metadata(pImpl->type).get_default_string(key, default_value);
+    value = pImpl->metadata.get_default_string(key, default_value);
   }
 
   return value;
@@ -1836,19 +1838,19 @@ std::string Thing::get_property_string(std::string key, std::string default_valu
 bool Thing::get_intrinsic_flag(std::string key, bool default_value) const
 {
   boost::algorithm::to_lower(key);
-  return TM.get_metadata(pImpl->type).get_intrinsic_flag(key, default_value);
+  return pImpl->metadata.get_intrinsic_flag(key, default_value);
 }
 
 int Thing::get_intrinsic_value(std::string key, int default_value) const
 {
   boost::algorithm::to_lower(key);
-  return TM.get_metadata(pImpl->type).get_intrinsic_value(key, default_value);
+  return pImpl->metadata.get_intrinsic_value(key, default_value);
 }
 
 std::string Thing::get_intrinsic_string(std::string key, std::string default_value) const
 {
   boost::algorithm::to_lower(key);
-  return TM.get_metadata(pImpl->type).get_intrinsic_string(key, default_value);
+  return pImpl->metadata.get_intrinsic_string(key, default_value);
 }
 
 void Thing::set_property_flag(std::string key, bool value)
@@ -2172,25 +2174,15 @@ MapId Thing::get_map_id() const
   }
 }
 
-void Thing::set_facing_direction(Direction d)
-{
-  pImpl->direction = d;
-}
-
-Direction Thing::get_facing_direction() const
-{
-  return pImpl->direction;
-}
-
 std::string Thing::get_pretty_name() const
 {
   /// @todo Implement adding adjectives.
-  return TM.get_metadata(pImpl->type).get_pretty_name();
+  return pImpl->metadata.get_pretty_name();
 }
 
 std::string Thing::get_pretty_plural() const
 {
-  return TM.get_metadata(pImpl->type).get_pretty_plural();
+  return pImpl->metadata.get_pretty_plural();
 }
 
 std::string Thing::get_proper_name() const
@@ -2453,7 +2445,7 @@ std::string Thing::get_possessive() const
 sf::Vector2u Thing::get_tile_sheet_coords(int frame) const
 {
   /// @todo Deal with selecting one of the other tiles.
-  sf::Vector2u coords = TM.get_metadata(pImpl->type).get_tile_coords();
+  sf::Vector2u coords = pImpl->metadata.get_tile_coords();
   return coords;
 
   int x = this->get_property_value("tile_sheet_x", 0);
