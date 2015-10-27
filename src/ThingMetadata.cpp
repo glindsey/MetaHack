@@ -13,6 +13,7 @@
 #include "Exceptions.h"
 #include "Lua.h"
 #include "ThingManager.h"
+#include "TileSheet.h"
 
 #define BOOST_FILESYSTEM_NO_DEPRECATED
 
@@ -266,7 +267,9 @@ ThingMetadata::ThingMetadata(std::string type)
   if (fs::exists(pngfile_path))
   {
     pImpl->has_tiles = true;
-    /// @todo Load PNG graphics.
+    pImpl->tile_location = TS.load_collection(pngfile_string);
+    TRACE("Tiles for Thing %s were placed on the TileSheet at (%u, %u)", 
+      type.c_str(), pImpl->tile_location.x, pImpl->tile_location.y);
   }
   else
   {
@@ -461,6 +464,11 @@ ValuesMap const& ThingMetadata::get_default_values() const
 StringsMap const& ThingMetadata::get_default_strings() const
 {
   return pImpl->default_strings;
+}
+
+sf::Vector2u ThingMetadata::get_tile_coords() const
+{
+  return pImpl->tile_location;
 }
 
 ActionResult ThingMetadata::call_lua_function(std::string function_name,

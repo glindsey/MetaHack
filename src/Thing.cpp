@@ -2021,8 +2021,9 @@ void Thing::add_memory_vertices_to(sf::VertexArray& vertices,
   std::string tile_type = pImpl->map_memory[game_map.get_index(x, y)];
   MapTileMetadata* tile_metadata = MapTileMetadata::get(tile_type);
 
-  sf::Vector2u tile_coords = sf::Vector2u(tile_metadata->get_value("tileX"),
-                                          tile_metadata->get_value("tileY"));
+  /// @todo Call a script to handle selecting a tile other than the one
+  ///       in the upper-left corner.
+  sf::Vector2u tile_coords = tile_metadata->get_tile_coords();
 
   TileSheet::add_quad(vertices,
     tile_coords, sf::Color::White,
@@ -2451,10 +2452,14 @@ std::string Thing::get_possessive() const
 
 sf::Vector2u Thing::get_tile_sheet_coords(int frame) const
 {
+  /// @todo Deal with selecting one of the other tiles.
+  sf::Vector2u coords = TM.get_metadata(pImpl->type).get_tile_coords();
+  return coords;
+
   int x = this->get_property_value("tile_sheet_x", 0);
   int y = this->get_property_value("tile_sheet_y", 0);
 
-  return sf::Vector2u(x, y);
+  return coords;
 }
 
 void Thing::add_vertices_to(sf::VertexArray& vertices,

@@ -11,6 +11,7 @@
 
 #include "ErrorHandler.h"
 #include "Exceptions.h"
+#include "TileSheet.h"
 
 #define BOOST_FILESYSTEM_NO_DEPRECATED
 
@@ -164,7 +165,9 @@ MapTileMetadata::MapTileMetadata(std::string type)
   if (fs::exists(pngfile_path))
   {
     pImpl->has_tiles = true;
-    /// @todo Load PNG graphics.
+    pImpl->tile_location = TS.load_collection(pngfile_string);
+    TRACE("Tiles for MapTile %s were placed on the TileSheet at (%u, %u)",
+      type.c_str(), pImpl->tile_location.x, pImpl->tile_location.y);
   }
   else
   {
@@ -245,4 +248,9 @@ std::string MapTileMetadata::get_string(std::string key, std::string default_val
   {
     return default_value;
   }
+}
+
+sf::Vector2u MapTileMetadata::get_tile_coords() const
+{
+  return pImpl->tile_location;
 }

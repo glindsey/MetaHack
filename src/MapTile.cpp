@@ -77,10 +77,9 @@ std::string MapTile::get_pretty_name() const
 
 sf::Vector2u MapTile::get_tile_sheet_coords(int frame) const
 {
-  int x = pImpl->pMetadata->get_value("tileX");
-  int y = pImpl->pMetadata->get_value("tileY");
-
-  return sf::Vector2u(x, y);
+  /// @todo Deal with selecting one of the other tiles.
+  sf::Vector2u coords = pImpl->pMetadata->get_tile_coords();
+  return coords;
 }
 
 void MapTile::add_vertices_to(sf::VertexArray& vertices,

@@ -83,7 +83,7 @@ int main()
     MessageLog::create(calc_message_log_dimensions());
 
     // Create the tile sheet.
-    TS.load("resources/graphics/tilesheet.png");
+    //TS.load("resources/graphics/tilesheet.png");
 
     // Run a Lua test.
     the_lua_instance.do_file("test.lua");

@@ -38,15 +38,18 @@ struct TileSheet::Impl
     return true;
   }
 
-  /// Find the first free area of the size specified.
+  /// Find the first free tile area.
+  /// @param size Size of the area to search for, IN TILES.
   /// @todo This is an extremely naive algorithm and can definitely be optimized.
   sf::Vector2u find_unused_area(sf::Vector2u size)
   {
     sf::Vector2u start(0, 0);
 
-    while (start.y < texture_size)
+    uint32_t texture_size_in_tiles = texture_size / Settings.map_tile_size;
+
+    while (start.y < texture_size_in_tiles)
     {
-      while (start.x < texture_size)
+      while (start.x < texture_size_in_tiles)
       {
         if (area_is_unused(start, size))
         {
@@ -60,6 +63,22 @@ struct TileSheet::Impl
     /// If we got here, there's no free space.
     throw std::out_of_range("Out of space on tile sheet");
   }
+
+  /// Mark a rectangle of tiles as being used.
+  /// @param upper_left_corner  Upper-left corner of rectangle.
+  /// @param size               Size of the rectangle to mark.
+  /// @todo This is an extremely naive algorithm and can definitely be optimized.
+  void mark_tiles_used(sf::Vector2u upper_left_corner, sf::Vector2u size)
+  {
+    for (uint32_t y = upper_left_corner.y; y < upper_left_corner.y + size.y; ++y)
+    {
+      for (uint32_t x = upper_left_corner.x; x < upper_left_corner.x + size.x; ++x)
+      {
+        used[get_index(x, y)] = true;
+      }
+    }
+  }
+
 };
 
 TileSheet::TileSheet()
@@ -67,6 +86,10 @@ TileSheet::TileSheet()
 {
   pImpl->texture_size = pImpl->texture.getMaximumSize();
   pImpl->texture.create(pImpl->texture_size, pImpl->texture_size);
+
+  uint32_t used_map_size = (pImpl->texture_size / Settings.map_tile_size) *
+                           (pImpl->texture_size / Settings.map_tile_size);
+  pImpl->used.resize(used_map_size);
 }
 
 TileSheet::~TileSheet()
@@ -104,7 +127,7 @@ sf::Vector2u TileSheet::load_collection(std::string const& filename)
     throw std::exception(std::string("Collection file not found: \"" + filename + "\"").c_str());
   }
 
-  image.createMaskFromColor(sf::Color(192, 32, 64));
+  image.createMaskFromColor(sf::Color(255, 0, 255));
 
   sf::Vector2u image_size = image.getSize();
 
@@ -112,11 +135,15 @@ sf::Vector2u TileSheet::load_collection(std::string const& filename)
     sf::Vector2u(divide_and_round_up(image_size.x, Settings.map_tile_size),
                  divide_and_round_up(image_size.y, Settings.map_tile_size));
 
-  sf::Vector2u free_coords = pImpl->find_unused_area(image.getSize());
+  sf::Vector2u free_coords = pImpl->find_unused_area(image_size_in_tiles);
 
   pImpl->texture.update(image, 
                         free_coords.x * Settings.map_tile_size, 
                         free_coords.y * Settings.map_tile_size);
+
+  pImpl->mark_tiles_used(free_coords, image_size_in_tiles);
+
+  return free_coords;
 }
 
 sf::IntRect TileSheet::get_tile(sf::Vector2u tile) const

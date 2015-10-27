@@ -5,6 +5,7 @@
 #include <map>
 #include <unordered_map>
 #include <string>
+#include <SFML/Graphics.hpp>
 
 #include "ActionResult.h"
 #include "ThingRef.h"
@@ -39,6 +40,8 @@ public:
   FlagsMap const& get_default_flags() const;
   ValuesMap const& get_default_values() const;
   StringsMap const& get_default_strings() const;
+
+  sf::Vector2u get_tile_coords() const;
 
   /// Try to call a Lua function that takes no arguments other than ThingId.
   /// If the function does not exist, attempts to step up to the parent type

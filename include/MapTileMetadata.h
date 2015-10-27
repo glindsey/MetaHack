@@ -5,6 +5,7 @@
 #include <map>
 #include <unordered_map>
 #include <string>
+#include <SFML/Graphics.hpp>
 
 class MapTileMetadata
 {
@@ -19,6 +20,8 @@ public:
   bool get_flag(std::string key, bool default_value = false) const;
   int get_value(std::string key, int default_value = 0) const;
   std::string get_string(std::string key, std::string default_value = "") const;
+
+  sf::Vector2u get_tile_coords() const;
 
 private:
   /// Constructor is private.
