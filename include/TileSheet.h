@@ -15,11 +15,8 @@ class TileSheet
     /// Get the singleton tilesheet instance.
     static TileSheet& instance();
 
-    /// Load an entire sprite sheet from disk.
-    void load(std::string const& filename);
-
-    /// Load a collection from disk and find a place to put them.
-    /// @return The location that the sprites were placed on the sheet.
+    /// Load a tile collection from disk and find a place to put them.
+    /// @return The location that the tiles were placed on the sheet.
     sf::Vector2u load_collection(std::string const& filename);
 
     /// Get a particular tile from the sheet.
