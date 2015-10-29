@@ -1,5 +1,8 @@
 #include "Lua.h"
 
+#include "ActionResult.h"
+#include "Gender.h"
+
 #include <sstream>
 
 std::unique_ptr<Lua> Lua::instance_;
@@ -13,6 +16,8 @@ Lua::Lua()
   luaL_openlibs(L_);
 
   /// @todo All of the other registration required... which will be a lot.
+  ActionResult_add_to_lua(this);
+  Gender_add_to_lua(this);
 
   // Run the initial Lua script.
   if (luaL_dofile(L_, "resources/default.lua"))

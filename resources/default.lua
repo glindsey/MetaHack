@@ -1,4 +1,5 @@
 -- Default Lua script read when ThingManager is first initialized.
--- print("Testing enum import: ActionResult.FailureCircularReference = " + ActionResult.FailureCircularReference)
+local temp = ActionResult.FailureCircularReference.value
+print("Testing enum import: ActionResult.FailureCircularReference = " , temp)
 print("*** Default Lua script executed.")
 

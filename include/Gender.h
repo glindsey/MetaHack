@@ -46,9 +46,9 @@ inline std::ostream& operator<<(std::ostream& os, Gender gender)
 	return os;
 }
 
-inline void Gender_add_to_lua()
+inline void Gender_add_to_lua(Lua* lua_instance)
 {
-  the_lua_instance.add_enum("Gender",
+  lua_instance->add_enum("Gender",
     "None", Gender::None,
     "Male", Gender::Male,
     "Female", Gender::Female,

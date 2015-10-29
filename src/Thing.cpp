@@ -2197,7 +2197,7 @@ std::string Thing::get_pretty_plural() const
 
 std::string Thing::get_proper_name() const
 {
-  return get_property_string("proper_name", "John Doe");
+  return get_property_string("proper_name", "");
 }
 
 void Thing::set_proper_name(std::string name)
@@ -2233,6 +2233,7 @@ std::string Thing::get_identifying_string_without_possessives(bool definite) con
   if (quantity == 1)
   {
     noun = get_pretty_name();
+
     if (definite)
     {
       article = "the ";
@@ -2244,38 +2245,18 @@ std::string Thing::get_identifying_string_without_possessives(bool definite) con
 
     if (get_proper_name().empty() == false)
     {
-      if (get_intrinsic_flag("living"))
-      {
-        if (pImpl->attributes.get(Attribute::HP) > 0)
-        {
-          noun = get_possessive();
-          suffix = " corpse";
-        }
-        else
-        {
-          suffix = " named " + get_proper_name();
-        }
-      }
-    }
-    else
-    {
+      suffix = " named " + get_proper_name();
     }
   }
   else
   {
-    if (get_proper_name().empty() == false)
+    noun = get_pretty_plural();
+
+    if (definite)
     {
-      noun = get_proper_name() + "s";
+      article = "the ";
     }
-    else
-    {
-      noun = get_pretty_plural();
-      if (definite)
-      {
-        article = "the ";
-      }
-      article += boost::lexical_cast<std::string>(get_quantity()) + " ";
-    }
+    article += boost::lexical_cast<std::string>(get_quantity()) + " ";
   }
 
   if (get_intrinsic_flag("living") && (pImpl->attributes.get(Attribute::HP) > 0))
@@ -2320,9 +2301,10 @@ std::string Thing::get_identifying_string(bool definite) const
   if (quantity == 1)
   {
     noun = get_pretty_name();
+
     if (owned)
     {
-      article = get_possessive() + " ";
+      article = location->get_possessive() + " ";
     }
     else
     {
@@ -2338,43 +2320,24 @@ std::string Thing::get_identifying_string(bool definite) const
 
     if (get_proper_name().empty() == false)
     {
-      if (get_intrinsic_flag("living"))
-      {
-        if (pImpl->attributes.get(Attribute::HP) > 0)
-        {
-          noun = get_possessive();
-          suffix = " corpse";
-        }
-        else
-        {
-          suffix = " named " + get_proper_name();
-        }
-      }
-    }
-    else
-    {
+      suffix = " named " + get_proper_name();
     }
   }
   else
   {
-    if (get_proper_name().empty() == false)
+    noun = get_pretty_plural();
+
+    if (owned)
     {
-      noun = get_proper_name() + "s";
+      article = location->get_possessive() + " ";
     }
     else
     {
-      noun = get_pretty_plural();
-      if (owned)
+      if (definite)
       {
-        article = get_possessive() + " ";
+        article = "the ";
       }
-      else
-      {
-        if (definite)
-        {
-          article = "the ";
-        }
-      }
+      
       article += boost::lexical_cast<std::string>(get_quantity()) + " ";
     }
   }
@@ -2442,7 +2405,7 @@ std::string Thing::get_possessive() const
   }
   else
   {
-    return get_identifying_string(true) + "'s";
+    return get_identifying_string_without_possessives(true) + "'s";
   }
 }
 

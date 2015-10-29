@@ -67,9 +67,9 @@ inline std::ostream& operator<<(std::ostream& os, ActionResult result)
 	return os;
 }
 
-inline void ActionResult_add_to_lua()
+inline void ActionResult_add_to_lua(Lua* lua_instance)
 {
-  the_lua_instance.add_enum("ActionResult",
+  lua_instance->add_enum("ActionResult",
     "FailureContainerCantBeSelf",   ActionResult::FailureContainerCantBeSelf,
     "FailureCircularReference",     ActionResult::FailureCircularReference,
     "FailureItemNotEquippable",     ActionResult::FailureItemNotEquippable,

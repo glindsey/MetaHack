@@ -89,13 +89,6 @@ int main()
     // Create the message log.
     MessageLog::create(calc_message_log_dimensions());
 
-    // Create the tile sheet.
-    //TS.load("resources/graphics/tilesheet.png");
-
-    // Populate Lua enums.
-    ActionResult_add_to_lua();
-    Gender_add_to_lua();
-
     // Create and run the app instance.
     app_.reset(new App());
     app_->run();
