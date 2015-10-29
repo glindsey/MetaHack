@@ -69,10 +69,6 @@ struct Thing::Impl
 
   Inventory inventory;
   unsigned int quantity;
-  Direction direction = Direction::None;  ///< Direction the thing is facing.
-
-  /// This Thing's busy counter.
-  unsigned int busy_counter = 0;
 
   /// Map of property flags.
   FlagsMap property_flags;
@@ -82,8 +78,6 @@ struct Thing::Impl
 
   /// Map of property strings.
   StringsMap property_strings;
-
-  std::string proper_name;
 
   /// Entity's attributes.
   AttributeSet attributes;
@@ -2203,12 +2197,12 @@ std::string Thing::get_pretty_plural() const
 
 std::string Thing::get_proper_name() const
 {
-  return pImpl->proper_name;
+  return get_property_string("proper_name", "John Doe");
 }
 
 void Thing::set_proper_name(std::string name)
 {
-  pImpl->proper_name = name;
+  set_property_string("proper_name", name);
 }
 
 std::string Thing::get_identifying_string_without_possessives(bool definite) const
