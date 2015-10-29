@@ -192,6 +192,7 @@ class Thing :
 
     bool get_property_flag(std::string name, bool default_value = false) const;
     int get_property_value(std::string name, int default_value = 0) const;
+    int add_to_property_value(std::string name, int value_to_add);
     std::string get_property_string(std::string name, std::string default_value = "") const;
     bool get_intrinsic_flag(std::string name, bool default_value = false) const;
     int get_intrinsic_value(std::string name, int default_value = 0) const;
@@ -211,10 +212,6 @@ class Thing :
 
     /// Return the location of this thing.
     ThingRef get_location() const;
-
-    /// Get the number of game cycles until this Entity can process a new
-    /// command.
-    int get_busy_counter() const;
 
     /// Traverse the line of sight to a map tile, setting visibility
     /// for the tiles between.
@@ -627,13 +624,6 @@ class Thing :
     ///          this function is called <i>regardless of the Entity's HP</>!
     ///          Keep this in mind when implementing specialized behavior.
     virtual void _process_specific();
-
-    /// Decrement the busy counter if greater than 0.
-    /// Returns true if the counter has reached 0, false otherwise.
-    bool dec_busy_counter();
-
-    /// Set the busy counter to a value.
-    void set_busy_counter(int value);
 
     /// Get a reference to this Entity's map memory.
     std::vector<std::string>& get_map_memory();

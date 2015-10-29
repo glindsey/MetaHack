@@ -72,6 +72,24 @@ struct WearLocation
   }
 };
 
+namespace std
+{
+  /// Hash functor for WearLocation
+  template<>
+  struct hash<WearLocation>
+  {
+    std::size_t operator()(const WearLocation& key) const
+    {
+      std::size_t seed = 0;
+
+      boost::hash_combine(seed, boost::hash_value(key.number));
+      boost::hash_combine(seed, boost::hash_value(key.part));
+
+      return seed;
+    }
+  };
+}
+
 inline bool operator==(const WearLocation& lhs, const WearLocation& rhs)
 {
   return lhs.index() == rhs.index();

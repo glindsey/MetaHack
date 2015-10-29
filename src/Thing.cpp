@@ -7,6 +7,7 @@
 #include <iomanip>
 #include <memory>
 #include <sstream>
+#include <unordered_map>
 #include <vector>
 
 #include "ai/AIStrategy.h"
@@ -39,10 +40,10 @@
 #define _YOU_TRY_ _YOU_ + _TRY_
 
 // Using declarations.
-using WieldingMap = std::map<unsigned int, ThingRef>;
+using WieldingMap = std::unordered_map<unsigned int, ThingRef>;
 using WieldingPair = std::pair<unsigned int, ThingRef>;
 
-using WearingMap = std::map<WearLocation, ThingRef>;
+using WearingMap = std::unordered_map<WearLocation, ThingRef>;
 using WearingPair = std::pair<WearLocation, ThingRef>;
 
 struct Thing::Impl
@@ -1817,6 +1818,21 @@ int Thing::get_property_value(std::string key, int default_value) const
   return value;
 }
 
+int Thing::add_to_property_value(std::string key, int value_to_add)
+{
+  boost::algorithm::to_lower(key);
+
+  int value = get_property_value(key);
+
+  if (value_to_add != 0)
+  {
+    value += value_to_add;
+    set_property_value(key, value);
+  }
+
+  return value;
+}
+
 std::string Thing::get_property_string(std::string key, std::string default_value) const
 {
   boost::algorithm::to_lower(key);
@@ -2377,11 +2393,6 @@ std::string Thing::get_identifying_string(bool definite) const
   name = article + adjectives + noun + suffix;
 
   return name;
-}
-
-int Thing::get_busy_counter() const
-{
-  return pImpl->busy_counter;
 }
 
 std::string const& Thing::choose_verb(std::string const& verb12,
@@ -3019,9 +3030,9 @@ bool Thing::_process()
   bool success = false;
 
   // If entity is currently busy, decrement by one and return.
-  if (pImpl->busy_counter > 0)
+  if (get_property_value("busy_counter") > 0)
   {
-    --(pImpl->busy_counter);
+    add_to_property_value("busy_counter", -1);
     return true;
   }
 
@@ -3054,7 +3065,7 @@ bool Thing::_process()
         success = this->do_move(Direction::Self, action_time);
         if (success)
         {
-          pImpl->busy_counter += action_time;
+          add_to_property_value("busy_counter", action_time);
         }
         break;
 
@@ -3062,7 +3073,7 @@ bool Thing::_process()
         success = this->do_move(action.direction, action_time);
         if (success)
         {
-          pImpl->busy_counter += action_time;
+          add_to_property_value("busy_counter", action_time);
         }
         break;
 
@@ -3074,7 +3085,7 @@ bool Thing::_process()
             success = this->do_drop(thing, action_time);
             if (success)
             {
-              pImpl->busy_counter += action_time;
+              add_to_property_value("busy_counter", action_time);
             }
           }
         }
@@ -3088,7 +3099,7 @@ bool Thing::_process()
             success = this->do_eat(thing, action_time);
             if (success)
             {
-              pImpl->busy_counter += action_time;
+              add_to_property_value("busy_counter", action_time);
             }
           }
         }
@@ -3102,7 +3113,7 @@ bool Thing::_process()
             success = this->do_pick_up(thing, action_time);
             if (success)
             {
-              pImpl->busy_counter += action_time;
+              add_to_property_value("busy_counter", action_time);
             }
           }
         }
@@ -3116,7 +3127,7 @@ bool Thing::_process()
             success = this->do_drink(thing, action_time);
             if (success)
             {
-              pImpl->busy_counter += action_time;
+              add_to_property_value("busy_counter", action_time);
             }
           }
         }
@@ -3136,7 +3147,7 @@ bool Thing::_process()
                 success = this->do_put_into(thing, container, action_time);
                 if (success)
                 {
-                  pImpl->busy_counter += action_time;
+                  add_to_property_value("busy_counter", action_time);
                 }
               }
             }
@@ -3157,7 +3168,7 @@ bool Thing::_process()
             success = this->do_take_out(thing, action_time);
             if (success)
             {
-              pImpl->busy_counter += action_time;
+              add_to_property_value("busy_counter", action_time);
             }
           }
         }
@@ -3177,7 +3188,7 @@ bool Thing::_process()
           success = this->do_wield(thing, 0, action_time);
           if (success)
           {
-            pImpl->busy_counter += action_time;
+            add_to_property_value("busy_counter", action_time);
           }
         }
         break;
@@ -3196,21 +3207,6 @@ bool Thing::_process()
 void Thing::_process_specific()
 {
   // Default implementation does nothing.
-}
-
-bool Thing::dec_busy_counter()
-{
-  if (pImpl->busy_counter != 0)
-  {
-    --pImpl->busy_counter;
-  }
-
-  return (pImpl->busy_counter == 0);
-}
-
-void Thing::set_busy_counter(int value)
-{
-  pImpl->busy_counter = value;
 }
 
 std::vector<std::string>& Thing::get_map_memory()

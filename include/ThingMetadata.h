@@ -7,12 +7,10 @@
 #include <string>
 #include <SFML/Graphics.hpp>
 
+#include "common_types.h"
+
 #include "ActionResult.h"
 #include "ThingRef.h"
-
-using FlagsMap = std::map < std::string, bool > ;
-using ValuesMap = std::map < std::string, int > ;
-using StringsMap = std::map < std::string, std::string > ;
 
 class ThingMetadata
 {

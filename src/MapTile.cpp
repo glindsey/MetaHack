@@ -37,7 +37,7 @@ struct MapTile::Impl
     /// 0 <= value <= 128: result = (original * (value / 128))
     /// 128 < value <= 255: result = max(original + (value - 128), 255)
     /// The alpha channel is ignored.
-    std::map<ThingRef, LightInfluence> lights;
+    std::unordered_map<ThingRef, LightInfluence> lights;
 
     std::string type;
     MapTileMetadata* pMetadata;

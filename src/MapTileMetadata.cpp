@@ -9,6 +9,8 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "common_types.h"
+
 #include "ErrorHandler.h"
 #include "Exceptions.h"
 #include "TileSheet.h"
@@ -21,11 +23,6 @@ std::unordered_map< std::string, std::unique_ptr<MapTileMetadata> > MapTileMetad
 // Namespace aliases
 namespace fs = boost::filesystem;
 namespace pt = boost::property_tree;
-
-// Using declarations
-using FlagsMap = std::map < std::string, bool >;
-using ValuesMap = std::map < std::string, int >;
-using StringsMap = std::map < std::string, std::string >;
 
 struct MapTileMetadata::Impl
 {

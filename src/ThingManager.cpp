@@ -28,9 +28,9 @@ struct ThingManager::Impl
   std::unordered_map< std::string, std::unique_ptr<ThingMetadata> > thing_metadata;
 
   /// Map of ThingIds to Things.
-  /// @todo Probably faster to use an unordered_map and use ThingId.full_id 
+  /// @todo Probably faster to use an unordered_map and use ThingId.id 
   ///       as the hash function.
-  std::map<ThingId, Thing*> thing_map;
+  std::unordered_map<ThingId, Thing*> thing_map;
 
   /// Object pool of Things that exist.
   boost::object_pool<Thing> thing_pool;

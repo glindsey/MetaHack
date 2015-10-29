@@ -14,6 +14,7 @@ class Thing;
 // Using Declarations
 using UUID = boost::uuids::uuid;
 
+// Using std::map here because we DO need to iterate over a sorted list often
 typedef std::map< InventorySlot, ThingRef > ThingMap;
 typedef std::pair< InventorySlot, ThingRef > ThingPair;
 

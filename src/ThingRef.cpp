@@ -68,6 +68,11 @@ Thing* ThingRef::operator->()
 	return TM.get_ptr(m_id);
 }
 
+ThingId ThingRef::get_id() const
+{
+  return this->m_id;
+}
+
 ThingId ThingRef::create()
 {
 	ThingId new_id;
