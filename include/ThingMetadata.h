@@ -41,17 +41,52 @@ public:
 
   sf::Vector2u get_tile_coords() const;
 
-  /// Try to call a Lua function that takes no arguments other than ThingId.
+  /// Try to call a Lua function that takes one ThingId argument: the caller.
+  ///
   /// If the function does not exist, attempts to step up to the parent type
   /// and call the function there, up until there's no parent to call.
   /// @param function_name  Name of the function to call
-  /// @param id             ThingId of the thing calling the function
+  /// @param caller         ThingId of the thing calling the function
   /// @param default_result The default result if function is not found 
   ///                       (defaults to ActionResult::Success).
   /// @return An ActionResult containing the result of the call.
-  ActionResult call_lua_function(std::string function_name,
-                                 ThingId id,
-                                 ActionResult default_result = ActionResult::Success);
+  ActionResult call_lua_function_1(std::string function_name,
+                                   ThingId caller,
+                                   ActionResult default_result = ActionResult::Success);
+
+  /// Try to call a Lua function that takes two ThingId arguments: the caller,
+  /// and a target.
+  ///
+  /// If the function does not exist, attempts to step up to the parent type
+  /// and call the function there, up until there's no parent to call.
+  /// @param function_name  Name of the function to call
+  /// @param caller         ThingId of the thing calling the function
+  /// @param target         ThingId of the target of the function
+  /// @param default_result The default result if function is not found 
+  ///                       (defaults to ActionResult::Success).
+  /// @return An ActionResult containing the result of the call.
+  ActionResult call_lua_function_2(std::string function_name,
+                                   ThingId caller,
+                                   ThingId target,
+                                   ActionResult default_result = ActionResult::Success);
+
+  /// Try to call a Lua function that takes two ThingId arguments: the caller,
+  /// and two targets.
+  ///
+  /// If the function does not exist, attempts to step up to the parent type
+  /// and call the function there, up until there's no parent to call.
+  /// @param function_name  Name of the function to call
+  /// @param caller         ThingId of the thing calling the function
+  /// @param target1        ThingId of target #1 of the function
+  /// @param target2        ThingId of target #1 of the function
+  /// @param default_result The default result if function is not found 
+  ///                       (defaults to ActionResult::Success).
+  /// @return An ActionResult containing the result of the call.
+  ActionResult call_lua_function_3(std::string function_name,
+    ThingId caller,
+    ThingId target1,
+    ThingId target2,
+    ActionResult default_result = ActionResult::Success);
 
 private:
   struct Impl;

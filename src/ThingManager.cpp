@@ -87,7 +87,7 @@ ThingRef ThingManager::create(std::string type)
   pImpl->thing_map[new_id] = new_thing;
 
   // Temporary test of Lua call
-  pImpl->thing_metadata[type]->call_lua_function("on_create", new_id);
+  pImpl->thing_metadata[type]->call_lua_function_1("on_create", new_id);
 
   return ThingRef(new_id);
 }

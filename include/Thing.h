@@ -243,7 +243,7 @@ class Thing :
     void add_memory_vertices_to(sf::VertexArray& vertices, int x, int y);
 
     /// Check if the Entity can move in the specified direction.
-    virtual bool can_move(Direction direction);
+    bool can_move(Direction direction);
 
     /// Return whether the Entity can pick up the requested Thing.
     /// The base method checks to make sure the Thing is at the same location
@@ -253,7 +253,7 @@ class Thing :
     /// @param[in] thing Thing to try to pick up
     /// @param[out] action_time The time it will take to pick it up
     /// @return ActionResult indicating what happened.
-    virtual ActionResult can_pick_up(ThingRef thing, unsigned int& action_time);
+    ActionResult can_pick_up(ThingRef thing, unsigned int& action_time);
 
     /// Attempt to pick a thing up.
     /// @param[in] thing Thing to try to pick up
@@ -266,31 +266,31 @@ class Thing :
     /// before proceeding with their own checks.
     /// @param[in] thing Thing to take out.
     /// @return ActionResult indicating what happened.
-    virtual ActionResult can_take_out(ThingRef thing, unsigned int& action_time);
+    ActionResult can_take_out(ThingRef thing, unsigned int& action_time);
 
     /// Attempt to take a thing out of its container.
     bool do_take_out(ThingRef thing_id, unsigned int& action_time);
 
-    virtual ActionResult can_read(ThingRef thing_id, unsigned int& action_time);
+    ActionResult can_read(ThingRef thing_id, unsigned int& action_time);
 
     bool do_read(ThingRef thing_id, unsigned int& action_time);
 
-    virtual ActionResult can_throw(ThingRef thing_id, unsigned int& action_time);
+    ActionResult can_throw(ThingRef thing_id, unsigned int& action_time);
 
     /// Attempt to toss/throw a thing in a particular direction.
     bool do_throw(ThingRef thing_id, Direction& direction, unsigned int& action_time);
 
-    virtual ActionResult can_deequip(ThingRef thing_id, unsigned int& action_time);
+    ActionResult can_deequip(ThingRef thing_id, unsigned int& action_time);
 
     /// Attempt to de-equip (remove) a thing.
     bool do_deequip(ThingRef thing_id, unsigned int& action_time);
 
-    virtual ActionResult can_equip(ThingRef thing_id, unsigned int& action_time);
+    ActionResult can_equip(ThingRef thing_id, unsigned int& action_time);
 
     /// Attempt to equip (wear) a thing.
     bool do_equip(ThingRef thing_id, unsigned int& action_time);
 
-    virtual ActionResult can_wield(ThingRef thing_id, unsigned int hand, unsigned int& action_time);
+    ActionResult can_wield(ThingRef thing_id, unsigned int hand, unsigned int& action_time);
 
     /// Attempt to wield a thing.
     /// @param[in] thing Thing to wield, or empty ptr if unwielding everything.
@@ -301,11 +301,11 @@ class Thing :
     /// Return whether this Entity can currently see.
     /// @todo Implement blindness counter, blindness due to wearing blindfold,
     ///       et cetera.
-    virtual bool can_currently_see() const;
+    bool can_currently_see() const;
 
     /// Return whether this Entity can currently move.
     /// @todo Implement paralysis counter, and/or other reasons to be immobile.
-    virtual bool can_currently_move() const;
+    bool can_currently_move() const;
 
     void set_gender(Gender gender);
 
@@ -314,13 +314,13 @@ class Thing :
     Gender get_gender() const;
 
     /// Get the number of a particular body part the Entity has.
-    virtual unsigned int get_bodypart_number(BodyPart part) const;
+    unsigned int get_bodypart_number(BodyPart part) const;
 
     /// Get the appropriate body part name for the Entity.
-    virtual std::string get_bodypart_name(BodyPart part) const;
+    std::string get_bodypart_name(BodyPart part) const;
 
     /// Get the appropriate body part plural for the Entity.
-    virtual std::string get_bodypart_plural(BodyPart part) const;
+    std::string get_bodypart_plural(BodyPart part) const;
 
     /// Get the appropriate description for a body part.
     /// This takes the body part name and the number referencing the particular
@@ -330,13 +330,13 @@ class Thing :
     /// In most cases the default implementation here will work, but if a
     /// creature has (for example) a strange configuration of limbs this can be
     /// overridden.
-    virtual std::string get_bodypart_description(BodyPart part, unsigned int number);
+    std::string get_bodypart_description(BodyPart part, unsigned int number);
 
     /// Return the attribute set for this Entity.
-    virtual AttributeSet& get_attributes();
+    AttributeSet& get_attributes();
 
     /// Return the attribute set for this Entity.
-    virtual AttributeSet const& get_attributes() const;
+    AttributeSet const& get_attributes() const;
 
     /// Returns a reference to the inventory.
     Inventory& get_inventory();
@@ -353,7 +353,7 @@ class Thing :
     /// Return this thing's description.
     /// Adds adjective qualifiers (such as "fireproof", "waterproof", etc.)
     /// @todo Add adjective qualifiers.s
-    virtual std::string get_pretty_name() const override final;
+    std::string get_pretty_name() const;
 
     /// Return this object's plural.
     std::string get_pretty_plural() const;
@@ -390,7 +390,7 @@ class Thing :
     /// it returns get_name() + "'s".
     /// @note If you want a possessive pronoun like his/her/its/etc., use
     /// get_possessive_adjective().
-    virtual std::string get_possessive() const;
+    std::string get_possessive() const;
 
 
     /// Choose which verb form to use based on first/second/third person.
@@ -403,34 +403,34 @@ class Thing :
                                    std::string const& verb3) const;
 
     /// Return this thing's mass.
-    virtual int get_mass() const;
+    int get_mass() const;
 
     /// Get the appropriate subject pronoun for the Thing.
-    virtual std::string const& get_subject_pronoun() const;
+    std::string const& get_subject_pronoun() const;
 
     /// Get the appropriate object pronoun for the Thing.
-    virtual std::string const& get_object_pronoun() const;
+    std::string const& get_object_pronoun() const;
 
     /// Get the appropriate reflexive pronoun for the Thing.
-    virtual std::string const& get_reflexive_pronoun() const;
+    std::string const& get_reflexive_pronoun() const;
 
     /// Get the appropriate possessive adjective for the Thing.
-    virtual std::string const& get_possessive_adjective() const;
+    std::string const& get_possessive_adjective() const;
 
     /// Get the appropriate possessive pronoun for the Thing.
-    virtual std::string const& get_possessive_pronoun() const;
+    std::string const& get_possessive_pronoun() const;
 
     /// Return the coordinates of the tile representing the thing.
-    virtual sf::Vector2u get_tile_sheet_coords(int frame) const;
+    sf::Vector2u get_tile_sheet_coords(int frame) const;
 
     /// Add this Thing to a VertexArray to be drawn.
     /// @param vertices Array to add vertices to.
     /// @param use_lighting If true, calculate lighting when adding.
     ///                     If false, store directly w/white bg color.
     /// @param frame Animation frame number.
-    virtual void add_vertices_to(sf::VertexArray& vertices,
-                                 bool use_lighting = true,
-                                 int frame = 0) override;
+    void add_vertices_to(sf::VertexArray& vertices,
+                         bool use_lighting = true,
+                         int frame = 0) override;
 
     /// Draw this Thing onto a RenderTexture, at the specified coordinates.
     /// @param target Texture to draw onto.
@@ -446,51 +446,51 @@ class Thing :
                  int frame = 0);
 
     /// Simple check to see if a Thing is opaque.
-    virtual bool is_opaque() const;
+    bool is_opaque() const;
 
     /// Provide light to this Thing's surroundings.
     /// If Thing is not opaque, calls light_up_surroundings() for each Thing
     /// in its inventory.
-    virtual void light_up_surroundings();
+    void light_up_surroundings();
 
     /// Receive light from the specified light source.
     /// The default behavior is to pass the light source to the location if
     /// this Thing is opaque.
-    virtual void be_lit_by(ThingRef light);
+    void be_lit_by(ThingRef light);
 
     /// Attempt to destroy this Thing.
-    virtual void destroy();
+    void destroy();
 
     /// Attempt to move this Thing into a location.
-    virtual bool move_into(ThingRef new_location);
+    bool move_into(ThingRef new_location);
 
     /// Return whether or not this thing can move from its current location.
     /// The default behavior for this is to return true.
-    virtual bool is_movable() const;
+    bool is_movable() const;
 
     /// Return whether or not this thing can be activated by this Entity.
     /// The default behavior for this is to return false.
-    virtual bool is_usable_by(ThingRef thing) const;
+    bool is_usable_by(ThingRef thing) const;
 
     /// Return whether or not this thing can be drank by this Entity.
     /// The default behavior for this is to return false.
-    virtual bool is_drinkable_by(ThingRef thing) const;
+    bool is_drinkable_by(ThingRef thing) const;
 
     /// Return whether or not this thing can be eaten by this Entity.
     /// The default behavior for this is to return false.
-    virtual bool is_edible_by(ThingRef thing) const;
+    bool is_edible_by(ThingRef thing) const;
 
     /// Return whether or not this thing can be read by this Entity.
     /// The default behavior for this is to return false.
-    virtual bool is_readable_by(ThingRef thing) const;
+    bool is_readable_by(ThingRef thing) const;
 
     /// Return whether or not this thing can be mixed with another Thing.
     /// The default behavior for this is to return false.
-    virtual bool is_miscible_with(ThingRef thing) const;
+    bool is_miscible_with(ThingRef thing) const;
 
     /// Return the body part this thing is equippable on.
     /// If thing is not equippable, return BodyPart::Count.
-    virtual BodyPart is_equippable_on() const;
+    BodyPart is_equippable_on() const;
 
     /// Process this Thing and its inventory for a single tick.
     bool process();
@@ -592,16 +592,16 @@ class Thing :
     //virtual char const* get_thing_type() const final;
 
     /// Returns whether this Thing can hold a liquid.
-    virtual bool is_liquid_carrier() const;
+    bool is_liquid_carrier() const;
 
     /// Returns whether this Thing is flammable.
-    virtual bool is_flammable() const;
+    bool is_flammable() const;
 
     /// Returns whether this Thing is corrodible.
-    virtual bool is_corrodible() const;
+    bool is_corrodible() const;
 
     /// Returns whether this Thing is shatterable.
-    virtual bool is_shatterable() const;
+    bool is_shatterable() const;
 
   protected:
     /// Named Constructor
@@ -615,15 +615,6 @@ class Thing :
 
     struct Impl;
     std::unique_ptr<Impl> pImpl;
-
-    /// Do any subclass-specific processing; called by _process().
-    /// This function is particularly useful if the subclass is able to do
-    /// specialized actions such as rise from the dead after a time (as in
-    /// NetHack trolls).
-    /// @warning In order to support the aforementioned rising from the dead,
-    ///          this function is called <i>regardless of the Entity's HP</>!
-    ///          Keep this in mind when implementing specialized behavior.
-    virtual void _process_specific();
 
     /// Get a reference to this Entity's map memory.
     std::vector<std::string>& get_map_memory();
@@ -643,6 +634,22 @@ class Thing :
     /// Static method initializing font sizes.
     static void initialize_font_sizes();
 
+    /// Ratio of desired height to font size.
+    static float font_line_to_point_ratio_;
+
+    /// Outline color for walls when drawing on-screen.
+    static sf::Color const wall_outline_color_;
+
+  private:
+    /// Do any subclass-specific processing; called by _process().
+    /// This function is particularly useful if the subclass is able to do
+    /// specialized actions such as rise from the dead after a time (as in
+    /// NetHack trolls).
+    /// @warning In order to support the aforementioned rising from the dead,
+    ///          this function is called <i>regardless of the Entity's HP</>!
+    ///          Keep this in mind when implementing specialized behavior.
+    virtual void _process_specific();
+
     /// Does the actual call to light surroundings.
     /// Default behavior is to do nothing.
     virtual void _light_up_surroundings();
@@ -651,13 +658,6 @@ class Thing :
     /// The default behavior is to do nothing.
     virtual void _be_lit_by(ThingRef light);
 
-    /// Ratio of desired height to font size.
-    static float font_line_to_point_ratio_;
-
-    /// Outline color for walls when drawing on-screen.
-    static sf::Color const wall_outline_color_;
-
-  private:
     /// Returns whether the Thing can hold a certain thing.
     virtual ActionResult _can_contain(ThingRef thing) const;
 

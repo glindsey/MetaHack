@@ -471,9 +471,9 @@ sf::Vector2u ThingMetadata::get_tile_coords() const
   return pImpl->tile_location;
 }
 
-ActionResult ThingMetadata::call_lua_function(std::string function_name,
-                                              ThingId id,
-                                              ActionResult default_result)
+ActionResult ThingMetadata::call_lua_function_1(std::string function_name,
+                                                ThingId caller,
+                                                ActionResult default_result)
 {
   ActionResult return_value = default_result;
 
@@ -484,7 +484,7 @@ ActionResult ThingMetadata::call_lua_function(std::string function_name,
   {
     lua_getfield(the_lua_state, -1, function_name.c_str()); // <2  Push the function name
     lua_remove(the_lua_state, -2);                          // >1  Get rid of name of class
-    lua_pushinteger(the_lua_state, id.full_id);             // <2  Push the thing's ID
+    lua_pushinteger(the_lua_state, caller.full_id);         // <2  Push the thing's ID
     int result = lua_pcall(the_lua_state, 1, 1, 0);         // >><1 Call with one argument, one result
     if (result == LUA_OK)
     {
@@ -508,9 +508,110 @@ ActionResult ThingMetadata::call_lua_function(std::string function_name,
     }
     else
     { 
-      return_value = TM.get_metadata(pImpl->parent).call_lua_function(function_name, 
-                                                                      id, 
-                                                                      default_result);
+      return_value = TM.get_metadata(pImpl->parent).call_lua_function_1(function_name, 
+                                                                        caller,
+                                                                        default_result);
+    }
+  }
+
+  return return_value;
+}
+
+ActionResult ThingMetadata::call_lua_function_2(std::string function_name,
+                                                ThingId caller,
+                                                ThingId target,
+                                                ActionResult default_result)
+{
+  ActionResult return_value = default_result;
+
+  std::string name = pImpl->name;
+  lua_getglobal(the_lua_state, name.c_str());        // <1 Push name of class
+
+  if (!lua_isnoneornil(the_lua_state, -1))
+  {
+    lua_getfield(the_lua_state, -1, function_name.c_str()); // <2  Push the function name
+    lua_remove(the_lua_state, -2);                          // >1  Get rid of name of class
+    lua_pushinteger(the_lua_state, caller.full_id);         // <2  Push the caller's ID
+    lua_pushinteger(the_lua_state, target.full_id);         // <3  Push the target's ID
+    int result = lua_pcall(the_lua_state, 2, 1, 0);         // >>><1 Call with two arguments, one result
+    if (result == LUA_OK)
+    {
+      return_value = (ActionResult)lua_tointeger(the_lua_state, -1);
+      lua_pop(the_lua_state, 1);
+    }
+    else
+    {
+      char const* error_message = lua_tostring(the_lua_state, -1);
+      MAJOR_ERROR("Error calling %s.%s: %s", name.c_str(), function_name.c_str(), error_message);
+      lua_pop(the_lua_state, 1);
+    }
+  }
+  else // didn't find a function of that name here, so try parent...
+  {
+    lua_pop(the_lua_state, 1);                      // >0 Pop the name back off the stack
+
+    if (pImpl->parent.empty())
+    {
+      return_value = default_result;
+    }
+    else
+    {
+      return_value = TM.get_metadata(pImpl->parent).call_lua_function_2(function_name,
+                                                                        caller,
+                                                                        target,
+                                                                        default_result);
+    }
+  }
+
+  return return_value;
+}
+
+ActionResult ThingMetadata::call_lua_function_3(std::string function_name,
+                                                ThingId caller,
+                                                ThingId target1,
+                                                ThingId target2,
+                                                ActionResult default_result)
+{
+  ActionResult return_value = default_result;
+
+  std::string name = pImpl->name;
+  lua_getglobal(the_lua_state, name.c_str());        // <1 Push name of class
+
+  if (!lua_isnoneornil(the_lua_state, -1))
+  {
+    lua_getfield(the_lua_state, -1, function_name.c_str()); // <2  Push the function name
+    lua_remove(the_lua_state, -2);                          // >1  Get rid of name of class
+    lua_pushinteger(the_lua_state, caller.full_id);         // <2  Push the caller's ID
+    lua_pushinteger(the_lua_state, target1.full_id);        // <3  Push target #1's ID
+    lua_pushinteger(the_lua_state, target2.full_id);        // <3  Push target #2's ID
+    int result = lua_pcall(the_lua_state, 3, 1, 0);         // >>><1 Call with three arguments, one result
+    if (result == LUA_OK)
+    {
+      return_value = (ActionResult)lua_tointeger(the_lua_state, -1);
+      lua_pop(the_lua_state, 1);
+    }
+    else
+    {
+      char const* error_message = lua_tostring(the_lua_state, -1);
+      MAJOR_ERROR("Error calling %s.%s: %s", name.c_str(), function_name.c_str(), error_message);
+      lua_pop(the_lua_state, 1);
+    }
+  }
+  else // didn't find a function of that name here, so try parent...
+  {
+    lua_pop(the_lua_state, 1);                      // >0 Pop the name back off the stack
+
+    if (pImpl->parent.empty())
+    {
+      return_value = default_result;
+    }
+    else
+    {
+      return_value = TM.get_metadata(pImpl->parent).call_lua_function_2(function_name,
+        caller,
+        target1,
+        target2,
+        default_result);
     }
   }
 
