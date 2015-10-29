@@ -13,6 +13,10 @@
 #include "ThingManager.h"
 #include "TileSheet.h"
 
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
+
 // Global declarations
 std::unique_ptr<sf::RenderWindow> app_window_;
 std::unique_ptr<sf::Font> default_font_;
@@ -37,6 +41,9 @@ sf::IntRect calc_message_log_dimensions()
 
 int main()
 {
+
+  _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+
   try
   {
     // Create the random number generator.
@@ -84,9 +91,6 @@ int main()
 
     // Create the tile sheet.
     //TS.load("resources/graphics/tilesheet.png");
-
-    // Run a Lua test.
-    the_lua_instance.do_file("test.lua");
 
     // Populate Lua enums.
     ActionResult_add_to_lua();

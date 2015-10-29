@@ -15,7 +15,10 @@ Lua::Lua()
   /// @todo All of the other registration required... which will be a lot.
 
   // Run the initial Lua script.
-  luaL_dofile(L_, "resources/default.lua");
+  if (luaL_dofile(L_, "resources/default.lua"))
+  {
+    fprintf(stderr, "%s\n", lua_tostring(L_, -1));
+  }
 }
 
 Lua::~Lua()

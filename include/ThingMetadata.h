@@ -83,10 +83,10 @@ public:
   ///                       (defaults to ActionResult::Success).
   /// @return An ActionResult containing the result of the call.
   ActionResult call_lua_function_3(std::string function_name,
-    ThingId caller,
-    ThingId target1,
-    ThingId target2,
-    ActionResult default_result = ActionResult::Success);
+                                   ThingId caller,
+                                   ThingId target1,
+                                   ThingId target2,
+                                   ActionResult default_result = ActionResult::Success);
 
 private:
   struct Impl;

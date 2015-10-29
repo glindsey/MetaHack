@@ -607,7 +607,7 @@ ActionResult ThingMetadata::call_lua_function_3(std::string function_name,
     }
     else
     {
-      return_value = TM.get_metadata(pImpl->parent).call_lua_function_2(function_name,
+      return_value = TM.get_metadata(pImpl->parent).call_lua_function_3(function_name,
         caller,
         target1,
         target2,
