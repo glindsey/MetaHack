@@ -179,15 +179,12 @@ MapTileMetadata* MapTileMetadata::get(std::string type)
     type = "Unknown";
   }
 
-  try
-  {
-    return collection.at(type).get();
-  }
-  catch (std::out_of_range&)
+  if (collection.count(type) == 0)
   {
     collection.emplace(std::make_pair(type, std::unique_ptr<MapTileMetadata>(new MapTileMetadata(type))));
-    return collection.at(type).get();
   }
+
+  return collection.at(type).get();
 }
 
 
@@ -209,11 +206,11 @@ bool MapTileMetadata::get_flag(std::string key, bool default_value) const
 {
   boost::algorithm::to_lower(key);
 
-  try
+  if (pImpl->flags.count(key) != 0)
   {
     return pImpl->flags.at(key);
   }
-  catch (std::out_of_range&)
+  else
   {
     return default_value;
   }
@@ -223,11 +220,11 @@ int MapTileMetadata::get_value(std::string key, int default_value) const
 {
   boost::algorithm::to_lower(key);
 
-  try
+  if (pImpl->values.count(key) != 0)
   {
     return pImpl->values.at(key);
   }
-  catch (std::out_of_range&)
+  else
   {
     return default_value;
   }
@@ -237,11 +234,11 @@ std::string MapTileMetadata::get_string(std::string key, std::string default_val
 {
   boost::algorithm::to_lower(key);
 
-  try
+  if (pImpl->strings.count(key) != 0)
   {
     return pImpl->strings.at(key);
   }
-  catch (std::out_of_range&)
+  else
   {
     return default_value;
   }

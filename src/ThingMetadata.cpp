@@ -314,11 +314,11 @@ bool ThingMetadata::get_intrinsic_flag(std::string key, bool default_value) cons
 {
   boost::algorithm::to_lower(key);
 
-  try
+  if (pImpl->intrinsic_flags.count(key) != 0)
   {
     return pImpl->intrinsic_flags.at(key);
   }
-  catch (std::out_of_range&)
+  else
   {
     if (pImpl->parent.empty())
     {
@@ -335,11 +335,11 @@ int ThingMetadata::get_intrinsic_value(std::string key, int default_value) const
 {
   boost::algorithm::to_lower(key);
 
-  try
+  if (pImpl->intrinsic_values.count(key) != 0)
   {
     return pImpl->intrinsic_values.at(key);
   }
-  catch (std::out_of_range&)
+  else
   {
     if (pImpl->parent.empty())
     {
@@ -356,11 +356,11 @@ std::string ThingMetadata::get_intrinsic_string(std::string key, std::string def
 {
   boost::algorithm::to_lower(key);
 
-  try
+  if (pImpl->intrinsic_strings.count(key) != 0)
   {
     return pImpl->intrinsic_strings.at(key);
   }
-  catch (std::out_of_range&)
+  else
   {
     if (pImpl->parent.empty())
     {
@@ -392,11 +392,11 @@ bool ThingMetadata::get_default_flag(std::string key, bool default_value) const
 {
   boost::algorithm::to_lower(key);
 
-  try
+  if (pImpl->default_flags.count(key) != 0)
   {
     return pImpl->default_flags.at(key);
   }
-  catch (std::out_of_range&)
+  else
   {
     if (pImpl->parent.empty())
     {
@@ -413,11 +413,11 @@ int ThingMetadata::get_default_value(std::string key, int default_value) const
 {
   boost::algorithm::to_lower(key);
 
-  try
+  if (pImpl->default_values.count(key) != 0)
   {
     return pImpl->default_values.at(key);
   }
-  catch (std::out_of_range&)
+  else
   {
     if (pImpl->parent.empty())
     {
@@ -434,11 +434,11 @@ std::string ThingMetadata::get_default_string(std::string key, std::string defau
 {
   boost::algorithm::to_lower(key);
 
-  try
+  if (pImpl->default_strings.count(key) != 0)
   {
     return pImpl->default_strings.at(key);
   }
-  catch (std::out_of_range&)
+  else
   {
     if (pImpl->parent.empty())
     {
