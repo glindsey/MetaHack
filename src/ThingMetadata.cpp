@@ -472,7 +472,7 @@ sf::Vector2u ThingMetadata::get_tile_coords() const
 }
 
 ActionResult ThingMetadata::call_lua_function_1(std::string function_name,
-                                                ThingId caller,
+                                                ThingRef caller,
                                                 ActionResult default_result)
 {
   ActionResult return_value = default_result;
@@ -482,10 +482,10 @@ ActionResult ThingMetadata::call_lua_function_1(std::string function_name,
 
   if (!lua_isnoneornil(the_lua_state, -1))
   {
-    lua_getfield(the_lua_state, -1, function_name.c_str()); // <2  Push the function name
-    lua_remove(the_lua_state, -2);                          // >1  Get rid of name of class
-    lua_pushinteger(the_lua_state, caller.full_id);         // <2  Push the thing's ID
-    int result = lua_pcall(the_lua_state, 1, 1, 0);         // >><1 Call with one argument, one result
+    lua_getfield(the_lua_state, -1, function_name.c_str());   // <2  Push the function name
+    lua_remove(the_lua_state, -2);                            // >1  Get rid of name of class
+    lua_pushinteger(the_lua_state, caller.get_id().full_id);  // <2  Push the thing's ID
+    int result = lua_pcall(the_lua_state, 1, 1, 0);           // >><1 Call with one argument, one result
     if (result == LUA_OK)
     {
       return_value = (ActionResult)lua_tointeger(the_lua_state, -1);
@@ -518,8 +518,8 @@ ActionResult ThingMetadata::call_lua_function_1(std::string function_name,
 }
 
 ActionResult ThingMetadata::call_lua_function_2(std::string function_name,
-                                                ThingId caller,
-                                                ThingId target,
+                                                ThingRef caller,
+                                                ThingRef target,
                                                 ActionResult default_result)
 {
   ActionResult return_value = default_result;
@@ -529,11 +529,11 @@ ActionResult ThingMetadata::call_lua_function_2(std::string function_name,
 
   if (!lua_isnoneornil(the_lua_state, -1))
   {
-    lua_getfield(the_lua_state, -1, function_name.c_str()); // <2  Push the function name
-    lua_remove(the_lua_state, -2);                          // >1  Get rid of name of class
-    lua_pushinteger(the_lua_state, caller.full_id);         // <2  Push the caller's ID
-    lua_pushinteger(the_lua_state, target.full_id);         // <3  Push the target's ID
-    int result = lua_pcall(the_lua_state, 2, 1, 0);         // >>><1 Call with two arguments, one result
+    lua_getfield(the_lua_state, -1, function_name.c_str());   // <2  Push the function name
+    lua_remove(the_lua_state, -2);                            // >1  Get rid of name of class
+    lua_pushinteger(the_lua_state, caller.get_id().full_id);  // <2  Push the caller's ID
+    lua_pushinteger(the_lua_state, target.get_id().full_id);  // <3  Push the target's ID
+    int result = lua_pcall(the_lua_state, 2, 1, 0);           // >>><1 Call with two arguments, one result
     if (result == LUA_OK)
     {
       return_value = (ActionResult)lua_tointeger(the_lua_state, -1);
@@ -567,9 +567,9 @@ ActionResult ThingMetadata::call_lua_function_2(std::string function_name,
 }
 
 ActionResult ThingMetadata::call_lua_function_3(std::string function_name,
-                                                ThingId caller,
-                                                ThingId target1,
-                                                ThingId target2,
+                                                ThingRef caller,
+                                                ThingRef target1,
+                                                ThingRef target2,
                                                 ActionResult default_result)
 {
   ActionResult return_value = default_result;
@@ -579,12 +579,12 @@ ActionResult ThingMetadata::call_lua_function_3(std::string function_name,
 
   if (!lua_isnoneornil(the_lua_state, -1))
   {
-    lua_getfield(the_lua_state, -1, function_name.c_str()); // <2  Push the function name
-    lua_remove(the_lua_state, -2);                          // >1  Get rid of name of class
-    lua_pushinteger(the_lua_state, caller.full_id);         // <2  Push the caller's ID
-    lua_pushinteger(the_lua_state, target1.full_id);        // <3  Push target #1's ID
-    lua_pushinteger(the_lua_state, target2.full_id);        // <3  Push target #2's ID
-    int result = lua_pcall(the_lua_state, 3, 1, 0);         // >>><1 Call with three arguments, one result
+    lua_getfield(the_lua_state, -1, function_name.c_str());   // <2  Push the function name
+    lua_remove(the_lua_state, -2);                            // >1  Get rid of name of class
+    lua_pushinteger(the_lua_state, caller.get_id().full_id);  // <2  Push the caller's ID
+    lua_pushinteger(the_lua_state, target1.get_id().full_id); // <3  Push target #1's ID
+    lua_pushinteger(the_lua_state, target2.get_id().full_id); // <3  Push target #2's ID
+    int result = lua_pcall(the_lua_state, 3, 1, 0);           // >>><1 Call with three arguments, one result
     if (result == LUA_OK)
     {
       return_value = (ActionResult)lua_tointeger(the_lua_state, -1);

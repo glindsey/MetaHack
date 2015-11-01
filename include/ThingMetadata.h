@@ -46,12 +46,12 @@ public:
   /// If the function does not exist, attempts to step up to the parent type
   /// and call the function there, up until there's no parent to call.
   /// @param function_name  Name of the function to call
-  /// @param caller         ThingId of the thing calling the function
+  /// @param caller         ThingRef to the thing calling the function
   /// @param default_result The default result if function is not found 
   ///                       (defaults to ActionResult::Success).
   /// @return An ActionResult containing the result of the call.
   ActionResult call_lua_function_1(std::string function_name,
-                                   ThingId caller,
+                                   ThingRef caller,
                                    ActionResult default_result = ActionResult::Success);
 
   /// Try to call a Lua function that takes two ThingId arguments: the caller,
@@ -60,14 +60,14 @@ public:
   /// If the function does not exist, attempts to step up to the parent type
   /// and call the function there, up until there's no parent to call.
   /// @param function_name  Name of the function to call
-  /// @param caller         ThingId of the thing calling the function
-  /// @param target         ThingId of the target of the function
+  /// @param caller         ThingRef to the thing calling the function
+  /// @param target         ThingRef to the target of the function
   /// @param default_result The default result if function is not found 
   ///                       (defaults to ActionResult::Success).
   /// @return An ActionResult containing the result of the call.
   ActionResult call_lua_function_2(std::string function_name,
-                                   ThingId caller,
-                                   ThingId target,
+                                   ThingRef caller,
+                                   ThingRef target,
                                    ActionResult default_result = ActionResult::Success);
 
   /// Try to call a Lua function that takes two ThingId arguments: the caller,
@@ -76,16 +76,16 @@ public:
   /// If the function does not exist, attempts to step up to the parent type
   /// and call the function there, up until there's no parent to call.
   /// @param function_name  Name of the function to call
-  /// @param caller         ThingId of the thing calling the function
-  /// @param target1        ThingId of target #1 of the function
-  /// @param target2        ThingId of target #1 of the function
+  /// @param caller         ThingRef to the thing calling the function
+  /// @param target1        ThingRef to target #1 of the function
+  /// @param target2        ThingRef to target #2 of the function
   /// @param default_result The default result if function is not found 
   ///                       (defaults to ActionResult::Success).
   /// @return An ActionResult containing the result of the call.
   ActionResult call_lua_function_3(std::string function_name,
-                                   ThingId caller,
-                                   ThingId target1,
-                                   ThingId target2,
+                                   ThingRef caller,
+                                   ThingRef target1,
+                                   ThingRef target2,
                                    ActionResult default_result = ActionResult::Success);
 
 private:

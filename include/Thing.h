@@ -498,7 +498,7 @@ class Thing :
     /// Perform an action when this thing is activated.
     /// If this function returns false, the action is aborted.
     /// The default behavior is to do nothing and return false.
-    bool perform_action_activated_by(ThingRef thing);
+    bool perform_action_activated_by(ThingRef actor);
 
     /// Perform an action when this thing collides with another thing.
     void perform_action_collided_with(ThingRef thing);
@@ -506,37 +506,37 @@ class Thing :
     /// Perform an action when this thing is eaten.
     /// If this function returns false, the action is aborted.
     /// The default behavior is to do nothing and return false.
-    bool perform_action_drank_by(ThingRef thing);
+    bool perform_action_drank_by(ThingRef actor);
 
     /// Perform an action when this thing is dropped.
     /// If this function returns false, the action is aborted.
     /// The default behavior is to do nothing and return true.
-    bool perform_action_dropped_by(ThingRef thing);
+    bool perform_action_dropped_by(ThingRef actor);
 
     /// Perform an action when this thing is eaten.
     /// If this function returns false, the action is aborted.
     /// The default behavior is to do nothing and return false.
-    bool perform_action_eaten_by(ThingRef thing);
+    bool perform_action_eaten_by(ThingRef actor);
 
     /// Perform an action when this thing is picked up.
     /// If this function returns false, the action is aborted.
     /// The default behavior is to do nothing and return true.
-    bool perform_action_picked_up_by(ThingRef thing);
+    bool perform_action_picked_up_by(ThingRef actor);
 
     /// Perform an action when this thing is put into another thing.
     /// If this function returns false, the action is aborted.
     /// The default behavior is to do nothing and return true.
-    bool perform_action_put_into(ThingRef container);
+    bool perform_action_put_into_by(ThingRef container, ThingRef actor);
 
     /// Perform an action when this thing is taken out its container.
     /// If this function returns false, the action is aborted.
     /// The default behavior is to do nothing and return true.
-    bool perform_action_take_out();
+    bool perform_action_taken_out_by(ThingRef actor);
 
     /// Perform an action when this thing is read.
     /// If this function returns Failure, the action is aborted.
     /// The default behavior is to do nothing and return Failure.
-    ActionResult perform_action_read_by(ThingRef thing);
+    ActionResult perform_action_read_by(ThingRef actor);
 
     /// Perform an action when this thing hits an entity.
     /// This action executes when the thing is wielded by an entity, and an
@@ -544,37 +544,37 @@ class Thing :
     /// to the damage done by Entity::attack(entity).
     /// The default behavior is to do nothing.
     /// @see Entity::attack
-    void perform_action_attack_hits(ThingRef thing);
+    void perform_action_attack_hits(ThingRef target);
 
     /// Perform an action when this thing is thrown.
     /// If this function returns false, the action is aborted.
     /// The default behavior is to do nothing and return true.
-    bool perform_action_thrown_by(ThingRef thing, Direction direction);
+    bool perform_action_thrown_by(ThingRef actor, Direction direction);
 
     /// Perform an action when this thing is de-equipped (taken off).
     /// If this function returns false, the action is aborted.
     /// The default behavior is to do nothing and return true.
-    bool perform_action_deequipped_by(ThingRef thing, WearLocation& location);
+    bool perform_action_deequipped_by(ThingRef actor, WearLocation& location);
 
     /// Perform an action when this thing is equipped.
     /// If this function returns false, the action is aborted.
     /// The default behavior is to do nothing and return false.
-    bool perform_action_equipped_by(ThingRef thing, WearLocation& location);
+    bool perform_action_equipped_by(ThingRef actor, WearLocation& location);
 
     /// Perform an action when this thing is unwielded.
     /// If this function returns false, the action is aborted.
     /// The default behavior is to do nothing and return true.
-    bool perform_action_unwielded_by(ThingRef thing);
+    bool perform_action_unwielded_by(ThingRef actor);
 
     /// Perform an action when this thing is wielded.
     /// If this function returns false, the action is aborted.
     /// The default behavior is to do nothing and return true.
-    bool perform_action_wielded_by(ThingRef thing);
+    bool perform_action_wielded_by(ThingRef actor);
 
     /// Perform an action when this thing is fired.
     /// If this function returns false, the action is aborted.
     /// The default behavior is to do nothing and return false.
-    bool perform_action_fired_by(ThingRef thing, Direction direction);
+    bool perform_action_fired_by(ThingRef actor, Direction direction);
 
     /// Returns whether the Thing can merge with another Thing.
     /// Calls an overridden subclass function.
@@ -664,16 +664,6 @@ class Thing :
     /// Gets this location's maptile.
     virtual MapTile* _get_maptile() const;
 
-    virtual bool _perform_action_activated_by(ThingRef thing);
-    virtual void _perform_action_collided_with(ThingRef thing);
-    virtual bool _perform_action_drank_by(ThingRef thing);
-    virtual bool _perform_action_dropped_by(ThingRef thing);
-    virtual bool _perform_action_eaten_by(ThingRef thing);
-    virtual bool _perform_action_picked_up_by(ThingRef thing);
-    virtual bool _perform_action_put_into(ThingRef container);
-    virtual bool _perform_action_take_out();
-    virtual ActionResult _perform_action_read_by(ThingRef thing);
-    virtual void _perform_action_attack_hits(ThingRef thing);
     virtual bool _perform_action_thrown_by(ThingRef thing, Direction direction);
     virtual bool _perform_action_deequipped_by(ThingRef thing,
                                                WearLocation& location);

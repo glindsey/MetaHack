@@ -969,7 +969,7 @@ bool Thing::do_put_into(ThingRef thing, ThingRef container,
   {
   case ActionResult::Success:
   {
-    if (thing->perform_action_put_into(container))
+    if (thing->perform_action_put_into_by(container, pImpl->ref))
     {
       message = _YOU_ + choose_verb(" place ", "places ") +
         thing->get_identifying_string() + " into " +
@@ -1208,7 +1208,7 @@ bool Thing::do_take_out(ThingRef thing, unsigned int& action_time)
   {
   case ActionResult::Success:
   {
-    if (thing->perform_action_take_out())
+    if (thing->perform_action_taken_out_by(pImpl->ref))
     {
       if (!thing->move_into(new_location))
       {
@@ -2750,83 +2750,93 @@ bool Thing::process()
   return _process();
 }
 
-bool Thing::perform_action_activated_by(ThingRef thing)
+bool Thing::perform_action_activated_by(ThingRef actor)
 {
-  return _perform_action_activated_by(thing);
+  ActionResult result = pImpl->metadata.call_lua_function_2("perform_action_activated_by", get_ref(), actor);
+  return was_successful(result);
 }
 
-void Thing::perform_action_collided_with(ThingRef thing)
+void Thing::perform_action_collided_with(ThingRef actor)
 {
-  _perform_action_collided_with(thing);
+  ActionResult result = pImpl->metadata.call_lua_function_2("perform_action_collided_with", get_ref(), actor);
+  return;
 }
 
-bool Thing::perform_action_drank_by(ThingRef thing)
+bool Thing::perform_action_drank_by(ThingRef actor)
 {
-  return _perform_action_drank_by(thing);
+  ActionResult result = pImpl->metadata.call_lua_function_2("perform_action_drank_by", get_ref(), actor);
+  return was_successful(result);
 }
 
-bool Thing::perform_action_dropped_by(ThingRef thing)
+bool Thing::perform_action_dropped_by(ThingRef actor)
 {
-  return _perform_action_dropped_by(thing);
+  ActionResult result = pImpl->metadata.call_lua_function_2("perform_action_dropped_by", get_ref(), actor);
+  return was_successful(result);
 }
 
-bool Thing::perform_action_eaten_by(ThingRef thing)
+bool Thing::perform_action_eaten_by(ThingRef actor)
 {
-  return _perform_action_eaten_by(thing);
+  ActionResult result = pImpl->metadata.call_lua_function_2("perform_action_eaten_by", get_ref(), actor);
+  return was_successful(result);
 }
 
-bool Thing::perform_action_picked_up_by(ThingRef thing)
+bool Thing::perform_action_picked_up_by(ThingRef actor)
 {
-  return _perform_action_picked_up_by(thing);
+  ActionResult result = pImpl->metadata.call_lua_function_2("perform_action_picked_up_by", get_ref(), actor);
+  return was_successful(result);
 }
 
-bool Thing::perform_action_put_into(ThingRef container)
+bool Thing::perform_action_put_into_by(ThingRef container, ThingRef actor)
 {
-  return _perform_action_put_into(container);
+  ActionResult result = pImpl->metadata.call_lua_function_3("perform_action_put_into", get_ref(), container, actor);
+  return was_successful(result);
 }
 
-bool Thing::perform_action_take_out()
+bool Thing::perform_action_taken_out_by(ThingRef actor)
 {
-  return _perform_action_take_out();
+  ActionResult result = pImpl->metadata.call_lua_function_2("perform_action_taken_out_by", get_ref(), actor);
+  return was_successful(result);
 }
 
-ActionResult Thing::perform_action_read_by(ThingRef thing)
+ActionResult Thing::perform_action_read_by(ThingRef actor)
 {
-  return _perform_action_read_by(thing);
+  ActionResult result = pImpl->metadata.call_lua_function_2("perform_action_read_by", get_ref(), actor);
+  return result;
 }
 
-void Thing::perform_action_attack_hits(ThingRef thing)
+void Thing::perform_action_attack_hits(ThingRef target)
 {
-  _perform_action_attack_hits(thing);
+  ActionResult result = pImpl->metadata.call_lua_function_2("perform_action_read_by", get_ref(), target);
+  return;
 }
 
-bool Thing::perform_action_thrown_by(ThingRef thing, Direction direction)
+bool Thing::perform_action_thrown_by(ThingRef actor, Direction direction)
 {
-  return _perform_action_thrown_by(thing, direction);
+  return _perform_action_thrown_by(actor, direction);
 }
 
-bool Thing::perform_action_deequipped_by(ThingRef thing, WearLocation& location)
+bool Thing::perform_action_deequipped_by(ThingRef actor, WearLocation& location)
 {
   if (this->get_property_flag("bound"))
   {
     std::string message;
-    message = thing->get_identifying_string() + " cannot take off " + this->get_identifying_string() +
+    message = actor->get_identifying_string() + " cannot take off " + this->get_identifying_string() +
               "; it is magically bound to " +
-              thing->get_possessive_adjective() + " " +
-              thing->get_bodypart_description(location.part,
+              actor->get_possessive_adjective() + " " +
+              actor->get_bodypart_description(location.part,
                                              location.number) + "!";
     the_message_log.add(message);
     return false;
   }
   else
   {
-    return _perform_action_deequipped_by(thing, location);
+    return _perform_action_deequipped_by(actor, location);
   }
 }
 
-bool Thing::perform_action_equipped_by(ThingRef thing, WearLocation& location)
+bool Thing::perform_action_equipped_by(ThingRef actor, WearLocation& location)
 {
-  bool subclass_result = _perform_action_equipped_by(thing, location);
+  bool subclass_result = _perform_action_equipped_by(actor, location);
 
   if (subclass_result == true)
   {
@@ -2835,8 +2845,8 @@ bool Thing::perform_action_equipped_by(ThingRef thing, WearLocation& location)
         this->set_property_flag("bound", true);
         std::string message;
         message = this->get_identifying_string() + " magically binds itself to " +
-                  thing->get_possessive() + " " +
-                  thing->get_bodypart_description(location.part,
+                  actor->get_possessive() + " " +
+                  actor->get_bodypart_description(location.part,
                                                   location.number) + "!";
         the_message_log.add(message);
     }
@@ -2845,27 +2855,27 @@ bool Thing::perform_action_equipped_by(ThingRef thing, WearLocation& location)
   return subclass_result;
 }
 
-bool Thing::perform_action_unwielded_by(ThingRef thing)
+bool Thing::perform_action_unwielded_by(ThingRef actor)
 {
   if (this->get_property_flag("bound"))
   {
     std::string message;
-    message = thing->get_identifying_string() + " cannot unwield " + this->get_identifying_string() +
+    message = actor->get_identifying_string() + " cannot unwield " + this->get_identifying_string() +
               "; it is magically bound to " +
-              thing->get_possessive_adjective() + " " +
-              thing->get_bodypart_name(BodyPart::Hand) + "!";
+              actor->get_possessive_adjective() + " " +
+              actor->get_bodypart_name(BodyPart::Hand) + "!";
     the_message_log.add(message);
     return false;
   }
   else
   {
-    return _perform_action_unwielded_by(thing);
+    return _perform_action_unwielded_by(actor);
   }
 }
 
-bool Thing::perform_action_wielded_by(ThingRef thing)
+bool Thing::perform_action_wielded_by(ThingRef actor)
 {
-  bool subclass_result = _perform_action_wielded_by(thing);
+  bool subclass_result = _perform_action_wielded_by(actor);
 
   if (subclass_result == true)
   {
@@ -2874,8 +2884,8 @@ bool Thing::perform_action_wielded_by(ThingRef thing)
       this->set_property_flag("bound", true);
       std::string message;
       message = this->get_identifying_string() + " magically binds itself to " +
-                thing->get_possessive() + " " +
-                thing->get_bodypart_name(BodyPart::Hand) + "!";
+                actor->get_possessive() + " " +
+                actor->get_bodypart_name(BodyPart::Hand) + "!";
       the_message_log.add(message);
     }
   }
@@ -2883,9 +2893,9 @@ bool Thing::perform_action_wielded_by(ThingRef thing)
   return subclass_result;
 }
 
-bool Thing::perform_action_fired_by(ThingRef thing, Direction direction)
+bool Thing::perform_action_fired_by(ThingRef actor, Direction direction)
 {
-  return _perform_action_fired_by(thing, direction);
+  return _perform_action_fired_by(actor, direction);
 }
 
 bool Thing::can_merge_with(ThingRef other) const
@@ -3449,54 +3459,6 @@ MapTile* Thing::_get_maptile() const
 ActionResult Thing::_can_contain(ThingRef thing) const
 {
   return ActionResult::Success;
-}
-
-bool Thing::_perform_action_activated_by(ThingRef thing)
-{
-  return false;
-}
-
-void Thing::_perform_action_collided_with(ThingRef thing)
-{
-}
-
-bool Thing::_perform_action_drank_by(ThingRef thing)
-{
-  return false;
-}
-
-bool Thing::_perform_action_dropped_by(ThingRef thing)
-{
-  return true;
-}
-
-bool Thing::_perform_action_eaten_by(ThingRef thing)
-{
-  return false;
-}
-
-bool Thing::_perform_action_picked_up_by(ThingRef thing)
-{
-  return true;
-}
-
-bool Thing::_perform_action_put_into(ThingRef container)
-{
-  return true;
-}
-
-bool Thing::_perform_action_take_out()
-{
-  return true;
-}
-
-ActionResult Thing::_perform_action_read_by(ThingRef thing)
-{
-  return ActionResult::Failure;
-}
-
-void Thing::_perform_action_attack_hits(ThingRef thing)
-{
 }
 
 bool Thing::_perform_action_thrown_by(ThingRef thing, Direction direction)

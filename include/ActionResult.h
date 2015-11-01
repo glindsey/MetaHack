@@ -34,6 +34,11 @@ enum class ActionResult
                                   ///< weapon is just changing hands.
 };
 
+inline bool was_successful(ActionResult result)
+{
+  return static_cast<int>(result) >= 0;
+}
+
 inline std::ostream& operator<<(std::ostream& os, ActionResult result)
 {
 	switch (result)
