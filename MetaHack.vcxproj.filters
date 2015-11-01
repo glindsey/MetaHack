@@ -354,5 +354,8 @@
     <None Include="resources\things\Thing.lua">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="resources\things\Human.lua">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

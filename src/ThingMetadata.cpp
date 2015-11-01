@@ -281,6 +281,7 @@ ThingMetadata::ThingMetadata(std::string type)
   if (fs::exists(luafile_path))
   {
     TRACE("Loading Lua script for type \"%s\"...", type.c_str());
+
     the_lua_instance.do_file(luafile_string);
   }
 

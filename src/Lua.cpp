@@ -49,7 +49,10 @@ void Lua::register_function(std::string name, lua_CFunction func)
 
 void Lua::do_file(std::string filename)
 {
-  luaL_dofile(L_, filename.c_str());
+  if (luaL_dofile(L_, filename.c_str()))
+  {
+    fprintf(stderr, "%s\n", lua_tostring(L_, -1));
+  }
 }
 
 bool Lua::add_enum(const char* tname, ...)
