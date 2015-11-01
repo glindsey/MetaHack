@@ -501,12 +501,12 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
           if (slot_count > 0)
           {
-            ThingRef thing = pImpl->inventory_area->get_viewed();
+            ThingRef thing = pImpl->inventory_area->get_selected_things().at(0);
             if (thing->get_intrinsic_value("inventory_size") != 0)
             {
-              if (thing->get_property_value("open"))
+              if (thing->get_property_flag("open"))
               {
-                if (!thing->get_property_value("locked"))
+                if (!thing->get_property_flag("locked"))
                 {
                   pImpl->inventory_area->set_viewed(thing);
                 }
@@ -756,7 +756,7 @@ bool AppStateGameMode::initialize()
   Map& game_map = MF.get(pImpl->current_map_id);
 
   // Move player to start position on the map.
-  ThingRef player = TM.create("human");
+  ThingRef player = TM.create("Human");
   player->set_proper_name("John Doe");
   TM.set_player(player);
   sf::Vector2i const& start_coords = game_map.get_start_coords();

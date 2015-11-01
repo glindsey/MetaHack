@@ -33,7 +33,7 @@ class MapTile : public GameObject
     ThingRef get_floor() const;
 
     /// Return this tile's description.
-    virtual std::string get_pretty_name() const override final;
+    virtual std::string get_display_name() const override final;
 
     /// Return the coordinates of the tile representing the thing.
     virtual sf::Vector2u get_tile_sheet_coords(int frame) const;

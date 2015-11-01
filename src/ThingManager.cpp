@@ -43,6 +43,10 @@ ThingManager::ThingManager()
   : pImpl(new Impl())
 {
   // Register the Thing Lua functions.
+  the_lua_instance.register_function("thing_create", Thing::LUA_create);
+  the_lua_instance.register_function("thing_get_player", Thing::LUA_get_player);
+  the_lua_instance.register_function("thing_get_coords", Thing::LUA_get_coords);
+  the_lua_instance.register_function("thing_get_parent_type", Thing::LUA_get_parent_type);
   the_lua_instance.register_function("thing_get_intrinsic_flag", Thing::LUA_get_intrinsic_flag);
   the_lua_instance.register_function("thing_get_intrinsic_value", Thing::LUA_get_intrinsic_value);
   the_lua_instance.register_function("thing_get_intrinsic_string", Thing::LUA_get_intrinsic_string);
@@ -88,7 +92,7 @@ ThingRef ThingManager::create(std::string type)
   pImpl->thing_map[new_id] = new_thing;
 
   // Temporary test of Lua call
-  pImpl->thing_metadata[type]->call_lua_function_1("on_create", new_ref);
+  pImpl->thing_metadata[type]->call_lua_function("on_create", new_ref);
 
   return ThingRef(new_id);
 }

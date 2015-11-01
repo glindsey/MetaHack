@@ -5,8 +5,10 @@
   <intrinsics>
     <flags>
       <lockable>false</lockable>
+      <locked>false</locked>
       <movable>true</movable>
       <opaque>true</opaque>
+      <open>true</open>
       <openable>false</openable>
     </flags>
 	  <values>

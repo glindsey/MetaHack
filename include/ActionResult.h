@@ -8,6 +8,7 @@
 // Enum representing possible results from an action.
 enum class ActionResult
 {
+  FailureContainerIsEmpty     = -20, ///< Used when trying to drink from a container
   FailureContainerCantBeSelf  = -19,
   FailureCircularReference    = -18, ///< e.g. Putting a container into itself
   FailureItemNotEquippable    = -17,

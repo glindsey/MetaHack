@@ -120,6 +120,14 @@ class Map
     struct Impl;
     std::unique_ptr<Impl> pImpl;
 
+    /// Lua function to get the Floor at a specific location.
+    /// Takes two parameters:
+    ///   - x, y location of the Floor to retrieve
+    /// It returns:
+    ///   - ID of the requested Floor, or nil if it does not exist.
+    /// Notes:
+    ///   - The Map that the tile is retrieved from is the one the player is on.
+    static int LUA_get_floor(lua_State* L);
 };
 
 #endif // MAP_H

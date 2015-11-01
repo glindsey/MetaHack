@@ -890,3 +890,24 @@ MapFeature& Map::add_map_feature(MapFeature* feature)
   pImpl->features.push_back(feature);
   return *feature;
 }
+
+int Map::LUA_get_floor(lua_State* L)
+{
+  int num_args = lua_gettop(L);
+
+  if (num_args != 2)
+  {
+    MINOR_ERROR("expected 2 arguments, got %d", num_args);
+    return 0;
+  }
+
+  sf::Vector2i coords = sf::Vector2i(lua_tonumber(L, 1), lua_tonumber(L, 2));
+
+  MapId map_id = TM.get_player()->get_map_id();
+  auto& map_tile = MF.get(map_id).get_tile(coords);
+  ThingRef floor = map_tile->get_floor();
+
+  lua_pushinteger(L, floor.get_id().full_id);
+
+  return 1;
+}

@@ -5,6 +5,8 @@
   <description>A large sack.</description>
   <intrinsics>
     <flags>
+      <open>true</open>
+      <openable>false</openable>
     </flags>
 	  <values>
 	    <inventory_size>10</inventory_size>

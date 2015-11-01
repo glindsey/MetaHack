@@ -9,6 +9,7 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "Direction.h"
 #include "ErrorHandler.h"
 #include "Exceptions.h"
 #include "Lua.h"
@@ -29,10 +30,10 @@ struct ThingMetadata::Impl
   std::string name;
 
   /// Thing pretty name.
-  std::string pretty_name;
+  std::string display_name;
 
   /// Thing pretty plural.
-  std::string pretty_plural;
+  std::string display_plural;
 
   /// Thing parent type, if any.
   std::string parent;
@@ -97,21 +98,21 @@ ThingMetadata::ThingMetadata(std::string type)
   // Get thing's pretty name.
   try
   { 
-    pImpl->pretty_name = data.get_child("thing.name").get_value<std::string>("[" + type + "]");
+    pImpl->display_name = data.get_child("thing.name").get_value<std::string>("[" + type + "]");
   }
   catch (pt::ptree_bad_path&)
   {
-    pImpl->pretty_name = "[" + type + "]";
+    pImpl->display_name = "[" + type + "]";
   }
 
   // Get thing's pretty plural, if present. Otherwise add "s" to the normal pretty name.
   try
   {
-    pImpl->pretty_plural = data.get_child("thing.plural").get_value<std::string>(pImpl->pretty_name + "s");
+    pImpl->display_plural = data.get_child("thing.plural").get_value<std::string>(pImpl->display_name + "s");
   }
   catch (pt::ptree_bad_path&)
   {
-    pImpl->pretty_plural = pImpl->pretty_name + "s";
+    pImpl->display_plural = pImpl->display_name + "s";
   }
 
   // Get thing's parent.
@@ -290,14 +291,14 @@ ThingMetadata::~ThingMetadata()
 {
 }
 
-std::string const& ThingMetadata::get_pretty_name() const
+std::string const& ThingMetadata::get_display_name() const
 {
-  return pImpl->pretty_name;
+  return pImpl->display_name;
 }
 
 std::string const& ThingMetadata::get_pretty_plural() const
 {
-  return pImpl->pretty_plural;
+  return pImpl->display_plural;
 }
 
 std::string const& ThingMetadata::get_description() const
@@ -471,9 +472,9 @@ sf::Vector2u ThingMetadata::get_tile_coords() const
   return pImpl->tile_location;
 }
 
-ActionResult ThingMetadata::call_lua_function_1(std::string function_name,
-                                                ThingRef caller,
-                                                ActionResult default_result)
+ActionResult ThingMetadata::call_lua_function(std::string function_name,
+                                              ThingRef caller,
+                                              ActionResult default_result)
 {
   ActionResult return_value = default_result;
 
@@ -483,43 +484,51 @@ ActionResult ThingMetadata::call_lua_function_1(std::string function_name,
   if (!lua_isnoneornil(the_lua_state, -1))
   {
     lua_getfield(the_lua_state, -1, function_name.c_str());   // <2  Push the function name
-    lua_remove(the_lua_state, -2);                            // >1  Get rid of name of class
-    lua_pushinteger(the_lua_state, caller.get_id().full_id);  // <2  Push the thing's ID
-    int result = lua_pcall(the_lua_state, 1, 1, 0);           // >><1 Call with one argument, one result
-    if (result == LUA_OK)
+    if (!lua_isnoneornil(the_lua_state, -1))
     {
-      return_value = (ActionResult)lua_tointeger(the_lua_state, -1);
-      lua_pop(the_lua_state, 1);
-    }
-    else
-    {
-      char const* error_message = lua_tostring(the_lua_state, -1);
-      MAJOR_ERROR("Error calling %s.%s: %s", name.c_str(), function_name.c_str(), error_message);
-      lua_pop(the_lua_state, 1);
-    }    
-  }
-  else // didn't find a function of that name here, so try parent...
-  {
-    lua_pop(the_lua_state, 1);                      // >0 Pop the name back off the stack
+      lua_remove(the_lua_state, -2);                            // >1  Get rid of name of class
+      lua_pushinteger(the_lua_state, caller.get_id().full_id);  // <2  Push the caller's ID
+      int result = lua_pcall(the_lua_state, 1, 1, 0);           // >><1 Call with one argument, one result
+      if (result == LUA_OK)
+      {
+        return_value = (ActionResult)lua_tointeger(the_lua_state, -1);
+        lua_pop(the_lua_state, 1);                              // >0
+      }
+      else
+      {
+        char const* error_message = lua_tostring(the_lua_state, -1);
+        MAJOR_ERROR("Error calling %s.%s: %s", name.c_str(), function_name.c_str(), error_message);
+        lua_pop(the_lua_state, 1);                              // >0
+      }
 
-    if (pImpl->parent.empty())
+      // If we got here, return.
+      return return_value;
+    }
+    else // didn't find a function of that name here, so try parent...
     {
-      return_value = default_result;
+      lua_pop(the_lua_state, 1);                      // >1 Pop the function name back off the stack
     }
-    else
-    { 
-      return_value = TM.get_metadata(pImpl->parent).call_lua_function_1(function_name, 
-                                                                        caller,
-                                                                        default_result);
-    }
+  }
+
+  lua_pop(the_lua_state, 1);                      // >1 Pop the class name back off the stack
+
+  if (pImpl->parent.empty())
+  {
+    return_value = default_result;
+  }
+  else
+  {
+    return_value = TM.get_metadata(pImpl->parent).call_lua_function(function_name,
+      caller,
+      default_result);
   }
 
   return return_value;
 }
 
-ActionResult ThingMetadata::call_lua_function_2(std::string function_name,
+ActionResult ThingMetadata::call_lua_function(std::string function_name,
                                                 ThingRef caller,
-                                                ThingRef target,
+                                                lua_Integer arg,
                                                 ActionResult default_result)
 {
   ActionResult return_value = default_result;
@@ -530,46 +539,53 @@ ActionResult ThingMetadata::call_lua_function_2(std::string function_name,
   if (!lua_isnoneornil(the_lua_state, -1))
   {
     lua_getfield(the_lua_state, -1, function_name.c_str());   // <2  Push the function name
-    lua_remove(the_lua_state, -2);                            // >1  Get rid of name of class
-    lua_pushinteger(the_lua_state, caller.get_id().full_id);  // <2  Push the caller's ID
-    lua_pushinteger(the_lua_state, target.get_id().full_id);  // <3  Push the target's ID
-    int result = lua_pcall(the_lua_state, 2, 1, 0);           // >>><1 Call with two arguments, one result
-    if (result == LUA_OK)
+    if (!lua_isnoneornil(the_lua_state, -1))
     {
-      return_value = (ActionResult)lua_tointeger(the_lua_state, -1);
-      lua_pop(the_lua_state, 1);
+      lua_remove(the_lua_state, -2);                            // >1  Get rid of name of class
+      lua_pushinteger(the_lua_state, caller.get_id().full_id);  // <2  Push the caller's ID
+      lua_pushinteger(the_lua_state, arg);                      // <3  Push the argument
+      int result = lua_pcall(the_lua_state, 2, 1, 0);           // >>><1 Call with two arguments, one result
+      if (result == LUA_OK)
+      {
+        return_value = (ActionResult)lua_tointeger(the_lua_state, -1);
+        lua_pop(the_lua_state, 1);
+      }
+      else
+      {
+        char const* error_message = lua_tostring(the_lua_state, -1);
+        MAJOR_ERROR("Error calling %s.%s: %s", name.c_str(), function_name.c_str(), error_message);
+        lua_pop(the_lua_state, 1);
+      }
+
+      // If we got here, return.
+      return return_value;
     }
-    else
+    else // didn't find a function of that name here, so try parent...
     {
-      char const* error_message = lua_tostring(the_lua_state, -1);
-      MAJOR_ERROR("Error calling %s.%s: %s", name.c_str(), function_name.c_str(), error_message);
-      lua_pop(the_lua_state, 1);
+      lua_pop(the_lua_state, 1);                      // >1 Pop the function name back off the stack
     }
   }
-  else // didn't find a function of that name here, so try parent...
-  {
-    lua_pop(the_lua_state, 1);                      // >0 Pop the name back off the stack
 
-    if (pImpl->parent.empty())
-    {
-      return_value = default_result;
-    }
-    else
-    {
-      return_value = TM.get_metadata(pImpl->parent).call_lua_function_2(function_name,
-                                                                        caller,
-                                                                        target,
-                                                                        default_result);
-    }
+  lua_pop(the_lua_state, 1);                      // >1 Pop the class name back off the stack
+
+  if (pImpl->parent.empty())
+  {
+    return_value = default_result;
+  }
+  else
+  {
+    return_value = TM.get_metadata(pImpl->parent).call_lua_function(function_name,
+      caller,
+      default_result);
   }
 
   return return_value;
 }
 
-ActionResult ThingMetadata::call_lua_function_3(std::string function_name,
+ActionResult ThingMetadata::call_lua_function(std::string function_name,
                                                 ThingRef caller,
-                                                ThingRef target1,
-                                                ThingRef target2,
+                                                lua_Integer arg1,
+                                                lua_Integer arg2,
                                                 ActionResult default_result)
 {
   ActionResult return_value = default_result;
@@ -580,39 +596,45 @@ ActionResult ThingMetadata::call_lua_function_3(std::string function_name,
   if (!lua_isnoneornil(the_lua_state, -1))
   {
     lua_getfield(the_lua_state, -1, function_name.c_str());   // <2  Push the function name
-    lua_remove(the_lua_state, -2);                            // >1  Get rid of name of class
-    lua_pushinteger(the_lua_state, caller.get_id().full_id);  // <2  Push the caller's ID
-    lua_pushinteger(the_lua_state, target1.get_id().full_id); // <3  Push target #1's ID
-    lua_pushinteger(the_lua_state, target2.get_id().full_id); // <3  Push target #2's ID
-    int result = lua_pcall(the_lua_state, 3, 1, 0);           // >>><1 Call with three arguments, one result
-    if (result == LUA_OK)
+    if (!lua_isnoneornil(the_lua_state, -1))
     {
-      return_value = (ActionResult)lua_tointeger(the_lua_state, -1);
-      lua_pop(the_lua_state, 1);
+      lua_remove(the_lua_state, -2);                            // >1  Get rid of name of class
+      lua_pushinteger(the_lua_state, caller.get_id().full_id);  // <2  Push the caller's ID
+      lua_pushinteger(the_lua_state, arg1);                     // <3  Push the argument #1
+      lua_pushinteger(the_lua_state, arg2);                     // <4  Push the argument #2
+      int result = lua_pcall(the_lua_state, 3, 1, 0);           // >>>><1 Call with three arguments, one result
+      if (result == LUA_OK)
+      {
+        return_value = (ActionResult)lua_tointeger(the_lua_state, -1);
+        lua_pop(the_lua_state, 1);
+      }
+      else
+      {
+        char const* error_message = lua_tostring(the_lua_state, -1);
+        MAJOR_ERROR("Error calling %s.%s: %s", name.c_str(), function_name.c_str(), error_message);
+        lua_pop(the_lua_state, 1);
+      }
+
+      // If we got here, return.
+      return return_value;
     }
-    else
+    else // didn't find a function of that name here, so try parent...
     {
-      char const* error_message = lua_tostring(the_lua_state, -1);
-      MAJOR_ERROR("Error calling %s.%s: %s", name.c_str(), function_name.c_str(), error_message);
-      lua_pop(the_lua_state, 1);
+      lua_pop(the_lua_state, 1);                      // >1 Pop the function name back off the stack
     }
   }
-  else // didn't find a function of that name here, so try parent...
-  {
-    lua_pop(the_lua_state, 1);                      // >0 Pop the name back off the stack
 
-    if (pImpl->parent.empty())
-    {
-      return_value = default_result;
-    }
-    else
-    {
-      return_value = TM.get_metadata(pImpl->parent).call_lua_function_3(function_name,
-        caller,
-        target1,
-        target2,
-        default_result);
-    }
+  lua_pop(the_lua_state, 1);                      // >1 Pop the class name back off the stack
+
+  if (pImpl->parent.empty())
+  {
+    return_value = default_result;
+  }
+  else
+  {
+    return_value = TM.get_metadata(pImpl->parent).call_lua_function(function_name,
+      caller,
+      default_result);
   }
 
   return return_value;

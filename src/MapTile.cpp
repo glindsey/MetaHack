@@ -70,9 +70,9 @@ ThingRef MapTile::get_floor() const
   return pImpl->floor;
 }
 
-std::string MapTile::get_pretty_name() const
+std::string MapTile::get_display_name() const
 {
-  return pImpl->pMetadata->get_pretty_name();
+  return pImpl->pMetadata->get_display_name();
 }
 
 sf::Vector2u MapTile::get_tile_sheet_coords(int frame) const

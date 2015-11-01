@@ -52,7 +52,7 @@ class Thing :
     /// Queue an action for this Entity to perform.
     void queue_action(Action action);
 
-    /// Return whether this is an action pending for this Entity.
+    /// Return whether there is an action pending for this Entity.
     bool pending_action() const;
 
     /// Returns true if this thing is the current player.
@@ -60,6 +60,7 @@ class Thing :
     virtual bool is_player() const;
 
     std::string const& get_type() const;
+    std::string const& get_parent_type() const;
 
     /// Set the AI strategy associated with this Thing.
     /// The Thing assumes responsibility for maintenance of the new object.
@@ -353,7 +354,7 @@ class Thing :
     /// Return this thing's description.
     /// Adds adjective qualifiers (such as "fireproof", "waterproof", etc.)
     /// @todo Add adjective qualifiers.s
-    std::string get_pretty_name() const;
+    std::string get_display_name() const;
 
     /// Return this object's plural.
     std::string get_pretty_plural() const;
@@ -497,83 +498,68 @@ class Thing :
 
     /// Perform an action when this thing is activated.
     /// If this function returns false, the action is aborted.
-    /// The default behavior is to do nothing and return false.
     bool perform_action_activated_by(ThingRef actor);
 
     /// Perform an action when this thing collides with another thing.
     void perform_action_collided_with(ThingRef thing);
 
     /// Perform an action when this thing is eaten.
-    /// If this function returns false, the action is aborted.
-    /// The default behavior is to do nothing and return false.
-    bool perform_action_drank_by(ThingRef actor);
+    /// If this function returns Failure, the action is aborted.
+    ActionResult perform_action_drank_by(ThingRef actor, ThingRef contents);
 
     /// Perform an action when this thing is dropped.
     /// If this function returns false, the action is aborted.
-    /// The default behavior is to do nothing and return true.
     bool perform_action_dropped_by(ThingRef actor);
 
     /// Perform an action when this thing is eaten.
     /// If this function returns false, the action is aborted.
-    /// The default behavior is to do nothing and return false.
     bool perform_action_eaten_by(ThingRef actor);
 
     /// Perform an action when this thing is picked up.
     /// If this function returns false, the action is aborted.
-    /// The default behavior is to do nothing and return true.
     bool perform_action_picked_up_by(ThingRef actor);
 
     /// Perform an action when this thing is put into another thing.
     /// If this function returns false, the action is aborted.
-    /// The default behavior is to do nothing and return true.
     bool perform_action_put_into_by(ThingRef container, ThingRef actor);
 
     /// Perform an action when this thing is taken out its container.
     /// If this function returns false, the action is aborted.
-    /// The default behavior is to do nothing and return true.
     bool perform_action_taken_out_by(ThingRef actor);
 
     /// Perform an action when this thing is read.
     /// If this function returns Failure, the action is aborted.
-    /// The default behavior is to do nothing and return Failure.
     ActionResult perform_action_read_by(ThingRef actor);
 
     /// Perform an action when this thing hits an entity.
     /// This action executes when the thing is wielded by an entity, and an
     /// attack successfully hits its target.  It is a side-effect in addition
     /// to the damage done by Entity::attack(entity).
-    /// The default behavior is to do nothing.
     /// @see Entity::attack
     void perform_action_attack_hits(ThingRef target);
 
     /// Perform an action when this thing is thrown.
     /// If this function returns false, the action is aborted.
-    /// The default behavior is to do nothing and return true.
     bool perform_action_thrown_by(ThingRef actor, Direction direction);
 
     /// Perform an action when this thing is de-equipped (taken off).
     /// If this function returns false, the action is aborted.
-    /// The default behavior is to do nothing and return true.
     bool perform_action_deequipped_by(ThingRef actor, WearLocation& location);
 
     /// Perform an action when this thing is equipped.
     /// If this function returns false, the action is aborted.
-    /// The default behavior is to do nothing and return false.
     bool perform_action_equipped_by(ThingRef actor, WearLocation& location);
 
     /// Perform an action when this thing is unwielded.
     /// If this function returns false, the action is aborted.
-    /// The default behavior is to do nothing and return true.
     bool perform_action_unwielded_by(ThingRef actor);
 
     /// Perform an action when this thing is wielded.
     /// If this function returns false, the action is aborted.
-    /// The default behavior is to do nothing and return true.
     bool perform_action_wielded_by(ThingRef actor);
 
     /// Perform an action when this thing is fired.
     /// If this function returns false, the action is aborted.
-    /// The default behavior is to do nothing and return false.
     bool perform_action_fired_by(ThingRef actor, Direction direction);
 
     /// Returns whether the Thing can merge with another Thing.
@@ -583,25 +569,10 @@ class Thing :
     /// Returns whether the Thing can hold a certain thing.
     /// If Thing's inventory size is 0, returns
     /// ActionResult::FailureTargetNotAContainer.
-    /// Otherwise, calls private virtual method _can_contain().
+    /// Otherwise, calls Lua function "can_contain()" for the Thing's type.
     /// @param thing Thing to check.
     /// @return ActionResult specifying whether the thing can be held here.
     ActionResult can_contain(ThingRef thing) const;
-
-    /// Return the type of this thing.
-    //virtual char const* get_thing_type() const final;
-
-    /// Returns whether this Thing can hold a liquid.
-    bool is_liquid_carrier() const;
-
-    /// Returns whether this Thing is flammable.
-    bool is_flammable() const;
-
-    /// Returns whether this Thing is corrodible.
-    bool is_corrodible() const;
-
-    /// Returns whether this Thing is shatterable.
-    bool is_shatterable() const;
 
   protected:
     /// Named Constructor
@@ -650,28 +621,8 @@ class Thing :
     ///          Keep this in mind when implementing specialized behavior.
     virtual void _process_specific();
 
-    /// Does the actual call to light surroundings.
-    /// Default behavior is to do nothing.
-    virtual void _light_up_surroundings();
-
-    /// Receive light from the specified light source.
-    /// The default behavior is to do nothing.
-    virtual void _be_lit_by(ThingRef light);
-
-    /// Returns whether the Thing can hold a certain thing.
-    virtual ActionResult _can_contain(ThingRef thing) const;
-
     /// Gets this location's maptile.
     virtual MapTile* _get_maptile() const;
-
-    virtual bool _perform_action_thrown_by(ThingRef thing, Direction direction);
-    virtual bool _perform_action_deequipped_by(ThingRef thing,
-                                               WearLocation& location);
-    virtual bool _perform_action_equipped_by(ThingRef thing,
-                                             WearLocation& location);
-    virtual bool _perform_action_unwielded_by(ThingRef thing);
-    virtual bool _perform_action_wielded_by(ThingRef thing);
-    virtual bool _perform_action_fired_by(ThingRef thing, Direction direction);
 
     /// Process this Thing for a single tick.
     /// By default, does nothing and returns true.
@@ -683,6 +634,30 @@ class Thing :
 
     // Static Lua functions.
     // @todo (Maybe these should be part of ThingManager instead?)
+
+    /// Lua function to create a new Thing.
+    /// Takes two parameters:
+    ///   - ID of the Thing it will be stored in
+    ///   - Type of the new Thing
+    /// It returns:
+    ///   - ID of the newly created Thing, or nil if it could not be created.
+    static int LUA_create(lua_State* L);
+
+    /// Lua function to get the ID of the player.
+    /// Takes no parameters.
+    /// It returns:
+    ///   - ID of the player character.
+    static int LUA_get_player(lua_State* L);
+
+
+    /// Lua function to get the coordinates of a Thing.
+    /// Takes one parameter:
+    ///   - ID of the Thing to get coordinates of.
+    /// It returns:
+    ///   - (x, y) coordinates of the Thing, or nil if not on the player's Map.
+    static int LUA_get_coords(lua_State* L);
+
+    static int LUA_get_parent_type(lua_State* L);
     static int LUA_get_intrinsic_flag(lua_State* L);
     static int LUA_get_intrinsic_value(lua_State* L);
     static int LUA_get_intrinsic_string(lua_State* L);

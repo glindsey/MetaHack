@@ -12,6 +12,9 @@ MapFactory::MapFactory()
   // Create and add the "null map" to the list.
   current_map_id = 0;
   maps_.insert(current_map_id, new Map(current_map_id, 1, 1));
+
+  // Register the Map Lua functions.
+  the_lua_instance.register_function("map_get_floor", Map::LUA_get_floor);
 }
 
 MapFactory::~MapFactory()

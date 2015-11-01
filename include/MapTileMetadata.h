@@ -14,7 +14,7 @@ public:
 
   static MapTileMetadata* get(std::string type);
 
-  std::string const& get_pretty_name() const;
+  std::string const& get_display_name() const;
   std::string const& get_description() const;
 
   bool get_flag(std::string key, bool default_value = false) const;

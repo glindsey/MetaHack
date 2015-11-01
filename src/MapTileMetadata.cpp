@@ -30,7 +30,7 @@ struct MapTileMetadata::Impl
   std::string name;
 
   /// Thing pretty name.
-  std::string pretty_name;
+  std::string display_name;
 
   /// Thing description
   std::string description;
@@ -81,21 +81,21 @@ MapTileMetadata::MapTileMetadata(std::string type)
   // Get thing's pretty name.
   try
   {
-    pImpl->pretty_name = data.get_child("maptile.name").get_value<std::string>("[" + type + "]");
+    pImpl->display_name = data.get_child("maptile.name").get_value<std::string>("[" + type + "]");
   }
   catch (pt::ptree_bad_path&)
   {
-    pImpl->pretty_name = "[" + type + "]";
+    pImpl->display_name = "[" + type + "]";
   }
 
   // Get thing's description, if present. Otherwise set it equal to the name.
   try
   {
-    pImpl->description = data.get_child("maptile.description").get_value<std::string>(pImpl->pretty_name);
+    pImpl->description = data.get_child("maptile.description").get_value<std::string>(pImpl->display_name);
   }
   catch (pt::ptree_bad_path&)
   {
-    pImpl->description = pImpl->pretty_name;
+    pImpl->description = pImpl->display_name;
   }
 
   // Look for properties section. It must be present for any MapTile.
@@ -192,9 +192,9 @@ MapTileMetadata::~MapTileMetadata()
 {
 }
 
-std::string const& MapTileMetadata::get_pretty_name() const
+std::string const& MapTileMetadata::get_display_name() const
 {
-  return pImpl->pretty_name;
+  return pImpl->display_name;
 }
 
 std::string const& MapTileMetadata::get_description() const

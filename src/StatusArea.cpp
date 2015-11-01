@@ -55,7 +55,7 @@ std::string StatusArea::render_contents(int frame)
     std::string name = player->get_proper_name();
     name[0] = std::toupper(name[0], std::locale());
 
-    std::string type = player->get_pretty_name();
+    std::string type = player->get_display_name();
     type[0] = std::toupper(type[0], std::locale());
 
     render_text.setString(name + " the " + type);

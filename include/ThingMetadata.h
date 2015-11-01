@@ -10,6 +10,7 @@
 #include "common_types.h"
 
 #include "ActionResult.h"
+#include "Direction.h"
 #include "ThingRef.h"
 
 class ThingMetadata
@@ -18,7 +19,7 @@ public:
   ThingMetadata(std::string type);
   virtual ~ThingMetadata();
 
-  std::string const& get_pretty_name() const;
+  std::string const& get_display_name() const;
   std::string const& get_pretty_plural() const;
   std::string const& get_description() const;
   std::string const& get_parent() const;
@@ -41,7 +42,7 @@ public:
 
   sf::Vector2u get_tile_coords() const;
 
-  /// Try to call a Lua function that takes one ThingId argument: the caller.
+  /// Try to call a Lua function given the caller and no other arguments.
   ///
   /// If the function does not exist, attempts to step up to the parent type
   /// and call the function there, up until there's no parent to call.
@@ -50,42 +51,40 @@ public:
   /// @param default_result The default result if function is not found 
   ///                       (defaults to ActionResult::Success).
   /// @return An ActionResult containing the result of the call.
-  ActionResult call_lua_function_1(std::string function_name,
+  ActionResult call_lua_function(std::string function_name,
                                    ThingRef caller,
                                    ActionResult default_result = ActionResult::Success);
 
-  /// Try to call a Lua function that takes two ThingId arguments: the caller,
-  /// and a target.
+  /// Try to call a Lua function given the caller and one argument.
   ///
   /// If the function does not exist, attempts to step up to the parent type
   /// and call the function there, up until there's no parent to call.
   /// @param function_name  Name of the function to call
   /// @param caller         ThingRef to the thing calling the function
-  /// @param target         ThingRef to the target of the function
+  /// @param arg            Argument to pass to the function
   /// @param default_result The default result if function is not found 
   ///                       (defaults to ActionResult::Success).
   /// @return An ActionResult containing the result of the call.
-  ActionResult call_lua_function_2(std::string function_name,
+  ActionResult call_lua_function(std::string function_name,
                                    ThingRef caller,
-                                   ThingRef target,
+                                   lua_Integer arg,
                                    ActionResult default_result = ActionResult::Success);
 
-  /// Try to call a Lua function that takes two ThingId arguments: the caller,
-  /// and two targets.
+  /// Try to call a Lua function given the caller and two arguments.
   ///
   /// If the function does not exist, attempts to step up to the parent type
   /// and call the function there, up until there's no parent to call.
   /// @param function_name  Name of the function to call
   /// @param caller         ThingRef to the thing calling the function
-  /// @param target1        ThingRef to target #1 of the function
-  /// @param target2        ThingRef to target #2 of the function
+  /// @param arg1           Argument #1 to pass to the function.
+  /// @param arg2           Argument #2 to pass to the function.
   /// @param default_result The default result if function is not found 
   ///                       (defaults to ActionResult::Success).
   /// @return An ActionResult containing the result of the call.
-  ActionResult call_lua_function_3(std::string function_name,
+  ActionResult call_lua_function(std::string function_name,
                                    ThingRef caller,
-                                   ThingRef target1,
-                                   ThingRef target2,
+                                   lua_Integer arg1,
+                                   lua_Integer arg2,
                                    ActionResult default_result = ActionResult::Success);
 
 private:

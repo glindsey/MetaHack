@@ -375,9 +375,16 @@ ActionResult Thing::can_drink(ThingRef thing, unsigned int& action_time)
   }
 
   // Check that it is something that contains a liquid.
-  if (!thing->is_liquid_carrier())
+  if (!thing->get_intrinsic_flag("liquid_carrier"))
   {
     return ActionResult::FailureNotLiquidCarrier;
+  }
+
+  // Check that it is not empty.
+  Inventory& inv = thing->get_inventory();
+  if (inv.count() == 0)
+  {
+    return ActionResult::FailureContainerIsEmpty;
   }
 
   return ActionResult::Success;
@@ -397,16 +404,29 @@ bool Thing::do_drink(ThingRef thing, unsigned int& action_time)
       message = _YOU_ + " drink " + thing->get_identifying_string();
       the_message_log.add(message);
 
-      if (thing->perform_action_drank_by(pImpl->ref))
+      ThingRef contents = thing->get_inventory().get(INVSLOT_ZERO);
+      ActionResult result = thing->perform_action_drank_by(pImpl->ref, contents);
+
+      switch (result)
       {
+      case ActionResult::Success:
         return true;
-      }
-      else
-      {
+
+      case ActionResult::SuccessDestroyed:
+        contents->destroy();
+        return true;
+
+      case ActionResult::Failure:
         message = _YOU_ + " stop drinking.";
         the_message_log.add(message);
+        break;
+
+      default:
+        MINOR_ERROR("Unknown ActionResult %d", result);
+        break;
       }
-    }
+
+    } // end if (thing->is_drinkable_by(pImpl->ref))
     break;
 
   case ActionResult::FailureSelfReference:
@@ -773,7 +793,7 @@ bool Thing::do_move(Direction new_direction, unsigned int& action_time)
     }
     else
     {
-      std::string tile_description = new_tile->get_pretty_name();
+      std::string tile_description = new_tile->get_display_name();
       message = _YOU_ARE_ + " stopped by " +
         getIndefArt(tile_description) + " " +
         tile_description + ".";
@@ -1761,6 +1781,11 @@ std::string const& Thing::get_type() const
   return pImpl->type;
 }
 
+std::string const& Thing::get_parent_type() const
+{
+  return pImpl->metadata.get_parent();
+}
+
 FlagsMap const& Thing::get_property_flags() const
 {
   return pImpl->property_flags;
@@ -2184,10 +2209,10 @@ MapId Thing::get_map_id() const
   }
 }
 
-std::string Thing::get_pretty_name() const
+std::string Thing::get_display_name() const
 {
   /// @todo Implement adding adjectives.
-  return pImpl->metadata.get_pretty_name();
+  return pImpl->metadata.get_display_name();
 }
 
 std::string Thing::get_pretty_plural() const
@@ -2232,7 +2257,7 @@ std::string Thing::get_identifying_string_without_possessives(bool definite) con
 
   if (quantity == 1)
   {
-    noun = get_pretty_name();
+    noun = get_display_name();
 
     if (definite)
     {
@@ -2300,7 +2325,7 @@ std::string Thing::get_identifying_string(bool definite) const
 
   if (quantity == 1)
   {
-    noun = get_pretty_name();
+    noun = get_display_name();
 
     if (owned)
     {
@@ -2531,12 +2556,26 @@ void Thing::light_up_surroundings()
     }
   }
 
-  _light_up_surroundings();
+  ThingRef location = get_location();
+
+  // Use visitor pattern.
+  if ((location != TM.get_mu()) && this->get_property_flag("light_lit"))
+  {
+    location->be_lit_by(this->get_ref());
+  }
 }
 
 void Thing::be_lit_by(ThingRef light)
 {
-  _be_lit_by(light);
+  pImpl->metadata.call_lua_function(
+    "on_lit_by",
+    pImpl->ref,
+    light.get_id().full_id);
+
+  if (get_location() == TM.get_mu())
+  {
+    MF.get(get_map_id()).add_light(light);
+  }
 
   if (!is_opaque())
   {
@@ -2752,67 +2791,111 @@ bool Thing::process()
 
 bool Thing::perform_action_activated_by(ThingRef actor)
 {
-  ActionResult result = pImpl->metadata.call_lua_function_2("perform_action_activated_by", get_ref(), actor);
+  ActionResult result = 
+    pImpl->metadata.call_lua_function(
+      "perform_action_activated_by", 
+      get_ref(), 
+      actor.get_id().full_id);
+
   return was_successful(result);
 }
 
 void Thing::perform_action_collided_with(ThingRef actor)
 {
-  ActionResult result = pImpl->metadata.call_lua_function_2("perform_action_collided_with", get_ref(), actor);
+  ActionResult result = 
+    pImpl->metadata.call_lua_function(
+      "perform_action_collided_with", 
+      get_ref(), 
+      actor.get_id().full_id);
+
   return;
 }
 
-bool Thing::perform_action_drank_by(ThingRef actor)
+ActionResult Thing::perform_action_drank_by(ThingRef actor, ThingRef contents)
 {
-  ActionResult result = pImpl->metadata.call_lua_function_2("perform_action_drank_by", get_ref(), actor);
-  return was_successful(result);
+  ActionResult result = 
+    pImpl->metadata.call_lua_function(
+      "perform_action_drank_by", 
+      get_ref(), 
+      actor.get_id().full_id,
+      contents.get_id().full_id);
+
+  return result;
 }
 
 bool Thing::perform_action_dropped_by(ThingRef actor)
 {
-  ActionResult result = pImpl->metadata.call_lua_function_2("perform_action_dropped_by", get_ref(), actor);
+  ActionResult result = 
+    pImpl->metadata.call_lua_function(
+      "perform_action_dropped_by", 
+      get_ref(), 
+      actor.get_id().full_id);
+
   return was_successful(result);
 }
 
 bool Thing::perform_action_eaten_by(ThingRef actor)
 {
-  ActionResult result = pImpl->metadata.call_lua_function_2("perform_action_eaten_by", get_ref(), actor);
+  ActionResult result = 
+    pImpl->metadata.call_lua_function("perform_action_eaten_by", 
+      get_ref(), 
+      actor.get_id().full_id);
+
   return was_successful(result);
 }
 
 bool Thing::perform_action_picked_up_by(ThingRef actor)
 {
-  ActionResult result = pImpl->metadata.call_lua_function_2("perform_action_picked_up_by", get_ref(), actor);
+  ActionResult result = 
+    pImpl->metadata.call_lua_function("perform_action_picked_up_by", 
+      get_ref(), 
+      actor.get_id().full_id);
+
   return was_successful(result);
 }
 
 bool Thing::perform_action_put_into_by(ThingRef container, ThingRef actor)
 {
-  ActionResult result = pImpl->metadata.call_lua_function_3("perform_action_put_into", get_ref(), container, actor);
+  ActionResult result = 
+    pImpl->metadata.call_lua_function(
+      "perform_action_put_into", 
+      get_ref(), 
+      container.get_id().full_id, 
+      actor.get_id().full_id);
+
   return was_successful(result);
 }
 
 bool Thing::perform_action_taken_out_by(ThingRef actor)
 {
-  ActionResult result = pImpl->metadata.call_lua_function_2("perform_action_taken_out_by", get_ref(), actor);
+  ActionResult result = 
+    pImpl->metadata.call_lua_function("perform_action_taken_out_by", get_ref(), actor.get_id().full_id);
   return was_successful(result);
 }
 
 ActionResult Thing::perform_action_read_by(ThingRef actor)
 {
-  ActionResult result = pImpl->metadata.call_lua_function_2("perform_action_read_by", get_ref(), actor);
+  ActionResult result = 
+    pImpl->metadata.call_lua_function("perform_action_read_by", get_ref(), actor.get_id().full_id);
   return result;
 }
 
 void Thing::perform_action_attack_hits(ThingRef target)
 {
-  ActionResult result = pImpl->metadata.call_lua_function_2("perform_action_read_by", get_ref(), target);
+  ActionResult result = 
+    pImpl->metadata.call_lua_function("perform_action_read_by", get_ref(), target.get_id().full_id);
   return;
 }
 
 bool Thing::perform_action_thrown_by(ThingRef actor, Direction direction)
 {
-  return _perform_action_thrown_by(actor, direction);
+  ActionResult result = 
+    pImpl->metadata.call_lua_function(
+      "perform_action_thrown_by", 
+      get_ref(), 
+      actor.get_id().full_id,
+      static_cast<lua_Integer>(direction));
+  return was_successful(result);
 }
 
 bool Thing::perform_action_deequipped_by(ThingRef actor, WearLocation& location)
@@ -2830,13 +2913,23 @@ bool Thing::perform_action_deequipped_by(ThingRef actor, WearLocation& location)
   }
   else
   {
-    return _perform_action_deequipped_by(actor, location);
+    ActionResult result = pImpl->metadata.call_lua_function(
+      "perform_action_deequipped_by",
+      get_ref(),
+      actor.get_id().full_id);
+
+    return was_successful(result);
   }
 }
 
 bool Thing::perform_action_equipped_by(ThingRef actor, WearLocation& location)
 {
-  bool subclass_result = _perform_action_equipped_by(actor, location);
+  ActionResult result = 
+    pImpl->metadata.call_lua_function("perform_action_equipped_by", 
+      get_ref(), 
+      actor.get_id().full_id);
+
+  bool subclass_result = was_successful(result);
 
   if (subclass_result == true)
   {
@@ -2869,13 +2962,23 @@ bool Thing::perform_action_unwielded_by(ThingRef actor)
   }
   else
   {
-    return _perform_action_unwielded_by(actor);
+    ActionResult result = pImpl->metadata.call_lua_function(
+      "perform_action_unwielded_by",
+      get_ref(),
+      actor.get_id().full_id);
+
+    return was_successful(result);
   }
 }
 
 bool Thing::perform_action_wielded_by(ThingRef actor)
 {
-  bool subclass_result = _perform_action_wielded_by(actor);
+  ActionResult result = pImpl->metadata.call_lua_function(
+    "perform_action_wielded_by", 
+    get_ref(), 
+    actor.get_id().full_id);
+
+  bool subclass_result = was_successful(result);
 
   if (subclass_result == true)
   {
@@ -2895,7 +2998,14 @@ bool Thing::perform_action_wielded_by(ThingRef actor)
 
 bool Thing::perform_action_fired_by(ThingRef actor, Direction direction)
 {
-  return _perform_action_fired_by(actor, direction);
+  ActionResult result = 
+    pImpl->metadata.call_lua_function(
+      "perform_action_fired_by", 
+      get_ref(), 
+      actor.get_id().full_id, 
+      static_cast<lua_Integer>(direction));
+
+  return was_successful(result);
 }
 
 bool Thing::can_merge_with(ThingRef other) const
@@ -2936,57 +3046,16 @@ ActionResult Thing::can_contain(ThingRef thing) const
   }
   else
   {
-    return _can_contain(thing);
+    return pImpl->metadata.call_lua_function(
+      "can_contain", 
+      get_ref(), 
+      thing.get_id().full_id);
   }
-}
-
-//char const* Thing::get_thing_type() const
-//{
-//  return typeid(*this).name();
-//}
-
-bool Thing::is_liquid_carrier() const
-{
-  return false;
-}
-
-bool Thing::is_flammable() const
-{
-  return false;
-}
-
-bool Thing::is_corrodible() const
-{
-  return false;
-}
-
-bool Thing::is_shatterable() const
-{
-  return false;
 }
 
 void Thing::set_location(ThingRef target)
 {
   pImpl->location = target;
-}
-
-void Thing::_light_up_surroundings()
-{
-  ThingRef location = get_location();
-
-  // Use visitor pattern.
-  if ((location != TM.get_mu()) && this->get_property_flag("light_lit"))
-  {
-    location->be_lit_by(this->get_ref());
-  }
-}
-
-void Thing::_be_lit_by(ThingRef light_id)
-{
-  if (get_location() == TM.get_mu())
-  {
-    MF.get(get_map_id()).add_light(light_id);
-  }
 }
 
 // *** PROTECTED METHODS ******************************************************
@@ -3003,9 +3072,9 @@ bool Thing::_process()
     return true;
   }
 
-  // Perform any subclass-specific processing.
+  // Perform any type-specific processing.
   // Useful if, for example, your Entity can rise from the dead.
-  _process_specific();
+  pImpl->metadata.call_lua_function("process", get_ref());
 
   // Is the entity dead?
   if (pImpl->attributes.get(Attribute::HP) > 0)
@@ -3456,40 +3525,95 @@ MapTile* Thing::_get_maptile() const
   return pImpl->map_tile;
 }
 
-ActionResult Thing::_can_contain(ThingRef thing) const
+int Thing::LUA_create(lua_State* L)
 {
-  return ActionResult::Success;
+  int num_args = lua_gettop(L);
+
+  if (num_args != 2)
+  {
+    MINOR_ERROR("expected 2 arguments, got %d", num_args);
+    return 0;
+  }
+
+  ThingRef thing = ThingRef(lua_tonumber(L, 1));
+  std::string new_thing_type = lua_tostring(L, 2);
+  
+  ThingRef new_thing = TM.create(new_thing_type);
+  bool success = new_thing->move_into(thing);
+
+  if (success)
+  {
+    lua_pushinteger(L, new_thing.get_id().full_id);
+  }
+  else
+  {
+    lua_pushnil(L);
+  }
+
+  return 1;
 }
 
-bool Thing::_perform_action_thrown_by(ThingRef thing, Direction direction)
+int Thing::LUA_get_player(lua_State* L)
 {
-  return true;
+  int num_args = lua_gettop(L);
+
+  if (num_args != 0)
+  {
+    MINOR_ERROR("expected 0 arguments, got %d", num_args);
+    return 0;
+  }
+
+  ThingRef player = TM.get_player();
+  lua_pushinteger(L, player.get_id().full_id);
+
+  return 1;
 }
 
-bool Thing::_perform_action_deequipped_by(ThingRef thing,
-                                          WearLocation& location)
+int Thing::LUA_get_coords(lua_State* L)
 {
-  return true;
+  int num_args = lua_gettop(L);
+
+  if (num_args != 1)
+  {
+    MINOR_ERROR("expected 1 argument, got %d", num_args);
+    return 0;
+  }
+
+  ThingRef thing = ThingRef(lua_tonumber(L, 1));
+
+  MapId map_id = TM.get_player()->get_map_id();
+  auto maptile = thing->get_maptile();
+
+  if (maptile != nullptr)
+  {
+    auto coords = maptile->get_coords();
+    lua_pushinteger(L, coords.x);
+    lua_pushinteger(L, coords.y);
+  }
+  else
+  {
+    lua_pushnil(L);
+    lua_pushnil(L);
+  }
+
+  return 2;
 }
 
-bool Thing::_perform_action_equipped_by(ThingRef thing, WearLocation& location)
+int Thing::LUA_get_parent_type(lua_State* L)
 {
-  return false;
-}
+  int num_args = lua_gettop(L);
 
-bool Thing::_perform_action_unwielded_by(ThingRef thing)
-{
-  return true;
-}
+  if (num_args != 1)
+  {
+    MINOR_ERROR("expected 1 arguments, got %d", num_args);
+    return 0;
+  }
 
-bool Thing::_perform_action_wielded_by(ThingRef thing)
-{
-  return true;
-}
+  ThingRef thing = ThingRef(lua_tonumber(L, 1));
+  std::string result = thing->get_parent_type();
+  lua_pushstring(L, result.c_str());
 
-bool Thing::_perform_action_fired_by(ThingRef thing, Direction direction)
-{
-  return false;
+  return 1;
 }
 
 int Thing::LUA_get_intrinsic_flag(lua_State* L)
@@ -3498,7 +3622,7 @@ int Thing::LUA_get_intrinsic_flag(lua_State* L)
 
   if (num_args != 2)
   {
-    MINOR_ERROR("LUA_get_intrinsic_flag expects 2 arguments, got %d", num_args);
+    MINOR_ERROR("expected 2 arguments, got %d", num_args);
     return 0;
   }
 
@@ -3516,7 +3640,7 @@ int Thing::LUA_get_intrinsic_value(lua_State* L)
 
   if (num_args != 2)
   {
-    MINOR_ERROR("LUA_get_intrinsic_value expects 2 arguments, got %d", num_args);
+    MINOR_ERROR("expected 2 arguments, got %d", num_args);
     return 0;
   }
 
@@ -3534,7 +3658,7 @@ int Thing::LUA_get_intrinsic_string(lua_State* L)
 
   if (num_args != 2)
   {
-    MINOR_ERROR("LUA_get_intrinsic_string expects 2 arguments, got %d", num_args);
+    MINOR_ERROR("expected 2 arguments, got %d", num_args);
     return 0;
   }
 
@@ -3552,7 +3676,7 @@ int Thing::LUA_get_property_flag(lua_State* L)
 
   if (num_args != 2)
   {
-    MINOR_ERROR("LUA_get_property_flag expects 2 arguments, got %d", num_args);
+    MINOR_ERROR("expected 2 arguments, got %d", num_args);
     return 0;
   }
 
@@ -3570,7 +3694,7 @@ int Thing::LUA_get_property_value(lua_State* L)
 
   if (num_args != 2)
   {
-    MINOR_ERROR("LUA_get_property_value expects 2 arguments, got %d", num_args);
+    MINOR_ERROR("expected 2 arguments, got %d", num_args);
     return 0;
   }
 
@@ -3588,7 +3712,7 @@ int Thing::LUA_get_property_string(lua_State* L)
 
   if (num_args != 2)
   {
-    MINOR_ERROR("LUA_get_property_string expects 2 arguments, got %d", num_args);
+    MINOR_ERROR("expected 2 arguments, got %d", num_args);
     return 0;
   }
 
@@ -3606,7 +3730,7 @@ int Thing::LUA_set_property_flag(lua_State* L)
 
   if (num_args != 3)
   {
-    MINOR_ERROR("LUA_set_property_flag expects 3 arguments, got %d", num_args);
+    MINOR_ERROR("expected 3 arguments, got %d", num_args);
     return 0;
   }
 
@@ -3624,7 +3748,7 @@ int Thing::LUA_set_property_value(lua_State* L)
 
   if (num_args != 3)
   {
-    MINOR_ERROR("LUA_set_property_value expects 3 arguments, got %d", num_args);
+    MINOR_ERROR("expected 3 arguments, got %d", num_args);
     return 0;
   }
 
@@ -3642,7 +3766,7 @@ int Thing::LUA_set_property_string(lua_State* L)
 
   if (num_args != 3)
   {
-    MINOR_ERROR("LUA_set_property_string expects 3 arguments, got %d", num_args);
+    MINOR_ERROR("expected 3 arguments, got %d", num_args);
     return 0;
   }
 
