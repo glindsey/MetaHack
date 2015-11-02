@@ -20,6 +20,7 @@
 std::unique_ptr<sf::Font> default_font_;
 std::unique_ptr<sf::Font> default_bold_font_;
 std::unique_ptr<sf::Font> default_mono_font_;
+std::unique_ptr<sf::Font> default_unicode_font_;
 std::unique_ptr<sf::Shader> shader_;
 std::unique_ptr<App> app_;
 std::unique_ptr<boost::random::mt19937> rng_;
