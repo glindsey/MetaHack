@@ -504,9 +504,9 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             ThingRef thing = pImpl->inventory_area->get_selected_things().at(0);
             if (thing->get_intrinsic_value("inventory_size") != 0)
             {
-              if (thing->get_property_flag("open"))
+              if (!thing->get_intrinsic_value("openable") || thing->get_property_flag("open"))
               {
-                if (!thing->get_property_flag("locked"))
+                if (thing->get_intrinsic_value("lockable") && !thing->get_property_flag("locked"))
                 {
                   pImpl->inventory_area->set_viewed(thing);
                 }
@@ -794,7 +794,7 @@ bool AppStateGameMode::initialize()
 
   // TESTING CODE: Create a sack immediately east of the player.
   TRACE("Creating sack...");
-  ThingRef sack = TM.create("SackLarge");
+  ThingRef sack = TM.create("SackCloth");
   sack->move_into(game_map.get_tile(start_coords.x + 1, start_coords.y)->get_floor());
 
   // TESTING CODE: Create five gold coins west of the player.

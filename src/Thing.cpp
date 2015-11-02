@@ -2440,11 +2440,6 @@ sf::Vector2u Thing::get_tile_sheet_coords(int frame) const
   /// @todo Deal with selecting one of the other tiles.
   sf::Vector2u coords = pImpl->metadata.get_tile_coords();
   return coords;
-
-  int x = this->get_property_value("tile_sheet_x", 0);
-  int y = this->get_property_value("tile_sheet_y", 0);
-
-  return coords;
 }
 
 void Thing::add_vertices_to(sf::VertexArray& vertices,

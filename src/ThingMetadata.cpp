@@ -274,6 +274,7 @@ ThingMetadata::ThingMetadata(std::string type)
   }
   else
   {
+    TRACE("No tiles found for Thing %s", type.c_str());
     pImpl->has_tiles = false;
   }
 

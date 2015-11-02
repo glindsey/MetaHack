@@ -1,11 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <thing>
-  <name>large sack</name>
+  <name>cloth sack</name>
   <parent>Container</parent>  
-  <description>A large sack.</description>
+  <description>A sack made out of cloth.</description>
   <intrinsics>
     <flags>
-      <open>true</open>
       <openable>false</openable>
     </flags>
 	  <values>
@@ -13,6 +12,9 @@
 	  </values>
   </intrinsics>
   <properties>
+	<flags>
+	  <open>true</open>
+	</flags>
     <values>
       <tile_sheet_x>2</tile_sheet_x>
       <tile_sheet_y>8</tile_sheet_y>
