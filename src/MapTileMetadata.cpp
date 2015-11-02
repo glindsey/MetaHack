@@ -27,15 +27,6 @@ namespace pt = boost::property_tree;
 
 struct MapTileMetadata::Impl
 {
-  /// Thing's own name.
-  std::string name;
-
-  /// Thing pretty name.
-  std::string display_name;
-
-  /// Thing description
-  std::string description;
-
   /// Map of flags.
   FlagsMap flags;
 
@@ -44,66 +35,21 @@ struct MapTileMetadata::Impl
 
   /// Map of strings.
   StringsMap strings;
-
-  /// Boolean indicating whether this MapTile has graphics associated with it.
-  bool has_tiles;
-
-  /// Location of this MapTile's graphics on the tilesheet.
-  sf::Vector2u tile_location;
 };
 
 
 MapTileMetadata::MapTileMetadata(std::string type)
-  : pImpl(NEW Impl())
+  : Metadata("maptile", type), pImpl(NEW Impl())
 {
-  TRACE("Loading metadata for map tile \"%s\"...", type.c_str());
+  TRACE("Loading MapTile-specific metadata for map tile \"%s\"...", type.c_str());
 
-  pImpl->name = type;
-
-  // Look for the XML/PNG files for this maptile.
-  std::string xmlfile_string = "resources/maptiles/" + type + ".xml";
-  fs::path xmlfile_path = fs::path(xmlfile_string);
-  std::string pngfile_string = "resources/maptiles/" + type + ".png";
-  fs::path pngfile_path = fs::path(pngfile_string);
-
-  if (!fs::exists(xmlfile_path))
-  {
-    throw ExceptionMissingFile("XML", "MapTile", type);
-  }
-
-  //TRACE("Found file \"%s\"", thing_string.c_str());
-
-  /// Load file.
-  pt::ptree data;
-  pt::xml_parser::read_xml(xmlfile_string, data);
-
-  //TRACE("Loaded property tree for \"%s\"", type.c_str());
-
-  // Get thing's pretty name.
-  try
-  {
-    pImpl->display_name = data.get_child("maptile.name").get_value<std::string>("[" + type + "]");
-  }
-  catch (pt::ptree_bad_path&)
-  {
-    pImpl->display_name = "[" + type + "]";
-  }
-
-  // Get thing's description, if present. Otherwise set it equal to the name.
-  try
-  {
-    pImpl->description = data.get_child("maptile.description").get_value<std::string>(pImpl->display_name);
-  }
-  catch (pt::ptree_bad_path&)
-  {
-    pImpl->description = pImpl->display_name;
-  }
+  pt::ptree const& data = get_ptree();
 
   // Look for properties section. It must be present for any MapTile.
-  pt::ptree properties_tree = data.get_child("maptile.properties");
+  pt::ptree properties_tree = data.get_child("properties");
   try
   {
-    properties_tree = data.get_child("maptile.properties");
+    properties_tree = data.get_child("properties");
   }
   catch (pt::ptree_bad_path& p)
   {
@@ -159,18 +105,10 @@ MapTileMetadata::MapTileMetadata(std::string type)
   catch (pt::ptree_bad_path&)
   {
   }
+}
 
-  if (fs::exists(pngfile_path))
-  {
-    pImpl->has_tiles = true;
-    pImpl->tile_location = TS.load_collection(pngfile_string);
-    TRACE("Tiles for MapTile %s were placed on the TileSheet at (%u, %u)",
-      type.c_str(), pImpl->tile_location.x, pImpl->tile_location.y);
-  }
-  else
-  {
-    pImpl->has_tiles = false;
-  }
+MapTileMetadata::~MapTileMetadata()
+{
 }
 
 MapTileMetadata* MapTileMetadata::get(std::string type)
@@ -186,21 +124,6 @@ MapTileMetadata* MapTileMetadata::get(std::string type)
   }
 
   return &(collection.at(type));
-}
-
-
-MapTileMetadata::~MapTileMetadata()
-{
-}
-
-std::string const& MapTileMetadata::get_display_name() const
-{
-  return pImpl->display_name;
-}
-
-std::string const& MapTileMetadata::get_description() const
-{
-  return pImpl->description;
 }
 
 bool MapTileMetadata::get_flag(std::string key, bool default_value) const
@@ -245,7 +168,3 @@ std::string MapTileMetadata::get_string(std::string key, std::string default_val
   }
 }
 
-sf::Vector2u MapTileMetadata::get_tile_coords() const
-{
-  return pImpl->tile_location;
-}

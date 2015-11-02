@@ -11,17 +11,15 @@
 
 #include "ActionResult.h"
 #include "Direction.h"
+#include "Metadata.h"
 #include "ThingRef.h"
 
-class ThingMetadata
+class ThingMetadata : public Metadata
 {
 public:
   ThingMetadata(std::string type);
   virtual ~ThingMetadata();
 
-  std::string const& get_display_name() const;
-  std::string const& get_pretty_plural() const;
-  std::string const& get_description() const;
   std::string const& get_parent() const;
 
   bool get_intrinsic_flag(std::string key, bool default_value = false) const;
@@ -39,8 +37,6 @@ public:
   FlagsMap const& get_default_flags() const;
   ValuesMap const& get_default_values() const;
   StringsMap const& get_default_strings() const;
-
-  sf::Vector2u get_tile_coords() const;
 
   /// Try to call a Lua function given the caller and no other arguments.
   ///

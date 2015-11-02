@@ -2208,9 +2208,9 @@ std::string Thing::get_display_name() const
   return pImpl->metadata.get_display_name();
 }
 
-std::string Thing::get_pretty_plural() const
+std::string Thing::get_display_plural() const
 {
-  return pImpl->metadata.get_pretty_plural();
+  return pImpl->metadata.get_display_plural();
 }
 
 std::string Thing::get_proper_name() const
@@ -2268,7 +2268,7 @@ std::string Thing::get_identifying_string_without_possessives(bool definite) con
   }
   else
   {
-    noun = get_pretty_plural();
+    noun = get_display_plural();
 
     if (definite)
     {
@@ -2343,7 +2343,7 @@ std::string Thing::get_identifying_string(bool definite) const
   }
   else
   {
-    noun = get_pretty_plural();
+    noun = get_display_plural();
 
     if (owned)
     {

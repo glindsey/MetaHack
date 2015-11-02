@@ -23,24 +23,10 @@
 namespace fs = boost::filesystem;
 namespace pt = boost::property_tree;
 
-// Using declarations
-
 struct ThingMetadata::Impl
 {
-  /// Thing's own name.
-  std::string name;
-
-  /// Thing pretty name.
-  std::string display_name;
-
-  /// Thing pretty plural.
-  std::string display_plural;
-
   /// Thing parent type, if any.
   std::string parent;
-
-  /// Thing description.
-  std::string description;
 
   /// Map of intrinsic flags.
   FlagsMap intrinsic_flags;
@@ -59,88 +45,20 @@ struct ThingMetadata::Impl
 
   /// Map of default property strings.
   StringsMap default_strings;
-
-  /// Boolean indicating whether this Thing has graphics associated with it.
-  bool has_tiles;
-
-  /// Location of this Thing's graphics on the tilesheet.
-  sf::Vector2u tile_location;
-
-  /// Recursive function that iterates through the tree and prints the values.
-  void trace_tree(pt::ptree const& tree, std::string prefix = "")
-  {
-    pt::ptree::const_iterator end = tree.end();
-    for (pt::ptree::const_iterator it = tree.begin(); it != end; ++it)
-    {
-      std::string name = prefix + (it->first);
-      boost::to_lower(name);
-      std::string value = it->second.get_value<std::string>();
-      boost::trim(value);
-      if (!value.empty())
-      { 
-        TRACE("%s = \"%s\"", name.c_str(), value.c_str());
-      }      
-      trace_tree(it->second, name + ".");
-    }
-  }
 };
 
 
 ThingMetadata::ThingMetadata(std::string type)
-  : pImpl(NEW Impl())
+  : Metadata("thing", type), pImpl(NEW Impl())
 {
-  TRACE("Loading metadata for type \"%s\"...", type.c_str());
+  TRACE("Loading Thing-specific metadata for map tile \"%s\"...", type.c_str());
 
-  pImpl->name = type;
-
-  // Look for the XML/PNG files for this thing.
-  std::string xmlfile_string = "resources/things/" + type + ".xml";
-  fs::path xmlfile_path = fs::path(xmlfile_string);
-  std::string pngfile_string = "resources/things/" + type + ".png";
-  fs::path pngfile_path = fs::path(pngfile_string);
-  std::string luafile_string = "resources/things/" + type + ".lua";
-  fs::path luafile_path = fs::path(luafile_string);
-
-  if (!fs::exists(xmlfile_path))
-  {
-    throw ExceptionMissingFile("XML", "Thing", type);
-  }
-
-  //TRACE("Found file \"%s\"", xmlfile_string.c_str());
-    
-  /// @todo Load file.
-  pt::ptree data;
-  pt::xml_parser::read_xml(xmlfile_string, data);
-
-  //TRACE("Loaded property tree for \"%s\"", type.c_str());
-
-  // DEBUG: Dump the tree using trace.
-  pImpl->trace_tree(data);
-
-  // Get thing's pretty name.
-  try
-  { 
-    pImpl->display_name = data.get_child("thing.name").get_value<std::string>("[" + type + "]");
-  }
-  catch (pt::ptree_bad_path&)
-  {
-    pImpl->display_name = "[" + type + "]";
-  }
-
-  // Get thing's pretty plural, if present. Otherwise add "s" to the normal pretty name.
-  try
-  {
-    pImpl->display_plural = data.get_child("thing.plural").get_value<std::string>(pImpl->display_name + "s");
-  }
-  catch (pt::ptree_bad_path&)
-  {
-    pImpl->display_plural = pImpl->display_name + "s";
-  }
+  pt::ptree const& data = get_ptree();
 
   // Get thing's parent.
   try
   {
-    pImpl->parent = data.get_child("thing.parent").get_value<std::string>("");
+    pImpl->parent = data.get_child("parent").get_value<std::string>("");
   }
   catch (pt::ptree_bad_path&)
   {
@@ -152,23 +70,13 @@ ThingMetadata::ThingMetadata(std::string type)
     pImpl->parent = "";
   }
 
-  // Get thing's description.
-  try
-  {
-    pImpl->description = data.get_child("thing.description").get_value<std::string>("(No description found.)");
-  }
-  catch (pt::ptree_bad_path&)
-  {
-    pImpl->description = "(No description found.)";
-  }
-
   // Look for intrinsics, properties sections. Both must be present for any Thing.
-  pt::ptree intrinsics_tree = data.get_child("thing.intrinsics");
-  pt::ptree properties_tree = data.get_child("thing.properties");
+  pt::ptree intrinsics_tree = data.get_child("intrinsics");
+  pt::ptree properties_tree = data.get_child("properties");
   try
   {
-    intrinsics_tree = data.get_child("thing.intrinsics");
-    properties_tree = data.get_child("thing.properties");
+    intrinsics_tree = data.get_child("intrinsics");
+    properties_tree = data.get_child("properties");
   }
   catch (pt::ptree_bad_path& p)
   {
@@ -286,47 +194,11 @@ ThingMetadata::ThingMetadata(std::string type)
 
   //TRACE("done");
 
-  if (fs::exists(pngfile_path))
-  {
-    pImpl->has_tiles = true;
-    pImpl->tile_location = TS.load_collection(pngfile_string);
-    TRACE("Tiles for Thing %s were placed on the TileSheet at (%u, %u)", 
-      type.c_str(), pImpl->tile_location.x, pImpl->tile_location.y);
-  }
-  else
-  {
-    TRACE("No tiles found for Thing %s", type.c_str());
-    pImpl->has_tiles = false;
-  }
-
-  /// Now try to load and run a Lua script for this Thing if one exists.
-  if (fs::exists(luafile_path))
-  {
-    TRACE("Loading Lua script for type \"%s\"...", type.c_str());
-
-    the_lua_instance.do_file(luafile_string);
-  }
-
 }
 
 
 ThingMetadata::~ThingMetadata()
 {
-}
-
-std::string const& ThingMetadata::get_display_name() const
-{
-  return pImpl->display_name;
-}
-
-std::string const& ThingMetadata::get_pretty_plural() const
-{
-  return pImpl->display_plural;
-}
-
-std::string const& ThingMetadata::get_description() const
-{
-  return pImpl->description;
 }
 
 std::string const& ThingMetadata::get_parent() const
@@ -490,18 +362,13 @@ StringsMap const& ThingMetadata::get_default_strings() const
   return pImpl->default_strings;
 }
 
-sf::Vector2u ThingMetadata::get_tile_coords() const
-{
-  return pImpl->tile_location;
-}
-
 ActionResult ThingMetadata::call_lua_function(std::string function_name,
                                               ThingRef caller,
                                               ActionResult default_result)
 {
   ActionResult return_value = default_result;
 
-  std::string name = pImpl->name;
+  std::string name = this->get_name();
   lua_getglobal(the_lua_state, name.c_str());        // <1 Push name of class
 
   if (!lua_isnoneornil(the_lua_state, -1))
@@ -556,7 +423,7 @@ ActionResult ThingMetadata::call_lua_function(std::string function_name,
 {
   ActionResult return_value = default_result;
 
-  std::string name = pImpl->name;
+  std::string name = this->get_name();
   lua_getglobal(the_lua_state, name.c_str());        // <1 Push name of class
 
   if (!lua_isnoneornil(the_lua_state, -1))
@@ -613,7 +480,7 @@ ActionResult ThingMetadata::call_lua_function(std::string function_name,
 {
   ActionResult return_value = default_result;
 
-  std::string name = pImpl->name;
+  std::string name = this->get_name();
   lua_getglobal(the_lua_state, name.c_str());        // <1 Push name of class
 
   if (!lua_isnoneornil(the_lua_state, -1))

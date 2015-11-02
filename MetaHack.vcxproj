@@ -163,6 +163,7 @@
     <ClInclude Include="include\MapTileMetadata.h" />
     <ClInclude Include="include\MathUtils.h" />
     <ClInclude Include="include\MessageLog.h" />
+    <ClInclude Include="include\Metadata.h" />
     <ClInclude Include="include\Ordinal.h" />
     <ClInclude Include="include\Renderable.h" />
     <ClInclude Include="include\ShaderEffect.h" />
@@ -205,6 +206,7 @@
     <ClCompile Include="src\MapTile.cpp" />
     <ClCompile Include="src\MapTileMetadata.cpp" />
     <ClCompile Include="src\MessageLog.cpp" />
+    <ClCompile Include="src\Metadata.cpp" />
     <ClCompile Include="src\State.cpp" />
     <ClCompile Include="src\StateMachine.cpp" />
     <ClCompile Include="src\StatusArea.cpp" />

@@ -6,21 +6,18 @@
 #include <boost/ptr_container/ptr_unordered_map.hpp>
 #include <SFML/Graphics.hpp>
 
-class MapTileMetadata
+#include "Metadata.h"
+
+class MapTileMetadata : public Metadata
 {
 public:
   virtual ~MapTileMetadata();
 
   static MapTileMetadata* get(std::string type);
 
-  std::string const& get_display_name() const;
-  std::string const& get_description() const;
-
   bool get_flag(std::string key, bool default_value = false) const;
   int get_value(std::string key, int default_value = 0) const;
   std::string get_string(std::string key, std::string default_value = "") const;
-
-  sf::Vector2u get_tile_coords() const;
 
 private:
   /// Constructor is private.

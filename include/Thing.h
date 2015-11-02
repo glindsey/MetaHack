@@ -343,7 +343,7 @@ class Thing :
     std::string get_display_name() const;
 
     /// Return this object's plural.
-    std::string get_pretty_plural() const;
+    std::string get_display_plural() const;
 
     /// Get the thing's proper name (if any).
     std::string get_proper_name() const;
