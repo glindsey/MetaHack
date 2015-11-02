@@ -1,6 +1,7 @@
 #include <boost/log/trivial.hpp>
 #include <cstdlib>
 
+#include "App.h"
 #include "ErrorHandler.h"
 
 struct ErrorHandler::Impl
@@ -13,7 +14,7 @@ struct ErrorHandler::Impl
 std::unique_ptr<ErrorHandler> ErrorHandler::Impl::handler_instance;
 
 ErrorHandler::ErrorHandler()
-  : pImpl(new Impl())
+  : pImpl(NEW Impl())
 {
   //ctor
 }
@@ -27,7 +28,7 @@ ErrorHandler& ErrorHandler::instance()
 {
   if (Impl::handler_instance.get() == nullptr)
   {
-    Impl::handler_instance.reset(new ErrorHandler());
+    Impl::handler_instance.reset(NEW ErrorHandler());
   }
 
   return *(Impl::handler_instance.get());

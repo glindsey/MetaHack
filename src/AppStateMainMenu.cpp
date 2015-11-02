@@ -9,7 +9,7 @@ struct AppStateMainMenu::Impl
 };
 
 AppStateMainMenu::AppStateMainMenu(StateMachine* state_machine)
-  : State(state_machine), pImpl(new Impl())
+  : State(state_machine), pImpl(NEW Impl())
 {
 }
 

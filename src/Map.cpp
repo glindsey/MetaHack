@@ -1,9 +1,9 @@
 #include "Map.h"
 #include <boost/log/trivial.hpp>
+#include <boost/ptr_container/ptr_vector.hpp>
 #include <boost/random/uniform_int_distribution.hpp>
 #include <climits>
 #include <memory>
-#include <vector>
 
 #include "App.h"
 #include "Inventory.h"
@@ -24,38 +24,45 @@ typedef boost::random::uniform_int_distribution<> uniform_int_dist;
 
 struct Map::Impl
 {
-    /// Map ID.
-    MapId map_id;
+  Impl() {}
+  ~Impl()
+  {
+    tiles.clear();
+    features.clear();
+  }
 
-    /// Map size.
-    sf::Vector2i map_size;
+  /// Map ID.
+  MapId map_id;
 
-    /// "Seen" map vertex array.
-    sf::VertexArray map_seen_vertices;
+  /// Map size.
+  sf::Vector2i map_size;
 
-    /// Outlines map vertex array.
-    sf::VertexArray map_outline_vertices;
+  /// "Seen" map vertex array.
+  sf::VertexArray map_seen_vertices;
 
-    /// "Memory" map vertex array.
-    sf::VertexArray map_memory_vertices;
+  /// Outlines map vertex array.
+  sf::VertexArray map_outline_vertices;
 
-    /// Thing vertex array.
-    sf::VertexArray thing_vertices;
+  /// "Memory" map vertex array.
+  sf::VertexArray map_memory_vertices;
 
-    /// Vector of tiles.
-    std::vector< std::unique_ptr<MapTile> > tiles;
+  /// Thing vertex array.
+  sf::VertexArray thing_vertices;
 
-    /// Player starting location.
-    sf::Vector2i start_coords;
+  /// Pointer vector of tiles.
+  boost::ptr_vector< MapTile > tiles;
 
-    /// Pointer deque of map features.
-    boost::ptr_deque<MapFeature> features;
+  /// Player starting location.
+  sf::Vector2i start_coords;
+
+  /// Pointer deque of map features.
+  boost::ptr_deque<MapFeature> features;
 };
 
 const sf::Color Map::ambient_light_level = sf::Color(48, 48, 48, 255);
 
 Map::Map(MapId mapId, int width, int height)
-  : pImpl(new Impl())
+  : pImpl(NEW Impl())
 {
   TRACE("Creating map of size %d x %d...", width, height);
 
@@ -64,7 +71,7 @@ Map::Map(MapId mapId, int width, int height)
   pImpl->map_size.x = width;
   pImpl->map_size.y = height;
 
-  pImpl->tiles.resize(width * height);
+  //pImpl->tiles.resize(width * height);
 
   pImpl->map_seen_vertices.resize(pImpl->map_size.x * pImpl->map_size.y * 20);
   pImpl->map_memory_vertices.resize(pImpl->map_size.x * pImpl->map_size.y * 20);
@@ -73,9 +80,10 @@ Map::Map(MapId mapId, int width, int height)
   {
     for (int x = 0; x < width; ++x)
     {
-      pImpl->tiles[get_index(x, y)].reset(new MapTile({x, y}, mapId));
-      TILE(x, y)->set_coords(x, y);
-      TILE(x, y)->set_ambient_light_level(ambient_light_level);
+      MapTile* new_tile = NEW MapTile({ x, y }, mapId);
+      pImpl->tiles.push_back(new_tile);
+      new_tile->set_coords(x, y);
+      new_tile->set_ambient_light_level(ambient_light_level);
     }
   }
 
@@ -93,6 +101,15 @@ Map::Map(MapId mapId, int width, int height)
     MapGenerator generator(*this);
     generator.generate();
   }
+
+  // Run Lua script associated with this map.
+  /// @todo Different scripts for different maps.
+  ///       And for that matter, ALL of map generation
+  ///       should be done via scripting. But for now
+  ///       this will do.
+  TRACE("Executing Map Lua script.");
+  the_lua_instance.set_global("current_map_id", mapId);
+  the_lua_instance.do_file("resources/scripts/map.lua");
 
   TRACE("Map created.");
 }
@@ -222,7 +239,7 @@ void Map::process()
   {
     for (int x = 0; x < pImpl->map_size.x; ++x)
     {
-      ThingRef floor = TILE(x, y)->get_floor();
+      ThingRef floor = TILE(x, y).get_floor();
       floor->process();
     }
   }
@@ -235,8 +252,7 @@ void Map::update_lighting()
   {
     for (int x = 0; x < pImpl->map_size.x; ++x)
     {
-      auto& tile = TILE(x, y);
-      tile->clear_light_influences();
+      TILE(x, y).clear_light_influences();
     }
   }
 
@@ -244,8 +260,7 @@ void Map::update_lighting()
   {
     for (int x = 0; x < pImpl->map_size.x; ++x)
     {
-      auto& tile = TILE(x, y);
-      ThingRef floor = tile->get_floor();
+      ThingRef floor = TILE(x, y).get_floor();
       auto& inventory = floor->get_inventory();
       auto& things = inventory.get_things();
       for (auto iter = std::begin(things);
@@ -289,9 +304,9 @@ void Map::do_recursive_lighting(ThingRef source,
       {
         if (calc_vis_distance(x, y, eX, eY) <= max_depth_squared)
         {
-          if (get_tile(x, y)->is_opaque())
+          if (get_tile(x, y).is_opaque())
           {
-            if (!get_tile(x - 1, y)->is_opaque())
+            if (!get_tile(x - 1, y).is_opaque())
             {
               do_recursive_lighting(source, origin, light_color,
                                   max_depth_squared,
@@ -301,7 +316,7 @@ void Map::do_recursive_lighting(ThingRef source,
           }
           else
           {
-            if (get_tile(x - 1, y)->is_opaque())
+            if (get_tile(x - 1, y).is_opaque())
             {
               slope_A = calc_slope(x - 0.5, y - 0.5, eX, eY);
             }
@@ -311,7 +326,7 @@ void Map::do_recursive_lighting(ThingRef source,
           influence.coords = origin;
           influence.color = light_color;
           influence.intensity = max_depth_squared;
-          get_tile(x, y)->add_light_influence(source, influence);
+          get_tile(x, y).add_light_influence(source, influence);
 
         }
         ++x;
@@ -325,9 +340,9 @@ void Map::do_recursive_lighting(ThingRef source,
       {
         if (calc_vis_distance(x, y, eX, eY) <= max_depth_squared)
         {
-          if (get_tile(x, y)->is_opaque())
+          if (get_tile(x, y).is_opaque())
           {
-            if (!get_tile(x + 1, y)->is_opaque())
+            if (!get_tile(x + 1, y).is_opaque())
             {
               do_recursive_lighting(source, origin, light_color,
                                   max_depth_squared,
@@ -337,7 +352,7 @@ void Map::do_recursive_lighting(ThingRef source,
           }
           else
           {
-            if (get_tile(x + 1, y)->is_opaque())
+            if (get_tile(x + 1, y).is_opaque())
             {
               slope_A = -calc_slope(x + 0.5, y - 0.5, eX, eY);
             }
@@ -347,7 +362,7 @@ void Map::do_recursive_lighting(ThingRef source,
           influence.coords = origin;
           influence.color = light_color;
           influence.intensity = max_depth_squared;
-          get_tile(x, y)->add_light_influence(source, influence);
+          get_tile(x, y).add_light_influence(source, influence);
 
         }
         --x;
@@ -361,9 +376,9 @@ void Map::do_recursive_lighting(ThingRef source,
       {
         if (calc_vis_distance(x, y, eX, eY) <= max_depth_squared)
         {
-          if (get_tile(x, y)->is_opaque())
+          if (get_tile(x, y).is_opaque())
           {
-            if (!get_tile(x, y - 1)->is_opaque())
+            if (!get_tile(x, y - 1).is_opaque())
             {
               do_recursive_lighting(source, origin, light_color,
                                   max_depth_squared,
@@ -373,7 +388,7 @@ void Map::do_recursive_lighting(ThingRef source,
           }
           else
           {
-            if (get_tile(x, y - 1)->is_opaque())
+            if (get_tile(x, y - 1).is_opaque())
             {
               slope_A = -calc_inv_slope(x + 0.5, y - 0.5, eX, eY);
             }
@@ -383,7 +398,7 @@ void Map::do_recursive_lighting(ThingRef source,
           influence.coords = origin;
           influence.color = light_color;
           influence.intensity = max_depth_squared;
-          get_tile(x, y)->add_light_influence(source, influence);
+          get_tile(x, y).add_light_influence(source, influence);
 
         }
         ++y;
@@ -397,9 +412,9 @@ void Map::do_recursive_lighting(ThingRef source,
       {
         if (calc_vis_distance(x, y, eX, eY) <= max_depth_squared)
         {
-          if (get_tile(x, y)->is_opaque())
+          if (get_tile(x, y).is_opaque())
           {
-            if (!get_tile(x, y + 1)->is_opaque())
+            if (!get_tile(x, y + 1).is_opaque())
             {
               do_recursive_lighting(source, origin, light_color,
                                   max_depth_squared,
@@ -409,7 +424,7 @@ void Map::do_recursive_lighting(ThingRef source,
           }
           else
           {
-            if (get_tile(x, y + 1)->is_opaque())
+            if (get_tile(x, y + 1).is_opaque())
             {
               slope_A = calc_inv_slope(x + 0.5, y + 0.5, eX, eY);
             }
@@ -419,7 +434,7 @@ void Map::do_recursive_lighting(ThingRef source,
           influence.coords = origin;
           influence.color = light_color;
           influence.intensity = max_depth_squared;
-          get_tile(x, y)->add_light_influence(source, influence);
+          get_tile(x, y).add_light_influence(source, influence);
 
         }
         --y;
@@ -433,9 +448,9 @@ void Map::do_recursive_lighting(ThingRef source,
       {
         if (calc_vis_distance(x, y, eX, eY) <= max_depth_squared)
         {
-          if (get_tile(x, y)->is_opaque())
+          if (get_tile(x, y).is_opaque())
           {
-            if (!get_tile(x + 1, y)->is_opaque())
+            if (!get_tile(x + 1, y).is_opaque())
             {
               do_recursive_lighting(source, origin, light_color,
                                   max_depth_squared,
@@ -445,7 +460,7 @@ void Map::do_recursive_lighting(ThingRef source,
           }
           else
           {
-            if (get_tile(x + 1, y)->is_opaque())
+            if (get_tile(x + 1, y).is_opaque())
             {
               slope_A = calc_slope(x + 0.5, y + 0.5, eX, eY);
             }
@@ -455,7 +470,7 @@ void Map::do_recursive_lighting(ThingRef source,
           influence.coords = origin;
           influence.color = light_color;
           influence.intensity = max_depth_squared;
-          get_tile(x, y)->add_light_influence(source, influence);
+          get_tile(x, y).add_light_influence(source, influence);
 
         }
         --x;
@@ -469,9 +484,9 @@ void Map::do_recursive_lighting(ThingRef source,
       {
         if (calc_vis_distance(x, y, eX, eY) <= max_depth_squared)
         {
-          if (get_tile(x, y)->is_opaque())
+          if (get_tile(x, y).is_opaque())
           {
-            if (!get_tile(x - 1, y)->is_opaque())
+            if (!get_tile(x - 1, y).is_opaque())
             {
               do_recursive_lighting(source, origin, light_color,
                                   max_depth_squared,
@@ -481,7 +496,7 @@ void Map::do_recursive_lighting(ThingRef source,
           }
           else
           {
-            if (get_tile(x - 1, y)->is_opaque())
+            if (get_tile(x - 1, y).is_opaque())
             {
               slope_A = -calc_slope(x - 0.5, y + 0.5, eX, eY);
             }
@@ -491,7 +506,7 @@ void Map::do_recursive_lighting(ThingRef source,
           influence.coords = origin;
           influence.color = light_color;
           influence.intensity = max_depth_squared;
-          get_tile(x, y)->add_light_influence(source, influence);
+          get_tile(x, y).add_light_influence(source, influence);
 
         }
         ++x;
@@ -505,9 +520,9 @@ void Map::do_recursive_lighting(ThingRef source,
       {
         if (calc_vis_distance(x, y, eX, eY) <= max_depth_squared)
         {
-          if (get_tile(x, y)->is_opaque())
+          if (get_tile(x, y).is_opaque())
           {
-            if (!get_tile(x, y + 1)->is_opaque())
+            if (!get_tile(x, y + 1).is_opaque())
             {
               do_recursive_lighting(source, origin, light_color,
                                   max_depth_squared,
@@ -517,7 +532,7 @@ void Map::do_recursive_lighting(ThingRef source,
           }
           else
           {
-            if (get_tile(x, y + 1)->is_opaque())
+            if (get_tile(x, y + 1).is_opaque())
             {
               slope_A = -calc_inv_slope(x - 0.5, y + 0.5, eX, eY);
             }
@@ -527,7 +542,7 @@ void Map::do_recursive_lighting(ThingRef source,
           influence.coords = origin;
           influence.color = light_color;
           influence.intensity = max_depth_squared;
-          get_tile(x, y)->add_light_influence(source, influence);
+          get_tile(x, y).add_light_influence(source, influence);
 
         }
         --y;
@@ -541,9 +556,9 @@ void Map::do_recursive_lighting(ThingRef source,
       {
         if (calc_vis_distance(x, y, eX, eY) <= max_depth_squared)
         {
-          if (get_tile(x, y)->is_opaque())
+          if (get_tile(x, y).is_opaque())
           {
-            if (!get_tile(x, y - 1)->is_opaque())
+            if (!get_tile(x, y - 1).is_opaque())
             {
               do_recursive_lighting(source, origin, light_color,
                                   max_depth_squared,
@@ -553,7 +568,7 @@ void Map::do_recursive_lighting(ThingRef source,
           }
           else
           {
-            if (get_tile(x, y - 1)->is_opaque())
+            if (get_tile(x, y - 1).is_opaque())
             {
               slope_A = calc_inv_slope(x - 0.5, y - 0.5, eX, eY);
             }
@@ -563,7 +578,7 @@ void Map::do_recursive_lighting(ThingRef source,
           influence.coords = origin;
           influence.color = light_color;
           influence.intensity = max_depth_squared;
-          get_tile(x, y)->add_light_influence(source, influence);
+          get_tile(x, y).add_light_influence(source, influence);
 
         }
         ++y;
@@ -575,7 +590,7 @@ void Map::do_recursive_lighting(ThingRef source,
       break;
   }
 
-  if ((depth*depth < max_depth_squared) && (!get_tile(x, y)->is_opaque()))
+  if ((depth*depth < max_depth_squared) && (!get_tile(x, y).is_opaque()))
   {
     do_recursive_lighting(source, origin, light_color,
                         max_depth_squared,
@@ -619,7 +634,7 @@ void Map::add_light(ThingRef source)
   influence.coords = coords;
   influence.color = light_color;
   influence.intensity = max_depth_squared;
-  get_tile(coords.x, coords.y)->add_light_influence(source, influence);
+  get_tile(coords.x, coords.y).add_light_influence(source, influence);
 
   // Octant is an integer representing the following:
   // \ 1|2 /  |
@@ -723,11 +738,9 @@ void Map::update_tile_vertices(ThingRef thing)
   {
     for (int x = 0; x < pImpl->map_size.x; ++x)
     {
-      auto& tile = TILE(x, y);
-
       if (thing->can_see(x, y))
       {
-        tile->add_vertices_to(pImpl->map_seen_vertices, true);
+        TILE(x, y).add_vertices_to(pImpl->map_seen_vertices, true);
       }
       else
       {
@@ -743,42 +756,42 @@ void Map::update_tile_vertices(ThingRef thing)
     {
       auto& tile = TILE(x, y);
 
-      bool this_is_empty = tile->is_empty_space();
+      bool this_is_empty = tile.is_empty_space();
       if (!this_is_empty)
       {
         bool nw_is_empty = ((x > 0) && (y > 0))
                             ? (thing->can_see(x-1, y-1) &&
-                               TILE(x-1, y-1)->is_empty_space()) : false;
+                               TILE(x-1, y-1).is_empty_space()) : false;
         bool n_is_empty  = (y > 0)
                             ? (thing->can_see(x, y-1) &&
-                               TILE(x, y-1)->is_empty_space()) : false;
+                               TILE(x, y-1).is_empty_space()) : false;
         bool ne_is_empty = ((x < pImpl->map_size.x - 1) && (y > 0))
                             ? (thing->can_see(x+1, y-1) &&
-                               TILE(x+1, y-1)->is_empty_space()) : false;
+                               TILE(x+1, y-1).is_empty_space()) : false;
         bool e_is_empty  = (x < pImpl->map_size.x - 1)
                             ? (thing->can_see(x+1, y) &&
-                               TILE(x+1, y)->is_empty_space()) : false;
+                               TILE(x+1, y).is_empty_space()) : false;
         bool se_is_empty = ((x < pImpl->map_size.x - 1) &&
                             (y < pImpl->map_size.y - 1))
                             ? (thing->can_see(x+1, y+1) &&
-                               TILE(x+1, y+1)->is_empty_space()) : false;
+                               TILE(x+1, y+1).is_empty_space()) : false;
         bool s_is_empty  = (y < pImpl->map_size.y - 1)
                             ? (thing->can_see(x, y+1) &&
-                               TILE(x, y+1)->is_empty_space()) : false;
+                               TILE(x, y+1).is_empty_space()) : false;
         bool sw_is_empty = ((x > 0) && (y < pImpl->map_size.y - 1))
                             ? (thing->can_see(x-1, y+1) &&
-                               TILE(x-1, y+1)->is_empty_space()) : false;
+                               TILE(x-1, y+1).is_empty_space()) : false;
         bool w_is_empty  = (x > 0)
                             ? (thing->can_see(x-1, y) &&
-                               TILE(x-1, y)->is_empty_space()) : false;
+                               TILE(x-1, y).is_empty_space()) : false;
 
         if (thing->can_see(x, y))
         {
-          tile->add_walls_to(pImpl->map_seen_vertices, true,
-                             nw_is_empty, n_is_empty,
-                             ne_is_empty, e_is_empty,
-                             se_is_empty, s_is_empty,
-                             sw_is_empty, w_is_empty);
+          tile.add_walls_to(pImpl->map_seen_vertices, true,
+                            nw_is_empty, n_is_empty,
+                            ne_is_empty, e_is_empty,
+                            se_is_empty, s_is_empty,
+                            sw_is_empty, w_is_empty);
         }
         else
         {
@@ -797,7 +810,7 @@ void Map::update_thing_vertices(ThingRef thing, int frame)
   {
     for (int x = 0; x < pImpl->map_size.x; ++x)
     {
-      ThingRef floor = TILE(x, y)->get_floor();
+      ThingRef floor = TILE(x, y).get_floor();
       Inventory& inv = floor->get_inventory();
 
       if (thing->can_see(x, y))
@@ -853,7 +866,7 @@ void Map::draw_to(sf::RenderTarget& target)
   target.draw(pImpl->thing_vertices, render_states);
 }
 
-std::unique_ptr<MapTile>& Map::get_tile(int x, int y) const
+MapTile& Map::get_tile(int x, int y) const
 {
   if (x < 0) x = 0;
   if (x >= pImpl->map_size.x) x = pImpl->map_size.x - 1;
@@ -863,7 +876,7 @@ std::unique_ptr<MapTile>& Map::get_tile(int x, int y) const
   return TILE(x, y);
 }
 
-std::unique_ptr<MapTile>& Map::get_tile(sf::Vector2i tile) const
+MapTile& Map::get_tile(sf::Vector2i tile) const
 {
   return get_tile(tile.x, tile.y);
 }
@@ -901,13 +914,34 @@ int Map::LUA_get_floor(lua_State* L)
     return 0;
   }
 
-  sf::Vector2i coords = sf::Vector2i(lua_tonumber(L, 1), lua_tonumber(L, 2));
+  MapId map_id = static_cast<MapId>(lua_tonumber(L, 1));
+  sf::Vector2i coords = sf::Vector2i(lua_tonumber(L, 2), lua_tonumber(L, 3));
 
-  MapId map_id = TM.get_player()->get_map_id();
   auto& map_tile = MF.get(map_id).get_tile(coords);
-  ThingRef floor = map_tile->get_floor();
+  ThingRef floor = map_tile.get_floor();
 
   lua_pushinteger(L, floor.get_id().full_id);
 
   return 1;
+}
+
+int Map::LUA_get_start_coords(lua_State* L)
+{
+  int num_args = lua_gettop(L);
+
+  if (num_args != 1)
+  {
+    MINOR_ERROR("expected 1 arguments, got %d", num_args);
+    return 0;
+  }
+
+  MapId map_id = static_cast<MapId>(lua_tonumber(L, 1));
+
+  auto& map = MF.get(map_id);
+  auto coords = map.get_start_coords();
+
+  lua_pushinteger(L, coords.x);
+  lua_pushinteger(L, coords.y);
+
+  return 2;
 }

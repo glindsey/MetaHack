@@ -1,5 +1,7 @@
 #include "KeyBuffer.h"
 
+#include "App.h"
+
 #include <string>
 
 struct KeyBuffer::Impl
@@ -77,7 +79,7 @@ struct KeyBuffer::Impl
 };
 
 KeyBuffer::KeyBuffer() :
-  pImpl(new Impl())
+  pImpl(NEW Impl())
 {
   this->clear_buffer();
   pImpl->replacing = false;

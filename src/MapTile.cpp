@@ -18,33 +18,39 @@ bool MapTile::initialized = false;
 
 struct MapTile::Impl
 {
-    MapId map_id;
-    sf::Vector2i coords;
+  Impl() {}
+  ~Impl()
+  {
+    lights.clear();
+  }
 
-    /// Reference to the Thing that represents this tile's floor.
-    ThingRef floor;
+  MapId map_id;
+  sf::Vector2i coords;
 
-    /// Tile's light level.
-    /// Levels for the various color channels are interpreted as such:
-    /// 0 <= value <= 128: result = (original * (value / 128))
-    /// 128 < value <= 255: result = max(original + (value - 128), 255)
-    /// The alpha channel is ignored.
-    sf::Color ambient_light_color;
+  /// Reference to the Thing that represents this tile's floor.
+  ThingRef floor;
 
-    /// A map of LightInfluences, representing the amount of light that
-    /// each thing is contributing to this map tile.
-    /// Levels for the various color channels are interpreted as such:
-    /// 0 <= value <= 128: result = (original * (value / 128))
-    /// 128 < value <= 255: result = max(original + (value - 128), 255)
-    /// The alpha channel is ignored.
-    std::unordered_map<ThingRef, LightInfluence> lights;
+  /// Tile's light level.
+  /// Levels for the various color channels are interpreted as such:
+  /// 0 <= value <= 128: result = (original * (value / 128))
+  /// 128 < value <= 255: result = max(original + (value - 128), 255)
+  /// The alpha channel is ignored.
+  sf::Color ambient_light_color;
 
-    std::string type;
-    MapTileMetadata* pMetadata;
+  /// A map of LightInfluences, representing the amount of light that
+  /// each thing is contributing to this map tile.
+  /// Levels for the various color channels are interpreted as such:
+  /// 0 <= value <= 128: result = (original * (value / 128))
+  /// 128 < value <= 255: result = max(original + (value - 128), 255)
+  /// The alpha channel is ignored.
+  std::unordered_map<ThingRef, LightInfluence> lights;
+
+  std::string type;
+  MapTileMetadata* pMetadata;
 };
 
 MapTile::MapTile(sf::Vector2i coords, MapId mapId)
-  : pImpl(new Impl())
+  : pImpl(NEW Impl())
 {
   if (!initialized)
   {
@@ -63,6 +69,7 @@ MapTile::MapTile(sf::Vector2i coords, MapId mapId)
 
 MapTile::~MapTile()
 {
+  pImpl.reset();
 }
 
 ThingRef MapTile::get_floor() const

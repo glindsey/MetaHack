@@ -4,6 +4,7 @@
 #include <boost/ptr_container/ptr_map.hpp>
 #include <string>
 
+#include "App.h"
 #include "ErrorHandler.h"
 #include "State.h"
 
@@ -15,7 +16,7 @@ struct StateMachine::Impl
 };
 
 StateMachine::StateMachine(std::string const& machine_name)
-  : pImpl(new Impl())
+  : pImpl(NEW Impl())
 {
   pImpl->current_state = nullptr;
   pImpl->machine_name = machine_name;

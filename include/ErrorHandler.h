@@ -22,6 +22,14 @@
                                       __FUNCTION_NAME__);                 \
 }
 
+#define LUA_TRACE(...)                                                    \
+{                                                                         \
+  char buf[1024];                                                         \
+  snprintf(buf, 1024, __VA_ARGS__);                                       \
+  ErrorHandler::instance().printTrace(buf, __FILE__, __LINE__,            \
+                                      __FUNCTION_NAME__);                 \
+}
+
 #define MINOR_ERROR(...)                                                  \
 {                                                                         \
   char buf[1024];                                                         \

@@ -31,6 +31,10 @@ public:
   /// Execute a particular file.
   void do_file(std::string filename);
 
+  /// Sets a global to a particular integer value.
+  /// If the global currently exists it will be overwritten.
+  void set_global(std::string name, lua_Integer value);
+
   /// Adds an enumerated type into Lua.
   ///
   /// L - Lua state.
@@ -101,6 +105,8 @@ public:
 
   /// Return the Lua state.
   lua_State* state();
+
+  static int LUA_trace(lua_State* L);
 
 private:
   /// Constructor (private because this is a singleton).

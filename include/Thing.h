@@ -62,20 +62,6 @@ class Thing :
     std::string const& get_type() const;
     std::string const& get_parent_type() const;
 
-    /// Set the AI strategy associated with this Thing.
-    /// The Thing assumes responsibility for maintenance of the new object.
-    /// Any old strategy in use will be discarded.
-    /// @note While it is possible to use the same AIStrategy instance with
-    ///       more than one Thing, doing this with probably not result in the
-    ///       desired behavior, as the AIStrategy may maintain state information
-    ///       which would be shared across multiple Things.  However, this
-    ///       MIGHT be desirable if dealing with an Thing type with a hive
-    ///       mind (thus sharing all of its knowledge across the species).
-    /// @param[in] strategy_ptr Pointer to a newly created AIStrategy object.
-    /// @return True if strategy was set; false if not (e.g. if the pointer
-    ///         passed in was not valid).
-    bool set_ai_strategy(AIStrategy* strategy_ptr);
-
     /// Return whether a Thing is wielded by this Entity.
     /// This is used by InventoryArea to show wielded status.
     /// @param[in] thing Thing to check

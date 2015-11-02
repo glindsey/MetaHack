@@ -22,7 +22,7 @@ struct GUIPane::Impl
 };
 
 GUIPane::GUIPane(sf::IntRect dimensions) :
-  pImpl(new Impl())
+  pImpl(NEW Impl())
 {
   set_dimensions(dimensions);
 }
@@ -50,7 +50,7 @@ sf::IntRect GUIPane::get_dimensions()
 void GUIPane::set_dimensions(sf::IntRect rect)
 {
   pImpl->dims = rect;
-  pImpl->bg_texture.reset(new sf::RenderTexture());
+  pImpl->bg_texture.reset(NEW sf::RenderTexture());
   pImpl->bg_texture->create(rect.width, rect.height);
 }
 

@@ -21,7 +21,7 @@ struct MapFeature::Impl
 };
 
 MapFeature::MapFeature(Map& m)
-  : pImpl (new Impl(m))
+  : pImpl (NEW Impl(m))
 {
   //ctor
 }

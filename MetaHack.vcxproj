@@ -125,8 +125,6 @@
   <ItemGroup>
     <ClInclude Include="include\Action.h" />
     <ClInclude Include="include\ActionResult.h" />
-    <ClInclude Include="include\ai\AISessile.h" />
-    <ClInclude Include="include\ai\AIStrategy.h" />
     <ClInclude Include="include\App.h" />
     <ClInclude Include="include\AppStateGameMode.h" />
     <ClInclude Include="include\AppStateMainMenu.h" />
@@ -181,8 +179,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="src\ai\AISessile.cpp" />
-    <ClCompile Include="src\ai\AIStrategy.cpp" />
     <ClCompile Include="src\App.cpp" />
     <ClCompile Include="src\AppStateGameMode.cpp" />
     <ClCompile Include="src\AppStateMainMenu.cpp" />
@@ -241,6 +237,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\default.lua" />
+    <None Include="resources\scripts\map.lua" />
     <None Include="resources\things\Biped.lua" />
     <None Include="resources\things\Human.lua" />
     <None Include="resources\things\Rock.lua" />

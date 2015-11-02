@@ -1,5 +1,7 @@
 #include "AppStateSplashScreen.h"
 
+#include "App.h"
+
 struct AppStateSplashScreen::Impl
 {
   sf::Texture splash_graphic;
@@ -8,7 +10,7 @@ struct AppStateSplashScreen::Impl
 };
 
 AppStateSplashScreen::AppStateSplashScreen(StateMachine* state_machine)
-  : State(state_machine), pImpl(new Impl())
+  : State(state_machine), pImpl(NEW Impl())
 {
   //ctor
 }

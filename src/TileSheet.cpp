@@ -5,6 +5,7 @@
 #include <map>
 
 #include "ConfigSettings.h"
+#include "ErrorHandler.h"
 #include "MathUtils.h"
 
 // Static declarations.
@@ -82,10 +83,15 @@ struct TileSheet::Impl
 };
 
 TileSheet::TileSheet()
-  : pImpl(new Impl())
+  : pImpl(NEW Impl())
 {
   pImpl->texture_size = pImpl->texture.getMaximumSize();
-  pImpl->texture.create(pImpl->texture_size, pImpl->texture_size);
+  bool success = pImpl->texture.create(pImpl->texture_size, pImpl->texture_size);
+
+  if (!success)
+  {
+    FATAL_ERROR("Could not create TileSheet texture. Now we're sad.");
+  }
 
   uint32_t used_map_size = (pImpl->texture_size / Settings.map_tile_size) *
                            (pImpl->texture_size / Settings.map_tile_size);
@@ -101,7 +107,7 @@ TileSheet& TileSheet::instance()
 {
   if (!instance_)
   {
-    instance_.reset(new TileSheet());
+    instance_.reset(NEW TileSheet());
   }
 
   return *(instance_.get());

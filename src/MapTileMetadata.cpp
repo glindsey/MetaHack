@@ -11,6 +11,7 @@
 
 #include "common_types.h"
 
+#include "App.h"
 #include "ErrorHandler.h"
 #include "Exceptions.h"
 #include "TileSheet.h"
@@ -18,7 +19,7 @@
 #define BOOST_FILESYSTEM_NO_DEPRECATED
 
 // Static declarations
-std::unordered_map< std::string, std::unique_ptr<MapTileMetadata> > MapTileMetadata::collection;
+boost::ptr_unordered_map<std::string, MapTileMetadata> MapTileMetadata::collection;
 
 // Namespace aliases
 namespace fs = boost::filesystem;
@@ -53,7 +54,7 @@ struct MapTileMetadata::Impl
 
 
 MapTileMetadata::MapTileMetadata(std::string type)
-  : pImpl(new Impl())
+  : pImpl(NEW Impl())
 {
   TRACE("Loading metadata for map tile \"%s\"...", type.c_str());
 
@@ -181,10 +182,10 @@ MapTileMetadata* MapTileMetadata::get(std::string type)
 
   if (collection.count(type) == 0)
   {
-    collection.emplace(std::make_pair(type, std::unique_ptr<MapTileMetadata>(new MapTileMetadata(type))));
+    collection.insert(type, NEW MapTileMetadata(type));
   }
 
-  return collection.at(type).get();
+  return &(collection.at(type));
 }
 
 

@@ -1,5 +1,6 @@
 #include "State.h"
 
+#include "App.h"
 #include "ErrorHandler.h"
 #include "StateMachine.h"
 
@@ -12,7 +13,7 @@ struct State::Impl
 };
 
 State::State(StateMachine* state_machine)
-  : pImpl(new Impl())
+  : pImpl(NEW Impl())
 {
   pImpl->state_machine = state_machine;
 }

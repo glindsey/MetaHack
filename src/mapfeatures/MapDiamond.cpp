@@ -21,7 +21,7 @@ struct MapDiamond::Impl
 };
 
 MapDiamond::MapDiamond(Map& m)
-  : MapFeature(m), pImpl(new Impl())
+  : MapFeature(m), pImpl(NEW Impl())
 {
   //ctor
 }
@@ -89,7 +89,7 @@ bool MapDiamond::create(GeoVector vec)
                   yCheck <= yCenter + (diamondHalfSize + 1); ++yCheck)
          {
            auto& tile = get_map().get_tile(xCheck, yCheck);
-           if (tile->is_empty_space())
+           if (tile.is_empty_space())
            {
              okay = false;
              break;
@@ -112,7 +112,7 @@ bool MapDiamond::create(GeoVector vec)
             int xCoord = xCenter + xCounter;
             int yCoord = yCenter + yCounter;
             auto& tile = get_map().get_tile(xCoord, yCoord);
-            tile->set_type("FloorStone");
+            tile.set_type("FloorStone");
           }
         }
 
@@ -135,7 +135,7 @@ bool MapDiamond::create(GeoVector vec)
         ///       Right now we just make it an open area.
         auto& startTile = get_map().get_tile(startingCoords.x,
                                              startingCoords.y);
-        startTile->set_type("FloorStone");
+        startTile.set_type("FloorStone");
 
         return true;
       }

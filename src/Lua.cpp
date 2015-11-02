@@ -1,6 +1,8 @@
 #include "Lua.h"
 
+#include "App.h"
 #include "ActionResult.h"
+#include "ErrorHandler.h"
 #include "Gender.h"
 
 #include <sstream>
@@ -19,11 +21,11 @@ Lua::Lua()
   ActionResult_add_to_lua(this);
   Gender_add_to_lua(this);
 
+  // Register the trace function.
+  register_function("print_trace", Lua::LUA_trace);
+
   // Run the initial Lua script.
-  if (luaL_dofile(L_, "resources/default.lua"))
-  {
-    fprintf(stderr, "%s\n", lua_tostring(L_, -1));
-  }
+  do_file("resources/default.lua");
 }
 
 Lua::~Lua()
@@ -36,7 +38,7 @@ Lua& Lua::instance()
 {
   if (Lua::instance_ == nullptr)
   {
-    Lua::instance_.reset(new Lua());
+    Lua::instance_.reset(NEW Lua());
   }
 
   return *(Lua::instance_.get());
@@ -49,10 +51,17 @@ void Lua::register_function(std::string name, lua_CFunction func)
 
 void Lua::do_file(std::string filename)
 {
-  if (luaL_dofile(L_, filename.c_str()))
+  const char * file = filename.c_str();
+  if (luaL_dofile(L_, file))
   {
     fprintf(stderr, "%s\n", lua_tostring(L_, -1));
   }
+}
+
+void Lua::set_global(std::string name, lua_Integer value)
+{
+  lua_pushinteger(L_, value);
+  lua_setglobal(L_, name.c_str());
 }
 
 bool Lua::add_enum(const char* tname, ...)
@@ -134,3 +143,19 @@ lua_State* Lua::state()
   return L_;
 }
 
+int Lua::LUA_trace(lua_State* L)
+{
+  int num_args = lua_gettop(L);
+
+  if (num_args != 1)
+  {
+    MINOR_ERROR("Expected 1 argument, got %d", num_args);
+  }
+  else
+  {
+    std::string str = lua_tostring(L, 1);
+    TRACE(str.c_str());
+  }
+
+  return 0;
+}

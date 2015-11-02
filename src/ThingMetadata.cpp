@@ -9,6 +9,7 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "App.h"
 #include "Direction.h"
 #include "ErrorHandler.h"
 #include "Exceptions.h"
@@ -68,7 +69,7 @@ struct ThingMetadata::Impl
 
 
 ThingMetadata::ThingMetadata(std::string type)
-  : pImpl(new Impl())
+  : pImpl(NEW Impl())
 {
   TRACE("Loading metadata for type \"%s\"...", type.c_str());
 

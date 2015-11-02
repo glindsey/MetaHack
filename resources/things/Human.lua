@@ -9,6 +9,6 @@ end
 
 function Human.process(id)
 	local x, y = thing_get_coords(id);
-	messageLog.add("Human " .. id .. " is at (" .. x .. ", " .. y .. ")")
+	messageLog_add("Human " .. id .. " is at (" .. x .. ", " .. y .. ")")
 	return ActionResult.Success
 end

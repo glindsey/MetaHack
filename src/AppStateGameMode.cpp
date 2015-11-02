@@ -24,9 +24,9 @@ struct AppStateGameMode::Impl
     current_input_state = GameInputState::Map;
     action_in_progress.type = Action::Type::None;
 
-    inventory_area.reset(new InventoryArea(calc_inventory_dims()));
+    inventory_area.reset(NEW InventoryArea(calc_inventory_dims()));
 
-    status_area.reset(new StatusArea(calc_status_area_dims()));
+    status_area.reset(NEW StatusArea(calc_status_area_dims()));
   }
 
   /// Map the player is currently on.
@@ -72,7 +72,7 @@ struct AppStateGameMode::Impl
     {
       if (current_input_state == GameInputState::CursorLook)
       {
-        ThingRef floor_id = game_map.get_tile(cursor_coords)->get_floor();
+        ThingRef floor_id = game_map.get_tile(cursor_coords).get_floor();
         inventory_area->set_viewed(floor_id);
       }
       else
@@ -121,7 +121,7 @@ struct AppStateGameMode::Impl
 };
 
 AppStateGameMode::AppStateGameMode(StateMachine* state_machine)
-  : State(state_machine), pImpl(new Impl())
+  : State(state_machine), pImpl(NEW Impl())
 {
 }
 
@@ -212,11 +212,11 @@ bool AppStateGameMode::render(sf::RenderTarget& target, int frame)
         game_map.draw_to(target);
 
         auto& cursor_tile = game_map.get_tile(pImpl->cursor_coords);
-        cursor_tile->draw_highlight(target,
-                                    cursor_pixel_coords,
-                                    Settings.cursor_border_color,
-                                    Settings.cursor_bg_color,
-                                    frame);
+        cursor_tile.draw_highlight(target,
+                                   cursor_pixel_coords,
+                                   Settings.cursor_border_color,
+                                   Settings.cursor_bg_color,
+                                   frame);
       }
       else
       {
@@ -752,16 +752,18 @@ std::string const& AppStateGameMode::get_name()
 
 bool AppStateGameMode::initialize()
 {
+  // Create the player.
+  ThingRef player = TM.create("Human");
+  player->set_proper_name("John Doe");
+  TM.set_player(player);
+
+  // Create the game map.
   pImpl->current_map_id = MF.create(64, 64);
   Map& game_map = MF.get(pImpl->current_map_id);
 
   // Move player to start position on the map.
-  ThingRef player = TM.create("Human");
-  player->set_proper_name("John Doe");
-  TM.set_player(player);
   sf::Vector2i const& start_coords = game_map.get_start_coords();
-
-  auto start = game_map.get_tile(start_coords)->get_floor();
+  auto start = game_map.get_tile(start_coords).get_floor();
   bool player_moved = player->move_into(start);
 
   if (player_moved == false)
@@ -785,34 +787,34 @@ bool AppStateGameMode::initialize()
   // TESTING CODE: Create a sconce immediately north of the player.
   TRACE("Creating sconce...");
   ThingRef sconce = TM.create("Sconce");
-  sconce->move_into(game_map.get_tile(start_coords.x, start_coords.y - 1)->get_floor());
+  sconce->move_into(game_map.get_tile(start_coords.x, start_coords.y - 1).get_floor());
 
   // TESTING CODE: Create a rock immediately south of the player.
   TRACE("Creating rock...");
   ThingRef rock = TM.create("Rock");
-  rock->move_into(game_map.get_tile(start_coords.x, start_coords.y + 1)->get_floor());
+  rock->move_into(game_map.get_tile(start_coords.x, start_coords.y + 1).get_floor());
 
   // TESTING CODE: Create a sack immediately east of the player.
   TRACE("Creating sack...");
   ThingRef sack = TM.create("SackCloth");
-  sack->move_into(game_map.get_tile(start_coords.x + 1, start_coords.y)->get_floor());
+  sack->move_into(game_map.get_tile(start_coords.x + 1, start_coords.y).get_floor());
 
   // TESTING CODE: Create five gold coins west of the player.
   TRACE("Creating 5 coins...");
   ThingRef coins = TM.create("CoinGold");
   coins->set_quantity(5);
-  coins->move_into(game_map.get_tile(start_coords.x - 1, start_coords.y)->get_floor());
+  coins->move_into(game_map.get_tile(start_coords.x - 1, start_coords.y).get_floor());
 
   // TESTING CODE: Create ten gold coins northwest of the player.
   TRACE("Creating 10 coins...");
   ThingRef coins2 = TM.create("CoinGold");
   coins2->set_quantity(10);
-  coins2->move_into(game_map.get_tile(start_coords.x - 1, start_coords.y - 1)->get_floor());
+  coins2->move_into(game_map.get_tile(start_coords.x - 1, start_coords.y - 1).get_floor());
 
   // TESTING CODE: Create a rock lichen northeast of the player.
   TRACE("Creating rock lichen...");
   ThingRef lichen = TM.create("RockLichen");
-  lichen->move_into(game_map.get_tile(start_coords.x + 1, start_coords.y - 1)->get_floor());
+  lichen->move_into(game_map.get_tile(start_coords.x + 1, start_coords.y - 1).get_floor());
 
   // END TESTING CODE
 

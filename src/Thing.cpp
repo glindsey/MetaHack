@@ -10,7 +10,6 @@
 #include <unordered_map>
 #include <vector>
 
-#include "ai/AIStrategy.h"
 #include "App.h"
 #include "ConfigSettings.h"
 #include "Direction.h"
@@ -52,6 +51,16 @@ struct Thing::Impl
     : type(type_), ref(ref_), metadata(TM.get_metadata(type_)) 
   {}
 
+  ~Impl()
+  {
+    property_flags.clear();
+    property_values.clear();
+    property_strings.clear();
+    map_memory.clear();
+    tile_seen.clear();
+    actions.clear();
+  }
+
   /// This Thing's type.
   std::string type;
 
@@ -92,9 +101,6 @@ struct Thing::Impl
   boost::dynamic_bitset<> tile_seen;
 
   /// @todo Blind counter.
-
-  /// AI strategy associated with this Entity (if any).
-  std::shared_ptr<AIStrategy> ai_strategy;
 
   /// Queue of actions to be performed.
   std::deque<Action> actions;
@@ -233,7 +239,7 @@ void Thing::initialize_font_sizes()
 }
 
 Thing::Thing(std::string type, ThingRef ref)
-  : pImpl(new Impl(type, ref))
+  : pImpl(NEW Impl(type, ref))
 {
   pImpl->map_tile = nullptr;
   pImpl->location = TM.get_mu();
@@ -246,7 +252,7 @@ Thing::Thing(std::string type, ThingRef ref)
 }
 
 Thing::Thing(MapTile* map_tile, ThingRef ref)
-  : pImpl(new Impl("floor", ref))
+  : pImpl(NEW Impl("floor", ref))
 {
   pImpl->map_tile = map_tile;
   pImpl->location = TM.get_mu();
@@ -259,7 +265,7 @@ Thing::Thing(MapTile* map_tile, ThingRef ref)
 }
 
 Thing::Thing(const Thing& original)
-  : pImpl(new Impl(original.get_type(), original.get_ref()))
+  : pImpl(NEW Impl(original.get_type(), original.get_ref()))
 {
   pImpl->location = original.get_location();
   pImpl->quantity = original.get_quantity();
@@ -280,19 +286,6 @@ void Thing::queue_action(Action action)
 bool Thing::pending_action() const
 {
   return !(pImpl->actions.empty());
-}
-
-bool Thing::set_ai_strategy(AIStrategy* strategy_ptr)
-{
-  if (strategy_ptr != nullptr)
-  {
-    pImpl->ai_strategy.reset(strategy_ptr);
-    return true;
-  }
-  else
-  {
-    return false;
-  }
 }
 
 bool Thing::is_wielding(ThingRef thing)
@@ -785,15 +778,15 @@ bool Thing::do_move(Direction new_direction, unsigned int& action_time)
     }
 
     auto& new_tile = current_map.get_tile(x_new, y_new);
-    ThingRef new_floor = new_tile->get_floor();
+    ThingRef new_floor = new_tile.get_floor();
 
-    if (new_tile->can_be_traversed_by(pImpl->ref))
+    if (new_tile.can_be_traversed_by(pImpl->ref))
     {
       return move_into(new_floor);
     }
     else
     {
-      std::string tile_description = new_tile->get_display_name();
+      std::string tile_description = new_tile.get_display_name();
       message = _YOU_ARE_ + " stopped by " +
         getIndefArt(tile_description) + " " +
         tile_description + ".";
@@ -2087,7 +2080,7 @@ bool Thing::can_move(Direction direction)
     if (is_in_bounds)
     {
       auto& new_tile = game_map.get_tile(check_coords);
-      return new_tile->can_be_traversed_by(pImpl->ref);
+      return new_tile.can_be_traversed_by(pImpl->ref);
     }
   }
   return false;
@@ -3074,14 +3067,6 @@ bool Thing::_process()
   // Is the entity dead?
   if (pImpl->attributes.get(Attribute::HP) > 0)
   {
-    // If the entity is not the player, perform the AI strategy associated with
-    // it.
-    if (!is_player())
-    {
-      if (pImpl->ai_strategy.get() != nullptr)
-        pImpl->ai_strategy->execute();
-    }
-
     // If actions are pending...
     if (!pImpl->actions.empty())
     {
@@ -3277,9 +3262,9 @@ void Thing::do_recursive_visibility(int octant,
     {
       if (calc_vis_distance(x, y, eX, eY) <= mw)
       {
-        if (game_map.get_tile(x, y)->is_opaque())
+        if (game_map.get_tile(x, y).is_opaque())
         {
-          if (!game_map.get_tile(x - 1, y)->is_opaque())
+          if (!game_map.get_tile(x - 1, y).is_opaque())
           {
             do_recursive_visibility(1, depth + 1, slope_A,
               calc_slope(x - 0.5, y + 0.5, eX, eY));
@@ -3287,13 +3272,13 @@ void Thing::do_recursive_visibility(int octant,
         }
         else
         {
-          if (game_map.get_tile(x - 1, y)->is_opaque())
+          if (game_map.get_tile(x - 1, y).is_opaque())
           {
             slope_A = calc_slope(x - 0.5, y - 0.5, eX, eY);
           }
         }
         pImpl->tile_seen[game_map.get_index(x, y)] = true;
-        pImpl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y)->get_type();
+        pImpl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
       }
       ++x;
     }
@@ -3306,9 +3291,9 @@ void Thing::do_recursive_visibility(int octant,
     {
       if (calc_vis_distance(x, y, eX, eY) <= mw)
       {
-        if (game_map.get_tile(x, y)->is_opaque())
+        if (game_map.get_tile(x, y).is_opaque())
         {
-          if (!game_map.get_tile(x + 1, y)->is_opaque())
+          if (!game_map.get_tile(x + 1, y).is_opaque())
           {
             do_recursive_visibility(2, depth + 1, slope_A,
               calc_slope(x + 0.5, y + 0.5, eX, eY));
@@ -3316,13 +3301,13 @@ void Thing::do_recursive_visibility(int octant,
         }
         else
         {
-          if (game_map.get_tile(x + 1, y)->is_opaque())
+          if (game_map.get_tile(x + 1, y).is_opaque())
           {
             slope_A = -calc_slope(x + 0.5, y - 0.5, eX, eY);
           }
         }
         pImpl->tile_seen[game_map.get_index(x, y)] = true;
-        pImpl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y)->get_type();
+        pImpl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
       }
       --x;
     }
@@ -3335,9 +3320,9 @@ void Thing::do_recursive_visibility(int octant,
     {
       if (calc_vis_distance(x, y, eX, eY) <= mw)
       {
-        if (game_map.get_tile(x, y)->is_opaque())
+        if (game_map.get_tile(x, y).is_opaque())
         {
-          if (!game_map.get_tile(x, y - 1)->is_opaque())
+          if (!game_map.get_tile(x, y - 1).is_opaque())
           {
             do_recursive_visibility(3, depth + 1, slope_A,
               calc_inv_slope(x - 0.5, y - 0.5, eX, eY));
@@ -3345,13 +3330,13 @@ void Thing::do_recursive_visibility(int octant,
         }
         else
         {
-          if (game_map.get_tile(x, y - 1)->is_opaque())
+          if (game_map.get_tile(x, y - 1).is_opaque())
           {
             slope_A = -calc_inv_slope(x + 0.5, y - 0.5, eX, eY);
           }
         }
         pImpl->tile_seen[game_map.get_index(x, y)] = true;
-        pImpl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y)->get_type();
+        pImpl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
       }
       ++y;
     }
@@ -3364,9 +3349,9 @@ void Thing::do_recursive_visibility(int octant,
     {
       if (calc_vis_distance(x, y, eX, eY) <= mw)
       {
-        if (game_map.get_tile(x, y)->is_opaque())
+        if (game_map.get_tile(x, y).is_opaque())
         {
-          if (!game_map.get_tile(x, y + 1)->is_opaque())
+          if (!game_map.get_tile(x, y + 1).is_opaque())
           {
             do_recursive_visibility(4, depth + 1, slope_A,
               calc_inv_slope(x - 0.5, y + 0.5, eX, eY));
@@ -3374,13 +3359,13 @@ void Thing::do_recursive_visibility(int octant,
         }
         else
         {
-          if (game_map.get_tile(x, y + 1)->is_opaque())
+          if (game_map.get_tile(x, y + 1).is_opaque())
           {
             slope_A = calc_inv_slope(x + 0.5, y + 0.5, eX, eY);
           }
         }
         pImpl->tile_seen[game_map.get_index(x, y)] = true;
-        pImpl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y)->get_type();
+        pImpl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
       }
       --y;
     }
@@ -3393,9 +3378,9 @@ void Thing::do_recursive_visibility(int octant,
     {
       if (calc_vis_distance(x, y, eX, eY) <= mw)
       {
-        if (game_map.get_tile(x, y)->is_opaque())
+        if (game_map.get_tile(x, y).is_opaque())
         {
-          if (!game_map.get_tile(x + 1, y)->is_opaque())
+          if (!game_map.get_tile(x + 1, y).is_opaque())
           {
             do_recursive_visibility(5, depth + 1, slope_A,
               calc_slope(x + 0.5, y - 0.5, eX, eY));
@@ -3403,13 +3388,13 @@ void Thing::do_recursive_visibility(int octant,
         }
         else
         {
-          if (game_map.get_tile(x + 1, y)->is_opaque())
+          if (game_map.get_tile(x + 1, y).is_opaque())
           {
             slope_A = calc_slope(x + 0.5, y + 0.5, eX, eY);
           }
         }
         pImpl->tile_seen[game_map.get_index(x, y)] = true;
-        pImpl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y)->get_type();
+        pImpl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
       }
       --x;
     }
@@ -3422,9 +3407,9 @@ void Thing::do_recursive_visibility(int octant,
     {
       if (calc_vis_distance(x, y, eX, eY) <= mw)
       {
-        if (game_map.get_tile(x, y)->is_opaque())
+        if (game_map.get_tile(x, y).is_opaque())
         {
-          if (!game_map.get_tile(x - 1, y)->is_opaque())
+          if (!game_map.get_tile(x - 1, y).is_opaque())
           {
             do_recursive_visibility(6, depth + 1, slope_A,
               calc_slope(x - 0.5, y - 0.5, eX, eY));
@@ -3432,13 +3417,13 @@ void Thing::do_recursive_visibility(int octant,
         }
         else
         {
-          if (game_map.get_tile(x - 1, y)->is_opaque())
+          if (game_map.get_tile(x - 1, y).is_opaque())
           {
             slope_A = -calc_slope(x - 0.5, y + 0.5, eX, eY);
           }
         }
         pImpl->tile_seen[game_map.get_index(x, y)] = true;
-        pImpl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y)->get_type();
+        pImpl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
       }
       ++x;
     }
@@ -3451,9 +3436,9 @@ void Thing::do_recursive_visibility(int octant,
     {
       if (calc_vis_distance(x, y, eX, eY) <= mw)
       {
-        if (game_map.get_tile(x, y)->is_opaque())
+        if (game_map.get_tile(x, y).is_opaque())
         {
-          if (!game_map.get_tile(x, y + 1)->is_opaque())
+          if (!game_map.get_tile(x, y + 1).is_opaque())
           {
             do_recursive_visibility(7, depth + 1, slope_A,
               calc_inv_slope(x + 0.5, y + 0.5, eX, eY));
@@ -3461,13 +3446,13 @@ void Thing::do_recursive_visibility(int octant,
         }
         else
         {
-          if (game_map.get_tile(x, y + 1)->is_opaque())
+          if (game_map.get_tile(x, y + 1).is_opaque())
           {
             slope_A = -calc_inv_slope(x - 0.5, y + 0.5, eX, eY);
           }
         }
         pImpl->tile_seen[game_map.get_index(x, y)] = true;
-        pImpl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y)->get_type();
+        pImpl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
       }
       --y;
     }
@@ -3480,9 +3465,9 @@ void Thing::do_recursive_visibility(int octant,
     {
       if (calc_vis_distance(x, y, eX, eY) <= mw)
       {
-        if (game_map.get_tile(x, y)->is_opaque())
+        if (game_map.get_tile(x, y).is_opaque())
         {
-          if (!game_map.get_tile(x, y - 1)->is_opaque())
+          if (!game_map.get_tile(x, y - 1).is_opaque())
           {
             do_recursive_visibility(8, depth + 1, slope_A,
               calc_inv_slope(x + 0.5, y - 0.5, eX, eY));
@@ -3490,13 +3475,13 @@ void Thing::do_recursive_visibility(int octant,
         }
         else
         {
-          if (game_map.get_tile(x, y - 1)->is_opaque())
+          if (game_map.get_tile(x, y - 1).is_opaque())
           {
             slope_A = calc_inv_slope(x - 0.5, y - 0.5, eX, eY);
           }
         }
         pImpl->tile_seen[game_map.get_index(x, y)] = true;
-        pImpl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y)->get_type();
+        pImpl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
       }
       ++y;
     }
@@ -3507,7 +3492,7 @@ void Thing::do_recursive_visibility(int octant,
     break;
   }
 
-  if ((depth < mv) && (!game_map.get_tile(x, y)->is_opaque()))
+  if ((depth < mv) && (!game_map.get_tile(x, y).is_opaque()))
   {
     do_recursive_visibility(octant, depth + 1, slope_A, slope_B);
   }

@@ -25,7 +25,7 @@ struct MessageLog::Impl
 
 MessageLog::MessageLog(sf::IntRect dimensions)
   : GUIPane(dimensions),
-    pImpl(new Impl())
+    pImpl(NEW Impl())
 {
   pImpl->history_lines_saved = 250;  ///< @todo Move to ConfigSettings
 }
@@ -42,7 +42,7 @@ MessageLog& MessageLog::create(sf::IntRect dimensions)
     throw std::bad_function_call();
   }
 
-  MessageLog::instance_.reset(new MessageLog(dimensions));
+  MessageLog::instance_.reset(NEW MessageLog(dimensions));
   MessageLog::instance_->initialize();
 
   return *(MessageLog::instance_.get());
@@ -151,7 +151,7 @@ int MessageLog::LUA_add(lua_State* L)
 
   if (num_args != 1)
   {
-    MINOR_ERROR("MessageLog::LUA_add expects 1 argument, got %d", num_args);
+    MINOR_ERROR("Expected 1 argument, got %d", num_args);
   }
   else
   {

@@ -129,12 +129,6 @@
     <ClInclude Include="include\TileSheet.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\ai\AISessile.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ai\AIStrategy.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\gui\GUIPane.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -245,12 +239,6 @@
     <ClCompile Include="src\TileSheet.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\ai\AISessile.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ai\AIStrategy.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\gui\GUIPane.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -355,6 +343,9 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="resources\things\Human.lua">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\scripts\map.lua">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

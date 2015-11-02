@@ -1,5 +1,6 @@
 #include "ThingManager.h"
 
+#include "App.h"
 #include "ErrorHandler.h"
 #include "Lua.h"
 #include "Thing.h"
@@ -21,6 +22,13 @@ std::unique_ptr<ThingManager> ThingManager::instance_;
 
 struct ThingManager::Impl
 {
+  Impl() {}
+  ~Impl()
+  {
+    thing_metadata.clear();
+    thing_map.clear();
+  }
+
   /// ThingRef of the player.
   ThingRef player;
 
@@ -40,7 +48,7 @@ struct ThingManager::Impl
 };
 
 ThingManager::ThingManager()
-  : pImpl(new Impl())
+  : pImpl(NEW Impl())
 {
   // Register the Thing Lua functions.
   the_lua_instance.register_function("thing_create", Thing::LUA_create);
@@ -72,7 +80,7 @@ ThingManager& ThingManager::instance()
 {
   if (ThingManager::instance_ == nullptr)
   {
-    ThingManager::instance_.reset(new ThingManager());
+    ThingManager::instance_.reset(NEW ThingManager());
     ThingManager::instance_->initialize();
   }
 
@@ -83,7 +91,7 @@ ThingRef ThingManager::create(std::string type)
 {
   if (pImpl->thing_metadata.count(type) == 0)
   {
-    pImpl->thing_metadata[type].reset(new ThingMetadata(type));
+    pImpl->thing_metadata[type].reset(NEW ThingMetadata(type));
   }
 
   ThingId new_id = ThingRef::create();
@@ -101,7 +109,7 @@ ThingRef ThingManager::create_floor(MapTile* map_tile)
 {
   if (pImpl->thing_metadata.count("Floor") == 0)
   {
-    pImpl->thing_metadata["Floor"].reset(new ThingMetadata("Floor"));
+    pImpl->thing_metadata["Floor"].reset(NEW ThingMetadata("Floor"));
   }
 
   ThingId new_id = ThingRef::create();
@@ -127,7 +135,7 @@ ThingMetadata& ThingManager::get_metadata(std::string type)
 {
   if (pImpl->thing_metadata.count(type) == 0)
   {
-    pImpl->thing_metadata[type].reset(new ThingMetadata(type));
+    pImpl->thing_metadata[type].reset(NEW ThingMetadata(type));
   }
 
   return *(pImpl->thing_metadata[type]);

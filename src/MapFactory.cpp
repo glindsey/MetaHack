@@ -2,6 +2,7 @@
 
 #include <boost/log/trivial.hpp>
 
+#include "App.h"
 #include "Map.h"
 
 std::unique_ptr<MapFactory> MapFactory::instance_;
@@ -11,7 +12,7 @@ MapFactory::MapFactory()
 {
   // Create and add the "null map" to the list.
   current_map_id = 0;
-  maps_.insert(current_map_id, new Map(current_map_id, 1, 1));
+  maps_.insert(current_map_id, NEW Map(current_map_id, 1, 1));
 
   // Register the Map Lua functions.
   the_lua_instance.register_function("map_get_floor", Map::LUA_get_floor);
@@ -26,7 +27,7 @@ MapFactory& MapFactory::instance()
 {
   if (instance_.get() == nullptr)
   {
-    instance_.reset(new MapFactory());
+    instance_.reset(NEW MapFactory());
   }
 
   return *(instance_.get());
@@ -47,7 +48,7 @@ Map& MapFactory::get(MapId map_id)
 MapId MapFactory::create(int x, int y)
 {
   ++current_map_id;
-  maps_.insert(current_map_id, new Map(current_map_id, x, y));
+  maps_.insert(current_map_id, NEW Map(current_map_id, x, y));
 
   return current_map_id;
 }

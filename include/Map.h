@@ -53,9 +53,9 @@ class Map
 
     void draw_to(sf::RenderTarget& target);
 
-    std::unique_ptr<MapTile>& get_tile(int x, int y) const;
+    MapTile& get_tile(int x, int y) const;
 
-    std::unique_ptr<MapTile>& get_tile(sf::Vector2i tile) const;
+    MapTile& get_tile(sf::Vector2i tile) const;
 
     /// Get the map's size.
     sf::Vector2i const& get_size() const;
@@ -121,13 +121,21 @@ class Map
     std::unique_ptr<Impl> pImpl;
 
     /// Lua function to get the Floor at a specific location.
-    /// Takes two parameters:
+    /// Takes three parameters:
+    ///   - The MapID of the map in question.
     ///   - x, y location of the Floor to retrieve
     /// It returns:
     ///   - ID of the requested Floor, or nil if it does not exist.
     /// Notes:
     ///   - The Map that the tile is retrieved from is the one the player is on.
     static int LUA_get_floor(lua_State* L);
+
+    /// Lua function to get the start coords for a map.
+    /// Takes one parameter:
+    ///   - The MapID of the map in question.
+    /// It returns.
+    ///   - The x, y location of the map's starting position.
+    static int LUA_get_start_coords(lua_State* L);
 };
 
 #endif // MAP_H

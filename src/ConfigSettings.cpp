@@ -1,3 +1,4 @@
+#include "App.h"
 #include "ConfigSettings.h"
 
 std::unique_ptr<ConfigSettings> ConfigSettings::instance_;
@@ -35,7 +36,7 @@ ConfigSettings& ConfigSettings::instance()
 {
   if (instance_ == nullptr)
   {
-    instance_.reset(new ConfigSettings());
+    instance_.reset(NEW ConfigSettings());
   }
 
   return *(instance_.get());

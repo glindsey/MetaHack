@@ -2,9 +2,8 @@
 #define MAPTILEMETADATA_H
 
 #include <memory>
-#include <map>
-#include <unordered_map>
 #include <string>
+#include <boost/ptr_container/ptr_unordered_map.hpp>
 #include <SFML/Graphics.hpp>
 
 class MapTileMetadata
@@ -32,7 +31,7 @@ private:
   std::unique_ptr<Impl> pImpl;
 
   /// Static collection of MapTileMetadata instances.
-  static std::unordered_map< std::string, std::unique_ptr<MapTileMetadata> > collection;
+  static boost::ptr_unordered_map<std::string, MapTileMetadata> MapTileMetadata::collection;
 };
 
 #endif // MAPTILEMETADATA_H
