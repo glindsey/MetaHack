@@ -34,15 +34,16 @@ The `=` key also adds to the number selected, in case you prefer to use the `-`/
 
 ### Commands
 
-Once items have been selected, a command is issued using `CTRL` plus a letter key.
+Once items have been selected, a command is issued using `CTRL` plus a letter key. Extended commands are issued using `CTRL` plus `ALT` plus a letter key.
 
 *(Eventually the goal is to allow items to be selected using the mouse, and then have a command menu from which the command can be chosen.)*
 
 Some commands do request a "target" item after the command has been entered, such as "store item". In that case, you would choose the items to store, press `CTRL-S`, and then choose the container to store them in.
 
-The following commands are currently in place, although some (most?) are not yet fully implemented:
+The following commands are currently in place, although some (most?) are not yet fully implemented. ~~Strikeout~~ indicates commands that may be planned but are currently not recognized at all.
 
 * `CTRL-A` - Attack a direction. Although attacking is usually automatic for hostile creatures, this forces an attack on something non-hostile, or something that isn't a creature (like a door).
+* ~~`CTRL-B` - nothing yet~~
 * `CTRL-C` - Close item(s). Also used to close doors/grates/etc.
 * `CTRL-D` - Drop item(s).
 * `CTRL-E` - Eat item(s).
@@ -50,7 +51,11 @@ The following commands are currently in place, although some (most?) are not yet
 * `CTRL-G` - Get (pick up) an item.
 * `CTRL-H` - Hurl (throw) an item.
 * `CTRL-I` - Inscribe (write) on an item.
+* ~~`CTRL-J` - Jump in a direction.~~
+* ~~`CTRL-K` - Kick in a direction.~~
+* ~~`CTRL-L` - nothing yet~~
 * `CTRL-M` - Mix two liquids/powders together.
+* ~~`CTRL-N` - nothing yet~~
 * `CTRL-O` - Open item(s). Also used to open doors/grates/etc.
 * `CTRL-P` - Put item(s) in another item. This is also used to load ammunition into a fireable weapon.
 * `CTRL-Q` - Quaff (drink) from item(s).
@@ -58,7 +63,14 @@ The following commands are currently in place, although some (most?) are not yet
 * `CTRL-S` - Shoot a fireable item. This will normally shoot the item you have equipped, if it is a firearm. If you select an item first, it will attempt to wield it and then shoot it.
 * `CTRL-T` - Take item(s) out of a container.
 * `CTRL-U` - Use an item. For items with actions that don't really fit into other command verbs.
+* ~~`CTRL-V`~~ - nothing yet
 * `CTRL-W` - Wield an item.
+* ~~`CTRL-X`~~ - nothing yet
+* ~~`CTRL-Y`~~ - nothing yet
+* ~~`CTRL-Z`~~ - nothing yet
+* ~~`CTRL-ALT-S` - Save the game.~~
+* ~~`CTRL-ALT-T` - Talk in a direction. Possibly talk to an item at some point, I dunno.~~
+* `CTRL-ALT-Q` - Quit the game, immediately.
 
 This list is definitely not finished and is subject to change.
 

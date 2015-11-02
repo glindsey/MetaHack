@@ -55,6 +55,9 @@ extern std::unique_ptr<sf::Font> default_bold_font_;
 /// Global default monospace font instance
 extern std::unique_ptr<sf::Font> default_mono_font_;
 
+/// Global default Unicode font instance
+extern std::unique_ptr<sf::Font> default_unicode_font_;
+
 /// Global RNG instance
 extern std::unique_ptr<boost::random::mt19937> rng_;
 
@@ -65,10 +68,11 @@ extern std::unique_ptr<TileSheet> tile_sheet_;
 extern std::unique_ptr<sf::Shader> shader_;
 
 // Here are a few macros to save on typing.
-#define the_default_font      (*(default_font_.get()))
-#define the_default_bold_font (*(default_bold_font_.get()))
-#define the_default_mono_font (*(default_mono_font_.get()))
-#define the_shader            (*(shader_.get()))
-#define the_RNG               (*(rng_.get()))
+#define the_default_font          (*(default_font_.get()))
+#define the_default_bold_font     (*(default_bold_font_.get()))
+#define the_default_mono_font     (*(default_mono_font_.get()))
+#define the_default_unicode_font  (*(default_unicode_font_.get()))
+#define the_shader                (*(shader_.get()))
+#define the_RNG                   (*(rng_.get()))
 
 #endif // APP_H

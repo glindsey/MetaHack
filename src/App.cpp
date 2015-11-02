@@ -80,6 +80,12 @@ int main()
         throw std::exception("Could not load the default monospace font (DejaVuSansMono.ttf)");
       }
 
+      default_unicode_font_.reset(NEW sf::Font());
+      if (default_unicode_font_->loadFromFile("resources/fonts/FreeMono.ttf") == false)
+      {
+        throw std::exception("Could not load the default Unicode font (FreeMono.ttf)");
+      }
+
       // Create the shader program.
       shader_.reset(NEW sf::Shader());
       if (shader_->loadFromFile("resources/shaders/default.vert",
