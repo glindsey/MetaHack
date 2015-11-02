@@ -75,8 +75,8 @@ All of the information regarding map tiles, items, enemies, et cetera., is store
 Hopefully one day I will be able to document those files a bit more thoroughly here, but for now if you are interested you'll have to look through the source code I'm afraid.
 
 
-Known Bugs
-----------
+Known Bugs / Issues
+-------------------
 
 * Resizing the window is definitely broken.
 * There are no enemies whatsoever yet.
