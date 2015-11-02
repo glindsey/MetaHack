@@ -44,9 +44,6 @@ class App : public EventHandler, public boost::noncopyable
     std::unique_ptr<Impl> pImpl;
 };
 
-/// Global app instance
-extern std::unique_ptr<App> app_;
-
 /// Global window instance
 extern std::unique_ptr<sf::RenderWindow> app_window_;
 
@@ -69,7 +66,6 @@ extern std::unique_ptr<TileSheet> tile_sheet_;
 extern std::unique_ptr<sf::Shader> shader_;
 
 // Here are a few macros to save on typing.
-#define the_app               (*(app_.get()))
 #define the_window            (*(app_window_.get()))
 #define the_default_font      (*(default_font_.get()))
 #define the_default_bold_font (*(default_bold_font_.get()))

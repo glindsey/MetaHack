@@ -40,10 +40,12 @@ sf::IntRect calc_message_log_dimensions()
 
 int main()
 {
-  _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+  _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF); 
 
   // Scoping everything here so it is properly destroyed before checking for memory leaks.
   {
+    std::unique_ptr<App> app;
+
     try
     {
       // Create the random number generator.
@@ -90,8 +92,8 @@ int main()
       MessageLog::create(calc_message_log_dimensions());
 
       // Create and run the app instance.
-      app_.reset(NEW App());
-      app_->run();
+      app.reset(NEW App());
+      app->run();
 
       // Close the app window.
       app_window_->close();
