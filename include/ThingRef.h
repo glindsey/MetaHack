@@ -2,6 +2,8 @@
 #define THINGREF_H
 
 #include "ThingManager.h"
+#include "Lua.h"
+
 #include <boost/functional/hash.hpp>
 #include <boost/lexical_cast.hpp>
 #include <iostream>
@@ -30,6 +32,9 @@ public:
 
   ThingId::ThingId(uint64_t full_id_)
     : full_id(full_id_) {}
+
+  ThingId::ThingId(lua_Integer full_id_)
+    : full_id(static_cast<uint64_t>(full_id_)) {}
 
   bool ThingId::operator<(ThingId const& other) const
   {

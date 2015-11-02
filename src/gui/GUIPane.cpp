@@ -61,7 +61,7 @@ EventResult GUIPane::handle_event(sf::Event& event)
 
 bool GUIPane::render(sf::RenderTarget& target, int frame)
 {
-  int line_spacing_y = the_default_font.getLineSpacing(Settings.text_default_size);
+  float line_spacing_y = the_default_font.getLineSpacing(Settings.text_default_size);
 
   // Text offsets relative to the background rectangle.
   float text_offset_x = 3;
@@ -95,8 +95,8 @@ bool GUIPane::render(sf::RenderTarget& target, int frame)
                               Settings.window_border_color);
     title_rect.setOutlineThickness(Settings.window_border_width);
     title_rect.setPosition(sf::Vector2f(0, 0));
-    title_rect.setSize(sf::Vector2f(pImpl->dims.width,
-                                    line_spacing_y + (text_offset_y * 2)));
+    title_rect.setSize(sf::Vector2f(static_cast<float>(pImpl->dims.width),
+                                    static_cast<float>(line_spacing_y + (text_offset_y * 2))));
 
     pImpl->bg_texture->draw(title_rect);
 
@@ -110,10 +110,8 @@ bool GUIPane::render(sf::RenderTarget& target, int frame)
   }
 
   // Draw the border.
-  pImpl->bg_shape.setPosition(sf::Vector2f(pImpl->dims.left,
-                                          pImpl->dims.top));
-  pImpl->bg_shape.setSize(sf::Vector2f(pImpl->dims.width,
-                                      pImpl->dims.height));
+  pImpl->bg_shape.setPosition(sf::Vector2f(static_cast<float>(pImpl->dims.left), static_cast<float>(pImpl->dims.top)));
+  pImpl->bg_shape.setSize(sf::Vector2f(static_cast<float>(pImpl->dims.width), static_cast<float>(pImpl->dims.height)));
   pImpl->bg_shape.setTexture(&(pImpl->bg_texture->getTexture()));
   pImpl->bg_shape.setTextureRect(sf::IntRect(0, 0,
                                            pImpl->dims.width,
@@ -123,9 +121,7 @@ bool GUIPane::render(sf::RenderTarget& target, int frame)
                                  Settings.window_border_color);
   pImpl->bg_shape.setOutlineThickness(Settings.window_border_width);
 
-  target.setView(sf::View(sf::FloatRect(0, 0,
-                          target.getSize().x,
-                          target.getSize().y)));
+  target.setView(sf::View(sf::FloatRect(0.0f, 0.0f, static_cast<float>(target.getSize().x), static_cast<float>(target.getSize().y))));
 
   target.draw(pImpl->bg_shape);
 

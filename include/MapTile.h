@@ -26,7 +26,7 @@ class MapTile : public GameObject
     {
       sf::Vector2i coords;  ///< Coordinates of the light.
       sf::Color color;      ///< Color of the light.
-      double intensity;     ///< Intensity of the light.
+      int intensity;        ///< Intensity of the light.
     };
 
     /// Get the tile's floor object.

@@ -299,7 +299,7 @@ void Map::do_recursive_lighting(ThingRef source,
   {
     case 1:
       y = eY - depth;
-      x = rint(static_cast<double>(eX) - (slope_A * static_cast<double>(depth)));
+      x = static_cast<int>(rint(static_cast<double>(eX) - (slope_A * static_cast<double>(depth))));
       while (calc_slope(x, y, eX, eY) >= slope_B)
       {
         if (calc_vis_distance(x, y, eX, eY) <= max_depth_squared)
@@ -335,7 +335,7 @@ void Map::do_recursive_lighting(ThingRef source,
       break;
     case 2:
       y = eY - depth;
-      x = rint(static_cast<double>(eX) + (slope_A * static_cast<double>(depth)));
+      x = static_cast<int>(rint(static_cast<double>(eX) + (slope_A * static_cast<double>(depth))));
       while (calc_slope(x, y, eX, eY) <= slope_B)
       {
         if (calc_vis_distance(x, y, eX, eY) <= max_depth_squared)
@@ -371,7 +371,7 @@ void Map::do_recursive_lighting(ThingRef source,
       break;
     case 3:
       x = eX + depth;
-      y = rint(static_cast<double>(eY) - (slope_A * static_cast<double>(depth)));
+      y = static_cast<int>(rint(static_cast<double>(eY) - (slope_A * static_cast<double>(depth))));
       while (calc_inv_slope(x, y, eX, eY) <= slope_B)
       {
         if (calc_vis_distance(x, y, eX, eY) <= max_depth_squared)
@@ -407,7 +407,7 @@ void Map::do_recursive_lighting(ThingRef source,
       break;
     case 4:
       x = eX + depth;
-      y = rint(static_cast<double>(eY) + (slope_A * static_cast<double>(depth)));
+      y = static_cast<int>(rint(static_cast<double>(eY) + (slope_A * static_cast<double>(depth))));
       while (calc_inv_slope(x, y, eX, eY) >= slope_B)
       {
         if (calc_vis_distance(x, y, eX, eY) <= max_depth_squared)
@@ -443,7 +443,7 @@ void Map::do_recursive_lighting(ThingRef source,
       break;
     case 5:
       y = eY + depth;
-      x = rint(static_cast<double>(eX) + (slope_A * static_cast<double>(depth)));
+      x = static_cast<int>(rint(static_cast<double>(eX) + (slope_A * static_cast<double>(depth))));
       while (calc_slope(x, y, eX, eY) >= slope_B)
       {
         if (calc_vis_distance(x, y, eX, eY) <= max_depth_squared)
@@ -479,7 +479,7 @@ void Map::do_recursive_lighting(ThingRef source,
       break;
     case 6:
       y = eY + depth;
-      x = rint(static_cast<double>(eX) - (slope_A * static_cast<double>(depth)));
+      x = static_cast<int>(rint(static_cast<double>(eX) - (slope_A * static_cast<double>(depth))));
       while (calc_slope(x, y, eX, eY) <= slope_B)
       {
         if (calc_vis_distance(x, y, eX, eY) <= max_depth_squared)
@@ -515,7 +515,7 @@ void Map::do_recursive_lighting(ThingRef source,
       break;
     case 7:
       x = eX - depth;
-      y = rint(static_cast<double>(eY) + (slope_A * static_cast<double>(depth)));
+      y = static_cast<int>(rint(static_cast<double>(eY) + (slope_A * static_cast<double>(depth))));
       while (calc_inv_slope(x, y, eX, eY) <= slope_B)
       {
         if (calc_vis_distance(x, y, eX, eY) <= max_depth_squared)
@@ -551,7 +551,7 @@ void Map::do_recursive_lighting(ThingRef source,
       break;
     case 8:
       x = eX - depth;
-      y = rint(static_cast<double>(eY) - (slope_A * static_cast<double>(depth)));
+      y = static_cast<int>(rint(static_cast<double>(eY) - (slope_A * static_cast<double>(depth))));
       while (calc_inv_slope(x, y, eX, eY) >= slope_B)
       {
         if (calc_vis_distance(x, y, eX, eY) <= max_depth_squared)
@@ -835,12 +835,12 @@ void Map::update_thing_vertices(ThingRef thing, int frame)
 
 void Map::set_view(sf::RenderTarget& target,
                    sf::Vector2f center,
-                   double zoom_level)
+                   float zoom_level)
 {
   sf::Vector2u screen_size = target.getSize();
 
-  sf::Vector2f window_center = sf::Vector2f((screen_size.x / zoom_level) / 2,
-                                            (screen_size.y / zoom_level) / 2);
+  sf::Vector2f window_center = sf::Vector2f((static_cast<float>(screen_size.x) / zoom_level) / 2,
+                                            (static_cast<float>(screen_size.y) / zoom_level) / 2);
 
   target.setView(sf::View(sf::FloatRect((center.x - window_center.x),
                                         (center.y - window_center.y),
@@ -914,8 +914,8 @@ int Map::LUA_get_floor(lua_State* L)
     return 0;
   }
 
-  MapId map_id = static_cast<MapId>(lua_tonumber(L, 1));
-  sf::Vector2i coords = sf::Vector2i(lua_tonumber(L, 2), lua_tonumber(L, 3));
+  MapId map_id = static_cast<MapId>(static_cast<unsigned int>(lua_tointeger(L, 1)));
+  sf::Vector2i coords = sf::Vector2i(static_cast<int>(lua_tointeger(L, 2)), static_cast<int>(lua_tointeger(L, 3)));
 
   auto& map_tile = MF.get(map_id).get_tile(coords);
   ThingRef floor = map_tile.get_floor();
@@ -935,7 +935,7 @@ int Map::LUA_get_start_coords(lua_State* L)
     return 0;
   }
 
-  MapId map_id = static_cast<MapId>(lua_tonumber(L, 1));
+  MapId map_id = static_cast<MapId>(static_cast<unsigned int>(lua_tointeger(L, 1)));
 
   auto& map = MF.get(map_id);
   auto coords = map.get_start_coords();

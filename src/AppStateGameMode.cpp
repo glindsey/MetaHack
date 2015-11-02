@@ -49,7 +49,7 @@ struct AppStateGameMode::Impl
   std::unique_ptr<InventoryArea> inventory_area;
 
   /// Map zoom level.  1.0 equals 100 percent zoom.
-  double map_zoom_level;
+  float map_zoom_level;
 
   /// Current screen area that has keyboard focus.
   GameInputState current_input_state;
@@ -580,13 +580,13 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
         // CTRL-MINUS -- Zoom out
       case sf::Keyboard::Key::Dash:
       case sf::Keyboard::Key::Subtract:
-        add_zoom(-0.05);
+        add_zoom(-0.05f);
         break;
 
         // CTRL-PLUS -- Zoom in
       case sf::Keyboard::Key::Equal:
       case sf::Keyboard::Key::Add:
-        add_zoom(0.05);
+        add_zoom(0.05f);
         break;
 
       case sf::Keyboard::Key::Num0:
@@ -957,9 +957,9 @@ EventResult AppStateGameMode::handle_mouse_wheel(sf::Event::MouseWheelEvent& whe
   return EventResult::Handled;
 }
 
-void AppStateGameMode::add_zoom(double zoom_amount)
+void AppStateGameMode::add_zoom(float zoom_amount)
 {
-  double current_zoom_level = pImpl->map_zoom_level;
+  float current_zoom_level = pImpl->map_zoom_level;
 
   current_zoom_level += zoom_amount;
 

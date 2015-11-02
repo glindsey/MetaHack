@@ -143,14 +143,14 @@ inline unsigned int divide_and_round_up(unsigned int value, unsigned int multipl
 
 /// Determine light factor based on light source, wall location, and which wall
 /// the light is hitting.
-inline double calculate_light_factor(sf::Vector2i source, sf::Vector2i target, Direction direction)
+inline float calculate_light_factor(sf::Vector2i source, sf::Vector2i target, Direction direction)
 {
-  double x_diff = static_cast<double>(iabs(source.x - target.x));
-  double y_diff = static_cast<double>(iabs(source.y - target.y));
+  float x_diff = static_cast<float>(iabs(source.x - target.x));
+  float y_diff = static_cast<float>(iabs(source.y - target.y));
 
   if ((x_diff == 0) && (y_diff == 0)) return 0;
 
-  double h_diff = sqrt((x_diff * x_diff) + (y_diff * y_diff));
+  float h_diff = sqrt((x_diff * x_diff) + (y_diff * y_diff));
 
   switch (direction)
   {

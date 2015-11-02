@@ -3447,7 +3447,7 @@ int Thing::LUA_create(lua_State* L)
     return 0;
   }
 
-  ThingRef thing = ThingRef(lua_tonumber(L, 1));
+  ThingRef thing = ThingRef(lua_tointeger(L, 1));
   std::string new_thing_type = lua_tostring(L, 2);
   
   ThingRef new_thing = TM.create(new_thing_type);
@@ -3491,7 +3491,7 @@ int Thing::LUA_get_coords(lua_State* L)
     return 0;
   }
 
-  ThingRef thing = ThingRef(lua_tonumber(L, 1));
+  ThingRef thing = ThingRef(lua_tointeger(L, 1));
 
   MapId map_id = TM.get_player()->get_map_id();
   auto maptile = thing->get_maptile();
@@ -3521,7 +3521,7 @@ int Thing::LUA_get_parent_type(lua_State* L)
     return 0;
   }
 
-  ThingRef thing = ThingRef(lua_tonumber(L, 1));
+  ThingRef thing = ThingRef(lua_tointeger(L, 1));
   std::string result = thing->get_parent_type();
   lua_pushstring(L, result.c_str());
 
@@ -3538,7 +3538,7 @@ int Thing::LUA_get_intrinsic_flag(lua_State* L)
     return 0;
   }
 
-  ThingRef thing = ThingRef(lua_tonumber(L, 1));
+  ThingRef thing = ThingRef(lua_tointeger(L, 1));
   const char* key = lua_tostring(L, 2);
   bool result = thing->get_intrinsic_flag(key);
   lua_pushboolean(L, result);
@@ -3556,7 +3556,7 @@ int Thing::LUA_get_intrinsic_value(lua_State* L)
     return 0;
   }
 
-  ThingRef thing = ThingRef(lua_tonumber(L, 1));
+  ThingRef thing = ThingRef(lua_tointeger(L, 1));
   const char* key = lua_tostring(L, 2);
   int result = thing->get_intrinsic_value(key);
   lua_pushinteger(L, result);
@@ -3574,7 +3574,7 @@ int Thing::LUA_get_intrinsic_string(lua_State* L)
     return 0;
   }
 
-  ThingRef thing = ThingRef(lua_tonumber(L, 1));
+  ThingRef thing = ThingRef(lua_tointeger(L, 1));
   const char* key = lua_tostring(L, 2);
   const char* result = thing->get_intrinsic_string(key).c_str();
   lua_pushstring(L, result);
@@ -3592,7 +3592,7 @@ int Thing::LUA_get_property_flag(lua_State* L)
     return 0;
   }
 
-  ThingRef thing = ThingRef(lua_tonumber(L, 1));
+  ThingRef thing = ThingRef(lua_tointeger(L, 1));
   const char* key = lua_tostring(L, 2);
   bool result = thing->get_property_flag(key);
   lua_pushboolean(L, result);
@@ -3610,7 +3610,7 @@ int Thing::LUA_get_property_value(lua_State* L)
     return 0;
   }
 
-  ThingRef thing = ThingRef(lua_tonumber(L, 1));
+  ThingRef thing = ThingRef(lua_tointeger(L, 1));
   const char* key = lua_tostring(L, 2);
   int result = thing->get_property_value(key);
   lua_pushinteger(L, result);
@@ -3628,7 +3628,7 @@ int Thing::LUA_get_property_string(lua_State* L)
     return 0;
   }
 
-  ThingRef thing = ThingRef(lua_tonumber(L, 1));
+  ThingRef thing = ThingRef(lua_tointeger(L, 1));
   const char* key = lua_tostring(L, 2);
   const char* result = thing->get_property_string(key).c_str();
   lua_pushstring(L, result);
@@ -3646,9 +3646,9 @@ int Thing::LUA_set_property_flag(lua_State* L)
     return 0;
   }
 
-  ThingRef thing = ThingRef(lua_tonumber(L, 1));
+  ThingRef thing = ThingRef(lua_tointeger(L, 1));
   const char* key = lua_tostring(L, 2);
-  bool value = lua_toboolean(L, 3);
+  bool value = (lua_toboolean(L, 3) != 0);
   thing->set_property_flag(key, value);
 
   return 0;
@@ -3664,9 +3664,9 @@ int Thing::LUA_set_property_value(lua_State* L)
     return 0;
   }
 
-  ThingRef thing = ThingRef(lua_tonumber(L, 1));
+  ThingRef thing = ThingRef(lua_tointeger(L, 1));
   const char* key = lua_tostring(L, 2);
-  bool value = lua_tointeger(L, 3);
+  int value = static_cast<int>(lua_tointeger(L, 3));
   thing->set_property_value(key, value);
 
   return 0;
@@ -3682,7 +3682,7 @@ int Thing::LUA_set_property_string(lua_State* L)
     return 0;
   }
 
-  ThingRef thing = ThingRef(lua_tonumber(L, 1));
+  ThingRef thing = ThingRef(lua_tointeger(L, 1));
   const char* key = lua_tostring(L, 2);
   const char* value = lua_tostring(L, 3);
   std::string svalue = std::string(value);

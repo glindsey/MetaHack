@@ -279,12 +279,12 @@ std::string InventoryArea::render_contents(int frame)
   // Our render texture.
   sf::RenderTexture& bg_texture = get_bg_texture();
 
-  int line_spacing_y = the_default_font.getLineSpacing(Settings.text_default_size);
-  int item_spacing_y = 4;
+  float line_spacing_y = the_default_font.getLineSpacing(Settings.text_default_size);
+  float item_spacing_y = 4.0f;
 
   // Text offsets relative to the background rectangle.
-  float text_offset_x = 3;
-  float text_offset_y = 3;
+  float text_offset_x = 3.0f;
+  float text_offset_y = 3.0f;
 
   // Get a reference to the location we're referring to.
   if (pImpl->viewed == TM.get_mu())
@@ -294,7 +294,7 @@ std::string InventoryArea::render_contents(int frame)
 
   // Start at the top and work down.
   float text_coord_x = text_offset_x;
-  float text_coord_y = text_offset_y + (line_spacing_y * 1.5);
+  float text_coord_y = text_offset_y + (line_spacing_y * 1.5f);
 
   Inventory& inventory = pImpl->viewed->get_inventory();
 
@@ -358,8 +358,8 @@ std::string InventoryArea::render_contents(int frame)
     // 4. Display the tile representing the item.
     TS.getTexture().setSmooth(true);
     thing->draw_to(bg_texture,
-                   sf::Vector2f(text_coord_x + 55, text_coord_y),
-                   line_spacing_y - 1, false, frame);
+                   sf::Vector2f(static_cast<float>(text_coord_x + 55), static_cast<float>(text_coord_y)),
+                   static_cast<unsigned int>(line_spacing_y - 1), false, frame);
     TS.getTexture().setSmooth(false);
 
     // 5. TODO: Display "worn" or "equipped" icon if necessary.
@@ -405,7 +405,7 @@ std::string InventoryArea::render_contents(int frame)
     // 7. Display a nice separator line.
     sf::RectangleShape separator_line;
     separator_line.setPosition(text_coord_x + 10, text_coord_y);
-    separator_line.setSize(sf::Vector2f(pane_dims.width - 25, 1));
+    separator_line.setSize(sf::Vector2f(static_cast<float>(pane_dims.width - 25), 1.0f));
     separator_line.setFillColor(Settings.window_border_color);
     bg_texture.draw(separator_line);
 

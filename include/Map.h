@@ -49,7 +49,7 @@ class Map
 
     void set_view(sf::RenderTarget& target,
                   sf::Vector2f center,
-                  double zoom_level);
+                  float zoom_level);
 
     void draw_to(sf::RenderTarget& target);
 

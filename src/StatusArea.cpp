@@ -41,7 +41,7 @@ std::string StatusArea::render_contents(int frame)
   // The player.
   ThingRef player = TM.get_player();
 
-  int line_spacing = the_default_font.getLineSpacing(Settings.text_default_size);
+  float line_spacing = the_default_font.getLineSpacing(Settings.text_default_size);
 
   // Text offsets relative to the background rectangle.
   sf::Text render_text;

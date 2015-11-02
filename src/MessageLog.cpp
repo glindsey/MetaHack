@@ -101,7 +101,7 @@ std::string MessageLog::render_contents(int frame)
   // Our render texture.
   sf::RenderTexture& bg_texture = get_bg_texture();
 
-  int lineSpacing = the_default_font.getLineSpacing(Settings.text_default_size);
+  float lineSpacing = the_default_font.getLineSpacing(Settings.text_default_size);
 
   // Text offsets relative to the background rectangle.
   float text_offset_x = 3;

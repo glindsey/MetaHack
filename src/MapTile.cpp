@@ -95,7 +95,7 @@ void MapTile::add_vertices_to(sf::VertexArray& vertices,
 {
   sf::Vertex new_vertex;
   float ts = static_cast<float>(Settings.map_tile_size);
-  float ts2 = ts * 0.5;
+  float ts2 = ts * 0.5f;
 
   sf::Vector2i const& coords = get_coords();
 
@@ -106,9 +106,9 @@ void MapTile::add_vertices_to(sf::VertexArray& vertices,
     light = get_light_level();
     if (is_opaque())
     {
-      light.r *= 0.5;
-      light.g *= 0.5;
-      light.b *= 0.5;
+      light.r >>= 1;
+      light.g >>= 1;
+      light.b >>= 1;
     }
   }
   else
@@ -142,7 +142,7 @@ void MapTile::draw_to(sf::RenderTexture& target,
     target_size = Settings.map_tile_size;
   }
 
-  float tile_size = static_cast<float>(Settings.map_tile_size);
+  auto tile_size = Settings.map_tile_size;
 
   sf::Vector2u tile_coords = this->get_tile_sheet_coords(frame);
   texture_coords.left = tile_coords.x * tile_size;
@@ -161,7 +161,7 @@ void MapTile::draw_to(sf::RenderTexture& target,
   }
 
   rectangle.setPosition(target_coords);
-  rectangle.setSize(sf::Vector2f(target_size, target_size));
+  rectangle.setSize(sf::Vector2f(static_cast<float>(target_size), static_cast<float>(target_size)));
   rectangle.setTexture(&(TS.getTexture()));
   rectangle.setTextureRect(texture_coords);
   rectangle.setFillColor(thing_color);
@@ -243,11 +243,10 @@ sf::Color MapTile::get_light_level() const
       ++iter)
     {
       sf::Vector2i const& source_coords = iter->second.coords;
-      float dist_squared = calc_vis_distance(get_coords().x, get_coords().y,
-        source_coords.x, source_coords.y);
+      float dist_squared = static_cast<float>(calc_vis_distance(get_coords().x, get_coords().y, source_coords.x, source_coords.y));
 
       sf::Color light_color = iter->second.color;
-      float light_intensity = iter->second.intensity;
+      int light_intensity = iter->second.intensity;
 
       bool light_is_visible = player->can_see(source_coords.x, source_coords.y);
 
@@ -270,14 +269,14 @@ sf::Color MapTile::get_light_level() const
         }
         else
         {
-          dist_factor = dist_squared / light_intensity;
+          dist_factor = dist_squared / static_cast<float>(light_intensity);
         }
 
         float light_factor = (1.0f - dist_factor);
 
-        addColor.r = (light_color.r * light_factor);
-        addColor.g = (light_color.g * light_factor);
-        addColor.b = (light_color.b * light_factor);
+        addColor.r = static_cast<sf::Uint8>(light_color.r * light_factor);
+        addColor.g = static_cast<sf::Uint8>(light_color.g * light_factor);
+        addColor.b = static_cast<sf::Uint8>(light_color.b * light_factor);
         addColor.a = 255;
 
         color.r = saturation_add(color.r, addColor.r);
@@ -304,11 +303,10 @@ sf::Color MapTile::get_wall_light_level(Direction direction) const
       ++iter)
     {
       sf::Vector2i const& source_coords = iter->second.coords;
-      float dist_squared = calc_vis_distance(get_coords().x, get_coords().y,
-        source_coords.x, source_coords.y);
+      float dist_squared = static_cast<float>(calc_vis_distance(get_coords().x, get_coords().y, source_coords.x, source_coords.y));
 
       sf::Color light_color = iter->second.color;
-      float light_intensity = iter->second.intensity;
+      int light_intensity = iter->second.intensity;
 
       bool light_is_visible = player->can_see(source_coords.x, source_coords.y);
 
@@ -326,16 +324,16 @@ sf::Color MapTile::get_wall_light_level(Direction direction) const
       }
       else
       {
-        dist_factor = dist_squared / light_intensity;
+        dist_factor = dist_squared / static_cast<float>(light_intensity);
       }
 
       float light_factor = (1.0f - dist_factor);
 
       float wall_factor = calculate_light_factor(source_coords, get_coords(), direction);
 
-      addColor.r = (light_color.r * wall_factor * light_factor);
-      addColor.g = (light_color.g * wall_factor * light_factor);
-      addColor.b = (light_color.b * wall_factor * light_factor);
+      addColor.r = static_cast<sf::Uint8>(light_color.r * wall_factor * light_factor);
+      addColor.g = static_cast<sf::Uint8>(light_color.g * wall_factor * light_factor);
+      addColor.b = static_cast<sf::Uint8>(light_color.b * wall_factor * light_factor);
       addColor.a = 255;
 
       color.r = saturation_add(color.r, addColor.r);
@@ -361,7 +359,7 @@ void MapTile::draw_highlight(sf::RenderTarget& target,
                             sf::Color bgColor,
                             int frame)
 {
-  float ts2(static_cast<float>(Settings.map_tile_size) * 0.5);
+  float ts2(static_cast<float>(Settings.map_tile_size) * 0.5f);
   sf::Vector2f vSW(location.x - ts2, location.y + ts2);
   sf::Vector2f vSE(location.x + ts2, location.y + ts2);
   sf::Vector2f vNW(location.x - ts2, location.y - ts2);
@@ -369,7 +367,7 @@ void MapTile::draw_highlight(sf::RenderTarget& target,
 
   sf::RectangleShape box_shape;
   sf::Vector2f box_position;
-  sf::Vector2f box_size(Settings.map_tile_size, Settings.map_tile_size);
+  sf::Vector2f box_size(static_cast<float>(Settings.map_tile_size), static_cast<float>(Settings.map_tile_size));
   sf::Vector2f box_half_size(box_size.x / 2, box_size.y / 2);
   box_position.x = (location.x - box_half_size.x);
   box_position.y = (location.y - box_half_size.y);
@@ -419,17 +417,14 @@ void MapTile::add_walls_to(sf::VertexArray& vertices,
   sf::Color wall_color_s  { sf::Color::White };
   sf::Color wall_color_w  { sf::Color::White };
 
-  // Wall light factor.
-  float wall_factor;
-
   // Full tile size.
   float ts(static_cast<float>(Settings.map_tile_size));
 
   // Half of the tile size.
-  float ts2(static_cast<float>(Settings.map_tile_size) * 0.5);
+  float ts2(static_cast<float>(Settings.map_tile_size) * 0.5f);
 
   // Wall size (configurable).
-  float ws(static_cast<float>(Settings.map_tile_size) * 0.4);
+  float ws(static_cast<float>(Settings.map_tile_size) * 0.4f);
 
   // Tile vertices.
   sf::Vector2f location(pImpl->coords.x * ts,
@@ -569,8 +564,7 @@ void MapTile::add_walls_to(sf::VertexArray& vertices,
 
 sf::Vector2f MapTile::get_pixel_coords(int x, int y)
 {
-  return sf::Vector2f(x * Settings.map_tile_size,
-                      y * Settings.map_tile_size);
+  return sf::Vector2f(static_cast<float>(x * Settings.map_tile_size), static_cast<float>(y * Settings.map_tile_size));
 }
 
 sf::Vector2f MapTile::get_pixel_coords(sf::Vector2i tile)

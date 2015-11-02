@@ -277,20 +277,20 @@ void KeyBuffer::render(sf::RenderTarget& target,
 
   if (pImpl->replacing)
   {
-    cursor_color.r *= 0.5;
-    cursor_color.g *= 0.5;
-    cursor_color.b *= 0.5;
-    cursor_color.a *= 0.5;
+    cursor_color.r >>= 1;
+    cursor_color.g >>= 1;
+    cursor_color.b >>= 1;
+    cursor_color.a >>= 1;
   }
 
   // Nice flashy cursor
-  cursor_color.a *= (21 - (frame % 21)) * 0.05;
+  cursor_color.a *= static_cast<sf::Uint8>((21 - (frame % 21)) * 0.05f);
 
   // This little hack ensures that trailing spaces in the string are considered
   // when figuring out the cursor location.
   render_text.setStyle(sf::Text::Style::Underlined);
 
-  int font_height = font.getLineSpacing(font_size);
+  float font_height = font.getLineSpacing(font_size);
 
   cursor_coords = render_text.findCharacterPos(pImpl->cursor_position);
 
