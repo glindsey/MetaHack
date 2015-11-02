@@ -48,7 +48,7 @@ using WearingPair = std::pair<WearLocation, ThingRef>;
 struct Thing::Impl
 {
   Impl(std::string type_, ThingRef ref_)
-    : type(type_), ref(ref_), metadata(TM.get_metadata(type_)) 
+    : type(type_), ref(ref_), metadata(ThingMetadata::get(type_)) 
   {}
 
   ~Impl()

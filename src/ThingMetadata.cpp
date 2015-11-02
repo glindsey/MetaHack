@@ -19,6 +19,9 @@
 
 #define BOOST_FILESYSTEM_NO_DEPRECATED
 
+// Static declarations
+boost::ptr_unordered_map<std::string, ThingMetadata> ThingMetadata::collection;
+
 // Namespace aliases
 namespace fs = boost::filesystem;
 namespace pt = boost::property_tree;
@@ -201,6 +204,22 @@ ThingMetadata::~ThingMetadata()
 {
 }
 
+ThingMetadata& ThingMetadata::get(std::string type)
+{
+  if (type.empty())
+  {
+    type = "Unknown";
+  }
+
+  if (collection.count(type) == 0)
+  {
+    collection.insert(type, NEW ThingMetadata(type));
+  }
+
+  return collection.at(type);
+}
+
+
 std::string const& ThingMetadata::get_parent() const
 {
   return pImpl->parent;
@@ -222,7 +241,7 @@ bool ThingMetadata::get_intrinsic_flag(std::string key, bool default_value) cons
     }
     else
     {
-      return TM.get_metadata(pImpl->parent).get_intrinsic_flag(key, default_value);
+      return ThingMetadata::get(pImpl->parent).get_intrinsic_flag(key, default_value);
     }
   }
 }
@@ -243,7 +262,7 @@ int ThingMetadata::get_intrinsic_value(std::string key, int default_value) const
     }
     else
     {
-      return TM.get_metadata(pImpl->parent).get_intrinsic_value(key, default_value);
+      return ThingMetadata::get(pImpl->parent).get_intrinsic_value(key, default_value);
     }
   }
 }
@@ -264,7 +283,7 @@ std::string ThingMetadata::get_intrinsic_string(std::string key, std::string def
     }
     else
     {
-      return TM.get_metadata(pImpl->parent).get_intrinsic_string(key, default_value);
+      return ThingMetadata::get(pImpl->parent).get_intrinsic_string(key, default_value);
     }
   }
 }
@@ -300,7 +319,7 @@ bool ThingMetadata::get_default_flag(std::string key, bool default_value) const
     }
     else
     {
-      return TM.get_metadata(pImpl->parent).get_default_flag(key, default_value);
+      return ThingMetadata::get(pImpl->parent).get_default_flag(key, default_value);
     }
   }
 }
@@ -321,7 +340,7 @@ int ThingMetadata::get_default_value(std::string key, int default_value) const
     }
     else
     {
-      return TM.get_metadata(pImpl->parent).get_default_value(key, default_value);
+      return ThingMetadata::get(pImpl->parent).get_default_value(key, default_value);
     }
   }
 }
@@ -342,7 +361,7 @@ std::string ThingMetadata::get_default_string(std::string key, std::string defau
     }
     else
     {
-      return TM.get_metadata(pImpl->parent).get_default_string(key, default_value);
+      return ThingMetadata::get(pImpl->parent).get_default_string(key, default_value);
     }
   }
 }
@@ -408,9 +427,7 @@ ActionResult ThingMetadata::call_lua_function(std::string function_name,
   }
   else
   {
-    return_value = TM.get_metadata(pImpl->parent).call_lua_function(function_name,
-      caller,
-      default_result);
+    return_value = ThingMetadata::get(pImpl->parent).call_lua_function(function_name, caller, default_result);
   }
 
   return return_value;
@@ -464,9 +481,7 @@ ActionResult ThingMetadata::call_lua_function(std::string function_name,
   }
   else
   {
-    return_value = TM.get_metadata(pImpl->parent).call_lua_function(function_name,
-      caller,
-      default_result);
+    return_value = ThingMetadata::get(pImpl->parent).call_lua_function(function_name, caller, default_result);
   }
 
   return return_value;
@@ -522,9 +537,7 @@ ActionResult ThingMetadata::call_lua_function(std::string function_name,
   }
   else
   {
-    return_value = TM.get_metadata(pImpl->parent).call_lua_function(function_name,
-      caller,
-      default_result);
+    return_value = ThingMetadata::get(pImpl->parent).call_lua_function(function_name, caller, default_result);
   }
 
   return return_value;

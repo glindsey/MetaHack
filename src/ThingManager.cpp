@@ -25,15 +25,11 @@ struct ThingManager::Impl
   Impl() {}
   ~Impl()
   {
-    thing_metadata.clear();
     thing_map.clear();
   }
 
   /// ThingRef of the player.
   ThingRef player;
-
-  /// Map of ThingMetadata.
-  std::unordered_map< std::string, std::unique_ptr<ThingMetadata> > thing_metadata;
 
   /// Map of ThingIds to Things.
   /// @todo Probably faster to use an unordered_map and use ThingId.id 
@@ -89,29 +85,19 @@ ThingManager& ThingManager::instance()
 
 ThingRef ThingManager::create(std::string type)
 {
-  if (pImpl->thing_metadata.count(type) == 0)
-  {
-    pImpl->thing_metadata[type].reset(NEW ThingMetadata(type));
-  }
-
   ThingId new_id = ThingRef::create();
   ThingRef new_ref = ThingRef(new_id);
   Thing* new_thing = pImpl->thing_pool.construct(type, new_ref);
   pImpl->thing_map[new_id] = new_thing;
 
   // Temporary test of Lua call
-  pImpl->thing_metadata[type]->call_lua_function("on_create", new_ref);
+  ThingMetadata::get(type).call_lua_function("on_create", new_ref);
 
   return ThingRef(new_id);
 }
 
 ThingRef ThingManager::create_floor(MapTile* map_tile)
 {
-  if (pImpl->thing_metadata.count("Floor") == 0)
-  {
-    pImpl->thing_metadata["Floor"].reset(NEW ThingMetadata("Floor"));
-  }
-
   ThingId new_id = ThingRef::create();
   Thing* new_thing = pImpl->thing_pool.construct(map_tile, ThingRef(new_id));
   pImpl->thing_map[new_id] = new_thing;
@@ -129,16 +115,6 @@ ThingRef ThingManager::clone(ThingRef original_ref)
   pImpl->thing_map[new_id] = new_thing;
 
   return ThingRef(new_id);
-}
-
-ThingMetadata& ThingManager::get_metadata(std::string type)
-{
-  if (pImpl->thing_metadata.count(type) == 0)
-  {
-    pImpl->thing_metadata[type].reset(NEW ThingMetadata(type));
-  }
-
-  return *(pImpl->thing_metadata[type]);
 }
 
 void ThingManager::destroy(ThingRef ref)

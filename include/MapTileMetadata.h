@@ -20,9 +20,8 @@ public:
   std::string get_string(std::string key, std::string default_value = "") const;
 
 private:
-  /// Constructor is private.
+  /// Constructor is private; new instances are obtained using get().
   MapTileMetadata(std::string type);
-
 
   struct Impl;
   std::unique_ptr<Impl> pImpl;

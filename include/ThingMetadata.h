@@ -5,6 +5,7 @@
 #include <map>
 #include <unordered_map>
 #include <string>
+#include <boost/ptr_container/ptr_unordered_map.hpp>
 #include <SFML/Graphics.hpp>
 
 #include "common_types.h"
@@ -17,8 +18,9 @@
 class ThingMetadata : public Metadata
 {
 public:
-  ThingMetadata(std::string type);
   virtual ~ThingMetadata();
+
+  static ThingMetadata& get(std::string type);
 
   std::string const& get_parent() const;
 
@@ -84,9 +86,14 @@ public:
                                    ActionResult default_result = ActionResult::Success);
 
 private:
+  /// Constructor is private; new instances are obtained using get().
+  ThingMetadata(std::string type);
+
   struct Impl;
   std::unique_ptr<Impl> pImpl;
 
+  /// Static collection of ThingMetadata instances.
+  static boost::ptr_unordered_map<std::string, ThingMetadata> ThingMetadata::collection;
 };
 
 #endif // THINGMETADATA_H

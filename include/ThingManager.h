@@ -42,10 +42,6 @@ public:
     /// @return A ThingRef to the new cloned object.
     ThingRef clone(ThingRef original_ref);
 
-    /// Get a reference to the metadata for a type.
-    /// If the type's metadata is not found, attempts to load it.
-    ThingMetadata& get_metadata(std::string type);
-
     /// Destroy an object given a ThingRef to the object.
     /// If the given ThingRef does not correspond to an object, does nothing.
     /// @param ref ThingRef of the object to destroy.
