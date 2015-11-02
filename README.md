@@ -42,12 +42,12 @@ Some commands do request a "target" item after the command has been entered, suc
 
 The following commands are currently in place, although some are not yet fully implemented:
 
-`CTRL-D` - Drop item(s)
-`CTRL-P` - Pick up item(s)
-`CTRL-Q` - Quaff (drink) item(s)
-`CTRL-S` - Store item(s) in another item
-`CTRL-T` - Take item out of container
-`CTRL-W` - Wield item
+* `CTRL-D` - Drop item(s)
+* `CTRL-P` - Pick up item(s)
+* `CTRL-Q` - Quaff (drink) item(s)
+* `CTRL-S` - Store item(s) in another item
+* `CTRL-T` - Take item out of container
+* `CTRL-W` - Wield item
 
 
 ### View Mode
