@@ -653,6 +653,47 @@ class Thing :
     static int LUA_set_property_flag(lua_State* L);
     static int LUA_set_property_value(lua_State* L);
     static int LUA_set_property_string(lua_State* L);
+
+    /// Try to call a Lua function given no arguments.
+    ///
+    /// If the function does not exist, attempts to step up to the parent type
+    /// and call the function there, up until there's no parent to call.
+    /// @param function_name  Name of the function to call
+    /// @param default_result The default result if function is not found 
+    ///                       (defaults to ActionResult::Success).
+    /// @return An ActionResult containing the result of the call.
+    ActionResult call_lua_function(std::string function_name,
+      ActionResult default_result = ActionResult::Success);
+
+    /// Try to call a Lua function given one argument.
+    ///
+    /// If the function does not exist, attempts to step up to the parent type
+    /// and call the function there, up until there's no parent to call.
+    /// @param function_name  Name of the function to call
+    /// @param arg            Argument to pass to the function
+    /// @param default_result The default result if function is not found 
+    ///                       (defaults to ActionResult::Success).
+    /// @return An ActionResult containing the result of the call.
+    ActionResult call_lua_function(std::string function_name,
+      lua_Integer arg,
+      ActionResult default_result = ActionResult::Success);
+
+    /// Try to call a Lua function given two arguments.
+    ///
+    /// If the function does not exist, attempts to step up to the parent type
+    /// and call the function there, up until there's no parent to call.
+    /// @param function_name  Name of the function to call
+    /// @param caller         ThingRef to the thing calling the function
+    /// @param arg1           Argument #1 to pass to the function.
+    /// @param arg2           Argument #2 to pass to the function.
+    /// @param default_result The default result if function is not found 
+    ///                       (defaults to ActionResult::Success).
+    /// @return An ActionResult containing the result of the call.
+    ActionResult call_lua_function(std::string function_name,
+      lua_Integer arg1,
+      lua_Integer arg2,
+      ActionResult default_result = ActionResult::Success);
+
 };
 
 #endif // THING_H

@@ -2555,10 +2555,7 @@ void Thing::light_up_surroundings()
 
 void Thing::be_lit_by(ThingRef light)
 {
-  pImpl->metadata.call_lua_function(
-    "on_lit_by",
-    pImpl->ref,
-    light.get_id().full_id);
+  call_lua_function("on_lit_by", light.get_id().full_id);
 
   if (get_location() == TM.get_mu())
   {
@@ -2779,110 +2776,67 @@ bool Thing::process()
 
 bool Thing::perform_action_activated_by(ThingRef actor)
 {
-  ActionResult result = 
-    pImpl->metadata.call_lua_function(
-      "perform_action_activated_by", 
-      get_ref(), 
-      actor.get_id().full_id);
-
+  ActionResult result = call_lua_function("perform_action_activated_by", actor.get_id().full_id);
   return was_successful(result);
 }
 
 void Thing::perform_action_collided_with(ThingRef actor)
 {
-  ActionResult result = 
-    pImpl->metadata.call_lua_function(
-      "perform_action_collided_with", 
-      get_ref(), 
-      actor.get_id().full_id);
-
+  ActionResult result = call_lua_function("perform_action_collided_with", actor.get_id().full_id);
   return;
 }
 
 ActionResult Thing::perform_action_drank_by(ThingRef actor, ThingRef contents)
 {
-  ActionResult result = 
-    pImpl->metadata.call_lua_function(
-      "perform_action_drank_by", 
-      get_ref(), 
-      actor.get_id().full_id,
-      contents.get_id().full_id);
-
+  ActionResult result = call_lua_function("perform_action_drank_by", actor.get_id().full_id, contents.get_id().full_id);
   return result;
 }
 
 bool Thing::perform_action_dropped_by(ThingRef actor)
 {
-  ActionResult result = 
-    pImpl->metadata.call_lua_function(
-      "perform_action_dropped_by", 
-      get_ref(), 
-      actor.get_id().full_id);
-
+  ActionResult result = call_lua_function("perform_action_dropped_by", actor.get_id().full_id);
   return was_successful(result);
 }
 
 bool Thing::perform_action_eaten_by(ThingRef actor)
 {
-  ActionResult result = 
-    pImpl->metadata.call_lua_function("perform_action_eaten_by", 
-      get_ref(), 
-      actor.get_id().full_id);
-
+  ActionResult result = call_lua_function("perform_action_eaten_by", actor.get_id().full_id);
   return was_successful(result);
 }
 
 bool Thing::perform_action_picked_up_by(ThingRef actor)
 {
-  ActionResult result = 
-    pImpl->metadata.call_lua_function("perform_action_picked_up_by", 
-      get_ref(), 
-      actor.get_id().full_id);
-
+  ActionResult result = call_lua_function("perform_action_picked_up_by", actor.get_id().full_id);
   return was_successful(result);
 }
 
 bool Thing::perform_action_put_into_by(ThingRef container, ThingRef actor)
 {
-  ActionResult result = 
-    pImpl->metadata.call_lua_function(
-      "perform_action_put_into", 
-      get_ref(), 
-      container.get_id().full_id, 
-      actor.get_id().full_id);
-
+  ActionResult result = call_lua_function("perform_action_put_into", container.get_id().full_id, actor.get_id().full_id);
   return was_successful(result);
 }
 
 bool Thing::perform_action_taken_out_by(ThingRef actor)
 {
-  ActionResult result = 
-    pImpl->metadata.call_lua_function("perform_action_taken_out_by", get_ref(), actor.get_id().full_id);
+  ActionResult result = call_lua_function("perform_action_taken_out_by", actor.get_id().full_id);
   return was_successful(result);
 }
 
 ActionResult Thing::perform_action_read_by(ThingRef actor)
 {
-  ActionResult result = 
-    pImpl->metadata.call_lua_function("perform_action_read_by", get_ref(), actor.get_id().full_id);
+  ActionResult result = call_lua_function("perform_action_read_by", actor.get_id().full_id);
   return result;
 }
 
 void Thing::perform_action_attack_hits(ThingRef target)
 {
-  ActionResult result = 
-    pImpl->metadata.call_lua_function("perform_action_read_by", get_ref(), target.get_id().full_id);
+  ActionResult result = call_lua_function("perform_action_read_by", target.get_id().full_id);  
   return;
 }
 
 bool Thing::perform_action_thrown_by(ThingRef actor, Direction direction)
 {
-  ActionResult result = 
-    pImpl->metadata.call_lua_function(
-      "perform_action_thrown_by", 
-      get_ref(), 
-      actor.get_id().full_id,
-      static_cast<lua_Integer>(direction));
+  ActionResult result = call_lua_function("perform_action_thrown_by", actor.get_id().full_id, static_cast<lua_Integer>(direction));  
   return was_successful(result);
 }
 
@@ -2901,22 +2855,14 @@ bool Thing::perform_action_deequipped_by(ThingRef actor, WearLocation& location)
   }
   else
   {
-    ActionResult result = pImpl->metadata.call_lua_function(
-      "perform_action_deequipped_by",
-      get_ref(),
-      actor.get_id().full_id);
-
+    ActionResult result = call_lua_function("perform_action_deequipped_by", actor.get_id().full_id);
     return was_successful(result);
   }
 }
 
 bool Thing::perform_action_equipped_by(ThingRef actor, WearLocation& location)
 {
-  ActionResult result = 
-    pImpl->metadata.call_lua_function("perform_action_equipped_by", 
-      get_ref(), 
-      actor.get_id().full_id);
-
+  ActionResult result = call_lua_function("perform_action_equipped_by", actor.get_id().full_id);
   bool subclass_result = was_successful(result);
 
   if (subclass_result == true)
@@ -2950,22 +2896,14 @@ bool Thing::perform_action_unwielded_by(ThingRef actor)
   }
   else
   {
-    ActionResult result = pImpl->metadata.call_lua_function(
-      "perform_action_unwielded_by",
-      get_ref(),
-      actor.get_id().full_id);
-
+    ActionResult result = call_lua_function("perform_action_unwielded_by", actor.get_id().full_id);
     return was_successful(result);
   }
 }
 
 bool Thing::perform_action_wielded_by(ThingRef actor)
 {
-  ActionResult result = pImpl->metadata.call_lua_function(
-    "perform_action_wielded_by", 
-    get_ref(), 
-    actor.get_id().full_id);
-
+  ActionResult result = call_lua_function("perform_action_wielded_by", actor.get_id().full_id);
   bool subclass_result = was_successful(result);
 
   if (subclass_result == true)
@@ -2986,13 +2924,7 @@ bool Thing::perform_action_wielded_by(ThingRef actor)
 
 bool Thing::perform_action_fired_by(ThingRef actor, Direction direction)
 {
-  ActionResult result = 
-    pImpl->metadata.call_lua_function(
-      "perform_action_fired_by", 
-      get_ref(), 
-      actor.get_id().full_id, 
-      static_cast<lua_Integer>(direction));
-
+  ActionResult result = call_lua_function("perform_action_fired_by", actor.get_id().full_id, static_cast<lua_Integer>(direction));
   return was_successful(result);
 }
 
@@ -3757,4 +3689,19 @@ int Thing::LUA_set_property_string(lua_State* L)
   thing->set_property_string(key, svalue);
 
   return 0;
+}
+
+ActionResult Thing::call_lua_function(std::string function_name, ActionResult default_result)
+{
+  return pImpl->metadata.call_lua_function(function_name, get_ref(), default_result);
+}
+
+ActionResult Thing::call_lua_function(std::string function_name, lua_Integer arg, ActionResult default_result)
+{
+  return pImpl->metadata.call_lua_function(function_name, get_ref(), arg, default_result);
+}
+
+ActionResult Thing::call_lua_function(std::string function_name, lua_Integer arg1, lua_Integer arg2, ActionResult default_result)
+{
+  return pImpl->metadata.call_lua_function(function_name, get_ref(), arg1, arg2, default_result);
 }
