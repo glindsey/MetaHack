@@ -85,7 +85,10 @@ struct TileSheet::Impl
 TileSheet::TileSheet()
   : pImpl(NEW Impl())
 {
-  pImpl->texture_size = pImpl->texture.getMaximumSize();
+  /// @todo Make this a configurable setting.
+  pImpl->texture_size = 1024;
+  //pImpl->texture_size = pImpl->texture.getMaximumSize();
+  
   bool success = pImpl->texture.create(pImpl->texture_size, pImpl->texture_size);
 
   if (!success)
