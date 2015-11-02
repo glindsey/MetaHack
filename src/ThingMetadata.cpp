@@ -65,6 +65,24 @@ struct ThingMetadata::Impl
 
   /// Location of this Thing's graphics on the tilesheet.
   sf::Vector2u tile_location;
+
+  /// Recursive function that iterates through the tree and prints the values.
+  void trace_tree(pt::ptree const& tree, std::string prefix = "")
+  {
+    pt::ptree::const_iterator end = tree.end();
+    for (pt::ptree::const_iterator it = tree.begin(); it != end; ++it)
+    {
+      std::string name = prefix + (it->first);
+      boost::to_lower(name);
+      std::string value = it->second.get_value<std::string>();
+      boost::trim(value);
+      if (!value.empty())
+      { 
+        TRACE("%s = \"%s\"", name.c_str(), value.c_str());
+      }      
+      trace_tree(it->second, name + ".");
+    }
+  }
 };
 
 
@@ -95,6 +113,9 @@ ThingMetadata::ThingMetadata(std::string type)
   pt::xml_parser::read_xml(xmlfile_string, data);
 
   //TRACE("Loaded property tree for \"%s\"", type.c_str());
+
+  // DEBUG: Dump the tree using trace.
+  pImpl->trace_tree(data);
 
   // Get thing's pretty name.
   try
@@ -164,7 +185,6 @@ ThingMetadata::ThingMetadata(std::string type)
       bool value = child_tree.second.get_value<bool>(false);
 
       pImpl->intrinsic_flags[key] = value;
-      //TRACE("Found intrinsic flag: %s = %s", key.c_str(), (value == true) ? "true" : "false");
     }
   }
   catch (pt::ptree_bad_path&)

@@ -8,6 +8,14 @@
       <movable>false</movable>
       <opaque>false</opaque>
       <openable>false</openable>
+    
+      <test>
+        <test2>
+          <test3a>false</test3a>
+          <test3b>true</test3b>
+          <test3c>false</test3c>
+        </test2>
+      </test>
     </flags>
 	  <values>
 	  </values>
