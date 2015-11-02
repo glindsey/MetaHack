@@ -40,15 +40,27 @@ Once items have been selected, a command is issued using `CTRL` plus a letter ke
 
 Some commands do request a "target" item after the command has been entered, such as "store item". In that case, you would choose the items to store, press `CTRL-S`, and then choose the container to store them in.
 
-The following commands are currently in place, although some are not yet fully implemented:
+The following commands are currently in place, although some (most?) are not yet fully implemented:
 
-* `CTRL-D` - Drop item(s)
-* `CTRL-P` - Pick up item(s)
-* `CTRL-Q` - Quaff (drink) item(s)
-* `CTRL-S` - Store item(s) in another item
-* `CTRL-T` - Take item out of container
-* `CTRL-W` - Wield item
+* `CTRL-A` - Attack a direction. Although attacking is usually automatic for hostile creatures, this forces an attack on something non-hostile, or something that isn't a creature (like a door).
+* `CTRL-C` - Close item(s). Also used to close doors/grates/etc.
+* `CTRL-D` - Drop item(s).
+* `CTRL-E` - Eat item(s).
+* `CTRL-F` - Fill item. Used to transfer a liquid/powder from one container to another.
+* `CTRL-G` - Get (pick up) an item.
+* `CTRL-H` - Hurl (throw) an item.
+* `CTRL-I` - Inscribe (write) on an item.
+* `CTRL-M` - Mix two liquids/powders together.
+* `CTRL-O` - Open item(s). Also used to open doors/grates/etc.
+* `CTRL-P` - Put item(s) in another item. This is also used to load ammunition into a fireable weapon.
+* `CTRL-Q` - Quaff (drink) from item(s).
+* `CTRL-R` - Read item(s).
+* `CTRL-S` - Shoot a fireable item. This will normally shoot the item you have equipped, if it is a firearm. If you select an item first, it will attempt to wield it and then shoot it.
+* `CTRL-T` - Take item(s) out of a container.
+* `CTRL-U` - Use an item. For items with actions that don't really fit into other command verbs.
+* `CTRL-W` - Wield an item.
 
+This list is definitely not finished and is subject to change.
 
 ### View Mode
 
@@ -59,9 +71,11 @@ Hitting `/` puts the display into "view mode". In this mode, the arrow keys move
 
 Hitting the backtick/tilde key brings up the debug console, which at the moment does absolutely nothing. Eventually it will let you execute Lua functions directly.
 
+Hitting `ESC` when in a "choose an item" / "choose a direction" prompt will abort an action.
+
 For those accustomed to NetHack, the comma `,` key is equivalent to `CTRL-P`. You just have to remember to select the items to pick up *first*!
 
-`Esc` will immediately exit the game. No time for "are you sure?" niceties right now.
+`CTRL-ALT-Q` will immediately exit the game. No time for "are you sure?" niceties right now.
 
 `CTRL-minus` and `CTRL-plus` (or `CTRL-equals`) zoom the graphics in and out. `CTRL-0` (zero) should return to standard zoom.
 

@@ -3053,7 +3053,7 @@ bool Thing::_process()
         }
         break;
 
-      case Action::Type::Pickup:
+      case Action::Type::Get:
         for (ThingRef thing : action.things)
         {
           if (thing != TM.get_mu())
@@ -3081,7 +3081,7 @@ bool Thing::_process()
         }
         break;
 
-      case Action::Type::Store:
+      case Action::Type::PutInto:
       {
         ThingRef container = action.target;
         if (container != TM.get_mu())
@@ -3143,7 +3143,7 @@ bool Thing::_process()
       }
 
       default:
-        MINOR_ERROR("Unimplemented action.type %d", action.type);
+        the_message_log.add("We're sorry, but that action has not yet been implemented.");
         break;
       } // end switch (action)
     } // end if (actions pending)

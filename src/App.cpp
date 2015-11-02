@@ -187,9 +187,12 @@ EventResult App::handle_event(sf::Event& event)
     {
       switch (event.key.code)
       {
-      case sf::Keyboard::Key::Escape:
-        pImpl->is_running = false;
-        result = EventResult::Handled;
+      case sf::Keyboard::Key::Q:
+        if (event.key.alt && event.key.control)
+        {
+          pImpl->is_running = false;
+          result = EventResult::Handled;
+        }
         break;
 
       default:

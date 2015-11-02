@@ -277,6 +277,15 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
       pImpl->reset_inventory_area();
     }
 
+    if (!key.alt && !key.control && key.code == sf::Keyboard::Key::Escape)
+    {
+      the_message_log.add("Aborted.");
+      pImpl->inventory_area_shows_player = false;
+      pImpl->reset_inventory_area();
+      pImpl->current_input_state = GameInputState::Map;
+      result = EventResult::Handled;
+    }
+
     if (pImpl->action_in_progress.target_can_be_thing)
     {
       if (!key.alt && !key.control && key_number != -1)
@@ -401,6 +410,12 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
       {
         pImpl->inventory_area_shows_player = !pImpl->inventory_area_shows_player;
         pImpl->reset_inventory_area();
+        result = EventResult::Handled;
+      }
+      else if (key.code == sf::Keyboard::Key::Escape)
+      {
+        the_message_log.add("Press CTRL-ALT-Q to quit the game.");
+        result = EventResult::Handled;
       }
     }
 
@@ -543,10 +558,11 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
         }
 
       case sf::Keyboard::Key::Comma:
+        /// @todo Find a better way to do this. This is hacky.
         key.alt = false;
         key.control = true;
         key.shift = false;
-        key.code = sf::Keyboard::Key::P;
+        key.code = sf::Keyboard::Key::G;
         break;
 
       default:
@@ -557,6 +573,8 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
     // *** No ALT, YES CTRL, SHIFT is irrelevant ******************************
     if (!key.alt && key.control)
     {
+      action.things = pImpl->inventory_area->get_selected_things();
+
       switch (key.code)
       {
         // CTRL-MINUS -- Zoom out
@@ -575,51 +593,274 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
         pImpl->map_zoom_level = 1.0f;
         break;
 
-        // CTRL-D -- drop items
-      case sf::Keyboard::Key::D:    // Drop
-        action.type = Action::Type::Drop;
-        action.things = pImpl->inventory_area->get_selected_things();
-        player->queue_action(action);
-        pImpl->inventory_area_shows_player = false;
-        pImpl->reset_inventory_area();
-        result = EventResult::Handled;
-        break;
-
-        // CTRL-P -- pick up items
-      case sf::Keyboard::Key::P:    // Pick up
-        action.type = Action::Type::Pickup;
-        action.things = pImpl->inventory_area->get_selected_things();
-        player->queue_action(action);
-        pImpl->inventory_area_shows_player = false;
-        pImpl->reset_inventory_area();
-        result = EventResult::Handled;
-        break;
-
-        // CTRL-Q -- quaff (drink) items
-      case sf::Keyboard::Key::Q:
-        action.type = Action::Type::Quaff;
-        action.things = pImpl->inventory_area->get_selected_things();
-        player->queue_action(action);
-        pImpl->inventory_area_shows_player = false;
-        pImpl->reset_inventory_area();
-        result = EventResult::Handled;
-        break;
-
-        // CTRL-S -- store item in another item
-      case sf::Keyboard::Key::S:
-        action.type = Action::Type::Store;
-        action.things = pImpl->inventory_area->get_selected_things();
-        if (action.things.size() > 0)
+        // CTRL-A -- attack
+      case sf::Keyboard::Key::A:    // Attack
+        action.type = Action::Type::Attack;
+        if (action.things.size() == 0)
         {
+          // No item specified, so ask for a direction.
           pImpl->action_in_progress = action;
-          the_message_log.add("Choose a container to store into.");
+          the_message_log.add("Choose a direction to attack.");
           pImpl->current_input_state = GameInputState::TargetSelection;
-          pImpl->action_in_progress.target_can_be_thing = true;
+          pImpl->action_in_progress.target_can_be_direction = true;
+          pImpl->inventory_area->clear_selected_slots();
+        }
+        else if (action.things.size() > 1)
+        {
+          the_message_log.add("You can only attack one item at once.");
+        }
+        else
+        {
+          // Item(s) specified, so proceed with items.
+          player->queue_action(action);
+          pImpl->inventory_area_shows_player = false;
+          pImpl->reset_inventory_area();
+        }
+        result = EventResult::Handled;
+        break;
+
+        // CTRL-C -- close items
+      case sf::Keyboard::Key::C:    // Close
+        action.type = Action::Type::Close;
+        if (action.things.size() == 0)
+        {
+          // No item specified, so ask for a direction.
+          pImpl->action_in_progress = action;
+          the_message_log.add("Choose a direction to close.");
+          pImpl->current_input_state = GameInputState::TargetSelection;
+          pImpl->action_in_progress.target_can_be_direction = true;
           pImpl->inventory_area->clear_selected_slots();
         }
         else
         {
-          the_message_log.add("You must first select the objects to store.");
+          // Item(s) specified, so proceed with items.
+          player->queue_action(action);
+          pImpl->inventory_area_shows_player = false;
+          pImpl->reset_inventory_area();
+        }
+        result = EventResult::Handled;
+        break;
+
+        // CTRL-D -- drop items
+      case sf::Keyboard::Key::D:    // Drop
+        action.type = Action::Type::Drop;
+        if (action.things.size() == 0)
+        {
+          the_message_log.add("Please choose the item(s) to drop first.");
+        }
+        else
+        {
+          player->queue_action(action);
+          pImpl->inventory_area_shows_player = false;
+          pImpl->reset_inventory_area();
+        }
+        result = EventResult::Handled;
+        break;
+
+        // CTRL-E -- eat items
+      case sf::Keyboard::Key::E:
+        action.type = Action::Type::Eat;
+        if (action.things.size() == 0)
+        {
+          the_message_log.add("Please choose the item(s) to eat first.");
+        }
+        else
+        {
+          player->queue_action(action);
+          pImpl->inventory_area_shows_player = false;
+          pImpl->reset_inventory_area();
+        }
+        result = EventResult::Handled;
+        break;
+
+        // CTRL-F -- fill item(s)
+      case sf::Keyboard::Key::F:
+        action.type = Action::Type::Fill;
+        if (action.things.size() == 0)
+        {
+          the_message_log.add("Please select the item(s) to fill first.");
+        }
+        else
+        {
+          pImpl->action_in_progress = action;
+          the_message_log.add("Choose an item or direction to fill from.");
+          pImpl->current_input_state = GameInputState::TargetSelection;
+          pImpl->action_in_progress.target_can_be_thing = true;
+          pImpl->action_in_progress.target_can_be_direction = true;
+          pImpl->inventory_area->clear_selected_slots();
+        }
+        result = EventResult::Handled;
+        break;
+
+        // CTRL-G -- get (pick up) items
+      case sf::Keyboard::Key::G:
+        action.type = Action::Type::Get;
+        if (action.things.size() == 0)
+        {
+          the_message_log.add("Please select the item(s) to pick up first.");
+        }
+        else
+        { 
+          player->queue_action(action);
+          pImpl->inventory_area_shows_player = false;
+          pImpl->reset_inventory_area();
+        }
+        result = EventResult::Handled;
+        break;
+
+        // CTRL-H -- hurl items
+      case sf::Keyboard::Key::H:
+        action.type = Action::Type::Hurl;
+        if (action.things.size() == 0)
+        {
+          the_message_log.add("Please select the item you want to hurl first.");
+        }
+        else if (action.things.size() > 1)
+        {
+          the_message_log.add("You can only hurl one item at once.");
+        }
+        else
+        {
+          pImpl->action_in_progress = action;
+          the_message_log.add("Choose a direction to hurl the item.");
+          pImpl->current_input_state = GameInputState::TargetSelection;
+          pImpl->action_in_progress.target_can_be_direction = true;
+          pImpl->inventory_area->clear_selected_slots();
+        }
+        result = EventResult::Handled;
+        break;
+
+        // CTRL-I -- inscribe on an item
+      case sf::Keyboard::Key::I:
+        action.type = Action::Type::Inscribe;
+        if (action.things.size() == 0)
+        {
+          the_message_log.add("Please select the item you want to write on.");
+        }
+        else if (action.things.size() > 1)
+        {
+          the_message_log.add("You can only write on one item at a time.");
+        }
+        else
+        {
+          pImpl->action_in_progress = action;
+          the_message_log.add("Choose an item to write with.");
+          pImpl->current_input_state = GameInputState::TargetSelection;
+          pImpl->action_in_progress.target_can_be_thing = true;
+          pImpl->inventory_area->clear_selected_slots();
+        }
+        result = EventResult::Handled;
+        break;
+
+
+        // CTRL-M -- mix items
+      case sf::Keyboard::Key::M:
+        action.type = Action::Type::Mix;
+        if (action.things.size() == 0)
+        {
+          the_message_log.add("Please select the two items you want to mix together first.");
+        }
+        else if (action.things.size() != 2)
+        {
+          the_message_log.add("You must select exactly two items to mix together.");
+        }
+        else
+        {
+          player->queue_action(action);
+          pImpl->inventory_area_shows_player = false;
+          pImpl->reset_inventory_area();
+        }
+        result = EventResult::Handled;
+        break;
+
+      case sf::Keyboard::Key::O:    // Open
+        action.type = Action::Type::Open;
+        if (action.things.size() == 0)
+        {
+          // No item specified, so ask for a direction.
+          pImpl->action_in_progress = action;
+          the_message_log.add("Choose a direction to open.");
+          pImpl->current_input_state = GameInputState::TargetSelection;
+          pImpl->action_in_progress.target_can_be_direction = true;
+          pImpl->inventory_area->clear_selected_slots();
+        }
+        else
+        {
+          // Item(s) specified, so proceed with items.
+          player->queue_action(action);
+          pImpl->inventory_area_shows_player = false;
+          pImpl->reset_inventory_area();
+        }
+        result = EventResult::Handled;
+        break;
+
+        // CTRL-P -- put item in another item
+      case sf::Keyboard::Key::P:
+        action.type = Action::Type::PutInto;
+        if (action.things.size() == 0)
+        {
+          the_message_log.add("Please select the item(s) you want to store first.");
+        }
+        else
+        {
+          pImpl->action_in_progress = action;
+          the_message_log.add("Choose a container to put the item(s) into.");
+          pImpl->current_input_state = GameInputState::TargetSelection;
+          pImpl->action_in_progress.target_can_be_thing = true;
+          pImpl->inventory_area->clear_selected_slots();
+        }
+        result = EventResult::Handled;
+        break;
+
+        // CTRL-Q -- quaff (drink) from items
+      case sf::Keyboard::Key::Q:
+        action.type = Action::Type::Quaff;
+        if (action.things.size() == 0)
+        {
+          the_message_log.add("Please select the item(s) you want to quaff from first.");
+        }
+        else
+        {
+          player->queue_action(action);
+          pImpl->inventory_area_shows_player = false;
+          pImpl->reset_inventory_area();
+        }
+        result = EventResult::Handled;
+        break;
+
+        // CTRL-R -- read an item
+      case sf::Keyboard::Key::R:
+        action.type = Action::Type::Read;
+        if (action.things.size() == 0)
+        {
+          the_message_log.add("Please select the item(s) you want to read first.");
+        }
+        else
+        {
+          player->queue_action(action);
+          pImpl->inventory_area_shows_player = false;
+          pImpl->reset_inventory_area();
+        }
+        result = EventResult::Handled;
+
+        // CTRL-S -- shoot items
+      case sf::Keyboard::Key::S:
+        action.type = Action::Type::Shoot;
+        // Skip the item check here, as we want to shoot our wielded weapon
+        // if no item is selected.
+        if (action.things.size() > 1)
+        {
+          the_message_log.add("You can only shoot one item at once.");
+        }
+        else
+        {
+          /// @todo If no items are selected, fire your wielded item.
+          ///       Otherwise, wield the selected item and fire it.
+          pImpl->action_in_progress = action;
+          the_message_log.add("Choose a direction to shoot.");
+          pImpl->current_input_state = GameInputState::TargetSelection;
+          pImpl->action_in_progress.target_can_be_direction = true;
+          pImpl->inventory_area->clear_selected_slots();
         }
         result = EventResult::Handled;
         break;
@@ -627,20 +868,52 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
         // CTRL-T -- take item out of container
       case sf::Keyboard::Key::T:
         action.type = Action::Type::TakeOut;
-        action.things = pImpl->inventory_area->get_selected_things();
-        player->queue_action(action);
-        pImpl->inventory_area_shows_player = false;
-        pImpl->reset_inventory_area();
+        if (action.things.size() == 0)
+        {
+          the_message_log.add("Please select the item(s) to take out first.");
+        }
+        else
+        {
+          player->queue_action(action);
+          pImpl->inventory_area_shows_player = false;
+          pImpl->reset_inventory_area();
+        }
+        result = EventResult::Handled;
+        break;
+
+        // CTRL-U -- use an item
+      case sf::Keyboard::Key::U:
+        action.type = Action::Type::Use;
+        if (action.things.size() == 0)
+        {
+          the_message_log.add("Please choose the item to use first.");
+        }
+        else
+        {
+          player->queue_action(action);
+          pImpl->inventory_area_shows_player = false;
+          pImpl->reset_inventory_area();
+        }
         result = EventResult::Handled;
         break;
 
         // CTRL-W -- wield item
       case sf::Keyboard::Key::W:
         action.type = Action::Type::Wield;
-        action.things = pImpl->inventory_area->get_selected_things();
-        player->queue_action(action);
-        pImpl->inventory_area_shows_player = false;
-        pImpl->reset_inventory_area();
+        if (action.things.size() == 0)
+        {
+          the_message_log.add("Please choose the item to wield first.");
+        }
+        else if (action.things.size() > 1)
+        {
+          the_message_log.add("You may only wield one item at a time.");
+        }
+        else
+        {
+          player->queue_action(action);
+          pImpl->inventory_area_shows_player = false;
+          pImpl->reset_inventory_area();
+        }
         result = EventResult::Handled;
         break;
 
