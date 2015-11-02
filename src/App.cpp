@@ -17,7 +17,6 @@
 #include <crtdbg.h>
 
 // Global declarations
-std::unique_ptr<sf::RenderWindow> app_window_;
 std::unique_ptr<sf::Font> default_font_;
 std::unique_ptr<sf::Font> default_bold_font_;
 std::unique_ptr<sf::Font> default_mono_font_;
@@ -28,11 +27,11 @@ std::unique_ptr<boost::random::mt19937> rng_;
 // Local typedefs
 typedef boost::random::uniform_int_distribution<> uniform_int_dist;
 
-sf::IntRect calc_message_log_dimensions()
+sf::IntRect calc_message_log_dimensions(sf::RenderWindow& window)
 {
   sf::IntRect messageLogDims;
-  messageLogDims.width = the_window.getSize().x - 6;
-  messageLogDims.height = static_cast<int>(the_window.getSize().y * 0.2f) - 6;
+  messageLogDims.width = window.getSize().x - 6;
+  messageLogDims.height = static_cast<int>(window.getSize().y * 0.2f) - 6;
   messageLogDims.left = 3;
   messageLogDims.top = 3;
   return messageLogDims;
@@ -44,6 +43,7 @@ int main()
 
   // Scoping everything here so it is properly destroyed before checking for memory leaks.
   {
+    std::unique_ptr<sf::RenderWindow> app_window;
     std::unique_ptr<App> app;
 
     try
@@ -58,7 +58,7 @@ int main()
       }
 
       // Create and open the main window.
-      app_window_.reset(NEW sf::RenderWindow(sf::VideoMode(1066, 600), "Magicule Saga"));
+      app_window.reset(NEW sf::RenderWindow(sf::VideoMode(1066, 600), "Magicule Saga"));
 
       // Create the default fonts.
       /// @todo Font names should be moved into ConfigSettings.
@@ -89,14 +89,11 @@ int main()
       }
 
       // Create the message log.
-      MessageLog::create(calc_message_log_dimensions());
+      MessageLog::create(calc_message_log_dimensions(*(app_window.get())));
 
       // Create and run the app instance.
-      app.reset(NEW App());
+      app.reset(NEW App(*(app_window.get())));
       app->run();
-
-      // Close the app window.
-      app_window_->close();
     }
     catch (std::exception& e)
     {
@@ -109,27 +106,36 @@ int main()
 
 struct App::Impl
 {
-    std::unique_ptr<StateMachine> state_machine;
-    bool is_running;
-    bool has_window_focus;
+  Impl(sf::RenderWindow& app_window_)
+    : app_window(app_window_),
+      state_machine(NEW StateMachine("app_state_machine"))
+  {}
+
+  ~Impl()
+  {
+    app_window.close();
+  }
+
+  sf::RenderWindow& app_window;
+  std::unique_ptr<StateMachine> state_machine;
+  bool is_running;
+  bool has_window_focus;
 };
 
-App::App()
-  : pImpl(NEW Impl())
+App::App(sf::RenderWindow& app_window)
+  : pImpl(NEW Impl(app_window))
 {
-  // Create the main state machine.
-  pImpl->state_machine.reset(NEW StateMachine("state_machine"));
+  StateMachine& sm = *(pImpl->state_machine.get());
 
-  StateMachine* sm = pImpl->state_machine.get();
   // Add states to the state machine.
-  pImpl->state_machine->add_state(NEW AppStateSplashScreen(sm));
-  pImpl->state_machine->add_state(NEW AppStateMainMenu(sm));
-  pImpl->state_machine->add_state(NEW AppStateGameMode(sm));
+  sm.add_state(NEW AppStateSplashScreen(sm, app_window));
+  sm.add_state(NEW AppStateMainMenu(sm, app_window));
+  sm.add_state(NEW AppStateGameMode(sm, app_window));
 
   // Switch to initial state.
   // DEBUG: Go right to game mode for now.
-  //pImpl->state_machine->change_to("AppStateSplashScreen");
-  pImpl->state_machine->change_to("AppStateGameMode");
+  //sm->change_to("AppStateSplashScreen");
+  sm.change_to("AppStateGameMode");
 
   // Set "window has focus" boolean to true.
   pImpl->has_window_focus = true;
@@ -161,10 +167,10 @@ EventResult App::handle_event(sf::Event& event)
 
   case sf::Event::EventType::Resized:
     {
-      app_window_->setView(sf::View(sf::FloatRect(0, 0,
-                                                 static_cast<float>(event.size.width),
-                                                 static_cast<float>(event.size.height))));
-      the_message_log.set_dimensions(calc_message_log_dimensions());
+      pImpl->app_window.setView(sf::View(sf::FloatRect(0, 0,
+                                         static_cast<float>(event.size.width),
+                                         static_cast<float>(event.size.height))));
+      the_message_log.set_dimensions(calc_message_log_dimensions(pImpl->app_window));
 
       result = EventResult::Acknowledged;
       break;
@@ -173,9 +179,6 @@ EventResult App::handle_event(sf::Event& event)
   case sf::Event::EventType::Closed:
     {
       pImpl->is_running = false;
-      app_window_->setView(sf::View(sf::FloatRect(0, 0,
-												  static_cast<float>(event.size.width),
-												  static_cast<float>(event.size.height))));
       result = EventResult::Handled;
       break;
     }
@@ -207,6 +210,11 @@ EventResult App::handle_event(sf::Event& event)
   return result;
 }
 
+sf::RenderWindow& App::get_window()
+{
+  return pImpl->app_window;
+}
+
 bool App::has_window_focus()
 {
   return pImpl->has_window_focus;
@@ -227,7 +235,7 @@ void App::run()
   {
     // Process events
     sf::Event event;
-    while (app_window_->pollEvent(event))
+    while (pImpl->app_window.pollEvent(event))
     {
       handle_event(event);
     }
@@ -238,9 +246,9 @@ void App::run()
     if (clock.getElapsedTime().asMilliseconds() > 16)
     {
       clock.restart();
-      the_window.clear();
-      pImpl->state_machine->render(the_window, frame_counter);
-      the_window.display();
+      pImpl->app_window.clear();
+      pImpl->state_machine->render(pImpl->app_window, frame_counter);
+      pImpl->app_window.display();
       ++frame_counter;
     }
   }

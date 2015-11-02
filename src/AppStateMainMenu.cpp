@@ -8,7 +8,7 @@ struct AppStateMainMenu::Impl
   sf::Text subtitle;
 };
 
-AppStateMainMenu::AppStateMainMenu(StateMachine* state_machine)
+AppStateMainMenu::AppStateMainMenu(StateMachine& state_machine, sf::RenderWindow& app_window)
   : State(state_machine), pImpl(NEW Impl())
 {
 }

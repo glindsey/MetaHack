@@ -27,12 +27,14 @@ class TileSheet;
 class App : public EventHandler, public boost::noncopyable
 {
   public:
-    App();
+    App(sf::RenderWindow& app_window);
     virtual ~App();
 
     void run();
 
     EventResult handle_event(sf::Event& event);
+
+    sf::RenderWindow& get_window();
 
     bool has_window_focus();
 
@@ -43,9 +45,6 @@ class App : public EventHandler, public boost::noncopyable
     struct Impl;
     std::unique_ptr<Impl> pImpl;
 };
-
-/// Global window instance
-extern std::unique_ptr<sf::RenderWindow> app_window_;
 
 /// Global default font instance
 extern std::unique_ptr<sf::Font> default_font_;
@@ -66,7 +65,6 @@ extern std::unique_ptr<TileSheet> tile_sheet_;
 extern std::unique_ptr<sf::Shader> shader_;
 
 // Here are a few macros to save on typing.
-#define the_window            (*(app_window_.get()))
 #define the_default_font      (*(default_font_.get()))
 #define the_default_bold_font (*(default_bold_font_.get()))
 #define the_default_mono_font (*(default_mono_font_.get()))

@@ -18,7 +18,8 @@
 
 struct AppStateGameMode::Impl
 {
-  Impl()
+  Impl(sf::RenderWindow& app_window_)
+    : app_window(app_window_)
   {
     map_zoom_level = 1.0f;
     current_input_state = GameInputState::Map;
@@ -28,6 +29,9 @@ struct AppStateGameMode::Impl
 
     status_area.reset(NEW StatusArea(calc_status_area_dims()));
   }
+
+  /// Application window.
+  sf::RenderWindow& app_window;
 
   /// Map the player is currently on.
   MapId current_map_id;
@@ -86,10 +90,10 @@ struct AppStateGameMode::Impl
   {
     sf::IntRect statusAreaDims;
     sf::IntRect invAreaDims = inventory_area->get_dimensions();
-    statusAreaDims.width = the_window.getSize().x -
+    statusAreaDims.width = app_window.getSize().x -
                            (invAreaDims.width + 24);
     statusAreaDims.height = Settings.status_area_height;
-    statusAreaDims.top = the_window.getSize().y -
+    statusAreaDims.top = app_window.getSize().y -
                          (Settings.status_area_height + 5);
     statusAreaDims.left = 12;
     return statusAreaDims;
@@ -100,9 +104,9 @@ struct AppStateGameMode::Impl
     sf::IntRect messageLogDims = the_message_log.get_dimensions();
     sf::IntRect inventoryAreaDims;
     inventoryAreaDims.width = Settings.inventory_area_width;
-    inventoryAreaDims.height = the_window.getSize().y -
+    inventoryAreaDims.height = app_window.getSize().y -
                                (messageLogDims.height + 18);
-    inventoryAreaDims.left = the_window.getSize().x -
+    inventoryAreaDims.left = app_window.getSize().x -
                              (inventoryAreaDims.width + 3);
     inventoryAreaDims.top = messageLogDims.top + messageLogDims.height + 10;
 
@@ -120,8 +124,8 @@ struct AppStateGameMode::Impl
   }
 };
 
-AppStateGameMode::AppStateGameMode(StateMachine* state_machine)
-  : State(state_machine), pImpl(NEW Impl())
+AppStateGameMode::AppStateGameMode(StateMachine& state_machine, sf::RenderWindow& app_window)
+  : State(state_machine), pImpl(NEW Impl(app_window))
 {
 }
 

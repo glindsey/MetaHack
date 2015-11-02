@@ -22,7 +22,7 @@ enum class GameInputState
 class AppStateGameMode : public State
 {
   public:
-    AppStateGameMode(StateMachine* state_machine);
+    AppStateGameMode(StateMachine& state_machine, sf::RenderWindow& app_window);
     virtual ~AppStateGameMode();
 
     void execute() override;

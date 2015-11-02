@@ -17,7 +17,7 @@ class State :
   virtual public boost::noncopyable
 {
   public:
-    State(StateMachine* state_machine);
+    State(StateMachine& state_machine);
     virtual ~State();
 
     // Get the name of this state.

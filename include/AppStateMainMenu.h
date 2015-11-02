@@ -9,7 +9,7 @@
 class AppStateMainMenu : public State
 {
   public:
-    AppStateMainMenu(StateMachine* state_machine);
+    AppStateMainMenu(StateMachine& state_machine, sf::RenderWindow& app_window);
     virtual ~AppStateMainMenu();
 
     void execute() override;

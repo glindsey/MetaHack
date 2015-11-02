@@ -9,7 +9,7 @@ struct AppStateSplashScreen::Impl
   sf::Clock clock;
 };
 
-AppStateSplashScreen::AppStateSplashScreen(StateMachine* state_machine)
+AppStateSplashScreen::AppStateSplashScreen(StateMachine& state_machine, sf::RenderWindow& app_window)
   : State(state_machine), pImpl(NEW Impl())
 {
   //ctor
