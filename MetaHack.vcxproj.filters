@@ -354,5 +354,8 @@
     <None Include="resources\scripts\map.lua">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="README.md">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

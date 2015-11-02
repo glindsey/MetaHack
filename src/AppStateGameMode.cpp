@@ -571,6 +571,10 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
         add_zoom(0.05);
         break;
 
+      case sf::Keyboard::Key::Num0:
+        pImpl->map_zoom_level = 1.0f;
+        break;
+
         // CTRL-D -- drop items
       case sf::Keyboard::Key::D:    // Drop
         action.type = Action::Type::Drop;

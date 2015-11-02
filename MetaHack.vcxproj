@@ -238,6 +238,7 @@
     </Xml>
   </ItemGroup>
   <ItemGroup>
+    <None Include="README.md" />
     <None Include="resources\default.lua" />
     <None Include="resources\scripts\map.lua" />
     <None Include="resources\things\Biped.lua" />
