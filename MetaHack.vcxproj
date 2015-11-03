@@ -180,6 +180,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="src\Action.cpp" />
     <ClCompile Include="src\App.cpp" />
     <ClCompile Include="src\AppStateGameMode.cpp" />
     <ClCompile Include="src\AppStateMainMenu.cpp" />

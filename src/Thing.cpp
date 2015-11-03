@@ -3091,9 +3091,9 @@ bool Thing::_process()
       Action action = pImpl->actions.front();
       pImpl->actions.pop_front();
 
-      unsigned int number_of_things = action.things.size();
+      unsigned int number_of_things = action.get_things().size();
 
-      switch (action.type)
+      switch (action.get_type())
       {
       case Action::Type::Wait:
         success = this->do_move(Direction::Self, action_time);
@@ -3104,7 +3104,7 @@ bool Thing::_process()
         break;
 
       case Action::Type::Move:
-        success = this->do_move(action.direction, action_time);
+        success = this->do_move(action.get_target_direction(), action_time);
         if (success)
         {
           add_to_property_value("busy_counter", action_time);
@@ -3112,7 +3112,7 @@ bool Thing::_process()
         break;
 
       case Action::Type::Drop:
-        for (ThingRef thing : action.things)
+        for (ThingRef thing : action.get_things())
         {
           if (thing != TM.get_mu())
           {
@@ -3126,7 +3126,7 @@ bool Thing::_process()
         break;
 
       case Action::Type::Eat:
-        for (ThingRef thing : action.things)
+        for (ThingRef thing : action.get_things())
         {
           if (thing != TM.get_mu())
           {
@@ -3140,7 +3140,7 @@ bool Thing::_process()
         break;
 
       case Action::Type::Get:
-        for (ThingRef thing : action.things)
+        for (ThingRef thing : action.get_things())
         {
           if (thing != TM.get_mu())
           {
@@ -3154,7 +3154,7 @@ bool Thing::_process()
         break;
 
       case Action::Type::Quaff:
-        for (ThingRef thing : action.things)
+        for (ThingRef thing : action.get_things())
         {
           if (thing != TM.get_mu())
           {
@@ -3169,12 +3169,12 @@ bool Thing::_process()
 
       case Action::Type::PutInto:
       {
-        ThingRef container = action.target;
+        ThingRef container = action.get_target_thing();
         if (container != TM.get_mu())
         {
           if (container->get_intrinsic_value("inventory_size") != 0)
           {
-            for (ThingRef thing : action.things)
+            for (ThingRef thing : action.get_things())
             {
               if (thing != TM.get_mu())
               {
@@ -3195,7 +3195,7 @@ bool Thing::_process()
       }
 
       case Action::Type::TakeOut:
-        for (ThingRef thing : action.things)
+        for (ThingRef thing : action.get_things())
         {
           if (thing != TM.get_mu())
           {
@@ -3209,7 +3209,7 @@ bool Thing::_process()
         break;
 
       case Action::Type::Use:
-        for (ThingRef thing : action.things)
+        for (ThingRef thing : action.get_things())
         {
           if (thing != TM.get_mu())
           {
@@ -3229,7 +3229,7 @@ bool Thing::_process()
           the_message_log.add("NOTE: Only wielding the last item selected.");
         }
 
-        ThingRef thing = action.things[number_of_things - 1];
+        ThingRef thing = action.get_things()[number_of_things - 1];
         if (thing != TM.get_mu())
         {
           /// @todo Implement wielding using other hands.

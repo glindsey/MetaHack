@@ -11,19 +11,10 @@
 // Forward declarations
 class Thing;
 
-// Struct describing an action to execute.
-struct Action
+// Class describing an action to execute.
+class Action
 {
-  Action()
-  {
-    type = Type::None;
-    things.clear();
-    target_can_be_direction = false;
-    target_can_be_thing = false;
-    target = TM.get_mu();
-    direction = Direction::None;
-  }
-
+public:
   enum class Type
   {
     None,
@@ -48,25 +39,36 @@ struct Action
     Use,
     Wield,
     Count
-  } type;
+  };
 
-  /// Thing(s) to perform the action on.
-  std::vector< ThingRef > things;
+  Action();
+  Action(Action::Type type);
+  virtual ~Action();
+  Action(const Action& other);
+  Action(Action&& other) noexcept;
+  Action& operator= (const Action& other);
+  Action& operator= (Action&& other) noexcept;
 
-  /// If true, action can take a Thing as a target.
-  bool target_can_be_thing;
+  void set_type(Action::Type type);
+  Action::Type get_type() const;
+  void set_things(std::vector<ThingRef> things);
+  std::vector<ThingRef> const& get_things() const;
+  void add_thing(ThingRef thing);
+  bool remove_thing(ThingRef thing);
+  void clear_things();
 
-  /// If true, action can take a Direction as a target.
-  bool target_can_be_direction;
+  bool target_can_be_thing() const;
+  bool target_can_be_direction() const;
+  void set_target(ThingRef target);
+  void set_target(Direction direction);
+  ThingRef const& get_target_thing() const;
+  Direction const& get_target_direction() const;
+  unsigned int get_quantity() const;
+  void set_quantity(unsigned int quantity);
 
-  /// Target Thing for the action (if any).
-  ThingRef target;
-
-  /// Direction for the action (if any).
-  Direction direction;
-
-  /// Quantity for the action (only used in drop/pickup).
-  unsigned int quantity;
+private:
+  struct Impl;
+  std::unique_ptr<Impl> pImpl;
 };
 
 #endif // ACTION_H

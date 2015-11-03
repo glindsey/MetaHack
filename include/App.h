@@ -1,17 +1,6 @@
 #ifndef APP_H
 #define APP_H
 
-#define _CRTDBG_MAP_ALLOC
-
-#ifdef _DEBUG
-#ifndef NEW
-#define NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
-#endif
-#else
-#define NEW new 
-#endif  // _DEBUG
-
-
 #include <boost/noncopyable.hpp>
 #include <boost/random/mersenne_twister.hpp>
 #include <memory>
@@ -19,6 +8,7 @@
 
 #include "EventHandler.h"
 #include "Lua.h"
+#include "New.h"
 
 // Forward declarations
 class MessageLog;

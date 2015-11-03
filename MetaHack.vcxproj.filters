@@ -287,6 +287,9 @@
     <ClCompile Include="src\Metadata.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Action.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="resources\things\Thing.xml">

@@ -103,6 +103,7 @@ class ThingRef
 
 public:
 
+  /// Create a reference to Mu (the nothingness Thing).
   ThingRef();
 
   /// Create a weak reference from an ID.

@@ -23,7 +23,7 @@ struct AppStateGameMode::Impl
   {
     map_zoom_level = 1.0f;
     current_input_state = GameInputState::Map;
-    action_in_progress.type = Action::Type::None;
+    action_in_progress = Action(Action::Type::None);
 
     inventory_area.reset(NEW InventoryArea(calc_inventory_dims()));
 
@@ -286,12 +286,12 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
       result = EventResult::Handled;
     }
 
-    if (pImpl->action_in_progress.target_can_be_thing)
+    if (pImpl->action_in_progress.target_can_be_thing())
     {
       if (!key.alt && !key.control && key_number != -1)
       {
-        pImpl->action_in_progress.target =
-          pImpl->inventory_area->get_thing(static_cast<InventorySlot>(key_number));
+        pImpl->action_in_progress.set_target(
+          pImpl->inventory_area->get_thing(static_cast<InventorySlot>(key_number)));
         player->queue_action(pImpl->action_in_progress);
         pImpl->inventory_area_shows_player = false;
         pImpl->reset_inventory_area();
@@ -300,11 +300,11 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
       }
     } // end if (pImpl->action_in_progress.target_can_be_thing)
 
-    if (pImpl->action_in_progress.target_can_be_direction)
+    if (pImpl->action_in_progress.target_can_be_direction())
     {
       if (!key.alt && !key.control && key_direction != Direction::None)
       {
-        pImpl->action_in_progress.direction = key_direction;
+        pImpl->action_in_progress.set_target(key_direction);
         player->queue_action(pImpl->action_in_progress);
         pImpl->inventory_area_shows_player = false;
         pImpl->reset_inventory_area();
@@ -426,14 +426,14 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
       {
         if (key_direction == Direction::Self)
         {
-          action.type = Action::Type::Wait;
+          action.set_type(Action::Type::Wait);
           player->queue_action(action);
           result = EventResult::Handled;
         }
         else
         {
-          action.type = Action::Type::Move;
-          action.direction = key_direction;
+          action.set_type(Action::Type::Move);
+          action.set_target(key_direction);
           player->queue_action(action);
           result = EventResult::Handled;
         }
@@ -573,7 +573,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
     // *** No ALT, YES CTRL, SHIFT is irrelevant ******************************
     if (!key.alt && key.control)
     {
-      action.things = pImpl->inventory_area->get_selected_things();
+      action.set_things(pImpl->inventory_area->get_selected_things());
 
       switch (key.code)
       {
@@ -595,17 +595,16 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
         // CTRL-A -- attack
       case sf::Keyboard::Key::A:    // Attack
-        action.type = Action::Type::Attack;
-        if (action.things.size() == 0)
+        action.set_type(Action::Type::Attack);
+        if (action.get_things().size() == 0)
         {
           // No item specified, so ask for a direction.
           pImpl->action_in_progress = action;
           the_message_log.add("Choose a direction to attack.");
           pImpl->current_input_state = GameInputState::TargetSelection;
-          pImpl->action_in_progress.target_can_be_direction = true;
           pImpl->inventory_area->clear_selected_slots();
         }
-        else if (action.things.size() > 1)
+        else if (action.get_things().size() > 1)
         {
           the_message_log.add("You can only attack one item at once.");
         }
@@ -621,14 +620,13 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
         // CTRL-C -- close items
       case sf::Keyboard::Key::C:    // Close
-        action.type = Action::Type::Close;
-        if (action.things.size() == 0)
+        action.set_type(Action::Type::Close);
+        if (action.get_things().size() == 0)
         {
           // No item specified, so ask for a direction.
           pImpl->action_in_progress = action;
           the_message_log.add("Choose a direction to close.");
           pImpl->current_input_state = GameInputState::TargetSelection;
-          pImpl->action_in_progress.target_can_be_direction = true;
           pImpl->inventory_area->clear_selected_slots();
         }
         else
@@ -643,8 +641,8 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
         // CTRL-D -- drop items
       case sf::Keyboard::Key::D:    // Drop
-        action.type = Action::Type::Drop;
-        if (action.things.size() == 0)
+        action.set_type(Action::Type::Drop);
+        if (action.get_things().size() == 0)
         {
           the_message_log.add("Please choose the item(s) to drop first.");
         }
@@ -659,8 +657,8 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
         // CTRL-E -- eat items
       case sf::Keyboard::Key::E:
-        action.type = Action::Type::Eat;
-        if (action.things.size() == 0)
+        action.set_type(Action::Type::Eat);
+        if (action.get_things().size() == 0)
         {
           the_message_log.add("Please choose the item(s) to eat first.");
         }
@@ -675,8 +673,8 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
         // CTRL-F -- fill item(s)
       case sf::Keyboard::Key::F:
-        action.type = Action::Type::Fill;
-        if (action.things.size() == 0)
+        action.set_type(Action::Type::Fill);
+        if (action.get_things().size() == 0)
         {
           the_message_log.add("Please select the item(s) to fill first.");
         }
@@ -685,8 +683,6 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           pImpl->action_in_progress = action;
           the_message_log.add("Choose an item or direction to fill from.");
           pImpl->current_input_state = GameInputState::TargetSelection;
-          pImpl->action_in_progress.target_can_be_thing = true;
-          pImpl->action_in_progress.target_can_be_direction = true;
           pImpl->inventory_area->clear_selected_slots();
         }
         result = EventResult::Handled;
@@ -694,8 +690,8 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
         // CTRL-G -- get (pick up) items
       case sf::Keyboard::Key::G:
-        action.type = Action::Type::Get;
-        if (action.things.size() == 0)
+        action.set_type(Action::Type::Get);
+        if (action.get_things().size() == 0)
         {
           the_message_log.add("Please select the item(s) to pick up first.");
         }
@@ -710,12 +706,12 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
         // CTRL-H -- hurl items
       case sf::Keyboard::Key::H:
-        action.type = Action::Type::Hurl;
-        if (action.things.size() == 0)
+        action.set_type(Action::Type::Hurl);
+        if (action.get_things().size() == 0)
         {
           the_message_log.add("Please select the item you want to hurl first.");
         }
-        else if (action.things.size() > 1)
+        else if (action.get_things().size() > 1)
         {
           the_message_log.add("You can only hurl one item at once.");
         }
@@ -724,7 +720,6 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           pImpl->action_in_progress = action;
           the_message_log.add("Choose a direction to hurl the item.");
           pImpl->current_input_state = GameInputState::TargetSelection;
-          pImpl->action_in_progress.target_can_be_direction = true;
           pImpl->inventory_area->clear_selected_slots();
         }
         result = EventResult::Handled;
@@ -732,12 +727,12 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
         // CTRL-I -- inscribe on an item
       case sf::Keyboard::Key::I:
-        action.type = Action::Type::Inscribe;
-        if (action.things.size() == 0)
+        action.set_type(Action::Type::Inscribe);
+        if (action.get_things().size() == 0)
         {
-          the_message_log.add("Please select the item you want to write on.");
+          the_message_log.add("Please select the item you want to write on first.");
         }
-        else if (action.things.size() > 1)
+        else if (action.get_things().size() > 1)
         {
           the_message_log.add("You can only write on one item at a time.");
         }
@@ -746,7 +741,6 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           pImpl->action_in_progress = action;
           the_message_log.add("Choose an item to write with.");
           pImpl->current_input_state = GameInputState::TargetSelection;
-          pImpl->action_in_progress.target_can_be_thing = true;
           pImpl->inventory_area->clear_selected_slots();
         }
         result = EventResult::Handled;
@@ -755,12 +749,12 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
         // CTRL-M -- mix items
       case sf::Keyboard::Key::M:
-        action.type = Action::Type::Mix;
-        if (action.things.size() == 0)
+        action.set_type(Action::Type::Mix);
+        if (action.get_things().size() == 0)
         {
           the_message_log.add("Please select the two items you want to mix together first.");
         }
-        else if (action.things.size() != 2)
+        else if (action.get_things().size() != 2)
         {
           the_message_log.add("You must select exactly two items to mix together.");
         }
@@ -774,14 +768,13 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
         break;
 
       case sf::Keyboard::Key::O:    // Open
-        action.type = Action::Type::Open;
-        if (action.things.size() == 0)
+        action.set_type(Action::Type::Open);
+        if (action.get_things().size() == 0)
         {
           // No item specified, so ask for a direction.
           pImpl->action_in_progress = action;
           the_message_log.add("Choose a direction to open.");
           pImpl->current_input_state = GameInputState::TargetSelection;
-          pImpl->action_in_progress.target_can_be_direction = true;
           pImpl->inventory_area->clear_selected_slots();
         }
         else
@@ -796,8 +789,8 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
         // CTRL-P -- put item in another item
       case sf::Keyboard::Key::P:
-        action.type = Action::Type::PutInto;
-        if (action.things.size() == 0)
+        action.set_type(Action::Type::PutInto);
+        if (action.get_things().size() == 0)
         {
           the_message_log.add("Please select the item(s) you want to store first.");
         }
@@ -806,7 +799,6 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           pImpl->action_in_progress = action;
           the_message_log.add("Choose a container to put the item(s) into.");
           pImpl->current_input_state = GameInputState::TargetSelection;
-          pImpl->action_in_progress.target_can_be_thing = true;
           pImpl->inventory_area->clear_selected_slots();
         }
         result = EventResult::Handled;
@@ -814,8 +806,8 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
         // CTRL-Q -- quaff (drink) from items
       case sf::Keyboard::Key::Q:
-        action.type = Action::Type::Quaff;
-        if (action.things.size() == 0)
+        action.set_type(Action::Type::Quaff);
+        if (action.get_things().size() == 0)
         {
           the_message_log.add("Please select the item(s) you want to quaff from first.");
         }
@@ -830,8 +822,8 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
         // CTRL-R -- read an item
       case sf::Keyboard::Key::R:
-        action.type = Action::Type::Read;
-        if (action.things.size() == 0)
+        action.set_type(Action::Type::Read);
+        if (action.get_things().size() == 0)
         {
           the_message_log.add("Please select the item(s) you want to read first.");
         }
@@ -845,10 +837,10 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
         // CTRL-S -- shoot items
       case sf::Keyboard::Key::S:
-        action.type = Action::Type::Shoot;
+        action.set_type(Action::Type::Shoot);
         // Skip the item check here, as we want to shoot our wielded weapon
         // if no item is selected.
-        if (action.things.size() > 1)
+        if (action.get_things().size() > 1)
         {
           the_message_log.add("You can only shoot one item at once.");
         }
@@ -859,7 +851,6 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           pImpl->action_in_progress = action;
           the_message_log.add("Choose a direction to shoot.");
           pImpl->current_input_state = GameInputState::TargetSelection;
-          pImpl->action_in_progress.target_can_be_direction = true;
           pImpl->inventory_area->clear_selected_slots();
         }
         result = EventResult::Handled;
@@ -867,8 +858,8 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
         // CTRL-T -- take item out of container
       case sf::Keyboard::Key::T:
-        action.type = Action::Type::TakeOut;
-        if (action.things.size() == 0)
+        action.set_type(Action::Type::TakeOut);
+        if (action.get_things().size() == 0)
         {
           the_message_log.add("Please select the item(s) to take out first.");
         }
@@ -883,8 +874,8 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
         // CTRL-U -- use an item
       case sf::Keyboard::Key::U:
-        action.type = Action::Type::Use;
-        if (action.things.size() == 0)
+        action.set_type(Action::Type::Use);
+        if (action.get_things().size() == 0)
         {
           the_message_log.add("Please choose the item to use first.");
         }
@@ -899,12 +890,12 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
         // CTRL-W -- wield item
       case sf::Keyboard::Key::W:
-        action.type = Action::Type::Wield;
-        if (action.things.size() == 0)
+        action.set_type(Action::Type::Wield);
+        if (action.get_things().size() == 0)
         {
           the_message_log.add("Please choose the item to wield first.");
         }
-        else if (action.things.size() > 1)
+        else if (action.get_things().size() > 1)
         {
           the_message_log.add("You may only wield one item at a time.");
         }
