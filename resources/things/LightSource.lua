@@ -16,7 +16,7 @@ end
 function LightSource.perform_action_used_by(id)
 	local name = thing_get_display_name(id)
 	local is_lit = thing_get_property_flag(id, "light_lit")
-	is_lit = ~is_lit
+	is_lit = not is_lit
 	if is_lit then
 		messageLog_add("You light the " .. name .. ".")
 	else

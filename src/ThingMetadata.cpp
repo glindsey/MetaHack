@@ -431,7 +431,7 @@ ActionResult ThingMetadata::call_lua_function(std::string function_name,
       if (result == LUA_OK)
       {
         // Get the return value.
-        return_value = static_cast<ActionResult>(lua_tointeger(the_lua_state, -1));
+        return_value = static_cast<ActionResult>(the_lua_instance.get_enum_value(-1));
 
         // Pop the return value off the stack. (-1)
         lua_pop(the_lua_state, 1);
@@ -458,6 +458,7 @@ ActionResult ThingMetadata::call_lua_function(std::string function_name,
   {
     if (pImpl->parent.empty())
     {
+      TRACE("Reached the top of the parent tree trying to call %s.%s", name.c_str(), function_name.c_str());
       return_value = default_result;
     }
     else
@@ -556,6 +557,7 @@ bool ThingMetadata::call_lua_function_bool(std::string function_name,
   {
     if (pImpl->parent.empty())
     {
+      TRACE("Reached the top of the parent tree trying to call %s.%s", name.c_str(), function_name.c_str());
       return_value = default_result;
     }
     else

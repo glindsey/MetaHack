@@ -133,9 +133,12 @@ bool Lua::check_enum_type(const char* tname, int index)
 
 int Lua::get_enum_value(int index)
 {
+  int value;
   lua_pushstring(L_, "value");
   lua_gettable(L_, index - 1);
-  return (int)luaL_checkinteger(L_, -1);
+  value = static_cast<int>(luaL_checkinteger(L_, -1));
+  lua_pop(L_, 1);
+  return value;
 }
 
 lua_State* Lua::state()
