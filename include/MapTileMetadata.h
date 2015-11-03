@@ -6,6 +6,7 @@
 #include <boost/ptr_container/ptr_unordered_map.hpp>
 #include <SFML/Graphics.hpp>
 
+#include "common_types.h"
 #include "Metadata.h"
 
 class MapTileMetadata : public Metadata
@@ -23,11 +24,17 @@ private:
   /// Constructor is private; new instances are obtained using get().
   MapTileMetadata(std::string type);
 
-  struct Impl;
-  std::unique_ptr<Impl> pImpl;
+  /// Map of flags.
+  FlagsMap m_flags;
+
+  /// Map of values.
+  ValuesMap m_values;
+
+  /// Map of strings.
+  StringsMap m_strings;
 
   /// Static collection of MapTileMetadata instances.
-  static boost::ptr_unordered_map<std::string, MapTileMetadata> MapTileMetadata::collection;
+  static boost::ptr_unordered_map<std::string, MapTileMetadata> MapTileMetadata::s_collection;
 };
 
 #endif // MAPTILEMETADATA_H

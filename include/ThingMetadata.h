@@ -96,11 +96,29 @@ private:
   /// Constructor is private; new instances are obtained using get().
   ThingMetadata(std::string type);
 
-  struct Impl;
-  std::unique_ptr<Impl> pImpl;
+  /// Thing parent type, if any.
+  std::string m_parent;
+
+  /// Map of intrinsic flags.
+  FlagsMap m_intrinsic_flags;
+
+  /// Map of intrinsic values.
+  ValuesMap m_intrinsic_values;
+
+  /// Map of intrinsic strings.
+  StringsMap m_intrinsic_strings;
+
+  /// Map of default property flags.
+  FlagsMap m_default_flags;
+
+  /// Map of default property values.
+  ValuesMap m_default_values;
+
+  /// Map of default property strings.
+  StringsMap m_default_strings;
 
   /// Static collection of ThingMetadata instances.
-  static boost::ptr_unordered_map<std::string, ThingMetadata> ThingMetadata::collection;
+  static boost::ptr_unordered_map<std::string, ThingMetadata> ThingMetadata::s_collection;
 };
 
 #endif // THINGMETADATA_H

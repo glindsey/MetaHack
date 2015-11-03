@@ -19,27 +19,14 @@
 #define BOOST_FILESYSTEM_NO_DEPRECATED
 
 // Static declarations
-boost::ptr_unordered_map<std::string, MapTileMetadata> MapTileMetadata::collection;
+boost::ptr_unordered_map<std::string, MapTileMetadata> MapTileMetadata::s_collection;
 
 // Namespace aliases
 namespace fs = boost::filesystem;
 namespace pt = boost::property_tree;
 
-struct MapTileMetadata::Impl
-{
-  /// Map of flags.
-  FlagsMap flags;
-
-  /// Map of values.
-  ValuesMap values;
-
-  /// Map of strings.
-  StringsMap strings;
-};
-
-
 MapTileMetadata::MapTileMetadata(std::string type)
-  : Metadata("maptile", type), pImpl(NEW Impl())
+  : Metadata("maptile", type)
 {
   TRACE("Loading MapTile-specific metadata for map tile \"%s\"...", type.c_str());
 
@@ -65,7 +52,7 @@ MapTileMetadata::MapTileMetadata(std::string type)
       boost::algorithm::to_lower(key);
       bool value = child_tree.second.get_value<bool>(false);
 
-      pImpl->flags[key] = value;
+      m_flags[key] = value;
     }
   }
   catch (pt::ptree_bad_path&)
@@ -81,7 +68,7 @@ MapTileMetadata::MapTileMetadata(std::string type)
       boost::algorithm::to_lower(key);
       int value = child_tree.second.get_value<int>(0);
 
-      pImpl->values[key] = value;
+      m_values[key] = value;
     }
   }
   catch (pt::ptree_bad_path&)
@@ -99,7 +86,7 @@ MapTileMetadata::MapTileMetadata(std::string type)
       boost::algorithm::to_lower(key);
       std::string value = child_tree.second.get_value<std::string>("");
 
-      pImpl->strings[key] = value;
+      m_strings[key] = value;
     }
   }
   catch (pt::ptree_bad_path&)
@@ -118,21 +105,21 @@ MapTileMetadata* MapTileMetadata::get(std::string type)
     type = "Unknown";
   }
 
-  if (collection.count(type) == 0)
+  if (s_collection.count(type) == 0)
   {
-    collection.insert(type, NEW MapTileMetadata(type));
+    s_collection.insert(type, NEW MapTileMetadata(type));
   }
 
-  return &(collection.at(type));
+  return &(s_collection.at(type));
 }
 
 bool MapTileMetadata::get_flag(std::string key, bool default_value) const
 {
   boost::algorithm::to_lower(key);
 
-  if (pImpl->flags.count(key) != 0)
+  if (m_flags.count(key) != 0)
   {
-    return pImpl->flags.at(key);
+    return m_flags.at(key);
   }
   else
   {
@@ -144,9 +131,9 @@ int MapTileMetadata::get_value(std::string key, int default_value) const
 {
   boost::algorithm::to_lower(key);
 
-  if (pImpl->values.count(key) != 0)
+  if (m_values.count(key) != 0)
   {
-    return pImpl->values.at(key);
+    return m_values.at(key);
   }
   else
   {
@@ -158,9 +145,9 @@ std::string MapTileMetadata::get_string(std::string key, std::string default_val
 {
   boost::algorithm::to_lower(key);
 
-  if (pImpl->strings.count(key) != 0)
+  if (m_strings.count(key) != 0)
   {
-    return pImpl->strings.at(key);
+    return m_strings.at(key);
   }
   else
   {

@@ -20,39 +20,14 @@
 #define BOOST_FILESYSTEM_NO_DEPRECATED
 
 // Static declarations
-boost::ptr_unordered_map<std::string, ThingMetadata> ThingMetadata::collection;
+boost::ptr_unordered_map<std::string, ThingMetadata> ThingMetadata::s_collection;
 
 // Namespace aliases
 namespace fs = boost::filesystem;
 namespace pt = boost::property_tree;
 
-struct ThingMetadata::Impl
-{
-  /// Thing parent type, if any.
-  std::string parent;
-
-  /// Map of intrinsic flags.
-  FlagsMap intrinsic_flags;
-
-  /// Map of intrinsic values.
-  ValuesMap intrinsic_values;
-
-  /// Map of intrinsic strings.
-  StringsMap intrinsic_strings;
-
-  /// Map of default property flags.
-  FlagsMap default_flags;
-
-  /// Map of default property values.
-  ValuesMap default_values;
-
-  /// Map of default property strings.
-  StringsMap default_strings;
-};
-
-
 ThingMetadata::ThingMetadata(std::string type)
-  : Metadata("thing", type), pImpl(NEW Impl())
+  : Metadata("thing", type)
 {
   TRACE("Loading Thing-specific metadata for map tile \"%s\"...", type.c_str());
 
@@ -61,7 +36,7 @@ ThingMetadata::ThingMetadata(std::string type)
   // Get thing's parent.
   try
   {
-    pImpl->parent = data.get_child("parent").get_value<std::string>("");
+    m_parent = data.get_child("parent").get_value<std::string>("");
   }
   catch (pt::ptree_bad_path&)
   {
@@ -70,7 +45,7 @@ ThingMetadata::ThingMetadata(std::string type)
       MINOR_ERROR("\"%s\" has no specified parent; this is probably not intentional", type.c_str());
     }
 
-    pImpl->parent = "";
+    m_parent = "";
   }
 
   // Look for intrinsics, properties sections. Both must be present for any Thing.
@@ -87,7 +62,7 @@ ThingMetadata::ThingMetadata(std::string type)
   }
 
   // Get intrinsic flags.
-  try
+  if (intrinsics_tree.count("flags") != 0)
   {
     for (auto& child_tree : intrinsics_tree.get_child("flags"))
     {
@@ -95,16 +70,12 @@ ThingMetadata::ThingMetadata(std::string type)
       boost::algorithm::to_lower(key);
       bool value = child_tree.second.get_value<bool>(false);
 
-      pImpl->intrinsic_flags[key] = value;
+      m_intrinsic_flags[key] = value;
     }
-  }
-  catch (pt::ptree_bad_path&)
-  {
-    //MINOR_ERROR("\"%s\" has no intrinsic flags section; assuming empty", type.c_str());
   }
 
   // Get intrinsic values.
-  try
+  if (intrinsics_tree.count("values") != 0)
   {
     for (auto& child_tree : intrinsics_tree.get_child("values"))
     {
@@ -112,37 +83,25 @@ ThingMetadata::ThingMetadata(std::string type)
       boost::algorithm::to_lower(key);
       int value = child_tree.second.get_value<int>(0);
 
-      pImpl->intrinsic_values[key] = value;
-      //TRACE("Found intrinsic value: %s = %d", key.c_str(), value);
+      m_intrinsic_values[key] = value;
     }
-  }
-  catch (pt::ptree_bad_path&)
-  {
-    //MINOR_ERROR("\"%s\" has no intrinsic values section; assuming empty", type.c_str());
   }
 
   // Get intrinsic strings.
-  try
+  if (intrinsics_tree.count("strings") != 0)
   {
-    pt::ptree intrinsic_strings = intrinsics_tree.get_child("strings");
-
     for (auto& child_tree : intrinsics_tree.get_child("strings"))
     {
       std::string key = child_tree.first;
       boost::algorithm::to_lower(key);
       std::string value = child_tree.second.get_value<std::string>("");
 
-      pImpl->intrinsic_strings[key] = value;
-      //TRACE("Found intrinsic string: %s = \"%s\"", key.c_str(), value.c_str());
+      m_intrinsic_strings[key] = value;
     }
-  }
-  catch (pt::ptree_bad_path&)
-  {
-    //MINOR_ERROR("\"%s\" has no intrinsic strings section; assuming empty", type.c_str());
   }
 
   // Get default property flags.
-  try
+  if (properties_tree.count("flags") != 0)
   {
     for (auto& child_tree : properties_tree.get_child("flags"))
     {
@@ -150,17 +109,12 @@ ThingMetadata::ThingMetadata(std::string type)
       boost::algorithm::to_lower(key);
       bool value = child_tree.second.get_value<bool>(false);
 
-      pImpl->default_flags[key] = value;
-      //TRACE("Found default flag: %s = %s", key.c_str(), (value == true) ? "true" : "false");
+      m_default_flags[key] = value;
     }
-  }
-  catch (pt::ptree_bad_path&)
-  {
-    //MINOR_ERROR("\"%s\" has no property flags section; assuming empty", type.c_str());
   }
 
   // Get default property values.
-  try
+  if (properties_tree.count("values") != 0)
   {
     for (auto& child_tree : properties_tree.get_child("values"))
     {
@@ -168,17 +122,12 @@ ThingMetadata::ThingMetadata(std::string type)
       boost::algorithm::to_lower(key);
       int value = child_tree.second.get_value<int>(0);
 
-      pImpl->default_values[key] = value;
-      //TRACE("Found default value: %s = %d", key.c_str(), value);
+      m_default_values[key] = value;
     }
-  }
-  catch (pt::ptree_bad_path&)
-  {
-    //MINOR_ERROR("\"%s\" has no property values section; assuming empty", type.c_str());
   }
 
   // Get default property strings.
-  try
+  if (properties_tree.count("strings") != 0)
   {
     for (auto& child_tree : properties_tree.get_child("strings"))
     {
@@ -186,17 +135,9 @@ ThingMetadata::ThingMetadata(std::string type)
       boost::algorithm::to_lower(key);
       std::string value = child_tree.second.get_value<std::string>("");
 
-      pImpl->default_strings[key] = value;
-      //TRACE("Found default string: %s = \"%s\"", key.c_str(), value.c_str());
+      m_default_strings[key] = value;
     }
   }
-  catch (pt::ptree_bad_path&)
-  {
-    //MINOR_ERROR("\"%s\" has no property strings section; assuming empty", type.c_str());
-  }
-
-  //TRACE("done");
-
 }
 
 
@@ -211,37 +152,37 @@ ThingMetadata& ThingMetadata::get(std::string type)
     type = "Unknown";
   }
 
-  if (collection.count(type) == 0)
+  if (s_collection.count(type) == 0)
   {
-    collection.insert(type, NEW ThingMetadata(type));
+    s_collection.insert(type, NEW ThingMetadata(type));
   }
 
-  return collection.at(type);
+  return s_collection.at(type);
 }
 
 
 std::string const& ThingMetadata::get_parent() const
 {
-  return pImpl->parent;
+  return m_parent;
 }
 
 bool ThingMetadata::get_intrinsic_flag(std::string key, bool default_value) const
 {
   boost::algorithm::to_lower(key);
 
-  if (pImpl->intrinsic_flags.count(key) != 0)
+  if (m_intrinsic_flags.count(key) != 0)
   {
-    return pImpl->intrinsic_flags.at(key);
+    return m_intrinsic_flags.at(key);
   }
   else
   {
-    if (pImpl->parent.empty())
+    if (m_parent.empty())
     {
       return default_value;
     }
     else
     {
-      return ThingMetadata::get(pImpl->parent).get_intrinsic_flag(key, default_value);
+      return ThingMetadata::get(m_parent).get_intrinsic_flag(key, default_value);
     }
   }
 }
@@ -250,19 +191,19 @@ int ThingMetadata::get_intrinsic_value(std::string key, int default_value) const
 {
   boost::algorithm::to_lower(key);
 
-  if (pImpl->intrinsic_values.count(key) != 0)
+  if (m_intrinsic_values.count(key) != 0)
   {
-    return pImpl->intrinsic_values.at(key);
+    return m_intrinsic_values.at(key);
   }
   else
   {
-    if (pImpl->parent.empty())
+    if (m_parent.empty())
     {
       return default_value;
     }
     else
     {
-      return ThingMetadata::get(pImpl->parent).get_intrinsic_value(key, default_value);
+      return ThingMetadata::get(m_parent).get_intrinsic_value(key, default_value);
     }
   }
 }
@@ -271,55 +212,55 @@ std::string ThingMetadata::get_intrinsic_string(std::string key, std::string def
 {
   boost::algorithm::to_lower(key);
 
-  if (pImpl->intrinsic_strings.count(key) != 0)
+  if (m_intrinsic_strings.count(key) != 0)
   {
-    return pImpl->intrinsic_strings.at(key);
+    return m_intrinsic_strings.at(key);
   }
   else
   {
-    if (pImpl->parent.empty())
+    if (m_parent.empty())
     {
       return default_value;
     }
     else
     {
-      return ThingMetadata::get(pImpl->parent).get_intrinsic_string(key, default_value);
+      return ThingMetadata::get(m_parent).get_intrinsic_string(key, default_value);
     }
   }
 }
 
 FlagsMap const& ThingMetadata::get_intrinsic_flags() const
 {
-  return pImpl->intrinsic_flags;
+  return m_intrinsic_flags;
 }
 
 ValuesMap const& ThingMetadata::get_intrinsic_values() const
 {
-  return pImpl->intrinsic_values;
+  return m_intrinsic_values;
 }
 
 StringsMap const& ThingMetadata::get_intrinsic_strings() const
 {
-  return pImpl->intrinsic_strings;
+  return m_intrinsic_strings;
 }
 
 bool ThingMetadata::get_default_flag(std::string key, bool default_value) const
 {
   boost::algorithm::to_lower(key);
 
-  if (pImpl->default_flags.count(key) != 0)
+  if (m_default_flags.count(key) != 0)
   {
-    return pImpl->default_flags.at(key);
+    return m_default_flags.at(key);
   }
   else
   {
-    if (pImpl->parent.empty())
+    if (m_parent.empty())
     {
       return default_value;
     }
     else
     {
-      return ThingMetadata::get(pImpl->parent).get_default_flag(key, default_value);
+      return ThingMetadata::get(m_parent).get_default_flag(key, default_value);
     }
   }
 }
@@ -328,19 +269,19 @@ int ThingMetadata::get_default_value(std::string key, int default_value) const
 {
   boost::algorithm::to_lower(key);
 
-  if (pImpl->default_values.count(key) != 0)
+  if (m_default_values.count(key) != 0)
   {
-    return pImpl->default_values.at(key);
+    return m_default_values.at(key);
   }
   else
   {
-    if (pImpl->parent.empty())
+    if (m_parent.empty())
     {
       return default_value;
     }
     else
     {
-      return ThingMetadata::get(pImpl->parent).get_default_value(key, default_value);
+      return ThingMetadata::get(m_parent).get_default_value(key, default_value);
     }
   }
 }
@@ -349,36 +290,36 @@ std::string ThingMetadata::get_default_string(std::string key, std::string defau
 {
   boost::algorithm::to_lower(key);
 
-  if (pImpl->default_strings.count(key) != 0)
+  if (m_default_strings.count(key) != 0)
   {
-    return pImpl->default_strings.at(key);
+    return m_default_strings.at(key);
   }
   else
   {
-    if (pImpl->parent.empty())
+    if (m_parent.empty())
     {
       return default_value;
     }
     else
     {
-      return ThingMetadata::get(pImpl->parent).get_default_string(key, default_value);
+      return ThingMetadata::get(m_parent).get_default_string(key, default_value);
     }
   }
 }
 
 FlagsMap const& ThingMetadata::get_default_flags() const
 {
-  return pImpl->default_flags;
+  return m_default_flags;
 }
 
 ValuesMap const& ThingMetadata::get_default_values() const
 {
-  return pImpl->default_values;
+  return m_default_values;
 }
 
 StringsMap const& ThingMetadata::get_default_strings() const
 {
-  return pImpl->default_strings;
+  return m_default_strings;
 }
 
 ActionResult ThingMetadata::call_lua_function(std::string function_name,
@@ -456,7 +397,7 @@ ActionResult ThingMetadata::call_lua_function(std::string function_name,
 
   if (call_parent)
   {
-    if (pImpl->parent.empty())
+    if (m_parent.empty())
     {
       TRACE("Reached the top of the parent tree trying to call %s.%s", name.c_str(), function_name.c_str());
       return_value = default_result;
@@ -464,7 +405,7 @@ ActionResult ThingMetadata::call_lua_function(std::string function_name,
     else
     {
       return_value =
-        ThingMetadata::get(pImpl->parent).call_lua_function(function_name, caller, args, default_result);
+        ThingMetadata::get(m_parent).call_lua_function(function_name, caller, args, default_result);
     }
   }
 
@@ -555,7 +496,7 @@ bool ThingMetadata::call_lua_function_bool(std::string function_name,
 
   if (call_parent)
   {
-    if (pImpl->parent.empty())
+    if (m_parent.empty())
     {
       TRACE("Reached the top of the parent tree trying to call %s.%s", name.c_str(), function_name.c_str());
       return_value = default_result;
@@ -563,7 +504,7 @@ bool ThingMetadata::call_lua_function_bool(std::string function_name,
     else
     {
       return_value =
-        ThingMetadata::get(pImpl->parent).call_lua_function_bool(function_name, caller, args, default_result);
+        ThingMetadata::get(m_parent).call_lua_function_bool(function_name, caller, args, default_result);
     }
   }
 
@@ -654,7 +595,7 @@ sf::Vector2u ThingMetadata::call_lua_function_v2u(std::string function_name,
 
   if (call_parent)
   {
-    if (pImpl->parent.empty())
+    if (m_parent.empty())
     {
       TRACE("Reached the top of the parent tree trying to call %s.%s", name.c_str(), function_name.c_str());
       return_value = default_result;
@@ -662,7 +603,7 @@ sf::Vector2u ThingMetadata::call_lua_function_v2u(std::string function_name,
     else
     {
       return_value =
-        ThingMetadata::get(pImpl->parent).call_lua_function_v2u(function_name, caller, args, default_result);
+        ThingMetadata::get(m_parent).call_lua_function_v2u(function_name, caller, args, default_result);
     }
   }
 
