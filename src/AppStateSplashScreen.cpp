@@ -2,13 +2,6 @@
 
 #include "App.h"
 
-struct AppStateSplashScreen::Impl
-{
-  sf::Texture splash_graphic;
-  sf::Sprite splash_sprite;
-  sf::Clock clock;
-};
-
 AppStateSplashScreen::AppStateSplashScreen(StateMachine& state_machine, sf::RenderWindow& app_window)
   : 
   State(state_machine)

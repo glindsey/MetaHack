@@ -10,6 +10,7 @@
 #include "GameObject.h"
 #include "Gender.h"
 #include "MapId.h"
+#include "ThingImpl.h"
 #include "ThingMetadata.h"
 
 #include <memory>
@@ -21,6 +22,8 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/serialization/strong_typedef.hpp>
 #include <SFML/Graphics.hpp>
+
+#include "UsesPimpl.h"
 
 // Forward declarations
 class AIStrategy;
@@ -38,8 +41,8 @@ using ThingCreator = std::shared_ptr<Thing>(*)(void);
 
 // Thing is any object in the game, animate or not.
 class Thing :
-  public GameObject,
-  public std::enable_shared_from_this<Thing>
+  public GameObject  /*,
+  public std::enable_shared_from_this<Thing> */
 {
   friend class boost::object_pool < Thing >;
   friend class AIStrategy;

@@ -186,6 +186,9 @@
     <ClInclude Include="src\impl\AppStateGameModeImpl.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\impl\ThingImpl.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">

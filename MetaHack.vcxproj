@@ -180,6 +180,7 @@
     <ClInclude Include="src\Exceptions.h" />
     <ClInclude Include="src\impl\ActionImpl.h" />
     <ClInclude Include="src\impl\AppStateGameModeImpl.h" />
+    <ClInclude Include="src\impl\ThingImpl.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
