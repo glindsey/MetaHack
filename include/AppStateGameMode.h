@@ -9,15 +9,9 @@
 #include "State.h"
 #include "StatusArea.h"
 #include "Thing.h"
+#include "UsesPimpl.h"
 
-/// Current input state for the game.
-enum class GameInputState
-{
-  Map,
-  TargetSelection,
-  CursorLook,
-  MessageLog
-};
+#include "AppStateGameModeImpl.h"
 
 class AppStateGameMode : public State
 {
@@ -39,8 +33,7 @@ class AppStateGameMode : public State
     void add_zoom(float zoom_amount);
 
   private:
-    struct Impl;
-    std::unique_ptr<Impl> pImpl;
+    Pimpl<AppStateGameModeImpl> pImpl;
 };
 
 #endif // APPSTATEGAMEMODE_H

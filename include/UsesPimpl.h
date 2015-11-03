@@ -21,7 +21,7 @@ public:
   Pimpl(P* ptr) : p{ ptr }  {}
 
   /// Templated pImpl initializer.
-  template<typename ...Args> Pimpl(Args&& ...) : p{ NEW P{ std::forward<Args>(args)... } }  {}
+  template<typename ...Args> Pimpl(Args&& ...args) : p{ NEW P{ std::forward<Args>(args)... } }  {}
 
   /// Destructor
   ~Pimpl()  { }
