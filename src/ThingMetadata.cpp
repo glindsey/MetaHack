@@ -382,163 +382,194 @@ StringsMap const& ThingMetadata::get_default_strings() const
 }
 
 ActionResult ThingMetadata::call_lua_function(std::string function_name,
-                                              ThingRef caller,
-                                              ActionResult default_result)
+  ThingRef caller,
+  std::vector<lua_Integer> const& args,
+  ActionResult default_result)
 {
   ActionResult return_value = default_result;
-
+  bool call_parent = false;
   std::string name = this->get_name();
-  lua_getglobal(the_lua_state, name.c_str());        // <1 Push name of class
 
-  if (!lua_isnoneornil(the_lua_state, -1))
+  int start_stack = lua_gettop(the_lua_state);
+
+  // Push name of class onto the stack. (+1)
+  lua_getglobal(the_lua_state, name.c_str());        
+
+  if (lua_isnoneornil(the_lua_state, -1))
   {
-    lua_getfield(the_lua_state, -1, function_name.c_str());   // <2  Push the function name
-    if (!lua_isnoneornil(the_lua_state, -1))
-    {
-      lua_remove(the_lua_state, -2);                            // >1  Get rid of name of class
-      lua_pushinteger(the_lua_state, caller.get_id().full_id);  // <2  Push the caller's ID
-      int result = lua_pcall(the_lua_state, 1, 1, 0);           // >><1 Call with one argument, one result
-      if (result == LUA_OK)
-      {
-        return_value = (ActionResult)lua_tointeger(the_lua_state, -1);
-        lua_pop(the_lua_state, 1);                              // >0
-      }
-      else
-      {
-        char const* error_message = lua_tostring(the_lua_state, -1);
-        MAJOR_ERROR("Error calling %s.%s: %s", name.c_str(), function_name.c_str(), error_message);
-        lua_pop(the_lua_state, 1);                              // >0
-      }
-
-      // If we got here, return.
-      return return_value;
-    }
-    else // didn't find a function of that name here, so try parent...
-    {
-      lua_pop(the_lua_state, 1);                      // >1 Pop the function name back off the stack
-    }
-  }
-
-  lua_pop(the_lua_state, 1);                      // >1 Pop the class name back off the stack
-
-  if (pImpl->parent.empty())
-  {
-    return_value = default_result;
+    // Class not found -- pop the name back off. (-1)
+    lua_pop(the_lua_state, 1);                     
+    call_parent = true;
   }
   else
   {
-    return_value = ThingMetadata::get(pImpl->parent).call_lua_function(function_name, caller, default_result);
+    // Push name of function onto the stack. (+1)
+    lua_getfield(the_lua_state, -1, function_name.c_str());
+
+    if (lua_isnoneornil(the_lua_state, -1))
+    {
+      // Function not found -- pop the function and class names back off. (-2)
+      lua_pop(the_lua_state, 2);
+      call_parent = true;
+    }
+    else
+    {
+      // Remove the class name from the stack. (-1)
+      lua_remove(the_lua_state, -2);
+
+      // Push the caller's ID onto the stack. (+1)
+      lua_pushinteger(the_lua_state, caller.get_id().full_id);
+
+      // Push the arguments onto the stack. (+N)
+      for (auto& arg : args)
+      {
+        lua_pushinteger(the_lua_state, arg);
+      }
+
+      // Call the function with N+1 arguments and 1 result. (-(N+2), +1) = -N
+      int result = lua_pcall(the_lua_state, args.size() + 1, 1, 0);
+      if (result == LUA_OK)
+      {
+        // Get the return value.
+        return_value = (ActionResult)lua_tointeger(the_lua_state, -1);
+
+        // Pop the return value off the stack. (-1)
+        lua_pop(the_lua_state, 1);
+      }
+      else
+      {
+        // Get the error message.
+        char const* error_message = lua_tostring(the_lua_state, -1);
+        MAJOR_ERROR("Error calling %s.%s: %s", name.c_str(), function_name.c_str(), error_message);
+
+        // Pop the error message off the stack. (-1)
+        lua_pop(the_lua_state, 1);
+      }
+
+      // Check if the return value is ActionResult::Pending.
+      if (return_value == ActionResult::Pending)
+      {
+        call_parent = true;
+      }
+    }
+  }
+
+  if (call_parent)
+  {
+    if (pImpl->parent.empty())
+    {
+      return_value = default_result;
+    }
+    else
+    {
+      return_value =
+        ThingMetadata::get(pImpl->parent).call_lua_function(function_name, caller, args, default_result);
+    }
+  }
+
+  int end_stack = lua_gettop(the_lua_state);
+
+  if (start_stack != end_stack)
+  {
+    MAJOR_ERROR("*** LUA STACK MISMATCH: Started at %d, ended at %d", start_stack, end_stack);
   }
 
   return return_value;
 }
 
-ActionResult ThingMetadata::call_lua_function(std::string function_name,
-                                                ThingRef caller,
-                                                lua_Integer arg,
-                                                ActionResult default_result)
+bool ThingMetadata::call_lua_function_bool(std::string function_name,
+  ThingRef caller,
+  std::vector<lua_Integer> const& args,
+  bool default_result)
 {
-  ActionResult return_value = default_result;
-
+  bool return_value = default_result;
+  bool call_parent = false;
   std::string name = this->get_name();
-  lua_getglobal(the_lua_state, name.c_str());        // <1 Push name of class
 
-  if (!lua_isnoneornil(the_lua_state, -1))
+  int start_stack = lua_gettop(the_lua_state);
+
+  // Push name of class onto the stack. (+1)
+  lua_getglobal(the_lua_state, name.c_str());
+
+  if (lua_isnoneornil(the_lua_state, -1))
   {
-    lua_getfield(the_lua_state, -1, function_name.c_str());   // <2  Push the function name
-    if (!lua_isnoneornil(the_lua_state, -1))
-    {
-      lua_remove(the_lua_state, -2);                            // >1  Get rid of name of class
-      lua_pushinteger(the_lua_state, caller.get_id().full_id);  // <2  Push the caller's ID
-      lua_pushinteger(the_lua_state, arg);                      // <3  Push the argument
-      int result = lua_pcall(the_lua_state, 2, 1, 0);           // >>><1 Call with two arguments, one result
-      if (result == LUA_OK)
-      {
-        return_value = (ActionResult)lua_tointeger(the_lua_state, -1);
-        lua_pop(the_lua_state, 1);
-      }
-      else
-      {
-        char const* error_message = lua_tostring(the_lua_state, -1);
-        MAJOR_ERROR("Error calling %s.%s: %s", name.c_str(), function_name.c_str(), error_message);
-        lua_pop(the_lua_state, 1);
-      }
-
-      // If we got here, return.
-      return return_value;
-    }
-    else // didn't find a function of that name here, so try parent...
-    {
-      lua_pop(the_lua_state, 1);                      // >1 Pop the function name back off the stack
-    }
-  }
-
-  lua_pop(the_lua_state, 1);                      // >1 Pop the class name back off the stack
-
-  if (pImpl->parent.empty())
-  {
-    return_value = default_result;
+    // Class not found -- pop the name back off. (-1)
+    lua_pop(the_lua_state, 1);
+    call_parent = true;
   }
   else
   {
-    return_value = ThingMetadata::get(pImpl->parent).call_lua_function(function_name, caller, default_result);
-  }
+    // Push name of function onto the stack. (+1)
+    lua_getfield(the_lua_state, -1, function_name.c_str());
 
-  return return_value;
-}
-
-ActionResult ThingMetadata::call_lua_function(std::string function_name,
-                                                ThingRef caller,
-                                                lua_Integer arg1,
-                                                lua_Integer arg2,
-                                                ActionResult default_result)
-{
-  ActionResult return_value = default_result;
-
-  std::string name = this->get_name();
-  lua_getglobal(the_lua_state, name.c_str());        // <1 Push name of class
-
-  if (!lua_isnoneornil(the_lua_state, -1))
-  {
-    lua_getfield(the_lua_state, -1, function_name.c_str());   // <2  Push the function name
-    if (!lua_isnoneornil(the_lua_state, -1))
+    if (lua_isnoneornil(the_lua_state, -1))
     {
-      lua_remove(the_lua_state, -2);                            // >1  Get rid of name of class
-      lua_pushinteger(the_lua_state, caller.get_id().full_id);  // <2  Push the caller's ID
-      lua_pushinteger(the_lua_state, arg1);                     // <3  Push the argument #1
-      lua_pushinteger(the_lua_state, arg2);                     // <4  Push the argument #2
-      int result = lua_pcall(the_lua_state, 3, 1, 0);           // >>>><1 Call with three arguments, one result
+      // Function not found -- pop the function and class names back off. (-2)
+      lua_pop(the_lua_state, 2);
+      call_parent = true;
+    }
+    else
+    {
+      // Remove the class name from the stack. (-1)
+      lua_remove(the_lua_state, -2);
+
+      // Push the caller's ID onto the stack. (+1)
+      lua_pushinteger(the_lua_state, caller.get_id().full_id);
+
+      // Push the arguments onto the stack. (+N)
+      for (auto& arg : args)
+      {
+        lua_pushinteger(the_lua_state, arg);
+      }
+
+      // Call the function with N+1 arguments and 1 result. (-(N+2), +1) = -N
+      int result = lua_pcall(the_lua_state, args.size() + 1, 1, 0);
       if (result == LUA_OK)
       {
-        return_value = (ActionResult)lua_tointeger(the_lua_state, -1);
-        lua_pop(the_lua_state, 1);                              // >0 Pop the result off the stack.
+        // Check for nil return.
+        if (lua_isnoneornil(the_lua_state, -1))
+        {
+          call_parent = true;
+        }
+        else
+        {
+          // Get the return value.
+          return_value = (lua_toboolean(the_lua_state, -1) != 0);
+        }
+
+        // Pop the return value off the stack. (-1)
+        lua_pop(the_lua_state, 1);
       }
       else
       {
+        // Get the error message.
         char const* error_message = lua_tostring(the_lua_state, -1);
         MAJOR_ERROR("Error calling %s.%s: %s", name.c_str(), function_name.c_str(), error_message);
-        lua_pop(the_lua_state, 1);                              // >0 Pop the error message off the stack.
-      }
 
-      // If we got here, and return value is NOT ActionResult::Pending, return.
-      if (return_value != ActionResult::Pending)
-      {
-        return return_value;
+        // Pop the error message off the stack. (-1)
+        lua_pop(the_lua_state, 1);
       }
     }
-    else // didn't find a function of that name here
+  }
+
+  if (call_parent)
+  {
+    if (pImpl->parent.empty())
     {
-      lua_pop(the_lua_state, 2);                      // >>0 Pop the function and class names back off the stack
+      return_value = default_result;
+    }
+    else
+    {
+      return_value =
+        ThingMetadata::get(pImpl->parent).call_lua_function_bool(function_name, caller, args, default_result);
     }
   }
-  else // didn't find a class of that name here
-  {
-    lua_pop(the_lua_state, 1);                      // >0 Pop the class name back off the stack
-  }
 
-  if (!pImpl->parent.empty())
+  int end_stack = lua_gettop(the_lua_state);
+
+  if (start_stack != end_stack)
   {
-    return_value = ThingMetadata::get(pImpl->parent).call_lua_function(function_name, caller, default_result);
+    MAJOR_ERROR("*** LUA STACK MISMATCH: Started at %d, ended at %d", start_stack, end_stack);
   }
 
   return return_value;

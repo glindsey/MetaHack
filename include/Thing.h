@@ -100,10 +100,6 @@ class Thing :
     bool do_attack(ThingRef thing, unsigned int& action_time);
 
     /// Return whether the Entity can drink the requested Thing.
-    /// The base method checks to make sure the Thing is a liquid, but beyond
-    /// that, assumes it can drink anything.
-    /// It is recommended that any derived classes first call the base method
-    /// before proceeding with their own checks.
     /// @param[in] thing Thing to try to drink
     /// @param[out] action_time The time it will take to drink it
     /// @return ActionResult indicating what happened.
@@ -116,10 +112,6 @@ class Thing :
     bool do_drink(ThingRef thing, unsigned int& action_time);
 
     /// Return whether the Entity can drop the requested Thing.
-    /// The base method checks to make sure the Entity is actually holding the
-    /// thing in its Inventory.
-    /// It is recommended that any derived classes first call the base method
-    /// before proceeding with their own checks.
     /// @param[in] thing Thing to try to drop
     /// @param[out] action_time The time it will take to drop it
     /// @return ActionResult indicating what happened.
@@ -132,8 +124,6 @@ class Thing :
     bool do_drop(ThingRef thing, unsigned int& action_time);
 
     /// Return whether the Entity can eat the requested Thing.
-    /// It is recommended that any derived classes first call the base method
-    /// before proceeding with their own checks.
     /// @param[in] thing Thing to try to eat
     /// @param[out] action_time The time it will take to eat it
     /// @return ActionResult indicating what happened.
@@ -143,8 +133,6 @@ class Thing :
     bool do_eat(ThingRef thing, unsigned int& action_time);
 
     /// Return whether the Entity can mix these two Things.
-    /// It is recommended that any derived classes first call the base method
-    /// before proceeding with their own checks.
     /// @param[in] thing1 First thing to mix.
     /// @param[in] thing2 Second thing to mix.
     /// @param[out] action_time The time it will take to mix.
@@ -161,8 +149,6 @@ class Thing :
     virtual bool do_move(Direction direction, unsigned int& action_time);
 
     /// Return whether the Entity can put thing into container.
-    /// It is recommended that any derived classes first call the base method
-    /// before proceeding with their own checks.
     /// @param[in] thing Thing to put in.
     /// @param[in] container Thing to put it into.
     /// @return ActionResult indicating what happened.
@@ -170,6 +156,15 @@ class Thing :
 
     /// Attempt to put a thing into a container.
     bool do_put_into(ThingRef thing, ThingRef container, unsigned int& action_time);
+
+    /// Return whether the Entity can use the requested Thing.
+    /// @param[in] thing Thing to try to use
+    /// @param[out] action_time The time it will take to use it
+    /// @return ActionResult indicating what happened.
+    virtual ActionResult can_use(ThingRef thing, unsigned int& action_time);
+
+    /// Attempt to use a thing.
+    bool do_use(ThingRef thing, unsigned int& action_time);
 
     /// @todo The next three might be better as protected methods.
     FlagsMap const& get_property_flags() const;
@@ -235,8 +230,6 @@ class Thing :
     /// Return whether the Entity can pick up the requested Thing.
     /// The base method checks to make sure the Thing is at the same location
     /// as the Entity, and that the Entity's inventory can contain it.
-    /// It is recommended that any derived classes first call the base method
-    /// before proceeding with their own checks.
     /// @param[in] thing Thing to try to pick up
     /// @param[out] action_time The time it will take to pick it up
     /// @return ActionResult indicating what happened.
@@ -249,8 +242,6 @@ class Thing :
     bool do_pick_up(ThingRef thing, unsigned int& action_time);
 
     /// Return whether the Entity can take a thing out of its container.
-    /// It is recommended that any derived classes first call the base method
-    /// before proceeding with their own checks.
     /// @param[in] thing Thing to take out.
     /// @return ActionResult indicating what happened.
     ActionResult can_take_out(ThingRef thing, unsigned int& action_time);
@@ -501,6 +492,10 @@ class Thing :
     /// If this function returns false, the action is aborted.
     bool perform_action_eaten_by(ThingRef actor);
 
+    /// Perform an action when this thing is used.
+    /// If this function returns false, the action is aborted.
+    bool perform_action_used_by(ThingRef actor);
+
     /// Perform an action when this thing is picked up.
     /// If this function returns false, the action is aborted.
     bool perform_action_picked_up_by(ThingRef actor);
@@ -558,7 +553,7 @@ class Thing :
     /// Otherwise, calls Lua function "can_contain()" for the Thing's type.
     /// @param thing Thing to check.
     /// @return ActionResult specifying whether the thing can be held here.
-    ActionResult can_contain(ThingRef thing) const;
+    ActionResult can_contain(ThingRef thing);
 
   protected:
     /// Named Constructor
@@ -643,6 +638,9 @@ class Thing :
     ///   - (x, y) coordinates of the Thing, or nil if not on the player's Map.
     static int LUA_get_coords(lua_State* L);
 
+    static int LUA_get_type(lua_State* L);
+    static int LUA_get_display_name(lua_State* L);
+    static int LUA_get_display_plural(lua_State* L);
     static int LUA_get_parent_type(lua_State* L);
     static int LUA_get_intrinsic_flag(lua_State* L);
     static int LUA_get_intrinsic_value(lua_State* L);
@@ -654,45 +652,16 @@ class Thing :
     static int LUA_set_property_value(lua_State* L);
     static int LUA_set_property_string(lua_State* L);
 
-    /// Try to call a Lua function given no arguments.
-    ///
-    /// If the function does not exist, attempts to step up to the parent type
-    /// and call the function there, up until there's no parent to call.
-    /// @param function_name  Name of the function to call
-    /// @param default_result The default result if function is not found 
-    ///                       (defaults to ActionResult::Success).
-    /// @return An ActionResult containing the result of the call.
+    /// Syntactic sugar for calling ThingMetadata::call_lua_function.
     ActionResult call_lua_function(std::string function_name,
+      std::vector<lua_Integer> const& args,
       ActionResult default_result = ActionResult::Success);
 
-    /// Try to call a Lua function given one argument.
-    ///
-    /// If the function does not exist, attempts to step up to the parent type
-    /// and call the function there, up until there's no parent to call.
-    /// @param function_name  Name of the function to call
-    /// @param arg            Argument to pass to the function
-    /// @param default_result The default result if function is not found 
-    ///                       (defaults to ActionResult::Success).
-    /// @return An ActionResult containing the result of the call.
-    ActionResult call_lua_function(std::string function_name,
-      lua_Integer arg,
-      ActionResult default_result = ActionResult::Success);
+    /// Syntactic sugar for calling ThingMetadata::call_lua_function_bool.
+    bool call_lua_function_bool(std::string function_name,
+      std::vector<lua_Integer> const& args,
+      bool default_result = true);
 
-    /// Try to call a Lua function given two arguments.
-    ///
-    /// If the function does not exist, attempts to step up to the parent type
-    /// and call the function there, up until there's no parent to call.
-    /// @param function_name  Name of the function to call
-    /// @param caller         ThingRef to the thing calling the function
-    /// @param arg1           Argument #1 to pass to the function.
-    /// @param arg2           Argument #2 to pass to the function.
-    /// @param default_result The default result if function is not found 
-    ///                       (defaults to ActionResult::Success).
-    /// @return An ActionResult containing the result of the call.
-    ActionResult call_lua_function(std::string function_name,
-      lua_Integer arg1,
-      lua_Integer arg2,
-      ActionResult default_result = ActionResult::Success);
 
 };
 

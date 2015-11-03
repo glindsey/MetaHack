@@ -116,6 +116,13 @@ public:
 	/// Assignment operator for weak references.
 	ThingRef& operator=(ThingRef other);
 
+  /// Conversion operator to lua_Integer.
+  /// Makes it REALLY easy to pass things to Lua scripts.
+  operator lua_Integer() const
+  {
+    return get_id().full_id;
+  }
+
   bool operator<(ThingRef const& other) const;
 
   bool operator<=(ThingRef const& other) const;

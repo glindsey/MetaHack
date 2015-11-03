@@ -243,6 +243,7 @@
     <None Include="resources\scripts\map.lua" />
     <None Include="resources\things\Biped.lua" />
     <None Include="resources\things\Human.lua" />
+    <None Include="resources\things\LightSource.lua" />
     <None Include="resources\things\Rock.lua" />
     <None Include="resources\things\Thing.lua" />
   </ItemGroup>
