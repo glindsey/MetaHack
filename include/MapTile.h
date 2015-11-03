@@ -6,10 +6,13 @@
 
 #include "GameObject.h"
 #include "Inventory.h"
+#include "LightInfluence.h"
 #include "MapId.h"
+#include "MapTileImpl.h"
 #include "Thing.h"
 #include "ThingRef.h"
 #include "TileSheet.h"
+#include "UsesPimpl.h"
 
 // Forward declarations
 class Entity;
@@ -21,13 +24,6 @@ class MapTile : public GameObject
 
   public:
     virtual ~MapTile();
-
-    struct LightInfluence
-    {
-      sf::Vector2i coords;  ///< Coordinates of the light.
-      sf::Color color;      ///< Color of the light.
-      int intensity;        ///< Intensity of the light.
-    };
 
     /// Get the tile's floor object.
     ThingRef get_floor() const;
@@ -142,13 +138,11 @@ class MapTile : public GameObject
 
   protected:
     /// Constructor, callable only by Map class.
-    MapTile(sf::Vector2i coords, MapId mapId);
+    MapTile(sf::Vector2i coords, std::string type, MapId map_id);
 
   private:
     static bool initialized;
-
-    struct Impl;
-    std::unique_ptr<Impl> pImpl;
+    Pimpl<MapTileImpl> pImpl;
 };
 
 #endif // MAPTILE_H

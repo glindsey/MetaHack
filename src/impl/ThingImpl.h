@@ -27,7 +27,7 @@ class ThingImpl
 {
 public:
 
-  // Constructor for thing of certain type.
+  /// Constructor for thing of certain type.
   ThingImpl(std::string type_, ThingRef ref_)
     : 
     type{ type_ },
@@ -51,7 +51,7 @@ public:
     property_values = metadata.get_default_values();
   }
 
-  // Constructor for floor of a MapTile.
+  /// Constructor for floor of a MapTile.
   ThingImpl(MapTile* tile, ThingRef ref_)
     :
     type{ "floor" },
@@ -75,7 +75,7 @@ public:
     property_values = metadata.get_default_values();
   }
 
-  // Clone constructor.
+  /// Clone constructor.
   ThingImpl(ThingImpl const& other, ThingRef ref_)
     :
     type{ other.type },

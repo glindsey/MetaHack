@@ -16,61 +16,24 @@ typedef boost::random::uniform_int_distribution<> uniform_int_dist;
 
 bool MapTile::initialized = false;
 
-struct MapTile::Impl
-{
-  Impl() {}
-  ~Impl()
-  {
-    lights.clear();
-  }
-
-  MapId map_id;
-  sf::Vector2i coords;
-
-  /// Reference to the Thing that represents this tile's floor.
-  ThingRef floor;
-
-  /// Tile's light level.
-  /// Levels for the various color channels are interpreted as such:
-  /// 0 <= value <= 128: result = (original * (value / 128))
-  /// 128 < value <= 255: result = max(original + (value - 128), 255)
-  /// The alpha channel is ignored.
-  sf::Color ambient_light_color;
-
-  /// A map of LightInfluences, representing the amount of light that
-  /// each thing is contributing to this map tile.
-  /// Levels for the various color channels are interpreted as such:
-  /// 0 <= value <= 128: result = (original * (value / 128))
-  /// 128 < value <= 255: result = max(original + (value - 128), 255)
-  /// The alpha channel is ignored.
-  std::unordered_map<ThingRef, LightInfluence> lights;
-
-  std::string type;
-  MapTileMetadata* pMetadata;
-};
-
-MapTile::MapTile(sf::Vector2i coords, MapId mapId)
-  : pImpl(NEW Impl())
+MapTile::MapTile(sf::Vector2i coords, std::string type, MapId map_id)
+  : pImpl(coords, type, map_id)
 {
   if (!initialized)
   {
-    // TODO: initialization
+    // TODO: any static class initialization that must be performed
+    initialized = true;
   }
 
-  //uniform_int_dist vDist(0, 3);
-
+  // Floor is created out here, or else the pImpl would need the
+  // "this" pointer passed in.
+  /// @todo The type of this floor should eventually be specified as
+  ///       part of the constructor.
   pImpl->floor = TM.create_floor(this);
-  this->set_type("FloorStone");
-  //pImpl->variant = vDist(the_RNG);
-  pImpl->map_id = mapId;
-  pImpl->coords = coords;
-  pImpl->ambient_light_color = sf::Color(192, 192, 192, 255);
 }
 
 MapTile::~MapTile()
-{
-  pImpl.reset();
-}
+{}
 
 ThingRef MapTile::get_floor() const
 {
@@ -79,13 +42,13 @@ ThingRef MapTile::get_floor() const
 
 std::string MapTile::get_display_name() const
 {
-  return pImpl->pMetadata->get_display_name();
+  return pImpl->p_metadata->get_display_name();
 }
 
 sf::Vector2u MapTile::get_tile_sheet_coords(int frame) const
 {
   /// @todo Deal with selecting one of the other tiles.
-  sf::Vector2u coords = pImpl->pMetadata->get_tile_coords();
+  sf::Vector2u coords = pImpl->p_metadata->get_tile_coords();
   return coords;
 }
 
@@ -172,7 +135,7 @@ void MapTile::draw_to(sf::RenderTexture& target,
 void MapTile::set_type(std::string type)
 {
   pImpl->type = type;
-  pImpl->pMetadata = MapTileMetadata::get(type);
+  pImpl->p_metadata = MapTileMetadata::get(type);
 }
 
 std::string MapTile::get_type() const
@@ -182,7 +145,7 @@ std::string MapTile::get_type() const
 
 bool MapTile::is_empty_space() const
 {
-  return pImpl->pMetadata->get_flag("passable");
+  return pImpl->p_metadata->get_flag("passable");
 }
 
 /// @todo: Implement this to cover different entity types.
@@ -350,7 +313,7 @@ bool MapTile::is_opaque() const
 {
   /// @todo Check the tile's inventory to see if there's anything huge enough
   ///       to block the view of stuff behind it.
-  return pImpl->pMetadata->get_flag("opaque");
+  return pImpl->p_metadata->get_flag("opaque");
 }
 
 void MapTile::draw_highlight(sf::RenderTarget& target,

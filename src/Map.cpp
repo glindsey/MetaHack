@@ -7,6 +7,7 @@
 
 #include "App.h"
 #include "Inventory.h"
+#include "LightInfluence.h"
 #include "MapTile.h"
 #include "MathUtils.h"
 #include "ShaderEffect.h"
@@ -61,13 +62,13 @@ struct Map::Impl
 
 const sf::Color Map::ambient_light_level = sf::Color(48, 48, 48, 255);
 
-Map::Map(MapId mapId, int width, int height)
+Map::Map(MapId map_id, int width, int height)
   : pImpl(NEW Impl())
 {
   TRACE("Creating map of size %d x %d...", width, height);
 
   // Set height, width, center variables.
-  pImpl->map_id = mapId;
+  pImpl->map_id = map_id;
   pImpl->map_size.x = width;
   pImpl->map_size.y = height;
 
@@ -80,7 +81,7 @@ Map::Map(MapId mapId, int width, int height)
   {
     for (int x = 0; x < width; ++x)
     {
-      MapTile* new_tile = NEW MapTile({ x, y }, mapId);
+      MapTile* new_tile = NEW MapTile({ x, y }, "Unknown", map_id);
       pImpl->tiles.push_back(new_tile);
       new_tile->set_coords(x, y);
       new_tile->set_ambient_light_level(ambient_light_level);
@@ -108,7 +109,7 @@ Map::Map(MapId mapId, int width, int height)
   ///       should be done via scripting. But for now
   ///       this will do.
   TRACE("Executing Map Lua script.");
-  the_lua_instance.set_global("current_map_id", mapId);
+  the_lua_instance.set_global("current_map_id", map_id);
   the_lua_instance.do_file("resources/scripts/map.lua");
 
   TRACE("Map created.");
@@ -322,7 +323,7 @@ void Map::do_recursive_lighting(ThingRef source,
             }
           }
 
-          MapTile::LightInfluence influence;
+          LightInfluence influence;
           influence.coords = origin;
           influence.color = light_color;
           influence.intensity = max_depth_squared;
@@ -358,7 +359,7 @@ void Map::do_recursive_lighting(ThingRef source,
             }
           }
 
-          MapTile::LightInfluence influence;
+          LightInfluence influence;
           influence.coords = origin;
           influence.color = light_color;
           influence.intensity = max_depth_squared;
@@ -394,7 +395,7 @@ void Map::do_recursive_lighting(ThingRef source,
             }
           }
 
-          MapTile::LightInfluence influence;
+          LightInfluence influence;
           influence.coords = origin;
           influence.color = light_color;
           influence.intensity = max_depth_squared;
@@ -430,7 +431,7 @@ void Map::do_recursive_lighting(ThingRef source,
             }
           }
 
-          MapTile::LightInfluence influence;
+          LightInfluence influence;
           influence.coords = origin;
           influence.color = light_color;
           influence.intensity = max_depth_squared;
@@ -466,7 +467,7 @@ void Map::do_recursive_lighting(ThingRef source,
             }
           }
 
-          MapTile::LightInfluence influence;
+          LightInfluence influence;
           influence.coords = origin;
           influence.color = light_color;
           influence.intensity = max_depth_squared;
@@ -502,7 +503,7 @@ void Map::do_recursive_lighting(ThingRef source,
             }
           }
 
-          MapTile::LightInfluence influence;
+          LightInfluence influence;
           influence.coords = origin;
           influence.color = light_color;
           influence.intensity = max_depth_squared;
@@ -538,7 +539,7 @@ void Map::do_recursive_lighting(ThingRef source,
             }
           }
 
-          MapTile::LightInfluence influence;
+          LightInfluence influence;
           influence.coords = origin;
           influence.color = light_color;
           influence.intensity = max_depth_squared;
@@ -574,7 +575,7 @@ void Map::do_recursive_lighting(ThingRef source,
             }
           }
 
-          MapTile::LightInfluence influence;
+          LightInfluence influence;
           influence.coords = origin;
           influence.color = light_color;
           influence.intensity = max_depth_squared;
@@ -630,7 +631,7 @@ void Map::add_light(ThingRef source)
   int max_depth_squared = source->get_property_value("light_strength", 0);
 
   // Add a light influence to the tile the light is on.
-  MapTile::LightInfluence influence;
+  LightInfluence influence;
   influence.coords = coords;
   influence.color = light_color;
   influence.intensity = max_depth_squared;

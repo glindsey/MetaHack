@@ -148,6 +148,7 @@
     <ClInclude Include="include\InventoryArea.h" />
     <ClInclude Include="include\InventorySlot.h" />
     <ClInclude Include="include\KeyBuffer.h" />
+    <ClInclude Include="include\LightInfluence.h" />
     <ClInclude Include="include\Lua.h" />
     <ClInclude Include="include\Map.h" />
     <ClInclude Include="include\MapFactory.h" />
@@ -180,6 +181,7 @@
     <ClInclude Include="src\Exceptions.h" />
     <ClInclude Include="src\impl\ActionImpl.h" />
     <ClInclude Include="src\impl\AppStateGameModeImpl.h" />
+    <ClInclude Include="src\impl\MapTileImpl.h" />
     <ClInclude Include="src\impl\ThingImpl.h" />
   </ItemGroup>
   <ItemGroup>
