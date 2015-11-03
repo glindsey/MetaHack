@@ -23,7 +23,7 @@ struct AppStateGameMode::Impl
   {
     map_zoom_level = 1.0f;
     current_input_state = GameInputState::Map;
-    action_in_progress = Action(Action::Type::None);
+    action_in_progress = Action(ActionType::None);
 
     inventory_area.reset(NEW InventoryArea(calc_inventory_dims()));
 
@@ -426,13 +426,13 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
       {
         if (key_direction == Direction::Self)
         {
-          action.set_type(Action::Type::Wait);
+          action.set_type(ActionType::Wait);
           player->queue_action(action);
           result = EventResult::Handled;
         }
         else
         {
-          action.set_type(Action::Type::Move);
+          action.set_type(ActionType::Move);
           action.set_target(key_direction);
           player->queue_action(action);
           result = EventResult::Handled;
@@ -595,7 +595,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
         // CTRL-A -- attack
       case sf::Keyboard::Key::A:    // Attack
-        action.set_type(Action::Type::Attack);
+        action.set_type(ActionType::Attack);
         if (action.get_things().size() == 0)
         {
           // No item specified, so ask for a direction.
@@ -620,7 +620,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
         // CTRL-C -- close items
       case sf::Keyboard::Key::C:    // Close
-        action.set_type(Action::Type::Close);
+        action.set_type(ActionType::Close);
         if (action.get_things().size() == 0)
         {
           // No item specified, so ask for a direction.
@@ -641,7 +641,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
         // CTRL-D -- drop items
       case sf::Keyboard::Key::D:    // Drop
-        action.set_type(Action::Type::Drop);
+        action.set_type(ActionType::Drop);
         if (action.get_things().size() == 0)
         {
           the_message_log.add("Please choose the item(s) to drop first.");
@@ -657,7 +657,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
         // CTRL-E -- eat items
       case sf::Keyboard::Key::E:
-        action.set_type(Action::Type::Eat);
+        action.set_type(ActionType::Eat);
         if (action.get_things().size() == 0)
         {
           the_message_log.add("Please choose the item(s) to eat first.");
@@ -673,7 +673,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
         // CTRL-F -- fill item(s)
       case sf::Keyboard::Key::F:
-        action.set_type(Action::Type::Fill);
+        action.set_type(ActionType::Fill);
         if (action.get_things().size() == 0)
         {
           the_message_log.add("Please select the item(s) to fill first.");
@@ -690,7 +690,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
         // CTRL-G -- get (pick up) items
       case sf::Keyboard::Key::G:
-        action.set_type(Action::Type::Get);
+        action.set_type(ActionType::Get);
         if (action.get_things().size() == 0)
         {
           the_message_log.add("Please select the item(s) to pick up first.");
@@ -706,7 +706,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
         // CTRL-H -- hurl items
       case sf::Keyboard::Key::H:
-        action.set_type(Action::Type::Hurl);
+        action.set_type(ActionType::Hurl);
         if (action.get_things().size() == 0)
         {
           the_message_log.add("Please select the item you want to hurl first.");
@@ -727,7 +727,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
         // CTRL-I -- inscribe on an item
       case sf::Keyboard::Key::I:
-        action.set_type(Action::Type::Inscribe);
+        action.set_type(ActionType::Inscribe);
         if (action.get_things().size() == 0)
         {
           the_message_log.add("Please select the item you want to write on first.");
@@ -749,7 +749,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
         // CTRL-M -- mix items
       case sf::Keyboard::Key::M:
-        action.set_type(Action::Type::Mix);
+        action.set_type(ActionType::Mix);
         if (action.get_things().size() == 0)
         {
           the_message_log.add("Please select the two items you want to mix together first.");
@@ -768,7 +768,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
         break;
 
       case sf::Keyboard::Key::O:    // Open
-        action.set_type(Action::Type::Open);
+        action.set_type(ActionType::Open);
         if (action.get_things().size() == 0)
         {
           // No item specified, so ask for a direction.
@@ -789,7 +789,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
         // CTRL-P -- put item in another item
       case sf::Keyboard::Key::P:
-        action.set_type(Action::Type::PutInto);
+        action.set_type(ActionType::PutInto);
         if (action.get_things().size() == 0)
         {
           the_message_log.add("Please select the item(s) you want to store first.");
@@ -806,7 +806,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
         // CTRL-Q -- quaff (drink) from items
       case sf::Keyboard::Key::Q:
-        action.set_type(Action::Type::Quaff);
+        action.set_type(ActionType::Quaff);
         if (action.get_things().size() == 0)
         {
           the_message_log.add("Please select the item(s) you want to quaff from first.");
@@ -822,7 +822,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
         // CTRL-R -- read an item
       case sf::Keyboard::Key::R:
-        action.set_type(Action::Type::Read);
+        action.set_type(ActionType::Read);
         if (action.get_things().size() == 0)
         {
           the_message_log.add("Please select the item(s) you want to read first.");
@@ -837,7 +837,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
         // CTRL-S -- shoot items
       case sf::Keyboard::Key::S:
-        action.set_type(Action::Type::Shoot);
+        action.set_type(ActionType::Shoot);
         // Skip the item check here, as we want to shoot our wielded weapon
         // if no item is selected.
         if (action.get_things().size() > 1)
@@ -858,7 +858,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
         // CTRL-T -- take item out of container
       case sf::Keyboard::Key::T:
-        action.set_type(Action::Type::TakeOut);
+        action.set_type(ActionType::TakeOut);
         if (action.get_things().size() == 0)
         {
           the_message_log.add("Please select the item(s) to take out first.");
@@ -874,7 +874,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
         // CTRL-U -- use an item
       case sf::Keyboard::Key::U:
-        action.set_type(Action::Type::Use);
+        action.set_type(ActionType::Use);
         if (action.get_things().size() == 0)
         {
           the_message_log.add("Please choose the item to use first.");
@@ -890,7 +890,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
         // CTRL-W -- wield item
       case sf::Keyboard::Key::W:
-        action.set_type(Action::Type::Wield);
+        action.set_type(ActionType::Wield);
         if (action.get_things().size() == 0)
         {
           the_message_log.add("Please choose the item to wield first.");

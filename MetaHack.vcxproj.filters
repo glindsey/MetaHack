@@ -177,6 +177,12 @@
     <ClInclude Include="include\Metadata.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\UsesPimpl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\impl\ActionImpl.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">

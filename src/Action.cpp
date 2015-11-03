@@ -4,43 +4,15 @@
 
 #include <algorithm>
 
-struct Action::Impl
-{
-  /// Type of this action.
-  Action::Type type;
-
-  /// Thing(s) to perform the action on.
-  std::vector<ThingRef> things;
-
-  /// If true, action can take a Thing as a target.
-  bool target_can_be_thing;
-
-  /// If true, action can take a Direction as a target.
-  bool target_can_be_direction;
-
-  /// Target Thing for the action (if any).
-  ThingRef target_thing;
-
-  /// Direction for the action (if any).
-  Direction target_direction;
-
-  /// Quantity for the action (only used in drop/pickup).
-  unsigned int quantity;
-};
-
 Action::Action()
-  : pImpl { NEW Impl() }
 {
-  pImpl->type = Type::None;
+  pImpl->type = ActionType::None;
   pImpl->things.clear();
-  pImpl->target_can_be_direction = false;
-  pImpl->target_can_be_thing = false;
   pImpl->target_thing = TM.get_mu();
   pImpl->target_direction = Direction::None;
 }
 
-Action::Action(Action::Type type)
-  : pImpl { NEW Impl() }
+Action::Action(ActionType type)
 {
   pImpl->type = type;
   pImpl->things.clear();
@@ -48,48 +20,12 @@ Action::Action(Action::Type type)
   pImpl->target_direction = Direction::None;
 }
 
-Action::~Action()
-{
-  pImpl.reset();
-}
-
-/// Copy constructor
-Action::Action(const Action& other)
-  : pImpl{ NEW Impl() }
-{
-  *(pImpl.get()) = *(other.pImpl.get());
-}
-
-/// Move constructor
-Action::Action(Action&& other) noexcept
-{
-  // Point our pImpl to the other's data.
-  pImpl.reset(other.pImpl.get());
-  // Release the other's pImpl.
-  other.pImpl.release();
-}
-
-/// Copy assignment operator
-Action& Action::operator= (const Action& other)
-{
-  Action temp(other);       // re-use copy constructor
-  *this = std::move(temp);  // re-use move constructor
-  return *this;
-}
-
-/// Move assignment operator
-Action& Action::operator= (Action&& other) noexcept
-{
-  std::swap(pImpl, other.pImpl);
-  return *this;
-}
-
-void Action::set_type(Action::Type type)
+void Action::set_type(ActionType type)
 {
   pImpl->type = type;
 }
 
-Action::Type Action::get_type() const
+ActionType Action::get_type() const
 {
   return pImpl->type;
 }
@@ -125,8 +61,8 @@ bool Action::target_can_be_thing() const
 {
   switch (pImpl->type)
   {
-  case Action::Type::Fill:
-  case Action::Type::PutInto:
+  case ActionType::Fill:
+  case ActionType::PutInto:
     return true;
 
   default:
@@ -138,14 +74,14 @@ bool Action::target_can_be_direction() const
 {
   switch (pImpl->type)
   {
-  case Action::Type::Attack:
-  case Action::Type::AttackSafe:
-  case Action::Type::Close:
-  case Action::Type::Fill:
-  case Action::Type::Hurl:
-  case Action::Type::Move:
-  case Action::Type::Open:
-  case Action::Type::Shoot:
+  case ActionType::Attack:
+  case ActionType::AttackSafe:
+  case ActionType::Close:
+  case ActionType::Fill:
+  case ActionType::Hurl:
+  case ActionType::Move:
+  case ActionType::Open:
+  case ActionType::Shoot:
     return true;
 
   default:

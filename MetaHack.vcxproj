@@ -54,17 +54,17 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Personal\projects\MetaHack\include;C:\Personal\libraries\SFML-feature-VS2015\include;C:\Personal\libraries\lua-5.3.1\src;C:\Personal\libraries\boost_1_59_0;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <IncludePath>C:\Personal\projects\MetaHack\include;C:\Personal\projects\MetaHack\src\impl;C:\Personal\libraries\SFML-feature-VS2015\include;C:\Personal\libraries\lua-5.3.1\src;C:\Personal\libraries\boost_1_59_0;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
     <LibraryPath>C:\Personal\libraries\SFML-feature-VS2015\lib;C:\Personal\libraries\lua-5.3.1\obj;C:\Personal\libraries\boost_1_59_0\stage\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Personal\projects\MetaHack\include;C:\Personal\libraries\SFML-feature-VS2015\include;C:\Personal\libraries\lua-5.3.1\src;C:\Personal\libraries\boost_1_59_0;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <IncludePath>C:\Personal\projects\MetaHack\include;C:\Personal\projects\MetaHack\src\impl;C:\Personal\libraries\SFML-feature-VS2015\include;C:\Personal\libraries\lua-5.3.1\src;C:\Personal\libraries\boost_1_59_0;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
     <LibraryPath>C:\Personal\libraries\SFML-feature-VS2015\lib;C:\Personal\libraries\lua-5.3.1\obj;C:\Personal\libraries\boost_1_59_0\stage\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\Personal\projects\MetaHack\include;C:\Personal\libraries\SFML-feature-VS2015\include;C:\Personal\libraries\lua-5.3.1\src;C:\Personal\libraries\boost_1_59_0;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <IncludePath>C:\Personal\projects\MetaHack\include;C:\Personal\projects\MetaHack\src\impl;C:\Personal\libraries\SFML-feature-VS2015\include;C:\Personal\libraries\lua-5.3.1\src;C:\Personal\libraries\boost_1_59_0;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
     <LibraryPath>C:\Personal\libraries\SFML-feature-VS2015\lib;C:\Personal\libraries\lua-5.3.1\obj;C:\Personal\libraries\boost_1_59_0\stage\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -176,7 +176,9 @@
     <ClInclude Include="include\ThingManager.h" />
     <ClInclude Include="include\ThingMetadata.h" />
     <ClInclude Include="include\TileSheet.h" />
+    <ClInclude Include="include\UsesPimpl.h" />
     <ClInclude Include="src\Exceptions.h" />
+    <ClInclude Include="src\impl\ActionImpl.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

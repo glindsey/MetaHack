@@ -5,8 +5,12 @@
 #include <vector>
 #include <boost/uuid/uuid.hpp>
 
+#include "ActionType.h"
 #include "Direction.h"
 #include "ThingManager.h"
+#include "UsesPimpl.h"
+
+#include "ActionImpl.h"
 
 // Forward declarations
 class Thing;
@@ -15,42 +19,13 @@ class Thing;
 class Action
 {
 public:
-  enum class Type
-  {
-    None,
-    Wait,
-    Attack,
-    AttackSafe,   ///< "Safe" attack action, only attacks hostiles
-    Close,
-    Drop,
-    Eat,
-    Fill,
-    Get,
-    Hurl,
-    Inscribe,
-    Mix,
-    Move,
-    Open,
-    PutInto,
-    Quaff,
-    Read,
-    Shoot,
-    TakeOut,
-    Use,
-    Wield,
-    Count
-  };
 
   Action();
-  Action(Action::Type type);
-  virtual ~Action();
-  Action(const Action& other);
-  Action(Action&& other) noexcept;
-  Action& operator= (const Action& other);
-  Action& operator= (Action&& other) noexcept;
+  Action(ActionType type);
+  virtual ~Action() = default;
 
-  void set_type(Action::Type type);
-  Action::Type get_type() const;
+  void set_type(ActionType type);
+  ActionType get_type() const;
   void set_things(std::vector<ThingRef> things);
   std::vector<ThingRef> const& get_things() const;
   void add_thing(ThingRef thing);
@@ -67,8 +42,7 @@ public:
   void set_quantity(unsigned int quantity);
 
 private:
-  struct Impl;
-  std::unique_ptr<Impl> pImpl;
+  CopyablePimpl<ActionImpl> pImpl;
 };
 
 #endif // ACTION_H
