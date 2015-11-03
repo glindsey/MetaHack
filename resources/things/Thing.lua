@@ -3,7 +3,7 @@
 Thing = Thing or {}
 
 function Thing.on_create(id)
-	messageLog_add("Thing.on_create() called, new ID = " .. id)
+	-- messageLog_add("Thing.on_create() called, new ID = " .. id)
 	return ActionResult.Success
 end
 

@@ -1,7 +1,4 @@
 -- Default Lua script read when ThingManager is first initialized.
-local temp = ActionResult.FailureCircularReference.value
-print("Testing enum import: ActionResult.FailureCircularReference = " , temp)
-print("*** Default Lua script executed.")
 
 function trace(string)
 	--print(debug.traceback())
@@ -21,3 +18,5 @@ function trace(string)
 	  debuginfo = debug.getinfo(n)
 	end
 end
+
+print("*** Default Lua script executed.")

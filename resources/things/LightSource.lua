@@ -2,11 +2,6 @@
 
 LightSource = LightSource or {}
 
-function LightSource.on_create(id)
-	messageLog_add("LightSource.on_create() called, new ID = " .. id)
-	return ActionResult.Success
-end
-
 function LightSource.is_usable_by(id)
 	-- This SHOULD check if a creature is sentient.
 	-- For now just return true.
