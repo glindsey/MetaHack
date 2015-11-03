@@ -22,22 +22,18 @@ class App : public EventHandler, public boost::noncopyable
     virtual ~App();
 
     void run();
-
     EventResult handle_event(sf::Event& event);
-
     sf::RenderWindow& get_window();
-
     bool has_window_focus();
-
-    int get_rand(int minimum, int maximum);
 
   protected:
   private:
-    struct Impl;
-    std::unique_ptr<Impl> pImpl;
+    sf::RenderWindow& m_app_window;
+    std::unique_ptr<StateMachine> m_state_machine;
+    bool m_is_running;
+    bool m_has_window_focus;
 
     static int s_frame_counter;
-
     static int LUA_get_frame_counter(lua_State* L);
 };
 

@@ -112,32 +112,18 @@ int main()
   return EXIT_SUCCESS;
 }
 
-struct App::Impl
-{
-  Impl(sf::RenderWindow& app_window_)
-    : app_window(app_window_),
-      state_machine(NEW StateMachine("app_state_machine"))
-  {}
-
-  ~Impl()
-  {
-    app_window.close();
-  }
-
-  sf::RenderWindow& app_window;
-  std::unique_ptr<StateMachine> state_machine;
-  bool is_running;
-  bool has_window_focus;
-};
-
 App::App(sf::RenderWindow& app_window)
-  : pImpl(NEW Impl(app_window))
+  : 
+  m_app_window{ app_window },
+  m_state_machine{ NEW StateMachine("app_state_machine") },
+  m_is_running{ false },
+  m_has_window_focus{ false }
 {
   // Register Lua functions.
   the_lua_instance.register_function("app_get_frame_counter", App::LUA_get_frame_counter);
 
   // Get the state machine.
-  StateMachine& sm = *(pImpl->state_machine.get());
+  StateMachine& sm = *(m_state_machine.get());
 
   // Add states to the state machine.
   sm.add_state(NEW AppStateSplashScreen(sm, app_window));
@@ -150,11 +136,12 @@ App::App(sf::RenderWindow& app_window)
   sm.change_to("AppStateGameMode");
 
   // Set "window has focus" boolean to true.
-  pImpl->has_window_focus = true;
+  m_has_window_focus = true;
 }
 
 App::~App()
 {
+  m_app_window.close();
 }
 
 EventResult App::handle_event(sf::Event& event)
@@ -165,24 +152,23 @@ EventResult App::handle_event(sf::Event& event)
   {
   case sf::Event::EventType::GainedFocus:
     {
-      pImpl->has_window_focus = true;
+      m_has_window_focus = true;
       result = EventResult::Handled;
       break;
     }
 
   case sf::Event::EventType::LostFocus:
     {
-      pImpl->has_window_focus = false;
+      m_has_window_focus = false;
       result = EventResult::Handled;
       break;
     }
 
   case sf::Event::EventType::Resized:
     {
-      pImpl->app_window.setView(sf::View(sf::FloatRect(0, 0,
-                                         static_cast<float>(event.size.width),
-                                         static_cast<float>(event.size.height))));
-      the_message_log.set_dimensions(calc_message_log_dimensions(pImpl->app_window));
+      m_app_window.setView(sf::View(
+        sf::FloatRect(0, 0, static_cast<float>(event.size.width), static_cast<float>(event.size.height))));
+      the_message_log.set_dimensions(calc_message_log_dimensions(m_app_window));
 
       result = EventResult::Acknowledged;
       break;
@@ -190,7 +176,7 @@ EventResult App::handle_event(sf::Event& event)
 
   case sf::Event::EventType::Closed:
     {
-      pImpl->is_running = false;
+      m_is_running = false;
       result = EventResult::Handled;
       break;
     }
@@ -202,7 +188,7 @@ EventResult App::handle_event(sf::Event& event)
       case sf::Keyboard::Key::Q:
         if (event.key.alt && event.key.control)
         {
-          pImpl->is_running = false;
+          m_is_running = false;
           result = EventResult::Handled;
         }
         break;
@@ -219,7 +205,7 @@ EventResult App::handle_event(sf::Event& event)
 
   if (result != EventResult::Handled)
   {
-      result = pImpl->state_machine->handle_event(event);
+      result = m_state_machine->handle_event(event);
   }
 
   return result;
@@ -227,12 +213,12 @@ EventResult App::handle_event(sf::Event& event)
 
 sf::RenderWindow& App::get_window()
 {
-  return pImpl->app_window;
+  return m_app_window;
 }
 
 bool App::has_window_focus()
 {
-  return pImpl->has_window_focus;
+  return m_has_window_focus;
 }
 
 void App::run()
@@ -240,38 +226,32 @@ void App::run()
   static sf::Clock frame_clock;
 
   // Set running boolean.
-  pImpl->is_running = true;
+  m_is_running = true;
 
   frame_clock.restart();
 
   // Start the loop
-  while (pImpl->is_running)
+  while (m_is_running)
   {
     // Process events
     sf::Event event;
-    while (pImpl->app_window.pollEvent(event))
+    while (m_app_window.pollEvent(event))
     {
       handle_event(event);
     }
 
-    pImpl->state_machine->execute();
+    m_state_machine->execute();
 
     // Limit frame rate to 60 fps.
     if (frame_clock.getElapsedTime().asMicroseconds() > 16667)
     {
       frame_clock.restart();
-      pImpl->app_window.clear();
-      pImpl->state_machine->render(pImpl->app_window, s_frame_counter);
-      pImpl->app_window.display();
+      m_app_window.clear();
+      m_state_machine->render(m_app_window, s_frame_counter);
+      m_app_window.display();
       ++s_frame_counter;
     }
   }
-}
-
-int App::get_rand(int minimum, int maximum)
-{
-   uniform_int_dist dist(minimum, maximum);
-   return dist(the_RNG);
 }
 
 int App::LUA_get_frame_counter(lua_State* L)
