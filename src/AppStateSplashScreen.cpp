@@ -10,19 +10,16 @@ struct AppStateSplashScreen::Impl
 };
 
 AppStateSplashScreen::AppStateSplashScreen(StateMachine& state_machine, sf::RenderWindow& app_window)
-  : State(state_machine), pImpl(NEW Impl())
-{
-  //ctor
-}
+  : 
+  State(state_machine)
+{}
 
 AppStateSplashScreen::~AppStateSplashScreen()
-{
-  //dtor
-}
+{}
 
 void AppStateSplashScreen::execute()
 {
-  if (pImpl->clock.getElapsedTime().asSeconds() >= 1 /*3*/)
+  if (m_clock.getElapsedTime().asSeconds() >= 1 /*3*/)
   {
     this->change_to("AppStateMainMenu");
   }
@@ -30,7 +27,7 @@ void AppStateSplashScreen::execute()
 
 bool AppStateSplashScreen::render(sf::RenderTarget& target, int frame)
 {
-  target.draw(pImpl->splash_sprite);
+  target.draw(m_splash_sprite);
   return true;
 }
 
@@ -47,13 +44,13 @@ std::string const& AppStateSplashScreen::get_name()
 
 bool AppStateSplashScreen::initialize()
 {
-  if (!pImpl->splash_graphic.loadFromFile("cb.bmp"))
+  if (!m_splash_graphic.loadFromFile("cb.bmp"))
   {
     return false;
   }
 
-  pImpl->splash_sprite.setTexture(pImpl->splash_graphic);
-  pImpl->clock.restart();
+  m_splash_sprite.setTexture(m_splash_graphic);
+  m_clock.restart();
   return true;
 }
 

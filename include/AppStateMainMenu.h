@@ -4,6 +4,7 @@
 #include <memory>
 
 #include "State.h"
+#include "AppStateMainMenuImpl.h"
 
 
 class AppStateMainMenu : public State
@@ -21,8 +22,8 @@ class AppStateMainMenu : public State
 
   protected:
   private:
-    struct Impl;
-    std::unique_ptr<Impl> pImpl;
+    sf::Text m_title;
+    sf::Text m_subtitle;
 };
 
 #endif // APPSTATEMAINMENU_H

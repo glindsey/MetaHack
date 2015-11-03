@@ -37,8 +37,8 @@ class State :
 
   protected:
   private:
-    struct Impl;
-    std::unique_ptr<Impl> pImpl;
+    // State machine that this state belongs to.
+    StateMachine& m_state_machine;
 };
 
 #endif // STATE_H

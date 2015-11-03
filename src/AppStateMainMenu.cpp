@@ -2,29 +2,21 @@
 
 #include "App.h"
 
-struct AppStateMainMenu::Impl
-{
-  sf::Text title;
-  sf::Text subtitle;
-};
-
 AppStateMainMenu::AppStateMainMenu(StateMachine& state_machine, sf::RenderWindow& app_window)
-  : State(state_machine), pImpl(NEW Impl())
-{
-}
+  : 
+  State{ state_machine }
+{}
 
 AppStateMainMenu::~AppStateMainMenu()
-{
-}
+{}
 
 void AppStateMainMenu::execute()
-{
-}
+{}
 
 bool AppStateMainMenu::render(sf::RenderTarget& target, int frame)
 {
-  target.draw(pImpl->title);
-  target.draw(pImpl->subtitle);
+  target.draw(m_title);
+  target.draw(m_subtitle);
   return true;
 }
 
@@ -62,12 +54,12 @@ std::string const& AppStateMainMenu::get_name()
 
 bool AppStateMainMenu::initialize()
 {
-  pImpl->title.setString("Hey y'all main menu in the hizzouse");
-  pImpl->title.setFont(the_default_font);
-  pImpl->subtitle.setString("But actually there's no main menu yet so just press Spacebar.");
-  pImpl->subtitle.setFont(the_default_font);
-  pImpl->subtitle.setCharacterSize(16);
-  pImpl->subtitle.setPosition(0, 100);
+  m_title.setString("Hey y'all main menu in the hizzouse");
+  m_title.setFont(the_default_font);
+  m_subtitle.setString("But actually there's no main menu yet so just press Spacebar.");
+  m_subtitle.setFont(the_default_font);
+  m_subtitle.setCharacterSize(16);
+  m_subtitle.setPosition(0, 100);
 
   return true;
 }

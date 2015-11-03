@@ -20,8 +20,9 @@ class AppStateSplashScreen : public State
 
   protected:
   private:
-    struct Impl;
-    std::unique_ptr<Impl> pImpl;
+    sf::Texture m_splash_graphic;
+    sf::Sprite m_splash_sprite;
+    sf::Clock m_clock;
 };
 
 #endif // APPSTATESPLASHSCREEN_H
