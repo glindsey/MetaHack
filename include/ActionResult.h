@@ -28,16 +28,17 @@ enum class ActionResult
   FailureInventoryFull        = -3,
   FailureNotPresent           = -2,
   Failure                     = -1,
-  Success                     = 0,
-  SuccessDestroyed            = 1,
-  SuccessSelfReference        = 2,
-  SuccessSwapHands            = 3 ///< For wield, indicates already-wielded
+  Pending                     = 0,
+  Success                     = 1,
+  SuccessDestroyed            = 2,
+  SuccessSelfReference        = 3,
+  SuccessSwapHands            = 4 ///< For wield, indicates already-wielded
                                   ///< weapon is just changing hands.
 };
 
 inline bool was_successful(ActionResult result)
 {
-  return static_cast<int>(result) >= 0;
+  return static_cast<int>(result) > 0;
 }
 
 inline std::ostream& operator<<(std::ostream& os, ActionResult result)

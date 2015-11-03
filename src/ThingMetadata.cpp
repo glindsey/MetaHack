@@ -511,31 +511,32 @@ ActionResult ThingMetadata::call_lua_function(std::string function_name,
       if (result == LUA_OK)
       {
         return_value = (ActionResult)lua_tointeger(the_lua_state, -1);
-        lua_pop(the_lua_state, 1);
+        lua_pop(the_lua_state, 1);                              // >0 Pop the result off the stack.
       }
       else
       {
         char const* error_message = lua_tostring(the_lua_state, -1);
         MAJOR_ERROR("Error calling %s.%s: %s", name.c_str(), function_name.c_str(), error_message);
-        lua_pop(the_lua_state, 1);
+        lua_pop(the_lua_state, 1);                              // >0 Pop the error message off the stack.
       }
 
-      // If we got here, return.
-      return return_value;
+      // If we got here, and return value is NOT ActionResult::Pending, return.
+      if (return_value != ActionResult::Pending)
+      {
+        return return_value;
+      }
     }
-    else // didn't find a function of that name here, so try parent...
+    else // didn't find a function of that name here
     {
-      lua_pop(the_lua_state, 1);                      // >1 Pop the function name back off the stack
+      lua_pop(the_lua_state, 2);                      // >>0 Pop the function and class names back off the stack
     }
   }
-
-  lua_pop(the_lua_state, 1);                      // >1 Pop the class name back off the stack
-
-  if (pImpl->parent.empty())
+  else // didn't find a class of that name here
   {
-    return_value = default_result;
+    lua_pop(the_lua_state, 1);                      // >0 Pop the class name back off the stack
   }
-  else
+
+  if (!pImpl->parent.empty())
   {
     return_value = ThingMetadata::get(pImpl->parent).call_lua_function(function_name, caller, default_result);
   }

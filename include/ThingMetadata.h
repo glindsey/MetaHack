@@ -42,8 +42,10 @@ public:
 
   /// Try to call a Lua function given the caller and no other arguments.
   ///
-  /// If the function does not exist, attempts to step up to the parent type
-  /// and call the function there, up until there's no parent to call.
+  /// If the function does not exist, or it returns ActionResult::Pending,
+  /// the code attempts to step up to the parent type and call the function
+  /// there.
+  ///
   /// @param function_name  Name of the function to call
   /// @param caller         ThingRef to the thing calling the function
   /// @param default_result The default result if function is not found 
@@ -55,8 +57,10 @@ public:
 
   /// Try to call a Lua function given the caller and one argument.
   ///
-  /// If the function does not exist, attempts to step up to the parent type
-  /// and call the function there, up until there's no parent to call.
+  /// If the function does not exist, or it returns ActionResult::Pending,
+  /// the code attempts to step up to the parent type and call the function
+  /// there.
+  ///
   /// @param function_name  Name of the function to call
   /// @param caller         ThingRef to the thing calling the function
   /// @param arg            Argument to pass to the function
@@ -70,8 +74,10 @@ public:
 
   /// Try to call a Lua function given the caller and two arguments.
   ///
-  /// If the function does not exist, attempts to step up to the parent type
-  /// and call the function there, up until there's no parent to call.
+  /// If the function does not exist, or it returns ActionResult::Pending,
+  /// the code attempts to step up to the parent type and call the function
+  /// there.
+  ///
   /// @param function_name  Name of the function to call
   /// @param caller         ThingRef to the thing calling the function
   /// @param arg1           Argument #1 to pass to the function.
