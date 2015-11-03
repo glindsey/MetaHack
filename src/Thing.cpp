@@ -57,7 +57,7 @@ struct Thing::Impl
     property_values.clear();
     property_strings.clear();
     map_memory.clear();
-    tile_seen.clear();
+    tiles_currently_seen.clear();
     actions.clear();
   }
 
@@ -94,11 +94,17 @@ struct Thing::Impl
   /// Gender of this entity.
   Gender gender = Gender::None;
 
-  /// Entity's memory of map tiles.
+  /// Entity's spacial memory of map tiles.
+  /// @todo Regarding memory, it would be AWESOME if it could fade out
+  ///       VERY gradually, over a long period of time. Seeing it would
+  ///       reset the memory counter to 0, or possibly just add a large
+  ///       amount to the counter so that places you see more frequently
+  ///       stay in your mind longer.
   std::vector<std::string> map_memory;
 
-  /// Bitset for seen tiles.
-  boost::dynamic_bitset<> tile_seen;
+  /// Bitset for tiles currently seen.
+  /// This deals with tiles observed at this particular instant.
+  boost::dynamic_bitset<> tiles_currently_seen;
 
   /// @todo Blind counter.
 
@@ -494,7 +500,7 @@ bool Thing::do_drop(ThingRef thing, unsigned int& action_time)
   {
   case ActionResult::Success:
   {
-    if (thing->is_movable())
+    if (thing->is_movable_by(pImpl->ref))
     {
       if (our_location->can_contain(thing) == ActionResult::Success)
       {
@@ -831,7 +837,7 @@ bool Thing::do_pick_up(ThingRef thing, unsigned int& action_time)
   switch (pick_up_try)
   {
   case ActionResult::Success:
-    if (thing->is_movable())
+    if (thing->is_movable_by(pImpl->ref))
     {
       if (thing->perform_action_picked_up_by(pImpl->ref))
       {
@@ -860,7 +866,7 @@ bool Thing::do_pick_up(ThingRef thing, unsigned int& action_time)
         " to pick up " + thing->get_identifying_string();
       the_message_log.add(message);
 
-      message = thing->get_identifying_string() + " cannot be moved.";
+      message = _YOU_ + " cannot move the " + thing->get_identifying_string() + ".";
       the_message_log.add(message);
     }
     break;
@@ -1317,7 +1323,7 @@ bool Thing::do_throw(ThingRef thing, Direction& direction, unsigned int& action_
   case ActionResult::Success:
   {
     ThingRef new_location = get_location();
-    if (thing->is_movable())
+    if (thing->is_movable_by(pImpl->ref))
     {
       if (thing->perform_action_thrown_by(pImpl->ref, direction))
       {
@@ -1336,6 +1342,10 @@ bool Thing::do_throw(ThingRef thing, Direction& direction, unsigned int& action_
             "is_movable returned Success");
         }
       }
+    }
+    else
+    {
+      /// @todo Tried to throw something immovable? That doesn't make sense.
     }
   }
   break;
@@ -2043,7 +2053,7 @@ bool Thing::can_see(int xTile, int yTile)
   if (can_currently_see())
   {
     // Return seen data.
-    return pImpl->tile_seen[game_map.get_index(xTile, yTile)];
+    return pImpl->tiles_currently_seen[game_map.get_index(xTile, yTile)];
   }
   else
   {
@@ -2053,9 +2063,9 @@ bool Thing::can_see(int xTile, int yTile)
 
 void Thing::find_seen_tiles()
 {
-  sf::Clock elapsed;
+  //sf::Clock elapsed;
 
-  elapsed.restart();
+  //elapsed.restart();
 
   // Are we on a map?  Bail out if we aren't.
   ThingRef location = get_location();
@@ -2065,16 +2075,19 @@ void Thing::find_seen_tiles()
   }
 
   // Clear the "tile seen" bitset.
-  pImpl->tile_seen.reset();
+  pImpl->tiles_currently_seen.reset();
 
-  do_recursive_visibility(1, 1, 1, 0);
-  do_recursive_visibility(2, 1, 1, 0);
-  do_recursive_visibility(3, 1, 1, 0);
-  do_recursive_visibility(4, 1, 1, 0);
-  do_recursive_visibility(5, 1, 1, 0);
-  do_recursive_visibility(6, 1, 1, 0);
-  do_recursive_visibility(7, 1, 1, 0);
-  do_recursive_visibility(8, 1, 1, 0);
+  // Hang on, can we actually see?
+  // If not, bail out.
+  if (can_currently_see() == false)
+  {
+    return;
+  }
+
+  for (int n = 1; n <= 8; ++n)
+  {
+    do_recursive_visibility(n);
+  }
 
   //TRACE("find_seen_tiles took %d ms", elapsed.getElapsedTime().asMilliseconds());
 }
@@ -2157,45 +2170,42 @@ bool Thing::move_into(ThingRef new_location)
 {
   MapId old_map_id = this->get_map_id();
 
-  if (is_movable())
+  if (new_location->can_contain(pImpl->ref) == ActionResult::Success)
   {
-    if (new_location->can_contain(pImpl->ref) == ActionResult::Success)
+    if (new_location->get_inventory().add(pImpl->ref))
     {
-      if (new_location->get_inventory().add(pImpl->ref))
+      // Try to lock our old location.
+      if (pImpl->location != TM.get_mu())
       {
-        // Try to lock our old location.
-        if (pImpl->location != TM.get_mu())
-        {
-          pImpl->location->get_inventory().remove(pImpl->ref);
-        }
-
-        // Set the location to the new location.
-        pImpl->location = new_location;
-
-        MapId new_map_id = this->get_map_id();
-        if (old_map_id != new_map_id)
-        {
-          if (old_map_id != MapFactory::null_map_id)
-          {
-            /// @todo Save old map memory.
-          }
-          pImpl->map_memory.clear();
-          pImpl->tile_seen.clear();
-          if (new_map_id != MapFactory::null_map_id)
-          {
-            Map& new_map = MF.get(new_map_id);
-            sf::Vector2i new_map_size = new_map.get_size();
-            pImpl->map_memory.resize(new_map_size.x * new_map_size.y);
-            pImpl->tile_seen.resize(new_map_size.x * new_map_size.y);
-            /// @todo Load new map memory if it exists somewhere.
-          }
-        }
-        this->find_seen_tiles();
-
-        return true;
+        pImpl->location->get_inventory().remove(pImpl->ref);
       }
-    }
-  }
+
+      // Set the location to the new location.
+      pImpl->location = new_location;
+
+      MapId new_map_id = this->get_map_id();
+      if (old_map_id != new_map_id)
+      {
+        if (old_map_id != MapFactory::null_map_id)
+        {
+          /// @todo Save old map memory.
+        }
+        pImpl->map_memory.clear();
+        pImpl->tiles_currently_seen.clear();
+        if (new_map_id != MapFactory::null_map_id)
+        {
+          Map& new_map = MF.get(new_map_id);
+          sf::Vector2i new_map_size = new_map.get_size();
+          pImpl->map_memory.resize(new_map_size.x * new_map_size.y);
+          pImpl->tiles_currently_seen.resize(new_map_size.x * new_map_size.y);
+          /// @todo Load new map memory if it exists somewhere.
+        }
+      }
+      this->find_seen_tiles();
+
+      return true;
+    } // end if (add to new inventory was successful)
+  } // end if (new location can contain thing)
 
   return false;
 }
@@ -2781,34 +2791,34 @@ std::string Thing::get_bodypart_description(BodyPart part,
 }
 
 
-bool Thing::is_movable() const
+bool Thing::is_movable_by(ThingRef thing)
 {
-  return true;
+  return call_lua_function_bool("is_movable_by", { thing }, true);
 }
 
-bool Thing::is_usable_by(ThingRef thing) const
+bool Thing::is_usable_by(ThingRef thing)
 {
-  return false;
+  return call_lua_function_bool("is_usable_by", { thing }, false);
 }
 
-bool Thing::is_drinkable_by(ThingRef thing) const
+bool Thing::is_drinkable_by(ThingRef thing)
 {
-  return false;
+  return call_lua_function_bool("is_drinkable_by", { thing }, false);
 }
 
-bool Thing::is_edible_by(ThingRef thing) const
+bool Thing::is_edible_by(ThingRef thing)
 {
-  return false;
+  return call_lua_function_bool("is_edible_by", { thing }, false);
 }
 
-bool Thing::is_readable_by(ThingRef thing) const
+bool Thing::is_readable_by(ThingRef thing)
 {
-  return false;
+  return call_lua_function_bool("is_readable_by", { thing }, false);
 }
 
-bool Thing::is_miscible_with(ThingRef thing) const
+bool Thing::is_miscible_with(ThingRef thing)
 {
-  return false;
+  return call_lua_function_bool("is_miscible_with", { thing }, false);
 }
 
 BodyPart Thing::is_equippable_on() const
@@ -3192,6 +3202,20 @@ bool Thing::_process()
         }
         break;
 
+      case Action::Type::Use:
+        for (ThingRef thing : action.things)
+        {
+          if (thing != TM.get_mu())
+          {
+            success = this->do_use(thing, action_time);
+            if (success)
+            {
+              add_to_property_value("busy_counter", action_time);
+            }
+          }
+        }
+        break;
+
       case Action::Type::Wield:
       {
         if (number_of_things > 1)
@@ -3279,7 +3303,7 @@ void Thing::do_recursive_visibility(int octant,
             slope_A = calc_slope(x - 0.5, y - 0.5, eX, eY);
           }
         }
-        pImpl->tile_seen[game_map.get_index(x, y)] = true;
+        pImpl->tiles_currently_seen[game_map.get_index(x, y)] = true;
         pImpl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
       }
       ++x;
@@ -3308,7 +3332,7 @@ void Thing::do_recursive_visibility(int octant,
             slope_A = -calc_slope(x + 0.5, y - 0.5, eX, eY);
           }
         }
-        pImpl->tile_seen[game_map.get_index(x, y)] = true;
+        pImpl->tiles_currently_seen[game_map.get_index(x, y)] = true;
         pImpl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
       }
       --x;
@@ -3337,7 +3361,7 @@ void Thing::do_recursive_visibility(int octant,
             slope_A = -calc_inv_slope(x + 0.5, y - 0.5, eX, eY);
           }
         }
-        pImpl->tile_seen[game_map.get_index(x, y)] = true;
+        pImpl->tiles_currently_seen[game_map.get_index(x, y)] = true;
         pImpl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
       }
       ++y;
@@ -3366,7 +3390,7 @@ void Thing::do_recursive_visibility(int octant,
             slope_A = calc_inv_slope(x + 0.5, y + 0.5, eX, eY);
           }
         }
-        pImpl->tile_seen[game_map.get_index(x, y)] = true;
+        pImpl->tiles_currently_seen[game_map.get_index(x, y)] = true;
         pImpl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
       }
       --y;
@@ -3395,7 +3419,7 @@ void Thing::do_recursive_visibility(int octant,
             slope_A = calc_slope(x + 0.5, y + 0.5, eX, eY);
           }
         }
-        pImpl->tile_seen[game_map.get_index(x, y)] = true;
+        pImpl->tiles_currently_seen[game_map.get_index(x, y)] = true;
         pImpl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
       }
       --x;
@@ -3424,7 +3448,7 @@ void Thing::do_recursive_visibility(int octant,
             slope_A = -calc_slope(x - 0.5, y + 0.5, eX, eY);
           }
         }
-        pImpl->tile_seen[game_map.get_index(x, y)] = true;
+        pImpl->tiles_currently_seen[game_map.get_index(x, y)] = true;
         pImpl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
       }
       ++x;
@@ -3453,7 +3477,7 @@ void Thing::do_recursive_visibility(int octant,
             slope_A = -calc_inv_slope(x - 0.5, y + 0.5, eX, eY);
           }
         }
-        pImpl->tile_seen[game_map.get_index(x, y)] = true;
+        pImpl->tiles_currently_seen[game_map.get_index(x, y)] = true;
         pImpl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
       }
       --y;
@@ -3482,7 +3506,7 @@ void Thing::do_recursive_visibility(int octant,
             slope_A = calc_inv_slope(x - 0.5, y - 0.5, eX, eY);
           }
         }
-        pImpl->tile_seen[game_map.get_index(x, y)] = true;
+        pImpl->tiles_currently_seen[game_map.get_index(x, y)] = true;
         pImpl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
       }
       ++y;

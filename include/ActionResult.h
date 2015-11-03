@@ -45,6 +45,7 @@ inline std::ostream& operator<<(std::ostream& os, ActionResult result)
 {
 	switch (result)
 	{
+  case ActionResult::FailureContainerIsEmpty: os << "FailureContainerIsEmpty"; break;
 	case ActionResult::FailureContainerCantBeSelf: os << "FailureContainerCantBeSelf"; break;
 	case ActionResult::FailureCircularReference: os << "FailureCircularReference"; break;
 	case ActionResult::FailureItemNotEquippable: os << "FailureItemNotEquippable"; break;
@@ -64,7 +65,8 @@ inline std::ostream& operator<<(std::ostream& os, ActionResult result)
 	case ActionResult::FailureInventoryFull: os << "FailureInventoryFull"; break;
 	case ActionResult::FailureNotPresent: os << "FailureNotPresent"; break;
 	case ActionResult::Failure: os << "Failure"; break;
-	case ActionResult::Success: os << "Success"; break;
+  case ActionResult::Pending: os << "Pending"; break;
+  case ActionResult::Success: os << "Success"; break;
 	case ActionResult::SuccessDestroyed: os << "SuccessDestroyed"; break;
 	case ActionResult::SuccessSelfReference: os << "SuccessSelfReference"; break;
 	case ActionResult::SuccessSwapHands: os << "SuccessSwapHands"; break;
@@ -77,6 +79,7 @@ inline std::ostream& operator<<(std::ostream& os, ActionResult result)
 inline void ActionResult_add_to_lua(Lua* lua_instance)
 {
   lua_instance->add_enum("ActionResult",
+    "FailureContainerIsEmpty",      ActionResult::FailureContainerIsEmpty,
     "FailureContainerCantBeSelf",   ActionResult::FailureContainerCantBeSelf,
     "FailureCircularReference",     ActionResult::FailureCircularReference,
     "FailureItemNotEquippable",     ActionResult::FailureItemNotEquippable,
@@ -96,6 +99,7 @@ inline void ActionResult_add_to_lua(Lua* lua_instance)
     "FailureInventoryFull",         ActionResult::FailureInventoryFull,
     "FailureNotPresent",            ActionResult::FailureNotPresent,
     "Failure",                      ActionResult::Failure,
+    "Pending",                      ActionResult::Pending,
     "Success",                      ActionResult::Success,
     "SuccessDestroyed",             ActionResult::SuccessDestroyed,
     "SuccessSelfReference",         ActionResult::SuccessSelfReference,

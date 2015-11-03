@@ -211,6 +211,7 @@ class Thing :
     bool can_see(int x, int y);
 
     /// Find out which tiles on the map can be seen by this Entity.
+    /// In the process, tiles in the Entity's visual memory are updated.
     /// This method uses a recursive raycasting algorithm to figure out what
     /// can be seen at a particular position.
     void find_seen_tiles();
@@ -442,29 +443,29 @@ class Thing :
     /// Attempt to move this Thing into a location.
     bool move_into(ThingRef new_location);
 
-    /// Return whether or not this thing can move from its current location.
+    /// Return whether or not this thing can be moved from its current location by this Entity.
     /// The default behavior for this is to return true.
-    bool is_movable() const;
+    bool is_movable_by(ThingRef thing);
 
     /// Return whether or not this thing can be activated by this Entity.
     /// The default behavior for this is to return false.
-    bool is_usable_by(ThingRef thing) const;
+    bool is_usable_by(ThingRef thing);
 
     /// Return whether or not this thing can be drank by this Entity.
     /// The default behavior for this is to return false.
-    bool is_drinkable_by(ThingRef thing) const;
+    bool is_drinkable_by(ThingRef thing);
 
     /// Return whether or not this thing can be eaten by this Entity.
     /// The default behavior for this is to return false.
-    bool is_edible_by(ThingRef thing) const;
+    bool is_edible_by(ThingRef thing);
 
     /// Return whether or not this thing can be read by this Entity.
     /// The default behavior for this is to return false.
-    bool is_readable_by(ThingRef thing) const;
+    bool is_readable_by(ThingRef thing);
 
     /// Return whether or not this thing can be mixed with another Thing.
     /// The default behavior for this is to return false.
-    bool is_miscible_with(ThingRef thing) const;
+    bool is_miscible_with(ThingRef thing);
 
     /// Return the body part this thing is equippable on.
     /// If thing is not equippable, return BodyPart::Count.
@@ -574,9 +575,9 @@ class Thing :
     /// Perform the recursive visibility scan for an octant.
     /// Used by find_seen_tiles.
     void do_recursive_visibility(int octant,
-      int depth,
-      double slope_A,
-      double slope_B);
+      int depth = 1,
+      double slope_A = 1,
+      double slope_B = 0);
 
     /// Set the location of this thing.
     /// Does no checks, nor does it update the source/target inventories.

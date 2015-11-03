@@ -7,6 +7,12 @@ function LightSource.on_create(id)
 	return ActionResult.Success
 end
 
+function LightSource.is_usable_by(id)
+	-- This SHOULD check if a creature is sentient.
+	-- For now just return true.
+	return true
+end
+
 function LightSource.perform_action_used_by(id)
 	local name = thing_get_display_name(id)
 	local is_lit = thing_get_property_flag(id, "light_lit")
@@ -17,4 +23,5 @@ function LightSource.perform_action_used_by(id)
 		messageLog_add("You extinguish the " .. name .. ".")
 	end
 	thing_set_property_flag(id, "light_lit", is_lit)
+	return ActionResult.Success
 end

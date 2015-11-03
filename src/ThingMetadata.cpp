@@ -431,7 +431,7 @@ ActionResult ThingMetadata::call_lua_function(std::string function_name,
       if (result == LUA_OK)
       {
         // Get the return value.
-        return_value = (ActionResult)lua_tointeger(the_lua_state, -1);
+        return_value = static_cast<ActionResult>(lua_tointeger(the_lua_state, -1));
 
         // Pop the return value off the stack. (-1)
         lua_pop(the_lua_state, 1);
