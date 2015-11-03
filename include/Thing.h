@@ -17,6 +17,7 @@
 #include <string>
 #include <set>
 #include <boost/dynamic_bitset.hpp>
+#include <boost/noncopyable.hpp>
 #include <boost/optional.hpp>
 #include <boost/pool/object_pool.hpp>
 #include <boost/property_tree/ptree.hpp>
@@ -41,8 +42,8 @@ using ThingCreator = std::shared_ptr<Thing>(*)(void);
 
 // Thing is any object in the game, animate or not.
 class Thing :
-  public GameObject  /*,
-  public std::enable_shared_from_this<Thing> */
+  public GameObject,
+  virtual public boost::noncopyable
 {
   friend class boost::object_pool < Thing >;
   friend class AIStrategy;
@@ -559,18 +560,20 @@ class Thing :
     /// @return ActionResult specifying whether the thing can be held here.
     ActionResult can_contain(ThingRef thing);
 
-  protected:
+  private:
+    /// Pimpl implementation
+    /// We don't use CopyablePimpl because you can't copy a Thing;
+    /// you can clone it but that's a different concept.
+    Pimpl<ThingImpl> pImpl;
+
     /// Named Constructor
     Thing(std::string type, ThingRef ref);
 
     /// Floor Constructor
     Thing(MapTile* map_tile, ThingRef ref);
 
-    /// Copy Constructor
-    Thing(const Thing& original);
-
-    struct Impl;
-    std::unique_ptr<Impl> pImpl;
+    /// Clone Constructor
+    Thing(Thing const& original, ThingRef ref);
 
     /// Get a reference to this Entity's map memory.
     std::vector<std::string>& get_map_memory();
@@ -587,35 +590,18 @@ class Thing :
     /// Those are the responsibility of the caller.
     void set_location(ThingRef target);
 
-    /// Static method initializing font sizes.
-    static void initialize_font_sizes();
-
-    /// Ratio of desired height to font size.
-    static float font_line_to_point_ratio_;
-
     /// Outline color for walls when drawing on-screen.
     static sf::Color const wall_outline_color_;
-
-  private:
-    /// Do any subclass-specific processing; called by _process().
-    /// This function is particularly useful if the subclass is able to do
-    /// specialized actions such as rise from the dead after a time (as in
-    /// NetHack trolls).
-    /// @warning In order to support the aforementioned rising from the dead,
-    ///          this function is called <i>regardless of the Entity's HP</>!
-    ///          Keep this in mind when implementing specialized behavior.
-    virtual void _process_specific();
 
     /// Gets this location's maptile.
     virtual MapTile* _get_maptile() const;
 
     /// Process this Thing for a single tick.
-    /// By default, does nothing and returns true.
     /// The function returns false to indicate to its parent that it no longer
     /// exists and should be deleted.
     /// @return true if the Thing continues to exist after the tick;
     ///         false if the Thing ceases to exist.
-    virtual bool _process();
+    virtual bool _process_self();
 
     // Static Lua functions.
     // @todo (Maybe these should be part of ThingManager instead?)

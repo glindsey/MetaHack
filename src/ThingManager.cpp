@@ -113,7 +113,8 @@ ThingRef ThingManager::clone(ThingRef original_ref)
   Thing* original_thing = TM.get_ptr(original_ref.m_id);
 
   ThingId new_id = ThingRef::create();
-  Thing* new_thing = pImpl->thing_pool.construct(*original_thing);
+  ThingRef new_ref = ThingRef(new_id);
+  Thing* new_thing = pImpl->thing_pool.construct(*original_thing, ThingRef(new_id));
   pImpl->thing_map[new_id] = new_thing;
 
   return ThingRef(new_id);

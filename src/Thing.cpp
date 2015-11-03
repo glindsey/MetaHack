@@ -38,247 +38,20 @@
 #define _YOU_DO_ _YOU_ + _DO_
 #define _YOU_TRY_ _YOU_ + _TRY_
 
-// Using declarations.
-using WieldingMap = std::unordered_map<unsigned int, ThingRef>;
-using WieldingPair = std::pair<unsigned int, ThingRef>;
-
-using WearingMap = std::unordered_map<WearLocation, ThingRef>;
-using WearingPair = std::pair<WearLocation, ThingRef>;
-
-struct Thing::Impl
-{
-  Impl(std::string type_, ThingRef ref_)
-    : type(type_), ref(ref_), metadata(ThingMetadata::get(type_)) 
-  {}
-
-  ~Impl()
-  {
-    property_flags.clear();
-    property_values.clear();
-    property_strings.clear();
-    map_memory.clear();
-    tiles_currently_seen.clear();
-    actions.clear();
-  }
-
-  /// This Thing's type.
-  std::string type;
-
-  /// Reference to this Thing.
-  ThingRef ref;
-
-  /// Reference to this Thing's metadata.
-  ThingMetadata& metadata;
-
-  /// Reference to this Thing's location.
-  ThingRef location;
-
-  /// If this Thing is a Floor, pointer to the MapTile it is on.
-  MapTile* map_tile;
-
-  Inventory inventory;
-  unsigned int quantity;
-
-  /// Map of property flags.
-  FlagsMap property_flags;
-
-  /// Map of property values.
-  ValuesMap property_values;
-
-  /// Map of property strings.
-  StringsMap property_strings;
-
-  /// Entity's attributes.
-  AttributeSet attributes;
-
-  /// Gender of this entity.
-  Gender gender = Gender::None;
-
-  /// Entity's spacial memory of map tiles.
-  /// @todo Regarding memory, it would be AWESOME if it could fade out
-  ///       VERY gradually, over a long period of time. Seeing it would
-  ///       reset the memory counter to 0, or possibly just add a large
-  ///       amount to the counter so that places you see more frequently
-  ///       stay in your mind longer.
-  std::vector<std::string> map_memory;
-
-  /// Bitset for tiles currently seen.
-  /// This deals with tiles observed at this particular instant.
-  boost::dynamic_bitset<> tiles_currently_seen;
-
-  /// @todo Blind counter.
-
-  /// Queue of actions to be performed.
-  std::deque<Action> actions;
-
-  /// Map of items wielded.
-  WieldingMap wielded_items;
-
-  /// Map of things worn.
-  WearingMap equipped_items;
-
-  bool is_wielding(ThingRef thing, unsigned int& hand)
-  {
-    if (thing == TM.get_mu())
-    {
-      return false;
-    }
-    auto found_item = std::find_if(wielded_items.cbegin(),
-      wielded_items.cend(),
-      [&](WieldingPair const& p)
-    { return p.second == thing; });
-
-    if (found_item == wielded_items.cend())
-    {
-      return false;
-    }
-    else
-    {
-      hand = found_item->first;
-      return true;
-    }
-  }
-
-  ThingRef wielding_in(unsigned int hand)
-  {
-    if (wielded_items.count(hand) == 0)
-    {
-      return TM.get_mu();
-    }
-    else
-    {
-      return wielded_items[hand];
-    }
-  }
-
-  bool is_wearing(ThingRef thing, WearLocation& location)
-  {
-    if (thing == TM.get_mu())
-    {
-      return false;
-    }
-    auto found_item = std::find_if(equipped_items.cbegin(),
-      equipped_items.cend(),
-      [&](WearingPair const& p)
-    { return p.second == thing; });
-
-    if (found_item == equipped_items.cend())
-    {
-      return false;
-    }
-    else
-    {
-      location = found_item->first;
-      return true;
-    }
-  }
-
-  void do_wield(ThingRef thing, unsigned int hand)
-  {
-    wielded_items[hand] = thing;
-  }
-
-  bool do_unwield(ThingRef thing)
-  {
-    unsigned int hand;
-    if (is_wielding(thing, hand) == false)
-    {
-      return false;
-    }
-    else
-    {
-      wielded_items.erase(hand);
-      return true;
-    }
-  }
-
-  bool do_unwield(unsigned int hand)
-  {
-    if (wielded_items.count(hand) == 0)
-    {
-      return false;
-    }
-    else
-    {
-      wielded_items.erase(hand);
-      return true;
-    }
-  }
-
-  bool do_equip(ThingRef thing, WearLocation location)
-  {
-    if (equipped_items.count(location) == 0)
-    {
-      equipped_items[location] = thing;
-      return true;
-    }
-    else
-    {
-      return false;
-    }
-  }
-
-  bool do_deequip(ThingRef thing)
-  {
-    WearLocation location;
-    if (is_wearing(thing, location) == false)
-    {
-      return false;
-    }
-    else
-    {
-      equipped_items.erase(location);
-      return true;
-    }
-  }
-};
-
 // Static member initialization.
-float Thing::font_line_to_point_ratio_ = 0.0f;
 sf::Color const Thing::wall_outline_color_ = sf::Color(255, 255, 255, 64);
 
-// Static methods
-void Thing::initialize_font_sizes()
-{
-  // Ratio to multiply by to get desired character point size.
-  font_line_to_point_ratio_ = 100.0f / static_cast<float>(the_default_font.getLineSpacing(100));
-}
-
 Thing::Thing(std::string type, ThingRef ref)
-  : pImpl(NEW Impl(type, ref))
-{
-  pImpl->map_tile = nullptr;
-  pImpl->location = TM.get_mu();
-  pImpl->quantity = 1;
-
-  // Set properties to the type defaults.
-  pImpl->property_flags = pImpl->metadata.get_default_flags();
-  pImpl->property_strings = pImpl->metadata.get_default_strings();
-  pImpl->property_values = pImpl->metadata.get_default_values();
-}
+  : pImpl(type, ref)
+{}
 
 Thing::Thing(MapTile* map_tile, ThingRef ref)
-  : pImpl(NEW Impl("floor", ref))
-{
-  pImpl->map_tile = map_tile;
-  pImpl->location = TM.get_mu();
-  pImpl->quantity = 1;
+  : pImpl(map_tile, ref)
+{}
 
-  // Set properties to the type defaults.
-  pImpl->property_flags = pImpl->metadata.get_default_flags();
-  pImpl->property_strings = pImpl->metadata.get_default_strings();
-  pImpl->property_values = pImpl->metadata.get_default_values();
-}
-
-Thing::Thing(const Thing& original)
-  : pImpl(NEW Impl(original.get_type(), original.get_ref()))
-{
-  pImpl->location = original.get_location();
-  pImpl->quantity = original.get_quantity();
-  pImpl->property_flags = original.get_property_flags();
-  pImpl->property_strings = original.get_property_strings();
-  pImpl->property_values = original.get_property_values();
-}
+Thing::Thing(Thing const& original, ThingRef ref)
+  : pImpl(*(original.pImpl), ref)
+{}
 
 Thing::~Thing()
 {
@@ -1879,7 +1652,7 @@ bool Thing::get_property_flag(std::string key, bool default_value) const
 
   if (pImpl->property_flags.count(key) != 0)
   {
-    value = pImpl->property_flags[key];
+    value = pImpl->property_flags.at(key);
   }
   else
   {
@@ -1897,7 +1670,7 @@ int Thing::get_property_value(std::string key, int default_value) const
 
   if (pImpl->property_values.count(key) != 0)
   {
-    value = pImpl->property_values[key];
+    value = pImpl->property_values.at(key);
   }
   else
   {
@@ -1930,7 +1703,7 @@ std::string Thing::get_property_string(std::string key, std::string default_valu
 
   if (pImpl->property_strings.count(key) != 0)
   {
-    value = pImpl->property_strings[key];
+    value = pImpl->property_strings.at(key);
   }
   else
   {
@@ -2854,7 +2627,7 @@ bool Thing::process()
   }
 
   // Process self last.
-  return _process();
+  return _process_self();
 }
 
 bool Thing::perform_action_activated_by(ThingRef actor)
@@ -3066,7 +2839,7 @@ void Thing::set_location(ThingRef target)
 
 // *** PROTECTED METHODS ******************************************************
 
-bool Thing::_process()
+bool Thing::_process_self()
 {
   unsigned int action_time = 0;
   bool success = false;
@@ -3250,11 +3023,6 @@ bool Thing::_process()
   } // end if (HP > 0)
 
   return true;
-}
-
-void Thing::_process_specific()
-{
-  // Default implementation does nothing.
 }
 
 std::vector<std::string>& Thing::get_map_memory()
