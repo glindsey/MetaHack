@@ -75,6 +75,23 @@ public:
     std::vector<lua_Integer> const& args,
     bool default_result = true);
 
+  /// Try to call a Lua function that takes the caller and one argument
+  /// and returns a pair of integers.
+  ///
+  /// If the function does not exist, or it returns nil, the code attempts
+  /// to step up to the parent type and call the function there.
+  ///
+  /// @param function_name  Name of the function to call
+  /// @param caller         ThingRef to the thing calling the function
+  /// @param args           Vector of arguments to pass to the function
+  /// @param default_result The default result if function is not found 
+  ///                       (defaults to (0, 0)).
+  /// @return A boolean containing the result of the call.
+  sf::Vector2u call_lua_function_v2u(std::string function_name,
+    ThingRef caller,
+    std::vector<lua_Integer> const& args,
+    sf::Vector2u default_result = sf::Vector2u(0, 0));
+
 private:
   /// Constructor is private; new instances are obtained using get().
   ThingMetadata(std::string type);

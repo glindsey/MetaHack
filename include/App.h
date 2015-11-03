@@ -18,6 +18,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "EventHandler.h"
+#include "Lua.h"
 
 // Forward declarations
 class MessageLog;
@@ -44,6 +45,10 @@ class App : public EventHandler, public boost::noncopyable
   private:
     struct Impl;
     std::unique_ptr<Impl> pImpl;
+
+    static int s_frame_counter;
+
+    static int LUA_get_frame_counter(lua_State* L);
 };
 
 /// Global default font instance

@@ -24,6 +24,7 @@ std::unique_ptr<sf::Font> default_unicode_font_;
 std::unique_ptr<sf::Shader> shader_;
 std::unique_ptr<App> app_;
 std::unique_ptr<boost::random::mt19937> rng_;
+int App::s_frame_counter = 0;
 
 // Local typedefs
 typedef boost::random::uniform_int_distribution<> uniform_int_dist;
@@ -132,6 +133,10 @@ struct App::Impl
 App::App(sf::RenderWindow& app_window)
   : pImpl(NEW Impl(app_window))
 {
+  // Register Lua functions.
+  the_lua_instance.register_function("app_get_frame_counter", App::LUA_get_frame_counter);
+
+  // Get the state machine.
   StateMachine& sm = *(pImpl->state_machine.get());
 
   // Add states to the state machine.
@@ -232,13 +237,12 @@ bool App::has_window_focus()
 
 void App::run()
 {
-  int frame_counter = 0;
-  static sf::Clock clock;
+  static sf::Clock frame_clock;
 
   // Set running boolean.
   pImpl->is_running = true;
 
-  clock.restart();
+  frame_clock.restart();
 
   // Start the loop
   while (pImpl->is_running)
@@ -252,14 +256,14 @@ void App::run()
 
     pImpl->state_machine->execute();
 
-    // Limit frame rate to 62.5 fps.
-    if (clock.getElapsedTime().asMilliseconds() > 16)
+    // Limit frame rate to 60 fps.
+    if (frame_clock.getElapsedTime().asMicroseconds() > 16667)
     {
-      clock.restart();
+      frame_clock.restart();
       pImpl->app_window.clear();
-      pImpl->state_machine->render(pImpl->app_window, frame_counter);
+      pImpl->state_machine->render(pImpl->app_window, s_frame_counter);
       pImpl->app_window.display();
-      ++frame_counter;
+      ++s_frame_counter;
     }
   }
 }
@@ -268,4 +272,19 @@ int App::get_rand(int minimum, int maximum)
 {
    uniform_int_dist dist(minimum, maximum);
    return dist(the_RNG);
+}
+
+int App::LUA_get_frame_counter(lua_State* L)
+{
+  int num_args = lua_gettop(L);
+
+  if (num_args != 0)
+  {
+    MINOR_ERROR("expected 0 arguments, got %d", num_args);
+    return 0;
+  }
+
+  lua_pushinteger(L, s_frame_counter);
+
+  return 1;
 }

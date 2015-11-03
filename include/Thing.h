@@ -400,7 +400,7 @@ class Thing :
     std::string const& get_possessive_pronoun() const;
 
     /// Return the coordinates of the tile representing the thing.
-    sf::Vector2u get_tile_sheet_coords(int frame) const;
+    sf::Vector2u get_tile_sheet_coords(int frame);
 
     /// Add this Thing to a VertexArray to be drawn.
     /// @param vertices Array to add vertices to.
@@ -663,6 +663,10 @@ class Thing :
       std::vector<lua_Integer> const& args,
       bool default_result = true);
 
+    /// Syntactic sugar for calling ThingMetadata::call_lua_function_v2u.
+    sf::Vector2u call_lua_function_v2u(std::string function_name,
+      std::vector<lua_Integer> const& args,
+      sf::Vector2u default_result = sf::Vector2u(0, 0));
 
 };
 

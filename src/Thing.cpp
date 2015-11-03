@@ -2504,12 +2504,18 @@ std::string Thing::get_possessive() const
   }
 }
 
-
-sf::Vector2u Thing::get_tile_sheet_coords(int frame) const
+sf::Vector2u Thing::get_tile_sheet_coords(int frame)
 {
-  /// @todo Deal with selecting one of the other tiles.
-  sf::Vector2u coords = pImpl->metadata.get_tile_coords();
-  return coords;
+  /// Get tile coordinates on the sheet.
+  sf::Vector2u start_coords = pImpl->metadata.get_tile_coords();
+
+  /// Call the Lua function to get the offset (tile to choose).
+  sf::Vector2u offset = call_lua_function_v2u("get_tile_offset", { frame });
+
+  /// Add them to get the resulting coordinates.
+  sf::Vector2u tile_coords = start_coords + offset;
+  
+  return tile_coords;
 }
 
 void Thing::add_vertices_to(sf::VertexArray& vertices,
@@ -3844,4 +3850,9 @@ ActionResult Thing::call_lua_function(std::string function_name, std::vector<lua
 bool Thing::call_lua_function_bool(std::string function_name, std::vector<lua_Integer> const& args, bool default_result)
 {
   return pImpl->metadata.call_lua_function_bool(function_name, get_ref(), args, default_result);
+}
+
+sf::Vector2u Thing::call_lua_function_v2u(std::string function_name, std::vector<lua_Integer> const& args, sf::Vector2u default_result)
+{
+  return pImpl->metadata.call_lua_function_v2u(function_name, get_ref(), args, default_result);
 }
