@@ -1,13 +1,13 @@
-#include "mapfeatures/MapGenerator.h"
+#include "MapGenerator.h"
 
 #include <boost/log/trivial.hpp>
 #include <boost/random/uniform_int_distribution.hpp>
 
-#include "mapfeatures/MapCorridor.h"
-#include "mapfeatures/MapDiamond.h"
-#include "mapfeatures/MapDonutRoom.h"
-#include "mapfeatures/MapLRoom.h"
-#include "mapfeatures/MapRoom.h"
+#include "MapCorridor.h"
+#include "MapDiamond.h"
+#include "MapDonutRoom.h"
+#include "MapLRoom.h"
+#include "MapRoom.h"
 
 #include "App.h"
 #include "MapTile.h"

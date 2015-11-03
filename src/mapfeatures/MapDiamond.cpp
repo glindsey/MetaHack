@@ -1,4 +1,4 @@
-#include "mapfeatures/MapDiamond.h"
+#include "MapDiamond.h"
 
 #include <boost/log/trivial.hpp>
 #include <boost/random/uniform_int_distribution.hpp>

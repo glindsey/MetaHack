@@ -1,4 +1,4 @@
-#include "mapfeatures/MapFeature.h"
+#include "MapFeature.h"
 
 #include <algorithm>
 #include <boost/log/trivial.hpp>

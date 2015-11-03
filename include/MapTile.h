@@ -8,15 +8,16 @@
 #include "Inventory.h"
 #include "LightInfluence.h"
 #include "MapId.h"
-#include "MapTileImpl.h"
 #include "Thing.h"
 #include "ThingRef.h"
 #include "TileSheet.h"
-#include "UsesPimpl.h"
 
 // Forward declarations
 class Entity;
 class Floor;
+
+#include "MapTileImpl.h"
+#include "UsesPimpl.h"
 
 class MapTile : public GameObject
 {

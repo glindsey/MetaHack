@@ -1,4 +1,4 @@
-#include "mapfeatures/MapCorridor.h"
+#include "MapCorridor.h"
 
 #include <boost/log/trivial.hpp>
 #include <boost/random/uniform_int_distribution.hpp>

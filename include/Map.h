@@ -19,6 +19,9 @@ class ThingRef;
 #define constexpr const
 #endif
 
+#include "MapImpl.h"
+#include "UsesPimpl.h"
+
 /// Class representing a map, which is a grid of locations for Things.
 class Map
 {
@@ -53,9 +56,9 @@ class Map
 
     void draw_to(sf::RenderTarget& target);
 
-    MapTile& get_tile(int x, int y) const;
+    MapTile& get_tile(int x, int y);
 
-    MapTile& get_tile(sf::Vector2i tile) const;
+    MapTile& get_tile(sf::Vector2i tile);
 
     /// Get the map's size.
     sf::Vector2i const& get_size() const;
@@ -117,8 +120,7 @@ class Map
                                double slope_B = 0);
 
   private:
-    struct Impl;
-    std::unique_ptr<Impl> pImpl;
+    Pimpl<MapImpl> pImpl;
 
     /// Lua function to get the Floor at a specific location.
     /// Takes three parameters:

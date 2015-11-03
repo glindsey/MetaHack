@@ -14,8 +14,8 @@
 #include "ThingManager.h"
 #include "TileSheet.h"
 
-#include "mapfeatures/MapFeature.h"
-#include "mapfeatures/MapGenerator.h"
+#include "MapFeature.h"
+#include "MapGenerator.h"
 
 #define VERTEX(x, y) (20 * (pImpl->map_size.x * y) + x)
 #define TILE(x, y) (pImpl->tiles[get_index(x, y)])
@@ -23,60 +23,19 @@
 // Local typedefs
 typedef boost::random::uniform_int_distribution<> uniform_int_dist;
 
-struct Map::Impl
-{
-  Impl() {}
-  ~Impl()
-  {
-    tiles.clear();
-    features.clear();
-  }
-
-  /// Map ID.
-  MapId map_id;
-
-  /// Map size.
-  sf::Vector2i map_size;
-
-  /// "Seen" map vertex array.
-  sf::VertexArray map_seen_vertices;
-
-  /// Outlines map vertex array.
-  sf::VertexArray map_outline_vertices;
-
-  /// "Memory" map vertex array.
-  sf::VertexArray map_memory_vertices;
-
-  /// Thing vertex array.
-  sf::VertexArray thing_vertices;
-
-  /// Pointer vector of tiles.
-  boost::ptr_vector< MapTile > tiles;
-
-  /// Player starting location.
-  sf::Vector2i start_coords;
-
-  /// Pointer deque of map features.
-  boost::ptr_deque<MapFeature> features;
-};
-
 const sf::Color Map::ambient_light_level = sf::Color(48, 48, 48, 255);
 
 Map::Map(MapId map_id, int width, int height)
-  : pImpl(NEW Impl())
+  : pImpl(map_id, width, height)
 {
   TRACE("Creating map of size %d x %d...", width, height);
 
-  // Set height, width, center variables.
-  pImpl->map_id = map_id;
-  pImpl->map_size.x = width;
-  pImpl->map_size.y = height;
-
-  //pImpl->tiles.resize(width * height);
-
+  // Create vertices. We multiply by 20 because each tile has five quads
+  // associated with it -- the floor and four potential walls.
   pImpl->map_seen_vertices.resize(pImpl->map_size.x * pImpl->map_size.y * 20);
   pImpl->map_memory_vertices.resize(pImpl->map_size.x * pImpl->map_size.y * 20);
 
+  // Create the tiles themselves.
   for (int y = 0; y < height; ++y)
   {
     for (int x = 0; x < width; ++x)
@@ -96,21 +55,22 @@ Map::Map(MapId map_id, int width, int height)
   pImpl->thing_vertices.clear();
   pImpl->thing_vertices.setPrimitiveType(sf::PrimitiveType::Quads);
 
-  // Generate the map.
+  // If the map isn't the 1x1 "limbo" map...
   if ((width != 1) && (height != 1))
   {
+    // Generate the map.
     MapGenerator generator(*this);
     generator.generate();
-  }
 
-  // Run Lua script associated with this map.
-  /// @todo Different scripts for different maps.
-  ///       And for that matter, ALL of map generation
-  ///       should be done via scripting. But for now
-  ///       this will do.
-  TRACE("Executing Map Lua script.");
-  the_lua_instance.set_global("current_map_id", map_id);
-  the_lua_instance.do_file("resources/scripts/map.lua");
+    // Run Lua script associated with this map.
+    /// @todo Different scripts for different maps.
+    ///       And for that matter, ALL of map generation
+    ///       should be done via scripting. But for now
+    ///       this will do.
+    TRACE("Executing Map Lua script.");
+    the_lua_instance.set_global("current_map_id", map_id);
+    the_lua_instance.do_file("resources/scripts/map.lua");
+  }
 
   TRACE("Map created.");
 }
@@ -867,7 +827,7 @@ void Map::draw_to(sf::RenderTarget& target)
   target.draw(pImpl->thing_vertices, render_states);
 }
 
-MapTile& Map::get_tile(int x, int y) const
+MapTile& Map::get_tile(int x, int y)
 {
   if (x < 0) x = 0;
   if (x >= pImpl->map_size.x) x = pImpl->map_size.x - 1;
@@ -877,7 +837,7 @@ MapTile& Map::get_tile(int x, int y) const
   return TILE(x, y);
 }
 
-MapTile& Map::get_tile(sf::Vector2i tile) const
+MapTile& Map::get_tile(sf::Vector2i tile)
 {
   return get_tile(tile.x, tile.y);
 }

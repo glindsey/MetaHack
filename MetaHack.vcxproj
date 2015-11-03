@@ -125,6 +125,7 @@
   <ItemGroup>
     <ClInclude Include="include\Action.h" />
     <ClInclude Include="include\ActionResult.h" />
+    <ClInclude Include="include\ActionType.h" />
     <ClInclude Include="include\App.h" />
     <ClInclude Include="include\AppStateGameMode.h" />
     <ClInclude Include="include\AppStateMainMenu.h" />
@@ -139,6 +140,7 @@
     <ClInclude Include="include\Direction.h" />
     <ClInclude Include="include\ErrorHandler.h" />
     <ClInclude Include="include\EventHandler.h" />
+    <ClInclude Include="include\Exceptions.h" />
     <ClInclude Include="include\GameObject.h" />
     <ClInclude Include="include\Gender.h" />
     <ClInclude Include="include\GeoVector.h" />
@@ -151,20 +153,21 @@
     <ClInclude Include="include\LightInfluence.h" />
     <ClInclude Include="include\Lua.h" />
     <ClInclude Include="include\Map.h" />
+    <ClInclude Include="include\MapCorridor.h" />
+    <ClInclude Include="include\MapDiamond.h" />
+    <ClInclude Include="include\MapDonutRoom.h" />
     <ClInclude Include="include\MapFactory.h" />
-    <ClInclude Include="include\mapfeatures\MapCorridor.h" />
-    <ClInclude Include="include\mapfeatures\MapDiamond.h" />
-    <ClInclude Include="include\mapfeatures\MapDonutRoom.h" />
-    <ClInclude Include="include\mapfeatures\MapFeature.h" />
-    <ClInclude Include="include\mapfeatures\MapGenerator.h" />
-    <ClInclude Include="include\mapfeatures\MapLRoom.h" />
-    <ClInclude Include="include\mapfeatures\MapRoom.h" />
+    <ClInclude Include="include\MapFeature.h" />
+    <ClInclude Include="include\MapGenerator.h" />
     <ClInclude Include="include\MapId.h" />
+    <ClInclude Include="include\MapLRoom.h" />
+    <ClInclude Include="include\MapRoom.h" />
     <ClInclude Include="include\MapTile.h" />
     <ClInclude Include="include\MapTileMetadata.h" />
     <ClInclude Include="include\MathUtils.h" />
     <ClInclude Include="include\MessageLog.h" />
     <ClInclude Include="include\Metadata.h" />
+    <ClInclude Include="include\New.h" />
     <ClInclude Include="include\Ordinal.h" />
     <ClInclude Include="include\Renderable.h" />
     <ClInclude Include="include\ShaderEffect.h" />
@@ -178,7 +181,6 @@
     <ClInclude Include="include\ThingMetadata.h" />
     <ClInclude Include="include\TileSheet.h" />
     <ClInclude Include="include\UsesPimpl.h" />
-    <ClInclude Include="src\Exceptions.h" />
     <ClInclude Include="src\impl\ActionImpl.h" />
     <ClInclude Include="src\impl\AppStateGameModeImpl.h" />
     <ClInclude Include="src\impl\MapTileImpl.h" />

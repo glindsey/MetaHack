@@ -10,7 +10,6 @@
 #include "GameObject.h"
 #include "Gender.h"
 #include "MapId.h"
-#include "ThingImpl.h"
 #include "ThingMetadata.h"
 
 #include <memory>
@@ -23,8 +22,6 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/serialization/strong_typedef.hpp>
 #include <SFML/Graphics.hpp>
-
-#include "UsesPimpl.h"
 
 // Forward declarations
 class AIStrategy;
@@ -39,6 +36,9 @@ class Thing;
 
 /// Typedef for the factory method.
 using ThingCreator = std::shared_ptr<Thing>(*)(void);
+
+#include "ThingImpl.h"
+#include "UsesPimpl.h"
 
 // Thing is any object in the game, animate or not.
 class Thing :
