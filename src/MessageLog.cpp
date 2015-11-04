@@ -60,7 +60,10 @@ MessageLog& MessageLog::instance()
 
 void MessageLog::initialize()
 {
+  the_lua_instance.register_function("print", MessageLog::LUA_redirect_print);
+
   the_lua_instance.register_function("messageLog_add", MessageLog::LUA_add);
+
 }
 
 void MessageLog::add(std::string message)
@@ -145,6 +148,26 @@ std::string MessageLog::render_contents(int frame)
   return "Message Log";
 }
 
+int MessageLog::LUA_redirect_print(lua_State* L)
+{
+  int nargs = lua_gettop(L);
+
+  for (int i = 1; i <= nargs; i++) 
+  {
+    if (lua_isstring(L, i)) 
+    {
+      std::string str = lua_tostring(L, i);
+      MessageLog::instance().add(str);
+    }
+    else {
+      /* Do something with non-strings if you like */
+    }
+  }
+
+  return 0;
+}
+
+
 int MessageLog::LUA_add(lua_State* L)
 {
   int num_args = lua_gettop(L);
@@ -161,3 +184,4 @@ int MessageLog::LUA_add(lua_State* L)
 
   return 0;
 }
+

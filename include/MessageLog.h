@@ -46,6 +46,9 @@ class MessageLog : public GUIPane
     /// Static instance.
     static std::unique_ptr<MessageLog> instance_;
 
+    /// Lua function to redirect printout to the message log.
+    static int LUA_redirect_print(lua_State* L);
+
     /// Lua function to add a message to the message log.
     static int LUA_add(lua_State* L);
 };

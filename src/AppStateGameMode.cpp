@@ -35,8 +35,14 @@ void AppStateGameMode::execute()
 
   if (debug_buffer.get_enter())
   {
-    /// @todo Implement debug command processing.
-    the_message_log.add("** Sorry, debug command processing is not yet implemented.");
+    /// Call the Lua interpreter with the command.
+    std::string contents = debug_buffer.get_buffer();
+    the_message_log.add("> " + contents);
+    if(luaL_dostring(the_lua_state, contents.c_str()))
+    {
+      the_message_log.add(lua_tostring(the_lua_state, -1));
+    }
+
     debug_buffer.clear_buffer();
   }
 
