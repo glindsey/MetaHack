@@ -457,7 +457,7 @@ class Thing :
 
     /// Return whether or not this thing can be drank by this Entity.
     /// The default behavior for this is to return false.
-    bool is_drinkable_by(ThingRef thing);
+    bool is_drinkable_by(ThingRef thing, ThingRef contents);
 
     /// Return whether or not this thing can be eaten by this Entity.
     /// The default behavior for this is to return false.
@@ -494,8 +494,8 @@ class Thing :
     bool perform_action_dropped_by(ThingRef actor);
 
     /// Perform an action when this thing is eaten.
-    /// If this function returns false, the action is aborted.
-    bool perform_action_eaten_by(ThingRef actor);
+    /// If this function returns Failure, the action is aborted.
+    ActionResult perform_action_eaten_by(ThingRef actor);
 
     /// Perform an action when this thing is used.
     /// If this function returns false, the action is aborted.

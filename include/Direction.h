@@ -24,19 +24,19 @@ inline std::ostream& operator<<(std::ostream& os, const Direction& d)
 {
   switch (d)
   {
-  case Direction::None:       os << "None"; break;
-  case Direction::North:      os << "North"; break;
-  case Direction::Northeast:  os << "Northeast"; break;
-  case Direction::East:       os << "East"; break;
-  case Direction::Southeast:  os << "Southeast"; break;
-  case Direction::South:      os << "South"; break;
-  case Direction::Southwest:  os << "Southwest"; break;
-  case Direction::West:       os << "West"; break;
-  case Direction::Northwest:  os << "Northwest"; break;
-  case Direction::Up:         os << "Up"; break;
-  case Direction::Down:       os << "Down"; break;
-  case Direction::Self:       os << "Self"; break;
-  case Direction::Count:      os << "Count"; break;
+  case Direction::None:       os << "none"; break;
+  case Direction::North:      os << "north"; break;
+  case Direction::Northeast:  os << "northeast"; break;
+  case Direction::East:       os << "east"; break;
+  case Direction::Southeast:  os << "southeast"; break;
+  case Direction::South:      os << "south"; break;
+  case Direction::Southwest:  os << "southwest"; break;
+  case Direction::West:       os << "west"; break;
+  case Direction::Northwest:  os << "northwest"; break;
+  case Direction::Up:         os << "up"; break;
+  case Direction::Down:       os << "down"; break;
+  case Direction::Self:       os << "self"; break;
+  case Direction::Count:      os << "count"; break;
   default:                    os << "???"; break;
   }
 

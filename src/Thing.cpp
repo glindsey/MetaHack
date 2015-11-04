@@ -26,17 +26,37 @@
 #include "TileSheet.h"
 
 // Local definitions to make reading/writing status info a bit easier.
-#define _YOU_   (this->get_identifying_string())
-#define _ARE_   (this->choose_verb(" are", " is"))
-#define _DO_    (this->choose_verb(" do", " does"))
-#define _YOUR_  (this->get_possessive())
-#define _HAVE_  (this->choose_verb(" have", " has"))
-#define _YOURSELF_ (this->get_reflexive_pronoun())
-#define _TRY_   (this->choose_verb(" try", " tries"))
+#define YOU       (this->get_identifying_string())  // "you" or descriptive noun like "the goblin"
+#define YOU2      (this->get_subject_pronoun())     // "you/he/she/it/etc."
+#define YOUR      (this->get_possessive())          // "your/his/her/its/etc."
+#define YOURSELF  (this->get_reflexive_pronoun())   // "yourself/himself/herself/itself/etc."
 
-#define _YOU_ARE_ _YOU_ + _ARE_
-#define _YOU_DO_ _YOU_ + _DO_
-#define _YOU_TRY_ _YOU_ + _TRY_
+#define CV(p12, p3)  (this->choose_verb(p12, p3))
+
+#define ARE   (this->choose_verb(" are", " is"))
+#define DO    (this->choose_verb(" do", " does"))
+#define GET   (this->choose_verb(" get", " gets"))
+#define HAVE  (this->choose_verb(" have", " has"))
+#define SEEM  (this->choose_verb(" seem", " seems"))
+#define TRY   (this->choose_verb(" try", " tries"))
+
+#define IS_PLAYER (TM.get_player() == pImpl->ref)
+
+#define FOO       (thing->get_identifying_string())
+#define FOO1      (thing1->get_identifying_string())
+#define FOO2      (thing2->get_identifying_string())
+#define LIQUID1      (liquid1->get_identifying_string())
+#define LIQUID2      (liquid2->get_identifying_string())
+
+#define YOU_ARE   (YOU + ARE)   
+#define YOU2_ARE  (YOU2 + ARE)
+#define YOU_DO    (YOU + DO)
+#define YOU_GET   (YOU + GET)
+#define YOU_HAVE  (YOU + HAVE)
+#define YOU_SEEM  (YOU + SEEM)
+#define YOU_TRY   (YOU + TRY)
+
+#define YOU_TRY_TO(verb) (YOU_TRY + " to " + verb + " ")
 
 // Static member initialization.
 sf::Color const Thing::wall_outline_color_ = sf::Color(255, 255, 255, 64);
@@ -140,6 +160,12 @@ ActionResult Thing::can_drink(ThingRef thing, unsigned int& action_time)
     return ActionResult::FailureSelfReference;
   }
 
+  // Check that we're capable of drinking at all.
+  if (this->get_intrinsic_flag("can_drink"))
+  {
+    return ActionResult::FailureActorCantPerform;
+  }
+
   // Check that the thing is within reach.
   if (!this->can_reach(thing))
   {
@@ -167,16 +193,17 @@ bool Thing::do_drink(ThingRef thing, unsigned int& action_time)
   std::string message;
 
   ActionResult drink_try = this->can_drink(thing, action_time);
+  ThingRef contents;
 
   switch (drink_try)
   {
   case ActionResult::Success:
-    if (thing->is_drinkable_by(pImpl->ref))
+    contents = thing->get_inventory().get(INVSLOT_ZERO); // Okay to do as we've already confirmed inventory size > 0.
+    if (thing->is_drinkable_by(pImpl->ref, contents))
     {
-      message = _YOU_ + " drink " + thing->get_identifying_string();
+      message = YOU + " drink from " + thing->get_identifying_string();
       the_message_log.add(message);
 
-      ThingRef contents = thing->get_inventory().get(INVSLOT_ZERO);
       ActionResult result = thing->perform_action_drank_by(pImpl->ref, contents);
 
       switch (result)
@@ -189,7 +216,7 @@ bool Thing::do_drink(ThingRef thing, unsigned int& action_time)
         return true;
 
       case ActionResult::Failure:
-        message = _YOU_ + " stop drinking.";
+        message = YOU + " stop drinking.";
         the_message_log.add(message);
         break;
 
@@ -197,35 +224,50 @@ bool Thing::do_drink(ThingRef thing, unsigned int& action_time)
         MINOR_ERROR("Unknown ActionResult %d", result);
         break;
       }
-
     } // end if (thing->is_drinkable_by(pImpl->ref))
+    else
+    {
+      message = YOU + " can't drink that!";
+      the_message_log.add(message);
+    }
     break;
 
   case ActionResult::FailureSelfReference:
-    if (TM.get_player() == pImpl->ref)
-    {
-      message = _YOU_TRY_ + " to drink " + thing->get_identifying_string() + ".";
-      the_message_log.add(message);
+    message = YOU_TRY + " to drink " + YOURSELF + ".";
+    the_message_log.add(message);
 
-      /// @todo When drinking self, special message if we're a liquid-based organism.
-      message = "That is a particularly unsettling image.";
-      the_message_log.add(message);
-    }
-    else
-    {
-      message = _YOU_TRY_ + " to drink " + _YOURSELF_ +
-        ", which seriously shouldn't happen.";
-      the_message_log.add(message);
-      MINOR_ERROR("Non-player Entity tried to drink self!?");
-    }
+    /// @todo When drinking self, special message if caller is a liquid-based organism.
+    message = "Needless to say, " + YOU_ARE + " not very successful in this endeavor.";
+    the_message_log.add(message);
+    break;
+
+  case ActionResult::FailureActorCantPerform:
+    message = YOU_TRY_TO("drink from") + FOO + ".";
+    the_message_log.add(message);
+    message = "But, as a " + get_display_name() + "," + YOU_ARE + " not capable of drinking liquids.";
+    the_message_log.add(message);
+    break;
+
+  case ActionResult::FailureThingOutOfReach:
+    message = YOU_TRY_TO("drink from") + FOO + ".";
+    the_message_log.add(message);
+
+    message = FOO + " is out of " + YOUR + " reach.";
+    the_message_log.add(message);
     break;
 
   case ActionResult::FailureNotLiquidCarrier:
-    message = _YOU_TRY_ + " to drink " + thing->get_identifying_string() + ".";
+    message = YOU_TRY_TO("drink from") + FOO + ".";
     the_message_log.add(message);
-    message = _YOU_ + " cannot drink from that!";
+    message = YOU + " cannot drink from that!";
     the_message_log.add(message);
     break;
+
+  case ActionResult::FailureContainerIsEmpty:
+    message = YOU_TRY_TO("drink from") + FOO + ".";
+    the_message_log.add(message);
+    message = "But " + FOO + " is empty!";
+    the_message_log.add(message);
 
   default:
     MINOR_ERROR("Unknown ActionResult %d", drink_try);
@@ -279,8 +321,7 @@ bool Thing::do_drop(ThingRef thing, unsigned int& action_time)
       {
         if (thing->perform_action_dropped_by(pImpl->ref))
         {
-          message = _YOU_ + choose_verb(" drop ", " drops ") +
-            thing->get_identifying_string() + ".";
+          message = YOU + CV(" drop ", " drops ") + FOO + ".";
           the_message_log.add(message);
           if (thing->move_into(our_location))
           {
@@ -302,20 +343,20 @@ bool Thing::do_drop(ThingRef thing, unsigned int& action_time)
       {
         // This is mighty strange, but I suppose there might be MapTiles in
         // the future that can't contain certain Things.
-        message = _YOU_TRY_ + " to drop " + thing->get_identifying_string() + ".";
+        message = YOU_TRY_TO("drop") + FOO + ".";
         the_message_log.add(message);
 
         message = our_location->get_identifying_string() + " cannot hold " +
-          thing->get_identifying_string() + ".";
+          FOO + ".";
         the_message_log.add(message);
       }
     }
     else // can't be moved
     {
-      message = _YOU_TRY_ + " to drop " + thing->get_identifying_string() + ".";
+      message = YOU_TRY_TO("drop") + FOO + ".";
       the_message_log.add(message);
 
-      message = thing->get_identifying_string() + " cannot be moved.";
+      message = FOO + " cannot be moved.";
       the_message_log.add(message);
     }
   }
@@ -323,48 +364,45 @@ bool Thing::do_drop(ThingRef thing, unsigned int& action_time)
 
   case ActionResult::FailureSelfReference:
   {
-    if (TM.get_player() == pImpl->ref)
-    {
-      message = "Drop yourself?  What, you mean commit suicide?  Uh, no.";
-    }
-    else
-    {
-      message = _YOU_TRY_ + " to drop " + _YOURSELF_ +
-        ", which seriously shouldn't happen.";
-      MINOR_ERROR("Non-player Entity tried to drop self!?");
-    }
+    message = YOU + CV(" hurl ", " hurls ") + YOURSELF + " to the " +
+      get_location()->get_display_name() + "!";
+    the_message_log.add(message);
+    /// @todo Possible damage from hurling yourself to the ground!
+    message = (IS_PLAYER ? "Fortunately, " : "") + YOU_SEEM + " unharmed.";
+    the_message_log.add(message);
+    message = YOU_GET + " up.";
     the_message_log.add(message);
     break;
   }
 
   case ActionResult::FailureNotPresent:
   {
-    message = _YOU_TRY_ + " to drop " + thing->get_identifying_string() + ".";
+    message = YOU_TRY_TO("drop") + FOO + ".";
     the_message_log.add(message);
 
-    message = thing->get_identifying_string() + thing->choose_verb(" are", " is") +
-      " not in " + _YOUR_ + " inventory!";
+    message = FOO + thing->choose_verb(" are ", " is ") +
+      "not in " + YOUR + " inventory!";
     the_message_log.add(message);
   }
   break;
 
   case ActionResult::FailureItemEquipped:
   {
-    message = _YOU_TRY_ + " to drop " + thing->get_identifying_string() + ".";
+    message = YOU_TRY_TO("drop") + FOO + ".";
     the_message_log.add(message);
 
-    message = _YOU_ + " cannot drop something that is currently being worn.";
+    message = YOU + " cannot drop something that is currently being worn.";
     the_message_log.add(message);
   }
   break;
 
   case ActionResult::FailureItemWielded:
   {
-    message = _YOU_TRY_ + " to drop " + thing->get_identifying_string() + ".";
+    message = YOU_TRY_TO("drop") + FOO + ".";
     the_message_log.add(message);
 
     /// @todo Perhaps automatically try to unwield the item before dropping?
-    message = _YOU_ + " cannot drop something that is currently being wielded.";
+    message = YOU + " cannot drop something that is currently being wielded.";
     the_message_log.add(message);
   }
   break;
@@ -387,6 +425,12 @@ ActionResult Thing::can_eat(ThingRef thing, unsigned int& action_time)
     return ActionResult::FailureSelfReference;
   }
 
+  // Check that we're capable of eating at all.
+  if (this->get_intrinsic_flag("can_eat"))
+  {
+    return ActionResult::FailureActorCantPerform;
+  }
+
   // Check that the thing is within reach.
   if (!this->can_reach(thing))
   {
@@ -402,7 +446,7 @@ bool Thing::do_eat(ThingRef thing, unsigned int& action_time)
 
   ActionResult eat_try = this->can_eat(thing, action_time);
 
-  message = _YOU_TRY_ + " to eat " + thing->get_identifying_string() + ".";
+  message = YOU_TRY_TO("eat") + FOO + ".";
   the_message_log.add(message);
 
   switch (eat_try)
@@ -410,32 +454,52 @@ bool Thing::do_eat(ThingRef thing, unsigned int& action_time)
   case ActionResult::Success:
     if (thing->is_edible_by(pImpl->ref))
     {
-      if (thing->perform_action_eaten_by(pImpl->ref))
+      message = YOU + CV(" eat ", " eats ") + FOO + ".";
+      the_message_log.add(message);
+
+      ActionResult result = thing->perform_action_eaten_by(pImpl->ref);
+
+      switch (result)
       {
+      case ActionResult::Success:
         return true;
+
+      case ActionResult::SuccessDestroyed:
+        thing->destroy();
+        return true;
+
+      case ActionResult::Failure:
+        message = YOU + " stop eating.";
+        the_message_log.add(message);
+        break;
+
+      default:
+        MINOR_ERROR("Unknown ActionResult %d", result);
+        break;
       }
-    }
+
+    } // end if (thing->is_edible_by(pImpl->ref))
     else
     {
-      message = _YOU_ + " can't eat that!";
+      message = YOU + " can't eat that!";
       the_message_log.add(message);
     }
     break;
 
   case ActionResult::FailureSelfReference:
-    if (TM.get_player() == pImpl->ref)
-    {
-      /// @todo When eating self, special message if we're a liquid-based organism.
-      message = "But you really aren't that tasty, so you stop.";
-      the_message_log.add(message);
-    }
-    else
-    {
-      message = "That seriously shouldn't happen!";
-      the_message_log.add(message);
+    message = YOU_TRY_TO("eat") + FOO + ".";
+    the_message_log.add(message);
 
-      MINOR_ERROR("Non-player Entity tried to eat self!?");
-    }
+    /// @todo Handle "unusual" cases (e.g. zombies?)
+    message = "But " + YOU + " really " + CV("aren't", "isn't") + " that tasty, so " + YOU + CV(" stop.", " stops.");
+    the_message_log.add(message);
+    break;
+
+  case ActionResult::FailureActorCantPerform:
+    message = YOU_TRY_TO("eat") + FOO + ".";
+    the_message_log.add(message);
+    message = "But, as a " + get_display_name() + "," + YOU_ARE + " not capable of eating.";
+    the_message_log.add(message);
     break;
 
   default:
@@ -467,13 +531,64 @@ ActionResult Thing::can_mix(ThingRef thing1, ThingRef thing2, unsigned int& acti
     return ActionResult::FailureThingOutOfReach;
   }
 
-  /// @todo write Thing::can_mix
+  // Check that both are liquid containers.
+  if (!thing1->get_intrinsic_flag("liquid_carrier") || !thing2->get_intrinsic_flag("liquid_carrier"))
+  {
+    return ActionResult::FailureNotLiquidCarrier;
+  }
+
+  // Check that neither is empty.
+  Inventory& inv1 = thing1->get_inventory();
+  Inventory& inv2 = thing2->get_inventory();
+  if (inv1.count() == 0 || inv2.count() == 0)
+  {
+    return ActionResult::FailureContainerIsEmpty;
+  }
+
+  /// @todo Anything else needed here?
+  ///       You need some sort of limbs to mix substances, right?
+
   return ActionResult::Success;
 }
 
 bool Thing::do_mix(ThingRef thing1, ThingRef thing2, unsigned int& action_time)
 {
-  /// @todo write Thing::mix
+  std::string message;
+
+  ActionResult mix_try = this->can_mix(thing1, thing2, action_time);
+  ThingRef liquid1, liquid2;
+
+  switch (mix_try)
+  {
+  case ActionResult::Success:  
+    liquid1 = thing1->get_inventory().get(INVSLOT_ZERO);
+    liquid2 = thing2->get_inventory().get(INVSLOT_ZERO);
+
+    message = YOU + CV(" mix ", " mixes ") + LIQUID1 + " with " + LIQUID2 + ".";
+    the_message_log.add(message);
+
+    /// @todo IMPLEMENT ME
+    //thing1->perform_action_mixed_with_by(thing2, pImpl->ref);
+    return true;
+
+  case ActionResult::FailureSelfReference:
+    message = YOU_TRY_TO("mix") + FOO1 + " and " + FOO2 + ".";
+    the_message_log.add(message);
+    message = "But that makes absolutely no sense.";
+    the_message_log.add(message);
+    break;
+
+  case ActionResult::FailureActorCantPerform:
+    message = YOU_TRY_TO("mix") + FOO1 + " and " + FOO2 + ".";
+    the_message_log.add(message);
+    message = "But, as a " + get_display_name() + "," + YOU_HAVE + " no way to mix anything.";
+    the_message_log.add(message);
+    break;
+
+  default:
+    MINOR_ERROR("Unknown ActionResult %d", mix_try);
+    break;
+  }
   return false;
 }
 
@@ -486,8 +601,8 @@ bool Thing::do_move(Direction new_direction, unsigned int& action_time)
   // First: check direction.
   if (new_direction == Direction::Self)
   {
-    message = _YOU_ + " successfully" + choose_verb(" stay", " stays") +
-      " where " + get_subject_pronoun() + _ARE_ + ".";
+    message = YOU + " successfully" + CV(" stay", " stays") +
+      " where " + YOU2_ARE + ".";
     the_message_log.add(message);
     return true;
   }
@@ -498,16 +613,26 @@ bool Thing::do_move(Direction new_direction, unsigned int& action_time)
   // Make sure we're not in limbo!
   if ((location == TM.get_mu()) || (current_tile == nullptr))
   {
-    message = _YOU_ + " can't move because " + _YOU_DO_ + " not exist physically!";
+    message = YOU + " can't move because " + YOU_DO + " not exist physically!";
     the_message_log.add(message);
     return false;
+  }
+
+  if (!IS_PLAYER)
+  {
+    message = YOU_TRY_TO("move");
+    the_message_log.add(message);
+    message = "But ";
+  }
+  else
+  {
+    message = "";
   }
 
   // Make sure we CAN move!
   if (!can_currently_move())
   {
-    message = _YOU_ + choose_verb(" do", " does") +
-      " not have the capability of movement.";
+    message += YOU + " can't move right now.";
     the_message_log.add(message);
     return false;
   }
@@ -515,8 +640,8 @@ bool Thing::do_move(Direction new_direction, unsigned int& action_time)
   // Make sure we're not confined inside another thing.
   if (is_inside_another_thing())
   {
-    message = _YOU_ARE_ + " inside " + location->get_identifying_string(false) +
-      " and " + _ARE_ + " not going anywhere!";
+    message += YOU_ARE + " inside " + location->get_identifying_string(false) +
+      " and " + ARE + " not going anywhere!";
 
     the_message_log.add(message);
     return false;
@@ -551,7 +676,7 @@ bool Thing::do_move(Direction new_direction, unsigned int& action_time)
     if ((x_new < 0) || (y_new < 0) ||
       (x_new >= map_size.x) || (y_new >= map_size.y))
     {
-      message = _YOU_ + " can't move there; it is out of bounds!";
+      message += YOU + " can't move there; it is out of bounds!";
       the_message_log.add(message);
       return false;
     }
@@ -566,7 +691,7 @@ bool Thing::do_move(Direction new_direction, unsigned int& action_time)
     else
     {
       std::string tile_description = new_tile.get_display_name();
-      message = _YOU_ARE_ + " stopped by " +
+      message += YOU_ARE + " stopped by " +
         getIndefArt(tile_description) + " " +
         tile_description + ".";
       the_message_log.add(message);
@@ -614,7 +739,7 @@ bool Thing::do_pick_up(ThingRef thing, unsigned int& action_time)
     {
       if (thing->perform_action_picked_up_by(pImpl->ref))
       {
-        message = _YOU_ + choose_verb(" pick", " picks") + " up " +
+        message = YOU + choose_verb(" pick", " picks") + " up " +
           thing->get_identifying_string() + ".";
         the_message_log.add(message);
         if (thing->move_into(pImpl->ref))
@@ -635,11 +760,11 @@ bool Thing::do_pick_up(ThingRef thing, unsigned int& action_time)
     }
     else // thing cannot be moved
     {
-      message = _YOU_TRY_ +
+      message = YOU_TRY +
         " to pick up " + thing->get_identifying_string();
       the_message_log.add(message);
 
-      message = _YOU_ + " cannot move the " + thing->get_identifying_string() + ".";
+      message = YOU + " cannot move the " + thing->get_identifying_string() + ".";
       the_message_log.add(message);
     }
     break;
@@ -651,8 +776,8 @@ bool Thing::do_pick_up(ThingRef thing, unsigned int& action_time)
     }
     else
     {
-      message = _YOU_TRY_ +
-        " to pick " + _YOURSELF_ +
+      message = YOU_TRY +
+        " to pick " + YOURSELF +
         "up, which seriously shouldn't happen.";
       MINOR_ERROR("Non-player Entity tried to pick self up!?");
     }
@@ -661,32 +786,32 @@ bool Thing::do_pick_up(ThingRef thing, unsigned int& action_time)
   }
   case ActionResult::FailureInventoryFull:
   {
-    message = _YOU_TRY_ +
+    message = YOU_TRY +
       " to pick up " + thing->get_identifying_string();
     the_message_log.add(message);
 
-    message = _YOUR_ + " inventory cannot accomodate " + thing->get_identifying_string();
+    message = YOUR + " inventory cannot accomodate " + thing->get_identifying_string();
     the_message_log.add(message);
   }
   break;
   case ActionResult::FailureAlreadyPresent:
   {
-    message = _YOU_TRY_ +
+    message = YOU_TRY +
       " to pick up " + thing->get_identifying_string();
     the_message_log.add(message);
 
     message = thing->get_identifying_string() + " is already in " +
-      _YOUR_ + " inventory!";
+      YOUR + " inventory!";
     the_message_log.add(message);
   }
   break;
   case ActionResult::FailureThingOutOfReach:
   {
-    message = _YOU_TRY_ +
+    message = YOU_TRY +
       " to pick up " + thing->get_identifying_string();
     the_message_log.add(message);
 
-    message = thing->get_identifying_string() + " is out of " + _YOUR_ + " reach.";
+    message = thing->get_identifying_string() + " is out of " + YOUR + " reach.";
     the_message_log.add(message);
   }
   break;
@@ -763,7 +888,7 @@ bool Thing::do_put_into(ThingRef thing, ThingRef container,
   {
     if (thing->perform_action_put_into_by(container, pImpl->ref))
     {
-      message = _YOU_ + choose_verb(" place ", "places ") +
+      message = YOU + choose_verb(" place ", "places ") +
         thing->get_identifying_string() + " into " +
         container->get_identifying_string() + ".";
       the_message_log.add(message);
@@ -789,7 +914,7 @@ bool Thing::do_put_into(ThingRef thing, ThingRef container,
     }
     else
     {
-      message = _YOU_TRY_ + " to store " + _YOURSELF_ +
+      message = YOU_TRY + " to store " + YOURSELF +
         "into the " + thing->get_identifying_string() +
         ", which seriously shouldn't happen.";
       MINOR_ERROR("Non-player Entity tried to store self!?");
@@ -807,8 +932,8 @@ bool Thing::do_put_into(ThingRef thing, ThingRef container,
     }
     else
     {
-      message = _YOU_TRY_ + " to store " + thing->get_identifying_string() +
-        "into " + _YOURSELF_ +
+      message = YOU_TRY + " to store " + thing->get_identifying_string() +
+        "into " + YOURSELF +
         ", which seriously shouldn't happen.";
       MINOR_ERROR("Non-player Entity tried to store into self!?");
     }
@@ -818,7 +943,7 @@ bool Thing::do_put_into(ThingRef thing, ThingRef container,
 
   case ActionResult::FailureAlreadyPresent:
   {
-    message = _YOU_TRY_ + " to store " + thing->get_identifying_string() + " in " +
+    message = YOU_TRY + " to store " + thing->get_identifying_string() + " in " +
       container->get_identifying_string() + ".";
     the_message_log.add(message);
 
@@ -830,7 +955,7 @@ bool Thing::do_put_into(ThingRef thing, ThingRef container,
 
   case ActionResult::FailureTargetNotAContainer:
   {
-    message = _YOU_TRY_ + " to store " + thing->get_identifying_string() + " in " +
+    message = YOU_TRY + " to store " + thing->get_identifying_string() + " in " +
       container->get_identifying_string() + ".";
     the_message_log.add(message);
 
@@ -841,22 +966,22 @@ bool Thing::do_put_into(ThingRef thing, ThingRef container,
 
   case ActionResult::FailureThingOutOfReach:
   {
-    message = _YOU_TRY_ + " to store " + thing->get_identifying_string() + " in " +
+    message = YOU_TRY + " to store " + thing->get_identifying_string() + " in " +
       container->get_identifying_string() + ".";
     the_message_log.add(message);
 
-    message = _YOU_ + " cannot reach " + thing->get_identifying_string() + ".";
+    message = YOU + " cannot reach " + thing->get_identifying_string() + ".";
     the_message_log.add(message);
   }
   break;
 
   case ActionResult::FailureContainerOutOfReach:
   {
-    message = _YOU_TRY_ + " to store " + thing->get_identifying_string() + " in " +
+    message = YOU_TRY + " to store " + thing->get_identifying_string() + " in " +
       container->get_identifying_string() + ".";
     the_message_log.add(message);
 
-    message = _YOU_ + " cannot reach " + container->get_identifying_string() + ".";
+    message = YOU + " cannot reach " + container->get_identifying_string() + ".";
     the_message_log.add(message);
   }
   break;
@@ -869,7 +994,7 @@ bool Thing::do_put_into(ThingRef thing, ThingRef container,
     }
     else
     {
-      message = _YOU_TRY_ + " to store " + thing->get_identifying_string() +
+      message = YOU_TRY + " to store " + thing->get_identifying_string() +
         "in itself, which seriously shouldn't happen.";
       MINOR_ERROR("Non-player Entity tried to store a container in itself!?");
     }
@@ -930,7 +1055,7 @@ bool Thing::do_read(ThingRef thing, unsigned int& action_time)
     }
     else
     {
-      message = _YOU_TRY_ + " to read " + thing->get_identifying_string() + ".";
+      message = YOU_TRY + " to read " + thing->get_identifying_string() + ".";
       the_message_log.add(message);
 
       message = thing->get_identifying_string() + " has no writing on it to read.";
@@ -941,10 +1066,10 @@ bool Thing::do_read(ThingRef thing, unsigned int& action_time)
 
   case ActionResult::FailureTooStupid:
   {
-    message = _YOU_TRY_ + " to read " + thing->get_identifying_string() + ".";
+    message = YOU_TRY + " to read " + thing->get_identifying_string() + ".";
     the_message_log.add(message);
 
-    message = _YOU_ARE_ + " not smart enough to read " +
+    message = YOU_ARE + " not smart enough to read " +
       thing->get_identifying_string() + ".";
     the_message_log.add(message);
   }
@@ -1008,7 +1133,7 @@ bool Thing::do_take_out(ThingRef thing, unsigned int& action_time)
       }
       else
       {
-        message = _YOU_ + choose_verb(" remove ", "removes ") +
+        message = YOU + choose_verb(" remove ", "removes ") +
           thing->get_identifying_string() + " from " +
           container->get_identifying_string() + ".";
         the_message_log.add(message);
@@ -1027,7 +1152,7 @@ bool Thing::do_take_out(ThingRef thing, unsigned int& action_time)
     }
     else
     {
-      message = _YOU_TRY_ + " to take " + _YOURSELF_ +
+      message = YOU_TRY + " to take " + YOURSELF +
         "out, which seriously shouldn't happen.";
       MINOR_ERROR("Non-player Entity tried to take self out!?");
     }
@@ -1037,7 +1162,7 @@ bool Thing::do_take_out(ThingRef thing, unsigned int& action_time)
 
   case ActionResult::FailureNotInsideContainer:
   {
-    message = _YOU_TRY_ + " to remove " + thing->get_identifying_string() +
+    message = YOU_TRY + " to remove " + thing->get_identifying_string() +
       " from its container.";
     the_message_log.add(message);
 
@@ -1048,11 +1173,11 @@ bool Thing::do_take_out(ThingRef thing, unsigned int& action_time)
 
   case ActionResult::FailureContainerOutOfReach:
   {
-    message = _YOU_TRY_ + " to remove " + thing->get_identifying_string() + " from " +
+    message = YOU_TRY + " to remove " + thing->get_identifying_string() + " from " +
       container->get_identifying_string() + ".";
     the_message_log.add(message);
 
-    message = _YOU_ + " cannot reach " + container->get_identifying_string() + ".";
+    message = YOU + " cannot reach " + container->get_identifying_string() + ".";
     the_message_log.add(message);
   }
   break;
@@ -1102,7 +1227,7 @@ bool Thing::do_throw(ThingRef thing, Direction& direction, unsigned int& action_
       {
         if (thing->move_into(new_location))
         {
-          message = _YOU_ + choose_verb(" throw ", " throws ") +
+          message = YOU + choose_verb(" throw ", " throws ") +
             thing->get_identifying_string();
           the_message_log.add(message);
 
@@ -1131,7 +1256,7 @@ bool Thing::do_throw(ThingRef thing, Direction& direction, unsigned int& action_
     }
     else
     {
-      message = _YOU_TRY_ + " to throw " + _YOURSELF_ +
+      message = YOU_TRY + " to throw " + YOURSELF +
         ", which seriously shouldn't happen.";
       MINOR_ERROR("Non-player Entity tried to throw self!?");
     }
@@ -1141,19 +1266,19 @@ bool Thing::do_throw(ThingRef thing, Direction& direction, unsigned int& action_
 
   case ActionResult::FailureItemEquipped:
   {
-    message = _YOU_ + " cannot throw something " + _YOU_ARE_ + "wearing.";
+    message = YOU + " cannot throw something " + YOU_ARE + "wearing.";
     the_message_log.add(message);
   }
   break;
 
   case ActionResult::FailureNotPresent:
   {
-    message = _YOU_TRY_ + " to throw " + thing->get_identifying_string() + ".";
+    message = YOU_TRY + " to throw " + thing->get_identifying_string() + ".";
     the_message_log.add(message);
 
     message = "But " + thing->get_identifying_string() +
       thing->choose_verb(" are", " is") +
-      " not actually in " + _YOUR_ +
+      " not actually in " + YOUR +
       " inventory!";
     the_message_log.add(message);
   }
@@ -1192,7 +1317,7 @@ bool Thing::do_use(ThingRef thing, unsigned int& action_time)
 
   ActionResult use_try = this->can_use(thing, action_time);
 
-  //message = _YOU_TRY_ + " to use " + thing->get_identifying_string() + ".";
+  //message = YOU_TRY + " to use " + thing->get_identifying_string() + ".";
   //the_message_log.add(message);
 
   switch (use_try)
@@ -1207,7 +1332,7 @@ bool Thing::do_use(ThingRef thing, unsigned int& action_time)
     }
     else
     {
-      message = _YOU_ + " can't use that!";
+      message = YOU + " can't use that!";
       the_message_log.add(message);
     }
     break;
@@ -1215,7 +1340,7 @@ bool Thing::do_use(ThingRef thing, unsigned int& action_time)
   case ActionResult::FailureSelfReference:
     if (TM.get_player() == pImpl->ref)
     {
-      message = _YOU_ARE_ + " already using " + _YOURSELF_ + " to the best of " + _YOUR_ + " ability.";
+      message = YOU_ARE + " already using " + YOURSELF + " to the best of " + YOUR + " ability.";
       the_message_log.add(message);
     }
     else
@@ -1260,7 +1385,7 @@ bool Thing::do_deequip(ThingRef thing, unsigned int& action_time)
   ActionResult deequip_try = this->can_deequip(thing, action_time);
   std::string thing_name = thing->get_identifying_string();
 
-  message = _YOU_TRY_ + " to take off " + thing_name;
+  message = YOU_TRY + " to take off " + thing_name;
   the_message_log.add(message);
 
   switch (deequip_try)
@@ -1276,8 +1401,8 @@ bool Thing::do_deequip(ThingRef thing, unsigned int& action_time)
       pImpl->do_deequip(thing);
 
       std::string wear_desc = get_bodypart_description(location.part, location.number);
-      message = _YOU_ARE_ + " no longer wearing " + thing_name +
-        " on " + _YOUR_ + " " + wear_desc + ".";
+      message = YOU_ARE + " no longer wearing " + thing_name +
+        " on " + YOUR + " " + wear_desc + ".";
       the_message_log.add(message);
       return true;
     }
@@ -1286,7 +1411,7 @@ bool Thing::do_deequip(ThingRef thing, unsigned int& action_time)
 
   case ActionResult::FailureItemNotEquipped:
   {
-    message = _YOU_ARE_ + " not wearing " + thing_name + ".";
+    message = YOU_ARE + " not wearing " + thing_name + ".";
     the_message_log.add(message);
     return true;
   }
@@ -1350,8 +1475,8 @@ bool Thing::do_equip(ThingRef thing, unsigned int& action_time)
       pImpl->do_equip(thing, location);
       std::string wear_desc = get_bodypart_description(location.part,
         location.number);
-      message = _YOU_ARE_ + " now wearing " + thing_name +
-        " on " + _YOUR_ + " " + wear_desc + ".";
+      message = YOU_ARE + " now wearing " + thing_name +
+        " on " + YOUR + " " + wear_desc + ".";
       the_message_log.add(message);
       return true;
     }
@@ -1365,7 +1490,7 @@ bool Thing::do_equip(ThingRef thing, unsigned int& action_time)
     }
     else
     {
-      message = _YOU_TRY_ + " to equip " + _YOURSELF_ +
+      message = YOU_TRY + " to equip " + YOURSELF +
         ", which seriously shouldn't happen.";
       MINOR_ERROR("Non-player Entity tried to equip self!?");
     }
@@ -1374,17 +1499,17 @@ bool Thing::do_equip(ThingRef thing, unsigned int& action_time)
 
   case ActionResult::FailureThingOutOfReach:
   {
-    message = _YOU_TRY_ + " to equip " + thing_name + ".";
+    message = YOU_TRY + " to equip " + thing_name + ".";
     the_message_log.add(message);
 
-    message = _YOU_ + " cannot reach " + thing_name + ".";
+    message = YOU + " cannot reach " + thing_name + ".";
     the_message_log.add(message);
   }
   break;
 
   case ActionResult::FailureItemNotEquippable:
   {
-    message = _YOU_TRY_ + " to equip " + thing_name + ".";
+    message = YOU_TRY + " to equip " + thing_name + ".";
     the_message_log.add(message);
 
     message = thing_name + " is not an equippable item.";
@@ -1431,8 +1556,8 @@ bool Thing::do_wield(ThingRef thing, unsigned int hand, unsigned int& action_tim
     // Now, check if the thing we're already wielding is THIS thing.
     if (currently_wielded == thing)
     {
-      message = _YOU_ARE_ + " already wielding " + thing_name + " with " +
-        _YOUR_ + " " + bodypart_desc + ".";
+      message = YOU_ARE + " already wielding " + thing_name + " with " +
+        YOUR + " " + bodypart_desc + ".";
       the_message_log.add(message);
       return true;
     }
@@ -1463,8 +1588,8 @@ bool Thing::do_wield(ThingRef thing, unsigned int hand, unsigned int& action_tim
     if (thing->perform_action_wielded_by(pImpl->ref))
     {
       pImpl->do_wield(thing, hand);
-      message = _YOU_ARE_ + " now wielding " + thing_name +
-        " with " + _YOUR_ + " " + bodypart_desc + ".";
+      message = YOU_ARE + " now wielding " + thing_name +
+        " with " + YOUR + " " + bodypart_desc + ".";
       the_message_log.add(message);
       return true;
     }
@@ -1473,8 +1598,8 @@ bool Thing::do_wield(ThingRef thing, unsigned int hand, unsigned int& action_tim
 
   case ActionResult::SuccessSelfReference:
   {
-    message = _YOU_ARE_ + " no longer wielding any weapons with " +
-      _YOUR_ + " " +
+    message = YOU_ARE + " no longer wielding any weapons with " +
+      YOUR + " " +
       this->get_bodypart_description(BodyPart::Hand, hand) + ".";
     the_message_log.add(message);
     return true;
@@ -1483,20 +1608,20 @@ bool Thing::do_wield(ThingRef thing, unsigned int hand, unsigned int& action_tim
 
   case ActionResult::FailureThingOutOfReach:
   {
-    message = _YOU_TRY_ + " to wield " + thing_name + ".";
+    message = YOU_TRY + " to wield " + thing_name + ".";
     the_message_log.add(message);
 
-    message = _YOU_ + " cannot reach " + thing_name + ".";
+    message = YOU + " cannot reach " + thing_name + ".";
     the_message_log.add(message);
   }
   break;
 
   case ActionResult::FailureNotEnoughHands:
   {
-    message = _YOU_TRY_ + " to wield " + thing_name;
+    message = YOU_TRY + " to wield " + thing_name;
     the_message_log.add(message);
 
-    message = _YOU_ + choose_verb(" don't", " doesn't") +
+    message = YOU + choose_verb(" don't", " doesn't") +
       " have enough free " +
       this->get_bodypart_plural(BodyPart::Hand) + ".";
     the_message_log.add(message);
@@ -2223,7 +2348,7 @@ std::string Thing::get_identifying_string(bool definite) const
 std::string const& Thing::choose_verb(std::string const& verb12,
                                       std::string const& verb3) const
 {
-  if (TM.get_player() == pImpl->ref)
+  if ((TM.get_player() == pImpl->ref) || (pImpl->quantity > 1))
   {
     return verb12;
   }
@@ -2580,9 +2705,9 @@ bool Thing::is_usable_by(ThingRef thing)
   return call_lua_function_bool("is_usable_by", { thing }, false);
 }
 
-bool Thing::is_drinkable_by(ThingRef thing)
+bool Thing::is_drinkable_by(ThingRef thing, ThingRef contents)
 {
-  return call_lua_function_bool("is_drinkable_by", { thing }, false);
+  return call_lua_function_bool("is_drinkable_by", { thing, contents }, false);
 }
 
 bool Thing::is_edible_by(ThingRef thing)
@@ -2654,10 +2779,10 @@ bool Thing::perform_action_dropped_by(ThingRef actor)
   return was_successful(result);
 }
 
-bool Thing::perform_action_eaten_by(ThingRef actor)
+ActionResult Thing::perform_action_eaten_by(ThingRef actor)
 {
   ActionResult result = call_lua_function("perform_action_eaten_by", { actor });
-  return was_successful(result);
+  return result;
 }
 
 bool Thing::perform_action_used_by(ThingRef actor)

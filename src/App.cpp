@@ -65,19 +65,19 @@ int main()
       // Create the default fonts.
       /// @todo Font names should be moved into ConfigSettings.
       default_font_.reset(NEW sf::Font());
-      if (default_font_->loadFromFile("resources/fonts/berylium rg.ttf") == false)
+      if (default_font_->loadFromFile("resources/fonts/" + Settings.font_name_default + ".ttf") == false)
       {
         throw std::exception("Could not load the default font (berylium rg.ttf)");
       }
 
       default_bold_font_.reset(NEW sf::Font());
-      if (default_bold_font_->loadFromFile("resources/fonts/berylium bd.ttf") == false)
+      if (default_bold_font_->loadFromFile("resources/fonts/" + Settings.font_name_bold + ".ttf") == false)
       {
         throw std::exception("Could not load the default bold font (berylium bd.ttf)");
       }
 
       default_mono_font_.reset(NEW sf::Font());
-      if (default_mono_font_->loadFromFile("resources/fonts/DejaVuSansMono.ttf") == false)
+      if (default_mono_font_->loadFromFile("resources/fonts/" + Settings.font_name_mono + ".ttf") == false)
       {
         throw std::exception("Could not load the default monospace font (DejaVuSansMono.ttf)");
       }

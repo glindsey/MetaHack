@@ -23,7 +23,8 @@ class ConfigSettings
     sf::Color window_focused_bg_color;      ///< Focused window bg color.
     std::string font_name_default;          ///< Default font name.
     std::string font_name_bold;             ///< Default bold font name.
-    std::string font_name_mono;             ///< Default mono font name.
+    std::string font_name_mono;             ///< Default monospaced font name.
+    std::string font_name_unicode;          ///< Default Unicode font name.
     sf::Color text_color;                   ///< Text color.
     sf::Color text_highlight_color;         ///< Text highlight color.
     sf::Color text_warning_color;           ///< Text color for warning messages

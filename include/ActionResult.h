@@ -5,9 +5,13 @@
 
 #include "Lua.h"
 
-// Enum representing possible results from an action.
+/// Enum representing possible results from an action.
+/// Note that a "Failure*" result doesn't necessarily mean a complete failure,
+/// just that things did not go as planned. There may still be side effects
+/// resulting from the attempt.
 enum class ActionResult
 {
+  FailureActorCantPerform     = -21, ///< Used when an actor is intrinsically incapable of performing an Action
   FailureContainerIsEmpty     = -20, ///< Used when trying to drink from a container
   FailureContainerCantBeSelf  = -19,
   FailureCircularReference    = -18, ///< e.g. Putting a container into itself
@@ -45,6 +49,7 @@ inline std::ostream& operator<<(std::ostream& os, ActionResult result)
 {
 	switch (result)
 	{
+  case ActionResult::FailureActorCantPerform: os << "FailureActorCantPerform"; break;
   case ActionResult::FailureContainerIsEmpty: os << "FailureContainerIsEmpty"; break;
 	case ActionResult::FailureContainerCantBeSelf: os << "FailureContainerCantBeSelf"; break;
 	case ActionResult::FailureCircularReference: os << "FailureCircularReference"; break;
@@ -79,6 +84,7 @@ inline std::ostream& operator<<(std::ostream& os, ActionResult result)
 inline void ActionResult_add_to_lua(Lua* lua_instance)
 {
   lua_instance->add_enum("ActionResult",
+    "FailureActorCantPerform",      ActionResult::FailureActorCantPerform,
     "FailureContainerIsEmpty",      ActionResult::FailureContainerIsEmpty,
     "FailureContainerCantBeSelf",   ActionResult::FailureContainerCantBeSelf,
     "FailureCircularReference",     ActionResult::FailureCircularReference,

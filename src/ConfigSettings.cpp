@@ -12,6 +12,7 @@ ConfigSettings::ConfigSettings()
   font_name_default           = "Dustismo_Roman";
   font_name_bold              = "Dustismo_Roman_Bold";
   font_name_mono              = "DejaVuSansMono";
+  font_name_unicode           = "FreeMono";
   text_color                  = sf::Color(224, 224, 160, 255);
   text_warning_color          = sf::Color(255, 255,   0, 255);
   text_danger_color           = sf::Color(255,   0,   0, 255);
