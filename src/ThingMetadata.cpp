@@ -359,7 +359,7 @@ ActionResult ThingMetadata::call_lua_function(std::string function_name,
       lua_remove(the_lua_state, -2);
 
       // Push the caller's ID onto the stack. (+1)
-      lua_pushinteger(the_lua_state, caller.get_id().full_id);
+      lua_pushinteger(the_lua_state, caller);
 
       // Push the arguments onto the stack. (+N)
       for (auto& arg : args)
@@ -369,7 +369,7 @@ ActionResult ThingMetadata::call_lua_function(std::string function_name,
 
       // Call the function with N+1 arguments and 1 result. (-(N+2), +1) = -N
       int result = lua_pcall(the_lua_state, args.size() + 1, 1, 0);
-      if (result == LUA_OK)
+      if (result == 0)
       {
         // Get the return value.
         return_value = static_cast<ActionResult>(the_lua_instance.get_enum_value(-1));
@@ -456,7 +456,7 @@ bool ThingMetadata::call_lua_function_bool(std::string function_name,
       lua_remove(the_lua_state, -2);
 
       // Push the caller's ID onto the stack. (+1)
-      lua_pushinteger(the_lua_state, caller.get_id().full_id);
+      lua_pushinteger(the_lua_state, caller);
 
       // Push the arguments onto the stack. (+N)
       for (auto& arg : args)
@@ -466,7 +466,7 @@ bool ThingMetadata::call_lua_function_bool(std::string function_name,
 
       // Call the function with N+1 arguments and 1 result. (-(N+2), +1) = -N
       int result = lua_pcall(the_lua_state, args.size() + 1, 1, 0);
-      if (result == LUA_OK)
+      if (result == 0)
       {
         // Check for nil return.
         if (lua_isnoneornil(the_lua_state, -1))
@@ -555,7 +555,7 @@ sf::Vector2u ThingMetadata::call_lua_function_v2u(std::string function_name,
       lua_remove(the_lua_state, -2);
 
       // Push the caller's ID onto the stack. (+1)
-      lua_pushinteger(the_lua_state, caller.get_id().full_id);
+      lua_pushinteger(the_lua_state, caller);
 
       // Push the arguments onto the stack. (+N)
       for (auto& arg : args)
@@ -565,7 +565,7 @@ sf::Vector2u ThingMetadata::call_lua_function_v2u(std::string function_name,
 
       // Call the function with N+1 arguments and 2 results. (-(N+2), +2) = -N
       int result = lua_pcall(the_lua_state, args.size() + 1, 2, 0);
-      if (result == LUA_OK)
+      if (result == 0)
       {
         // Check for nil return.
         if (lua_isnoneornil(the_lua_state, -1))

@@ -881,7 +881,7 @@ int Map::LUA_get_floor(lua_State* L)
   auto& map_tile = MF.get(map_id).get_tile(coords);
   ThingRef floor = map_tile.get_floor();
 
-  lua_pushinteger(L, floor.get_id().full_id);
+  lua_pushinteger(L, floor);
 
   return 1;
 }

@@ -54,18 +54,18 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Personal\projects\MetaHack\include;C:\Personal\projects\MetaHack\src\impl;C:\Personal\libraries\SFML-feature-VS2015\include;C:\Personal\libraries\lua-5.3.1\src;C:\Personal\libraries\boost_1_59_0;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
-    <LibraryPath>C:\Personal\libraries\SFML-feature-VS2015\lib;C:\Personal\libraries\lua-5.3.1\obj;C:\Personal\libraries\boost_1_59_0\stage\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Personal\projects\MetaHack\include;C:\Personal\projects\MetaHack\src\impl;C:\Personal\libraries\SFML-feature-VS2015\include;C:\Personal\libraries\luajit-2.0\src;C:\Personal\libraries\boost_1_59_0;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <LibraryPath>C:\Personal\libraries\SFML-feature-VS2015\lib;C:\Personal\libraries\luajit-2.0;C:\Personal\libraries\boost_1_59_0\stage\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Personal\projects\MetaHack\include;C:\Personal\projects\MetaHack\src\impl;C:\Personal\libraries\SFML-feature-VS2015\include;C:\Personal\libraries\lua-5.3.1\src;C:\Personal\libraries\boost_1_59_0;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
-    <LibraryPath>C:\Personal\libraries\SFML-feature-VS2015\lib;C:\Personal\libraries\lua-5.3.1\obj;C:\Personal\libraries\boost_1_59_0\stage\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Personal\projects\MetaHack\include;C:\Personal\projects\MetaHack\src\impl;C:\Personal\libraries\SFML-feature-VS2015\include;C:\Personal\libraries\luajit-2.0\src;C:\Personal\libraries\boost_1_59_0;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <LibraryPath>C:\Personal\libraries\SFML-feature-VS2015\lib;C:\Personal\libraries\luajit-2.0;C:\Personal\libraries\boost_1_59_0\stage\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\Personal\projects\MetaHack\include;C:\Personal\projects\MetaHack\src\impl;C:\Personal\libraries\SFML-feature-VS2015\include;C:\Personal\libraries\lua-5.3.1\src;C:\Personal\libraries\boost_1_59_0;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
-    <LibraryPath>C:\Personal\libraries\SFML-feature-VS2015\lib;C:\Personal\libraries\lua-5.3.1\obj;C:\Personal\libraries\boost_1_59_0\stage\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Personal\projects\MetaHack\include;C:\Personal\projects\MetaHack\src\impl;C:\Personal\libraries\SFML-feature-VS2015\include;C:\Personal\libraries\luajit-2.0\src;C:\Personal\libraries\boost_1_59_0;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <LibraryPath>C:\Personal\libraries\SFML-feature-VS2015\lib;C:\Personal\libraries\luajit-2.0;C:\Personal\libraries\boost_1_59_0\stage\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -81,7 +81,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>sfml-graphics-d.lib;sfml-system-d.lib;sfml-window-d.lib;lua5.3.1.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>sfml-graphics-d.lib;sfml-system-d.lib;sfml-window-d.lib;lua51-d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">
@@ -119,7 +119,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>sfml-graphics.lib;sfml-system.lib;sfml-window.lib;lua5.3.1.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>sfml-graphics.lib;sfml-system.lib;sfml-window.lib;lua51.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

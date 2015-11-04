@@ -3323,7 +3323,7 @@ int Thing::LUA_create(lua_State* L)
 
   if (success)
   {
-    lua_pushinteger(L, new_thing.get_id().full_id);
+    lua_pushinteger(L, new_thing);
   }
   else
   {
@@ -3344,7 +3344,7 @@ int Thing::LUA_get_player(lua_State* L)
   }
 
   ThingRef player = TM.get_player();
-  lua_pushinteger(L, player.get_id().full_id);
+  lua_pushinteger(L, player);
 
   return 1;
 }
