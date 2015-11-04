@@ -254,6 +254,7 @@
     <None Include="resources\things\Human.lua" />
     <None Include="resources\things\LightSource.lua" />
     <None Include="resources\things\Rock.lua" />
+    <None Include="resources\things\Sconce.lua" />
     <None Include="resources\things\Thing.lua" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -35,7 +35,7 @@ class ConfigSettings
     sf::Color cursor_bg_color;              ///< Cursor background color.
     float window_border_width;              ///< Window border width.
     float tile_highlight_border_width;      ///< Highlight border width.
-    unsigned int inventory_area_width;      ///< Width of inventory areas.
+    unsigned int inventory_area_width;      ///< Width of inventory area.
     unsigned int status_area_height;        ///< Height of the status area.
     unsigned int map_tile_size;             ///< Size of a map tile, in pixels.
 

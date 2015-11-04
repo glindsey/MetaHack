@@ -387,5 +387,8 @@
     <None Include="resources\things\LightSource.lua">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="resources\things\Sconce.lua">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

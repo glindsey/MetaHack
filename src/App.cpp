@@ -33,7 +33,7 @@ sf::IntRect calc_message_log_dimensions(sf::RenderWindow& window)
 {
   sf::IntRect messageLogDims;
   messageLogDims.width = window.getSize().x - 6;
-  messageLogDims.height = static_cast<int>(window.getSize().y * 0.2f) - 6;
+  messageLogDims.height = static_cast<int>(window.getSize().y * 0.25f) - 6;
   messageLogDims.left = 3;
   messageLogDims.top = 3;
   return messageLogDims;
