@@ -7,6 +7,8 @@
 
 #include "common_types.h"
 
+#include "ErrorHandler.h"
+
 // Namespace aliases
 namespace pt = boost::property_tree;
 
@@ -19,7 +21,7 @@ public:
   virtual ~PropertyDictionary();
   
   /// Populate this dictionary from a Boost property tree.
-  void populate_from(pt::ptree const& tree);
+  void populate_from(pt::ptree const& tree, std::string prefix = "");
 
   /// Check if a particular key exists.
   bool contains(std::string key) const;
@@ -34,6 +36,7 @@ public:
     // Bail if the setting doesn't exist.
     if (m_dictionary.count(key) == 0)
     {
+      MINOR_ERROR("Attempted to retrieve nonexistent key \"%s\"", key.c_str());
       return T();
     }
 

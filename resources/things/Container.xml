@@ -4,17 +4,11 @@
   <description>The generic Container class.</description>
   <parent>Thing</parent>
   <intrinsics>
-    <flags>
-      <openable>true</openable>
-    </flags>
-	  <values>
-	    <inventory_size>-1</inventory_size>
-	  </values>
+    <openable>true</openable>
+    <inventory_size>-1</inventory_size>
   </intrinsics>
-  <properties>
-    <values>
-      <tile_sheet_x>4</tile_sheet_x>
-      <tile_sheet_y>3</tile_sheet_y>
-    </values>
-  </properties>
+  <defaults>
+    <tile_sheet_x>4</tile_sheet_x>
+    <tile_sheet_y>3</tile_sheet_y>
+  </defaults>
 </thing>

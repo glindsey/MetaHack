@@ -4,15 +4,9 @@
   <parent>Entity</parent>
   <description>The generic Blob class.</description>
   <intrinsics>
-    <flags>
-    </flags>
-	  <values>
-	  </values>
   </intrinsics>
-  <properties>
-    <values>
-      <tile_sheet_x>0</tile_sheet_x>
-      <tile_sheet_y>0</tile_sheet_y>
-    </values>
-  </properties>
+  <defaults>
+    <tile_sheet_x>0</tile_sheet_x>
+    <tile_sheet_y>0</tile_sheet_y>
+  </defaults>
 </thing>

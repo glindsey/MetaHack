@@ -3,25 +3,11 @@
   <name>[Mu]</name>
   <description>The class that represents "Nothingness".</description>
   <intrinsics>
-    <flags>
-      <lockable>false</lockable>
-      <movable>false</movable>
-      <opaque>false</opaque>
-      <openable>false</openable>
-    
-      <test>
-        <test2>
-          <test3a>false</test3a>
-          <test3b>true</test3b>
-          <test3c>false</test3c>
-        </test2>
-      </test>
-    </flags>
-	  <values>
-	  </values>
-    <strings>      
-    </strings>
+    <lockable>false</lockable>
+    <movable>false</movable>
+    <opaque>false</opaque>
+    <openable>false</openable>
   </intrinsics>
-  <properties>
-  </properties>
+  <defaults>
+  </defaults>
 </thing>

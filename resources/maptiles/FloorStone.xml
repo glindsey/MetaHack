@@ -1,16 +1,12 @@
 <maptile>
-	<name>stone floor</name>
-	<description>A stone floor.</description>
-	<properties>
-		<flags>
-			<passable>true</passable>
-			<opaque>false</opaque>
-		</flags>
-		<values>
-			<tileX>0</tileX>
-			<tileY>1</tileY>
-		</values>
-		<strings>
-		</strings>
-	</properties>
+  <name>stone floor</name>
+  <description>A stone floor.</description>
+  <intrinsics>
+    <passable>true</passable>
+    <opaque>false</opaque>
+    <tileX>0</tileX>
+    <tileY>1</tileY>
+  </intrinsics> 
+  <defaults>
+  </defaults>
 </maptile>

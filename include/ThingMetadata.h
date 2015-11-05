@@ -23,7 +23,7 @@ public:
   static ThingMetadata& get(std::string type);
 
   template<typename T>
-  T get_intrinsic(std::string key) const
+  T get_intrinsic(std::string key, T default_value = T()) const
   {
     PropertyDictionary const& intrinsics = get_intrinsics();
     if (intrinsics.contains(key))
@@ -40,13 +40,13 @@ public:
       }
       else
       {
-        return T();
+        return default_value;
       }
     }
   }
 
   template<typename T>
-  T get_default(std::string key) const
+  T get_default(std::string key, T default_value = T()) const
   {
     PropertyDictionary const& defaults = get_defaults();
     if (defaults.contains(key))
@@ -63,7 +63,7 @@ public:
       }
       else
       {
-        return T();
+        return default_value;
       }
     }
   }

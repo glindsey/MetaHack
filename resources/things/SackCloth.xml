@@ -4,20 +4,12 @@
   <parent>Container</parent>  
   <description>A sack made out of cloth.</description>
   <intrinsics>
-    <flags>
-      <openable>false</openable>
-    </flags>
-	  <values>
-	    <inventory_size>10</inventory_size>
-	  </values>
+    <openable>false</openable>
+    <inventory_size>10</inventory_size>
   </intrinsics>
-  <properties>
-	<flags>
+  <defaults>
 	  <open>true</open>
-	</flags>
-    <values>
-      <tile_sheet_x>2</tile_sheet_x>
-      <tile_sheet_y>8</tile_sheet_y>
-    </values>
+    <tile_sheet_x>2</tile_sheet_x>
+    <tile_sheet_y>8</tile_sheet_y>
   </properties>
 </thing>

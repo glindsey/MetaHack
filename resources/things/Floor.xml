@@ -2,18 +2,14 @@
 <thing>
   <name>floor</name>
   <parent>Thing</parent>
-  <description>A dirt floor.</description>
+  <description>A floor.</description>
   <intrinsics>
-    <flags>
-      <movable>false</movable>
-      <opaque>false</opaque>
-    </flags>
-	  <values>
-      <inventory_size>-1</inventory_size>
-    </values>
+    <movable>false</movable>
+    <opaque>false</opaque>
+    <inventory_size>-1</inventory_size>
   </intrinsics>
-  <properties>
+  <defaults>
     <values>      
     </values>
-  </properties>
+  </defaults>
 </thing>

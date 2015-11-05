@@ -4,16 +4,10 @@
   <parent>Thing</parent>
   <description>A small rock. That's all.</description>
   <intrinsics>
-    <flags>
-    </flags>
-	  <values>
-	    <physical_mass>1</physical_mass>
-	  </values>
+    <physical_mass>1</physical_mass>
   </intrinsics>
-  <properties>
-    <values>
-      <tile_sheet_x>0</tile_sheet_x>
-      <tile_sheet_y>8</tile_sheet_y>
-    </values>
-  </properties>
+  <defaults>
+    <tile_sheet_x>0</tile_sheet_x>
+    <tile_sheet_y>8</tile_sheet_y>
+  </defaults>
 </thing>

@@ -1,16 +1,12 @@
 <maptile>
-	<name>stone wall</name>
-	<description>A stone wall.</description>
-	<properties>
-		<flags>
-			<passable>false</passable>
-			<opaque>true</opaque>
-		</flags>
-		<values>
-			<tileX>0</tileX>
-			<tileY>2</tileY>
-		</values>
-		<strings>
-		</strings>
-	</properties>
+  <name>stone wall</name>
+  <description>A stone wall.</description>
+  <intrinsics>
+    <passable>false</passable>
+    <opaque>true</opaque>
+    <tileX>0</tileX>
+    <tileY>2</tileY>
+  </intrinsics>
+  <defaults>
+  </defaults>
 </maptile>

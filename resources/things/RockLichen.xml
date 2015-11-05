@@ -4,15 +4,9 @@
   <parent>Blob</parent>
   <description>A lichen that normally grows on a rock.</description>
   <intrinsics>
-    <flags>
-    </flags>
-	  <values>
-	  </values>
   </intrinsics>
-  <properties>
-    <values>
-      <tile_sheet_x>4</tile_sheet_x>
-      <tile_sheet_y>5</tile_sheet_y>
-    </values>
-  </properties>
+  <defaults>
+    <tile_sheet_x>4</tile_sheet_x>
+    <tile_sheet_y>5</tile_sheet_y>
+  </defaults>
 </thing>

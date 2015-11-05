@@ -1672,21 +1672,21 @@ unsigned int Thing::get_bodypart_number(BodyPart part) const
 {
   switch (part)
   {
-  case BodyPart::Body:  return get_intrinsic<int>("bodypart_body_count");
-  case BodyPart::Skin:  return get_intrinsic<int>("bodypart_skin_count");
-  case BodyPart::Head:  return get_intrinsic<int>("bodypart_head_count");
-  case BodyPart::Ear:   return get_intrinsic<int>("bodypart_ear_count");
-  case BodyPart::Eye:   return get_intrinsic<int>("bodypart_eye_count");
-  case BodyPart::Nose:  return get_intrinsic<int>("bodypart_nose_count");
-  case BodyPart::Mouth: return get_intrinsic<int>("bodypart_mouth_count");
-  case BodyPart::Neck:  return get_intrinsic<int>("bodypart_neck_count");
-  case BodyPart::Chest: return get_intrinsic<int>("bodypart_chest_count");
-  case BodyPart::Arm:   return get_intrinsic<int>("bodypart_arm_count");
-  case BodyPart::Hand:  return get_intrinsic<int>("bodypart_hand_count");
-  case BodyPart::Leg:   return get_intrinsic<int>("bodypart_leg_count");
-  case BodyPart::Foot:  return get_intrinsic<int>("bodypart_foot_count");
-  case BodyPart::Wing:  return get_intrinsic<int>("bodypart_wing_count");
-  case BodyPart::Tail:  return get_intrinsic<int>("bodypart_tail_count");
+  case BodyPart::Body:  return get_intrinsic<int>("bodypart.body.count");
+  case BodyPart::Skin:  return get_intrinsic<int>("bodypart.skin.count");
+  case BodyPart::Head:  return get_intrinsic<int>("bodypart.head.count");
+  case BodyPart::Ear:   return get_intrinsic<int>("bodypart.ear.count");
+  case BodyPart::Eye:   return get_intrinsic<int>("bodypart.eye.count");
+  case BodyPart::Nose:  return get_intrinsic<int>("bodypart.nose.count");
+  case BodyPart::Mouth: return get_intrinsic<int>("bodypart.mouth.count");
+  case BodyPart::Neck:  return get_intrinsic<int>("bodypart.neck.count");
+  case BodyPart::Chest: return get_intrinsic<int>("bodypart.chest.count");
+  case BodyPart::Arm:   return get_intrinsic<int>("bodypart.arm.count");
+  case BodyPart::Hand:  return get_intrinsic<int>("bodypart.hand.count");
+  case BodyPart::Leg:   return get_intrinsic<int>("bodypart.leg.count");
+  case BodyPart::Foot:  return get_intrinsic<int>("bodypart.foot.count");
+  case BodyPart::Wing:  return get_intrinsic<int>("bodypart.wing.count");
+  case BodyPart::Tail:  return get_intrinsic<int>("bodypart.tail.count");
   default: return 0;
   }
 }
@@ -1696,22 +1696,22 @@ std::string Thing::get_bodypart_name(BodyPart part) const
 {
   switch (part)
   {
-  case BodyPart::Body:  return get_intrinsic<std::string>("bodypart_body_name");
-  case BodyPart::Skin:  return get_intrinsic<std::string>("bodypart_skin_name");
-  case BodyPart::Head:  return get_intrinsic<std::string>("bodypart_head_name");
-  case BodyPart::Ear:   return get_intrinsic<std::string>("bodypart_ear_name");
-  case BodyPart::Eye:   return get_intrinsic<std::string>("bodypart_eye_name");
-  case BodyPart::Nose:  return get_intrinsic<std::string>("bodypart_nose_name");
-  case BodyPart::Mouth: return get_intrinsic<std::string>("bodypart_mouth_name");
-  case BodyPart::Neck:  return get_intrinsic<std::string>("bodypart_neck_name");
-  case BodyPart::Chest: return get_intrinsic<std::string>("bodypart_chest_name");
-  case BodyPart::Arm:   return get_intrinsic<std::string>("bodypart_arm_name");
-  case BodyPart::Hand:  return get_intrinsic<std::string>("bodypart_hand_name");
-  case BodyPart::Leg:   return get_intrinsic<std::string>("bodypart_leg_name");
-  case BodyPart::Foot:  return get_intrinsic<std::string>("bodypart_foot_name");
-  case BodyPart::Wing:  return get_intrinsic<std::string>("bodypart_wing_name");
-  case BodyPart::Tail:  return get_intrinsic<std::string>("bodypart_tail_name");
-  default: return "null";
+  case BodyPart::Body:  return get_intrinsic<std::string>("bodypart.body.name");
+  case BodyPart::Skin:  return get_intrinsic<std::string>("bodypart.skin.name");
+  case BodyPart::Head:  return get_intrinsic<std::string>("bodypart.head.name");
+  case BodyPart::Ear:   return get_intrinsic<std::string>("bodypart.ear.name");
+  case BodyPart::Eye:   return get_intrinsic<std::string>("bodypart.eye.name");
+  case BodyPart::Nose:  return get_intrinsic<std::string>("bodypart.nose.name");
+  case BodyPart::Mouth: return get_intrinsic<std::string>("bodypart.mouth.name");
+  case BodyPart::Neck:  return get_intrinsic<std::string>("bodypart.neck.name");
+  case BodyPart::Chest: return get_intrinsic<std::string>("bodypart.chest.name");
+  case BodyPart::Arm:   return get_intrinsic<std::string>("bodypart.arm.name");
+  case BodyPart::Hand:  return get_intrinsic<std::string>("bodypart.hand.name");
+  case BodyPart::Leg:   return get_intrinsic<std::string>("bodypart.leg.name");
+  case BodyPart::Foot:  return get_intrinsic<std::string>("bodypart.foot.name");
+  case BodyPart::Wing:  return get_intrinsic<std::string>("bodypart.wing.name");
+  case BodyPart::Tail:  return get_intrinsic<std::string>("bodypart.tail.name");
+  default: return "squeedlyspooch (unknown BodyPart)";
   }
 }
 
@@ -1720,22 +1720,22 @@ std::string Thing::get_bodypart_plural(BodyPart part) const
 {
   switch (part)
   {
-  case BodyPart::Body:  return get_intrinsic<std::string>("bodypart_body_plural");
-  case BodyPart::Skin:  return get_intrinsic<std::string>("bodypart_skin_plural");
-  case BodyPart::Head:  return get_intrinsic<std::string>("bodypart_head_plural");
-  case BodyPart::Ear:   return get_intrinsic<std::string>("bodypart_ear_plural");
-  case BodyPart::Eye:   return get_intrinsic<std::string>("bodypart_eye_plural");
-  case BodyPart::Nose:  return get_intrinsic<std::string>("bodypart_nose_plural");
-  case BodyPart::Mouth: return get_intrinsic<std::string>("bodypart_mouth_plural");
-  case BodyPart::Neck:  return get_intrinsic<std::string>("bodypart_neck_plural");
-  case BodyPart::Chest: return get_intrinsic<std::string>("bodypart_chest_plural");
-  case BodyPart::Arm:   return get_intrinsic<std::string>("bodypart_arm_plural");
-  case BodyPart::Hand:  return get_intrinsic<std::string>("bodypart_hand_plural");
-  case BodyPart::Leg:   return get_intrinsic<std::string>("bodypart_leg_plural");
-  case BodyPart::Foot:  return get_intrinsic<std::string>("bodypart_foot_plural");
-  case BodyPart::Wing:  return get_intrinsic<std::string>("bodypart_wing_plural");
-  case BodyPart::Tail:  return get_intrinsic<std::string>("bodypart_tail_plural");
-  default: return "null";
+  case BodyPart::Body:  return get_intrinsic<std::string>("bodypart.body.plural", get_bodypart_name(BodyPart::Body) + "s");
+  case BodyPart::Skin:  return get_intrinsic<std::string>("bodypart.skin.plural", get_bodypart_name(BodyPart::Skin) + "s");
+  case BodyPart::Head:  return get_intrinsic<std::string>("bodypart.head.plural", get_bodypart_name(BodyPart::Head) + "s");
+  case BodyPart::Ear:   return get_intrinsic<std::string>("bodypart.ear.plural", get_bodypart_name(BodyPart::Ear) + "s");
+  case BodyPart::Eye:   return get_intrinsic<std::string>("bodypart.eye.plural", get_bodypart_name(BodyPart::Eye) + "s");
+  case BodyPart::Nose:  return get_intrinsic<std::string>("bodypart.nose.plural", get_bodypart_name(BodyPart::Nose) + "s");
+  case BodyPart::Mouth: return get_intrinsic<std::string>("bodypart.mouth.plural", get_bodypart_name(BodyPart::Mouth) + "s");
+  case BodyPart::Neck:  return get_intrinsic<std::string>("bodypart.neck.plural", get_bodypart_name(BodyPart::Neck) + "s");
+  case BodyPart::Chest: return get_intrinsic<std::string>("bodypart.chest.plural", get_bodypart_name(BodyPart::Chest) + "s");
+  case BodyPart::Arm:   return get_intrinsic<std::string>("bodypart.arm.plural", get_bodypart_name(BodyPart::Arm) + "s");
+  case BodyPart::Hand:  return get_intrinsic<std::string>("bodypart.hand.plural", get_bodypart_name(BodyPart::Hand) + "s");
+  case BodyPart::Leg:   return get_intrinsic<std::string>("bodypart.leg.plural", get_bodypart_name(BodyPart::Leg) + "s");
+  case BodyPart::Foot:  return get_intrinsic<std::string>("bodypart.foot.plural", get_bodypart_name(BodyPart::Foot) + "s");
+  case BodyPart::Wing:  return get_intrinsic<std::string>("bodypart.wing.plural", get_bodypart_name(BodyPart::Wing) + "s");
+  case BodyPart::Tail:  return get_intrinsic<std::string>("bodypart.tail.plural", get_bodypart_name(BodyPart::Tail) + "s");
+  default: return "squeedlyspooches (unknown BodyParts)";
   }
 }
 

@@ -4,19 +4,13 @@
   <description>An unremarkable wooden chest.</description>
   <parent>Container</parent>
   <intrinsics>
-    <flags>
-      <lockable>true</lockable>
-      <flammable>true</flammable>
-    </flags>
-	  <values>
-	    <inventory_size>20</inventory_size>
-	    <physical_mass>0</physical_mass>
-	  </values>
+    <lockable>true</lockable>
+    <flammable>true</flammable>
+    <inventory_size>20</inventory_size>
+    <physical_mass>10</physical_mass>
   </intrinsics>
-  <properties>
-    <values>
-      <tile_sheet_x>5</tile_sheet_x>
-      <tile_sheet_y>9</tile_sheet_y>
-    </values>
-  </properties>
+  <defaults>
+    <tile_sheet_x>5</tile_sheet_x>
+    <tile_sheet_y>9</tile_sheet_y>
+  </defaults>
 </thing>

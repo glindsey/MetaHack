@@ -43,7 +43,7 @@ Some commands do request a "target" item after the command has been entered, suc
 The following commands are currently in place, although some (most?) are not yet fully implemented. ~~Strikeout~~ indicates commands that may be planned but are currently not recognized at all.
 
 * `CTRL-A` - Attack a direction. Although attacking is usually automatic for hostile creatures, this forces an attack on something non-hostile, or something that isn't a creature (like a door).
-* ~~`CTRL-B` - nothing yet~~
+* ~~`CTRL-B` - Nothing yet; maybe beg for your life? That would be interesting.~~
 * `CTRL-C` - Close item(s). Also used to close doors/grates/etc.
 * `CTRL-D` - Drop item(s).
 * `CTRL-E` - Eat item(s).
@@ -53,9 +53,9 @@ The following commands are currently in place, although some (most?) are not yet
 * `CTRL-I` - Inscribe (write) on an item.
 * ~~`CTRL-J` - Jump in a direction.~~
 * ~~`CTRL-K` - Kick in a direction.~~
-* ~~`CTRL-L` - nothing yet~~
+* ~~`CTRL-L` - Nothing yet; maybe look around (similar to "search" in Nethack).~~
 * `CTRL-M` - Mix two liquids/powders together.
-* ~~`CTRL-N` - nothing yet~~
+* ~~`CTRL-N` - Nothing yet.~~
 * `CTRL-O` - Open item(s). Also used to open doors/grates/etc.
 * `CTRL-P` - Put item(s) in another item. This is also used to load ammunition into a fireable weapon.
 * `CTRL-Q` - Quaff (drink) from item(s).
@@ -63,14 +63,14 @@ The following commands are currently in place, although some (most?) are not yet
 * `CTRL-S` - Shoot a fireable item. This will normally shoot the item you have equipped, if it is a firearm. If you select an item first, it will attempt to wield it and then shoot it.
 * `CTRL-T` - Take item(s) out of a container.
 * `CTRL-U` - Use an item. For items with actions that don't really fit into other command verbs.
-* ~~`CTRL-V`~~ - nothing yet
+* ~~`CTRL-V` - Nothing yet.~~
 * `CTRL-W` - Wield an item.
-* ~~`CTRL-X`~~ - nothing yet
-* ~~`CTRL-Y`~~ - nothing yet
-* ~~`CTRL-Z`~~ - nothing yet
+* ~~`CTRL-X` - Nothing yet.~~ 
+* ~~`CTRL-Y` - Nothing yet.~~ 
+* ~~`CTRL-Z`- Nothing yet.~~ 
 * ~~`CTRL-ALT-S` - Save the game.~~
 * ~~`CTRL-ALT-T` - Talk in a direction. Possibly talk to an item at some point, I dunno.~~
-* `CTRL-ALT-Q` - Quit the game, immediately.
+* `CTRL-ALT-Q` - Quit the game, immediately, abandoning your character. Will eventually have an "are you sure" prompt.
 
 This list is definitely not finished and is subject to change.
 

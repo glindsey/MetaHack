@@ -4,21 +4,14 @@
   <parent>Thing</parent>
   <description>The generic Entity class.</description>
   <intrinsics>
-    <flags>
-      <opaque>false</opaque>
-      <living>true</living>
-    </flags>
-    <values>
-      <inventory_size>-1</inventory_size>
-    </values>
+    <opaque>false</opaque>
+    <living>true</living>
+    <inventory_size>-1</inventory_size>
   </intrinsics>
-  <properties>
-    <values>
-      <level>1</level>
-      <xp>0</xp>
-
-      <tile_sheet_x>0</tile_sheet_x>
-      <tile_sheet_y>4</tile_sheet_y>
-    </values>
-  </properties>
+  <defaults>
+    <level>1</level>
+    <xp>0</xp>
+    <tile_sheet_x>0</tile_sheet_x>
+    <tile_sheet_y>4</tile_sheet_y>
+  </defaults>
 </thing>

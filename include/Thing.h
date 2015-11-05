@@ -171,13 +171,13 @@ class Thing :
     bool do_use(ThingRef thing, unsigned int& action_time);
 
     template<typename T>
-    T get_intrinsic(std::string key) const
+    T get_intrinsic(std::string key, T default_value = T()) const
     {
-      return pImpl->metadata.get_intrinsic<T>(key);
+      return pImpl->metadata.get_intrinsic<T>(key, default_value);
     }
 
     template<typename T>
-    T get_property(std::string key)
+    T get_property(std::string key, T default_value = T())
     {      
       PropertyDictionary& properties = pImpl->properties;
 
@@ -187,7 +187,7 @@ class Thing :
       }
       else
       {
-        T value = pImpl->metadata.get_default<T>(key);
+        T value = pImpl->metadata.get_default<T>(key, default_value);
         properties.set<T>(key, value);
         return value;
       }

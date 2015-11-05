@@ -4,20 +4,14 @@
   <parent>LightSource</parent>
   <description>A light sconce.</description>
   <intrinsics>
-    <flags>
-    </flags>
-    <values>
-    </values>
   </intrinsics>
-  <properties>
-    <values>
-      <light_color_red>160</light_color_red>
-      <light_color_green>128</light_color_green>
-      <light_color_blue>112</light_color_blue>
-      <light_level>256</light_level>
-      <light_strength>48</light_strength>
-      <tile_sheet_x>0</tile_sheet_x>
-      <tile_sheet_y>7</tile_sheet_y>
-    </values>
-  </properties>
+  <defaults>
+    <light_color_red>160</light_color_red>
+    <light_color_green>128</light_color_green>
+    <light_color_blue>112</light_color_blue>
+    <light_level>256</light_level>
+    <light_strength>48</light_strength>
+    <tile_sheet_x>0</tile_sheet_x>
+    <tile_sheet_y>7</tile_sheet_y>
+  </defaults>
 </thing>

@@ -1,16 +1,12 @@
 <maptile>
-	<name>Unknown</name>
-	<description>Unexplored space.</description>
-	<properties>
-		<flags>
-			<passable>false</passable>
-			<opaque>true</opaque>
-		</flags>
-		<values>
-			<tileX>4</tileX>
-			<tileY>0</tileY>
-		</values>
-		<strings>
-		</strings>
-	</properties>
+  <name>Unknown</name>
+  <description>Unexplored space.</description>
+  <intrinsics>
+    <passable>false</passable>
+    <opaque>true</opaque>
+    <tileX>4</tileX>
+    <tileY>0</tileY>
+  </intrinsics>
+  <defaults>
+  </defaults>
 </maptile>

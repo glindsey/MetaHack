@@ -4,6 +4,7 @@
 #include <boost/property_tree/xml_parser.hpp>
 #include <memory>
 
+#include "common_functions.h"
 #include "common_types.h"
 
 #include "App.h"
@@ -48,6 +49,7 @@ Metadata::Metadata(std::string category, std::string type)
   else
   {
     m_parent = data.get_child("parent").get_value<std::string>("");
+    strip_quotes(m_parent);
   }
 
   // Get the pretty name.
@@ -58,6 +60,8 @@ Metadata::Metadata(std::string category, std::string type)
   else
   {
     m_display_name = data.get_child("name").get_value<std::string>("[" + type + "]");
+    boost::trim(m_display_name);
+    strip_quotes(m_display_name);
   }
 
   // Get thing's pretty plural, if present. Otherwise add "s" to the normal pretty name.
@@ -68,6 +72,8 @@ Metadata::Metadata(std::string category, std::string type)
   else
   {
     m_display_plural = data.get_child("plural").get_value<std::string>(m_display_name + "s");
+    boost::trim(m_display_plural);
+    strip_quotes(m_display_plural);
   }
 
   // Get thing's description.
@@ -78,6 +84,8 @@ Metadata::Metadata(std::string category, std::string type)
   else
   {
     m_description = data.get_child("description").get_value<std::string>("(No description found.)");
+    boost::trim(m_description);
+    strip_quotes(m_description);
   }
 
   // Look for intrinsics, defaults sections. Both must be present in any metadata file.
@@ -187,15 +195,16 @@ void Metadata::trace_tree(pt::ptree const* pTree, std::string prefix)
   pt::ptree::const_iterator end = pTree->end();
   for (pt::ptree::const_iterator it = pTree->begin(); it != end; ++it)
   {
-    std::string name = prefix + (it->first);
-    boost::to_lower(name);
+    std::string key = prefix + (it->first);
+    boost::to_lower(key);
     std::string value = it->second.get_value<std::string>();
+    boost::trim(key);
     boost::trim(value);
     if (!value.empty())
     {
-      TRACE("%s = \"%s\"", name.c_str(), value.c_str());
+      TRACE("%s = \"%s\"", key.c_str(), value.c_str());
     }
-    trace_tree(&(it->second), name + ".");
+    trace_tree(&(it->second), key + ".");
   }
 }
 
