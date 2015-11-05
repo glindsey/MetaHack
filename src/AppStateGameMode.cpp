@@ -118,8 +118,8 @@ bool AppStateGameMode::render(sf::RenderTarget& target, int frame)
         auto& cursor_tile = game_map.get_tile(pImpl->cursor_coords);
         cursor_tile.draw_highlight(target,
                                    cursor_pixel_coords,
-                                   Settings.cursor_border_color,
-                                   Settings.cursor_bg_color,
+                                   Settings.get<sf::Color>("cursor_border_color"),
+                                   Settings.get<sf::Color>("cursor_bg_color"),
                                    frame);
       }
       else

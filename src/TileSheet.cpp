@@ -46,7 +46,7 @@ struct TileSheet::Impl
   {
     sf::Vector2u start(0, 0);
 
-    uint32_t texture_size_in_tiles = texture_size / Settings.map_tile_size;
+    uint32_t texture_size_in_tiles = texture_size / Settings.get<unsigned int>("map_tile_size");
 
     while (start.y < texture_size_in_tiles)
     {
@@ -96,8 +96,8 @@ TileSheet::TileSheet()
     FATAL_ERROR("Could not create TileSheet texture. Now we're sad.");
   }
 
-  uint32_t used_map_size = (pImpl->texture_size / Settings.map_tile_size) *
-                           (pImpl->texture_size / Settings.map_tile_size);
+  uint32_t used_map_size = (pImpl->texture_size / Settings.get<unsigned int>("map_tile_size")) *
+                           (pImpl->texture_size / Settings.get<unsigned int>("map_tile_size"));
   pImpl->used.resize(used_map_size);
 }
 
@@ -126,17 +126,17 @@ sf::Vector2u TileSheet::load_collection(std::string const& filename)
 
   image.createMaskFromColor(sf::Color(255, 0, 255));
 
+  unsigned int tile_size = Settings.get<unsigned int>("map_tile_size");
+
   sf::Vector2u image_size = image.getSize();
 
   sf::Vector2u image_size_in_tiles =
-    sf::Vector2u(divide_and_round_up(image_size.x, Settings.map_tile_size),
-                 divide_and_round_up(image_size.y, Settings.map_tile_size));
+    sf::Vector2u(divide_and_round_up(image_size.x, tile_size),
+                 divide_and_round_up(image_size.y, tile_size));
 
   sf::Vector2u free_coords = pImpl->find_unused_area(image_size_in_tiles);
 
-  pImpl->texture.update(image, 
-                        free_coords.x * Settings.map_tile_size, 
-                        free_coords.y * Settings.map_tile_size);
+  pImpl->texture.update(image, free_coords.x * tile_size, free_coords.y * tile_size);
 
   pImpl->mark_tiles_used(free_coords, image_size_in_tiles);
 
@@ -146,10 +146,11 @@ sf::Vector2u TileSheet::load_collection(std::string const& filename)
 sf::IntRect TileSheet::get_tile(sf::Vector2u tile) const
 {
   sf::IntRect rect;
-  rect.left = tile.x * Settings.map_tile_size;
-  rect.top = tile.y * Settings.map_tile_size;
-  rect.width = Settings.map_tile_size;
-  rect.height = Settings.map_tile_size;
+  unsigned int tile_size = Settings.get<unsigned int>("map_tile_size");
+  rect.left = tile.x * tile_size;
+  rect.top = tile.y * tile_size;
+  rect.width = tile_size;
+  rect.height = tile_size;
 
   #ifdef DEBUG
   if ((rect.left < 0) || (rect.top < 0) ||
@@ -175,7 +176,7 @@ void TileSheet::add_quad(sf::VertexArray& vertices,
                              sf::Vector2f ll_coord, sf::Vector2f lr_coord)
 {
   sf::Vertex new_vertex;
-  float ts(static_cast<float>(Settings.map_tile_size));
+  float ts(Settings.get<float>("map_tile_size"));
   sf::Vector2f texNW(tile_coords.x * ts, tile_coords.y * ts);
 
   new_vertex.color = bg_color;
@@ -208,7 +209,7 @@ void TileSheet::add_gradient_quad(sf::VertexArray& vertices,
                                   sf::Color lr_color, sf::Vector2f lr_coord)
 {
   sf::Vertex new_vertex;
-  float ts(static_cast<float>(Settings.map_tile_size));
+  float ts(Settings.get<float>("map_tile_size"));
   sf::Vector2f texNW(tile_coords.x * ts, tile_coords.y * ts);
 
   new_vertex.color = ul_color;

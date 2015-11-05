@@ -8,6 +8,8 @@
 #include <memory>
 #include <string>
 
+#include "common_types.h"
+
 extern "C"
 {
 #include <lua.h>
@@ -103,7 +105,23 @@ public:
   ///
   int get_enum_value(int index);
 
+  /// Attempts to deduce the type of a boost::any and push the required
+  /// values onto the Lua stack.
+  /// Supported types include:
+  ///  * std::string
+  ///  * bool
+  ///  * double
+  ///  * sf::Vector2i
+  ///  * sf::Color
+  /// @param    value   Value to deduce the type of.
+  /// @return           The number of arguments pushed to the stack.
+  ///                   If the type could not be deduced, it will push
+  ///                   nil and return 1.
+  int push_onto_lua_stack(boost::any value);
+
   /// Return the Lua state.
+  /// @todo For cleanliness, this should not be exposed; all Lua interaction
+  ///       should go through the Lua class.
   lua_State* state();
 
   static int LUA_trace(lua_State* L);

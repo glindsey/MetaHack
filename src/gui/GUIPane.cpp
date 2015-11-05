@@ -61,14 +61,14 @@ EventResult GUIPane::handle_event(sf::Event& event)
 
 bool GUIPane::render(sf::RenderTarget& target, int frame)
 {
-  float line_spacing_y = the_default_font.getLineSpacing(Settings.text_default_size);
+  float line_spacing_y = the_default_font.getLineSpacing(Settings.get<unsigned int>("text_default_size"));
 
   // Text offsets relative to the background rectangle.
   float text_offset_x = 3;
   float text_offset_y = 3;
 
   // Clear background texture.
-  pImpl->bg_texture->clear(Settings.window_bg_color);
+  pImpl->bg_texture->clear(Settings.get<sf::Color>("window_bg_color"));
 
   // Call the possibly-overridden render_contents.
   sf::String title_string = render_contents(frame);
@@ -87,20 +87,20 @@ bool GUIPane::render(sf::RenderTarget& target, int frame)
 
     title_text.setString(title_string);
     title_text.setFont(the_default_bold_font);
-    title_text.setCharacterSize(Settings.text_default_size);
+    title_text.setCharacterSize(Settings.get<unsigned int>("text_default_size"));
 
-    title_rect.setFillColor(Settings.window_bg_color);
+    title_rect.setFillColor(Settings.get<sf::Color>("window_bg_color"));
     title_rect.setOutlineColor(pImpl->focus ?
-                              Settings.window_focused_border_color :
-                              Settings.window_border_color);
-    title_rect.setOutlineThickness(Settings.window_border_width);
+                              Settings.get<sf::Color>("window_focused_border_color") :
+                              Settings.get<sf::Color>("window_border_color"));
+    title_rect.setOutlineThickness(Settings.get<float>("window_border_width"));
     title_rect.setPosition(sf::Vector2f(0, 0));
     title_rect.setSize(sf::Vector2f(static_cast<float>(pImpl->dims.width),
                                     static_cast<float>(line_spacing_y + (text_offset_y * 2))));
 
     pImpl->bg_texture->draw(title_rect);
 
-    title_text.setColor(Settings.text_color);
+    title_text.setColor(Settings.get<sf::Color>("text_color"));
     title_text.setPosition(sf::Vector2f(text_offset_x + line_spacing_y,
                                         text_offset_y));
     pImpl->bg_texture->draw(title_text);
@@ -117,9 +117,9 @@ bool GUIPane::render(sf::RenderTarget& target, int frame)
                                            pImpl->dims.width,
                                            pImpl->dims.height));
   pImpl->bg_shape.setOutlineColor(pImpl->focus ?
-                                 Settings.window_focused_border_color :
-                                 Settings.window_border_color);
-  pImpl->bg_shape.setOutlineThickness(Settings.window_border_width);
+                                 Settings.get<sf::Color>("window_focused_border_color") :
+                                 Settings.get<sf::Color>("window_border_color"));
+  pImpl->bg_shape.setOutlineThickness(Settings.get<float>("window_border_width"));
 
   target.setView(sf::View(sf::FloatRect(0.0f, 0.0f, static_cast<float>(target.getSize().x), static_cast<float>(target.getSize().y))));
 

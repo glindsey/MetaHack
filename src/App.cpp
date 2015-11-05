@@ -65,27 +65,31 @@ int main()
       // Create the default fonts.
       /// @todo Font names should be moved into ConfigSettings.
       default_font_.reset(NEW sf::Font());
-      if (default_font_->loadFromFile("resources/fonts/" + Settings.font_name_default + ".ttf") == false)
+      std::string font_name = "resources/fonts/" + Settings.get<std::string>("font_name_default") + ".ttf";
+      if (default_font_->loadFromFile(font_name) == false)
       {
-        throw std::exception("Could not load the default font (berylium rg.ttf)");
+        throw std::exception("Could not load the default font");
       }
 
       default_bold_font_.reset(NEW sf::Font());
-      if (default_bold_font_->loadFromFile("resources/fonts/" + Settings.font_name_bold + ".ttf") == false)
+      font_name = "resources/fonts/" + Settings.get<std::string>("font_name_bold") + ".ttf";
+      if (default_bold_font_->loadFromFile(font_name) == false)
       {
-        throw std::exception("Could not load the default bold font (berylium bd.ttf)");
+        throw std::exception("Could not load the default bold font");
       }
 
       default_mono_font_.reset(NEW sf::Font());
-      if (default_mono_font_->loadFromFile("resources/fonts/" + Settings.font_name_mono + ".ttf") == false)
+      font_name = "resources/fonts/" + Settings.get<std::string>("font_name_mono") + ".ttf";
+      if (default_mono_font_->loadFromFile(font_name) == false)
       {
-        throw std::exception("Could not load the default monospace font (DejaVuSansMono.ttf)");
+        throw std::exception("Could not load the default monospace font");
       }
 
       default_unicode_font_.reset(NEW sf::Font());
-      if (default_unicode_font_->loadFromFile("resources/fonts/FreeMono.ttf") == false)
+      font_name = "resources/fonts/" + Settings.get<std::string>("font_name_unicode") + ".ttf";
+      if (default_unicode_font_->loadFromFile(font_name) == false)
       {
-        throw std::exception("Could not load the default Unicode font (FreeMono.ttf)");
+        throw std::exception("Could not load the default Unicode font");
       }
 
       // Create the shader program.

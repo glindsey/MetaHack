@@ -1,31 +1,42 @@
-#include "App.h"
 #include "ConfigSettings.h"
+
+#include "common_types.h"
+#include "App.h"
+#include "ErrorHandler.h"
 
 std::unique_ptr<ConfigSettings> ConfigSettings::instance_;
 
 ConfigSettings::ConfigSettings()
 {
-  window_border_color         = sf::Color( 96,  48,  32, 255);
-  window_focused_border_color = sf::Color(192,  96,  64, 255);
-  window_bg_color             = sf::Color( 48,  24,  16, 255);
-  window_focused_bg_color     = sf::Color( 48,  24,  16, 255);
-  font_name_default           = "Dustismo_Roman";
-  font_name_bold              = "Dustismo_Roman_Bold";
-  font_name_mono              = "DejaVuSansMono";
-  font_name_unicode           = "FreeMono";
-  text_color                  = sf::Color(224, 224, 160, 255);
-  text_warning_color          = sf::Color(255, 255,   0, 255);
-  text_danger_color           = sf::Color(255,   0,   0, 255);
-  text_highlight_color        = sf::Color(255, 255, 255, 255);
-  text_default_size           = 16;
-  text_mono_default_size      = 12;
-  cursor_border_color         = sf::Color(255, 255, 240, 255);
-  cursor_bg_color             = sf::Color(255, 255, 240,  32);
-  window_border_width         = 2;
-  tile_highlight_border_width = 2;
-  inventory_area_width        = 220;
-  status_area_height          = 80;
-  map_tile_size               = 32;
+  TRACE("Creating ConfigSettings instance...");
+
+  /// @todo These settings should be read from an XML file.
+  set("window_border_color", sf::Color(96, 48, 32, 255));
+  set("window_border_color", sf::Color(96, 48, 32, 255));
+  set("window_focused_border_color", sf::Color(192, 96, 64, 255));
+  set("window_bg_color", sf::Color(48, 24, 16, 255));
+  set("window_focused_bg_color", sf::Color(48, 24, 16, 255));
+  set("font_name_default", "Dustismo_Roman");
+  set("font_name_bold", "Dustismo_Roman_Bold");
+  set("font_name_mono", "DejaVuSansMono");
+  set("font_name_unicode", "FreeMono");
+  set("text_color", sf::Color(224, 224, 160, 255));
+  set("text_warning_color", sf::Color(255, 255, 0, 255));
+  set("text_danger_color", sf::Color(255, 0, 0, 255));
+  set("text_highlight_color", sf::Color(255, 255, 255, 255));
+  set("text_default_size", 16);
+  set("text_mono_default_size", 12);
+  set("cursor_border_color", sf::Color(255, 255, 240, 255));
+  set("cursor_bg_color", sf::Color(255, 255, 240, 32));
+  set("window_border_width", 2);
+  set("tile_highlight_border_width", 2);
+  set("inventory_area_width", 220);
+  set("status_area_height", 80);
+  set("map_tile_size", 32);
+
+  // Register the Lua functions to access settings.
+  the_lua_instance.register_function("get_config", ConfigSettings::LUA_get_config);
+  //the_lua_instance.register_function("set_config", ConfigSettings::LUA_set_config);
 }
 
 ConfigSettings::~ConfigSettings()
@@ -42,3 +53,33 @@ ConfigSettings& ConfigSettings::instance()
 
   return *(instance_.get());
 }
+
+
+int ConfigSettings::LUA_get_config(lua_State* L)
+{
+  // Make sure the instance actually exists.
+  ConfigSettings& instance = ConfigSettings::instance();
+
+  int num_args = lua_gettop(L);
+
+  if (num_args != 1)
+  {
+    MINOR_ERROR("expected 1 arguments, got %d", num_args);
+    return 0;
+  }
+
+  const char* key = lua_tostring(L, 1);
+
+  if (instance.settings.count(key) == 0)
+  {
+    lua_pushnil(L);
+    return 1;
+  }
+  else
+  {
+    boost::any result = instance.settings[key];
+    int args = the_lua_instance.push_onto_lua_stack(result);
+    return args;
+  }
+}
+

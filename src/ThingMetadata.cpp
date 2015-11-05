@@ -367,7 +367,7 @@ ActionResult ThingMetadata::call_lua_function(std::string function_name,
         lua_pushinteger(the_lua_state, arg);
       }
 
-      // Call the function with N+1 arguments and 1 result. (-(N+2), +1) = -N
+      // Call the function with N+1 arguments and 1 result. (-(N+2), +1) = -(N+1)
       int result = lua_pcall(the_lua_state, args.size() + 1, 1, 0);
       if (result == 0)
       {
@@ -395,6 +395,13 @@ ActionResult ThingMetadata::call_lua_function(std::string function_name,
     }
   }
 
+  int end_stack = lua_gettop(the_lua_state);
+
+  if (start_stack != end_stack)
+  {
+    MAJOR_ERROR("*** LUA STACK MISMATCH (%s:%s): Started at %d, ended at %d", name.c_str(), function_name.c_str(), start_stack, end_stack);
+  }
+
   if (call_parent)
   {
     if (m_parent.empty())
@@ -407,13 +414,6 @@ ActionResult ThingMetadata::call_lua_function(std::string function_name,
       return_value =
         ThingMetadata::get(m_parent).call_lua_function(function_name, caller, args, default_result);
     }
-  }
-
-  int end_stack = lua_gettop(the_lua_state);
-
-  if (start_stack != end_stack)
-  {
-    MAJOR_ERROR("*** LUA STACK MISMATCH: Started at %d, ended at %d", start_stack, end_stack);
   }
 
   return return_value;
@@ -494,6 +494,13 @@ bool ThingMetadata::call_lua_function_bool(std::string function_name,
     }
   }
 
+  int end_stack = lua_gettop(the_lua_state);
+
+  if (start_stack != end_stack)
+  {
+    MAJOR_ERROR("*** LUA STACK MISMATCH (%s:%s): Started at %d, ended at %d", name.c_str(), function_name.c_str(), start_stack, end_stack);
+  }
+
   if (call_parent)
   {
     if (m_parent.empty())
@@ -506,13 +513,6 @@ bool ThingMetadata::call_lua_function_bool(std::string function_name,
       return_value =
         ThingMetadata::get(m_parent).call_lua_function_bool(function_name, caller, args, default_result);
     }
-  }
-
-  int end_stack = lua_gettop(the_lua_state);
-
-  if (start_stack != end_stack)
-  {
-    MAJOR_ERROR("*** LUA STACK MISMATCH: Started at %d, ended at %d", start_stack, end_stack);
   }
 
   return return_value;
@@ -593,6 +593,13 @@ sf::Vector2u ThingMetadata::call_lua_function_v2u(std::string function_name,
     }
   }
 
+  int end_stack = lua_gettop(the_lua_state);
+
+  if (start_stack != end_stack)
+  {
+    MAJOR_ERROR("*** LUA STACK MISMATCH (%s:%s): Started at %d, ended at %d", name.c_str(), function_name.c_str(), start_stack, end_stack);
+  }
+
   if (call_parent)
   {
     if (m_parent.empty())
@@ -605,13 +612,6 @@ sf::Vector2u ThingMetadata::call_lua_function_v2u(std::string function_name,
       return_value =
         ThingMetadata::get(m_parent).call_lua_function_v2u(function_name, caller, args, default_result);
     }
-  }
-
-  int end_stack = lua_gettop(the_lua_state);
-
-  if (start_stack != end_stack)
-  {
-    MAJOR_ERROR("*** LUA STACK MISMATCH: Started at %d, ended at %d", start_stack, end_stack);
   }
 
   return return_value;

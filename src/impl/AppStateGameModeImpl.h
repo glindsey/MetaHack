@@ -94,9 +94,8 @@ public:
     sf::IntRect invAreaDims = inventory_area->get_dimensions();
     statusAreaDims.width = app_window.getSize().x -
       (invAreaDims.width + 24);
-    statusAreaDims.height = Settings.status_area_height;
-    statusAreaDims.top = app_window.getSize().y -
-      (Settings.status_area_height + 5);
+    statusAreaDims.height = Settings.get<int>("status_area_height");
+    statusAreaDims.top = app_window.getSize().y - (Settings.get<int>("status_area_height") + 5);
     statusAreaDims.left = 12;
     return statusAreaDims;
   }
@@ -105,11 +104,9 @@ public:
   {
     sf::IntRect messageLogDims = the_message_log.get_dimensions();
     sf::IntRect inventoryAreaDims;
-    inventoryAreaDims.width = Settings.inventory_area_width;
-    inventoryAreaDims.height = app_window.getSize().y -
-      (messageLogDims.height + 18);
-    inventoryAreaDims.left = app_window.getSize().x -
-      (inventoryAreaDims.width + 3);
+    inventoryAreaDims.width = Settings.get<int>("inventory_area_width");
+    inventoryAreaDims.height = app_window.getSize().y - (messageLogDims.height + 18);
+    inventoryAreaDims.left = app_window.getSize().x - (inventoryAreaDims.width + 3);
     inventoryAreaDims.top = messageLogDims.top + messageLogDims.height + 10;
 
     return inventoryAreaDims;

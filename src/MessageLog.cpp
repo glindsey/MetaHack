@@ -104,7 +104,7 @@ std::string MessageLog::render_contents(int frame)
   // Our render texture.
   sf::RenderTexture& bg_texture = get_bg_texture();
 
-  float lineSpacing = the_default_font.getLineSpacing(Settings.text_default_size);
+  float lineSpacing = the_default_font.getLineSpacing(Settings.get<unsigned int>("text_default_size"));
 
   // Text offsets relative to the background rectangle.
   float text_offset_x = 3;
@@ -117,7 +117,7 @@ std::string MessageLog::render_contents(int frame)
   sf::Text render_text;
 
   render_text.setFont(the_default_font);
-  render_text.setCharacterSize(Settings.text_default_size);
+  render_text.setCharacterSize(Settings.get<unsigned int>("text_default_size"));
 
   // If we have the focus, put the current command at the bottom of the log.
   if (get_focus() == true)
@@ -126,8 +126,8 @@ std::string MessageLog::render_contents(int frame)
                         sf::Vector2f(text_coord_x, text_coord_y),
                         frame,
                         the_default_font,
-                        Settings.text_default_size,
-                        Settings.text_highlight_color);
+                        Settings.get<unsigned int>("text_default_size"),
+                        Settings.get<sf::Color>("text_highlight_color"));
 
     text_coord_y -= lineSpacing;
   }
@@ -139,7 +139,7 @@ std::string MessageLog::render_contents(int frame)
   {
     render_text.setString(*iter);
     render_text.setPosition(text_coord_x, text_coord_y);
-    render_text.setColor(Settings.text_color);
+    render_text.setColor(Settings.get<sf::Color>("text_color"));
     bg_texture.draw(render_text);
     if (text_coord_y < text_offset_y) break;
     text_coord_y -= lineSpacing;

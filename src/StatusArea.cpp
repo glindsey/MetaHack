@@ -41,13 +41,13 @@ std::string StatusArea::render_contents(int frame)
   // The player.
   ThingRef player = TM.get_player();
 
-  float line_spacing = the_default_font.getLineSpacing(Settings.text_default_size);
+  float line_spacing = the_default_font.getLineSpacing(Settings.get<unsigned int>("text_default_size"));
 
   // Text offsets relative to the background rectangle.
   sf::Text render_text;
   render_text.setFont(the_default_font);
-  render_text.setCharacterSize(Settings.text_default_size);
-  render_text.setColor(Settings.text_color);
+  render_text.setCharacterSize(Settings.get<unsigned int>("text_default_size"));
+  render_text.setColor(Settings.get<sf::Color>("text_color"));
   render_text.setPosition(3, 3);
 
   if (player != TM.get_mu())
@@ -73,15 +73,15 @@ std::string StatusArea::render_contents(int frame)
 
     if (hp_percentage > 0.6)
     {
-      render_text.setColor(Settings.text_color);
+      render_text.setColor(Settings.get<sf::Color>("text_color"));
     }
     else if (hp_percentage > 0.3)
     {
-      render_text.setColor(Settings.text_warning_color);
+      render_text.setColor(Settings.get<sf::Color>("text_warning_color"));
     }
     else
     {
-      render_text.setColor(Settings.text_danger_color);
+      render_text.setColor(Settings.get<sf::Color>("text_danger_color"));
     }
 
     std::string hp_string = boost::lexical_cast<std::string>(hp)+

@@ -279,7 +279,7 @@ std::string InventoryArea::render_contents(int frame)
   // Our render texture.
   sf::RenderTexture& bg_texture = get_bg_texture();
 
-  float line_spacing_y = the_default_font.getLineSpacing(Settings.text_default_size);
+  float line_spacing_y = the_default_font.getLineSpacing(Settings.get<unsigned int>("text_default_size"));
   float item_spacing_y = 4.0f;
 
   // Text offsets relative to the background rectangle.
@@ -313,7 +313,7 @@ std::string InventoryArea::render_contents(int frame)
     sf::Text render_text;
 
     // 1. Figure out whether this is selected or not, and set FG color.
-    sf::Color fg_color = Settings.text_color;
+    sf::Color fg_color = Settings.get<sf::Color>("text_color");
     unsigned int selection_order = 0;
     auto slot_iter = std::find(pImpl->selected_slots.begin(),
                                 pImpl->selected_slots.end(),
@@ -321,7 +321,7 @@ std::string InventoryArea::render_contents(int frame)
 
     if (slot_iter != pImpl->selected_slots.end())
     {
-      fg_color = Settings.text_highlight_color;
+      fg_color = Settings.get<sf::Color>("text_highlight_color");
       selection_order = (slot_iter - pImpl->selected_slots.begin()) + 1;
     }
 
@@ -331,7 +331,7 @@ std::string InventoryArea::render_contents(int frame)
       std::stringstream selection_number;
       selection_number << "[" << selection_order << "]" << std::endl;
       render_text.setFont(the_default_mono_font);
-      render_text.setCharacterSize(Settings.text_mono_default_size);
+      render_text.setCharacterSize(Settings.get<unsigned int>("text_mono_default_size"));
       render_text.setString(selection_number.str());
       render_text.setPosition(text_coord_x + 1, text_coord_y);
       render_text.setColor(fg_color);
@@ -348,7 +348,7 @@ std::string InventoryArea::render_contents(int frame)
 
       slot_id << item_char << ":";
       render_text.setFont(the_default_mono_font);
-      render_text.setCharacterSize(Settings.text_mono_default_size);
+      render_text.setCharacterSize(Settings.get<unsigned int>("text_mono_default_size"));
       render_text.setString(slot_id.str());
       render_text.setPosition(text_coord_x + 35, text_coord_y);
       render_text.setColor(fg_color);
@@ -392,7 +392,7 @@ std::string InventoryArea::render_contents(int frame)
 
     item_name << thing->get_identifying_string_without_possessives(false);
     render_text.setFont(the_default_font);
-    render_text.setCharacterSize(Settings.text_default_size);
+    render_text.setCharacterSize(Settings.get<unsigned int>("text_default_size"));
     render_text.setString(item_name.str());
     render_text.setPosition(text_coord_x + 60 + line_spacing_y,
                             text_coord_y + 1);
@@ -406,7 +406,7 @@ std::string InventoryArea::render_contents(int frame)
     sf::RectangleShape separator_line;
     separator_line.setPosition(text_coord_x + 10, text_coord_y);
     separator_line.setSize(sf::Vector2f(static_cast<float>(pane_dims.width - 25), 1.0f));
-    separator_line.setFillColor(Settings.window_border_color);
+    separator_line.setFillColor(Settings.get<sf::Color>("window_border_color"));
     bg_texture.draw(separator_line);
 
     text_coord_y += item_spacing_y;

@@ -3,6 +3,7 @@
 #ifndef COMMONTYPES_H
 #define COMMONTYPES_H
 
+#include <boost/any.hpp>
 #include <unordered_map>
 
 // Using declarations
@@ -12,6 +13,6 @@
 using FlagsMap = std::unordered_map < std::string, bool >;
 using ValuesMap = std::unordered_map < std::string, int >;
 using StringsMap = std::unordered_map < std::string, std::string >;
-
+using AnyMap = std::unordered_map < std::string, boost::any >;
 
 #endif // COMMONTYPES_H

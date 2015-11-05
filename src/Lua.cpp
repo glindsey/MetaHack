@@ -141,6 +141,49 @@ int Lua::get_enum_value(int index)
   return value;
 }
 
+int Lua::push_onto_lua_stack(boost::any value)
+{
+  if (boost::any_cast<std::string>(&value))
+  {
+    std::string cast_value = boost::any_cast<std::string>(value);
+    lua_pushstring(L_, cast_value.c_str());
+    return 1;
+  }
+  else if (boost::any_cast<bool>(&value))
+  {
+    bool cast_value = boost::any_cast<bool>(value);
+    lua_pushboolean(L_, cast_value);
+    return 1;
+  }
+  else if (boost::any_cast<double>(&value))
+  {
+    double cast_value = boost::any_cast<double>(value);
+    lua_pushnumber(L_, static_cast<lua_Number>(cast_value));
+    return 1;
+  }
+  else if (boost::any_cast<sf::Vector2i>(&value))
+  {
+    sf::Vector2i cast_value = boost::any_cast<sf::Vector2i>(value);
+    lua_pushinteger(L_, cast_value.x);
+    lua_pushinteger(L_, cast_value.y);
+    return 2;
+  }
+  else if (boost::any_cast<sf::Color>(&value))
+  {
+    sf::Color cast_value = boost::any_cast<sf::Color>(value);
+    lua_pushinteger(L_, cast_value.r);
+    lua_pushinteger(L_, cast_value.g);
+    lua_pushinteger(L_, cast_value.b);
+    lua_pushinteger(L_, cast_value.a);
+    return 4;
+  }
+  else
+  {
+    lua_pushnil(L_);
+    return 1;
+  }
+}
+
 lua_State* Lua::state()
 {
   return L_;
