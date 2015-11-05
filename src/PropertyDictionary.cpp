@@ -27,17 +27,16 @@ void PropertyDictionary::populate_from(pt::ptree const& tree, std::string prefix
     if (!value.empty())
     {
       // Do some key name fixup; we want to be flexible.
-      boost::algorithm::replace_last(key, "_flag", "_f");
-      boost::algorithm::replace_last(key, "_string", "_s");
-      boost::algorithm::replace_last(key, "_str", "_s");
-      boost::algorithm::replace_last(key, "_value", "");
-      boost::algorithm::replace_last(key, "_val", "");
-      boost::algorithm::replace_last(key, "_v", "");
+      if (boost::algorithm::ends_with(key, "_flag")) boost::algorithm::erase_tail(key, 3);
+      if (boost::algorithm::ends_with(key, "_string")) boost::algorithm::erase_tail(key, 5);
+      if (boost::algorithm::ends_with(key, "_str")) boost::algorithm::erase_tail(key, 2);
+      if (boost::algorithm::ends_with(key, "_value")) boost::algorithm::erase_tail(key, 4);
+      if (boost::algorithm::ends_with(key, "_val")) boost::algorithm::erase_tail(key, 2);
       
       if (boost::algorithm::ends_with(key, "_f"))
       {
         // Explicitly specified flag.
-        boost::algorithm::replace_last(key, "_f", "");
+        boost::algorithm::erase_tail(key, 2);
         try
         {
           bool bool_value = boost::lexical_cast<bool>(value);
@@ -51,13 +50,13 @@ void PropertyDictionary::populate_from(pt::ptree const& tree, std::string prefix
       else if (boost::algorithm::ends_with(key, "_s"))
       {
         // Explicitly specified string.
-        boost::algorithm::replace_last(key, "_s", "");
+        boost::algorithm::erase_tail(key, 2);
         set(key, value);
       }
       else if (boost::algorithm::ends_with(key, "_v"))
       {
         // Explicitly specified value.
-        boost::algorithm::replace_last(key, "_v", "");
+        boost::algorithm::erase_tail(key, 2);
         try
         {
           double double_value = boost::lexical_cast<double>(value);
