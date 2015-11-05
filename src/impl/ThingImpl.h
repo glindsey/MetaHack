@@ -9,6 +9,7 @@
 #include "AttributeSet.h"
 #include "Gender.h"
 #include "MapTile.h"
+#include "PropertyDictionary.h"
 #include "ThingMetadata.h"
 #include "ThingRef.h"
 
@@ -45,10 +46,8 @@ public:
     wielded_items{ WieldingMap() },
     equipped_items{ WearingMap() }
   {
-    // Set properties to the type defaults.
-    property_flags = metadata.get_default_flags();
-    property_strings = metadata.get_default_strings();
-    property_values = metadata.get_default_values();
+    // Properties can remain clear; if a property is ever missing, we
+    // populate it with the default from the ThingMetadata (if one exists).
   }
 
   /// Constructor for floor of a MapTile.
@@ -69,10 +68,8 @@ public:
     wielded_items{ WieldingMap() },
     equipped_items{ WearingMap() }
   {
-    // Set properties to the type defaults.
-    property_flags = metadata.get_default_flags();
-    property_strings = metadata.get_default_strings();
-    property_values = metadata.get_default_values();
+    // Properties can remain clear; if a property is ever missing, we
+    // populate it with the default from the ThingMetadata (if one exists).
   }
 
   /// Clone constructor.
@@ -85,9 +82,7 @@ public:
     map_tile{ other.map_tile },
     inventory{ Inventory() },             // don't copy
     quantity{ other.quantity },
-    property_flags{ other.property_flags },
-    property_strings{ other.property_strings },
-    property_values{ other.property_values },
+    properties{ other.properties },
     attributes{ other.attributes },
     gender{ other.gender },
     map_memory{ other.map_memory },
@@ -99,9 +94,6 @@ public:
 
   ~ThingImpl()
   {
-    property_flags.clear();
-    property_values.clear();
-    property_strings.clear();
     map_memory.clear();
     tiles_currently_seen.clear();
     actions.clear();
@@ -126,14 +118,8 @@ public:
 
   unsigned int quantity;
 
-  /// Map of property flags.
-  FlagsMap property_flags;
-
-  /// Map of property values.
-  ValuesMap property_values;
-
-  /// Map of property strings.
-  StringsMap property_strings;
+  /// Property dictionary.
+  PropertyDictionary properties;
 
   /// Entity's attributes.
   AttributeSet attributes;

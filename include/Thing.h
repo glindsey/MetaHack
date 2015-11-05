@@ -170,22 +170,46 @@ class Thing :
     /// Attempt to use a thing.
     bool do_use(ThingRef thing, unsigned int& action_time);
 
-    /// @todo The next three might be better as protected methods.
-    FlagsMap const& get_property_flags() const;
-    ValuesMap const& get_property_values() const;
-    StringsMap const& get_property_strings() const;
+    template<typename T>
+    T get_intrinsic(std::string key) const
+    {
+      return pImpl->metadata.get_intrinsic<T>(key);
+    }
 
+    template<typename T>
+    T get_property(std::string key)
+    {      
+      PropertyDictionary& properties = pImpl->properties;
 
-    bool get_property_flag(std::string name, bool default_value = false) const;
-    int get_property_value(std::string name, int default_value = 0) const;
-    int add_to_property_value(std::string name, int value_to_add);
-    std::string get_property_string(std::string name, std::string default_value = "") const;
-    bool get_intrinsic_flag(std::string name, bool default_value = false) const;
-    int get_intrinsic_value(std::string name, int default_value = 0) const;
-    std::string get_intrinsic_string(std::string name, std::string default_value = "") const;
-    void set_property_flag(std::string name, bool value);
-    void set_property_value(std::string name, int value);
-    void set_property_string(std::string name, std::string value);
+      if (properties.contains(key))
+      {
+        return properties.get<T>(key);
+      }
+      else
+      {
+        T value = pImpl->metadata.get_default<T>(key);
+        properties.set<T>(key, value);
+        return value;
+      }
+    }
+
+    template<typename T>
+    bool set_property(std::string key, T value)
+    {
+      PropertyDictionary& properties = pImpl->properties;
+      bool existed = properties.contains(key);
+      properties.set<T>(key, value);
+      return existed;
+    }
+
+    template<typename T>
+    void add_to_property(std::string key, T add_value)
+    {
+      PropertyDictionary& properties = pImpl->properties;
+      T existing_value = properties.get<T>(key);
+      T new_value = existing_value + add_value;
+      properties.set<T>(key, new_value);
+    }
 
     /// Get the quantity this thing represents.
     virtual unsigned int get_quantity() const;
@@ -342,7 +366,7 @@ class Thing :
     std::string get_display_plural() const;
 
     /// Get the thing's proper name (if any).
-    std::string get_proper_name() const;
+    std::string get_proper_name();
 
     /// Set this thing's proper name.
     void set_proper_name(std::string name);
@@ -357,14 +381,14 @@ class Thing :
     /// @param definite   If true, uses definite articles. 
     ///                   If false, uses indefinite articles.
     ///                   Defaults to true.
-    std::string get_identifying_string(bool definite = true) const;
+    std::string get_identifying_string(bool definite = true);
 
     /// Return a string that identifies this thing without using possessives.
     /// The same as get_identifying_string, but without using any possessives.
     /// @param definite   If true, uses definite articles. 
     ///                   If false, uses indefinite articles.
     ///                   Defaults to true.
-    std::string get_identifying_string_without_possessives(bool definite = true) const;
+    std::string get_identifying_string_without_possessives(bool definite = true);
 
     /// Choose the proper possessive form
     /// For a Thing, this is simply "the", as Things cannot own things.
@@ -373,7 +397,7 @@ class Thing :
     /// it returns get_name() + "'s".
     /// @note If you want a possessive pronoun like his/her/its/etc., use
     /// get_possessive_adjective().
-    std::string get_possessive() const;
+    std::string get_possessive();
 
 
     /// Choose which verb form to use based on first/second/third person.

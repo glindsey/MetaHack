@@ -421,11 +421,11 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           if (slot_count > 0)
           {
             ThingRef thing = pImpl->inventory_area->get_selected_things().at(0);
-            if (thing->get_intrinsic_value("inventory_size") != 0)
+            if (thing->get_intrinsic<int>("inventory_size") != 0)
             {
-              if (!thing->get_intrinsic_value("openable") || thing->get_property_flag("open"))
+              if (!thing->get_intrinsic<bool>("openable") || thing->get_property<bool>("open"))
               {
-                if (thing->get_intrinsic_value("lockable") && !thing->get_property_flag("locked"))
+                if (thing->get_intrinsic<bool>("lockable") && !thing->get_property<bool>("locked"))
                 {
                   pImpl->inventory_area->set_viewed(thing);
                 }

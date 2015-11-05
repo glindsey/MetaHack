@@ -21,13 +21,20 @@ public:
 
   /// Get the name associated with this data.
   std::string const& get_name() const;
+  std::string const& get_parent() const;
   std::string const& get_display_name() const;
   std::string const& get_display_plural() const;
   std::string const& get_description() const;
   sf::Vector2u const& get_tile_coords() const;
 
-
 protected:
+
+  /// Get the entire PropertyDictionary of defaults.
+  PropertyDictionary const& get_defaults() const;
+
+  /// Get the entire PropertyDictionary of intrinsics.
+  PropertyDictionary const& get_intrinsics() const;
+
   /// Recursive function that iterates through the tree and prints the values.
   void trace_tree(pt::ptree const* pTree = nullptr, std::string prefix = "");
 
@@ -42,8 +49,11 @@ private:
   /// Category of this metadata (e.g. "maptile", "thing", etc.)
   std::string m_category;
 
-  /// The name associated with this metadata.
-  std::string m_name;
+  /// The type associated with this metadata.
+  std::string m_type;
+
+  /// The parent type, if any.
+  std::string m_parent;
 
   /// The display name.
   std::string m_display_name;

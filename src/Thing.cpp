@@ -161,7 +161,7 @@ ActionResult Thing::can_drink(ThingRef thing, unsigned int& action_time)
   }
 
   // Check that we're capable of drinking at all.
-  if (this->get_intrinsic_flag("can_drink"))
+  if (this->get_intrinsic<bool>("can_drink"))
   {
     return ActionResult::FailureActorCantPerform;
   }
@@ -173,7 +173,7 @@ ActionResult Thing::can_drink(ThingRef thing, unsigned int& action_time)
   }
 
   // Check that it is something that contains a liquid.
-  if (!thing->get_intrinsic_flag("liquid_carrier"))
+  if (!thing->get_intrinsic<bool>("liquid_carrier"))
   {
     return ActionResult::FailureNotLiquidCarrier;
   }
@@ -426,7 +426,7 @@ ActionResult Thing::can_eat(ThingRef thing, unsigned int& action_time)
   }
 
   // Check that we're capable of eating at all.
-  if (this->get_intrinsic_flag("can_eat"))
+  if (this->get_intrinsic<bool>("can_eat"))
   {
     return ActionResult::FailureActorCantPerform;
   }
@@ -532,7 +532,7 @@ ActionResult Thing::can_mix(ThingRef thing1, ThingRef thing2, unsigned int& acti
   }
 
   // Check that both are liquid containers.
-  if (!thing1->get_intrinsic_flag("liquid_carrier") || !thing2->get_intrinsic_flag("liquid_carrier"))
+  if (!thing1->get_intrinsic<bool>("liquid_carrier") || !thing2->get_intrinsic<bool>("liquid_carrier"))
   {
     return ActionResult::FailureNotLiquidCarrier;
   }
@@ -848,7 +848,7 @@ ActionResult Thing::can_put_into(ThingRef thing, ThingRef container,
   }
 
   // Check that the container actually IS a container.
-  if (container->get_intrinsic_value("inventory_size") == 0)
+  if (container->get_intrinsic<int>("inventory_size") == 0)
   {
     return ActionResult::FailureTargetNotAContainer;
   }
@@ -1672,21 +1672,21 @@ unsigned int Thing::get_bodypart_number(BodyPart part) const
 {
   switch (part)
   {
-  case BodyPart::Body:  return get_intrinsic_value("bodypart_body_count");
-  case BodyPart::Skin:  return get_intrinsic_value("bodypart_skin_count");
-  case BodyPart::Head:  return get_intrinsic_value("bodypart_head_count");
-  case BodyPart::Ear:   return get_intrinsic_value("bodypart_ear_count");
-  case BodyPart::Eye:   return get_intrinsic_value("bodypart_eye_count");
-  case BodyPart::Nose:  return get_intrinsic_value("bodypart_nose_count");
-  case BodyPart::Mouth: return get_intrinsic_value("bodypart_mouth_count");
-  case BodyPart::Neck:  return get_intrinsic_value("bodypart_neck_count");
-  case BodyPart::Chest: return get_intrinsic_value("bodypart_chest_count");
-  case BodyPart::Arm:   return get_intrinsic_value("bodypart_arm_count");
-  case BodyPart::Hand:  return get_intrinsic_value("bodypart_hand_count");
-  case BodyPart::Leg:   return get_intrinsic_value("bodypart_leg_count");
-  case BodyPart::Foot:  return get_intrinsic_value("bodypart_foot_count");
-  case BodyPart::Wing:  return get_intrinsic_value("bodypart_wing_count");
-  case BodyPart::Tail:  return get_intrinsic_value("bodypart_tail_count");
+  case BodyPart::Body:  return get_intrinsic<int>("bodypart_body_count");
+  case BodyPart::Skin:  return get_intrinsic<int>("bodypart_skin_count");
+  case BodyPart::Head:  return get_intrinsic<int>("bodypart_head_count");
+  case BodyPart::Ear:   return get_intrinsic<int>("bodypart_ear_count");
+  case BodyPart::Eye:   return get_intrinsic<int>("bodypart_eye_count");
+  case BodyPart::Nose:  return get_intrinsic<int>("bodypart_nose_count");
+  case BodyPart::Mouth: return get_intrinsic<int>("bodypart_mouth_count");
+  case BodyPart::Neck:  return get_intrinsic<int>("bodypart_neck_count");
+  case BodyPart::Chest: return get_intrinsic<int>("bodypart_chest_count");
+  case BodyPart::Arm:   return get_intrinsic<int>("bodypart_arm_count");
+  case BodyPart::Hand:  return get_intrinsic<int>("bodypart_hand_count");
+  case BodyPart::Leg:   return get_intrinsic<int>("bodypart_leg_count");
+  case BodyPart::Foot:  return get_intrinsic<int>("bodypart_foot_count");
+  case BodyPart::Wing:  return get_intrinsic<int>("bodypart_wing_count");
+  case BodyPart::Tail:  return get_intrinsic<int>("bodypart_tail_count");
   default: return 0;
   }
 }
@@ -1696,21 +1696,21 @@ std::string Thing::get_bodypart_name(BodyPart part) const
 {
   switch (part)
   {
-  case BodyPart::Body:  return get_intrinsic_string("bodypart_body_name");
-  case BodyPart::Skin:  return get_intrinsic_string("bodypart_skin_name");
-  case BodyPart::Head:  return get_intrinsic_string("bodypart_head_name");
-  case BodyPart::Ear:   return get_intrinsic_string("bodypart_ear_name");
-  case BodyPart::Eye:   return get_intrinsic_string("bodypart_eye_name");
-  case BodyPart::Nose:  return get_intrinsic_string("bodypart_nose_name");
-  case BodyPart::Mouth: return get_intrinsic_string("bodypart_mouth_name");
-  case BodyPart::Neck:  return get_intrinsic_string("bodypart_neck_name");
-  case BodyPart::Chest: return get_intrinsic_string("bodypart_chest_name");
-  case BodyPart::Arm:   return get_intrinsic_string("bodypart_arm_name");
-  case BodyPart::Hand:  return get_intrinsic_string("bodypart_hand_name");
-  case BodyPart::Leg:   return get_intrinsic_string("bodypart_leg_name");
-  case BodyPart::Foot:  return get_intrinsic_string("bodypart_foot_name");
-  case BodyPart::Wing:  return get_intrinsic_string("bodypart_wing_name");
-  case BodyPart::Tail:  return get_intrinsic_string("bodypart_tail_name");
+  case BodyPart::Body:  return get_intrinsic<std::string>("bodypart_body_name");
+  case BodyPart::Skin:  return get_intrinsic<std::string>("bodypart_skin_name");
+  case BodyPart::Head:  return get_intrinsic<std::string>("bodypart_head_name");
+  case BodyPart::Ear:   return get_intrinsic<std::string>("bodypart_ear_name");
+  case BodyPart::Eye:   return get_intrinsic<std::string>("bodypart_eye_name");
+  case BodyPart::Nose:  return get_intrinsic<std::string>("bodypart_nose_name");
+  case BodyPart::Mouth: return get_intrinsic<std::string>("bodypart_mouth_name");
+  case BodyPart::Neck:  return get_intrinsic<std::string>("bodypart_neck_name");
+  case BodyPart::Chest: return get_intrinsic<std::string>("bodypart_chest_name");
+  case BodyPart::Arm:   return get_intrinsic<std::string>("bodypart_arm_name");
+  case BodyPart::Hand:  return get_intrinsic<std::string>("bodypart_hand_name");
+  case BodyPart::Leg:   return get_intrinsic<std::string>("bodypart_leg_name");
+  case BodyPart::Foot:  return get_intrinsic<std::string>("bodypart_foot_name");
+  case BodyPart::Wing:  return get_intrinsic<std::string>("bodypart_wing_name");
+  case BodyPart::Tail:  return get_intrinsic<std::string>("bodypart_tail_name");
   default: return "null";
   }
 }
@@ -1720,21 +1720,21 @@ std::string Thing::get_bodypart_plural(BodyPart part) const
 {
   switch (part)
   {
-  case BodyPart::Body:  return get_intrinsic_string("bodypart_body_plural");
-  case BodyPart::Skin:  return get_intrinsic_string("bodypart_skin_plural");
-  case BodyPart::Head:  return get_intrinsic_string("bodypart_head_plural");
-  case BodyPart::Ear:   return get_intrinsic_string("bodypart_ear_plural");
-  case BodyPart::Eye:   return get_intrinsic_string("bodypart_eye_plural");
-  case BodyPart::Nose:  return get_intrinsic_string("bodypart_nose_plural");
-  case BodyPart::Mouth: return get_intrinsic_string("bodypart_mouth_plural");
-  case BodyPart::Neck:  return get_intrinsic_string("bodypart_neck_plural");
-  case BodyPart::Chest: return get_intrinsic_string("bodypart_chest_plural");
-  case BodyPart::Arm:   return get_intrinsic_string("bodypart_arm_plural");
-  case BodyPart::Hand:  return get_intrinsic_string("bodypart_hand_plural");
-  case BodyPart::Leg:   return get_intrinsic_string("bodypart_leg_plural");
-  case BodyPart::Foot:  return get_intrinsic_string("bodypart_foot_plural");
-  case BodyPart::Wing:  return get_intrinsic_string("bodypart_wing_plural");
-  case BodyPart::Tail:  return get_intrinsic_string("bodypart_tail_plural");
+  case BodyPart::Body:  return get_intrinsic<std::string>("bodypart_body_plural");
+  case BodyPart::Skin:  return get_intrinsic<std::string>("bodypart_skin_plural");
+  case BodyPart::Head:  return get_intrinsic<std::string>("bodypart_head_plural");
+  case BodyPart::Ear:   return get_intrinsic<std::string>("bodypart_ear_plural");
+  case BodyPart::Eye:   return get_intrinsic<std::string>("bodypart_eye_plural");
+  case BodyPart::Nose:  return get_intrinsic<std::string>("bodypart_nose_plural");
+  case BodyPart::Mouth: return get_intrinsic<std::string>("bodypart_mouth_plural");
+  case BodyPart::Neck:  return get_intrinsic<std::string>("bodypart_neck_plural");
+  case BodyPart::Chest: return get_intrinsic<std::string>("bodypart_chest_plural");
+  case BodyPart::Arm:   return get_intrinsic<std::string>("bodypart_arm_plural");
+  case BodyPart::Hand:  return get_intrinsic<std::string>("bodypart_hand_plural");
+  case BodyPart::Leg:   return get_intrinsic<std::string>("bodypart_leg_plural");
+  case BodyPart::Foot:  return get_intrinsic<std::string>("bodypart_foot_plural");
+  case BodyPart::Wing:  return get_intrinsic<std::string>("bodypart_wing_plural");
+  case BodyPart::Tail:  return get_intrinsic<std::string>("bodypart_tail_plural");
   default: return "null";
   }
 }
@@ -1752,125 +1752,6 @@ std::string const& Thing::get_type() const
 std::string const& Thing::get_parent_type() const
 {
   return pImpl->metadata.get_parent();
-}
-
-FlagsMap const& Thing::get_property_flags() const
-{
-  return pImpl->property_flags;
-}
-
-ValuesMap const& Thing::get_property_values() const
-{
-  return pImpl->property_values;
-}
-
-StringsMap const& Thing::get_property_strings() const
-{
-  return pImpl->property_strings;
-}
-
-bool Thing::get_property_flag(std::string key, bool default_value) const
-{
-  boost::algorithm::to_lower(key);
-
-  bool value;
-
-  if (pImpl->property_flags.count(key) != 0)
-  {
-    value = pImpl->property_flags.at(key);
-  }
-  else
-  {
-    value = pImpl->metadata.get_default_flag(key, default_value);
-  }
-
-  return value;
-}
-
-int Thing::get_property_value(std::string key, int default_value) const
-{
-  boost::algorithm::to_lower(key);
-
-  int value;
-
-  if (pImpl->property_values.count(key) != 0)
-  {
-    value = pImpl->property_values.at(key);
-  }
-  else
-  {
-	value = pImpl->metadata.get_default_value(key, default_value);
-  }
-
-  return value;
-}
-
-int Thing::add_to_property_value(std::string key, int value_to_add)
-{
-  boost::algorithm::to_lower(key);
-
-  int value = get_property_value(key);
-
-  if (value_to_add != 0)
-  {
-    value += value_to_add;
-    set_property_value(key, value);
-  }
-
-  return value;
-}
-
-std::string Thing::get_property_string(std::string key, std::string default_value) const
-{
-  boost::algorithm::to_lower(key);
-
-  std::string value;
-
-  if (pImpl->property_strings.count(key) != 0)
-  {
-    value = pImpl->property_strings.at(key);
-  }
-  else
-  {
-    value = pImpl->metadata.get_default_string(key, default_value);
-  }
-
-  return value;
-}
-
-bool Thing::get_intrinsic_flag(std::string key, bool default_value) const
-{
-  boost::algorithm::to_lower(key);
-  return pImpl->metadata.get_intrinsic_flag(key, default_value);
-}
-
-int Thing::get_intrinsic_value(std::string key, int default_value) const
-{
-  boost::algorithm::to_lower(key);
-  return pImpl->metadata.get_intrinsic_value(key, default_value);
-}
-
-std::string Thing::get_intrinsic_string(std::string key, std::string default_value) const
-{
-  boost::algorithm::to_lower(key);
-  return pImpl->metadata.get_intrinsic_string(key, default_value);
-}
-
-void Thing::set_property_flag(std::string key, bool value)
-{
-  pImpl->property_flags[key] = value;
-}
-
-void Thing::set_property_value(std::string key, int value)
-{
-  boost::algorithm::to_lower(key);
-  pImpl->property_values[key] = value;
-}
-
-void Thing::set_property_string(std::string key, std::string value)
-{
-  boost::algorithm::to_lower(key);
-  pImpl->property_strings[key] = value;
 }
 
 unsigned int Thing::get_quantity() const
@@ -2188,17 +2069,17 @@ std::string Thing::get_display_plural() const
   return pImpl->metadata.get_display_plural();
 }
 
-std::string Thing::get_proper_name() const
+std::string Thing::get_proper_name()
 {
-  return get_property_string("proper_name", "");
+  return get_property<std::string>("proper_name");
 }
 
 void Thing::set_proper_name(std::string name)
 {
-  set_property_string("proper_name", name);
+  set_property<std::string>("proper_name", name);
 }
 
-std::string Thing::get_identifying_string_without_possessives(bool definite) const
+std::string Thing::get_identifying_string_without_possessives(bool definite)
 {
   ThingRef location = this->get_location();
   unsigned int quantity = this->get_quantity();
@@ -2252,7 +2133,7 @@ std::string Thing::get_identifying_string_without_possessives(bool definite) con
     article += boost::lexical_cast<std::string>(get_quantity()) + " ";
   }
 
-  if (get_intrinsic_flag("living") && (pImpl->attributes.get(Attribute::HP) > 0))
+  if (get_intrinsic<bool>("living") && (pImpl->attributes.get(Attribute::HP) > 0))
   {
     adjectives += "dead ";
   }
@@ -2262,7 +2143,7 @@ std::string Thing::get_identifying_string_without_possessives(bool definite) con
   return name;
 }
 
-std::string Thing::get_identifying_string(bool definite) const
+std::string Thing::get_identifying_string(bool definite)
 {
   ThingRef location = this->get_location();
   unsigned int quantity = this->get_quantity();
@@ -2289,7 +2170,7 @@ std::string Thing::get_identifying_string(bool definite) const
     }
   }
 
-  owned = location->get_intrinsic_flag("living");
+  owned = location->get_intrinsic<bool>("living");
 
   if (quantity == 1)
   {
@@ -2335,7 +2216,7 @@ std::string Thing::get_identifying_string(bool definite) const
     }
   }
 
-  if (get_intrinsic_flag("living") && (pImpl->attributes.get(Attribute::HP) > 0))
+  if (get_intrinsic<bool>("living") && (pImpl->attributes.get(Attribute::HP) > 0))
   {
     adjectives += "dead ";
   }
@@ -2360,7 +2241,7 @@ std::string const& Thing::choose_verb(std::string const& verb12,
 
 int Thing::get_mass() const
 {
-  return get_intrinsic_value("physical_mass") * pImpl->quantity;
+  return get_intrinsic<int>("physical_mass") * pImpl->quantity;
 }
 
 std::string const& Thing::get_subject_pronoun() const
@@ -2388,7 +2269,7 @@ std::string const& Thing::get_possessive_pronoun() const
   return getPossPro(get_gender());
 }
 
-std::string Thing::get_possessive() const
+std::string Thing::get_possessive()
 {
   static std::string const your = std::string("your");
 
@@ -2507,12 +2388,12 @@ void Thing::draw_to(sf::RenderTexture& target,
 
 bool Thing::is_opaque() const
 {
-  return get_intrinsic_flag("opaque");
+  return get_intrinsic<bool>("opaque");
 }
 
 void Thing::light_up_surroundings()
 {
-  if (get_intrinsic_value("inventory_size") != 0)
+  if (get_intrinsic<int>("inventory_size") != 0)
   {
     if (!is_opaque())
     {
@@ -2528,7 +2409,7 @@ void Thing::light_up_surroundings()
   ThingRef location = get_location();
 
   // Use visitor pattern.
-  if ((location != TM.get_mu()) && this->get_property_flag("light_lit"))
+  if ((location != TM.get_mu()) && this->get_property<bool>("light_lit"))
   {
     location->be_lit_by(this->get_ref());
   }
@@ -2557,7 +2438,7 @@ void Thing::destroy()
 {
   auto old_location = pImpl->location;
 
-  if (get_intrinsic_value("inventory_size") != 0)
+  if (get_intrinsic<int>("inventory_size") != 0)
   {
     Inventory& inventory = get_inventory();
     ThingMap const& things = inventory.get_things();
@@ -2829,7 +2710,7 @@ bool Thing::perform_action_thrown_by(ThingRef actor, Direction direction)
 
 bool Thing::perform_action_deequipped_by(ThingRef actor, WearLocation& location)
 {
-  if (this->get_property_flag("bound"))
+  if (this->get_property<bool>("bound"))
   {
     std::string message;
     message = actor->get_identifying_string() + " cannot take off " + this->get_identifying_string() +
@@ -2854,9 +2735,9 @@ bool Thing::perform_action_equipped_by(ThingRef actor, WearLocation& location)
 
   if (subclass_result == true)
   {
-    if (this->get_property_flag("autobinds"))
+    if (this->get_property<bool>("autobinds"))
     {
-        this->set_property_flag("bound", true);
+        this->set_property<bool>("bound", true);
         std::string message;
         message = this->get_identifying_string() + " magically binds itself to " +
                   actor->get_possessive() + " " +
@@ -2871,7 +2752,7 @@ bool Thing::perform_action_equipped_by(ThingRef actor, WearLocation& location)
 
 bool Thing::perform_action_unwielded_by(ThingRef actor)
 {
-  if (this->get_property_flag("bound"))
+  if (this->get_property<bool>("bound"))
   {
     std::string message;
     message = actor->get_identifying_string() + " cannot unwield " + this->get_identifying_string() +
@@ -2895,9 +2776,9 @@ bool Thing::perform_action_wielded_by(ThingRef actor)
 
   if (subclass_result == true)
   {
-    if (this->get_property_flag("autobinds", true))
+    if (this->get_property<bool>("autobinds"))
     {
-      this->set_property_flag("bound", true);
+      this->set_property<bool>("bound", true);
       std::string message;
       message = this->get_identifying_string() + " magically binds itself to " +
                 actor->get_possessive() + " " +
@@ -2917,10 +2798,6 @@ bool Thing::perform_action_fired_by(ThingRef actor, Direction direction)
 
 bool Thing::can_merge_with(ThingRef other) const
 {
-  // FUCK IT, I'M USING RTTI HERE.
-  // I can probably craft a solution using CRTP and double-dispatch but I will
-  // almost certainly go insane figuring it out AND waste a ton of time.
-
   // Things with different types can't merge (obviously).
   if (other->get_type() != pImpl->type)
   {
@@ -2928,16 +2805,15 @@ bool Thing::can_merge_with(ThingRef other) const
   }
 
   // Things with inventories can never merge.
-  if ((get_intrinsic_value("inventory_size") != 0) ||
-    (other->get_intrinsic_value("inventory_size") != 0))
+  if ((get_intrinsic<int>("inventory_size") != 0) ||
+    (other->get_intrinsic<int>("inventory_size") != 0))
   {
     return false;
   }
 
   // If the things have the same properties, merge is okay.
-  if ((this->get_property_flags() == other->get_property_flags()) &&
-    (this->get_property_values() == other->get_property_values()) &&
-    (this->get_property_strings() == other->get_property_strings()))
+  // @todo Implement this. It's going to be a major pain in the ass.
+  //if ((this->pImpl->properties) == (other->pImpl->properties))
   {
     return true;
   }
@@ -2947,7 +2823,7 @@ bool Thing::can_merge_with(ThingRef other) const
 
 ActionResult Thing::can_contain(ThingRef thing)
 {
-  if (get_intrinsic_value("inventory_size") == 0)
+  if (get_intrinsic<int>("inventory_size") == 0)
   {
     return ActionResult::FailureTargetNotAContainer;
   }
@@ -2970,9 +2846,11 @@ bool Thing::_process_self()
   bool success = false;
 
   // If entity is currently busy, decrement by one and return.
-  if (get_property_value("busy_counter") > 0)
+  int busy_counter = get_property<int>("busy_counter");
+  if (busy_counter > 0)
   {
-    add_to_property_value("busy_counter", -1);
+    --busy_counter;
+    set_property<int>("busy_counter", busy_counter);
     return true;
   }
 
@@ -2997,7 +2875,7 @@ bool Thing::_process_self()
         success = this->do_move(Direction::Self, action_time);
         if (success)
         {
-          add_to_property_value("busy_counter", action_time);
+          add_to_property<int>("busy_counter", action_time);
         }
         break;
 
@@ -3005,7 +2883,7 @@ bool Thing::_process_self()
         success = this->do_move(action.get_target_direction(), action_time);
         if (success)
         {
-          add_to_property_value("busy_counter", action_time);
+          add_to_property<int>("busy_counter", action_time);
         }
         break;
 
@@ -3017,7 +2895,7 @@ bool Thing::_process_self()
             success = this->do_drop(thing, action_time);
             if (success)
             {
-              add_to_property_value("busy_counter", action_time);
+              add_to_property<int>("busy_counter", action_time);
             }
           }
         }
@@ -3031,7 +2909,7 @@ bool Thing::_process_self()
             success = this->do_eat(thing, action_time);
             if (success)
             {
-              add_to_property_value("busy_counter", action_time);
+              add_to_property<int>("busy_counter", action_time);
             }
           }
         }
@@ -3045,7 +2923,7 @@ bool Thing::_process_self()
             success = this->do_pick_up(thing, action_time);
             if (success)
             {
-              add_to_property_value("busy_counter", action_time);
+              add_to_property<int>("busy_counter", action_time);
             }
           }
         }
@@ -3059,7 +2937,7 @@ bool Thing::_process_self()
             success = this->do_drink(thing, action_time);
             if (success)
             {
-              add_to_property_value("busy_counter", action_time);
+              add_to_property<int>("busy_counter", action_time);
             }
           }
         }
@@ -3070,7 +2948,7 @@ bool Thing::_process_self()
         ThingRef container = action.get_target_thing();
         if (container != TM.get_mu())
         {
-          if (container->get_intrinsic_value("inventory_size") != 0)
+          if (container->get_intrinsic<int>("inventory_size") != 0)
           {
             for (ThingRef thing : action.get_things())
             {
@@ -3079,7 +2957,7 @@ bool Thing::_process_self()
                 success = this->do_put_into(thing, container, action_time);
                 if (success)
                 {
-                  add_to_property_value("busy_counter", action_time);
+                  add_to_property<int>("busy_counter", action_time);
                 }
               }
             }
@@ -3100,7 +2978,7 @@ bool Thing::_process_self()
             success = this->do_take_out(thing, action_time);
             if (success)
             {
-              add_to_property_value("busy_counter", action_time);
+              add_to_property<int>("busy_counter", action_time);
             }
           }
         }
@@ -3114,7 +2992,7 @@ bool Thing::_process_self()
             success = this->do_use(thing, action_time);
             if (success)
             {
-              add_to_property_value("busy_counter", action_time);
+              add_to_property<int>("busy_counter", action_time);
             }
           }
         }
@@ -3134,7 +3012,7 @@ bool Thing::_process_self()
           success = this->do_wield(thing, 0, action_time);
           if (success)
           {
-            add_to_property_value("busy_counter", action_time);
+            add_to_property<int>("busy_counter", action_time);
           }
         }
         break;
@@ -3584,7 +3462,7 @@ int Thing::LUA_get_intrinsic_flag(lua_State* L)
 
   ThingRef thing = ThingRef(lua_tointeger(L, 1));
   const char* key = lua_tostring(L, 2);
-  bool result = thing->get_intrinsic_flag(key);
+  bool result = thing->get_intrinsic<bool>(key);
   lua_pushboolean(L, result);
 
   return 1;
@@ -3602,7 +3480,7 @@ int Thing::LUA_get_intrinsic_value(lua_State* L)
 
   ThingRef thing = ThingRef(lua_tointeger(L, 1));
   const char* key = lua_tostring(L, 2);
-  int result = thing->get_intrinsic_value(key);
+  int result = thing->get_intrinsic<int>(key);
   lua_pushinteger(L, result);
 
   return 1;
@@ -3620,7 +3498,7 @@ int Thing::LUA_get_intrinsic_string(lua_State* L)
 
   ThingRef thing = ThingRef(lua_tointeger(L, 1));
   const char* key = lua_tostring(L, 2);
-  const char* result = thing->get_intrinsic_string(key).c_str();
+  const char* result = thing->get_intrinsic<std::string>(key).c_str();
   lua_pushstring(L, result);
 
   return 1;
@@ -3638,7 +3516,7 @@ int Thing::LUA_get_property_flag(lua_State* L)
 
   ThingRef thing = ThingRef(lua_tointeger(L, 1));
   const char* key = lua_tostring(L, 2);
-  bool result = thing->get_property_flag(key);
+  bool result = thing->get_property<bool>(key);
   lua_pushboolean(L, result);
 
   return 1;
@@ -3656,7 +3534,7 @@ int Thing::LUA_get_property_value(lua_State* L)
 
   ThingRef thing = ThingRef(lua_tointeger(L, 1));
   const char* key = lua_tostring(L, 2);
-  int result = thing->get_property_value(key);
+  int result = thing->get_property<int>(key);
   lua_pushinteger(L, result);
 
   return 1;
@@ -3674,7 +3552,7 @@ int Thing::LUA_get_property_string(lua_State* L)
 
   ThingRef thing = ThingRef(lua_tointeger(L, 1));
   const char* key = lua_tostring(L, 2);
-  const char* result = thing->get_property_string(key).c_str();
+  const char* result = thing->get_property<std::string>(key).c_str();
   lua_pushstring(L, result);
 
   return 1;
@@ -3693,7 +3571,7 @@ int Thing::LUA_set_property_flag(lua_State* L)
   ThingRef thing = ThingRef(lua_tointeger(L, 1));
   const char* key = lua_tostring(L, 2);
   bool value = (lua_toboolean(L, 3) != 0);
-  thing->set_property_flag(key, value);
+  thing->set_property<bool>(key, value);
 
   return 0;
 }
@@ -3711,7 +3589,7 @@ int Thing::LUA_set_property_value(lua_State* L)
   ThingRef thing = ThingRef(lua_tointeger(L, 1));
   const char* key = lua_tostring(L, 2);
   int value = static_cast<int>(lua_tointeger(L, 3));
-  thing->set_property_value(key, value);
+  thing->set_property<int>(key, value);
 
   return 0;
 }
@@ -3730,7 +3608,7 @@ int Thing::LUA_set_property_string(lua_State* L)
   const char* key = lua_tostring(L, 2);
   const char* value = lua_tostring(L, 3);
   std::string svalue = std::string(value);
-  thing->set_property_string(key, svalue);
+  thing->set_property<std::string>(key, svalue);
 
   return 0;
 }

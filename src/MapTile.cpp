@@ -145,7 +145,7 @@ std::string MapTile::get_type() const
 
 bool MapTile::is_empty_space() const
 {
-  return pImpl->p_metadata->get_flag("passable");
+  return pImpl->p_metadata->get_intrinsic<bool>("passable");
 }
 
 /// @todo: Implement this to cover different entity types.
@@ -313,7 +313,7 @@ bool MapTile::is_opaque() const
 {
   /// @todo Check the tile's inventory to see if there's anything huge enough
   ///       to block the view of stuff behind it.
-  return pImpl->p_metadata->get_flag("opaque");
+  return pImpl->p_metadata->get_intrinsic<bool>("opaque");
 }
 
 void MapTile::draw_highlight(sf::RenderTarget& target,

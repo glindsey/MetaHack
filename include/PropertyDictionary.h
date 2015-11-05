@@ -2,9 +2,13 @@
 #define PROPERTYDICTIONARY_H
 
 #include <string>
+#include <boost/property_tree/ptree.hpp>
 #include <SFML/Graphics.hpp>
 
 #include "common_types.h"
+
+// Namespace aliases
+namespace pt = boost::property_tree;
 
 /// Class that handles a dictionary that associates data of various types
 /// with keys.
@@ -14,12 +18,18 @@ public:
   PropertyDictionary();
   virtual ~PropertyDictionary();
   
+  /// Populate this dictionary from a Boost property tree.
+  void populate_from(pt::ptree const& tree);
+
+  /// Check if a particular key exists.
+  bool contains(std::string key) const;
+
   /// Get an entry from the dictionary.
   /// @param key  Key of the setting to retrieve.
   /// @return     The entry requested.
   ///             If the entry does not exist, returns a new instance of T.
   template<typename T>
-  T get(std::string key)
+  T get(std::string key) const
   {
     // Bail if the setting doesn't exist.
     if (m_dictionary.count(key) == 0)
@@ -47,11 +57,11 @@ public:
   // break round-tripping. (i.e. Any time Lua writes a value it will be
   // stored as a double does to Lua's "a number is a number" typing. No way
   // to get around that.)
-  template<> int get(std::string key) { return static_cast<int>(get<double>(key)); }
-  template<> unsigned int get(std::string key) { return static_cast<unsigned int>(get<double>(key)); }
-  template<> long int get(std::string key) { return static_cast<long int>(get<double>(key)); }
-  template<> unsigned long int get(std::string key) { return static_cast<unsigned long int>(get<double>(key)); }
-  template<> float get(std::string key) { return static_cast<float>(get<double>(key)); }
+  template<> int get(std::string key) const { return static_cast<int>(get<double>(key)); }
+  template<> unsigned int get(std::string key) const { return static_cast<unsigned int>(get<double>(key)); }
+  template<> long int get(std::string key) const { return static_cast<long int>(get<double>(key)); }
+  template<> unsigned long int get(std::string key) const { return static_cast<unsigned long int>(get<double>(key)); }
+  template<> float get(std::string key) const { return static_cast<float>(get<double>(key)); }
 
   /// Add/alter an entry in the dictionary.
   /// @note         The type being added must be copyable... I think.

@@ -17,7 +17,7 @@ Metadata::Metadata(std::string category, std::string type)
   TRACE("Loading metadata for %s::%s...", category.c_str(), type.c_str());
 
   m_category = category;
-  m_name = type;
+  m_type = type;
 
   // Look for the various files containing this metadata.
   std::string xmlfile_string = "resources/" + category + "s/" + type + ".xml";
@@ -30,7 +30,6 @@ Metadata::Metadata(std::string category, std::string type)
   if (!fs::exists(xmlfile_path))
   {
     FATAL_ERROR("Can't find %s", xmlfile_string.c_str());
-    //throw ExceptionMissingFile("XML", "Thing", type);
   }
 
   /// Load file.
@@ -41,128 +40,72 @@ Metadata::Metadata(std::string category, std::string type)
 
   pt::ptree& data = (m_raw_ptree).get_child(m_category);
 
-  // Get the pretty name.
-  try
+  // Get thing's parent.
+  if (data.count("parent") == 0)
   {
-    m_display_name = data.get_child("name").get_value<std::string>("[" + type + "]");
+    m_parent = "";
   }
-  catch (pt::ptree_bad_path&)
+  else
+  {
+    m_parent = data.get_child("parent").get_value<std::string>("");
+  }
+
+  // Get the pretty name.
+  if (data.count("name") == 0)
   {
     m_display_name = "[" + type + "]";
   }
+  else
+  {
+    m_display_name = data.get_child("name").get_value<std::string>("[" + type + "]");
+  }
 
   // Get thing's pretty plural, if present. Otherwise add "s" to the normal pretty name.
-  try
-  {
-    m_display_plural = data.get_child("plural").get_value<std::string>(m_display_name + "s");
-  }
-  catch (pt::ptree_bad_path&)
+  if (data.count("plural") == 0)
   {
     m_display_plural = m_display_name + "s";
   }
+  else
+  {
+    m_display_plural = data.get_child("plural").get_value<std::string>(m_display_name + "s");
+  }
 
   // Get thing's description.
-  try
-  {
-    m_description = data.get_child("description").get_value<std::string>("(No description found.)");
-  }
-  catch (pt::ptree_bad_path&)
+  if (data.count("description") == 0)
   {
     m_description = "(No description found.)";
   }
+  else
+  {
+    m_description = data.get_child("description").get_value<std::string>("(No description found.)");
+  }
 
-#if 0
-  // Look for intrinsics, properties sections. Both must be present for any Thing.
-  pt::ptree intrinsics_tree = data.get_child("intrinsics");
-  pt::ptree properties_tree = data.get_child("properties");
-  try
+  // Look for intrinsics, defaults sections. Both must be present in any metadata file.
+  pt::ptree intrinsics_tree;
+  if (data.count("intrinsics") == 0)
+  {
+    FATAL_ERROR("Metadata file for %s:%s doesn't have an \"intrinsics\" section", m_category.c_str(), m_type.c_str());
+  }
+  else
   {
     intrinsics_tree = data.get_child("intrinsics");
-    properties_tree = data.get_child("properties");
   }
-  catch (pt::ptree_bad_path& p)
+
+  pt::ptree defaults_tree;
+  if (data.count("defaults") == 0)
   {
-    FATAL_ERROR(p.what());
+    FATAL_ERROR("Metadata file for %s:%s doesn't have a \"defaults\" section", m_category.c_str(), m_type.c_str());
   }
-
-  // Get intrinsic flags.
-  if (intrinsics_tree.count("flags") != 0)
+  else
   {
-    for (auto& child_tree : intrinsics_tree.get_child("flags"))
-    {
-      std::string key = child_tree.first;
-      boost::algorithm::to_lower(key);
-      bool value = child_tree.second.get_value<bool>(false);
-
-      m_intrinsic_flags[key] = value;
-    }
+    defaults_tree = data.get_child("defaults");
   }
 
-  // Get intrinsic values.
-  if (intrinsics_tree.count("values") != 0)
-  {
-    for (auto& child_tree : intrinsics_tree.get_child("values"))
-    {
-      std::string key = child_tree.first;
-      boost::algorithm::to_lower(key);
-      int value = child_tree.second.get_value<int>(0);
+  // Populate intrinsics dictionary.
+  m_intrinsics.populate_from(intrinsics_tree);
 
-      m_intrinsic_values[key] = value;
-    }
-  }
-
-  // Get intrinsic strings.
-  if (intrinsics_tree.count("strings") != 0)
-  {
-    for (auto& child_tree : intrinsics_tree.get_child("strings"))
-    {
-      std::string key = child_tree.first;
-      boost::algorithm::to_lower(key);
-      std::string value = child_tree.second.get_value<std::string>("");
-
-      m_intrinsic_strings[key] = value;
-    }
-  }
-
-  // Get default property flags.
-  if (properties_tree.count("flags") != 0)
-  {
-    for (auto& child_tree : properties_tree.get_child("flags"))
-    {
-      std::string key = child_tree.first;
-      boost::algorithm::to_lower(key);
-      bool value = child_tree.second.get_value<bool>(false);
-
-      m_default_flags[key] = value;
-    }
-  }
-
-  // Get default property values.
-  if (properties_tree.count("values") != 0)
-  {
-    for (auto& child_tree : properties_tree.get_child("values"))
-    {
-      std::string key = child_tree.first;
-      boost::algorithm::to_lower(key);
-      int value = child_tree.second.get_value<int>(0);
-
-      m_default_values[key] = value;
-    }
-  }
-
-  // Get default property strings.
-  if (properties_tree.count("strings") != 0)
-  {
-    for (auto& child_tree : properties_tree.get_child("strings"))
-    {
-      std::string key = child_tree.first;
-      boost::algorithm::to_lower(key);
-      std::string value = child_tree.second.get_value<std::string>("");
-
-      m_default_strings[key] = value;
-    }
-  }
-#endif
+  // Populate defaults dictionary.
+  m_defaults.populate_from(defaults_tree);
 
   if (fs::exists(pngfile_path))
   {
@@ -194,7 +137,12 @@ Metadata::~Metadata()
 /// Get the name associated with this data.
 std::string const& Metadata::get_name() const
 {
-  return m_name;
+  return m_type;
+}
+
+std::string const& Metadata::get_parent() const
+{
+  return m_parent;
 }
 
 std::string const& Metadata::get_display_name() const
@@ -215,6 +163,16 @@ std::string const& Metadata::get_description() const
 sf::Vector2u const& Metadata::get_tile_coords() const
 {
   return m_tile_location;
+}
+
+PropertyDictionary const& Metadata::get_defaults() const
+{
+  return m_defaults;
+}
+
+PropertyDictionary const& Metadata::get_intrinsics() const
+{
+  return m_intrinsics;
 }
 
 // === PROTECTED METHODS ======================================================
