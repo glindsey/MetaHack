@@ -32,10 +32,11 @@ typedef boost::random::uniform_int_distribution<> uniform_int_dist;
 sf::IntRect calc_message_log_dimensions(sf::RenderWindow& window)
 {
   sf::IntRect messageLogDims;
-  messageLogDims.width = window.getSize().x - 6;
-  messageLogDims.height = static_cast<int>(window.getSize().y * 0.25f) - 6;
-  messageLogDims.left = 3;
-  messageLogDims.top = 3;
+  unsigned int inventory_area_width = Settings.get<unsigned int>("inventory_area_width");
+  messageLogDims.width = window.getSize().x - (inventory_area_width + 24);
+  messageLogDims.height = static_cast<int>(window.getSize().y * 0.25f) - 10;
+  messageLogDims.left = 12;
+  messageLogDims.top = 5;
   return messageLogDims;
 }
 
