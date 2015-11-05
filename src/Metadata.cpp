@@ -12,42 +12,12 @@
 #include "Lua.h"
 #include "Tilesheet.h"
 
-struct Metadata::Impl
-{
-  /// Category of this metadata (e.g. "maptile", "thing", etc.)
-  std::string category;
-
-  /// The name associated with this metadata.
-  std::string name;
-
-  /// The display name.
-  std::string display_name;
-
-  /// The display plural.
-  std::string display_plural;
-
-  /// A brief description.
-  std::string description;
-
-  /// The raw metadata. It is a bit wasteful to save this
-  /// independently of other data, so it should probably only be saved
-  /// for as long as it is needed.
-  pt::ptree raw_ptree;
-
-  /// Boolean indicating whether this metadata has graphics associated with it.
-  bool has_tiles;
-
-  /// Location of this metadata's graphics on the tilesheet.
-  sf::Vector2u tile_location;
-};
-
 Metadata::Metadata(std::string category, std::string type)
-  : pImpl(NEW Impl())
 {
   TRACE("Loading metadata for %s::%s...", category.c_str(), type.c_str());
 
-  pImpl->category = category;
-  pImpl->name = type;
+  m_category = category;
+  m_name = type;
 
   // Look for the various files containing this metadata.
   std::string xmlfile_string = "resources/" + category + "s/" + type + ".xml";
@@ -64,54 +34,147 @@ Metadata::Metadata(std::string category, std::string type)
   }
 
   /// Load file.
-  pt::xml_parser::read_xml(xmlfile_string, pImpl->raw_ptree);
+  pt::xml_parser::read_xml(xmlfile_string, m_raw_ptree);
 
   // DEBUG: Dump the tree using trace.
   this->trace_tree();
 
-  pt::ptree& data = (pImpl->raw_ptree).get_child(pImpl->category);
+  pt::ptree& data = (m_raw_ptree).get_child(m_category);
 
   // Get the pretty name.
   try
   {
-    pImpl->display_name = data.get_child("name").get_value<std::string>("[" + type + "]");
+    m_display_name = data.get_child("name").get_value<std::string>("[" + type + "]");
   }
   catch (pt::ptree_bad_path&)
   {
-    pImpl->display_name = "[" + type + "]";
+    m_display_name = "[" + type + "]";
   }
 
   // Get thing's pretty plural, if present. Otherwise add "s" to the normal pretty name.
   try
   {
-    pImpl->display_plural = data.get_child("plural").get_value<std::string>(pImpl->display_name + "s");
+    m_display_plural = data.get_child("plural").get_value<std::string>(m_display_name + "s");
   }
   catch (pt::ptree_bad_path&)
   {
-    pImpl->display_plural = pImpl->display_name + "s";
+    m_display_plural = m_display_name + "s";
   }
 
   // Get thing's description.
   try
   {
-    pImpl->description = data.get_child("description").get_value<std::string>("(No description found.)");
+    m_description = data.get_child("description").get_value<std::string>("(No description found.)");
   }
   catch (pt::ptree_bad_path&)
   {
-    pImpl->description = "(No description found.)";
+    m_description = "(No description found.)";
   }
+
+#if 0
+  // Look for intrinsics, properties sections. Both must be present for any Thing.
+  pt::ptree intrinsics_tree = data.get_child("intrinsics");
+  pt::ptree properties_tree = data.get_child("properties");
+  try
+  {
+    intrinsics_tree = data.get_child("intrinsics");
+    properties_tree = data.get_child("properties");
+  }
+  catch (pt::ptree_bad_path& p)
+  {
+    FATAL_ERROR(p.what());
+  }
+
+  // Get intrinsic flags.
+  if (intrinsics_tree.count("flags") != 0)
+  {
+    for (auto& child_tree : intrinsics_tree.get_child("flags"))
+    {
+      std::string key = child_tree.first;
+      boost::algorithm::to_lower(key);
+      bool value = child_tree.second.get_value<bool>(false);
+
+      m_intrinsic_flags[key] = value;
+    }
+  }
+
+  // Get intrinsic values.
+  if (intrinsics_tree.count("values") != 0)
+  {
+    for (auto& child_tree : intrinsics_tree.get_child("values"))
+    {
+      std::string key = child_tree.first;
+      boost::algorithm::to_lower(key);
+      int value = child_tree.second.get_value<int>(0);
+
+      m_intrinsic_values[key] = value;
+    }
+  }
+
+  // Get intrinsic strings.
+  if (intrinsics_tree.count("strings") != 0)
+  {
+    for (auto& child_tree : intrinsics_tree.get_child("strings"))
+    {
+      std::string key = child_tree.first;
+      boost::algorithm::to_lower(key);
+      std::string value = child_tree.second.get_value<std::string>("");
+
+      m_intrinsic_strings[key] = value;
+    }
+  }
+
+  // Get default property flags.
+  if (properties_tree.count("flags") != 0)
+  {
+    for (auto& child_tree : properties_tree.get_child("flags"))
+    {
+      std::string key = child_tree.first;
+      boost::algorithm::to_lower(key);
+      bool value = child_tree.second.get_value<bool>(false);
+
+      m_default_flags[key] = value;
+    }
+  }
+
+  // Get default property values.
+  if (properties_tree.count("values") != 0)
+  {
+    for (auto& child_tree : properties_tree.get_child("values"))
+    {
+      std::string key = child_tree.first;
+      boost::algorithm::to_lower(key);
+      int value = child_tree.second.get_value<int>(0);
+
+      m_default_values[key] = value;
+    }
+  }
+
+  // Get default property strings.
+  if (properties_tree.count("strings") != 0)
+  {
+    for (auto& child_tree : properties_tree.get_child("strings"))
+    {
+      std::string key = child_tree.first;
+      boost::algorithm::to_lower(key);
+      std::string value = child_tree.second.get_value<std::string>("");
+
+      m_default_strings[key] = value;
+    }
+  }
+#endif
 
   if (fs::exists(pngfile_path))
   {
-    pImpl->has_tiles = true;
-    pImpl->tile_location = TS.load_collection(pngfile_string);
+    m_has_tiles = true;
+    m_tile_location = TS.load_collection(pngfile_string);
     TRACE("Tiles for %s:%s were placed on the TileSheet at (%u, %u)",
-      category.c_str(), type.c_str(), pImpl->tile_location.x, pImpl->tile_location.y);
+      category.c_str(), type.c_str(), m_tile_location.x, m_tile_location.y);
   }
   else
   {
     TRACE("No tiles found for %s:%s", category.c_str(), type.c_str());
-    pImpl->has_tiles = false;
+    m_has_tiles = false;
   }
 
   /// Now try to load and run a Lua script for this Thing if one exists.
@@ -131,27 +194,27 @@ Metadata::~Metadata()
 /// Get the name associated with this data.
 std::string const& Metadata::get_name() const
 {
-  return pImpl->name;
+  return m_name;
 }
 
 std::string const& Metadata::get_display_name() const
 {
-  return pImpl->display_name;
+  return m_display_name;
 }
 
 std::string const& Metadata::get_display_plural() const
 {
-  return pImpl->display_plural;
+  return m_display_plural;
 }
 
 std::string const& Metadata::get_description() const
 {
-  return pImpl->description;
+  return m_description;
 }
 
 sf::Vector2u const& Metadata::get_tile_coords() const
 {
-  return pImpl->tile_location;
+  return m_tile_location;
 }
 
 // === PROTECTED METHODS ======================================================
@@ -160,7 +223,7 @@ void Metadata::trace_tree(pt::ptree const* pTree, std::string prefix)
 {
   if (pTree == nullptr)
   {
-    pTree = &(pImpl->raw_ptree);
+    pTree = &(m_raw_ptree);
   }
 
   pt::ptree::const_iterator end = pTree->end();
@@ -181,13 +244,13 @@ void Metadata::trace_tree(pt::ptree const* pTree, std::string prefix)
 /// Get the raw property tree containing metadata.
 pt::ptree const& Metadata::get_ptree()
 {
-  return pImpl->raw_ptree.get_child(pImpl->category);
+  return m_raw_ptree.get_child(m_category);
 }
 
 /// Clear the raw property tree. Should only be done after all data needed
 /// has been read from it.
 void Metadata::clear_ptree()
 {
-  pImpl->raw_ptree.clear();
+  m_raw_ptree.clear();
 }
 

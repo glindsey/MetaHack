@@ -60,6 +60,8 @@ int ConfigSettings::LUA_get_config(lua_State* L)
   // Make sure the instance actually exists.
   ConfigSettings& instance = ConfigSettings::instance();
 
+  AnyMap& dictionary = instance.get_dictionary();
+
   int num_args = lua_gettop(L);
 
   if (num_args != 1)
@@ -70,14 +72,14 @@ int ConfigSettings::LUA_get_config(lua_State* L)
 
   const char* key = lua_tostring(L, 1);
 
-  if (instance.settings.count(key) == 0)
+  if (dictionary.count(key) == 0)
   {
     lua_pushnil(L);
     return 1;
   }
   else
   {
-    boost::any result = instance.settings[key];
+    boost::any result = dictionary[key];
     int args = the_lua_instance.push_onto_lua_stack(result);
     return args;
   }

@@ -169,6 +169,7 @@
     <ClInclude Include="include\Metadata.h" />
     <ClInclude Include="include\New.h" />
     <ClInclude Include="include\Ordinal.h" />
+    <ClInclude Include="include\PropertyDictionary.h" />
     <ClInclude Include="include\Renderable.h" />
     <ClInclude Include="include\ShaderEffect.h" />
     <ClInclude Include="include\SpritePrototype.h" />
@@ -216,6 +217,7 @@
     <ClCompile Include="src\MapTileMetadata.cpp" />
     <ClCompile Include="src\MessageLog.cpp" />
     <ClCompile Include="src\Metadata.cpp" />
+    <ClCompile Include="src\PropertyDictionary.cpp" />
     <ClCompile Include="src\State.cpp" />
     <ClCompile Include="src\StateMachine.cpp" />
     <ClCompile Include="src\StatusArea.cpp" />
