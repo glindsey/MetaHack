@@ -31,15 +31,26 @@ Counters
 Attributes
 ==========
     - Strength
+        - affects how much you can lift
+        - affects damage done with large and/or blunt force weapons
     - Endurance
+        - affects how long you can go without food/water/sleep
     - Vitality
+        - affects poison immunity, Max HP gained per level
     - Agility
+        - affects reflexes: action start speed, dodge ability
     - Intelligence
-    - Magic Defense
+        - affects ability to read scrolls/books, build items
+    - Aura
+        - affects potency of magicule usage, defense against effects
     - Charisma
+        - affects ability to barter, bribe, and influence others
     - Allure
+        - affects physical attractiveness to interested individuals
     - Attentiveness
+        - affects identification of secret passages
     - Luck
+        - affects "random" chance events
 
 Experience levels
 =================

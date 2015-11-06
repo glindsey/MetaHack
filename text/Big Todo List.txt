@@ -13,7 +13,7 @@ MEDIUM THINGS
 
 BIG THINGS
 ==========
-[ ] Create a std::unordered_map< std::string, std::vector< std::string > > that records the children of each parent.
+[X] Create a std::unordered_map< std::string, std::vector< std::string > > that records the children of each parent.
     - Turns out this has required a huge refactor of the way I'm saving Metadata instances. Welp.
     
 [ ] Revamp Actions
