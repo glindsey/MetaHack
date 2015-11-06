@@ -126,7 +126,7 @@ ActionResult ThingMetadata::call_lua_function(std::string function_name,
 
   if (start_stack != end_stack)
   {
-    MAJOR_ERROR("*** LUA STACK MISMATCH (%s:%s): Started at %d, ended at %d", name.c_str(), function_name.c_str(), start_stack, end_stack);
+    MAJOR_ERROR("*** LUA STACK MISMATCH (%s!%s): Started at %d, ended at %d", name.c_str(), function_name.c_str(), start_stack, end_stack);
   }
 
   std::string parent = get_parent();
@@ -134,7 +134,7 @@ ActionResult ThingMetadata::call_lua_function(std::string function_name,
   {
     if (parent.empty())
     {
-      TRACE("Reached the top of the parent tree trying to call %s.%s", name.c_str(), function_name.c_str());
+      //TRACE("Reached the top of the parent tree trying to call %s.%s", name.c_str(), function_name.c_str());
       return_value = default_result;
     }
     else
@@ -226,7 +226,7 @@ bool ThingMetadata::call_lua_function_bool(std::string function_name,
 
   if (start_stack != end_stack)
   {
-    MAJOR_ERROR("*** LUA STACK MISMATCH (%s:%s): Started at %d, ended at %d", name.c_str(), function_name.c_str(), start_stack, end_stack);
+    MAJOR_ERROR("*** LUA STACK MISMATCH (%s!%s): Started at %d, ended at %d", name.c_str(), function_name.c_str(), start_stack, end_stack);
   }
 
   if (call_parent)
@@ -234,7 +234,7 @@ bool ThingMetadata::call_lua_function_bool(std::string function_name,
     std::string parent = get_parent();
     if (parent.empty())
     {
-      TRACE("Reached the top of the parent tree trying to call %s.%s", name.c_str(), function_name.c_str());
+      //TRACE("Reached the top of the parent tree trying to call %s.%s", name.c_str(), function_name.c_str());
       return_value = default_result;
     }
     else
@@ -326,7 +326,7 @@ sf::Vector2u ThingMetadata::call_lua_function_v2u(std::string function_name,
 
   if (start_stack != end_stack)
   {
-    MAJOR_ERROR("*** LUA STACK MISMATCH (%s:%s): Started at %d, ended at %d", name.c_str(), function_name.c_str(), start_stack, end_stack);
+    MAJOR_ERROR("*** LUA STACK MISMATCH (%s!%s): Started at %d, ended at %d", name.c_str(), function_name.c_str(), start_stack, end_stack);
   }
 
   if (call_parent)
@@ -334,7 +334,7 @@ sf::Vector2u ThingMetadata::call_lua_function_v2u(std::string function_name,
     std::string parent = get_parent();
     if (parent.empty())
     {
-      TRACE("Reached the top of the parent tree trying to call %s.%s", name.c_str(), function_name.c_str());
+      //TRACE("Reached the top of the parent tree trying to call %s.%s", name.c_str(), function_name.c_str());
       return_value = default_result;
     }
     else

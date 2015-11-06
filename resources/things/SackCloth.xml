@@ -2,14 +2,12 @@
 <thing>
   <name>cloth sack</name>
   <parent>Container</parent>  
-  <description>A sack made out of cloth.</description>
+  <description>"A sack made out of cloth."</description>
   <intrinsics>
     <openable>false</openable>
     <inventory_size>10</inventory_size>
   </intrinsics>
   <defaults>
 	  <open>true</open>
-    <tile_sheet_x>2</tile_sheet_x>
-    <tile_sheet_y>8</tile_sheet_y>
-  </properties>
+  </defaults>
 </thing>

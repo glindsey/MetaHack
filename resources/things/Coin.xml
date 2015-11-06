@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <thing>
-  <name>gold coin</name>
-  <parent>Coin</parent>
-  <description>"A gold coin."</description>
+  <name>[Coin]</name>
+  <parent>Thing</parent>
+  <description>"The generic Coin class."</description>
   <intrinsics>
     <physical_mass>1</physical_mass>
   </intrinsics>

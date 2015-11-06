@@ -2,11 +2,9 @@
 <thing>
   <name>[Blob]</name>
   <parent>Entity</parent>
-  <description>The generic Blob class.</description>
+  <description>"The generic Blob class."</description>
   <intrinsics>
   </intrinsics>
   <defaults>
-    <tile_sheet_x>0</tile_sheet_x>
-    <tile_sheet_y>0</tile_sheet_y>
   </defaults>
 </thing>

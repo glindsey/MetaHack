@@ -2,11 +2,9 @@
 <thing>
   <name>rock lichen</name>
   <parent>Blob</parent>
-  <description>A lichen that normally grows on a rock.</description>
+  <description>"A lichen that normally grows on a rock."</description>
   <intrinsics>
   </intrinsics>
   <defaults>
-    <tile_sheet_x>4</tile_sheet_x>
-    <tile_sheet_y>5</tile_sheet_y>
   </defaults>
 </thing>

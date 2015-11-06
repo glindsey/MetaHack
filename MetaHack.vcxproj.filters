@@ -204,6 +204,12 @@
     <ClInclude Include="include\PropertyDictionary.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\common_functions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\IntegerRange.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">
@@ -320,6 +326,9 @@
     <ClCompile Include="src\PropertyDictionary.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\IntegerRange.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="resources\things\Thing.xml">
@@ -394,6 +403,9 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="resources\things\Sconce.lua">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\things\Entity.lua">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

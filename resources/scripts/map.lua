@@ -5,8 +5,8 @@
 -- Globals used:
 --		current_map_id - ID of the map currently being generated
 
-trace("Current map ID is " .. current_map_id)
+print("Current map ID is " .. current_map_id)
 
 if current_map_id ~= 0 then
-	trace("TODO: Populate map with stuff.")
+	print("TODO: Populate map with stuff.")
 end

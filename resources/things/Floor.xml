@@ -2,14 +2,12 @@
 <thing>
   <name>floor</name>
   <parent>Thing</parent>
-  <description>A floor.</description>
+  <description>"A floor."</description>
   <intrinsics>
     <movable>false</movable>
     <opaque>false</opaque>
     <inventory_size>-1</inventory_size>
   </intrinsics>
   <defaults>
-    <values>      
-    </values>
   </defaults>
 </thing>

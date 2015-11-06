@@ -18,7 +18,7 @@ public:
 
   virtual char const * what() const
   {
-    return (boost::format("The %s file for %s:%s was not found") 
+    return (boost::format("The %s file for %s!%s was not found") 
       % m_fileType % m_objectType % m_objectName).str().c_str();
   }
 

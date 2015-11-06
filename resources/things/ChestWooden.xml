@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <thing>
   <name>wooden chest</name>
-  <description>An unremarkable wooden chest.</description>
+  <description>"An unremarkable wooden chest."</description>
   <parent>Container</parent>
   <intrinsics>
     <lockable>true</lockable>
@@ -10,7 +10,5 @@
     <physical_mass>10</physical_mass>
   </intrinsics>
   <defaults>
-    <tile_sheet_x>5</tile_sheet_x>
-    <tile_sheet_y>9</tile_sheet_y>
   </defaults>
 </thing>

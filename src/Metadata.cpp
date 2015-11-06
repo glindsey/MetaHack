@@ -15,7 +15,7 @@
 
 Metadata::Metadata(std::string category, std::string type)
 {
-  TRACE("Loading metadata for %s::%s...", category.c_str(), type.c_str());
+  TRACE("Loading metadata for %s!%s...", category.c_str(), type.c_str());
 
   m_category = category;
   m_type = type;
@@ -37,7 +37,7 @@ Metadata::Metadata(std::string category, std::string type)
   pt::xml_parser::read_xml(xmlfile_string, m_raw_ptree);
 
   // DEBUG: Dump the tree using trace.
-  this->trace_tree();
+  //this->trace_tree();
 
   pt::ptree& data = (m_raw_ptree).get_child(m_category);
 
@@ -92,7 +92,7 @@ Metadata::Metadata(std::string category, std::string type)
   pt::ptree intrinsics_tree;
   if (data.count("intrinsics") == 0)
   {
-    FATAL_ERROR("Metadata file for %s:%s doesn't have an \"intrinsics\" section", m_category.c_str(), m_type.c_str());
+    FATAL_ERROR("Metadata file for %s!%s doesn't have an \"intrinsics\" section", m_category.c_str(), m_type.c_str());
   }
   else
   {
@@ -102,7 +102,7 @@ Metadata::Metadata(std::string category, std::string type)
   pt::ptree defaults_tree;
   if (data.count("defaults") == 0)
   {
-    FATAL_ERROR("Metadata file for %s:%s doesn't have a \"defaults\" section", m_category.c_str(), m_type.c_str());
+    FATAL_ERROR("Metadata file for %s!%s doesn't have a \"defaults\" section", m_category.c_str(), m_type.c_str());
   }
   else
   {
@@ -119,19 +119,19 @@ Metadata::Metadata(std::string category, std::string type)
   {
     m_has_tiles = true;
     m_tile_location = TS.load_collection(pngfile_string);
-    TRACE("Tiles for %s:%s were placed on the TileSheet at (%u, %u)",
+    TRACE("Tiles for %s!%s were placed on the TileSheet at (%u, %u)",
       category.c_str(), type.c_str(), m_tile_location.x, m_tile_location.y);
   }
   else
   {
-    TRACE("No tiles found for %s:%s", category.c_str(), type.c_str());
+    TRACE("No tiles found for %s!%s", category.c_str(), type.c_str());
     m_has_tiles = false;
   }
 
   /// Now try to load and run a Lua script for this Thing if one exists.
   if (fs::exists(luafile_path))
   {
-    TRACE("Loading Lua script for %s:%s...", category.c_str(), type.c_str());
+    TRACE("Loading Lua script for %s!%s...", category.c_str(), type.c_str());
 
     the_lua_instance.do_file(luafile_string);
   }

@@ -135,6 +135,7 @@
     <ClInclude Include="include\Beatitude.h" />
     <ClInclude Include="include\BodyPart.h" />
     <ClInclude Include="include\common_enums.h" />
+    <ClInclude Include="include\common_functions.h" />
     <ClInclude Include="include\common_types.h" />
     <ClInclude Include="include\ConfigSettings.h" />
     <ClInclude Include="include\Direction.h" />
@@ -146,6 +147,7 @@
     <ClInclude Include="include\GeoVector.h" />
     <ClInclude Include="include\GetLetterKey.h" />
     <ClInclude Include="include\gui\GUIPane.h" />
+    <ClInclude Include="include\IntegerRange.h" />
     <ClInclude Include="include\Inventory.h" />
     <ClInclude Include="include\InventoryArea.h" />
     <ClInclude Include="include\InventorySlot.h" />
@@ -200,6 +202,7 @@
     <ClCompile Include="src\GameObject.cpp" />
     <ClCompile Include="src\Gender.cpp" />
     <ClCompile Include="src\gui\GUIPane.cpp" />
+    <ClCompile Include="src\IntegerRange.cpp" />
     <ClCompile Include="src\Inventory.cpp" />
     <ClCompile Include="src\InventoryArea.cpp" />
     <ClCompile Include="src\KeyBuffer.cpp" />
@@ -253,6 +256,7 @@
     <None Include="resources\default.lua" />
     <None Include="resources\scripts\map.lua" />
     <None Include="resources\things\Biped.lua" />
+    <None Include="resources\things\Entity.lua" />
     <None Include="resources\things\Human.lua" />
     <None Include="resources\things\LightSource.lua" />
     <None Include="resources\things\Rock.lua" />

@@ -2,12 +2,24 @@
 <thing>
   <name>human</name>
   <parent>Biped</parent>
-  <description>A human being.</description>
+  <description>"A human being."</description>
   <intrinsics>
+	<!-- This guy/gal is an utterly average hero, so his/her stats reflect that. -->
+	<attributes>
+		<maxhp>6 to 10</maxhp>
+		<strength>13 to 17</strength>
+		<endurance>13 to 17</endurance>
+		<vitality>13 to 17</vitality>
+		<agility>13 to 17</agility>
+		<intelligence>13 to 17</intelligence>
+		<magicdefense>13 to 17</magicdefense>
+		<charisma>13 to 17</charisma>
+		<allure>13 to 17</allure>
+		<attentiveness>13 to 17</attentiveness>
+		<luck>13 to 17</luck>
+	</attributes>
   </intrinsics>
   <defaults>
-    <tile_sheet_x>0</tile_sheet_x>
-    <tile_sheet_y>5</tile_sheet_y>
     <proper_name>"John Doe"</proper_name>
   </defaults>
 </thing>

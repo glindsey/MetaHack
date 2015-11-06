@@ -1,19 +1,40 @@
 GSL NOTE -- this is a bit out of date as I have decided Attributes will go from 0 to 31.  Keeping this though for the experience level info.
 
+Info regarding attributes in the code (eventually in its own XML file, maybe):
+
+- Name
+- Description
+- Maximum amount possible
+
+* Entities have all attributes. Destructable Things (and maybe even MapTiles) have HP.
+* XP is not an attribute in the same manner as the other attributes.
+* Neither are food/drink timeouts. Those will probably go into "counters".
+* Max HP will increase on each level up, by an amount determined by vitality.
+
+* Attribute starting amounts are stored in XML files for different Things, expressed as ranges.
+
+	* A range is expressed as "X to Y" in the XML file. By default, a number will be chosen from the range using a normal distribution. However, a uniform distribution can be chosen by appending "uniform" (or just "uni" or "u") after the range.
+
+
 Attributes
 ==========
 
-STR - Strength
-CON - Constitution
-AGI - Agility
-INT - Intelligence
-PER - Perception (of surrounding environment)
-MAG - Magic ability
-CHA - Charm (ability to charm anybody)
-APP - Appearance (physical attractiveness)
-LUC - Luck
+  {   0, 2147483647 }, // XP
+  {  10,      65535 }, // HP
+  {  10,      65535 }, // MaxHP
+  { 512,      65535 }, // FoodTimeout
+  { 512,      65535 }, // DrinkTimeout
+  {  15,         31 }, // Strength
+  {  15,         31 }, // Endurance
+  {  15,         31 }, // Vitality
+  {  15,         31 }, // Agility
+  {  15,         31 }, // Intelligence
+  {  15,         31 }, // MagicDefense
+  {  15,         31 }, // Charisma
+  {  15,         31 }, // Allure
+  {  15,         31 }, // Attentiveness
+  {  15,         31 }, // Luck
 
-For any of these, 5000 is normal, although this number is divided by 50 when displayed to the player (thus showing 100).  Min stat is 0; max stat is 49999 (which results in a display of 999).
 
 Experience levels
 =================

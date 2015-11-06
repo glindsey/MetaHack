@@ -2,16 +2,16 @@
 <thing>
   <name>[Entity]</name>
   <parent>Thing</parent>
-  <description>The generic Entity class.</description>
+  <description>"The generic Entity class."</description>
   <intrinsics>
+    <bodypart>
+      <body><count>1</count></body>
+	</bodypart> 
     <opaque>false</opaque>
     <living>true</living>
     <inventory_size>-1</inventory_size>
   </intrinsics>
   <defaults>
-    <level>1</level>
     <xp>0</xp>
-    <tile_sheet_x>0</tile_sheet_x>
-    <tile_sheet_y>4</tile_sheet_y>
   </defaults>
 </thing>

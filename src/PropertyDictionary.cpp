@@ -2,8 +2,11 @@
 
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/regex.hpp>
 
 #include "common_functions.h"
+#include "ErrorHandler.h"
+#include "IntegerRange.h"
 
 PropertyDictionary::PropertyDictionary()
 {}
@@ -88,17 +91,38 @@ void PropertyDictionary::populate_from(pt::ptree const& tree, std::string prefix
         }
         else
         {
-          try
+          boost::regex range_regex("(-?[0-9]+)\\s*to\\s*(-?[0-9]+)\\s*([Uu]?).*");
+          boost::smatch str_matches;
+
+          if (boost::regex_match(value, str_matches, range_regex))
           {
-            // Try to make a double out of the value.
-            double double_value = boost::lexical_cast<double>(value);
-            set(key, double_value);
+            std::string start_string = str_matches[1];
+            std::string end_string = str_matches[2];
+            std::string uniform_string = str_matches[3];
+
+            int start = boost::lexical_cast<int>(start_string);
+            int end = boost::lexical_cast<int>(end_string);
+            bool uniform = !uniform_string.empty();
+
+            TRACE("Hey, we found an IntegerRange (%s): start = %d, end = %d, uniform = %s", key.c_str(), start, end, (uniform ? "true" : "false"));
+
+            IntegerRange range(start, end, uniform);
+            set(key, range);
           }
-          catch (boost::bad_lexical_cast&)
+          else
           {
+            try
+            {
+              // Try to make a double out of the value.
+              double double_value = boost::lexical_cast<double>(value);
+              set(key, double_value);
+            }
+            catch (boost::bad_lexical_cast&)
+            {
               // Okay, fine, just save it as a string.
               set(key, value);
-          } // end try/catch for double
+            } // end try/catch for double
+          } // end else (wasn't a range)
         } // end else (didn't match other test conditions)
       } // end else (didn't have an explicit suffix)
     } // end (value is not empty)
