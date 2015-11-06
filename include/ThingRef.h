@@ -1,7 +1,6 @@
 #ifndef THINGREF_H
 #define THINGREF_H
 
-#include "ThingManager.h"
 #include "Lua.h"
 
 #include <boost/functional/hash.hpp>
@@ -9,6 +8,9 @@
 #include <iostream>
 #include <memory>
 #include <vector>
+
+// Forward declaration
+class ThingManager;
 
 /// Definition of a ID/version pair.
 class ThingId

@@ -36,11 +36,14 @@ Map::Map(MapId map_id, int width, int height)
   pImpl->map_memory_vertices.resize(pImpl->map_size.x * pImpl->map_size.y * 20);
 
   // Create the tiles themselves.
+  MetadataCollection& collection = MDC::get_collection("maptile");
   for (int y = 0; y < height; ++y)
   {
     for (int x = 0; x < width; ++x)
     {
-      MapTile* new_tile = NEW MapTile({ x, y }, "Unknown", map_id);
+      Metadata& metadata = collection.get("Unknown");
+
+      MapTile* new_tile = NEW MapTile({ x, y }, metadata, map_id);
       pImpl->tiles.push_back(new_tile);
       new_tile->set_coords(x, y);
       new_tile->set_ambient_light_level(ambient_light_level);

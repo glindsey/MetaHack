@@ -78,7 +78,12 @@ public:
     bool existed = (m_dictionary.count(key) != 0);
     boost::any insert_value = value;
 
+    if (existed)
+    {
+      m_dictionary.erase(key);
+    }
     m_dictionary.insert(std::pair<std::string, boost::any>(key, insert_value));
+
     return existed;
   }
 

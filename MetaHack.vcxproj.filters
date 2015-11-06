@@ -135,16 +135,10 @@
     <ClInclude Include="include\ThingManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\ThingMetadata.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\ThingRef.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Lua.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\MapTileMetadata.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\common_types.h">
@@ -208,6 +202,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\IntegerRange.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MetadataCollection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -305,19 +302,10 @@
     <ClCompile Include="src\ThingManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\ThingMetadata.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\ThingRef.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Lua.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\MapTileMetadata.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Metadata.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Action.cpp">
@@ -327,6 +315,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\IntegerRange.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Metadata.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MetadataCollection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

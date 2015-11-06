@@ -11,13 +11,12 @@ class MapTileImpl
 {
 public:
 
-  MapTileImpl(sf::Vector2i coords_, std::string type_, MapId map_id_)
+  MapTileImpl(sf::Vector2i coords_, Metadata& metadata_, MapId map_id_)
     :
     map_id{ map_id_ },
     coords{ coords_ },
-    type{ type_ },
-    ambient_light_color{ sf::Color(192, 192, 192, 255) },
-    p_metadata{ MapTileMetadata::get(type_) }
+    p_metadata{ &metadata_ },
+    ambient_light_color{ sf::Color(192, 192, 192, 255) }
   {}
 
   ~MapTileImpl()
@@ -29,7 +28,10 @@ public:
 
   sf::Vector2i coords;
 
-  std::string type;
+  /// Pointer to this MapTile's metadata.
+  /// This has to be a pointer rather than a reference because it can be
+  /// modified after MapTile construction.
+  Metadata* p_metadata;
 
   /// Reference to the Thing that represents this tile's floor.
   ThingRef floor;
@@ -49,7 +51,6 @@ public:
   /// The alpha channel is ignored.
   std::unordered_map<ThingRef, LightInfluence> lights;
 
-  MapTileMetadata* p_metadata;
 };
 
 

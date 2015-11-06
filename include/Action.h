@@ -8,9 +8,9 @@
 #include "ActionType.h"
 #include "Direction.h"
 #include "ThingManager.h"
-#include "UsesPimpl.h"
 
 #include "ActionImpl.h"
+#include "UsesPimpl.h"
 
 // Forward declarations
 class Thing;

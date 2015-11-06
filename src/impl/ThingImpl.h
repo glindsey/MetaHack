@@ -9,8 +9,8 @@
 #include "AttributeSet.h"
 #include "Gender.h"
 #include "MapTile.h"
+#include "Metadata.h"
 #include "PropertyDictionary.h"
-#include "ThingMetadata.h"
 #include "ThingRef.h"
 
 // Using declarations.
@@ -29,11 +29,10 @@ class ThingImpl
 public:
 
   /// Constructor for thing of certain type.
-  ThingImpl(std::string type_, ThingRef ref_)
+  ThingImpl(Metadata& metadata_, ThingRef ref_)
     : 
-    type{ type_ },
+    metadata{ metadata_ },
     ref{ ref_ },
-    metadata{ ThingMetadata::get(type_) },
     location{ TM.get_mu() },
     map_tile{ nullptr },
     inventory{ Inventory() },
@@ -51,11 +50,10 @@ public:
   }
 
   /// Constructor for floor of a MapTile.
-  ThingImpl(MapTile* tile, ThingRef ref_)
+  ThingImpl(MapTile* tile, Metadata& metadata_, ThingRef ref_)
     :
-    type{ "floor" },
+    metadata{ metadata_ },
     ref{ ref_ },
-    metadata{ ThingMetadata::get("floor") },
     location{ TM.get_mu() },
     map_tile{ tile },
     inventory{ Inventory() },
@@ -75,9 +73,8 @@ public:
   /// Clone constructor.
   ThingImpl(ThingImpl const& other, ThingRef ref_)
     :
-    type{ other.type },
-    ref{ ref_ },
     metadata{ other.metadata },
+    ref{ ref_ },
     location{ other.location },
     map_tile{ other.map_tile },
     inventory{ Inventory() },             // don't copy
@@ -99,14 +96,11 @@ public:
     actions.clear();
   }
 
-  /// This Thing's type.
-  std::string type;
+  /// Reference to this Thing's metadata.
+  Metadata& metadata;
 
   /// Reference to this Thing.
   ThingRef ref;
-
-  /// Reference to this Thing's metadata.
-  ThingMetadata& metadata;
 
   /// Reference to this Thing's location.
   ThingRef location;

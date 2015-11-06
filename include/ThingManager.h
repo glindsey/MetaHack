@@ -4,7 +4,9 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
+#include <boost/pool/object_pool.hpp>
 
+#include "MetadataCollection.h"
 #include "ThingRef.h"
 
 // Forward declarations
@@ -81,9 +83,19 @@ private:
   /// Constructor; private because ThingFactory is a singleton.
   ThingManager();
 
-  struct Impl;
-  /// Implementation pointer
-  std::unique_ptr<Impl> pImpl;
+  /// ThingRef of the player.
+  ThingRef m_player;
+
+  /// Map of ThingIds to Things.
+  /// @todo Probably faster to use an unordered_map and use ThingId.id 
+  ///       as the hash function.
+  std::unordered_map<ThingId, Thing*> m_thing_map;
+
+  /// Object pool of Things that exist.
+  boost::object_pool<Thing> m_thing_pool;
+
+  /// ThingRef that means "nothing".
+  ThingRef m_mu;
 
   /// Unique pointer to singleton instance.
   static std::unique_ptr<ThingManager> instance_;

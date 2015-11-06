@@ -49,7 +49,9 @@ int main()
     std::unique_ptr<sf::RenderWindow> app_window;
     std::unique_ptr<App> app;
 
+#ifdef NDEBUG
     try
+#endif
     {
       // Create the random number generator.
       rng_.reset(NEW boost::random::mt19937(static_cast<unsigned int>(std::time(0))));
@@ -108,10 +110,12 @@ int main()
       app.reset(NEW App(*(app_window.get())));
       app->run();
     }
+#ifdef NDEBUG
     catch (std::exception& e)
     {
       FATAL_ERROR("Caught top-level exception: %s", e.what());
     }
+#endif
   }
 
   return EXIT_SUCCESS;

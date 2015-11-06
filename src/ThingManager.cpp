@@ -3,48 +3,22 @@
 #include "App.h"
 #include "ErrorHandler.h"
 #include "Lua.h"
+#include "Metadata.h"
 #include "Thing.h"
 #include "ThingRef.h"
-#include "ThingMetadata.h"
 
 #include <boost/algorithm/string.hpp>
 #include <boost/bimap.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/log/trivial.hpp>
-#include <boost/pool/object_pool.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include <queue>
 #include <string>
-#include <unordered_map>
 
 std::unique_ptr<ThingManager> ThingManager::instance_;
 
-struct ThingManager::Impl
-{
-  Impl() {}
-  ~Impl()
-  {
-    thing_map.clear();
-  }
-
-  /// ThingRef of the player.
-  ThingRef player;
-
-  /// Map of ThingIds to Things.
-  /// @todo Probably faster to use an unordered_map and use ThingId.id 
-  ///       as the hash function.
-  std::unordered_map<ThingId, Thing*> thing_map;
-
-  /// Object pool of Things that exist.
-  boost::object_pool<Thing> thing_pool;
-
-  /// ThingRef that means "nothing".
-  ThingRef mu;
-};
-
 ThingManager::ThingManager()
-  : pImpl(NEW Impl())
 {
   // Register the Thing Lua functions.
   the_lua_instance.register_function("thing_create", Thing::LUA_create);
@@ -71,7 +45,7 @@ ThingManager::~ThingManager()
 void ThingManager::initialize()
 {
   // Create the "nothingness" object.
-  pImpl->mu = create("Mu");
+  m_mu = create("Mu");
 }
 
 ThingManager& ThingManager::instance()
@@ -89,8 +63,10 @@ ThingRef ThingManager::create(std::string type)
 {
   ThingId new_id = ThingRef::create();
   ThingRef new_ref = ThingRef(new_id);
-  Thing* new_thing = pImpl->thing_pool.construct(type, new_ref);
-  pImpl->thing_map[new_id] = new_thing;
+  Metadata& metadata = MDC::get_collection("thing").get(type);
+
+  Thing* new_thing = m_thing_pool.construct(boost::ref(metadata), new_ref);
+  m_thing_map[new_id] = new_thing;
 
   // Temporary test of Lua call
   new_thing->call_lua_function("on_create", {});
@@ -101,34 +77,38 @@ ThingRef ThingManager::create(std::string type)
 ThingRef ThingManager::create_floor(MapTile* map_tile)
 {
   ThingId new_id = ThingRef::create();
-  Thing* new_thing = pImpl->thing_pool.construct(map_tile, ThingRef(new_id));
-  pImpl->thing_map[new_id] = new_thing;
+  ThingRef new_ref = ThingRef(new_id);
+  Metadata& metadata = MDC::get_collection("thing").get("floor");
+
+  Thing* new_thing = m_thing_pool.construct(map_tile, boost::ref(metadata), new_ref);
+  m_thing_map[new_id] = new_thing;
 
   return ThingRef(new_id);
 }
 
 ThingRef ThingManager::clone(ThingRef original_ref)
 {
-  if (TM.exists(original_ref) == false) return pImpl->mu;
+  if (TM.exists(original_ref) == false) return m_mu;
   Thing* original_thing = TM.get_ptr(original_ref.m_id);
 
   ThingId new_id = ThingRef::create();
   ThingRef new_ref = ThingRef(new_id);
-  Thing* new_thing = pImpl->thing_pool.construct(*original_thing, ThingRef(new_id));
-  pImpl->thing_map[new_id] = new_thing;
+
+  Thing* new_thing = m_thing_pool.construct(*original_thing, new_ref);
+  m_thing_map[new_id] = new_thing;
 
   return ThingRef(new_id);
 }
 
 void ThingManager::destroy(ThingRef ref)
 {
-  if (ref != pImpl->mu)
+  if (ref != m_mu)
   {
-    if (pImpl->thing_map.count(ref.m_id) != 0)
+    if (m_thing_map.count(ref.m_id) != 0)
     {
-      Thing* old_thing = pImpl->thing_map[ref.m_id];
-      pImpl->thing_pool.destroy(old_thing);
-      pImpl->thing_map.erase(ref.m_id);
+      Thing* old_thing = m_thing_map[ref.m_id];
+      m_thing_pool.destroy(old_thing);
+      m_thing_map.erase(ref.m_id);
     }
   }
   else
@@ -139,19 +119,19 @@ void ThingManager::destroy(ThingRef ref)
 
 bool ThingManager::exists(ThingRef ref)
 {
-  return (pImpl->thing_map.count(ref.m_id) != 0);
+  return (m_thing_map.count(ref.m_id) != 0);
 }
 
 Thing* ThingManager::get_ptr(ThingId id)
 {
   try
   {
-    return pImpl->thing_map.at(id);
+    return m_thing_map.at(id);
   }
   catch (std::out_of_range&)
   {
     MAJOR_ERROR("Tried to get thing %s which does not exist", boost::lexical_cast<std::string>(id).c_str());
-    return pImpl->thing_map[pImpl->mu.m_id];
+    return m_thing_map[m_mu.m_id];
   }
 }
 
@@ -159,30 +139,30 @@ Thing const* ThingManager::get_ptr(ThingId id) const
 {
   try
   {
-    return pImpl->thing_map.at(id);
+    return m_thing_map.at(id);
   }
   catch (std::out_of_range&)
   {
     MAJOR_ERROR("Tried to get thing %s which does not exist", boost::lexical_cast<std::string>(id).c_str());
-    return pImpl->thing_map[pImpl->mu.m_id];
+    return m_thing_map.at(m_mu.m_id);
   }
 }
 
 
 bool ThingManager::set_player(ThingRef ref)
 {
-  ASSERT_CONDITION(ref != pImpl->mu);
+  ASSERT_CONDITION(ref != m_mu);
 
-  pImpl->player = ref;
+  m_player = ref;
   return true;
 }
 
 ThingRef ThingManager::get_player() const
 {
-  return pImpl->player;
+  return m_player;
 }
 
 ThingRef ThingManager::get_mu() const
 {
-  return pImpl->mu;
+  return m_mu;
 }

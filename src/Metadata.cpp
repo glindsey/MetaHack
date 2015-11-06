@@ -1,24 +1,16 @@
 #include "Metadata.h"
 
-#include <boost/algorithm/string.hpp>
-#include <boost/property_tree/xml_parser.hpp>
-#include <memory>
-
-#include "common_functions.h"
-#include "common_types.h"
-
-#include "App.h"
 #include "ErrorHandler.h"
-#include "Exceptions.h"
-#include "Lua.h"
-#include "Tilesheet.h"
+#include "MetadataCollection.h"
 
-Metadata::Metadata(std::string category, std::string type)
+Metadata::Metadata(MetadataCollection& collection, std::string type)
+  :
+  m_collection{ collection },
+  m_type{ type }
 {
-  TRACE("Loading metadata for %s!%s...", category.c_str(), type.c_str());
+  std::string category = collection.get_category();
 
-  m_category = category;
-  m_type = type;
+  TRACE("Loading metadata for %s!%s...", category.c_str(), type.c_str());
 
   // Look for the various files containing this metadata.
   std::string xmlfile_string = "resources/" + category + "s/" + type + ".xml";
@@ -39,7 +31,7 @@ Metadata::Metadata(std::string category, std::string type)
   // DEBUG: Dump the tree using trace.
   //this->trace_tree();
 
-  pt::ptree& data = (m_raw_ptree).get_child(m_category);
+  pt::ptree& data = (m_raw_ptree).get_child(category);
 
   // Get thing's parent.
   if (data.count("parent") == 0)
@@ -92,7 +84,7 @@ Metadata::Metadata(std::string category, std::string type)
   pt::ptree intrinsics_tree;
   if (data.count("intrinsics") == 0)
   {
-    FATAL_ERROR("Metadata file for %s!%s doesn't have an \"intrinsics\" section", m_category.c_str(), m_type.c_str());
+    FATAL_ERROR("Metadata file for %s!%s doesn't have an \"intrinsics\" section", category.c_str(), m_type.c_str());
   }
   else
   {
@@ -102,7 +94,7 @@ Metadata::Metadata(std::string category, std::string type)
   pt::ptree defaults_tree;
   if (data.count("defaults") == 0)
   {
-    FATAL_ERROR("Metadata file for %s!%s doesn't have a \"defaults\" section", m_category.c_str(), m_type.c_str());
+    FATAL_ERROR("Metadata file for %s!%s doesn't have a \"defaults\" section", category.c_str(), m_type.c_str());
   }
   else
   {
@@ -138,12 +130,14 @@ Metadata::Metadata(std::string category, std::string type)
 }
 
 Metadata::~Metadata()
-{
+{}
 
+MetadataCollection& Metadata::get_collection()
+{
+  return m_collection;
 }
 
-/// Get the name associated with this data.
-std::string const& Metadata::get_name() const
+std::string const& Metadata::get_type() const
 {
   return m_type;
 }
@@ -173,19 +167,22 @@ sf::Vector2u const& Metadata::get_tile_coords() const
   return m_tile_location;
 }
 
+// === PROTECTED METHODS ======================================================
+
+/// Get the entire PropertyDictionary of defaults.
 PropertyDictionary const& Metadata::get_defaults() const
 {
   return m_defaults;
 }
 
+/// Get the entire PropertyDictionary of intrinsics.
 PropertyDictionary const& Metadata::get_intrinsics() const
 {
   return m_intrinsics;
 }
 
-// === PROTECTED METHODS ======================================================
-
-void Metadata::trace_tree(pt::ptree const* pTree, std::string prefix)
+/// Recursive function that iterates through the tree and prints the values.
+void Metadata::trace_tree(pt::ptree const* pTree = nullptr, std::string prefix = "")
 {
   if (pTree == nullptr)
   {
@@ -211,7 +208,8 @@ void Metadata::trace_tree(pt::ptree const* pTree, std::string prefix)
 /// Get the raw property tree containing metadata.
 pt::ptree const& Metadata::get_ptree()
 {
-  return m_raw_ptree.get_child(m_category);
+  std::string category = get_collection().get_category();
+  return m_raw_ptree.get_child(category);
 }
 
 /// Clear the raw property tree. Should only be done after all data needed
@@ -221,3 +219,300 @@ void Metadata::clear_ptree()
   m_raw_ptree.clear();
 }
 
+ActionResult Metadata::call_lua_function(std::string function_name,
+  ThingRef caller,
+  std::vector<lua_Integer> const& args,
+  ActionResult default_result)
+{
+  ActionResult return_value = default_result;
+  bool call_parent = false;
+  std::string name = this->get_type();
+
+  int start_stack = lua_gettop(the_lua_state);
+
+  // Push name of class onto the stack. (+1)
+  lua_getglobal(the_lua_state, name.c_str());
+
+  if (lua_isnoneornil(the_lua_state, -1))
+  {
+    // Class not found -- pop the name back off. (-1)
+    lua_pop(the_lua_state, 1);
+    call_parent = true;
+  }
+  else
+  {
+    // Push name of function onto the stack. (+1)
+    lua_getfield(the_lua_state, -1, function_name.c_str());
+
+    if (lua_isnoneornil(the_lua_state, -1))
+    {
+      // Function not found -- pop the function and class names back off. (-2)
+      lua_pop(the_lua_state, 2);
+      call_parent = true;
+    }
+    else
+    {
+      // Remove the class name from the stack. (-1)
+      lua_remove(the_lua_state, -2);
+
+      // Push the caller's ID onto the stack. (+1)
+      lua_pushinteger(the_lua_state, caller);
+
+      // Push the arguments onto the stack. (+N)
+      for (auto& arg : args)
+      {
+        lua_pushinteger(the_lua_state, arg);
+      }
+
+      // Call the function with N+1 arguments and 1 result. (-(N+2), +1) = -(N+1)
+      int result = lua_pcall(the_lua_state, args.size() + 1, 1, 0);
+      if (result == 0)
+      {
+        // Get the return value.
+        return_value = static_cast<ActionResult>(the_lua_instance.get_enum_value(-1));
+
+        // Pop the return value off the stack. (-1)
+        lua_pop(the_lua_state, 1);
+      }
+      else
+      {
+        // Get the error message.
+        char const* error_message = lua_tostring(the_lua_state, -1);
+        MAJOR_ERROR("Error calling %s.%s: %s", name.c_str(), function_name.c_str(), error_message);
+
+        // Pop the error message off the stack. (-1)
+        lua_pop(the_lua_state, 1);
+      }
+
+      // Check if the return value is ActionResult::Pending.
+      if (return_value == ActionResult::Pending)
+      {
+        call_parent = true;
+      }
+    }
+  }
+
+  int end_stack = lua_gettop(the_lua_state);
+
+  if (start_stack != end_stack)
+  {
+    MAJOR_ERROR("*** LUA STACK MISMATCH (%s!%s): Started at %d, ended at %d", name.c_str(), function_name.c_str(), start_stack, end_stack);
+  }
+
+  std::string parent = get_parent();
+  if (call_parent)
+  {
+    if (parent.empty())
+    {
+      //TRACE("Reached the top of the parent tree trying to call %s.%s", name.c_str(), function_name.c_str());
+      return_value = default_result;
+    }
+    else
+    {
+      return_value =
+        get_collection().get(parent).call_lua_function(function_name, caller, args, default_result);
+    }
+  }
+
+  return return_value;
+}
+
+bool Metadata::call_lua_function_bool(std::string function_name,
+  ThingRef caller,
+  std::vector<lua_Integer> const& args,
+  bool default_result)
+{
+  bool return_value = default_result;
+  bool call_parent = false;
+  std::string name = this->get_type();
+
+  int start_stack = lua_gettop(the_lua_state);
+
+  // Push name of class onto the stack. (+1)
+  lua_getglobal(the_lua_state, name.c_str());
+
+  if (lua_isnoneornil(the_lua_state, -1))
+  {
+    // Class not found -- pop the name back off. (-1)
+    lua_pop(the_lua_state, 1);
+    call_parent = true;
+  }
+  else
+  {
+    // Push name of function onto the stack. (+1)
+    lua_getfield(the_lua_state, -1, function_name.c_str());
+
+    if (lua_isnoneornil(the_lua_state, -1))
+    {
+      // Function not found -- pop the function and class names back off. (-2)
+      lua_pop(the_lua_state, 2);
+      call_parent = true;
+    }
+    else
+    {
+      // Remove the class name from the stack. (-1)
+      lua_remove(the_lua_state, -2);
+
+      // Push the caller's ID onto the stack. (+1)
+      lua_pushinteger(the_lua_state, caller);
+
+      // Push the arguments onto the stack. (+N)
+      for (auto& arg : args)
+      {
+        lua_pushinteger(the_lua_state, arg);
+      }
+
+      // Call the function with N+1 arguments and 1 result. (-(N+2), +1) = -N
+      int result = lua_pcall(the_lua_state, args.size() + 1, 1, 0);
+      if (result == 0)
+      {
+        // Check for nil return.
+        if (lua_isnoneornil(the_lua_state, -1))
+        {
+          call_parent = true;
+        }
+        else
+        {
+          // Get the return value.
+          return_value = (lua_toboolean(the_lua_state, -1) != 0);
+        }
+
+        // Pop the return value off the stack. (-1)
+        lua_pop(the_lua_state, 1);
+      }
+      else
+      {
+        // Get the error message.
+        char const* error_message = lua_tostring(the_lua_state, -1);
+        MAJOR_ERROR("Error calling %s.%s: %s", name.c_str(), function_name.c_str(), error_message);
+
+        // Pop the error message off the stack. (-1)
+        lua_pop(the_lua_state, 1);
+      }
+    }
+  }
+
+  int end_stack = lua_gettop(the_lua_state);
+
+  if (start_stack != end_stack)
+  {
+    MAJOR_ERROR("*** LUA STACK MISMATCH (%s!%s): Started at %d, ended at %d", name.c_str(), function_name.c_str(), start_stack, end_stack);
+  }
+
+  if (call_parent)
+  {
+    std::string parent = get_parent();
+    if (parent.empty())
+    {
+      //TRACE("Reached the top of the parent tree trying to call %s.%s", name.c_str(), function_name.c_str());
+      return_value = default_result;
+    }
+    else
+    {
+      return_value =
+        get_collection().get(parent).call_lua_function_bool(function_name, caller, args, default_result);
+    }
+  }
+
+  return return_value;
+}
+
+sf::Vector2u Metadata::call_lua_function_v2u(std::string function_name,
+  ThingRef caller,
+  std::vector<lua_Integer> const& args,
+  sf::Vector2u default_result)
+{
+  sf::Vector2u return_value = default_result;
+  bool call_parent = false;
+  std::string name = this->get_type();
+
+  int start_stack = lua_gettop(the_lua_state);
+
+  // Push name of class onto the stack. (+1)
+  lua_getglobal(the_lua_state, name.c_str());
+
+  if (lua_isnoneornil(the_lua_state, -1))
+  {
+    // Class not found -- pop the name back off. (-1)
+    lua_pop(the_lua_state, 1);
+    call_parent = true;
+  }
+  else
+  {
+    // Push name of function onto the stack. (+1)
+    lua_getfield(the_lua_state, -1, function_name.c_str());
+
+    if (lua_isnoneornil(the_lua_state, -1))
+    {
+      // Function not found -- pop the function and class names back off. (-2)
+      lua_pop(the_lua_state, 2);
+      call_parent = true;
+    }
+    else
+    {
+      // Remove the class name from the stack. (-1)
+      lua_remove(the_lua_state, -2);
+
+      // Push the caller's ID onto the stack. (+1)
+      lua_pushinteger(the_lua_state, caller);
+
+      // Push the arguments onto the stack. (+N)
+      for (auto& arg : args)
+      {
+        lua_pushinteger(the_lua_state, arg);
+      }
+
+      // Call the function with N+1 arguments and 2 results. (-(N+2), +2) = -N
+      int result = lua_pcall(the_lua_state, args.size() + 1, 2, 0);
+      if (result == 0)
+      {
+        // Check for nil return.
+        if (lua_isnoneornil(the_lua_state, -1))
+        {
+          call_parent = true;
+        }
+        else
+        {
+          // Get the return values.
+          return_value = sf::Vector2u(lua_tointeger(the_lua_state, -2), lua_tointeger(the_lua_state, -1));
+        }
+
+        // Pop the return values off the stack. (-2)
+        lua_pop(the_lua_state, 2);
+      }
+      else
+      {
+        // Get the error message.
+        char const* error_message = lua_tostring(the_lua_state, -1);
+        MAJOR_ERROR("Error calling %s.%s: %s", name.c_str(), function_name.c_str(), error_message);
+
+        // Pop the error message off the stack. (-1)
+        lua_pop(the_lua_state, 1);
+      }
+    }
+  }
+
+  int end_stack = lua_gettop(the_lua_state);
+
+  if (start_stack != end_stack)
+  {
+    MAJOR_ERROR("*** LUA STACK MISMATCH (%s!%s): Started at %d, ended at %d", name.c_str(), function_name.c_str(), start_stack, end_stack);
+  }
+
+  if (call_parent)
+  {
+    std::string parent = get_parent();
+    if (parent.empty())
+    {
+      //TRACE("Reached the top of the parent tree trying to call %s.%s", name.c_str(), function_name.c_str());
+      return_value = default_result;
+    }
+    else
+    {
+      return_value =
+        get_collection().get(parent).call_lua_function_v2u(function_name, caller, args, default_result);
+    }
+  }
+
+  return return_value;
+}

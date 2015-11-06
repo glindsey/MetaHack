@@ -5,6 +5,7 @@
 #include <memory>
 
 #include "MapId.h"
+#include "MetadataCollection.h"
 
 // Forward declarations
 class Map;
@@ -32,6 +33,7 @@ class MapFactory
   private:
     MapFactory();
 
+    /// Collection of maps.
     boost::ptr_map<MapId, Map> maps_;
 
     MapId current_map_id;

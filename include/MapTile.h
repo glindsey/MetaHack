@@ -15,6 +15,7 @@
 // Forward declarations
 class Entity;
 class Floor;
+class Metadata;
 
 #include "MapTileImpl.h"
 #include "UsesPimpl.h"
@@ -139,7 +140,7 @@ class MapTile : public GameObject
 
   protected:
     /// Constructor, callable only by Map class.
-    MapTile(sf::Vector2i coords, std::string type, MapId map_id);
+    MapTile(sf::Vector2i coords, Metadata& metadata, MapId map_id);
 
   private:
     static bool initialized;

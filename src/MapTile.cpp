@@ -16,8 +16,8 @@ typedef boost::random::uniform_int_distribution<> uniform_int_dist;
 
 bool MapTile::initialized = false;
 
-MapTile::MapTile(sf::Vector2i coords, std::string type, MapId map_id)
-  : pImpl(coords, type, map_id)
+MapTile::MapTile(sf::Vector2i coords, Metadata& metadata, MapId map_id)
+  : pImpl(coords, metadata, map_id)
 {
   if (!initialized)
   {
@@ -134,13 +134,12 @@ void MapTile::draw_to(sf::RenderTexture& target,
 
 void MapTile::set_type(std::string type)
 {
-  pImpl->type = type;
-  pImpl->p_metadata = MapTileMetadata::get(type);
+  pImpl->p_metadata = &(pImpl->p_metadata->get_collection().get(type));
 }
 
 std::string MapTile::get_type() const
 {
-  return pImpl->type;
+  return pImpl->p_metadata->get_type();
 }
 
 bool MapTile::is_empty_space() const

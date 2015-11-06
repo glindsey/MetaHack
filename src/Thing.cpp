@@ -20,9 +20,9 @@
 #include "MapTileMetadata.h"
 #include "MathUtils.h"
 #include "MessageLog.h"
+#include "Metadata.h"
 #include "Ordinal.h"
 #include "ThingManager.h"
-#include "ThingMetadata.h"
 #include "TileSheet.h"
 
 // Local definitions to make reading/writing status info a bit easier.
@@ -61,12 +61,12 @@
 // Static member initialization.
 sf::Color const Thing::wall_outline_color_ = sf::Color(255, 255, 255, 64);
 
-Thing::Thing(std::string type, ThingRef ref)
-  : pImpl(type, ref)
+Thing::Thing(Metadata& metadata, ThingRef ref)
+  : pImpl(metadata, ref)
 {}
 
-Thing::Thing(MapTile* map_tile, ThingRef ref)
-  : pImpl(map_tile, ref)
+Thing::Thing(MapTile* map_tile, Metadata& metadata, ThingRef ref)
+  : pImpl(map_tile, metadata, ref)
 {}
 
 Thing::Thing(Thing const& original, ThingRef ref)
@@ -1746,7 +1746,7 @@ bool Thing::is_player() const
 
 std::string const& Thing::get_type() const
 {
-  return pImpl->type;
+  return pImpl->metadata.get_type();
 }
 
 std::string const& Thing::get_parent_type() const
@@ -1908,7 +1908,7 @@ void Thing::add_memory_vertices_to(sf::VertexArray& vertices,
   sf::Vector2f vNE(location.x + ts2, location.y - ts2);
 
   std::string tile_type = pImpl->map_memory[game_map.get_index(x, y)];
-  MapTileMetadata* tile_metadata = MapTileMetadata::get(tile_type);
+  Metadata* tile_metadata = &(MDC::get_collection("maptile").get(tile_type));
 
   /// @todo Call a script to handle selecting a tile other than the one
   ///       in the upper-left corner.
@@ -2669,6 +2669,7 @@ ActionResult Thing::perform_action_eaten_by(ThingRef actor)
 bool Thing::perform_action_used_by(ThingRef actor)
 {
   ActionResult result = call_lua_function("perform_action_used_by", { actor });
+
   return was_successful(result);
 }
 
@@ -2799,7 +2800,7 @@ bool Thing::perform_action_fired_by(ThingRef actor, Direction direction)
 bool Thing::can_merge_with(ThingRef other) const
 {
   // Things with different types can't merge (obviously).
-  if (other->get_type() != pImpl->type)
+  if (other->get_type() != get_type())
   {
     return false;
   }
