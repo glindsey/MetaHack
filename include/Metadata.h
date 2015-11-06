@@ -192,7 +192,7 @@ private:
   PropertyDictionary m_defaults;
 
   /// A vector containing the children of this object.
-  std::unordered_map< std::string, std::vector<std::string> > m_children;
+  std::vector<std::string> m_children;
 
   /// The raw metadata. It is a bit wasteful to save this
   /// independently of other data, so it should probably only be saved

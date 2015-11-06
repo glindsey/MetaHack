@@ -42,6 +42,7 @@ Metadata::Metadata(MetadataCollection& collection, std::string type)
   {
     m_parent = data.get_child("parent").get_value<std::string>("");
     strip_quotes(m_parent);
+    m_collection.get(m_parent).m_children.push_back(m_type);
   }
 
   // Get the pretty name.
