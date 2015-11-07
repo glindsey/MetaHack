@@ -1689,12 +1689,12 @@ void Thing::set_gender(Gender gender)
   pImpl->gender = gender;
 }
 
-Gender Thing::get_true_gender() const
+Gender Thing::get_gender() const
 {
   return pImpl->gender;
 }
 
-Gender Thing::get_gender() const
+Gender Thing::get_gender_or_you() const
 {
   if (is_player())
   {
@@ -2287,27 +2287,27 @@ int Thing::get_mass()
 
 std::string const& Thing::get_subject_pronoun() const
 {
-  return getSubjPro(get_gender());
+  return getSubjPro(get_gender_or_you());
 }
 
 std::string const& Thing::get_object_pronoun() const
 {
-  return getObjPro(get_gender());
+  return getObjPro(get_gender_or_you());
 }
 
 std::string const& Thing::get_reflexive_pronoun() const
 {
-  return getRefPro(get_gender());
+  return getRefPro(get_gender_or_you());
 }
 
 std::string const& Thing::get_possessive_adjective() const
 {
-  return getPossAdj(get_gender());
+  return getPossAdj(get_gender_or_you());
 }
 
 std::string const& Thing::get_possessive_pronoun() const
 {
-  return getPossPro(get_gender());
+  return getPossPro(get_gender_or_you());
 }
 
 std::string Thing::get_possessive()

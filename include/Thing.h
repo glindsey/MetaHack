@@ -316,9 +316,9 @@ class Thing :
 
     void set_gender(Gender gender);
 
-    Gender get_true_gender() const;
-
     Gender get_gender() const;
+
+    Gender get_gender_or_you() const;
 
     /// Get the number of a particular body part the Entity has.
     unsigned int get_bodypart_number(BodyPart part) const;
