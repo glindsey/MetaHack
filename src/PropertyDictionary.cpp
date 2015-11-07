@@ -19,6 +19,13 @@ void PropertyDictionary::populate_from(pt::ptree const& tree, std::string prefix
   // Get each of the defaults.
   for (auto& child_tree : tree)
   {
+    boost::regex range_regex("(-?[0-9]+)\\s*to\\s*(-?[0-9]+)\\s*([Uu]?).*");
+    boost::regex hexcolor_regex("#([0-9a-fA-F][0-9a-fA-F])([0-9a-fA-F][0-9a-fA-F])([0-9a-fA-F][0-9a-fA-F])([0-9a-fA-F][0-9a-fA-F])");
+    boost::regex color_regex("\\(\\s*([0-9]+)\\s*,\\s*([0-9]+)\\s*,\\s*([0-9]+)\\s*,\\s*([0-9]+)\\s*\\)");
+    boost::regex vector2f_regex("\\(\\s*([0-9]+.?[0-9]*)\\s*,\\s*([0-9]+.?[0-9]*)\\s*\\)");
+
+    boost::smatch str_matches;
+
     std::string key = prefix + child_tree.first;
     std::string value = child_tree.second.get_value<std::string>();
     std::string lowercase_value = boost::algorithm::to_lower_copy(value);
@@ -91,9 +98,6 @@ void PropertyDictionary::populate_from(pt::ptree const& tree, std::string prefix
         }
         else
         {
-          boost::regex range_regex("(-?[0-9]+)\\s*to\\s*(-?[0-9]+)\\s*([Uu]?).*");
-          boost::smatch str_matches;
-
           if (boost::regex_match(value, str_matches, range_regex))
           {
             std::string start_string = str_matches[1];
@@ -104,10 +108,49 @@ void PropertyDictionary::populate_from(pt::ptree const& tree, std::string prefix
             int end = boost::lexical_cast<int>(end_string);
             bool uniform = !uniform_string.empty();
 
-            TRACE("Hey, we found an IntegerRange (%s): start = %d, end = %d, uniform = %s", key.c_str(), start, end, (uniform ? "true" : "false"));
-
             IntegerRange range(start, end, uniform);
             set(key, range);
+          }
+          else if (boost::regex_match(value, str_matches, hexcolor_regex))
+          {
+            std::string r_string = str_matches[1];
+            std::string g_string = str_matches[2];
+            std::string b_string = str_matches[3];
+            std::string a_string = str_matches[4];
+
+            int r = std::stoul(r_string, nullptr, 16);
+            int g = std::stoul(g_string, nullptr, 16);
+            int b = std::stoul(b_string, nullptr, 16);
+            int a = std::stoul(a_string, nullptr, 16);
+
+            sf::Color color(r, g, b, a);
+            set(key, color);
+          }
+          else if (boost::regex_match(value, str_matches, color_regex))
+          {
+            std::string r_string = str_matches[1];
+            std::string g_string = str_matches[2];
+            std::string b_string = str_matches[3];
+            std::string a_string = str_matches[4];
+
+            int r = boost::lexical_cast<int>(r_string);
+            int g = boost::lexical_cast<int>(g_string);
+            int b = boost::lexical_cast<int>(b_string);
+            int a = boost::lexical_cast<int>(a_string);
+
+            sf::Color color(r, g, b, a);
+            set(key, color);
+          }
+          else if (boost::regex_match(value, str_matches, vector2f_regex))
+          {
+            std::string x_string = str_matches[1];
+            std::string y_string = str_matches[2];
+
+            float x = boost::lexical_cast<float>(x_string);
+            float y = boost::lexical_cast<float>(y_string);
+
+            sf::Vector2f vec(x, y);
+            set(key, vec);
           }
           else
           {
