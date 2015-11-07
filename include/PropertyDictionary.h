@@ -2,6 +2,7 @@
 #define PROPERTYDICTIONARY_H
 
 #include <string>
+#include <boost/core/demangle.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <SFML/Graphics.hpp>
 
@@ -77,12 +78,15 @@ public:
   {
     bool existed = (m_dictionary.count(key) != 0);
     boost::any insert_value = value;
+    std::string type = boost::core::demangle(typeid(value).name());
 
     if (existed)
     {
       m_dictionary.erase(key);
+      m_metadictionary.erase(key);
     }
     m_dictionary.insert(std::pair<std::string, boost::any>(key, insert_value));
+    m_metadictionary.insert(std::pair<std::string, std::string>(key, type));
 
     return existed;
   }
@@ -116,6 +120,7 @@ protected:
 
 private:
   AnyMap m_dictionary;
+  StringMap m_metadictionary;
 };
 
 #endif // PROPERTYDICTIONARY_H

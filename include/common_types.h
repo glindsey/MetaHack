@@ -10,9 +10,10 @@
 // Note: std::unordered_map is faster than std::map, but it obviously means
 //       that obtaining a sorted list will be a bit more difficult. However,
 //       there won't be many times we NEED a sorted list.
-using FlagsMap = std::unordered_map < std::string, bool >;
-using ValuesMap = std::unordered_map < std::string, int >;
-using StringsMap = std::unordered_map < std::string, std::string >;
+using BoolMap = std::unordered_map < std::string, bool >;
+using IntMap = std::unordered_map < std::string, int >;
+using StringMap = std::unordered_map < std::string, std::string >;
 using AnyMap = std::unordered_map < std::string, boost::any >;
+using CharMap = std::unordered_map < std::string, char >;
 
 #endif // COMMONTYPES_H
