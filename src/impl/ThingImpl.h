@@ -110,8 +110,6 @@ public:
 
   Inventory inventory;
 
-  unsigned int quantity;
-
   /// Property dictionary.
   PropertyDictionary properties;
 

@@ -213,7 +213,7 @@ class Thing :
     }
 
     /// Get the quantity this thing represents.
-    virtual unsigned int get_quantity() const;
+    unsigned int get_quantity();
 
     /// Set the quantity this thing represents.
     void set_quantity(unsigned int quantity);
@@ -309,11 +309,11 @@ class Thing :
     /// Return whether this Entity can currently see.
     /// @todo Implement blindness counter, blindness due to wearing blindfold,
     ///       et cetera.
-    bool can_currently_see() const;
+    bool can_currently_see();
 
     /// Return whether this Entity can currently move.
     /// @todo Implement paralysis counter, and/or other reasons to be immobile.
-    bool can_currently_move() const;
+    bool can_currently_move();
 
     void set_gender(Gender gender);
 

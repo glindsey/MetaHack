@@ -104,7 +104,8 @@ Hopefully one day I will be able to document those files a bit more thoroughly h
 Known Bugs / Issues
 -------------------
 
-* Resizing the window is definitely broken.
+* Resizing the window is ~~definitely~~ maybe broken? It seems to be working correctly again, but I swear it was broken before.
+
 * There are no enemies whatsoever yet.
 
 

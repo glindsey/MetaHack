@@ -571,10 +571,42 @@ bool Thing::do_mix(ThingRef thing1, ThingRef thing2, unsigned int& action_time)
     //thing1->perform_action_mixed_with_by(thing2, pImpl->ref);
     return true;
 
+
+  case ActionResult::FailureCircularReference:
+    liquid1 = thing1->get_inventory().get(INVSLOT_ZERO);
+    liquid2 = thing2->get_inventory().get(INVSLOT_ZERO);
+
+    message = YOU_TRY_TO("mix") + "the contents of " + FOO1 + " and " + FOO2 + ".";
+    the_message_log.add(message);
+    message = "Those are both the same container!";
+    the_message_log.add(message);
+    break;
+
   case ActionResult::FailureSelfReference:
-    message = YOU_TRY_TO("mix") + FOO1 + " and " + FOO2 + ".";
+    message = YOU_TRY_TO("mix") + "the contents of " + FOO1 + " and " + FOO2 + ".";
     the_message_log.add(message);
     message = "But that makes absolutely no sense.";
+    the_message_log.add(message);
+    break;
+
+  case ActionResult::FailureThingOutOfReach:
+    message = YOU_TRY_TO("mix") + "the contents of " + FOO1 + " and " + FOO2 + ".";
+    the_message_log.add(message);
+    message = "But at least one of them is out of " + YOUR + " reach.";
+    the_message_log.add(message);
+    break;
+
+  case ActionResult::FailureNotLiquidCarrier:
+    message = YOU_TRY_TO("mix") + "the contents of " + FOO1 + " and " + FOO2 + ".";
+    the_message_log.add(message);
+    message = "But at least one of them doesn't hold liquid!";
+    the_message_log.add(message);
+    break;
+
+  case ActionResult::FailureContainerIsEmpty:
+    message = YOU_TRY_TO("mix") + "the contents of " + FOO1 + " and " + FOO2 + ".";
+    the_message_log.add(message);
+    message = "But at least one of them is empty!";
     the_message_log.add(message);
     break;
 
@@ -629,7 +661,15 @@ bool Thing::do_move(Direction new_direction, unsigned int& action_time)
     message = "";
   }
 
-  // Make sure we CAN move!
+  // Make sure we CAN move.
+  if (!get_property<bool>("can_move", false))
+  {
+    message += YOU + CV(" don't", " doesn't") + " have the capability of movement.";
+    the_message_log.add(message);
+    return false;
+  }
+
+  // Make sure we can move RIGHT NOW.
   if (!can_currently_move())
   {
     message += YOU + " can't move right now.";
@@ -927,8 +967,7 @@ bool Thing::do_put_into(ThingRef thing, ThingRef container,
   {
     if (is_player())
     {
-      message = "Store something in yourself?  "
-        "What do you think you are, a drug mule?";
+      message = "Store something in yourself?  What do you think you are, a drug mule?";
     }
     else
     {
@@ -1635,14 +1674,14 @@ bool Thing::do_wield(ThingRef thing, unsigned int hand, unsigned int& action_tim
   return false;
 }
 
-bool Thing::can_currently_see() const
+bool Thing::can_currently_see()
 {
-  return true;
+  return get_property<bool>("can_see", false) && (get_property<int>("counter.blind", 0) == 0);
 }
 
-bool Thing::can_currently_move() const
+bool Thing::can_currently_move()
 {
-  return true;
+  return get_property<bool>("can_move", false) && (get_property<int>("counter.paralyzed", 0) == 0);
 }
 
 void Thing::set_gender(Gender gender)
@@ -1756,12 +1795,12 @@ std::string const& Thing::get_parent_type() const
 
 unsigned int Thing::get_quantity() const
 {
-  return pImpl->quantity;
+  return get_property<unsigned int>("quantity", 1);
 }
 
 void Thing::set_quantity(unsigned int quantity)
 {
-  pImpl->quantity = quantity;
+  set_property<unsigned int>("quantity", quantity);
 }
 
 ThingRef Thing::get_ref() const
@@ -1776,6 +1815,12 @@ ThingRef Thing::get_location() const
 
 bool Thing::can_see(ThingRef thing)
 {
+  // Make sure we are able to see at all.
+  if (!can_currently_see())
+  {
+    return false;
+  }
+
   // Are we on a map?  Bail out if we aren't.
   MapId entity_map_id = this->get_map_id();
   MapId thing_map_id = thing->get_map_id();
@@ -1805,6 +1850,12 @@ bool Thing::can_see(sf::Vector2i coords)
 
 bool Thing::can_see(int xTile, int yTile)
 {
+  // Make sure we are able to see at all.
+  if (!can_currently_see())
+  {
+    return false;
+  }
+
   MapId map_id = get_map_id();
 
   // Are we on a map?  Bail out if we aren't.

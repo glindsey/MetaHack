@@ -1,18 +1,32 @@
 SMALL THINGS
 ============
-[ ] Add ability to stick vectors, colors into XML files without having to split them into individual values
+[X] Add ability to stick vectors, colors into XML files without having to split them into individual values
     - Colors specified via #rrggbbaa, or via (r, g, b, a)
     - Vector2f specified as (x, y)    
 [ ] When a default is read to get an initial property for a Thing/MapTile, any IntegerRange key should automatically do a "pick()" and return a result instead of just returning the IntegerRange.
+[ ] Lua-ify some more events and checks
 
 MEDIUM THINGS
 =============
 [ ] Tile coordinates aren't inherited right now -- fix this
 [ ] Make it easier for enum classes to be defined, to have an operator<< defined, and to have it exposed to Lua.
 [ ] Replace the error/trace functions with boost logging facilities
+[ ] Light bleed across tiles
+    - Simple convolution that bleeds a bit of light from a tile
+      into adjacent ones, will make shadows way less sharp
 
 BIG THINGS
 ==========
+[ ] Streamline Lua get/set of intrinsics/properties
+    - We shouldn't require these get_[flag|value|string] functions for Lua; we should just be able to call get/set and have the C function deduce what we want. For setting:
+        - 1 lua_Number --> value
+        - 1 lua_Boolean --> bool
+        - 1 lua_String --> string
+        - 2 lua_Numbers --> sf::Vector2f
+        - 4 lua_Numbers --> sf::Color
+        
+    - Likewise, get can just push back however many return values are needed for the value.
+
 [X] Create a std::unordered_map< std::string, std::vector< std::string > > that records the children of each parent.
     - Turns out this has required a huge refactor of the way I'm saving Metadata instances. Welp.
     

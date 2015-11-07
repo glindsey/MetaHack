@@ -27,6 +27,11 @@ Counters
     - food timeout
     - drink timeout
     - sleep timeout
+    - blind timeout
+    - deaf timeout
+    - drunk timeout
+    - confused timeout
+    - paralyzed timeout
     
 Attributes
 ==========
@@ -55,5 +60,5 @@ Attributes
 Experience levels
 =================
 
-experience needed to gain a level = ROUND(2 * (1.5 ^ current level), 0) * 10
+experience needed to gain a level = ROUND((1.2 ^ current level), 0) * 15
 
