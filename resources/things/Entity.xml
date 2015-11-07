@@ -2,11 +2,11 @@
 <thing>
   <name>[Entity]</name>
   <parent>Thing</parent>
-  <description>"The generic Entity class."</description>
+  <description>"A thing with distinct and independent existence."</description>
   <intrinsics>
     <bodypart>
       <body><count>1</count></body>
-	</bodypart> 
+	  </bodypart>    
     <opaque>false</opaque>
     <living>true</living>
     <inventory_size>-1</inventory_size>

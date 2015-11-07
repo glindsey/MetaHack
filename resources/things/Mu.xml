@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <thing>
   <name>[Mu]</name>
-  <description>"The class that represents "Nothingness"."</description>
+  <description>"A completely empty space."</description>
   <intrinsics>
     <lockable>false</lockable>
     <movable>false</movable>

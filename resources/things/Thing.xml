@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <thing>
   <name>[Thing]</name>
-  <description>"The generic Thing class."</description>
+  <description>"The blanket category for any object in the world."</description>
   <intrinsics>
     <bodypart>      
       <body>

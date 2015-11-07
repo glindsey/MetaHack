@@ -2,7 +2,7 @@
 <thing>
   <name>floor</name>
   <parent>Thing</parent>
-  <description>"A floor."</description>
+  <description>"The lower surface of a room, on which one may walk."</description>
   <intrinsics>
     <movable>false</movable>
     <opaque>false</opaque>

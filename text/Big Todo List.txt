@@ -14,6 +14,7 @@ MEDIUM THINGS
 [ ] Light bleed across tiles
     - Simple convolution that bleeds a bit of light from a tile
       into adjacent ones, will make shadows way less sharp
+[ ] Move description XML tag into Lua files instead.
 
 BIG THINGS
 ==========
@@ -52,6 +53,17 @@ BIG THINGS
         - center should be the single tile in question
     - Split a wall into two quads
         - ...and something something figure this out later
+
+[ ] Mouse selection of GUIPanes, inventory items
+
+[ ] List of available commands that apply when Things are selected
         
-[ ] GUIPane animation for sliding in/out
+[ ] GUIPane animation for sliding in/out, flipping, expanding/shrinking
+
+ENORMOUS THINGS
+===============
+[ ] Move ALL XML data into Lua files
+    - Why split stuff between XML and Lua files?
+    - Not sure how dependency resolution would work here though
+        - e.g. if the "Biped" Lua class derives from the "Animal" Lua class, you'd have to be absolutely sure the "Animal.lua" file is run prior to the "Biped.lua" file somehow.
         

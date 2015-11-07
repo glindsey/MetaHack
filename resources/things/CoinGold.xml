@@ -2,7 +2,7 @@
 <thing>
   <name>gold coin</name>
   <parent>Coin</parent>
-  <description>"A gold coin."</description>
+  <description>"A coin made out of gold."</description>
   <intrinsics>
     <physical_mass>1</physical_mass>
   </intrinsics>

@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <thing>
   <name>[Container]</name>
-  <description>"The generic Container class."</description>
+  <description>"An object that can be used to hold or transport something."</description>
   <parent>Thing</parent>
   <intrinsics>
     <openable>true</openable>

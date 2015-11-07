@@ -2,7 +2,7 @@
 <thing>
   <name>rock</name>
   <parent>Thing</parent>
-  <description>"A small rock. That's all."</description>
+  <description>"A stone of any size, especially one small enough to be picked up and used as a projectile."</description>
   <intrinsics>
     <physical_mass>1</physical_mass>
   </intrinsics>

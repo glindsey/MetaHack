@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <thing>
   <name>wooden chest</name>
-  <description>"An unremarkable wooden chest."</description>
+  <description>"A large strong box, typically made of wood and used for storage or shipping."</description>
   <parent>Container</parent>
   <intrinsics>
     <lockable>true</lockable>

@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <thing>
   <name>[Biped]</name>
-  <parent>Entity</parent>
-  <description>"The generic Biped class."</description>
+  <parent>Animal</parent>
+  <description>"An animal that uses two legs for walking."</description>
   <intrinsics>
     <bodypart>
       <body><count>1</count></body>
@@ -19,11 +19,7 @@
       <leg><count>2</count></leg>
       <foot><count>2</count></foot>
     </bodypart>
-    <can_move>true</can_move>
-    <can_see>true</can_see>    
   </intrinsics>
   <defaults>
-    <tile_sheet_x>0</tile_sheet_x>
-    <tile_sheet_y>4</tile_sheet_y>
   </defaults>
 </thing>

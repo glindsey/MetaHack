@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<thing>
+  <name>[Animal]</name>
+  <parent>Entity</parent>
+  <description>"A living organism that feeds on organic matter, typically having specialized sense organs and nervous system and able to respond rapidly to stimuli."</description>
+  <intrinsics>
+    <can_drink>true</can_drink>
+    <can_eat>true</can_eat>
+    <can_hear>true</can_hear>
+    <can_move>true</can_move>
+    <can_see>true</can_see>
+    <can_smell>true</can_smell>
+  </intrinsics>
+  <defaults>
+  </defaults>
+</thing>

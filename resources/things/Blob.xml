@@ -2,7 +2,7 @@
 <thing>
   <name>[Blob]</name>
   <parent>Entity</parent>
-  <description>"The generic Blob class."</description>
+  <description>"An amorphous entity with no distinguishable limbs, head, or other extremities."</description>
   <intrinsics>
   </intrinsics>
   <defaults>

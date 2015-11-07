@@ -2,7 +2,7 @@
 <thing>
   <name>[LightSource]</name>
   <parent>Thing</parent>
-  <description>"The generic LightSource class."</description>
+  <description>"A source of illumination."</description>
   <intrinsics>
   </intrinsics>
   <defaults>

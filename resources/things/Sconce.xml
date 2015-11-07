@@ -2,7 +2,7 @@
 <thing>
   <name>torch sconce</name>
   <parent>LightSource</parent>
-  <description>"A light sconce."</description>
+  <description>"A flaming torch or candle secured in a holder that is attached to a wall."</description>
   <intrinsics>
   </intrinsics>
   <defaults>
