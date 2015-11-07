@@ -19,6 +19,8 @@
       <leg><count>2</count></leg>
       <foot><count>2</count></foot>
     </bodypart>
+    <can_move>true</can_move>
+    <can_see>true</can_see>    
   </intrinsics>
   <defaults>
     <tile_sheet_x>0</tile_sheet_x>

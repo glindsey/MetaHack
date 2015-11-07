@@ -6,7 +6,6 @@
 #include <boost/dynamic_bitset.hpp>
 
 #include "common_types.h"
-#include "AttributeSet.h"
 #include "Gender.h"
 #include "MapTile.h"
 #include "Metadata.h"
@@ -36,8 +35,6 @@ public:
     location{ TM.get_mu() },
     map_tile{ nullptr },
     inventory{ Inventory() },
-    quantity{ 1 },
-    attributes{ AttributeSet() },
     gender{ Gender::None },
     map_memory{ MapMemory() },
     tiles_currently_seen{ TilesSeen() },
@@ -57,8 +54,6 @@ public:
     location{ TM.get_mu() },
     map_tile{ tile },
     inventory{ Inventory() },
-    quantity{ 1 },
-    attributes{ AttributeSet() },
     gender{ Gender::None },
     map_memory{ MapMemory() },
     tiles_currently_seen{ TilesSeen() },
@@ -78,9 +73,7 @@ public:
     location{ other.location },
     map_tile{ other.map_tile },
     inventory{ Inventory() },             // don't copy
-    quantity{ other.quantity },
     properties{ other.properties },
-    attributes{ other.attributes },
     gender{ other.gender },
     map_memory{ other.map_memory },
     tiles_currently_seen{ TilesSeen() },  // don't copy
@@ -112,9 +105,6 @@ public:
 
   /// Property dictionary.
   PropertyDictionary properties;
-
-  /// Entity's attributes.
-  AttributeSet attributes;
 
   /// Gender of this entity.
   Gender gender = Gender::None;

@@ -3,7 +3,6 @@
 
 #include "Action.h"
 #include "ActionResult.h"
-#include "AttributeSet.h"
 #include "BodyPart.h"
 #include "Direction.h"
 #include "ErrorHandler.h"
@@ -340,12 +339,6 @@ class Thing :
     /// overridden.
     std::string get_bodypart_description(BodyPart part, unsigned int number);
 
-    /// Return the attribute set for this Entity.
-    AttributeSet& get_attributes();
-
-    /// Return the attribute set for this Entity.
-    AttributeSet const& get_attributes() const;
-
     /// Returns a reference to the inventory.
     Inventory& get_inventory();
 
@@ -408,10 +401,10 @@ class Thing :
     /// @param verb2 The second person verb form, such as "shake"
     /// @param verb3 The third person verb form, such as "shakes"
     std::string const& choose_verb(std::string const& verb2,
-                                   std::string const& verb3) const;
+                                   std::string const& verb3);
 
     /// Return this thing's mass.
-    int get_mass() const;
+    int get_mass();
 
     /// Get the appropriate subject pronoun for the Thing.
     std::string const& get_subject_pronoun() const;

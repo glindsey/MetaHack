@@ -33,12 +33,6 @@
     <ClInclude Include="include\AppStateSplashScreen.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Attribute.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\AttributeSet.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\Beatitude.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -219,9 +213,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\AppStateSplashScreen.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\AttributeSet.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\ConfigSettings.cpp">

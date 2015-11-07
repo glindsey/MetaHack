@@ -66,8 +66,8 @@ std::string StatusArea::render_contents(int frame)
     render_text.setString("HP");
     bg_texture.draw(render_text);
 
-    int hp = player->get_attributes().get(Attribute::HP);
-    int max_hp = player->get_attributes().get(Attribute::MaxHP);
+    int hp = player->get_property<int>("hp");
+    int max_hp = player->get_property<int>("maxhp");
 
     float hp_percentage = static_cast<float>(hp) / static_cast<float>(max_hp);
 

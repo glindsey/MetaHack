@@ -17,6 +17,8 @@ MEDIUM THINGS
 
 BIG THINGS
 ==========
+[ ] Let Lua get a Thing's inventory (as a table of ids)
+
 [ ] Streamline Lua get/set of intrinsics/properties
     - We shouldn't require these get_[flag|value|string] functions for Lua; we should just be able to call get/set and have the C function deduce what we want. For setting:
         - 1 lua_Number --> value

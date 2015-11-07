@@ -662,7 +662,7 @@ bool Thing::do_move(Direction new_direction, unsigned int& action_time)
   }
 
   // Make sure we CAN move.
-  if (!get_property<bool>("can_move", false))
+  if (!get_intrinsic<bool>("can_move", false))
   {
     message += YOU + CV(" don't", " doesn't") + " have the capability of movement.";
     the_message_log.add(message);
@@ -1676,12 +1676,12 @@ bool Thing::do_wield(ThingRef thing, unsigned int hand, unsigned int& action_tim
 
 bool Thing::can_currently_see()
 {
-  return get_property<bool>("can_see", false) && (get_property<int>("counter.blind", 0) == 0);
+  return get_intrinsic<bool>("can_see", false) && (get_property<int>("counter.blind", 0) == 0);
 }
 
 bool Thing::can_currently_move()
 {
-  return get_property<bool>("can_move", false) && (get_property<int>("counter.paralyzed", 0) == 0);
+  return get_intrinsic<bool>("can_move", false) && (get_property<int>("counter.paralyzed", 0) == 0);
 }
 
 void Thing::set_gender(Gender gender)
@@ -1793,7 +1793,7 @@ std::string const& Thing::get_parent_type() const
   return pImpl->metadata.get_parent();
 }
 
-unsigned int Thing::get_quantity() const
+unsigned int Thing::get_quantity()
 {
   return get_property<unsigned int>("quantity", 1);
 }
@@ -2040,16 +2040,6 @@ bool Thing::move_into(ThingRef new_location)
   return false;
 }
 
-AttributeSet& Thing::get_attributes()
-{
-  return pImpl->attributes;
-}
-
-AttributeSet const& Thing::get_attributes() const
-{
-  return pImpl->attributes;
-}
-
 Inventory& Thing::get_inventory()
 {
   return pImpl->inventory;
@@ -2145,7 +2135,7 @@ std::string Thing::get_identifying_string_without_possessives(bool definite)
   // If the thing is YOU, use YOU.
   if (is_player())
   {
-    if (pImpl->attributes.get(Attribute::HP) > 0)
+    if (get_property<int>("hp") > 0)
     {
       return "you";
     }
@@ -2184,7 +2174,7 @@ std::string Thing::get_identifying_string_without_possessives(bool definite)
     article += boost::lexical_cast<std::string>(get_quantity()) + " ";
   }
 
-  if (get_intrinsic<bool>("living") && (pImpl->attributes.get(Attribute::HP) > 0))
+  if (get_intrinsic<bool>("living") && get_property<int>("hp") > 0)
   {
     adjectives += "dead ";
   }
@@ -2211,7 +2201,7 @@ std::string Thing::get_identifying_string(bool definite)
   // If the thing is YOU, use YOU.
   if (is_player())
   {
-    if (pImpl->attributes.get(Attribute::HP) > 0)
+    if (get_property<int>("hp") > 0)
     {
       return "you";
     }
@@ -2267,7 +2257,7 @@ std::string Thing::get_identifying_string(bool definite)
     }
   }
 
-  if (get_intrinsic<bool>("living") && (pImpl->attributes.get(Attribute::HP) > 0))
+  if (get_intrinsic<bool>("living") && get_property<int>("hp") > 0)
   {
     adjectives += "dead ";
   }
@@ -2278,9 +2268,9 @@ std::string Thing::get_identifying_string(bool definite)
 }
 
 std::string const& Thing::choose_verb(std::string const& verb12,
-                                      std::string const& verb3) const
+                                      std::string const& verb3)
 {
-  if ((TM.get_player() == pImpl->ref) || (pImpl->quantity > 1))
+  if ((TM.get_player() == pImpl->ref) || (get_property<unsigned int>("quantity") > 1))
   {
     return verb12;
   }
@@ -2290,9 +2280,9 @@ std::string const& Thing::choose_verb(std::string const& verb12,
   }
 }
 
-int Thing::get_mass() const
+int Thing::get_mass()
 {
-  return get_intrinsic<int>("physical_mass") * pImpl->quantity;
+  return get_intrinsic<int>("physical_mass") * get_property<unsigned int>("quantity");
 }
 
 std::string const& Thing::get_subject_pronoun() const
@@ -2911,7 +2901,7 @@ bool Thing::_process_self()
   call_lua_function("process", {});
 
   // Is the entity dead?
-  if (pImpl->attributes.get(Attribute::HP) > 0)
+  if (get_property<int>("hp") > 0)
   {
     // If actions are pending...
     if (!pImpl->actions.empty())

@@ -130,8 +130,6 @@
     <ClInclude Include="include\AppStateGameMode.h" />
     <ClInclude Include="include\AppStateMainMenu.h" />
     <ClInclude Include="include\AppStateSplashScreen.h" />
-    <ClInclude Include="include\Attribute.h" />
-    <ClInclude Include="include\AttributeSet.h" />
     <ClInclude Include="include\Beatitude.h" />
     <ClInclude Include="include\BodyPart.h" />
     <ClInclude Include="include\common_enums.h" />
@@ -195,7 +193,6 @@
     <ClCompile Include="src\AppStateGameMode.cpp" />
     <ClCompile Include="src\AppStateMainMenu.cpp" />
     <ClCompile Include="src\AppStateSplashScreen.cpp" />
-    <ClCompile Include="src\AttributeSet.cpp" />
     <ClCompile Include="src\ConfigSettings.cpp" />
     <ClCompile Include="src\ErrorHandler.cpp" />
     <ClCompile Include="src\GameObject.cpp" />
