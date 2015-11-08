@@ -2,6 +2,9 @@
 
 Thing = Thing or {}
 
+Thing.intrinsics = {}
+Thing.defaults = {}
+
 function Thing.get_tile_offset(id, frame)
 	return 0, 0
 end
