@@ -226,7 +226,6 @@ ActionResult Metadata::call_lua_function(std::string function_name,
   ActionResult default_result)
 {
   ActionResult return_value = default_result;
-  bool call_parent = false;
   std::string name = this->get_type();
 
   int start_stack = lua_gettop(the_lua_state);
@@ -238,7 +237,6 @@ ActionResult Metadata::call_lua_function(std::string function_name,
   {
     // Class not found -- pop the name back off. (-1)
     lua_pop(the_lua_state, 1);
-    call_parent = true;
   }
   else
   {
@@ -249,7 +247,6 @@ ActionResult Metadata::call_lua_function(std::string function_name,
     {
       // Function not found -- pop the function and class names back off. (-2)
       lua_pop(the_lua_state, 2);
-      call_parent = true;
     }
     else
     {
@@ -284,12 +281,6 @@ ActionResult Metadata::call_lua_function(std::string function_name,
         // Pop the error message off the stack. (-1)
         lua_pop(the_lua_state, 1);
       }
-
-      // Check if the return value is ActionResult::Pending.
-      if (return_value == ActionResult::Pending)
-      {
-        call_parent = true;
-      }
     }
   }
 
@@ -298,21 +289,6 @@ ActionResult Metadata::call_lua_function(std::string function_name,
   if (start_stack != end_stack)
   {
     MAJOR_ERROR("*** LUA STACK MISMATCH (%s!%s): Started at %d, ended at %d", name.c_str(), function_name.c_str(), start_stack, end_stack);
-  }
-
-  std::string parent = get_parent();
-  if (call_parent)
-  {
-    if (parent.empty())
-    {
-      //TRACE("Reached the top of the parent tree trying to call %s.%s", name.c_str(), function_name.c_str());
-      return_value = default_result;
-    }
-    else
-    {
-      return_value =
-        get_collection().get(parent).call_lua_function(function_name, caller, args, default_result);
-    }
   }
 
   return return_value;
@@ -324,7 +300,6 @@ bool Metadata::call_lua_function_bool(std::string function_name,
   bool default_result)
 {
   bool return_value = default_result;
-  bool call_parent = false;
   std::string name = this->get_type();
 
   int start_stack = lua_gettop(the_lua_state);
@@ -336,7 +311,6 @@ bool Metadata::call_lua_function_bool(std::string function_name,
   {
     // Class not found -- pop the name back off. (-1)
     lua_pop(the_lua_state, 1);
-    call_parent = true;
   }
   else
   {
@@ -347,7 +321,6 @@ bool Metadata::call_lua_function_bool(std::string function_name,
     {
       // Function not found -- pop the function and class names back off. (-2)
       lua_pop(the_lua_state, 2);
-      call_parent = true;
     }
     else
     {
@@ -367,16 +340,8 @@ bool Metadata::call_lua_function_bool(std::string function_name,
       int result = lua_pcall(the_lua_state, args.size() + 1, 1, 0);
       if (result == 0)
       {
-        // Check for nil return.
-        if (lua_isnoneornil(the_lua_state, -1))
-        {
-          call_parent = true;
-        }
-        else
-        {
-          // Get the return value.
-          return_value = (lua_toboolean(the_lua_state, -1) != 0);
-        }
+        // Get the return value.
+        return_value = (lua_toboolean(the_lua_state, -1) != 0);
 
         // Pop the return value off the stack. (-1)
         lua_pop(the_lua_state, 1);
@@ -400,21 +365,6 @@ bool Metadata::call_lua_function_bool(std::string function_name,
     MAJOR_ERROR("*** LUA STACK MISMATCH (%s!%s): Started at %d, ended at %d", name.c_str(), function_name.c_str(), start_stack, end_stack);
   }
 
-  if (call_parent)
-  {
-    std::string parent = get_parent();
-    if (parent.empty())
-    {
-      //TRACE("Reached the top of the parent tree trying to call %s.%s", name.c_str(), function_name.c_str());
-      return_value = default_result;
-    }
-    else
-    {
-      return_value =
-        get_collection().get(parent).call_lua_function_bool(function_name, caller, args, default_result);
-    }
-  }
-
   return return_value;
 }
 
@@ -424,7 +374,6 @@ sf::Vector2u Metadata::call_lua_function_v2u(std::string function_name,
   sf::Vector2u default_result)
 {
   sf::Vector2u return_value = default_result;
-  bool call_parent = false;
   std::string name = this->get_type();
 
   int start_stack = lua_gettop(the_lua_state);
@@ -436,7 +385,6 @@ sf::Vector2u Metadata::call_lua_function_v2u(std::string function_name,
   {
     // Class not found -- pop the name back off. (-1)
     lua_pop(the_lua_state, 1);
-    call_parent = true;
   }
   else
   {
@@ -447,7 +395,6 @@ sf::Vector2u Metadata::call_lua_function_v2u(std::string function_name,
     {
       // Function not found -- pop the function and class names back off. (-2)
       lua_pop(the_lua_state, 2);
-      call_parent = true;
     }
     else
     {
@@ -467,16 +414,8 @@ sf::Vector2u Metadata::call_lua_function_v2u(std::string function_name,
       int result = lua_pcall(the_lua_state, args.size() + 1, 2, 0);
       if (result == 0)
       {
-        // Check for nil return.
-        if (lua_isnoneornil(the_lua_state, -1))
-        {
-          call_parent = true;
-        }
-        else
-        {
-          // Get the return values.
-          return_value = sf::Vector2u(lua_tointeger(the_lua_state, -2), lua_tointeger(the_lua_state, -1));
-        }
+        // Get the return values.
+        return_value = sf::Vector2u(lua_tointeger(the_lua_state, -2), lua_tointeger(the_lua_state, -1));
 
         // Pop the return values off the stack. (-2)
         lua_pop(the_lua_state, 2);
@@ -498,21 +437,6 @@ sf::Vector2u Metadata::call_lua_function_v2u(std::string function_name,
   if (start_stack != end_stack)
   {
     MAJOR_ERROR("*** LUA STACK MISMATCH (%s!%s): Started at %d, ended at %d", name.c_str(), function_name.c_str(), start_stack, end_stack);
-  }
-
-  if (call_parent)
-  {
-    std::string parent = get_parent();
-    if (parent.empty())
-    {
-      //TRACE("Reached the top of the parent tree trying to call %s.%s", name.c_str(), function_name.c_str());
-      return_value = default_result;
-    }
-    else
-    {
-      return_value =
-        get_collection().get(parent).call_lua_function_v2u(function_name, caller, args, default_result);
-    }
   }
 
   return return_value;

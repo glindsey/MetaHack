@@ -25,7 +25,7 @@ Lua::Lua()
   register_function("print_trace", Lua::LUA_trace);
 
   // Run the initial Lua script.
-  do_file("resources/default.lua");
+  require("resources/default", true);
 }
 
 Lua::~Lua()
@@ -57,6 +57,34 @@ void Lua::do_file(std::string filename)
     fprintf(stderr, "%s\n", lua_tostring(L_, -1));
   }
 }
+
+void Lua::require(std::string packagename, bool fatal)
+{
+  int err;
+
+  // Call the "require" function.  
+  lua_getfield(L_, LUA_GLOBALSINDEX, "require"); // function
+  lua_pushstring(L_, packagename.c_str());     // arg 0: module name
+  err = lua_pcall(L_, 1, 1, 0);
+
+  if (err)
+  {
+    if (fatal)
+    {
+      FATAL_ERROR("%s", lua_tostring(L_, -1));
+    }
+    else
+    {
+      MAJOR_ERROR("%s", lua_tostring(L_, -1));
+    }
+  }
+  else
+  {
+    // Store module table in global var
+    lua_setfield(L_, LUA_GLOBALSINDEX, packagename.c_str());
+  }
+}
+
 
 void Lua::set_global(std::string name, lua_Integer value)
 {

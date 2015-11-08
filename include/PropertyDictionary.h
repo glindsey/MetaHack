@@ -85,6 +85,7 @@ public:
       m_dictionary.erase(key);
       m_metadictionary.erase(key);
     }
+    //TRACE("Inserting key %s, type %s", key.c_str(), type.c_str());
     m_dictionary.insert(std::pair<std::string, boost::any>(key, insert_value));
     m_metadictionary.insert(std::pair<std::string, std::string>(key, type));
 

@@ -33,6 +33,9 @@ public:
   /// Execute a particular file.
   void do_file(std::string filename);
 
+  /// Load a particular package, making sure it is not already loaded.
+  void require(std::string filename, bool fatal = false);
+
   /// Sets a global to a particular integer value.
   /// If the global currently exists it will be overwritten.
   void set_global(std::string name, lua_Integer value);

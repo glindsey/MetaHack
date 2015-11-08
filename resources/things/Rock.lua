@@ -1,3 +1,5 @@
 -- Definition of special functions for the Rock object type.
 
-Rock = Rock or {}
+require "resources/things/Thing"
+
+Rock = inheritsFrom(Thing)

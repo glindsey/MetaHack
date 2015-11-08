@@ -1,3 +1,5 @@
 -- Definition of special functions for the Biped object type.
 
-Biped = Biped or {}
+require "resources/things/Sapient"
+
+Biped = inheritsFrom(Sapient)

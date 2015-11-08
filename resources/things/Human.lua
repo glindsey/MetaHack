@@ -1,3 +1,5 @@
 -- Definition of special functions for the Human object type.
 
-Human = Human or {}
+require "resources/things/Biped"
+
+Human = inheritsFrom(Biped)

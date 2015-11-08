@@ -1,6 +1,8 @@
 -- Definition of special functions for the Sconce object type.
 
-Sconce = Sconce or {}
+require "resources/things/LightSource"
+
+Sconce = Sconce or inheritsFrom(Sconce)
 
 function Sconce.get_tile_offset(id, frame)
 	local is_lit = thing_get_property_flag(id, "light_lit")

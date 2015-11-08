@@ -660,6 +660,10 @@ class Thing :
     static int LUA_set_property_value(lua_State* L);
     static int LUA_set_property_string(lua_State* L);
 
+    static int LUA_get_intrinsic(lua_State* L);
+    static int LUA_get_property(lua_State* L);
+    static int LUA_set_property(lua_State* L);
+
     /// Syntactic sugar for calling Metadata::call_lua_function.
     ActionResult call_lua_function(std::string function_name,
       std::vector<lua_Integer> const& args,

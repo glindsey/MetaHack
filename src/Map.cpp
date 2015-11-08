@@ -72,7 +72,7 @@ Map::Map(MapId map_id, int width, int height)
     ///       this will do.
     TRACE("Executing Map Lua script.");
     the_lua_instance.set_global("current_map_id", map_id);
-    the_lua_instance.do_file("resources/scripts/map.lua");
+    the_lua_instance.require("resources/scripts/map");
   }
 
   TRACE("Map created.");

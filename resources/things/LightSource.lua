@@ -1,6 +1,8 @@
 -- Definition of special functions for the LightSource object type.
 
-LightSource = LightSource or {}
+require "resources/things/Thing"
+
+LightSource = inheritsFrom(Thing)
 
 function LightSource.is_usable_by(id)
 	-- This SHOULD check if a creature is sentient.

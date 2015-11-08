@@ -62,5 +62,6 @@
   <defaults>
     <locked>false</locked>
     <open>true</open>
+	<quantity>1</quantity>
   </defaults>
 </thing>
