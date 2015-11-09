@@ -2,4 +2,4 @@
 
 require "resources/things/Blob"
 
-RockLichen = inheritsFrom(Blob)
+RockLichen = inheritsFrom(Blob, "RockLichen")

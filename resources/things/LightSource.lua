@@ -2,7 +2,7 @@
 
 require "resources/things/Thing"
 
-LightSource = inheritsFrom(Thing)
+LightSource = inheritsFrom(Thing, "LightSource")
 
 function LightSource.is_usable_by(id)
 	-- This SHOULD check if a creature is sentient.

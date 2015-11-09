@@ -2,4 +2,4 @@
 
 require "resources/things/Animal"
 
-Sapient = inheritsFrom(Animal)
+Sapient = inheritsFrom(Animal, "Sapient")

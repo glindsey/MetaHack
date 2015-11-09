@@ -8,7 +8,11 @@ SMALL THINGS
 
 MEDIUM THINGS
 =============
+[X] Function to get a dot-nested table from Lua class, e.g. "intrinsics.bodypart.body.name"
+[ ] Function to set a dot-nested table in Lua class
+
 [ ] Tile coordinates aren't inherited right now -- fix this
+	- Sticking tile coordinates into Lua classes will automatically enable inheritance
 [ ] Make it easier for enum classes to be defined, to have an operator<< defined, and to have it exposed to Lua.
 [ ] Replace the error/trace functions with boost logging facilities
 [ ] Light bleed across tiles
@@ -62,8 +66,6 @@ BIG THINGS
 
 ENORMOUS THINGS
 ===============
-[ ] Move ALL XML data into Lua files
+[/] Move ALL XML data into Lua files
     - Why split stuff between XML and Lua files?
-    - Not sure how dependency resolution would work here though
-        - e.g. if the "Biped" Lua class derives from the "Animal" Lua class, you'd have to be absolutely sure the "Animal.lua" file is run prior to the "Biped.lua" file somehow.
         

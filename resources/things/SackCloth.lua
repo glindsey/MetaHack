@@ -2,4 +2,4 @@
 
 require "resources/things/Container"
 
-SackCloth = inheritsFrom(Container)
+SackCloth = inheritsFrom(Container, "SackCloth")

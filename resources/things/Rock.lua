@@ -2,4 +2,4 @@
 
 require "resources/things/Thing"
 
-Rock = inheritsFrom(Thing)
+Rock = inheritsFrom(Thing, "Rock")

@@ -13,11 +13,12 @@ Metadata::Metadata(MetadataCollection& collection, std::string type)
   TRACE("Loading metadata for %s!%s...", category.c_str(), type.c_str());
 
   // Look for the various files containing this metadata.
-  std::string xmlfile_string = "resources/" + category + "s/" + type + ".xml";
+  std::string resource_string = "resources/" + category + "s/" + type;
+  std::string xmlfile_string = resource_string + ".xml";
   fs::path xmlfile_path = fs::path(xmlfile_string);
-  std::string pngfile_string = "resources/" + category + "s/" + type + ".png";
+  std::string pngfile_string = resource_string + ".png";
   fs::path pngfile_path = fs::path(pngfile_string);
-  std::string luafile_string = "resources/" + category + "s/" + type + ".lua";
+  std::string luafile_string = resource_string + ".lua";
   fs::path luafile_path = fs::path(luafile_string);
 
   if (!fs::exists(xmlfile_path))
@@ -126,7 +127,7 @@ Metadata::Metadata(MetadataCollection& collection, std::string type)
   {
     TRACE("Loading Lua script for %s!%s...", category.c_str(), type.c_str());
 
-    the_lua_instance.do_file(luafile_string);
+    the_lua_instance.require(resource_string, true);
   }
 }
 
@@ -288,7 +289,7 @@ ActionResult Metadata::call_lua_function(std::string function_name,
 
   if (start_stack != end_stack)
   {
-    MAJOR_ERROR("*** LUA STACK MISMATCH (%s!%s): Started at %d, ended at %d", name.c_str(), function_name.c_str(), start_stack, end_stack);
+    MAJOR_ERROR("*** LUA STACK MISMATCH (%s.%s): Started at %d, ended at %d", name.c_str(), function_name.c_str(), start_stack, end_stack);
   }
 
   return return_value;
@@ -362,7 +363,7 @@ bool Metadata::call_lua_function_bool(std::string function_name,
 
   if (start_stack != end_stack)
   {
-    MAJOR_ERROR("*** LUA STACK MISMATCH (%s!%s): Started at %d, ended at %d", name.c_str(), function_name.c_str(), start_stack, end_stack);
+    MAJOR_ERROR("*** LUA STACK MISMATCH (%s.%s): Started at %d, ended at %d", name.c_str(), function_name.c_str(), start_stack, end_stack);
   }
 
   return return_value;
@@ -436,7 +437,217 @@ sf::Vector2u Metadata::call_lua_function_v2u(std::string function_name,
 
   if (start_stack != end_stack)
   {
-    MAJOR_ERROR("*** LUA STACK MISMATCH (%s!%s): Started at %d, ended at %d", name.c_str(), function_name.c_str(), start_stack, end_stack);
+    MAJOR_ERROR("*** LUA STACK MISMATCH (%s.%s): Started at %d, ended at %d", name.c_str(), function_name.c_str(), start_stack, end_stack);
+  }
+
+  return return_value;
+}
+
+bool Metadata::get_lua_bool(std::string name)
+{
+  bool return_value = false;
+  std::string type = this->get_type();
+
+  int start_stack = lua_gettop(the_lua_state);
+
+  // Push type of class onto the stack. (+1)
+  lua_getglobal(the_lua_state, type.c_str());           // class <
+
+  if (lua_isnoneornil(the_lua_state, -1))
+  {
+    // Class not found -- pop the name back off. (-1)
+    lua_pop(the_lua_state, 1);
+    MAJOR_ERROR("Lua class %s was not found", type.c_str());
+  }
+  else
+  {
+    // Push name of function onto the stack. (+1)
+    lua_getfield(the_lua_state, -1, "get");   // class get <
+
+    if (lua_isnoneornil(the_lua_state, -1))
+    {
+      // Function not found -- pop the function and class names back off. (-2)
+      lua_pop(the_lua_state, 2);
+      MAJOR_ERROR("Lua function %s:get() was not found", type.c_str());
+    }
+    else
+    {
+      // Push the class name up to the front of the stack.
+      lua_pushvalue(the_lua_state, -2);                 // class get class <
+
+                                                        // Pop the class name off the back of the stack.
+      lua_remove(the_lua_state, -3);                    // get class <
+
+                                                        // Push the intrinsic name onto the stack. (+1)
+      lua_pushstring(the_lua_state, name.c_str());      // get class intrinsic_name <
+
+                                                        // Call the function with 2 arguments and 1 result. 
+      int result = lua_pcall(the_lua_state, 2, 1, 0);   // (result|err) <
+      if (result == 0)
+      {
+        // Get the return value.
+        return_value = (lua_toboolean(the_lua_state, -1) != 0 ? true : false);
+
+        // Pop the return value off the stack. (-1)
+        lua_pop(the_lua_state, 1);
+      }
+      else
+      {
+        // Get the error message.
+        char const* error_message = lua_tostring(the_lua_state, -1);
+        MAJOR_ERROR("Error calling %s:get(%s): %s", type.c_str(), name.c_str(), error_message);
+
+        // Pop the error message off the stack. (-1)
+        lua_pop(the_lua_state, 1);
+      }
+    }
+  }
+
+  int end_stack = lua_gettop(the_lua_state);
+
+  if (start_stack != end_stack)
+  {
+    MAJOR_ERROR("*** LUA STACK MISMATCH (%s.get): Started at %d, ended at %d", name.c_str(), start_stack, end_stack);
+  }
+
+  return return_value;
+}
+
+double Metadata::get_lua_value(std::string name)
+{
+  double return_value = 0.0;
+  std::string type = this->get_type();
+
+  int start_stack = lua_gettop(the_lua_state);
+
+  // Push type of class onto the stack. (+1)
+  lua_getglobal(the_lua_state, type.c_str());           // class <
+
+  if (lua_isnoneornil(the_lua_state, -1))
+  {
+    // Class not found -- pop the name back off. (-1)
+    lua_pop(the_lua_state, 1);
+    MAJOR_ERROR("Lua class %s was not found", type.c_str());
+  }
+  else
+  {
+    // Push name of function onto the stack. (+1)
+    lua_getfield(the_lua_state, -1, "get");   // class get <
+
+    if (lua_isnoneornil(the_lua_state, -1))
+    {
+      // Function not found -- pop the function and class names back off. (-2)
+      lua_pop(the_lua_state, 2);
+      MAJOR_ERROR("Lua function %s:get() was not found", type.c_str());
+    }
+    else
+    {
+      // Push the class name up to the front of the stack.
+      lua_pushvalue(the_lua_state, -2);                 // class get class <
+
+                                                        // Pop the class name off the back of the stack.
+      lua_remove(the_lua_state, -3);                    // get class <
+
+                                                        // Push the intrinsic name onto the stack. (+1)
+      lua_pushstring(the_lua_state, name.c_str());      // get class intrinsic_name <
+
+                                                        // Call the function with 2 arguments and 1 result. 
+      int result = lua_pcall(the_lua_state, 2, 1, 0);   // (result|err) <
+      if (result == 0)
+      {
+        // Get the return value.
+        return_value = lua_tonumber(the_lua_state, -1);
+
+        // Pop the return value off the stack. (-1)
+        lua_pop(the_lua_state, 1);
+      }
+      else
+      {
+        // Get the error message.
+        char const* error_message = lua_tostring(the_lua_state, -1);
+        MAJOR_ERROR("Error calling %s:get(%s): %s", type.c_str(), name.c_str(), error_message);
+
+        // Pop the error message off the stack. (-1)
+        lua_pop(the_lua_state, 1);
+      }
+    }
+  }
+
+  int end_stack = lua_gettop(the_lua_state);
+
+  if (start_stack != end_stack)
+  {
+    MAJOR_ERROR("*** LUA STACK MISMATCH (%s.get): Started at %d, ended at %d", name.c_str(), start_stack, end_stack);
+  }
+
+  return return_value;
+}
+
+std::string Metadata::get_lua_string(std::string name)
+{
+  std::string return_value = "";
+  std::string type = this->get_type();
+
+  int start_stack = lua_gettop(the_lua_state);
+
+  // Push type of class onto the stack. (+1)
+  lua_getglobal(the_lua_state, type.c_str());           // class <
+
+  if (lua_isnoneornil(the_lua_state, -1))
+  {
+    // Class not found -- pop the name back off. (-1)
+    lua_pop(the_lua_state, 1);
+    MAJOR_ERROR("Lua class %s was not found", type.c_str());
+  }
+  else
+  {
+    // Push name of function onto the stack. (+1)
+    lua_getfield(the_lua_state, -1, "get");   // class get <
+
+    if (lua_isnoneornil(the_lua_state, -1))
+    {
+      // Function not found -- pop the function and class names back off. (-2)
+      lua_pop(the_lua_state, 2);
+      MAJOR_ERROR("Lua function %s:get() was not found", type.c_str());
+    }
+    else
+    {
+      // Push the class name up to the front of the stack.
+      lua_pushvalue(the_lua_state, -2);                 // class get class <
+
+                                                        // Pop the class name off the back of the stack.
+      lua_remove(the_lua_state, -3);                    // get class <
+
+                                                        // Push the intrinsic name onto the stack. (+1)
+      lua_pushstring(the_lua_state, name.c_str());      // get class intrinsic_name <
+
+                                                        // Call the function with 2 arguments and 1 result. 
+      int result = lua_pcall(the_lua_state, 2, 1, 0);   // (result|err) <
+      if (result == 0)
+      {
+        // Get the return value.
+        return_value = lua_tostring(the_lua_state, -1);
+
+        // Pop the return value off the stack. (-1)
+        lua_pop(the_lua_state, 1);
+      }
+      else
+      {
+        // Get the error message.
+        char const* error_message = lua_tostring(the_lua_state, -1);
+        MAJOR_ERROR("Error calling %s:get(%s): %s", type.c_str(), name.c_str(), error_message);
+
+        // Pop the error message off the stack. (-1)
+        lua_pop(the_lua_state, 1);
+      }
+    }
+  }
+
+  int end_stack = lua_gettop(the_lua_state);
+
+  if (start_stack != end_stack)
+  {
+    MAJOR_ERROR("*** LUA STACK MISMATCH (%s.get): Started at %d, ended at %d", name.c_str(), start_stack, end_stack);
   }
 
   return return_value;

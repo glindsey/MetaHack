@@ -2,4 +2,4 @@
 
 require "resources/things/Coin"
 
-CoinGold = inheritsFrom(Coin)
+CoinGold = inheritsFrom(Coin, "CoinGold")

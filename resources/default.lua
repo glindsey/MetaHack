@@ -20,13 +20,17 @@ function trace(string)
 end
 
 -- inheritsFrom courtesy of lua-users.org wiki
-function inheritsFrom(baseClass)
+function inheritsFrom(baseClass, className)
 	local new_class = {}
-	local class_mt = { __index = new_class }
+	new_class.type = className
+
+	-- @todo Register class name with the ThingManager
+	--thingManager_register(className)
 	
 	-- new_class:create() is disabled because we don't actually create
 	-- instances of these classes; instead they operate on C++ Thing instances.
 	
+	--local class_mt = { __index = new_class }
 	--function new_class:create()
 	--	local newinst = {}
 	--	setmetatable(newinst, class_mt)
@@ -60,6 +64,5 @@ function inheritsFrom(baseClass)
 	
 	return new_class
 end
-
 
 print("*** Default Lua script executed.")

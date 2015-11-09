@@ -2,4 +2,4 @@
 
 require "resources/things/Sapient"
 
-Biped = inheritsFrom(Sapient)
+Biped = inheritsFrom(Sapient, "Biped")

@@ -2,4 +2,4 @@
 
 require "resources/things/Entity"
 
-Blob = inheritsFrom(Entity)
+Blob = inheritsFrom(Entity, "Blob")

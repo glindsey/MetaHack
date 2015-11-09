@@ -2,4 +2,4 @@
 
 require "resources/things/Entity"
 
-Animal = inheritsFrom(Entity)
+Animal = inheritsFrom(Entity, "Animal")
