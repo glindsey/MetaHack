@@ -3,6 +3,17 @@
 require "resources/things/Thing"
 
 LightSource = inheritsFrom(Thing, "LightSource")
+LightSource.name = "[LightSource]"
+
+LightSource.defaults.light_lit = true
+LightSource.defaults.light_color = color(64, 64, 64, 256)
+LightSource.defaults.light_level = 256
+LightSource.defaults.light_strength = 64
+
+function LightSource.get_description()
+	return "A source of illumination."
+end
+
 
 function LightSource.is_usable_by(id)
 	-- This SHOULD check if a creature is sentient.

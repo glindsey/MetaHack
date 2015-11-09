@@ -3,3 +3,13 @@
 require "resources/things/Thing"
 
 Mu = inheritsFrom(Thing, "Mu")
+Mu.name = "[Mu]"
+
+Mu.intrinsics.lockable = false
+Mu.intrinsics.movable = false
+Mu.intrinsics.opaque = false
+Mu.intrinsics.openable = false
+
+function Mu.get_description()
+	return "A completely empty space; the absence of all things."
+end

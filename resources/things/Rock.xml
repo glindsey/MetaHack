@@ -4,7 +4,7 @@
   <parent>Thing</parent>
   <description>"A stone of any size, especially one small enough to be picked up and used as a projectile."</description>
   <intrinsics>
-    <physical_mass>1</physical_mass>
+    <physical_mass>3</physical_mass>
   </intrinsics>
   <defaults>
   </defaults>

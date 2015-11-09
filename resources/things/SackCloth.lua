@@ -3,3 +3,13 @@
 require "resources/things/Container"
 
 SackCloth = inheritsFrom(Container, "SackCloth")
+SackCloth.name = "cloth sack"
+
+SackCloth.intrinsics.inventory_size = 10
+SackCloth.intrinsics.openable = false
+
+SackCloth.defaults.open = true
+
+function SackCloth.get_description()
+	return "A sack made out of cloth."
+end

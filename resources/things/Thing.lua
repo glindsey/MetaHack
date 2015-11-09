@@ -90,7 +90,7 @@ function Thing:get(name)
 		
 		-- Make sure "tableToSearch" is a table.
 		if type(tableToSearch) ~= "table" then
-			error("Couldn't retrieve " .. name .. ": " .. firstPart .. " is not a table")
+			return nil;
 		end
 		
 		-- Traverse down the nested tables.
@@ -101,8 +101,10 @@ function Thing:get(name)
 	end
 	
 	-- When we get here, secondPart should be the final result we want to return.
+	-- Or, if secondPart doesn't exist, it will be nil.
 	
 	return tableToSearch[secondPart]
+	
 end
 
 function Thing:set(name, value)
@@ -124,10 +126,14 @@ function Thing:set(name, value)
 		
 		-- Make sure "tableToSearch" is a table.
 		if type(tableToSearch) ~= "table" then
-			error("Couldn't retrieve " .. name .. ": " .. firstPart .. " is not a table")
+			error("Couldn't set " .. name .. ": " .. firstPart .. " is not a table")
 		end
 		
-		-- Traverse down the nested tables.
+		-- Traverse down the nested tables, creating as we go.
+		if tableToSearch[firstPart] == nil then
+			tableToSearch[firstPart] = {}
+		end
+		
 		tableToSearch = tableToSearch[firstPart];
 		
 		-- Find the next dot.
@@ -135,6 +141,10 @@ function Thing:set(name, value)
 	end
 	
 	-- When we get here, secondPart should be the final result we want to set.
+	if type(tableToSearch[secondPart]) == "table" then
+		error("Couldn't set " .. name .. ": " .. secondPart .. " already exists and is a table")
+	end
 	
 	tableToSearch[secondPart] = value
+	
 end
