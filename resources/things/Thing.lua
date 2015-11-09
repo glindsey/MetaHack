@@ -1,17 +1,54 @@
--- Definition of special functions for the Thing object type.
+-- Definition of the Thing object type, which all others inherit from.
 
 Thing = inheritsFrom(nil, "Thing")
+Thing.name = "[Thing]"
+
 Thing.intrinsics = {}
 Thing.defaults = {}
 
--- Test code.
-Thing.intrinsics.test1 = {}
-Thing.intrinsics.test1.test1a = false
-Thing.intrinsics.test1.test1b = true
-Thing.intrinsics.test1.test1c = {}
-Thing.intrinsics.test1.test1c.test1c1 = true
-Thing.intrinsics.test2 = false
--- END test code
+Thing.intrinsics.bodypart = {}
+Thing.intrinsics.bodypart.body = {}
+Thing.intrinsics.bodypart.body.name = "body"
+Thing.intrinsics.bodypart.body.plural = "bodies"
+Thing.intrinsics.bodypart.skin = {}
+Thing.intrinsics.bodypart.skin.name = "skin"
+Thing.intrinsics.bodypart.head = {}
+Thing.intrinsics.bodypart.head.name = "head"
+Thing.intrinsics.bodypart.ear = {}
+Thing.intrinsics.bodypart.ear.name = "ear"
+Thing.intrinsics.bodypart.eye = {}
+Thing.intrinsics.bodypart.eye.name = "eye"
+Thing.intrinsics.bodypart.nose = {}
+Thing.intrinsics.bodypart.nose.name = "nose"
+Thing.intrinsics.bodypart.mouth = {}
+Thing.intrinsics.bodypart.mouth.name = "mouth"
+Thing.intrinsics.bodypart.neck = {}
+Thing.intrinsics.bodypart.neck.name = "neck"
+Thing.intrinsics.bodypart.chest = {}
+Thing.intrinsics.bodypart.chest.name = "chest"
+Thing.intrinsics.bodypart.arm = {}
+Thing.intrinsics.bodypart.arm.name = "arm"
+Thing.intrinsics.bodypart.hand = {}
+Thing.intrinsics.bodypart.hand.name = "hand"
+Thing.intrinsics.bodypart.leg = {}
+Thing.intrinsics.bodypart.leg.name = "leg"
+Thing.intrinsics.bodypart.foot = {}
+Thing.intrinsics.bodypart.foot.name = "foot"
+Thing.intrinsics.bodypart.foot.plural = "feet"
+Thing.intrinsics.bodypart.wing = {}
+Thing.intrinsics.bodypart.wing.name = "wing"
+Thing.intrinsics.bodypart.tail = {}
+Thing.intrinsics.bodypart.tail.name = "tail"
+Thing.intrinsics.inventory_size = 0;
+Thing.intrinsics.lockable = false;
+Thing.intrinsics.movable = true;
+Thing.intrinsics.opaque = true;
+Thing.intrinsics.openable = false;
+Thing.intrinsics.physical_mass = 0;
+  
+Thing.defaults.locked = false;
+Thing.defaults.open = true;
+Thing.defaults.quantity = 1;
 
 function Thing.get_description(id)
 	return "Thing #" .. id .. ", which has no description associated with it."

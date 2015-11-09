@@ -156,9 +156,22 @@ public:
   template<> bool get_lua(std::string name) { return get_lua_bool(name); }
   template<> std::string get_lua(std::string name) { return get_lua_string(name); }
 
+  template <typename T>
+  void set_lua(std::string name, T value)
+  {
+    set_lua_value(name, static_cast<double>(value));
+  }
+
+  template<> void set_lua(std::string name, bool value) { return set_lua_bool(name, value); }
+  template<> void set_lua(std::string name, std::string value) { return set_lua_string(name, value); }
+
   bool get_lua_bool(std::string name);
   double get_lua_value(std::string name);
   std::string get_lua_string(std::string name);
+
+  void set_lua_bool(std::string name, bool value);
+  void set_lua_value(std::string name, double value);
+  void set_lua_string(std::string name, std::string value);
 
 protected:
 
