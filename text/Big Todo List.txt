@@ -9,7 +9,7 @@ SMALL THINGS
 MEDIUM THINGS
 =============
 [X] Function to get a dot-nested table from Lua class, e.g. "intrinsics.bodypart.body.name"
-[ ] Function to set a dot-nested table in Lua class
+[/] Function to set a dot-nested table in Lua class (untested so far)
 
 [ ] Tile coordinates aren't inherited right now -- fix this
     - Sticking tile coordinates into Lua classes will automatically enable inheritance
