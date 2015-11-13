@@ -443,9 +443,9 @@ sf::Vector2u Metadata::call_lua_function_v2u(std::string function_name,
   return return_value;
 }
 
-bool Metadata::get_lua_bool(std::string name)
+bool Metadata::get_lua_bool(std::string name, bool default_value)
 {
-  bool return_value = false;
+  bool return_value = default_value;
   std::string type = this->get_type();
 
   int start_stack = lua_gettop(the_lua_state);
@@ -507,9 +507,9 @@ bool Metadata::get_lua_bool(std::string name)
   return return_value;
 }
 
-double Metadata::get_lua_value(std::string name)
+double Metadata::get_lua_value(std::string name, double default_value)
 {
-  double return_value = 0.0;
+  double return_value = default_value;
   std::string type = this->get_type();
 
   int start_stack = lua_gettop(the_lua_state);
@@ -571,9 +571,9 @@ double Metadata::get_lua_value(std::string name)
   return return_value;
 }
 
-std::string Metadata::get_lua_string(std::string name)
+std::string Metadata::get_lua_string(std::string name, std::string default_value)
 {
-  std::string return_value = "";
+  std::string return_value = default_value;
   std::string type = this->get_type();
 
   int start_stack = lua_gettop(the_lua_state);

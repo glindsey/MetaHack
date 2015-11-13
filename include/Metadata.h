@@ -148,13 +148,20 @@ public:
     sf::Vector2u default_result = sf::Vector2u(0, 0));
 
   template <typename T>
-  T get_lua(std::string name)
+  T get_lua(std::string name, T default_value = T())
   {
-    return static_cast<T>(get_lua_value(name));
+    return static_cast<T>(get_lua_value(name), default_value);
   }
 
-  template<> bool get_lua(std::string name) { return get_lua_bool(name); }
-  template<> std::string get_lua(std::string name) { return get_lua_string(name); }
+  template<> bool get_lua(std::string name, bool default_value) 
+  { 
+    return get_lua_bool(name, default_value); 
+  }
+
+  template<> std::string get_lua(std::string name, std::string default_value)
+  { 
+    return get_lua_string(name, default_value); 
+  }
 
   template <typename T>
   void set_lua(std::string name, T value)
@@ -165,9 +172,9 @@ public:
   template<> void set_lua(std::string name, bool value) { return set_lua_bool(name, value); }
   template<> void set_lua(std::string name, std::string value) { return set_lua_string(name, value); }
 
-  bool get_lua_bool(std::string name);
-  double get_lua_value(std::string name);
-  std::string get_lua_string(std::string name);
+  bool get_lua_bool(std::string name, bool default_value);
+  double get_lua_value(std::string name, double default_value);
+  std::string get_lua_string(std::string name, std::string default_value);
 
   void set_lua_bool(std::string name, bool value);
   void set_lua_value(std::string name, double value);
