@@ -33,6 +33,7 @@ ConfigSettings::ConfigSettings()
   set("inventory_area_width", 220);
   set("status_area_height", 80);
   set("map_tile_size", 32);
+  set("debug_show_quad_outlines", false);
 
   // Register the Lua functions to access settings.
   the_lua_instance.register_function("get_config", ConfigSettings::LUA_get_config);

@@ -402,10 +402,13 @@ void MapTile::add_walls_to(sf::VertexArray& vertices,
   sf::Color tile_color    { sf::Color::White };
 
   // Wall colors.
-  sf::Color wall_color_n  { sf::Color::White };
-  sf::Color wall_color_e  { sf::Color::White };
-  sf::Color wall_color_s  { sf::Color::White };
-  sf::Color wall_color_w  { sf::Color::White };
+  sf::Color wall_n_color  { sf::Color::White };
+
+  sf::Color wall_e_color  { sf::Color::White };
+
+  sf::Color wall_s_color  { sf::Color::White };
+
+  sf::Color wall_w_color  { sf::Color::White };
 
   // Full tile size.
   float ts(Settings.get<float>("map_tile_size"));
@@ -433,15 +436,16 @@ void MapTile::add_walls_to(sf::VertexArray& vertices,
   if (use_lighting)
   {
     tile_color = get_light_level();
-    wall_color_n = get_wall_light_level(Direction::North);
-    wall_color_e = get_wall_light_level(Direction::East);
-    wall_color_s = get_wall_light_level(Direction::South);
-    wall_color_w = get_wall_light_level(Direction::West);
+    wall_n_color = get_wall_light_level(Direction::North);
+    wall_e_color = get_wall_light_level(Direction::East);
+    wall_s_color = get_wall_light_level(Direction::South);
+    wall_w_color = get_wall_light_level(Direction::West);
   }
 
   // NORTH WALL
   if (n_is_empty && player_sees_n_wall)
   {
+    sf::Vector2f vS(vTileN.x, vTileN.y + ws);
     sf::Vector2f vSW(vTileNW.x, vTileNW.y + ws);
     if (w_is_empty)
     {
@@ -461,14 +465,14 @@ void MapTile::add_walls_to(sf::VertexArray& vertices,
       vSE.x += ws;
     }
 
-    TileSheet::add_quad(vertices,
-                            tile_coords, wall_color_n,
-                            vTileNW, vTileNE, vSE, vSW);
+    TileSheet::add_quad(vertices, tile_coords, wall_n_color, vTileNW, vTileN, vS, vSW);
+    TileSheet::add_quad(vertices, tile_coords, wall_n_color, vTileN, vTileNE, vSE, vS);
   }
 
   // EAST WALL
   if (e_is_empty && player_sees_e_wall)
   {
+    sf::Vector2f vW(vTileE.x - ws, vTileE.y);
     sf::Vector2f vNW(vTileNE.x - ws, vTileNE.y);
     if (n_is_empty)
     {
@@ -491,14 +495,14 @@ void MapTile::add_walls_to(sf::VertexArray& vertices,
     // DEBUG
     //tile_color = sf::Color::Yellow;
 
-    TileSheet::add_quad(vertices,
-                            tile_coords, wall_color_e,
-                            vNW, vTileNE, vTileSE, vSW);
+    TileSheet::add_quad(vertices, tile_coords, wall_e_color, vNW, vTileNE, vTileE, vW);
+    TileSheet::add_quad(vertices, tile_coords, wall_e_color, vW, vTileE, vTileSE, vSW);
   }
 
   // SOUTH WALL
   if (s_is_empty && player_sees_s_wall)
   {
+    sf::Vector2f vN(vTileS.x, vTileS.y - ws);
     sf::Vector2f vNW(vTileSW.x, vTileSW.y - ws);
     if (w_is_empty)
     {
@@ -521,14 +525,14 @@ void MapTile::add_walls_to(sf::VertexArray& vertices,
     // DEBUG
     //tile_color = sf::Color::Green;
 
-    TileSheet::add_quad(vertices,
-                            tile_coords, wall_color_s,
-                            vNW, vNE, vTileSE, vTileSW);
+    TileSheet::add_quad(vertices, tile_coords, wall_s_color, vNW, vN, vTileS, vTileSW);
+    TileSheet::add_quad(vertices, tile_coords, wall_s_color, vN, vNE, vTileSE, vTileS);
   }
 
   // WEST WALL
   if (w_is_empty && player_sees_w_wall)
   {
+    sf::Vector2f vE(vTileW.x + ws, vTileW.y);
     sf::Vector2f vNE(vTileNW.x + ws, vTileNW.y);
     if (n_is_empty)
     {
@@ -551,9 +555,8 @@ void MapTile::add_walls_to(sf::VertexArray& vertices,
     // DEBUG
     //tile_color = sf::Color::Blue;
 
-    TileSheet::add_quad(vertices,
-                            tile_coords, wall_color_w,
-                            vTileNW, vNE, vSE, vTileSW);
+    TileSheet::add_quad(vertices, tile_coords, wall_w_color, vTileNW, vNE, vE, vTileW);
+    TileSheet::add_quad(vertices, tile_coords, wall_w_color, vTileW, vE, vSE, vTileSW);
   }
 }
 
