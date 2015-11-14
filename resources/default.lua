@@ -83,17 +83,9 @@ function inheritsFrom(baseClass, className)
     return new_class
 end
 
-function color(red, green, blue, alpha)
-    local c = {}
-    c.r = red
-    c.g = green
-    c.b = blue
-    c.a = alpha
-    return c
-end
-
 function range(minValue, maxValue)
     local r = {}
+	r.type = "range"
     r.min = minValue
     r.max = maxValue
     return r
@@ -101,6 +93,7 @@ end
 
 function vector2(xValue, yValue)
     local v = {}
+	v.type = "vector2"
     v.x = xValue
     v.y = yValue
     return v

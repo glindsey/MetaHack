@@ -1,29 +1,30 @@
 SMALL THINGS
 ============
-[X] Add ability to stick vectors, colors into XML files without having to split them into individual values
-    - Colors specified via #rrggbbaa, or via (r, g, b, a)
-    - Vector2f specified as (x, y)    
-[ ] When a default is read to get an initial property for a Thing/MapTile, any IntegerRange key should automatically do a "pick()" and return a result instead of just returning the IntegerRange.
+[ ] When a default is read to get an initial property for a Thing/MapTile, any IntegerRange key should automatically do a "pick()" and return a result instead of just returning the IntegerRange table.
 [ ] Lua-ify some more events and checks
+[ ] Show hardcoded attributes in StatusArea
 
 MEDIUM THINGS
 =============
-[ ] Tile coordinates aren't inherited right now -- fix this
+[ ] Have the Lua "map.lua" script place the initial things
 [ ] Make it easier for enum classes to be defined, to have an operator<< defined, and to have it exposed to Lua.
 [ ] Replace the error/trace functions with boost logging facilities
 [ ] Light bleed across tiles
     - Simple convolution that bleeds a bit of light from a tile
       into adjacent ones, will make shadows way less sharp
-[ ] Move description XML tag into Lua files instead.
 [ ] Split MessageLog into model/view (MessageLog and MessageLogPane)
 [ ] Allow for scrolling back in MessageLog
 [ ] Allow for lines with different colors (and fonts?) in MessageLog
 
 BIG THINGS
 ==========
+[ ] Implement wielding an item
+
+[ ] Implement the Attack action!
+
 [ ] Let Lua get a Thing's inventory (as a table of ids)
 
-[ ] Streamline Lua get/set of intrinsics/properties
+[ ] Streamline Lua get/set of properties
     - We shouldn't require these get_[flag|value|string] functions for Lua; we should just be able to call get/set and have the C function deduce what we want. For setting:
         - 1 lua_Number --> value
         - 1 lua_Boolean --> bool
@@ -59,3 +60,5 @@ BIG THINGS
 [ ] List of available commands that apply when Things are selected
         
 [ ] GUIPane animation for sliding in/out, flipping, expanding/shrinking
+
+[ ] Settings option that chooses which attributes to show in StatusArea
