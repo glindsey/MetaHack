@@ -362,8 +362,13 @@ std::string InventoryArea::render_contents(int frame)
                    static_cast<unsigned int>(line_spacing_y - 1), false, frame);
     TS.getTexture().setSmooth(false);
 
+    unsigned int wield_location;
+    WearLocation wear_location;
+    bool wielding = pImpl->viewed->is_wielding(thing, wield_location);
+    bool wearing = pImpl->viewed->has_equipped(thing, wear_location);
+    
     // 5. TODO: Display "worn" or "equipped" icon if necessary.
-    if (pImpl->viewed->is_wielding(thing))
+    if (wielding)
     {
       render_text.setFont(the_default_mono_font);
       render_text.setCharacterSize(Settings.get<unsigned int>("text_mono_default_size"));
@@ -372,7 +377,7 @@ std::string InventoryArea::render_contents(int frame)
       render_text.setColor(fg_color);
       bg_texture.draw(render_text);
     }
-    else if (pImpl->viewed->has_equipped(thing))
+    else if (wearing)
     {
       render_text.setFont(the_default_mono_font);
       render_text.setCharacterSize(Settings.get<unsigned int>("text_mono_default_size"));
@@ -394,6 +399,16 @@ std::string InventoryArea::render_contents(int frame)
     }
 
     item_name << thing->get_identifying_string_without_possessives(false);
+
+    if (wielding)
+    {
+      item_name << " (" << pImpl->viewed->get_bodypart_description(BodyPart::Hand, wield_location) << ")";
+    }
+    else if (wearing)
+    {
+      item_name << " (" << pImpl->viewed->get_bodypart_description(wear_location.part, wear_location.number) << ")";
+    }
+
     render_text.setFont(the_default_font);
     render_text.setCharacterSize(Settings.get<unsigned int>("text_default_size"));
     render_text.setString(item_name.str());

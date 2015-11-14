@@ -30,7 +30,8 @@ ConfigSettings::ConfigSettings()
   set("cursor_bg_color", sf::Color(255, 255, 240, 32));
   set("window_border_width", 2);
   set("tile_highlight_border_width", 2);
-  set("inventory_area_width", 220);
+  set("inventory_area_width", 300);
+  set("messagelog_area_height", 200);
   set("status_area_height", 80);
   set("map_tile_size", 32);
   set("debug_show_quad_outlines", false);
