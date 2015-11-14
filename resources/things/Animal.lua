@@ -3,7 +3,8 @@
 require "resources/things/Entity"
 
 Animal = inheritsFrom(Entity, "Animal")
-Animal.name = "[Animal]"
+Animal.intrinsics.name = "[Animal]"
+Animal.intrinsics.plural = "[Animal]"
 
 Animal.intrinsics.can_drink = true
 Animal.intrinsics.can_eat = true

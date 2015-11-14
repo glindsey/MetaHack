@@ -3,7 +3,8 @@
 require "resources/things/Container"
 
 ChestWooden = inheritsFrom(Container, "ChestWooden")
-ChestWooden.name = "wooden chest"
+ChestWooden.intrinsics.name = "wooden chest"
+ChestWooden.intrinsics.plural = "wooden chests"
 
 ChestWooden.intrinsics.lockable = true
 ChestWooden.intrinsics.flammable = true

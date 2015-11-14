@@ -3,7 +3,8 @@
 require "resources/things/Thing"
 
 Coin = inheritsFrom(Thing, "Coin")
-Coin.name = "[Coin]"
+Coin.intrinsics.name = "[Coin]"
+Coin.intrinsics.plural = "[Coins]"
 
 Coin.intrinsics.physical_mass = 1
 

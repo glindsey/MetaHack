@@ -3,7 +3,8 @@
 require "resources/things/Animal"
 
 Sapient = inheritsFrom(Animal, "Sapient")
-Sapient.name = "[Sapient]"
+Sapient.intrinsics.name = "[Sapient]"
+Sapient.intrinsics.plural = "[Sapients]"
 
 Sapient.intrinsics.can_talk = true
 

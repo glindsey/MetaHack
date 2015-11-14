@@ -111,7 +111,7 @@ bool MapCorridor::create(GeoVector vec)
              for (int yCheck = yMin; yCheck <= yMax; ++yCheck)
              {
                auto& tile = get_map().get_tile(xCheck, yCheck);
-               tile.set_type("FloorStone");
+               tile.set_type("MTFloorStone");
              }
           }
 
@@ -137,7 +137,7 @@ bool MapCorridor::create(GeoVector vec)
           ///        Right now we just make it an open area.
           auto& startTile = get_map().get_tile(startingCoords.x,
                                                 startingCoords.y);
-          startTile.set_type("FloorStone");
+          startTile.set_type("MTFloorStone");
 
           /// Check the tile two past the ending tile.
           /// If it is open space, there should be a small chance
@@ -175,7 +175,7 @@ bool MapCorridor::create(GeoVector vec)
             {
               auto& endTile = get_map().get_tile(pImpl->endingCoords.x,
                                                  pImpl->endingCoords.y);
-              endTile.set_type("FloorStone");
+              endTile.set_type("MTFloorStone");
 
               /// @todo Keep going here
             }

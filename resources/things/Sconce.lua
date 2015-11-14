@@ -3,11 +3,14 @@
 require "resources/things/LightSource"
 
 Sconce = inheritsFrom(LightSource, "Sconce")
-Sconce.name = "torch sconce"
+Sconce.intrinsics.name = "torch sconce"
+Sconce.intrinsics.plural = "torch sconces"
 
-Sconce.defaults.light_color = color(160, 128, 112, 255)
-Sconce.defaults.light_level = 256;
-Sconce.defaults.light_strength = 48;
+Sconce.defaults.light_color_red = 160
+Sconce.defaults.light_color_green = 128
+Sconce.defaults.light_color_blue = 112
+Sconce.defaults.light_level = 256
+Sconce.defaults.light_strength = 48
 
 function Sconce.get_description()
 	return "A flaming torch secured in a holder that is attached to a wall."

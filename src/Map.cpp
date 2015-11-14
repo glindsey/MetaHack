@@ -41,7 +41,7 @@ Map::Map(MapId map_id, int width, int height)
   {
     for (int x = 0; x < width; ++x)
     {
-      Metadata& metadata = collection.get("Unknown");
+      Metadata& metadata = collection.get("MTUnknown");
 
       MapTile* new_tile = NEW MapTile({ x, y }, metadata, map_id);
       pImpl->tiles.push_back(new_tile);
@@ -844,6 +844,17 @@ MapTile& Map::get_tile(sf::Vector2i tile)
 {
   return get_tile(tile.x, tile.y);
 }
+
+bool Map::tile_is_opaque(int x, int y)
+{
+  if ((x < 0) || (x >= pImpl->map_size.x) || (y < 0) || (y >= pImpl->map_size.y))
+  {
+    return true;
+  }
+
+  return TILE(x, y).is_opaque();
+}
+
 
 void Map::clear_map_features()
 {

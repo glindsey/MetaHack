@@ -3,7 +3,8 @@
 require "resources/things/Thing"
 
 Container = inheritsFrom(Thing, "Container")
-Container.name = "[Container]"
+Container.intrinsics.name = "[Container]"
+Container.intrinsics.plural = "[Containers]"
 
 Container.intrinsics.openable = true
 Container.intrinsics.inventory_size = -1

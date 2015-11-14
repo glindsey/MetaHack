@@ -3,10 +3,13 @@
 require "resources/things/Thing"
 
 LightSource = inheritsFrom(Thing, "LightSource")
-LightSource.name = "[LightSource]"
+LightSource.intrinsics.name = "[LightSource]"
+LightSource.intrinsics.plural = "[LightSources]"
 
 LightSource.defaults.light_lit = true
-LightSource.defaults.light_color = color(64, 64, 64, 256)
+LightSource.defaults.light_color_red = 64
+LightSource.defaults.light_color_green = 64
+LightSource.defaults.light_color_blue = 64
 LightSource.defaults.light_level = 256
 LightSource.defaults.light_strength = 64
 

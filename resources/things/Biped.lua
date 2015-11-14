@@ -3,21 +3,22 @@
 require "resources/things/Sapient"
 
 Biped = inheritsFrom(Sapient, "Biped")
-Biped.name = "[Biped]"
+Biped.intrinsics.name = "[Biped]"
+Biped.intrinsics.plural = "[Bipeds]"
 
-Biped.intrinsics.bodypart.body.count = 1;
-Biped.intrinsics.bodypart.skin.count = 1;
-Biped.intrinsics.bodypart.head.count = 1;
-Biped.intrinsics.bodypart.ear.count = 2;
-Biped.intrinsics.bodypart.eye.count = 2;
-Biped.intrinsics.bodypart.nose.count = 1;
-Biped.intrinsics.bodypart.mouth.count = 1;
-Biped.intrinsics.bodypart.neck.count = 1;
-Biped.intrinsics.bodypart.chest.count = 1;
-Biped.intrinsics.bodypart.arm.count = 2;
-Biped.intrinsics.bodypart.hand.count = 2;
-Biped.intrinsics.bodypart.leg.count = 2;
-Biped.intrinsics.bodypart.foot.count = 2;
+Biped.intrinsics.bodypart_body_count = 1
+Biped.intrinsics.bodypart_skin_count = 1
+Biped.intrinsics.bodypart_head_count = 1
+Biped.intrinsics.bodypart_ear_count = 2
+Biped.intrinsics.bodypart_eye_count = 2
+Biped.intrinsics.bodypart_nose_count = 1
+Biped.intrinsics.bodypart_mouth_count = 1
+Biped.intrinsics.bodypart_neck_count = 1
+Biped.intrinsics.bodypart_chest_count = 1
+Biped.intrinsics.bodypart_arm_count = 2
+Biped.intrinsics.bodypart_hand_count = 2
+Biped.intrinsics.bodypart_leg_count = 2
+Biped.intrinsics.bodypart_foot_count = 2
 
 function Biped.get_description()
 	return "An animal that uses two legs for walking."

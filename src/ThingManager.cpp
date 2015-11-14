@@ -78,7 +78,7 @@ ThingRef ThingManager::create_floor(MapTile* map_tile)
 {
   ThingId new_id = ThingRef::create();
   ThingRef new_ref = ThingRef(new_id);
-  Metadata& metadata = MDC::get_collection("thing").get("floor");
+  Metadata& metadata = MDC::get_collection("thing").get("Floor");
 
   Thing* new_thing = m_thing_pool.construct(map_tile, boost::ref(metadata), new_ref);
   m_thing_map[new_id] = new_thing;

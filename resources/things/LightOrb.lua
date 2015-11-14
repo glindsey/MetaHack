@@ -2,8 +2,9 @@
 
 require "resources/things/LightSource"
 
-LightOrb = inheritsFrom(LightSource, "Light Orb")
-LightOrb.name = "magical lighting orb"
+LightOrb = inheritsFrom(LightSource, "LightOrb")
+LightOrb.intrinsics.name = "magical lighting orb"
+LightOrb.intrinsics.plural = "magical lighting orbs"
 
 LightOrb.defaults.physical_mass = 2
 

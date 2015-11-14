@@ -3,7 +3,8 @@
 require "resources/things/Entity"
 
 Blob = inheritsFrom(Entity, "Blob")
-Blob.name = "[Blob]"
+Blob.intrinsics.name = "[Blob]"
+Blob.intrinsics.plural = "[Blobs]"
 
 function Blob.get_description()
 	return "An amorphous entity with no distinguishable limbs, head, or other extremities."

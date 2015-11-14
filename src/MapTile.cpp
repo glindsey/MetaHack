@@ -42,7 +42,7 @@ ThingRef MapTile::get_floor() const
 
 std::string MapTile::get_display_name() const
 {
-  return pImpl->p_metadata->get_display_name();
+  return pImpl->p_metadata->get_intrinsic<std::string>("name");
 }
 
 sf::Vector2u MapTile::get_tile_sheet_coords(int frame) const
@@ -312,7 +312,8 @@ bool MapTile::is_opaque() const
 {
   /// @todo Check the tile's inventory to see if there's anything huge enough
   ///       to block the view of stuff behind it.
-  return pImpl->p_metadata->get_intrinsic<bool>("opaque");
+  bool return_value = pImpl->p_metadata->get_intrinsic<bool>("opaque");
+  return return_value;
 }
 
 void MapTile::draw_highlight(sf::RenderTarget& target,

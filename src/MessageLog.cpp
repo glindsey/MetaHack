@@ -60,7 +60,7 @@ MessageLog& MessageLog::instance()
 
 void MessageLog::initialize()
 {
-  the_lua_instance.register_function("print", MessageLog::LUA_redirect_print);
+  //the_lua_instance.register_function("print", MessageLog::LUA_redirect_print);
 
   the_lua_instance.register_function("messageLog_add", MessageLog::LUA_add);
 

@@ -60,6 +60,8 @@ class Map
 
     MapTile& get_tile(sf::Vector2i tile);
 
+    bool Map::tile_is_opaque(int x, int y);
+
     /// Get the map's size.
     sf::Vector2i const& get_size() const;
 

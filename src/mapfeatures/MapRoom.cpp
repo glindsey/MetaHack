@@ -136,7 +136,7 @@ bool MapRoom::create(GeoVector vec)
                     ++y_coord)
            {
              auto& tile = get_map().get_tile(x_coord, y_coord);
-             tile.set_type("FloorStone");
+             tile.set_type("MTFloorStone");
            }
         }
 
@@ -165,7 +165,7 @@ bool MapRoom::create(GeoVector vec)
         ///       Right now we just make it an open area.
         auto& startTile = get_map().get_tile(starting_coords.x,
                                              starting_coords.y);
-        startTile.set_type("FloorStone");
+        startTile.set_type("MTFloorStone");
 
         return true;
       }

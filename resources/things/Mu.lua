@@ -3,7 +3,8 @@
 require "resources/things/Thing"
 
 Mu = inheritsFrom(Thing, "Mu")
-Mu.name = "[Mu]"
+Mu.intrinsics.name = "[Mu]"
+Mu.intrinsics.plural = "[Mu]"
 
 Mu.intrinsics.lockable = false
 Mu.intrinsics.movable = false

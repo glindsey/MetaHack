@@ -1,51 +1,36 @@
 -- Definition of the Thing object type, which all others inherit from.
 
 Thing = inheritsFrom(nil, "Thing")
-Thing.name = "[Thing]"
+Thing.intrinsics.name = "[Thing]"
+Thing.intrinsics.plural = "[Things]"
 
-Thing.intrinsics = {}
-Thing.defaults = {}
+Thing.intrinsics.bodypart_body_name = "body"
+Thing.intrinsics.bodypart_body_plural = "bodies"
+Thing.intrinsics.bodypart_skin_name = "skin"
+Thing.intrinsics.bodypart_head_name = "head"
+Thing.intrinsics.bodypart_ear_name = "ear"
+Thing.intrinsics.bodypart_eye_name = "eye"
+Thing.intrinsics.bodypart_nose_name = "nose"
+Thing.intrinsics.bodypart_mouth_name = "mouth"
+Thing.intrinsics.bodypart_neck_name = "neck"
+Thing.intrinsics.bodypart_chest_name = "chest"
+Thing.intrinsics.bodypart_arm_name = "arm"
+Thing.intrinsics.bodypart_hand_name = "hand"
+Thing.intrinsics.bodypart_leg_name = "leg"
+Thing.intrinsics.bodypart_foot_name = "foot"
+Thing.intrinsics.bodypart_foot_plural = "feet"
+Thing.intrinsics.bodypart_wing_name = "wing"
+Thing.intrinsics.bodypart_tail_name = "tail"
 
-Thing.intrinsics.bodypart = {}
-Thing.intrinsics.bodypart.body = {}
-Thing.intrinsics.bodypart.body.name = "body"
-Thing.intrinsics.bodypart.body.plural = "bodies"
-Thing.intrinsics.bodypart.skin = {}
-Thing.intrinsics.bodypart.skin.name = "skin"
-Thing.intrinsics.bodypart.head = {}
-Thing.intrinsics.bodypart.head.name = "head"
-Thing.intrinsics.bodypart.ear = {}
-Thing.intrinsics.bodypart.ear.name = "ear"
-Thing.intrinsics.bodypart.eye = {}
-Thing.intrinsics.bodypart.eye.name = "eye"
-Thing.intrinsics.bodypart.nose = {}
-Thing.intrinsics.bodypart.nose.name = "nose"
-Thing.intrinsics.bodypart.mouth = {}
-Thing.intrinsics.bodypart.mouth.name = "mouth"
-Thing.intrinsics.bodypart.neck = {}
-Thing.intrinsics.bodypart.neck.name = "neck"
-Thing.intrinsics.bodypart.chest = {}
-Thing.intrinsics.bodypart.chest.name = "chest"
-Thing.intrinsics.bodypart.arm = {}
-Thing.intrinsics.bodypart.arm.name = "arm"
-Thing.intrinsics.bodypart.hand = {}
-Thing.intrinsics.bodypart.hand.name = "hand"
-Thing.intrinsics.bodypart.leg = {}
-Thing.intrinsics.bodypart.leg.name = "leg"
-Thing.intrinsics.bodypart.foot = {}
-Thing.intrinsics.bodypart.foot.name = "foot"
-Thing.intrinsics.bodypart.foot.plural = "feet"
-Thing.intrinsics.bodypart.wing = {}
-Thing.intrinsics.bodypart.wing.name = "wing"
-Thing.intrinsics.bodypart.tail = {}
-Thing.intrinsics.bodypart.tail.name = "tail"
 Thing.intrinsics.inventory_size = 0;
+Thing.intrinsics.living = false;
 Thing.intrinsics.lockable = false;
 Thing.intrinsics.movable = true;
 Thing.intrinsics.opaque = true;
 Thing.intrinsics.openable = false;
 Thing.intrinsics.physical_mass = 0;
-  
+
+Thing.defaults.counter_busy = 0;
 Thing.defaults.locked = false;
 Thing.defaults.open = true;
 Thing.defaults.quantity = 1;
@@ -71,80 +56,38 @@ function Thing.process()
 	return ActionResult.Success
 end
 
-function Thing:get(name)
-	if type(name) ~= "string" then
-		error("Name is not a string")
-	end
+function Thing:get_intrinsic(name)
+	local result = self.intrinsics[name]
 	
-	local tableToSearch = self
-	local firstPart = ""
-	local secondPart = name
-	
-	-- Look for a dot in the string.
-	local dotLocation = string.find(secondPart, ".", 1, true)
-	
-	while (dotLocation ~= nil) do
-		-- Strip off the part before the dot.
-		firstPart = string.sub(secondPart, 1, dotLocation - 1)
-		secondPart = string.sub(secondPart, dotLocation + 1)
+	if (result == nil) then
+		local superclass = self.superClass()
 		
-		-- Make sure "tableToSearch" is a table.
-		if type(tableToSearch) ~= "table" then
-			return nil;
+		if (superclass ~= nil) then
+			return self.superClass():get_intrinsic(name)
+		else
+			--error("Traversed all the way to root class but could not find " .. name)
 		end
-		
-		-- Traverse down the nested tables.
-		tableToSearch = tableToSearch[firstPart];
-		
-		-- Find the next dot.
-		dotLocation = string.find(secondPart, ".", 1, true)
-	end
-	
-	-- When we get here, secondPart should be the final result we want to return.
-	-- Or, if secondPart doesn't exist, it will be nil.
-	
-	return tableToSearch[secondPart]
-	
+	else
+		return result
+	end		
 end
 
-function Thing:set(name, value)
-	if type(name) ~= "string" then
-		error("Name is not a string")
+function Thing:get_default(name)
+	local result = self.defaults[name]
+	
+	if (self.type == "LightOrb" or self.type == "LightSource") then
+		print("Asked thing " .. self.type .. " for default " .. name .. " and got result " .. tostring(result))
 	end
 	
-	local tableToSearch = self
-	local firstPart = ""
-	local secondPart = name
-	
-	-- Look for a dot in the string.
-	local dotLocation = string.find(secondPart, ".", 1, true)
-	
-	while (dotLocation ~= nil) do
-		-- Strip off the part before the dot.
-		firstPart = string.sub(secondPart, 1, dotLocation - 1)
-		secondPart = string.sub(secondPart, dotLocation + 1)
+	if (result == nil) then
+		local superclass = self.superClass()
 		
-		-- Make sure "tableToSearch" is a table.
-		if type(tableToSearch) ~= "table" then
-			error("Couldn't set " .. name .. ": " .. firstPart .. " is not a table")
+		if (superclass ~= nil) then
+			return self.superClass():get_default(name)
+		else
+			--error("Traversed all the way to root class but could not find " .. name)
 		end
-		
-		-- Traverse down the nested tables, creating as we go.
-		if tableToSearch[firstPart] == nil then
-			tableToSearch[firstPart] = {}
-		end
-		
-		tableToSearch = tableToSearch[firstPart];
-		
-		-- Find the next dot.
-		dotLocation = string.find(secondPart, ".", 1, true)
-	end
-	
-	-- When we get here, secondPart should be the final result we want to set.
-	if type(tableToSearch[secondPart]) == "table" then
-		error("Couldn't set " .. name .. ": " .. secondPart .. " already exists and is a table")
-	end
-	
-	tableToSearch[secondPart] = value
-	
+	else
+		return result
+	end		
 end

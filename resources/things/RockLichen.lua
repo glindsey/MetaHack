@@ -3,7 +3,8 @@
 require "resources/things/Blob"
 
 RockLichen = inheritsFrom(Blob, "RockLichen")
-RockLichen.name = "rock lichen"
+RockLichen.intrinsics.name = "rock lichen"
+RockLichen.intrinsics.plural = "rock lichens"
 
 function RockLichen.get_description()
 	return "A lichen that normally grows on a rock."

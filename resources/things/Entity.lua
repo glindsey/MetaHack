@@ -3,10 +3,11 @@
 require "resources/things/Thing"
 
 Entity = inheritsFrom(Thing, "Entity")
-Entity.name = "[Entity]"
+Entity.intrinsics.name = "[Entity]"
+Entity.intrinsics.plural = "[Entities]"
 
-Entity.intrinsics.attributes = {}
-Entity.intrinsics.bodypart.body.count = 1
+Entity.intrinsics.bodypart_body_count = 1
+Entity.intrinsics.is_entity = true
 Entity.intrinsics.opaque = true
 Entity.intrinsics.living = true
 Entity.intrinsics.inventory_size = -1

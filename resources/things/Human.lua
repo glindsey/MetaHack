@@ -3,18 +3,19 @@
 require "resources/things/Biped"
 
 Human = inheritsFrom(Biped, "Human")
-Human.name = "human"
+Human.intrinsics.name = "human"
+Human.intrinsics.plural = "humans"
 
-Human.intrinsics.attributes.strength = range(13, 17)
-Human.intrinsics.attributes.endurance = range(13, 17)
-Human.intrinsics.attributes.vitality = range(13, 17)
-Human.intrinsics.attributes.agility = range(13, 17)
-Human.intrinsics.attributes.intelligence = range(13, 17)
-Human.intrinsics.attributes.magicdefense = range(13, 17)
-Human.intrinsics.attributes.charisma = range(13, 17)
-Human.intrinsics.attributes.allure = range(13, 17)
-Human.intrinsics.attributes.attentiveness = range(13, 17)
-Human.intrinsics.attributes.luck = range(13, 17)
+Human.intrinsics.attributes_strength = range(13, 17)
+Human.intrinsics.attributes_endurance = range(13, 17)
+Human.intrinsics.attributes_vitality = range(13, 17)
+Human.intrinsics.attributes_agility = range(13, 17)
+Human.intrinsics.attributes_intelligence = range(13, 17)
+Human.intrinsics.attributes_magicdefense = range(13, 17)
+Human.intrinsics.attributes_charisma = range(13, 17)
+Human.intrinsics.attributes_allure = range(13, 17)
+Human.intrinsics.attributes_attentiveness = range(13, 17)
+Human.intrinsics.attributes_luck = range(13, 17)
 
 Human.defaults.proper_name = "John Doe"
 Human.defaults.hp = 10	-- @todo This is temporary

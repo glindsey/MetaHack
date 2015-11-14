@@ -3,7 +3,8 @@
 require "resources/things/Thing"
 
 Rock = inheritsFrom(Thing, "Rock")
-Rock.name = "rock"
+Rock.intrinsics.name = "rock"
+Rock.intrinsics.plural = "rocks"
 
 Rock.intrinsics.physical_mass = 3
 

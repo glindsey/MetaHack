@@ -1,5 +1,7 @@
 -- Default Lua script read when ThingManager is first initialized.
 
+require "resources/deepcopy"
+
 function trace(string)
     print(debug.traceback())
 
@@ -21,31 +23,37 @@ end
 
 -- Initial inheritsFrom code courtesy of lua-users.org wiki
 function inheritsFrom(baseClass, className)
-    local new_class = {}
-    new_class.type = className
+	
+	local new_class = {}
 
-    -- @todo Register class name with the ThingManager
-    --thingManager_register(className)
-    
     -- new_class:create() is disabled because we don't actually create
     -- instances of these classes; instead they operate on C++ Thing instances.
-    
-    
+        
     --local class_mt = { __index = new_class }
     --function new_class:create()
     --  local newinst = {}
     --  setmetatable(newinst, class_mt)
     --  return newinst
     --end
+
+	-- Add the default intrinsics and properties tables if they don't exist.
+	new_class.intrinsics = new_class.intrinsics or {}
+	new_class.defaults = new_class.defaults or {}
     
-    if nil ~= baseClass then
+    if nil ~= baseClass then	
+		-- Do a deep copy of the base class, for starters.
+		new_class = table.deepcopy(baseClass)
+	
         -- Inherit from the base class.
         setmetatable(new_class, { __index = baseClass })
-        
+
+		-- Add the other class as this class' parent.
+		new_class.intrinsics.parent = baseClass.type
+		
         -- Add this class to the base class' list of children.
         baseClass.children = baseClass.children or {}
         baseClass.children[className] = new_class;
-    end
+	end
 
     function new_class:class()
         return new_class
@@ -67,7 +75,11 @@ function inheritsFrom(baseClass, className)
         end
         return b_isa
     end
-    
+
+	
+    -- @todo Register class name with the ThingManager
+    --thingManager_register(className)
+	new_class.intrinsics.type = className  
     return new_class
 end
 
