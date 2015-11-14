@@ -16,39 +16,23 @@ typedef boost::random::uniform_int_distribution<> uniform_int_dist;
 
 bool MapTile::initialized = false;
 
-MapTile::MapTile(sf::Vector2i coords, Metadata& metadata, MapId map_id)
-  : pImpl(coords, metadata, map_id)
-{
-  if (!initialized)
-  {
-    // TODO: any static class initialization that must be performed
-    initialized = true;
-  }
-
-  // Floor is created out here, or else the pImpl would need the
-  // "this" pointer passed in.
-  /// @todo The type of this floor should eventually be specified as
-  ///       part of the constructor.
-  pImpl->floor = TM.create_floor(this);
-}
-
 MapTile::~MapTile()
 {}
 
 ThingRef MapTile::get_floor() const
 {
-  return pImpl->floor;
+  return m_floor;
 }
 
 std::string MapTile::get_display_name() const
 {
-  return pImpl->p_metadata->get_intrinsic<std::string>("name");
+  return m_pMetadata->get_intrinsic<std::string>("name");
 }
 
 sf::Vector2u MapTile::get_tile_sheet_coords(int frame) const
 {
   /// @todo Deal with selecting one of the other tiles.
-  sf::Vector2u coords = pImpl->p_metadata->get_tile_coords();
+  sf::Vector2u coords = m_pMetadata->get_tile_coords();
   return coords;
 }
 
@@ -58,37 +42,73 @@ void MapTile::add_vertices_to(sf::VertexArray& vertices,
 {
   sf::Vertex new_vertex;
   float ts = Settings.get<float>("map_tile_size");
-  float ts2 = ts * 0.5f;
+  float half_ts = ts * 0.5f;
 
   sf::Vector2i const& coords = get_coords();
+  MapTile const& tileN = get_adjacent_tile(Direction::North);
+  MapTile const& tileNE = get_adjacent_tile(Direction::Northeast);
+  MapTile const& tileE = get_adjacent_tile(Direction::East);
+  MapTile const& tileSE = get_adjacent_tile(Direction::Southeast);
+  MapTile const& tileS = get_adjacent_tile(Direction::South);
+  MapTile const& tileSW = get_adjacent_tile(Direction::Southwest);
+  MapTile const& tileW = get_adjacent_tile(Direction::West);
+  MapTile const& tileNW = get_adjacent_tile(Direction::Northwest);
 
-  sf::Color light { sf::Color::White };
+  sf::Color light{ sf::Color::White };
+  sf::Color lightN{ sf::Color::White };
+  sf::Color lightNE{ sf::Color::White };
+  sf::Color lightE{ sf::Color::White };
+  sf::Color lightSE{ sf::Color::White };
+  sf::Color lightS{ sf::Color::White };
+  sf::Color lightSW{ sf::Color::White };
+  sf::Color lightW{ sf::Color::White };
+  sf::Color lightNW{ sf::Color::White };
 
   if (use_lighting)
   {
+    sf::Color colorN{ tileN.get_light_level() };
+    sf::Color colorNE{ tileNE.get_light_level() };
+    sf::Color colorE{ tileE.get_light_level() };
+    sf::Color colorSE{ tileSE.get_light_level() };
+    sf::Color colorS{ tileS.get_light_level() };
+    sf::Color colorSW{ tileSW.get_light_level() };
+    sf::Color colorW{ tileW.get_light_level() };
+    sf::Color colorNW{ tileNW.get_light_level() };
+
     light = get_light_level();
-    if (is_opaque())
-    {
-      light.r >>= 1;
-      light.g >>= 1;
-      light.b >>= 1;
-    }
-  }
-  else
-  {
-    light = sf::Color::White;
+    lightN = average(light, colorN);
+    lightNE = average(light, colorN, colorNE, colorE);
+    lightE = average(light, colorE);
+    lightSE = average(light, colorE, colorSE, colorS);
+    lightS = average(light, colorS);
+    lightSW = average(light, colorS, colorSW, colorW);
+    lightW = average(light, colorW);
+    lightNW = average(light, colorW, colorNW, colorN);
   }
 
-  sf::Vector2f location(coords.x * ts, coords.y * ts);
-  sf::Vector2f vSW(location.x - ts2, location.y + ts2);
-  sf::Vector2f vSE(location.x + ts2, location.y + ts2);
-  sf::Vector2f vNW(location.x - ts2, location.y - ts2);
-  sf::Vector2f vNE(location.x + ts2, location.y - ts2);
+  sf::Vector2f location{ coords.x * ts, coords.y * ts };
+  sf::Vector2f vN{ location.x, location.y - half_ts };
+  sf::Vector2f vNE{ location.x + half_ts, location.y - half_ts };
+  sf::Vector2f vE{ location.x + half_ts, location.y };
+  sf::Vector2f vSE{ location.x + half_ts, location.y + half_ts };
+  sf::Vector2f vS{ location.x, location.y + half_ts };
+  sf::Vector2f vSW{ location.x - half_ts, location.y + half_ts };
+  sf::Vector2f vW{ location.x - half_ts, location.y };
+  sf::Vector2f vNW{ location.x - half_ts, location.y - half_ts };
+
   sf::Vector2u tile_coords = this->get_tile_sheet_coords(frame);
 
-  TileSheet::add_quad(vertices,
-                          tile_coords, light,
-                          vNW, vNE, vSW, vSE);
+  // Northwest quadrant.
+  TileSheet::add_gradient_quad(vertices, tile_coords, lightNW, vNW, lightN, vN, light, location, lightW, vW);
+
+  // Northeast quadrant.
+  TileSheet::add_gradient_quad(vertices, tile_coords, lightN, vN, lightNE, vNE, lightE, vE, light, location);
+
+  // Southeast quadrant.
+  TileSheet::add_gradient_quad(vertices, tile_coords, light, location, lightE, vE, lightSE, vSE, lightS, vS);
+
+  // Southwest quadrant.
+  TileSheet::add_gradient_quad(vertices, tile_coords, lightW, vW, light, location, lightS, vS, lightSW, vSW);
 }
 
 void MapTile::draw_to(sf::RenderTexture& target,
@@ -134,17 +154,17 @@ void MapTile::draw_to(sf::RenderTexture& target,
 
 void MapTile::set_type(std::string type)
 {
-  pImpl->p_metadata = &(pImpl->p_metadata->get_collection().get(type));
+  m_pMetadata = &(m_pMetadata->get_collection().get(type));
 }
 
 std::string MapTile::get_type() const
 {
-  return pImpl->p_metadata->get_type();
+  return m_pMetadata->get_type();
 }
 
 bool MapTile::is_empty_space() const
 {
-  return pImpl->p_metadata->get_intrinsic<bool>("passable");
+  return m_pMetadata->get_intrinsic<bool>("passable");
 }
 
 /// @todo: Implement this to cover different entity types.
@@ -156,23 +176,23 @@ bool MapTile::can_be_traversed_by(ThingRef thing) const
 
 void MapTile::set_coords(int x, int y)
 {
-  pImpl->coords.x = x;
-  pImpl->coords.y = y;
+  m_coords.x = x;
+  m_coords.y = y;
 }
 
 sf::Vector2i const& MapTile::get_coords() const
 {
-  return pImpl->coords;
+  return m_coords;
 }
 
 MapId MapTile::get_map_id() const
 {
-  return pImpl->map_id;
+  return m_map_id;
 }
 
 void MapTile::set_ambient_light_level(sf::Color level)
 {
-  pImpl->ambient_light_color = level;
+  m_ambient_light_color = level;
 }
 
 void MapTile::be_lit_by(ThingRef light)
@@ -182,26 +202,25 @@ void MapTile::be_lit_by(ThingRef light)
 
 void MapTile::clear_light_influences()
 {
-  pImpl->lights.clear();
+  m_lights.clear();
 }
 
 void MapTile::add_light_influence(ThingRef source,
                                   LightInfluence influence)
 {
-
-  pImpl->lights[source] = influence;
+  m_lights[source] = influence;
 }
 
 sf::Color MapTile::get_light_level() const
 {
-  sf::Color color = pImpl->ambient_light_color;
+  sf::Color color = m_ambient_light_color;
 
   ThingRef player = TM.get_player();
 
   if (player != TM.get_mu())
   {
-    for (auto iter = std::begin(pImpl->lights);
-      iter != std::end(pImpl->lights);
+    for (auto iter = std::begin(m_lights);
+      iter != std::end(m_lights);
       ++iter)
     {
       sf::Vector2i const& source_coords = iter->second.coords;
@@ -249,19 +268,27 @@ sf::Color MapTile::get_light_level() const
     }
   }
 
+  // If the tile is opaque, cut the light level in half.
+  if (is_opaque())
+  {
+    color.r >>= 1;
+    color.g >>= 1;
+    color.b >>= 1;
+  }
+
   return color;
 }
 
 sf::Color MapTile::get_wall_light_level(Direction direction) const
 {
-  sf::Color color = pImpl->ambient_light_color;
+  sf::Color color = m_ambient_light_color;
 
   ThingRef player = TM.get_player();
 
   if (player != TM.get_mu())
   {
-    for (auto iter = std::begin(pImpl->lights);
-      iter != std::end(pImpl->lights);
+    for (auto iter = std::begin(m_lights);
+      iter != std::end(m_lights);
       ++iter)
     {
       sf::Vector2i const& source_coords = iter->second.coords;
@@ -312,7 +339,7 @@ bool MapTile::is_opaque() const
 {
   /// @todo Check the tile's inventory to see if there's anything huge enough
   ///       to block the view of stuff behind it.
-  bool return_value = pImpl->p_metadata->get_intrinsic<bool>("opaque");
+  bool return_value = m_pMetadata->get_intrinsic<bool>("opaque");
   return return_value;
 }
 
@@ -322,11 +349,11 @@ void MapTile::draw_highlight(sf::RenderTarget& target,
                             sf::Color bgColor,
                             int frame)
 {
-  float ts2(Settings.get<float>("map_tile_size") * 0.5f);
-  sf::Vector2f vSW(location.x - ts2, location.y + ts2);
-  sf::Vector2f vSE(location.x + ts2, location.y + ts2);
-  sf::Vector2f vNW(location.x - ts2, location.y - ts2);
-  sf::Vector2f vNE(location.x + ts2, location.y - ts2);
+  float half_ts(Settings.get<float>("map_tile_size") * 0.5f);
+  sf::Vector2f vSW(location.x - half_ts, location.y + half_ts);
+  sf::Vector2f vSE(location.x + half_ts, location.y + half_ts);
+  sf::Vector2f vNW(location.x - half_ts, location.y - half_ts);
+  sf::Vector2f vNE(location.x + half_ts, location.y - half_ts);
 
   sf::RectangleShape box_shape;
   sf::Vector2f box_position;
@@ -384,18 +411,23 @@ void MapTile::add_walls_to(sf::VertexArray& vertices,
   float ts(Settings.get<float>("map_tile_size"));
 
   // Half of the tile size.
-  float ts2(Settings.get<float>("map_tile_size") * 0.5f);
+  float half_ts(Settings.get<float>("map_tile_size") * 0.5f);
 
   // Wall size (configurable).
   float ws(Settings.get<float>("map_tile_size") * 0.4f);
 
   // Tile vertices.
-  sf::Vector2f location(pImpl->coords.x * ts,
-                        pImpl->coords.y * ts);
-  sf::Vector2f vTileNW(location.x - ts2, location.y - ts2);
-  sf::Vector2f vTileNE(location.x + ts2, location.y - ts2);
-  sf::Vector2f vTileSW(location.x - ts2, location.y + ts2);
-  sf::Vector2f vTileSE(location.x + ts2, location.y + ts2);
+  sf::Vector2f location(m_coords.x * ts,
+                        m_coords.y * ts);
+  sf::Vector2f vTileN(location.x, location.y - half_ts);
+  sf::Vector2f vTileNE(location.x + half_ts, location.y - half_ts);
+  sf::Vector2f vTileE(location.x + half_ts, location.y);
+  sf::Vector2f vTileSE(location.x + half_ts, location.y + half_ts);
+  sf::Vector2f vTileS(location.x, location.y + half_ts);
+  sf::Vector2f vTileSW(location.x - half_ts, location.y + half_ts);
+  sf::Vector2f vTileW(location.x - half_ts, location.y);
+  sf::Vector2f vTileNW(location.x - half_ts, location.y - half_ts);
+
   sf::Vector2u tile_coords = this->get_tile_sheet_coords(0);
 
   if (use_lighting)
@@ -431,7 +463,7 @@ void MapTile::add_walls_to(sf::VertexArray& vertices,
 
     TileSheet::add_quad(vertices,
                             tile_coords, wall_color_n,
-                            vTileNW, vTileNE, vSW, vSE);
+                            vTileNW, vTileNE, vSE, vSW);
   }
 
   // EAST WALL
@@ -461,7 +493,7 @@ void MapTile::add_walls_to(sf::VertexArray& vertices,
 
     TileSheet::add_quad(vertices,
                             tile_coords, wall_color_e,
-                            vNW, vTileNE, vSW, vTileSE);
+                            vNW, vTileNE, vTileSE, vSW);
   }
 
   // SOUTH WALL
@@ -491,7 +523,7 @@ void MapTile::add_walls_to(sf::VertexArray& vertices,
 
     TileSheet::add_quad(vertices,
                             tile_coords, wall_color_s,
-                            vNW, vNE, vTileSW, vTileSE);
+                            vNW, vNE, vTileSE, vTileSW);
   }
 
   // WEST WALL
@@ -521,7 +553,7 @@ void MapTile::add_walls_to(sf::VertexArray& vertices,
 
     TileSheet::add_quad(vertices,
                             tile_coords, wall_color_w,
-                            vTileNW, vNE, vTileSW, vSE);
+                            vTileNW, vNE, vSE, vTileSW);
   }
 }
 
@@ -533,4 +565,63 @@ sf::Vector2f MapTile::get_pixel_coords(int x, int y)
 sf::Vector2f MapTile::get_pixel_coords(sf::Vector2i tile)
 {
   return get_pixel_coords(tile.x, tile.y);
+}
+
+// === PROTECTED METHODS ======================================================
+
+MapTile::MapTile(sf::Vector2i coords, Metadata& metadata, MapId map_id)
+  : 
+  m_map_id{ map_id },
+  m_coords{ coords },  
+  m_pMetadata{ &metadata },
+  m_ambient_light_color{ sf::Color(192, 192, 192, 255) }
+{
+  if (!initialized)
+  {
+    // TODO: any static class initialization that must be performed
+    initialized = true;
+  }
+
+  // Floor is created out here, or else the pImpl would need the
+  // "this" pointer passed in.
+  /// @todo The type of this floor should eventually be specified as
+  ///       part of the constructor.
+  m_floor = TM.create_floor(this);
+}
+
+MapTile const& MapTile::get_adjacent_tile(Direction direction) const
+{
+  sf::Vector2i coords = get_coords();
+  Map const& map = MF.get(get_map_id());
+  MapTile const& tile = *this;
+
+  switch (direction)
+  {
+  case Direction::North:
+    return map.get_tile(coords.x, coords.y - 1);
+
+  case Direction::South:
+    return map.get_tile(coords.x, coords.y + 1);
+
+  case Direction::West:
+    return map.get_tile(coords.x - 1, coords.y);
+
+  case Direction::East:
+    return map.get_tile(coords.x + 1, coords.y);
+
+  case Direction::Northwest:
+    return map.get_tile(coords.x - 1, coords.y - 1);
+
+  case Direction::Northeast:
+    return map.get_tile(coords.x + 1, coords.y - 1);
+
+  case Direction::Southwest:
+    return map.get_tile(coords.x - 1, coords.y + 1);
+
+  case Direction::Southeast:
+    return map.get_tile(coords.x + 1, coords.y + 1);
+
+  default:
+    return tile;
+  }
 }

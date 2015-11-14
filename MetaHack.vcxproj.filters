@@ -153,9 +153,6 @@
     <ClInclude Include="src\impl\ThingImpl.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\impl\MapTileImpl.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\LightInfluence.h">
       <Filter>Header Files</Filter>
     </ClInclude>

@@ -167,4 +167,26 @@ inline float calculate_light_factor(sf::Vector2i source, sf::Vector2i target, Di
   }
 }
 
+/// Average two colors together.
+inline sf::Color average(sf::Color first, sf::Color second)
+{
+  sf::Color result;
+  result.r = (first.r + second.r) >> 1;
+  result.g = (first.g + second.g) >> 1;
+  result.b = (first.b + second.b) >> 1;
+  result.a = (first.a + second.a) >> 1;
+  return result;
+}
+
+/// Average four colors together.
+inline sf::Color average(sf::Color first, sf::Color second, sf::Color third, sf::Color fourth)
+{
+  sf::Color result;
+  result.r = (first.r + second.r + third.r + fourth.r) >> 2;
+  result.g = (first.g + second.g + third.g + fourth.g) >> 2;
+  result.b = (first.b + second.b + third.b + fourth.b) >> 2;
+  result.a = (first.a + second.a + third.a + fourth.a) >> 2;
+  return result;
+}
+
 #endif // _MATHUTILS_H_

@@ -33,6 +33,19 @@ MapFactory& MapFactory::instance()
   return *(instance_.get());
 }
 
+Map const& MapFactory::get(MapId map_id) const
+{
+  if (maps_.count(map_id) == 0)
+  {
+    return maps_.at(null_map_id);
+  }
+  else
+  {
+    return maps_.at(map_id);
+  }
+}
+
+
 Map& MapFactory::get(MapId map_id)
 {
   if (maps_.count(map_id) == 0)

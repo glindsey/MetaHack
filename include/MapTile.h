@@ -4,6 +4,7 @@
 #include <cstdbool>
 #include <SFML/Graphics.hpp>
 
+#include "Direction.h"
 #include "GameObject.h"
 #include "Inventory.h"
 #include "LightInfluence.h"
@@ -16,9 +17,6 @@
 class Entity;
 class Floor;
 class Metadata;
-
-#include "MapTileImpl.h"
-#include "UsesPimpl.h"
 
 class MapTile : public GameObject
 {
@@ -142,9 +140,40 @@ class MapTile : public GameObject
     /// Constructor, callable only by Map class.
     MapTile(sf::Vector2i coords, Metadata& metadata, MapId map_id);
 
+    /// Get a reference to an adjacent tile.
+    MapTile const & get_adjacent_tile(Direction direction) const;
+
   private:
     static bool initialized;
-    Pimpl<MapTileImpl> pImpl;
+
+    /// The ID of the Map this MapTile belongs to.
+    MapId m_map_id;
+
+    /// This MapTile's coordinates on the map.
+    sf::Vector2i m_coords;
+
+    /// Pointer to this MapTile's metadata.
+    /// This has to be a pointer rather than a reference because it can be
+    /// modified after MapTile construction.
+    Metadata* m_pMetadata;
+
+    /// Reference to the Thing that represents this tile's floor.
+    ThingRef m_floor;
+
+    /// Tile's light level.
+    /// Levels for the various color channels are interpreted as such:
+    /// 0 <= value <= 128: result = (original * (value / 128))
+    /// 128 < value <= 255: result = max(original + (value - 128), 255)
+    /// The alpha channel is ignored.
+    sf::Color m_ambient_light_color;
+
+    /// A map of LightInfluences, representing the amount of light that
+    /// each thing is contributing to this map tile.
+    /// Levels for the various color channels are interpreted as such:
+    /// 0 <= value <= 128: result = (original * (value / 128))
+    /// 128 < value <= 255: result = max(original + (value - 128), 255)
+    /// The alpha channel is ignored.
+    std::unordered_map<ThingRef, LightInfluence> m_lights;
 };
 
 #endif // MAPTILE_H

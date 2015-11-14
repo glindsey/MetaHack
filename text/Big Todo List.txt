@@ -15,6 +15,8 @@ MEDIUM THINGS
 [ ] Split MessageLog into model/view (MessageLog and MessageLogPane)
 [ ] Allow for scrolling back in MessageLog
 [ ] Allow for lines with different colors (and fonts?) in MessageLog
+[ ] Memoize the get_light_level() / get_wall_light_level() methods
+	- Requires invalidating the memoized value when lights need recalculating
 
 BIG THINGS
 ==========
@@ -48,12 +50,12 @@ BIG THINGS
     - Some actions have to be fudged; for example, "move". Obviously, in real life, the move would start at "begin", progress from tile A to tile B during "in_progress", and end up at "finish". However, being a tile-based game, moves are atomic from tile to tile. So the move mmediately execute on "begin". "in_progress" is the amount of time the move actually took. Nothing happens on "finish", and "post_finish" stays at zero. This will best approximate what the player expects to happen -- if a monster is adjacent, about to attack, they can leap out of the way. (Of course, there's still the "pre_begin" Agility check, so they may not be fast enough.)
 
 [ ] Smooth tile lighting
-    - Split a tile into four quads
-        - corners should be the average of all four surrounding tiles
-        - mid-edges should be the average of the two tiles
-        - center should be the single tile in question
-    - Split a wall into two quads
-        - ...and something something figure this out later
+    [X] Split a tile into four quads
+			- corners should be the average of all four surrounding tiles
+			- mid-edges should be the average of the two tiles
+			- center should be the single tile in question
+    [ ] Split a wall into two quads
+			- ...and something something figure this out later
 
 [ ] Mouse selection of GUIPanes, inventory items
 
@@ -62,3 +64,8 @@ BIG THINGS
 [ ] GUIPane animation for sliding in/out, flipping, expanding/shrinking
 
 [ ] Settings option that chooses which attributes to show in StatusArea
+
+MIND-BOGGLINGLY ENORMOUS THINGS
+===============================
+
+[ ] Implement saving/loading of the dungeon

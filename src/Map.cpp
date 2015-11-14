@@ -830,6 +830,16 @@ void Map::draw_to(sf::RenderTarget& target)
   target.draw(pImpl->thing_vertices, render_states);
 }
 
+MapTile const& Map::get_tile(int x, int y) const
+{
+  if (x < 0) x = 0;
+  if (x >= pImpl->map_size.x) x = pImpl->map_size.x - 1;
+  if (y < 0) y = 0;
+  if (y >= pImpl->map_size.y) y = pImpl->map_size.y - 1;
+
+  return TILE(x, y);
+}
+
 MapTile& Map::get_tile(int x, int y)
 {
   if (x < 0) x = 0;

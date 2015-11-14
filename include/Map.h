@@ -56,6 +56,8 @@ class Map
 
     void draw_to(sf::RenderTarget& target);
 
+    MapTile const& get_tile(int x, int y) const;
+
     MapTile& get_tile(int x, int y);
 
     MapTile& get_tile(sf::Vector2i tile);

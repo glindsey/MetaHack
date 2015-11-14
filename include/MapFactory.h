@@ -21,6 +21,9 @@ class MapFactory
     static MapFactory& instance();
 
     /// Gets a reference to a Map by ID.
+    Map const& get(MapId map_id) const;
+
+    /// Gets a reference to a Map by ID.
     Map& get(MapId map_id);
 
     MapId create(int x, int y);

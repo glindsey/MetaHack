@@ -112,7 +112,7 @@ bool MapDiamond::create(GeoVector vec)
             int xCoord = xCenter + xCounter;
             int yCoord = yCenter + yCounter;
             auto& tile = get_map().get_tile(xCoord, yCoord);
-            tile.set_type("MTFloorStone");
+            tile.set_type("MTFloorDirt");
           }
         }
 
@@ -135,7 +135,7 @@ bool MapDiamond::create(GeoVector vec)
         ///       Right now we just make it an open area.
         auto& startTile = get_map().get_tile(startingCoords.x,
                                              startingCoords.y);
-        startTile.set_type("MTFloorStone");
+        startTile.set_type("MTFloorDirt");
 
         return true;
       }
