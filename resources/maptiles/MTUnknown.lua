@@ -50,3 +50,7 @@ function MTUnknown:get_default(name)
 		return result
 	end		
 end
+
+function MTUnknown:set_intrinsic(name, value)
+	self.intrinsics[name] = value
+end

@@ -10,106 +10,12 @@ Metadata::Metadata(MetadataCollection& collection, std::string type)
 {
   std::string category = collection.get_category();
 
-  TRACE("Loading metadata for %s!%s...", category.c_str(), type.c_str());
-
   // Look for the various files containing this metadata.
   std::string resource_string = "resources/" + category + "s/" + type;
-  std::string xmlfile_string = resource_string + ".xml";
-  fs::path xmlfile_path = fs::path(xmlfile_string);
   std::string pngfile_string = resource_string + ".png";
   fs::path pngfile_path = fs::path(pngfile_string);
   std::string luafile_string = resource_string + ".lua";
   fs::path luafile_path = fs::path(luafile_string);
-
-#if 0
-  if (!fs::exists(xmlfile_path))
-  {
-    FATAL_ERROR("Can't find %s", xmlfile_string.c_str());
-  }
-
-  /// Load file.
-  pt::xml_parser::read_xml(xmlfile_string, m_raw_ptree);
-
-  // DEBUG: Dump the tree using trace.
-  //this->trace_tree();
-
-  pt::ptree& data = (m_raw_ptree).get_child(category);
-
-  // Get thing's parent.
-  if (data.count("parent") == 0)
-  {
-    m_parent = "";
-  }
-  else
-  {
-    m_parent = data.get_child("parent").get_value<std::string>("");
-    strip_quotes(m_parent);
-    m_collection.get(m_parent).m_children.push_back(m_type);
-  }
-
-  // Get the pretty name.
-  if (data.count("name") == 0)
-  {
-    m_display_name = "[" + type + "]";
-  }
-  else
-  {
-    m_display_name = data.get_child("name").get_value<std::string>("[" + type + "]");
-    boost::trim(m_display_name);
-    strip_quotes(m_display_name);
-  }
-
-  // Get thing's pretty plural, if present. Otherwise add "s" to the normal pretty name.
-  if (data.count("plural") == 0)
-  {
-    m_display_plural = m_display_name + "s";
-  }
-  else
-  {
-    m_display_plural = data.get_child("plural").get_value<std::string>(m_display_name + "s");
-    boost::trim(m_display_plural);
-    strip_quotes(m_display_plural);
-  }
-
-  // Get thing's description.
-  if (data.count("description") == 0)
-  {
-    m_description = "(No description found.)";
-  }
-  else
-  {
-    m_description = data.get_child("description").get_value<std::string>("(No description found.)");
-    boost::trim(m_description);
-    strip_quotes(m_description);
-  }
-
-  // Look for intrinsics, defaults sections. Both must be present in any metadata file.
-  pt::ptree intrinsics_tree;
-  if (data.count("intrinsics") == 0)
-  {
-    FATAL_ERROR("Metadata file for %s!%s doesn't have an \"intrinsics\" section", category.c_str(), m_type.c_str());
-  }
-  else
-  {
-    intrinsics_tree = data.get_child("intrinsics");
-  }
-
-  pt::ptree defaults_tree;
-  if (data.count("defaults") == 0)
-  {
-    FATAL_ERROR("Metadata file for %s!%s doesn't have a \"defaults\" section", category.c_str(), m_type.c_str());
-  }
-  else
-  {
-    defaults_tree = data.get_child("defaults");
-  }
-
-  // Populate intrinsics dictionary.
-  m_intrinsics.populate_from(intrinsics_tree);
-
-  // Populate defaults dictionary.
-  m_defaults.populate_from(defaults_tree);
-#endif
 
   /// Try to load and run this Thing's Lua script.
   if (fs::exists(luafile_path))
@@ -125,15 +31,19 @@ Metadata::Metadata(MetadataCollection& collection, std::string type)
 
   if (fs::exists(pngfile_path))
   {
-    m_has_tiles = true;
-    m_tile_location = TS.load_collection(pngfile_string);
+    sf::Vector2u tile_location;
+
+    tile_location = TS.load_collection(pngfile_string);
     TRACE("Tiles for %s!%s were placed on the TileSheet at (%u, %u)",
-      category.c_str(), type.c_str(), m_tile_location.x, m_tile_location.y);
+      category.c_str(), type.c_str(), tile_location.x, tile_location.y);
+
+    set_intrinsic<bool>("has_tiles", true);
+    set_intrinsic<int>("tile_location_x", tile_location.x);
+    set_intrinsic<int>("tile_location_y", tile_location.y);
   }
   else
   {
     TRACE("No tiles found for %s!%s", category.c_str(), type.c_str());
-    m_has_tiles = false;
   }
 }
 
@@ -150,86 +60,13 @@ std::string const& Metadata::get_type() const
   return m_type;
 }
 
-#if 0
-std::string const& Metadata::get_parent() const
+sf::Vector2u Metadata::get_tile_coords()
 {
-  return m_parent;
+  sf::Vector2u tile_location;
+  tile_location.x = get_intrinsic<int>("tile_location_x");
+  tile_location.y = get_intrinsic<int>("tile_location_y");
+  return tile_location;
 }
-
-std::string const& Metadata::get_display_name() const
-{
-  return m_display_name;
-}
-
-std::string const& Metadata::get_display_plural() const
-{
-  return m_display_plural;
-}
-
-std::string const& Metadata::get_description() const
-{
-  return m_description;
-}
-#endif
-
-sf::Vector2u const& Metadata::get_tile_coords() const
-{
-  return m_tile_location;
-}
-
-// === PROTECTED METHODS ======================================================
-
-#if 0
-/// Get the entire PropertyDictionary of defaults.
-PropertyDictionary const& Metadata::get_defaults() const
-{
-  return m_defaults;
-}
-
-/// Get the entire PropertyDictionary of intrinsics.
-PropertyDictionary const& Metadata::get_intrinsics() const
-{
-  return m_intrinsics;
-}
-
-/// Recursive function that iterates through the tree and prints the values.
-void Metadata::trace_tree(pt::ptree const* pTree = nullptr, std::string prefix = "")
-{
-  if (pTree == nullptr)
-  {
-    pTree = &(m_raw_ptree);
-  }
-
-  pt::ptree::const_iterator end = pTree->end();
-  for (pt::ptree::const_iterator it = pTree->begin(); it != end; ++it)
-  {
-    std::string key = prefix + (it->first);
-    boost::to_lower(key);
-    std::string value = it->second.get_value<std::string>();
-    boost::trim(key);
-    boost::trim(value);
-    if (!value.empty())
-    {
-      TRACE("%s = \"%s\"", key.c_str(), value.c_str());
-    }
-    trace_tree(&(it->second), key + ".");
-  }
-}
-
-/// Get the raw property tree containing metadata.
-pt::ptree const& Metadata::get_ptree()
-{
-  std::string category = get_collection().get_category();
-  return m_raw_ptree.get_child(category);
-}
-
-/// Clear the raw property tree. Should only be done after all data needed
-/// has been read from it.
-void Metadata::clear_ptree()
-{
-  m_raw_ptree.clear();
-}
-#endif
 
 ActionResult Metadata::call_lua_function(std::string function_name,
   ThingRef caller,
@@ -299,7 +136,7 @@ ActionResult Metadata::call_lua_function(std::string function_name,
 
   if (start_stack != end_stack)
   {
-    MAJOR_ERROR("*** LUA STACK MISMATCH (%s.%s): Started at %d, ended at %d", name.c_str(), function_name.c_str(), start_stack, end_stack);
+    FATAL_ERROR("*** LUA STACK MISMATCH (%s.%s): Started at %d, ended at %d", name.c_str(), function_name.c_str(), start_stack, end_stack);
   }
 
   return return_value;
@@ -373,7 +210,7 @@ bool Metadata::call_lua_function_bool(std::string function_name,
 
   if (start_stack != end_stack)
   {
-    MAJOR_ERROR("*** LUA STACK MISMATCH (%s.%s): Started at %d, ended at %d", name.c_str(), function_name.c_str(), start_stack, end_stack);
+    FATAL_ERROR("*** LUA STACK MISMATCH (%s.%s): Started at %d, ended at %d", name.c_str(), function_name.c_str(), start_stack, end_stack);
   }
 
   return return_value;
@@ -447,7 +284,7 @@ sf::Vector2u Metadata::call_lua_function_v2u(std::string function_name,
 
   if (start_stack != end_stack)
   {
-    MAJOR_ERROR("*** LUA STACK MISMATCH (%s.%s): Started at %d, ended at %d", name.c_str(), function_name.c_str(), start_stack, end_stack);
+    FATAL_ERROR("*** LUA STACK MISMATCH (%s.%s): Started at %d, ended at %d", name.c_str(), function_name.c_str(), start_stack, end_stack);
   }
 
   return return_value;
@@ -515,7 +352,7 @@ bool Metadata::get_default_bool(std::string name, bool default_value = false)
 
   if (start_stack != end_stack)
   {
-    MAJOR_ERROR("*** LUA STACK MISMATCH (%s:get_default): Started at %d, ended at %d", name.c_str(), start_stack, end_stack);
+    FATAL_ERROR("*** LUA STACK MISMATCH (%s:get_default): Started at %d, ended at %d", name.c_str(), start_stack, end_stack);
   }
 
   return return_value;
@@ -583,7 +420,7 @@ double Metadata::get_default_value(std::string name, double default_value = 0.0)
 
   if (start_stack != end_stack)
   {
-    MAJOR_ERROR("*** LUA STACK MISMATCH (%s:get_default): Started at %d, ended at %d", name.c_str(), start_stack, end_stack);
+    FATAL_ERROR("*** LUA STACK MISMATCH (%s:get_default): Started at %d, ended at %d", name.c_str(), start_stack, end_stack);
   }
 
   return return_value;
@@ -650,7 +487,7 @@ std::string Metadata::get_default_string(std::string name, std::string default_v
 
   if (start_stack != end_stack)
   {
-    MAJOR_ERROR("*** LUA STACK MISMATCH (%s:get_default): Started at %d, ended at %d", name.c_str(), start_stack, end_stack);
+    FATAL_ERROR("*** LUA STACK MISMATCH (%s:get_default): Started at %d, ended at %d", name.c_str(), start_stack, end_stack);
   }
 
   return return_value;
@@ -718,7 +555,7 @@ bool Metadata::get_intrinsic_bool(std::string name, bool default_value = false)
 
   if (start_stack != end_stack)
   {
-    MAJOR_ERROR("*** LUA STACK MISMATCH (%s:get_intrinsic): Started at %d, ended at %d", name.c_str(), start_stack, end_stack);
+    FATAL_ERROR("*** LUA STACK MISMATCH (%s:get_intrinsic): Started at %d, ended at %d", name.c_str(), start_stack, end_stack);
   }
 
   return return_value;
@@ -786,7 +623,7 @@ double Metadata::get_intrinsic_value(std::string name, double default_value = 0.
 
   if (start_stack != end_stack)
   {
-    MAJOR_ERROR("*** LUA STACK MISMATCH (%s:get_intrinsic): Started at %d, ended at %d", name.c_str(), start_stack, end_stack);
+    FATAL_ERROR("*** LUA STACK MISMATCH (%s:get_intrinsic): Started at %d, ended at %d", name.c_str(), start_stack, end_stack);
   }
 
   return return_value;
@@ -853,7 +690,7 @@ std::string Metadata::get_intrinsic_string(std::string name, std::string default
 
   if (start_stack != end_stack)
   {
-    MAJOR_ERROR("*** LUA STACK MISMATCH (%s:get_intrinsic): Started at %d, ended at %d", name.c_str(), start_stack, end_stack);
+    FATAL_ERROR("*** LUA STACK MISMATCH (%s:get_intrinsic): Started at %d, ended at %d", name.c_str(), start_stack, end_stack);
   }
 
   return return_value;
@@ -893,12 +730,7 @@ void Metadata::set_intrinsic_bool(std::string name, bool value)
       lua_pushstring(the_lua_state, name.c_str());              // set class name <
       lua_pushboolean(the_lua_state, static_cast<int>(value));  // set class name value <
       int result = lua_pcall(the_lua_state, 3, 0, 0);           // (nil|err) <
-      if (result == 0)
-      {
-        // Pop the return value off the stack. (-1)
-        lua_pop(the_lua_state, 1);
-      }
-      else
+      if (result != 0)
       {
         // Get the error message.
         char const* error_message = lua_tostring(the_lua_state, -1);
@@ -914,7 +746,7 @@ void Metadata::set_intrinsic_bool(std::string name, bool value)
 
   if (start_stack != end_stack)
   {
-    MAJOR_ERROR("*** LUA STACK MISMATCH (%s:set_intrinsic): Started at %d, ended at %d", name.c_str(), start_stack, end_stack);
+    FATAL_ERROR("*** LUA STACK MISMATCH (%s:set_intrinsic): Started at %d, ended at %d", name.c_str(), start_stack, end_stack);
   }
 }
 
@@ -952,12 +784,7 @@ void Metadata::set_intrinsic_value(std::string name, double value = 0.0)
       lua_pushstring(the_lua_state, name.c_str());              // set class name <
       lua_pushnumber(the_lua_state, value);                     // set class name value <
       int result = lua_pcall(the_lua_state, 3, 0, 0);           // (nil|err) <
-      if (result == 0)
-      {
-        // Pop the return value off the stack. (-1)
-        lua_pop(the_lua_state, 1);
-      }
-      else
+      if (result != 0)
       {
         // Get the error message.
         char const* error_message = lua_tostring(the_lua_state, -1);
@@ -973,7 +800,7 @@ void Metadata::set_intrinsic_value(std::string name, double value = 0.0)
 
   if (start_stack != end_stack)
   {
-    MAJOR_ERROR("*** LUA STACK MISMATCH (%s:set_intrinsic): Started at %d, ended at %d", name.c_str(), start_stack, end_stack);
+    FATAL_ERROR("*** LUA STACK MISMATCH (%s:set_intrinsic): Started at %d, ended at %d", name.c_str(), start_stack, end_stack);
   }
 }
 
@@ -1011,12 +838,7 @@ void Metadata::set_intrinsic_string(std::string name, std::string value = "")
       lua_pushstring(the_lua_state, name.c_str());              // set class name <
       lua_pushstring(the_lua_state, value.c_str());             // set class name value <
       int result = lua_pcall(the_lua_state, 3, 0, 0);           // (nil|err) <
-      if (result == 0)
-      {
-        // Pop the return value off the stack. (-1)
-        lua_pop(the_lua_state, 1);
-      }
-      else
+      if (result != 0)
       {
         // Get the error message.
         char const* error_message = lua_tostring(the_lua_state, -1);
@@ -1032,7 +854,7 @@ void Metadata::set_intrinsic_string(std::string name, std::string value = "")
 
   if (start_stack != end_stack)
   {
-    MAJOR_ERROR("*** LUA STACK MISMATCH (%s:set_intrinsic): Started at %d, ended at %d", name.c_str(), start_stack, end_stack);
+    FATAL_ERROR("*** LUA STACK MISMATCH (%s:set_intrinsic): Started at %d, ended at %d", name.c_str(), start_stack, end_stack);
   }
 }
 

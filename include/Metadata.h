@@ -39,63 +39,7 @@ public:
 
   std::string const& get_type() const;
 
-  //std::string const& get_parent() const;
-
-  //std::string const& get_display_name() const;
-
-  //std::string const& get_display_plural() const;
-
-  //std::string const& get_description() const;
-
-  sf::Vector2u const& get_tile_coords() const;
-
-#if 0
-  template<typename T>
-  T get_intrinsic(std::string key, T default_value = T())
-  {
-    PropertyDictionary const& intrinsics = get_intrinsics();
-    if (intrinsics.contains(key))
-    {
-      return get_intrinsics().get<T>(key);
-    }
-    else
-    {
-      std::string parent = get_parent();
-      if (!parent.empty())
-      {
-        Metadata& parent_metadata = get_collection().get(parent);
-        return parent_metadata.get_intrinsic<T>(key);
-      }
-      else
-      {
-        return default_value;
-      }
-    }
-  }
-
-  template<typename T>
-  T get_default(std::string key, T default_value = T())
-  {
-    PropertyDictionary const& defaults = get_defaults();
-    if (defaults.contains(key))
-    {
-      return get_defaults().get<T>(key);
-    }
-    else
-    {
-      std::string parent = get_parent();
-      if (!parent.empty())
-      {
-        Metadata& parent_metadata = get_collection().get(parent);
-        return parent_metadata.get_default<T>(key);
-      }
-      else
-      {
-        return default_value;
-      }
-    }
-  }
-#endif
+  sf::Vector2u get_tile_coords();
 
   /// Try to call a Lua function that takes the caller and a vector of
   /// arguments and returns an ActionResult.
@@ -192,7 +136,7 @@ public:
   template <typename T>
   void set_intrinsic(std::string name, T value)
   {
-    return static_cast<T>(set_intrinsic_value(name, value));
+    set_intrinsic_value(name, static_cast<double>(value));
   }
 
   template<> void set_intrinsic(std::string name, bool value)
@@ -209,24 +153,7 @@ public:
   void set_intrinsic_value(std::string name, double value);
   void set_intrinsic_string(std::string name, std::string value);
 
-
 protected:
-
-  /// Get the entire PropertyDictionary of defaults.
-  //PropertyDictionary const& get_defaults() const;
-
-  /// Get the entire PropertyDictionary of intrinsics.
-  //PropertyDictionary const& get_intrinsics() const;
-
-  /// Recursive function that iterates through the tree and prints the values.
-  //void trace_tree(pt::ptree const* pTree, std::string prefix);
-
-  /// Get the raw property tree containing metadata.
-  //pt::ptree const& get_ptree();
-
-  /// Clear the raw property tree. Should only be done after all data needed
-  /// has been read from it.
-  //void clear_ptree();
 
 private:
   /// Reference to the collection this metadata is in (e.g. "maptile", "thing", etc.)
@@ -234,39 +161,6 @@ private:
 
   /// The type associated with this metadata.
   std::string m_type;
-
-  /// The parent type, if any.
-  //std::string m_parent;
-
-  /// The display name.
-  //std::string m_display_name;
-
-  /// The display plural.
-  //std::string m_display_plural;
-
-  /// A brief description.
-  //std::string m_description;
-
-  /// Read-only properties (intrinsics).
-  //PropertyDictionary m_intrinsics;
-
-  /// Read-write properties. The ones contained here are the defaults
-  /// which are copied to a target (Thing, MapTile, etc.) on creation.
-  //PropertyDictionary m_defaults;
-
-  /// A vector containing the children of this object.
-  //std::vector<std::string> m_children;
-
-  /// The raw metadata. It is a bit wasteful to save this
-  /// independently of other data, so it should probably only be saved
-  /// for as long as it is needed.
-  //pt::ptree m_raw_ptree;
-
-  /// Boolean indicating whether this metadata has graphics associated with it.
-  bool m_has_tiles;
-
-  /// Location of this metadata's graphics on the tilesheet.
-  sf::Vector2u m_tile_location;
 };
 
 #endif // METADATA_H
