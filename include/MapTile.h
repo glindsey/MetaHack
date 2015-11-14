@@ -174,6 +174,9 @@ class MapTile : public GameObject
     /// 128 < value <= 255: result = max(original + (value - 128), 255)
     /// The alpha channel is ignored.
     std::unordered_map<ThingRef, LightInfluence> m_lights;
+
+    /// Random tile offset.
+    int m_tile_offset;
 };
 
 #endif // MAPTILE_H

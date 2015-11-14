@@ -236,6 +236,59 @@ void TileSheet::add_gradient_quad(sf::VertexArray& vertices,
   vertices.append(new_vertex);
 }
 
+void TileSheet::add_gradient_quad(sf::VertexArray& vertices,
+  sf::Vector2u tile_coords,
+  sf::Vector2f coordNW, sf::Vector2f coordNE, sf::Vector2f coordSE, sf::Vector2f coordSW,
+  sf::Color colorC, 
+  sf::Color colorNW, sf::Color colorN,
+  sf::Color colorNE, sf::Color colorE,
+  sf::Color colorSE, sf::Color colorS,
+  sf::Color colorSW, sf::Color colorW)
+{
+  float ts(Settings.get<float>("map_tile_size"));
+  float half_ts = (ts / 2.0f);
+
+  sf::Vector2f coordC((coordNW.x + coordNE.x + coordSE.x + coordSW.x) / 4, (coordNW.y + coordNE.y + coordSE.y + coordSW.y) / 4);
+  sf::Vector2f coordN((coordNW.x + coordNE.x) / 2, (coordNW.y + coordNE.y) / 2);
+  sf::Vector2f coordE((coordNE.x + coordSE.x) / 2, (coordNE.y + coordSE.y) / 2);
+  sf::Vector2f coordS((coordSW.x + coordSE.x) / 2, (coordSW.y + coordSE.y) / 2);
+  sf::Vector2f coordW((coordNW.x + coordSW.x) / 2, (coordNW.y + coordSW.y) / 2);
+
+  sf::Vector2f texNW(tile_coords.x * ts, tile_coords.y * ts);
+  sf::Vector2f texN(texNW.x + half_ts, texNW.y);
+  sf::Vector2f texNE(texNW.x + ts, texNW.y);
+  sf::Vector2f texE(texNW.x + ts, texNW.y + half_ts);
+  sf::Vector2f texSE(texNW.x + ts, texNW.y + ts);
+  sf::Vector2f texS(texNW.x + half_ts, texNW.y + ts);
+  sf::Vector2f texSW(texNW.x, texNW.y + ts);
+  sf::Vector2f texW(texNW.x, texNW.y + half_ts);
+  sf::Vector2f texC(texNW.x + half_ts, texNW.y + half_ts);
+
+  // Upper left
+  vertices.append(sf::Vertex(coordNW, colorNW, texNW));
+  vertices.append(sf::Vertex(coordN, colorN, texN));
+  vertices.append(sf::Vertex(coordC, colorC, texC));
+  vertices.append(sf::Vertex(coordW, colorW, texW));
+
+  // Upper right
+  vertices.append(sf::Vertex(coordN, colorN, texN));
+  vertices.append(sf::Vertex(coordNE, colorNE, texNE));
+  vertices.append(sf::Vertex(coordE, colorE, texE));
+  vertices.append(sf::Vertex(coordC, colorC, texC));
+
+  // Lower right
+  vertices.append(sf::Vertex(coordC, colorC, texC));
+  vertices.append(sf::Vertex(coordE, colorE, texE));
+  vertices.append(sf::Vertex(coordSE, colorSE, texSE));
+  vertices.append(sf::Vertex(coordS, colorS, texS));
+
+  // Lower left
+  vertices.append(sf::Vertex(coordW, colorW, texW));
+  vertices.append(sf::Vertex(coordC, colorC, texC));
+  vertices.append(sf::Vertex(coordS, colorS, texS));
+  vertices.append(sf::Vertex(coordSW, colorSW, texSW));
+}
+
 void TileSheet::add_outline_vertices(sf::VertexArray& vertices,
                                      sf::Color bg_color,
                                      sf::Vector2f ul_coord,

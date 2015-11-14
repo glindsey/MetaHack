@@ -32,8 +32,9 @@ std::string MapTile::get_display_name() const
 sf::Vector2u MapTile::get_tile_sheet_coords(int frame) const
 {
   /// @todo Deal with selecting one of the other tiles.
-  sf::Vector2u coords = m_pMetadata->get_tile_coords();
-  return coords;
+  sf::Vector2u start_coords = m_pMetadata->get_tile_coords();
+  sf::Vector2u tile_coords(start_coords.x + m_tile_offset, start_coords.y);
+  return tile_coords;
 }
 
 void MapTile::add_vertices_to(sf::VertexArray& vertices,
@@ -87,28 +88,16 @@ void MapTile::add_vertices_to(sf::VertexArray& vertices,
   }
 
   sf::Vector2f location{ coords.x * ts, coords.y * ts };
-  sf::Vector2f vN{ location.x, location.y - half_ts };
   sf::Vector2f vNE{ location.x + half_ts, location.y - half_ts };
-  sf::Vector2f vE{ location.x + half_ts, location.y };
   sf::Vector2f vSE{ location.x + half_ts, location.y + half_ts };
-  sf::Vector2f vS{ location.x, location.y + half_ts };
   sf::Vector2f vSW{ location.x - half_ts, location.y + half_ts };
-  sf::Vector2f vW{ location.x - half_ts, location.y };
   sf::Vector2f vNW{ location.x - half_ts, location.y - half_ts };
 
   sf::Vector2u tile_coords = this->get_tile_sheet_coords(frame);
 
-  // Northwest quadrant.
-  TileSheet::add_gradient_quad(vertices, tile_coords, lightNW, vNW, lightN, vN, light, location, lightW, vW);
-
-  // Northeast quadrant.
-  TileSheet::add_gradient_quad(vertices, tile_coords, lightN, vN, lightNE, vNE, lightE, vE, light, location);
-
-  // Southeast quadrant.
-  TileSheet::add_gradient_quad(vertices, tile_coords, light, location, lightE, vE, lightSE, vSE, lightS, vS);
-
-  // Southwest quadrant.
-  TileSheet::add_gradient_quad(vertices, tile_coords, lightW, vW, light, location, lightS, vS, lightSW, vSW);
+  TileSheet::add_gradient_quad(vertices, tile_coords,
+    vNW, vNE, vSE, vSW, 
+    light, lightNW, lightN, lightNE, lightE, lightSE, lightS, lightSW, lightW);
 }
 
 void MapTile::draw_to(sf::RenderTexture& target,
@@ -492,8 +481,9 @@ void MapTile::add_walls_to(sf::VertexArray& vertices,
       vSE.x += ws;
     }
 
-    TileSheet::add_gradient_quad(vertices, tile_coords, wall_n_color_w, vTileNW, wall_n_color, vTileN, wall_n_color, vS, wall_n_color_w, vSW);
-    TileSheet::add_gradient_quad(vertices, tile_coords, wall_n_color, vTileN, wall_n_color_e, vTileNE, wall_n_color_e, vSE, wall_n_color, vS);
+    TileSheet::add_gradient_quad(vertices, tile_coords,
+      vTileNW, vTileNE, vSE, vSW,
+      wall_n_color, wall_n_color_w, wall_n_color, wall_n_color_e, wall_n_color_e, wall_n_color_e, wall_n_color, wall_n_color_w, wall_n_color_w);
   }
 
   // EAST WALL
@@ -519,11 +509,9 @@ void MapTile::add_walls_to(sf::VertexArray& vertices,
       vSW.y += ws;
     }
 
-    // DEBUG
-    //tile_color = sf::Color::Yellow;
-
-    TileSheet::add_gradient_quad(vertices, tile_coords, wall_e_color_n, vNW, wall_e_color_n, vTileNE, wall_e_color, vTileE, wall_e_color, vW);
-    TileSheet::add_gradient_quad(vertices, tile_coords, wall_e_color, vW, wall_e_color, vTileE, wall_e_color_s, vTileSE, wall_e_color_s, vSW);
+    TileSheet::add_gradient_quad(vertices, tile_coords,
+      vNW, vTileNE, vTileSE, vSW,
+      wall_e_color, wall_e_color_n, wall_e_color_n, wall_e_color, wall_e_color_s, wall_e_color_s, wall_e_color_s, wall_e_color, wall_e_color_n);
   }
 
   // SOUTH WALL
@@ -549,11 +537,9 @@ void MapTile::add_walls_to(sf::VertexArray& vertices,
       vNE.x += ws;
     }
 
-    // DEBUG
-    //tile_color = sf::Color::Green;
-
-    TileSheet::add_gradient_quad(vertices, tile_coords, wall_s_color_w, vNW, wall_s_color, vN, wall_s_color, vTileS, wall_s_color_w, vTileSW);
-    TileSheet::add_gradient_quad(vertices, tile_coords, wall_s_color, vN, wall_s_color_e, vNE, wall_s_color_e, vTileSE, wall_s_color, vTileS);
+    TileSheet::add_gradient_quad(vertices, tile_coords,
+      vNW, vNE, vTileSE, vTileSW,
+      wall_s_color, wall_s_color_w, wall_s_color, wall_s_color_e, wall_s_color_e, wall_s_color_e, wall_s_color, wall_s_color_w, wall_s_color_w);
   }
 
   // WEST WALL
@@ -579,11 +565,9 @@ void MapTile::add_walls_to(sf::VertexArray& vertices,
       vSE.y += ws;
     }
 
-    // DEBUG
-    //tile_color = sf::Color::Blue;
-
-    TileSheet::add_gradient_quad(vertices, tile_coords, wall_w_color_n, vTileNW, wall_w_color_n, vNE, wall_w_color, vE, wall_w_color, vTileW);
-    TileSheet::add_gradient_quad(vertices, tile_coords, wall_w_color, vTileW, wall_w_color, vE, wall_w_color_s, vSE, wall_w_color_s, vTileSW);
+    TileSheet::add_gradient_quad(vertices, tile_coords,
+      vTileNW, vNE, vSE, vTileSW,
+      wall_w_color, wall_w_color_n, wall_w_color_n, wall_w_color, wall_w_color_s, wall_w_color_s, wall_w_color_s, wall_w_color, wall_w_color_n);
   }
 }
 
@@ -604,7 +588,8 @@ MapTile::MapTile(sf::Vector2i coords, Metadata& metadata, MapId map_id)
   m_map_id{ map_id },
   m_coords{ coords },  
   m_pMetadata{ &metadata },
-  m_ambient_light_color{ sf::Color(192, 192, 192, 255) }
+  m_ambient_light_color{ sf::Color(192, 192, 192, 255) },
+  m_tile_offset{ pick_uniform(0, 4) }
 {
   if (!initialized)
   {

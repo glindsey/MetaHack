@@ -988,6 +988,11 @@ bool AppStateGameMode::initialize()
   ThingRef lichen = TM.create("RockLichen");
   lichen->move_into(game_map.get_tile(start_coords.x + 1, start_coords.y - 1).get_floor());
 
+  // TESTING CODE: Create a dagger southwest of the player.
+  TRACE("Creating dagger...");
+  ThingRef dagger = TM.create("Dagger");
+  dagger->move_into(game_map.get_tile(start_coords.x + 1, start_coords.y + 1).get_floor());
+
   // END TESTING CODE
 
   // Get the map ready.

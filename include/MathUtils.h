@@ -112,6 +112,20 @@ inline bool flip_coin()
   return (coin(the_RNG) == 0 ? false : true);
 }
 
+/// Pick a number out of a uniform distribution.
+inline unsigned int pick_uniform(unsigned int min, unsigned int max)
+{
+  uniform_int_dist number(min, max);
+  return number(the_RNG);
+}
+
+/// Pick a number out of a uniform distribution.
+inline int pick_uniform(int min, int max)
+{
+  uniform_int_dist number(min, max);
+  return number(the_RNG);
+}
+
 /// Choose one of two alternatives at random.
 template <class T> T choose_random (T a, T b)
 {

@@ -64,6 +64,15 @@ class TileSheet
                                   sf::Color lr_color, sf::Vector2f lr_coord,
                                   sf::Color ll_color, sf::Vector2f ll_coord);
 
+    static void add_gradient_quad(sf::VertexArray& vertices,
+      sf::Vector2u tile_coords,
+      sf::Vector2f coordNW, sf::Vector2f coordNE, sf::Vector2f coordSE, sf::Vector2f coordSW,
+      sf::Color colorC,
+      sf::Color colorNW, sf::Color colorN,
+      sf::Color colorNE, sf::Color colorE,
+      sf::Color colorSE, sf::Color colorS,
+      sf::Color colorSW, sf::Color colorW);
+
     /// Add outline vertices to the requested vertex array.
     /// This method draws a hollow quadrilateral in the color specified by
     /// bg_color.

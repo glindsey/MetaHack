@@ -34,6 +34,7 @@
 #define CV(p12, p3)  (this->choose_verb(p12, p3))
 
 #define ARE   (this->choose_verb(" are", " is"))
+#define WERE  (this->choose_verb(" were", " was"))
 #define DO    (this->choose_verb(" do", " does"))
 #define GET   (this->choose_verb(" get", " gets"))
 #define HAVE  (this->choose_verb(" have", " has"))
@@ -49,6 +50,7 @@
 #define LIQUID2      (liquid2->get_identifying_string())
 
 #define YOU_ARE   (YOU + ARE)   
+#define YOU_WERE  (YOU + WERE)
 #define YOU2_ARE  (YOU2 + ARE)
 #define YOU_DO    (YOU + DO)
 #define YOU_GET   (YOU + GET)
@@ -1474,8 +1476,8 @@ ActionResult Thing::can_equip(ThingRef thing, unsigned int& action_time)
     return ActionResult::FailureSelfReference;
   }
 
-  // Check that it's within reach.
-  if (!this->can_reach(thing))
+  // Check that it's in our inventory.
+  if (!this->get_inventory().contains(thing))
   {
     return ActionResult::FailureThingOutOfReach;
   }
@@ -1541,7 +1543,7 @@ bool Thing::do_equip(ThingRef thing, unsigned int& action_time)
     message = YOU_TRY + " to equip " + thing_name + ".";
     the_message_log.add(message);
 
-    message = YOU + " cannot reach " + thing_name + ".";
+    message = thing_name + " is not in " + YOUR + " inventory.";
     the_message_log.add(message);
   }
   break;
@@ -1568,13 +1570,23 @@ ActionResult Thing::can_wield(ThingRef thing, unsigned int hand, unsigned int& a
 {
   action_time = 1;
 
-  // Check that it's within reach.
-  if (!this->can_reach(thing))
+  // If it is us, it means to unwield whatever is wielded.
+  if (thing == pImpl->ref)
+  {
+    return ActionResult::SuccessSelfReference;
+  }
+
+  // Check that it's in our inventory.
+  if (!this->get_inventory().contains(thing))
   {
     return ActionResult::FailureThingOutOfReach;
   }
 
-  /// @todo Check that we have hands capable of wielding anything.
+  // Check that we have hands capable of wielding anything.
+  if (this->get_bodypart_number(BodyPart::Hand) == 0)
+  {
+    return ActionResult::FailureNotEnoughHands;
+  }
 
   return ActionResult::Success;
 }
@@ -1587,7 +1599,9 @@ bool Thing::do_wield(ThingRef thing, unsigned int hand, unsigned int& action_tim
 
   ThingRef currently_wielded = pImpl->wielding_in(hand);
 
-  std::string thing_name = (thing == TM.get_mu()) ? thing->get_identifying_string() : "nothing";
+  std::string thing_name = (thing != TM.get_mu()) ? thing->get_identifying_string() : "nothing";
+
+  bool was_wielding = false;
 
   // First, check if we're already wielding something.
   if (currently_wielded != TM.get_mu())
@@ -1606,6 +1620,7 @@ bool Thing::do_wield(ThingRef thing, unsigned int hand, unsigned int& action_tim
       if (currently_wielded->perform_action_unwielded_by(pImpl->ref))
       {
         pImpl->do_unwield(currently_wielded);
+        was_wielding = true;
       }
       else
       {
@@ -1637,10 +1652,18 @@ bool Thing::do_wield(ThingRef thing, unsigned int hand, unsigned int& action_tim
 
   case ActionResult::SuccessSelfReference:
   {
-    message = YOU_ARE + " no longer wielding any weapons with " +
-      YOUR + " " +
-      this->get_bodypart_description(BodyPart::Hand, hand) + ".";
-    the_message_log.add(message);
+    if (was_wielding)
+    {
+      message = YOU_ARE + " no longer wielding any weapons with " +
+        YOUR + " " +
+        this->get_bodypart_description(BodyPart::Hand, hand) + ".";
+      the_message_log.add(message);
+    }
+    else
+    {
+      message = YOU_WERE + " not wielding any weapon to begin with.";
+      the_message_log.add(message);
+    }
     return true;
   }
   break;
@@ -1650,7 +1673,7 @@ bool Thing::do_wield(ThingRef thing, unsigned int hand, unsigned int& action_tim
     message = YOU_TRY + " to wield " + thing_name + ".";
     the_message_log.add(message);
 
-    message = YOU + " cannot reach " + thing_name + ".";
+    message = thing_name + " is not in " + YOUR + " inventory.";
     the_message_log.add(message);
   }
   break;
@@ -1711,21 +1734,21 @@ unsigned int Thing::get_bodypart_number(BodyPart part) const
 {
   switch (part)
   {
-  case BodyPart::Body:  return get_intrinsic<int>("bodypart.body.count");
-  case BodyPart::Skin:  return get_intrinsic<int>("bodypart.skin.count");
-  case BodyPart::Head:  return get_intrinsic<int>("bodypart.head.count");
-  case BodyPart::Ear:   return get_intrinsic<int>("bodypart.ear.count");
-  case BodyPart::Eye:   return get_intrinsic<int>("bodypart.eye.count");
-  case BodyPart::Nose:  return get_intrinsic<int>("bodypart.nose.count");
-  case BodyPart::Mouth: return get_intrinsic<int>("bodypart.mouth.count");
-  case BodyPart::Neck:  return get_intrinsic<int>("bodypart.neck.count");
-  case BodyPart::Chest: return get_intrinsic<int>("bodypart.chest.count");
-  case BodyPart::Arm:   return get_intrinsic<int>("bodypart.arm.count");
-  case BodyPart::Hand:  return get_intrinsic<int>("bodypart.hand.count");
-  case BodyPart::Leg:   return get_intrinsic<int>("bodypart.leg.count");
-  case BodyPart::Foot:  return get_intrinsic<int>("bodypart.foot.count");
-  case BodyPart::Wing:  return get_intrinsic<int>("bodypart.wing.count");
-  case BodyPart::Tail:  return get_intrinsic<int>("bodypart.tail.count");
+  case BodyPart::Body:  return get_intrinsic<int>("bodypart_body_count");
+  case BodyPart::Skin:  return get_intrinsic<int>("bodypart_skin_count");
+  case BodyPart::Head:  return get_intrinsic<int>("bodypart_head_count");
+  case BodyPart::Ear:   return get_intrinsic<int>("bodypart_ear_count");
+  case BodyPart::Eye:   return get_intrinsic<int>("bodypart_eye_count");
+  case BodyPart::Nose:  return get_intrinsic<int>("bodypart_nose_count");
+  case BodyPart::Mouth: return get_intrinsic<int>("bodypart_mouth_count");
+  case BodyPart::Neck:  return get_intrinsic<int>("bodypart_neck_count");
+  case BodyPart::Chest: return get_intrinsic<int>("bodypart_chest_count");
+  case BodyPart::Arm:   return get_intrinsic<int>("bodypart_arm_count");
+  case BodyPart::Hand:  return get_intrinsic<int>("bodypart_hand_count");
+  case BodyPart::Leg:   return get_intrinsic<int>("bodypart_leg_count");
+  case BodyPart::Foot:  return get_intrinsic<int>("bodypart_foot_count");
+  case BodyPart::Wing:  return get_intrinsic<int>("bodypart_wing_count");
+  case BodyPart::Tail:  return get_intrinsic<int>("bodypart_tail_count");
   default: return 0;
   }
 }
@@ -1735,21 +1758,21 @@ std::string Thing::get_bodypart_name(BodyPart part) const
 {
   switch (part)
   {
-  case BodyPart::Body:  return get_intrinsic<std::string>("bodypart.body.name");
-  case BodyPart::Skin:  return get_intrinsic<std::string>("bodypart.skin.name");
-  case BodyPart::Head:  return get_intrinsic<std::string>("bodypart.head.name");
-  case BodyPart::Ear:   return get_intrinsic<std::string>("bodypart.ear.name");
-  case BodyPart::Eye:   return get_intrinsic<std::string>("bodypart.eye.name");
-  case BodyPart::Nose:  return get_intrinsic<std::string>("bodypart.nose.name");
-  case BodyPart::Mouth: return get_intrinsic<std::string>("bodypart.mouth.name");
-  case BodyPart::Neck:  return get_intrinsic<std::string>("bodypart.neck.name");
-  case BodyPart::Chest: return get_intrinsic<std::string>("bodypart.chest.name");
-  case BodyPart::Arm:   return get_intrinsic<std::string>("bodypart.arm.name");
-  case BodyPart::Hand:  return get_intrinsic<std::string>("bodypart.hand.name");
-  case BodyPart::Leg:   return get_intrinsic<std::string>("bodypart.leg.name");
-  case BodyPart::Foot:  return get_intrinsic<std::string>("bodypart.foot.name");
-  case BodyPart::Wing:  return get_intrinsic<std::string>("bodypart.wing.name");
-  case BodyPart::Tail:  return get_intrinsic<std::string>("bodypart.tail.name");
+  case BodyPart::Body:  return get_intrinsic<std::string>("bodypart_body_name");
+  case BodyPart::Skin:  return get_intrinsic<std::string>("bodypart_skin_name");
+  case BodyPart::Head:  return get_intrinsic<std::string>("bodypart_head_name");
+  case BodyPart::Ear:   return get_intrinsic<std::string>("bodypart_ear_name");
+  case BodyPart::Eye:   return get_intrinsic<std::string>("bodypart_eye_name");
+  case BodyPart::Nose:  return get_intrinsic<std::string>("bodypart_nose_name");
+  case BodyPart::Mouth: return get_intrinsic<std::string>("bodypart_mouth_name");
+  case BodyPart::Neck:  return get_intrinsic<std::string>("bodypart_neck_name");
+  case BodyPart::Chest: return get_intrinsic<std::string>("bodypart_chest_name");
+  case BodyPart::Arm:   return get_intrinsic<std::string>("bodypart_arm_name");
+  case BodyPart::Hand:  return get_intrinsic<std::string>("bodypart_hand_name");
+  case BodyPart::Leg:   return get_intrinsic<std::string>("bodypart_leg_name");
+  case BodyPart::Foot:  return get_intrinsic<std::string>("bodypart_foot_name");
+  case BodyPart::Wing:  return get_intrinsic<std::string>("bodypart_wing_name");
+  case BodyPart::Tail:  return get_intrinsic<std::string>("bodypart_tail_name");
   default: return "squeedlyspooch (unknown BodyPart)";
   }
 }
@@ -1759,21 +1782,21 @@ std::string Thing::get_bodypart_plural(BodyPart part) const
 {
   switch (part)
   {
-  case BodyPart::Body:  return get_intrinsic<std::string>("bodypart.body.plural", get_bodypart_name(BodyPart::Body) + "s");
-  case BodyPart::Skin:  return get_intrinsic<std::string>("bodypart.skin.plural", get_bodypart_name(BodyPart::Skin) + "s");
-  case BodyPart::Head:  return get_intrinsic<std::string>("bodypart.head.plural", get_bodypart_name(BodyPart::Head) + "s");
-  case BodyPart::Ear:   return get_intrinsic<std::string>("bodypart.ear.plural", get_bodypart_name(BodyPart::Ear) + "s");
-  case BodyPart::Eye:   return get_intrinsic<std::string>("bodypart.eye.plural", get_bodypart_name(BodyPart::Eye) + "s");
-  case BodyPart::Nose:  return get_intrinsic<std::string>("bodypart.nose.plural", get_bodypart_name(BodyPart::Nose) + "s");
-  case BodyPart::Mouth: return get_intrinsic<std::string>("bodypart.mouth.plural", get_bodypart_name(BodyPart::Mouth) + "s");
-  case BodyPart::Neck:  return get_intrinsic<std::string>("bodypart.neck.plural", get_bodypart_name(BodyPart::Neck) + "s");
-  case BodyPart::Chest: return get_intrinsic<std::string>("bodypart.chest.plural", get_bodypart_name(BodyPart::Chest) + "s");
-  case BodyPart::Arm:   return get_intrinsic<std::string>("bodypart.arm.plural", get_bodypart_name(BodyPart::Arm) + "s");
-  case BodyPart::Hand:  return get_intrinsic<std::string>("bodypart.hand.plural", get_bodypart_name(BodyPart::Hand) + "s");
-  case BodyPart::Leg:   return get_intrinsic<std::string>("bodypart.leg.plural", get_bodypart_name(BodyPart::Leg) + "s");
-  case BodyPart::Foot:  return get_intrinsic<std::string>("bodypart.foot.plural", get_bodypart_name(BodyPart::Foot) + "s");
-  case BodyPart::Wing:  return get_intrinsic<std::string>("bodypart.wing.plural", get_bodypart_name(BodyPart::Wing) + "s");
-  case BodyPart::Tail:  return get_intrinsic<std::string>("bodypart.tail.plural", get_bodypart_name(BodyPart::Tail) + "s");
+  case BodyPart::Body:  return get_intrinsic<std::string>("bodypart_body_plural", get_bodypart_name(BodyPart::Body) + "s");
+  case BodyPart::Skin:  return get_intrinsic<std::string>("bodypart_skin_plural", get_bodypart_name(BodyPart::Skin) + "s");
+  case BodyPart::Head:  return get_intrinsic<std::string>("bodypart_head_plural", get_bodypart_name(BodyPart::Head) + "s");
+  case BodyPart::Ear:   return get_intrinsic<std::string>("bodypart_ear_plural", get_bodypart_name(BodyPart::Ear) + "s");
+  case BodyPart::Eye:   return get_intrinsic<std::string>("bodypart_eye_plural", get_bodypart_name(BodyPart::Eye) + "s");
+  case BodyPart::Nose:  return get_intrinsic<std::string>("bodypart_nose_plural", get_bodypart_name(BodyPart::Nose) + "s");
+  case BodyPart::Mouth: return get_intrinsic<std::string>("bodypart_mouth_plural", get_bodypart_name(BodyPart::Mouth) + "s");
+  case BodyPart::Neck:  return get_intrinsic<std::string>("bodypart_neck_plural", get_bodypart_name(BodyPart::Neck) + "s");
+  case BodyPart::Chest: return get_intrinsic<std::string>("bodypart_chest_plural", get_bodypart_name(BodyPart::Chest) + "s");
+  case BodyPart::Arm:   return get_intrinsic<std::string>("bodypart_arm_plural", get_bodypart_name(BodyPart::Arm) + "s");
+  case BodyPart::Hand:  return get_intrinsic<std::string>("bodypart_hand_plural", get_bodypart_name(BodyPart::Hand) + "s");
+  case BodyPart::Leg:   return get_intrinsic<std::string>("bodypart_leg_plural", get_bodypart_name(BodyPart::Leg) + "s");
+  case BodyPart::Foot:  return get_intrinsic<std::string>("bodypart_foot_plural", get_bodypart_name(BodyPart::Foot) + "s");
+  case BodyPart::Wing:  return get_intrinsic<std::string>("bodypart_wing_plural", get_bodypart_name(BodyPart::Wing) + "s");
+  case BodyPart::Tail:  return get_intrinsic<std::string>("bodypart_tail_plural", get_bodypart_name(BodyPart::Tail) + "s");
   default: return "squeedlyspooches (unknown BodyParts)";
   }
 }
