@@ -15,11 +15,10 @@ MEDIUM THINGS
 [ ] Split MessageLog into model/view (MessageLog and MessageLogPane)
 [ ] Allow for scrolling back in MessageLog
 [ ] Allow for lines with different colors (and fonts?) in MessageLog
+[ ] Show the "wielded" / "equipped" tiles in the Inventory
 
 BIG THINGS
 ==========
-[ ] Implement wielding an item
-
 [ ] Implement the Attack action!
 
 [ ] Let Lua get a Thing's inventory (as a table of ids)

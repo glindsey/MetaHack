@@ -333,7 +333,7 @@ std::string InventoryArea::render_contents(int frame)
       render_text.setFont(the_default_mono_font);
       render_text.setCharacterSize(Settings.get<unsigned int>("text_mono_default_size"));
       render_text.setString(selection_number.str());
-      render_text.setPosition(text_coord_x + 1, text_coord_y);
+      render_text.setPosition(text_coord_x + 26, text_coord_y);
       render_text.setColor(fg_color);
       bg_texture.draw(render_text);
     }
@@ -350,7 +350,7 @@ std::string InventoryArea::render_contents(int frame)
       render_text.setFont(the_default_mono_font);
       render_text.setCharacterSize(Settings.get<unsigned int>("text_mono_default_size"));
       render_text.setString(slot_id.str());
-      render_text.setPosition(text_coord_x + 35, text_coord_y);
+      render_text.setPosition(text_coord_x + 55, text_coord_y);
       render_text.setColor(fg_color);
       bg_texture.draw(render_text);
     }
@@ -358,26 +358,29 @@ std::string InventoryArea::render_contents(int frame)
     // 4. Display the tile representing the item.
     TS.getTexture().setSmooth(true);
     thing->draw_to(bg_texture,
-                   sf::Vector2f(static_cast<float>(text_coord_x + 55), static_cast<float>(text_coord_y)),
+                   sf::Vector2f(static_cast<float>(text_coord_x + 75), static_cast<float>(text_coord_y)),
                    static_cast<unsigned int>(line_spacing_y - 1), false, frame);
     TS.getTexture().setSmooth(false);
 
     // 5. TODO: Display "worn" or "equipped" icon if necessary.
-    // 5a. First, the inventory location must be an Entity.
-    #if 0
-    if (isType(&location, Entity))
+    if (pImpl->viewed->is_wielding(thing))
     {
-      Entity& location_entity = dynamic_cast<Entity&>(location);
-      if (location_entity.is_wielding(id))
-      {
-        // TODO: draw wielding icon
-      }
-      else if (location_entity.has_equipped(id))
-      {
-        // TODO: draw equipped icon
-      }
+      render_text.setFont(the_default_mono_font);
+      render_text.setCharacterSize(Settings.get<unsigned int>("text_mono_default_size"));
+      render_text.setString("W");
+      render_text.setPosition(text_coord_x + 11, text_coord_y);
+      render_text.setColor(fg_color);
+      bg_texture.draw(render_text);
     }
-    #endif
+    else if (pImpl->viewed->has_equipped(thing))
+    {
+      render_text.setFont(the_default_mono_font);
+      render_text.setCharacterSize(Settings.get<unsigned int>("text_mono_default_size"));
+      render_text.setString("E");
+      render_text.setPosition(text_coord_x + 11, text_coord_y);
+      render_text.setColor(fg_color);
+      bg_texture.draw(render_text);
+    }
 
     // 6. Display the item name.
     std::stringstream item_name;
@@ -394,7 +397,7 @@ std::string InventoryArea::render_contents(int frame)
     render_text.setFont(the_default_font);
     render_text.setCharacterSize(Settings.get<unsigned int>("text_default_size"));
     render_text.setString(item_name.str());
-    render_text.setPosition(text_coord_x + 60 + line_spacing_y,
+    render_text.setPosition(text_coord_x + 80 + line_spacing_y,
                             text_coord_y + 1);
     render_text.setColor(fg_color);
     bg_texture.draw(render_text);
