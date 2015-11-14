@@ -8,11 +8,7 @@ SMALL THINGS
 
 MEDIUM THINGS
 =============
-[X] Function to get a dot-nested table from Lua class, e.g. "intrinsics.bodypart.body.name"
-[/] Function to set a dot-nested table in Lua class (untested so far)
-
 [ ] Tile coordinates aren't inherited right now -- fix this
-    - Sticking tile coordinates into Lua classes will automatically enable inheritance
 [ ] Make it easier for enum classes to be defined, to have an operator<< defined, and to have it exposed to Lua.
 [ ] Replace the error/trace functions with boost logging facilities
 [ ] Light bleed across tiles
@@ -37,9 +33,6 @@ BIG THINGS
         
     - Likewise, get can just push back however many return values are needed for the value.
 
-[X] Create a std::unordered_map< std::string, std::vector< std::string > > that records the children of each parent.
-    - Turns out this has required a huge refactor of the way I'm saving Metadata instances. Welp.
-    
 [ ] Revamp Actions
     - Right now, actions just execute immediately when popped from the queue, and then have an "action_time" where the actor is frozen.
     - Instead, actions should be split into the following stages:
@@ -66,9 +59,3 @@ BIG THINGS
 [ ] List of available commands that apply when Things are selected
         
 [ ] GUIPane animation for sliding in/out, flipping, expanding/shrinking
-
-ENORMOUS THINGS
-===============
-[/] Move ALL XML data into Lua files
-    - Why split stuff between XML and Lua files?
-        

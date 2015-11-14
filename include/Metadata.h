@@ -189,6 +189,27 @@ public:
   double get_default_value(std::string name, double default_value);
   std::string get_default_string(std::string name, std::string default_value);
 
+  template <typename T>
+  void set_intrinsic(std::string name, T value)
+  {
+    return static_cast<T>(set_intrinsic_value(name, value));
+  }
+
+  template<> void set_intrinsic(std::string name, bool value)
+  {
+    return set_intrinsic_bool(name, value);
+  }
+
+  template<> void set_intrinsic(std::string name, std::string value)
+  {
+    return set_intrinsic_string(name, value);
+  }
+
+  void set_intrinsic_bool(std::string name, bool value);
+  void set_intrinsic_value(std::string name, double value);
+  void set_intrinsic_string(std::string name, std::string value);
+
+
 protected:
 
   /// Get the entire PropertyDictionary of defaults.

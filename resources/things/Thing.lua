@@ -91,3 +91,8 @@ function Thing:get_default(name)
 		return result
 	end		
 end
+
+function Thing:set_intrinsic(name, value)
+	self.intrinsics[name] = value
+end
+
