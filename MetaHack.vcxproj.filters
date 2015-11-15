@@ -400,5 +400,8 @@
     <None Include="resources\maptiles\MTWallStone.lua">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="resources\things\Chest.lua">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

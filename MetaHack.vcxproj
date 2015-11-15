@@ -237,6 +237,7 @@
     <None Include="resources\things\Animal.lua" />
     <None Include="resources\things\Biped.lua" />
     <None Include="resources\things\Blob.lua" />
+    <None Include="resources\things\Chest.lua" />
     <None Include="resources\things\ChestWooden.lua" />
     <None Include="resources\things\Coin.lua" />
     <None Include="resources\things\CoinGold.lua" />
