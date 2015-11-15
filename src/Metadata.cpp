@@ -391,18 +391,26 @@ double Metadata::get_default_value(std::string name, double default_value = 0.0)
       lua_pushvalue(the_lua_state, -2);                 // class get class <
       lua_remove(the_lua_state, -3);                    // get class <
       lua_pushstring(the_lua_state, name.c_str());      // get class name <
-      int result = lua_pcall(the_lua_state, 2, 1, 0);   // (result|err) <
+      int result = lua_pcall(the_lua_state, 2, 2, 0);   // (result1, (result2|nil)|err) <
       if (result == 0)
       {
         // Get the return value.
-        if (!lua_isnoneornil(the_lua_state, -1))
+        if (!lua_isnoneornil(the_lua_state, -2))
         {
-          // Get the return value.
-          return_value = lua_tonumber(the_lua_state, -1);
+          if (lua_isnoneornil(the_lua_state, -1))
+          {
+            // Get the return value.
+            return_value = lua_tonumber(the_lua_state, -2);
+          }
+          else
+          {
+            IntegerRange range(lua_tonumber(the_lua_state, -2), lua_tonumber(the_lua_state, -1));
+            return_value = range.pick();
+          }
         }
 
-        // Pop the return value off the stack. (-1)
-        lua_pop(the_lua_state, 1);
+        // Pop the return values off the stack. (-2)
+        lua_pop(the_lua_state, 2);
       }
       else
       {

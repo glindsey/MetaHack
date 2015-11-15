@@ -20,6 +20,7 @@ ConfigSettings::ConfigSettings()
   set("font_name_bold", "Dustismo_Roman_Bold");
   set("font_name_mono", "DejaVuSansMono");
   set("font_name_unicode", "FreeMono");
+  set("text_dim_color", sf::Color(192, 192, 128, 255));
   set("text_color", sf::Color(224, 224, 160, 255));
   set("text_warning_color", sf::Color(255, 255, 0, 255));
   set("text_danger_color", sf::Color(255, 0, 0, 255));
@@ -32,7 +33,7 @@ ConfigSettings::ConfigSettings()
   set("tile_highlight_border_width", 2);
   set("inventory_area_width", 300);
   set("messagelog_area_height", 200);
-  set("status_area_height", 80);
+  set("status_area_height", 90);
   set("map_tile_size", 32);
   set("debug_show_quad_outlines", false);
 

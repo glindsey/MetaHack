@@ -18,6 +18,8 @@ class StatusArea : public GUIPane
     virtual std::string render_contents(int frame) override;
 
   private:
+    void render_attribute(sf::RenderTexture& bg_texture, std::string abbrev, std::string name, sf::Vector2f location);
+
     struct Impl;
     std::unique_ptr<Impl> pImpl;
 };

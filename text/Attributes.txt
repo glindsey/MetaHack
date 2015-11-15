@@ -63,9 +63,8 @@ Attributes
         - affects ability to read scrolls/books, build items
     - Aura
         - affects potency of magicule usage, defense against effects
-    - Suavity
+    - Charisma
         - affects ability to barter, bribe, and influence others
-    - Allure
         - affects physical attractiveness to interested individuals
     - Vigilance
         - affects identification of secret passages

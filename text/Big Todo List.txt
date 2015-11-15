@@ -1,8 +1,7 @@
 SMALL THINGS
 ============
-[ ] When a default is read to get an initial property for a Thing/MapTile, any IntegerRange key should automatically do a "pick()" and return a result instead of just returning the IntegerRange table.
 [ ] Lua-ify some more events and checks
-[ ] Show hardcoded attributes in StatusArea
+[ ] Fix quantities (they are not currently being respected for get/drop actions)
 
 MEDIUM THINGS
 =============
@@ -19,6 +18,21 @@ MEDIUM THINGS
 
 BIG THINGS
 ==========
+[ ] Implement GUILabel class
+	[ ] Label should support left/center/right justification
+	[ ] Label should handle text wrapping
+
+[ ] Change StatusArea to use GUILabel
+
+[ ] Change InventoryArea to use GUILabel
+
+[ ] Map creation driven via Lua scripts instead of C++ code
+
+[ ] Add a way for monster types to register themselves in a vector that stores spawn information
+	- Never / Single / Group
+	- Player XP level for spawning
+	- Spawn location (e.g. cave, town, etc)?
+	
 [ ] Implement the Attack action!
 
 [ ] Let Lua get a Thing's inventory (as a table of ids)
@@ -56,5 +70,13 @@ BIG THINGS
 
 MIND-BOGGLINGLY ENORMOUS THINGS
 ===============================
-
 [ ] Implement saving/loading of the dungeon
+
+
+??? THINGS
+==========
+	- How do we handle polymorphing?
+		- A permanent polymorph is actually pretty easy; you just make a new Thing and then do set_player() on it.
+		- Temporary polymorphs are far trickier; we need a way to stash the existing Thing somewhere, and then revert back to it at death.
+			- Original form could be stashed in Limbo; the temporary polymorph would need to store its ThingId to know what to revert to
+			- There's also the question of which attributes get copied over.
