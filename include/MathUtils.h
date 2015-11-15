@@ -203,4 +203,13 @@ inline sf::Color average(sf::Color first, sf::Color second, sf::Color third, sf:
   return result;
 }
 
+/// Return whether two sets of coordinates are adjacent to each other.
+/// In this context, adjacent includes corners as well as edges.
+/// (e.g. A tile at (4, 4) and a tile at (5, 5) are considered adjacent.)
+/// A tile is also considered adjacent to itself.
+inline bool adjacent(sf::Vector2i first, sf::Vector2i second)
+{
+  return (iabs(first.x - second.x) <= 1) && (iabs(first.y - second.y) <= 1);
+}
+
 #endif // _MATHUTILS_H_

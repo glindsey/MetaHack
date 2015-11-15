@@ -4,6 +4,14 @@
 #include <boost/random/normal_distribution.hpp>
 
 #include "App.h"
+#include "ErrorHandler.h"
+
+IntegerRange::IntegerRange()
+  :
+  m_start{ 0 },
+  m_end{ 0 },
+  m_uniform{ false }
+{}
 
 IntegerRange::IntegerRange(int start, int end, bool uniform)
   :
@@ -39,8 +47,7 @@ int IntegerRange::pick()
     if (value < 0) value = 0;
     if (value > 1) value = 1;
     // Multiply by the desired range, and add m_start.
-    value *= range;
-    value += m_start;
+    value = (value * range) + m_start;
 
     return static_cast<int>(value);
   }

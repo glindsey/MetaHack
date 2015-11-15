@@ -2,6 +2,7 @@
 #define DIRECTION_H
 
 #include <iostream>
+#include <sstream>
 
 enum class Direction
 {
@@ -41,6 +42,13 @@ inline std::ostream& operator<<(std::ostream& os, const Direction& d)
   }
 
   return os;
+}
+
+inline std::string str(const Direction& d)
+{
+  std::stringstream stream;
+  stream << d;
+  return stream.str();
 }
 
 inline Direction update_direction(Direction current_direction,

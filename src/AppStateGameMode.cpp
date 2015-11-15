@@ -425,7 +425,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             {
               if (!thing->get_intrinsic<bool>("openable") || thing->get_property<bool>("open"))
               {
-                if (thing->get_intrinsic<bool>("lockable") && !thing->get_property<bool>("locked"))
+                if (!thing->get_intrinsic<bool>("lockable") || !thing->get_property<bool>("locked"))
                 {
                   pImpl->inventory_area->set_viewed(thing);
                 }
@@ -493,24 +493,15 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
         pImpl->map_zoom_level = 1.0f;
         break;
 
-        // CTRL-A -- attack
+        // CTRL-A -- attire/adorn
       case sf::Keyboard::Key::A:    // Attack
-        action.set_type(ActionType::Attack);
+        action.set_type(ActionType::Attire);
         if (action.get_things().size() == 0)
         {
-          // No item specified, so ask for a direction.
-          pImpl->action_in_progress = action;
-          the_message_log.add("Choose a direction to attack.");
-          pImpl->current_input_state = GameInputState::TargetSelection;
-          pImpl->inventory_area->clear_selected_slots();
-        }
-        else if (action.get_things().size() > 1)
-        {
-          the_message_log.add("You can only attack one item at once.");
+          the_message_log.add("Please choose the item(s) to wear first.");
         }
         else
         {
-          // Item(s) specified, so proceed with items.
           player->queue_action(action);
           pImpl->inventory_area_shows_player = false;
           pImpl->reset_inventory_area();
@@ -596,7 +587,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           the_message_log.add("Please select the item(s) to pick up first.");
         }
         else
-        { 
+        {
           player->queue_action(action);
           pImpl->inventory_area_shows_player = false;
           pImpl->reset_inventory_area();
@@ -808,9 +799,32 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
         result = EventResult::Handled;
         break;
 
+        // CTRL-X -- Xplicit attack
+      case sf::Keyboard::Key::X:
+        action.set_type(ActionType::Attack);
+        if (action.get_things().size() == 0)
+        {
+          // No item specified, so ask for a direction.
+          pImpl->action_in_progress = action;
+          the_message_log.add("Choose a direction to attack.");
+          pImpl->current_input_state = GameInputState::TargetSelection;
+          pImpl->inventory_area->clear_selected_slots();
+        }
+        else if (action.get_things().size() > 1)
+        {
+          the_message_log.add("You can only attack one item at once.");
+        }
+        else
+        {
+          // Item(s) specified, so proceed with items.
+          player->queue_action(action);
+          pImpl->inventory_area_shows_player = false;
+          pImpl->reset_inventory_area();
+        }
+
       default:
         break;
-      }
+      } // end switch 
     } // end if (!key.alt && key.control)
 
     // *** YES ALT, no CTRL, SHIFT is irrelevant ******************************

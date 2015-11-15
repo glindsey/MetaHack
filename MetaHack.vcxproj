@@ -225,35 +225,33 @@
     <ClCompile Include="src\TileSheet.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="resources\things\Biped.xml" />
-    <Xml Include="resources\things\Blob.xml" />
-    <Xml Include="resources\things\ChestWooden.xml" />
-    <Xml Include="resources\things\CoinGold.xml" />
-    <Xml Include="resources\things\Entity.xml" />
-    <Xml Include="resources\things\Floor.xml">
-      <SubType>Designer</SubType>
-    </Xml>
-    <Xml Include="resources\things\Human.xml" />
-    <Xml Include="resources\things\LightOrb.xml" />
-    <Xml Include="resources\things\LightSource.xml" />
-    <Xml Include="resources\things\Mu.xml" />
-    <Xml Include="resources\things\Rock.xml" />
-    <Xml Include="resources\things\RockLichen.xml" />
-    <Xml Include="resources\things\SackLarge.xml" />
-    <Xml Include="resources\things\Sconce.xml" />
-    <Xml Include="resources\things\Thing.xml">
-      <SubType>Designer</SubType>
-    </Xml>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="README.md" />
     <None Include="resources\default.lua" />
+    <None Include="resources\maptiles\MTFloor.lua" />
+    <None Include="resources\maptiles\MTFloorDirt.lua" />
+    <None Include="resources\maptiles\MTFloorStone.lua" />
+    <None Include="resources\maptiles\MTUnknown.lua" />
+    <None Include="resources\maptiles\MTWall.lua" />
+    <None Include="resources\maptiles\MTWallStone.lua" />
     <None Include="resources\scripts\map.lua" />
+    <None Include="resources\things\Animal.lua" />
     <None Include="resources\things\Biped.lua" />
+    <None Include="resources\things\Blob.lua" />
+    <None Include="resources\things\ChestWooden.lua" />
+    <None Include="resources\things\Coin.lua" />
+    <None Include="resources\things\CoinGold.lua" />
+    <None Include="resources\things\Container.lua" />
+    <None Include="resources\things\Dagger.lua" />
     <None Include="resources\things\Entity.lua" />
+    <None Include="resources\things\Floor.lua" />
     <None Include="resources\things\Human.lua" />
+    <None Include="resources\things\LightOrb.lua" />
     <None Include="resources\things\LightSource.lua" />
+    <None Include="resources\things\Mu.lua" />
     <None Include="resources\things\Rock.lua" />
+    <None Include="resources\things\RockLichen.lua" />
+    <None Include="resources\things\SackCloth.lua" />
+    <None Include="resources\things\Sapient.lua" />
     <None Include="resources\things\Sconce.lua" />
     <None Include="resources\things\Thing.lua" />
   </ItemGroup>

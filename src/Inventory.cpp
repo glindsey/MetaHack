@@ -194,14 +194,43 @@ ThingRef Inventory::get_largest_thing()
   return iter_largest->second;
 }
 
+ThingRef Inventory::get_living_creature()
+{
+  auto iter =
+    find_if([&](const ThingPair& thing_pair)
+  {
+    ThingRef ref = thing_pair.second;
+    return ((ref->get_intrinsic<bool>("living") == true) && (ref->get_property<int>("hp") > 0));
+  });
+
+  if (iter != things_.cend())
+  {
+    return iter->second;
+  }
+  else
+  {
+    return TM.get_mu();
+  }
+}
+
+ThingMap::iterator Inventory::find_if(std::function<bool(ThingPair const&)> functor)
+{
+  ThingMap::iterator iter = 
+    std::find_if(things_.begin(), things_.end(), functor);
+  return iter;
+}
+
 ThingMap::iterator Inventory::find(ThingRef target_id)
 {
-  ThingMap::iterator iter = find_if(things_.begin(),
-                                    things_.end(),
-                                    [&](ThingPair const& thing_pair)
-                                    {
-                                      return thing_pair.second == target_id;
-                                    });
+  ThingMap::iterator iter = 
+    std::find_if(
+      things_.begin(),
+      things_.end(),
+      [&](ThingPair const& thing_pair)
+      {
+        return thing_pair.second == target_id;
+      });
+
   return iter;
 }
 

@@ -313,53 +313,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="resources\things\Thing.xml">
-      <Filter>Resource Files</Filter>
-    </Xml>
-    <Xml Include="resources\things\Sconce.xml">
-      <Filter>Resource Files</Filter>
-    </Xml>
-    <Xml Include="resources\things\LightOrb.xml">
-      <Filter>Resource Files</Filter>
-    </Xml>
-    <Xml Include="resources\things\SackLarge.xml">
-      <Filter>Resource Files</Filter>
-    </Xml>
-    <Xml Include="resources\things\Biped.xml">
-      <Filter>Resource Files</Filter>
-    </Xml>
-    <Xml Include="resources\things\Blob.xml">
-      <Filter>Resource Files</Filter>
-    </Xml>
-    <Xml Include="resources\things\ChestWooden.xml">
-      <Filter>Resource Files</Filter>
-    </Xml>
-    <Xml Include="resources\things\CoinGold.xml">
-      <Filter>Resource Files</Filter>
-    </Xml>
-    <Xml Include="resources\things\Human.xml">
-      <Filter>Resource Files</Filter>
-    </Xml>
-    <Xml Include="resources\things\RockLichen.xml">
-      <Filter>Resource Files</Filter>
-    </Xml>
-    <Xml Include="resources\things\Rock.xml">
-      <Filter>Resource Files</Filter>
-    </Xml>
-    <Xml Include="resources\things\Floor.xml">
-      <Filter>Resource Files</Filter>
-    </Xml>
-    <Xml Include="resources\things\Mu.xml">
-      <Filter>Resource Files</Filter>
-    </Xml>
-    <Xml Include="resources\things\LightSource.xml">
-      <Filter>Resource Files</Filter>
-    </Xml>
-    <Xml Include="resources\things\Entity.xml">
-      <Filter>Resource Files</Filter>
-    </Xml>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="resources\default.lua">
       <Filter>Resource Files</Filter>
     </None>
@@ -388,6 +341,63 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="resources\things\Entity.lua">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\things\Animal.lua">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\things\Blob.lua">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\things\ChestWooden.lua">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\things\Coin.lua">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\things\CoinGold.lua">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\things\Container.lua">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\things\Dagger.lua">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\things\Floor.lua">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\things\LightOrb.lua">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\things\Mu.lua">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\things\RockLichen.lua">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\things\SackCloth.lua">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\things\Sapient.lua">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\maptiles\MTFloor.lua">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\maptiles\MTFloorDirt.lua">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\maptiles\MTFloorStone.lua">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\maptiles\MTUnknown.lua">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\maptiles\MTWall.lua">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\maptiles\MTWallStone.lua">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

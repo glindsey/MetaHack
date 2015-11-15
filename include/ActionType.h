@@ -6,7 +6,7 @@ enum class ActionType
   None,
   Wait,
   Attack,
-  AttackSafe,   ///< "Safe" attack action, only attacks hostiles
+  Attire,
   Close,
   Drop,
   Eat,

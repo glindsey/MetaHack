@@ -57,6 +57,8 @@ bool Action::remove_thing(ThingRef thing)
   return false;
 }
 
+// @todo Action::target_can_be_bodypart()
+
 bool Action::target_can_be_thing() const
 {
   switch (pImpl->type)
@@ -74,8 +76,7 @@ bool Action::target_can_be_direction() const
 {
   switch (pImpl->type)
   {
-  case ActionType::Attack:
-  case ActionType::AttackSafe:
+  case ActionType::Attack:    
   case ActionType::Close:
   case ActionType::Fill:
   case ActionType::Hurl:

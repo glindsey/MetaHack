@@ -72,9 +72,11 @@ class Inventory
     ThingRef remove(InventorySlot slot);
 
     ThingRef get_largest_thing();
+    ThingRef get_living_creature();
 
   protected:
     ThingMap::iterator find(ThingRef target);
+    ThingMap::iterator find_if(std::function<bool(ThingPair const&)> functor);
 
     static bool is_smaller_than(ThingRef a, ThingRef b);
 

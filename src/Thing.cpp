@@ -14,6 +14,7 @@
 #include "ConfigSettings.h"
 #include "Direction.h"
 #include "Gender.h"
+#include "IntegerRange.h"
 #include "Inventory.h"
 #include "Map.h"
 #include "MapTile.h"
@@ -65,15 +66,34 @@ sf::Color const Thing::wall_outline_color_ = sf::Color(255, 255, 255, 64);
 
 Thing::Thing(Metadata& metadata, ThingRef ref)
   : pImpl(metadata, ref)
-{}
+{
+  initialize();
+}
 
 Thing::Thing(MapTile* map_tile, Metadata& metadata, ThingRef ref)
   : pImpl(map_tile, metadata, ref)
-{}
+{
+  initialize();
+}
 
 Thing::Thing(Thing const& original, ThingRef ref)
   : pImpl(*(original.pImpl), ref)
-{}
+{
+  initialize();
+}
+
+void Thing::initialize()
+{
+  /// Get the max_hp IntegerRange for this Thing (if any).
+  IntegerRange max_hp_range = pImpl->metadata.get_default<IntegerRange>("maxhp");
+
+  /// Pick a number and set it as our maximum HP.
+  int max_hp = max_hp_range.pick();
+  set_property<int>("maxhp", max_hp);
+
+  /// Also set our HP to that value.
+  set_property<int>("hp", max_hp);
+}
 
 Thing::~Thing()
 {
@@ -136,17 +156,151 @@ bool Thing::can_reach(ThingRef thing)
   return false;
 }
 
+bool Thing::is_adjacent_to(ThingRef thing)
+{
+  // Get the coordinates we are at.
+  MapTile* our_maptile = get_maptile();
+  MapTile* thing_maptile = thing->get_maptile();
+  if ((our_maptile == nullptr) || (thing_maptile == nullptr))
+  {
+    return false;
+  }
+
+  sf::Vector2i const& our_coords = our_maptile->get_coords();
+  sf::Vector2i const& thing_coords = thing_maptile->get_coords();
+
+  return adjacent(our_coords, thing_coords);
+}
+
+bool Thing::do_attack(Direction direction, unsigned int& action_time)
+{
+  /// @todo Update action time based on direction, speed, etc.
+
+  std::string message;
+
+  // First: check direction.
+  if (direction == Direction::Self)
+  {
+    /// @todo Allow attacking yourself!
+    message = YOU + " wisely" + CV(" refrain", " refrains") + " from pummelling " + YOURSELF + ".";
+    the_message_log.add(message);
+    return false;
+  }
+
+  ThingRef location = get_location();
+  MapTile* current_tile = get_maptile();
+
+  // Make sure we're not in limbo!
+  if ((location == TM.get_mu()) || (current_tile == nullptr))
+  {
+    message = YOU + " can't attack anything because " + YOU_DO + " not exist physically!";
+    the_message_log.add(message);
+    return false;
+  }
+
+  if (!IS_PLAYER)
+  {
+    message = YOU_TRY_TO("attack") + str(direction) + ".";
+    the_message_log.add(message);
+    message = "But ";
+  }
+  else
+  {
+    message = "";
+  }
+
+  // Make sure we CAN move.
+  if (!get_intrinsic<bool>("can_attack", false))
+  {
+    message += YOU + CV(" aren't", " isn't") + " capable of attacking anything.";
+    the_message_log.add(message);
+    return false;
+  }
+
+  // Make sure we can move RIGHT NOW.
+  if (!can_currently_move())
+  {
+    message += YOU + " can't move right now.";
+    the_message_log.add(message);
+    return false;
+  }
+
+  // Make sure we're not confined inside another thing.
+  if (is_inside_another_thing())
+  {
+    /// @todo Attack the thing you are inside!
+    message += YOU_ARE + " inside " + location->get_identifying_string(false) +
+      " and " + ARE + " not going anywhere!";
+
+    the_message_log.add(message);
+    return false;
+  }
+
+  if (direction == Direction::Up)
+  {
+    /// @todo Write up/down attack code
+    message = "Attacking the ceiling is not yet supported!";
+    the_message_log.add(message);
+    return false;
+  }
+  else if (direction == Direction::Down)
+  {
+    /// @todo Write up/down attack code
+    message = "Attacking the floor is not yet supported!";
+    the_message_log.add(message);
+    return false;
+  }
+  else
+  {
+    // Figure out our target location.
+    sf::Vector2i coords = current_tile->get_coords();
+    int x_offset = get_x_offset(direction);
+    int y_offset = get_y_offset(direction);
+    int x_new = coords.x + x_offset;
+    int y_new = coords.y + y_offset;
+    Map& current_map = MF.get(get_map_id());
+    sf::Vector2i map_size = current_map.get_size();
+
+    // Check boundaries.
+    if ((x_new < 0) || (y_new < 0) ||
+      (x_new >= map_size.x) || (y_new >= map_size.y))
+    {
+      message += YOU + " can't attack there; it is out of bounds!";
+      the_message_log.add(message);
+      return false;
+    }
+
+    auto& new_tile = current_map.get_tile(x_new, y_new);
+    ThingRef new_floor = new_tile.get_floor();
+
+    // See if the tile to move into contains another creature.
+    ThingRef creature = new_floor->get_inventory().get_living_creature();
+    if (creature != TM.get_mu())
+    {
+      return do_attack(creature, action_time);
+    }
+    else
+    {
+      /// @todo Deal with attacking other stuff, MapTiles, etc.
+      message = "Attacking non-living things is not yet supported!";
+      the_message_log.add(message);
+      return false;
+    }
+  } // end else if (other direction)
+}
+
 bool Thing::do_attack(ThingRef thing, unsigned int& action_time)
 {
   std::string message;
 
-  bool reachable = this->can_reach(thing);
+  bool reachable = this->is_adjacent_to(thing);
   /// @todo deal with Entities in your Inventory -- WTF do you do THEN?
 
   if (reachable)
   {
     /// @todo Write attack code.
-    the_message_log.add("TODO: This is where you would attack something.");
+    std::string message = YOU_TRY + " to attack " + FOO + ", but are stopped by the programmer's procrastination!";
+    the_message_log.add(message);
   }
 
   return false;
@@ -302,6 +456,10 @@ ActionResult Thing::can_drop(ThingRef thing, unsigned int& action_time)
   }
 
   /// @todo Check that we're not wearing the item.
+  if (this->has_equipped(thing))
+  {
+    return ActionResult::FailureItemEquipped;
+  }
 
   return ActionResult::Success;
 }
@@ -654,7 +812,7 @@ bool Thing::do_move(Direction new_direction, unsigned int& action_time)
 
   if (!IS_PLAYER)
   {
-    message = YOU_TRY_TO("move");
+    message = YOU_TRY_TO("move") + str(new_direction) + ".";
     the_message_log.add(message);
     message = "But ";
   }
@@ -726,18 +884,29 @@ bool Thing::do_move(Direction new_direction, unsigned int& action_time)
     auto& new_tile = current_map.get_tile(x_new, y_new);
     ThingRef new_floor = new_tile.get_floor();
 
-    if (new_tile.can_be_traversed_by(pImpl->ref))
+    // See if the tile to move into contains another creature.
+    ThingRef creature = new_floor->get_inventory().get_living_creature();
+    if (creature != TM.get_mu())
     {
-      return move_into(new_floor);
+      /// @todo Setting choosing whether auto-attack is on.
+      /// @todo Only attack hostiles.
+      return do_attack(new_direction, action_time);
     }
     else
     {
-      std::string tile_description = new_tile.get_display_name();
-      message += YOU_ARE + " stopped by " +
-        getIndefArt(tile_description) + " " +
-        tile_description + ".";
-      the_message_log.add(message);
-      return false;
+      if (new_tile.can_be_traversed_by(pImpl->ref))
+      {
+        return move_into(new_floor);
+      }
+      else
+      {
+        std::string tile_description = new_tile.get_display_name();
+        message += YOU_ARE + " stopped by " +
+          getIndefArt(tile_description) + " " +
+          tile_description + ".";
+        the_message_log.add(message);
+        return false;
+      }
     }
   } // end else if (other direction)
 }
@@ -913,6 +1082,18 @@ ActionResult Thing::can_put_into(ThingRef thing, ThingRef container,
     return ActionResult::FailureContainerOutOfReach;
   }
 
+  // Check that we're not wielding the item.
+  if (this->is_wielding(thing))
+  {
+    return ActionResult::FailureItemWielded;
+  }
+
+  /// @todo Check that we're not wearing the item.
+  if (this->has_equipped(thing))
+  {
+    return ActionResult::FailureItemEquipped;
+  }
+
   // Finally, make sure the container can hold this thing.
   return container->can_contain(pImpl->ref);
 }
@@ -1039,6 +1220,29 @@ bool Thing::do_put_into(ThingRef thing, ThingRef container,
         "in itself, which seriously shouldn't happen.";
       MINOR_ERROR("Non-player Entity tried to store a container in itself!?");
     }
+  }
+  break;
+
+  case ActionResult::FailureItemEquipped:
+  {
+    message = YOU_TRY + " to store " + thing->get_identifying_string() + " in " +
+      container->get_identifying_string() + ".";
+    the_message_log.add(message);
+
+    message = YOU + " cannot store something that is currently being worn.";
+    the_message_log.add(message);
+  }
+  break;
+
+  case ActionResult::FailureItemWielded:
+  {
+    message = YOU_TRY + " to store " + thing->get_identifying_string() + " in " +
+      container->get_identifying_string() + ".";
+    the_message_log.add(message);
+
+    /// @todo Perhaps automatically try to unwield the item before dropping?
+    message = YOU + "cannot store something that is currently being wielded.";
+    the_message_log.add(message);
   }
   break;
 
@@ -2198,7 +2402,7 @@ std::string Thing::get_identifying_string_without_possessives(bool definite)
     article += boost::lexical_cast<std::string>(get_quantity()) + " ";
   }
 
-  if (get_intrinsic<bool>("living") && get_property<int>("hp") > 0)
+  if (get_intrinsic<bool>("living") && get_property<int>("hp") <= 0)
   {
     adjectives += "dead ";
   }
@@ -2281,7 +2485,7 @@ std::string Thing::get_identifying_string(bool definite)
     }
   }
 
-  if (get_intrinsic<bool>("living") && get_property<int>("hp") > 0)
+  if (get_intrinsic<bool>("living") && get_property<int>("hp") <= 0)
   {
     adjectives += "dead ";
   }
@@ -2961,6 +3165,14 @@ bool Thing::_process_self()
 
       case ActionType::Move:
         success = this->do_move(action.get_target_direction(), action_time);
+        if (success)
+        {
+          add_to_property<int>("counter_busy", action_time);
+        }
+        break;
+
+      case ActionType::Attack:
+        success = this->do_attack(action.get_target_direction(), action_time);
         if (success)
         {
           add_to_property<int>("counter_busy", action_time);

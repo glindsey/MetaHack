@@ -42,7 +42,7 @@ Some commands do request a "target" item after the command has been entered, suc
 
 The following commands are currently in place, although some (most?) are not yet fully implemented. ~~Strikeout~~ indicates commands that may be planned but are currently not recognized at all.
 
-* `CTRL-A` - Attack a direction. Although attacking is usually automatic for hostile creatures, this forces an attack on something non-hostile, or something that isn't a creature (like a door).
+* `CTRL-A` - Attire/adorn yourself with an item (e.g. wear it). Using this with @ (yourself) will attempt to remove everything you are wearing; using it with an already worn item will attempt to remove it. 
 * ~~`CTRL-B` - Nothing yet; maybe beg for your life? That would be interesting.~~
 * `CTRL-C` - Close item(s). Also used to close doors/grates/etc.
 * `CTRL-D` - Drop item(s).
@@ -64,10 +64,12 @@ The following commands are currently in place, although some (most?) are not yet
 * `CTRL-T` - Take item(s) out of a container.
 * `CTRL-U` - Use an item. For items with actions that don't really fit into other command verbs.
 * ~~`CTRL-V` - Nothing yet.~~
-* `CTRL-W` - Wield an item.
-* ~~`CTRL-X` - Nothing yet.~~ 
+* `CTRL-W` - Wield or unwield an item. Using this with @ (yourself) unwields whatever you are wielding; wielding your already wielded object will also unwield it.
+* `CTRL-X` - eXplicitly attack a direction. Although attacking is usually automatic for hostile creatures, this forces an attack on something non-hostile, or something that isn't a creature (like a door). If used in the direction of a group of items, it will automatically attack the largest item there.
 * ~~`CTRL-Y` - Nothing yet.~~ 
 * ~~`CTRL-Z`- Nothing yet.~~ 
+* ~~`CTRL-ALT-C` - Construct an item out of a collection of items.~~
+* ~~`CTRL-ALT-D` - Destruct an item into its constituent parts.~~
 * ~~`CTRL-ALT-S` - Save the game.~~
 * ~~`CTRL-ALT-T` - Talk in a direction. Possibly talk to an item at some point, I dunno.~~
 * `CTRL-ALT-Q` - Quit the game, immediately, abandoning your character. Will eventually have an "are you sure" prompt.

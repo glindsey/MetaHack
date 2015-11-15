@@ -6,6 +6,7 @@
 class IntegerRange
 {
 public:
+  IntegerRange();
   IntegerRange(int start, int end, bool uniform = false);
   ~IntegerRange();
 

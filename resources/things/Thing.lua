@@ -44,7 +44,7 @@ function Thing.get_tile_offset(id, frame)
 end
 
 function Thing.on_create(id)
-	messageLog_add("Thing.on_create() called, new ID = " .. id)
+	--messageLog_add("Thing.on_create() called, new ID = " .. id)
 	return ActionResult.Success
 end
 
@@ -68,8 +68,19 @@ function Thing:get_intrinsic(name)
 			--error("Traversed all the way to root class but could not find " .. name)
 		end
 	else
+        -- Look for special cases.
+        if (type(result) == "table") then
+            if (result.type == "range") then
+                print("Range type found, returning " .. tostring(result.min) .. " and " .. tostring(result.max))
+                return result.min, result.max
+            elseif (result.type == "vector2") then
+                return result.x, result.y
+            end
+        end
+
+        -- Got here? Just return the result.
 		return result
-	end		
+	end
 end
 
 function Thing:get_default(name)
@@ -88,6 +99,17 @@ function Thing:get_default(name)
 			--error("Traversed all the way to root class but could not find " .. name)
 		end
 	else
+        -- Look for special cases.
+        if (type(result) == "table") then
+            if (result.type == "range") then
+                print("Range type found, returning " .. tostring(result.min) .. " and " .. tostring(result.max))
+                return result.min, result.max
+            elseif (result.type == "vector2") then
+                return result.x, result.y
+            end
+        end
+
+        -- Got here? Just return the result.
 		return result
 	end		
 end

@@ -15,6 +15,7 @@
 #include "App.h"
 #include "ErrorHandler.h"
 #include "Exceptions.h"
+#include "IntegerRange.h"
 #include "Lua.h"
 #include "MetadataCollection.h"
 #include "PropertyDictionary.h"
@@ -129,9 +130,15 @@ public:
     return get_default_string(name, default_value);
   }
 
+  template<> IntegerRange get_default(std::string name, IntegerRange default_value)
+  {
+    return get_default_range(name, default_value);
+  }
+
   bool get_default_bool(std::string name, bool default_value);
   double get_default_value(std::string name, double default_value);
   std::string get_default_string(std::string name, std::string default_value);
+  IntegerRange get_default_range(std::string name, IntegerRange default_value);
 
   template <typename T>
   void set_intrinsic(std::string name, T value)

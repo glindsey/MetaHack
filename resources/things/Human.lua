@@ -19,7 +19,6 @@ Human.intrinsics.attributes_vigilance = range(13, 17)
 Human.intrinsics.attributes_luck = range(13, 17)
 
 Human.defaults.proper_name = "John Doe"
-Human.defaults.hp = 10	-- @todo This is temporary
 Human.defaults.maxhp = range(6, 10)
 
 function Human.get_description()

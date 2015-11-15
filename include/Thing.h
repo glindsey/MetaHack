@@ -95,6 +95,18 @@ class Thing :
     ///         same location as the Entity, false otherwise.
     bool can_reach(ThingRef thing);
 
+    /// Return whether a Thing is adjacent to this Entity.
+    /// @param[in] thing Thing to check
+    /// @return true if the Thing is at the same place or adjacent to this Entity, false otherwise.
+    bool is_adjacent_to(ThingRef thing);
+
+    /// Attempt to attack a direction.
+    /// @param[in] direction Direction to attack.
+    /// @param[out] action_time The time it took to attack it.
+    /// @return true if attack was performed (whether it succeeded or not),
+    ///         false if it wasn't performed
+    bool do_attack(Direction direction, unsigned int& action_time);
+
     /// Attempt to attack a thing.
     /// @param[in] thing Thing to attack.
     /// @param[out] action_time The time it took to attack it.
@@ -592,6 +604,9 @@ class Thing :
 
     /// Clone Constructor
     Thing(Thing const& original, ThingRef ref);
+
+    /// Initializer; called by all constructors.
+    void initialize();
 
     /// Get a reference to this Entity's map memory.
     std::vector<std::string>& get_map_memory();
