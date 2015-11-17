@@ -877,7 +877,12 @@ void Map::clear_map_features()
 
 MapFeature& Map::get_random_map_feature()
 {
-  uniform_int_dist featureDist(0, pImpl->features.size() - 1);
+  if (pImpl->features.size() < 1)
+  {
+    FATAL_ERROR("get_random_map_feature() called but map doesn't contain any features yet!");
+  }
+
+  uniform_int_dist featureDist(0, pImpl->features.size() - 1);  
   int featureIndex = featureDist(the_RNG);
   return pImpl->features[featureIndex];
 }
@@ -889,7 +894,10 @@ boost::ptr_deque<MapFeature> const& Map::get_map_features() const
 
 MapFeature& Map::add_map_feature(MapFeature* feature)
 {
-  pImpl->features.push_back(feature);
+  if (feature != nullptr)
+  {
+    pImpl->features.push_back(feature);
+  }
   return *feature;
 }
 

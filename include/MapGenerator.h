@@ -14,6 +14,8 @@ class MapGenerator
 
     void generate();
 
+    bool add_feature(int chosen_feature, PropertyDictionary const& settings);
+
     struct FeatureLimits
     {
       /// Maximum number of features present on the map.

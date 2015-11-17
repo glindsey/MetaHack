@@ -161,7 +161,7 @@ MapGenerator::~MapGenerator()
 
 void MapGenerator::generate()
 {
-  PropertyDictionary room_settings;
+  PropertyDictionary feature_settings;
 
   TRACE("Filling map...");
   // Fill the map with stone.
@@ -171,7 +171,7 @@ void MapGenerator::generate()
   TRACE("Making starting room...");
 
   MapFeature& startingRoom =
-    pImpl->game_map.add_map_feature(NEW MapRoom(pImpl->game_map, room_settings));
+    pImpl->game_map.add_map_feature(NEW MapRoom(pImpl->game_map, feature_settings));
 
   if (!startingRoom.create(GeoVector(pImpl->getRandomFilledSquare(),
                                      Direction::Self)))
@@ -198,51 +198,82 @@ void MapGenerator::generate()
     GeoVector nextGrowthVector;
     MapFeature* feature = nullptr;
 
-    if (pImpl->getGrowthVector(nextGrowthVector))
+    uniform_int_dist chooseAFeature(0, 8);
+    int chosen_feature = chooseAFeature(the_RNG);
+    switch (chosen_feature)
     {
-      uniform_int_dist chooseAFeature(0, 8);
-      int chosen_feature = chooseAFeature(the_RNG);
+    case 0:
+      feature_settings.set<std::string>("type", "room_diamond");
+      break;
 
-      // DEBUG TESTING CODE
-      //int chosen_feature = 6;
+    case 1:
+      feature_settings.set<std::string>("type", "room_l");
+      break;
 
-      switch (chosen_feature)
-      {
-      case 0:
-        feature = NEW MapDiamond(pImpl->game_map, room_settings);
-        break;
+    case 2:
+      feature_settings.set<std::string>("type", "room_torus");
+      break;
 
-      case 1:
-        feature = NEW MapLRoom(pImpl->game_map, room_settings);
-        break;
+    case 3:
+    case 4:
+    case 5:
+      feature_settings.set<std::string>("type", "corridor");
+      break;
 
-      case 2:
-        feature = NEW MapDonutRoom(pImpl->game_map, room_settings);
-        break;
-
-      case 3:
-      case 4:
-      case 5:
-        feature = NEW MapCorridor(pImpl->game_map, room_settings);
-        break;
-
-      default:
-          feature = NEW MapRoom(pImpl->game_map, room_settings);
-          break;
-      }
+    default:
+      feature_settings.set<std::string>("type", "room");
+      break;
     }
 
-    if (feature != nullptr)
-    {
-      if (feature->create(nextGrowthVector))
-      {
-        pImpl->game_map.add_map_feature(feature);
-      }
-      else
-      {
-        delete feature;
-      }
-    }
+    add_feature(chosen_feature, feature_settings);
     ++mapFeatures;
   }
+}
+
+bool MapGenerator::add_feature(int chosen_feature, PropertyDictionary const& feature_settings)
+{
+  GeoVector nextGrowthVector;
+  std::unique_ptr<MapFeature> feature;
+
+  if (pImpl->getGrowthVector(nextGrowthVector))
+  {
+    std::string feature_type = feature_settings.get<std::string>("type");
+
+    if (feature_type == "room")
+    {
+      feature.reset(NEW MapRoom(pImpl->game_map, feature_settings));
+    }
+    else if (feature_type == "corridor")
+    {
+      feature.reset(NEW MapCorridor(pImpl->game_map, feature_settings));
+    }
+    else if (feature_type == "room_l")
+    {
+      feature.reset(NEW MapLRoom(pImpl->game_map, feature_settings));
+    }
+    else if (feature_type == "room_diamond")
+    {
+      feature.reset(NEW MapDiamond(pImpl->game_map, feature_settings));
+    }
+    else if (feature_type == "room_torus")
+    {
+      feature.reset(NEW MapDonutRoom(pImpl->game_map, feature_settings));
+    }
+    else
+    {
+      MINOR_ERROR("Unknown feature type \"%s\" requested", feature_type.c_str());
+    }
+  }
+
+  if (feature)
+  {
+    if (feature->create(nextGrowthVector))
+    {
+      pImpl->game_map.add_map_feature(feature.get());
+      feature.release();
+      return true;
+    }
+  }
+
+  return false;
 }
