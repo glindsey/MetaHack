@@ -20,9 +20,10 @@ struct MapDiamond::Impl
   bool dummy;
 };
 
-MapDiamond::MapDiamond(Map& m, PropertyDictionary const& settings)
+MapDiamond::MapDiamond(Map& m, PropertyDictionary const& s)
   : 
-  MapFeature(m), pImpl(NEW Impl())
+  MapFeature{ m, s },
+  pImpl(NEW Impl())
 {
   //ctor
 }

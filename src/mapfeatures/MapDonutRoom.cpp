@@ -19,9 +19,9 @@ unsigned int MapDonutRoom::max_retries = 500;
 // Local typedefs
 typedef boost::random::uniform_int_distribution<> uniform_int_dist;
 
-MapDonutRoom::MapDonutRoom(Map& m, PropertyDictionary const& settings) 
+MapDonutRoom::MapDonutRoom(Map& m, PropertyDictionary const& s) 
   :
-  MapFeature(m)
+  MapFeature{ m, s }
 {
   //ctor
 }

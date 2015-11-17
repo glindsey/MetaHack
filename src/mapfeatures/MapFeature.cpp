@@ -7,29 +7,32 @@
 #include <SFML/Graphics.hpp>
 
 #include "App.h"
+#include "PropertyDictionary.h"
 
 // Local typedefs
 typedef boost::random::uniform_int_distribution<> uniform_int_dist;
 
 struct MapFeature::Impl
 {
-  Impl(Map& m) : gameMap(m) {}
+  Impl(Map& m, PropertyDictionary const& s)
+    :
+    gameMap{ m },
+    settings{ s }
+  {}
 
   Map& gameMap;
+  PropertyDictionary settings;
   sf::IntRect coords;
   std::deque<GeoVector> vecs;
 };
 
-MapFeature::MapFeature(Map& m)
-  : pImpl (NEW Impl(m))
-{
-  //ctor
-}
+MapFeature::MapFeature(Map& m, PropertyDictionary const& s)
+  : 
+  pImpl (NEW Impl(m, s))
+{}
 
 MapFeature::~MapFeature()
-{
-  //dtor
-}
+{}
 
 sf::IntRect const& MapFeature::get_coords() const
 {
@@ -39,6 +42,11 @@ sf::IntRect const& MapFeature::get_coords() const
 Map& MapFeature::get_map() const
 {
   return pImpl->gameMap;
+}
+
+PropertyDictionary const& MapFeature::get_settings() const
+{
+  return pImpl->settings;
 }
 
 unsigned int MapFeature::get_num_growth_vectors() const
