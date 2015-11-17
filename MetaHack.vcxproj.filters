@@ -144,9 +144,6 @@
     <ClInclude Include="include\UsesPimpl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\impl\ActionImpl.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\impl\AppStateGameModeImpl.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -154,9 +151,6 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="include\LightInfluence.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ActionType.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Exceptions.h">

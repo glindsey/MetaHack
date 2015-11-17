@@ -3166,7 +3166,7 @@ bool Thing::_process_self()
 
       switch (action.get_type())
       {
-      case ActionType::Wait:
+      case Action::Type::Wait:
         success = this->do_move(Direction::Self, action_time);
         if (success)
         {
@@ -3174,7 +3174,7 @@ bool Thing::_process_self()
         }
         break;
 
-      case ActionType::Move:
+      case Action::Type::Move:
         success = this->do_move(action.get_target_direction(), action_time);
         if (success)
         {
@@ -3182,7 +3182,7 @@ bool Thing::_process_self()
         }
         break;
 
-      case ActionType::Attack:
+      case Action::Type::Attack:
         success = this->do_attack(action.get_target_direction(), action_time);
         if (success)
         {
@@ -3190,7 +3190,7 @@ bool Thing::_process_self()
         }
         break;
 
-      case ActionType::Drop:
+      case Action::Type::Drop:
         for (ThingRef thing : action.get_things())
         {
           if (thing != TM.get_mu())
@@ -3204,7 +3204,7 @@ bool Thing::_process_self()
         }
         break;
 
-      case ActionType::Eat:
+      case Action::Type::Eat:
         for (ThingRef thing : action.get_things())
         {
           if (thing != TM.get_mu())
@@ -3218,7 +3218,7 @@ bool Thing::_process_self()
         }
         break;
 
-      case ActionType::Get:
+      case Action::Type::Get:
         for (ThingRef thing : action.get_things())
         {
           if (thing != TM.get_mu())
@@ -3232,7 +3232,7 @@ bool Thing::_process_self()
         }
         break;
 
-      case ActionType::Quaff:
+      case Action::Type::Quaff:
         for (ThingRef thing : action.get_things())
         {
           if (thing != TM.get_mu())
@@ -3246,7 +3246,7 @@ bool Thing::_process_self()
         }
         break;
 
-      case ActionType::PutInto:
+      case Action::Type::PutInto:
       {
         ThingRef container = action.get_target_thing();
         if (container != TM.get_mu())
@@ -3273,7 +3273,7 @@ bool Thing::_process_self()
         break;
       }
 
-      case ActionType::TakeOut:
+      case Action::Type::TakeOut:
         for (ThingRef thing : action.get_things())
         {
           if (thing != TM.get_mu())
@@ -3287,7 +3287,7 @@ bool Thing::_process_self()
         }
         break;
 
-      case ActionType::Use:
+      case Action::Type::Use:
         for (ThingRef thing : action.get_things())
         {
           if (thing != TM.get_mu())
@@ -3301,7 +3301,7 @@ bool Thing::_process_self()
         }
         break;
 
-      case ActionType::Wield:
+      case Action::Type::Wield:
       {
         if (number_of_things > 1)
         {

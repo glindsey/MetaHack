@@ -5,49 +5,53 @@
 #include <algorithm>
 
 Action::Action()
+  :
+  m_type{ Action::Type::None },
+  m_state{ Action::State::Pending },
+  m_things{ std::vector<ThingRef>{ } },
+  m_target_thing{ TM.get_mu() },
+  m_target_direction{ Direction::None },
+  m_quantity{ 0 }
+{}
+
+Action::Action(Action::Type type)
+  :
+  m_type{ type },
+  m_state{ Action::State::Pending },
+  m_things{ std::vector<ThingRef>{ } },
+  m_target_thing{ TM.get_mu() },
+  m_target_direction{ Direction::None },
+  m_quantity{ 0 }
+{}
+
+void Action::set_type(Action::Type type)
 {
-  pImpl->type = ActionType::None;
-  pImpl->things.clear();
-  pImpl->target_thing = TM.get_mu();
-  pImpl->target_direction = Direction::None;
+  m_type = type;
 }
 
-Action::Action(ActionType type)
+Action::Type Action::get_type() const
 {
-  pImpl->type = type;
-  pImpl->things.clear();
-  pImpl->target_thing = TM.get_mu();
-  pImpl->target_direction = Direction::None;
-}
-
-void Action::set_type(ActionType type)
-{
-  pImpl->type = type;
-}
-
-ActionType Action::get_type() const
-{
-  return pImpl->type;
+  return m_type;
 }
 
 void Action::set_things(std::vector<ThingRef> things)
 {
-  pImpl->things = things;
+  m_things = things;
 }
 
 std::vector<ThingRef> const& Action::get_things() const
 {
-  return pImpl->things;
+  return m_things;
 }
 
 void Action::add_thing(ThingRef thing)
 {
-  pImpl->things.push_back(thing);
+  m_things.push_back(thing);
 }
 
 bool Action::remove_thing(ThingRef thing)
 {
-  auto& things = pImpl->things;
+  auto& things = m_things;
   auto& iter = std::find(things.begin(), things.end(), thing);
   if (iter != things.end())
   {
@@ -61,10 +65,10 @@ bool Action::remove_thing(ThingRef thing)
 
 bool Action::target_can_be_thing() const
 {
-  switch (pImpl->type)
+  switch (m_type)
   {
-  case ActionType::Fill:
-  case ActionType::PutInto:
+  case Action::Type::Fill:
+  case Action::Type::PutInto:
     return true;
 
   default:
@@ -74,15 +78,15 @@ bool Action::target_can_be_thing() const
 
 bool Action::target_can_be_direction() const
 {
-  switch (pImpl->type)
+  switch (m_type)
   {
-  case ActionType::Attack:    
-  case ActionType::Close:
-  case ActionType::Fill:
-  case ActionType::Hurl:
-  case ActionType::Move:
-  case ActionType::Open:
-  case ActionType::Shoot:
+  case Action::Type::Attack:    
+  case Action::Type::Close:
+  case Action::Type::Fill:
+  case Action::Type::Hurl:
+  case Action::Type::Move:
+  case Action::Type::Open:
+  case Action::Type::Shoot:
     return true;
 
   default:
@@ -92,32 +96,32 @@ bool Action::target_can_be_direction() const
 
 void Action::set_target(ThingRef target)
 {
-  pImpl->target_thing = target;
-  pImpl->target_direction = Direction::None;
+  m_target_thing = target;
+  m_target_direction = Direction::None;
 }
 
 void Action::set_target(Direction direction)
 {
-  pImpl->target_thing = ThingRef();
-  pImpl->target_direction = direction;
+  m_target_thing = ThingRef();
+  m_target_direction = direction;
 }
 
 ThingRef const& Action::get_target_thing() const
 {
-  return pImpl->target_thing;
+  return m_target_thing;
 }
 
 Direction const& Action::get_target_direction() const
 {
-  return pImpl->target_direction;
+  return m_target_direction;
 }
 
 unsigned int Action::get_quantity() const
 {
-  return pImpl->quantity;
+  return m_quantity;
 }
 
 void Action::set_quantity(unsigned int quantity)
 {
-  pImpl->quantity = quantity;
+  m_quantity = quantity;
 }

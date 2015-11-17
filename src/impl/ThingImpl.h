@@ -121,9 +121,6 @@ public:
   /// This deals with tiles observed at this particular instant.
   TilesSeen tiles_currently_seen;
 
-  /// Action that is currently in progress.
-  std::unique_ptr<Action> action_in_progress;
-
   /// Queue of pending_actions to be performed.
   ActionQueue pending_actions;
 

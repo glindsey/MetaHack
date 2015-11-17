@@ -3,6 +3,7 @@
 
 #include "SFML/Graphics.hpp"
 
+#include "Action.h"
 #include "ConfigSettings.h"
 #include "Map.h"
 #include "MapFactory.h"
@@ -32,7 +33,7 @@ public:
     map_zoom_level{ 1.0f },
     current_input_state{ GameInputState::Map },
     cursor_coords{ 0, 0 },
-    action_in_progress{ Action(ActionType::None) }
+    action_in_progress{ Action::Type::None }
   {}
 
   /// Application window.
