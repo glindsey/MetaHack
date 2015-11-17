@@ -36,8 +36,9 @@ enum class ActionResult
   Success                     = 1,
   SuccessDestroyed            = 2,
   SuccessSelfReference        = 3,
-  SuccessSwapHands            = 4 ///< For wield, indicates already-wielded
-                                  ///< weapon is just changing hands.
+  SuccessInterrupted          = 4, ///< The action started, but was interrupted in the middle.
+  SuccessSwapHands            = 5  ///< For wield, indicates already-wielded
+                                   ///< weapon is just changing hands.
 };
 
 inline bool was_successful(ActionResult result)

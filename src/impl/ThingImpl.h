@@ -38,7 +38,7 @@ public:
     gender{ Gender::None },
     map_memory{ MapMemory() },
     tiles_currently_seen{ TilesSeen() },
-    actions{ ActionQueue() },
+    pending_actions{ ActionQueue() },
     wielded_items{ WieldingMap() },
     equipped_items{ WearingMap() }
   {
@@ -57,7 +57,7 @@ public:
     gender{ Gender::None },
     map_memory{ MapMemory() },
     tiles_currently_seen{ TilesSeen() },
-    actions{ ActionQueue() },
+    pending_actions{ ActionQueue() },
     wielded_items{ WieldingMap() },
     equipped_items{ WearingMap() }
   {
@@ -77,7 +77,7 @@ public:
     gender{ other.gender },
     map_memory{ other.map_memory },
     tiles_currently_seen{ TilesSeen() },  // don't copy
-    actions{ ActionQueue() },             // don't copy
+    pending_actions{ ActionQueue() },             // don't copy
     wielded_items{ WieldingMap() },       // don't copy
     equipped_items{ WearingMap() }        // don't copy
   {}
@@ -86,7 +86,7 @@ public:
   {
     map_memory.clear();
     tiles_currently_seen.clear();
-    actions.clear();
+    pending_actions.clear();
   }
 
   /// Reference to this Thing's metadata.
@@ -121,8 +121,11 @@ public:
   /// This deals with tiles observed at this particular instant.
   TilesSeen tiles_currently_seen;
 
-  /// Queue of actions to be performed.
-  ActionQueue actions;
+  /// Action that is currently in progress.
+  std::unique_ptr<Action> action_in_progress;
+
+  /// Queue of pending_actions to be performed.
+  ActionQueue pending_actions;
 
   /// Map of items wielded.
   WieldingMap wielded_items;

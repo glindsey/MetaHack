@@ -102,12 +102,12 @@ Thing::~Thing()
 
 void Thing::queue_action(Action action)
 {
-  pImpl->actions.push_back(action);
+  pImpl->pending_actions.push_back(action);
 }
 
 bool Thing::pending_action() const
 {
-  return !(pImpl->actions.empty());
+  return !(pImpl->pending_actions.empty());
 }
 
 bool Thing::is_wielding(ThingRef thing)
@@ -1563,9 +1563,6 @@ bool Thing::do_use(ThingRef thing, unsigned int& action_time)
 
   ActionResult use_try = this->can_use(thing, action_time);
 
-  //message = YOU_TRY + " to use " + thing->get_identifying_string() + ".";
-  //the_message_log.add(message);
-
   switch (use_try)
   {
   case ActionResult::Success:
@@ -1578,12 +1575,18 @@ bool Thing::do_use(ThingRef thing, unsigned int& action_time)
     }
     else
     {
+      message = YOU_TRY + " to use " + thing->get_identifying_string() + ".";
+      the_message_log.add(message);
+
       message = YOU + " can't use that!";
       the_message_log.add(message);
     }
     break;
     
   case ActionResult::FailureSelfReference:
+    message = YOU_TRY + " to use " + thing->get_identifying_string() + ".";
+    the_message_log.add(message);
+
     if (TM.get_player() == pImpl->ref)
     {
       message = YOU_ARE + " already using " + YOURSELF + " to the best of " + YOUR + " ability.";
@@ -3154,10 +3157,10 @@ bool Thing::_process_self()
   if (get_property<int>("hp") > 0)
   {
     // If actions are pending...
-    if (!pImpl->actions.empty())
+    if (!pImpl->pending_actions.empty())
     {
-      Action action = pImpl->actions.front();
-      pImpl->actions.pop_front();
+      Action action = pImpl->pending_actions.front();
+      pImpl->pending_actions.pop_front();
 
       unsigned int number_of_things = action.get_things().size();
 
