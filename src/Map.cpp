@@ -33,10 +33,12 @@ Map::Map(MapId map_id, int width, int height)
 {
   TRACE("Creating map of size %d x %d...", width, height);
 
-  // Create vertices. We multiply by 20 because each tile has five quads
-  // associated with it -- the floor and four potential walls.
-  pImpl->map_seen_vertices.resize(pImpl->map_size.x * pImpl->map_size.y * 20);
-  pImpl->map_memory_vertices.resize(pImpl->map_size.x * pImpl->map_size.y * 20);
+  // Create vertices:
+  // 4 vertices * 4 quads for the floor
+  // 4 vertices * 4 quads * 4 potential walls
+  // = 16 + 64 = 80 possible vertices per tile.
+  pImpl->map_seen_vertices.resize(pImpl->map_size.x * pImpl->map_size.y * 80);
+  pImpl->map_memory_vertices.resize(pImpl->map_size.x * pImpl->map_size.y * 80);
 
   // Create the tiles themselves.
   MetadataCollection& collection = MDC::get_collection("maptile");
