@@ -9,22 +9,35 @@ print("Current map ID is " .. current_map_id)
 
 if current_map_id ~= 0 then
     local start_x, start_y = map_get_start_coords(current_map_id)
-    print("Map is ID " .. tostring(current_map_id) .. " and has start coords (" .. tostring(start_x) .. ", " .. tostring(start_y) .. ")")
-
     local start_floor_id = map_get_floor(current_map_id, start_x, start_y)
-    print("Start floor is ID " .. tostring(start_floor_id))
-
     local player_id = thing_get_player()
-    local player_x, player_y = thing_get_coords(player_id)
-    print("Player is ID " .. tostring(player_id) .. " and is located at (" .. tostring(player_x) .. ", " .. tostring(player_y) .. ")")
-
-    local player_type = thing_get_type(player_id)
-    print("Player type is " .. tostring(player_type) .. " which corresponds to global " .. tostring(_G[player_type]))
 
     print("Trying to move player to starting position...")
     local move_success = thing_move_into(player_id, start_floor_id)
+    print("Success = " .. tostring(move_success))
 
-    print("Result = " .. tostring(move_success))
+    -- TESTING CODE: Create a lighting orb held in player inventory.
+    print("Creating lighting orb...")
+    local orb_id = thing_create(player_id, "LightOrb")
 
-	print("TODO: Populate map with stuff.")
+    -- TESTING CODE: Create a sconce immediately north of the player.
+    print("Creating sconce...");
+    local sconce_id = thing_create(map_get_floor(current_map_id, start_x, start_y - 1), "Sconce")
+
+    -- TESTING CODE: Create a rock immediately south of the player.
+    print("Creating rock...");
+    local rock_id = thing_create(map_get_floor(current_map_id, start_x, start_y + 1), "Rock")
+
+    -- TESTING CODE: Create a sack immediately east of the player.
+    print("Creating sack...");
+    local sack_id = thing_create(map_get_floor(current_map_id, start_x + 1, start_y), "SackCloth")
+
+    -- TESTING CODE: Create a rock lichen northeast of the player.
+    print("Creating rock lichen...");
+    local lichen_id = thing_create(map_get_floor(current_map_id, start_x + 1, start_y - 1), "RockLichen")
+
+    -- TESTING CODE: Create a dagger southeast of the player.
+    print("Creating dagger...");
+    local dagger_id = thing_create(map_get_floor(current_map_id, start_x + 1, start_y + 1), "Dagger")
+
 end

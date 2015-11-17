@@ -948,42 +948,18 @@ bool AppStateGameMode::initialize()
   Map& game_map = MF.get(pImpl->current_map_id);
 
   // Move player to start position on the map.
-  sf::Vector2i const& start_coords = game_map.get_start_coords();
-  auto start = game_map.get_tile(start_coords).get_floor();
-  bool player_moved = player->move_into(start);
-
-  if (player_moved == false)
-  {
-    throw std::exception("Could not move player to start position!");
-    return false;
-  }
+  // (This is done by the map.lua script now.)
+  //auto start = game_map.get_tile(start_coords).get_floor();
+  //bool player_moved = player->move_into(start);
 
   // Set cursor to starting location.
+  // (Should this be done by the map.lua script too?)
+  sf::Vector2i const& start_coords = game_map.get_start_coords();
   pImpl->cursor_coords = start_coords;
 
   // Set the viewed inventory location to the player's location.
   pImpl->inventory_area_shows_player = false;
   pImpl->reset_inventory_area();
-
-  // TESTING CODE: Create a lighting orb held in player inventory.
-  TRACE("Creating lighting orb...");
-  ThingRef player_orb = TM.create("LightOrb");
-  player_orb->move_into(player);
-
-  // TESTING CODE: Create a sconce immediately north of the player.
-  TRACE("Creating sconce...");
-  ThingRef sconce = TM.create("Sconce");
-  sconce->move_into(game_map.get_tile(start_coords.x, start_coords.y - 1).get_floor());
-
-  // TESTING CODE: Create a rock immediately south of the player.
-  TRACE("Creating rock...");
-  ThingRef rock = TM.create("Rock");
-  rock->move_into(game_map.get_tile(start_coords.x, start_coords.y + 1).get_floor());
-
-  // TESTING CODE: Create a sack immediately east of the player.
-  TRACE("Creating sack...");
-  ThingRef sack = TM.create("SackCloth");
-  sack->move_into(game_map.get_tile(start_coords.x + 1, start_coords.y).get_floor());
 
   // TESTING CODE: Create five gold coins west of the player.
   TRACE("Creating 5 coins...");
@@ -996,16 +972,6 @@ bool AppStateGameMode::initialize()
   ThingRef coins2 = TM.create("CoinGold");
   coins2->set_quantity(10);
   coins2->move_into(game_map.get_tile(start_coords.x - 1, start_coords.y - 1).get_floor());
-
-  // TESTING CODE: Create a rock lichen northeast of the player.
-  TRACE("Creating rock lichen...");
-  ThingRef lichen = TM.create("RockLichen");
-  lichen->move_into(game_map.get_tile(start_coords.x + 1, start_coords.y - 1).get_floor());
-
-  // TESTING CODE: Create a dagger southwest of the player.
-  TRACE("Creating dagger...");
-  ThingRef dagger = TM.create("Dagger");
-  dagger->move_into(game_map.get_tile(start_coords.x + 1, start_coords.y + 1).get_floor());
 
   // END TESTING CODE
 
