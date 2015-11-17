@@ -39,6 +39,10 @@ function Thing.get_description(id)
 	return "Thing #" .. id .. ", which has no description associated with it."
 end
 
+function Thing.can_contain(id)
+    return ActionResult.Success
+end
+
 function Thing.get_tile_offset(id, frame)
 	return 0, 0
 end

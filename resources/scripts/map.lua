@@ -22,7 +22,7 @@ if current_map_id ~= 0 then
     print("Player type is " .. tostring(player_type) .. " which corresponds to global " .. tostring(_G[player_type]))
 
     print("Trying to move player to starting position...")
-    local move_success = thing_move_into(player_id, floor_id)
+    local move_success = thing_move_into(player_id, start_floor_id)
 
     print("Result = " .. tostring(move_success))
 

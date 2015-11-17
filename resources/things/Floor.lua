@@ -13,7 +13,3 @@ Floor.intrinsics.inventory_size = -1
 function Floor.get_description()
 	return "The lower surface of a room, on which one may walk."
 end
-
-function Floor.can_contain(id)
-    return ActionResult.Success
-end

@@ -4,6 +4,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/log/trivial.hpp>
 
+#include <cinttypes>
 #include <iomanip>
 #include <memory>
 #include <sstream>
@@ -2227,6 +2228,13 @@ bool Thing::can_move(Direction direction)
 bool Thing::move_into(ThingRef new_location)
 {
   MapId old_map_id = this->get_map_id();
+  ThingRef old_location = pImpl->location;
+
+  if (new_location == old_location)
+  {
+    // We're already there!
+    return true;
+  }
 
   if (new_location->can_contain(pImpl->ref) == ActionResult::Success)
   {
