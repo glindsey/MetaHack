@@ -11,6 +11,7 @@
 
 // Forward declarations
 class MapFeature;
+class MapGenerator;
 class MapTile;
 class ThingRef;
 
@@ -126,6 +127,9 @@ class Map
   private:
     Pimpl<MapImpl> pImpl;
 
+    std::unique_ptr<MapGenerator> m_generator;
+
+
     /// Lua function to get the Floor at a specific location.
     /// Takes three parameters:
     ///   - The MapID of the map in question.
@@ -139,9 +143,17 @@ class Map
     /// Lua function to get the start coords for a map.
     /// Takes one parameter:
     ///   - The MapID of the map in question.
-    /// It returns.
+    /// It returns:
     ///   - The x, y location of the map's starting position.
     static int LUA_get_start_coords(lua_State* L);
+
+    /// Lua function to add a feature to a map.
+    /// Takes two parameters:
+    ///   - The MapID of the map in question.
+    ///   - A string indicating the type of feature to add.
+    /// It returns:
+    ///   - A boolean indicating whether the feature could be added to the map.
+    static int LUA_map_add_feature(lua_State* L);
 };
 
 #endif // MAP_H

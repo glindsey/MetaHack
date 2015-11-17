@@ -198,6 +198,9 @@
     <ClInclude Include="include\MetadataCollection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\impl\MapImpl.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">

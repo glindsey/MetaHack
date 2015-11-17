@@ -16,6 +16,8 @@ MapFactory::MapFactory()
 
   // Register the Map Lua functions.
   the_lua_instance.register_function("map_get_floor", Map::LUA_get_floor);
+  the_lua_instance.register_function("map_get_start_coords", Map::LUA_get_start_coords);
+  the_lua_instance.register_function("map_add_feature", Map::LUA_map_add_feature);
 }
 
 MapFactory::~MapFactory()

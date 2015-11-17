@@ -183,6 +183,7 @@
     <ClInclude Include="include\UsesPimpl.h" />
     <ClInclude Include="src\impl\ActionImpl.h" />
     <ClInclude Include="src\impl\AppStateGameModeImpl.h" />
+    <ClInclude Include="src\impl\MapImpl.h" />
     <ClInclude Include="src\impl\ThingImpl.h" />
   </ItemGroup>
   <ItemGroup>

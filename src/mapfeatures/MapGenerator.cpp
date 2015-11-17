@@ -225,12 +225,12 @@ void MapGenerator::generate()
       break;
     }
 
-    add_feature(chosen_feature, feature_settings);
+    add_feature(feature_settings);
     ++mapFeatures;
   }
 }
 
-bool MapGenerator::add_feature(int chosen_feature, PropertyDictionary const& feature_settings)
+bool MapGenerator::add_feature(PropertyDictionary const& feature_settings)
 {
   GeoVector nextGrowthVector;
   std::unique_ptr<MapFeature> feature;

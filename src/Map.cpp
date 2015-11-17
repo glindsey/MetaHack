@@ -27,7 +27,9 @@ typedef boost::random::uniform_int_distribution<> uniform_int_dist;
 const sf::Color Map::ambient_light_level = sf::Color(48, 48, 48, 255);
 
 Map::Map(MapId map_id, int width, int height)
-  : pImpl(map_id, width, height)
+  : 
+  pImpl(map_id, width, height),
+  m_generator{ NEW MapGenerator(*this) }
 {
   TRACE("Creating map of size %d x %d...", width, height);
 
@@ -63,8 +65,7 @@ Map::Map(MapId map_id, int width, int height)
   if ((width != 1) && (height != 1))
   {
     // Generate the map.
-    MapGenerator generator(*this);
-    generator.generate();
+    m_generator->generate();
 
     // Run Lua script associated with this map.
     /// @todo Different scripts for different maps.
@@ -941,4 +942,31 @@ int Map::LUA_get_start_coords(lua_State* L)
   lua_pushinteger(L, coords.y);
 
   return 2;
+}
+
+int Map::LUA_map_add_feature(lua_State* L)
+{
+  PropertyDictionary feature_settings;
+
+  int num_args = lua_gettop(L);
+
+  if (num_args != 2)
+  {
+    MINOR_ERROR("expected 2 arguments, got %d", num_args);
+    return 0;
+  }
+
+  MapId map_id = static_cast<MapId>(static_cast<unsigned int>(lua_tointeger(L, 1)));
+
+  auto& map = MF.get(map_id);
+
+  std::string feature = lua_tostring(L, 2);
+
+  feature_settings.set<std::string>("type", feature);
+
+  bool success = map.m_generator->add_feature(feature_settings);
+
+  lua_pushboolean(L, static_cast<int>(success));
+
+  return 1;
 }

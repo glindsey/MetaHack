@@ -3,6 +3,7 @@
 
 #include <memory>
 
+#include "Lua.h"
 #include "Map.h"
 
 /// The MapGenerator fills a map with dungeon features.
@@ -14,7 +15,7 @@ class MapGenerator
 
     void generate();
 
-    bool add_feature(int chosen_feature, PropertyDictionary const& settings);
+    bool add_feature(PropertyDictionary const& settings);
 
     struct FeatureLimits
     {
