@@ -961,20 +961,6 @@ bool AppStateGameMode::initialize()
   pImpl->inventory_area_shows_player = false;
   pImpl->reset_inventory_area();
 
-  // TESTING CODE: Create five gold coins west of the player.
-  TRACE("Creating 5 coins...");
-  ThingRef coins = TM.create("CoinGold");
-  coins->set_quantity(5);
-  coins->move_into(game_map.get_tile(start_coords.x - 1, start_coords.y).get_floor());
-
-  // TESTING CODE: Create ten gold coins northwest of the player.
-  TRACE("Creating 10 coins...");
-  ThingRef coins2 = TM.create("CoinGold");
-  coins2->set_quantity(10);
-  coins2->move_into(game_map.get_tile(start_coords.x - 1, start_coords.y - 1).get_floor());
-
-  // END TESTING CODE
-
   // Get the map ready.
   game_map.update_lighting();
   game_map.update_tile_vertices(player);

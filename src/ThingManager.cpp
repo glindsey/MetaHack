@@ -21,7 +21,7 @@ std::unique_ptr<ThingManager> ThingManager::instance_;
 ThingManager::ThingManager()
 {
   // Register the Thing Lua functions.
-  the_lua_instance.register_function("thing_create", Thing::LUA_create);
+  the_lua_instance.register_function("thing_create", Thing::LUA_thing_create);
   the_lua_instance.register_function("thing_get_player", Thing::LUA_get_player);
   the_lua_instance.register_function("thing_get_coords", Thing::LUA_get_coords);
   the_lua_instance.register_function("thing_get_type", Thing::LUA_get_type);

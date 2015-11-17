@@ -2,10 +2,12 @@ SMALL THINGS
 ============
 [ ] Lua-ify some more events and checks
 [ ] Fix quantities (they are not currently being respected for get/drop actions)
+[ ] Export "thing_set_quantity" / "thing_modify_quantity" functions to Lua
+[ ] Export "thing_destroy" function to Lua
 
 MEDIUM THINGS
 =============
-[ ] Have the Lua "map.lua" script place the initial things
+[/] Have the Lua "map.lua" script place the initial things
 [ ] Make it easier for enum classes to be defined, to have an operator<< defined, and to have it exposed to Lua.
 [ ] Replace the error/trace functions with boost logging facilities
 [ ] Light bleed across tiles
@@ -14,25 +16,28 @@ MEDIUM THINGS
 [ ] Split MessageLog into model/view (MessageLog and MessageLogPane)
 [ ] Allow for scrolling back in MessageLog
 [ ] Allow for lines with different colors (and fonts?) in MessageLog
-[ ] Show the "wielded" / "equipped" tiles in the Inventory
+[/] Show the "wielded" / "equipped" tiles in the Inventory
+    - Doing a simple letter so far, will do nicer tiles down the line
+    
+[ ] Create Thing::spill() method which dumps the contents of a Thing out into the Thing's location
+    - Maybe allow a "do_spill" action that performs this purposely?
+    - Each Thing that tumbles out should have do_collided_with(new_location) called on it
 
 BIG THINGS
 ==========
 [ ] Implement GUILabel class
-	[ ] Label should support left/center/right justification
-	[ ] Label should handle text wrapping
+    [ ] Label should support left/center/right justification
+    [ ] Label should handle text wrapping
+    [ ] Change StatusArea to use GUILabel
+    [ ] Change InventoryArea to use GUILabel
 
-[ ] Change StatusArea to use GUILabel
-
-[ ] Change InventoryArea to use GUILabel
-
-[ ] Map creation driven via Lua scripts instead of C++ code
+[/] Map creation driven via Lua scripts instead of C++ code
 
 [ ] Add a way for monster types to register themselves in a vector that stores spawn information
-	- Never / Single / Group
-	- Player XP level for spawning
-	- Spawn location (e.g. cave, town, etc)?
-	
+    - Never / Single / Group
+    - Player XP level for spawning
+    - Spawn location (e.g. cave, town, etc)?
+    
 [ ] Implement the Attack action!
 
 [ ] Let Lua get a Thing's inventory (as a table of ids)
@@ -75,8 +80,8 @@ MIND-BOGGLINGLY ENORMOUS THINGS
 
 ??? THINGS
 ==========
-	- How do we handle polymorphing?
-		- A permanent polymorph is actually pretty easy; you just make a new Thing and then do set_player() on it.
-		- Temporary polymorphs are far trickier; we need a way to stash the existing Thing somewhere, and then revert back to it at death.
-			- Original form could be stashed in Limbo; the temporary polymorph would need to store its ThingId to know what to revert to
-			- There's also the question of which attributes get copied over.
+    - How do we handle polymorphing?
+        - A permanent polymorph is actually pretty easy; you just make a new Thing and then do set_player() on it.
+        - Temporary polymorphs are far trickier; we need a way to stash the existing Thing somewhere, and then revert back to it at death.
+            - Original form could be stashed in Limbo; the temporary polymorph would need to store its ThingId to know what to revert to
+            - There's also the question of which attributes get copied over.

@@ -645,7 +645,7 @@ class Thing :
     ///   - Type of the new Thing
     /// It returns:
     ///   - ID of the newly created Thing, or nil if it could not be created.
-    static int LUA_create(lua_State* L);
+    static int LUA_thing_create(lua_State* L);
 
     /// Lua function to get the ID of the player.
     /// Takes no parameters.

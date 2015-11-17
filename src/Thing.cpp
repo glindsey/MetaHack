@@ -3608,13 +3608,13 @@ MapTile* Thing::_get_maptile() const
   return pImpl->map_tile;
 }
 
-int Thing::LUA_create(lua_State* L)
+int Thing::LUA_thing_create(lua_State* L)
 {
   int num_args = lua_gettop(L);
 
-  if (num_args != 2)
+  if ((num_args < 2) || (num_args > 3))
   {
-    MINOR_ERROR("expected 2 arguments, got %d", num_args);
+    MINOR_ERROR("expected 2 or 3 arguments, got %d", num_args);
     return 0;
   }
 
@@ -3623,6 +3623,12 @@ int Thing::LUA_create(lua_State* L)
   
   ThingRef new_thing = TM.create(new_thing_type);
   bool success = new_thing->move_into(thing);
+
+  if (num_args > 2)
+  {
+    int quantity = lua_tointeger(L, 3);
+    new_thing->set_quantity(static_cast<unsigned int>(quantity));
+  }
 
   if (success)
   {

@@ -32,6 +32,14 @@ if current_map_id ~= 0 then
     print("Creating sack...");
     local sack_id = thing_create(map_get_floor(current_map_id, start_x + 1, start_y), "SackCloth")
 
+    -- TESTING CODE: Create five gold coins west of the player.
+    print("Creating 5 coins...");
+    local coins_id = thing_create(map_get_floor(current_map_id, start_x - 1, start_y), "CoinGold", 5)
+
+    -- TESTING CODE: Create ten gold coins northwest of the player.
+    print("Creating 10 coins...");
+    local coins2_id = thing_create(map_get_floor(current_map_id, start_x - 1, start_y - 1), "CoinGold", 10)
+
     -- TESTING CODE: Create a rock lichen northeast of the player.
     print("Creating rock lichen...");
     local lichen_id = thing_create(map_get_floor(current_map_id, start_x + 1, start_y - 1), "RockLichen")
