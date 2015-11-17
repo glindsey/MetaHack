@@ -5,10 +5,13 @@
 
 #include "MapFeature.h"
 
+// Forward declarations
+class PropertyDictionary;
+
 class MapCorridor : public MapFeature
 {
   public:
-    MapCorridor(Map& m);
+    MapCorridor(Map& m, PropertyDictionary const& settings);
     virtual ~MapCorridor();
 
     /// Create a corridor of random length, given starting coordinates

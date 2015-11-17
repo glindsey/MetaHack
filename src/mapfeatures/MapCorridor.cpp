@@ -19,8 +19,9 @@ struct MapCorridor::Impl
   sf::Vector2i endingCoords;
 };
 
-MapCorridor::MapCorridor(Map& m)
-  : MapFeature(m), pImpl(NEW Impl())
+MapCorridor::MapCorridor(Map& m, PropertyDictionary const& settings)
+  : 
+  MapFeature(m), pImpl(NEW Impl())
 {
   //ctor
 }

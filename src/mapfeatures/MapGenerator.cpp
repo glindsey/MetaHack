@@ -12,6 +12,7 @@
 #include "App.h"
 #include "MapTile.h"
 #include "MathUtils.h"
+#include "PropertyDictionary.h"
 
 typedef boost::random::uniform_int_distribution<> uniform_int_dist;
 
@@ -160,6 +161,8 @@ MapGenerator::~MapGenerator()
 
 void MapGenerator::generate()
 {
+  PropertyDictionary room_settings;
+
   TRACE("Filling map...");
   // Fill the map with stone.
   pImpl->clearMap();
@@ -168,7 +171,7 @@ void MapGenerator::generate()
   TRACE("Making starting room...");
 
   MapFeature& startingRoom =
-    pImpl->game_map.add_map_feature(NEW MapRoom(pImpl->game_map));
+    pImpl->game_map.add_map_feature(NEW MapRoom(pImpl->game_map, room_settings));
 
   if (!startingRoom.create(GeoVector(pImpl->getRandomFilledSquare(),
                                      Direction::Self)))
@@ -197,7 +200,7 @@ void MapGenerator::generate()
 
     if (pImpl->getGrowthVector(nextGrowthVector))
     {
-      uniform_int_dist chooseAFeature(0, 6);
+      uniform_int_dist chooseAFeature(0, 8);
       int chosen_feature = chooseAFeature(the_RNG);
 
       // DEBUG TESTING CODE
@@ -205,35 +208,27 @@ void MapGenerator::generate()
 
       switch (chosen_feature)
       {
+      case 0:
+        feature = NEW MapDiamond(pImpl->game_map, room_settings);
+        break;
+
+      case 1:
+        feature = NEW MapLRoom(pImpl->game_map, room_settings);
+        break;
+
+      case 2:
+        feature = NEW MapDonutRoom(pImpl->game_map, room_settings);
+        break;
+
       case 3:
-        {
-          feature = NEW MapDiamond(pImpl->game_map);
-        }
-        break;
-
       case 4:
-        {
-          feature = NEW MapCorridor(pImpl->game_map);
-        }
-        break;
-
       case 5:
-        {
-          feature = NEW MapLRoom(pImpl->game_map);
-        }
-        break;
-
-      case 6:
-        {
-          feature = NEW MapDonutRoom(pImpl->game_map);
-        }
+        feature = NEW MapCorridor(pImpl->game_map, room_settings);
         break;
 
       default:
-        {
-          feature = NEW MapRoom(pImpl->game_map);
-        }
-        break;
+          feature = NEW MapRoom(pImpl->game_map, room_settings);
+          break;
       }
     }
 

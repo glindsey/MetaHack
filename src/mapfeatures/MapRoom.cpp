@@ -18,7 +18,8 @@ unsigned int MapRoom::max_retries = 100;
 // Local typedefs
 typedef boost::random::uniform_int_distribution<> uniform_int_dist;
 
-MapRoom::MapRoom(Map& m) :
+MapRoom::MapRoom(Map& m, PropertyDictionary const& settings) 
+  :
   MapFeature(m)
 {
   //ctor

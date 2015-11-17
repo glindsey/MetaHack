@@ -5,11 +5,13 @@
 
 #include "MapFeature.h"
 
+// Forward declarations
+class PropertyDictionary;
 
 class MapDiamond : public MapFeature
 {
   public:
-    MapDiamond(Map& m);
+    MapDiamond(Map& m, PropertyDictionary const& settings);
     virtual ~MapDiamond();
   protected:
     /// Create a diamond-shaped room of random size adjacent to starting

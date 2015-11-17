@@ -5,10 +5,13 @@
 
 #include "MapFeature.h"
 
+// Forward declarations
+class PropertyDictionary;
+
 class MapLRoom : public MapFeature
 {
   public:
-    MapLRoom(Map& m);
+    MapLRoom(Map& m, PropertyDictionary const& settings);
     virtual ~MapLRoom();
 
     /// Create an L-shaped room of random size adjacent to starting
