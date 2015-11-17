@@ -63,7 +63,9 @@ Map& MapFactory::get(MapId map_id)
 MapId MapFactory::create(int x, int y)
 {
   ++current_map_id;
-  maps_.insert(current_map_id, NEW Map(current_map_id, x, y));
+  Map* new_map = NEW Map(current_map_id, x, y);
+  maps_.insert(current_map_id, new_map);
+  new_map->initialize();
 
   return current_map_id;
 }

@@ -63,8 +63,13 @@ Map::Map(MapId map_id, int width, int height)
   pImpl->thing_vertices.clear();
   pImpl->thing_vertices.setPrimitiveType(sf::PrimitiveType::Quads);
 
+  TRACE("Map created.");
+}
+
+void Map::initialize()
+{
   // If the map isn't the 1x1 "limbo" map...
-  if ((width != 1) && (height != 1))
+  if ((pImpl->map_size.x != 1) && (pImpl->map_size.y != 1))
   {
     // Generate the map.
     m_generator->generate();
@@ -75,11 +80,11 @@ Map::Map(MapId map_id, int width, int height)
     ///       should be done via scripting. But for now
     ///       this will do.
     TRACE("Executing Map Lua script.");
-    the_lua_instance.set_global("current_map_id", map_id);
+    the_lua_instance.set_global("current_map_id", pImpl->map_id);
     the_lua_instance.require("resources/scripts/map");
   }
 
-  TRACE("Map created.");
+  TRACE("Map initialized.");
 }
 
 Map::~Map()
@@ -908,9 +913,9 @@ int Map::LUA_get_floor(lua_State* L)
 {
   int num_args = lua_gettop(L);
 
-  if (num_args != 2)
+  if (num_args != 3)
   {
-    MINOR_ERROR("expected 2 arguments, got %d", num_args);
+    MINOR_ERROR("expected 3 arguments, got %d", num_args);
     return 0;
   }
 

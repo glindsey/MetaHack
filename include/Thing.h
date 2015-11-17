@@ -240,7 +240,7 @@ class Thing :
     /// @warning Assumes entity is on a map, and that the ending coordinates
     ///          are valid for the map the entity is on!
     void traverseLineOfSightTo(int xEnd, int yEnd);
-
+    
     /// Return whether the Entity can see the requested Thing.
     bool can_see(ThingRef thing);
 
@@ -652,7 +652,6 @@ class Thing :
     /// It returns:
     ///   - ID of the player character.
     static int LUA_get_player(lua_State* L);
-
 
     /// Lua function to get the coordinates of a Thing.
     /// Takes one parameter:

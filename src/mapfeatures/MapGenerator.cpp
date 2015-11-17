@@ -186,6 +186,7 @@ void MapGenerator::generate()
   sf::Vector2i startCoords(startBox.left + (startBox.width / 2),
                            startBox.top + (startBox.height / 2));
 
+  TRACE("Setting start coords to (%d, %d)", startCoords.x, startCoords.y);
   pImpl->game_map.set_start_coords(startCoords);
 
   // Continue with additional map features.

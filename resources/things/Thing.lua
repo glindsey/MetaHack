@@ -71,7 +71,7 @@ function Thing:get_intrinsic(name)
         -- Look for special cases.
         if (type(result) == "table") then
             if (result.type == "range") then
-                print("Range type found, returning " .. tostring(result.min) .. " and " .. tostring(result.max))
+                --print("Range type found, returning " .. tostring(result.min) .. " and " .. tostring(result.max))
                 return result.min, result.max
             elseif (result.type == "vector2") then
                 return result.x, result.y
@@ -102,7 +102,7 @@ function Thing:get_default(name)
         -- Look for special cases.
         if (type(result) == "table") then
             if (result.type == "range") then
-                print("Range type found, returning " .. tostring(result.min) .. " and " .. tostring(result.max))
+                --print("Range type found, returning " .. tostring(result.min) .. " and " .. tostring(result.max))
                 return result.min, result.max
             elseif (result.type == "vector2") then
                 return result.x, result.y

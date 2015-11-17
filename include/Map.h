@@ -105,6 +105,13 @@ class Map
   protected:
     Map(MapId mapId, int width, int height);
 
+    /// Initialize a new Map.
+    /// This unfortunately has to be separated from the constructor due to
+    /// the fact that Lua scripts refer to Maps by ID. This means the Map
+    /// must be inserted into the container of Maps before any Lua scripts
+    /// can refer to it.
+    void initialize();
+
     /// Recursively calculates lighting from the origin.
     /// Octant is an integer representing the following:
     /// \ 1|2 /  |
