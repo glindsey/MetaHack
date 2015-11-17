@@ -114,6 +114,11 @@ ActionResult Metadata::call_lua_function(std::string function_name,
       int result = lua_pcall(the_lua_state, args.size() + 1, 1, 0);
       if (result == 0)
       {
+        if (!lua_istable(the_lua_state, -1))
+        {
+          FATAL_ERROR("Expected ActionResult from Lua function but got %s", lua_typename(the_lua_state, lua_type(the_lua_state, -1)));
+        }
+
         // Get the return value.
         return_value = static_cast<ActionResult>(the_lua_instance.get_enum_value(-1));
 
@@ -188,6 +193,11 @@ bool Metadata::call_lua_function_bool(std::string function_name,
       int result = lua_pcall(the_lua_state, args.size() + 1, 1, 0);
       if (result == 0)
       {
+        if (!lua_isboolean(the_lua_state, -1))
+        {
+          FATAL_ERROR("Expected boolean from Lua function but got %s", lua_typename(the_lua_state, lua_type(the_lua_state, -1)));
+        }
+
         // Get the return value.
         return_value = (lua_toboolean(the_lua_state, -1) != 0);
 
@@ -262,6 +272,13 @@ sf::Vector2u Metadata::call_lua_function_v2u(std::string function_name,
       int result = lua_pcall(the_lua_state, args.size() + 1, 2, 0);
       if (result == 0)
       {
+        if (!lua_isnumber(the_lua_state, -2) || !lua_isnumber(the_lua_state, -1))
+        {
+          FATAL_ERROR("Expected number/number from Lua function but got %s/%s", 
+            lua_typename(the_lua_state, lua_type(the_lua_state, -2)),
+            lua_typename(the_lua_state, lua_type(the_lua_state, -1)));
+        }
+
         // Get the return values.
         return_value = sf::Vector2u(lua_tointeger(the_lua_state, -2), lua_tointeger(the_lua_state, -1));
 
@@ -404,7 +421,7 @@ double Metadata::get_default_value(std::string name, double default_value = 0.0)
           }
           else
           {
-            IntegerRange range(lua_tonumber(the_lua_state, -2), lua_tonumber(the_lua_state, -1));
+            IntegerRange range(static_cast<int>(lua_tonumber(the_lua_state, -2)), static_cast<int>(lua_tonumber(the_lua_state, -1)));
             return_value = range.pick();
           }
         }

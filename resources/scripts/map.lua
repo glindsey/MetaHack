@@ -21,5 +21,10 @@ if current_map_id ~= 0 then
     local player_type = thing_get_type(player_id)
     print("Player type is " .. tostring(player_type) .. " which corresponds to global " .. tostring(_G[player_type]))
 
+    print("Trying to move player to starting position...")
+    local move_success = thing_move_into(player_id, floor_id)
+
+    print("Result = " .. tostring(move_success))
+
 	print("TODO: Populate map with stuff.")
 end

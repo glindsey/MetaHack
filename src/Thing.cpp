@@ -3691,111 +3691,6 @@ int Thing::LUA_get_type(lua_State* L)
   return 1;
 }
 
-int Thing::LUA_get_display_name(lua_State* L)
-{
-  int num_args = lua_gettop(L);
-
-  if (num_args != 1)
-  {
-    MINOR_ERROR("expected 1 arguments, got %d", num_args);
-    return 0;
-  }
-
-  ThingRef thing = ThingRef(lua_tointeger(L, 1));
-  std::string result = thing->get_display_name();
-  lua_pushstring(L, result.c_str());
-
-  return 1;
-}
-
-int Thing::LUA_get_display_plural(lua_State* L)
-{
-  int num_args = lua_gettop(L);
-
-  if (num_args != 1)
-  {
-    MINOR_ERROR("expected 1 arguments, got %d", num_args);
-    return 0;
-  }
-
-  ThingRef thing = ThingRef(lua_tointeger(L, 1));
-  std::string result = thing->get_display_plural();
-  lua_pushstring(L, result.c_str());
-
-  return 1;
-}
-
-int Thing::LUA_get_parent_type(lua_State* L)
-{
-  int num_args = lua_gettop(L);
-
-  if (num_args != 1)
-  {
-    MINOR_ERROR("expected 1 arguments, got %d", num_args);
-    return 0;
-  }
-
-  ThingRef thing = ThingRef(lua_tointeger(L, 1));
-  std::string result = thing->get_parent_type();
-  lua_pushstring(L, result.c_str());
-
-  return 1;
-}
-
-int Thing::LUA_get_intrinsic_flag(lua_State* L)
-{
-  int num_args = lua_gettop(L);
-
-  if (num_args != 2)
-  {
-    MINOR_ERROR("expected 2 arguments, got %d", num_args);
-    return 0;
-  }
-
-  ThingRef thing = ThingRef(lua_tointeger(L, 1));
-  const char* key = lua_tostring(L, 2);
-  bool result = thing->get_intrinsic<bool>(key);
-  lua_pushboolean(L, result);
-
-  return 1;
-}
-
-int Thing::LUA_get_intrinsic_value(lua_State* L)
-{
-  int num_args = lua_gettop(L);
-
-  if (num_args != 2)
-  {
-    MINOR_ERROR("expected 2 arguments, got %d", num_args);
-    return 0;
-  }
-
-  ThingRef thing = ThingRef(lua_tointeger(L, 1));
-  const char* key = lua_tostring(L, 2);
-  int result = thing->get_intrinsic<int>(key);
-  lua_pushinteger(L, result);
-
-  return 1;
-}
-
-int Thing::LUA_get_intrinsic_string(lua_State* L)
-{
-  int num_args = lua_gettop(L);
-
-  if (num_args != 2)
-  {
-    MINOR_ERROR("expected 2 arguments, got %d", num_args);
-    return 0;
-  }
-
-  ThingRef thing = ThingRef(lua_tointeger(L, 1));
-  const char* key = lua_tostring(L, 2);
-  const char* result = thing->get_intrinsic<std::string>(key).c_str();
-  lua_pushstring(L, result);
-
-  return 1;
-}
-
 int Thing::LUA_get_property_flag(lua_State* L)
 {
   int num_args = lua_gettop(L);
@@ -3904,6 +3799,27 @@ int Thing::LUA_set_property_string(lua_State* L)
 
   return 0;
 }
+
+int Thing::LUA_thing_move_into(lua_State* L)
+{
+  int num_args = lua_gettop(L);
+
+  if (num_args != 2)
+  {
+    MINOR_ERROR("expected 2 arguments, got %d", num_args);
+    return 0;
+  }
+
+  ThingRef thing_to_move = ThingRef(lua_tointeger(L, 1));
+  ThingRef thing_destination = ThingRef(lua_tointeger(L, 2));
+
+  bool result = thing_to_move->move_into(thing_destination);
+
+  lua_pushboolean(L, static_cast<int>(result));
+
+  return 1;
+}
+
 
 ActionResult Thing::call_lua_function(std::string function_name, std::vector<lua_Integer> const& args, ActionResult default_result)
 {

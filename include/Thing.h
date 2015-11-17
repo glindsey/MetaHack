@@ -661,12 +661,6 @@ class Thing :
     static int LUA_get_coords(lua_State* L);
 
     static int LUA_get_type(lua_State* L);
-    static int LUA_get_display_name(lua_State* L);
-    static int LUA_get_display_plural(lua_State* L);
-    static int LUA_get_parent_type(lua_State* L);
-    static int LUA_get_intrinsic_flag(lua_State* L);
-    static int LUA_get_intrinsic_value(lua_State* L);
-    static int LUA_get_intrinsic_string(lua_State* L);
     static int LUA_get_property_flag(lua_State* L);
     static int LUA_get_property_value(lua_State* L);
     static int LUA_get_property_string(lua_State* L);
@@ -674,9 +668,10 @@ class Thing :
     static int LUA_set_property_value(lua_State* L);
     static int LUA_set_property_string(lua_State* L);
 
-    static int LUA_get_intrinsic(lua_State* L);
     static int LUA_get_property(lua_State* L);
     static int LUA_set_property(lua_State* L);
+
+    static int LUA_thing_move_into(lua_State* L);
 
     /// Syntactic sugar for calling Metadata::call_lua_function.
     ActionResult call_lua_function(std::string function_name,
