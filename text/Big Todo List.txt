@@ -7,6 +7,10 @@ SMALL THINGS
 
 MEDIUM THINGS
 =============
+[X] Death conditions
+    [/] For player
+        - Player do_die() is called, but graceful game shutdown is not yet done
+    [X] For other Things
 [X] Have the Lua "map.lua" script place the initial things
 [ ] Make it easier for enum classes to be defined, to have an operator<< defined, and to have it exposed to Lua.
 [ ] Replace the error/trace functions with boost logging facilities

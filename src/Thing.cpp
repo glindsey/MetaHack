@@ -29,7 +29,8 @@
 
 // Local definitions to make reading/writing status info a bit easier.
 #define YOU       (this->get_identifying_string())  // "you" or descriptive noun like "the goblin"
-#define YOU2      (this->get_subject_pronoun())     // "you/he/she/it/etc."
+#define YOU_SUBJ  (this->get_subject_pronoun())     // "you/he/she/it/etc."
+#define YOU_OBJ   (this->get_object_pronoun())      // "you/him/her/it/etc."
 #define YOUR      (this->get_possessive())          // "your/his/her/its/etc."
 #define YOURSELF  (this->get_reflexive_pronoun())   // "yourself/himself/herself/itself/etc."
 
@@ -51,14 +52,14 @@
 #define LIQUID1      (liquid1->get_identifying_string())
 #define LIQUID2      (liquid2->get_identifying_string())
 
-#define YOU_ARE   (YOU + ARE)   
-#define YOU_WERE  (YOU + WERE)
-#define YOU2_ARE  (YOU2 + ARE)
-#define YOU_DO    (YOU + DO)
-#define YOU_GET   (YOU + GET)
-#define YOU_HAVE  (YOU + HAVE)
-#define YOU_SEEM  (YOU + SEEM)
-#define YOU_TRY   (YOU + TRY)
+#define YOU_ARE       (YOU + ARE)   
+#define YOU_WERE      (YOU + WERE)
+#define YOU_SUBJ_ARE  (YOU_SUBJ + ARE)
+#define YOU_DO        (YOU + DO)
+#define YOU_GET       (YOU + GET)
+#define YOU_HAVE      (YOU + HAVE)
+#define YOU_SEEM      (YOU + SEEM)
+#define YOU_TRY       (YOU + TRY)
 
 #define YOU_TRY_TO(verb) (YOU_TRY + " to " + verb + " ")
 
@@ -171,6 +172,38 @@ bool Thing::is_adjacent_to(ThingRef thing)
   sf::Vector2i const& thing_coords = thing_maptile->get_coords();
 
   return adjacent(our_coords, thing_coords);
+}
+
+bool Thing::do_die()
+{
+  /// @todo Handle stuff like auto-activating life-saving items here.
+  /// @todo Pass in the cause of death somehow.
+
+  ActionResult result = perform_action_died();
+  std::string message;
+
+  switch (result)
+  {
+  case ActionResult::Success:
+    if (this->is_player())
+    {
+      message = YOU + " die...";
+      the_message_log.add(message);
+    }
+    else
+    {
+      /// @todo For non-living entities, use "destroyed" or something to that end.
+      message = YOU_ARE + " killed!";
+      the_message_log.add(message);
+    }
+    return true;
+  case ActionResult::Failure:
+  default:
+    message = YOU + CV(" manage", " manages") + " to avoid dying.";
+    the_message_log.add(message);
+    return false;
+  }
+
 }
 
 bool Thing::do_attack(Direction direction, unsigned int& action_time)
@@ -795,7 +828,7 @@ bool Thing::do_move(Direction new_direction, unsigned int& action_time)
   if (new_direction == Direction::Self)
   {
     message = YOU + " successfully" + CV(" stay", " stays") +
-      " where " + YOU2_ARE + ".";
+      " where " + YOU_SUBJ_ARE + ".";
     the_message_log.add(message);
     return true;
   }
@@ -2950,27 +2983,29 @@ BodyPart Thing::is_equippable_on() const
 
 bool Thing::process()
 {
-  // Process inventory.
+  // Get a copy of the inventory's list of things.
+  // This is because things can be deleted/removed from the inventory
+  // over the course of processing them, and this might screw up the
+  // iterator.
   auto things = pImpl->inventory.get_things();
 
+  // Process inventory.
   for (auto iter = std::begin(things);
             iter != std::end(things);
-            /* no increment */)
+            ++iter)
   {
     ThingRef thing = iter->second;
     bool dead = thing->process();
-    if (dead)
-    {
-      things.erase(iter++);
-    }
-    else
-    {
-      ++iter;
-    }
   }
 
   // Process self last.
   return _process_self();
+}
+
+ActionResult Thing::perform_action_died()
+{
+  ActionResult result = call_lua_function("perform_action_died", {});
+  return result;
 }
 
 bool Thing::perform_action_activated_by(ThingRef actor)
@@ -2982,6 +3017,12 @@ bool Thing::perform_action_activated_by(ThingRef actor)
 void Thing::perform_action_collided_with(ThingRef actor)
 {
   ActionResult result = call_lua_function("perform_action_collided_with", { actor });
+  return;
+}
+
+void Thing::perform_action_collided_with_wall(Direction d, std::string tile_type)
+{
+  /// @todo Implement me; right now there's no way to pass one enum and one string to a Lua function.
   return;
 }
 
@@ -3202,7 +3243,21 @@ bool Thing::_process_self()
   call_lua_function("process", {});
 
   // Is the entity dead?
-  if (get_property<int>("hp") > 0)
+  if (get_property<int>("hp") <= 0)
+  {
+    // Did the entity JUST die?
+    if (get_property<bool>("dead") != true)
+    {
+      // Set the property saying the entity is dead.
+      set_property<bool>("dead", true);
+
+      // Perform the "die" action.
+      this->do_die();
+
+      /// @todo Handle player death by transitioning to game end state.
+    }
+  }
+  else
   {
     // If actions are pending...
     if (!pImpl->pending_actions.empty())

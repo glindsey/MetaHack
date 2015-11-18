@@ -100,6 +100,10 @@ class Thing :
     /// @return true if the Thing is at the same place or adjacent to this Entity, false otherwise.
     bool is_adjacent_to(ThingRef thing);
 
+    /// Die.
+    /// @return True if the Thing died, false if the death was avoided.
+    bool do_die();
+
     /// Attempt to attack a direction.
     /// @param[in] direction Direction to attack.
     /// @param[out] action_time The time it took to attack it.
@@ -511,12 +515,22 @@ class Thing :
     /// Process this Thing and its inventory for a single tick.
     bool process();
 
+    /// Perform an action when this thing dies.
+    /// @return If this function returns Failure, the death is avoided.
+    /// @warning The function must reset whatever caused the death in the
+    ///          first place, or the Thing will just immediately die again
+    ///          on the next call to process()!
+    ActionResult perform_action_died();
+    
     /// Perform an action when this thing is activated.
     /// If this function returns false, the action is aborted.
     bool perform_action_activated_by(ThingRef actor);
 
     /// Perform an action when this thing collides with another thing.
     void perform_action_collided_with(ThingRef thing);
+
+    /// Perform an action when this thing collides with a wall.
+    void perform_action_collided_with_wall(Direction d, std::string tile_type);
 
     /// Perform an action when this thing is eaten.
     /// If this function returns Failure, the action is aborted.
