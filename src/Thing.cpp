@@ -2239,8 +2239,11 @@ bool Thing::move_into(ThingRef new_location)
     return true;
   }
 
-  if (new_location->can_contain(pImpl->ref) == ActionResult::Success)
+  ActionResult can_contain = new_location->can_contain(pImpl->ref);
+
+  switch (can_contain)
   {
+  case ActionResult::Success:
     if (new_location->get_inventory().add(pImpl->ref))
     {
       // Try to lock our old location.
@@ -2271,10 +2274,13 @@ bool Thing::move_into(ThingRef new_location)
         }
       }
       this->find_seen_tiles();
-
       return true;
     } // end if (add to new inventory was successful)
-  } // end if (new location can contain thing)
+
+    break;
+  default:
+    break;
+  } // end switch (ActionResult)
 
   return false;
 }
@@ -2728,34 +2734,71 @@ void Thing::be_lit_by(ThingRef light)
   }
 }
 
+void Thing::spill()
+{
+  Inventory& inventory = get_inventory();
+  ThingMap const& things = inventory.get_things();
+  std::string message;
+  bool success = false;
+
+  // Step through all contents of this Thing.
+  for (ThingPair thing_pair : things)
+  {
+    ThingRef thing = thing_pair.second;
+    if (pImpl->location != TM.get_mu())
+    {
+      ActionResult can_contain = pImpl->location->can_contain(thing);
+
+      switch (can_contain)
+      {
+      case ActionResult::Success:
+
+        // Try to move this into the Thing's location.
+        success = thing->move_into(pImpl->location);
+        if (success)
+        {
+          auto container_string = this->get_identifying_string();
+          auto thing_string = thing->get_identifying_string();
+          message = thing_string + CV(" tumble", " tumbles") + " out of " + container_string + ".";
+          the_message_log.add(message);
+        }
+        else
+        {
+          // We couldn't move it, so just destroy it.
+          auto container_string = this->get_identifying_string();
+          auto thing_string = thing->get_identifying_string();
+          message = thing_string + CV(" vanish", " vanishes") + " in a puff of logic.";
+          the_message_log.add(message);
+          thing->destroy();
+        }
+
+        break;
+
+      case ActionResult::FailureInventoryFull:
+        /// @todo Handle the situation where the Thing's container can't hold the Thing.
+        break;
+
+      default:
+        break;
+
+      } // end switch (can_contain)
+    } // end if (container location is not Mu)
+    else
+    {
+      // Container's location is Mu, so just destroy it without a message.
+      thing->destroy();
+    }
+  } // end for (contents of Thing)
+}
+
 void Thing::destroy()
 {
   auto old_location = pImpl->location;
 
   if (get_intrinsic<int>("inventory_size") != 0)
   {
-    Inventory& inventory = get_inventory();
-    ThingMap const& things = inventory.get_things();
-
-    // Step through all contents of this Thing.
-    for (ThingPair thing_pair : things)
-    {
-      ThingRef thing = thing_pair.second;
-      if (old_location != TM.get_mu())
-      {
-        // Try to move this into the Thing's location.
-        bool success = thing->move_into(old_location);
-        if (!success)
-        {
-          // We couldn't move it, so just destroy it.
-          thing->destroy();
-        }
-      }
-      else
-      {
-        thing->destroy();
-      }
-    }
+    // Spill the contents of this Thing into the Thing's location.
+    spill();
   }
 
   if (old_location != TM.get_mu())
@@ -3118,9 +3161,14 @@ bool Thing::can_merge_with(ThingRef other) const
 
 ActionResult Thing::can_contain(ThingRef thing)
 {
-  if (get_intrinsic<int>("inventory_size") == 0)
+  unsigned int inventory_size = get_intrinsic<unsigned int>("inventory_size");
+  if (inventory_size == 0)
   {
     return ActionResult::FailureTargetNotAContainer;
+  }
+  else if (get_inventory().count() >= inventory_size)
+  {
+    return ActionResult::FailureInventoryFull;
   }
   else
   {

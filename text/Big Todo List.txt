@@ -7,7 +7,7 @@ SMALL THINGS
 
 MEDIUM THINGS
 =============
-[/] Have the Lua "map.lua" script place the initial things
+[X] Have the Lua "map.lua" script place the initial things
 [ ] Make it easier for enum classes to be defined, to have an operator<< defined, and to have it exposed to Lua.
 [ ] Replace the error/trace functions with boost logging facilities
 [ ] Light bleed across tiles
@@ -19,7 +19,7 @@ MEDIUM THINGS
 [/] Show the "wielded" / "equipped" tiles in the Inventory
     - Doing a simple letter so far, will do nicer tiles down the line
     
-[ ] Create Thing::spill() method which dumps the contents of a Thing out into the Thing's location
+[/] Create Thing::spill() method which dumps the contents of a Thing out into the Thing's location
     - Maybe allow a "do_spill" action that performs this purposely?
     - Each Thing that tumbles out should have do_collided_with(new_location) called on it
 

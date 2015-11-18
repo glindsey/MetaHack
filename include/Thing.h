@@ -471,6 +471,9 @@ class Thing :
     /// this Thing is opaque.
     void be_lit_by(ThingRef light);
 
+    /// Spill the contents of this Thing out into the location of the Thing.
+    void spill();
+
     /// Attempt to destroy this Thing.
     void destroy();
 
