@@ -3693,7 +3693,24 @@ int Thing::LUA_thing_create(lua_State* L)
   return 1;
 }
 
-int Thing::LUA_get_player(lua_State* L)
+int Thing::LUA_thing_destroy(lua_State* L)
+{
+  int num_args = lua_gettop(L);
+
+  if (num_args != 1)
+  {
+    MINOR_ERROR("expected 1 argument, got %d", num_args);
+    return 0;
+  }
+
+  ThingRef thing = ThingRef(lua_tointeger(L, 1));
+  thing->destroy();
+
+  return 0;
+}
+
+
+int Thing::LUA_thing_get_player(lua_State* L)
 {
   int num_args = lua_gettop(L);
 
@@ -3709,7 +3726,7 @@ int Thing::LUA_get_player(lua_State* L)
   return 1;
 }
 
-int Thing::LUA_get_coords(lua_State* L)
+int Thing::LUA_thing_get_coords(lua_State* L)
 {
   int num_args = lua_gettop(L);
 
@@ -3739,7 +3756,7 @@ int Thing::LUA_get_coords(lua_State* L)
   return 2;
 }
 
-int Thing::LUA_get_type(lua_State* L)
+int Thing::LUA_thing_get_type(lua_State* L)
 {
   int num_args = lua_gettop(L);
 
@@ -3756,7 +3773,7 @@ int Thing::LUA_get_type(lua_State* L)
   return 1;
 }
 
-int Thing::LUA_get_property_flag(lua_State* L)
+int Thing::LUA_thing_get_property_flag(lua_State* L)
 {
   int num_args = lua_gettop(L);
 
@@ -3774,7 +3791,7 @@ int Thing::LUA_get_property_flag(lua_State* L)
   return 1;
 }
 
-int Thing::LUA_get_property_value(lua_State* L)
+int Thing::LUA_thing_get_property_value(lua_State* L)
 {
   int num_args = lua_gettop(L);
 
@@ -3792,7 +3809,7 @@ int Thing::LUA_get_property_value(lua_State* L)
   return 1;
 }
 
-int Thing::LUA_get_property_string(lua_State* L)
+int Thing::LUA_thing_get_property_string(lua_State* L)
 {
   int num_args = lua_gettop(L);
 
@@ -3810,7 +3827,7 @@ int Thing::LUA_get_property_string(lua_State* L)
   return 1;
 }
 
-int Thing::LUA_set_property_flag(lua_State* L)
+int Thing::LUA_thing_set_property_flag(lua_State* L)
 {
   int num_args = lua_gettop(L);
 
@@ -3828,7 +3845,7 @@ int Thing::LUA_set_property_flag(lua_State* L)
   return 0;
 }
 
-int Thing::LUA_set_property_value(lua_State* L)
+int Thing::LUA_thing_set_property_value(lua_State* L)
 {
   int num_args = lua_gettop(L);
 
@@ -3846,7 +3863,7 @@ int Thing::LUA_set_property_value(lua_State* L)
   return 0;
 }
 
-int Thing::LUA_set_property_string(lua_State* L)
+int Thing::LUA_thing_set_property_string(lua_State* L)
 {
   int num_args = lua_gettop(L);
 

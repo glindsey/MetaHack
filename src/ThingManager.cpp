@@ -22,15 +22,16 @@ ThingManager::ThingManager()
 {
   // Register the Thing Lua functions.
   the_lua_instance.register_function("thing_create", Thing::LUA_thing_create);
-  the_lua_instance.register_function("thing_get_player", Thing::LUA_get_player);
-  the_lua_instance.register_function("thing_get_coords", Thing::LUA_get_coords);
-  the_lua_instance.register_function("thing_get_type", Thing::LUA_get_type);
-  the_lua_instance.register_function("thing_get_property_flag", Thing::LUA_get_property_flag);
-  the_lua_instance.register_function("thing_get_property_value", Thing::LUA_get_property_value);
-  the_lua_instance.register_function("thing_get_property_string", Thing::LUA_get_property_string);
-  the_lua_instance.register_function("thing_set_property_flag", Thing::LUA_set_property_flag);
-  the_lua_instance.register_function("thing_set_property_value", Thing::LUA_set_property_value);
-  the_lua_instance.register_function("thing_set_property_string", Thing::LUA_set_property_string);
+  the_lua_instance.register_function("thing_destroy", Thing::LUA_thing_create);
+  the_lua_instance.register_function("thing_get_player", Thing::LUA_thing_get_player);
+  the_lua_instance.register_function("thing_get_coords", Thing::LUA_thing_get_coords);
+  the_lua_instance.register_function("thing_get_type", Thing::LUA_thing_get_type);
+  the_lua_instance.register_function("thing_get_property_flag", Thing::LUA_thing_get_property_flag);
+  the_lua_instance.register_function("thing_get_property_value", Thing::LUA_thing_get_property_value);
+  the_lua_instance.register_function("thing_get_property_string", Thing::LUA_thing_get_property_string);
+  the_lua_instance.register_function("thing_set_property_flag", Thing::LUA_thing_set_property_flag);
+  the_lua_instance.register_function("thing_set_property_value", Thing::LUA_thing_set_property_value);
+  the_lua_instance.register_function("thing_set_property_string", Thing::LUA_thing_set_property_string);
   the_lua_instance.register_function("thing_move_into", Thing::LUA_thing_move_into);
 }
 

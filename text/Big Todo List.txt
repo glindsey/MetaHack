@@ -3,7 +3,7 @@ SMALL THINGS
 [ ] Lua-ify some more events and checks
 [ ] Fix quantities (they are not currently being respected for get/drop actions)
 [ ] Export "thing_set_quantity" / "thing_modify_quantity" functions to Lua
-[ ] Export "thing_destroy" function to Lua
+[X] Export "thing_destroy" function to Lua
 
 MEDIUM THINGS
 =============
@@ -11,8 +11,7 @@ MEDIUM THINGS
 [ ] Make it easier for enum classes to be defined, to have an operator<< defined, and to have it exposed to Lua.
 [ ] Replace the error/trace functions with boost logging facilities
 [ ] Light bleed across tiles
-    - Simple convolution that bleeds a bit of light from a tile
-      into adjacent ones, will make shadows way less sharp
+    - Simple convolution that bleeds a bit of light from a tile into adjacent ones, will make shadows way less sharp
 [ ] Split MessageLog into model/view (MessageLog and MessageLogPane)
 [ ] Allow for scrolling back in MessageLog
 [ ] Allow for lines with different colors (and fonts?) in MessageLog
@@ -35,7 +34,7 @@ BIG THINGS
 
 [ ] Add a way for monster types to register themselves in a vector that stores spawn information
     - Never / Single / Group
-    - Player XP level for spawning
+    - XP level for spawning
     - Spawn location (e.g. cave, town, etc)?
     
 [ ] Implement the Attack action!
