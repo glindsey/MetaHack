@@ -56,7 +56,7 @@ class Thing :
     void queue_action(Action action);
 
     /// Return whether there is an action pending for this Entity.
-    bool pending_action() const;
+    bool action_is_pending() const;
 
     /// Returns true if this thing is the current player.
     /// By default, returns false. Overridden by Entity class.

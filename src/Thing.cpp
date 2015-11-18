@@ -106,7 +106,7 @@ void Thing::queue_action(Action action)
   pImpl->pending_actions.push_back(action);
 }
 
-bool Thing::pending_action() const
+bool Thing::action_is_pending() const
 {
   return !(pImpl->pending_actions.empty());
 }

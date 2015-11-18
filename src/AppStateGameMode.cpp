@@ -48,7 +48,7 @@ void AppStateGameMode::execute()
 
   ThingRef player = TM.get_player();
 
-  if (player->pending_action())
+  if (player->action_is_pending())
   {
     // QUESTION: Do we want to update all Things, PERIOD?  In other words, should
     //           other maps keep playing themselves if the player is not on them?
