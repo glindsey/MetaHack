@@ -72,7 +72,7 @@ class Inventory
     ThingRef remove(InventorySlot slot);
 
     ThingRef get_largest_thing();
-    ThingRef get_living_creature();
+    ThingRef get_entity();
 
   protected:
     ThingMap::iterator find(ThingRef target);

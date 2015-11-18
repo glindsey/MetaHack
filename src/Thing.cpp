@@ -308,7 +308,7 @@ bool Thing::do_attack(Direction direction, unsigned int& action_time)
     ThingRef new_floor = new_tile.get_floor();
 
     // See if the tile to move into contains another creature.
-    ThingRef creature = new_floor->get_inventory().get_living_creature();
+    ThingRef creature = new_floor->get_inventory().get_entity();
     if (creature != TM.get_mu())
     {
       return do_attack(creature, action_time);
@@ -316,7 +316,7 @@ bool Thing::do_attack(Direction direction, unsigned int& action_time)
     else
     {
       /// @todo Deal with attacking other stuff, MapTiles, etc.
-      message = "Attacking non-living things is not yet supported!";
+      message = "Attacking non-entity things is not yet supported!";
       the_message_log.add(message);
       return false;
     }
@@ -919,7 +919,7 @@ bool Thing::do_move(Direction new_direction, unsigned int& action_time)
     ThingRef new_floor = new_tile.get_floor();
 
     // See if the tile to move into contains another creature.
-    ThingRef creature = new_floor->get_inventory().get_living_creature();
+    ThingRef creature = new_floor->get_inventory().get_entity();
     if (creature != TM.get_mu())
     {
       /// @todo Setting choosing whether auto-attack is on.

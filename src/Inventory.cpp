@@ -194,7 +194,7 @@ ThingRef Inventory::get_largest_thing()
   return iter_largest->second;
 }
 
-ThingRef Inventory::get_living_creature()
+ThingRef Inventory::get_entity()
 {
   auto iter =
     find_if([&](const ThingPair& thing_pair)
