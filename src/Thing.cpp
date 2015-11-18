@@ -2452,7 +2452,7 @@ std::string Thing::get_identifying_string_without_possessives(bool definite)
     article += boost::lexical_cast<std::string>(get_quantity()) + " ";
   }
 
-  if (get_intrinsic<bool>("living") && get_property<int>("hp") <= 0)
+  if (get_intrinsic<bool>("is_entity") && get_property<int>("hp") <= 0)
   {
     adjectives += "dead ";
   }
@@ -2489,7 +2489,7 @@ std::string Thing::get_identifying_string(bool definite)
     }
   }
 
-  owned = location->get_intrinsic<bool>("living");
+  owned = location->get_intrinsic<bool>("is_entity");
 
   if (quantity == 1)
   {
@@ -2535,7 +2535,7 @@ std::string Thing::get_identifying_string(bool definite)
     }
   }
 
-  if (get_intrinsic<bool>("living") && get_property<int>("hp") <= 0)
+  if (get_intrinsic<bool>("is_entity") && get_property<int>("hp") <= 0)
   {
     adjectives += "dead ";
   }
@@ -3229,21 +3229,8 @@ bool Thing::_process_self()
   unsigned int action_time = 0;
   bool success = false;
 
-  // If entity is currently busy, decrement by one and return.
-  int counter_busy = get_property<int>("counter_busy");
-  if (counter_busy > 0)
-  {
-    --counter_busy;
-    set_property<int>("counter_busy", counter_busy);
-    return true;
-  }
-
-  // Perform any type-specific processing.
-  // Useful if, for example, your Entity can rise from the dead.
-  call_lua_function("process", {});
-
-  // Is the entity dead?
-  if (get_property<int>("hp") <= 0)
+  // Is this an entity that is now dead?
+  if ((get_property<bool>("is_entity") == true) && (get_property<int>("hp") <= 0))
   {
     // Did the entity JUST die?
     if (get_property<bool>("dead") != true)
@@ -3257,8 +3244,21 @@ bool Thing::_process_self()
       /// @todo Handle player death by transitioning to game end state.
     }
   }
+
+  // If entity is currently busy, decrement by one and return.
+  int counter_busy = get_property<int>("counter_busy");
+  if (counter_busy > 0)
+  {
+    --counter_busy;
+    set_property<int>("counter_busy", counter_busy);
+    return true;
+  }
   else
   {
+    // Perform any type-specific processing.
+    // Useful if, for example, your Entity can rise from the dead.
+    call_lua_function("process", {});
+
     // If actions are pending...
     if (!pImpl->pending_actions.empty())
     {

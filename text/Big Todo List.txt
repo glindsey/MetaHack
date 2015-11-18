@@ -3,7 +3,6 @@ SMALL THINGS
 [ ] Lua-ify some more events and checks
 [ ] Fix quantities (they are not currently being respected for get/drop actions)
 [ ] Export "thing_set_quantity" / "thing_modify_quantity" functions to Lua
-[X] Export "thing_destroy" function to Lua
 
 MEDIUM THINGS
 =============
@@ -11,7 +10,6 @@ MEDIUM THINGS
     [/] For player
         - Player do_die() is called, but graceful game shutdown is not yet done
     [X] For other Things
-[X] Have the Lua "map.lua" script place the initial things
 [ ] Make it easier for enum classes to be defined, to have an operator<< defined, and to have it exposed to Lua.
 [ ] Replace the error/trace functions with boost logging facilities
 [ ] Light bleed across tiles

@@ -200,7 +200,7 @@ ThingRef Inventory::get_living_creature()
     find_if([&](const ThingPair& thing_pair)
   {
     ThingRef ref = thing_pair.second;
-    return ((ref->get_intrinsic<bool>("living") == true) && (ref->get_property<int>("hp") > 0));
+    return ((ref->get_intrinsic<bool>("is_entity") == true) && (ref->get_property<int>("hp") > 0));
   });
 
   if (iter != things_.cend())
