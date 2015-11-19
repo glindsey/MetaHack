@@ -1,8 +1,8 @@
 #include "Action.h"
-#include "App.h"
-#include "Direction.h"
 
 #include <algorithm>
+
+#include "ThingManager.h"
 
 Action::Action()
   :

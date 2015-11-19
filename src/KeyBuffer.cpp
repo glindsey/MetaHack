@@ -1,8 +1,8 @@
 #include "KeyBuffer.h"
 
-#include "App.h"
-
 #include <string>
+
+#include "New.h"
 
 struct KeyBuffer::Impl
 {

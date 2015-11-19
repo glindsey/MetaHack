@@ -11,6 +11,7 @@
 #include "Metadata.h"
 #include "PropertyDictionary.h"
 #include "ThingRef.h"
+#include "ThingManager.h"
 
 // Using declarations.
 using WieldingMap = std::unordered_map<unsigned int, ThingRef>;

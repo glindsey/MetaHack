@@ -1,6 +1,7 @@
 #include "MetadataCollection.h"
 
 #include "Metadata.h"
+#include "New.h"
 
 boost::ptr_unordered_map<std::string, MetadataCollection> MetadataCollection::m_metacollection;
 

@@ -8,7 +8,6 @@
 
 #include "EventHandler.h"
 #include "Lua.h"
-#include "New.h"
 
 // Forward declarations
 class MessageLog;

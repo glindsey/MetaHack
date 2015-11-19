@@ -1,11 +1,13 @@
 #include "Lua.h"
 
-#include "App.h"
+#include <sstream>
+#include <boost/any.hpp>
+#include <SFML/Graphics.hpp>
+
 #include "ActionResult.h"
 #include "ErrorHandler.h"
 #include "Gender.h"
-
-#include <sstream>
+#include "New.h"
 
 std::unique_ptr<Lua> Lua::instance_;
 

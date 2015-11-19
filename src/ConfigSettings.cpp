@@ -1,8 +1,8 @@
 #include "ConfigSettings.h"
 
 #include "common_types.h"
-#include "App.h"
 #include "ErrorHandler.h"
+#include "New.h"
 
 std::unique_ptr<ConfigSettings> ConfigSettings::instance_;
 

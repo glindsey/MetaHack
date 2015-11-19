@@ -144,9 +144,6 @@
     <ClInclude Include="include\UsesPimpl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\impl\AppStateGameModeImpl.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\impl\ThingImpl.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -404,6 +401,9 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="resources\things\Chest.lua">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include=".gitignore">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

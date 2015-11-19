@@ -6,7 +6,7 @@
 #include <boost/uuid/uuid.hpp>
 
 #include "Direction.h"
-#include "ThingManager.h"
+#include "ThingRef.h"
 
 // Forward declarations
 class Thing;

@@ -1,8 +1,10 @@
+#include "ErrorHandler.h"
+
 #include <boost/log/trivial.hpp>
 #include <cstdlib>
 
 #include "App.h"
-#include "ErrorHandler.h"
+#include "New.h"
 
 struct ErrorHandler::Impl
 {

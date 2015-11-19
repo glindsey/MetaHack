@@ -4,8 +4,8 @@
 #include <boost/ptr_container/ptr_map.hpp>
 #include <string>
 
-#include "App.h"
 #include "ErrorHandler.h"
+#include "New.h"
 #include "State.h"
 
 struct StateMachine::Impl

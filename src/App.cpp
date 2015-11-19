@@ -1,17 +1,15 @@
 #include "App.h"
 
 #include <boost/random/uniform_int_distribution.hpp>
-#include <ctime>
-#include <SFML/Graphics.hpp>
 
 #include "AppStateGameMode.h"
 #include "AppStateMainMenu.h"
 #include "AppStateSplashScreen.h"
+#include "ConfigSettings.h"
 #include "ErrorHandler.h"
 #include "MessageLog.h"
+#include "New.h"
 #include "StateMachine.h"
-#include "ThingManager.h"
-#include "TileSheet.h"
 
 #include <stdlib.h>
 #include <crtdbg.h>

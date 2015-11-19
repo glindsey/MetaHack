@@ -1,12 +1,13 @@
 #include "MessageLog.h"
 
+#include <boost/log/trivial.hpp>
+#include <deque>
+
 #include "App.h"
 #include "ConfigSettings.h"
 #include "ErrorHandler.h"
 #include "KeyBuffer.h"
-
-#include <boost/log/trivial.hpp>
-#include <deque>
+#include "New.h"
 
 std::unique_ptr<MessageLog> MessageLog::instance_;
 

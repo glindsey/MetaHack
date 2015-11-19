@@ -2,17 +2,11 @@
 #define APPSTATEGAMEMODE_H
 
 #include <memory>
+#include <SFML/Graphics.hpp>
 
+#include "EventHandler.h"
 #include "GameState.h"
-#include "InventoryArea.h"
-#include "MapId.h"
-#include "MessageLog.h"
 #include "State.h"
-#include "StatusArea.h"
-#include "Thing.h"
-#include "UsesPimpl.h"
-
-#include "AppStateGameModeImpl.h"
 
 class AppStateGameMode : public State
 {
@@ -36,7 +30,8 @@ class AppStateGameMode : public State
     void add_zoom(float zoom_amount);
 
   private:
-    Pimpl<AppStateGameModeImpl> pImpl;
+    struct Impl;
+    std::unique_ptr<Impl> pImpl;
 };
 
 #endif // APPSTATEGAMEMODE_H

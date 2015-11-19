@@ -181,7 +181,6 @@
     <ClInclude Include="include\ThingManager.h" />
     <ClInclude Include="include\TileSheet.h" />
     <ClInclude Include="include\UsesPimpl.h" />
-    <ClInclude Include="src\impl\AppStateGameModeImpl.h" />
     <ClInclude Include="src\impl\MapImpl.h" />
     <ClInclude Include="src\impl\ThingImpl.h" />
   </ItemGroup>
@@ -226,6 +225,7 @@
     <ClCompile Include="src\TileSheet.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include=".gitignore" />
     <None Include="README.md" />
     <None Include="resources\default.lua" />
     <None Include="resources\maptiles\MTFloor.lua" />

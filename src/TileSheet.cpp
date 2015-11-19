@@ -7,6 +7,7 @@
 #include "ConfigSettings.h"
 #include "ErrorHandler.h"
 #include "MathUtils.h"
+#include "New.h"
 
 // Static declarations.
 std::unique_ptr<TileSheet> TileSheet::instance_;
