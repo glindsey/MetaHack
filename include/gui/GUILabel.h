@@ -1,6 +1,7 @@
 #ifndef GUILABEL_H
 #define GUILABEL_H
 
+#include <functional>
 #include <SFML/Graphics.hpp>
 #include <memory>
 #include <string>
@@ -12,11 +13,11 @@ class GUILabel :
   public GUIObject
 {
   public:
-    GUILabel(sf::IntRect dimensions, std::weak_ptr<std::string> text_ptr);
+    GUILabel(sf::IntRect dimensions, std::function<std::string()> string_function);
     virtual ~GUILabel();
 
-    std::weak_ptr<std::string> const& get_text_pointer();
-    void set_text_pointer(std::shared_ptr<std::string> text_ptr);
+    std::function<std::string()> get_string_function();
+    void set_string_function(std::function<std::string()> string_function);
 
     virtual EventResult handle_event(sf::Event& event);
 

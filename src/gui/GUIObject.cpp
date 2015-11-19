@@ -63,11 +63,13 @@ void GUIObject::set_dimensions(sf::IntRect rect)
   pImpl->bg_texture->create(rect.width, rect.height);
 }
 
-bool GUIObject::add_child(GUIObject& child)
+bool GUIObject::add_child(GUIObject* child)
 {
-  if (std::find_if(pImpl->children.cbegin(), pImpl->children.cend(), [&](GUIObject const& c) { return &c == &child; }) == pImpl->children.cend())
+  ASSERT_CONDITION(child != nullptr);
+
+  if (std::find_if(pImpl->children.cbegin(), pImpl->children.cend(), [&](GUIObject const& c) { return &c == child; }) == pImpl->children.cend())
   {
-    pImpl->children.push_back(&child);
+    pImpl->children.push_back(child);
     return true;
   }
   return false;

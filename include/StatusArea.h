@@ -20,6 +20,8 @@ class StatusArea : public GUIPane
   private:
     void render_attribute(sf::RenderTarget& target, std::string abbrev, std::string name, sf::Vector2f location);
 
+    std::string get_test_label();
+
     struct Impl;
     std::unique_ptr<Impl> pImpl;
 };

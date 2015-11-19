@@ -23,9 +23,9 @@ public:
 
   /// Add a child GUIObject underneath this one.
   /// This GUIObject assumes ownership of the child.
-  /// @param child  Reference to child to add.
+  /// @param child  Pointer to child to add.
   /// @return True if the object was added, false if the object was already a child of this GUIObject.
-  bool add_child(GUIObject& child);
+  bool add_child(GUIObject* child);
 
   void clear_children();
 

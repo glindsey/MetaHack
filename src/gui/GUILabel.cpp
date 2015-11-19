@@ -6,11 +6,14 @@
 
 struct GUILabel::Impl
 {
-  Impl(std::weak_ptr<std::string> text_ptr_)
+  Impl(std::function<std::string()> string_function_)
     : 
     focus{ false },
-    text_ptr{ text_ptr_ }
-  {}
+    bg_texture{ NEW sf::RenderTexture() },
+    string_function{ string_function_ }
+  {
+    bg_texture->create(dims.width, dims.height);
+  }
 
   /// Boolean indicating whether this area has the focus.
   bool focus;
@@ -21,17 +24,17 @@ struct GUILabel::Impl
   /// Background texture.
   std::unique_ptr<sf::RenderTexture> bg_texture;
 
-  /// Pointer to the text to render.
-  std::weak_ptr<std::string> text_ptr;
+  /// Function to get the text to render.
+  std::function<std::string()> string_function;
 
   /// Background shape.
   sf::RectangleShape bg_shape;
 };
 
-GUILabel::GUILabel(sf::IntRect dimensions, std::weak_ptr<std::string> text_ptr)
+GUILabel::GUILabel(sf::IntRect dimensions, std::function<std::string()> string_function)
   :
   GUIObject(dimensions),
-  pImpl{ NEW Impl(text_ptr) }
+  pImpl{ NEW Impl(string_function) }
 {
   set_dimensions(dimensions);
 }
@@ -41,14 +44,14 @@ GUILabel::~GUILabel()
   //dtor
 }
 
-std::weak_ptr<std::string> const& GUILabel::get_text_pointer()
+std::function<std::string()> GUILabel::get_string_function()
 {
-  return pImpl->text_ptr;
+  return pImpl->string_function;
 }
 
-void GUILabel::set_text_pointer(std::shared_ptr<std::string> text_ptr)
+void GUILabel::set_string_function(std::function<std::string()> string_function)
 {
-  pImpl->text_ptr = text_ptr;
+  pImpl->string_function = string_function;
 }
 
 EventResult GUILabel::handle_event(sf::Event& event)
@@ -69,9 +72,10 @@ bool GUILabel::_render_self(sf::RenderTarget& target, int frame)
   pImpl->bg_texture->clear(Settings.get<sf::Color>("window_bg_color"));
 
   /// @todo Flesh this out; right now it is EXTREMELY rudimentary
-  if (!pImpl->text_ptr.expired())
+  std::string str = pImpl->string_function();
+  if (!str.empty())
   {
-    sf::Text text{ *(pImpl->text_ptr.lock()), the_default_font, Settings.get<unsigned int>("text_default_size") };
+    sf::Text text{ str, the_default_font, Settings.get<unsigned int>("text_default_size") };
     text.setColor(Settings.get<sf::Color>("text_color"));
     pImpl->bg_texture->draw(text);
   }

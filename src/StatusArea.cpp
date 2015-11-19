@@ -12,8 +12,6 @@
 
 struct StatusArea::Impl
 {
-  std::shared_ptr<std::string> test_label;
-
   bool dummy;
 };
 
@@ -22,9 +20,9 @@ StatusArea::StatusArea(sf::IntRect dimensions)
     pImpl(NEW Impl())
 {
   //ctor
-  *(pImpl->test_label) = "Testing GUILabel";
-  GUILabel label{ {500, 100, 500, 30}, pImpl->test_label };
-  add_child(label);
+  //std::function<std::string()> label_function = std::bind(&StatusArea::get_test_label, this);
+  //GUILabel* label = NEW GUILabel( {0, 0, dimensions.width, dimensions.height}, label_function );
+  //add_child(label);
 }
 
 StatusArea::~StatusArea()
@@ -138,3 +136,9 @@ void StatusArea::render_attribute(sf::RenderTarget& target, std::string abbrev, 
   render_text.setString(attr_string);
   target.draw(render_text);
 }
+
+std::string StatusArea::get_test_label()
+{
+  return "Testing GUILabel";
+}
+

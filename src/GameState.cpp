@@ -40,7 +40,7 @@ ThingManager& GameState::get_thing_manager()
 
 bool GameState::set_player(ThingRef ref)
 {
-  ASSERT_CONDITION(ref != get_mu());
+  ASSERT_CONDITION(ref != get_thing_manager().get_mu());
 
   m_player = ref;
   return true;
