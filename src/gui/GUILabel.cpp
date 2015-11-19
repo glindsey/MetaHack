@@ -88,6 +88,14 @@ bool GUILabel::render(sf::RenderTarget& target, int frame)
   // Clear background texture.
   pImpl->bg_texture->clear(Settings.get<sf::Color>("window_bg_color"));
 
+  /// @todo Flesh this out; right now it is EXTREMELY rudimentary
+  if (!pImpl->text_ptr.expired())
+  {
+    sf::Text text{ *(pImpl->text_ptr.lock()), the_default_font, Settings.get<unsigned int>("text_default_size") };
+    text.setColor(Settings.get<sf::Color>("text_color"));
+    pImpl->bg_texture->draw(text);
+  }
+
   // Render to the texture.
   pImpl->bg_texture->display();
 
