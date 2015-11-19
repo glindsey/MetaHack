@@ -461,7 +461,7 @@ class Thing :
     /// @param use_lighting If true, calculate lighting when adding.
     ///                     If false, store directly w/white bg color.
     /// @param frame Animation frame number.
-    void draw_to(sf::RenderTexture& target,
+    void draw_to(sf::RenderTarget& target,
                  sf::Vector2f target_coords,
                  unsigned int target_size = 0,
                  bool use_lighting = true,

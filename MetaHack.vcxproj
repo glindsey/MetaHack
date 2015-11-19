@@ -197,6 +197,7 @@
     <ClCompile Include="src\GameState.cpp" />
     <ClCompile Include="src\Gender.cpp" />
     <ClCompile Include="src\gui\GUILabel.cpp" />
+    <ClCompile Include="src\gui\GUIObject.cpp" />
     <ClCompile Include="src\gui\GUIPane.cpp" />
     <ClCompile Include="src\IntegerRange.cpp" />
     <ClCompile Include="src\Inventory.cpp" />

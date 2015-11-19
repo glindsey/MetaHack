@@ -31,10 +31,9 @@ EventResult StatusArea::handle_event(sf::Event& event)
   return EventResult::Ignored;
 }
 
-std::string StatusArea::render_contents(int frame)
+std::string StatusArea::_render_contents(sf::RenderTarget& target, int frame)
 {
   sf::IntRect pane_dims = get_dimensions();
-  sf::RenderTexture& bg_texture = get_bg_texture();
   ThingRef player = GAME.get_player();
   sf::Vector2f origin(3, 3);
   sf::Color text_color = Settings.get<sf::Color>("text_color");
@@ -61,14 +60,14 @@ std::string StatusArea::render_contents(int frame)
     type[0] = std::toupper(type[0], std::locale());
 
     render_text.setString(name + " the " + type);
-    bg_texture.draw(render_text);
+    target.draw(render_text);
 
     // Render HP
     render_text.setFont(the_default_mono_font);
     render_text.setColor(text_dim_color);
     render_text.setPosition(origin.x, origin.y + line_spacing);
     render_text.setString("HP");
-    bg_texture.draw(render_text);
+    target.draw(render_text);
 
     int hp = player->get_property<int>("hp");
     int max_hp = player->get_property<int>("maxhp");
@@ -92,26 +91,26 @@ std::string StatusArea::render_contents(int frame)
 
     render_text.setPosition(origin.x + 30, origin.y + line_spacing);
     render_text.setString(hp_string);
-    bg_texture.draw(render_text);
+    target.draw(render_text);
 
     // Render attributes
-    render_attribute(bg_texture, "XP", "xp", { origin.x, origin.y + (2 * line_spacing) });
-    render_attribute(bg_texture, "STR", "attribute_strength", { origin.x + (0 * attrib_spacing), origin.y + (3 * line_spacing) });
-    render_attribute(bg_texture, "END", "attribute_endurance", { origin.x + (1 * attrib_spacing), origin.y + (3 * line_spacing) });
-    render_attribute(bg_texture, "VIT", "attribute_vitality", { origin.x + (2 * attrib_spacing), origin.y + (3 * line_spacing) });
-    render_attribute(bg_texture, "AGI", "attribute_agility", { origin.x + (3 * attrib_spacing), origin.y + (3 * line_spacing) });
-    render_attribute(bg_texture, "PRE", "attribute_precision", { origin.x + (4 * attrib_spacing), origin.y + (3 * line_spacing) });
-    render_attribute(bg_texture, "INT", "attribute_intelligence", { origin.x + (5 * attrib_spacing), origin.y + (3 * line_spacing) });
-    render_attribute(bg_texture, "AUR", "attribute_aura", { origin.x + (6 * attrib_spacing), origin.y + (3 * line_spacing) });
-    render_attribute(bg_texture, "CHA", "attribute_charisma", { origin.x + (7 * attrib_spacing), origin.y + (3 * line_spacing) });
-    render_attribute(bg_texture, "VIG", "attribute_vigilance", { origin.x + (8 * attrib_spacing), origin.y + (3 * line_spacing) });
-    render_attribute(bg_texture, "LUC", "attribute_luck", { origin.x + (9 * attrib_spacing), origin.y + (3 * line_spacing) });
+    render_attribute(target, "XP", "xp", { origin.x, origin.y + (2 * line_spacing) });
+    render_attribute(target, "STR", "attribute_strength", { origin.x + (0 * attrib_spacing), origin.y + (3 * line_spacing) });
+    render_attribute(target, "END", "attribute_endurance", { origin.x + (1 * attrib_spacing), origin.y + (3 * line_spacing) });
+    render_attribute(target, "VIT", "attribute_vitality", { origin.x + (2 * attrib_spacing), origin.y + (3 * line_spacing) });
+    render_attribute(target, "AGI", "attribute_agility", { origin.x + (3 * attrib_spacing), origin.y + (3 * line_spacing) });
+    render_attribute(target, "PRE", "attribute_precision", { origin.x + (4 * attrib_spacing), origin.y + (3 * line_spacing) });
+    render_attribute(target, "INT", "attribute_intelligence", { origin.x + (5 * attrib_spacing), origin.y + (3 * line_spacing) });
+    render_attribute(target, "AUR", "attribute_aura", { origin.x + (6 * attrib_spacing), origin.y + (3 * line_spacing) });
+    render_attribute(target, "CHA", "attribute_charisma", { origin.x + (7 * attrib_spacing), origin.y + (3 * line_spacing) });
+    render_attribute(target, "VIG", "attribute_vigilance", { origin.x + (8 * attrib_spacing), origin.y + (3 * line_spacing) });
+    render_attribute(target, "LUC", "attribute_luck", { origin.x + (9 * attrib_spacing), origin.y + (3 * line_spacing) });
   }
 
   return "";
 }
 
-void StatusArea::render_attribute(sf::RenderTexture& bg_texture, std::string abbrev, std::string name, sf::Vector2f location)
+void StatusArea::render_attribute(sf::RenderTarget& target, std::string abbrev, std::string name, sf::Vector2f location)
 {
   sf::Text render_text;
   sf::Color text_color = Settings.get<sf::Color>("text_color");
@@ -124,12 +123,12 @@ void StatusArea::render_attribute(sf::RenderTexture& bg_texture, std::string abb
   render_text.setCharacterSize(Settings.get<unsigned int>("text_default_size"));
   render_text.setPosition(location.x, location.y);
   render_text.setString(abbrev + ":");
-  bg_texture.draw(render_text);
+  target.draw(render_text);
 
   std::string attr_string = boost::lexical_cast<std::string>(player->get_property<int>(name));
 
   render_text.setColor(text_color);
   render_text.setPosition(location.x + 40, location.y);
   render_text.setString(attr_string);
-  bg_texture.draw(render_text);
+  target.draw(render_text);
 }

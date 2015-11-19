@@ -97,13 +97,10 @@ EventResult MessageLog::handle_event(sf::Event& event)
   return GUIPane::handle_event(event);
 }
 
-std::string MessageLog::render_contents(int frame)
+std::string MessageLog::_render_contents(sf::RenderTarget& target, int frame)
 {
   // Dimensions of the pane.
   sf::IntRect pane_dims = get_dimensions();
-
-  // Our render texture.
-  sf::RenderTexture& bg_texture = get_bg_texture();
 
   float lineSpacing = the_default_font.getLineSpacing(Settings.get<unsigned int>("text_default_size"));
 
@@ -123,7 +120,7 @@ std::string MessageLog::render_contents(int frame)
   // If we have the focus, put the current command at the bottom of the log.
   if (get_focus() == true)
   {
-    pImpl->buffer.render(bg_texture,
+    pImpl->buffer.render(target,
                         sf::Vector2f(text_coord_x, text_coord_y),
                         frame,
                         the_default_font,
@@ -141,7 +138,7 @@ std::string MessageLog::render_contents(int frame)
     render_text.setString(*iter);
     render_text.setPosition(text_coord_x, text_coord_y);
     render_text.setColor(Settings.get<sf::Color>("text_color"));
-    bg_texture.draw(render_text);
+    target.draw(render_text);
     if (text_coord_y < text_offset_y) break;
     text_coord_y -= lineSpacing;
   }

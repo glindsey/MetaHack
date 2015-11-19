@@ -15,10 +15,10 @@ class StatusArea : public GUIPane
     virtual EventResult handle_event(sf::Event& event) override;
 
   protected:
-    virtual std::string render_contents(int frame) override;
+    virtual std::string _render_contents(sf::RenderTarget& target, int frame) override;
 
   private:
-    void render_attribute(sf::RenderTexture& bg_texture, std::string abbrev, std::string name, sf::Vector2f location);
+    void render_attribute(sf::RenderTarget& target, std::string abbrev, std::string name, sf::Vector2f location);
 
     struct Impl;
     std::unique_ptr<Impl> pImpl;

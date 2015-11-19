@@ -101,7 +101,7 @@ void MapTile::add_vertices_to(sf::VertexArray& vertices,
     light, lightNW, lightN, lightNE, lightE, lightSE, lightS, lightSW, lightW);
 }
 
-void MapTile::draw_to(sf::RenderTexture& target,
+void MapTile::draw_to(sf::RenderTarget& target,
                       sf::Vector2f target_coords,
                       unsigned int target_size,
                       bool use_lighting,

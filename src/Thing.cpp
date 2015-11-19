@@ -2661,7 +2661,7 @@ void Thing::add_vertices_to(sf::VertexArray& vertices,
                           vNW, vNE, vSE, vSW);
 }
 
-void Thing::draw_to(sf::RenderTexture& target,
+void Thing::draw_to(sf::RenderTarget& target,
                     sf::Vector2f target_coords,
                     unsigned int target_size,
                     bool use_lighting,

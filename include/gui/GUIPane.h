@@ -5,31 +5,20 @@
 #include <memory>
 #include <vector>
 
-#include "EventHandler.h"
-#include "Renderable.h"
+#include "GUIObject.h"
 
 class GUIPane :
-  public EventHandler,
-  public Renderable
+  public GUIObject
 {
   public:
     GUIPane(sf::IntRect dimensions);
     virtual ~GUIPane();
 
-    void set_focus(bool focus);
-    bool get_focus();
-
-    sf::IntRect get_dimensions();
-    void set_dimensions(sf::IntRect dimensions);
-
     virtual EventResult handle_event(sf::Event& event);
 
-    virtual bool render(sf::RenderTarget& target, int frame) final;
-
   protected:
-    virtual std::string render_contents(int frame);
-
-    sf::RenderTexture& get_bg_texture();
+    virtual bool _render_self(sf::RenderTarget& target, int frame) final;
+    virtual std::string _render_contents(sf::RenderTarget& target, int frame);
 
   private:
     struct Impl;

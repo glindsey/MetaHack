@@ -30,7 +30,7 @@ class GameObject
     /// @param use_lighting If true, calculate lighting when adding.
     ///                     If false, store directly w/white bg color.
     /// @param frame Animation frame number.
-    virtual void draw_to(sf::RenderTexture& target,
+    virtual void draw_to(sf::RenderTarget& target,
                          sf::Vector2f target_coords,
                          unsigned int target_size,
                          bool use_lighting,

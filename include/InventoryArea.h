@@ -51,7 +51,7 @@ class InventoryArea :
     virtual EventResult handle_event(sf::Event& event) override;
 
   protected:
-    virtual std::string render_contents(int frame) override;
+    virtual std::string _render_contents(sf::RenderTarget& target, int frame) override;
 
   private:
     struct Impl;
