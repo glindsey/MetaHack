@@ -37,12 +37,11 @@ std::string const& AppStateSplashScreen::get_name()
 
 bool AppStateSplashScreen::initialize()
 {
-  if (!m_splash_graphic.loadFromFile("cb.bmp"))
+  if (m_splash_graphic.loadFromFile("splash.bmp"))
   {
-    return false;
+    m_splash_sprite.setTexture(m_splash_graphic);
   }
-
-  m_splash_sprite.setTexture(m_splash_graphic);
+  
   m_clock.restart();
   return true;
 }
