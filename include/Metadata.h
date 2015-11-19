@@ -14,7 +14,6 @@
 #include "ActionResult.h"
 #include "App.h"
 #include "ErrorHandler.h"
-#include "Exceptions.h"
 #include "IntegerRange.h"
 #include "Lua.h"
 #include "MetadataCollection.h"

@@ -2,6 +2,7 @@
 #define APPSTATESPLASHSCREEN_H
 
 #include <memory>
+#include <SFML/Graphics.hpp>
 
 #include "State.h"
 

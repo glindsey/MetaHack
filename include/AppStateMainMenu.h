@@ -2,6 +2,7 @@
 #define APPSTATEMAINMENU_H
 
 #include <memory>
+#include <SFML/Graphics.hpp>
 
 #include "State.h"
 
