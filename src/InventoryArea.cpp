@@ -101,7 +101,7 @@ void InventoryArea::set_viewed(ThingRef thing)
 
 void InventoryArea::toggle_selection(InventorySlot selection)
 {
-  if (pImpl->viewed == TM.get_mu())
+  if (pImpl->viewed == ThingManager::get_mu())
   {
     return;
   }
@@ -144,7 +144,7 @@ std::vector<ThingRef> InventoryArea::get_selected_things()
 {
   std::vector<ThingRef> things;
 
-  if (pImpl->viewed != TM.get_mu())
+  if (pImpl->viewed != ThingManager::get_mu())
   {
     Inventory& inventory = pImpl->viewed->get_inventory();
 
@@ -174,7 +174,7 @@ unsigned int InventoryArea::get_max_quantity() const
 {
   unsigned int result;
 
-  if (pImpl->viewed == TM.get_mu())
+  if (pImpl->viewed == ThingManager::get_mu())
   {
     return 0;
   }
@@ -189,7 +189,7 @@ unsigned int InventoryArea::get_max_quantity() const
   {
     ThingRef thing = inventory.get(pImpl->selected_slots[0]);
 
-    if (thing == TM.get_mu())
+    if (thing == ThingManager::get_mu())
     {
       result = 0;
     }
@@ -247,9 +247,9 @@ ThingRef InventoryArea::get_thing(InventorySlot selection)
 {
   ThingRef viewed = pImpl->viewed;
 
-  if (viewed == TM.get_mu())
+  if (viewed == ThingManager::get_mu())
   {
-    return TM.get_mu();
+    return ThingManager::get_mu();
   }
 
   Inventory& inventory = pImpl->viewed->get_inventory();
@@ -262,7 +262,7 @@ ThingRef InventoryArea::get_thing(InventorySlot selection)
   {
     TRACE("Requested non-existent inventory slot %u, returning mu!",
           static_cast<unsigned int>(selection));
-    return TM.get_mu();
+    return ThingManager::get_mu();
   }
 }
 
@@ -287,7 +287,7 @@ std::string InventoryArea::render_contents(int frame)
   float text_offset_y = 3.0f;
 
   // Get a reference to the location we're referring to.
-  if (pImpl->viewed == TM.get_mu())
+  if (pImpl->viewed == ThingManager::get_mu())
   {
     return "Invalid Viewed Object!";
   }

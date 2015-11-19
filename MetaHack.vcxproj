@@ -140,6 +140,7 @@
     <ClInclude Include="include\EventHandler.h" />
     <ClInclude Include="include\Exceptions.h" />
     <ClInclude Include="include\GameObject.h" />
+    <ClInclude Include="include\GameState.h" />
     <ClInclude Include="include\Gender.h" />
     <ClInclude Include="include\GeoVector.h" />
     <ClInclude Include="include\GetLetterKey.h" />
@@ -194,6 +195,7 @@
     <ClCompile Include="src\ConfigSettings.cpp" />
     <ClCompile Include="src\ErrorHandler.cpp" />
     <ClCompile Include="src\GameObject.cpp" />
+    <ClCompile Include="src\GameState.cpp" />
     <ClCompile Include="src\Gender.cpp" />
     <ClCompile Include="src\gui\GUIPane.cpp" />
     <ClCompile Include="src\IntegerRange.cpp" />

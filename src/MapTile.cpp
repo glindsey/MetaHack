@@ -6,6 +6,7 @@
 
 #include "App.h"
 #include "ConfigSettings.h"
+#include "GameState.h"
 #include "Map.h"
 #include "MapTileMetadata.h"
 #include "MathUtils.h"
@@ -204,9 +205,9 @@ sf::Color MapTile::get_light_level() const
 {
   sf::Color color = m_ambient_light_color;
 
-  ThingRef player = TM.get_player();
+  ThingRef player = GAME.get_thing_manager().get_player();
 
-  if (player != TM.get_mu())
+  if (player != ThingManager::get_mu())
   {
     for (auto iter = std::begin(m_lights);
       iter != std::end(m_lights);
@@ -272,9 +273,9 @@ sf::Color MapTile::get_wall_light_level(Direction direction) const
 {
   sf::Color color = m_ambient_light_color;
 
-  ThingRef player = TM.get_player();
+  ThingRef player = GAME.get_thing_manager().get_player();
 
-  if (player != TM.get_mu())
+  if (player != ThingManager::get_mu())
   {
     for (auto iter = std::begin(m_lights);
       iter != std::end(m_lights);
@@ -373,9 +374,9 @@ void MapTile::add_walls_to(sf::VertexArray& vertices,
   bool player_sees_w_wall { false };
 
   // Player.
-  ThingRef player = TM.get_player();
+  ThingRef player = GAME.get_thing_manager().get_player();
 
-  if (player != TM.get_mu())
+  if (player != ThingManager::get_mu())
   {
     auto player_tile = player->get_maptile();
     if (player_tile != nullptr)
@@ -601,7 +602,7 @@ MapTile::MapTile(sf::Vector2i coords, Metadata& metadata, MapId map_id)
   // "this" pointer passed in.
   /// @todo The type of this floor should eventually be specified as
   ///       part of the constructor.
-  m_floor = TM.create_floor(this);
+  m_floor = GAME.get_thing_manager().create_floor(this);
 }
 
 MapTile const& MapTile::get_adjacent_tile(Direction direction) const

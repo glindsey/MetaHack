@@ -13,10 +13,9 @@
 #include <boost/log/trivial.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/uuid/uuid_io.hpp>
+#include <cinttypes>
 #include <queue>
 #include <string>
-
-std::unique_ptr<ThingManager> ThingManager::instance_;
 
 ThingManager::ThingManager()
 {
@@ -33,27 +32,17 @@ ThingManager::ThingManager()
   the_lua_instance.register_function("thing_set_property_value", Thing::LUA_thing_set_property_value);
   the_lua_instance.register_function("thing_set_property_string", Thing::LUA_thing_set_property_string);
   the_lua_instance.register_function("thing_move_into", Thing::LUA_thing_move_into);
+
+  // Create the "nothingness" object.
+  ThingRef mu = create("Mu");
+  if (mu.get_id().full_id != 0)
+  {
+    FATAL_ERROR("Mu's ID is %" PRIu64 " instead of zero!", mu.get_id().full_id);
+  }
 }
 
 ThingManager::~ThingManager()
 {
-}
-
-void ThingManager::initialize()
-{
-  // Create the "nothingness" object.
-  m_mu = create("Mu");
-}
-
-ThingManager& ThingManager::instance()
-{
-  if (ThingManager::instance_ == nullptr)
-  {
-    ThingManager::instance_.reset(NEW ThingManager());
-    ThingManager::instance_->initialize();
-  }
-
-  return *(ThingManager::instance_.get());
 }
 
 ThingRef ThingManager::create(std::string type)
@@ -85,8 +74,8 @@ ThingRef ThingManager::create_floor(MapTile* map_tile)
 
 ThingRef ThingManager::clone(ThingRef original_ref)
 {
-  if (TM.exists(original_ref) == false) return m_mu;
-  Thing* original_thing = TM.get_ptr(original_ref.m_id);
+  if (this->exists(original_ref) == false) return get_mu();
+  Thing* original_thing = this->get_ptr(original_ref.m_id);
 
   ThingId new_id = ThingRef::create();
   ThingRef new_ref = ThingRef(new_id);
@@ -99,7 +88,7 @@ ThingRef ThingManager::clone(ThingRef original_ref)
 
 void ThingManager::destroy(ThingRef ref)
 {
-  if (ref != m_mu)
+  if (ref != get_mu())
   {
     if (m_thing_map.count(ref.m_id) != 0)
     {
@@ -128,7 +117,7 @@ Thing* ThingManager::get_ptr(ThingId id)
   catch (std::out_of_range&)
   {
     MAJOR_ERROR("Tried to get thing %s which does not exist", boost::lexical_cast<std::string>(id).c_str());
-    return m_thing_map[m_mu.m_id];
+    return m_thing_map[get_mu().m_id];
   }
 }
 
@@ -141,7 +130,7 @@ Thing const* ThingManager::get_ptr(ThingId id) const
   catch (std::out_of_range&)
   {
     MAJOR_ERROR("Tried to get thing %s which does not exist", boost::lexical_cast<std::string>(id).c_str());
-    return m_thing_map.at(m_mu.m_id);
+    return m_thing_map.at(get_mu().m_id);
   }
 }
 
@@ -159,7 +148,7 @@ ThingRef ThingManager::get_player() const
   return m_player;
 }
 
-ThingRef ThingManager::get_mu() const
+ThingRef ThingManager::get_mu()
 {
-  return m_mu;
+  return ThingRef();
 }

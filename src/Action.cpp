@@ -9,7 +9,7 @@ Action::Action()
   m_type{ Action::Type::None },
   m_state{ Action::State::Pending },
   m_things{ std::vector<ThingRef>{ } },
-  m_target_thing{ TM.get_mu() },
+  m_target_thing{ ThingManager::get_mu() },
   m_target_direction{ Direction::None },
   m_quantity{ 0 }
 {}
@@ -19,7 +19,7 @@ Action::Action(Action::Type type)
   m_type{ type },
   m_state{ Action::State::Pending },
   m_things{ std::vector<ThingRef>{ } },
-  m_target_thing{ TM.get_mu() },
+  m_target_thing{ ThingManager::get_mu() },
   m_target_direction{ Direction::None },
   m_quantity{ 0 }
 {}

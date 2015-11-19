@@ -3,6 +3,7 @@
 
 #include <memory>
 
+#include "GameState.h"
 #include "InventoryArea.h"
 #include "MapId.h"
 #include "MessageLog.h"
@@ -25,6 +26,8 @@ class AppStateGameMode : public State
     std::string const& get_name() override;
     bool initialize() override;
     bool terminate() override;
+
+    GameState& get_game_state();
 
   protected:
     EventResult handle_key_press(sf::Event::KeyEvent& key);

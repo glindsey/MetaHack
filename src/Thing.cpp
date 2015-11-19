@@ -14,6 +14,7 @@
 #include "App.h"
 #include "ConfigSettings.h"
 #include "Direction.h"
+#include "GameState.h"
 #include "Gender.h"
 #include "IntegerRange.h"
 #include "Inventory.h"
@@ -44,7 +45,7 @@
 #define SEEM  (this->choose_verb(" seem", " seems"))
 #define TRY   (this->choose_verb(" try", " tries"))
 
-#define IS_PLAYER (TM.get_player() == pImpl->ref)
+#define IS_PLAYER (GAME.get_thing_manager().get_player() == pImpl->ref)
 
 #define FOO       (thing->get_identifying_string())
 #define FOO1      (thing1->get_identifying_string())
@@ -230,7 +231,7 @@ bool Thing::do_attack(Direction direction, unsigned int& action_time)
   MapTile* current_tile = get_maptile();
 
   // Make sure we're not in limbo!
-  if ((location == TM.get_mu()) || (current_tile == nullptr))
+  if ((location == ThingManager::get_mu()) || (current_tile == nullptr))
   {
     message = YOU + " can't attack anything because " + YOU_DO + " not exist physically!";
     the_message_log.add(message);
@@ -314,7 +315,7 @@ bool Thing::do_attack(Direction direction, unsigned int& action_time)
 
     // See if the tile to move into contains another creature.
     ThingRef creature = new_floor->get_inventory().get_entity();
-    if (creature != TM.get_mu())
+    if (creature != ThingManager::get_mu())
     {
       return do_attack(creature, action_time);
     }
@@ -842,7 +843,7 @@ bool Thing::do_move(Direction new_direction, unsigned int& action_time)
   MapTile* current_tile = get_maptile();
 
   // Make sure we're not in limbo!
-  if ((location == TM.get_mu()) || (current_tile == nullptr))
+  if ((location == ThingManager::get_mu()) || (current_tile == nullptr))
   {
     message = YOU + " can't move because " + YOU_DO + " not exist physically!";
     the_message_log.add(message);
@@ -925,7 +926,7 @@ bool Thing::do_move(Direction new_direction, unsigned int& action_time)
 
     // See if the tile to move into contains another creature.
     ThingRef creature = new_floor->get_inventory().get_entity();
-    if (creature != TM.get_mu())
+    if (creature != ThingManager::get_mu())
     {
       /// @todo Setting choosing whether auto-attack is on.
       /// @todo Only attack hostiles.
@@ -1625,7 +1626,7 @@ bool Thing::do_use(ThingRef thing, unsigned int& action_time)
     message = YOU_TRY + " to use " + thing->get_identifying_string() + ".";
     the_message_log.add(message);
 
-    if (TM.get_player() == pImpl->ref)
+    if (GAME.get_thing_manager().get_player() == pImpl->ref)
     {
       message = YOU_ARE + " already using " + YOURSELF + " to the best of " + YOUR + " ability.";
       the_message_log.add(message);
@@ -1845,12 +1846,12 @@ bool Thing::do_wield(ThingRef thing, unsigned int hand, unsigned int& action_tim
 
   ThingRef currently_wielded = pImpl->wielding_in(hand);
 
-  std::string thing_name = (thing != TM.get_mu()) ? thing->get_identifying_string() : "nothing";
+  std::string thing_name = (thing != ThingManager::get_mu()) ? thing->get_identifying_string() : "nothing";
 
   bool was_wielding = false;
 
   // First, check if we're already wielding something.
-  if (currently_wielded != TM.get_mu())
+  if (currently_wielded != ThingManager::get_mu())
   {
     // Now, check if the thing we're already wielding is THIS thing.
     if (currently_wielded == thing)
@@ -1876,7 +1877,7 @@ bool Thing::do_wield(ThingRef thing, unsigned int hand, unsigned int& action_tim
   }
 
   // If we HAVE a new item, try to wield it.
-  ActionResult wield_try = (thing != TM.get_mu()) 
+  ActionResult wield_try = (thing != ThingManager::get_mu()) 
     ? this->can_wield(thing, hand, action_time)
     : ActionResult::SuccessSelfReference;
 
@@ -2049,7 +2050,7 @@ std::string Thing::get_bodypart_plural(BodyPart part) const
 
 bool Thing::is_player() const
 {
-  return (TM.get_player() == pImpl->ref);
+  return (GAME.get_thing_manager().get_player() == pImpl->ref);
 }
 
 std::string const& Thing::get_type() const
@@ -2168,7 +2169,7 @@ void Thing::find_seen_tiles()
 
   // Are we on a map?  Bail out if we aren't.
   ThingRef location = get_location();
-  if (location == TM.get_mu())
+  if (location == ThingManager::get_mu())
   {
     return;
   }
@@ -2285,7 +2286,7 @@ bool Thing::move_into(ThingRef new_location)
     if (new_location->get_inventory().add(pImpl->ref))
     {
       // Try to lock our old location.
-      if (pImpl->location != TM.get_mu())
+      if (pImpl->location != ThingManager::get_mu())
       {
         pImpl->location->get_inventory().remove(pImpl->ref);
       }
@@ -2331,14 +2332,14 @@ Inventory& Thing::get_inventory()
 bool Thing::is_inside_another_thing() const
 {
   ThingRef location = pImpl->location;
-  if (location == TM.get_mu())
+  if (location == ThingManager::get_mu())
   {
     // Thing is a part of the MapTile such as the floor.
     return false;
   }
 
   ThingRef location2 = location->get_location();
-  if (location2 == TM.get_mu())
+  if (location2 == ThingManager::get_mu())
   {
     // Thing is directly on the floor.
     return false;
@@ -2350,7 +2351,7 @@ MapTile* Thing::get_maptile() const
 {
   ThingRef location = pImpl->location;
 
-  if (location == TM.get_mu())
+  if (location == ThingManager::get_mu())
   {
     return _get_maptile();
   }
@@ -2364,7 +2365,7 @@ MapId Thing::get_map_id() const
 {
   ThingRef location = pImpl->location;
 
-  if (location == TM.get_mu())
+  if (location == ThingManager::get_mu())
   {
     MapTile* maptile = _get_maptile();
     if (maptile != nullptr)
@@ -2553,7 +2554,7 @@ std::string Thing::get_identifying_string(bool definite)
 std::string const& Thing::choose_verb(std::string const& verb12,
                                       std::string const& verb3)
 {
-  if ((TM.get_player() == pImpl->ref) || (get_property<unsigned int>("quantity") > 1))
+  if ((GAME.get_thing_manager().get_player() == pImpl->ref) || (get_property<unsigned int>("quantity") > 1))
   {
     return verb12;
   }
@@ -2597,7 +2598,7 @@ std::string Thing::get_possessive()
 {
   static std::string const your = std::string("your");
 
-  if (TM.get_player() == pImpl->ref)
+  if (GAME.get_thing_manager().get_player() == pImpl->ref)
   {
     return your;
   }
@@ -2740,7 +2741,7 @@ void Thing::light_up_surroundings()
   ThingRef location = get_location();
 
   // Use visitor pattern.
-  if ((location != TM.get_mu()) && this->get_property<bool>("light_lit"))
+  if ((location != ThingManager::get_mu()) && this->get_property<bool>("light_lit"))
   {
     location->be_lit_by(this->get_ref());
   }
@@ -2750,7 +2751,7 @@ void Thing::be_lit_by(ThingRef light)
 {
   call_lua_function("on_lit_by", { light });
 
-  if (get_location() == TM.get_mu())
+  if (get_location() == ThingManager::get_mu())
   {
     MF.get(get_map_id()).add_light(light);
   }
@@ -2765,7 +2766,7 @@ void Thing::be_lit_by(ThingRef light)
   if (!is_opaque() || get_intrinsic<bool>("is_entity"))
   {
     ThingRef location = get_location();
-    if (location != TM.get_mu())
+    if (location != ThingManager::get_mu())
     {
       location->be_lit_by(light);
     }
@@ -2783,7 +2784,7 @@ void Thing::spill()
   for (ThingPair thing_pair : things)
   {
     ThingRef thing = thing_pair.second;
-    if (pImpl->location != TM.get_mu())
+    if (pImpl->location != ThingManager::get_mu())
     {
       ActionResult can_contain = pImpl->location->can_contain(thing);
 
@@ -2839,7 +2840,7 @@ void Thing::destroy()
     spill();
   }
 
-  if (old_location != TM.get_mu())
+  if (old_location != ThingManager::get_mu())
   {
     old_location->get_inventory().remove(pImpl->ref);
   }
@@ -3301,7 +3302,7 @@ bool Thing::_process_self()
       case Action::Type::Drop:
         for (ThingRef thing : action.get_things())
         {
-          if (thing != TM.get_mu())
+          if (thing != ThingManager::get_mu())
           {
             success = this->do_drop(thing, action_time);
             if (success)
@@ -3315,7 +3316,7 @@ bool Thing::_process_self()
       case Action::Type::Eat:
         for (ThingRef thing : action.get_things())
         {
-          if (thing != TM.get_mu())
+          if (thing != ThingManager::get_mu())
           {
             success = this->do_eat(thing, action_time);
             if (success)
@@ -3329,7 +3330,7 @@ bool Thing::_process_self()
       case Action::Type::Get:
         for (ThingRef thing : action.get_things())
         {
-          if (thing != TM.get_mu())
+          if (thing != ThingManager::get_mu())
           {
             success = this->do_pick_up(thing, action_time);
             if (success)
@@ -3343,7 +3344,7 @@ bool Thing::_process_self()
       case Action::Type::Quaff:
         for (ThingRef thing : action.get_things())
         {
-          if (thing != TM.get_mu())
+          if (thing != ThingManager::get_mu())
           {
             success = this->do_drink(thing, action_time);
             if (success)
@@ -3357,13 +3358,13 @@ bool Thing::_process_self()
       case Action::Type::PutInto:
       {
         ThingRef container = action.get_target_thing();
-        if (container != TM.get_mu())
+        if (container != ThingManager::get_mu())
         {
           if (container->get_intrinsic<int>("inventory_size") != 0)
           {
             for (ThingRef thing : action.get_things())
             {
-              if (thing != TM.get_mu())
+              if (thing != ThingManager::get_mu())
               {
                 success = this->do_put_into(thing, container, action_time);
                 if (success)
@@ -3384,7 +3385,7 @@ bool Thing::_process_self()
       case Action::Type::TakeOut:
         for (ThingRef thing : action.get_things())
         {
-          if (thing != TM.get_mu())
+          if (thing != ThingManager::get_mu())
           {
             success = this->do_take_out(thing, action_time);
             if (success)
@@ -3398,7 +3399,7 @@ bool Thing::_process_self()
       case Action::Type::Use:
         for (ThingRef thing : action.get_things())
         {
-          if (thing != TM.get_mu())
+          if (thing != ThingManager::get_mu())
           {
             success = this->do_use(thing, action_time);
             if (success)
@@ -3417,7 +3418,7 @@ bool Thing::_process_self()
         }
 
         ThingRef thing = action.get_things()[number_of_things - 1];
-        if (thing != TM.get_mu())
+        if (thing != ThingManager::get_mu())
         {
           /// @todo Implement wielding using other hands.
           success = this->do_wield(thing, 0, action_time);
@@ -3732,7 +3733,7 @@ int Thing::LUA_thing_create(lua_State* L)
   ThingRef thing = ThingRef(lua_tointeger(L, 1));
   std::string new_thing_type = lua_tostring(L, 2);
   
-  ThingRef new_thing = TM.create(new_thing_type);
+  ThingRef new_thing = GAME.get_thing_manager().create(new_thing_type);
   bool success = new_thing->move_into(thing);
 
   if (num_args > 2)
@@ -3780,7 +3781,7 @@ int Thing::LUA_thing_get_player(lua_State* L)
     return 0;
   }
 
-  ThingRef player = TM.get_player();
+  ThingRef player = GAME.get_thing_manager().get_player();
   lua_pushinteger(L, player);
 
   return 1;
@@ -3798,7 +3799,7 @@ int Thing::LUA_thing_get_coords(lua_State* L)
 
   ThingRef thing = ThingRef(lua_tointeger(L, 1));
 
-  MapId map_id = TM.get_player()->get_map_id();
+  MapId map_id = GAME.get_thing_manager().get_player()->get_map_id();
   auto maptile = thing->get_maptile();
 
   if (maptile != nullptr)

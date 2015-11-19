@@ -32,7 +32,7 @@ public:
     : 
     metadata{ metadata_ },
     ref{ ref_ },
-    location{ TM.get_mu() },
+    location{ ThingManager::get_mu() },
     map_tile{ nullptr },
     inventory{ Inventory() },
     gender{ Gender::None },
@@ -51,7 +51,7 @@ public:
     :
     metadata{ metadata_ },
     ref{ ref_ },
-    location{ TM.get_mu() },
+    location{ ThingManager::get_mu() },
     map_tile{ tile },
     inventory{ Inventory() },
     gender{ Gender::None },
@@ -132,7 +132,7 @@ public:
 
   bool is_wielding(ThingRef thing, unsigned int& hand)
   {
-    if (thing == TM.get_mu())
+    if (thing == ThingManager::get_mu())
     {
       return false;
     }
@@ -157,7 +157,7 @@ public:
   {
     if (wielded_items.count(hand) == 0)
     {
-      return TM.get_mu();
+      return ThingManager::get_mu();
     }
     else
     {
@@ -167,7 +167,7 @@ public:
 
   bool is_wearing(ThingRef thing, WearLocation& location)
   {
-    if (thing == TM.get_mu())
+    if (thing == ThingManager::get_mu())
     {
       return false;
     }

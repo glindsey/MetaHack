@@ -5,9 +5,11 @@
 
 #include "Action.h"
 #include "ConfigSettings.h"
+#include "GameState.h"
 #include "Map.h"
 #include "MapFactory.h"
 #include "MapTile.h"
+#include "New.h"
 
 /// Current input state for the game.
 enum class GameInputState
@@ -25,6 +27,7 @@ public:
   AppStateGameModeImpl(sf::RenderWindow& app_window_)
     :
     app_window{ app_window_ },
+    game_state{ NEW GameState() },
     window_in_focus{ true },
     inventory_area_shows_player{ false },
     inventory_area{ NEW InventoryArea(calc_inventory_dims()) },
@@ -37,6 +40,9 @@ public:
 
   /// Application window.
   sf::RenderWindow& app_window;
+
+  /// The current game state.
+  std::unique_ptr<GameState> game_state;
 
   /// True if the application window is in focus, false otherwise.
   bool window_in_focus;
@@ -68,7 +74,7 @@ public:
 
   void reset_inventory_area()
   {
-    ThingRef player = TM.get_player();
+    ThingRef player = game_state->get_thing_manager().get_player();
     Map& game_map = MF.get(player->get_map_id());
     if (inventory_area_shows_player == true)
     {
@@ -114,7 +120,7 @@ public:
 
   bool move_cursor(Direction direction)
   {
-    ThingRef player = TM.get_player();
+    ThingRef player = game_state->get_thing_manager().get_player();
     Map& game_map = MF.get(player->get_map_id());
     bool result;
 

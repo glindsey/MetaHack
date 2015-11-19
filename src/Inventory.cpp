@@ -4,6 +4,7 @@
 #include <boost/log/trivial.hpp>
 #include <climits>
 
+#include "GameState.h"
 #include "Thing.h"
 #include "ThingManager.h"
 
@@ -19,13 +20,13 @@ Inventory::~Inventory()
 bool Inventory::add(ThingRef thing)
 {
   // If thing is Mu, exit returning false.
-  if (thing == TM.get_mu())
+  if (thing == ThingManager::get_mu())
   {
     return false;
   }
 
   // If the thing is the player, it goes into slot 0.
-  if (thing == TM.get_player())
+  if (thing == GAME.get_thing_manager().get_player())
   {
     if (things_.count(INVSLOT_ZERO) != 0)
     {
@@ -102,7 +103,7 @@ void Inventory::consolidate_items()
 
 bool Inventory::contains(ThingRef thing)
 {
-  if (TM.exists(thing) == false) return false;
+  if (GAME.get_thing_manager().exists(thing) == false) return false;
 
   return (find(thing) != things_.cend());
 }
@@ -114,7 +115,7 @@ bool Inventory::contains(InventorySlot slot)
 
 InventorySlot Inventory::get(ThingRef thing)
 {
-  if (TM.exists(thing) == false) return INVSLOT_INVALID;
+  if (GAME.get_thing_manager().exists(thing) == false) return INVSLOT_INVALID;
 
   auto iter = find(thing);
 
@@ -133,7 +134,7 @@ ThingRef Inventory::get(InventorySlot slot)
 
 ThingRef Inventory::split(ThingRef thing, unsigned int target_quantity)
 {
-  ThingRef target_thing = TM.get_mu();
+  ThingRef target_thing = ThingManager::get_mu();
 
   if (target_quantity > 0)
   {
@@ -145,7 +146,7 @@ ThingRef Inventory::split(ThingRef thing, unsigned int target_quantity)
       unsigned int source_quantity = source_thing->get_quantity();
       if (target_quantity < source_quantity)
       {
-        ThingRef target_thing = TM.clone(source_thing);
+        ThingRef target_thing = GAME.get_thing_manager().clone(source_thing);
         source_thing->set_quantity(source_quantity - target_quantity);
         target_thing->set_quantity(target_quantity);
       }
@@ -209,7 +210,7 @@ ThingRef Inventory::get_entity()
   }
   else
   {
-    return TM.get_mu();
+    return ThingManager::get_mu();
   }
 }
 
@@ -236,7 +237,7 @@ ThingMap::iterator Inventory::find(ThingRef target_id)
 
 bool Inventory::is_smaller_than(ThingRef a, ThingRef b)
 {
-  if ((a == TM.get_mu()) || (b == TM.get_mu())) return false;
+  if ((a == ThingManager::get_mu()) || (b == ThingManager::get_mu())) return false;
 
   return (a->get_mass() < b->get_mass());
 }

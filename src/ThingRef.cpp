@@ -1,3 +1,4 @@
+#include "GameState.h"
 #include "ThingRef.h"
 #include "Thing.h"
 #include "ThingManager.h"
@@ -65,7 +66,7 @@ bool ThingRef::operator!=(ThingRef const& other) const
 
 Thing* ThingRef::operator->()
 {
-	return TM.get_ptr(m_id);
+	return GAME.get_thing_manager().get_ptr(m_id);
 }
 
 ThingId ThingRef::get_id() const

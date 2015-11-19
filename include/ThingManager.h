@@ -21,53 +21,50 @@ class ThingManager
 	friend class ThingRef;
 
 public:
-	virtual ~ThingManager();
+  /// Constructor.
+  ThingManager();
 
-    /// Initialize the ThingManager.  Populates it with Mu.
-    void initialize();
+  virtual ~ThingManager();
 
-    /// Get the singleton instance of ThingManager.
-  	static ThingManager& instance();
+  /// Create a particular object given the type name.
+  /// @param type The type name of the object to create.
+  /// @return A ThingRef to the new object created.
+  ThingRef create(std::string type);
 
-    /// Create a particular object given the type name.
-    /// @param type The type name of the object to create.
-    /// @return A ThingRef to the new object created.
-    ThingRef create(std::string type);
+  /// Create a floor object.
+  /// @param map_tile Pointer to the map tile associated.
+  /// @return A ThingRef to the new object created.
+  ThingRef create_floor(MapTile* map_tile);
 
-    /// Create a floor object.
-    /// @param map_tile Pointer to the map tile associated.
-    /// @return A ThingRef to the new object created.
-    ThingRef create_floor(MapTile* map_tile);
+  /// Clone a particular object.
+  /// @param original_ref Reference to the object to clone.
+  /// @return A ThingRef to the new cloned object.
+  ThingRef clone(ThingRef original_ref);
 
-    /// Clone a particular object.
-    /// @param original_ref Reference to the object to clone.
-    /// @return A ThingRef to the new cloned object.
-    ThingRef clone(ThingRef original_ref);
+  /// Destroy an object given a ThingRef to the object.
+  /// If the given ThingRef does not correspond to an object, does nothing.
+  /// @param ref ThingRef of the object to destroy.
+  void destroy(ThingRef ref);
 
-    /// Destroy an object given a ThingRef to the object.
-    /// If the given ThingRef does not correspond to an object, does nothing.
-    /// @param ref ThingRef of the object to destroy.
-    void destroy(ThingRef ref);
+  /// Returns whether a Thing with a particular ThingRef exists.
+  bool exists(ThingRef ref);
 
-    /// Returns whether a Thing with a particular ThingRef exists.
-    bool exists(ThingRef ref);
+  /// Set the game player.
+  /// If the caller attempts to set a ThingRef of a Thing that does not exist,
+  /// the program will abort with a FATAL_ERROR call.
+  /// @note Changing the player ID has not been testing as of this writing,
+  ///       and unpredictable results may occur!
+  /// @param ref ThingRef of the Thing to set as the player.
+  /// @return True if the set was successful, false otherwise.
+  bool set_player(ThingRef ref);
 
-    /// Set the game player.
-    /// If the caller attempts to set a ThingRef of a Thing that does not exist,
-    /// the program will abort with a FATAL_ERROR call.
-    /// @note Changing the player ID has not been testing as of this writing,
-    ///       and unpredictable results may occur!
-    /// @param ref ThingRef of the Thing to set as the player.
-    /// @return True if the set was successful, false otherwise.
-    bool set_player(ThingRef ref);
+  /// Get the ThingRef of the game player Thing.
+  /// @return The player ThingRef.
+  ThingRef get_player() const;
 
-    /// Get the ThingRef of the game player Thing.
-    /// @return The player ThingRef.
-    ThingRef get_player() const;
-
-    /// Get the ThingRef of Mu (nothingness).
-    /// @return The ThingRef of Mu.
-    ThingRef get_mu() const;
+  /// Get the ThingRef of Mu (nothingness).
+  /// @return The ThingRef of Mu.
+  static ThingRef get_mu();
 
 protected:
 
@@ -80,9 +77,6 @@ protected:
 	Thing const* get_ptr(ThingId data) const;
 
 private:
-  /// Constructor; private because ThingFactory is a singleton.
-  ThingManager();
-
   /// ThingRef of the player.
   ThingRef m_player;
 
@@ -93,15 +87,6 @@ private:
 
   /// Object pool of Things that exist.
   boost::object_pool<Thing> m_thing_pool;
-
-  /// ThingRef that means "nothing".
-  ThingRef m_mu;
-
-  /// Unique pointer to singleton instance.
-  static std::unique_ptr<ThingManager> instance_;
 };
-
-/// Shortcut to the singleton instance, to save on typing.
-#define TM        ThingManager::instance()
 
 #endif // THINGMANAGER_H

@@ -5,6 +5,7 @@
 
 #include "App.h"
 #include "ConfigSettings.h"
+#include "GameState.h"
 #include "Thing.h"
 #include "ThingManager.h"
 
@@ -34,7 +35,7 @@ std::string StatusArea::render_contents(int frame)
 {
   sf::IntRect pane_dims = get_dimensions();
   sf::RenderTexture& bg_texture = get_bg_texture();
-  ThingRef player = TM.get_player();
+  ThingRef player = GAME.get_thing_manager().get_player();
   sf::Vector2f origin(3, 3);
   sf::Color text_color = Settings.get<sf::Color>("text_color");
   sf::Color text_dim_color = Settings.get<sf::Color>("text_dim_color");
@@ -50,7 +51,7 @@ std::string StatusArea::render_contents(int frame)
   render_text.setCharacterSize(Settings.get<unsigned int>("text_default_size"));
   render_text.setPosition(origin.x, origin.y);
 
-  if (player != TM.get_mu())
+  if (player != ThingManager::get_mu())
   {
     // Render player name
     std::string name = player->get_proper_name();
@@ -115,7 +116,7 @@ void StatusArea::render_attribute(sf::RenderTexture& bg_texture, std::string abb
   sf::Text render_text;
   sf::Color text_color = Settings.get<sf::Color>("text_color");
   sf::Color text_dim_color = Settings.get<sf::Color>("text_dim_color");
-  ThingRef player = TM.get_player();
+  ThingRef player = GAME.get_thing_manager().get_player();
 
   // Render STR
   render_text.setFont(the_default_mono_font);
