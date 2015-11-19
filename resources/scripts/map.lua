@@ -12,10 +12,6 @@ if current_map_id ~= 0 then
     local start_floor_id = map_get_floor(current_map_id, start_x, start_y)
     local player_id = thing_get_player()
 
-    print("Trying to move player to starting position...")
-    local move_success = thing_move_into(player_id, start_floor_id)
-    print("Success = " .. tostring(move_success))
-
     -- TESTING CODE: Create a lighting orb held in player inventory.
     print("Creating lighting orb...")
     local orb_id = thing_create(player_id, "LightOrb")

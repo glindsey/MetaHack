@@ -58,6 +58,9 @@ class Thing :
     /// Return whether there is an action pending for this Entity.
     bool action_is_pending() const;
 
+    /// Return whether there is an action currently in progress for this Entity.
+    bool action_is_in_progress();
+
     /// Returns true if this thing is the current player.
     /// By default, returns false. Overridden by Entity class.
     virtual bool is_player() const;

@@ -48,7 +48,7 @@ void AppStateGameMode::execute()
 
   ThingRef player = TM.get_player();
 
-  if (player->action_is_pending())
+  if (player->action_is_pending() || player->action_is_in_progress())
   {
     // QUESTION: Do we want to update all Things, PERIOD?  In other words, should
     //           other maps keep playing themselves if the player is not on them?
@@ -59,9 +59,15 @@ void AppStateGameMode::execute()
     MapId current_map_id = player->get_map_id();
     Map& current_map = MF.get(current_map_id);
 
-    // Process everything on the map.
+    // Process everything on the map, and increment game clock.
     current_map.process();
-    pImpl->reset_inventory_area();
+    ++(pImpl->game_clock);
+
+    // If outstanding player actions have completed...
+    if (!player->action_is_pending() && !player->action_is_in_progress())
+    {
+      pImpl->reset_inventory_area();
+    }
 
     // If player can see the map...
     /// @todo IMPLEMENT THIS CHECK
@@ -944,17 +950,15 @@ bool AppStateGameMode::initialize()
   TM.set_player(player);
 
   // Create the game map.
-  pImpl->current_map_id = MF.create(64, 64);
-  Map& game_map = MF.get(pImpl->current_map_id);
+  MapId current_map_id = MF.create(64, 64);
+  Map& game_map = MF.get(current_map_id);
 
   // Move player to start position on the map.
-  // (This is done by the map.lua script now.)
-  //auto start = game_map.get_tile(start_coords).get_floor();
-  //bool player_moved = player->move_into(start);
+  auto& start_coords = game_map.get_start_coords();
+  auto start_floor = game_map.get_tile(start_coords).get_floor();
+  bool player_moved = player->move_into(start_floor);
 
   // Set cursor to starting location.
-  // (Should this be done by the map.lua script too?)
-  sf::Vector2i const& start_coords = game_map.get_start_coords();
   pImpl->cursor_coords = start_coords;
 
   // Set the viewed inventory location to the player's location.

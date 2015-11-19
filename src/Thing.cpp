@@ -111,6 +111,11 @@ bool Thing::action_is_pending() const
   return !(pImpl->pending_actions.empty());
 }
 
+bool Thing::action_is_in_progress()
+{
+  return (get_property<int>("counter_busy") > 0);
+}
+
 bool Thing::is_wielding(ThingRef thing)
 {
   unsigned int dummy;

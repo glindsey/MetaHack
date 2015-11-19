@@ -25,7 +25,6 @@ public:
   AppStateGameModeImpl(sf::RenderWindow& app_window_)
     :
     app_window{ app_window_ },
-    current_map_id{ MapId(0) },
     window_in_focus{ true },
     inventory_area_shows_player{ false },
     inventory_area{ NEW InventoryArea(calc_inventory_dims()) },
@@ -38,9 +37,6 @@ public:
 
   /// Application window.
   sf::RenderWindow& app_window;
-
-  /// Map the player is currently on.
-  MapId current_map_id;
 
   /// True if the application window is in focus, false otherwise.
   bool window_in_focus;
@@ -66,6 +62,9 @@ public:
   /// Action in progress.
   /// Used for an action that needs a "target".
   Action action_in_progress;
+
+  /// Game clock.
+  uint64_t game_clock;
 
   void reset_inventory_area()
   {
@@ -115,7 +114,8 @@ public:
 
   bool move_cursor(Direction direction)
   {
-    Map& game_map = MF.get(current_map_id);
+    ThingRef player = TM.get_player();
+    Map& game_map = MF.get(player->get_map_id());
     bool result;
 
     result = game_map.calc_coords(cursor_coords, direction, cursor_coords);
