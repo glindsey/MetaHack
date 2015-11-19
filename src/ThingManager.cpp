@@ -2,6 +2,7 @@
 
 #include "App.h"
 #include "ErrorHandler.h"
+#include "GameState.h"
 #include "Lua.h"
 #include "Metadata.h"
 #include "Thing.h"
@@ -17,7 +18,9 @@
 #include <queue>
 #include <string>
 
-ThingManager::ThingManager()
+ThingManager::ThingManager(GameState& game_state)
+  :
+  m_game_state{ game_state }
 {
   // Register the Thing Lua functions.
   the_lua_instance.register_function("thing_create", Thing::LUA_thing_create);
@@ -137,7 +140,7 @@ Thing const* ThingManager::get_ptr(ThingId id) const
 
 bool ThingManager::set_player(ThingRef ref)
 {
-  ASSERT_CONDITION(ref != m_mu);
+  ASSERT_CONDITION(ref != get_mu());
 
   m_player = ref;
   return true;

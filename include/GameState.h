@@ -5,6 +5,7 @@
 #include <memory>
 
 // Forward declarations
+class MapFactory;
 class ThingManager;
 
 /// Class that encapsulates the entire state of the game data.
@@ -15,8 +16,12 @@ class GameState : public boost::noncopyable
 {
 public:
   GameState();
+
+  /// @todo Create a constructor that loads a game state from disk.
+
   virtual ~GameState();
 
+  MapFactory& get_map_factory();
   ThingManager& get_thing_manager();
 
   static GameState& instance();
@@ -24,6 +29,7 @@ public:
 protected:
 
 private:
+  std::unique_ptr<MapFactory> m_map_factory;
   std::unique_ptr<ThingManager> m_thing_manager;
 
   static GameState* p_instance;

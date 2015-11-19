@@ -57,7 +57,7 @@ void AppStateGameMode::execute()
 
     // Get the map the player is on.
     MapId current_map_id = player->get_map_id();
-    Map& current_map = MF.get(current_map_id);
+    Map& current_map = GAME.get_map_factory().get(current_map_id);
 
     // Process everything on the map, and increment game clock.
     current_map.process();
@@ -108,7 +108,7 @@ bool AppStateGameMode::render(sf::RenderTarget& target, int frame)
     MapTile* tile = player->get_maptile();
     if (tile != nullptr)
     {
-      Map& game_map = MF.get(tile->get_map_id());
+      Map& game_map = GAME.get_map_factory().get(tile->get_map_id());
       sf::Vector2i tile_coords = tile->get_coords();
       sf::Vector2f player_pixel_coords = MapTile::get_pixel_coords(tile_coords);
       sf::Vector2f cursor_pixel_coords = MapTile::get_pixel_coords(pImpl->cursor_coords);
@@ -950,8 +950,8 @@ bool AppStateGameMode::initialize()
   get_game_state().get_thing_manager().set_player(player);
 
   // Create the game map.
-  MapId current_map_id = MF.create(64, 64);
-  Map& game_map = MF.get(current_map_id);
+  MapId current_map_id = GAME.get_map_factory().create(64, 64);
+  Map& game_map = GAME.get_map_factory().get(current_map_id);
 
   // Move player to start position on the map.
   auto& start_coords = game_map.get_start_coords();

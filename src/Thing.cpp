@@ -298,7 +298,7 @@ bool Thing::do_attack(Direction direction, unsigned int& action_time)
     int y_offset = get_y_offset(direction);
     int x_new = coords.x + x_offset;
     int y_new = coords.y + y_offset;
-    Map& current_map = MF.get(get_map_id());
+    Map& current_map = GAME.get_map_factory().get(get_map_id());
     sf::Vector2i map_size = current_map.get_size();
 
     // Check boundaries.
@@ -909,7 +909,7 @@ bool Thing::do_move(Direction new_direction, unsigned int& action_time)
     int y_offset = get_y_offset(new_direction);
     int x_new = coords.x + x_offset;
     int y_new = coords.y + y_offset;
-    Map& current_map = MF.get(get_map_id());
+    Map& current_map = GAME.get_map_factory().get(get_map_id());
     sf::Vector2i map_size = current_map.get_size();
 
     // Check boundaries.
@@ -2148,7 +2148,7 @@ bool Thing::can_see(int xTile, int yTile)
     return true;
   }
 
-  Map& game_map = MF.get(map_id);
+  Map& game_map = GAME.get_map_factory().get(map_id);
 
   if (can_currently_see())
   {
@@ -2199,7 +2199,7 @@ std::string Thing::get_memory_at(int x, int y) const
     return "???";
   }
 
-  Map& game_map = MF.get(this->get_map_id());
+  Map& game_map = GAME.get_map_factory().get(this->get_map_id());
   return pImpl->map_memory[game_map.get_index(x, y)];
 }
 
@@ -2216,7 +2216,7 @@ void Thing::add_memory_vertices_to(sf::VertexArray& vertices,
   {
     return;
   }
-  Map& game_map = MF.get(map_id);
+  Map& game_map = GAME.get_map_factory().get(map_id);
 
   static sf::Vertex new_vertex;
   float ts = Settings.get<float>("map_tile_size");
@@ -2255,7 +2255,7 @@ bool Thing::can_move(Direction direction)
     sf::Vector2i coords = tile->get_coords();
     sf::Vector2i check_coords;
 
-    Map& game_map = MF.get(game_map_id);
+    Map& game_map = GAME.get_map_factory().get(game_map_id);
     bool is_in_bounds = game_map.calc_coords(coords, direction, check_coords);
 
     if (is_in_bounds)
@@ -2305,7 +2305,7 @@ bool Thing::move_into(ThingRef new_location)
         pImpl->tiles_currently_seen.clear();
         if (new_map_id != MapFactory::null_map_id)
         {
-          Map& new_map = MF.get(new_map_id);
+          Map& new_map = GAME.get_map_factory().get(new_map_id);
           sf::Vector2i new_map_size = new_map.get_size();
           pImpl->map_memory.resize(new_map_size.x * new_map_size.y);
           pImpl->tiles_currently_seen.resize(new_map_size.x * new_map_size.y);
@@ -2753,7 +2753,7 @@ void Thing::be_lit_by(ThingRef light)
 
   if (get_location() == ThingManager::get_mu())
   {
-    MF.get(get_map_id()).add_light(light);
+    GAME.get_map_factory().get(get_map_id()).add_light(light);
   }
 
   /// @todo Figure out how we want to handle light sources.
@@ -3461,7 +3461,7 @@ void Thing::do_recursive_visibility(int octant,
 
   MapTile* tile = get_maptile();
   sf::Vector2i tile_coords = tile->get_coords();
-  Map& game_map = MF.get(get_map_id());
+  Map& game_map = GAME.get_map_factory().get(get_map_id());
   int eX = tile_coords.x;
   int eY = tile_coords.y;
 

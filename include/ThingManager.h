@@ -10,6 +10,7 @@
 #include "ThingRef.h"
 
 // Forward declarations
+class GameState;
 class MapTile;
 class Thing;
 class ThingMetadata;
@@ -22,7 +23,7 @@ class ThingManager
 
 public:
   /// Constructor.
-  ThingManager();
+  ThingManager(GameState& game_state);
 
   virtual ~ThingManager();
 
@@ -77,6 +78,9 @@ protected:
 	Thing const* get_ptr(ThingId data) const;
 
 private:
+  /// Reference to owning game state.
+  GameState& m_game_state;
+
   /// ThingRef of the player.
   ThingRef m_player;
 

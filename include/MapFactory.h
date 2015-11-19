@@ -8,6 +8,7 @@
 #include "MetadataCollection.h"
 
 // Forward declarations
+class GameState;
 class Map;
 
 // MapFactory is both a Factory for Maps and a store containing all of
@@ -16,9 +17,8 @@ class Map;
 class MapFactory
 {
   public:
+    MapFactory(GameState& game_state);
     virtual ~MapFactory();
-
-    static MapFactory& instance();
 
     /// Gets a reference to a Map by ID.
     Map const& get(MapId map_id) const;
@@ -34,16 +34,13 @@ class MapFactory
 
   protected:
   private:
-    MapFactory();
+    /// Reference to owning GameState.
+    GameState& m_game_state;
 
     /// Collection of maps.
-    boost::ptr_map<MapId, Map> maps_;
+    boost::ptr_map<MapId, Map> m_maps;
 
     MapId current_map_id;
-    static std::unique_ptr<MapFactory> instance_;
 };
-
-// The following is a shortcut for something that will be typed A LOT.
-#define MF        MapFactory::instance()
 
 #endif // MAPFACTORY_H

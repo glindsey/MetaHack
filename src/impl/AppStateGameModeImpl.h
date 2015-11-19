@@ -75,7 +75,7 @@ public:
   void reset_inventory_area()
   {
     ThingRef player = game_state->get_thing_manager().get_player();
-    Map& game_map = MF.get(player->get_map_id());
+    Map& game_map = GAME.get_map_factory().get(player->get_map_id());
     if (inventory_area_shows_player == true)
     {
       inventory_area->set_viewed(player);
@@ -121,7 +121,7 @@ public:
   bool move_cursor(Direction direction)
   {
     ThingRef player = game_state->get_thing_manager().get_player();
-    Map& game_map = MF.get(player->get_map_id());
+    Map& game_map = GAME.get_map_factory().get(player->get_map_id());
     bool result;
 
     result = game_map.calc_coords(cursor_coords, direction, cursor_coords);
