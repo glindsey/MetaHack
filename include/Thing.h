@@ -173,6 +173,7 @@ class Thing :
     /// Return whether the Entity can put thing into container.
     /// @param[in] thing Thing to put in.
     /// @param[in] container Thing to put it into.
+    /// @param[out] action_time The time it took to move the thing.
     /// @return ActionResult indicating what happened.
     virtual ActionResult can_put_into(ThingRef thing, ThingRef container, unsigned int& action_time);
 
@@ -291,6 +292,7 @@ class Thing :
 
     /// Return whether the Entity can take a thing out of its container.
     /// @param[in] thing Thing to take out.
+    /// @param[out] action_time The time it took to move the thing.
     /// @return ActionResult indicating what happened.
     ActionResult can_take_out(ThingRef thing, unsigned int& action_time);
 
@@ -322,7 +324,7 @@ class Thing :
     /// @param[in] thing Thing to wield, or empty ptr if unwielding everything.
     /// @param[in] hand Hand to wield it in.
     /// @param[out] action_time Time it takes to wield.
-    bool do_wield(ThingRef thing_id, unsigned int hand, unsigned int& action_time);
+    bool do_wield(ThingRef thing, unsigned int hand, unsigned int& action_time);
 
     /// Return whether this Entity can currently see.
     /// @todo Implement blindness counter, blindness due to wearing blindfold,

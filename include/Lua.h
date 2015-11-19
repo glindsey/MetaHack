@@ -81,10 +81,10 @@ public:
   /// Your C function gets called, and you use check_enum_type to verify the
   /// argument is the correct type.
   ///
-  /// int lua_dosomething(lua_State *L)
+  /// int lua_dosomething(lua_State* L)
   /// {
   ///   if (!check_enum_type(L, "type", -1))
-  ///     /* error*/
+  ///     /* error */
   ///   ...
   /// }
   ///
@@ -97,10 +97,10 @@ public:
   ///
   /// EX:
   ///
-  /// int lua_dosomething(lua_State *L)
+  /// int lua_dosomething(lua_State* L)
   /// {
   ///   if (!check_enum_type(L, "type", -1))
-  ///     /* error*/
+  ///     /* error */
   ///   
   ///   int value = get_enum_value(L, -1);
   ///   ...

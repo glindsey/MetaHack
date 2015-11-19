@@ -62,7 +62,7 @@ class Inventory
     /// a player needs to perform an action on a portion of an item group
     /// (such as dropping 50 gold coins).
     /// The newly created object is <i>not</i> included in the inventory.
-    /// @param thing_id ID of the thing to split.
+    /// @param thing Reference to the thing to split.
     /// @param target_quantity Target quantity to split out.
     /// @return The UUID of the new Thing.
     ThingRef split(ThingRef thing, unsigned int target_quantity);
