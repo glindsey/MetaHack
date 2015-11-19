@@ -1,5 +1,7 @@
 #include "gui/GUIObject.h"
 
+#include <boost/ptr_container/ptr_vector.hpp>
+
 #include "App.h"
 #include "ConfigSettings.h"
 #include "New.h"
@@ -22,6 +24,9 @@ struct GUIObject::Impl
 
   /// Background shape.
   sf::RectangleShape bg_shape;
+
+  /// Pointer vector of child elements.
+  boost::ptr_vector<GUIObject> children;
 };
 
 GUIObject::GUIObject(sf::IntRect dimensions)
@@ -58,6 +63,21 @@ void GUIObject::set_dimensions(sf::IntRect rect)
   pImpl->bg_texture->create(rect.width, rect.height);
 }
 
+bool GUIObject::add_child(GUIObject& child)
+{
+  if (std::find_if(pImpl->children.cbegin(), pImpl->children.cend(), [&](GUIObject const& c) { return &c == &child; }) == pImpl->children.cend())
+  {
+    pImpl->children.push_back(&child);
+    return true;
+  }
+  return false;
+}
+
+void GUIObject::clear_children()
+{
+  pImpl->children.clear();
+}
+
 bool GUIObject::render(sf::RenderTarget& target, int frame)
 {
   sf::RenderTexture& texture = *(pImpl->bg_texture.get());
@@ -69,11 +89,15 @@ bool GUIObject::render(sf::RenderTarget& target, int frame)
   // Clear background texture.
   pImpl->bg_texture->clear();
 
-  /// @todo Render all child objects to our bg texture.
-
   /// Render self to our bg texture.
   bool success = _render_self(texture, frame);
 
+  /// Render all child objects to our bg texture.
+  for (auto& child : pImpl->children)
+  {
+    child.render(texture, frame);
+  }
+  
   texture.display();
 
   // Create the RectangleShape that will be drawn onto the target.

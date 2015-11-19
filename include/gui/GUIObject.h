@@ -21,6 +21,14 @@ public:
   sf::IntRect get_dimensions();
   void set_dimensions(sf::IntRect dimensions);
 
+  /// Add a child GUIObject underneath this one.
+  /// This GUIObject assumes ownership of the child.
+  /// @param child  Reference to child to add.
+  /// @return True if the object was added, false if the object was already a child of this GUIObject.
+  bool add_child(GUIObject& child);
+
+  void clear_children();
+
   virtual EventResult handle_event(sf::Event& event) = 0;
 
   bool render(sf::RenderTarget& target, int frame);
