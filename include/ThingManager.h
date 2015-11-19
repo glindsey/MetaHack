@@ -50,19 +50,6 @@ public:
   /// Returns whether a Thing with a particular ThingRef exists.
   bool exists(ThingRef ref);
 
-  /// Set the game player.
-  /// If the caller attempts to set a ThingRef of a Thing that does not exist,
-  /// the program will abort with a FATAL_ERROR call.
-  /// @note Changing the player ID has not been testing as of this writing,
-  ///       and unpredictable results may occur!
-  /// @param ref ThingRef of the Thing to set as the player.
-  /// @return True if the set was successful, false otherwise.
-  bool set_player(ThingRef ref);
-
-  /// Get the ThingRef of the game player Thing.
-  /// @return The player ThingRef.
-  ThingRef get_player() const;
-
   /// Get the ThingRef of Mu (nothingness).
   /// @return The ThingRef of Mu.
   static ThingRef get_mu();
@@ -80,9 +67,6 @@ protected:
 private:
   /// Reference to owning game state.
   GameState& m_game_state;
-
-  /// ThingRef of the player.
-  ThingRef m_player;
 
   /// Map of ThingIds to Things.
   /// @todo Probably faster to use an unordered_map and use ThingId.id 

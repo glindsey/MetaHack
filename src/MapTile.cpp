@@ -205,7 +205,7 @@ sf::Color MapTile::get_light_level() const
 {
   sf::Color color = m_ambient_light_color;
 
-  ThingRef player = GAME.get_thing_manager().get_player();
+  ThingRef player = GAME.get_player();
 
   if (player != ThingManager::get_mu())
   {
@@ -273,7 +273,7 @@ sf::Color MapTile::get_wall_light_level(Direction direction) const
 {
   sf::Color color = m_ambient_light_color;
 
-  ThingRef player = GAME.get_thing_manager().get_player();
+  ThingRef player = GAME.get_player();
 
   if (player != ThingManager::get_mu())
   {
@@ -374,7 +374,7 @@ void MapTile::add_walls_to(sf::VertexArray& vertices,
   bool player_sees_w_wall { false };
 
   // Player.
-  ThingRef player = GAME.get_thing_manager().get_player();
+  ThingRef player = GAME.get_player();
 
   if (player != ThingManager::get_mu())
   {

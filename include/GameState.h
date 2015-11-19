@@ -4,6 +4,8 @@
 #include <boost/noncopyable.hpp>
 #include <memory>
 
+#include "ThingRef.h"
+
 // Forward declarations
 class MapFactory;
 class ThingManager;
@@ -24,6 +26,21 @@ public:
   MapFactory& get_map_factory();
   ThingManager& get_thing_manager();
 
+  /// Set the game player.
+  /// If the caller attempts to set a ThingRef of a Thing that does not exist,
+  /// the program will abort with a FATAL_ERROR call.
+  /// @note Changing the player ID has not been testing as of this writing,
+  ///       and unpredictable results may occur!
+  /// @param ref ThingRef of the Thing to set as the player.
+  /// @return True if the set was successful, false otherwise.
+  bool set_player(ThingRef ref);
+
+  /// Get the ThingRef of the game player Thing.
+  /// @return The player ThingRef.
+  ThingRef get_player() const;
+
+
+
   static GameState& instance();
 
 protected:
@@ -31,6 +48,7 @@ protected:
 private:
   std::unique_ptr<MapFactory> m_map_factory;
   std::unique_ptr<ThingManager> m_thing_manager;
+  ThingRef m_player;
 
   static GameState* p_instance;
 };

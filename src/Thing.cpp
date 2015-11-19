@@ -45,7 +45,7 @@
 #define SEEM  (this->choose_verb(" seem", " seems"))
 #define TRY   (this->choose_verb(" try", " tries"))
 
-#define IS_PLAYER (GAME.get_thing_manager().get_player() == pImpl->ref)
+#define IS_PLAYER (GAME.get_player() == pImpl->ref)
 
 #define FOO       (thing->get_identifying_string())
 #define FOO1      (thing1->get_identifying_string())
@@ -1626,7 +1626,7 @@ bool Thing::do_use(ThingRef thing, unsigned int& action_time)
     message = YOU_TRY + " to use " + thing->get_identifying_string() + ".";
     the_message_log.add(message);
 
-    if (GAME.get_thing_manager().get_player() == pImpl->ref)
+    if (GAME.get_player() == pImpl->ref)
     {
       message = YOU_ARE + " already using " + YOURSELF + " to the best of " + YOUR + " ability.";
       the_message_log.add(message);
@@ -2050,7 +2050,7 @@ std::string Thing::get_bodypart_plural(BodyPart part) const
 
 bool Thing::is_player() const
 {
-  return (GAME.get_thing_manager().get_player() == pImpl->ref);
+  return (GAME.get_player() == pImpl->ref);
 }
 
 std::string const& Thing::get_type() const
@@ -2554,7 +2554,7 @@ std::string Thing::get_identifying_string(bool definite)
 std::string const& Thing::choose_verb(std::string const& verb12,
                                       std::string const& verb3)
 {
-  if ((GAME.get_thing_manager().get_player() == pImpl->ref) || (get_property<unsigned int>("quantity") > 1))
+  if ((GAME.get_player() == pImpl->ref) || (get_property<unsigned int>("quantity") > 1))
   {
     return verb12;
   }
@@ -2598,7 +2598,7 @@ std::string Thing::get_possessive()
 {
   static std::string const your = std::string("your");
 
-  if (GAME.get_thing_manager().get_player() == pImpl->ref)
+  if (GAME.get_player() == pImpl->ref)
   {
     return your;
   }
@@ -3781,7 +3781,7 @@ int Thing::LUA_thing_get_player(lua_State* L)
     return 0;
   }
 
-  ThingRef player = GAME.get_thing_manager().get_player();
+  ThingRef player = GAME.get_player();
   lua_pushinteger(L, player);
 
   return 1;
@@ -3799,7 +3799,7 @@ int Thing::LUA_thing_get_coords(lua_State* L)
 
   ThingRef thing = ThingRef(lua_tointeger(L, 1));
 
-  MapId map_id = GAME.get_thing_manager().get_player()->get_map_id();
+  MapId map_id = GAME.get_player()->get_map_id();
   auto maptile = thing->get_maptile();
 
   if (maptile != nullptr)

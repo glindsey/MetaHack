@@ -38,6 +38,20 @@ ThingManager& GameState::get_thing_manager()
   return *(m_thing_manager.get());
 }
 
+bool GameState::set_player(ThingRef ref)
+{
+  ASSERT_CONDITION(ref != get_mu());
+
+  m_player = ref;
+  return true;
+}
+
+ThingRef GameState::get_player() const
+{
+  return m_player;
+}
+
+
 GameState& GameState::instance()
 {
   ASSERT_CONDITION(p_instance);

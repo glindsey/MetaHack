@@ -35,7 +35,7 @@ std::string StatusArea::render_contents(int frame)
 {
   sf::IntRect pane_dims = get_dimensions();
   sf::RenderTexture& bg_texture = get_bg_texture();
-  ThingRef player = GAME.get_thing_manager().get_player();
+  ThingRef player = GAME.get_player();
   sf::Vector2f origin(3, 3);
   sf::Color text_color = Settings.get<sf::Color>("text_color");
   sf::Color text_dim_color = Settings.get<sf::Color>("text_dim_color");
@@ -116,7 +116,7 @@ void StatusArea::render_attribute(sf::RenderTexture& bg_texture, std::string abb
   sf::Text render_text;
   sf::Color text_color = Settings.get<sf::Color>("text_color");
   sf::Color text_dim_color = Settings.get<sf::Color>("text_dim_color");
-  ThingRef player = GAME.get_thing_manager().get_player();
+  ThingRef player = GAME.get_player();
 
   // Render STR
   render_text.setFont(the_default_mono_font);

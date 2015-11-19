@@ -47,7 +47,7 @@ void AppStateGameMode::execute()
   }
 
   // === TODO: This part should go inside GameState object ====================
-  ThingRef player = get_game_state().get_thing_manager().get_player();
+  ThingRef player = get_game_state().get_player();
 
   if (player->action_is_pending() || player->action_is_in_progress())
   {
@@ -92,7 +92,7 @@ bool AppStateGameMode::render(sf::RenderTarget& target, int frame)
   the_message_log.set_focus(pImpl->current_input_state == GameInputState::MessageLog);
   pImpl->status_area->set_focus(pImpl->current_input_state == GameInputState::Map);
 
-  ThingRef player = get_game_state().get_thing_manager().get_player();
+  ThingRef player = get_game_state().get_player();
   ThingRef location = player->get_location();
 
   if (location == get_game_state().get_thing_manager().get_mu())
@@ -148,7 +148,7 @@ bool AppStateGameMode::render(sf::RenderTarget& target, int frame)
 EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 {
   EventResult result = EventResult::Ignored;
-  ThingRef player = get_game_state().get_thing_manager().get_player();
+  ThingRef player = get_game_state().get_player();
 
   // *** Handle keys processed in any mode.
   if (!key.alt && !key.control)
@@ -949,7 +949,7 @@ bool AppStateGameMode::initialize()
   // Create the player.
   ThingRef player = get_game_state().get_thing_manager().create("Human");
   player->set_proper_name("John Doe");
-  get_game_state().get_thing_manager().set_player(player);
+  get_game_state().set_player(player);
 
   // Create the game map.
   MapId current_map_id = GAME.get_map_factory().create(64, 64);

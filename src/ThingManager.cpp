@@ -137,20 +137,6 @@ Thing const* ThingManager::get_ptr(ThingId id) const
   }
 }
 
-
-bool ThingManager::set_player(ThingRef ref)
-{
-  ASSERT_CONDITION(ref != get_mu());
-
-  m_player = ref;
-  return true;
-}
-
-ThingRef ThingManager::get_player() const
-{
-  return m_player;
-}
-
 ThingRef ThingManager::get_mu()
 {
   return ThingRef();

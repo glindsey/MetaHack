@@ -26,7 +26,7 @@ bool Inventory::add(ThingRef thing)
   }
 
   // If the thing is the player, it goes into slot 0.
-  if (thing == GAME.get_thing_manager().get_player())
+  if (thing == GAME.get_player())
   {
     if (things_.count(INVSLOT_ZERO) != 0)
     {
