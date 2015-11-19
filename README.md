@@ -3,7 +3,17 @@ MetaHack
 
 A graphical roguelike engine which uses SFML for graphics and sound, and Lua for scripting. It is called "MetaHack" because the goal is to make a "hack"-style game that is easy to hack (mod) via Lua scripts.
 
-MetaHack is compiled under Visual Studio 2015. Right now, the code is in serious flux; although I try to make sure it always builds successfully before committing, I guarantee that there are still plenty of runtime errors present. Also, at the moment, the engine is extremely incomplete, with most functionality still unimplemented.
+MetaHack is compiled using the following:
+
+* Visual Studio 2015
+
+* Boost 1.59
+
+* LuaJIT 2.0
+
+* SFML 2.3.1 (built from scratch under VS2015)
+
+Right now, the code is in serious flux; although I try to make sure it always builds successfully before committing, I guarantee that there are still plenty of runtime errors present. Also, at the moment, the engine is extremely incomplete, with most functionality still unimplemented.
 
 
 Interface
@@ -106,6 +116,8 @@ Hopefully one day I will be able to document those files a bit more thoroughly h
 
 Known Bugs / Issues
 -------------------
+
+* Library and include directories in the project are absolute at the moment, instead of being relative to the project.
 
 * Resizing the window is ~~definitely~~ maybe broken? It seems to be working correctly again, but I swear it was broken before.
 
