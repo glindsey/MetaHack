@@ -5,7 +5,7 @@
 #include <memory>
 #include <vector>
 
-#include "GUIObject.h"
+#include "gui/GUIObject.h"
 
 class GUIPane :
   public GUIObject

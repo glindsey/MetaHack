@@ -1,5 +1,5 @@
 #ifndef GUIOBJECT_H
-#define GUIOJBECT_H
+#define GUIOBJECT_H
 
 #include <memory>
 

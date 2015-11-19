@@ -3,6 +3,7 @@
 #include <boost/lexical_cast.hpp>
 #include <locale>
 
+#include "gui/GUILabel.h"
 #include "App.h"
 #include "ConfigSettings.h"
 #include "GameState.h"
@@ -11,6 +12,8 @@
 
 struct StatusArea::Impl
 {
+  std::shared_ptr<std::string> test_label;
+
   bool dummy;
 };
 
@@ -19,6 +22,9 @@ StatusArea::StatusArea(sf::IntRect dimensions)
     pImpl(NEW Impl())
 {
   //ctor
+  *(pImpl->test_label) = "Testing GUILabel";
+  GUILabel label{ {500, 100, 500, 30}, pImpl->test_label };
+  add_child(label);
 }
 
 StatusArea::~StatusArea()

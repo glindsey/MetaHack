@@ -144,6 +144,7 @@
     <ClInclude Include="include\GeoVector.h" />
     <ClInclude Include="include\GetLetterKey.h" />
     <ClInclude Include="include\gui\GUILabel.h" />
+    <ClInclude Include="include\gui\GUIObject.h" />
     <ClInclude Include="include\gui\GUIPane.h" />
     <ClInclude Include="include\IntegerRange.h" />
     <ClInclude Include="include\Inventory.h" />

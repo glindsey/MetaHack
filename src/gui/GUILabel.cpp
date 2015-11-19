@@ -30,7 +30,8 @@ struct GUILabel::Impl
 
 GUILabel::GUILabel(sf::IntRect dimensions, std::weak_ptr<std::string> text_ptr)
   :
-  pImpl(NEW Impl(text_ptr))
+  GUIObject(dimensions),
+  pImpl{ NEW Impl(text_ptr) }
 {
   set_dimensions(dimensions);
 }
@@ -38,28 +39,6 @@ GUILabel::GUILabel(sf::IntRect dimensions, std::weak_ptr<std::string> text_ptr)
 GUILabel::~GUILabel()
 {
   //dtor
-}
-
-void GUILabel::set_focus(bool focus)
-{
-  pImpl->focus = focus;
-}
-
-bool GUILabel::get_focus()
-{
-  return pImpl->focus;
-}
-
-sf::IntRect GUILabel::get_dimensions()
-{
-  return pImpl->dims;
-}
-
-void GUILabel::set_dimensions(sf::IntRect rect)
-{
-  pImpl->dims = rect;
-  pImpl->bg_texture.reset(NEW sf::RenderTexture());
-  pImpl->bg_texture->create(rect.width, rect.height);
 }
 
 std::weak_ptr<std::string> const& GUILabel::get_text_pointer()
@@ -77,7 +56,8 @@ EventResult GUILabel::handle_event(sf::Event& event)
   return EventResult::Ignored;
 }
 
-bool GUILabel::render(sf::RenderTarget& target, int frame)
+// === PROTECTED METHODS ======================================================
+bool GUILabel::_render_self(sf::RenderTarget& target, int frame)
 {
   float line_spacing_y = the_default_font.getLineSpacing(Settings.get<unsigned int>("text_default_size"));
 
@@ -104,18 +84,12 @@ bool GUILabel::render(sf::RenderTarget& target, int frame)
   pImpl->bg_shape.setSize(sf::Vector2f(static_cast<float>(pImpl->dims.width), static_cast<float>(pImpl->dims.height)));
   pImpl->bg_shape.setTexture(&(pImpl->bg_texture->getTexture()));
   pImpl->bg_shape.setTextureRect(sf::IntRect(0, 0,
-                                           pImpl->dims.width,
-                                           pImpl->dims.height));
+    pImpl->dims.width,
+    pImpl->dims.height));
 
   // Draw onto the target.
   target.setView(sf::View(sf::FloatRect(0.0f, 0.0f, static_cast<float>(target.getSize().x), static_cast<float>(target.getSize().y))));
   target.draw(pImpl->bg_shape);
 
   return true;
-}
-
-// === PROTECTED METHODS ======================================================
-sf::RenderTexture& GUILabel::get_bg_texture()
-{
-  return *(pImpl->bg_texture.get());
 }
