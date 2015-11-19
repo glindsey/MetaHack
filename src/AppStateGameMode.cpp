@@ -46,6 +46,7 @@ void AppStateGameMode::execute()
     debug_buffer.clear_buffer();
   }
 
+  // === TODO: This part should go inside GameState object ====================
   ThingRef player = get_game_state().get_thing_manager().get_player();
 
   if (player->action_is_pending() || player->action_is_in_progress())
@@ -82,6 +83,7 @@ void AppStateGameMode::execute()
       current_map.update_tile_vertices(player);
     }
   }
+  // ==========================================================================
 }
 
 bool AppStateGameMode::render(sf::RenderTarget& target, int frame)
