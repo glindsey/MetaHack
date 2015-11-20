@@ -1,8 +1,8 @@
 -- Definition of special functions for the Dagger object type.
 
-require "resources/things/Thing"
+require "resources/things/WeaponStabbing"
 
-Dagger = inheritsFrom(Thing, "Dagger")
+Dagger = inheritsFrom(WeaponStabbing, "Dagger")
 Dagger.intrinsics.name = "dagger"
 Dagger.intrinsics.plural = "daggers"
 

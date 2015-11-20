@@ -37,26 +37,45 @@ Counters
 
 Proficiencies
 =============
-	- Range from 0 (unskilled) to 7 (expert)	
+	- Range from 0 (unskilled) to 10 (expert)
 	- Named "proficiency_XXXXX" where XXXXX is the weapon category
 	- Affects damage done with a weapon
 	- Affects chance of landing a hit
 	- Affects chance of landing a critical hit
 	- Wielding an item that isn't technically a weapon always equates to a proficiency of 0
+
+Weapon Categories
+=================
+    - First part is "stabbing", "cutting", "striking", etc. as seen in WeaponXXX.lua Thing classes.
+    - Second part is "small"/"large"/"huge" as determined by the Thing's physical mass.
+    - e.g. a greatsword would be classified as "cutting_huge".
+
+Combat
+======
+    - First, figure out how accurate your attack was.
+        - ((PRE + 2) * (weapon proficiency + 2)) + (LUC - 15) = accuracy rating (-11 to 399)
+        - A "hit" is scored if rand(0, 400) is below your accuracy rating
+        
+    - Second, figure out if the enemy parries/dodges your attack.
+        - (AGI * VIG) + (LUC - 15) = dodge rating (-15 to 915)
+        - A dodge is successful if rand(0, 1000) is below your accuracy rating
+        - This isn't quite right; figure it out later.
+        
+    - Third, figure out the damage done by the attack.
     
 Attributes
 ==========
-	- Range from 0 to 31
+	- Range from 0 to 30
 	- Named "attribute_XXXXX" where XXXXX is the attribute name
     - Strength
         - affects how much you can carry
-        - affects damage done with large and/or blunt force weapons
+        - affects damage done with large and/or blunt force weapons (?)
     - Endurance
         - affects how long you can go without food/water/sleep
     - Vitality
         - affects poison immunity, Max HP gained per level
     - Agility
-        - affects reflexes: action start speed, dodge ability
+        - affects reflexes: action start speed, dodge/parry ability
 	- Precision
 		- affects your ability to land a hit
     - Intelligence
@@ -68,6 +87,7 @@ Attributes
         - affects physical attractiveness to interested individuals
     - Vigilance
         - affects identification of secret passages
+        - affects dodge/parry ability (due to being able to predict an attack)
 		- affects picking up on sounds, smells, catching distant glimpses of things, etc.
     - Luck
         - affects "random" chance events
