@@ -21,7 +21,7 @@ StatusArea::StatusArea(sf::IntRect dimensions)
 {
   //ctor
   //std::function<std::string()> label_function = std::bind(&StatusArea::get_test_label, this);
-  //GUILabel* label = NEW GUILabel( {0, 0, dimensions.width, dimensions.height}, label_function );
+  //GUILabel* label = NEW GUILabel( {0, 0, dimensions.width / 2, dimensions.height / 2}, label_function );
   //add_child(label);
 }
 

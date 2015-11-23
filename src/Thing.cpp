@@ -198,8 +198,15 @@ bool Thing::do_die()
     }
     else
     {
-      /// @todo For non-living entities, use "destroyed" or something to that end.
-      message = YOU_ARE + " killed!";
+      bool living = get_property<bool>("living");
+      if (living)
+      {
+        message = YOU_ARE + " killed!";
+      }
+      else
+      {
+        message = YOU_ARE + " destroyed!";
+      }
       the_message_log.add(message);
     }
     return true;
