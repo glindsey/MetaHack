@@ -15,6 +15,11 @@ Entity.intrinsics.inventory_size = -1
 Entity.defaults.xp = 0
 
 function Entity.get_tile_offset(id, frame)
-	-- TODO: If entity's hit points are <= 0, show the "dead" tile.
-	return 0, 0
+	-- If entity's hit points are <= 0, show the "dead" tile.
+    local hp = thing_get_property_value(id, "hp")
+    if (hp > 0) then
+        return 0, 0
+    else
+        return 1, 0
+    end
 end
