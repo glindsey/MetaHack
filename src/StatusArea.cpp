@@ -100,15 +100,14 @@ std::string StatusArea::_render_contents(sf::RenderTarget& target, int frame)
     // Render attributes
     render_attribute(target, "XP", "xp", { origin.x, origin.y + (2 * line_spacing) });
     render_attribute(target, "STR", "attribute_strength", { origin.x + (0 * attrib_spacing), origin.y + (3 * line_spacing) });
-    render_attribute(target, "END", "attribute_endurance", { origin.x + (1 * attrib_spacing), origin.y + (3 * line_spacing) });
-    render_attribute(target, "VIT", "attribute_vitality", { origin.x + (2 * attrib_spacing), origin.y + (3 * line_spacing) });
-    render_attribute(target, "AGI", "attribute_agility", { origin.x + (3 * attrib_spacing), origin.y + (3 * line_spacing) });
-    render_attribute(target, "PRE", "attribute_precision", { origin.x + (4 * attrib_spacing), origin.y + (3 * line_spacing) });
-    render_attribute(target, "INT", "attribute_intelligence", { origin.x + (5 * attrib_spacing), origin.y + (3 * line_spacing) });
-    render_attribute(target, "AUR", "attribute_aura", { origin.x + (6 * attrib_spacing), origin.y + (3 * line_spacing) });
-    render_attribute(target, "CHA", "attribute_charisma", { origin.x + (7 * attrib_spacing), origin.y + (3 * line_spacing) });
-    render_attribute(target, "VIG", "attribute_vigilance", { origin.x + (8 * attrib_spacing), origin.y + (3 * line_spacing) });
-    render_attribute(target, "LUC", "attribute_luck", { origin.x + (9 * attrib_spacing), origin.y + (3 * line_spacing) });
+    render_attribute(target, "VIG", "attribute_vigilance", { origin.x + (1 * attrib_spacing), origin.y + (3 * line_spacing) });
+    render_attribute(target, "END", "attribute_endurance", { origin.x + (2 * attrib_spacing), origin.y + (3 * line_spacing) });
+    render_attribute(target, "CHA", "attribute_charisma", { origin.x + (3 * attrib_spacing), origin.y + (3 * line_spacing) });
+    render_attribute(target, "INT", "attribute_intelligence", { origin.x + (4 * attrib_spacing), origin.y + (3 * line_spacing) });
+    render_attribute(target, "AGI", "attribute_agility", { origin.x + (5 * attrib_spacing), origin.y + (3 * line_spacing) });
+    render_attribute(target, "LUC", "attribute_luck", { origin.x + (6 * attrib_spacing), origin.y + (3 * line_spacing) });
+    render_attribute(target, "VIT", "attribute_vitality", { origin.x + (7 * attrib_spacing), origin.y + (3 * line_spacing) });
+    render_attribute(target, "AUR", "attribute_aura", { origin.x + (8 * attrib_spacing), origin.y + (3 * line_spacing) });
   }
 
   return "";
