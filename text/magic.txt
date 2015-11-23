@@ -1,7 +1,7 @@
 =============================
 THE ETHERS
 =============================
-There are a multitude of "ethers" which can be mixed (in pairs) to produce effects.  When two ethers are mixed, they produce either a new ether, one or more magicules, or plain water (if the ethers cancel each other out).  Ethers can also be mixed with plain water to produce magicules.
+There are a multitude of "ethers" which can be mixed (in pairs) to produce effects.  When two ethers are mixed, they produce either a new ether, one or more magicules, or plain water (if the ethers cancel each other out).  Ethers can also be mixed with plain water to produce "pure" magicules. (Likewise, "pure" magicules crushed and mixed with water will create ethers.)
 
 Note that the ether of water is distinct from water itself.
 
@@ -37,7 +37,7 @@ minus - Diminish
 
 If you also consider mixing with pure water, these ethers allow for 210 unique combinations!  Not all of these combinations are useful, though, and some will produce dubiously useful, or even detrimental, effects.
 
-If a particular action is not listed, there is no effect.  In the case of a spell ray or field, this also means the magicule is destroyed.  In the case of equipping the magicule, it simply does nothing.
+If a particular action is not listed, there is no effect.  In the case of a spell ray or field, or consuming the magicule, this also means the magicule is destroyed.  In the case of equipping the magicule, it simply does nothing.
 
 Effect Types:
 	* Proj ------ Projectile.  The magicule is thrown or launched/fired via conventional arms.
@@ -48,11 +48,12 @@ Effect Types:
 	* Weapon ---- The magicule is attached to a weapon.
 	* Armor ----- The magicule is attached to any armor.
 	* Adorn ----- The magicule is attached to an adornment (ring, earring, amulet, etc.)
+	* Consume --- The magicule is eaten/swallowed. 
 	
 =======================================
 THE COMBINATIONS
 =======================================
-terra + WATER .................................. pebble
+terra + WATER .................................. ???
 
 terra + atmos .................................. Duststorm
 	* Ray/Proj: Choking dust storm.
@@ -136,7 +137,7 @@ terra + minus .................................. Weakness
 	* Ray: Target CONDITION:St-3:10-30t
 	* Proj: Radius 3 Field, Target CONDITION:St-2:5-15t
 	
-atmos + WATER .................................. seltzer water
+atmos + WATER .................................. ???
 
 atmos + pyros .................................. Smoke
 	* Ray: Create adj choking cloud of smoke at Entity's position.
@@ -212,7 +213,7 @@ atmos + minus .................................. Gravitation
 	* Equip: Entity CONDITION:!Levitate
              The entity is anchored to the floor.
 
-pyros + WATER .................................. cloud of steam + empty flask
+pyros + WATER .................................. ???
 
 pyros + hydro .................................. Steam
 	* Ray/Field: Generates a scalding cloud of steam.
@@ -269,7 +270,7 @@ pyros + minus .................................. Exhaustion
 	* Armor: Entity CONDITION:En-1
 	* Ray/Field: Entity CONDITION:En-3:10-30t
 	
-hydro + WATER .................................. pure water
+hydro + WATER .................................. ???
 
 hydro + magio .................................. Deluge
 	* Weapon: On hit, +DAMAGE:Water:10-30
@@ -277,9 +278,9 @@ hydro + magio .................................. Deluge
 	
 hydro + flora ..................................
 
-hydro + fauna ..................................
+hydro + fauna .................................. Summon Fish
 
-hydro + arcti ..................................
+hydro + arcti .................................. Ice Grenade
 
 hydro + luces .................................. Rainbow Light
 	* Glows a dim blue.
@@ -307,7 +308,7 @@ hydro + docto ..................................
 
 hydro + weave ..................................
 
-hydro + razor...................................
+hydro + razor................................... Waterknife
 
 hydro + antis .................................. Waterproof
 	* Adorn: Entity/Item CONDITION:AntiWater
@@ -320,7 +321,7 @@ hydro + pleos ..................................
 
 hydro + minus ..................................
 
-magio + WATER .................................. the water sparkles for a bit 
+magio + WATER .................................. ???
 
 magio + flora .................................. Summon Pretty Bouquet
 
@@ -352,6 +353,7 @@ magio + riule .................................. Absorb magicules
 	               All conditions associated with the magicules on the equipped
 			       item become intrinsic to the wearer.  The magicules then
 				   disintegrate.
+				   (NOTE TO SELF: This might be seriously game-breaking.)
 				   
 magio + khaos .................................. Extract magicules
 	* Ray/Throw: Target EFFECT:ExtractMagicules
@@ -364,6 +366,8 @@ magio + khaos .................................. Extract magicules
 				 2: (2/5) - (4/25) = 16% chance
 				 3: (4/25) - (8/125) = 9.6% chance
 				 4: (8/125) = 6.4% chance
+				 (NOTE TO SELF: This might also be seriously game-breaking.)
+				 
 magio + docto .................................. Teleport
 	* Autobinds
 	* Adorn: Entity CONDITION:Teleport:every 5 to 25 turns
@@ -395,7 +399,7 @@ magio + minus .................................. Mundanity
 	* Adorn: Entity CONDITION:Ma-2
 	* Ray/Field: Target CONDITION:Ma-3:10-30t
 
-flora + WATER .................................. a random fruit
+flora + WATER .................................. ???
 
 flora + fauna ..................................
 
@@ -419,11 +423,11 @@ flora + riule .................................. Create Plant Elemental
 
 flora + khaos ..................................
 
-flora + docto ..................................
+flora + docto .................................. 
 
-flora + weave ..................................
+flora + weave .................................. Brambles
 
-flora + razor................................... Brambles
+flora + razor................................... Leaf Barrage
 
 flora + antis ..................................
 
@@ -431,7 +435,7 @@ flora + pleos ..................................
 
 flora + minus ..................................
 
-fauna + WATER .................................. a random small animal
+fauna + WATER .................................. ???
 
 fauna + arcti ..................................
 
@@ -480,7 +484,7 @@ fauna + minus .................................. Revulsion
 	* Armor: Entity CONDITION:Al-1
 	* Ray/Field: Target CONDITION:Al-3:10-30t
 
-arcti + WATER .................................. chunk of ice
+arcti + WATER .................................. ???
 
 arcti + luces ..................................
 
@@ -498,7 +502,7 @@ arcti + docto ..................................
 
 arcti + weave ..................................
 
-arcti + razor...................................
+arcti + razor................................... Ice Needles
 
 arcti + antis .................................. Antifreeze
 	* Adorn: Item/Entity CONDITION:AntiCold
@@ -513,7 +517,7 @@ arcti + pleos .................................. Refrigeration
 
 arcti + minus .................................. Oven ??
 
-luces + WATER .................................. the water glows brightly for a bit
+luces + WATER .................................. glowing pebbles
 
 luces + vitae .................................. panacea (full healing)
 
@@ -540,7 +544,7 @@ luces + docto ..................................
 
 luces + weave ..................................
 
-luces + razor...................................
+luces + razor................................... Laser Beam
 
 luces + antis .................................. Blinding
 	* Adorn: Entity CONDITION:Blind
@@ -553,7 +557,7 @@ luces + minus .................................. Batseye
 	* Autobinds
 	* Adorn: Entity CONDITION:AdjustLight / 4
 
-vitae + WATER .................................. medicine
+vitae + WATER .................................. ???
 
 vitae + morti .................................. pure water
 
@@ -583,6 +587,7 @@ vitae + razor...................................
 
 vitae + antis .................................. Genocide
 	Throw: All instances of the entity hit by the magicule are eliminated.
+	(TODO: Obviously HYPER game-breaking. Need some sort of balance.)
 
 vitae + pleos .................................. Fortitude
 	* Chest: +2 to Vitality
@@ -597,7 +602,7 @@ vitae + minus .................................. Frailty
 	* Adorn: -1 to Vitality
 	* Ray/Field: -3 to Vitality for 10-30 turns
 
-morti + WATER .................................. poison
+morti + WATER .................................. ???
 
 morti + noein .................................. Thanataura
 	* Adorn: Entity can see where creatures were slain.
@@ -627,8 +632,7 @@ morti + pleos ..................................
 
 morti + minus .................................. 
 
-noein + WATER .................................. pure water, but you have the
-                                                 insight identifying ether
+noein + WATER .................................. ???
 
 noein + riule .................................. Focus
 	* Adorn: Entity is protected against confusion.
@@ -665,7 +669,7 @@ noein + minus .................................. Stupidity
 	* Ray/Field: MDef save.
 		-3 to Intelligence for 10-30 turns
 
-riule + WATER .................................. hydros ether
+riule + WATER .................................. ???
 
 riule + khaos .................................. pure water
 
@@ -689,7 +693,7 @@ riule + minus .................................. Abrasiveness
 	* Adorn: -2 to Charisma
 	* Ray/Field: -3 to Charisma for 10-30 turns
 
-khaos + WATER .................................. a random ether
+khaos + WATER .................................. ???
 
 khaos + docto .................................. Transmute
 	* Item (any): magicule becomes a different, random magicule when equipped.
@@ -712,7 +716,7 @@ khaos + minus .................................. Luck
 	* Adorn: Entity CONDITION:Lu+2
 	* Weapon: Item CONDITION:CriticalHit+1
 
-docto + WATER .................................. "the flask appears bigger on the inside"
+docto + WATER .................................. ???
 
 docto + weave ..................................
 
@@ -741,7 +745,7 @@ docto + minus .................................. Slow
 	* Container: Item CONDITION:AlterInventoryWeight:200%
 	* Ray/Field: Target CONDITION:Ag-3:10-30t
 
-weave + WATER .................................. glue
+weave + WATER .................................. ???
 
 weave + razor................................... Razorwire
 
@@ -751,7 +755,7 @@ weave + pleos .................................. Bind
 
 weave + minus .................................. Unbind
 
-razor + WATER ..................................
+razor + WATER .................................. ???
 
 razor + antis ..................................
 
@@ -759,7 +763,7 @@ razor + pleos .................................. Sharpen
 
 razor + minus .................................. Dull
 	
-antis + WATER .................................. empty flask
+antis + WATER .................................. ???
 
 antis + pleos .................................. Anti-magicule
 	* Autobinds
@@ -775,8 +779,8 @@ antis + minus .................................. Anti-Dispel
 		Entity is protected against dispelling.  magicule disintegrates
 		after one use.
 		
-pleos + WATER .................................. the flask overflows
+pleos + WATER .................................. ???
 
 pleos + minus .................................. pure water
 
-minus + WATER .................................. water shrinks until gone
+minus + WATER .................................. ???
