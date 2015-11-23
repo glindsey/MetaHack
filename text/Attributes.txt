@@ -37,60 +37,75 @@ Counters
 
 Proficiencies
 =============
-	- Range from 0 (unskilled) to 10 (expert)
+	- Range from 0 (unskilled) to 4 (expert)	
 	- Named "proficiency_XXXXX" where XXXXX is the weapon category
 	- Affects damage done with a weapon
 	- Affects chance of landing a hit
 	- Affects chance of landing a critical hit
 	- Wielding an item that isn't technically a weapon always equates to a proficiency of 0
 
-Weapon Categories
-=================
-    - First part is "stabbing", "cutting", "striking", etc. as seen in WeaponXXX.lua Thing classes.
-    - Second part is "small"/"large"/"huge" as determined by the Thing's physical mass.
-    - e.g. a greatsword would be classified as "cutting_huge".
+Attack Procedure
+================
+	1) Determine if you were accurate enough to hit.
+		- For a WIELDED weapon:
+			- Proficiency of 0 = 50% chance of hitting
+			- Proficiency of 4 = 90% chance of hitting
+			- Accuracy Rating = (50 + (Proficiency * 10)) * Luck Factor = (42.5 to 103.5)
+		- For a THROWN or FIRED weapon:
+			- Proficiency of 0 = 10% chance of hitting
+			- Proficiency of 4 = 90% chance of hitting
+			- Accuracy Rating = (10 + (Proficiency * 20)) * Luck Factor = (8.5 to 103.5)
+		- You hit if RAND(0, 100) is less than your accuracy rating.
+        
+	2) Determine if the enemy was quick enough to dodge/parry.
+		- For a WIELDED weapon:
+			- ((AGI * VIG) / 10) * Luck Factor = Dodge Rating (0 to 103.5)
+		- For a THROWN weapon:
+			- ((AGI * VIG) / 15) * Luck Factor = Dodge Rating (0 to 69)
+		- For a FIRED weapon:
+			- ((AGI * VIG) / 30) * Luck Factor = Dodge Rating (0 to 34.5)
+		- You dodge if RAND(0, 100) is less than your dodge rating.
 
-Combat
-======
-    - First, figure out how accurate your attack was.
-        - ((PRE + 2) * (weapon proficiency + 2)) + (LUC - 15) = accuracy rating (-11 to 399)
-        - A "hit" is scored if rand(0, 400) is below your accuracy rating
-        
-    - Second, figure out if the enemy parries/dodges your attack.
-        - (AGI * VIG) + (LUC - 15) = dodge rating (-15 to 915)
-        - A dodge is successful if rand(0, 1000) is below your accuracy rating
-        - This isn't quite right; figure it out later.
-        
-    - Third, figure out the damage done by the attack.
+	3) Determine if the enemy's armor deflected the hit.
+		- Calculated by the individual Lua script for the armor.
+		- May be affected by the type of damage done (piercing, cutting, etc.)
+	
+	4) Determine the damage you did.
+		- Calculated by the individual Lua script for the weapon.
+		- May be multiplied by an attribute factor for certain weapons, e.g. large weapons do more damage with higher STR.
+	
+	5) Determine the damage deflected by the enemy's armor.
+		- Calculated by the individual Lua script for the armor.
+		- May be affected by the type of damage done (piercing, cutting, etc.)
     
 Attributes
 ==========
 	- Range from 0 to 30
 	- Named "attribute_XXXXX" where XXXXX is the attribute name
-    - Strength
+    - STR - Strength
         - affects how much you can carry
-        - affects damage done with large and/or blunt force weapons (?)
-    - Endurance
+        - typically affects damage done with large and/or blunt force weapons
+    - VIG - Vigilance
+        - affects identification of secret passages
+		- affects picking up on sounds, smells, catching distant glimpses of things, etc.
+		- affect dodge/parry (due to being able to anticipate an attack)
+    - END - Endurance
         - affects how long you can go without food/water/sleep
-    - Vitality
-        - affects poison immunity, Max HP gained per level
-    - Agility
-        - affects reflexes: action start speed, dodge/parry ability
-	- Precision
-		- affects your ability to land a hit
-    - Intelligence
-        - affects ability to read scrolls/books, build items
-    - Aura
-        - affects potency of magicule usage, defense against effects
-    - Charisma
+    - CHA - Charisma
         - affects ability to barter, bribe, and influence others
         - affects physical attractiveness to interested individuals
-    - Vigilance
-        - affects identification of secret passages
-        - affects dodge/parry ability (due to being able to predict an attack)
-		- affects picking up on sounds, smells, catching distant glimpses of things, etc.
-    - Luck
+    - INT - Intelligence
+        - affects ability to read scrolls/books, build items
+    - AGI - Agility
+        - affects reflexes: action start speed, dodge ability
+		- A sessile creature has AGI of 0
+    - LUC - Luck
         - affects "random" chance events
+		- "Luck Factor" = (1 + ((LUC - 15) / 100)) = 0.85 to 1.15
+    - VIT - Vitality
+        - affects poison immunity, Max HP gained per level
+    - AUR - Aura
+        - affects potency of magicule usage, defense against effects
 
 Experience levels
 =================
