@@ -3254,195 +3254,24 @@ bool Thing::_process_self()
       // Perform the "die" action.
       this->do_die();
 
+      // Clear any pending actions.
+      pImpl->pending_actions.clear();
+
       /// @todo Handle player death by transitioning to game end state.
     }
   }
 
-  // If entity is currently busy, decrement by one and return.
-  int counter_busy = get_property<int>("counter_busy");
-  if (counter_busy > 0)
+  // If actions are pending...
+  if (!pImpl->pending_actions.empty())
   {
-    --counter_busy;
-    set_property<int>("counter_busy", counter_busy);
-    return true;
-  }
-  else
-  {
-    // Perform any type-specific processing.
-    // Useful if, for example, your Entity can rise from the dead.
-    call_lua_function("process", {});
-
-    // If actions are pending...
-    if (!pImpl->pending_actions.empty())
+    // Process the front action.      
+    Action action = pImpl->pending_actions.front();
+    bool action_done = action.process(get_ref(), {});
+    if (action_done)
     {
-      Action action = pImpl->pending_actions.front();
       pImpl->pending_actions.pop_front();
-
-      unsigned int number_of_things = action.get_things().size();
-
-      switch (action.get_type())
-      {
-      case Action::Type::Wait:
-        success = this->do_move(Direction::Self, action_time);
-        if (success)
-        {
-          add_to_property<int>("counter_busy", action_time);
-        }
-        break;
-
-      case Action::Type::Move:
-        success = this->do_move(action.get_target_direction(), action_time);
-        if (success)
-        {
-          add_to_property<int>("counter_busy", action_time);
-        }
-        break;
-
-      case Action::Type::Attack:
-        success = this->do_attack(action.get_target_direction(), action_time);
-        if (success)
-        {
-          add_to_property<int>("counter_busy", action_time);
-        }
-        break;
-
-      case Action::Type::Drop:
-        for (ThingRef thing : action.get_things())
-        {
-          if (thing != ThingManager::get_mu())
-          {
-            success = this->do_drop(thing, action_time);
-            if (success)
-            {
-              add_to_property<int>("counter_busy", action_time);
-            }
-          }
-        }
-        break;
-
-      case Action::Type::Eat:
-        for (ThingRef thing : action.get_things())
-        {
-          if (thing != ThingManager::get_mu())
-          {
-            success = this->do_eat(thing, action_time);
-            if (success)
-            {
-              add_to_property<int>("counter_busy", action_time);
-            }
-          }
-        }
-        break;
-
-      case Action::Type::Get:
-        for (ThingRef thing : action.get_things())
-        {
-          if (thing != ThingManager::get_mu())
-          {
-            success = this->do_pick_up(thing, action_time);
-            if (success)
-            {
-              add_to_property<int>("counter_busy", action_time);
-            }
-          }
-        }
-        break;
-
-      case Action::Type::Quaff:
-        for (ThingRef thing : action.get_things())
-        {
-          if (thing != ThingManager::get_mu())
-          {
-            success = this->do_drink(thing, action_time);
-            if (success)
-            {
-              add_to_property<int>("counter_busy", action_time);
-            }
-          }
-        }
-        break;
-
-      case Action::Type::PutInto:
-      {
-        ThingRef container = action.get_target_thing();
-        if (container != ThingManager::get_mu())
-        {
-          if (container->get_intrinsic<int>("inventory_size") != 0)
-          {
-            for (ThingRef thing : action.get_things())
-            {
-              if (thing != ThingManager::get_mu())
-              {
-                success = this->do_put_into(thing, container, action_time);
-                if (success)
-                {
-                  add_to_property<int>("counter_busy", action_time);
-                }
-              }
-            }
-          }
-        }
-        else
-        {
-          the_message_log.add("That target is not a container.");
-        }
-        break;
-      }
-
-      case Action::Type::TakeOut:
-        for (ThingRef thing : action.get_things())
-        {
-          if (thing != ThingManager::get_mu())
-          {
-            success = this->do_take_out(thing, action_time);
-            if (success)
-            {
-              add_to_property<int>("counter_busy", action_time);
-            }
-          }
-        }
-        break;
-
-      case Action::Type::Use:
-        for (ThingRef thing : action.get_things())
-        {
-          if (thing != ThingManager::get_mu())
-          {
-            success = this->do_use(thing, action_time);
-            if (success)
-            {
-              add_to_property<int>("counter_busy", action_time);
-            }
-          }
-        }
-        break;
-
-      case Action::Type::Wield:
-      {
-        if (number_of_things > 1)
-        {
-          the_message_log.add("NOTE: Only wielding the last item selected.");
-        }
-
-        ThingRef thing = action.get_things()[number_of_things - 1];
-        if (thing != ThingManager::get_mu())
-        {
-          /// @todo Implement wielding using other hands.
-          success = this->do_wield(thing, 0, action_time);
-          if (success)
-          {
-            add_to_property<int>("counter_busy", action_time);
-          }
-        }
-        break;
-      }
-
-      default:
-        the_message_log.add("We're sorry, but that action has not yet been implemented.");
-        break;
-      } // end switch (action)
-    } // end if (actions pending)
-  } // end if (HP > 0)
+    }
+  } // end if (actions pending)
 
   return true;
 }

@@ -21,6 +21,7 @@ public:
     Pending,      ///< The action is waiting to be executed.
     PreBegin,     ///< Wait state prior to starting the action, to account for reaction time.
     InProgress,   ///< The action has been started and is currently in progress.
+    Interrupted,  ///< The action was interrupted while in process and will be aborted.
     PostFinish,   ///< The action is finished and the entity is now in a recovery wait state.
     Processed     ///< The action is totally done and can be popped off the queue.
   };
@@ -64,6 +65,11 @@ public:
   bool remove_thing(ThingRef thing);
   void clear_things();
 
+  bool process(ThingRef actor, AnyMap params);
+
+  void set_state(Action::State state);
+  Action::State get_state();
+
   bool target_can_be_thing() const;
   bool target_can_be_direction() const;
   void set_target(ThingRef target);
@@ -74,6 +80,11 @@ public:
   void set_quantity(unsigned int quantity);
 
 private:
+  bool prebegin_(ThingRef actor, AnyMap params);
+  bool begin_(ThingRef actor, AnyMap params);
+  void finish_(ThingRef actor, AnyMap params);
+  void abort_(ThingRef actor, AnyMap params);
+
   /// Type of this action.
   Action::Type m_type;
 
