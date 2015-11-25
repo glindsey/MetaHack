@@ -13,7 +13,7 @@ enum class Beatitude
 };
 
 // Special behavior for ++Beatitude
-Beatitude& operator++( Beatitude &original )
+Beatitude& operator++(Beatitude &original)
 {
   int value = static_cast<int>(original);
   value++;
@@ -24,7 +24,7 @@ Beatitude& operator++( Beatitude &original )
 }
 
 // Special behavior for --Beatitude
-Beatitude& operator--( Beatitude &original )
+Beatitude& operator--(Beatitude &original)
 {
   int value = static_cast<int>(original);
   value--;
@@ -35,14 +35,14 @@ Beatitude& operator--( Beatitude &original )
 }
 
 // Special behavior for Beatitude++
-Beatitude operator++( Beatitude &original, int ) {
+Beatitude operator++(Beatitude &original, int) {
   Beatitude result = original;
   ++original;
   return result;
 }
 
 // Special behavior for Beatitude--
-Beatitude operator--( Beatitude &original, int ) {
+Beatitude operator--(Beatitude &original, int) {
   Beatitude result = original;
   ++original;
   return result;

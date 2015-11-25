@@ -39,8 +39,6 @@ public:
   /// @return The player ThingRef.
   ThingRef get_player() const;
 
-
-
   static GameState& instance();
 
 protected:

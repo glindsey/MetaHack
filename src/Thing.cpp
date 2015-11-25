@@ -53,7 +53,7 @@
 #define LIQUID1      (liquid1->get_identifying_string())
 #define LIQUID2      (liquid2->get_identifying_string())
 
-#define YOU_ARE       (YOU + ARE)   
+#define YOU_ARE       (YOU + ARE)
 #define YOU_WERE      (YOU + WERE)
 #define YOU_SUBJ_ARE  (YOU_SUBJ + ARE)
 #define YOU_DO        (YOU + DO)
@@ -216,7 +216,6 @@ bool Thing::do_die()
     the_message_log.add(message);
     return false;
   }
-
 }
 
 bool Thing::do_attack(Direction direction, unsigned int& action_time)
@@ -310,7 +309,7 @@ bool Thing::do_attack(Direction direction, unsigned int& action_time)
 
     // Check boundaries.
     if ((x_new < 0) || (y_new < 0) ||
-      (x_new >= map_size.x) || (y_new >= map_size.y))
+        (x_new >= map_size.x) || (y_new >= map_size.y))
     {
       message += YOU + " can't attack there; it is out of bounds!";
       the_message_log.add(message);
@@ -537,7 +536,7 @@ bool Thing::do_drop(ThingRef thing, unsigned int& action_time)
           else
           {
             MAJOR_ERROR("Could not move Thing even though "
-              "is_movable returned Success");
+                        "is_movable returned Success");
             break;
           }
         }
@@ -684,7 +683,6 @@ bool Thing::do_eat(ThingRef thing, unsigned int& action_time)
         MINOR_ERROR("Unknown ActionResult %d", result);
         break;
       }
-
     } // end if (thing->is_edible_by(pImpl->ref))
     else
     {
@@ -767,7 +765,7 @@ bool Thing::do_mix(ThingRef thing1, ThingRef thing2, unsigned int& action_time)
 
   switch (mix_try)
   {
-  case ActionResult::Success:  
+  case ActionResult::Success:
     liquid1 = thing1->get_inventory().get(INVSLOT_ZERO);
     liquid2 = thing2->get_inventory().get(INVSLOT_ZERO);
 
@@ -777,7 +775,6 @@ bool Thing::do_mix(ThingRef thing1, ThingRef thing2, unsigned int& action_time)
     /// @todo IMPLEMENT ME
     //thing1->perform_action_mixed_with_by(thing2, pImpl->ref);
     return true;
-
 
   case ActionResult::FailureCircularReference:
     liquid1 = thing1->get_inventory().get(INVSLOT_ZERO);
@@ -921,7 +918,7 @@ bool Thing::do_move(Direction new_direction, unsigned int& action_time)
 
     // Check boundaries.
     if ((x_new < 0) || (y_new < 0) ||
-      (x_new >= map_size.x) || (y_new >= map_size.y))
+        (x_new >= map_size.x) || (y_new >= map_size.y))
     {
       message += YOU + " can't move there; it is out of bounds!";
       the_message_log.add(message);
@@ -1007,7 +1004,7 @@ bool Thing::do_pick_up(ThingRef thing, unsigned int& action_time)
         else // could not add to inventory
         {
           MAJOR_ERROR("Could not move Thing even though "
-            "is_movable returned Success");
+                      "is_movable returned Success");
           break;
         }
       }
@@ -1083,7 +1080,7 @@ bool Thing::do_pick_up(ThingRef thing, unsigned int& action_time)
 }
 
 ActionResult Thing::can_put_into(ThingRef thing, ThingRef container,
-  unsigned int& action_time)
+                                 unsigned int& action_time)
 {
   action_time = 1;
 
@@ -1146,7 +1143,7 @@ ActionResult Thing::can_put_into(ThingRef thing, ThingRef container,
 }
 
 bool Thing::do_put_into(ThingRef thing, ThingRef container,
-  unsigned int& action_time)
+                        unsigned int& action_time)
 {
   std::string message;
 
@@ -1300,7 +1297,7 @@ bool Thing::do_put_into(ThingRef thing, ThingRef container,
 
   return false;
 }
- 
+
 ActionResult Thing::can_read(ThingRef thing, unsigned int& action_time)
 {
   action_time = 1;
@@ -1401,7 +1398,6 @@ ActionResult Thing::can_take_out(ThingRef thing, unsigned int& action_time)
 
   return ActionResult::Success;
 }
-
 
 bool Thing::do_take_out(ThingRef thing, unsigned int& action_time)
 {
@@ -1529,7 +1525,7 @@ bool Thing::do_throw(ThingRef thing, Direction& direction, unsigned int& action_
         else
         {
           MAJOR_ERROR("Could not move Thing even though "
-            "is_movable returned Success");
+                      "is_movable returned Success");
         }
       }
     }
@@ -1628,7 +1624,7 @@ bool Thing::do_use(ThingRef thing, unsigned int& action_time)
       the_message_log.add(message);
     }
     break;
-    
+
   case ActionResult::FailureSelfReference:
     message = YOU_TRY + " to use " + thing->get_identifying_string() + ".";
     the_message_log.add(message);
@@ -1769,7 +1765,7 @@ bool Thing::do_equip(ThingRef thing, unsigned int& action_time)
     {
       pImpl->do_equip(thing, location);
       std::string wear_desc = get_bodypart_description(location.part,
-        location.number);
+                                                       location.number);
       message = YOU_ARE + " now wearing " + thing_name +
         " on " + YOUR + " " + wear_desc + ".";
       the_message_log.add(message);
@@ -1884,7 +1880,7 @@ bool Thing::do_wield(ThingRef thing, unsigned int hand, unsigned int& action_tim
   }
 
   // If we HAVE a new item, try to wield it.
-  ActionResult wield_try = (thing != ThingManager::get_mu()) 
+  ActionResult wield_try = (thing != ThingManager::get_mu())
     ? this->can_wield(thing, hand, action_time)
     : ActionResult::SuccessSelfReference;
 
@@ -2103,8 +2099,8 @@ bool Thing::can_see(ThingRef thing)
   MapId thing_map_id = thing->get_map_id();
 
   if ((entity_map_id == MapFactory::null_map_id) ||
-    (thing_map_id == MapFactory::null_map_id) ||
-    (entity_map_id != thing_map_id))
+      (thing_map_id == MapFactory::null_map_id) ||
+      (entity_map_id != thing_map_id))
   {
     return false;
   }
@@ -2216,7 +2212,7 @@ std::string Thing::get_memory_at(sf::Vector2i coords) const
 }
 
 void Thing::add_memory_vertices_to(sf::VertexArray& vertices,
-  int x, int y)
+                                   int x, int y)
 {
   MapId map_id = this->get_map_id();
   if (map_id == MapFactory::null_map_id)
@@ -2244,8 +2240,8 @@ void Thing::add_memory_vertices_to(sf::VertexArray& vertices,
   sf::Vector2u tile_coords = tile_metadata->get_tile_coords();
 
   TileSheet::add_quad(vertices,
-    tile_coords, sf::Color::White,
-    vNW, vNE, vSE, vSW);
+                      tile_coords, sf::Color::White,
+                      vNW, vNE, vSE, vSW);
 }
 
 bool Thing::can_move(Direction direction)
@@ -2479,7 +2475,7 @@ std::string Thing::get_identifying_string(bool definite)
 {
   ThingRef location = this->get_location();
   unsigned int quantity = this->get_quantity();
-  
+
   std::string name;
 
   bool owned;
@@ -2543,7 +2539,7 @@ std::string Thing::get_identifying_string(bool definite)
       {
         article = "the ";
       }
-      
+
       article += boost::lexical_cast<std::string>(get_quantity()) + " ";
     }
   }
@@ -2625,7 +2621,7 @@ sf::Vector2u Thing::get_tile_sheet_coords(int frame)
 
   /// Add them to get the resulting coordinates.
   sf::Vector2u tile_coords = start_coords + offset;
-  
+
   return tile_coords;
 }
 
@@ -2664,8 +2660,8 @@ void Thing::add_vertices_to(sf::VertexArray& vertices,
   sf::Vector2u tile_coords = this->get_tile_sheet_coords(frame);
 
   TileSheet::add_quad(vertices,
-                          tile_coords, thing_color,
-                          vNW, vNE, vSE, vSW);
+                      tile_coords, thing_color,
+                      vNW, vNE, vSE, vSW);
 }
 
 void Thing::draw_to(sf::RenderTarget& target,
@@ -2709,8 +2705,8 @@ void Thing::draw_to(sf::RenderTarget& target,
   }
 
   rectangle.setPosition(target_coords);
-  rectangle.setSize(sf::Vector2f(static_cast<float>(target_size), 
-								 static_cast<float>(target_size)));
+  rectangle.setSize(sf::Vector2f(static_cast<float>(target_size),
+                                 static_cast<float>(target_size)));
   rectangle.setTexture(&(TS.getTexture()));
   rectangle.setTextureRect(texture_coords);
   rectangle.setFillColor(thing_color);
@@ -2826,7 +2822,6 @@ void Thing::spill()
 
       default:
         break;
-
       } // end switch (can_contain)
     } // end if (container location is not Mu)
     else
@@ -2854,7 +2849,7 @@ void Thing::destroy()
 }
 
 std::string Thing::get_bodypart_description(BodyPart part,
-  unsigned int number)
+                                            unsigned int number)
 {
   unsigned int total_number = this->get_bodypart_number(part);
   std::string part_name = this->get_bodypart_name(part);
@@ -2958,7 +2953,6 @@ std::string Thing::get_bodypart_description(BodyPart part,
   return result;
 }
 
-
 bool Thing::is_movable_by(ThingRef thing)
 {
   return call_lua_function_bool("is_movable_by", { thing }, true);
@@ -3004,8 +2998,8 @@ bool Thing::process()
 
   // Process inventory.
   for (auto iter = std::begin(things);
-            iter != std::end(things);
-            ++iter)
+  iter != std::end(things);
+    ++iter)
   {
     ThingRef thing = iter->second;
     bool dead = thing->process();
@@ -3106,10 +3100,10 @@ bool Thing::perform_action_deequipped_by(ThingRef actor, WearLocation& location)
   {
     std::string message;
     message = actor->get_identifying_string() + " cannot take off " + this->get_identifying_string() +
-              "; it is magically bound to " +
-              actor->get_possessive_adjective() + " " +
-              actor->get_bodypart_description(location.part,
-                                             location.number) + "!";
+      "; it is magically bound to " +
+      actor->get_possessive_adjective() + " " +
+      actor->get_bodypart_description(location.part,
+                                      location.number) + "!";
     the_message_log.add(message);
     return false;
   }
@@ -3129,13 +3123,13 @@ bool Thing::perform_action_equipped_by(ThingRef actor, WearLocation& location)
   {
     if (this->get_property<bool>("autobinds"))
     {
-        this->set_property<bool>("bound", true);
-        std::string message;
-        message = this->get_identifying_string() + " magically binds itself to " +
-                  actor->get_possessive() + " " +
-                  actor->get_bodypart_description(location.part,
-                                                  location.number) + "!";
-        the_message_log.add(message);
+      this->set_property<bool>("bound", true);
+      std::string message;
+      message = this->get_identifying_string() + " magically binds itself to " +
+        actor->get_possessive() + " " +
+        actor->get_bodypart_description(location.part,
+                                        location.number) + "!";
+      the_message_log.add(message);
     }
   }
 
@@ -3148,9 +3142,9 @@ bool Thing::perform_action_unwielded_by(ThingRef actor)
   {
     std::string message;
     message = actor->get_identifying_string() + " cannot unwield " + this->get_identifying_string() +
-              "; it is magically bound to " +
-              actor->get_possessive_adjective() + " " +
-              actor->get_bodypart_name(BodyPart::Hand) + "!";
+      "; it is magically bound to " +
+      actor->get_possessive_adjective() + " " +
+      actor->get_bodypart_name(BodyPart::Hand) + "!";
     the_message_log.add(message);
     return false;
   }
@@ -3173,8 +3167,8 @@ bool Thing::perform_action_wielded_by(ThingRef actor)
       this->set_property<bool>("bound", true);
       std::string message;
       message = this->get_identifying_string() + " magically binds itself to " +
-                actor->get_possessive() + " " +
-                actor->get_bodypart_name(BodyPart::Hand) + "!";
+        actor->get_possessive() + " " +
+        actor->get_bodypart_name(BodyPart::Hand) + "!";
       the_message_log.add(message);
     }
   }
@@ -3198,7 +3192,7 @@ bool Thing::can_merge_with(ThingRef other) const
 
   // Things with inventories can never merge.
   if ((get_intrinsic<int>("inventory_size") != 0) ||
-    (other->get_intrinsic<int>("inventory_size") != 0))
+      (other->get_intrinsic<int>("inventory_size") != 0))
   {
     return false;
   }
@@ -3264,7 +3258,7 @@ bool Thing::_process_self()
   // If actions are pending...
   if (!pImpl->pending_actions.empty())
   {
-    // Process the front action.      
+    // Process the front action.
     Action action = pImpl->pending_actions.front();
     bool action_done = action.process(get_ref(), {});
     if (action_done)
@@ -3282,9 +3276,9 @@ std::vector<std::string>& Thing::get_map_memory()
 }
 
 void Thing::do_recursive_visibility(int octant,
-  int depth,
-  double slope_A,
-  double slope_B)
+                                    int depth,
+                                    double slope_A,
+                                    double slope_B)
 {
   int x = 0;
   int y = 0;
@@ -3308,7 +3302,7 @@ void Thing::do_recursive_visibility(int octant,
   {
   case 1:
     y = eY - depth;
-    x = static_cast<int>(rint(static_cast<double>(eX)-(slope_A * static_cast<double>(depth))));
+    x = static_cast<int>(rint(static_cast<double>(eX) - (slope_A * static_cast<double>(depth))));
     while (calc_slope(x, y, eX, eY) >= slope_B)
     {
       if (calc_vis_distance(x, y, eX, eY) <= mw)
@@ -3318,7 +3312,7 @@ void Thing::do_recursive_visibility(int octant,
           if (!game_map.tile_is_opaque(x - 1, y))
           {
             do_recursive_visibility(1, depth + 1, slope_A,
-              calc_slope(x - 0.5, y + 0.5, eX, eY));
+                                    calc_slope(x - 0.5, y + 0.5, eX, eY));
           }
         }
         else
@@ -3337,7 +3331,7 @@ void Thing::do_recursive_visibility(int octant,
     break;
   case 2:
     y = eY - depth;
-    x = static_cast<int>(rint(static_cast<double>(eX)+(slope_A * static_cast<double>(depth))));
+    x = static_cast<int>(rint(static_cast<double>(eX) + (slope_A * static_cast<double>(depth))));
     while (calc_slope(x, y, eX, eY) <= slope_B)
     {
       if (calc_vis_distance(x, y, eX, eY) <= mw)
@@ -3347,7 +3341,7 @@ void Thing::do_recursive_visibility(int octant,
           if (!game_map.tile_is_opaque(x + 1, y))
           {
             do_recursive_visibility(2, depth + 1, slope_A,
-              calc_slope(x + 0.5, y + 0.5, eX, eY));
+                                    calc_slope(x + 0.5, y + 0.5, eX, eY));
           }
         }
         else
@@ -3366,7 +3360,7 @@ void Thing::do_recursive_visibility(int octant,
     break;
   case 3:
     x = eX + depth;
-    y = static_cast<int>(rint(static_cast<double>(eY)-(slope_A * static_cast<double>(depth))));
+    y = static_cast<int>(rint(static_cast<double>(eY) - (slope_A * static_cast<double>(depth))));
     while (calc_inv_slope(x, y, eX, eY) <= slope_B)
     {
       if (calc_vis_distance(x, y, eX, eY) <= mw)
@@ -3376,7 +3370,7 @@ void Thing::do_recursive_visibility(int octant,
           if (!game_map.tile_is_opaque(x, y - 1))
           {
             do_recursive_visibility(3, depth + 1, slope_A,
-              calc_inv_slope(x - 0.5, y - 0.5, eX, eY));
+                                    calc_inv_slope(x - 0.5, y - 0.5, eX, eY));
           }
         }
         else
@@ -3395,7 +3389,7 @@ void Thing::do_recursive_visibility(int octant,
     break;
   case 4:
     x = eX + depth;
-    y = static_cast<int>(rint(static_cast<double>(eY)+(slope_A * static_cast<double>(depth))));
+    y = static_cast<int>(rint(static_cast<double>(eY) + (slope_A * static_cast<double>(depth))));
     while (calc_inv_slope(x, y, eX, eY) >= slope_B)
     {
       if (calc_vis_distance(x, y, eX, eY) <= mw)
@@ -3405,7 +3399,7 @@ void Thing::do_recursive_visibility(int octant,
           if (!game_map.tile_is_opaque(x, y + 1))
           {
             do_recursive_visibility(4, depth + 1, slope_A,
-              calc_inv_slope(x - 0.5, y + 0.5, eX, eY));
+                                    calc_inv_slope(x - 0.5, y + 0.5, eX, eY));
           }
         }
         else
@@ -3424,7 +3418,7 @@ void Thing::do_recursive_visibility(int octant,
     break;
   case 5:
     y = eY + depth;
-    x = static_cast<int>(rint(static_cast<double>(eX)+(slope_A * static_cast<double>(depth))));
+    x = static_cast<int>(rint(static_cast<double>(eX) + (slope_A * static_cast<double>(depth))));
     while (calc_slope(x, y, eX, eY) >= slope_B)
     {
       if (calc_vis_distance(x, y, eX, eY) <= mw)
@@ -3434,7 +3428,7 @@ void Thing::do_recursive_visibility(int octant,
           if (!game_map.tile_is_opaque(x + 1, y))
           {
             do_recursive_visibility(5, depth + 1, slope_A,
-              calc_slope(x + 0.5, y - 0.5, eX, eY));
+                                    calc_slope(x + 0.5, y - 0.5, eX, eY));
           }
         }
         else
@@ -3453,7 +3447,7 @@ void Thing::do_recursive_visibility(int octant,
     break;
   case 6:
     y = eY + depth;
-    x = static_cast<int>(rint(static_cast<double>(eX)-(slope_A * static_cast<double>(depth))));
+    x = static_cast<int>(rint(static_cast<double>(eX) - (slope_A * static_cast<double>(depth))));
     while (calc_slope(x, y, eX, eY) <= slope_B)
     {
       if (calc_vis_distance(x, y, eX, eY) <= mw)
@@ -3463,7 +3457,7 @@ void Thing::do_recursive_visibility(int octant,
           if (!game_map.tile_is_opaque(x - 1, y))
           {
             do_recursive_visibility(6, depth + 1, slope_A,
-              calc_slope(x - 0.5, y - 0.5, eX, eY));
+                                    calc_slope(x - 0.5, y - 0.5, eX, eY));
           }
         }
         else
@@ -3482,7 +3476,7 @@ void Thing::do_recursive_visibility(int octant,
     break;
   case 7:
     x = eX - depth;
-    y = static_cast<int>(rint(static_cast<double>(eY)+(slope_A * static_cast<double>(depth))));
+    y = static_cast<int>(rint(static_cast<double>(eY) + (slope_A * static_cast<double>(depth))));
     while (calc_inv_slope(x, y, eX, eY) <= slope_B)
     {
       if (calc_vis_distance(x, y, eX, eY) <= mw)
@@ -3492,7 +3486,7 @@ void Thing::do_recursive_visibility(int octant,
           if (!game_map.tile_is_opaque(x, y + 1))
           {
             do_recursive_visibility(7, depth + 1, slope_A,
-              calc_inv_slope(x + 0.5, y + 0.5, eX, eY));
+                                    calc_inv_slope(x + 0.5, y + 0.5, eX, eY));
           }
         }
         else
@@ -3511,7 +3505,7 @@ void Thing::do_recursive_visibility(int octant,
     break;
   case 8:
     x = eX - depth;
-    y = static_cast<int>(rint(static_cast<double>(eY)-(slope_A * static_cast<double>(depth))));
+    y = static_cast<int>(rint(static_cast<double>(eY) - (slope_A * static_cast<double>(depth))));
     while (calc_inv_slope(x, y, eX, eY) >= slope_B)
     {
       if (calc_vis_distance(x, y, eX, eY) <= mw)
@@ -3521,7 +3515,7 @@ void Thing::do_recursive_visibility(int octant,
           if (!game_map.tile_is_opaque(x, y - 1))
           {
             do_recursive_visibility(8, depth + 1, slope_A,
-              calc_inv_slope(x + 0.5, y - 0.5, eX, eY));
+                                    calc_inv_slope(x + 0.5, y - 0.5, eX, eY));
           }
         }
         else
@@ -3568,7 +3562,7 @@ int Thing::LUA_thing_create(lua_State* L)
 
   ThingRef thing = ThingRef(lua_tointeger(L, 1));
   std::string new_thing_type = lua_tostring(L, 2);
-  
+
   ThingRef new_thing = GAME.get_thing_manager().create(new_thing_type);
   bool success = new_thing->move_into(thing);
 
@@ -3605,7 +3599,6 @@ int Thing::LUA_thing_destroy(lua_State* L)
 
   return 0;
 }
-
 
 int Thing::LUA_thing_get_player(lua_State* L)
 {
@@ -3798,7 +3791,6 @@ int Thing::LUA_thing_move_into(lua_State* L)
 
   return 1;
 }
-
 
 ActionResult Thing::call_lua_function(std::string function_name, std::vector<lua_Integer> const& args, ActionResult default_result)
 {

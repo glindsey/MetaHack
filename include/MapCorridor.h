@@ -10,29 +10,29 @@ class PropertyDictionary;
 
 class MapCorridor : public MapFeature
 {
-  public:
-    MapCorridor(Map& m, PropertyDictionary const& settings);
-    virtual ~MapCorridor();
+public:
+  MapCorridor(Map& m, PropertyDictionary const& settings);
+  virtual ~MapCorridor();
 
-    /// Create a corridor of random length, given starting coordinates
-    /// and direction.
-    /// Checks to make sure the corridor does not intersect existing features.
-    /// If successful, puts the coordinates in resultCoords and the endpoint into
-    /// endingCoords.
-    /// If not successful, returns false.
-    virtual bool create(GeoVector vec) override;
+  /// Create a corridor of random length, given starting coordinates
+  /// and direction.
+  /// Checks to make sure the corridor does not intersect existing features.
+  /// If successful, puts the coordinates in resultCoords and the endpoint into
+  /// endingCoords.
+  /// If not successful, returns false.
+  virtual bool create(GeoVector vec) override;
 
-    /// Get this corridor's ending coordinates.
-    sf::Vector2i const& getEndingCoords() const;
+  /// Get this corridor's ending coordinates.
+  sf::Vector2i const& getEndingCoords() const;
 
-  protected:
-  private:
-    struct Impl;
-    std::unique_ptr<Impl> pImpl;
+protected:
+private:
+  struct Impl;
+  std::unique_ptr<Impl> pImpl;
 
-    static unsigned int maxLength;
-    static unsigned int minLength;
-    static unsigned int maxRetries;
+  static unsigned int maxLength;
+  static unsigned int minLength;
+  static unsigned int maxRetries;
 };
 
 #endif // MAPCORRIDOR_H

@@ -27,8 +27,8 @@ struct MapFeature::Impl
 };
 
 MapFeature::MapFeature(Map& m, PropertyDictionary const& s)
-  : 
-  pImpl (NEW Impl(m, s))
+  :
+  pImpl(NEW Impl(m, s))
 {}
 
 MapFeature::~MapFeature()

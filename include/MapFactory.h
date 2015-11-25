@@ -16,31 +16,31 @@ class Map;
 
 class MapFactory
 {
-  public:
-    MapFactory(GameState& game_state);
-    virtual ~MapFactory();
+public:
+  MapFactory(GameState& game_state);
+  virtual ~MapFactory();
 
-    /// Gets a reference to a Map by ID.
-    Map const& get(MapId map_id) const;
+  /// Gets a reference to a Map by ID.
+  Map const& get(MapId map_id) const;
 
-    /// Gets a reference to a Map by ID.
-    Map& get(MapId map_id);
+  /// Gets a reference to a Map by ID.
+  Map& get(MapId map_id);
 
-    MapId create(int x, int y);
+  MapId create(int x, int y);
 
-    bool destroy(MapId map_id);
+  bool destroy(MapId map_id);
 
-    static const MapId null_map_id;
+  static const MapId null_map_id;
 
-  protected:
-  private:
-    /// Reference to owning GameState.
-    GameState& m_game_state;
+protected:
+private:
+  /// Reference to owning GameState.
+  GameState& m_game_state;
 
-    /// Collection of maps.
-    boost::ptr_map<MapId, Map> m_maps;
+  /// Collection of maps.
+  boost::ptr_map<MapId, Map> m_maps;
 
-    MapId current_map_id;
+  MapId current_map_id;
 };
 
 #endif // MAPFACTORY_H

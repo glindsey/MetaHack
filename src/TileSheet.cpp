@@ -80,7 +80,6 @@ struct TileSheet::Impl
       }
     }
   }
-
 };
 
 TileSheet::TileSheet()
@@ -89,7 +88,7 @@ TileSheet::TileSheet()
   /// @todo Make this a configurable setting.
   pImpl->texture_size = 1024;
   //pImpl->texture_size = pImpl->texture.getMaximumSize();
-  
+
   bool success = pImpl->texture.create(pImpl->texture_size, pImpl->texture_size);
 
   if (!success)
@@ -98,7 +97,7 @@ TileSheet::TileSheet()
   }
 
   uint32_t used_map_size = (pImpl->texture_size / Settings.get<unsigned int>("map_tile_size")) *
-                           (pImpl->texture_size / Settings.get<unsigned int>("map_tile_size"));
+    (pImpl->texture_size / Settings.get<unsigned int>("map_tile_size"));
   pImpl->used.resize(used_map_size);
 }
 
@@ -153,7 +152,7 @@ sf::IntRect TileSheet::get_tile(sf::Vector2u tile) const
   rect.width = tile_size;
   rect.height = tile_size;
 
-  #ifdef DEBUG
+#ifdef DEBUG
   if ((rect.left < 0) || (rect.top < 0) ||
       (rect.left + rect.width >= static_cast<int>(pImpl->texture.getSize().x)) ||
       (rect.top + rect.height >= static_cast<int>(pImpl->texture.getSize().y)))
@@ -161,7 +160,7 @@ sf::IntRect TileSheet::get_tile(sf::Vector2u tile) const
     MAJOR_ERROR("Request for tile (%d, %d) is out of bounds on the sprite sheet!",
                 tile.x, tile.y);
   }
-  #endif // DEBUG
+#endif // DEBUG
 
   return rect;
 }
@@ -172,9 +171,9 @@ sf::Texture& TileSheet::getTexture(void)
 }
 
 void TileSheet::add_quad(sf::VertexArray& vertices,
-                             sf::Vector2u tile_coords, sf::Color bg_color,
-                             sf::Vector2f ul_coord, sf::Vector2f ur_coord,
-                             sf::Vector2f lr_coord, sf::Vector2f ll_coord)
+                         sf::Vector2u tile_coords, sf::Color bg_color,
+                         sf::Vector2f ul_coord, sf::Vector2f ur_coord,
+                         sf::Vector2f lr_coord, sf::Vector2f ll_coord)
 {
   sf::Vertex new_vertex;
   float ts(Settings.get<float>("map_tile_size"));
@@ -238,13 +237,13 @@ void TileSheet::add_gradient_quad(sf::VertexArray& vertices,
 }
 
 void TileSheet::add_gradient_quad(sf::VertexArray& vertices,
-  sf::Vector2u tile_coords,
-  sf::Vector2f coordNW, sf::Vector2f coordNE, sf::Vector2f coordSE, sf::Vector2f coordSW,
-  sf::Color colorC, 
-  sf::Color colorNW, sf::Color colorN,
-  sf::Color colorNE, sf::Color colorE,
-  sf::Color colorSE, sf::Color colorS,
-  sf::Color colorSW, sf::Color colorW)
+                                  sf::Vector2u tile_coords,
+                                  sf::Vector2f coordNW, sf::Vector2f coordNE, sf::Vector2f coordSE, sf::Vector2f coordSW,
+                                  sf::Color colorC,
+                                  sf::Color colorNW, sf::Color colorN,
+                                  sf::Color colorNE, sf::Color colorE,
+                                  sf::Color colorSE, sf::Color colorS,
+                                  sf::Color colorSW, sf::Color colorW)
 {
   float ts(Settings.get<float>("map_tile_size"));
   float half_ts = (ts / 2.0f);
@@ -297,8 +296,6 @@ void TileSheet::add_outline_vertices(sf::VertexArray& vertices,
                                      sf::Vector2f lr_coord,
                                      sf::Vector2f ll_coord)
 {
-
-
   sf::Vertex new_vertex;
 
   new_vertex.color = bg_color;

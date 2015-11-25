@@ -75,12 +75,11 @@ struct InventoryArea::Impl
 
     return static_cast<InventorySlot>(slot_number);
   }
-
 };
 
 InventoryArea::InventoryArea(sf::IntRect dimensions)
   : GUIPane(dimensions),
-    pImpl(NEW Impl())
+  pImpl(NEW Impl())
 {}
 
 InventoryArea::~InventoryArea()
@@ -113,7 +112,7 @@ void InventoryArea::toggle_selection(InventorySlot selection)
     auto iter = std::find(std::begin(pImpl->selected_slots),
                           std::end(pImpl->selected_slots),
                           selection);
-    if ( iter == std::end(pImpl->selected_slots))
+    if (iter == std::end(pImpl->selected_slots))
     {
       //TRACE("Adding thing %u to selected things",
       //      static_cast<unsigned int>(id));
@@ -149,8 +148,8 @@ std::vector<ThingRef> InventoryArea::get_selected_things()
     Inventory& inventory = pImpl->viewed->get_inventory();
 
     for (auto iter = std::begin(pImpl->selected_slots);
-              iter != std::end(pImpl->selected_slots);
-              ++iter)
+    iter != std::end(pImpl->selected_slots);
+      ++iter)
     {
       ThingRef thing = inventory.get(*iter);
       things.push_back(thing);
@@ -302,7 +301,7 @@ std::string InventoryArea::_render_contents(sf::RenderTarget& target, int frame)
   auto& things = inventory.get_things();
 
   for (auto iter = things.cbegin();
-       iter != things.cend(); ++iter)
+  iter != things.cend(); ++iter)
   {
     auto& slot = (*iter).first;
     ThingRef thing = (*iter).second;
@@ -313,8 +312,8 @@ std::string InventoryArea::_render_contents(sf::RenderTarget& target, int frame)
     sf::Color fg_color = Settings.get<sf::Color>("text_color");
     unsigned int selection_order = 0;
     auto slot_iter = std::find(pImpl->selected_slots.begin(),
-                                pImpl->selected_slots.end(),
-                                slot);
+                               pImpl->selected_slots.end(),
+                               slot);
 
     if (slot_iter != pImpl->selected_slots.end())
     {
@@ -363,7 +362,7 @@ std::string InventoryArea::_render_contents(sf::RenderTarget& target, int frame)
     WearLocation wear_location;
     bool wielding = pImpl->viewed->is_wielding(thing, wield_location);
     bool wearing = pImpl->viewed->has_equipped(thing, wear_location);
-    
+
     // 5. TODO: Display "worn" or "equipped" icon if necessary.
     if (wielding)
     {

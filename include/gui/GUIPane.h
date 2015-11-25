@@ -10,19 +10,19 @@
 class GUIPane :
   public GUIObject
 {
-  public:
-    GUIPane(sf::IntRect dimensions);
-    virtual ~GUIPane();
+public:
+  GUIPane(sf::IntRect dimensions);
+  virtual ~GUIPane();
 
-    virtual EventResult handle_event(sf::Event& event);
+  virtual EventResult handle_event(sf::Event& event);
 
-  protected:
-    virtual bool _render_self(sf::RenderTarget& target, int frame) final;
-    virtual std::string _render_contents(sf::RenderTarget& target, int frame);
+protected:
+  virtual bool _render_self(sf::RenderTarget& target, int frame) final;
+  virtual std::string _render_contents(sf::RenderTarget& target, int frame);
 
-  private:
-    struct Impl;
-    std::unique_ptr<Impl> pImpl;
+private:
+  struct Impl;
+  std::unique_ptr<Impl> pImpl;
 };
 
 #endif // GUIPANE_H

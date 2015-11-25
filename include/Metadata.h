@@ -51,13 +51,13 @@ public:
   /// @param function_name  Name of the function to call
   /// @param caller         ThingRef to the thing calling the function
   /// @param args           Vector of arguments to pass to the function
-  /// @param default_result The default result if function is not found 
+  /// @param default_result The default result if function is not found
   ///                       (defaults to ActionResult::Success).
   /// @return An ActionResult containing the result of the call.
   ActionResult call_lua_function(std::string function_name,
-    ThingRef caller,
-    std::vector<lua_Integer> const& args,
-    ActionResult default_result = ActionResult::Success);
+                                 ThingRef caller,
+                                 std::vector<lua_Integer> const& args,
+                                 ActionResult default_result = ActionResult::Success);
 
   /// Try to call a Lua function that takes the caller and one argument
   /// and returns a boolean.
@@ -68,13 +68,13 @@ public:
   /// @param function_name  Name of the function to call
   /// @param caller         ThingRef to the thing calling the function
   /// @param args           Vector of arguments to pass to the function
-  /// @param default_result The default result if function is not found 
+  /// @param default_result The default result if function is not found
   ///                       (defaults to true).
   /// @return A boolean containing the result of the call.
   bool call_lua_function_bool(std::string function_name,
-    ThingRef caller,
-    std::vector<lua_Integer> const& args,
-    bool default_result = true);
+                              ThingRef caller,
+                              std::vector<lua_Integer> const& args,
+                              bool default_result = true);
 
   /// Try to call a Lua function that takes the caller and one argument
   /// and returns a pair of integers.
@@ -85,13 +85,13 @@ public:
   /// @param function_name  Name of the function to call
   /// @param caller         ThingRef to the thing calling the function
   /// @param args           Vector of arguments to pass to the function
-  /// @param default_result The default result if function is not found 
+  /// @param default_result The default result if function is not found
   ///                       (defaults to (0, 0)).
   /// @return A boolean containing the result of the call.
   sf::Vector2u call_lua_function_v2u(std::string function_name,
-    ThingRef caller,
-    std::vector<lua_Integer> const& args,
-    sf::Vector2u default_result = sf::Vector2u(0, 0));
+                                     ThingRef caller,
+                                     std::vector<lua_Integer> const& args,
+                                     sf::Vector2u default_result = sf::Vector2u(0, 0));
 
   template <typename T>
   T get_intrinsic(std::string name, T default_value = T())
@@ -100,15 +100,15 @@ public:
   }
 
   template<> bool get_intrinsic(std::string name, bool default_value)
-  { 
-    return get_intrinsic_bool(name, default_value); 
+  {
+    return get_intrinsic_bool(name, default_value);
   }
 
   template<> std::string get_intrinsic(std::string name, std::string default_value)
-  { 
-    return get_intrinsic_string(name, default_value); 
+  {
+    return get_intrinsic_string(name, default_value);
   }
-  
+
   bool get_intrinsic_bool(std::string name, bool default_value);
   double get_intrinsic_value(std::string name, double default_value);
   std::string get_intrinsic_string(std::string name, std::string default_value);
@@ -170,4 +170,3 @@ private:
 };
 
 #endif // METADATA_H
-

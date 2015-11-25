@@ -97,8 +97,8 @@ void MapTile::add_vertices_to(sf::VertexArray& vertices,
   sf::Vector2u tile_coords = this->get_tile_sheet_coords(frame);
 
   TileSheet::add_gradient_quad(vertices, tile_coords,
-    vNW, vNE, vSE, vSW, 
-    light, lightNW, lightN, lightNE, lightE, lightSE, lightS, lightSW, lightW);
+                               vNW, vNE, vSE, vSW,
+                               light, lightNW, lightN, lightNE, lightE, lightSE, lightS, lightSW, lightW);
 }
 
 void MapTile::draw_to(sf::RenderTarget& target,
@@ -210,7 +210,7 @@ sf::Color MapTile::get_light_level() const
   if (player != ThingManager::get_mu())
   {
     for (auto iter = std::begin(m_lights);
-      iter != std::end(m_lights);
+    iter != std::end(m_lights);
       ++iter)
     {
       sf::Vector2i const& source_coords = iter->second.coords;
@@ -278,7 +278,7 @@ sf::Color MapTile::get_wall_light_level(Direction direction) const
   if (player != ThingManager::get_mu())
   {
     for (auto iter = std::begin(m_lights);
-      iter != std::end(m_lights);
+    iter != std::end(m_lights);
       ++iter)
     {
       sf::Vector2i const& source_coords = iter->second.coords;
@@ -334,10 +334,10 @@ bool MapTile::is_opaque() const
 }
 
 void MapTile::draw_highlight(sf::RenderTarget& target,
-                            sf::Vector2f location,
-                            sf::Color fgColor,
-                            sf::Color bgColor,
-                            int frame)
+                             sf::Vector2f location,
+                             sf::Color fgColor,
+                             sf::Color bgColor,
+                             int frame)
 {
   float half_ts(Settings.get<float>("map_tile_size") * 0.5f);
   sf::Vector2f vSW(location.x - half_ts, location.y + half_ts);
@@ -368,10 +368,10 @@ void MapTile::add_walls_to(sf::VertexArray& vertices,
                            bool sw_is_empty, bool w_is_empty)
 {
   // Checks to see N/S/E/W walls.
-  bool player_sees_n_wall { false };
-  bool player_sees_s_wall { false };
-  bool player_sees_e_wall { false };
-  bool player_sees_w_wall { false };
+  bool player_sees_n_wall{ false };
+  bool player_sees_s_wall{ false };
+  bool player_sees_e_wall{ false };
+  bool player_sees_w_wall{ false };
 
   // Player.
   ThingRef player = GAME.get_player();
@@ -449,7 +449,6 @@ void MapTile::add_walls_to(sf::VertexArray& vertices,
     wall_e_color_n = average(wall_e_color, adjacent_tile_n.get_wall_light_level(Direction::East));
     wall_e_color_s = average(wall_e_color, adjacent_tile_s.get_wall_light_level(Direction::East));
 
-
     wall_s_color = get_wall_light_level(Direction::South);
     wall_s_color_w = average(wall_s_color, adjacent_tile_w.get_wall_light_level(Direction::South));
     wall_s_color_e = average(wall_s_color, adjacent_tile_e.get_wall_light_level(Direction::South));
@@ -483,8 +482,8 @@ void MapTile::add_walls_to(sf::VertexArray& vertices,
     }
 
     TileSheet::add_gradient_quad(vertices, tile_coords,
-      vTileNW, vTileNE, vSE, vSW,
-      wall_n_color, wall_n_color_w, wall_n_color, wall_n_color_e, wall_n_color_e, wall_n_color_e, wall_n_color, wall_n_color_w, wall_n_color_w);
+                                 vTileNW, vTileNE, vSE, vSW,
+                                 wall_n_color, wall_n_color_w, wall_n_color, wall_n_color_e, wall_n_color_e, wall_n_color_e, wall_n_color, wall_n_color_w, wall_n_color_w);
   }
 
   // EAST WALL
@@ -511,8 +510,8 @@ void MapTile::add_walls_to(sf::VertexArray& vertices,
     }
 
     TileSheet::add_gradient_quad(vertices, tile_coords,
-      vNW, vTileNE, vTileSE, vSW,
-      wall_e_color, wall_e_color_n, wall_e_color_n, wall_e_color, wall_e_color_s, wall_e_color_s, wall_e_color_s, wall_e_color, wall_e_color_n);
+                                 vNW, vTileNE, vTileSE, vSW,
+                                 wall_e_color, wall_e_color_n, wall_e_color_n, wall_e_color, wall_e_color_s, wall_e_color_s, wall_e_color_s, wall_e_color, wall_e_color_n);
   }
 
   // SOUTH WALL
@@ -539,8 +538,8 @@ void MapTile::add_walls_to(sf::VertexArray& vertices,
     }
 
     TileSheet::add_gradient_quad(vertices, tile_coords,
-      vNW, vNE, vTileSE, vTileSW,
-      wall_s_color, wall_s_color_w, wall_s_color, wall_s_color_e, wall_s_color_e, wall_s_color_e, wall_s_color, wall_s_color_w, wall_s_color_w);
+                                 vNW, vNE, vTileSE, vTileSW,
+                                 wall_s_color, wall_s_color_w, wall_s_color, wall_s_color_e, wall_s_color_e, wall_s_color_e, wall_s_color, wall_s_color_w, wall_s_color_w);
   }
 
   // WEST WALL
@@ -567,8 +566,8 @@ void MapTile::add_walls_to(sf::VertexArray& vertices,
     }
 
     TileSheet::add_gradient_quad(vertices, tile_coords,
-      vTileNW, vNE, vSE, vTileSW,
-      wall_w_color, wall_w_color_n, wall_w_color_n, wall_w_color, wall_w_color_s, wall_w_color_s, wall_w_color_s, wall_w_color, wall_w_color_n);
+                                 vTileNW, vNE, vSE, vTileSW,
+                                 wall_w_color, wall_w_color_n, wall_w_color_n, wall_w_color, wall_w_color_s, wall_w_color_s, wall_w_color_s, wall_w_color, wall_w_color_n);
   }
 }
 
@@ -585,9 +584,9 @@ sf::Vector2f MapTile::get_pixel_coords(sf::Vector2i tile)
 // === PROTECTED METHODS ======================================================
 
 MapTile::MapTile(sf::Vector2i coords, Metadata& metadata, MapId map_id)
-  : 
+  :
   m_map_id{ map_id },
-  m_coords{ coords },  
+  m_coords{ coords },
   m_pMetadata{ &metadata },
   m_ambient_light_color{ sf::Color(192, 192, 192, 255) },
   m_tile_offset{ pick_uniform(0, 4) }

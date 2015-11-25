@@ -59,9 +59,9 @@ public:
   }
 
   bool ThingId::operator==(ThingId const& other) const
-	{
-		return (this->full_id == other.full_id);
-	}
+  {
+    return (this->full_id == other.full_id);
+  }
 
   bool ThingId::operator!=(ThingId const& other) const
   {
@@ -70,9 +70,9 @@ public:
 
   friend std::ostream& operator<< (std::ostream& stream, ThingId const& thing)
   {
-    stream << boost::lexical_cast<std::string>(thing.id) 
-           << "." 
-           << boost::lexical_cast<std::string>(thing.version);
+    stream << boost::lexical_cast<std::string>(thing.id)
+      << "."
+      << boost::lexical_cast<std::string>(thing.version);
 
     return stream;
   }
@@ -101,7 +101,7 @@ class Thing;
 
 class ThingRef
 {
-	friend class ThingManager;
+  friend class ThingManager;
 
 public:
 
@@ -109,15 +109,15 @@ public:
   ThingRef();
 
   /// Create a weak reference from an ID.
-	explicit ThingRef(ThingId const& id);
+  explicit ThingRef(ThingId const& id);
 
-	virtual ~ThingRef();
+  virtual ~ThingRef();
 
-	/// Create a weak reference from another weak reference.
-	ThingRef(ThingRef const& other);
+  /// Create a weak reference from another weak reference.
+  ThingRef(ThingRef const& other);
 
-	/// Assignment operator for weak references.
-	ThingRef& operator=(ThingRef other);
+  /// Assignment operator for weak references.
+  ThingRef& operator=(ThingRef other);
 
   /// Conversion operator to lua_Integer.
   /// Makes it REALLY easy to pass things to Lua scripts.
@@ -134,14 +134,14 @@ public:
 
   bool operator>=(ThingRef const& other) const;
 
-	/// Equivalence operator.
-	bool operator==(ThingRef const& other) const;
+  /// Equivalence operator.
+  bool operator==(ThingRef const& other) const;
 
   /// Non-equivalence operator.
   bool operator!=(ThingRef const& other) const;
 
   /// Call to get the thing associated with this.
-	Thing* operator->(void);
+  Thing* operator->(void);
 
   /// Call to get the ID associated with this.
   /// @warning This is ONLY exposed to allow for std::unordered_map hashing.
@@ -149,26 +149,26 @@ public:
   ThingId get_id(void) const;
 
 protected:
-	/// Create a new ID.
-	/// This ID is guaranteed to be unique from any other currently existing,
-	/// or any that has previously existed in this game instance.
-	static ThingId create();
+  /// Create a new ID.
+  /// This ID is guaranteed to be unique from any other currently existing,
+  /// or any that has previously existed in this game instance.
+  static ThingId create();
 
-	/// Destroy an ID that is no longer required.
-	static void destroy(ThingId const& id);
+  /// Destroy an ID that is no longer required.
+  static void destroy(ThingId const& id);
 
-	/// Swap function
-	friend void swap(ThingRef& first, ThingRef& second);
+  /// Swap function
+  friend void swap(ThingRef& first, ThingRef& second);
 
 private:
-	/// The ID/version associated with this reference.
-	ThingId m_id;
+  /// The ID/version associated with this reference.
+  ThingId m_id;
 
-	/// Largest unused ID so far.
-	static uint32_t S_largest_unused_id;
+  /// Largest unused ID so far.
+  static uint32_t S_largest_unused_id;
 
-	/// Vector of ID/version pairs that have been deleted so far.
-	static std::vector<ThingId> S_deleted_ids;
+  /// Vector of ID/version pairs that have been deleted so far.
+  static std::vector<ThingId> S_deleted_ids;
 };
 
 namespace std

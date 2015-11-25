@@ -8,9 +8,9 @@
 
 struct ErrorHandler::Impl
 {
-    static std::unique_ptr<ErrorHandler> handler_instance;
-    bool die_on_minor_error = false;
-    bool die_on_major_error = false;
+  static std::unique_ptr<ErrorHandler> handler_instance;
+  bool die_on_minor_error = false;
+  bool die_on_major_error = false;
 };
 
 std::unique_ptr<ErrorHandler> ErrorHandler::Impl::handler_instance;
@@ -43,7 +43,6 @@ void ErrorHandler::printTrace(char* buf,
 {
   printf("%s (%d): %s\n", func, line, buf);
 }
-
 
 void ErrorHandler::handleMinorError(char* buf,
                                     char const* file,
@@ -95,4 +94,3 @@ void ErrorHandler::setErrorHandlingFlags(bool minor, bool major)
   pImpl->die_on_minor_error = minor;
   pImpl->die_on_major_error = major;
 }
-

@@ -185,7 +185,7 @@ ThingRef Inventory::get_largest_thing()
   auto iter_largest = things_.cbegin();
 
   for (ThingMap::const_iterator iter = things_.cbegin();
-        iter != things_.cend(); ++iter)
+  iter != things_.cend(); ++iter)
   {
     if (is_smaller_than(iter_largest->second, iter->second))
     {
@@ -216,21 +216,21 @@ ThingRef Inventory::get_entity()
 
 ThingMap::iterator Inventory::find_if(std::function<bool(ThingPair const&)> functor)
 {
-  ThingMap::iterator iter = 
+  ThingMap::iterator iter =
     std::find_if(things_.begin(), things_.end(), functor);
   return iter;
 }
 
 ThingMap::iterator Inventory::find(ThingRef target_id)
 {
-  ThingMap::iterator iter = 
+  ThingMap::iterator iter =
     std::find_if(
       things_.begin(),
       things_.end(),
       [&](ThingPair const& thing_pair)
-      {
-        return thing_pair.second == target_id;
-      });
+  {
+    return thing_pair.second == target_id;
+  });
 
   return iter;
 }

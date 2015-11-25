@@ -7,7 +7,7 @@
 struct GUIPane::Impl
 {
   Impl()
-    : 
+    :
     focus(false)
   {}
 
@@ -64,8 +64,8 @@ bool GUIPane::_render_self(sf::RenderTarget& target, int frame)
 
     title_rect.setFillColor(Settings.get<sf::Color>("window_bg_color"));
     title_rect.setOutlineColor(pImpl->focus ?
-                              Settings.get<sf::Color>("window_focused_border_color") :
-                              Settings.get<sf::Color>("window_border_color"));
+                               Settings.get<sf::Color>("window_focused_border_color") :
+                               Settings.get<sf::Color>("window_border_color"));
     title_rect.setOutlineThickness(Settings.get<float>("window_border_width"));
     title_rect.setPosition(sf::Vector2f(0, 0));
     title_rect.setSize(sf::Vector2f(static_cast<float>(dimensions.width),
@@ -82,7 +82,7 @@ bool GUIPane::_render_self(sf::RenderTarget& target, int frame)
   // Draw the border.
   float border_width = Settings.get<float>("window_border_width");
   pImpl->border_shape.setPosition(sf::Vector2f(border_width, border_width));
-  pImpl->border_shape.setSize(sf::Vector2f(static_cast<float>(dimensions.width - (2* border_width)), static_cast<float>(dimensions.height - (2* border_width))));
+  pImpl->border_shape.setSize(sf::Vector2f(static_cast<float>(dimensions.width - (2 * border_width)), static_cast<float>(dimensions.height - (2 * border_width))));
   pImpl->border_shape.setFillColor(sf::Color::Transparent);
   pImpl->border_shape.setOutlineColor(
     pImpl->focus ?

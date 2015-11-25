@@ -7,7 +7,7 @@
 #include <boost/log/trivial.hpp>
 
 State::State(StateMachine& state_machine)
-  : 
+  :
   m_state_machine{ state_machine }
 {}
 

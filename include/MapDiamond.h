@@ -10,23 +10,23 @@ class PropertyDictionary;
 
 class MapDiamond : public MapFeature
 {
-  public:
-    MapDiamond(Map& m, PropertyDictionary const& settings);
-    virtual ~MapDiamond();
-  protected:
-    /// Create a diamond-shaped room of random size adjacent to starting
-    /// coordinates in the direction indicated.
-    /// Checks to make sure the box does not intersect any existing features.
-    /// Attempts to create the box maxFeatureRetries times before giving up.
-    virtual bool create(GeoVector vec) override;
+public:
+  MapDiamond(Map& m, PropertyDictionary const& settings);
+  virtual ~MapDiamond();
+protected:
+  /// Create a diamond-shaped room of random size adjacent to starting
+  /// coordinates in the direction indicated.
+  /// Checks to make sure the box does not intersect any existing features.
+  /// Attempts to create the box maxFeatureRetries times before giving up.
+  virtual bool create(GeoVector vec) override;
 
-  private:
-    struct Impl;
-    std::unique_ptr<Impl> pImpl;
+private:
+  struct Impl;
+  std::unique_ptr<Impl> pImpl;
 
-    static unsigned int maxHalfSize;
-    static unsigned int minHalfSize;
-    static unsigned int maxRetries;
+  static unsigned int maxHalfSize;
+  static unsigned int minHalfSize;
+  static unsigned int maxRetries;
 };
 
 #endif // MAPDIAMOND_H

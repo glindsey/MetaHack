@@ -23,14 +23,14 @@ struct SpritePrototype
   SpritePrototype(sf::Vector2u spriteCoords_ = sf::Vector2u(0, 0),
                   unsigned int numAnimFrames_ = 1,
                   SpriteAnimationStyle animationStyle_ =
-                      SpriteAnimationsStyle::IdlePlusLoop,
+                  SpriteAnimationsStyle::IdlePlusLoop,
                   unsigned int numDirections_ = 1,
                   unsigned int rendersPerFrame_ = 1)
     : spriteCoords(spriteCoords_),
-      numAnimFrames(numAnimFrames_),
-      animationStyle(animationStyle_),
-      numDirections(numDirections_),
-      rendersPerFrame(rendersPerFrame_) {}
+    numAnimFrames(numAnimFrames_),
+    animationStyle(animationStyle_),
+    numDirections(numDirections_),
+    rendersPerFrame(rendersPerFrame_) {}
 
   /// Coordinates of the upper-left tile for the sprite.
   unsigned sf::Vector2u spriteCoords;
@@ -54,14 +54,13 @@ struct SpritePrototype
   unsigned int rendersPerFrame;
 };
 
-
 class SpritePrototype
 {
-  public:
-    SpritePrototype() {}
-    virtual ~SpritePrototype() {}
-  protected:
-  private:
+public:
+  SpritePrototype() {}
+  virtual ~SpritePrototype() {}
+protected:
+private:
 };
 
 #endif // SPRITEPROTOTYPE_H

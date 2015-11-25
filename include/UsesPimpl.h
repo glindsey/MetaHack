@@ -15,16 +15,16 @@ class Pimpl
 
 public:
   /// Default constructor.
-  Pimpl() : p{ NEW P{} }  {}
+  Pimpl() : p{ NEW P{} } {}
 
   /// Pointer constructor.
-  Pimpl(P* ptr) : p{ ptr }  {}
+  Pimpl(P* ptr) : p{ ptr } {}
 
   /// Templated pImpl initializer.
-  template<typename ...Args> Pimpl(Args&& ...args) : p{ NEW P{ std::forward<Args>(args)... } }  {}
+  template<typename ...Args> Pimpl(Args&& ...args) : p{ NEW P{ std::forward<Args>(args)... } } {}
 
   /// Destructor
-  ~Pimpl()  { }
+  ~Pimpl() { }
 
   /// Copy constructor
   Pimpl(const Pimpl& other) = delete;

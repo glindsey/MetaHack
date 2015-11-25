@@ -16,12 +16,12 @@ enum EventResult
 // Interface class indicating that an object handles SFML events.
 class EventHandler
 {
-  public:
-    virtual ~EventHandler() {}
-    virtual EventResult handle_event(sf::Event& event) = 0;
+public:
+  virtual ~EventHandler() {}
+  virtual EventResult handle_event(sf::Event& event) = 0;
 
-  protected:
-  private:
+protected:
+private:
 };
 
 #endif // EVENTHANDLER_H

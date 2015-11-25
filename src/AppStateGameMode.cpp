@@ -138,7 +138,7 @@ public:
 };
 
 AppStateGameMode::AppStateGameMode(StateMachine& state_machine, sf::RenderWindow& app_window)
-  : 
+  :
   State{ state_machine },
   pImpl(NEW Impl(app_window))
 {
@@ -159,7 +159,7 @@ void AppStateGameMode::execute()
     /// Call the Lua interpreter with the command.
     std::string contents = debug_buffer.get_buffer();
     the_message_log.add("> " + contents);
-    if(luaL_dostring(the_lua_state, contents.c_str()))
+    if (luaL_dostring(the_lua_state, contents.c_str()))
     {
       the_message_log.add(lua_tostring(the_lua_state, -1));
     }
@@ -484,107 +484,107 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
         // "-" - subtract quantity
       case sf::Keyboard::Key::Dash:
       case sf::Keyboard::Key::Subtract:
+      {
+        /// @todo Need a way to choose which inventory we're affecting.
+        unsigned int slot_count = pImpl->inventory_area->get_selected_slot_count();
+        if (slot_count < 1)
         {
-          /// @todo Need a way to choose which inventory we're affecting.
-          unsigned int slot_count = pImpl->inventory_area->get_selected_slot_count();
-          if (slot_count < 1)
-          {
-            the_message_log.add("You have to have something selected "
-                                "before you can choose a quantity.");
-          }
-          else if (slot_count > 1)
-          {
-            the_message_log.add("You can only have one thing selected "
-                                "when choosing a quantity.");
-          }
-          else
-          {
-            pImpl->inventory_area->dec_selected_quantity();
-          }
+          the_message_log.add("You have to have something selected "
+                              "before you can choose a quantity.");
         }
-        result = EventResult::Handled;
-        break;
+        else if (slot_count > 1)
+        {
+          the_message_log.add("You can only have one thing selected "
+                              "when choosing a quantity.");
+        }
+        else
+        {
+          pImpl->inventory_area->dec_selected_quantity();
+        }
+      }
+      result = EventResult::Handled;
+      break;
 
-        // "+"/"=" - add quantity
+      // "+"/"=" - add quantity
       case sf::Keyboard::Key::Equal:
       case sf::Keyboard::Key::Add:
+      {
+        unsigned int slot_count = pImpl->inventory_area->get_selected_slot_count();
+        if (slot_count < 1)
         {
-          unsigned int slot_count = pImpl->inventory_area->get_selected_slot_count();
-          if (slot_count < 1)
-          {
-            the_message_log.add("You have to have something selected "
-                                "before you can choose a quantity.");
-          }
-          else if (slot_count > 1)
-          {
-            the_message_log.add("You can only have one thing selected "
-                                "when choosing a quantity.");
-          }
-          else
-          {
-            pImpl->inventory_area->inc_selected_quantity();
-          }
+          the_message_log.add("You have to have something selected "
+                              "before you can choose a quantity.");
         }
-        result = EventResult::Handled;
-        break;
+        else if (slot_count > 1)
+        {
+          the_message_log.add("You can only have one thing selected "
+                              "when choosing a quantity.");
+        }
+        else
+        {
+          pImpl->inventory_area->inc_selected_quantity();
+        }
+      }
+      result = EventResult::Handled;
+      break;
 
       case sf::Keyboard::Key::LBracket:
+      {
+        ThingRef thing = pImpl->inventory_area->get_viewed();
+        ThingRef location = thing->get_location();
+        if (location != get_game_state().get_thing_manager().get_mu())
         {
-          ThingRef thing = pImpl->inventory_area->get_viewed();
-          ThingRef location = thing->get_location();
-          if (location != get_game_state().get_thing_manager().get_mu())
-          {
-            pImpl->inventory_area->set_viewed(location);
-          }
-          else
-          {
-            the_message_log.add("You are at the top of the inventory tree.");
-          }
+          pImpl->inventory_area->set_viewed(location);
         }
-        break;
+        else
+        {
+          the_message_log.add("You are at the top of the inventory tree.");
+        }
+      }
+      break;
 
       case sf::Keyboard::Key::RBracket:
-        {
-          unsigned int slot_count = pImpl->inventory_area->get_selected_slot_count();
+      {
+        unsigned int slot_count = pImpl->inventory_area->get_selected_slot_count();
 
-          if (slot_count > 0)
+        if (slot_count > 0)
+        {
+          ThingRef thing = pImpl->inventory_area->get_selected_things().at(0);
+          if (thing->get_intrinsic<int>("inventory_size") != 0)
           {
-            ThingRef thing = pImpl->inventory_area->get_selected_things().at(0);
-            if (thing->get_intrinsic<int>("inventory_size") != 0)
+            if (!thing->get_intrinsic<bool>("openable") || thing->get_property<bool>("open"))
             {
-              if (!thing->get_intrinsic<bool>("openable") || thing->get_property<bool>("open"))
+              if (!thing->get_intrinsic<bool>("lockable") || !thing->get_property<bool>("locked"))
               {
-                if (!thing->get_intrinsic<bool>("lockable") || !thing->get_property<bool>("locked"))
-                {
-                  pImpl->inventory_area->set_viewed(thing);
-                }
-                else // if (container.is_locked())
-                {
-                  the_message_log.add(thing->get_identifying_string() +
-                                      thing->choose_verb(" are", " is") +
-                                      " locked.");
-                }
+                pImpl->inventory_area->set_viewed(thing);
               }
-              else // if (!container.is_open())
+              else // if (container.is_locked())
               {
                 the_message_log.add(thing->get_identifying_string() +
                                     thing->choose_verb(" are", " is") +
-                                    " closed.");
+                                    " locked.");
               }
             }
-            else // if (!thing.is_container())
+            else // if (!container.is_open())
             {
               the_message_log.add(thing->get_identifying_string() +
                                   thing->choose_verb(" are", " is") +
-                                  " not a container.");
+                                  " closed.");
             }
           }
-          else
+          else // if (!thing.is_container())
           {
-            the_message_log.add("Nothing is currently selected.");
+            the_message_log.add(thing->get_identifying_string() +
+                                thing->choose_verb(" are", " is") +
+                                " not a container.");
           }
-          break;
         }
+        else
+        {
+          the_message_log.add("Nothing is currently selected.");
+        }
+        break;
+      }
 
       case sf::Keyboard::Key::Comma:
         /// @todo Find a better way to do this. This is hacky.
@@ -765,7 +765,6 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
         }
         result = EventResult::Handled;
         break;
-
 
         // CTRL-M -- mix items
       case sf::Keyboard::Key::M:
@@ -953,7 +952,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
       default:
         break;
-      } // end switch 
+      } // end switch
     } // end if (!key.alt && key.control)
 
     // *** YES ALT, no CTRL, SHIFT is irrelevant ******************************

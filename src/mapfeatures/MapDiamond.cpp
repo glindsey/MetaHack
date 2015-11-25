@@ -21,7 +21,7 @@ struct MapDiamond::Impl
 };
 
 MapDiamond::MapDiamond(Map& m, PropertyDictionary const& s)
-  : 
+  :
   MapFeature{ m, s },
   pImpl(NEW Impl())
 {
@@ -75,9 +75,9 @@ bool MapDiamond::create(GeoVector vec)
     }
 
     if ((get_map().is_in_bounds(xCenter - (diamondHalfSize + 1),
-                           yCenter - (diamondHalfSize + 1))) &&
+                                yCenter - (diamondHalfSize + 1))) &&
         (get_map().is_in_bounds(xCenter + (diamondHalfSize + 1),
-                           yCenter + (diamondHalfSize + 1))))
+                                yCenter + (diamondHalfSize + 1))))
     {
       bool okay = true;
 
@@ -85,31 +85,31 @@ bool MapDiamond::create(GeoVector vec)
       /// @todo: Constrain this to only check around the edges of the
       ///        diamond, instead of the entire enclosing box.
       for (int xCheck = xCenter - (diamondHalfSize + 1);
-               xCheck <= xCenter + (diamondHalfSize + 1); ++xCheck)
+      xCheck <= xCenter + (diamondHalfSize + 1); ++xCheck)
       {
-         for (int yCheck = yCenter - (diamondHalfSize + 1);
-                  yCheck <= yCenter + (diamondHalfSize + 1); ++yCheck)
-         {
-           auto& tile = get_map().get_tile(xCheck, yCheck);
-           if (tile.is_empty_space())
-           {
-             okay = false;
-             break;
-           }
-         }
-         if (okay == false) break;
+        for (int yCheck = yCenter - (diamondHalfSize + 1);
+        yCheck <= yCenter + (diamondHalfSize + 1); ++yCheck)
+        {
+          auto& tile = get_map().get_tile(xCheck, yCheck);
+          if (tile.is_empty_space())
+          {
+            okay = false;
+            break;
+          }
+        }
+        if (okay == false) break;
       }
 
       if (okay)
       {
         // Clear out a diamond.
         for (int xCounter = -diamondHalfSize;
-                 xCounter <= diamondHalfSize;
-                 ++xCounter)
+        xCounter <= diamondHalfSize;
+          ++xCounter)
         {
           for (int yCounter = -(diamondHalfSize - abs(xCounter));
-                   yCounter <= diamondHalfSize - abs(xCounter);
-                   ++yCounter)
+          yCounter <= diamondHalfSize - abs(xCounter);
+            ++yCounter)
           {
             int xCoord = xCenter + xCounter;
             int yCoord = yCenter + yCounter;
@@ -119,19 +119,19 @@ bool MapDiamond::create(GeoVector vec)
         }
 
         set_coords(sf::IntRect(xCenter - diamondHalfSize,
-                              yCenter - diamondHalfSize,
-                              (diamondHalfSize * 2) + 1,
-                              (diamondHalfSize * 2) + 1));
+                               yCenter - diamondHalfSize,
+                               (diamondHalfSize * 2) + 1,
+                               (diamondHalfSize * 2) + 1));
 
         // Add the four points as potential connection points.
         add_growth_vector(GeoVector(xCenter, yCenter - (diamondHalfSize + 1),
-                                  Direction::North));
+                                    Direction::North));
         add_growth_vector(GeoVector(xCenter, yCenter + (diamondHalfSize + 1),
-                                  Direction::South));
+                                    Direction::South));
         add_growth_vector(GeoVector(xCenter - (diamondHalfSize + 1), yCenter,
-                                  Direction::West));
+                                    Direction::West));
         add_growth_vector(GeoVector(xCenter + (diamondHalfSize + 1), yCenter,
-                                  Direction::East));
+                                    Direction::East));
 
         /// @todo Put either a door or an open area at the starting coords.
         ///       Right now we just make it an open area.

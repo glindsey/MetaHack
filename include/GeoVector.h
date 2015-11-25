@@ -30,7 +30,7 @@ struct GeoVector
   bool operator==(const GeoVector &other) const
   {
     return (start_point == other.start_point) &&
-           (direction == other.direction);
+      (direction == other.direction);
   }
 
   bool operator!=(const GeoVector &other) const

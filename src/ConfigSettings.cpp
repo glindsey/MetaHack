@@ -57,7 +57,6 @@ ConfigSettings& ConfigSettings::instance()
   return *(instance_.get());
 }
 
-
 int ConfigSettings::LUA_get_config(lua_State* L)
 {
   // Make sure the instance actually exists.
@@ -87,4 +86,3 @@ int ConfigSettings::LUA_get_config(lua_State* L)
     return args;
   }
 }
-

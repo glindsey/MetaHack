@@ -9,8 +9,7 @@
 #define NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
 #endif
 #else
-#define NEW new 
+#define NEW new
 #endif  // _DEBUG
-
 
 #endif // NEW_H

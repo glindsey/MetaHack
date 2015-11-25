@@ -39,7 +39,6 @@ Map const& MapFactory::get(MapId map_id) const
   }
 }
 
-
 Map& MapFactory::get(MapId map_id)
 {
   if (m_maps.count(map_id) == 0)

@@ -42,7 +42,7 @@ sf::IntRect calc_message_log_dimensions(sf::RenderWindow& window)
 
 int main()
 {
-  _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF); 
+  _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
   // Scoping everything here so it is properly destroyed before checking for memory leaks.
   {
@@ -98,7 +98,7 @@ int main()
       // Create the shader program.
       shader_.reset(NEW sf::Shader());
       if (shader_->loadFromFile("resources/shaders/default.vert",
-        "resources/shaders/default.frag") == false)
+                                "resources/shaders/default.frag") == false)
       {
         throw std::exception("Could not load the shaders");
       }
@@ -122,7 +122,7 @@ int main()
 }
 
 App::App(sf::RenderWindow& app_window)
-  : 
+  :
   m_app_window{ app_window },
   m_state_machine{ NEW StateMachine("app_state_machine") },
   m_is_running{ false },
@@ -160,53 +160,53 @@ EventResult App::handle_event(sf::Event& event)
   switch (event.type)
   {
   case sf::Event::EventType::GainedFocus:
-    {
-      m_has_window_focus = true;
-      result = EventResult::Handled;
-      break;
-    }
+  {
+    m_has_window_focus = true;
+    result = EventResult::Handled;
+    break;
+  }
 
   case sf::Event::EventType::LostFocus:
-    {
-      m_has_window_focus = false;
-      result = EventResult::Handled;
-      break;
-    }
+  {
+    m_has_window_focus = false;
+    result = EventResult::Handled;
+    break;
+  }
 
   case sf::Event::EventType::Resized:
-    {
-      m_app_window.setView(sf::View(
-        sf::FloatRect(0, 0, static_cast<float>(event.size.width), static_cast<float>(event.size.height))));
-      the_message_log.set_dimensions(calc_message_log_dimensions(m_app_window));
+  {
+    m_app_window.setView(sf::View(
+      sf::FloatRect(0, 0, static_cast<float>(event.size.width), static_cast<float>(event.size.height))));
+    the_message_log.set_dimensions(calc_message_log_dimensions(m_app_window));
 
-      result = EventResult::Acknowledged;
-      break;
-    }
+    result = EventResult::Acknowledged;
+    break;
+  }
 
   case sf::Event::EventType::Closed:
-    {
-      m_is_running = false;
-      result = EventResult::Handled;
-      break;
-    }
+  {
+    m_is_running = false;
+    result = EventResult::Handled;
+    break;
+  }
 
   case sf::Event::EventType::KeyPressed:
+  {
+    switch (event.key.code)
     {
-      switch (event.key.code)
+    case sf::Keyboard::Key::Q:
+      if (event.key.alt && event.key.control)
       {
-      case sf::Keyboard::Key::Q:
-        if (event.key.alt && event.key.control)
-        {
-          m_is_running = false;
-          result = EventResult::Handled;
-        }
-        break;
-
-      default:
-        break;
+        m_is_running = false;
+        result = EventResult::Handled;
       }
       break;
+
+    default:
+      break;
     }
+    break;
+  }
 
   default:
     break;
@@ -214,7 +214,7 @@ EventResult App::handle_event(sf::Event& event)
 
   if (result != EventResult::Handled)
   {
-      result = m_state_machine->handle_event(event);
+    result = m_state_machine->handle_event(event);
   }
 
   return result;

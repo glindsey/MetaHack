@@ -24,14 +24,14 @@ inline unsigned int next_power_of_two(unsigned int n)
   n++;           // The result is a number of 1 bits equal to the number
                  // of bits in the original number, plus 1. That's the
                  // next highest power of 2.
-return n;
+  return n;
 }
 
 inline unsigned int iabs(int value)
 {
-	return (value >= 0) ? 
-		static_cast<unsigned int>(value) : 
-		static_cast<unsigned int>(-value);
+  return (value >= 0) ?
+    static_cast<unsigned int>(value) :
+    static_cast<unsigned int>(-value);
 }
 
 inline double calc_slope(double x1, double y1, double x2, double y2)
@@ -127,7 +127,7 @@ inline int pick_uniform(int min, int max)
 }
 
 /// Choose one of two alternatives at random.
-template <class T> T choose_random (T a, T b)
+template <class T> T choose_random(T a, T b)
 {
   uniform_int_dist choose(0, 1);
   int choice = choose(the_RNG);
@@ -135,17 +135,17 @@ template <class T> T choose_random (T a, T b)
 }
 
 /// Choose one of three alternatives at random.
-template <class T> T choose_random (T a, T b, T c)
+template <class T> T choose_random(T a, T b, T c)
 {
   uniform_int_dist choose(0, 2);
   int choice = choose(the_RNG);
   switch (choice)
   {
-    case 0: return a;
-    case 1: return b;
-    case 2: return c;
+  case 0: return a;
+  case 1: return b;
+  case 2: return c;
 
-    default: return b;  // should not happen, here to shut compiler up
+  default: return b;  // should not happen, here to shut compiler up
   }
 }
 

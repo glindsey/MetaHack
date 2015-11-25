@@ -30,7 +30,7 @@ public:
 
   /// Constructor for thing of certain type.
   ThingImpl(Metadata& metadata_, ThingRef ref_)
-    : 
+    :
     metadata{ metadata_ },
     ref{ ref_ },
     location{ ThingManager::get_mu() },
@@ -137,10 +137,10 @@ public:
     {
       return false;
     }
-    auto found_item = 
+    auto found_item =
       std::find_if(wielded_items.cbegin(),
-        wielded_items.cend(),
-        [&](WieldingPair const& p)
+                   wielded_items.cend(),
+                   [&](WieldingPair const& p)
     { return p.second == thing; });
 
     if (found_item == wielded_items.cend())
@@ -172,10 +172,10 @@ public:
     {
       return false;
     }
-    auto found_item = 
+    auto found_item =
       std::find_if(equipped_items.cbegin(),
-        equipped_items.cend(),
-        [&](WearingPair const& p)
+                   equipped_items.cend(),
+                   [&](WearingPair const& p)
     { return p.second == thing; });
 
     if (found_item == equipped_items.cend())
@@ -248,7 +248,5 @@ public:
     }
   }
 };
-
-
 
 #endif // THINGIMPL_H

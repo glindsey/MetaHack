@@ -20,7 +20,7 @@ class PropertyDictionary
 public:
   PropertyDictionary();
   virtual ~PropertyDictionary();
-  
+
   /// Populate this dictionary from a Boost property tree.
   void populate_from(pt::ptree const& tree, std::string prefix = "");
 
@@ -70,7 +70,7 @@ public:
   /// Add/alter an entry in the dictionary.
   /// @note         The type being added must be copyable... I think.
   /// @param key    Key of the entry to add/alter.
-  /// @param value  Value to set it to.    
+  /// @param value  Value to set it to.
   /// @return       True if the entry already existed and has been changed.
   ///               False if a new entry was added.
   template<typename T>

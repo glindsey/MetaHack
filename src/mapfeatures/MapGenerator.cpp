@@ -151,7 +151,6 @@ struct MapGenerator::Impl
 MapGenerator::MapGenerator(Map& m)
   : pImpl(NEW Impl(m))
 {
-
 }
 
 MapGenerator::~MapGenerator()

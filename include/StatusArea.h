@@ -8,22 +8,22 @@
 
 class StatusArea : public GUIPane
 {
-  public:
-    StatusArea(sf::IntRect dimensions);
-    virtual ~StatusArea();
+public:
+  StatusArea(sf::IntRect dimensions);
+  virtual ~StatusArea();
 
-    virtual EventResult handle_event(sf::Event& event) override;
+  virtual EventResult handle_event(sf::Event& event) override;
 
-  protected:
-    virtual std::string _render_contents(sf::RenderTarget& target, int frame) override;
+protected:
+  virtual std::string _render_contents(sf::RenderTarget& target, int frame) override;
 
-  private:
-    void render_attribute(sf::RenderTarget& target, std::string abbrev, std::string name, sf::Vector2f location);
+private:
+  void render_attribute(sf::RenderTarget& target, std::string abbrev, std::string name, sf::Vector2f location);
 
-    std::string get_test_label();
+  std::string get_test_label();
 
-    struct Impl;
-    std::unique_ptr<Impl> pImpl;
+  struct Impl;
+  std::unique_ptr<Impl> pImpl;
 };
 
 #endif // STATUSAREA_H

@@ -30,7 +30,7 @@ void PropertyDictionary::populate_from(pt::ptree const& tree, std::string prefix
     std::string value = child_tree.second.get_value<std::string>();
     std::string lowercase_value = boost::algorithm::to_lower_copy(value);
     boost::algorithm::to_lower(key);
-   
+
     boost::trim(key);
     boost::trim(value);
 
@@ -42,7 +42,7 @@ void PropertyDictionary::populate_from(pt::ptree const& tree, std::string prefix
       if (boost::algorithm::ends_with(key, "_str")) boost::algorithm::erase_tail(key, 2);
       if (boost::algorithm::ends_with(key, "_value")) boost::algorithm::erase_tail(key, 4);
       if (boost::algorithm::ends_with(key, "_val")) boost::algorithm::erase_tail(key, 2);
-      
+
       if (boost::algorithm::ends_with(key, "_f"))
       {
         // Explicitly specified flag.
@@ -179,7 +179,6 @@ bool PropertyDictionary::contains(std::string key) const
 {
   return (m_dictionary.count(key) != 0);
 }
-
 
 AnyMap& PropertyDictionary::get_dictionary()
 {

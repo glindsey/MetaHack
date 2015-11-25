@@ -7,7 +7,7 @@
 struct GUILabel::Impl
 {
   Impl(std::function<std::string()> string_function_)
-    : 
+    :
     focus{ false },
     bg_texture{ NEW sf::RenderTexture() },
     string_function{ string_function_ }
@@ -88,8 +88,8 @@ bool GUILabel::_render_self(sf::RenderTarget& target, int frame)
   pImpl->bg_shape.setSize(sf::Vector2f(static_cast<float>(pImpl->dims.width), static_cast<float>(pImpl->dims.height)));
   pImpl->bg_shape.setTexture(&(pImpl->bg_texture->getTexture()));
   pImpl->bg_shape.setTextureRect(sf::IntRect(0, 0,
-    pImpl->dims.width,
-    pImpl->dims.height));
+                                             pImpl->dims.width,
+                                             pImpl->dims.height));
 
   // Draw onto the target.
   target.setView(sf::View(sf::FloatRect(0.0f, 0.0f, static_cast<float>(target.getSize().x), static_cast<float>(target.getSize().y))));

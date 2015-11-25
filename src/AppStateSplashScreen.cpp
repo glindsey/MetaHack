@@ -3,7 +3,7 @@
 #include "App.h"
 
 AppStateSplashScreen::AppStateSplashScreen(StateMachine& state_machine, sf::RenderWindow& app_window)
-  : 
+  :
   State(state_machine)
 {}
 
@@ -41,7 +41,7 @@ bool AppStateSplashScreen::initialize()
   {
     m_splash_sprite.setTexture(m_splash_graphic);
   }
-  
+
   m_clock.restart();
   return true;
 }

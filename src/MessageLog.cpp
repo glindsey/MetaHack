@@ -26,7 +26,7 @@ struct MessageLog::Impl
 
 MessageLog::MessageLog(sf::IntRect dimensions)
   : GUIPane(dimensions),
-    pImpl(NEW Impl())
+  pImpl(NEW Impl())
 {
   pImpl->history_lines_saved = 250;  ///< @todo Move to ConfigSettings
 }
@@ -64,7 +64,6 @@ void MessageLog::initialize()
   //the_lua_instance.register_function("print", MessageLog::LUA_redirect_print);
 
   the_lua_instance.register_function("messageLog_add", MessageLog::LUA_add);
-
 }
 
 void MessageLog::add(std::string message)
@@ -121,11 +120,11 @@ std::string MessageLog::_render_contents(sf::RenderTarget& target, int frame)
   if (get_focus() == true)
   {
     pImpl->buffer.render(target,
-                        sf::Vector2f(text_coord_x, text_coord_y),
-                        frame,
-                        the_default_font,
-                        Settings.get<unsigned int>("text_default_size"),
-                        Settings.get<sf::Color>("text_highlight_color"));
+                         sf::Vector2f(text_coord_x, text_coord_y),
+                         frame,
+                         the_default_font,
+                         Settings.get<unsigned int>("text_default_size"),
+                         Settings.get<sf::Color>("text_highlight_color"));
 
     text_coord_y -= lineSpacing;
   }
@@ -133,7 +132,7 @@ std::string MessageLog::_render_contents(sf::RenderTarget& target, int frame)
   // Draw each of the message_queue in the queue.
   /// @todo Split lines that are too long instead of truncating them.
   for (std::deque<std::string>::iterator iter = pImpl->message_queue.begin();
-       iter != pImpl->message_queue.end(); ++iter)
+  iter != pImpl->message_queue.end(); ++iter)
   {
     render_text.setString(*iter);
     render_text.setPosition(text_coord_x, text_coord_y);
@@ -150,9 +149,9 @@ int MessageLog::LUA_redirect_print(lua_State* L)
 {
   int nargs = lua_gettop(L);
 
-  for (int i = 1; i <= nargs; i++) 
+  for (int i = 1; i <= nargs; i++)
   {
-    if (lua_isstring(L, i)) 
+    if (lua_isstring(L, i))
     {
       std::string str = lua_tostring(L, i);
       MessageLog::instance().add(str);
@@ -164,7 +163,6 @@ int MessageLog::LUA_redirect_print(lua_State* L)
 
   return 0;
 }
-
 
 int MessageLog::LUA_add(lua_State* L)
 {
@@ -182,4 +180,3 @@ int MessageLog::LUA_add(lua_State* L)
 
   return 0;
 }
-

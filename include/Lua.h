@@ -1,6 +1,5 @@
 // Lua enum binding modified from code Copyright (c) 2010 Tom Distler.
 
-
 #ifndef LUA_H
 #define LUA_H
 
@@ -101,7 +100,7 @@ public:
   /// {
   ///   if (!check_enum_type(L, "type", -1))
   ///     /* error */
-  ///   
+  ///
   ///   int value = get_enum_value(L, -1);
   ///   ...
   /// }

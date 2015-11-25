@@ -294,7 +294,6 @@ void KeyBuffer::render(sf::RenderTarget& target,
 
   cursor_coords = render_text.findCharacterPos(pImpl->cursor_position);
 
-
   if (pImpl->replacing)
   {
     sf::Glyph glyph = font.getGlyph(pImpl->buffer[pImpl->cursor_position],

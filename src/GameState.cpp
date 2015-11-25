@@ -51,7 +51,6 @@ ThingRef GameState::get_player() const
   return m_player;
 }
 
-
 GameState& GameState::instance()
 {
   ASSERT_CONDITION(p_instance);

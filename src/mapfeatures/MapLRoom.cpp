@@ -22,7 +22,7 @@ unsigned int MapLRoom::max_retries = 500;
 // Local typedefs
 typedef boost::random::uniform_int_distribution<> uniform_int_dist;
 
-MapLRoom::MapLRoom(Map& m, PropertyDictionary const& s) 
+MapLRoom::MapLRoom(Map& m, PropertyDictionary const& s)
   :
   MapFeature{ m, s }
 {
@@ -63,61 +63,61 @@ bool MapLRoom::create(GeoVector vec)
     switch (direction)
     {
     case Direction::North:
-      {
-        uniform_int_dist offset_dist(0, horiz_rect.width - 1);
-        int offset = offset_dist(the_RNG);
+    {
+      uniform_int_dist offset_dist(0, horiz_rect.width - 1);
+      int offset = offset_dist(the_RNG);
 
-        horiz_rect.top = starting_coords.y - horiz_rect.height;
-        horiz_rect.left = starting_coords.x - offset;
+      horiz_rect.top = starting_coords.y - horiz_rect.height;
+      horiz_rect.left = starting_coords.x - offset;
 
-        vert_rect.top = horiz_rect.top - vert_rect.height;
-        vert_rect.left = (flip_coin() ?
-                          horiz_rect.left :
-                          horiz_rect.left + horiz_rect.width - vert_rect.width);
-      }
-      break;
+      vert_rect.top = horiz_rect.top - vert_rect.height;
+      vert_rect.left = (flip_coin() ?
+                        horiz_rect.left :
+                        horiz_rect.left + horiz_rect.width - vert_rect.width);
+    }
+    break;
     case Direction::South:
-      {
-        uniform_int_dist offset_dist(0, horiz_rect.width - 1);
-        int offset = offset_dist(the_RNG);
+    {
+      uniform_int_dist offset_dist(0, horiz_rect.width - 1);
+      int offset = offset_dist(the_RNG);
 
-        horiz_rect.top = starting_coords.y + 1;
-        horiz_rect.left = starting_coords.x - offset;
+      horiz_rect.top = starting_coords.y + 1;
+      horiz_rect.left = starting_coords.x - offset;
 
-        vert_rect.top = horiz_rect.top + horiz_rect.height;
-        vert_rect.left = (flip_coin() ?
-                          horiz_rect.left :
-                          horiz_rect.left + horiz_rect.width - vert_rect.width);
-      }
-      break;
+      vert_rect.top = horiz_rect.top + horiz_rect.height;
+      vert_rect.left = (flip_coin() ?
+                        horiz_rect.left :
+                        horiz_rect.left + horiz_rect.width - vert_rect.width);
+    }
+    break;
     case Direction::West:
-      {
-        uniform_int_dist offset_dist(0, vert_rect.height - 1);
-        int offset = offset_dist(the_RNG);
+    {
+      uniform_int_dist offset_dist(0, vert_rect.height - 1);
+      int offset = offset_dist(the_RNG);
 
-        vert_rect.top = starting_coords.y - offset;
-        vert_rect.left = starting_coords.x - vert_rect.width;
+      vert_rect.top = starting_coords.y - offset;
+      vert_rect.left = starting_coords.x - vert_rect.width;
 
-        horiz_rect.top = (flip_coin() ?
-                          vert_rect.top :
-                          vert_rect.top + vert_rect.height - horiz_rect.height);
-        horiz_rect.left = vert_rect.left - horiz_rect.width;
-      }
-      break;
+      horiz_rect.top = (flip_coin() ?
+                        vert_rect.top :
+                        vert_rect.top + vert_rect.height - horiz_rect.height);
+      horiz_rect.left = vert_rect.left - horiz_rect.width;
+    }
+    break;
     case Direction::East:
-      {
-        uniform_int_dist offset_dist(0, vert_rect.height - 1);
-        int offset = offset_dist(the_RNG);
+    {
+      uniform_int_dist offset_dist(0, vert_rect.height - 1);
+      int offset = offset_dist(the_RNG);
 
-        vert_rect.top = starting_coords.y - offset;
-        vert_rect.left = starting_coords.x + 1;
+      vert_rect.top = starting_coords.y - offset;
+      vert_rect.left = starting_coords.x + 1;
 
-        horiz_rect.top = (flip_coin() ?
-                          vert_rect.top :
-                          vert_rect.top + vert_rect.height - horiz_rect.height);
-        horiz_rect.left = vert_rect.left + vert_rect.width;
-      }
-      break;
+      horiz_rect.top = (flip_coin() ?
+                        vert_rect.top :
+                        vert_rect.top + vert_rect.height - horiz_rect.height);
+      horiz_rect.left = vert_rect.left + vert_rect.width;
+    }
+    break;
     default:
       MINOR_ERROR("Invalid direction");
       return false;
@@ -136,68 +136,68 @@ bool MapLRoom::create(GeoVector vec)
 
       // Verify that both boxes and surrounding area are solid walls.
       for (int x_check = vert_rect.left - 1;
-               x_check <= vert_rect.left + vert_rect.width;
-               ++x_check)
+      x_check <= vert_rect.left + vert_rect.width;
+        ++x_check)
       {
-         for (int y_check = vert_rect.top - 1;
-                  y_check <= vert_rect.top + vert_rect.height;
-                  ++y_check)
-         {
-           auto& tile = get_map().get_tile(x_check, y_check);
-           if (tile.is_empty_space())
-           {
-             okay = false;
-             break;
-           }
-         }
-         if (okay == false) break;
+        for (int y_check = vert_rect.top - 1;
+        y_check <= vert_rect.top + vert_rect.height;
+          ++y_check)
+        {
+          auto& tile = get_map().get_tile(x_check, y_check);
+          if (tile.is_empty_space())
+          {
+            okay = false;
+            break;
+          }
+        }
+        if (okay == false) break;
       }
 
       for (int x_check = horiz_rect.left - 1;
-               x_check <= horiz_rect.left + horiz_rect.width;
-               ++x_check)
+      x_check <= horiz_rect.left + horiz_rect.width;
+        ++x_check)
       {
-         for (int y_check = horiz_rect.top - 1;
-                  y_check <= horiz_rect.top + horiz_rect.height;
-                  ++y_check)
-         {
-           auto& tile = get_map().get_tile(x_check, y_check);
-           if (tile.is_empty_space())
-           {
-             okay = false;
-             break;
-           }
-         }
-         if (okay == false) break;
+        for (int y_check = horiz_rect.top - 1;
+        y_check <= horiz_rect.top + horiz_rect.height;
+          ++y_check)
+        {
+          auto& tile = get_map().get_tile(x_check, y_check);
+          if (tile.is_empty_space())
+          {
+            okay = false;
+            break;
+          }
+        }
+        if (okay == false) break;
       }
 
       if (okay)
       {
         // Clear out the boxes.
         for (int x_coord = vert_rect.left;
-                 x_coord <= vert_rect.left + vert_rect.width - 1;
-                 ++x_coord)
+        x_coord <= vert_rect.left + vert_rect.width - 1;
+          ++x_coord)
         {
-           for (int y_coord = vert_rect.top;
-                    y_coord <= vert_rect.top + vert_rect.height - 1;
-                    ++y_coord)
-           {
-             auto& tile = get_map().get_tile(x_coord, y_coord);
-             tile.set_type("MTFloorDirt");
-           }
+          for (int y_coord = vert_rect.top;
+          y_coord <= vert_rect.top + vert_rect.height - 1;
+            ++y_coord)
+          {
+            auto& tile = get_map().get_tile(x_coord, y_coord);
+            tile.set_type("MTFloorDirt");
+          }
         }
 
         for (int x_coord = horiz_rect.left;
-                 x_coord <= horiz_rect.left + horiz_rect.width - 1;
-                 ++x_coord)
+        x_coord <= horiz_rect.left + horiz_rect.width - 1;
+          ++x_coord)
         {
-           for (int y_coord = horiz_rect.top;
-                    y_coord <= horiz_rect.top + horiz_rect.height - 1;
-                    ++y_coord)
-           {
-             auto& tile = get_map().get_tile(x_coord, y_coord);
-             tile.set_type("MTFloorDirt");
-           }
+          for (int y_coord = horiz_rect.top;
+          y_coord <= horiz_rect.top + horiz_rect.height - 1;
+            ++y_coord)
+          {
+            auto& tile = get_map().get_tile(x_coord, y_coord);
+            tile.set_type("MTFloorDirt");
+          }
         }
 
         unsigned int x_min = std::min(horiz_rect.left, vert_rect.left);
@@ -216,32 +216,32 @@ bool MapLRoom::create(GeoVector vec)
 
         // Horizontal rectangle, horizontal walls...
         for (int x_coord = horiz_rect.left + 1;
-                 x_coord <= horiz_rect.left + horiz_rect.width - 1;
-                 ++x_coord)
+        x_coord <= horiz_rect.left + horiz_rect.width - 1;
+          ++x_coord)
         {
           add_growth_vector(GeoVector(x_coord, horiz_rect.top - 1, Direction::North));
           add_growth_vector(GeoVector(x_coord, horiz_rect.top + horiz_rect.height, Direction::South));
         }
         // Vertical rectangle, horizontal walls...
         for (int x_coord = vert_rect.left + 1;
-                 x_coord <= vert_rect.left + vert_rect.width - 1;
-                 ++x_coord)
+        x_coord <= vert_rect.left + vert_rect.width - 1;
+          ++x_coord)
         {
           add_growth_vector(GeoVector(x_coord, vert_rect.top - 1, Direction::North));
           add_growth_vector(GeoVector(x_coord, vert_rect.top + vert_rect.height, Direction::South));
         }
         // Horizontal rectangle, vertical walls...
         for (int y_coord = horiz_rect.top + 1;
-                 y_coord <= horiz_rect.top + horiz_rect.height - 1;
-                 ++y_coord)
+        y_coord <= horiz_rect.top + horiz_rect.height - 1;
+          ++y_coord)
         {
           add_growth_vector(GeoVector(horiz_rect.left - 1, y_coord, Direction::West));
           add_growth_vector(GeoVector(horiz_rect.left + horiz_rect.width, y_coord, Direction::East));
         }
         // Vertical rectangle, vertical walls...
         for (int y_coord = vert_rect.top + 1;
-                 y_coord <= vert_rect.top + vert_rect.height - 1;
-                 ++y_coord)
+        y_coord <= vert_rect.top + vert_rect.height - 1;
+          ++y_coord)
         {
           add_growth_vector(GeoVector(vert_rect.left - 1, y_coord, Direction::West));
           add_growth_vector(GeoVector(vert_rect.left + vert_rect.width, y_coord, Direction::East));

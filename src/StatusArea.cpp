@@ -17,7 +17,7 @@ struct StatusArea::Impl
 
 StatusArea::StatusArea(sf::IntRect dimensions)
   : GUIPane(dimensions),
-    pImpl(NEW Impl())
+  pImpl(NEW Impl())
 {
   //ctor
   //std::function<std::string()> label_function = std::bind(&StatusArea::get_test_label, this);
@@ -140,4 +140,3 @@ std::string StatusArea::get_test_label()
 {
   return "Testing GUILabel";
 }
-

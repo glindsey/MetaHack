@@ -18,7 +18,7 @@ unsigned int MapRoom::max_retries = 100;
 // Local typedefs
 typedef boost::random::uniform_int_distribution<> uniform_int_dist;
 
-MapRoom::MapRoom(Map& m, PropertyDictionary const& s) 
+MapRoom::MapRoom(Map& m, PropertyDictionary const& s)
   :
   MapFeature{ m, s }
 {
@@ -50,50 +50,50 @@ bool MapRoom::create(GeoVector vec)
     switch (direction)
     {
     case Direction::North:
-      {
-        uniform_int_dist offset_dist(0, rect.width - 1);
-        int offset = offset_dist(the_RNG);
+    {
+      uniform_int_dist offset_dist(0, rect.width - 1);
+      int offset = offset_dist(the_RNG);
 
-        rect.top = starting_coords.y - rect.height;
-        rect.left = starting_coords.x - offset;
-      }
-      break;
+      rect.top = starting_coords.y - rect.height;
+      rect.left = starting_coords.x - offset;
+    }
+    break;
     case Direction::South:
-      {
-        uniform_int_dist offset_dist(0, rect.width - 1);
-        int offset = offset_dist(the_RNG);
+    {
+      uniform_int_dist offset_dist(0, rect.width - 1);
+      int offset = offset_dist(the_RNG);
 
-        rect.top = starting_coords.y + 1;
-        rect.left = starting_coords.x - offset;
-      }
-      break;
+      rect.top = starting_coords.y + 1;
+      rect.left = starting_coords.x - offset;
+    }
+    break;
     case Direction::West:
-      {
-        uniform_int_dist offset_dist(0, rect.height - 1);
-        int offset = offset_dist(the_RNG);
+    {
+      uniform_int_dist offset_dist(0, rect.height - 1);
+      int offset = offset_dist(the_RNG);
 
-        rect.top = starting_coords.y - offset;
-        rect.left = starting_coords.x - rect.width;
-      }
-      break;
+      rect.top = starting_coords.y - offset;
+      rect.left = starting_coords.x - rect.width;
+    }
+    break;
     case Direction::East:
-      {
-        uniform_int_dist offset_dist(0, rect.height - 1);
-        int offset = offset_dist(the_RNG);
+    {
+      uniform_int_dist offset_dist(0, rect.height - 1);
+      int offset = offset_dist(the_RNG);
 
-        rect.top = starting_coords.y - offset;
-        rect.left = starting_coords.x + 1;
-      }
-      break;
+      rect.top = starting_coords.y - offset;
+      rect.left = starting_coords.x + 1;
+    }
+    break;
     case Direction::Self:
-      {
-        uniform_int_dist height_offset_dist(0, rect.height - 1);
-        uniform_int_dist width_offset_dist(0, rect.width - 1);
+    {
+      uniform_int_dist height_offset_dist(0, rect.height - 1);
+      uniform_int_dist width_offset_dist(0, rect.width - 1);
 
-        rect.top = starting_coords.y - height_offset_dist(the_RNG);
-        rect.left = starting_coords.x - width_offset_dist(the_RNG);
-      }
-      break;
+      rect.top = starting_coords.y - height_offset_dist(the_RNG);
+      rect.left = starting_coords.x - width_offset_dist(the_RNG);
+    }
+    break;
     default:
       MINOR_ERROR("Invalid direction");
       return false;
@@ -108,37 +108,37 @@ bool MapRoom::create(GeoVector vec)
 
       // Verify that box and surrounding area are solid walls.
       for (int x_check = rect.left - 1;
-               x_check <= rect.left + rect.width;
-               ++x_check)
+      x_check <= rect.left + rect.width;
+        ++x_check)
       {
-         for (int y_check = rect.top - 1;
-                  y_check <= rect.top + rect.height;
-                  ++y_check)
-         {
-           auto& tile = get_map().get_tile(x_check, y_check);
-           if (tile.is_empty_space())
-           {
-             okay = false;
-             break;
-           }
-         }
-         if (okay == false) break;
+        for (int y_check = rect.top - 1;
+        y_check <= rect.top + rect.height;
+          ++y_check)
+        {
+          auto& tile = get_map().get_tile(x_check, y_check);
+          if (tile.is_empty_space())
+          {
+            okay = false;
+            break;
+          }
+        }
+        if (okay == false) break;
       }
 
       if (okay)
       {
         // Clear out the box.
         for (int x_coord = rect.left;
-                 x_coord <= rect.left + rect.width - 1;
-                 ++x_coord)
+        x_coord <= rect.left + rect.width - 1;
+          ++x_coord)
         {
-           for (int y_coord = rect.top;
-                    y_coord <= rect.top + rect.height - 1;
-                    ++y_coord)
-           {
-             auto& tile = get_map().get_tile(x_coord, y_coord);
-             tile.set_type("MTFloorDirt");
-           }
+          for (int y_coord = rect.top;
+          y_coord <= rect.top + rect.height - 1;
+            ++y_coord)
+          {
+            auto& tile = get_map().get_tile(x_coord, y_coord);
+            tile.set_type("MTFloorDirt");
+          }
         }
 
         set_coords(rect);
@@ -147,16 +147,16 @@ bool MapRoom::create(GeoVector vec)
 
         // Horizontal walls...
         for (int x_coord = rect.left + 1;
-                 x_coord <= rect.left + rect.width - 1;
-                 ++x_coord)
+        x_coord <= rect.left + rect.width - 1;
+          ++x_coord)
         {
           add_growth_vector(GeoVector(x_coord, rect.top - 1, Direction::North));
           add_growth_vector(GeoVector(x_coord, rect.top + rect.height, Direction::South));
         }
         // Vertical walls...
         for (int y_coord = rect.top + 1;
-                 y_coord <= rect.top + rect.height - 1;
-                 ++y_coord)
+        y_coord <= rect.top + rect.height - 1;
+          ++y_coord)
         {
           add_growth_vector(GeoVector(rect.left - 1, y_coord, Direction::West));
           add_growth_vector(GeoVector(rect.left + rect.width, y_coord, Direction::East));

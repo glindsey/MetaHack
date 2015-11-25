@@ -78,7 +78,7 @@ bool Action::process(ThingRef actor, AnyMap params)
     actor->set_property<int>("counter_busy", counter_busy);
     return true;
   }
-  
+
   // Perform any type-specific processing.
   // Useful if, for example, your Entity can rise from the dead.
   /// @todo Figure out how to implement this safely.
@@ -338,7 +338,6 @@ Action::State Action::get_state()
   return m_state;
 }
 
-
 // @todo Action::target_can_be_bodypart()
 
 bool Action::target_can_be_thing() const
@@ -358,7 +357,7 @@ bool Action::target_can_be_direction() const
 {
   switch (m_type)
   {
-  case Action::Type::Attack:    
+  case Action::Type::Attack:
   case Action::Type::Close:
   case Action::Type::Fill:
   case Action::Type::Hurl:

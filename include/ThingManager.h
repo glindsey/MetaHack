@@ -18,8 +18,8 @@ class ThingMetadata;
 /// ThingManager is a factory to create and manage all the Things in the game.
 class ThingManager
 {
-	friend class ThingId;
-	friend class ThingRef;
+  friend class ThingId;
+  friend class ThingRef;
 
 public:
   /// Constructor.
@@ -57,19 +57,19 @@ public:
 protected:
 
   /// Get a pointer to the Thing associated with a particular ThingId.
-	/// If the ID does not exist, returns Mu.
-	Thing* get_ptr(ThingId data);
+  /// If the ID does not exist, returns Mu.
+  Thing* get_ptr(ThingId data);
 
-	/// Get a pointer to the Thing associated with a particular ThingId.
-	/// If the ID does not exist, returns Mu.
-	Thing const* get_ptr(ThingId data) const;
+  /// Get a pointer to the Thing associated with a particular ThingId.
+  /// If the ID does not exist, returns Mu.
+  Thing const* get_ptr(ThingId data) const;
 
 private:
   /// Reference to owning game state.
   GameState& m_game_state;
 
   /// Map of ThingIds to Things.
-  /// @todo Probably faster to use an unordered_map and use ThingId.id 
+  /// @todo Probably faster to use an unordered_map and use ThingId.id
   ///       as the hash function.
   std::unordered_map<ThingId, Thing*> m_thing_map;
 

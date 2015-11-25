@@ -35,7 +35,7 @@ Metadata::Metadata(MetadataCollection& collection, std::string type)
 
     tile_location = TS.load_collection(pngfile_string);
     TRACE("Tiles for %s!%s were placed on the TileSheet at (%u, %u)",
-      category.c_str(), type.c_str(), tile_location.x, tile_location.y);
+          category.c_str(), type.c_str(), tile_location.x, tile_location.y);
 
     set_intrinsic<bool>("has_tiles", true);
     set_intrinsic<int>("tile_location_x", tile_location.x);
@@ -69,9 +69,9 @@ sf::Vector2u Metadata::get_tile_coords()
 }
 
 ActionResult Metadata::call_lua_function(std::string function_name,
-  ThingRef caller,
-  std::vector<lua_Integer> const& args,
-  ActionResult default_result)
+                                         ThingRef caller,
+                                         std::vector<lua_Integer> const& args,
+                                         ActionResult default_result)
 {
   ActionResult return_value = default_result;
   std::string name = this->get_type();
@@ -148,9 +148,9 @@ ActionResult Metadata::call_lua_function(std::string function_name,
 }
 
 bool Metadata::call_lua_function_bool(std::string function_name,
-  ThingRef caller,
-  std::vector<lua_Integer> const& args,
-  bool default_result)
+                                      ThingRef caller,
+                                      std::vector<lua_Integer> const& args,
+                                      bool default_result)
 {
   bool return_value = default_result;
   std::string name = this->get_type();
@@ -227,9 +227,9 @@ bool Metadata::call_lua_function_bool(std::string function_name,
 }
 
 sf::Vector2u Metadata::call_lua_function_v2u(std::string function_name,
-  ThingRef caller,
-  std::vector<lua_Integer> const& args,
-  sf::Vector2u default_result)
+                                             ThingRef caller,
+                                             std::vector<lua_Integer> const& args,
+                                             sf::Vector2u default_result)
 {
   sf::Vector2u return_value = default_result;
   std::string name = this->get_type();
@@ -274,9 +274,9 @@ sf::Vector2u Metadata::call_lua_function_v2u(std::string function_name,
       {
         if (!lua_isnumber(the_lua_state, -2) || !lua_isnumber(the_lua_state, -1))
         {
-          FATAL_ERROR("Expected number/number from Lua function but got %s/%s", 
-            lua_typename(the_lua_state, lua_type(the_lua_state, -2)),
-            lua_typename(the_lua_state, lua_type(the_lua_state, -1)));
+          FATAL_ERROR("Expected number/number from Lua function but got %s/%s",
+                      lua_typename(the_lua_state, lua_type(the_lua_state, -2)),
+                      lua_typename(the_lua_state, lua_type(the_lua_state, -1)));
         }
 
         // Get the return values.
@@ -585,7 +585,6 @@ IntegerRange Metadata::get_default_range(std::string name, IntegerRange default_
   return return_value;
 }
 
-
 bool Metadata::get_intrinsic_bool(std::string name, bool default_value = false)
 {
   bool return_value = default_value;
@@ -606,7 +605,7 @@ bool Metadata::get_intrinsic_bool(std::string name, bool default_value = false)
   {
     // Push name of function onto the stack. (+1)
     lua_getfield(the_lua_state, -1, "get_intrinsic");             // class get <
-    
+
     if (lua_isnoneornil(the_lua_state, -1))
     {
       // Function not found -- pop the function and class names back off. (-2)
@@ -950,4 +949,3 @@ void Metadata::set_intrinsic_string(std::string name, std::string value = "")
     FATAL_ERROR("*** LUA STACK MISMATCH (%s:set_intrinsic): Started at %d, ended at %d", name.c_str(), start_stack, end_stack);
   }
 }
-

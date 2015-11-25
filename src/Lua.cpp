@@ -64,7 +64,7 @@ void Lua::require(std::string packagename, bool fatal)
 {
   int err;
 
-  // Call the "require" function.  
+  // Call the "require" function.
   lua_getfield(L_, LUA_GLOBALSINDEX, "require"); // function
   lua_pushstring(L_, packagename.c_str());     // arg 0: module name
   err = lua_pcall(L_, 1, 1, 0);
@@ -87,7 +87,6 @@ void Lua::require(std::string packagename, bool fatal)
   }
 }
 
-
 void Lua::set_global(std::string name, lua_Integer value)
 {
   lua_pushinteger(L_, value);
@@ -99,13 +98,13 @@ bool Lua::add_enum(const char* tname, ...)
   // NOTE: Here's the Lua code we're building and executing to define the
   //       enum.
   //
-  // <tname> = setmetatable( {}, { 
-  //      __index = { 
-  //          <name1> = { 
-  //              value = <value1>, 
+  // <tname> = setmetatable( {}, {
+  //      __index = {
+  //          <name1> = {
+  //              value = <value1>,
   //              type = \"<tname>\"
-  //          }, 
-  //          ... 
+  //          },
+  //          ...
   //      },
   //      __newindex = function(table, key, value)
   //          error(\"Attempt to modify read-only table\")

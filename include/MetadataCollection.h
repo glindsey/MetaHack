@@ -12,7 +12,7 @@ class MetadataCollection
 public:
   MetadataCollection(std::string category);
   ~MetadataCollection();
-  
+
   std::string MetadataCollection::get_category();
 
   Metadata& MetadataCollection::get(std::string type);

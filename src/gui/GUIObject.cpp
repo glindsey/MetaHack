@@ -9,7 +9,7 @@
 struct GUIObject::Impl
 {
   Impl()
-    : 
+    :
     focus{ false }
   {}
 
@@ -99,7 +99,7 @@ bool GUIObject::render(sf::RenderTarget& target, int frame)
   {
     child.render(texture, frame);
   }
-  
+
   texture.display();
 
   // Create the RectangleShape that will be drawn onto the target.

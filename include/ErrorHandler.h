@@ -10,7 +10,7 @@
 #define __FUNCTION_NAME__   __FUNCTION__
 #define snprintf _snprintf_s
 #else          //*NIX
-#define __FUNCTION_NAME__   __func__ 
+#define __FUNCTION_NAME__   __func__
 #endif
 #endif
 
@@ -86,38 +86,38 @@
 class ErrorHandler :
   public boost::noncopyable
 {
-  public:
-    static ErrorHandler& instance();
-    virtual ~ErrorHandler();
+public:
+  static ErrorHandler& instance();
+  virtual ~ErrorHandler();
 
-    void printTrace(char* buf,
-                    char const* file,
-                    int line,
-                    char const* func);
+  void printTrace(char* buf,
+                  char const* file,
+                  int line,
+                  char const* func);
 
-    void handleMinorError(char* buf,
-                          char const* file,
-                          int line,
-                          char const* func);
+  void handleMinorError(char* buf,
+                        char const* file,
+                        int line,
+                        char const* func);
 
-    void handleMajorError(char* buf,
-                          char const* file,
-                          int line,
-                          char const* func);
+  void handleMajorError(char* buf,
+                        char const* file,
+                        int line,
+                        char const* func);
 
-    void handleFatalError(char* buf,
-                          char const* file,
-                          int line,
-                          char const* func);
+  void handleFatalError(char* buf,
+                        char const* file,
+                        int line,
+                        char const* func);
 
-    void setErrorHandlingFlags(bool minor, bool major);
+  void setErrorHandlingFlags(bool minor, bool major);
 
-  protected:
-  private:
-    ErrorHandler();
+protected:
+private:
+  ErrorHandler();
 
-    struct Impl;
-    std::unique_ptr<Impl> pImpl;
+  struct Impl;
+  std::unique_ptr<Impl> pImpl;
 };
 
 #endif // ERRORMACROS_H_INCLUDED

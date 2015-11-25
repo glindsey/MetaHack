@@ -56,7 +56,7 @@ bool ThingRef::operator>=(ThingRef const& other) const
 
 bool ThingRef::operator==(ThingRef const& other) const
 {
-	return (this->m_id == other.m_id);
+  return (this->m_id == other.m_id);
 }
 
 bool ThingRef::operator!=(ThingRef const& other) const
@@ -66,7 +66,7 @@ bool ThingRef::operator!=(ThingRef const& other) const
 
 Thing* ThingRef::operator->()
 {
-	return GAME.get_thing_manager().get_ptr(m_id);
+  return GAME.get_thing_manager().get_ptr(m_id);
 }
 
 ThingId ThingRef::get_id() const
@@ -76,28 +76,28 @@ ThingId ThingRef::get_id() const
 
 ThingId ThingRef::create()
 {
-	ThingId new_id;
+  ThingId new_id;
 
-	if (S_deleted_ids.size() != 0)
-	{
-		ThingId last_deleted = S_deleted_ids.back();
-		S_deleted_ids.pop_back();
-		++(last_deleted.version);
-		new_id = last_deleted;
-	}
-	else
-	{
-		new_id.id = S_largest_unused_id;
-		new_id.version = 0;
-		++(S_largest_unused_id);
-	}
+  if (S_deleted_ids.size() != 0)
+  {
+    ThingId last_deleted = S_deleted_ids.back();
+    S_deleted_ids.pop_back();
+    ++(last_deleted.version);
+    new_id = last_deleted;
+  }
+  else
+  {
+    new_id.id = S_largest_unused_id;
+    new_id.version = 0;
+    ++(S_largest_unused_id);
+  }
 
-	return new_id;
+  return new_id;
 }
 
 void ThingRef::destroy(ThingId const& id)
 {
-	S_deleted_ids.push_back(id);
+  S_deleted_ids.push_back(id);
 }
 
 /// Swap function

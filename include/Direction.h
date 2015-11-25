@@ -94,11 +94,11 @@ inline int get_appropriate_4way_tile(Direction direction)
 {
   switch (direction)
   {
-    case Direction::North: return 0;
-    case Direction::East: return 1;
-    case Direction::South: return 2;
-    case Direction::West: return 3;
-    default: return 2; // Default to facing player if direction isn't supported
+  case Direction::North: return 0;
+  case Direction::East: return 1;
+  case Direction::South: return 2;
+  case Direction::West: return 3;
+  default: return 2; // Default to facing player if direction isn't supported
   }
 }
 
