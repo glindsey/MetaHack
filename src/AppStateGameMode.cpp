@@ -179,9 +179,11 @@ public:
         inventory_area_shows_player = false;
         reset_inventory_area();
         current_input_state = GameInputState::Map;
-        return EventResult::Handled;
+        result = EventResult::Handled;
       }
     }
+
+    return result;
   }
 
   EventResult handle_key_press_cursor_look(ThingRef player, sf::Event::KeyEvent& key)
@@ -632,7 +634,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
         break;
 
         // CTRL-A -- attire/adorn
-      case sf::Keyboard::Key::A:    // Attack
+      case sf::Keyboard::Key::A:    // Attire
         action.set_type(Action::Type::Attire);
         if (action.get_things().size() == 0)
         {

@@ -80,10 +80,10 @@ public:
   void set_quantity(unsigned int quantity);
 
 private:
-  bool prebegin_(ThingRef actor, AnyMap params);
-  bool begin_(ThingRef actor, AnyMap params);
-  void finish_(ThingRef actor, AnyMap params);
-  void abort_(ThingRef actor, AnyMap params);
+  bool prebegin_(ThingRef actor, AnyMap& params);
+  bool begin_(ThingRef actor, AnyMap& params);
+  void finish_(ThingRef actor, AnyMap& params);
+  void abort_(ThingRef actor, AnyMap& params);
 
   /// Type of this action.
   Action::Type m_type;
