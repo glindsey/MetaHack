@@ -135,6 +135,135 @@ public:
 
     return result;
   }
+
+  EventResult handle_key_press_target_selection(ThingRef player, sf::Event::KeyEvent& key)
+  {
+    EventResult result = EventResult::Ignored;
+    int key_number = get_letter_key(key);
+    Direction key_direction = get_direction_key(key);
+
+    if (!key.alt && !key.control && key.code == sf::Keyboard::Key::Tab)
+    {
+      inventory_area_shows_player = !inventory_area_shows_player;
+      reset_inventory_area();
+    }
+
+    if (!key.alt && !key.control && key.code == sf::Keyboard::Key::Escape)
+    {
+      the_message_log.add("Aborted.");
+      inventory_area_shows_player = false;
+      reset_inventory_area();
+      current_input_state = GameInputState::Map;
+      result = EventResult::Handled;
+    }
+
+    if (action_in_progress.target_can_be_thing())
+    {
+      if (!key.alt && !key.control && key_number != -1)
+      {
+        action_in_progress.set_target(inventory_area->get_thing(static_cast<InventorySlot>(key_number)));
+        player->queue_action(action_in_progress);
+        inventory_area_shows_player = false;
+        reset_inventory_area();
+        current_input_state = GameInputState::Map;
+        result = EventResult::Handled;
+      }
+    } // end if (action_in_progress.target_can_be_thing)
+
+    if (action_in_progress.target_can_be_direction())
+    {
+      if (!key.alt && !key.control && key_direction != Direction::None)
+      {
+        action_in_progress.set_target(key_direction);
+        player->queue_action(action_in_progress);
+        inventory_area_shows_player = false;
+        reset_inventory_area();
+        current_input_state = GameInputState::Map;
+        return EventResult::Handled;
+      }
+    }
+  }
+
+  EventResult handle_key_press_cursor_look(ThingRef player, sf::Event::KeyEvent& key)
+  {
+    EventResult result = EventResult::Ignored;
+
+    // *** NON-MODIFIED KEYS ***********************************************
+    if (!key.alt && !key.control && !key.shift)
+    {
+      switch (key.code)
+      {
+      case sf::Keyboard::Key::Up:
+        move_cursor(Direction::North);
+        inventory_area_shows_player = false;
+        reset_inventory_area();
+        result = EventResult::Handled;
+        break;
+
+      case sf::Keyboard::Key::PageUp:
+        move_cursor(Direction::Northeast);
+        inventory_area_shows_player = false;
+        reset_inventory_area();
+        result = EventResult::Handled;
+        break;
+
+      case sf::Keyboard::Key::Right:
+        move_cursor(Direction::East);
+        inventory_area_shows_player = false;
+        reset_inventory_area();
+        result = EventResult::Handled;
+        break;
+
+      case sf::Keyboard::Key::PageDown:
+        move_cursor(Direction::Southeast);
+        inventory_area_shows_player = false;
+        reset_inventory_area();
+        result = EventResult::Handled;
+        break;
+
+      case sf::Keyboard::Key::Down:
+        move_cursor(Direction::South);
+        inventory_area_shows_player = false;
+        reset_inventory_area();
+        result = EventResult::Handled;
+        break;
+
+      case sf::Keyboard::Key::End:
+        move_cursor(Direction::Southwest);
+        inventory_area_shows_player = false;
+        reset_inventory_area();
+        result = EventResult::Handled;
+        break;
+
+      case sf::Keyboard::Key::Left:
+        move_cursor(Direction::West);
+        inventory_area_shows_player = false;
+        reset_inventory_area();
+        result = EventResult::Handled;
+        break;
+
+      case sf::Keyboard::Key::Home:
+        move_cursor(Direction::Northwest);
+        inventory_area_shows_player = false;
+        reset_inventory_area();
+        result = EventResult::Handled;
+        break;
+
+        // "/" - go back to Map focus.
+      case sf::Keyboard::Key::Slash:
+        current_input_state = GameInputState::Map;
+        inventory_area_shows_player = false;
+        reset_inventory_area();
+        result = EventResult::Handled;
+        break;
+
+      default:
+        break;
+      } // end switch (key.code)
+    } // end if (no modifier keys)
+
+    return result;
+  }
 };
 
 AppStateGameMode::AppStateGameMode(StateMachine& state_machine, sf::RenderWindow& app_window)
@@ -296,130 +425,10 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
   switch (pImpl->current_input_state)
   {
   case GameInputState::TargetSelection:
-  {
-    int key_number = get_letter_key(key);
-    Direction key_direction = get_direction_key(key);
-
-    if (!key.alt && !key.control && key.code == sf::Keyboard::Key::Tab)
-    {
-      pImpl->inventory_area_shows_player = !pImpl->inventory_area_shows_player;
-      pImpl->reset_inventory_area();
-    }
-
-    if (!key.alt && !key.control && key.code == sf::Keyboard::Key::Escape)
-    {
-      the_message_log.add("Aborted.");
-      pImpl->inventory_area_shows_player = false;
-      pImpl->reset_inventory_area();
-      pImpl->current_input_state = GameInputState::Map;
-      result = EventResult::Handled;
-    }
-
-    if (pImpl->action_in_progress.target_can_be_thing())
-    {
-      if (!key.alt && !key.control && key_number != -1)
-      {
-        pImpl->action_in_progress.set_target(
-          pImpl->inventory_area->get_thing(static_cast<InventorySlot>(key_number)));
-        player->queue_action(pImpl->action_in_progress);
-        pImpl->inventory_area_shows_player = false;
-        pImpl->reset_inventory_area();
-        pImpl->current_input_state = GameInputState::Map;
-        result = EventResult::Handled;
-      }
-    } // end if (pImpl->action_in_progress.target_can_be_thing)
-
-    if (pImpl->action_in_progress.target_can_be_direction())
-    {
-      if (!key.alt && !key.control && key_direction != Direction::None)
-      {
-        pImpl->action_in_progress.set_target(key_direction);
-        player->queue_action(pImpl->action_in_progress);
-        pImpl->inventory_area_shows_player = false;
-        pImpl->reset_inventory_area();
-        pImpl->current_input_state = GameInputState::Map;
-        return EventResult::Handled;
-      }
-    }
-  } // end case GameInputState::TargetSelection
+    return pImpl->handle_key_press_target_selection(player, key);
 
   case GameInputState::CursorLook:
-  {
-    // *** NON-MODIFIED KEYS ***********************************************
-    if (!key.alt && !key.control && !key.shift)
-    {
-      switch (key.code)
-      {
-      case sf::Keyboard::Key::Up:
-        pImpl->move_cursor(Direction::North);
-        pImpl->inventory_area_shows_player = false;
-        pImpl->reset_inventory_area();
-        result = EventResult::Handled;
-        break;
-
-      case sf::Keyboard::Key::PageUp:
-        pImpl->move_cursor(Direction::Northeast);
-        pImpl->inventory_area_shows_player = false;
-        pImpl->reset_inventory_area();
-        result = EventResult::Handled;
-        break;
-
-      case sf::Keyboard::Key::Right:
-        pImpl->move_cursor(Direction::East);
-        pImpl->inventory_area_shows_player = false;
-        pImpl->reset_inventory_area();
-        result = EventResult::Handled;
-        break;
-
-      case sf::Keyboard::Key::PageDown:
-        pImpl->move_cursor(Direction::Southeast);
-        pImpl->inventory_area_shows_player = false;
-        pImpl->reset_inventory_area();
-        result = EventResult::Handled;
-        break;
-
-      case sf::Keyboard::Key::Down:
-        pImpl->move_cursor(Direction::South);
-        pImpl->inventory_area_shows_player = false;
-        pImpl->reset_inventory_area();
-        result = EventResult::Handled;
-        break;
-
-      case sf::Keyboard::Key::End:
-        pImpl->move_cursor(Direction::Southwest);
-        pImpl->inventory_area_shows_player = false;
-        pImpl->reset_inventory_area();
-        result = EventResult::Handled;
-        break;
-
-      case sf::Keyboard::Key::Left:
-        pImpl->move_cursor(Direction::West);
-        pImpl->inventory_area_shows_player = false;
-        pImpl->reset_inventory_area();
-        result = EventResult::Handled;
-        break;
-
-      case sf::Keyboard::Key::Home:
-        pImpl->move_cursor(Direction::Northwest);
-        pImpl->inventory_area_shows_player = false;
-        pImpl->reset_inventory_area();
-        result = EventResult::Handled;
-        break;
-
-        // "/" - go back to Map focus.
-      case sf::Keyboard::Key::Slash:
-        pImpl->current_input_state = GameInputState::Map;
-        pImpl->inventory_area_shows_player = false;
-        pImpl->reset_inventory_area();
-        result = EventResult::Handled;
-        break;
-
-      default:
-        break;
-      } // end switch (key.code)
-    } // end if (no modifier keys)
-    break;
-  } // end case GameInputState::CursorLook
+    return pImpl->handle_key_press_cursor_look(player, key);
 
   case GameInputState::Map:
   {
