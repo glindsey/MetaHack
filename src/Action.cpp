@@ -71,8 +71,7 @@ void Action::clear_things()
 bool Action::process(ThingRef actor, AnyMap params)
 {
   // If entity is currently busy, decrement by one and return.
-  int counter_busy = actor->get_property<int>("counter_busy");
-  if (counter_busy > 0)
+  if (actor->get_property<int>("counter_busy") > 0)
   {
     actor->add_to_property<int>("counter_busy", -1);
     return true;
@@ -83,10 +82,8 @@ bool Action::process(ThingRef actor, AnyMap params)
   /// @todo Figure out how to implement this safely.
   //actor->call_lua_function("process", {});
 
-  // This uses subsequent if statements rather than a switch,
-  // because an action could conceivably run through several (or all)
-  // of these states in a single call to process().
-
+  // Continue running through states until the event is processed, or the
+  // target actor is busy.
   while ((m_state != Action::State::Processed) && (actor->get_property<int>("counter_busy") == 0))
   {
     switch (m_state)
@@ -232,7 +229,7 @@ bool Action::begin_(ThingRef actor, AnyMap& params)
     break;
   } // end switch (action)
 
-  // If the action succeeded, move to the in-progress state.
+  // If starting the action succeeded, move to the in-progress state.
   // Otherwise, just go right to post-finish.
   if (success)
   {
@@ -256,15 +253,19 @@ void Action::finish_(ThingRef actor, AnyMap& params)
 
   /// @todo Complete the action here
 
-  /// If there are any things in the m_things queue, pop the back one off.
+  // If there are any things in the m_things queue, pop the back one off.
   if (m_things.size() > 0)
   {
     m_things.pop_back();
-    set_state(Action::State::PreBegin);
   }
 
-  /// If there are no things left, move to the post-finish state.
-  if (m_things.size() == 0)
+  // If there are still things left, go back to the pre-begin state to handle
+  // the next thing; otherwise, move to the post-finish state.
+  if (m_things.size() > 0)
+  {
+    set_state(Action::State::PreBegin);
+  }
+  else
   {
     actor->set_property<int>("counter_busy", action_time);
     set_state(Action::State::PostFinish);
