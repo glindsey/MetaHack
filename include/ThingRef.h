@@ -16,36 +16,44 @@ class ThingManager;
 class ThingId
 {
 public:
-  union
+  struct
   {
-    uint64_t full_id;
-    struct
-    {
-      uint32_t id;
-      uint32_t version;
-    };
+    uint32_t id;
+    uint32_t version;
   };
 
   ThingId::ThingId()
-    : id(0), version(0) {}
+    :
+    id{ 0 },
+    version{ 0 }
+  {}
 
   ThingId::ThingId(uint32_t id_, uint16_t version_)
-    : id(id_), version(version_) {}
+    :
+    id{ id_ },
+    version{ version_ }
+  {}
 
   ThingId::ThingId(uint64_t full_id_)
-    : full_id(full_id_) {}
+    :
+    id{ full_id_ & 0xFFFFFFFF },
+    version{ full_id_ >> 32 }
+  {}
 
   ThingId::ThingId(lua_Integer full_id_)
-    : full_id(static_cast<uint64_t>(full_id_)) {}
+    :
+    id{ static_cast<uint64_t>(full_id_) & 0xFFFFFFFF },
+    version{ static_cast<uint64_t>(full_id_) >> 32 }
+  {}
 
   bool ThingId::operator<(ThingId const& other) const
   {
-    return (this->full_id < other.full_id);
+    return (this->to_uint64() < other.to_uint64());
   }
 
   bool ThingId::operator<=(ThingId const& other) const
   {
-    return (this->full_id <= other.full_id);
+    return (this->to_uint64() <= other.to_uint64());
   }
 
   bool ThingId::operator>(ThingId const& other) const
@@ -60,12 +68,22 @@ public:
 
   bool ThingId::operator==(ThingId const& other) const
   {
-    return (this->full_id == other.full_id);
+    return (this->to_uint64() == other.to_uint64());
   }
 
   bool ThingId::operator!=(ThingId const& other) const
   {
     return !operator==(other);
+  }
+
+  uint64_t ThingId::to_uint64() const
+  {
+    return (static_cast<uint64_t>(version) << 32) | (static_cast<uint64_t>(id));
+  }
+
+  std::string ThingId::to_string() const
+  {
+    return boost::lexical_cast<std::string>(id) + "." + boost::lexical_cast<std::string>(version);
   }
 
   friend std::ostream& operator<< (std::ostream& stream, ThingId const& thing)
@@ -123,7 +141,7 @@ public:
   /// Makes it REALLY easy to pass things to Lua scripts.
   operator lua_Integer() const
   {
-    return static_cast<lua_Integer>(get_id().full_id);
+    return static_cast<lua_Integer>(get_id().to_uint64());
   }
 
   bool operator<(ThingRef const& other) const;

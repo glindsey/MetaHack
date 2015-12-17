@@ -38,9 +38,9 @@ ThingManager::ThingManager(GameState& game_state)
 
   // Create the "nothingness" object.
   ThingRef mu = create("Mu");
-  if (mu.get_id().full_id != 0)
+  if (mu.get_id().to_uint64() != 0)
   {
-    FATAL_ERROR("Mu's ID is %" PRIu64 " instead of zero!", mu.get_id().full_id);
+    FATAL_ERROR("Mu's ID is %" PRIu64 " instead of zero!", mu.get_id().to_uint64());
   }
 }
 

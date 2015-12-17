@@ -14,25 +14,26 @@ LightSource.defaults.light_level = 256
 LightSource.defaults.light_strength = 64
 
 function LightSource.get_description()
-	return "A source of illumination."
+    return "A source of illumination."
 end
 
 
 function LightSource.is_usable_by(id)
-	-- This SHOULD check if a creature is sentient.
-	-- For now just return true.
-	return true
+    -- This SHOULD check if a creature is sentient.
+    -- For now just return true.
+    return true
 end
 
 function LightSource.perform_action_used_by(id)
-	local name = thing_get_display_name(id)
-	local is_lit = thing_get_property_flag(id, "light_lit")
-	is_lit = not is_lit
-	if is_lit then
-		messageLog_add("You light the " .. name .. ".")
-	else
-		messageLog_add("You extinguish the " .. name .. ".")
-	end
-	thing_set_property_flag(id, "light_lit", is_lit)
-	return ActionResult.Success
+    -- local name = thing_get_intrinsic_string(id, "name")
+    local name = "doohickey"
+    local is_lit = thing_get_property_flag(id, "light_lit")
+    is_lit = not is_lit
+    if is_lit then
+        messageLog_add("You light the " .. name .. ".")
+    else
+        messageLog_add("You extinguish the " .. name .. ".")
+    end
+    thing_set_property_flag(id, "light_lit", is_lit)
+    return ActionResult.Success
 end

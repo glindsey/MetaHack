@@ -203,47 +203,11 @@ void TileSheet::add_quad(sf::VertexArray& vertices,
 
 void TileSheet::add_gradient_quad(sf::VertexArray& vertices,
                                   sf::Vector2u tile_coords,
-                                  sf::Color ul_color, sf::Vector2f ul_coord,
-                                  sf::Color ur_color, sf::Vector2f ur_coord,
-                                  sf::Color lr_color, sf::Vector2f lr_coord,
-                                  sf::Color ll_color, sf::Vector2f ll_coord)
-{
-  sf::Vertex new_vertex;
-  float ts(Settings.get<float>("map_tile_size"));
-  sf::Vector2f texNW(tile_coords.x * ts, tile_coords.y * ts);
-
-  new_vertex.color = ul_color;
-  new_vertex.position = ul_coord;
-  new_vertex.texCoords = texNW;
-  vertices.append(new_vertex);
-
-  new_vertex.color = ur_color;
-  new_vertex.position = ur_coord;
-  new_vertex.texCoords = sf::Vector2f(texNW.x + ts,
-                                      texNW.y);
-  vertices.append(new_vertex);
-
-  new_vertex.color = lr_color;
-  new_vertex.position = lr_coord;
-  new_vertex.texCoords = sf::Vector2f(texNW.x + ts,
-                                      texNW.y + ts);
-  vertices.append(new_vertex);
-
-  new_vertex.color = ll_color;
-  new_vertex.position = ll_coord;
-  new_vertex.texCoords = sf::Vector2f(texNW.x,
-                                      texNW.y + ts);
-  vertices.append(new_vertex);
-}
-
-void TileSheet::add_gradient_quad(sf::VertexArray& vertices,
-                                  sf::Vector2u tile_coords,
-                                  sf::Vector2f coordNW, sf::Vector2f coordNE, sf::Vector2f coordSE, sf::Vector2f coordSW,
-                                  sf::Color colorC,
-                                  sf::Color colorNW, sf::Color colorN,
-                                  sf::Color colorNE, sf::Color colorE,
-                                  sf::Color colorSE, sf::Color colorS,
-                                  sf::Color colorSW, sf::Color colorW)
+                                  sf::Vector2f coordNW, sf::Vector2f coordNE,
+                                  sf::Vector2f coordSW, sf::Vector2f coordSE,
+                                  sf::Color colorNW, sf::Color colorN, sf::Color colorNE,
+                                  sf::Color colorW, sf::Color colorC, sf::Color colorE,
+                                  sf::Color colorSW, sf::Color colorS, sf::Color colorSE)
 {
   float ts(Settings.get<float>("map_tile_size"));
   float half_ts = (ts / 2.0f);

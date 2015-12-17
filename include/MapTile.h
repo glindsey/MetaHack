@@ -2,6 +2,7 @@
 #define MAPTILE_H
 
 #include <cstdbool>
+#include <map>
 #include <SFML/Graphics.hpp>
 
 #include "Direction.h"
@@ -167,13 +168,16 @@ private:
   /// The alpha channel is ignored.
   sf::Color m_ambient_light_color;
 
+  /// The calculated light levels of this tile and all of its walls.
+  std::map<Direction, sf::Color> m_calculated_light_colors;
+
   /// A map of LightInfluences, representing the amount of light that
   /// each thing is contributing to this map tile.
   /// Levels for the various color channels are interpreted as such:
   /// 0 <= value <= 128: result = (original * (value / 128))
   /// 128 < value <= 255: result = max(original + (value - 128), 255)
   /// The alpha channel is ignored.
-  std::unordered_map<ThingRef, LightInfluence> m_lights;
+  std::map<ThingRef, LightInfluence> m_lights;
 
   /// Random tile offset.
   int m_tile_offset;

@@ -224,12 +224,16 @@ inline float calculate_light_factor(sf::Vector2i source, sf::Vector2i target, Di
   float x_diff = static_cast<float>(iabs(source.x - target.x));
   float y_diff = static_cast<float>(iabs(source.y - target.y));
 
-  if ((x_diff == 0) && (y_diff == 0)) return 0;
+  if ((x_diff == 0) && (y_diff == 0)) return 1;
 
   float h_diff = sqrt((x_diff * x_diff) + (y_diff * y_diff));
 
   switch (direction)
   {
+    case Direction::Self:
+    case Direction::Up:
+    case Direction::Down:
+      return 1;
     case Direction::North:
       return (source.y < target.y) ? (y_diff / h_diff) : 0;
     case Direction::South:

@@ -43,35 +43,14 @@ public:
                        sf::Vector2f ul_coord, sf::Vector2f ur_coord,
                        sf::Vector2f lr_coord, sf::Vector2f ll_coord);
 
-  /// Add vertices to the requested vertex array.
-  /// This method is similar to add_quad but allows the caller to specify
-  /// the color of each vertex individually, allowing for gradients across
-  /// the quadrilateral.
-  /// @param vertices Vertex array to add to.
-  /// @param tile_coords Coordinates of the tile to render.
-  /// @param ul_color Color of upper-left vertex.
-  /// @param ul_coord Upper-left coordinates.
-  /// @param ur_color Color of upper-right vertex.
-  /// @param ur_coord Upper-right coordinates.
-  /// @param lr_color Color of lower-right vertex.
-  /// @param lr_coord Lower-left coordinates.
-  /// @param ll_color Color of lower-left vertex.
-  /// @param ll_coord Lower-right coordinates.
+  /// Add a quad with colors specified in a 3x3 grid.
   static void add_gradient_quad(sf::VertexArray& vertices,
                                 sf::Vector2u tile_coords,
-                                sf::Color ul_color, sf::Vector2f ul_coord,
-                                sf::Color ur_color, sf::Vector2f ur_coord,
-                                sf::Color lr_color, sf::Vector2f lr_coord,
-                                sf::Color ll_color, sf::Vector2f ll_coord);
-
-  static void add_gradient_quad(sf::VertexArray& vertices,
-                                sf::Vector2u tile_coords,
-                                sf::Vector2f coordNW, sf::Vector2f coordNE, sf::Vector2f coordSE, sf::Vector2f coordSW,
-                                sf::Color colorC,
-                                sf::Color colorNW, sf::Color colorN,
-                                sf::Color colorNE, sf::Color colorE,
-                                sf::Color colorSE, sf::Color colorS,
-                                sf::Color colorSW, sf::Color colorW);
+                                sf::Vector2f coordNW, sf::Vector2f coordNE,
+                                sf::Vector2f coordSW, sf::Vector2f coordSE,
+                                sf::Color colorNW, sf::Color colorN, sf::Color colorNE,
+                                sf::Color colorW, sf::Color colorC, sf::Color colorE,
+                                sf::Color colorSW, sf::Color colorS, sf::Color colorSE);
 
   /// Add outline vertices to the requested vertex array.
   /// This method draws a hollow quadrilateral in the color specified by

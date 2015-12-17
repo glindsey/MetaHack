@@ -3,6 +3,7 @@ SMALL THINGS
 [ ] Lua-ify some more events and checks (which ones?)
 [ ] Fix quantities (they are not currently being respected for get/drop actions)
 [ ] Export "thing_set_quantity" / "thing_modify_quantity" functions to Lua
+[ ] Re-implement Lua "get_intrinsic_XXX" functions for Things
 
 MEDIUM THINGS
 =============
@@ -74,6 +75,8 @@ BIG THINGS
 
 [ ] Settings option that chooses which attributes to show in StatusArea
 
+[ ] Implement fog / variable opacity for sight
+    - This actually isn't too difficult; we already have the "depth" parameter for do_recursive_visibility. It wouldn't be too hard to add a combined opacity number, and bail out if it exceeds a certain value.
 MIND-BOGGLINGLY ENORMOUS THINGS
 ===============================
 [ ] Switch over to using SFGUI for GUI elements

@@ -97,8 +97,11 @@ void MapTile::add_vertices_to(sf::VertexArray& vertices,
   sf::Vector2u tile_coords = this->get_tile_sheet_coords(frame);
 
   TileSheet::add_gradient_quad(vertices, tile_coords,
-                               vNW, vNE, vSE, vSW,
-                               light, lightNW, lightN, lightNE, lightE, lightSE, lightS, lightSW, lightW);
+                               vNW, vNE,
+                               vSW, vSE,
+                               lightNW, lightN, lightNE,
+                               lightW, light, lightE,
+                               lightSW, lightS, lightSE);
 }
 
 void MapTile::draw_to(sf::RenderTarget& target,
@@ -193,16 +196,69 @@ void MapTile::be_lit_by(ThingRef light)
 void MapTile::clear_light_influences()
 {
   m_lights.clear();
+  m_calculated_light_colors.clear();
 }
 
 void MapTile::add_light_influence(ThingRef source,
                                   LightInfluence influence)
 {
-  m_lights[source] = influence;
+  if (m_lights.count(source) == 0)
+  {
+    m_lights[source] = influence;
+
+    float dist_squared = static_cast<float>(calc_vis_distance(get_coords().x, get_coords().y, influence.coords.x, influence.coords.y));
+
+    sf::Color light_color = influence.color;
+    int light_intensity = influence.intensity;
+
+    sf::Color addColor;
+
+    float dist_factor;
+
+    if (light_intensity == 0)
+    {
+      dist_factor = 1.0f;
+    }
+    else
+    {
+      dist_factor = dist_squared / static_cast<float>(light_intensity);
+    }
+
+    std::vector<Direction> const directions{ Direction::Self, Direction::North, Direction::East, Direction::South, Direction::West };
+
+    for (Direction d : directions)
+    {
+      if (d != Direction::Self || !is_opaque())
+      {
+        float light_factor = (1.0f - dist_factor);
+        float wall_factor = calculate_light_factor(influence.coords, get_coords(), d);
+
+        addColor.r = static_cast<sf::Uint8>(light_color.r * wall_factor * light_factor);
+        addColor.g = static_cast<sf::Uint8>(light_color.g * wall_factor * light_factor);
+        addColor.b = static_cast<sf::Uint8>(light_color.b * wall_factor * light_factor);
+        addColor.a = 255;
+
+        m_calculated_light_colors[d].r = saturation_add(m_calculated_light_colors[d].r, addColor.r);
+        m_calculated_light_colors[d].g = saturation_add(m_calculated_light_colors[d].g, addColor.g);
+        m_calculated_light_colors[d].b = saturation_add(m_calculated_light_colors[d].b, addColor.b);
+        m_calculated_light_colors[d].a = saturation_add(m_calculated_light_colors[d].a, addColor.a);
+      }
+    }
+  }
 }
 
 sf::Color MapTile::get_light_level() const
 {
+  if (m_calculated_light_colors.count(Direction::Self) == 0)
+  {
+    return sf::Color::Black;
+  }
+  else
+  {
+    return m_calculated_light_colors.at(Direction::Self);
+  }
+#if 0
+
   sf::Color color = m_ambient_light_color;
 
   ThingRef player = GAME.get_player();
@@ -267,10 +323,20 @@ sf::Color MapTile::get_light_level() const
   }
 
   return color;
-}
+#endif
+  }
 
 sf::Color MapTile::get_wall_light_level(Direction direction) const
 {
+  if (m_calculated_light_colors.count(direction) == 0)
+  {
+    return sf::Color::Black;
+  }
+  else
+  {
+    return m_calculated_light_colors.at(direction);
+  }
+#if 0
   sf::Color color = m_ambient_light_color;
 
   ThingRef player = GAME.get_player();
@@ -323,7 +389,8 @@ sf::Color MapTile::get_wall_light_level(Direction direction) const
   }
 
   return color;
-}
+#endif
+  }
 
 bool MapTile::is_opaque() const
 {
@@ -482,8 +549,11 @@ void MapTile::add_walls_to(sf::VertexArray& vertices,
     }
 
     TileSheet::add_gradient_quad(vertices, tile_coords,
-                                 vTileNW, vTileNE, vSE, vSW,
-                                 wall_n_color, wall_n_color_w, wall_n_color, wall_n_color_e, wall_n_color_e, wall_n_color_e, wall_n_color, wall_n_color_w, wall_n_color_w);
+                                 vTileNW, vTileNE,
+                                 vSW, vSE,
+                                 wall_n_color_w, wall_n_color, wall_n_color_e,
+                                 wall_n_color_w, wall_n_color, wall_n_color_e,
+                                 wall_n_color_w, wall_n_color, wall_n_color_e);
   }
 
   // EAST WALL
@@ -510,8 +580,11 @@ void MapTile::add_walls_to(sf::VertexArray& vertices,
     }
 
     TileSheet::add_gradient_quad(vertices, tile_coords,
-                                 vNW, vTileNE, vTileSE, vSW,
-                                 wall_e_color, wall_e_color_n, wall_e_color_n, wall_e_color, wall_e_color_s, wall_e_color_s, wall_e_color_s, wall_e_color, wall_e_color_n);
+                                 vNW, vTileNE,
+                                 vSW, vTileSE,
+                                 wall_e_color_n, wall_e_color_n, wall_e_color_n,
+                                 wall_e_color, wall_e_color, wall_e_color,
+                                 wall_e_color_s, wall_e_color_s, wall_e_color_s);
   }
 
   // SOUTH WALL
@@ -538,8 +611,11 @@ void MapTile::add_walls_to(sf::VertexArray& vertices,
     }
 
     TileSheet::add_gradient_quad(vertices, tile_coords,
-                                 vNW, vNE, vTileSE, vTileSW,
-                                 wall_s_color, wall_s_color_w, wall_s_color, wall_s_color_e, wall_s_color_e, wall_s_color_e, wall_s_color, wall_s_color_w, wall_s_color_w);
+                                 vNW, vNE,
+                                 vTileSW, vTileSE,
+                                 wall_s_color_w, wall_s_color, wall_s_color_e,
+                                 wall_s_color_w, wall_s_color, wall_s_color_e,
+                                 wall_s_color_w, wall_s_color, wall_s_color_e);
   }
 
   // WEST WALL
@@ -566,8 +642,11 @@ void MapTile::add_walls_to(sf::VertexArray& vertices,
     }
 
     TileSheet::add_gradient_quad(vertices, tile_coords,
-                                 vTileNW, vNE, vSE, vTileSW,
-                                 wall_w_color, wall_w_color_n, wall_w_color_n, wall_w_color, wall_w_color_s, wall_w_color_s, wall_w_color_s, wall_w_color, wall_w_color_n);
+                                 vTileNW, vNE,
+                                 vTileSW, vSE,
+                                 wall_w_color_n, wall_w_color_n, wall_w_color_n,
+                                 wall_w_color, wall_w_color, wall_w_color,
+                                 wall_w_color_s, wall_w_color_s, wall_w_color_s);
   }
 }
 
@@ -612,31 +691,31 @@ MapTile const& MapTile::get_adjacent_tile(Direction direction) const
 
   switch (direction)
   {
-  case Direction::North:
-    return map.get_tile(coords.x, coords.y - 1);
+    case Direction::Northwest:
+      return map.get_tile(coords.x - 1, coords.y - 1);
 
-  case Direction::South:
-    return map.get_tile(coords.x, coords.y + 1);
+    case Direction::North:
+      return map.get_tile(coords.x, coords.y - 1);
 
-  case Direction::West:
-    return map.get_tile(coords.x - 1, coords.y);
+    case Direction::Northeast:
+      return map.get_tile(coords.x + 1, coords.y - 1);
 
-  case Direction::East:
-    return map.get_tile(coords.x + 1, coords.y);
+    case Direction::West:
+      return map.get_tile(coords.x - 1, coords.y);
 
-  case Direction::Northwest:
-    return map.get_tile(coords.x - 1, coords.y - 1);
+    default:
+      return tile;
 
-  case Direction::Northeast:
-    return map.get_tile(coords.x + 1, coords.y - 1);
+    case Direction::East:
+      return map.get_tile(coords.x + 1, coords.y);
 
-  case Direction::Southwest:
-    return map.get_tile(coords.x - 1, coords.y + 1);
+    case Direction::Southwest:
+      return map.get_tile(coords.x - 1, coords.y + 1);
 
-  case Direction::Southeast:
-    return map.get_tile(coords.x + 1, coords.y + 1);
+    case Direction::South:
+      return map.get_tile(coords.x, coords.y + 1);
 
-  default:
-    return tile;
+    case Direction::Southeast:
+      return map.get_tile(coords.x + 1, coords.y + 1);
   }
 }
