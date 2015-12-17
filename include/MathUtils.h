@@ -4,6 +4,8 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/random/uniform_int_distribution.hpp>
 
+#include <SFML/Graphics.hpp>
+
 #include "App.h"
 #include "Direction.h"
 
@@ -39,14 +41,74 @@ inline double calc_slope(double x1, double y1, double x2, double y2)
   return (x1 - x2) / (y1 - y2);
 }
 
+inline float calc_slope(sf::Vector2f s1, sf::Vector2f s2)
+{
+  float x_dist = static_cast<float>(s1.x - s2.x);
+  float y_dist = static_cast<float>(s1.y - s2.y);
+  return x_dist / y_dist;
+}
+
 inline double calc_inv_slope(double x1, double y1, double x2, double y2)
 {
   return (y1 - y2) / (x1 - x2);
 }
 
+inline float calc_inv_slope(sf::Vector2f s1, sf::Vector2f s2)
+{
+  float x_dist = static_cast<float>(s1.x - s2.x);
+  float y_dist = static_cast<float>(s1.y - s2.y);
+  return y_dist / x_dist;
+}
+
 inline int calc_vis_distance(int x1, int y1, int x2, int y2)
 {
   return ((x1 - x2) * (x1 - x2)) + ((y1 - y2) * (y1 - y2));
+}
+
+inline float calc_vis_distance(sf::Vector2i s1, sf::Vector2i s2)
+{
+  float x_dist = static_cast<float>(s1.x - s2.x);
+  float y_dist = static_cast<float>(s1.y - s2.y);
+  return (x_dist * x_dist) + (y_dist * y_dist);
+}
+
+inline sf::Vector2i unit(Direction direction)
+{
+  switch (direction)
+  {
+    case Direction::Northwest:  return{ -1, -1 };
+    case Direction::North:      return{ 0, -1 };
+    case Direction::Northeast:  return{ 1, -1 };
+    case Direction::West:       return{ -1, 0 };
+    case Direction::Self:       return{ 0, 0 };
+    case Direction::East:       return{ 1, 0 };
+    case Direction::Southwest:  return{ -1, 1 };
+    case Direction::South:      return{ 0, 1 };
+    case Direction::Southeast:  return{ 1, 1 };
+    default:                    return{ 0, 0 };
+  }
+}
+
+inline sf::Vector2f halfunit(Direction direction)
+{
+  switch (direction)
+  {
+    case Direction::Northwest:  return{ -0.5f, -0.5f };
+    case Direction::North:      return{ 0.0f, -0.5f };
+    case Direction::Northeast:  return{ 0.5f, -0.5f };
+    case Direction::West:       return{ -0.5f,  0.0f };
+    case Direction::Self:       return{ 0.0f,  0.0f };
+    case Direction::East:       return{ 0.5f,  0.0f };
+    case Direction::Southwest:  return{ -0.5f,  0.5f };
+    case Direction::South:      return{ 0.0f,  0.5f };
+    case Direction::Southeast:  return{ 0.5f,  0.5f };
+    default:                    return{ 0.0f,  0.0f };
+  }
+}
+
+inline sf::Vector2f to_v2f(sf::Vector2i vec)
+{
+  return sf::Vector2f{ static_cast<float>(vec.x), static_cast<float>(vec.y) };
 }
 
 inline Direction get_approx_direction(int xSrc, int ySrc, int xDst, int yDst)
@@ -141,11 +203,11 @@ template <class T> T choose_random(T a, T b, T c)
   int choice = choose(the_RNG);
   switch (choice)
   {
-  case 0: return a;
-  case 1: return b;
-  case 2: return c;
+    case 0: return a;
+    case 1: return b;
+    case 2: return c;
 
-  default: return b;  // should not happen, here to shut compiler up
+    default: return b;  // should not happen, here to shut compiler up
   }
 }
 
@@ -168,16 +230,16 @@ inline float calculate_light_factor(sf::Vector2i source, sf::Vector2i target, Di
 
   switch (direction)
   {
-  case Direction::North:
-    return (source.y < target.y) ? (y_diff / h_diff) : 0;
-  case Direction::South:
-    return (source.y > target.y) ? (y_diff / h_diff) : 0;
-  case Direction::West:
-    return (source.x < target.x) ? (x_diff / h_diff) : 0;
-  case Direction::East:
-    return (source.x > target.x) ? (x_diff / h_diff) : 0;
-  default:
-    throw std::out_of_range(std::string("Invalid direction " + boost::lexical_cast<std::string>(direction) + " passed to calculate_light_factor").c_str());
+    case Direction::North:
+      return (source.y < target.y) ? (y_diff / h_diff) : 0;
+    case Direction::South:
+      return (source.y > target.y) ? (y_diff / h_diff) : 0;
+    case Direction::West:
+      return (source.x < target.x) ? (x_diff / h_diff) : 0;
+    case Direction::East:
+      return (source.x > target.x) ? (x_diff / h_diff) : 0;
+    default:
+      throw std::out_of_range(std::string("Invalid direction " + boost::lexical_cast<std::string>(direction) + " passed to calculate_light_factor").c_str());
   }
 }
 

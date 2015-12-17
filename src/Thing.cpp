@@ -3295,11 +3295,12 @@ std::vector<std::string>& Thing::get_map_memory()
 
 void Thing::do_recursive_visibility(int octant,
                                     int depth,
-                                    double slope_A,
-                                    double slope_B)
+                                    float slope_A,
+                                    float slope_B)
 {
-  int x = 0;
-  int y = 0;
+  sf::Vector2i new_coords;
+  //int x = 0;
+  //int y = 0;
 
   // Are we on a map?  Bail out if we aren't.
   if (is_inside_another_thing())
@@ -3310,252 +3311,123 @@ void Thing::do_recursive_visibility(int octant,
   MapTile* tile = get_maptile();
   sf::Vector2i tile_coords = tile->get_coords();
   Map& game_map = GAME.get_map_factory().get(get_map_id());
-  int eX = tile_coords.x;
-  int eY = tile_coords.y;
 
   static const int mv = 128;
   static constexpr int mw = (mv * mv);
 
+  std::function< bool(sf::Vector2f, sf::Vector2f, float) > loop_condition;
+  Direction dir;
+  std::function< float(sf::Vector2f, sf::Vector2f) > recurse_slope;
+  std::function< float(sf::Vector2f, sf::Vector2f) > loop_slope;
+
   switch (octant)
   {
     case 1:
-      y = eY - depth;
-      x = static_cast<int>(rint(static_cast<double>(eX) - (slope_A * static_cast<double>(depth))));
-      while (calc_slope(x, y, eX, eY) >= slope_B)
-      {
-        if (calc_vis_distance(x, y, eX, eY) <= mw)
-        {
-          if (game_map.tile_is_opaque(x, y))
-          {
-            if (!game_map.tile_is_opaque(x - 1, y))
-            {
-              do_recursive_visibility(1, depth + 1, slope_A,
-                                      calc_slope(x - 0.5, y + 0.5, eX, eY));
-            }
-          }
-          else
-          {
-            if (game_map.tile_is_opaque(x - 1, y))
-            {
-              slope_A = calc_slope(x - 0.5, y - 0.5, eX, eY);
-            }
-          }
-          pImpl->tiles_currently_seen[game_map.get_index(x, y)] = true;
-          pImpl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
-        }
-        ++x;
-      }
-      --x;
+      new_coords.x = static_cast<int>(rint(static_cast<float>(tile_coords.x) - (slope_A * static_cast<float>(depth))));
+      new_coords.y = tile_coords.y - depth;
+      loop_condition = [](sf::Vector2f a, sf::Vector2f b, float c) { return calc_slope(a, b) >= c; };
+      dir = Direction::West;
+      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_slope({ a.x - 0.5f, a.y + 0.5f }, b); };
+      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_slope({ a.x - 0.5f, a.y - 0.5f }, b); };
+
       break;
+
     case 2:
-      y = eY - depth;
-      x = static_cast<int>(rint(static_cast<double>(eX) + (slope_A * static_cast<double>(depth))));
-      while (calc_slope(x, y, eX, eY) <= slope_B)
-      {
-        if (calc_vis_distance(x, y, eX, eY) <= mw)
-        {
-          if (game_map.tile_is_opaque(x, y))
-          {
-            if (!game_map.tile_is_opaque(x + 1, y))
-            {
-              do_recursive_visibility(2, depth + 1, slope_A,
-                                      calc_slope(x + 0.5, y + 0.5, eX, eY));
-            }
-          }
-          else
-          {
-            if (game_map.tile_is_opaque(x + 1, y))
-            {
-              slope_A = -calc_slope(x + 0.5, y - 0.5, eX, eY);
-            }
-          }
-          pImpl->tiles_currently_seen[game_map.get_index(x, y)] = true;
-          pImpl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
-        }
-        --x;
-      }
-      ++x;
+      new_coords.x = static_cast<int>(rint(static_cast<float>(tile_coords.x) + (slope_A * static_cast<float>(depth))));
+      new_coords.y = tile_coords.y - depth;
+      loop_condition = [](sf::Vector2f a, sf::Vector2f b, float c) { return calc_slope(a, b) <= c; };
+      dir = Direction::East;
+      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_slope({ a.x + 0.5f, a.y + 0.5f }, b); };
+      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return -calc_slope({ a.x + 0.5f, a.y - 0.5f }, b); };
+
       break;
+
     case 3:
-      x = eX + depth;
-      y = static_cast<int>(rint(static_cast<double>(eY) - (slope_A * static_cast<double>(depth))));
-      while (calc_inv_slope(x, y, eX, eY) <= slope_B)
-      {
-        if (calc_vis_distance(x, y, eX, eY) <= mw)
-        {
-          if (game_map.tile_is_opaque(x, y))
-          {
-            if (!game_map.tile_is_opaque(x, y - 1))
-            {
-              do_recursive_visibility(3, depth + 1, slope_A,
-                                      calc_inv_slope(x - 0.5, y - 0.5, eX, eY));
-            }
-          }
-          else
-          {
-            if (game_map.tile_is_opaque(x, y - 1))
-            {
-              slope_A = -calc_inv_slope(x + 0.5, y - 0.5, eX, eY);
-            }
-          }
-          pImpl->tiles_currently_seen[game_map.get_index(x, y)] = true;
-          pImpl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
-        }
-        ++y;
-      }
-      --y;
+      new_coords.x = tile_coords.x + depth;
+      new_coords.y = static_cast<int>(rint(static_cast<float>(tile_coords.y) - (slope_A * static_cast<float>(depth))));
+      loop_condition = [](sf::Vector2f a, sf::Vector2f b, float c) { return calc_inv_slope(a, b) <= c; };
+      dir = Direction::North;
+      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_inv_slope({ a.x - 0.5f, a.y - 0.5f }, b); };
+      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return -calc_inv_slope({ a.x + 0.5f, a.y - 0.5f }, b); };
       break;
+
     case 4:
-      x = eX + depth;
-      y = static_cast<int>(rint(static_cast<double>(eY) + (slope_A * static_cast<double>(depth))));
-      while (calc_inv_slope(x, y, eX, eY) >= slope_B)
-      {
-        if (calc_vis_distance(x, y, eX, eY) <= mw)
-        {
-          if (game_map.tile_is_opaque(x, y))
-          {
-            if (!game_map.tile_is_opaque(x, y + 1))
-            {
-              do_recursive_visibility(4, depth + 1, slope_A,
-                                      calc_inv_slope(x - 0.5, y + 0.5, eX, eY));
-            }
-          }
-          else
-          {
-            if (game_map.tile_is_opaque(x, y + 1))
-            {
-              slope_A = calc_inv_slope(x + 0.5, y + 0.5, eX, eY);
-            }
-          }
-          pImpl->tiles_currently_seen[game_map.get_index(x, y)] = true;
-          pImpl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
-        }
-        --y;
-      }
-      ++y;
+      new_coords.x = tile_coords.x + depth;
+      new_coords.y = static_cast<int>(rint(static_cast<float>(tile_coords.y) + (slope_A * static_cast<float>(depth))));
+      loop_condition = [](sf::Vector2f a, sf::Vector2f b, float c) { return calc_inv_slope(a, b) >= c; };
+      dir = Direction::South;
+      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_inv_slope({ a.x - 0.5f, a.y + 0.5f }, b); };
+      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_inv_slope({ a.x + 0.5f, a.y + 0.5f }, b); };
       break;
+
     case 5:
-      y = eY + depth;
-      x = static_cast<int>(rint(static_cast<double>(eX) + (slope_A * static_cast<double>(depth))));
-      while (calc_slope(x, y, eX, eY) >= slope_B)
-      {
-        if (calc_vis_distance(x, y, eX, eY) <= mw)
-        {
-          if (game_map.tile_is_opaque(x, y))
-          {
-            if (!game_map.tile_is_opaque(x + 1, y))
-            {
-              do_recursive_visibility(5, depth + 1, slope_A,
-                                      calc_slope(x + 0.5, y - 0.5, eX, eY));
-            }
-          }
-          else
-          {
-            if (game_map.tile_is_opaque(x + 1, y))
-            {
-              slope_A = calc_slope(x + 0.5, y + 0.5, eX, eY);
-            }
-          }
-          pImpl->tiles_currently_seen[game_map.get_index(x, y)] = true;
-          pImpl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
-        }
-        --x;
-      }
-      ++x;
+      new_coords.x = static_cast<int>(rint(static_cast<float>(tile_coords.x) + (slope_A * static_cast<float>(depth))));
+      new_coords.y = tile_coords.y + depth;
+      loop_condition = [](sf::Vector2f a, sf::Vector2f b, float c) { return calc_slope(a, b) >= c; };
+      dir = Direction::East;
+      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_slope({ a.x + 0.5f, a.y - 0.5f }, b); };
+      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_slope({ a.x + 0.5f, a.y + 0.5f }, b); };
       break;
+
     case 6:
-      y = eY + depth;
-      x = static_cast<int>(rint(static_cast<double>(eX) - (slope_A * static_cast<double>(depth))));
-      while (calc_slope(x, y, eX, eY) <= slope_B)
-      {
-        if (calc_vis_distance(x, y, eX, eY) <= mw)
-        {
-          if (game_map.tile_is_opaque(x, y))
-          {
-            if (!game_map.tile_is_opaque(x - 1, y))
-            {
-              do_recursive_visibility(6, depth + 1, slope_A,
-                                      calc_slope(x - 0.5, y - 0.5, eX, eY));
-            }
-          }
-          else
-          {
-            if (game_map.tile_is_opaque(x - 1, y))
-            {
-              slope_A = -calc_slope(x - 0.5, y + 0.5, eX, eY);
-            }
-          }
-          pImpl->tiles_currently_seen[game_map.get_index(x, y)] = true;
-          pImpl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
-        }
-        ++x;
-      }
-      --x;
+      new_coords.x = static_cast<int>(rint(static_cast<float>(tile_coords.x) - (slope_A * static_cast<float>(depth))));
+      new_coords.y = tile_coords.y + depth;
+      loop_condition = [](sf::Vector2f a, sf::Vector2f b, float c) { return calc_slope(a, b) <= c; };
+      dir = Direction::West;
+      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_slope({ a.x - 0.5f, a.y - 0.5f }, b); };
+      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return -calc_slope({ a.x - 0.5f, a.y + 0.5f }, b); };
       break;
+
     case 7:
-      x = eX - depth;
-      y = static_cast<int>(rint(static_cast<double>(eY) + (slope_A * static_cast<double>(depth))));
-      while (calc_inv_slope(x, y, eX, eY) <= slope_B)
-      {
-        if (calc_vis_distance(x, y, eX, eY) <= mw)
-        {
-          if (game_map.tile_is_opaque(x, y))
-          {
-            if (!game_map.tile_is_opaque(x, y + 1))
-            {
-              do_recursive_visibility(7, depth + 1, slope_A,
-                                      calc_inv_slope(x + 0.5, y + 0.5, eX, eY));
-            }
-          }
-          else
-          {
-            if (game_map.tile_is_opaque(x, y + 1))
-            {
-              slope_A = -calc_inv_slope(x - 0.5, y + 0.5, eX, eY);
-            }
-          }
-          pImpl->tiles_currently_seen[game_map.get_index(x, y)] = true;
-          pImpl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
-        }
-        --y;
-      }
-      ++y;
+      new_coords.x = tile_coords.x - depth;
+      new_coords.y = static_cast<int>(rint(static_cast<float>(tile_coords.y) + (slope_A * static_cast<float>(depth))));
+      loop_condition = [](sf::Vector2f a, sf::Vector2f b, float c) { return calc_inv_slope(a, b) <= c; };
+      dir = Direction::South;
+      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_inv_slope({ a.x + 0.5f, a.y + 0.5f }, b); };
+      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return -calc_inv_slope({ a.x - 0.5f, a.y + 0.5f }, b); };
       break;
+
     case 8:
-      x = eX - depth;
-      y = static_cast<int>(rint(static_cast<double>(eY) - (slope_A * static_cast<double>(depth))));
-      while (calc_inv_slope(x, y, eX, eY) >= slope_B)
-      {
-        if (calc_vis_distance(x, y, eX, eY) <= mw)
-        {
-          if (game_map.tile_is_opaque(x, y))
-          {
-            if (!game_map.tile_is_opaque(x, y - 1))
-            {
-              do_recursive_visibility(8, depth + 1, slope_A,
-                                      calc_inv_slope(x + 0.5, y - 0.5, eX, eY));
-            }
-          }
-          else
-          {
-            if (game_map.tile_is_opaque(x, y - 1))
-            {
-              slope_A = calc_inv_slope(x - 0.5, y - 0.5, eX, eY);
-            }
-          }
-          pImpl->tiles_currently_seen[game_map.get_index(x, y)] = true;
-          pImpl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
-        }
-        ++y;
-      }
-      --y;
+      new_coords.x = tile_coords.x - depth;
+      new_coords.y = static_cast<int>(rint(static_cast<float>(tile_coords.y) - (slope_A * static_cast<float>(depth))));
+
+      loop_condition = [](sf::Vector2f a, sf::Vector2f b, float c) { return calc_inv_slope(a, b) >= c; };
+      dir = Direction::North;
+      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_inv_slope({ a.x + 0.5f, a.y - 0.5f }, b); };
+      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_inv_slope({ a.x - 0.5f, a.y - 0.5f }, b); };
       break;
+
     default:
       MAJOR_ERROR("Octant passed to do_recursive_visibility was %d (not 1 to 8)!", octant);
       break;
   }
 
-  if ((depth < mv) && (!game_map.get_tile(x, y).is_opaque()))
+  while (loop_condition(to_v2f(new_coords), to_v2f(tile_coords), slope_B))
+  {
+    if (calc_vis_distance(new_coords, tile_coords) <= mw)
+    {
+      if (game_map.tile_is_opaque(new_coords))
+      {
+        if (!game_map.tile_is_opaque(new_coords + unit(dir)))
+        {
+          do_recursive_visibility(octant, depth + 1, slope_A, recurse_slope(to_v2f(new_coords), to_v2f(tile_coords)));
+        }
+      }
+      else
+      {
+        if (game_map.tile_is_opaque(new_coords + unit(dir)))
+        {
+          slope_A = loop_slope(to_v2f(new_coords), to_v2f(tile_coords));
+        }
+      }
+      pImpl->tiles_currently_seen[game_map.get_index(new_coords.x, new_coords.y)] = true;
+      pImpl->map_memory[game_map.get_index(new_coords.x, new_coords.y)] = game_map.get_tile(new_coords.x, new_coords.y).get_type();
+    }
+    new_coords -= unit(dir);
+  }
+  new_coords += unit(dir);
+
+  if ((depth < mv) && (!game_map.get_tile(new_coords.x, new_coords.y).is_opaque()))
   {
     do_recursive_visibility(octant, depth + 1, slope_A, slope_B);
   }

@@ -636,8 +636,8 @@ private:
   /// Used by find_seen_tiles.
   void do_recursive_visibility(int octant,
                                int depth = 1,
-                               double slope_A = 1,
-                               double slope_B = 0);
+                               float slope_A = 1,
+                               float slope_B = 0);
 
   /// Set the location of this thing.
   /// Does no checks, nor does it update the source/target inventories.

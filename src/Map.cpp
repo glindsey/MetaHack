@@ -112,71 +112,71 @@ bool Map::calc_coords(sf::Vector2i origin,
   bool is_in_bounds = false;
   switch (direction)
   {
-  case Direction::Northwest:
-    if ((origin.x > 0) &&
-        (origin.y > 0))
-    {
-      result = sf::Vector2i(origin.x - 1, origin.y - 1);
+    case Direction::Northwest:
+      if ((origin.x > 0) &&
+          (origin.y > 0))
+      {
+        result = sf::Vector2i(origin.x - 1, origin.y - 1);
+        is_in_bounds = true;
+      }
+      break;
+    case Direction::North:
+      if (origin.y > 0)
+      {
+        result = sf::Vector2i(origin.x, origin.y - 1);
+        is_in_bounds = true;
+      }
+      break;
+    case Direction::Northeast:
+      if ((origin.x < pImpl->map_size.x - 1) &&
+          (origin.y > 0))
+      {
+        result = sf::Vector2i(origin.x + 1, origin.y - 1);
+        is_in_bounds = true;
+      }
+      break;
+    case Direction::East:
+      if (origin.x < pImpl->map_size.x - 1)
+      {
+        result = sf::Vector2i(origin.x + 1, origin.y);
+        is_in_bounds = true;
+      }
+      break;
+    case Direction::Southeast:
+      if ((origin.x < pImpl->map_size.x - 1) &&
+          (origin.y < pImpl->map_size.y - 1))
+      {
+        result = sf::Vector2i(origin.x + 1, origin.y + 1);
+        is_in_bounds = true;
+      }
+      break;
+    case Direction::South:
+      if (origin.y < pImpl->map_size.y - 1)
+      {
+        result = sf::Vector2i(origin.x, origin.y + 1);
+        is_in_bounds = true;
+      }
+      break;
+    case Direction::Southwest:
+      if ((origin.x > 0) &&
+          (origin.y < pImpl->map_size.y - 1))
+      {
+        result = sf::Vector2i(origin.x - 1, origin.y + 1);
+        is_in_bounds = true;
+      }
+      break;
+    case Direction::West:
+      if (origin.x < pImpl->map_size.x - 1)
+      {
+        result = sf::Vector2i(origin.x - 1, origin.y);
+        is_in_bounds = true;
+      }
+      break;
+    case Direction::Self:
+    default:
+      result = origin;
       is_in_bounds = true;
-    }
-    break;
-  case Direction::North:
-    if (origin.y > 0)
-    {
-      result = sf::Vector2i(origin.x, origin.y - 1);
-      is_in_bounds = true;
-    }
-    break;
-  case Direction::Northeast:
-    if ((origin.x < pImpl->map_size.x - 1) &&
-        (origin.y > 0))
-    {
-      result = sf::Vector2i(origin.x + 1, origin.y - 1);
-      is_in_bounds = true;
-    }
-    break;
-  case Direction::East:
-    if (origin.x < pImpl->map_size.x - 1)
-    {
-      result = sf::Vector2i(origin.x + 1, origin.y);
-      is_in_bounds = true;
-    }
-    break;
-  case Direction::Southeast:
-    if ((origin.x < pImpl->map_size.x - 1) &&
-        (origin.y < pImpl->map_size.y - 1))
-    {
-      result = sf::Vector2i(origin.x + 1, origin.y + 1);
-      is_in_bounds = true;
-    }
-    break;
-  case Direction::South:
-    if (origin.y < pImpl->map_size.y - 1)
-    {
-      result = sf::Vector2i(origin.x, origin.y + 1);
-      is_in_bounds = true;
-    }
-    break;
-  case Direction::Southwest:
-    if ((origin.x > 0) &&
-        (origin.y < pImpl->map_size.y - 1))
-    {
-      result = sf::Vector2i(origin.x - 1, origin.y + 1);
-      is_in_bounds = true;
-    }
-    break;
-  case Direction::West:
-    if (origin.x < pImpl->map_size.x - 1)
-    {
-      result = sf::Vector2i(origin.x - 1, origin.y);
-      is_in_bounds = true;
-    }
-    break;
-  case Direction::Self:
-  default:
-    result = origin;
-    is_in_bounds = true;
-    break;
+      break;
   }
 
   return is_in_bounds;
@@ -271,289 +271,289 @@ void Map::do_recursive_lighting(ThingRef source,
 
   switch (octant)
   {
-  case 1:
-    y = eY - depth;
-    x = static_cast<int>(rint(static_cast<double>(eX) - (slope_A * static_cast<double>(depth))));
-    while (calc_slope(x, y, eX, eY) >= slope_B)
-    {
-      if (calc_vis_distance(x, y, eX, eY) <= max_depth_squared)
+    case 1:
+      y = eY - depth;
+      x = static_cast<int>(rint(static_cast<double>(eX) - (slope_A * static_cast<double>(depth))));
+      while (calc_slope(x, y, eX, eY) >= slope_B)
       {
-        if (get_tile(x, y).is_opaque())
+        if (calc_vis_distance(x, y, eX, eY) <= max_depth_squared)
         {
-          if (!get_tile(x - 1, y).is_opaque())
+          if (get_tile(x, y).is_opaque())
           {
-            do_recursive_lighting(source, origin, light_color,
-                                  max_depth_squared,
-                                  1, depth + 1,
-                                  slope_A, calc_slope(x - 0.5, y + 0.5, eX, eY));
+            if (!get_tile(x - 1, y).is_opaque())
+            {
+              do_recursive_lighting(source, origin, light_color,
+                                    max_depth_squared,
+                                    1, depth + 1,
+                                    slope_A, calc_slope(x - 0.5, y + 0.5, eX, eY));
+            }
           }
-        }
-        else
-        {
-          if (get_tile(x - 1, y).is_opaque())
+          else
           {
-            slope_A = calc_slope(x - 0.5, y - 0.5, eX, eY);
+            if (get_tile(x - 1, y).is_opaque())
+            {
+              slope_A = calc_slope(x - 0.5, y - 0.5, eX, eY);
+            }
           }
-        }
 
-        LightInfluence influence;
-        influence.coords = origin;
-        influence.color = light_color;
-        influence.intensity = max_depth_squared;
-        get_tile(x, y).add_light_influence(source, influence);
-      }
-      ++x;
-    }
-    --x;
-    break;
-  case 2:
-    y = eY - depth;
-    x = static_cast<int>(rint(static_cast<double>(eX) + (slope_A * static_cast<double>(depth))));
-    while (calc_slope(x, y, eX, eY) <= slope_B)
-    {
-      if (calc_vis_distance(x, y, eX, eY) <= max_depth_squared)
-      {
-        if (get_tile(x, y).is_opaque())
-        {
-          if (!get_tile(x + 1, y).is_opaque())
-          {
-            do_recursive_lighting(source, origin, light_color,
-                                  max_depth_squared,
-                                  2, depth + 1,
-                                  slope_A, calc_slope(x + 0.5, y + 0.5, eX, eY));
-          }
+          LightInfluence influence;
+          influence.coords = origin;
+          influence.color = light_color;
+          influence.intensity = max_depth_squared;
+          get_tile(x, y).add_light_influence(source, influence);
         }
-        else
-        {
-          if (get_tile(x + 1, y).is_opaque())
-          {
-            slope_A = -calc_slope(x + 0.5, y - 0.5, eX, eY);
-          }
-        }
-
-        LightInfluence influence;
-        influence.coords = origin;
-        influence.color = light_color;
-        influence.intensity = max_depth_squared;
-        get_tile(x, y).add_light_influence(source, influence);
+        ++x;
       }
       --x;
-    }
-    ++x;
-    break;
-  case 3:
-    x = eX + depth;
-    y = static_cast<int>(rint(static_cast<double>(eY) - (slope_A * static_cast<double>(depth))));
-    while (calc_inv_slope(x, y, eX, eY) <= slope_B)
-    {
-      if (calc_vis_distance(x, y, eX, eY) <= max_depth_squared)
+      break;
+    case 2:
+      y = eY - depth;
+      x = static_cast<int>(rint(static_cast<double>(eX) + (slope_A * static_cast<double>(depth))));
+      while (calc_slope(x, y, eX, eY) <= slope_B)
       {
-        if (get_tile(x, y).is_opaque())
+        if (calc_vis_distance(x, y, eX, eY) <= max_depth_squared)
         {
-          if (!get_tile(x, y - 1).is_opaque())
+          if (get_tile(x, y).is_opaque())
           {
-            do_recursive_lighting(source, origin, light_color,
-                                  max_depth_squared,
-                                  3, depth + 1,
-                                  slope_A, calc_inv_slope(x - 0.5, y - 0.5, eX, eY));
+            if (!get_tile(x + 1, y).is_opaque())
+            {
+              do_recursive_lighting(source, origin, light_color,
+                                    max_depth_squared,
+                                    2, depth + 1,
+                                    slope_A, calc_slope(x + 0.5, y + 0.5, eX, eY));
+            }
           }
-        }
-        else
-        {
-          if (get_tile(x, y - 1).is_opaque())
+          else
           {
-            slope_A = -calc_inv_slope(x + 0.5, y - 0.5, eX, eY);
+            if (get_tile(x + 1, y).is_opaque())
+            {
+              slope_A = -calc_slope(x + 0.5, y - 0.5, eX, eY);
+            }
           }
-        }
 
-        LightInfluence influence;
-        influence.coords = origin;
-        influence.color = light_color;
-        influence.intensity = max_depth_squared;
-        get_tile(x, y).add_light_influence(source, influence);
-      }
-      ++y;
-    }
-    --y;
-    break;
-  case 4:
-    x = eX + depth;
-    y = static_cast<int>(rint(static_cast<double>(eY) + (slope_A * static_cast<double>(depth))));
-    while (calc_inv_slope(x, y, eX, eY) >= slope_B)
-    {
-      if (calc_vis_distance(x, y, eX, eY) <= max_depth_squared)
-      {
-        if (get_tile(x, y).is_opaque())
-        {
-          if (!get_tile(x, y + 1).is_opaque())
-          {
-            do_recursive_lighting(source, origin, light_color,
-                                  max_depth_squared,
-                                  4, depth + 1,
-                                  slope_A, calc_inv_slope(x - 0.5, y + 0.5, eX, eY));
-          }
+          LightInfluence influence;
+          influence.coords = origin;
+          influence.color = light_color;
+          influence.intensity = max_depth_squared;
+          get_tile(x, y).add_light_influence(source, influence);
         }
-        else
-        {
-          if (get_tile(x, y + 1).is_opaque())
-          {
-            slope_A = calc_inv_slope(x + 0.5, y + 0.5, eX, eY);
-          }
-        }
-
-        LightInfluence influence;
-        influence.coords = origin;
-        influence.color = light_color;
-        influence.intensity = max_depth_squared;
-        get_tile(x, y).add_light_influence(source, influence);
-      }
-      --y;
-    }
-    ++y;
-    break;
-  case 5:
-    y = eY + depth;
-    x = static_cast<int>(rint(static_cast<double>(eX) + (slope_A * static_cast<double>(depth))));
-    while (calc_slope(x, y, eX, eY) >= slope_B)
-    {
-      if (calc_vis_distance(x, y, eX, eY) <= max_depth_squared)
-      {
-        if (get_tile(x, y).is_opaque())
-        {
-          if (!get_tile(x + 1, y).is_opaque())
-          {
-            do_recursive_lighting(source, origin, light_color,
-                                  max_depth_squared,
-                                  5, depth + 1,
-                                  slope_A, calc_slope(x + 0.5, y - 0.5, eX, eY));
-          }
-        }
-        else
-        {
-          if (get_tile(x + 1, y).is_opaque())
-          {
-            slope_A = calc_slope(x + 0.5, y + 0.5, eX, eY);
-          }
-        }
-
-        LightInfluence influence;
-        influence.coords = origin;
-        influence.color = light_color;
-        influence.intensity = max_depth_squared;
-        get_tile(x, y).add_light_influence(source, influence);
-      }
-      --x;
-    }
-    ++x;
-    break;
-  case 6:
-    y = eY + depth;
-    x = static_cast<int>(rint(static_cast<double>(eX) - (slope_A * static_cast<double>(depth))));
-    while (calc_slope(x, y, eX, eY) <= slope_B)
-    {
-      if (calc_vis_distance(x, y, eX, eY) <= max_depth_squared)
-      {
-        if (get_tile(x, y).is_opaque())
-        {
-          if (!get_tile(x - 1, y).is_opaque())
-          {
-            do_recursive_lighting(source, origin, light_color,
-                                  max_depth_squared,
-                                  6, depth + 1,
-                                  slope_A, calc_slope(x - 0.5, y - 0.5, eX, eY));
-          }
-        }
-        else
-        {
-          if (get_tile(x - 1, y).is_opaque())
-          {
-            slope_A = -calc_slope(x - 0.5, y + 0.5, eX, eY);
-          }
-        }
-
-        LightInfluence influence;
-        influence.coords = origin;
-        influence.color = light_color;
-        influence.intensity = max_depth_squared;
-        get_tile(x, y).add_light_influence(source, influence);
+        --x;
       }
       ++x;
-    }
-    --x;
-    break;
-  case 7:
-    x = eX - depth;
-    y = static_cast<int>(rint(static_cast<double>(eY) + (slope_A * static_cast<double>(depth))));
-    while (calc_inv_slope(x, y, eX, eY) <= slope_B)
-    {
-      if (calc_vis_distance(x, y, eX, eY) <= max_depth_squared)
+      break;
+    case 3:
+      x = eX + depth;
+      y = static_cast<int>(rint(static_cast<double>(eY) - (slope_A * static_cast<double>(depth))));
+      while (calc_inv_slope(x, y, eX, eY) <= slope_B)
       {
-        if (get_tile(x, y).is_opaque())
+        if (calc_vis_distance(x, y, eX, eY) <= max_depth_squared)
         {
-          if (!get_tile(x, y + 1).is_opaque())
+          if (get_tile(x, y).is_opaque())
           {
-            do_recursive_lighting(source, origin, light_color,
-                                  max_depth_squared,
-                                  7, depth + 1,
-                                  slope_A, calc_inv_slope(x + 0.5, y + 0.5, eX, eY));
+            if (!get_tile(x, y - 1).is_opaque())
+            {
+              do_recursive_lighting(source, origin, light_color,
+                                    max_depth_squared,
+                                    3, depth + 1,
+                                    slope_A, calc_inv_slope(x - 0.5, y - 0.5, eX, eY));
+            }
           }
-        }
-        else
-        {
-          if (get_tile(x, y + 1).is_opaque())
+          else
           {
-            slope_A = -calc_inv_slope(x - 0.5, y + 0.5, eX, eY);
+            if (get_tile(x, y - 1).is_opaque())
+            {
+              slope_A = -calc_inv_slope(x + 0.5, y - 0.5, eX, eY);
+            }
           }
-        }
 
-        LightInfluence influence;
-        influence.coords = origin;
-        influence.color = light_color;
-        influence.intensity = max_depth_squared;
-        get_tile(x, y).add_light_influence(source, influence);
+          LightInfluence influence;
+          influence.coords = origin;
+          influence.color = light_color;
+          influence.intensity = max_depth_squared;
+          get_tile(x, y).add_light_influence(source, influence);
+        }
+        ++y;
       }
       --y;
-    }
-    ++y;
-    break;
-  case 8:
-    x = eX - depth;
-    y = static_cast<int>(rint(static_cast<double>(eY) - (slope_A * static_cast<double>(depth))));
-    while (calc_inv_slope(x, y, eX, eY) >= slope_B)
-    {
-      if (calc_vis_distance(x, y, eX, eY) <= max_depth_squared)
+      break;
+    case 4:
+      x = eX + depth;
+      y = static_cast<int>(rint(static_cast<double>(eY) + (slope_A * static_cast<double>(depth))));
+      while (calc_inv_slope(x, y, eX, eY) >= slope_B)
       {
-        if (get_tile(x, y).is_opaque())
+        if (calc_vis_distance(x, y, eX, eY) <= max_depth_squared)
         {
-          if (!get_tile(x, y - 1).is_opaque())
+          if (get_tile(x, y).is_opaque())
           {
-            do_recursive_lighting(source, origin, light_color,
-                                  max_depth_squared,
-                                  8, depth + 1,
-                                  slope_A, calc_inv_slope(x + 0.5, y - 0.5, eX, eY));
+            if (!get_tile(x, y + 1).is_opaque())
+            {
+              do_recursive_lighting(source, origin, light_color,
+                                    max_depth_squared,
+                                    4, depth + 1,
+                                    slope_A, calc_inv_slope(x - 0.5, y + 0.5, eX, eY));
+            }
           }
-        }
-        else
-        {
-          if (get_tile(x, y - 1).is_opaque())
+          else
           {
-            slope_A = calc_inv_slope(x - 0.5, y - 0.5, eX, eY);
+            if (get_tile(x, y + 1).is_opaque())
+            {
+              slope_A = calc_inv_slope(x + 0.5, y + 0.5, eX, eY);
+            }
           }
-        }
 
-        LightInfluence influence;
-        influence.coords = origin;
-        influence.color = light_color;
-        influence.intensity = max_depth_squared;
-        get_tile(x, y).add_light_influence(source, influence);
+          LightInfluence influence;
+          influence.coords = origin;
+          influence.color = light_color;
+          influence.intensity = max_depth_squared;
+          get_tile(x, y).add_light_influence(source, influence);
+        }
+        --y;
       }
       ++y;
-    }
-    --y;
-    break;
-  default:
-    MAJOR_ERROR("Octant passed to do_recursive_lighting was %d (not 1 to 8)!", octant);
-    break;
+      break;
+    case 5:
+      y = eY + depth;
+      x = static_cast<int>(rint(static_cast<double>(eX) + (slope_A * static_cast<double>(depth))));
+      while (calc_slope(x, y, eX, eY) >= slope_B)
+      {
+        if (calc_vis_distance(x, y, eX, eY) <= max_depth_squared)
+        {
+          if (get_tile(x, y).is_opaque())
+          {
+            if (!get_tile(x + 1, y).is_opaque())
+            {
+              do_recursive_lighting(source, origin, light_color,
+                                    max_depth_squared,
+                                    5, depth + 1,
+                                    slope_A, calc_slope(x + 0.5, y - 0.5, eX, eY));
+            }
+          }
+          else
+          {
+            if (get_tile(x + 1, y).is_opaque())
+            {
+              slope_A = calc_slope(x + 0.5, y + 0.5, eX, eY);
+            }
+          }
+
+          LightInfluence influence;
+          influence.coords = origin;
+          influence.color = light_color;
+          influence.intensity = max_depth_squared;
+          get_tile(x, y).add_light_influence(source, influence);
+        }
+        --x;
+      }
+      ++x;
+      break;
+    case 6:
+      y = eY + depth;
+      x = static_cast<int>(rint(static_cast<double>(eX) - (slope_A * static_cast<double>(depth))));
+      while (calc_slope(x, y, eX, eY) <= slope_B)
+      {
+        if (calc_vis_distance(x, y, eX, eY) <= max_depth_squared)
+        {
+          if (get_tile(x, y).is_opaque())
+          {
+            if (!get_tile(x - 1, y).is_opaque())
+            {
+              do_recursive_lighting(source, origin, light_color,
+                                    max_depth_squared,
+                                    6, depth + 1,
+                                    slope_A, calc_slope(x - 0.5, y - 0.5, eX, eY));
+            }
+          }
+          else
+          {
+            if (get_tile(x - 1, y).is_opaque())
+            {
+              slope_A = -calc_slope(x - 0.5, y + 0.5, eX, eY);
+            }
+          }
+
+          LightInfluence influence;
+          influence.coords = origin;
+          influence.color = light_color;
+          influence.intensity = max_depth_squared;
+          get_tile(x, y).add_light_influence(source, influence);
+        }
+        ++x;
+      }
+      --x;
+      break;
+    case 7:
+      x = eX - depth;
+      y = static_cast<int>(rint(static_cast<double>(eY) + (slope_A * static_cast<double>(depth))));
+      while (calc_inv_slope(x, y, eX, eY) <= slope_B)
+      {
+        if (calc_vis_distance(x, y, eX, eY) <= max_depth_squared)
+        {
+          if (get_tile(x, y).is_opaque())
+          {
+            if (!get_tile(x, y + 1).is_opaque())
+            {
+              do_recursive_lighting(source, origin, light_color,
+                                    max_depth_squared,
+                                    7, depth + 1,
+                                    slope_A, calc_inv_slope(x + 0.5, y + 0.5, eX, eY));
+            }
+          }
+          else
+          {
+            if (get_tile(x, y + 1).is_opaque())
+            {
+              slope_A = -calc_inv_slope(x - 0.5, y + 0.5, eX, eY);
+            }
+          }
+
+          LightInfluence influence;
+          influence.coords = origin;
+          influence.color = light_color;
+          influence.intensity = max_depth_squared;
+          get_tile(x, y).add_light_influence(source, influence);
+        }
+        --y;
+      }
+      ++y;
+      break;
+    case 8:
+      x = eX - depth;
+      y = static_cast<int>(rint(static_cast<double>(eY) - (slope_A * static_cast<double>(depth))));
+      while (calc_inv_slope(x, y, eX, eY) >= slope_B)
+      {
+        if (calc_vis_distance(x, y, eX, eY) <= max_depth_squared)
+        {
+          if (get_tile(x, y).is_opaque())
+          {
+            if (!get_tile(x, y - 1).is_opaque())
+            {
+              do_recursive_lighting(source, origin, light_color,
+                                    max_depth_squared,
+                                    8, depth + 1,
+                                    slope_A, calc_inv_slope(x + 0.5, y - 0.5, eX, eY));
+            }
+          }
+          else
+          {
+            if (get_tile(x, y - 1).is_opaque())
+            {
+              slope_A = calc_inv_slope(x - 0.5, y - 0.5, eX, eY);
+            }
+          }
+
+          LightInfluence influence;
+          influence.coords = origin;
+          influence.color = light_color;
+          influence.intensity = max_depth_squared;
+          get_tile(x, y).add_light_influence(source, influence);
+        }
+        ++y;
+      }
+      --y;
+      break;
+    default:
+      MAJOR_ERROR("Octant passed to do_recursive_lighting was %d (not 1 to 8)!", octant);
+      break;
   }
 
   if ((depth*depth < max_depth_squared) && (!get_tile(x, y).is_opaque()))
@@ -860,14 +860,14 @@ MapTile& Map::get_tile(sf::Vector2i tile)
   return get_tile(tile.x, tile.y);
 }
 
-bool Map::tile_is_opaque(int x, int y)
+bool Map::tile_is_opaque(sf::Vector2i tile)
 {
-  if ((x < 0) || (x >= pImpl->map_size.x) || (y < 0) || (y >= pImpl->map_size.y))
+  if ((tile.x < 0) || (tile.x >= pImpl->map_size.x) || (tile.y < 0) || (tile.y >= pImpl->map_size.y))
   {
     return true;
   }
 
-  return TILE(x, y).is_opaque();
+  return TILE(tile.x, tile.y).is_opaque();
 }
 
 void Map::clear_map_features()
