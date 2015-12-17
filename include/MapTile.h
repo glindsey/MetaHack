@@ -98,6 +98,7 @@ public:
                            LightInfluence influence);
 
   /// Get the light shining on a tile.
+  /// Syntactic sugar for get_wall_light_level(Direction::Self).
   sf::Color get_light_level() const;
 
   /// Get the light shining on a tile wall.
