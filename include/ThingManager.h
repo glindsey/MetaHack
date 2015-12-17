@@ -35,7 +35,7 @@ public:
   /// Create a floor object.
   /// @param map_tile Pointer to the map tile associated.
   /// @return A ThingRef to the new object created.
-  ThingRef create_floor(MapTile* map_tile);
+  ThingRef create_tile_contents(MapTile* map_tile);
 
   /// Clone a particular object.
   /// @param original_ref Reference to the object to clone.

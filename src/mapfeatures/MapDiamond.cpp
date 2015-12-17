@@ -49,29 +49,29 @@ bool MapDiamond::create(GeoVector vec)
 
     switch (direction)
     {
-    case Direction::North:
-      xCenter = startingCoords.x;
-      yCenter = startingCoords.y - (diamondHalfSize + 1);
-      break;
-    case Direction::South:
-      xCenter = startingCoords.x;
-      yCenter = startingCoords.y + (diamondHalfSize + 1);
-      break;
-    case Direction::West:
-      xCenter = startingCoords.x - (diamondHalfSize + 1);
-      yCenter = startingCoords.y;
-      break;
-    case Direction::East:
-      xCenter = startingCoords.x + (diamondHalfSize + 1);
-      yCenter = startingCoords.y;
-      break;
-    case Direction::Self:
-      xCenter = startingCoords.x;
-      yCenter = startingCoords.y;
-      break;
-    default:
-      MINOR_ERROR("Invalid Direction passed into createRoom");
-      return false;
+      case Direction::North:
+        xCenter = startingCoords.x;
+        yCenter = startingCoords.y - (diamondHalfSize + 1);
+        break;
+      case Direction::South:
+        xCenter = startingCoords.x;
+        yCenter = startingCoords.y + (diamondHalfSize + 1);
+        break;
+      case Direction::West:
+        xCenter = startingCoords.x - (diamondHalfSize + 1);
+        yCenter = startingCoords.y;
+        break;
+      case Direction::East:
+        xCenter = startingCoords.x + (diamondHalfSize + 1);
+        yCenter = startingCoords.y;
+        break;
+      case Direction::Self:
+        xCenter = startingCoords.x;
+        yCenter = startingCoords.y;
+        break;
+      default:
+        MINOR_ERROR("Invalid Direction passed into createRoom");
+        return false;
     }
 
     if ((get_map().is_in_bounds(xCenter - (diamondHalfSize + 1),
@@ -114,7 +114,7 @@ bool MapDiamond::create(GeoVector vec)
             int xCoord = xCenter + xCounter;
             int yCoord = yCenter + yCounter;
             auto& tile = get_map().get_tile(xCoord, yCoord);
-            tile.set_type("MTFloorDirt");
+            tile.set_tile_type("MTFloorDirt");
           }
         }
 
@@ -137,7 +137,7 @@ bool MapDiamond::create(GeoVector vec)
         ///       Right now we just make it an open area.
         auto& startTile = get_map().get_tile(startingCoords.x,
                                              startingCoords.y);
-        startTile.set_type("MTFloorDirt");
+        startTile.set_tile_type("MTFloorDirt");
 
         return true;
       }

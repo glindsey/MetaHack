@@ -63,11 +63,11 @@ ThingRef ThingManager::create(std::string type)
   return ThingRef(new_id);
 }
 
-ThingRef ThingManager::create_floor(MapTile* map_tile)
+ThingRef ThingManager::create_tile_contents(MapTile* map_tile)
 {
   ThingId new_id = ThingRef::create();
   ThingRef new_ref = ThingRef(new_id);
-  Metadata& metadata = MDC::get_collection("thing").get("Floor");
+  Metadata& metadata = MDC::get_collection("thing").get("TileContents");
 
   Thing* new_thing = m_thing_pool.construct(map_tile, boost::ref(metadata), new_ref);
   m_thing_map[new_id] = new_thing;

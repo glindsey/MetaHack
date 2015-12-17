@@ -17,7 +17,7 @@ MapFactory::MapFactory(GameState& game_state)
   m_maps.insert(current_map_id, NEW Map(current_map_id, 1, 1));
 
   // Register the Map Lua functions.
-  the_lua_instance.register_function("map_get_floor", Map::LUA_get_floor);
+  the_lua_instance.register_function("map_get_tile_contents", Map::LUA_get_tile_contents);
   the_lua_instance.register_function("map_get_start_coords", Map::LUA_get_start_coords);
   the_lua_instance.register_function("map_add_feature", Map::LUA_map_add_feature);
 }

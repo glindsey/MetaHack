@@ -20,20 +20,20 @@ bool MapTile::initialized = false;
 MapTile::~MapTile()
 {}
 
-ThingRef MapTile::get_floor() const
+ThingRef MapTile::get_tile_contents() const
 {
-  return m_floor;
+  return m_tile_contents;
 }
 
 std::string MapTile::get_display_name() const
 {
-  return m_pMetadata->get_intrinsic<std::string>("name");
+  return m_p_metadata->get_intrinsic<std::string>("name");
 }
 
 sf::Vector2u MapTile::get_tile_sheet_coords(int frame) const
 {
   /// @todo Deal with selecting one of the other tiles.
-  sf::Vector2u start_coords = m_pMetadata->get_tile_coords();
+  sf::Vector2u start_coords = m_p_metadata->get_tile_coords();
   sf::Vector2u tile_coords(start_coords.x + m_tile_offset, start_coords.y);
   return tile_coords;
 }
@@ -145,19 +145,19 @@ void MapTile::draw_to(sf::RenderTarget& target,
   target.draw(rectangle);
 }
 
-void MapTile::set_type(std::string type)
+void MapTile::set_tile_type(std::string type)
 {
-  m_pMetadata = &(m_pMetadata->get_collection().get(type));
+  m_p_metadata = &(m_p_metadata->get_collection().get(type));
 }
 
-std::string MapTile::get_type() const
+std::string MapTile::get_tile_type() const
 {
-  return m_pMetadata->get_type();
+  return m_p_metadata->get_type();
 }
 
 bool MapTile::is_empty_space() const
 {
-  return m_pMetadata->get_intrinsic<bool>("passable");
+  return m_p_metadata->get_intrinsic<bool>("passable");
 }
 
 /// @todo: Implement this to cover different entity types.
@@ -271,11 +271,19 @@ sf::Color MapTile::get_wall_light_level(Direction direction) const
   }
 }
 
+sf::Color MapTile::get_opacity() const
+{
+  return sf::Color(m_p_metadata->get_intrinsic<int>("opacity_red"),
+                   m_p_metadata->get_intrinsic<int>("opacity_green"),
+                   m_p_metadata->get_intrinsic<int>("opacity_blue"),
+                   255);
+}
+
 bool MapTile::is_opaque() const
 {
   /// @todo Check the tile's inventory to see if there's anything huge enough
   ///       to block the view of stuff behind it.
-  bool return_value = m_pMetadata->get_intrinsic<bool>("opaque");
+  bool return_value = m_p_metadata->get_intrinsic<bool>("opaque");
   return return_value;
 }
 
@@ -306,12 +314,12 @@ void MapTile::draw_highlight(sf::RenderTarget& target,
   target.draw(box_shape);
 }
 
-void MapTile::add_walls_to(sf::VertexArray& vertices,
-                           bool use_lighting,
-                           bool nw_is_empty, bool n_is_empty,
-                           bool ne_is_empty, bool e_is_empty,
-                           bool se_is_empty, bool s_is_empty,
-                           bool sw_is_empty, bool w_is_empty)
+void MapTile::add_wall_vertices_to(sf::VertexArray& vertices,
+                                   bool use_lighting,
+                                   bool nw_is_empty, bool n_is_empty,
+                                   bool ne_is_empty, bool e_is_empty,
+                                   bool se_is_empty, bool s_is_empty,
+                                   bool sw_is_empty, bool w_is_empty)
 {
   // Checks to see N/S/E/W walls.
   bool player_sees_n_wall{ false };
@@ -567,7 +575,8 @@ void MapTile::add_walls_to(sf::VertexArray& vertices,
 
 sf::Vector2f MapTile::get_pixel_coords(int x, int y)
 {
-  return sf::Vector2f(static_cast<float>(x) * Settings.get<float>("map_tile_size"), static_cast<float>(y) * Settings.get<float>("map_tile_size"));
+  return sf::Vector2f(static_cast<float>(x) * Settings.get<float>("map_tile_size"),
+                      static_cast<float>(y) * Settings.get<float>("map_tile_size"));
 }
 
 sf::Vector2f MapTile::get_pixel_coords(sf::Vector2i tile)
@@ -581,7 +590,7 @@ MapTile::MapTile(sf::Vector2i coords, Metadata& metadata, MapId map_id)
   :
   m_map_id{ map_id },
   m_coords{ coords },
-  m_pMetadata{ &metadata },
+  m_p_metadata{ &metadata },
   m_ambient_light_color{ sf::Color(192, 192, 192, 255) },
   m_tile_offset{ pick_uniform(0, 4) }
 {
@@ -591,11 +600,11 @@ MapTile::MapTile(sf::Vector2i coords, Metadata& metadata, MapId map_id)
     initialized = true;
   }
 
-  // Floor is created out here, or else the pImpl would need the
+  // Tile contents thing is created here, or else the pImpl would need the
   // "this" pointer passed in.
   /// @todo The type of this floor should eventually be specified as
   ///       part of the constructor.
-  m_floor = GAME.get_thing_manager().create_floor(this);
+  m_tile_contents = GAME.get_thing_manager().create_tile_contents(this);
 }
 
 MapTile const& MapTile::get_adjacent_tile(Direction direction) const

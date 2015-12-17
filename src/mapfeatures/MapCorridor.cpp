@@ -48,41 +48,41 @@ bool MapCorridor::create(GeoVector vec)
 
     switch (direction)
     {
-    case Direction::North:
-      yMax = startingCoords.y - 1;
-      yMin = yMax - (corridorLen - 1);
-      xMin = startingCoords.x;
-      xMax = startingCoords.x;
-      pImpl->endingCoords.x = startingCoords.x;
-      pImpl->endingCoords.y = yMin - 1;
-      break;
-    case Direction::South:
-      yMin = startingCoords.y + 1;
-      yMax = yMin + (corridorLen - 1);
-      xMin = startingCoords.x;
-      xMax = startingCoords.x;
-      pImpl->endingCoords.x = startingCoords.x;
-      pImpl->endingCoords.y = yMax + 1;
-      break;
-    case Direction::West:
-      xMax = startingCoords.x - 1;
-      xMin = xMax - (corridorLen - 1);
-      yMin = startingCoords.y;
-      yMax = startingCoords.y;
-      pImpl->endingCoords.x = xMin - 1;
-      pImpl->endingCoords.y = startingCoords.y;
-      break;
-    case Direction::East:
-      xMin = startingCoords.x + 1;
-      xMax = xMin + (corridorLen - 1);
-      yMin = startingCoords.y;
-      yMax = startingCoords.y;
-      pImpl->endingCoords.x = xMax + 1;
-      pImpl->endingCoords.y = startingCoords.y;
-      break;
-    default:
-      MINOR_ERROR("Invalid Direction passed into createCorridor");
-      return false;
+      case Direction::North:
+        yMax = startingCoords.y - 1;
+        yMin = yMax - (corridorLen - 1);
+        xMin = startingCoords.x;
+        xMax = startingCoords.x;
+        pImpl->endingCoords.x = startingCoords.x;
+        pImpl->endingCoords.y = yMin - 1;
+        break;
+      case Direction::South:
+        yMin = startingCoords.y + 1;
+        yMax = yMin + (corridorLen - 1);
+        xMin = startingCoords.x;
+        xMax = startingCoords.x;
+        pImpl->endingCoords.x = startingCoords.x;
+        pImpl->endingCoords.y = yMax + 1;
+        break;
+      case Direction::West:
+        xMax = startingCoords.x - 1;
+        xMin = xMax - (corridorLen - 1);
+        yMin = startingCoords.y;
+        yMax = startingCoords.y;
+        pImpl->endingCoords.x = xMin - 1;
+        pImpl->endingCoords.y = startingCoords.y;
+        break;
+      case Direction::East:
+        xMin = startingCoords.x + 1;
+        xMax = xMin + (corridorLen - 1);
+        yMin = startingCoords.y;
+        yMax = startingCoords.y;
+        pImpl->endingCoords.x = xMax + 1;
+        pImpl->endingCoords.y = startingCoords.y;
+        break;
+      default:
+        MINOR_ERROR("Invalid Direction passed into createCorridor");
+        return false;
     }
 
     if ((get_map().is_in_bounds(xMin - 1, yMin - 1)) &&
@@ -113,7 +113,7 @@ bool MapCorridor::create(GeoVector vec)
           for (int yCheck = yMin; yCheck <= yMax; ++yCheck)
           {
             auto& tile = get_map().get_tile(xCheck, yCheck);
-            tile.set_type("MTFloorDirt");
+            tile.set_tile_type("MTFloorDirt");
           }
         }
 
@@ -139,7 +139,7 @@ bool MapCorridor::create(GeoVector vec)
         ///        Right now we just make it an open area.
         auto& startTile = get_map().get_tile(startingCoords.x,
                                              startingCoords.y);
-        startTile.set_type("MTFloorDirt");
+        startTile.set_tile_type("MTFloorDirt");
 
         /// Check the tile two past the ending tile.
         /// If it is open space, there should be a small chance
@@ -149,26 +149,26 @@ bool MapCorridor::create(GeoVector vec)
         sf::Vector2i checkCoords;
         switch (direction)
         {
-        case Direction::North:
-          checkCoords.x = startingCoords.x;
-          checkCoords.y = pImpl->endingCoords.y - 1;
-          break;
-        case Direction::South:
-          checkCoords.x = startingCoords.x;
-          checkCoords.y = pImpl->endingCoords.y + 1;
-          break;
-        case Direction::West:
-          checkCoords.x = pImpl->endingCoords.x - 1;
-          checkCoords.y = startingCoords.y;
-          break;
-        case Direction::East:
-          checkCoords.x = pImpl->endingCoords.x + 1;
-          checkCoords.y = startingCoords.y;
-          break;
-        default:
-          // shouldn't happen at this point
-          MINOR_ERROR("Invalid Direction passed into createCorridor");
-          return false;
+          case Direction::North:
+            checkCoords.x = startingCoords.x;
+            checkCoords.y = pImpl->endingCoords.y - 1;
+            break;
+          case Direction::South:
+            checkCoords.x = startingCoords.x;
+            checkCoords.y = pImpl->endingCoords.y + 1;
+            break;
+          case Direction::West:
+            checkCoords.x = pImpl->endingCoords.x - 1;
+            checkCoords.y = startingCoords.y;
+            break;
+          case Direction::East:
+            checkCoords.x = pImpl->endingCoords.x + 1;
+            checkCoords.y = startingCoords.y;
+            break;
+          default:
+            // shouldn't happen at this point
+            MINOR_ERROR("Invalid Direction passed into createCorridor");
+            return false;
         }
         if (get_map().is_in_bounds(checkCoords.x, checkCoords.y))
         {
@@ -177,7 +177,7 @@ bool MapCorridor::create(GeoVector vec)
           {
             auto& endTile = get_map().get_tile(pImpl->endingCoords.x,
                                                pImpl->endingCoords.y);
-            endTile.set_type("MTFloorDirt");
+            endTile.set_tile_type("MTFloorDirt");
 
             /// @todo Keep going here
           }

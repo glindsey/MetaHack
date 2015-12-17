@@ -28,7 +28,7 @@ struct MapGenerator::Impl
       for (int x = 0; x < game_map.get_size().x; ++x)
       {
         auto& tile = game_map.get_tile(x, y);
-        tile.set_type("MTWallStone");
+        tile.set_tile_type("MTWallStone");
       }
     }
   }
@@ -53,40 +53,40 @@ struct MapGenerator::Impl
         bool vecOkay = false;
         switch (vec.direction)
         {
-        case Direction::North:
-          if (vec.start_point.y > 0)
-          {
-            auto& checkTile = game_map.get_tile(vec.start_point.x,
-                                                vec.start_point.y - 1);
-            vecOkay = !checkTile.is_empty_space();
-          }
-          break;
-        case Direction::East:
-          if (vec.start_point.x < mapSize.x - 1)
-          {
-            auto& checkTile = game_map.get_tile(vec.start_point.x + 1,
-                                                vec.start_point.y);
-            vecOkay = !checkTile.is_empty_space();
-          }
-          break;
-        case Direction::South:
-          if (vec.start_point.y < mapSize.y - 1)
-          {
-            auto& checkTile = game_map.get_tile(vec.start_point.x,
-                                                vec.start_point.y + 1);
-            vecOkay = !checkTile.is_empty_space();
-          }
-          break;
-        case Direction::West:
-          if (vec.start_point.x > 0)
-          {
-            auto& checkTile = game_map.get_tile(vec.start_point.x - 1,
-                                                vec.start_point.y);
-            vecOkay = !checkTile.is_empty_space();
-          }
-          break;
-        default:
-          break;
+          case Direction::North:
+            if (vec.start_point.y > 0)
+            {
+              auto& checkTile = game_map.get_tile(vec.start_point.x,
+                                                  vec.start_point.y - 1);
+              vecOkay = !checkTile.is_empty_space();
+            }
+            break;
+          case Direction::East:
+            if (vec.start_point.x < mapSize.x - 1)
+            {
+              auto& checkTile = game_map.get_tile(vec.start_point.x + 1,
+                                                  vec.start_point.y);
+              vecOkay = !checkTile.is_empty_space();
+            }
+            break;
+          case Direction::South:
+            if (vec.start_point.y < mapSize.y - 1)
+            {
+              auto& checkTile = game_map.get_tile(vec.start_point.x,
+                                                  vec.start_point.y + 1);
+              vecOkay = !checkTile.is_empty_space();
+            }
+            break;
+          case Direction::West:
+            if (vec.start_point.x > 0)
+            {
+              auto& checkTile = game_map.get_tile(vec.start_point.x - 1,
+                                                  vec.start_point.y);
+              vecOkay = !checkTile.is_empty_space();
+            }
+            break;
+          default:
+            break;
         }
 
         if (vecOkay)
@@ -202,27 +202,27 @@ void MapGenerator::generate()
     int chosen_feature = chooseAFeature(the_RNG);
     switch (chosen_feature)
     {
-    case 0:
-      feature_settings.set<std::string>("type", "room_diamond");
-      break;
+      case 0:
+        feature_settings.set<std::string>("type", "room_diamond");
+        break;
 
-    case 1:
-      feature_settings.set<std::string>("type", "room_l");
-      break;
+      case 1:
+        feature_settings.set<std::string>("type", "room_l");
+        break;
 
-    case 2:
-      feature_settings.set<std::string>("type", "room_torus");
-      break;
+      case 2:
+        feature_settings.set<std::string>("type", "room_torus");
+        break;
 
-    case 3:
-    case 4:
-    case 5:
-      feature_settings.set<std::string>("type", "corridor");
-      break;
+      case 3:
+      case 4:
+      case 5:
+        feature_settings.set<std::string>("type", "corridor");
+        break;
 
-    default:
-      feature_settings.set<std::string>("type", "room");
-      break;
+      default:
+        feature_settings.set<std::string>("type", "room");
+        break;
     }
 
     add_feature(feature_settings);

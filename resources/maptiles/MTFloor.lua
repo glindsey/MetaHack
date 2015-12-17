@@ -7,6 +7,9 @@ MTFloor.intrinsics.name = "floor"
 
 MTFloor.intrinsics.passable = true
 MTFloor.intrinsics.opaque = false
+MTFloor.intrinsics.opacity_red = 0;
+MTFloor.intrinsics.opacity_green = 0;
+MTFloor.intrinsics.opacity_blue = 0;
 
 function MTFloor.get_description()
 	return "A floor."

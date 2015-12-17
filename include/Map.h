@@ -128,23 +128,23 @@ protected:
                              int const max_depth_squared,
                              int octant,
                              int depth = 1,
-                             double slope_A = 1,
-                             double slope_B = 0);
+                             float slope_A = 1,
+                             float slope_B = 0);
 
 private:
   Pimpl<MapImpl> pImpl;
 
   std::unique_ptr<MapGenerator> m_generator;
 
-  /// Lua function to get the Floor at a specific location.
+  /// Lua function to get the tile contents Thing at a specific location.
   /// Takes three parameters:
   ///   - The MapID of the map in question.
-  ///   - x, y location of the Floor to retrieve
+  ///   - x, y location of the tile contents to retrieve
   /// It returns:
-  ///   - ID of the requested Floor, or nil if it does not exist.
+  ///   - ID of the requested Thing, or nil if it does not exist.
   /// Notes:
   ///   - The Map that the tile is retrieved from is the one the player is on.
-  static int LUA_get_floor(lua_State* L);
+  static int LUA_get_tile_contents(lua_State* L);
 
   /// Lua function to get the start coords for a map.
   /// Takes one parameter:

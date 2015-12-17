@@ -373,9 +373,6 @@
     <None Include="resources\things\Dagger.lua">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="resources\things\Floor.lua">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="resources\things\LightOrb.lua">
       <Filter>Resource Files</Filter>
     </None>
@@ -413,6 +410,9 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include=".gitignore">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\things\TileContents.lua">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

@@ -91,7 +91,7 @@ public:
     {
       if (current_input_state == GameInputState::CursorLook)
       {
-        ThingRef floor_id = game_map.get_tile(cursor_coords).get_floor();
+        ThingRef floor_id = game_map.get_tile(cursor_coords).get_tile_contents();
         inventory_area->set_viewed(floor_id);
       }
       else
@@ -1088,7 +1088,7 @@ bool AppStateGameMode::initialize()
 
   // Move player to start position on the map.
   auto& start_coords = game_map.get_start_coords();
-  auto start_floor = game_map.get_tile(start_coords).get_floor();
+  auto start_floor = game_map.get_tile(start_coords).get_tile_contents();
   bool player_moved = player->move_into(start_floor);
 
   // Set cursor to starting location.

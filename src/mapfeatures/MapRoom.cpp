@@ -49,54 +49,54 @@ bool MapRoom::create(GeoVector vec)
 
     switch (direction)
     {
-    case Direction::North:
-    {
-      uniform_int_dist offset_dist(0, rect.width - 1);
-      int offset = offset_dist(the_RNG);
+      case Direction::North:
+      {
+        uniform_int_dist offset_dist(0, rect.width - 1);
+        int offset = offset_dist(the_RNG);
 
-      rect.top = starting_coords.y - rect.height;
-      rect.left = starting_coords.x - offset;
-    }
-    break;
-    case Direction::South:
-    {
-      uniform_int_dist offset_dist(0, rect.width - 1);
-      int offset = offset_dist(the_RNG);
+        rect.top = starting_coords.y - rect.height;
+        rect.left = starting_coords.x - offset;
+      }
+      break;
+      case Direction::South:
+      {
+        uniform_int_dist offset_dist(0, rect.width - 1);
+        int offset = offset_dist(the_RNG);
 
-      rect.top = starting_coords.y + 1;
-      rect.left = starting_coords.x - offset;
-    }
-    break;
-    case Direction::West:
-    {
-      uniform_int_dist offset_dist(0, rect.height - 1);
-      int offset = offset_dist(the_RNG);
+        rect.top = starting_coords.y + 1;
+        rect.left = starting_coords.x - offset;
+      }
+      break;
+      case Direction::West:
+      {
+        uniform_int_dist offset_dist(0, rect.height - 1);
+        int offset = offset_dist(the_RNG);
 
-      rect.top = starting_coords.y - offset;
-      rect.left = starting_coords.x - rect.width;
-    }
-    break;
-    case Direction::East:
-    {
-      uniform_int_dist offset_dist(0, rect.height - 1);
-      int offset = offset_dist(the_RNG);
+        rect.top = starting_coords.y - offset;
+        rect.left = starting_coords.x - rect.width;
+      }
+      break;
+      case Direction::East:
+      {
+        uniform_int_dist offset_dist(0, rect.height - 1);
+        int offset = offset_dist(the_RNG);
 
-      rect.top = starting_coords.y - offset;
-      rect.left = starting_coords.x + 1;
-    }
-    break;
-    case Direction::Self:
-    {
-      uniform_int_dist height_offset_dist(0, rect.height - 1);
-      uniform_int_dist width_offset_dist(0, rect.width - 1);
+        rect.top = starting_coords.y - offset;
+        rect.left = starting_coords.x + 1;
+      }
+      break;
+      case Direction::Self:
+      {
+        uniform_int_dist height_offset_dist(0, rect.height - 1);
+        uniform_int_dist width_offset_dist(0, rect.width - 1);
 
-      rect.top = starting_coords.y - height_offset_dist(the_RNG);
-      rect.left = starting_coords.x - width_offset_dist(the_RNG);
-    }
-    break;
-    default:
-      MINOR_ERROR("Invalid direction");
-      return false;
+        rect.top = starting_coords.y - height_offset_dist(the_RNG);
+        rect.left = starting_coords.x - width_offset_dist(the_RNG);
+      }
+      break;
+      default:
+        MINOR_ERROR("Invalid direction");
+        return false;
     }
 
     if ((get_map().is_in_bounds(rect.left - 1,
@@ -137,7 +137,7 @@ bool MapRoom::create(GeoVector vec)
             ++y_coord)
           {
             auto& tile = get_map().get_tile(x_coord, y_coord);
-            tile.set_type("MTFloorDirt");
+            tile.set_tile_type("MTFloorDirt");
           }
         }
 
@@ -166,7 +166,7 @@ bool MapRoom::create(GeoVector vec)
         ///       Right now we just make it an open area.
         auto& startTile = get_map().get_tile(starting_coords.x,
                                              starting_coords.y);
-        startTile.set_type("MTFloorDirt");
+        startTile.set_tile_type("MTFloorDirt");
 
         return true;
       }

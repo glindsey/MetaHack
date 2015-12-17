@@ -62,65 +62,65 @@ bool MapLRoom::create(GeoVector vec)
 
     switch (direction)
     {
-    case Direction::North:
-    {
-      uniform_int_dist offset_dist(0, horiz_rect.width - 1);
-      int offset = offset_dist(the_RNG);
+      case Direction::North:
+      {
+        uniform_int_dist offset_dist(0, horiz_rect.width - 1);
+        int offset = offset_dist(the_RNG);
 
-      horiz_rect.top = starting_coords.y - horiz_rect.height;
-      horiz_rect.left = starting_coords.x - offset;
+        horiz_rect.top = starting_coords.y - horiz_rect.height;
+        horiz_rect.left = starting_coords.x - offset;
 
-      vert_rect.top = horiz_rect.top - vert_rect.height;
-      vert_rect.left = (flip_coin() ?
-                        horiz_rect.left :
-                        horiz_rect.left + horiz_rect.width - vert_rect.width);
-    }
-    break;
-    case Direction::South:
-    {
-      uniform_int_dist offset_dist(0, horiz_rect.width - 1);
-      int offset = offset_dist(the_RNG);
+        vert_rect.top = horiz_rect.top - vert_rect.height;
+        vert_rect.left = (flip_coin() ?
+                          horiz_rect.left :
+                          horiz_rect.left + horiz_rect.width - vert_rect.width);
+      }
+      break;
+      case Direction::South:
+      {
+        uniform_int_dist offset_dist(0, horiz_rect.width - 1);
+        int offset = offset_dist(the_RNG);
 
-      horiz_rect.top = starting_coords.y + 1;
-      horiz_rect.left = starting_coords.x - offset;
+        horiz_rect.top = starting_coords.y + 1;
+        horiz_rect.left = starting_coords.x - offset;
 
-      vert_rect.top = horiz_rect.top + horiz_rect.height;
-      vert_rect.left = (flip_coin() ?
-                        horiz_rect.left :
-                        horiz_rect.left + horiz_rect.width - vert_rect.width);
-    }
-    break;
-    case Direction::West:
-    {
-      uniform_int_dist offset_dist(0, vert_rect.height - 1);
-      int offset = offset_dist(the_RNG);
+        vert_rect.top = horiz_rect.top + horiz_rect.height;
+        vert_rect.left = (flip_coin() ?
+                          horiz_rect.left :
+                          horiz_rect.left + horiz_rect.width - vert_rect.width);
+      }
+      break;
+      case Direction::West:
+      {
+        uniform_int_dist offset_dist(0, vert_rect.height - 1);
+        int offset = offset_dist(the_RNG);
 
-      vert_rect.top = starting_coords.y - offset;
-      vert_rect.left = starting_coords.x - vert_rect.width;
+        vert_rect.top = starting_coords.y - offset;
+        vert_rect.left = starting_coords.x - vert_rect.width;
 
-      horiz_rect.top = (flip_coin() ?
-                        vert_rect.top :
-                        vert_rect.top + vert_rect.height - horiz_rect.height);
-      horiz_rect.left = vert_rect.left - horiz_rect.width;
-    }
-    break;
-    case Direction::East:
-    {
-      uniform_int_dist offset_dist(0, vert_rect.height - 1);
-      int offset = offset_dist(the_RNG);
+        horiz_rect.top = (flip_coin() ?
+                          vert_rect.top :
+                          vert_rect.top + vert_rect.height - horiz_rect.height);
+        horiz_rect.left = vert_rect.left - horiz_rect.width;
+      }
+      break;
+      case Direction::East:
+      {
+        uniform_int_dist offset_dist(0, vert_rect.height - 1);
+        int offset = offset_dist(the_RNG);
 
-      vert_rect.top = starting_coords.y - offset;
-      vert_rect.left = starting_coords.x + 1;
+        vert_rect.top = starting_coords.y - offset;
+        vert_rect.left = starting_coords.x + 1;
 
-      horiz_rect.top = (flip_coin() ?
-                        vert_rect.top :
-                        vert_rect.top + vert_rect.height - horiz_rect.height);
-      horiz_rect.left = vert_rect.left + vert_rect.width;
-    }
-    break;
-    default:
-      MINOR_ERROR("Invalid direction");
-      return false;
+        horiz_rect.top = (flip_coin() ?
+                          vert_rect.top :
+                          vert_rect.top + vert_rect.height - horiz_rect.height);
+        horiz_rect.left = vert_rect.left + vert_rect.width;
+      }
+      break;
+      default:
+        MINOR_ERROR("Invalid direction");
+        return false;
     }
 
     if ((get_map().is_in_bounds(vert_rect.left - 1,
@@ -183,7 +183,7 @@ bool MapLRoom::create(GeoVector vec)
             ++y_coord)
           {
             auto& tile = get_map().get_tile(x_coord, y_coord);
-            tile.set_type("MTFloorDirt");
+            tile.set_tile_type("MTFloorDirt");
           }
         }
 
@@ -196,7 +196,7 @@ bool MapLRoom::create(GeoVector vec)
             ++y_coord)
           {
             auto& tile = get_map().get_tile(x_coord, y_coord);
-            tile.set_type("MTFloorDirt");
+            tile.set_tile_type("MTFloorDirt");
           }
         }
 
@@ -251,7 +251,7 @@ bool MapLRoom::create(GeoVector vec)
         ///       Right now we just make it an open area.
         auto& startTile = get_map().get_tile(starting_coords.x,
                                              starting_coords.y);
-        startTile.set_type("MTFloorDirt");
+        startTile.set_tile_type("MTFloorDirt");
 
         return true;
       }

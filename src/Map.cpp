@@ -213,8 +213,8 @@ void Map::process()
   {
     for (int x = 0; x < pImpl->map_size.x; ++x)
     {
-      ThingRef floor = TILE(x, y).get_floor();
-      floor->process();
+      ThingRef contents = TILE(x, y).get_tile_contents();
+      contents->process();
     }
   }
 }
@@ -234,8 +234,8 @@ void Map::update_lighting()
   {
     for (int x = 0; x < pImpl->map_size.x; ++x)
     {
-      ThingRef floor = TILE(x, y).get_floor();
-      auto& inventory = floor->get_inventory();
+      ThingRef contents = TILE(x, y).get_tile_contents();
+      auto& inventory = contents->get_inventory();
       auto& things = inventory.get_things();
       for (auto iter = std::begin(things);
       iter != std::end(things);
@@ -255,8 +255,8 @@ void Map::do_recursive_lighting(ThingRef source,
                                 int const max_depth_squared,
                                 int octant,
                                 int depth,
-                                double slope_A,
-                                double slope_B)
+                                float slope_A,
+                                float slope_B)
 {
   //TRACE("origin (%d, %d), light (%d, %d, %d)", origin.x, origin.y, light_color.r, light_color.g, light_color.b);
   //TRACE("maxd2 %d, octant %d, depth %d, slope_A %1.5f, slope_B %1.5f", max_depth_squared, octant, depth, slope_A, slope_B);
@@ -549,11 +549,11 @@ void Map::update_tile_vertices(ThingRef thing)
         }
         else
         {
-          tile.add_walls_to(pImpl->map_seen_vertices, true,
-                            nw_is_empty, n_is_empty,
-                            ne_is_empty, e_is_empty,
-                            se_is_empty, s_is_empty,
-                            sw_is_empty, w_is_empty);
+          tile.add_wall_vertices_to(pImpl->map_seen_vertices, true,
+                                    nw_is_empty, n_is_empty,
+                                    ne_is_empty, e_is_empty,
+                                    se_is_empty, s_is_empty,
+                                    sw_is_empty, w_is_empty);
         }
       }
       else
@@ -572,8 +572,8 @@ void Map::update_thing_vertices(ThingRef thing, int frame)
   {
     for (int x = 0; x < pImpl->map_size.x; ++x)
     {
-      ThingRef floor = TILE(x, y).get_floor();
-      Inventory& inv = floor->get_inventory();
+      ThingRef contents = TILE(x, y).get_tile_contents();
+      Inventory& inv = contents->get_inventory();
 
       if (thing->can_see(x, y))
       {
@@ -697,7 +697,7 @@ MapFeature& Map::add_map_feature(MapFeature* feature)
   return *feature;
 }
 
-int Map::LUA_get_floor(lua_State* L)
+int Map::LUA_get_tile_contents(lua_State* L)
 {
   int num_args = lua_gettop(L);
 
@@ -711,9 +711,9 @@ int Map::LUA_get_floor(lua_State* L)
   sf::Vector2i coords = sf::Vector2i(static_cast<int>(lua_tointeger(L, 2)), static_cast<int>(lua_tointeger(L, 3)));
 
   auto& map_tile = GAME.get_map_factory().get(map_id).get_tile(coords);
-  ThingRef floor = map_tile.get_floor();
+  ThingRef contents = map_tile.get_tile_contents();
 
-  lua_pushinteger(L, floor);
+  lua_pushinteger(L, contents);
 
   return 1;
 }

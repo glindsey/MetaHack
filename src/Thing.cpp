@@ -324,7 +324,7 @@ bool Thing::do_attack(Direction direction, unsigned int& action_time)
     }
 
     auto& new_tile = current_map.get_tile(x_new, y_new);
-    ThingRef new_floor = new_tile.get_floor();
+    ThingRef new_floor = new_tile.get_tile_contents();
 
     // See if the tile to move into contains another creature.
     ThingRef creature = new_floor->get_inventory().get_entity();
@@ -933,7 +933,7 @@ bool Thing::do_move(Direction new_direction, unsigned int& action_time)
     }
 
     auto& new_tile = current_map.get_tile(x_new, y_new);
-    ThingRef new_floor = new_tile.get_floor();
+    ThingRef new_floor = new_tile.get_tile_contents();
 
     // See if the tile to move into contains another creature.
     ThingRef creature = new_floor->get_inventory().get_entity();
@@ -3421,7 +3421,7 @@ void Thing::do_recursive_visibility(int octant,
         }
       }
       pImpl->tiles_currently_seen[game_map.get_index(new_coords.x, new_coords.y)] = true;
-      pImpl->map_memory[game_map.get_index(new_coords.x, new_coords.y)] = game_map.get_tile(new_coords.x, new_coords.y).get_type();
+      pImpl->map_memory[game_map.get_index(new_coords.x, new_coords.y)] = game_map.get_tile(new_coords.x, new_coords.y).get_tile_type();
     }
     new_coords -= unit(dir);
   }

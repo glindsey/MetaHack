@@ -26,14 +26,14 @@ class MapTile : public GameObject
 public:
   virtual ~MapTile();
 
-  /// Get the tile's floor object.
-  ThingRef get_floor() const;
+  /// Get the tile's contents object.
+  ThingRef get_tile_contents() const;
 
   /// Return this tile's description.
   virtual std::string get_display_name() const override final;
 
-  /// Return the coordinates of the tile representing the thing.
-  virtual sf::Vector2u get_tile_sheet_coords(int frame) const;
+  /// Return the coordinates of the tile on the tilesheet.
+  sf::Vector2u get_tile_sheet_coords(int frame) const;
 
   /// Add this MapTile to a VertexArray to be drawn.
   /// @param vertices Array to add vertices to.
@@ -57,15 +57,15 @@ public:
                        bool use_lighting = true,
                        int frame = 0) override;
 
-  /// Sets the map tile type, without doing gameplay checks.
+  /// Sets the tile type, without doing gameplay checks.
   /// Used to set up the map before gameplay begins.
-  /// @param tileType Type of the tile.
+  /// @param type Type of the tile.
   /// @return None.
-  void set_type(std::string tileType);
+  void set_tile_type(std::string type);
 
-  /// Gets the current map tile type.
+  /// Gets the current tile type.
   /// @return Type of the tile.
-  std::string get_type() const;
+  std::string get_tile_type() const;
 
   /// Returns whether a tile is empty space, e.g. no wall in the way.
   bool is_empty_space() const;
@@ -103,6 +103,9 @@ public:
   /// Get the light shining on a tile wall.
   sf::Color get_wall_light_level(Direction direction) const;
 
+  /// Get the opacity of this tile.
+  sf::Color get_opacity() const;
+
   /// Get whether the tile is opaque or not.
   bool is_opaque() const;
 
@@ -124,12 +127,12 @@ public:
   /// @param s_is_empty   Whether tile to the south is empty.
   /// @param sw_is_empty  Whether tile to the southwest is empty.
   /// @param w_is_empty   Whether tile to the west is empty.
-  void add_walls_to(sf::VertexArray& vertices,
-                    bool use_lighting,
-                    bool nw_is_empty, bool n_is_empty,
-                    bool ne_is_empty, bool e_is_empty,
-                    bool se_is_empty, bool s_is_empty,
-                    bool sw_is_empty, bool w_is_empty);
+  void add_wall_vertices_to(sf::VertexArray& vertices,
+                            bool use_lighting,
+                            bool nw_is_empty, bool n_is_empty,
+                            bool ne_is_empty, bool e_is_empty,
+                            bool se_is_empty, bool s_is_empty,
+                            bool sw_is_empty, bool w_is_empty);
 
   /// Get the coordinates associated with a tile.
   static sf::Vector2f get_pixel_coords(int x, int y);
@@ -156,10 +159,10 @@ private:
   /// Pointer to this MapTile's metadata.
   /// This has to be a pointer rather than a reference because it can be
   /// modified after MapTile construction.
-  Metadata* m_pMetadata;
+  Metadata* m_p_metadata;
 
-  /// Reference to the Thing that represents this tile's floor.
-  ThingRef m_floor;
+  /// Reference to the Thing that represents this tile's contents.
+  ThingRef m_tile_contents;
 
   /// Tile's light level.
   /// Levels for the various color channels are interpreted as such:
