@@ -530,54 +530,24 @@ void Map::update_tile_vertices(ThingRef thing)
   {
     for (int x = 0; x < pImpl->map_size.x; ++x)
     {
+      auto& tile = TILE(x, y);
+      bool this_is_empty = tile.is_empty_space();
+      bool nw_is_empty = ((x > 0) && (y > 0)) ? (thing->can_see(x - 1, y - 1) && TILE(x - 1, y - 1).is_empty_space()) : false;
+      bool n_is_empty = (y > 0) ? (thing->can_see(x, y - 1) && TILE(x, y - 1).is_empty_space()) : false;
+      bool ne_is_empty = ((x < pImpl->map_size.x - 1) && (y > 0)) ? (thing->can_see(x + 1, y - 1) && TILE(x + 1, y - 1).is_empty_space()) : false;
+      bool e_is_empty = (x < pImpl->map_size.x - 1) ? (thing->can_see(x + 1, y) && TILE(x + 1, y).is_empty_space()) : false;
+      bool se_is_empty = ((x < pImpl->map_size.x - 1) && (y < pImpl->map_size.y - 1)) ? (thing->can_see(x + 1, y + 1) && TILE(x + 1, y + 1).is_empty_space()) : false;
+      bool s_is_empty = (y < pImpl->map_size.y - 1) ? (thing->can_see(x, y + 1) && TILE(x, y + 1).is_empty_space()) : false;
+      bool sw_is_empty = ((x > 0) && (y < pImpl->map_size.y - 1)) ? (thing->can_see(x - 1, y + 1) && TILE(x - 1, y + 1).is_empty_space()) : false;
+      bool w_is_empty = (x > 0) ? (thing->can_see(x - 1, y) && TILE(x - 1, y).is_empty_space()) : false;
+
       if (thing->can_see(x, y))
       {
-        TILE(x, y).add_vertices_to(pImpl->map_seen_vertices, true);
-      }
-      else
-      {
-        thing->add_memory_vertices_to(pImpl->map_memory_vertices, x, y);
-      }
-    } // end for (int x)
-  } // end for (int y)
-
-  // Do walls.
-  for (int y = 0; y < pImpl->map_size.y; ++y)
-  {
-    for (int x = 0; x < pImpl->map_size.x; ++x)
-    {
-      auto& tile = TILE(x, y);
-
-      bool this_is_empty = tile.is_empty_space();
-      if (!this_is_empty)
-      {
-        bool nw_is_empty = ((x > 0) && (y > 0))
-          ? (thing->can_see(x - 1, y - 1) &&
-             TILE(x - 1, y - 1).is_empty_space()) : false;
-        bool n_is_empty = (y > 0)
-          ? (thing->can_see(x, y - 1) &&
-             TILE(x, y - 1).is_empty_space()) : false;
-        bool ne_is_empty = ((x < pImpl->map_size.x - 1) && (y > 0))
-          ? (thing->can_see(x + 1, y - 1) &&
-             TILE(x + 1, y - 1).is_empty_space()) : false;
-        bool e_is_empty = (x < pImpl->map_size.x - 1)
-          ? (thing->can_see(x + 1, y) &&
-             TILE(x + 1, y).is_empty_space()) : false;
-        bool se_is_empty = ((x < pImpl->map_size.x - 1) &&
-                            (y < pImpl->map_size.y - 1))
-          ? (thing->can_see(x + 1, y + 1) &&
-             TILE(x + 1, y + 1).is_empty_space()) : false;
-        bool s_is_empty = (y < pImpl->map_size.y - 1)
-          ? (thing->can_see(x, y + 1) &&
-             TILE(x, y + 1).is_empty_space()) : false;
-        bool sw_is_empty = ((x > 0) && (y < pImpl->map_size.y - 1))
-          ? (thing->can_see(x - 1, y + 1) &&
-             TILE(x - 1, y + 1).is_empty_space()) : false;
-        bool w_is_empty = (x > 0)
-          ? (thing->can_see(x - 1, y) &&
-             TILE(x - 1, y).is_empty_space()) : false;
-
-        if (thing->can_see(x, y))
+        if (this_is_empty)
+        {
+          tile.add_floor_vertices_to(pImpl->map_seen_vertices, true);
+        }
+        else
         {
           tile.add_walls_to(pImpl->map_seen_vertices, true,
                             nw_is_empty, n_is_empty,
@@ -585,11 +555,11 @@ void Map::update_tile_vertices(ThingRef thing)
                             se_is_empty, s_is_empty,
                             sw_is_empty, w_is_empty);
         }
-        else
-        {
-          //thing.add_memory_walls_to(pImpl->map_memory_vertices, x, y);
-        }
-      } // end if (this_is_empty)
+      }
+      else
+      {
+        thing->add_memory_vertices_to(pImpl->map_memory_vertices, x, y);
+      }
     } // end for (int x)
   } // end for (int y)
 }
@@ -612,14 +582,14 @@ void Map::update_thing_vertices(ThingRef thing, int frame)
           ThingRef biggest_thing = inv.get_largest_thing();
           if (biggest_thing != ThingManager::get_mu())
           {
-            biggest_thing->add_vertices_to(pImpl->thing_vertices, true, frame);
+            biggest_thing->add_floor_vertices_to(pImpl->thing_vertices, true, frame);
           }
         }
       }
 
       if (inv.contains(thing))
       {
-        thing->add_vertices_to(pImpl->thing_vertices, true, frame);
+        thing->add_floor_vertices_to(pImpl->thing_vertices, true, frame);
       }
     }
   }

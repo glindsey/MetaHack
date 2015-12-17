@@ -2633,9 +2633,9 @@ sf::Vector2u Thing::get_tile_sheet_coords(int frame)
   return tile_coords;
 }
 
-void Thing::add_vertices_to(sf::VertexArray& vertices,
-                            bool use_lighting,
-                            int frame)
+void Thing::add_floor_vertices_to(sf::VertexArray& vertices,
+                                  bool use_lighting,
+                                  int frame)
 {
   sf::Vertex new_vertex;
   float ts = Settings.get<float>("map_tile_size");

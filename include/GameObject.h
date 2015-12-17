@@ -19,7 +19,7 @@ public:
   /// @param use_lighting If true, calculate lighting when adding.
   ///                     If false, store directly w/white bg color.
   /// @param frame Animation frame number.
-  virtual void add_vertices_to(sf::VertexArray& vertices,
+  virtual void add_floor_vertices_to(sf::VertexArray& vertices,
                                bool use_lighting,
                                int frame) = 0;
 

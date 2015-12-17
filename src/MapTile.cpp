@@ -38,9 +38,9 @@ sf::Vector2u MapTile::get_tile_sheet_coords(int frame) const
   return tile_coords;
 }
 
-void MapTile::add_vertices_to(sf::VertexArray& vertices,
-                              bool use_lighting,
-                              int frame)
+void MapTile::add_floor_vertices_to(sf::VertexArray& vertices,
+                                    bool use_lighting,
+                                    int frame)
 {
   sf::Vertex new_vertex;
   float ts = Settings.get<float>("map_tile_size");
@@ -228,7 +228,7 @@ void MapTile::add_light_influence(ThingRef source,
 
     for (Direction d : directions)
     {
-      if (d != Direction::Self || !is_opaque())
+      //if (!is_opaque() || (d != Direction::Self))
       {
         float light_factor = (1.0f - dist_factor);
         float wall_factor = calculate_light_factor(influence.coords, get_coords(), d);
@@ -387,25 +387,61 @@ void MapTile::add_walls_to(sf::VertexArray& vertices,
   {
     tile_color = get_light_level();
 
-    wall_n_color = get_wall_light_level(Direction::North);
-    wall_n_color_w = average(wall_n_color, adjacent_tile_w.get_wall_light_level(Direction::North));
-    wall_n_color_e = average(wall_n_color, adjacent_tile_e.get_wall_light_level(Direction::North));
+    if (player_sees_n_wall)
+    {
+      wall_n_color = get_wall_light_level(Direction::North);
+      wall_n_color_w = average(wall_n_color, adjacent_tile_w.get_wall_light_level(Direction::North));
+      wall_n_color_e = average(wall_n_color, adjacent_tile_e.get_wall_light_level(Direction::North));
+    }
+    else
+    {
+      wall_n_color = sf::Color::Black;
+      wall_n_color_w = sf::Color::Black;
+      wall_n_color_e = sf::Color::Black;
+    }
 
-    wall_e_color = get_wall_light_level(Direction::East);
-    wall_e_color_n = average(wall_e_color, adjacent_tile_n.get_wall_light_level(Direction::East));
-    wall_e_color_s = average(wall_e_color, adjacent_tile_s.get_wall_light_level(Direction::East));
+    if (player_sees_e_wall)
+    {
+      wall_e_color = get_wall_light_level(Direction::East);
+      wall_e_color_n = average(wall_e_color, adjacent_tile_n.get_wall_light_level(Direction::East));
+      wall_e_color_s = average(wall_e_color, adjacent_tile_s.get_wall_light_level(Direction::East));
+    }
+    else
+    {
+      wall_e_color = sf::Color::Black;
+      wall_e_color_n = sf::Color::Black;
+      wall_e_color_s = sf::Color::Black;
+    }
 
-    wall_s_color = get_wall_light_level(Direction::South);
-    wall_s_color_w = average(wall_s_color, adjacent_tile_w.get_wall_light_level(Direction::South));
-    wall_s_color_e = average(wall_s_color, adjacent_tile_e.get_wall_light_level(Direction::South));
+    if (player_sees_s_wall)
+    {
+      wall_s_color = get_wall_light_level(Direction::South);
+      wall_s_color_w = average(wall_s_color, adjacent_tile_w.get_wall_light_level(Direction::South));
+      wall_s_color_e = average(wall_s_color, adjacent_tile_e.get_wall_light_level(Direction::South));
+    }
+    else
+    {
+      wall_s_color = sf::Color::Black;
+      wall_s_color_w = sf::Color::Black;
+      wall_s_color_e = sf::Color::Black;
+    }
 
-    wall_w_color = get_wall_light_level(Direction::West);
-    wall_w_color_n = average(wall_w_color, adjacent_tile_n.get_wall_light_level(Direction::West));
-    wall_w_color_s = average(wall_w_color, adjacent_tile_s.get_wall_light_level(Direction::West));
+    if (player_sees_w_wall)
+    {
+      wall_w_color = get_wall_light_level(Direction::West);
+      wall_w_color_n = average(wall_w_color, adjacent_tile_n.get_wall_light_level(Direction::West));
+      wall_w_color_s = average(wall_w_color, adjacent_tile_s.get_wall_light_level(Direction::West));
+    }
+    else
+    {
+      wall_w_color = sf::Color::Black;
+      wall_w_color_n = sf::Color::Black;
+      wall_w_color_s = sf::Color::Black;
+    }
   }
 
   // NORTH WALL
-  if (n_is_empty && player_sees_n_wall)
+  if (n_is_empty)
   {
     sf::Vector2f vS(vTileN.x, vTileN.y + ws);
     sf::Vector2f vSW(vTileNW.x, vTileNW.y + ws);
@@ -436,7 +472,7 @@ void MapTile::add_walls_to(sf::VertexArray& vertices,
   }
 
   // EAST WALL
-  if (e_is_empty && player_sees_e_wall)
+  if (e_is_empty)
   {
     sf::Vector2f vW(vTileE.x - ws, vTileE.y);
     sf::Vector2f vNW(vTileNE.x - ws, vTileNE.y);
@@ -467,7 +503,7 @@ void MapTile::add_walls_to(sf::VertexArray& vertices,
   }
 
   // SOUTH WALL
-  if (s_is_empty && player_sees_s_wall)
+  if (s_is_empty)
   {
     sf::Vector2f vN(vTileS.x, vTileS.y - ws);
     sf::Vector2f vNW(vTileSW.x, vTileSW.y - ws);
@@ -498,7 +534,7 @@ void MapTile::add_walls_to(sf::VertexArray& vertices,
   }
 
   // WEST WALL
-  if (w_is_empty && player_sees_w_wall)
+  if (w_is_empty)
   {
     sf::Vector2f vE(vTileW.x + ws, vTileW.y);
     sf::Vector2f vNE(vTileNW.x + ws, vTileNW.y);
