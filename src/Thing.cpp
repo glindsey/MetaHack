@@ -3327,9 +3327,8 @@ void Thing::do_recursive_visibility(int octant,
       new_coords.y = tile_coords.y - depth;
       loop_condition = [](sf::Vector2f a, sf::Vector2f b, float c) { return calc_slope(a, b) >= c; };
       dir = Direction::West;
-      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_slope({ a.x - 0.5f, a.y + 0.5f }, b); };
-      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_slope({ a.x - 0.5f, a.y - 0.5f }, b); };
-
+      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_slope(a + halfunit(Direction::Southwest), b); };
+      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_slope(a + halfunit(Direction::Northwest), b); };
       break;
 
     case 2:
@@ -3337,9 +3336,8 @@ void Thing::do_recursive_visibility(int octant,
       new_coords.y = tile_coords.y - depth;
       loop_condition = [](sf::Vector2f a, sf::Vector2f b, float c) { return calc_slope(a, b) <= c; };
       dir = Direction::East;
-      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_slope({ a.x + 0.5f, a.y + 0.5f }, b); };
-      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return -calc_slope({ a.x + 0.5f, a.y - 0.5f }, b); };
-
+      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_slope(a + halfunit(Direction::Southeast), b); };
+      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return -calc_slope(a + halfunit(Direction::Northeast), b); };
       break;
 
     case 3:
@@ -3347,8 +3345,8 @@ void Thing::do_recursive_visibility(int octant,
       new_coords.y = static_cast<int>(rint(static_cast<float>(tile_coords.y) - (slope_A * static_cast<float>(depth))));
       loop_condition = [](sf::Vector2f a, sf::Vector2f b, float c) { return calc_inv_slope(a, b) <= c; };
       dir = Direction::North;
-      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_inv_slope({ a.x - 0.5f, a.y - 0.5f }, b); };
-      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return -calc_inv_slope({ a.x + 0.5f, a.y - 0.5f }, b); };
+      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_inv_slope(a + halfunit(Direction::Northwest), b); };
+      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return -calc_inv_slope(a + halfunit(Direction::Northeast), b); };
       break;
 
     case 4:
@@ -3356,8 +3354,8 @@ void Thing::do_recursive_visibility(int octant,
       new_coords.y = static_cast<int>(rint(static_cast<float>(tile_coords.y) + (slope_A * static_cast<float>(depth))));
       loop_condition = [](sf::Vector2f a, sf::Vector2f b, float c) { return calc_inv_slope(a, b) >= c; };
       dir = Direction::South;
-      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_inv_slope({ a.x - 0.5f, a.y + 0.5f }, b); };
-      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_inv_slope({ a.x + 0.5f, a.y + 0.5f }, b); };
+      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_inv_slope(a + halfunit(Direction::Southwest), b); };
+      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_inv_slope(a + halfunit(Direction::Southeast), b); };
       break;
 
     case 5:
@@ -3365,8 +3363,8 @@ void Thing::do_recursive_visibility(int octant,
       new_coords.y = tile_coords.y + depth;
       loop_condition = [](sf::Vector2f a, sf::Vector2f b, float c) { return calc_slope(a, b) >= c; };
       dir = Direction::East;
-      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_slope({ a.x + 0.5f, a.y - 0.5f }, b); };
-      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_slope({ a.x + 0.5f, a.y + 0.5f }, b); };
+      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_slope(a + halfunit(Direction::Northeast), b); };
+      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_slope(a + halfunit(Direction::Southeast), b); };
       break;
 
     case 6:
@@ -3374,8 +3372,8 @@ void Thing::do_recursive_visibility(int octant,
       new_coords.y = tile_coords.y + depth;
       loop_condition = [](sf::Vector2f a, sf::Vector2f b, float c) { return calc_slope(a, b) <= c; };
       dir = Direction::West;
-      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_slope({ a.x - 0.5f, a.y - 0.5f }, b); };
-      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return -calc_slope({ a.x - 0.5f, a.y + 0.5f }, b); };
+      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_slope(a + halfunit(Direction::Northwest), b); };
+      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return -calc_slope(a + halfunit(Direction::Southwest), b); };
       break;
 
     case 7:
@@ -3383,8 +3381,8 @@ void Thing::do_recursive_visibility(int octant,
       new_coords.y = static_cast<int>(rint(static_cast<float>(tile_coords.y) + (slope_A * static_cast<float>(depth))));
       loop_condition = [](sf::Vector2f a, sf::Vector2f b, float c) { return calc_inv_slope(a, b) <= c; };
       dir = Direction::South;
-      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_inv_slope({ a.x + 0.5f, a.y + 0.5f }, b); };
-      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return -calc_inv_slope({ a.x - 0.5f, a.y + 0.5f }, b); };
+      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_inv_slope(a + halfunit(Direction::Southeast), b); };
+      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return -calc_inv_slope(a + halfunit(Direction::Southwest), b); };
       break;
 
     case 8:
@@ -3393,8 +3391,8 @@ void Thing::do_recursive_visibility(int octant,
 
       loop_condition = [](sf::Vector2f a, sf::Vector2f b, float c) { return calc_inv_slope(a, b) >= c; };
       dir = Direction::North;
-      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_inv_slope({ a.x + 0.5f, a.y - 0.5f }, b); };
-      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_inv_slope({ a.x - 0.5f, a.y - 0.5f }, b); };
+      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_inv_slope(a + halfunit(Direction::Northeast), b); };
+      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_inv_slope(a + halfunit(Direction::Northwest), b); };
       break;
 
     default:
