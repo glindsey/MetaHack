@@ -283,8 +283,10 @@ bool MapTile::is_opaque() const
 {
   /// @todo Check the tile's inventory to see if there's anything huge enough
   ///       to block the view of stuff behind it.
-  bool return_value = m_p_metadata->get_intrinsic<bool>("opaque");
-  return return_value;
+  return
+    (m_p_metadata->get_intrinsic<int>("opacity_red") >= 255) &&
+    (m_p_metadata->get_intrinsic<int>("opacity_green") >= 255) &&
+    (m_p_metadata->get_intrinsic<int>("opacity_blue") >= 255);
 }
 
 void MapTile::draw_highlight(sf::RenderTarget& target,

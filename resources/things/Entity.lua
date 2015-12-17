@@ -8,14 +8,16 @@ Entity.intrinsics.plural = "[Entities]"
 
 Entity.intrinsics.bodypart_body_count = 1
 Entity.intrinsics.is_entity = true
-Entity.intrinsics.opaque = true
+Entity.intrinsics.opacity_red = 255
+Entity.intrinsics.opacity_green = 255
+Entity.intrinsics.opacity_blue = 255
 Entity.intrinsics.living = true
 Entity.intrinsics.inventory_size = -1
 
 Entity.defaults.xp = 0
 
 function Entity.get_tile_offset(id, frame)
-	-- If entity's hit points are <= 0, show the "dead" tile.
+    -- If entity's hit points are <= 0, show the "dead" tile.
     local hp = thing_get_property_value(id, "hp")
     if (hp > 0) then
         return 0, 0

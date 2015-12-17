@@ -22,21 +22,23 @@ Thing.intrinsics.bodypart_foot_plural = "feet"
 Thing.intrinsics.bodypart_wing_name = "wing"
 Thing.intrinsics.bodypart_tail_name = "tail"
 
-Thing.intrinsics.inventory_size = 0;
-Thing.intrinsics.living = false;
-Thing.intrinsics.lockable = false;
-Thing.intrinsics.movable = true;
-Thing.intrinsics.opaque = true;
-Thing.intrinsics.openable = false;
-Thing.intrinsics.physical_mass = 0;
+Thing.intrinsics.inventory_size = 0
+Thing.intrinsics.living = false
+Thing.intrinsics.lockable = false
+Thing.intrinsics.movable = true
+Thing.intrinsics.opacity_red = 255
+Thing.intrinsics.opacity_green = 255
+Thing.intrinsics.opacity_blue = 255
+Thing.intrinsics.openable = false
+Thing.intrinsics.physical_mass = 0
 
-Thing.defaults.counter_busy = 0;
-Thing.defaults.locked = false;
-Thing.defaults.open = true;
-Thing.defaults.quantity = 1;
+Thing.defaults.counter_busy = 0
+Thing.defaults.locked = false
+Thing.defaults.open = true
+Thing.defaults.quantity = 1
 
 function Thing.get_description(id)
-	return "Thing #" .. id .. ", which has no description associated with it."
+    return "Thing #" .. id .. ", which has no description associated with it."
 end
 
 function Thing.can_contain(id)
@@ -44,34 +46,34 @@ function Thing.can_contain(id)
 end
 
 function Thing.get_tile_offset(id, frame)
-	return 0, 0
+    return 0, 0
 end
 
 function Thing.on_create(id)
-	--messageLog_add("Thing.on_create() called, new ID = " .. id)
-	return ActionResult.Success
+    --messageLog_add("Thing.on_create() called, new ID = " .. id)
+    return ActionResult.Success
 end
 
 function Thing.on_lit_by(id)
-	return ActionResult.Success
+    return ActionResult.Success
 end
 
 function Thing.process()
-	return ActionResult.Success
+    return ActionResult.Success
 end
 
 function Thing:get_intrinsic(name)
-	local result = self.intrinsics[name]
-	
-	if (result == nil) then
-		local superclass = self.superClass()
-		
-		if (superclass ~= nil) then
-			return self.superClass():get_intrinsic(name)
-		else
-			--error("Traversed all the way to root class but could not find " .. name)
-		end
-	else
+    local result = self.intrinsics[name]
+    
+    if (result == nil) then
+        local superclass = self.superClass()
+        
+        if (superclass ~= nil) then
+            return self.superClass():get_intrinsic(name)
+        else
+            --error("Traversed all the way to root class but could not find " .. name)
+        end
+    else
         -- Look for special cases.
         if (type(result) == "table") then
             if (result.type == "range") then
@@ -83,26 +85,26 @@ function Thing:get_intrinsic(name)
         end
 
         -- Got here? Just return the result.
-		return result
-	end
+        return result
+    end
 end
 
 function Thing:get_default(name)
-	local result = self.defaults[name]
-	
-	if (self.type == "LightOrb" or self.type == "LightSource") then
-		print("Asked thing " .. self.type .. " for default " .. name .. " and got result " .. tostring(result))
-	end
-	
-	if (result == nil) then
-		local superclass = self.superClass()
-		
-		if (superclass ~= nil) then
-			return self.superClass():get_default(name)
-		else
-			--error("Traversed all the way to root class but could not find " .. name)
-		end
-	else
+    local result = self.defaults[name]
+    
+    if (self.type == "LightOrb" or self.type == "LightSource") then
+        print("Asked thing " .. self.type .. " for default " .. name .. " and got result " .. tostring(result))
+    end
+    
+    if (result == nil) then
+        local superclass = self.superClass()
+        
+        if (superclass ~= nil) then
+            return self.superClass():get_default(name)
+        else
+            --error("Traversed all the way to root class but could not find " .. name)
+        end
+    else
         -- Look for special cases.
         if (type(result) == "table") then
             if (result.type == "range") then
@@ -114,11 +116,11 @@ function Thing:get_default(name)
         end
 
         -- Got here? Just return the result.
-		return result
-	end		
+        return result
+    end		
 end
 
 function Thing:set_intrinsic(name, value)
-	self.intrinsics[name] = value
+    self.intrinsics[name] = value
 end
 

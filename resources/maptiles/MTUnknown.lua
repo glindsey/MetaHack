@@ -7,10 +7,9 @@ MTUnknown.intrinsics = MTUnknown.intrinsics or {}
 MTUnknown.defaults = MTUnknown.defaults or {}
 
 MTUnknown.intrinsics.passable = false
-MTUnknown.intrinsics.opaque = true
-MTUnknown.intrinsics.opacity_red = 255;
-MTUnknown.intrinsics.opacity_green = 255;
-MTUnknown.intrinsics.opacity_blue = 255;
+MTUnknown.intrinsics.opacity_red = 255
+MTUnknown.intrinsics.opacity_green = 255
+MTUnknown.intrinsics.opacity_blue = 255
 
 
 function MTUnknown.get_description()

@@ -2725,7 +2725,10 @@ void Thing::draw_to(sf::RenderTarget& target,
 
 bool Thing::is_opaque() const
 {
-  return get_intrinsic<bool>("opaque");
+  return
+    (get_intrinsic<int>("opacity_red") >= 255) &&
+    (get_intrinsic<int>("opacity_green") >= 255) &&
+    (get_intrinsic<int>("opacity_blue") >= 255);
 }
 
 void Thing::light_up_surroundings()
