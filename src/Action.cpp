@@ -74,7 +74,7 @@ bool Action::process(ThingRef actor, AnyMap params)
   if (actor->get_property<int>("counter_busy") > 0)
   {
     actor->add_to_property<int>("counter_busy", -1);
-    return true;
+    return false;
   }
 
   // Perform any type-specific processing.
@@ -88,28 +88,28 @@ bool Action::process(ThingRef actor, AnyMap params)
   {
     switch (m_state)
     {
-    case Action::State::Pending:
-      prebegin_(actor, params);
-      break;
+      case Action::State::Pending:
+        prebegin_(actor, params);
+        break;
 
-    case Action::State::PreBegin:
-      begin_(actor, params);
-      break;
+      case Action::State::PreBegin:
+        begin_(actor, params);
+        break;
 
-    case Action::State::InProgress:
-      finish_(actor, params);
-      break;
+      case Action::State::InProgress:
+        finish_(actor, params);
+        break;
 
-    case Action::State::Interrupted:
-      abort_(actor, params);
-      break;
+      case Action::State::Interrupted:
+        abort_(actor, params);
+        break;
 
-    case Action::State::PostFinish:
-      set_state(Action::State::Processed);
-      break;
+      case Action::State::PostFinish:
+        set_state(Action::State::Processed);
+        break;
 
-    default:
-      break;
+      default:
+        break;
     }
   }
 
@@ -139,94 +139,94 @@ bool Action::begin_(ThingRef actor, AnyMap& params)
 
   switch (get_type())
   {
-  case Action::Type::Wait:
-    success = actor->do_move(Direction::Self, action_time);
-    break;
+    case Action::Type::Wait:
+      success = actor->do_move(Direction::Self, action_time);
+      break;
 
-  case Action::Type::Move:
-    success = actor->do_move(get_target_direction(), action_time);
-    break;
+    case Action::Type::Move:
+      success = actor->do_move(get_target_direction(), action_time);
+      break;
 
-  case Action::Type::Attack:
-    success = actor->do_attack(get_target_direction(), action_time);
-    break;
+    case Action::Type::Attack:
+      success = actor->do_attack(get_target_direction(), action_time);
+      break;
 
-  case Action::Type::Drop:
-    if (thing != ThingManager::get_mu())
-    {
-      success = actor->do_drop(thing, action_time);
-    }
-    break;
-
-  case Action::Type::Eat:
-    if (thing != ThingManager::get_mu())
-    {
-      success = actor->do_eat(thing, action_time);
-    }
-    break;
-
-  case Action::Type::Get:
-    if (thing != ThingManager::get_mu())
-    {
-      success = actor->do_pick_up(thing, action_time);
-    }
-    break;
-
-  case Action::Type::Quaff:
-    if (thing != ThingManager::get_mu())
-    {
-      success = actor->do_drink(thing, action_time);
-    }
-    break;
-
-  case Action::Type::PutInto:
-  {
-    ThingRef container = get_target_thing();
-    if (container != ThingManager::get_mu())
-    {
-      if (container->get_intrinsic<int>("inventory_size") != 0)
+    case Action::Type::Drop:
+      if (thing != ThingManager::get_mu())
       {
-        if (thing != ThingManager::get_mu())
-        {
-          success = actor->do_put_into(thing, container, action_time);
-        }
-        break;
+        success = actor->do_drop(thing, action_time);
       }
-    }
-    else
-    {
-      the_message_log.add("That target is not a container.");
-    }
-    break;
-  }
+      break;
 
-  case Action::Type::TakeOut:
-    if (thing != ThingManager::get_mu())
-    {
-      success = actor->do_take_out(thing, action_time);
-    }
-    break;
+    case Action::Type::Eat:
+      if (thing != ThingManager::get_mu())
+      {
+        success = actor->do_eat(thing, action_time);
+      }
+      break;
 
-  case Action::Type::Use:
-    if (thing != ThingManager::get_mu())
-    {
-      success = actor->do_use(thing, action_time);
-    }
-    break;
+    case Action::Type::Get:
+      if (thing != ThingManager::get_mu())
+      {
+        success = actor->do_pick_up(thing, action_time);
+      }
+      break;
 
-  case Action::Type::Wield:
-  {
-    if (thing != ThingManager::get_mu())
-    {
-      /// @todo Implement wielding using other hands.
-      success = actor->do_wield(thing, 0, action_time);
-    }
-    break;
-  }
+    case Action::Type::Quaff:
+      if (thing != ThingManager::get_mu())
+      {
+        success = actor->do_drink(thing, action_time);
+      }
+      break;
 
-  default:
-    the_message_log.add("We're sorry, but that action has not yet been implemented.");
-    break;
+    case Action::Type::PutInto:
+    {
+      ThingRef container = get_target_thing();
+      if (container != ThingManager::get_mu())
+      {
+        if (container->get_intrinsic<int>("inventory_size") != 0)
+        {
+          if (thing != ThingManager::get_mu())
+          {
+            success = actor->do_put_into(thing, container, action_time);
+          }
+          break;
+        }
+      }
+      else
+      {
+        the_message_log.add("That target is not a container.");
+      }
+      break;
+    }
+
+    case Action::Type::TakeOut:
+      if (thing != ThingManager::get_mu())
+      {
+        success = actor->do_take_out(thing, action_time);
+      }
+      break;
+
+    case Action::Type::Use:
+      if (thing != ThingManager::get_mu())
+      {
+        success = actor->do_use(thing, action_time);
+      }
+      break;
+
+    case Action::Type::Wield:
+    {
+      if (thing != ThingManager::get_mu())
+      {
+        /// @todo Implement wielding using other hands.
+        success = actor->do_wield(thing, 0, action_time);
+      }
+      break;
+    }
+
+    default:
+      the_message_log.add("We're sorry, but that action has not yet been implemented.");
+      break;
   } // end switch (action)
 
   // If starting the action succeeded, move to the in-progress state.
@@ -298,12 +298,12 @@ bool Action::target_can_be_thing() const
 {
   switch (m_type)
   {
-  case Action::Type::Fill:
-  case Action::Type::PutInto:
-    return true;
+    case Action::Type::Fill:
+    case Action::Type::PutInto:
+      return true;
 
-  default:
-    return false;
+    default:
+      return false;
   }
 }
 
@@ -311,17 +311,17 @@ bool Action::target_can_be_direction() const
 {
   switch (m_type)
   {
-  case Action::Type::Attack:
-  case Action::Type::Close:
-  case Action::Type::Fill:
-  case Action::Type::Hurl:
-  case Action::Type::Move:
-  case Action::Type::Open:
-  case Action::Type::Shoot:
-    return true;
+    case Action::Type::Attack:
+    case Action::Type::Close:
+    case Action::Type::Fill:
+    case Action::Type::Hurl:
+    case Action::Type::Move:
+    case Action::Type::Open:
+    case Action::Type::Shoot:
+      return true;
 
-  default:
-    return false;
+    default:
+      return false;
   }
 }
 

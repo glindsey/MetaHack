@@ -1,6 +1,6 @@
 SMALL THINGS
 ============
-[ ] Lua-ify some more events and checks
+[ ] Lua-ify some more events and checks (which ones?)
 [ ] Fix quantities (they are not currently being respected for get/drop actions)
 [ ] Export "thing_set_quantity" / "thing_modify_quantity" functions to Lua
 
@@ -26,7 +26,7 @@ MEDIUM THINGS
 
 BIG THINGS
 ==========
-[ ] Implement GUILabel class
+[/] Implement GUILabel class
     [ ] Label should support left/center/right justification
     [ ] Label should handle text wrapping
     [ ] Change StatusArea to use GUILabel
@@ -76,6 +76,8 @@ BIG THINGS
 
 MIND-BOGGLINGLY ENORMOUS THINGS
 ===============================
+[ ] Switch over to using SFGUI for GUI elements
+
 [ ] Implement saving/loading of the dungeon
 
 

@@ -190,31 +190,38 @@ bool Thing::do_die()
 
   switch (result)
   {
-  case ActionResult::Success:
-    if (this->is_player())
-    {
-      message = YOU + " die...";
-      the_message_log.add(message);
-    }
-    else
-    {
-      bool living = get_property<bool>("living");
-      if (living)
+    case ActionResult::Success:
+      if (this->is_player())
       {
-        message = YOU_ARE + " killed!";
+        message = YOU + " die...";
+        the_message_log.add(message);
       }
       else
       {
-        message = YOU_ARE + " destroyed!";
+        bool living = get_property<bool>("living");
+        if (living)
+        {
+          message = YOU_ARE + " killed!";
+        }
+        else
+        {
+          message = YOU_ARE + " destroyed!";
+        }
+        the_message_log.add(message);
       }
+
+      // Set the property saying the entity is dead.
+      set_property<bool>("dead", true);
+
+      // Clear any pending actions.
+      pImpl->pending_actions.clear();
+
+      return true;
+    case ActionResult::Failure:
+    default:
+      message = YOU + CV(" manage", " manages") + " to avoid dying.";
       the_message_log.add(message);
-    }
-    return true;
-  case ActionResult::Failure:
-  default:
-    message = YOU + CV(" manage", " manages") + " to avoid dying.";
-    the_message_log.add(message);
-    return false;
+      return false;
   }
 }
 
@@ -399,81 +406,81 @@ bool Thing::do_drink(ThingRef thing, unsigned int& action_time)
 
   switch (drink_try)
   {
-  case ActionResult::Success:
-    contents = thing->get_inventory().get(INVSLOT_ZERO); // Okay to do as we've already confirmed inventory size > 0.
-    if (thing->is_drinkable_by(pImpl->ref, contents))
-    {
-      message = YOU + " drink from " + thing->get_identifying_string();
-      the_message_log.add(message);
-
-      ActionResult result = thing->perform_action_drank_by(pImpl->ref, contents);
-
-      switch (result)
+    case ActionResult::Success:
+      contents = thing->get_inventory().get(INVSLOT_ZERO); // Okay to do as we've already confirmed inventory size > 0.
+      if (thing->is_drinkable_by(pImpl->ref, contents))
       {
-      case ActionResult::Success:
-        return true;
-
-      case ActionResult::SuccessDestroyed:
-        contents->destroy();
-        return true;
-
-      case ActionResult::Failure:
-        message = YOU + " stop drinking.";
+        message = YOU + " drink from " + thing->get_identifying_string();
         the_message_log.add(message);
-        break;
 
-      default:
-        MINOR_ERROR("Unknown ActionResult %d", result);
-        break;
+        ActionResult result = thing->perform_action_drank_by(pImpl->ref, contents);
+
+        switch (result)
+        {
+          case ActionResult::Success:
+            return true;
+
+          case ActionResult::SuccessDestroyed:
+            contents->destroy();
+            return true;
+
+          case ActionResult::Failure:
+            message = YOU + " stop drinking.";
+            the_message_log.add(message);
+            break;
+
+          default:
+            MINOR_ERROR("Unknown ActionResult %d", result);
+            break;
+        }
+      } // end if (thing->is_drinkable_by(pImpl->ref))
+      else
+      {
+        message = YOU + " can't drink that!";
+        the_message_log.add(message);
       }
-    } // end if (thing->is_drinkable_by(pImpl->ref))
-    else
-    {
-      message = YOU + " can't drink that!";
+      break;
+
+    case ActionResult::FailureSelfReference:
+      message = YOU_TRY + " to drink " + YOURSELF + ".";
       the_message_log.add(message);
-    }
-    break;
 
-  case ActionResult::FailureSelfReference:
-    message = YOU_TRY + " to drink " + YOURSELF + ".";
-    the_message_log.add(message);
+      /// @todo When drinking self, special message if caller is a liquid-based organism.
+      message = "Needless to say, " + YOU_ARE + " not very successful in this endeavor.";
+      the_message_log.add(message);
+      break;
 
-    /// @todo When drinking self, special message if caller is a liquid-based organism.
-    message = "Needless to say, " + YOU_ARE + " not very successful in this endeavor.";
-    the_message_log.add(message);
-    break;
+    case ActionResult::FailureActorCantPerform:
+      message = YOU_TRY_TO("drink from") + FOO + ".";
+      the_message_log.add(message);
+      message = "But, as a " + get_display_name() + "," + YOU_ARE + " not capable of drinking liquids.";
+      the_message_log.add(message);
+      break;
 
-  case ActionResult::FailureActorCantPerform:
-    message = YOU_TRY_TO("drink from") + FOO + ".";
-    the_message_log.add(message);
-    message = "But, as a " + get_display_name() + "," + YOU_ARE + " not capable of drinking liquids.";
-    the_message_log.add(message);
-    break;
+    case ActionResult::FailureThingOutOfReach:
+      message = YOU_TRY_TO("drink from") + FOO + ".";
+      the_message_log.add(message);
 
-  case ActionResult::FailureThingOutOfReach:
-    message = YOU_TRY_TO("drink from") + FOO + ".";
-    the_message_log.add(message);
+      message = FOO + " is out of " + YOUR + " reach.";
+      the_message_log.add(message);
+      break;
 
-    message = FOO + " is out of " + YOUR + " reach.";
-    the_message_log.add(message);
-    break;
+    case ActionResult::FailureNotLiquidCarrier:
+      message = YOU_TRY_TO("drink from") + FOO + ".";
+      the_message_log.add(message);
+      message = YOU + " cannot drink from that!";
+      the_message_log.add(message);
+      break;
 
-  case ActionResult::FailureNotLiquidCarrier:
-    message = YOU_TRY_TO("drink from") + FOO + ".";
-    the_message_log.add(message);
-    message = YOU + " cannot drink from that!";
-    the_message_log.add(message);
-    break;
+    case ActionResult::FailureContainerIsEmpty:
+      message = YOU_TRY_TO("drink from") + FOO + ".";
+      the_message_log.add(message);
+      message = "But " + FOO + " is empty!";
+      the_message_log.add(message);
 
-  case ActionResult::FailureContainerIsEmpty:
-    message = YOU_TRY_TO("drink from") + FOO + ".";
-    the_message_log.add(message);
-    message = "But " + FOO + " is empty!";
-    the_message_log.add(message);
-
-  default:
-    MINOR_ERROR("Unknown ActionResult %d", drink_try);
-    break;
+    default:
+      MINOR_ERROR("Unknown ActionResult %d", drink_try);
+      break;
   }
 
   return false;
@@ -519,103 +526,103 @@ bool Thing::do_drop(ThingRef thing, unsigned int& action_time)
 
   switch (drop_try)
   {
-  case ActionResult::Success:
-  {
-    if (thing->is_movable_by(pImpl->ref))
+    case ActionResult::Success:
     {
-      if (our_location->can_contain(thing) == ActionResult::Success)
+      if (thing->is_movable_by(pImpl->ref))
       {
-        if (thing->perform_action_dropped_by(pImpl->ref))
+        if (our_location->can_contain(thing) == ActionResult::Success)
         {
-          message = YOU + CV(" drop ", " drops ") + FOO + ".";
-          the_message_log.add(message);
-          if (thing->move_into(our_location))
+          if (thing->perform_action_dropped_by(pImpl->ref))
           {
-            return true;
+            message = YOU + CV(" drop ", " drops ") + FOO + ".";
+            the_message_log.add(message);
+            if (thing->move_into(our_location))
+            {
+              return true;
+            }
+            else
+            {
+              MAJOR_ERROR("Could not move Thing even though "
+                          "is_movable returned Success");
+              break;
+            }
           }
-          else
+          else // Drop failed
           {
-            MAJOR_ERROR("Could not move Thing even though "
-                        "is_movable returned Success");
-            break;
+            // perform_action_dropped_by() will print any relevant messages
           }
         }
-        else // Drop failed
+        else // can't contain the thing
         {
-          // perform_action_dropped_by() will print any relevant messages
+          // This is mighty strange, but I suppose there might be MapTiles in
+          // the future that can't contain certain Things.
+          message = YOU_TRY_TO("drop") + FOO + ".";
+          the_message_log.add(message);
+
+          message = our_location->get_identifying_string() + " cannot hold " +
+            FOO + ".";
+          the_message_log.add(message);
         }
       }
-      else // can't contain the thing
+      else // can't be moved
       {
-        // This is mighty strange, but I suppose there might be MapTiles in
-        // the future that can't contain certain Things.
         message = YOU_TRY_TO("drop") + FOO + ".";
         the_message_log.add(message);
 
-        message = our_location->get_identifying_string() + " cannot hold " +
-          FOO + ".";
+        message = FOO + " cannot be moved.";
         the_message_log.add(message);
       }
     }
-    else // can't be moved
+    break;
+
+    case ActionResult::FailureSelfReference:
+    {
+      message = YOU + CV(" hurl ", " hurls ") + YOURSELF + " to the " +
+        get_location()->get_display_name() + "!";
+      the_message_log.add(message);
+      /// @todo Possible damage from hurling yourself to the ground!
+      message = (IS_PLAYER ? "Fortunately, " : "") + YOU_SEEM + " unharmed.";
+      the_message_log.add(message);
+      message = YOU_GET + " up.";
+      the_message_log.add(message);
+      break;
+    }
+
+    case ActionResult::FailureNotPresent:
     {
       message = YOU_TRY_TO("drop") + FOO + ".";
       the_message_log.add(message);
 
-      message = FOO + " cannot be moved.";
+      message = FOO + thing->choose_verb(" are ", " is ") +
+        "not in " + YOUR + " inventory!";
       the_message_log.add(message);
     }
-  }
-  break;
-
-  case ActionResult::FailureSelfReference:
-  {
-    message = YOU + CV(" hurl ", " hurls ") + YOURSELF + " to the " +
-      get_location()->get_display_name() + "!";
-    the_message_log.add(message);
-    /// @todo Possible damage from hurling yourself to the ground!
-    message = (IS_PLAYER ? "Fortunately, " : "") + YOU_SEEM + " unharmed.";
-    the_message_log.add(message);
-    message = YOU_GET + " up.";
-    the_message_log.add(message);
     break;
-  }
 
-  case ActionResult::FailureNotPresent:
-  {
-    message = YOU_TRY_TO("drop") + FOO + ".";
-    the_message_log.add(message);
+    case ActionResult::FailureItemEquipped:
+    {
+      message = YOU_TRY_TO("drop") + FOO + ".";
+      the_message_log.add(message);
 
-    message = FOO + thing->choose_verb(" are ", " is ") +
-      "not in " + YOUR + " inventory!";
-    the_message_log.add(message);
-  }
-  break;
-
-  case ActionResult::FailureItemEquipped:
-  {
-    message = YOU_TRY_TO("drop") + FOO + ".";
-    the_message_log.add(message);
-
-    message = YOU + " cannot drop something that is currently being worn.";
-    the_message_log.add(message);
-  }
-  break;
-
-  case ActionResult::FailureItemWielded:
-  {
-    message = YOU_TRY_TO("drop") + FOO + ".";
-    the_message_log.add(message);
-
-    /// @todo Perhaps automatically try to unwield the item before dropping?
-    message = YOU + " cannot drop something that is currently being wielded.";
-    the_message_log.add(message);
-  }
-  break;
-
-  default:
-    MINOR_ERROR("Unknown ActionResult %d", drop_try);
+      message = YOU + " cannot drop something that is currently being worn.";
+      the_message_log.add(message);
+    }
     break;
+
+    case ActionResult::FailureItemWielded:
+    {
+      message = YOU_TRY_TO("drop") + FOO + ".";
+      the_message_log.add(message);
+
+      /// @todo Perhaps automatically try to unwield the item before dropping?
+      message = YOU + " cannot drop something that is currently being wielded.";
+      the_message_log.add(message);
+    }
+    break;
+
+    default:
+      MINOR_ERROR("Unknown ActionResult %d", drop_try);
+      break;
   }
 
   return false;
@@ -657,59 +664,59 @@ bool Thing::do_eat(ThingRef thing, unsigned int& action_time)
 
   switch (eat_try)
   {
-  case ActionResult::Success:
-    if (thing->is_edible_by(pImpl->ref))
-    {
-      message = YOU + CV(" eat ", " eats ") + FOO + ".";
-      the_message_log.add(message);
-
-      ActionResult result = thing->perform_action_eaten_by(pImpl->ref);
-
-      switch (result)
+    case ActionResult::Success:
+      if (thing->is_edible_by(pImpl->ref))
       {
-      case ActionResult::Success:
-        return true;
-
-      case ActionResult::SuccessDestroyed:
-        thing->destroy();
-        return true;
-
-      case ActionResult::Failure:
-        message = YOU + " stop eating.";
+        message = YOU + CV(" eat ", " eats ") + FOO + ".";
         the_message_log.add(message);
-        break;
 
-      default:
-        MINOR_ERROR("Unknown ActionResult %d", result);
-        break;
+        ActionResult result = thing->perform_action_eaten_by(pImpl->ref);
+
+        switch (result)
+        {
+          case ActionResult::Success:
+            return true;
+
+          case ActionResult::SuccessDestroyed:
+            thing->destroy();
+            return true;
+
+          case ActionResult::Failure:
+            message = YOU + " stop eating.";
+            the_message_log.add(message);
+            break;
+
+          default:
+            MINOR_ERROR("Unknown ActionResult %d", result);
+            break;
+        }
+      } // end if (thing->is_edible_by(pImpl->ref))
+      else
+      {
+        message = YOU + " can't eat that!";
+        the_message_log.add(message);
       }
-    } // end if (thing->is_edible_by(pImpl->ref))
-    else
-    {
-      message = YOU + " can't eat that!";
+      break;
+
+    case ActionResult::FailureSelfReference:
+      message = YOU_TRY_TO("eat") + FOO + ".";
       the_message_log.add(message);
-    }
-    break;
 
-  case ActionResult::FailureSelfReference:
-    message = YOU_TRY_TO("eat") + FOO + ".";
-    the_message_log.add(message);
+      /// @todo Handle "unusual" cases (e.g. zombies?)
+      message = "But " + YOU + " really " + CV("aren't", "isn't") + " that tasty, so " + YOU + CV(" stop.", " stops.");
+      the_message_log.add(message);
+      break;
 
-    /// @todo Handle "unusual" cases (e.g. zombies?)
-    message = "But " + YOU + " really " + CV("aren't", "isn't") + " that tasty, so " + YOU + CV(" stop.", " stops.");
-    the_message_log.add(message);
-    break;
+    case ActionResult::FailureActorCantPerform:
+      message = YOU_TRY_TO("eat") + FOO + ".";
+      the_message_log.add(message);
+      message = "But, as a " + get_display_name() + "," + YOU_ARE + " not capable of eating.";
+      the_message_log.add(message);
+      break;
 
-  case ActionResult::FailureActorCantPerform:
-    message = YOU_TRY_TO("eat") + FOO + ".";
-    the_message_log.add(message);
-    message = "But, as a " + get_display_name() + "," + YOU_ARE + " not capable of eating.";
-    the_message_log.add(message);
-    break;
-
-  default:
-    MINOR_ERROR("Unknown ActionResult %d", eat_try);
-    break;
+    default:
+      MINOR_ERROR("Unknown ActionResult %d", eat_try);
+      break;
   }
   return false;
 }
@@ -765,65 +772,65 @@ bool Thing::do_mix(ThingRef thing1, ThingRef thing2, unsigned int& action_time)
 
   switch (mix_try)
   {
-  case ActionResult::Success:
-    liquid1 = thing1->get_inventory().get(INVSLOT_ZERO);
-    liquid2 = thing2->get_inventory().get(INVSLOT_ZERO);
+    case ActionResult::Success:
+      liquid1 = thing1->get_inventory().get(INVSLOT_ZERO);
+      liquid2 = thing2->get_inventory().get(INVSLOT_ZERO);
 
-    message = YOU + CV(" mix ", " mixes ") + LIQUID1 + " with " + LIQUID2 + ".";
-    the_message_log.add(message);
+      message = YOU + CV(" mix ", " mixes ") + LIQUID1 + " with " + LIQUID2 + ".";
+      the_message_log.add(message);
 
-    /// @todo IMPLEMENT ME
-    //thing1->perform_action_mixed_with_by(thing2, pImpl->ref);
-    return true;
+      /// @todo IMPLEMENT ME
+      //thing1->perform_action_mixed_with_by(thing2, pImpl->ref);
+      return true;
 
-  case ActionResult::FailureCircularReference:
-    liquid1 = thing1->get_inventory().get(INVSLOT_ZERO);
-    liquid2 = thing2->get_inventory().get(INVSLOT_ZERO);
+    case ActionResult::FailureCircularReference:
+      liquid1 = thing1->get_inventory().get(INVSLOT_ZERO);
+      liquid2 = thing2->get_inventory().get(INVSLOT_ZERO);
 
-    message = YOU_TRY_TO("mix") + "the contents of " + FOO1 + " and " + FOO2 + ".";
-    the_message_log.add(message);
-    message = "Those are both the same container!";
-    the_message_log.add(message);
-    break;
+      message = YOU_TRY_TO("mix") + "the contents of " + FOO1 + " and " + FOO2 + ".";
+      the_message_log.add(message);
+      message = "Those are both the same container!";
+      the_message_log.add(message);
+      break;
 
-  case ActionResult::FailureSelfReference:
-    message = YOU_TRY_TO("mix") + "the contents of " + FOO1 + " and " + FOO2 + ".";
-    the_message_log.add(message);
-    message = "But that makes absolutely no sense.";
-    the_message_log.add(message);
-    break;
+    case ActionResult::FailureSelfReference:
+      message = YOU_TRY_TO("mix") + "the contents of " + FOO1 + " and " + FOO2 + ".";
+      the_message_log.add(message);
+      message = "But that makes absolutely no sense.";
+      the_message_log.add(message);
+      break;
 
-  case ActionResult::FailureThingOutOfReach:
-    message = YOU_TRY_TO("mix") + "the contents of " + FOO1 + " and " + FOO2 + ".";
-    the_message_log.add(message);
-    message = "But at least one of them is out of " + YOUR + " reach.";
-    the_message_log.add(message);
-    break;
+    case ActionResult::FailureThingOutOfReach:
+      message = YOU_TRY_TO("mix") + "the contents of " + FOO1 + " and " + FOO2 + ".";
+      the_message_log.add(message);
+      message = "But at least one of them is out of " + YOUR + " reach.";
+      the_message_log.add(message);
+      break;
 
-  case ActionResult::FailureNotLiquidCarrier:
-    message = YOU_TRY_TO("mix") + "the contents of " + FOO1 + " and " + FOO2 + ".";
-    the_message_log.add(message);
-    message = "But at least one of them doesn't hold liquid!";
-    the_message_log.add(message);
-    break;
+    case ActionResult::FailureNotLiquidCarrier:
+      message = YOU_TRY_TO("mix") + "the contents of " + FOO1 + " and " + FOO2 + ".";
+      the_message_log.add(message);
+      message = "But at least one of them doesn't hold liquid!";
+      the_message_log.add(message);
+      break;
 
-  case ActionResult::FailureContainerIsEmpty:
-    message = YOU_TRY_TO("mix") + "the contents of " + FOO1 + " and " + FOO2 + ".";
-    the_message_log.add(message);
-    message = "But at least one of them is empty!";
-    the_message_log.add(message);
-    break;
+    case ActionResult::FailureContainerIsEmpty:
+      message = YOU_TRY_TO("mix") + "the contents of " + FOO1 + " and " + FOO2 + ".";
+      the_message_log.add(message);
+      message = "But at least one of them is empty!";
+      the_message_log.add(message);
+      break;
 
-  case ActionResult::FailureActorCantPerform:
-    message = YOU_TRY_TO("mix") + FOO1 + " and " + FOO2 + ".";
-    the_message_log.add(message);
-    message = "But, as a " + get_display_name() + "," + YOU_HAVE + " no way to mix anything.";
-    the_message_log.add(message);
-    break;
+    case ActionResult::FailureActorCantPerform:
+      message = YOU_TRY_TO("mix") + FOO1 + " and " + FOO2 + ".";
+      the_message_log.add(message);
+      message = "But, as a " + get_display_name() + "," + YOU_HAVE + " no way to mix anything.";
+      the_message_log.add(message);
+      break;
 
-  default:
-    MINOR_ERROR("Unknown ActionResult %d", mix_try);
-    break;
+    default:
+      MINOR_ERROR("Unknown ActionResult %d", mix_try);
+      break;
   }
   return false;
 }
@@ -989,90 +996,90 @@ bool Thing::do_pick_up(ThingRef thing, unsigned int& action_time)
 
   switch (pick_up_try)
   {
-  case ActionResult::Success:
-    if (thing->is_movable_by(pImpl->ref))
-    {
-      if (thing->perform_action_picked_up_by(pImpl->ref))
+    case ActionResult::Success:
+      if (thing->is_movable_by(pImpl->ref))
       {
-        message = YOU + choose_verb(" pick", " picks") + " up " +
-          thing->get_identifying_string() + ".";
+        if (thing->perform_action_picked_up_by(pImpl->ref))
+        {
+          message = YOU + choose_verb(" pick", " picks") + " up " +
+            thing->get_identifying_string() + ".";
+          the_message_log.add(message);
+          if (thing->move_into(pImpl->ref))
+          {
+            return true;
+          }
+          else // could not add to inventory
+          {
+            MAJOR_ERROR("Could not move Thing even though "
+                        "is_movable returned Success");
+            break;
+          }
+        }
+        else // perform_action_picked_up_by(pImpl->id) returned false
+        {
+          // perform_action_picked_up_by() will print any relevant messages
+        }
+      }
+      else // thing cannot be moved
+      {
+        message = YOU_TRY +
+          " to pick up " + thing->get_identifying_string();
         the_message_log.add(message);
-        if (thing->move_into(pImpl->ref))
-        {
-          return true;
-        }
-        else // could not add to inventory
-        {
-          MAJOR_ERROR("Could not move Thing even though "
-                      "is_movable returned Success");
-          break;
-        }
+
+        message = YOU + " cannot move the " + thing->get_identifying_string() + ".";
+        the_message_log.add(message);
       }
-      else // perform_action_picked_up_by(pImpl->id) returned false
+      break;
+    case ActionResult::FailureSelfReference:
+    {
+      if (is_player())
       {
-        // perform_action_picked_up_by() will print any relevant messages
+        message = "Oh, ha ha, I get it, \"pick me up\".  Nice try.";
       }
+      else
+      {
+        message = YOU_TRY +
+          " to pick " + YOURSELF +
+          "up, which seriously shouldn't happen.";
+        MINOR_ERROR("Non-player Entity tried to pick self up!?");
+      }
+      the_message_log.add(message);
+      break;
     }
-    else // thing cannot be moved
+    case ActionResult::FailureInventoryFull:
     {
       message = YOU_TRY +
         " to pick up " + thing->get_identifying_string();
       the_message_log.add(message);
 
-      message = YOU + " cannot move the " + thing->get_identifying_string() + ".";
+      message = YOUR + " inventory cannot accomodate " + thing->get_identifying_string();
       the_message_log.add(message);
     }
     break;
-  case ActionResult::FailureSelfReference:
-  {
-    if (is_player())
-    {
-      message = "Oh, ha ha, I get it, \"pick me up\".  Nice try.";
-    }
-    else
+    case ActionResult::FailureAlreadyPresent:
     {
       message = YOU_TRY +
-        " to pick " + YOURSELF +
-        "up, which seriously shouldn't happen.";
-      MINOR_ERROR("Non-player Entity tried to pick self up!?");
+        " to pick up " + thing->get_identifying_string();
+      the_message_log.add(message);
+
+      message = thing->get_identifying_string() + " is already in " +
+        YOUR + " inventory!";
+      the_message_log.add(message);
     }
-    the_message_log.add(message);
     break;
-  }
-  case ActionResult::FailureInventoryFull:
-  {
-    message = YOU_TRY +
-      " to pick up " + thing->get_identifying_string();
-    the_message_log.add(message);
+    case ActionResult::FailureThingOutOfReach:
+    {
+      message = YOU_TRY +
+        " to pick up " + thing->get_identifying_string();
+      the_message_log.add(message);
 
-    message = YOUR + " inventory cannot accomodate " + thing->get_identifying_string();
-    the_message_log.add(message);
-  }
-  break;
-  case ActionResult::FailureAlreadyPresent:
-  {
-    message = YOU_TRY +
-      " to pick up " + thing->get_identifying_string();
-    the_message_log.add(message);
-
-    message = thing->get_identifying_string() + " is already in " +
-      YOUR + " inventory!";
-    the_message_log.add(message);
-  }
-  break;
-  case ActionResult::FailureThingOutOfReach:
-  {
-    message = YOU_TRY +
-      " to pick up " + thing->get_identifying_string();
-    the_message_log.add(message);
-
-    message = thing->get_identifying_string() + " is out of " + YOUR + " reach.";
-    the_message_log.add(message);
-  }
-  break;
-  default:
-    MINOR_ERROR("Unknown ActionResult %d", pick_up_try);
+      message = thing->get_identifying_string() + " is out of " + YOUR + " reach.";
+      the_message_log.add(message);
+    }
     break;
+    default:
+      MINOR_ERROR("Unknown ActionResult %d", pick_up_try);
+      break;
   }
 
   action_time = 0;
@@ -1151,148 +1158,148 @@ bool Thing::do_put_into(ThingRef thing, ThingRef container,
 
   switch (put_try)
   {
-  case ActionResult::Success:
-  {
-    if (thing->perform_action_put_into_by(container, pImpl->ref))
+    case ActionResult::Success:
     {
-      message = YOU + choose_verb(" place ", "places ") +
-        thing->get_identifying_string() + " into " +
-        container->get_identifying_string() + ".";
-      the_message_log.add(message);
-      if (!thing->move_into(container))
+      if (thing->perform_action_put_into_by(container, pImpl->ref))
       {
-        MAJOR_ERROR("Could not move Thing into Container");
+        message = YOU + choose_verb(" place ", "places ") +
+          thing->get_identifying_string() + " into " +
+          container->get_identifying_string() + ".";
+        the_message_log.add(message);
+        if (!thing->move_into(container))
+        {
+          MAJOR_ERROR("Could not move Thing into Container");
+        }
+        else
+        {
+          return true;
+        }
+      }
+    }
+    break;
+
+    case ActionResult::FailureSelfReference:
+    {
+      if (is_player())
+      {
+        /// @todo Possibly allow player to voluntarily enter a container?
+        message = "I'm afraid you can't do that.  "
+          "(At least, not in this version...)";
       }
       else
       {
-        return true;
+        message = YOU_TRY + " to store " + YOURSELF +
+          "into the " + thing->get_identifying_string() +
+          ", which seriously shouldn't happen.";
+        MINOR_ERROR("Non-player Entity tried to store self!?");
+      }
+      the_message_log.add(message);
+    }
+    break;
+
+    case ActionResult::FailureContainerCantBeSelf:
+    {
+      if (is_player())
+      {
+        message = "Store something in yourself?  What do you think you are, a drug mule?";
+      }
+      else
+      {
+        message = YOU_TRY + " to store " + thing->get_identifying_string() +
+          "into " + YOURSELF +
+          ", which seriously shouldn't happen.";
+        MINOR_ERROR("Non-player Entity tried to store into self!?");
+      }
+      the_message_log.add(message);
+    }
+    break;
+
+    case ActionResult::FailureAlreadyPresent:
+    {
+      message = YOU_TRY + " to store " + thing->get_identifying_string() + " in " +
+        container->get_identifying_string() + ".";
+      the_message_log.add(message);
+
+      message = thing->get_identifying_string() + " is already in " +
+        container->get_identifying_string() + "!";
+      the_message_log.add(message);
+    }
+    break;
+
+    case ActionResult::FailureTargetNotAContainer:
+    {
+      message = YOU_TRY + " to store " + thing->get_identifying_string() + " in " +
+        container->get_identifying_string() + ".";
+      the_message_log.add(message);
+
+      message = container->get_identifying_string() + " is not a container!";
+      the_message_log.add(message);
+    }
+    break;
+
+    case ActionResult::FailureThingOutOfReach:
+    {
+      message = YOU_TRY + " to store " + thing->get_identifying_string() + " in " +
+        container->get_identifying_string() + ".";
+      the_message_log.add(message);
+
+      message = YOU + " cannot reach " + thing->get_identifying_string() + ".";
+      the_message_log.add(message);
+    }
+    break;
+
+    case ActionResult::FailureContainerOutOfReach:
+    {
+      message = YOU_TRY + " to store " + thing->get_identifying_string() + " in " +
+        container->get_identifying_string() + ".";
+      the_message_log.add(message);
+
+      message = YOU + " cannot reach " + container->get_identifying_string() + ".";
+      the_message_log.add(message);
+    }
+    break;
+
+    case ActionResult::FailureCircularReference:
+    {
+      if (is_player())
+      {
+        message = "That would be an interesting topological exercise.";
+      }
+      else
+      {
+        message = YOU_TRY + " to store " + thing->get_identifying_string() +
+          "in itself, which seriously shouldn't happen.";
+        MINOR_ERROR("Non-player Entity tried to store a container in itself!?");
       }
     }
-  }
-  break;
-
-  case ActionResult::FailureSelfReference:
-  {
-    if (is_player())
-    {
-      /// @todo Possibly allow player to voluntarily enter a container?
-      message = "I'm afraid you can't do that.  "
-        "(At least, not in this version...)";
-    }
-    else
-    {
-      message = YOU_TRY + " to store " + YOURSELF +
-        "into the " + thing->get_identifying_string() +
-        ", which seriously shouldn't happen.";
-      MINOR_ERROR("Non-player Entity tried to store self!?");
-    }
-    the_message_log.add(message);
-  }
-  break;
-
-  case ActionResult::FailureContainerCantBeSelf:
-  {
-    if (is_player())
-    {
-      message = "Store something in yourself?  What do you think you are, a drug mule?";
-    }
-    else
-    {
-      message = YOU_TRY + " to store " + thing->get_identifying_string() +
-        "into " + YOURSELF +
-        ", which seriously shouldn't happen.";
-      MINOR_ERROR("Non-player Entity tried to store into self!?");
-    }
-    the_message_log.add(message);
-  }
-  break;
-
-  case ActionResult::FailureAlreadyPresent:
-  {
-    message = YOU_TRY + " to store " + thing->get_identifying_string() + " in " +
-      container->get_identifying_string() + ".";
-    the_message_log.add(message);
-
-    message = thing->get_identifying_string() + " is already in " +
-      container->get_identifying_string() + "!";
-    the_message_log.add(message);
-  }
-  break;
-
-  case ActionResult::FailureTargetNotAContainer:
-  {
-    message = YOU_TRY + " to store " + thing->get_identifying_string() + " in " +
-      container->get_identifying_string() + ".";
-    the_message_log.add(message);
-
-    message = container->get_identifying_string() + " is not a container!";
-    the_message_log.add(message);
-  }
-  break;
-
-  case ActionResult::FailureThingOutOfReach:
-  {
-    message = YOU_TRY + " to store " + thing->get_identifying_string() + " in " +
-      container->get_identifying_string() + ".";
-    the_message_log.add(message);
-
-    message = YOU + " cannot reach " + thing->get_identifying_string() + ".";
-    the_message_log.add(message);
-  }
-  break;
-
-  case ActionResult::FailureContainerOutOfReach:
-  {
-    message = YOU_TRY + " to store " + thing->get_identifying_string() + " in " +
-      container->get_identifying_string() + ".";
-    the_message_log.add(message);
-
-    message = YOU + " cannot reach " + container->get_identifying_string() + ".";
-    the_message_log.add(message);
-  }
-  break;
-
-  case ActionResult::FailureCircularReference:
-  {
-    if (is_player())
-    {
-      message = "That would be an interesting topological exercise.";
-    }
-    else
-    {
-      message = YOU_TRY + " to store " + thing->get_identifying_string() +
-        "in itself, which seriously shouldn't happen.";
-      MINOR_ERROR("Non-player Entity tried to store a container in itself!?");
-    }
-  }
-  break;
-
-  case ActionResult::FailureItemEquipped:
-  {
-    message = YOU_TRY + " to store " + thing->get_identifying_string() + " in " +
-      container->get_identifying_string() + ".";
-    the_message_log.add(message);
-
-    message = YOU + " cannot store something that is currently being worn.";
-    the_message_log.add(message);
-  }
-  break;
-
-  case ActionResult::FailureItemWielded:
-  {
-    message = YOU_TRY + " to store " + thing->get_identifying_string() + " in " +
-      container->get_identifying_string() + ".";
-    the_message_log.add(message);
-
-    /// @todo Perhaps automatically try to unwield the item before dropping?
-    message = YOU + "cannot store something that is currently being wielded.";
-    the_message_log.add(message);
-  }
-  break;
-
-  default:
-    MINOR_ERROR("Unknown ActionResult %d", put_try);
     break;
+
+    case ActionResult::FailureItemEquipped:
+    {
+      message = YOU_TRY + " to store " + thing->get_identifying_string() + " in " +
+        container->get_identifying_string() + ".";
+      the_message_log.add(message);
+
+      message = YOU + " cannot store something that is currently being worn.";
+      the_message_log.add(message);
+    }
+    break;
+
+    case ActionResult::FailureItemWielded:
+    {
+      message = YOU_TRY + " to store " + thing->get_identifying_string() + " in " +
+        container->get_identifying_string() + ".";
+      the_message_log.add(message);
+
+      /// @todo Perhaps automatically try to unwield the item before dropping?
+      message = YOU + "cannot store something that is currently being wielded.";
+      the_message_log.add(message);
+    }
+    break;
+
+    default:
+      MINOR_ERROR("Unknown ActionResult %d", put_try);
+      break;
   }
 
   return false;
@@ -1324,49 +1331,49 @@ bool Thing::do_read(ThingRef thing, unsigned int& action_time)
 
   switch (read_try)
   {
-  case ActionResult::Success:
-  {
-    if (thing->is_readable_by(pImpl->ref))
+    case ActionResult::Success:
     {
-      switch (thing->perform_action_read_by(pImpl->ref))
+      if (thing->is_readable_by(pImpl->ref))
       {
-      case ActionResult::SuccessDestroyed:
-        thing->destroy();
-        return true;
+        switch (thing->perform_action_read_by(pImpl->ref))
+        {
+          case ActionResult::SuccessDestroyed:
+            thing->destroy();
+            return true;
 
-      case ActionResult::Success:
-        return true;
+          case ActionResult::Success:
+            return true;
 
-      case ActionResult::Failure:
-      default:
-        return false;
+          case ActionResult::Failure:
+          default:
+            return false;
+        }
+      }
+      else
+      {
+        message = YOU_TRY + " to read " + thing->get_identifying_string() + ".";
+        the_message_log.add(message);
+
+        message = thing->get_identifying_string() + " has no writing on it to read.";
+        the_message_log.add(message);
       }
     }
-    else
+    break;
+
+    case ActionResult::FailureTooStupid:
     {
       message = YOU_TRY + " to read " + thing->get_identifying_string() + ".";
       the_message_log.add(message);
 
-      message = thing->get_identifying_string() + " has no writing on it to read.";
+      message = YOU_ARE + " not smart enough to read " +
+        thing->get_identifying_string() + ".";
       the_message_log.add(message);
     }
-  }
-  break;
-
-  case ActionResult::FailureTooStupid:
-  {
-    message = YOU_TRY + " to read " + thing->get_identifying_string() + ".";
-    the_message_log.add(message);
-
-    message = YOU_ARE + " not smart enough to read " +
-      thing->get_identifying_string() + ".";
-    the_message_log.add(message);
-  }
-  break;
-
-  default:
-    MINOR_ERROR("Unknown ActionResult %d", read_try);
     break;
+
+    default:
+      MINOR_ERROR("Unknown ActionResult %d", read_try);
+      break;
   }
 
   return false;
@@ -1411,68 +1418,68 @@ bool Thing::do_take_out(ThingRef thing, unsigned int& action_time)
 
   switch (takeout_try)
   {
-  case ActionResult::Success:
-  {
-    if (thing->perform_action_taken_out_by(pImpl->ref))
+    case ActionResult::Success:
     {
-      if (!thing->move_into(new_location))
+      if (thing->perform_action_taken_out_by(pImpl->ref))
       {
-        MAJOR_ERROR("Could not move Thing out of Container");
+        if (!thing->move_into(new_location))
+        {
+          MAJOR_ERROR("Could not move Thing out of Container");
+        }
+        else
+        {
+          message = YOU + choose_verb(" remove ", "removes ") +
+            thing->get_identifying_string() + " from " +
+            container->get_identifying_string() + ".";
+          the_message_log.add(message);
+        }
+      }
+    }
+    break;
+
+    case ActionResult::FailureSelfReference:
+    {
+      if (is_player())
+      {
+        /// @todo Maybe allow player to voluntarily exit a container?
+        message = "I'm afraid you can't do that.  "
+          "(At least, not in this version...)";
       }
       else
       {
-        message = YOU + choose_verb(" remove ", "removes ") +
-          thing->get_identifying_string() + " from " +
-          container->get_identifying_string() + ".";
-        the_message_log.add(message);
+        message = YOU_TRY + " to take " + YOURSELF +
+          "out, which seriously shouldn't happen.";
+        MINOR_ERROR("Non-player Entity tried to take self out!?");
       }
+      the_message_log.add(message);
     }
-  }
-  break;
-
-  case ActionResult::FailureSelfReference:
-  {
-    if (is_player())
-    {
-      /// @todo Maybe allow player to voluntarily exit a container?
-      message = "I'm afraid you can't do that.  "
-        "(At least, not in this version...)";
-    }
-    else
-    {
-      message = YOU_TRY + " to take " + YOURSELF +
-        "out, which seriously shouldn't happen.";
-      MINOR_ERROR("Non-player Entity tried to take self out!?");
-    }
-    the_message_log.add(message);
-  }
-  break;
-
-  case ActionResult::FailureNotInsideContainer:
-  {
-    message = YOU_TRY + " to remove " + thing->get_identifying_string() +
-      " from its container.";
-    the_message_log.add(message);
-
-    message = "But " + thing->get_identifying_string() + " is not inside a container!";
-    the_message_log.add(message);
-  }
-  break;
-
-  case ActionResult::FailureContainerOutOfReach:
-  {
-    message = YOU_TRY + " to remove " + thing->get_identifying_string() + " from " +
-      container->get_identifying_string() + ".";
-    the_message_log.add(message);
-
-    message = YOU + " cannot reach " + container->get_identifying_string() + ".";
-    the_message_log.add(message);
-  }
-  break;
-
-  default:
-    MINOR_ERROR("Unknown ActionResult %d", takeout_try);
     break;
+
+    case ActionResult::FailureNotInsideContainer:
+    {
+      message = YOU_TRY + " to remove " + thing->get_identifying_string() +
+        " from its container.";
+      the_message_log.add(message);
+
+      message = "But " + thing->get_identifying_string() + " is not inside a container!";
+      the_message_log.add(message);
+    }
+    break;
+
+    case ActionResult::FailureContainerOutOfReach:
+    {
+      message = YOU_TRY + " to remove " + thing->get_identifying_string() + " from " +
+        container->get_identifying_string() + ".";
+      the_message_log.add(message);
+
+      message = YOU + " cannot reach " + container->get_identifying_string() + ".";
+      the_message_log.add(message);
+    }
+    break;
+
+    default:
+      MINOR_ERROR("Unknown ActionResult %d", takeout_try);
+      break;
   }
 
   return false;
@@ -1506,75 +1513,75 @@ bool Thing::do_throw(ThingRef thing, Direction& direction, unsigned int& action_
 
   switch (throw_try)
   {
-  case ActionResult::Success:
-  {
-    ThingRef new_location = get_location();
-    if (thing->is_movable_by(pImpl->ref))
+    case ActionResult::Success:
     {
-      if (thing->perform_action_thrown_by(pImpl->ref, direction))
+      ThingRef new_location = get_location();
+      if (thing->is_movable_by(pImpl->ref))
       {
-        if (thing->move_into(new_location))
+        if (thing->perform_action_thrown_by(pImpl->ref, direction))
         {
-          message = YOU + choose_verb(" throw ", " throws ") +
-            thing->get_identifying_string();
-          the_message_log.add(message);
+          if (thing->move_into(new_location))
+          {
+            message = YOU + choose_verb(" throw ", " throws ") +
+              thing->get_identifying_string();
+            the_message_log.add(message);
 
-          /// @todo When throwing, set Thing's direction and velocity
-          return true;
-        }
-        else
-        {
-          MAJOR_ERROR("Could not move Thing even though "
-                      "is_movable returned Success");
+            /// @todo When throwing, set Thing's direction and velocity
+            return true;
+          }
+          else
+          {
+            MAJOR_ERROR("Could not move Thing even though "
+                        "is_movable returned Success");
+          }
         }
       }
+      else
+      {
+        /// @todo Tried to throw something immovable? That doesn't make sense.
+      }
     }
-    else
-    {
-      /// @todo Tried to throw something immovable? That doesn't make sense.
-    }
-  }
-  break;
-
-  case ActionResult::FailureSelfReference:
-  {
-    if (is_player())
-    {
-      message = "Throw yourself?  Throw yourself what, a party?";
-    }
-    else
-    {
-      message = YOU_TRY + " to throw " + YOURSELF +
-        ", which seriously shouldn't happen.";
-      MINOR_ERROR("Non-player Entity tried to throw self!?");
-    }
-    the_message_log.add(message);
-  }
-  break;
-
-  case ActionResult::FailureItemEquipped:
-  {
-    message = YOU + " cannot throw something " + YOU_ARE + "wearing.";
-    the_message_log.add(message);
-  }
-  break;
-
-  case ActionResult::FailureNotPresent:
-  {
-    message = YOU_TRY + " to throw " + thing->get_identifying_string() + ".";
-    the_message_log.add(message);
-
-    message = "But " + thing->get_identifying_string() +
-      thing->choose_verb(" are", " is") +
-      " not actually in " + YOUR +
-      " inventory!";
-    the_message_log.add(message);
-  }
-  break;
-
-  default:
-    MINOR_ERROR("Unknown ActionResult %d", throw_try);
     break;
+
+    case ActionResult::FailureSelfReference:
+    {
+      if (is_player())
+      {
+        message = "Throw yourself?  Throw yourself what, a party?";
+      }
+      else
+      {
+        message = YOU_TRY + " to throw " + YOURSELF +
+          ", which seriously shouldn't happen.";
+        MINOR_ERROR("Non-player Entity tried to throw self!?");
+      }
+      the_message_log.add(message);
+    }
+    break;
+
+    case ActionResult::FailureItemEquipped:
+    {
+      message = YOU + " cannot throw something " + YOU_ARE + "wearing.";
+      the_message_log.add(message);
+    }
+    break;
+
+    case ActionResult::FailureNotPresent:
+    {
+      message = YOU_TRY + " to throw " + thing->get_identifying_string() + ".";
+      the_message_log.add(message);
+
+      message = "But " + thing->get_identifying_string() +
+        thing->choose_verb(" are", " is") +
+        " not actually in " + YOUR +
+        " inventory!";
+      the_message_log.add(message);
+    }
+    break;
+
+    default:
+      MINOR_ERROR("Unknown ActionResult %d", throw_try);
+      break;
   }
 
   return false;
@@ -1607,45 +1614,45 @@ bool Thing::do_use(ThingRef thing, unsigned int& action_time)
 
   switch (use_try)
   {
-  case ActionResult::Success:
-    if (thing->is_usable_by(pImpl->ref))
-    {
-      if (thing->perform_action_used_by(pImpl->ref))
+    case ActionResult::Success:
+      if (thing->is_usable_by(pImpl->ref))
       {
-        return true;
+        if (thing->perform_action_used_by(pImpl->ref))
+        {
+          return true;
+        }
       }
-    }
-    else
-    {
+      else
+      {
+        message = YOU_TRY + " to use " + thing->get_identifying_string() + ".";
+        the_message_log.add(message);
+
+        message = YOU + " can't use that!";
+        the_message_log.add(message);
+      }
+      break;
+
+    case ActionResult::FailureSelfReference:
       message = YOU_TRY + " to use " + thing->get_identifying_string() + ".";
       the_message_log.add(message);
 
-      message = YOU + " can't use that!";
-      the_message_log.add(message);
-    }
-    break;
+      if (GAME.get_player() == pImpl->ref)
+      {
+        message = YOU_ARE + " already using " + YOURSELF + " to the best of " + YOUR + " ability.";
+        the_message_log.add(message);
+      }
+      else
+      {
+        message = "That seriously shouldn't happen!";
+        the_message_log.add(message);
 
-  case ActionResult::FailureSelfReference:
-    message = YOU_TRY + " to use " + thing->get_identifying_string() + ".";
-    the_message_log.add(message);
+        MINOR_ERROR("Non-player Entity tried to use self!?");
+      }
+      break;
 
-    if (GAME.get_player() == pImpl->ref)
-    {
-      message = YOU_ARE + " already using " + YOURSELF + " to the best of " + YOUR + " ability.";
-      the_message_log.add(message);
-    }
-    else
-    {
-      message = "That seriously shouldn't happen!";
-      the_message_log.add(message);
-
-      MINOR_ERROR("Non-player Entity tried to use self!?");
-    }
-    break;
-
-  default:
-    MINOR_ERROR("Unknown ActionResult %d", use_try);
-    break;
+    default:
+      MINOR_ERROR("Unknown ActionResult %d", use_try);
+      break;
   }
   return false;
 }
@@ -1681,36 +1688,36 @@ bool Thing::do_deequip(ThingRef thing, unsigned int& action_time)
 
   switch (deequip_try)
   {
-  case ActionResult::Success:
-  {
-    // Get the body part this item is equipped on.
-    WearLocation location;
-    this->has_equipped(thing, location);
-
-    if (thing->perform_action_deequipped_by(pImpl->ref, location))
+    case ActionResult::Success:
     {
-      pImpl->do_deequip(thing);
+      // Get the body part this item is equipped on.
+      WearLocation location;
+      this->has_equipped(thing, location);
 
-      std::string wear_desc = get_bodypart_description(location.part, location.number);
-      message = YOU_ARE + " no longer wearing " + thing_name +
-        " on " + YOUR + " " + wear_desc + ".";
+      if (thing->perform_action_deequipped_by(pImpl->ref, location))
+      {
+        pImpl->do_deequip(thing);
+
+        std::string wear_desc = get_bodypart_description(location.part, location.number);
+        message = YOU_ARE + " no longer wearing " + thing_name +
+          " on " + YOUR + " " + wear_desc + ".";
+        the_message_log.add(message);
+        return true;
+      }
+    }
+    break;
+
+    case ActionResult::FailureItemNotEquipped:
+    {
+      message = YOU_ARE + " not wearing " + thing_name + ".";
       the_message_log.add(message);
       return true;
     }
-  }
-  break;
-
-  case ActionResult::FailureItemNotEquipped:
-  {
-    message = YOU_ARE + " not wearing " + thing_name + ".";
-    the_message_log.add(message);
-    return true;
-  }
-  break;
-
-  default:
-    MINOR_ERROR("Unknown ActionResult %d", deequip_try);
     break;
+
+    default:
+      MINOR_ERROR("Unknown ActionResult %d", deequip_try);
+      break;
   }
 
   return false;
@@ -1757,60 +1764,60 @@ bool Thing::do_equip(ThingRef thing, unsigned int& action_time)
 
   switch (equip_try)
   {
-  case ActionResult::Success:
-  {
-    WearLocation location;
-
-    if (thing->perform_action_equipped_by(pImpl->ref, location))
+    case ActionResult::Success:
     {
-      pImpl->do_equip(thing, location);
-      std::string wear_desc = get_bodypart_description(location.part,
-                                                       location.number);
-      message = YOU_ARE + " now wearing " + thing_name +
-        " on " + YOUR + " " + wear_desc + ".";
+      WearLocation location;
+
+      if (thing->perform_action_equipped_by(pImpl->ref, location))
+      {
+        pImpl->do_equip(thing, location);
+        std::string wear_desc = get_bodypart_description(location.part,
+                                                         location.number);
+        message = YOU_ARE + " now wearing " + thing_name +
+          " on " + YOUR + " " + wear_desc + ".";
+        the_message_log.add(message);
+        return true;
+      }
+    }
+    break;
+
+    case ActionResult::FailureSelfReference:
+      if (is_player())
+      {
+        message = "To equip yourself, choose what you want to equip first.";
+      }
+      else
+      {
+        message = YOU_TRY + " to equip " + YOURSELF +
+          ", which seriously shouldn't happen.";
+        MINOR_ERROR("Non-player Entity tried to equip self!?");
+      }
       the_message_log.add(message);
-      return true;
-    }
-  }
-  break;
+      break;
 
-  case ActionResult::FailureSelfReference:
-    if (is_player())
+    case ActionResult::FailureThingOutOfReach:
     {
-      message = "To equip yourself, choose what you want to equip first.";
+      message = YOU_TRY + " to equip " + thing_name + ".";
+      the_message_log.add(message);
+
+      message = thing_name + " is not in " + YOUR + " inventory.";
+      the_message_log.add(message);
     }
-    else
-    {
-      message = YOU_TRY + " to equip " + YOURSELF +
-        ", which seriously shouldn't happen.";
-      MINOR_ERROR("Non-player Entity tried to equip self!?");
-    }
-    the_message_log.add(message);
     break;
 
-  case ActionResult::FailureThingOutOfReach:
-  {
-    message = YOU_TRY + " to equip " + thing_name + ".";
-    the_message_log.add(message);
+    case ActionResult::FailureItemNotEquippable:
+    {
+      message = YOU_TRY + " to equip " + thing_name + ".";
+      the_message_log.add(message);
 
-    message = thing_name + " is not in " + YOUR + " inventory.";
-    the_message_log.add(message);
-  }
-  break;
-
-  case ActionResult::FailureItemNotEquippable:
-  {
-    message = YOU_TRY + " to equip " + thing_name + ".";
-    the_message_log.add(message);
-
-    message = thing_name + " is not an equippable item.";
-    the_message_log.add(message);
-  }
-  break;
-
-  default:
-    MINOR_ERROR("Unknown ActionResult %d", equip_try);
+      message = thing_name + " is not an equippable item.";
+      the_message_log.add(message);
+    }
     break;
+
+    default:
+      MINOR_ERROR("Unknown ActionResult %d", equip_try);
+      break;
   }
 
   return false;
@@ -1886,63 +1893,63 @@ bool Thing::do_wield(ThingRef thing, unsigned int hand, unsigned int& action_tim
 
   switch (wield_try)
   {
-  case ActionResult::Success:
-  case ActionResult::SuccessSwapHands:
-  {
-    if (thing->perform_action_wielded_by(pImpl->ref))
+    case ActionResult::Success:
+    case ActionResult::SuccessSwapHands:
     {
-      pImpl->do_wield(thing, hand);
-      message = YOU_ARE + " now wielding " + thing_name +
-        " with " + YOUR + " " + bodypart_desc + ".";
-      the_message_log.add(message);
+      if (thing->perform_action_wielded_by(pImpl->ref))
+      {
+        pImpl->do_wield(thing, hand);
+        message = YOU_ARE + " now wielding " + thing_name +
+          " with " + YOUR + " " + bodypart_desc + ".";
+        the_message_log.add(message);
+        return true;
+      }
+    }
+    break;
+
+    case ActionResult::SuccessSelfReference:
+    {
+      if (was_wielding)
+      {
+        message = YOU_ARE + " no longer wielding any weapons with " +
+          YOUR + " " +
+          this->get_bodypart_description(BodyPart::Hand, hand) + ".";
+        the_message_log.add(message);
+      }
+      else
+      {
+        message = YOU_WERE + " not wielding any weapon to begin with.";
+        the_message_log.add(message);
+      }
       return true;
     }
-  }
-  break;
-
-  case ActionResult::SuccessSelfReference:
-  {
-    if (was_wielding)
-    {
-      message = YOU_ARE + " no longer wielding any weapons with " +
-        YOUR + " " +
-        this->get_bodypart_description(BodyPart::Hand, hand) + ".";
-      the_message_log.add(message);
-    }
-    else
-    {
-      message = YOU_WERE + " not wielding any weapon to begin with.";
-      the_message_log.add(message);
-    }
-    return true;
-  }
-  break;
-
-  case ActionResult::FailureThingOutOfReach:
-  {
-    message = YOU_TRY + " to wield " + thing_name + ".";
-    the_message_log.add(message);
-
-    message = thing_name + " is not in " + YOUR + " inventory.";
-    the_message_log.add(message);
-  }
-  break;
-
-  case ActionResult::FailureNotEnoughHands:
-  {
-    message = YOU_TRY + " to wield " + thing_name;
-    the_message_log.add(message);
-
-    message = YOU + choose_verb(" don't", " doesn't") +
-      " have enough free " +
-      this->get_bodypart_plural(BodyPart::Hand) + ".";
-    the_message_log.add(message);
-  }
-  break;
-
-  default:
-    MINOR_ERROR("Unknown ActionResult %d", wield_try);
     break;
+
+    case ActionResult::FailureThingOutOfReach:
+    {
+      message = YOU_TRY + " to wield " + thing_name + ".";
+      the_message_log.add(message);
+
+      message = thing_name + " is not in " + YOUR + " inventory.";
+      the_message_log.add(message);
+    }
+    break;
+
+    case ActionResult::FailureNotEnoughHands:
+    {
+      message = YOU_TRY + " to wield " + thing_name;
+      the_message_log.add(message);
+
+      message = YOU + choose_verb(" don't", " doesn't") +
+        " have enough free " +
+        this->get_bodypart_plural(BodyPart::Hand) + ".";
+      the_message_log.add(message);
+    }
+    break;
+
+    default:
+      MINOR_ERROR("Unknown ActionResult %d", wield_try);
+      break;
   }
   return false;
 }
@@ -1984,22 +1991,22 @@ unsigned int Thing::get_bodypart_number(BodyPart part) const
 {
   switch (part)
   {
-  case BodyPart::Body:  return get_intrinsic<int>("bodypart_body_count");
-  case BodyPart::Skin:  return get_intrinsic<int>("bodypart_skin_count");
-  case BodyPart::Head:  return get_intrinsic<int>("bodypart_head_count");
-  case BodyPart::Ear:   return get_intrinsic<int>("bodypart_ear_count");
-  case BodyPart::Eye:   return get_intrinsic<int>("bodypart_eye_count");
-  case BodyPart::Nose:  return get_intrinsic<int>("bodypart_nose_count");
-  case BodyPart::Mouth: return get_intrinsic<int>("bodypart_mouth_count");
-  case BodyPart::Neck:  return get_intrinsic<int>("bodypart_neck_count");
-  case BodyPart::Chest: return get_intrinsic<int>("bodypart_chest_count");
-  case BodyPart::Arm:   return get_intrinsic<int>("bodypart_arm_count");
-  case BodyPart::Hand:  return get_intrinsic<int>("bodypart_hand_count");
-  case BodyPart::Leg:   return get_intrinsic<int>("bodypart_leg_count");
-  case BodyPart::Foot:  return get_intrinsic<int>("bodypart_foot_count");
-  case BodyPart::Wing:  return get_intrinsic<int>("bodypart_wing_count");
-  case BodyPart::Tail:  return get_intrinsic<int>("bodypart_tail_count");
-  default: return 0;
+    case BodyPart::Body:  return get_intrinsic<int>("bodypart_body_count");
+    case BodyPart::Skin:  return get_intrinsic<int>("bodypart_skin_count");
+    case BodyPart::Head:  return get_intrinsic<int>("bodypart_head_count");
+    case BodyPart::Ear:   return get_intrinsic<int>("bodypart_ear_count");
+    case BodyPart::Eye:   return get_intrinsic<int>("bodypart_eye_count");
+    case BodyPart::Nose:  return get_intrinsic<int>("bodypart_nose_count");
+    case BodyPart::Mouth: return get_intrinsic<int>("bodypart_mouth_count");
+    case BodyPart::Neck:  return get_intrinsic<int>("bodypart_neck_count");
+    case BodyPart::Chest: return get_intrinsic<int>("bodypart_chest_count");
+    case BodyPart::Arm:   return get_intrinsic<int>("bodypart_arm_count");
+    case BodyPart::Hand:  return get_intrinsic<int>("bodypart_hand_count");
+    case BodyPart::Leg:   return get_intrinsic<int>("bodypart_leg_count");
+    case BodyPart::Foot:  return get_intrinsic<int>("bodypart_foot_count");
+    case BodyPart::Wing:  return get_intrinsic<int>("bodypart_wing_count");
+    case BodyPart::Tail:  return get_intrinsic<int>("bodypart_tail_count");
+    default: return 0;
   }
 }
 
@@ -2008,22 +2015,22 @@ std::string Thing::get_bodypart_name(BodyPart part) const
 {
   switch (part)
   {
-  case BodyPart::Body:  return get_intrinsic<std::string>("bodypart_body_name");
-  case BodyPart::Skin:  return get_intrinsic<std::string>("bodypart_skin_name");
-  case BodyPart::Head:  return get_intrinsic<std::string>("bodypart_head_name");
-  case BodyPart::Ear:   return get_intrinsic<std::string>("bodypart_ear_name");
-  case BodyPart::Eye:   return get_intrinsic<std::string>("bodypart_eye_name");
-  case BodyPart::Nose:  return get_intrinsic<std::string>("bodypart_nose_name");
-  case BodyPart::Mouth: return get_intrinsic<std::string>("bodypart_mouth_name");
-  case BodyPart::Neck:  return get_intrinsic<std::string>("bodypart_neck_name");
-  case BodyPart::Chest: return get_intrinsic<std::string>("bodypart_chest_name");
-  case BodyPart::Arm:   return get_intrinsic<std::string>("bodypart_arm_name");
-  case BodyPart::Hand:  return get_intrinsic<std::string>("bodypart_hand_name");
-  case BodyPart::Leg:   return get_intrinsic<std::string>("bodypart_leg_name");
-  case BodyPart::Foot:  return get_intrinsic<std::string>("bodypart_foot_name");
-  case BodyPart::Wing:  return get_intrinsic<std::string>("bodypart_wing_name");
-  case BodyPart::Tail:  return get_intrinsic<std::string>("bodypart_tail_name");
-  default: return "squeedlyspooch (unknown BodyPart)";
+    case BodyPart::Body:  return get_intrinsic<std::string>("bodypart_body_name");
+    case BodyPart::Skin:  return get_intrinsic<std::string>("bodypart_skin_name");
+    case BodyPart::Head:  return get_intrinsic<std::string>("bodypart_head_name");
+    case BodyPart::Ear:   return get_intrinsic<std::string>("bodypart_ear_name");
+    case BodyPart::Eye:   return get_intrinsic<std::string>("bodypart_eye_name");
+    case BodyPart::Nose:  return get_intrinsic<std::string>("bodypart_nose_name");
+    case BodyPart::Mouth: return get_intrinsic<std::string>("bodypart_mouth_name");
+    case BodyPart::Neck:  return get_intrinsic<std::string>("bodypart_neck_name");
+    case BodyPart::Chest: return get_intrinsic<std::string>("bodypart_chest_name");
+    case BodyPart::Arm:   return get_intrinsic<std::string>("bodypart_arm_name");
+    case BodyPart::Hand:  return get_intrinsic<std::string>("bodypart_hand_name");
+    case BodyPart::Leg:   return get_intrinsic<std::string>("bodypart_leg_name");
+    case BodyPart::Foot:  return get_intrinsic<std::string>("bodypart_foot_name");
+    case BodyPart::Wing:  return get_intrinsic<std::string>("bodypart_wing_name");
+    case BodyPart::Tail:  return get_intrinsic<std::string>("bodypart_tail_name");
+    default: return "squeedlyspooch (unknown BodyPart)";
   }
 }
 
@@ -2032,22 +2039,22 @@ std::string Thing::get_bodypart_plural(BodyPart part) const
 {
   switch (part)
   {
-  case BodyPart::Body:  return get_intrinsic<std::string>("bodypart_body_plural", get_bodypart_name(BodyPart::Body) + "s");
-  case BodyPart::Skin:  return get_intrinsic<std::string>("bodypart_skin_plural", get_bodypart_name(BodyPart::Skin) + "s");
-  case BodyPart::Head:  return get_intrinsic<std::string>("bodypart_head_plural", get_bodypart_name(BodyPart::Head) + "s");
-  case BodyPart::Ear:   return get_intrinsic<std::string>("bodypart_ear_plural", get_bodypart_name(BodyPart::Ear) + "s");
-  case BodyPart::Eye:   return get_intrinsic<std::string>("bodypart_eye_plural", get_bodypart_name(BodyPart::Eye) + "s");
-  case BodyPart::Nose:  return get_intrinsic<std::string>("bodypart_nose_plural", get_bodypart_name(BodyPart::Nose) + "s");
-  case BodyPart::Mouth: return get_intrinsic<std::string>("bodypart_mouth_plural", get_bodypart_name(BodyPart::Mouth) + "s");
-  case BodyPart::Neck:  return get_intrinsic<std::string>("bodypart_neck_plural", get_bodypart_name(BodyPart::Neck) + "s");
-  case BodyPart::Chest: return get_intrinsic<std::string>("bodypart_chest_plural", get_bodypart_name(BodyPart::Chest) + "s");
-  case BodyPart::Arm:   return get_intrinsic<std::string>("bodypart_arm_plural", get_bodypart_name(BodyPart::Arm) + "s");
-  case BodyPart::Hand:  return get_intrinsic<std::string>("bodypart_hand_plural", get_bodypart_name(BodyPart::Hand) + "s");
-  case BodyPart::Leg:   return get_intrinsic<std::string>("bodypart_leg_plural", get_bodypart_name(BodyPart::Leg) + "s");
-  case BodyPart::Foot:  return get_intrinsic<std::string>("bodypart_foot_plural", get_bodypart_name(BodyPart::Foot) + "s");
-  case BodyPart::Wing:  return get_intrinsic<std::string>("bodypart_wing_plural", get_bodypart_name(BodyPart::Wing) + "s");
-  case BodyPart::Tail:  return get_intrinsic<std::string>("bodypart_tail_plural", get_bodypart_name(BodyPart::Tail) + "s");
-  default: return "squeedlyspooches (unknown BodyParts)";
+    case BodyPart::Body:  return get_intrinsic<std::string>("bodypart_body_plural", get_bodypart_name(BodyPart::Body) + "s");
+    case BodyPart::Skin:  return get_intrinsic<std::string>("bodypart_skin_plural", get_bodypart_name(BodyPart::Skin) + "s");
+    case BodyPart::Head:  return get_intrinsic<std::string>("bodypart_head_plural", get_bodypart_name(BodyPart::Head) + "s");
+    case BodyPart::Ear:   return get_intrinsic<std::string>("bodypart_ear_plural", get_bodypart_name(BodyPart::Ear) + "s");
+    case BodyPart::Eye:   return get_intrinsic<std::string>("bodypart_eye_plural", get_bodypart_name(BodyPart::Eye) + "s");
+    case BodyPart::Nose:  return get_intrinsic<std::string>("bodypart_nose_plural", get_bodypart_name(BodyPart::Nose) + "s");
+    case BodyPart::Mouth: return get_intrinsic<std::string>("bodypart_mouth_plural", get_bodypart_name(BodyPart::Mouth) + "s");
+    case BodyPart::Neck:  return get_intrinsic<std::string>("bodypart_neck_plural", get_bodypart_name(BodyPart::Neck) + "s");
+    case BodyPart::Chest: return get_intrinsic<std::string>("bodypart_chest_plural", get_bodypart_name(BodyPart::Chest) + "s");
+    case BodyPart::Arm:   return get_intrinsic<std::string>("bodypart_arm_plural", get_bodypart_name(BodyPart::Arm) + "s");
+    case BodyPart::Hand:  return get_intrinsic<std::string>("bodypart_hand_plural", get_bodypart_name(BodyPart::Hand) + "s");
+    case BodyPart::Leg:   return get_intrinsic<std::string>("bodypart_leg_plural", get_bodypart_name(BodyPart::Leg) + "s");
+    case BodyPart::Foot:  return get_intrinsic<std::string>("bodypart_foot_plural", get_bodypart_name(BodyPart::Foot) + "s");
+    case BodyPart::Wing:  return get_intrinsic<std::string>("bodypart_wing_plural", get_bodypart_name(BodyPart::Wing) + "s");
+    case BodyPart::Tail:  return get_intrinsic<std::string>("bodypart_tail_plural", get_bodypart_name(BodyPart::Tail) + "s");
+    default: return "squeedlyspooches (unknown BodyParts)";
   }
 }
 
@@ -2285,43 +2292,43 @@ bool Thing::move_into(ThingRef new_location)
 
   switch (can_contain)
   {
-  case ActionResult::Success:
-    if (new_location->get_inventory().add(pImpl->ref))
-    {
-      // Try to lock our old location.
-      if (pImpl->location != ThingManager::get_mu())
+    case ActionResult::Success:
+      if (new_location->get_inventory().add(pImpl->ref))
       {
-        pImpl->location->get_inventory().remove(pImpl->ref);
-      }
-
-      // Set the location to the new location.
-      pImpl->location = new_location;
-
-      MapId new_map_id = this->get_map_id();
-      if (old_map_id != new_map_id)
-      {
-        if (old_map_id != MapFactory::null_map_id)
+        // Try to lock our old location.
+        if (pImpl->location != ThingManager::get_mu())
         {
-          /// @todo Save old map memory.
+          pImpl->location->get_inventory().remove(pImpl->ref);
         }
-        pImpl->map_memory.clear();
-        pImpl->tiles_currently_seen.clear();
-        if (new_map_id != MapFactory::null_map_id)
-        {
-          Map& new_map = GAME.get_map_factory().get(new_map_id);
-          sf::Vector2i new_map_size = new_map.get_size();
-          pImpl->map_memory.resize(new_map_size.x * new_map_size.y);
-          pImpl->tiles_currently_seen.resize(new_map_size.x * new_map_size.y);
-          /// @todo Load new map memory if it exists somewhere.
-        }
-      }
-      this->find_seen_tiles();
-      return true;
-    } // end if (add to new inventory was successful)
 
-    break;
-  default:
-    break;
+        // Set the location to the new location.
+        pImpl->location = new_location;
+
+        MapId new_map_id = this->get_map_id();
+        if (old_map_id != new_map_id)
+        {
+          if (old_map_id != MapFactory::null_map_id)
+          {
+            /// @todo Save old map memory.
+          }
+          pImpl->map_memory.clear();
+          pImpl->tiles_currently_seen.clear();
+          if (new_map_id != MapFactory::null_map_id)
+          {
+            Map& new_map = GAME.get_map_factory().get(new_map_id);
+            sf::Vector2i new_map_size = new_map.get_size();
+            pImpl->map_memory.resize(new_map_size.x * new_map_size.y);
+            pImpl->tiles_currently_seen.resize(new_map_size.x * new_map_size.y);
+            /// @todo Load new map memory if it exists somewhere.
+          }
+        }
+        this->find_seen_tiles();
+        return true;
+      } // end if (add to new inventory was successful)
+
+      break;
+    default:
+      break;
   } // end switch (ActionResult)
 
   return false;
@@ -2793,35 +2800,35 @@ void Thing::spill()
 
       switch (can_contain)
       {
-      case ActionResult::Success:
+        case ActionResult::Success:
 
-        // Try to move this into the Thing's location.
-        success = thing->move_into(pImpl->location);
-        if (success)
-        {
-          auto container_string = this->get_identifying_string();
-          auto thing_string = thing->get_identifying_string();
-          message = thing_string + CV(" tumble", " tumbles") + " out of " + container_string + ".";
-          the_message_log.add(message);
-        }
-        else
-        {
-          // We couldn't move it, so just destroy it.
-          auto container_string = this->get_identifying_string();
-          auto thing_string = thing->get_identifying_string();
-          message = thing_string + CV(" vanish", " vanishes") + " in a puff of logic.";
-          the_message_log.add(message);
-          thing->destroy();
-        }
+          // Try to move this into the Thing's location.
+          success = thing->move_into(pImpl->location);
+          if (success)
+          {
+            auto container_string = this->get_identifying_string();
+            auto thing_string = thing->get_identifying_string();
+            message = thing_string + CV(" tumble", " tumbles") + " out of " + container_string + ".";
+            the_message_log.add(message);
+          }
+          else
+          {
+            // We couldn't move it, so just destroy it.
+            auto container_string = this->get_identifying_string();
+            auto thing_string = thing->get_identifying_string();
+            message = thing_string + CV(" vanish", " vanishes") + " in a puff of logic.";
+            the_message_log.add(message);
+            thing->destroy();
+          }
 
-        break;
+          break;
 
-      case ActionResult::FailureInventoryFull:
-        /// @todo Handle the situation where the Thing's container can't hold the Thing.
-        break;
+        case ActionResult::FailureInventoryFull:
+          /// @todo Handle the situation where the Thing's container can't hold the Thing.
+          break;
 
-      default:
-        break;
+        default:
+          break;
       } // end switch (can_contain)
     } // end if (container location is not Mu)
     else
@@ -2858,90 +2865,90 @@ std::string Thing::get_bodypart_description(BodyPart part,
   ASSERT_CONDITION(number < total_number);
   switch (total_number)
   {
-  case 0: // none of them!?  shouldn't occur!
-    result = "non-existent " + part_name;
-    MINOR_ERROR("Request for description of %s!?", result.c_str());
-    break;
+    case 0: // none of them!?  shouldn't occur!
+      result = "non-existent " + part_name;
+      MINOR_ERROR("Request for description of %s!?", result.c_str());
+      break;
 
-  case 1: // only one of them
-    result = part_name;
-    break;
+    case 1: // only one of them
+      result = part_name;
+      break;
 
-  case 2: // assume a right and left one.
-    switch (number)
-    {
-    case 0: result = "right " + part_name; break;
-    case 1: result = "left " + part_name; break;
-    default: break;
-    }
-    break;
-
-  case 3: // assume right, center, and left.
-    switch (number)
-    {
-    case 0: result = "right " + part_name; break;
-    case 1: result = "center " + part_name; break;
-    case 2: result = "left " + part_name; break;
-    default: break;
-    }
-    break;
-
-  case 4: // Legs/feet assume front/rear, others assume upper/lower.
-    if ((part == BodyPart::Leg) || (part == BodyPart::Foot))
-    {
+    case 2: // assume a right and left one.
       switch (number)
       {
-      case 0: result = "front right " + part_name; break;
-      case 1: result = "front left " + part_name; break;
-      case 2: result = "rear right " + part_name; break;
-      case 3: result = "rear left " + part_name; break;
-      default: break;
+        case 0: result = "right " + part_name; break;
+        case 1: result = "left " + part_name; break;
+        default: break;
       }
-    }
-    else
-    {
-      switch (number)
-      {
-      case 0: result = "upper right " + part_name; break;
-      case 1: result = "upper left " + part_name; break;
-      case 2: result = "lower right " + part_name; break;
-      case 3: result = "lower left " + part_name; break;
-      default: break;
-      }
-    }
-    break;
+      break;
 
-  case 6: // Legs/feet assume front/middle/rear, others upper/middle/lower.
-    if ((part == BodyPart::Leg) || (part == BodyPart::Foot))
-    {
+    case 3: // assume right, center, and left.
       switch (number)
       {
-      case 0: result = "front right " + part_name; break;
-      case 1: result = "front left " + part_name; break;
-      case 2: result = "middle right " + part_name; break;
-      case 3: result = "middle left " + part_name; break;
-      case 4: result = "rear right " + part_name; break;
-      case 5: result = "rear left " + part_name; break;
-      default: break;
+        case 0: result = "right " + part_name; break;
+        case 1: result = "center " + part_name; break;
+        case 2: result = "left " + part_name; break;
+        default: break;
       }
-    }
-    else
-    {
-      switch (number)
-      {
-      case 0: result = "upper right " + part_name; break;
-      case 1: result = "upper left " + part_name; break;
-      case 2: result = "middle right " + part_name; break;
-      case 3: result = "middle left " + part_name; break;
-      case 4: result = "lower right " + part_name; break;
-      case 5: result = "lower left " + part_name; break;
-      default: break;
-      }
-    }
-    break;
+      break;
 
-  default:
-    break;
+    case 4: // Legs/feet assume front/rear, others assume upper/lower.
+      if ((part == BodyPart::Leg) || (part == BodyPart::Foot))
+      {
+        switch (number)
+        {
+          case 0: result = "front right " + part_name; break;
+          case 1: result = "front left " + part_name; break;
+          case 2: result = "rear right " + part_name; break;
+          case 3: result = "rear left " + part_name; break;
+          default: break;
+        }
+      }
+      else
+      {
+        switch (number)
+        {
+          case 0: result = "upper right " + part_name; break;
+          case 1: result = "upper left " + part_name; break;
+          case 2: result = "lower right " + part_name; break;
+          case 3: result = "lower left " + part_name; break;
+          default: break;
+        }
+      }
+      break;
+
+    case 6: // Legs/feet assume front/middle/rear, others upper/middle/lower.
+      if ((part == BodyPart::Leg) || (part == BodyPart::Foot))
+      {
+        switch (number)
+        {
+          case 0: result = "front right " + part_name; break;
+          case 1: result = "front left " + part_name; break;
+          case 2: result = "middle right " + part_name; break;
+          case 3: result = "middle left " + part_name; break;
+          case 4: result = "rear right " + part_name; break;
+          case 5: result = "rear left " + part_name; break;
+          default: break;
+        }
+      }
+      else
+      {
+        switch (number)
+        {
+          case 0: result = "upper right " + part_name; break;
+          case 1: result = "upper left " + part_name; break;
+          case 2: result = "middle right " + part_name; break;
+          case 3: result = "middle left " + part_name; break;
+          case 4: result = "lower right " + part_name; break;
+          case 5: result = "lower left " + part_name; break;
+          default: break;
+        }
+      }
+      break;
+
+    default:
+      break;
   }
 
   // Anything else and we just return the ordinal name.
@@ -3235,6 +3242,7 @@ bool Thing::_process_self()
 {
   unsigned int action_time = 0;
   bool success = false;
+  int counter_busy = get_property<int>("counter_busy");
 
   // Is this an entity that is now dead?
   if ((get_property<bool>("is_entity") == true) && (get_property<int>("hp") <= 0))
@@ -3242,27 +3250,37 @@ bool Thing::_process_self()
     // Did the entity JUST die?
     if (get_property<bool>("dead") != true)
     {
-      // Set the property saying the entity is dead.
-      set_property<bool>("dead", true);
-
       // Perform the "die" action.
-      this->do_die();
-
-      // Clear any pending actions.
-      pImpl->pending_actions.clear();
-
-      /// @todo Handle player death by transitioning to game end state.
+      // (This sets the "dead" property and clears out any pending actions.)
+      if (this->do_die() == true)
+      {
+        /// @todo Handle player death by transitioning to game end state.
+      }
     }
   }
-
-  // If actions are pending...
-  if (!pImpl->pending_actions.empty())
+  // Otherwise if this entity is busy...
+  else if (counter_busy > 0)
+  {
+    // Decrement busy counter.
+    add_to_property<int>("counter_busy", -1);
+  }
+  // Otherwise if actions are pending...
+  else if (!pImpl->pending_actions.empty())
   {
     // Process the front action.
     Action action = pImpl->pending_actions.front();
+    TRACE("Thing %" PRIu64 " (%s): Action %s is in state %s",
+          get_ref().get_id().full_id,
+          get_type().c_str(),
+          Action::str(action.get_type()),
+          Action::str(action.get_state()));
     bool action_done = action.process(get_ref(), {});
     if (action_done)
     {
+      TRACE("Thing %" PRIu64 " (%s): Action %s is done, popping",
+            get_ref().get_id().full_id,
+            get_type().c_str(),
+            Action::str(action.get_type()));
       pImpl->pending_actions.pop_front();
     }
   } // end if (actions pending)
@@ -3300,241 +3318,241 @@ void Thing::do_recursive_visibility(int octant,
 
   switch (octant)
   {
-  case 1:
-    y = eY - depth;
-    x = static_cast<int>(rint(static_cast<double>(eX) - (slope_A * static_cast<double>(depth))));
-    while (calc_slope(x, y, eX, eY) >= slope_B)
-    {
-      if (calc_vis_distance(x, y, eX, eY) <= mw)
+    case 1:
+      y = eY - depth;
+      x = static_cast<int>(rint(static_cast<double>(eX) - (slope_A * static_cast<double>(depth))));
+      while (calc_slope(x, y, eX, eY) >= slope_B)
       {
-        if (game_map.tile_is_opaque(x, y))
+        if (calc_vis_distance(x, y, eX, eY) <= mw)
         {
-          if (!game_map.tile_is_opaque(x - 1, y))
+          if (game_map.tile_is_opaque(x, y))
           {
-            do_recursive_visibility(1, depth + 1, slope_A,
-                                    calc_slope(x - 0.5, y + 0.5, eX, eY));
+            if (!game_map.tile_is_opaque(x - 1, y))
+            {
+              do_recursive_visibility(1, depth + 1, slope_A,
+                                      calc_slope(x - 0.5, y + 0.5, eX, eY));
+            }
           }
-        }
-        else
-        {
-          if (game_map.tile_is_opaque(x - 1, y))
+          else
           {
-            slope_A = calc_slope(x - 0.5, y - 0.5, eX, eY);
+            if (game_map.tile_is_opaque(x - 1, y))
+            {
+              slope_A = calc_slope(x - 0.5, y - 0.5, eX, eY);
+            }
           }
+          pImpl->tiles_currently_seen[game_map.get_index(x, y)] = true;
+          pImpl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
         }
-        pImpl->tiles_currently_seen[game_map.get_index(x, y)] = true;
-        pImpl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
-      }
-      ++x;
-    }
-    --x;
-    break;
-  case 2:
-    y = eY - depth;
-    x = static_cast<int>(rint(static_cast<double>(eX) + (slope_A * static_cast<double>(depth))));
-    while (calc_slope(x, y, eX, eY) <= slope_B)
-    {
-      if (calc_vis_distance(x, y, eX, eY) <= mw)
-      {
-        if (game_map.tile_is_opaque(x, y))
-        {
-          if (!game_map.tile_is_opaque(x + 1, y))
-          {
-            do_recursive_visibility(2, depth + 1, slope_A,
-                                    calc_slope(x + 0.5, y + 0.5, eX, eY));
-          }
-        }
-        else
-        {
-          if (game_map.tile_is_opaque(x + 1, y))
-          {
-            slope_A = -calc_slope(x + 0.5, y - 0.5, eX, eY);
-          }
-        }
-        pImpl->tiles_currently_seen[game_map.get_index(x, y)] = true;
-        pImpl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
+        ++x;
       }
       --x;
-    }
-    ++x;
-    break;
-  case 3:
-    x = eX + depth;
-    y = static_cast<int>(rint(static_cast<double>(eY) - (slope_A * static_cast<double>(depth))));
-    while (calc_inv_slope(x, y, eX, eY) <= slope_B)
-    {
-      if (calc_vis_distance(x, y, eX, eY) <= mw)
+      break;
+    case 2:
+      y = eY - depth;
+      x = static_cast<int>(rint(static_cast<double>(eX) + (slope_A * static_cast<double>(depth))));
+      while (calc_slope(x, y, eX, eY) <= slope_B)
       {
-        if (game_map.tile_is_opaque(x, y))
+        if (calc_vis_distance(x, y, eX, eY) <= mw)
         {
-          if (!game_map.tile_is_opaque(x, y - 1))
+          if (game_map.tile_is_opaque(x, y))
           {
-            do_recursive_visibility(3, depth + 1, slope_A,
-                                    calc_inv_slope(x - 0.5, y - 0.5, eX, eY));
+            if (!game_map.tile_is_opaque(x + 1, y))
+            {
+              do_recursive_visibility(2, depth + 1, slope_A,
+                                      calc_slope(x + 0.5, y + 0.5, eX, eY));
+            }
           }
-        }
-        else
-        {
-          if (game_map.tile_is_opaque(x, y - 1))
+          else
           {
-            slope_A = -calc_inv_slope(x + 0.5, y - 0.5, eX, eY);
+            if (game_map.tile_is_opaque(x + 1, y))
+            {
+              slope_A = -calc_slope(x + 0.5, y - 0.5, eX, eY);
+            }
           }
+          pImpl->tiles_currently_seen[game_map.get_index(x, y)] = true;
+          pImpl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
         }
-        pImpl->tiles_currently_seen[game_map.get_index(x, y)] = true;
-        pImpl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
-      }
-      ++y;
-    }
-    --y;
-    break;
-  case 4:
-    x = eX + depth;
-    y = static_cast<int>(rint(static_cast<double>(eY) + (slope_A * static_cast<double>(depth))));
-    while (calc_inv_slope(x, y, eX, eY) >= slope_B)
-    {
-      if (calc_vis_distance(x, y, eX, eY) <= mw)
-      {
-        if (game_map.tile_is_opaque(x, y))
-        {
-          if (!game_map.tile_is_opaque(x, y + 1))
-          {
-            do_recursive_visibility(4, depth + 1, slope_A,
-                                    calc_inv_slope(x - 0.5, y + 0.5, eX, eY));
-          }
-        }
-        else
-        {
-          if (game_map.tile_is_opaque(x, y + 1))
-          {
-            slope_A = calc_inv_slope(x + 0.5, y + 0.5, eX, eY);
-          }
-        }
-        pImpl->tiles_currently_seen[game_map.get_index(x, y)] = true;
-        pImpl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
-      }
-      --y;
-    }
-    ++y;
-    break;
-  case 5:
-    y = eY + depth;
-    x = static_cast<int>(rint(static_cast<double>(eX) + (slope_A * static_cast<double>(depth))));
-    while (calc_slope(x, y, eX, eY) >= slope_B)
-    {
-      if (calc_vis_distance(x, y, eX, eY) <= mw)
-      {
-        if (game_map.tile_is_opaque(x, y))
-        {
-          if (!game_map.tile_is_opaque(x + 1, y))
-          {
-            do_recursive_visibility(5, depth + 1, slope_A,
-                                    calc_slope(x + 0.5, y - 0.5, eX, eY));
-          }
-        }
-        else
-        {
-          if (game_map.tile_is_opaque(x + 1, y))
-          {
-            slope_A = calc_slope(x + 0.5, y + 0.5, eX, eY);
-          }
-        }
-        pImpl->tiles_currently_seen[game_map.get_index(x, y)] = true;
-        pImpl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
-      }
-      --x;
-    }
-    ++x;
-    break;
-  case 6:
-    y = eY + depth;
-    x = static_cast<int>(rint(static_cast<double>(eX) - (slope_A * static_cast<double>(depth))));
-    while (calc_slope(x, y, eX, eY) <= slope_B)
-    {
-      if (calc_vis_distance(x, y, eX, eY) <= mw)
-      {
-        if (game_map.tile_is_opaque(x, y))
-        {
-          if (!game_map.tile_is_opaque(x - 1, y))
-          {
-            do_recursive_visibility(6, depth + 1, slope_A,
-                                    calc_slope(x - 0.5, y - 0.5, eX, eY));
-          }
-        }
-        else
-        {
-          if (game_map.tile_is_opaque(x - 1, y))
-          {
-            slope_A = -calc_slope(x - 0.5, y + 0.5, eX, eY);
-          }
-        }
-        pImpl->tiles_currently_seen[game_map.get_index(x, y)] = true;
-        pImpl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
+        --x;
       }
       ++x;
-    }
-    --x;
-    break;
-  case 7:
-    x = eX - depth;
-    y = static_cast<int>(rint(static_cast<double>(eY) + (slope_A * static_cast<double>(depth))));
-    while (calc_inv_slope(x, y, eX, eY) <= slope_B)
-    {
-      if (calc_vis_distance(x, y, eX, eY) <= mw)
+      break;
+    case 3:
+      x = eX + depth;
+      y = static_cast<int>(rint(static_cast<double>(eY) - (slope_A * static_cast<double>(depth))));
+      while (calc_inv_slope(x, y, eX, eY) <= slope_B)
       {
-        if (game_map.tile_is_opaque(x, y))
+        if (calc_vis_distance(x, y, eX, eY) <= mw)
         {
-          if (!game_map.tile_is_opaque(x, y + 1))
+          if (game_map.tile_is_opaque(x, y))
           {
-            do_recursive_visibility(7, depth + 1, slope_A,
-                                    calc_inv_slope(x + 0.5, y + 0.5, eX, eY));
+            if (!game_map.tile_is_opaque(x, y - 1))
+            {
+              do_recursive_visibility(3, depth + 1, slope_A,
+                                      calc_inv_slope(x - 0.5, y - 0.5, eX, eY));
+            }
           }
-        }
-        else
-        {
-          if (game_map.tile_is_opaque(x, y + 1))
+          else
           {
-            slope_A = -calc_inv_slope(x - 0.5, y + 0.5, eX, eY);
+            if (game_map.tile_is_opaque(x, y - 1))
+            {
+              slope_A = -calc_inv_slope(x + 0.5, y - 0.5, eX, eY);
+            }
           }
+          pImpl->tiles_currently_seen[game_map.get_index(x, y)] = true;
+          pImpl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
         }
-        pImpl->tiles_currently_seen[game_map.get_index(x, y)] = true;
-        pImpl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
+        ++y;
       }
       --y;
-    }
-    ++y;
-    break;
-  case 8:
-    x = eX - depth;
-    y = static_cast<int>(rint(static_cast<double>(eY) - (slope_A * static_cast<double>(depth))));
-    while (calc_inv_slope(x, y, eX, eY) >= slope_B)
-    {
-      if (calc_vis_distance(x, y, eX, eY) <= mw)
+      break;
+    case 4:
+      x = eX + depth;
+      y = static_cast<int>(rint(static_cast<double>(eY) + (slope_A * static_cast<double>(depth))));
+      while (calc_inv_slope(x, y, eX, eY) >= slope_B)
       {
-        if (game_map.tile_is_opaque(x, y))
+        if (calc_vis_distance(x, y, eX, eY) <= mw)
         {
-          if (!game_map.tile_is_opaque(x, y - 1))
+          if (game_map.tile_is_opaque(x, y))
           {
-            do_recursive_visibility(8, depth + 1, slope_A,
-                                    calc_inv_slope(x + 0.5, y - 0.5, eX, eY));
+            if (!game_map.tile_is_opaque(x, y + 1))
+            {
+              do_recursive_visibility(4, depth + 1, slope_A,
+                                      calc_inv_slope(x - 0.5, y + 0.5, eX, eY));
+            }
           }
-        }
-        else
-        {
-          if (game_map.tile_is_opaque(x, y - 1))
+          else
           {
-            slope_A = calc_inv_slope(x - 0.5, y - 0.5, eX, eY);
+            if (game_map.tile_is_opaque(x, y + 1))
+            {
+              slope_A = calc_inv_slope(x + 0.5, y + 0.5, eX, eY);
+            }
           }
+          pImpl->tiles_currently_seen[game_map.get_index(x, y)] = true;
+          pImpl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
         }
-        pImpl->tiles_currently_seen[game_map.get_index(x, y)] = true;
-        pImpl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
+        --y;
       }
       ++y;
-    }
-    --y;
-    break;
-  default:
-    MAJOR_ERROR("Octant passed to do_recursive_visibility was %d (not 1 to 8)!", octant);
-    break;
+      break;
+    case 5:
+      y = eY + depth;
+      x = static_cast<int>(rint(static_cast<double>(eX) + (slope_A * static_cast<double>(depth))));
+      while (calc_slope(x, y, eX, eY) >= slope_B)
+      {
+        if (calc_vis_distance(x, y, eX, eY) <= mw)
+        {
+          if (game_map.tile_is_opaque(x, y))
+          {
+            if (!game_map.tile_is_opaque(x + 1, y))
+            {
+              do_recursive_visibility(5, depth + 1, slope_A,
+                                      calc_slope(x + 0.5, y - 0.5, eX, eY));
+            }
+          }
+          else
+          {
+            if (game_map.tile_is_opaque(x + 1, y))
+            {
+              slope_A = calc_slope(x + 0.5, y + 0.5, eX, eY);
+            }
+          }
+          pImpl->tiles_currently_seen[game_map.get_index(x, y)] = true;
+          pImpl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
+        }
+        --x;
+      }
+      ++x;
+      break;
+    case 6:
+      y = eY + depth;
+      x = static_cast<int>(rint(static_cast<double>(eX) - (slope_A * static_cast<double>(depth))));
+      while (calc_slope(x, y, eX, eY) <= slope_B)
+      {
+        if (calc_vis_distance(x, y, eX, eY) <= mw)
+        {
+          if (game_map.tile_is_opaque(x, y))
+          {
+            if (!game_map.tile_is_opaque(x - 1, y))
+            {
+              do_recursive_visibility(6, depth + 1, slope_A,
+                                      calc_slope(x - 0.5, y - 0.5, eX, eY));
+            }
+          }
+          else
+          {
+            if (game_map.tile_is_opaque(x - 1, y))
+            {
+              slope_A = -calc_slope(x - 0.5, y + 0.5, eX, eY);
+            }
+          }
+          pImpl->tiles_currently_seen[game_map.get_index(x, y)] = true;
+          pImpl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
+        }
+        ++x;
+      }
+      --x;
+      break;
+    case 7:
+      x = eX - depth;
+      y = static_cast<int>(rint(static_cast<double>(eY) + (slope_A * static_cast<double>(depth))));
+      while (calc_inv_slope(x, y, eX, eY) <= slope_B)
+      {
+        if (calc_vis_distance(x, y, eX, eY) <= mw)
+        {
+          if (game_map.tile_is_opaque(x, y))
+          {
+            if (!game_map.tile_is_opaque(x, y + 1))
+            {
+              do_recursive_visibility(7, depth + 1, slope_A,
+                                      calc_inv_slope(x + 0.5, y + 0.5, eX, eY));
+            }
+          }
+          else
+          {
+            if (game_map.tile_is_opaque(x, y + 1))
+            {
+              slope_A = -calc_inv_slope(x - 0.5, y + 0.5, eX, eY);
+            }
+          }
+          pImpl->tiles_currently_seen[game_map.get_index(x, y)] = true;
+          pImpl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
+        }
+        --y;
+      }
+      ++y;
+      break;
+    case 8:
+      x = eX - depth;
+      y = static_cast<int>(rint(static_cast<double>(eY) - (slope_A * static_cast<double>(depth))));
+      while (calc_inv_slope(x, y, eX, eY) >= slope_B)
+      {
+        if (calc_vis_distance(x, y, eX, eY) <= mw)
+        {
+          if (game_map.tile_is_opaque(x, y))
+          {
+            if (!game_map.tile_is_opaque(x, y - 1))
+            {
+              do_recursive_visibility(8, depth + 1, slope_A,
+                                      calc_inv_slope(x + 0.5, y - 0.5, eX, eY));
+            }
+          }
+          else
+          {
+            if (game_map.tile_is_opaque(x, y - 1))
+            {
+              slope_A = calc_inv_slope(x - 0.5, y - 0.5, eX, eY);
+            }
+          }
+          pImpl->tiles_currently_seen[game_map.get_index(x, y)] = true;
+          pImpl->map_memory[game_map.get_index(x, y)] = game_map.get_tile(x, y).get_type();
+        }
+        ++y;
+      }
+      --y;
+      break;
+    default:
+      MAJOR_ERROR("Octant passed to do_recursive_visibility was %d (not 1 to 8)!", octant);
+      break;
   }
 
   if ((depth < mv) && (!game_map.get_tile(x, y).is_opaque()))

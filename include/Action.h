@@ -26,6 +26,20 @@ public:
     Processed     ///< The action is totally done and can be popped off the queue.
   };
 
+  static inline char const* str(State const& s)
+  {
+    switch (s)
+    {
+      case State::Pending:      return "Pending";
+      case State::PreBegin:     return "PreBegin";
+      case State::InProgress:   return "InProgress";
+      case State::Interrupted:  return "Interrupted";
+      case State::PostFinish:   return "PostFinish";
+      case State::Processed:    return "Processed";
+      default:                  return "???";
+    }
+  }
+
   enum class Type
   {
     None,
@@ -51,6 +65,36 @@ public:
     Wield,
     Count
   };
+
+  static inline char const* str(Type const& t)
+  {
+    switch (t)
+    {
+      case Type::None:      return "None";
+      case Type::Wait:      return "Wait";
+      case Type::Attack:    return "Attack";
+      case Type::Attire:    return "Attire";
+      case Type::Close:     return "Close";
+      case Type::Drop:      return "Drop";
+      case Type::Eat:       return "Eat";
+      case Type::Fill:      return "Fill";
+      case Type::Get:       return "Get";
+      case Type::Hurl:      return "Hurl";
+      case Type::Inscribe:  return "Inscribe";
+      case Type::Mix:       return "Mix";
+      case Type::Move:      return "Move";
+      case Type::Open:      return "Open";
+      case Type::PutInto:   return "PutInto";
+      case Type::Quaff:     return "Quaff";
+      case Type::Read:      return "Read";
+      case Type::Shoot:     return "Shoot";
+      case Type::TakeOut:   return "TakeOut";
+      case Type::Use:       return "Use";
+      case Type::Wield:     return "Wield";
+      case Type::Count:     return "Count";
+      default:              return "???";
+    }
+  }
 
   Action();
   Action(Action::Type type);
