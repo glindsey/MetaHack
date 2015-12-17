@@ -36,12 +36,12 @@ public:
   /// @param bg_color Color to blend with (for lighting).
   /// @param ul_coord Upper-left coordinates.
   /// @param ur_coord Upper-right coordinates.
-  /// @param lr_coord Lower-right coordinates.
   /// @param ll_coord Lower-left coordinates.
+  /// @param lr_coord Lower-right coordinates.
   static void add_quad(sf::VertexArray& vertices,
                        sf::Vector2u tile_coords, sf::Color bg_color,
                        sf::Vector2f ul_coord, sf::Vector2f ur_coord,
-                       sf::Vector2f lr_coord, sf::Vector2f ll_coord);
+                       sf::Vector2f ll_coord, sf::Vector2f lr_coord);
 
   /// Add a quad with colors specified in a 3x3 grid.
   static void add_gradient_quad(sf::VertexArray& vertices,

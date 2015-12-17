@@ -173,7 +173,7 @@ sf::Texture& TileSheet::getTexture(void)
 void TileSheet::add_quad(sf::VertexArray& vertices,
                          sf::Vector2u tile_coords, sf::Color bg_color,
                          sf::Vector2f ul_coord, sf::Vector2f ur_coord,
-                         sf::Vector2f lr_coord, sf::Vector2f ll_coord)
+                         sf::Vector2f ll_coord, sf::Vector2f lr_coord)
 {
   sf::Vertex new_vertex;
   float ts(Settings.get<float>("map_tile_size"));

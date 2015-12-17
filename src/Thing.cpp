@@ -2248,7 +2248,8 @@ void Thing::add_memory_vertices_to(sf::VertexArray& vertices,
 
   TileSheet::add_quad(vertices,
                       tile_coords, sf::Color::White,
-                      vNW, vNE, vSE, vSW);
+                      vNW, vNE,
+                      vSW, vSE);
 }
 
 bool Thing::can_move(Direction direction)
@@ -2668,7 +2669,8 @@ void Thing::add_vertices_to(sf::VertexArray& vertices,
 
   TileSheet::add_quad(vertices,
                       tile_coords, thing_color,
-                      vNW, vNE, vSE, vSW);
+                      vNW, vNE,
+                      vSW, vSE);
 }
 
 void Thing::draw_to(sf::RenderTarget& target,

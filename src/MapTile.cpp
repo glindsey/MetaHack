@@ -257,74 +257,7 @@ sf::Color MapTile::get_light_level() const
   {
     return m_calculated_light_colors.at(Direction::Self);
   }
-#if 0
-
-  sf::Color color = m_ambient_light_color;
-
-  ThingRef player = GAME.get_player();
-
-  if (player != ThingManager::get_mu())
-  {
-    for (auto iter = std::begin(m_lights);
-    iter != std::end(m_lights);
-      ++iter)
-    {
-      sf::Vector2i const& source_coords = iter->second.coords;
-      float dist_squared = static_cast<float>(calc_vis_distance(get_coords().x, get_coords().y, source_coords.x, source_coords.y));
-
-      sf::Color light_color = iter->second.color;
-      int light_intensity = iter->second.intensity;
-
-      bool light_is_visible = player->can_see(source_coords.x, source_coords.y);
-
-      sf::Color addColor;
-
-      // LightIntensity is the distance at which the calculated light would be
-      // zero.
-      //
-
-      // If this tile is opaque, make sure we can see the light source.
-      // This is a crude but effective way of making sure light does not
-      // "bleed through" wall tiles.
-      if (!is_opaque() || light_is_visible)
-      {
-        float dist_factor;
-
-        if (light_intensity == 0)
-        {
-          dist_factor = 1.0f;
-        }
-        else
-        {
-          dist_factor = dist_squared / static_cast<float>(light_intensity);
-        }
-
-        float light_factor = (1.0f - dist_factor);
-
-        addColor.r = static_cast<sf::Uint8>(light_color.r * light_factor);
-        addColor.g = static_cast<sf::Uint8>(light_color.g * light_factor);
-        addColor.b = static_cast<sf::Uint8>(light_color.b * light_factor);
-        addColor.a = 255;
-
-        color.r = saturation_add(color.r, addColor.r);
-        color.g = saturation_add(color.g, addColor.g);
-        color.b = saturation_add(color.b, addColor.b);
-        color.a = saturation_add(color.a, addColor.a);
-      }
-    }
-  }
-
-  // If the tile is opaque, cut the light level in half.
-  if (is_opaque())
-  {
-    color.r >>= 1;
-    color.g >>= 1;
-    color.b >>= 1;
-  }
-
-  return color;
-#endif
-  }
+}
 
 sf::Color MapTile::get_wall_light_level(Direction direction) const
 {
@@ -336,61 +269,7 @@ sf::Color MapTile::get_wall_light_level(Direction direction) const
   {
     return m_calculated_light_colors.at(direction);
   }
-#if 0
-  sf::Color color = m_ambient_light_color;
-
-  ThingRef player = GAME.get_player();
-
-  if (player != ThingManager::get_mu())
-  {
-    for (auto iter = std::begin(m_lights);
-    iter != std::end(m_lights);
-      ++iter)
-    {
-      sf::Vector2i const& source_coords = iter->second.coords;
-      float dist_squared = static_cast<float>(calc_vis_distance(get_coords().x, get_coords().y, source_coords.x, source_coords.y));
-
-      sf::Color light_color = iter->second.color;
-      int light_intensity = iter->second.intensity;
-
-      bool light_is_visible = player->can_see(source_coords.x, source_coords.y);
-
-      sf::Color addColor;
-
-      // LightIntensity is the distance at which the calculated light would be
-      // zero.
-      //
-
-      float dist_factor;
-
-      if (light_intensity == 0)
-      {
-        dist_factor = 1.0f;
-      }
-      else
-      {
-        dist_factor = dist_squared / static_cast<float>(light_intensity);
-      }
-
-      float light_factor = (1.0f - dist_factor);
-
-      float wall_factor = calculate_light_factor(source_coords, get_coords(), direction);
-
-      addColor.r = static_cast<sf::Uint8>(light_color.r * wall_factor * light_factor);
-      addColor.g = static_cast<sf::Uint8>(light_color.g * wall_factor * light_factor);
-      addColor.b = static_cast<sf::Uint8>(light_color.b * wall_factor * light_factor);
-      addColor.a = 255;
-
-      color.r = saturation_add(color.r, addColor.r);
-      color.g = saturation_add(color.g, addColor.g);
-      color.b = saturation_add(color.b, addColor.b);
-      color.a = saturation_add(color.a, addColor.a);
-    }
-  }
-
-  return color;
-#endif
-  }
+}
 
 bool MapTile::is_opaque() const
 {
