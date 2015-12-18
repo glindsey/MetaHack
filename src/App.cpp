@@ -15,14 +15,10 @@
 #include <crtdbg.h>
 
 // Global declarations
-std::unique_ptr<sf::Font> default_font_;
-std::unique_ptr<sf::Font> default_bold_font_;
-std::unique_ptr<sf::Font> default_mono_font_;
-std::unique_ptr<sf::Font> default_unicode_font_;
-std::unique_ptr<sf::Shader> shader_;
 std::unique_ptr<App> app_;
-std::unique_ptr<boost::random::mt19937> rng_;
 int App::s_frame_counter = 0;
+
+App* App::s_p_instance;
 
 // Local typedefs
 typedef boost::random::uniform_int_distribution<> uniform_int_dist;
@@ -53,9 +49,6 @@ int main()
     try
 #endif
     {
-      // Create the random number generator.
-      rng_.reset(NEW boost::random::mt19937(static_cast<unsigned int>(std::time(0))));
-
       // Check to make sure shaders are available.
       if (!sf::Shader::isAvailable())
       {
@@ -64,44 +57,6 @@ int main()
 
       // Create and open the main window.
       app_window.reset(NEW sf::RenderWindow(sf::VideoMode(1066, 600), "Magicule Saga"));
-
-      // Create the default fonts.
-      /// @todo Font names should be moved into ConfigSettings.
-      default_font_.reset(NEW sf::Font());
-      std::string font_name = "resources/fonts/" + Settings.get<std::string>("font_name_default") + ".ttf";
-      if (default_font_->loadFromFile(font_name) == false)
-      {
-        throw std::exception("Could not load the default font");
-      }
-
-      default_bold_font_.reset(NEW sf::Font());
-      font_name = "resources/fonts/" + Settings.get<std::string>("font_name_bold") + ".ttf";
-      if (default_bold_font_->loadFromFile(font_name) == false)
-      {
-        throw std::exception("Could not load the default bold font");
-      }
-
-      default_mono_font_.reset(NEW sf::Font());
-      font_name = "resources/fonts/" + Settings.get<std::string>("font_name_mono") + ".ttf";
-      if (default_mono_font_->loadFromFile(font_name) == false)
-      {
-        throw std::exception("Could not load the default monospace font");
-      }
-
-      default_unicode_font_.reset(NEW sf::Font());
-      font_name = "resources/fonts/" + Settings.get<std::string>("font_name_unicode") + ".ttf";
-      if (default_unicode_font_->loadFromFile(font_name) == false)
-      {
-        throw std::exception("Could not load the default Unicode font");
-      }
-
-      // Create the shader program.
-      shader_.reset(NEW sf::Shader());
-      if (shader_->loadFromFile("resources/shaders/default.vert",
-                                "resources/shaders/default.frag") == false)
-      {
-        throw std::exception("Could not load the shaders");
-      }
 
       // Create the message log.
       MessageLog::create(calc_message_log_dimensions(*(app_window.get())));
@@ -128,6 +83,59 @@ App::App(sf::RenderWindow& app_window)
   m_is_running{ false },
   m_has_window_focus{ false }
 {
+  // Set the static instance pointer.
+  if (!s_p_instance)
+  {
+    s_p_instance = this;
+  }
+  else
+  {
+    throw std::exception("Tried to create more than one App instance");
+  }
+
+  // Initialize SFGUI.
+  m_sfgui.reset(NEW sfg::SFGUI());
+
+  // Create the random number generator and seed it with the current time.
+  m_rng.reset(NEW boost::random::mt19937(static_cast<unsigned int>(std::time(0))));
+
+  // Create the default fonts.
+  m_default_font.reset(NEW sf::Font());
+  std::string font_name = "resources/fonts/" + Settings.get<std::string>("font_name_default") + ".ttf";
+  if (m_default_font->loadFromFile(font_name) == false)
+  {
+    throw std::exception("Could not load the default font");
+  }
+
+  m_default_bold_font.reset(NEW sf::Font());
+  font_name = "resources/fonts/" + Settings.get<std::string>("font_name_bold") + ".ttf";
+  if (m_default_bold_font->loadFromFile(font_name) == false)
+  {
+    throw std::exception("Could not load the default bold font");
+  }
+
+  m_default_mono_font.reset(NEW sf::Font());
+  font_name = "resources/fonts/" + Settings.get<std::string>("font_name_mono") + ".ttf";
+  if (m_default_mono_font->loadFromFile(font_name) == false)
+  {
+    throw std::exception("Could not load the default monospace font");
+  }
+
+  m_default_unicode_font.reset(NEW sf::Font());
+  font_name = "resources/fonts/" + Settings.get<std::string>("font_name_unicode") + ".ttf";
+  if (m_default_unicode_font->loadFromFile(font_name) == false)
+  {
+    throw std::exception("Could not load the default Unicode font");
+  }
+
+  // Create the shader program.
+  m_shader.reset(NEW sf::Shader());
+  if (m_shader->loadFromFile("resources/shaders/default.vert",
+                             "resources/shaders/default.frag") == false)
+  {
+    throw std::exception("Could not load the default shaders");
+  }
+
   // Register Lua functions.
   the_lua_instance.register_function("app_get_frame_counter", App::LUA_get_frame_counter);
 
@@ -151,6 +159,7 @@ App::App(sf::RenderWindow& app_window)
 App::~App()
 {
   m_app_window.close();
+  s_p_instance = nullptr;
 }
 
 EventResult App::handle_event(sf::Event& event)
@@ -159,57 +168,57 @@ EventResult App::handle_event(sf::Event& event)
 
   switch (event.type)
   {
-  case sf::Event::EventType::GainedFocus:
-  {
-    m_has_window_focus = true;
-    result = EventResult::Handled;
-    break;
-  }
-
-  case sf::Event::EventType::LostFocus:
-  {
-    m_has_window_focus = false;
-    result = EventResult::Handled;
-    break;
-  }
-
-  case sf::Event::EventType::Resized:
-  {
-    m_app_window.setView(sf::View(
-      sf::FloatRect(0, 0, static_cast<float>(event.size.width), static_cast<float>(event.size.height))));
-    the_message_log.set_dimensions(calc_message_log_dimensions(m_app_window));
-
-    result = EventResult::Acknowledged;
-    break;
-  }
-
-  case sf::Event::EventType::Closed:
-  {
-    m_is_running = false;
-    result = EventResult::Handled;
-    break;
-  }
-
-  case sf::Event::EventType::KeyPressed:
-  {
-    switch (event.key.code)
+    case sf::Event::EventType::GainedFocus:
     {
-    case sf::Keyboard::Key::Q:
-      if (event.key.alt && event.key.control)
+      m_has_window_focus = true;
+      result = EventResult::Handled;
+      break;
+    }
+
+    case sf::Event::EventType::LostFocus:
+    {
+      m_has_window_focus = false;
+      result = EventResult::Handled;
+      break;
+    }
+
+    case sf::Event::EventType::Resized:
+    {
+      m_app_window.setView(sf::View(
+        sf::FloatRect(0, 0, static_cast<float>(event.size.width), static_cast<float>(event.size.height))));
+      the_message_log.set_dimensions(calc_message_log_dimensions(m_app_window));
+
+      result = EventResult::Acknowledged;
+      break;
+    }
+
+    case sf::Event::EventType::Closed:
+    {
+      m_is_running = false;
+      result = EventResult::Handled;
+      break;
+    }
+
+    case sf::Event::EventType::KeyPressed:
+    {
+      switch (event.key.code)
       {
-        m_is_running = false;
-        result = EventResult::Handled;
+        case sf::Keyboard::Key::Q:
+          if (event.key.alt && event.key.control)
+          {
+            m_is_running = false;
+            result = EventResult::Handled;
+          }
+          break;
+
+        default:
+          break;
       }
       break;
+    }
 
     default:
       break;
-    }
-    break;
-  }
-
-  default:
-    break;
   }
 
   if (result != EventResult::Handled)
@@ -228,6 +237,48 @@ sf::RenderWindow& App::get_window()
 bool App::has_window_focus()
 {
   return m_has_window_focus;
+}
+
+boost::random::mt19937 & App::get_rng()
+{
+  return *(m_rng.get());
+}
+
+sf::Font & App::get_default_font()
+{
+  return *(m_default_font.get());
+}
+
+sf::Font & App::get_default_bold_font()
+{
+  return *(m_default_bold_font.get());
+}
+
+sf::Font & App::get_default_mono_font()
+{
+  return *(m_default_mono_font.get());
+}
+
+sf::Font & App::get_default_unicode_font()
+{
+  return *(m_default_unicode_font.get());
+}
+
+sf::Shader & App::get_shader()
+{
+  return *(m_shader.get());
+}
+
+App & App::instance()
+{
+  if (s_p_instance)
+  {
+    return *s_p_instance;
+  }
+  else
+  {
+    throw std::exception("App instance was requested before it was created");
+  }
 }
 
 void App::run()
