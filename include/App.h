@@ -5,6 +5,7 @@
 #include <boost/random/mersenne_twister.hpp>
 #include <memory>
 #include <SFML/Graphics.hpp>
+#include <SFGUI/SFGUI.hpp>
 
 #include "EventHandler.h"
 #include "Lua.h"
@@ -25,6 +26,28 @@ public:
   sf::RenderWindow& get_window();
   bool has_window_focus();
 
+  /// Get the random number generator.
+  boost::random::mt19937& get_rng();
+
+  /// Get the default font.
+  sf::Font& get_default_font();
+
+  /// Get the default bold font.
+  sf::Font& get_default_bold_font();
+
+  ///Get the default monospace font.
+  sf::Font& get_default_mono_font();
+
+  /// Get the default Unicode font.
+  sf::Font& get_default_unicode_font();
+
+  /// Get the shader.
+  sf::Shader& get_shader();
+
+  /// Get the current App instance.
+  /// If no App instance currently exists, throws an exception.
+  static App& instance();
+
 protected:
 private:
   sf::RenderWindow& m_app_window;
@@ -32,37 +55,42 @@ private:
   bool m_is_running;
   bool m_has_window_focus;
 
+  /// The SFGUI instance.
+  std::unique_ptr<sfg::SFGUI> m_sfgui;
+
+  /// The RNG instance.
+  std::unique_ptr<boost::random::mt19937> m_rng;
+
+  /// The default font instance.
+  std::unique_ptr<sf::Font> m_default_font;
+
+  /// The default bold font instance.
+  std::unique_ptr<sf::Font> m_default_bold_font;
+
+  /// The default monospace font instance.
+  std::unique_ptr<sf::Font> m_default_mono_font;
+
+  /// The default Unicode font instance.
+  std::unique_ptr<sf::Font> m_default_unicode_font;
+
+  /// The shader instance.
+  std::unique_ptr<sf::Shader> m_shader;
+
   static int s_frame_counter;
+
+  /// A static pointer to the existing App instance.
+  static App* s_p_instance;
+
+  // === LUA FUNCTIONS ========================================================
   static int LUA_get_frame_counter(lua_State* L);
 };
 
-/// Global default font instance
-extern std::unique_ptr<sf::Font> default_font_;
-
-/// Global default bold font instance
-extern std::unique_ptr<sf::Font> default_bold_font_;
-
-/// Global default monospace font instance
-extern std::unique_ptr<sf::Font> default_mono_font_;
-
-/// Global default Unicode font instance
-extern std::unique_ptr<sf::Font> default_unicode_font_;
-
-/// Global RNG instance
-extern std::unique_ptr<boost::random::mt19937> rng_;
-
-/// Global tile sheet instance
-extern std::unique_ptr<TileSheet> tile_sheet_;
-
-/// Global shader instance
-extern std::unique_ptr<sf::Shader> shader_;
-
 // Here are a few macros to save on typing.
-#define the_default_font          (*(default_font_.get()))
-#define the_default_bold_font     (*(default_bold_font_.get()))
-#define the_default_mono_font     (*(default_mono_font_.get()))
-#define the_default_unicode_font  (*(default_unicode_font_.get()))
-#define the_shader                (*(shader_.get()))
-#define the_RNG                   (*(rng_.get()))
+#define the_default_font          App::instance().get_default_font()
+#define the_default_bold_font     App::instance().get_default_bold_font()
+#define the_default_mono_font     App::instance().get_default_mono_font()
+#define the_default_unicode_font  App::instance().get_default_unicode_font()
+#define the_shader                App::instance().get_shader()
+#define the_RNG                   App::instance().get_rng()
 
 #endif // APP_H
