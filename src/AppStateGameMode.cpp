@@ -38,6 +38,7 @@ public:
     game_state{ NEW GameState() },
     window_in_focus{ true },
     inventory_area_shows_player{ false },
+    message_log_view{ NEW MessageLogView(the_message_log, calc_message_log_dims()) },
     inventory_area{ NEW InventoryArea(calc_inventory_dims()) },
     status_area{ NEW StatusArea(calc_status_area_dims()) },
     map_zoom_level{ 1.0f },
@@ -57,6 +58,9 @@ public:
 
   /// True if inventory window shows player inventory, false otherwise.
   bool inventory_area_shows_player;
+
+  /// Instance of the message log view.
+  std::unique_ptr<MessageLogView> message_log_view;
 
   /// Instance of the inventory area.
   std::unique_ptr<InventoryArea> inventory_area;
@@ -79,6 +83,19 @@ public:
 
   /// Game clock.
   uint64_t game_clock;
+
+  sf::IntRect calc_message_log_dims()
+  {
+    sf::IntRect messageLogDims;
+    unsigned int inventory_area_width = Settings.get<unsigned int>("inventory_area_width");
+    unsigned int messagelog_area_height = Settings.get<unsigned int>("messagelog_area_height");
+    messageLogDims.width = app_window.getSize().x - (inventory_area_width + 24);
+    messageLogDims.height = messagelog_area_height - 10;
+    //messageLogDims.height = static_cast<int>(app_window.getSize().y * 0.25f) - 10;
+    messageLogDims.left = 12;
+    messageLogDims.top = 5;
+    return messageLogDims;
+  }
 
   void reset_inventory_area()
   {
@@ -116,7 +133,7 @@ public:
 
   sf::IntRect calc_inventory_dims()
   {
-    sf::IntRect messageLogDims = the_message_log_view.get_dimensions();
+    sf::IntRect messageLogDims = message_log_view->get_dimensions();
     sf::IntRect inventoryAreaDims;
     inventoryAreaDims.width = Settings.get<int>("inventory_area_width");
     inventoryAreaDims.height = app_window.getSize().y - 10;
@@ -342,7 +359,7 @@ void AppStateGameMode::execute()
 bool AppStateGameMode::render(sf::RenderTarget& target, int frame)
 {
   // Set focus for areas.
-  the_message_log_view.set_focus(pImpl->current_input_state == GameInputState::MessageLog);
+  pImpl->message_log_view->set_focus(pImpl->current_input_state == GameInputState::MessageLog);
   pImpl->status_area->set_focus(pImpl->current_input_state == GameInputState::Map);
 
   ThingRef player = get_game_state().get_player();
@@ -391,7 +408,7 @@ bool AppStateGameMode::render(sf::RenderTarget& target, int frame)
     }
   }
 
-  the_message_log_view.render(target, frame);
+  pImpl->message_log_view->render(target, frame);
   pImpl->status_area->render(target, frame);
   pImpl->inventory_area->render(target, frame);
 
@@ -1029,6 +1046,7 @@ EventResult AppStateGameMode::handle_event(sf::Event& event)
   {
     case sf::Event::EventType::Resized:
     {
+      pImpl->message_log_view->set_dimensions(pImpl->calc_message_log_dims());
       pImpl->inventory_area->set_dimensions(pImpl->calc_inventory_dims());
       pImpl->status_area->set_dimensions(pImpl->calc_status_area_dims());
       result = EventResult::Handled;
@@ -1059,7 +1077,7 @@ EventResult AppStateGameMode::handle_event(sf::Event& event)
         break;
 
       case GameInputState::MessageLog:
-        result = the_message_log_view.handle_event(event);
+        result = pImpl->message_log_view->handle_event(event);
         break;
 
       default:

@@ -48,9 +48,6 @@ public:
   /// Get the MessageLog instance.
   MessageLog& get_message_log();
 
-  /// Get the MessageLogView instance.
-  MessageLogView& get_message_log_view();
-
   /// Get the current App instance.
   /// If no App instance currently exists, throws an exception.
   static App& instance();
@@ -86,9 +83,6 @@ private:
   /// The message log.
   std::unique_ptr<MessageLog> m_message_log;
 
-  /// The message log view.
-  std::unique_ptr<MessageLogView> m_message_log_view;
-
   static int s_frame_counter;
 
   /// A static pointer to the existing App instance.
@@ -112,6 +106,5 @@ private:
 #define the_shader                App::instance().get_shader()
 #define the_RNG                   App::instance().get_rng()
 #define the_message_log           App::instance().get_message_log()
-#define the_message_log_view      App::instance().get_message_log_view()
 
 #endif // APP_H

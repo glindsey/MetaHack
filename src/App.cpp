@@ -137,10 +137,6 @@ App::App(sf::RenderWindow& app_window)
   // Create the message log.
   m_message_log.reset(NEW MessageLog());
 
-  // Create the message log view.
-  m_message_log_view.reset(NEW MessageLogView(*(m_message_log.get()),
-                                              calc_message_log_dimensions(m_app_window)));
-
   // Register Lua functions.
   the_lua_instance.register_function("app_get_frame_counter", App::LUA_get_frame_counter);
   //the_lua_instance.register_function("print", App::LUA_redirect_print);
@@ -193,7 +189,6 @@ EventResult App::handle_event(sf::Event& event)
     {
       m_app_window.setView(sf::View(
         sf::FloatRect(0, 0, static_cast<float>(event.size.width), static_cast<float>(event.size.height))));
-      the_message_log_view.set_dimensions(calc_message_log_dimensions(m_app_window));
 
       result = EventResult::Acknowledged;
       break;
@@ -279,11 +274,6 @@ sf::Shader & App::get_shader()
 MessageLog & App::get_message_log()
 {
   return *(m_message_log.get());
-}
-
-MessageLogView & App::get_message_log_view()
-{
-  return *(m_message_log_view.get());
 }
 
 App & App::instance()

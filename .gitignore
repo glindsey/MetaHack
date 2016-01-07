@@ -220,3 +220,4 @@ pip-log.txt
 #Doxygen
 html/
 doxygen/
+*.opendb
