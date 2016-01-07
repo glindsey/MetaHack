@@ -8,6 +8,7 @@
 #include "ConfigSettings.h"
 #include "ErrorHandler.h"
 #include "MessageLog.h"
+#include "MessageLogView.h"
 #include "New.h"
 #include "StateMachine.h"
 
@@ -57,9 +58,6 @@ int main()
 
       // Create and open the main window.
       app_window.reset(NEW sf::RenderWindow(sf::VideoMode(1066, 600), "Magicule Saga"));
-
-      // Create the message log.
-      MessageLog::create(calc_message_log_dimensions(*(app_window.get())));
 
       // Create and run the app instance.
       app.reset(NEW App(*(app_window.get())));
@@ -136,8 +134,17 @@ App::App(sf::RenderWindow& app_window)
     throw std::exception("Could not load the default shaders");
   }
 
+  // Create the message log.
+  m_message_log.reset(NEW MessageLog());
+
+  // Create the message log view.
+  m_message_log_view.reset(NEW MessageLogView(*(m_message_log.get()),
+                                              calc_message_log_dimensions(m_app_window)));
+
   // Register Lua functions.
   the_lua_instance.register_function("app_get_frame_counter", App::LUA_get_frame_counter);
+  //the_lua_instance.register_function("print", App::LUA_redirect_print);
+  the_lua_instance.register_function("messageLog_add", App::LUA_add);
 
   // Get the state machine.
   StateMachine& sm = *(m_state_machine.get());
@@ -186,7 +193,7 @@ EventResult App::handle_event(sf::Event& event)
     {
       m_app_window.setView(sf::View(
         sf::FloatRect(0, 0, static_cast<float>(event.size.width), static_cast<float>(event.size.height))));
-      the_message_log.set_dimensions(calc_message_log_dimensions(m_app_window));
+      the_message_log_view.set_dimensions(calc_message_log_dimensions(m_app_window));
 
       result = EventResult::Acknowledged;
       break;
@@ -269,6 +276,16 @@ sf::Shader & App::get_shader()
   return *(m_shader.get());
 }
 
+MessageLog & App::get_message_log()
+{
+  return *(m_message_log.get());
+}
+
+MessageLogView & App::get_message_log_view()
+{
+  return *(m_message_log_view.get());
+}
+
 App & App::instance()
 {
   if (s_p_instance)
@@ -327,4 +344,40 @@ int App::LUA_get_frame_counter(lua_State* L)
   lua_pushinteger(L, s_frame_counter);
 
   return 1;
+}
+
+int App::LUA_redirect_print(lua_State* L)
+{
+  int nargs = lua_gettop(L);
+
+  for (int i = 1; i <= nargs; i++)
+  {
+    if (lua_isstring(L, i))
+    {
+      std::string str = lua_tostring(L, i);
+      the_message_log.add(str);
+    }
+    else {
+      /* Do something with non-strings if you like */
+    }
+  }
+
+  return 0;
+}
+
+int App::LUA_add(lua_State* L)
+{
+  int num_args = lua_gettop(L);
+
+  if (num_args != 1)
+  {
+    MINOR_ERROR("Expected 1 argument, got %d", num_args);
+  }
+  else
+  {
+    std::string str = lua_tostring(L, 1);
+    the_message_log.add(str);
+  }
+
+  return 0;
 }

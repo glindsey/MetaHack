@@ -12,6 +12,7 @@
 
 // Forward declarations
 class MessageLog;
+class MessageLogView;
 class StateMachine;
 class TileSheet;
 
@@ -43,6 +44,12 @@ public:
 
   /// Get the shader.
   sf::Shader& get_shader();
+
+  /// Get the MessageLog instance.
+  MessageLog& get_message_log();
+
+  /// Get the MessageLogView instance.
+  MessageLogView& get_message_log_view();
 
   /// Get the current App instance.
   /// If no App instance currently exists, throws an exception.
@@ -76,6 +83,12 @@ private:
   /// The shader instance.
   std::unique_ptr<sf::Shader> m_shader;
 
+  /// The message log.
+  std::unique_ptr<MessageLog> m_message_log;
+
+  /// The message log view.
+  std::unique_ptr<MessageLogView> m_message_log_view;
+
   static int s_frame_counter;
 
   /// A static pointer to the existing App instance.
@@ -83,6 +96,12 @@ private:
 
   // === LUA FUNCTIONS ========================================================
   static int LUA_get_frame_counter(lua_State* L);
+
+  /// Lua function to redirect printout to the message log.
+  static int LUA_redirect_print(lua_State* L);
+
+  /// Lua function to add a message to the message log.
+  static int LUA_add(lua_State* L);
 };
 
 // Here are a few macros to save on typing.
@@ -92,5 +111,7 @@ private:
 #define the_default_unicode_font  App::instance().get_default_unicode_font()
 #define the_shader                App::instance().get_shader()
 #define the_RNG                   App::instance().get_rng()
+#define the_message_log           App::instance().get_message_log()
+#define the_message_log_view      App::instance().get_message_log_view()
 
 #endif // APP_H

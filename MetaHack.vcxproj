@@ -166,6 +166,7 @@
     <ClInclude Include="include\MapTile.h" />
     <ClInclude Include="include\MathUtils.h" />
     <ClInclude Include="include\MessageLog.h" />
+    <ClInclude Include="include\MessageLogView.h" />
     <ClInclude Include="include\Metadata.h" />
     <ClInclude Include="include\MetadataCollection.h" />
     <ClInclude Include="include\New.h" />
@@ -216,6 +217,7 @@
     <ClCompile Include="src\mapfeatures\MapRoom.cpp" />
     <ClCompile Include="src\MapTile.cpp" />
     <ClCompile Include="src\MessageLog.cpp" />
+    <ClCompile Include="src\MessageLogView.cpp" />
     <ClCompile Include="src\Metadata.cpp" />
     <ClCompile Include="src\MetadataCollection.cpp" />
     <ClCompile Include="src\PropertyDictionary.cpp" />
