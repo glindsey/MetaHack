@@ -307,10 +307,9 @@ bool Thing::do_attack(Direction direction, unsigned int& action_time)
   {
     // Figure out our target location.
     sf::Vector2i coords = current_tile->get_coords();
-    int x_offset = get_x_offset(direction);
-    int y_offset = get_y_offset(direction);
-    int x_new = coords.x + x_offset;
-    int y_new = coords.y + y_offset;
+    sf::Vector2i offset = get_vector(direction);
+    int x_new = coords.x + offset.x;
+    int y_new = coords.y + offset.y;
     Map& current_map = GAME.get_map_factory().get(get_map_id());
     sf::Vector2i map_size = current_map.get_size();
 
@@ -916,10 +915,9 @@ bool Thing::do_move(Direction new_direction, unsigned int& action_time)
   {
     // Figure out our target location.
     sf::Vector2i coords = current_tile->get_coords();
-    int x_offset = get_x_offset(new_direction);
-    int y_offset = get_y_offset(new_direction);
-    int x_new = coords.x + x_offset;
-    int y_new = coords.y + y_offset;
+    sf::Vector2i offset = get_vector(new_direction);
+    int x_new = coords.x + offset.x;
+    int y_new = coords.y + offset.y;
     Map& current_map = GAME.get_map_factory().get(get_map_id());
     sf::Vector2i map_size = current_map.get_size();
 

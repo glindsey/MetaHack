@@ -1,6 +1,8 @@
 #ifndef DIRECTION_H
 #define DIRECTION_H
 
+#include <SFML/Graphics.hpp>
+
 #include <iostream>
 #include <sstream>
 
@@ -102,38 +104,21 @@ inline int get_appropriate_4way_tile(Direction direction)
   }
 }
 
-inline int get_x_offset(Direction direction)
-{
-  if ((direction == Direction::Northeast) ||
-      (direction == Direction::East) ||
-      (direction == Direction::Southeast))
-  {
-    return 1;
-  }
-  if ((direction == Direction::Northwest) ||
-      (direction == Direction::West) ||
-      (direction == Direction::Southwest))
-  {
-    return -1;
-  }
-  return 0;
-}
 
-inline int get_y_offset(Direction direction)
+inline sf::Vector2i get_vector(Direction direction)
 {
-  if ((direction == Direction::Northwest) ||
-      (direction == Direction::North) ||
-      (direction == Direction::Northeast))
+  switch (direction)
   {
-    return -1;
+    case Direction::North: return sf::Vector2i(0, -1);
+    case Direction::Northeast: return sf::Vector2i(1, -1);
+    case Direction::East: return sf::Vector2i(1, 0);
+    case Direction::Southeast: return sf::Vector2i(1, 1);
+    case Direction::South: return sf::Vector2i(0, 1);
+    case Direction::Southwest: return sf::Vector2i(-1, 1);
+    case Direction::West: return sf::Vector2i(-1, 0);
+    case Direction::Northwest: return sf::Vector2i(-1, -1);
+    default: return sf::Vector2i(0, 0);
   }
-  if ((direction == Direction::Southwest) ||
-      (direction == Direction::South) ||
-      (direction == Direction::Southeast))
-  {
-    return 1;
-  }
-  return 0;
 }
 
 #endif // DIRECTION_H
