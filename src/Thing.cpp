@@ -35,7 +35,7 @@
 #define YOUR      (this->get_possessive())          // "your/his/her/its/etc."
 #define YOURSELF  (this->get_reflexive_pronoun())   // "yourself/himself/herself/itself/etc."
 
-#define CV(p12, p3)  (this->choose_verb(p12, p3))
+#define CV(p12, p3)  (this->choose_verb(p12, p3))   // shortcut for "Choose Verb"
 
 #define ARE   (this->choose_verb(" are", " is"))
 #define WERE  (this->choose_verb(" were", " was"))
@@ -3208,7 +3208,9 @@ bool Thing::can_merge_with(ThingRef other) const
   }
 
   // If the things have the same properties, merge is okay.
-  // @todo Implement this. It's going to be a major pain in the ass.
+  /// @todo Implement this. It's going to be a major pain in the ass.
+  ///       We'll need a Lua function that compares the property arrays
+  ///       of the two Things, and returns true or false.
   //if ((this->pImpl->properties) == (other->pImpl->properties))
   {
     return true;
