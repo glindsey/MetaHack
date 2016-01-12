@@ -53,7 +53,7 @@ public:
   virtual ~Thing();
 
   /// Queue an action for this Entity to perform.
-  void queue_action(Action action);
+  void queue_action(std::unique_ptr<Action> pAction);
 
   /// Return whether there is an action pending for this Entity.
   bool action_is_pending() const;

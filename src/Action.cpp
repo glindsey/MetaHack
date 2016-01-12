@@ -7,16 +7,6 @@
 #include "ThingManager.h"
 #include "ThingRef.h"
 
-Action::Action()
-  :
-  m_type{ Action::Type::None },
-  m_state{ Action::State::Pending },
-  m_things{ std::vector<ThingRef>{ } },
-  m_target_thing{ ThingManager::get_mu() },
-  m_target_direction{ Direction::None },
-  m_quantity{ 0 }
-{}
-
 Action::Action(Action::Type type)
   :
   m_type{ type },
@@ -26,11 +16,6 @@ Action::Action(Action::Type type)
   m_target_direction{ Direction::None },
   m_quantity{ 0 }
 {}
-
-void Action::set_type(Action::Type type)
-{
-  m_type = type;
-}
 
 Action::Type Action::get_type() const
 {
@@ -118,9 +103,12 @@ bool Action::process(ThingRef actor, AnyMap params)
 
 bool Action::prebegin_(ThingRef actor, AnyMap& params)
 {
-  /// @todo Set counter_busy based on the action being taken and
-  ///       the entity's reflexes.
+  bool success = false;
+  unsigned int action_time = 0;
+
+  success = prebegin__(actor, params, action_time);
   actor->set_property<int>("counter_busy", 0);
+
   set_state(Action::State::PreBegin);
   return true;
 }
@@ -136,6 +124,148 @@ bool Action::begin_(ThingRef actor, AnyMap& params)
   {
     thing = m_things.back();
   }
+
+  success = begin__(actor, thing, params, action_time);
+
+  // If starting the action succeeded, move to the in-progress state.
+  // Otherwise, just go right to post-finish.
+  if (success)
+  {
+    // Update the busy counter.
+    actor->set_property<int>("counter_busy", action_time);
+    set_state(Action::State::InProgress);
+  }
+  else
+  {
+    // Clear the busy counter.
+    actor->set_property<int>("counter_busy", 0);
+    set_state(Action::State::PostFinish);
+  }
+
+  return success;
+}
+
+void Action::finish_(ThingRef actor, AnyMap& params)
+{
+  unsigned int action_time = 0;
+
+  finish__(actor, params, action_time);
+
+  // If there are any things in the m_things queue, pop the back one off.
+  if (m_things.size() > 0)
+  {
+    m_things.pop_back();
+  }
+
+  // If there are still things left, go back to the pre-begin state to handle
+  // the next thing; otherwise, move to the post-finish state.
+  if (m_things.size() > 0)
+  {
+    set_state(Action::State::PreBegin);
+  }
+  else
+  {
+    actor->set_property<int>("counter_busy", action_time);
+    set_state(Action::State::PostFinish);
+  }
+}
+
+void Action::abort_(ThingRef actor, AnyMap& params)
+{
+  unsigned int action_time = 0;
+
+  abort__(actor, params, action_time);
+
+  actor->add_to_property<int>("counter_busy", action_time);
+  set_state(Action::State::PostFinish);
+}
+
+void Action::set_state(Action::State state)
+{
+  m_state = state;
+}
+
+Action::State Action::get_state()
+{
+  return m_state;
+}
+
+// @todo Action::target_can_be_bodypart()
+
+bool Action::target_can_be_thing() const
+{
+  switch (m_type)
+  {
+    case Action::Type::Fill:
+    case Action::Type::PutInto:
+      return true;
+
+    default:
+      return false;
+  }
+}
+
+bool Action::target_can_be_direction() const
+{
+  switch (m_type)
+  {
+    case Action::Type::Attack:
+    case Action::Type::Close:
+    case Action::Type::Fill:
+    case Action::Type::Hurl:
+    case Action::Type::Move:
+    case Action::Type::Open:
+    case Action::Type::Shoot:
+      return true;
+
+    default:
+      return false;
+  }
+}
+
+void Action::set_target(ThingRef target)
+{
+  m_target_thing = target;
+  m_target_direction = Direction::None;
+}
+
+void Action::set_target(Direction direction)
+{
+  m_target_thing = ThingRef();
+  m_target_direction = direction;
+}
+
+ThingRef const& Action::get_target_thing() const
+{
+  return m_target_thing;
+}
+
+Direction const& Action::get_target_direction() const
+{
+  return m_target_direction;
+}
+
+unsigned int Action::get_quantity() const
+{
+  return m_quantity;
+}
+
+void Action::set_quantity(unsigned int quantity)
+{
+  m_quantity = quantity;
+}
+
+bool Action::prebegin__(ThingRef actor, AnyMap& params, unsigned int& action_time)
+{
+  /// @todo Set counter_busy based on the action being taken and
+  ///       the entity's reflexes.
+  action_time = 0;
+  return true;
+}
+
+bool Action::begin__(ThingRef actor, ThingRef thing, AnyMap& params, unsigned int& action_time)
+{
+  bool success;
 
   switch (get_type())
   {
@@ -229,130 +359,17 @@ bool Action::begin_(ThingRef actor, AnyMap& params)
       break;
   } // end switch (action)
 
-  // If starting the action succeeded, move to the in-progress state.
-  // Otherwise, just go right to post-finish.
-  if (success)
-  {
-    // Update the busy counter.
-    actor->set_property<int>("counter_busy", action_time);
-    set_state(Action::State::InProgress);
-  }
-  else
-  {
-    // Clear the busy counter.
-    actor->set_property<int>("counter_busy", 0);
-    set_state(Action::State::PostFinish);
-  }
-
   return success;
 }
 
-void Action::finish_(ThingRef actor, AnyMap& params)
+void Action::finish__(ThingRef actor, AnyMap& params, unsigned int& action_time)
 {
-  unsigned int action_time = 0;
-
   /// @todo Complete the action here
-
-  // If there are any things in the m_things queue, pop the back one off.
-  if (m_things.size() > 0)
-  {
-    m_things.pop_back();
-  }
-
-  // If there are still things left, go back to the pre-begin state to handle
-  // the next thing; otherwise, move to the post-finish state.
-  if (m_things.size() > 0)
-  {
-    set_state(Action::State::PreBegin);
-  }
-  else
-  {
-    actor->set_property<int>("counter_busy", action_time);
-    set_state(Action::State::PostFinish);
-  }
+  action_time = 0;
 }
 
-void Action::abort_(ThingRef actor, AnyMap& params)
+void Action::abort__(ThingRef actor, AnyMap& params, unsigned int& action_time)
 {
-  unsigned int action_time = 0;
-
   /// @todo Handle aborting the action here.
-
-  actor->add_to_property<int>("counter_busy", action_time);
-  set_state(Action::State::PostFinish);
-}
-
-void Action::set_state(Action::State state)
-{
-  m_state = state;
-}
-
-Action::State Action::get_state()
-{
-  return m_state;
-}
-
-// @todo Action::target_can_be_bodypart()
-
-bool Action::target_can_be_thing() const
-{
-  switch (m_type)
-  {
-    case Action::Type::Fill:
-    case Action::Type::PutInto:
-      return true;
-
-    default:
-      return false;
-  }
-}
-
-bool Action::target_can_be_direction() const
-{
-  switch (m_type)
-  {
-    case Action::Type::Attack:
-    case Action::Type::Close:
-    case Action::Type::Fill:
-    case Action::Type::Hurl:
-    case Action::Type::Move:
-    case Action::Type::Open:
-    case Action::Type::Shoot:
-      return true;
-
-    default:
-      return false;
-  }
-}
-
-void Action::set_target(ThingRef target)
-{
-  m_target_thing = target;
-  m_target_direction = Direction::None;
-}
-
-void Action::set_target(Direction direction)
-{
-  m_target_thing = ThingRef();
-  m_target_direction = direction;
-}
-
-ThingRef const& Action::get_target_thing() const
-{
-  return m_target_thing;
-}
-
-Direction const& Action::get_target_direction() const
-{
-  return m_target_direction;
-}
-
-unsigned int Action::get_quantity() const
-{
-  return m_quantity;
-}
-
-void Action::set_quantity(unsigned int quantity)
-{
-  m_quantity = quantity;
+  action_time = 0;
 }

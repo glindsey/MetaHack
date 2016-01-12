@@ -102,9 +102,9 @@ Thing::~Thing()
 {
 }
 
-void Thing::queue_action(Action action)
+void Thing::queue_action(std::unique_ptr<Action> pAction)
 {
-  pImpl->pending_actions.push_back(action);
+  pImpl->pending_actions.push_back(*pAction.get());
 }
 
 bool Thing::action_is_pending() const

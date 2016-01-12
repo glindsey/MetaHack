@@ -96,12 +96,10 @@ public:
     }
   }
 
-  Action();
   Action(Action::Type type);
   Action(Action const&) = default;
   virtual ~Action() = default;
 
-  void set_type(Action::Type type);
   Action::Type get_type() const;
   void set_things(std::vector<ThingRef> things);
   std::vector<ThingRef> const& get_things() const;
@@ -123,11 +121,17 @@ public:
   unsigned int get_quantity() const;
   void set_quantity(unsigned int quantity);
 
-private:
+protected:
   bool prebegin_(ThingRef actor, AnyMap& params);
   bool begin_(ThingRef actor, AnyMap& params);
   void finish_(ThingRef actor, AnyMap& params);
   void abort_(ThingRef actor, AnyMap& params);
+
+private:
+  virtual bool prebegin__(ThingRef actor, AnyMap& params, unsigned int& action_time);
+  virtual bool begin__(ThingRef actor, ThingRef thing, AnyMap& params, unsigned int& action_time);
+  virtual void finish__(ThingRef actor, AnyMap& params, unsigned int& action_time);
+  virtual void abort__(ThingRef actor, AnyMap& params, unsigned int& action_time);
 
   /// Type of this action.
   Action::Type m_type;
