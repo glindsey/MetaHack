@@ -16,6 +16,12 @@ class Action
 {
 public:
 
+  struct StateResult
+  {
+    bool success;
+    unsigned int elapsed_time;
+  };
+
   enum class State
   {
     Pending,      ///< The action is waiting to be executed.
@@ -134,10 +140,10 @@ private:
   struct Impl;
   std::unique_ptr<Impl> pImpl;
 
-  virtual bool do_prebegin_work(ThingRef actor, AnyMap& params, unsigned int& action_time);
-  virtual bool do_begin_work(ThingRef actor, ThingRef thing, AnyMap& params, unsigned int& action_time);
-  virtual void do_finish_work(ThingRef actor, AnyMap& params, unsigned int& action_time);
-  virtual void do_abort_work(ThingRef actor, AnyMap& params, unsigned int& action_time);
+  virtual StateResult do_prebegin_work(ThingRef actor, AnyMap& params);
+  virtual StateResult do_begin_work(ThingRef actor, ThingRef thing, AnyMap& params);
+  virtual StateResult do_finish_work(ThingRef actor, AnyMap& params);
+  virtual StateResult do_abort_work(ThingRef actor, AnyMap& params);
 };
 
 #endif // ACTION_H

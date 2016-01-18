@@ -148,11 +148,12 @@ bool Action::process(ThingRef actor, AnyMap params)
 
 bool Action::prebegin_(ThingRef actor, AnyMap& params)
 {
-  bool success = false;
-  unsigned int action_time = 0;
+  auto result = do_prebegin_work(actor, params);
 
-  success = do_prebegin_work(actor, params, action_time);
-  actor->set_property<int>("counter_busy", 0);
+  if (result.success)
+  {
+    actor->set_property<int>("counter_busy", result.elapsed_time);
+  }
 
   set_state(Action::State::PreBegin);
   return true;
@@ -160,9 +161,6 @@ bool Action::prebegin_(ThingRef actor, AnyMap& params)
 
 bool Action::begin_(ThingRef actor, AnyMap& params)
 {
-  bool success = false;
-  unsigned int action_time = 0;
-
   ThingRef thing = ThingManager::get_mu();
 
   if (pImpl->things.size() > 0)
@@ -170,14 +168,14 @@ bool Action::begin_(ThingRef actor, AnyMap& params)
     thing = pImpl->things.back();
   }
 
-  success = do_begin_work(actor, thing, params, action_time);
+  auto result = do_begin_work(actor, thing, params);
 
   // If starting the action succeeded, move to the in-progress state.
   // Otherwise, just go right to post-finish.
-  if (success)
+  if (result.success)
   {
     // Update the busy counter.
-    actor->set_property<int>("counter_busy", action_time);
+    actor->set_property<int>("counter_busy", result.elapsed_time);
     set_state(Action::State::InProgress);
   }
   else
@@ -187,16 +185,14 @@ bool Action::begin_(ThingRef actor, AnyMap& params)
     set_state(Action::State::PostFinish);
   }
 
-  return success;
+  return result.success;
 }
 
 void Action::finish_(ThingRef actor, AnyMap& params)
 {
-  unsigned int action_time = 0;
+  auto result = do_finish_work(actor, params);
 
-  do_finish_work(actor, params, action_time);
-
-  // If there are any things in the m_things queue, pop the back one off.
+  // If there are any things in the things queue, pop the back one off.
   if (pImpl->things.size() > 0)
   {
     pImpl->things.pop_back();
@@ -210,18 +206,22 @@ void Action::finish_(ThingRef actor, AnyMap& params)
   }
   else
   {
-    actor->set_property<int>("counter_busy", action_time);
+    if (result.success)
+    {
+      actor->set_property<int>("counter_busy", result.elapsed_time);
+    }
     set_state(Action::State::PostFinish);
   }
 }
 
 void Action::abort_(ThingRef actor, AnyMap& params)
 {
-  unsigned int action_time = 0;
+  auto result = do_abort_work(actor, params);
 
-  do_abort_work(actor, params, action_time);
-
-  actor->add_to_property<int>("counter_busy", action_time);
+  if (result.success)
+  {
+    actor->add_to_property<int>("counter_busy", result.elapsed_time);
+  }
   set_state(Action::State::PostFinish);
 }
 
@@ -300,17 +300,17 @@ bool Action::target_can_be_direction() const
   }
 }
 
-bool Action::do_prebegin_work(ThingRef actor, AnyMap& params, unsigned int& action_time)
+Action::StateResult Action::do_prebegin_work(ThingRef actor, AnyMap& params)
 {
   /// @todo Set counter_busy based on the action being taken and
   ///       the entity's reflexes.
-  action_time = 0;
-  return true;
+  return{ true, 0 };
 }
 
-bool Action::do_begin_work(ThingRef actor, ThingRef thing, AnyMap& params, unsigned int& action_time)
+Action::StateResult Action::do_begin_work(ThingRef actor, ThingRef thing, AnyMap& params)
 {
   bool success;
+  unsigned int action_time;
 
   switch (get_type())
   {
@@ -404,17 +404,17 @@ bool Action::do_begin_work(ThingRef actor, ThingRef thing, AnyMap& params, unsig
       break;
   } // end switch (action)
 
-  return success;
+  return{ success, action_time };
 }
 
-void Action::do_finish_work(ThingRef actor, AnyMap& params, unsigned int& action_time)
+Action::StateResult Action::do_finish_work(ThingRef actor, AnyMap& params)
 {
   /// @todo Complete the action here
-  action_time = 0;
+  return{ true, 0 };
 }
 
-void Action::do_abort_work(ThingRef actor, AnyMap& params, unsigned int& action_time)
+Action::StateResult Action::do_abort_work(ThingRef actor, AnyMap& params)
 {
   /// @todo Handle aborting the action here.
-  action_time = 0;
+  return{ true, 0 };
 }
