@@ -123,7 +123,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="ActionWait.h" />
     <ClInclude Include="include\Action.h" />
     <ClInclude Include="include\ActionResult.h" />
     <ClInclude Include="include\App.h" />
@@ -190,6 +189,7 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\Action.cpp" />
+    <ClCompile Include="src\ActionWait.cpp" />
     <ClCompile Include="src\App.cpp" />
     <ClCompile Include="src\AppStateGameMode.cpp" />
     <ClCompile Include="src\AppStateMainMenu.cpp" />

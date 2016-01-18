@@ -136,14 +136,14 @@ protected:
   void finish_(ThingRef actor, AnyMap& params);
   void abort_(ThingRef actor, AnyMap& params);
 
-private:
-  struct Impl;
-  std::unique_ptr<Impl> pImpl;
-
   virtual StateResult do_prebegin_work(ThingRef actor, AnyMap& params);
   virtual StateResult do_begin_work(ThingRef actor, ThingRef thing, AnyMap& params);
   virtual StateResult do_finish_work(ThingRef actor, AnyMap& params);
   virtual StateResult do_abort_work(ThingRef actor, AnyMap& params);
+
+private:
+  struct Impl;
+  std::unique_ptr<Impl> pImpl;
 };
 
 #endif // ACTION_H

@@ -5,6 +5,7 @@
 #include <set>
 
 #include "Action.h"
+#include "ActionWait.h"
 #include "App.h"
 #include "ConfigSettings.h"
 #include "GetLetterKey.h"
@@ -487,7 +488,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
         {
           if (key_direction == Direction::Self)
           {
-            p_action.reset(new Action(Action::Type::Wait));
+            p_action.reset(new ActionWait());
             player->queue_action(std::move(p_action));
             result = EventResult::Handled;
           }
