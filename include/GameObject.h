@@ -1,11 +1,14 @@
 #ifndef GAMEOBJECT_H
 #define GAMEOBJECT_H
 
+#include <boost/noncopyable.hpp>
 #include <SFML/Graphics.hpp>
 #include <string>
 
 /// Everything in the game inherits from GameObject.
 class GameObject
+  :
+  public boost::noncopyable
 {
 public:
   GameObject();
@@ -20,8 +23,8 @@ public:
   ///                     If false, store directly w/white bg color.
   /// @param frame Animation frame number.
   virtual void add_floor_vertices_to(sf::VertexArray& vertices,
-                               bool use_lighting,
-                               int frame) = 0;
+                                     bool use_lighting,
+                                     int frame) = 0;
 
   /// Draw this game object onto a RenderTexture, at the specified coordinates.
   /// @param target Texture to draw onto.

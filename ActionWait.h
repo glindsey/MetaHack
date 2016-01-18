@@ -2,7 +2,9 @@
 
 #include "Action.h"
 
-class ActionWait : public Action
+class ActionWait
+  :
+  public Action
 {
   ActionWait();
   virtual ~ActionWait();

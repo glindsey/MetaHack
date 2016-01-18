@@ -19,7 +19,9 @@ class Entity;
 class Floor;
 class Metadata;
 
-class MapTile : public GameObject
+class MapTile
+  :
+  public GameObject
 {
   friend class Map;
 

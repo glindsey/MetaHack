@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <boost/dynamic_bitset.hpp>
+#include <boost/noncopyable.hpp>
 
 #include "common_types.h"
 #include "Gender.h"
@@ -25,6 +26,8 @@ using TilesSeen = boost::dynamic_bitset<>;
 using ActionQueue = std::deque< std::unique_ptr<Action> >;
 
 class ThingImpl
+  :
+  public boost::noncopyable
 {
 public:
 

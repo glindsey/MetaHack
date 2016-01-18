@@ -15,7 +15,6 @@
 #include <string>
 #include <set>
 #include <boost/dynamic_bitset.hpp>
-#include <boost/noncopyable.hpp>
 #include <boost/optional.hpp>
 #include <boost/pool/object_pool.hpp>
 #include <boost/property_tree/ptree.hpp>
@@ -40,9 +39,9 @@ using ThingCreator = std::shared_ptr<Thing>(*)(void);
 #include "UsesPimpl.h"
 
 // Thing is any object in the game, animate or not.
-class Thing :
-  public GameObject,
-  virtual public boost::noncopyable
+class Thing
+  :
+  public GameObject
 {
   friend class boost::object_pool < Thing >;
   friend class AIStrategy;

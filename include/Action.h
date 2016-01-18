@@ -13,7 +13,9 @@
 class Thing;
 
 // Class describing an action to execute.
-class Action : public boost::noncopyable
+class Action
+  :
+  public boost::noncopyable
 {
 public:
 
