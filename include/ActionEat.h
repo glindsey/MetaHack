@@ -3,17 +3,17 @@
 #include "Action.h"
 #include <string>
 
-class ActionWait
+class ActionEat
   :
   public Action
 {
 public:
-  ActionWait();
-  virtual ~ActionWait();
+  ActionEat();
+  virtual ~ActionEat();
 
   virtual std::string get_type() const
   {
-    return "Wait";
+    return "Eat";
   }
 
 protected:

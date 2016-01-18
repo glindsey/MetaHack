@@ -124,7 +124,27 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="include\Action.h" />
+    <ClInclude Include="include\ActionAttack.h" />
+    <ClInclude Include="include\ActionAttire.h" />
+    <ClInclude Include="include\ActionClose.h" />
+    <ClInclude Include="include\ActionDrop.h" />
+    <ClInclude Include="include\ActionEat.h" />
+    <ClInclude Include="include\ActionFill.h" />
+    <ClInclude Include="include\ActionGet.h" />
+    <ClInclude Include="include\ActionHurl.h" />
+    <ClInclude Include="include\ActionInscribe.h" />
+    <ClInclude Include="include\ActionMix.h" />
+    <ClInclude Include="include\ActionMove.h" />
+    <ClInclude Include="include\ActionOpen.h" />
+    <ClInclude Include="include\ActionPutInto.h" />
+    <ClInclude Include="include\ActionQuaff.h" />
+    <ClInclude Include="include\ActionRead.h" />
     <ClInclude Include="include\ActionResult.h" />
+    <ClInclude Include="include\ActionShoot.h" />
+    <ClInclude Include="include\ActionTakeOut.h" />
+    <ClInclude Include="include\ActionUse.h" />
+    <ClInclude Include="include\ActionWait.h" />
+    <ClInclude Include="include\ActionWield.h" />
     <ClInclude Include="include\App.h" />
     <ClInclude Include="include\AppStateGameMode.h" />
     <ClInclude Include="include\AppStateMainMenu.h" />
@@ -189,7 +209,26 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\Action.cpp" />
+    <ClCompile Include="src\ActionAttack.cpp" />
+    <ClCompile Include="src\ActionAttire.cpp" />
+    <ClCompile Include="src\ActionClose.cpp" />
+    <ClCompile Include="src\ActionDrop.cpp" />
+    <ClCompile Include="src\ActionEat.cpp" />
+    <ClCompile Include="src\ActionFill.cpp" />
+    <ClCompile Include="src\ActionGet.cpp" />
+    <ClCompile Include="src\ActionHurl.cpp" />
+    <ClCompile Include="src\ActionInscribe.cpp" />
+    <ClCompile Include="src\ActionMix.cpp" />
+    <ClCompile Include="src\ActionMove.cpp" />
+    <ClCompile Include="src\ActionOpen.cpp" />
+    <ClCompile Include="src\ActionPutInto.cpp" />
+    <ClCompile Include="src\ActionQuaff.cpp" />
+    <ClCompile Include="src\ActionRead.cpp" />
+    <ClCompile Include="src\ActionShoot.cpp" />
+    <ClCompile Include="src\ActionTakeOut.cpp" />
+    <ClCompile Include="src\ActionUse.cpp" />
     <ClCompile Include="src\ActionWait.cpp" />
+    <ClCompile Include="src\ActionWield.cpp" />
     <ClCompile Include="src\App.cpp" />
     <ClCompile Include="src\AppStateGameMode.cpp" />
     <ClCompile Include="src\AppStateMainMenu.cpp" />

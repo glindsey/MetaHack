@@ -6,7 +6,9 @@
 #include <boost/noncopyable.hpp>
 #include <boost/uuid/uuid.hpp>
 
+#include "App.h"
 #include "Direction.h"
+#include "MessageLog.h"
 #include "ThingRef.h"
 
 // Forward declarations
@@ -105,10 +107,9 @@ public:
     }
   }
 
-  Action(Action::Type type);
+  Action();
   virtual ~Action();
 
-  Action::Type get_type() const;
   void set_things(std::vector<ThingRef> things);
   std::vector<ThingRef> const& get_things() const;
   void add_thing(ThingRef thing);
@@ -130,6 +131,8 @@ public:
   virtual bool target_can_be_thing() const;
   virtual bool target_can_be_direction() const;
 
+  virtual std::string get_type() const = 0;
+
 protected:
   bool prebegin_(ThingRef actor, AnyMap& params);
   bool begin_(ThingRef actor, AnyMap& params);
@@ -145,5 +148,26 @@ private:
   struct Impl;
   std::unique_ptr<Impl> pImpl;
 };
+
+#include "ActionAttack.h"
+#include "ActionAttire.h"
+#include "ActionClose.h"
+#include "ActionDrop.h"
+#include "ActionEat.h"
+#include "ActionFill.h"
+#include "ActionGet.h"
+#include "ActionHurl.h"
+#include "ActionInscribe.h"
+#include "ActionMix.h"
+#include "ActionMove.h"
+#include "ActionOpen.h"
+#include "ActionPutInto.h"
+#include "ActionQuaff.h"
+#include "ActionRead.h"
+#include "ActionShoot.h"
+#include "ActionTakeOut.h"
+#include "ActionUse.h"
+#include "ActionWait.h"
+#include "ActionWield.h"
 
 #endif // ACTION_H

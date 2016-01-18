@@ -3,17 +3,22 @@
 #include "Action.h"
 #include <string>
 
-class ActionWait
+class ActionHurl
   :
   public Action
 {
 public:
-  ActionWait();
-  virtual ~ActionWait();
+  ActionHurl();
+  virtual ~ActionHurl();
+
+  virtual bool target_can_be_direction() const override
+  {
+    return true;
+  }
 
   virtual std::string get_type() const
   {
-    return "Wait";
+    return "Hurl";
   }
 
 protected:

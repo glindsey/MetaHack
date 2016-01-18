@@ -9,18 +9,14 @@
 
 struct Action::Impl
 {
-  Impl(Action::Type type_)
+  Impl()
     :
-    type{ type_ },
     state{ Action::State::Pending },
     things{ std::vector<ThingRef>{ } },
     target_thing{ ThingManager::get_mu() },
     target_direction{ Direction::None },
     quantity{ 0 }
   {}
-
-  /// Type of this action.
-  Action::Type type;
 
   /// State of this action.
   Action::State state;
@@ -38,18 +34,13 @@ struct Action::Impl
   unsigned int quantity;
 };
 
-Action::Action(Action::Type type)
+Action::Action()
   :
-  pImpl{ new Impl(type) }
+  pImpl{ new Impl() }
 {}
 
 Action::~Action()
 {}
-
-Action::Type Action::get_type() const
-{
-  return pImpl->type;
-}
 
 void Action::set_things(std::vector<ThingRef> things)
 {
@@ -128,6 +119,16 @@ bool Action::process(ThingRef actor, AnyMap params)
   }
 
   return true;
+}
+
+bool Action::target_can_be_thing() const
+{
+  return false;
+}
+
+bool Action::target_can_be_direction() const
+{
+  return false;
 }
 
 bool Action::prebegin_(ThingRef actor, AnyMap& params)
@@ -253,37 +254,6 @@ void Action::set_quantity(unsigned int quantity)
 
 // @todo Action::target_can_be_bodypart()
 
-bool Action::target_can_be_thing() const
-{
-  switch (pImpl->type)
-  {
-    case Action::Type::Fill:
-    case Action::Type::PutInto:
-      return true;
-
-    default:
-      return false;
-  }
-}
-
-bool Action::target_can_be_direction() const
-{
-  switch (pImpl->type)
-  {
-    case Action::Type::Attack:
-    case Action::Type::Close:
-    case Action::Type::Fill:
-    case Action::Type::Hurl:
-    case Action::Type::Move:
-    case Action::Type::Open:
-    case Action::Type::Shoot:
-      return true;
-
-    default:
-      return false;
-  }
-}
-
 Action::StateResult Action::do_prebegin_work(ThingRef actor, AnyMap& params)
 {
   /// @todo Set counter_busy based on the action being taken and
@@ -293,102 +263,9 @@ Action::StateResult Action::do_prebegin_work(ThingRef actor, AnyMap& params)
 
 Action::StateResult Action::do_begin_work(ThingRef actor, ThingRef thing, AnyMap& params)
 {
-  bool success;
-  unsigned int action_time;
+  the_message_log.add("We're sorry, but that action has not yet been implemented.");
 
-  switch (get_type())
-  {
-    case Action::Type::Wait:
-      success = actor->do_move(Direction::Self, action_time);
-      break;
-
-    case Action::Type::Move:
-      success = actor->do_move(get_target_direction(), action_time);
-      break;
-
-    case Action::Type::Attack:
-      success = actor->do_attack(get_target_direction(), action_time);
-      break;
-
-    case Action::Type::Drop:
-      if (thing != ThingManager::get_mu())
-      {
-        success = actor->do_drop(thing, action_time);
-      }
-      break;
-
-    case Action::Type::Eat:
-      if (thing != ThingManager::get_mu())
-      {
-        success = actor->do_eat(thing, action_time);
-      }
-      break;
-
-    case Action::Type::Get:
-      if (thing != ThingManager::get_mu())
-      {
-        success = actor->do_pick_up(thing, action_time);
-      }
-      break;
-
-    case Action::Type::Quaff:
-      if (thing != ThingManager::get_mu())
-      {
-        success = actor->do_drink(thing, action_time);
-      }
-      break;
-
-    case Action::Type::PutInto:
-    {
-      ThingRef container = get_target_thing();
-      if (container != ThingManager::get_mu())
-      {
-        if (container->get_intrinsic<int>("inventory_size") != 0)
-        {
-          if (thing != ThingManager::get_mu())
-          {
-            success = actor->do_put_into(thing, container, action_time);
-          }
-          break;
-        }
-      }
-      else
-      {
-        the_message_log.add("That target is not a container.");
-      }
-      break;
-    }
-
-    case Action::Type::TakeOut:
-      if (thing != ThingManager::get_mu())
-      {
-        success = actor->do_take_out(thing, action_time);
-      }
-      break;
-
-    case Action::Type::Use:
-      if (thing != ThingManager::get_mu())
-      {
-        success = actor->do_use(thing, action_time);
-      }
-      break;
-
-    case Action::Type::Wield:
-    {
-      if (thing != ThingManager::get_mu())
-      {
-        /// @todo Implement wielding using other hands.
-        success = actor->do_wield(thing, 0, action_time);
-      }
-      break;
-    }
-
-    default:
-      the_message_log.add("We're sorry, but that action has not yet been implemented.");
-      break;
-  } // end switch (action)
-
-  return{ success, action_time };
+  return{ false, 0 };
 }
 
 Action::StateResult Action::do_finish_work(ThingRef actor, AnyMap& params)
