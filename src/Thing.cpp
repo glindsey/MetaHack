@@ -3273,7 +3273,7 @@ bool Thing::_process_self()
   else if (!pImpl->pending_actions.empty())
   {
     // Process the front action.
-    Action action = pImpl->pending_actions.front();
+    Action& action = pImpl->pending_actions.front();
     TRACE("Thing %s (%s): Action %s is in state %s",
           get_ref().get_id().to_string().c_str(),
           get_type().c_str(),

@@ -7,42 +7,87 @@
 #include "ThingManager.h"
 #include "ThingRef.h"
 
+struct Action::Impl
+{
+  Impl(Action::Type type_)
+    :
+    type{ type_ },
+    state{ Action::State::Pending },
+    things{ std::vector<ThingRef>{ } },
+    target_thing{ ThingManager::get_mu() },
+    target_direction{ Direction::None },
+    quantity{ 0 }
+  {}
+
+  /// Type of this action.
+  Action::Type type;
+
+  /// State of this action.
+  Action::State state;
+
+  /// Thing(s) to perform the action on.
+  std::vector<ThingRef> things;
+
+  /// Target Thing for the action (if any).
+  ThingRef target_thing;
+
+  /// Direction for the action (if any).
+  Direction target_direction;
+
+  /// Quantity for the action (only used in drop/pickup).
+  unsigned int quantity;
+};
+
 Action::Action(Action::Type type)
   :
-  m_type{ type },
-  m_state{ Action::State::Pending },
-  m_things{ std::vector<ThingRef>{ } },
-  m_target_thing{ ThingManager::get_mu() },
-  m_target_direction{ Direction::None },
-  m_quantity{ 0 }
+  pImpl{ new Impl(type) }
 {}
+
+Action::~Action()
+{}
+
+Action::Action(Action const& other)
+  :
+  pImpl{ new Impl(*(other.pImpl.get())) }
+{}
+
+Action::Action(Action&& other)
+  :
+  pImpl{ std::move(other.pImpl) }
+{}
+
+Action& Action::operator=(Action other)
+{
+  std::swap(pImpl, other.pImpl);
+  return *this;
+}
 
 Action::Type Action::get_type() const
 {
-  return m_type;
+  return pImpl->type;
 }
 
 void Action::set_things(std::vector<ThingRef> things)
 {
-  m_things = things;
+  pImpl->things = things;
 }
 
 std::vector<ThingRef> const& Action::get_things() const
 {
-  return m_things;
+  return pImpl->things;
 }
 
 void Action::add_thing(ThingRef thing)
 {
-  m_things.push_back(thing);
+  pImpl->things.push_back(thing);
 }
 
 bool Action::remove_thing(ThingRef thing)
 {
-  auto& iter = std::find(m_things.begin(), m_things.end(), thing);
-  if (iter != m_things.end())
+  auto& iter = std::find(pImpl->things.begin(), pImpl->things.end(), thing);
+  if (iter != pImpl->things.end())
   {
-    m_things.erase(iter);
+    pImpl->things.erase(iter);
     return true;
   }
   return false;
@@ -50,7 +95,7 @@ bool Action::remove_thing(ThingRef thing)
 
 void Action::clear_things()
 {
-  m_things.clear();
+  pImpl->things.clear();
 }
 
 bool Action::process(ThingRef actor, AnyMap params)
@@ -69,9 +114,9 @@ bool Action::process(ThingRef actor, AnyMap params)
 
   // Continue running through states until the event is processed, or the
   // target actor is busy.
-  while ((m_state != Action::State::Processed) && (actor->get_property<int>("counter_busy") == 0))
+  while ((pImpl->state != Action::State::Processed) && (actor->get_property<int>("counter_busy") == 0))
   {
-    switch (m_state)
+    switch (pImpl->state)
     {
       case Action::State::Pending:
         prebegin_(actor, params);
@@ -106,7 +151,7 @@ bool Action::prebegin_(ThingRef actor, AnyMap& params)
   bool success = false;
   unsigned int action_time = 0;
 
-  success = prebegin__(actor, params, action_time);
+  success = do_prebegin_work(actor, params, action_time);
   actor->set_property<int>("counter_busy", 0);
 
   set_state(Action::State::PreBegin);
@@ -120,12 +165,12 @@ bool Action::begin_(ThingRef actor, AnyMap& params)
 
   ThingRef thing = ThingManager::get_mu();
 
-  if (m_things.size() > 0)
+  if (pImpl->things.size() > 0)
   {
-    thing = m_things.back();
+    thing = pImpl->things.back();
   }
 
-  success = begin__(actor, thing, params, action_time);
+  success = do_begin_work(actor, thing, params, action_time);
 
   // If starting the action succeeded, move to the in-progress state.
   // Otherwise, just go right to post-finish.
@@ -149,17 +194,17 @@ void Action::finish_(ThingRef actor, AnyMap& params)
 {
   unsigned int action_time = 0;
 
-  finish__(actor, params, action_time);
+  do_finish_work(actor, params, action_time);
 
   // If there are any things in the m_things queue, pop the back one off.
-  if (m_things.size() > 0)
+  if (pImpl->things.size() > 0)
   {
-    m_things.pop_back();
+    pImpl->things.pop_back();
   }
 
   // If there are still things left, go back to the pre-begin state to handle
   // the next thing; otherwise, move to the post-finish state.
-  if (m_things.size() > 0)
+  if (pImpl->things.size() > 0)
   {
     set_state(Action::State::PreBegin);
   }
@@ -174,7 +219,7 @@ void Action::abort_(ThingRef actor, AnyMap& params)
 {
   unsigned int action_time = 0;
 
-  abort__(actor, params, action_time);
+  do_abort_work(actor, params, action_time);
 
   actor->add_to_property<int>("counter_busy", action_time);
   set_state(Action::State::PostFinish);
@@ -182,19 +227,51 @@ void Action::abort_(ThingRef actor, AnyMap& params)
 
 void Action::set_state(Action::State state)
 {
-  m_state = state;
+  pImpl->state = state;
 }
 
 Action::State Action::get_state()
 {
-  return m_state;
+  return pImpl->state;
+}
+
+void Action::set_target(ThingRef target)
+{
+  pImpl->target_thing = target;
+  pImpl->target_direction = Direction::None;
+}
+
+void Action::set_target(Direction direction)
+{
+  pImpl->target_thing = ThingRef();
+  pImpl->target_direction = direction;
+}
+
+ThingRef const& Action::get_target_thing() const
+{
+  return pImpl->target_thing;
+}
+
+Direction const& Action::get_target_direction() const
+{
+  return pImpl->target_direction;
+}
+
+unsigned int Action::get_quantity() const
+{
+  return pImpl->quantity;
+}
+
+void Action::set_quantity(unsigned int quantity)
+{
+  pImpl->quantity = quantity;
 }
 
 // @todo Action::target_can_be_bodypart()
 
 bool Action::target_can_be_thing() const
 {
-  switch (m_type)
+  switch (pImpl->type)
   {
     case Action::Type::Fill:
     case Action::Type::PutInto:
@@ -207,7 +284,7 @@ bool Action::target_can_be_thing() const
 
 bool Action::target_can_be_direction() const
 {
-  switch (m_type)
+  switch (pImpl->type)
   {
     case Action::Type::Attack:
     case Action::Type::Close:
@@ -223,39 +300,7 @@ bool Action::target_can_be_direction() const
   }
 }
 
-void Action::set_target(ThingRef target)
-{
-  m_target_thing = target;
-  m_target_direction = Direction::None;
-}
-
-void Action::set_target(Direction direction)
-{
-  m_target_thing = ThingRef();
-  m_target_direction = direction;
-}
-
-ThingRef const& Action::get_target_thing() const
-{
-  return m_target_thing;
-}
-
-Direction const& Action::get_target_direction() const
-{
-  return m_target_direction;
-}
-
-unsigned int Action::get_quantity() const
-{
-  return m_quantity;
-}
-
-void Action::set_quantity(unsigned int quantity)
-{
-  m_quantity = quantity;
-}
-
-bool Action::prebegin__(ThingRef actor, AnyMap& params, unsigned int& action_time)
+bool Action::do_prebegin_work(ThingRef actor, AnyMap& params, unsigned int& action_time)
 {
   /// @todo Set counter_busy based on the action being taken and
   ///       the entity's reflexes.
@@ -263,7 +308,7 @@ bool Action::prebegin__(ThingRef actor, AnyMap& params, unsigned int& action_tim
   return true;
 }
 
-bool Action::begin__(ThingRef actor, ThingRef thing, AnyMap& params, unsigned int& action_time)
+bool Action::do_begin_work(ThingRef actor, ThingRef thing, AnyMap& params, unsigned int& action_time)
 {
   bool success;
 
@@ -362,13 +407,13 @@ bool Action::begin__(ThingRef actor, ThingRef thing, AnyMap& params, unsigned in
   return success;
 }
 
-void Action::finish__(ThingRef actor, AnyMap& params, unsigned int& action_time)
+void Action::do_finish_work(ThingRef actor, AnyMap& params, unsigned int& action_time)
 {
   /// @todo Complete the action here
   action_time = 0;
 }
 
-void Action::abort__(ThingRef actor, AnyMap& params, unsigned int& action_time)
+void Action::do_abort_work(ThingRef actor, AnyMap& params, unsigned int& action_time)
 {
   /// @todo Handle aborting the action here.
   action_time = 0;

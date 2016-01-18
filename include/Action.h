@@ -97,8 +97,10 @@ public:
   }
 
   Action(Action::Type type);
-  Action(Action const&) = default;
-  virtual ~Action() = default;
+  Action(Action const& other);
+  Action(Action&& other);
+  Action& operator=(Action other);
+  virtual ~Action();
 
   Action::Type get_type() const;
   void set_things(std::vector<ThingRef> things);
@@ -112,14 +114,15 @@ public:
   void set_state(Action::State state);
   Action::State get_state();
 
-  bool target_can_be_thing() const;
-  bool target_can_be_direction() const;
   void set_target(ThingRef target);
   void set_target(Direction direction);
   ThingRef const& get_target_thing() const;
   Direction const& get_target_direction() const;
   unsigned int get_quantity() const;
   void set_quantity(unsigned int quantity);
+
+  virtual bool target_can_be_thing() const;
+  virtual bool target_can_be_direction() const;
 
 protected:
   bool prebegin_(ThingRef actor, AnyMap& params);
@@ -128,28 +131,13 @@ protected:
   void abort_(ThingRef actor, AnyMap& params);
 
 private:
-  virtual bool prebegin__(ThingRef actor, AnyMap& params, unsigned int& action_time);
-  virtual bool begin__(ThingRef actor, ThingRef thing, AnyMap& params, unsigned int& action_time);
-  virtual void finish__(ThingRef actor, AnyMap& params, unsigned int& action_time);
-  virtual void abort__(ThingRef actor, AnyMap& params, unsigned int& action_time);
+  struct Impl;
+  std::unique_ptr<Impl> pImpl;
 
-  /// Type of this action.
-  Action::Type m_type;
-
-  /// State of this action.
-  Action::State m_state;
-
-  /// Thing(s) to perform the action on.
-  std::vector<ThingRef> m_things;
-
-  /// Target Thing for the action (if any).
-  ThingRef m_target_thing;
-
-  /// Direction for the action (if any).
-  Direction m_target_direction;
-
-  /// Quantity for the action (only used in drop/pickup).
-  unsigned int m_quantity;
+  virtual bool do_prebegin_work(ThingRef actor, AnyMap& params, unsigned int& action_time);
+  virtual bool do_begin_work(ThingRef actor, ThingRef thing, AnyMap& params, unsigned int& action_time);
+  virtual void do_finish_work(ThingRef actor, AnyMap& params, unsigned int& action_time);
+  virtual void do_abort_work(ThingRef actor, AnyMap& params, unsigned int& action_time);
 };
 
 #endif // ACTION_H
