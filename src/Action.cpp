@@ -46,22 +46,6 @@ Action::Action(Action::Type type)
 Action::~Action()
 {}
 
-Action::Action(Action const& other)
-  :
-  pImpl{ new Impl(*(other.pImpl.get())) }
-{}
-
-Action::Action(Action&& other)
-  :
-  pImpl{ std::move(other.pImpl) }
-{}
-
-Action& Action::operator=(Action other)
-{
-  std::swap(pImpl, other.pImpl);
-  return *this;
-}
-
 Action::Type Action::get_type() const
 {
   return pImpl->type;

@@ -123,6 +123,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ActionWait.h" />
     <ClInclude Include="include\Action.h" />
     <ClInclude Include="include\ActionResult.h" />
     <ClInclude Include="include\App.h" />

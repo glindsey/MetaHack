@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <vector>
+#include <boost/noncopyable.hpp>
 #include <boost/uuid/uuid.hpp>
 
 #include "Direction.h"
@@ -12,7 +13,7 @@
 class Thing;
 
 // Class describing an action to execute.
-class Action
+class Action : public boost::noncopyable
 {
 public:
 
@@ -103,9 +104,6 @@ public:
   }
 
   Action(Action::Type type);
-  Action(Action const& other);
-  Action(Action&& other);
-  Action& operator=(Action other);
   virtual ~Action();
 
   Action::Type get_type() const;

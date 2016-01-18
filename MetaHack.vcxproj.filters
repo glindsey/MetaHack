@@ -201,6 +201,9 @@
     <ClInclude Include="include\MessageLogView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ActionWait.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">
