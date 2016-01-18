@@ -53,6 +53,8 @@ public:
   virtual ~Thing();
 
   /// Queue an action for this Entity to perform.
+  /// pAction The Action to queue. The Action is MOVED when queued,
+  ///         e.g. pAction will be `nullptr` after queuing.
   void queue_action(std::unique_ptr<Action> pAction);
 
   /// Return whether there is an action pending for this Entity.

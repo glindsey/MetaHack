@@ -22,7 +22,7 @@ using WearingPair = std::pair<WearLocation, ThingRef>;
 
 using MapMemory = std::vector<std::string>;
 using TilesSeen = boost::dynamic_bitset<>;
-using ActionQueue = std::deque<Action>;
+using ActionQueue = std::deque< std::unique_ptr<Action> >;
 
 class ThingImpl
 {
