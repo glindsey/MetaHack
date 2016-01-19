@@ -11,6 +11,42 @@
 #include "MessageLog.h"
 #include "ThingRef.h"
 
+// === MESSAGE HELPER MACROS ==================================================
+#define YOU       (get_subject()->get_identifying_string())  // "you" or descriptive noun like "the goblin"
+#define YOU_SUBJ  (get_subject()->get_subject_pronoun())     // "you/he/she/it/etc."
+#define YOU_OBJ   (get_subject()->get_object_pronoun())      // "you/him/her/it/etc."
+#define YOUR      (get_subject()->get_possessive())          // "your/his/her/its/etc."
+#define YOURSELF  (get_subject()->get_reflexive_pronoun())   // "yourself/himself/herself/itself/etc."
+
+#define CV(p12, p3)  (get_subject()->choose_verb(p12, p3))   // shortcut for "Choose Verb"
+
+#define ARE   (get_subject()->choose_verb(" are", " is"))
+#define WERE  (get_subject()->choose_verb(" were", " was"))
+#define DO    (get_subject()->choose_verb(" do", " does"))
+#define GET   (get_subject()->choose_verb(" get", " gets"))
+#define HAVE  (get_subject()->choose_verb(" have", " has"))
+#define SEEM  (get_subject()->choose_verb(" seem", " seems"))
+#define TRY   (get_subject()->choose_verb(" try", " tries"))
+
+#define IS_PLAYER (GAME.get_player() == get_subject())
+
+#define FOO       (get_object()->get_identifying_string())
+#define FOO1      (get_object()->get_identifying_string())
+#define FOO2      (get_second_object()->get_identifying_string())
+//#define LIQUID1      (liquid1->get_identifying_string())
+//#define LIQUID2      (liquid2->get_identifying_string())
+
+#define YOU_ARE       (YOU + ARE)
+#define YOU_WERE      (YOU + WERE)
+#define YOU_SUBJ_ARE  (YOU_SUBJ + ARE)
+#define YOU_DO        (YOU + DO)
+#define YOU_GET       (YOU + GET)
+#define YOU_HAVE      (YOU + HAVE)
+#define YOU_SEEM      (YOU + SEEM)
+#define YOU_TRY       (YOU + TRY)
+
+#define YOU_TRY_TO(verb) (YOU_TRY + " to " + verb + " ")
+
 // Forward declarations
 class Thing;
 
@@ -99,6 +135,8 @@ public:
 
   ThingRef get_subject() const;
   std::vector<ThingRef> const& get_objects() const;
+  ThingRef get_object() const;
+  ThingRef get_second_object() const;
 
   bool process(ThingRef actor, AnyMap params);
 

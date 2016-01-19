@@ -73,6 +73,16 @@ std::vector<ThingRef> const& Action::get_objects() const
   return pImpl->objects;
 }
 
+ThingRef Action::get_object() const
+{
+  return pImpl->objects[0];
+}
+
+ThingRef Action::get_second_object() const
+{
+  return pImpl->objects[1];
+}
+
 bool Action::process(ThingRef actor, AnyMap params)
 {
   // If entity is currently busy, decrement by one and return.

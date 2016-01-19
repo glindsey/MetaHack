@@ -358,133 +358,6 @@ bool Thing::do_attack(ThingRef thing, unsigned int& action_time)
   return false;
 }
 
-ActionResult Thing::can_drink(ThingRef thing, unsigned int& action_time)
-{
-  action_time = 1;
-
-  // Check that it isn't US!
-  if (thing == pImpl->ref)
-  {
-    return ActionResult::FailureSelfReference;
-  }
-
-  // Check that we're capable of drinking at all.
-  if (this->get_intrinsic<bool>("can_drink"))
-  {
-    return ActionResult::FailureActorCantPerform;
-  }
-
-  // Check that the thing is within reach.
-  if (!this->can_reach(thing))
-  {
-    return ActionResult::FailureThingOutOfReach;
-  }
-
-  // Check that it is something that contains a liquid.
-  if (!thing->get_intrinsic<bool>("liquid_carrier"))
-  {
-    return ActionResult::FailureNotLiquidCarrier;
-  }
-
-  // Check that it is not empty.
-  Inventory& inv = thing->get_inventory();
-  if (inv.count() == 0)
-  {
-    return ActionResult::FailureContainerIsEmpty;
-  }
-
-  return ActionResult::Success;
-}
-
-bool Thing::do_drink(ThingRef thing, unsigned int& action_time)
-{
-  std::string message;
-
-  ActionResult drink_try = this->can_drink(thing, action_time);
-  ThingRef contents;
-
-  switch (drink_try)
-  {
-    case ActionResult::Success:
-      contents = thing->get_inventory().get(INVSLOT_ZERO); // Okay to do as we've already confirmed inventory size > 0.
-      if (thing->is_drinkable_by(pImpl->ref, contents))
-      {
-        message = YOU + " drink from " + thing->get_identifying_string();
-        the_message_log.add(message);
-
-        ActionResult result = thing->perform_action_drank_by(pImpl->ref, contents);
-
-        switch (result)
-        {
-          case ActionResult::Success:
-            return true;
-
-          case ActionResult::SuccessDestroyed:
-            contents->destroy();
-            return true;
-
-          case ActionResult::Failure:
-            message = YOU + " stop drinking.";
-            the_message_log.add(message);
-            break;
-
-          default:
-            MINOR_ERROR("Unknown ActionResult %d", result);
-            break;
-        }
-      } // end if (thing->is_drinkable_by(pImpl->ref))
-      else
-      {
-        message = YOU + " can't drink that!";
-        the_message_log.add(message);
-      }
-      break;
-
-    case ActionResult::FailureSelfReference:
-      message = YOU_TRY + " to drink " + YOURSELF + ".";
-      the_message_log.add(message);
-
-      /// @todo When drinking self, special message if caller is a liquid-based organism.
-      message = "Needless to say, " + YOU_ARE + " not very successful in this endeavor.";
-      the_message_log.add(message);
-      break;
-
-    case ActionResult::FailureActorCantPerform:
-      message = YOU_TRY_TO("drink from") + FOO + ".";
-      the_message_log.add(message);
-      message = "But, as a " + get_display_name() + "," + YOU_ARE + " not capable of drinking liquids.";
-      the_message_log.add(message);
-      break;
-
-    case ActionResult::FailureThingOutOfReach:
-      message = YOU_TRY_TO("drink from") + FOO + ".";
-      the_message_log.add(message);
-
-      message = FOO + " is out of " + YOUR + " reach.";
-      the_message_log.add(message);
-      break;
-
-    case ActionResult::FailureNotLiquidCarrier:
-      message = YOU_TRY_TO("drink from") + FOO + ".";
-      the_message_log.add(message);
-      message = YOU + " cannot drink from that!";
-      the_message_log.add(message);
-      break;
-
-    case ActionResult::FailureContainerIsEmpty:
-      message = YOU_TRY_TO("drink from") + FOO + ".";
-      the_message_log.add(message);
-      message = "But " + FOO + " is empty!";
-      the_message_log.add(message);
-
-    default:
-      MINOR_ERROR("Unknown ActionResult %d", drink_try);
-      break;
-  }
-
-  return false;
-}
-
 ActionResult Thing::can_drop(ThingRef thing, unsigned int& action_time)
 {
   action_time = 1;
@@ -2973,8 +2846,9 @@ bool Thing::is_usable_by(ThingRef thing)
   return call_lua_function_bool("is_usable_by", { thing }, false);
 }
 
-bool Thing::is_drinkable_by(ThingRef thing, ThingRef contents)
+bool Thing::is_drinkable_by(ThingRef thing)
 {
+  ThingRef contents = pImpl->inventory.get(INVSLOT_ZERO);
   return call_lua_function_bool("is_drinkable_by", { thing, contents }, false);
 }
 
@@ -3043,8 +2917,9 @@ void Thing::perform_action_collided_with_wall(Direction d, std::string tile_type
   return;
 }
 
-ActionResult Thing::perform_action_drank_by(ThingRef actor, ThingRef contents)
+ActionResult Thing::perform_action_drank_by(ThingRef actor)
 {
+  ThingRef contents = actor->get_inventory().get(INVSLOT_ZERO);
   ActionResult result = call_lua_function("perform_action_drank_by", { actor, contents });
   return result;
 }

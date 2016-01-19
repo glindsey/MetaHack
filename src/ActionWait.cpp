@@ -12,17 +12,19 @@ ActionWait::~ActionWait()
 
 Action::StateResult ActionWait::do_prebegin_work(AnyMap& params)
 {
+  // We can always wait.
   return{ true, 0 };
 }
 
 Action::StateResult ActionWait::do_begin_work(AnyMap& params)
 {
-  bool success;
-  unsigned int action_time;
+  std::string message =
+    YOU + " successfully" + CV(" stay", " stays") +
+    " where " + YOU_SUBJ_ARE + ".";
 
-  success = get_subject()->do_move(Direction::Self, action_time);
+  the_message_log.add(message);
 
-  return{ success, action_time };
+  return{ true, 1 };
 }
 
 Action::StateResult ActionWait::do_finish_work(AnyMap& params)

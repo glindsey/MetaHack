@@ -122,18 +122,6 @@ public:
   ///         false if it wasn't performed
   bool do_attack(ThingRef thing, unsigned int& action_time);
 
-  /// Return whether the Entity can drink the requested Thing.
-  /// @param[in] thing Thing to try to drink
-  /// @param[out] action_time The time it will take to drink it
-  /// @return ActionResult indicating what happened.
-  virtual ActionResult can_drink(ThingRef thing, unsigned int& action_time);
-
-  /// Attempt to drink a thing.
-  /// @param[in] thing Thing to try to drink
-  /// @param[out] action_time The time it took to drink it.
-  /// @return true if object is drank, false if not
-  bool do_drink(ThingRef thing, unsigned int& action_time);
-
   /// Return whether the Entity can drop the requested Thing.
   /// @param[in] thing Thing to try to drop
   /// @param[out] action_time The time it will take to drop it
@@ -499,7 +487,7 @@ public:
 
   /// Return whether or not this thing can be drank by this Entity.
   /// The default behavior for this is to return false.
-  bool is_drinkable_by(ThingRef thing, ThingRef contents);
+  bool is_drinkable_by(ThingRef thing);
 
   /// Return whether or not this thing can be eaten by this Entity.
   /// The default behavior for this is to return false.
@@ -537,9 +525,9 @@ public:
   /// Perform an action when this thing collides with a wall.
   void perform_action_collided_with_wall(Direction d, std::string tile_type);
 
-  /// Perform an action when this thing is eaten.
+  /// Perform an action when this thing is drank.
   /// If this function returns Failure, the action is aborted.
-  ActionResult perform_action_drank_by(ThingRef actor, ThingRef contents);
+  ActionResult perform_action_drank_by(ThingRef actor);
 
   /// Perform an action when this thing is dropped.
   /// If this function returns false, the action is aborted.
