@@ -2,34 +2,30 @@
 #include "Thing.h"
 #include "ThingRef.h"
 
-ActionPutInto::ActionPutInto()
+ActionPutInto::ActionPutInto(ThingRef subject, ThingRef object)
   :
-  Action()
+  Action(subject, object)
+{}
+
+ActionPutInto::ActionPutInto(ThingRef subject, std::vector<ThingRef> objects)
+  :
+  Action(subject, objects)
 {}
 
 ActionPutInto::~ActionPutInto()
 {}
 
-bool ActionPutInto::target_can_be_thing() const
-{
-  return true;
-}
-
-bool ActionPutInto::target_can_be_direction() const
-{
-  return false;
-}
-
-Action::StateResult ActionPutInto::do_prebegin_work(ThingRef actor, AnyMap& params)
+Action::StateResult ActionPutInto::do_prebegin_work(AnyMap& params)
 {
   return{ true, 0 };
 }
 
-Action::StateResult ActionPutInto::do_begin_work(ThingRef actor, ThingRef thing, AnyMap& params)
+Action::StateResult ActionPutInto::do_begin_work(AnyMap& params)
 {
   bool success = false;
   unsigned int action_time;
 
+  ThingRef thing = get_objects().front();
   ThingRef container = get_target_thing();
   if (container != ThingManager::get_mu())
   {
@@ -37,7 +33,7 @@ Action::StateResult ActionPutInto::do_begin_work(ThingRef actor, ThingRef thing,
     {
       if (thing != ThingManager::get_mu())
       {
-        success = actor->do_put_into(thing, container, action_time);
+        success = get_subject()->do_put_into(thing, container, action_time);
       }
     }
   }
@@ -49,12 +45,12 @@ Action::StateResult ActionPutInto::do_begin_work(ThingRef actor, ThingRef thing,
   return{ success, action_time };
 }
 
-Action::StateResult ActionPutInto::do_finish_work(ThingRef actor, AnyMap& params)
+Action::StateResult ActionPutInto::do_finish_work(AnyMap& params)
 {
   return{ true, 0 };
 }
 
-Action::StateResult ActionPutInto::do_abort_work(ThingRef actor, AnyMap& params)
+Action::StateResult ActionPutInto::do_abort_work(AnyMap& params)
 {
   return{ true, 0 };
 }

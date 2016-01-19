@@ -2,32 +2,32 @@
 #include "Thing.h"
 #include "ThingRef.h"
 
-ActionAttire::ActionAttire()
+ActionAttire::ActionAttire(ThingRef subject, ThingRef object)
   :
-  Action()
+  Action(subject, { object })
 {}
 
 ActionAttire::~ActionAttire()
 {}
 
-Action::StateResult ActionAttire::do_prebegin_work(ThingRef actor, AnyMap& params)
+Action::StateResult ActionAttire::do_prebegin_work(AnyMap& params)
 {
   return{ true, 0 };
 }
 
-Action::StateResult ActionAttire::do_begin_work(ThingRef actor, ThingRef thing, AnyMap& params)
+Action::StateResult ActionAttire::do_begin_work(AnyMap& params)
 {
   the_message_log.add("We're sorry, but that action has not yet been implemented.");
 
   return{ false, 0 };
 }
 
-Action::StateResult ActionAttire::do_finish_work(ThingRef actor, AnyMap& params)
+Action::StateResult ActionAttire::do_finish_work(AnyMap& params)
 {
   return{ true, 0 };
 }
 
-Action::StateResult ActionAttire::do_abort_work(ThingRef actor, AnyMap& params)
+Action::StateResult ActionAttire::do_abort_work(AnyMap& params)
 {
   return{ true, 0 };
 }

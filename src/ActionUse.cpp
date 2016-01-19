@@ -2,48 +2,39 @@
 #include "Thing.h"
 #include "ThingRef.h"
 
-ActionUse::ActionUse()
+ActionUse::ActionUse(ThingRef subject, ThingRef object)
   :
-  Action()
+  Action(subject, object)
 {}
 
 ActionUse::~ActionUse()
 {}
 
-bool ActionUse::target_can_be_thing() const
-{
-  return false;
-}
-
-bool ActionUse::target_can_be_direction() const
-{
-  return false;
-}
-
-Action::StateResult ActionUse::do_prebegin_work(ThingRef actor, AnyMap& params)
+Action::StateResult ActionUse::do_prebegin_work(AnyMap& params)
 {
   return{ true, 0 };
 }
 
-Action::StateResult ActionUse::do_begin_work(ThingRef actor, ThingRef thing, AnyMap& params)
+Action::StateResult ActionUse::do_begin_work(AnyMap& params)
 {
   bool success = false;
   unsigned int action_time;
 
+  ThingRef thing = get_objects().front();
   if (thing != ThingManager::get_mu())
   {
-    success = actor->do_use(thing, action_time);
+    success = get_subject()->do_use(thing, action_time);
   }
 
   return{ success, action_time };
 }
 
-Action::StateResult ActionUse::do_finish_work(ThingRef actor, AnyMap& params)
+Action::StateResult ActionUse::do_finish_work(AnyMap& params)
 {
   return{ true, 0 };
 }
 
-Action::StateResult ActionUse::do_abort_work(ThingRef actor, AnyMap& params)
+Action::StateResult ActionUse::do_abort_work(AnyMap& params)
 {
   return{ true, 0 };
 }

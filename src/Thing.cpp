@@ -3274,18 +3274,13 @@ bool Thing::_process_self()
   {
     // Process the front action.
     std::unique_ptr<Action>& action = pImpl->pending_actions.front();
-    TRACE("Thing %s (%s): Action %s is in state %s",
-          get_ref().get_id().to_string().c_str(),
-          get_type().c_str(),
-          Action::str(action->get_type()),
-          Action::str(action->get_state()));
     bool action_done = action->process(get_ref(), {});
     if (action_done)
     {
       TRACE("Thing %s (%s): Action %s is done, popping",
             get_ref().get_id().to_string().c_str(),
             get_type().c_str(),
-            Action::str(action->get_type()));
+            action->get_type().c_str());
       pImpl->pending_actions.pop_front();
     }
   } // end if (actions pending)

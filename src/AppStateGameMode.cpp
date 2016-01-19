@@ -19,6 +19,28 @@
 #include "Thing.h"
 #include "ThingManager.h"
 
+/// Actions that can be performed.
+#include "ActionAttack.h"
+#include "ActionAttire.h"
+#include "ActionClose.h"
+#include "ActionDrop.h"
+#include "ActionEat.h"
+#include "ActionFill.h"
+#include "ActionGet.h"
+#include "ActionHurl.h"
+#include "ActionInscribe.h"
+#include "ActionMix.h"
+#include "ActionMove.h"
+#include "ActionOpen.h"
+#include "ActionPutInto.h"
+#include "ActionQuaff.h"
+#include "ActionRead.h"
+#include "ActionShoot.h"
+#include "ActionTakeOut.h"
+#include "ActionUse.h"
+#include "ActionWait.h"
+#include "ActionWield.h"
+
 /// Current input state for the game.
 enum class GameInputState
 {
@@ -176,7 +198,7 @@ public:
 
     if (p_action_in_progress)
     {
-      if (p_action_in_progress->target_can_be_thing())
+      if (p_action_in_progress->can_be_subject_verb_thing_preposition_thing())
       {
         if (!key.alt && !key.control && key_number != -1)
         {
@@ -189,7 +211,8 @@ public:
         }
       } // end if (action_in_progress.target_can_be_thing)
 
-      if (p_action_in_progress->target_can_be_direction())
+      if (p_action_in_progress->can_be_subject_verb_direction() ||
+          p_action_in_progress->can_be_subject_verb_thing_preposition_direction())
       {
         if (!key.alt && !key.control && key_direction != Direction::None)
         {
@@ -455,7 +478,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
     case GameInputState::Map:
     {
       std::unique_ptr<Action> p_action;
-      std::vector<ThingRef>& v_things = pImpl->inventory_area->get_selected_things();
+      std::vector<ThingRef>& things = pImpl->inventory_area->get_selected_things();
       int key_number = get_letter_key(key);
       Direction key_direction = get_direction_key(key);
 
@@ -487,13 +510,13 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
         {
           if (key_direction == Direction::Self)
           {
-            p_action.reset(new ActionWait());
+            p_action.reset(new ActionWait(player));
             player->queue_action(std::move(p_action));
             result = EventResult::Handled;
           }
           else
           {
-            p_action.reset(new ActionMove());
+            p_action.reset(new ActionMove(player));
             p_action->set_target(key_direction);
             player->queue_action(std::move(p_action));
             result = EventResult::Handled;
@@ -654,15 +677,17 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
             // CTRL-A -- attire/adorn
           case sf::Keyboard::Key::A:    // Attire
-            if (v_things.size() == 0)
+            if (things.size() == 0)
             {
               the_message_log.add("Please choose the item(s) to wear first.");
             }
             else
             {
-              p_action.reset(new ActionAttire());
-              p_action->set_things(v_things);
-              player->queue_action(std::move(p_action));
+              for (auto thing : things)
+              {
+                p_action.reset(new ActionAttire(player, thing));
+                player->queue_action(std::move(p_action));
+              }
               pImpl->inventory_area_shows_player = false;
               pImpl->reset_inventory_area();
             }
@@ -671,10 +696,10 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
             // CTRL-C -- close items
           case sf::Keyboard::Key::C:    // Close
-            if (v_things.size() == 0)
+            if (things.size() == 0)
             {
               // No item specified, so ask for a direction.
-              pImpl->p_action_in_progress.reset(new ActionClose());
+              pImpl->p_action_in_progress.reset(new ActionClose(player));
               the_message_log.add("Choose a direction to close.");
               pImpl->current_input_state = GameInputState::TargetSelection;
               pImpl->inventory_area->clear_selected_slots();
@@ -682,9 +707,11 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             else
             {
               // Item(s) specified, so proceed with items.
-              p_action.reset(new ActionClose());
-              p_action->set_things(v_things);
-              player->queue_action(std::move(p_action));
+              for (auto thing : things)
+              {
+                p_action.reset(new ActionClose(player, thing));
+                player->queue_action(std::move(p_action));
+              }
               pImpl->inventory_area_shows_player = false;
               pImpl->reset_inventory_area();
             }
@@ -693,15 +720,17 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
             // CTRL-D -- drop items
           case sf::Keyboard::Key::D:    // Drop
-            if (v_things.size() == 0)
+            if (things.size() == 0)
             {
               the_message_log.add("Please choose the item(s) to drop first.");
             }
             else
             {
-              p_action.reset(new ActionDrop());
-              p_action->set_things(v_things);
-              player->queue_action(std::move(p_action));
+              for (auto thing : things)
+              {
+                p_action.reset(new ActionDrop(player, thing));
+                player->queue_action(std::move(p_action));
+              }
               pImpl->inventory_area_shows_player = false;
               pImpl->reset_inventory_area();
             }
@@ -710,15 +739,17 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
             // CTRL-E -- eat items
           case sf::Keyboard::Key::E:
-            if (v_things.size() == 0)
+            if (things.size() == 0)
             {
               the_message_log.add("Please choose the item(s) to eat first.");
             }
             else
             {
-              p_action.reset(new ActionEat());
-              p_action->set_things(v_things);
-              player->queue_action(std::move(p_action));
+              for (auto thing : things)
+              {
+                p_action.reset(new ActionEat(player, thing));
+                player->queue_action(std::move(p_action));
+              }
               pImpl->inventory_area_shows_player = false;
               pImpl->reset_inventory_area();
             }
@@ -727,14 +758,17 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
             // CTRL-F -- fill item(s)
           case sf::Keyboard::Key::F:
-            if (v_things.size() == 0)
+            if (things.size() == 0)
             {
-              the_message_log.add("Please select the item(s) to fill first.");
+              the_message_log.add("Please select the item to fill first.");
+            }
+            else if (things.size() > 1)
+            {
+              the_message_log.add("You can only fill one item at a time.");
             }
             else
             {
-              pImpl->p_action_in_progress.reset(new ActionFill());
-              pImpl->p_action_in_progress->set_things(v_things);
+              pImpl->p_action_in_progress.reset(new ActionFill(player, things.front()));
               the_message_log.add("Choose an item or direction to fill from.");
               pImpl->current_input_state = GameInputState::TargetSelection;
               pImpl->inventory_area->clear_selected_slots();
@@ -744,15 +778,17 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
             // CTRL-G -- get (pick up) items
           case sf::Keyboard::Key::G:
-            if (v_things.size() == 0)
+            if (things.size() == 0)
             {
               the_message_log.add("Please select the item(s) to pick up first.");
             }
             else
             {
-              p_action.reset(new ActionGet());
-              p_action->set_things(v_things);
-              player->queue_action(std::move(p_action));
+              for (auto thing : things)
+              {
+                p_action.reset(new ActionGet(player, thing));
+                player->queue_action(std::move(p_action));
+              }
               pImpl->inventory_area_shows_player = false;
               pImpl->reset_inventory_area();
             }
@@ -761,18 +797,17 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
             // CTRL-H -- hurl items
           case sf::Keyboard::Key::H:
-            if (v_things.size() == 0)
+            if (things.size() == 0)
             {
               the_message_log.add("Please select the item you want to hurl first.");
             }
-            else if (v_things.size() > 1)
+            else if (things.size() > 1)
             {
               the_message_log.add("You can only hurl one item at once.");
             }
             else
             {
-              pImpl->p_action_in_progress.reset(new ActionHurl());
-              pImpl->p_action_in_progress->set_things(v_things);
+              pImpl->p_action_in_progress.reset(new ActionHurl(player, things.front()));
               the_message_log.add("Choose a direction to hurl the item.");
               pImpl->current_input_state = GameInputState::TargetSelection;
               pImpl->inventory_area->clear_selected_slots();
@@ -780,21 +815,24 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             result = EventResult::Handled;
             break;
 
-            // CTRL-I -- inscribe on an item
+            // CTRL-I -- inscribe with an item
           case sf::Keyboard::Key::I:
-            if (v_things.size() == 0)
+            if (things.size() > 1)
             {
-              the_message_log.add("Please select the item you want to write on first.");
-            }
-            else if (v_things.size() > 1)
-            {
-              the_message_log.add("You can only write on one item at a time.");
+              the_message_log.add("You can only write with one item at a time.");
             }
             else
             {
-              pImpl->p_action_in_progress.reset(new ActionInscribe());
-              pImpl->p_action_in_progress->set_things(v_things);
-              the_message_log.add("Choose an item to write with.");
+              if (things.size() == 0)
+              {
+                pImpl->p_action_in_progress.reset(new ActionInscribe(player));
+              }
+              else
+              {
+                pImpl->p_action_in_progress.reset(new ActionInscribe(player, things.front()));
+              }
+
+              the_message_log.add("Choose an item or direction to write on.");
               pImpl->current_input_state = GameInputState::TargetSelection;
               pImpl->inventory_area->clear_selected_slots();
             }
@@ -803,18 +841,17 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
             // CTRL-M -- mix items
           case sf::Keyboard::Key::M:
-            if (v_things.size() == 0)
+            if (things.size() == 0)
             {
               the_message_log.add("Please select the two items you want to mix together first.");
             }
-            else if (v_things.size() != 2)
+            else if (things.size() != 2)
             {
               the_message_log.add("You must select exactly two items to mix together.");
             }
             else
             {
-              p_action.reset(new ActionMix());
-              p_action->set_things(v_things);
+              p_action.reset(new ActionMix(player, things));
               player->queue_action(std::move(p_action));
               pImpl->inventory_area_shows_player = false;
               pImpl->reset_inventory_area();
@@ -823,10 +860,10 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             break;
 
           case sf::Keyboard::Key::O:    // Open
-            if (v_things.size() == 0)
+            if (things.size() == 0)
             {
               // No item specified, so ask for a direction.
-              pImpl->p_action_in_progress.reset(new ActionOpen());
+              pImpl->p_action_in_progress.reset(new ActionOpen(player));
               the_message_log.add("Choose a direction to open.");
               pImpl->current_input_state = GameInputState::TargetSelection;
               pImpl->inventory_area->clear_selected_slots();
@@ -834,9 +871,11 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             else
             {
               // Item(s) specified, so proceed with items.
-              p_action.reset(new ActionOpen());
-              p_action->set_things(v_things);
-              player->queue_action(std::move(p_action));
+              for (auto thing : things)
+              {
+                p_action.reset(new ActionOpen(player, thing));
+                player->queue_action(std::move(p_action));
+              }
               pImpl->inventory_area_shows_player = false;
               pImpl->reset_inventory_area();
             }
@@ -845,14 +884,13 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
             // CTRL-P -- put item in another item
           case sf::Keyboard::Key::P:
-            if (v_things.size() == 0)
+            if (things.size() == 0)
             {
               the_message_log.add("Please select the item(s) you want to store first.");
             }
             else
             {
-              pImpl->p_action_in_progress.reset(new ActionPutInto());
-              pImpl->p_action_in_progress->set_things(v_things);
+              pImpl->p_action_in_progress.reset(new ActionPutInto(player, things));
               the_message_log.add("Choose a container to put the item(s) into.");
               pImpl->current_input_state = GameInputState::TargetSelection;
               pImpl->inventory_area->clear_selected_slots();
@@ -862,15 +900,17 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
             // CTRL-Q -- quaff (drink) from items
           case sf::Keyboard::Key::Q:
-            if (v_things.size() == 0)
+            if (things.size() == 0)
             {
               the_message_log.add("Please select the item(s) you want to quaff from first.");
             }
             else
             {
-              p_action.reset(new ActionQuaff());
-              p_action->set_things(v_things);
-              player->queue_action(std::move(p_action));
+              for (auto thing : things)
+              {
+                p_action.reset(new ActionQuaff(player, thing));
+                player->queue_action(std::move(p_action));
+              }
               pImpl->inventory_area_shows_player = false;
               pImpl->reset_inventory_area();
             }
@@ -879,15 +919,17 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
             // CTRL-R -- read an item
           case sf::Keyboard::Key::R:
-            if (v_things.size() == 0)
+            if (things.size() == 0)
             {
               the_message_log.add("Please select the item(s) you want to read first.");
             }
             else
             {
-              p_action.reset(new ActionRead());
-              p_action->set_things(v_things);
-              player->queue_action(std::move(p_action));
+              for (auto thing : things)
+              {
+                p_action.reset(new ActionRead(player, thing));
+                player->queue_action(std::move(p_action));
+              }
               pImpl->inventory_area_shows_player = false;
               pImpl->reset_inventory_area();
             }
@@ -897,7 +939,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::S:
             // Skip the item check here, as we want to shoot our wielded weapon
             // if no item is selected.
-            if (v_things.size() > 1)
+            if (things.size() > 1)
             {
               the_message_log.add("You can only shoot one item at once.");
             }
@@ -905,8 +947,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             {
               /// @todo If no items are selected, fire your wielded item.
               ///       Otherwise, wield the selected item and fire it.
-              pImpl->p_action_in_progress.reset(new ActionShoot());
-              pImpl->p_action_in_progress->set_things(v_things);
+              pImpl->p_action_in_progress.reset(new ActionShoot(player, things.front()));
               the_message_log.add("Choose a direction to shoot.");
               pImpl->current_input_state = GameInputState::TargetSelection;
               pImpl->inventory_area->clear_selected_slots();
@@ -916,14 +957,13 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
             // CTRL-T -- take item out of container
           case sf::Keyboard::Key::T:
-            if (v_things.size() == 0)
+            if (things.size() == 0)
             {
               the_message_log.add("Please select the item(s) to take out first.");
             }
             else
             {
-              p_action.reset(new ActionTakeOut());
-              p_action->set_things(v_things);
+              p_action.reset(new ActionTakeOut(player, things));
               player->queue_action(std::move(p_action));
               pImpl->inventory_area_shows_player = false;
               pImpl->reset_inventory_area();
@@ -933,15 +973,17 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
             // CTRL-U -- use an item
           case sf::Keyboard::Key::U:
-            if (v_things.size() == 0)
+            if (things.size() == 0)
             {
               the_message_log.add("Please choose the item to use first.");
             }
             else
             {
-              p_action.reset(new ActionUse());
-              p_action->set_things(v_things);
-              player->queue_action(std::move(p_action));
+              for (auto thing : things)
+              {
+                p_action.reset(new ActionUse(player, thing));
+                player->queue_action(std::move(p_action));
+              }
               pImpl->inventory_area_shows_player = false;
               pImpl->reset_inventory_area();
             }
@@ -950,18 +992,17 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
             // CTRL-W -- wield item
           case sf::Keyboard::Key::W:
-            if (v_things.size() == 0)
+            if (things.size() == 0)
             {
               the_message_log.add("Please choose the item to wield first.");
             }
-            else if (v_things.size() > 1)
+            else if (things.size() > 1)
             {
               the_message_log.add("You may only wield one item at a time.");
             }
             else
             {
-              p_action.reset(new ActionWield());
-              p_action->set_things(v_things);
+              p_action.reset(new ActionWield(player, things.front()));
               player->queue_action(std::move(p_action));
               pImpl->inventory_area_shows_player = false;
               pImpl->reset_inventory_area();
@@ -971,24 +1012,22 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
             // CTRL-X -- Xplicit attack
           case sf::Keyboard::Key::X:
-            if (v_things.size() == 0)
+            if (things.size() == 0)
             {
               // No item specified, so ask for a direction.
-              pImpl->p_action_in_progress.reset(new ActionAttack());
-              pImpl->p_action_in_progress->set_things(v_things);
+              pImpl->p_action_in_progress.reset(new ActionAttack(player));
               the_message_log.add("Choose a direction to attack.");
               pImpl->current_input_state = GameInputState::TargetSelection;
               pImpl->inventory_area->clear_selected_slots();
             }
-            else if (v_things.size() > 1)
+            else if (things.size() > 1)
             {
               the_message_log.add("You can only attack one item at once.");
             }
             else
             {
               // Item(s) specified, so proceed with items.
-              p_action.reset(new ActionAttack());
-              p_action->set_things(v_things);
+              p_action.reset(new ActionAttack(player, things.front()));
               player->queue_action(std::move(p_action));
               pImpl->inventory_area_shows_player = false;
               pImpl->reset_inventory_area();

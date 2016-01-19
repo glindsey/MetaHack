@@ -1,34 +1,31 @@
 #pragma once
 
 #include "Action.h"
+#include "ThingRef.h"
+
 #include <string>
+#include <vector>
 
 class ActionOpen
   :
   public Action
 {
 public:
-  ActionOpen();
+  ActionOpen(ThingRef subject);
+  ActionOpen(ThingRef subject, ThingRef object);
   virtual ~ActionOpen();
 
-  virtual bool target_can_be_direction() const override
-  {
-    return true;
-  }
-
-  virtual bool target_can_be_thing() const override
-  {
-    return true;
-  }
-
-  virtual std::string get_type() const
+  virtual std::string get_type() const override
   {
     return "Open";
   }
 
+  ACTION_TRAIT(can_be_subject_verb_thing);
+  ACTION_TRAIT(can_be_subject_verb_direction);
+
 protected:
-  virtual StateResult do_prebegin_work(ThingRef actor, AnyMap& params) override;
-  virtual StateResult do_begin_work(ThingRef actor, ThingRef thing, AnyMap& params) override;
-  virtual StateResult do_finish_work(ThingRef actor, AnyMap& params) override;
-  virtual StateResult do_abort_work(ThingRef actor, AnyMap& params) override;
+  virtual StateResult do_prebegin_work(AnyMap& params) override;
+  virtual StateResult do_begin_work(AnyMap& params) override;
+  virtual StateResult do_finish_work(AnyMap& params) override;
+  virtual StateResult do_abort_work(AnyMap& params) override;
 };

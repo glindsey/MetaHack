@@ -9,20 +9,26 @@
 
 struct Action::Impl
 {
-  Impl()
+  Impl(ThingRef subject_,
+       std::vector<ThingRef> objects_,
+       unsigned int quantity_)
     :
     state{ Action::State::Pending },
-    things{ std::vector<ThingRef>{ } },
+    subject{ subject_ },
+    objects{ objects_ },
     target_thing{ ThingManager::get_mu() },
     target_direction{ Direction::None },
-    quantity{ 0 }
+    quantity{ quantity_ }
   {}
 
   /// State of this action.
   Action::State state;
 
-  /// Thing(s) to perform the action on.
-  std::vector<ThingRef> things;
+  /// The subject performing the action.
+  ThingRef subject;
+
+  /// The objects of the action.
+  std::vector<ThingRef> objects;
 
   /// Target Thing for the action (if any).
   ThingRef target_thing;
@@ -34,50 +40,49 @@ struct Action::Impl
   unsigned int quantity;
 };
 
-Action::Action()
+Action::Action(ThingRef subject)
   :
-  pImpl{ new Impl() }
+  pImpl{ new Impl(subject, {}, 0) }
+{}
+
+Action::Action(ThingRef subject, ThingRef object)
+  :
+  pImpl{ new Impl(subject, { object }, 1) }
+{}
+
+Action::Action(ThingRef subject, ThingRef object, unsigned int quantity)
+  :
+  pImpl{ new Impl(subject,{object}, quantity) }
+{}
+
+Action::Action(ThingRef subject, std::vector<ThingRef> objects)
+  :
+  pImpl{ new Impl(subject, objects, 1) }
 {}
 
 Action::~Action()
 {}
 
-void Action::set_things(std::vector<ThingRef> things)
+ThingRef Action::get_subject() const
 {
-  pImpl->things = things;
+  return pImpl->subject;
 }
 
-std::vector<ThingRef> const& Action::get_things() const
+std::vector<ThingRef> const& Action::get_objects() const
 {
-  return pImpl->things;
-}
-
-void Action::add_thing(ThingRef thing)
-{
-  pImpl->things.push_back(thing);
-}
-
-bool Action::remove_thing(ThingRef thing)
-{
-  auto& iter = std::find(pImpl->things.begin(), pImpl->things.end(), thing);
-  if (iter != pImpl->things.end())
-  {
-    pImpl->things.erase(iter);
-    return true;
-  }
-  return false;
-}
-
-void Action::clear_things()
-{
-  pImpl->things.clear();
+  return pImpl->objects;
 }
 
 bool Action::process(ThingRef actor, AnyMap params)
 {
   // If entity is currently busy, decrement by one and return.
-  if (actor->get_property<int>("counter_busy") > 0)
+  unsigned int counter_busy = actor->get_property<int>("counter_busy");
+  if (counter_busy > 0)
   {
+    TRACE("Thing #%s (%s): counter_busy = %d, decrementing",
+          actor.get_id().to_string().c_str(),
+          actor->get_type().c_str(),
+          counter_busy);
     actor->add_to_property<int>("counter_busy", -1);
     return false;
   }
@@ -89,24 +94,33 @@ bool Action::process(ThingRef actor, AnyMap params)
 
   // Continue running through states until the event is processed, or the
   // target actor is busy.
-  while ((pImpl->state != Action::State::Processed) && (actor->get_property<int>("counter_busy") == 0))
+  while ((pImpl->state != Action::State::Processed) && (counter_busy == 0))
   {
+    unsigned int counter_busy = actor->get_property<int>("counter_busy");
+
+    TRACE("Thing #%s (%s): Action %s is in state %s, counter_busy = %d",
+          actor.get_id().to_string().c_str(),
+          actor->get_type().c_str(),
+          get_type().c_str(),
+          Action::str(get_state()),
+          counter_busy);
+
     switch (pImpl->state)
     {
       case Action::State::Pending:
-        prebegin_(actor, params);
+        prebegin_(params);
         break;
 
       case Action::State::PreBegin:
-        begin_(actor, params);
+        begin_(params);
         break;
 
       case Action::State::InProgress:
-        finish_(actor, params);
+        finish_(params);
         break;
 
       case Action::State::Interrupted:
-        abort_(actor, params);
+        abort_(params);
         break;
 
       case Action::State::PostFinish:
@@ -121,92 +135,63 @@ bool Action::process(ThingRef actor, AnyMap params)
   return true;
 }
 
-bool Action::target_can_be_thing() const
-{
-  return false;
-}
+/// @todo Action::target_can_be_bodypart()
 
-bool Action::target_can_be_direction() const
+bool Action::prebegin_(AnyMap& params)
 {
-  return false;
-}
-
-bool Action::prebegin_(ThingRef actor, AnyMap& params)
-{
-  auto result = do_prebegin_work(actor, params);
+  auto result = do_prebegin_work(params);
 
   if (result.success)
   {
-    actor->set_property<int>("counter_busy", result.elapsed_time);
+    // Update the busy counter.
+    pImpl->subject->set_property<int>("counter_busy", result.elapsed_time);
+    set_state(Action::State::PreBegin);
+  }
+  else
+  {
+    // Clear the busy counter.
+    pImpl->subject->set_property<int>("counter_busy", 0);
+    set_state(Action::State::PostFinish);
   }
 
-  set_state(Action::State::PreBegin);
   return true;
 }
 
-bool Action::begin_(ThingRef actor, AnyMap& params)
+bool Action::begin_(AnyMap& params)
 {
-  ThingRef thing = ThingManager::get_mu();
-
-  if (pImpl->things.size() > 0)
-  {
-    thing = pImpl->things.back();
-  }
-
-  auto result = do_begin_work(actor, thing, params);
+  auto result = do_begin_work(params);
 
   // If starting the action succeeded, move to the in-progress state.
   // Otherwise, just go right to post-finish.
   if (result.success)
   {
     // Update the busy counter.
-    actor->set_property<int>("counter_busy", result.elapsed_time);
+    pImpl->subject->set_property<int>("counter_busy", result.elapsed_time);
     set_state(Action::State::InProgress);
   }
   else
   {
     // Clear the busy counter.
-    actor->set_property<int>("counter_busy", 0);
+    pImpl->subject->set_property<int>("counter_busy", 0);
     set_state(Action::State::PostFinish);
   }
 
   return result.success;
 }
 
-void Action::finish_(ThingRef actor, AnyMap& params)
+void Action::finish_(AnyMap& params)
 {
-  auto result = do_finish_work(actor, params);
+  auto result = do_finish_work(params);
 
-  // If there are any things in the things queue, pop the back one off.
-  if (pImpl->things.size() > 0)
-  {
-    pImpl->things.pop_back();
-  }
-
-  // If there are still things left, go back to the pre-begin state to handle
-  // the next thing; otherwise, move to the post-finish state.
-  if (pImpl->things.size() > 0)
-  {
-    set_state(Action::State::PreBegin);
-  }
-  else
-  {
-    if (result.success)
-    {
-      actor->set_property<int>("counter_busy", result.elapsed_time);
-    }
-    set_state(Action::State::PostFinish);
-  }
+  pImpl->subject->set_property<int>("counter_busy", result.elapsed_time);
+  set_state(Action::State::PostFinish);
 }
 
-void Action::abort_(ThingRef actor, AnyMap& params)
+void Action::abort_(AnyMap& params)
 {
-  auto result = do_abort_work(actor, params);
+  auto result = do_abort_work(params);
 
-  if (result.success)
-  {
-    actor->add_to_property<int>("counter_busy", result.elapsed_time);
-  }
+  pImpl->subject->add_to_property<int>("counter_busy", result.elapsed_time);
   set_state(Action::State::PostFinish);
 }
 
@@ -220,16 +205,21 @@ Action::State Action::get_state()
   return pImpl->state;
 }
 
-void Action::set_target(ThingRef target)
+void Action::set_target(ThingRef thing) const
 {
-  pImpl->target_thing = target;
+  pImpl->target_thing = thing;
   pImpl->target_direction = Direction::None;
 }
 
-void Action::set_target(Direction direction)
+void Action::set_target(Direction direction) const
 {
-  pImpl->target_thing = ThingRef();
+  pImpl->target_thing = ThingManager::get_mu();
   pImpl->target_direction = direction;
+}
+
+void Action::set_quantity(unsigned int quantity) const
+{
+  pImpl->quantity = quantity;
 }
 
 ThingRef const& Action::get_target_thing() const
@@ -247,34 +237,27 @@ unsigned int Action::get_quantity() const
   return pImpl->quantity;
 }
 
-void Action::set_quantity(unsigned int quantity)
-{
-  pImpl->quantity = quantity;
-}
-
-// @todo Action::target_can_be_bodypart()
-
-Action::StateResult Action::do_prebegin_work(ThingRef actor, AnyMap& params)
+Action::StateResult Action::do_prebegin_work(AnyMap& params)
 {
   /// @todo Set counter_busy based on the action being taken and
   ///       the entity's reflexes.
   return{ true, 0 };
 }
 
-Action::StateResult Action::do_begin_work(ThingRef actor, ThingRef thing, AnyMap& params)
+Action::StateResult Action::do_begin_work(AnyMap& params)
 {
   the_message_log.add("We're sorry, but that action has not yet been implemented.");
 
   return{ false, 0 };
 }
 
-Action::StateResult Action::do_finish_work(ThingRef actor, AnyMap& params)
+Action::StateResult Action::do_finish_work(AnyMap& params)
 {
   /// @todo Complete the action here
   return{ true, 0 };
 }
 
-Action::StateResult Action::do_abort_work(ThingRef actor, AnyMap& params)
+Action::StateResult Action::do_abort_work(AnyMap& params)
 {
   /// @todo Handle aborting the action here.
   return{ true, 0 };

@@ -14,6 +14,18 @@
 // Forward declarations
 class Thing;
 
+// === ACTION TRAITS ==========================================================
+
+#define CREATE_TRAIT(trait)       virtual bool trait()                    \
+                                  {                                       \
+                                    return false;                         \
+                                  }
+
+#define ACTION_TRAIT(trait)       virtual bool trait() override       \
+                                  {                                   \
+                                    return true;                      \
+                                  }
+
 // Class describing an action to execute.
 class Action
   :
@@ -51,6 +63,7 @@ public:
     }
   }
 
+#if 0
   enum class Type
   {
     None,
@@ -76,98 +89,96 @@ public:
     Wield,
     Count
   };
+#endif
 
-  static inline char const* str(Type const& t)
-  {
-    switch (t)
-    {
-      case Type::None:      return "None";
-      case Type::Wait:      return "Wait";
-      case Type::Attack:    return "Attack";
-      case Type::Attire:    return "Attire";
-      case Type::Close:     return "Close";
-      case Type::Drop:      return "Drop";
-      case Type::Eat:       return "Eat";
-      case Type::Fill:      return "Fill";
-      case Type::Get:       return "Get";
-      case Type::Hurl:      return "Hurl";
-      case Type::Inscribe:  return "Inscribe";
-      case Type::Mix:       return "Mix";
-      case Type::Move:      return "Move";
-      case Type::Open:      return "Open";
-      case Type::PutInto:   return "PutInto";
-      case Type::Quaff:     return "Quaff";
-      case Type::Read:      return "Read";
-      case Type::Shoot:     return "Shoot";
-      case Type::TakeOut:   return "TakeOut";
-      case Type::Use:       return "Use";
-      case Type::Wield:     return "Wield";
-      case Type::Count:     return "Count";
-      default:              return "???";
-    }
-  }
-
-  Action();
+  Action(ThingRef subject);
+  Action(ThingRef subject, ThingRef object);
+  Action(ThingRef subject, ThingRef object, unsigned int quantity);
+  Action(ThingRef subject, std::vector<ThingRef> objects);
   virtual ~Action();
 
-  void set_things(std::vector<ThingRef> things);
-  std::vector<ThingRef> const& get_things() const;
-  void add_thing(ThingRef thing);
-  bool remove_thing(ThingRef thing);
-  void clear_things();
+  ThingRef get_subject() const;
+  std::vector<ThingRef> const& get_objects() const;
 
   bool process(ThingRef actor, AnyMap params);
 
   void set_state(Action::State state);
   Action::State get_state();
 
-  void set_target(ThingRef target);
-  void set_target(Direction direction);
+  void set_target(ThingRef thing) const;
+  void set_target(Direction direction) const;
+  void set_quantity(unsigned int quantity) const;
+
   ThingRef const& get_target_thing() const;
   Direction const& get_target_direction() const;
   unsigned int get_quantity() const;
-  void set_quantity(unsigned int quantity);
 
-  virtual bool target_can_be_thing() const;
-  virtual bool target_can_be_direction() const;
+  virtual std::string get_type() const
+  {
+    return "???";
+  }
 
-  virtual std::string get_type() const = 0;
+  CREATE_TRAIT(can_be_subject_only);
+  CREATE_TRAIT(can_be_subject_verb_thing);
+  CREATE_TRAIT(can_be_subject_verb_direction);
+  CREATE_TRAIT(can_be_subject_verb_things);
+  CREATE_TRAIT(can_be_subject_verb_thing_preposition_thing);
+  CREATE_TRAIT(can_be_subject_verb_things_preposition_thing);
+  CREATE_TRAIT(can_be_subject_verb_thing_preposition_bodypart);
+  CREATE_TRAIT(can_be_subject_verb_thing_preposition_direction);
+  CREATE_TRAIT(can_take_a_quantity);
 
 protected:
-  bool prebegin_(ThingRef actor, AnyMap& params);
-  bool begin_(ThingRef actor, AnyMap& params);
-  void finish_(ThingRef actor, AnyMap& params);
-  void abort_(ThingRef actor, AnyMap& params);
+  bool prebegin_(AnyMap& params);
+  bool begin_(AnyMap& params);
+  void finish_(AnyMap& params);
+  void abort_(AnyMap& params);
 
-  virtual StateResult do_prebegin_work(ThingRef actor, AnyMap& params);
-  virtual StateResult do_begin_work(ThingRef actor, ThingRef thing, AnyMap& params);
-  virtual StateResult do_finish_work(ThingRef actor, AnyMap& params);
-  virtual StateResult do_abort_work(ThingRef actor, AnyMap& params);
+  /// Perform work to be done at the start of the PreBegin state.
+  /// This work typically consists of checking whether the action is possible.
+  /// If StateResult::success is false, the action was not possible and is cancelled.
+  /// If StateResult::success is true, the action is possible, and the target actor
+  /// is busy for StateResult::elapsed_time before moving to the InProgress state.
+  /// @param params Map of parameters for the Action.
+  /// @return StateResult indicating whether the Action continues.
+  virtual StateResult do_prebegin_work(AnyMap& params);
+
+  /// Perform work to be done at the start of the InProgress state.
+  /// This is where the action begins.
+  /// If StateResult::success is false, the action could not begin and is cancelled.
+  /// (However, the PreBegin reaction time has already elapsed, so this is more
+  ///  like a critical failure when attempting the action, unlike a failure in
+  ///   do_prebegin_work which just means the action couldn't be started at all.)
+  /// If StateResult::success is true, the action began, and the target actor is
+  /// busy for StateResult::elapsed_time while the action is performed. It then
+  /// moves to the PostFinish state.
+  /// @param params Map of parameters for the Action.
+  /// @return StateResult indicating whether the Action continues.
+  virtual StateResult do_begin_work(AnyMap& params);
+
+  /// Perform work to be done at the end of the InProgress state and the start
+  /// of the PostFinish state.
+  /// This is where the action ends, and is used for actions that are not
+  /// instantaneous in game time, such as eating, drinking, reading, etc.
+  /// StateResult::success is ignored.
+  /// The target actor is busy for StateResult::elapsed_time as a "refractory"
+  /// period.
+  /// @param params Map of parameters for the Action.
+  /// @return StateResult indicating the post-Action wait time.
+  virtual StateResult do_finish_work(AnyMap& params);
+
+  /// Perform work to be done when an action in the InProgress state is aborted.
+  /// This is called when an action is aborted.
+  /// StateResult::success is ignored.
+  /// The target actor is busy for StateResult::elapsed_time as a "refractory"
+  /// period.
+  /// @param params Map of parameters for the Action.
+  /// @return StateResult indicating the post-Action wait time.
+  virtual StateResult do_abort_work(AnyMap& params);
 
 private:
   struct Impl;
   std::unique_ptr<Impl> pImpl;
 };
-
-#include "ActionAttack.h"
-#include "ActionAttire.h"
-#include "ActionClose.h"
-#include "ActionDrop.h"
-#include "ActionEat.h"
-#include "ActionFill.h"
-#include "ActionGet.h"
-#include "ActionHurl.h"
-#include "ActionInscribe.h"
-#include "ActionMix.h"
-#include "ActionMove.h"
-#include "ActionOpen.h"
-#include "ActionPutInto.h"
-#include "ActionQuaff.h"
-#include "ActionRead.h"
-#include "ActionShoot.h"
-#include "ActionTakeOut.h"
-#include "ActionUse.h"
-#include "ActionWait.h"
-#include "ActionWield.h"
 
 #endif // ACTION_H
