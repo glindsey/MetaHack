@@ -29,7 +29,7 @@
 #define SEEM  (get_subject()->choose_verb(" seem", " seems"))
 #define TRY   (get_subject()->choose_verb(" try", " tries"))
 
-#define IS_PLAYER (GAME.get_player() == get_subject())
+#define IS_PLAYER (get_subject()->is_player())
 
 #define FOO       (get_object()->get_identifying_string())
 #define FOO1      (get_object()->get_identifying_string())
@@ -142,6 +142,8 @@ protected:
   /// If StateResult::success is false, the action was not possible and is cancelled.
   /// If StateResult::success is true, the action is possible, and the target actor
   /// is busy for StateResult::elapsed_time before moving to the InProgress state.
+  /// @note do_prebegin_work usually has multiple returns in order to avoid
+  ///       the Dreaded Pyramid of Doom. It's just easier that way.
   /// @param params Map of parameters for the Action.
   /// @return StateResult indicating whether the Action continues.
   virtual StateResult do_prebegin_work(AnyMap& params);

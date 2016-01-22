@@ -256,23 +256,6 @@ public:
   /// Add the memory of a particular tile to a VertexArray.
   void add_memory_vertices_to(sf::VertexArray& vertices, int x, int y);
 
-  /// Check if the Entity can move in the specified direction.
-  bool can_move(Direction direction);
-
-  /// Return whether the Entity can pick up the requested Thing.
-  /// The base method checks to make sure the Thing is at the same location
-  /// as the Entity, and that the Entity's inventory can contain it.
-  /// @param[in] thing Thing to try to pick up
-  /// @param[out] action_time The time it will take to pick it up
-  /// @return ActionResult indicating what happened.
-  ActionResult can_pick_up(ThingRef thing, unsigned int& action_time);
-
-  /// Attempt to pick a thing up.
-  /// @param[in] thing Thing to try to pick up
-  /// @param[out] action_time The time it took to pick up
-  /// @return true if object is picked up, false if not
-  bool do_pick_up(ThingRef thing, unsigned int& action_time);
-
   /// Return whether the Entity can take a thing out of its container.
   /// @param[in] thing Thing to take out.
   /// @param[out] action_time The time it took to move the thing.

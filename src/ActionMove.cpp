@@ -71,7 +71,7 @@ Action::StateResult ActionMove::do_prebegin_work(AnyMap& params)
 
 Action::StateResult ActionMove::do_begin_work(AnyMap& params)
 {
-  StateResult result;
+  StateResult result = StateResult::Failure();
 
   std::string message;
 
@@ -85,14 +85,12 @@ Action::StateResult ActionMove::do_begin_work(AnyMap& params)
     /// @todo Write up/down movement code
     message = "Up/down movement is not yet supported!";
     the_message_log.add(message);
-    result = StateResult::Failure();
   }
   else if (new_direction == Direction::Down)
   {
     /// @todo Write up/down movement code
     message = "Up/down movement is not yet supported!";
     the_message_log.add(message);
-    result = StateResult::Failure();
   }
   else
   {
@@ -110,7 +108,6 @@ Action::StateResult ActionMove::do_begin_work(AnyMap& params)
     {
       message += YOU + " can't move there; it is out of bounds!";
       the_message_log.add(message);
-      return StateResult::Failure();
     }
     else
     {
@@ -129,7 +126,7 @@ Action::StateResult ActionMove::do_begin_work(AnyMap& params)
       }
       else
       {
-        if (new_tile.can_be_traversed_by(subject->get_ref()))
+        if (new_tile.can_be_traversed_by(subject))
         {
           /// @todo Figure out elapsed movement time.
           result.success = subject->move_into(new_floor);
@@ -142,7 +139,6 @@ Action::StateResult ActionMove::do_begin_work(AnyMap& params)
             getIndefArt(tile_description) + " " +
             tile_description + ".";
           the_message_log.add(message);
-          result = StateResult::Failure();
         }
       } // end else if (tile does not contain creature)
     } // end else if (not out of bounds)
