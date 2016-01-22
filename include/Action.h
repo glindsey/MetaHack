@@ -99,34 +99,6 @@ public:
     }
   }
 
-#if 0
-  enum class Type
-  {
-    None,
-    Wait,
-    Attack,
-    Attire,
-    Close,
-    Drop,
-    Eat,
-    Fill,
-    Get,
-    Hurl,
-    Inscribe,
-    Mix,
-    Move,
-    Open,
-    PutInto,
-    Quaff,
-    Read,
-    Shoot,
-    TakeOut,
-    Use,
-    Wield,
-    Count
-  };
-#endif
-
   Action(ThingRef subject);
   Action(ThingRef subject, ThingRef object);
   Action(ThingRef subject, ThingRef object, unsigned int quantity);
@@ -154,7 +126,7 @@ public:
   virtual std::string get_type() const
   {
     return "???";
-  }
+}
 
   CREATE_TRAIT(can_be_subject_only);
   CREATE_TRAIT(can_be_subject_verb_thing);
@@ -167,10 +139,6 @@ public:
   CREATE_TRAIT(can_take_a_quantity);
 
 protected:
-  bool prebegin_(AnyMap& params);
-  bool begin_(AnyMap& params);
-  void finish_(AnyMap& params);
-  void abort_(AnyMap& params);
 
   /// Perform work to be done at the start of the PreBegin state.
   /// This work typically consists of checking whether the action is possible.

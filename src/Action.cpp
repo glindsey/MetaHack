@@ -107,6 +107,7 @@ bool Action::process(ThingRef actor, AnyMap params)
   while ((pImpl->state != Action::State::Processed) && (counter_busy == 0))
   {
     unsigned int counter_busy = actor->get_property<int>("counter_busy");
+    Action::StateResult result{ false, 0 };
 
     TRACE("Thing #%s (%s): Action %s is in state %s, counter_busy = %d",
           actor.get_id().to_string().c_str(),
@@ -118,19 +119,53 @@ bool Action::process(ThingRef actor, AnyMap params)
     switch (pImpl->state)
     {
       case Action::State::Pending:
-        prebegin_(params);
+        result = do_prebegin_work(params);
+
+        if (result.success)
+        {
+          // Update the busy counter.
+          pImpl->subject->set_property<int>("counter_busy", result.elapsed_time);
+          set_state(Action::State::PreBegin);
+        }
+        else
+        {
+          // Clear the busy counter.
+          pImpl->subject->set_property<int>("counter_busy", 0);
+          set_state(Action::State::PostFinish);
+        }
         break;
 
       case Action::State::PreBegin:
-        begin_(params);
+        result = do_begin_work(params);
+
+        // If starting the action succeeded, move to the in-progress state.
+        // Otherwise, just go right to post-finish.
+        if (result.success)
+        {
+          // Update the busy counter.
+          pImpl->subject->set_property<int>("counter_busy", result.elapsed_time);
+          set_state(Action::State::InProgress);
+        }
+        else
+        {
+          // Clear the busy counter.
+          pImpl->subject->set_property<int>("counter_busy", 0);
+          set_state(Action::State::PostFinish);
+        }
         break;
 
       case Action::State::InProgress:
-        finish_(params);
+        result = do_finish_work(params);
+
+        pImpl->subject->set_property<int>("counter_busy", result.elapsed_time);
+        set_state(Action::State::PostFinish);
         break;
 
       case Action::State::Interrupted:
-        abort_(params);
+        result = do_abort_work(params);
+
+        pImpl->subject->add_to_property<int>("counter_busy", result.elapsed_time);
+        set_state(Action::State::PostFinish);
         break;
 
       case Action::State::PostFinish:
@@ -143,66 +178,6 @@ bool Action::process(ThingRef actor, AnyMap params)
   }
 
   return true;
-}
-
-/// @todo Action::target_can_be_bodypart()
-
-bool Action::prebegin_(AnyMap& params)
-{
-  auto result = do_prebegin_work(params);
-
-  if (result.success)
-  {
-    // Update the busy counter.
-    pImpl->subject->set_property<int>("counter_busy", result.elapsed_time);
-    set_state(Action::State::PreBegin);
-  }
-  else
-  {
-    // Clear the busy counter.
-    pImpl->subject->set_property<int>("counter_busy", 0);
-    set_state(Action::State::PostFinish);
-  }
-
-  return true;
-}
-
-bool Action::begin_(AnyMap& params)
-{
-  auto result = do_begin_work(params);
-
-  // If starting the action succeeded, move to the in-progress state.
-  // Otherwise, just go right to post-finish.
-  if (result.success)
-  {
-    // Update the busy counter.
-    pImpl->subject->set_property<int>("counter_busy", result.elapsed_time);
-    set_state(Action::State::InProgress);
-  }
-  else
-  {
-    // Clear the busy counter.
-    pImpl->subject->set_property<int>("counter_busy", 0);
-    set_state(Action::State::PostFinish);
-  }
-
-  return result.success;
-}
-
-void Action::finish_(AnyMap& params)
-{
-  auto result = do_finish_work(params);
-
-  pImpl->subject->set_property<int>("counter_busy", result.elapsed_time);
-  set_state(Action::State::PostFinish);
-}
-
-void Action::abort_(AnyMap& params)
-{
-  auto result = do_abort_work(params);
-
-  pImpl->subject->add_to_property<int>("counter_busy", result.elapsed_time);
-  set_state(Action::State::PostFinish);
 }
 
 void Action::set_state(Action::State state)
