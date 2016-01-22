@@ -934,11 +934,16 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
               pImpl->reset_inventory_area();
             }
             result = EventResult::Handled;
+            break;
 
             // CTRL-S -- shoot items
           case sf::Keyboard::Key::S:
-            // Skip the item check here, as we want to shoot our wielded weapon
-            // if no item is selected.
+            /// @todo Skip the item check here, as we want to shoot our wielded weapon
+            /// if no item is selected.
+            if (things.size() < 1)
+            {
+              the_message_log.add("Please choose the item to shoot first.");
+            }
             if (things.size() > 1)
             {
               the_message_log.add("You can only shoot one item at once.");

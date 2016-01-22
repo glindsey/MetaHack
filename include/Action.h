@@ -19,7 +19,8 @@
 #define YOUR      (get_subject()->get_possessive())          // "your/his/her/its/etc."
 #define YOURSELF  (get_subject()->get_reflexive_pronoun())   // "yourself/himself/herself/itself/etc."
 
-#define CV(p12, p3)  (get_subject()->choose_verb(p12, p3))   // shortcut for "Choose Verb"
+#define CV(p12, p3)  (get_subject()->choose_verb(p12, p3))   // shortcut for "Subject - Choose Verb"
+#define OBJCV(p12, p3)  (get_object()->choose_verb(p12, p3)) // shortcut for "Object - Choose Verb"
 
 #define ARE   (get_subject()->choose_verb(" are", " is"))
 #define WERE  (get_subject()->choose_verb(" were", " was"))
@@ -31,6 +32,7 @@
 
 #define IS_PLAYER (get_subject()->is_player())
 
+#define FOOSELF   (IS_PLAYER ? "yourself" : FOO)
 #define FOO       (get_object()->get_identifying_string())
 #define FOO1      (get_object()->get_identifying_string())
 #define FOO2      (get_second_object()->get_identifying_string())

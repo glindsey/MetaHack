@@ -265,10 +265,6 @@ public:
   /// Attempt to take a thing out of its container.
   bool do_take_out(ThingRef thing_id, unsigned int& action_time);
 
-  ActionResult can_read(ThingRef thing_id, unsigned int& action_time);
-
-  bool do_read(ThingRef thing_id, unsigned int& action_time);
-
   ActionResult can_throw(ThingRef thing_id, unsigned int& action_time);
 
   /// Attempt to toss/throw a thing in a particular direction.
