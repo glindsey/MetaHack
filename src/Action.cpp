@@ -2,6 +2,7 @@
 
 #include <algorithm>
 
+#include "common_functions.h"
 #include "MessageLog.h"
 #include "Thing.h"
 #include "ThingManager.h"
@@ -113,7 +114,7 @@ bool Action::process(ThingRef actor, AnyMap params)
           actor.get_id().to_string().c_str(),
           actor->get_type().c_str(),
           get_type().c_str(),
-          Action::str(get_state()),
+          str(get_state()).c_str(),
           counter_busy);
 
     switch (pImpl->state)
@@ -226,24 +227,24 @@ Action::StateResult Action::do_prebegin_work(AnyMap& params)
 {
   /// @todo Set counter_busy based on the action being taken and
   ///       the entity's reflexes.
-  return{ true, 0 };
+  return Action::StateResult::Success();
 }
 
 Action::StateResult Action::do_begin_work(AnyMap& params)
 {
   the_message_log.add("We're sorry, but that action has not yet been implemented.");
 
-  return{ false, 0 };
+  return Action::StateResult::Failure();
 }
 
 Action::StateResult Action::do_finish_work(AnyMap& params)
 {
   /// @todo Complete the action here
-  return{ true, 0 };
+  return Action::StateResult::Success();
 }
 
 Action::StateResult Action::do_abort_work(AnyMap& params)
 {
   /// @todo Handle aborting the action here.
-  return{ true, 0 };
+  return Action::StateResult::Success();
 }

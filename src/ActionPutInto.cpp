@@ -17,7 +17,7 @@ ActionPutInto::~ActionPutInto()
 
 Action::StateResult ActionPutInto::do_prebegin_work(AnyMap& params)
 {
-  return{ true, 0 };
+  return Action::StateResult::Success();
 }
 
 Action::StateResult ActionPutInto::do_begin_work(AnyMap& params)
@@ -47,10 +47,10 @@ Action::StateResult ActionPutInto::do_begin_work(AnyMap& params)
 
 Action::StateResult ActionPutInto::do_finish_work(AnyMap& params)
 {
-  return{ true, 0 };
+  return Action::StateResult::Success();
 }
 
 Action::StateResult ActionPutInto::do_abort_work(AnyMap& params)
 {
-  return{ true, 0 };
+  return Action::StateResult::Success();
 }

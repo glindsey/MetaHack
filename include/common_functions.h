@@ -4,6 +4,14 @@
 #include <boost/algorithm/string.hpp>
 #include <string>
 
+template<typename T>
+std::string str(T const& t)
+{
+  std::stringstream stream;
+  stream << t;
+  return stream.str();
+}
+
 inline bool strip_quotes(std::string& str)
 {
   boost::trim(str);

@@ -17,7 +17,7 @@ ActionAttack::~ActionAttack()
 
 Action::StateResult ActionAttack::do_prebegin_work(AnyMap& params)
 {
-  return{ true, 0 };
+  return Action::StateResult::Success();
 }
 
 Action::StateResult ActionAttack::do_begin_work(AnyMap& params)
@@ -32,10 +32,10 @@ Action::StateResult ActionAttack::do_begin_work(AnyMap& params)
 
 Action::StateResult ActionAttack::do_finish_work(AnyMap& params)
 {
-  return{ true, 0 };
+  return Action::StateResult::Success();
 }
 
 Action::StateResult ActionAttack::do_abort_work(AnyMap& params)
 {
-  return{ true, 0 };
+  return Action::StateResult::Success();
 }

@@ -8,6 +8,7 @@
 
 #include "App.h"
 #include "Direction.h"
+#include "GameState.h"
 #include "MessageLog.h"
 #include "ThingRef.h"
 
@@ -71,6 +72,16 @@ public:
 
   struct StateResult
   {
+    static StateResult Success(unsigned int time = 0)
+    {
+      return{ true, time };
+    }
+
+    static StateResult Failure(unsigned int time = 0)
+    {
+      return{ false, time };
+    }
+
     bool success;
     unsigned int elapsed_time;
   };
@@ -84,20 +95,6 @@ public:
     PostFinish,   ///< The action is finished and the entity is now in a recovery wait state.
     Processed     ///< The action is totally done and can be popped off the queue.
   };
-
-  static inline char const* str(State const& s)
-  {
-    switch (s)
-    {
-      case State::Pending:      return "Pending";
-      case State::PreBegin:     return "PreBegin";
-      case State::InProgress:   return "InProgress";
-      case State::Interrupted:  return "Interrupted";
-      case State::PostFinish:   return "PostFinish";
-      case State::Processed:    return "Processed";
-      default:                  return "???";
-    }
-  }
 
   Action(ThingRef subject);
   Action(ThingRef subject, ThingRef object);
@@ -126,7 +123,7 @@ public:
   virtual std::string get_type() const
   {
     return "???";
-}
+  }
 
   CREATE_TRAIT(can_be_subject_only);
   CREATE_TRAIT(can_be_subject_verb_thing);
@@ -186,5 +183,21 @@ private:
   struct Impl;
   std::unique_ptr<Impl> pImpl;
 };
+
+inline std::ostream& operator<<(std::ostream& os, Action::State const& s)
+{
+  switch (s)
+  {
+    case Action::State::Pending:      os << "Pending"; break;
+    case Action::State::PreBegin:     os << "PreBegin"; break;
+    case Action::State::InProgress:   os << "InProgress"; break;
+    case Action::State::Interrupted:  os << "Interrupted"; break;
+    case Action::State::PostFinish:   os << "PostFinish"; break;
+    case Action::State::Processed:    os << "Processed"; break;
+    default:                          os << "???"; break;
+  }
+
+  return os;
+}
 
 #endif // ACTION_H

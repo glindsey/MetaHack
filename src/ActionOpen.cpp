@@ -17,7 +17,7 @@ ActionOpen::~ActionOpen()
 
 Action::StateResult ActionOpen::do_prebegin_work(AnyMap& params)
 {
-  return{ true, 0 };
+  return Action::StateResult::Success();
 }
 
 Action::StateResult ActionOpen::do_begin_work(AnyMap& params)
@@ -39,10 +39,10 @@ Action::StateResult ActionOpen::do_begin_work(AnyMap& params)
 
 Action::StateResult ActionOpen::do_finish_work(AnyMap& params)
 {
-  return{ true, 0 };
+  return Action::StateResult::Success();
 }
 
 Action::StateResult ActionOpen::do_abort_work(AnyMap& params)
 {
-  return{ true, 0 };
+  return Action::StateResult::Success();
 }

@@ -153,12 +153,6 @@ public:
   /// Attempt to mix two things.
   bool do_mix(ThingRef thing1, ThingRef thing2, unsigned int& action_time);
 
-  /// Attempt to move in a particular direction.
-  /// @param[in] direction Direction to move in
-  /// @param[out] action_time The time it took to move
-  /// @return true on success; false if the move was prevented.
-  virtual bool do_move(Direction direction, unsigned int& action_time);
-
   /// Return whether the Entity can put thing into container.
   /// @param[in] thing Thing to put in.
   /// @param[in] container Thing to put it into.

@@ -17,7 +17,7 @@ ActionTakeOut::~ActionTakeOut()
 
 Action::StateResult ActionTakeOut::do_prebegin_work(AnyMap& params)
 {
-  return{ true, 0 };
+  return Action::StateResult::Success();
 }
 
 Action::StateResult ActionTakeOut::do_begin_work(AnyMap& params)
@@ -36,10 +36,10 @@ Action::StateResult ActionTakeOut::do_begin_work(AnyMap& params)
 
 Action::StateResult ActionTakeOut::do_finish_work(AnyMap& params)
 {
-  return{ true, 0 };
+  return Action::StateResult::Success();
 }
 
 Action::StateResult ActionTakeOut::do_abort_work(AnyMap& params)
 {
-  return{ true, 0 };
+  return Action::StateResult::Success();
 }

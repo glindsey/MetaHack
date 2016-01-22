@@ -13,7 +13,7 @@ ActionWait::~ActionWait()
 Action::StateResult ActionWait::do_prebegin_work(AnyMap& params)
 {
   // We can always wait.
-  return{ true, 0 };
+  return Action::StateResult::Success();
 }
 
 Action::StateResult ActionWait::do_begin_work(AnyMap& params)
@@ -29,10 +29,10 @@ Action::StateResult ActionWait::do_begin_work(AnyMap& params)
 
 Action::StateResult ActionWait::do_finish_work(AnyMap& params)
 {
-  return{ true, 0 };
+  return Action::StateResult::Success();
 }
 
 Action::StateResult ActionWait::do_abort_work(AnyMap& params)
 {
-  return{ true, 0 };
+  return Action::StateResult::Success();
 }

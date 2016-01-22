@@ -12,7 +12,7 @@ ActionEat::~ActionEat()
 
 Action::StateResult ActionEat::do_prebegin_work(AnyMap& params)
 {
-  return{ true, 0 };
+  return Action::StateResult::Success();
 }
 
 Action::StateResult ActionEat::do_begin_work(AnyMap& params)
@@ -31,10 +31,10 @@ Action::StateResult ActionEat::do_begin_work(AnyMap& params)
 
 Action::StateResult ActionEat::do_finish_work(AnyMap& params)
 {
-  return{ true, 0 };
+  return Action::StateResult::Success();
 }
 
 Action::StateResult ActionEat::do_abort_work(AnyMap& params)
 {
-  return{ true, 0 };
+  return Action::StateResult::Success();
 }

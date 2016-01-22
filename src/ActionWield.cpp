@@ -17,7 +17,7 @@ ActionWield::~ActionWield()
 
 Action::StateResult ActionWield::do_prebegin_work(AnyMap& params)
 {
-  return{ true, 0 };
+  return Action::StateResult::Success();
 }
 
 Action::StateResult ActionWield::do_begin_work(AnyMap& params)
@@ -37,10 +37,10 @@ Action::StateResult ActionWield::do_begin_work(AnyMap& params)
 
 Action::StateResult ActionWield::do_finish_work(AnyMap& params)
 {
-  return{ true, 0 };
+  return Action::StateResult::Success();
 }
 
 Action::StateResult ActionWield::do_abort_work(AnyMap& params)
 {
-  return{ true, 0 };
+  return Action::StateResult::Success();
 }

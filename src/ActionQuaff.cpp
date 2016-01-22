@@ -29,7 +29,7 @@ Action::StateResult ActionQuaff::do_prebegin_work(AnyMap& params)
     message = "Needless to say, " + YOU_ARE + " not very successful in this endeavor.";
     the_message_log.add(message);
 
-    return{ false, 0 };
+    return Action::StateResult::Failure();
   }
 
   // Check that we're capable of drinking at all.
@@ -40,7 +40,7 @@ Action::StateResult ActionQuaff::do_prebegin_work(AnyMap& params)
     message = "But, as a " + get_subject()->get_display_name() + "," + YOU_ARE + " not capable of drinking liquids.";
     the_message_log.add(message);
 
-    return{ false, 0 };
+    return Action::StateResult::Failure();
   }
 
   // Check that the thing is within reach.
@@ -49,7 +49,7 @@ Action::StateResult ActionQuaff::do_prebegin_work(AnyMap& params)
     message = YOU_TRY_TO("drink from") + FOO + ", but it is out of " + YOUR + " reach.";
     the_message_log.add(message);
 
-    return{ false, 0 };
+    return Action::StateResult::Failure();
   }
 
   // Check that it is something that contains a liquid.
@@ -60,7 +60,7 @@ Action::StateResult ActionQuaff::do_prebegin_work(AnyMap& params)
     message = YOU + " cannot drink from that!";
     the_message_log.add(message);
 
-    return{ false, 0 };
+    return Action::StateResult::Failure();
   }
 
   // Check that it is not empty.
@@ -72,10 +72,10 @@ Action::StateResult ActionQuaff::do_prebegin_work(AnyMap& params)
     message = "But " + FOO + " is empty!";
     the_message_log.add(message);
 
-    return{ false, 0 };
+    return Action::StateResult::Failure();
   }
 
-  return{ true, 0 };
+  return Action::StateResult::Success();
 }
 
 Action::StateResult ActionQuaff::do_begin_work(AnyMap& params)
@@ -104,27 +104,27 @@ Action::StateResult ActionQuaff::do_begin_work(AnyMap& params)
       case ActionResult::Failure:
         message = YOU + " stop drinking.";
         the_message_log.add(message);
-        return{ false, 0 };
+        return Action::StateResult::Failure();
 
       default:
         MINOR_ERROR("Unknown ActionResult %d", result);
-        return{ false, 0 };
+        return Action::StateResult::Failure();
     }
   } // end if (thing->is_drinkable_by(pImpl->ref))
   else
   {
     message = YOU + " can't drink that!";
     the_message_log.add(message);
-    return{ false, 0 };
+    return Action::StateResult::Failure();
   }
 }
 
 Action::StateResult ActionQuaff::do_finish_work(AnyMap& params)
 {
-  return{ true, 0 };
+  return Action::StateResult::Success();
 }
 
 Action::StateResult ActionQuaff::do_abort_work(AnyMap& params)
 {
-  return{ true, 0 };
+  return Action::StateResult::Success();
 }
