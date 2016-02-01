@@ -376,9 +376,10 @@ public:
 
   /// Choose which verb form to use based on first/second/third person.
   /// This function checks to see if this Thing is currently designated as
-  /// the player (in the ThingFactory).  If so, it returns the string passed
-  /// as verb2; otherwise, it returns the string passed as verb3.
-  /// @param verb2 The second person verb form, such as "shake"
+  /// the player (in the ThingFactory), or has a quantity greater than zero.
+  /// If so, it returns the string passed as verb2; otherwise, it returns the
+  /// string passed as verb3.
+  /// @param verb2 The second person or plural verb form, such as "shake"
   /// @param verb3 The third person verb form, such as "shakes"
   std::string const& choose_verb(std::string const& verb2,
                                  std::string const& verb3);
