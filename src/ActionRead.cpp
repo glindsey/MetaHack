@@ -19,7 +19,7 @@ Action::StateResult ActionRead::do_prebegin_work(AnyMap& params)
   // Check that the thing is within reach.
   if (!subject->can_reach(object))
   {
-    message = YOU_TRY_TO("read") + FOO + ", but it is out of " + YOUR + " reach.";
+    message = YOU_TRY_TO("read") + FOOSELF + ", but it is out of " + YOUR + " reach.";
     the_message_log.add(message);
 
     return Action::StateResult::Failure();
@@ -80,7 +80,7 @@ Action::StateResult ActionRead::do_finish_work(AnyMap& params)
   switch (object->perform_action_read_by(subject))
   {
     case ActionResult::SuccessDestroyed:
-      message = FOO + " disintegrates after " + YOU + CV(" read", " reads") + " it.";
+      message = FOO + OBJCV(" disintegrate", " disintegrates") + " after " + YOU + CV(" read ", " reads ") + FOO_OBJ;
       the_message_log.add(message);
 
       object->destroy();

@@ -36,6 +36,9 @@
 #define FOO       (get_object()->get_identifying_string())
 #define FOO1      (get_object()->get_identifying_string())
 #define FOO2      (get_second_object()->get_identifying_string())
+#define FOO_SUBJ  (get_subject()->get_subject_pronoun())     // "you/he/she/it/etc."
+#define FOO_OBJ   (get_subject()->get_object_pronoun())      // "you/him/her/it/etc."
+
 //#define LIQUID1      (liquid1->get_identifying_string())
 //#define LIQUID2      (liquid2->get_identifying_string())
 

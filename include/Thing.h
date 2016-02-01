@@ -122,18 +122,6 @@ public:
   ///         false if it wasn't performed
   bool do_attack(ThingRef thing, unsigned int& action_time);
 
-  /// Return whether the Entity can drop the requested Thing.
-  /// @param[in] thing Thing to try to drop
-  /// @param[out] action_time The time it will take to drop it
-  /// @return ActionResult indicating what happened.
-  virtual ActionResult can_drop(ThingRef thing, unsigned int& action_time);
-
-  /// Attampt to drop a thing.
-  /// @param[in] thing Thing to try to drop
-  /// @param[out] action_time The time it took to drop it.
-  /// @return true if object is dropped, false if not
-  bool do_drop(ThingRef thing, unsigned int& action_time);
-
   /// Return whether the Entity can eat the requested Thing.
   /// @param[in] thing Thing to try to eat
   /// @param[out] action_time The time it will take to eat it
