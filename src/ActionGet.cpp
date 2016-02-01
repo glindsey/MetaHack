@@ -50,11 +50,10 @@ Action::StateResult ActionGet::do_prebegin_work(AnyMap& params)
   // Check if it's already in our inventory.
   if (subject->get_inventory().contains(object))
   {
-    message = YOU_TRY + " to pick up " + object->get_identifying_string();
+    message = YOU_TRY + " to pick up " + THE_FOO + ".";
     the_message_log.add(message);
 
-    message = object->get_identifying_string() + " is already in " +
-      YOUR + " inventory!";
+    message = THE_FOO + FOO_IS + " already in " + YOUR + " inventory!";
     the_message_log.add(message);
     return StateResult::Failure();
   }
@@ -62,10 +61,10 @@ Action::StateResult ActionGet::do_prebegin_work(AnyMap& params)
   // Check that it's within reach.
   if (!subject->can_reach(object))
   {
-    message = YOU_TRY + " to pick up " + object->get_identifying_string();
+    message = YOU_TRY + " to pick up " + THE_FOO + ".";
     the_message_log.add(message);
 
-    message = object->get_identifying_string() + " is out of " + YOUR + " reach.";
+    message = THE_FOO + FOO_IS + " out of " + YOUR + " reach.";
     the_message_log.add(message);
     return StateResult::Failure();
   }
@@ -73,20 +72,20 @@ Action::StateResult ActionGet::do_prebegin_work(AnyMap& params)
   /// @todo When picking up, check if our inventory is full-up.
   if (false)
   {
-    message = YOU_TRY + " to pick up " + object->get_identifying_string();
+    message = YOU_TRY + " to pick up " + THE_FOO + ".";
     the_message_log.add(message);
 
-    message = YOUR + " inventory cannot accomodate " + object->get_identifying_string();
+    message = YOUR + " inventory cannot accommodate " + THE_FOO + ".";
     the_message_log.add(message);
     return StateResult::Failure();
   }
 
   if (!object->is_movable_by(subject))
   {
-    message = YOU_TRY + " to pick up " + object->get_identifying_string();
+    message = YOU_TRY + " to pick up " + THE_FOO + ".";
     the_message_log.add(message);
 
-    message = YOU + " cannot move the " + object->get_identifying_string() + ".";
+    message = YOU + " cannot move " + THE_FOO + ".";
     the_message_log.add(message);
     return StateResult::Failure();
   }
@@ -104,7 +103,7 @@ Action::StateResult ActionGet::do_begin_work(AnyMap& params)
 
   if (object->perform_action_picked_up_by(subject))
   {
-    message = YOU + CV(" pick", " picks") + " up " + FOO + ".";
+    message = YOU + CV(" pick", " picks") + " up " + THE_FOO + ".";
     the_message_log.add(message);
     if (object->move_into(subject))
     {

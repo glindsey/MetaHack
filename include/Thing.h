@@ -337,10 +337,20 @@ public:
   std::string get_you_or_identifying_string(bool definite = true);
 
   /// Return a string that identifies this thing.
+  /// If it matches the object passed in as "other", it'll return
+  /// the appropriate reflexive pronoun ("yourself", "itself", etc.).
+  /// Otherwise it calls get_identifying_string().
+  ///
+  /// @param other      The "other" to compare to.
+  /// @param definite   If true, uses definite articles.
+  ///                   If false, uses indefinite articles.
+  ///                   Defaults to true.
+  std::string get_self_or_identifying_string(ThingRef other, bool definite = true);
+
+  /// Return a string that identifies this thing.
   /// Returns "the/a/an" and a description of the thing, such as
   /// "the chair".
   /// If it is carried by the player, it'll return "your (thing)".
-  /// If it IS the player, it'll return "you".
   /// Likewise, if it is carried by another Entity it'll return
   /// "(Entity)'s (thing)".
   /// @param definite   If true, uses definite articles.

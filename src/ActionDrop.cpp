@@ -31,10 +31,10 @@ Action::StateResult ActionDrop::do_prebegin_work(AnyMap& params)
   // Check that it's in our inventory.
   if (!subject->get_inventory().contains(object))
   {
-    message = YOU_TRY_TO("drop") + FOO + ".";
+    message = YOU_TRY_TO("drop") + THE_FOO + ".";
     the_message_log.add(message);
 
-    message = FOO + object->choose_verb(" are ", " is ") +
+    message = THE_FOO + object->choose_verb(" are ", " is ") +
       "not in " + YOUR + " inventory!";
     the_message_log.add(message);
 
@@ -44,7 +44,7 @@ Action::StateResult ActionDrop::do_prebegin_work(AnyMap& params)
   // Check that we're not wielding the item.
   if (subject->is_wielding(object))
   {
-    message = YOU_TRY_TO("drop") + FOO + ".";
+    message = YOU_TRY_TO("drop") + THE_FOO + ".";
     the_message_log.add(message);
 
     /// @todo Perhaps automatically try to unwield the item before dropping?
@@ -57,7 +57,7 @@ Action::StateResult ActionDrop::do_prebegin_work(AnyMap& params)
   // Check that we're not wearing the item.
   if (subject->has_equipped(object))
   {
-    message = YOU_TRY_TO("drop") + FOO + ".";
+    message = YOU_TRY_TO("drop") + THE_FOO + ".";
     the_message_log.add(message);
 
     message = YOU + " cannot drop something that is currently being worn.";
@@ -69,10 +69,10 @@ Action::StateResult ActionDrop::do_prebegin_work(AnyMap& params)
   // Check that we can move the item.
   if (!object->is_movable_by(subject))
   {
-    message = YOU_TRY_TO("drop") + FOO + ".";
+    message = YOU_TRY_TO("drop") + THE_FOO + ".";
     the_message_log.add(message);
 
-    message = FOO + " cannot be moved.";
+    message = THE_FOO + " cannot be moved.";
     the_message_log.add(message);
 
     return Action::StateResult::Failure();
@@ -108,7 +108,7 @@ Action::StateResult ActionDrop::do_begin_work(AnyMap& params)
     {
       if (object->perform_action_dropped_by(subject))
       {
-        message = YOU + CV(" drop ", " drops ") + FOO + ".";
+        message = YOU + CV(" drop ", " drops ") + THE_FOO + ".";
         the_message_log.add(message);
         if (object->move_into(location))
         {
@@ -130,11 +130,10 @@ Action::StateResult ActionDrop::do_begin_work(AnyMap& params)
     {
       // This is mighty strange, but I suppose there might be MapTiles in
       // the future that can't contain certain Things.
-      message = YOU_TRY_TO("drop") + FOO + ".";
+      message = YOU_TRY_TO("drop") + THE_FOO + ".";
       the_message_log.add(message);
 
-      message = location->get_identifying_string() + " cannot hold " +
-        FOO + ".";
+      message = location->get_identifying_string() + " cannot hold " + THE_FOO + ".";
       the_message_log.add(message);
     }
   }

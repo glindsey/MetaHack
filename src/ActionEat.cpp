@@ -32,7 +32,7 @@ Action::StateResult ActionEat::do_prebegin_work(AnyMap& params)
   // Check that we're capable of eating at all.
   if (subject->get_intrinsic<bool>("can_eat"))
   {
-    message = YOU_TRY_TO("eat") + FOO + ".";
+    message = YOU_TRY_TO("eat") + THE_FOO + ".";
     the_message_log.add(message);
     message = "But, as " + getIndefArt(subject->get_display_name()) + subject->get_display_name() + "," + YOU_ARE + " not capable of eating.";
     the_message_log.add(message);
@@ -43,7 +43,7 @@ Action::StateResult ActionEat::do_prebegin_work(AnyMap& params)
   // Check that the thing is within reach.
   if (!subject->can_reach(object))
   {
-    message = YOU_TRY_TO("eat") + FOO + ", but it is out of " + YOUR + " reach.";
+    message = YOU_TRY_TO("eat") + THE_FOO + ", but " + OBJ_PRO_FOO + FOO_IS + " out of " + YOUR + " reach.";
     the_message_log.add(message);
 
     return Action::StateResult::Failure();
@@ -69,7 +69,7 @@ Action::StateResult ActionEat::do_begin_work(AnyMap& params)
   auto subject = get_subject();
   auto object = get_object();
 
-  message = YOU + " begin to eat " + FOO + ".";
+  message = YOU + " begin to eat " + THE_FOO + ".";
   the_message_log.add(message);
 
   // Do the eating action here.
@@ -98,7 +98,7 @@ Action::StateResult ActionEat::do_finish_work(AnyMap& params)
   std::string message;
   auto object = get_object();
 
-  message = YOU + " finish eating.";
+  message = YOU + " finish eating " + THE_FOO + ".";
   the_message_log.add(message);
   object->get_inventory().get(INVSLOT_ZERO)->destroy();
   return Action::StateResult::Success();

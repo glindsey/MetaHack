@@ -1783,6 +1783,16 @@ std::string Thing::get_you_or_identifying_string(bool definite)
   return get_identifying_string(definite);
 }
 
+std::string Thing::get_self_or_identifying_string(ThingRef other, bool definite)
+{
+  if (other == get_ref())
+  {
+    return get_reflexive_pronoun();
+  }
+
+  return get_identifying_string(definite);
+}
+
 std::string Thing::get_identifying_string(bool definite)
 {
   ThingRef location = this->get_location();
@@ -1796,19 +1806,6 @@ std::string Thing::get_identifying_string(bool definite)
   std::string adjectives;
   std::string noun;
   std::string suffix;
-
-  // If the thing is YOU, use YOU.
-  if (is_player())
-  {
-    if (get_property<int>("hp") > 0)
-    {
-      return "you";
-    }
-    else
-    {
-      return "your corpse";
-    }
-  }
 
   owned = location->get_intrinsic<bool>("is_entity");
 

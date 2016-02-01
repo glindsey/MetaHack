@@ -59,8 +59,7 @@ Action::StateResult ActionMove::do_prebegin_work(AnyMap& params)
   // Make sure we're not confined inside another thing.
   if (subject->is_inside_another_thing())
   {
-    message += YOU_ARE + " inside " + location->get_identifying_string(false) +
-      " and " + ARE + " not going anywhere!";
+    message += YOU_ARE + " inside " + location->get_identifying_string(false) + " and " + ARE + " not going anywhere!";
 
     the_message_log.add(message);
     return Action::StateResult::Failure();

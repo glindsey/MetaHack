@@ -13,7 +13,7 @@
 #include "ThingRef.h"
 
 // === MESSAGE HELPER MACROS ==================================================
-#define YOU       (get_subject()->get_identifying_string())  // "you" or descriptive noun like "the goblin"
+#define YOU       (get_subject()->get_you_or_identifying_string())  // "you" or descriptive noun like "the goblin"
 #define YOU_SUBJ  (get_subject()->get_subject_pronoun())     // "you/he/she/it/etc."
 #define YOU_OBJ   (get_subject()->get_object_pronoun())      // "you/him/her/it/etc."
 #define YOUR      (get_subject()->get_possessive())          // "your/his/her/its/etc."
@@ -30,14 +30,21 @@
 #define SEEM  (get_subject()->choose_verb(" seem", " seems"))
 #define TRY   (get_subject()->choose_verb(" try", " tries"))
 
+#define FOO_IS    OBJCV(" are", " is")
+#define FOO_HAS   OBJCV(" have", " has")
+
 #define IS_PLAYER (get_subject()->is_player())
 
-#define FOOSELF   (IS_PLAYER ? "yourself" : FOO)
-#define FOO       (get_object()->get_identifying_string())
-#define FOO1      (get_object()->get_identifying_string())
-#define FOO2      (get_second_object()->get_identifying_string())
-#define FOO_SUBJ  (get_subject()->get_subject_pronoun())     // "you/he/she/it/etc."
-#define FOO_OBJ   (get_subject()->get_object_pronoun())      // "you/him/her/it/etc."
+#define THE_FOO   (get_object()->get_identifying_string(true))
+#define A_FOO     (get_object()->get_identifying_string(false))
+
+#define FOOSELF (get_object()->get_self_or_identifying_string(get_subject(), true))
+
+#define THE_FOO1  (get_object()->get_identifying_string(true))
+#define THE_FOO2  (get_second_object()->get_identifying_string(true))
+
+#define SUBJ_PRO_FOO  (get_subject()->get_subject_pronoun())     // "you/he/she/it/etc."
+#define OBJ_PRO_FOO   (get_subject()->get_object_pronoun())      // "you/him/her/it/etc."
 
 //#define LIQUID1      (liquid1->get_identifying_string())
 //#define LIQUID2      (liquid2->get_identifying_string())

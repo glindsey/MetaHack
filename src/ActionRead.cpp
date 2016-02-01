@@ -59,7 +59,7 @@ Action::StateResult ActionRead::do_begin_work(AnyMap& params)
     message = YOU_TRY + " to read " + FOOSELF + ".";
     the_message_log.add(message);
 
-    message = FOO + OBJCV(" have", " has") + " no writing to read.";
+    message = THE_FOO + FOO_HAS + " no writing to read.";
     the_message_log.add(message);
   }
 
@@ -80,7 +80,7 @@ Action::StateResult ActionRead::do_finish_work(AnyMap& params)
   switch (object->perform_action_read_by(subject))
   {
     case ActionResult::SuccessDestroyed:
-      message = FOO + OBJCV(" disintegrate", " disintegrates") + " after " + YOU + CV(" read ", " reads ") + FOO_OBJ;
+      message = THE_FOO + OBJCV(" disintegrate", " disintegrates") + " after " + YOU + CV(" read ", " reads ") + OBJ_PRO_FOO;
       the_message_log.add(message);
 
       object->destroy();
