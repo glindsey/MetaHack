@@ -39,7 +39,7 @@ Action::StateResult ActionQuaff::do_prebegin_work(AnyMap& params)
   {
     message = YOU_TRY_TO("drink from") + FOO + ".";
     the_message_log.add(message);
-    message = "But, as a " + subject->get_display_name() + "," + YOU_ARE + " not capable of drinking liquids.";
+    message = "But, as " + getIndefArt(subject->get_display_name()) + subject->get_display_name() + "," + YOU_ARE + " not capable of drinking liquids.";
     the_message_log.add(message);
 
     return Action::StateResult::Failure();
@@ -77,6 +77,15 @@ Action::StateResult ActionQuaff::do_prebegin_work(AnyMap& params)
     return Action::StateResult::Failure();
   }
 
+  // Check that you can drink what is inside it.
+  if (!inv.get(INVSLOT_ZERO)->is_drinkable_by(subject))
+  {
+    message = YOU + " can't drink that!";
+    the_message_log.add(message);
+
+    return Action::StateResult::Failure();
+  }
+
   return Action::StateResult::Success();
 }
 
@@ -88,48 +97,46 @@ Action::StateResult ActionQuaff::do_begin_work(AnyMap& params)
   auto subject = get_subject();
   auto object = get_object();
 
-  if (object->is_drinkable_by(subject))
+  message = YOU + " drink from " + FOO + ".";
+  the_message_log.add(message);
+
+  // Do the drinking action here.
+  /// @todo Figure out drinking time.
+  ActionResult result = object->perform_action_drank_by(subject);
+
+  switch (result)
   {
-    message = YOU + " drink from " + FOO + ".";
-    the_message_log.add(message);
+    case ActionResult::Success:
+    case ActionResult::SuccessDestroyed:
+      return Action::StateResult::Success();
 
-    /// @todo Figure out drinking time.
-    /// @todo Split drinking action into start/finish?
-    ActionResult result = object->perform_action_drank_by(subject);
+    case ActionResult::Failure:
+      message = YOU + " stop drinking.";
+      the_message_log.add(message);
+      return Action::StateResult::Failure();
 
-    switch (result)
-    {
-      case ActionResult::Success:
-        return{ true, 1 };
-
-      case ActionResult::SuccessDestroyed:
-        object->get_inventory().get(INVSLOT_ZERO)->destroy();
-        return{ true, 1 };
-
-      case ActionResult::Failure:
-        message = YOU + " stop drinking.";
-        the_message_log.add(message);
-        return Action::StateResult::Failure();
-
-      default:
-        MINOR_ERROR("Unknown ActionResult %d", result);
-        return Action::StateResult::Failure();
-    }
-  } // end if (object is drinkable by subject)
-  else
-  {
-    message = YOU + " can't drink that!";
-    the_message_log.add(message);
-    return Action::StateResult::Failure();
+    default:
+      MINOR_ERROR("Unknown ActionResult %d", result);
+      return Action::StateResult::Failure();
   }
 }
 
 Action::StateResult ActionQuaff::do_finish_work(AnyMap& params)
 {
+  std::string message;
+  auto object = get_object();
+
+  message = YOU + " finish drinking.";
+  the_message_log.add(message);
+  object->get_inventory().get(INVSLOT_ZERO)->destroy();
   return Action::StateResult::Success();
 }
 
 Action::StateResult ActionQuaff::do_abort_work(AnyMap& params)
 {
+  std::string message;
+
+  message = YOU + " stop drinking.";
+  the_message_log.add(message);
   return Action::StateResult::Success();
 }

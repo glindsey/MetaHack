@@ -358,99 +358,6 @@ bool Thing::do_attack(ThingRef thing, unsigned int& action_time)
   return false;
 }
 
-ActionResult Thing::can_eat(ThingRef thing, unsigned int& action_time)
-{
-  action_time = 1;
-
-  // Check that it isn't US!
-  if (thing == pImpl->ref)
-  {
-    return ActionResult::FailureSelfReference;
-  }
-
-  // Check that we're capable of eating at all.
-  if (this->get_intrinsic<bool>("can_eat"))
-  {
-    return ActionResult::FailureActorCantPerform;
-  }
-
-  // Check that the thing is within reach.
-  if (!this->can_reach(thing))
-  {
-    return ActionResult::FailureThingOutOfReach;
-  }
-
-  return ActionResult::Success;
-}
-
-bool Thing::do_eat(ThingRef thing, unsigned int& action_time)
-{
-  std::string message;
-
-  ActionResult eat_try = this->can_eat(thing, action_time);
-
-  message = YOU_TRY_TO("eat") + FOO + ".";
-  the_message_log.add(message);
-
-  switch (eat_try)
-  {
-    case ActionResult::Success:
-      if (thing->is_edible_by(pImpl->ref))
-      {
-        message = YOU + CV(" eat ", " eats ") + FOO + ".";
-        the_message_log.add(message);
-
-        ActionResult result = thing->perform_action_eaten_by(pImpl->ref);
-
-        switch (result)
-        {
-          case ActionResult::Success:
-            return true;
-
-          case ActionResult::SuccessDestroyed:
-            thing->destroy();
-            return true;
-
-          case ActionResult::Failure:
-            message = YOU + " stop eating.";
-            the_message_log.add(message);
-            break;
-
-          default:
-            MINOR_ERROR("Unknown ActionResult %d", result);
-            break;
-        }
-      } // end if (thing->is_edible_by(pImpl->ref))
-      else
-      {
-        message = YOU + " can't eat that!";
-        the_message_log.add(message);
-      }
-      break;
-
-    case ActionResult::FailureSelfReference:
-      message = YOU_TRY_TO("eat") + FOO + ".";
-      the_message_log.add(message);
-
-      /// @todo Handle "unusual" cases (e.g. zombies?)
-      message = "But " + YOU + " really " + CV("aren't", "isn't") + " that tasty, so " + YOU + CV(" stop.", " stops.");
-      the_message_log.add(message);
-      break;
-
-    case ActionResult::FailureActorCantPerform:
-      message = YOU_TRY_TO("eat") + FOO + ".";
-      the_message_log.add(message);
-      message = "But, as a " + get_display_name() + "," + YOU_ARE + " not capable of eating.";
-      the_message_log.add(message);
-      break;
-
-    default:
-      MINOR_ERROR("Unknown ActionResult %d", eat_try);
-      break;
-  }
-  return false;
-}
-
 ActionResult Thing::can_mix(ThingRef thing1, ThingRef thing2, unsigned int& action_time)
 {
   action_time = 1;
@@ -1856,6 +1763,24 @@ std::string Thing::get_identifying_string_without_possessives(bool definite)
   name = article + adjectives + noun + suffix;
 
   return name;
+}
+
+std::string Thing::get_you_or_identifying_string(bool definite)
+{
+  // If the thing is YOU, use YOU.
+  if (is_player())
+  {
+    if (get_property<int>("hp") > 0)
+    {
+      return "you";
+    }
+    else
+    {
+      return "your corpse";
+    }
+  }
+
+  return get_identifying_string(definite);
 }
 
 std::string Thing::get_identifying_string(bool definite)

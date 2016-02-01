@@ -122,15 +122,6 @@ public:
   ///         false if it wasn't performed
   bool do_attack(ThingRef thing, unsigned int& action_time);
 
-  /// Return whether the Entity can eat the requested Thing.
-  /// @param[in] thing Thing to try to eat
-  /// @param[out] action_time The time it will take to eat it
-  /// @return ActionResult indicating what happened.
-  virtual ActionResult can_eat(ThingRef thing, unsigned int& action_time);
-
-  /// Attempt to eat a thing.
-  bool do_eat(ThingRef thing, unsigned int& action_time);
-
   /// Return whether the Entity can mix these two Things.
   /// @param[in] thing1 First thing to mix.
   /// @param[in] thing2 Second thing to mix.
@@ -335,6 +326,15 @@ public:
 
   /// Set this thing's proper name.
   void set_proper_name(std::string name);
+
+  /// Return a string that identifies this thing.
+  /// If it IS the player, it'll return "you".
+  /// Otherwise it calls get_identifying_string().
+  ///
+  /// @param definite   If true, uses definite articles.
+  ///                   If false, uses indefinite articles.
+  ///                   Defaults to true.
+  std::string get_you_or_identifying_string(bool definite = true);
 
   /// Return a string that identifies this thing.
   /// Returns "the/a/an" and a description of the thing, such as
