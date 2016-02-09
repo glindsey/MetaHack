@@ -122,16 +122,6 @@ public:
   ///         false if it wasn't performed
   bool do_attack(ThingRef thing, unsigned int& action_time);
 
-  /// Return whether the Entity can mix these two Things.
-  /// @param[in] thing1 First thing to mix.
-  /// @param[in] thing2 Second thing to mix.
-  /// @param[out] action_time The time it will take to mix.
-  /// @return ActionResult indicating what happened.
-  virtual ActionResult can_mix(ThingRef thing1, ThingRef thing2, unsigned int& action_time);
-
-  /// Attempt to mix two things.
-  bool do_mix(ThingRef thing1, ThingRef thing2, unsigned int& action_time);
-
   /// Return whether the Entity can put thing into container.
   /// @param[in] thing Thing to put in.
   /// @param[in] container Thing to put it into.
