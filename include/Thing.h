@@ -215,15 +215,6 @@ public:
   /// Add the memory of a particular tile to a VertexArray.
   void add_memory_vertices_to(sf::VertexArray& vertices, int x, int y);
 
-  /// Return whether the Entity can take a thing out of its container.
-  /// @param[in] thing Thing to take out.
-  /// @param[out] action_time The time it took to move the thing.
-  /// @return ActionResult indicating what happened.
-  ActionResult can_take_out(ThingRef thing, unsigned int& action_time);
-
-  /// Attempt to take a thing out of its container.
-  bool do_take_out(ThingRef thing_id, unsigned int& action_time);
-
   ActionResult can_throw(ThingRef thing_id, unsigned int& action_time);
 
   /// Attempt to toss/throw a thing in a particular direction.
