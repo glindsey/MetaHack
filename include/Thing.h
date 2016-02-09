@@ -215,11 +215,6 @@ public:
   /// Add the memory of a particular tile to a VertexArray.
   void add_memory_vertices_to(sf::VertexArray& vertices, int x, int y);
 
-  ActionResult can_throw(ThingRef thing_id, unsigned int& action_time);
-
-  /// Attempt to toss/throw a thing in a particular direction.
-  bool do_throw(ThingRef thing_id, Direction& direction, unsigned int& action_time);
-
   ActionResult can_deequip(ThingRef thing_id, unsigned int& action_time);
 
   /// Attempt to de-equip (remove) a thing.

@@ -17,9 +17,9 @@ Action::StateResult ActionMove::do_prebegin_work(AnyMap& params)
   std::string message;
 
   auto subject = get_subject();
-  ThingRef location = subject->get_location();
+  auto location = subject->get_location();
   MapTile* current_tile = subject->get_maptile();
-  Direction new_direction = get_target_direction();
+  auto new_direction = get_target_direction();
 
   // Make sure we're not in limbo!
   if ((location == ThingManager::get_mu()) || (current_tile == nullptr))

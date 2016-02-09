@@ -117,6 +117,9 @@ Action::StateResult ActionDrop::do_begin_work(AnyMap& params)
         }
         else
         {
+          message = YOU + " could not drop " + THE_FOO + " for some inexplicable reason.";
+          the_message_log.add(message);
+
           MAJOR_ERROR("Could not move Thing even though "
                       "is_movable returned Success");
         }
