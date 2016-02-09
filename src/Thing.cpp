@@ -358,225 +358,6 @@ bool Thing::do_attack(ThingRef thing, unsigned int& action_time)
   return false;
 }
 
-ActionResult Thing::can_put_into(ThingRef thing, ThingRef container,
-                                 unsigned int& action_time)
-{
-  action_time = 1;
-
-  // Check that the thing and container aren't the same thing.
-  if (thing == container)
-  {
-    return ActionResult::FailureCircularReference;
-  }
-
-  // Check that the thing is not US!
-  if (thing == pImpl->ref)
-  {
-    return ActionResult::FailureSelfReference;
-  }
-
-  // Check that the container is not US!
-  if (container == pImpl->ref)
-  {
-    return ActionResult::FailureContainerCantBeSelf;
-  }
-
-  // Check that the container actually IS a container.
-  if (container->get_intrinsic<int>("inventory_size") == 0)
-  {
-    return ActionResult::FailureTargetNotAContainer;
-  }
-
-  // Check that the thing's location isn't already the container.
-  if (thing->get_location() == container)
-  {
-    return ActionResult::FailureAlreadyPresent;
-  }
-
-  // Check that the thing is within reach.
-  if (!this->can_reach(thing))
-  {
-    return ActionResult::FailureThingOutOfReach;
-  }
-
-  // Check that the container is within reach.
-  if (!this->can_reach(container))
-  {
-    return ActionResult::FailureContainerOutOfReach;
-  }
-
-  // Check that we're not wielding the item.
-  if (this->is_wielding(thing))
-  {
-    return ActionResult::FailureItemWielded;
-  }
-
-  /// @todo Check that we're not wearing the item.
-  if (this->has_equipped(thing))
-  {
-    return ActionResult::FailureItemEquipped;
-  }
-
-  // Finally, make sure the container can hold this thing.
-  return container->can_contain(pImpl->ref);
-}
-
-bool Thing::do_put_into(ThingRef thing, ThingRef container,
-                        unsigned int& action_time)
-{
-  std::string message;
-
-  ActionResult put_try = this->can_put_into(thing, container, action_time);
-
-  switch (put_try)
-  {
-    case ActionResult::Success:
-    {
-      if (thing->perform_action_put_into_by(container, pImpl->ref))
-      {
-        message = YOU + choose_verb(" place ", "places ") +
-          thing->get_identifying_string() + " into " +
-          container->get_identifying_string() + ".";
-        the_message_log.add(message);
-        if (!thing->move_into(container))
-        {
-          MAJOR_ERROR("Could not move Thing into Container");
-        }
-        else
-        {
-          return true;
-        }
-      }
-    }
-    break;
-
-    case ActionResult::FailureSelfReference:
-    {
-      if (is_player())
-      {
-        /// @todo Possibly allow player to voluntarily enter a container?
-        message = "I'm afraid you can't do that.  "
-          "(At least, not in this version...)";
-      }
-      else
-      {
-        message = YOU_TRY + " to store " + YOURSELF +
-          "into the " + thing->get_identifying_string() +
-          ", which seriously shouldn't happen.";
-        MINOR_ERROR("Non-player Entity tried to store self!?");
-      }
-      the_message_log.add(message);
-    }
-    break;
-
-    case ActionResult::FailureContainerCantBeSelf:
-    {
-      if (is_player())
-      {
-        message = "Store something in yourself?  What do you think you are, a drug mule?";
-      }
-      else
-      {
-        message = YOU_TRY + " to store " + thing->get_identifying_string() +
-          "into " + YOURSELF +
-          ", which seriously shouldn't happen.";
-        MINOR_ERROR("Non-player Entity tried to store into self!?");
-      }
-      the_message_log.add(message);
-    }
-    break;
-
-    case ActionResult::FailureAlreadyPresent:
-    {
-      message = YOU_TRY + " to store " + thing->get_identifying_string() + " in " +
-        container->get_identifying_string() + ".";
-      the_message_log.add(message);
-
-      message = thing->get_identifying_string() + " is already in " +
-        container->get_identifying_string() + "!";
-      the_message_log.add(message);
-    }
-    break;
-
-    case ActionResult::FailureTargetNotAContainer:
-    {
-      message = YOU_TRY + " to store " + thing->get_identifying_string() + " in " +
-        container->get_identifying_string() + ".";
-      the_message_log.add(message);
-
-      message = container->get_identifying_string() + " is not a container!";
-      the_message_log.add(message);
-    }
-    break;
-
-    case ActionResult::FailureThingOutOfReach:
-    {
-      message = YOU_TRY + " to store " + thing->get_identifying_string() + " in " +
-        container->get_identifying_string() + ".";
-      the_message_log.add(message);
-
-      message = YOU + " cannot reach " + thing->get_identifying_string() + ".";
-      the_message_log.add(message);
-    }
-    break;
-
-    case ActionResult::FailureContainerOutOfReach:
-    {
-      message = YOU_TRY + " to store " + thing->get_identifying_string() + " in " +
-        container->get_identifying_string() + ".";
-      the_message_log.add(message);
-
-      message = YOU + " cannot reach " + container->get_identifying_string() + ".";
-      the_message_log.add(message);
-    }
-    break;
-
-    case ActionResult::FailureCircularReference:
-    {
-      if (is_player())
-      {
-        message = "That would be an interesting topological exercise.";
-      }
-      else
-      {
-        message = YOU_TRY + " to store " + thing->get_identifying_string() +
-          "in itself, which seriously shouldn't happen.";
-        MINOR_ERROR("Non-player Entity tried to store a container in itself!?");
-      }
-    }
-    break;
-
-    case ActionResult::FailureItemEquipped:
-    {
-      message = YOU_TRY + " to store " + thing->get_identifying_string() + " in " +
-        container->get_identifying_string() + ".";
-      the_message_log.add(message);
-
-      message = YOU + " cannot store something that is currently being worn.";
-      the_message_log.add(message);
-    }
-    break;
-
-    case ActionResult::FailureItemWielded:
-    {
-      message = YOU_TRY + " to store " + thing->get_identifying_string() + " in " +
-        container->get_identifying_string() + ".";
-      the_message_log.add(message);
-
-      /// @todo Perhaps automatically try to unwield the item before dropping?
-      message = YOU + "cannot store something that is currently being wielded.";
-      the_message_log.add(message);
-    }
-    break;
-
-    default:
-      MINOR_ERROR("Unknown ActionResult %d", put_try);
-      break;
-  }
-
-  return false;
-}
-
 ActionResult Thing::can_take_out(ThingRef thing, unsigned int& action_time)
 {
   action_time = 1;
@@ -647,7 +428,7 @@ bool Thing::do_take_out(ThingRef thing, unsigned int& action_time)
       {
         message = YOU_TRY + " to take " + YOURSELF +
           "out, which seriously shouldn't happen.";
-        MINOR_ERROR("Non-player Entity tried to take self out!?");
+        MINOR_ERROR("NPC tried to take self out!?");
       }
       the_message_log.add(message);
     }
@@ -751,7 +532,7 @@ bool Thing::do_throw(ThingRef thing, Direction& direction, unsigned int& action_
       {
         message = YOU_TRY + " to throw " + YOURSELF +
           ", which seriously shouldn't happen.";
-        MINOR_ERROR("Non-player Entity tried to throw self!?");
+        MINOR_ERROR("NPC tried to throw self!?");
       }
       the_message_log.add(message);
     }
@@ -844,7 +625,7 @@ bool Thing::do_use(ThingRef thing, unsigned int& action_time)
         message = "That seriously shouldn't happen!";
         the_message_log.add(message);
 
-        MINOR_ERROR("Non-player Entity tried to use self!?");
+        MINOR_ERROR("NPC tried to use self!?");
       }
       break;
 
@@ -988,7 +769,7 @@ bool Thing::do_equip(ThingRef thing, unsigned int& action_time)
       {
         message = YOU_TRY + " to equip " + YOURSELF +
           ", which seriously shouldn't happen.";
-        MINOR_ERROR("Non-player Entity tried to equip self!?");
+        MINOR_ERROR("NPC tried to equip self!?");
       }
       the_message_log.add(message);
       break;

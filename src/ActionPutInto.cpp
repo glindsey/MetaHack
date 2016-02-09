@@ -17,32 +17,195 @@ ActionPutInto::~ActionPutInto()
 
 Action::StateResult ActionPutInto::do_prebegin_work(AnyMap& params)
 {
-  return Action::StateResult::Success();
+  std::string message;
+  auto subject = get_subject();
+  auto object = get_object();
+  auto container = get_target_thing();
+  ThingRef location = subject->get_location();
+  MapTile* current_tile = subject->get_maptile();
+
+  // Verify that the Action has an object.
+  if (object == ThingManager::get_mu())
+  {
+    return StateResult::Failure();
+  }
+
+  // Check that the thing and container aren't the same thing.
+  if (object == container)
+  {
+    if (IS_PLAYER)
+    {
+      message = "That would be an interesting topological exercise.";
+    }
+    else
+    {
+      message = YOU_TRY + " to store " + THE_FOO +
+        "inside itself, which seriously shouldn't happen.";
+      MINOR_ERROR("NPC tried to store a container in itself!?");
+    }
+
+    return StateResult::Failure();
+  }
+
+  // Check that the thing is not US!
+  if (object == subject)
+  {
+    if (IS_PLAYER)
+    {
+      /// @todo Possibly allow player to voluntarily enter a container?
+      message = "I'm afraid you can't do that.  "
+        "(At least, not in this version...)";
+    }
+    else
+    {
+      message = YOU_TRY + " to store " + YOURSELF +
+        "into " + THE_CONTAINER +
+        ", which seriously shouldn't happen.";
+      MINOR_ERROR("NPC tried to store self!?");
+    }
+    the_message_log.add(message);
+
+    return StateResult::Failure();
+  }
+
+  // Check that the container is not US!
+  if (container == subject)
+  {
+    if (IS_PLAYER)
+    {
+      message = "Store something in yourself?  What do you think you are, a drug mule?";
+    }
+    else
+    {
+      message = YOU_TRY + " to store " + THE_FOO + "into " + YOURSELF +
+        ", which seriously shouldn't happen.";
+      MINOR_ERROR("NPC tried to store into self!?");
+    }
+    the_message_log.add(message);
+
+    return StateResult::Failure();
+  }
+
+  // Check that the container actually IS a container.
+  if (container->get_intrinsic<int>("inventory_size") == 0)
+  {
+    message = YOU_TRY + " to store " + THE_FOO + " in " +
+      THE_CONTAINER + ".";
+    the_message_log.add(message);
+
+    message = THE_CONTAINER + " is not a container!";
+    the_message_log.add(message);
+
+    return StateResult::Failure();
+  }
+
+  // Check that the thing's location isn't already the container.
+  if (object->get_location() == container)
+  {
+    message = YOU_TRY + " to store " + THE_FOO + " in " +
+      THE_CONTAINER + ".";
+    the_message_log.add(message);
+
+    message = THE_FOO + " is already in " +
+      THE_CONTAINER + "!";
+    the_message_log.add(message);
+
+    return StateResult::Failure();
+  }
+
+  // Check that the thing is within reach.
+  if (!subject->can_reach(object))
+  {
+    message = YOU_TRY + " to store " + THE_FOO + " in " +
+      THE_CONTAINER + ".";
+    the_message_log.add(message);
+
+    message = YOU + " cannot reach " + THE_FOO;
+
+    if (!subject->can_reach(container))
+    {
+      message += " (or " + THE_CONTAINER + ")";
+    }
+
+    message += ".";
+    the_message_log.add(message);
+
+    return StateResult::Failure();
+  }
+
+  // Check that the container is within reach.
+  if (!subject->can_reach(container))
+  {
+    message = YOU_TRY + " to store " + THE_FOO + " in " +
+      THE_CONTAINER + ".";
+    the_message_log.add(message);
+
+    message = YOU + " cannot reach " + THE_CONTAINER + ".";
+    the_message_log.add(message);
+
+    return StateResult::Failure();
+  }
+
+  // Check that we're not wielding the item.
+  if (subject->is_wielding(object))
+  {
+    message = YOU_TRY + " to store " + THE_FOO + " in " +
+      THE_CONTAINER + ".";
+    the_message_log.add(message);
+
+    message = YOU + " cannot store something that is currently being worn.";
+    the_message_log.add(message);
+
+    return StateResult::Failure();
+  }
+
+  /// @todo Check that we're not wearing the item.
+  if (subject->has_equipped(object))
+  {
+    message = YOU_TRY + " to store " + THE_FOO + " in " +
+      THE_CONTAINER + ".";
+    the_message_log.add(message);
+
+    /// @todo Perhaps automatically try to unwield the item before dropping?
+    message = YOU + "cannot store something that is currently being wielded.";
+    the_message_log.add(message);
+
+    return StateResult::Failure(); //ActionResult::FailureItemEquipped;
+  }
+
+  return StateResult::Success();
 }
 
 Action::StateResult ActionPutInto::do_begin_work(AnyMap& params)
 {
-  bool success = false;
-  unsigned int action_time;
+  /// @todo Handle putting a certain quantity of an item.
+  Action::StateResult result = StateResult::Failure();
+  std::string message;
+  auto subject = get_subject();
+  auto object = get_object();
+  auto container = get_target_thing();
 
-  ThingRef thing = get_objects().front();
-  ThingRef container = get_target_thing();
-  if (container != ThingManager::get_mu())
+  if (object->perform_action_put_into_by(container, subject))
   {
-    if (container->get_intrinsic<int>("inventory_size") != 0)
+    message = YOU + CV(" place ", "places ") +
+      THE_FOO + " into " +
+      THE_CONTAINER + ".";
+    the_message_log.add(message);
+    if (object->move_into(container))
     {
-      if (thing != ThingManager::get_mu())
-      {
-        success = get_subject()->do_put_into(thing, container, action_time);
-      }
+      /// @todo Figure out action time.
+      result = StateResult::Success();
+    }
+    else
+    {
+      message = YOU + " could not move " + THE_FOO + " into " + THE_CONTAINER + " for some inexplicable reason.";
+      the_message_log.add(message);
+
+      MAJOR_ERROR("Could not move Thing into Container");
     }
   }
-  else
-  {
-    the_message_log.add("That target is not a container.");
-  }
 
-  return{ success, action_time };
+  return result;
 }
 
 Action::StateResult ActionPutInto::do_finish_work(AnyMap& params)

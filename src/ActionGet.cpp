@@ -22,7 +22,6 @@ Action::StateResult ActionGet::do_prebegin_work(AnyMap& params)
   auto object = get_object();
   ThingRef location = subject->get_location();
   MapTile* current_tile = subject->get_maptile();
-  Direction new_direction = get_target_direction();
 
   // Verify that the Action has an object.
   if (object == ThingManager::get_mu())
@@ -41,7 +40,7 @@ Action::StateResult ActionGet::do_prebegin_work(AnyMap& params)
     {
       message = YOU_TRY + " to pick " + YOURSELF +
         "up, which seriously shouldn't happen.";
-      MINOR_ERROR("Non-player Entity tried to pick self up!?");
+      MINOR_ERROR("NPC tried to pick self up!?");
     }
     the_message_log.add(message);
     return StateResult::Failure();
@@ -112,13 +111,12 @@ Action::StateResult ActionGet::do_begin_work(AnyMap& params)
     }
     else // could not add to inventory
     {
+      message = YOU + " could not pick up " + THE_FOO + " for some inexplicable reason.";
+      the_message_log.add(message);
+
       MAJOR_ERROR("Could not move Thing even though "
                   "is_movable returned Success");
     }
-  }
-  else // perform_action_picked_up_by(pImpl->id) returned false
-  {
-    // perform_action_picked_up_by() will print any relevant messages
   }
 
   return result;

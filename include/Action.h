@@ -38,6 +38,8 @@
 #define THE_FOO   (get_object()->get_identifying_string(true))
 #define A_FOO     (get_object()->get_identifying_string(false))
 
+#define THE_CONTAINER   (get_target_thing()->get_identifying_string(true))
+
 #define FOOSELF (get_object()->get_self_or_identifying_string(get_subject(), true))
 
 #define THE_FOO1  (get_object()->get_identifying_string(true))
@@ -128,8 +130,8 @@ public:
   void set_target(Direction direction) const;
   void set_quantity(unsigned int quantity) const;
 
-  ThingRef const& get_target_thing() const;
-  Direction const& get_target_direction() const;
+  ThingRef get_target_thing() const;
+  Direction get_target_direction() const;
   unsigned int get_quantity() const;
 
   virtual std::string get_type() const

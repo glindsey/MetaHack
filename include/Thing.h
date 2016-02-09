@@ -122,16 +122,6 @@ public:
   ///         false if it wasn't performed
   bool do_attack(ThingRef thing, unsigned int& action_time);
 
-  /// Return whether the Entity can put thing into container.
-  /// @param[in] thing Thing to put in.
-  /// @param[in] container Thing to put it into.
-  /// @param[out] action_time The time it took to move the thing.
-  /// @return ActionResult indicating what happened.
-  virtual ActionResult can_put_into(ThingRef thing, ThingRef container, unsigned int& action_time);
-
-  /// Attempt to put a thing into a container.
-  bool do_put_into(ThingRef thing, ThingRef container, unsigned int& action_time);
-
   /// Return whether the Entity can use the requested Thing.
   /// @param[in] thing Thing to try to use
   /// @param[out] action_time The time it will take to use it

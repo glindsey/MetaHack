@@ -208,12 +208,12 @@ void Action::set_quantity(unsigned int quantity) const
   pImpl->quantity = quantity;
 }
 
-ThingRef const& Action::get_target_thing() const
+ThingRef Action::get_target_thing() const
 {
   return pImpl->target_thing;
 }
 
-Direction const& Action::get_target_direction() const
+Direction Action::get_target_direction() const
 {
   return pImpl->target_direction;
 }
