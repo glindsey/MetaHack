@@ -17,7 +17,36 @@ ActionTakeOut::~ActionTakeOut()
 
 Action::StateResult ActionTakeOut::do_prebegin_work(AnyMap& params)
 {
-  return Action::StateResult::Success();
+  std::string message;
+  auto subject = get_subject();
+  auto object = get_object();
+  auto container = object->get_location();
+
+  // Verify that the Action has an object.
+  if (object == ThingManager::get_mu())
+  {
+    return StateResult::Failure();
+  }
+
+  // Check that the thing isn't US!
+  if (object == subject)
+  {
+    return StateResult::Failure(); //ActionResult::FailureSelfReference;
+  }
+
+  // Check that the container is not a MapTile or Entity.
+  if (!object->is_inside_another_thing())
+  {
+    return StateResult::Failure(); //ActionResult::FailureNotInsideContainer;
+  }
+
+  // Check that the container is within reach.
+  if (!subject->can_reach(container))
+  {
+    return StateResult::Failure(); //ActionResult::FailureContainerOutOfReach;
+  }
+
+  return StateResult::Success();
 }
 
 Action::StateResult ActionTakeOut::do_begin_work(AnyMap& params)

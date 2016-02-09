@@ -38,7 +38,8 @@
 #define THE_FOO   (get_object()->get_identifying_string(true))
 #define A_FOO     (get_object()->get_identifying_string(false))
 
-#define THE_CONTAINER   (get_target_thing()->get_identifying_string(true))
+#define THE_FOOS_LOCATION  (get_object()->get_location()->get_identifying_string(true))
+#define THE_TARGET_THING   (get_target_thing()->get_identifying_string(true))
 
 #define FOOSELF (get_object()->get_self_or_identifying_string(get_subject(), true))
 

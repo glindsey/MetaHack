@@ -21,8 +21,6 @@ Action::StateResult ActionPutInto::do_prebegin_work(AnyMap& params)
   auto subject = get_subject();
   auto object = get_object();
   auto container = get_target_thing();
-  ThingRef location = subject->get_location();
-  MapTile* current_tile = subject->get_maptile();
 
   // Verify that the Action has an object.
   if (object == ThingManager::get_mu())
@@ -59,7 +57,7 @@ Action::StateResult ActionPutInto::do_prebegin_work(AnyMap& params)
     else
     {
       message = YOU_TRY + " to store " + YOURSELF +
-        "into " + THE_CONTAINER +
+        "into " + THE_TARGET_THING +
         ", which seriously shouldn't happen.";
       MINOR_ERROR("NPC tried to store self!?");
     }
@@ -90,10 +88,10 @@ Action::StateResult ActionPutInto::do_prebegin_work(AnyMap& params)
   if (container->get_intrinsic<int>("inventory_size") == 0)
   {
     message = YOU_TRY + " to store " + THE_FOO + " in " +
-      THE_CONTAINER + ".";
+      THE_TARGET_THING + ".";
     the_message_log.add(message);
 
-    message = THE_CONTAINER + " is not a container!";
+    message = THE_TARGET_THING + " is not a container!";
     the_message_log.add(message);
 
     return StateResult::Failure();
@@ -103,11 +101,11 @@ Action::StateResult ActionPutInto::do_prebegin_work(AnyMap& params)
   if (object->get_location() == container)
   {
     message = YOU_TRY + " to store " + THE_FOO + " in " +
-      THE_CONTAINER + ".";
+      THE_TARGET_THING + ".";
     the_message_log.add(message);
 
     message = THE_FOO + " is already in " +
-      THE_CONTAINER + "!";
+      THE_TARGET_THING + "!";
     the_message_log.add(message);
 
     return StateResult::Failure();
@@ -117,14 +115,14 @@ Action::StateResult ActionPutInto::do_prebegin_work(AnyMap& params)
   if (!subject->can_reach(object))
   {
     message = YOU_TRY + " to store " + THE_FOO + " in " +
-      THE_CONTAINER + ".";
+      THE_TARGET_THING + ".";
     the_message_log.add(message);
 
     message = YOU + " cannot reach " + THE_FOO;
 
     if (!subject->can_reach(container))
     {
-      message += " (or " + THE_CONTAINER + ")";
+      message += " (or " + THE_TARGET_THING + ")";
     }
 
     message += ".";
@@ -137,10 +135,10 @@ Action::StateResult ActionPutInto::do_prebegin_work(AnyMap& params)
   if (!subject->can_reach(container))
   {
     message = YOU_TRY + " to store " + THE_FOO + " in " +
-      THE_CONTAINER + ".";
+      THE_TARGET_THING + ".";
     the_message_log.add(message);
 
-    message = YOU + " cannot reach " + THE_CONTAINER + ".";
+    message = YOU + " cannot reach " + THE_TARGET_THING + ".";
     the_message_log.add(message);
 
     return StateResult::Failure();
@@ -150,7 +148,7 @@ Action::StateResult ActionPutInto::do_prebegin_work(AnyMap& params)
   if (subject->is_wielding(object))
   {
     message = YOU_TRY + " to store " + THE_FOO + " in " +
-      THE_CONTAINER + ".";
+      THE_TARGET_THING + ".";
     the_message_log.add(message);
 
     message = YOU + " cannot store something that is currently being worn.";
@@ -163,7 +161,7 @@ Action::StateResult ActionPutInto::do_prebegin_work(AnyMap& params)
   if (subject->has_equipped(object))
   {
     message = YOU_TRY + " to store " + THE_FOO + " in " +
-      THE_CONTAINER + ".";
+      THE_TARGET_THING + ".";
     the_message_log.add(message);
 
     /// @todo Perhaps automatically try to unwield the item before dropping?
@@ -189,7 +187,7 @@ Action::StateResult ActionPutInto::do_begin_work(AnyMap& params)
   {
     message = YOU + CV(" place ", "places ") +
       THE_FOO + " into " +
-      THE_CONTAINER + ".";
+      THE_TARGET_THING + ".";
     the_message_log.add(message);
     if (object->move_into(container))
     {
@@ -198,7 +196,7 @@ Action::StateResult ActionPutInto::do_begin_work(AnyMap& params)
     }
     else
     {
-      message = YOU + " could not move " + THE_FOO + " into " + THE_CONTAINER + " for some inexplicable reason.";
+      message = YOU + " could not move " + THE_FOO + " into " + THE_TARGET_THING + " for some inexplicable reason.";
       the_message_log.add(message);
 
       MAJOR_ERROR("Could not move Thing into Container");
