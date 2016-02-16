@@ -7,7 +7,7 @@
 /// Enum class representing body parts or their analogous equivalents.
 enum class BodyPart
 {
-  Nowhere,
+  Nowhere = 0,
   Body,
   Skin,
   Head,
