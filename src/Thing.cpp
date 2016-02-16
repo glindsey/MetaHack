@@ -29,7 +29,7 @@
 #include "TileSheet.h"
 
 // Local definitions to make reading/writing status info a bit easier.
-#define YOU       (this->get_identifying_string())  // "you" or descriptive noun like "the goblin"
+#define YOU       (this->get_you_or_identifying_string())  // "you" or descriptive noun like "the goblin"
 #define YOU_SUBJ  (this->get_subject_pronoun())     // "you/he/she/it/etc."
 #define YOU_OBJ   (this->get_object_pronoun())      // "you/him/her/it/etc."
 #define YOUR      (this->get_possessive())          // "your/his/her/its/etc."
@@ -225,6 +225,7 @@ bool Thing::do_die()
   }
 }
 
+#if 0
 bool Thing::do_attack(Direction direction, unsigned int& action_time)
 {
   /// @todo Update action time based on direction, speed, etc.
@@ -340,6 +341,7 @@ bool Thing::do_attack(Direction direction, unsigned int& action_time)
     }
   } // end else if (other direction)
 }
+#endif
 
 bool Thing::do_attack(ThingRef thing, unsigned int& action_time)
 {

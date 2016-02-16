@@ -261,6 +261,9 @@
     <ClInclude Include="include\ActionWield.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\ActionDie.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">

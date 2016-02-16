@@ -113,7 +113,7 @@ public:
   /// @param[out] action_time The time it took to attack it.
   /// @return true if attack was performed (whether it succeeded or not),
   ///         false if it wasn't performed
-  bool do_attack(Direction direction, unsigned int& action_time);
+  //bool do_attack(Direction direction, unsigned int& action_time);
 
   /// Attempt to attack a thing.
   /// @param[in] thing Thing to attack.

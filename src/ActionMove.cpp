@@ -1,4 +1,6 @@
 #include "ActionMove.h"
+
+#include "ActionAttack.h"
 #include "GameState.h"
 #include "Map.h"
 #include "Thing.h"
@@ -121,7 +123,12 @@ Action::StateResult ActionMove::do_begin_work(AnyMap& params)
         /// @todo Only attack hostiles.
         /// @todo Change this to pushing an attack action onto the subject's queue
         ///       instead of just segueing right into the attack.
-        result.success = subject->do_attack(new_direction, result.elapsed_time);
+        std::unique_ptr<ActionAttack> action_attack{ new ActionAttack(subject) };
+        action_attack->set_target(new_direction);
+
+        subject->queue_action(std::move(action_attack));
+
+        result = StateResult::Success();
       }
       else
       {
