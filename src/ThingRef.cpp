@@ -8,14 +8,14 @@ uint32_t ThingRef::S_largest_unused_id = 0;
 std::vector<ThingId> ThingRef::S_deleted_ids;
 
 ThingRef::ThingRef()
-{
-  this->m_id = ThingId(0, 0);
-}
+  :
+  m_id{ ThingId(0,0) }
+{}
 
 ThingRef::ThingRef(ThingId const& id)
-{
-  this->m_id = id;
-}
+  :
+  m_id{ id }
+{}
 
 ThingRef::~ThingRef()
 {
@@ -23,9 +23,9 @@ ThingRef::~ThingRef()
 
 /// Create a weak reference from another weak reference.
 ThingRef::ThingRef(ThingRef const& other)
-{
-  this->m_id = other.m_id;
-}
+  :
+  m_id{ other.m_id }
+{}
 
 /// Assignment operator for weak references.
 ThingRef& ThingRef::operator=(ThingRef other)

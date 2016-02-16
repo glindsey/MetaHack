@@ -11,7 +11,7 @@ class GUIPane :
   public GUIObject
 {
 public:
-  GUIPane(sf::IntRect dimensions);
+  explicit GUIPane(sf::IntRect dimensions);
   virtual ~GUIPane();
 
   virtual EventResult handle_event(sf::Event& event);

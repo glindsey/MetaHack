@@ -1,0 +1,15 @@
+{
+	"folders":
+	[
+		{
+			"folder_exclude_patterns":
+			[
+				"doxygen",
+				".vs",
+				"Debug",
+				"Release"
+			],
+			"path": "."
+		}
+	]
+}

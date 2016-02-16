@@ -87,7 +87,7 @@ ThingRef Action::get_second_object() const
 bool Action::process(ThingRef actor, AnyMap params)
 {
   // If entity is currently busy, decrement by one and return.
-  unsigned int counter_busy = actor->get_property<int>("counter_busy");
+  int counter_busy = actor->get_property<int>("counter_busy");
   if (counter_busy > 0)
   {
     TRACE("Thing #%s (%s): counter_busy = %d, decrementing",
@@ -107,7 +107,7 @@ bool Action::process(ThingRef actor, AnyMap params)
   // target actor is busy.
   while ((pImpl->state != Action::State::Processed) && (counter_busy == 0))
   {
-    unsigned int counter_busy = actor->get_property<int>("counter_busy");
+    int counter_busy = actor->get_property<int>("counter_busy");
     Action::StateResult result{ false, 0 };
 
     TRACE("Thing #%s (%s): Action %s is in state %s, counter_busy = %d",

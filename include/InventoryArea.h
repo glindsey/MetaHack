@@ -24,7 +24,7 @@ class InventoryArea :
   public GUIPane
 {
 public:
-  InventoryArea(sf::IntRect dimensions);
+  explicit InventoryArea(sf::IntRect dimensions);
   virtual ~InventoryArea();
 
   ThingRef get_viewed() const;

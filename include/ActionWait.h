@@ -11,7 +11,7 @@ class ActionWait
   public Action
 {
 public:
-  ActionWait(ThingRef subject);
+  explicit ActionWait(ThingRef subject);
   virtual ~ActionWait();
 
   virtual std::string get_type() const override

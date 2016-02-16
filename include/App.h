@@ -19,7 +19,7 @@ class TileSheet;
 class App : public EventHandler, public boost::noncopyable
 {
 public:
-  App(sf::RenderWindow& app_window);
+  explicit App(sf::RenderWindow& app_window);
   virtual ~App();
 
   void run();

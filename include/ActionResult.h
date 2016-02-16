@@ -50,33 +50,33 @@ inline std::ostream& operator<<(std::ostream& os, ActionResult result)
 {
   switch (result)
   {
-  case ActionResult::FailureActorCantPerform: os << "FailureActorCantPerform"; break;
-  case ActionResult::FailureContainerIsEmpty: os << "FailureContainerIsEmpty"; break;
-  case ActionResult::FailureContainerCantBeSelf: os << "FailureContainerCantBeSelf"; break;
-  case ActionResult::FailureCircularReference: os << "FailureCircularReference"; break;
-  case ActionResult::FailureItemNotEquippable: os << "FailureItemNotEquippable"; break;
-  case ActionResult::FailureItemNotEquipped: os << "FailureItemNotEquipped"; break;
-  case ActionResult::FailureItemWielded: os << "FailureItemWielded"; break;
-  case ActionResult::FailureItemEquipped: os << "FailureItemEquipped"; break;
-  case ActionResult::FailureNotEnoughHands: os << "FailureNotEnoughHands"; break;
-  case ActionResult::FailureTooStupid: os << "FailureTooStupid"; break;
-  case ActionResult::FailureNotLiquidCarrier: os << "FailureNotLiquidCarrier"; break;
-  case ActionResult::FailureSelfReference: os << "FailureSelfReference"; break;
-  case ActionResult::FailureTargetNotAContainer: os << "FailureTargetNotAContainer"; break;
-  case ActionResult::FailureNotInsideContainer: os << "FailureNotInsideContainer"; break;
-  case ActionResult::FailureContainerOutOfReach: os << "FailureContainerOutOfReach"; break;
-  case ActionResult::FailureThingOutOfReach: os << "FailureThingOutOfReach"; break;
-  case ActionResult::FailureAlreadyPresent: os << "FailureAlreadyPresent"; break;
-  case ActionResult::FailureInventoryCantContain: os << "FailureInventoryCantContain"; break;
-  case ActionResult::FailureInventoryFull: os << "FailureInventoryFull"; break;
-  case ActionResult::FailureNotPresent: os << "FailureNotPresent"; break;
-  case ActionResult::Failure: os << "Failure"; break;
-  case ActionResult::Pending: os << "Pending"; break;
-  case ActionResult::Success: os << "Success"; break;
-  case ActionResult::SuccessDestroyed: os << "SuccessDestroyed"; break;
-  case ActionResult::SuccessSelfReference: os << "SuccessSelfReference"; break;
-  case ActionResult::SuccessSwapHands: os << "SuccessSwapHands"; break;
-  default: os << "(Unknown ActionResult" << (unsigned int)result << ")"; break;
+    case ActionResult::FailureActorCantPerform: os << "FailureActorCantPerform"; break;
+    case ActionResult::FailureContainerIsEmpty: os << "FailureContainerIsEmpty"; break;
+    case ActionResult::FailureContainerCantBeSelf: os << "FailureContainerCantBeSelf"; break;
+    case ActionResult::FailureCircularReference: os << "FailureCircularReference"; break;
+    case ActionResult::FailureItemNotEquippable: os << "FailureItemNotEquippable"; break;
+    case ActionResult::FailureItemNotEquipped: os << "FailureItemNotEquipped"; break;
+    case ActionResult::FailureItemWielded: os << "FailureItemWielded"; break;
+    case ActionResult::FailureItemEquipped: os << "FailureItemEquipped"; break;
+    case ActionResult::FailureNotEnoughHands: os << "FailureNotEnoughHands"; break;
+    case ActionResult::FailureTooStupid: os << "FailureTooStupid"; break;
+    case ActionResult::FailureNotLiquidCarrier: os << "FailureNotLiquidCarrier"; break;
+    case ActionResult::FailureSelfReference: os << "FailureSelfReference"; break;
+    case ActionResult::FailureTargetNotAContainer: os << "FailureTargetNotAContainer"; break;
+    case ActionResult::FailureNotInsideContainer: os << "FailureNotInsideContainer"; break;
+    case ActionResult::FailureContainerOutOfReach: os << "FailureContainerOutOfReach"; break;
+    case ActionResult::FailureThingOutOfReach: os << "FailureThingOutOfReach"; break;
+    case ActionResult::FailureAlreadyPresent: os << "FailureAlreadyPresent"; break;
+    case ActionResult::FailureInventoryCantContain: os << "FailureInventoryCantContain"; break;
+    case ActionResult::FailureInventoryFull: os << "FailureInventoryFull"; break;
+    case ActionResult::FailureNotPresent: os << "FailureNotPresent"; break;
+    case ActionResult::Failure: os << "Failure"; break;
+    case ActionResult::Pending: os << "Pending"; break;
+    case ActionResult::Success: os << "Success"; break;
+    case ActionResult::SuccessDestroyed: os << "SuccessDestroyed"; break;
+    case ActionResult::SuccessSelfReference: os << "SuccessSelfReference"; break;
+    case ActionResult::SuccessSwapHands: os << "SuccessSwapHands"; break;
+    default: os << "(Unknown ActionResult" << (unsigned int)result << ")"; break;
   }
 
   return os;

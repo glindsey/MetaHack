@@ -24,23 +24,23 @@ EventResult AppStateMainMenu::handle_event(sf::Event& event)
 {
   switch (event.type)
   {
-  case sf::Event::EventType::KeyPressed:
-    switch (event.key.code)
-    {
-    case sf::Keyboard::Key::Space:
-      // Switch to game state.
-      this->change_to("AppStateGameMode");
+    case sf::Event::EventType::KeyPressed:
+      switch (event.key.code)
+      {
+        case sf::Keyboard::Key::Space:
+          // Switch to game state.
+          this->change_to("AppStateGameMode");
 
-      return EventResult::Handled;
+          return EventResult::Handled;
+          break;
+
+        default:
+          break;
+      }
       break;
 
     default:
       break;
-    }
-    break;
-
-  default:
-    break;
   }
 
   return EventResult::Ignored;

@@ -115,7 +115,6 @@ bool Lua::add_enum(const char* tname, ...)
   va_list args;
   std::stringstream code;
   char* ename;
-  int evalue;
 
   code << tname << " = setmetatable({}, {";
   code << "__index = {";
@@ -124,7 +123,7 @@ bool Lua::add_enum(const char* tname, ...)
   va_start(args, tname);
   while ((ename = va_arg(args, char*)) != 0)
   {
-    evalue = va_arg(args, int);
+    int evalue = va_arg(args, int);
     code << ename << "={value=" << evalue << ",type=\"" << tname << "\"},";
   }
   va_end(args);

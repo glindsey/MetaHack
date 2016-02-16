@@ -11,7 +11,7 @@ class ActionMove
   public Action
 {
 public:
-  ActionMove(ThingRef subject);
+  explicit ActionMove(ThingRef subject);
   virtual ~ActionMove();
 
   virtual std::string get_type() const override

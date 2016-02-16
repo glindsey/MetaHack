@@ -18,7 +18,7 @@ typedef boost::random::uniform_int_distribution<> uniform_int_dist;
 
 struct MapGenerator::Impl
 {
-  Impl(Map& m) : game_map(m) {}
+  explicit Impl(Map& m) : game_map(m) {}
 
   /// Fill map with stone.
   void clearMap()
@@ -196,7 +196,6 @@ void MapGenerator::generate()
   while (mapFeatures < pImpl->limits.maxFeatures)
   {
     GeoVector nextGrowthVector;
-    MapFeature* feature = nullptr;
 
     uniform_int_dist chooseAFeature(0, 8);
     int chosen_feature = chooseAFeature(the_RNG);

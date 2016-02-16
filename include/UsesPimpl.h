@@ -18,19 +18,19 @@ public:
   Pimpl() : p{ NEW P{} } {}
 
   /// Pointer constructor.
-  Pimpl(P* ptr) : p{ ptr } {}
+  explicit Pimpl(P* ptr) : p{ ptr } {}
 
   /// Templated pImpl initializer.
-  template<typename ...Args> Pimpl(Args&& ...args) : p{ NEW P{ std::forward<Args>(args)... } } {}
+  template<typename ...Args> explicit Pimpl(Args&& ...args) : p{ NEW P{ std::forward<Args>(args)... } } {}
 
   /// Destructor
   ~Pimpl() { }
 
   /// Copy constructor
-  Pimpl(const Pimpl& other) = delete;
+  explicit Pimpl(const Pimpl& other) = delete;
 
   /// Move constructor
-  Pimpl(Pimpl<P>&&) = default;
+  explicit Pimpl(Pimpl<P>&&) = default;
 
   /// Copy assignment operator
   Pimpl<P>& operator= (const Pimpl<P>& other) = delete;
@@ -63,10 +63,10 @@ public:
   CopyablePimpl() : p{ NEW P{} } {}
 
   /// Pointer constructor.
-  CopyablePimpl(P* ptr) : p{ ptr } {}
+  explicit CopyablePimpl(P* ptr) : p{ ptr } {}
 
   /// Templated pImpl initializer.
-  template<typename ...Args> CopyablePimpl(Args&& ...) : p{ NEW P{ std::forward<Args>(args)... } } {}
+  template<typename ...Args> explicit CopyablePimpl(Args&& ...) : p{ NEW P{ std::forward<Args>(args)... } } {}
 
   /// Destructor
   ~CopyablePimpl() { }

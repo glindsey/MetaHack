@@ -105,104 +105,104 @@ EventResult KeyBuffer::handle_key_press(sf::Event::KeyEvent& key)
   {
     switch (key.code)
     {
-    case sf::Keyboard::Key::Tilde:      INSERT('~', '`');
-    case sf::Keyboard::Key::Num1:       INSERT('!', '1');
-    case sf::Keyboard::Key::Num2:       INSERT('@', '2');
-    case sf::Keyboard::Key::Num3:       INSERT('#', '3');
-    case sf::Keyboard::Key::Num4:       INSERT('$', '4');
-    case sf::Keyboard::Key::Num5:       INSERT('%', '5');
-    case sf::Keyboard::Key::Num6:       INSERT('^', '6');
-    case sf::Keyboard::Key::Num7:       INSERT('&', '7');
-    case sf::Keyboard::Key::Num8:       INSERT('*', '8');
-    case sf::Keyboard::Key::Num9:       INSERT('(', '9');
-    case sf::Keyboard::Key::Num0:       INSERT(')', '0');
-    case sf::Keyboard::Key::Dash:       INSERT('_', '-');
-    case sf::Keyboard::Key::Equal:      INSERT('+', '=');
-    case sf::Keyboard::Key::Q:          INSERT('Q', 'q');
-    case sf::Keyboard::Key::W:          INSERT('W', 'w');
-    case sf::Keyboard::Key::E:          INSERT('E', 'e');
-    case sf::Keyboard::Key::R:          INSERT('R', 'r');
-    case sf::Keyboard::Key::T:          INSERT('T', 't');
-    case sf::Keyboard::Key::Y:          INSERT('Y', 'y');
-    case sf::Keyboard::Key::U:          INSERT('U', 'u');
-    case sf::Keyboard::Key::I:          INSERT('I', 'i');
-    case sf::Keyboard::Key::O:          INSERT('O', 'o');
-    case sf::Keyboard::Key::P:          INSERT('P', 'p');
-    case sf::Keyboard::Key::LBracket:   INSERT('{', '[');
-    case sf::Keyboard::Key::RBracket:   INSERT('}', ']');
-    case sf::Keyboard::Key::BackSlash:  INSERT('|', '\\');
-    case sf::Keyboard::Key::A:          INSERT('A', 'a');
-    case sf::Keyboard::Key::S:          INSERT('S', 's');
-    case sf::Keyboard::Key::D:          INSERT('D', 'd');
-    case sf::Keyboard::Key::F:          INSERT('F', 'f');
-    case sf::Keyboard::Key::G:          INSERT('G', 'g');
-    case sf::Keyboard::Key::H:          INSERT('H', 'h');
-    case sf::Keyboard::Key::J:          INSERT('J', 'j');
-    case sf::Keyboard::Key::K:          INSERT('K', 'k');
-    case sf::Keyboard::Key::L:          INSERT('L', 'l');
-    case sf::Keyboard::Key::SemiColon:  INSERT(':', ';');
-    case sf::Keyboard::Key::Quote:      INSERT('"', '\'');
-    case sf::Keyboard::Key::Z:          INSERT('Z', 'z');
-    case sf::Keyboard::Key::X:          INSERT('X', 'x');
-    case sf::Keyboard::Key::C:          INSERT('C', 'c');
-    case sf::Keyboard::Key::V:          INSERT('V', 'v');
-    case sf::Keyboard::Key::B:          INSERT('B', 'b');
-    case sf::Keyboard::Key::N:          INSERT('N', 'n');
-    case sf::Keyboard::Key::M:          INSERT('M', 'm');
-    case sf::Keyboard::Key::Comma:      INSERT('<', ',');
-    case sf::Keyboard::Key::Period:     INSERT('>', '.');
-    case sf::Keyboard::Key::Slash:      INSERT('?', '/');
-    case sf::Keyboard::Key::Space:      INSERT(' ', ' ');
-    case sf::Keyboard::Key::Left:
-      pImpl->left_cursor();
-      result = EventResult::Handled;
-      break;
-    case sf::Keyboard::Key::Right:
-      pImpl->right_cursor();
-      result = EventResult::Handled;
-      break;
-    case sf::Keyboard::Key::BackSpace:
-      if (pImpl->left_cursor())
-      {
+      case sf::Keyboard::Key::Tilde:      INSERT('~', '`');
+      case sf::Keyboard::Key::Num1:       INSERT('!', '1');
+      case sf::Keyboard::Key::Num2:       INSERT('@', '2');
+      case sf::Keyboard::Key::Num3:       INSERT('#', '3');
+      case sf::Keyboard::Key::Num4:       INSERT('$', '4');
+      case sf::Keyboard::Key::Num5:       INSERT('%', '5');
+      case sf::Keyboard::Key::Num6:       INSERT('^', '6');
+      case sf::Keyboard::Key::Num7:       INSERT('&', '7');
+      case sf::Keyboard::Key::Num8:       INSERT('*', '8');
+      case sf::Keyboard::Key::Num9:       INSERT('(', '9');
+      case sf::Keyboard::Key::Num0:       INSERT(')', '0');
+      case sf::Keyboard::Key::Dash:       INSERT('_', '-');
+      case sf::Keyboard::Key::Equal:      INSERT('+', '=');
+      case sf::Keyboard::Key::Q:          INSERT('Q', 'q');
+      case sf::Keyboard::Key::W:          INSERT('W', 'w');
+      case sf::Keyboard::Key::E:          INSERT('E', 'e');
+      case sf::Keyboard::Key::R:          INSERT('R', 'r');
+      case sf::Keyboard::Key::T:          INSERT('T', 't');
+      case sf::Keyboard::Key::Y:          INSERT('Y', 'y');
+      case sf::Keyboard::Key::U:          INSERT('U', 'u');
+      case sf::Keyboard::Key::I:          INSERT('I', 'i');
+      case sf::Keyboard::Key::O:          INSERT('O', 'o');
+      case sf::Keyboard::Key::P:          INSERT('P', 'p');
+      case sf::Keyboard::Key::LBracket:   INSERT('{', '[');
+      case sf::Keyboard::Key::RBracket:   INSERT('}', ']');
+      case sf::Keyboard::Key::BackSlash:  INSERT('|', '\\');
+      case sf::Keyboard::Key::A:          INSERT('A', 'a');
+      case sf::Keyboard::Key::S:          INSERT('S', 's');
+      case sf::Keyboard::Key::D:          INSERT('D', 'd');
+      case sf::Keyboard::Key::F:          INSERT('F', 'f');
+      case sf::Keyboard::Key::G:          INSERT('G', 'g');
+      case sf::Keyboard::Key::H:          INSERT('H', 'h');
+      case sf::Keyboard::Key::J:          INSERT('J', 'j');
+      case sf::Keyboard::Key::K:          INSERT('K', 'k');
+      case sf::Keyboard::Key::L:          INSERT('L', 'l');
+      case sf::Keyboard::Key::SemiColon:  INSERT(':', ';');
+      case sf::Keyboard::Key::Quote:      INSERT('"', '\'');
+      case sf::Keyboard::Key::Z:          INSERT('Z', 'z');
+      case sf::Keyboard::Key::X:          INSERT('X', 'x');
+      case sf::Keyboard::Key::C:          INSERT('C', 'c');
+      case sf::Keyboard::Key::V:          INSERT('V', 'v');
+      case sf::Keyboard::Key::B:          INSERT('B', 'b');
+      case sf::Keyboard::Key::N:          INSERT('N', 'n');
+      case sf::Keyboard::Key::M:          INSERT('M', 'm');
+      case sf::Keyboard::Key::Comma:      INSERT('<', ',');
+      case sf::Keyboard::Key::Period:     INSERT('>', '.');
+      case sf::Keyboard::Key::Slash:      INSERT('?', '/');
+      case sf::Keyboard::Key::Space:      INSERT(' ', ' ');
+      case sf::Keyboard::Key::Left:
+        pImpl->left_cursor();
+        result = EventResult::Handled;
+        break;
+      case sf::Keyboard::Key::Right:
+        pImpl->right_cursor();
+        result = EventResult::Handled;
+        break;
+      case sf::Keyboard::Key::BackSpace:
+        if (pImpl->left_cursor())
+        {
+          pImpl->del_character();
+        }
+        result = EventResult::Handled;
+        break;
+      case sf::Keyboard::Key::Insert:
+        pImpl->replacing = !(pImpl->replacing);
+        result = EventResult::Handled;
+        break;
+      case sf::Keyboard::Key::Delete:
         pImpl->del_character();
-      }
-      result = EventResult::Handled;
-      break;
-    case sf::Keyboard::Key::Insert:
-      pImpl->replacing = !(pImpl->replacing);
-      result = EventResult::Handled;
-      break;
-    case sf::Keyboard::Key::Delete:
-      pImpl->del_character();
-      result = EventResult::Handled;
-      break;
-    case sf::Keyboard::Key::Home:
-      pImpl->cursor_position = 0;
-      result = EventResult::Handled;
-      break;
-    case sf::Keyboard::Key::End:
-      pImpl->cursor_position = pImpl->buffer.size();
-      result = EventResult::Handled;
-      break;
-    case sf::Keyboard::Key::Divide:     INSERT('/', '/');
-    case sf::Keyboard::Key::Multiply:   INSERT('*', '*');
-    case sf::Keyboard::Key::Subtract:   INSERT('-', '-');
-    case sf::Keyboard::Key::Add:        INSERT('+', '+');
-    case sf::Keyboard::Key::Numpad0:    INSERT('0', '0');
-    case sf::Keyboard::Key::Numpad1:    INSERT('1', '1');
-    case sf::Keyboard::Key::Numpad2:    INSERT('2', '2');
-    case sf::Keyboard::Key::Numpad3:    INSERT('3', '3');
-    case sf::Keyboard::Key::Numpad4:    INSERT('4', '4');
-    case sf::Keyboard::Key::Numpad5:    INSERT('5', '5');
-    case sf::Keyboard::Key::Numpad6:    INSERT('6', '6');
-    case sf::Keyboard::Key::Numpad7:    INSERT('7', '7');
-    case sf::Keyboard::Key::Numpad8:    INSERT('8', '8');
-    case sf::Keyboard::Key::Numpad9:    INSERT('9', '9');
-    case sf::Keyboard::Key::Return:
-      pImpl->enter = true;
-      result = EventResult::Handled;
-      break;
-    default: break;
+        result = EventResult::Handled;
+        break;
+      case sf::Keyboard::Key::Home:
+        pImpl->cursor_position = 0;
+        result = EventResult::Handled;
+        break;
+      case sf::Keyboard::Key::End:
+        pImpl->cursor_position = pImpl->buffer.size();
+        result = EventResult::Handled;
+        break;
+      case sf::Keyboard::Key::Divide:     INSERT('/', '/');
+      case sf::Keyboard::Key::Multiply:   INSERT('*', '*');
+      case sf::Keyboard::Key::Subtract:   INSERT('-', '-');
+      case sf::Keyboard::Key::Add:        INSERT('+', '+');
+      case sf::Keyboard::Key::Numpad0:    INSERT('0', '0');
+      case sf::Keyboard::Key::Numpad1:    INSERT('1', '1');
+      case sf::Keyboard::Key::Numpad2:    INSERT('2', '2');
+      case sf::Keyboard::Key::Numpad3:    INSERT('3', '3');
+      case sf::Keyboard::Key::Numpad4:    INSERT('4', '4');
+      case sf::Keyboard::Key::Numpad5:    INSERT('5', '5');
+      case sf::Keyboard::Key::Numpad6:    INSERT('6', '6');
+      case sf::Keyboard::Key::Numpad7:    INSERT('7', '7');
+      case sf::Keyboard::Key::Numpad8:    INSERT('8', '8');
+      case sf::Keyboard::Key::Numpad9:    INSERT('9', '9');
+      case sf::Keyboard::Key::Return:
+        pImpl->enter = true;
+        result = EventResult::Handled;
+        break;
+      default: break;
     }
   }
 

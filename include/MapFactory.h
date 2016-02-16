@@ -17,7 +17,7 @@ class Map;
 class MapFactory
 {
 public:
-  MapFactory(GameState& game_state);
+  explicit MapFactory(GameState& game_state);
   virtual ~MapFactory();
 
   /// Gets a reference to a Map by ID.

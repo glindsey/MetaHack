@@ -9,7 +9,7 @@
 class StatusArea : public GUIPane
 {
 public:
-  StatusArea(sf::IntRect dimensions);
+  explicit StatusArea(sf::IntRect dimensions);
   virtual ~StatusArea();
 
   virtual EventResult handle_event(sf::Event& event) override;

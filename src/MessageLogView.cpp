@@ -9,7 +9,7 @@
 struct MessageLogView::Impl
 {
   /// Constructor.
-  Impl(MessageLog& model_)
+  explicit Impl(MessageLog& model_)
     :
     model(model_)
   {}

@@ -10,7 +10,7 @@
 class MapGenerator
 {
 public:
-  MapGenerator(Map& m);
+  explicit MapGenerator(Map& m);
   virtual ~MapGenerator();
 
   void generate();

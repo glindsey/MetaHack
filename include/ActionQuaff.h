@@ -11,7 +11,7 @@ class ActionQuaff
   public Action
 {
 public:
-  ActionQuaff(ThingRef subject);
+  explicit ActionQuaff(ThingRef subject);
   ActionQuaff(ThingRef subject, ThingRef object);
   virtual ~ActionQuaff();
 

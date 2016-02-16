@@ -30,24 +30,24 @@ inline std::ostream& operator<<(std::ostream& os, BodyPart const& part)
 {
   switch (part)
   {
-  case BodyPart::Nowhere: os << "Nowhere"; break;
-  case BodyPart::Body: os << "Body"; break;
-  case BodyPart::Skin: os << "Skin"; break;
-  case BodyPart::Head: os << "Head"; break;
-  case BodyPart::Ear: os << "Ear"; break;
-  case BodyPart::Eye: os << "Eye"; break;
-  case BodyPart::Nose: os << "Nose"; break;
-  case BodyPart::Mouth: os << "Mouth"; break;
-  case BodyPart::Neck: os << "Neck"; break;
-  case BodyPart::Chest: os << "Chest"; break;
-  case BodyPart::Arm: os << "Arm"; break;
-  case BodyPart::Hand: os << "Hand"; break;
-  case BodyPart::Leg: os << "Leg"; break;
-  case BodyPart::Foot: os << "Foot"; break;
-  case BodyPart::Wing: os << "Wing"; break;
-  case BodyPart::Tail: os << "Tail"; break;
-  case BodyPart::Count: os << "Count"; break;
-  default: os << "???"; break;
+    case BodyPart::Nowhere: os << "Nowhere"; break;
+    case BodyPart::Body: os << "Body"; break;
+    case BodyPart::Skin: os << "Skin"; break;
+    case BodyPart::Head: os << "Head"; break;
+    case BodyPart::Ear: os << "Ear"; break;
+    case BodyPart::Eye: os << "Eye"; break;
+    case BodyPart::Nose: os << "Nose"; break;
+    case BodyPart::Mouth: os << "Mouth"; break;
+    case BodyPart::Neck: os << "Neck"; break;
+    case BodyPart::Chest: os << "Chest"; break;
+    case BodyPart::Arm: os << "Arm"; break;
+    case BodyPart::Hand: os << "Hand"; break;
+    case BodyPart::Leg: os << "Leg"; break;
+    case BodyPart::Foot: os << "Foot"; break;
+    case BodyPart::Wing: os << "Wing"; break;
+    case BodyPart::Tail: os << "Tail"; break;
+    case BodyPart::Count: os << "Count"; break;
+    default: os << "???"; break;
   }
 
   return os;

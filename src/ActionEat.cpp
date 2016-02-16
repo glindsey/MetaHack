@@ -64,8 +64,6 @@ Action::StateResult ActionEat::do_prebegin_work(AnyMap& params)
 Action::StateResult ActionEat::do_begin_work(AnyMap& params)
 {
   std::string message;
-  bool success = false;
-  unsigned int action_time = 0;
   auto subject = get_subject();
   auto object = get_object();
 

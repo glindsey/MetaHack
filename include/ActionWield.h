@@ -11,7 +11,7 @@ class ActionWield
   public Action
 {
 public:
-  ActionWield(ThingRef subject);
+  explicit ActionWield(ThingRef subject);
   ActionWield(ThingRef subject, ThingRef object);
   virtual ~ActionWield();
 

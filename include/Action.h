@@ -111,7 +111,7 @@ public:
     Processed     ///< The action is totally done and can be popped off the queue.
   };
 
-  Action(ThingRef subject);
+  explicit Action(ThingRef subject);
   Action(ThingRef subject, ThingRef object);
   Action(ThingRef subject, ThingRef object, unsigned int quantity);
   Action(ThingRef subject, std::vector<ThingRef> objects);

@@ -19,7 +19,7 @@ class StateMachine :
   virtual public boost::noncopyable
 {
 public:
-  StateMachine(std::string const& machine_name);
+  explicit StateMachine(std::string const& machine_name);
   virtual ~StateMachine();
 
   /// Get the name of this state machine.

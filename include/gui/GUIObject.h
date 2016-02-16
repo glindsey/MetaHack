@@ -12,7 +12,7 @@ class GUIObject :
   public Renderable
 {
 public:
-  GUIObject(sf::IntRect dimensions);
+  explicit GUIObject(sf::IntRect dimensions);
   virtual ~GUIObject();
 
   void set_focus(bool focus);

@@ -21,7 +21,6 @@ Action::StateResult ActionGet::do_prebegin_work(AnyMap& params)
   auto subject = get_subject();
   auto object = get_object();
   ThingRef location = subject->get_location();
-  MapTile* current_tile = subject->get_maptile();
 
   // Verify that the Action has an object.
   if (object == ThingManager::get_mu())

@@ -11,7 +11,7 @@ class ActionAttack
   public Action
 {
 public:
-  ActionAttack(ThingRef subject);
+  explicit ActionAttack(ThingRef subject);
   ActionAttack(ThingRef subject, ThingRef object);
   virtual ~ActionAttack();
 

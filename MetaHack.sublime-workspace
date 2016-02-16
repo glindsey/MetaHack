@@ -1,0 +1,745 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "src/Thing.cpp",
+			"settings":
+			{
+				"buffer_size": 66508,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"contents": "#ifndef THING_H\n#define THING_H\n\n#include \"Action.h\"\n#include \"ActionResult.h\"\n#include \"BodyPart.h\"\n#include \"Direction.h\"\n#include \"ErrorHandler.h\"\n#include \"GameObject.h\"\n#include \"Gender.h\"\n#include \"MapId.h\"\n#include \"Metadata.h\"\n\n#include <memory>\n#include <string>\n#include <set>\n#include <boost/dynamic_bitset.hpp>\n#include <boost/optional.hpp>\n#include <boost/pool/object_pool.hpp>\n#include <boost/property_tree/ptree.hpp>\n#include <boost/serialization/strong_typedef.hpp>\n#include <SFML/Graphics.hpp>\n\n// Forward declarations\nclass AIStrategy;\nclass Entity;\nclass MapTile;\nclass Inventory;\nclass ThingFactory;\nclass ThingRef;\nclass Thing;\n\n// Using Declarations\n\n/// Typedef for the factory method.\nusing ThingCreator = std::shared_ptr<Thing>(*)(void);\n\n#include \"ThingImpl.h\"\n#include \"UsesPimpl.h\"\n\n// Thing is any object in the game, animate or not.\nclass Thing\n  :\n  public GameObject\n{\n  friend class boost::object_pool < Thing >;\n  friend class AIStrategy;\n  friend class ThingFactory;\n  friend class ThingManager;\n\npublic:\n  virtual ~Thing();\n\n  /// Queue an action for this Entity to perform.\n  /// pAction The Action to queue. The Action is MOVED when queued,\n  ///         e.g. pAction will be `nullptr` after queuing.\n  void queue_action(std::unique_ptr<Action> pAction);\n\n  /// Return whether there is an action pending for this Entity.\n  bool action_is_pending() const;\n\n  /// Return whether there is an action currently in progress for this Entity.\n  bool action_is_in_progress();\n\n  /// Returns true if this thing is the current player.\n  /// By default, returns false. Overridden by Entity class.\n  virtual bool is_player() const;\n\n  std::string const& get_type() const;\n  std::string const& get_parent_type() const;\n\n  /// Return whether a Thing is wielded by this Entity.\n  /// This is used by InventoryArea to show wielded status.\n  /// @param[in] thing Thing to check\n  /// @return true if the Thing is wielded by the Entity.\n  bool is_wielding(ThingRef thing);\n\n  /// Return whether a Thing is wielded by this Entity.\n  /// This is used by InventoryArea to show wielded status.\n  /// @param[in] thing Thing to check\n  /// @param[out] number Hand number it is wielded in.\n  /// @return true if the Thing is wielded by the Entity.\n  bool is_wielding(ThingRef thing, unsigned int& number);\n\n  /// Return whether a Thing is equipped (worn) by this Entity.\n  /// @param[in] thing Thing to check\n  /// @return true if the Thing is being worn.\n  bool has_equipped(ThingRef thing);\n\n  /// Return whether a Thing is being worn by this Entity.\n  /// @param[in] thing Thing to check\n  /// @param[out] location of the worn Thing, if worn\n  /// @return true if the Thing is being worn.\n  bool has_equipped(ThingRef thing, WearLocation& location);\n\n  /// Return whether a Thing is within reach of the Entity.\n  /// @param[in] thing Thing to check\n  /// @return true if the Thing is in the Entity's inventory or is at the\n  ///         same location as the Entity, false otherwise.\n  bool can_reach(ThingRef thing);\n\n  /// Return whether a Thing is adjacent to this Entity.\n  /// @param[in] thing Thing to check\n  /// @return true if the Thing is at the same place or adjacent to this Entity, false otherwise.\n  bool is_adjacent_to(ThingRef thing);\n\n  /// Die.\n  /// @return True if the Thing died, false if the death was avoided.\n  bool do_die();\n\n  /// Attempt to attack a direction.\n  /// @param[in] direction Direction to attack.\n  /// @param[out] action_time The time it took to attack it.\n  /// @return true if attack was performed (whether it succeeded or not),\n  ///         false if it wasn't performed\n  bool do_attack(Direction direction, unsigned int& action_time);\n\n  /// Attempt to attack a thing.\n  /// @param[in] thing Thing to attack.\n  /// @param[out] action_time The time it took to attack it.\n  /// @return true if attack was performed (whether it succeeded or not),\n  ///         false if it wasn't performed\n  bool do_attack(ThingRef thing, unsigned int& action_time);\n\n  /// Return whether the Entity can use the requested Thing.\n  /// @param[in] thing Thing to try to use\n  /// @param[out] action_time The time it will take to use it\n  /// @return ActionResult indicating what happened.\n  virtual ActionResult can_use(ThingRef thing, unsigned int& action_time);\n\n  /// Attempt to use a thing.\n  bool do_use(ThingRef thing, unsigned int& action_time);\n\n  /**\n   * @brief      Function to return an intrinsic value from a Thing.\n   *\n   * @param[in]  key            Name of the intrinsic to get.\n   * @param[in]  default_value  Default value if intrinsic is not found.\n   *\n   * @tparam     T              Type of the intrinsic requested.\n   *\n   * @return     Value of the intrinsic requested, or default value if it was not found.\n   */\n  template<typename T>\n  T get_intrinsic(std::string key, T default_value = T()) const\n  {\n    return pImpl->metadata.get_intrinsic<T>(key, default_value);\n  }\n\n  template<typename T>\n  T get_property(std::string key, T default_value = T())\n  {\n    PropertyDictionary& properties = pImpl->properties;\n\n    if (properties.contains(key))\n    {\n      return properties.get<T>(key);\n    }\n    else\n    {\n      T value = pImpl->metadata.get_default<T>(key, default_value);\n      properties.set<T>(key, value);\n      return value;\n    }\n  }\n\n  template<typename T>\n  bool set_property(std::string key, T value)\n  {\n    PropertyDictionary& properties = pImpl->properties;\n    bool existed = properties.contains(key);\n    properties.set<T>(key, value);\n\n    return existed;\n  }\n\n  template<typename T>\n  void add_to_property(std::string key, T add_value)\n  {\n    PropertyDictionary& properties = pImpl->properties;\n    T existing_value = properties.get<T>(key);\n    T new_value = existing_value + add_value;\n    properties.set<T>(key, new_value);\n  }\n\n  /// Get the quantity this thing represents.\n  unsigned int get_quantity();\n\n  /// Set the quantity this thing represents.\n  void set_quantity(unsigned int quantity);\n\n  /// Return a reference to this thing.\n  ThingRef get_ref() const;\n\n  /// Return the location of this thing.\n  ThingRef get_location() const;\n\n  /// Traverse the line of sight to a map tile, setting visibility\n  /// for the tiles between.\n  /// @warning Assumes entity is on a map, and that the ending coordinates\n  ///          are valid for the map the entity is on!\n  void traverseLineOfSightTo(int xEnd, int yEnd);\n\n  /// Return whether the Entity can see the requested Thing.\n  bool can_see(ThingRef thing);\n\n  /// Return whether the Entity can see the requested tile.\n  bool can_see(sf::Vector2i coords);\n\n  /// Return whether the Entity can see the requested tile.\n  bool can_see(int x, int y);\n\n  /// Find out which tiles on the map can be seen by this Entity.\n  /// In the process, tiles in the Entity's visual memory are updated.\n  /// This method uses a recursive raycasting algorithm to figure out what\n  /// can be seen at a particular position.\n  void find_seen_tiles();\n\n  /// Get the remembered tile type at the specified coordinates.\n  std::string get_memory_at(int x, int y) const;\n\n  /// Get the remembered tile type at the specified coordinates.\n  std::string get_memory_at(sf::Vector2i coords) const;\n\n  /// Add the memory of a particular tile to a VertexArray.\n  void add_memory_vertices_to(sf::VertexArray& vertices, int x, int y);\n\n  ActionResult can_deequip(ThingRef thing_id, unsigned int& action_time);\n\n  /// Attempt to de-equip (remove) a thing.\n  bool do_deequip(ThingRef thing_id, unsigned int& action_time);\n\n  ActionResult can_equip(ThingRef thing_id, unsigned int& action_time);\n\n  /// Attempt to equip (wear) a thing.\n  bool do_equip(ThingRef thing_id, unsigned int& action_time);\n\n  ActionResult can_wield(ThingRef thing_id, unsigned int hand, unsigned int& action_time);\n\n  /// Attempt to wield a thing.\n  /// @param[in] thing Thing to wield, or empty ptr if unwielding everything.\n  /// @param[in] hand Hand to wield it in.\n  /// @param[out] action_time Time it takes to wield.\n  bool do_wield(ThingRef thing, unsigned int hand, unsigned int& action_time);\n\n  /// Return whether this Entity can currently see.\n  /// @todo Implement blindness counter, blindness due to wearing blindfold,\n  ///       et cetera.\n  bool can_currently_see();\n\n  /// Return whether this Entity can currently move.\n  /// @todo Implement paralysis counter, and/or other reasons to be immobile.\n  bool can_currently_move();\n\n  void set_gender(Gender gender);\n\n  Gender get_gender() const;\n\n  Gender get_gender_or_you() const;\n\n  /// Get the number of a particular body part the Entity has.\n  unsigned int get_bodypart_number(BodyPart part) const;\n\n  /// Get the appropriate body part name for the Entity.\n  std::string get_bodypart_name(BodyPart part) const;\n\n  /// Get the appropriate body part plural for the Entity.\n  std::string get_bodypart_plural(BodyPart part) const;\n\n  /// Get the appropriate description for a body part.\n  /// This takes the body part name and the number referencing the particular\n  /// part and comes up with a description.\n  /// For example, for most creatures with two hands, hand #0 will be the\n  /// \"right hand\" and hand #1 will be the \"left hand\".\n  /// In most cases the default implementation here will work, but if a\n  /// creature has (for example) a strange configuration of limbs this can be\n  /// overridden.\n  std::string get_bodypart_description(BodyPart part, unsigned int number);\n\n  /// Returns a reference to the inventory.\n  Inventory& get_inventory();\n\n  /// Returns true if this thing is inside another Thing.\n  bool is_inside_another_thing() const;\n\n  /// Get the MapTile this thing is on, or nullptr if not on a map.\n  MapTile* get_maptile() const;\n\n  /// Return the MapId this Thing is currently on, or 0 if not on a map.\n  MapId get_map_id() const;\n\n  /// Return this thing's description.\n  /// Adds adjective qualifiers (such as \"fireproof\", \"waterproof\", etc.)\n  /// @todo Add adjective qualifiers.s\n  std::string get_display_name() const;\n\n  /// Return this object's plural.\n  std::string get_display_plural() const;\n\n  /// Get the thing's proper name (if any).\n  std::string get_proper_name();\n\n  /// Set this thing's proper name.\n  void set_proper_name(std::string name);\n\n  /// Return a string that identifies this thing.\n  /// If it IS the player, it'll return \"you\".\n  /// Otherwise it calls get_identifying_string().\n  ///\n  /// @param definite   If true, uses definite articles.\n  ///                   If false, uses indefinite articles.\n  ///                   Defaults to true.\n  std::string get_you_or_identifying_string(bool definite = true);\n\n  /// Return a string that identifies this thing.\n  /// If it matches the object passed in as \"other\", it'll return\n  /// the appropriate reflexive pronoun (\"yourself\", \"itself\", etc.).\n  /// Otherwise it calls get_identifying_string().\n  ///\n  /// @param other      The \"other\" to compare to.\n  /// @param definite   If true, uses definite articles.\n  ///                   If false, uses indefinite articles.\n  ///                   Defaults to true.\n  std::string get_self_or_identifying_string(ThingRef other, bool definite = true);\n\n  /// Return a string that identifies this thing.\n  /// Returns \"the/a/an\" and a description of the thing, such as\n  /// \"the chair\".\n  /// If it is carried by the player, it'll return \"your (thing)\".\n  /// Likewise, if it is carried by another Entity it'll return\n  /// \"(Entity)'s (thing)\".\n  /// @param definite   If true, uses definite articles.\n  ///                   If false, uses indefinite articles.\n  ///                   Defaults to true.\n  std::string get_identifying_string(bool definite = true);\n\n  /// Return a string that identifies this thing without using possessives.\n  /// The same as get_identifying_string, but without using any possessives.\n  /// @param definite   If true, uses definite articles.\n  ///                   If false, uses indefinite articles.\n  ///                   Defaults to true.\n  std::string get_identifying_string_without_possessives(bool definite = true);\n\n  /// Choose the proper possessive form\n  /// For a Thing, this is simply \"the\", as Things cannot own things.\n  /// This function checks to see if this Thing is currently designated as\n  /// the player (in the ThingFactory).  If so, it returns \"your\".  If not,\n  /// it returns get_name() + \"'s\".\n  /// @note If you want a possessive pronoun like his/her/its/etc., use\n  /// get_possessive_adjective().\n  std::string get_possessive();\n\n  /// Choose which verb form to use based on first/second/third person.\n  /// This function checks to see if this Thing is currently designated as\n  /// the player (in the ThingFactory), or has a quantity greater than zero.\n  /// If so, it returns the string passed as verb2; otherwise, it returns the\n  /// string passed as verb3.\n  /// @param verb2 The second person or plural verb form, such as \"shake\"\n  /// @param verb3 The third person verb form, such as \"shakes\"\n  std::string const& choose_verb(std::string const& verb2,\n                                 std::string const& verb3);\n\n  /// Return this thing's mass.\n  int get_mass();\n\n  /// Get the appropriate subject pronoun for the Thing.\n  std::string const& get_subject_pronoun() const;\n\n  /// Get the appropriate object pronoun for the Thing.\n  std::string const& get_object_pronoun() const;\n\n  /// Get the appropriate reflexive pronoun for the Thing.\n  std::string const& get_reflexive_pronoun() const;\n\n  /// Get the appropriate possessive adjective for the Thing.\n  std::string const& get_possessive_adjective() const;\n\n  /// Get the appropriate possessive pronoun for the Thing.\n  std::string const& get_possessive_pronoun() const;\n\n  /// Return the coordinates of the tile representing the thing.\n  sf::Vector2u get_tile_sheet_coords(int frame);\n\n  /// Add this Thing to a VertexArray to be drawn.\n  /// @param vertices Array to add vertices to.\n  /// @param use_lighting If true, calculate lighting when adding.\n  ///                     If false, store directly w/white bg color.\n  /// @param frame Animation frame number.\n  void add_floor_vertices_to(sf::VertexArray& vertices,\n                             bool use_lighting = true,\n                             int frame = 0) override;\n\n  /// Draw this Thing onto a RenderTexture, at the specified coordinates.\n  /// @param target Texture to draw onto.\n  /// @param target_coords Coordinates to draw the Thing at.\n  /// @param target_size Target size of thing, in pixels.\n  /// @param use_lighting If true, calculate lighting when adding.\n  ///                     If false, store directly w/white bg color.\n  /// @param frame Animation frame number.\n  void draw_to(sf::RenderTarget& target,\n               sf::Vector2f target_coords,\n               unsigned int target_size = 0,\n               bool use_lighting = true,\n               int frame = 0);\n\n  /// Simple check to see if a Thing is opaque.\n  bool is_opaque() const;\n\n  /// Provide light to this Thing's surroundings.\n  /// If Thing is not opaque, calls light_up_surroundings() for each Thing\n  /// in its inventory.\n  void light_up_surroundings();\n\n  /// Receive light from the specified light source.\n  /// The default behavior is to pass the light source to the location if\n  /// this Thing is opaque.\n  void be_lit_by(ThingRef light);\n\n  /// Spill the contents of this Thing out into the location of the Thing.\n  void spill();\n\n  /// Attempt to destroy this Thing.\n  void destroy();\n\n  /// Attempt to move this Thing into a location.\n  bool move_into(ThingRef new_location);\n\n  /// Return whether or not this thing can be moved from its current location by this Entity.\n  /// The default behavior for this is to return true.\n  bool is_movable_by(ThingRef thing);\n\n  /// Return whether or not this thing can be activated by this Entity.\n  /// The default behavior for this is to return false.\n  bool is_usable_by(ThingRef thing);\n\n  /// Return whether or not this thing can be drank by this Entity.\n  /// The default behavior for this is to return false.\n  bool is_drinkable_by(ThingRef thing);\n\n  /// Return whether or not this thing can be eaten by this Entity.\n  /// The default behavior for this is to return false.\n  bool is_edible_by(ThingRef thing);\n\n  /// Return whether or not this thing can be read by this Entity.\n  /// The default behavior for this is to return false.\n  bool is_readable_by(ThingRef thing);\n\n  /// Return whether or not this thing can be mixed with another Thing.\n  /// The default behavior for this is to return false.\n  bool is_miscible_with(ThingRef thing);\n\n  /// Return the body part this thing is equippable on.\n  /// If thing is not equippable, return BodyPart::Count.\n  BodyPart is_equippable_on() const;\n\n  /// Process this Thing and its inventory for a single tick.\n  bool process();\n\n  /// Perform an action when this thing dies.\n  /// @return If this function returns Failure, the death is avoided.\n  /// @warning The function must reset whatever caused the death in the\n  ///          first place, or the Thing will just immediately die again\n  ///          on the next call to process()!\n  ActionResult perform_action_died();\n\n  /// Perform an action when this thing is activated.\n  /// If this function returns false, the action is aborted.\n  bool perform_action_activated_by(ThingRef actor);\n\n  /// Perform an action when this thing collides with another thing.\n  void perform_action_collided_with(ThingRef thing);\n\n  /// Perform an action when this thing collides with a wall.\n  void perform_action_collided_with_wall(Direction d, std::string tile_type);\n\n  /// Perform an action when this thing is drank.\n  /// If this function returns Failure, the action is aborted.\n  ActionResult perform_action_drank_by(ThingRef actor);\n\n  /// Perform an action when this thing is dropped.\n  /// If this function returns false, the action is aborted.\n  bool perform_action_dropped_by(ThingRef actor);\n\n  /// Perform an action when this thing is eaten.\n  /// If this function returns Failure, the action is aborted.\n  ActionResult perform_action_eaten_by(ThingRef actor);\n\n  /// Perform an action when this thing is used.\n  /// If this function returns false, the action is aborted.\n  bool perform_action_used_by(ThingRef actor);\n\n  /// Perform an action when this thing is picked up.\n  /// If this function returns false, the action is aborted.\n  bool perform_action_picked_up_by(ThingRef actor);\n\n  /// Perform an action when this thing is put into another thing.\n  /// If this function returns false, the action is aborted.\n  bool perform_action_put_into_by(ThingRef container, ThingRef actor);\n\n  /// Perform an action when this thing is taken out its container.\n  /// If this function returns false, the action is aborted.\n  bool perform_action_taken_out_by(ThingRef actor);\n\n  /// Perform an action when this thing is read.\n  /// If this function returns Failure, the action is aborted.\n  ActionResult perform_action_read_by(ThingRef actor);\n\n  /// Perform an action when this thing hits an entity.\n  /// This action executes when the thing is wielded by an entity, and an\n  /// attack successfully hits its target.  It is a side-effect in addition\n  /// to the damage done by Entity::attack(entity).\n  /// @see Entity::attack\n  void perform_action_attack_hits(ThingRef target);\n\n  /// Perform an action when this thing is thrown.\n  /// If this function returns false, the action is aborted.\n  bool perform_action_thrown_by(ThingRef actor, Direction direction);\n\n  /// Perform an action when this thing is de-equipped (taken off).\n  /// If this function returns false, the action is aborted.\n  bool perform_action_deequipped_by(ThingRef actor, WearLocation& location);\n\n  /// Perform an action when this thing is equipped.\n  /// If this function returns false, the action is aborted.\n  bool perform_action_equipped_by(ThingRef actor, WearLocation& location);\n\n  /// Perform an action when this thing is unwielded.\n  /// If this function returns false, the action is aborted.\n  bool perform_action_unwielded_by(ThingRef actor);\n\n  /// Perform an action when this thing is wielded.\n  /// If this function returns false, the action is aborted.\n  bool perform_action_wielded_by(ThingRef actor);\n\n  /// Perform an action when this thing is fired.\n  /// If this function returns false, the action is aborted.\n  bool perform_action_fired_by(ThingRef actor, Direction direction);\n\n  /// Returns whether the Thing can merge with another Thing.\n  /// Calls an overridden subclass function.\n  bool can_merge_with(ThingRef other) const;\n\n  /// Returns whether the Thing can hold a certain thing.\n  /// If Thing's inventory size is 0, returns\n  /// ActionResult::FailureTargetNotAContainer.\n  /// Otherwise, calls Lua function \"can_contain()\" for the Thing's type.\n  /// @param thing Thing to check.\n  /// @return ActionResult specifying whether the thing can be held here.\n  ActionResult can_contain(ThingRef thing);\n\nprivate:\n  /// Pimpl implementation\n  /// We don't use CopyablePimpl because you can't copy a Thing;\n  /// you can clone it but that's a different concept.\n  Pimpl<ThingImpl> pImpl;\n\n  /// Named Constructor\n  Thing(Metadata& metadata, ThingRef ref);\n\n  /// Floor Constructor\n  Thing(MapTile* map_tile, Metadata& metadata, ThingRef ref);\n\n  /// Clone Constructor\n  Thing(Thing const& original, ThingRef ref);\n\n  /// Initializer; called by all constructors.\n  void initialize();\n\n  /// Get a reference to this Entity's map memory.\n  std::vector<std::string>& get_map_memory();\n\n  /// Perform the recursive visibility scan for an octant.\n  /// Used by find_seen_tiles.\n  void do_recursive_visibility(int octant,\n                               int depth = 1,\n                               float slope_A = 1,\n                               float slope_B = 0);\n\n  /// Set the location of this thing.\n  /// Does no checks, nor does it update the source/target inventories.\n  /// Those are the responsibility of the caller.\n  void set_location(ThingRef target);\n\n  /// Outline color for walls when drawing on-screen.\n  static sf::Color const wall_outline_color_;\n\n  /// Gets this location's maptile.\n  virtual MapTile* _get_maptile() const;\n\n  /// Process this Thing for a single tick.\n  /// The function returns false to indicate to its parent that it no longer\n  /// exists and should be deleted.\n  /// @return true if the Thing continues to exist after the tick;\n  ///         false if the Thing ceases to exist.\n  virtual bool _process_self();\n\n  // Static Lua functions.\n  // @todo (Maybe these should be part of ThingManager instead?)\n\n  /// Lua function to create a new Thing.\n  /// Takes two parameters:\n  ///   - ID of the Thing it will be stored in\n  ///   - Type of the new Thing\n  /// It returns:\n  ///   - ID of the newly created Thing, or nil if it could not be created.\n  static int LUA_thing_create(lua_State* L);\n\n  /// Lua function to destroy a new Thing.\n  /// Takes two parameters:\n  ///   - ID of the Thing to destroy\n  /// It returns:\n  ///   - Nothing. Thing destruction is always successful.\n  static int LUA_thing_destroy(lua_State* L);\n\n  /// Lua function to get the ID of the player.\n  /// Takes no parameters.\n  /// It returns:\n  ///   - ID of the player character.\n  static int LUA_thing_get_player(lua_State* L);\n\n  /// Lua function to get the coordinates of a Thing.\n  /// Takes one parameter:\n  ///   - ID of the Thing to get coordinates of.\n  /// It returns:\n  ///   - (x, y) coordinates of the Thing, or nil if not on the player's Map.\n  static int LUA_thing_get_coords(lua_State* L);\n\n  static int LUA_thing_get_type(lua_State* L);\n  static int LUA_thing_get_property_flag(lua_State* L);\n  static int LUA_thing_get_property_value(lua_State* L);\n  static int LUA_thing_get_property_string(lua_State* L);\n  static int LUA_thing_set_property_flag(lua_State* L);\n  static int LUA_thing_set_property_value(lua_State* L);\n  static int LUA_thing_set_property_string(lua_State* L);\n\n  static int LUA_get_property(lua_State* L);\n  static int LUA_set_property(lua_State* L);\n\n  static int LUA_thing_move_into(lua_State* L);\n\n  /// Syntactic sugar for calling Metadata::call_lua_function.\n  ActionResult call_lua_function(std::string function_name,\n                                 std::vector<lua_Integer> const& args,\n                                 ActionResult default_result = ActionResult::Success);\n\n  /// Syntactic sugar for calling Metadata::call_lua_function_bool.\n  bool call_lua_function_bool(std::string function_name,\n                              std::vector<lua_Integer> const& args,\n                              bool default_result = true);\n\n  /// Syntactic sugar for calling Metadata::call_lua_function_v2u.\n  sf::Vector2u call_lua_function_v2u(std::string function_name,\n                                     std::vector<lua_Integer> const& args,\n                                     sf::Vector2u default_result = sf::Vector2u(0, 0));\n};\n\n#endif // THING_H\n",
+			"file": "include/Thing.h",
+			"file_size": 25183,
+			"file_write_time": 131001231199495990,
+			"settings":
+			{
+				"buffer_size": 24921,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "src/ActionUse.cpp",
+			"settings":
+			{
+				"buffer_size": 2982,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "src/ActionRead.cpp",
+			"settings":
+			{
+				"buffer_size": 2762,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "include/Action.h",
+			"settings":
+			{
+				"buffer_size": 8687,
+				"line_ending": "Windows"
+			}
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 85.0,
+		"last_filter": "install package",
+		"selected_items":
+		[
+			[
+				"install package",
+				"Package Control: Install Package"
+			],
+			[
+				"remove package",
+				"Package Control: Remove Package"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"astyle",
+				"SublimeAStyleFormatter: Format Current File"
+			],
+			[
+				"pack inst",
+				"Package Control: Install Package"
+			],
+			[
+				"Pack Insta",
+				"Package Control: Install Package"
+			],
+			[
+				"Package Control: Install Package",
+				"Package Control: Install Package"
+			],
+			[
+				"Snippet: ",
+				"Snippet: Vector For Loop"
+			]
+		],
+		"width": 450.0
+	},
+	"console":
+	{
+		"height": 160.0,
+		"history":
+		[
+			"import urllib.request,os,hashlib; h = '2915d1851351e5ee549c20394736b442' + '8bc59f460fa1548d1514676163dafc88'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/C/Personal/Projects/MetaHack",
+		"/C/Personal/Projects/MetaHack/include",
+		"/C/Personal/Projects/MetaHack/src"
+	],
+	"file_history":
+	[
+		"/C/Personal/Projects/MetaHack/src/Action.cpp",
+		"/C/Personal/Projects/MetaHack/src/AppStateGameMode.cpp",
+		"/C/Personal/Projects/MetaHack/include/BodyPart.h",
+		"/C/Personal/Projects/MetaHack/include/Renderable.h",
+		"/C/Personal/Projects/MetaHack/include/Stringable.h",
+		"/C/Users/glindsey.UICO/AppData/Roaming/Sublime Text 3/Packages/User/SublimeAStyleFormatter.sublime-settings",
+		"/C/Users/glindsey.UICO/AppData/Roaming/Sublime Text 3/Packages/User/Preferences.sublime-settings",
+		"/C/Personal/Projects/MetaHack/README.md",
+		"/C/Users/glindsey.UICO/AppData/Roaming/Sublime Text 3/Packages/MarkdownEditing/README.md",
+		"/C/w/FW021015 GARMIN BEBOP-ZURICH-BIGSUR/Watch_Psoc4/Watch_Psoc4.cydsn/main.c",
+		"/C/w/FW021015 GARMIN BEBOP-ZURICH-BIGSUR/Watch_Psoc4/Watch_Psoc4.cydsn/config.h",
+		"/C/w/FW021015 GARMIN BEBOP-ZURICH-BIGSUR/Watch_Psoc4/Watch_Psoc4.cydsn/version.h",
+		"/C/w/FW021015 GARMIN BEBOP-ZURICH-BIGSUR/Watch_Psoc4/Watch_Psoc4.cydsn/ProcessConfig.c",
+		"/C/Users/glindsey.UICO/AppData/Roaming/Sublime Text 3/Packages/User/bh_core.sublime-settings",
+		"/C/Users/glindsey.UICO/AppData/Roaming/Sublime Text 3/Packages/BracketHighlighter/bh_core.sublime-settings",
+		"/C/Users/glindsey.UICO/AppData/Roaming/Sublime Text 3/Packages/Default/Preferences.sublime-settings",
+		"/C/w/FW021015 GARMIN BEBOP-ZURICH-BIGSUR/Watch_Psoc4/bootloader/Bootloader_14/Bootloader_14.cydsn/v1_bootloader.c",
+		"/C/w/FW021015 GARMIN BEBOP-ZURICH-BIGSUR/Watch_Psoc4/Watch_Psoc4.cydsn/shield.c",
+		"/C/Users/glindsey.UICO/AppData/Roaming/Sublime Text 3/Packages/SublimeAStyleFormatter/SublimeAStyleFormatter.sublime-settings",
+		"/C/w/FW021015 GARMIN BEBOP-ZURICH-BIGSUR/Watch_Psoc4/Watch_Psoc4.cydsn/Capsense_control.c",
+		"/C/Users/glindsey.UICO/AppData/Roaming/Sublime Text 3/Packages/DoxyDoxygen/Doxy.sublime-settings",
+		"/C/Users/glindsey.UICO/AppData/Roaming/Sublime Text 3/Packages/User/SublimeLinter.sublime-settings",
+		"/C/w/FW021015 GARMIN BEBOP-ZURICH-BIGSUR/.gitignore",
+		"/C/Users/glindsey.UICO/AppData/Roaming/Sublime Text 3/Packages/User/Distraction Free.sublime-settings"
+	],
+	"find":
+	{
+		"height": 41.0
+	},
+	"find_in_files":
+	{
+		"height": 96.0,
+		"where_history":
+		[
+			""
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"operator<<",
+			"parameter_address_table",
+			"keep-one-line",
+			"convert",
+			"tabs",
+			"G_sleep_interval_msec",
+			"milliseconds",
+			"reset_cause",
+			"WDT_MATCH_VALUE_15MS",
+			"TX_ENABLE",
+			"TUNING_ENABLE"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 2,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "src/Thing.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 66508,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								10283,
+								10737
+							]
+						],
+						"settings":
+						{
+							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content"
+							],
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 8946.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "include/Thing.h",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 24921,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4332,
+								4332
+							]
+						],
+						"settings":
+						{
+							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content"
+							],
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 2622.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "src/ActionUse.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2982,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								549,
+								549
+							]
+						],
+						"settings":
+						{
+							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content"
+							],
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 138.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "src/ActionRead.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2762,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2530,
+								2761
+							]
+						],
+						"settings":
+						{
+							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content"
+							],
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1936.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "include/Action.h",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 8687,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								5056,
+								5056
+							]
+						],
+						"settings":
+						{
+							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content"
+							],
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": -0.0,
+						"translation.y": 2760.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 31.0
+	},
+	"input":
+	{
+		"height": 41.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.astyle_error_message":
+	{
+		"height": 0.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "",
+	"project": "MetaHack.sublime-project",
+	"replace":
+	{
+		"height": 58.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"",
+				"C:\\w\\FW021015 GARMIN BEBOP-ZURICH-BIGSUR\\Zurich.sublime-project"
+			]
+		],
+		"width": 380.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+		"last_automatic_layout":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		]
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 219.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

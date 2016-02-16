@@ -3,7 +3,9 @@
 
 #include <SFML/Graphics.hpp>
 
-// Interface for a class that can be rendered on-screen.
+/**
+ * @brief      Interface for a class that can be rendered on-screen.
+ */
 class Renderable
 {
 public:

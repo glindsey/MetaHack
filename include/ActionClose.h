@@ -11,7 +11,7 @@ class ActionClose
   public Action
 {
 public:
-  ActionClose(ThingRef subject);
+  explicit ActionClose(ThingRef subject);
   ActionClose(ThingRef subject, ThingRef object);
   virtual ~ActionClose();
 

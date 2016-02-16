@@ -16,7 +16,7 @@ class ActionInscribe
   public Action
 {
 public:
-  ActionInscribe(ThingRef subject);
+  explicit ActionInscribe(ThingRef subject);
   ActionInscribe(ThingRef subject, ThingRef object);
   virtual ~ActionInscribe();
 

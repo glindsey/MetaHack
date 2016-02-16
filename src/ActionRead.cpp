@@ -80,7 +80,8 @@ Action::StateResult ActionRead::do_finish_work(AnyMap& params)
   switch (object->perform_action_read_by(subject))
   {
     case ActionResult::SuccessDestroyed:
-      message = THE_FOO + OBJCV(" disintegrate", " disintegrates") + " after " + YOU + CV(" read ", " reads ") + OBJ_PRO_FOO;
+      message = THE_FOO + OBJCV(" disintegrate", " disintegrates") + " after " + YOU + CV(" read ",
+                                                                                          " reads ") + OBJ_PRO_FOO + "!";
       the_message_log.add(message);
 
       object->destroy();

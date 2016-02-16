@@ -10,7 +10,7 @@ class Metadata;
 class MetadataCollection
 {
 public:
-  MetadataCollection(std::string category);
+  explicit MetadataCollection(std::string category);
   ~MetadataCollection();
 
   std::string MetadataCollection::get_category();

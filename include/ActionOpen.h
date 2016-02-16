@@ -11,7 +11,7 @@ class ActionOpen
   public Action
 {
 public:
-  ActionOpen(ThingRef subject);
+  explicit ActionOpen(ThingRef subject);
   ActionOpen(ThingRef subject, ThingRef object);
   virtual ~ActionOpen();
 

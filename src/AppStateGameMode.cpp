@@ -54,7 +54,7 @@ struct AppStateGameMode::Impl
 {
 public:
   /// Constructor.
-  Impl(sf::RenderWindow& app_window_)
+  explicit Impl(sf::RenderWindow& app_window_)
     :
     app_window{ app_window_ },
     game_state{ NEW GameState() },
@@ -65,7 +65,8 @@ public:
     status_area{ NEW StatusArea(calc_status_area_dims()) },
     map_zoom_level{ 1.0f },
     current_input_state{ GameInputState::Map },
-    cursor_coords{ 0, 0 }
+    cursor_coords{ 0, 0 },
+    game_clock{ 0 }
   {}
 
   /// Application window.
@@ -1167,7 +1168,7 @@ bool AppStateGameMode::initialize()
   // Move player to start position on the map.
   auto& start_coords = game_map.get_start_coords();
   auto start_floor = game_map.get_tile(start_coords).get_tile_contents();
-  bool player_moved = player->move_into(start_floor);
+  /* bool player_moved = */ player->move_into(start_floor);
 
   // Set cursor to starting location.
   pImpl->cursor_coords = start_coords;

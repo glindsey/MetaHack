@@ -150,13 +150,13 @@ std::string const& getIndefArt(std::string const& desc)
   char firstLetter = tolower(desc[0]);
   switch (firstLetter)
   {
-  case 'a':
-  case 'e':
-  case 'i':
-  case 'o':
-  case 'u':
-    return articleAn;
-  default:
-    return articleA;
+    case 'a':
+    case 'e':
+    case 'i':
+    case 'o':
+    case 'u':
+      return articleAn;
+    default:
+      return articleA;
   }
 }

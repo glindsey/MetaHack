@@ -23,7 +23,7 @@ class ThingManager
 
 public:
   /// Constructor.
-  ThingManager(GameState& game_state);
+  explicit ThingManager(GameState& game_state);
 
   virtual ~ThingManager();
 
