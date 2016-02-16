@@ -122,15 +122,6 @@ public:
   ///         false if it wasn't performed
   bool do_attack(ThingRef thing, unsigned int& action_time);
 
-  /// Return whether the Entity can use the requested Thing.
-  /// @param[in] thing Thing to try to use
-  /// @param[out] action_time The time it will take to use it
-  /// @return ActionResult indicating what happened.
-  virtual ActionResult can_use(ThingRef thing, unsigned int& action_time);
-
-  /// Attempt to use a thing.
-  bool do_use(ThingRef thing, unsigned int& action_time);
-
   template<typename T>
   T get_intrinsic(std::string key, T default_value = T()) const
   {
@@ -476,8 +467,8 @@ public:
   ActionResult perform_action_eaten_by(ThingRef actor);
 
   /// Perform an action when this thing is used.
-  /// If this function returns false, the action is aborted.
-  bool perform_action_used_by(ThingRef actor);
+  /// If this function returns Failure, the action is aborted.
+  ActionResult perform_action_used_by(ThingRef actor);
 
   /// Perform an action when this thing is picked up.
   /// If this function returns false, the action is aborted.
@@ -616,6 +607,9 @@ private:
   static int LUA_thing_get_coords(lua_State* L);
 
   static int LUA_thing_get_type(lua_State* L);
+  static int LUA_thing_get_intrinsic_flag(lua_State* L);
+  static int LUA_thing_get_intrinsic_value(lua_State* L);
+  static int LUA_thing_get_intrinsic_string(lua_State* L);
   static int LUA_thing_get_property_flag(lua_State* L);
   static int LUA_thing_get_property_value(lua_State* L);
   static int LUA_thing_get_property_string(lua_State* L);

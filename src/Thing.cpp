@@ -358,76 +358,6 @@ bool Thing::do_attack(ThingRef thing, unsigned int& action_time)
   return false;
 }
 
-ActionResult Thing::can_use(ThingRef thing, unsigned int& action_time)
-{
-  action_time = 1;
-
-  // Check that it isn't US!
-  if (thing == pImpl->ref)
-  {
-    return ActionResult::FailureSelfReference;
-  }
-
-  // Check that the thing is within reach.
-  if (!this->can_reach(thing))
-  {
-    return ActionResult::FailureThingOutOfReach;
-  }
-
-  return ActionResult::Success;
-}
-
-bool Thing::do_use(ThingRef thing, unsigned int& action_time)
-{
-  std::string message;
-
-  ActionResult use_try = this->can_use(thing, action_time);
-
-  switch (use_try)
-  {
-    case ActionResult::Success:
-      if (thing->is_usable_by(pImpl->ref))
-      {
-        if (thing->perform_action_used_by(pImpl->ref))
-        {
-          return true;
-        }
-      }
-      else
-      {
-        message = YOU_TRY + " to use " + thing->get_identifying_string() + ".";
-        the_message_log.add(message);
-
-        message = YOU + " can't use that!";
-        the_message_log.add(message);
-      }
-      break;
-
-    case ActionResult::FailureSelfReference:
-      message = YOU_TRY + " to use " + thing->get_identifying_string() + ".";
-      the_message_log.add(message);
-
-      if (GAME.get_player() == pImpl->ref)
-      {
-        message = YOU_ARE + " already using " + YOURSELF + " to the best of " + YOUR + " ability.";
-        the_message_log.add(message);
-      }
-      else
-      {
-        message = "That seriously shouldn't happen!";
-        the_message_log.add(message);
-
-        MINOR_ERROR("NPC tried to use self!?");
-      }
-      break;
-
-    default:
-      MINOR_ERROR("Unknown ActionResult %d", use_try);
-      break;
-  }
-  return false;
-}
-
 ActionResult Thing::can_deequip(ThingRef thing, unsigned int& action_time)
 {
   action_time = 1;
@@ -1928,11 +1858,11 @@ ActionResult Thing::perform_action_eaten_by(ThingRef actor)
   return result;
 }
 
-bool Thing::perform_action_used_by(ThingRef actor)
+ActionResult Thing::perform_action_used_by(ThingRef actor)
 {
   ActionResult result = call_lua_function("perform_action_used_by", { actor });
 
-  return was_successful(result);
+  return result;
 }
 
 bool Thing::perform_action_picked_up_by(ThingRef actor)
@@ -2417,6 +2347,62 @@ int Thing::LUA_thing_get_type(lua_State* L)
   return 1;
 }
 
+int Thing::LUA_thing_get_intrinsic_flag(lua_State* L)
+{
+  int num_args = lua_gettop(L);
+
+  if (num_args != 2)
+  {
+    MINOR_ERROR("expected 2 arguments, got %d", num_args);
+    return 0;
+  }
+
+  ThingRef thing = ThingRef(lua_tointeger(L, 1));
+  const char* key = lua_tostring(L, 2);
+  bool result = thing->get_intrinsic<bool>(key);
+  lua_pushboolean(L, result);
+
+  return 1;
+}
+
+int Thing::LUA_thing_get_intrinsic_value(lua_State* L)
+{
+  int num_args = lua_gettop(L);
+
+  if (num_args != 2)
+  {
+    MINOR_ERROR("expected 2 arguments, got %d", num_args);
+    return 0;
+  }
+
+  ThingRef thing = ThingRef(lua_tointeger(L, 1));
+  const char* key = lua_tostring(L, 2);
+  int result = thing->get_intrinsic<int>(key);
+  lua_pushinteger(L, result);
+
+  return 1;
+}
+
+int Thing::LUA_thing_get_intrinsic_string(lua_State* L)
+{
+  int num_args = lua_gettop(L);
+
+  if (num_args != 2)
+  {
+    MINOR_ERROR("expected 2 arguments, got %d", num_args);
+    return 0;
+  }
+
+  ThingRef thing = ThingRef(lua_tointeger(L, 1));
+  const char* key = lua_tostring(L, 2);
+
+  std::string result = thing->get_intrinsic<std::string>(key).c_str();
+
+  lua_pushstring(L, result.c_str());
+
+  return 1;
+}
+
 int Thing::LUA_thing_get_property_flag(lua_State* L)
 {
   int num_args = lua_gettop(L);
@@ -2465,8 +2451,8 @@ int Thing::LUA_thing_get_property_string(lua_State* L)
 
   ThingRef thing = ThingRef(lua_tointeger(L, 1));
   const char* key = lua_tostring(L, 2);
-  const char* result = thing->get_property<std::string>(key).c_str();
-  lua_pushstring(L, result);
+  std::string result = thing->get_property<std::string>(key).c_str();
+  lua_pushstring(L, result.c_str());
 
   return 1;
 }

@@ -25,8 +25,7 @@ function LightSource.is_usable_by(id)
 end
 
 function LightSource.perform_action_used_by(id)
-    -- local name = thing_get_intrinsic_string(id, "name")
-    local name = "doohickey"
+    local name = thing_get_intrinsic_string(id, "name")
     local is_lit = thing_get_property_flag(id, "light_lit")
     is_lit = not is_lit
     if is_lit then

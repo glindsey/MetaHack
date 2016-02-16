@@ -1045,6 +1045,8 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
       } // end if (!key.alt && key.control)
 
       // *** YES ALT, no CTRL, SHIFT is irrelevant ******************************
+      // Right now we don't have any ALT-* combinations.
+#if 0
       if (key.alt && !key.control)
       {
         switch (key.code)
@@ -1053,8 +1055,11 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             break;
         }
       }
+#endif
 
       // *** YES ALT, YES CTRL, SHIFT is irrelevant *****************************
+      // Right now we don't have any CTRL-ALT-* combinations.
+#if 0
       if (key.alt && key.control)
       {
         switch (key.code)
@@ -1063,6 +1068,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             break;
         }
       }
+#endif
       break;
     } // end case GameInputState::Map
 

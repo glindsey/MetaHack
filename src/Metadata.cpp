@@ -762,6 +762,10 @@ std::string Metadata::get_intrinsic_string(std::string name, std::string default
         {
           return_value = lua_tostring(the_lua_state, -1);
         }
+        else
+        {
+          MINOR_ERROR("Warning calling %s:get_intrinsic(%s): Result was nil", type.c_str(), name.c_str());
+        }
 
         // Pop the return value off the stack. (-1)
         lua_pop(the_lua_state, 1);
