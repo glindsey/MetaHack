@@ -3,7 +3,7 @@ SMALL THINGS
 [ ] Lua-ify some more events and checks (which ones?)
 [ ] Fix quantities (they are not currently being respected for get/drop actions)
 [ ] Export "thing_set_quantity" / "thing_modify_quantity" functions to Lua
-[ ] Re-implement Lua "get_intrinsic_XXX" functions for Things
+[X] Re-implement Lua "get_intrinsic_XXX" functions for Things
 
 MEDIUM THINGS
 =============
@@ -15,7 +15,7 @@ MEDIUM THINGS
 [ ] Replace the error/trace functions with boost logging facilities
 [ ] Light bleed across tiles
     - Simple convolution that bleeds a bit of light from a tile into adjacent ones, will make shadows way less sharp
-[ ] Split MessageLog into model/view (MessageLog and MessageLogPane)
+[/] Split MessageLog into model/view (MessageLog and MessageLogPane)
 [ ] Allow for scrolling back in MessageLog
 [ ] Allow for lines with different colors (and fonts?) in MessageLog
 [/] Show the "wielded" / "equipped" tiles in the Inventory
@@ -54,7 +54,7 @@ BIG THINGS
         
     - Likewise, get can just push back however many return values are needed for the value.
 
-[ ] Revamp Actions
+[/] Revamp Actions
     - Right now, actions just execute immediately when popped from the queue, and then have an "action_time" where the actor is frozen.
     - Instead, actions should be split into the following stages:
         - "pending": The action is ready to be executed.
@@ -77,9 +77,14 @@ BIG THINGS
 
 [ ] Implement fog / variable opacity for sight
     - This actually isn't too difficult; we already have the "depth" parameter for do_recursive_visibility. It wouldn't be too hard to add a combined opacity number, and bail out if it exceeds a certain value.
+
+[ ] Use std::async to parallelize visibility, light propogation
+    - Requires making sure that the algorithm does not visit any one tile twice. Right now I think the 45/90-degree compass directions ARE visited twice, which would have to be rectified.
+    - After that it should be as simple as wrapping octant calls inside std::async
+    
 MIND-BOGGLINGLY ENORMOUS THINGS
 ===============================
-[ ] Switch over to using SFGUI for GUI elements
+[ ] Switch over to using SFGUI for GUI elements (or some other GUI engine)
 
 [ ] Implement saving/loading of the dungeon
 
