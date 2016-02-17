@@ -1,12 +1,12 @@
 SMALL THINGS
 ============
 [ ] Lua-ify some more events and checks (which ones?)
-[ ] Fix quantities (they are not currently being respected for get/drop actions)
 [ ] Export "thing_set_quantity" / "thing_modify_quantity" functions to Lua
 [X] Re-implement Lua "get_intrinsic_XXX" functions for Things
 
 MEDIUM THINGS
 =============
+[ ] Fix quantities (they are not currently being respected for get/drop actions)
 [X] Death conditions
     [/] For player
         - Player do_die() is called, but graceful game shutdown is not yet done
@@ -23,7 +23,7 @@ MEDIUM THINGS
     
 [/] Create Thing::spill() method which dumps the contents of a Thing out into the Thing's location
     - Maybe allow a "do_spill" action that performs this purposely?
-    - Each Thing that tumbles out should have do_collided_with(new_location) called on it
+    - Each Thing that tumbles out should have do_collided_with(new_location) called on it (do_collided_with_floor?)
 
 BIG THINGS
 ==========
@@ -55,17 +55,14 @@ BIG THINGS
     - Likewise, get can just push back however many return values are needed for the value.
 
 [/] Revamp Actions
-    - Right now, actions just execute immediately when popped from the queue, and then have an "action_time" where the actor is frozen.
-    - Instead, actions should be split into the following stages:
+    - Actions should be split into the following stages:
         - "pending": The action is ready to be executed.
-        - "pre_begin": Prior to the action being executed. Accounts for overall reaction time (based on Agility attribute).
-        - "begin": When the action is first executed. Switches to "in_progress".
-        - "in_progress": While the action is executing. Switches to "finish" when completed.
-        - "finish": When the action is completed. Switches to "post_finish".
-        - "post_finish": Recovery time after the action is completed. Switches to "processed".
+        - "pre_begin": Prior to the action being executed. Checks to see if the action is possible. Accounts for overall reaction time (based on Agility attribute) and waits before starting the action.
+        - "in_progress": Starts the action; waits for the amount of time the action takes to execute. Switches to "post_finish" when completed.
+        - "post_finish": Completes the action; waits for the recovery time after the action is completed. Switches to "processed".
         - "processed": Action is done, and the next action should be popped.
     
-    - Some actions have to be fudged; for example, "move". Obviously, in real life, the move would start at "begin", progress from tile A to tile B during "in_progress", and end up at "finish". However, being a tile-based game, moves are atomic from tile to tile. So the move mmediately execute on "begin". "in_progress" is the amount of time the move actually took. Nothing happens on "finish", and "post_finish" stays at zero. This will best approximate what the player expects to happen -- if a monster is adjacent, about to attack, they can leap out of the way. (Of course, there's still the "pre_begin" Agility check, so they may not be fast enough.)
+    - Some actions have to be fudged; for example, "move". Obviously, in real life, the move would start at "begin", progress from tile A to tile B during "in_progress", and end up at "finish". However, being a tile-based game, moves are atomic from tile to tile. So the move immediately executes at the start of "in_progress". "in_progress" is the amount of time the move actually took. "post_finish" does nothing. This will best approximate what the player expects to happen -- if a monster is adjacent, about to attack, they can leap out of the way. (Of course, there's still the "pre_begin" Agility check, so they may not be fast enough.)
 
 [ ] Mouse selection of GUIPanes, inventory items
 
@@ -86,7 +83,7 @@ MIND-BOGGLINGLY ENORMOUS THINGS
 ===============================
 [ ] Switch over to using SFGUI for GUI elements (or some other GUI engine)
 
-[ ] Implement saving/loading of the dungeon
+[ ] Implement saving/loading of the entire game state
 
 
 ??? THINGS
