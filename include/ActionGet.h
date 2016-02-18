@@ -14,6 +14,16 @@ class ActionGet
   ACTION_HDR_BOILERPLATE(ActionGet)
 
 public:
+  std::string const get_verbing() const override
+  {
+    return "getting";
+  }
+
+  std::string const get_verbed() const override
+  {
+    return "got";
+  }
+
   ACTION_TRAIT(can_be_subject_verb_thing);
   ACTION_TRAIT(can_take_a_quantity);
 

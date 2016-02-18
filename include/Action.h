@@ -3,6 +3,8 @@
 #define ACTION_H
 
 #include <memory>
+#include <regex>
+#include <string>
 #include <vector>
 #include <boost/noncopyable.hpp>
 #include <boost/uuid/uuid.hpp>
@@ -74,16 +76,20 @@ using ActionCreator = std::unique_ptr<Action>(ThingRef);
 // === BOILERPLATE MACRO(S) ===================================================
 /// Boilerplate that goes at the start of each Action source file.
 /// @todo Good LORD these are ugly. Can we do this without resorting to macros?
-#define ACTION_SRC_BOILERPLATE(T, key)                                        \
+#define ACTION_SRC_BOILERPLATE(T, type, verb)                                 \
   T::T() : Action()                                                           \
   {                                                                           \
-    Action::register_action_as(key, &T::create);                              \
+    Action::register_action_as(type, &T::create);                             \
   }                                                                           \
   T::T(ThingRef subject) : Action(subject) {}                                 \
   T::~T() {}                                                                  \
   std::string const T::get_type() const                                       \
   {                                                                           \
-    return key;                                                               \
+    return type;                                                              \
+  }                                                                           \
+  std::string const T::get_verb() const                                       \
+  {                                                                           \
+    return verb;                                                              \
   }                                                                           \
   T T::prototype;
 
@@ -95,19 +101,14 @@ using ActionCreator = std::unique_ptr<Action>(ThingRef);
     explicit T(ThingRef subject);                                             \
     virtual ~T();                                                             \
     virtual std::string const get_type() const override;                      \
+    virtual std::string const get_verb() const override;                      \
     static T prototype;
 
 // === ACTION TRAITS ==========================================================
 
-#define CREATE_TRAIT(trait)       virtual bool trait()                    \
-                                  {                                       \
-                                    return false;                         \
-                                  }
+#define CREATE_TRAIT(trait)       virtual bool trait() { return false; }
 
-#define ACTION_TRAIT(trait)       virtual bool trait() override       \
-                                  {                                   \
-                                    return true;                      \
-                                  }
+#define ACTION_TRAIT(trait)       virtual bool trait() override { return true; }
 
 /// Class describing an action to execute.
 class Action
@@ -174,15 +175,54 @@ public:
     return "???";
   }
 
-  CREATE_TRAIT(can_be_subject_only);
-  CREATE_TRAIT(can_be_subject_verb_thing);
-  CREATE_TRAIT(can_be_subject_verb_direction);
-  CREATE_TRAIT(can_be_subject_verb_things);
-  CREATE_TRAIT(can_be_subject_verb_thing_preposition_thing);
-  CREATE_TRAIT(can_be_subject_verb_things_preposition_thing);
-  CREATE_TRAIT(can_be_subject_verb_thing_preposition_bodypart);
-  CREATE_TRAIT(can_be_subject_verb_thing_preposition_direction);
-  CREATE_TRAIT(can_take_a_quantity);
+  virtual std::string const get_verb() const
+  {
+    return "???";
+  }
+
+  virtual std::string const get_verb3() const
+  {
+    std::string verb = get_verb();
+    return verb + "s";
+  }
+
+  virtual std::string const get_verbing() const
+  {
+    std::string verb = get_verb();
+    if (std::string("aeiou").find_first_of(verb.back()))
+    {
+      return verb.substr(0, verb.length() - 1) + "ing";
+    }
+    else
+    {
+      return verb + "ing";
+    }
+  }
+
+  virtual std::string const get_verbed() const
+  {
+    std::string verb = get_verb();
+    if (std::string("aeiou").find_first_of(verb.back()))
+    {
+      return verb.substr(0, verb.length() - 1) + "ed";
+    }
+    else
+    {
+      return verb + "ed";
+    }
+  }
+
+  CREATE_TRAIT(can_be_subject_only)
+    CREATE_TRAIT(can_be_subject_verb_thing)
+    CREATE_TRAIT(can_be_subject_verb_direction)
+    CREATE_TRAIT(can_be_subject_verb_things)
+    CREATE_TRAIT(can_be_subject_verb_thing_preposition_thing)
+    CREATE_TRAIT(can_be_subject_verb_things_preposition_thing)
+    CREATE_TRAIT(can_be_subject_verb_thing_preposition_bodypart)
+    CREATE_TRAIT(can_be_subject_verb_thing_preposition_direction)
+    CREATE_TRAIT(can_take_a_quantity)
+
+    ;
 
   /// A static function that registers an action subclass in a database.
   static void register_action_as(std::string key, ActionCreator creator);

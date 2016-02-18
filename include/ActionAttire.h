@@ -16,6 +16,11 @@ class ActionAttire
 public:
   ACTION_TRAIT(can_be_subject_verb_thing);
 
+  std::string const get_verbed() const override
+  {
+    return "wore";
+  }
+
 protected:
   virtual StateResult do_prebegin_work_(AnyMap& params) override;
   virtual StateResult do_begin_work_(AnyMap& params) override;

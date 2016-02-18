@@ -19,6 +19,11 @@ class ActionInscribe
   ACTION_HDR_BOILERPLATE(ActionInscribe)
 
 public:
+  std::string const get_verbed() const override
+  {
+    return "wrote";
+  }
+
   ACTION_TRAIT(can_be_subject_verb_direction);
   ACTION_TRAIT(can_be_subject_verb_thing_preposition_thing);
   ACTION_TRAIT(can_be_subject_verb_thing_preposition_direction);

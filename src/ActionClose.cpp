@@ -2,7 +2,7 @@
 #include "Thing.h"
 #include "ThingRef.h"
 
-ACTION_SRC_BOILERPLATE(ActionClose, "Close")
+ACTION_SRC_BOILERPLATE(ActionClose, "Close", "close")
 
 Action::StateResult ActionClose::do_prebegin_work_(AnyMap& params)
 {

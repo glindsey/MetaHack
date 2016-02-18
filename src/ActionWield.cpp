@@ -2,7 +2,7 @@
 #include "Thing.h"
 #include "ThingRef.h"
 
-ACTION_SRC_BOILERPLATE(ActionWield, "Wield")
+ACTION_SRC_BOILERPLATE(ActionWield, "Wield", "wield")
 
 Action::StateResult ActionWield::do_prebegin_work_(AnyMap& params)
 {

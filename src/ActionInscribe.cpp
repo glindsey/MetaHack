@@ -2,7 +2,7 @@
 #include "Thing.h"
 #include "ThingRef.h"
 
-ACTION_SRC_BOILERPLATE(ActionInscribe, "Inscribe")
+ACTION_SRC_BOILERPLATE(ActionInscribe, "Inscribe", "write")
 
 Action::StateResult ActionInscribe::do_prebegin_work_(AnyMap& params)
 {

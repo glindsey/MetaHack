@@ -2,7 +2,7 @@
 #include "Thing.h"
 #include "ThingRef.h"
 
-ACTION_SRC_BOILERPLATE(ActionGet, "Get")
+ACTION_SRC_BOILERPLATE(ActionGet, "Get", "get")
 
 Action::StateResult ActionGet::do_prebegin_work_(AnyMap& params)
 {

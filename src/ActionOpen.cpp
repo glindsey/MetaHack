@@ -2,7 +2,7 @@
 #include "Thing.h"
 #include "ThingRef.h"
 
-ACTION_SRC_BOILERPLATE(ActionOpen, "Open")
+ACTION_SRC_BOILERPLATE(ActionOpen, "Open", "open")
 
 Action::StateResult ActionOpen::do_prebegin_work_(AnyMap& params)
 {

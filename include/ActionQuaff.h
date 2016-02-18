@@ -14,6 +14,11 @@ class ActionQuaff
   ACTION_HDR_BOILERPLATE(ActionQuaff)
 
 public:
+  std::string const get_verbed() const override
+  {
+    return "drank";
+  }
+
   ACTION_TRAIT(can_be_subject_verb_thing);
   ACTION_TRAIT(can_be_subject_verb_direction);
 

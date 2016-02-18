@@ -2,7 +2,7 @@
 #include "Thing.h"
 #include "ThingRef.h"
 
-ACTION_SRC_BOILERPLATE(ActionMix, "Mix")
+ACTION_SRC_BOILERPLATE(ActionMix, "Mix", "mix")
 
 Action::StateResult ActionMix::do_prebegin_work_(AnyMap& params)
 {

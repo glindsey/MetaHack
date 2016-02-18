@@ -2,7 +2,7 @@
 #include "Thing.h"
 #include "ThingRef.h"
 
-ACTION_SRC_BOILERPLATE(ActionDrop, "Drop")
+ACTION_SRC_BOILERPLATE(ActionDrop, "Drop", "drop")
 
 Action::StateResult ActionDrop::do_prebegin_work_(AnyMap& params)
 {

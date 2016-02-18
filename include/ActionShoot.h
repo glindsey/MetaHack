@@ -14,6 +14,11 @@ class ActionShoot
   ACTION_HDR_BOILERPLATE(ActionShoot)
 
 public:
+  std::string const get_verbed() const override
+  {
+    return "shot";
+  }
+
   ACTION_TRAIT(can_be_subject_verb_thing_preposition_direction);
 
 protected:
