@@ -11,15 +11,9 @@ class ActionDrop
   :
   public Action, public ActionCRTP<ActionDrop>
 {
+  ACTION_HDR_BOILERPLATE(ActionDrop)
+
 public:
-  explicit ActionDrop(ThingRef subject);
-  virtual ~ActionDrop();
-
-  virtual std::string get_type() const override
-  {
-    return "Drop";
-  }
-
   ACTION_TRAIT(can_be_subject_verb_thing);
   ACTION_TRAIT(can_take_a_quantity);
 

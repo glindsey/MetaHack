@@ -6,7 +6,7 @@
 #include "Thing.h"
 #include "ThingRef.h"
 
-ACTION_BOILERPLATE(ActionMove)
+ACTION_SRC_BOILERPLATE(ActionMove, "Move")
 
 Action::StateResult ActionMove::do_prebegin_work_(AnyMap& params)
 {

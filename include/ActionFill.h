@@ -11,15 +11,9 @@ class ActionFill
   :
   public Action, public ActionCRTP<ActionFill>
 {
+  ACTION_HDR_BOILERPLATE(ActionFill)
+
 public:
-  explicit ActionFill(ThingRef subject);
-  virtual ~ActionFill();
-
-  virtual std::string get_type() const override
-  {
-    return "Fill";
-  }
-
   ACTION_TRAIT(can_be_subject_verb_thing_preposition_thing);
 
 protected:

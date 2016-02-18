@@ -11,15 +11,9 @@ class ActionClose
   :
   public Action, public ActionCRTP<ActionClose>
 {
+  ACTION_HDR_BOILERPLATE(ActionClose)
+
 public:
-  explicit ActionClose(ThingRef subject);
-  virtual ~ActionClose();
-
-  virtual std::string get_type() const override
-  {
-    return "Close";
-  }
-
   ACTION_TRAIT(can_be_subject_verb_thing);
   ACTION_TRAIT(can_be_subject_verb_direction);
 

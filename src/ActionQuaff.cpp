@@ -2,7 +2,7 @@
 #include "Thing.h"
 #include "ThingRef.h"
 
-ACTION_BOILERPLATE(ActionQuaff)
+ACTION_SRC_BOILERPLATE(ActionQuaff, "Quaff")
 
 Action::StateResult ActionQuaff::do_prebegin_work_(AnyMap& params)
 {

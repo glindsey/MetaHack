@@ -1,6 +1,7 @@
 #ifndef ACTIONCRTP_H
 #define ACTIONCRTP_H
 
+#include "Action.h"
 #include "ThingRef.h"
 
 #include <memory>
@@ -13,9 +14,9 @@ class ActionCRTP
 public:
 
   /// Implement a create() function that will be registerable with a factory class.
-  static std::unique_ptr<Derived> create(ThingRef subject)
+  static std::unique_ptr<Action> create(ThingRef subject)
   {
-    std::unique_ptr<Derived> action{ new Derived{ subject } };
+    std::unique_ptr<Action> action{ new Derived{ subject } };
 
     return std::move(action);
   }

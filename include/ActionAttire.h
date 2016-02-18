@@ -11,15 +11,9 @@ class ActionAttire
   :
   public Action, public ActionCRTP<ActionAttire>
 {
+  ACTION_HDR_BOILERPLATE(ActionAttire)
+
 public:
-  ActionAttire(ThingRef subject);
-  virtual ~ActionAttire();
-
-  virtual std::string get_type() const override
-  {
-    return "Attire";
-  }
-
   ACTION_TRAIT(can_be_subject_verb_thing);
 
 protected:

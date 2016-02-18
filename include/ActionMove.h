@@ -11,15 +11,9 @@ class ActionMove
   :
   public Action, public ActionCRTP<ActionMove>
 {
+  ACTION_HDR_BOILERPLATE(ActionMove)
+
 public:
-  explicit ActionMove(ThingRef subject);
-  virtual ~ActionMove();
-
-  virtual std::string get_type() const override
-  {
-    return "Move";
-  }
-
   ACTION_TRAIT(can_be_subject_verb_direction);
 
 protected:

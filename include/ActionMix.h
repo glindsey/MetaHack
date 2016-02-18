@@ -11,15 +11,9 @@ class ActionMix
   :
   public Action, public ActionCRTP<ActionMix>
 {
+  ACTION_HDR_BOILERPLATE(ActionMix)
+
 public:
-  explicit ActionMix(ThingRef subject);
-  virtual ~ActionMix();
-
-  virtual std::string get_type() const override
-  {
-    return "Mix";
-  }
-
   ACTION_TRAIT(can_be_subject_verb_things);
 
 protected:

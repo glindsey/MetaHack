@@ -5,7 +5,7 @@
 #include "Thing.h"
 #include "ThingRef.h"
 
-ACTION_BOILERPLATE(ActionAttack)
+ACTION_SRC_BOILERPLATE(ActionAttack, "Attack")
 
 Action::StateResult ActionAttack::do_prebegin_work_(AnyMap& params)
 {

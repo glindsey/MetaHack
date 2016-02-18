@@ -11,15 +11,9 @@ class ActionDie
   :
   public Action, public ActionCRTP<ActionDie>
 {
+  ACTION_HDR_BOILERPLATE(ActionAttack)
+
 public:
-  explicit ActionDie(ThingRef subject);
-  virtual ~ActionDie();
-
-  virtual std::string get_type() const override
-  {
-    return "Die";
-  }
-
   ACTION_TRAIT(can_be_subject_only);
 
 protected:

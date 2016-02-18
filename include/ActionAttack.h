@@ -11,15 +11,9 @@ class ActionAttack
   :
   public Action, public ActionCRTP<ActionAttack>
 {
+  ACTION_HDR_BOILERPLATE(ActionAttack)
+
 public:
-  explicit ActionAttack(ThingRef subject);
-  virtual ~ActionAttack();
-
-  virtual std::string get_type() const override
-  {
-    return "Attack";
-  }
-
   ACTION_TRAIT(can_be_subject_verb_thing);
   ACTION_TRAIT(can_be_subject_verb_direction);
 

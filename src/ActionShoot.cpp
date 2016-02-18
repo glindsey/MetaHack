@@ -2,7 +2,7 @@
 #include "Thing.h"
 #include "ThingRef.h"
 
-ACTION_BOILERPLATE(ActionShoot)
+ACTION_SRC_BOILERPLATE(ActionShoot, "Shoot")
 
 Action::StateResult ActionShoot::do_prebegin_work_(AnyMap& params)
 {

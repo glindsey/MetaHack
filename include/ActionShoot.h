@@ -11,15 +11,9 @@ class ActionShoot
   :
   public Action, public ActionCRTP<ActionShoot>
 {
+  ACTION_HDR_BOILERPLATE(ActionShoot)
+
 public:
-  explicit ActionShoot(ThingRef subject);
-  virtual ~ActionShoot();
-
-  virtual std::string get_type() const override
-  {
-    return "Shoot";
-  }
-
   ACTION_TRAIT(can_be_subject_verb_thing_preposition_direction);
 
 protected:

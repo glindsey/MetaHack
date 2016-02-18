@@ -11,15 +11,9 @@ class ActionHurl
   :
   public Action, public ActionCRTP<ActionHurl>
 {
+  ACTION_HDR_BOILERPLATE(ActionHurl)
+
 public:
-  explicit ActionHurl(ThingRef subject);
-  virtual ~ActionHurl();
-
-  virtual std::string get_type() const override
-  {
-    return "Hurl";
-  }
-
   ACTION_TRAIT(can_be_subject_verb_thing_preposition_direction);
 
 protected:

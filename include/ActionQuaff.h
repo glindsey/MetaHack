@@ -11,15 +11,9 @@ class ActionQuaff
   :
   public Action, public ActionCRTP<ActionQuaff>
 {
+  ACTION_HDR_BOILERPLATE(ActionQuaff)
+
 public:
-  explicit ActionQuaff(ThingRef subject);
-  virtual ~ActionQuaff();
-
-  virtual std::string get_type() const override
-  {
-    return "Quaff";
-  }
-
   ACTION_TRAIT(can_be_subject_verb_thing);
   ACTION_TRAIT(can_be_subject_verb_direction);
 

@@ -13,6 +13,13 @@
 #include "MessageLog.h"
 #include "ThingRef.h"
 
+// === FORWARD DECLARATIONS ===================================================
+class Action;
+class Thing;
+
+// === USING DECLARATIONS =====================================================
+using ActionCreator = std::unique_ptr<Action>(ThingRef);
+
 // === MESSAGE HELPER MACROS ==================================================
 #define YOU       (get_subject()->get_you_or_identifying_string())  // "you" or descriptive noun like "the goblin"
 #define YOU_SUBJ  (get_subject()->get_subject_pronoun())     // "you/he/she/it/etc."
@@ -65,11 +72,30 @@
 #define YOU_TRY_TO(verb) (YOU_TRY + " to " + verb + " ")
 
 // === BOILERPLATE MACRO(S) ===================================================
-#define ACTION_BOILERPLATE(x) x::x(ThingRef subject) : Action(subject) {} \
-                              x::~x() {}
+/// Boilerplate that goes at the start of each Action source file.
+/// @todo Good LORD these are ugly. Can we do this without resorting to macros?
+#define ACTION_SRC_BOILERPLATE(T, key)                                        \
+  T::T() : Action()                                                           \
+  {                                                                           \
+    Action::register_action_as(key, &T::create);                              \
+  }                                                                           \
+  T::T(ThingRef subject) : Action(subject) {}                                 \
+  T::~T() {}                                                                  \
+  std::string const T::get_type() const                                       \
+  {                                                                           \
+    return key;                                                               \
+  }                                                                           \
+  T T::prototype;
 
-// Forward declarations
-class Thing;
+/// Boilerplate that goes at the start of each Action header file.
+/// @todo Good LORD these are ugly. Can we do this without resorting to macros?
+#define ACTION_HDR_BOILERPLATE(T)                                             \
+  public:                                                                     \
+    T();                                                                      \
+    explicit T(ThingRef subject);                                             \
+    virtual ~T();                                                             \
+    virtual std::string const get_type() const override;                      \
+    static T prototype;
 
 // === ACTION TRAITS ==========================================================
 
@@ -116,6 +142,8 @@ public:
     Processed     ///< The action is totally done and can be popped off the queue.
   };
 
+  /// An Action without a subject; used for prototype registration only.
+  Action();
   explicit Action(ThingRef subject);
   virtual ~Action();
 
@@ -141,7 +169,7 @@ public:
   Direction get_target_direction() const;
   unsigned int get_quantity() const;
 
-  virtual std::string get_type() const
+  virtual std::string const get_type() const
   {
     return "???";
   }
@@ -155,6 +183,9 @@ public:
   CREATE_TRAIT(can_be_subject_verb_thing_preposition_bodypart);
   CREATE_TRAIT(can_be_subject_verb_thing_preposition_direction);
   CREATE_TRAIT(can_take_a_quantity);
+
+  /// A static function that registers an action subclass in a database.
+  static void register_action_as(std::string key, ActionCreator creator);
 
 protected:
 

@@ -11,15 +11,9 @@ class ActionWield
   :
   public Action, public ActionCRTP<ActionWield>
 {
+  ACTION_HDR_BOILERPLATE(ActionWield)
+
 public:
-  explicit ActionWield(ThingRef subject);
-  virtual ~ActionWield();
-
-  virtual std::string get_type() const override
-  {
-    return "Wield";
-  }
-
   ACTION_TRAIT(can_be_subject_only);
   ACTION_TRAIT(can_be_subject_verb_thing);
 

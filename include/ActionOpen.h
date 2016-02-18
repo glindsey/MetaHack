@@ -11,15 +11,9 @@ class ActionOpen
   :
   public Action, public ActionCRTP<ActionOpen>
 {
+  ACTION_HDR_BOILERPLATE(ActionOpen)
+
 public:
-  explicit ActionOpen(ThingRef subject);
-  virtual ~ActionOpen();
-
-  virtual std::string get_type() const override
-  {
-    return "Open";
-  }
-
   ACTION_TRAIT(can_be_subject_verb_thing);
   ACTION_TRAIT(can_be_subject_verb_direction);
 

@@ -2,7 +2,7 @@
 #include "Thing.h"
 #include "ThingRef.h"
 
-ACTION_BOILERPLATE(ActionHurl)
+ACTION_SRC_BOILERPLATE(ActionHurl, "Hurl")
 
 Action::StateResult ActionHurl::do_prebegin_work_(AnyMap& params)
 {

@@ -11,15 +11,9 @@ class ActionRead
   :
   public Action, public ActionCRTP<ActionRead>
 {
+  ACTION_HDR_BOILERPLATE(ActionRead)
+
 public:
-  explicit ActionRead(ThingRef subject);
-  virtual ~ActionRead();
-
-  virtual std::string get_type() const override
-  {
-    return "Read";
-  }
-
   ACTION_TRAIT(can_be_subject_verb_thing);
 
 protected:

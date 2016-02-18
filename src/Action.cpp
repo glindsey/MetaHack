@@ -39,6 +39,11 @@ struct Action::Impl
   unsigned int quantity;
 };
 
+Action::Action()
+  :
+  pImpl{ new Impl(ThingManager::get_mu()) }
+{}
+
 Action::Action(ThingRef subject)
   :
   pImpl{ new Impl(subject) }
@@ -269,4 +274,9 @@ Action::StateResult Action::do_abort_work_(AnyMap& params)
 {
   /// @todo Handle aborting the action here.
   return Action::StateResult::Success();
+}
+
+void Action::register_action_as(std::string key, ActionCreator creator)
+{
+  /// @todo WRITE ME
 }

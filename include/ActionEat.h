@@ -11,15 +11,9 @@ class ActionEat
   :
   public Action, public ActionCRTP<ActionEat>
 {
+  ACTION_HDR_BOILERPLATE(ActionEat)
+
 public:
-  explicit ActionEat(ThingRef subject);
-  virtual ~ActionEat();
-
-  virtual std::string get_type() const override
-  {
-    return "Eat";
-  }
-
   ACTION_TRAIT(can_be_subject_verb_thing);
 
 protected:

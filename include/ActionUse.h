@@ -11,15 +11,9 @@ class ActionUse
   :
   public Action, public ActionCRTP<ActionUse>
 {
+  ACTION_HDR_BOILERPLATE(ActionUse)
+
 public:
-  explicit ActionUse(ThingRef subject);
-  virtual ~ActionUse();
-
-  virtual std::string get_type() const override
-  {
-    return "Use";
-  }
-
   ACTION_TRAIT(can_be_subject_verb_thing);
 
 protected:

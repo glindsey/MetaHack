@@ -11,15 +11,9 @@ class ActionGet
   :
   public Action, public ActionCRTP<ActionGet>
 {
+  ACTION_HDR_BOILERPLATE(ActionGet)
+
 public:
-  explicit ActionGet(ThingRef subject);
-  virtual ~ActionGet();
-
-  virtual std::string get_type() const override
-  {
-    return "Get";
-  }
-
   ACTION_TRAIT(can_be_subject_verb_thing);
   ACTION_TRAIT(can_take_a_quantity);
 

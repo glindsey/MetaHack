@@ -2,7 +2,7 @@
 #include "Thing.h"
 #include "ThingRef.h"
 
-ACTION_BOILERPLATE(ActionEat)
+ACTION_SRC_BOILERPLATE(ActionEat, "Eat")
 
 Action::StateResult ActionEat::do_prebegin_work_(AnyMap& params)
 {

@@ -2,7 +2,7 @@
 #include "Thing.h"
 #include "ThingRef.h"
 
-ACTION_BOILERPLATE(ActionRead)
+ACTION_SRC_BOILERPLATE(ActionRead, "Read")
 
 Action::StateResult ActionRead::do_prebegin_work_(AnyMap& params)
 {

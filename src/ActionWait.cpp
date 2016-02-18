@@ -2,7 +2,7 @@
 #include "Thing.h"
 #include "ThingRef.h"
 
-ACTION_BOILERPLATE(ActionWait)
+ACTION_SRC_BOILERPLATE(ActionWait, "Wait")
 
 Action::StateResult ActionWait::do_prebegin_work_(AnyMap& params)
 {
