@@ -127,6 +127,7 @@
     <ClInclude Include="include\ActionAttack.h" />
     <ClInclude Include="include\ActionAttire.h" />
     <ClInclude Include="include\ActionClose.h" />
+    <ClInclude Include="include\ActionCRTP.h" />
     <ClInclude Include="include\ActionDie.h" />
     <ClInclude Include="include\ActionDrop.h" />
     <ClInclude Include="include\ActionEat.h" />

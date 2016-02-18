@@ -686,7 +686,8 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             {
               for (auto thing : things)
               {
-                p_action.reset(new ActionAttire(player, thing));
+                p_action.reset(new ActionAttire(player));
+                p_action->set_object(thing);
                 player->queue_action(std::move(p_action));
               }
               pImpl->inventory_area_shows_player = false;
@@ -710,7 +711,8 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
               // Item(s) specified, so proceed with items.
               for (auto thing : things)
               {
-                p_action.reset(new ActionClose(player, thing));
+                p_action.reset(new ActionClose(player));
+                p_action->set_object(thing);
                 player->queue_action(std::move(p_action));
               }
               pImpl->inventory_area_shows_player = false;
@@ -729,7 +731,8 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             {
               for (auto thing : things)
               {
-                p_action.reset(new ActionDrop(player, thing));
+                p_action.reset(new ActionDrop(player));
+                p_action->set_object(thing);
                 player->queue_action(std::move(p_action));
               }
               pImpl->inventory_area_shows_player = false;
@@ -748,7 +751,8 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             {
               for (auto thing : things)
               {
-                p_action.reset(new ActionEat(player, thing));
+                p_action.reset(new ActionEat(player));
+                p_action->set_object(thing);
                 player->queue_action(std::move(p_action));
               }
               pImpl->inventory_area_shows_player = false;
@@ -769,7 +773,8 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             }
             else
             {
-              pImpl->p_action_in_progress.reset(new ActionFill(player, things.front()));
+              pImpl->p_action_in_progress.reset(new ActionFill(player));
+              pImpl->p_action_in_progress->set_object(things.front());
               the_message_log.add("Choose an item or direction to fill from.");
               pImpl->current_input_state = GameInputState::TargetSelection;
               pImpl->inventory_area->clear_selected_slots();
@@ -787,7 +792,8 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             {
               for (auto thing : things)
               {
-                p_action.reset(new ActionGet(player, thing));
+                p_action.reset(new ActionGet(player));
+                p_action->set_object(thing);
                 player->queue_action(std::move(p_action));
               }
               pImpl->inventory_area_shows_player = false;
@@ -808,7 +814,8 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             }
             else
             {
-              pImpl->p_action_in_progress.reset(new ActionHurl(player, things.front()));
+              pImpl->p_action_in_progress.reset(new ActionHurl(player));
+              pImpl->p_action_in_progress->set_object(things.front());
               the_message_log.add("Choose a direction to hurl the item.");
               pImpl->current_input_state = GameInputState::TargetSelection;
               pImpl->inventory_area->clear_selected_slots();
@@ -824,13 +831,10 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             }
             else
             {
-              if (things.size() == 0)
+              pImpl->p_action_in_progress.reset(new ActionInscribe(player));
+              if (things.size() != 0)
               {
-                pImpl->p_action_in_progress.reset(new ActionInscribe(player));
-              }
-              else
-              {
-                pImpl->p_action_in_progress.reset(new ActionInscribe(player, things.front()));
+                pImpl->p_action_in_progress->set_object(things.front());
               }
 
               the_message_log.add("Choose an item or direction to write on.");
@@ -852,7 +856,8 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             }
             else
             {
-              p_action.reset(new ActionMix(player, things));
+              p_action.reset(new ActionMix(player));
+              p_action->set_objects(things);
               player->queue_action(std::move(p_action));
               pImpl->inventory_area_shows_player = false;
               pImpl->reset_inventory_area();
@@ -874,7 +879,8 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
               // Item(s) specified, so proceed with items.
               for (auto thing : things)
               {
-                p_action.reset(new ActionOpen(player, thing));
+                p_action.reset(new ActionOpen(player));
+                p_action->set_object(thing);
                 player->queue_action(std::move(p_action));
               }
               pImpl->inventory_area_shows_player = false;
@@ -891,7 +897,8 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             }
             else
             {
-              pImpl->p_action_in_progress.reset(new ActionPutInto(player, things));
+              pImpl->p_action_in_progress.reset(new ActionPutInto(player));
+              pImpl->p_action_in_progress->set_objects(things);
               the_message_log.add("Choose a container to put the item(s) into.");
               pImpl->current_input_state = GameInputState::TargetSelection;
               pImpl->inventory_area->clear_selected_slots();
@@ -909,7 +916,8 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             {
               for (auto thing : things)
               {
-                p_action.reset(new ActionQuaff(player, thing));
+                p_action.reset(new ActionQuaff(player));
+                p_action->set_object(thing);
                 player->queue_action(std::move(p_action));
               }
               pImpl->inventory_area_shows_player = false;
@@ -928,7 +936,8 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             {
               for (auto thing : things)
               {
-                p_action.reset(new ActionRead(player, thing));
+                p_action.reset(new ActionRead(player));
+                p_action->set_object(thing);
                 player->queue_action(std::move(p_action));
               }
               pImpl->inventory_area_shows_player = false;
@@ -953,7 +962,8 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             {
               /// @todo If no items are selected, fire your wielded item.
               ///       Otherwise, wield the selected item and fire it.
-              pImpl->p_action_in_progress.reset(new ActionShoot(player, things.front()));
+              pImpl->p_action_in_progress.reset(new ActionShoot(player));
+              pImpl->p_action_in_progress->set_object(things.front());
               the_message_log.add("Choose a direction to shoot.");
               pImpl->current_input_state = GameInputState::TargetSelection;
               pImpl->inventory_area->clear_selected_slots();
@@ -969,7 +979,8 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             }
             else
             {
-              p_action.reset(new ActionTakeOut(player, things));
+              p_action.reset(new ActionTakeOut(player));
+              p_action->set_objects(things);
               player->queue_action(std::move(p_action));
               pImpl->inventory_area_shows_player = false;
               pImpl->reset_inventory_area();
@@ -987,7 +998,8 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             {
               for (auto thing : things)
               {
-                p_action.reset(new ActionUse(player, thing));
+                p_action.reset(new ActionUse(player));
+                p_action->set_object(thing);
                 player->queue_action(std::move(p_action));
               }
               pImpl->inventory_area_shows_player = false;
@@ -1008,7 +1020,8 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             }
             else
             {
-              p_action.reset(new ActionWield(player, things.front()));
+              p_action.reset(new ActionWield(player));
+              p_action->set_object(things.front());
               player->queue_action(std::move(p_action));
               pImpl->inventory_area_shows_player = false;
               pImpl->reset_inventory_area();
@@ -1033,7 +1046,8 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             else
             {
               // Item(s) specified, so proceed with items.
-              p_action.reset(new ActionAttack(player, things.front()));
+              p_action.reset(new ActionAttack(player));
+              p_action->set_object(things.front());
               player->queue_action(std::move(p_action));
               pImpl->inventory_area_shows_player = false;
               pImpl->reset_inventory_area();
@@ -1054,7 +1068,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           default:
             break;
         }
-      }
+    }
 #endif
 
       // *** YES ALT, YES CTRL, SHIFT is irrelevant *****************************
@@ -1067,17 +1081,17 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           default:
             break;
         }
-      }
+  }
 #endif
       break;
-    } // end case GameInputState::Map
+} // end case GameInputState::Map
 
     default:
       break;
-  } // end switch (pImpl->current_input_state)
+      } // end switch (pImpl->current_input_state)
 
   return result;
-}
+    }
 
 EventResult AppStateGameMode::handle_mouse_wheel(sf::Event::MouseWheelEvent& wheel)
 {

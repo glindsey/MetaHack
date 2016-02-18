@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Action.h"
+#include "ActionCRTP.h"
 #include "ThingRef.h"
 
 #include <string>
@@ -13,11 +14,10 @@
 ///     `subject` writes using `object` on `target` (for writing with item)
 class ActionInscribe
   :
-  public Action
+  public Action, public ActionCRTP<ActionInscribe>
 {
 public:
   explicit ActionInscribe(ThingRef subject);
-  ActionInscribe(ThingRef subject, ThingRef object);
   virtual ~ActionInscribe();
 
   virtual std::string get_type() const override
@@ -30,8 +30,8 @@ public:
   ACTION_TRAIT(can_be_subject_verb_thing_preposition_direction);
 
 protected:
-  virtual StateResult do_prebegin_work(AnyMap& params) override;
-  virtual StateResult do_begin_work(AnyMap& params) override;
-  virtual StateResult do_finish_work(AnyMap& params) override;
-  virtual StateResult do_abort_work(AnyMap& params) override;
+  virtual StateResult do_prebegin_work_(AnyMap& params) override;
+  virtual StateResult do_begin_work_(AnyMap& params) override;
+  virtual StateResult do_finish_work_(AnyMap& params) override;
+  virtual StateResult do_abort_work_(AnyMap& params) override;
 };

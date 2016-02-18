@@ -10,16 +10,14 @@
 
 struct Action::Impl
 {
-  Impl(ThingRef subject_,
-       std::vector<ThingRef> objects_,
-       unsigned int quantity_)
+  Impl(ThingRef subject_)
     :
     state{ Action::State::Pending },
     subject{ subject_ },
-    objects{ objects_ },
+    objects{},
     target_thing{ ThingManager::get_mu() },
     target_direction{ Direction::None },
-    quantity{ quantity_ }
+    quantity{ 1 }
   {}
 
   /// State of this action.
@@ -43,22 +41,7 @@ struct Action::Impl
 
 Action::Action(ThingRef subject)
   :
-  pImpl{ new Impl(subject, {}, 0) }
-{}
-
-Action::Action(ThingRef subject, ThingRef object)
-  :
-  pImpl{ new Impl(subject, { object }, 1) }
-{}
-
-Action::Action(ThingRef subject, ThingRef object, unsigned int quantity)
-  :
-  pImpl{ new Impl(subject,{object}, quantity) }
-{}
-
-Action::Action(ThingRef subject, std::vector<ThingRef> objects)
-  :
-  pImpl{ new Impl(subject, objects, 1) }
+  pImpl{ new Impl(subject) }
 {}
 
 Action::~Action()
@@ -67,6 +50,17 @@ Action::~Action()
 ThingRef Action::get_subject() const
 {
   return pImpl->subject;
+}
+
+void Action::set_object(ThingRef object)
+{
+  pImpl->objects.clear();
+  pImpl->objects.push_back(object);
+}
+
+void Action::set_objects(std::vector<ThingRef> objects)
+{
+  pImpl->objects = objects;
 }
 
 std::vector<ThingRef> const& Action::get_objects() const
@@ -225,25 +219,53 @@ unsigned int Action::get_quantity() const
 
 Action::StateResult Action::do_prebegin_work(AnyMap& params)
 {
+  auto result = do_prebegin_work_(params);
+
+  return result;
+}
+
+Action::StateResult Action::do_begin_work(AnyMap& params)
+{
+  auto result = do_begin_work_(params);
+
+  return result;
+}
+
+Action::StateResult Action::do_finish_work(AnyMap& params)
+{
+  auto result = do_finish_work_(params);
+
+  return result;
+}
+
+Action::StateResult Action::do_abort_work(AnyMap& params)
+{
+  auto result = do_abort_work_(params);
+
+  return result;
+}
+
+Action::StateResult Action::do_prebegin_work_(AnyMap& params)
+{
   /// @todo Set counter_busy based on the action being taken and
   ///       the entity's reflexes.
   return Action::StateResult::Success();
 }
 
-Action::StateResult Action::do_begin_work(AnyMap& params)
+Action::StateResult Action::do_begin_work_(AnyMap& params)
 {
   the_message_log.add("We're sorry, but that action has not yet been implemented.");
 
   return Action::StateResult::Failure();
 }
 
-Action::StateResult Action::do_finish_work(AnyMap& params)
+Action::StateResult Action::do_finish_work_(AnyMap& params)
 {
   /// @todo Complete the action here
   return Action::StateResult::Success();
 }
 
-Action::StateResult Action::do_abort_work(AnyMap& params)
+Action::StateResult Action::do_abort_work_(AnyMap& params)
 {
   /// @todo Handle aborting the action here.
   return Action::StateResult::Success();

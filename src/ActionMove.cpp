@@ -6,15 +6,9 @@
 #include "Thing.h"
 #include "ThingRef.h"
 
-ActionMove::ActionMove(ThingRef subject)
-  :
-  Action(subject)
-{}
+ACTION_BOILERPLATE(ActionMove)
 
-ActionMove::~ActionMove()
-{}
-
-Action::StateResult ActionMove::do_prebegin_work(AnyMap& params)
+Action::StateResult ActionMove::do_prebegin_work_(AnyMap& params)
 {
   std::string message;
 
@@ -70,7 +64,7 @@ Action::StateResult ActionMove::do_prebegin_work(AnyMap& params)
   return Action::StateResult::Success();
 }
 
-Action::StateResult ActionMove::do_begin_work(AnyMap& params)
+Action::StateResult ActionMove::do_begin_work_(AnyMap& params)
 {
   StateResult result = StateResult::Failure();
 
@@ -153,12 +147,12 @@ Action::StateResult ActionMove::do_begin_work(AnyMap& params)
   return result;
 }
 
-Action::StateResult ActionMove::do_finish_work(AnyMap& params)
+Action::StateResult ActionMove::do_finish_work_(AnyMap& params)
 {
   return Action::StateResult::Success();
 }
 
-Action::StateResult ActionMove::do_abort_work(AnyMap& params)
+Action::StateResult ActionMove::do_abort_work_(AnyMap& params)
 {
   return Action::StateResult::Success();
 }

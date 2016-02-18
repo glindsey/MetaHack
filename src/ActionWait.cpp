@@ -2,21 +2,15 @@
 #include "Thing.h"
 #include "ThingRef.h"
 
-ActionWait::ActionWait(ThingRef subject)
-  :
-  Action(subject)
-{}
+ACTION_BOILERPLATE(ActionWait)
 
-ActionWait::~ActionWait()
-{}
-
-Action::StateResult ActionWait::do_prebegin_work(AnyMap& params)
+Action::StateResult ActionWait::do_prebegin_work_(AnyMap& params)
 {
   // We can always wait.
   return Action::StateResult::Success();
 }
 
-Action::StateResult ActionWait::do_begin_work(AnyMap& params)
+Action::StateResult ActionWait::do_begin_work_(AnyMap& params)
 {
   std::string message =
     YOU + " successfully" + CV(" stay", " stays") +
@@ -27,12 +21,12 @@ Action::StateResult ActionWait::do_begin_work(AnyMap& params)
   return{ true, 1 };
 }
 
-Action::StateResult ActionWait::do_finish_work(AnyMap& params)
+Action::StateResult ActionWait::do_finish_work_(AnyMap& params)
 {
   return Action::StateResult::Success();
 }
 
-Action::StateResult ActionWait::do_abort_work(AnyMap& params)
+Action::StateResult ActionWait::do_abort_work_(AnyMap& params)
 {
   return Action::StateResult::Success();
 }

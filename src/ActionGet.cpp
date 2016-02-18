@@ -2,20 +2,9 @@
 #include "Thing.h"
 #include "ThingRef.h"
 
-ActionGet::ActionGet(ThingRef subject, ThingRef object)
-  :
-  Action(subject, object)
-{}
+ACTION_BOILERPLATE(ActionGet)
 
-ActionGet::ActionGet(ThingRef subject, ThingRef object, unsigned int quantity)
-  :
-  Action(subject, object, quantity)
-{}
-
-ActionGet::~ActionGet()
-{}
-
-Action::StateResult ActionGet::do_prebegin_work(AnyMap& params)
+Action::StateResult ActionGet::do_prebegin_work_(AnyMap& params)
 {
   std::string message;
   auto subject = get_subject();
@@ -91,7 +80,7 @@ Action::StateResult ActionGet::do_prebegin_work(AnyMap& params)
   return Action::StateResult::Success();
 }
 
-Action::StateResult ActionGet::do_begin_work(AnyMap& params)
+Action::StateResult ActionGet::do_begin_work_(AnyMap& params)
 {
   /// @todo Handle getting a certain quantity of an item.
   Action::StateResult result = StateResult::Failure();
@@ -121,12 +110,12 @@ Action::StateResult ActionGet::do_begin_work(AnyMap& params)
   return result;
 }
 
-Action::StateResult ActionGet::do_finish_work(AnyMap& params)
+Action::StateResult ActionGet::do_finish_work_(AnyMap& params)
 {
   return Action::StateResult::Success();
 }
 
-Action::StateResult ActionGet::do_abort_work(AnyMap& params)
+Action::StateResult ActionGet::do_abort_work_(AnyMap& params)
 {
   return Action::StateResult::Success();
 }

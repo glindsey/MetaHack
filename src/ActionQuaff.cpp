@@ -2,20 +2,9 @@
 #include "Thing.h"
 #include "ThingRef.h"
 
-ActionQuaff::ActionQuaff(ThingRef subject)
-  :
-  Action(subject)
-{}
+ACTION_BOILERPLATE(ActionQuaff)
 
-ActionQuaff::ActionQuaff(ThingRef subject, ThingRef object)
-  :
-  Action(subject, object)
-{}
-
-ActionQuaff::~ActionQuaff()
-{}
-
-Action::StateResult ActionQuaff::do_prebegin_work(AnyMap& params)
+Action::StateResult ActionQuaff::do_prebegin_work_(AnyMap& params)
 {
   std::string message;
   auto subject = get_subject();
@@ -89,7 +78,7 @@ Action::StateResult ActionQuaff::do_prebegin_work(AnyMap& params)
   return Action::StateResult::Success();
 }
 
-Action::StateResult ActionQuaff::do_begin_work(AnyMap& params)
+Action::StateResult ActionQuaff::do_begin_work_(AnyMap& params)
 {
   std::string message;
   auto subject = get_subject();
@@ -119,7 +108,7 @@ Action::StateResult ActionQuaff::do_begin_work(AnyMap& params)
   }
 }
 
-Action::StateResult ActionQuaff::do_finish_work(AnyMap& params)
+Action::StateResult ActionQuaff::do_finish_work_(AnyMap& params)
 {
   std::string message;
   auto object = get_object();
@@ -130,7 +119,7 @@ Action::StateResult ActionQuaff::do_finish_work(AnyMap& params)
   return Action::StateResult::Success();
 }
 
-Action::StateResult ActionQuaff::do_abort_work(AnyMap& params)
+Action::StateResult ActionQuaff::do_abort_work_(AnyMap& params)
 {
   std::string message;
 

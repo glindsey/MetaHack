@@ -2,15 +2,9 @@
 #include "Thing.h"
 #include "ThingRef.h"
 
-ActionRead::ActionRead(ThingRef subject, ThingRef object)
-  :
-  Action(subject, object)
-{}
+ACTION_BOILERPLATE(ActionRead)
 
-ActionRead::~ActionRead()
-{}
-
-Action::StateResult ActionRead::do_prebegin_work(AnyMap& params)
+Action::StateResult ActionRead::do_prebegin_work_(AnyMap& params)
 {
   std::string message;
   auto subject = get_subject();
@@ -39,7 +33,7 @@ Action::StateResult ActionRead::do_prebegin_work(AnyMap& params)
   return StateResult::Success();
 }
 
-Action::StateResult ActionRead::do_begin_work(AnyMap& params)
+Action::StateResult ActionRead::do_begin_work_(AnyMap& params)
 {
   StateResult result = StateResult::Failure();
   std::string message;
@@ -66,7 +60,7 @@ Action::StateResult ActionRead::do_begin_work(AnyMap& params)
   return result;
 }
 
-Action::StateResult ActionRead::do_finish_work(AnyMap& params)
+Action::StateResult ActionRead::do_finish_work_(AnyMap& params)
 {
   StateResult result = StateResult::Failure();
   std::string message;
@@ -101,7 +95,7 @@ Action::StateResult ActionRead::do_finish_work(AnyMap& params)
   return result;
 }
 
-Action::StateResult ActionRead::do_abort_work(AnyMap& params)
+Action::StateResult ActionRead::do_abort_work_(AnyMap& params)
 {
   std::string message;
   auto subject = get_subject();

@@ -2,15 +2,9 @@
 #include "Thing.h"
 #include "ThingRef.h"
 
-ActionMix::ActionMix(ThingRef subject, std::vector<ThingRef> objects)
-  :
-  Action(subject, objects)
-{}
+ACTION_BOILERPLATE(ActionMix)
 
-ActionMix::~ActionMix()
-{}
-
-Action::StateResult ActionMix::do_prebegin_work(AnyMap& params)
+Action::StateResult ActionMix::do_prebegin_work_(AnyMap& params)
 {
   std::string message;
   auto subject = get_subject();
@@ -91,7 +85,7 @@ Action::StateResult ActionMix::do_prebegin_work(AnyMap& params)
   return Action::StateResult::Success();
 }
 
-Action::StateResult ActionMix::do_begin_work(AnyMap& params)
+Action::StateResult ActionMix::do_begin_work_(AnyMap& params)
 {
   /// @todo IMPLEMENT ME
   //message = YOU + CV(" mix ", " mixes ") + LIQUID1 + " with " + LIQUID2 + ".";
@@ -103,12 +97,12 @@ Action::StateResult ActionMix::do_begin_work(AnyMap& params)
   return Action::StateResult::Failure();
 }
 
-Action::StateResult ActionMix::do_finish_work(AnyMap& params)
+Action::StateResult ActionMix::do_finish_work_(AnyMap& params)
 {
   return Action::StateResult::Success();
 }
 
-Action::StateResult ActionMix::do_abort_work(AnyMap& params)
+Action::StateResult ActionMix::do_abort_work_(AnyMap& params)
 {
   return Action::StateResult::Success();
 }

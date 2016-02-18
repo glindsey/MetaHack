@@ -2,15 +2,9 @@
 #include "Thing.h"
 #include "ThingRef.h"
 
-ActionUse::ActionUse(ThingRef subject, ThingRef object)
-  :
-  Action(subject, object)
-{}
+ACTION_BOILERPLATE(ActionUse)
 
-ActionUse::~ActionUse()
-{}
-
-Action::StateResult ActionUse::do_prebegin_work(AnyMap& params)
+Action::StateResult ActionUse::do_prebegin_work_(AnyMap& params)
 {
   std::string message;
   auto subject = get_subject();
@@ -50,7 +44,7 @@ Action::StateResult ActionUse::do_prebegin_work(AnyMap& params)
   return StateResult::Success();
 }
 
-Action::StateResult ActionUse::do_begin_work(AnyMap& params)
+Action::StateResult ActionUse::do_begin_work_(AnyMap& params)
 {
   StateResult result = StateResult::Failure();
   std::string message;
@@ -77,7 +71,7 @@ Action::StateResult ActionUse::do_begin_work(AnyMap& params)
   return result;
 }
 
-Action::StateResult ActionUse::do_finish_work(AnyMap& params)
+Action::StateResult ActionUse::do_finish_work_(AnyMap& params)
 {
   StateResult result = StateResult::Failure();
   std::string message;
@@ -114,7 +108,7 @@ Action::StateResult ActionUse::do_finish_work(AnyMap& params)
   return Action::StateResult::Success();
 }
 
-Action::StateResult ActionUse::do_abort_work(AnyMap& params)
+Action::StateResult ActionUse::do_abort_work_(AnyMap& params)
 {
   std::string message;
   auto subject = get_subject();

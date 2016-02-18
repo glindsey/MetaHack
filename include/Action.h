@@ -1,4 +1,5 @@
 #ifndef ACTION_H
+
 #define ACTION_H
 
 #include <memory>
@@ -63,6 +64,10 @@
 
 #define YOU_TRY_TO(verb) (YOU_TRY + " to " + verb + " ")
 
+// === BOILERPLATE MACRO(S) ===================================================
+#define ACTION_BOILERPLATE(x) x::x(ThingRef subject) : Action(subject) {} \
+                              x::~x() {}
+
 // Forward declarations
 class Thing;
 
@@ -78,7 +83,7 @@ class Thing;
                                     return true;                      \
                                   }
 
-// Class describing an action to execute.
+/// Class describing an action to execute.
 class Action
   :
   public boost::noncopyable
@@ -112,12 +117,13 @@ public:
   };
 
   explicit Action(ThingRef subject);
-  Action(ThingRef subject, ThingRef object);
-  Action(ThingRef subject, ThingRef object, unsigned int quantity);
-  Action(ThingRef subject, std::vector<ThingRef> objects);
   virtual ~Action();
 
   ThingRef get_subject() const;
+
+  void set_object(ThingRef object);
+  void set_objects(std::vector<ThingRef> objects);
+
   std::vector<ThingRef> const& get_objects() const;
   ThingRef get_object() const;
   ThingRef get_second_object() const;
@@ -161,7 +167,7 @@ protected:
   ///       the Dreaded Pyramid of Doom. It's just easier that way.
   /// @param params Map of parameters for the Action.
   /// @return StateResult indicating whether the Action continues.
-  virtual StateResult do_prebegin_work(AnyMap& params);
+  StateResult do_prebegin_work(AnyMap& params);
 
   /// Perform work to be done at the start of the InProgress state.
   /// This is where the action begins.
@@ -174,7 +180,7 @@ protected:
   /// moves to the PostFinish state.
   /// @param params Map of parameters for the Action.
   /// @return StateResult indicating whether the Action continues.
-  virtual StateResult do_begin_work(AnyMap& params);
+  StateResult do_begin_work(AnyMap& params);
 
   /// Perform work to be done at the end of the InProgress state and the start
   /// of the PostFinish state.
@@ -185,7 +191,7 @@ protected:
   /// period.
   /// @param params Map of parameters for the Action.
   /// @return StateResult indicating the post-Action wait time.
-  virtual StateResult do_finish_work(AnyMap& params);
+  StateResult do_finish_work(AnyMap& params);
 
   /// Perform work to be done when an action in the InProgress state is aborted.
   /// This is called when an action is aborted.
@@ -194,7 +200,27 @@ protected:
   /// period.
   /// @param params Map of parameters for the Action.
   /// @return StateResult indicating the post-Action wait time.
-  virtual StateResult do_abort_work(AnyMap& params);
+  StateResult do_abort_work(AnyMap& params);
+
+  /// Overridable portion of do_prebegin_work().
+  /// @param params Map of parameters for the Action.
+  /// @return StateResult indicating whether the Action continues.
+  virtual StateResult do_prebegin_work_(AnyMap& params);
+
+  /// Overridable portion of do_begin_work().
+  /// @param params Map of parameters for the Action.
+  /// @return StateResult indicating whether the Action continues.
+  virtual StateResult do_begin_work_(AnyMap& params);
+
+  /// Overridable portion of do_finish_work().
+  /// @param params Map of parameters for the Action.
+  /// @return StateResult indicating the post-Action wait time.
+  virtual StateResult do_finish_work_(AnyMap& params);
+
+  /// Overridable portion of do_abort_work().
+  /// @param params Map of parameters for the Action.
+  /// @return StateResult indicating the post-Action wait time.
+  virtual StateResult do_abort_work_(AnyMap& params);
 
 private:
   struct Impl;

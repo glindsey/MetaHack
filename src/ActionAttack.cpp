@@ -5,20 +5,9 @@
 #include "Thing.h"
 #include "ThingRef.h"
 
-ActionAttack::ActionAttack(ThingRef subject)
-  :
-  Action(subject)
-{}
+ACTION_BOILERPLATE(ActionAttack)
 
-ActionAttack::ActionAttack(ThingRef subject, ThingRef object)
-  :
-  Action(subject, object)
-{}
-
-ActionAttack::~ActionAttack()
-{}
-
-Action::StateResult ActionAttack::do_prebegin_work(AnyMap& params)
+Action::StateResult ActionAttack::do_prebegin_work_(AnyMap& params)
 {
   std::string message;
 
@@ -101,7 +90,7 @@ Action::StateResult ActionAttack::do_prebegin_work(AnyMap& params)
   return StateResult::Success();
 }
 
-Action::StateResult ActionAttack::do_begin_work(AnyMap& params)
+Action::StateResult ActionAttack::do_begin_work_(AnyMap& params)
 {
   std::string message;
 
@@ -148,12 +137,12 @@ Action::StateResult ActionAttack::do_begin_work(AnyMap& params)
   return{ success, action_time };
 }
 
-Action::StateResult ActionAttack::do_finish_work(AnyMap& params)
+Action::StateResult ActionAttack::do_finish_work_(AnyMap& params)
 {
   return Action::StateResult::Success();
 }
 
-Action::StateResult ActionAttack::do_abort_work(AnyMap& params)
+Action::StateResult ActionAttack::do_abort_work_(AnyMap& params)
 {
   return Action::StateResult::Success();
 }

@@ -2,20 +2,9 @@
 #include "Thing.h"
 #include "ThingRef.h"
 
-ActionTakeOut::ActionTakeOut(ThingRef subject, ThingRef object)
-  :
-  Action(subject, object)
-{}
+ACTION_BOILERPLATE(ActionTakeOut)
 
-ActionTakeOut::ActionTakeOut(ThingRef subject, std::vector<ThingRef> objects)
-  :
-  Action(subject, objects)
-{}
-
-ActionTakeOut::~ActionTakeOut()
-{}
-
-Action::StateResult ActionTakeOut::do_prebegin_work(AnyMap& params)
+Action::StateResult ActionTakeOut::do_prebegin_work_(AnyMap& params)
 {
   std::string message;
   auto subject = get_subject();
@@ -77,7 +66,7 @@ Action::StateResult ActionTakeOut::do_prebegin_work(AnyMap& params)
   return StateResult::Success();
 }
 
-Action::StateResult ActionTakeOut::do_begin_work(AnyMap& params)
+Action::StateResult ActionTakeOut::do_begin_work_(AnyMap& params)
 {
   /// @todo Handle taking out a certain quantity of an item.
   Action::StateResult result = StateResult::Failure();
@@ -111,12 +100,12 @@ Action::StateResult ActionTakeOut::do_begin_work(AnyMap& params)
   return result;
 }
 
-Action::StateResult ActionTakeOut::do_finish_work(AnyMap& params)
+Action::StateResult ActionTakeOut::do_finish_work_(AnyMap& params)
 {
   return Action::StateResult::Success();
 }
 
-Action::StateResult ActionTakeOut::do_abort_work(AnyMap& params)
+Action::StateResult ActionTakeOut::do_abort_work_(AnyMap& params)
 {
   return Action::StateResult::Success();
 }

@@ -2,15 +2,9 @@
 #include "Thing.h"
 #include "ThingRef.h"
 
-ActionEat::ActionEat(ThingRef subject, ThingRef object)
-  :
-  Action(subject, object)
-{}
+ACTION_BOILERPLATE(ActionEat)
 
-ActionEat::~ActionEat()
-{}
-
-Action::StateResult ActionEat::do_prebegin_work(AnyMap& params)
+Action::StateResult ActionEat::do_prebegin_work_(AnyMap& params)
 {
   std::string message;
   auto subject = get_subject();
@@ -61,7 +55,7 @@ Action::StateResult ActionEat::do_prebegin_work(AnyMap& params)
   return Action::StateResult::Success();
 }
 
-Action::StateResult ActionEat::do_begin_work(AnyMap& params)
+Action::StateResult ActionEat::do_begin_work_(AnyMap& params)
 {
   std::string message;
   auto subject = get_subject();
@@ -91,7 +85,7 @@ Action::StateResult ActionEat::do_begin_work(AnyMap& params)
   }
 }
 
-Action::StateResult ActionEat::do_finish_work(AnyMap& params)
+Action::StateResult ActionEat::do_finish_work_(AnyMap& params)
 {
   std::string message;
   auto object = get_object();
@@ -102,7 +96,7 @@ Action::StateResult ActionEat::do_finish_work(AnyMap& params)
   return Action::StateResult::Success();
 }
 
-Action::StateResult ActionEat::do_abort_work(AnyMap& params)
+Action::StateResult ActionEat::do_abort_work_(AnyMap& params)
 {
   std::string message;
 

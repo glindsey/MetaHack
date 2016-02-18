@@ -2,20 +2,9 @@
 #include "Thing.h"
 #include "ThingRef.h"
 
-ActionDrop::ActionDrop(ThingRef subject, ThingRef object)
-  :
-  Action(subject, object)
-{}
+ACTION_BOILERPLATE(ActionDrop)
 
-ActionDrop::ActionDrop(ThingRef subject, ThingRef object, unsigned int quantity)
-  :
-  Action(subject, object, quantity)
-{}
-
-ActionDrop::~ActionDrop()
-{}
-
-Action::StateResult ActionDrop::do_prebegin_work(AnyMap& params)
+Action::StateResult ActionDrop::do_prebegin_work_(AnyMap& params)
 {
   std::string message;
   auto subject = get_subject();
@@ -81,7 +70,7 @@ Action::StateResult ActionDrop::do_prebegin_work(AnyMap& params)
   return Action::StateResult::Success();
 }
 
-Action::StateResult ActionDrop::do_begin_work(AnyMap& params)
+Action::StateResult ActionDrop::do_begin_work_(AnyMap& params)
 {
   Action::StateResult result = StateResult::Failure();
   std::string message;
@@ -144,12 +133,12 @@ Action::StateResult ActionDrop::do_begin_work(AnyMap& params)
   return result;
 }
 
-Action::StateResult ActionDrop::do_finish_work(AnyMap& params)
+Action::StateResult ActionDrop::do_finish_work_(AnyMap& params)
 {
   return Action::StateResult::Success();
 }
 
-Action::StateResult ActionDrop::do_abort_work(AnyMap& params)
+Action::StateResult ActionDrop::do_abort_work_(AnyMap& params)
 {
   return Action::StateResult::Success();
 }

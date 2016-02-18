@@ -2,25 +2,14 @@
 #include "Thing.h"
 #include "ThingRef.h"
 
-ActionWield::ActionWield(ThingRef subject)
-  :
-  Action(subject)
-{}
+ACTION_BOILERPLATE(ActionWield)
 
-ActionWield::ActionWield(ThingRef subject, ThingRef object)
-  :
-  Action(subject, object)
-{}
-
-ActionWield::~ActionWield()
-{}
-
-Action::StateResult ActionWield::do_prebegin_work(AnyMap& params)
+Action::StateResult ActionWield::do_prebegin_work_(AnyMap& params)
 {
   return Action::StateResult::Success();
 }
 
-Action::StateResult ActionWield::do_begin_work(AnyMap& params)
+Action::StateResult ActionWield::do_begin_work_(AnyMap& params)
 {
   bool success = false;
   unsigned int action_time;
@@ -35,12 +24,12 @@ Action::StateResult ActionWield::do_begin_work(AnyMap& params)
   return{ success, action_time };
 }
 
-Action::StateResult ActionWield::do_finish_work(AnyMap& params)
+Action::StateResult ActionWield::do_finish_work_(AnyMap& params)
 {
   return Action::StateResult::Success();
 }
 
-Action::StateResult ActionWield::do_abort_work(AnyMap& params)
+Action::StateResult ActionWield::do_abort_work_(AnyMap& params)
 {
   return Action::StateResult::Success();
 }

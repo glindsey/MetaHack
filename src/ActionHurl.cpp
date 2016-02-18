@@ -2,15 +2,9 @@
 #include "Thing.h"
 #include "ThingRef.h"
 
-ActionHurl::ActionHurl(ThingRef subject, ThingRef object)
-  :
-  Action(subject, object)
-{}
+ACTION_BOILERPLATE(ActionHurl)
 
-ActionHurl::~ActionHurl()
-{}
-
-Action::StateResult ActionHurl::do_prebegin_work(AnyMap& params)
+Action::StateResult ActionHurl::do_prebegin_work_(AnyMap& params)
 {
   std::string message;
   auto subject = get_subject();
@@ -75,7 +69,7 @@ Action::StateResult ActionHurl::do_prebegin_work(AnyMap& params)
   return StateResult::Success();
 }
 
-Action::StateResult ActionHurl::do_begin_work(AnyMap& params)
+Action::StateResult ActionHurl::do_begin_work_(AnyMap& params)
 {
   auto result = StateResult::Failure();
   std::string message;
@@ -107,12 +101,12 @@ Action::StateResult ActionHurl::do_begin_work(AnyMap& params)
   return result;
 }
 
-Action::StateResult ActionHurl::do_finish_work(AnyMap& params)
+Action::StateResult ActionHurl::do_finish_work_(AnyMap& params)
 {
   return Action::StateResult::Success();
 }
 
-Action::StateResult ActionHurl::do_abort_work(AnyMap& params)
+Action::StateResult ActionHurl::do_abort_work_(AnyMap& params)
 {
   return Action::StateResult::Success();
 }

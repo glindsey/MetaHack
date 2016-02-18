@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Action.h"
+#include "ActionCRTP.h"
 #include "ThingRef.h"
 
 #include <string>
@@ -8,11 +9,10 @@
 
 class ActionQuaff
   :
-  public Action
+  public Action, public ActionCRTP<ActionQuaff>
 {
 public:
   explicit ActionQuaff(ThingRef subject);
-  ActionQuaff(ThingRef subject, ThingRef object);
   virtual ~ActionQuaff();
 
   virtual std::string get_type() const override
@@ -24,8 +24,8 @@ public:
   ACTION_TRAIT(can_be_subject_verb_direction);
 
 protected:
-  virtual StateResult do_prebegin_work(AnyMap& params) override;
-  virtual StateResult do_begin_work(AnyMap& params) override;
-  virtual StateResult do_finish_work(AnyMap& params) override;
-  virtual StateResult do_abort_work(AnyMap& params) override;
+  virtual StateResult do_prebegin_work_(AnyMap& params) override;
+  virtual StateResult do_begin_work_(AnyMap& params) override;
+  virtual StateResult do_finish_work_(AnyMap& params) override;
+  virtual StateResult do_abort_work_(AnyMap& params) override;
 };

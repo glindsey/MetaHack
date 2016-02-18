@@ -2,20 +2,9 @@
 #include "Thing.h"
 #include "ThingRef.h"
 
-ActionPutInto::ActionPutInto(ThingRef subject, ThingRef object)
-  :
-  Action(subject, object)
-{}
+ACTION_BOILERPLATE(ActionPutInto)
 
-ActionPutInto::ActionPutInto(ThingRef subject, std::vector<ThingRef> objects)
-  :
-  Action(subject, objects)
-{}
-
-ActionPutInto::~ActionPutInto()
-{}
-
-Action::StateResult ActionPutInto::do_prebegin_work(AnyMap& params)
+Action::StateResult ActionPutInto::do_prebegin_work_(AnyMap& params)
 {
   std::string message;
   auto subject = get_subject();
@@ -174,7 +163,7 @@ Action::StateResult ActionPutInto::do_prebegin_work(AnyMap& params)
   return StateResult::Success();
 }
 
-Action::StateResult ActionPutInto::do_begin_work(AnyMap& params)
+Action::StateResult ActionPutInto::do_begin_work_(AnyMap& params)
 {
   /// @todo Handle putting a certain quantity of an item.
   Action::StateResult result = StateResult::Failure();
@@ -206,12 +195,12 @@ Action::StateResult ActionPutInto::do_begin_work(AnyMap& params)
   return result;
 }
 
-Action::StateResult ActionPutInto::do_finish_work(AnyMap& params)
+Action::StateResult ActionPutInto::do_finish_work_(AnyMap& params)
 {
   return Action::StateResult::Success();
 }
 
-Action::StateResult ActionPutInto::do_abort_work(AnyMap& params)
+Action::StateResult ActionPutInto::do_abort_work_(AnyMap& params)
 {
   return Action::StateResult::Success();
 }

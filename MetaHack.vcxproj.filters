@@ -264,6 +264,9 @@
     <ClInclude Include="include\ActionDie.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\ActionCRTP.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">
