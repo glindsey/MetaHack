@@ -16,14 +16,6 @@ Action::StateResult ActionAttack::do_prebegin_work_(AnyMap& params)
   MapTile* current_tile = subject->get_maptile();
   auto new_direction = get_target_direction();
 
-  // Make sure we're not in limbo!
-  if ((location == ThingManager::get_mu()) || (current_tile == nullptr))
-  {
-    message = YOU + " can't attack anything because " + YOU_DO + " not exist physically!";
-    the_message_log.add(message);
-    return StateResult::Failure();
-  }
-
   if (!IS_PLAYER)
   {
     /// @todo Clean this message up.

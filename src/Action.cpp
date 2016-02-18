@@ -224,6 +224,25 @@ unsigned int Action::get_quantity() const
 
 Action::StateResult Action::do_prebegin_work(AnyMap& params)
 {
+  std::string message;
+
+  auto subject = get_subject();
+  auto location = subject->get_location();
+  MapTile* current_tile = subject->get_maptile();
+  auto new_direction = get_target_direction();
+
+  if (!subject_can_be_in_limbo())
+  {
+    // Make sure we're not in limbo!
+    if ((location == ThingManager::get_mu()) || (current_tile == nullptr))
+    {
+      /// @todo This message could be made less awkward for verbs that take objects.
+      message = YOU + " can't " + VERB + " because " + YOU_DO + " not exist physically!";
+      the_message_log.add(message);
+      return StateResult::Failure();
+    }
+  }
+
   auto result = do_prebegin_work_(params);
 
   return result;

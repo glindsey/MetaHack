@@ -73,6 +73,11 @@ using ActionCreator = std::unique_ptr<Action>(ThingRef);
 
 #define YOU_TRY_TO(verb) (YOU_TRY + " to " + verb + " ")
 
+#define VERB          get_verb()
+#define VERB3         get_verb3()
+#define VERBING       get_verbing()
+#define VERBED        get_verbed()
+
 // === BOILERPLATE MACRO(S) ===================================================
 /// Boilerplate that goes at the start of each Action source file.
 /// @todo Good LORD these are ugly. Can we do this without resorting to macros?
@@ -221,6 +226,7 @@ public:
     CREATE_TRAIT(can_be_subject_verb_thing_preposition_bodypart)
     CREATE_TRAIT(can_be_subject_verb_thing_preposition_direction)
     CREATE_TRAIT(can_take_a_quantity)
+    CREATE_TRAIT(subject_can_be_in_limbo)
 
     ;
 
