@@ -44,15 +44,12 @@ Action::StateResult ActionRead::do_begin_work_(AnyMap& params)
   if (object->is_readable_by(subject))
   {
     /// @todo Figure out read time.
-    message = YOU + CV(" begin", " begins") + " to read " + FOOSELF + ".";
-    the_message_log.add(message);
-
+    print_message_begin_();
     result = StateResult::Success(1);
   }
   else
   {
-    message = YOU_TRY + " to read " + FOOSELF + ".";
-    the_message_log.add(message);
+    print_message_try_();
 
     message = THE_FOO + FOO_HAS + " no writing to read.";
     the_message_log.add(message);
@@ -68,8 +65,7 @@ Action::StateResult ActionRead::do_finish_work_(AnyMap& params)
   auto subject = get_subject();
   auto object = get_object();
 
-  message = YOU + CV(" finish", " finishes") + " reading " + FOOSELF + ".";
-  the_message_log.add(message);
+  print_message_finish_();
 
   /// @todo Split read time into start/finish actions.
   switch (object->perform_action_read_by(subject))
@@ -102,8 +98,6 @@ Action::StateResult ActionRead::do_abort_work_(AnyMap& params)
   auto subject = get_subject();
   auto object = get_object();
 
-  message = YOU + CV(" stop", " stops") + " reading " + FOOSELF + ".";
-  the_message_log.add(message);
-
+  print_message_stop_();
   return Action::StateResult::Success();
 }

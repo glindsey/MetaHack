@@ -62,8 +62,7 @@ Action::StateResult ActionEat::do_begin_work_(AnyMap& params)
   auto subject = get_subject();
   auto object = get_object();
 
-  message = YOU + " begin to eat " + THE_FOO + ".";
-  the_message_log.add(message);
+  print_message_begin_();
 
   // Do the eating action here.
   /// @todo Figure out eating time.
@@ -76,8 +75,7 @@ Action::StateResult ActionEat::do_begin_work_(AnyMap& params)
       return Action::StateResult::Success();
 
     case ActionResult::Failure:
-      message = YOU + " stop eating.";
-      the_message_log.add(message);
+      print_message_stop_();
       return Action::StateResult::Failure();
 
     default:
@@ -91,17 +89,13 @@ Action::StateResult ActionEat::do_finish_work_(AnyMap& params)
   std::string message;
   auto object = get_object();
 
-  message = YOU + " finish eating " + THE_FOO + ".";
-  the_message_log.add(message);
+  print_message_finish_();
   object->get_inventory().get(INVSLOT_ZERO)->destroy();
   return Action::StateResult::Success();
 }
 
 Action::StateResult ActionEat::do_abort_work_(AnyMap& params)
 {
-  std::string message;
-
-  message = YOU + " stop eating.";
-  the_message_log.add(message);
-  return Action::StateResult::Failure();
+  print_message_stop_();
+  return Action::StateResult::Success();
 }

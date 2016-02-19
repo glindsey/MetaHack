@@ -19,6 +19,11 @@ public:
     return "drank from";
   }
 
+  std::string const get_verbing() const override
+  {
+    return "drinking from";
+  }
+
   ACTION_TRAIT(can_be_subject_verb_thing);
   ACTION_TRAIT(can_be_subject_verb_direction);
 

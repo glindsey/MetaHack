@@ -296,11 +296,11 @@ protected:
   /// Describes the object(s) or direction in terms of the subject.
   /// This string will vary based on the presence of objects or a direction
   /// for the action, following this order:
-  ///   * If only one object is seen, prints " [OBJECT]."
-  ///     - If object = subject, prints " [REFLEXIVE-PRONOUN]."
-  ///     - If the quantity is greater than 1, prints "[QUANTITY] of the [OBJECTS]".
-  ///   * If more than one object, prints " the items."
-  ///   * If a direction is present, prints " [DIRECTION]."
+  ///   * If only one object is seen, returns " [OBJECT]."
+  ///     - If object = subject, returns " [SUBJECT-REFLEXIVE-PRONOUN]."
+  ///     - If the quantity is greater than 1, returns "[QUANTITY] of the [OBJECTS]".
+  ///   * If more than one object, returns " the items."
+  ///   * If a direction is present, returns " [DIRECTION]."
   ///   * If none of these are present, returns an empty string.
   /// @note The string returned has a leading space on it unless no objects or
   ///       direction are found, in order to make message composition cleaner.
@@ -308,6 +308,17 @@ protected:
   /// This method can be overridden if necessary to customze the description for a
   /// particular action.
   virtual std::string get_object_string_();
+
+  /// Describes the target in terms of the subject or object.
+  /// This string will vary based on the presence of objects or a direction
+  /// for the action, following this order:
+  ///   * If the target equals the subject, returns "[SUBJECT-REFLEXIVE-PRONOUN]".
+  ///   * If the target equals the object, returns "[OBJECT-REFLEXIVE-PRONOUN]".
+  ///   * Otherwise returns the target description.
+  ///
+  /// This method can be overridden if necessary to customze the description for a
+  /// particular action.
+  virtual std::string get_target_string_();
 
   /// Print a "[SUBJECT] try to [VERB]" message.
   /// The message will vary based on the presence of objects or a direction
@@ -335,6 +346,15 @@ protected:
   /// This method can be overridden if necessary to customze the message for a
   /// particular action.
   virtual void print_message_begin_();
+
+  /// Print a "[SUBJECT] stop [VERBING]" message.
+  /// The message will vary based on the presence of objects or a direction
+  /// for the action, using get_object_string().
+  /// "Stop" will be conjugated for the subject as "stops" if needed.
+  ///
+  /// This method can be overridden if necessary to customze the message for a
+  /// particular action.
+  virtual void print_message_stop_();
 
   /// Print a "[SUBJECT] finish [VERBING]" message.
   /// The message will vary based on the presence of objects or a direction

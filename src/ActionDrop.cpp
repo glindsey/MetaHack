@@ -93,8 +93,8 @@ Action::StateResult ActionDrop::do_begin_work_(AnyMap& params)
     {
       if (object->perform_action_dropped_by(subject))
       {
-        message = YOU + CV(" drop ", " drops ") + THE_FOO + ".";
-        the_message_log.add(message);
+        print_message_do_();
+
         if (object->move_into(location))
         {
           /// @todo Figure out action time.

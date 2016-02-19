@@ -81,8 +81,7 @@ Action::StateResult ActionHurl::do_begin_work_(AnyMap& params)
   {
     if (object->move_into(new_location))
     {
-      message = YOU + CV(" throw ", " throws ") + THE_FOO;
-      the_message_log.add(message);
+      print_message_do_();
 
       /// @todo When throwing, set Thing's direction and velocity
       /// @todo Figure out action time.

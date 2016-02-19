@@ -40,9 +40,11 @@ Action::StateResult ActionTakeOut::do_prebegin_work_(AnyMap& params)
   // Check that the container is not a MapTile or Entity.
   if (!object->is_inside_another_thing())
   {
-    message = YOU_TRY + " to remove " + THE_FOO +
-      " from its container.";
-    the_message_log.add(message);
+    print_message_try_();
+
+    //message = YOU_TRY + " to remove " + THE_FOO +
+    //  " from its container.";
+    //the_message_log.add(message);
 
     message = "But " + THE_FOO + " is not inside a container!";
     the_message_log.add(message);
@@ -53,9 +55,7 @@ Action::StateResult ActionTakeOut::do_prebegin_work_(AnyMap& params)
   // Check that the container is within reach.
   if (!subject->can_reach(container))
   {
-    message = YOU_TRY + " to remove " + THE_FOO + " from " +
-      THE_FOOS_LOCATION + ".";
-    the_message_log.add(message);
+    print_message_try_();
 
     message = YOU + " cannot reach " + THE_FOO + ".";
     the_message_log.add(message);
@@ -80,10 +80,7 @@ Action::StateResult ActionTakeOut::do_begin_work_(AnyMap& params)
   {
     if (object->move_into(new_location))
     {
-      message = YOU + CV(" remove ", "removes ") +
-        THE_FOO + " from " +
-        THE_FOOS_LOCATION + ".";
-      the_message_log.add(message);
+      print_message_do_();
 
       /// @todo Figure out action time.
       result = StateResult::Success();
@@ -108,4 +105,16 @@ Action::StateResult ActionTakeOut::do_finish_work_(AnyMap& params)
 Action::StateResult ActionTakeOut::do_abort_work_(AnyMap& params)
 {
   return Action::StateResult::Success();
+}
+
+void ActionTakeOut::print_message_try_()
+{
+  std::string message = YOU_TRY + " to " + VERB + get_object_string_() + " from " + THE_FOOS_LOCATION + ".";
+  the_message_log.add(message);
+}
+
+void ActionTakeOut::print_message_do_()
+{
+  std::string message = YOU + " " + CV(VERB, VERB3) + get_object_string_() + " from " + THE_FOOS_LOCATION + ".";
+  the_message_log.add(message);
 }

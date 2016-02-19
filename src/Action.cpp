@@ -307,6 +307,10 @@ std::string Action::get_object_string_()
     }
     else
     {
+      if (get_quantity() > 1)
+      {
+        description += " " + boost::lexical_cast<std::string>(get_quantity()) + " of";
+      }
       description += " " + get_object()->get_identifying_string(true);
     }
   }
@@ -332,6 +336,27 @@ std::string Action::get_object_string_()
   return description;
 }
 
+std::string Action::get_target_string_()
+{
+  auto subject = get_subject();
+  auto& objects = get_objects();
+  auto target = get_target_thing();
+
+  if (target == subject)
+  {
+    return subject->get_reflexive_pronoun();
+  }
+  else if (objects.size() == 1)
+  {
+    auto object = get_object();
+    return object->get_reflexive_pronoun();
+  }
+  else
+  {
+    return target->get_identifying_string(true);
+  }
+}
+
 void Action::print_message_try_()
 {
   std::string message = YOU_TRY + " to " + VERB + get_object_string_() + ".";
@@ -347,6 +372,12 @@ void Action::print_message_do_()
 void Action::print_message_begin_()
 {
   std::string message = YOU + " " + CV("begin", "begins") + " to " + VERB + get_object_string_() + ".";
+  the_message_log.add(message);
+}
+
+void Action::print_message_stop_()
+{
+  std::string message = YOU + " " + CV("stop", "stops") + VERBING + get_object_string_() + ".";
   the_message_log.add(message);
 }
 

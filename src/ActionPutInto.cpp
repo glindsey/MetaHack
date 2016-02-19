@@ -76,9 +76,7 @@ Action::StateResult ActionPutInto::do_prebegin_work_(AnyMap& params)
   // Check that the container actually IS a container.
   if (container->get_intrinsic<int>("inventory_size") == 0)
   {
-    message = YOU_TRY + " to store " + THE_FOO + " in " +
-      THE_TARGET_THING + ".";
-    the_message_log.add(message);
+    print_message_try_();
 
     message = THE_TARGET_THING + " is not a container!";
     the_message_log.add(message);
@@ -89,9 +87,7 @@ Action::StateResult ActionPutInto::do_prebegin_work_(AnyMap& params)
   // Check that the thing's location isn't already the container.
   if (object->get_location() == container)
   {
-    message = YOU_TRY + " to store " + THE_FOO + " in " +
-      THE_TARGET_THING + ".";
-    the_message_log.add(message);
+    print_message_try_();
 
     message = THE_FOO + " is already in " +
       THE_TARGET_THING + "!";
@@ -103,9 +99,7 @@ Action::StateResult ActionPutInto::do_prebegin_work_(AnyMap& params)
   // Check that the thing is within reach.
   if (!subject->can_reach(object))
   {
-    message = YOU_TRY + " to store " + THE_FOO + " in " +
-      THE_TARGET_THING + ".";
-    the_message_log.add(message);
+    print_message_try_();
 
     message = YOU + " cannot reach " + THE_FOO;
 
@@ -123,9 +117,7 @@ Action::StateResult ActionPutInto::do_prebegin_work_(AnyMap& params)
   // Check that the container is within reach.
   if (!subject->can_reach(container))
   {
-    message = YOU_TRY + " to store " + THE_FOO + " in " +
-      THE_TARGET_THING + ".";
-    the_message_log.add(message);
+    print_message_try_();
 
     message = YOU + " cannot reach " + THE_TARGET_THING + ".";
     the_message_log.add(message);
@@ -136,28 +128,24 @@ Action::StateResult ActionPutInto::do_prebegin_work_(AnyMap& params)
   // Check that we're not wielding the item.
   if (subject->is_wielding(object))
   {
-    message = YOU_TRY + " to store " + THE_FOO + " in " +
-      THE_TARGET_THING + ".";
-    the_message_log.add(message);
+    print_message_try_();
 
-    message = YOU + " cannot store something that is currently being worn.";
+    message = YOU + " cannot store something that is currently being wielded.";
     the_message_log.add(message);
 
     return StateResult::Failure();
   }
 
-  /// @todo Check that we're not wearing the item.
+  // Check that we're not wearing the item.
   if (subject->has_equipped(object))
   {
-    message = YOU_TRY + " to store " + THE_FOO + " in " +
-      THE_TARGET_THING + ".";
-    the_message_log.add(message);
+    print_message_try_();
 
     /// @todo Perhaps automatically try to unwield the item before dropping?
-    message = YOU + "cannot store something that is currently being wielded.";
+    message = YOU + "cannot store something that is currently being worn.";
     the_message_log.add(message);
 
-    return StateResult::Failure(); //ActionResult::FailureItemEquipped;
+    return StateResult::Failure();
   }
 
   return StateResult::Success();
@@ -174,10 +162,8 @@ Action::StateResult ActionPutInto::do_begin_work_(AnyMap& params)
 
   if (object->perform_action_put_into_by(container, subject))
   {
-    message = YOU + CV(" place ", "places ") +
-      THE_FOO + " into " +
-      THE_TARGET_THING + ".";
-    the_message_log.add(message);
+    print_message_do_();
+
     if (object->move_into(container))
     {
       /// @todo Figure out action time.
@@ -203,4 +189,16 @@ Action::StateResult ActionPutInto::do_finish_work_(AnyMap& params)
 Action::StateResult ActionPutInto::do_abort_work_(AnyMap& params)
 {
   return Action::StateResult::Success();
+}
+
+void ActionPutInto::print_message_try_()
+{
+  std::string message = YOU_TRY + " to " + VERB + get_object_string_() + " into " + get_target_string_() + ".";
+  the_message_log.add(message);
+}
+
+void ActionPutInto::print_message_do_()
+{
+  std::string message = YOU + " " + CV(VERB, VERB3) + get_object_string_() + " into " + get_target_string_() + ".";
+  the_message_log.add(message);
 }
