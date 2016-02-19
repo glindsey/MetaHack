@@ -95,8 +95,9 @@ using ActionCreator = std::unique_ptr<Action>(ThingRef);
 /// Boilerplate that goes at the start of each Action header file.
 /// @todo Good LORD these are ugly. Can we do this without resorting to macros?
 #define ACTION_HDR_BOILERPLATE(T)                                             \
-  public:                                                                     \
+  private:                                                                    \
     T();                                                                      \
+  public:                                                                     \
     explicit T(ThingRef subject);                                             \
     virtual ~T();                                                             \
     virtual std::string const get_type() const override;                      \
@@ -142,8 +143,6 @@ public:
     Processed     ///< The action is totally done and can be popped off the queue.
   };
 
-  /// An Action without a subject; used for prototype registration only.
-  Action();
   explicit Action(ThingRef subject);
   virtual ~Action();
 
@@ -228,6 +227,8 @@ public:
   static void register_action_as(std::string key, ActionCreator creator);
 
 protected:
+  /// An Action without a subject; used for prototype registration only.
+  Action();
 
   /// Perform work to be done at the start of the PreBegin state.
   /// This work typically consists of checking whether the action is possible.
