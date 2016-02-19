@@ -14,8 +14,8 @@ Action::StateResult ActionMix::do_prebegin_work_(AnyMap& params)
   // Check that we're capable of mixing at all.
   if (subject->get_intrinsic<bool>("can_mix"))
   {
-    message = YOU_TRY_TO("mix") + THE_FOO1 + " and " + THE_FOO2 + ".";
-    the_message_log.add(message);
+    print_message_try_();
+
     message = "But, as " + getIndefArt(subject->get_display_name()) + subject->get_display_name() + "," + YOU_ARE + " not capable of mixing anything together.";
     the_message_log.add(message);
 
@@ -25,8 +25,8 @@ Action::StateResult ActionMix::do_prebegin_work_(AnyMap& params)
   // Check that they aren't both the same thing.
   if (object1 == object2)
   {
-    message = YOU_TRY_TO("mix") + "the contents of " + THE_FOO1 + " and " + THE_FOO2 + ".";
-    the_message_log.add(message);
+    print_message_try_();
+
     message = "Those are both the same container!";
     the_message_log.add(message);
 
@@ -36,8 +36,8 @@ Action::StateResult ActionMix::do_prebegin_work_(AnyMap& params)
   // Check that neither of them is us.
   if (object1 == subject || object2 == subject)
   {
-    message = YOU_TRY_TO("mix") + "the contents of " + THE_FOO1 + " and " + THE_FOO2 + ".";
-    the_message_log.add(message);
+    print_message_try_();
+
     message = "But that makes absolutely no sense.";
     the_message_log.add(message);
 
@@ -47,8 +47,8 @@ Action::StateResult ActionMix::do_prebegin_work_(AnyMap& params)
   // Check that both are within reach.
   if (!subject->can_reach(object1) || !subject->can_reach(object2))
   {
-    message = YOU_TRY_TO("mix") + "the contents of " + THE_FOO1 + " and " + THE_FOO2 + ".";
-    the_message_log.add(message);
+    print_message_try_();
+
     message = "But at least one of them is out of " + YOUR + " reach.";
     the_message_log.add(message);
 
@@ -58,8 +58,8 @@ Action::StateResult ActionMix::do_prebegin_work_(AnyMap& params)
   // Check that both are liquid containers.
   if (!object1->get_intrinsic<bool>("liquid_carrier") || !object2->get_intrinsic<bool>("liquid_carrier"))
   {
-    message = YOU_TRY_TO("mix") + "the contents of " + THE_FOO1 + " and " + THE_FOO2 + ".";
-    the_message_log.add(message);
+    print_message_try_();
+
     message = "But at least one of them doesn't hold liquid!";
     the_message_log.add(message);
 
@@ -71,8 +71,8 @@ Action::StateResult ActionMix::do_prebegin_work_(AnyMap& params)
   Inventory& inv2 = object2->get_inventory();
   if (inv1.count() == 0 || inv2.count() == 0)
   {
-    message = YOU_TRY_TO("mix") + "the contents of " + THE_FOO1 + " and " + THE_FOO2 + ".";
-    the_message_log.add(message);
+    print_message_try_();
+
     message = "But at least one of them is empty!";
     the_message_log.add(message);
 

@@ -46,8 +46,8 @@ Action::StateResult ActionHurl::do_prebegin_work_(AnyMap& params)
   /// Check that we have limbs capable of throwing.
   if (subject->get_intrinsic<bool>("can_throw"))
   {
-    message = YOU_TRY_TO("throw") + THE_FOO + ".";
-    the_message_log.add(message);
+    print_message_try_();
+
     message = "But, as " + getIndefArt(subject->get_display_name()) + subject->get_display_name() + "," + YOU_ARE + " not capable of throwing anything.";
     the_message_log.add(message);
 
@@ -57,8 +57,7 @@ Action::StateResult ActionHurl::do_prebegin_work_(AnyMap& params)
   /// Check that we're not wearing the item.
   if (subject->has_equipped(object))
   {
-    message = YOU_TRY_TO("throw") + THE_FOO + ".";
-    the_message_log.add(message);
+    print_message_try_();
 
     message = YOU + " cannot throw something " + YOU_ARE + "wearing.";
     the_message_log.add(message);

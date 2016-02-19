@@ -45,16 +45,12 @@ using ActionCreator = std::unique_ptr<Action>(ThingRef);
 
 #define IS_PLAYER (get_subject()->is_player())
 
-#define THE_FOO   (get_object()->get_identifying_string(true))
-#define A_FOO     (get_object()->get_identifying_string(false))
+#define THE_FOO   (get_object_string_())
 
 #define THE_FOOS_LOCATION  (get_object()->get_location()->get_identifying_string(true))
 #define THE_TARGET_THING   (get_target_thing()->get_identifying_string(true))
 
 #define FOOSELF (get_object()->get_self_or_identifying_string(get_subject(), true))
-
-#define THE_FOO1  (get_object()->get_identifying_string(true))
-#define THE_FOO2  (get_second_object()->get_identifying_string(true))
 
 #define SUBJ_PRO_FOO  (get_subject()->get_subject_pronoun())     // "you/he/she/it/etc."
 #define OBJ_PRO_FOO   (get_subject()->get_object_pronoun())      // "you/him/her/it/etc."
@@ -70,8 +66,6 @@ using ActionCreator = std::unique_ptr<Action>(ThingRef);
 #define YOU_HAVE      (YOU + HAVE)
 #define YOU_SEEM      (YOU + SEEM)
 #define YOU_TRY       (YOU + TRY)
-
-#define YOU_TRY_TO(verb) (YOU_TRY + " to " + verb + " ")
 
 #define VERB          get_verb()
 #define VERB3         get_verb3()
@@ -298,6 +292,58 @@ protected:
   /// @param params Map of parameters for the Action.
   /// @return StateResult indicating the post-Action wait time.
   virtual StateResult do_abort_work_(AnyMap& params);
+
+  /// Describes the object(s) or direction in terms of the subject.
+  /// This string will vary based on the presence of objects or a direction
+  /// for the action, following this order:
+  ///   * If only one object is seen, prints " [OBJECT]."
+  ///     - If object = subject, prints " [REFLEXIVE-PRONOUN]."
+  ///     - If the quantity is greater than 1, prints "[QUANTITY] of the [OBJECTS]".
+  ///   * If more than one object, prints " the items."
+  ///   * If a direction is present, prints " [DIRECTION]."
+  ///   * If none of these are present, returns an empty string.
+  /// @note The string returned has a leading space on it unless no objects or
+  ///       direction are found, in order to make message composition cleaner.
+  ///
+  /// This method can be overridden if necessary to customze the description for a
+  /// particular action.
+  virtual std::string get_object_string_();
+
+  /// Print a "[SUBJECT] try to [VERB]" message.
+  /// The message will vary based on the presence of objects or a direction
+  /// for the action, using get_object_string().
+  /// "Try to" will be conjugated for the subject as "tries to" if needed.
+  ///
+  /// This method can be overridden if necessary to customze the message for a
+  /// particular action.
+  virtual void print_message_try_();
+
+  /// Print a "[SUBJECT] [VERB]" message.
+  /// The message will vary based on the presence of objects or a direction
+  /// for the action, using get_object_string().
+  /// VERB will be conjugated for the subject as needed.
+  ///
+  /// This method can be overridden if necessary to customze the message for a
+  /// particular action.
+  virtual void print_message_do_();
+
+  /// Print a "[SUBJECT] begin to [VERB]" message.
+  /// The message will vary based on the presence of objects or a direction
+  /// for the action, using get_object_string().
+  /// "Begin to" will be conjugated for the subject as "begins to" if needed.
+  ///
+  /// This method can be overridden if necessary to customze the message for a
+  /// particular action.
+  virtual void print_message_begin_();
+
+  /// Print a "[SUBJECT] finish [VERBING]" message.
+  /// The message will vary based on the presence of objects or a direction
+  /// for the action, using get_object_string().
+  /// "Finish" will be conjugated for the subject as "finishes" if needed.
+  ///
+  /// This method can be overridden if necessary to customze the message for a
+  /// particular action.
+  virtual void print_message_finish_();
 
 private:
   struct Impl;

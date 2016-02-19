@@ -18,9 +18,7 @@ Action::StateResult ActionAttack::do_prebegin_work_(AnyMap& params)
 
   if (!IS_PLAYER)
   {
-    /// @todo Clean this message up.
-    message = YOU_TRY_TO("attack") + str(new_direction) + ".";
-    the_message_log.add(message);
+    print_message_try_();
     message = "But ";
   }
   else
@@ -66,7 +64,7 @@ Action::StateResult ActionAttack::do_prebegin_work_(AnyMap& params)
   if (new_direction == Direction::Up)
   {
     /// @todo Write up/down attack code
-    message = "Attacking the ceiling is not yet supported!";
+    message = "attacking the ceiling is not yet supported!";
     the_message_log.add(message);
     return StateResult::Failure();
   }
@@ -74,7 +72,7 @@ Action::StateResult ActionAttack::do_prebegin_work_(AnyMap& params)
   if (new_direction == Direction::Down)
   {
     /// @todo Write up/down attack code
-    message = "Attacking the floor is not yet supported!";
+    message = "attacking the floor is not yet supported!";
     the_message_log.add(message);
     return StateResult::Failure();
   }

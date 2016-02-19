@@ -19,8 +19,8 @@ Action::StateResult ActionMove::do_prebegin_work_(AnyMap& params)
 
   if (!IS_PLAYER)
   {
-    message = YOU_TRY_TO("move") + str(new_direction) + ".";
-    the_message_log.add(message);
+    print_message_try_();
+
     message = "But ";
   }
   else

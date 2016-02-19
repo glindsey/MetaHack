@@ -2,7 +2,7 @@
 #include "Thing.h"
 #include "ThingRef.h"
 
-ACTION_SRC_BOILERPLATE(ActionQuaff, "Quaff", "drink")
+ACTION_SRC_BOILERPLATE(ActionQuaff, "Quaff", "drink from")
 
 Action::StateResult ActionQuaff::do_prebegin_work_(AnyMap& params)
 {
@@ -13,11 +13,10 @@ Action::StateResult ActionQuaff::do_prebegin_work_(AnyMap& params)
   // Check that it isn't US!
   if (subject == object)
   {
-    message = YOU_TRY + " to drink " + YOURSELF + ".";
-    the_message_log.add(message);
+    print_message_try_();
 
     /// @todo When drinking self, special message if caller is a liquid-based organism.
-    message = "Needless to say, " + YOU_ARE + " not very successful in this endeavor.";
+    message = "Ewwww... no.";
     the_message_log.add(message);
 
     return Action::StateResult::Failure();
@@ -26,8 +25,8 @@ Action::StateResult ActionQuaff::do_prebegin_work_(AnyMap& params)
   // Check that we're capable of drinking at all.
   if (subject->get_intrinsic<bool>("can_drink"))
   {
-    message = YOU_TRY_TO("drink from") + THE_FOO + ".";
-    the_message_log.add(message);
+    print_message_try_();
+
     message = "But, as " + getIndefArt(subject->get_display_name()) + subject->get_display_name() + "," + YOU_ARE + " not capable of drinking liquids.";
     the_message_log.add(message);
 
@@ -37,7 +36,9 @@ Action::StateResult ActionQuaff::do_prebegin_work_(AnyMap& params)
   // Check that the thing is within reach.
   if (!subject->can_reach(object))
   {
-    message = YOU_TRY_TO("drink from") + THE_FOO + ", but " + OBJ_PRO_FOO + FOO_IS + " out of " + YOUR + " reach.";
+    print_message_try_();
+
+    message = "However, " + OBJ_PRO_FOO + FOO_IS + " out of " + YOUR + " reach.";
     the_message_log.add(message);
 
     return Action::StateResult::Failure();
@@ -46,8 +47,8 @@ Action::StateResult ActionQuaff::do_prebegin_work_(AnyMap& params)
   // Check that it is something that contains a liquid.
   if (!object->get_intrinsic<bool>("liquid_carrier"))
   {
-    message = YOU_TRY_TO("drink from") + THE_FOO + ".";
-    the_message_log.add(message);
+    print_message_try_();
+
     message = YOU + " cannot drink from that!";
     the_message_log.add(message);
 
@@ -58,8 +59,8 @@ Action::StateResult ActionQuaff::do_prebegin_work_(AnyMap& params)
   Inventory& inv = object->get_inventory();
   if (inv.count() == 0)
   {
-    message = YOU_TRY_TO("drink from") + THE_FOO + ".";
-    the_message_log.add(message);
+    print_message_try_();
+
     message = "But " + THE_FOO + FOO_IS + " empty!";
     the_message_log.add(message);
 

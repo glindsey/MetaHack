@@ -62,8 +62,6 @@
 #define YOU_SEEM      (YOU + SEEM)
 #define YOU_TRY       (YOU + TRY)
 
-#define YOU_TRY_TO(verb) (YOU_TRY + " to " + verb + " ")
-
 // Static member initialization.
 sf::Color const Thing::wall_outline_color_ = sf::Color(255, 255, 255, 64);
 

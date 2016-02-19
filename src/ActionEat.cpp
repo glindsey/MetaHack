@@ -13,8 +13,7 @@ Action::StateResult ActionEat::do_prebegin_work_(AnyMap& params)
   // Check that it isn't US!
   if (subject == object)
   {
-    message = YOU_TRY_TO("eat") + YOURSELF + ".";
-    the_message_log.add(message);
+    print_message_try_();
 
     /// @todo Handle "unusual" cases (e.g. zombies?)
     message = "But " + YOU + " really " + CV("aren't", "isn't") + " that tasty, so " + YOU + CV(" stop.", " stops.");
@@ -26,8 +25,8 @@ Action::StateResult ActionEat::do_prebegin_work_(AnyMap& params)
   // Check that we're capable of eating at all.
   if (subject->get_intrinsic<bool>("can_eat"))
   {
-    message = YOU_TRY_TO("eat") + THE_FOO + ".";
-    the_message_log.add(message);
+    print_message_try_();
+
     message = "But, as " + getIndefArt(subject->get_display_name()) + subject->get_display_name() + "," + YOU_ARE + " not capable of eating.";
     the_message_log.add(message);
 
@@ -37,7 +36,9 @@ Action::StateResult ActionEat::do_prebegin_work_(AnyMap& params)
   // Check that the thing is within reach.
   if (!subject->can_reach(object))
   {
-    message = YOU_TRY_TO("eat") + THE_FOO + ", but " + OBJ_PRO_FOO + FOO_IS + " out of " + YOUR + " reach.";
+    print_message_try_();
+
+    message = "However, " + OBJ_PRO_FOO + FOO_IS + " out of " + YOUR + " reach.";
     the_message_log.add(message);
 
     return Action::StateResult::Failure();

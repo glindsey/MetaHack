@@ -295,6 +295,67 @@ Action::StateResult Action::do_abort_work_(AnyMap& params)
   return Action::StateResult::Success();
 }
 
+std::string Action::get_object_string_()
+{
+  std::string description;
+
+  if (get_objects().size() == 1)
+  {
+    if (get_object() == get_subject())
+    {
+      description += " " + get_subject()->get_reflexive_pronoun();
+    }
+    else
+    {
+      description += " " + get_object()->get_identifying_string(true);
+    }
+  }
+  else if (get_objects().size() == 2)
+  {
+    description += " " + get_object()->get_identifying_string(true) + " and " + get_second_object()->get_identifying_string(true);
+  }
+  else if (get_objects().size() > 1)
+  {
+    /// @todo May want to change this depending on whether subject is the player.
+    ///       If not, we should print "several items" or something to that effect.
+    description += " the items";
+  }
+  else
+  {
+    auto new_direction = get_target_direction();
+    if (new_direction != Direction::None)
+    {
+      description += " " + str(new_direction);
+    }
+  }
+
+  return description;
+}
+
+void Action::print_message_try_()
+{
+  std::string message = YOU_TRY + " to " + VERB + get_object_string_() + ".";
+  the_message_log.add(message);
+}
+
+void Action::print_message_do_()
+{
+  std::string message = YOU + " " + CV(VERB, VERB3) + get_object_string_() + ".";
+  the_message_log.add(message);
+}
+
+void Action::print_message_begin_()
+{
+  std::string message = YOU + " " + CV("begin", "begins") + " to " + VERB + get_object_string_() + ".";
+  the_message_log.add(message);
+}
+
+void Action::print_message_finish_()
+{
+  std::string message = YOU + " " + CV("finish", "finishes") + VERBING + get_object_string_() + ".";
+  the_message_log.add(message);
+}
+
 void Action::register_action_as(std::string key, ActionCreator creator)
 {
   /// @todo WRITE ME

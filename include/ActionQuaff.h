@@ -16,7 +16,7 @@ class ActionQuaff
 public:
   std::string const get_verbed() const override
   {
-    return "drank";
+    return "drank from";
   }
 
   ACTION_TRAIT(can_be_subject_verb_thing);

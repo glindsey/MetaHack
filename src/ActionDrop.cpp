@@ -20,8 +20,7 @@ Action::StateResult ActionDrop::do_prebegin_work_(AnyMap& params)
   // Check that it's in our inventory.
   if (!subject->get_inventory().contains(object))
   {
-    message = YOU_TRY_TO("drop") + THE_FOO + ".";
-    the_message_log.add(message);
+    print_message_try_();
 
     message = THE_FOO + object->choose_verb(" are ", " is ") +
       "not in " + YOUR + " inventory!";
@@ -33,8 +32,7 @@ Action::StateResult ActionDrop::do_prebegin_work_(AnyMap& params)
   // Check that we're not wielding the item.
   if (subject->is_wielding(object))
   {
-    message = YOU_TRY_TO("drop") + THE_FOO + ".";
-    the_message_log.add(message);
+    print_message_try_();
 
     /// @todo Perhaps automatically try to unwield the item before dropping?
     message = YOU + " cannot drop something that is currently being wielded.";
@@ -46,8 +44,7 @@ Action::StateResult ActionDrop::do_prebegin_work_(AnyMap& params)
   // Check that we're not wearing the item.
   if (subject->has_equipped(object))
   {
-    message = YOU_TRY_TO("drop") + THE_FOO + ".";
-    the_message_log.add(message);
+    print_message_try_();
 
     message = YOU + " cannot drop something that is currently being worn.";
     the_message_log.add(message);
@@ -58,8 +55,7 @@ Action::StateResult ActionDrop::do_prebegin_work_(AnyMap& params)
   // Check that we can move the item.
   if (!object->is_movable_by(subject))
   {
-    message = YOU_TRY_TO("drop") + THE_FOO + ".";
-    the_message_log.add(message);
+    print_message_try_();
 
     message = THE_FOO + " cannot be moved.";
     the_message_log.add(message);
@@ -122,8 +118,7 @@ Action::StateResult ActionDrop::do_begin_work_(AnyMap& params)
     {
       // This is mighty strange, but I suppose there might be MapTiles in
       // the future that can't contain certain Things.
-      message = YOU_TRY_TO("drop") + THE_FOO + ".";
-      the_message_log.add(message);
+      print_message_try_();
 
       message = location->get_identifying_string() + " cannot hold " + THE_FOO + ".";
       the_message_log.add(message);
