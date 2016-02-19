@@ -13,8 +13,8 @@ class ActionCRTP
 {
 public:
 
-  /// Implement a create() function that will be registerable with a factory class.
-  static std::unique_ptr<Action> create(ThingRef subject)
+  /// Implement a create_() function that will be registerable with a factory class.
+  static std::unique_ptr<Action> create_(ThingRef subject)
   {
     std::unique_ptr<Action> action{ new Derived{ subject } };
 

@@ -1,12 +1,16 @@
 #include "Action.h"
 
 #include <algorithm>
+#include <exception>
+#include <unordered_map>
 
 #include "common_functions.h"
 #include "MessageLog.h"
 #include "Thing.h"
 #include "ThingManager.h"
 #include "ThingRef.h"
+
+std::unordered_map<std::string, ActionCreator> Action::action_map;
 
 struct Action::Impl
 {
@@ -389,5 +393,28 @@ void Action::print_message_finish_()
 
 void Action::register_action_as(std::string key, ActionCreator creator)
 {
-  /// @todo WRITE ME
+  Action::action_map.insert({ key, creator });
+}
+
+bool Action::exists(std::string key)
+{
+  return Action::action_map.count(key) != 0;
+}
+
+std::unique_ptr<Action> Action::create(std::string key, ThingRef subject)
+{
+  if (Action::action_map.count(key) != 0)
+  {
+    std::unique_ptr<Action> action = (Action::action_map.at(key))(subject);
+    return std::move(action);
+  }
+  else
+  {
+    throw std::runtime_error("Requested non-existent action " + key);
+  }
+}
+
+ActionMap const & Action::get_map()
+{
+  return Action::action_map;
 }

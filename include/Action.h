@@ -2,6 +2,7 @@
 
 #define ACTION_H
 
+#include <functional>
 #include <memory>
 #include <regex>
 #include <string>
@@ -20,7 +21,8 @@ class Action;
 class Thing;
 
 // === USING DECLARATIONS =====================================================
-using ActionCreator = std::unique_ptr<Action>(ThingRef);
+using ActionCreator = std::function<std::unique_ptr<Action>(ThingRef)>;
+using ActionMap = std::unordered_map<std::string, ActionCreator>;
 
 // === MESSAGE HELPER MACROS ==================================================
 #define YOU       (get_subject()->get_you_or_identifying_string())  // "you" or descriptive noun like "the goblin"
@@ -78,7 +80,7 @@ using ActionCreator = std::unique_ptr<Action>(ThingRef);
 #define ACTION_SRC_BOILERPLATE(T, type, verb)                                 \
   T::T() : Action()                                                           \
   {                                                                           \
-    Action::register_action_as(type, &T::create);                             \
+    Action::register_action_as(type, &T::create_);                            \
   }                                                                           \
   T::T(ThingRef subject) : Action(subject) {}                                 \
   T::~T() {}                                                                  \
@@ -226,6 +228,16 @@ public:
   /// A static function that registers an action subclass in a database.
   static void register_action_as(std::string key, ActionCreator creator);
 
+  /// A static function that checks if a key exists.
+  static bool exists(std::string key);
+
+  /// A static function that returns an Action associated with a key.
+  /// If the requested key does not exist, throws an exception.
+  static std::unique_ptr<Action> create(std::string key, ThingRef subject);
+
+  /// Get a const reference to the action map.
+  static ActionMap const& get_map();
+
 protected:
   /// An Action without a subject; used for prototype registration only.
   Action();
@@ -369,6 +381,8 @@ protected:
 private:
   struct Impl;
   std::unique_ptr<Impl> pImpl;
+
+  static ActionMap action_map;
 };
 
 inline std::ostream& operator<<(std::ostream& os, Action::State const& s)
