@@ -13,7 +13,6 @@ Action::StateResult ActionAttack::do_prebegin_work_(AnyMap& params)
 
   auto subject = get_subject();
   auto location = subject->get_location();
-  MapTile* current_tile = subject->get_maptile();
   auto new_direction = get_target_direction();
 
   if (!IS_PLAYER)

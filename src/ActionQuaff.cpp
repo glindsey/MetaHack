@@ -81,7 +81,6 @@ Action::StateResult ActionQuaff::do_prebegin_work_(AnyMap& params)
 
 Action::StateResult ActionQuaff::do_begin_work_(AnyMap& params)
 {
-  std::string message;
   auto subject = get_subject();
   auto object = get_object();
 
@@ -109,7 +108,6 @@ Action::StateResult ActionQuaff::do_begin_work_(AnyMap& params)
 
 Action::StateResult ActionQuaff::do_finish_work_(AnyMap& params)
 {
-  std::string message;
   auto object = get_object();
 
   print_message_finish_();
@@ -119,8 +117,6 @@ Action::StateResult ActionQuaff::do_finish_work_(AnyMap& params)
 
 Action::StateResult ActionQuaff::do_abort_work_(AnyMap& params)
 {
-  std::string message;
-
   print_message_stop_();
   return Action::StateResult::Success();
 }

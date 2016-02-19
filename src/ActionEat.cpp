@@ -58,7 +58,6 @@ Action::StateResult ActionEat::do_prebegin_work_(AnyMap& params)
 
 Action::StateResult ActionEat::do_begin_work_(AnyMap& params)
 {
-  std::string message;
   auto subject = get_subject();
   auto object = get_object();
 
@@ -86,7 +85,6 @@ Action::StateResult ActionEat::do_begin_work_(AnyMap& params)
 
 Action::StateResult ActionEat::do_finish_work_(AnyMap& params)
 {
-  std::string message;
   auto object = get_object();
 
   print_message_finish_();

@@ -94,7 +94,6 @@ Action::StateResult ActionRead::do_finish_work_(AnyMap& params)
 
 Action::StateResult ActionRead::do_abort_work_(AnyMap& params)
 {
-  std::string message;
   auto subject = get_subject();
   auto object = get_object();
 

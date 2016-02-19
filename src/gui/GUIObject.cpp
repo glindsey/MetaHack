@@ -92,7 +92,7 @@ bool GUIObject::render(sf::RenderTarget& target, int frame)
   pImpl->bg_texture->clear();
 
   /// Render self to our bg texture.
-  bool success = _render_self(texture, frame);
+  /* bool success = */ _render_self(texture, frame);
 
   /// Render all child objects to our bg texture.
   for (auto& child : pImpl->children)
