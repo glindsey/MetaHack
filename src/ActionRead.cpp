@@ -10,17 +10,6 @@ Action::StateResult ActionRead::do_prebegin_work_(AnyMap& params)
   auto subject = get_subject();
   auto object = get_object();
 
-  // Check that the thing is within reach.
-  if (!subject->can_reach(object))
-  {
-    print_message_try_();
-
-    message = "However, " + OBJ_PRO_FOO + " is out of " + YOUR + " reach.";
-    the_message_log.add(message);
-
-    return Action::StateResult::Failure();
-  }
-
   if (false) ///< @todo Intelligence tests for reading.
   {
     print_message_try_();

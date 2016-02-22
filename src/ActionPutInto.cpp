@@ -96,24 +96,6 @@ Action::StateResult ActionPutInto::do_prebegin_work_(AnyMap& params)
     return StateResult::Failure();
   }
 
-  // Check that the thing is within reach.
-  if (!subject->can_reach(object))
-  {
-    print_message_try_();
-
-    message = YOU + " cannot reach " + THE_FOO;
-
-    if (!subject->can_reach(container))
-    {
-      message += " (or " + THE_TARGET_THING + ")";
-    }
-
-    message += ".";
-    the_message_log.add(message);
-
-    return StateResult::Failure();
-  }
-
   // Check that the container is within reach.
   if (!subject->can_reach(container))
   {

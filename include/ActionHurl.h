@@ -19,7 +19,7 @@ public:
     return "threw";
   }
 
-  ACTION_TRAIT(can_be_subject_verb_thing_preposition_direction);
+  ACTION_TRAIT(can_be_subject_verb_object_preposition_direction);
 
 protected:
   virtual StateResult do_prebegin_work_(AnyMap& params) override;

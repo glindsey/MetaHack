@@ -24,7 +24,7 @@ public:
     return "drinking from";
   }
 
-  ACTION_TRAIT(can_be_subject_verb_thing);
+  ACTION_TRAIT(can_be_subject_verb_object);
   ACTION_TRAIT(can_be_subject_verb_direction);
 
 protected:

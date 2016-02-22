@@ -14,7 +14,7 @@ class ActionMix
   ACTION_HDR_BOILERPLATE(ActionMix)
 
 public:
-  ACTION_TRAIT(can_be_subject_verb_things);
+  ACTION_TRAIT(can_be_subject_verb_objects);
 
 protected:
   virtual StateResult do_prebegin_work_(AnyMap& params) override;

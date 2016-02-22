@@ -231,6 +231,7 @@ Action::StateResult Action::do_prebegin_work(AnyMap& params)
   std::string message;
 
   auto subject = get_subject();
+  auto& objects = get_objects();
   auto location = subject->get_location();
   MapTile* current_tile = subject->get_maptile();
   auto new_direction = get_target_direction();
@@ -244,6 +245,26 @@ Action::StateResult Action::do_prebegin_work(AnyMap& params)
       message = YOU + " can't " + VERB + " because " + YOU_DO + " not exist physically!";
       the_message_log.add(message);
       return StateResult::Failure();
+    }
+  }
+
+  if (objects.size() > 0)
+  {
+    if (!object_can_be_out_of_reach())
+    {
+      for (auto object : objects)
+      {
+        // Check that each object is within reach.
+        if (!subject->can_reach(object))
+        {
+          print_message_try_();
+
+          message = "However, " + OBJ_PRO_FOO + FOO_IS + " out of " + YOUR + " reach.";
+          the_message_log.add(message);
+
+          return StateResult::Failure();
+        }
+      }
     }
   }
 

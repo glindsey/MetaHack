@@ -1,11 +1,14 @@
 SMALL THINGS
 ============
-[ ] Lua-ify some more events and checks (which ones?)
 [ ] Export "thing_set_quantity" / "thing_modify_quantity" functions to Lua
 [X] Re-implement Lua "get_intrinsic_XXX" functions for Things
+[ ] BUG: Using "/" look command reveals inventory of squares player can't see
 
 MEDIUM THINGS
 =============
+[ ] Transition attire (wear), wield code into Action subclasses
+[ ] Create (and call) each Thing's "process()" Lua function (needed for enemy AI!)
+[ ] Create Lua functions to allow queuing of Actions (needed for enemy AI!)
 [ ] Fix quantities (they are not currently being respected for get/drop actions)
 [X] Death conditions
     [/] For player

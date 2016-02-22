@@ -14,7 +14,7 @@ class ActionRead
   ACTION_HDR_BOILERPLATE(ActionRead)
 
 public:
-  ACTION_TRAIT(can_be_subject_verb_thing);
+  ACTION_TRAIT(can_be_subject_verb_object);
 
 protected:
   virtual StateResult do_prebegin_work_(AnyMap& params) override;

@@ -45,17 +45,6 @@ Action::StateResult ActionGet::do_prebegin_work_(AnyMap& params)
     return StateResult::Failure();
   }
 
-  // Check that it's within reach.
-  if (!subject->can_reach(object))
-  {
-    message = YOU_TRY + " to pick up " + THE_FOO + ".";
-    the_message_log.add(message);
-
-    message = THE_FOO + FOO_IS + " out of " + YOUR + " reach.";
-    the_message_log.add(message);
-    return StateResult::Failure();
-  }
-
   /// @todo When picking up, check if our inventory is full-up.
   if (false)
   {

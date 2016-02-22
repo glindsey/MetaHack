@@ -199,7 +199,7 @@ public:
 
     if (p_action_in_progress)
     {
-      if (p_action_in_progress->can_be_subject_verb_thing_preposition_thing())
+      if (p_action_in_progress->can_be_subject_verb_object_preposition_target())
       {
         if (!key.alt && !key.control && key_number != -1)
         {
@@ -213,7 +213,7 @@ public:
       } // end if (action_in_progress.target_can_be_thing)
 
       if (p_action_in_progress->can_be_subject_verb_direction() ||
-          p_action_in_progress->can_be_subject_verb_thing_preposition_direction())
+          p_action_in_progress->can_be_subject_verb_object_preposition_direction())
       {
         if (!key.alt && !key.control && key_direction != Direction::None)
         {

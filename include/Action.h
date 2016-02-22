@@ -213,15 +213,16 @@ public:
   }
 
   CREATE_TRAIT(can_be_subject_only)
-    CREATE_TRAIT(can_be_subject_verb_thing)
+    CREATE_TRAIT(can_be_subject_verb_object)
     CREATE_TRAIT(can_be_subject_verb_direction)
-    CREATE_TRAIT(can_be_subject_verb_things)
-    CREATE_TRAIT(can_be_subject_verb_thing_preposition_thing)
-    CREATE_TRAIT(can_be_subject_verb_things_preposition_thing)
-    CREATE_TRAIT(can_be_subject_verb_thing_preposition_bodypart)
-    CREATE_TRAIT(can_be_subject_verb_thing_preposition_direction)
+    CREATE_TRAIT(can_be_subject_verb_objects)
+    CREATE_TRAIT(can_be_subject_verb_object_preposition_target)
+    CREATE_TRAIT(can_be_subject_verb_objects_preposition_target)
+    CREATE_TRAIT(can_be_subject_verb_object_preposition_bodypart)
+    CREATE_TRAIT(can_be_subject_verb_object_preposition_direction)
     CREATE_TRAIT(can_take_a_quantity)
     CREATE_TRAIT(subject_can_be_in_limbo)
+    CREATE_TRAIT(object_can_be_out_of_reach)
 
     ;
 

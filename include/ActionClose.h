@@ -14,7 +14,7 @@ class ActionClose
   ACTION_HDR_BOILERPLATE(ActionClose)
 
 public:
-  ACTION_TRAIT(can_be_subject_verb_thing);
+  ACTION_TRAIT(can_be_subject_verb_object);
   ACTION_TRAIT(can_be_subject_verb_direction);
 
 protected:

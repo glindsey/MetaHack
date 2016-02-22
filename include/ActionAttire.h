@@ -14,7 +14,7 @@ class ActionAttire
   ACTION_HDR_BOILERPLATE(ActionAttire)
 
 public:
-  ACTION_TRAIT(can_be_subject_verb_thing);
+  ACTION_TRAIT(can_be_subject_verb_object);
 
   std::string const get_verbed() const override
   {

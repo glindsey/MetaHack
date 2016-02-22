@@ -33,17 +33,6 @@ Action::StateResult ActionEat::do_prebegin_work_(AnyMap& params)
     return Action::StateResult::Failure();
   }
 
-  // Check that the thing is within reach.
-  if (!subject->can_reach(object))
-  {
-    print_message_try_();
-
-    message = "However, " + OBJ_PRO_FOO + FOO_IS + " out of " + YOUR + " reach.";
-    the_message_log.add(message);
-
-    return Action::StateResult::Failure();
-  }
-
   // Check that it is edible by us.
   if (!object->is_edible_by(subject))
   {

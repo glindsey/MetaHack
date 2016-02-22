@@ -24,7 +24,7 @@ public:
     return "got";
   }
 
-  ACTION_TRAIT(can_be_subject_verb_thing);
+  ACTION_TRAIT(can_be_subject_verb_object);
   ACTION_TRAIT(can_take_a_quantity);
 
 protected:

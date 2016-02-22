@@ -16,8 +16,8 @@ class ActionTakeOut
     /// @todo Handle taking multiple items out of a thing. Right now only the
     ///       first item is processed.
 public:
-  ACTION_TRAIT(can_be_subject_verb_thing);
-  ACTION_TRAIT(can_be_subject_verb_things);
+  ACTION_TRAIT(can_be_subject_verb_object);
+  ACTION_TRAIT(can_be_subject_verb_objects);
 
 protected:
   virtual StateResult do_prebegin_work_(AnyMap& params) override;

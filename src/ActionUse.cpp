@@ -32,17 +32,6 @@ Action::StateResult ActionUse::do_prebegin_work_(AnyMap& params)
     return StateResult::Failure();
   }
 
-  // Check that the thing is within reach.
-  if (!subject->can_reach(object))
-  {
-    print_message_try_();
-
-    message = "However, " + OBJ_PRO_FOO + " is out of " + YOUR + " reach.";
-    the_message_log.add(message);
-
-    return StateResult::Failure();
-  }
-
   return StateResult::Success();
 }
 
