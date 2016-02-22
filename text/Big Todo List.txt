@@ -1,14 +1,15 @@
 SMALL THINGS
 ============
 [ ] Export "thing_set_quantity" / "thing_modify_quantity" functions to Lua
-[X] Re-implement Lua "get_intrinsic_XXX" functions for Things
 [ ] BUG: Using "/" look command reveals inventory of squares player can't see
-[ ] Lua function names should not be dependent on the English past-participle forms of Action verbs.
-    They should be renamed from "can_be_VERBed_by" to "can_have_action_TYPE_done_by", with the Action type passed in rather than the English verb.
+[ ] Look at some of the intrinsics like "movable", "lockable", et cetera and see if they can be removed.
+    e.g. "lockable" can be replaced by "can_have_action_lock_done_by(nil)"
 
 MEDIUM THINGS
 =============
 [ ] Transition attire (wear), wield code into Action subclasses
+[ ] Transition die code into Action subclass (?)
+[ ] Some more verbs: push, shatter
 [ ] Create (and call) each Thing's "process()" Lua function (needed for enemy AI!)
 [ ] Create Lua functions to allow queuing of Actions (needed for enemy AI!)
 [ ] Fix quantities (they are not currently being respected for get/drop actions)
