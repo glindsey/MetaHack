@@ -273,7 +273,12 @@ Action::StateResult Action::do_prebegin_work(AnyMap& params)
         {
           print_message_try_();
 
-          message = "However, " + OBJ_PRO_FOO + FOO_IS + " not in " + YOUR + " inventory.";
+          message = "However, " + OBJ_PRO_FOO + FOO_IS + " not in " + YOUR + " inventory";
+          if (subject->can_reach(object))
+          {
+            message += " (pick it up first)";
+          }
+          message += ".";
           the_message_log.add(message);
 
           return StateResult::Failure();

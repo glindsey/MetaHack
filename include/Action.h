@@ -54,8 +54,8 @@ using ActionMap = std::unordered_map<std::string, ActionCreator>;
 
 #define FOOSELF (get_object()->get_self_or_identifying_string(get_subject(), true))
 
-#define SUBJ_PRO_FOO  (get_subject()->get_subject_pronoun())     // "you/he/she/it/etc."
-#define OBJ_PRO_FOO   (get_subject()->get_object_pronoun())      // "you/him/her/it/etc."
+#define SUBJ_PRO_FOO  (get_object()->get_subject_pronoun())     // "you/he/she/it/etc."
+#define OBJ_PRO_FOO   (get_object()->get_object_pronoun())      // "you/him/her/it/etc."
 
 //#define LIQUID1      (liquid1->get_identifying_string())
 //#define LIQUID2      (liquid2->get_identifying_string())
