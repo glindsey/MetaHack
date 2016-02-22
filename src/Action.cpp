@@ -352,7 +352,11 @@ std::string Action::get_object_string_()
 {
   std::string description;
 
-  if (get_objects().size() == 1)
+  if (get_objects().size() == 0)
+  {
+    description += "nothing";
+  }
+  else if (get_objects().size() == 1)
   {
     if (get_object() == get_subject())
     {
@@ -360,11 +364,18 @@ std::string Action::get_object_string_()
     }
     else
     {
-      if (get_quantity() > 1)
+      if (get_object() == ThingManager::get_mu())
       {
-        description += boost::lexical_cast<std::string>(get_quantity()) + " of";
+        description += "nothing";
       }
-      description += get_object()->get_identifying_string(true);
+      else
+      {
+        if (get_quantity() > 1)
+        {
+          description += boost::lexical_cast<std::string>(get_quantity()) + " of";
+        }
+        description += get_object()->get_identifying_string(true);
+      }
     }
   }
   else if (get_objects().size() == 2)
