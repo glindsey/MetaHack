@@ -16,6 +16,14 @@ Entity.intrinsics.inventory_size = -1
 
 Entity.defaults.xp = 0
 
+function Entity.can_have_action_attack_done_by(id)
+    return true
+end
+
+function Entity.can_have_action_die_done_by(id)
+    return true
+end
+
 function Entity.get_tile_offset(id, frame)
     -- If entity's hit points are <= 0, show the "dead" tile.
     local hp = thing_get_property_value(id, "hp")

@@ -41,7 +41,23 @@ function Thing.get_description(id)
     return "Thing #" .. id .. ", which has no description associated with it."
 end
 
+function Thing.can_have_action_get_done_by(id)
+    return true
+end
+
+function Thing.can_have_action_hurl_done_by(id)
+    return true
+end
+
 function Thing.can_have_action_move_done_by(id)
+    return true
+end
+
+function Thing.can_have_action_putinto_done_by(id)
+    return true
+end
+
+function Thing.can_have_action_takeout_done_by(id)
     return true
 end
 

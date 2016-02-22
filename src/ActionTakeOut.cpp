@@ -2,7 +2,7 @@
 #include "Thing.h"
 #include "ThingRef.h"
 
-ACTION_SRC_BOILERPLATE(ActionTakeOut, "TakeOut", "remove")
+ACTION_SRC_BOILERPLATE(ActionTakeOut, "takeout", "remove")
 
 Action::StateResult ActionTakeOut::do_prebegin_work_(AnyMap& params)
 {

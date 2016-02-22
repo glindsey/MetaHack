@@ -2,7 +2,7 @@
 #include "Thing.h"
 #include "ThingRef.h"
 
-ACTION_SRC_BOILERPLATE(ActionPutInto, "PutInto", "store")
+ACTION_SRC_BOILERPLATE(ActionPutInto, "putinto", "store")
 
 Action::StateResult ActionPutInto::do_prebegin_work_(AnyMap& params)
 {
