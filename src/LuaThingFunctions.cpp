@@ -245,6 +245,12 @@ namespace LuaThingFunctions
     ThingRef thing = ThingRef(lua_tointeger(L, 1));
     std::string action_type = lua_tostring(L, 2);
 
+    if (!Action::exists(action_type))
+    {
+      MAJOR_ERROR("Lua script requested queue of non-existent Action \"%s\"", new_action);
+      return 0;
+    }
+
     std::unique_ptr<Action> new_action = Action::create(action_type, thing);
     std::vector<ThingRef> objects;
 
