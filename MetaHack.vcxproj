@@ -175,6 +175,7 @@
     <ClInclude Include="include\KeyBuffer.h" />
     <ClInclude Include="include\LightInfluence.h" />
     <ClInclude Include="include\Lua.h" />
+    <ClInclude Include="include\LuaThingFunctions.h" />
     <ClInclude Include="include\Map.h" />
     <ClInclude Include="include\MapCorridor.h" />
     <ClInclude Include="include\MapDiamond.h" />
@@ -248,6 +249,7 @@
     <ClCompile Include="src\InventoryArea.cpp" />
     <ClCompile Include="src\KeyBuffer.cpp" />
     <ClCompile Include="src\Lua.cpp" />
+    <ClCompile Include="src\LuaThingFunctions.cpp" />
     <ClCompile Include="src\Map.cpp" />
     <ClCompile Include="src\MapFactory.cpp" />
     <ClCompile Include="src\mapfeatures\MapCorridor.cpp" />

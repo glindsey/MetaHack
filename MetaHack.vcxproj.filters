@@ -267,6 +267,9 @@
     <ClInclude Include="include\ActionCRTP.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\LuaThingFunctions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">
@@ -450,6 +453,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\ActionShoot.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\LuaThingFunctions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

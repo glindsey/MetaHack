@@ -555,53 +555,6 @@ private:
   ///         false if the Thing ceases to exist.
   virtual bool _process_self();
 
-  // Static Lua functions.
-  // @todo (Maybe these should be part of ThingManager instead?)
-
-  /// Lua function to create a new Thing.
-  /// Takes two parameters:
-  ///   - ID of the Thing it will be stored in
-  ///   - Type of the new Thing
-  /// It returns:
-  ///   - ID of the newly created Thing, or nil if it could not be created.
-  static int LUA_thing_create(lua_State* L);
-
-  /// Lua function to destroy a new Thing.
-  /// Takes two parameters:
-  ///   - ID of the Thing to destroy
-  /// It returns:
-  ///   - Nothing. Thing destruction is always successful.
-  static int LUA_thing_destroy(lua_State* L);
-
-  /// Lua function to get the ID of the player.
-  /// Takes no parameters.
-  /// It returns:
-  ///   - ID of the player character.
-  static int LUA_thing_get_player(lua_State* L);
-
-  /// Lua function to get the coordinates of a Thing.
-  /// Takes one parameter:
-  ///   - ID of the Thing to get coordinates of.
-  /// It returns:
-  ///   - (x, y) coordinates of the Thing, or nil if not on the player's Map.
-  static int LUA_thing_get_coords(lua_State* L);
-
-  static int LUA_thing_get_type(lua_State* L);
-  static int LUA_thing_get_intrinsic_flag(lua_State* L);
-  static int LUA_thing_get_intrinsic_value(lua_State* L);
-  static int LUA_thing_get_intrinsic_string(lua_State* L);
-  static int LUA_thing_get_property_flag(lua_State* L);
-  static int LUA_thing_get_property_value(lua_State* L);
-  static int LUA_thing_get_property_string(lua_State* L);
-  static int LUA_thing_set_property_flag(lua_State* L);
-  static int LUA_thing_set_property_value(lua_State* L);
-  static int LUA_thing_set_property_string(lua_State* L);
-
-  static int LUA_get_property(lua_State* L);
-  static int LUA_set_property(lua_State* L);
-
-  static int LUA_thing_move_into(lua_State* L);
-
   /// Syntactic sugar for calling Metadata::call_lua_function.
   ActionResult call_lua_function(std::string function_name,
                                  std::vector<lua_Integer> const& args,
