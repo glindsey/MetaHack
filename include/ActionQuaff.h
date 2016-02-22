@@ -12,6 +12,8 @@ class ActionQuaff
   public Action, public ActionCRTP<ActionQuaff>
 {
   ACTION_HDR_BOILERPLATE(ActionQuaff)
+    ACTION_TRAIT(can_be_subject_verb_object)
+    ACTION_TRAIT(can_be_subject_verb_direction)
 
 public:
   std::string const get_verbed() const override
@@ -28,9 +30,6 @@ public:
   {
     return "potable";
   }
-
-  ACTION_TRAIT(can_be_subject_verb_object);
-  ACTION_TRAIT(can_be_subject_verb_direction);
 
 protected:
   virtual StateResult do_prebegin_work_(AnyMap& params) override;

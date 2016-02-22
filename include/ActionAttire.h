@@ -12,10 +12,9 @@ class ActionAttire
   public Action, public ActionCRTP<ActionAttire>
 {
   ACTION_HDR_BOILERPLATE(ActionAttire)
+    ACTION_TRAIT(can_be_subject_verb_object)
 
 public:
-  ACTION_TRAIT(can_be_subject_verb_object);
-
   std::string const get_verbed() const override
   {
     return "wore";

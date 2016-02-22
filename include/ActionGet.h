@@ -12,6 +12,8 @@ class ActionGet
   public Action, public ActionCRTP<ActionGet>
 {
   ACTION_HDR_BOILERPLATE(ActionGet)
+    ACTION_TRAIT(can_be_subject_verb_object)
+    ACTION_TRAIT(can_take_a_quantity)
 
 public:
   std::string const get_verbing() const override
@@ -28,9 +30,6 @@ public:
   {
     return "gotten";
   }
-
-  ACTION_TRAIT(can_be_subject_verb_object);
-  ACTION_TRAIT(can_take_a_quantity);
 
 protected:
   virtual StateResult do_prebegin_work_(AnyMap& params) override;

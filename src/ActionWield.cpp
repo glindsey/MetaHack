@@ -6,22 +6,86 @@ ACTION_SRC_BOILERPLATE(ActionWield, "wield", "wield")
 
 Action::StateResult ActionWield::do_prebegin_work_(AnyMap& params)
 {
-  return Action::StateResult::Success();
+  std::string message;
+  auto subject = get_subject();
+  auto object = get_object();
+  /// @todo Support wielding in other hand(s).
+  unsigned int hand = 0;
+  std::string bodypart_desc =
+    subject->get_bodypart_description(BodyPart::Hand, hand);
+
+  std::string thing_name = (object != ThingManager::get_mu()) ? get_object_string_() : "nothing";
+
+  // If it is us, it means to unwield whatever is wielded.
+  if (object == subject)
+  {
+    object = ThingManager::get_mu();
+  }
+
+  // Check that we have hands capable of wielding anything.
+  if (subject->get_bodypart_number(BodyPart::Hand) == 0)
+  {
+    print_message_try_();
+
+    message = YOU_HAVE + " no way to wield anything!";
+    the_message_log.add(message);
+
+    return StateResult::Failure();
+  }
+
+  return StateResult::Success();
 }
 
 Action::StateResult ActionWield::do_begin_work_(AnyMap& params)
 {
-  bool success = false;
-  unsigned int action_time;
+  Action::StateResult result = StateResult::Failure();
+  std::string message;
+  auto subject = get_subject();
+  auto object = get_object();
+  /// @todo Support wielding in other hand(s).
+  unsigned int hand = 0;
+  std::string bodypart_desc =
+    subject->get_bodypart_description(BodyPart::Hand, hand);
+  ThingRef currently_wielded = subject->get_wielding(hand);
 
-  ThingRef thing = get_objects().front();
-  if (thing != ThingManager::get_mu())
+  bool was_wielding = false;
+
+  // First, check if we're already wielding something.
+  if (currently_wielded != ThingManager::get_mu())
   {
-    /// @todo Implement wielding using other hands.
-    success = get_subject()->do_wield(thing, 0, action_time);
+    // Now, check if the thing we're already wielding is THIS thing.
+    if (currently_wielded == object)
+    {
+      message = YOU_ARE + " already wielding " + get_object_string_() + " with " +
+        YOUR + " " + bodypart_desc + ".";
+      the_message_log.add(message);
+      result = StateResult::Success();
+    }
+    else
+    {
+      // Try to unwield the old item.
+      if (currently_wielded->perform_action_unwielded_by(subject))
+      {
+        subject->set_wielded(ThingManager::get_mu(), hand);
+        was_wielding = true;
+      }
+      else
+      {
+        // Premature exit.
+        return result;
+      }
+    }
   }
 
-  return{ success, action_time };
+  // If we HAVE a new item, try to wield it.
+  if (object->perform_action_wielded_by(subject))
+  {
+    subject->set_wielded(object, hand);
+    message = YOU_ARE + " now wielding " + get_object_string_() +
+      " with " + YOUR + " " + bodypart_desc + ".";
+    the_message_log.add(message);
+    result = StateResult::Success();
+  }
 }
 
 Action::StateResult ActionWield::do_finish_work_(AnyMap& params)

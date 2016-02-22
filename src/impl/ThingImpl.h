@@ -191,65 +191,6 @@ public:
       return true;
     }
   }
-
-  void do_wield(ThingRef thing, unsigned int hand)
-  {
-    wielded_items[hand] = thing;
-  }
-
-  bool do_unwield(ThingRef thing)
-  {
-    unsigned int hand;
-    if (is_wielding(thing, hand) == false)
-    {
-      return false;
-    }
-    else
-    {
-      wielded_items.erase(hand);
-      return true;
-    }
-  }
-
-  bool do_unwield(unsigned int hand)
-  {
-    if (wielded_items.count(hand) == 0)
-    {
-      return false;
-    }
-    else
-    {
-      wielded_items.erase(hand);
-      return true;
-    }
-  }
-
-  bool do_equip(ThingRef thing, WearLocation location)
-  {
-    if (equipped_items.count(location) == 0)
-    {
-      equipped_items[location] = thing;
-      return true;
-    }
-    else
-    {
-      return false;
-    }
-  }
-
-  bool do_deequip(ThingRef thing)
-  {
-    WearLocation location;
-    if (is_wearing(thing, location) == false)
-    {
-      return false;
-    }
-    else
-    {
-      equipped_items.erase(location);
-      return true;
-    }
-  }
 };
 
 #endif // THINGIMPL_H

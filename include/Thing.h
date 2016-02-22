@@ -62,6 +62,9 @@ public:
   /// Return whether there is an action currently in progress for this Entity.
   bool action_is_in_progress();
 
+  /// Get the thing being wielded in the specified hand, if any.
+  ThingRef get_wielding(unsigned int & hand);
+
   /// Returns true if this thing is the current player.
   /// By default, returns false. Overridden by Entity class.
   virtual bool is_player() const;
@@ -211,11 +214,9 @@ public:
 
   ActionResult can_wield(ThingRef thing_id, unsigned int hand, unsigned int& action_time);
 
-  /// Attempt to wield a thing.
-  /// @param[in] thing Thing to wield, or empty ptr if unwielding everything.
-  /// @param[in] hand Hand to wield it in.
-  /// @param[out] action_time Time it takes to wield.
-  bool do_wield(ThingRef thing, unsigned int hand, unsigned int& action_time);
+  void set_wielded(ThingRef thing, unsigned int hand);
+
+  void set_worn(ThingRef thing, WearLocation location);
 
   /// Return whether this Entity can currently see.
   /// @todo Implement blindness counter, blindness due to wearing blindfold,

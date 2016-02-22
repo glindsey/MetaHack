@@ -12,9 +12,7 @@ class ActionWait
   public Action, public ActionCRTP<ActionWait>
 {
   ACTION_HDR_BOILERPLATE(ActionWait)
-
-public:
-  ACTION_TRAIT(can_be_subject_only);
+    ACTION_TRAIT(can_be_subject_only)
 
 protected:
   virtual StateResult do_prebegin_work_(AnyMap& params) override;

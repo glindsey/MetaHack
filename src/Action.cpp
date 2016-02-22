@@ -266,6 +266,20 @@ Action::StateResult Action::do_prebegin_work(AnyMap& params)
         }
       }
 
+      if (object_must_be_in_inventory())
+      {
+        // Check that each object is in our inventory.
+        if (!subject->get_inventory().contains(object))
+        {
+          print_message_try_();
+
+          message = "However, " + OBJ_PRO_FOO + FOO_IS + " not in " + YOUR + " inventory.";
+          the_message_log.add(message);
+
+          return StateResult::Failure();
+        }
+      }
+
       // Check that we can perform this Action on this object.
       if (!object->can_have_action_done_by(subject, *this))
       {

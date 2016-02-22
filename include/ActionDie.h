@@ -12,15 +12,14 @@ class ActionDie
   public Action, public ActionCRTP<ActionDie>
 {
   ACTION_HDR_BOILERPLATE(ActionDie)
+    ACTION_TRAIT(can_be_subject_only)
+    ACTION_TRAIT(subject_can_be_in_limbo)
 
 public:
   virtual std::string const get_verbable() const override
   {
     return "mortal";
   }
-
-  ACTION_TRAIT(can_be_subject_only)
-    ACTION_TRAIT(subject_can_be_in_limbo)
 
 protected:
   virtual StateResult do_prebegin_work_(AnyMap& params) override;

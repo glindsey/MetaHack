@@ -253,6 +253,7 @@ public:
     CREATE_TRAIT(can_take_a_quantity)
     CREATE_TRAIT(subject_can_be_in_limbo)
     CREATE_TRAIT(object_can_be_out_of_reach)
+    CREATE_TRAIT(object_must_be_in_inventory)
 
     ;
 

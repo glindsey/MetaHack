@@ -115,6 +115,11 @@ bool Thing::action_is_in_progress()
   return (get_property<int>("counter_busy") > 0);
 }
 
+ThingRef Thing::get_wielding(unsigned int& hand)
+{
+  return pImpl->wielding_in(hand);
+}
+
 bool Thing::is_wielding(ThingRef thing)
 {
   unsigned int dummy;
@@ -279,7 +284,7 @@ bool Thing::do_deequip(ThingRef thing, unsigned int& action_time)
 
       if (thing->perform_action_deequipped_by(pImpl->ref, location))
       {
-        pImpl->do_deequip(thing);
+        set_worn(ThingManager::get_mu(), location);
 
         std::string wear_desc = get_bodypart_description(location.part, location.number);
         message = YOU_ARE + " no longer wearing " + thing_name +
@@ -352,7 +357,8 @@ bool Thing::do_equip(ThingRef thing, unsigned int& action_time)
 
       if (thing->perform_action_equipped_by(pImpl->ref, location))
       {
-        pImpl->do_equip(thing, location);
+        set_worn(thing, location);
+
         std::string wear_desc = get_bodypart_description(location.part,
                                                          location.number);
         message = YOU_ARE + " now wearing " + thing_name +
@@ -405,135 +411,28 @@ bool Thing::do_equip(ThingRef thing, unsigned int& action_time)
   return false;
 }
 
-ActionResult Thing::can_wield(ThingRef thing, unsigned int hand, unsigned int& action_time)
+void Thing::set_wielded(ThingRef thing, unsigned int hand)
 {
-  action_time = 1;
-
-  // If it is us, it means to unwield whatever is wielded.
-  if (thing == pImpl->ref)
+  if (thing == ThingManager::get_mu())
   {
-    return ActionResult::SuccessSelfReference;
+    pImpl->wielded_items.erase(hand);
   }
-
-  // Check that it's in our inventory.
-  if (!this->get_inventory().contains(thing))
+  else
   {
-    return ActionResult::FailureThingOutOfReach;
+    pImpl->wielded_items[hand] = thing;
   }
-
-  // Check that we have hands capable of wielding anything.
-  if (this->get_bodypart_number(BodyPart::Hand) == 0)
-  {
-    return ActionResult::FailureNotEnoughHands;
-  }
-
-  return ActionResult::Success;
 }
 
-bool Thing::do_wield(ThingRef thing, unsigned int hand, unsigned int& action_time)
+void Thing::set_worn(ThingRef thing, WearLocation location)
 {
-  std::string message;
-  std::string bodypart_desc =
-    this->get_bodypart_description(BodyPart::Hand, hand);
-
-  ThingRef currently_wielded = pImpl->wielding_in(hand);
-
-  std::string thing_name = (thing != ThingManager::get_mu()) ? thing->get_identifying_string() : "nothing";
-
-  bool was_wielding = false;
-
-  // First, check if we're already wielding something.
-  if (currently_wielded != ThingManager::get_mu())
+  if (thing == ThingManager::get_mu())
   {
-    // Now, check if the thing we're already wielding is THIS thing.
-    if (currently_wielded == thing)
-    {
-      message = YOU_ARE + " already wielding " + thing_name + " with " +
-        YOUR + " " + bodypart_desc + ".";
-      the_message_log.add(message);
-      return true;
-    }
-    else
-    {
-      // Try to unwield the old item.
-      if (currently_wielded->perform_action_unwielded_by(pImpl->ref))
-      {
-        pImpl->do_unwield(currently_wielded);
-        was_wielding = true;
-      }
-      else
-      {
-        return false;
-      }
-    }
+    pImpl->equipped_items.erase(location);
   }
-
-  // If we HAVE a new item, try to wield it.
-  ActionResult wield_try = (thing != ThingManager::get_mu())
-    ? this->can_wield(thing, hand, action_time)
-    : ActionResult::SuccessSelfReference;
-
-  switch (wield_try)
+  else
   {
-    case ActionResult::Success:
-    case ActionResult::SuccessSwapHands:
-    {
-      if (thing->perform_action_wielded_by(pImpl->ref))
-      {
-        pImpl->do_wield(thing, hand);
-        message = YOU_ARE + " now wielding " + thing_name +
-          " with " + YOUR + " " + bodypart_desc + ".";
-        the_message_log.add(message);
-        return true;
-      }
-    }
-    break;
-
-    case ActionResult::SuccessSelfReference:
-    {
-      if (was_wielding)
-      {
-        message = YOU_ARE + " no longer wielding any weapons with " +
-          YOUR + " " +
-          this->get_bodypart_description(BodyPart::Hand, hand) + ".";
-        the_message_log.add(message);
-      }
-      else
-      {
-        message = YOU_WERE + " not wielding any weapon to begin with.";
-        the_message_log.add(message);
-      }
-      return true;
-    }
-    break;
-
-    case ActionResult::FailureThingOutOfReach:
-    {
-      message = YOU_TRY + " to wield " + thing_name + ".";
-      the_message_log.add(message);
-
-      message = thing_name + " is not in " + YOUR + " inventory.";
-      the_message_log.add(message);
-    }
-    break;
-
-    case ActionResult::FailureNotEnoughHands:
-    {
-      message = YOU_TRY + " to wield " + thing_name;
-      the_message_log.add(message);
-
-      message = YOU + choose_verb(" don't", " doesn't") +
-        " have enough free " +
-        this->get_bodypart_plural(BodyPart::Hand) + ".";
-      the_message_log.add(message);
-    }
-    break;
-
-    default:
-      MINOR_ERROR("Unknown ActionResult %d", wield_try);
-      break;
+    pImpl->equipped_items[location] = thing;
   }
-  return false;
 }
 
 bool Thing::can_currently_see()

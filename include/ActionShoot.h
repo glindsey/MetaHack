@@ -12,14 +12,13 @@ class ActionShoot
   public Action, public ActionCRTP<ActionShoot>
 {
   ACTION_HDR_BOILERPLATE(ActionShoot)
+    ACTION_TRAIT(can_be_subject_verb_object_preposition_direction)
 
 public:
   std::string const get_verbed() const override
   {
     return "shot";
   }
-
-  ACTION_TRAIT(can_be_subject_verb_object_preposition_direction);
 
 protected:
   virtual StateResult do_prebegin_work_(AnyMap& params) override;

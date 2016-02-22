@@ -12,9 +12,7 @@ class ActionUse
   public Action, public ActionCRTP<ActionUse>
 {
   ACTION_HDR_BOILERPLATE(ActionUse)
-
-public:
-  ACTION_TRAIT(can_be_subject_verb_object);
+    ACTION_TRAIT(can_be_subject_verb_object)
 
 protected:
   virtual StateResult do_prebegin_work_(AnyMap& params) override;

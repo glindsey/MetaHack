@@ -17,6 +17,9 @@ class ActionInscribe
   public Action, public ActionCRTP<ActionInscribe>
 {
   ACTION_HDR_BOILERPLATE(ActionInscribe)
+    ACTION_TRAIT(can_be_subject_verb_direction)
+    ACTION_TRAIT(can_be_subject_verb_object_preposition_target)
+    ACTION_TRAIT(can_be_subject_verb_object_preposition_direction)
 
 public:
   std::string const get_verbed() const override
@@ -28,10 +31,6 @@ public:
   {
     return "written";
   }
-
-  ACTION_TRAIT(can_be_subject_verb_direction);
-  ACTION_TRAIT(can_be_subject_verb_object_preposition_target);
-  ACTION_TRAIT(can_be_subject_verb_object_preposition_direction);
 
 protected:
   virtual StateResult do_prebegin_work_(AnyMap& params) override;

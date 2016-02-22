@@ -12,14 +12,14 @@ class ActionRead
   public Action, public ActionCRTP<ActionRead>
 {
   ACTION_HDR_BOILERPLATE(ActionRead)
+    ACTION_TRAIT(can_be_subject_verb_object)
+    ACTION_TRAIT(can_be_subject_verb_direction)
 
 public:
   std::string const get_verbed() const override
   {
     return "read";
   }
-
-  ACTION_TRAIT(can_be_subject_verb_object);
 
 protected:
   virtual StateResult do_prebegin_work_(AnyMap& params) override;

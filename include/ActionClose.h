@@ -12,10 +12,8 @@ class ActionClose
   public Action, public ActionCRTP<ActionClose>
 {
   ACTION_HDR_BOILERPLATE(ActionClose)
-
-public:
-  ACTION_TRAIT(can_be_subject_verb_object);
-  ACTION_TRAIT(can_be_subject_verb_direction);
+    ACTION_TRAIT(can_be_subject_verb_object)
+    ACTION_TRAIT(can_be_subject_verb_direction)
 
 protected:
   virtual StateResult do_prebegin_work_(AnyMap& params) override;
