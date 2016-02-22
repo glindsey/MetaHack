@@ -247,7 +247,7 @@ namespace LuaThingFunctions
 
     if (!Action::exists(action_type))
     {
-      MAJOR_ERROR("Lua script requested queue of non-existent Action \"%s\"", new_action);
+      MAJOR_ERROR("Lua script requested queue of non-existent Action \"%s\"", action_type);
       return 0;
     }
 
