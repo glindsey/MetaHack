@@ -33,15 +33,6 @@ Action::StateResult ActionEat::do_prebegin_work_(AnyMap& params)
     return Action::StateResult::Failure();
   }
 
-  // Check that it is edible by us.
-  if (!object->is_edible_by(subject))
-  {
-    message = YOU + " can't eat that!";
-    the_message_log.add(message);
-
-    return Action::StateResult::Failure();
-  }
-
   return Action::StateResult::Success();
 }
 

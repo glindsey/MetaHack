@@ -18,7 +18,7 @@ function LightSource.get_description()
 end
 
 
-function LightSource.is_usable_by(id)
+function LightSource.can_be_used_by(id)
     -- This SHOULD check if a creature is sentient.
     -- For now just return true.
     return true

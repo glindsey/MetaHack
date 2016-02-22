@@ -19,6 +19,11 @@ public:
     return "threw";
   }
 
+  std::string const get_verb_pp() const override
+  {
+    return "thrown";
+  }
+
   ACTION_TRAIT(can_be_subject_verb_object_preposition_direction);
 
 protected:

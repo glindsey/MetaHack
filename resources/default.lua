@@ -57,8 +57,8 @@ end
 
 -- Initial inheritsFrom code courtesy of lua-users.org wiki
 function inheritsFrom(baseClass, className)
-	
-	local new_class = {}
+    
+    local new_class = {}
 
     -- new_class:create() is disabled because we don't actually create
     -- instances of these classes; instead they operate on C++ Thing instances.
@@ -70,24 +70,24 @@ function inheritsFrom(baseClass, className)
     --  return newinst
     --end
 
-	-- Add the default intrinsics and properties tables if they don't exist.
-	new_class.intrinsics = new_class.intrinsics or {}
-	new_class.defaults = new_class.defaults or {}
+    -- Add the default intrinsics and properties tables if they don't exist.
+    new_class.intrinsics = new_class.intrinsics or {}
+    new_class.defaults = new_class.defaults or {}
     
     if nil ~= baseClass then	
-		-- Do a deep copy of the base class, for starters.
-		new_class = table.deepcopy(baseClass)
-	
+        -- Do a deep copy of the base class, for starters.
+        new_class = table.deepcopy(baseClass)
+    
         -- Inherit from the base class.
         setmetatable(new_class, { __index = baseClass })
 
-		-- Add the other class as this class' parent.
-		new_class.intrinsics.parent = baseClass.type
-		
+        -- Add the other class as this class' parent.
+        new_class.intrinsics.parent = baseClass.type
+        
         -- Add this class to the base class' list of children.
         baseClass.children = baseClass.children or {}
         baseClass.children[className] = new_class;
-	end
+    end
 
     function new_class:class()
         return new_class
@@ -110,16 +110,16 @@ function inheritsFrom(baseClass, className)
         return b_isa
     end
 
-	
+    
     -- @todo Register class name with the ThingManager
     --thingManager_register(className)
-	new_class.intrinsics.type = className  
+    new_class.intrinsics.type = className  
     return new_class
 end
 
 function range(minValue, maxValue)
     local r = {}
-	r.type = "range"
+    r.type = "range"
     r.min = minValue
     r.max = maxValue
     return r
@@ -127,7 +127,7 @@ end
 
 function vector2(xValue, yValue)
     local v = {}
-	v.type = "vector2"
+    v.type = "vector2"
     v.x = xValue
     v.y = yValue
     return v

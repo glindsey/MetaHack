@@ -250,9 +250,9 @@ Action::StateResult Action::do_prebegin_work(AnyMap& params)
 
   if (objects.size() > 0)
   {
-    if (!object_can_be_out_of_reach())
+    for (auto object : objects)
     {
-      for (auto object : objects)
+      if (!object_can_be_out_of_reach())
       {
         // Check that each object is within reach.
         if (!subject->can_reach(object))
@@ -264,6 +264,15 @@ Action::StateResult Action::do_prebegin_work(AnyMap& params)
 
           return StateResult::Failure();
         }
+      }
+
+      // Check that we can perform this Action on this object.
+      if (!object->can_be_verbed_by(subject, get_verb_pp()))
+      {
+        print_message_try_();
+        print_message_cant_();
+
+        return Action::StateResult::Failure();
       }
     }
   }
@@ -328,33 +337,33 @@ std::string Action::get_object_string_()
   {
     if (get_object() == get_subject())
     {
-      description += " " + get_subject()->get_reflexive_pronoun();
+      description += get_subject()->get_reflexive_pronoun();
     }
     else
     {
       if (get_quantity() > 1)
       {
-        description += " " + boost::lexical_cast<std::string>(get_quantity()) + " of";
+        description += boost::lexical_cast<std::string>(get_quantity()) + " of";
       }
-      description += " " + get_object()->get_identifying_string(true);
+      description += get_object()->get_identifying_string(true);
     }
   }
   else if (get_objects().size() == 2)
   {
-    description += " " + get_object()->get_identifying_string(true) + " and " + get_second_object()->get_identifying_string(true);
+    description += get_object()->get_identifying_string(true) + " and " + get_second_object()->get_identifying_string(true);
   }
   else if (get_objects().size() > 1)
   {
     /// @todo May want to change this depending on whether subject is the player.
     ///       If not, we should print "several items" or something to that effect.
-    description += " the items";
+    description += "the items";
   }
   else
   {
     auto new_direction = get_target_direction();
     if (new_direction != Direction::None)
     {
-      description += " " + str(new_direction);
+      description += str(new_direction);
     }
   }
 
@@ -384,31 +393,47 @@ std::string Action::get_target_string_()
 
 void Action::print_message_try_()
 {
-  std::string message = YOU_TRY + " to " + VERB + get_object_string_() + ".";
+  std::string object_string = get_object_string_();
+  if (!object_string.empty()) object_string = " " + object_string;
+  std::string message = YOU_TRY + " to " + VERB + " " + get_object_string_() + ".";
   the_message_log.add(message);
 }
 
 void Action::print_message_do_()
 {
-  std::string message = YOU + " " + CV(VERB, VERB3) + get_object_string_() + ".";
+  std::string object_string = get_object_string_();
+  if (!object_string.empty()) object_string = " " + object_string;
+  std::string message = YOU + " " + CV(VERB, VERB3) + " " + get_object_string_() + ".";
   the_message_log.add(message);
 }
 
 void Action::print_message_begin_()
 {
-  std::string message = YOU + " " + CV("begin", "begins") + " to " + VERB + get_object_string_() + ".";
+  std::string object_string = get_object_string_();
+  if (!object_string.empty()) object_string = " " + object_string;
+  std::string message = YOU + " " + CV("begin", "begins") + " to " + VERB + object_string + ".";
   the_message_log.add(message);
 }
 
 void Action::print_message_stop_()
 {
-  std::string message = YOU + " " + CV("stop", "stops") + VERBING + get_object_string_() + ".";
+  std::string object_string = get_object_string_();
+  if (!object_string.empty()) object_string = " " + object_string;
+  std::string message = YOU + " " + CV("stop ", "stops ") + VERBING + object_string + ".";
   the_message_log.add(message);
 }
 
 void Action::print_message_finish_()
 {
-  std::string message = YOU + " " + CV("finish", "finishes") + VERBING + get_object_string_() + ".";
+  std::string object_string = get_object_string_();
+  if (!object_string.empty()) object_string = " " + object_string;
+  std::string message = YOU + " " + CV("finish ", "finishes ") + VERBING + object_string + ".";
+  the_message_log.add(message);
+}
+
+void Action::print_message_cant_()
+{
+  std::string message = YOU + " can't " + VERB + " that!";
   the_message_log.add(message);
 }
 

@@ -251,6 +251,14 @@ public:
   /// overridden.
   std::string get_bodypart_description(BodyPart part, unsigned int number);
 
+  /// Returns true if a particular Action can be performed on this Thing by
+  /// the specified Thing.
+  /// @param thing  The Thing doing the Action.
+  /// @param verbed Past-tense verb form to check, usually obtained by calling
+  ///               Action::get_verbed() on the requested Action.
+  /// @return true if the Action can be performed, false otherwise.
+  bool can_be_verbed_by(ThingRef thing, std::string verbed);
+
   /// Returns a reference to the inventory.
   Inventory& get_inventory();
 
@@ -398,26 +406,6 @@ public:
 
   /// Attempt to move this Thing into a location.
   bool move_into(ThingRef new_location);
-
-  /// Return whether or not this thing can be moved from its current location by this Entity.
-  /// The default behavior for this is to return true.
-  bool is_movable_by(ThingRef thing);
-
-  /// Return whether or not this thing can be activated by this Entity.
-  /// The default behavior for this is to return false.
-  bool is_usable_by(ThingRef thing);
-
-  /// Return whether or not this thing can be drank by this Entity.
-  /// The default behavior for this is to return false.
-  bool is_drinkable_by(ThingRef thing);
-
-  /// Return whether or not this thing can be eaten by this Entity.
-  /// The default behavior for this is to return false.
-  bool is_edible_by(ThingRef thing);
-
-  /// Return whether or not this thing can be read by this Entity.
-  /// The default behavior for this is to return false.
-  bool is_readable_by(ThingRef thing);
 
   /// Return whether or not this thing can be mixed with another Thing.
   /// The default behavior for this is to return false.

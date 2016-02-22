@@ -3,6 +3,8 @@ SMALL THINGS
 [ ] Export "thing_set_quantity" / "thing_modify_quantity" functions to Lua
 [X] Re-implement Lua "get_intrinsic_XXX" functions for Things
 [ ] BUG: Using "/" look command reveals inventory of squares player can't see
+[ ] Lua function names should not be dependent on the English past-participle forms of Action verbs.
+    They should be renamed from "can_be_VERBed_by" to "can_have_action_TYPE_done_by", with the Action type passed in rather than the English verb.
 
 MEDIUM THINGS
 =============

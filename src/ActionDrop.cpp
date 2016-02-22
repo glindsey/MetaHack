@@ -1,4 +1,5 @@
 #include "ActionDrop.h"
+#include "ActionMove.h"
 #include "Thing.h"
 #include "ThingRef.h"
 
@@ -53,7 +54,7 @@ Action::StateResult ActionDrop::do_prebegin_work_(AnyMap& params)
   }
 
   // Check that we can move the item.
-  if (!object->is_movable_by(subject))
+  if (!object->can_be_verbed_by(subject, ActionMove::prototype.get_verb_pp()))
   {
     print_message_try_();
 

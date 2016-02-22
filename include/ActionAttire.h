@@ -21,6 +21,11 @@ public:
     return "wore";
   }
 
+  std::string const get_verb_pp() const override
+  {
+    return "worn";
+  }
+
 protected:
   virtual StateResult do_prebegin_work_(AnyMap& params) override;
   virtual StateResult do_begin_work_(AnyMap& params) override;

@@ -19,6 +19,16 @@ public:
     return "ate";
   }
 
+  std::string const get_verb_pp() const override
+  {
+    return "eaten";
+  }
+
+  std::string const get_verbable() const override
+  {
+    return "edible";
+  }
+
   ACTION_TRAIT(can_be_subject_verb_object);
 
 protected:

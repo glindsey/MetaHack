@@ -24,6 +24,11 @@ public:
     return "wrote";
   }
 
+  std::string const get_verb_pp() const override
+  {
+    return "written";
+  }
+
   ACTION_TRAIT(can_be_subject_verb_direction);
   ACTION_TRAIT(can_be_subject_verb_object_preposition_target);
   ACTION_TRAIT(can_be_subject_verb_object_preposition_direction);

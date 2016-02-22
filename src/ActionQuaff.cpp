@@ -56,15 +56,6 @@ Action::StateResult ActionQuaff::do_prebegin_work_(AnyMap& params)
     return Action::StateResult::Failure();
   }
 
-  // Check that you can drink what is inside it.
-  if (!inv.get(INVSLOT_ZERO)->is_drinkable_by(subject))
-  {
-    message = YOU + " can't drink that!";
-    the_message_log.add(message);
-
-    return Action::StateResult::Failure();
-  }
-
   return Action::StateResult::Success();
 }
 

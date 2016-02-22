@@ -1,4 +1,5 @@
 #include "ActionGet.h"
+#include "ActionMove.h"
 #include "Thing.h"
 #include "ThingRef.h"
 
@@ -56,7 +57,7 @@ Action::StateResult ActionGet::do_prebegin_work_(AnyMap& params)
     return StateResult::Failure();
   }
 
-  if (!object->is_movable_by(subject))
+  if (!object->can_be_verbed_by(subject, ActionMove::prototype.get_verb_pp()))
   {
     message = YOU_TRY + " to pick up " + THE_FOO + ".";
     the_message_log.add(message);

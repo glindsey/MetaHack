@@ -9,7 +9,7 @@ Coin.intrinsics.plural = "[Coins]"
 Coin.intrinsics.physical_mass = 1
 
 function Coin.get_description()
-	return "A flat, typically round piece of metal with an official stamp, used as money."
+    return "A flat, typically round piece of metal with an official stamp, used as money."
 end
 
 function Coin.get_tile_offset(id, frame)

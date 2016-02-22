@@ -14,6 +14,16 @@ class ActionDrop
   ACTION_HDR_BOILERPLATE(ActionDrop)
 
 public:
+  std::string const get_verbable() const override
+  {
+    return "droppable";
+  }
+
+  std::string const get_verbed() const override
+  {
+    return "dropped";
+  }
+
   ACTION_TRAIT(can_be_subject_verb_object);
   ACTION_TRAIT(can_take_a_quantity);
 

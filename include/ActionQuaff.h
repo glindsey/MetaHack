@@ -24,6 +24,11 @@ public:
     return "drinking from";
   }
 
+  std::string const get_verbable() const override
+  {
+    return "potable";
+  }
+
   ACTION_TRAIT(can_be_subject_verb_object);
   ACTION_TRAIT(can_be_subject_verb_direction);
 

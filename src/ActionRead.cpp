@@ -30,19 +30,9 @@ Action::StateResult ActionRead::do_begin_work_(AnyMap& params)
   auto subject = get_subject();
   auto object = get_object();
 
-  if (object->is_readable_by(subject))
-  {
-    /// @todo Figure out read time.
-    print_message_begin_();
-    result = StateResult::Success(1);
-  }
-  else
-  {
-    print_message_try_();
-
-    message = THE_FOO + FOO_HAS + " no writing to read.";
-    the_message_log.add(message);
-  }
+  /// @todo Figure out read time.
+  print_message_begin_();
+  result = StateResult::Success(1);
 
   return result;
 }
@@ -88,4 +78,10 @@ Action::StateResult ActionRead::do_abort_work_(AnyMap& params)
 
   print_message_stop_();
   return Action::StateResult::Success();
+}
+
+void ActionRead::print_message_cant_()
+{
+  std::string message = THE_FOO + FOO_HAS + " no writing to read.";
+  the_message_log.add(message);
 }

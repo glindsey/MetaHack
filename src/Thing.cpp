@@ -1640,30 +1640,9 @@ std::string Thing::get_bodypart_description(BodyPart part,
   return result;
 }
 
-bool Thing::is_movable_by(ThingRef thing)
+bool Thing::can_be_verbed_by(ThingRef thing, std::string verbed)
 {
-  return call_lua_function_bool("is_movable_by", { thing }, true);
-}
-
-bool Thing::is_usable_by(ThingRef thing)
-{
-  return call_lua_function_bool("is_usable_by", { thing }, false);
-}
-
-bool Thing::is_drinkable_by(ThingRef thing)
-{
-  ThingRef contents = pImpl->inventory.get(INVSLOT_ZERO);
-  return call_lua_function_bool("is_drinkable_by", { thing, contents }, false);
-}
-
-bool Thing::is_edible_by(ThingRef thing)
-{
-  return call_lua_function_bool("is_edible_by", { thing }, false);
-}
-
-bool Thing::is_readable_by(ThingRef thing)
-{
-  return call_lua_function_bool("is_readable_by", { thing }, false);
+  return call_lua_function_bool("can_be_" + verbed + "_by", { thing }, false);
 }
 
 bool Thing::is_miscible_with(ThingRef thing)

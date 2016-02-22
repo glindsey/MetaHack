@@ -42,19 +42,9 @@ Action::StateResult ActionUse::do_begin_work_(AnyMap& params)
   auto subject = get_subject();
   auto object = get_object();
 
-  if (object->is_usable_by(subject))
-  {
-    /// @todo Figure out use time.
-    print_message_begin_();
-    result = StateResult::Success(1);
-  }
-  else
-  {
-    print_message_try_();
-
-    message = THE_FOO + " cannot be used.";
-    the_message_log.add(message);
-  }
+  /// @todo Figure out use time.
+  print_message_begin_();
+  result = StateResult::Success(1);
 
   return result;
 }

@@ -73,6 +73,7 @@ using ActionMap = std::unordered_map<std::string, ActionCreator>;
 #define VERB3         get_verb3()
 #define VERBING       get_verbing()
 #define VERBED        get_verbed()
+#define VERBPP        get_verb_pp()
 
 // === BOILERPLATE MACRO(S) ===================================================
 /// Boilerplate that goes at the start of each Action source file.
@@ -175,17 +176,22 @@ public:
     return "???";
   }
 
+  /// Return the first-/second-person singular form of the verb to be performed.
   virtual std::string const get_verb() const
   {
     return "???";
   }
 
+  /// Return the third-person singular form of the verb to be performed.
+  /// By default, appends an "s" to get_verb().
   virtual std::string const get_verb3() const
   {
     std::string verb = get_verb();
     return verb + "s";
   }
 
+  /// Return the present participle form of the verb to be performed.
+  /// By default, tries to use standard compositional rules to make the form.
   virtual std::string const get_verbing() const
   {
     std::string verb = get_verb();
@@ -199,6 +205,8 @@ public:
     }
   }
 
+  /// Return the past form of the verb to be performed.
+  /// By default, tries to use standard compositional rules to make the form.
   virtual std::string const get_verbed() const
   {
     std::string verb = get_verb();
@@ -209,6 +217,28 @@ public:
     else
     {
       return verb + "ed";
+    }
+  }
+
+  /// Return the past participle form of the verb to be performed.
+  /// By default, returns the past form, as it is the same for most verbs.
+  virtual std::string const get_verb_pp() const
+  {
+    return get_verbed();
+  }
+
+  /// Return the adjective form of the verb to be performed.
+  /// By default, tries to use standard compositional rules to make the form.
+  virtual std::string const get_verbable() const
+  {
+    std::string verb = get_verb();
+    if (std::string("aeiou").find_first_of(verb.back()))
+    {
+      return verb.substr(0, verb.length() - 1) + "able";
+    }
+    else
+    {
+      return verb + "able";
     }
   }
 
@@ -378,6 +408,16 @@ protected:
   /// This method can be overridden if necessary to customze the message for a
   /// particular action.
   virtual void print_message_finish_();
+
+  /// Print a "[SUBJECT] can't [VERB] that!" message.
+  /// The message will vary based on the presence of objects or a direction
+  /// for the action, using get_object_string().
+  /// "Finish" will be conjugated for the subject as "finishes" if needed.
+  ///
+  /// @todo Finish implementing me, right now the default implementation is too simple.
+  /// This method can be overridden if necessary to customze the message for a
+  /// particular action.
+  virtual void print_message_cant_();
 
 private:
   struct Impl;

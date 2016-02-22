@@ -24,6 +24,11 @@ public:
     return "got";
   }
 
+  std::string const get_verb_pp() const override
+  {
+    return "gotten";
+  }
+
   ACTION_TRAIT(can_be_subject_verb_object);
   ACTION_TRAIT(can_take_a_quantity);
 

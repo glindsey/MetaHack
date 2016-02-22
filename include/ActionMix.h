@@ -14,6 +14,11 @@ class ActionMix
   ACTION_HDR_BOILERPLATE(ActionMix)
 
 public:
+  std::string const get_verbable() const override
+  {
+    return "miscable";
+  }
+
   ACTION_TRAIT(can_be_subject_verb_objects);
 
 protected:

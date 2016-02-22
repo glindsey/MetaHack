@@ -14,6 +14,11 @@ class ActionDie
   ACTION_HDR_BOILERPLATE(ActionDie)
 
 public:
+  virtual std::string const get_verbable() const override
+  {
+    return "mortal";
+  }
+
   ACTION_TRAIT(can_be_subject_only)
     ACTION_TRAIT(subject_can_be_in_limbo)
 

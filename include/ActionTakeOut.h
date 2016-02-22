@@ -16,6 +16,7 @@ class ActionTakeOut
     /// @todo Handle taking multiple items out of a thing. Right now only the
     ///       first item is processed.
 public:
+
   ACTION_TRAIT(can_be_subject_verb_object);
   ACTION_TRAIT(can_be_subject_verb_objects);
 
