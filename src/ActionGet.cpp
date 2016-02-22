@@ -93,7 +93,7 @@ Action::StateResult ActionGet::do_begin_work_(AnyMap& params)
       the_message_log.add(message);
 
       MAJOR_ERROR("Could not move Thing even though "
-                  "is_movable returned Success");
+                  "perform_action_picked_up_by returned Success");
     }
   }
 

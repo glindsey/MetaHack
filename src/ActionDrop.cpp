@@ -107,7 +107,7 @@ Action::StateResult ActionDrop::do_begin_work_(AnyMap& params)
           the_message_log.add(message);
 
           MAJOR_ERROR("Could not move Thing even though "
-                      "is_movable returned Success");
+                      "perform_action_dropped_by returned Success");
         }
       }
       else // Drop failed

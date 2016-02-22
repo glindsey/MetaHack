@@ -7,7 +7,6 @@ Mu.intrinsics.name = "[Mu]"
 Mu.intrinsics.plural = "[Mu]"
 
 Mu.intrinsics.lockable = false
-Mu.intrinsics.movable = false
 Mu.intrinsics.opacity_red = 0
 Mu.intrinsics.opacity_green = 0
 Mu.intrinsics.opacity_blue = 0
