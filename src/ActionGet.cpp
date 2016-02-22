@@ -57,7 +57,7 @@ Action::StateResult ActionGet::do_prebegin_work_(AnyMap& params)
     return StateResult::Failure();
   }
 
-  if (!object->can_be_verbed_by(subject, ActionMove::prototype.get_verb_pp()))
+  if (!object->can_have_action_done_by(subject, ActionMove::prototype))
   {
     message = YOU_TRY + " to pick up " + THE_FOO + ".";
     the_message_log.add(message);

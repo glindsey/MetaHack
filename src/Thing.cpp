@@ -1640,9 +1640,9 @@ std::string Thing::get_bodypart_description(BodyPart part,
   return result;
 }
 
-bool Thing::can_be_verbed_by(ThingRef thing, std::string verbed)
+bool Thing::can_have_action_done_by(ThingRef thing, Action& action)
 {
-  return call_lua_function_bool("can_be_" + verbed + "_by", { thing }, false);
+  return call_lua_function_bool("can_have_action_" + action.get_type() + "_done_by", { thing }, false);
 }
 
 bool Thing::is_miscible_with(ThingRef thing)

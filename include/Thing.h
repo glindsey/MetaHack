@@ -254,10 +254,9 @@ public:
   /// Returns true if a particular Action can be performed on this Thing by
   /// the specified Thing.
   /// @param thing  The Thing doing the Action.
-  /// @param verbed Past-tense verb form to check, usually obtained by calling
-  ///               Action::get_verbed() on the requested Action.
+  /// @param action Reference to the Action to perform.
   /// @return true if the Action can be performed, false otherwise.
-  bool can_be_verbed_by(ThingRef thing, std::string verbed);
+  bool can_have_action_done_by(ThingRef thing, Action& action);
 
   /// Returns a reference to the inventory.
   Inventory& get_inventory();

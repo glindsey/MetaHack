@@ -54,7 +54,7 @@ Action::StateResult ActionDrop::do_prebegin_work_(AnyMap& params)
   }
 
   // Check that we can move the item.
-  if (!object->can_be_verbed_by(subject, ActionMove::prototype.get_verb_pp()))
+  if (!object->can_have_action_done_by(subject, ActionMove::prototype))
   {
     print_message_try_();
 

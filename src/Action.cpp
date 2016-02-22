@@ -267,7 +267,7 @@ Action::StateResult Action::do_prebegin_work(AnyMap& params)
       }
 
       // Check that we can perform this Action on this object.
-      if (!object->can_be_verbed_by(subject, get_verb_pp()))
+      if (!object->can_have_action_done_by(subject, *this))
       {
         print_message_try_();
         print_message_cant_();
