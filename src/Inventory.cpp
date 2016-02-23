@@ -146,7 +146,7 @@ ThingRef Inventory::split(ThingRef thing, unsigned int target_quantity)
       unsigned int source_quantity = source_thing->get_quantity();
       if (target_quantity < source_quantity)
       {
-        ThingRef target_thing = GAME.get_thing_manager().clone(source_thing);
+        target_thing = GAME.get_thing_manager().clone(source_thing);
         source_thing->set_quantity(source_quantity - target_quantity);
         target_thing->set_quantity(target_quantity);
       }

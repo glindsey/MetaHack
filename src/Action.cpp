@@ -110,7 +110,7 @@ bool Action::process(ThingRef actor, AnyMap params)
   // target actor is busy.
   while ((pImpl->state != Action::State::Processed) && (counter_busy == 0))
   {
-    int counter_busy = actor->get_property<int>("counter_busy");
+    counter_busy = actor->get_property<int>("counter_busy");
     Action::StateResult result{ false, 0 };
 
     TRACE("Thing #%s (%s): Action %s is in state %s, counter_busy = %d",
