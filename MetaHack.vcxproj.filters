@@ -553,5 +553,8 @@
     <None Include="resources\things\TileContents.lua">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="resources\deepcopy.lua">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

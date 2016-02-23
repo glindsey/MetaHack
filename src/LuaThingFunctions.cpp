@@ -230,8 +230,6 @@ namespace LuaThingFunctions
     return 1;
   }
 
-  /// @todo Flesh me out some more. Right now I can't queue actions that
-  ///       require targets, or that take a directional input.
   int thing_queue_action(lua_State* L)
   {
     int num_args = lua_gettop(L);
@@ -262,6 +260,82 @@ namespace LuaThingFunctions
       }
     }
 
+    new_action->set_objects(objects);
+    thing->queue_action(std::move(new_action));
+
+    return 1;
+  }
+
+  int thing_queue_targeted_action(lua_State* L)
+  {
+    int num_args = lua_gettop(L);
+
+    if ((num_args < 3))
+    {
+      MINOR_ERROR("expected >= 3 arguments, got %d", num_args);
+      return 0;
+    }
+
+    ThingRef thing = ThingRef(lua_tointeger(L, 1));
+    std::string action_type = lua_tostring(L, 2);
+    ThingRef target = ThingRef(lua_tointeger(L, 3));
+
+    if (!Action::exists(action_type))
+    {
+      MAJOR_ERROR("Lua script requested queue of non-existent Action \"%s\"", action_type);
+      return 0;
+    }
+
+    std::unique_ptr<Action> new_action = Action::create(action_type, thing);
+    std::vector<ThingRef> objects;
+
+    if (num_args > 3)
+    {
+      for (int arg_number = 4; arg_number <= num_args; ++arg_number)
+      {
+        objects.push_back(ThingRef(lua_tointeger(L, arg_number)));
+      }
+    }
+
+    new_action->set_target(target);
+    new_action->set_objects(objects);
+    thing->queue_action(std::move(new_action));
+
+    return 1;
+  }
+
+  int thing_queue_directional_action(lua_State* L)
+  {
+    int num_args = lua_gettop(L);
+
+    if ((num_args < 3))
+    {
+      MINOR_ERROR("expected >= 3 arguments, got %d", num_args);
+      return 0;
+    }
+
+    ThingRef thing = ThingRef(lua_tointeger(L, 1));
+    std::string action_type = lua_tostring(L, 2);
+    Direction direction = (Direction)the_lua_instance.get_enum_value(3);
+
+    if (!Action::exists(action_type))
+    {
+      MAJOR_ERROR("Lua script requested queue of non-existent Action \"%s\"", action_type);
+      return 0;
+    }
+
+    std::unique_ptr<Action> new_action = Action::create(action_type, thing);
+    std::vector<ThingRef> objects;
+
+    if (num_args > 3)
+    {
+      for (int arg_number = 4; arg_number <= num_args; ++arg_number)
+      {
+        objects.push_back(ThingRef(lua_tointeger(L, arg_number)));
+      }
+    }
+
+    new_action->set_target(direction);
     new_action->set_objects(objects);
     thing->queue_action(std::move(new_action));
 
@@ -357,6 +431,8 @@ namespace LuaThingFunctions
     the_lua_instance.register_function("thing_get_property_value", thing_get_property_value);
     the_lua_instance.register_function("thing_get_property_string", thing_get_property_string);
     the_lua_instance.register_function("thing_queue_action", thing_queue_action);
+    the_lua_instance.register_function("thing_queue_targeted_action", thing_queue_targeted_action);
+    the_lua_instance.register_function("thing_queue_directional_action", thing_queue_directional_action);
     the_lua_instance.register_function("thing_set_property_flag", thing_set_property_flag);
     the_lua_instance.register_function("thing_set_property_value", thing_set_property_value);
     the_lua_instance.register_function("thing_set_property_string", thing_set_property_string);

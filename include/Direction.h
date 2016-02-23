@@ -3,6 +3,8 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "Lua.h"
+
 #include <iostream>
 #include <sstream>
 
@@ -44,6 +46,26 @@ inline std::ostream& operator<<(std::ostream& os, Direction const& d)
   }
 
   return os;
+}
+
+inline void Direction_add_to_lua(Lua* lua_instance)
+{
+  lua_instance->add_enum("Direction",
+                         "None", Direction::None,
+                         "North", Direction::North,
+                         "Northeast", Direction::Northeast,
+                         "East", Direction::East,
+                         "Southeast", Direction::Southeast,
+                         "South", Direction::South,
+                         "Southwest", Direction::Southwest,
+                         "West", Direction::West,
+                         "Northwest", Direction::Northwest,
+                         "Up", Direction::Up,
+                         "Down", Direction::Down,
+                         "Self", Direction::Self,
+                         "Count", Direction::Count,
+                         0
+                         );
 }
 
 inline Direction update_direction(Direction current_direction,

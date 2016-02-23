@@ -276,6 +276,7 @@
   <ItemGroup>
     <None Include=".gitignore" />
     <None Include="README.md" />
+    <None Include="resources\deepcopy.lua" />
     <None Include="resources\default.lua" />
     <None Include="resources\maptiles\MTFloor.lua" />
     <None Include="resources\maptiles\MTFloorDirt.lua" />
