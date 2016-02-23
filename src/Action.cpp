@@ -19,7 +19,7 @@ struct Action::Impl
     state{ Action::State::Pending },
     subject{ subject_ },
     objects{},
-    target_thing{ ThingManager::get_mu() },
+    target_thing{ MU },
     target_direction{ Direction::None },
     quantity{ 1 }
   {}
@@ -45,7 +45,7 @@ struct Action::Impl
 
 Action::Action()
   :
-  pImpl{ new Impl(ThingManager::get_mu()) }
+  pImpl{ new Impl(MU) }
 {}
 
 Action::Action(ThingRef subject)
@@ -202,7 +202,7 @@ void Action::set_target(ThingRef thing) const
 
 void Action::set_target(Direction direction) const
 {
-  pImpl->target_thing = ThingManager::get_mu();
+  pImpl->target_thing = MU;
   pImpl->target_direction = direction;
 }
 
@@ -239,7 +239,7 @@ Action::StateResult Action::do_prebegin_work(AnyMap& params)
   if (!subject_can_be_in_limbo())
   {
     // Make sure we're not in limbo!
-    if ((location == ThingManager::get_mu()) || (current_tile == nullptr))
+    if ((location == MU) || (current_tile == nullptr))
     {
       /// @todo This message could be made less awkward for verbs that take objects.
       message = YOU + " can't " + VERB + " because " + YOU_DO + " not exist physically!";
@@ -364,7 +364,7 @@ std::string Action::get_object_string_()
     }
     else
     {
-      if (get_object() == ThingManager::get_mu())
+      if (get_object() == MU)
       {
         description += "nothing";
       }
@@ -410,10 +410,9 @@ std::string Action::get_target_string_()
   {
     return subject->get_reflexive_pronoun();
   }
-  else if (objects.size() == 1)
+  else if ((objects.size() == 1) && (target == get_object()))
   {
-    auto object = get_object();
-    return object->get_reflexive_pronoun();
+    return get_object()->get_reflexive_pronoun();
   }
   else
   {

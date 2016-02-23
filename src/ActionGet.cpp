@@ -13,7 +13,7 @@ Action::StateResult ActionGet::do_prebegin_work_(AnyMap& params)
   ThingRef location = subject->get_location();
 
   // Verify that the Action has an object.
-  if (object == ThingManager::get_mu())
+  if (object == MU)
   {
     return StateResult::Failure();
   }

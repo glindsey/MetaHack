@@ -284,7 +284,7 @@ bool Thing::do_deequip(ThingRef thing, unsigned int& action_time)
 
       if (thing->perform_action_deequipped_by(pImpl->ref, location))
       {
-        set_worn(ThingManager::get_mu(), location);
+        set_worn(MU, location);
 
         std::string wear_desc = get_bodypart_description(location.part, location.number);
         message = YOU_ARE + " no longer wearing " + thing_name +
@@ -413,7 +413,7 @@ bool Thing::do_equip(ThingRef thing, unsigned int& action_time)
 
 void Thing::set_wielded(ThingRef thing, unsigned int hand)
 {
-  if (thing == ThingManager::get_mu())
+  if (thing == MU)
   {
     pImpl->wielded_items.erase(hand);
   }
@@ -425,7 +425,7 @@ void Thing::set_wielded(ThingRef thing, unsigned int hand)
 
 void Thing::set_worn(ThingRef thing, WearLocation location)
 {
-  if (thing == ThingManager::get_mu())
+  if (thing == MU)
   {
     pImpl->equipped_items.erase(location);
   }
@@ -617,6 +617,19 @@ ThingRef Thing::get_ref() const
   return pImpl->ref;
 }
 
+ThingRef Thing::get_root_location() const
+{
+  if (pImpl->location == MU)
+  {
+    return pImpl->ref;
+  }
+  else
+  {
+    auto location = pImpl->location;
+    return location->get_root_location();
+  }
+}
+
 ThingRef Thing::get_location() const
 {
   return pImpl->location;
@@ -708,7 +721,7 @@ void Thing::find_seen_tiles()
 
   // Are we on a map?  Bail out if we aren't.
   ThingRef location = get_location();
-  if (location == ThingManager::get_mu())
+  if (location == MU)
   {
     return;
   }
@@ -800,7 +813,7 @@ bool Thing::move_into(ThingRef new_location)
       if (new_location->get_inventory().add(pImpl->ref))
       {
         // Try to lock our old location.
-        if (pImpl->location != ThingManager::get_mu())
+        if (pImpl->location != MU)
         {
           pImpl->location->get_inventory().remove(pImpl->ref);
         }
@@ -846,14 +859,14 @@ Inventory& Thing::get_inventory()
 bool Thing::is_inside_another_thing() const
 {
   ThingRef location = pImpl->location;
-  if (location == ThingManager::get_mu())
+  if (location == MU)
   {
     // Thing is a part of the MapTile such as the floor.
     return false;
   }
 
   ThingRef location2 = location->get_location();
-  if (location2 == ThingManager::get_mu())
+  if (location2 == MU)
   {
     // Thing is directly on the floor.
     return false;
@@ -865,7 +878,7 @@ MapTile* Thing::get_maptile() const
 {
   ThingRef location = pImpl->location;
 
-  if (location == ThingManager::get_mu())
+  if (location == MU)
   {
     return _get_maptile();
   }
@@ -879,7 +892,7 @@ MapId Thing::get_map_id() const
 {
   ThingRef location = pImpl->location;
 
-  if (location == ThingManager::get_mu())
+  if (location == MU)
   {
     MapTile* maptile = _get_maptile();
     if (maptile != nullptr)
@@ -1274,7 +1287,7 @@ void Thing::light_up_surroundings()
   ThingRef location = get_location();
 
   // Use visitor pattern.
-  if ((location != ThingManager::get_mu()) && this->get_property<bool>("light_lit"))
+  if ((location != MU) && this->get_property<bool>("light_lit"))
   {
     location->be_lit_by(this->get_ref());
   }
@@ -1284,7 +1297,7 @@ void Thing::be_lit_by(ThingRef light)
 {
   call_lua_function("on_lit_by", { light });
 
-  if (get_location() == ThingManager::get_mu())
+  if (get_location() == MU)
   {
     GAME.get_map_factory().get(get_map_id()).add_light(light);
   }
@@ -1299,7 +1312,7 @@ void Thing::be_lit_by(ThingRef light)
   if (!is_opaque() || get_intrinsic<bool>("is_entity"))
   {
     ThingRef location = get_location();
-    if (location != ThingManager::get_mu())
+    if (location != MU)
     {
       location->be_lit_by(light);
     }
@@ -1317,7 +1330,7 @@ void Thing::spill()
   for (ThingPair thing_pair : things)
   {
     ThingRef thing = thing_pair.second;
-    if (pImpl->location != ThingManager::get_mu())
+    if (pImpl->location != MU)
     {
       ActionResult can_contain = pImpl->location->can_contain(thing);
 
@@ -1372,7 +1385,7 @@ void Thing::destroy()
     spill();
   }
 
-  if (old_location != ThingManager::get_mu())
+  if (old_location != MU)
   {
     old_location->get_inventory().remove(pImpl->ref);
   }

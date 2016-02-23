@@ -102,7 +102,7 @@ Action::StateResult ActionMove::do_begin_work_(AnyMap& params)
 
       // See if the tile to move into contains another creature.
       ThingRef creature = new_floor->get_inventory().get_entity();
-      if (creature != ThingManager::get_mu())
+      if (creature != MU)
       {
         /// @todo Setting choosing whether auto-attack is on.
         /// @todo Only attack hostiles.

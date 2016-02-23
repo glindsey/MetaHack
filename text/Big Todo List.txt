@@ -7,7 +7,9 @@ SMALL THINGS
 
 MEDIUM THINGS
 =============
-[ ] Transition attire (wear), wield code into Action subclasses
+[ ] Write attire (wear) action code
+[ ] Write open, close Action code
+[ ] Write lock, unlock Action code
 [ ] Transition die code into Action subclass (?)
 [ ] Some more verbs: push, shatter
 [ ] Create (and call) each Thing's "process()" Lua function (needed for enemy AI!)

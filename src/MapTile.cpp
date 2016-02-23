@@ -333,7 +333,7 @@ void MapTile::add_wall_vertices_to(sf::VertexArray& vertices,
   // Player.
   ThingRef player = GAME.get_player();
 
-  if (player != ThingManager::get_mu())
+  if (player != MU)
   {
     auto player_tile = player->get_maptile();
     if (player_tile != nullptr)

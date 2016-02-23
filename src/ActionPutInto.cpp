@@ -12,7 +12,7 @@ Action::StateResult ActionPutInto::do_prebegin_work_(AnyMap& params)
   auto container = get_target_thing();
 
   // Verify that the Action has an object.
-  if (object == ThingManager::get_mu())
+  if (object == MU)
   {
     return StateResult::Failure();
   }
@@ -175,12 +175,12 @@ Action::StateResult ActionPutInto::do_abort_work_(AnyMap& params)
 
 void ActionPutInto::print_message_try_()
 {
-  std::string message = YOU_TRY + " to " + VERB + get_object_string_() + " into " + get_target_string_() + ".";
+  std::string message = YOU_TRY + " to " + VERB + " " + get_object_string_() + " into " + get_target_string_() + ".";
   the_message_log.add(message);
 }
 
 void ActionPutInto::print_message_do_()
 {
-  std::string message = YOU + " " + CV(VERB, VERB3) + get_object_string_() + " into " + get_target_string_() + ".";
+  std::string message = YOU + " " + CV(VERB, VERB3) + " " + get_object_string_() + " into " + get_target_string_() + ".";
   the_message_log.add(message);
 }

@@ -77,4 +77,7 @@ private:
   boost::object_pool<Thing> m_thing_pool;
 };
 
+// === CONVENIENCE MACRO ======================================================
+#define MU  ThingManager::get_mu()
+
 #endif // THINGMANAGER_H

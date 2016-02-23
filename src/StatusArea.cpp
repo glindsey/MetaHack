@@ -54,7 +54,7 @@ std::string StatusArea::_render_contents(sf::RenderTarget& target, int frame)
   render_text.setCharacterSize(Settings.get<unsigned int>("text_default_size"));
   render_text.setPosition(origin.x, origin.y);
 
-  if (player != ThingManager::get_mu())
+  if (player != MU)
   {
     // Render player name
     std::string name = player->get_proper_name();

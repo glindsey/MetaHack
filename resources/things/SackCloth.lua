@@ -7,10 +7,17 @@ SackCloth.intrinsics.name = "cloth sack"
 SackCloth.intrinsics.plural = "cloth sacks"
 
 SackCloth.intrinsics.inventory_size = 10
-SackCloth.intrinsics.openable = false
 
 SackCloth.defaults.open = true
 
+function Container.can_have_action_open_done_by(id)
+    return false
+end
+
+function Container.can_have_action_close_done_by(id)
+    return false
+end
+
 function SackCloth.get_description()
-	return "A sack made out of cloth."
+    return "A sack made out of cloth."
 end

@@ -24,11 +24,9 @@ Thing.intrinsics.bodypart_tail_name = "tail"
 
 Thing.intrinsics.inventory_size = 0
 Thing.intrinsics.living = false
-Thing.intrinsics.lockable = false
 Thing.intrinsics.opacity_red = 255
 Thing.intrinsics.opacity_green = 255
 Thing.intrinsics.opacity_blue = 255
-Thing.intrinsics.openable = false
 Thing.intrinsics.physical_mass = 0
 
 Thing.defaults.counter_busy = 0

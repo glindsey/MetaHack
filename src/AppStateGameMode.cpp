@@ -29,6 +29,7 @@
 #include "ActionGet.h"
 #include "ActionHurl.h"
 #include "ActionInscribe.h"
+#include "ActionLock.h"
 #include "ActionMix.h"
 #include "ActionMove.h"
 #include "ActionOpen.h"
@@ -37,6 +38,7 @@
 #include "ActionRead.h"
 #include "ActionShoot.h"
 #include "ActionTakeOut.h"
+#include "ActionUnlock.h"
 #include "ActionUse.h"
 #include "ActionWait.h"
 #include "ActionWield.h"
@@ -197,35 +199,32 @@ public:
       result = EventResult::Handled;
     }
 
-    if (p_action_in_progress)
+    if (p_action_in_progress && p_action_in_progress->can_be_subject_verb_object_preposition_target())
     {
-      if (p_action_in_progress->can_be_subject_verb_object_preposition_target())
+      if (!key.alt && !key.control && key_number != -1)
       {
-        if (!key.alt && !key.control && key_number != -1)
-        {
-          p_action_in_progress->set_target(inventory_area->get_thing(static_cast<InventorySlot>(key_number)));
-          player->queue_action(std::move(p_action_in_progress));
-          inventory_area_shows_player = false;
-          reset_inventory_area();
-          current_input_state = GameInputState::Map;
-          result = EventResult::Handled;
-        }
-      } // end if (action_in_progress.target_can_be_thing)
-
-      if (p_action_in_progress->can_be_subject_verb_direction() ||
-          p_action_in_progress->can_be_subject_verb_object_preposition_direction())
-      {
-        if (!key.alt && !key.control && key_direction != Direction::None)
-        {
-          p_action_in_progress->set_target(key_direction);
-          player->queue_action(std::move(p_action_in_progress));
-          inventory_area_shows_player = false;
-          reset_inventory_area();
-          current_input_state = GameInputState::Map;
-          result = EventResult::Handled;
-        }
+        p_action_in_progress->set_target(inventory_area->get_thing(static_cast<InventorySlot>(key_number)));
+        player->queue_action(std::move(p_action_in_progress));
+        inventory_area_shows_player = false;
+        reset_inventory_area();
+        current_input_state = GameInputState::Map;
+        result = EventResult::Handled;
       }
-    } // end if (p_action_in_progress)
+    } // end if (action_in_progress.target_can_be_thing)
+
+    if (p_action_in_progress && (p_action_in_progress->can_be_subject_verb_direction() ||
+                                 p_action_in_progress->can_be_subject_verb_object_preposition_direction()))
+    {
+      if (!key.alt && !key.control && key_direction != Direction::None)
+      {
+        p_action_in_progress->set_target(key_direction);
+        player->queue_action(std::move(p_action_in_progress));
+        inventory_area_shows_player = false;
+        reset_inventory_area();
+        current_input_state = GameInputState::Map;
+        result = EventResult::Handled;
+      }
+    }
 
     return result;
   }
@@ -608,9 +607,9 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
               ThingRef thing = pImpl->inventory_area->get_selected_things().at(0);
               if (thing->get_intrinsic<int>("inventory_size") != 0)
               {
-                if (!thing->get_intrinsic<bool>("openable") || thing->get_property<bool>("open"))
+                if (!thing->can_have_action_done_by(MU, ActionOpen::prototype) || thing->get_property<bool>("open"))
                 {
-                  if (!thing->get_intrinsic<bool>("lockable") || !thing->get_property<bool>("locked"))
+                  if (!thing->can_have_action_done_by(MU, ActionLock::prototype) || !thing->get_property<bool>("locked"))
                   {
                     pImpl->inventory_area->set_viewed(thing);
                   }
@@ -1068,7 +1067,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           default:
             break;
         }
-    }
+      }
 #endif
 
       // *** YES ALT, YES CTRL, SHIFT is irrelevant *****************************
@@ -1081,17 +1080,17 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           default:
             break;
         }
-  }
+      }
 #endif
       break;
-} // end case GameInputState::Map
+    } // end case GameInputState::Map
 
     default:
       break;
-      } // end switch (pImpl->current_input_state)
+  } // end switch (pImpl->current_input_state)
 
   return result;
-    }
+}
 
 EventResult AppStateGameMode::handle_mouse_wheel(sf::Event::MouseWheelEvent& wheel)
 {

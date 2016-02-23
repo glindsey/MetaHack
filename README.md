@@ -64,7 +64,7 @@ The following commands are currently in place, although ~~some~~ most are not ye
 * `CTRL-I` - Inscribe (write) on an item.
 * ~~`CTRL-J` - Jump in a direction.~~
 * ~~`CTRL-K` - Kick in a direction.~~
-* ~~`CTRL-L` - Nothing yet; maybe look around (similar to "search" in Nethack).~~
+* ~~`CTRL-L` - Nothing yet; maybe look around (similar to "search" in Nethack), or lock/unlock.~~
 * `CTRL-M` - Mix two liquids/powders together.
 * ~~`CTRL-N` - Nothing yet.~~
 * `CTRL-O` - Open item(s). Also used to open doors/grates/etc.

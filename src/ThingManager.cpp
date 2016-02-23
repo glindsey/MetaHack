@@ -127,7 +127,7 @@ Thing const* ThingManager::get_ptr(ThingId id) const
   }
 }
 
-ThingRef ThingManager::get_mu()
+ThingRef MU
 {
   return ThingRef();
 }

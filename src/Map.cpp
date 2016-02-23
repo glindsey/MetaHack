@@ -517,7 +517,7 @@ void Map::update_thing_vertices(ThingRef thing, int frame)
         if (inv.count() > 0)
         {
           ThingRef biggest_thing = inv.get_largest_thing();
-          if (biggest_thing != ThingManager::get_mu())
+          if (biggest_thing != MU)
           {
             biggest_thing->add_floor_vertices_to(pImpl->thing_vertices, true, frame);
           }

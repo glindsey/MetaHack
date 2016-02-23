@@ -12,7 +12,7 @@ Action::StateResult ActionTakeOut::do_prebegin_work_(AnyMap& params)
   auto container = object->get_location();
 
   // Verify that the Action has an object.
-  if (object == ThingManager::get_mu())
+  if (object == MU)
   {
     return StateResult::Failure();
   }
@@ -76,6 +76,9 @@ Action::StateResult ActionTakeOut::do_begin_work_(AnyMap& params)
   auto container = object->get_location();
   auto new_location = container->get_location();
 
+  // Set the target to be the container as a kludge for message printing.
+  set_target(container);
+
   if (object->perform_action_taken_out_by(subject))
   {
     if (object->move_into(new_location))
@@ -87,7 +90,7 @@ Action::StateResult ActionTakeOut::do_begin_work_(AnyMap& params)
     }
     else
     {
-      message = YOU + " could not take " + THE_FOO + " out of " + THE_FOOS_LOCATION + " for some inexplicable reason.";
+      message = YOU + " could not take " + get_object_string_() + " out of " + get_target_string_() + " for some inexplicable reason.";
       the_message_log.add(message);
 
       MAJOR_ERROR("Could not move Thing out of Container");
@@ -109,12 +112,12 @@ Action::StateResult ActionTakeOut::do_abort_work_(AnyMap& params)
 
 void ActionTakeOut::print_message_try_()
 {
-  std::string message = YOU_TRY + " to " + VERB + get_object_string_() + " from " + THE_FOOS_LOCATION + ".";
+  std::string message = YOU_TRY + " to " + VERB + " " + get_object_string_() + " from " + get_target_string_() + ".";
   the_message_log.add(message);
 }
 
 void ActionTakeOut::print_message_do_()
 {
-  std::string message = YOU + " " + CV(VERB, VERB3) + get_object_string_() + " from " + THE_FOOS_LOCATION + ".";
+  std::string message = YOU + " " + CV(VERB, VERB3) + " " + get_object_string_() + " from " + get_target_string_() + ".";
   the_message_log.add(message);
 }

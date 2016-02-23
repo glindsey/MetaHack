@@ -6,11 +6,9 @@ Mu = inheritsFrom(Thing, "Mu")
 Mu.intrinsics.name = "[Mu]"
 Mu.intrinsics.plural = "[Mu]"
 
-Mu.intrinsics.lockable = false
 Mu.intrinsics.opacity_red = 0
 Mu.intrinsics.opacity_green = 0
 Mu.intrinsics.opacity_blue = 0
-Mu.intrinsics.openable = false
 
 function Mu.get_description()
 	return "A completely empty space; the absence of all things."

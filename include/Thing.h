@@ -169,6 +169,10 @@ public:
   /// Return a reference to this thing.
   ThingRef get_ref() const;
 
+  /// Return the root location of this Thing, traversing up the location
+  /// chain until MU is reached.
+  ThingRef get_root_location() const;
+
   /// Return the location of this thing.
   ThingRef get_location() const;
 

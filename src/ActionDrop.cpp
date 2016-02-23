@@ -88,7 +88,7 @@ Action::StateResult ActionDrop::do_begin_work_(AnyMap& params)
     message = YOU_GET + " up.";
     the_message_log.add(message);
   }
-  else if (object != ThingManager::get_mu())
+  else if (object != MU)
   {
     if (location->can_contain(object) == ActionResult::Success)
     {

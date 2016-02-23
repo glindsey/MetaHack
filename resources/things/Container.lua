@@ -6,9 +6,16 @@ Container = inheritsFrom(Thing, "Container")
 Container.intrinsics.name = "[Container]"
 Container.intrinsics.plural = "[Containers]"
 
-Container.intrinsics.openable = true
 Container.intrinsics.inventory_size = -1
 
+function Container.can_have_action_open_done_by(id)
+    return true
+end
+
+function Container.can_have_action_close_done_by(id)
+    return true
+end
+
 function Container.get_description()
-	return "An object that can be used to hold or transport something."
+    return "An object that can be used to hold or transport something."
 end
