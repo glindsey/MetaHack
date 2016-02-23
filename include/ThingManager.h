@@ -4,7 +4,6 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
-#include <boost/pool/object_pool.hpp>
 #include <cereal/archives/xml.hpp>
 #include <cereal/types/memory.hpp>
 #include <cereal/types/polymorphic.hpp>
@@ -31,12 +30,10 @@ public:
 
   /// Serialization function.
   template<class Archive>
-  void serialize(Archive& archive)
+  void serialize(Archive& archive) const
   {
-    /// @todo WRITE ME. It isn't as simple as just archiving m_thing_map and
-    ///       m_thing_pool, because there are a crapload of naked pointers in
-    ///       there.
-    //archive(m_thing_map, m_thing_pool);
+    /// @todo GSL -- KEEP GOING HERE
+    //archive(m_thing_map);
   }
 
   /// Create a particular object given the type name.
@@ -68,22 +65,19 @@ public:
 
 protected:
 
-  /// Get a pointer to the Thing associated with a particular ThingId.
+  /// Get a reference to the Thing associated with a particular ThingId.
   /// If the ID does not exist, returns Mu.
-  Thing* get_ptr(ThingId data);
+  Thing& get(ThingId data);
 
-  /// Get a pointer to the Thing associated with a particular ThingId.
+  /// Get a reference to the Thing associated with a particular ThingId.
   /// If the ID does not exist, returns Mu.
-  Thing const* get_ptr(ThingId data) const;
+  Thing const& get(ThingId data) const;
 
 private:
   /// Map of ThingIds to Things.
   /// @todo Probably faster to use an unordered_map and use ThingId.id
   ///       as the hash function.
-  std::unordered_map<ThingId, Thing*> m_thing_map;
-
-  /// Object pool of Things that exist.
-  boost::object_pool<Thing> m_thing_pool;
+  std::unordered_map<ThingId, std::unique_ptr<Thing>> m_thing_map;
 };
 
 // === CONVENIENCE MACRO ======================================================

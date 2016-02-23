@@ -66,7 +66,7 @@ bool ThingRef::operator!=(ThingRef const& other) const
 
 Thing* ThingRef::operator->()
 {
-  return GAME.get_thing_manager().get_ptr(m_id);
+  return &(GAME.get_thing_manager().get(m_id));
 }
 
 ThingId ThingRef::get_id() const

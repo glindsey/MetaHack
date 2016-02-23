@@ -42,11 +42,11 @@ ThingRef ThingManager::create(std::string type)
   ThingRef new_ref = ThingRef(new_id);
   Metadata& metadata = MDC::get_collection("thing").get(type);
 
-  Thing* new_thing = m_thing_pool.construct(boost::ref(metadata), new_ref);
-  m_thing_map[new_id] = new_thing;
+  std::unique_ptr<Thing> new_thing{ new Thing{ metadata, new_ref} };
+  m_thing_map[new_id] = std::move(new_thing);
 
   // Temporary test of Lua call
-  new_thing->call_lua_function("on_create", {});
+  m_thing_map[new_id]->call_lua_function("on_create", {});
 
   return ThingRef(new_id);
 }
@@ -57,8 +57,8 @@ ThingRef ThingManager::create_tile_contents(MapTile* map_tile)
   ThingRef new_ref = ThingRef(new_id);
   Metadata& metadata = MDC::get_collection("thing").get("TileContents");
 
-  Thing* new_thing = m_thing_pool.construct(map_tile, boost::ref(metadata), new_ref);
-  m_thing_map[new_id] = new_thing;
+  std::unique_ptr<Thing> new_thing{ new Thing { map_tile, metadata, new_ref } };
+  m_thing_map[new_id] = std::move(new_thing);
 
   return ThingRef(new_id);
 }
@@ -66,13 +66,13 @@ ThingRef ThingManager::create_tile_contents(MapTile* map_tile)
 ThingRef ThingManager::clone(ThingRef original_ref)
 {
   if (this->exists(original_ref) == false) return get_mu();
-  Thing* original_thing = this->get_ptr(original_ref.m_id);
+  Thing& original_thing = this->get(original_ref.m_id);
 
   ThingId new_id = ThingRef::create();
   ThingRef new_ref = ThingRef(new_id);
 
-  Thing* new_thing = m_thing_pool.construct(*original_thing, new_ref);
-  m_thing_map[new_id] = new_thing;
+  std::unique_ptr<Thing> new_thing{ new Thing { original_thing, new_ref} };
+  m_thing_map[new_id] = std::move(new_thing);
 
   return ThingRef(new_id);
 }
@@ -83,8 +83,6 @@ void ThingManager::destroy(ThingRef ref)
   {
     if (m_thing_map.count(ref.m_id) != 0)
     {
-      Thing* old_thing = m_thing_map[ref.m_id];
-      m_thing_pool.destroy(old_thing);
       m_thing_map.erase(ref.m_id);
     }
   }
@@ -99,29 +97,29 @@ bool ThingManager::exists(ThingRef ref)
   return (m_thing_map.count(ref.m_id) != 0);
 }
 
-Thing* ThingManager::get_ptr(ThingId id)
+Thing& ThingManager::get(ThingId id)
 {
   try
   {
-    return m_thing_map.at(id);
+    return *(m_thing_map.at(id).get());
   }
   catch (std::out_of_range&)
   {
     MAJOR_ERROR("Tried to get thing %s which does not exist", boost::lexical_cast<std::string>(id).c_str());
-    return m_thing_map[get_mu().m_id];
+    return *(m_thing_map[get_mu().m_id].get());
   }
 }
 
-Thing const* ThingManager::get_ptr(ThingId id) const
+Thing const& ThingManager::get(ThingId id) const
 {
   try
   {
-    return m_thing_map.at(id);
+    return *(m_thing_map.at(id).get());
   }
   catch (std::out_of_range&)
   {
     MAJOR_ERROR("Tried to get thing %s which does not exist", boost::lexical_cast<std::string>(id).c_str());
-    return m_thing_map.at(get_mu().m_id);
+    return *(m_thing_map.at(get_mu().m_id).get());
   }
 }
 
