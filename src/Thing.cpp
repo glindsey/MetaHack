@@ -1657,7 +1657,7 @@ void Thing::perform_action_attack_hits(ThingRef target)
 
 bool Thing::perform_action_thrown_by(ThingRef actor, Direction direction)
 {
-  ActionResult result = call_lua_function("perform_action_thrown_by", { actor, static_cast<lua_Integer>(direction) });
+  ActionResult result = call_lua_function("perform_action_thrown_by", { actor, direction.x(), direction.y(), direction.z() });
   return was_successful(result);
 }
 
@@ -1745,7 +1745,7 @@ bool Thing::perform_action_wielded_by(ThingRef actor)
 
 bool Thing::perform_action_fired_by(ThingRef actor, Direction direction)
 {
-  ActionResult result = call_lua_function("perform_action_fired_by", { actor, static_cast<lua_Integer>(direction) });
+  ActionResult result = call_lua_function("perform_action_fired_by", { actor, direction.x(), direction.y(), direction.z() });
   return was_successful(result);
 }
 
@@ -1882,8 +1882,8 @@ void Thing::do_recursive_visibility(int octant,
       new_coords.y = tile_coords.y - depth;
       loop_condition = [](sf::Vector2f a, sf::Vector2f b, float c) { return calc_slope(a, b) >= c; };
       dir = Direction::West;
-      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_slope(a + halfunit(Direction::Southwest), b); };
-      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_slope(a + halfunit(Direction::Northwest), b); };
+      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_slope(a + Direction::Southwest.half(), b); };
+      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_slope(a + Direction::Northwest.half(), b); };
       break;
 
     case 2:
@@ -1891,8 +1891,8 @@ void Thing::do_recursive_visibility(int octant,
       new_coords.y = tile_coords.y - depth;
       loop_condition = [](sf::Vector2f a, sf::Vector2f b, float c) { return calc_slope(a, b) <= c; };
       dir = Direction::East;
-      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_slope(a + halfunit(Direction::Southeast), b); };
-      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return -calc_slope(a + halfunit(Direction::Northeast), b); };
+      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_slope(a + Direction::Southeast.half(), b); };
+      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return -calc_slope(a + Direction::Northeast.half(), b); };
       break;
 
     case 3:
@@ -1900,8 +1900,8 @@ void Thing::do_recursive_visibility(int octant,
       new_coords.y = static_cast<int>(rint(static_cast<float>(tile_coords.y) - (slope_A * static_cast<float>(depth))));
       loop_condition = [](sf::Vector2f a, sf::Vector2f b, float c) { return calc_inv_slope(a, b) <= c; };
       dir = Direction::North;
-      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_inv_slope(a + halfunit(Direction::Northwest), b); };
-      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return -calc_inv_slope(a + halfunit(Direction::Northeast), b); };
+      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_inv_slope(a + Direction::Northwest.half(), b); };
+      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return -calc_inv_slope(a + Direction::Northeast.half(), b); };
       break;
 
     case 4:
@@ -1909,8 +1909,8 @@ void Thing::do_recursive_visibility(int octant,
       new_coords.y = static_cast<int>(rint(static_cast<float>(tile_coords.y) + (slope_A * static_cast<float>(depth))));
       loop_condition = [](sf::Vector2f a, sf::Vector2f b, float c) { return calc_inv_slope(a, b) >= c; };
       dir = Direction::South;
-      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_inv_slope(a + halfunit(Direction::Southwest), b); };
-      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_inv_slope(a + halfunit(Direction::Southeast), b); };
+      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_inv_slope(a + Direction::Southwest.half(), b); };
+      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_inv_slope(a + Direction::Southeast.half(), b); };
       break;
 
     case 5:
@@ -1918,8 +1918,8 @@ void Thing::do_recursive_visibility(int octant,
       new_coords.y = tile_coords.y + depth;
       loop_condition = [](sf::Vector2f a, sf::Vector2f b, float c) { return calc_slope(a, b) >= c; };
       dir = Direction::East;
-      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_slope(a + halfunit(Direction::Northeast), b); };
-      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_slope(a + halfunit(Direction::Southeast), b); };
+      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_slope(a + Direction::Northeast.half(), b); };
+      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_slope(a + Direction::Southeast.half(), b); };
       break;
 
     case 6:
@@ -1927,8 +1927,8 @@ void Thing::do_recursive_visibility(int octant,
       new_coords.y = tile_coords.y + depth;
       loop_condition = [](sf::Vector2f a, sf::Vector2f b, float c) { return calc_slope(a, b) <= c; };
       dir = Direction::West;
-      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_slope(a + halfunit(Direction::Northwest), b); };
-      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return -calc_slope(a + halfunit(Direction::Southwest), b); };
+      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_slope(a + Direction::Northwest.half(), b); };
+      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return -calc_slope(a + Direction::Southwest.half(), b); };
       break;
 
     case 7:
@@ -1936,8 +1936,8 @@ void Thing::do_recursive_visibility(int octant,
       new_coords.y = static_cast<int>(rint(static_cast<float>(tile_coords.y) + (slope_A * static_cast<float>(depth))));
       loop_condition = [](sf::Vector2f a, sf::Vector2f b, float c) { return calc_inv_slope(a, b) <= c; };
       dir = Direction::South;
-      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_inv_slope(a + halfunit(Direction::Southeast), b); };
-      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return -calc_inv_slope(a + halfunit(Direction::Southwest), b); };
+      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_inv_slope(a + Direction::Southeast.half(), b); };
+      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return -calc_inv_slope(a + Direction::Southwest.half(), b); };
       break;
 
     case 8:
@@ -1946,8 +1946,8 @@ void Thing::do_recursive_visibility(int octant,
 
       loop_condition = [](sf::Vector2f a, sf::Vector2f b, float c) { return calc_inv_slope(a, b) >= c; };
       dir = Direction::North;
-      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_inv_slope(a + halfunit(Direction::Northeast), b); };
-      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_inv_slope(a + halfunit(Direction::Northwest), b); };
+      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_inv_slope(a + Direction::Northeast.half(), b); };
+      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_inv_slope(a + Direction::Northwest.half(), b); };
       break;
 
     default:
@@ -1961,14 +1961,14 @@ void Thing::do_recursive_visibility(int octant,
     {
       if (game_map.tile_is_opaque(new_coords))
       {
-        if (!game_map.tile_is_opaque(new_coords + unit(dir)))
+        if (!game_map.tile_is_opaque(new_coords + (sf::Vector2i)dir))
         {
           do_recursive_visibility(octant, depth + 1, slope_A, recurse_slope(to_v2f(new_coords), to_v2f(tile_coords)));
         }
       }
       else
       {
-        if (game_map.tile_is_opaque(new_coords + unit(dir)))
+        if (game_map.tile_is_opaque(new_coords + (sf::Vector2i)dir))
         {
           slope_A = loop_slope(to_v2f(new_coords), to_v2f(tile_coords));
         }
@@ -1977,9 +1977,9 @@ void Thing::do_recursive_visibility(int octant,
       pImpl->map_memory[game_map.get_index(new_coords.x, new_coords.y)] = game_map.get_tile(new_coords.x,
                                                                                             new_coords.y).get_tile_type();
     }
-    new_coords -= unit(dir);
+    new_coords -= (sf::Vector2i)dir;
   }
-  new_coords += unit(dir);
+  new_coords += (sf::Vector2i)dir;
 
   if ((depth < mv) && (!game_map.get_tile(new_coords.x, new_coords.y).is_opaque()))
   {

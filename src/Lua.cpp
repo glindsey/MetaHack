@@ -22,7 +22,6 @@ Lua::Lua()
 
   /// @todo All of the other registration required... which will be a lot.
   ActionResult_add_to_lua(this);
-  Direction_add_to_lua(this);
   Gender_add_to_lua(this);
 
   // Register the trace function.

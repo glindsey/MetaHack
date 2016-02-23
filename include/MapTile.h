@@ -175,7 +175,9 @@ private:
   sf::Color m_ambient_light_color;
 
   /// The calculated light levels of this tile and all of its walls.
-  std::map<Direction, sf::Color> m_calculated_light_colors;
+  /// Mapping to an int is horribly hacky but I see no other alternative
+  /// right now.
+  std::map<unsigned int, sf::Color> m_calculated_light_colors;
 
   /// A map of LightInfluences, representing the amount of light that
   /// each thing is contributing to this map tile.

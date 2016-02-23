@@ -109,75 +109,12 @@ bool Map::calc_coords(sf::Vector2i origin,
                       Direction direction,
                       sf::Vector2i& result)
 {
-  bool is_in_bounds = false;
-  switch (direction)
-  {
-    case Direction::Northwest:
-      if ((origin.x > 0) &&
-          (origin.y > 0))
-      {
-        result = sf::Vector2i(origin.x - 1, origin.y - 1);
-        is_in_bounds = true;
-      }
-      break;
-    case Direction::North:
-      if (origin.y > 0)
-      {
-        result = sf::Vector2i(origin.x, origin.y - 1);
-        is_in_bounds = true;
-      }
-      break;
-    case Direction::Northeast:
-      if ((origin.x < pImpl->map_size.x - 1) &&
-          (origin.y > 0))
-      {
-        result = sf::Vector2i(origin.x + 1, origin.y - 1);
-        is_in_bounds = true;
-      }
-      break;
-    case Direction::East:
-      if (origin.x < pImpl->map_size.x - 1)
-      {
-        result = sf::Vector2i(origin.x + 1, origin.y);
-        is_in_bounds = true;
-      }
-      break;
-    case Direction::Southeast:
-      if ((origin.x < pImpl->map_size.x - 1) &&
-          (origin.y < pImpl->map_size.y - 1))
-      {
-        result = sf::Vector2i(origin.x + 1, origin.y + 1);
-        is_in_bounds = true;
-      }
-      break;
-    case Direction::South:
-      if (origin.y < pImpl->map_size.y - 1)
-      {
-        result = sf::Vector2i(origin.x, origin.y + 1);
-        is_in_bounds = true;
-      }
-      break;
-    case Direction::Southwest:
-      if ((origin.x > 0) &&
-          (origin.y < pImpl->map_size.y - 1))
-      {
-        result = sf::Vector2i(origin.x - 1, origin.y + 1);
-        is_in_bounds = true;
-      }
-      break;
-    case Direction::West:
-      if (origin.x < pImpl->map_size.x - 1)
-      {
-        result = sf::Vector2i(origin.x - 1, origin.y);
-        is_in_bounds = true;
-      }
-      break;
-    case Direction::Self:
-    default:
-      result = origin;
-      is_in_bounds = true;
-      break;
-  }
+  result = origin + (sf::Vector2i)direction;
+
+  bool is_in_bounds = ((result.x >= 0) &&
+                       (result.y >= 0) &&
+                       (result.x <= pImpl->map_size.x - 1) &&
+                       (result.y <= pImpl->map_size.y - 1));
 
   return is_in_bounds;
 }
@@ -277,8 +214,8 @@ void Map::do_recursive_lighting(ThingRef source,
       new_coords.y = origin.y - depth;
       loop_condition = [](sf::Vector2f a, sf::Vector2f b, float c) { return calc_slope(a, b) >= c; };
       dir = Direction::West;
-      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_slope(a + halfunit(Direction::Southwest), b); };
-      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_slope(a + halfunit(Direction::Northwest), b); };
+      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_slope(a + Direction::Southwest.half(), b); };
+      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_slope(a + Direction::Northwest.half(), b); };
       break;
 
     case 2:
@@ -286,8 +223,8 @@ void Map::do_recursive_lighting(ThingRef source,
       new_coords.y = origin.y - depth;
       loop_condition = [](sf::Vector2f a, sf::Vector2f b, float c) { return calc_slope(a, b) <= c; };
       dir = Direction::East;
-      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_slope(a + halfunit(Direction::Southeast), b); };
-      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return -calc_slope(a + halfunit(Direction::Northeast), b); };
+      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_slope(a + Direction::Southeast.half(), b); };
+      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return -calc_slope(a + Direction::Northeast.half(), b); };
       break;
 
     case 3:
@@ -295,8 +232,8 @@ void Map::do_recursive_lighting(ThingRef source,
       new_coords.y = static_cast<int>(rint(static_cast<float>(origin.y) - (slope_A * static_cast<float>(depth))));
       loop_condition = [](sf::Vector2f a, sf::Vector2f b, float c) { return calc_inv_slope(a, b) <= c; };
       dir = Direction::North;
-      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_inv_slope(a + halfunit(Direction::Northwest), b); };
-      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return -calc_inv_slope(a + halfunit(Direction::Northeast), b); };
+      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_inv_slope(a + Direction::Northwest.half(), b); };
+      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return -calc_inv_slope(a + Direction::Northeast.half(), b); };
       break;
 
     case 4:
@@ -304,8 +241,8 @@ void Map::do_recursive_lighting(ThingRef source,
       new_coords.y = static_cast<int>(rint(static_cast<float>(origin.y) + (slope_A * static_cast<float>(depth))));
       loop_condition = [](sf::Vector2f a, sf::Vector2f b, float c) { return calc_inv_slope(a, b) >= c; };
       dir = Direction::South;
-      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_inv_slope(a + halfunit(Direction::Southwest), b); };
-      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_inv_slope(a + halfunit(Direction::Southeast), b); };
+      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_inv_slope(a + Direction::Southwest.half(), b); };
+      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_inv_slope(a + Direction::Southeast.half(), b); };
       break;
 
     case 5:
@@ -313,8 +250,8 @@ void Map::do_recursive_lighting(ThingRef source,
       new_coords.y = origin.y + depth;
       loop_condition = [](sf::Vector2f a, sf::Vector2f b, float c) { return calc_slope(a, b) >= c; };
       dir = Direction::East;
-      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_slope(a + halfunit(Direction::Northeast), b); };
-      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_slope(a + halfunit(Direction::Southeast), b); };
+      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_slope(a + Direction::Northeast.half(), b); };
+      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_slope(a + Direction::Southeast.half(), b); };
       break;
 
     case 6:
@@ -322,8 +259,8 @@ void Map::do_recursive_lighting(ThingRef source,
       new_coords.y = origin.y + depth;
       loop_condition = [](sf::Vector2f a, sf::Vector2f b, float c) { return calc_slope(a, b) <= c; };
       dir = Direction::West;
-      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_slope(a + halfunit(Direction::Northwest), b); };
-      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return -calc_slope(a + halfunit(Direction::Southwest), b); };
+      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_slope(a + Direction::Northwest.half(), b); };
+      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return -calc_slope(a + Direction::Southwest.half(), b); };
       break;
 
     case 7:
@@ -331,8 +268,8 @@ void Map::do_recursive_lighting(ThingRef source,
       new_coords.y = static_cast<int>(rint(static_cast<float>(origin.y) + (slope_A * static_cast<float>(depth))));
       loop_condition = [](sf::Vector2f a, sf::Vector2f b, float c) { return calc_inv_slope(a, b) <= c; };
       dir = Direction::South;
-      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_inv_slope(a + halfunit(Direction::Southeast), b); };
-      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return -calc_inv_slope(a + halfunit(Direction::Southwest), b); };
+      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_inv_slope(a + Direction::Southeast.half(), b); };
+      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return -calc_inv_slope(a + Direction::Southwest.half(), b); };
       break;
 
     case 8:
@@ -341,8 +278,8 @@ void Map::do_recursive_lighting(ThingRef source,
 
       loop_condition = [](sf::Vector2f a, sf::Vector2f b, float c) { return calc_inv_slope(a, b) >= c; };
       dir = Direction::North;
-      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_inv_slope(a + halfunit(Direction::Northeast), b); };
-      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_inv_slope(a + halfunit(Direction::Northwest), b); };
+      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_inv_slope(a + Direction::Northeast.half(), b); };
+      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_inv_slope(a + Direction::Northwest.half(), b); };
       break;
 
     default:
@@ -356,7 +293,7 @@ void Map::do_recursive_lighting(ThingRef source,
     {
       if (get_tile(new_coords).is_opaque())
       {
-        if (!get_tile(new_coords + unit(dir)).is_opaque())
+        if (!get_tile(new_coords + (sf::Vector2i)dir).is_opaque())
         {
           do_recursive_lighting(source, origin, light_color,
                                 max_depth_squared,
@@ -366,7 +303,7 @@ void Map::do_recursive_lighting(ThingRef source,
       }
       else
       {
-        if (get_tile(new_coords + unit(dir)).is_opaque())
+        if (get_tile(new_coords + (sf::Vector2i)dir).is_opaque())
         {
           slope_A = loop_slope(to_v2f(new_coords), to_v2f(origin));
         }
@@ -378,9 +315,9 @@ void Map::do_recursive_lighting(ThingRef source,
       influence.intensity = max_depth_squared;
       get_tile(new_coords).add_light_influence(source, influence);
     }
-    new_coords -= unit(dir);
+    new_coords -= (sf::Vector2i)dir;
   }
-  new_coords += unit(dir);
+  new_coords += (sf::Vector2i)dir;
 
   if ((depth*depth < max_depth_squared) && (!get_tile(new_coords).is_opaque()))
   {
@@ -649,6 +586,11 @@ MapTile& Map::get_tile(int x, int y)
   if (y >= pImpl->map_size.y) y = pImpl->map_size.y - 1;
 
   return TILE(x, y);
+}
+
+MapTile const& Map::get_tile(sf::Vector2i tile) const
+{
+  return get_tile(tile.x, tile.y);
 }
 
 MapTile& Map::get_tile(sf::Vector2i tile)

@@ -245,7 +245,7 @@ namespace LuaThingFunctions
 
     if (!Action::exists(action_type))
     {
-      MAJOR_ERROR("Lua script requested queue of non-existent Action \"%s\"", action_type);
+      MAJOR_ERROR("Lua script requested queue of non-existent Action \"%s\"", action_type.c_str());
       return 0;
     }
 
@@ -282,7 +282,7 @@ namespace LuaThingFunctions
 
     if (!Action::exists(action_type))
     {
-      MAJOR_ERROR("Lua script requested queue of non-existent Action \"%s\"", action_type);
+      MAJOR_ERROR("Lua script requested queue of non-existent Action \"%s\"", action_type.c_str());
       return 0;
     }
 
@@ -308,28 +308,31 @@ namespace LuaThingFunctions
   {
     int num_args = lua_gettop(L);
 
-    if ((num_args < 3))
+    if ((num_args < 5))
     {
-      MINOR_ERROR("expected >= 3 arguments, got %d", num_args);
+      MINOR_ERROR("expected >= 5 arguments, got %d", num_args);
       return 0;
     }
 
     ThingRef thing = ThingRef(lua_tointeger(L, 1));
     std::string action_type = lua_tostring(L, 2);
-    Direction direction = (Direction)the_lua_instance.get_enum_value(3);
+    int x = lua_tointeger(L, 3);
+    int y = lua_tointeger(L, 4);
+    int z = lua_tointeger(L, 5);
+    Direction direction{ x, y, z };
 
     if (!Action::exists(action_type))
     {
-      MAJOR_ERROR("Lua script requested queue of non-existent Action \"%s\"", action_type);
+      MAJOR_ERROR("Lua script requested queue of non-existent Action \"%s\"", action_type.c_str());
       return 0;
     }
 
     std::unique_ptr<Action> new_action = Action::create(action_type, thing);
     std::vector<ThingRef> objects;
 
-    if (num_args > 3)
+    if (num_args > 5)
     {
-      for (int arg_number = 4; arg_number <= num_args; ++arg_number)
+      for (int arg_number = 6; arg_number <= num_args; ++arg_number)
       {
         objects.push_back(ThingRef(lua_tointeger(L, arg_number)));
       }

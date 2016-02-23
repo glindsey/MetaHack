@@ -51,42 +51,42 @@ struct MapGenerator::Impl
         // Check the validity of the vector by looking at adjacent tiles.
         // It is valid if the adjacent tile is NOT empty.
         bool vecOkay = false;
-        switch (vec.direction)
+
+        if (vec.direction == Direction::North)
         {
-          case Direction::North:
-            if (vec.start_point.y > 0)
-            {
-              auto& checkTile = game_map.get_tile(vec.start_point.x,
-                                                  vec.start_point.y - 1);
-              vecOkay = !checkTile.is_empty_space();
-            }
-            break;
-          case Direction::East:
-            if (vec.start_point.x < mapSize.x - 1)
-            {
-              auto& checkTile = game_map.get_tile(vec.start_point.x + 1,
-                                                  vec.start_point.y);
-              vecOkay = !checkTile.is_empty_space();
-            }
-            break;
-          case Direction::South:
-            if (vec.start_point.y < mapSize.y - 1)
-            {
-              auto& checkTile = game_map.get_tile(vec.start_point.x,
-                                                  vec.start_point.y + 1);
-              vecOkay = !checkTile.is_empty_space();
-            }
-            break;
-          case Direction::West:
-            if (vec.start_point.x > 0)
-            {
-              auto& checkTile = game_map.get_tile(vec.start_point.x - 1,
-                                                  vec.start_point.y);
-              vecOkay = !checkTile.is_empty_space();
-            }
-            break;
-          default:
-            break;
+          if (vec.start_point.y > 0)
+          {
+            auto& checkTile = game_map.get_tile(vec.start_point.x,
+                                                vec.start_point.y - 1);
+            vecOkay = !checkTile.is_empty_space();
+          }
+        }
+        else if (vec.direction == Direction::East)
+        {
+          if (vec.start_point.x < mapSize.x - 1)
+          {
+            auto& checkTile = game_map.get_tile(vec.start_point.x + 1,
+                                                vec.start_point.y);
+            vecOkay = !checkTile.is_empty_space();
+          }
+        }
+        else if (vec.direction == Direction::South)
+        {
+          if (vec.start_point.y < mapSize.y - 1)
+          {
+            auto& checkTile = game_map.get_tile(vec.start_point.x,
+                                                vec.start_point.y + 1);
+            vecOkay = !checkTile.is_empty_space();
+          }
+        }
+        else if (vec.direction == Direction::West)
+        {
+          if (vec.start_point.x > 0)
+          {
+            auto& checkTile = game_map.get_tile(vec.start_point.x - 1,
+                                                vec.start_point.y);
+            vecOkay = !checkTile.is_empty_space();
+          }
         }
 
         if (vecOkay)

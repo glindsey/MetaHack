@@ -238,10 +238,11 @@ void MapTile::add_light_influence(ThingRef source,
         addColor.b = static_cast<sf::Uint8>(light_color.b * wall_factor * light_factor);
         addColor.a = 255;
 
-        m_calculated_light_colors[d].r = saturation_add(m_calculated_light_colors[d].r, addColor.r);
-        m_calculated_light_colors[d].g = saturation_add(m_calculated_light_colors[d].g, addColor.g);
-        m_calculated_light_colors[d].b = saturation_add(m_calculated_light_colors[d].b, addColor.b);
-        m_calculated_light_colors[d].a = saturation_add(m_calculated_light_colors[d].a, addColor.a);
+        unsigned int index = d.get_map_index();
+        m_calculated_light_colors[index].r = saturation_add(m_calculated_light_colors[index].r, addColor.r);
+        m_calculated_light_colors[index].g = saturation_add(m_calculated_light_colors[index].g, addColor.g);
+        m_calculated_light_colors[index].b = saturation_add(m_calculated_light_colors[index].b, addColor.b);
+        m_calculated_light_colors[index].a = saturation_add(m_calculated_light_colors[index].a, addColor.a);
       }
     }
   }
@@ -249,25 +250,25 @@ void MapTile::add_light_influence(ThingRef source,
 
 sf::Color MapTile::get_light_level() const
 {
-  if (m_calculated_light_colors.count(Direction::Self) == 0)
+  if (m_calculated_light_colors.count(Direction::Self.get_map_index()) == 0)
   {
     return sf::Color::Black;
   }
   else
   {
-    return m_calculated_light_colors.at(Direction::Self);
+    return m_calculated_light_colors.at(Direction::Self.get_map_index());
   }
 }
 
 sf::Color MapTile::get_wall_light_level(Direction direction) const
 {
-  if (m_calculated_light_colors.count(direction) == 0)
+  if (m_calculated_light_colors.count(direction.get_map_index()) == 0)
   {
     return sf::Color::Black;
   }
   else
   {
-    return m_calculated_light_colors.at(direction);
+    return m_calculated_light_colors.at(direction.get_map_index());
   }
 }
 
@@ -615,33 +616,6 @@ MapTile const& MapTile::get_adjacent_tile(Direction direction) const
   Map const& map = GAME.get_map_factory().get(get_map_id());
   MapTile const& tile = *this;
 
-  switch (direction)
-  {
-    case Direction::Northwest:
-      return map.get_tile(coords.x - 1, coords.y - 1);
-
-    case Direction::North:
-      return map.get_tile(coords.x, coords.y - 1);
-
-    case Direction::Northeast:
-      return map.get_tile(coords.x + 1, coords.y - 1);
-
-    case Direction::West:
-      return map.get_tile(coords.x - 1, coords.y);
-
-    default:
-      return tile;
-
-    case Direction::East:
-      return map.get_tile(coords.x + 1, coords.y);
-
-    case Direction::Southwest:
-      return map.get_tile(coords.x - 1, coords.y + 1);
-
-    case Direction::South:
-      return map.get_tile(coords.x, coords.y + 1);
-
-    case Direction::Southeast:
-      return map.get_tile(coords.x + 1, coords.y + 1);
-  }
+  sf::Vector2i adjacent_coords = coords + (sf::Vector2i)direction;
+  return map.get_tile(adjacent_coords);
 }

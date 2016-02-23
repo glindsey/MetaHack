@@ -46,43 +46,46 @@ bool MapCorridor::create(GeoVector vec)
 
     int xMin, xMax, yMin, yMax;
 
-    switch (direction)
+    if (direction == Direction::North)
     {
-      case Direction::North:
-        yMax = startingCoords.y - 1;
-        yMin = yMax - (corridorLen - 1);
-        xMin = startingCoords.x;
-        xMax = startingCoords.x;
-        pImpl->endingCoords.x = startingCoords.x;
-        pImpl->endingCoords.y = yMin - 1;
-        break;
-      case Direction::South:
-        yMin = startingCoords.y + 1;
-        yMax = yMin + (corridorLen - 1);
-        xMin = startingCoords.x;
-        xMax = startingCoords.x;
-        pImpl->endingCoords.x = startingCoords.x;
-        pImpl->endingCoords.y = yMax + 1;
-        break;
-      case Direction::West:
-        xMax = startingCoords.x - 1;
-        xMin = xMax - (corridorLen - 1);
-        yMin = startingCoords.y;
-        yMax = startingCoords.y;
-        pImpl->endingCoords.x = xMin - 1;
-        pImpl->endingCoords.y = startingCoords.y;
-        break;
-      case Direction::East:
-        xMin = startingCoords.x + 1;
-        xMax = xMin + (corridorLen - 1);
-        yMin = startingCoords.y;
-        yMax = startingCoords.y;
-        pImpl->endingCoords.x = xMax + 1;
-        pImpl->endingCoords.y = startingCoords.y;
-        break;
-      default:
-        MINOR_ERROR("Invalid Direction passed into createCorridor");
-        return false;
+      yMax = startingCoords.y - 1;
+      yMin = yMax - (corridorLen - 1);
+      xMin = startingCoords.x;
+      xMax = startingCoords.x;
+      pImpl->endingCoords.x = startingCoords.x;
+      pImpl->endingCoords.y = yMin - 1;
+    }
+    else if (direction == Direction::South)
+    {
+      yMin = startingCoords.y + 1;
+      yMax = yMin + (corridorLen - 1);
+      xMin = startingCoords.x;
+      xMax = startingCoords.x;
+      pImpl->endingCoords.x = startingCoords.x;
+      pImpl->endingCoords.y = yMax + 1;
+    }
+    else if (direction == Direction::West)
+    {
+      xMax = startingCoords.x - 1;
+      xMin = xMax - (corridorLen - 1);
+      yMin = startingCoords.y;
+      yMax = startingCoords.y;
+      pImpl->endingCoords.x = xMin - 1;
+      pImpl->endingCoords.y = startingCoords.y;
+    }
+    else if (direction == Direction::East)
+    {
+      xMin = startingCoords.x + 1;
+      xMax = xMin + (corridorLen - 1);
+      yMin = startingCoords.y;
+      yMax = startingCoords.y;
+      pImpl->endingCoords.x = xMax + 1;
+      pImpl->endingCoords.y = startingCoords.y;
+    }
+    else
+    {
+      MINOR_ERROR("Invalid Direction passed into createCorridor");
+      return false;
     }
 
     if ((get_map().is_in_bounds(xMin - 1, yMin - 1)) &&
@@ -147,29 +150,32 @@ bool MapCorridor::create(GeoVector vec)
         /// will allow for some loops in the map instead of it being
         /// nothing but a tree.
         sf::Vector2i checkCoords;
-        switch (direction)
+        if (direction == Direction::North)
         {
-          case Direction::North:
-            checkCoords.x = startingCoords.x;
-            checkCoords.y = pImpl->endingCoords.y - 1;
-            break;
-          case Direction::South:
-            checkCoords.x = startingCoords.x;
-            checkCoords.y = pImpl->endingCoords.y + 1;
-            break;
-          case Direction::West:
-            checkCoords.x = pImpl->endingCoords.x - 1;
-            checkCoords.y = startingCoords.y;
-            break;
-          case Direction::East:
-            checkCoords.x = pImpl->endingCoords.x + 1;
-            checkCoords.y = startingCoords.y;
-            break;
-          default:
-            // shouldn't happen at this point
-            MINOR_ERROR("Invalid Direction passed into createCorridor");
-            return false;
+          checkCoords.x = startingCoords.x;
+          checkCoords.y = pImpl->endingCoords.y - 1;
         }
+        else if (direction == Direction::South)
+        {
+          checkCoords.x = startingCoords.x;
+          checkCoords.y = pImpl->endingCoords.y + 1;
+        }
+        else if (direction == Direction::West)
+        {
+          checkCoords.x = pImpl->endingCoords.x - 1;
+          checkCoords.y = startingCoords.y;
+        }
+        else if (direction == Direction::East)
+        {
+          checkCoords.x = pImpl->endingCoords.x + 1;
+          checkCoords.y = startingCoords.y;
+        }
+        else
+        {
+          MINOR_ERROR("Invalid Direction passed into createCorridor");
+          return false;
+        }
+
         if (get_map().is_in_bounds(checkCoords.x, checkCoords.y))
         {
           auto& checkTile = get_map().get_tile(checkCoords.x, checkCoords.y);

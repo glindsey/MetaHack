@@ -61,6 +61,8 @@ public:
 
   MapTile& get_tile(int x, int y);
 
+  MapTile const & get_tile(sf::Vector2i tile) const;
+
   MapTile& get_tile(sf::Vector2i tile);
 
   bool tile_is_opaque(sf::Vector2i tile);

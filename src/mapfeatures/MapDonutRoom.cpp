@@ -48,47 +48,42 @@ bool MapDonutRoom::create(GeoVector vec)
     rect.width = width_dist(the_RNG);
     rect.height = height_dist(the_RNG);
 
-    switch (direction)
+    if (direction == Direction::North)
     {
-      case Direction::North:
-      {
-        uniform_int_dist offset_dist(0, rect.width - 1);
-        int offset = offset_dist(the_RNG);
+      uniform_int_dist offset_dist(0, rect.width - 1);
+      int offset = offset_dist(the_RNG);
 
-        rect.top = starting_coords.y - rect.height;
-        rect.left = starting_coords.x - offset;
-      }
-      break;
-      case Direction::South:
-      {
-        uniform_int_dist offset_dist(0, rect.width - 1);
-        int offset = offset_dist(the_RNG);
+      rect.top = starting_coords.y - rect.height;
+      rect.left = starting_coords.x - offset;
+    }
+    else if (direction == Direction::South)
+    {
+      uniform_int_dist offset_dist(0, rect.width - 1);
+      int offset = offset_dist(the_RNG);
 
-        rect.top = starting_coords.y + 1;
-        rect.left = starting_coords.x - offset;
-      }
-      break;
-      case Direction::West:
-      {
-        uniform_int_dist offset_dist(0, rect.height - 1);
-        int offset = offset_dist(the_RNG);
+      rect.top = starting_coords.y + 1;
+      rect.left = starting_coords.x - offset;
+    }
+    else if (direction == Direction::West)
+    {
+      uniform_int_dist offset_dist(0, rect.height - 1);
+      int offset = offset_dist(the_RNG);
 
-        rect.top = starting_coords.y - offset;
-        rect.left = starting_coords.x - rect.width;
-      }
-      break;
-      case Direction::East:
-      {
-        uniform_int_dist offset_dist(0, rect.height - 1);
-        int offset = offset_dist(the_RNG);
+      rect.top = starting_coords.y - offset;
+      rect.left = starting_coords.x - rect.width;
+    }
+    else if (direction == Direction::East)
+    {
+      uniform_int_dist offset_dist(0, rect.height - 1);
+      int offset = offset_dist(the_RNG);
 
-        rect.top = starting_coords.y - offset;
-        rect.left = starting_coords.x + 1;
-      }
-      break;
-      default:
-        MINOR_ERROR("Invalid direction");
-        return false;
+      rect.top = starting_coords.y - offset;
+      rect.left = starting_coords.x + 1;
+    }
+    else
+    {
+      MINOR_ERROR("Invalid direction");
+      return false;
     }
 
     if ((get_map().is_in_bounds(rect.left - 1,

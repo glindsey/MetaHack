@@ -47,31 +47,35 @@ bool MapDiamond::create(GeoVector vec)
 
     int xCenter, yCenter;
 
-    switch (direction)
+    if (direction == Direction::North)
     {
-      case Direction::North:
-        xCenter = startingCoords.x;
-        yCenter = startingCoords.y - (diamondHalfSize + 1);
-        break;
-      case Direction::South:
-        xCenter = startingCoords.x;
-        yCenter = startingCoords.y + (diamondHalfSize + 1);
-        break;
-      case Direction::West:
-        xCenter = startingCoords.x - (diamondHalfSize + 1);
-        yCenter = startingCoords.y;
-        break;
-      case Direction::East:
-        xCenter = startingCoords.x + (diamondHalfSize + 1);
-        yCenter = startingCoords.y;
-        break;
-      case Direction::Self:
-        xCenter = startingCoords.x;
-        yCenter = startingCoords.y;
-        break;
-      default:
-        MINOR_ERROR("Invalid Direction passed into createRoom");
-        return false;
+      xCenter = startingCoords.x;
+      yCenter = startingCoords.y - (diamondHalfSize + 1);
+    }
+    else if (direction == Direction::South)
+    {
+      xCenter = startingCoords.x;
+      yCenter = startingCoords.y + (diamondHalfSize + 1);
+    }
+    else if (direction == Direction::West)
+    {
+      xCenter = startingCoords.x - (diamondHalfSize + 1);
+      yCenter = startingCoords.y;
+    }
+    else if (direction == Direction::East)
+    {
+      xCenter = startingCoords.x + (diamondHalfSize + 1);
+      yCenter = startingCoords.y;
+    }
+    else if (direction == Direction::Self)
+    {
+      xCenter = startingCoords.x;
+      yCenter = startingCoords.y;
+    }
+    else
+    {
+      MINOR_ERROR("Invalid Direction passed into createRoom");
+      return false;
     }
 
     if ((get_map().is_in_bounds(xCenter - (diamondHalfSize + 1),

@@ -7,9 +7,8 @@
 #include <SFML/Graphics.hpp>
 
 #include "App.h"
-#include "Direction.h"
 
-const double PI = 3.14159265359;
+constexpr double PI = 3.14159265359;
 constexpr double PI_HALF = PI / 2.0;
 constexpr double PI_QUARTER = PI / 4.0;
 
@@ -34,6 +33,10 @@ inline unsigned int iabs(int value)
   return (value >= 0) ?
     static_cast<unsigned int>(value) :
     static_cast<unsigned int>(-value);
+}
+
+template <typename T> int sgn(T val) {
+  return (T(0) < val) - (val < T(0));
 }
 
 inline double calc_slope(double x1, double y1, double x2, double y2)
@@ -72,92 +75,9 @@ inline float calc_vis_distance(sf::Vector2i s1, sf::Vector2i s2)
   return (x_dist * x_dist) + (y_dist * y_dist);
 }
 
-inline sf::Vector2i unit(Direction direction)
-{
-  switch (direction)
-  {
-    case Direction::Northwest:  return{ -1, -1 };
-    case Direction::North:      return{ 0, -1 };
-    case Direction::Northeast:  return{ 1, -1 };
-    case Direction::West:       return{ -1, 0 };
-    case Direction::Self:       return{ 0, 0 };
-    case Direction::East:       return{ 1, 0 };
-    case Direction::Southwest:  return{ -1, 1 };
-    case Direction::South:      return{ 0, 1 };
-    case Direction::Southeast:  return{ 1, 1 };
-    default:                    return{ 0, 0 };
-  }
-}
-
-inline sf::Vector2f halfunit(Direction direction)
-{
-  switch (direction)
-  {
-    case Direction::Northwest:  return{ -0.5f, -0.5f };
-    case Direction::North:      return{ 0.0f, -0.5f };
-    case Direction::Northeast:  return{ 0.5f, -0.5f };
-    case Direction::West:       return{ -0.5f,  0.0f };
-    case Direction::Self:       return{ 0.0f,  0.0f };
-    case Direction::East:       return{ 0.5f,  0.0f };
-    case Direction::Southwest:  return{ -0.5f,  0.5f };
-    case Direction::South:      return{ 0.0f,  0.5f };
-    case Direction::Southeast:  return{ 0.5f,  0.5f };
-    default:                    return{ 0.0f,  0.0f };
-  }
-}
-
 inline sf::Vector2f to_v2f(sf::Vector2i vec)
 {
   return sf::Vector2f{ static_cast<float>(vec.x), static_cast<float>(vec.y) };
-}
-
-inline Direction get_approx_direction(int xSrc, int ySrc, int xDst, int yDst)
-{
-  if (yDst < ySrc)
-  {
-    if (xDst < xSrc)
-    {
-      return Direction::Northwest;
-    }
-    else if (xDst == xSrc)
-    {
-      return Direction::North;
-    }
-    else // if (xDst > xSrc)
-    {
-      return Direction::Northeast;
-    }
-  }
-  else if (yDst == ySrc)
-  {
-    if (xDst < xSrc)
-    {
-      return Direction::West;
-    }
-    else if (xDst == xSrc)
-    {
-      return Direction::Self;
-    }
-    else // if (xDst > xSrc)
-    {
-      return Direction::East;
-    }
-  }
-  else // if (yDst > ySrc)
-  {
-    if (xDst < xSrc)
-    {
-      return Direction::Southwest;
-    }
-    else if (xDst == xSrc)
-    {
-      return Direction::South;
-    }
-    else // if (xDst > xSrc)
-    {
-      return Direction::Southeast;
-    }
-  }
 }
 
 inline unsigned char saturation_add(unsigned char const& a,
@@ -215,36 +135,6 @@ template <class T> T choose_random(T a, T b, T c)
 inline unsigned int divide_and_round_up(unsigned int value, unsigned int multiple)
 {
   return ((value / multiple) + ((value % multiple == 0) ? 0 : 1));
-}
-
-/// Determine light factor based on light source, wall location, and which wall
-/// the light is hitting.
-inline float calculate_light_factor(sf::Vector2i source, sf::Vector2i target, Direction direction)
-{
-  float x_diff = static_cast<float>(iabs(source.x - target.x));
-  float y_diff = static_cast<float>(iabs(source.y - target.y));
-
-  if ((x_diff == 0) && (y_diff == 0)) return 1;
-
-  float h_diff = sqrt((x_diff * x_diff) + (y_diff * y_diff));
-
-  switch (direction)
-  {
-    case Direction::Self:
-    case Direction::Up:
-    case Direction::Down:
-      return 1;
-    case Direction::North:
-      return (source.y < target.y) ? (y_diff / h_diff) : 0;
-    case Direction::South:
-      return (source.y > target.y) ? (y_diff / h_diff) : 0;
-    case Direction::West:
-      return (source.x < target.x) ? (x_diff / h_diff) : 0;
-    case Direction::East:
-      return (source.x > target.x) ? (x_diff / h_diff) : 0;
-    default:
-      throw std::out_of_range(std::string("Invalid direction " + boost::lexical_cast<std::string>(direction) + " passed to calculate_light_factor").c_str());
-  }
 }
 
 /// Average two colors together.

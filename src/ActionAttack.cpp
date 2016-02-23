@@ -93,7 +93,7 @@ Action::StateResult ActionAttack::do_begin_work_(AnyMap& params)
 
   // Figure out our target location.
   sf::Vector2i coords = current_tile->get_coords();
-  sf::Vector2i offset = get_vector(new_direction);
+  sf::Vector2i offset = (sf::Vector2i)new_direction;
   int x_new = coords.x + offset.x;
   int y_new = coords.y + offset.y;
   Map& current_map = GAME.get_map_factory().get(subject->get_map_id());
