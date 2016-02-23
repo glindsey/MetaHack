@@ -206,8 +206,8 @@ inline Direction get_approx_direction(int xSrc, int ySrc, int xDst, int yDst)
 /// the light is hitting.
 inline float calculate_light_factor(sf::Vector2i source, sf::Vector2i target, Direction direction)
 {
-  float x_diff = static_cast<float>(iabs(source.x - target.x));
-  float y_diff = static_cast<float>(iabs(source.y - target.y));
+  float x_diff = fabs(source.x - target.x);
+  float y_diff = fabs(source.y - target.y);
 
   if ((x_diff == 0) && (y_diff == 0)) return 1;
 

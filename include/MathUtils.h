@@ -28,13 +28,6 @@ inline unsigned int next_power_of_two(unsigned int n)
   return n;
 }
 
-inline unsigned int iabs(int value)
-{
-  return (value >= 0) ?
-    static_cast<unsigned int>(value) :
-    static_cast<unsigned int>(-value);
-}
-
 inline double calc_slope(double x1, double y1, double x2, double y2)
 {
   return (x1 - x2) / (y1 - y2);
@@ -161,7 +154,7 @@ inline sf::Color average(sf::Color first, sf::Color second, sf::Color third, sf:
 /// A tile is also considered adjacent to itself.
 inline bool adjacent(sf::Vector2i first, sf::Vector2i second)
 {
-  return (iabs(first.x - second.x) <= 1) && (iabs(first.y - second.y) <= 1);
+  return ((abs(first.x - second.x) <= 1) && (abs(first.y - second.y) <= 1));
 }
 
 #endif // _MATHUTILS_H_
