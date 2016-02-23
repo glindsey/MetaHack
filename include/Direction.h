@@ -1,6 +1,7 @@
 #ifndef DIRECTION_H
 #define DIRECTION_H
 
+#include <boost/math/special_functions/sign.hpp>
 #include <SFML/Graphics.hpp>
 
 #include "Lua.h"
@@ -31,9 +32,9 @@ public:
   Direction(int x, int y, int z = 0)
     :
     m_exists{ true },
-    m_x{ sgn(x) },
-    m_y{ sgn(y) },
-    m_z{ sgn(z) },
+    m_x{ boost::math::sign(x) },
+    m_y{ boost::math::sign(y) },
+    m_z{ boost::math::sign(z) },
     m_halfx{ (float)x / 2.0f },
     m_halfy{ (float)y / 2.0f },
     m_halfz{ (float)z / 2.0f }

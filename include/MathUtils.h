@@ -35,10 +35,6 @@ inline unsigned int iabs(int value)
     static_cast<unsigned int>(-value);
 }
 
-template <typename T> int sgn(T val) {
-  return (T(0) < val) - (val < T(0));
-}
-
 inline double calc_slope(double x1, double y1, double x2, double y2)
 {
   return (x1 - x2) / (y1 - y2);
