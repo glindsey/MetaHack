@@ -186,7 +186,6 @@
     <ClInclude Include="include\MapFactory.h" />
     <ClInclude Include="include\MapFeature.h" />
     <ClInclude Include="include\MapGenerator.h" />
-    <ClInclude Include="include\MapId.h" />
     <ClInclude Include="include\MapLRoom.h" />
     <ClInclude Include="include\MapRoom.h" />
     <ClInclude Include="include\MapTile.h" />
@@ -209,7 +208,6 @@
     <ClInclude Include="include\ThingManager.h" />
     <ClInclude Include="include\TileSheet.h" />
     <ClInclude Include="include\UsesPimpl.h" />
-    <ClInclude Include="src\impl\MapImpl.h" />
     <ClInclude Include="src\impl\ThingImpl.h" />
   </ItemGroup>
   <ItemGroup>

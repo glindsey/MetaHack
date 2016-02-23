@@ -19,9 +19,17 @@ class GameState : public boost::noncopyable
 public:
   GameState();
 
-  /// @todo Create a constructor that loads a game state from disk.
+  /// Constructor that loads a game state from disk.
+  /// Throws an exception if the game could not be loaded.
+  /// @todo WRITE ME
+  GameState(std::string filename);
 
   virtual ~GameState();
+
+  /// Save the game state to disk.
+  /// Throws an exception if the game could not be saved.
+  /// @todo WRITE ME
+  void save_state(std::string filename);
 
   MapFactory& get_map_factory();
   ThingManager& get_thing_manager();

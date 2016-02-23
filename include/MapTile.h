@@ -9,7 +9,7 @@
 #include "GameObject.h"
 #include "Inventory.h"
 #include "LightInfluence.h"
-#include "MapId.h"
+#include "MapFactory.h"
 #include "Thing.h"
 #include "ThingRef.h"
 #include "TileSheet.h"

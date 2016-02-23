@@ -27,10 +27,36 @@ typedef boost::random::uniform_int_distribution<> uniform_int_dist;
 
 const sf::Color Map::ambient_light_level = sf::Color(48, 48, 48, 255);
 
+struct Map::Impl
+{
+  /// Pointer vector of tiles.
+  boost::ptr_vector< MapTile > tiles;
+
+  /// Player starting location.
+  sf::Vector2i start_coords;
+
+  /// Pointer deque of map features.
+  boost::ptr_deque<MapFeature> features;
+
+  /// "Seen" map vertex array.
+  sf::VertexArray map_seen_vertices;
+
+  /// Outlines map vertex array.
+  sf::VertexArray map_outline_vertices;
+
+  /// "Memory" map vertex array.
+  sf::VertexArray map_memory_vertices;
+
+  /// Thing vertex array.
+  sf::VertexArray thing_vertices;
+};
+
 Map::Map(MapId map_id, int width, int height)
   :
-  pImpl(map_id, width, height),
-  m_generator{ NEW MapGenerator(*this) }
+  m_map_id{ map_id },
+  m_map_size{ width, height },
+  m_generator{ NEW MapGenerator(*this) },
+  pImpl{ NEW Impl{} }
 {
   TRACE("Creating map of size %d x %d...", width, height);
 
@@ -38,8 +64,8 @@ Map::Map(MapId map_id, int width, int height)
   // 4 vertices * 4 quads for the floor
   // 4 vertices * 4 quads * 4 potential walls
   // = 16 + 64 = 80 possible vertices per tile.
-  pImpl->map_seen_vertices.resize(pImpl->map_size.x * pImpl->map_size.y * 80);
-  pImpl->map_memory_vertices.resize(pImpl->map_size.x * pImpl->map_size.y * 80);
+  pImpl->map_seen_vertices.resize(m_map_size.x * m_map_size.y * 80);
+  pImpl->map_memory_vertices.resize(m_map_size.x * m_map_size.y * 80);
 
   // Create the tiles themselves.
   MetadataCollection& collection = MDC::get_collection("maptile");
@@ -70,7 +96,7 @@ Map::Map(MapId map_id, int width, int height)
 void Map::initialize()
 {
   // If the map isn't the 1x1 "limbo" map...
-  if ((pImpl->map_size.x != 1) && (pImpl->map_size.y != 1))
+  if ((m_map_size.x != 1) && (m_map_size.y != 1))
   {
     // Generate the map.
     m_generator->generate();
@@ -81,7 +107,7 @@ void Map::initialize()
     ///       should be done via scripting. But for now
     ///       this will do.
     TRACE("Executing Map Lua script.");
-    the_lua_instance.set_global("current_map_id", pImpl->map_id);
+    the_lua_instance.set_global("current_map_id", m_map_id);
     the_lua_instance.require("resources/scripts/map");
   }
 
@@ -95,14 +121,14 @@ Map::~Map()
 
 int Map::get_index(int x, int y) const
 {
-  return (y * pImpl->map_size.x) + x;
+  return (y * m_map_size.x) + x;
 }
 
 bool Map::is_in_bounds(int x, int y) const
 {
   return ((x >= 0) && (y >= 0) &&
-          (x < pImpl->map_size.x) &&
-          (y < pImpl->map_size.y));
+          (x < m_map_size.x) &&
+          (y < m_map_size.y));
 }
 
 bool Map::calc_coords(sf::Vector2i origin,
@@ -113,20 +139,20 @@ bool Map::calc_coords(sf::Vector2i origin,
 
   bool is_in_bounds = ((result.x >= 0) &&
                        (result.y >= 0) &&
-                       (result.x <= pImpl->map_size.x - 1) &&
-                       (result.y <= pImpl->map_size.y - 1));
+                       (result.x <= m_map_size.x - 1) &&
+                       (result.y <= m_map_size.y - 1));
 
   return is_in_bounds;
 }
 
 MapId Map::get_map_id() const
 {
-  return pImpl->map_id;
+  return m_map_id;
 }
 
 sf::Vector2i const& Map::get_size() const
 {
-  return pImpl->map_size;
+  return m_map_size;
 }
 
 sf::Vector2i const& Map::get_start_coords() const
@@ -146,9 +172,9 @@ bool Map::set_start_coords(sf::Vector2i start_coords)
 
 void Map::process()
 {
-  for (int y = 0; y < pImpl->map_size.y; ++y)
+  for (int y = 0; y < m_map_size.y; ++y)
   {
-    for (int x = 0; x < pImpl->map_size.x; ++x)
+    for (int x = 0; x < m_map_size.x; ++x)
     {
       ThingRef contents = TILE(x, y).get_tile_contents();
       contents->process();
@@ -159,17 +185,17 @@ void Map::process()
 void Map::update_lighting()
 {
   // Clear it first.
-  for (int y = 0; y < pImpl->map_size.y; ++y)
+  for (int y = 0; y < m_map_size.y; ++y)
   {
-    for (int x = 0; x < pImpl->map_size.x; ++x)
+    for (int x = 0; x < m_map_size.x; ++x)
     {
       TILE(x, y).clear_light_influences();
     }
   }
 
-  for (int y = 0; y < pImpl->map_size.y; ++y)
+  for (int y = 0; y < m_map_size.y; ++y)
   {
-    for (int x = 0; x < pImpl->map_size.x; ++x)
+    for (int x = 0; x < m_map_size.x; ++x)
     {
       ThingRef contents = TILE(x, y).get_tile_contents();
       auto& inventory = contents->get_inventory();
@@ -463,19 +489,19 @@ void Map::update_tile_vertices(ThingRef thing)
   pImpl->map_seen_vertices.clear();
   pImpl->map_memory_vertices.clear();
 
-  for (int y = 0; y < pImpl->map_size.y; ++y)
+  for (int y = 0; y < m_map_size.y; ++y)
   {
-    for (int x = 0; x < pImpl->map_size.x; ++x)
+    for (int x = 0; x < m_map_size.x; ++x)
     {
       auto& tile = TILE(x, y);
       bool this_is_empty = tile.is_empty_space();
       bool nw_is_empty = ((x > 0) && (y > 0)) ? (thing->can_see(x - 1, y - 1) && TILE(x - 1, y - 1).is_empty_space()) : false;
       bool n_is_empty = (y > 0) ? (thing->can_see(x, y - 1) && TILE(x, y - 1).is_empty_space()) : false;
-      bool ne_is_empty = ((x < pImpl->map_size.x - 1) && (y > 0)) ? (thing->can_see(x + 1, y - 1) && TILE(x + 1, y - 1).is_empty_space()) : false;
-      bool e_is_empty = (x < pImpl->map_size.x - 1) ? (thing->can_see(x + 1, y) && TILE(x + 1, y).is_empty_space()) : false;
-      bool se_is_empty = ((x < pImpl->map_size.x - 1) && (y < pImpl->map_size.y - 1)) ? (thing->can_see(x + 1, y + 1) && TILE(x + 1, y + 1).is_empty_space()) : false;
-      bool s_is_empty = (y < pImpl->map_size.y - 1) ? (thing->can_see(x, y + 1) && TILE(x, y + 1).is_empty_space()) : false;
-      bool sw_is_empty = ((x > 0) && (y < pImpl->map_size.y - 1)) ? (thing->can_see(x - 1, y + 1) && TILE(x - 1, y + 1).is_empty_space()) : false;
+      bool ne_is_empty = ((x < m_map_size.x - 1) && (y > 0)) ? (thing->can_see(x + 1, y - 1) && TILE(x + 1, y - 1).is_empty_space()) : false;
+      bool e_is_empty = (x < m_map_size.x - 1) ? (thing->can_see(x + 1, y) && TILE(x + 1, y).is_empty_space()) : false;
+      bool se_is_empty = ((x < m_map_size.x - 1) && (y < m_map_size.y - 1)) ? (thing->can_see(x + 1, y + 1) && TILE(x + 1, y + 1).is_empty_space()) : false;
+      bool s_is_empty = (y < m_map_size.y - 1) ? (thing->can_see(x, y + 1) && TILE(x, y + 1).is_empty_space()) : false;
+      bool sw_is_empty = ((x > 0) && (y < m_map_size.y - 1)) ? (thing->can_see(x - 1, y + 1) && TILE(x - 1, y + 1).is_empty_space()) : false;
       bool w_is_empty = (x > 0) ? (thing->can_see(x - 1, y) && TILE(x - 1, y).is_empty_space()) : false;
 
       if (thing->can_see(x, y))
@@ -505,9 +531,9 @@ void Map::update_thing_vertices(ThingRef thing, int frame)
 {
   // Loop through and draw things.
   pImpl->thing_vertices.clear();
-  for (int y = 0; y < pImpl->map_size.y; ++y)
+  for (int y = 0; y < m_map_size.y; ++y)
   {
-    for (int x = 0; x < pImpl->map_size.x; ++x)
+    for (int x = 0; x < m_map_size.x; ++x)
     {
       ThingRef contents = TILE(x, y).get_tile_contents();
       Inventory& inv = contents->get_inventory();
@@ -571,9 +597,9 @@ void Map::draw_to(sf::RenderTarget& target)
 MapTile const& Map::get_tile(int x, int y) const
 {
   if (x < 0) x = 0;
-  if (x >= pImpl->map_size.x) x = pImpl->map_size.x - 1;
+  if (x >= m_map_size.x) x = m_map_size.x - 1;
   if (y < 0) y = 0;
-  if (y >= pImpl->map_size.y) y = pImpl->map_size.y - 1;
+  if (y >= m_map_size.y) y = m_map_size.y - 1;
 
   return TILE(x, y);
 }
@@ -581,9 +607,9 @@ MapTile const& Map::get_tile(int x, int y) const
 MapTile& Map::get_tile(int x, int y)
 {
   if (x < 0) x = 0;
-  if (x >= pImpl->map_size.x) x = pImpl->map_size.x - 1;
+  if (x >= m_map_size.x) x = m_map_size.x - 1;
   if (y < 0) y = 0;
-  if (y >= pImpl->map_size.y) y = pImpl->map_size.y - 1;
+  if (y >= m_map_size.y) y = m_map_size.y - 1;
 
   return TILE(x, y);
 }
@@ -600,7 +626,7 @@ MapTile& Map::get_tile(sf::Vector2i tile)
 
 bool Map::tile_is_opaque(sf::Vector2i tile)
 {
-  if ((tile.x < 0) || (tile.x >= pImpl->map_size.x) || (tile.y < 0) || (tile.y >= pImpl->map_size.y))
+  if ((tile.x < 0) || (tile.x >= m_map_size.x) || (tile.y < 0) || (tile.y >= m_map_size.y))
   {
     return true;
   }

@@ -2,6 +2,9 @@
 #define MAP_H
 
 #include <boost/ptr_container/ptr_deque.hpp>
+#include <cereal/archives/xml.hpp>
+#include <cereal/types/memory.hpp>
+#include <cereal/types/polymorphic.hpp>
 #include <memory>
 #include <SFML/Graphics.hpp>
 
@@ -20,16 +23,13 @@ class ThingRef;
 #define constexpr const
 #endif
 
-#include "MapImpl.h"
-#include "UsesPimpl.h"
-
 /// Class representing a map, which is a grid of locations for Things.
-class Map
+class Map final
 {
   friend class MapFactory;
 
 public:
-  virtual ~Map();
+  ~Map();
 
   /// The maximum length of one side.
   static constexpr int max_dimension = 128;
@@ -39,6 +39,13 @@ public:
 
   /// The default ambient light level.
   static const sf::Color ambient_light_level;
+
+  /// Serialization function.
+  template<class Archive>
+  void serialize(Archive& archive)
+  {
+    archive(pImpl);
+  }
 
   /// Process all Things on this map.
   void process();
@@ -134,9 +141,16 @@ protected:
                              float slope_B = 0);
 
 private:
-  Pimpl<MapImpl> pImpl;
+  /// Map ID.
+  MapId m_map_id;
+
+  /// Map size.
+  sf::Vector2i m_map_size;
 
   std::unique_ptr<MapGenerator> m_generator;
+
+  struct Impl;
+  std::unique_ptr<Impl> pImpl;
 
   /// Lua function to get the tile contents Thing at a specific location.
   /// Takes three parameters:

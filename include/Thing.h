@@ -8,7 +8,6 @@
 #include "ErrorHandler.h"
 #include "GameObject.h"
 #include "Gender.h"
-#include "MapId.h"
 #include "Metadata.h"
 
 #include <memory>

@@ -19,9 +19,7 @@
 #include <queue>
 #include <string>
 
-ThingManager::ThingManager(GameState& game_state)
-  :
-  m_game_state{ game_state }
+ThingManager::ThingManager()
 {
   // Register the Thing Lua functions.
   LuaThingFunctions::register_functions();

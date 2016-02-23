@@ -5,6 +5,9 @@
 #include <string>
 #include <unordered_map>
 #include <boost/pool/object_pool.hpp>
+#include <cereal/archives/xml.hpp>
+#include <cereal/types/memory.hpp>
+#include <cereal/types/polymorphic.hpp>
 
 #include "MetadataCollection.h"
 #include "ThingRef.h"
@@ -16,16 +19,25 @@ class Thing;
 class ThingMetadata;
 
 /// ThingManager is a factory to create and manage all the Things in the game.
-class ThingManager
+class ThingManager final
 {
   friend class ThingId;
   friend class ThingRef;
 
 public:
   /// Constructor.
-  explicit ThingManager(GameState& game_state);
+  ThingManager();
+  ~ThingManager();
 
-  virtual ~ThingManager();
+  /// Serialization function.
+  template<class Archive>
+  void serialize(Archive& archive)
+  {
+    /// @todo WRITE ME. It isn't as simple as just archiving m_thing_map and
+    ///       m_thing_pool, because there are a crapload of naked pointers in
+    ///       there.
+    //archive(m_thing_map, m_thing_pool);
+  }
 
   /// Create a particular object given the type name.
   /// @param type The type name of the object to create.
@@ -65,9 +77,6 @@ protected:
   Thing const* get_ptr(ThingId data) const;
 
 private:
-  /// Reference to owning game state.
-  GameState& m_game_state;
-
   /// Map of ThingIds to Things.
   /// @todo Probably faster to use an unordered_map and use ThingId.id
   ///       as the hash function.

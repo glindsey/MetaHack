@@ -8,13 +8,12 @@
 
 const MapId MapFactory::null_map_id = static_cast<MapId>(0);
 
-MapFactory::MapFactory(GameState& game_state)
-  :
-  m_game_state{ game_state }
+MapFactory::MapFactory()
 {
   // Create and add the "null map" to the list.
   current_map_id = 0;
-  m_maps.insert(current_map_id, NEW Map(current_map_id, 1, 1));
+  std::unique_ptr<Map> new_map{ NEW Map { current_map_id, 1, 1 } };
+  m_maps[current_map_id] = std::move(new_map);
 
   // Register the Map Lua functions.
   the_lua_instance.register_function("map_get_tile_contents", Map::LUA_get_tile_contents);
@@ -31,11 +30,11 @@ Map const& MapFactory::get(MapId map_id) const
 {
   if (m_maps.count(map_id) == 0)
   {
-    return m_maps.at(null_map_id);
+    return *(m_maps.at(null_map_id).get());
   }
   else
   {
-    return m_maps.at(map_id);
+    return *(m_maps.at(map_id).get());
   }
 }
 
@@ -43,20 +42,21 @@ Map& MapFactory::get(MapId map_id)
 {
   if (m_maps.count(map_id) == 0)
   {
-    return m_maps.at(null_map_id);
+    return *(m_maps.at(null_map_id).get());
   }
   else
   {
-    return m_maps.at(map_id);
+    return *(m_maps.at(map_id).get());
   }
 }
 
 MapId MapFactory::create(int x, int y)
 {
   ++current_map_id;
-  Map* new_map = NEW Map(current_map_id, x, y);
-  m_maps.insert(current_map_id, new_map);
-  new_map->initialize();
+
+  std::unique_ptr<Map> new_map{ NEW Map{ current_map_id, x, y } };
+  m_maps[current_map_id] = std::move(new_map);
+  m_maps[current_map_id]->initialize();
 
   return current_map_id;
 }

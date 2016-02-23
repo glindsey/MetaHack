@@ -84,9 +84,6 @@
     <ClInclude Include="include\MapFactory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\MapId.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\MapTile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -185,9 +182,6 @@
     </ClInclude>
     <ClInclude Include="include\MetadataCollection.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\impl\MapImpl.h">
-      <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="include\GameState.h">
       <Filter>Header Files</Filter>

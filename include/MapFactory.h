@@ -2,14 +2,19 @@
 #define MAPFACTORY_H
 
 #include <boost/ptr_container/ptr_map.hpp>
+#include <cereal/archives/xml.hpp>
+#include <cereal/types/memory.hpp>
+#include <cereal/types/polymorphic.hpp>
 #include <memory>
 
-#include "MapId.h"
 #include "MetadataCollection.h"
 
 // Forward declarations
 class GameState;
 class Map;
+
+// Using declarations
+using MapId = unsigned int;
 
 // MapFactory is both a Factory for Maps and a store containing all of
 // the Maps currently in use.
@@ -17,8 +22,16 @@ class Map;
 class MapFactory
 {
 public:
-  explicit MapFactory(GameState& game_state);
+  MapFactory();
   virtual ~MapFactory();
+
+  /// Serialization function.
+  template<class Archive>
+  void serialize(Archive& archive)
+  {
+    /// @todo WRITE ME
+    //archive(m_maps, current_map_id);
+  }
 
   /// Gets a reference to a Map by ID.
   Map const& get(MapId map_id) const;
@@ -34,11 +47,8 @@ public:
 
 protected:
 private:
-  /// Reference to owning GameState.
-  GameState& m_game_state;
-
   /// Collection of maps.
-  boost::ptr_map<MapId, Map> m_maps;
+  std::unordered_map<MapId, std::unique_ptr<Map>> m_maps;
 
   MapId current_map_id;
 };

@@ -5,6 +5,9 @@
 
 #include <boost/functional/hash.hpp>
 #include <boost/lexical_cast.hpp>
+#include <cereal/archives/xml.hpp>
+#include <cereal/types/memory.hpp>
+#include <cereal/types/polymorphic.hpp>
 #include <iostream>
 #include <memory>
 #include <vector>
@@ -45,6 +48,13 @@ public:
     id{ static_cast<uint64_t>(full_id_) & 0xFFFFFFFF },
     version{ static_cast<uint64_t>(full_id_) >> 32 }
   {}
+
+  /// Serialization function.
+  template<class Archive>
+  void serialize(Archive& archive)
+  {
+    archive(id, version);
+  }
 
   bool ThingId::operator<(ThingId const& other) const
   {
@@ -117,7 +127,7 @@ namespace std
 // Forward declarations
 class Thing;
 
-class ThingRef
+class ThingRef final
 {
   friend class ThingManager;
 
@@ -129,7 +139,7 @@ public:
   /// Create a weak reference from an ID.
   explicit ThingRef(ThingId const& id);
 
-  virtual ~ThingRef();
+  ~ThingRef();
 
   /// Create a weak reference from another weak reference.
   ThingRef(ThingRef const& other);
@@ -142,6 +152,16 @@ public:
   operator lua_Integer() const
   {
     return static_cast<lua_Integer>(get_id().to_uint64());
+  }
+
+  /// Serialization function.
+  /// @todo This is SUPER DUPER INEFFICIENT as it will store the static data
+  ///       once for EVERY SINGLE ThingRef. It really needs to be split out
+  ///       into some sort of factory.
+  template<class Archive>
+  void serialize(Archive& archive)
+  {
+    archive(m_id, S_largest_unused_id, S_deleted_ids);
   }
 
   bool operator<(ThingRef const& other) const;
