@@ -5,6 +5,7 @@ require "resources/things/LightSource"
 Sconce = inheritsFrom(LightSource, "Sconce")
 Sconce.intrinsics.name = "torch sconce"
 Sconce.intrinsics.plural = "torch sconces"
+Sconce.intrinsics.creatable = true
 
 Sconce.defaults.light_color_red = 160
 Sconce.defaults.light_color_green = 128

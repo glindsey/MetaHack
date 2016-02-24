@@ -5,6 +5,7 @@ require "resources/things/Biped"
 Human = inheritsFrom(Biped, "Human")
 Human.intrinsics.name = "human"
 Human.intrinsics.plural = "humans"
+Human.intrinsics.creatable = true
 
 Human.defaults.proper_name = "John Doe"
 Human.defaults.maxhp = range(6, 10)

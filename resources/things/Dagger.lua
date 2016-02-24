@@ -5,6 +5,7 @@ require "resources/things/WeaponStabbing"
 Dagger = inheritsFrom(WeaponStabbing, "Dagger")
 Dagger.intrinsics.name = "dagger"
 Dagger.intrinsics.plural = "daggers"
+Dagger.intrinsics.creatable = true
 
 Dagger.intrinsics.physical_mass = 1
 Dagger.intrinsics.rustable = true

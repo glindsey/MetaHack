@@ -310,6 +310,11 @@
     <None Include="resources\things\Sapient.lua" />
     <None Include="resources\things\Sconce.lua" />
     <None Include="resources\things\Thing.lua" />
+    <None Include="resources\things\Weapon.lua" />
+    <None Include="resources\things\WeaponCutting.lua" />
+    <None Include="resources\things\WeaponStabbing.lua" />
+    <None Include="resources\things\WeaponStrangling.lua" />
+    <None Include="resources\things\WeaponStriking.lua" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

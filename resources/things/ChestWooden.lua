@@ -5,6 +5,7 @@ require "resources/things/Chest"
 ChestWooden = inheritsFrom(Chest, "ChestWooden")
 ChestWooden.intrinsics.name = "wooden chest"
 ChestWooden.intrinsics.plural = "wooden chests"
+ChestWooden.intrinsics.creatable = true
 
 ChestWooden.intrinsics.flammable = true
 

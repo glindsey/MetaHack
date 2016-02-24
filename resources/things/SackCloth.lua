@@ -5,6 +5,7 @@ require "resources/things/Container"
 SackCloth = inheritsFrom(Container, "SackCloth")
 SackCloth.intrinsics.name = "cloth sack"
 SackCloth.intrinsics.plural = "cloth sacks"
+SackCloth.intrinsics.creatable = true
 
 SackCloth.intrinsics.inventory_size = 10
 

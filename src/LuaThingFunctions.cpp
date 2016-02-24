@@ -9,6 +9,8 @@ namespace LuaThingFunctions
 {
   int thing_create(lua_State* L)
   {
+    bool success = false;
+    ThingRef new_thing;
     int num_args = lua_gettop(L);
 
     if ((num_args < 2) || (num_args > 3))
@@ -20,13 +22,21 @@ namespace LuaThingFunctions
     ThingRef thing = ThingRef(lua_tointeger(L, 1));
     std::string new_thing_type = lua_tostring(L, 2);
 
-    ThingRef new_thing = GAME.get_thing_manager().create(new_thing_type);
-    bool success = new_thing->move_into(thing);
+    // Check to make sure the Thing is actually creatable.
+    /// @todo Might want the ability to disable this check for debugging purposes?
+    Metadata& thing_metadata = MDC::get_collection("thing").get(new_thing_type);
+    bool is_creatable = thing_metadata.get_intrinsic<bool>("creatable", false);
 
-    if (num_args > 2)
+    if (is_creatable)
     {
-      int quantity = lua_tointeger(L, 3);
-      new_thing->set_quantity(static_cast<unsigned int>(quantity));
+      new_thing = GAME.get_thing_manager().create(new_thing_type);
+      success = new_thing->move_into(thing);
+
+      if (success && (num_args > 2))
+      {
+        int quantity = lua_tointeger(L, 3);
+        new_thing->set_quantity(static_cast<unsigned int>(quantity));
+      }
     }
 
     if (success)

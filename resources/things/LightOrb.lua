@@ -5,6 +5,7 @@ require "resources/things/LightSource"
 LightOrb = inheritsFrom(LightSource, "LightOrb")
 LightOrb.intrinsics.name = "magical lighting orb"
 LightOrb.intrinsics.plural = "magical lighting orbs"
+LightOrb.intrinsics.creatable = true
 
 LightOrb.defaults.light_color_red = 255
 LightOrb.defaults.light_color_green = 255

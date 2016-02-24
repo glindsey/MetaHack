@@ -565,5 +565,20 @@
     <None Include="resources\deepcopy.lua">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="resources\things\Weapon.lua">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\things\WeaponCutting.lua">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\things\WeaponStabbing.lua">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\things\WeaponStrangling.lua">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\things\WeaponStriking.lua">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

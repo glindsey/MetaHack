@@ -44,8 +44,6 @@ ThingRef ThingManager::create(std::string type)
 
   std::unique_ptr<Thing> new_thing{ new Thing{ metadata, new_ref} };
   m_thing_map[new_id] = std::move(new_thing);
-
-  // Temporary test of Lua call
   m_thing_map[new_id]->call_lua_function("on_create", {});
 
   return ThingRef(new_id);

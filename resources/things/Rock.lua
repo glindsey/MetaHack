@@ -5,6 +5,7 @@ require "resources/things/Thing"
 Rock = inheritsFrom(Thing, "Rock")
 Rock.intrinsics.name = "rock"
 Rock.intrinsics.plural = "rocks"
+Rock.intrinsics.creatable = true
 
 Rock.intrinsics.physical_mass = 3
 

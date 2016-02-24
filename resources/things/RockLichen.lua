@@ -5,6 +5,7 @@ require "resources/things/Blob"
 RockLichen = inheritsFrom(Blob, "RockLichen")
 RockLichen.intrinsics.name = "rock lichen"
 RockLichen.intrinsics.plural = "rock lichens"
+RockLichen.intrinsics.creatable = true
 
 RockLichen.defaults.maxhp = range(1, 1)
 
