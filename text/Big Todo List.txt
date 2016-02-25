@@ -11,7 +11,7 @@ MEDIUM THINGS
 [ ] Write open, close Action code
 [ ] Write lock, unlock Action code
 [ ] Transition die code into Action subclass (?)
-[ ] Some more verbs: push, shatter
+[ ] Some more verbs: clean, push, shatter(?), unwield
 [ ] Create (and call) each Thing's "process()" Lua function (needed for enemy AI!)
 [ ] Create Lua functions to allow queuing of Actions (needed for enemy AI!)
 [ ] Fix quantities (they are not currently being respected for get/drop actions)
