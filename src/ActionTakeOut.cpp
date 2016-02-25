@@ -79,7 +79,7 @@ Action::StateResult ActionTakeOut::do_begin_work_(AnyMap& params)
   // Set the target to be the container as a kludge for message printing.
   set_target(container);
 
-  if (object->perform_action_taken_out_by(subject))
+  if (object->be_object_of(*this, subject) == ActionResult::Success)
   {
     if (object->move_into(new_location))
     {
@@ -93,7 +93,7 @@ Action::StateResult ActionTakeOut::do_begin_work_(AnyMap& params)
       message = YOU + " could not take " + get_object_string_() + " out of " + get_target_string_() + " for some inexplicable reason.";
       the_message_log.add(message);
 
-      MAJOR_ERROR("Could not move Thing out of Container");
+      MAJOR_ERROR("Could not move Thing out of Container even though be_object_of returned Success");
     }
   }
 

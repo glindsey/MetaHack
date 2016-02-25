@@ -92,7 +92,7 @@ Action::StateResult ActionDrop::do_begin_work_(AnyMap& params)
   {
     if (location->can_contain(object) == ActionResult::Success)
     {
-      if (object->perform_action_dropped_by(subject))
+      if (object->be_object_of(*this, subject) == ActionResult::Success)
       {
         print_message_do_();
 
@@ -107,12 +107,12 @@ Action::StateResult ActionDrop::do_begin_work_(AnyMap& params)
           the_message_log.add(message);
 
           MAJOR_ERROR("Could not move Thing even though "
-                      "perform_action_dropped_by returned Success");
+                      "be_object_of returned Success");
         }
       }
       else // Drop failed
       {
-        // perform_action_dropped_by() will print any relevant messages
+        // be_object_of() will print any relevant messages
       }
     }
     else // can't contain the thing

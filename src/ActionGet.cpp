@@ -78,7 +78,7 @@ Action::StateResult ActionGet::do_begin_work_(AnyMap& params)
   auto subject = get_subject();
   auto object = get_object();
 
-  if (object->perform_action_picked_up_by(subject))
+  if (object->be_object_of(*this, subject) == ActionResult::Success)
   {
     message = YOU + CV(" pick", " picks") + " up " + THE_FOO + ".";
     the_message_log.add(message);
@@ -93,7 +93,7 @@ Action::StateResult ActionGet::do_begin_work_(AnyMap& params)
       the_message_log.add(message);
 
       MAJOR_ERROR("Could not move Thing even though "
-                  "perform_action_picked_up_by returned Success");
+                  "be_object_of returned Success");
     }
   }
 

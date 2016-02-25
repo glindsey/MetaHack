@@ -45,7 +45,7 @@ Action::StateResult ActionEat::do_begin_work_(AnyMap& params)
 
   // Do the eating action here.
   /// @todo Figure out eating time.
-  ActionResult result = object->perform_action_eaten_by(subject);
+  ActionResult result = object->be_object_of(*this, subject);
 
   switch (result)
   {

@@ -59,7 +59,7 @@ Action::StateResult ActionUse::do_finish_work_(AnyMap& params)
   print_message_finish_();
 
   /// @todo Split read time into start/finish actions.
-  switch (object->perform_action_used_by(subject))
+  switch (object->be_object_of(*this, subject))
   {
     case ActionResult::SuccessDestroyed:
       message = THE_FOO + OBJCV(" disintegrate", " disintegrates") + " after " + YOU + CV(" use ",

@@ -428,58 +428,46 @@ public:
   ///          on the next call to process()!
   ActionResult perform_action_died();
 
-  /// Perform an action when this thing is activated.
-  /// If this function returns false, the action is aborted.
-  bool perform_action_activated_by(ThingRef actor);
-
   /// Perform an action when this thing collides with another thing.
   void perform_action_collided_with(ThingRef thing);
 
   /// Perform an action when this thing collides with a wall.
   void perform_action_collided_with_wall(Direction d, std::string tile_type);
 
-  /// Perform an action when this thing is drank.
-  /// If this function returns Failure, the action is aborted.
-  ActionResult perform_action_drank_by(ThingRef actor);
+  /// Perform the effects of being a object of a particular action.
+  /// @param action   The action to be the target of.
+  /// @param subject  The subject performing the action.
+  /// @return Result of the action. If Failure, the action is aborted
+  ///         (if possible).
+  ActionResult be_object_of(Action & action, ThingRef subject);
 
-  /// Perform an action when this thing is dropped.
-  /// If this function returns false, the action is aborted.
-  bool perform_action_dropped_by(ThingRef actor);
+  /// Perform the effects of being a object of an action with a target.
+  /// @param action   The action to be the target of.
+  /// @param subject  The subject performing the action.
+  /// @param target   The target of the action.
+  /// @return Result of the action. If Failure, the action is aborted
+  ///         (if possible).
+  ActionResult be_object_of(Action & action, ThingRef subject, ThingRef target);
 
-  /// Perform an action when this thing is eaten.
-  /// If this function returns Failure, the action is aborted.
-  ActionResult perform_action_eaten_by(ThingRef actor);
+  /// Perform the effects of being a object of an action with a direction.
+  /// @param action     The action to be the target of.
+  /// @param subject    The subject performing the action.
+  /// @param direction  The direction of the action.
+  /// @return Result of the action. If Failure, the action is aborted
+  ///         (if possible).
+  ActionResult be_object_of(Action & action, ThingRef subject, Direction direction);
 
-  /// Perform an action when this thing is used.
-  /// If this function returns Failure, the action is aborted.
-  ActionResult perform_action_used_by(ThingRef actor);
+  /// Perform an action when this thing is hit by an attack.
+  ActionResult perform_action_hurt_by(ThingRef subject);
 
-  /// Perform an action when this thing is picked up.
-  /// If this function returns false, the action is aborted.
-  bool perform_action_picked_up_by(ThingRef actor);
-
-  /// Perform an action when this thing is put into another thing.
-  /// If this function returns false, the action is aborted.
-  bool perform_action_put_into_by(ThingRef container, ThingRef actor);
-
-  /// Perform an action when this thing is taken out its container.
-  /// If this function returns false, the action is aborted.
-  bool perform_action_taken_out_by(ThingRef actor);
-
-  /// Perform an action when this thing is read.
-  /// If this function returns Failure, the action is aborted.
-  ActionResult perform_action_read_by(ThingRef actor);
-
-  /// Perform an action when this thing hits an entity.
+  /// Perform an action when this thing is used to hit a target.
   /// This action executes when the thing is wielded by an entity, and an
   /// attack successfully hits its target.  It is a side-effect in addition
   /// to the damage done by Entity::attack(entity).
   /// @see Entity::attack
-  void perform_action_attack_hits(ThingRef target);
-
-  /// Perform an action when this thing is thrown.
-  /// If this function returns false, the action is aborted.
-  bool perform_action_thrown_by(ThingRef actor, Direction direction);
+  /// @note Is there a better name for this? Current name sounds like the
+  ///       object is the target, instead of the implement.
+  ActionResult perform_action_attacked_by(ThingRef subject, ThingRef target);
 
   /// Perform an action when this thing is de-equipped (taken off).
   /// If this function returns false, the action is aborted.
@@ -492,14 +480,6 @@ public:
   /// Perform an action when this thing is unwielded.
   /// If this function returns false, the action is aborted.
   bool perform_action_unwielded_by(ThingRef actor);
-
-  /// Perform an action when this thing is wielded.
-  /// If this function returns false, the action is aborted.
-  bool perform_action_wielded_by(ThingRef actor);
-
-  /// Perform an action when this thing is fired.
-  /// If this function returns false, the action is aborted.
-  bool perform_action_fired_by(ThingRef actor, Direction direction);
 
   /// Returns whether the Thing can merge with another Thing.
   /// Calls an overridden subclass function.

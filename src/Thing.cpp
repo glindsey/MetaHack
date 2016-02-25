@@ -1594,12 +1594,6 @@ ActionResult Thing::perform_action_died()
   return result;
 }
 
-bool Thing::perform_action_activated_by(ThingRef actor)
-{
-  ActionResult result = call_lua_function("perform_action_activated_by", { actor });
-  return was_successful(result);
-}
-
 void Thing::perform_action_collided_with(ThingRef actor)
 {
   /* ActionResult result = */ call_lua_function("perform_action_collided_with", { actor });
@@ -1612,66 +1606,34 @@ void Thing::perform_action_collided_with_wall(Direction d, std::string tile_type
   return;
 }
 
-ActionResult Thing::perform_action_drank_by(ThingRef actor)
+ActionResult Thing::be_object_of(Action& action, ThingRef subject)
 {
-  ThingRef contents = actor->get_inventory().get(INVSLOT_ZERO);
-  ActionResult result = call_lua_function("perform_action_drank_by", { actor, contents });
+  ActionResult result = call_lua_function("be_object_of_action_" + action.get_type(), { subject });
   return result;
 }
 
-bool Thing::perform_action_dropped_by(ThingRef actor)
+ActionResult Thing::be_object_of(Action & action, ThingRef subject, ThingRef target)
 {
-  ActionResult result = call_lua_function("perform_action_dropped_by", { actor });
-  return was_successful(result);
-}
-
-ActionResult Thing::perform_action_eaten_by(ThingRef actor)
-{
-  ActionResult result = call_lua_function("perform_action_eaten_by", { actor });
+  ActionResult result = call_lua_function("be_object_of_action_" + action.get_type(), { subject, target });
   return result;
 }
 
-ActionResult Thing::perform_action_used_by(ThingRef actor)
+ActionResult Thing::be_object_of(Action & action, ThingRef subject, Direction direction)
 {
-  ActionResult result = call_lua_function("perform_action_used_by", { actor });
-
+  ActionResult result = call_lua_function("be_object_of_action_" + action.get_type(), { subject, NULL, direction.x(), direction.y(), direction.z() });
   return result;
 }
 
-bool Thing::perform_action_picked_up_by(ThingRef actor)
+ActionResult Thing::perform_action_hurt_by(ThingRef subject)
 {
-  ActionResult result = call_lua_function("perform_action_picked_up_by", { actor });
-  return was_successful(result);
-}
-
-bool Thing::perform_action_put_into_by(ThingRef container, ThingRef actor)
-{
-  ActionResult result = call_lua_function("perform_action_put_into", { container, actor });
-  return was_successful(result);
-}
-
-bool Thing::perform_action_taken_out_by(ThingRef actor)
-{
-  ActionResult result = call_lua_function("perform_action_taken_out_by", { actor });
-  return was_successful(result);
-}
-
-ActionResult Thing::perform_action_read_by(ThingRef actor)
-{
-  ActionResult result = call_lua_function("perform_action_read_by", { actor });
+  ActionResult result = call_lua_function("be_object_of_action_hurt", { subject });
   return result;
 }
 
-void Thing::perform_action_attack_hits(ThingRef target)
+ActionResult Thing::perform_action_attacked_by(ThingRef subject, ThingRef target)
 {
-  /* ActionResult result = */ call_lua_function("perform_action_read_by", { target });
-  return;
-}
-
-bool Thing::perform_action_thrown_by(ThingRef actor, Direction direction)
-{
-  ActionResult result = call_lua_function("perform_action_thrown_by", { actor, direction.x(), direction.y(), direction.z() });
-  return was_successful(result);
+  ActionResult result = call_lua_function("be_object_of_action_attack", { subject, target });
+  return result;
 }
 
 bool Thing::perform_action_deequipped_by(ThingRef actor, WearLocation& location)
@@ -1718,47 +1680,7 @@ bool Thing::perform_action_equipped_by(ThingRef actor, WearLocation& location)
 
 bool Thing::perform_action_unwielded_by(ThingRef actor)
 {
-  if (this->get_property<bool>("bound"))
-  {
-    std::string message;
-    message = actor->get_identifying_string() + " cannot unwield " + this->get_identifying_string() +
-      "; it is magically bound to " +
-      actor->get_possessive_adjective() + " " +
-      actor->get_bodypart_name(BodyPart::Hand) + "!";
-    the_message_log.add(message);
-    return false;
-  }
-  else
-  {
-    ActionResult result = call_lua_function("perform_action_unwielded_by", { actor });
-    return was_successful(result);
-  }
-}
-
-bool Thing::perform_action_wielded_by(ThingRef actor)
-{
-  ActionResult result = call_lua_function("perform_action_wielded_by", { actor });
-  bool subclass_result = was_successful(result);
-
-  if (subclass_result == true)
-  {
-    if (this->get_property<bool>("autobinds"))
-    {
-      this->set_property<bool>("bound", true);
-      std::string message;
-      message = this->get_identifying_string() + " magically binds itself to " +
-        actor->get_possessive() + " " +
-        actor->get_bodypart_name(BodyPart::Hand) + "!";
-      the_message_log.add(message);
-    }
-  }
-
-  return subclass_result;
-}
-
-bool Thing::perform_action_fired_by(ThingRef actor, Direction direction)
-{
-  ActionResult result = call_lua_function("perform_action_fired_by", { actor, direction.x(), direction.y(), direction.z() });
+  ActionResult result = call_lua_function("perform_action_unwielded_by", { actor });
   return was_successful(result);
 }
 
@@ -1777,11 +1699,8 @@ bool Thing::can_merge_with(ThingRef other) const
     return false;
   }
 
-  // If the things have the same properties, merge is okay.
-  /// @todo Implement this. It's going to be a major pain in the ass.
-  ///       We'll need a Lua function that compares the property arrays
-  ///       of the two Things, and returns true or false.
-  //if ((this->pImpl->properties) == (other->pImpl->properties))
+  // If the things have the exact same properties, merge is okay.
+  if ((this->pImpl->properties) == (other->pImpl->properties))
   {
     return true;
   }

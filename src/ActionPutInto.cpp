@@ -142,7 +142,7 @@ Action::StateResult ActionPutInto::do_begin_work_(AnyMap& params)
   auto object = get_object();
   auto container = get_target_thing();
 
-  if (object->perform_action_put_into_by(container, subject))
+  if (object->be_object_of(*this, subject, container) == ActionResult::Success)
   {
     print_message_do_();
 
@@ -156,7 +156,7 @@ Action::StateResult ActionPutInto::do_begin_work_(AnyMap& params)
       message = YOU + " could not move " + THE_FOO + " into " + THE_TARGET_THING + " for some inexplicable reason.";
       the_message_log.add(message);
 
-      MAJOR_ERROR("Could not move Thing into Container");
+      MAJOR_ERROR("Could not move Thing into Container even though be_object_of returned Success");
     }
   }
 

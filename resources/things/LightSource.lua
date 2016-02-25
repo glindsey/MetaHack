@@ -24,7 +24,7 @@ function LightSource.can_have_action_use_done_by(id)
     return true
 end
 
-function LightSource.perform_action_used_by(id)
+function LightSource.be_object_of_action_use(id)
     local name = thing_get_intrinsic_string(id, "name")
     local is_lit = thing_get_property_flag(id, "light_lit")
     is_lit = not is_lit

@@ -68,7 +68,7 @@ Action::StateResult ActionQuaff::do_begin_work_(AnyMap& params)
 
   // Do the drinking action here.
   /// @todo Figure out drinking time.
-  ActionResult result = object->perform_action_drank_by(subject);
+  ActionResult result = object->be_object_of(*this, subject);
 
   switch (result)
   {

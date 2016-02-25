@@ -78,7 +78,6 @@ public:
   {
     bool existed = (m_dictionary.count(key) != 0);
     boost::any insert_value = value;
-    std::string type = boost::core::demangle(typeid(value).name());
 
     if (existed)
     {
@@ -87,7 +86,7 @@ public:
     }
     //TRACE("Inserting key %s, type %s", key.c_str(), type.c_str());
     m_dictionary.insert(std::pair<std::string, boost::any>(key, insert_value));
-    m_metadictionary.insert(std::pair<std::string, std::string>(key, type));
+    m_metadictionary.insert(std::pair<std::string, std::type_index>(key, typeid(key)));
 
     return existed;
   }
@@ -115,13 +114,22 @@ public:
   bool set(std::string key, sf::Vector2u value) { return set<sf::Vector2i>(key, static_cast<sf::Vector2i>(value)); }
   bool set(std::string key, sf::Color value) { return set<sf::Color>(key, value); }
 
+  /// Overloaded equality operator.
+  bool operator==(PropertyDictionary const& other) const;
+
+  /// Overloaded inequality operator.
+  bool operator!=(PropertyDictionary const& other) const
+  {
+    return !(*this == other);
+  }
+
 protected:
   /// Get a reference to the dictionary map itself.
   AnyMap& get_dictionary();
 
 private:
   AnyMap m_dictionary;
-  StringMap m_metadictionary;
+  TypeMap m_metadictionary;
 };
 
 #endif // PROPERTYDICTIONARY_H

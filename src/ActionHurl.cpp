@@ -77,7 +77,7 @@ Action::StateResult ActionHurl::do_begin_work_(AnyMap& params)
   auto direction = get_target_direction();
   ThingRef new_location = subject->get_location();
 
-  if (object->perform_action_thrown_by(subject, direction))
+  if (object->be_object_of(*this, subject, direction) == ActionResult::Success)
   {
     if (object->move_into(new_location))
     {
@@ -92,7 +92,7 @@ Action::StateResult ActionHurl::do_begin_work_(AnyMap& params)
       message = YOU + " could not throw " + THE_FOO + " for some inexplicable reason.";
       the_message_log.add(message);
 
-      MAJOR_ERROR("Could not throw Thing");
+      MAJOR_ERROR("Could not throw Thing even though be_object_of returned Success");
     }
   }
 
