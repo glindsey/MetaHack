@@ -3,6 +3,7 @@
 #ifndef COMMONTYPES_H
 #define COMMONTYPES_H
 
+#include <SFML/Graphics.hpp>
 #include <boost/any.hpp>
 #include <typeinfo>
 #include <typeindex>
@@ -15,6 +16,7 @@
 using BoolMap = std::unordered_map < std::string, bool >;
 using IntMap = std::unordered_map < std::string, int >;
 using StringMap = std::unordered_map < std::string, std::string >;
+using ColorMap = std::unordered_map < std::string, sf::Color >;
 using AnyMap = std::unordered_map < std::string, boost::any >;
 using TypeMap = std::unordered_map < std::string, std::type_index >;
 using CharMap = std::unordered_map < std::string, char >;
