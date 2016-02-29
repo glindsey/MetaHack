@@ -188,31 +188,37 @@ AnyMap& PropertyDictionary::get_dictionary()
 /// @todo Verify that this is correct. I *think* it is but it has not been tested.
 bool PropertyDictionary::operator==(PropertyDictionary const& other) const
 {
-  // If the metadictionary counts don't match, return false.
-  if (m_metadictionary.size() != other.m_metadictionary.size())
+  // If the dictionary counts don't match, return false.
+  if (m_dictionary.size() != other.m_dictionary.size())
   {
     return false;
   }
 
   // Step through each key in our metadictionary.
-  for (auto& pair : m_metadictionary)
+  for (auto& pair : m_dictionary)
   {
     auto key = pair.first;
 
-    if (other.m_metadictionary.count(key) == 0)
+    if (other.m_dictionary.count(key) == 0)
     {
       return false;
     }
 
-    auto type = pair.second;
+    auto our_value = pair.second;
+    auto other_value = other.m_dictionary.at(key);
 
-    if (other.m_metadictionary.at(key) != type)
+    auto& our_type = our_value.type();
+    auto& other_type = other_value.type();
+
+    if (our_type != other_type)
     {
       return false;
     }
 
-    // Okay, at this point we know the types match. Now to compare the values...
-    /// @todo WRITE ME
+    if (our_value != other_value)
+    {
+      return false;
+    }
   }
 
   return true;

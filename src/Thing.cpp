@@ -1700,6 +1700,9 @@ bool Thing::can_merge_with(ThingRef other) const
   }
 
   // If the things have the exact same properties, merge is okay.
+  auto& our_properties = this->pImpl->properties;
+  auto& other_properties = other->pImpl->properties;
+
   if ((this->pImpl->properties) == (other->pImpl->properties))
   {
     return true;

@@ -1,6 +1,7 @@
 #ifndef PROPERTYDICTIONARY_H
 #define PROPERTYDICTIONARY_H
 
+#include <exception>
 #include <string>
 #include <boost/core/demangle.hpp>
 #include <boost/property_tree/ptree.hpp>
@@ -82,11 +83,10 @@ public:
     if (existed)
     {
       m_dictionary.erase(key);
-      m_metadictionary.erase(key);
     }
-    //TRACE("Inserting key %s, type %s", key.c_str(), type.c_str());
+
+    TRACE("Inserting key \"%s\" (%s)", key.c_str(), typeid(key).name());
     m_dictionary.insert(std::pair<std::string, boost::any>(key, insert_value));
-    m_metadictionary.insert(std::pair<std::string, std::type_index>(key, typeid(key)));
 
     return existed;
   }
@@ -129,7 +129,58 @@ protected:
 
 private:
   AnyMap m_dictionary;
-  TypeMap m_metadictionary;
 };
+
+/// Equality operator overload for boost::any.
+/// Only works for certain values, which is unfortunate, but there's no other
+/// safe way to handle equality for boost::any.
+inline bool operator==(boost::any const& lhs, boost::any const& rhs)
+{
+  auto& ltype = lhs.type();
+  auto& rtype = rhs.type();
+
+  if (ltype != rtype)
+  {
+    return false;
+  }
+
+  if (ltype == typeid(std::string))
+  {
+    return boost::any_cast<std::string>(lhs) == boost::any_cast<std::string>(rhs);
+  }
+
+  if (ltype == typeid(double))
+  {
+    return boost::any_cast<double>(lhs) == boost::any_cast<double>(rhs);
+  }
+
+  if (ltype == typeid(bool))
+  {
+    return boost::any_cast<bool>(lhs) == boost::any_cast<bool>(rhs);
+  }
+
+  if (ltype == typeid(sf::Color))
+  {
+    return boost::any_cast<sf::Color>(lhs) == boost::any_cast<sf::Color>(rhs);
+  }
+
+  if (ltype == typeid(sf::Vector2i))
+  {
+    return boost::any_cast<sf::Vector2i>(lhs) == boost::any_cast<sf::Vector2i>(rhs);
+  }
+
+  if (ltype == typeid(sf::Vector2u))
+  {
+    return boost::any_cast<sf::Vector2u>(lhs) == boost::any_cast<sf::Vector2u>(rhs);
+  }
+
+  std::string message = "Comparison of boost::any type \"" + std::string(ltype.name()) + "\" is not supported";
+  throw std::runtime_error(message.c_str());
+}
+
+inline bool operator!=(boost::any const& op1, boost::any const& op2)
+{
+  return !(op1 == op2);
+}
 
 #endif // PROPERTYDICTIONARY_H

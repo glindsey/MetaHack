@@ -15,8 +15,10 @@
 //       there won't be many times we NEED a sorted list.
 using BoolMap = std::unordered_map < std::string, bool >;
 using IntMap = std::unordered_map < std::string, int >;
+using DoubleMap = std::unordered_map < std::string, double >;
 using StringMap = std::unordered_map < std::string, std::string >;
 using ColorMap = std::unordered_map < std::string, sf::Color >;
+using Vec2Map = std::unordered_map < std::string, sf::Vector2i >;
 using AnyMap = std::unordered_map < std::string, boost::any >;
 using TypeMap = std::unordered_map < std::string, std::type_index >;
 using CharMap = std::unordered_map < std::string, char >;
