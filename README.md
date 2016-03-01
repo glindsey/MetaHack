@@ -132,7 +132,8 @@ The TODO list is currently a text file called "Big Todo List.txt". It can be fou
 FAQOWBIALAT (Frequently Asked Questions, Or Would Be If Anyone Looked At This)
 ------------------------------------------------------------------------------
 * Q: Why is development of this so slow and erratic?
-** A: I have a full-time job and a family. Finding time to work on an open-source project such as this is difficult at best, and impossible at worst. Still, I try to work on it when I can.
+
+    * A: I have a full-time job and a family. Finding time to work on an open-source project such as this is difficult at best, and impossible at worst. Still, I try to work on it when I can.
 
 License
 -------
