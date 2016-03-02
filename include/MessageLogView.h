@@ -29,7 +29,7 @@ protected:
   /// Render the contents of this view to the specified target.
   /// @param  target  RenderTarget to render onto.
   /// @param  frame   Current frame counter.
-  virtual std::string _render_contents(sf::RenderTarget& target, int frame) override;
+  virtual std::string _render_contents(sf::RenderTexture& texture, int frame) override;
 
 private:
 

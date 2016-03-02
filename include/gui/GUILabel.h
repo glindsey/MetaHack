@@ -22,7 +22,7 @@ public:
   virtual EventResult handle_event(sf::Event& event);
 
 protected:
-  virtual bool _render_self(sf::RenderTarget& target, int frame) final;
+  virtual bool _render_self(sf::RenderTexture& texture, int frame) override final;
 
 private:
   struct Impl;

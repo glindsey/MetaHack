@@ -35,9 +35,9 @@ EventResult StatusArea::handle_event(sf::Event& event)
   return EventResult::Ignored;
 }
 
-std::string StatusArea::_render_contents(sf::RenderTarget& target, int frame)
+std::string StatusArea::_render_contents(sf::RenderTexture& texture, int frame)
 {
-  sf::IntRect pane_dims = get_dimensions();
+  sf::IntRect pane_dims = get_relative_dimensions();
   ThingRef player = GAME.get_player();
   sf::Vector2f origin(3, 3);
   sf::Color text_color = Settings.get<sf::Color>("text_color");
@@ -64,14 +64,14 @@ std::string StatusArea::_render_contents(sf::RenderTarget& target, int frame)
     type[0] = std::toupper(type[0], std::locale());
 
     render_text.setString(name + " the " + type);
-    target.draw(render_text);
+    texture.draw(render_text);
 
     // Render HP
     render_text.setFont(the_default_mono_font);
     render_text.setColor(text_dim_color);
     render_text.setPosition(origin.x, origin.y + line_spacing);
     render_text.setString("HP");
-    target.draw(render_text);
+    texture.draw(render_text);
 
     int hp = player->get_property<int>("hp");
     int max_hp = player->get_property<int>("maxhp");
@@ -95,19 +95,19 @@ std::string StatusArea::_render_contents(sf::RenderTarget& target, int frame)
 
     render_text.setPosition(origin.x + 30, origin.y + line_spacing);
     render_text.setString(hp_string);
-    target.draw(render_text);
+    texture.draw(render_text);
 
     // Render attributes
-    render_attribute(target, "XP", "xp", { origin.x, origin.y + (2 * line_spacing) });
-    render_attribute(target, "STR", "attribute_strength", { origin.x + (0 * attrib_spacing), origin.y + (3 * line_spacing) });
-    render_attribute(target, "VIG", "attribute_vigilance", { origin.x + (1 * attrib_spacing), origin.y + (3 * line_spacing) });
-    render_attribute(target, "END", "attribute_endurance", { origin.x + (2 * attrib_spacing), origin.y + (3 * line_spacing) });
-    render_attribute(target, "CHA", "attribute_charisma", { origin.x + (3 * attrib_spacing), origin.y + (3 * line_spacing) });
-    render_attribute(target, "INT", "attribute_intelligence", { origin.x + (4 * attrib_spacing), origin.y + (3 * line_spacing) });
-    render_attribute(target, "AGI", "attribute_agility", { origin.x + (5 * attrib_spacing), origin.y + (3 * line_spacing) });
-    render_attribute(target, "LUC", "attribute_luck", { origin.x + (6 * attrib_spacing), origin.y + (3 * line_spacing) });
-    render_attribute(target, "VIT", "attribute_vitality", { origin.x + (7 * attrib_spacing), origin.y + (3 * line_spacing) });
-    render_attribute(target, "AUR", "attribute_aura", { origin.x + (8 * attrib_spacing), origin.y + (3 * line_spacing) });
+    render_attribute(texture, "XP", "xp", { origin.x, origin.y + (2 * line_spacing) });
+    render_attribute(texture, "STR", "attribute_strength", { origin.x + (0 * attrib_spacing), origin.y + (3 * line_spacing) });
+    render_attribute(texture, "VIG", "attribute_vigilance", { origin.x + (1 * attrib_spacing), origin.y + (3 * line_spacing) });
+    render_attribute(texture, "END", "attribute_endurance", { origin.x + (2 * attrib_spacing), origin.y + (3 * line_spacing) });
+    render_attribute(texture, "CHA", "attribute_charisma", { origin.x + (3 * attrib_spacing), origin.y + (3 * line_spacing) });
+    render_attribute(texture, "INT", "attribute_intelligence", { origin.x + (4 * attrib_spacing), origin.y + (3 * line_spacing) });
+    render_attribute(texture, "AGI", "attribute_agility", { origin.x + (5 * attrib_spacing), origin.y + (3 * line_spacing) });
+    render_attribute(texture, "LUC", "attribute_luck", { origin.x + (6 * attrib_spacing), origin.y + (3 * line_spacing) });
+    render_attribute(texture, "VIT", "attribute_vitality", { origin.x + (7 * attrib_spacing), origin.y + (3 * line_spacing) });
+    render_attribute(texture, "AUR", "attribute_aura", { origin.x + (8 * attrib_spacing), origin.y + (3 * line_spacing) });
   }
 
   return "";

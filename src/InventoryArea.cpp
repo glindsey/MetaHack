@@ -270,10 +270,10 @@ EventResult InventoryArea::handle_event(sf::Event& event)
   return EventResult::Ignored;
 }
 
-std::string InventoryArea::_render_contents(sf::RenderTarget& target, int frame)
+std::string InventoryArea::_render_contents(sf::RenderTexture& texture, int frame)
 {
   // Dimensions of the pane.
-  sf::IntRect pane_dims = get_dimensions();
+  sf::IntRect pane_dims = get_relative_dimensions();
 
   float line_spacing_y = the_default_font.getLineSpacing(Settings.get<unsigned int>("text_default_size"));
   float item_spacing_y = 4.0f;
@@ -331,7 +331,7 @@ std::string InventoryArea::_render_contents(sf::RenderTarget& target, int frame)
       render_text.setString(selection_number.str());
       render_text.setPosition(text_coord_x + 26, text_coord_y);
       render_text.setColor(fg_color);
-      target.draw(render_text);
+      texture.draw(render_text);
     }
 
     // 3. Display the slot ID.
@@ -348,12 +348,12 @@ std::string InventoryArea::_render_contents(sf::RenderTarget& target, int frame)
       render_text.setString(slot_id.str());
       render_text.setPosition(text_coord_x + 55, text_coord_y);
       render_text.setColor(fg_color);
-      target.draw(render_text);
+      texture.draw(render_text);
     }
 
     // 4. Display the tile representing the item.
     TS.getTexture().setSmooth(true);
-    thing->draw_to(target,
+    thing->draw_to(texture,
                    sf::Vector2f(static_cast<float>(text_coord_x + 75), static_cast<float>(text_coord_y)),
                    static_cast<unsigned int>(line_spacing_y - 1), false, frame);
     TS.getTexture().setSmooth(false);
@@ -371,7 +371,7 @@ std::string InventoryArea::_render_contents(sf::RenderTarget& target, int frame)
       render_text.setString("W");
       render_text.setPosition(text_coord_x + 11, text_coord_y);
       render_text.setColor(fg_color);
-      target.draw(render_text);
+      texture.draw(render_text);
     }
     else if (wearing)
     {
@@ -380,7 +380,7 @@ std::string InventoryArea::_render_contents(sf::RenderTarget& target, int frame)
       render_text.setString("E");
       render_text.setPosition(text_coord_x + 11, text_coord_y);
       render_text.setColor(fg_color);
-      target.draw(render_text);
+      texture.draw(render_text);
     }
 
     // 6. Display the item name.
@@ -411,7 +411,7 @@ std::string InventoryArea::_render_contents(sf::RenderTarget& target, int frame)
     render_text.setPosition(text_coord_x + 80 + line_spacing_y,
                             text_coord_y + 1);
     render_text.setColor(fg_color);
-    target.draw(render_text);
+    texture.draw(render_text);
 
     if (text_coord_y > pane_dims.height) break;
     text_coord_y += line_spacing_y + item_spacing_y;
@@ -421,7 +421,7 @@ std::string InventoryArea::_render_contents(sf::RenderTarget& target, int frame)
     separator_line.setPosition(text_coord_x + 10, text_coord_y);
     separator_line.setSize(sf::Vector2f(static_cast<float>(pane_dims.width - 25), 1.0f));
     separator_line.setFillColor(Settings.get<sf::Color>("window_border_color"));
-    target.draw(separator_line);
+    texture.draw(separator_line);
 
     text_coord_y += item_spacing_y;
   }

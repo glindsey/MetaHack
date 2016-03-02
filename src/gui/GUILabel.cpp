@@ -33,11 +33,9 @@ struct GUILabel::Impl
 
 GUILabel::GUILabel(sf::IntRect dimensions, std::function<std::string()> string_function)
   :
-  GUIObject(dimensions),
+  GUIObject("label", dimensions),
   pImpl{ NEW Impl(string_function) }
-{
-  set_dimensions(dimensions);
-}
+{}
 
 GUILabel::~GUILabel()
 {
@@ -60,7 +58,7 @@ EventResult GUILabel::handle_event(sf::Event& event)
 }
 
 // === PROTECTED METHODS ======================================================
-bool GUILabel::_render_self(sf::RenderTarget& target, int frame)
+bool GUILabel::_render_self(sf::RenderTexture& texture, int frame)
 {
   float line_spacing_y = the_default_font.getLineSpacing(Settings.get<unsigned int>("text_default_size"));
 
@@ -92,8 +90,8 @@ bool GUILabel::_render_self(sf::RenderTarget& target, int frame)
                                              pImpl->dims.height));
 
   // Draw onto the target.
-  target.setView(sf::View(sf::FloatRect(0.0f, 0.0f, static_cast<float>(target.getSize().x), static_cast<float>(target.getSize().y))));
-  target.draw(pImpl->bg_shape);
+  texture.setView(sf::View(sf::FloatRect(0.0f, 0.0f, static_cast<float>(texture.getSize().x), static_cast<float>(texture.getSize().y))));
+  texture.draw(pImpl->bg_shape);
 
   return true;
 }

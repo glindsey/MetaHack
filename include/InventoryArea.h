@@ -51,7 +51,7 @@ public:
   virtual EventResult handle_event(sf::Event& event) override;
 
 protected:
-  virtual std::string _render_contents(sf::RenderTarget& target, int frame) override;
+  virtual std::string _render_contents(sf::RenderTexture& texture, int frame) override;
 
 private:
   struct Impl;

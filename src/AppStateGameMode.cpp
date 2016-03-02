@@ -146,7 +146,7 @@ public:
   sf::IntRect calc_status_area_dims()
   {
     sf::IntRect statusAreaDims;
-    sf::IntRect invAreaDims = inventory_area->get_dimensions();
+    sf::IntRect invAreaDims = inventory_area->get_relative_dimensions();
     statusAreaDims.width = app_window.getSize().x -
       (invAreaDims.width + 24);
     statusAreaDims.height = Settings.get<int>("status_area_height");
@@ -157,7 +157,7 @@ public:
 
   sf::IntRect calc_inventory_dims()
   {
-    sf::IntRect messageLogDims = message_log_view->get_dimensions();
+    sf::IntRect messageLogDims = message_log_view->get_relative_dimensions();
     sf::IntRect inventoryAreaDims;
     inventoryAreaDims.width = Settings.get<int>("inventory_area_width");
     inventoryAreaDims.height = app_window.getSize().y - 10;
@@ -1125,9 +1125,9 @@ EventResult AppStateGameMode::handle_event(sf::Event& event)
   {
     case sf::Event::EventType::Resized:
     {
-      pImpl->message_log_view->set_dimensions(pImpl->calc_message_log_dims());
-      pImpl->inventory_area->set_dimensions(pImpl->calc_inventory_dims());
-      pImpl->status_area->set_dimensions(pImpl->calc_status_area_dims());
+      pImpl->message_log_view->set_relative_dimensions(pImpl->calc_message_log_dims());
+      pImpl->inventory_area->set_relative_dimensions(pImpl->calc_inventory_dims());
+      pImpl->status_area->set_relative_dimensions(pImpl->calc_status_area_dims());
       result = EventResult::Handled;
       break;
     }

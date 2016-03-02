@@ -1,39 +1,20 @@
 #include "gui/GUIObject.h"
 
-#include <boost/ptr_container/ptr_vector.hpp>
+#include <exception>
 
 #include "App.h"
 #include "ConfigSettings.h"
 #include "New.h"
 
-struct GUIObject::Impl
+GUIObject::GUIObject(std::string name, sf::Vector2i location, sf::Vector2i size)
 {
-  Impl()
-    :
-    focus{ false }
-  {}
+  set_relative_location(location);
+  set_size(size);
+}
 
-  /// Boolean indicating whether this object has the focus.
-  bool focus;
-
-  /// Pane dimensions.
-  sf::IntRect dims;
-
-  /// Background texture.
-  std::unique_ptr<sf::RenderTexture> bg_texture;
-
-  /// Background shape.
-  sf::RectangleShape bg_shape;
-
-  /// Pointer vector of child elements.
-  boost::ptr_vector<GUIObject> children;
-};
-
-GUIObject::GUIObject(sf::IntRect dimensions)
-  :
-  pImpl(NEW Impl())
+GUIObject::GUIObject(std::string name, sf::IntRect dimensions)
 {
-  set_dimensions(dimensions);
+  set_relative_dimensions(dimensions);
 }
 
 GUIObject::~GUIObject()
@@ -41,76 +22,175 @@ GUIObject::~GUIObject()
   //dtor
 }
 
+std::string GUIObject::get_name()
+{
+  return m_name;
+}
+
 void GUIObject::set_focus(bool focus)
 {
-  pImpl->focus = focus;
+  m_focus = focus;
 }
 
 bool GUIObject::get_focus()
 {
-  return pImpl->focus;
+  return m_focus;
 }
 
-sf::IntRect GUIObject::get_dimensions()
+void GUIObject::set_text(std::string text)
 {
-  return pImpl->dims;
+  m_text = text;
 }
 
-void GUIObject::set_dimensions(sf::IntRect rect)
+std::string GUIObject::get_text()
 {
-  pImpl->dims = rect;
-  pImpl->bg_texture.reset(NEW sf::RenderTexture());
-  pImpl->bg_texture->create(rect.width, rect.height);
+  return m_text;
 }
 
-bool GUIObject::add_child(GUIObject* child)
+sf::Vector2i GUIObject::get_relative_location()
 {
-  ASSERT_CONDITION(child != nullptr);
+  return m_location;
+}
 
-  if (std::find_if(pImpl->children.cbegin(), pImpl->children.cend(), [&](GUIObject const& c) { return &c == child; }) == pImpl->children.cend())
+void GUIObject::set_relative_location(sf::Vector2i location)
+{
+  m_location = location;
+}
+
+sf::Vector2i GUIObject::get_size()
+{
+  return m_size;
+}
+
+void GUIObject::set_size(sf::Vector2i size)
+{
+  m_size = size;
+  m_bg_texture.reset(NEW sf::RenderTexture());
+  m_bg_texture->create(size.x, size.y);
+}
+
+sf::IntRect GUIObject::get_relative_dimensions()
+{
+  sf::IntRect dimensions;
+  sf::Vector2i location = get_relative_location();
+  sf::Vector2i size = get_size();
+  dimensions.left = location.x;
+  dimensions.top = location.y;
+  dimensions.width = size.x;
+  dimensions.height = size.y;
+  return dimensions;
+}
+
+void GUIObject::set_relative_dimensions(sf::IntRect dimensions)
+{
+  set_relative_location({ dimensions.left, dimensions.top });
+  set_size({ dimensions.width, dimensions.height });
+}
+
+sf::Vector2i GUIObject::get_absolute_location()
+{
+  sf::Vector2i absolute_location = get_relative_location();
+
+  if (m_parent != nullptr)
   {
-    pImpl->children.push_back(child);
+    sf::Vector2i parents_absolute_location = m_parent->get_absolute_location();
+    absolute_location += parents_absolute_location;
+  }
+
+  return absolute_location;
+}
+
+void GUIObject::set_absolute_location(sf::Vector2i location)
+{
+  sf::Vector2i relative_location = location;
+
+  if (m_parent != nullptr)
+  {
+    sf::Vector2i parents_absolute_location = m_parent->get_absolute_location();
+    relative_location -= parents_absolute_location;
+  }
+
+  set_relative_location(relative_location);
+}
+
+bool GUIObject::add_child(std::unique_ptr<GUIObject> child)
+{
+  ASSERT_CONDITION(child);
+
+  if (std::find_if(m_children.cbegin(),
+                   m_children.cend(),
+                   [&](std::unique_ptr<GUIObject> const& c) { return c.get() == child.get(); }) == m_children.cend())
+  {
+    child->set_parent(this);
+    m_children.push_back(std::move(child));
     return true;
   }
   return false;
 }
 
+bool GUIObject::child_exists(std::string name)
+{
+  if (std::find_if(m_children.cbegin(),
+                   m_children.cend(),
+                   [&](std::unique_ptr<GUIObject> const& c) { return c->get_name() == name; }) == m_children.cend())
+  {
+    return true;
+  }
+  return false;
+}
+
+GUIObject& GUIObject::get_child(std::string name)
+{
+  auto& iter = std::find_if(m_children.cbegin(),
+                            m_children.cend(),
+                            [&](std::unique_ptr<GUIObject> const& c) { return c->get_name() == name; });
+
+  if (iter == m_children.cend())
+  {
+    std::string message = "Tried to get non-existent child \"" + name + "\" of GUI object \"" + get_name() + "\"";
+    throw std::runtime_error(message.c_str());
+  }
+
+  return *(iter->get());
+}
+
 void GUIObject::clear_children()
 {
-  pImpl->children.clear();
+  m_children.clear();
 }
 
 bool GUIObject::render(sf::RenderTarget& target, int frame)
 {
-  sf::RenderTexture& texture = *(pImpl->bg_texture.get());
-
-  // Text offsets relative to the background rectangle.
-  float text_offset_x = 3;
-  float text_offset_y = 3;
+  sf::RenderTexture& texture = *(m_bg_texture.get());
 
   // Clear background texture.
-  pImpl->bg_texture->clear();
+  m_bg_texture->clear();
 
   /// Render self to our bg texture.
   /* bool success = */ _render_self(texture, frame);
 
   /// Render all child objects to our bg texture.
-  for (auto& child : pImpl->children)
+  for (auto& child : m_children)
   {
-    child.render(texture, frame);
+    child->render(texture, frame);
   }
 
   texture.display();
 
   // Create the RectangleShape that will be drawn onto the target.
-  pImpl->bg_shape.setPosition(sf::Vector2f(static_cast<float>(pImpl->dims.left), static_cast<float>(pImpl->dims.top)));
-  pImpl->bg_shape.setSize(sf::Vector2f(static_cast<float>(pImpl->dims.width), static_cast<float>(pImpl->dims.height)));
-  pImpl->bg_shape.setTexture(&(pImpl->bg_texture->getTexture()));
-  pImpl->bg_shape.setTextureRect(sf::IntRect(0, 0, pImpl->dims.width, pImpl->dims.height));
+  m_bg_shape.setPosition(sf::Vector2f(static_cast<float>(m_location.x), static_cast<float>(m_location.y)));
+  m_bg_shape.setSize(sf::Vector2f(static_cast<float>(m_size.x), static_cast<float>(m_size.y)));
+  m_bg_shape.setTexture(&(m_bg_texture->getTexture()));
+  m_bg_shape.setTextureRect(sf::IntRect(0, 0, m_size.x, m_size.y));
 
   // Draw onto the target.
   target.setView(sf::View(sf::FloatRect(0.0f, 0.0f, static_cast<float>(target.getSize().x), static_cast<float>(target.getSize().y))));
-  target.draw(pImpl->bg_shape);
+  target.draw(m_bg_shape);
 
   return true;
+}
+
+void GUIObject::set_parent(GUIObject* parent)
+{
+  m_parent = parent;
 }

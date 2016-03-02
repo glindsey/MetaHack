@@ -19,7 +19,7 @@ struct GUIPane::Impl
 };
 
 GUIPane::GUIPane(sf::IntRect dimensions) :
-  GUIObject(dimensions),
+  GUIObject("pane", dimensions),
   pImpl{ NEW Impl() }
 {}
 
@@ -35,9 +35,9 @@ EventResult GUIPane::handle_event(sf::Event& event)
 
 // === PROTECTED METHODS ======================================================
 
-bool GUIPane::_render_self(sf::RenderTarget& target, int frame)
+bool GUIPane::_render_self(sf::RenderTexture& texture, int frame)
 {
-  sf::IntRect& dimensions = get_dimensions();
+  sf::Vector2i size = get_size();
 
   float line_spacing_y = the_default_font.getLineSpacing(Settings.get<unsigned int>("text_default_size"));
 
@@ -46,10 +46,10 @@ bool GUIPane::_render_self(sf::RenderTarget& target, int frame)
   float text_offset_y = 3;
 
   // Clear the target.
-  target.clear(Settings.get<sf::Color>("window_bg_color"));
+  texture.clear(Settings.get<sf::Color>("window_bg_color"));
 
   // Render the contents, if any.
-  std::string title = _render_contents(target, frame);
+  std::string title = _render_contents(texture, frame);
 
   // IF the pane has a title...
   if (!title.empty())
@@ -67,22 +67,22 @@ bool GUIPane::_render_self(sf::RenderTarget& target, int frame)
                                Settings.get<sf::Color>("window_focused_border_color") :
                                Settings.get<sf::Color>("window_border_color"));
     title_rect.setOutlineThickness(Settings.get<float>("window_border_width"));
-    title_rect.setPosition(sf::Vector2f(0, 0));
-    title_rect.setSize(sf::Vector2f(static_cast<float>(dimensions.width),
+    title_rect.setPosition({ 0, 0 });
+    title_rect.setSize(sf::Vector2f(static_cast<float>(size.x),
                                     static_cast<float>(line_spacing_y + (text_offset_y * 2))));
 
-    target.draw(title_rect);
+    texture.draw(title_rect);
 
     title_text.setColor(Settings.get<sf::Color>("text_color"));
     title_text.setPosition(sf::Vector2f(text_offset_x + line_spacing_y,
                                         text_offset_y));
-    target.draw(title_text);
+    texture.draw(title_text);
   }
 
   // Draw the border.
   float border_width = Settings.get<float>("window_border_width");
   pImpl->border_shape.setPosition(sf::Vector2f(border_width, border_width));
-  pImpl->border_shape.setSize(sf::Vector2f(static_cast<float>(dimensions.width - (2 * border_width)), static_cast<float>(dimensions.height - (2 * border_width))));
+  pImpl->border_shape.setSize(sf::Vector2f(static_cast<float>(size.x - (2 * border_width)), static_cast<float>(size.y - (2 * border_width))));
   pImpl->border_shape.setFillColor(sf::Color::Transparent);
   pImpl->border_shape.setOutlineColor(
     pImpl->focus ?
@@ -90,14 +90,14 @@ bool GUIPane::_render_self(sf::RenderTarget& target, int frame)
     Settings.get<sf::Color>("window_border_color"));
   pImpl->border_shape.setOutlineThickness(border_width);
 
-  //target.setView(sf::View(sf::FloatRect(0.0f, 0.0f, static_cast<float>(target.getSize().x), static_cast<float>(target.getSize().y))));
+  //texture.setView(sf::View(sf::FloatRect(0.0f, 0.0f, static_cast<float>(target.getSize().x), static_cast<float>(target.getSize().y))));
 
-  target.draw(pImpl->border_shape);
+  texture.draw(pImpl->border_shape);
 
   return true;
 }
 
-std::string GUIPane::_render_contents(sf::RenderTarget& target, int frame)
+std::string GUIPane::_render_contents(sf::RenderTexture& texture, int frame)
 {
   return "";
 }

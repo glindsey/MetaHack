@@ -17,8 +17,8 @@ public:
   virtual EventResult handle_event(sf::Event& event);
 
 protected:
-  virtual bool _render_self(sf::RenderTarget& target, int frame) final;
-  virtual std::string _render_contents(sf::RenderTarget& target, int frame);
+  virtual bool _render_self(sf::RenderTexture& texture, int frame) override final;
+  virtual std::string _render_contents(sf::RenderTexture& texture, int frame);
 
 private:
   struct Impl;

@@ -41,10 +41,10 @@ EventResult MessageLogView::handle_event(sf::Event& event)
   return GUIPane::handle_event(event);
 }
 
-std::string MessageLogView::_render_contents(sf::RenderTarget& target, int frame)
+std::string MessageLogView::_render_contents(sf::RenderTexture& texture, int frame)
 {
   // Dimensions of the pane.
-  sf::IntRect pane_dims = get_dimensions();
+  sf::IntRect pane_dims = get_relative_dimensions();
 
   float lineSpacing = the_default_font.getLineSpacing(Settings.get<unsigned int>("text_default_size"));
 
@@ -65,7 +65,7 @@ std::string MessageLogView::_render_contents(sf::RenderTarget& target, int frame
   if (get_focus() == true)
   {
     pImpl->model.get_key_buffer().render(
-      target,
+      texture,
       sf::Vector2f(text_coord_x, text_coord_y),
       frame,
       the_default_font,
@@ -84,7 +84,7 @@ std::string MessageLogView::_render_contents(sf::RenderTarget& target, int frame
     render_text.setString(*iter);
     render_text.setPosition(text_coord_x, text_coord_y);
     render_text.setColor(Settings.get<sf::Color>("text_color"));
-    target.draw(render_text);
+    texture.draw(render_text);
     if (text_coord_y < text_offset_y) break;
     text_coord_y -= lineSpacing;
   }
