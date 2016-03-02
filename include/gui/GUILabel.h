@@ -13,11 +13,8 @@ class GUILabel :
   public GUIObject
 {
 public:
-  GUILabel(sf::IntRect dimensions, std::function<std::string()> string_function);
+  GUILabel(std::string name, sf::Vector2i location);
   virtual ~GUILabel();
-
-  std::function<std::string()> get_string_function();
-  void set_string_function(std::function<std::string()> string_function);
 
   virtual EventResult handle_event(sf::Event& event);
 
@@ -25,8 +22,6 @@ protected:
   virtual bool _render_self(sf::RenderTexture& texture, int frame) override final;
 
 private:
-  struct Impl;
-  std::unique_ptr<Impl> pImpl;
 };
 
 #endif // GUILABEL_H

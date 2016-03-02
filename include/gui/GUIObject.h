@@ -27,7 +27,9 @@ public:
   void set_text(std::string text);
   std::string get_text();
 
+  /// Get location relative to parent object.
   sf::Vector2i get_relative_location();
+
   void set_relative_location(sf::Vector2i location);
 
   sf::Vector2i get_size();
@@ -36,7 +38,9 @@ public:
   sf::IntRect get_relative_dimensions();
   void set_relative_dimensions(sf::IntRect dimensions);
 
+  // Get absolute location relative to root object.
   sf::Vector2i get_absolute_location();
+
   void set_absolute_location(sf::Vector2i location);
 
   /// Add a child GUIObject underneath this one.
