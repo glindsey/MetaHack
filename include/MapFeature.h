@@ -1,8 +1,7 @@
 #ifndef MAPFEATURE_H
 #define MAPFEATURE_H
 
-#include <memory>
-#include <SFML/Graphics.hpp>
+#include "stdafx.h"
 
 #include "Direction.h"
 #include "GeoVector.h"

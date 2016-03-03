@@ -1,7 +1,6 @@
-#include "MapGenerator.h"
+#include "stdafx.h"
 
-#include <boost/log/trivial.hpp>
-#include <boost/random/uniform_int_distribution.hpp>
+#include "MapGenerator.h"
 
 #include "MapCorridor.h"
 #include "MapDiamond.h"

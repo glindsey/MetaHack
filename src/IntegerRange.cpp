@@ -1,7 +1,6 @@
-#include "IntegerRange.h"
+#include "stdafx.h"
 
-#include <boost/random/uniform_int_distribution.hpp>
-#include <boost/random/normal_distribution.hpp>
+#include "IntegerRange.h"
 
 #include "App.h"
 #include "ErrorHandler.h"

@@ -1,7 +1,7 @@
 #ifndef RENDERABLE_H
 #define RENDERABLE_H
 
-#include <SFML/Graphics.hpp>
+#include "stdafx.h"
 
 /**
  * @brief      Interface for a class that can be rendered on-screen.

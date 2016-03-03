@@ -1,7 +1,7 @@
 #ifndef GEOVECTOR_H
 #define GEOVECTOR_H
 
-#include <SFML/Graphics.hpp>
+#include "stdafx.h"
 
 #include "Direction.h"
 

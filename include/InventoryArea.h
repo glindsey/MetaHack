@@ -1,10 +1,7 @@
 #ifndef INVENTORYAREA_H
 #define INVENTORYAREA_H
 
-#include <SFML/Graphics.hpp>
-#include <memory>
-#include <vector>
-#include <boost/uuid/uuid.hpp>
+#include "stdafx.h"
 
 #include "gui/GUIPane.h"
 #include "InventorySlot.h"

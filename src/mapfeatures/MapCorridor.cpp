@@ -1,7 +1,6 @@
-#include "MapCorridor.h"
+#include "stdafx.h"
 
-#include <boost/log/trivial.hpp>
-#include <boost/random/uniform_int_distribution.hpp>
+#include "MapCorridor.h"
 
 #include "App.h"
 #include "MapTile.h"

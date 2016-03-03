@@ -1,10 +1,7 @@
 #ifndef THINGIMPL_H
 #define THINGIMPL_H
 
-#include <string>
-#include <vector>
-#include <boost/dynamic_bitset.hpp>
-#include <boost/noncopyable.hpp>
+#include "stdafx.h"
 
 #include "common_types.h"
 #include "Gender.h"

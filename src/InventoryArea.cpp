@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "InventoryArea.h"
 
 #include "App.h"
@@ -7,10 +9,6 @@
 #include "Thing.h"
 #include "ThingManager.h"
 #include "TileSheet.h"
-
-#include <boost/log/trivial.hpp>
-#include <sstream>
-#include <string>
 
 struct InventoryArea::Impl
 {

@@ -1,7 +1,7 @@
 #ifndef MAPCORRIDOR_H
 #define MAPCORRIDOR_H
 
-#include <SFML/Graphics.hpp>
+#include "stdafx.h"
 
 #include "MapFeature.h"
 

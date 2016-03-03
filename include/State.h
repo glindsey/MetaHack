@@ -1,9 +1,7 @@
 #ifndef STATE_H
 #define STATE_H
 
-#include <boost/noncopyable.hpp>
-#include <memory>
-#include <string>
+#include "stdafx.h"
 
 #include "EventHandler.h"
 #include "Renderable.h"

@@ -1,8 +1,7 @@
 #ifndef BODYPART_H_INCLUDED
 #define BODYPART_H_INCLUDED
 
-#include <iostream>
-#include <string>
+#include "stdafx.h"
 
 /// Enum class representing body parts or their analogous equivalents.
 enum class BodyPart

@@ -1,9 +1,9 @@
 #ifndef ACTIONRESULT_H
 #define ACTIONRESULT_H
 
-#include <iostream>
+#include "stdafx.h"
 
-#include "Lua.h"
+#include "LuaObject.h"
 
 /// Enum representing possible results from an action.
 /// Note that a "Failure*" result doesn't necessarily mean a complete failure,

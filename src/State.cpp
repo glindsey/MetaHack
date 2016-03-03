@@ -1,10 +1,10 @@
+#include "stdafx.h"
+
 #include "State.h"
 
 #include "App.h"
 #include "ErrorHandler.h"
 #include "StateMachine.h"
-
-#include <boost/log/trivial.hpp>
 
 State::State(StateMachine& state_machine)
   :

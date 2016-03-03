@@ -1,7 +1,6 @@
-#include "StatusArea.h"
+#include "stdafx.h"
 
-#include <boost/lexical_cast.hpp>
-#include <locale>
+#include "StatusArea.h"
 
 #include "gui/GUILabel.h"
 #include "App.h"

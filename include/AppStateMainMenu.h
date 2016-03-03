@@ -1,8 +1,7 @@
 #ifndef APPSTATEMAINMENU_H
 #define APPSTATEMAINMENU_H
 
-#include <memory>
-#include <SFML/Graphics.hpp>
+#include "stdafx.h"
 
 #include "State.h"
 

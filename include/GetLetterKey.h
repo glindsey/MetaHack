@@ -1,7 +1,7 @@
 #ifndef GETLETTERKEY_H_INCLUDED
 #define GETLETTERKEY_H_INCLUDED
 
-#include <SFML/Graphics.hpp>
+#include "stdafx.h"
 
 #include "Direction.h"
 

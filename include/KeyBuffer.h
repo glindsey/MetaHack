@@ -1,8 +1,7 @@
 #ifndef KEYBUFFER_H
 #define KEYBUFFER_H
 
-#include <SFML/Graphics.hpp>
-#include <memory>
+#include "stdafx.h"
 
 #include "EventHandler.h"
 

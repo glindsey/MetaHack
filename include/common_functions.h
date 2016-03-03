@@ -1,8 +1,7 @@
 #ifndef COMMON_FUNCTIONS_H
 #define COMMON_FUNCTIONS_H
 
-#include <boost/algorithm/string.hpp>
-#include <string>
+#include "stdafx.h"
 
 template<typename T>
 std::string str(T const& t)

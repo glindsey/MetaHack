@@ -1,8 +1,7 @@
 #ifndef STATUSAREA_H
 #define STATUSAREA_H
 
-#include <memory>
-#include <SFML/Graphics.hpp>
+#include "stdafx.h"
 
 #include "gui/GUIPane.h"
 

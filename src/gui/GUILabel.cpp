@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "gui/GUILabel.h"
 
 #include "App.h"

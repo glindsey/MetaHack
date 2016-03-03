@@ -1,6 +1,6 @@
-#include "App.h"
+#include "stdafx.h"
 
-#include <boost/random/uniform_int_distribution.hpp>
+#include "App.h"
 
 #include "AppStateGameMode.h"
 #include "AppStateMainMenu.h"
@@ -11,9 +11,6 @@
 #include "MessageLogView.h"
 #include "New.h"
 #include "StateMachine.h"
-
-#include <stdlib.h>
-#include <crtdbg.h>
 
 // Global declarations
 std::unique_ptr<App> app_;
@@ -90,9 +87,6 @@ App::App(sf::RenderWindow& app_window)
   {
     throw std::exception("Tried to create more than one App instance");
   }
-
-  // Initialize SFGUI.
-  m_sfgui.reset(NEW sfg::SFGUI());
 
   // Create the random number generator and seed it with the current time.
   m_rng.reset(NEW boost::random::mt19937(static_cast<unsigned int>(std::time(0))));

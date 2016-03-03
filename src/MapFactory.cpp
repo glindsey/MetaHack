@@ -1,6 +1,6 @@
-#include "MapFactory.h"
+#include "stdafx.h"
 
-#include <boost/log/trivial.hpp>
+#include "MapFactory.h"
 
 #include "App.h"
 #include "GameState.h"

@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "LuaThingFunctions.h"
 
 #include "ErrorHandler.h"

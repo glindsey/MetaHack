@@ -1,7 +1,7 @@
 #ifndef MAPROOM_H
 #define MAPROOM_H
 
-#include <SFML/Graphics.hpp>
+#include "stdafx.h"
 
 #include "MapFeature.h"
 

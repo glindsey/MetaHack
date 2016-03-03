@@ -1,8 +1,6 @@
-#include "Action.h"
+#include "stdafx.h"
 
-#include <algorithm>
-#include <exception>
-#include <unordered_map>
+#include "Action.h"
 
 #include "common_functions.h"
 #include "MessageLog.h"

@@ -1,8 +1,6 @@
-#include "MapTile.h"
+#include "stdafx.h"
 
-#include <boost/log/trivial.hpp>
-#include <boost/random/uniform_int_distribution.hpp>
-#include <string>
+#include "MapTile.h"
 
 #include "App.h"
 #include "ConfigSettings.h"

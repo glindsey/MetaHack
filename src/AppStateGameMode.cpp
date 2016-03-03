@@ -1,8 +1,6 @@
-#include "AppStateGameMode.h"
+#include "stdafx.h"
 
-#include <boost/log/trivial.hpp>
-#include <memory>
-#include <set>
+#include "AppStateGameMode.h"
 
 #include "Action.h"
 #include "App.h"

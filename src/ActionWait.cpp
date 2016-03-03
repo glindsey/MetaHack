@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "ActionWait.h"
 #include "Thing.h"
 #include "ThingRef.h"

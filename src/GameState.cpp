@@ -1,10 +1,6 @@
+#include "stdafx.h"
+
 #include "GameState.h"
-
-#include <exception>
-#include <fstream>
-
-#include <cereal/archives/xml.hpp>
-#include <cereal/types/memory.hpp>
 
 #include "ErrorHandler.h"
 #include "MapFactory.h"

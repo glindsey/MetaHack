@@ -1,9 +1,7 @@
 #ifndef MAPTILE_H
 #define MAPTILE_H
 
-#include <cstdbool>
-#include <map>
-#include <SFML/Graphics.hpp>
+#include "stdafx.h"
 
 #include "Direction.h"
 #include "GameObject.h"

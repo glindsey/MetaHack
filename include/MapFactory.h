@@ -1,11 +1,7 @@
 #ifndef MAPFACTORY_H
 #define MAPFACTORY_H
 
-#include <boost/ptr_container/ptr_map.hpp>
-#include <cereal/archives/xml.hpp>
-#include <cereal/types/memory.hpp>
-#include <cereal/types/polymorphic.hpp>
-#include <memory>
+#include "stdafx.h"
 
 #include "MetadataCollection.h"
 

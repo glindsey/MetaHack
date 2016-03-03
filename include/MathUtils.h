@@ -1,10 +1,7 @@
 #ifndef _MATHUTILS_H_
 #define _MATHUTILS_H_
 
-#include <boost/lexical_cast.hpp>
-#include <boost/random/uniform_int_distribution.hpp>
-
-#include <SFML/Graphics.hpp>
+#include "stdafx.h"
 
 #include "App.h"
 

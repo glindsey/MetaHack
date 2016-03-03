@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "Metadata.h"
 
 #include "ErrorHandler.h"

@@ -1,16 +1,9 @@
 #ifndef THINGREF_H
 #define THINGREF_H
 
-#include "Lua.h"
+#include "stdafx.h"
 
-#include <boost/functional/hash.hpp>
-#include <boost/lexical_cast.hpp>
-#include <cereal/archives/xml.hpp>
-#include <cereal/types/memory.hpp>
-#include <cereal/types/polymorphic.hpp>
-#include <iostream>
-#include <memory>
-#include <vector>
+#include "LuaObject.h"
 
 // Forward declaration
 class ThingManager;

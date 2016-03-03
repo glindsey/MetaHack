@@ -1,11 +1,7 @@
 #ifndef PROPERTYDICTIONARY_H
 #define PROPERTYDICTIONARY_H
 
-#include <exception>
-#include <string>
-#include <boost/core/demangle.hpp>
-#include <boost/property_tree/ptree.hpp>
-#include <SFML/Graphics.hpp>
+#include "stdafx.h"
 
 #include "common_types.h"
 

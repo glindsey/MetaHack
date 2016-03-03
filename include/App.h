@@ -1,14 +1,10 @@
 #ifndef APP_H
 #define APP_H
 
-#include <boost/noncopyable.hpp>
-#include <boost/random/mersenne_twister.hpp>
-#include <memory>
-#include <SFML/Graphics.hpp>
-#include <SFGUI/SFGUI.hpp>
+#include "stdafx.h"
 
 #include "EventHandler.h"
-#include "Lua.h"
+#include "LuaObject.h"
 
 // Forward declarations
 class MessageLog;
@@ -58,9 +54,6 @@ private:
   std::unique_ptr<StateMachine> m_state_machine;
   bool m_is_running;
   bool m_has_window_focus;
-
-  /// The SFGUI instance.
-  std::unique_ptr<sfg::SFGUI> m_sfgui;
 
   /// The RNG instance.
   std::unique_ptr<boost::random::mt19937> m_rng;

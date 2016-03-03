@@ -1,7 +1,7 @@
 #ifndef MAPDIAMOND_H
 #define MAPDIAMOND_H
 
-#include <SFML/Graphics.hpp>
+#include "stdafx.h"
 
 #include "MapFeature.h"
 

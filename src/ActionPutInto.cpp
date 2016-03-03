@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "ActionPutInto.h"
 #include "Thing.h"
 #include "ThingRef.h"

@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "gui/GUIObject.h"
 
 #include <exception>

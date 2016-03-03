@@ -1,12 +1,7 @@
 #ifndef MAP_H
 #define MAP_H
 
-#include <boost/ptr_container/ptr_deque.hpp>
-#include <cereal/archives/xml.hpp>
-#include <cereal/types/memory.hpp>
-#include <cereal/types/polymorphic.hpp>
-#include <memory>
-#include <SFML/Graphics.hpp>
+#include "stdafx.h"
 
 #include "MapFactory.h"
 #include "Renderable.h"

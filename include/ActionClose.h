@@ -1,11 +1,10 @@
 #pragma once
 
+#include "stdafx.h"
+
 #include "Action.h"
 #include "ActionCRTP.h"
 #include "ThingRef.h"
-
-#include <string>
-#include <vector>
 
 class ActionClose
   :

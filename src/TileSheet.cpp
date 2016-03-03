@@ -1,8 +1,6 @@
-#include "TileSheet.h"
+#include "stdafx.h"
 
-#include <boost/dynamic_bitset.hpp>
-#include <boost/log/trivial.hpp>
-#include <map>
+#include "TileSheet.h"
 
 #include "ConfigSettings.h"
 #include "ErrorHandler.h"

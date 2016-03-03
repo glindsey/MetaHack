@@ -1,7 +1,7 @@
 #ifndef MAPDONUTROOM_H
 #define MAPDONUTROOM_H
 
-#include <SFML/Graphics.hpp>
+#include "stdafx.h"
 
 #include "MapFeature.h"
 

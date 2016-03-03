@@ -1,7 +1,7 @@
 #ifndef USESPIMPL_H
 #define USESPIMPL_H
 
-#include <memory>
+#include "stdafx.h"
 
 #include "New.h"
 

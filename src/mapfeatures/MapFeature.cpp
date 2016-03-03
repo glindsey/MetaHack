@@ -1,10 +1,6 @@
-#include "MapFeature.h"
+#include "stdafx.h"
 
-#include <algorithm>
-#include <boost/log/trivial.hpp>
-#include <boost/random/uniform_int_distribution.hpp>
-#include <deque>
-#include <SFML/Graphics.hpp>
+#include "MapFeature.h"
 
 #include "App.h"
 #include "PropertyDictionary.h"

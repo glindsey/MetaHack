@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "ActionAttack.h"
 #include "GameState.h"
 #include "Map.h"

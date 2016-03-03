@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "AppStateMainMenu.h"
 
 #include "App.h"

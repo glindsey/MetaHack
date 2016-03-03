@@ -1,15 +1,6 @@
+#include "stdafx.h"
+
 #include "Thing.h"
-
-#include <boost/algorithm/string.hpp>
-#include <boost/lexical_cast.hpp>
-#include <boost/log/trivial.hpp>
-
-#include <cinttypes>
-#include <iomanip>
-#include <memory>
-#include <sstream>
-#include <unordered_map>
-#include <vector>
 
 #include "App.h"
 #include "ConfigSettings.h"

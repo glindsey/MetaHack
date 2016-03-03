@@ -1,10 +1,7 @@
 #ifndef TILESHEET_H
 #define TILESHEET_H
 
-#include <boost/noncopyable.hpp>
-#include <memory>
-#include <string>
-#include <SFML/Graphics.hpp>
+#include "stdafx.h"
 
 /// Sheet containing all tiles in the application.
 class TileSheet

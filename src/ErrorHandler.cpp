@@ -1,7 +1,6 @@
-#include "ErrorHandler.h"
+#include "stdafx.h"
 
-#include <boost/log/trivial.hpp>
-#include <cstdlib>
+#include "ErrorHandler.h"
 
 #include "App.h"
 #include "New.h"

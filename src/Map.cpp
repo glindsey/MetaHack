@@ -1,9 +1,6 @@
+#include "stdafx.h"
+
 #include "Map.h"
-#include <boost/log/trivial.hpp>
-#include <boost/ptr_container/ptr_vector.hpp>
-#include <boost/random/uniform_int_distribution.hpp>
-#include <climits>
-#include <memory>
 
 #include "App.h"
 #include "ConfigSettings.h"

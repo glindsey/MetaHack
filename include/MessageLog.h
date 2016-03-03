@@ -1,14 +1,11 @@
 #ifndef MESSAGELOG_H
 #define MESSAGELOG_H
 
-#include <deque>
-#include <memory>
-#include <string>
-#include <SFML/Graphics.hpp>
+#include "stdafx.h"
 
 #include "gui/GUIPane.h"
 #include "KeyBuffer.h"
-#include "Lua.h"
+#include "LuaObject.h"
 
 /// A class that keeps track of game messages, and is renderable on-screen.
 class MessageLog

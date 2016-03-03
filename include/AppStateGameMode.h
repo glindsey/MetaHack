@@ -1,8 +1,7 @@
 #ifndef APPSTATEGAMEMODE_H
 #define APPSTATEGAMEMODE_H
 
-#include <memory>
-#include <SFML/Graphics.hpp>
+#include "stdafx.h"
 
 #include "EventHandler.h"
 #include "GameState.h"

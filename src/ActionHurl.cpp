@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "ActionHurl.h"
 #include "Thing.h"
 #include "ThingRef.h"

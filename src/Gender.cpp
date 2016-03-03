@@ -1,6 +1,6 @@
-#include "Gender.h"
+#include "stdafx.h"
 
-#include <cctype>
+#include "Gender.h"
 
 std::string const subjectPronounArray[] =
 {

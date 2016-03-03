@@ -1,8 +1,7 @@
 #ifndef GAMESTATE_H
 #define GAMESTATE_H
 
-#include <boost/noncopyable.hpp>
-#include <memory>
+#include "stdafx.h"
 
 #include "ThingRef.h"
 

@@ -1,8 +1,6 @@
-#include "Lua.h"
+#include "stdafx.h"
 
-#include <sstream>
-#include <boost/any.hpp>
-#include <SFML/Graphics.hpp>
+#include "LuaObject.h"
 
 #include "ActionResult.h"
 #include "Direction.h"

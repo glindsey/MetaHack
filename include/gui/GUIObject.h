@@ -1,10 +1,7 @@
 #ifndef GUIOBJECT_H
 #define GUIOBJECT_H
 
-#include <functional>
-#include <memory>
-#include <string>
-#include <vector>
+#include "stdafx.h"
 
 #include "EventHandler.h"
 #include "Renderable.h"

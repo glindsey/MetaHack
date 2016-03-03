@@ -1,6 +1,6 @@
-#include "MessageLog.h"
+#include "stdafx.h"
 
-#include <boost/log/trivial.hpp>
+#include "MessageLog.h"
 
 #include "App.h"
 #include "ConfigSettings.h"

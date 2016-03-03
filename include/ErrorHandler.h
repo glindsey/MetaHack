@@ -1,9 +1,7 @@
 #ifndef ERRORHANDLER_H_INCLUDED
 #define ERRORHANDLER_H_INCLUDED
 
-#include <boost/noncopyable.hpp>
-#include <cstdio>
-#include <memory>
+#include "stdafx.h"
 
 #ifndef __FUNCTION_NAME__
 #ifdef WIN32   //WINDOWS

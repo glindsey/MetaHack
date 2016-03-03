@@ -1,8 +1,6 @@
-#include "Inventory.h"
+#include "stdafx.h"
 
-#include <algorithm>
-#include <boost/log/trivial.hpp>
-#include <climits>
+#include "Inventory.h"
 
 #include "GameState.h"
 #include "Thing.h"

@@ -129,9 +129,6 @@
     <ClInclude Include="include\ThingRef.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Lua.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\common_types.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -270,6 +267,12 @@
     <ClInclude Include="include\ActionUnlock.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\LuaObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">
@@ -363,9 +366,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\ThingRef.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Lua.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Action.cpp">
@@ -465,6 +465,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\ActionUnlock.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\LuaObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

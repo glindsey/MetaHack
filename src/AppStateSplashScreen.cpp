@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "AppStateSplashScreen.h"
 
 #include "App.h"

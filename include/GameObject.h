@@ -1,9 +1,7 @@
 #ifndef GAMEOBJECT_H
 #define GAMEOBJECT_H
 
-#include <boost/noncopyable.hpp>
-#include <SFML/Graphics.hpp>
-#include <string>
+#include "stdafx.h"
 
 /// Everything in the game inherits from GameObject.
 class GameObject

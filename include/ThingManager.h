@@ -1,12 +1,7 @@
 #ifndef THINGMANAGER_H
 #define THINGMANAGER_H
 
-#include <memory>
-#include <string>
-#include <unordered_map>
-#include <cereal/archives/xml.hpp>
-#include <cereal/types/memory.hpp>
-#include <cereal/types/polymorphic.hpp>
+#include "stdafx.h"
 
 #include "MetadataCollection.h"
 #include "ThingRef.h"

@@ -1,8 +1,7 @@
 #ifndef APPSTATESPLASHSCREEN_H
 #define APPSTATESPLASHSCREEN_H
 
-#include <memory>
-#include <SFML/Graphics.hpp>
+#include "stdafx.h"
 
 #include "State.h"
 

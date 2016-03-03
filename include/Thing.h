@@ -1,6 +1,8 @@
 #ifndef THING_H
 #define THING_H
 
+#include "stdafx.h"
+
 #include "Action.h"
 #include "ActionResult.h"
 #include "BodyPart.h"
@@ -9,16 +11,6 @@
 #include "GameObject.h"
 #include "Gender.h"
 #include "Metadata.h"
-
-#include <memory>
-#include <string>
-#include <set>
-#include <boost/dynamic_bitset.hpp>
-#include <boost/optional.hpp>
-#include <boost/pool/object_pool.hpp>
-#include <boost/property_tree/ptree.hpp>
-#include <boost/serialization/strong_typedef.hpp>
-#include <SFML/Graphics.hpp>
 
 // Forward declarations
 class AIStrategy;
@@ -42,7 +34,6 @@ class Thing
   :
   public GameObject
 {
-  friend class boost::object_pool < Thing >;
   friend class AIStrategy;
   friend class ThingFactory;
   friend class ThingManager;

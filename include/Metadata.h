@@ -1,12 +1,7 @@
 #ifndef METADATA_H
 #define METADATA_H
 
-#include <memory>
-#include <boost/algorithm/string.hpp>
-#include <boost/filesystem.hpp>
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/xml_parser.hpp>
-#include <SFML/Graphics.hpp>
+#include "stdafx.h"
 
 #include "common_functions.h"
 #include "common_types.h"
@@ -15,7 +10,7 @@
 #include "App.h"
 #include "ErrorHandler.h"
 #include "IntegerRange.h"
-#include "Lua.h"
+#include "LuaObject.h"
 #include "MetadataCollection.h"
 #include "PropertyDictionary.h"
 #include "ThingRef.h"

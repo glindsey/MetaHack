@@ -1,9 +1,7 @@
 #ifndef STATEMACHINE_H
 #define STATEMACHINE_H
 
-#include <boost/noncopyable.hpp>
-#include <boost/scoped_ptr.hpp>
-#include <string>
+#include "stdafx.h"
 
 #include "EventHandler.h"
 #include "Renderable.h"
@@ -83,7 +81,7 @@ public:
 protected:
 private:
   struct Impl;
-  boost::scoped_ptr<Impl> pImpl;
+  std::unique_ptr<Impl> pImpl;
 };
 
 #endif // STATEMACHINE_H

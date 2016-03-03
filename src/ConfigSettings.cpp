@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "ConfigSettings.h"
 
 #include "common_types.h"

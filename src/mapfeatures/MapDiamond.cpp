@@ -1,7 +1,6 @@
-#include "MapDiamond.h"
+#include "stdafx.h"
 
-#include <boost/log/trivial.hpp>
-#include <boost/random/uniform_int_distribution.hpp>
+#include "MapDiamond.h"
 
 #include "App.h"
 #include "MapTile.h"

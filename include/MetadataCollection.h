@@ -1,8 +1,7 @@
 #ifndef METADATACOLLECTION_H
 #define METADATACOLLECTION_H
 
-#include <boost/ptr_container/ptr_unordered_map.hpp>
-#include <string>
+#include "stdafx.h"
 
 // Forward declarations
 class Metadata;

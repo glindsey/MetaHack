@@ -1,7 +1,6 @@
-#include "MapLRoom.h"
+#include "stdafx.h"
 
-#include <boost/log/trivial.hpp>
-#include <boost/random/uniform_int_distribution.hpp>
+#include "MapLRoom.h"
 
 #include "App.h"
 #include "MapTile.h"

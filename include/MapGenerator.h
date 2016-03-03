@@ -1,9 +1,9 @@
 #ifndef MAPGENERATOR_H
 #define MAPGENERATOR_H
 
-#include <memory>
+#include "stdafx.h"
 
-#include "Lua.h"
+#include "LuaObject.h"
 #include "Map.h"
 
 /// The MapGenerator fills a map with dungeon features.

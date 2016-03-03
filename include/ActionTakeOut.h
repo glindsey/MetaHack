@@ -1,11 +1,10 @@
 #pragma once
 
+#include "stdafx.h"
+
 #include "Action.h"
 #include "ActionCRTP.h"
 #include "ThingRef.h"
-
-#include <string>
-#include <vector>
 
 /// Action class for taking an item out of another item.
 /// Why does this item have the "object can be out of reach" trait? Well, the

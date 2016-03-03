@@ -1,10 +1,10 @@
 #ifndef ACTIONCRTP_H
 #define ACTIONCRTP_H
 
+#include "stdafx.h"
+
 #include "Action.h"
 #include "ThingRef.h"
-
-#include <memory>
 
 /// Template class implementing the Curiously Recurring Template Pattern
 /// to present several create() functions.

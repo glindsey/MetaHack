@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "ActionMove.h"
 
 #include "ActionAttack.h"

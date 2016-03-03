@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "MessageLogView.h"
 
 #include "App.h"

@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "GameState.h"
 #include "ThingRef.h"
 #include "Thing.h"

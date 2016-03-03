@@ -1,6 +1,6 @@
-#include "KeyBuffer.h"
+#include "stdafx.h"
 
-#include <string>
+#include "KeyBuffer.h"
 
 #include "New.h"
 

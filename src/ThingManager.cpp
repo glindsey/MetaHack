@@ -1,23 +1,15 @@
+#include "stdafx.h"
+
 #include "ThingManager.h"
 
 #include "App.h"
 #include "ErrorHandler.h"
 #include "GameState.h"
-#include "Lua.h"
+#include "LuaObject.h"
 #include "LuaThingFunctions.h"
 #include "Metadata.h"
 #include "Thing.h"
 #include "ThingRef.h"
-
-#include <boost/algorithm/string.hpp>
-#include <boost/bimap.hpp>
-#include <boost/lexical_cast.hpp>
-#include <boost/log/trivial.hpp>
-#include <boost/property_tree/ptree.hpp>
-#include <boost/uuid/uuid_io.hpp>
-#include <cinttypes>
-#include <queue>
-#include <string>
 
 ThingManager::ThingManager()
 {

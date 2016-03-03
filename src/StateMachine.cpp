@@ -1,8 +1,6 @@
-#include "StateMachine.h"
+#include "stdafx.h"
 
-#include <boost/log/trivial.hpp>
-#include <boost/ptr_container/ptr_map.hpp>
-#include <string>
+#include "StateMachine.h"
 
 #include "ErrorHandler.h"
 #include "New.h"

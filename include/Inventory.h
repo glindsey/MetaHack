@@ -1,18 +1,13 @@
 #ifndef INVENTORY_H
 #define INVENTORY_H
 
-#include <map>
-#include <memory>
-#include <boost/uuid/uuid.hpp>
+#include "stdafx.h"
 
 #include "InventorySlot.h"
 #include "ThingRef.h"
 
 /// Forward declarations
 class Thing;
-
-// Using Declarations
-using UUID = boost::uuids::uuid;
 
 // Using std::map here because we DO need to iterate over a sorted list often
 typedef std::map< InventorySlot, ThingRef > ThingMap;

@@ -1,7 +1,7 @@
 #ifndef MAPLROOM_H
 #define MAPLROOM_H
 
-#include <SFML/Graphics.hpp>
+#include "stdafx.h"
 
 #include "MapFeature.h"
 

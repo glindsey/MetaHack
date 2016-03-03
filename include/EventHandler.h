@@ -1,8 +1,7 @@
 #ifndef EVENTHANDLER_H
 #define EVENTHANDLER_H
 
-#include <boost/noncopyable.hpp>
-#include <SFML/Graphics.hpp>
+#include "stdafx.h"
 
 enum EventResult
 {

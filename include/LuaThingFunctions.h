@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Lua.h"
+#include "LuaObject.h"
 
 namespace LuaThingFunctions
 {

@@ -1,8 +1,6 @@
-#include "PropertyDictionary.h"
+#include "stdafx.h"
 
-#include <boost/algorithm/string.hpp>
-#include <boost/lexical_cast.hpp>
-#include <boost/regex.hpp>
+#include "PropertyDictionary.h"
 
 #include "common_functions.h"
 #include "ErrorHandler.h"
@@ -19,12 +17,12 @@ void PropertyDictionary::populate_from(pt::ptree const& tree, std::string prefix
   // Get each of the defaults.
   for (auto& child_tree : tree)
   {
-    boost::regex range_regex("(-?[0-9]+)\\s*to\\s*(-?[0-9]+)\\s*([Uu]?).*");
-    boost::regex hexcolor_regex("#([0-9a-fA-F][0-9a-fA-F])([0-9a-fA-F][0-9a-fA-F])([0-9a-fA-F][0-9a-fA-F])([0-9a-fA-F][0-9a-fA-F])");
-    boost::regex color_regex("\\(\\s*([0-9]+)\\s*,\\s*([0-9]+)\\s*,\\s*([0-9]+)\\s*,\\s*([0-9]+)\\s*\\)");
-    boost::regex vector2f_regex("\\(\\s*([0-9]+.?[0-9]*)\\s*,\\s*([0-9]+.?[0-9]*)\\s*\\)");
+    std::regex range_regex("(-?[0-9]+)\\s*to\\s*(-?[0-9]+)\\s*([Uu]?).*");
+    std::regex hexcolor_regex("#([0-9a-fA-F][0-9a-fA-F])([0-9a-fA-F][0-9a-fA-F])([0-9a-fA-F][0-9a-fA-F])([0-9a-fA-F][0-9a-fA-F])");
+    std::regex color_regex("\\(\\s*([0-9]+)\\s*,\\s*([0-9]+)\\s*,\\s*([0-9]+)\\s*,\\s*([0-9]+)\\s*\\)");
+    std::regex vector2f_regex("\\(\\s*([0-9]+.?[0-9]*)\\s*,\\s*([0-9]+.?[0-9]*)\\s*\\)");
 
-    boost::smatch str_matches;
+    std::smatch str_matches;
 
     std::string key = prefix + child_tree.first;
     std::string value = child_tree.second.get_value<std::string>();
@@ -98,7 +96,7 @@ void PropertyDictionary::populate_from(pt::ptree const& tree, std::string prefix
         }
         else
         {
-          if (boost::regex_match(value, str_matches, range_regex))
+          if (std::regex_match(value, str_matches, range_regex))
           {
             std::string start_string = str_matches[1];
             std::string end_string = str_matches[2];
@@ -111,7 +109,7 @@ void PropertyDictionary::populate_from(pt::ptree const& tree, std::string prefix
             IntegerRange range(start, end, uniform);
             set(key, range);
           }
-          else if (boost::regex_match(value, str_matches, hexcolor_regex))
+          else if (std::regex_match(value, str_matches, hexcolor_regex))
           {
             std::string r_string = str_matches[1];
             std::string g_string = str_matches[2];
@@ -126,7 +124,7 @@ void PropertyDictionary::populate_from(pt::ptree const& tree, std::string prefix
             sf::Color color(r, g, b, a);
             set(key, color);
           }
-          else if (boost::regex_match(value, str_matches, color_regex))
+          else if (std::regex_match(value, str_matches, color_regex))
           {
             std::string r_string = str_matches[1];
             std::string g_string = str_matches[2];
@@ -141,7 +139,7 @@ void PropertyDictionary::populate_from(pt::ptree const& tree, std::string prefix
             sf::Color color(r, g, b, a);
             set(key, color);
           }
-          else if (boost::regex_match(value, str_matches, vector2f_regex))
+          else if (std::regex_match(value, str_matches, vector2f_regex))
           {
             std::string x_string = str_matches[1];
             std::string y_string = str_matches[2];

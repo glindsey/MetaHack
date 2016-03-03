@@ -3,11 +3,7 @@
 #ifndef COMMONTYPES_H
 #define COMMONTYPES_H
 
-#include <SFML/Graphics.hpp>
-#include <boost/any.hpp>
-#include <typeinfo>
-#include <typeindex>
-#include <unordered_map>
+#include "stdafx.h"
 
 // Using declarations
 // Note: std::unordered_map is faster than std::map, but it obviously means

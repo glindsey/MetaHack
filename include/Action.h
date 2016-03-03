@@ -2,13 +2,7 @@
 
 #define ACTION_H
 
-#include <functional>
-#include <memory>
-#include <regex>
-#include <string>
-#include <vector>
-#include <boost/noncopyable.hpp>
-#include <boost/uuid/uuid.hpp>
+#include "stdafx.h"
 
 #include "App.h"
 #include "Direction.h"

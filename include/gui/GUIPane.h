@@ -1,9 +1,7 @@
 #ifndef GUIPANE_H
 #define GUIPANE_H
 
-#include <SFML/Graphics.hpp>
-#include <memory>
-#include <vector>
+#include "stdafx.h"
 
 #include "gui/GUIObject.h"
 

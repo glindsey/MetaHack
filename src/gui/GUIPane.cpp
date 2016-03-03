@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "gui/GUIPane.h"
 
 #include "App.h"

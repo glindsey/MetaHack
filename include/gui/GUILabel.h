@@ -1,11 +1,7 @@
 #ifndef GUILABEL_H
 #define GUILABEL_H
 
-#include <functional>
-#include <SFML/Graphics.hpp>
-#include <memory>
-#include <string>
-#include <vector>
+#include "stdafx.h"
 
 #include "gui/GUIObject.h"
 

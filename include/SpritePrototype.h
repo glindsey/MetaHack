@@ -1,8 +1,7 @@
 #ifndef SPRITEPROTOTYPE_H
 #define SPRITEPROTOTYPE_H
 
-#include <string>
-#include <SFML/Graphics.hpp>
+#include "stdafx.h"
 
 /// Ways that a sprite might animate.
 /// Disregarded if rendersPerFrame is set to zero.

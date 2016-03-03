@@ -1,12 +1,10 @@
 #ifndef CONFIGSETTINGS_H
 #define CONFIGSETTINGS_H
 
-#include "Lua.h"
-#include "PropertyDictionary.h"
+#include "stdafx.h"
 
-#include <memory>
-#include <string>
-#include <SFML/Graphics.hpp>
+#include "LuaObject.h"
+#include "PropertyDictionary.h"
 
 /// Class that contains configuration settings for the entire game.  The class
 /// is instantiated as a lazy-initialized singleton.

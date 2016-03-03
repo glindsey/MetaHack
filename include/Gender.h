@@ -1,10 +1,9 @@
 #ifndef GENDER_H
 #define GENDER_H
 
-#include <iostream>
-#include <string>
+#include "stdafx.h"
 
-#include "Lua.h"
+#include "LuaObject.h"
 
 /// Enumeration of not just genders, but also other modes of speech that might
 /// be required.

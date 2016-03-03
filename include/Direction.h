@@ -1,14 +1,10 @@
 #ifndef DIRECTION_H
 #define DIRECTION_H
 
-#include <boost/math/special_functions/sign.hpp>
-#include <SFML/Graphics.hpp>
+#include "stdafx.h"
 
-#include "Lua.h"
+#include "LuaObject.h"
 #include "MathUtils.h"
-
-#include <iostream>
-#include <sstream>
 
 /// Directional vector in 3-D space.
 /// A std::vector or sf::Vector3i could be used here, but I'd like to keep
