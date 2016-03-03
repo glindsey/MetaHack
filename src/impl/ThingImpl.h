@@ -70,11 +70,11 @@ public:
   ThingImpl(ThingImpl const& other, ThingRef ref_)
     :
     metadata{ other.metadata },
+    properties{ other.properties },
     ref{ ref_ },
     location{ other.location },
     map_tile{ other.map_tile },
     inventory{ Inventory() },             // don't copy
-    properties{ other.properties },
     gender{ other.gender },
     map_memory{ other.map_memory },
     tiles_currently_seen{ TilesSeen() },  // don't copy
@@ -93,6 +93,9 @@ public:
   /// Reference to this Thing's metadata.
   Metadata& metadata;
 
+  /// Property dictionary.
+  PropertyDictionary properties;
+
   /// Reference to this Thing.
   ThingRef ref;
 
@@ -102,10 +105,8 @@ public:
   /// If this Thing is a Floor, pointer to the MapTile it is on.
   MapTile* map_tile;
 
+  /// This Thing's inventory.
   Inventory inventory;
-
-  /// Property dictionary.
-  PropertyDictionary properties;
 
   /// Gender of this entity.
   Gender gender = Gender::None;

@@ -76,6 +76,8 @@ Thing::Thing(Thing const& original, ThingRef ref)
 
 void Thing::initialize()
 {
+  PropertyDictionary& properties = pImpl->properties;
+
   /// Get the max_hp IntegerRange for this Thing (if any).
   IntegerRange max_hp_range = pImpl->metadata.get_default<IntegerRange>("maxhp");
 
@@ -1691,6 +1693,10 @@ bool Thing::can_merge_with(ThingRef other) const
   }
 
   // If the things have the exact same properties, merge is okay.
+  /// @todo Handle default properties. Right now, if a property was
+  ///       queried on a Thing and pulls the default, but it was NOT queried
+  ///       on the second thing, the property dictionaries will NOT match.
+  ///       I have not yet found a good solution to this problem.
   auto& our_properties = this->pImpl->properties;
   auto& other_properties = other->pImpl->properties;
 

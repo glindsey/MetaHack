@@ -6,6 +6,7 @@
 #include "common_types.h"
 
 #include "ErrorHandler.h"
+#include "Metadata.h"
 
 // Namespace aliases
 namespace pt = boost::property_tree;
@@ -16,6 +17,7 @@ class PropertyDictionary
 {
 public:
   PropertyDictionary();
+
   virtual ~PropertyDictionary();
 
   /// Populate this dictionary from a Boost property tree.

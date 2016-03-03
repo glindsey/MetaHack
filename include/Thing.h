@@ -117,10 +117,6 @@ public:
   /// Get a property of this Thing.
   /// If the property is not found, the method falls back upon the default
   /// for that property (if any).
-  /// @note Originally this method saved the default value of a non-existent
-  ///       property, to speed up later lookups. However, this breaks the
-  ///       comparison of property maps for object merging. So we aren't
-  ///       doing that anymore.
   /// @param key            Name of the property to get.
   /// @param default_value  Default value to use, if any.
   /// @return The property (or default) value for that key.
@@ -136,6 +132,7 @@ public:
     else
     {
       T value = pImpl->metadata.get_default<T>(key, default_value);
+      properties.set<T>(key, value);
       return value;
     }
   }
