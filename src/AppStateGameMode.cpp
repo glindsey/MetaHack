@@ -65,8 +65,7 @@ public:
     status_area{ NEW StatusArea(calc_status_area_dims()) },
     map_zoom_level{ 1.0f },
     current_input_state{ GameInputState::Map },
-    cursor_coords{ 0, 0 },
-    game_clock{ 0 }
+    cursor_coords{ 0, 0 }
   {}
 
   /// Application window.
@@ -102,9 +101,6 @@ public:
   /// Action in progress (if any).
   /// Used for an action that needs a "target".
   std::unique_ptr<Action> p_action_in_progress;
-
-  /// Game clock.
-  uint64_t game_clock;
 
   sf::IntRect calc_message_log_dims()
   {
@@ -339,44 +335,14 @@ void AppStateGameMode::execute()
     debug_buffer.clear_buffer();
   }
 
-  // === TODO: This part should go inside GameState object ====================
-  ThingRef player = get_game_state().get_player();
+  GAME.process_tick();
 
-  if (player->action_is_pending() || player->action_is_in_progress())
+  // If outstanding player actions have completed...
+  auto player = GAME.get_player();
+  if (!player->action_is_pending() && !player->action_is_in_progress())
   {
-    // QUESTION: Do we want to update all Things, PERIOD?  In other words, should
-    //           other maps keep playing themselves if the player is not on them?
-    //           While this would be awesome, I'd imagine the resulting per-turn
-    //           lag would quickly grow intolerable.
-
-    // Get the map the player is on.
-    MapId current_map_id = player->get_map_id();
-    Map& current_map = GAME.get_map_factory().get(current_map_id);
-
-    // Process everything on the map, and increment game clock.
-    current_map.process();
-    ++(pImpl->game_clock);
-
-    // If outstanding player actions have completed...
-    if (!player->action_is_pending() && !player->action_is_in_progress())
-    {
-      pImpl->reset_inventory_area();
-    }
-
-    // If player can see the map...
-    /// @todo IMPLEMENT THIS CHECK
-    // (can be done by checking if the location chain for the player is
-    //  entirely transparent)
-    if (true /* player is directly on a map */)
-    {
-      // Update map lighting.
-      current_map.update_lighting();
-
-      // Update tile vertex array.
-      current_map.update_tile_vertices(player);
-    }
+    pImpl->reset_inventory_area();
   }
-  // ==========================================================================
 }
 
 bool AppStateGameMode::render(sf::RenderTarget& target, int frame)
@@ -1064,8 +1030,8 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
         {
           default:
             break;
-        }
-      }
+    }
+  }
 #endif
 
       // *** YES ALT, YES CTRL, SHIFT is irrelevant *****************************
@@ -1077,18 +1043,18 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
         {
           default:
             break;
-        }
+}
       }
 #endif
       break;
-    } // end case GameInputState::Map
+        } // end case GameInputState::Map
 
     default:
       break;
-  } // end switch (pImpl->current_input_state)
+      } // end switch (pImpl->current_input_state)
 
   return result;
-}
+        }
 
 EventResult AppStateGameMode::handle_mouse_wheel(sf::Event::MouseWheelEvent& wheel)
 {

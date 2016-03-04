@@ -46,15 +46,27 @@ public:
   /// @return The player ThingRef.
   ThingRef get_player() const;
 
+  /// Process a single tick in the game.
+  void process_tick();
+
   static GameState& instance();
 
 protected:
 
 private:
+  /// Pointer to the Map Factory object.
   std::unique_ptr<MapFactory> m_map_factory;
+
+  /// Pointer to the Thing Manager object.
   std::unique_ptr<ThingManager> m_thing_manager;
+
+  /// Reference to the Thing that is serving as the player.
   ThingRef m_player;
 
+  /// Current game clock, in milliseconds.
+  uint64_t m_game_clock;
+
+  /// Static pointer to the singleton instance of the GameState.
   static GameState* p_instance;
 };
 

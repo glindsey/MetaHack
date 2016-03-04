@@ -3,8 +3,10 @@
 #include "GameState.h"
 
 #include "ErrorHandler.h"
+#include "Map.h"
 #include "MapFactory.h"
 #include "New.h"
+#include "Thing.h"
 #include "ThingManager.h"
 
 GameState* GameState::p_instance = nullptr;
@@ -73,6 +75,41 @@ bool GameState::set_player(ThingRef ref)
 ThingRef GameState::get_player() const
 {
   return m_player;
+}
+
+void GameState::process_tick()
+{
+  ThingRef player = get_player();
+
+  if (player->action_is_pending() || player->action_is_in_progress())
+  {
+    // QUESTION: Do we want to update all Things, PERIOD?  In other words, should
+    //           other maps keep playing themselves if the player is not on them?
+    //           While this would be awesome, I'd imagine the resulting per-turn
+    //           lag would quickly grow intolerable.
+
+    // Get the map the player is on.
+    MapId current_map_id = player->get_map_id();
+    Map& current_map = GAME.get_map_factory().get(current_map_id);
+
+    // Process everything on the map, and increment game clock.
+    current_map.process();
+    ++m_game_clock;
+
+    // If player can see the map...
+    /// @todo IMPLEMENT THIS CHECK
+    // (can be done by checking if the location chain for the player is
+    //  entirely transparent)
+    if (true /* player is directly on a map */)
+    {
+      // Update map lighting.
+      current_map.update_lighting();
+
+      // Update tile vertex array.
+      current_map.update_tile_vertices(player);
+    }
+  }
+  // ==========================================================================
 }
 
 GameState& GameState::instance()

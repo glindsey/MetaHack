@@ -7,6 +7,10 @@
 #include "GameState.h"
 #include "State.h"
 
+/// Object that represents the game mode state.
+/// Anything about the game that needs to be saved should go into the
+/// GameState class (e.g. data model members). Data view members which
+/// do not get saved should go here.
 class AppStateGameMode : public State
 {
 public:
