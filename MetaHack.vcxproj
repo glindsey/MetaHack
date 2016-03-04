@@ -171,6 +171,7 @@
     <ClInclude Include="include\gui\GUILabel.h" />
     <ClInclude Include="include\gui\GUIObject.h" />
     <ClInclude Include="include\gui\GUIPane.h" />
+    <ClInclude Include="include\gui\GUIWindowPane.h" />
     <ClInclude Include="include\IntegerRange.h" />
     <ClInclude Include="include\Inventory.h" />
     <ClInclude Include="include\InventoryArea.h" />
@@ -249,6 +250,7 @@
     <ClCompile Include="src\gui\GUILabel.cpp" />
     <ClCompile Include="src\gui\GUIObject.cpp" />
     <ClCompile Include="src\gui\GUIPane.cpp" />
+    <ClCompile Include="src\gui\GUIWindowPane.cpp" />
     <ClCompile Include="src\IntegerRange.cpp" />
     <ClCompile Include="src\Inventory.cpp" />
     <ClCompile Include="src\InventoryArea.cpp" />

@@ -23,7 +23,7 @@ struct MessageLogView::Impl
 MessageLogView::MessageLogView(MessageLog& model,
                                sf::IntRect dimensions)
   :
-  GUIPane("MessageLogView", dimensions),
+  GUIWindowPane("MessageLogView", dimensions),
   pImpl(NEW Impl(model))
 {}
 

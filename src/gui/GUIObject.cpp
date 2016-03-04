@@ -39,6 +39,26 @@ bool GUIObject::get_focus()
   return m_focus;
 }
 
+void GUIObject::set_hidden(bool hidden)
+{
+  m_hidden = hidden;
+}
+
+bool GUIObject::get_hidden()
+{
+  return m_hidden;
+}
+
+void GUIObject::set_enabled(bool enabled)
+{
+  m_enabled = enabled;
+}
+
+bool GUIObject::get_enabled()
+{
+  return m_enabled;
+}
+
 void GUIObject::set_text(std::string text)
 {
   m_text = text;
@@ -119,40 +139,70 @@ void GUIObject::set_absolute_location(sf::Vector2i location)
   set_relative_location(relative_location);
 }
 
-GUIObject& GUIObject::add_child(std::unique_ptr<GUIObject> child)
+GUIObject& GUIObject::add_child(std::unique_ptr<GUIObject> child, uint32_t z_order)
 {
   ASSERT_CONDITION(child);
 
   GUIObject& child_ref = *(child.get());
   child->set_parent(this);
-  m_children.push_back(std::move(child));
+
+  // This odd syntax is in order to work around VS compiler bug when having
+  // a unique_ptr as a map value. See:
+  // https://stackoverflow.com/questions/21056872/c-stdunique-ptr-wont-compile-in-map
+  m_children.insert<ChildMap::value_type>(ChildMap::value_type( z_order, std::move(child) ) );
   return child_ref;
+}
+
+GUIObject& GUIObject::add_child(std::unique_ptr<GUIObject> child)
+{
+  uint32_t z_order = get_highest_child_z_order() + 1;
+  return add_child(std::move(child), z_order);
+}
+
+GUIObject & GUIObject::add_child_top(std::unique_ptr<GUIObject> child)
+{
+  uint32_t z_order = get_lowest_child_z_order() - 1;
+  return add_child(std::move(child), z_order);
 }
 
 bool GUIObject::child_exists(std::string name)
 {
-  if (std::find_if(m_children.cbegin(),
-                   m_children.cend(),
-                   [&](std::unique_ptr<GUIObject> const& c) { return c->get_name() == name; }) == m_children.cend())
+  for (auto& child_pair : m_children)
   {
-    return true;
+    if ((child_pair.second)->get_name() == name)
+    {
+      return true;
+    }
   }
   return false;
 }
 
 GUIObject& GUIObject::get_child(std::string name)
 {
-  auto& iter = std::find_if(m_children.cbegin(),
-                            m_children.cend(),
-                            [&](std::unique_ptr<GUIObject> const& c) { return c->get_name() == name; });
-
-  if (iter == m_children.cend())
+  for (auto& child_pair : m_children)
   {
-    std::string message = "Tried to get non-existent child \"" + name + "\" of GUI object \"" + get_name() + "\"";
-    throw std::runtime_error(message.c_str());
+    if ((child_pair.second)->get_name() == name)
+    {
+      return *(child_pair.second.get());
+    }
   }
 
-  return *(iter->get());
+  std::string message = "Tried to get non-existent child \"" + name + "\" of GUI object \"" + get_name() + "\"";
+  throw std::runtime_error(message.c_str());
+}
+
+uint32_t GUIObject::get_lowest_child_z_order()
+{
+  auto& iter = m_children.cbegin();
+
+  return uint32_t();
+}
+
+uint32_t GUIObject::get_highest_child_z_order()
+{
+  auto& iter = (m_children.cend())--;
+
+  return uint32_t();
 }
 
 void GUIObject::clear_children()
@@ -181,9 +231,9 @@ bool GUIObject::render(sf::RenderTarget& target, int frame)
   /* bool success = */ _render_self(texture, frame);
 
   /// Render all child objects to our bg texture.
-  for (auto& child : m_children)
+  for (auto& child_pair : m_children)
   {
-    child->render(texture, frame);
+    (child_pair.second)->render(texture, frame);
   }
 
   texture.display();
@@ -206,9 +256,9 @@ EventResult GUIObject::handle_event(sf::Event & event)
   EventResult result = handle_event_before_children_(event);
   if (result != EventResult::Handled)
   {
-    for (auto& child : m_children)
+    for (auto& child_pair : m_children)
     {
-      result = child->handle_event(event);
+      result = (child_pair.second)->handle_event(event);
       if (result == EventResult::Handled) break;
     }
   }

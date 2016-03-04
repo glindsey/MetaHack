@@ -3,13 +3,13 @@
 
 #include "stdafx.h"
 
-#include "gui/GUIPane.h"
+#include "gui/GUIWindowPane.h"
 
 /// Forward declarations
 class MessageLog;
 
 /// A class that acts as a View for a MessageLog model instance.
-class MessageLogView : public GUIPane
+class MessageLogView : public GUIWindowPane
 {
 public:
   /// Create a message log view tied to the specified model.

@@ -14,12 +14,9 @@ public:
   virtual ~GUIPane();
 
 protected:
-  virtual bool _render_self(sf::RenderTexture& texture, int frame) override final;
-  virtual std::string _render_contents(sf::RenderTexture& texture, int frame);
 
 private:
-  /// Border shape.
-  sf::RectangleShape m_border_shape;
+
 };
 
 #endif // GUIPANE_H

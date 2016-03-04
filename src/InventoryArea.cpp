@@ -76,7 +76,7 @@ struct InventoryArea::Impl
 };
 
 InventoryArea::InventoryArea(sf::IntRect dimensions)
-  : GUIPane("InventoryArea", dimensions),
+  : GUIWindowPane("InventoryArea", dimensions),
   pImpl(NEW Impl())
 {}
 

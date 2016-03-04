@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 
-#include "gui/GUIPane.h"
+#include "gui/GUIWindowPane.h"
 #include "InventorySlot.h"
 
 enum class InventoryType
@@ -18,7 +18,7 @@ class Thing;
 class ThingRef;
 
 class InventoryArea :
-  public GUIPane
+  public GUIWindowPane
 {
 public:
   explicit InventoryArea(sf::IntRect dimensions);
