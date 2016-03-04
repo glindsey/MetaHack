@@ -12,8 +12,6 @@ public:
   GUILabel(std::string name, sf::Vector2i location);
   virtual ~GUILabel();
 
-  virtual EventResult handle_event(sf::Event& event);
-
 protected:
   virtual bool _render_self(sf::RenderTexture& texture, int frame) override final;
 

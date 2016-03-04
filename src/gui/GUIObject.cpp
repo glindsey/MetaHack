@@ -201,7 +201,37 @@ bool GUIObject::render(sf::RenderTarget& target, int frame)
   return true;
 }
 
+EventResult GUIObject::handle_event(sf::Event & event)
+{
+  EventResult result = handle_event_before_children_(event);
+  if (result != EventResult::Handled)
+  {
+    for (auto& child : m_children)
+    {
+      result = child->handle_event(event);
+      if (result == EventResult::Handled) break;
+    }
+  }
+
+  if (result != EventResult::Handled)
+  {
+    result = handle_event_after_children_(event);
+  }
+
+  return result;
+}
+
 void GUIObject::set_parent(GUIObject* parent)
 {
   m_parent = parent;
+}
+
+EventResult GUIObject::handle_event_before_children_(sf::Event & event)
+{
+  return EventResult::Ignored;
+}
+
+EventResult GUIObject::handle_event_after_children_(sf::Event & event)
+{
+  return EventResult::Ignored;
 }

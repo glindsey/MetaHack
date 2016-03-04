@@ -74,12 +74,32 @@ public:
   /// returns get_size(); however, subclasses can override this behavior.
   virtual sf::Vector2i get_child_area_size();
 
-  virtual EventResult handle_event(sf::Event& event) = 0;
-
   bool render(sf::RenderTarget& target, int frame);
+
+  /// Handle an incoming event.
+  /// Calls the virtual function handle_event_before_children_ first.
+  /// If it returns anything other than Handled, it then passes the
+  /// event down to each child in sequence, stopping only if one of them
+  /// returns Handled. If the event still isn't Handled after all children
+  /// have seen it, handle_event_after_children_ is called.
+  EventResult handle_event(sf::Event& event);
 
 protected:
   void set_parent(GUIObject* parent);
+
+  /// Called before an event is passed along to child objects.
+  /// Default behavior is to return EventResult::Ignored.
+  /// @note If this method returns EventResult::Handled, event processing
+  ///       will stop here and the children will never see the event! To
+  ///       process it here *and* have children see it, you should return
+  ///       EventResult::Acknowledged.
+  virtual EventResult handle_event_before_children_(sf::Event& event);
+
+  /// Called after an event is passed along to child objects.
+  /// This method will only be called if none of the child objects returns
+  /// EventResult::Handled when the event is passed to it.
+  /// Default behavior is to return EventResult::Ignored.
+  virtual EventResult handle_event_after_children_(sf::Event& event);
 
   virtual bool _render_self(sf::RenderTexture& texture, int frame) = 0;
 

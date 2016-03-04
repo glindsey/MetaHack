@@ -16,11 +16,6 @@ GUILabel::~GUILabel()
   //dtor
 }
 
-EventResult GUILabel::handle_event(sf::Event& event)
-{
-  return EventResult::Ignored;
-}
-
 // === PROTECTED METHODS ======================================================
 bool GUILabel::_render_self(sf::RenderTexture& texture, int frame)
 {

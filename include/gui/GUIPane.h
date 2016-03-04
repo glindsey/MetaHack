@@ -9,18 +9,17 @@ class GUIPane :
   public GUIObject
 {
 public:
-  explicit GUIPane(sf::IntRect dimensions);
+  GUIPane(std::string name, sf::Vector2i location, sf::Vector2i size = sf::Vector2i(0, 0));
+  GUIPane(std::string name, sf::IntRect dimensions);
   virtual ~GUIPane();
-
-  virtual EventResult handle_event(sf::Event& event);
 
 protected:
   virtual bool _render_self(sf::RenderTexture& texture, int frame) override final;
   virtual std::string _render_contents(sf::RenderTexture& texture, int frame);
 
 private:
-  struct Impl;
-  std::unique_ptr<Impl> pImpl;
+  /// Border shape.
+  sf::RectangleShape m_border_shape;
 };
 
 #endif // GUIPANE_H
