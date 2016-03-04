@@ -222,53 +222,65 @@ sf::Vector2i GUIObject::get_child_area_size()
 
 bool GUIObject::render(sf::RenderTarget& target, int frame)
 {
-  sf::RenderTexture& texture = *(m_bg_texture.get());
-
-  // Clear background texture.
-  m_bg_texture->clear();
-
-  /// Render self to our bg texture.
-  render_self_before_children_(texture, frame);
-
-  /// Render all child objects to our bg texture.
-  for (auto& child_pair : m_children)
+  if (m_hidden == false)
   {
-    (child_pair.second)->render(texture, frame);
+    sf::RenderTexture& texture = *(m_bg_texture.get());
+
+    // Clear background texture.
+    m_bg_texture->clear();
+
+    /// Render self to our bg texture.
+    render_self_before_children_(texture, frame);
+
+    /// Render all child objects to our bg texture.
+    for (auto& child_pair : m_children)
+    {
+      (child_pair.second)->render(texture, frame);
+    }
+
+    /// Render self after children are done.
+    render_self_after_children_(texture, frame);
+
+    texture.display();
+
+    // Create the RectangleShape that will be drawn onto the target.
+    m_bg_shape.setPosition(sf::Vector2f(static_cast<float>(m_location.x), static_cast<float>(m_location.y)));
+    m_bg_shape.setSize(sf::Vector2f(static_cast<float>(m_size.x), static_cast<float>(m_size.y)));
+    m_bg_shape.setTexture(&(m_bg_texture->getTexture()));
+    m_bg_shape.setTextureRect(sf::IntRect(0, 0, m_size.x, m_size.y));
+
+    // Draw onto the target.
+    target.setView(sf::View(sf::FloatRect(0.0f, 0.0f, static_cast<float>(target.getSize().x), static_cast<float>(target.getSize().y))));
+    target.draw(m_bg_shape);
+
+    return true;
   }
-
-  /// Render self after children are done.
-  render_self_after_children_(texture, frame);
-
-  texture.display();
-
-  // Create the RectangleShape that will be drawn onto the target.
-  m_bg_shape.setPosition(sf::Vector2f(static_cast<float>(m_location.x), static_cast<float>(m_location.y)));
-  m_bg_shape.setSize(sf::Vector2f(static_cast<float>(m_size.x), static_cast<float>(m_size.y)));
-  m_bg_shape.setTexture(&(m_bg_texture->getTexture()));
-  m_bg_shape.setTextureRect(sf::IntRect(0, 0, m_size.x, m_size.y));
-
-  // Draw onto the target.
-  target.setView(sf::View(sf::FloatRect(0.0f, 0.0f, static_cast<float>(target.getSize().x), static_cast<float>(target.getSize().y))));
-  target.draw(m_bg_shape);
-
-  return true;
+  else
+  {
+    return false;
+  }
 }
 
 EventResult GUIObject::handle_event(sf::Event & event)
 {
-  EventResult result = handle_event_before_children_(event);
-  if (result != EventResult::Handled)
-  {
-    for (auto& child_pair : m_children)
-    {
-      result = (child_pair.second)->handle_event(event);
-      if (result == EventResult::Handled) break;
-    }
-  }
+  EventResult result = EventResult::Ignored;
 
-  if (result != EventResult::Handled)
+  if (m_enabled == true)
   {
-    result = handle_event_after_children_(event);
+    result = handle_event_before_children_(event);
+    if (result != EventResult::Handled)
+    {
+      for (auto& child_pair : m_children)
+      {
+        result = (child_pair.second)->handle_event(event);
+        if (result == EventResult::Handled) break;
+      }
+    }
+
+    if (result != EventResult::Handled)
+    {
+      result = handle_event_after_children_(event);
+    }
   }
 
   return result;
