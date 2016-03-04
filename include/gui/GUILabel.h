@@ -13,7 +13,7 @@ public:
   virtual ~GUILabel();
 
 protected:
-  virtual bool _render_self(sf::RenderTexture& texture, int frame) override final;
+  virtual void render_self_before_children_(sf::RenderTexture& texture, int frame) override final;
 
 private:
 };

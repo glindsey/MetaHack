@@ -34,7 +34,7 @@ EventResult StatusArea::handle_event(sf::Event& event)
   return EventResult::Ignored;
 }
 
-std::string StatusArea::_render_contents(sf::RenderTexture& texture, int frame)
+std::string StatusArea::render_contents_(sf::RenderTexture& texture, int frame)
 {
   sf::IntRect pane_dims = get_relative_dimensions();
   ThingRef player = GAME.get_player();

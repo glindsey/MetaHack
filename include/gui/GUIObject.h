@@ -29,10 +29,21 @@ public:
   void set_focus(bool focus);
   bool get_focus();
 
+  /// Set whether this object is hidden.
+  /// A hidden object will not be rendered to the screen, nor will any of
+  /// its children.
   void set_hidden(bool hidden);
+
+  /// Get whether this object is hidden.
   bool get_hidden();
 
+  /// Set whether this object is enabled.
+  /// A disabled object will not have events passed to it, nor to its children.
+  /// Depending on the object's render() method, it may be rendered differently
+  /// when disabled.
   void set_enabled(bool enabled);
+
+  /// Get whether thsi object is disabled.
   bool get_enabled();
 
   void set_text(std::string text);
@@ -61,24 +72,24 @@ public:
   /// @param z_order  Z-order to put this child at. If omitted, uses the
   ///                 highest Z-order currently in the map, plus one.
   /// @return A reference to the child added.
-  GUIObject& add_child(std::unique_ptr<GUIObject> child, 
+  GUIObject& add_child(std::unique_ptr<GUIObject> child,
                        uint32_t z_order);
 
   /// Add a child GUIObject underneath this one.
   /// This GUIObject assumes ownership of the child.
-  /// The new child's Z-order will be set to the highest Z-order currently in 
+  /// The new child's Z-order will be set to the highest Z-order currently in
   /// the child map, plus one.
   /// @param child    std::unique_ptr to child to add.
-  ///                
+  ///
   /// @return A reference to the child added.
   GUIObject& add_child(std::unique_ptr<GUIObject> child);
 
   /// Add a child GUIObject underneath this one.
   /// This GUIObject assumes ownership of the child.
-  /// The new child's Z-order will be set to the lowest Z-order currently in 
+  /// The new child's Z-order will be set to the lowest Z-order currently in
   /// the child map, minus one.
   /// @param child    std::unique_ptr to child to add.
-  ///                
+  ///
   /// @return A reference to the child added.
   GUIObject& add_child_top(std::unique_ptr<GUIObject> child);
 
@@ -117,6 +128,7 @@ public:
   /// returns get_size(); however, subclasses can override this behavior.
   virtual sf::Vector2i get_child_area_size();
 
+  /// Render this object, and all of its children, to the screen.
   bool render(sf::RenderTarget& target, int frame);
 
   /// Handle an incoming event.
@@ -129,6 +141,14 @@ public:
 
 protected:
   void set_parent(GUIObject* parent);
+
+  /// Called before rendering the object's children.
+  /// Default behavior is to do nothing.
+  virtual void render_self_before_children_(sf::RenderTexture& texture, int frame);
+
+  /// Called after rendering the object's children.
+  /// Default behavior is to do nothing.
+  virtual void render_self_after_children_(sf::RenderTexture& texture, int frame);
 
   /// Called before an event is passed along to child objects.
   /// Default behavior is to return EventResult::Ignored.
@@ -143,8 +163,6 @@ protected:
   /// EventResult::Handled when the event is passed to it.
   /// Default behavior is to return EventResult::Ignored.
   virtual EventResult handle_event_after_children_(sf::Event& event);
-
-  virtual bool _render_self(sf::RenderTexture& texture, int frame) = 0;
 
 private:
   /// The name of this object.

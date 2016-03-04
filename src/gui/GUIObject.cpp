@@ -115,7 +115,7 @@ sf::Vector2i GUIObject::get_absolute_location()
 
   if (m_parent != nullptr)
   {
-    sf::Vector2i child_area_absolute_location = 
+    sf::Vector2i child_area_absolute_location =
       m_parent->get_absolute_location() + m_parent->get_child_area_location();
 
     absolute_location += child_area_absolute_location;
@@ -149,7 +149,7 @@ GUIObject& GUIObject::add_child(std::unique_ptr<GUIObject> child, uint32_t z_ord
   // This odd syntax is in order to work around VS compiler bug when having
   // a unique_ptr as a map value. See:
   // https://stackoverflow.com/questions/21056872/c-stdunique-ptr-wont-compile-in-map
-  m_children.insert<ChildMap::value_type>(ChildMap::value_type( z_order, std::move(child) ) );
+  m_children.insert<ChildMap::value_type>(ChildMap::value_type(z_order, std::move(child)));
   return child_ref;
 }
 
@@ -228,13 +228,16 @@ bool GUIObject::render(sf::RenderTarget& target, int frame)
   m_bg_texture->clear();
 
   /// Render self to our bg texture.
-  /* bool success = */ _render_self(texture, frame);
+  render_self_before_children_(texture, frame);
 
   /// Render all child objects to our bg texture.
   for (auto& child_pair : m_children)
   {
     (child_pair.second)->render(texture, frame);
   }
+
+  /// Render self after children are done.
+  render_self_after_children_(texture, frame);
 
   texture.display();
 
@@ -276,12 +279,20 @@ void GUIObject::set_parent(GUIObject* parent)
   m_parent = parent;
 }
 
-EventResult GUIObject::handle_event_before_children_(sf::Event & event)
+void GUIObject::render_self_before_children_(sf::RenderTexture& texture, int frame)
+{
+}
+
+void GUIObject::render_self_after_children_(sf::RenderTexture& texture, int frame)
+{
+}
+
+EventResult GUIObject::handle_event_before_children_(sf::Event& event)
 {
   return EventResult::Ignored;
 }
 
-EventResult GUIObject::handle_event_after_children_(sf::Event & event)
+EventResult GUIObject::handle_event_after_children_(sf::Event& event)
 {
   return EventResult::Ignored;
 }

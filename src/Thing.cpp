@@ -19,40 +19,6 @@
 #include "ThingManager.h"
 #include "TileSheet.h"
 
-// Local definitions to make reading/writing status info a bit easier.
-#define YOU       (this->get_you_or_identifying_string())  // "you" or descriptive noun like "the goblin"
-#define YOU_SUBJ  (this->get_subject_pronoun())     // "you/he/she/it/etc."
-#define YOU_OBJ   (this->get_object_pronoun())      // "you/him/her/it/etc."
-#define YOUR      (this->get_possessive())          // "your/his/her/its/etc."
-#define YOURSELF  (this->get_reflexive_pronoun())   // "yourself/himself/herself/itself/etc."
-
-#define CV(p12, p3)  (this->choose_verb(p12, p3))   // shortcut for "Choose Verb"
-
-#define ARE   (this->choose_verb(" are", " is"))
-#define WERE  (this->choose_verb(" were", " was"))
-#define DO    (this->choose_verb(" do", " does"))
-#define GET   (this->choose_verb(" get", " gets"))
-#define HAVE  (this->choose_verb(" have", " has"))
-#define SEEM  (this->choose_verb(" seem", " seems"))
-#define TRY   (this->choose_verb(" try", " tries"))
-
-#define IS_PLAYER (GAME.get_player() == pImpl->ref)
-
-#define FOO       (thing->get_identifying_string())
-#define FOO1      (thing1->get_identifying_string())
-#define FOO2      (thing2->get_identifying_string())
-#define LIQUID1      (liquid1->get_identifying_string())
-#define LIQUID2      (liquid2->get_identifying_string())
-
-#define YOU_ARE       (YOU + ARE)
-#define YOU_WERE      (YOU + WERE)
-#define YOU_SUBJ_ARE  (YOU_SUBJ + ARE)
-#define YOU_DO        (YOU + DO)
-#define YOU_GET       (YOU + GET)
-#define YOU_HAVE      (YOU + HAVE)
-#define YOU_SEEM      (YOU + SEEM)
-#define YOU_TRY       (YOU + TRY)
-
 // Static member initialization.
 sf::Color const Thing::wall_outline_color_ = sf::Color(255, 255, 255, 64);
 
@@ -189,7 +155,7 @@ bool Thing::do_die()
     case ActionResult::Success:
       if (this->is_player())
       {
-        message = YOU + " die...";
+        message = this->get_you_or_identifying_string() + " die...";
         the_message_log.add(message);
       }
       else
@@ -197,11 +163,13 @@ bool Thing::do_die()
         bool living = get_property<bool>("living");
         if (living)
         {
-          message = YOU_ARE + " killed!";
+          message = this->get_you_or_identifying_string() + " " +
+            this->choose_verb("are", "is") + " killed!";
         }
         else
         {
-          message = YOU_ARE + " destroyed!";
+          message = this->get_you_or_identifying_string() + " " +
+            this->choose_verb("are", "is") + " destroyed!";
         }
         the_message_log.add(message);
       }
@@ -215,7 +183,8 @@ bool Thing::do_die()
       return true;
     case ActionResult::Failure:
     default:
-      message = YOU + CV(" manage", " manages") + " to avoid dying.";
+      message = this->get_you_or_identifying_string() +
+        this->choose_verb(" manage", " manages") + " to avoid dying.";
       the_message_log.add(message);
       return false;
   }
@@ -231,7 +200,10 @@ bool Thing::do_attack(ThingRef thing, unsigned int& action_time)
   if (reachable)
   {
     /// @todo Write attack code.
-    message = YOU_TRY + " to attack " + FOO + ", but are stopped by the programmer's procrastination!";
+    message = this->get_you_or_identifying_string() + " " +
+      this->choose_verb("try", "tries") + " to attack " +
+      thing->get_identifying_string() + ", but " +
+      this->choose_verb("are", "is") + " stopped by the programmer's procrastination!";
     the_message_log.add(message);
   }
 
@@ -264,7 +236,9 @@ bool Thing::do_deequip(ThingRef thing, unsigned int& action_time)
   ActionResult deequip_try = this->can_deequip(thing, action_time);
   std::string thing_name = thing->get_identifying_string();
 
-  message = YOU_TRY + " to take off " + thing_name;
+  message = this->get_you_or_identifying_string() + " " +
+    this->choose_verb("try", "tries") +
+    " to take off " + thing_name;
   the_message_log.add(message);
 
   switch (deequip_try)
@@ -280,8 +254,9 @@ bool Thing::do_deequip(ThingRef thing, unsigned int& action_time)
         set_worn(MU, location);
 
         std::string wear_desc = get_bodypart_description(location.part, location.number);
-        message = YOU_ARE + " no longer wearing " + thing_name +
-          " on " + YOUR + " " + wear_desc + ".";
+        message = this->get_you_or_identifying_string() + " " +
+          this->choose_verb("are", "is") + " no longer wearing " + thing_name +
+          " on " + this->get_possessive() + " " + wear_desc + ".";
         the_message_log.add(message);
         return true;
       }
@@ -290,7 +265,8 @@ bool Thing::do_deequip(ThingRef thing, unsigned int& action_time)
 
     case ActionResult::FailureItemNotEquipped:
     {
-      message = YOU_ARE + " not wearing " + thing_name + ".";
+      message = this->get_you_or_identifying_string() + " " +
+        this->choose_verb("are", "is") + " not wearing " + thing_name + ".";
       the_message_log.add(message);
       return true;
     }
@@ -354,8 +330,10 @@ bool Thing::do_equip(ThingRef thing, unsigned int& action_time)
 
         std::string wear_desc = get_bodypart_description(location.part,
                                                          location.number);
-        message = YOU_ARE + " now wearing " + thing_name +
-          " on " + YOUR + " " + wear_desc + ".";
+        message = this->get_you_or_identifying_string() + " " +
+          this->choose_verb(" are", " is") +
+          " now wearing " + thing_name +
+          " on " + this->get_possessive() + " " + wear_desc + ".";
         the_message_log.add(message);
         return true;
       }
@@ -369,7 +347,9 @@ bool Thing::do_equip(ThingRef thing, unsigned int& action_time)
       }
       else
       {
-        message = YOU_TRY + " to equip " + YOURSELF +
+        message = this->get_you_or_identifying_string() + " " +
+          this->choose_verb("try", "tries") +
+          " to equip " + this->get_reflexive_pronoun() +
           ", which seriously shouldn't happen.";
         MINOR_ERROR("NPC tried to equip self!?");
       }
@@ -378,17 +358,21 @@ bool Thing::do_equip(ThingRef thing, unsigned int& action_time)
 
     case ActionResult::FailureThingOutOfReach:
     {
-      message = YOU_TRY + " to equip " + thing_name + ".";
+      message = this->get_you_or_identifying_string() + " " +
+        this->choose_verb("try", "tries") +
+        " to equip " + thing_name + ".";
       the_message_log.add(message);
 
-      message = thing_name + " is not in " + YOUR + " inventory.";
+      message = thing_name + " is not in " + this->get_possessive() + " inventory.";
       the_message_log.add(message);
     }
     break;
 
     case ActionResult::FailureItemNotEquippable:
     {
-      message = YOU_TRY + " to equip " + thing_name + ".";
+      message = this->get_you_or_identifying_string() + " " +
+        this->choose_verb("try", "tries") +
+        " to equip " + thing_name + ".";
       the_message_log.add(message);
 
       message = thing_name + " is not an equippable item.";
@@ -936,7 +920,6 @@ std::string Thing::get_identifying_string_without_possessives(bool definite)
   std::string noun;
   std::string suffix;
 
-  // If the thing is YOU, use YOU.
   if (is_player())
   {
     if (get_property<int>("hp") > 0)
@@ -990,7 +973,6 @@ std::string Thing::get_identifying_string_without_possessives(bool definite)
 
 std::string Thing::get_you_or_identifying_string(bool definite)
 {
-  // If the thing is YOU, use YOU.
   if (is_player())
   {
     if (get_property<int>("hp") > 0)
@@ -1337,7 +1319,7 @@ void Thing::spill()
           {
             auto container_string = this->get_identifying_string();
             auto thing_string = thing->get_identifying_string();
-            message = thing_string + CV(" tumble", " tumbles") + " out of " + container_string + ".";
+            message = thing_string + this->choose_verb(" tumble", " tumbles") + " out of " + container_string + ".";
             the_message_log.add(message);
           }
           else
@@ -1345,7 +1327,7 @@ void Thing::spill()
             // We couldn't move it, so just destroy it.
             auto container_string = this->get_identifying_string();
             auto thing_string = thing->get_identifying_string();
-            message = thing_string + CV(" vanish", " vanishes") + " in a puff of logic.";
+            message = thing_string + this->choose_verb(" vanish", " vanishes") + " in a puff of logic.";
             the_message_log.add(message);
             thing->destroy();
           }

@@ -43,7 +43,7 @@ EventResult MessageLogView::handle_event(sf::Event& event)
   return GUIPane::handle_event(event);
 }
 
-std::string MessageLogView::_render_contents(sf::RenderTexture& texture, int frame)
+std::string MessageLogView::render_contents_(sf::RenderTexture& texture, int frame)
 {
   // Dimensions of the pane.
   sf::IntRect pane_dims = get_relative_dimensions();

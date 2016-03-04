@@ -21,7 +21,7 @@ GUIWindowPane::~GUIWindowPane()
 
 // === PROTECTED METHODS ======================================================
 
-bool GUIWindowPane::_render_self(sf::RenderTexture& texture, int frame)
+void GUIWindowPane::render_self_before_children_(sf::RenderTexture& texture, int frame)
 {
   sf::Vector2i size = get_size();
 
@@ -35,7 +35,7 @@ bool GUIWindowPane::_render_self(sf::RenderTexture& texture, int frame)
   texture.clear(Settings.get<sf::Color>("window_bg_color"));
 
   // Render the contents, if any.
-  std::string title = _render_contents(texture, frame);
+  std::string title = render_contents_(texture, frame);
 
   // IF the pane has a title...
   if (!title.empty())
@@ -79,11 +79,9 @@ bool GUIWindowPane::_render_self(sf::RenderTexture& texture, int frame)
   //texture.setView(sf::View(sf::FloatRect(0.0f, 0.0f, static_cast<float>(target.getSize().x), static_cast<float>(target.getSize().y))));
 
   texture.draw(m_border_shape);
-
-  return true;
 }
 
-std::string GUIWindowPane::_render_contents(sf::RenderTexture& texture, int frame)
+std::string GUIWindowPane::render_contents_(sf::RenderTexture& texture, int frame)
 {
   return "";
 }

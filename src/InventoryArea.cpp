@@ -268,7 +268,7 @@ EventResult InventoryArea::handle_event(sf::Event& event)
   return EventResult::Ignored;
 }
 
-std::string InventoryArea::_render_contents(sf::RenderTexture& texture, int frame)
+std::string InventoryArea::render_contents_(sf::RenderTexture& texture, int frame)
 {
   // Dimensions of the pane.
   sf::IntRect pane_dims = get_relative_dimensions();

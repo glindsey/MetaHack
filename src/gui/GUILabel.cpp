@@ -17,7 +17,7 @@ GUILabel::~GUILabel()
 }
 
 // === PROTECTED METHODS ======================================================
-bool GUILabel::_render_self(sf::RenderTexture& texture, int frame)
+void GUILabel::render_self_before_children_(sf::RenderTexture& texture, int frame)
 {
   float line_spacing_y = the_default_font.getLineSpacing(Settings.get<unsigned int>("text_default_size"));
 
@@ -33,6 +33,4 @@ bool GUILabel::_render_self(sf::RenderTexture& texture, int frame)
     text.setPosition(offset);
     texture.draw(text);
   }
-
-  return true;
 }

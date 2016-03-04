@@ -14,11 +14,11 @@ public:
   virtual ~GUIWindowPane();
 
 protected:
-  virtual bool _render_self(sf::RenderTexture& texture, int frame) override final;
+  virtual void render_self_before_children_(sf::RenderTexture& texture, int frame) override final;
 
   /// Temporary function used to render the contents of classes derived from
   /// GUIWindowPane until they can be properly replaced with child controls.
-  virtual std::string _render_contents(sf::RenderTexture& texture, int frame);
+  virtual std::string render_contents_(sf::RenderTexture& texture, int frame);
 
 private:
   /// Border shape.

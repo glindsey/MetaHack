@@ -16,7 +16,6 @@ public:
 protected:
 
 private:
-
 };
 
 #endif // GUIPANE_H
