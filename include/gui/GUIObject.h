@@ -24,9 +24,10 @@ public:
   void set_text(std::string text);
   std::string get_text();
 
-  /// Get location relative to parent object.
+  /// Get location relative to parent object's client area.
   sf::Vector2i get_relative_location();
 
+  /// Set location relative to parent object's client area.
   void set_relative_location(sf::Vector2i location);
 
   sf::Vector2i get_size();
@@ -42,9 +43,9 @@ public:
 
   /// Add a child GUIObject underneath this one.
   /// This GUIObject assumes ownership of the child.
-  /// @param child  Pointer to child to add.
-  /// @return True if the object was added, false if the object was already a child of this GUIObject.
-  bool add_child(std::unique_ptr<GUIObject> child);
+  /// @param child  std::unique_ptr to child to add.
+  /// @return A reference to the child added.
+  GUIObject& add_child(std::unique_ptr<GUIObject> child);
 
   bool child_exists(std::string name);
 
@@ -61,6 +62,17 @@ public:
 
   /// Clear all children from this GUIObject.
   void clear_children();
+
+  /// Get the upper-left corner of this object's child area, relative to
+  /// its own upper-left corner.
+  /// By default, the child area encompasses the entire object, so this
+  /// returns (0, 0); however, subclasses can override this behavior.
+  virtual sf::Vector2i get_child_area_location();
+
+  /// Get the size of this object's child area.
+  /// By default, the child area encompasses the entire object, so this
+  /// returns get_size(); however, subclasses can override this behavior.
+  virtual sf::Vector2i get_child_area_size();
 
   virtual EventResult handle_event(sf::Event& event) = 0;
 

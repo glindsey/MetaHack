@@ -95,8 +95,10 @@ sf::Vector2i GUIObject::get_absolute_location()
 
   if (m_parent != nullptr)
   {
-    sf::Vector2i parents_absolute_location = m_parent->get_absolute_location();
-    absolute_location += parents_absolute_location;
+    sf::Vector2i child_area_absolute_location = 
+      m_parent->get_absolute_location() + m_parent->get_child_area_location();
+
+    absolute_location += child_area_absolute_location;
   }
 
   return absolute_location;
@@ -108,26 +110,23 @@ void GUIObject::set_absolute_location(sf::Vector2i location)
 
   if (m_parent != nullptr)
   {
-    sf::Vector2i parents_absolute_location = m_parent->get_absolute_location();
-    relative_location -= parents_absolute_location;
+    sf::Vector2i child_area_absolute_location =
+      m_parent->get_absolute_location() + m_parent->get_child_area_location();
+
+    relative_location -= child_area_absolute_location;
   }
 
   set_relative_location(relative_location);
 }
 
-bool GUIObject::add_child(std::unique_ptr<GUIObject> child)
+GUIObject& GUIObject::add_child(std::unique_ptr<GUIObject> child)
 {
   ASSERT_CONDITION(child);
 
-  if (std::find_if(m_children.cbegin(),
-                   m_children.cend(),
-                   [&](std::unique_ptr<GUIObject> const& c) { return c.get() == child.get(); }) == m_children.cend())
-  {
-    child->set_parent(this);
-    m_children.push_back(std::move(child));
-    return true;
-  }
-  return false;
+  GUIObject& child_ref = *(child.get());
+  child->set_parent(this);
+  m_children.push_back(std::move(child));
+  return child_ref;
 }
 
 bool GUIObject::child_exists(std::string name)
@@ -159,6 +158,16 @@ GUIObject& GUIObject::get_child(std::string name)
 void GUIObject::clear_children()
 {
   m_children.clear();
+}
+
+sf::Vector2i GUIObject::get_child_area_location()
+{
+  return{ 0, 0 };
+}
+
+sf::Vector2i GUIObject::get_child_area_size()
+{
+  return get_size();
 }
 
 bool GUIObject::render(sf::RenderTarget& target, int frame)
