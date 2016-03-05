@@ -6,8 +6,11 @@
 
 AppStateMainMenu::AppStateMainMenu(StateMachine& state_machine, sf::RenderWindow& app_window)
   :
-  State{ state_machine }
-{}
+  State{ state_machine },
+  m_desktop{ "mainMenuDesktop" }
+{
+
+}
 
 AppStateMainMenu::~AppStateMainMenu()
 {}
@@ -17,6 +20,8 @@ void AppStateMainMenu::execute()
 
 bool AppStateMainMenu::render(sf::RenderTarget& target, int frame)
 {
+  m_desktop.render(target, frame);
+
   target.draw(m_title);
   target.draw(m_subtitle);
   return true;
@@ -24,28 +29,33 @@ bool AppStateMainMenu::render(sf::RenderTarget& target, int frame)
 
 EventResult AppStateMainMenu::handle_event(sf::Event& event)
 {
-  switch (event.type)
+  EventResult result = m_desktop.handle_event(event);
+
+  if (result != EventResult::Handled)
   {
-    case sf::Event::EventType::KeyPressed:
-      switch (event.key.code)
-      {
-        case sf::Keyboard::Key::Space:
-          // Switch to game state.
-          this->change_to("AppStateGameMode");
+    switch (event.type)
+    {
+      case sf::Event::EventType::KeyPressed:
+        switch (event.key.code)
+        {
+          case sf::Keyboard::Key::Space:
+            // Switch to game state.
+            this->change_to("AppStateGameMode");
 
-          return EventResult::Handled;
-          break;
+            result = EventResult::Handled;
+            break;
 
-        default:
-          break;
-      }
-      break;
+          default:
+            break;
+        }
+        break;
 
-    default:
-      break;
+      default:
+        break;
+    }
   }
 
-  return EventResult::Ignored;
+  return result;
 }
 
 std::string const& AppStateMainMenu::get_name()

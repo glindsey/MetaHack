@@ -11,8 +11,7 @@ namespace metagui
     public Pane
   {
   public:
-    explicit DesktopPane(std::string name, sf::Vector2i location = sf::Vector2i(0, 0), sf::Vector2i size = sf::Vector2i(0, 0));
-    DesktopPane(std::string name, sf::IntRect dimensions);
+    explicit DesktopPane(std::string name);
     virtual ~DesktopPane();
 
   protected:
