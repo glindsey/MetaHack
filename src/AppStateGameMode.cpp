@@ -45,17 +45,17 @@ AppStateGameMode::AppStateGameMode(StateMachine& state_machine, sf::RenderWindow
   :
   State{ state_machine },
   m_app_window{ m_app_window },
-  m_desktop{ "gameModeDesktop" },
+  m_desktop{ "gameModeDesktop", m_app_window.getSize() },
   m_game_state{ NEW GameState() },
   m_window_in_focus{ true },
   m_inventory_area_shows_player{ false },
-  m_message_log_view{ NEW MessageLogView(the_message_log, calc_message_log_dims()) },
-  m_inventory_area{ NEW InventoryArea(calc_inventory_dims()) },
-  m_status_area{ NEW StatusArea(calc_status_area_dims()) },
   m_map_zoom_level{ 1.0f },
   m_current_input_state{ GameInputState::Map },
   m_cursor_coords{ 0, 0 }
 {
+  m_desktop.add_child(NEW MessageLogView(the_message_log, calc_message_log_dims()));
+  m_desktop.add_child(NEW InventoryArea(calc_inventory_dims()));
+  m_desktop.add_child(NEW StatusArea(calc_status_area_dims()));
 }
 
 AppStateGameMode::~AppStateGameMode()
@@ -93,12 +93,9 @@ void AppStateGameMode::execute()
 
 bool AppStateGameMode::render(sf::RenderTarget& target, int frame)
 {
-  // Render the desktop first.
-  m_desktop.render(target, frame);
-
   // Set focus for areas.
-  m_message_log_view->set_focus(m_current_input_state == GameInputState::MessageLog);
-  m_status_area->set_focus(m_current_input_state == GameInputState::Map);
+  m_desktop.get_child("MessageLogView").set_focus(m_current_input_state == GameInputState::MessageLog);
+  m_desktop.get_child("StatusArea").set_focus(m_current_input_state == GameInputState::Map);
 
   ThingRef player = get_game_state().get_player();
   ThingRef location = player->get_location();
@@ -146,9 +143,8 @@ bool AppStateGameMode::render(sf::RenderTarget& target, int frame)
     }
   }
 
-  m_message_log_view->render(target, frame);
-  m_status_area->render(target, frame);
-  m_inventory_area->render(target, frame);
+  // Render the GUI last.
+  m_desktop.render(target, frame);
 
   return true;
 }
@@ -157,18 +153,15 @@ EventResult AppStateGameMode::handle_event(sf::Event& event)
 {
   EventResult result = EventResult::Ignored;
 
-  // First let the desktop handle events.
-  result = m_desktop.handle_event(event);
-
   if (result != EventResult::Handled)
   {
     switch (event.type)
     {
       case sf::Event::EventType::Resized:
       {
-        m_message_log_view->set_relative_dimensions(calc_message_log_dims());
-        m_inventory_area->set_relative_dimensions(calc_inventory_dims());
-        m_status_area->set_relative_dimensions(calc_status_area_dims());
+        m_desktop.get_child("MessageLogView").set_relative_dimensions(calc_message_log_dims());
+        m_desktop.get_child("InventoryArea").set_relative_dimensions(calc_inventory_dims());
+        m_desktop.get_child("StatusArea").set_relative_dimensions(calc_status_area_dims());
         result = EventResult::Handled;
         break;
       }
@@ -189,21 +182,29 @@ EventResult AppStateGameMode::handle_event(sf::Event& event)
     }
   }
 
+  /// @todo This whole section should be redundant once we get focus-based
+  ///       key/click handling working properly for objects.
   if (result != EventResult::Handled)
   {
     switch (m_current_input_state)
     {
       case GameInputState::Map:
-        result = m_status_area->handle_event(event);
+        result = m_desktop.get_child("StatusArea").handle_event(event);
         break;
 
       case GameInputState::MessageLog:
-        result = m_message_log_view->handle_event(event);
+        result = m_desktop.get_child("MessageLogView").handle_event(event);
         break;
 
       default:
         break;
     }
+  }
+
+  // Finally let the GUI handle events.
+  if (result != EventResult::Handled)
+  {
+    result = m_desktop.handle_event(event);
   }
 
   return result;
@@ -298,7 +299,10 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
     case GameInputState::Map:
     {
       std::unique_ptr<Action> p_action;
-      std::vector<ThingRef>& things = m_inventory_area->get_selected_things();
+      /// @todo This is ugly; fix it.
+      InventoryArea& inventory_area = dynamic_cast<InventoryArea&>(m_desktop.get_child("InventoryArea"));
+
+      std::vector<ThingRef>& things = inventory_area.get_selected_things();
       int key_number = get_letter_key(key);
       Direction key_direction = get_direction_key(key);
 
@@ -307,7 +311,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
       {
         if (key_number != -1)
         {
-          m_inventory_area->toggle_selection(static_cast<InventorySlot>(key_number));
+          inventory_area.toggle_selection(static_cast<InventorySlot>(key_number));
           result = EventResult::Handled;
         }
         else if (key.code == sf::Keyboard::Key::Tab)
@@ -361,7 +365,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::Subtract:
           {
             /// @todo Need a way to choose which inventory we're affecting.
-            unsigned int slot_count = m_inventory_area->get_selected_slot_count();
+            unsigned int slot_count = inventory_area.get_selected_slot_count();
             if (slot_count < 1)
             {
               the_message_log.add("You have to have something selected "
@@ -374,7 +378,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             }
             else
             {
-              m_inventory_area->dec_selected_quantity();
+              inventory_area.dec_selected_quantity();
             }
           }
           result = EventResult::Handled;
@@ -384,7 +388,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::Equal:
           case sf::Keyboard::Key::Add:
           {
-            unsigned int slot_count = m_inventory_area->get_selected_slot_count();
+            unsigned int slot_count = inventory_area.get_selected_slot_count();
             if (slot_count < 1)
             {
               the_message_log.add("You have to have something selected "
@@ -397,7 +401,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             }
             else
             {
-              m_inventory_area->inc_selected_quantity();
+              inventory_area.inc_selected_quantity();
             }
           }
           result = EventResult::Handled;
@@ -405,11 +409,11 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
           case sf::Keyboard::Key::LBracket:
           {
-            ThingRef thing = m_inventory_area->get_viewed();
+            ThingRef thing = inventory_area.get_viewed();
             ThingRef location = thing->get_location();
             if (location != get_game_state().get_thing_manager().get_mu())
             {
-              m_inventory_area->set_viewed(location);
+              inventory_area.set_viewed(location);
             }
             else
             {
@@ -420,18 +424,18 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
           case sf::Keyboard::Key::RBracket:
           {
-            unsigned int slot_count = m_inventory_area->get_selected_slot_count();
+            unsigned int slot_count = inventory_area.get_selected_slot_count();
 
             if (slot_count > 0)
             {
-              ThingRef thing = m_inventory_area->get_selected_things().at(0);
+              ThingRef thing = inventory_area.get_selected_things().at(0);
               if (thing->get_intrinsic<int>("inventory_size") != 0)
               {
                 if (!thing->can_have_action_done_by(MU, ActionOpen::prototype) || thing->get_property<bool>("open"))
                 {
                   if (!thing->can_have_action_done_by(MU, ActionLock::prototype) || !thing->get_property<bool>("locked"))
                   {
-                    m_inventory_area->set_viewed(thing);
+                    inventory_area.set_viewed(thing);
                   }
                   else // if (container.is_locked())
                   {
@@ -523,7 +527,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
               m_action_in_progress.reset(new ActionClose(player));
               the_message_log.add("Choose a direction to close.");
               m_current_input_state = GameInputState::TargetSelection;
-              m_inventory_area->clear_selected_slots();
+              inventory_area.clear_selected_slots();
             }
             else
             {
@@ -596,7 +600,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
               m_action_in_progress->set_object(things.front());
               the_message_log.add("Choose an item or direction to fill from.");
               m_current_input_state = GameInputState::TargetSelection;
-              m_inventory_area->clear_selected_slots();
+              inventory_area.clear_selected_slots();
             }
             result = EventResult::Handled;
             break;
@@ -637,7 +641,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
               m_action_in_progress->set_object(things.front());
               the_message_log.add("Choose a direction to hurl the item.");
               m_current_input_state = GameInputState::TargetSelection;
-              m_inventory_area->clear_selected_slots();
+              inventory_area.clear_selected_slots();
             }
             result = EventResult::Handled;
             break;
@@ -658,7 +662,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
               the_message_log.add("Choose an item or direction to write on.");
               m_current_input_state = GameInputState::TargetSelection;
-              m_inventory_area->clear_selected_slots();
+              inventory_area.clear_selected_slots();
             }
             result = EventResult::Handled;
             break;
@@ -691,7 +695,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
               m_action_in_progress.reset(new ActionOpen(player));
               the_message_log.add("Choose a direction to open.");
               m_current_input_state = GameInputState::TargetSelection;
-              m_inventory_area->clear_selected_slots();
+              inventory_area.clear_selected_slots();
             }
             else
             {
@@ -720,7 +724,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
               m_action_in_progress->set_objects(things);
               the_message_log.add("Choose a container to put the item(s) into.");
               m_current_input_state = GameInputState::TargetSelection;
-              m_inventory_area->clear_selected_slots();
+              inventory_area.clear_selected_slots();
             }
             result = EventResult::Handled;
             break;
@@ -785,7 +789,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
               m_action_in_progress->set_object(things.front());
               the_message_log.add("Choose a direction to shoot.");
               m_current_input_state = GameInputState::TargetSelection;
-              m_inventory_area->clear_selected_slots();
+              inventory_area.clear_selected_slots();
             }
             result = EventResult::Handled;
             break;
@@ -856,7 +860,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
               m_action_in_progress.reset(new ActionAttack(player));
               the_message_log.add("Choose a direction to attack.");
               m_current_input_state = GameInputState::TargetSelection;
-              m_inventory_area->clear_selected_slots();
+              inventory_area.clear_selected_slots();
             }
             else if (things.size() > 1)
             {
@@ -954,20 +958,24 @@ void AppStateGameMode::reset_inventory_area()
 {
   ThingRef player = m_game_state->get_player();
   Map& game_map = GAME.get_map_factory().get(player->get_map_id());
+
+  /// @todo This is ugly; fix it.
+  InventoryArea& inventory_area = dynamic_cast<InventoryArea&>(m_desktop.get_child("InventoryArea"));
+
   if (m_inventory_area_shows_player == true)
   {
-    m_inventory_area->set_viewed(player);
+    inventory_area.set_viewed(player);
   }
   else
   {
     if (m_current_input_state == GameInputState::CursorLook)
     {
       ThingRef floor_id = game_map.get_tile(m_cursor_coords).get_tile_contents();
-      m_inventory_area->set_viewed(floor_id);
+      inventory_area.set_viewed(floor_id);
     }
     else
     {
-      m_inventory_area->set_viewed(player->get_location());
+      inventory_area.set_viewed(player->get_location());
     }
   }
 }
@@ -975,7 +983,7 @@ void AppStateGameMode::reset_inventory_area()
 sf::IntRect AppStateGameMode::calc_status_area_dims()
 {
   sf::IntRect statusAreaDims;
-  sf::IntRect invAreaDims = m_inventory_area->get_relative_dimensions();
+  sf::IntRect invAreaDims = m_desktop.get_child("InventoryArea").get_relative_dimensions();
   statusAreaDims.width = m_app_window.getSize().x -
     (invAreaDims.width + 24);
   statusAreaDims.height = Settings.get<int>("status_area_height");
@@ -986,7 +994,7 @@ sf::IntRect AppStateGameMode::calc_status_area_dims()
 
 sf::IntRect AppStateGameMode::calc_inventory_dims()
 {
-  sf::IntRect messageLogDims = m_message_log_view->get_relative_dimensions();
+  sf::IntRect messageLogDims = m_desktop.get_child("MessageLogView").get_relative_dimensions();
   sf::IntRect inventoryAreaDims;
   inventoryAreaDims.width = Settings.get<int>("inventory_area_width");
   inventoryAreaDims.height = m_app_window.getSize().y - 10;
@@ -1032,7 +1040,9 @@ EventResult AppStateGameMode::handle_key_press_target_selection(ThingRef player,
   {
     if (!key.alt && !key.control && key_number != -1)
     {
-      m_action_in_progress->set_target(m_inventory_area->get_thing(static_cast<InventorySlot>(key_number)));
+      /// @todo This is ugly; fix it
+      InventoryArea& inventory_area = dynamic_cast<InventoryArea&>(m_desktop.get_child("InventoryArea"));
+      m_action_in_progress->set_target(inventory_area.get_thing(static_cast<InventorySlot>(key_number)));
       player->queue_action(std::move(m_action_in_progress));
       m_inventory_area_shows_player = false;
       reset_inventory_area();

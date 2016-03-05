@@ -10,14 +10,16 @@
 
 namespace metagui
 {
-  Object::Object(std::string name, sf::Vector2i location, sf::Vector2i size)
+  Object::Object(std::string name, sf::Vector2i location, sf::Vector2u size)
   {
+    m_name = name;
     set_relative_location(location);
     set_size(size);
   }
 
   Object::Object(std::string name, sf::IntRect dimensions)
   {
+    m_name = name;
     set_relative_dimensions(dimensions);
   }
 
@@ -108,14 +110,21 @@ namespace metagui
     m_location = location;
   }
 
-  sf::Vector2i Object::get_size()
+  sf::Vector2u Object::get_size()
   {
     return m_size;
   }
 
-  void Object::set_size(sf::Vector2i size)
+  void Object::set_size(sf::Vector2u size)
   {
     m_size = size;
+
+    // Would be better not to create a texture if size is 0 in either dimension
+    // but for the moment this is faster.
+    /// @todo See if we can make this more elegant.
+    if (size.x < 1) size.x = 1;
+    if (size.y < 1) size.y = 1;
+
     m_bg_texture.reset(NEW sf::RenderTexture());
     m_bg_texture->create(size.x, size.y);
   }
@@ -124,7 +133,7 @@ namespace metagui
   {
     sf::IntRect dimensions;
     sf::Vector2i location = get_relative_location();
-    sf::Vector2i size = get_size();
+    sf::Vector2u size = get_size();
     dimensions.left = location.x;
     dimensions.top = location.y;
     dimensions.width = size.x;
@@ -135,7 +144,8 @@ namespace metagui
   void Object::set_relative_dimensions(sf::IntRect dimensions)
   {
     set_relative_location({ dimensions.left, dimensions.top });
-    set_size({ dimensions.width, dimensions.height });
+    set_size({ static_cast<unsigned int>(dimensions.width), 
+               static_cast<unsigned int>(dimensions.height) });
   }
 
   sf::Vector2i Object::get_absolute_location()
@@ -189,13 +199,15 @@ namespace metagui
     m_children.insert<ChildMap::value_type>(ChildMap::value_type(name, std::move(child)));
     m_zorder_map.insert({ z_order, name });
 
+    TRACE("Added child \"%s\" (with Z-order %d) to parent \"%s\"", name.c_str(), z_order, get_name().c_str());
+
     return child_ref;
   }
 
   Object & Object::add_child(Object * child, uint32_t z_order)
   {
     std::unique_ptr<Object> child_ptr(child);
-    return add_child(std::move(child), z_order);
+    return add_child(std::move(child_ptr), z_order);
   }
 
   Object& Object::add_child(std::unique_ptr<Object> child)
@@ -207,7 +219,7 @@ namespace metagui
   Object & Object::add_child(Object * child)
   {
     std::unique_ptr<Object> child_ptr(child);
-    return add_child(std::move(child));
+    return add_child(std::move(child_ptr));
   }
 
   Object & Object::add_child_top(std::unique_ptr<Object> child)
@@ -219,7 +231,7 @@ namespace metagui
   Object & Object::add_child_top(Object * child)
   {
     std::unique_ptr<Object> child_ptr(child);
-    return add_child_top(std::move(child));
+    return add_child_top(std::move(child_ptr));
   }
 
   bool Object::child_exists(std::string name)
@@ -296,7 +308,7 @@ namespace metagui
     return{ 0, 0 };
   }
 
-  sf::Vector2i Object::get_child_area_size()
+  sf::Vector2u Object::get_child_area_size()
   {
     return get_size();
   }
@@ -308,7 +320,7 @@ namespace metagui
       sf::RenderTexture& texture = *(m_bg_texture.get());
 
       // Clear background texture.
-      m_bg_texture->clear();
+      //m_bg_texture->clear();
 
       /// Render self to our bg texture.
       render_self_before_children_(texture, frame);

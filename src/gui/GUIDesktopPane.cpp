@@ -8,9 +8,9 @@
 
 namespace metagui
 {
-  DesktopPane::DesktopPane(std::string name)
+  DesktopPane::DesktopPane(std::string name, sf::Vector2u size)
     :
-    Pane(name, sf::Vector2i(0, 0), sf::Vector2i(0, 0))
+    Pane(name, sf::Vector2i(0, 0), size)
   {}
 
   DesktopPane::~DesktopPane()
@@ -18,9 +18,27 @@ namespace metagui
 
   // === PROTECTED METHODS ======================================================
 
+  EventResult DesktopPane::handle_event_before_children_(sf::Event & event)
+  {
+    EventResult result = EventResult::Ignored;
+    switch (event.type)
+    {
+      case sf::Event::EventType::Resized:
+        set_size({ event.size.width, event.size.height });
+        result = EventResult::Acknowledged;
+        break;
+
+      default:
+        break;
+    }
+
+    return result;
+  }
+
   void DesktopPane::render_self_before_children_(sf::RenderTexture& texture, int frame)
   {
-    sf::Vector2i size = get_size();
+#if 0
+    sf::Vector2u size = get_size();
 
     float line_spacing_y = the_default_font.getLineSpacing(Settings.get<unsigned int>("text_default_size"));
 
@@ -58,5 +76,6 @@ namespace metagui
                                           text_offset_y));
       texture.draw(title_text);
     }
+#endif
   }
 }; // end namespace metagui

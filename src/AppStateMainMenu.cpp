@@ -7,7 +7,7 @@
 AppStateMainMenu::AppStateMainMenu(StateMachine& state_machine, sf::RenderWindow& app_window)
   :
   State{ state_machine },
-  m_desktop{ "mainMenuDesktop" }
+  m_desktop{ "mainMenuDesktop", app_window.getSize() }
 {
 
 }

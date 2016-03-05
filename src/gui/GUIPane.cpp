@@ -8,7 +8,7 @@
 
 namespace metagui
 {
-  Pane::Pane(std::string name, sf::Vector2i location, sf::Vector2i size)
+  Pane::Pane(std::string name, sf::Vector2i location, sf::Vector2u size)
     :
     Object(name, location, size)
   {}

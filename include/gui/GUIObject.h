@@ -22,7 +22,7 @@ namespace metagui
     public Renderable
   {
   public:
-    explicit Object(std::string name, sf::Vector2i location = sf::Vector2i(0, 0), sf::Vector2i size = sf::Vector2i(0, 0));
+    explicit Object(std::string name, sf::Vector2i location = sf::Vector2i(0, 0), sf::Vector2u size = sf::Vector2u(0, 0));
     Object(std::string name, sf::IntRect dimensions);
     virtual ~Object();
 
@@ -71,8 +71,8 @@ namespace metagui
     /// Set location relative to parent object's client area.
     void set_relative_location(sf::Vector2i location);
 
-    sf::Vector2i get_size();
-    void set_size(sf::Vector2i size);
+    sf::Vector2u get_size();
+    void set_size(sf::Vector2u size);
 
     sf::IntRect get_relative_dimensions();
     void set_relative_dimensions(sf::IntRect dimensions);
@@ -176,7 +176,7 @@ namespace metagui
     /// Get the size of this object's child area.
     /// By default, the child area encompasses the entire object, so this
     /// returns get_size(); however, subclasses can override this behavior.
-    virtual sf::Vector2i get_child_area_size();
+    virtual sf::Vector2u get_child_area_size();
 
     /// Render this object, and all of its children, to the screen.
     bool render(sf::RenderTarget& target, int frame);
@@ -246,7 +246,7 @@ namespace metagui
     sf::Vector2i m_location;
 
     /// Object size.
-    sf::Vector2i m_size;
+    sf::Vector2u m_size;
 
     /// Background texture.
     std::unique_ptr<sf::RenderTexture> m_bg_texture;
@@ -258,7 +258,7 @@ namespace metagui
     std::map< std::string, std::unique_ptr<Object> > m_children;
 
     /// Multimap that associates child elements with Z-orders.
-    std::map< uint32_t, std::string > m_zorder_map;
+    std::multimap< uint32_t, std::string > m_zorder_map;
   };
 }; // end namespace metagui
 

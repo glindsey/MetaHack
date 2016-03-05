@@ -11,10 +11,11 @@ namespace metagui
     public Pane
   {
   public:
-    explicit DesktopPane(std::string name);
+    explicit DesktopPane(std::string name, sf::Vector2u size);
     virtual ~DesktopPane();
 
   protected:
+    virtual EventResult handle_event_before_children_(sf::Event& event) override final;
     virtual void render_self_before_children_(sf::RenderTexture& texture, int frame) override final;
 
   private:

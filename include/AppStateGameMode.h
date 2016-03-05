@@ -70,15 +70,6 @@ private:
   /// True if inventory window shows player inventory, false otherwise.
   bool m_inventory_area_shows_player;
 
-  /// Instance of the message log view.
-  std::unique_ptr<MessageLogView> m_message_log_view;
-
-  /// Instance of the inventory area.
-  std::unique_ptr<InventoryArea> m_inventory_area;
-
-  /// Instance of the player status area.
-  std::unique_ptr<StatusArea> m_status_area;
-
   /// Map zoom level.  1.0 equals 100 percent zoom.
   float m_map_zoom_level;
 

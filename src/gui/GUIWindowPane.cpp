@@ -13,7 +13,7 @@
 
 namespace metagui
 {
-  WindowPane::WindowPane(std::string name, sf::Vector2i location, sf::Vector2i size)
+  WindowPane::WindowPane(std::string name, sf::Vector2i location, sf::Vector2u size)
     :
     Pane(name, location, size)
   {}
@@ -132,7 +132,7 @@ namespace metagui
 
   void WindowPane::render_self_before_children_(sf::RenderTexture& texture, int frame)
   {
-    sf::Vector2i size = get_size();
+    sf::Vector2u size = get_size();
 
     float line_spacing_y = the_default_font.getLineSpacing(Settings.get<unsigned int>("text_default_size"));
 
