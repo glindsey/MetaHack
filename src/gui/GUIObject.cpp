@@ -31,12 +31,39 @@ std::string GUIObject::get_name()
 
 void GUIObject::set_focus(bool focus)
 {
-  m_focus = focus;
+  if (m_parent != nullptr)
+  {
+    m_parent->clear_child_focuses();
+  }
+
+  set_focus_only(focus);
 }
 
 bool GUIObject::get_focus()
 {
   return m_focus;
+}
+
+bool GUIObject::get_global_focus()
+{
+  bool global_focus = m_focus;
+
+  if ((global_focus == true) && (m_parent != nullptr))
+  {
+    global_focus &= m_parent->get_global_focus();
+  }
+
+  return global_focus;
+}
+
+void GUIObject::set_global_focus(bool focus)
+{
+  if (m_parent != nullptr)
+  {
+    m_parent->set_global_focus(focus);
+  }
+
+  set_focus(focus);
 }
 
 void GUIObject::set_hidden(bool hidden)
@@ -289,6 +316,19 @@ EventResult GUIObject::handle_event(sf::Event & event)
 void GUIObject::set_parent(GUIObject* parent)
 {
   m_parent = parent;
+}
+
+void GUIObject::clear_child_focuses()
+{
+  for (auto& child_pair : m_children)
+  {
+    child_pair.second->set_focus_only(false);
+  }
+}
+
+void GUIObject::set_focus_only(bool focus)
+{
+  m_focus = focus;
 }
 
 void GUIObject::render_self_before_children_(sf::RenderTexture& texture, int frame)

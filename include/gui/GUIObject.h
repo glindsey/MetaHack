@@ -26,8 +26,22 @@ public:
 
   std::string get_name();
 
+  /// Set whether this object has focus.
+  /// When set to "true", will also unfocus any sibling controls.
+  /// @note This only sets whether the object has focus in the context of its
+  ///       parent. If the parent does not have focus, this object will not
+  ///       be focused in the GUI until it does.
   void set_focus(bool focus);
+
+  /// Get whether this object has focus.
   bool get_focus();
+
+  /// Get whether this object has global focus (i.e., the entire chain of
+  /// its parents also have focus).
+  bool get_global_focus();
+
+  /// Set whether this object has global focus.
+  void set_global_focus(bool focus);
 
   /// Set whether this object is hidden.
   /// A hidden object will not be rendered to the screen, nor will any of
@@ -141,6 +155,12 @@ public:
 
 protected:
   void set_parent(GUIObject* parent);
+
+  /// Clear the focus of all of this object's children.
+  void clear_child_focuses();
+
+  /// Set the focus of an object without clearing sibling focuses (foci?).
+  void set_focus_only(bool focus);
 
   /// Called before rendering the object's children.
   /// Default behavior is to do nothing.
