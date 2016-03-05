@@ -173,7 +173,12 @@ namespace metagui
     ASSERT_CONDITION(child);
 
     std::string name = child->get_name();
-    ASSERT_CONDITION(child_exists(name) == false);
+
+    if (child_exists(name))
+    {
+      std::string message = "Tried to add already-present child \"" + name + "\" of GUI object \"" + get_name() + "\"";
+      throw std::runtime_error(message.c_str());
+    }
 
     Object& child_ref = *(child.get());
     child->set_parent(this);
