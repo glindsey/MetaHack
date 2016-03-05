@@ -1,5 +1,5 @@
-#ifndef GUILABEL_H
-#define GUILABEL_H
+#ifndef GUIRESIZEHANDLE_H
+#define GUIRESIZEHANDLE_H
 
 #include "stdafx.h"
 
@@ -7,18 +7,20 @@
 
 namespace metagui
 {
-  class Label :
+  class ResizeHandle :
     public Object
   {
+    friend class WindowPane;
+
   public:
-    explicit Label(std::string name, sf::Vector2i location = sf::Vector2i(0, 0));
-    virtual ~Label();
+    virtual ~ResizeHandle();
 
   protected:
+    explicit ResizeHandle(std::string name);
     virtual void render_self_before_children_(sf::RenderTexture& texture, int frame) override final;
 
   private:
   };
 }; // end namespace metagui
 
-#endif // GUILABEL_H
+#endif // GUICLOSEHANDLE_H

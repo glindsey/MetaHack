@@ -11,7 +11,7 @@ namespace metagui
     public Object
   {
   public:
-    Pane(std::string name, sf::Vector2i location, sf::Vector2i size = sf::Vector2i(0, 0));
+    explicit Pane(std::string name, sf::Vector2i location = sf::Vector2i(0, 0), sf::Vector2i size = sf::Vector2i(0, 0));
     Pane(std::string name, sf::IntRect dimensions);
     virtual ~Pane();
 

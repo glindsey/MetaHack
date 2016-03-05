@@ -182,16 +182,34 @@ namespace metagui
     return child_ref;
   }
 
+  Object & Object::add_child(Object * child, uint32_t z_order)
+  {
+    std::unique_ptr<Object> child_ptr(child);
+    return add_child(std::move(child), z_order);
+  }
+
   Object& Object::add_child(std::unique_ptr<Object> child)
   {
     uint32_t z_order = get_highest_child_z_order() + 1;
     return add_child(std::move(child), z_order);
   }
 
+  Object & Object::add_child(Object * child)
+  {
+    std::unique_ptr<Object> child_ptr(child);
+    return add_child(std::move(child));
+  }
+
   Object & Object::add_child_top(std::unique_ptr<Object> child)
   {
     uint32_t z_order = get_lowest_child_z_order() - 1;
     return add_child(std::move(child), z_order);
+  }
+
+  Object & Object::add_child_top(Object * child)
+  {
+    std::unique_ptr<Object> child_ptr(child);
+    return add_child_top(std::move(child));
   }
 
   bool Object::child_exists(std::string name)
@@ -218,6 +236,27 @@ namespace metagui
 
     std::string message = "Tried to get non-existent child \"" + name + "\" of GUI object \"" + get_name() + "\"";
     throw std::runtime_error(message.c_str());
+  }
+
+  std::unique_ptr<Object> Object::remove_child(std::string name)
+  {
+    auto& iter = m_children.cbegin();
+
+    for (auto& iter = m_children.begin(); iter != m_children.end(); ++iter)
+    {
+      if ((iter->second)->get_name() == name)
+      {
+        // This moves the object out of the stored unique_ptr.
+        std::unique_ptr<Object> moved_object = std::move(iter->second);
+        // This erases the (now empty) unique_ptr from the map.
+        m_children.erase(iter);
+        // This returns the object we removed.
+        return std::move(moved_object);
+      }
+    }
+
+    // Didn't find the object, so return an empty unique_ptr.
+    return std::unique_ptr<Object>();
   }
 
   uint32_t Object::get_lowest_child_z_order()

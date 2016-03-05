@@ -22,7 +22,7 @@ namespace metagui
     public Renderable
   {
   public:
-    Object(std::string name, sf::Vector2i location, sf::Vector2i size = sf::Vector2i(0, 0));
+    explicit Object(std::string name, sf::Vector2i location = sf::Vector2i(0, 0), sf::Vector2i size = sf::Vector2i(0, 0));
     Object(std::string name, sf::IntRect dimensions);
     virtual ~Object();
 
@@ -83,7 +83,7 @@ namespace metagui
     void set_absolute_location(sf::Vector2i location);
 
     /// Add a child GUIObject underneath this one.
-    /// This GUIObject assumes ownership of the child.
+    /// *This GUIObject assumes ownership of the child.*
     /// @param child    std::unique_ptr to child to add.
     /// @param z_order  Z-order to put this child at. If omitted, uses the
     ///                 highest Z-order currently in the map, plus one.
@@ -92,7 +92,16 @@ namespace metagui
                       uint32_t z_order);
 
     /// Add a child GUIObject underneath this one.
-    /// This GUIObject assumes ownership of the child.
+    /// *This GUIObject assumes ownership of the child.*
+    /// @param child    Pointer to child to add.
+    /// @param z_order  Z-order to put this child at. If omitted, uses the
+    ///                 highest Z-order currently in the map, plus one.
+    /// @return A reference to the child added.
+    Object& add_child(Object* child,
+                      uint32_t z_order);
+
+    /// Add a child GUIObject underneath this one.
+    /// *This GUIObject assumes ownership of the child.*
     /// The new child's Z-order will be set to the highest Z-order currently in
     /// the child map, plus one.
     /// @param child    std::unique_ptr to child to add.
@@ -101,7 +110,17 @@ namespace metagui
     Object& add_child(std::unique_ptr<Object> child);
 
     /// Add a child GUIObject underneath this one.
-    /// This GUIObject assumes ownership of the child.
+    /// *This GUIObject assumes ownership of the child.*
+    /// The new child's Z-order will be set to the highest Z-order currently in
+    /// the child map, plus one.
+    /// @param child    Pointer to child to add.
+    ///
+    /// @return A reference to the child added.
+    Object& add_child(Object* child);
+
+
+    /// Add a child GUIObject underneath this one.
+    /// *This GUIObject assumes ownership of the child.*
     /// The new child's Z-order will be set to the lowest Z-order currently in
     /// the child map, minus one.
     /// @param child    std::unique_ptr to child to add.
@@ -109,9 +128,24 @@ namespace metagui
     /// @return A reference to the child added.
     Object& add_child_top(std::unique_ptr<Object> child);
 
+    /// Add a child GUIObject underneath this one.
+    /// *This GUIObject assumes ownership of the child.*
+    /// The new child's Z-order will be set to the lowest Z-order currently in
+    /// the child map, minus one.
+    /// @param child    Pointer to child to add.
+    ///
+    /// @return A reference to the child added.
+    Object& add_child_top(Object* child);
+
     bool child_exists(std::string name);
 
     Object& get_child(std::string name);
+
+    /// Remove the child object with the given name, if it exists.
+    /// @param name   Name of the child object to remove.
+    /// @return Pointer to the removed object if it existed,
+    ///         empty unique_ptr otherwise.
+    std::unique_ptr<Object> remove_child(std::string name);
 
     /// Get lowest Z-order of all this object's children.
     /// If no children are present, returns zero.

@@ -2,6 +2,11 @@
 
 #include "gui/GUIWindowPane.h"
 
+#include "gui/GUITitleBar.h"
+#include "gui/GUICloseHandle.h"
+#include "gui/GUIResizeHandle.h"
+#include "gui/GUIShrinkHandle.h"
+
 #include "App.h"
 #include "ConfigSettings.h"
 #include "New.h"
@@ -20,6 +25,108 @@ namespace metagui
 
   WindowPane::~WindowPane()
   {}
+
+  void WindowPane::set_title_bar(bool enabled)
+  {
+    m_title_bar = enabled;
+    std::string name = get_name() + "_titlebar";
+
+    if (enabled)
+    {
+      if (!child_exists(name))
+      {
+        add_child(new TitleBar(name));
+      }
+    }
+    else
+    {
+      remove_child(name);
+    }
+  }
+
+  bool WindowPane::get_title_bar()
+  {
+    return m_title_bar;
+  }
+
+  void WindowPane::set_movable(bool enabled)
+  {
+    m_movable = enabled;
+  }
+
+  bool WindowPane::get_movable()
+  {
+    return m_movable;
+  }
+
+  void WindowPane::set_resizable(bool enabled)
+  {
+    m_resizable = enabled;
+
+    std::string name = get_name() + "_resizehandle";
+    if (enabled)
+    {
+      if (!child_exists(name))
+      {
+        add_child(new ResizeHandle(name));
+      }
+    }
+    else
+    {
+      remove_child(name);
+    }
+  }
+
+  bool WindowPane::get_resizable()
+  {
+    return m_resizable;
+  }
+
+  void WindowPane::set_closable(bool enabled)
+  {
+    m_closable = enabled;
+
+    std::string name = get_name() + "_closehandle";
+    if (enabled)
+    {
+      if (!child_exists(name))
+      {
+        add_child(new CloseHandle(name));
+      }
+    }
+    else
+    {
+      remove_child(name);
+    }
+  }
+
+  bool WindowPane::get_shrinkable()
+  {
+    return m_shrinkable;
+  }
+
+  void WindowPane::set_shrinkable(bool enabled)
+  {
+    m_shrinkable = enabled;
+
+    std::string name = get_name() + "_shrinkhandle";
+    if (enabled)
+    {
+      if (!child_exists(name))
+      {
+        add_child(new ShrinkHandle(name));
+      }
+    }
+    else
+    {
+      remove_child(name);
+    }
+  }
+
+  bool WindowPane::get_closable()
+  {
+    return m_closable;
+  }
 
   // === PROTECTED METHODS ======================================================
 

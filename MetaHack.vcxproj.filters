@@ -279,6 +279,18 @@
     <ClInclude Include="include\gui\GUIDesktopPane.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\gui\GUICloseHandle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gui\GUIResizeHandle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gui\GUIShrinkHandle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gui\GUITitleBar.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">
@@ -483,6 +495,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\gui\GUIDesktopPane.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\GUICloseHandle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\GUIResizeHandle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\GUIShrinkHandle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\GUITitleBar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
