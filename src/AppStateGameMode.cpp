@@ -308,7 +308,8 @@ public:
 AppStateGameMode::AppStateGameMode(StateMachine& state_machine, sf::RenderWindow& app_window)
   :
   State{ state_machine },
-  pImpl(NEW Impl(app_window))
+  pImpl(NEW Impl(app_window)),
+  m_desktop{ "gameModeDesktop" }
 {
 }
 
@@ -347,6 +348,9 @@ void AppStateGameMode::execute()
 
 bool AppStateGameMode::render(sf::RenderTarget& target, int frame)
 {
+  // Render the desktop first.
+  m_desktop.render(target, frame);
+
   // Set focus for areas.
   pImpl->message_log_view->set_focus(pImpl->current_input_state == GameInputState::MessageLog);
   pImpl->status_area->set_focus(pImpl->current_input_state == GameInputState::Map);
@@ -407,6 +411,7 @@ bool AppStateGameMode::render(sf::RenderTarget& target, int frame)
 EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 {
   EventResult result = EventResult::Ignored;
+
   ThingRef player = get_game_state().get_player();
 
   // *** Handle keys processed in any mode.
@@ -1085,30 +1090,36 @@ EventResult AppStateGameMode::handle_event(sf::Event& event)
 {
   EventResult result = EventResult::Ignored;
 
-  switch (event.type)
+  // First let the desktop handle events.
+  result = m_desktop.handle_event(event);
+
+  if (result != EventResult::Handled)
   {
-    case sf::Event::EventType::Resized:
+    switch (event.type)
     {
-      pImpl->message_log_view->set_relative_dimensions(pImpl->calc_message_log_dims());
-      pImpl->inventory_area->set_relative_dimensions(pImpl->calc_inventory_dims());
-      pImpl->status_area->set_relative_dimensions(pImpl->calc_status_area_dims());
-      result = EventResult::Handled;
-      break;
+      case sf::Event::EventType::Resized:
+      {
+        pImpl->message_log_view->set_relative_dimensions(pImpl->calc_message_log_dims());
+        pImpl->inventory_area->set_relative_dimensions(pImpl->calc_inventory_dims());
+        pImpl->status_area->set_relative_dimensions(pImpl->calc_status_area_dims());
+        result = EventResult::Handled;
+        break;
+      }
+
+      case sf::Event::EventType::KeyPressed:
+        result = this->handle_key_press(event.key);
+        break;
+
+      case sf::Event::EventType::KeyReleased:
+        break;
+
+      case sf::Event::EventType::MouseWheelMoved:
+        result = this->handle_mouse_wheel(event.mouseWheel);
+        break;
+
+      default:
+        break;
     }
-
-    case sf::Event::EventType::KeyPressed:
-      result = this->handle_key_press(event.key);
-      break;
-
-    case sf::Event::EventType::KeyReleased:
-      break;
-
-    case sf::Event::EventType::MouseWheelMoved:
-      result = this->handle_mouse_wheel(event.mouseWheel);
-      break;
-
-    default:
-      break;
   }
 
   if (result != EventResult::Handled)

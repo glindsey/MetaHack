@@ -7,6 +7,8 @@
 #include "GameState.h"
 #include "State.h"
 
+#include "gui/GUIDesktopPane.h"
+
 /// Object that represents the game mode state.
 /// Anything about the game that needs to be saved should go into the
 /// GameState class (e.g. data model members). Data view members which
@@ -35,6 +37,8 @@ protected:
 private:
   struct Impl;
   std::unique_ptr<Impl> pImpl;
+
+  metagui::DesktopPane m_desktop;
 };
 
 #endif // APPSTATEGAMEMODE_H
