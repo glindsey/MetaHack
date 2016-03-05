@@ -172,13 +172,18 @@ namespace metagui
   {
     ASSERT_CONDITION(child);
 
+    std::string name = child->get_name();
+    ASSERT_CONDITION(child_exists(name) == false);
+
     Object& child_ref = *(child.get());
     child->set_parent(this);
 
     // This odd syntax is in order to work around VS compiler bug when having
     // a unique_ptr as a map value. See:
     // https://stackoverflow.com/questions/21056872/c-stdunique-ptr-wont-compile-in-map
-    m_children.insert<ChildMap::value_type>(ChildMap::value_type(z_order, std::move(child)));
+    m_children.insert<ChildMap::value_type>(ChildMap::value_type(name, std::move(child)));
+    m_zorder_map.insert({ z_order, name });
+
     return child_ref;
   }
 
@@ -226,12 +231,9 @@ namespace metagui
 
   Object& Object::get_child(std::string name)
   {
-    for (auto& child_pair : m_children)
+    if (child_exists(name))
     {
-      if ((child_pair.second)->get_name() == name)
-      {
-        return *(child_pair.second.get());
-      }
+      return *(m_children.at(name).get());
     }
 
     std::string message = "Tried to get non-existent child \"" + name + "\" of GUI object \"" + get_name() + "\"";
@@ -240,19 +242,25 @@ namespace metagui
 
   std::unique_ptr<Object> Object::remove_child(std::string name)
   {
-    auto& iter = m_children.cbegin();
-
-    for (auto& iter = m_children.begin(); iter != m_children.end(); ++iter)
+    if (child_exists(name))
     {
-      if ((iter->second)->get_name() == name)
+      // This moves the object out of the stored unique_ptr.
+      std::unique_ptr<Object> moved_object = std::move(m_children.at(name));
+      // This erases the (now empty) unique_ptr from the map.
+      m_children.erase(name);
+
+      // This finds the child name in the Z-order map and gets rid of it.
+      for (auto& iter = m_zorder_map.begin(); iter != m_zorder_map.end(); ++iter)
       {
-        // This moves the object out of the stored unique_ptr.
-        std::unique_ptr<Object> moved_object = std::move(iter->second);
-        // This erases the (now empty) unique_ptr from the map.
-        m_children.erase(iter);
-        // This returns the object we removed.
-        return std::move(moved_object);
+        if (iter->second == name)
+        {
+          m_zorder_map.erase(iter);
+          break;
+        }
       }
+
+      // This returns the object we removed.
+      return std::move(moved_object);
     }
 
     // Didn't find the object, so return an empty unique_ptr.
@@ -261,21 +269,28 @@ namespace metagui
 
   uint32_t Object::get_lowest_child_z_order()
   {
-    auto& iter = m_children.cbegin();
-
-    return uint32_t();
+    if (m_zorder_map.size() > 0)
+    {
+      auto& iter = m_zorder_map.cbegin();
+      return iter->first;
+    }
+    return 0;
   }
 
   uint32_t Object::get_highest_child_z_order()
   {
-    auto& iter = (m_children.cend())--;
-
-    return uint32_t();
+    if (m_zorder_map.size() > 0)
+    {
+      auto& iter = (m_zorder_map.cend())--;
+      return iter->first;
+    }
+    return 0;
   }
 
   void Object::clear_children()
   {
     m_children.clear();
+    m_zorder_map.clear();
   }
 
   sf::Vector2i Object::get_child_area_location()
@@ -301,9 +316,9 @@ namespace metagui
       render_self_before_children_(texture, frame);
 
       /// Render all child objects to our bg texture.
-      for (auto& child_pair : m_children)
+      for (auto& z_pair : m_zorder_map)
       {
-        (child_pair.second)->render(texture, frame);
+        m_children.at(z_pair.second)->render(texture, frame);
       }
 
       /// Render self after children are done.
@@ -338,9 +353,9 @@ namespace metagui
       result = handle_event_before_children_(event);
       if (result != EventResult::Handled)
       {
-        for (auto& child_pair : m_children)
+        for (auto& z_pair : m_zorder_map)
         {
-          result = (child_pair.second)->handle_event(event);
+          result = m_children.at(z_pair.second)->handle_event(event);
           if (result == EventResult::Handled) break;
         }
       }

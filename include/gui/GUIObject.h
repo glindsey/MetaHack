@@ -12,8 +12,8 @@ namespace metagui
   class Object;
 
   /// Using declarations
-  using ChildMap = std::multimap< uint32_t, std::unique_ptr<Object> >;
-  using ChildPair = std::pair< uint32_t, std::unique_ptr<Object> >;
+  using ChildMap = std::map< std::string, std::unique_ptr<Object> >;
+  using ZOrderMap = std::multimap< uint32_t, std::string >;
 
   /// Virtual superclass of all GUI objects on screen.
   /// @todo Should child objects store Z-order?
@@ -254,8 +254,11 @@ namespace metagui
     /// Background shape.
     sf::RectangleShape m_bg_shape;
 
-    /// Pointer multimap associating Z-orders with child elements.
-    ChildMap m_children;
+    /// Map that owns the child elements.
+    std::map< std::string, std::unique_ptr<Object> > m_children;
+
+    /// Multimap that associates child elements with Z-orders.
+    std::map< uint32_t, std::string > m_zorder_map;
   };
 }; // end namespace metagui
 
