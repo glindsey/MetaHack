@@ -18,11 +18,11 @@ protected:
 
   /// Temporary function used to render the contents of classes derived from
   /// GUIWindowPane until they can be properly replaced with child controls.
-  virtual std::string render_contents_(sf::RenderTexture& texture, int frame);
+  virtual void render_contents_(sf::RenderTexture& texture, int frame);
 
 private:
   /// Border shape.
   sf::RectangleShape m_border_shape;
 };
 
-#endif // GUIPANE_H
+#endif // GUIWINDOWPANE_H

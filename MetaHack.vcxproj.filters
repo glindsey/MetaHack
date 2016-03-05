@@ -276,6 +276,9 @@
     <ClInclude Include="include\gui\GUIWindowPane.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\gui\GUIDesktopPane.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">
@@ -477,6 +480,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\gui\GUIWindowPane.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\GUIDesktopPane.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

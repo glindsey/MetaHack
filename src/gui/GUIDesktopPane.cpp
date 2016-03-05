@@ -1,27 +1,27 @@
 #include "stdafx.h"
 
-#include "gui/GUIWindowPane.h"
+#include "gui/GUIDesktopPane.h"
 
 #include "App.h"
 #include "ConfigSettings.h"
 #include "New.h"
 
-GUIWindowPane::GUIWindowPane(std::string name, sf::Vector2i location, sf::Vector2i size)
+GUIDesktopPane::GUIDesktopPane(std::string name, sf::Vector2i location, sf::Vector2i size)
   :
   GUIPane(name, location, size)
 {}
 
-GUIWindowPane::GUIWindowPane(std::string name, sf::IntRect dimensions)
+GUIDesktopPane::GUIDesktopPane(std::string name, sf::IntRect dimensions)
   :
   GUIPane(name, dimensions)
 {}
 
-GUIWindowPane::~GUIWindowPane()
+GUIDesktopPane::~GUIDesktopPane()
 {}
 
 // === PROTECTED METHODS ======================================================
 
-void GUIWindowPane::render_self_before_children_(sf::RenderTexture& texture, int frame)
+void GUIDesktopPane::render_self_before_children_(sf::RenderTexture& texture, int frame)
 {
   sf::Vector2i size = get_size();
 
@@ -34,10 +34,7 @@ void GUIWindowPane::render_self_before_children_(sf::RenderTexture& texture, int
   // Clear the target.
   texture.clear(Settings.get<sf::Color>("window_bg_color"));
 
-  // Render the contents, if any.
-  render_contents_(texture, frame);
-
-  // IF the pane has a title...
+  // IF the pane has a caption...
   if (!get_text().empty())
   {
     // Draw the title in the upper-left corner.
@@ -65,21 +62,4 @@ void GUIWindowPane::render_self_before_children_(sf::RenderTexture& texture, int
     texture.draw(title_text);
   }
 
-  // Draw the border.
-  float border_width = Settings.get<float>("window_border_width");
-  m_border_shape.setPosition(sf::Vector2f(border_width, border_width));
-  m_border_shape.setSize(sf::Vector2f(static_cast<float>(size.x - (2 * border_width)), static_cast<float>(size.y - (2 * border_width))));
-  m_border_shape.setFillColor(sf::Color::Transparent);
-  m_border_shape.setOutlineColor(
-    get_focus() ?
-    Settings.get<sf::Color>("window_focused_border_color") :
-    Settings.get<sf::Color>("window_border_color"));
-  m_border_shape.setOutlineThickness(border_width);
-
-  //texture.setView(sf::View(sf::FloatRect(0.0f, 0.0f, static_cast<float>(target.getSize().x), static_cast<float>(target.getSize().y))));
-
-  texture.draw(m_border_shape);
 }
-
-void GUIWindowPane::render_contents_(sf::RenderTexture& texture, int frame)
-{}

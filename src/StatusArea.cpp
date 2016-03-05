@@ -34,7 +34,7 @@ EventResult StatusArea::handle_event(sf::Event& event)
   return EventResult::Ignored;
 }
 
-std::string StatusArea::render_contents_(sf::RenderTexture& texture, int frame)
+void StatusArea::render_contents_(sf::RenderTexture& texture, int frame)
 {
   sf::IntRect pane_dims = get_relative_dimensions();
   ThingRef player = GAME.get_player();
@@ -109,7 +109,7 @@ std::string StatusArea::render_contents_(sf::RenderTexture& texture, int frame)
     render_attribute(texture, "AUR", "attribute_aura", { origin.x + (8 * attrib_spacing), origin.y + (3 * line_spacing) });
   }
 
-  return "";
+  return;
 }
 
 void StatusArea::render_attribute(sf::RenderTarget& target, std::string abbrev, std::string name, sf::Vector2f location)

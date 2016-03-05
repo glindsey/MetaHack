@@ -25,7 +25,9 @@ MessageLogView::MessageLogView(MessageLog& model,
   :
   GUIWindowPane("MessageLogView", dimensions),
   pImpl(NEW Impl(model))
-{}
+{
+  set_text("Message Log");
+}
 
 MessageLogView::~MessageLogView()
 {}
@@ -43,7 +45,7 @@ EventResult MessageLogView::handle_event(sf::Event& event)
   return GUIPane::handle_event(event);
 }
 
-std::string MessageLogView::render_contents_(sf::RenderTexture& texture, int frame)
+void MessageLogView::render_contents_(sf::RenderTexture& texture, int frame)
 {
   // Dimensions of the pane.
   sf::IntRect pane_dims = get_relative_dimensions();
@@ -91,5 +93,5 @@ std::string MessageLogView::render_contents_(sf::RenderTexture& texture, int fra
     text_coord_y -= lineSpacing;
   }
 
-  return "Message Log";
+  return;
 }

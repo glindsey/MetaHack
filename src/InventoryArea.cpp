@@ -268,7 +268,7 @@ EventResult InventoryArea::handle_event(sf::Event& event)
   return EventResult::Ignored;
 }
 
-std::string InventoryArea::render_contents_(sf::RenderTexture& texture, int frame)
+void InventoryArea::render_contents_(sf::RenderTexture& texture, int frame)
 {
   // Dimensions of the pane.
   sf::IntRect pane_dims = get_relative_dimensions();
@@ -283,7 +283,8 @@ std::string InventoryArea::render_contents_(sf::RenderTexture& texture, int fram
   // Get a reference to the location we're referring to.
   if (pImpl->viewed == MU)
   {
-    return "Invalid Viewed Object!";
+    set_text("Invalid Viewed Object!");
+    return;
   }
 
   // Start at the top and work down.
@@ -430,5 +431,6 @@ std::string InventoryArea::render_contents_(sf::RenderTexture& texture, int fram
   //       overridden to say stuff like "Things on the floor".
   sf::String title_string = pImpl->viewed->get_possessive() + " inventory";
   title_string[0] = toupper(title_string[0]);
-  return title_string;
+  set_text(title_string);
+  return;
 }
