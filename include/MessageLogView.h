@@ -31,8 +31,8 @@ protected:
 
 private:
 
-  struct Impl;
-  std::unique_ptr<Impl> pImpl;
+  /// Reference to the associated MessageLog model.
+  MessageLog& m_model;
 };
 
 #endif // MESSAGELOGVIEW_H

@@ -8,23 +8,11 @@
 #include "MessageLog.h"
 #include "New.h"
 
-struct MessageLogView::Impl
-{
-  /// Constructor.
-  explicit Impl(MessageLog& model_)
-    :
-    model(model_)
-  {}
-
-  /// Reference to the associated MessageLog model.
-  MessageLog& model;
-};
-
 MessageLogView::MessageLogView(MessageLog& model,
                                sf::IntRect dimensions)
   :
   metagui::WindowPane("MessageLogView", dimensions),
-  pImpl(NEW Impl(model))
+  m_model(model)
 {
   set_text("Message Log");
 }
@@ -37,7 +25,7 @@ EventResult MessageLogView::handle_event(sf::Event& event)
   switch (event.type)
   {
     case sf::Event::EventType::KeyPressed:
-      return pImpl->model.get_key_buffer().handle_key_press(event.key);
+      return m_model.get_key_buffer().handle_key_press(event.key);
     default:
       break;
   }
@@ -68,7 +56,7 @@ void MessageLogView::render_contents_(sf::RenderTexture& texture, int frame)
   // If we have the focus, put the current command at the bottom of the log.
   if (get_focus() == true)
   {
-    pImpl->model.get_key_buffer().render(
+    m_model.get_key_buffer().render(
       texture,
       sf::Vector2f(text_coord_x, text_coord_y),
       frame,
@@ -81,7 +69,7 @@ void MessageLogView::render_contents_(sf::RenderTexture& texture, int frame)
 
   // Draw each of the message_queue in the queue.
   /// @todo Split lines that are too long instead of truncating them.
-  auto& message_queue = pImpl->model.get_message_queue();
+  auto& message_queue = m_model.get_message_queue();
 
   for (auto iter = message_queue.begin(); iter != message_queue.end(); ++iter)
   {
