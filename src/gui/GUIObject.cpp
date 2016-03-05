@@ -219,14 +219,7 @@ namespace metagui
 
   bool Object::child_exists(std::string name)
   {
-    for (auto& child_pair : m_children)
-    {
-      if ((child_pair.second)->get_name() == name)
-      {
-        return true;
-      }
-    }
-    return false;
+    return (m_children.count(name) > 0);
   }
 
   Object& Object::get_child(std::string name)
