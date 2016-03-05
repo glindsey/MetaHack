@@ -5,17 +5,20 @@
 
 #include "gui/GUIObject.h"
 
-class GUILabel :
-  public GUIObject
+namespace metagui
 {
-public:
-  GUILabel(std::string name, sf::Vector2i location);
-  virtual ~GUILabel();
+  class Label :
+    public Object
+  {
+  public:
+    Label(std::string name, sf::Vector2i location);
+    virtual ~Label();
 
-protected:
-  virtual void render_self_before_children_(sf::RenderTexture& texture, int frame) override final;
+  protected:
+    virtual void render_self_before_children_(sf::RenderTexture& texture, int frame) override final;
 
-private:
-};
+  private:
+  };
+}; // end namespace metagui
 
 #endif // GUILABEL_H

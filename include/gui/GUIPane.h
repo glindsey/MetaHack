@@ -5,17 +5,20 @@
 
 #include "gui/GUIObject.h"
 
-class GUIPane :
-  public GUIObject
+namespace metagui
 {
-public:
-  GUIPane(std::string name, sf::Vector2i location, sf::Vector2i size = sf::Vector2i(0, 0));
-  GUIPane(std::string name, sf::IntRect dimensions);
-  virtual ~GUIPane();
+  class Pane :
+    public Object
+  {
+  public:
+    Pane(std::string name, sf::Vector2i location, sf::Vector2i size = sf::Vector2i(0, 0));
+    Pane(std::string name, sf::IntRect dimensions);
+    virtual ~Pane();
 
-protected:
+  protected:
 
-private:
-};
+  private:
+  };
+}; // end namespace metagui
 
 #endif // GUIPANE_H

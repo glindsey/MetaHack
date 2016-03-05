@@ -23,7 +23,7 @@ struct MessageLogView::Impl
 MessageLogView::MessageLogView(MessageLog& model,
                                sf::IntRect dimensions)
   :
-  GUIWindowPane("MessageLogView", dimensions),
+  metagui::WindowPane("MessageLogView", dimensions),
   pImpl(NEW Impl(model))
 {
   set_text("Message Log");
@@ -42,7 +42,7 @@ EventResult MessageLogView::handle_event(sf::Event& event)
       break;
   }
 
-  return GUIPane::handle_event(event);
+  return metagui::Pane::handle_event(event);
 }
 
 void MessageLogView::render_contents_(sf::RenderTexture& texture, int frame)

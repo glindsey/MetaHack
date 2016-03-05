@@ -5,18 +5,21 @@
 
 #include "gui/GUIPane.h"
 
-class GUIDesktopPane :
-  public GUIPane
+namespace metagui
 {
-public:
-  GUIDesktopPane(std::string name, sf::Vector2i location, sf::Vector2i size = sf::Vector2i(0, 0));
-  GUIDesktopPane(std::string name, sf::IntRect dimensions);
-  virtual ~GUIDesktopPane();
+  class DesktopPane :
+    public Pane
+  {
+  public:
+    DesktopPane(std::string name, sf::Vector2i location, sf::Vector2i size = sf::Vector2i(0, 0));
+    DesktopPane(std::string name, sf::IntRect dimensions);
+    virtual ~DesktopPane();
 
-protected:
-  virtual void render_self_before_children_(sf::RenderTexture& texture, int frame) override final;
+  protected:
+    virtual void render_self_before_children_(sf::RenderTexture& texture, int frame) override final;
 
-private:
-};
+  private:
+  };
+}; // end namespace metagui
 
 #endif // GUIDESKTOPPANE_H

@@ -5,7 +5,7 @@
 
 #include "gui/GUIWindowPane.h"
 
-class StatusArea : public GUIWindowPane
+class StatusArea : public metagui::WindowPane
 {
 public:
   explicit StatusArea(sf::IntRect dimensions);

@@ -15,7 +15,7 @@ struct StatusArea::Impl
 };
 
 StatusArea::StatusArea(sf::IntRect dimensions)
-  : GUIWindowPane("StatusArea", dimensions),
+  : metagui::WindowPane("StatusArea", dimensions),
   pImpl(NEW Impl())
 {
   //ctor

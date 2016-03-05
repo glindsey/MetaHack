@@ -9,7 +9,7 @@
 class MessageLog;
 
 /// A class that acts as a View for a MessageLog model instance.
-class MessageLogView : public GUIWindowPane
+class MessageLogView : public metagui::WindowPane
 {
 public:
   /// Create a message log view tied to the specified model.

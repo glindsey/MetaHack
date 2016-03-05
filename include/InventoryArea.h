@@ -18,7 +18,7 @@ class Thing;
 class ThingRef;
 
 class InventoryArea :
-  public GUIWindowPane
+  public metagui::WindowPane
 {
 public:
   explicit InventoryArea(sf::IntRect dimensions);

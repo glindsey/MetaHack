@@ -6,17 +6,20 @@
 #include "ConfigSettings.h"
 #include "New.h"
 
-GUIPane::GUIPane(std::string name, sf::Vector2i location, sf::Vector2i size)
-  :
-  GUIObject(name, location, size)
-{}
+namespace metagui
+{
+  Pane::Pane(std::string name, sf::Vector2i location, sf::Vector2i size)
+    :
+    Object(name, location, size)
+  {}
 
-GUIPane::GUIPane(std::string name, sf::IntRect dimensions)
-  :
-  GUIObject(name, dimensions)
-{}
+  Pane::Pane(std::string name, sf::IntRect dimensions)
+    :
+    Object(name, dimensions)
+  {}
 
-GUIPane::~GUIPane()
-{}
+  Pane::~Pane()
+  {}
+}; // end namespace metagui
 
 // === PROTECTED METHODS ======================================================
