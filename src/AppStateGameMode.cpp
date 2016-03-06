@@ -41,6 +41,8 @@
 #include "ActionWait.h"
 #include "ActionWield.h"
 
+#include "gui/GUIWindowPane.h"
+
 AppStateGameMode::AppStateGameMode(StateMachine& state_machine, sf::RenderWindow& m_app_window)
   :
   State{ state_machine },
@@ -53,6 +55,8 @@ AppStateGameMode::AppStateGameMode(StateMachine& state_machine, sf::RenderWindow
   m_current_input_state{ GameInputState::Map },
   m_cursor_coords{ 0, 0 }
 {
+  auto render_map_functor = std::bind(&AppStateGameMode::render_map, this, std::placeholders::_1, std::placeholders::_2);
+  m_desktop.set_pre_child_render_functor(render_map_functor);
   m_desktop.add_child(NEW MessageLogView(the_message_log, calc_message_log_dims()));
   m_desktop.add_child(NEW InventoryArea(calc_inventory_dims()));
   m_desktop.add_child(NEW StatusArea(calc_status_area_dims()));
@@ -97,52 +101,6 @@ bool AppStateGameMode::render(sf::RenderTarget& target, int frame)
   m_desktop.get_child("MessageLogView").set_focus(m_current_input_state == GameInputState::MessageLog);
   m_desktop.get_child("StatusArea").set_focus(m_current_input_state == GameInputState::Map);
 
-  ThingRef player = get_game_state().get_player();
-  ThingRef location = player->get_location();
-
-  if (location == get_game_state().get_thing_manager().get_mu())
-  {
-    throw std::exception("Uh oh, the player's location appears to have been deleted!");
-  }
-
-  /// @todo We need a way to determine if the player is directly on a map,
-  ///       and render either the map, or a container interior.
-  ///       Should probably use an overridden "render_surroundings" method
-  ///       for Things.
-
-  if (!player->is_inside_another_thing())
-  {
-    MapTile* tile = player->get_maptile();
-    if (tile != nullptr)
-    {
-      Map& game_map = GAME.get_map_factory().get(tile->get_map_id());
-      sf::Vector2i tile_coords = tile->get_coords();
-      sf::Vector2f player_pixel_coords = MapTile::get_pixel_coords(tile_coords);
-      sf::Vector2f cursor_pixel_coords = MapTile::get_pixel_coords(m_cursor_coords);
-
-      // Update thing vertex array.
-      game_map.update_thing_vertices(player, frame);
-
-      if (m_current_input_state == GameInputState::CursorLook)
-      {
-        game_map.set_view(target, cursor_pixel_coords, m_map_zoom_level);
-        game_map.draw_to(target);
-
-        auto& cursor_tile = game_map.get_tile(m_cursor_coords);
-        cursor_tile.draw_highlight(target,
-                                   cursor_pixel_coords,
-                                   Settings.get<sf::Color>("cursor_border_color"),
-                                   Settings.get<sf::Color>("cursor_bg_color"),
-                                   frame);
-      }
-      else
-      {
-        game_map.set_view(target, player_pixel_coords, m_map_zoom_level);
-        game_map.draw_to(target);
-      }
-    }
-  }
-
   // Render the GUI last.
   m_desktop.render(target, frame);
 
@@ -162,7 +120,7 @@ EventResult AppStateGameMode::handle_event(sf::Event& event)
         m_desktop.get_child("MessageLogView").set_relative_dimensions(calc_message_log_dims());
         m_desktop.get_child("InventoryArea").set_relative_dimensions(calc_inventory_dims());
         m_desktop.get_child("StatusArea").set_relative_dimensions(calc_status_area_dims());
-        result = EventResult::Handled;
+        result = EventResult::Acknowledged;
         break;
       }
 
@@ -260,6 +218,57 @@ GameState& AppStateGameMode::get_game_state()
 }
 
 // === PROTECTED METHODS ======================================================
+void AppStateGameMode::render_map(sf::RenderTexture& texture, int frame)
+{
+  texture.clear();
+
+  ThingRef player = get_game_state().get_player();
+  ThingRef location = player->get_location();
+
+  if (location == get_game_state().get_thing_manager().get_mu())
+  {
+    throw std::runtime_error("Uh oh, the player's location appears to have been deleted!");
+  }
+
+  /// @todo We need a way to determine if the player is directly on a map,
+  ///       and render either the map, or a container interior.
+  ///       Should probably use an overridden "render_surroundings" method
+  ///       for Things.
+
+  if (!player->is_inside_another_thing())
+  {
+    MapTile* tile = player->get_maptile();
+    if (tile != nullptr)
+    {
+      Map& game_map = GAME.get_map_factory().get(tile->get_map_id());
+      sf::Vector2i tile_coords = tile->get_coords();
+      sf::Vector2f player_pixel_coords = MapTile::get_pixel_coords(tile_coords);
+      sf::Vector2f cursor_pixel_coords = MapTile::get_pixel_coords(m_cursor_coords);
+
+      // Update thing vertex array.
+      game_map.update_thing_vertices(player, frame);
+
+      if (m_current_input_state == GameInputState::CursorLook)
+      {
+        game_map.set_view(texture, cursor_pixel_coords, m_map_zoom_level);
+        game_map.draw_to(texture);
+
+        auto& cursor_tile = game_map.get_tile(m_cursor_coords);
+        cursor_tile.draw_highlight(texture,
+                                   cursor_pixel_coords,
+                                   Settings.get<sf::Color>("cursor_border_color"),
+                                   Settings.get<sf::Color>("cursor_bg_color"),
+                                   frame);
+      }
+      else
+      {
+        game_map.set_view(texture, player_pixel_coords, m_map_zoom_level);
+        game_map.draw_to(texture);
+      }
+    }
+  }
+}
+
 EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 {
   EventResult result = EventResult::Ignored;

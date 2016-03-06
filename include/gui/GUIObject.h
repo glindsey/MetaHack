@@ -14,6 +14,7 @@ namespace metagui
   /// Using declarations
   using ChildMap = std::map< std::string, std::unique_ptr<Object> >;
   using ZOrderMap = std::multimap< uint32_t, std::string >;
+  using RenderFunctor = std::function< void(sf::RenderTexture&, int) >;
 
   /// Virtual superclass of all GUI objects on screen.
   /// @todo Should child objects store Z-order?
@@ -27,6 +28,24 @@ namespace metagui
     virtual ~Object();
 
     std::string get_name();
+
+    /// Set pre-child render functor.
+    /// If present, this functor is called after render_self_before_children_()
+    /// is executed, but before children are rendered.
+    /// @param  functor   Functor to call.
+    void set_pre_child_render_functor(RenderFunctor functor);
+
+    /// Clear the pre-child render functor.
+    void clear_pre_child_render_functor();
+
+    /// Set post-child render functor.
+    /// If present, this functor is called after children are rendered,
+    /// but before render_self_after_children_() is executed.
+    /// @param  functor   Functor to call.
+    void set_post_child_render_functor(RenderFunctor functor);
+
+    /// Clear the pre-child render functor.
+    void clear_post_child_render_functor();
 
     /// Set whether this object has focus.
     /// When set to "true", will also unfocus any sibling controls.
@@ -253,6 +272,12 @@ namespace metagui
 
     /// Background shape.
     sf::RectangleShape m_bg_shape;
+
+    /// Pre-child render functor.
+    RenderFunctor m_pre_child_render_functor;
+
+    /// Post-child render functor.
+    RenderFunctor m_post_child_render_functor;
 
     /// Map that owns the child elements.
     std::map< std::string, std::unique_ptr<Object> > m_children;

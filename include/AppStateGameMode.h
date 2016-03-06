@@ -42,6 +42,7 @@ public:
   GameState& get_game_state();
 
 protected:
+  void render_map(sf::RenderTexture& texture, int frame);
   EventResult handle_key_press(sf::Event::KeyEvent& key);
   EventResult handle_mouse_wheel(sf::Event::MouseWheelEvent& wheel);
   sf::IntRect calc_message_log_dims();

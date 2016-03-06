@@ -33,6 +33,26 @@ namespace metagui
     return m_name;
   }
 
+  void Object::set_pre_child_render_functor(RenderFunctor functor)
+  {
+    m_pre_child_render_functor = functor;
+  }
+
+  void Object::clear_pre_child_render_functor()
+  {
+    m_pre_child_render_functor = RenderFunctor();
+  }
+
+  void Object::set_post_child_render_functor(RenderFunctor functor)
+  {
+    m_post_child_render_functor = functor;
+  }
+
+  void Object::clear_post_child_render_functor()
+  {
+    m_post_child_render_functor = RenderFunctor();
+  }
+
   void Object::set_focus(bool focus)
   {
     if (m_parent != nullptr)
@@ -325,10 +345,22 @@ namespace metagui
       /// Render self to our bg texture.
       render_self_before_children_(texture, frame);
 
+      /// If a pre-child render functor is present, call that.
+      if (m_pre_child_render_functor)
+      {
+        m_pre_child_render_functor(texture, frame);
+      }
+
       /// Render all child objects to our bg texture.
       for (auto& z_pair : m_zorder_map)
       {
         m_children.at(z_pair.second)->render(texture, frame);
+      }
+
+      /// If a post-child render functor is present, call that.
+      if (m_post_child_render_functor)
+      {
+        m_post_child_render_functor(texture, frame);
       }
 
       /// Render self after children are done.
