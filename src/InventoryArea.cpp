@@ -112,14 +112,14 @@ void InventoryArea::toggle_selection(InventorySlot selection)
                           selection);
     if (iter == std::end(pImpl->selected_slots))
     {
-      //TRACE("Adding thing %u to selected things",
-      //      static_cast<unsigned int>(id));
+      TRACE("Adding slot %u to selected things",
+            static_cast<unsigned int>(selection));
       pImpl->selected_slots.push_back(selection);
     }
     else
     {
-      //TRACE("Removing thing %u from selected things",
-      //      static_cast<unsigned int>(id));
+      TRACE("Removing slot %u from selected things",
+            static_cast<unsigned int>(selection));
       pImpl->selected_slots.erase(iter);
     }
 
@@ -277,8 +277,8 @@ void InventoryArea::render_contents_(sf::RenderTexture& texture, int frame)
   float item_spacing_y = 4.0f;
 
   // Text offsets relative to the background rectangle.
-  float text_offset_x = 3.0f;
-  float text_offset_y = 3.0f;
+  float text_offset_x = Settings.get<float>("window_text_offset_x");
+  float text_offset_y = Settings.get<float>("window_text_offset_y");
 
   // Get a reference to the location we're referring to.
   if (pImpl->viewed == MU)

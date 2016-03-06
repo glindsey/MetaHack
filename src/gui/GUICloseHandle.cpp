@@ -13,6 +13,10 @@ namespace metagui
     Object(name, sf::Vector2i(0, 0))
   {}
 
+  void CloseHandle::handle_parent_size_changed_(sf::Vector2u parent_size)
+  {
+  }
+
   CloseHandle::~CloseHandle()
   {
     //dtor

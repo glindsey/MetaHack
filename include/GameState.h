@@ -46,8 +46,9 @@ public:
   /// @return The player ThingRef.
   ThingRef get_player() const;
 
-  /// Process a single tick in the game.
-  void process_tick();
+  /// Process a single tick in the game, if one needs to be processed.
+  /// @return True if a tick elapsed, false if it did not.
+  bool process_tick();
 
   static GameState& instance();
 

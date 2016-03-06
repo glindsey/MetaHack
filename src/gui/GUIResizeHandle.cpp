@@ -22,4 +22,7 @@ namespace metagui
   void ResizeHandle::render_self_before_children_(sf::RenderTexture& texture, int frame)
   {
   }
+  void ResizeHandle::handle_parent_size_changed_(sf::Vector2u parent_size)
+  {
+  }
 }; // end namespace metagui

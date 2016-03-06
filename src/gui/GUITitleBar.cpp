@@ -32,8 +32,8 @@ namespace metagui
     float line_spacing_y = the_default_font.getLineSpacing(Settings.get<unsigned int>("text_default_size"));
 
     // Text offsets relative to the background rectangle.
-    float text_offset_x = 3;
-    float text_offset_y = 3;
+    float text_offset_x = Settings.get<float>("window_text_offset_x");
+    float text_offset_y = Settings.get<float>("window_text_offset_y");
     float border_width = Settings.get<float>("window_border_width");
 
     sf::Vector2f rect_position{ border_width, border_width };
@@ -74,7 +74,7 @@ namespace metagui
     float line_spacing_y = the_default_font.getLineSpacing(Settings.get<unsigned int>("text_default_size"));
 
     // Text offsets relative to the background rectangle.
-    float text_offset_y = 3;
+    float text_offset_y = Settings.get<float>("window_text_offset_y");
 
     sf::Vector2u our_size{ parent_size.x, static_cast<unsigned int>(line_spacing_y + (text_offset_y * 2)) };
 

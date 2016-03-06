@@ -32,12 +32,14 @@ ConfigSettings::ConfigSettings()
   set("cursor_border_color", sf::Color(255, 255, 240, 255));
   set("cursor_bg_color", sf::Color(255, 255, 240, 32));
   set("window_border_width", 2);
+  set("window_handle_size", 3);
+  set("window_text_offset_x", 3);
+  set("window_text_offset_y", 3);
   set("tile_highlight_border_width", 2);
   set("inventory_area_width", 300);
   set("messagelog_area_height", 200);
   set("status_area_height", 90);
   set("map_tile_size", 32);
-  set("debug_show_quad_outlines", false);
 
   // Register the Lua functions to access settings.
   the_lua_instance.register_function("get_config", ConfigSettings::LUA_get_config);

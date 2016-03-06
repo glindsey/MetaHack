@@ -85,11 +85,11 @@ void AppStateGameMode::execute()
     debug_buffer.clear_buffer();
   }
 
-  GAME.process_tick();
+  bool ticked = GAME.process_tick();
 
   // If outstanding player actions have completed...
   auto player = GAME.get_player();
-  if (!player->action_is_pending() && !player->action_is_in_progress())
+  if (ticked && !player->action_is_pending() && !player->action_is_in_progress())
   {
     reset_inventory_area();
   }

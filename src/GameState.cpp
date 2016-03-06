@@ -77,7 +77,7 @@ ThingRef GameState::get_player() const
   return m_player;
 }
 
-void GameState::process_tick()
+bool GameState::process_tick()
 {
   ThingRef player = get_player();
 
@@ -108,8 +108,9 @@ void GameState::process_tick()
       // Update tile vertex array.
       current_map.update_tile_vertices(player);
     }
+    return true;
   }
-  // ==========================================================================
+  return false;
 }
 
 GameState& GameState::instance()

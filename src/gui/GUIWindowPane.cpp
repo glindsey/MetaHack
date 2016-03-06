@@ -59,8 +59,8 @@ namespace metagui
     float line_spacing_y = the_default_font.getLineSpacing(Settings.get<unsigned int>("text_default_size"));
 
     // Text offsets relative to the background rectangle.
-    float text_offset_x = 3;
-    float text_offset_y = 3;
+    float text_offset_x = Settings.get<float>("window_text_offset_x");
+    float text_offset_y = Settings.get<float>("window_text_offset_y");
 
     // Clear the target.
     texture.clear(Settings.get<sf::Color>("window_bg_color"));
