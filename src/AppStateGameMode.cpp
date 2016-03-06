@@ -57,8 +57,8 @@ AppStateGameMode::AppStateGameMode(StateMachine& state_machine, sf::RenderWindow
 {
   auto render_map_functor = std::bind(&AppStateGameMode::render_map, this, std::placeholders::_1, std::placeholders::_2);
   m_desktop.set_pre_child_render_functor(render_map_functor);
-  m_desktop.add_child(NEW MessageLogView(the_message_log, calc_message_log_dims()));
-  m_desktop.add_child(NEW InventoryArea(calc_inventory_dims()));
+  m_desktop.add_child(NEW MessageLogView(the_message_log, calc_message_log_dims())).set_flag("titlebar", true);
+  m_desktop.add_child(NEW InventoryArea(calc_inventory_dims())).set_flag("titlebar", true);
   m_desktop.add_child(NEW StatusArea(calc_status_area_dims()));
 }
 

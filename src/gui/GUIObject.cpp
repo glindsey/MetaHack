@@ -55,12 +55,15 @@ namespace metagui
 
   void Object::set_focus(bool focus)
   {
-    if (m_parent != nullptr)
+    if ((m_disabled_cached == false) || (m_hidden_cached == false))
     {
-      m_parent->clear_child_focuses();
-    }
+      if (m_parent != nullptr)
+      {
+        m_parent->clear_child_focuses();
+      }
 
-    set_focus_only(focus);
+      set_focus_only(focus);
+    }
   }
 
   bool Object::get_focus()
@@ -82,32 +85,15 @@ namespace metagui
 
   void Object::set_global_focus(bool focus)
   {
-    if (m_parent != nullptr)
+    if ((m_disabled_cached == false) || (m_hidden_cached == false))
     {
-      m_parent->set_global_focus(focus);
+      if (m_parent != nullptr)
+      {
+        m_parent->set_global_focus(focus);
+      }
+
+      set_focus(focus);
     }
-
-    set_focus(focus);
-  }
-
-  void Object::set_hidden(bool hidden)
-  {
-    m_hidden = hidden;
-  }
-
-  bool Object::get_hidden()
-  {
-    return m_hidden;
-  }
-
-  void Object::set_enabled(bool enabled)
-  {
-    m_enabled = enabled;
-  }
-
-  bool Object::get_enabled()
-  {
-    return m_enabled;
   }
 
   void Object::set_text(std::string text)
@@ -145,6 +131,16 @@ namespace metagui
     if (size.x < 1) size.x = 1;
     if (size.y < 1) size.y = 1;
 
+    if (m_parent != nullptr)
+    {
+      auto max_size = ((m_decor_cached == true) ? 
+                       m_parent->get_size() : 
+                       m_parent->get_child_area_size());
+
+      if (size.x > max_size.x) size.x = max_size.x;
+      if (size.y > max_size.y) size.y = max_size.y;
+    }
+
     m_bg_texture.reset(NEW sf::RenderTexture());
     m_bg_texture->create(size.x, size.y);
   }
@@ -175,7 +171,12 @@ namespace metagui
     if (m_parent != nullptr)
     {
       sf::Vector2i child_area_absolute_location =
-        m_parent->get_absolute_location() + m_parent->get_child_area_location();
+        m_parent->get_absolute_location();
+      
+      if (m_decor_cached != true)
+      {
+        child_area_absolute_location += m_parent->get_child_area_location();
+      }
 
       absolute_location += child_area_absolute_location;
     }
@@ -190,7 +191,12 @@ namespace metagui
     if (m_parent != nullptr)
     {
       sf::Vector2i child_area_absolute_location =
-        m_parent->get_absolute_location() + m_parent->get_child_area_location();
+        m_parent->get_absolute_location();
+
+      if (m_decor_cached != true)
+      {
+        child_area_absolute_location += m_parent->get_child_area_location();
+      }
 
       relative_location -= child_area_absolute_location;
     }
@@ -224,34 +230,16 @@ namespace metagui
     return child_ref;
   }
 
-  Object & Object::add_child(Object * child, uint32_t z_order)
-  {
-    std::unique_ptr<Object> child_ptr(child);
-    return add_child(std::move(child_ptr), z_order);
-  }
-
   Object& Object::add_child(std::unique_ptr<Object> child)
   {
     uint32_t z_order = get_highest_child_z_order() + 1;
     return add_child(std::move(child), z_order);
   }
 
-  Object & Object::add_child(Object * child)
-  {
-    std::unique_ptr<Object> child_ptr(child);
-    return add_child(std::move(child_ptr));
-  }
-
   Object & Object::add_child_top(std::unique_ptr<Object> child)
   {
     uint32_t z_order = get_lowest_child_z_order() - 1;
     return add_child(std::move(child), z_order);
-  }
-
-  Object & Object::add_child_top(Object * child)
-  {
-    std::unique_ptr<Object> child_ptr(child);
-    return add_child_top(std::move(child_ptr));
   }
 
   bool Object::child_exists(std::string name)
@@ -335,7 +323,7 @@ namespace metagui
 
   bool Object::render(sf::RenderTarget& target, int frame)
   {
-    if (m_hidden == false)
+    if (m_hidden_cached == false)
     {
       sf::RenderTexture& texture = *(m_bg_texture.get());
 
@@ -390,7 +378,7 @@ namespace metagui
   {
     EventResult result = EventResult::Ignored;
 
-    if (m_enabled == true)
+    if (m_disabled_cached == false)
     {
       result = handle_event_before_children_(event);
       if (result != EventResult::Handled)
@@ -409,6 +397,50 @@ namespace metagui
     }
 
     return result;
+  }
+
+  void Object::set_flag(std::string name, bool value)
+  {
+    if ((m_flags.count(name) == 0) || (m_flags[name] != value))
+    {
+      m_flags[name] = value;
+      handle_set_flag(name, value);
+    }
+  }
+
+  bool Object::get_flag(std::string name, bool default_value)
+  {
+    if (m_flags.count(name) == 0)
+    {
+      set_flag(name, default_value);
+    }
+    return m_flags[name];
+  }
+
+  void Object::handle_set_flag(std::string name, bool value)
+  {
+    if (name == "hidden")
+    {
+      if (value == true)
+      {
+        set_focus(false);
+      }
+      m_hidden_cached = value;
+    }
+    else if (name == "disabled")
+    {
+      if (value == true)
+      {
+        set_focus(false);
+      }
+      m_disabled_cached = value;
+    }
+    else if (name == "decor")
+    {
+      m_decor_cached = value;
+    }
+
+    handle_set_flag_(name, value);
   }
 
   void Object::set_parent(Object* parent)
@@ -446,4 +478,8 @@ namespace metagui
   {
     return EventResult::Ignored;
   }
+
+  void Object::handle_set_flag_(std::string name, bool enabled)
+  {}
+
 }; // end namespace metagui

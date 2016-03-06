@@ -49,6 +49,7 @@ namespace metagui
 
     /// Set whether this object has focus.
     /// When set to "true", will also unfocus any sibling controls.
+    /// If the object is hidden or disabled, this method will do nothing.
     /// @note This only sets whether the object has focus in the context of its
     ///       parent. If the parent does not have focus, this object will not
     ///       be focused in the GUI until it does.
@@ -62,24 +63,9 @@ namespace metagui
     bool get_global_focus();
 
     /// Set whether this object has global focus.
+    /// If the object is hidden or disabled, this method will do nothing.
+    /// @param  focus   Whether this object has focus or not.
     void set_global_focus(bool focus);
-
-    /// Set whether this object is hidden.
-    /// A hidden object will not be rendered to the screen, nor will any of
-    /// its children.
-    void set_hidden(bool hidden);
-
-    /// Get whether this object is hidden.
-    bool get_hidden();
-
-    /// Set whether this object is enabled.
-    /// A disabled object will not have events passed to it, nor to its children.
-    /// Depending on the object's render() method, it may be rendered differently
-    /// when disabled.
-    void set_enabled(bool enabled);
-
-    /// Get whether thsi object is disabled.
-    bool get_enabled();
 
     void set_text(std::string text);
     std::string get_text();
@@ -112,15 +98,6 @@ namespace metagui
 
     /// Add a child GUIObject underneath this one.
     /// *This GUIObject assumes ownership of the child.*
-    /// @param child    Pointer to child to add.
-    /// @param z_order  Z-order to put this child at. If omitted, uses the
-    ///                 highest Z-order currently in the map, plus one.
-    /// @return A reference to the child added.
-    Object& add_child(Object* child,
-                      uint32_t z_order);
-
-    /// Add a child GUIObject underneath this one.
-    /// *This GUIObject assumes ownership of the child.*
     /// The new child's Z-order will be set to the highest Z-order currently in
     /// the child map, plus one.
     /// @param child    std::unique_ptr to child to add.
@@ -130,13 +107,30 @@ namespace metagui
 
     /// Add a child GUIObject underneath this one.
     /// *This GUIObject assumes ownership of the child.*
+    /// @param child    Pointer to child to add.
+    /// @param z_order  Z-order to put this child at. If omitted, uses the
+    ///                 highest Z-order currently in the map, plus one.
+    /// @return A reference to the child added.
+    template< typename T >
+    T& add_child(T* child, uint32_t z_order)
+    {
+      std::unique_ptr<Object> child_ptr(child);
+      return dynamic_cast<T&>(add_child(std::move(child_ptr), z_order));
+    }
+
+    /// Add a child GUIObject underneath this one.
+    /// *This GUIObject assumes ownership of the child.*
     /// The new child's Z-order will be set to the highest Z-order currently in
     /// the child map, plus one.
     /// @param child    Pointer to child to add.
     ///
     /// @return A reference to the child added.
-    Object& add_child(Object* child);
-
+    template< typename T >
+    T& add_child(T* child)
+    {
+      std::unique_ptr<Object> child_ptr(child);
+      return dynamic_cast<T&>(add_child(std::move(child_ptr)));
+    }
 
     /// Add a child GUIObject underneath this one.
     /// *This GUIObject assumes ownership of the child.*
@@ -154,7 +148,12 @@ namespace metagui
     /// @param child    Pointer to child to add.
     ///
     /// @return A reference to the child added.
-    Object& add_child_top(Object* child);
+    template< typename T >
+    T& add_child_top(T* child)
+    {
+      std::unique_ptr<Object> child_ptr(child);
+      return dynamic_cast<T&>(add_child_top(std::move(child_ptr)));
+    }
 
     bool child_exists(std::string name);
 
@@ -208,6 +207,22 @@ namespace metagui
     /// have seen it, handle_event_after_children_ is called.
     EventResult handle_event(sf::Event& event);
 
+    /// Set/clear an object flag.
+    /// Calls the virtual function handle_set_flag_ if the flag has been
+    /// changed; this allows subclasses to perform specific actions based on
+    /// certain flags (such as setting/clearing "titlebar").
+    void set_flag(std::string name, bool enabled);
+
+    /// Get an object flag.
+    /// A flag that does not exist will be initialized and set to false or
+    /// the default value given.
+    bool get_flag(std::string name, bool default_value = false);
+
+    /// Handles a flag being set/cleared.
+    /// If this function does not handle a particular flag, calls the
+    /// virtual function handle_set_flag_().
+    void handle_set_flag(std::string name, bool enabled);
+
   protected:
     void set_parent(Object* parent);
 
@@ -239,6 +254,11 @@ namespace metagui
     /// Default behavior is to return EventResult::Ignored.
     virtual EventResult handle_event_after_children_(sf::Event& event);
 
+    /// Handles a flag being set/cleared.
+    /// This method is called by set_flag() if the value was changed.
+    /// The default behavior is to do nothing.
+    virtual void handle_set_flag_(std::string name, bool enabled);
+
   private:
     /// The name of this object.
     std::string m_name;
@@ -247,13 +267,21 @@ namespace metagui
     Object* m_parent;
 
     /// Boolean indicating whether this object has the focus.
+    /// Focus is handled differently and NOT put into m_flags because of
+    /// how it propogates along the object tree.
     bool m_focus = false;
 
     /// Boolean indicating whether this object is hidden.
-    bool m_hidden = false;
+    /// Cached from m_flags so we don't keep looking it up.
+    bool m_hidden_cached = false;
 
-    /// Boolean indicating whether this object is enabled.
-    bool m_enabled = true;
+    /// Boolean indicating whether this object is disabled.
+    /// Cached from m_flags so we don't keep looking it up.
+    bool m_disabled_cached = false;
+
+    /// Boolean indicating whether this object is a decoration.
+    /// Cached from m_flags so we don't keep looking it up.
+    bool m_decor_cached = false;
 
     /// The text for this object. The way this text is used is dependent on the
     /// sort of control it is; e.g. for a Pane this is the pane title, for a
@@ -279,8 +307,11 @@ namespace metagui
     /// Post-child render functor.
     RenderFunctor m_post_child_render_functor;
 
+    /// Map of flags that can be set/cleared for this object.
+    std::unordered_map< std::string, bool > m_flags;
+
     /// Map that owns the child elements.
-    std::map< std::string, std::unique_ptr<Object> > m_children;
+    std::unordered_map< std::string, std::unique_ptr<Object> > m_children;
 
     /// Multimap that associates child elements with Z-orders.
     std::multimap< uint32_t, std::string > m_zorder_map;
