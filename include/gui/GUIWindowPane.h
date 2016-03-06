@@ -15,6 +15,15 @@ namespace metagui
     WindowPane(std::string name, sf::IntRect dimensions);
     virtual ~WindowPane();
 
+    /// Get the upper-left corner of this object's child area, relative to
+    /// its own upper-left corner, taking into account any decorator
+    /// elements added to this window.
+    virtual sf::Vector2i get_child_area_location() override final;
+
+    /// Get the size of this window's child area, taking into account any
+    /// decorator elements added to this window.
+    virtual sf::Vector2u get_child_area_size() override final;
+
   protected:
     virtual void render_self_before_children_(sf::RenderTexture& texture, int frame) override final;
 
@@ -27,6 +36,10 @@ namespace metagui
   private:
     /// Border shape.
     sf::RectangleShape m_border_shape;
+
+    /// Cached state of the "titlebar" flag.
+    bool m_titlebar_cached = false;
+
 
   };
 }; // end namespace metagui
