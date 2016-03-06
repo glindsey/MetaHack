@@ -95,15 +95,18 @@ void AppStateGameMode::execute()
   }
 }
 
-bool AppStateGameMode::render(sf::RenderTarget& target, int frame)
+bool AppStateGameMode::render(sf::RenderTexture& texture, int frame)
 {
+  texture.clear(sf::Color::Green);
+
   // Set focus for areas.
   m_desktop.get_child("MessageLogView").set_focus(m_current_input_state == GameInputState::MessageLog);
   m_desktop.get_child("StatusArea").set_focus(m_current_input_state == GameInputState::Map);
 
   // Render the GUI last.
-  m_desktop.render(target, frame);
+  m_desktop.render(texture, frame);
 
+  texture.display();
   return true;
 }
 
@@ -117,6 +120,7 @@ EventResult AppStateGameMode::handle_event(sf::Event& event)
     {
       case sf::Event::EventType::Resized:
       {
+        m_desktop.set_size({ event.size.width, event.size.height });
         m_desktop.get_child("MessageLogView").set_relative_dimensions(calc_message_log_dims());
         m_desktop.get_child("InventoryArea").set_relative_dimensions(calc_inventory_dims());
         m_desktop.get_child("StatusArea").set_relative_dimensions(calc_status_area_dims());

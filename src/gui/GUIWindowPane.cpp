@@ -68,6 +68,7 @@ namespace metagui
     // Render the contents, if any.
     render_contents_(texture, frame);
 
+#if 0
     // IF the pane has a title...
     if (!get_text().empty())
     {
@@ -95,6 +96,7 @@ namespace metagui
                                           text_offset_y));
       texture.draw(title_text);
     }
+#endif
 
     // Draw the border.
     float border_width = Settings.get<float>("window_border_width");

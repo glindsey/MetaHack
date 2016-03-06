@@ -51,6 +51,10 @@ public:
 protected:
 private:
   sf::RenderWindow& m_app_window;
+
+  /// Pointer to off-screen buffer for drawing composition.
+  std::unique_ptr<sf::RenderTexture> m_app_texture;
+
   std::unique_ptr<StateMachine> m_state_machine;
   bool m_is_running;
   bool m_has_window_focus;

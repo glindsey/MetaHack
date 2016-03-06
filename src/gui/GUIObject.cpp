@@ -143,6 +143,12 @@ namespace metagui
 
     m_bg_texture.reset(NEW sf::RenderTexture());
     m_bg_texture->create(size.x, size.y);
+
+    // Inform children of the parent size change.
+    for (auto& child : m_children)
+    {
+      child.second->handle_parent_size_changed_(size);
+    }
   }
 
   sf::IntRect Object::get_relative_dimensions()
@@ -224,6 +230,8 @@ namespace metagui
     // https://stackoverflow.com/questions/21056872/c-stdunique-ptr-wont-compile-in-map
     m_children.insert<ChildMap::value_type>(ChildMap::value_type(name, std::move(child)));
     m_zorder_map.insert({ z_order, name });
+
+    child_ref.handle_parent_size_changed_(get_size());
 
     TRACE("Added child \"%s\" (with Z-order %d) to parent \"%s\"", name.c_str(), z_order, get_name().c_str());
 
@@ -321,40 +329,39 @@ namespace metagui
     return get_size();
   }
 
-  bool Object::render(sf::RenderTarget& target, int frame)
+  bool Object::render(sf::RenderTexture& parent_texture, int frame)
   {
+    sf::RenderTexture& our_texture = *(m_bg_texture.get());
+
+    our_texture.clear(sf::Color::Blue);
+
     if (m_hidden_cached == false)
     {
-      sf::RenderTexture& texture = *(m_bg_texture.get());
-
-      // Clear background texture.
-      //m_bg_texture->clear();
-
       /// Render self to our bg texture.
-      render_self_before_children_(texture, frame);
+      render_self_before_children_(our_texture, frame);
 
       /// If a pre-child render functor is present, call that.
       if (m_pre_child_render_functor)
       {
-        m_pre_child_render_functor(texture, frame);
+        m_pre_child_render_functor(our_texture, frame);
       }
 
       /// Render all child objects to our bg texture.
       for (auto& z_pair : m_zorder_map)
       {
-        m_children.at(z_pair.second)->render(texture, frame);
+        m_children.at(z_pair.second)->render(our_texture, frame);
       }
 
       /// If a post-child render functor is present, call that.
       if (m_post_child_render_functor)
       {
-        m_post_child_render_functor(texture, frame);
+        m_post_child_render_functor(our_texture, frame);
       }
 
       /// Render self after children are done.
-      render_self_after_children_(texture, frame);
+      render_self_after_children_(our_texture, frame);
 
-      texture.display();
+      our_texture.display();
 
       // Create the RectangleShape that will be drawn onto the target.
       m_bg_shape.setPosition(sf::Vector2f(static_cast<float>(m_location.x), static_cast<float>(m_location.y)));
@@ -362,10 +369,11 @@ namespace metagui
       m_bg_shape.setTexture(&(m_bg_texture->getTexture()));
       m_bg_shape.setTextureRect(sf::IntRect(0, 0, m_size.x, m_size.y));
 
-      // Draw onto the target.
-      target.setView(sf::View(sf::FloatRect(0.0f, 0.0f, static_cast<float>(target.getSize().x), static_cast<float>(target.getSize().y))));
-      target.draw(m_bg_shape);
+      // Draw onto the parent.
+      parent_texture.setView(sf::View(sf::FloatRect(0.0f, 0.0f, static_cast<float>(parent_texture.getSize().x), static_cast<float>(parent_texture.getSize().y))));
+      parent_texture.draw(m_bg_shape);
 
+      parent_texture.display();
       return true;
     }
     else
@@ -443,6 +451,11 @@ namespace metagui
     handle_set_flag_(name, value);
   }
 
+  Object * Object::get_parent()
+  {
+    return m_parent;
+  }
+
   void Object::set_parent(Object* parent)
   {
     m_parent = parent;
@@ -481,5 +494,9 @@ namespace metagui
 
   void Object::handle_set_flag_(std::string name, bool enabled)
   {}
+
+  void Object::handle_parent_size_changed_(sf::Vector2u parent_size)
+  {
+  }
 
 }; // end namespace metagui

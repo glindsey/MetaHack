@@ -20,9 +20,10 @@ void AppStateSplashScreen::execute()
   }
 }
 
-bool AppStateSplashScreen::render(sf::RenderTarget& target, int frame)
+bool AppStateSplashScreen::render(sf::RenderTexture& texture, int frame)
 {
-  target.draw(m_splash_sprite);
+  texture.draw(m_splash_sprite);
+  texture.display();
   return true;
 }
 

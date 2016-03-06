@@ -18,6 +18,8 @@ namespace metagui
   protected:
     explicit TitleBar(std::string name);
     virtual void render_self_before_children_(sf::RenderTexture& texture, int frame) override final;
+    virtual void handle_parent_size_changed_(sf::Vector2u parent_size) override final;
+
 
   private:
   };

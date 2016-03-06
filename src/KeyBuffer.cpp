@@ -242,7 +242,7 @@ bool KeyBuffer::get_enter()
   return pImpl->enter;
 }
 
-void KeyBuffer::render(sf::RenderTarget& target,
+void KeyBuffer::render(sf::RenderTexture& texture,
                        sf::Vector2f coords,
                        unsigned int frame,
                        sf::Font const& font,
@@ -260,7 +260,7 @@ void KeyBuffer::render(sf::RenderTarget& target,
   render_text.setString("> ");
   render_text.setPosition(x_position, coords.y);
   render_text.setStyle(sf::Text::Style::Bold);
-  target.draw(render_text);
+  texture.draw(render_text);
 
   x_position += render_text.getLocalBounds().width;
 
@@ -268,7 +268,7 @@ void KeyBuffer::render(sf::RenderTarget& target,
   render_text.setString(pImpl->buffer);
   render_text.setPosition(x_position, coords.y);
   render_text.setStyle(sf::Text::Style::Regular);
-  target.draw(render_text);
+  texture.draw(render_text);
 
   // *** CURSOR ***************************************************************
   sf::Vector2f cursor_coords;
@@ -309,5 +309,7 @@ void KeyBuffer::render(sf::RenderTarget& target,
   cursor_rect.setPosition(cursor_coords);
   cursor_rect.setSize(cursor_size);
   cursor_rect.setFillColor(cursor_color);
-  target.draw(cursor_rect);
+  texture.draw(cursor_rect);
+
+  texture.display();
 }

@@ -13,7 +13,7 @@ class State;
 // from the State abstract class.
 class StateMachine :
   virtual public EventHandler,
-  virtual public Renderable,
+  virtual public RenderableToTexture,
   virtual public boost::noncopyable
 {
 public:
@@ -52,7 +52,7 @@ public:
   /// @param target Target to render to.
   /// @param frame Frame number, used for animations
   /// @return True if we could render, false otherwise.
-  bool render(sf::RenderTarget& target, int frame) override;
+  bool render(sf::RenderTexture& texture, int frame) override;
 
   /// Pass an event on to the current state.
   /// If no state is active, does nothing and returns EventResult::Ignored.

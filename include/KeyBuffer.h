@@ -41,7 +41,7 @@ public:
   /// @param font Font to use.
   /// @param font_size Font size to use.
   /// @param fg_color Foreground color to use.
-  void render(sf::RenderTarget& target,
+  void render(sf::RenderTexture& texture,
               sf::Vector2f coords,
               unsigned int frame,
               sf::Font const& font,

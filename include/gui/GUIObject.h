@@ -20,7 +20,7 @@ namespace metagui
   /// @todo Should child objects store Z-order?
   class Object :
     public EventHandler,
-    public Renderable
+    public RenderableToTexture
   {
   public:
     explicit Object(std::string name, sf::Vector2i location = sf::Vector2i(0, 0), sf::Vector2u size = sf::Vector2u(0, 0));
@@ -196,8 +196,8 @@ namespace metagui
     /// returns get_size(); however, subclasses can override this behavior.
     virtual sf::Vector2u get_child_area_size();
 
-    /// Render this object, and all of its children, to the screen.
-    bool render(sf::RenderTarget& target, int frame);
+    /// Render this object, and all of its children, to the parent texture.
+    bool render(sf::RenderTexture& texture, int frame);
 
     /// Handle an incoming event.
     /// Calls the virtual function handle_event_before_children_ first.
@@ -224,6 +224,8 @@ namespace metagui
     void handle_set_flag(std::string name, bool enabled);
 
   protected:
+    Object* get_parent();
+
     void set_parent(Object* parent);
 
     /// Clear the focus of all of this object's children.
@@ -258,6 +260,10 @@ namespace metagui
     /// This method is called by set_flag() if the value was changed.
     /// The default behavior is to do nothing.
     virtual void handle_set_flag_(std::string name, bool enabled);
+
+    /// Handles the parent's size being changed.
+    /// The default behavior is to do nothing.
+    virtual void handle_parent_size_changed_(sf::Vector2u parent_size);
 
   private:
     /// The name of this object.

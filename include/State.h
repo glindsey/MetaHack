@@ -11,7 +11,7 @@ class StateMachine;
 
 class State :
   virtual public EventHandler,
-  virtual public Renderable,
+  virtual public RenderableToTexture,
   virtual public boost::noncopyable
 {
 public:

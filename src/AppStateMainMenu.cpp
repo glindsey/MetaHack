@@ -18,12 +18,14 @@ AppStateMainMenu::~AppStateMainMenu()
 void AppStateMainMenu::execute()
 {}
 
-bool AppStateMainMenu::render(sf::RenderTarget& target, int frame)
+bool AppStateMainMenu::render(sf::RenderTexture& texture, int frame)
 {
-  m_desktop.render(target, frame);
+  m_desktop.render(texture, frame);
 
-  target.draw(m_title);
-  target.draw(m_subtitle);
+  texture.draw(m_title);
+  texture.draw(m_subtitle);
+
+  texture.display();
   return true;
 }
 

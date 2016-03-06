@@ -4,13 +4,13 @@
 #include "stdafx.h"
 
 /**
- * @brief      Interface for a class that can be rendered on-screen.
+ * @brief      Interface for a class that can be rendered to a texture.
  */
-class Renderable
+class RenderableToTexture
 {
 public:
-  virtual ~Renderable() {}
-  virtual bool render(sf::RenderTarget& target, int frame) = 0;
+  virtual ~RenderableToTexture() {}
+  virtual bool render(sf::RenderTexture& texture, int frame) = 0;
 protected:
 private:
 };

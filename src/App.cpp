@@ -74,6 +74,7 @@ int main()
 App::App(sf::RenderWindow& app_window)
   :
   m_app_window{ app_window },
+  m_app_texture{ NEW sf::RenderTexture() },
   m_state_machine{ NEW StateMachine("app_state_machine") },
   m_is_running{ false },
   m_has_window_focus{ false }
@@ -87,6 +88,9 @@ App::App(sf::RenderWindow& app_window)
   {
     throw std::exception("Tried to create more than one App instance");
   }
+
+  // Create the app texture for off-screen composition.
+  m_app_texture->create(m_app_window.getSize().x, m_app_window.getSize().y);
 
   // Create the random number generator and seed it with the current time.
   m_rng.reset(NEW boost::random::mt19937(static_cast<unsigned int>(std::time(0))));
@@ -181,6 +185,8 @@ EventResult App::handle_event(sf::Event& event)
 
     case sf::Event::EventType::Resized:
     {
+      m_app_texture.reset(NEW sf::RenderTexture());
+      m_app_texture->create(event.size.width, event.size.height);
       m_app_window.setView(sf::View(
         sf::FloatRect(0, 0, static_cast<float>(event.size.width), static_cast<float>(event.size.height))));
 
@@ -308,7 +314,14 @@ void App::run()
     {
       frame_clock.restart();
       m_app_window.clear();
-      m_state_machine->render(m_app_window, s_frame_counter);
+      m_app_texture->clear(sf::Color::Red);
+
+      m_state_machine->render(*(m_app_texture.get()), s_frame_counter);
+
+      m_app_texture->display();
+      sf::Sprite sprite(m_app_texture->getTexture());
+      m_app_window.draw(sprite);
+
       m_app_window.display();
       ++s_frame_counter;
     }

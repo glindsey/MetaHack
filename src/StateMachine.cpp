@@ -88,7 +88,7 @@ void StateMachine::execute()
   }
 }
 
-bool StateMachine::render(sf::RenderTarget& target, int frame)
+bool StateMachine::render(sf::RenderTexture& texture, int frame)
 {
   if (pImpl->current_state == nullptr)
   {
@@ -96,7 +96,7 @@ bool StateMachine::render(sf::RenderTarget& target, int frame)
   }
   else
   {
-    return pImpl->current_state->render(target, frame);
+    return pImpl->current_state->render(texture, frame);
   }
 }
 

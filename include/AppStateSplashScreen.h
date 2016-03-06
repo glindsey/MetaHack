@@ -12,7 +12,7 @@ public:
   virtual ~AppStateSplashScreen();
 
   void execute() override;
-  bool render(sf::RenderTarget& target, int frame) override;
+  bool render(sf::RenderTexture& texture, int frame) override;
   EventResult handle_event(sf::Event& event) override;
   std::string const& get_name() override;
   bool initialize() override;
