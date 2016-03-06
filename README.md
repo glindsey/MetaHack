@@ -119,7 +119,7 @@ Known Bugs / Issues
 
 * Library and include directories in the project are absolute at the moment, instead of being relative to the project.
 
-* Resizing the window is ~~definitely~~ maybe broken? It seems to be working correctly again, but I swear it was broken before.
+* Resizing the window is slightly broken; there's an issue where small vertical lines appear between tiles when the window is resized to certain sizes. I'm guessing this has something to do with int/float conversion when viewports are resized, but I'll have to investigate it further.
 
 * There is a grand total of one enemy so far, and you can't attack it.
 
@@ -137,4 +137,6 @@ FAQOWBIALAT (Frequently Asked Questions, Or Would Be If Anyone Looked At This)
 
 License
 -------
-This work is licensed under the Creative Commons Attribution-ShareAlike 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/.
+The GUI code in this work (under the "include/gui" and "src/gui" subdirectories and henceforth referred to as *MetaGUI*) is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/.
+
+The remainder of the code, art, sounds, and any other resource files used to run the engine are licensed under the Creative Commons Attribution-ShareAlike 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/.
