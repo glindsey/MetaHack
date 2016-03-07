@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 
-#include "common_types.h"
 #include "Gender.h"
 #include "MapTile.h"
 #include "Metadata.h"

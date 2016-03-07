@@ -42,6 +42,8 @@ Thing::Thing(Thing const& original, ThingRef ref)
 
 void Thing::initialize()
 {
+  SET_UP_LOGGER("Thing", true);
+
   PropertyDictionary& properties = pImpl->properties;
 
   /// Get the max_hp IntegerRange for this Thing (if any).
@@ -717,8 +719,6 @@ void Thing::find_seen_tiles()
   {
     do_recursive_visibility(n);
   }
-
-  //TRACE("find_seen_tiles took %d ms", elapsed.getElapsedTime().asMilliseconds());
 }
 
 std::string Thing::get_memory_at(int x, int y) const
@@ -1746,10 +1746,11 @@ bool Thing::_process_self()
     bool action_done = action->process(get_ref(), {});
     if (action_done)
     {
-      TRACE("Thing %s (%s): Action %s is done, popping",
-            get_ref().get_id().to_string().c_str(),
-            get_type().c_str(),
-            action->get_type().c_str());
+      CLOG(TRACE, "Thing") << "Thing " <<
+        get_ref().get_id().to_string() << "( " <<
+        get_type() << "): Action " <<
+        action->get_type() << " is done, popping";
+
       pImpl->pending_actions.pop_front();
     }
   } // end if (actions pending)

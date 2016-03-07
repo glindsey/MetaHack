@@ -5,8 +5,6 @@
 
 #include "stdafx.h"
 
-#include "common_types.h"
-
 /// Global Lua interface
 
 class Lua : public boost::noncopyable

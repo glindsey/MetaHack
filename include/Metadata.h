@@ -3,9 +3,6 @@
 
 #include "stdafx.h"
 
-#include "common_functions.h"
-#include "common_types.h"
-
 #include "ActionResult.h"
 #include "App.h"
 #include "ErrorHandler.h"

@@ -78,7 +78,9 @@ struct InventoryArea::Impl
 InventoryArea::InventoryArea(sf::IntRect dimensions)
   : metagui::WindowPane("InventoryArea", dimensions),
   pImpl(NEW Impl())
-{}
+{
+  SET_UP_LOGGER("InventoryArea", true);
+}
 
 InventoryArea::~InventoryArea()
 {
@@ -112,14 +114,16 @@ void InventoryArea::toggle_selection(InventorySlot selection)
                           selection);
     if (iter == std::end(pImpl->selected_slots))
     {
-      TRACE("Adding slot %u to selected things",
-            static_cast<unsigned int>(selection));
+      CLOG(TRACE, "InventoryArea") <<
+        "Adding slot " << static_cast<unsigned int>(selection) <<
+        "to selected things";
       pImpl->selected_slots.push_back(selection);
     }
     else
     {
-      TRACE("Removing slot %u from selected things",
-            static_cast<unsigned int>(selection));
+      CLOG(TRACE, "InventoryArea") <<
+        "Removing slot " << static_cast<unsigned int>(selection) <<
+        "from selected things";
       pImpl->selected_slots.erase(iter);
     }
 
@@ -257,8 +261,10 @@ ThingRef InventoryArea::get_thing(InventorySlot selection)
   }
   else
   {
-    TRACE("Requested non-existent inventory slot %u, returning mu!",
-          static_cast<unsigned int>(selection));
+    CLOG(WARNING, "InventoryArea") <<
+      "Requested non-existent inventory slot " <<
+      static_cast<unsigned int>(selection) <<
+      ", returning Mu!";
     return MU;
   }
 }

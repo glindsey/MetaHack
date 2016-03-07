@@ -12,6 +12,9 @@ std::unique_ptr<Lua> Lua::instance_;
 
 Lua::Lua()
 {
+  // Initialize the logger.
+  SET_UP_LOGGER("Lua", true);
+
   // Initialize the Lua interpreter.
   L_ = luaL_newstate();
 
@@ -222,12 +225,12 @@ int Lua::LUA_trace(lua_State* L)
 
   if (num_args != 1)
   {
-    MINOR_ERROR("Expected 1 argument, got %d", num_args);
+    CLOG(WARNING, "Lua") << "Expected 1 argument, got " << num_args;
   }
   else
   {
     std::string str = lua_tostring(L, 1);
-    TRACE(str.c_str());
+    CLOG(TRACE, "Lua") << str;
   }
 
   return 0;

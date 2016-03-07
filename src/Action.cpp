@@ -2,7 +2,6 @@
 
 #include "Action.h"
 
-#include "common_functions.h"
 #include "MessageLog.h"
 #include "Thing.h"
 #include "ThingManager.h"

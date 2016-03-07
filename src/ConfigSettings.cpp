@@ -2,7 +2,6 @@
 
 #include "ConfigSettings.h"
 
-#include "common_types.h"
 #include "ErrorHandler.h"
 #include "New.h"
 
@@ -10,8 +9,6 @@ std::unique_ptr<ConfigSettings> ConfigSettings::instance_;
 
 ConfigSettings::ConfigSettings()
 {
-  TRACE("Creating ConfigSettings instance...");
-
   /// @todo These settings should be read from an XML file.
   set("window_border_color", sf::Color(96, 48, 32, 255));
   set("window_border_color", sf::Color(96, 48, 32, 255));

@@ -48,6 +48,7 @@ struct Map::Impl
   sf::VertexArray thing_vertices;
 };
 
+/// @todo Have this take an sf::Vector2i instead of width x height
 Map::Map(MapId map_id, int width, int height)
   :
   m_map_id{ map_id },
@@ -55,7 +56,9 @@ Map::Map(MapId map_id, int width, int height)
   m_generator{ NEW MapGenerator(*this) },
   pImpl{ NEW Impl{} }
 {
-  TRACE("Creating map of size %d x %d...", width, height);
+  SET_UP_LOGGER("Map", true);
+
+  CLOG(TRACE, "Map") << "Creating map of size " << width << " x " << height;
 
   // Create vertices:
   // 4 vertices * 4 quads for the floor
@@ -87,7 +90,7 @@ Map::Map(MapId map_id, int width, int height)
   pImpl->thing_vertices.clear();
   pImpl->thing_vertices.setPrimitiveType(sf::PrimitiveType::Quads);
 
-  TRACE("Map created.");
+  CLOG(TRACE, "Map") << "Map created.";
 }
 
 void Map::initialize()
@@ -103,12 +106,12 @@ void Map::initialize()
     ///       And for that matter, ALL of map generation
     ///       should be done via scripting. But for now
     ///       this will do.
-    TRACE("Executing Map Lua script.");
+    CLOG(TRACE, "Map") << "Executing Map Lua script.";
     the_lua_instance.set_global("current_map_id", m_map_id);
     the_lua_instance.require("resources/scripts/map");
   }
 
-  TRACE("Map initialized.");
+  CLOG(TRACE, "Map") << "Map initialized.";
 }
 
 Map::~Map()
@@ -218,9 +221,6 @@ void Map::do_recursive_lighting(ThingRef source,
                                 float slope_A,
                                 float slope_B)
 {
-  //TRACE("origin (%d, %d), light (%d, %d, %d)", origin.x, origin.y, light_color.r, light_color.g, light_color.b);
-  //TRACE("maxd2 %d, octant %d, depth %d, slope_A %1.5f, slope_B %1.5f", max_depth_squared, octant, depth, slope_A, slope_B);
-
   sf::Vector2i new_coords;
 
   sf::Color addColor;

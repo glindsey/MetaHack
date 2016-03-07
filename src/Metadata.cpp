@@ -10,6 +10,8 @@ Metadata::Metadata(MetadataCollection& collection, std::string type)
   m_collection{ collection },
   m_type{ type }
 {
+  SET_UP_LOGGER("Metadata", true);
+
   std::string category = collection.get_category();
 
   // Look for the various files containing this metadata.
@@ -19,16 +21,19 @@ Metadata::Metadata(MetadataCollection& collection, std::string type)
   std::string luafile_string = resource_string + ".lua";
   fs::path luafile_path = fs::path(luafile_string);
 
+  std::string qualified_name = category + "!" + type;
+
   /// Try to load and run this Thing's Lua script.
   if (fs::exists(luafile_path))
   {
-    TRACE("Loading Lua script for %s!%s...", category.c_str(), type.c_str());
+    CLOG(INFO, "Metadata") << "Loading Lua script for " <<
+      qualified_name;
 
     the_lua_instance.require(resource_string, true);
   }
   else
   {
-    FATAL_ERROR("Can't find %s", luafile_string.c_str());
+    LOG(FATAL) << "Can't find " << luafile_string;
   }
 
   if (fs::exists(pngfile_path))
@@ -36,8 +41,8 @@ Metadata::Metadata(MetadataCollection& collection, std::string type)
     sf::Vector2u tile_location;
 
     tile_location = TS.load_collection(pngfile_string);
-    TRACE("Tiles for %s!%s were placed on the TileSheet at (%u, %u)",
-          category.c_str(), type.c_str(), tile_location.x, tile_location.y);
+    CLOG(TRACE, "Metadata") << "Tiles for " << qualified_name <<
+      " were placed on the TileSheet at " << tile_location;
 
     set_intrinsic<bool>("has_tiles", true);
     set_intrinsic<int>("tile_location_x", tile_location.x);
@@ -45,7 +50,7 @@ Metadata::Metadata(MetadataCollection& collection, std::string type)
   }
   else
   {
-    TRACE("No tiles found for %s!%s", category.c_str(), type.c_str());
+    CLOG(TRACE, "Metadata") << "No tiles found for " << qualified_name;
   }
 }
 

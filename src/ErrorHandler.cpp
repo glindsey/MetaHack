@@ -35,14 +35,6 @@ ErrorHandler& ErrorHandler::instance()
   return *(Impl::handler_instance.get());
 }
 
-void ErrorHandler::printTrace(char* buf,
-                              char const* file,
-                              int line,
-                              char const* func)
-{
-  printf("%s (%d): %s\n", func, line, buf);
-}
-
 void ErrorHandler::handleMinorError(char* buf,
                                     char const* file,
                                     int line,

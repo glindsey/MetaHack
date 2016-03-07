@@ -12,7 +12,7 @@ int main(int argc, char* argv[])
 
   el::Loggers::reconfigureAllLoggers(
     el::ConfigurationType::Format,
-    "%loc %level: %msg");
+    "[%logger] %loc %level: %msg");
 
   LOG(INFO) << "Entered main()";
 

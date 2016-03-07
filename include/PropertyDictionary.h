@@ -3,8 +3,6 @@
 
 #include "stdafx.h"
 
-#include "common_types.h"
-
 #include "ErrorHandler.h"
 #include "Metadata.h"
 

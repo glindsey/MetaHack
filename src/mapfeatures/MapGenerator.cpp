@@ -150,6 +150,7 @@ struct MapGenerator::Impl
 MapGenerator::MapGenerator(Map& m)
   : pImpl(NEW Impl(m))
 {
+  SET_UP_LOGGER("MapGenerator", true);
 }
 
 MapGenerator::~MapGenerator()
@@ -161,12 +162,12 @@ void MapGenerator::generate()
 {
   PropertyDictionary feature_settings;
 
-  TRACE("Filling map...");
+  CLOG(TRACE, "MapGenerator") << "Filling map...";
   // Fill the map with stone.
   pImpl->clearMap();
 
   // Create the initial room.
-  TRACE("Making starting room...");
+  CLOG(TRACE, "MapGenerator") << "Making starting room...";
 
   MapFeature& startingRoom =
     pImpl->game_map.add_map_feature(NEW MapRoom(pImpl->game_map, feature_settings));
@@ -178,17 +179,17 @@ void MapGenerator::generate()
   }
 
   sf::IntRect startBox = startingRoom.get_coords();
-  TRACE("Starting room is at (%d, %d) and is size (%d, %d)",
-        startBox.left, startBox.top, startBox.width, startBox.height);
+  CLOG(TRACE, "MapGenerator") << "Starting room is at " << startBox;
 
   sf::Vector2i startCoords(startBox.left + (startBox.width / 2),
                            startBox.top + (startBox.height / 2));
 
-  TRACE("Setting start coords to (%d, %d)", startCoords.x, startCoords.y);
+  CLOG(TRACE, "MapGenerator") << "Setting start coords to " << startCoords;
+
   pImpl->game_map.set_start_coords(startCoords);
 
   // Continue with additional map features.
-  TRACE("Making additional map features...");
+  CLOG(TRACE, "MapGenerator") << "Making additional map features...";
 
   unsigned int mapFeatures = 0;
 

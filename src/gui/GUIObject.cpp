@@ -12,6 +12,8 @@ namespace metagui
 {
   Object::Object(std::string name, sf::Vector2i location, sf::Vector2u size)
   {
+    SET_UP_LOGGER("GUI", true);
+
     m_name = name;
     set_relative_location(location);
     set_size(size);
@@ -133,8 +135,8 @@ namespace metagui
 
     if (m_parent != nullptr)
     {
-      auto max_size = ((m_decor_cached == true) ? 
-                       m_parent->get_size() : 
+      auto max_size = ((m_decor_cached == true) ?
+                       m_parent->get_size() :
                        m_parent->get_child_area_size());
 
       if (size.x > max_size.x) size.x = max_size.x;
@@ -166,7 +168,7 @@ namespace metagui
   void Object::set_relative_dimensions(sf::IntRect dimensions)
   {
     set_relative_location({ dimensions.left, dimensions.top });
-    set_size({ static_cast<unsigned int>(dimensions.width), 
+    set_size({ static_cast<unsigned int>(dimensions.width),
                static_cast<unsigned int>(dimensions.height) });
   }
 
@@ -178,7 +180,7 @@ namespace metagui
     {
       sf::Vector2i child_area_absolute_location =
         m_parent->get_absolute_location();
-      
+
       if (m_decor_cached != true)
       {
         child_area_absolute_location += m_parent->get_child_area_location();
@@ -233,7 +235,9 @@ namespace metagui
 
     child_ref.handle_parent_size_changed_(get_size());
 
-    TRACE("Added child \"%s\" (with Z-order %d) to parent \"%s\"", name.c_str(), z_order, get_name().c_str());
+    CLOG(TRACE, "GUI") << "Added child \"" << name <<
+      "\" (with Z-order " << z_order <<
+      ") to parent \"" << get_name() << "\"";
 
     return child_ref;
   }
@@ -498,5 +502,4 @@ namespace metagui
   void Object::handle_parent_size_changed_(sf::Vector2u parent_size)
   {
   }
-
 }; // end namespace metagui

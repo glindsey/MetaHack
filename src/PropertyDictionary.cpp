@@ -2,7 +2,6 @@
 
 #include "PropertyDictionary.h"
 
-#include "common_functions.h"
 #include "ErrorHandler.h"
 #include "IntegerRange.h"
 
