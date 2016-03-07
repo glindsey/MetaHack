@@ -83,7 +83,6 @@ public:
       m_dictionary.erase(key);
     }
 
-    //TRACE("Inserting key \"%s\" (%s)", key.c_str(), typeid(key).name());
     m_dictionary.insert(std::pair<std::string, boost::any>(key, insert_value));
 
     return existed;

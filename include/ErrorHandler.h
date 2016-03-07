@@ -12,6 +12,17 @@
 #endif
 #endif
 
+#define STR(x)  #x
+#define SET_UP_LOGGER(name, enabled)                                      \
+{                                                                         \
+  el::Loggers::getLogger(name);                                           \
+  el::Configurations conf;                                                \
+  conf.setToDefault();                                                    \
+  conf.set(el::Level::Global,                                             \
+           el::ConfigurationType::Enabled, STR(enabled));                 \
+  el::Loggers::reconfigureLogger(name, conf);                             \
+}
+
 #define TRACE(...)                                                        \
 {                                                                         \
   char buf[1024];                                                         \

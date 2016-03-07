@@ -10,6 +10,10 @@ int main(int argc, char* argv[])
 {
   START_EASYLOGGINGPP(argc, argv);
 
+  el::Loggers::reconfigureAllLoggers(
+    el::ConfigurationType::Format,
+    "%loc %level: %msg");
+
   LOG(INFO) << "Entered main()";
 
   _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
@@ -26,7 +30,7 @@ int main(int argc, char* argv[])
       // Check to make sure shaders are available.
       if (!sf::Shader::isAvailable())
       {
-        throw std::exception("Shaders are not available on this platform");
+        LOG(FATAL) << "Shaders are not available on this platform";
       }
 
       // Create and open the main window.
@@ -39,7 +43,7 @@ int main(int argc, char* argv[])
 #ifdef NDEBUG
     catch (std::exception& e)
     {
-      FATAL_ERROR("Caught top-level exception: %s", e.what());
+      LOG(FATAL) << "Caught top-level exception: " << e.what();
     }
 #endif
   }

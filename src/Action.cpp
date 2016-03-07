@@ -44,7 +44,9 @@ struct Action::Impl
 Action::Action()
   :
   pImpl{ new Impl(MU) }
-{}
+{
+  SET_UP_LOGGER("Action", true);
+}
 
 Action::Action(ThingRef subject)
   :
@@ -91,10 +93,11 @@ bool Action::process(ThingRef actor, AnyMap params)
   int counter_busy = actor->get_property<int>("counter_busy");
   if (counter_busy > 0)
   {
-    TRACE("Thing #%s (%s): counter_busy = %d, decrementing",
-          actor.get_id().to_string().c_str(),
-          actor->get_type().c_str(),
-          counter_busy);
+    CLOG(TRACE, "Action") << "Thing #" <<
+      actor.get_id().to_string().c_str() << " (" <<
+      actor->get_type().c_str() << "): counter_busy = " <<
+      counter_busy << "%d, decrementing";
+
     actor->add_to_property<int>("counter_busy", -1);
     return false;
   }
@@ -111,12 +114,12 @@ bool Action::process(ThingRef actor, AnyMap params)
     counter_busy = actor->get_property<int>("counter_busy");
     Action::StateResult result{ false, 0 };
 
-    TRACE("Thing #%s (%s): Action %s is in state %s, counter_busy = %d",
-          actor.get_id().to_string().c_str(),
-          actor->get_type().c_str(),
-          get_type().c_str(),
-          str(get_state()).c_str(),
-          counter_busy);
+    CLOG(TRACE, "Action") << "Thing #" <<
+      actor.get_id().to_string().c_str() << " (" <<
+      actor->get_type().c_str() << "): Action " <<
+      get_type().c_str() << " is in state " <<
+      str(get_state()).c_str() << ", counter_busy = " <<
+      counter_busy;
 
     switch (pImpl->state)
     {
