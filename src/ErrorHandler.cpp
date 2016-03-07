@@ -35,22 +35,6 @@ ErrorHandler& ErrorHandler::instance()
   return *(Impl::handler_instance.get());
 }
 
-void ErrorHandler::handleMinorError(char* buf,
-                                    char const* file,
-                                    int line,
-                                    char const* func)
-{
-  printf("%s (%d): WARNING: %s\n", func, line, buf);
-
-  if (pImpl->die_on_minor_error)
-  {
-    printf("Dying because die_on_minor_error is true.\n");
-    printf("Press Enter to exit.\n");
-    getchar();
-    exit(-3);
-  }
-}
-
 void ErrorHandler::handleMajorError(char* buf,
                                     char const* file,
                                     int line,

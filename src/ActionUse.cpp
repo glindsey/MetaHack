@@ -28,7 +28,7 @@ Action::StateResult ActionUse::do_prebegin_work_(AnyMap& params)
       message = "That seriously shouldn't happen!";
       the_message_log.add(message);
 
-      MINOR_ERROR("NPC tried to use self!?");
+      CLOG(WARNING, "Action") << "NPC tried to use self!?";
     }
 
     return StateResult::Failure();

@@ -9,6 +9,8 @@ std::unique_ptr<ConfigSettings> ConfigSettings::instance_;
 
 ConfigSettings::ConfigSettings()
 {
+  SET_UP_LOGGER("ConfigSettings", true);
+
   /// @todo These settings should be read from an XML file.
   set("window_border_color", sf::Color(96, 48, 32, 255));
   set("window_border_color", sf::Color(96, 48, 32, 255));
@@ -69,7 +71,7 @@ int ConfigSettings::LUA_get_config(lua_State* L)
 
   if (num_args != 1)
   {
-    MINOR_ERROR("expected 1 arguments, got %d", num_args);
+    CLOG(WARNING, "ConfigSettings") << "expected 1 arguments, got " << num_args;
     return 0;
   }
 

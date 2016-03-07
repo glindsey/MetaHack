@@ -31,7 +31,7 @@ Action::StateResult ActionGet::do_prebegin_work_(AnyMap& params)
     {
       message = YOU_TRY + " to pick " + YOURSELF +
         "up, which seriously shouldn't happen.";
-      MINOR_ERROR("NPC tried to pick self up!?");
+      CLOG(WARNING, "Action") << "NPC tried to pick self up!?";
     }
     the_message_log.add(message);
     return StateResult::Failure();

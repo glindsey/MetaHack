@@ -771,7 +771,7 @@ std::string Metadata::get_intrinsic_string(std::string name, std::string default
         }
         else
         {
-          MINOR_ERROR("Warning calling %s:get_intrinsic(%s): Result was nil", type.c_str(), name.c_str());
+          CLOG(WARNING, "Metadata") << "Warning calling " << type << ":get_intrinsic(" << name << "): Result was nil";
         }
 
         // Pop the return value off the stack. (-1)
@@ -781,7 +781,7 @@ std::string Metadata::get_intrinsic_string(std::string name, std::string default
       {
         // Get the error message.
         char const* error_message = lua_tostring(the_lua_state, -1);
-        MAJOR_ERROR("Error calling %s:get_intrinsic(%s): %s", type.c_str(), name.c_str(), error_message);
+        CLOG(WARNING, "Metadata") << "Error calling " << type << ":get_intrinsic(" << name << "): " << error_message;
 
         // Pop the error message off the stack. (-1)
         lua_pop(the_lua_state, 1);
@@ -793,7 +793,8 @@ std::string Metadata::get_intrinsic_string(std::string name, std::string default
 
   if (start_stack != end_stack)
   {
-    FATAL_ERROR("*** LUA STACK MISMATCH (%s:get_intrinsic): Started at %d, ended at %d", name.c_str(), start_stack, end_stack);
+    CLOG(FATAL, "Metadata") << "*** LUA STACK MISMATCH (" << name <<
+      ":get_intrinsic): Started at " << start_stack << ", ended at " << end_stack;
   }
 
   return return_value;

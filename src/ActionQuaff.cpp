@@ -83,7 +83,7 @@ Action::StateResult ActionQuaff::do_begin_work_(AnyMap& params)
       return Action::StateResult::Failure();
 
     default:
-      MINOR_ERROR("Unknown ActionResult %d", result);
+      CLOG(WARNING, "Action") << "Unknown ActionResult " << result;
       return Action::StateResult::Failure();
   }
 }

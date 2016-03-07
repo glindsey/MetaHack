@@ -24,7 +24,7 @@ Action::StateResult ActionHurl::do_prebegin_work_(AnyMap& params)
     {
       message = YOU_TRY + " to throw " + YOURSELF +
         ", which seriously shouldn't happen.";
-      MINOR_ERROR("NPC tried to throw self!?");
+      CLOG(WARNING, "Action") << "NPC tried to throw self!?";
     }
     the_message_log.add(message);
 

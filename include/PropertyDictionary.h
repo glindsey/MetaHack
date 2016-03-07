@@ -34,7 +34,8 @@ public:
     // Bail if the setting doesn't exist.
     if (m_dictionary.count(key) == 0)
     {
-      MINOR_ERROR("Attempted to retrieve nonexistent key \"%s\"", key.c_str());
+      CLOG(WARNING, "PropertyDictionary") <<
+        "Attempted to retrieve nonexistent key \"" << key << "\"";
       return T();
     }
 

@@ -32,7 +32,7 @@ Action::StateResult ActionTakeOut::do_prebegin_work_(AnyMap& params)
     {
       message = YOU_TRY + " to take " + YOURSELF +
         "out, which seriously shouldn't happen.";
-      MINOR_ERROR("NPC tried to take self out!?");
+      CLOG(WARNING, "Action") << "NPC tried to take self out!?";
     }
     the_message_log.add(message);
 

@@ -73,7 +73,7 @@ bool MapDiamond::create(GeoVector vec)
     }
     else
     {
-      MINOR_ERROR("Invalid Direction passed into createRoom");
+      CLOG(WARNING, "MapGenerator") << "Invalid Direction passed into createRoom";
       return false;
     }
 

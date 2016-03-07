@@ -88,7 +88,7 @@ bool MapRoom::create(GeoVector vec)
     }
     else
     {
-      MINOR_ERROR("Invalid direction");
+      CLOG(WARNING, "MapGenerator") << "Invalid direction";
       return false;
     }
 

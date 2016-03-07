@@ -83,7 +83,7 @@ bool MapCorridor::create(GeoVector vec)
     }
     else
     {
-      MINOR_ERROR("Invalid Direction passed into createCorridor");
+      CLOG(WARNING, "MapGenerator") << "Invalid Direction passed into createCorridor";
       return false;
     }
 
@@ -171,7 +171,7 @@ bool MapCorridor::create(GeoVector vec)
         }
         else
         {
-          MINOR_ERROR("Invalid Direction passed into createCorridor");
+          CLOG(WARNING, "MapGenerator") << "Invalid Direction passed into createCorridor";
           return false;
         }
 

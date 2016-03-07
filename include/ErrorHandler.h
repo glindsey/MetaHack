@@ -26,16 +26,6 @@
   el::Loggers::reconfigureLogger(name, conf);                             \
 }
 
-#define MINOR_ERROR(...)                                                  \
-{                                                                         \
-  char buf[1024];                                                         \
-  snprintf(buf, 1024, __VA_ARGS__);                                       \
-  ErrorHandler::instance().handleMinorError(buf,                          \
-                                             __FILE__,                    \
-                                             __LINE__,                    \
-                                             __FUNCTION_NAME__);          \
-}
-
 #define MAJOR_ERROR(...)                                                  \
 {                                                                         \
   char buf[1024];                                                         \
@@ -85,11 +75,6 @@ class ErrorHandler :
 public:
   static ErrorHandler& instance();
   virtual ~ErrorHandler();
-
-  void handleMinorError(char* buf,
-                        char const* file,
-                        int line,
-                        char const* func);
 
   void handleMajorError(char* buf,
                         char const* file,

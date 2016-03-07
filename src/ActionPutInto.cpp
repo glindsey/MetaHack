@@ -30,7 +30,7 @@ Action::StateResult ActionPutInto::do_prebegin_work_(AnyMap& params)
     {
       message = YOU_TRY + " to store " + THE_FOO +
         "inside itself, which seriously shouldn't happen.";
-      MINOR_ERROR("NPC tried to store a container in itself!?");
+      CLOG(WARNING, "Action") << "NPC tried to store a container in itself!?";
     }
 
     return StateResult::Failure();
@@ -50,7 +50,7 @@ Action::StateResult ActionPutInto::do_prebegin_work_(AnyMap& params)
       message = YOU_TRY + " to store " + YOURSELF +
         "into " + THE_TARGET_THING +
         ", which seriously shouldn't happen.";
-      MINOR_ERROR("NPC tried to store self!?");
+      CLOG(WARNING, "Action") << "NPC tried to store self!?";
     }
     the_message_log.add(message);
 
@@ -68,7 +68,7 @@ Action::StateResult ActionPutInto::do_prebegin_work_(AnyMap& params)
     {
       message = YOU_TRY + " to store " + THE_FOO + "into " + YOURSELF +
         ", which seriously shouldn't happen.";
-      MINOR_ERROR("NPC tried to store into self!?");
+      CLOG(WARNING, "Action") << "NPC tried to store into self!?";
     }
     the_message_log.add(message);
 

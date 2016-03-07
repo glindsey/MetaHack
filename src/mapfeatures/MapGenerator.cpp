@@ -260,7 +260,8 @@ bool MapGenerator::add_feature(PropertyDictionary const& feature_settings)
     }
     else
     {
-      MINOR_ERROR("Unknown feature type \"%s\" requested", feature_type.c_str());
+      CLOG(WARNING, "MapGenerator") << "Unknown feature type \"" <<
+        feature_type << "\" requested";
     }
   }
 

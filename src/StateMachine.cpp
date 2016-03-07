@@ -16,6 +16,8 @@ struct StateMachine::Impl
 StateMachine::StateMachine(std::string const& machine_name)
   : pImpl(NEW Impl())
 {
+  SET_UP_LOGGER("StateMachine", true);
+
   pImpl->current_state = nullptr;
   pImpl->machine_name = machine_name;
 
@@ -121,9 +123,9 @@ bool StateMachine::change_to(State* state)
     terminator_result = pImpl->current_state->terminate();
     if (terminator_result == false)
     {
-      MINOR_ERROR("Terminator for state \"%s\" in state machine \"%s\" returned false",
-                  pImpl->current_state->get_name().c_str(),
-                  this->get_name().c_str());
+      CLOG(WARNING, "StateMachine") << "Terminator for state \"" <<
+        pImpl->current_state->get_name() << "\" in state machine \"" <<
+        this->get_name() << "\" returned false";
     }
   }
 
@@ -136,9 +138,9 @@ bool StateMachine::change_to(State* state)
       bool initializer_result = pImpl->current_state->initialize();
       if (initializer_result == false)
       {
-        MINOR_ERROR("Initializer for state \"%s\" in state machine \"%s\" returned false",
-                    pImpl->current_state->get_name().c_str(),
-                    this->get_name().c_str());
+        CLOG(WARNING, "StateMachine") << "Initializer for state \"" <<
+          pImpl->current_state->get_name() << "\" in state machine \"" <<
+          this->get_name() << "\" returned false";
       }
     }
   }

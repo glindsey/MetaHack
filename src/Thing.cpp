@@ -275,7 +275,7 @@ bool Thing::do_deequip(ThingRef thing, unsigned int& action_time)
     break;
 
     default:
-      MINOR_ERROR("Unknown ActionResult %d", deequip_try);
+      CLOG(WARNING, "Thing") << "Unknown ActionResult " << deequip_try;
       break;
   }
 
@@ -353,7 +353,7 @@ bool Thing::do_equip(ThingRef thing, unsigned int& action_time)
           this->choose_verb("try", "tries") +
           " to equip " + this->get_reflexive_pronoun() +
           ", which seriously shouldn't happen.";
-        MINOR_ERROR("NPC tried to equip self!?");
+        CLOG(WARNING, "Thing") << "NPC tried to equip self!?";
       }
       the_message_log.add(message);
       break;
@@ -383,7 +383,7 @@ bool Thing::do_equip(ThingRef thing, unsigned int& action_time)
     break;
 
     default:
-      MINOR_ERROR("Unknown ActionResult %d", equip_try);
+      CLOG(WARNING, "Thing") << "Unknown ActionResult " << equip_try;
       break;
   }
 
@@ -1378,7 +1378,7 @@ std::string Thing::get_bodypart_description(BodyPart part,
   {
     case 0: // none of them!?  shouldn't occur!
       result = "non-existent " + part_name;
-      MINOR_ERROR("Request for description of %s!?", result.c_str());
+      CLOG(WARNING, "Thing") << "Request for description of " << result << "!?";
       break;
 
     case 1: // only one of them

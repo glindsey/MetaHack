@@ -17,7 +17,7 @@ namespace LuaThingFunctions
 
     if ((num_args < 2) || (num_args > 3))
     {
-      MINOR_ERROR("expected 2 or 3 arguments, got %d", num_args);
+      CLOG(WARNING, "Lua") << "expected 2 or 3 arguments, got " << num_args;
       return 0;
     }
 
@@ -59,7 +59,7 @@ namespace LuaThingFunctions
 
     if (num_args != 1)
     {
-      MINOR_ERROR("expected 1 argument, got %d", num_args);
+      CLOG(WARNING, "Lua") << "expected 1 argument, got " << num_args;
       return 0;
     }
 
@@ -75,7 +75,7 @@ namespace LuaThingFunctions
 
     if (num_args != 0)
     {
-      MINOR_ERROR("expected 0 arguments, got %d", num_args);
+      CLOG(WARNING, "Lua") << "expected 0 arguments, got " << num_args;
       return 0;
     }
 
@@ -91,7 +91,7 @@ namespace LuaThingFunctions
 
     if (num_args != 1)
     {
-      MINOR_ERROR("expected 1 argument, got %d", num_args);
+      CLOG(WARNING, "Lua") << "expected 1 argument, got " << num_args;
       return 0;
     }
 
@@ -121,7 +121,7 @@ namespace LuaThingFunctions
 
     if (num_args != 1)
     {
-      MINOR_ERROR("expected 1 arguments, got %d", num_args);
+      CLOG(WARNING, "Lua") << "expected 1 arguments, got " << num_args;
       return 0;
     }
 
@@ -138,7 +138,7 @@ namespace LuaThingFunctions
 
     if (num_args != 2)
     {
-      MINOR_ERROR("expected 2 arguments, got %d", num_args);
+      CLOG(WARNING, "Lua") << "expected 2 arguments, got " << num_args;
       return 0;
     }
 
@@ -156,7 +156,7 @@ namespace LuaThingFunctions
 
     if (num_args != 2)
     {
-      MINOR_ERROR("expected 2 arguments, got %d", num_args);
+      CLOG(WARNING, "Lua") << "expected 2 arguments, got " << num_args;
       return 0;
     }
 
@@ -174,7 +174,7 @@ namespace LuaThingFunctions
 
     if (num_args != 2)
     {
-      MINOR_ERROR("expected 2 arguments, got %d", num_args);
+      CLOG(WARNING, "Lua") << "expected 2 arguments, got " << num_args;
       return 0;
     }
 
@@ -194,7 +194,7 @@ namespace LuaThingFunctions
 
     if (num_args != 2)
     {
-      MINOR_ERROR("expected 2 arguments, got %d", num_args);
+      CLOG(WARNING, "Lua") << "expected 2 arguments, got " << num_args;
       return 0;
     }
 
@@ -212,7 +212,7 @@ namespace LuaThingFunctions
 
     if (num_args != 2)
     {
-      MINOR_ERROR("expected 2 arguments, got %d", num_args);
+      CLOG(WARNING, "Lua") << "expected 2 arguments, got " << num_args;
       return 0;
     }
 
@@ -230,7 +230,7 @@ namespace LuaThingFunctions
 
     if (num_args != 2)
     {
-      MINOR_ERROR("expected 2 arguments, got %d", num_args);
+      CLOG(WARNING, "Lua") << "expected 2 arguments, got " << num_args;
       return 0;
     }
 
@@ -248,7 +248,7 @@ namespace LuaThingFunctions
 
     if ((num_args < 2))
     {
-      MINOR_ERROR("expected >= 2 arguments, got %d", num_args);
+      CLOG(WARNING, "Lua") << "expected >= 2 arguments, got " << num_args;
       return 0;
     }
 
@@ -284,7 +284,7 @@ namespace LuaThingFunctions
 
     if ((num_args < 3))
     {
-      MINOR_ERROR("expected >= 3 arguments, got %d", num_args);
+      CLOG(WARNING, "Lua") << "expected >= 3 arguments, got " << num_args;
       return 0;
     }
 
@@ -322,7 +322,7 @@ namespace LuaThingFunctions
 
     if ((num_args < 5))
     {
-      MINOR_ERROR("expected >= 5 arguments, got %d", num_args);
+      CLOG(WARNING, "Lua") << "expected >= 5 arguments, got %d" << num_args;
       return 0;
     }
 
@@ -363,7 +363,7 @@ namespace LuaThingFunctions
 
     if (num_args != 3)
     {
-      MINOR_ERROR("expected 3 arguments, got %d", num_args);
+      CLOG(WARNING, "Lua") << "expected 3 arguments, got %d" << num_args;
       return 0;
     }
 
@@ -381,7 +381,7 @@ namespace LuaThingFunctions
 
     if (num_args != 3)
     {
-      MINOR_ERROR("expected 3 arguments, got %d", num_args);
+      CLOG(WARNING, "Lua") << "expected 3 arguments, got %d" << num_args;
       return 0;
     }
 
@@ -399,7 +399,7 @@ namespace LuaThingFunctions
 
     if (num_args != 3)
     {
-      MINOR_ERROR("expected 3 arguments, got %d", num_args);
+      CLOG(WARNING, "Lua") << "expected 3 arguments, got %d" << num_args;
       return 0;
     }
 
@@ -418,7 +418,7 @@ namespace LuaThingFunctions
 
     if (num_args != 2)
     {
-      MINOR_ERROR("expected 2 arguments, got %d", num_args);
+      CLOG(WARNING, "Lua") << "expected 2 arguments, got " << num_args;
       return 0;
     }
 

@@ -300,7 +300,7 @@ int App::LUA_get_frame_counter(lua_State* L)
 
   if (num_args != 0)
   {
-    MINOR_ERROR("expected 0 arguments, got %d", num_args);
+    CLOG(WARNING, "App") << "expected 0 arguments, got " << num_args;
     return 0;
   }
 
@@ -334,7 +334,7 @@ int App::LUA_add(lua_State* L)
 
   if (num_args != 1)
   {
-    MINOR_ERROR("Expected 1 argument, got %d", num_args);
+    CLOG(WARNING, "App") << "Expected 1 argument, got " << num_args;
   }
   else
   {

@@ -668,7 +668,7 @@ int Map::LUA_get_tile_contents(lua_State* L)
 
   if (num_args != 3)
   {
-    MINOR_ERROR("expected 3 arguments, got %d", num_args);
+    CLOG(WARNING, "Lua") << "expected 3 arguments, got " << num_args;
     return 0;
   }
 
@@ -689,7 +689,7 @@ int Map::LUA_get_start_coords(lua_State* L)
 
   if (num_args != 1)
   {
-    MINOR_ERROR("expected 1 arguments, got %d", num_args);
+    CLOG(WARNING, "Lua") << "expected 1 arguments, got %d" << num_args;
     return 0;
   }
 
@@ -712,7 +712,7 @@ int Map::LUA_map_add_feature(lua_State* L)
 
   if (num_args != 2)
   {
-    MINOR_ERROR("expected 2 arguments, got %d", num_args);
+    CLOG(WARNING, "Lua") << "expected 2 arguments, got " << num_args;
     return 0;
   }
 
