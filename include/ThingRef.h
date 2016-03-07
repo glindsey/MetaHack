@@ -91,9 +91,7 @@ public:
 
   friend std::ostream& operator<< (std::ostream& stream, ThingId const& thing)
   {
-    stream << boost::lexical_cast<std::string>(thing.id)
-      << "."
-      << boost::lexical_cast<std::string>(thing.version);
+    stream << thing.id << "." << thing.version;
 
     return stream;
   }
@@ -174,10 +172,20 @@ public:
   /// Call to get the thing associated with this.
   Thing* operator->(void);
 
+  /// Call to get the thing associated with this.
+  Thing const* operator->(void) const;
+
   /// Call to get the ID associated with this.
   /// @warning This is ONLY exposed to allow for std::unordered_map hashing.
   ///          It should not be used in any other circumstance.
   ThingId get_id(void) const;
+
+  friend std::ostream& operator<< (std::ostream& stream, ThingRef const& thing)
+  {
+    stream << thing.get_id();
+
+    return stream;
+  }
 
 protected:
   /// Create a new ID.

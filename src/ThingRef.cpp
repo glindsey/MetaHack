@@ -71,6 +71,11 @@ Thing* ThingRef::operator->()
   return &(GAME.get_thing_manager().get(m_id));
 }
 
+Thing const* ThingRef::operator->() const
+{
+  return &(GAME.get_thing_manager().get(m_id));
+}
+
 ThingId ThingRef::get_id() const
 {
   return this->m_id;

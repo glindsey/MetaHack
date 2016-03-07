@@ -94,7 +94,8 @@ Action::StateResult ActionHurl::do_begin_work_(AnyMap& params)
       message = YOU + " could not throw " + THE_FOO + " for some inexplicable reason.";
       the_message_log.add(message);
 
-      MAJOR_ERROR("Could not throw Thing even though be_object_of returned Success");
+      CLOG(WARNING, "Action") << "Could not throw Thing " << object <<
+        " even though be_object_of returned Success";
     }
   }
 

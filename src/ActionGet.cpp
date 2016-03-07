@@ -94,8 +94,8 @@ Action::StateResult ActionGet::do_begin_work_(AnyMap& params)
       message = YOU + " could not pick up " + THE_FOO + " for some inexplicable reason.";
       the_message_log.add(message);
 
-      MAJOR_ERROR("Could not move Thing even though "
-                  "be_object_of returned Success");
+      CLOG(WARNING, "Action") << "Could not move Thing " << object <<
+        " even though be_object_of returned Success";
     }
   }
 
