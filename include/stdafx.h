@@ -36,6 +36,7 @@
 #include <boost/functional/hash.hpp>
 #include <boost/math/special_functions/sign.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/log/core.hpp>
 #include <boost/log/trivial.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/optional.hpp>
@@ -58,6 +59,9 @@
 // SFML includes
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
+
+// EasyLogging++ includes
+#include "easyloggingpp/easylogging++.h"
 
 // Lua includes
 extern "C"

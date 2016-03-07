@@ -49,6 +49,7 @@ public:
   static App& instance();
 
 protected:
+
 private:
   sf::RenderWindow& m_app_window;
 

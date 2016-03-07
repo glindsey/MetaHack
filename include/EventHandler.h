@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 
-enum EventResult
+enum class EventResult
 {
   Pending,      ///< The event has not been handled by any handler yet; only for variable initialization.
   Handled,      ///< The event was handled and should not be passed on

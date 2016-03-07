@@ -34,43 +34,6 @@ sf::IntRect calc_message_log_dimensions(sf::RenderWindow& window)
   return messageLogDims;
 }
 
-int main()
-{
-  _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-
-  // Scoping everything here so it is properly destroyed before checking for memory leaks.
-  {
-    std::unique_ptr<sf::RenderWindow> app_window;
-    std::unique_ptr<App> app;
-
-#ifdef NDEBUG
-    try
-#endif
-    {
-      // Check to make sure shaders are available.
-      if (!sf::Shader::isAvailable())
-      {
-        throw std::exception("Shaders are not available on this platform");
-      }
-
-      // Create and open the main window.
-      app_window.reset(NEW sf::RenderWindow(sf::VideoMode(1066, 600), "Magicule Saga"));
-
-      // Create and run the app instance.
-      app.reset(NEW App(*(app_window.get())));
-      app->run();
-    }
-#ifdef NDEBUG
-    catch (std::exception& e)
-    {
-      FATAL_ERROR("Caught top-level exception: %s", e.what());
-    }
-#endif
-  }
-
-  return EXIT_SUCCESS;
-}
-
 App::App(sf::RenderWindow& app_window)
   :
   m_app_window{ app_window },
@@ -86,8 +49,11 @@ App::App(sf::RenderWindow& app_window)
   }
   else
   {
-    throw std::exception("Tried to create more than one App instance");
+    throw std::runtime_error("Tried to create more than one App instance");
   }
+
+  // Register the App logger.
+  el::Loggers::getLogger("App");
 
   // Create the app texture for off-screen composition.
   m_app_texture->create(m_app_window.getSize().x, m_app_window.getSize().y);
@@ -100,28 +66,28 @@ App::App(sf::RenderWindow& app_window)
   std::string font_name = "resources/fonts/" + Settings.get<std::string>("font_name_default") + ".ttf";
   if (m_default_font->loadFromFile(font_name) == false)
   {
-    throw std::exception("Could not load the default font");
+    CLOG(FATAL, "App") << "Could not load the default font";
   }
 
   m_default_bold_font.reset(NEW sf::Font());
   font_name = "resources/fonts/" + Settings.get<std::string>("font_name_bold") + ".ttf";
   if (m_default_bold_font->loadFromFile(font_name) == false)
   {
-    throw std::exception("Could not load the default bold font");
+    CLOG(FATAL, "App") << "Could not load the default bold font";
   }
 
   m_default_mono_font.reset(NEW sf::Font());
   font_name = "resources/fonts/" + Settings.get<std::string>("font_name_mono") + ".ttf";
   if (m_default_mono_font->loadFromFile(font_name) == false)
   {
-    throw std::exception("Could not load the default monospace font");
+    CLOG(FATAL, "App") << "Could not load the default monospace font";
   }
 
   m_default_unicode_font.reset(NEW sf::Font());
   font_name = "resources/fonts/" + Settings.get<std::string>("font_name_unicode") + ".ttf";
   if (m_default_unicode_font->loadFromFile(font_name) == false)
   {
-    throw std::exception("Could not load the default Unicode font");
+    CLOG(FATAL, "App") << "Could not load the default Unicode font";
   }
 
   // Create the shader program.
@@ -129,7 +95,7 @@ App::App(sf::RenderWindow& app_window)
   if (m_shader->loadFromFile("resources/shaders/default.vert",
                              "resources/shaders/default.frag") == false)
   {
-    throw std::exception("Could not load the default shaders");
+    CLOG(FATAL, "App") << "Could not load the default shaders";
   }
 
   // Create the message log.
