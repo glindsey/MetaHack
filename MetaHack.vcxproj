@@ -216,6 +216,7 @@
     <ClInclude Include="include\TileSheet.h" />
     <ClInclude Include="include\UsesPimpl.h" />
     <ClInclude Include="src\impl\ThingImpl.h" />
+    <ClInclude Include="Visitor.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
