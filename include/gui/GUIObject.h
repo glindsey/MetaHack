@@ -255,6 +255,7 @@ namespace metagui
     /// have seen it, handle_event_after_children_ is called.
     virtual EventResult handle_event(sf::Event& event) override final;
 
+    // === TESTING CODE =======================================================
     template<class T>
     EventResult Object::handle(T& event)
     {
@@ -288,6 +289,13 @@ namespace metagui
       /// @todo WRITE ME
       return handle_before_children_(event);
     }
+
+    template<class T>
+    EventResult handle_before_children_(T& event) { return EventResult::Ignored; }
+
+    template<class T>
+    EventResult handle_after_children_(T& event) { return EventResult::Ignored; }
+    // ========================================================================
 
     /// Called before an event is passed along to child objects.
     /// After it does what it needs to do, calls the virtual method

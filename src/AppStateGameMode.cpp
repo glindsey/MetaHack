@@ -169,6 +169,11 @@ EventResult AppStateGameMode::handle_event(sf::Event& event)
     result = m_desktop.handle_event(event);
   }
 
+  // === TESTING CODE =======================================================
+  int test;
+  m_desktop.handle(test);
+  // ========================================================================
+
   return result;
 }
 
@@ -904,7 +909,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           default:
             break;
         }
-      }
+    }
 #endif
 
       // *** YES ALT, YES CTRL, SHIFT is irrelevant *****************************
@@ -917,10 +922,10 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           default:
             break;
         }
-      }
+  }
 #endif
       break;
-    } // end case GameInputState::Map
+} // end case GameInputState::Map
 
     default:
       break;
