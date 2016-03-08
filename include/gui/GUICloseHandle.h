@@ -8,7 +8,7 @@
 namespace metagui
 {
   class CloseHandle :
-    public Object
+    public Object, public ObjectVisitable<CloseHandle>
   {
     friend class WindowPane;
 

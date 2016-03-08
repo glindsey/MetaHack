@@ -291,7 +291,7 @@
     <ClInclude Include="include\gui\GUITitleBar.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Visitor.h">
+    <ClInclude Include="include\Visitor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

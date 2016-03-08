@@ -8,7 +8,7 @@
 namespace metagui
 {
   class WindowPane :
-    public Pane
+    public Pane, public ObjectVisitable<WindowPane>
   {
   public:
     WindowPane(std::string name, sf::Vector2i location, sf::Vector2u size = sf::Vector2u(0, 0));
@@ -39,8 +39,6 @@ namespace metagui
 
     /// Cached state of the "titlebar" flag.
     bool m_titlebar_cached = false;
-
-
   };
 }; // end namespace metagui
 

@@ -8,7 +8,7 @@
 namespace metagui
 {
   class DesktopPane :
-    public Pane
+    public Pane, public ObjectVisitable<DesktopPane>
   {
   public:
     explicit DesktopPane(std::string name, sf::Vector2u size);

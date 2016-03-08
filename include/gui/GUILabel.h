@@ -8,7 +8,7 @@
 namespace metagui
 {
   class Label :
-    public Object
+    public Object, public ObjectVisitable<Label>
   {
   public:
     explicit Label(std::string name, sf::Vector2i location = sf::Vector2i(0, 0));

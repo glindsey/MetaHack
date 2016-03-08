@@ -8,7 +8,7 @@
 namespace metagui
 {
   class TitleBar :
-    public Object
+    public Object, public ObjectVisitable<TitleBar>
   {
     friend class WindowPane;
 
@@ -19,7 +19,6 @@ namespace metagui
     explicit TitleBar(std::string name);
     virtual void render_self_before_children_(sf::RenderTexture& texture, int frame) override final;
     virtual void handle_parent_size_changed_(sf::Vector2u parent_size) override final;
-
 
   private:
   };

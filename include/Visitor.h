@@ -3,6 +3,7 @@
 /// @file Templates implementing the Visitor Pattern in C++11.
 ///       Shamelessly copied from:
 ///       https://stackoverflow.com/questions/11796121/implementing-the-visitor-pattern-using-c-templates
+///       with a few small modifications by me.
 
 /// Visitor template declaration
 template<typename... Types>
@@ -33,23 +34,23 @@ template<typename... Types>
 class Visitable
 {
 public:
-  virtual void accept(Visitor<Types...>& visitor) = 0;
+  virtual void be_visited_by(Visitor<Types...>& visitor) = 0;
 };
 
 /// The implementation of a Visitable class.
 /// For example:
-///     class Derived: public Base, public VisitableImpl<Derived, Visitor1, Visitor2>
+///     class Foo: public Base, public VisitableImpl<Foo, Foo, Bar>
 ///
-/// This specifies that the class `Derived` is derived from the class `Base` and
-/// can accept visitor classes `Visitor1` and `Visitor2`.
+/// This specifies that the class `Foo` is derived from the class `Base` and
+/// can accept a Visitor<Foo, Bar> class instance.
 ///
 /// @tparam Derived   The name of the class.
-/// @tparam Types     A list of Visitor types this class can accept.
+/// @tparam Types     The list of types that the Visitor can visit.
 template<typename Derived, typename... Types>
 class VisitableImpl : public Visitable<Types...>
 {
 public:
-  virtual void accept(Visitor<Types...>& visitor)
+  virtual void be_visited_by(Visitor<Types...>& visitor) override
   {
     visitor.visit(static_cast<Derived&>(*this));
   }

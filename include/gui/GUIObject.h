@@ -6,15 +6,50 @@
 #include "EventHandler.h"
 #include "Renderable.h"
 
+#include "Visitor.h"
+
 namespace metagui
 {
-  /// Forward declarations
+  // Forward declaration of Object class
   class Object;
+
+  // Forward declaration of any class that can be visited
+  class CloseHandle;
+  class DesktopPane;
+  class Label;
+  class ResizeHandle;
+  class ShrinkHandle;
+  class TitleBar;
+  class WindowPane;
 
   /// Using declarations
   using ChildMap = std::map< std::string, std::unique_ptr<Object> >;
   using ZOrderMap = std::multimap< uint32_t, std::string >;
   using RenderFunctor = std::function< void(sf::RenderTexture&, int) >;
+
+  // The following declaration should include every possible GUIObject that
+  // we want to be able to accept visitors.
+  using ObjectVisitor = Visitor<
+    CloseHandle,
+    DesktopPane,
+    Label,
+    ResizeHandle,
+    ShrinkHandle,
+    TitleBar,
+    WindowPane
+  >;
+
+  // The following declaration should have the same class list as above.
+  template<class T>
+  using ObjectVisitable = VisitableImpl<T,
+    CloseHandle,
+    DesktopPane,
+    Label,
+    ResizeHandle,
+    ShrinkHandle,
+    TitleBar,
+    WindowPane
+  >;
 
   /// Virtual superclass of all GUI objects on screen.
   /// @todo Should child objects store Z-order?
