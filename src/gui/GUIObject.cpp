@@ -397,7 +397,8 @@ namespace metagui
       {
         for (auto& z_pair : m_zorder_map)
         {
-          result = m_children.at(z_pair.second)->handle_event(event);
+          auto& child = m_children.at(z_pair.second);
+          result = child->handle_event(event);
           if (result == EventResult::Handled) break;
         }
       }
@@ -453,6 +454,17 @@ namespace metagui
     }
 
     handle_set_flag_(name, value);
+  }
+
+  bool Object::contains_point(sf::Vector2i point)
+  {
+    auto left = get_absolute_location().x;
+    auto top = get_absolute_location().y;
+    auto right = left + (static_cast<int>(get_size().x) - 1);
+    auto bottom = top + (static_cast<int>(get_size().y) - 1);
+
+    return ((point.x >= left) && (point.x <= right) &&
+            (point.y >= top) && (point.y <= bottom));
   }
 
   Object * Object::get_parent()

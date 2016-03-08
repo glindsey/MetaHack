@@ -235,7 +235,7 @@ namespace metagui
     bool render(sf::RenderTexture& texture, int frame);
 
     /// Handle an incoming event.
-    /// Calls the virtual function handle_event_before_children_ first.
+    /// Calls the virtual method handle_event_before_children_() first.
     /// If it returns anything other than Handled, it then passes the
     /// event down to each child in sequence, stopping only if one of them
     /// returns Handled. If the event still isn't Handled after all children
@@ -243,7 +243,7 @@ namespace metagui
     EventResult handle_event(sf::Event& event);
 
     /// Set/clear an object flag.
-    /// Calls the virtual function handle_set_flag_ if the flag has been
+    /// Calls the virtual method handle_set_flag_ if the flag has been
     /// changed; this allows subclasses to perform specific actions based on
     /// certain flags (such as setting/clearing "titlebar").
     void set_flag(std::string name, bool enabled);
@@ -257,6 +257,11 @@ namespace metagui
     /// If this function does not handle a particular flag, calls the
     /// virtual function handle_set_flag_().
     void handle_set_flag(std::string name, bool enabled);
+
+    /// Returns whether the specified point falls within this object's bounds.
+    /// @param  point   Point to check.
+    /// @return True if the point is within the object, false otherwise.
+    bool contains_point(sf::Vector2i point);
 
   protected:
     Object* get_parent();

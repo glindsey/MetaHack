@@ -39,5 +39,4 @@ namespace metagui
   {
     texture.clear(sf::Color::Magenta);
   }
-
 }; // end namespace metagui
