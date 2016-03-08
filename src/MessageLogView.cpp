@@ -20,17 +20,15 @@ MessageLogView::MessageLogView(MessageLog& model,
 MessageLogView::~MessageLogView()
 {}
 
-EventResult MessageLogView::handle_event(sf::Event& event)
+EventResult MessageLogView::handle_event_before_children_(sf::Event& event)
 {
   switch (event.type)
   {
     case sf::Event::EventType::KeyPressed:
       return m_model.get_key_buffer().handle_key_press(event.key);
     default:
-      break;
+      return metagui::WindowPane::handle_event_before_children_(event);
   }
-
-  return metagui::Pane::handle_event(event);
 }
 
 void MessageLogView::render_contents_(sf::RenderTexture& texture, int frame)

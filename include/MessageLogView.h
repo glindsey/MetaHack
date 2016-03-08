@@ -21,7 +21,7 @@ public:
   virtual ~MessageLogView();
 
   /// Handle an SFML event.
-  virtual EventResult handle_event(sf::Event& event) override;
+  virtual EventResult handle_event_before_children_(sf::Event& event) override;
 
 protected:
   /// Render the contents of this view to the specified target.

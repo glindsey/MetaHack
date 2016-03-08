@@ -269,7 +269,7 @@ ThingRef InventoryArea::get_thing(InventorySlot selection)
   }
 }
 
-EventResult InventoryArea::handle_event(sf::Event& event)
+EventResult InventoryArea::handle_event_before_children_(sf::Event& event)
 {
   return EventResult::Ignored;
 }

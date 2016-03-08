@@ -392,7 +392,7 @@ namespace metagui
 
     if (m_disabled_cached == false)
     {
-      result = handle_event_before_children_(event);
+      result = handle_event_before_children(event);
       if (result != EventResult::Handled)
       {
         for (auto& z_pair : m_zorder_map)
@@ -410,6 +410,29 @@ namespace metagui
     }
 
     return result;
+  }
+
+  EventResult Object::handle_event_before_children(sf::Event & event)
+  {
+    switch (event.type)
+    {
+      case sf::Event::EventType::MouseMoved:
+      {
+        sf::Vector2i point{ event.mouseMove.x, event.mouseMove.y };
+        set_contains_mouse(this->contains_point(point));
+      }
+      break;
+
+      case sf::Event::EventType::MouseLeft:
+      {
+        set_contains_mouse(false);
+      }
+      break;
+
+      default:
+        break;
+    }
+    return handle_event_before_children_(event);
   }
 
   void Object::set_flag(std::string name, bool value)
@@ -467,6 +490,11 @@ namespace metagui
             (point.y >= top) && (point.y <= bottom));
   }
 
+  bool Object::contains_mouse()
+  {
+    return m_contains_mouse;
+  }
+
   Object * Object::get_parent()
   {
     return m_parent;
@@ -488,6 +516,16 @@ namespace metagui
   void Object::set_focus_only(bool focus)
   {
     m_focus = focus;
+  }
+
+  void Object::set_contains_mouse(bool contains)
+  {
+    if (m_contains_mouse != contains)
+    {
+      CLOG(TRACE, "GUI") << "Mouse has " << (contains ? "entered " : "left ") <<
+        "the object " << get_name();
+    }
+    m_contains_mouse = contains;
   }
 
   void Object::render_self_before_children_(sf::RenderTexture& texture, int frame)

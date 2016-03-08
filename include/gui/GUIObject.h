@@ -235,12 +235,22 @@ namespace metagui
     bool render(sf::RenderTexture& texture, int frame);
 
     /// Handle an incoming event.
-    /// Calls the virtual method handle_event_before_children_() first.
+    /// Calls the method handle_event_before_children() first.
     /// If it returns anything other than Handled, it then passes the
     /// event down to each child in sequence, stopping only if one of them
     /// returns Handled. If the event still isn't Handled after all children
     /// have seen it, handle_event_after_children_ is called.
-    EventResult handle_event(sf::Event& event);
+    virtual EventResult handle_event(sf::Event& event) override final;
+
+    /// Called before an event is passed along to child objects.
+    /// After it does what it needs to do, calls the virtual method
+    /// handle_event_before_children_().
+    ///
+    /// @note If this method returns EventResult::Handled, event processing
+    ///       will stop here and the children will never see the event! To
+    ///       process it here *and* have children see it, you should return
+    ///       EventResult::Acknowledged.
+    EventResult handle_event_before_children(sf::Event& event);
 
     /// Set/clear an object flag.
     /// Calls the virtual method handle_set_flag_ if the flag has been
@@ -263,6 +273,10 @@ namespace metagui
     /// @return True if the point is within the object, false otherwise.
     bool contains_point(sf::Vector2i point);
 
+    /// Returns whether the mouse is currently over this object.
+    /// @return True if the mouse is over the object, false otherwise.
+    bool contains_mouse();
+
   protected:
     Object* get_parent();
 
@@ -273,6 +287,9 @@ namespace metagui
 
     /// Set the focus of an object without clearing sibling focuses (foci?).
     void set_focus_only(bool focus);
+
+    /// Set whether the mouse is contained within this object.
+    void set_contains_mouse(bool contains);
 
     /// Called before rendering the object's children.
     /// Default behavior is to do nothing.
@@ -340,6 +357,9 @@ namespace metagui
 
     /// Object size.
     sf::Vector2u m_size;
+
+    /// Flag indicating whether the mouse is currently over this object.
+    bool m_contains_mouse;
 
     /// Background texture.
     std::unique_ptr<sf::RenderTexture> m_bg_texture;

@@ -29,7 +29,7 @@ StatusArea::~StatusArea()
   //dtor
 }
 
-EventResult StatusArea::handle_event(sf::Event& event)
+EventResult StatusArea::handle_event_before_children_(sf::Event& event)
 {
   return EventResult::Ignored;
 }
@@ -38,7 +38,7 @@ void StatusArea::render_contents_(sf::RenderTexture& texture, int frame)
 {
   sf::IntRect pane_dims = get_relative_dimensions();
   ThingRef player = GAME.get_player();
-  sf::Vector2f origin(Settings.get<float>("window_text_offset_x"), 
+  sf::Vector2f origin(Settings.get<float>("window_text_offset_x"),
                       Settings.get<float>("window_text_offset_y"));
   sf::Color text_color = Settings.get<sf::Color>("text_color");
   sf::Color text_dim_color = Settings.get<sf::Color>("text_dim_color");
