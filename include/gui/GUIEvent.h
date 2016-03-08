@@ -5,11 +5,13 @@
 namespace metagui
 {
   /// Superclass for MetaGUI events.
+  /// This is not the most elegant implementation, but it works well enough and
+  /// is similar to the SFML implementation of sf::Event.
   class Event
   {
     enum class Type
     {
-      NonEvent,
+      Unknown,
       MemberCount
     };
 

@@ -4,6 +4,7 @@
 #include "stdafx.h"
 
 #include "EventHandler.h"
+#include "GUIEvent.h"
 #include "Renderable.h"
 
 #include "Visitor.h"
@@ -253,6 +254,40 @@ namespace metagui
     /// returns Handled. If the event still isn't Handled after all children
     /// have seen it, handle_event_after_children_ is called.
     virtual EventResult handle_event(sf::Event& event) override final;
+
+    template<class T>
+    EventResult Object::handle(T& event)
+    {
+      EventResult result = EventResult::Ignored;
+
+      if (m_disabled_cached == false)
+      {
+        result = handle_before_children(event);
+        if (result != EventResult::Handled)
+        {
+          for (auto& z_pair : m_zorder_map)
+          {
+            auto& child = m_children.at(z_pair.second);
+            result = child->handle(event);
+            if (result == EventResult::Handled) break;
+          }
+        }
+
+        if (result != EventResult::Handled)
+        {
+          result = handle_after_children_(event);
+        }
+      }
+
+      return result;
+    }
+
+    template<class T>
+    EventResult handle_before_children(T& event)
+    {
+      /// @todo WRITE ME
+      return handle_before_children_(event);
+    }
 
     /// Called before an event is passed along to child objects.
     /// After it does what it needs to do, calls the virtual method

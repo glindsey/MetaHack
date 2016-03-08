@@ -10,7 +10,7 @@ namespace metagui
     {
       /// @todo WRITE ME
       default:
-        return Event{ Type::NonEvent, {} };
+        return Event{ Type::Unknown, {} };
     }
   }
 
