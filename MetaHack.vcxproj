@@ -170,6 +170,7 @@
     <ClInclude Include="include\GetLetterKey.h" />
     <ClInclude Include="include\gui\GUICloseHandle.h" />
     <ClInclude Include="include\gui\GUIDesktopPane.h" />
+    <ClInclude Include="include\gui\GUIEvent.h" />
     <ClInclude Include="include\gui\GUILabel.h" />
     <ClInclude Include="include\gui\GUIObject.h" />
     <ClInclude Include="include\gui\GUIPane.h" />
@@ -255,6 +256,7 @@
     <ClCompile Include="src\Gender.cpp" />
     <ClCompile Include="src\gui\GUICloseHandle.cpp" />
     <ClCompile Include="src\gui\GUIDesktopPane.cpp" />
+    <ClCompile Include="src\gui\GUIEvent.cpp" />
     <ClCompile Include="src\gui\GUILabel.cpp" />
     <ClCompile Include="src\gui\GUIObject.cpp" />
     <ClCompile Include="src\gui\GUIPane.cpp" />
