@@ -57,6 +57,18 @@ namespace metagui
     public EventHandler,
     public RenderableToTexture
   {
+    struct MouseButtonInfo
+    {
+      /// Whether this button is pressed.
+      bool pressed;
+
+      /// Absolute location of the press or release.
+      sf::Vector2i location;
+
+      /// Time elapsed since the last button state change.
+      sf::Clock elapsed;
+    };
+
   public:
     explicit Object(std::string name, sf::Vector2i location = sf::Vector2i(0, 0), sf::Vector2u size = sf::Vector2u(0, 0));
     Object(std::string name, sf::IntRect dimensions);
@@ -360,6 +372,9 @@ namespace metagui
 
     /// Flag indicating whether the mouse is currently over this object.
     bool m_contains_mouse;
+
+    /// An array of data for each possible mouse button.
+    std::array< MouseButtonInfo, sf::Mouse::ButtonCount > m_button_info;
 
     /// Background texture.
     std::unique_ptr<sf::RenderTexture> m_bg_texture;

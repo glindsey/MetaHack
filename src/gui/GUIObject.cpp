@@ -416,16 +416,51 @@ namespace metagui
   {
     switch (event.type)
     {
+      case sf::Event::EventType::MouseButtonPressed:
+      {
+        sf::Vector2i point{ event.mouseButton.x, event.mouseButton.y };
+        sf::Mouse::Button button{ event.mouseButton.button };
+
+        m_button_info[static_cast<unsigned int>(button)].pressed = true;
+        m_button_info[static_cast<unsigned int>(button)].location = point;
+        m_button_info[static_cast<unsigned int>(button)].elapsed.restart();
+
+        /// @todo Handle click, double-click, etc.
+      }
+      break;
+
+      case sf::Event::EventType::MouseButtonReleased:
+      {
+        sf::Vector2i point{ event.mouseButton.x, event.mouseButton.y };
+        sf::Mouse::Button button{ event.mouseButton.button };
+
+        m_button_info[static_cast<unsigned int>(button)].pressed = false;
+        m_button_info[static_cast<unsigned int>(button)].location = point;
+        m_button_info[static_cast<unsigned int>(button)].elapsed.restart();
+
+        /// @todo Handle click, double-click, etc.
+      }
+      break;
+
       case sf::Event::EventType::MouseMoved:
       {
         sf::Vector2i point{ event.mouseMove.x, event.mouseMove.y };
         set_contains_mouse(this->contains_point(point));
+
+        /// @todo Handle things like dragging, resizing
       }
       break;
 
       case sf::Event::EventType::MouseLeft:
       {
         set_contains_mouse(false);
+
+        for (auto& button : m_button_info)
+        {
+          button.pressed = false;
+          button.location = { -1, -1 }; /// @todo Maybe fill in with last-known mouse coords?
+          button.elapsed.restart();
+        }
       }
       break;
 
