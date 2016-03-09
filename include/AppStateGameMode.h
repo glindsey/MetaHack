@@ -5,9 +5,9 @@
 
 #include "Action.h"
 #include "Direction.h"
-#include "EventHandler.h"
 #include "GameState.h"
 #include "InventoryArea.h"
+#include "SFMLEventHandler.h"
 #include "State.h"
 #include "StatusArea.h"
 
@@ -34,7 +34,7 @@ public:
 
   void execute() override;
   bool render(sf::RenderTexture& texture, int frame) override;
-  EventResult handle_event(sf::Event& event) override;
+  SFMLEventResult handle_sfml_event(sf::Event& event) override;
   std::string const& get_name() override;
   bool initialize() override;
   bool terminate() override;
@@ -43,15 +43,15 @@ public:
 
 protected:
   void render_map(sf::RenderTexture& texture, int frame);
-  EventResult handle_key_press(sf::Event::KeyEvent& key);
-  EventResult handle_mouse_wheel(sf::Event::MouseWheelEvent& wheel);
+  SFMLEventResult handle_key_press(sf::Event::KeyEvent& key);
+  SFMLEventResult handle_mouse_wheel(sf::Event::MouseWheelEvent& wheel);
   sf::IntRect calc_message_log_dims();
   void reset_inventory_area();
   sf::IntRect calc_status_area_dims();
   sf::IntRect calc_inventory_dims();
   bool move_cursor(Direction direction);
-  EventResult handle_key_press_target_selection(ThingRef player, sf::Event::KeyEvent& key);
-  EventResult handle_key_press_cursor_look(ThingRef player, sf::Event::KeyEvent& key);
+  SFMLEventResult handle_key_press_target_selection(ThingRef player, sf::Event::KeyEvent& key);
+  SFMLEventResult handle_key_press_cursor_look(ThingRef player, sf::Event::KeyEvent& key);
 
   void add_zoom(float zoom_amount);
 
@@ -83,7 +83,6 @@ private:
   /// Action in progress (if any).
   /// Used for an action that needs a "target".
   std::unique_ptr<Action> m_action_in_progress;
-
 };
 
 #endif // APPSTATEGAMEMODE_H

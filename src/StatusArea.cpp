@@ -29,11 +29,6 @@ StatusArea::~StatusArea()
   //dtor
 }
 
-EventResult StatusArea::handle_event_before_children_(sf::Event& event)
-{
-  return EventResult::Ignored;
-}
-
 void StatusArea::render_contents_(sf::RenderTexture& texture, int frame)
 {
   sf::IntRect pane_dims = get_relative_dimensions();

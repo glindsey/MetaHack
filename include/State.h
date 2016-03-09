@@ -3,15 +3,15 @@
 
 #include "stdafx.h"
 
-#include "EventHandler.h"
 #include "Renderable.h"
+#include "SFMLEventHandler.h"
 
 // Forward declarations
 class StateMachine;
 
 class State :
-  virtual public EventHandler,
   virtual public RenderableToTexture,
+  virtual public SFMLEventHandler,
   virtual public boost::noncopyable
 {
 public:

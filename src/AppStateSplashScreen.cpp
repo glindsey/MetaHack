@@ -27,9 +27,9 @@ bool AppStateSplashScreen::render(sf::RenderTexture& texture, int frame)
   return true;
 }
 
-EventResult AppStateSplashScreen::handle_event(sf::Event& event)
+SFMLEventResult AppStateSplashScreen::handle_sfml_event(sf::Event& event)
 {
-  return EventResult::Ignored;
+  return SFMLEventResult::Ignored;
 }
 
 std::string const& AppStateSplashScreen::get_name()

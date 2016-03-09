@@ -3,8 +3,8 @@
 
 #include "stdafx.h"
 
-#include "EventHandler.h"
 #include "Renderable.h"
+#include "SFMLEventHandler.h"
 
 // Forward declarations
 class State;
@@ -12,8 +12,8 @@ class State;
 // Implementation of a state machine that can change between states derived
 // from the State abstract class.
 class StateMachine :
-  virtual public EventHandler,
   virtual public RenderableToTexture,
+  virtual public SFMLEventHandler,
   virtual public boost::noncopyable
 {
 public:
@@ -55,8 +55,8 @@ public:
   bool render(sf::RenderTexture& texture, int frame) override;
 
   /// Pass an event on to the current state.
-  /// If no state is active, does nothing and returns EventResult::Ignored.
-  EventResult handle_event(sf::Event& event) override;
+  /// If no state is active, does nothing and returns SFMLEventResult::Ignored.
+  SFMLEventResult handle_sfml_event(sf::Event& event) override;
 
   /// Try to change to a new state.
   /// If nullptr is passed, attempts to terminate existing state only; this is

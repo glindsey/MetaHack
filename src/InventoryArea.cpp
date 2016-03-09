@@ -269,9 +269,9 @@ ThingRef InventoryArea::get_thing(InventorySlot selection)
   }
 }
 
-EventResult InventoryArea::handle_event_before_children_(sf::Event& event)
+metagui::Event::Result InventoryArea::handle_event_before_children_(metagui::Event& event)
 {
-  return EventResult::Ignored;
+  return metagui::Event::Result::Ignored;
 }
 
 void InventoryArea::render_contents_(sf::RenderTexture& texture, int frame)

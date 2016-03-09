@@ -386,90 +386,6 @@ namespace metagui
     }
   }
 
-  EventResult Object::handle_event(sf::Event & event)
-  {
-    EventResult result = EventResult::Ignored;
-
-    if (m_disabled_cached == false)
-    {
-      result = handle_event_before_children(event);
-      if (result != EventResult::Handled)
-      {
-        for (auto& z_pair : m_zorder_map)
-        {
-          auto& child = m_children.at(z_pair.second);
-          result = child->handle_event(event);
-          if (result == EventResult::Handled) break;
-        }
-      }
-
-      if (result != EventResult::Handled)
-      {
-        result = handle_event_after_children_(event);
-      }
-    }
-
-    return result;
-  }
-
-  EventResult Object::handle_event_before_children(sf::Event & event)
-  {
-    switch (event.type)
-    {
-      case sf::Event::EventType::MouseButtonPressed:
-      {
-        sf::Vector2i point{ event.mouseButton.x, event.mouseButton.y };
-        sf::Mouse::Button button{ event.mouseButton.button };
-
-        m_button_info[static_cast<unsigned int>(button)].pressed = true;
-        m_button_info[static_cast<unsigned int>(button)].location = point;
-        m_button_info[static_cast<unsigned int>(button)].elapsed.restart();
-
-        /// @todo Handle click, double-click, etc.
-      }
-      break;
-
-      case sf::Event::EventType::MouseButtonReleased:
-      {
-        sf::Vector2i point{ event.mouseButton.x, event.mouseButton.y };
-        sf::Mouse::Button button{ event.mouseButton.button };
-
-        m_button_info[static_cast<unsigned int>(button)].pressed = false;
-        m_button_info[static_cast<unsigned int>(button)].location = point;
-        m_button_info[static_cast<unsigned int>(button)].elapsed.restart();
-
-        /// @todo Handle click, double-click, etc.
-      }
-      break;
-
-      case sf::Event::EventType::MouseMoved:
-      {
-        sf::Vector2i point{ event.mouseMove.x, event.mouseMove.y };
-        set_contains_mouse(this->contains_point(point));
-
-        /// @todo Handle things like dragging, resizing
-      }
-      break;
-
-      case sf::Event::EventType::MouseLeft:
-      {
-        set_contains_mouse(false);
-
-        for (auto& button : m_button_info)
-        {
-          button.pressed = false;
-          button.location = { -1, -1 }; /// @todo Maybe fill in with last-known mouse coords?
-          button.elapsed.restart();
-        }
-      }
-      break;
-
-      default:
-        break;
-    }
-    return handle_event_before_children_(event);
-  }
-
   void Object::set_flag(std::string name, bool value)
   {
     if ((m_flags.count(name) == 0) || (m_flags[name] != value))
@@ -571,14 +487,14 @@ namespace metagui
   {
   }
 
-  EventResult Object::handle_event_before_children_(sf::Event& event)
+  Event::Result Object::handle_event_before_children_(Event& event)
   {
-    return EventResult::Ignored;
+    return Event::Result::Ignored;
   }
 
-  EventResult Object::handle_event_after_children_(sf::Event& event)
+  Event::Result Object::handle_event_after_children_(Event& event)
   {
-    return EventResult::Ignored;
+    return Event::Result::Ignored;
   }
 
   void Object::handle_set_flag_(std::string name, bool enabled)

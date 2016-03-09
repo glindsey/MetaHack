@@ -9,44 +9,59 @@ namespace metagui
   /// is similar to the SFML implementation of sf::Event.
   class Event
   {
+  public:
+    /// Enum class for results that events can return.
+    enum class Result
+    {
+      Pending,      ///< The event has not been handled by any handler yet; only for variable initialization.
+      Handled,      ///< The event was handled and should not be passed on
+      Acknowledged, ///< The event was handled, but should still be passed on
+      Ignored,      ///< The event was ignored, and should be passed on
+      Unknown       ///< The event type is unknown; further action is at handler's discretion
+    };
+
     enum class Type
     {
       Unknown,
       MemberCount
     };
 
-  public:
-    /// Static factory function that takes an SFML Event and outputs the
-    /// requested MetaGUI event.
-    static Event create(sf::Event event);
-
     /// Virtual destructor.
-    virtual ~Event();
+    virtual ~Event() {}
 
   protected:
-    /// Constructor function that takes an event type, and a boost::any
-    /// containing the appropriate information.
-    Event(Type type, boost::any data);
-
-    /// Template function to set the event data.
-    template< typename T >
-    void set_data(T data)
-    {
-      m_data = boost::any(data);
-    }
-
-    /// Template function to get the event data.
-    template< typename T >
-    T get_data()
-    {
-      return boost::any_cast<T>(m_data);
-    }
-
-  private:
-    /// Type of this event.
-    Type m_type;
-
-    /// Data for this event.
-    boost::any m_data;
+    Event() {}
   };
+
+  struct EventKeyPressed : public Event
+  {
+    EventKeyPressed(sf::Event::KeyEvent& event)
+      :
+      code(event.code),
+      alt(event.alt),
+      control(event.control),
+      shift(event.shift),
+      system(event.system)
+    {}
+
+    sf::Keyboard::Key const code;
+    bool alt;
+    bool control;
+    bool shift;
+    bool system;
+  };
+
+  struct EventResized : public Event
+  {
+    EventResized(sf::Event::SizeEvent size)
+      :
+      new_size({ size.width, size.height })
+    {}
+
+    sf::Vector2u const new_size;
+  };
+
+  /// Using declaration for an EventDelegate.
+  template< class T >
+  using EventDelegate = std::function< Event::Result(Event&) >;
 }; // end namespace metagui

@@ -129,23 +129,23 @@ App::~App()
   s_p_instance = nullptr;
 }
 
-EventResult App::handle_event(sf::Event& event)
+SFMLEventResult App::handle_sfml_event(sf::Event& event)
 {
-  EventResult result = EventResult::Ignored;
+  SFMLEventResult result = SFMLEventResult::Ignored;
 
   switch (event.type)
   {
     case sf::Event::EventType::GainedFocus:
     {
       m_has_window_focus = true;
-      result = EventResult::Handled;
+      result = SFMLEventResult::Handled;
       break;
     }
 
     case sf::Event::EventType::LostFocus:
     {
       m_has_window_focus = false;
-      result = EventResult::Handled;
+      result = SFMLEventResult::Handled;
       break;
     }
 
@@ -156,14 +156,14 @@ EventResult App::handle_event(sf::Event& event)
       m_app_window.setView(sf::View(
         sf::FloatRect(0, 0, static_cast<float>(event.size.width), static_cast<float>(event.size.height))));
 
-      result = EventResult::Acknowledged;
+      result = SFMLEventResult::Acknowledged;
       break;
     }
 
     case sf::Event::EventType::Closed:
     {
       m_is_running = false;
-      result = EventResult::Handled;
+      result = SFMLEventResult::Handled;
       break;
     }
 
@@ -175,7 +175,7 @@ EventResult App::handle_event(sf::Event& event)
           if (event.key.alt && event.key.control)
           {
             m_is_running = false;
-            result = EventResult::Handled;
+            result = SFMLEventResult::Handled;
           }
           break;
 
@@ -189,9 +189,9 @@ EventResult App::handle_event(sf::Event& event)
       break;
   }
 
-  if (result != EventResult::Handled)
+  if (result != SFMLEventResult::Handled)
   {
-    result = m_state_machine->handle_event(event);
+    result = m_state_machine->handle_sfml_event(event);
   }
 
   return result;
@@ -270,7 +270,7 @@ void App::run()
     sf::Event event;
     while (m_app_window.pollEvent(event))
     {
-      handle_event(event);
+      handle_sfml_event(event);
     }
 
     m_state_machine->execute();

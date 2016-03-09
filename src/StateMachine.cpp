@@ -102,15 +102,15 @@ bool StateMachine::render(sf::RenderTexture& texture, int frame)
   }
 }
 
-EventResult StateMachine::handle_event(sf::Event& event)
+SFMLEventResult StateMachine::handle_sfml_event(sf::Event& event)
 {
   if (pImpl->current_state == nullptr)
   {
-    return EventResult::Ignored;
+    return SFMLEventResult::Ignored;
   }
   else
   {
-    return pImpl->current_state->handle_event(event);
+    return pImpl->current_state->handle_sfml_event(event);
   }
 }
 

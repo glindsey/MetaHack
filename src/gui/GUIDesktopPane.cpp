@@ -16,23 +16,95 @@ namespace metagui
   DesktopPane::~DesktopPane()
   {}
 
-  // === PROTECTED METHODS ======================================================
-
-  EventResult DesktopPane::handle_event_before_children_(sf::Event & event)
+  SFMLEventResult DesktopPane::handle_sfml_event(sf::Event & sfml_event)
   {
-    EventResult result = EventResult::Ignored;
-    switch (event.type)
+    SFMLEventResult sfml_result = SFMLEventResult::Ignored;
+
+    switch (sfml_event.type)
     {
+      case sf::Event::EventType::KeyPressed:
+      {
+        EventKeyPressed event{ sfml_event.key };
+        handle_gui_event(event);
+        sfml_result = SFMLEventResult::Handled;
+      }
+      break;
+
       case sf::Event::EventType::Resized:
-        set_size({ event.size.width, event.size.height });
-        result = EventResult::Acknowledged;
-        break;
+      {
+        set_size({ sfml_event.size.width, sfml_event.size.height });
+        EventResized event{ sfml_event.size };
+        handle_gui_event(event);
+        sfml_result = SFMLEventResult::Acknowledged;
+      }
+      break;
+
+      case sf::Event::EventType::MouseButtonPressed:
+      {
+        sf::Vector2i point{ sfml_event.mouseButton.x, sfml_event.mouseButton.y };
+        sf::Mouse::Button button{ sfml_event.mouseButton.button };
+
+        m_button_info[static_cast<unsigned int>(button)].pressed = true;
+        m_button_info[static_cast<unsigned int>(button)].location = point;
+        m_button_info[static_cast<unsigned int>(button)].elapsed.restart();
+
+        /// @todo Handle click, double-click, etc.
+        sfml_result = SFMLEventResult::Handled;
+      }
+      break;
+
+      case sf::Event::EventType::MouseButtonReleased:
+      {
+        sf::Vector2i point{ sfml_event.mouseButton.x, sfml_event.mouseButton.y };
+        sf::Mouse::Button button{ sfml_event.mouseButton.button };
+
+        m_button_info[static_cast<unsigned int>(button)].pressed = false;
+        m_button_info[static_cast<unsigned int>(button)].location = point;
+        m_button_info[static_cast<unsigned int>(button)].elapsed.restart();
+
+        /// @todo Handle click, double-click, etc.
+        sfml_result = SFMLEventResult::Handled;
+      }
+      break;
+
+      case sf::Event::EventType::MouseMoved:
+      {
+        sf::Vector2i point{ sfml_event.mouseMove.x, sfml_event.mouseMove.y };
+        set_contains_mouse(this->contains_point(point));
+
+        /// @todo Handle things like dragging, resizing
+        sfml_result = SFMLEventResult::Handled;
+      }
+      break;
+
+      case sf::Event::EventType::MouseLeft:
+      {
+        set_contains_mouse(false);
+
+        for (auto& button : m_button_info)
+        {
+          button.pressed = false;
+          button.location = { -1, -1 }; /// @todo Maybe fill in with last-known mouse coords?
+          button.elapsed.restart();
+        }
+        sfml_result = SFMLEventResult::Handled;
+      }
+      break;
 
       default:
         break;
     }
 
-    return result;
+    return sfml_result;
+  }
+
+  // === PROTECTED METHODS ======================================================
+
+  Event::Result DesktopPane::handle_event_before_children_(EventResized& event)
+  {
+    Event::Result result = Event::Result::Ignored;
+    set_size({ event.new_size.x, event.new_size.y });
+    return Event::Result::Acknowledged;
   }
 
   void DesktopPane::render_self_before_children_(sf::RenderTexture& texture, int frame)

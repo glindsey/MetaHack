@@ -162,7 +162,7 @@
     <ClInclude Include="include\ConfigSettings.h" />
     <ClInclude Include="include\Direction.h" />
     <ClInclude Include="include\ErrorHandler.h" />
-    <ClInclude Include="include\EventHandler.h" />
+    <ClInclude Include="include\SFMLEventHandler.h" />
     <ClInclude Include="include\GameObject.h" />
     <ClInclude Include="include\GameState.h" />
     <ClInclude Include="include\Gender.h" />
@@ -256,7 +256,6 @@
     <ClCompile Include="src\Gender.cpp" />
     <ClCompile Include="src\gui\GUICloseHandle.cpp" />
     <ClCompile Include="src\gui\GUIDesktopPane.cpp" />
-    <ClCompile Include="src\gui\GUIEvent.cpp" />
     <ClCompile Include="src\gui\GUILabel.cpp" />
     <ClCompile Include="src\gui\GUIObject.cpp" />
     <ClCompile Include="src\gui\GUIPane.cpp" />

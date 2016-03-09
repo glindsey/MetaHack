@@ -9,7 +9,6 @@ AppStateMainMenu::AppStateMainMenu(StateMachine& state_machine, sf::RenderWindow
   State{ state_machine },
   m_desktop{ "mainMenuDesktop", app_window.getSize() }
 {
-
 }
 
 AppStateMainMenu::~AppStateMainMenu()
@@ -29,11 +28,12 @@ bool AppStateMainMenu::render(sf::RenderTexture& texture, int frame)
   return true;
 }
 
-EventResult AppStateMainMenu::handle_event(sf::Event& event)
+SFMLEventResult AppStateMainMenu::handle_sfml_event(sf::Event& event)
 {
-  EventResult result = m_desktop.handle_event(event);
+  /// @todo This is ugly, fix later
+  SFMLEventResult result = static_cast<SFMLEventResult>(m_desktop.handle_sfml_event(event));
 
-  if (result != EventResult::Handled)
+  if (result != SFMLEventResult::Handled)
   {
     switch (event.type)
     {
@@ -44,7 +44,7 @@ EventResult AppStateMainMenu::handle_event(sf::Event& event)
             // Switch to game state.
             this->change_to("AppStateGameMode");
 
-            result = EventResult::Handled;
+            result = SFMLEventResult::Handled;
             break;
 
           default:

@@ -3,8 +3,10 @@
 
 #include "stdafx.h"
 
-#include "EventHandler.h"
 #include "LuaObject.h"
+#include "SFMLEventHandler.h"
+
+#include "gui/GUIEvent.h"
 
 // Forward declarations
 class MessageLog;
@@ -12,15 +14,18 @@ class MessageLogView;
 class StateMachine;
 class TileSheet;
 
-class App : public EventHandler, public boost::noncopyable
+class App : public SFMLEventHandler, public boost::noncopyable
 {
 public:
   explicit App(sf::RenderWindow& app_window);
   virtual ~App();
 
   void run();
-  EventResult handle_event(sf::Event& event);
+
+  SFMLEventResult handle_sfml_event(sf::Event& event);
+
   sf::RenderWindow& get_window();
+
   bool has_window_focus();
 
   /// Get the random number generator.

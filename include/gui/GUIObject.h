@@ -3,9 +3,9 @@
 
 #include "stdafx.h"
 
-#include "EventHandler.h"
 #include "GUIEvent.h"
 #include "Renderable.h"
+#include "SFMLEventHandler.h"
 
 #include "Visitor.h"
 
@@ -55,21 +55,8 @@ namespace metagui
   /// Virtual superclass of all GUI objects on screen.
   /// @todo Should child objects store Z-order?
   class Object :
-    public EventHandler,
     public RenderableToTexture
   {
-    struct MouseButtonInfo
-    {
-      /// Whether this button is pressed.
-      bool pressed;
-
-      /// Absolute location of the press or release.
-      sf::Vector2i location;
-
-      /// Time elapsed since the last button state change.
-      sf::Clock elapsed;
-    };
-
   public:
     explicit Object(std::string name, sf::Vector2i location = sf::Vector2i(0, 0), sf::Vector2u size = sf::Vector2u(0, 0));
     Object(std::string name, sf::IntRect dimensions);
@@ -253,59 +240,34 @@ namespace metagui
     /// event down to each child in sequence, stopping only if one of them
     /// returns Handled. If the event still isn't Handled after all children
     /// have seen it, handle_event_after_children_ is called.
-    virtual EventResult handle_event(sf::Event& event) override final;
-
-    // === TESTING CODE =======================================================
-    template<class T>
-    EventResult Object::handle(T& event)
+    template< typename T >
+    Event::Result Object::handle_gui_event(T& event)
     {
-      EventResult result = EventResult::Ignored;
+      //CLOG(TRACE, "GUI") << "handle_event called with event type " << typeid(T).name();
+
+      Event::Result result = Event::Result::Ignored;
 
       if (m_disabled_cached == false)
       {
-        result = handle_before_children(event);
-        if (result != EventResult::Handled)
+        result = handle_event_before_children_(event);
+        if (result != Event::Result::Handled)
         {
           for (auto& z_pair : m_zorder_map)
           {
             auto& child = m_children.at(z_pair.second);
-            result = child->handle(event);
-            if (result == EventResult::Handled) break;
+            result = child->handle_gui_event(event);
+            if (result == Event::Result::Handled) break;
           }
         }
 
-        if (result != EventResult::Handled)
+        if (result != Event::Result::Handled)
         {
-          result = handle_after_children_(event);
+          result = handle_event_after_children_(event);
         }
       }
 
       return result;
     }
-
-    template<class T>
-    EventResult handle_before_children(T& event)
-    {
-      /// @todo WRITE ME
-      return handle_before_children_(event);
-    }
-
-    template<class T>
-    EventResult handle_before_children_(T& event) { return EventResult::Ignored; }
-
-    template<class T>
-    EventResult handle_after_children_(T& event) { return EventResult::Ignored; }
-    // ========================================================================
-
-    /// Called before an event is passed along to child objects.
-    /// After it does what it needs to do, calls the virtual method
-    /// handle_event_before_children_().
-    ///
-    /// @note If this method returns EventResult::Handled, event processing
-    ///       will stop here and the children will never see the event! To
-    ///       process it here *and* have children see it, you should return
-    ///       EventResult::Acknowledged.
-    EventResult handle_event_before_children(sf::Event& event);
 
     /// Set/clear an object flag.
     /// Calls the virtual method handle_set_flag_ if the flag has been
@@ -354,19 +316,19 @@ namespace metagui
     /// Default behavior is to do nothing.
     virtual void render_self_after_children_(sf::RenderTexture& texture, int frame);
 
-    /// Called before an event is passed along to child objects.
-    /// Default behavior is to return EventResult::Ignored.
-    /// @note If this method returns EventResult::Handled, event processing
+    /// Called before a GUI event is passed along to child objects.
+    /// Default behavior is to return metagui::Event::Result::Ignored.
+    /// @note If this method returns metagui::Event::Result::Handled, event processing
     ///       will stop here and the children will never see the event! To
     ///       process it here *and* have children see it, you should return
-    ///       EventResult::Acknowledged.
-    virtual EventResult handle_event_before_children_(sf::Event& event);
+    ///       metagui::Event::Result::Acknowledged.
+    virtual Event::Result handle_event_before_children_(Event& event);
 
-    /// Called after an event is passed along to child objects.
+    /// Called after a GUI event is passed along to child objects.
     /// This method will only be called if none of the child objects returns
-    /// EventResult::Handled when the event is passed to it.
-    /// Default behavior is to return EventResult::Ignored.
-    virtual EventResult handle_event_after_children_(sf::Event& event);
+    /// metagui::Event::Result::Handled when the event is passed to it.
+    /// Default behavior is to return metagui::Event::Result::Ignored.
+    virtual Event::Result handle_event_after_children_(Event& event);
 
     /// Handles a flag being set/cleared.
     /// This method is called by set_flag() if the value was changed.
@@ -415,9 +377,6 @@ namespace metagui
 
     /// Flag indicating whether the mouse is currently over this object.
     bool m_contains_mouse;
-
-    /// An array of data for each possible mouse button.
-    std::array< MouseButtonInfo, sf::Mouse::ButtonCount > m_button_info;
 
     /// Background texture.
     std::unique_ptr<sf::RenderTexture> m_bg_texture;

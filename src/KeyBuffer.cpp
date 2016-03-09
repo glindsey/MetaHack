@@ -92,18 +92,18 @@ KeyBuffer::~KeyBuffer()
 
 #define INSERT(x, y)                                               \
 {                                                                  \
-  pImpl->set_character((key.shift ? x : y));                        \
-  result = EventResult::Handled;                                   \
+  pImpl->set_character((event.shift ? x : y));                     \
+  result = metagui::Event::Result::Handled;                        \
   break;                                                           \
 }
 
-EventResult KeyBuffer::handle_key_press(sf::Event::KeyEvent& key)
+metagui::Event::Result KeyBuffer::handle_key_press(metagui::EventKeyPressed& event)
 {
-  EventResult result = EventResult::Ignored;
+  metagui::Event::Result result = metagui::Event::Result::Ignored;
 
-  if (!key.control && !key.alt)
+  if (!event.control && !event.alt)
   {
-    switch (key.code)
+    switch (event.code)
     {
       case sf::Keyboard::Key::Tilde:      INSERT('~', '`');
       case sf::Keyboard::Key::Num1:       INSERT('!', '1');
@@ -155,34 +155,34 @@ EventResult KeyBuffer::handle_key_press(sf::Event::KeyEvent& key)
       case sf::Keyboard::Key::Space:      INSERT(' ', ' ');
       case sf::Keyboard::Key::Left:
         pImpl->left_cursor();
-        result = EventResult::Handled;
+        result = metagui::Event::Result::Handled;
         break;
       case sf::Keyboard::Key::Right:
         pImpl->right_cursor();
-        result = EventResult::Handled;
+        result = metagui::Event::Result::Handled;
         break;
       case sf::Keyboard::Key::BackSpace:
         if (pImpl->left_cursor())
         {
           pImpl->del_character();
         }
-        result = EventResult::Handled;
+        result = metagui::Event::Result::Handled;
         break;
       case sf::Keyboard::Key::Insert:
         pImpl->replacing = !(pImpl->replacing);
-        result = EventResult::Handled;
+        result = metagui::Event::Result::Handled;
         break;
       case sf::Keyboard::Key::Delete:
         pImpl->del_character();
-        result = EventResult::Handled;
+        result = metagui::Event::Result::Handled;
         break;
       case sf::Keyboard::Key::Home:
         pImpl->cursor_position = 0;
-        result = EventResult::Handled;
+        result = metagui::Event::Result::Handled;
         break;
       case sf::Keyboard::Key::End:
         pImpl->cursor_position = pImpl->buffer.size();
-        result = EventResult::Handled;
+        result = metagui::Event::Result::Handled;
         break;
       case sf::Keyboard::Key::Divide:     INSERT('/', '/');
       case sf::Keyboard::Key::Multiply:   INSERT('*', '*');
@@ -200,7 +200,7 @@ EventResult KeyBuffer::handle_key_press(sf::Event::KeyEvent& key)
       case sf::Keyboard::Key::Numpad9:    INSERT('9', '9');
       case sf::Keyboard::Key::Return:
         pImpl->enter = true;
-        result = EventResult::Handled;
+        result = metagui::Event::Result::Handled;
         break;
       default: break;
     }
