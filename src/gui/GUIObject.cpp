@@ -10,7 +10,7 @@
 
 namespace metagui
 {
-  Object::Object(std::string name, sf::Vector2i location, sf::Vector2u size)
+  Object::Object(StringKey name, sf::Vector2i location, sf::Vector2u size)
   {
     SET_UP_LOGGER("GUI", true);
 
@@ -19,7 +19,7 @@ namespace metagui
     set_size(size);
   }
 
-  Object::Object(std::string name, sf::IntRect dimensions)
+  Object::Object(StringKey name, sf::IntRect dimensions)
   {
     m_name = name;
     set_relative_dimensions(dimensions);
@@ -30,7 +30,7 @@ namespace metagui
     //dtor
   }
 
-  std::string Object::get_name()
+  StringKey Object::get_name()
   {
     return m_name;
   }
@@ -98,12 +98,12 @@ namespace metagui
     }
   }
 
-  void Object::set_text(std::string text)
+  void Object::set_text(StringDisplay text)
   {
     m_text = text;
   }
 
-  std::string Object::get_text()
+  StringDisplay Object::get_text()
   {
     return m_text;
   }
@@ -216,12 +216,11 @@ namespace metagui
   {
     ASSERT_CONDITION(child);
 
-    std::string name = child->get_name();
+    StringKey name = child->get_name();
 
     if (child_exists(name))
     {
-      std::string message = "Tried to add already-present child \"" + name + "\" of GUI object \"" + get_name() + "\"";
-      throw std::runtime_error(message.c_str());
+      throw std::runtime_error("Tried to add already-present child \"" + name + "\" of GUI object \"" + get_name() + "\"");
     }
 
     Object& child_ref = *(child.get());
@@ -254,23 +253,22 @@ namespace metagui
     return add_child(std::move(child), z_order);
   }
 
-  bool Object::child_exists(std::string name)
+  bool Object::child_exists(StringKey name)
   {
     return (m_children.count(name) > 0);
   }
 
-  Object& Object::get_child(std::string name)
+  Object& Object::get_child(StringKey name)
   {
     if (child_exists(name))
     {
       return *(m_children.at(name).get());
     }
 
-    std::string message = "Tried to get non-existent child \"" + name + "\" of GUI object \"" + get_name() + "\"";
-    throw std::runtime_error(message.c_str());
+    throw std::runtime_error("Tried to get non-existent child \"" + name + "\" of GUI object \"" + get_name() + "\"");
   }
 
-  std::unique_ptr<Object> Object::remove_child(std::string name)
+  std::unique_ptr<Object> Object::remove_child(StringKey name)
   {
     if (child_exists(name))
     {
@@ -386,7 +384,7 @@ namespace metagui
     }
   }
 
-  void Object::set_flag(std::string name, bool value)
+  void Object::set_flag(StringKey name, bool value)
   {
     if ((m_flags.count(name) == 0) || (m_flags[name] != value))
     {
@@ -395,7 +393,7 @@ namespace metagui
     }
   }
 
-  bool Object::get_flag(std::string name, bool default_value)
+  bool Object::get_flag(StringKey name, bool default_value)
   {
     if (m_flags.count(name) == 0)
     {
@@ -404,7 +402,7 @@ namespace metagui
     return m_flags[name];
   }
 
-  void Object::handle_set_flag(std::string name, bool value)
+  void Object::handle_set_flag(StringKey name, bool value)
   {
     if (name == "hidden")
     {
@@ -522,7 +520,7 @@ namespace metagui
     return Event::Result::Ignored;
   }
 
-  void Object::handle_set_flag_(std::string name, bool enabled)
+  void Object::handle_set_flag_(StringKey name, bool enabled)
   {}
 
   void Object::handle_parent_size_changed_(sf::Vector2u parent_size)

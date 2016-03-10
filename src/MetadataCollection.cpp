@@ -5,9 +5,9 @@
 #include "Metadata.h"
 #include "New.h"
 
-boost::ptr_unordered_map<std::string, MetadataCollection> MetadataCollection::m_metacollection;
+boost::ptr_unordered_map<StringKey, MetadataCollection> MetadataCollection::m_metacollection;
 
-MetadataCollection::MetadataCollection(std::string category)
+MetadataCollection::MetadataCollection(StringKey category)
   :
   m_category{ category }
 {}
@@ -15,12 +15,12 @@ MetadataCollection::MetadataCollection(std::string category)
 MetadataCollection::~MetadataCollection()
 {}
 
-std::string MetadataCollection::get_category()
+StringKey MetadataCollection::get_category()
 {
   return m_category;
 }
 
-Metadata& MetadataCollection::get(std::string type)
+Metadata& MetadataCollection::get(StringKey type)
 {
   if (type.empty())
   {
@@ -35,7 +35,7 @@ Metadata& MetadataCollection::get(std::string type)
   return m_collection.at(type);
 }
 
-MetadataCollection& MetadataCollection::get_collection(std::string category)
+MetadataCollection& MetadataCollection::get_collection(StringKey category)
 {
   if (m_metacollection.count(category) == 0)
   {

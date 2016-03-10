@@ -8,7 +8,7 @@
 
 namespace metagui
 {
-  Label::Label(std::string name, sf::Vector2i location)
+  Label::Label(StringKey name, sf::Vector2i location)
     :
     Object(name, location)
   {}
@@ -27,8 +27,8 @@ namespace metagui
     sf::Vector2f offset{ 3.0f, 3.0f };
 
     /// @todo Flesh this out; right now it is EXTREMELY rudimentary
-    std::string str = get_text();
-    if (!str.empty())
+    StringDisplay str = get_text();
+    if (!str.isEmpty())
     {
       sf::Text text{ str, the_default_font, Settings.get<unsigned int>("text_default_size") };
       text.setColor(Settings.get<sf::Color>("text_color"));

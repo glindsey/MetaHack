@@ -52,10 +52,10 @@ void StatusArea::render_contents_(sf::RenderTexture& texture, int frame)
   if (player != MU)
   {
     // Render player name
-    std::string name = player->get_proper_name();
+    StringDisplay name = player->get_proper_name();
     name[0] = std::toupper(name[0], std::locale());
 
-    std::string type = player->get_display_name();
+    StringDisplay type = player->get_display_name();
     type[0] = std::toupper(type[0], std::locale());
 
     render_text.setString(name + " the " + type);
@@ -86,7 +86,7 @@ void StatusArea::render_contents_(sf::RenderTexture& texture, int frame)
       render_text.setColor(text_danger_color);
     }
 
-    std::string hp_string = boost::lexical_cast<std::string>(hp) + "/" + boost::lexical_cast<std::string>(max_hp);
+    StringDisplay hp_string = hp + "/" + max_hp;
 
     render_text.setPosition(origin.x + 30, origin.y + line_spacing);
     render_text.setString(hp_string);
@@ -108,7 +108,7 @@ void StatusArea::render_contents_(sf::RenderTexture& texture, int frame)
   return;
 }
 
-void StatusArea::render_attribute(sf::RenderTarget& target, std::string abbrev, std::string name, sf::Vector2f location)
+void StatusArea::render_attribute(sf::RenderTarget& target, StringDisplay abbrev, StringDisplay name, sf::Vector2f location)
 {
   sf::Text render_text;
   sf::Color text_color = Settings.get<sf::Color>("text_color");
@@ -123,7 +123,7 @@ void StatusArea::render_attribute(sf::RenderTarget& target, std::string abbrev, 
   render_text.setString(abbrev + ":");
   target.draw(render_text);
 
-  std::string attr_string = boost::lexical_cast<std::string>(player->get_property<int>(name));
+  StringDisplay attr_string = std::to_string(player->get_property<int>(name));
 
   render_text.setColor(text_color);
   render_text.setPosition(location.x + 40, location.y);
@@ -131,7 +131,7 @@ void StatusArea::render_attribute(sf::RenderTarget& target, std::string abbrev, 
   target.draw(render_text);
 }
 
-std::string StatusArea::get_test_label()
+StringDisplay StatusArea::get_test_label()
 {
   return "Testing GUILabel";
 }

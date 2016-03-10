@@ -76,9 +76,9 @@ void AppStateGameMode::execute()
   if (debug_buffer.get_enter())
   {
     /// Call the Lua interpreter with the command.
-    std::string contents = debug_buffer.get_buffer();
+    StringDisplay contents = debug_buffer.get_buffer();
     the_message_log.add("> " + contents);
-    if (luaL_dostring(the_lua_state, contents.c_str()))
+    if (luaL_dostring(the_lua_state, contents.toAnsiString().c_str()))
     {
       the_message_log.add(lua_tostring(the_lua_state, -1));
     }
@@ -178,9 +178,9 @@ SFMLEventResult AppStateGameMode::handle_sfml_event(sf::Event& event)
   return result;
 }
 
-std::string const& AppStateGameMode::get_name()
+StringKey const& AppStateGameMode::get_name()
 {
-  static std::string name = std::string("AppStateGameMode");
+  static StringKey name = "AppStateGameMode";
   return name;
 }
 

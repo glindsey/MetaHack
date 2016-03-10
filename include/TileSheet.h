@@ -14,7 +14,7 @@ public:
 
   /// Load a tile collection from disk and find a place to put them.
   /// @return The location that the tiles were placed on the sheet.
-  sf::Vector2u load_collection(std::string const& filename);
+  sf::Vector2u load_collection(FileName const& filename);
 
   /// Get a particular tile from the sheet.
   /// @warning Assumes tile is within the bounds of the loaded texture,

@@ -15,9 +15,9 @@ protected:
   virtual void render_contents_(sf::RenderTexture& texture, int frame) override;
 
 private:
-  void render_attribute(sf::RenderTarget& target, std::string abbrev, std::string name, sf::Vector2f location);
+  void render_attribute(sf::RenderTarget& target, StringDisplay abbrev, StringDisplay name, sf::Vector2f location);
 
-  std::string get_test_label();
+  StringDisplay get_test_label();
 
   struct Impl;
   std::unique_ptr<Impl> pImpl;

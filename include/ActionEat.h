@@ -14,17 +14,17 @@ class ActionEat
     ACTION_TRAIT(can_be_subject_verb_object)
 
 public:
-  std::string const get_verbed() const override
+  StringDisplay const get_verbed() const override
   {
     return "ate";
   }
 
-  std::string const get_verb_pp() const override
+  StringDisplay const get_verb_pp() const override
   {
     return "eaten";
   }
 
-  std::string const get_verbable() const override
+  StringDisplay const get_verbable() const override
   {
     return "edible";
   }

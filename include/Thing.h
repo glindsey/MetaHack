@@ -59,8 +59,8 @@ public:
   /// By default, returns false. Overridden by Entity class.
   virtual bool is_player() const;
 
-  std::string const& get_type() const;
-  std::string const& get_parent_type() const;
+  StringKey const& get_type() const;
+  StringKey const& get_parent_type() const;
 
   /// Return whether a Thing is wielded by this Entity.
   /// This is used by InventoryArea to show wielded status.
@@ -109,7 +109,7 @@ public:
   bool do_attack(ThingRef thing, unsigned int& action_time);
 
   template<typename T>
-  T get_intrinsic(std::string key, T default_value = T()) const
+  T get_intrinsic(StringKey key, T default_value = T()) const
   {
     return pImpl->metadata.get_intrinsic<T>(key, default_value);
   }
@@ -121,7 +121,7 @@ public:
   /// @param default_value  Default value to use, if any.
   /// @return The property (or default) value for that key.
   template<typename T>
-  T get_property(std::string key, T default_value = T())
+  T get_property(StringKey key, T default_value = T())
   {
     PropertyDictionary& properties = pImpl->properties;
 
@@ -138,7 +138,7 @@ public:
   }
 
   template<typename T>
-  bool set_property(std::string key, T value)
+  bool set_property(StringKey key, T value)
   {
     PropertyDictionary& properties = pImpl->properties;
     bool existed = properties.contains(key);
@@ -148,7 +148,7 @@ public:
   }
 
   template<typename T>
-  void add_to_property(std::string key, T add_value)
+  void add_to_property(StringKey key, T add_value)
   {
     PropertyDictionary& properties = pImpl->properties;
     T existing_value = properties.get<T>(key);
@@ -194,10 +194,10 @@ public:
   void find_seen_tiles();
 
   /// Get the remembered tile type at the specified coordinates.
-  std::string get_memory_at(int x, int y) const;
+  StringKey get_memory_at(int x, int y) const;
 
   /// Get the remembered tile type at the specified coordinates.
-  std::string get_memory_at(sf::Vector2i coords) const;
+  StringKey get_memory_at(sf::Vector2i coords) const;
 
   /// Add the memory of a particular tile to a VertexArray.
   void add_memory_vertices_to(sf::VertexArray& vertices, int x, int y);
@@ -237,10 +237,10 @@ public:
   unsigned int get_bodypart_number(BodyPart part) const;
 
   /// Get the appropriate body part name for the Entity.
-  std::string get_bodypart_name(BodyPart part) const;
+  StringDisplay get_bodypart_name(BodyPart part) const;
 
   /// Get the appropriate body part plural for the Entity.
-  std::string get_bodypart_plural(BodyPart part) const;
+  StringDisplay get_bodypart_plural(BodyPart part) const;
 
   /// Get the appropriate description for a body part.
   /// This takes the body part name and the number referencing the particular
@@ -250,7 +250,7 @@ public:
   /// In most cases the default implementation here will work, but if a
   /// creature has (for example) a strange configuration of limbs this can be
   /// overridden.
-  std::string get_bodypart_description(BodyPart part, unsigned int number);
+  StringDisplay get_bodypart_description(BodyPart part, unsigned int number);
 
   /// Returns true if a particular Action can be performed on this Thing by
   /// the specified Thing.
@@ -274,16 +274,16 @@ public:
   /// Return this thing's description.
   /// Adds adjective qualifiers (such as "fireproof", "waterproof", etc.)
   /// @todo Add adjective qualifiers.s
-  std::string get_display_name() const;
+  StringDisplay get_display_name() const;
 
   /// Return this object's plural.
-  std::string get_display_plural() const;
+  StringDisplay get_display_plural() const;
 
   /// Get the thing's proper name (if any).
-  std::string get_proper_name();
+  StringDisplay get_proper_name();
 
   /// Set this thing's proper name.
-  void set_proper_name(std::string name);
+  void set_proper_name(StringDisplay name);
 
   /// Return a string that identifies this thing.
   /// If it IS the player, it'll return "you".
@@ -292,7 +292,7 @@ public:
   /// @param definite   If true, uses definite articles.
   ///                   If false, uses indefinite articles.
   ///                   Defaults to true.
-  std::string get_you_or_identifying_string(bool definite = true);
+  StringDisplay get_you_or_identifying_string(bool definite = true);
 
   /// Return a string that identifies this thing.
   /// If it matches the object passed in as "other", it'll return
@@ -303,7 +303,7 @@ public:
   /// @param definite   If true, uses definite articles.
   ///                   If false, uses indefinite articles.
   ///                   Defaults to true.
-  std::string get_self_or_identifying_string(ThingRef other, bool definite = true);
+  StringDisplay get_self_or_identifying_string(ThingRef other, bool definite = true);
 
   /// Return a string that identifies this thing.
   /// Returns "the/a/an" and a description of the thing, such as
@@ -314,14 +314,14 @@ public:
   /// @param definite   If true, uses definite articles.
   ///                   If false, uses indefinite articles.
   ///                   Defaults to true.
-  std::string get_identifying_string(bool definite = true);
+  StringDisplay get_identifying_string(bool definite = true);
 
   /// Return a string that identifies this thing without using possessives.
   /// The same as get_identifying_string, but without using any possessives.
   /// @param definite   If true, uses definite articles.
   ///                   If false, uses indefinite articles.
   ///                   Defaults to true.
-  std::string get_identifying_string_without_possessives(bool definite = true);
+  StringDisplay get_identifying_string_without_possessives(bool definite = true);
 
   /// Choose the proper possessive form
   /// For a Thing, this is simply "the", as Things cannot own things.
@@ -330,7 +330,7 @@ public:
   /// it returns get_name() + "'s".
   /// @note If you want a possessive pronoun like his/her/its/etc., use
   /// get_possessive_adjective().
-  std::string get_possessive();
+  StringDisplay get_possessive();
 
   /// Choose which verb form to use based on first/second/third person.
   /// This function checks to see if this Thing is currently designated as
@@ -339,26 +339,26 @@ public:
   /// string passed as verb3.
   /// @param verb2 The second person or plural verb form, such as "shake"
   /// @param verb3 The third person verb form, such as "shakes"
-  std::string const& choose_verb(std::string const& verb2,
-                                 std::string const& verb3);
+  StringDisplay const& choose_verb(StringDisplay const& verb2,
+                                   StringDisplay const& verb3);
 
   /// Return this thing's mass.
   int get_mass();
 
   /// Get the appropriate subject pronoun for the Thing.
-  std::string const& get_subject_pronoun() const;
+  StringDisplay const& get_subject_pronoun() const;
 
   /// Get the appropriate object pronoun for the Thing.
-  std::string const& get_object_pronoun() const;
+  StringDisplay const& get_object_pronoun() const;
 
   /// Get the appropriate reflexive pronoun for the Thing.
-  std::string const& get_reflexive_pronoun() const;
+  StringDisplay const& get_reflexive_pronoun() const;
 
   /// Get the appropriate possessive adjective for the Thing.
-  std::string const& get_possessive_adjective() const;
+  StringDisplay const& get_possessive_adjective() const;
 
   /// Get the appropriate possessive pronoun for the Thing.
-  std::string const& get_possessive_pronoun() const;
+  StringDisplay const& get_possessive_pronoun() const;
 
   /// Return the coordinates of the tile representing the thing.
   sf::Vector2u get_tile_sheet_coords(int frame);
@@ -429,7 +429,7 @@ public:
   void perform_action_collided_with(ThingRef thing);
 
   /// Perform an action when this thing collides with a wall.
-  void perform_action_collided_with_wall(Direction d, std::string tile_type);
+  void perform_action_collided_with_wall(Direction d, StringKey tile_type);
 
   /// Perform the effects of being a object of a particular action.
   /// @param action   The action to be the target of.
@@ -509,7 +509,7 @@ private:
   void initialize();
 
   /// Get a reference to this Entity's map memory.
-  std::vector<std::string>& get_map_memory();
+  std::vector<StringKey>& get_map_memory();
 
   /// Perform the recursive visibility scan for an octant.
   /// Used by find_seen_tiles.

@@ -63,7 +63,7 @@ App::App(sf::RenderWindow& app_window)
 
   // Create the default fonts.
   m_default_font.reset(NEW sf::Font());
-  std::string font_name = "resources/fonts/" + Settings.get<std::string>("font_name_default") + ".ttf";
+  FileName font_name = "resources/fonts/" + Settings.get<std::string>("font_name_default") + ".ttf";
   if (m_default_font->loadFromFile(font_name) == false)
   {
     CLOG(FATAL, "App") << "Could not load the default font";

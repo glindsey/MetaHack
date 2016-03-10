@@ -24,12 +24,12 @@ class Metadata
   friend class MetadataCollection;
 
 public:
-  Metadata(MetadataCollection& collection, std::string type);
+  Metadata(MetadataCollection& collection, StringKey type);
   virtual ~Metadata();
 
   MetadataCollection& get_collection();
 
-  std::string const& get_type() const;
+  StringKey const& get_type() const;
 
   sf::Vector2u get_tile_coords();
 
@@ -86,70 +86,70 @@ public:
                                      sf::Vector2u default_result = sf::Vector2u(0, 0));
 
   template <typename T>
-  T get_intrinsic(std::string name, T default_value = T())
+  T get_intrinsic(StringKey name, T default_value = T())
   {
     return static_cast<T>(get_intrinsic_value(name, default_value));
   }
 
-  template<> bool get_intrinsic(std::string name, bool default_value)
+  template<> bool get_intrinsic(StringKey name, bool default_value)
   {
     return get_intrinsic_bool(name, default_value);
   }
 
-  template<> std::string get_intrinsic(std::string name, std::string default_value)
+  template<> std::string get_intrinsic(StringKey name, std::string default_value)
   {
     return get_intrinsic_string(name, default_value);
   }
 
-  bool get_intrinsic_bool(std::string name, bool default_value);
-  double get_intrinsic_value(std::string name, double default_value);
-  std::string get_intrinsic_string(std::string name, std::string default_value);
+  bool get_intrinsic_bool(StringKey name, bool default_value);
+  double get_intrinsic_value(StringKey name, double default_value);
+  std::string get_intrinsic_string(StringKey name, std::string default_value);
 
   template <typename T>
-  T get_default(std::string name, T default_value = T())
+  T get_default(StringKey name, T default_value = T())
   {
     return static_cast<T>(get_default_value(name, default_value));
   }
 
-  template<> bool get_default(std::string name, bool default_value)
+  template<> bool get_default(StringKey name, bool default_value)
   {
     return get_default_bool(name, default_value);
   }
 
-  template<> std::string get_default(std::string name, std::string default_value)
+  template<> std::string get_default(StringKey name, std::string default_value)
   {
     return get_default_string(name, default_value);
   }
 
-  template<> IntegerRange get_default(std::string name, IntegerRange default_value)
+  template<> IntegerRange get_default(StringKey name, IntegerRange default_value)
   {
     return get_default_range(name, default_value);
   }
 
-  bool get_default_bool(std::string name, bool default_value);
-  double get_default_value(std::string name, double default_value);
-  std::string get_default_string(std::string name, std::string default_value);
-  IntegerRange get_default_range(std::string name, IntegerRange default_value);
+  bool get_default_bool(StringKey name, bool default_value);
+  double get_default_value(StringKey name, double default_value);
+  std::string get_default_string(StringKey name, std::string default_value);
+  IntegerRange get_default_range(StringKey name, IntegerRange default_value);
 
   template <typename T>
-  void set_intrinsic(std::string name, T value)
+  void set_intrinsic(StringKey name, T value)
   {
     set_intrinsic_value(name, static_cast<double>(value));
   }
 
-  template<> void set_intrinsic(std::string name, bool value)
+  template<> void set_intrinsic(StringKey name, bool value)
   {
     return set_intrinsic_bool(name, value);
   }
 
-  template<> void set_intrinsic(std::string name, std::string value)
+  template<> void set_intrinsic(StringKey name, std::string value)
   {
     return set_intrinsic_string(name, value);
   }
 
-  void set_intrinsic_bool(std::string name, bool value);
-  void set_intrinsic_value(std::string name, double value);
-  void set_intrinsic_string(std::string name, std::string value);
+  void set_intrinsic_bool(StringKey name, bool value);
+  void set_intrinsic_value(StringKey name, double value);
+  void set_intrinsic_string(StringKey name, std::string value);
 
 protected:
 
@@ -158,7 +158,7 @@ private:
   MetadataCollection& m_collection;
 
   /// The type associated with this metadata.
-  std::string m_type;
+  StringKey m_type;
 };
 
 #endif // METADATA_H

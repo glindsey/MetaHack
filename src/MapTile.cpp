@@ -23,7 +23,7 @@ ThingRef MapTile::get_tile_contents() const
   return m_tile_contents;
 }
 
-std::string MapTile::get_display_name() const
+StringDisplay MapTile::get_display_name() const
 {
   return m_p_metadata->get_intrinsic<std::string>("name");
 }
@@ -143,12 +143,12 @@ void MapTile::draw_to(sf::RenderTarget& target,
   target.draw(rectangle);
 }
 
-void MapTile::set_tile_type(std::string type)
+void MapTile::set_tile_type(StringKey type)
 {
   m_p_metadata = &(m_p_metadata->get_collection().get(type));
 }
 
-std::string MapTile::get_tile_type() const
+StringKey MapTile::get_tile_type() const
 {
   return m_p_metadata->get_type();
 }

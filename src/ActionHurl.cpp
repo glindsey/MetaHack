@@ -8,7 +8,7 @@ ACTION_SRC_BOILERPLATE(ActionHurl, "hurl", "throw")
 
 Action::StateResult ActionHurl::do_prebegin_work_(AnyMap& params)
 {
-  std::string message;
+  StringDisplay message;
   auto subject = get_subject();
   auto object = get_object();
   auto new_direction = get_target_direction();
@@ -73,7 +73,7 @@ Action::StateResult ActionHurl::do_prebegin_work_(AnyMap& params)
 Action::StateResult ActionHurl::do_begin_work_(AnyMap& params)
 {
   auto result = StateResult::Failure();
-  std::string message;
+  StringDisplay message;
   auto subject = get_subject();
   auto object = get_object();
   auto direction = get_target_direction();

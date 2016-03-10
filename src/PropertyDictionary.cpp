@@ -25,9 +25,9 @@ void PropertyDictionary::populate_from(pt::ptree const& tree, std::string prefix
 
     std::smatch str_matches;
 
-    std::string key = prefix + child_tree.first;
-    std::string value = child_tree.second.get_value<std::string>();
-    std::string lowercase_value = boost::algorithm::to_lower_copy(value);
+    StringKey key = prefix + child_tree.first;
+    StringKey value = child_tree.second.get_value<std::string>();
+    StringKey lowercase_value = boost::algorithm::to_lower_copy(value);
     boost::algorithm::to_lower(key);
 
     boost::trim(key);
@@ -174,7 +174,7 @@ void PropertyDictionary::populate_from(pt::ptree const& tree, std::string prefix
   }
 }
 
-bool PropertyDictionary::contains(std::string key) const
+bool PropertyDictionary::contains(StringKey key) const
 {
   return (m_dictionary.count(key) != 0);
 }

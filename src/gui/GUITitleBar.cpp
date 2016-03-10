@@ -8,7 +8,7 @@
 
 namespace metagui
 {
-  TitleBar::TitleBar(std::string name)
+  TitleBar::TitleBar(StringKey name)
     :
     Object(name, sf::Vector2i(0, 0))
   {}
@@ -37,7 +37,7 @@ namespace metagui
     float border_width = Settings.get<float>("window_border_width");
 
     sf::Vector2f rect_position{ border_width, border_width };
-    sf::Vector2f rect_size{ static_cast<float>(parent_size.x - (border_width * 2)), 
+    sf::Vector2f rect_size{ static_cast<float>(parent_size.x - (border_width * 2)),
       static_cast<float>(line_spacing_y + (text_offset_y * 2) - (border_width * 2)) };
     sf::Vector2f text_position{ text_offset_x + line_spacing_y, text_offset_y };
 
@@ -46,16 +46,16 @@ namespace metagui
     sf::Text title_text;
 
     title_rect.setFillColor(Settings.get<sf::Color>("window_bg_color"));
-    title_rect.setOutlineColor(get_focus() ?
-                                Settings.get<sf::Color>("window_focused_border_color") :
-                                Settings.get<sf::Color>("window_border_color"));
+    title_rect.setOutlineColor(get_parent()->get_focus() ?
+                               Settings.get<sf::Color>("window_focused_border_color") :
+                               Settings.get<sf::Color>("window_border_color"));
     title_rect.setOutlineThickness(border_width);
     title_rect.setPosition(rect_position);
     title_rect.setSize(rect_size);
 
     texture.draw(title_rect);
 
-    if (titlebar_text.empty() == false)
+    if (titlebar_text.isEmpty() == false)
     {
       title_text.setString(titlebar_text);
       title_text.setFont(the_default_bold_font);
@@ -80,5 +80,4 @@ namespace metagui
 
     set_size(our_size);
   }
-
 }; // end namespace metagui

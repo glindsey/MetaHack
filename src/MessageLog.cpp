@@ -15,7 +15,7 @@ struct MessageLog::Impl
   unsigned int message_queue_size;
 
   /// Queue of previous messages.
-  std::deque<std::string> message_queue;
+  std::deque<StringDisplay> message_queue;
 
   /// Key buffer for the current command.
   KeyBuffer buffer;
@@ -33,7 +33,7 @@ MessageLog::~MessageLog()
   //dtor
 }
 
-void MessageLog::add(std::string message)
+void MessageLog::add(StringDisplay message)
 {
   message[0] = toupper(message[0]);
 
@@ -50,7 +50,7 @@ unsigned int MessageLog::get_message_queue_size()
   return pImpl->message_queue_size;
 }
 
-std::deque<std::string>& MessageLog::get_message_queue()
+std::deque<StringDisplay>& MessageLog::get_message_queue()
 {
   return pImpl->message_queue;
 }

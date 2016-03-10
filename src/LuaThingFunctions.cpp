@@ -22,7 +22,7 @@ namespace LuaThingFunctions
     }
 
     ThingRef thing = ThingRef(lua_tointeger(L, 1));
-    std::string new_thing_type = lua_tostring(L, 2);
+    StringKey new_thing_type = lua_tostring(L, 2);
 
     // Check to make sure the Thing is actually creatable.
     /// @todo Might want the ability to disable this check for debugging purposes?
@@ -126,7 +126,7 @@ namespace LuaThingFunctions
     }
 
     ThingRef thing = ThingRef(lua_tointeger(L, 1));
-    std::string result = thing->get_type();
+    StringKey result = thing->get_type();
     lua_pushstring(L, result.c_str());
 
     return 1;
@@ -181,7 +181,7 @@ namespace LuaThingFunctions
     ThingRef thing = ThingRef(lua_tointeger(L, 1));
     const char* key = lua_tostring(L, 2);
 
-    std::string result = thing->get_intrinsic<std::string>(key).c_str();
+    StringKey result = thing->get_intrinsic<StringKey>(key).c_str();
 
     lua_pushstring(L, result.c_str());
 
@@ -236,7 +236,7 @@ namespace LuaThingFunctions
 
     ThingRef thing = ThingRef(lua_tointeger(L, 1));
     const char* key = lua_tostring(L, 2);
-    std::string result = thing->get_property<std::string>(key).c_str();
+    StringKey result = thing->get_property<StringKey>(key).c_str();
     lua_pushstring(L, result.c_str());
 
     return 1;
@@ -253,7 +253,7 @@ namespace LuaThingFunctions
     }
 
     ThingRef thing = ThingRef(lua_tointeger(L, 1));
-    std::string action_type = lua_tostring(L, 2);
+    StringKey action_type = lua_tostring(L, 2);
 
     if (!Action::exists(action_type))
     {
@@ -289,7 +289,7 @@ namespace LuaThingFunctions
     }
 
     ThingRef thing = ThingRef(lua_tointeger(L, 1));
-    std::string action_type = lua_tostring(L, 2);
+    StringKey action_type = lua_tostring(L, 2);
     ThingRef target = ThingRef(lua_tointeger(L, 3));
 
     if (!Action::exists(action_type))
@@ -327,7 +327,7 @@ namespace LuaThingFunctions
     }
 
     ThingRef thing = ThingRef(lua_tointeger(L, 1));
-    std::string action_type = lua_tostring(L, 2);
+    StringKey action_type = lua_tostring(L, 2);
     int x = lua_tointeger(L, 3);
     int y = lua_tointeger(L, 4);
     int z = lua_tointeger(L, 5);
@@ -406,8 +406,8 @@ namespace LuaThingFunctions
     ThingRef thing = ThingRef(lua_tointeger(L, 1));
     const char* key = lua_tostring(L, 2);
     const char* value = lua_tostring(L, 3);
-    std::string svalue = std::string(value);
-    thing->set_property<std::string>(key, svalue);
+    StringKey svalue = StringKey(value);
+    thing->set_property<StringKey>(key, svalue);
 
     return 0;
   }

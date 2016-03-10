@@ -17,7 +17,7 @@ using WieldingPair = std::pair<unsigned int, ThingRef>;
 using WearingMap = std::unordered_map<WearLocation, ThingRef>;
 using WearingPair = std::pair<WearLocation, ThingRef>;
 
-using MapMemory = std::vector<std::string>;
+using MapMemory = std::vector<StringKey>;
 using TilesSeen = boost::dynamic_bitset<>;
 using ActionQueue = std::deque< std::unique_ptr<Action> >;
 

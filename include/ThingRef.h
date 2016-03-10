@@ -86,7 +86,7 @@ public:
 
   std::string ThingId::to_string() const
   {
-    return boost::lexical_cast<std::string>(id) + "." + boost::lexical_cast<std::string>(version);
+    return str(id);
   }
 
   friend std::ostream& operator<< (std::ostream& stream, ThingId const& thing)

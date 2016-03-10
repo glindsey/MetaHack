@@ -150,7 +150,7 @@ bool Thing::do_die()
   /// @todo Pass in the cause of death somehow.
 
   ActionResult result = perform_action_died();
-  std::string message;
+  StringDisplay message;
 
   switch (result)
   {
@@ -194,7 +194,7 @@ bool Thing::do_die()
 
 bool Thing::do_attack(ThingRef thing, unsigned int& action_time)
 {
-  std::string message;
+  StringDisplay message;
 
   bool reachable = this->is_adjacent_to(thing);
   /// @todo deal with Entities in your Inventory -- WTF do you do THEN?
@@ -234,9 +234,9 @@ ActionResult Thing::can_deequip(ThingRef thing, unsigned int& action_time)
 
 bool Thing::do_deequip(ThingRef thing, unsigned int& action_time)
 {
-  std::string message;
+  StringDisplay message;
   ActionResult deequip_try = this->can_deequip(thing, action_time);
-  std::string thing_name = thing->get_identifying_string();
+  StringDisplay thing_name = thing->get_identifying_string();
 
   message = this->get_you_or_identifying_string() + " " +
     this->choose_verb("try", "tries") +
@@ -255,7 +255,7 @@ bool Thing::do_deequip(ThingRef thing, unsigned int& action_time)
       {
         set_worn(MU, location);
 
-        std::string wear_desc = get_bodypart_description(location.part, location.number);
+        StringDisplay wear_desc = get_bodypart_description(location.part, location.number);
         message = this->get_you_or_identifying_string() + " " +
           this->choose_verb("are", "is") + " no longer wearing " + thing_name +
           " on " + this->get_possessive() + " " + wear_desc + ".";
@@ -315,10 +315,10 @@ ActionResult Thing::can_equip(ThingRef thing, unsigned int& action_time)
 
 bool Thing::do_equip(ThingRef thing, unsigned int& action_time)
 {
-  std::string message;
+  StringDisplay message;
 
   ActionResult equip_try = this->can_equip(thing, action_time);
-  std::string thing_name = thing->get_identifying_string();
+  StringDisplay thing_name = thing->get_identifying_string();
 
   switch (equip_try)
   {
@@ -330,8 +330,8 @@ bool Thing::do_equip(ThingRef thing, unsigned int& action_time)
       {
         set_worn(thing, location);
 
-        std::string wear_desc = get_bodypart_description(location.part,
-                                                         location.number);
+        StringDisplay wear_desc = get_bodypart_description(location.part,
+                                                           location.number);
         message = this->get_you_or_identifying_string() + " " +
           this->choose_verb(" are", " is") +
           " now wearing " + thing_name +
@@ -487,7 +487,7 @@ unsigned int Thing::get_bodypart_number(BodyPart part) const
 }
 
 /// Get the appropriate body part name for the Entity.
-std::string Thing::get_bodypart_name(BodyPart part) const
+StringDisplay Thing::get_bodypart_name(BodyPart part) const
 {
   switch (part)
   {
@@ -527,7 +527,7 @@ std::string Thing::get_bodypart_name(BodyPart part) const
 }
 
 /// Get the appropriate body part plural for the Entity.
-std::string Thing::get_bodypart_plural(BodyPart part) const
+StringDisplay Thing::get_bodypart_plural(BodyPart part) const
 {
   switch (part)
   {
@@ -571,14 +571,14 @@ bool Thing::is_player() const
   return (GAME.get_player() == pImpl->ref);
 }
 
-std::string const& Thing::get_type() const
+StringKey const& Thing::get_type() const
 {
   return pImpl->metadata.get_type();
 }
 
-std::string const& Thing::get_parent_type() const
+StringKey const& Thing::get_parent_type() const
 {
-  return pImpl->metadata.get_intrinsic<std::string>("parent");
+  return pImpl->metadata.get_intrinsic<StringKey>("parent");
 }
 
 unsigned int Thing::get_quantity()
@@ -721,7 +721,7 @@ void Thing::find_seen_tiles()
   }
 }
 
-std::string Thing::get_memory_at(int x, int y) const
+StringKey Thing::get_memory_at(int x, int y) const
 {
   if (this->get_map_id() == MapFactory::null_map_id)
   {
@@ -732,7 +732,7 @@ std::string Thing::get_memory_at(int x, int y) const
   return pImpl->map_memory[game_map.get_index(x, y)];
 }
 
-std::string Thing::get_memory_at(sf::Vector2i coords) const
+StringKey Thing::get_memory_at(sf::Vector2i coords) const
 {
   return this->get_memory_at(coords.x, coords.y);
 }
@@ -757,7 +757,7 @@ void Thing::add_memory_vertices_to(sf::VertexArray& vertices,
   sf::Vector2f vNW(location.x - ts2, location.y - ts2);
   sf::Vector2f vNE(location.x + ts2, location.y - ts2);
 
-  std::string tile_type = pImpl->map_memory[game_map.get_index(x, y)];
+  StringKey tile_type = pImpl->map_memory[game_map.get_index(x, y)];
   if (tile_type == "") { tile_type = "MTUnknown"; }
   Metadata* tile_metadata = &(MDC::get_collection("maptile").get(tile_type));
 
@@ -887,38 +887,38 @@ MapId Thing::get_map_id() const
   }
 }
 
-std::string Thing::get_display_name() const
+StringDisplay Thing::get_display_name() const
 {
   /// @todo Implement adding adjectives.
   return pImpl->metadata.get_intrinsic<std::string>("name");
 }
 
-std::string Thing::get_display_plural() const
+StringDisplay Thing::get_display_plural() const
 {
   return pImpl->metadata.get_intrinsic<std::string>("plural");
 }
 
-std::string Thing::get_proper_name()
+StringDisplay Thing::get_proper_name()
 {
   return get_property<std::string>("proper_name");
 }
 
-void Thing::set_proper_name(std::string name)
+void Thing::set_proper_name(StringDisplay name)
 {
   set_property<std::string>("proper_name", name);
 }
 
-std::string Thing::get_identifying_string_without_possessives(bool definite)
+StringDisplay Thing::get_identifying_string_without_possessives(bool definite)
 {
   ThingRef location = this->get_location();
   unsigned int quantity = this->get_quantity();
 
-  std::string name;
+  StringDisplay name;
 
-  std::string article;
-  std::string adjectives;
-  std::string noun;
-  std::string suffix;
+  StringDisplay article;
+  StringDisplay adjectives;
+  StringDisplay noun;
+  StringDisplay suffix;
 
   if (is_player())
   {
@@ -945,7 +945,7 @@ std::string Thing::get_identifying_string_without_possessives(bool definite)
       article = getIndefArt(noun) + " ";
     }
 
-    if (get_proper_name().empty() == false)
+    if (get_proper_name().isEmpty() == false)
     {
       suffix = " named " + get_proper_name();
     }
@@ -958,7 +958,7 @@ std::string Thing::get_identifying_string_without_possessives(bool definite)
     {
       article = "the ";
     }
-    article += boost::lexical_cast<std::string>(get_quantity()) + " ";
+    article += get_quantity() + " ";
   }
 
   if (get_intrinsic<bool>("is_entity") && get_property<int>("hp") <= 0)
@@ -971,7 +971,7 @@ std::string Thing::get_identifying_string_without_possessives(bool definite)
   return name;
 }
 
-std::string Thing::get_you_or_identifying_string(bool definite)
+StringDisplay Thing::get_you_or_identifying_string(bool definite)
 {
   if (is_player())
   {
@@ -988,7 +988,7 @@ std::string Thing::get_you_or_identifying_string(bool definite)
   return get_identifying_string(definite);
 }
 
-std::string Thing::get_self_or_identifying_string(ThingRef other, bool definite)
+StringDisplay Thing::get_self_or_identifying_string(ThingRef other, bool definite)
 {
   if (other == get_ref())
   {
@@ -998,19 +998,19 @@ std::string Thing::get_self_or_identifying_string(ThingRef other, bool definite)
   return get_identifying_string(definite);
 }
 
-std::string Thing::get_identifying_string(bool definite)
+StringDisplay Thing::get_identifying_string(bool definite)
 {
   ThingRef location = this->get_location();
   unsigned int quantity = this->get_quantity();
 
-  std::string name;
+  StringDisplay name;
 
   bool owned;
 
-  std::string article;
-  std::string adjectives;
-  std::string noun;
-  std::string suffix;
+  StringDisplay article;
+  StringDisplay adjectives;
+  StringDisplay noun;
+  StringDisplay suffix;
 
   owned = location->get_intrinsic<bool>("is_entity");
 
@@ -1034,7 +1034,7 @@ std::string Thing::get_identifying_string(bool definite)
       }
     }
 
-    if (get_proper_name().empty() == false)
+    if (get_proper_name().isEmpty() == false)
     {
       suffix = " named " + get_proper_name();
     }
@@ -1054,7 +1054,7 @@ std::string Thing::get_identifying_string(bool definite)
         article = "the ";
       }
 
-      article += boost::lexical_cast<std::string>(get_quantity()) + " ";
+      article += get_quantity() + " ";
     }
   }
 
@@ -1068,8 +1068,8 @@ std::string Thing::get_identifying_string(bool definite)
   return name;
 }
 
-std::string const& Thing::choose_verb(std::string const& verb12,
-                                      std::string const& verb3)
+StringDisplay const& Thing::choose_verb(StringDisplay const& verb12,
+                                        StringDisplay const& verb3)
 {
   if ((GAME.get_player() == pImpl->ref) || (get_property<unsigned int>("quantity") > 1))
   {
@@ -1086,38 +1086,36 @@ int Thing::get_mass()
   return get_intrinsic<int>("physical_mass") * get_property<unsigned int>("quantity");
 }
 
-std::string const& Thing::get_subject_pronoun() const
+StringDisplay const& Thing::get_subject_pronoun() const
 {
   return getSubjPro(get_gender_or_you());
 }
 
-std::string const& Thing::get_object_pronoun() const
+StringDisplay const& Thing::get_object_pronoun() const
 {
   return getObjPro(get_gender_or_you());
 }
 
-std::string const& Thing::get_reflexive_pronoun() const
+StringDisplay const& Thing::get_reflexive_pronoun() const
 {
   return getRefPro(get_gender_or_you());
 }
 
-std::string const& Thing::get_possessive_adjective() const
+StringDisplay const& Thing::get_possessive_adjective() const
 {
   return getPossAdj(get_gender_or_you());
 }
 
-std::string const& Thing::get_possessive_pronoun() const
+StringDisplay const& Thing::get_possessive_pronoun() const
 {
   return getPossPro(get_gender_or_you());
 }
 
-std::string Thing::get_possessive()
+StringDisplay Thing::get_possessive()
 {
-  static std::string const your = std::string("your");
-
   if (GAME.get_player() == pImpl->ref)
   {
-    return your;
+    return "your";
   }
   else
   {
@@ -1298,7 +1296,7 @@ void Thing::spill()
 {
   Inventory& inventory = get_inventory();
   ThingMap const& things = inventory.get_things();
-  std::string message;
+  StringDisplay message;
   bool success = false;
 
   // Step through all contents of this Thing.
@@ -1366,12 +1364,12 @@ void Thing::destroy()
   }
 }
 
-std::string Thing::get_bodypart_description(BodyPart part,
-                                            unsigned int number)
+StringDisplay Thing::get_bodypart_description(BodyPart part,
+                                              unsigned int number)
 {
   unsigned int total_number = this->get_bodypart_number(part);
-  std::string part_name = this->get_bodypart_name(part);
-  std::string result;
+  StringDisplay part_name = this->get_bodypart_name(part);
+  StringDisplay result;
 
   ASSERT_CONDITION(number < total_number);
   switch (total_number)
@@ -1519,7 +1517,7 @@ std::string Thing::get_bodypart_description(BodyPart part,
   }
 
   // Anything else and we just return the ordinal name.
-  if (result.empty())
+  if (result.isEmpty())
   {
     result = Ordinal::get(number) + " " + part_name;
   }
@@ -1575,7 +1573,7 @@ void Thing::perform_action_collided_with(ThingRef actor)
   return;
 }
 
-void Thing::perform_action_collided_with_wall(Direction d, std::string tile_type)
+void Thing::perform_action_collided_with_wall(Direction d, StringKey tile_type)
 {
   /// @todo Implement me; right now there's no way to pass one enum and one string to a Lua function.
   return;
@@ -1615,7 +1613,7 @@ bool Thing::perform_action_deequipped_by(ThingRef actor, WearLocation& location)
 {
   if (this->get_property<bool>("bound"))
   {
-    std::string message;
+    StringDisplay message;
     message = actor->get_identifying_string() + " cannot take off " + this->get_identifying_string() +
       "; it is magically bound to " +
       actor->get_possessive_adjective() + " " +
@@ -1641,7 +1639,7 @@ bool Thing::perform_action_equipped_by(ThingRef actor, WearLocation& location)
     if (this->get_property<bool>("autobinds"))
     {
       this->set_property<bool>("bound", true);
-      std::string message;
+      StringDisplay message;
       message = this->get_identifying_string() + " magically binds itself to " +
         actor->get_possessive() + " " +
         actor->get_bodypart_description(location.part,
@@ -1758,7 +1756,7 @@ bool Thing::_process_self()
   return true;
 }
 
-std::vector<std::string>& Thing::get_map_memory()
+std::vector<StringKey>& Thing::get_map_memory()
 {
   return pImpl->map_memory;
 }

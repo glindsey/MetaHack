@@ -23,10 +23,10 @@ public:
   void set_cursor_position(unsigned int position);
 
   /// Get the current buffer contents.
-  std::string const& get_buffer() const;
+  StringDisplay const& get_buffer() const;
 
   /// Set the current buffer contents, putting cursor at the end.
-  void set_buffer(std::string buf);
+  void set_buffer(StringDisplay buf);
 
   /// Clear the current buffer contents.
   void clear_buffer();

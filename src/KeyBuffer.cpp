@@ -7,7 +7,7 @@
 struct KeyBuffer::Impl
 {
   /// Buffer holding the string being composed.
-  std::string buffer;
+  StringDisplay buffer;
 
   /// Cursor location within string.
   unsigned int cursor_position;
@@ -23,19 +23,19 @@ struct KeyBuffer::Impl
   {
     unsigned int position = cursor_position;
 
-    if (position >= buffer.size())
+    if (position >= buffer.getSize())
     {
-      buffer.append(1, c);
+      buffer += c;
     }
     else
     {
       if (replacing)
       {
-        buffer.replace(position, 1, 1, c);
+        buffer.replace(position, 1, c);
       }
       else
       {
-        buffer.insert(position, 1, c);
+        buffer.insert(position, c);
       }
     }
     cursor_position = position + 1;
@@ -46,7 +46,7 @@ struct KeyBuffer::Impl
   {
     unsigned int position = cursor_position;
 
-    if (position >= buffer.size())
+    if (position >= buffer.getSize())
     {
       return;
     }
@@ -69,7 +69,7 @@ struct KeyBuffer::Impl
   /// Move cursor right.
   bool right_cursor()
   {
-    if (cursor_position == buffer.size())
+    if (cursor_position == buffer.getSize())
     {
       return false;
     }
@@ -181,7 +181,7 @@ metagui::Event::Result KeyBuffer::handle_key_press(metagui::EventKeyPressed& eve
         result = metagui::Event::Result::Handled;
         break;
       case sf::Keyboard::Key::End:
-        pImpl->cursor_position = pImpl->buffer.size();
+        pImpl->cursor_position = pImpl->buffer.getSize();
         result = metagui::Event::Result::Handled;
         break;
       case sf::Keyboard::Key::Divide:     INSERT('/', '/');
@@ -216,18 +216,18 @@ unsigned int KeyBuffer::get_cursor_position() const
 
 void KeyBuffer::set_cursor_position(unsigned int position)
 {
-  pImpl->cursor_position = std::min(pImpl->buffer.size(), position);
+  pImpl->cursor_position = std::min(pImpl->buffer.getSize(), position);
 }
 
-std::string const& KeyBuffer::get_buffer() const
+StringDisplay const& KeyBuffer::get_buffer() const
 {
   return pImpl->buffer;
 }
 
-void KeyBuffer::set_buffer(std::string buf)
+void KeyBuffer::set_buffer(StringDisplay buf)
 {
   pImpl->buffer = buf;
-  pImpl->cursor_position = buf.size();
+  pImpl->cursor_position = buf.getSize();
 }
 
 void KeyBuffer::clear_buffer()

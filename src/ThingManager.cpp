@@ -13,6 +13,9 @@
 
 ThingManager::ThingManager()
 {
+  // Set up the logger.
+  SET_UP_LOGGER("Thing", true);
+
   // Register the Thing Lua functions.
   LuaThingFunctions::register_functions();
 
@@ -28,7 +31,7 @@ ThingManager::~ThingManager()
 {
 }
 
-ThingRef ThingManager::create(std::string type)
+ThingRef ThingManager::create(StringKey type)
 {
   ThingId new_id = ThingRef::create();
   ThingRef new_ref = ThingRef(new_id);
@@ -95,7 +98,7 @@ Thing& ThingManager::get(ThingId id)
   }
   catch (std::out_of_range&)
   {
-    MAJOR_ERROR("Tried to get thing %s which does not exist", boost::lexical_cast<std::string>(id).c_str());
+    CLOG(WARNING, "Thing") << "Tried to get thing " << id << " which does not exist";
     return *(m_thing_map[get_mu().m_id].get());
   }
 }
@@ -108,12 +111,12 @@ Thing const& ThingManager::get(ThingId id) const
   }
   catch (std::out_of_range&)
   {
-    MAJOR_ERROR("Tried to get thing %s which does not exist", boost::lexical_cast<std::string>(id).c_str());
+    CLOG(WARNING, "Thing") << "Tried to get thing " << id << " which does not exist";
     return *(m_thing_map.at(get_mu().m_id).get());
   }
 }
 
-ThingRef MU
+ThingRef ThingManager::get_mu()
 {
   return ThingRef();
 }

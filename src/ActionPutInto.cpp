@@ -8,7 +8,7 @@ ACTION_SRC_BOILERPLATE(ActionPutInto, "putinto", "store")
 
 Action::StateResult ActionPutInto::do_prebegin_work_(AnyMap& params)
 {
-  std::string message;
+  StringDisplay message;
   auto subject = get_subject();
   auto object = get_object();
   auto container = get_target_thing();
@@ -139,7 +139,7 @@ Action::StateResult ActionPutInto::do_begin_work_(AnyMap& params)
 {
   /// @todo Handle putting a certain quantity of an item.
   Action::StateResult result = StateResult::Failure();
-  std::string message;
+  StringDisplay message;
   auto subject = get_subject();
   auto object = get_object();
   auto container = get_target_thing();
@@ -177,12 +177,12 @@ Action::StateResult ActionPutInto::do_abort_work_(AnyMap& params)
 
 void ActionPutInto::print_message_try_()
 {
-  std::string message = YOU_TRY + " to " + VERB + " " + get_object_string_() + " into " + get_target_string_() + ".";
+  StringDisplay message = YOU_TRY + " to " + VERB + " " + get_object_string_() + " into " + get_target_string_() + ".";
   the_message_log.add(message);
 }
 
 void ActionPutInto::print_message_do_()
 {
-  std::string message = YOU + " " + CV(VERB, VERB3) + " " + get_object_string_() + " into " + get_target_string_() + ".";
+  StringDisplay message = YOU + " " + CV(VERB, VERB3) + " " + get_object_string_() + " into " + get_target_string_() + ".";
   the_message_log.add(message);
 }

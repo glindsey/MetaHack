@@ -24,8 +24,8 @@ namespace metagui
   class WindowPane;
 
   /// Using declarations
-  using ChildMap = std::map< std::string, std::unique_ptr<Object> >;
-  using ZOrderMap = std::multimap< uint32_t, std::string >;
+  using ChildMap = std::map< StringKey, std::unique_ptr<Object> >;
+  using ZOrderMap = std::multimap< uint32_t, StringKey >;
   using RenderFunctor = std::function< void(sf::RenderTexture&, int) >;
 
   // The following declaration should include every possible GUIObject that
@@ -58,11 +58,11 @@ namespace metagui
     public RenderableToTexture
   {
   public:
-    explicit Object(std::string name, sf::Vector2i location = sf::Vector2i(0, 0), sf::Vector2u size = sf::Vector2u(0, 0));
-    Object(std::string name, sf::IntRect dimensions);
+    explicit Object(StringKey name, sf::Vector2i location = sf::Vector2i(0, 0), sf::Vector2u size = sf::Vector2u(0, 0));
+    Object(StringKey name, sf::IntRect dimensions);
     virtual ~Object();
 
-    std::string get_name();
+    StringKey get_name();
 
     /// Set pre-child render functor.
     /// If present, this functor is called after render_self_before_children_()
@@ -102,8 +102,8 @@ namespace metagui
     /// @param  focus   Whether this object has focus or not.
     void set_global_focus(bool focus);
 
-    void set_text(std::string text);
-    std::string get_text();
+    void set_text(StringDisplay text);
+    StringDisplay get_text();
 
     /// Get location relative to parent object's client area.
     sf::Vector2i get_relative_location();
@@ -228,15 +228,15 @@ namespace metagui
       return result;
     }
 
-    bool child_exists(std::string name);
+    bool child_exists(StringKey name);
 
-    Object& get_child(std::string name);
+    Object& get_child(StringKey name);
 
     /// Remove the child object with the given name, if it exists.
     /// @param name   Name of the child object to remove.
     /// @return Pointer to the removed object if it existed,
     ///         empty unique_ptr otherwise.
-    std::unique_ptr<Object> remove_child(std::string name);
+    std::unique_ptr<Object> remove_child(StringKey name);
 
     /// Get lowest Z-order of all this object's children.
     /// If no children are present, returns zero.
@@ -276,17 +276,17 @@ namespace metagui
     /// Calls the virtual method handle_set_flag_ if the flag has been
     /// changed; this allows subclasses to perform specific actions based on
     /// certain flags (such as setting/clearing "titlebar").
-    void set_flag(std::string name, bool enabled);
+    void set_flag(StringKey name, bool enabled);
 
     /// Get an object flag.
     /// A flag that does not exist will be initialized and set to false or
     /// the default value given.
-    bool get_flag(std::string name, bool default_value = false);
+    bool get_flag(StringKey name, bool default_value = false);
 
     /// Handles a flag being set/cleared.
     /// If this function does not handle a particular flag, calls the
     /// virtual function handle_set_flag_().
-    void handle_set_flag(std::string name, bool enabled);
+    void handle_set_flag(StringKey name, bool enabled);
 
     /// Returns whether the specified point falls within this object's bounds.
     /// @param  point   Point to check.
@@ -343,7 +343,7 @@ namespace metagui
     /// Handles a flag being set/cleared.
     /// This method is called by set_flag() if the value was changed.
     /// The default behavior is to do nothing.
-    virtual void handle_set_flag_(std::string name, bool enabled);
+    virtual void handle_set_flag_(StringKey name, bool enabled);
 
     /// Handles the parent's size being changed.
     /// The default behavior is to do nothing.
@@ -351,7 +351,7 @@ namespace metagui
 
   private:
     /// The name of this object.
-    std::string m_name;
+    StringKey m_name;
 
     /// The parent of this object. Set to nullptr if the object has no parent.
     Object* m_parent;
@@ -377,7 +377,7 @@ namespace metagui
     /// sort of control it is; e.g. for a Pane this is the pane title, for a
     /// Button it is the button caption, for a TextBox it is the box contents,
     /// etc.
-    std::string m_text;
+    StringDisplay m_text;
 
     /// Object location, relative to parent.
     sf::Vector2i m_location;
@@ -401,13 +401,13 @@ namespace metagui
     RenderFunctor m_post_child_render_functor;
 
     /// Map of flags that can be set/cleared for this object.
-    std::unordered_map< std::string, bool > m_flags;
+    BoolMap m_flags;
 
     /// Map that owns the child elements.
-    std::unordered_map< std::string, std::unique_ptr<Object> > m_children;
+    std::unordered_map< StringKey, std::unique_ptr<Object> > m_children;
 
     /// Multimap that associates child elements with Z-orders.
-    std::multimap< uint32_t, std::string > m_zorder_map;
+    std::multimap< uint32_t, StringKey > m_zorder_map;
   };
 }; // end namespace metagui
 

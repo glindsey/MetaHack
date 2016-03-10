@@ -21,7 +21,7 @@ GameState::GameState()
   m_map_factory.reset(NEW MapFactory());
 }
 
-GameState::GameState(std::string filename)
+GameState::GameState(FileName filename)
 {
 #if 0
   ASSERT_CONDITION(p_instance == nullptr);
@@ -40,7 +40,7 @@ GameState::~GameState()
   p_instance = nullptr;
 }
 
-void GameState::save_state(std::string filename)
+void GameState::save_state(FileName filename)
 {
 #if 0
   std::ofstream fs{ filename.c_str() };

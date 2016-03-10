@@ -34,7 +34,7 @@ public:
   /// Create a particular object given the type name.
   /// @param type The type name of the object to create.
   /// @return A ThingRef to the new object created.
-  ThingRef create(std::string type);
+  ThingRef create(StringKey type);
 
   /// Create a floor object.
   /// @param map_tile Pointer to the map tile associated.

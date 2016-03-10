@@ -17,11 +17,11 @@ class StateMachine :
   virtual public boost::noncopyable
 {
 public:
-  explicit StateMachine(std::string const& machine_name);
+  explicit StateMachine(StringKey const& machine_name);
   virtual ~StateMachine();
 
   /// Get the name of this state machine.
-  std::string const& get_name();
+  StringKey const& get_name();
 
   /// Add a state to the machine.
   /// The new state must be allocated on the heap, as the ptr_map will take
@@ -42,7 +42,7 @@ public:
   /// This function will fail if the requested state is the current one.
   /// @param state_name Name of the state to delete.
   /// @return True if the state was found and deleted, false otherwise.
-  bool delete_state(std::string const& state_name);
+  bool delete_state(StringKey const& state_name);
 
   /// Executes the current state.
   /// If no state is active, does nothing and returns false.
@@ -68,7 +68,7 @@ public:
   /// Try to change to a new state.
   /// @param new_state_name Name of new state to change to.
   /// @return True if we could change to that state, false otherwise.
-  bool change_to(std::string const& new_state_name);
+  bool change_to(StringKey const& new_state_name);
 
   /// Get a pointer to the current state.
   /// @return Current state, or nullptr if there is no current state.
@@ -76,7 +76,7 @@ public:
 
   /// Get the name of the current state.
   /// @return Name of current state, or "(none)" if no state is current.
-  std::string const& get_current_state_name();
+  StringKey const& get_current_state_name();
 
 protected:
 private:

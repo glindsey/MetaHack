@@ -19,17 +19,17 @@ public:
   virtual ~PropertyDictionary();
 
   /// Populate this dictionary from a Boost property tree.
-  void populate_from(pt::ptree const& tree, std::string prefix = "");
+  void populate_from(pt::ptree const& tree, StringKey prefix = "");
 
   /// Check if a particular key exists.
-  bool contains(std::string key) const;
+  bool contains(StringKey key) const;
 
   /// Get an entry from the dictionary.
   /// @param key  Key of the setting to retrieve.
   /// @return     The entry requested.
   ///             If the entry does not exist, returns a new instance of T.
   template<typename T>
-  T get(std::string key) const
+  T get(StringKey key) const
   {
     // Bail if the setting doesn't exist.
     if (m_dictionary.count(key) == 0)
@@ -59,11 +59,11 @@ public:
   // break round-tripping. (i.e. Any time Lua writes a value it will be
   // stored as a double does to Lua's "a number is a number" typing. No way
   // to get around that.)
-  template<> int get(std::string key) const { return static_cast<int>(get<double>(key)); }
-  template<> unsigned int get(std::string key) const { return static_cast<unsigned int>(get<double>(key)); }
-  template<> long int get(std::string key) const { return static_cast<long int>(get<double>(key)); }
-  template<> unsigned long int get(std::string key) const { return static_cast<unsigned long int>(get<double>(key)); }
-  template<> float get(std::string key) const { return static_cast<float>(get<double>(key)); }
+  template<> int get(StringKey key) const { return static_cast<int>(get<double>(key)); }
+  template<> unsigned int get(StringKey key) const { return static_cast<unsigned int>(get<double>(key)); }
+  template<> long int get(StringKey key) const { return static_cast<long int>(get<double>(key)); }
+  template<> unsigned long int get(StringKey key) const { return static_cast<unsigned long int>(get<double>(key)); }
+  template<> float get(StringKey key) const { return static_cast<float>(get<double>(key)); }
 
   /// Add/alter an entry in the dictionary.
   /// @note         The type being added must be copyable... I think.
@@ -72,7 +72,7 @@ public:
   /// @return       True if the entry already existed and has been changed.
   ///               False if a new entry was added.
   template<typename T>
-  bool set(std::string key, T value)
+  bool set(StringKey key, T value)
   {
     bool existed = (m_dictionary.count(key) != 0);
     boost::any insert_value = value;
@@ -82,33 +82,33 @@ public:
       m_dictionary.erase(key);
     }
 
-    m_dictionary.insert(std::pair<std::string, boost::any>(key, insert_value));
+    m_dictionary.insert(std::pair<StringKey, boost::any>(key, insert_value));
 
     return existed;
   }
 
   // Various template specializations for certain types.
   // See get() specalizations for explanation.
-  template<> bool set(std::string key, int value) { return set<double>(key, static_cast<double>(value)); }
-  template<> bool set(std::string key, unsigned int value) { return set<double>(key, static_cast<double>(value)); }
-  template<> bool set(std::string key, long int value) { return set<double>(key, static_cast<double>(value)); }
-  template<> bool set(std::string key, unsigned long int value) { return set<double>(key, static_cast<double>(value)); }
-  template<> bool set(std::string key, float value) { return set<double>(key, static_cast<double>(value)); }
-  template<> bool set(std::string key, char const* value) { return set<std::string>(key, std::string(value)); }
+  template<> bool set(StringKey key, int value) { return set<double>(key, static_cast<double>(value)); }
+  template<> bool set(StringKey key, unsigned int value) { return set<double>(key, static_cast<double>(value)); }
+  template<> bool set(StringKey key, long int value) { return set<double>(key, static_cast<double>(value)); }
+  template<> bool set(StringKey key, unsigned long int value) { return set<double>(key, static_cast<double>(value)); }
+  template<> bool set(StringKey key, float value) { return set<double>(key, static_cast<double>(value)); }
+  template<> bool set(StringKey key, char const* value) { return set<std::string>(key, std::string(value)); }
 
   // Common non-templated set() functions, used to aid in typing.
-  bool set(std::string key, int value) { return set<double>(key, static_cast<double>(value)); }
-  bool set(std::string key, unsigned int value) { return set<double>(key, static_cast<double>(value)); }
-  bool set(std::string key, long int value) { return set<double>(key, static_cast<double>(value)); }
-  bool set(std::string key, unsigned long int value) { return set<double>(key, static_cast<double>(value)); }
-  bool set(std::string key, float value) { return set<double>(key, static_cast<double>(value)); }
-  bool set(std::string key, double value) { return set<double>(key, static_cast<double>(value)); }
-  bool set(std::string key, bool value) { return set<bool>(key, value); }
-  bool set(std::string key, char const* value) { return set<std::string>(key, std::string(value)); }
-  bool set(std::string key, std::string value) { return set<std::string>(key, value); }
-  bool set(std::string key, sf::Vector2i value) { return set<sf::Vector2i>(key, value); }
-  bool set(std::string key, sf::Vector2u value) { return set<sf::Vector2i>(key, static_cast<sf::Vector2i>(value)); }
-  bool set(std::string key, sf::Color value) { return set<sf::Color>(key, value); }
+  bool set(StringKey key, int value) { return set<double>(key, static_cast<double>(value)); }
+  bool set(StringKey key, unsigned int value) { return set<double>(key, static_cast<double>(value)); }
+  bool set(StringKey key, long int value) { return set<double>(key, static_cast<double>(value)); }
+  bool set(StringKey key, unsigned long int value) { return set<double>(key, static_cast<double>(value)); }
+  bool set(StringKey key, float value) { return set<double>(key, static_cast<double>(value)); }
+  bool set(StringKey key, double value) { return set<double>(key, static_cast<double>(value)); }
+  bool set(StringKey key, bool value) { return set<bool>(key, value); }
+  bool set(StringKey key, char const* value) { return set<std::string>(key, std::string(value)); }
+  bool set(StringKey key, std::string value) { return set<std::string>(key, value); }
+  bool set(StringKey key, sf::Vector2i value) { return set<sf::Vector2i>(key, value); }
+  bool set(StringKey key, sf::Vector2u value) { return set<sf::Vector2i>(key, static_cast<sf::Vector2i>(value)); }
+  bool set(StringKey key, sf::Color value) { return set<sf::Color>(key, value); }
 
   /// Overloaded equality operator.
   bool operator==(PropertyDictionary const& other) const;
@@ -170,8 +170,7 @@ inline bool operator==(boost::any const& lhs, boost::any const& rhs)
     return boost::any_cast<sf::Vector2u>(lhs) == boost::any_cast<sf::Vector2u>(rhs);
   }
 
-  std::string message = "Comparison of boost::any type \"" + std::string(ltype.name()) + "\" is not supported";
-  throw std::runtime_error(message.c_str());
+  throw std::runtime_error("Comparison of boost::any type \"" + std::string(ltype.name()) + "\" is not supported");
 }
 
 inline bool operator!=(boost::any const& op1, boost::any const& op2)

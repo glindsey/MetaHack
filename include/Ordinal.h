@@ -3,20 +3,20 @@
 
 namespace Ordinal
 {
-  inline std::string get_abbrev(unsigned int number)
+  inline StringDisplay get_abbrev(unsigned int number)
   {
     char buf[4];
     snprintf(buf, 4, "%u", number);
     switch (number % 10)
     {
-      case 1: return std::string(buf) + "st";
-      case 2: return std::string(buf) + "nd";
-      case 3: return std::string(buf) + "rd";
-      default: return std::string(buf) + "th";
+      case 1: return StringDisplay(buf) + "st";
+      case 2: return StringDisplay(buf) + "nd";
+      case 3: return StringDisplay(buf) + "rd";
+      default: return StringDisplay(buf) + "th";
     }
   }
 
-  inline std::string get(unsigned int number)
+  inline StringDisplay get(unsigned int number)
   {
     switch (number)
     {

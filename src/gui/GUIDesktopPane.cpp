@@ -8,7 +8,7 @@
 
 namespace metagui
 {
-  DesktopPane::DesktopPane(std::string name, sf::Vector2u size)
+  DesktopPane::DesktopPane(StringKey name, sf::Vector2u size)
     :
     Object(name, sf::Vector2i(0, 0), size)
   {}

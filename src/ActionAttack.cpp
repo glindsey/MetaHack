@@ -11,7 +11,7 @@ ACTION_SRC_BOILERPLATE(ActionAttack, "attack", "attack")
 
 Action::StateResult ActionAttack::do_prebegin_work_(AnyMap& params)
 {
-  std::string message;
+  StringDisplay message;
 
   auto subject = get_subject();
   auto location = subject->get_location();
@@ -83,7 +83,7 @@ Action::StateResult ActionAttack::do_prebegin_work_(AnyMap& params)
 
 Action::StateResult ActionAttack::do_begin_work_(AnyMap& params)
 {
-  std::string message;
+  StringDisplay message;
 
   auto subject = get_subject();
   auto location = subject->get_location();

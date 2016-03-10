@@ -11,7 +11,7 @@ namespace metagui
     public Object, public ObjectVisitable<Label>
   {
   public:
-    explicit Label(std::string name, sf::Vector2i location = sf::Vector2i(0, 0));
+    explicit Label(StringKey name, sf::Vector2i location = sf::Vector2i(0, 0));
     virtual ~Label();
 
   protected:

@@ -1,5 +1,7 @@
 #include "stdafx.h"
 
+#include "common_types.h"
+
 #include "Action.h"
 
 #include "MessageLog.h"
@@ -7,7 +9,7 @@
 #include "ThingManager.h"
 #include "ThingRef.h"
 
-std::unordered_map<std::string, ActionCreator> Action::action_map;
+std::unordered_map<StringKey, ActionCreator> Action::action_map;
 
 struct Action::Impl
 {
@@ -93,8 +95,8 @@ bool Action::process(ThingRef actor, AnyMap params)
   if (counter_busy > 0)
   {
     CLOG(TRACE, "Action") << "Thing #" <<
-      actor.get_id().to_string().c_str() << " (" <<
-      actor->get_type().c_str() << "): counter_busy = " <<
+      actor.get_id().to_string() << " (" <<
+      actor->get_type() << "): counter_busy = " <<
       counter_busy << "%d, decrementing";
 
     actor->add_to_property<int>("counter_busy", -1);
@@ -114,10 +116,10 @@ bool Action::process(ThingRef actor, AnyMap params)
     Action::StateResult result{ false, 0 };
 
     CLOG(TRACE, "Action") << "Thing #" <<
-      actor.get_id().to_string().c_str() << " (" <<
+      actor.get_id().to_string() << " (" <<
       actor->get_type().c_str() << "): Action " <<
       get_type().c_str() << " is in state " <<
-      str(get_state()).c_str() << ", counter_busy = " <<
+      str(get_state()) << ", counter_busy = " <<
       counter_busy;
 
     switch (pImpl->state)
@@ -228,7 +230,7 @@ unsigned int Action::get_quantity() const
 
 Action::StateResult Action::do_prebegin_work(AnyMap& params)
 {
-  std::string message;
+  StringDisplay message;
 
   auto subject = get_subject();
   auto& objects = get_objects();
@@ -348,9 +350,9 @@ Action::StateResult Action::do_abort_work_(AnyMap& params)
   return Action::StateResult::Success();
 }
 
-std::string Action::get_object_string_()
+StringDisplay Action::get_object_string_()
 {
-  std::string description;
+  StringDisplay description;
 
   if (get_objects().size() == 0)
   {
@@ -372,7 +374,7 @@ std::string Action::get_object_string_()
       {
         if (get_quantity() > 1)
         {
-          description += boost::lexical_cast<std::string>(get_quantity()) + " of";
+          description += get_quantity() + " of";
         }
         description += get_object()->get_identifying_string(true);
       }
@@ -400,7 +402,7 @@ std::string Action::get_object_string_()
   return description;
 }
 
-std::string Action::get_target_string_()
+StringDisplay Action::get_target_string_()
 {
   auto subject = get_subject();
   auto& objects = get_objects();
@@ -422,61 +424,61 @@ std::string Action::get_target_string_()
 
 void Action::print_message_try_()
 {
-  std::string object_string = get_object_string_();
-  if (!object_string.empty()) object_string = " " + object_string;
-  std::string message = YOU_TRY + " to " + VERB + " " + get_object_string_() + ".";
+  StringDisplay object_string = get_object_string_();
+  if (!object_string.isEmpty()) object_string = " " + object_string;
+  StringDisplay message = YOU_TRY + " to " + VERB + " " + get_object_string_() + ".";
   the_message_log.add(message);
 }
 
 void Action::print_message_do_()
 {
-  std::string object_string = get_object_string_();
-  if (!object_string.empty()) object_string = " " + object_string;
-  std::string message = YOU + " " + CV(VERB, VERB3) + " " + get_object_string_() + ".";
+  StringDisplay object_string = get_object_string_();
+  if (!object_string.isEmpty()) object_string = " " + object_string;
+  StringDisplay message = YOU + " " + CV(VERB, VERB3) + " " + get_object_string_() + ".";
   the_message_log.add(message);
 }
 
 void Action::print_message_begin_()
 {
-  std::string object_string = get_object_string_();
-  if (!object_string.empty()) object_string = " " + object_string;
-  std::string message = YOU + " " + CV("begin", "begins") + " to " + VERB + object_string + ".";
+  StringDisplay object_string = get_object_string_();
+  if (!object_string.isEmpty()) object_string = " " + object_string;
+  StringDisplay message = YOU + " " + CV("begin", "begins") + " to " + VERB + object_string + ".";
   the_message_log.add(message);
 }
 
 void Action::print_message_stop_()
 {
-  std::string object_string = get_object_string_();
-  if (!object_string.empty()) object_string = " " + object_string;
-  std::string message = YOU + " " + CV("stop ", "stops ") + VERBING + object_string + ".";
+  StringDisplay object_string = get_object_string_();
+  if (!object_string.isEmpty()) object_string = " " + object_string;
+  StringDisplay message = YOU + " " + CV("stop ", "stops ") + VERBING + object_string + ".";
   the_message_log.add(message);
 }
 
 void Action::print_message_finish_()
 {
-  std::string object_string = get_object_string_();
-  if (!object_string.empty()) object_string = " " + object_string;
-  std::string message = YOU + " " + CV("finish ", "finishes ") + VERBING + object_string + ".";
+  StringDisplay object_string = get_object_string_();
+  if (!object_string.isEmpty()) object_string = " " + object_string;
+  StringDisplay message = YOU + " " + CV("finish ", "finishes ") + VERBING + object_string + ".";
   the_message_log.add(message);
 }
 
 void Action::print_message_cant_()
 {
-  std::string message = YOU + " can't " + VERB + " that!";
+  StringDisplay message = YOU + " can't " + VERB + " that!";
   the_message_log.add(message);
 }
 
-void Action::register_action_as(std::string key, ActionCreator creator)
+void Action::register_action_as(StringKey key, ActionCreator creator)
 {
   Action::action_map.insert({ key, creator });
 }
 
-bool Action::exists(std::string key)
+bool Action::exists(StringKey key)
 {
   return Action::action_map.count(key) != 0;
 }
 
-std::unique_ptr<Action> Action::create(std::string key, ThingRef subject)
+std::unique_ptr<Action> Action::create(StringKey key, ThingRef subject)
 {
   if (Action::action_map.count(key) != 0)
   {

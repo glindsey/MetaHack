@@ -15,7 +15,7 @@ class ActionRead
     ACTION_TRAIT(can_be_subject_verb_direction)
 
 public:
-  std::string const get_verbed() const override
+  StringDisplay const get_verbed() const override
   {
     return "read";
   }
