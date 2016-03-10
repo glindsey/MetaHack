@@ -236,9 +236,8 @@ inline float calculate_light_factor(sf::Vector2i source, sf::Vector2i target, Di
     return (source.x > target.x) ? (x_diff / h_diff) : 0;
   }
 
-  throw std::out_of_range(std::string("Invalid direction " +
-                                      boost::lexical_cast<std::string>(direction) +
-                                      " passed to calculate_light_factor").c_str());
+  throw std::runtime_error("Invalid direction " + str(direction) +
+                           " passed to calculate_light_factor");
 }
 
 inline std::ostream& operator<<(std::ostream& os, Direction const& d)

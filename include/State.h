@@ -3,15 +3,15 @@
 
 #include "stdafx.h"
 
-#include "EventHandler.h"
 #include "Renderable.h"
+#include "SFMLEventHandler.h"
 
 // Forward declarations
 class StateMachine;
 
 class State :
-  virtual public EventHandler,
   virtual public RenderableToTexture,
+  virtual public SFMLEventHandler,
   virtual public boost::noncopyable
 {
 public:
@@ -19,7 +19,7 @@ public:
   virtual ~State();
 
   // Get the name of this state.
-  virtual std::string const& get_name() = 0;
+  virtual StringKey const& get_name() = 0;
 
   // Initialize the state upon entering it.
   virtual bool initialize() = 0;
@@ -31,7 +31,7 @@ public:
   virtual bool terminate() = 0;
 
   // Tell state machine to change to a new state.
-  bool change_to(std::string const& new_state);
+  bool change_to(StringKey const& new_state);
 
 protected:
 private:

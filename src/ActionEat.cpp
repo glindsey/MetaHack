@@ -8,7 +8,7 @@ ACTION_SRC_BOILERPLATE(ActionEat, "eat", "eat")
 
 Action::StateResult ActionEat::do_prebegin_work_(AnyMap& params)
 {
-  std::string message;
+  StringDisplay message;
   auto subject = get_subject();
   auto object = get_object();
 

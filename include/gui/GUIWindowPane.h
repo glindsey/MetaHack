@@ -3,16 +3,16 @@
 
 #include "stdafx.h"
 
-#include "gui/GUIPane.h"
+#include "gui/GUIObject.h"
 
 namespace metagui
 {
   class WindowPane :
-    public Pane, public ObjectVisitable<WindowPane>
+    public Object, public ObjectVisitable<WindowPane>
   {
   public:
-    WindowPane(std::string name, sf::Vector2i location, sf::Vector2u size = sf::Vector2u(0, 0));
-    WindowPane(std::string name, sf::IntRect dimensions);
+    WindowPane(StringKey name, sf::Vector2i location, sf::Vector2u size = sf::Vector2u(0, 0));
+    WindowPane(StringKey name, sf::IntRect dimensions);
     virtual ~WindowPane();
 
     /// Get the upper-left corner of this object's child area, relative to
@@ -27,7 +27,7 @@ namespace metagui
   protected:
     virtual void render_self_before_children_(sf::RenderTexture& texture, int frame) override final;
 
-    virtual void handle_set_flag_(std::string name, bool enabled) override;
+    virtual void handle_set_flag_(StringKey name, bool enabled) override;
 
     /// Temporary function used to render the contents of classes derived from
     /// GUIWindowPane until they can be properly replaced with child controls.

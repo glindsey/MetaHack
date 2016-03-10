@@ -9,7 +9,7 @@ ACTION_SRC_BOILERPLATE(ActionGet, "get", "get")
 
 Action::StateResult ActionGet::do_prebegin_work_(AnyMap& params)
 {
-  std::string message;
+  StringDisplay message;
   auto subject = get_subject();
   auto object = get_object();
   ThingRef location = subject->get_location();
@@ -76,7 +76,7 @@ Action::StateResult ActionGet::do_begin_work_(AnyMap& params)
 {
   /// @todo Handle getting a certain quantity of an item.
   Action::StateResult result = StateResult::Failure();
-  std::string message;
+  StringDisplay message;
   auto subject = get_subject();
   auto object = get_object();
 

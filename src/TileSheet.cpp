@@ -114,12 +114,12 @@ TileSheet& TileSheet::instance()
   return *(instance_.get());
 }
 
-sf::Vector2u TileSheet::load_collection(std::string const& filename)
+sf::Vector2u TileSheet::load_collection(FileName const& filename)
 {
   sf::Image image;
   if (!image.loadFromFile(filename))
   {
-    throw std::exception(std::string("Tile collection file not found: \"" + filename + "\"").c_str());
+    throw std::runtime_error("Tile collection file not found: \"" + filename + "\"");
   }
 
   image.createMaskFromColor(sf::Color(255, 0, 255));

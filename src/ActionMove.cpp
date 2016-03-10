@@ -12,7 +12,7 @@ ACTION_SRC_BOILERPLATE(ActionMove, "move", "move")
 
 Action::StateResult ActionMove::do_prebegin_work_(AnyMap& params)
 {
-  std::string message;
+  StringDisplay message;
 
   auto subject = get_subject();
   auto location = subject->get_location();
@@ -61,7 +61,7 @@ Action::StateResult ActionMove::do_begin_work_(AnyMap& params)
 {
   StateResult result = StateResult::Failure();
 
-  std::string message;
+  StringDisplay message;
 
   auto subject = get_subject();
   ThingRef location = subject->get_location();
@@ -127,7 +127,7 @@ Action::StateResult ActionMove::do_begin_work_(AnyMap& params)
         }
         else
         {
-          std::string tile_description = new_tile.get_display_name();
+          StringDisplay tile_description = new_tile.get_display_name();
           message += YOU_ARE + " stopped by " +
             getIndefArt(tile_description) + " " +
             tile_description + ".";

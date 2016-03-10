@@ -13,8 +13,8 @@ public:
 
   void execute() override;
   bool render(sf::RenderTexture& texture, int frame) override;
-  EventResult handle_event(sf::Event& event) override;
-  std::string const& get_name() override;
+  SFMLEventResult handle_sfml_event(sf::Event& event) override;
+  StringKey const& get_name() override;
   bool initialize() override;
   bool terminate() override;
 

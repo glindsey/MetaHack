@@ -3,9 +3,9 @@
 
 #include "stdafx.h"
 
-#include "EventHandler.h"
 #include "GUIEvent.h"
 #include "Renderable.h"
+#include "SFMLEventHandler.h"
 
 #include "Visitor.h"
 
@@ -24,8 +24,8 @@ namespace metagui
   class WindowPane;
 
   /// Using declarations
-  using ChildMap = std::map< std::string, std::unique_ptr<Object> >;
-  using ZOrderMap = std::multimap< uint32_t, std::string >;
+  using ChildMap = std::map< StringKey, std::unique_ptr<Object> >;
+  using ZOrderMap = std::multimap< uint32_t, StringKey >;
   using RenderFunctor = std::function< void(sf::RenderTexture&, int) >;
 
   // The following declaration should include every possible GUIObject that
@@ -55,27 +55,14 @@ namespace metagui
   /// Virtual superclass of all GUI objects on screen.
   /// @todo Should child objects store Z-order?
   class Object :
-    public EventHandler,
     public RenderableToTexture
   {
-    struct MouseButtonInfo
-    {
-      /// Whether this button is pressed.
-      bool pressed;
-
-      /// Absolute location of the press or release.
-      sf::Vector2i location;
-
-      /// Time elapsed since the last button state change.
-      sf::Clock elapsed;
-    };
-
   public:
-    explicit Object(std::string name, sf::Vector2i location = sf::Vector2i(0, 0), sf::Vector2u size = sf::Vector2u(0, 0));
-    Object(std::string name, sf::IntRect dimensions);
+    explicit Object(StringKey name, sf::Vector2i location = sf::Vector2i(0, 0), sf::Vector2u size = sf::Vector2u(0, 0));
+    Object(StringKey name, sf::IntRect dimensions);
     virtual ~Object();
 
-    std::string get_name();
+    StringKey get_name();
 
     /// Set pre-child render functor.
     /// If present, this functor is called after render_self_before_children_()
@@ -115,8 +102,8 @@ namespace metagui
     /// @param  focus   Whether this object has focus or not.
     void set_global_focus(bool focus);
 
-    void set_text(std::string text);
-    std::string get_text();
+    void set_text(StringDisplay text);
+    StringDisplay get_text();
 
     /// Get location relative to parent object's client area.
     sf::Vector2i get_relative_location();
@@ -203,15 +190,53 @@ namespace metagui
       return dynamic_cast<T&>(add_child_top(std::move(child_ptr)));
     }
 
-    bool child_exists(std::string name);
+    /// Handle an incoming event.
+    /// Calls the method handle_event_before_children() first.
+    /// If it returns anything other than Handled, it then passes the
+    /// event down to each child in sequence, stopping only if one of them
+    /// returns Handled. If the event still isn't Handled after all children
+    /// have seen it, handle_event_after_children_ is called.
+    template< typename T >
+    Event::Result handle_gui_event(T& event)
+    {
+      CLOG(TRACE, "GUI") << typeid(*this).name() <<
+        "::handle_gui_event called with event type " << typeid(T).name();
 
-    Object& get_child(std::string name);
+      Event::Result result = Event::Result::Ignored;
+
+      if (m_disabled_cached == false)
+      {
+        result = handle_event_before_children_(event);
+        if (result != Event::Result::Handled)
+        {
+          for (auto& z_pair : m_zorder_map)
+          {
+            auto& child = m_children.at(z_pair.second);
+            result = child->handle_gui_event(event);
+            if (result == Event::Result::Handled) break;
+          }
+        }
+
+        if (result != Event::Result::Handled)
+        {
+          result = handle_event_after_children_(event);
+        }
+      }
+
+      CLOG(TRACE, "GUI") << "handle_gui_event returned " << str(result);
+
+      return result;
+    }
+
+    bool child_exists(StringKey name);
+
+    Object& get_child(StringKey name);
 
     /// Remove the child object with the given name, if it exists.
     /// @param name   Name of the child object to remove.
     /// @return Pointer to the removed object if it existed,
     ///         empty unique_ptr otherwise.
-    std::unique_ptr<Object> remove_child(std::string name);
+    std::unique_ptr<Object> remove_child(StringKey name);
 
     /// Get lowest Z-order of all this object's children.
     /// If no children are present, returns zero.
@@ -221,7 +246,7 @@ namespace metagui
     /// If no children are present, returns zero.
     uint32_t get_highest_child_z_order();
 
-    template<typename ...args>
+    template< typename ...args >
     void visit_children(std::function<void(Object&, args...)> functor)
     {
       for (auto& child_pair : children)
@@ -247,81 +272,21 @@ namespace metagui
     /// Render this object, and all of its children, to the parent texture.
     bool render(sf::RenderTexture& texture, int frame);
 
-    /// Handle an incoming event.
-    /// Calls the method handle_event_before_children() first.
-    /// If it returns anything other than Handled, it then passes the
-    /// event down to each child in sequence, stopping only if one of them
-    /// returns Handled. If the event still isn't Handled after all children
-    /// have seen it, handle_event_after_children_ is called.
-    virtual EventResult handle_event(sf::Event& event) override final;
-
-    // === TESTING CODE =======================================================
-    template<class T>
-    EventResult Object::handle(T& event)
-    {
-      EventResult result = EventResult::Ignored;
-
-      if (m_disabled_cached == false)
-      {
-        result = handle_before_children(event);
-        if (result != EventResult::Handled)
-        {
-          for (auto& z_pair : m_zorder_map)
-          {
-            auto& child = m_children.at(z_pair.second);
-            result = child->handle(event);
-            if (result == EventResult::Handled) break;
-          }
-        }
-
-        if (result != EventResult::Handled)
-        {
-          result = handle_after_children_(event);
-        }
-      }
-
-      return result;
-    }
-
-    template<class T>
-    EventResult handle_before_children(T& event)
-    {
-      /// @todo WRITE ME
-      return handle_before_children_(event);
-    }
-
-    template<class T>
-    EventResult handle_before_children_(T& event) { return EventResult::Ignored; }
-
-    template<class T>
-    EventResult handle_after_children_(T& event) { return EventResult::Ignored; }
-    // ========================================================================
-
-    /// Called before an event is passed along to child objects.
-    /// After it does what it needs to do, calls the virtual method
-    /// handle_event_before_children_().
-    ///
-    /// @note If this method returns EventResult::Handled, event processing
-    ///       will stop here and the children will never see the event! To
-    ///       process it here *and* have children see it, you should return
-    ///       EventResult::Acknowledged.
-    EventResult handle_event_before_children(sf::Event& event);
-
     /// Set/clear an object flag.
     /// Calls the virtual method handle_set_flag_ if the flag has been
     /// changed; this allows subclasses to perform specific actions based on
     /// certain flags (such as setting/clearing "titlebar").
-    void set_flag(std::string name, bool enabled);
+    void set_flag(StringKey name, bool enabled);
 
     /// Get an object flag.
     /// A flag that does not exist will be initialized and set to false or
     /// the default value given.
-    bool get_flag(std::string name, bool default_value = false);
+    bool get_flag(StringKey name, bool default_value = false);
 
     /// Handles a flag being set/cleared.
     /// If this function does not handle a particular flag, calls the
     /// virtual function handle_set_flag_().
-    void handle_set_flag(std::string name, bool enabled);
+    void handle_set_flag(StringKey name, bool enabled);
 
     /// Returns whether the specified point falls within this object's bounds.
     /// @param  point   Point to check.
@@ -354,24 +319,31 @@ namespace metagui
     /// Default behavior is to do nothing.
     virtual void render_self_after_children_(sf::RenderTexture& texture, int frame);
 
-    /// Called before an event is passed along to child objects.
-    /// Default behavior is to return EventResult::Ignored.
-    /// @note If this method returns EventResult::Handled, event processing
+#if 0
+    /// Called before a GUI event is passed along to child objects.
+    /// Default behavior is to return metagui::Event::Result::Ignored.
+    /// @note If this method returns metagui::Event::Result::Handled, event processing
     ///       will stop here and the children will never see the event! To
     ///       process it here *and* have children see it, you should return
-    ///       EventResult::Acknowledged.
-    virtual EventResult handle_event_before_children_(sf::Event& event);
+    ///       metagui::Event::Result::Acknowledged.
+    virtual Event::Result handle_event_before_children_(Event& event);
 
-    /// Called after an event is passed along to child objects.
+    /// Called after a GUI event is passed along to child objects.
     /// This method will only be called if none of the child objects returns
-    /// EventResult::Handled when the event is passed to it.
-    /// Default behavior is to return EventResult::Ignored.
-    virtual EventResult handle_event_after_children_(sf::Event& event);
+    /// metagui::Event::Result::Handled when the event is passed to it.
+    /// Default behavior is to return metagui::Event::Result::Ignored.
+    virtual Event::Result handle_event_after_children_(Event& event);
+#endif
 
+    virtual Event::Result handle_event_before_children_(EventKeyPressed& event);
+    virtual Event::Result handle_event_after_children_(EventKeyPressed& event);
+
+    virtual Event::Result handle_event_before_children_(EventResized& event);
+    virtual Event::Result handle_event_after_children_(EventResized& event);
     /// Handles a flag being set/cleared.
     /// This method is called by set_flag() if the value was changed.
     /// The default behavior is to do nothing.
-    virtual void handle_set_flag_(std::string name, bool enabled);
+    virtual void handle_set_flag_(StringKey name, bool enabled);
 
     /// Handles the parent's size being changed.
     /// The default behavior is to do nothing.
@@ -379,7 +351,7 @@ namespace metagui
 
   private:
     /// The name of this object.
-    std::string m_name;
+    StringKey m_name;
 
     /// The parent of this object. Set to nullptr if the object has no parent.
     Object* m_parent;
@@ -405,7 +377,7 @@ namespace metagui
     /// sort of control it is; e.g. for a Pane this is the pane title, for a
     /// Button it is the button caption, for a TextBox it is the box contents,
     /// etc.
-    std::string m_text;
+    StringDisplay m_text;
 
     /// Object location, relative to parent.
     sf::Vector2i m_location;
@@ -415,9 +387,6 @@ namespace metagui
 
     /// Flag indicating whether the mouse is currently over this object.
     bool m_contains_mouse;
-
-    /// An array of data for each possible mouse button.
-    std::array< MouseButtonInfo, sf::Mouse::ButtonCount > m_button_info;
 
     /// Background texture.
     std::unique_ptr<sf::RenderTexture> m_bg_texture;
@@ -432,13 +401,13 @@ namespace metagui
     RenderFunctor m_post_child_render_functor;
 
     /// Map of flags that can be set/cleared for this object.
-    std::unordered_map< std::string, bool > m_flags;
+    BoolMap m_flags;
 
     /// Map that owns the child elements.
-    std::unordered_map< std::string, std::unique_ptr<Object> > m_children;
+    std::unordered_map< StringKey, std::unique_ptr<Object> > m_children;
 
     /// Multimap that associates child elements with Z-orders.
-    std::multimap< uint32_t, std::string > m_zorder_map;
+    std::multimap< uint32_t, StringKey > m_zorder_map;
   };
 }; // end namespace metagui
 

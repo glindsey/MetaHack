@@ -8,7 +8,7 @@
 
 namespace metagui
 {
-  CloseHandle::CloseHandle(std::string name)
+  CloseHandle::CloseHandle(StringKey name)
     :
     Object(name, sf::Vector2i(0, 0))
   {}

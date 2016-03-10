@@ -61,9 +61,9 @@
 #include <SFML/System.hpp>
 
 // Our convenience includes
+#include "common_types.h"
 #include "common_enums.h"
 #include "common_functions.h"
-#include "common_types.h"
 
 // EasyLogging++ includes
 #include "easyloggingpp/easylogging++.h"

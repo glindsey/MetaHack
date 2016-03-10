@@ -8,12 +8,12 @@
 
 struct StateMachine::Impl
 {
-  boost::ptr_map<std::string, State> state_map;
+  boost::ptr_map<StringKey, State> state_map;
   State* current_state;
-  std::string machine_name;
+  StringKey machine_name;
 };
 
-StateMachine::StateMachine(std::string const& machine_name)
+StateMachine::StateMachine(StringKey const& machine_name)
   : pImpl(NEW Impl())
 {
   SET_UP_LOGGER("StateMachine", true);
@@ -30,7 +30,7 @@ StateMachine::~StateMachine()
   //dtor
 }
 
-std::string const& StateMachine::get_name()
+StringKey const& StateMachine::get_name()
 {
   return pImpl->machine_name;
 }
@@ -39,7 +39,7 @@ bool StateMachine::add_state(State* state)
 {
   ASSERT_NOT_NULL(state);
 
-  std::string state_name = state->get_name();
+  StringKey state_name = state->get_name();
 
   if (pImpl->state_map.count(state_name) == 0)
   {
@@ -61,7 +61,7 @@ bool StateMachine::delete_state(State* state)
   return delete_state(state->get_name());
 }
 
-bool StateMachine::delete_state(std::string const& state_name)
+bool StateMachine::delete_state(StringKey const& state_name)
 {
   if (state_name == pImpl->current_state->get_name())
   {
@@ -102,15 +102,15 @@ bool StateMachine::render(sf::RenderTexture& texture, int frame)
   }
 }
 
-EventResult StateMachine::handle_event(sf::Event& event)
+SFMLEventResult StateMachine::handle_sfml_event(sf::Event& event)
 {
   if (pImpl->current_state == nullptr)
   {
-    return EventResult::Ignored;
+    return SFMLEventResult::Ignored;
   }
   else
   {
-    return pImpl->current_state->handle_event(event);
+    return pImpl->current_state->handle_sfml_event(event);
   }
 }
 
@@ -148,7 +148,7 @@ bool StateMachine::change_to(State* state)
   return terminator_result;
 }
 
-bool StateMachine::change_to(std::string const& new_state_name)
+bool StateMachine::change_to(StringKey const& new_state_name)
 {
   if (pImpl->state_map.count(new_state_name) == 0)
   {
@@ -167,9 +167,9 @@ State* StateMachine::get_current_state()
   return pImpl->current_state;
 }
 
-std::string const& StateMachine::get_current_state_name()
+StringKey const& StateMachine::get_current_state_name()
 {
-  static std::string const noneDesc = std::string("(none)");
+  static StringKey const noneDesc = StringKey("(none)");
 
   if (pImpl->current_state == nullptr)
   {

@@ -4,11 +4,11 @@
 #include "stdafx.h"
 
 template<typename T>
-std::string str(T const& t)
+StringDisplay str(T const& t)
 {
   std::stringstream stream;
   stream << t;
-  return stream.str();
+  return StringDisplay(stream.str());
 }
 
 inline bool strip_quotes(std::string& str)
@@ -69,6 +69,13 @@ namespace std
   {
     out << "pos = (" << rect.left << ", " << rect.top <<
       "), size = (" << rect.width << " x " << rect.height << ")";
+    return out;
+  }
+
+  /// Stream operator override for sf::String.
+  inline ostream& operator<<(ostream& out, sf::String const& str)
+  {
+    out << str.toAnsiString();
     return out;
   }
 }

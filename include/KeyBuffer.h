@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 
-#include "EventHandler.h"
+#include "gui/GUIEvent.h"
 
 /// This class encapsulates the idea of an input buffer which is added to or
 /// removed from using SFML KeyPressed events.
@@ -14,7 +14,7 @@ public:
   virtual ~KeyBuffer();
 
   /// Process a key event.
-  EventResult handle_key_press(sf::Event::KeyEvent& key);
+  metagui::Event::Result KeyBuffer::handle_key_press(metagui::EventKeyPressed& event);
 
   /// Get the current cursor position.
   unsigned int get_cursor_position() const;
@@ -23,10 +23,10 @@ public:
   void set_cursor_position(unsigned int position);
 
   /// Get the current buffer contents.
-  std::string const& get_buffer() const;
+  StringDisplay const& get_buffer() const;
 
   /// Set the current buffer contents, putting cursor at the end.
-  void set_buffer(std::string buf);
+  void set_buffer(StringDisplay buf);
 
   /// Clear the current buffer contents.
   void clear_buffer();

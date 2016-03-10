@@ -1,3 +1,5 @@
+BIG TODO LIST
+
 SMALL THINGS
 ============
 [ ] Export "thing_set_quantity" / "thing_modify_quantity" functions to Lua

@@ -3,22 +3,41 @@
 
 #include "stdafx.h"
 
-#include "gui/GUIPane.h"
+#include "gui/GUIObject.h"
 
 namespace metagui
 {
   class DesktopPane :
-    public Pane, public ObjectVisitable<DesktopPane>
+    public Object,
+    public ObjectVisitable<DesktopPane>
   {
   public:
-    explicit DesktopPane(std::string name, sf::Vector2u size);
+    struct MouseButtonInfo
+    {
+      /// Whether this button is pressed.
+      bool pressed;
+
+      /// Absolute location of the press or release.
+      sf::Vector2i location;
+
+      /// Time elapsed since the last button state change.
+      sf::Clock elapsed;
+    };
+
+    explicit DesktopPane(StringKey name, sf::Vector2u size);
     virtual ~DesktopPane();
 
+    /// Handles an SFML event and translates it into a GUI event if necessary.
+    SFMLEventResult handle_sfml_event(sf::Event& sfml_event);
+
   protected:
-    virtual EventResult handle_event_before_children_(sf::Event& event) override final;
+    virtual metagui::Event::Result handle_event_before_children_(EventResized& event) final;
+
     virtual void render_self_before_children_(sf::RenderTexture& texture, int frame) override final;
 
   private:
+    /// An array of data for each possible mouse button.
+    std::array< MouseButtonInfo, sf::Mouse::ButtonCount > m_button_info;
   };
 }; // end namespace metagui
 

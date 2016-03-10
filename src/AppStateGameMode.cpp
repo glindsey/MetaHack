@@ -41,6 +41,7 @@
 #include "ActionWait.h"
 #include "ActionWield.h"
 
+#include "gui/GUIObject.h"
 #include "gui/GUIWindowPane.h"
 
 AppStateGameMode::AppStateGameMode(StateMachine& state_machine, sf::RenderWindow& m_app_window)
@@ -59,7 +60,7 @@ AppStateGameMode::AppStateGameMode(StateMachine& state_machine, sf::RenderWindow
   m_desktop.set_pre_child_render_functor(render_map_functor);
   m_desktop.add_child(NEW MessageLogView(the_message_log, calc_message_log_dims())).set_flag("titlebar", true);
   m_desktop.add_child(NEW InventoryArea(calc_inventory_dims())).set_flag("titlebar", true);
-  m_desktop.add_child(NEW StatusArea(calc_status_area_dims()));
+  m_desktop.add_child(NEW StatusArea(calc_status_area_dims())).set_global_focus(true);
 }
 
 AppStateGameMode::~AppStateGameMode()
@@ -75,9 +76,9 @@ void AppStateGameMode::execute()
   if (debug_buffer.get_enter())
   {
     /// Call the Lua interpreter with the command.
-    std::string contents = debug_buffer.get_buffer();
+    StringDisplay contents = debug_buffer.get_buffer();
     the_message_log.add("> " + contents);
-    if (luaL_dostring(the_lua_state, contents.c_str()))
+    if (luaL_dostring(the_lua_state, contents.toAnsiString().c_str()))
     {
       the_message_log.add(lua_tostring(the_lua_state, -1));
     }
@@ -100,8 +101,8 @@ bool AppStateGameMode::render(sf::RenderTexture& texture, int frame)
   texture.clear(sf::Color::Green);
 
   // Set focus for areas.
-  m_desktop.get_child("MessageLogView").set_focus(m_current_input_state == GameInputState::MessageLog);
-  m_desktop.get_child("StatusArea").set_focus(m_current_input_state == GameInputState::Map);
+  //m_desktop.get_child("MessageLogView").set_focus(m_current_input_state == GameInputState::MessageLog);
+  //m_desktop.get_child("StatusArea").set_focus(m_current_input_state == GameInputState::Map);
 
   // Render the GUI last.
   m_desktop.render(texture, frame);
@@ -110,11 +111,11 @@ bool AppStateGameMode::render(sf::RenderTexture& texture, int frame)
   return true;
 }
 
-EventResult AppStateGameMode::handle_event(sf::Event& event)
+SFMLEventResult AppStateGameMode::handle_sfml_event(sf::Event& event)
 {
-  EventResult result = EventResult::Ignored;
+  SFMLEventResult result = SFMLEventResult::Ignored;
 
-  if (result != EventResult::Handled)
+  if (result != SFMLEventResult::Handled)
   {
     switch (event.type)
     {
@@ -124,7 +125,7 @@ EventResult AppStateGameMode::handle_event(sf::Event& event)
         m_desktop.get_child("MessageLogView").set_relative_dimensions(calc_message_log_dims());
         m_desktop.get_child("InventoryArea").set_relative_dimensions(calc_inventory_dims());
         m_desktop.get_child("StatusArea").set_relative_dimensions(calc_status_area_dims());
-        result = EventResult::Acknowledged;
+        result = SFMLEventResult::Acknowledged;
         break;
       }
 
@@ -146,40 +147,39 @@ EventResult AppStateGameMode::handle_event(sf::Event& event)
 
   /// @todo This whole section should be redundant once we get focus-based
   ///       key/click handling working properly for objects.
-  if (result != EventResult::Handled)
+#if 0
+  if (result != SFMLEventResult::Handled)
   {
     switch (m_current_input_state)
     {
       case GameInputState::Map:
-        result = m_desktop.get_child("StatusArea").handle_event(event);
+        /// @todo This is ugly, fix later
+        result = static_cast<SFMLEventResult>(m_desktop.get_child("StatusArea").handle_gui_event(event));
         break;
 
       case GameInputState::MessageLog:
-        result = m_desktop.get_child("MessageLogView").handle_event(event);
+        /// @todo This is ugly, fix later
+        result = static_cast<SFMLEventResult>(m_desktop.get_child("MessageLogView").handle_gui_event(event));
         break;
 
       default:
         break;
     }
   }
+#endif
 
   // Finally let the GUI handle events.
-  if (result != EventResult::Handled)
+  if (result != SFMLEventResult::Handled)
   {
-    result = m_desktop.handle_event(event);
+    result = m_desktop.handle_sfml_event(event);
   }
-
-  // === TESTING CODE =======================================================
-  int test;
-  m_desktop.handle(test);
-  // ========================================================================
 
   return result;
 }
 
-std::string const& AppStateGameMode::get_name()
+StringKey const& AppStateGameMode::get_name()
 {
-  static std::string name = std::string("AppStateGameMode");
+  static StringKey name = "AppStateGameMode";
   return name;
 }
 
@@ -278,9 +278,9 @@ void AppStateGameMode::render_map(sf::RenderTexture& texture, int frame)
   }
 }
 
-EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
+SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 {
-  EventResult result = EventResult::Ignored;
+  SFMLEventResult result = SFMLEventResult::Ignored;
 
   ThingRef player = get_game_state().get_player();
 
@@ -293,11 +293,13 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
       {
         case GameInputState::Map:
           m_current_input_state = GameInputState::MessageLog;
-          return EventResult::Handled;
+          m_desktop.get_child("MessageLogView").set_global_focus(true);
+          return SFMLEventResult::Handled;
 
         case GameInputState::MessageLog:
           m_current_input_state = GameInputState::Map;
-          return EventResult::Handled;
+          m_desktop.get_child("StatusArea").set_global_focus(true);
+          return SFMLEventResult::Handled;
 
         default:
           break;
@@ -330,18 +332,18 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
         if (key_number != -1)
         {
           inventory_area.toggle_selection(static_cast<InventorySlot>(key_number));
-          result = EventResult::Handled;
+          result = SFMLEventResult::Handled;
         }
         else if (key.code == sf::Keyboard::Key::Tab)
         {
           m_inventory_area_shows_player = !m_inventory_area_shows_player;
           reset_inventory_area();
-          result = EventResult::Handled;
+          result = SFMLEventResult::Handled;
         }
         else if (key.code == sf::Keyboard::Key::Escape)
         {
           the_message_log.add("Press CTRL-ALT-Q to quit the game.");
-          result = EventResult::Handled;
+          result = SFMLEventResult::Handled;
         }
       }
 
@@ -354,14 +356,14 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           {
             p_action.reset(new ActionWait(player));
             player->queue_action(std::move(p_action));
-            result = EventResult::Handled;
+            result = SFMLEventResult::Handled;
           }
           else
           {
             p_action.reset(new ActionMove(player));
             p_action->set_target(key_direction);
             player->queue_action(std::move(p_action));
-            result = EventResult::Handled;
+            result = SFMLEventResult::Handled;
           }
         }
         else switch (key.code)
@@ -375,7 +377,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             m_current_input_state = GameInputState::CursorLook;
             m_inventory_area_shows_player = false;
             reset_inventory_area();
-            result = EventResult::Handled;
+            result = SFMLEventResult::Handled;
             break;
 
             // "-" - subtract quantity
@@ -399,7 +401,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
               inventory_area.dec_selected_quantity();
             }
           }
-          result = EventResult::Handled;
+          result = SFMLEventResult::Handled;
           break;
 
           // "+"/"=" - add quantity
@@ -422,7 +424,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
               inventory_area.inc_selected_quantity();
             }
           }
-          result = EventResult::Handled;
+          result = SFMLEventResult::Handled;
           break;
 
           case sf::Keyboard::Key::LBracket:
@@ -534,7 +536,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
               m_inventory_area_shows_player = false;
               reset_inventory_area();
             }
-            result = EventResult::Handled;
+            result = SFMLEventResult::Handled;
             break;
 
             // CTRL-C -- close items
@@ -559,7 +561,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
               m_inventory_area_shows_player = false;
               reset_inventory_area();
             }
-            result = EventResult::Handled;
+            result = SFMLEventResult::Handled;
             break;
 
             // CTRL-D -- drop items
@@ -579,7 +581,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
               m_inventory_area_shows_player = false;
               reset_inventory_area();
             }
-            result = EventResult::Handled;
+            result = SFMLEventResult::Handled;
             break;
 
             // CTRL-E -- eat items
@@ -599,7 +601,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
               m_inventory_area_shows_player = false;
               reset_inventory_area();
             }
-            result = EventResult::Handled;
+            result = SFMLEventResult::Handled;
             break;
 
             // CTRL-F -- fill item(s)
@@ -620,7 +622,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
               m_current_input_state = GameInputState::TargetSelection;
               inventory_area.clear_selected_slots();
             }
-            result = EventResult::Handled;
+            result = SFMLEventResult::Handled;
             break;
 
             // CTRL-G -- get (pick up) items
@@ -640,7 +642,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
               m_inventory_area_shows_player = false;
               reset_inventory_area();
             }
-            result = EventResult::Handled;
+            result = SFMLEventResult::Handled;
             break;
 
             // CTRL-H -- hurl items
@@ -661,7 +663,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
               m_current_input_state = GameInputState::TargetSelection;
               inventory_area.clear_selected_slots();
             }
-            result = EventResult::Handled;
+            result = SFMLEventResult::Handled;
             break;
 
             // CTRL-I -- inscribe with an item
@@ -682,7 +684,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
               m_current_input_state = GameInputState::TargetSelection;
               inventory_area.clear_selected_slots();
             }
-            result = EventResult::Handled;
+            result = SFMLEventResult::Handled;
             break;
 
             // CTRL-M -- mix items
@@ -703,7 +705,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
               m_inventory_area_shows_player = false;
               reset_inventory_area();
             }
-            result = EventResult::Handled;
+            result = SFMLEventResult::Handled;
             break;
 
           case sf::Keyboard::Key::O:    // Open
@@ -727,7 +729,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
               m_inventory_area_shows_player = false;
               reset_inventory_area();
             }
-            result = EventResult::Handled;
+            result = SFMLEventResult::Handled;
             break;
 
             // CTRL-P -- put item in another item
@@ -744,7 +746,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
               m_current_input_state = GameInputState::TargetSelection;
               inventory_area.clear_selected_slots();
             }
-            result = EventResult::Handled;
+            result = SFMLEventResult::Handled;
             break;
 
             // CTRL-Q -- quaff (drink) from items
@@ -764,7 +766,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
               m_inventory_area_shows_player = false;
               reset_inventory_area();
             }
-            result = EventResult::Handled;
+            result = SFMLEventResult::Handled;
             break;
 
             // CTRL-R -- read an item
@@ -784,7 +786,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
               m_inventory_area_shows_player = false;
               reset_inventory_area();
             }
-            result = EventResult::Handled;
+            result = SFMLEventResult::Handled;
             break;
 
             // CTRL-S -- shoot items
@@ -809,7 +811,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
               m_current_input_state = GameInputState::TargetSelection;
               inventory_area.clear_selected_slots();
             }
-            result = EventResult::Handled;
+            result = SFMLEventResult::Handled;
             break;
 
             // CTRL-T -- take item out of container
@@ -826,7 +828,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
               m_inventory_area_shows_player = false;
               reset_inventory_area();
             }
-            result = EventResult::Handled;
+            result = SFMLEventResult::Handled;
             break;
 
             // CTRL-U -- use an item
@@ -846,7 +848,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
               m_inventory_area_shows_player = false;
               reset_inventory_area();
             }
-            result = EventResult::Handled;
+            result = SFMLEventResult::Handled;
             break;
 
             // CTRL-W -- wield item
@@ -867,7 +869,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
               m_inventory_area_shows_player = false;
               reset_inventory_area();
             }
-            result = EventResult::Handled;
+            result = SFMLEventResult::Handled;
             break;
 
             // CTRL-X -- Xplicit attack
@@ -909,7 +911,7 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           default:
             break;
         }
-    }
+      }
 #endif
 
       // *** YES ALT, YES CTRL, SHIFT is irrelevant *****************************
@@ -922,10 +924,10 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           default:
             break;
         }
-  }
+      }
 #endif
       break;
-} // end case GameInputState::Map
+    } // end case GameInputState::Map
 
     default:
       break;
@@ -934,10 +936,10 @@ EventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
   return result;
 }
 
-EventResult AppStateGameMode::handle_mouse_wheel(sf::Event::MouseWheelEvent& wheel)
+SFMLEventResult AppStateGameMode::handle_mouse_wheel(sf::Event::MouseWheelEvent& wheel)
 {
   add_zoom(wheel.delta * 0.05f);
-  return EventResult::Handled;
+  return SFMLEventResult::Handled;
 }
 
 void AppStateGameMode::add_zoom(float zoom_amount)
@@ -1033,9 +1035,9 @@ bool AppStateGameMode::move_cursor(Direction direction)
   return result;
 }
 
-EventResult AppStateGameMode::handle_key_press_target_selection(ThingRef player, sf::Event::KeyEvent& key)
+SFMLEventResult AppStateGameMode::handle_key_press_target_selection(ThingRef player, sf::Event::KeyEvent& key)
 {
-  EventResult result = EventResult::Ignored;
+  SFMLEventResult result = SFMLEventResult::Ignored;
   int key_number = get_letter_key(key);
   Direction key_direction = get_direction_key(key);
 
@@ -1051,7 +1053,7 @@ EventResult AppStateGameMode::handle_key_press_target_selection(ThingRef player,
     m_inventory_area_shows_player = false;
     reset_inventory_area();
     m_current_input_state = GameInputState::Map;
-    result = EventResult::Handled;
+    result = SFMLEventResult::Handled;
   }
 
   if (m_action_in_progress && m_action_in_progress->can_be_subject_verb_object_preposition_target())
@@ -1065,7 +1067,7 @@ EventResult AppStateGameMode::handle_key_press_target_selection(ThingRef player,
       m_inventory_area_shows_player = false;
       reset_inventory_area();
       m_current_input_state = GameInputState::Map;
-      result = EventResult::Handled;
+      result = SFMLEventResult::Handled;
     }
   } // end if (action_in_progress.target_can_be_thing)
 
@@ -1079,16 +1081,16 @@ EventResult AppStateGameMode::handle_key_press_target_selection(ThingRef player,
       m_inventory_area_shows_player = false;
       reset_inventory_area();
       m_current_input_state = GameInputState::Map;
-      result = EventResult::Handled;
+      result = SFMLEventResult::Handled;
     }
   }
 
   return result;
 }
 
-EventResult AppStateGameMode::handle_key_press_cursor_look(ThingRef player, sf::Event::KeyEvent& key)
+SFMLEventResult AppStateGameMode::handle_key_press_cursor_look(ThingRef player, sf::Event::KeyEvent& key)
 {
-  EventResult result = EventResult::Ignored;
+  SFMLEventResult result = SFMLEventResult::Ignored;
 
   // *** NON-MODIFIED KEYS ***********************************************
   if (!key.alt && !key.control && !key.shift)
@@ -1099,56 +1101,56 @@ EventResult AppStateGameMode::handle_key_press_cursor_look(ThingRef player, sf::
         move_cursor(Direction::North);
         m_inventory_area_shows_player = false;
         reset_inventory_area();
-        result = EventResult::Handled;
+        result = SFMLEventResult::Handled;
         break;
 
       case sf::Keyboard::Key::PageUp:
         move_cursor(Direction::Northeast);
         m_inventory_area_shows_player = false;
         reset_inventory_area();
-        result = EventResult::Handled;
+        result = SFMLEventResult::Handled;
         break;
 
       case sf::Keyboard::Key::Right:
         move_cursor(Direction::East);
         m_inventory_area_shows_player = false;
         reset_inventory_area();
-        result = EventResult::Handled;
+        result = SFMLEventResult::Handled;
         break;
 
       case sf::Keyboard::Key::PageDown:
         move_cursor(Direction::Southeast);
         m_inventory_area_shows_player = false;
         reset_inventory_area();
-        result = EventResult::Handled;
+        result = SFMLEventResult::Handled;
         break;
 
       case sf::Keyboard::Key::Down:
         move_cursor(Direction::South);
         m_inventory_area_shows_player = false;
         reset_inventory_area();
-        result = EventResult::Handled;
+        result = SFMLEventResult::Handled;
         break;
 
       case sf::Keyboard::Key::End:
         move_cursor(Direction::Southwest);
         m_inventory_area_shows_player = false;
         reset_inventory_area();
-        result = EventResult::Handled;
+        result = SFMLEventResult::Handled;
         break;
 
       case sf::Keyboard::Key::Left:
         move_cursor(Direction::West);
         m_inventory_area_shows_player = false;
         reset_inventory_area();
-        result = EventResult::Handled;
+        result = SFMLEventResult::Handled;
         break;
 
       case sf::Keyboard::Key::Home:
         move_cursor(Direction::Northwest);
         m_inventory_area_shows_player = false;
         reset_inventory_area();
-        result = EventResult::Handled;
+        result = SFMLEventResult::Handled;
         break;
 
         // "/" - go back to Map focus.
@@ -1156,7 +1158,7 @@ EventResult AppStateGameMode::handle_key_press_cursor_look(ThingRef player, sf::
         m_current_input_state = GameInputState::Map;
         m_inventory_area_shows_player = false;
         reset_inventory_area();
-        result = EventResult::Handled;
+        result = SFMLEventResult::Handled;
         break;
 
       default:

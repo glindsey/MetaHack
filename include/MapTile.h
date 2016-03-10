@@ -30,7 +30,7 @@ public:
   ThingRef get_tile_contents() const;
 
   /// Return this tile's description.
-  virtual std::string get_display_name() const override final;
+  virtual StringDisplay get_display_name() const override final;
 
   /// Return the coordinates of the tile on the tilesheet.
   sf::Vector2u get_tile_sheet_coords(int frame) const;
@@ -61,11 +61,11 @@ public:
   /// Used to set up the map before gameplay begins.
   /// @param type Type of the tile.
   /// @return None.
-  void set_tile_type(std::string type);
+  void set_tile_type(StringKey type);
 
   /// Gets the current tile type.
   /// @return Type of the tile.
-  std::string get_tile_type() const;
+  StringKey get_tile_type() const;
 
   /// Returns whether a tile is empty space, e.g. no wall in the way.
   bool is_empty_space() const;

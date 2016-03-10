@@ -8,7 +8,7 @@ ACTION_SRC_BOILERPLATE(ActionMix, "mix", "mix")
 
 Action::StateResult ActionMix::do_prebegin_work_(AnyMap& params)
 {
-  std::string message;
+  StringDisplay message;
   auto subject = get_subject();
   auto object1 = get_object();
   auto object2 = get_second_object();

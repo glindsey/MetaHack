@@ -14,7 +14,7 @@ class ActionShoot
     ACTION_TRAIT(can_be_subject_verb_object_preposition_direction)
 
 public:
-  std::string const get_verbed() const override
+  StringDisplay const get_verbed() const override
   {
     return "shot";
   }

@@ -5,23 +5,23 @@
 #include "ErrorHandler.h"
 #include "MetadataCollection.h"
 
-Metadata::Metadata(MetadataCollection& collection, std::string type)
+Metadata::Metadata(MetadataCollection& collection, StringKey type)
   :
   m_collection{ collection },
   m_type{ type }
 {
   SET_UP_LOGGER("Metadata", true);
 
-  std::string category = collection.get_category();
+  StringKey category = collection.get_category();
 
   // Look for the various files containing this metadata.
-  std::string resource_string = "resources/" + category + "s/" + type;
-  std::string pngfile_string = resource_string + ".png";
+  FileName resource_string = "resources/" + category + "s/" + type;
+  FileName pngfile_string = resource_string + ".png";
   fs::path pngfile_path = fs::path(pngfile_string);
-  std::string luafile_string = resource_string + ".lua";
+  FileName luafile_string = resource_string + ".lua";
   fs::path luafile_path = fs::path(luafile_string);
 
-  std::string qualified_name = category + "!" + type;
+  StringKey qualified_name = category + "!" + type;
 
   /// Try to load and run this Thing's Lua script.
   if (fs::exists(luafile_path))
@@ -62,7 +62,7 @@ MetadataCollection& Metadata::get_collection()
   return m_collection;
 }
 
-std::string const& Metadata::get_type() const
+StringKey const& Metadata::get_type() const
 {
   return m_type;
 }
@@ -81,7 +81,7 @@ ActionResult Metadata::call_lua_function(std::string function_name,
                                          ActionResult default_result)
 {
   ActionResult return_value = default_result;
-  std::string name = this->get_type();
+  StringKey name = this->get_type();
 
   int start_stack = lua_gettop(the_lua_state);
 
@@ -160,7 +160,7 @@ bool Metadata::call_lua_function_bool(std::string function_name,
                                       bool default_result)
 {
   bool return_value = default_result;
-  std::string name = this->get_type();
+  StringKey name = this->get_type();
 
   int start_stack = lua_gettop(the_lua_state);
 
@@ -239,7 +239,7 @@ sf::Vector2u Metadata::call_lua_function_v2u(std::string function_name,
                                              sf::Vector2u default_result)
 {
   sf::Vector2u return_value = default_result;
-  std::string name = this->get_type();
+  StringKey name = this->get_type();
 
   int start_stack = lua_gettop(the_lua_state);
 
@@ -314,10 +314,10 @@ sf::Vector2u Metadata::call_lua_function_v2u(std::string function_name,
   return return_value;
 }
 
-bool Metadata::get_default_bool(std::string name, bool default_value = false)
+bool Metadata::get_default_bool(StringKey name, bool default_value = false)
 {
   bool return_value = default_value;
-  std::string type = this->get_type();
+  StringKey type = this->get_type();
 
   int start_stack = lua_gettop(the_lua_state);
 
@@ -382,10 +382,10 @@ bool Metadata::get_default_bool(std::string name, bool default_value = false)
   return return_value;
 }
 
-double Metadata::get_default_value(std::string name, double default_value = 0.0)
+double Metadata::get_default_value(StringKey name, double default_value = 0.0)
 {
   double return_value = default_value;
-  std::string type = this->get_type();
+  StringKey type = this->get_type();
 
   int start_stack = lua_gettop(the_lua_state);
 
@@ -458,10 +458,10 @@ double Metadata::get_default_value(std::string name, double default_value = 0.0)
   return return_value;
 }
 
-std::string Metadata::get_default_string(std::string name, std::string default_value = "")
+std::string Metadata::get_default_string(StringKey name, std::string default_value = "")
 {
   std::string return_value = default_value;
-  std::string type = this->get_type();
+  StringKey type = this->get_type();
 
   int start_stack = lua_gettop(the_lua_state);
 
@@ -525,10 +525,10 @@ std::string Metadata::get_default_string(std::string name, std::string default_v
   return return_value;
 }
 
-IntegerRange Metadata::get_default_range(std::string name, IntegerRange default_value = IntegerRange(0, 0))
+IntegerRange Metadata::get_default_range(StringKey name, IntegerRange default_value = IntegerRange(0, 0))
 {
   IntegerRange return_value = default_value;
-  std::string type = this->get_type();
+  StringKey type = this->get_type();
 
   int start_stack = lua_gettop(the_lua_state);
 
@@ -592,10 +592,10 @@ IntegerRange Metadata::get_default_range(std::string name, IntegerRange default_
   return return_value;
 }
 
-bool Metadata::get_intrinsic_bool(std::string name, bool default_value = false)
+bool Metadata::get_intrinsic_bool(StringKey name, bool default_value = false)
 {
   bool return_value = default_value;
-  std::string type = this->get_type();
+  StringKey type = this->get_type();
 
   int start_stack = lua_gettop(the_lua_state);
 
@@ -660,10 +660,10 @@ bool Metadata::get_intrinsic_bool(std::string name, bool default_value = false)
   return return_value;
 }
 
-double Metadata::get_intrinsic_value(std::string name, double default_value = 0.0)
+double Metadata::get_intrinsic_value(StringKey name, double default_value = 0.0)
 {
   double return_value = default_value;
-  std::string type = this->get_type();
+  StringKey type = this->get_type();
 
   int start_stack = lua_gettop(the_lua_state);
 
@@ -728,10 +728,10 @@ double Metadata::get_intrinsic_value(std::string name, double default_value = 0.
   return return_value;
 }
 
-std::string Metadata::get_intrinsic_string(std::string name, std::string default_value = "")
+std::string Metadata::get_intrinsic_string(StringKey name, std::string default_value = "")
 {
   std::string return_value = default_value;
-  std::string type = this->get_type();
+  StringKey type = this->get_type();
 
   int start_stack = lua_gettop(the_lua_state);
 
@@ -800,9 +800,9 @@ std::string Metadata::get_intrinsic_string(std::string name, std::string default
   return return_value;
 }
 
-void Metadata::set_intrinsic_bool(std::string name, bool value)
+void Metadata::set_intrinsic_bool(StringKey name, bool value)
 {
-  std::string type = this->get_type();
+  StringKey type = this->get_type();
 
   int start_stack = lua_gettop(the_lua_state);
 
@@ -854,9 +854,9 @@ void Metadata::set_intrinsic_bool(std::string name, bool value)
   }
 }
 
-void Metadata::set_intrinsic_value(std::string name, double value = 0.0)
+void Metadata::set_intrinsic_value(StringKey name, double value = 0.0)
 {
-  std::string type = this->get_type();
+  StringKey type = this->get_type();
 
   int start_stack = lua_gettop(the_lua_state);
 
@@ -908,9 +908,9 @@ void Metadata::set_intrinsic_value(std::string name, double value = 0.0)
   }
 }
 
-void Metadata::set_intrinsic_string(std::string name, std::string value = "")
+void Metadata::set_intrinsic_string(StringKey name, std::string value = "")
 {
-  std::string type = this->get_type();
+  StringKey type = this->get_type();
 
   int start_stack = lua_gettop(the_lua_state);
 

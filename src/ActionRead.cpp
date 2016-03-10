@@ -8,7 +8,7 @@ ACTION_SRC_BOILERPLATE(ActionRead, "read", "read")
 
 Action::StateResult ActionRead::do_prebegin_work_(AnyMap& params)
 {
-  std::string message;
+  StringDisplay message;
   auto subject = get_subject();
   auto object = get_object();
 
@@ -28,7 +28,7 @@ Action::StateResult ActionRead::do_prebegin_work_(AnyMap& params)
 Action::StateResult ActionRead::do_begin_work_(AnyMap& params)
 {
   StateResult result = StateResult::Failure();
-  std::string message;
+  StringDisplay message;
   auto subject = get_subject();
   auto object = get_object();
 
@@ -42,7 +42,7 @@ Action::StateResult ActionRead::do_begin_work_(AnyMap& params)
 Action::StateResult ActionRead::do_finish_work_(AnyMap& params)
 {
   StateResult result = StateResult::Failure();
-  std::string message;
+  StringDisplay message;
   auto subject = get_subject();
   auto object = get_object();
 
@@ -84,6 +84,6 @@ Action::StateResult ActionRead::do_abort_work_(AnyMap& params)
 
 void ActionRead::print_message_cant_()
 {
-  std::string message = THE_FOO + FOO_HAS + " no writing to read.";
+  StringDisplay message = THE_FOO + FOO_HAS + " no writing to read.";
   the_message_log.add(message);
 }

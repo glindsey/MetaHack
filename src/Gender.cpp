@@ -2,7 +2,7 @@
 
 #include "Gender.h"
 
-std::string const subjectPronounArray[] =
+StringDisplay const subjectPronounArray[] =
 {
   "it",
   "he",
@@ -17,7 +17,7 @@ std::string const subjectPronounArray[] =
   "someone"
 };
 
-std::string const objectPronounArray[] =
+StringDisplay const objectPronounArray[] =
 {
   "it",
   "him",
@@ -32,7 +32,7 @@ std::string const objectPronounArray[] =
   "someone"
 };
 
-std::string const reflexivePronounArray[] =
+StringDisplay const reflexivePronounArray[] =
 {
   "itself",
   "himself",
@@ -47,7 +47,7 @@ std::string const reflexivePronounArray[] =
   "him/herself"
 };
 
-std::string const possessiveAdjectiveArray[] =
+StringDisplay const possessiveAdjectiveArray[] =
 {
   "its",
   "his",
@@ -62,7 +62,7 @@ std::string const possessiveAdjectiveArray[] =
   "his/her"
 };
 
-std::string const possessivePronounArray[] =
+StringDisplay const possessivePronounArray[] =
 {
   "its",
   "his",
@@ -77,7 +77,7 @@ std::string const possessivePronounArray[] =
   "his/hers"
 };
 
-std::string const& getSubjPro(Gender gender)
+StringDisplay const& getSubjPro(Gender gender)
 {
   if ((int)gender < (int)Gender::Count)
   {
@@ -89,7 +89,7 @@ std::string const& getSubjPro(Gender gender)
   }
 }
 
-std::string const& getObjPro(Gender gender)
+StringDisplay const& getObjPro(Gender gender)
 {
   if ((int)gender < (int)Gender::Count)
   {
@@ -101,7 +101,7 @@ std::string const& getObjPro(Gender gender)
   }
 }
 
-std::string const& getRefPro(Gender gender)
+StringDisplay const& getRefPro(Gender gender)
 {
   if ((int)gender < (int)Gender::Count)
   {
@@ -113,7 +113,7 @@ std::string const& getRefPro(Gender gender)
   }
 }
 
-std::string const& getPossAdj(Gender gender)
+StringDisplay const& getPossAdj(Gender gender)
 {
   if ((int)gender < (int)Gender::Count)
   {
@@ -125,7 +125,7 @@ std::string const& getPossAdj(Gender gender)
   }
 }
 
-std::string const& getPossPro(Gender gender)
+StringDisplay const& getPossPro(Gender gender)
 {
   if ((int)gender < (int)Gender::Count)
   {
@@ -137,13 +137,13 @@ std::string const& getPossPro(Gender gender)
   }
 }
 
-std::string const& getIndefArt(std::string const& desc)
+StringDisplay const& getIndefArt(StringDisplay const& desc)
 {
-  static std::string const articleAn = std::string("an");
-  static std::string const articleA = std::string("a");
-  static std::string const articleNull = std::string("");
+  static StringDisplay const articleAn = "an";
+  static StringDisplay const articleA = "a";
+  static StringDisplay const articleNull = "";
 
-  if (desc.empty())
+  if (desc.isEmpty())
   {
     return articleNull;
   }

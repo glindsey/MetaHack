@@ -16,7 +16,7 @@ class Thing;
 
 // === USING DECLARATIONS =====================================================
 using ActionCreator = std::function<std::unique_ptr<Action>(ThingRef)>;
-using ActionMap = std::unordered_map<std::string, ActionCreator>;
+using ActionMap = std::unordered_map<StringKey, ActionCreator>;
 
 // === MESSAGE HELPER MACROS ==================================================
 #define YOU       (get_subject()->get_you_or_identifying_string())  // "you" or descriptive noun like "the goblin"
@@ -79,11 +79,11 @@ using ActionMap = std::unordered_map<std::string, ActionCreator>;
   }                                                                           \
   T::T(ThingRef subject) : Action(subject) {}                                 \
   T::~T() {}                                                                  \
-  std::string const T::get_type() const                                       \
+  StringKey const T::get_type() const                                         \
   {                                                                           \
     return type;                                                              \
   }                                                                           \
-  std::string const T::get_verb() const                                       \
+  StringDisplay const T::get_verb() const                                     \
   {                                                                           \
     return verb;                                                              \
   }                                                                           \
@@ -97,8 +97,8 @@ using ActionMap = std::unordered_map<std::string, ActionCreator>;
   public:                                                                     \
     explicit T(ThingRef subject);                                             \
     virtual ~T();                                                             \
-    virtual std::string const get_type() const override;                      \
-    virtual std::string const get_verb() const override;                      \
+    virtual StringKey const get_type() const override;                        \
+    virtual StringDisplay const get_verb() const override;                    \
     static T prototype;
 
 // === ACTION TRAITS ==========================================================
@@ -165,33 +165,35 @@ public:
   Direction get_target_direction() const;
   unsigned int get_quantity() const;
 
-  virtual std::string const get_type() const
+  virtual StringKey const get_type() const
   {
     return "???";
   }
 
   /// Return the first-/second-person singular form of the verb to be performed.
-  virtual std::string const get_verb() const
+  virtual StringDisplay const get_verb() const
   {
     return "???";
   }
 
   /// Return the third-person singular form of the verb to be performed.
   /// By default, appends an "s" to get_verb().
-  virtual std::string const get_verb3() const
+  virtual StringDisplay const get_verb3() const
   {
-    std::string verb = get_verb();
+    StringDisplay verb = get_verb();
     return verb + "s";
   }
 
   /// Return the present participle form of the verb to be performed.
   /// By default, tries to use standard compositional rules to make the form.
-  virtual std::string const get_verbing() const
+  virtual StringDisplay const get_verbing() const
   {
-    std::string verb = get_verb();
-    if (std::string("aeiou").find_first_of(verb.back()))
+    StringDisplay verb = get_verb();
+    CharDisplay last_character = *(verb.end()--);
+
+    if (StringDisplay("aeiou").find(last_character) != sf::String::InvalidPos)
     {
-      return verb.substr(0, verb.length() - 1) + "ing";
+      return verb.substring(0, verb.getSize() - 1) + "ing";
     }
     else
     {
@@ -201,12 +203,14 @@ public:
 
   /// Return the past form of the verb to be performed.
   /// By default, tries to use standard compositional rules to make the form.
-  virtual std::string const get_verbed() const
+  virtual StringDisplay const get_verbed() const
   {
-    std::string verb = get_verb();
-    if (std::string("aeiou").find_first_of(verb.back()))
+    StringDisplay verb = get_verb();
+    CharDisplay last_character = *(verb.end()--);
+
+    if (StringDisplay("aeiou").find(last_character) != sf::String::InvalidPos)
     {
-      return verb.substr(0, verb.length() - 1) + "ed";
+      return verb.substring(0, verb.getSize() - 1) + "ed";
     }
     else
     {
@@ -216,19 +220,21 @@ public:
 
   /// Return the past participle form of the verb to be performed.
   /// By default, returns the past form, as it is the same for most verbs.
-  virtual std::string const get_verb_pp() const
+  virtual StringDisplay const get_verb_pp() const
   {
     return get_verbed();
   }
 
   /// Return the adjective form of the verb to be performed.
   /// By default, tries to use standard compositional rules to make the form.
-  virtual std::string const get_verbable() const
+  virtual StringDisplay const get_verbable() const
   {
-    std::string verb = get_verb();
-    if (std::string("aeiou").find_first_of(verb.back()))
+    StringDisplay verb = get_verb();
+    CharDisplay last_character = *(verb.end()--);
+
+    if (StringDisplay("aeiou").find(last_character) != sf::String::InvalidPos)
     {
-      return verb.substr(0, verb.length() - 1) + "able";
+      return verb.substring(0, verb.getSize() - 1) + "able";
     }
     else
     {
@@ -252,14 +258,14 @@ public:
     ;
 
   /// A static function that registers an action subclass in a database.
-  static void register_action_as(std::string key, ActionCreator creator);
+  static void register_action_as(StringKey key, ActionCreator creator);
 
   /// A static function that checks if a key exists.
-  static bool exists(std::string key);
+  static bool exists(StringKey key);
 
   /// A static function that returns an Action associated with a key.
   /// If the requested key does not exist, throws an exception.
-  static std::unique_ptr<Action> create(std::string key, ThingRef subject);
+  static std::unique_ptr<Action> create(StringKey key, ThingRef subject);
 
   /// Get a const reference to the action map.
   static ActionMap const& get_map();
@@ -346,7 +352,7 @@ protected:
   ///
   /// This method can be overridden if necessary to customze the description for a
   /// particular action.
-  virtual std::string get_object_string_();
+  virtual StringDisplay get_object_string_();
 
   /// Describes the target in terms of the subject or object.
   /// This string will vary based on the presence of objects or a direction
@@ -357,7 +363,7 @@ protected:
   ///
   /// This method can be overridden if necessary to customze the description for a
   /// particular action.
-  virtual std::string get_target_string_();
+  virtual StringDisplay get_target_string_();
 
   /// Print a "[SUBJECT] try to [VERB]" message.
   /// The message will vary based on the presence of objects or a direction

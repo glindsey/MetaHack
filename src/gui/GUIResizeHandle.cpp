@@ -8,7 +8,7 @@
 
 namespace metagui
 {
-  ResizeHandle::ResizeHandle(std::string name)
+  ResizeHandle::ResizeHandle(StringKey name)
     :
     Object(name, sf::Vector2i(0, 0))
   {}

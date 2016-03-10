@@ -51,9 +51,6 @@
     <ClInclude Include="include\ErrorHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\EventHandler.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\GameObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -118,9 +115,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\TileSheet.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\gui\GUIPane.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\ThingManager.h">
@@ -297,6 +291,9 @@
     <ClInclude Include="include\gui\GUIEvent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\SFMLEventHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">
@@ -357,9 +354,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\TileSheet.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\gui\GUIPane.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\mapfeatures\MapCorridor.cpp">
@@ -513,9 +507,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\gui\GUITitleBar.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\gui\GUIEvent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

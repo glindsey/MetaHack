@@ -16,17 +16,17 @@ public:
   static Lua& instance();
 
   /// Register a function with Lua.
-  void register_function(std::string name, lua_CFunction func);
+  void register_function(StringKey name, lua_CFunction func);
 
   /// Execute a particular file.
-  void do_file(std::string filename);
+  void do_file(FileName filename);
 
   /// Load a particular package, making sure it is not already loaded.
-  void require(std::string filename, bool fatal = false);
+  void require(FileName filename, bool fatal = false);
 
   /// Sets a global to a particular integer value.
   /// If the global currently exists it will be overwritten.
-  void set_global(std::string name, lua_Integer value);
+  void set_global(StringKey name, lua_Integer value);
 
   /// Adds an enumerated type into Lua.
   ///
@@ -99,7 +99,7 @@ public:
   /// Attempts to deduce the type of a boost::any and push the required
   /// values onto the Lua stack.
   /// Supported types include:
-  ///  * std::string
+  ///  * StringKey
   ///  * bool
   ///  * double
   ///  * sf::Vector2i

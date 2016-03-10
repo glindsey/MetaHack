@@ -64,11 +64,11 @@ inline void Gender_add_to_lua(Lua* lua_instance)
                          );
 }
 
-std::string const& getSubjPro(Gender gender);
-std::string const& getObjPro(Gender gender);
-std::string const& getRefPro(Gender gender);
-std::string const& getPossAdj(Gender gender);
-std::string const& getPossPro(Gender gender);
-std::string const& getIndefArt(std::string const& desc);
+StringDisplay const& getSubjPro(Gender gender);
+StringDisplay const& getObjPro(Gender gender);
+StringDisplay const& getRefPro(Gender gender);
+StringDisplay const& getPossAdj(Gender gender);
+StringDisplay const& getPossPro(Gender gender);
+StringDisplay const& getIndefArt(StringDisplay const& desc);
 
 #endif // GENDER_H

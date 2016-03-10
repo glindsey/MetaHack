@@ -15,12 +15,12 @@ class ActionDrop
     ACTION_TRAIT(can_take_a_quantity)
 
 public:
-  std::string const get_verbable() const override
+  StringDisplay const get_verbable() const override
   {
     return "droppable";
   }
 
-  std::string const get_verbed() const override
+  StringDisplay const get_verbed() const override
   {
     return "dropped";
   }

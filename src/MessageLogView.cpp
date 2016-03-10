@@ -20,14 +20,18 @@ MessageLogView::MessageLogView(MessageLog& model,
 MessageLogView::~MessageLogView()
 {}
 
-EventResult MessageLogView::handle_event_before_children_(sf::Event& event)
+metagui::Event::Result MessageLogView::handle_event_before_children_(metagui::EventKeyPressed& event)
 {
-  switch (event.type)
+  CLOG(TRACE, "GUI") << "MessageLogView::handle_event_before_children_(EventKeyPressed&) called";
+
+  /// @todo This is ugly, fix later
+  if (get_global_focus() == true)
   {
-    case sf::Event::EventType::KeyPressed:
-      return m_model.get_key_buffer().handle_key_press(event.key);
-    default:
-      return metagui::WindowPane::handle_event_before_children_(event);
+    return static_cast<metagui::Event::Result>(m_model.get_key_buffer().handle_key_press(event));
+  }
+  else
+  {
+    return metagui::Event::Result::Ignored;
   }
 }
 

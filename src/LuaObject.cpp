@@ -48,12 +48,12 @@ Lua& Lua::instance()
   return *(Lua::instance_.get());
 }
 
-void Lua::register_function(std::string name, lua_CFunction func)
+void Lua::register_function(StringKey name, lua_CFunction func)
 {
   lua_register(L_, name.c_str(), func);
 }
 
-void Lua::do_file(std::string filename)
+void Lua::do_file(FileName filename)
 {
   const char * file = filename.c_str();
   if (luaL_dofile(L_, file))
@@ -62,7 +62,7 @@ void Lua::do_file(std::string filename)
   }
 }
 
-void Lua::require(std::string packagename, bool fatal)
+void Lua::require(FileName packagename, bool fatal)
 {
   int err;
 
@@ -89,7 +89,7 @@ void Lua::require(std::string packagename, bool fatal)
   }
 }
 
-void Lua::set_global(std::string name, lua_Integer value)
+void Lua::set_global(StringKey name, lua_Integer value)
 {
   lua_pushinteger(L_, value);
   lua_setglobal(L_, name.c_str());

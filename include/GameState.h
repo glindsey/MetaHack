@@ -21,14 +21,14 @@ public:
   /// Constructor that loads a game state from disk.
   /// Throws an exception if the game could not be loaded.
   /// @todo WRITE ME
-  GameState(std::string filename);
+  GameState(FileName filename);
 
   virtual ~GameState();
 
   /// Save the game state to disk.
   /// Throws an exception if the game could not be saved.
   /// @todo WRITE ME
-  void save_state(std::string filename);
+  void save_state(FileName filename);
 
   MapFactory& get_map_factory();
   ThingManager& get_thing_manager();

@@ -8,7 +8,7 @@ ACTION_SRC_BOILERPLATE(ActionTakeOut, "takeout", "remove")
 
 Action::StateResult ActionTakeOut::do_prebegin_work_(AnyMap& params)
 {
-  std::string message;
+  StringDisplay message;
   auto subject = get_subject();
   auto object = get_object();
   auto container = object->get_location();
@@ -72,7 +72,7 @@ Action::StateResult ActionTakeOut::do_begin_work_(AnyMap& params)
 {
   /// @todo Handle taking out a certain quantity of an item.
   Action::StateResult result = StateResult::Failure();
-  std::string message;
+  StringDisplay message;
   auto subject = get_subject();
   auto object = get_object();
   auto container = object->get_location();
@@ -114,12 +114,12 @@ Action::StateResult ActionTakeOut::do_abort_work_(AnyMap& params)
 
 void ActionTakeOut::print_message_try_()
 {
-  std::string message = YOU_TRY + " to " + VERB + " " + get_object_string_() + " from " + get_target_string_() + ".";
+  StringDisplay message = YOU_TRY + " to " + VERB + " " + get_object_string_() + " from " + get_target_string_() + ".";
   the_message_log.add(message);
 }
 
 void ActionTakeOut::print_message_do_()
 {
-  std::string message = YOU + " " + CV(VERB, VERB3) + " " + get_object_string_() + " from " + get_target_string_() + ".";
+  StringDisplay message = YOU + " " + CV(VERB, VERB3) + " " + get_object_string_() + " from " + get_target_string_() + ".";
   the_message_log.add(message);
 }

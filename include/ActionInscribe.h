@@ -21,12 +21,12 @@ class ActionInscribe
     ACTION_TRAIT(can_be_subject_verb_object_preposition_direction)
 
 public:
-  std::string const get_verbed() const override
+  StringDisplay const get_verbed() const override
   {
     return "wrote";
   }
 
-  std::string const get_verb_pp() const override
+  StringDisplay const get_verb_pp() const override
   {
     return "written";
   }

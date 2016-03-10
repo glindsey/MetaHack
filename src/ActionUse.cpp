@@ -8,7 +8,7 @@ ACTION_SRC_BOILERPLATE(ActionUse, "use", "use")
 
 Action::StateResult ActionUse::do_prebegin_work_(AnyMap& params)
 {
-  std::string message;
+  StringDisplay message;
   auto subject = get_subject();
   auto object = get_object();
 
@@ -40,7 +40,7 @@ Action::StateResult ActionUse::do_prebegin_work_(AnyMap& params)
 Action::StateResult ActionUse::do_begin_work_(AnyMap& params)
 {
   StateResult result = StateResult::Failure();
-  std::string message;
+  StringDisplay message;
   auto subject = get_subject();
   auto object = get_object();
 
@@ -54,7 +54,7 @@ Action::StateResult ActionUse::do_begin_work_(AnyMap& params)
 Action::StateResult ActionUse::do_finish_work_(AnyMap& params)
 {
   StateResult result = StateResult::Failure();
-  std::string message;
+  StringDisplay message;
   auto subject = get_subject();
   auto object = get_object();
 

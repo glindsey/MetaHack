@@ -9,7 +9,7 @@ ACTION_SRC_BOILERPLATE(ActionDrop, "drop", "drop")
 
 Action::StateResult ActionDrop::do_prebegin_work_(AnyMap& params)
 {
-  std::string message;
+  StringDisplay message;
   auto subject = get_subject();
   auto object = get_object();
   ThingRef location = subject->get_location();
@@ -72,7 +72,7 @@ Action::StateResult ActionDrop::do_prebegin_work_(AnyMap& params)
 Action::StateResult ActionDrop::do_begin_work_(AnyMap& params)
 {
   Action::StateResult result = StateResult::Failure();
-  std::string message;
+  StringDisplay message;
   auto subject = get_subject();
   auto object = get_objects().front();
   ThingRef location = subject->get_location();

@@ -14,7 +14,7 @@ Action::StateResult ActionWait::do_prebegin_work_(AnyMap& params)
 
 Action::StateResult ActionWait::do_begin_work_(AnyMap& params)
 {
-  std::string message =
+  StringDisplay message =
     YOU + " successfully" + CV(" stay", " stays") +
     " where " + YOU_SUBJ_ARE + ".";
 

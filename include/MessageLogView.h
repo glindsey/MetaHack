@@ -20,8 +20,8 @@ public:
 
   virtual ~MessageLogView();
 
-  /// Handle an SFML event.
-  virtual EventResult handle_event_before_children_(sf::Event& event) override;
+  /// Handle a KeyPressed event.
+  virtual metagui::Event::Result MessageLogView::handle_event_before_children_(metagui::EventKeyPressed& event);
 
 protected:
   /// Render the contents of this view to the specified target.
