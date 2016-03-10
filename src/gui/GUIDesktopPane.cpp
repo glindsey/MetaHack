@@ -42,28 +42,36 @@ namespace metagui
       case sf::Event::EventType::MouseButtonPressed:
       {
         sf::Vector2i point{ sfml_event.mouseButton.x, sfml_event.mouseButton.y };
-        sf::Mouse::Button button{ sfml_event.mouseButton.button };
+        auto& button{ m_button_info[static_cast<unsigned int>(sfml_event.mouseButton.button)] };
 
-        m_button_info[static_cast<unsigned int>(button)].pressed = true;
-        m_button_info[static_cast<unsigned int>(button)].location = point;
-        m_button_info[static_cast<unsigned int>(button)].elapsed.restart();
+        button.pressed = true;
+        button.location = point;
+        button.elapsed.restart();
+
+        EventMouseDown event{ sfml_event.mouseButton.button, point };
 
         /// @todo Handle click, double-click, etc.
-        sfml_result = SFMLEventResult::Handled;
+        sfml_result = SFMLEventResult::Acknowledged;
       }
       break;
 
       case sf::Event::EventType::MouseButtonReleased:
       {
         sf::Vector2i point{ sfml_event.mouseButton.x, sfml_event.mouseButton.y };
-        sf::Mouse::Button button{ sfml_event.mouseButton.button };
+        auto& button{ m_button_info[static_cast<unsigned int>(sfml_event.mouseButton.button)] };
 
-        m_button_info[static_cast<unsigned int>(button)].pressed = false;
-        m_button_info[static_cast<unsigned int>(button)].location = point;
-        m_button_info[static_cast<unsigned int>(button)].elapsed.restart();
+        button.pressed = false;
+        button.location = point;
+        button.elapsed.restart();
+
+        if (button.dragging)
+        {
+          button.dragging = false;
+          /// @todo Send EventDragFinished
+        }
 
         /// @todo Handle click, double-click, etc.
-        sfml_result = SFMLEventResult::Handled;
+        sfml_result = SFMLEventResult::Acknowledged;
       }
       break;
 
@@ -71,8 +79,24 @@ namespace metagui
       {
         sf::Vector2i point{ sfml_event.mouseMove.x, sfml_event.mouseMove.y };
         set_contains_mouse(this->contains_point(point));
+        m_mouse_location = point;
 
         /// @todo Handle things like dragging, resizing
+        for (unsigned int index = 0; index < sf::Mouse::ButtonCount; ++index)
+        {
+          auto& button_info = m_button_info[index];
+
+          if (button_info.pressed &&
+              distance(point, button_info.location) > EventDragging::drag_threshold)
+          {
+            button_info.dragging = true;
+            EventDragging event{ static_cast<sf::Mouse::Button>(index), button_info.location, point };
+            handle_gui_event(event);
+
+            sfml_result = SFMLEventResult::Handled;
+          }
+        }
+
         sfml_result = SFMLEventResult::Handled;
       }
       break;
@@ -83,9 +107,18 @@ namespace metagui
 
         for (auto& button : m_button_info)
         {
-          button.pressed = false;
-          button.location = { -1, -1 }; /// @todo Maybe fill in with last-known mouse coords?
-          button.elapsed.restart();
+          if (button.pressed)
+          {
+            button.pressed = false;
+            // Don't update location, just keep it as last seen
+            button.elapsed.restart();
+
+            if (button.dragging)
+            {
+              button.dragging = false;
+              /// @todo Send EventDragFinished
+            }
+          }
         }
         sfml_result = SFMLEventResult::Handled;
       }

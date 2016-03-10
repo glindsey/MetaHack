@@ -16,12 +16,20 @@ namespace metagui
   WindowPane::WindowPane(StringKey name, sf::Vector2i location, sf::Vector2u size)
     :
     Object(name, location, size)
-  {}
+  {
+    // *** TESTING CODE ***
+    // Set this object to be draggable.
+    set_flag("draggable", true);
+  }
 
   WindowPane::WindowPane(StringKey name, sf::IntRect dimensions)
     :
     Object(name, dimensions)
-  {}
+  {
+    // *** TESTING CODE ***
+    // Set this object to be draggable.
+    set_flag("draggable", true);
+  }
 
   WindowPane::~WindowPane()
   {}

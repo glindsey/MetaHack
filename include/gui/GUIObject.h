@@ -206,8 +206,10 @@ namespace metagui
 
       if (m_disabled_cached == false)
       {
-        result = handle_event_before_children_(event);
-        if (result != Event::Result::Handled)
+        result = handle_event_before_children(event);
+
+        if ((result != Event::Result::Handled) &&
+            (result != Event::Result::Discarded))
         {
           for (auto& z_pair : m_zorder_map)
           {
@@ -219,7 +221,7 @@ namespace metagui
 
         if (result != Event::Result::Handled)
         {
-          result = handle_event_after_children_(event);
+          result = handle_event_after_children(event);
         }
       }
 
@@ -297,6 +299,21 @@ namespace metagui
     /// @return True if the mouse is over the object, false otherwise.
     bool contains_mouse();
 
+    Event::Result handle_event_before_children(EventDragFinished& event);
+    Event::Result handle_event_after_children(EventDragFinished& event);
+
+    Event::Result handle_event_before_children(EventDragging& event);
+    Event::Result handle_event_after_children(EventDragging& event);
+
+    Event::Result handle_event_before_children(EventKeyPressed& event);
+    Event::Result handle_event_after_children(EventKeyPressed& event);
+
+    Event::Result handle_event_before_children(EventMouseDown& event);
+    Event::Result handle_event_after_children(EventMouseDown& event);
+
+    Event::Result handle_event_before_children(EventResized& event);
+    Event::Result handle_event_after_children(EventResized& event);
+
   protected:
     Object* get_parent();
 
@@ -319,27 +336,21 @@ namespace metagui
     /// Default behavior is to do nothing.
     virtual void render_self_after_children_(sf::RenderTexture& texture, int frame);
 
-#if 0
-    /// Called before a GUI event is passed along to child objects.
-    /// Default behavior is to return metagui::Event::Result::Ignored.
-    /// @note If this method returns metagui::Event::Result::Handled, event processing
-    ///       will stop here and the children will never see the event! To
-    ///       process it here *and* have children see it, you should return
-    ///       metagui::Event::Result::Acknowledged.
-    virtual Event::Result handle_event_before_children_(Event& event);
+    virtual Event::Result handle_event_before_children_(EventDragFinished& event);
+    virtual Event::Result handle_event_after_children_(EventDragFinished& event);
 
-    /// Called after a GUI event is passed along to child objects.
-    /// This method will only be called if none of the child objects returns
-    /// metagui::Event::Result::Handled when the event is passed to it.
-    /// Default behavior is to return metagui::Event::Result::Ignored.
-    virtual Event::Result handle_event_after_children_(Event& event);
-#endif
+    virtual Event::Result handle_event_before_children_(EventDragging& event);
+    virtual Event::Result handle_event_after_children_(EventDragging& event);
 
     virtual Event::Result handle_event_before_children_(EventKeyPressed& event);
     virtual Event::Result handle_event_after_children_(EventKeyPressed& event);
 
+    virtual Event::Result handle_event_before_children_(EventMouseDown& event);
+    virtual Event::Result handle_event_after_children_(EventMouseDown& event);
+
     virtual Event::Result handle_event_before_children_(EventResized& event);
     virtual Event::Result handle_event_after_children_(EventResized& event);
+
     /// Handles a flag being set/cleared.
     /// This method is called by set_flag() if the value was changed.
     /// The default behavior is to do nothing.
@@ -369,6 +380,10 @@ namespace metagui
     /// Cached from m_flags so we don't keep looking it up.
     bool m_disabled_cached = false;
 
+    /// Boolean indicating whether this object is draggable.
+    /// Cached from m_flags so we don't keep looking it up.
+    bool m_draggable_cached = false;
+
     /// Boolean indicating whether this object is a decoration.
     /// Cached from m_flags so we don't keep looking it up.
     bool m_decor_cached = false;
@@ -381,6 +396,9 @@ namespace metagui
 
     /// Object location, relative to parent.
     sf::Vector2i m_location;
+
+    /// Location as captured at last mousedown.
+    sf::Vector2i m_location_last_mousedown;
 
     /// Object size.
     sf::Vector2u m_size;
@@ -409,6 +427,15 @@ namespace metagui
     /// Multimap that associates child elements with Z-orders.
     std::multimap< uint32_t, StringKey > m_zorder_map;
   };
+
+  /// Convenience function for calculating the distance between two
+  /// sf::Vector2i points.
+  inline unsigned int distance(sf::Vector2i first, sf::Vector2i second)
+  {
+    int x_distance = first.x - second.x;
+    int y_distance = first.y - second.y;
+    return static_cast<unsigned int>(sqrt((x_distance * x_distance) + (y_distance * y_distance)));
+  }
 }; // end namespace metagui
 
 #endif // GUIOBJECT_H

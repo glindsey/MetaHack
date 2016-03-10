@@ -17,6 +17,9 @@ namespace metagui
       /// Whether this button is pressed.
       bool pressed;
 
+      /// Whether a drag is currently in process with this button.
+      bool dragging;
+
       /// Absolute location of the press or release.
       sf::Vector2i location;
 
@@ -38,6 +41,9 @@ namespace metagui
   private:
     /// An array of data for each possible mouse button.
     std::array< MouseButtonInfo, sf::Mouse::ButtonCount > m_button_info;
+
+    /// Constantly updated mouse location.
+    sf::Vector2i m_mouse_location;
   };
 }; // end namespace metagui
 

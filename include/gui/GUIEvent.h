@@ -5,9 +5,7 @@
 namespace metagui
 {
   /// Superclass for MetaGUI events.
-  /// This is not the most elegant implementation, but it works well enough and
-  /// is similar to the SFML implementation of sf::Event.
-  class Event
+  struct Event
   {
   public:
     /// Enum class for results that events can return.
@@ -17,6 +15,7 @@ namespace metagui
       Handled,      ///< The event was handled and should not be passed on
       Acknowledged, ///< The event was handled, but should still be passed on
       Ignored,      ///< The event was ignored, and should be passed on
+      Discarded,    ///< The event was ignored, and should not be passed on
       Unknown       ///< The event type is unknown; further action is at handler's discretion
     };
 
@@ -33,6 +32,37 @@ namespace metagui
     Event() {}
   };
 
+  struct EventDragFinished : public Event
+  {
+    EventDragFinished(sf::Mouse::Button button_, sf::Vector2i start_location_, sf::Vector2i current_location_)
+      :
+      button(button_),
+      start_location(start_location_),
+      current_location(current_location_)
+    {}
+
+    sf::Mouse::Button const button;
+    sf::Vector2i const start_location;
+    sf::Vector2i const current_location;
+  };
+
+  struct EventDragging : public Event
+  {
+    EventDragging(sf::Mouse::Button button_, sf::Vector2i start_location_, sf::Vector2i current_location_)
+      :
+      button(button_),
+      start_location(start_location_),
+      current_location(current_location_)
+    {}
+
+    sf::Mouse::Button const button;
+    sf::Vector2i const start_location;
+    sf::Vector2i const current_location;
+
+    /// Number of pixels you have to move before it is considered "dragging" the object.
+    static unsigned int const drag_threshold = 16;
+  };
+
   struct EventKeyPressed : public Event
   {
     EventKeyPressed(sf::Event::KeyEvent& event)
@@ -45,10 +75,22 @@ namespace metagui
     {}
 
     sf::Keyboard::Key const code;
-    bool alt;
-    bool control;
-    bool shift;
-    bool system;
+    bool const alt;
+    bool const control;
+    bool const shift;
+    bool const system;
+  };
+
+  struct EventMouseDown : public Event
+  {
+    EventMouseDown(sf::Mouse::Button button_, sf::Vector2i location_)
+      :
+      button(button_),
+      location(location_)
+    {}
+
+    sf::Mouse::Button const button;
+    sf::Vector2i const location;
   };
 
   struct EventResized : public Event
