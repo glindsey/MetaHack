@@ -22,6 +22,8 @@ MessageLogView::~MessageLogView()
 
 metagui::Event::Result MessageLogView::handle_event_before_children_(metagui::EventKeyPressed& event)
 {
+  CLOG(TRACE, "GUI") << "MessageLogView::handle_event_before_children_(EventKeyPressed&) called";
+
   /// @todo This is ugly, fix later
   if (get_global_focus() == true)
   {

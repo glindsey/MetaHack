@@ -3,12 +3,12 @@
 
 #include "stdafx.h"
 
-#include "gui/GUIPane.h"
+#include "gui/GUIObject.h"
 
 namespace metagui
 {
   class DesktopPane :
-    public Pane,
+    public Object,
     public ObjectVisitable<DesktopPane>
   {
   public:

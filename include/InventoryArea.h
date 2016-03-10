@@ -45,8 +45,6 @@ public:
   InventoryType get_inventory_type();
   void set_inventory_type(InventoryType type);
 
-  virtual metagui::Event::Result handle_event_before_children_(metagui::Event& event) override;
-
 protected:
   virtual void render_contents_(sf::RenderTexture& texture, int frame) override;
 

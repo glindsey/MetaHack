@@ -173,7 +173,6 @@
     <ClInclude Include="include\gui\GUIEvent.h" />
     <ClInclude Include="include\gui\GUILabel.h" />
     <ClInclude Include="include\gui\GUIObject.h" />
-    <ClInclude Include="include\gui\GUIPane.h" />
     <ClInclude Include="include\gui\GUIResizeHandle.h" />
     <ClInclude Include="include\gui\GUIShrinkHandle.h" />
     <ClInclude Include="include\gui\GUITitleBar.h" />
@@ -258,7 +257,6 @@
     <ClCompile Include="src\gui\GUIDesktopPane.cpp" />
     <ClCompile Include="src\gui\GUILabel.cpp" />
     <ClCompile Include="src\gui\GUIObject.cpp" />
-    <ClCompile Include="src\gui\GUIPane.cpp" />
     <ClCompile Include="src\gui\GUIResizeHandle.cpp" />
     <ClCompile Include="src\gui\GUIShrinkHandle.cpp" />
     <ClCompile Include="src\gui\GUITitleBar.cpp" />

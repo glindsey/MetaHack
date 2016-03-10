@@ -487,12 +487,37 @@ namespace metagui
   {
   }
 
+#if 0
   Event::Result Object::handle_event_before_children_(Event& event)
   {
+    CLOG(TRACE, "GUI") << "Default Object handle_event_before_children_() called on event";
     return Event::Result::Ignored;
   }
 
   Event::Result Object::handle_event_after_children_(Event& event)
+  {
+    return Event::Result::Ignored;
+  }
+#endif
+
+  Event::Result Object::handle_event_before_children_(EventKeyPressed& event)
+  {
+    CLOG(TRACE, "GUI") << "Default Object handle_event_before_children_(EventKeyPressed&) called on event";
+    return Event::Result::Ignored;
+  }
+
+  Event::Result Object::handle_event_after_children_(EventKeyPressed& event)
+  {
+    return Event::Result::Ignored;
+  }
+
+  Event::Result Object::handle_event_before_children_(EventResized& event)
+  {
+    CLOG(TRACE, "GUI") << "Default Object handle_event_before_children_(EventResized&) called on event";
+    return Event::Result::Ignored;
+  }
+
+  Event::Result Object::handle_event_after_children_(EventResized& event)
   {
     return Event::Result::Ignored;
   }

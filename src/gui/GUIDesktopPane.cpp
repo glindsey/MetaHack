@@ -10,7 +10,7 @@ namespace metagui
 {
   DesktopPane::DesktopPane(std::string name, sf::Vector2u size)
     :
-    Pane(name, sf::Vector2i(0, 0), size)
+    Object(name, sf::Vector2i(0, 0), size)
   {}
 
   DesktopPane::~DesktopPane()
@@ -102,7 +102,6 @@ namespace metagui
 
   Event::Result DesktopPane::handle_event_before_children_(EventResized& event)
   {
-    Event::Result result = Event::Result::Ignored;
     set_size({ event.new_size.x, event.new_size.y });
     return Event::Result::Acknowledged;
   }

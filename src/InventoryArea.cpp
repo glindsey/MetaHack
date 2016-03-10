@@ -269,11 +269,6 @@ ThingRef InventoryArea::get_thing(InventorySlot selection)
   }
 }
 
-metagui::Event::Result InventoryArea::handle_event_before_children_(metagui::Event& event)
-{
-  return metagui::Event::Result::Ignored;
-}
-
 void InventoryArea::render_contents_(sf::RenderTexture& texture, int frame)
 {
   // Dimensions of the pane.

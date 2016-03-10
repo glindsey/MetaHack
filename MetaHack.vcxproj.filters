@@ -117,9 +117,6 @@
     <ClInclude Include="include\TileSheet.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\gui\GUIPane.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\ThingManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -357,9 +354,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\TileSheet.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\gui\GUIPane.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\mapfeatures\MapCorridor.cpp">

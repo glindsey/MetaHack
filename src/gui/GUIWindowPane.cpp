@@ -15,12 +15,12 @@ namespace metagui
 {
   WindowPane::WindowPane(std::string name, sf::Vector2i location, sf::Vector2u size)
     :
-    Pane(name, location, size)
+    Object(name, location, size)
   {}
 
   WindowPane::WindowPane(std::string name, sf::IntRect dimensions)
     :
-    Pane(name, dimensions)
+    Object(name, dimensions)
   {}
 
   WindowPane::~WindowPane()

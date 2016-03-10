@@ -190,6 +190,44 @@ namespace metagui
       return dynamic_cast<T&>(add_child_top(std::move(child_ptr)));
     }
 
+    /// Handle an incoming event.
+    /// Calls the method handle_event_before_children() first.
+    /// If it returns anything other than Handled, it then passes the
+    /// event down to each child in sequence, stopping only if one of them
+    /// returns Handled. If the event still isn't Handled after all children
+    /// have seen it, handle_event_after_children_ is called.
+    template< typename T >
+    Event::Result handle_gui_event(T& event)
+    {
+      CLOG(TRACE, "GUI") << typeid(*this).name() <<
+        "::handle_gui_event called with event type " << typeid(T).name();
+
+      Event::Result result = Event::Result::Ignored;
+
+      if (m_disabled_cached == false)
+      {
+        result = handle_event_before_children_(event);
+        if (result != Event::Result::Handled)
+        {
+          for (auto& z_pair : m_zorder_map)
+          {
+            auto& child = m_children.at(z_pair.second);
+            result = child->handle_gui_event(event);
+            if (result == Event::Result::Handled) break;
+          }
+        }
+
+        if (result != Event::Result::Handled)
+        {
+          result = handle_event_after_children_(event);
+        }
+      }
+
+      CLOG(TRACE, "GUI") << "handle_gui_event returned " << str(result);
+
+      return result;
+    }
+
     bool child_exists(std::string name);
 
     Object& get_child(std::string name);
@@ -208,7 +246,7 @@ namespace metagui
     /// If no children are present, returns zero.
     uint32_t get_highest_child_z_order();
 
-    template<typename ...args>
+    template< typename ...args >
     void visit_children(std::function<void(Object&, args...)> functor)
     {
       for (auto& child_pair : children)
@@ -233,41 +271,6 @@ namespace metagui
 
     /// Render this object, and all of its children, to the parent texture.
     bool render(sf::RenderTexture& texture, int frame);
-
-    /// Handle an incoming event.
-    /// Calls the method handle_event_before_children() first.
-    /// If it returns anything other than Handled, it then passes the
-    /// event down to each child in sequence, stopping only if one of them
-    /// returns Handled. If the event still isn't Handled after all children
-    /// have seen it, handle_event_after_children_ is called.
-    template< typename T >
-    Event::Result Object::handle_gui_event(T& event)
-    {
-      //CLOG(TRACE, "GUI") << "handle_event called with event type " << typeid(T).name();
-
-      Event::Result result = Event::Result::Ignored;
-
-      if (m_disabled_cached == false)
-      {
-        result = handle_event_before_children_(event);
-        if (result != Event::Result::Handled)
-        {
-          for (auto& z_pair : m_zorder_map)
-          {
-            auto& child = m_children.at(z_pair.second);
-            result = child->handle_gui_event(event);
-            if (result == Event::Result::Handled) break;
-          }
-        }
-
-        if (result != Event::Result::Handled)
-        {
-          result = handle_event_after_children_(event);
-        }
-      }
-
-      return result;
-    }
 
     /// Set/clear an object flag.
     /// Calls the virtual method handle_set_flag_ if the flag has been
@@ -316,6 +319,7 @@ namespace metagui
     /// Default behavior is to do nothing.
     virtual void render_self_after_children_(sf::RenderTexture& texture, int frame);
 
+#if 0
     /// Called before a GUI event is passed along to child objects.
     /// Default behavior is to return metagui::Event::Result::Ignored.
     /// @note If this method returns metagui::Event::Result::Handled, event processing
@@ -329,7 +333,13 @@ namespace metagui
     /// metagui::Event::Result::Handled when the event is passed to it.
     /// Default behavior is to return metagui::Event::Result::Ignored.
     virtual Event::Result handle_event_after_children_(Event& event);
+#endif
 
+    virtual Event::Result handle_event_before_children_(EventKeyPressed& event);
+    virtual Event::Result handle_event_after_children_(EventKeyPressed& event);
+
+    virtual Event::Result handle_event_before_children_(EventResized& event);
+    virtual Event::Result handle_event_after_children_(EventResized& event);
     /// Handles a flag being set/cleared.
     /// This method is called by set_flag() if the value was changed.
     /// The default behavior is to do nothing.

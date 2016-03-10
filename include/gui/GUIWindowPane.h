@@ -3,12 +3,12 @@
 
 #include "stdafx.h"
 
-#include "gui/GUIPane.h"
+#include "gui/GUIObject.h"
 
 namespace metagui
 {
   class WindowPane :
-    public Pane, public ObjectVisitable<WindowPane>
+    public Object, public ObjectVisitable<WindowPane>
   {
   public:
     WindowPane(std::string name, sf::Vector2i location, sf::Vector2u size = sf::Vector2u(0, 0));

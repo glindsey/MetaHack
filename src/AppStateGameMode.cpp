@@ -60,7 +60,7 @@ AppStateGameMode::AppStateGameMode(StateMachine& state_machine, sf::RenderWindow
   m_desktop.set_pre_child_render_functor(render_map_functor);
   m_desktop.add_child(NEW MessageLogView(the_message_log, calc_message_log_dims())).set_flag("titlebar", true);
   m_desktop.add_child(NEW InventoryArea(calc_inventory_dims())).set_flag("titlebar", true);
-  m_desktop.add_child(NEW StatusArea(calc_status_area_dims()));
+  m_desktop.add_child(NEW StatusArea(calc_status_area_dims())).set_global_focus(true);
 }
 
 AppStateGameMode::~AppStateGameMode()
@@ -101,8 +101,8 @@ bool AppStateGameMode::render(sf::RenderTexture& texture, int frame)
   texture.clear(sf::Color::Green);
 
   // Set focus for areas.
-  m_desktop.get_child("MessageLogView").set_focus(m_current_input_state == GameInputState::MessageLog);
-  m_desktop.get_child("StatusArea").set_focus(m_current_input_state == GameInputState::Map);
+  //m_desktop.get_child("MessageLogView").set_focus(m_current_input_state == GameInputState::MessageLog);
+  //m_desktop.get_child("StatusArea").set_focus(m_current_input_state == GameInputState::Map);
 
   // Render the GUI last.
   m_desktop.render(texture, frame);
@@ -294,10 +294,12 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
       {
         case GameInputState::Map:
           m_current_input_state = GameInputState::MessageLog;
+          m_desktop.get_child("MessageLogView").set_global_focus(true);
           return SFMLEventResult::Handled;
 
         case GameInputState::MessageLog:
           m_current_input_state = GameInputState::Map;
+          m_desktop.get_child("StatusArea").set_global_focus(true);
           return SFMLEventResult::Handled;
 
         default:

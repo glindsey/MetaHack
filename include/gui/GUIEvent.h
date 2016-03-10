@@ -65,3 +65,34 @@ namespace metagui
   template< class T >
   using EventDelegate = std::function< Event::Result(Event&) >;
 }; // end namespace metagui
+
+namespace std
+{
+  /// Stream operator override for metagui::Event::Result.
+  inline ostream& operator<<(ostream& out, metagui::Event::Result const& result)
+  {
+    switch (result)
+    {
+      case metagui::Event::Result::Pending:
+        out << "Pending";
+        break;
+      case metagui::Event::Result::Handled:
+        out << "Handled";
+        break;
+      case metagui::Event::Result::Acknowledged:
+        out << "Acknowledged";
+        break;
+      case metagui::Event::Result::Ignored:
+        out << "Ignored";
+        break;
+      case metagui::Event::Result::Unknown:
+        out << "Unknown";
+        break;
+      default:
+        out << "(" << static_cast<unsigned int>(result) << "?)";
+        break;
+    }
+
+    return out;
+  }
+}; // end namespace std
