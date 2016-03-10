@@ -169,10 +169,9 @@ SFMLEventResult AppStateGameMode::handle_sfml_event(sf::Event& event)
 #endif
 
   // Finally let the GUI handle events.
-  if (result != metagui::Event::Result::Handled)
+  if (result != SFMLEventResult::Handled)
   {
-    /// @todo This is ugly, fix later
-    result = static_cast<SFMLEventResult>(m_desktop.handle_sfml_event(event));
+    result = m_desktop.handle_sfml_event(event);
   }
 
   return result;
