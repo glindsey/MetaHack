@@ -21,6 +21,9 @@ namespace metagui
     virtual void handle_parent_size_changed_(sf::Vector2u parent_size) override final;
 
   private:
+    /// Size of the resize handle.
+    /// @todo This should be moved into a central config file.
+    static unsigned int const s_handle_size = 10;
   };
 }; // end namespace metagui
 
