@@ -4,14 +4,11 @@
 #include "stdafx.h"
 
 #include "Action.h"
+#include "AppState.h"
 #include "Direction.h"
 #include "GameState.h"
 #include "InventoryArea.h"
-#include "SFMLEventHandler.h"
-#include "State.h"
 #include "StatusArea.h"
-
-#include "GUIDesktop.h"
 
 /// Object that represents the game mode state.
 /// Anything about the game that needs to be saved should go into the
@@ -19,7 +16,7 @@
 /// do not get saved should go here.
 class AppStateGameMode
   :
-  public State
+  public AppState
 {
   /// Current input state for the game.
   enum class GameInputState
@@ -34,12 +31,12 @@ public:
   AppStateGameMode(StateMachine& state_machine, sf::RenderWindow& app_window);
   virtual ~AppStateGameMode();
 
-  void execute() override;
-  bool render(sf::RenderTexture& texture, int frame) override;
-  SFMLEventResult handle_sfml_event(sf::Event& event) override;
-  StringKey const& get_name() override;
-  bool initialize() override;
-  bool terminate() override;
+  virtual SFMLEventResult handle_sfml_event(sf::Event& event) override;
+
+  virtual StringKey const& get_name() override;
+  virtual bool initialize() override;
+  virtual void execute() override;
+  virtual bool terminate() override;
 
   GameState& get_game_state();
 

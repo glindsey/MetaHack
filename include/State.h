@@ -10,9 +10,9 @@
 class StateMachine;
 
 class State :
-  virtual public RenderableToTexture,
-  virtual public SFMLEventHandler,
-  virtual public boost::noncopyable
+  public RenderableToTexture,
+  public SFMLEventHandler,
+  public boost::noncopyable
 {
 public:
   explicit State(StateMachine& state_machine);

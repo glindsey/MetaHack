@@ -6,28 +6,17 @@
 
 AppStateMainMenu::AppStateMainMenu(StateMachine& state_machine, sf::RenderWindow& app_window)
   :
-  State{ state_machine }
+  AppState(state_machine,
+           std::bind(&AppStateMainMenu::render_title, this, std::placeholders::_1, std::placeholders::_2))
 {
-  auto render_title_functor = std::bind(&AppStateMainMenu::render_title, this, std::placeholders::_1, std::placeholders::_2);
-  the_desktop.set_pre_child_render_functor(render_title_functor);
 }
 
 AppStateMainMenu::~AppStateMainMenu()
 {
-  the_desktop.clear_children();
-  the_desktop.clear_pre_child_render_functor();
 }
 
 void AppStateMainMenu::execute()
 {}
-
-bool AppStateMainMenu::render(sf::RenderTexture& texture, int frame)
-{
-  the_desktop.render(texture, frame);
-
-  texture.display();
-  return true;
-}
 
 SFMLEventResult AppStateMainMenu::handle_sfml_event(sf::Event& event)
 {

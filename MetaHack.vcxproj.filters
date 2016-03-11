@@ -294,6 +294,9 @@
     <ClInclude Include="gui\GUIWindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\AppState.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">
@@ -507,6 +510,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="gui\GUIWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AppState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

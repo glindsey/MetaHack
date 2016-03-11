@@ -46,7 +46,8 @@
 
 AppStateGameMode::AppStateGameMode(StateMachine& state_machine, sf::RenderWindow& m_app_window)
   :
-  State{ state_machine },
+  AppState(state_machine,
+           std::bind(&AppStateGameMode::render_map, this, std::placeholders::_1, std::placeholders::_2)),
   m_app_window{ m_app_window },
   m_game_state{ NEW GameState() },
   m_window_in_focus{ true },
@@ -55,8 +56,6 @@ AppStateGameMode::AppStateGameMode(StateMachine& state_machine, sf::RenderWindow
   m_current_input_state{ GameInputState::Map },
   m_cursor_coords{ 0, 0 }
 {
-  auto render_map_functor = std::bind(&AppStateGameMode::render_map, this, std::placeholders::_1, std::placeholders::_2);
-  the_desktop.set_pre_child_render_functor(render_map_functor);
   the_desktop.add_child(NEW MessageLogView(the_message_log, calc_message_log_dims())).set_flag("titlebar", true);
   the_desktop.add_child(NEW InventoryArea(calc_inventory_dims())).set_flag("titlebar", true);
   the_desktop.add_child(NEW StatusArea(calc_status_area_dims())).set_global_focus(true);
@@ -64,8 +63,6 @@ AppStateGameMode::AppStateGameMode(StateMachine& state_machine, sf::RenderWindow
 
 AppStateGameMode::~AppStateGameMode()
 {
-  the_desktop.clear_children();
-  the_desktop.clear_pre_child_render_functor();
 }
 
 void AppStateGameMode::execute()
@@ -94,15 +91,6 @@ void AppStateGameMode::execute()
   {
     reset_inventory_area();
   }
-}
-
-bool AppStateGameMode::render(sf::RenderTexture& texture, int frame)
-{
-  // Render the desktop.
-  the_desktop.render(texture, frame);
-
-  texture.display();
-  return true;
 }
 
 SFMLEventResult AppStateGameMode::handle_sfml_event(sf::Event& event)
@@ -883,7 +871,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           default:
             break;
         }
-    }
+      }
 #endif
 
       // *** YES ALT, YES CTRL, SHIFT is irrelevant *****************************
@@ -895,11 +883,11 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
         {
           default:
             break;
-        }
+    }
   }
 #endif
       break;
-} // end case GameInputState::Map
+    } // end case GameInputState::Map
 
     default:
       break;

@@ -3,24 +3,22 @@
 
 #include "stdafx.h"
 
-#include "State.h"
-
-#include "GUIDesktop.h"
+#include "AppState.h"
 
 class AppStateMainMenu
   :
-  public State
+  public AppState
 {
 public:
   AppStateMainMenu(StateMachine& state_machine, sf::RenderWindow& app_window);
   virtual ~AppStateMainMenu();
 
-  void execute() override;
-  bool render(sf::RenderTexture& texture, int frame) override;
-  SFMLEventResult handle_sfml_event(sf::Event& event) override;
-  StringKey const& get_name() override;
-  bool initialize() override;
-  bool terminate() override;
+  virtual SFMLEventResult handle_sfml_event(sf::Event& event) override;
+
+  virtual StringKey const& get_name() override;
+  virtual bool initialize() override;
+  virtual void execute() override;
+  virtual bool terminate() override;
 
 protected:
   void render_title(sf::RenderTexture& texture, int frame);

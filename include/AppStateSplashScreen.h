@@ -3,24 +3,26 @@
 
 #include "stdafx.h"
 
-#include "State.h"
+#include "AppState.h"
 
 class AppStateSplashScreen
   :
-  public State
+  public AppState
 {
 public:
   AppStateSplashScreen(StateMachine& state_machine, sf::RenderWindow& app_window);
   virtual ~AppStateSplashScreen();
 
-  void execute() override;
-  bool render(sf::RenderTexture& texture, int frame) override;
-  SFMLEventResult handle_sfml_event(sf::Event& event) override;
-  StringKey const& get_name() override;
-  bool initialize() override;
-  bool terminate() override;
+  virtual SFMLEventResult handle_sfml_event(sf::Event& event) override;
+
+  virtual StringKey const& get_name() override;
+  virtual bool initialize() override;
+  virtual void execute() override;
+  virtual bool terminate() override;
 
 protected:
+  void render_splash(sf::RenderTexture& texture, int frame);
+
 private:
   sf::Texture m_splash_graphic;
   sf::Sprite m_splash_sprite;

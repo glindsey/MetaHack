@@ -160,6 +160,7 @@
     <ClInclude Include="include\ActionWait.h" />
     <ClInclude Include="include\ActionWield.h" />
     <ClInclude Include="include\App.h" />
+    <ClInclude Include="include\AppState.h" />
     <ClInclude Include="include\AppStateGameMode.h" />
     <ClInclude Include="include\AppStateMainMenu.h" />
     <ClInclude Include="include\AppStateSplashScreen.h" />
@@ -252,6 +253,7 @@
     <ClCompile Include="src\ActionWait.cpp" />
     <ClCompile Include="src\ActionWield.cpp" />
     <ClCompile Include="src\App.cpp" />
+    <ClCompile Include="src\AppState.cpp" />
     <ClCompile Include="src\AppStateGameMode.cpp" />
     <ClCompile Include="src\AppStateMainMenu.cpp" />
     <ClCompile Include="src\AppStateSplashScreen.cpp" />

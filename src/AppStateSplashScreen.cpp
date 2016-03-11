@@ -6,11 +6,14 @@
 
 AppStateSplashScreen::AppStateSplashScreen(StateMachine& state_machine, sf::RenderWindow& app_window)
   :
-  State(state_machine)
-{}
+  AppState(state_machine,
+           std::bind(&AppStateSplashScreen::render_splash, this, std::placeholders::_1, std::placeholders::_2))
+{
+}
 
 AppStateSplashScreen::~AppStateSplashScreen()
-{}
+{
+}
 
 void AppStateSplashScreen::execute()
 {
@@ -18,13 +21,6 @@ void AppStateSplashScreen::execute()
   {
     this->change_to("AppStateMainMenu");
   }
-}
-
-bool AppStateSplashScreen::render(sf::RenderTexture& texture, int frame)
-{
-  texture.draw(m_splash_sprite);
-  texture.display();
-  return true;
 }
 
 SFMLEventResult AppStateSplashScreen::handle_sfml_event(sf::Event& event)
@@ -52,4 +48,10 @@ bool AppStateSplashScreen::initialize()
 bool AppStateSplashScreen::terminate()
 {
   return true;
+}
+
+void AppStateSplashScreen::render_splash(sf::RenderTexture& texture, int frame)
+{
+  texture.draw(m_splash_sprite);
+  texture.display();
 }
