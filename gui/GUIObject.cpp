@@ -460,17 +460,15 @@ namespace metagui
 
   Event::Result Object::handle_event_before_children(EventDragging& event)
   {
-    if (contains_point(event.start_location))
+    if (contains_point(event.current_location))
     {
       // We "Acknowledge" the event so it is passed to children.
-      CLOG(TRACE, "GUI") << "Point is within object, passing to children";
       return Event::Result::Acknowledged;
     }
     else
     {
-      // We "Discard" the event so it is not passed to children.
-      CLOG(TRACE, "GUI") << "Point is not within object, discarding";
-      return Event::Result::Discarded;
+      // We "Ignore" the event so it is not passed to children.
+      return Event::Result::Ignored;
     }
   }
 
@@ -478,21 +476,16 @@ namespace metagui
   {
     // If we got here, all children ignored the event (or there are no
     // children) so we want to process it if we are draggable.
-    if (m_draggable_cached == true)
+    if (contains_point(event.current_location) && m_draggable_cached == true)
     {
-      CLOG(TRACE, "GUI") << "m_draggable_cached is true, dragging";
-
-      /// @todo THIS IS WRONG. Move amount should be current location minus last location,
-      ///       or new_coords should be drag start location + move_amount.
       auto move_amount = event.current_location - event.start_location;
-      auto new_coords = m_location_last_mousedown + move_amount;
+      auto new_coords = m_absolute_location_last_mousedown + move_amount;
 
       set_absolute_location(new_coords);
       return Event::Result::Handled;
     }
     else
     {
-      CLOG(TRACE, "GUI") << "m_draggable_cached is false, ignoring";
       return Event::Result::Ignored;
     }
   }
@@ -509,7 +502,11 @@ namespace metagui
 
   Event::Result Object::handle_event_before_children(EventMouseDown& event)
   {
-    m_location_last_mousedown = m_location;
+    if (contains_point(event.location))
+    {
+      m_absolute_location_last_mousedown = get_absolute_location();
+    }
+
     return handle_event_before_children_(event);
   }
 
@@ -569,67 +566,54 @@ namespace metagui
   {
   }
 
-#if 0
-  Event::Result Object::handle_event_before_children_(Event& event)
-  {
-    CLOG(TRACE, "GUI") << "Default Object handle_event_before_children_() called on event";
-    return Event::Result::Ignored;
-  }
-
-  Event::Result Object::handle_event_after_children_(Event& event)
-  {
-    return Event::Result::Ignored;
-  }
-#endif
-
   Event::Result Object::handle_event_before_children_(EventDragFinished& event)
   {
-    return Event::Result::Ignored;
+    return Event::Result::Acknowledged;
   }
 
   Event::Result Object::handle_event_after_children_(EventDragFinished& event)
   {
-    return Event::Result::Ignored;
+    return Event::Result::Acknowledged;
   }
 
   Event::Result Object::handle_event_before_children_(EventDragging& event)
   {
-    return Event::Result::Ignored;
+    return Event::Result::Acknowledged;
   }
 
   Event::Result Object::handle_event_after_children_(EventDragging& event)
   {
-    return Event::Result::Ignored;
+    return Event::Result::Acknowledged;
   }
 
   Event::Result Object::handle_event_before_children_(EventKeyPressed& event)
   {
-    return Event::Result::Ignored;
+    return Event::Result::Acknowledged;
   }
 
   Event::Result Object::handle_event_after_children_(EventKeyPressed& event)
   {
-    return Event::Result::Ignored;
+    return Event::Result::Acknowledged;
   }
 
   Event::Result Object::handle_event_before_children_(EventMouseDown& event)
   {
-    return Event::Result::Ignored;
+    return Event::Result::Acknowledged;
   }
 
   Event::Result Object::handle_event_after_children_(EventMouseDown& event)
   {
-    return Event::Result::Ignored;
+    return Event::Result::Acknowledged;
   }
 
   Event::Result Object::handle_event_before_children_(EventResized& event)
   {
-    return Event::Result::Ignored;
+    return Event::Result::Acknowledged;
   }
 
   Event::Result Object::handle_event_after_children_(EventResized& event)
   {
-    return Event::Result::Ignored;
+    return Event::Result::Acknowledged;
   }
 
   void Object::handle_set_flag_(StringKey name, bool enabled)

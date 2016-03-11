@@ -86,8 +86,9 @@ namespace metagui
         {
           auto& button_info = m_button_info[index];
 
-          if (button_info.pressed &&
-              distance(point, button_info.location) > EventDragging::drag_threshold)
+          if ((button_info.dragging == true) ||
+              (button_info.pressed &&
+               distance(point, button_info.location) > EventDragging::drag_threshold))
           {
             button_info.dragging = true;
             EventDragging event{ static_cast<sf::Mouse::Button>(index), button_info.location, point };

@@ -99,7 +99,7 @@ KeyBuffer::~KeyBuffer()
 
 metagui::Event::Result KeyBuffer::handle_key_press(metagui::EventKeyPressed& event)
 {
-  metagui::Event::Result result = metagui::Event::Result::Ignored;
+  metagui::Event::Result result = metagui::Event::Result::Acknowledged;
 
   if (!event.control && !event.alt)
   {

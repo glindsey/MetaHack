@@ -31,7 +31,7 @@ metagui::Event::Result MessageLogView::handle_event_before_children_(metagui::Ev
   }
   else
   {
-    return metagui::Event::Result::Ignored;
+    return metagui::Event::Result::Acknowledged;
   }
 }
 

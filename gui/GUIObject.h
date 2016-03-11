@@ -199,33 +199,44 @@ namespace metagui
     template< typename T >
     Event::Result handle_gui_event(T& event)
     {
-      CLOG(TRACE, "GUI") << typeid(*this).name() <<
-        "::handle_gui_event called with event type " << typeid(T).name();
-
-      Event::Result result = Event::Result::Ignored;
+      Event::Result result = Event::Result::Pending;
 
       if (m_disabled_cached == false)
       {
+        // Check the event for us first.
         result = handle_event_before_children(event);
 
-        if ((result != Event::Result::Handled) &&
-            (result != Event::Result::Discarded))
+        // Possible results here:
+        //   * The event doesn't apply to us at all. (Ignored)
+        //        Do not pass to children, and do not call handle_event_after_children.
+        //   * The event may apply to us or to our children (Acknowledged)
+        //        Pass to children.
+        //        As long as no child responded "Handled", call handle_event_after_children.
+        //   * The event applies to us, and we handled it. (Handled)
+        //        Do not pass to children, and do not call handle_event_after_children.
+
+        if ((result != Event::Result::Ignored) &&
+            (result != Event::Result::Handled))
         {
           for (auto& z_pair : m_zorder_map)
           {
+            Event::Result child_result = Event::Result::Acknowledged;
             auto& child = m_children.at(z_pair.second);
-            result = child->handle_gui_event(event);
-            if (result == Event::Result::Handled) break;
+            child_result = child->handle_gui_event(event);
+            if (child_result == Event::Result::Handled)
+            {
+              result = Event::Result::Handled;
+              break;
+            }
           }
         }
 
-        if (result != Event::Result::Handled)
+        if ((result != Event::Result::Ignored) &&
+            (result != Event::Result::Handled))
         {
           result = handle_event_after_children(event);
         }
       }
-
-      CLOG(TRACE, "GUI") << "handle_gui_event returned " << str(result);
 
       return result;
     }
@@ -398,7 +409,7 @@ namespace metagui
     sf::Vector2i m_location;
 
     /// Location as captured at last mousedown.
-    sf::Vector2i m_location_last_mousedown;
+    sf::Vector2i m_absolute_location_last_mousedown;
 
     /// Object size.
     sf::Vector2u m_size;

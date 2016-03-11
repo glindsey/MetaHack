@@ -12,10 +12,9 @@ namespace metagui
     enum class Result
     {
       Pending,      ///< The event has not been handled by any handler yet; only for variable initialization.
-      Handled,      ///< The event was handled and should not be passed on
-      Acknowledged, ///< The event was handled, but should still be passed on
-      Ignored,      ///< The event was ignored, and should be passed on
-      Discarded,    ///< The event was ignored, and should not be passed on
+      Handled,      ///< The event was handled and is not be passed on to children or siblings
+      Acknowledged, ///< The event is passed down to children
+      Ignored,      ///< The event is not passed down to children (but is passed to siblings)
       Unknown       ///< The event type is unknown; further action is at handler's discretion
     };
 
