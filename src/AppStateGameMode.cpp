@@ -247,6 +247,7 @@ void AppStateGameMode::render_map(sf::RenderTexture& texture, int frame)
       }
     }
   }
+  texture.display();
 }
 
 SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
@@ -882,7 +883,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           default:
             break;
         }
-      }
+    }
 #endif
 
       // *** YES ALT, YES CTRL, SHIFT is irrelevant *****************************
@@ -895,10 +896,10 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           default:
             break;
         }
-      }
+  }
 #endif
       break;
-    } // end case GameInputState::Map
+} // end case GameInputState::Map
 
     default:
       break;

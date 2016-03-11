@@ -8,10 +8,15 @@ AppStateMainMenu::AppStateMainMenu(StateMachine& state_machine, sf::RenderWindow
   :
   State{ state_machine }
 {
+  auto render_title_functor = std::bind(&AppStateMainMenu::render_title, this, std::placeholders::_1, std::placeholders::_2);
+  the_desktop.set_pre_child_render_functor(render_title_functor);
 }
 
 AppStateMainMenu::~AppStateMainMenu()
-{}
+{
+  the_desktop.clear_children();
+  the_desktop.clear_pre_child_render_functor();
+}
 
 void AppStateMainMenu::execute()
 {}
@@ -19,9 +24,6 @@ void AppStateMainMenu::execute()
 bool AppStateMainMenu::render(sf::RenderTexture& texture, int frame)
 {
   the_desktop.render(texture, frame);
-
-  texture.draw(m_title);
-  texture.draw(m_subtitle);
 
   texture.display();
   return true;
@@ -79,4 +81,13 @@ bool AppStateMainMenu::initialize()
 bool AppStateMainMenu::terminate()
 {
   return true;
+}
+
+// === PROTECTED METHODS ======================================================
+
+void AppStateMainMenu::render_title(sf::RenderTexture & texture, int frame)
+{
+  texture.draw(m_title);
+  texture.draw(m_subtitle);
+  texture.display();
 }

@@ -128,6 +128,8 @@ App::App(sf::RenderWindow& app_window)
 
 App::~App()
 {
+  m_state_machine.reset();
+  m_gui_desktop.reset();
   m_app_window.close();
   s_p_instance = nullptr;
 }
@@ -258,7 +260,7 @@ App & App::instance()
   }
   else
   {
-    throw std::exception("App instance was requested before it was created");
+    throw std::runtime_error("App instance was requested, but it does not exist");
   }
 }
 

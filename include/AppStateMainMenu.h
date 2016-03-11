@@ -23,6 +23,8 @@ public:
   bool terminate() override;
 
 protected:
+  void render_title(sf::RenderTexture& texture, int frame);
+
 private:
   sf::Text m_title;
   sf::Text m_subtitle;
