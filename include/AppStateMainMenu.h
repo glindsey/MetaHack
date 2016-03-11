@@ -7,7 +7,9 @@
 
 #include "GUIDesktop.h"
 
-class AppStateMainMenu : public State
+class AppStateMainMenu
+  :
+  public State
 {
 public:
   AppStateMainMenu(StateMachine& state_machine, sf::RenderWindow& app_window);
@@ -24,8 +26,6 @@ protected:
 private:
   sf::Text m_title;
   sf::Text m_subtitle;
-
-  metagui::Desktop m_desktop;
 };
 
 #endif // APPSTATEMAINMENU_H

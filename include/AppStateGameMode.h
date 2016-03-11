@@ -17,7 +17,9 @@
 /// Anything about the game that needs to be saved should go into the
 /// GameState class (e.g. data model members). Data view members which
 /// do not get saved should go here.
-class AppStateGameMode : public State
+class AppStateGameMode
+  :
+  public State
 {
   /// Current input state for the game.
   enum class GameInputState
@@ -58,9 +60,6 @@ protected:
 private:
   /// Application window.
   sf::RenderWindow& m_app_window;
-
-  /// The desktop GUI pane.
-  metagui::Desktop m_desktop;
 
   /// The current game state.
   std::unique_ptr<GameState> m_game_state;

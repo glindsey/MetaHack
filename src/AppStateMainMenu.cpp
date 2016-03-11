@@ -6,8 +6,7 @@
 
 AppStateMainMenu::AppStateMainMenu(StateMachine& state_machine, sf::RenderWindow& app_window)
   :
-  State{ state_machine },
-  m_desktop{ "mainMenuDesktop", app_window.getSize() }
+  State{ state_machine }
 {
 }
 
@@ -19,7 +18,7 @@ void AppStateMainMenu::execute()
 
 bool AppStateMainMenu::render(sf::RenderTexture& texture, int frame)
 {
-  m_desktop.render(texture, frame);
+  the_desktop.render(texture, frame);
 
   texture.draw(m_title);
   texture.draw(m_subtitle);
@@ -30,8 +29,7 @@ bool AppStateMainMenu::render(sf::RenderTexture& texture, int frame)
 
 SFMLEventResult AppStateMainMenu::handle_sfml_event(sf::Event& event)
 {
-  /// @todo This is ugly, fix later
-  SFMLEventResult result = static_cast<SFMLEventResult>(m_desktop.handle_sfml_event(event));
+  SFMLEventResult result = the_desktop.handle_sfml_event(event);
 
   if (result != SFMLEventResult::Handled)
   {

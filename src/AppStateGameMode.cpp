@@ -48,7 +48,6 @@ AppStateGameMode::AppStateGameMode(StateMachine& state_machine, sf::RenderWindow
   :
   State{ state_machine },
   m_app_window{ m_app_window },
-  m_desktop{ "gameModeDesktop", m_app_window.getSize() },
   m_game_state{ NEW GameState() },
   m_window_in_focus{ true },
   m_inventory_area_shows_player{ false },
@@ -57,15 +56,16 @@ AppStateGameMode::AppStateGameMode(StateMachine& state_machine, sf::RenderWindow
   m_cursor_coords{ 0, 0 }
 {
   auto render_map_functor = std::bind(&AppStateGameMode::render_map, this, std::placeholders::_1, std::placeholders::_2);
-  m_desktop.set_pre_child_render_functor(render_map_functor);
-  m_desktop.add_child(NEW MessageLogView(the_message_log, calc_message_log_dims())).set_flag("titlebar", true);
-  m_desktop.add_child(NEW InventoryArea(calc_inventory_dims())).set_flag("titlebar", true);
-  m_desktop.add_child(NEW StatusArea(calc_status_area_dims())).set_global_focus(true);
+  the_desktop.set_pre_child_render_functor(render_map_functor);
+  the_desktop.add_child(NEW MessageLogView(the_message_log, calc_message_log_dims())).set_flag("titlebar", true);
+  the_desktop.add_child(NEW InventoryArea(calc_inventory_dims())).set_flag("titlebar", true);
+  the_desktop.add_child(NEW StatusArea(calc_status_area_dims())).set_global_focus(true);
 }
 
 AppStateGameMode::~AppStateGameMode()
 {
-  //dtor
+  the_desktop.clear_children();
+  the_desktop.clear_pre_child_render_functor();
 }
 
 void AppStateGameMode::execute()
@@ -98,14 +98,8 @@ void AppStateGameMode::execute()
 
 bool AppStateGameMode::render(sf::RenderTexture& texture, int frame)
 {
-  texture.clear(sf::Color::Green);
-
-  // Set focus for areas.
-  //m_desktop.get_child("MessageLogView").set_focus(m_current_input_state == GameInputState::MessageLog);
-  //m_desktop.get_child("StatusArea").set_focus(m_current_input_state == GameInputState::Map);
-
-  // Render the GUI last.
-  m_desktop.render(texture, frame);
+  // Render the desktop.
+  the_desktop.render(texture, frame);
 
   texture.display();
   return true;
@@ -121,10 +115,10 @@ SFMLEventResult AppStateGameMode::handle_sfml_event(sf::Event& event)
     {
       case sf::Event::EventType::Resized:
       {
-        m_desktop.set_size({ event.size.width, event.size.height });
-        m_desktop.get_child("MessageLogView").set_relative_dimensions(calc_message_log_dims());
-        m_desktop.get_child("InventoryArea").set_relative_dimensions(calc_inventory_dims());
-        m_desktop.get_child("StatusArea").set_relative_dimensions(calc_status_area_dims());
+        the_desktop.set_size({ event.size.width, event.size.height });
+        the_desktop.get_child("MessageLogView").set_relative_dimensions(calc_message_log_dims());
+        the_desktop.get_child("InventoryArea").set_relative_dimensions(calc_inventory_dims());
+        the_desktop.get_child("StatusArea").set_relative_dimensions(calc_status_area_dims());
         result = SFMLEventResult::Acknowledged;
         break;
       }
@@ -145,33 +139,10 @@ SFMLEventResult AppStateGameMode::handle_sfml_event(sf::Event& event)
     }
   }
 
-  /// @todo This whole section should be redundant once we get focus-based
-  ///       key/click handling working properly for objects.
-#if 0
-  if (result != SFMLEventResult::Handled)
-  {
-    switch (m_current_input_state)
-    {
-      case GameInputState::Map:
-        /// @todo This is ugly, fix later
-        result = static_cast<SFMLEventResult>(m_desktop.get_child("StatusArea").handle_gui_event(event));
-        break;
-
-      case GameInputState::MessageLog:
-        /// @todo This is ugly, fix later
-        result = static_cast<SFMLEventResult>(m_desktop.get_child("MessageLogView").handle_gui_event(event));
-        break;
-
-      default:
-        break;
-    }
-  }
-#endif
-
   // Finally let the GUI handle events.
   if (result != SFMLEventResult::Handled)
   {
-    result = m_desktop.handle_sfml_event(event);
+    result = the_desktop.handle_sfml_event(event);
   }
 
   return result;
@@ -293,12 +264,12 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
       {
         case GameInputState::Map:
           m_current_input_state = GameInputState::MessageLog;
-          m_desktop.get_child("MessageLogView").set_global_focus(true);
+          the_desktop.get_child("MessageLogView").set_global_focus(true);
           return SFMLEventResult::Handled;
 
         case GameInputState::MessageLog:
           m_current_input_state = GameInputState::Map;
-          m_desktop.get_child("StatusArea").set_global_focus(true);
+          the_desktop.get_child("StatusArea").set_global_focus(true);
           return SFMLEventResult::Handled;
 
         default:
@@ -320,7 +291,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
     {
       std::unique_ptr<Action> p_action;
       /// @todo This is ugly; fix it.
-      InventoryArea& inventory_area = dynamic_cast<InventoryArea&>(m_desktop.get_child("InventoryArea"));
+      InventoryArea& inventory_area = dynamic_cast<InventoryArea&>(the_desktop.get_child("InventoryArea"));
 
       std::vector<ThingRef>& things = inventory_area.get_selected_things();
       int key_number = get_letter_key(key);
@@ -980,7 +951,7 @@ void AppStateGameMode::reset_inventory_area()
   Map& game_map = GAME.get_map_factory().get(player->get_map_id());
 
   /// @todo This is ugly; fix it.
-  InventoryArea& inventory_area = dynamic_cast<InventoryArea&>(m_desktop.get_child("InventoryArea"));
+  InventoryArea& inventory_area = dynamic_cast<InventoryArea&>(the_desktop.get_child("InventoryArea"));
 
   if (m_inventory_area_shows_player == true)
   {
@@ -1003,7 +974,7 @@ void AppStateGameMode::reset_inventory_area()
 sf::IntRect AppStateGameMode::calc_status_area_dims()
 {
   sf::IntRect statusAreaDims;
-  sf::IntRect invAreaDims = m_desktop.get_child("InventoryArea").get_relative_dimensions();
+  sf::IntRect invAreaDims = the_desktop.get_child("InventoryArea").get_relative_dimensions();
   statusAreaDims.width = m_app_window.getSize().x -
     (invAreaDims.width + 24);
   statusAreaDims.height = Settings.get<int>("status_area_height");
@@ -1014,7 +985,7 @@ sf::IntRect AppStateGameMode::calc_status_area_dims()
 
 sf::IntRect AppStateGameMode::calc_inventory_dims()
 {
-  sf::IntRect messageLogDims = m_desktop.get_child("MessageLogView").get_relative_dimensions();
+  sf::IntRect messageLogDims = the_desktop.get_child("MessageLogView").get_relative_dimensions();
   sf::IntRect inventoryAreaDims;
   inventoryAreaDims.width = Settings.get<int>("inventory_area_width");
   inventoryAreaDims.height = m_app_window.getSize().y - 10;
@@ -1061,7 +1032,7 @@ SFMLEventResult AppStateGameMode::handle_key_press_target_selection(ThingRef pla
     if (!key.alt && !key.control && key_number != -1)
     {
       /// @todo This is ugly; fix it
-      InventoryArea& inventory_area = dynamic_cast<InventoryArea&>(m_desktop.get_child("InventoryArea"));
+      InventoryArea& inventory_area = dynamic_cast<InventoryArea&>(the_desktop.get_child("InventoryArea"));
       m_action_in_progress->set_target(inventory_area.get_thing(static_cast<InventorySlot>(key_number)));
       player->queue_action(std::move(m_action_in_progress));
       m_inventory_area_shows_player = false;

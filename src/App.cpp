@@ -58,6 +58,9 @@ App::App(sf::RenderWindow& app_window)
   // Create the app texture for off-screen composition.
   m_app_texture->create(m_app_window.getSize().x, m_app_window.getSize().y);
 
+  // Create the GUI desktop.
+  m_gui_desktop.reset(NEW metagui::Desktop("Desktop", m_app_window.getSize()));
+
   // Create the random number generator and seed it with the current time.
   m_rng.reset(NEW boost::random::mt19937(static_cast<unsigned int>(std::time(0))));
 
@@ -240,6 +243,11 @@ sf::Shader & App::get_shader()
 MessageLog & App::get_message_log()
 {
   return *(m_message_log.get());
+}
+
+metagui::Desktop & App::get_gui_desktop()
+{
+  return *(m_gui_desktop.get());
 }
 
 App & App::instance()

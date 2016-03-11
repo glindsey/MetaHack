@@ -5,7 +5,9 @@
 
 #include "State.h"
 
-class AppStateSplashScreen : public State
+class AppStateSplashScreen
+  :
+  public State
 {
 public:
   AppStateSplashScreen(StateMachine& state_machine, sf::RenderWindow& app_window);

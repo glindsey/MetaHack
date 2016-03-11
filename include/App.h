@@ -6,7 +6,7 @@
 #include "LuaObject.h"
 #include "SFMLEventHandler.h"
 
-#include "GUIEvent.h"
+#include "GUIDesktop.h"
 
 // Forward declarations
 class MessageLog;
@@ -49,6 +49,9 @@ public:
   /// Get the MessageLog instance.
   MessageLog& get_message_log();
 
+  /// Get the Destop instance.
+  metagui::Desktop& get_gui_desktop();
+
   /// Get the current App instance.
   /// If no App instance currently exists, throws an exception.
   static App& instance();
@@ -61,6 +64,10 @@ private:
   /// Pointer to off-screen buffer for drawing composition.
   std::unique_ptr<sf::RenderTexture> m_app_texture;
 
+  /// The GUI desktop.
+  std::unique_ptr<metagui::Desktop> m_gui_desktop;
+
+  /// The state machine.
   std::unique_ptr<StateMachine> m_state_machine;
   bool m_is_running;
   bool m_has_window_focus;
@@ -106,6 +113,7 @@ private:
 #define the_default_bold_font     App::instance().get_default_bold_font()
 #define the_default_mono_font     App::instance().get_default_mono_font()
 #define the_default_unicode_font  App::instance().get_default_unicode_font()
+#define the_desktop               App::instance().get_gui_desktop()
 #define the_shader                App::instance().get_shader()
 #define the_RNG                   App::instance().get_rng()
 #define the_message_log           App::instance().get_message_log()
