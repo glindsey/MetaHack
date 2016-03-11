@@ -33,6 +33,8 @@ namespace metagui
     /// GUIWindow until they can be properly replaced with child controls.
     virtual void render_contents_(sf::RenderTexture& texture, int frame);
 
+    virtual Event::Result handle_event_after_children_(EventDragStarted& event) override;
+
   private:
     /// Border shape.
     sf::RectangleShape m_border_shape;
