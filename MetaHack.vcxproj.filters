@@ -270,9 +270,6 @@
     <ClInclude Include="include\gui\GUIWindowPane.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\gui\GUIDesktopPane.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\gui\GUICloseHandle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -292,6 +289,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\SFMLEventHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gui\GUIDesktop.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -494,9 +494,6 @@
     <ClCompile Include="src\gui\GUIWindowPane.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\gui\GUIDesktopPane.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\gui\GUICloseHandle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -507,6 +504,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\gui\GUITitleBar.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\GUIDesktop.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

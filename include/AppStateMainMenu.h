@@ -5,7 +5,7 @@
 
 #include "State.h"
 
-#include "gui/GUIDesktopPane.h"
+#include "gui/GUIDesktop.h"
 
 class AppStateMainMenu : public State
 {
@@ -25,7 +25,7 @@ private:
   sf::Text m_title;
   sf::Text m_subtitle;
 
-  metagui::DesktopPane m_desktop;
+  metagui::Desktop m_desktop;
 };
 
 #endif // APPSTATEMAINMENU_H

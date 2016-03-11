@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include "gui/GUIDesktopPane.h"
+#include "gui/GUIDesktop.h"
 
 #include "App.h"
 #include "ConfigSettings.h"
@@ -8,15 +8,15 @@
 
 namespace metagui
 {
-  DesktopPane::DesktopPane(StringKey name, sf::Vector2u size)
+  Desktop::Desktop(StringKey name, sf::Vector2u size)
     :
     Object(name, sf::Vector2i(0, 0), size)
   {}
 
-  DesktopPane::~DesktopPane()
+  Desktop::~Desktop()
   {}
 
-  SFMLEventResult DesktopPane::handle_sfml_event(sf::Event & sfml_event)
+  SFMLEventResult Desktop::handle_sfml_event(sf::Event & sfml_event)
   {
     SFMLEventResult sfml_result = SFMLEventResult::Ignored;
 
@@ -133,13 +133,13 @@ namespace metagui
 
   // === PROTECTED METHODS ======================================================
 
-  Event::Result DesktopPane::handle_event_before_children_(EventResized& event)
+  Event::Result Desktop::handle_event_before_children_(EventResized& event)
   {
     set_size({ event.new_size.x, event.new_size.y });
     return Event::Result::Acknowledged;
   }
 
-  void DesktopPane::render_self_before_children_(sf::RenderTexture& texture, int frame)
+  void Desktop::render_self_before_children_(sf::RenderTexture& texture, int frame)
   {
     texture.clear(sf::Color::Magenta);
   }

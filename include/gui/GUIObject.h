@@ -16,7 +16,7 @@ namespace metagui
 
   // Forward declaration of any class that can be visited
   class CloseHandle;
-  class DesktopPane;
+  class Desktop;
   class Label;
   class ResizeHandle;
   class ShrinkHandle;
@@ -32,7 +32,7 @@ namespace metagui
   // we want to be able to accept visitors.
   using ObjectVisitor = Visitor<
     CloseHandle,
-    DesktopPane,
+    Desktop,
     Label,
     ResizeHandle,
     ShrinkHandle,
@@ -44,7 +44,7 @@ namespace metagui
   template<class T>
   using ObjectVisitable = VisitableImpl<T,
     CloseHandle,
-    DesktopPane,
+    Desktop,
     Label,
     ResizeHandle,
     ShrinkHandle,

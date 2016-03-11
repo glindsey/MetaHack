@@ -162,6 +162,7 @@
     <ClInclude Include="include\ConfigSettings.h" />
     <ClInclude Include="include\Direction.h" />
     <ClInclude Include="include\ErrorHandler.h" />
+    <ClInclude Include="include\gui\GUIDesktop.h" />
     <ClInclude Include="include\SFMLEventHandler.h" />
     <ClInclude Include="include\GameObject.h" />
     <ClInclude Include="include\GameState.h" />
@@ -169,7 +170,6 @@
     <ClInclude Include="include\GeoVector.h" />
     <ClInclude Include="include\GetLetterKey.h" />
     <ClInclude Include="include\gui\GUICloseHandle.h" />
-    <ClInclude Include="include\gui\GUIDesktopPane.h" />
     <ClInclude Include="include\gui\GUIEvent.h" />
     <ClInclude Include="include\gui\GUILabel.h" />
     <ClInclude Include="include\gui\GUIObject.h" />
@@ -254,7 +254,7 @@
     <ClCompile Include="src\GameState.cpp" />
     <ClCompile Include="src\Gender.cpp" />
     <ClCompile Include="src\gui\GUICloseHandle.cpp" />
-    <ClCompile Include="src\gui\GUIDesktopPane.cpp" />
+    <ClCompile Include="src\gui\GUIDesktop.cpp" />
     <ClCompile Include="src\gui\GUILabel.cpp" />
     <ClCompile Include="src\gui\GUIObject.cpp" />
     <ClCompile Include="src\gui\GUIResizeHandle.cpp" />

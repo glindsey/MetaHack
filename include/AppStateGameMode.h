@@ -11,7 +11,7 @@
 #include "State.h"
 #include "StatusArea.h"
 
-#include "gui/GUIDesktopPane.h"
+#include "gui/GUIDesktop.h"
 
 /// Object that represents the game mode state.
 /// Anything about the game that needs to be saved should go into the
@@ -60,7 +60,7 @@ private:
   sf::RenderWindow& m_app_window;
 
   /// The desktop GUI pane.
-  metagui::DesktopPane m_desktop;
+  metagui::Desktop m_desktop;
 
   /// The current game state.
   std::unique_ptr<GameState> m_game_state;

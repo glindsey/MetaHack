@@ -7,9 +7,9 @@
 
 namespace metagui
 {
-  class DesktopPane :
+  class Desktop :
     public Object,
-    public ObjectVisitable<DesktopPane>
+    public ObjectVisitable<Desktop>
   {
   public:
     struct MouseButtonInfo
@@ -27,8 +27,8 @@ namespace metagui
       sf::Clock elapsed;
     };
 
-    explicit DesktopPane(StringKey name, sf::Vector2u size);
-    virtual ~DesktopPane();
+    explicit Desktop(StringKey name, sf::Vector2u size);
+    virtual ~Desktop();
 
     /// Handles an SFML event and translates it into a GUI event if necessary.
     SFMLEventResult handle_sfml_event(sf::Event& sfml_event);
