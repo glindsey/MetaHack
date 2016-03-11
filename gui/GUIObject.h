@@ -344,23 +344,23 @@ namespace metagui
     /// Default behavior is to do nothing.
     virtual void render_self_after_children_(sf::RenderTexture& texture, int frame);
 
-    virtual Event::Result handle_event_before_children_(EventDragFinished& event, Event::Result default_result);
-    virtual Event::Result handle_event_after_children_(EventDragFinished& event, Event::Result default_result);
+    virtual Event::Result handle_event_before_children_(EventDragFinished& event);
+    virtual Event::Result handle_event_after_children_(EventDragFinished& event);
 
-    virtual Event::Result handle_event_before_children_(EventDragStarted& event, Event::Result default_result);
-    virtual Event::Result handle_event_after_children_(EventDragStarted& event, Event::Result default_result);
+    virtual Event::Result handle_event_before_children_(EventDragStarted& event);
+    virtual Event::Result handle_event_after_children_(EventDragStarted& event);
 
-    virtual Event::Result handle_event_before_children_(EventDragging& event, Event::Result default_result);
-    virtual Event::Result handle_event_after_children_(EventDragging& event, Event::Result default_result);
+    virtual Event::Result handle_event_before_children_(EventDragging& event);
+    virtual Event::Result handle_event_after_children_(EventDragging& event);
 
-    virtual Event::Result handle_event_before_children_(EventKeyPressed& event, Event::Result default_result);
-    virtual Event::Result handle_event_after_children_(EventKeyPressed& event, Event::Result default_result);
+    virtual Event::Result handle_event_before_children_(EventKeyPressed& event);
+    virtual Event::Result handle_event_after_children_(EventKeyPressed& event);
 
-    virtual Event::Result handle_event_before_children_(EventMouseDown& event, Event::Result default_result);
-    virtual Event::Result handle_event_after_children_(EventMouseDown& event, Event::Result default_result);
+    virtual Event::Result handle_event_before_children_(EventMouseDown& event);
+    virtual Event::Result handle_event_after_children_(EventMouseDown& event);
 
-    virtual Event::Result handle_event_before_children_(EventResized& event, Event::Result default_result);
-    virtual Event::Result handle_event_after_children_(EventResized& event, Event::Result default_result);
+    virtual Event::Result handle_event_before_children_(EventResized& event);
+    virtual Event::Result handle_event_after_children_(EventResized& event);
 
     /// Handles a flag being set/cleared.
     /// This method is called by set_flag() if the value was changed.
