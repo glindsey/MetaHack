@@ -460,51 +460,60 @@ namespace metagui
   Event::Result Object::handle_event_before_children(EventDragFinished& event)
   {
     m_being_dragged = false;
-    return handle_event_before_children_(event);
+    return handle_event_before_children_(event, Event::Result::Acknowledged);
   }
 
   Event::Result Object::handle_event_after_children(EventDragFinished& event)
   {
-    return handle_event_after_children_(event);
+    return handle_event_after_children_(event, Event::Result::Acknowledged);
   }
 
   Event::Result Object::handle_event_before_children(EventDragStarted& event)
   {
+    Event::Result default_result = Event::Result::Pending;
+
     if (contains_point(event.start_location))
     {
-      // We "Acknowledge" the event so it is passed to children.
-      return Event::Result::Acknowledged;
+      default_result = Event::Result::Acknowledged;
     }
     else
     {
       // We "Ignore" the event so it is not passed to children.
-      return Event::Result::Ignored;
+      default_result = Event::Result::Ignored;
     }
+
+    return handle_event_before_children_(event, default_result);
   }
 
   Event::Result Object::handle_event_after_children(EventDragStarted& event)
   {
+    Event::Result default_result = Event::Result::Pending;
+
     if (contains_point(event.start_location) && m_draggable_cached == true)
     {
       m_being_dragged = true;
       m_drag_start_location = event.start_location;
       m_absolute_location_drag_start = get_absolute_location();
-      return Event::Result::Handled;
+      default_result = Event::Result::Handled;
     }
     else
     {
-      return Event::Result::Acknowledged;
+      default_result = Event::Result::Acknowledged;
     }
+
+    return handle_event_after_children_(event, default_result);
   }
 
   Event::Result Object::handle_event_before_children(EventDragging& event)
   {
     // We "Acknowledge" the event so it is passed to children.
-    return Event::Result::Acknowledged;
+    return handle_event_before_children_(event, Event::Result::Acknowledged);
   }
 
   Event::Result Object::handle_event_after_children(EventDragging& event)
   {
+    Event::Result default_result = Event::Result::Pending;
+
     // If we got here, all children ignored the event (or there are no
     // children) so we want to process it if we are draggable.
     if (m_being_dragged == true)
@@ -513,42 +522,44 @@ namespace metagui
       auto new_coords = m_absolute_location_drag_start + move_amount;
 
       set_absolute_location(new_coords);
-      return Event::Result::Handled;
+      default_result = Event::Result::Handled;
     }
     else
     {
-      return Event::Result::Ignored;
+      default_result = Event::Result::Ignored;
     }
+
+    return handle_event_after_children_(event, default_result);
   }
 
   Event::Result Object::handle_event_before_children(EventKeyPressed& event)
   {
-    return handle_event_before_children_(event);
+    return handle_event_before_children_(event, Event::Result::Acknowledged);
   }
 
   Event::Result Object::handle_event_after_children(EventKeyPressed& event)
   {
-    return handle_event_after_children_(event);
+    return handle_event_after_children_(event, Event::Result::Acknowledged);
   }
 
   Event::Result Object::handle_event_before_children(EventMouseDown& event)
   {
-    return handle_event_before_children_(event);
+    return handle_event_before_children_(event, Event::Result::Acknowledged);
   }
 
   Event::Result Object::handle_event_after_children(EventMouseDown& event)
   {
-    return handle_event_after_children_(event);
+    return handle_event_after_children_(event, Event::Result::Acknowledged);
   }
 
   Event::Result Object::handle_event_before_children(EventResized& event)
   {
-    return handle_event_before_children_(event);
+    return handle_event_before_children_(event, Event::Result::Acknowledged);
   }
 
   Event::Result Object::handle_event_after_children(EventResized& event)
   {
-    return handle_event_after_children_(event);
+    return handle_event_after_children_(event, Event::Result::Acknowledged);
   }
 
   Object * Object::get_parent()
@@ -576,70 +587,72 @@ namespace metagui
 
   void Object::render_self_before_children_(sf::RenderTexture& texture, int frame)
   {
+    // Default behavior is to do nothing.
   }
 
   void Object::render_self_after_children_(sf::RenderTexture& texture, int frame)
   {
+    // Default behavior is to do nothing.
   }
 
-  Event::Result Object::handle_event_before_children_(EventDragFinished& event)
+  Event::Result Object::handle_event_before_children_(EventDragFinished& event, Event::Result default_result)
   {
-    return Event::Result::Acknowledged;
+    return default_result;
   }
 
-  Event::Result Object::handle_event_after_children_(EventDragFinished& event)
+  Event::Result Object::handle_event_after_children_(EventDragFinished& event, Event::Result default_result)
   {
-    return Event::Result::Acknowledged;
+    return default_result;
   }
 
-  Event::Result Object::handle_event_before_children_(EventDragStarted& event)
+  Event::Result Object::handle_event_before_children_(EventDragStarted& event, Event::Result default_result)
   {
-    return Event::Result::Acknowledged;
+    return default_result;
   }
 
-  Event::Result Object::handle_event_after_children_(EventDragStarted& event)
+  Event::Result Object::handle_event_after_children_(EventDragStarted& event, Event::Result default_result)
   {
-    return Event::Result::Acknowledged;
+    return default_result;
   }
 
-  Event::Result Object::handle_event_before_children_(EventDragging& event)
+  Event::Result Object::handle_event_before_children_(EventDragging& event, Event::Result default_result)
   {
-    return Event::Result::Acknowledged;
+    return default_result;
   }
 
-  Event::Result Object::handle_event_after_children_(EventDragging& event)
+  Event::Result Object::handle_event_after_children_(EventDragging& event, Event::Result default_result)
   {
-    return Event::Result::Acknowledged;
+    return default_result;
   }
 
-  Event::Result Object::handle_event_before_children_(EventKeyPressed& event)
+  Event::Result Object::handle_event_before_children_(EventKeyPressed& event, Event::Result default_result)
   {
-    return Event::Result::Acknowledged;
+    return default_result;
   }
 
-  Event::Result Object::handle_event_after_children_(EventKeyPressed& event)
+  Event::Result Object::handle_event_after_children_(EventKeyPressed& event, Event::Result default_result)
   {
-    return Event::Result::Acknowledged;
+    return default_result;
   }
 
-  Event::Result Object::handle_event_before_children_(EventMouseDown& event)
+  Event::Result Object::handle_event_before_children_(EventMouseDown& event, Event::Result default_result)
   {
-    return Event::Result::Acknowledged;
+    return default_result;
   }
 
-  Event::Result Object::handle_event_after_children_(EventMouseDown& event)
+  Event::Result Object::handle_event_after_children_(EventMouseDown& event, Event::Result default_result)
   {
-    return Event::Result::Acknowledged;
+    return default_result;
   }
 
-  Event::Result Object::handle_event_before_children_(EventResized& event)
+  Event::Result Object::handle_event_before_children_(EventResized& event, Event::Result default_result)
   {
-    return Event::Result::Acknowledged;
+    return default_result;
   }
 
-  Event::Result Object::handle_event_after_children_(EventResized& event)
+  Event::Result Object::handle_event_after_children_(EventResized& event, Event::Result default_result)
   {
-    return Event::Result::Acknowledged;
+    return default_result;
   }
 
   void Object::handle_set_flag_(StringKey name, bool enabled)
