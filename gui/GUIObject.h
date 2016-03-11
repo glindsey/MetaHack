@@ -119,8 +119,9 @@ namespace metagui
 
     // Get absolute location relative to root object.
     sf::Vector2i get_absolute_location();
-
     void set_absolute_location(sf::Vector2i location);
+
+    sf::IntRect get_absolute_dimensions();
 
     /// Add a child GUIObject underneath this one.
     /// *This GUIObject assumes ownership of the child.*
@@ -306,12 +307,11 @@ namespace metagui
     /// @return True if the point is within the object, false otherwise.
     bool contains_point(sf::Vector2i point);
 
-    /// Returns whether the mouse is currently over this object.
-    /// @return True if the mouse is over the object, false otherwise.
-    bool contains_mouse();
-
     Event::Result handle_event_before_children(EventDragFinished& event);
     Event::Result handle_event_after_children(EventDragFinished& event);
+
+    Event::Result handle_event_before_children(EventDragStarted& event);
+    Event::Result handle_event_after_children(EventDragStarted& event);
 
     Event::Result handle_event_before_children(EventDragging& event);
     Event::Result handle_event_after_children(EventDragging& event);
@@ -336,9 +336,6 @@ namespace metagui
     /// Set the focus of an object without clearing sibling focuses (foci?).
     void set_focus_only(bool focus);
 
-    /// Set whether the mouse is contained within this object.
-    void set_contains_mouse(bool contains);
-
     /// Called before rendering the object's children.
     /// Default behavior is to do nothing.
     virtual void render_self_before_children_(sf::RenderTexture& texture, int frame);
@@ -349,6 +346,9 @@ namespace metagui
 
     virtual Event::Result handle_event_before_children_(EventDragFinished& event);
     virtual Event::Result handle_event_after_children_(EventDragFinished& event);
+
+    virtual Event::Result handle_event_before_children_(EventDragStarted& event);
+    virtual Event::Result handle_event_after_children_(EventDragStarted& event);
 
     virtual Event::Result handle_event_before_children_(EventDragging& event);
     virtual Event::Result handle_event_after_children_(EventDragging& event);
@@ -399,6 +399,12 @@ namespace metagui
     /// Cached from m_flags so we don't keep looking it up.
     bool m_decor_cached = false;
 
+    /// Boolean indicating whether this object is currently being dragged.
+    bool m_being_dragged = false;
+
+    /// The location that the last drag started.
+    sf::Vector2i m_drag_start_location;
+
     /// The text for this object. The way this text is used is dependent on the
     /// sort of control it is; e.g. for a Pane this is the pane title, for a
     /// Button it is the button caption, for a TextBox it is the box contents,
@@ -409,13 +415,10 @@ namespace metagui
     sf::Vector2i m_location;
 
     /// Location as captured at last mousedown.
-    sf::Vector2i m_absolute_location_last_mousedown;
+    sf::Vector2i m_absolute_location_drag_start;
 
     /// Object size.
     sf::Vector2u m_size;
-
-    /// Flag indicating whether the mouse is currently over this object.
-    bool m_contains_mouse;
 
     /// Background texture.
     std::unique_ptr<sf::RenderTexture> m_bg_texture;

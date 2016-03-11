@@ -21,6 +21,8 @@ namespace metagui
 
   Object::Object(StringKey name, sf::IntRect dimensions)
   {
+    SET_UP_LOGGER("GUI", true);
+
     m_name = name;
     set_relative_dimensions(dimensions);
   }
@@ -210,6 +212,18 @@ namespace metagui
     }
 
     set_relative_location(relative_location);
+  }
+
+  sf::IntRect Object::get_absolute_dimensions()
+  {
+    sf::IntRect dimensions;
+    sf::Vector2i location = get_absolute_location();
+    sf::Vector2u size = get_size();
+    dimensions.left = location.x;
+    dimensions.top = location.y;
+    dimensions.width = size.x;
+    dimensions.height = size.y;
+    return dimensions;
   }
 
   Object& Object::add_child(std::unique_ptr<Object> child, uint32_t z_order)
@@ -443,13 +457,9 @@ namespace metagui
             (point.y >= top) && (point.y <= bottom));
   }
 
-  bool Object::contains_mouse()
-  {
-    return m_contains_mouse;
-  }
-
   Event::Result Object::handle_event_before_children(EventDragFinished& event)
   {
+    m_being_dragged = false;
     return handle_event_before_children_(event);
   }
 
@@ -458,9 +468,9 @@ namespace metagui
     return handle_event_after_children_(event);
   }
 
-  Event::Result Object::handle_event_before_children(EventDragging& event)
+  Event::Result Object::handle_event_before_children(EventDragStarted& event)
   {
-    if (contains_point(event.current_location))
+    if (contains_point(event.start_location))
     {
       // We "Acknowledge" the event so it is passed to children.
       return Event::Result::Acknowledged;
@@ -472,14 +482,35 @@ namespace metagui
     }
   }
 
+  Event::Result Object::handle_event_after_children(EventDragStarted& event)
+  {
+    if (contains_point(event.start_location) && m_draggable_cached == true)
+    {
+      m_being_dragged = true;
+      m_drag_start_location = event.start_location;
+      m_absolute_location_drag_start = get_absolute_location();
+      return Event::Result::Handled;
+    }
+    else
+    {
+      return Event::Result::Acknowledged;
+    }
+  }
+
+  Event::Result Object::handle_event_before_children(EventDragging& event)
+  {
+    // We "Acknowledge" the event so it is passed to children.
+    return Event::Result::Acknowledged;
+  }
+
   Event::Result Object::handle_event_after_children(EventDragging& event)
   {
     // If we got here, all children ignored the event (or there are no
     // children) so we want to process it if we are draggable.
-    if (contains_point(event.current_location) && m_draggable_cached == true)
+    if (m_being_dragged == true)
     {
-      auto move_amount = event.current_location - event.start_location;
-      auto new_coords = m_absolute_location_last_mousedown + move_amount;
+      auto move_amount = event.current_location - m_drag_start_location;
+      auto new_coords = m_absolute_location_drag_start + move_amount;
 
       set_absolute_location(new_coords);
       return Event::Result::Handled;
@@ -502,11 +533,6 @@ namespace metagui
 
   Event::Result Object::handle_event_before_children(EventMouseDown& event)
   {
-    if (contains_point(event.location))
-    {
-      m_absolute_location_last_mousedown = get_absolute_location();
-    }
-
     return handle_event_before_children_(event);
   }
 
@@ -548,16 +574,6 @@ namespace metagui
     m_focus = focus;
   }
 
-  void Object::set_contains_mouse(bool contains)
-  {
-    if (m_contains_mouse != contains)
-    {
-      CLOG(TRACE, "GUI") << "Mouse has " << (contains ? "entered " : "left ") <<
-        "the object " << get_name();
-    }
-    m_contains_mouse = contains;
-  }
-
   void Object::render_self_before_children_(sf::RenderTexture& texture, int frame)
   {
   }
@@ -572,6 +588,16 @@ namespace metagui
   }
 
   Event::Result Object::handle_event_after_children_(EventDragFinished& event)
+  {
+    return Event::Result::Acknowledged;
+  }
+
+  Event::Result Object::handle_event_before_children_(EventDragStarted& event)
+  {
+    return Event::Result::Acknowledged;
+  }
+
+  Event::Result Object::handle_event_after_children_(EventDragStarted& event)
   {
     return Event::Result::Acknowledged;
   }

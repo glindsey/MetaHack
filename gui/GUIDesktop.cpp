@@ -49,6 +49,7 @@ namespace metagui
         button.elapsed.restart();
 
         EventMouseDown event{ sfml_event.mouseButton.button, point };
+        handle_gui_event(event);
 
         /// @todo Handle click, double-click, etc.
         sfml_result = SFMLEventResult::Acknowledged;
@@ -67,7 +68,8 @@ namespace metagui
         if (button.dragging)
         {
           button.dragging = false;
-          /// @todo Send EventDragFinished
+          EventDragFinished event{ sfml_event.mouseButton.button, point };
+          handle_gui_event(event);
         }
 
         /// @todo Handle click, double-click, etc.
@@ -78,7 +80,6 @@ namespace metagui
       case sf::Event::EventType::MouseMoved:
       {
         sf::Vector2i point{ sfml_event.mouseMove.x, sfml_event.mouseMove.y };
-        set_contains_mouse(this->contains_point(point));
         m_mouse_location = point;
 
         /// @todo Handle things like dragging, resizing
@@ -90,8 +91,14 @@ namespace metagui
               (button_info.pressed &&
                distance(point, button_info.location) > EventDragging::drag_threshold))
           {
-            button_info.dragging = true;
-            EventDragging event{ static_cast<sf::Mouse::Button>(index), button_info.location, point };
+            if (button_info.dragging != true)
+            {
+              button_info.dragging = true;
+              EventDragStarted event{ static_cast<sf::Mouse::Button>(index), button_info.location };
+              handle_gui_event(event);
+            }
+
+            EventDragging event{ static_cast<sf::Mouse::Button>(index), point };
             handle_gui_event(event);
 
             sfml_result = SFMLEventResult::Handled;
@@ -104,8 +111,6 @@ namespace metagui
 
       case sf::Event::EventType::MouseLeft:
       {
-        set_contains_mouse(false);
-
         for (auto& button : m_button_info)
         {
           if (button.pressed)
@@ -117,7 +122,8 @@ namespace metagui
             if (button.dragging)
             {
               button.dragging = false;
-              /// @todo Send EventDragFinished
+              EventDragFinished event{ sfml_event.mouseButton.button, button.location };
+              handle_gui_event(event);
             }
           }
         }

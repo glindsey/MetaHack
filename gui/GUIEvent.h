@@ -33,29 +33,39 @@ namespace metagui
 
   struct EventDragFinished : public Event
   {
-    EventDragFinished(sf::Mouse::Button button_, sf::Vector2i start_location_, sf::Vector2i current_location_)
+    EventDragFinished(sf::Mouse::Button button_, sf::Vector2i current_location_)
       :
       button(button_),
-      start_location(start_location_),
       current_location(current_location_)
     {}
 
     sf::Mouse::Button const button;
-    sf::Vector2i const start_location;
     sf::Vector2i const current_location;
+  };
+
+  struct EventDragStarted : public Event
+  {
+    EventDragStarted(sf::Mouse::Button button_, sf::Vector2i start_location_)
+      :
+      button(button_),
+      start_location(start_location_)
+    {}
+
+    sf::Mouse::Button const button;
+    sf::Vector2i const start_location;
+
+    /// Number of pixels you have to move before it is considered "dragging" the object.
   };
 
   struct EventDragging : public Event
   {
-    EventDragging(sf::Mouse::Button button_, sf::Vector2i start_location_, sf::Vector2i current_location_)
+    EventDragging(sf::Mouse::Button button_, sf::Vector2i current_location_)
       :
       button(button_),
-      start_location(start_location_),
       current_location(current_location_)
     {}
 
     sf::Mouse::Button const button;
-    sf::Vector2i const start_location;
     sf::Vector2i const current_location;
 
     /// Number of pixels you have to move before it is considered "dragging" the object.
