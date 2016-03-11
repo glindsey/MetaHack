@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include "gui/GUIWindowPane.h"
+#include "gui/GUIWindow.h"
 
 #include "gui/GUITitleBar.h"
 #include "gui/GUICloseHandle.h"
@@ -13,7 +13,7 @@
 
 namespace metagui
 {
-  WindowPane::WindowPane(StringKey name, sf::Vector2i location, sf::Vector2u size)
+  Window::Window(StringKey name, sf::Vector2i location, sf::Vector2u size)
     :
     Object(name, location, size)
   {
@@ -22,7 +22,7 @@ namespace metagui
     set_flag("draggable", true);
   }
 
-  WindowPane::WindowPane(StringKey name, sf::IntRect dimensions)
+  Window::Window(StringKey name, sf::IntRect dimensions)
     :
     Object(name, dimensions)
   {
@@ -31,12 +31,12 @@ namespace metagui
     set_flag("draggable", true);
   }
 
-  WindowPane::~WindowPane()
+  Window::~Window()
   {}
 
   // === PROTECTED METHODS ======================================================
 
-  sf::Vector2i WindowPane::get_child_area_location()
+  sf::Vector2i Window::get_child_area_location()
   {
     sf::Vector2i child_location{ 0, 0 };
 
@@ -48,7 +48,7 @@ namespace metagui
     return child_location;
   }
 
-  sf::Vector2u WindowPane::get_child_area_size()
+  sf::Vector2u Window::get_child_area_size()
   {
     auto child_size = get_size();
 
@@ -60,7 +60,7 @@ namespace metagui
     return child_size;
   }
 
-  void WindowPane::render_self_before_children_(sf::RenderTexture& texture, int frame)
+  void Window::render_self_before_children_(sf::RenderTexture& texture, int frame)
   {
     sf::Vector2u size = get_size();
 
@@ -92,7 +92,7 @@ namespace metagui
     texture.draw(m_border_shape);
   }
 
-  void WindowPane::handle_set_flag_(StringKey name, bool enabled)
+  void Window::handle_set_flag_(StringKey name, bool enabled)
   {
     if (name == "titlebar")
     {
@@ -159,6 +159,6 @@ namespace metagui
     }
   }
 
-  void WindowPane::render_contents_(sf::RenderTexture& texture, int frame)
+  void Window::render_contents_(sf::RenderTexture& texture, int frame)
   {}
 }; // end namespace metagui

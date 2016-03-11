@@ -76,7 +76,7 @@ struct InventoryArea::Impl
 };
 
 InventoryArea::InventoryArea(sf::IntRect dimensions)
-  : metagui::WindowPane("InventoryArea", dimensions),
+  : metagui::Window("InventoryArea", dimensions),
   pImpl(NEW Impl())
 {
   SET_UP_LOGGER("InventoryArea", true);

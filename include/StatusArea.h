@@ -3,9 +3,9 @@
 
 #include "stdafx.h"
 
-#include "gui/GUIWindowPane.h"
+#include "gui/GUIWindow.h"
 
-class StatusArea : public metagui::WindowPane
+class StatusArea : public metagui::Window
 {
 public:
   explicit StatusArea(sf::IntRect dimensions);

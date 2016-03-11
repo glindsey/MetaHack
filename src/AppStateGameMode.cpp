@@ -42,7 +42,7 @@
 #include "ActionWield.h"
 
 #include "gui/GUIObject.h"
-#include "gui/GUIWindowPane.h"
+#include "gui/GUIWindow.h"
 
 AppStateGameMode::AppStateGameMode(StateMachine& state_machine, sf::RenderWindow& m_app_window)
   :

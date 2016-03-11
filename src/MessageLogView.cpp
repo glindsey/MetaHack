@@ -11,7 +11,7 @@
 MessageLogView::MessageLogView(MessageLog& model,
                                sf::IntRect dimensions)
   :
-  metagui::WindowPane("MessageLogView", dimensions),
+  metagui::Window("MessageLogView", dimensions),
   m_model(model)
 {
   set_text("Message Log");

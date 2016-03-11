@@ -10,7 +10,7 @@ namespace metagui
   class CloseHandle :
     public Object, public ObjectVisitable<CloseHandle>
   {
-    friend class WindowPane;
+    friend class Window;
 
   public:
     virtual ~CloseHandle();

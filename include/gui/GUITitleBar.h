@@ -10,7 +10,7 @@ namespace metagui
   class TitleBar :
     public Object, public ObjectVisitable<TitleBar>
   {
-    friend class WindowPane;
+    friend class Window;
 
   public:
     virtual ~TitleBar();

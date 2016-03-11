@@ -7,13 +7,13 @@
 
 namespace metagui
 {
-  class WindowPane :
-    public Object, public ObjectVisitable<WindowPane>
+  class Window :
+    public Object, public ObjectVisitable<Window>
   {
   public:
-    WindowPane(StringKey name, sf::Vector2i location, sf::Vector2u size = sf::Vector2u(0, 0));
-    WindowPane(StringKey name, sf::IntRect dimensions);
-    virtual ~WindowPane();
+    Window(StringKey name, sf::Vector2i location, sf::Vector2u size = sf::Vector2u(0, 0));
+    Window(StringKey name, sf::IntRect dimensions);
+    virtual ~Window();
 
     /// Get the upper-left corner of this object's child area, relative to
     /// its own upper-left corner, taking into account any decorator
@@ -30,7 +30,7 @@ namespace metagui
     virtual void handle_set_flag_(StringKey name, bool enabled) override;
 
     /// Temporary function used to render the contents of classes derived from
-    /// GUIWindowPane until they can be properly replaced with child controls.
+    /// GUIWindow until they can be properly replaced with child controls.
     virtual void render_contents_(sf::RenderTexture& texture, int frame);
 
   private:

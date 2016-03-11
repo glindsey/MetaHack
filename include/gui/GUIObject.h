@@ -21,7 +21,7 @@ namespace metagui
   class ResizeHandle;
   class ShrinkHandle;
   class TitleBar;
-  class WindowPane;
+  class Window;
 
   /// Using declarations
   using ChildMap = std::map< StringKey, std::unique_ptr<Object> >;
@@ -37,7 +37,7 @@ namespace metagui
     ResizeHandle,
     ShrinkHandle,
     TitleBar,
-    WindowPane
+    Window
   >;
 
   // The following declaration should have the same class list as above.
@@ -49,7 +49,7 @@ namespace metagui
     ResizeHandle,
     ShrinkHandle,
     TitleBar,
-    WindowPane
+    Window
   >;
 
   /// Virtual superclass of all GUI objects on screen.

@@ -10,7 +10,7 @@ namespace metagui
   class ResizeHandle :
     public Object, public ObjectVisitable<ResizeHandle>
   {
-    friend class WindowPane;
+    friend class Window;
 
   public:
     virtual ~ResizeHandle();

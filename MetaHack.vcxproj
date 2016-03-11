@@ -163,6 +163,7 @@
     <ClInclude Include="include\Direction.h" />
     <ClInclude Include="include\ErrorHandler.h" />
     <ClInclude Include="include\gui\GUIDesktop.h" />
+    <ClInclude Include="include\gui\GUIWindow.h" />
     <ClInclude Include="include\SFMLEventHandler.h" />
     <ClInclude Include="include\GameObject.h" />
     <ClInclude Include="include\GameState.h" />
@@ -176,7 +177,6 @@
     <ClInclude Include="include\gui\GUIResizeHandle.h" />
     <ClInclude Include="include\gui\GUIShrinkHandle.h" />
     <ClInclude Include="include\gui\GUITitleBar.h" />
-    <ClInclude Include="include\gui\GUIWindowPane.h" />
     <ClInclude Include="include\IntegerRange.h" />
     <ClInclude Include="include\Inventory.h" />
     <ClInclude Include="include\InventoryArea.h" />
@@ -260,7 +260,7 @@
     <ClCompile Include="src\gui\GUIResizeHandle.cpp" />
     <ClCompile Include="src\gui\GUIShrinkHandle.cpp" />
     <ClCompile Include="src\gui\GUITitleBar.cpp" />
-    <ClCompile Include="src\gui\GUIWindowPane.cpp" />
+    <ClCompile Include="src\gui\GUIWindow.cpp" />
     <ClCompile Include="src\IntegerRange.cpp" />
     <ClCompile Include="src\Inventory.cpp" />
     <ClCompile Include="src\InventoryArea.cpp" />
