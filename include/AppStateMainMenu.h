@@ -5,7 +5,7 @@
 
 #include "State.h"
 
-#include "gui/GUIDesktop.h"
+#include "GUIDesktop.h"
 
 class AppStateMainMenu : public State
 {

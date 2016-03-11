@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 
-#include "gui/GUIEvent.h"
+#include "GUIEvent.h"
 
 /// This class encapsulates the idea of an input buffer which is added to or
 /// removed from using SFML KeyPressed events.

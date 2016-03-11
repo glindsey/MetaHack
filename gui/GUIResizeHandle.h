@@ -1,22 +1,22 @@
-#ifndef GUITITLEBAR_H
-#define GUITITLEBAR_H
+#ifndef GUIRESIZEHANDLE_H
+#define GUIRESIZEHANDLE_H
 
 #include "stdafx.h"
 
-#include "gui/GUIObject.h"
+#include "GUIObject.h"
 
 namespace metagui
 {
-  class TitleBar :
-    public Object, public ObjectVisitable<TitleBar>
+  class ResizeHandle :
+    public Object, public ObjectVisitable<ResizeHandle>
   {
     friend class Window;
 
   public:
-    virtual ~TitleBar();
+    virtual ~ResizeHandle();
 
   protected:
-    explicit TitleBar(StringKey name);
+    explicit ResizeHandle(StringKey name);
     virtual void render_self_before_children_(sf::RenderTexture& texture, int frame) override final;
     virtual void handle_parent_size_changed_(sf::Vector2u parent_size) override final;
 
@@ -24,4 +24,4 @@ namespace metagui
   };
 }; // end namespace metagui
 
-#endif // GUITITLEBAR_H
+#endif // GUICLOSEHANDLE_H

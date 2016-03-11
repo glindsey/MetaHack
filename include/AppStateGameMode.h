@@ -11,7 +11,7 @@
 #include "State.h"
 #include "StatusArea.h"
 
-#include "gui/GUIDesktop.h"
+#include "GUIDesktop.h"
 
 /// Object that represents the game mode state.
 /// Anything about the game that needs to be saved should go into the

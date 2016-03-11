@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 
-#include "gui/GUIObject.h"
+#include "GUIObject.h"
 #include "KeyBuffer.h"
 #include "LuaObject.h"
 

@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 
-#include "gui/GUIWindow.h"
+#include "GUIWindow.h"
 #include "InventorySlot.h"
 
 enum class InventoryType

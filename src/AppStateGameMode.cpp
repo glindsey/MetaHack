@@ -41,8 +41,8 @@
 #include "ActionWait.h"
 #include "ActionWield.h"
 
-#include "gui/GUIObject.h"
-#include "gui/GUIWindow.h"
+#include "GUIObject.h"
+#include "GUIWindow.h"
 
 AppStateGameMode::AppStateGameMode(StateMachine& state_machine, sf::RenderWindow& m_app_window)
   :

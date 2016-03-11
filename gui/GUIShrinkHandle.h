@@ -1,22 +1,22 @@
-#ifndef GUIRESIZEHANDLE_H
-#define GUIRESIZEHANDLE_H
+#ifndef GUISHRINKHANDLE_H
+#define GUISHRINKHANDLE_H
 
 #include "stdafx.h"
 
-#include "gui/GUIObject.h"
+#include "GUIObject.h"
 
 namespace metagui
 {
-  class ResizeHandle :
-    public Object, public ObjectVisitable<ResizeHandle>
+  class ShrinkHandle :
+    public Object, public ObjectVisitable<ShrinkHandle>
   {
     friend class Window;
 
   public:
-    virtual ~ResizeHandle();
+    virtual ~ShrinkHandle();
 
   protected:
-    explicit ResizeHandle(StringKey name);
+    explicit ShrinkHandle(StringKey name);
     virtual void render_self_before_children_(sf::RenderTexture& texture, int frame) override final;
     virtual void handle_parent_size_changed_(sf::Vector2u parent_size) override final;
 

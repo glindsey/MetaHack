@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include "gui/GUIResizeHandle.h"
+#include "GUIResizeHandle.h"
 
 #include "App.h"
 #include "ConfigSettings.h"

@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include "gui/GUICloseHandle.h"
+#include "GUICloseHandle.h"
 
 #include "App.h"
 #include "ConfigSettings.h"

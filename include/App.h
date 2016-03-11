@@ -6,7 +6,7 @@
 #include "LuaObject.h"
 #include "SFMLEventHandler.h"
 
-#include "gui/GUIEvent.h"
+#include "GUIEvent.h"
 
 // Forward declarations
 class MessageLog;

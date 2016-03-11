@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include "gui/GUITitleBar.h"
+#include "GUITitleBar.h"
 
 #include "App.h"
 #include "ConfigSettings.h"

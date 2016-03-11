@@ -2,7 +2,7 @@
 
 #include "StatusArea.h"
 
-#include "gui/GUILabel.h"
+#include "GUILabel.h"
 #include "App.h"
 #include "ConfigSettings.h"
 #include "GameState.h"

@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include "gui/GUIDesktop.h"
+#include "GUIDesktop.h"
 
 #include "App.h"
 #include "ConfigSettings.h"

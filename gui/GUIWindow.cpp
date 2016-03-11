@@ -1,11 +1,11 @@
 #include "stdafx.h"
 
-#include "gui/GUIWindow.h"
+#include "GUIWindow.h"
 
-#include "gui/GUITitleBar.h"
-#include "gui/GUICloseHandle.h"
-#include "gui/GUIResizeHandle.h"
-#include "gui/GUIShrinkHandle.h"
+#include "GUITitleBar.h"
+#include "GUICloseHandle.h"
+#include "GUIResizeHandle.h"
+#include "GUIShrinkHandle.h"
 
 #include "App.h"
 #include "ConfigSettings.h"

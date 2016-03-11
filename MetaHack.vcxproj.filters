@@ -177,12 +177,6 @@
     <ClInclude Include="include\GameState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\gui\GUILabel.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\gui\GUIObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\MessageLogView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -267,31 +261,37 @@
     <ClInclude Include="include\LuaObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\gui\GUICloseHandle.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\gui\GUIResizeHandle.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\gui\GUIShrinkHandle.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\gui\GUITitleBar.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\Visitor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\gui\GUIEvent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\SFMLEventHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\gui\GUIDesktop.h">
+    <ClInclude Include="gui\GUICloseHandle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\gui\GUIWindow.h">
+    <ClInclude Include="gui\GUIDesktop.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\GUIEvent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\GUILabel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\GUIObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\GUIResizeHandle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\GUIShrinkHandle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\GUITitleBar.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\GUIWindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -404,12 +404,6 @@
     <ClCompile Include="src\GameState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\gui\GUILabel.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\gui\GUIObject.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\MessageLogView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -491,22 +485,28 @@
     <ClCompile Include="src\LuaObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\gui\GUICloseHandle.cpp">
+    <ClCompile Include="gui\GUICloseHandle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\gui\GUIResizeHandle.cpp">
+    <ClCompile Include="gui\GUIDesktop.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\gui\GUIShrinkHandle.cpp">
+    <ClCompile Include="gui\GUILabel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\gui\GUITitleBar.cpp">
+    <ClCompile Include="gui\GUIObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\gui\GUIDesktop.cpp">
+    <ClCompile Include="gui\GUIResizeHandle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\gui\GUIWindow.cpp">
+    <ClCompile Include="gui\GUIShrinkHandle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\GUITitleBar.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\GUIWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include "gui/GUIShrinkHandle.h"
+#include "GUIShrinkHandle.h"
 
 #include "App.h"
 #include "ConfigSettings.h"

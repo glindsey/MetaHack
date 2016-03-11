@@ -54,17 +54,17 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Personal\projects\MetaHack\include;C:\Personal\projects\MetaHack\src\impl;C:\Personal\libraries\SFGUI\include;C:\Personal\libraries\SFML-feature-VS2015\include;C:\Personal\libraries\luajit-2.0\src;C:\Personal\libraries\boost_1_59_0;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <IncludePath>C:\Personal\projects\MetaHack\include;C:\Personal\projects\MetaHack\gui;C:\Personal\projects\MetaHack\src\impl;C:\Personal\libraries\SFGUI\include;C:\Personal\libraries\SFML-feature-VS2015\include;C:\Personal\libraries\luajit-2.0\src;C:\Personal\libraries\boost_1_59_0;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
     <LibraryPath>C:\Personal\projects\MetaHack\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Personal\projects\MetaHack\include;C:\Personal\projects\MetaHack\src\impl;C:\Personal\libraries\SFGUI\include;C:\Personal\libraries\SFML-feature-VS2015\include;C:\Personal\libraries\luajit-2.0\src;C:\Personal\libraries\boost_1_59_0;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <IncludePath>C:\Personal\projects\MetaHack\include;C:\Personal\projects\MetaHack\gui;C:\Personal\projects\MetaHack\src\impl;C:\Personal\libraries\SFGUI\include;C:\Personal\libraries\SFML-feature-VS2015\include;C:\Personal\libraries\luajit-2.0\src;C:\Personal\libraries\boost_1_59_0;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
     <LibraryPath>C:\Personal\projects\MetaHack\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\Personal\projects\MetaHack\include;C:\Personal\projects\MetaHack\src\impl;C:\Personal\libraries\SFGUI\include;C:\Personal\libraries\SFML-feature-VS2015\include;C:\Personal\libraries\luajit-2.0\src;C:\Personal\libraries\boost_1_59_0;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <IncludePath>C:\Personal\projects\MetaHack\include;C:\Personal\projects\MetaHack\gui;C:\Personal\projects\MetaHack\src\impl;C:\Personal\libraries\SFGUI\include;C:\Personal\libraries\SFML-feature-VS2015\include;C:\Personal\libraries\luajit-2.0\src;C:\Personal\libraries\boost_1_59_0;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
     <LibraryPath>C:\Personal\projects\MetaHack\lib;$(LibraryPath)</LibraryPath>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
@@ -124,6 +124,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="gui\GUICloseHandle.h" />
+    <ClInclude Include="gui\GUIDesktop.h" />
+    <ClInclude Include="gui\GUIEvent.h" />
+    <ClInclude Include="gui\GUILabel.h" />
+    <ClInclude Include="gui\GUIObject.h" />
+    <ClInclude Include="gui\GUIResizeHandle.h" />
+    <ClInclude Include="gui\GUIShrinkHandle.h" />
+    <ClInclude Include="gui\GUITitleBar.h" />
+    <ClInclude Include="gui\GUIWindow.h" />
     <ClInclude Include="include\Action.h" />
     <ClInclude Include="include\ActionAttack.h" />
     <ClInclude Include="include\ActionAttire.h" />
@@ -162,21 +171,12 @@
     <ClInclude Include="include\ConfigSettings.h" />
     <ClInclude Include="include\Direction.h" />
     <ClInclude Include="include\ErrorHandler.h" />
-    <ClInclude Include="include\gui\GUIDesktop.h" />
-    <ClInclude Include="include\gui\GUIWindow.h" />
     <ClInclude Include="include\SFMLEventHandler.h" />
     <ClInclude Include="include\GameObject.h" />
     <ClInclude Include="include\GameState.h" />
     <ClInclude Include="include\Gender.h" />
     <ClInclude Include="include\GeoVector.h" />
     <ClInclude Include="include\GetLetterKey.h" />
-    <ClInclude Include="include\gui\GUICloseHandle.h" />
-    <ClInclude Include="include\gui\GUIEvent.h" />
-    <ClInclude Include="include\gui\GUILabel.h" />
-    <ClInclude Include="include\gui\GUIObject.h" />
-    <ClInclude Include="include\gui\GUIResizeHandle.h" />
-    <ClInclude Include="include\gui\GUIShrinkHandle.h" />
-    <ClInclude Include="include\gui\GUITitleBar.h" />
     <ClInclude Include="include\IntegerRange.h" />
     <ClInclude Include="include\Inventory.h" />
     <ClInclude Include="include\InventoryArea.h" />
@@ -219,6 +219,14 @@
     <ClInclude Include="src\impl\ThingImpl.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="gui\GUICloseHandle.cpp" />
+    <ClCompile Include="gui\GUIDesktop.cpp" />
+    <ClCompile Include="gui\GUILabel.cpp" />
+    <ClCompile Include="gui\GUIObject.cpp" />
+    <ClCompile Include="gui\GUIResizeHandle.cpp" />
+    <ClCompile Include="gui\GUIShrinkHandle.cpp" />
+    <ClCompile Include="gui\GUITitleBar.cpp" />
+    <ClCompile Include="gui\GUIWindow.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\Action.cpp" />
     <ClCompile Include="src\ActionAttack.cpp" />
@@ -253,14 +261,6 @@
     <ClCompile Include="src\GameObject.cpp" />
     <ClCompile Include="src\GameState.cpp" />
     <ClCompile Include="src\Gender.cpp" />
-    <ClCompile Include="src\gui\GUICloseHandle.cpp" />
-    <ClCompile Include="src\gui\GUIDesktop.cpp" />
-    <ClCompile Include="src\gui\GUILabel.cpp" />
-    <ClCompile Include="src\gui\GUIObject.cpp" />
-    <ClCompile Include="src\gui\GUIResizeHandle.cpp" />
-    <ClCompile Include="src\gui\GUIShrinkHandle.cpp" />
-    <ClCompile Include="src\gui\GUITitleBar.cpp" />
-    <ClCompile Include="src\gui\GUIWindow.cpp" />
     <ClCompile Include="src\IntegerRange.cpp" />
     <ClCompile Include="src\Inventory.cpp" />
     <ClCompile Include="src\InventoryArea.cpp" />

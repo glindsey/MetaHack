@@ -1,22 +1,22 @@
-#ifndef GUICLOSEHANDLE_H
-#define GUICLOSEHANDLE_H
+#ifndef GUITITLEBAR_H
+#define GUITITLEBAR_H
 
 #include "stdafx.h"
 
-#include "gui/GUIObject.h"
+#include "GUIObject.h"
 
 namespace metagui
 {
-  class CloseHandle :
-    public Object, public ObjectVisitable<CloseHandle>
+  class TitleBar :
+    public Object, public ObjectVisitable<TitleBar>
   {
     friend class Window;
 
   public:
-    virtual ~CloseHandle();
+    virtual ~TitleBar();
 
   protected:
-    explicit CloseHandle(StringKey name);
+    explicit TitleBar(StringKey name);
     virtual void render_self_before_children_(sf::RenderTexture& texture, int frame) override final;
     virtual void handle_parent_size_changed_(sf::Vector2u parent_size) override final;
 
@@ -24,4 +24,4 @@ namespace metagui
   };
 }; // end namespace metagui
 
-#endif // GUICLOSEHANDLE_H
+#endif // GUITITLEBAR_H
