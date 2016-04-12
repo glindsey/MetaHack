@@ -223,7 +223,7 @@ public:
     T existing_value = transient_properties.get<T>(key);
     T new_value = existing_value + add_value;
     transient_properties.set<T>(key, new_value);
-}
+  }
 #endif
 
   /// Get the quantity this thing represents.
@@ -600,20 +600,14 @@ private:
   ///         false if the Thing ceases to exist.
   virtual bool _process_self();
 
-  /// Syntactic sugar for calling Metadata::call_lua_function_actionresult.
-  ActionResult call_lua_function_actionresult(std::string function_name,
-                                              std::vector<lua_Integer> const& args,
-                                              ActionResult default_result = ActionResult::Success);
-
-  /// Syntactic sugar for calling Metadata::call_lua_function_bool.
-  bool call_lua_function_bool(std::string function_name,
-                              std::vector<lua_Integer> const& args,
-                              bool default_result = true);
-
-  /// Syntactic sugar for calling Metadata::call_lua_function_v2u.
-  sf::Vector2u call_lua_function_v2u(std::string function_name,
-                                     std::vector<lua_Integer> const& args,
-                                     sf::Vector2u default_result = sf::Vector2u(0, 0));
+  /// Syntactic sugar for calling call_lua_function().
+  template < typename ReturnType, typename ArgType = lua_Integer>
+  ReturnType call_lua_function(std::string function_name,
+                               std::vector<ArgType> const& args = {},
+                               ReturnType default_result = ReturnType())
+  {
+    return call_lua_thing_function<ReturnType, ArgType>(function_name, get_ref(), args, default_result);
+  }
 };
 
 #endif // THING_H

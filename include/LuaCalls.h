@@ -63,11 +63,11 @@ template<> unsigned int lua_stack_slots<ActionResult>();
 ///                       return type.
 ///
 /// @return The result of the call.
-template < typename ArgType, typename ResultType >
-ResultType call_lua_function(std::string function_name,
-                             ThingRef caller,
-                             std::vector<ArgType> const& args,
-                             ResultType default_result = ResultType())
+template < typename ResultType, typename ArgType >
+ResultType call_lua_thing_function(std::string function_name,
+                                   ThingRef caller,
+                                   std::vector<ArgType> const& args,
+                                   ResultType default_result = ResultType())
 {
   ResultType return_value = default_result;
   StringKey name = caller->get_type();

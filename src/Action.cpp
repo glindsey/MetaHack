@@ -106,7 +106,7 @@ bool Action::process(ThingRef actor, AnyMap params)
   // Perform any type-specific processing.
   // Useful if, for example, your Entity can rise from the dead.
   /// @todo Figure out how to implement this safely.
-  //actor->call_lua_function_actionresult("process", {});
+  //actor->call_lua_function<ActionResult>("process");
 
   // Continue running through states until the event is processed, or the
   // target actor is busy.

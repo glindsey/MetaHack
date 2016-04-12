@@ -44,7 +44,7 @@ ThingRef ThingManager::create(StringKey type)
 
   if (m_initialized)
   {
-    m_thing_map[new_id]->call_lua_function_actionresult("on_create", {});
+    m_thing_map[new_id]->call_lua_function<ActionResult>("on_create", {});
   }
 
   return ThingRef(new_id);

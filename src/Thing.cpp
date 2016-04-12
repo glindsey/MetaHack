@@ -1127,7 +1127,7 @@ sf::Vector2u Thing::get_tile_sheet_coords(int frame)
   sf::Vector2u start_coords = pImpl->metadata.get_tile_coords();
 
   /// Call the Lua function to get the offset (tile to choose).
-  sf::Vector2u offset = call_lua_function_v2u("get_tile_offset", { frame });
+  sf::Vector2u offset = call_lua_function<sf::Vector2u>("get_tile_offset", { frame });
 
   /// Add them to get the resulting coordinates.
   sf::Vector2u tile_coords = start_coords + offset;
@@ -1266,7 +1266,7 @@ void Thing::light_up_surroundings()
 
 void Thing::be_lit_by(ThingRef light)
 {
-  call_lua_function_actionresult("on_lit_by", { light });
+  call_lua_function<ActionResult>("on_lit_by", { light });
 
   if (get_location() == MU)
   {
@@ -1525,12 +1525,12 @@ StringDisplay Thing::get_bodypart_description(BodyPart part,
 
 bool Thing::can_have_action_done_by(ThingRef thing, Action& action)
 {
-  return call_lua_function_bool("can_have_action_" + action.get_type() + "_done_by", { thing }, false);
+  return call_lua_function<bool>("can_have_action_" + action.get_type() + "_done_by", { thing }, false);
 }
 
 bool Thing::is_miscible_with(ThingRef thing)
 {
-  return call_lua_function_bool("is_miscible_with", { thing }, false);
+  return call_lua_function<bool>("is_miscible_with", { thing }, false);
 }
 
 BodyPart Thing::is_equippable_on() const
@@ -1561,13 +1561,13 @@ bool Thing::process()
 
 ActionResult Thing::perform_action_died()
 {
-  ActionResult result = call_lua_function_actionresult("perform_action_died", {});
+  ActionResult result = call_lua_function<ActionResult>("perform_action_died");
   return result;
 }
 
 void Thing::perform_action_collided_with(ThingRef actor)
 {
-  /* ActionResult result = */ call_lua_function_actionresult("perform_action_collided_with", { actor });
+  /* ActionResult result = */ call_lua_function<ActionResult>("perform_action_collided_with", { actor });
   return;
 }
 
@@ -1579,31 +1579,31 @@ void Thing::perform_action_collided_with_wall(Direction d, StringKey tile_type)
 
 ActionResult Thing::be_object_of(Action& action, ThingRef subject)
 {
-  ActionResult result = call_lua_function_actionresult("be_object_of_action_" + action.get_type(), { subject });
+  ActionResult result = call_lua_function<ActionResult>("be_object_of_action_" + action.get_type(), { subject });
   return result;
 }
 
 ActionResult Thing::be_object_of(Action & action, ThingRef subject, ThingRef target)
 {
-  ActionResult result = call_lua_function_actionresult("be_object_of_action_" + action.get_type(), { subject, target });
+  ActionResult result = call_lua_function<ActionResult>("be_object_of_action_" + action.get_type(), { subject, target });
   return result;
 }
 
 ActionResult Thing::be_object_of(Action & action, ThingRef subject, Direction direction)
 {
-  ActionResult result = call_lua_function_actionresult("be_object_of_action_" + action.get_type(), { subject, NULL, direction.x(), direction.y(), direction.z() });
+  ActionResult result = call_lua_function<ActionResult>("be_object_of_action_" + action.get_type(), { subject, NULL, direction.x(), direction.y(), direction.z() });
   return result;
 }
 
 ActionResult Thing::perform_action_hurt_by(ThingRef subject)
 {
-  ActionResult result = call_lua_function_actionresult("be_object_of_action_hurt", { subject });
+  ActionResult result = call_lua_function<ActionResult>("be_object_of_action_hurt", { subject });
   return result;
 }
 
 ActionResult Thing::perform_action_attacked_by(ThingRef subject, ThingRef target)
 {
-  ActionResult result = call_lua_function_actionresult("be_object_of_action_attack", { subject, target });
+  ActionResult result = call_lua_function<ActionResult>("be_object_of_action_attack", { subject, target });
   return result;
 }
 
@@ -1622,14 +1622,14 @@ bool Thing::perform_action_deequipped_by(ThingRef actor, WearLocation& location)
   }
   else
   {
-    ActionResult result = call_lua_function_actionresult("perform_action_deequipped_by", { actor });
+    ActionResult result = call_lua_function<ActionResult>("perform_action_deequipped_by", { actor });
     return was_successful(result);
   }
 }
 
 bool Thing::perform_action_equipped_by(ThingRef actor, WearLocation& location)
 {
-  ActionResult result = call_lua_function_actionresult("perform_action_equipped_by", { actor });
+  ActionResult result = call_lua_function<ActionResult>("perform_action_equipped_by", { actor });
   bool subclass_result = was_successful(result);
 
   if (subclass_result == true)
@@ -1651,7 +1651,7 @@ bool Thing::perform_action_equipped_by(ThingRef actor, WearLocation& location)
 
 bool Thing::perform_action_unwielded_by(ThingRef actor)
 {
-  ActionResult result = call_lua_function_actionresult("perform_action_unwielded_by", { actor });
+  ActionResult result = call_lua_function<ActionResult>("perform_action_unwielded_by", { actor });
   return was_successful(result);
 }
 
@@ -1699,7 +1699,7 @@ ActionResult Thing::can_contain(ThingRef thing)
   }
   else
   {
-    return call_lua_function_actionresult("can_contain", { thing });
+    return call_lua_function<ActionResult>("can_contain", { thing });
   }
 }
 
@@ -1903,22 +1903,4 @@ void Thing::do_recursive_visibility(int octant,
 MapTile* Thing::_get_maptile() const
 {
   return pImpl->map_tile;
-}
-
-ActionResult Thing::call_lua_function_actionresult(std::string function_name, std::vector<lua_Integer> const& args,
-                                                   ActionResult default_result)
-{
-  return call_lua_function<lua_Integer, ActionResult>(function_name, get_ref(), args, default_result);
-  //  return pImpl->metadata.call_lua_function_actionresult(function_name, get_ref(), args, default_result);
-}
-
-bool Thing::call_lua_function_bool(std::string function_name, std::vector<lua_Integer> const& args, bool default_result)
-{
-  return pImpl->metadata.call_lua_function_bool(function_name, get_ref(), args, default_result);
-}
-
-sf::Vector2u Thing::call_lua_function_v2u(std::string function_name, std::vector<lua_Integer> const& args,
-                                          sf::Vector2u default_result)
-{
-  return pImpl->metadata.call_lua_function_v2u(function_name, get_ref(), args, default_result);
 }
