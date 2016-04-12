@@ -1908,7 +1908,8 @@ MapTile* Thing::_get_maptile() const
 ActionResult Thing::call_lua_function_actionresult(std::string function_name, std::vector<lua_Integer> const& args,
                                                    ActionResult default_result)
 {
-  return pImpl->metadata.call_lua_function_actionresult(function_name, get_ref(), args, default_result);
+  return call_lua_function<lua_Integer, ActionResult>(function_name, get_ref(), args, default_result);
+  //  return pImpl->metadata.call_lua_function_actionresult(function_name, get_ref(), args, default_result);
 }
 
 bool Thing::call_lua_function_bool(std::string function_name, std::vector<lua_Integer> const& args, bool default_result)

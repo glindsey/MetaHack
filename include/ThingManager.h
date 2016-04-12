@@ -69,6 +69,9 @@ protected:
   Thing const& get(ThingId data) const;
 
 private:
+  /// Boolean indicating whether ThingManager is initialized.
+  bool m_initialized = false;
+
   /// Map of ThingIds to Things.
   /// @todo Probably faster to use an unordered_map and use ThingId.id
   ///       as the hash function.

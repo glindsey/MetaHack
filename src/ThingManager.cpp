@@ -25,6 +25,8 @@ ThingManager::ThingManager()
   {
     FATAL_ERROR("Mu's ID is %" PRIu64 " instead of zero!", mu.get_id().to_uint64());
   }
+
+  m_initialized = true;
 }
 
 ThingManager::~ThingManager()
@@ -39,7 +41,11 @@ ThingRef ThingManager::create(StringKey type)
 
   std::unique_ptr<Thing> new_thing{ new Thing{ metadata, new_ref} };
   m_thing_map[new_id] = std::move(new_thing);
-  m_thing_map[new_id]->call_lua_function_actionresult("on_create", {});
+
+  if (m_initialized)
+  {
+    m_thing_map[new_id]->call_lua_function_actionresult("on_create", {});
+  }
 
   return ThingRef(new_id);
 }

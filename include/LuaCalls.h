@@ -69,8 +69,8 @@ ResultType call_lua_function(std::string function_name,
                              std::vector<ArgType> const& args,
                              ResultType default_result = ResultType())
 {
-  T return_value = default_result;
-  StringKey name = this->get_type();
+  ResultType return_value = default_result;
+  StringKey name = caller->get_type();
 
   int start_stack = lua_gettop(the_lua_state);
 
@@ -105,20 +105,20 @@ ResultType call_lua_function(std::string function_name,
       for (auto& arg : args)
       {
         lua_args += lua_stack_slots<ArgType>();
-        push_value_to_lua(the_lua_state, arg);
+        push_value_to_lua(arg);
       }
 
       // Call the function with N+1 arguments and R results. (-(N+2), +R) = R-(N+2)
       int result = lua_pcall(the_lua_state, lua_args + 1, lua_stack_slots<ResultType>(), 0);
       if (result == 0)
       {
-        if (!lua_istable(the_lua_state, -1))
-        {
-          FATAL_ERROR("Expected ActionResult from Lua function but got %s", lua_typename(the_lua_state, lua_type(the_lua_state, -1)));
-        }
+        //if (!lua_istable(the_lua_state, -1))
+        //{
+        //  FATAL_ERROR("Expected ActionResult from Lua function but got %s", lua_typename(the_lua_state, lua_type(the_lua_state, -1)));
+        //}
 
         // Pop the return value off of the stack. (-R)
-        return_value = pop_value_from_lua();
+        return_value = pop_value_from_lua<ResultType>();
       }
       else
       {

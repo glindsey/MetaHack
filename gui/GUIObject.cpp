@@ -15,6 +15,7 @@ namespace metagui
     SET_UP_LOGGER("GUI", true);
 
     m_name = name;
+    m_parent = nullptr;
     set_relative_location(location);
     set_size(size);
   }
@@ -24,6 +25,7 @@ namespace metagui
     SET_UP_LOGGER("GUI", true);
 
     m_name = name;
+    m_parent = nullptr;
     set_relative_dimensions(dimensions);
   }
 
@@ -313,7 +315,7 @@ namespace metagui
   {
     if (m_zorder_map.size() > 0)
     {
-      auto& iter = m_zorder_map.cbegin();
+      auto iter = m_zorder_map.cbegin();
       return iter->first;
     }
     return 0;
@@ -323,7 +325,8 @@ namespace metagui
   {
     if (m_zorder_map.size() > 0)
     {
-      auto& iter = (m_zorder_map.cend())--;
+      auto iter = m_zorder_map.cend();
+      --iter;
       return iter->first;
     }
     return 0;
