@@ -46,6 +46,9 @@ template <> void push_value_to_lua(sf::Color value)
   lua_pushnumber(the_lua_state, static_cast<lua_Integer>(value.a));
 }
 
+template <> void pop_value_from_lua()
+{}
+
 template <> unsigned int pop_value_from_lua()
 {
   unsigned int return_value = lua_tointeger(the_lua_state, -1);
@@ -83,7 +86,12 @@ template <> bool pop_value_from_lua()
 
 template <> std::string pop_value_from_lua()
 {
-  std::string return_value = std::string(lua_tostring(the_lua_state, -1));
+  std::string return_value;
+  char const* return_ptr = lua_tostring(the_lua_state, -1);
+  if (return_ptr != nullptr)
+  {
+    return_value = std::string(return_ptr);
+  }
   lua_pop(the_lua_state, 1);
   return return_value;
 }
@@ -113,10 +121,12 @@ template <> ActionResult pop_value_from_lua()
   return return_value;
 }
 
+template<> unsigned int lua_stack_slots<void>() { return 0; }
 template<> unsigned int lua_stack_slots<unsigned int>() { return 1; }
 template<> unsigned int lua_stack_slots<int>() { return 1; }
 template<> unsigned int lua_stack_slots<float>() { return 1; }
 template<> unsigned int lua_stack_slots<double>() { return 1; }
+template<> unsigned int lua_stack_slots<bool>() { return 1; }
 template<> unsigned int lua_stack_slots<std::string>() { return 1; }
 template<> unsigned int lua_stack_slots<sf::Vector2u>() { return 2; }
 template<> unsigned int lua_stack_slots<sf::Color>() { return 4; }

@@ -44,11 +44,8 @@ void Thing::initialize()
 {
   SET_UP_LOGGER("Thing", true);
 
-  /// Get the max_hp IntegerRange for this Thing (if any).
-  IntegerRange max_hp_range = pImpl->metadata.get_intrinsic<IntegerRange>("maxhp");
-
-  /// Pick a number and set it as our maximum HP.
-  int max_hp = max_hp_range.pick();
+  /// Get our maximum HP. (The Lua script will automatically pick it from a range.)
+  int max_hp = pImpl->metadata.get_intrinsic<int>("maxhp");
   set_base_property<int>("maxhp", max_hp);
 
   /// Also set our HP to that value.

@@ -297,6 +297,9 @@
     <ClInclude Include="include\AppState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\LuaCalls.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">

@@ -1,12 +1,13 @@
 #ifndef LUACALLS_H
 #define LUACALLS_H
 
+#include "stdafx.h"
+
 #include "ActionResult.h"
 #include "LuaObject.h"
 #include "ThingRef.h"
 
 /// Push a value to a Lua function, if possible.
-/// The default template implementation does nothing.
 ///
 /// @param value    Value to push.
 template < typename T > void push_value_to_lua(T value) {}
@@ -21,11 +22,11 @@ template <> void push_value_to_lua(sf::Vector2u value);
 template <> void push_value_to_lua(sf::Color value);
 
 /// Pop a value from a Lua function, if possible.
-/// The default template implementation does nothing.
 ///
 /// @return The popped value.
-template < typename T >T pop_value_from_lua() {}
+template < typename T >T pop_value_from_lua();
 
+template <> void pop_value_from_lua();
 template <> unsigned int pop_value_from_lua();
 template <> int pop_value_from_lua();
 template <> float pop_value_from_lua();
@@ -37,11 +38,13 @@ template <> sf::Color pop_value_from_lua();
 template <> ActionResult pop_value_from_lua();
 
 /// Return the number of Lua stack slots associated with a particular value.
-template < typename T > unsigned int lua_stack_slots() { return 0; }
+template < typename T > unsigned int lua_stack_slots();
+template<> unsigned int lua_stack_slots<void>();
 template<> unsigned int lua_stack_slots<unsigned int>();
 template<> unsigned int lua_stack_slots<int>();
 template<> unsigned int lua_stack_slots<float>();
 template<> unsigned int lua_stack_slots<double>();
+template<> unsigned int lua_stack_slots<bool>();
 template<> unsigned int lua_stack_slots<std::string>();
 template<> unsigned int lua_stack_slots<sf::Vector2u>();
 template<> unsigned int lua_stack_slots<sf::Color>();
@@ -140,6 +143,132 @@ ResultType call_lua_thing_function(std::string function_name,
   }
 
   return return_value;
+}
+
+/// Get a Thing type intrinsic.
+/// @param type           Name of type to get intrinsic of.
+/// @param name           Name of intrinsic to get.
+/// @param default_value  Default value if intrinsic does not exist
+///                       (defaults to default constructor of type).
+/// @return       The value of the intrinsic.
+template < typename ReturnType >
+ReturnType get_type_intrinsic(StringKey type, StringKey name, ReturnType default_value = ReturnType())
+{
+  ReturnType return_value = default_value;
+
+  int start_stack = lua_gettop(the_lua_state);
+
+  // Push type of class onto the stack. (+1)
+  lua_getglobal(the_lua_state, type.c_str());           // class <
+
+  if (lua_isnoneornil(the_lua_state, -1))
+  {
+    // Class not found -- pop the name back off. (-1)
+    lua_pop(the_lua_state, 1);
+    MAJOR_ERROR("Lua class %s was not found", type.c_str());
+  }
+  else
+  {
+    // Push name of function onto the stack. (+1)
+    lua_getfield(the_lua_state, -1, "get_intrinsic");             // class get <
+
+    if (lua_isnoneornil(the_lua_state, -1))
+    {
+      // Function not found -- pop the function and class names back off. (-2)
+      lua_pop(the_lua_state, 2);
+      MAJOR_ERROR("Lua function %s:get_intrinsic() was not found", type.c_str());
+    }
+    else
+    {
+      // Push the class name up to the front of the stack.
+      lua_pushvalue(the_lua_state, -2);                 // class get class <
+      lua_remove(the_lua_state, -3);                    // get class <
+      lua_pushstring(the_lua_state, name.c_str());      // get class name <
+
+      int num_results = lua_stack_slots<ReturnType>();
+      int result = lua_pcall(the_lua_state, 2, num_results, 0);   // (result|nil|err) <
+      if (result == 0)
+      {
+        return_value = pop_value_from_lua<ReturnType>();
+      }
+      else
+      {
+        // Get the error message.
+        char const* error_message = lua_tostring(the_lua_state, -1);
+        MAJOR_ERROR("Error calling %s:get_intrinsic(%s): %s", type.c_str(), name.c_str(), error_message);
+
+        // Pop the error message off the stack. (-1)
+        lua_pop(the_lua_state, 1);
+      }
+    }
+  }
+
+  int end_stack = lua_gettop(the_lua_state);
+
+  if (start_stack != end_stack)
+  {
+    FATAL_ERROR("*** LUA STACK MISMATCH (%s:get_intrinsic): Started at %d, ended at %d", name.c_str(), start_stack, end_stack);
+  }
+
+  return return_value;
+}
+
+/// Set a Thing type intrinsic.
+/// @param type   Name of type to set intrinsic of.
+/// @param name   Name of intrinsic to set.
+/// @param value  Value to set intrinsic to.
+template < typename ValueType >
+void set_type_intrinsic(StringKey type, StringKey name, ValueType value)
+{
+  int start_stack = lua_gettop(the_lua_state);
+
+  // Push type of class onto the stack. (+1)
+  lua_getglobal(the_lua_state, type.c_str());           // class <
+
+  if (lua_isnoneornil(the_lua_state, -1))
+  {
+    // Class not found -- pop the name back off. (-1)
+    lua_pop(the_lua_state, 1);
+    MAJOR_ERROR("Lua class %s was not found", type.c_str());
+  }
+  else
+  {
+    // Push name of function onto the stack. (+1)
+    lua_getfield(the_lua_state, -1, "set_intrinsic");             // class get <
+
+    if (lua_isnoneornil(the_lua_state, -1))
+    {
+      // Function not found -- pop the function and class names back off. (-2)
+      lua_pop(the_lua_state, 2);
+      MAJOR_ERROR("Lua function %s:set_intrinsic() was not found", type.c_str());
+    }
+    else
+    {
+      // Push the class name up to the front of the stack.
+      lua_pushvalue(the_lua_state, -2);                         // class set class <
+      lua_remove(the_lua_state, -3);                            // set class <
+      lua_pushstring(the_lua_state, name.c_str());              // set class name <
+      push_value_to_lua<ValueType>(value);                      // set class name value <
+      int num_args = 2 + lua_stack_slots<ValueType>();
+      int result = lua_pcall(the_lua_state, num_args, 0, 0);    // (nil|err) <
+      if (result != 0)
+      {
+        // Get the error message.
+        char const* error_message = lua_tostring(the_lua_state, -1);
+        MAJOR_ERROR("Error calling %s:set_intrinsic(%s): %s", type.c_str(), name.c_str(), error_message);
+
+        // Pop the error message off the stack. (-1)
+        lua_pop(the_lua_state, 1);
+      }
+    }
+  }
+
+  int end_stack = lua_gettop(the_lua_state);
+
+  if (start_stack != end_stack)
+  {
+    FATAL_ERROR("*** LUA STACK MISMATCH (%s:set_intrinsic): Started at %d, ended at %d", name.c_str(), start_stack, end_stack);
+  }
 }
 
 #endif // LUACALLS_H

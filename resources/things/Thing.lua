@@ -99,7 +99,7 @@ function Thing:get_intrinsic(name)
         if (type(result) == "table") then
             if (result.type == "range") then
                 --print("Range type found, returning " .. tostring(result.min) .. " and " .. tostring(result.max))
-                return result.min, result.max
+                return math.random(result.min, result.max)
             elseif (result.type == "vector2") then
                 return result.x, result.y
             end

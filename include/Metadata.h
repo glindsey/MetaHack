@@ -7,6 +7,7 @@
 #include "App.h"
 #include "ErrorHandler.h"
 #include "IntegerRange.h"
+#include "LuaCalls.h"
 #include "LuaObject.h"
 #include "MetadataCollection.h"
 #include "PropertyDictionary.h"
@@ -33,51 +34,19 @@ public:
 
   sf::Vector2u get_tile_coords();
 
-  template <typename T>
-  T get_intrinsic(StringKey name, T default_value = T())
+  template <typename ReturnType>
+  ReturnType get_intrinsic(StringKey name, ReturnType default_value = ReturnType())
   {
-    return static_cast<T>(get_intrinsic_value(name, default_value));
+    StringKey type = this->get_type();
+    return get_type_intrinsic<ReturnType>(type, name, default_value);
   }
 
-  template<> bool get_intrinsic(StringKey name, bool default_value)
+  template <typename ValueType>
+  void set_intrinsic(StringKey name, ValueType value)
   {
-    return get_intrinsic_bool(name, default_value);
+    StringKey type = this->get_type();
+    set_type_intrinsic<ValueType>(type, name, value);
   }
-
-  template<> std::string get_intrinsic(StringKey name, std::string default_value)
-  {
-    return get_intrinsic_string(name, default_value);
-  }
-
-  template<> IntegerRange get_intrinsic(StringKey name, IntegerRange default_value)
-  {
-    return get_intrinsic_range(name, default_value);
-  }
-
-  bool get_intrinsic_bool(StringKey name, bool default_value);
-  double get_intrinsic_value(StringKey name, double default_value);
-  std::string get_intrinsic_string(StringKey name, std::string default_value);
-  IntegerRange get_intrinsic_range(StringKey name, IntegerRange default_value);
-
-  template <typename T>
-  void set_intrinsic(StringKey name, T value)
-  {
-    set_intrinsic_value(name, static_cast<double>(value));
-  }
-
-  template<> void set_intrinsic(StringKey name, bool value)
-  {
-    return set_intrinsic_bool(name, value);
-  }
-
-  template<> void set_intrinsic(StringKey name, std::string value)
-  {
-    return set_intrinsic_string(name, value);
-  }
-
-  void set_intrinsic_bool(StringKey name, bool value);
-  void set_intrinsic_value(StringKey name, double value);
-  void set_intrinsic_string(StringKey name, std::string value);
 
 protected:
 

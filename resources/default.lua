@@ -2,6 +2,10 @@
 
 require "resources/deepcopy"
 
+-- Seed the RNG.
+-- (TODO: Probably should improve upon this in the future.)
+math.randomseed(os.time())
+
 -- Function to compare two tables. Used to check property tables
 -- to see if objects can be combined.
 -- Taken from https://stackoverflow.com/questions/20325332/how-to-check-if-two-tablesobjects-have-the-same-value-in-lua
