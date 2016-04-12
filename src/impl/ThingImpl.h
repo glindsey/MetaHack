@@ -31,6 +31,9 @@ public:
   ThingImpl(Metadata& metadata_, ThingRef ref_)
     :
     metadata{ metadata_ },
+    base_properties{},
+    transient_properties{},
+    transients_valid{ false },
     ref{ ref_ },
     location{ MU },
     map_tile{ nullptr },
@@ -50,6 +53,9 @@ public:
   ThingImpl(MapTile* tile, Metadata& metadata_, ThingRef ref_)
     :
     metadata{ metadata_ },
+    base_properties{},
+    transient_properties{},
+    transients_valid{ false },
     ref{ ref_ },
     location{ MU },
     map_tile{ tile },
@@ -61,15 +67,18 @@ public:
     wielded_items{ WieldingMap() },
     equipped_items{ WearingMap() }
   {
-    // Properties can remain clear; if a property is ever missing, we
-    // populate it with the default from the ThingMetadata (if one exists).
+    // Base/transient properties can remain clear; if a property is ever
+    // missing, we populate it with the intrinsic from the ThingMetadata
+    // (if one exists).
   }
 
   /// Clone constructor.
   ThingImpl(ThingImpl const& other, ThingRef ref_)
     :
     metadata{ other.metadata },
-    properties{ other.properties },
+    base_properties{ other.base_properties },
+    transient_properties{ other.transient_properties },
+    transients_valid{ other.transients_valid },
     ref{ ref_ },
     location{ other.location },
     map_tile{ other.map_tile },
@@ -93,7 +102,19 @@ public:
   Metadata& metadata;
 
   /// Property dictionary.
-  PropertyDictionary properties;
+  /// Contains "base" properties for this Thing, e.g. properties without
+  /// any modifiers affecting them.
+  PropertyDictionary base_properties;
+
+  /// Transient property dictionary.
+  /// Contains modifications to properties for this Thing due to inventory
+  /// items, worn/equipped items, and/or Adjectives.
+  /// Recreated any time transients_valid is set to false.
+  PropertyDictionary transient_properties;
+
+  /// If false, the next time a property value is requested, the method
+  /// update_transient_properties() will be called to refresh them.
+  bool transients_valid;
 
   /// Reference to this Thing.
   ThingRef ref;

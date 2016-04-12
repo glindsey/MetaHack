@@ -46,10 +46,10 @@ public:
   /// @param default_result The default result if function is not found
   ///                       (defaults to ActionResult::Success).
   /// @return An ActionResult containing the result of the call.
-  ActionResult call_lua_function(std::string function_name,
-                                 ThingRef caller,
-                                 std::vector<lua_Integer> const& args,
-                                 ActionResult default_result = ActionResult::Success);
+  ActionResult call_lua_function_actionresult(std::string function_name,
+                                              ThingRef caller,
+                                              std::vector<lua_Integer> const& args,
+                                              ActionResult default_result = ActionResult::Success);
 
   /// Try to call a Lua function that takes the caller and one argument
   /// and returns a boolean.

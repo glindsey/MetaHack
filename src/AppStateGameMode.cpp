@@ -411,9 +411,9 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
               ThingRef thing = inventory_area.get_selected_things().at(0);
               if (thing->get_intrinsic<int>("inventory_size") != 0)
               {
-                if (!thing->can_have_action_done_by(MU, ActionOpen::prototype) || thing->get_property<bool>("open"))
+                if (!thing->can_have_action_done_by(MU, ActionOpen::prototype) || thing->get_base_property<bool>("open"))
                 {
-                  if (!thing->can_have_action_done_by(MU, ActionLock::prototype) || !thing->get_property<bool>("locked"))
+                  if (!thing->can_have_action_done_by(MU, ActionLock::prototype) || !thing->get_base_property<bool>("locked"))
                   {
                     inventory_area.set_viewed(thing);
                   }

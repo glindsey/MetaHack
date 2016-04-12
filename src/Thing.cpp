@@ -44,17 +44,15 @@ void Thing::initialize()
 {
   SET_UP_LOGGER("Thing", true);
 
-  PropertyDictionary& properties = pImpl->properties;
-
   /// Get the max_hp IntegerRange for this Thing (if any).
   IntegerRange max_hp_range = pImpl->metadata.get_intrinsic<IntegerRange>("maxhp");
 
   /// Pick a number and set it as our maximum HP.
   int max_hp = max_hp_range.pick();
-  set_property<int>("maxhp", max_hp);
+  set_base_property<int>("maxhp", max_hp);
 
   /// Also set our HP to that value.
-  set_property<int>("hp", max_hp);
+  set_base_property<int>("hp", max_hp);
 }
 
 Thing::~Thing()
@@ -73,7 +71,7 @@ bool Thing::action_is_pending() const
 
 bool Thing::action_is_in_progress()
 {
-  return (get_property<int>("counter_busy") > 0);
+  return (get_base_property<int>("counter_busy") > 0);
 }
 
 ThingRef Thing::get_wielding(unsigned int& hand)
@@ -162,7 +160,7 @@ bool Thing::do_die()
       }
       else
       {
-        bool living = get_property<bool>("living");
+        bool living = get_base_property<bool>("living");
         if (living)
         {
           message = this->get_you_or_identifying_string() + " " +
@@ -177,7 +175,7 @@ bool Thing::do_die()
       }
 
       // Set the property saying the entity is dead.
-      set_property<bool>("dead", true);
+      set_base_property<bool>("dead", true);
 
       // Clear any pending actions.
       pImpl->pending_actions.clear();
@@ -416,12 +414,12 @@ void Thing::set_worn(ThingRef thing, WearLocation location)
 
 bool Thing::can_currently_see()
 {
-  return get_intrinsic<bool>("can_see", false) && (get_property<int>("counters.blind", 0) == 0);
+  return get_intrinsic<bool>("can_see", false) && (get_base_property<int>("counters.blind", 0) == 0);
 }
 
 bool Thing::can_currently_move()
 {
-  return get_intrinsic<bool>("can_move", false) && (get_property<int>("counters.paralyzed", 0) == 0);
+  return get_intrinsic<bool>("can_move", false) && (get_base_property<int>("counters.paralyzed", 0) == 0);
 }
 
 void Thing::set_gender(Gender gender)
@@ -583,12 +581,12 @@ StringKey const& Thing::get_parent_type() const
 
 unsigned int Thing::get_quantity()
 {
-  return get_property<unsigned int>("quantity", 1);
+  return get_base_property<unsigned int>("quantity", 1);
 }
 
 void Thing::set_quantity(unsigned int quantity)
 {
-  set_property<unsigned int>("quantity", quantity);
+  set_base_property<unsigned int>("quantity", quantity);
 }
 
 ThingRef Thing::get_ref() const
@@ -900,12 +898,12 @@ StringDisplay Thing::get_display_plural() const
 
 StringDisplay Thing::get_proper_name()
 {
-  return get_property<std::string>("proper_name");
+  return get_base_property<std::string>("proper_name");
 }
 
 void Thing::set_proper_name(StringDisplay name)
 {
-  set_property<std::string>("proper_name", name);
+  set_base_property<std::string>("proper_name", name);
 }
 
 StringDisplay Thing::get_identifying_string_without_possessives(bool definite)
@@ -922,7 +920,7 @@ StringDisplay Thing::get_identifying_string_without_possessives(bool definite)
 
   if (is_player())
   {
-    if (get_property<int>("hp") > 0)
+    if (get_base_property<int>("hp") > 0)
     {
       return "you";
     }
@@ -961,7 +959,7 @@ StringDisplay Thing::get_identifying_string_without_possessives(bool definite)
     article += get_quantity() + " ";
   }
 
-  if (get_intrinsic<bool>("is_entity") && get_property<int>("hp") <= 0)
+  if (get_intrinsic<bool>("is_entity") && get_base_property<int>("hp") <= 0)
   {
     adjectives += "dead ";
   }
@@ -975,7 +973,7 @@ StringDisplay Thing::get_you_or_identifying_string(bool definite)
 {
   if (is_player())
   {
-    if (get_property<int>("hp") > 0)
+    if (get_base_property<int>("hp") > 0)
     {
       return "you";
     }
@@ -1058,7 +1056,7 @@ StringDisplay Thing::get_identifying_string(bool definite)
     }
   }
 
-  if (get_intrinsic<bool>("is_entity") && get_property<int>("hp") <= 0)
+  if (get_intrinsic<bool>("is_entity") && get_base_property<int>("hp") <= 0)
   {
     adjectives += "dead ";
   }
@@ -1071,7 +1069,7 @@ StringDisplay Thing::get_identifying_string(bool definite)
 StringDisplay const& Thing::choose_verb(StringDisplay const& verb12,
                                         StringDisplay const& verb3)
 {
-  if ((GAME.get_player() == pImpl->ref) || (get_property<unsigned int>("quantity") > 1))
+  if ((GAME.get_player() == pImpl->ref) || (get_base_property<unsigned int>("quantity") > 1))
   {
     return verb12;
   }
@@ -1083,7 +1081,7 @@ StringDisplay const& Thing::choose_verb(StringDisplay const& verb12,
 
 int Thing::get_mass()
 {
-  return get_intrinsic<int>("physical_mass") * get_property<unsigned int>("quantity");
+  return get_intrinsic<int>("physical_mass") * get_base_property<unsigned int>("quantity");
 }
 
 StringDisplay const& Thing::get_subject_pronoun() const
@@ -1260,7 +1258,7 @@ void Thing::light_up_surroundings()
   ThingRef location = get_location();
 
   // Use visitor pattern.
-  if ((location != MU) && this->get_property<bool>("light_lit"))
+  if ((location != MU) && this->get_base_property<bool>("light_lit"))
   {
     location->be_lit_by(this->get_ref());
   }
@@ -1268,7 +1266,7 @@ void Thing::light_up_surroundings()
 
 void Thing::be_lit_by(ThingRef light)
 {
-  call_lua_function("on_lit_by", { light });
+  call_lua_function_actionresult("on_lit_by", { light });
 
   if (get_location() == MU)
   {
@@ -1563,13 +1561,13 @@ bool Thing::process()
 
 ActionResult Thing::perform_action_died()
 {
-  ActionResult result = call_lua_function("perform_action_died", {});
+  ActionResult result = call_lua_function_actionresult("perform_action_died", {});
   return result;
 }
 
 void Thing::perform_action_collided_with(ThingRef actor)
 {
-  /* ActionResult result = */ call_lua_function("perform_action_collided_with", { actor });
+  /* ActionResult result = */ call_lua_function_actionresult("perform_action_collided_with", { actor });
   return;
 }
 
@@ -1581,37 +1579,37 @@ void Thing::perform_action_collided_with_wall(Direction d, StringKey tile_type)
 
 ActionResult Thing::be_object_of(Action& action, ThingRef subject)
 {
-  ActionResult result = call_lua_function("be_object_of_action_" + action.get_type(), { subject });
+  ActionResult result = call_lua_function_actionresult("be_object_of_action_" + action.get_type(), { subject });
   return result;
 }
 
 ActionResult Thing::be_object_of(Action & action, ThingRef subject, ThingRef target)
 {
-  ActionResult result = call_lua_function("be_object_of_action_" + action.get_type(), { subject, target });
+  ActionResult result = call_lua_function_actionresult("be_object_of_action_" + action.get_type(), { subject, target });
   return result;
 }
 
 ActionResult Thing::be_object_of(Action & action, ThingRef subject, Direction direction)
 {
-  ActionResult result = call_lua_function("be_object_of_action_" + action.get_type(), { subject, NULL, direction.x(), direction.y(), direction.z() });
+  ActionResult result = call_lua_function_actionresult("be_object_of_action_" + action.get_type(), { subject, NULL, direction.x(), direction.y(), direction.z() });
   return result;
 }
 
 ActionResult Thing::perform_action_hurt_by(ThingRef subject)
 {
-  ActionResult result = call_lua_function("be_object_of_action_hurt", { subject });
+  ActionResult result = call_lua_function_actionresult("be_object_of_action_hurt", { subject });
   return result;
 }
 
 ActionResult Thing::perform_action_attacked_by(ThingRef subject, ThingRef target)
 {
-  ActionResult result = call_lua_function("be_object_of_action_attack", { subject, target });
+  ActionResult result = call_lua_function_actionresult("be_object_of_action_attack", { subject, target });
   return result;
 }
 
 bool Thing::perform_action_deequipped_by(ThingRef actor, WearLocation& location)
 {
-  if (this->get_property<bool>("bound"))
+  if (this->get_base_property<bool>("bound"))
   {
     StringDisplay message;
     message = actor->get_identifying_string() + " cannot take off " + this->get_identifying_string() +
@@ -1624,21 +1622,21 @@ bool Thing::perform_action_deequipped_by(ThingRef actor, WearLocation& location)
   }
   else
   {
-    ActionResult result = call_lua_function("perform_action_deequipped_by", { actor });
+    ActionResult result = call_lua_function_actionresult("perform_action_deequipped_by", { actor });
     return was_successful(result);
   }
 }
 
 bool Thing::perform_action_equipped_by(ThingRef actor, WearLocation& location)
 {
-  ActionResult result = call_lua_function("perform_action_equipped_by", { actor });
+  ActionResult result = call_lua_function_actionresult("perform_action_equipped_by", { actor });
   bool subclass_result = was_successful(result);
 
   if (subclass_result == true)
   {
-    if (this->get_property<bool>("autobinds"))
+    if (this->get_base_property<bool>("autobinds"))
     {
-      this->set_property<bool>("bound", true);
+      this->set_base_property<bool>("bound", true);
       StringDisplay message;
       message = this->get_identifying_string() + " magically binds itself to " +
         actor->get_possessive() + " " +
@@ -1653,7 +1651,7 @@ bool Thing::perform_action_equipped_by(ThingRef actor, WearLocation& location)
 
 bool Thing::perform_action_unwielded_by(ThingRef actor)
 {
-  ActionResult result = call_lua_function("perform_action_unwielded_by", { actor });
+  ActionResult result = call_lua_function_actionresult("perform_action_unwielded_by", { actor });
   return was_successful(result);
 }
 
@@ -1677,10 +1675,10 @@ bool Thing::can_merge_with(ThingRef other) const
   ///       queried on a Thing and pulls the default, but it was NOT queried
   ///       on the second thing, the property dictionaries will NOT match.
   ///       I have not yet found a good solution to this problem.
-  auto& our_properties = this->pImpl->properties;
-  auto& other_properties = other->pImpl->properties;
+  auto& our_properties = this->pImpl->base_properties;
+  auto& other_properties = other->pImpl->base_properties;
 
-  if ((this->pImpl->properties) == (other->pImpl->properties))
+  if ((this->pImpl->base_properties) == (other->pImpl->base_properties))
   {
     return true;
   }
@@ -1701,7 +1699,7 @@ ActionResult Thing::can_contain(ThingRef thing)
   }
   else
   {
-    return call_lua_function("can_contain", { thing });
+    return call_lua_function_actionresult("can_contain", { thing });
   }
 }
 
@@ -1714,13 +1712,13 @@ void Thing::set_location(ThingRef target)
 
 bool Thing::_process_self()
 {
-  int counter_busy = get_property<int>("counter_busy");
+  int counter_busy = get_base_property<int>("counter_busy");
 
   // Is this an entity that is now dead?
-  if ((get_property<bool>("is_entity") == true) && (get_property<int>("hp") <= 0))
+  if ((get_base_property<bool>("is_entity") == true) && (get_base_property<int>("hp") <= 0))
   {
     // Did the entity JUST die?
-    if (get_property<bool>("dead") != true)
+    if (get_base_property<bool>("dead") != true)
     {
       // Perform the "die" action.
       // (This sets the "dead" property and clears out any pending actions.)
@@ -1734,7 +1732,7 @@ bool Thing::_process_self()
   else if (counter_busy > 0)
   {
     // Decrement busy counter.
-    add_to_property<int>("counter_busy", -1);
+    add_to_base_property<int>("counter_busy", -1);
   }
   // Otherwise if actions are pending...
   else if (!pImpl->pending_actions.empty())
@@ -1907,10 +1905,10 @@ MapTile* Thing::_get_maptile() const
   return pImpl->map_tile;
 }
 
-ActionResult Thing::call_lua_function(std::string function_name, std::vector<lua_Integer> const& args,
-                                      ActionResult default_result)
+ActionResult Thing::call_lua_function_actionresult(std::string function_name, std::vector<lua_Integer> const& args,
+                                                   ActionResult default_result)
 {
-  return pImpl->metadata.call_lua_function(function_name, get_ref(), args, default_result);
+  return pImpl->metadata.call_lua_function_actionresult(function_name, get_ref(), args, default_result);
 }
 
 bool Thing::call_lua_function_bool(std::string function_name, std::vector<lua_Integer> const& args, bool default_result)

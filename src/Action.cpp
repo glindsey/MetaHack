@@ -91,7 +91,7 @@ ThingRef Action::get_second_object() const
 bool Action::process(ThingRef actor, AnyMap params)
 {
   // If entity is currently busy, decrement by one and return.
-  int counter_busy = actor->get_property<int>("counter_busy");
+  int counter_busy = actor->get_base_property<int>("counter_busy");
   if (counter_busy > 0)
   {
     CLOG(TRACE, "Action") << "Thing #" <<
@@ -99,20 +99,20 @@ bool Action::process(ThingRef actor, AnyMap params)
       actor->get_type() << "): counter_busy = " <<
       counter_busy << "%d, decrementing";
 
-    actor->add_to_property<int>("counter_busy", -1);
+    actor->add_to_base_property<int>("counter_busy", -1);
     return false;
   }
 
   // Perform any type-specific processing.
   // Useful if, for example, your Entity can rise from the dead.
   /// @todo Figure out how to implement this safely.
-  //actor->call_lua_function("process", {});
+  //actor->call_lua_function_actionresult("process", {});
 
   // Continue running through states until the event is processed, or the
   // target actor is busy.
   while ((pImpl->state != Action::State::Processed) && (counter_busy == 0))
   {
-    counter_busy = actor->get_property<int>("counter_busy");
+    counter_busy = actor->get_base_property<int>("counter_busy");
     Action::StateResult result{ false, 0 };
 
     CLOG(TRACE, "Action") << "Thing #" <<
@@ -130,13 +130,13 @@ bool Action::process(ThingRef actor, AnyMap params)
         if (result.success)
         {
           // Update the busy counter.
-          pImpl->subject->set_property<int>("counter_busy", result.elapsed_time);
+          pImpl->subject->set_base_property<int>("counter_busy", result.elapsed_time);
           set_state(Action::State::PreBegin);
         }
         else
         {
           // Clear the busy counter.
-          pImpl->subject->set_property<int>("counter_busy", 0);
+          pImpl->subject->set_base_property<int>("counter_busy", 0);
           set_state(Action::State::PostFinish);
         }
         break;
@@ -149,13 +149,13 @@ bool Action::process(ThingRef actor, AnyMap params)
         if (result.success)
         {
           // Update the busy counter.
-          pImpl->subject->set_property<int>("counter_busy", result.elapsed_time);
+          pImpl->subject->set_base_property<int>("counter_busy", result.elapsed_time);
           set_state(Action::State::InProgress);
         }
         else
         {
           // Clear the busy counter.
-          pImpl->subject->set_property<int>("counter_busy", 0);
+          pImpl->subject->set_base_property<int>("counter_busy", 0);
           set_state(Action::State::PostFinish);
         }
         break;
@@ -163,14 +163,14 @@ bool Action::process(ThingRef actor, AnyMap params)
       case Action::State::InProgress:
         result = do_finish_work(params);
 
-        pImpl->subject->set_property<int>("counter_busy", result.elapsed_time);
+        pImpl->subject->set_base_property<int>("counter_busy", result.elapsed_time);
         set_state(Action::State::PostFinish);
         break;
 
       case Action::State::Interrupted:
         result = do_abort_work(params);
 
-        pImpl->subject->add_to_property<int>("counter_busy", result.elapsed_time);
+        pImpl->subject->add_to_base_property<int>("counter_busy", result.elapsed_time);
         set_state(Action::State::PostFinish);
         break;
 

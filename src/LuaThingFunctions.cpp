@@ -200,7 +200,7 @@ namespace LuaThingFunctions
 
     ThingRef thing = ThingRef(lua_tointeger(L, 1));
     const char* key = lua_tostring(L, 2);
-    bool result = thing->get_property<bool>(key);
+    bool result = thing->get_base_property<bool>(key);
     lua_pushboolean(L, result);
 
     return 1;
@@ -218,7 +218,7 @@ namespace LuaThingFunctions
 
     ThingRef thing = ThingRef(lua_tointeger(L, 1));
     const char* key = lua_tostring(L, 2);
-    int result = thing->get_property<int>(key);
+    int result = thing->get_base_property<int>(key);
     lua_pushinteger(L, result);
 
     return 1;
@@ -236,7 +236,7 @@ namespace LuaThingFunctions
 
     ThingRef thing = ThingRef(lua_tointeger(L, 1));
     const char* key = lua_tostring(L, 2);
-    StringKey result = thing->get_property<StringKey>(key).c_str();
+    StringKey result = thing->get_base_property<StringKey>(key).c_str();
     lua_pushstring(L, result.c_str());
 
     return 1;
@@ -370,7 +370,7 @@ namespace LuaThingFunctions
     ThingRef thing = ThingRef(lua_tointeger(L, 1));
     const char* key = lua_tostring(L, 2);
     bool value = (lua_toboolean(L, 3) != 0);
-    thing->set_property<bool>(key, value);
+    thing->set_base_property<bool>(key, value);
 
     return 0;
   }
@@ -388,7 +388,7 @@ namespace LuaThingFunctions
     ThingRef thing = ThingRef(lua_tointeger(L, 1));
     const char* key = lua_tostring(L, 2);
     int value = static_cast<int>(lua_tointeger(L, 3));
-    thing->set_property<int>(key, value);
+    thing->set_base_property<int>(key, value);
 
     return 0;
   }
@@ -407,7 +407,7 @@ namespace LuaThingFunctions
     const char* key = lua_tostring(L, 2);
     const char* value = lua_tostring(L, 3);
     StringKey svalue = StringKey(value);
-    thing->set_property<StringKey>(key, svalue);
+    thing->set_base_property<StringKey>(key, svalue);
 
     return 0;
   }

@@ -75,10 +75,10 @@ sf::Vector2u Metadata::get_tile_coords()
   return tile_location;
 }
 
-ActionResult Metadata::call_lua_function(std::string function_name,
-                                         ThingRef caller,
-                                         std::vector<lua_Integer> const& args,
-                                         ActionResult default_result)
+ActionResult Metadata::call_lua_function_actionresult(std::string function_name,
+                                                      ThingRef caller,
+                                                      std::vector<lua_Integer> const& args,
+                                                      ActionResult default_result)
 {
   ActionResult return_value = default_result;
   StringKey name = this->get_type();

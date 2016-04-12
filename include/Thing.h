@@ -10,6 +10,7 @@
 #include "ErrorHandler.h"
 #include "GameObject.h"
 #include "Gender.h"
+#include "LuaCalls.h"
 #include "Metadata.h"
 
 // Forward declarations
@@ -108,53 +109,122 @@ public:
   ///         false if it wasn't performed
   bool do_attack(ThingRef thing, unsigned int& action_time);
 
+  /// Get an intrinsic of this Thing.
+  /// If the intrinsic is not found, returns the default value.
+  /// @param key            Name of the intrinsic to get.
+  /// @param default_value  Default value to use, if any.
+  /// @return The intrinsic (or default) value for that key.
   template<typename T>
   T get_intrinsic(StringKey key, T default_value = T()) const
   {
     return pImpl->metadata.get_intrinsic<T>(key, default_value);
   }
 
-  /// Get a property of this Thing.
-  /// If the property is not found, the method falls back upon the intrinsic
-  /// for that property (if any).
+  /// Get a base property of this Thing.
+  /// If the base property is not found, the method falls back upon the
+  /// intrinsic for that property (if any).
   /// @param key            Name of the property to get.
   /// @param default_value  Default value to use, if any.
   /// @return The property (or default) value for that key.
   template<typename T>
-  T get_property(StringKey key, T default_value = T())
+  T get_base_property(StringKey key, T default_value = T())
   {
-    PropertyDictionary& properties = pImpl->properties;
+    PropertyDictionary& base_properties = pImpl->base_properties;
 
-    if (properties.contains(key))
+    if (base_properties.contains(key))
     {
-      return properties.get<T>(key);
+      return base_properties.get<T>(key);
     }
     else
     {
       T value = pImpl->metadata.get_intrinsic<T>(key, default_value);
-      properties.set<T>(key, value);
+      base_properties.set<T>(key, value);
       return value;
     }
   }
 
+  /// Sets a base property of this Thing.
+  /// If the base property is not found, it is created.
+  ///
+  /// @param key    Key of the property to set.
+  /// @param value  Value to set the property to.
+  /// @return Boolean indicating whether the property previously existed.
   template<typename T>
-  bool set_property(StringKey key, T value)
+  bool set_base_property(StringKey key, T value)
   {
-    PropertyDictionary& properties = pImpl->properties;
-    bool existed = properties.contains(key);
-    properties.set<T>(key, value);
+    PropertyDictionary& base_properties = pImpl->base_properties;
+    bool existed = base_properties.contains(key);
+    base_properties.set<T>(key, value);
 
     return existed;
   }
 
+  /// Adds to a base property of this Thing.
+  /// If the base property is not found, it is created.
+  /// @param key    Key of the property to set.
+  /// @param value  Value to add to the property.
   template<typename T>
-  void add_to_property(StringKey key, T add_value)
+  void add_to_base_property(StringKey key, T add_value)
   {
-    PropertyDictionary& properties = pImpl->properties;
-    T existing_value = properties.get<T>(key);
+    PropertyDictionary& base_properties = pImpl->base_properties;
+    T existing_value = base_properties.get<T>(key);
     T new_value = existing_value + add_value;
-    properties.set<T>(key, new_value);
+    base_properties.set<T>(key, new_value);
   }
+
+#if 0
+  /// Get a transient property of this Thing.
+  /// If the transient property is not found, the method falls back upon the
+  /// base value for that property (if any).
+  /// @param key            Name of the property to get.
+  /// @param default_value  Default value to use, if any.
+  /// @return The transient (or base) property value for that key.
+  template<typename T>
+  T get_transient_property(StringKey key, T default_value = T())
+  {
+    PropertyDictionary& transient_properties = pImpl->transient_properties;
+
+    if (transient_properties.contains(key))
+    {
+      return transient_properties.get<T>(key);
+    }
+    else
+    {
+      T value = get_base_property<T>(key, default_value);
+      transient_properties.set<T>(key, value);
+      return value;
+    }
+  }
+
+  /// Sets a transient property of this Thing.
+  /// If the transient property is not found, it is created.
+  /// @param key    Key of the transient property to set.
+  /// @param value  Value to set the transient property to.
+  /// @return Boolean indicating whether the transient property previously
+  ///         existed.
+  template<typename T>
+  bool set_transient_property(StringKey key, T value)
+  {
+    PropertyDictionary& transient_properties = pImpl->transient_properties;
+    bool existed = transient_properties.contains(key);
+    transient_properties.set<T>(key, value);
+
+    return existed;
+  }
+
+  /// Adds to a transient property of this Thing.
+  /// If the transient property is not found, it is created from the base.
+  /// @param key    Key of the property to set.
+  /// @param value  Value to add to the property.
+  template<typename T>
+  void add_to_transient_property(StringKey key, T add_value)
+  {
+    PropertyDictionary& transient_properties = pImpl->transient_properties;
+    T existing_value = transient_properties.get<T>(key);
+    T new_value = existing_value + add_value;
+    transient_properties.set<T>(key, new_value);
+}
+#endif
 
   /// Get the quantity this thing represents.
   unsigned int get_quantity();
@@ -530,10 +600,10 @@ private:
   ///         false if the Thing ceases to exist.
   virtual bool _process_self();
 
-  /// Syntactic sugar for calling Metadata::call_lua_function.
-  ActionResult call_lua_function(std::string function_name,
-                                 std::vector<lua_Integer> const& args,
-                                 ActionResult default_result = ActionResult::Success);
+  /// Syntactic sugar for calling Metadata::call_lua_function_actionresult.
+  ActionResult call_lua_function_actionresult(std::string function_name,
+                                              std::vector<lua_Integer> const& args,
+                                              ActionResult default_result = ActionResult::Success);
 
   /// Syntactic sugar for calling Metadata::call_lua_function_bool.
   bool call_lua_function_bool(std::string function_name,

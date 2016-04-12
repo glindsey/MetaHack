@@ -364,9 +364,9 @@ void Map::add_light(ThingRef source)
 
   sf::Vector2i coords = maptile->get_coords();
 
-  int light_color_red = source->get_property<int>("light_color_red");
-  int light_color_green = source->get_property<int>("light_color_green");
-  int light_color_blue = source->get_property<int>("light_color_blue");
+  int light_color_red = source->get_base_property<int>("light_color_red");
+  int light_color_green = source->get_base_property<int>("light_color_green");
+  int light_color_blue = source->get_base_property<int>("light_color_blue");
   sf::Color light_color = sf::Color(light_color_red, light_color_green, light_color_blue, 255);
 
   /// @todo Re-implement direction.
@@ -379,7 +379,7 @@ void Map::add_light(ThingRef source)
 
   /// @todo: Handle "dark sources" with negative light strength properly --
   ///        right now they'll cause Very Bad Behavior!
-  int max_depth_squared = source->get_property<int>("light_strength");
+  int max_depth_squared = source->get_base_property<int>("light_strength");
 
   // Add a light influence to the tile the light is on.
   LightInfluence influence;

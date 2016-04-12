@@ -267,6 +267,7 @@
     <ClCompile Include="src\Inventory.cpp" />
     <ClCompile Include="src\InventoryArea.cpp" />
     <ClCompile Include="src\KeyBuffer.cpp" />
+    <ClCompile Include="src\LuaCalls.cpp" />
     <ClCompile Include="src\LuaObject.cpp" />
     <ClCompile Include="src\LuaThingFunctions.cpp" />
     <ClCompile Include="src\Map.cpp" />

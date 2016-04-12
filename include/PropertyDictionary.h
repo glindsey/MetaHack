@@ -18,9 +18,6 @@ public:
 
   virtual ~PropertyDictionary();
 
-  /// Populate this dictionary from a Boost property tree.
-  void populate_from(pt::ptree const& tree, StringKey prefix = "");
-
   /// Check if a particular key exists.
   bool contains(StringKey key) const;
 
