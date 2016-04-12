@@ -115,7 +115,7 @@ public:
   }
 
   /// Get a property of this Thing.
-  /// If the property is not found, the method falls back upon the default
+  /// If the property is not found, the method falls back upon the intrinsic
   /// for that property (if any).
   /// @param key            Name of the property to get.
   /// @param default_value  Default value to use, if any.
@@ -131,7 +131,7 @@ public:
     }
     else
     {
-      T value = pImpl->metadata.get_default<T>(key, default_value);
+      T value = pImpl->metadata.get_intrinsic<T>(key, default_value);
       properties.set<T>(key, value);
       return value;
     }
@@ -171,12 +171,6 @@ public:
 
   /// Return the location of this thing.
   ThingRef get_location() const;
-
-  /// Traverse the line of sight to a map tile, setting visibility
-  /// for the tiles between.
-  /// @warning Assumes entity is on a map, and that the ending coordinates
-  ///          are valid for the map the entity is on!
-  void traverseLineOfSightTo(int xEnd, int yEnd);
 
   /// Return whether the Entity can see the requested Thing.
   bool can_see(ThingRef thing);

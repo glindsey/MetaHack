@@ -7,11 +7,11 @@ Sconce.intrinsics.name = "torch sconce"
 Sconce.intrinsics.plural = "torch sconces"
 Sconce.intrinsics.creatable = true
 
-Sconce.defaults.light_color_red = 160
-Sconce.defaults.light_color_green = 128
-Sconce.defaults.light_color_blue = 112
-Sconce.defaults.light_level = 256
-Sconce.defaults.light_strength = 48
+Sconce.intrinsics.light_color_red = 160
+Sconce.intrinsics.light_color_green = 128
+Sconce.intrinsics.light_color_blue = 112
+Sconce.intrinsics.light_level = 256
+Sconce.intrinsics.light_strength = 48
 
 function Sconce.get_description()
     return "A flaming torch secured in a holder that is attached to a wall."

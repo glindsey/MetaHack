@@ -9,7 +9,7 @@ SackCloth.intrinsics.creatable = true
 
 SackCloth.intrinsics.inventory_size = 10
 
-SackCloth.defaults.open = true
+SackCloth.intrinsics.open = true
 
 function Container.can_have_action_open_done_by(id)
     return false

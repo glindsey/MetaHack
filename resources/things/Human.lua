@@ -7,19 +7,19 @@ Human.intrinsics.name = "human"
 Human.intrinsics.plural = "humans"
 Human.intrinsics.creatable = true
 
-Human.defaults.proper_name = "John Doe"
-Human.defaults.maxhp = range(6, 10)
+Human.intrinsics.proper_name = "John Doe"
+Human.intrinsics.maxhp = range(6, 10)
 
-Human.defaults.attribute_strength = range(13, 17)
-Human.defaults.attribute_endurance = range(13, 17)
-Human.defaults.attribute_vitality = range(13, 17)
-Human.defaults.attribute_agility = range(13, 17)
-Human.defaults.attribute_precision = range(13, 17)
-Human.defaults.attribute_intelligence = range(13, 17)
-Human.defaults.attribute_aura = range(13, 17)
-Human.defaults.attribute_charisma = range(13, 17)
-Human.defaults.attribute_vigilance = range(13, 17)
-Human.defaults.attribute_luck = range(13, 17)
+Human.intrinsics.attribute_strength = range(13, 17)
+Human.intrinsics.attribute_endurance = range(13, 17)
+Human.intrinsics.attribute_vitality = range(13, 17)
+Human.intrinsics.attribute_agility = range(13, 17)
+Human.intrinsics.attribute_precision = range(13, 17)
+Human.intrinsics.attribute_intelligence = range(13, 17)
+Human.intrinsics.attribute_aura = range(13, 17)
+Human.intrinsics.attribute_charisma = range(13, 17)
+Human.intrinsics.attribute_vigilance = range(13, 17)
+Human.intrinsics.attribute_luck = range(13, 17)
 
 function Human.get_description()
 	return "A human being."

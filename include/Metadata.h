@@ -101,35 +101,15 @@ public:
     return get_intrinsic_string(name, default_value);
   }
 
+  template<> IntegerRange get_intrinsic(StringKey name, IntegerRange default_value)
+  {
+    return get_intrinsic_range(name, default_value);
+  }
+
   bool get_intrinsic_bool(StringKey name, bool default_value);
   double get_intrinsic_value(StringKey name, double default_value);
   std::string get_intrinsic_string(StringKey name, std::string default_value);
-
-  template <typename T>
-  T get_default(StringKey name, T default_value = T())
-  {
-    return static_cast<T>(get_default_value(name, default_value));
-  }
-
-  template<> bool get_default(StringKey name, bool default_value)
-  {
-    return get_default_bool(name, default_value);
-  }
-
-  template<> std::string get_default(StringKey name, std::string default_value)
-  {
-    return get_default_string(name, default_value);
-  }
-
-  template<> IntegerRange get_default(StringKey name, IntegerRange default_value)
-  {
-    return get_default_range(name, default_value);
-  }
-
-  bool get_default_bool(StringKey name, bool default_value);
-  double get_default_value(StringKey name, double default_value);
-  std::string get_default_string(StringKey name, std::string default_value);
-  IntegerRange get_default_range(StringKey name, IntegerRange default_value);
+  IntegerRange get_intrinsic_range(StringKey name, IntegerRange default_value);
 
   template <typename T>
   void set_intrinsic(StringKey name, T value)

@@ -14,7 +14,7 @@ Entity.intrinsics.opacity_blue = 255
 Entity.intrinsics.living = true
 Entity.intrinsics.inventory_size = -1
 
-Entity.defaults.xp = 0
+Entity.intrinsics.xp = 0
 
 function Entity.can_have_action_attack_done_by(id)
     return true

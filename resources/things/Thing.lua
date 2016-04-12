@@ -29,10 +29,10 @@ Thing.intrinsics.opacity_green = 255
 Thing.intrinsics.opacity_blue = 255
 Thing.intrinsics.physical_mass = 0
 
-Thing.defaults.counter_busy = 0
-Thing.defaults.locked = false
-Thing.defaults.open = true
-Thing.defaults.quantity = 1
+Thing.intrinsics.counter_busy = 0
+Thing.intrinsics.locked = false
+Thing.intrinsics.open = true
+Thing.intrinsics.quantity = 1
 
 function Thing.get_description(id)
     return "Thing #" .. id .. ", which has no description associated with it."
@@ -108,37 +108,6 @@ function Thing:get_intrinsic(name)
         -- Got here? Just return the result.
         return result
     end
-end
-
-function Thing:get_default(name)
-    local result = self.defaults[name]
-    
-    if (self.type == "LightOrb" or self.type == "LightSource") then
-        print("Asked thing " .. self.type .. " for default " .. name .. " and got result " .. tostring(result))
-    end
-    
-    if (result == nil) then
-        local superclass = self.superClass()
-        
-        if (superclass ~= nil) then
-            return self.superClass():get_default(name)
-        else
-            --error("Traversed all the way to root class but could not find " .. name)
-        end
-    else
-        -- Look for special cases.
-        if (type(result) == "table") then
-            if (result.type == "range") then
-                --print("Range type found, returning " .. tostring(result.min) .. " and " .. tostring(result.max))
-                return result.min, result.max
-            elseif (result.type == "vector2") then
-                return result.x, result.y
-            end
-        end
-
-        -- Got here? Just return the result.
-        return result
-    end		
 end
 
 function Thing:set_intrinsic(name, value)

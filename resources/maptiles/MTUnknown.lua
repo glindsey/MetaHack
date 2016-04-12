@@ -4,7 +4,6 @@ MTUnknown = inheritsFrom(nil, "MTUnknown")
 MTUnknown.intrinsics.name = "unknown"
 
 MTUnknown.intrinsics = MTUnknown.intrinsics or {}
-MTUnknown.defaults = MTUnknown.defaults or {}
 
 MTUnknown.intrinsics.passable = false
 MTUnknown.intrinsics.opacity_red = 255

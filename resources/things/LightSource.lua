@@ -6,12 +6,12 @@ LightSource = inheritsFrom(Thing, "LightSource")
 LightSource.intrinsics.name = "[LightSource]"
 LightSource.intrinsics.plural = "[LightSources]"
 
-LightSource.defaults.light_lit = true
-LightSource.defaults.light_color_red = 64
-LightSource.defaults.light_color_green = 64
-LightSource.defaults.light_color_blue = 64
-LightSource.defaults.light_level = 256
-LightSource.defaults.light_strength = 64
+LightSource.intrinsics.light_lit = true
+LightSource.intrinsics.light_color_red = 64
+LightSource.intrinsics.light_color_green = 64
+LightSource.intrinsics.light_color_blue = 64
+LightSource.intrinsics.light_level = 256
+LightSource.intrinsics.light_strength = 64
 
 function LightSource.get_description()
     return "A source of illumination."

@@ -47,7 +47,7 @@ void Thing::initialize()
   PropertyDictionary& properties = pImpl->properties;
 
   /// Get the max_hp IntegerRange for this Thing (if any).
-  IntegerRange max_hp_range = pImpl->metadata.get_default<IntegerRange>("maxhp");
+  IntegerRange max_hp_range = pImpl->metadata.get_intrinsic<IntegerRange>("maxhp");
 
   /// Pick a number and set it as our maximum HP.
   int max_hp = max_hp_range.pick();
