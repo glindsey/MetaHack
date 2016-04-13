@@ -184,7 +184,7 @@ public:
   {
     PropertyDictionary& transient_properties = pImpl->transient_properties;
 
-    if (transient_properties.contains(key))
+    if (transient_properties.has_modifier_for(key))
     {
       return transient_properties.get<T>(key);
     }
@@ -206,7 +206,7 @@ public:
   bool set_transient_property(StringKey key, T value)
   {
     PropertyDictionary& transient_properties = pImpl->transient_properties;
-    bool existed = transient_properties.contains(key);
+    bool existed = transient_properties.has_modifier_for(key);
     transient_properties.set<T>(key, value);
 
     return existed;

@@ -23,6 +23,10 @@ AnyMap& PropertyDictionary::get_dictionary()
   return m_dictionary;
 }
 
+void PropertyDictionary::_after_set(StringKey key)
+{
+}
+
 /// @todo Verify that this is correct. I *think* it is but it has not been tested.
 bool PropertyDictionary::operator==(PropertyDictionary const& other) const
 {

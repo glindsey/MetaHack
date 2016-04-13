@@ -10,7 +10,7 @@ ModifierDictionary::~ModifierDictionary()
 {
 }
 
-unsigned int ModifierDictionary::contains(StringKey key) const
+unsigned int ModifierDictionary::has_modifier_for(StringKey key) const
 {
   if (m_modifiers.count(key) != 0)
   {
@@ -20,7 +20,7 @@ unsigned int ModifierDictionary::contains(StringKey key) const
   return 0;
 }
 
-unsigned int ModifierDictionary::contains(StringKey key, ThingId id) const
+unsigned int ModifierDictionary::has_modifier_for(StringKey key, ThingId id) const
 {
   if (m_modifiers.count(key) != 0)
   {
@@ -30,7 +30,7 @@ unsigned int ModifierDictionary::contains(StringKey key, ThingId id) const
   return 0;
 }
 
-bool ModifierDictionary::add(StringKey key, ThingId id, unsigned int expiration_ticks)
+bool ModifierDictionary::add_modifier(StringKey key, ThingId id, unsigned int expiration_ticks)
 {
   if (m_modifiers.count(key) == 0)
   {
@@ -46,7 +46,7 @@ bool ModifierDictionary::add(StringKey key, ThingId id, unsigned int expiration_
   return false;
 }
 
-unsigned int ModifierDictionary::remove(StringKey key)
+unsigned int ModifierDictionary::remove_modifier(StringKey key)
 {
   if (m_modifiers.count(key) != 0)
   {
@@ -58,7 +58,7 @@ unsigned int ModifierDictionary::remove(StringKey key)
   return 0;
 }
 
-unsigned int ModifierDictionary::remove(StringKey key, ThingId id)
+unsigned int ModifierDictionary::remove_modifier(StringKey key, ThingId id)
 {
   if (m_modifiers.count(key) != 0)
   {

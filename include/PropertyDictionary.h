@@ -21,7 +21,7 @@ public:
   /// Check if a particular key exists.
   bool contains(StringKey key) const;
 
-  /// Get an entry from the dictionary.
+  /// Get a base entry from the dictionary.
   /// @param key  Key of the setting to retrieve.
   /// @return     The entry requested.
   ///             If the entry does not exist, returns a new instance of T.
@@ -62,7 +62,9 @@ public:
   template<> unsigned long int get(StringKey key) const { return static_cast<unsigned long int>(get<double>(key)); }
   template<> float get(StringKey key) const { return static_cast<float>(get<double>(key)); }
 
-  /// Add/alter an entry in the dictionary.
+  /// Add/alter an entry in the base dictionary.
+  /// Erases any entry in the modified dictionary, if one exists.
+  ///
   /// @note         The type being added must be copyable... I think.
   /// @param key    Key of the entry to add/alter.
   /// @param value  Value to set it to.
@@ -80,6 +82,7 @@ public:
     }
 
     m_dictionary.insert(std::pair<StringKey, boost::any>(key, insert_value));
+    _after_set(key);
 
     return existed;
   }
@@ -93,19 +96,10 @@ public:
   template<> bool set(StringKey key, float value) { return set<double>(key, static_cast<double>(value)); }
   template<> bool set(StringKey key, char const* value) { return set<std::string>(key, std::string(value)); }
 
-  // Common non-templated set() functions, used to aid in typing.
-  bool set(StringKey key, int value) { return set<double>(key, static_cast<double>(value)); }
-  bool set(StringKey key, unsigned int value) { return set<double>(key, static_cast<double>(value)); }
-  bool set(StringKey key, long int value) { return set<double>(key, static_cast<double>(value)); }
-  bool set(StringKey key, unsigned long int value) { return set<double>(key, static_cast<double>(value)); }
-  bool set(StringKey key, float value) { return set<double>(key, static_cast<double>(value)); }
-  bool set(StringKey key, double value) { return set<double>(key, static_cast<double>(value)); }
-  bool set(StringKey key, bool value) { return set<bool>(key, value); }
-  bool set(StringKey key, char const* value) { return set<std::string>(key, std::string(value)); }
-  bool set(StringKey key, std::string value) { return set<std::string>(key, value); }
-  bool set(StringKey key, sf::Vector2i value) { return set<sf::Vector2i>(key, value); }
-  bool set(StringKey key, sf::Vector2u value) { return set<sf::Vector2i>(key, static_cast<sf::Vector2i>(value)); }
-  bool set(StringKey key, sf::Color value) { return set<sf::Color>(key, value); }
+  /// Overridable function to be called after a set() is performed.
+  /// Default behavior is to do nothing.
+  /// @param key  Key that was set.
+  virtual void _after_set(StringKey key);
 
   /// Overloaded equality operator.
   bool operator==(PropertyDictionary const& other) const;
@@ -121,6 +115,7 @@ protected:
   AnyMap& get_dictionary();
 
 private:
+  /// The base property dictionary.
   AnyMap m_dictionary;
 };
 

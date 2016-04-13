@@ -34,11 +34,11 @@ public:
 
   /// Check if modifier functions exist for a particular key.
   /// @return Number of modifiers for the key.
-  unsigned int contains(StringKey key) const;
+  unsigned int has_modifier_for(StringKey key) const;
 
   /// Check if a modifier function exists for a particular key and ID.
   /// @return Number of modifiers for the key and ID. (Should be 0 or 1.)
-  unsigned int contains(StringKey key, ThingId id) const;
+  unsigned int has_modifier_for(StringKey key, ThingId id) const;
 
   /// Add a modifier function for a given property and ID.
   /// @param  key               Name of property to add a modifier function for.
@@ -56,15 +56,15 @@ public:
   /// new one will be added.
   ///
   /// @return True if the function was added; false if it already existed.
-  bool add(StringKey key, ThingId id, unsigned int expiration_ticks = 0);
+  bool add_modifier(StringKey key, ThingId id, unsigned int expiration_ticks = 0);
 
   /// Remove all modifier functions for a given key.
   /// @return The number of modifiers erased.
-  unsigned int remove(StringKey key);
+  unsigned int remove_modifier(StringKey key);
 
   /// Remove all modifier functions for a given key and thing ID.
   /// @return The number of modifiers erased.
-  unsigned int remove(StringKey key, ThingId id);
+  unsigned int remove_modifier(StringKey key, ThingId id);
 
   /// Run all the modifier functions for a property given a value to modify.
   /// @param  key     Property to run the modifiers for.
@@ -72,7 +72,7 @@ public:
   /// @return The resulting value.
   /// @todo WRITE ME
   template<typename T>
-  T run(StringKey key, T value)
+  T run_modifiers(StringKey key, T value)
   {
     return value;
   }

@@ -883,8 +883,8 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
         {
           default:
             break;
-    }
-  }
+        }
+      }
 #endif
       break;
     } // end case GameInputState::Map
