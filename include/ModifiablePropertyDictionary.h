@@ -41,8 +41,7 @@ public:
     // Recalculate if the setting doesn't exist.
     if (m_modified_dictionary.count(key) == 0)
     {
-      /// @todo WRITE ME
-      return get<T>(key);
+      run_modifiers<T>(key);
     }
 
     boost::any value = m_modified_dictionary.at(key);
@@ -71,7 +70,7 @@ public:
   /// Overridden function to be called after a set() is performed.
   /// Erases the equivalent key in the modified dictionary.
   /// @param key  Key that was set.
-  virtual void _after_set(StringKey key);
+  virtual void after_set_(StringKey key);
 
   /// Check if modifier functions exist for a particular key.
   /// @return Number of modifiers for the key.
@@ -109,13 +108,18 @@ public:
 
   /// Run all the modifier functions for a property given a value to modify.
   /// @param  key     Property to run the modifiers for.
-  /// @param  value   Value to run them on.
   /// @return The resulting value.
-  /// @todo WRITE ME
   template<typename T>
-  T run_modifiers(StringKey key, T value)
+  void run_modifiers(StringKey key)
   {
-    return value;
+    if (m_modified_dictionary.count(key) != 0)
+    {
+      m_modified_dictionary.erase(key);
+    }
+
+    T value = get<T>(key);
+    /// @todo Call the appropriate modifier functions.
+    m_modified_dictionary.emplace(std::make_pair(key, value));
   }
 
   /// Add/subtract ticks from all modifier expiration_ticks, if applicable.

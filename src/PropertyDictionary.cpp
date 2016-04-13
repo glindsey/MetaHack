@@ -23,7 +23,7 @@ AnyMap& PropertyDictionary::get_dictionary()
   return m_dictionary;
 }
 
-void PropertyDictionary::_after_set(StringKey key)
+void PropertyDictionary::after_set_(StringKey key)
 {
 }
 

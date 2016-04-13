@@ -12,7 +12,7 @@ ModifiablePropertyDictionary::ModifiablePropertyDictionary()
 ModifiablePropertyDictionary::~ModifiablePropertyDictionary()
 {}
 
-void ModifiablePropertyDictionary::_after_set(StringKey key)
+void ModifiablePropertyDictionary::after_set_(StringKey key)
 {
   m_modified_dictionary.erase(key);
 }
@@ -47,6 +47,7 @@ bool ModifiablePropertyDictionary::add_modifier(StringKey key, ThingId id, unsig
   if (m_modifiers.at(key).count(id) == 0)
   {
     m_modifiers.at(key).emplace(std::make_pair(id, expiration_ticks));
+    m_modified_dictionary.erase(key);
     return true;
   }
 
@@ -59,6 +60,7 @@ unsigned int ModifiablePropertyDictionary::remove_modifier(StringKey key)
   {
     auto size = m_modifiers.at(key).size();
     m_modifiers.erase(key);
+    m_modified_dictionary.erase(key);
     return size;
   }
 
@@ -75,6 +77,7 @@ unsigned int ModifiablePropertyDictionary::remove_modifier(StringKey key, ThingI
       if (m_modifiers.at(key).size() == 0)
       {
         m_modifiers.erase(key);
+        m_modified_dictionary.erase(key);
       }
       return 1;
     }

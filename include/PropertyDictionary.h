@@ -82,7 +82,7 @@ public:
     }
 
     m_dictionary.insert(std::pair<StringKey, boost::any>(key, insert_value));
-    _after_set(key);
+    after_set_(key);
 
     return existed;
   }
@@ -99,7 +99,7 @@ public:
   /// Overridable function to be called after a set() is performed.
   /// Default behavior is to do nothing.
   /// @param key  Key that was set.
-  virtual void _after_set(StringKey key);
+  virtual void after_set_(StringKey key);
 
   /// Overloaded equality operator.
   bool operator==(PropertyDictionary const& other) const;
