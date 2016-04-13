@@ -2,6 +2,8 @@ BIG TODO LIST
 
 SMALL THINGS
 ============
+[ ] Add Lua function "get_property_name_XXXX" for properties, so they can be added to Thing descriptions in a sensible manner (e.g. "a blind cave bat", but not "a blind dagger"
+[ ] Add Lua functions "on_base_property_change_XXX", "on_transient_property_change_XXX" for when Thing properties are modified. Pass in the old value and the new value.
 [ ] Export "thing_set_quantity" / "thing_modify_quantity" functions to Lua
 [ ] BUG: Using "/" look command reveals inventory of squares player can't see
 [ ] Look at some of the intrinsics like "movable", "lockable", et cetera and see if they can be removed.
@@ -9,6 +11,19 @@ SMALL THINGS
 
 MEDIUM THINGS
 =============
+[ ] Transient properties
+    [ ] Cached set of properties
+        - Property is recalculated upon:
+            - base property changing
+            - add_property_modifier / remove_property_modifier
+            - modifier expiration
+    [ ] Map of modifiers for a base property:
+        - ID of thing responsible for modifier
+        - Lua function to call to modify the property
+        - Number of ticks modifier stays in place, or 0 if permanent until explicitly removed
+    [ ] Export "add_property_modifier", "remove_property_modifier" to Lua
+        - Either of these causes a recalculation of transient property values
+        
 [ ] Write attire (wear) action code
 [ ] Write open, close Action code
 [ ] Write lock, unlock Action code
@@ -91,8 +106,6 @@ BIG THINGS
     
 MIND-BOGGLINGLY ENORMOUS THINGS
 ===============================
-[ ] Switch over to using SFGUI for GUI elements (or some other GUI engine)
-
 [ ] Implement saving/loading of the entire game state
 
 

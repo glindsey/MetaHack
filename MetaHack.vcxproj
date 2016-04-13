@@ -173,6 +173,7 @@
     <ClInclude Include="include\Direction.h" />
     <ClInclude Include="include\ErrorHandler.h" />
     <ClInclude Include="include\LuaCalls.h" />
+    <ClInclude Include="include\ModifierDictionary.h" />
     <ClInclude Include="include\SFMLEventHandler.h" />
     <ClInclude Include="include\GameObject.h" />
     <ClInclude Include="include\GameState.h" />
@@ -285,6 +286,7 @@
     <ClCompile Include="src\MessageLogView.cpp" />
     <ClCompile Include="src\Metadata.cpp" />
     <ClCompile Include="src\MetadataCollection.cpp" />
+    <ClCompile Include="src\ModifierDictionary.cpp" />
     <ClCompile Include="src\PropertyDictionary.cpp" />
     <ClCompile Include="src\State.cpp" />
     <ClCompile Include="src\StateMachine.cpp" />

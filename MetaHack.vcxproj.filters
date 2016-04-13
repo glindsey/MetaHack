@@ -300,6 +300,9 @@
     <ClInclude Include="include\LuaCalls.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\ModifierDictionary.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">
@@ -519,6 +522,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\LuaCalls.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ModifierDictionary.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

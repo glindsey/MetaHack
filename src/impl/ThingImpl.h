@@ -6,6 +6,7 @@
 #include "Gender.h"
 #include "MapTile.h"
 #include "Metadata.h"
+#include "ModifierDictionary.h"
 #include "PropertyDictionary.h"
 #include "ThingRef.h"
 #include "ThingManager.h"
@@ -33,7 +34,7 @@ public:
     metadata{ metadata_ },
     base_properties{},
     transient_properties{},
-    transients_valid{ false },
+    property_modifiers{},
     ref{ ref_ },
     location{ MU },
     map_tile{ nullptr },
@@ -55,7 +56,7 @@ public:
     metadata{ metadata_ },
     base_properties{},
     transient_properties{},
-    transients_valid{ false },
+    property_modifiers{},
     ref{ ref_ },
     location{ MU },
     map_tile{ tile },
@@ -78,7 +79,7 @@ public:
     metadata{ other.metadata },
     base_properties{ other.base_properties },
     transient_properties{ other.transient_properties },
-    transients_valid{ other.transients_valid },
+    property_modifiers{ other.property_modifiers },
     ref{ ref_ },
     location{ other.location },
     map_tile{ other.map_tile },
@@ -106,15 +107,16 @@ public:
   /// any modifiers affecting them.
   PropertyDictionary base_properties;
 
-  /// Transient property dictionary.
-  /// Contains modifications to properties for this Thing due to inventory
-  /// items, worn/equipped items, and/or Adjectives.
-  /// Recreated any time transients_valid is set to false.
+  /// Cached transient property dictionary.
+  /// Contains modifications to properties for this Thing due to
+  /// property modifiers.
+  /// If a property here is missing, it is recalculated.
   PropertyDictionary transient_properties;
 
-  /// If false, the next time a property value is requested, the method
-  /// update_transient_properties() will be called to refresh them.
-  bool transients_valid;
+  /// Property modifiers.
+  /// Contains a map of all modifier functions to be performed on base
+  /// properties to get transient property values.
+  ModifierDictionary property_modifiers;
 
   /// Reference to this Thing.
   ThingRef ref;
