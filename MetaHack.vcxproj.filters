@@ -300,9 +300,6 @@
     <ClInclude Include="include\LuaCalls.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\ModifierDictionary.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\ModifiablePropertyDictionary.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -525,9 +522,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\LuaCalls.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ModifierDictionary.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\ModifiablePropertyDictionary.cpp">

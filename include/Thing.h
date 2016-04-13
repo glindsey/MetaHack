@@ -129,16 +129,16 @@ public:
   template<typename T>
   T get_base_property(StringKey key, T default_value = T())
   {
-    PropertyDictionary& base_properties = pImpl->base_properties;
+    PropertyDictionary& properties = pImpl->properties;
 
-    if (base_properties.contains(key))
+    if (properties.contains(key))
     {
-      return base_properties.get<T>(key);
+      return properties.get<T>(key);
     }
     else
     {
       T value = pImpl->metadata.get_intrinsic<T>(key, default_value);
-      base_properties.set<T>(key, value);
+      properties.set<T>(key, value);
       return value;
     }
   }
@@ -152,9 +152,9 @@ public:
   template<typename T>
   bool set_base_property(StringKey key, T value)
   {
-    PropertyDictionary& base_properties = pImpl->base_properties;
-    bool existed = base_properties.contains(key);
-    base_properties.set<T>(key, value);
+    PropertyDictionary& properties = pImpl->properties;
+    bool existed = properties.contains(key);
+    properties.set<T>(key, value);
 
     return existed;
   }
@@ -166,10 +166,10 @@ public:
   template<typename T>
   void add_to_base_property(StringKey key, T add_value)
   {
-    PropertyDictionary& base_properties = pImpl->base_properties;
-    T existing_value = base_properties.get<T>(key);
+    PropertyDictionary& properties = pImpl->properties;
+    T existing_value = properties.get<T>(key);
     T new_value = existing_value + add_value;
-    base_properties.set<T>(key, new_value);
+    properties.set<T>(key, new_value);
   }
 
 #if 0

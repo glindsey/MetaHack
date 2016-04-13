@@ -6,8 +6,7 @@
 #include "Gender.h"
 #include "MapTile.h"
 #include "Metadata.h"
-#include "ModifierDictionary.h"
-#include "PropertyDictionary.h"
+#include "ModifiablePropertyDictionary.h"
 #include "ThingRef.h"
 #include "ThingManager.h"
 
@@ -32,9 +31,7 @@ public:
   ThingImpl(Metadata& metadata_, ThingRef ref_)
     :
     metadata{ metadata_ },
-    base_properties{},
-    transient_properties{},
-    property_modifiers{},
+    properties{},
     ref{ ref_ },
     location{ MU },
     map_tile{ nullptr },
@@ -54,9 +51,7 @@ public:
   ThingImpl(MapTile* tile, Metadata& metadata_, ThingRef ref_)
     :
     metadata{ metadata_ },
-    base_properties{},
-    transient_properties{},
-    property_modifiers{},
+    properties{},
     ref{ ref_ },
     location{ MU },
     map_tile{ tile },
@@ -77,9 +72,7 @@ public:
   ThingImpl(ThingImpl const& other, ThingRef ref_)
     :
     metadata{ other.metadata },
-    base_properties{ other.base_properties },
-    transient_properties{ other.transient_properties },
-    property_modifiers{ other.property_modifiers },
+    properties{ other.properties },
     ref{ ref_ },
     location{ other.location },
     map_tile{ other.map_tile },
@@ -103,20 +96,7 @@ public:
   Metadata& metadata;
 
   /// Property dictionary.
-  /// Contains "base" properties for this Thing, e.g. properties without
-  /// any modifiers affecting them.
-  PropertyDictionary base_properties;
-
-  /// Cached transient property dictionary.
-  /// Contains modifications to properties for this Thing due to
-  /// property modifiers.
-  /// If a property here is missing, it is recalculated.
-  PropertyDictionary transient_properties;
-
-  /// Property modifiers.
-  /// Contains a map of all modifier functions to be performed on base
-  /// properties to get transient property values.
-  ModifierDictionary property_modifiers;
+  ModifiablePropertyDictionary properties;
 
   /// Reference to this Thing.
   ThingRef ref;

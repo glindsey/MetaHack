@@ -1672,10 +1672,10 @@ bool Thing::can_merge_with(ThingRef other) const
   ///       queried on a Thing and pulls the default, but it was NOT queried
   ///       on the second thing, the property dictionaries will NOT match.
   ///       I have not yet found a good solution to this problem.
-  auto& our_properties = this->pImpl->base_properties;
-  auto& other_properties = other->pImpl->base_properties;
+  auto& our_properties = this->pImpl->properties;
+  auto& other_properties = other->pImpl->properties;
 
-  if ((this->pImpl->base_properties) == (other->pImpl->base_properties))
+  if ((this->pImpl->properties) == (other->pImpl->properties))
   {
     return true;
   }
