@@ -2,7 +2,7 @@
 
 #include "ActionQuaff.h"
 #include "Thing.h"
-#include "ThingRef.h"
+#include "ThingId.h"
 
 ACTION_SRC_BOILERPLATE(ActionQuaff, "quaff", "drink from")
 

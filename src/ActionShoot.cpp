@@ -2,7 +2,7 @@
 
 #include "ActionShoot.h"
 #include "Thing.h"
-#include "ThingRef.h"
+#include "ThingId.h"
 
 ACTION_SRC_BOILERPLATE(ActionShoot, "shoot", "shoot")
 

@@ -3,7 +3,7 @@
 #include "ActionDrop.h"
 #include "ActionMove.h"
 #include "Thing.h"
-#include "ThingRef.h"
+#include "ThingId.h"
 
 ACTION_SRC_BOILERPLATE(ActionDrop, "drop", "drop")
 
@@ -12,7 +12,7 @@ Action::StateResult ActionDrop::do_prebegin_work_(AnyMap& params)
   StringDisplay message;
   auto subject = get_subject();
   auto object = get_object();
-  ThingRef location = subject->get_location();
+  ThingId location = subject->get_location();
 
   // If it's us, this is a special case. Return success.
   if (subject == object)
@@ -75,7 +75,7 @@ Action::StateResult ActionDrop::do_begin_work_(AnyMap& params)
   StringDisplay message;
   auto subject = get_subject();
   auto object = get_objects().front();
-  ThingRef location = subject->get_location();
+  ThingId location = subject->get_location();
 
   /// @todo Handle dropping a certain quantity of an item.
 

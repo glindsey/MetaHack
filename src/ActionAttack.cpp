@@ -5,7 +5,7 @@
 #include "Map.h"
 #include "MapFactory.h"
 #include "Thing.h"
-#include "ThingRef.h"
+#include "ThingId.h"
 
 ACTION_SRC_BOILERPLATE(ActionAttack, "attack", "attack")
 
@@ -111,10 +111,10 @@ Action::StateResult ActionAttack::do_begin_work_(AnyMap& params)
   }
 
   auto& new_tile = current_map.get_tile(x_new, y_new);
-  ThingRef new_floor = new_tile.get_tile_contents();
+  ThingId new_floor = new_tile.get_tile_contents();
 
   // See if the tile to move into contains another creature.
-  ThingRef creature = new_floor->get_inventory().get_entity();
+  ThingId creature = new_floor->get_inventory().get_entity();
   if (creature == MU)
   {
     /// @todo Deal with attacking other stuff, MapTiles, etc.

@@ -218,7 +218,7 @@
     <ClInclude Include="include\StatusArea.h" />
     <ClInclude Include="include\stdafx.h" />
     <ClInclude Include="include\Thing.h" />
-    <ClInclude Include="include\ThingRef.h" />
+    <ClInclude Include="include\ThingId.h" />
     <ClInclude Include="include\ThingManager.h" />
     <ClInclude Include="include\TileSheet.h" />
     <ClInclude Include="include\UsesPimpl.h" />
@@ -300,7 +300,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\Thing.cpp" />
-    <ClCompile Include="src\ThingRef.cpp" />
+    <ClCompile Include="src\ThingId.cpp" />
     <ClCompile Include="src\ThingManager.cpp" />
     <ClCompile Include="src\TileSheet.cpp" />
   </ItemGroup>

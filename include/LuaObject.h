@@ -6,7 +6,7 @@
 #include "stdafx.h"
 
 #include "ErrorHandler.h"
-#include "ThingRef.h"
+#include "ThingId.h"
 
 /// Forward declarations
 enum class ActionResult;
@@ -174,7 +174,7 @@ public:
     return 1;
   }
 
-  template <> int push_value(ThingRef value)
+  template <> int push_value(ThingId value)
   {
     lua_pushinteger(L_, static_cast<lua_Integer>(value));
     return 1;
@@ -242,11 +242,11 @@ public:
     return return_value;
   }
 
-  template <> ThingRef pop_value()
+  template <> ThingId pop_value()
   {
     lua_Integer return_value = lua_tointeger(L_, -1);
     lua_pop(L_, 1);
-    return ThingRef(return_value);
+    return ThingId(return_value);
   }
 
   template <> float pop_value()
@@ -312,7 +312,7 @@ public:
   template<> unsigned int stack_slots<void>() { return 0; }
   template<> unsigned int stack_slots<unsigned int>() { return 1; }
   template<> unsigned int stack_slots<int>() { return 1; }
-  template<> unsigned int stack_slots<ThingRef>() { return 1; }
+  template<> unsigned int stack_slots<ThingId>() { return 1; }
   template<> unsigned int stack_slots<float>() { return 1; }
   template<> unsigned int stack_slots<double>() { return 1; }
   template<> unsigned int stack_slots<bool>() { return 1; }
@@ -329,7 +329,7 @@ public:
   /// there.
   ///
   /// @param function_name  Name of the function to call
-  /// @param caller         ThingRef to the thing calling the function
+  /// @param caller         ThingId to the thing calling the function
   /// @param args           Vector of arguments to pass to the function
   /// @param default_result The default result if function is not found
   ///                       after traversing the entire parent tree.
@@ -339,7 +339,7 @@ public:
   /// @return The result of the call.
   template < typename ResultType, typename ArgType >
   ResultType call_thing_function(std::string function_name,
-                                 ThingRef caller,
+                                 ThingId caller,
                                  std::vector<ArgType> const& args,
                                  ResultType default_result = ResultType())
   {

@@ -120,9 +120,6 @@
     <ClInclude Include="include\ThingManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\ThingRef.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\common_types.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -300,6 +297,9 @@
     <ClInclude Include="include\ModifiablePropertyDictionary.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\ThingId.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">
@@ -387,9 +387,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\ThingManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ThingRef.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Action.cpp">
@@ -519,6 +516,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\ModifiablePropertyDictionary.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ThingId.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

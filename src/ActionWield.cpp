@@ -2,7 +2,7 @@
 
 #include "ActionWield.h"
 #include "Thing.h"
-#include "ThingRef.h"
+#include "ThingId.h"
 
 ACTION_SRC_BOILERPLATE(ActionWield, "wield", "wield")
 
@@ -15,7 +15,7 @@ Action::StateResult ActionWield::do_prebegin_work_(AnyMap& params)
   unsigned int hand = 0;
   StringDisplay bodypart_desc =
     subject->get_bodypart_description(BodyPart::Hand, hand);
-  ThingRef currently_wielded = subject->get_wielding(hand);
+  ThingId currently_wielded = subject->get_wielding(hand);
 
   StringDisplay thing_name = (object != MU) ? get_object_string_() : "nothing";
 
@@ -49,7 +49,7 @@ Action::StateResult ActionWield::do_begin_work_(AnyMap& params)
   unsigned int hand = 0;
   StringDisplay bodypart_desc =
     subject->get_bodypart_description(BodyPart::Hand, hand);
-  ThingRef currently_wielded = subject->get_wielding(hand);
+  ThingId currently_wielded = subject->get_wielding(hand);
 
   bool was_wielding = false;
 

@@ -2,7 +2,7 @@
 
 #include "ActionHurl.h"
 #include "Thing.h"
-#include "ThingRef.h"
+#include "ThingId.h"
 
 ACTION_SRC_BOILERPLATE(ActionHurl, "hurl", "throw")
 
@@ -77,7 +77,7 @@ Action::StateResult ActionHurl::do_begin_work_(AnyMap& params)
   auto subject = get_subject();
   auto object = get_object();
   auto direction = get_target_direction();
-  ThingRef new_location = subject->get_location();
+  ThingId new_location = subject->get_location();
 
   if (object->be_object_of(*this, subject, direction) == ActionResult::Success)
   {

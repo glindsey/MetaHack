@@ -145,7 +145,7 @@ StringKey const& AppStateGameMode::get_name()
 bool AppStateGameMode::initialize()
 {
   // Create the player.
-  ThingRef player = get_game_state().get_thing_manager().create("Human");
+  ThingId player = get_game_state().get_thing_manager().create("Human");
   player->set_proper_name("John Doe");
   get_game_state().set_player(player);
 
@@ -190,8 +190,8 @@ void AppStateGameMode::render_map(sf::RenderTexture& texture, int frame)
 {
   texture.clear();
 
-  ThingRef player = get_game_state().get_player();
-  ThingRef location = player->get_location();
+  ThingId player = get_game_state().get_player();
+  ThingId location = player->get_location();
 
   if (location == get_game_state().get_thing_manager().get_mu())
   {
@@ -242,7 +242,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 {
   SFMLEventResult result = SFMLEventResult::Ignored;
 
-  ThingRef player = get_game_state().get_player();
+  ThingId player = get_game_state().get_player();
 
   // *** Handle keys processed in any mode.
   if (!key.alt && !key.control)
@@ -282,7 +282,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
       /// @todo This is ugly; fix it.
       InventoryArea& inventory_area = dynamic_cast<InventoryArea&>(the_desktop.get_child("InventoryArea"));
 
-      std::vector<ThingRef>& things = inventory_area.get_selected_things();
+      std::vector<ThingId>& things = inventory_area.get_selected_things();
       int key_number = get_letter_key(key);
       Direction key_direction = get_direction_key(key);
 
@@ -389,8 +389,8 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
           case sf::Keyboard::Key::LBracket:
           {
-            ThingRef thing = inventory_area.get_viewed();
-            ThingRef location = thing->get_location();
+            ThingId thing = inventory_area.get_viewed();
+            ThingId location = thing->get_location();
             if (location != get_game_state().get_thing_manager().get_mu())
             {
               inventory_area.set_viewed(location);
@@ -408,7 +408,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
             if (slot_count > 0)
             {
-              ThingRef thing = inventory_area.get_selected_things().at(0);
+              ThingId thing = inventory_area.get_selected_things().at(0);
               if (thing->get_intrinsic<int>("inventory_size") != 0)
               {
                 if (!thing->can_have_action_done_by(MU, ActionOpen::prototype) || thing->get_base_property<bool>("open"))
@@ -936,7 +936,7 @@ sf::IntRect AppStateGameMode::calc_message_log_dims()
 
 void AppStateGameMode::reset_inventory_area()
 {
-  ThingRef player = m_game_state->get_player();
+  ThingId player = m_game_state->get_player();
   Map& game_map = GAME.get_map_factory().get(player->get_map_id());
 
   /// @todo This is ugly; fix it.
@@ -950,7 +950,7 @@ void AppStateGameMode::reset_inventory_area()
   {
     if (m_current_input_state == GameInputState::CursorLook)
     {
-      ThingRef floor_id = game_map.get_tile(m_cursor_coords).get_tile_contents();
+      ThingId floor_id = game_map.get_tile(m_cursor_coords).get_tile_contents();
       inventory_area.set_viewed(floor_id);
     }
     else
@@ -986,7 +986,7 @@ sf::IntRect AppStateGameMode::calc_inventory_dims()
 
 bool AppStateGameMode::move_cursor(Direction direction)
 {
-  ThingRef player = m_game_state->get_player();
+  ThingId player = m_game_state->get_player();
   Map& game_map = GAME.get_map_factory().get(player->get_map_id());
   bool result;
 
@@ -995,7 +995,7 @@ bool AppStateGameMode::move_cursor(Direction direction)
   return result;
 }
 
-SFMLEventResult AppStateGameMode::handle_key_press_target_selection(ThingRef player, sf::Event::KeyEvent& key)
+SFMLEventResult AppStateGameMode::handle_key_press_target_selection(ThingId player, sf::Event::KeyEvent& key)
 {
   SFMLEventResult result = SFMLEventResult::Ignored;
   int key_number = get_letter_key(key);
@@ -1048,7 +1048,7 @@ SFMLEventResult AppStateGameMode::handle_key_press_target_selection(ThingRef pla
   return result;
 }
 
-SFMLEventResult AppStateGameMode::handle_key_press_cursor_look(ThingRef player, sf::Event::KeyEvent& key)
+SFMLEventResult AppStateGameMode::handle_key_press_cursor_look(ThingId player, sf::Event::KeyEvent& key)
 {
   SFMLEventResult result = SFMLEventResult::Ignored;
 

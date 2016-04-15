@@ -2,7 +2,7 @@
 
 #include "ActionPutInto.h"
 #include "Thing.h"
-#include "ThingRef.h"
+#include "ThingId.h"
 
 ACTION_SRC_BOILERPLATE(ActionPutInto, "putinto", "store")
 

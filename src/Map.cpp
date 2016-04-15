@@ -176,7 +176,7 @@ void Map::process()
   {
     for (int x = 0; x < m_map_size.x; ++x)
     {
-      ThingRef contents = TILE(x, y).get_tile_contents();
+      ThingId contents = TILE(x, y).get_tile_contents();
       contents->process();
     }
   }
@@ -197,14 +197,14 @@ void Map::update_lighting()
   {
     for (int x = 0; x < m_map_size.x; ++x)
     {
-      ThingRef contents = TILE(x, y).get_tile_contents();
+      ThingId contents = TILE(x, y).get_tile_contents();
       auto& inventory = contents->get_inventory();
       auto& things = inventory.get_things();
       for (auto iter = std::begin(things);
       iter != std::end(things);
         ++iter)
       {
-        ThingRef thing = iter->second;
+        ThingId thing = iter->second;
         thing->light_up_surroundings();
         //add_light(thing);
       }
@@ -212,7 +212,7 @@ void Map::update_lighting()
   }
 }
 
-void Map::do_recursive_lighting(ThingRef source,
+void Map::do_recursive_lighting(ThingId source,
                                 sf::Vector2i const& origin,
                                 sf::Color const& light_color,
                                 int const max_depth_squared,
@@ -351,7 +351,7 @@ void Map::do_recursive_lighting(ThingRef source,
   }
 }
 
-void Map::add_light(ThingRef source)
+void Map::add_light(ThingId source)
 {
   // Get the map tile the light source is on.
   auto maptile = source->get_maptile();
@@ -476,7 +476,7 @@ void Map::add_light(ThingRef source)
   }
 }
 
-void Map::update_tile_vertices(ThingRef thing)
+void Map::update_tile_vertices(ThingId thing)
 {
   auto location = thing->get_location();
 
@@ -524,7 +524,7 @@ void Map::update_tile_vertices(ThingRef thing)
   } // end for (int y)
 }
 
-void Map::update_thing_vertices(ThingRef thing, int frame)
+void Map::update_thing_vertices(ThingId thing, int frame)
 {
   // Loop through and draw things.
   pImpl->thing_vertices.clear();
@@ -532,14 +532,14 @@ void Map::update_thing_vertices(ThingRef thing, int frame)
   {
     for (int x = 0; x < m_map_size.x; ++x)
     {
-      ThingRef contents = TILE(x, y).get_tile_contents();
+      ThingId contents = TILE(x, y).get_tile_contents();
       Inventory& inv = contents->get_inventory();
 
       if (thing->can_see(x, y))
       {
         if (inv.count() > 0)
         {
-          ThingRef biggest_thing = inv.get_largest_thing();
+          ThingId biggest_thing = inv.get_largest_thing();
           if (biggest_thing != MU)
           {
             biggest_thing->add_floor_vertices_to(pImpl->thing_vertices, true, frame);
@@ -676,7 +676,7 @@ int Map::LUA_get_tile_contents(lua_State* L)
   sf::Vector2i coords = sf::Vector2i(static_cast<int>(lua_tointeger(L, 2)), static_cast<int>(lua_tointeger(L, 3)));
 
   auto& map_tile = GAME.get_map_factory().get(map_id).get_tile(coords);
-  ThingRef contents = map_tile.get_tile_contents();
+  ThingId contents = map_tile.get_tile_contents();
 
   lua_pushinteger(L, contents);
 

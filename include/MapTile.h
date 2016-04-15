@@ -9,7 +9,7 @@
 #include "LightInfluence.h"
 #include "MapFactory.h"
 #include "Thing.h"
-#include "ThingRef.h"
+#include "ThingId.h"
 #include "TileSheet.h"
 
 // Forward declarations
@@ -27,7 +27,7 @@ public:
   virtual ~MapTile();
 
   /// Get the tile's contents object.
-  ThingRef get_tile_contents() const;
+  ThingId get_tile_contents() const;
 
   /// Return this tile's description.
   virtual StringDisplay get_display_name() const override final;
@@ -71,7 +71,7 @@ public:
   bool is_empty_space() const;
 
   /// Returns whether a tile can be traversed by a certain Entity.
-  bool can_be_traversed_by(ThingRef thing) const;
+  bool can_be_traversed_by(ThingId thing) const;
 
   /// Set the current tile's location.
   void set_coords(int x, int y);
@@ -88,13 +88,13 @@ public:
   /// Receive light from the specified LightSource.
   /// Gets the Map this tile belongs to and does a recursive
   /// raycasting algorithm on it.
-  virtual void be_lit_by(ThingRef light);
+  virtual void be_lit_by(ThingId light);
 
   /// Clear light influences.
   void clear_light_influences();
 
   /// Add a light influence to the tile.
-  void add_light_influence(ThingRef source,
+  void add_light_influence(ThingId source,
                            LightInfluence influence);
 
   /// Get the light shining on a tile.
@@ -163,7 +163,7 @@ private:
   Metadata* m_p_metadata;
 
   /// Reference to the Thing that represents this tile's contents.
-  ThingRef m_tile_contents;
+  ThingId m_tile_contents;
 
   /// Tile's light level.
   /// Levels for the various color channels are interpreted as such:
@@ -183,7 +183,7 @@ private:
   /// 0 <= value <= 128: result = (original * (value / 128))
   /// 128 < value <= 255: result = max(original + (value - 128), 255)
   /// The alpha channel is ignored.
-  std::map<ThingRef, LightInfluence> m_lights;
+  std::map<ThingId, LightInfluence> m_lights;
 
   /// Random tile offset.
   int m_tile_offset;

@@ -49,8 +49,8 @@ protected:
   sf::IntRect calc_status_area_dims();
   sf::IntRect calc_inventory_dims();
   bool move_cursor(Direction direction);
-  SFMLEventResult handle_key_press_target_selection(ThingRef player, sf::Event::KeyEvent& key);
-  SFMLEventResult handle_key_press_cursor_look(ThingRef player, sf::Event::KeyEvent& key);
+  SFMLEventResult handle_key_press_target_selection(ThingId player, sf::Event::KeyEvent& key);
+  SFMLEventResult handle_key_press_cursor_look(ThingId player, sf::Event::KeyEvent& key);
 
   void add_zoom(float zoom_amount);
 

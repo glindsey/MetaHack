@@ -11,7 +11,7 @@
 class MapFeature;
 class MapGenerator;
 class MapTile;
-class ThingRef;
+class ThingId;
 
 // VS compatibility
 #ifdef WIN32   //WINDOWS
@@ -47,11 +47,11 @@ public:
 
   void update_lighting();
 
-  void add_light(ThingRef source);
+  void add_light(ThingId source);
 
-  void update_tile_vertices(ThingRef thing);
+  void update_tile_vertices(ThingId thing);
 
-  void update_thing_vertices(ThingRef thing, int frame);
+  void update_thing_vertices(ThingId thing, int frame);
 
   void set_view(sf::RenderTarget& target,
                 sf::Vector2f center,
@@ -126,7 +126,7 @@ protected:
   ///  / | \   |
   /// / 6|5 \  |
 
-  void do_recursive_lighting(ThingRef source,
+  void do_recursive_lighting(ThingId source,
                              sf::Vector2i const& origin,
                              sf::Color const& light_color,
                              int const max_depth_squared,

@@ -15,7 +15,7 @@ Inventory::~Inventory()
   //dtor
 }
 
-bool Inventory::add(ThingRef thing)
+bool Inventory::add(ThingId thing)
 {
   // If thing is Mu, exit returning false.
   if (thing == MU)
@@ -80,8 +80,8 @@ void Inventory::consolidate_items()
 
     while (second_iter != std::end(things_))
     {
-      ThingRef first_thing = first_iter->second;
-      ThingRef second_thing = second_iter->second;
+      ThingId first_thing = first_iter->second;
+      ThingId second_thing = second_iter->second;
 
       if (first_thing->can_merge_with(second_thing))
       {
@@ -99,7 +99,7 @@ void Inventory::consolidate_items()
   }
 }
 
-bool Inventory::contains(ThingRef thing)
+bool Inventory::contains(ThingId thing)
 {
   if (GAME.get_thing_manager().exists(thing) == false) return false;
 
@@ -111,7 +111,7 @@ bool Inventory::contains(InventorySlot slot)
   return (things_.count(slot) != 0);
 }
 
-InventorySlot Inventory::get(ThingRef thing)
+InventorySlot Inventory::get(ThingId thing)
 {
   if (GAME.get_thing_manager().exists(thing) == false) return INVSLOT_INVALID;
 
@@ -125,14 +125,14 @@ InventorySlot Inventory::get(ThingRef thing)
   return INVSLOT_INVALID;
 }
 
-ThingRef Inventory::get(InventorySlot slot)
+ThingId Inventory::get(InventorySlot slot)
 {
   return (things_.at(slot));
 }
 
-ThingRef Inventory::split(ThingRef thing, unsigned int target_quantity)
+ThingId Inventory::split(ThingId thing, unsigned int target_quantity)
 {
-  ThingRef target_thing = MU;
+  ThingId target_thing = MU;
 
   if (target_quantity > 0)
   {
@@ -140,7 +140,7 @@ ThingRef Inventory::split(ThingRef thing, unsigned int target_quantity)
 
     if (iter != things_.cend())
     {
-      ThingRef source_thing = iter->second;
+      ThingId source_thing = iter->second;
       unsigned int source_quantity = source_thing->get_quantity();
       if (target_quantity < source_quantity)
       {
@@ -154,9 +154,9 @@ ThingRef Inventory::split(ThingRef thing, unsigned int target_quantity)
   return target_thing;
 }
 
-ThingRef Inventory::remove(InventorySlot slot)
+ThingId Inventory::remove(InventorySlot slot)
 {
-  ThingRef removed_thing;
+  ThingId removed_thing;
   if (things_.count(slot) != 0)
   {
     removed_thing = things_[slot];
@@ -165,9 +165,9 @@ ThingRef Inventory::remove(InventorySlot slot)
   return removed_thing;
 }
 
-ThingRef Inventory::remove(ThingRef thing)
+ThingId Inventory::remove(ThingId thing)
 {
-  ThingRef removed_thing;
+  ThingId removed_thing;
 
   auto iter = find(thing);
   if (iter != things_.cend())
@@ -178,7 +178,7 @@ ThingRef Inventory::remove(ThingRef thing)
   return removed_thing;
 }
 
-ThingRef Inventory::get_largest_thing()
+ThingId Inventory::get_largest_thing()
 {
   auto iter_largest = things_.cbegin();
 
@@ -193,12 +193,12 @@ ThingRef Inventory::get_largest_thing()
   return iter_largest->second;
 }
 
-ThingRef Inventory::get_entity()
+ThingId Inventory::get_entity()
 {
   auto iter =
     find_if([&](const ThingPair& thing_pair)
   {
-    ThingRef ref = thing_pair.second;
+    ThingId ref = thing_pair.second;
     return ((ref->get_intrinsic<bool>("is_entity") == true) && (ref->get_base_property<int>("hp") > 0));
   });
 
@@ -219,7 +219,7 @@ ThingMap::iterator Inventory::find_if(std::function<bool(ThingPair const&)> func
   return iter;
 }
 
-ThingMap::iterator Inventory::find(ThingRef target_id)
+ThingMap::iterator Inventory::find(ThingId target_id)
 {
   ThingMap::iterator iter =
     std::find_if(
@@ -233,7 +233,7 @@ ThingMap::iterator Inventory::find(ThingRef target_id)
   return iter;
 }
 
-bool Inventory::is_smaller_than(ThingRef a, ThingRef b)
+bool Inventory::is_smaller_than(ThingId a, ThingId b)
 {
   if ((a == MU) || (b == MU)) return false;
 

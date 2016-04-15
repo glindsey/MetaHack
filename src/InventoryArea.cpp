@@ -13,7 +13,7 @@
 struct InventoryArea::Impl
 {
   /// Thing whose contents (or surroundings) are currently being viewed.
-  ThingRef viewed;
+  ThingId viewed;
 
   /// Vector of selected inventory slots.
   std::vector< InventorySlot > selected_slots;
@@ -87,12 +87,12 @@ InventoryArea::~InventoryArea()
   //dtor
 }
 
-ThingRef InventoryArea::get_viewed() const
+ThingId InventoryArea::get_viewed() const
 {
   return pImpl->viewed;
 }
 
-void InventoryArea::set_viewed(ThingRef thing)
+void InventoryArea::set_viewed(ThingId thing)
 {
   pImpl->viewed = thing;
   pImpl->selected_slots.clear();
@@ -141,9 +141,9 @@ std::vector<InventorySlot> const& InventoryArea::get_selected_slots()
   return pImpl->selected_slots;
 }
 
-std::vector<ThingRef> InventoryArea::get_selected_things()
+std::vector<ThingId> InventoryArea::get_selected_things()
 {
-  std::vector<ThingRef> things;
+  std::vector<ThingId> things;
 
   if (pImpl->viewed != MU)
   {
@@ -153,7 +153,7 @@ std::vector<ThingRef> InventoryArea::get_selected_things()
     iter != std::end(pImpl->selected_slots);
       ++iter)
     {
-      ThingRef thing = inventory.get(*iter);
+      ThingId thing = inventory.get(*iter);
       things.push_back(thing);
     }
   }
@@ -188,7 +188,7 @@ unsigned int InventoryArea::get_max_quantity() const
   }
   else
   {
-    ThingRef thing = inventory.get(pImpl->selected_slots[0]);
+    ThingId thing = inventory.get(pImpl->selected_slots[0]);
 
     if (thing == MU)
     {
@@ -244,9 +244,9 @@ bool InventoryArea::dec_selected_quantity()
   return false;
 }
 
-ThingRef InventoryArea::get_thing(InventorySlot selection)
+ThingId InventoryArea::get_thing(InventorySlot selection)
 {
-  ThingRef viewed = pImpl->viewed;
+  ThingId viewed = pImpl->viewed;
 
   if (viewed == MU)
   {
@@ -304,7 +304,7 @@ void InventoryArea::render_contents_(sf::RenderTexture& texture, int frame)
   iter != things.cend(); ++iter)
   {
     auto& slot = (*iter).first;
-    ThingRef thing = (*iter).second;
+    ThingId thing = (*iter).second;
     unsigned int slot_number = static_cast<unsigned int>(slot);
     sf::Text render_text;
 

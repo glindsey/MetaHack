@@ -4,7 +4,7 @@
 #include "stdafx.h"
 
 #include "Action.h"
-#include "ThingRef.h"
+#include "ThingId.h"
 
 /// Template class implementing the Curiously Recurring Template Pattern
 /// to present several create() functions.
@@ -14,7 +14,7 @@ class ActionCRTP
 public:
 
   /// Implement a create_() function that will be registerable with a factory class.
-  static std::unique_ptr<Action> create_(ThingRef subject)
+  static std::unique_ptr<Action> create_(ThingId subject)
   {
     std::unique_ptr<Action> action{ new Derived{ subject } };
 

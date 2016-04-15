@@ -19,7 +19,7 @@ class Entity;
 class MapTile;
 class Inventory;
 class ThingFactory;
-class ThingRef;
+class ThingId;
 class Thing;
 
 // Using Declarations
@@ -54,7 +54,7 @@ public:
   bool action_is_in_progress();
 
   /// Get the thing being wielded in the specified hand, if any.
-  ThingRef get_wielding(unsigned int & hand);
+  ThingId get_wielding(unsigned int & hand);
 
   /// Returns true if this thing is the current player.
   /// By default, returns false. Overridden by Entity class.
@@ -67,36 +67,36 @@ public:
   /// This is used by InventoryArea to show wielded status.
   /// @param[in] thing Thing to check
   /// @return true if the Thing is wielded by the Entity.
-  bool is_wielding(ThingRef thing);
+  bool is_wielding(ThingId thing);
 
   /// Return whether a Thing is wielded by this Entity.
   /// This is used by InventoryArea to show wielded status.
   /// @param[in] thing Thing to check
   /// @param[out] number Hand number it is wielded in.
   /// @return true if the Thing is wielded by the Entity.
-  bool is_wielding(ThingRef thing, unsigned int& number);
+  bool is_wielding(ThingId thing, unsigned int& number);
 
   /// Return whether a Thing is equipped (worn) by this Entity.
   /// @param[in] thing Thing to check
   /// @return true if the Thing is being worn.
-  bool has_equipped(ThingRef thing);
+  bool has_equipped(ThingId thing);
 
   /// Return whether a Thing is being worn by this Entity.
   /// @param[in] thing Thing to check
   /// @param[out] location of the worn Thing, if worn
   /// @return true if the Thing is being worn.
-  bool has_equipped(ThingRef thing, WearLocation& location);
+  bool has_equipped(ThingId thing, WearLocation& location);
 
   /// Return whether a Thing is within reach of the Entity.
   /// @param[in] thing Thing to check
   /// @return true if the Thing is in the Entity's inventory or is at the
   ///         same location as the Entity, false otherwise.
-  bool can_reach(ThingRef thing);
+  bool can_reach(ThingId thing);
 
   /// Return whether a Thing is adjacent to this Entity.
   /// @param[in] thing Thing to check
   /// @return true if the Thing is at the same place or adjacent to this Entity, false otherwise.
-  bool is_adjacent_to(ThingRef thing);
+  bool is_adjacent_to(ThingId thing);
 
   /// Die.
   /// @return True if the Thing died, false if the death was avoided.
@@ -107,7 +107,7 @@ public:
   /// @param[out] action_time The time it took to attack it.
   /// @return true if attack was performed (whether it succeeded or not),
   ///         false if it wasn't performed
-  bool do_attack(ThingRef thing, unsigned int& action_time);
+  bool do_attack(ThingId thing, unsigned int& action_time);
 
   /// Get an intrinsic of this Thing.
   /// If the intrinsic is not found, returns the default value.
@@ -233,17 +233,17 @@ public:
   void set_quantity(unsigned int quantity);
 
   /// Return a reference to this thing.
-  ThingRef get_ref() const;
+  ThingId get_id() const;
 
   /// Return the root location of this Thing, traversing up the location
   /// chain until MU is reached.
-  ThingRef get_root_location() const;
+  ThingId get_root_location() const;
 
   /// Return the location of this thing.
-  ThingRef get_location() const;
+  ThingId get_location() const;
 
   /// Return whether the Entity can see the requested Thing.
-  bool can_see(ThingRef thing);
+  bool can_see(ThingId thing);
 
   /// Return whether the Entity can see the requested tile.
   bool can_see(sf::Vector2i coords);
@@ -266,21 +266,21 @@ public:
   /// Add the memory of a particular tile to a VertexArray.
   void add_memory_vertices_to(sf::VertexArray& vertices, int x, int y);
 
-  ActionResult can_deequip(ThingRef thing_id, unsigned int& action_time);
+  ActionResult can_deequip(ThingId thing_id, unsigned int& action_time);
 
   /// Attempt to de-equip (remove) a thing.
-  bool do_deequip(ThingRef thing_id, unsigned int& action_time);
+  bool do_deequip(ThingId thing_id, unsigned int& action_time);
 
-  ActionResult can_equip(ThingRef thing_id, unsigned int& action_time);
+  ActionResult can_equip(ThingId thing_id, unsigned int& action_time);
 
   /// Attempt to equip (wear) a thing.
-  bool do_equip(ThingRef thing_id, unsigned int& action_time);
+  bool do_equip(ThingId thing_id, unsigned int& action_time);
 
-  ActionResult can_wield(ThingRef thing_id, unsigned int hand, unsigned int& action_time);
+  ActionResult can_wield(ThingId thing_id, unsigned int hand, unsigned int& action_time);
 
-  void set_wielded(ThingRef thing, unsigned int hand);
+  void set_wielded(ThingId thing, unsigned int hand);
 
-  void set_worn(ThingRef thing, WearLocation location);
+  void set_worn(ThingId thing, WearLocation location);
 
   /// Return whether this Entity can currently see.
   /// @todo Implement blindness counter, blindness due to wearing blindfold,
@@ -321,7 +321,7 @@ public:
   /// @param thing  The Thing doing the Action.
   /// @param action Reference to the Action to perform.
   /// @return true if the Action can be performed, false otherwise.
-  bool can_have_action_done_by(ThingRef thing, Action& action);
+  bool can_have_action_done_by(ThingId thing, Action& action);
 
   /// Returns a reference to the inventory.
   Inventory& get_inventory();
@@ -367,7 +367,7 @@ public:
   /// @param definite   If true, uses definite articles.
   ///                   If false, uses indefinite articles.
   ///                   Defaults to true.
-  StringDisplay get_self_or_identifying_string(ThingRef other, bool definite = true);
+  StringDisplay get_self_or_identifying_string(ThingId other, bool definite = true);
 
   /// Return a string that identifies this thing.
   /// Returns "the/a/an" and a description of the thing, such as
@@ -416,7 +416,7 @@ public:
   StringDisplay const& get_object_pronoun() const;
 
   /// Get the appropriate reflexive pronoun for the Thing.
-  StringDisplay const& get_reflexive_pronoun() const;
+  StringDisplay const& get_idlexive_pronoun() const;
 
   /// Get the appropriate possessive adjective for the Thing.
   StringDisplay const& get_possessive_adjective() const;
@@ -460,7 +460,7 @@ public:
   /// Receive light from the specified light source.
   /// The default behavior is to pass the light source to the location if
   /// this Thing is opaque.
-  void be_lit_by(ThingRef light);
+  void be_lit_by(ThingId light);
 
   /// Spill the contents of this Thing out into the location of the Thing.
   void spill();
@@ -469,11 +469,11 @@ public:
   void destroy();
 
   /// Attempt to move this Thing into a location.
-  bool move_into(ThingRef new_location);
+  bool move_into(ThingId new_location);
 
   /// Return whether or not this thing can be mixed with another Thing.
   /// The default behavior for this is to return false.
-  bool is_miscible_with(ThingRef thing);
+  bool is_miscible_with(ThingId thing);
 
   /// Return the body part this thing is equippable on.
   /// If thing is not equippable, return BodyPart::Count.
@@ -490,7 +490,7 @@ public:
   ActionResult perform_action_died();
 
   /// Perform an action when this thing collides with another thing.
-  void perform_action_collided_with(ThingRef thing);
+  void perform_action_collided_with(ThingId thing);
 
   /// Perform an action when this thing collides with a wall.
   void perform_action_collided_with_wall(Direction d, StringKey tile_type);
@@ -500,7 +500,7 @@ public:
   /// @param subject  The subject performing the action.
   /// @return Result of the action. If Failure, the action is aborted
   ///         (if possible).
-  ActionResult be_object_of(Action & action, ThingRef subject);
+  ActionResult be_object_of(Action & action, ThingId subject);
 
   /// Perform the effects of being a object of an action with a target.
   /// @param action   The action to be the target of.
@@ -508,7 +508,7 @@ public:
   /// @param target   The target of the action.
   /// @return Result of the action. If Failure, the action is aborted
   ///         (if possible).
-  ActionResult be_object_of(Action & action, ThingRef subject, ThingRef target);
+  ActionResult be_object_of(Action & action, ThingId subject, ThingId target);
 
   /// Perform the effects of being a object of an action with a direction.
   /// @param action     The action to be the target of.
@@ -516,10 +516,10 @@ public:
   /// @param direction  The direction of the action.
   /// @return Result of the action. If Failure, the action is aborted
   ///         (if possible).
-  ActionResult be_object_of(Action & action, ThingRef subject, Direction direction);
+  ActionResult be_object_of(Action & action, ThingId subject, Direction direction);
 
   /// Perform an action when this thing is hit by an attack.
-  ActionResult perform_action_hurt_by(ThingRef subject);
+  ActionResult perform_action_hurt_by(ThingId subject);
 
   /// Perform an action when this thing is used to hit a target.
   /// This action executes when the thing is wielded by an entity, and an
@@ -528,23 +528,23 @@ public:
   /// @see Entity::attack
   /// @note Is there a better name for this? Current name sounds like the
   ///       object is the target, instead of the implement.
-  ActionResult perform_action_attacked_by(ThingRef subject, ThingRef target);
+  ActionResult perform_action_attacked_by(ThingId subject, ThingId target);
 
   /// Perform an action when this thing is de-equipped (taken off).
   /// If this function returns false, the action is aborted.
-  bool perform_action_deequipped_by(ThingRef actor, WearLocation& location);
+  bool perform_action_deequipped_by(ThingId actor, WearLocation& location);
 
   /// Perform an action when this thing is equipped.
   /// If this function returns false, the action is aborted.
-  bool perform_action_equipped_by(ThingRef actor, WearLocation& location);
+  bool perform_action_equipped_by(ThingId actor, WearLocation& location);
 
   /// Perform an action when this thing is unwielded.
   /// If this function returns false, the action is aborted.
-  bool perform_action_unwielded_by(ThingRef actor);
+  bool perform_action_unwielded_by(ThingId actor);
 
   /// Returns whether the Thing can merge with another Thing.
   /// Calls an overridden subclass function.
-  bool can_merge_with(ThingRef other) const;
+  bool can_merge_with(ThingId other) const;
 
   /// Returns whether the Thing can hold a certain thing.
   /// If Thing's inventory size is 0, returns
@@ -552,7 +552,7 @@ public:
   /// Otherwise, calls Lua function "can_contain()" for the Thing's type.
   /// @param thing Thing to check.
   /// @return ActionResult specifying whether the thing can be held here.
-  ActionResult can_contain(ThingRef thing);
+  ActionResult can_contain(ThingId thing);
 
 private:
   /// Pimpl implementation
@@ -561,13 +561,13 @@ private:
   Pimpl<ThingImpl> pImpl;
 
   /// Named Constructor
-  Thing(Metadata& metadata, ThingRef ref);
+  Thing(Metadata& metadata, ThingId ref);
 
   /// Floor Constructor
-  Thing(MapTile* map_tile, Metadata& metadata, ThingRef ref);
+  Thing(MapTile* map_tile, Metadata& metadata, ThingId ref);
 
   /// Clone Constructor
-  Thing(Thing const& original, ThingRef ref);
+  Thing(Thing const& original, ThingId ref);
 
   /// Initializer; called by all constructors.
   void initialize();
@@ -585,7 +585,7 @@ private:
   /// Set the location of this thing.
   /// Does no checks, nor does it update the source/target inventories.
   /// Those are the responsibility of the caller.
-  void set_location(ThingRef target);
+  void set_location(ThingId target);
 
   /// Outline color for walls when drawing on-screen.
   static sf::Color const wall_outline_color_;
@@ -606,7 +606,7 @@ private:
                                std::vector<ArgType> const& args = {},
                                ReturnType default_result = ReturnType())
   {
-    return the_lua_instance.call_thing_function<ReturnType, ArgType>(function_name, get_ref(), args, default_result);
+    return the_lua_instance.call_thing_function<ReturnType, ArgType>(function_name, get_id(), args, default_result);
   }
 };
 

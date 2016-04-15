@@ -2,7 +2,7 @@
 
 #include "ActionWait.h"
 #include "Thing.h"
-#include "ThingRef.h"
+#include "ThingId.h"
 
 ACTION_SRC_BOILERPLATE(ActionWait, "wait", "wait")
 

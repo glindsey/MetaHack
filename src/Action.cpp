@@ -7,13 +7,13 @@
 #include "MessageLog.h"
 #include "Thing.h"
 #include "ThingManager.h"
-#include "ThingRef.h"
+#include "ThingId.h"
 
 std::unordered_map<StringKey, ActionCreator> Action::action_map;
 
 struct Action::Impl
 {
-  Impl(ThingRef subject_)
+  Impl(ThingId subject_)
     :
     state{ Action::State::Pending },
     subject{ subject_ },
@@ -27,13 +27,13 @@ struct Action::Impl
   Action::State state;
 
   /// The subject performing the action.
-  ThingRef subject;
+  ThingId subject;
 
   /// The objects of the action.
-  std::vector<ThingRef> objects;
+  std::vector<ThingId> objects;
 
   /// Target Thing for the action (if any).
-  ThingRef target_thing;
+  ThingId target_thing;
 
   /// Direction for the action (if any).
   Direction target_direction;
@@ -49,7 +49,7 @@ Action::Action()
   SET_UP_LOGGER("Action", true);
 }
 
-Action::Action(ThingRef subject)
+Action::Action(ThingId subject)
   :
   pImpl{ new Impl(subject) }
 {}
@@ -57,45 +57,45 @@ Action::Action(ThingRef subject)
 Action::~Action()
 {}
 
-ThingRef Action::get_subject() const
+ThingId Action::get_subject() const
 {
   return pImpl->subject;
 }
 
-void Action::set_object(ThingRef object)
+void Action::set_object(ThingId object)
 {
   pImpl->objects.clear();
   pImpl->objects.push_back(object);
 }
 
-void Action::set_objects(std::vector<ThingRef> objects)
+void Action::set_objects(std::vector<ThingId> objects)
 {
   pImpl->objects = objects;
 }
 
-std::vector<ThingRef> const& Action::get_objects() const
+std::vector<ThingId> const& Action::get_objects() const
 {
   return pImpl->objects;
 }
 
-ThingRef Action::get_object() const
+ThingId Action::get_object() const
 {
   return pImpl->objects[0];
 }
 
-ThingRef Action::get_second_object() const
+ThingId Action::get_second_object() const
 {
   return pImpl->objects[1];
 }
 
-bool Action::process(ThingRef actor, AnyMap params)
+bool Action::process(ThingId actor, AnyMap params)
 {
   // If entity is currently busy, decrement by one and return.
   int counter_busy = actor->get_base_property<int>("counter_busy");
   if (counter_busy > 0)
   {
     CLOG(TRACE, "Action") << "Thing #" <<
-      actor.get_id().to_string() << " (" <<
+      actor.to_string() << " (" <<
       actor->get_type() << "): counter_busy = " <<
       counter_busy << "%d, decrementing";
 
@@ -116,7 +116,7 @@ bool Action::process(ThingRef actor, AnyMap params)
     Action::StateResult result{ false, 0 };
 
     CLOG(TRACE, "Action") << "Thing #" <<
-      actor.get_id().to_string() << " (" <<
+      actor.to_string() << " (" <<
       actor->get_type().c_str() << "): Action " <<
       get_type().c_str() << " is in state " <<
       str(get_state()) << ", counter_busy = " <<
@@ -196,7 +196,7 @@ Action::State Action::get_state()
   return pImpl->state;
 }
 
-void Action::set_target(ThingRef thing) const
+void Action::set_target(ThingId thing) const
 {
   pImpl->target_thing = thing;
   pImpl->target_direction = Direction::None;
@@ -213,7 +213,7 @@ void Action::set_quantity(unsigned int quantity) const
   pImpl->quantity = quantity;
 }
 
-ThingRef Action::get_target_thing() const
+ThingId Action::get_target_thing() const
 {
   return pImpl->target_thing;
 }
@@ -362,7 +362,7 @@ StringDisplay Action::get_object_string_()
   {
     if (get_object() == get_subject())
     {
-      description += get_subject()->get_reflexive_pronoun();
+      description += get_subject()->get_idlexive_pronoun();
     }
     else
     {
@@ -410,11 +410,11 @@ StringDisplay Action::get_target_string_()
 
   if (target == subject)
   {
-    return subject->get_reflexive_pronoun();
+    return subject->get_idlexive_pronoun();
   }
   else if ((objects.size() == 1) && (target == get_object()))
   {
-    return get_object()->get_reflexive_pronoun();
+    return get_object()->get_idlexive_pronoun();
   }
   else
   {
@@ -478,7 +478,7 @@ bool Action::exists(StringKey key)
   return Action::action_map.count(key) != 0;
 }
 
-std::unique_ptr<Action> Action::create(StringKey key, ThingRef subject)
+std::unique_ptr<Action> Action::create(StringKey key, ThingId subject)
 {
   if (Action::action_map.count(key) != 0)
   {

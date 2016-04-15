@@ -3,7 +3,7 @@
 #include "ActionGet.h"
 #include "ActionMove.h"
 #include "Thing.h"
-#include "ThingRef.h"
+#include "ThingId.h"
 
 ACTION_SRC_BOILERPLATE(ActionGet, "get", "get")
 
@@ -12,7 +12,7 @@ Action::StateResult ActionGet::do_prebegin_work_(AnyMap& params)
   StringDisplay message;
   auto subject = get_subject();
   auto object = get_object();
-  ThingRef location = subject->get_location();
+  ThingId location = subject->get_location();
 
   // Verify that the Action has an object.
   if (object == MU)

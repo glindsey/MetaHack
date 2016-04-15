@@ -7,15 +7,15 @@
 #include "MapTile.h"
 #include "Metadata.h"
 #include "ModifiablePropertyDictionary.h"
-#include "ThingRef.h"
+#include "ThingId.h"
 #include "ThingManager.h"
 
 // Using declarations.
-using WieldingMap = std::unordered_map<unsigned int, ThingRef>;
-using WieldingPair = std::pair<unsigned int, ThingRef>;
+using WieldingMap = std::unordered_map<unsigned int, ThingId>;
+using WieldingPair = std::pair<unsigned int, ThingId>;
 
-using WearingMap = std::unordered_map<WearLocation, ThingRef>;
-using WearingPair = std::pair<WearLocation, ThingRef>;
+using WearingMap = std::unordered_map<WearLocation, ThingId>;
+using WearingPair = std::pair<WearLocation, ThingId>;
 
 using MapMemory = std::vector<StringKey>;
 using TilesSeen = boost::dynamic_bitset<>;
@@ -28,7 +28,7 @@ class ThingImpl
 public:
 
   /// Constructor for thing of certain type.
-  ThingImpl(Metadata& metadata_, ThingRef ref_)
+  ThingImpl(Metadata& metadata_, ThingId ref_)
     :
     metadata{ metadata_ },
     properties{},
@@ -48,7 +48,7 @@ public:
   }
 
   /// Constructor for floor of a MapTile.
-  ThingImpl(MapTile* tile, Metadata& metadata_, ThingRef ref_)
+  ThingImpl(MapTile* tile, Metadata& metadata_, ThingId ref_)
     :
     metadata{ metadata_ },
     properties{},
@@ -69,7 +69,7 @@ public:
   }
 
   /// Clone constructor.
-  ThingImpl(ThingImpl const& other, ThingRef ref_)
+  ThingImpl(ThingImpl const& other, ThingId ref_)
     :
     metadata{ other.metadata },
     properties{ other.properties },
@@ -99,10 +99,10 @@ public:
   ModifiablePropertyDictionary properties;
 
   /// Reference to this Thing.
-  ThingRef ref;
+  ThingId ref;
 
   /// Reference to this Thing's location.
-  ThingRef location;
+  ThingId location;
 
   /// If this Thing is a Floor, pointer to the MapTile it is on.
   MapTile* map_tile;
@@ -134,7 +134,7 @@ public:
   /// Map of things worn.
   WearingMap equipped_items;
 
-  bool is_wielding(ThingRef thing, unsigned int& hand)
+  bool is_wielding(ThingId thing, unsigned int& hand)
   {
     if (thing == MU)
     {
@@ -157,7 +157,7 @@ public:
     }
   }
 
-  ThingRef wielding_in(unsigned int hand)
+  ThingId wielding_in(unsigned int hand)
   {
     if (wielded_items.count(hand) == 0)
     {
@@ -169,7 +169,7 @@ public:
     }
   }
 
-  bool is_wearing(ThingRef thing, WearLocation& location)
+  bool is_wearing(ThingId thing, WearLocation& location)
   {
     if (thing == MU)
     {

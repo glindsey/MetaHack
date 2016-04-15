@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 
-#include "ThingRef.h"
+#include "ThingId.h"
 
 // Forward declarations
 class MapFactory;
@@ -34,17 +34,17 @@ public:
   ThingManager& get_thing_manager();
 
   /// Set the game player.
-  /// If the caller attempts to set a ThingRef of a Thing that does not exist,
+  /// If the caller attempts to set a ThingId of a Thing that does not exist,
   /// the program will abort with a FATAL_ERROR call.
   /// @note Changing the player ID has not been testing as of this writing,
   ///       and unpredictable results may occur!
-  /// @param ref ThingRef of the Thing to set as the player.
+  /// @param ref ThingId of the Thing to set as the player.
   /// @return True if the set was successful, false otherwise.
-  bool set_player(ThingRef ref);
+  bool set_player(ThingId ref);
 
-  /// Get the ThingRef of the game player Thing.
-  /// @return The player ThingRef.
-  ThingRef get_player() const;
+  /// Get the ThingId of the game player Thing.
+  /// @return The player ThingId.
+  ThingId get_player() const;
 
   /// Process a single tick in the game, if one needs to be processed.
   /// @return True if a tick elapsed, false if it did not.
@@ -62,7 +62,7 @@ private:
   std::unique_ptr<ThingManager> m_thing_manager;
 
   /// Reference to the Thing that is serving as the player.
-  ThingRef m_player;
+  ThingId m_player;
 
   /// Current game clock, in milliseconds.
   uint64_t m_game_clock;
@@ -72,5 +72,7 @@ private:
 };
 
 #define GAME  GameState::instance()
+
+#define MU  GameState::instance().get_thing_manager().get_mu()
 
 #endif // GAMESTATE_H

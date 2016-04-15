@@ -4,7 +4,7 @@
 #include "stdafx.h"
 
 #include "MetadataCollection.h"
-#include "ThingRef.h"
+#include "ThingId.h"
 
 // Forward declarations
 class GameState;
@@ -16,7 +16,6 @@ class ThingMetadata;
 class ThingManager final
 {
   friend class ThingId;
-  friend class ThingRef;
 
 public:
   /// Constructor.
@@ -33,30 +32,31 @@ public:
 
   /// Create a particular object given the type name.
   /// @param type The type name of the object to create.
-  /// @return A ThingRef to the new object created.
-  ThingRef create(StringKey type);
+  /// @return ThingId of the new object created.
+  ThingId create(StringKey type);
 
   /// Create a floor object.
   /// @param map_tile Pointer to the map tile associated.
-  /// @return A ThingRef to the new object created.
-  ThingRef create_tile_contents(MapTile* map_tile);
+  /// @return ThingId of the new object created.
+  ThingId create_tile_contents(MapTile* map_tile);
 
   /// Clone a particular object.
-  /// @param original_ref Reference to the object to clone.
-  /// @return A ThingRef to the new cloned object.
-  ThingRef clone(ThingRef original_ref);
+  /// @param original ID of the object to clone.
+  /// @return ThingId of the new cloned object.
+  ThingId clone(ThingId original);
 
-  /// Destroy an object given a ThingRef to the object.
-  /// If the given ThingRef does not correspond to an object, does nothing.
-  /// @param ref ThingRef of the object to destroy.
-  void destroy(ThingRef ref);
+  /// Destroy an object given a ThingId.
+  /// If the given ThingId does not correspond to an object, does nothing.
+  /// @param id ThingId of the object to destroy.
+  void destroy(ThingId id);
 
-  /// Returns whether a Thing with a particular ThingRef exists.
-  bool exists(ThingRef ref);
+  /// Returns whether a Thing with a particular ThingId exists.
+  /// @param id ThingId of the object to find.
+  bool exists(ThingId id);
 
-  /// Get the ThingRef of Mu (nothingness).
-  /// @return The ThingRef of Mu.
-  static ThingRef get_mu();
+  /// Get the ThingId of Mu (nothingness).
+  /// @return The ThingId of Mu.
+  ThingId get_mu() const;
 
 protected:
 
@@ -72,13 +72,13 @@ private:
   /// Boolean indicating whether ThingManager is initialized.
   bool m_initialized = false;
 
+  /// Counter indicating the next ThingId to be created.
+  uint64_t m_nextThingId = 0;
+
   /// Map of ThingIds to Things.
   /// @todo Probably faster to use an unordered_map and use ThingId.id
   ///       as the hash function.
   std::unordered_map<ThingId, std::unique_ptr<Thing>> m_thing_map;
 };
-
-// === CONVENIENCE MACRO ======================================================
-#define MU  ThingManager::get_mu()
 
 #endif // THINGMANAGER_H

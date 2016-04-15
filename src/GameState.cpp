@@ -65,7 +65,7 @@ ThingManager& GameState::get_thing_manager()
   return *(m_thing_manager.get());
 }
 
-bool GameState::set_player(ThingRef ref)
+bool GameState::set_player(ThingId ref)
 {
   ASSERT_CONDITION(ref != get_thing_manager().get_mu());
 
@@ -73,14 +73,14 @@ bool GameState::set_player(ThingRef ref)
   return true;
 }
 
-ThingRef GameState::get_player() const
+ThingId GameState::get_player() const
 {
   return m_player;
 }
 
 bool GameState::process_tick()
 {
-  ThingRef player = get_player();
+  ThingId player = get_player();
 
   if (player->action_is_pending() || player->action_is_in_progress())
   {

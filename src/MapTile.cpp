@@ -18,7 +18,7 @@ bool MapTile::initialized = false;
 MapTile::~MapTile()
 {}
 
-ThingRef MapTile::get_tile_contents() const
+ThingId MapTile::get_tile_contents() const
 {
   return m_tile_contents;
 }
@@ -160,7 +160,7 @@ bool MapTile::is_empty_space() const
 
 /// @todo: Implement this to cover different entity types.
 ///        For example, a non-corporeal Entity can move through solid matter.
-bool MapTile::can_be_traversed_by(ThingRef thing) const
+bool MapTile::can_be_traversed_by(ThingId thing) const
 {
   return is_empty_space();
 }
@@ -186,7 +186,7 @@ void MapTile::set_ambient_light_level(sf::Color level)
   m_ambient_light_color = level;
 }
 
-void MapTile::be_lit_by(ThingRef light)
+void MapTile::be_lit_by(ThingId light)
 {
   GAME.get_map_factory().get(get_map_id()).add_light(light);
 }
@@ -197,7 +197,7 @@ void MapTile::clear_light_influences()
   m_calculated_light_colors.clear();
 }
 
-void MapTile::add_light_influence(ThingRef source,
+void MapTile::add_light_influence(ThingId source,
                                   LightInfluence influence)
 {
   if (m_lights.count(source) == 0)
@@ -329,7 +329,7 @@ void MapTile::add_wall_vertices_to(sf::VertexArray& vertices,
   bool player_sees_w_wall{ false };
 
   // Player.
-  ThingRef player = GAME.get_player();
+  ThingId player = GAME.get_player();
 
   if (player != MU)
   {

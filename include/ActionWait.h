@@ -4,7 +4,7 @@
 
 #include "Action.h"
 #include "ActionCRTP.h"
-#include "ThingRef.h"
+#include "ThingId.h"
 
 class ActionWait
   :

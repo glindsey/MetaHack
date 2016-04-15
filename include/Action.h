@@ -8,14 +8,14 @@
 #include "Direction.h"
 #include "GameState.h"
 #include "MessageLog.h"
-#include "ThingRef.h"
+#include "ThingId.h"
 
 // === FORWARD DECLARATIONS ===================================================
 class Action;
 class Thing;
 
 // === USING DECLARATIONS =====================================================
-using ActionCreator = std::function<std::unique_ptr<Action>(ThingRef)>;
+using ActionCreator = std::function<std::unique_ptr<Action>(ThingId)>;
 using ActionMap = std::unordered_map<StringKey, ActionCreator>;
 
 // === MESSAGE HELPER MACROS ==================================================
@@ -23,7 +23,7 @@ using ActionMap = std::unordered_map<StringKey, ActionCreator>;
 #define YOU_SUBJ  (get_subject()->get_subject_pronoun())     // "you/he/she/it/etc."
 #define YOU_OBJ   (get_subject()->get_object_pronoun())      // "you/him/her/it/etc."
 #define YOUR      (get_subject()->get_possessive())          // "your/his/her/its/etc."
-#define YOURSELF  (get_subject()->get_reflexive_pronoun())   // "yourself/himself/herself/itself/etc."
+#define YOURSELF  (get_subject()->get_idlexive_pronoun())   // "yourself/himself/herself/itself/etc."
 
 #define CV(p12, p3)  (get_subject()->choose_verb(p12, p3))   // shortcut for "Subject - Choose Verb"
 #define OBJCV(p12, p3)  (get_object()->choose_verb(p12, p3)) // shortcut for "Object - Choose Verb"
@@ -77,7 +77,7 @@ using ActionMap = std::unordered_map<StringKey, ActionCreator>;
   {                                                                           \
     Action::register_action_as(type, &T::create_);                            \
   }                                                                           \
-  T::T(ThingRef subject) : Action(subject) {}                                 \
+  T::T(ThingId subject) : Action(subject) {}                                 \
   T::~T() {}                                                                  \
   StringKey const T::get_type() const                                         \
   {                                                                           \
@@ -95,7 +95,7 @@ using ActionMap = std::unordered_map<StringKey, ActionCreator>;
   private:                                                                    \
     T();                                                                      \
   public:                                                                     \
-    explicit T(ThingRef subject);                                             \
+    explicit T(ThingId subject);                                             \
     virtual ~T();                                                             \
     virtual StringKey const get_type() const override;                        \
     virtual StringDisplay const get_verb() const override;                    \
@@ -140,28 +140,28 @@ public:
     Processed     ///< The action is totally done and can be popped off the queue.
   };
 
-  explicit Action(ThingRef subject);
+  explicit Action(ThingId subject);
   virtual ~Action();
 
-  ThingRef get_subject() const;
+  ThingId get_subject() const;
 
-  void set_object(ThingRef object);
-  void set_objects(std::vector<ThingRef> objects);
+  void set_object(ThingId object);
+  void set_objects(std::vector<ThingId> objects);
 
-  std::vector<ThingRef> const& get_objects() const;
-  ThingRef get_object() const;
-  ThingRef get_second_object() const;
+  std::vector<ThingId> const& get_objects() const;
+  ThingId get_object() const;
+  ThingId get_second_object() const;
 
-  bool process(ThingRef actor, AnyMap params);
+  bool process(ThingId actor, AnyMap params);
 
   void set_state(Action::State state);
   Action::State get_state();
 
-  void set_target(ThingRef thing) const;
+  void set_target(ThingId thing) const;
   void set_target(Direction direction) const;
   void set_quantity(unsigned int quantity) const;
 
-  ThingRef get_target_thing() const;
+  ThingId get_target_thing() const;
   Direction get_target_direction() const;
   unsigned int get_quantity() const;
 
@@ -271,7 +271,7 @@ public:
 
   /// A static function that returns an Action associated with a key.
   /// If the requested key does not exist, throws an exception.
-  static std::unique_ptr<Action> create(StringKey key, ThingRef subject);
+  static std::unique_ptr<Action> create(StringKey key, ThingId subject);
 
   /// Get a const reference to the action map.
   static ActionMap const& get_map();

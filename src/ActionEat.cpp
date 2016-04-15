@@ -2,7 +2,7 @@
 
 #include "ActionEat.h"
 #include "Thing.h"
-#include "ThingRef.h"
+#include "ThingId.h"
 
 ACTION_SRC_BOILERPLATE(ActionEat, "eat", "eat")
 

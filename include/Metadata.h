@@ -10,7 +10,7 @@
 #include "LuaObject.h"
 #include "MetadataCollection.h"
 #include "PropertyDictionary.h"
-#include "ThingRef.h"
+#include "ThingId.h"
 #include "Tilesheet.h"
 
 #define BOOST_FILESYSTEM_NO_DEPRECATED

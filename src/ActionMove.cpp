@@ -6,7 +6,7 @@
 #include "GameState.h"
 #include "Map.h"
 #include "Thing.h"
-#include "ThingRef.h"
+#include "ThingId.h"
 
 ACTION_SRC_BOILERPLATE(ActionMove, "move", "move")
 
@@ -64,7 +64,7 @@ Action::StateResult ActionMove::do_begin_work_(AnyMap& params)
   StringDisplay message;
 
   auto subject = get_subject();
-  ThingRef location = subject->get_location();
+  ThingId location = subject->get_location();
   MapTile* current_tile = subject->get_maptile();
   Direction new_direction = get_target_direction();
 
@@ -100,10 +100,10 @@ Action::StateResult ActionMove::do_begin_work_(AnyMap& params)
     else
     {
       auto& new_tile = current_map.get_tile(x_new, y_new);
-      ThingRef new_floor = new_tile.get_tile_contents();
+      ThingId new_floor = new_tile.get_tile_contents();
 
       // See if the tile to move into contains another creature.
-      ThingRef creature = new_floor->get_inventory().get_entity();
+      ThingId creature = new_floor->get_inventory().get_entity();
       if (creature != MU)
       {
         /// @todo Setting choosing whether auto-attack is on.

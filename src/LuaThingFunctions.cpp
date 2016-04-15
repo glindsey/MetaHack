@@ -5,14 +5,14 @@
 #include "ErrorHandler.h"
 #include "GameState.h"
 #include "Thing.h"
-#include "ThingRef.h"
+#include "ThingId.h"
 
 namespace LuaThingFunctions
 {
   int thing_create(lua_State* L)
   {
     bool success = false;
-    ThingRef new_thing;
+    ThingId new_thing;
     int num_args = lua_gettop(L);
 
     if ((num_args < 2) || (num_args > 3))
@@ -21,7 +21,7 @@ namespace LuaThingFunctions
       return 0;
     }
 
-    ThingRef thing = ThingRef(lua_tointeger(L, 1));
+    ThingId thing = ThingId(lua_tointeger(L, 1));
     StringKey new_thing_type = lua_tostring(L, 2);
 
     // Check to make sure the Thing is actually creatable.
@@ -63,7 +63,7 @@ namespace LuaThingFunctions
       return 0;
     }
 
-    ThingRef thing = ThingRef(lua_tointeger(L, 1));
+    ThingId thing = ThingId(lua_tointeger(L, 1));
     thing->destroy();
 
     return 0;
@@ -79,7 +79,7 @@ namespace LuaThingFunctions
       return 0;
     }
 
-    ThingRef player = GAME.get_player();
+    ThingId player = GAME.get_player();
     lua_pushinteger(L, player);
 
     return 1;
@@ -95,7 +95,7 @@ namespace LuaThingFunctions
       return 0;
     }
 
-    ThingRef thing = ThingRef(lua_tointeger(L, 1));
+    ThingId thing = ThingId(lua_tointeger(L, 1));
 
     MapId map_id = GAME.get_player()->get_map_id();
     auto maptile = thing->get_maptile();
@@ -125,7 +125,7 @@ namespace LuaThingFunctions
       return 0;
     }
 
-    ThingRef thing = ThingRef(lua_tointeger(L, 1));
+    ThingId thing = ThingId(lua_tointeger(L, 1));
     StringKey result = thing->get_type();
     lua_pushstring(L, result.c_str());
 
@@ -142,7 +142,7 @@ namespace LuaThingFunctions
       return 0;
     }
 
-    ThingRef thing = ThingRef(lua_tointeger(L, 1));
+    ThingId thing = ThingId(lua_tointeger(L, 1));
     const char* key = lua_tostring(L, 2);
     bool result = thing->get_intrinsic<bool>(key);
     lua_pushboolean(L, result);
@@ -160,7 +160,7 @@ namespace LuaThingFunctions
       return 0;
     }
 
-    ThingRef thing = ThingRef(lua_tointeger(L, 1));
+    ThingId thing = ThingId(lua_tointeger(L, 1));
     const char* key = lua_tostring(L, 2);
     int result = thing->get_intrinsic<int>(key);
     lua_pushinteger(L, result);
@@ -178,7 +178,7 @@ namespace LuaThingFunctions
       return 0;
     }
 
-    ThingRef thing = ThingRef(lua_tointeger(L, 1));
+    ThingId thing = ThingId(lua_tointeger(L, 1));
     const char* key = lua_tostring(L, 2);
 
     StringKey result = thing->get_intrinsic<StringKey>(key).c_str();
@@ -198,7 +198,7 @@ namespace LuaThingFunctions
       return 0;
     }
 
-    ThingRef thing = ThingRef(lua_tointeger(L, 1));
+    ThingId thing = ThingId(lua_tointeger(L, 1));
     const char* key = lua_tostring(L, 2);
     bool result = thing->get_base_property<bool>(key);
     lua_pushboolean(L, result);
@@ -216,7 +216,7 @@ namespace LuaThingFunctions
       return 0;
     }
 
-    ThingRef thing = ThingRef(lua_tointeger(L, 1));
+    ThingId thing = ThingId(lua_tointeger(L, 1));
     const char* key = lua_tostring(L, 2);
     int result = thing->get_base_property<int>(key);
     lua_pushinteger(L, result);
@@ -234,7 +234,7 @@ namespace LuaThingFunctions
       return 0;
     }
 
-    ThingRef thing = ThingRef(lua_tointeger(L, 1));
+    ThingId thing = ThingId(lua_tointeger(L, 1));
     const char* key = lua_tostring(L, 2);
     StringKey result = thing->get_base_property<StringKey>(key).c_str();
     lua_pushstring(L, result.c_str());
@@ -252,7 +252,7 @@ namespace LuaThingFunctions
       return 0;
     }
 
-    ThingRef thing = ThingRef(lua_tointeger(L, 1));
+    ThingId thing = ThingId(lua_tointeger(L, 1));
     StringKey action_type = lua_tostring(L, 2);
 
     if (!Action::exists(action_type))
@@ -262,13 +262,13 @@ namespace LuaThingFunctions
     }
 
     std::unique_ptr<Action> new_action = Action::create(action_type, thing);
-    std::vector<ThingRef> objects;
+    std::vector<ThingId> objects;
 
     if (num_args > 2)
     {
       for (int arg_number = 3; arg_number <= num_args; ++arg_number)
       {
-        objects.push_back(ThingRef(lua_tointeger(L, arg_number)));
+        objects.push_back(ThingId(lua_tointeger(L, arg_number)));
       }
     }
 
@@ -288,9 +288,9 @@ namespace LuaThingFunctions
       return 0;
     }
 
-    ThingRef thing = ThingRef(lua_tointeger(L, 1));
+    ThingId thing = ThingId(lua_tointeger(L, 1));
     StringKey action_type = lua_tostring(L, 2);
-    ThingRef target = ThingRef(lua_tointeger(L, 3));
+    ThingId target = ThingId(lua_tointeger(L, 3));
 
     if (!Action::exists(action_type))
     {
@@ -299,13 +299,13 @@ namespace LuaThingFunctions
     }
 
     std::unique_ptr<Action> new_action = Action::create(action_type, thing);
-    std::vector<ThingRef> objects;
+    std::vector<ThingId> objects;
 
     if (num_args > 3)
     {
       for (int arg_number = 4; arg_number <= num_args; ++arg_number)
       {
-        objects.push_back(ThingRef(lua_tointeger(L, arg_number)));
+        objects.push_back(ThingId(lua_tointeger(L, arg_number)));
       }
     }
 
@@ -326,7 +326,7 @@ namespace LuaThingFunctions
       return 0;
     }
 
-    ThingRef thing = ThingRef(lua_tointeger(L, 1));
+    ThingId thing = ThingId(lua_tointeger(L, 1));
     StringKey action_type = lua_tostring(L, 2);
     int x = lua_tointeger(L, 3);
     int y = lua_tointeger(L, 4);
@@ -340,13 +340,13 @@ namespace LuaThingFunctions
     }
 
     std::unique_ptr<Action> new_action = Action::create(action_type, thing);
-    std::vector<ThingRef> objects;
+    std::vector<ThingId> objects;
 
     if (num_args > 5)
     {
       for (int arg_number = 6; arg_number <= num_args; ++arg_number)
       {
-        objects.push_back(ThingRef(lua_tointeger(L, arg_number)));
+        objects.push_back(ThingId(lua_tointeger(L, arg_number)));
       }
     }
 
@@ -367,7 +367,7 @@ namespace LuaThingFunctions
       return 0;
     }
 
-    ThingRef thing = ThingRef(lua_tointeger(L, 1));
+    ThingId thing = ThingId(lua_tointeger(L, 1));
     const char* key = lua_tostring(L, 2);
     bool value = (lua_toboolean(L, 3) != 0);
     thing->set_base_property<bool>(key, value);
@@ -385,7 +385,7 @@ namespace LuaThingFunctions
       return 0;
     }
 
-    ThingRef thing = ThingRef(lua_tointeger(L, 1));
+    ThingId thing = ThingId(lua_tointeger(L, 1));
     const char* key = lua_tostring(L, 2);
     int value = static_cast<int>(lua_tointeger(L, 3));
     thing->set_base_property<int>(key, value);
@@ -403,7 +403,7 @@ namespace LuaThingFunctions
       return 0;
     }
 
-    ThingRef thing = ThingRef(lua_tointeger(L, 1));
+    ThingId thing = ThingId(lua_tointeger(L, 1));
     const char* key = lua_tostring(L, 2);
     const char* value = lua_tostring(L, 3);
     StringKey svalue = StringKey(value);
@@ -422,8 +422,8 @@ namespace LuaThingFunctions
       return 0;
     }
 
-    ThingRef thing_to_move = ThingRef(lua_tointeger(L, 1));
-    ThingRef thing_destination = ThingRef(lua_tointeger(L, 2));
+    ThingId thing_to_move = ThingId(lua_tointeger(L, 1));
+    ThingId thing_destination = ThingId(lua_tointeger(L, 2));
 
     bool result = thing_to_move->move_into(thing_destination);
 

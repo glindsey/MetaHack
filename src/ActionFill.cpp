@@ -2,7 +2,7 @@
 
 #include "ActionFill.h"
 #include "Thing.h"
-#include "ThingRef.h"
+#include "ThingId.h"
 
 ACTION_SRC_BOILERPLATE(ActionFill, "fill", "fill")
 

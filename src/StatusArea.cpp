@@ -32,7 +32,7 @@ StatusArea::~StatusArea()
 void StatusArea::render_contents_(sf::RenderTexture& texture, int frame)
 {
   sf::IntRect pane_dims = get_relative_dimensions();
-  ThingRef player = GAME.get_player();
+  ThingId player = GAME.get_player();
   sf::Vector2f origin(Settings.get<float>("window_text_offset_x"),
                       Settings.get<float>("window_text_offset_y"));
   sf::Color text_color = Settings.get<sf::Color>("text_color");
@@ -113,7 +113,7 @@ void StatusArea::render_attribute(sf::RenderTarget& target, StringDisplay abbrev
   sf::Text render_text;
   sf::Color text_color = Settings.get<sf::Color>("text_color");
   sf::Color text_dim_color = Settings.get<sf::Color>("text_dim_color");
-  ThingRef player = GAME.get_player();
+  ThingId player = GAME.get_player();
 
   // Render STR
   render_text.setFont(the_default_mono_font);

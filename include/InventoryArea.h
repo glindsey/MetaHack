@@ -15,7 +15,7 @@ enum class InventoryType
 // Forward declarations
 class Container;
 class Thing;
-class ThingRef;
+class ThingId;
 
 class InventoryArea :
   public metagui::Window
@@ -24,13 +24,13 @@ public:
   explicit InventoryArea(sf::IntRect dimensions);
   virtual ~InventoryArea();
 
-  ThingRef get_viewed() const;
-  void set_viewed(ThingRef thing);
+  ThingId get_viewed() const;
+  void set_viewed(ThingId thing);
 
   void toggle_selection(InventorySlot selection);
   unsigned int get_selected_slot_count() const;
   std::vector<InventorySlot> const& get_selected_slots();
-  std::vector<ThingRef> get_selected_things();
+  std::vector<ThingId> get_selected_things();
   void clear_selected_slots();
 
   unsigned int get_selected_quantity() const;
@@ -40,7 +40,7 @@ public:
   bool inc_selected_quantity();
   bool dec_selected_quantity();
 
-  ThingRef get_thing(InventorySlot selection);
+  ThingId get_thing(InventorySlot selection);
 
   InventoryType get_inventory_type();
   void set_inventory_type(InventoryType type);

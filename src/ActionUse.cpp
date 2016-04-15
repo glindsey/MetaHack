@@ -2,7 +2,7 @@
 
 #include "ActionUse.h"
 #include "Thing.h"
-#include "ThingRef.h"
+#include "ThingId.h"
 
 ACTION_SRC_BOILERPLATE(ActionUse, "use", "use")
 

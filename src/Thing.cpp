@@ -22,19 +22,19 @@
 // Static member initialization.
 sf::Color const Thing::wall_outline_color_ = sf::Color(255, 255, 255, 64);
 
-Thing::Thing(Metadata& metadata, ThingRef ref)
+Thing::Thing(Metadata& metadata, ThingId ref)
   : pImpl(metadata, ref)
 {
   initialize();
 }
 
-Thing::Thing(MapTile* map_tile, Metadata& metadata, ThingRef ref)
+Thing::Thing(MapTile* map_tile, Metadata& metadata, ThingId ref)
   : pImpl(map_tile, metadata, ref)
 {
   initialize();
 }
 
-Thing::Thing(Thing const& original, ThingRef ref)
+Thing::Thing(Thing const& original, ThingId ref)
   : pImpl(*(original.pImpl), ref)
 {
   initialize();
@@ -71,34 +71,34 @@ bool Thing::action_is_in_progress()
   return (get_base_property<int>("counter_busy") > 0);
 }
 
-ThingRef Thing::get_wielding(unsigned int& hand)
+ThingId Thing::get_wielding(unsigned int& hand)
 {
   return pImpl->wielding_in(hand);
 }
 
-bool Thing::is_wielding(ThingRef thing)
+bool Thing::is_wielding(ThingId thing)
 {
   unsigned int dummy;
   return is_wielding(thing, dummy);
 }
 
-bool Thing::is_wielding(ThingRef thing, unsigned int& hand)
+bool Thing::is_wielding(ThingId thing, unsigned int& hand)
 {
   return pImpl->is_wielding(thing, hand);
 }
 
-bool Thing::has_equipped(ThingRef thing)
+bool Thing::has_equipped(ThingId thing)
 {
   WearLocation dummy;
   return has_equipped(thing, dummy);
 }
 
-bool Thing::has_equipped(ThingRef thing, WearLocation& location)
+bool Thing::has_equipped(ThingId thing, WearLocation& location)
 {
   return pImpl->is_wearing(thing, location);
 }
 
-bool Thing::can_reach(ThingRef thing)
+bool Thing::can_reach(ThingId thing)
 {
   // Check if it is our location.
   auto our_location = get_location();
@@ -123,7 +123,7 @@ bool Thing::can_reach(ThingRef thing)
   return false;
 }
 
-bool Thing::is_adjacent_to(ThingRef thing)
+bool Thing::is_adjacent_to(ThingId thing)
 {
   // Get the coordinates we are at.
   MapTile* our_maptile = get_maptile();
@@ -187,7 +187,7 @@ bool Thing::do_die()
   }
 }
 
-bool Thing::do_attack(ThingRef thing, unsigned int& action_time)
+bool Thing::do_attack(ThingId thing, unsigned int& action_time)
 {
   StringDisplay message;
 
@@ -207,7 +207,7 @@ bool Thing::do_attack(ThingRef thing, unsigned int& action_time)
   return false;
 }
 
-ActionResult Thing::can_deequip(ThingRef thing, unsigned int& action_time)
+ActionResult Thing::can_deequip(ThingId thing, unsigned int& action_time)
 {
   action_time = 1;
 
@@ -227,7 +227,7 @@ ActionResult Thing::can_deequip(ThingRef thing, unsigned int& action_time)
   return ActionResult::Success;
 }
 
-bool Thing::do_deequip(ThingRef thing, unsigned int& action_time)
+bool Thing::do_deequip(ThingId thing, unsigned int& action_time)
 {
   StringDisplay message;
   ActionResult deequip_try = this->can_deequip(thing, action_time);
@@ -277,7 +277,7 @@ bool Thing::do_deequip(ThingRef thing, unsigned int& action_time)
   return false;
 }
 
-ActionResult Thing::can_equip(ThingRef thing, unsigned int& action_time)
+ActionResult Thing::can_equip(ThingId thing, unsigned int& action_time)
 {
   action_time = 1;
 
@@ -308,7 +308,7 @@ ActionResult Thing::can_equip(ThingRef thing, unsigned int& action_time)
   return ActionResult::Success;
 }
 
-bool Thing::do_equip(ThingRef thing, unsigned int& action_time)
+bool Thing::do_equip(ThingId thing, unsigned int& action_time)
 {
   StringDisplay message;
 
@@ -346,7 +346,7 @@ bool Thing::do_equip(ThingRef thing, unsigned int& action_time)
       {
         message = this->get_you_or_identifying_string() + " " +
           this->choose_verb("try", "tries") +
-          " to equip " + this->get_reflexive_pronoun() +
+          " to equip " + this->get_idlexive_pronoun() +
           ", which seriously shouldn't happen.";
         CLOG(WARNING, "Thing") << "NPC tried to equip self!?";
       }
@@ -385,7 +385,7 @@ bool Thing::do_equip(ThingRef thing, unsigned int& action_time)
   return false;
 }
 
-void Thing::set_wielded(ThingRef thing, unsigned int hand)
+void Thing::set_wielded(ThingId thing, unsigned int hand)
 {
   if (thing == MU)
   {
@@ -397,7 +397,7 @@ void Thing::set_wielded(ThingRef thing, unsigned int hand)
   }
 }
 
-void Thing::set_worn(ThingRef thing, WearLocation location)
+void Thing::set_worn(ThingId thing, WearLocation location)
 {
   if (thing == MU)
   {
@@ -586,12 +586,12 @@ void Thing::set_quantity(unsigned int quantity)
   set_base_property<unsigned int>("quantity", quantity);
 }
 
-ThingRef Thing::get_ref() const
+ThingId Thing::get_id() const
 {
   return pImpl->ref;
 }
 
-ThingRef Thing::get_root_location() const
+ThingId Thing::get_root_location() const
 {
   if (pImpl->location == MU)
   {
@@ -604,12 +604,12 @@ ThingRef Thing::get_root_location() const
   }
 }
 
-ThingRef Thing::get_location() const
+ThingId Thing::get_location() const
 {
   return pImpl->location;
 }
 
-bool Thing::can_see(ThingRef thing)
+bool Thing::can_see(ThingId thing)
 {
   // Make sure we are able to see at all.
   if (!can_currently_see())
@@ -694,7 +694,7 @@ void Thing::find_seen_tiles()
   //elapsed.restart();
 
   // Are we on a map?  Bail out if we aren't.
-  ThingRef location = get_location();
+  ThingId location = get_location();
   if (location == MU)
   {
     return;
@@ -766,10 +766,10 @@ void Thing::add_memory_vertices_to(sf::VertexArray& vertices,
                       vSW, vSE);
 }
 
-bool Thing::move_into(ThingRef new_location)
+bool Thing::move_into(ThingId new_location)
 {
   MapId old_map_id = this->get_map_id();
-  ThingRef old_location = pImpl->location;
+  ThingId old_location = pImpl->location;
 
   if (new_location == old_location)
   {
@@ -830,14 +830,14 @@ Inventory& Thing::get_inventory()
 
 bool Thing::is_inside_another_thing() const
 {
-  ThingRef location = pImpl->location;
+  ThingId location = pImpl->location;
   if (location == MU)
   {
     // Thing is a part of the MapTile such as the floor.
     return false;
   }
 
-  ThingRef location2 = location->get_location();
+  ThingId location2 = location->get_location();
   if (location2 == MU)
   {
     // Thing is directly on the floor.
@@ -848,7 +848,7 @@ bool Thing::is_inside_another_thing() const
 
 MapTile* Thing::get_maptile() const
 {
-  ThingRef location = pImpl->location;
+  ThingId location = pImpl->location;
 
   if (location == MU)
   {
@@ -862,7 +862,7 @@ MapTile* Thing::get_maptile() const
 
 MapId Thing::get_map_id() const
 {
-  ThingRef location = pImpl->location;
+  ThingId location = pImpl->location;
 
   if (location == MU)
   {
@@ -905,7 +905,7 @@ void Thing::set_proper_name(StringDisplay name)
 
 StringDisplay Thing::get_identifying_string_without_possessives(bool definite)
 {
-  ThingRef location = this->get_location();
+  ThingId location = this->get_location();
   unsigned int quantity = this->get_quantity();
 
   StringDisplay name;
@@ -983,11 +983,11 @@ StringDisplay Thing::get_you_or_identifying_string(bool definite)
   return get_identifying_string(definite);
 }
 
-StringDisplay Thing::get_self_or_identifying_string(ThingRef other, bool definite)
+StringDisplay Thing::get_self_or_identifying_string(ThingId other, bool definite)
 {
-  if (other == get_ref())
+  if (other == get_id())
   {
-    return get_reflexive_pronoun();
+    return get_idlexive_pronoun();
   }
 
   return get_identifying_string(definite);
@@ -995,7 +995,7 @@ StringDisplay Thing::get_self_or_identifying_string(ThingRef other, bool definit
 
 StringDisplay Thing::get_identifying_string(bool definite)
 {
-  ThingRef location = this->get_location();
+  ThingId location = this->get_location();
   unsigned int quantity = this->get_quantity();
 
   StringDisplay name;
@@ -1091,7 +1091,7 @@ StringDisplay const& Thing::get_object_pronoun() const
   return getObjPro(get_gender_or_you());
 }
 
-StringDisplay const& Thing::get_reflexive_pronoun() const
+StringDisplay const& Thing::get_idlexive_pronoun() const
 {
   return getRefPro(get_gender_or_you());
 }
@@ -1246,24 +1246,24 @@ void Thing::light_up_surroundings()
       auto& things = get_inventory().get_things();
       for (auto& thing_pair : things)
       {
-        ThingRef thing = thing_pair.second;
+        ThingId thing = thing_pair.second;
         thing->light_up_surroundings();
       }
     }
   }
 
-  ThingRef location = get_location();
+  ThingId location = get_location();
 
   // Use visitor pattern.
   if ((location != MU) && this->get_base_property<bool>("light_lit"))
   {
-    location->be_lit_by(this->get_ref());
+    location->be_lit_by(this->get_id());
   }
 }
 
-void Thing::be_lit_by(ThingRef light)
+void Thing::be_lit_by(ThingId light)
 {
-  call_lua_function<ActionResult, ThingRef>("on_lit_by", { light }, ActionResult::Success);
+  call_lua_function<ActionResult, ThingId>("on_lit_by", { light }, ActionResult::Success);
 
   if (get_location() == MU)
   {
@@ -1279,7 +1279,7 @@ void Thing::be_lit_by(ThingRef light)
   //if (!is_opaque() || is_wielding(light) || has_equipped(light))
   if (!is_opaque() || get_intrinsic<bool>("is_entity"))
   {
-    ThingRef location = get_location();
+    ThingId location = get_location();
     if (location != MU)
     {
       location->be_lit_by(light);
@@ -1297,7 +1297,7 @@ void Thing::spill()
   // Step through all contents of this Thing.
   for (ThingPair thing_pair : things)
   {
-    ThingRef thing = thing_pair.second;
+    ThingId thing = thing_pair.second;
     if (pImpl->location != MU)
     {
       ActionResult can_contain = pImpl->location->can_contain(thing);
@@ -1520,12 +1520,12 @@ StringDisplay Thing::get_bodypart_description(BodyPart part,
   return result;
 }
 
-bool Thing::can_have_action_done_by(ThingRef thing, Action& action)
+bool Thing::can_have_action_done_by(ThingId thing, Action& action)
 {
   return call_lua_function<bool>("can_have_action_" + action.get_type() + "_done_by", { thing }, false);
 }
 
-bool Thing::is_miscible_with(ThingRef thing)
+bool Thing::is_miscible_with(ThingId thing)
 {
   return call_lua_function<bool>("is_miscible_with", { thing }, false);
 }
@@ -1548,7 +1548,7 @@ bool Thing::process()
   iter != std::end(things);
     ++iter)
   {
-    ThingRef thing = iter->second;
+    ThingId thing = iter->second;
     /* bool dead = */ thing->process();
   }
 
@@ -1562,9 +1562,9 @@ ActionResult Thing::perform_action_died()
   return result;
 }
 
-void Thing::perform_action_collided_with(ThingRef actor)
+void Thing::perform_action_collided_with(ThingId actor)
 {
-  /* ActionResult result = */ call_lua_function<ActionResult, ThingRef>("perform_action_collided_with", { actor }, ActionResult::Success);
+  /* ActionResult result = */ call_lua_function<ActionResult, ThingId>("perform_action_collided_with", { actor }, ActionResult::Success);
   return;
 }
 
@@ -1574,37 +1574,37 @@ void Thing::perform_action_collided_with_wall(Direction d, StringKey tile_type)
   return;
 }
 
-ActionResult Thing::be_object_of(Action& action, ThingRef subject)
+ActionResult Thing::be_object_of(Action& action, ThingId subject)
 {
-  ActionResult result = call_lua_function<ActionResult, ThingRef>("be_object_of_action_" + action.get_type(), { subject }, ActionResult::Success);
+  ActionResult result = call_lua_function<ActionResult, ThingId>("be_object_of_action_" + action.get_type(), { subject }, ActionResult::Success);
   return result;
 }
 
-ActionResult Thing::be_object_of(Action & action, ThingRef subject, ThingRef target)
+ActionResult Thing::be_object_of(Action & action, ThingId subject, ThingId target)
 {
-  ActionResult result = call_lua_function<ActionResult, ThingRef>("be_object_of_action_" + action.get_type(), { subject, target }, ActionResult::Success);
+  ActionResult result = call_lua_function<ActionResult, ThingId>("be_object_of_action_" + action.get_type(), { subject, target }, ActionResult::Success);
   return result;
 }
 
-ActionResult Thing::be_object_of(Action & action, ThingRef subject, Direction direction)
+ActionResult Thing::be_object_of(Action & action, ThingId subject, Direction direction)
 {
   ActionResult result = call_lua_function<ActionResult>("be_object_of_action_" + action.get_type(), { subject, NULL, direction.x(), direction.y(), direction.z() }, ActionResult::Success);
   return result;
 }
 
-ActionResult Thing::perform_action_hurt_by(ThingRef subject)
+ActionResult Thing::perform_action_hurt_by(ThingId subject)
 {
-  ActionResult result = call_lua_function<ActionResult, ThingRef>("be_object_of_action_hurt", { subject }, ActionResult::Success);
+  ActionResult result = call_lua_function<ActionResult, ThingId>("be_object_of_action_hurt", { subject }, ActionResult::Success);
   return result;
 }
 
-ActionResult Thing::perform_action_attacked_by(ThingRef subject, ThingRef target)
+ActionResult Thing::perform_action_attacked_by(ThingId subject, ThingId target)
 {
-  ActionResult result = call_lua_function<ActionResult, ThingRef>("be_object_of_action_attack", { subject, target }, ActionResult::Success);
+  ActionResult result = call_lua_function<ActionResult, ThingId>("be_object_of_action_attack", { subject, target }, ActionResult::Success);
   return result;
 }
 
-bool Thing::perform_action_deequipped_by(ThingRef actor, WearLocation& location)
+bool Thing::perform_action_deequipped_by(ThingId actor, WearLocation& location)
 {
   if (this->get_base_property<bool>("bound"))
   {
@@ -1619,14 +1619,14 @@ bool Thing::perform_action_deequipped_by(ThingRef actor, WearLocation& location)
   }
   else
   {
-    ActionResult result = call_lua_function<ActionResult, ThingRef>("perform_action_deequipped_by", { actor }, ActionResult::Success);
+    ActionResult result = call_lua_function<ActionResult, ThingId>("perform_action_deequipped_by", { actor }, ActionResult::Success);
     return was_successful(result);
   }
 }
 
-bool Thing::perform_action_equipped_by(ThingRef actor, WearLocation& location)
+bool Thing::perform_action_equipped_by(ThingId actor, WearLocation& location)
 {
-  ActionResult result = call_lua_function<ActionResult, ThingRef>("perform_action_equipped_by", { actor }, ActionResult::Success);
+  ActionResult result = call_lua_function<ActionResult, ThingId>("perform_action_equipped_by", { actor }, ActionResult::Success);
   bool subclass_result = was_successful(result);
 
   if (subclass_result == true)
@@ -1646,13 +1646,13 @@ bool Thing::perform_action_equipped_by(ThingRef actor, WearLocation& location)
   return subclass_result;
 }
 
-bool Thing::perform_action_unwielded_by(ThingRef actor)
+bool Thing::perform_action_unwielded_by(ThingId actor)
 {
-  ActionResult result = call_lua_function<ActionResult, ThingRef>("perform_action_unwielded_by", { actor }, ActionResult::Success);
+  ActionResult result = call_lua_function<ActionResult, ThingId>("perform_action_unwielded_by", { actor }, ActionResult::Success);
   return was_successful(result);
 }
 
-bool Thing::can_merge_with(ThingRef other) const
+bool Thing::can_merge_with(ThingId other) const
 {
   // Things with different types can't merge (obviously).
   if (other->get_type() != get_type())
@@ -1683,7 +1683,7 @@ bool Thing::can_merge_with(ThingRef other) const
   return false;
 }
 
-ActionResult Thing::can_contain(ThingRef thing)
+ActionResult Thing::can_contain(ThingId thing)
 {
   unsigned int inventory_size = get_intrinsic<unsigned int>("inventory_size");
   if (inventory_size == 0)
@@ -1696,11 +1696,11 @@ ActionResult Thing::can_contain(ThingRef thing)
   }
   else
   {
-    return call_lua_function<ActionResult, ThingRef>("can_contain", { thing }, ActionResult::Success);
+    return call_lua_function<ActionResult, ThingId>("can_contain", { thing }, ActionResult::Success);
   }
 }
 
-void Thing::set_location(ThingRef target)
+void Thing::set_location(ThingId target)
 {
   pImpl->location = target;
 }
@@ -1736,11 +1736,11 @@ bool Thing::_process_self()
   {
     // Process the front action.
     std::unique_ptr<Action>& action = pImpl->pending_actions.front();
-    bool action_done = action->process(get_ref(), {});
+    bool action_done = action->process(get_id(), {});
     if (action_done)
     {
       CLOG(TRACE, "Thing") << "Thing " <<
-        get_ref().get_id().to_string() << "( " <<
+        get_id().to_string() << "( " <<
         get_type() << "): Action " <<
         action->get_type() << " is done, popping";
 
