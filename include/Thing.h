@@ -10,7 +10,7 @@
 #include "ErrorHandler.h"
 #include "GameObject.h"
 #include "Gender.h"
-#include "LuaCalls.h"
+#include "LuaObject.h"
 #include "Metadata.h"
 
 // Forward declarations
@@ -606,7 +606,7 @@ private:
                                std::vector<ArgType> const& args = {},
                                ReturnType default_result = ReturnType())
   {
-    return call_lua_thing_function<ReturnType, ArgType>(function_name, get_ref(), args, default_result);
+    return the_lua_instance.call_thing_function<ReturnType, ArgType>(function_name, get_ref(), args, default_result);
   }
 };
 

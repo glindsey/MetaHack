@@ -3,8 +3,6 @@
 
 #include "stdafx.h"
 
-#include "LuaObject.h"
-
 // Forward declaration
 class ThingManager;
 

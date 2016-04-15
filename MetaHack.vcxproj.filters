@@ -297,9 +297,6 @@
     <ClInclude Include="include\AppState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\LuaCalls.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\ModifiablePropertyDictionary.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -519,9 +516,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\AppState.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\LuaCalls.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\ModifiablePropertyDictionary.cpp">

@@ -85,7 +85,7 @@ int ConfigSettings::LUA_get_config(lua_State* L)
   else
   {
     boost::any result = dictionary[key];
-    int args = the_lua_instance.push_onto_lua_stack(result);
+    int args = the_lua_instance.push_value<boost::any>(result);
     return args;
   }
 }

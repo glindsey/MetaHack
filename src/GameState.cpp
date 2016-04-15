@@ -3,6 +3,7 @@
 #include "GameState.h"
 
 #include "ErrorHandler.h"
+#include "LuaObject.h"
 #include "Map.h"
 #include "MapFactory.h"
 #include "New.h"

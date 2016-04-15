@@ -7,7 +7,6 @@
 #include "App.h"
 #include "ErrorHandler.h"
 #include "IntegerRange.h"
-#include "LuaCalls.h"
 #include "LuaObject.h"
 #include "MetadataCollection.h"
 #include "PropertyDictionary.h"
@@ -38,14 +37,14 @@ public:
   ReturnType get_intrinsic(StringKey name, ReturnType default_value = ReturnType())
   {
     StringKey type = this->get_type();
-    return get_type_intrinsic<ReturnType>(type, name, default_value);
+    return the_lua_instance.get_type_intrinsic<ReturnType>(type, name, default_value);
   }
 
   template <typename ValueType>
   void set_intrinsic(StringKey name, ValueType value)
   {
     StringKey type = this->get_type();
-    set_type_intrinsic<ValueType>(type, name, value);
+    the_lua_instance.set_type_intrinsic<ValueType>(type, name, value);
   }
 
 protected:

@@ -177,7 +177,6 @@
     <ClInclude Include="include\ConfigSettings.h" />
     <ClInclude Include="include\Direction.h" />
     <ClInclude Include="include\ErrorHandler.h" />
-    <ClInclude Include="include\LuaCalls.h" />
     <ClInclude Include="include\ModifiablePropertyDictionary.h" />
     <ClInclude Include="include\SFMLEventHandler.h" />
     <ClInclude Include="include\GameObject.h" />
@@ -274,7 +273,6 @@
     <ClCompile Include="src\Inventory.cpp" />
     <ClCompile Include="src\InventoryArea.cpp" />
     <ClCompile Include="src\KeyBuffer.cpp" />
-    <ClCompile Include="src\LuaCalls.cpp" />
     <ClCompile Include="src\LuaObject.cpp" />
     <ClCompile Include="src\LuaThingFunctions.cpp" />
     <ClCompile Include="src\Map.cpp" />
