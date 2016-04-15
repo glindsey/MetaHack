@@ -174,6 +174,12 @@ public:
     return 1;
   }
 
+  template <> int push_value(ThingRef value)
+  {
+    lua_pushinteger(L_, static_cast<lua_Integer>(value));
+    return 1;
+  }
+
   template <> int push_value(float value)
   {
     lua_pushnumber(L_, static_cast<lua_Number>(value));
@@ -234,6 +240,13 @@ public:
     int return_value = lua_tointeger(L_, -1);
     lua_pop(L_, 1);
     return return_value;
+  }
+
+  template <> ThingRef pop_value()
+  {
+    lua_Integer return_value = lua_tointeger(L_, -1);
+    lua_pop(L_, 1);
+    return ThingRef(return_value);
   }
 
   template <> float pop_value()
@@ -299,6 +312,7 @@ public:
   template<> unsigned int stack_slots<void>() { return 0; }
   template<> unsigned int stack_slots<unsigned int>() { return 1; }
   template<> unsigned int stack_slots<int>() { return 1; }
+  template<> unsigned int stack_slots<ThingRef>() { return 1; }
   template<> unsigned int stack_slots<float>() { return 1; }
   template<> unsigned int stack_slots<double>() { return 1; }
   template<> unsigned int stack_slots<bool>() { return 1; }
@@ -352,7 +366,9 @@ public:
         // Function not found -- pop the function and class names back off. (-2)
         lua_pop(L_, 2);
 
-        CLOG(WARNING, "Lua") << "Could not find Lua function " << name << ":" << function_name;
+        CLOG(WARNING, "Lua") << "Could not find Lua function "
+          << name << ":"
+          << function_name;
       }
       else
       {

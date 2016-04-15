@@ -128,6 +128,9 @@ public:
   /// Create a weak reference from an ID.
   explicit ThingRef(ThingId const& id);
 
+  /// Create a weak reference from a lua_Integer.
+  explicit ThingRef(lua_Integer n);
+
   ~ThingRef();
 
   /// Create a weak reference from another weak reference.

@@ -19,6 +19,11 @@ ThingRef::ThingRef(ThingId const& id)
   m_id{ id }
 {}
 
+ThingRef::ThingRef(lua_Integer n)
+  :
+  m_id{ n }
+{}
+
 ThingRef::~ThingRef()
 {
 }
