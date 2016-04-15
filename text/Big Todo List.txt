@@ -6,18 +6,19 @@ SMALL THINGS
 [ ] Add Lua functions "on_base_property_change_XXX", "on_transient_property_change_XXX" for when Thing properties are modified. Pass in the old value and the new value.
 [ ] Export "thing_set_quantity" / "thing_modify_quantity" functions to Lua
 [ ] BUG: Using "/" look command reveals inventory of squares player can't see
+[ ] BUG: HP display in status area is screwed up
 [ ] Look at some of the intrinsics like "movable", "lockable", et cetera and see if they can be removed.
     e.g. "lockable" can be replaced by "can_have_action_lock_done_by(nil)"
 
 MEDIUM THINGS
 =============
-[ ] Transient properties
-    [ ] Cached set of properties
+[/] Transient properties
+    [/] Cached set of properties
         - Property is recalculated upon:
             - base property changing
             - add_property_modifier / remove_property_modifier
             - modifier expiration
-    [ ] Map of modifiers for a base property:
+    [X] Map of modifiers for a base property:
         - ID of thing responsible for modifier
         - Lua function to call to modify the property
         - Number of ticks modifier stays in place, or 0 if permanent until explicitly removed
@@ -79,7 +80,7 @@ BIG THINGS
         
     - Likewise, get can just push back however many return values are needed for the value.
 
-[/] Revamp Actions
+[X] Revamp Actions
     - Actions should be split into the following stages:
         - "pending": The action is ready to be executed.
         - "pre_begin": Prior to the action being executed. Checks to see if the action is possible. Accounts for overall reaction time (based on Agility attribute) and waits before starting the action.
