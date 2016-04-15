@@ -38,6 +38,10 @@ function Thing.get_description(id)
     return "Thing #" .. id .. ", which has no description associated with it."
 end
 
+function Thing.can_have_action_drop_done_by(id)
+    return true
+end
+
 function Thing.can_have_action_get_done_by(id)
     return true
 end

@@ -167,13 +167,13 @@ public:
 
   virtual StringKey const get_type() const
   {
-    return "???";
+    return "[Action]";
   }
 
   /// Return the first-/second-person singular form of the verb to be performed.
   virtual StringDisplay const get_verb() const
   {
-    return "???";
+    return "[action]";
   }
 
   /// Return the third-person singular form of the verb to be performed.
@@ -189,7 +189,9 @@ public:
   virtual StringDisplay const get_verbing() const
   {
     StringDisplay verb = get_verb();
-    CharDisplay last_character = *(verb.end()--);
+    auto verb_last_char = verb.end();
+    --verb_last_char;
+    CharDisplay last_character = *verb_last_char;
 
     if (StringDisplay("aeiou").find(last_character) != sf::String::InvalidPos)
     {
@@ -206,7 +208,9 @@ public:
   virtual StringDisplay const get_verbed() const
   {
     StringDisplay verb = get_verb();
-    CharDisplay last_character = *(verb.end()--);
+    auto verb_last_char = verb.end();
+    --verb_last_char;
+    CharDisplay last_character = *verb_last_char;
 
     if (StringDisplay("aeiou").find(last_character) != sf::String::InvalidPos)
     {
@@ -230,7 +234,9 @@ public:
   virtual StringDisplay const get_verbable() const
   {
     StringDisplay verb = get_verb();
-    CharDisplay last_character = *(verb.end()--);
+    auto verb_last_char = verb.end();
+    --verb_last_char;
+    CharDisplay last_character = *verb_last_char;
 
     if (StringDisplay("aeiou").find(last_character) != sf::String::InvalidPos)
     {

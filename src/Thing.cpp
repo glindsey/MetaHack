@@ -1263,7 +1263,7 @@ void Thing::light_up_surroundings()
 
 void Thing::be_lit_by(ThingRef light)
 {
-  call_lua_function<ActionResult>("on_lit_by", { light });
+  call_lua_function<ActionResult>("on_lit_by", { light }, ActionResult::Success);
 
   if (get_location() == MU)
   {
@@ -1558,13 +1558,13 @@ bool Thing::process()
 
 ActionResult Thing::perform_action_died()
 {
-  ActionResult result = call_lua_function<ActionResult>("perform_action_died");
+  ActionResult result = call_lua_function<ActionResult>("perform_action_died", {}, ActionResult::Success);
   return result;
 }
 
 void Thing::perform_action_collided_with(ThingRef actor)
 {
-  /* ActionResult result = */ call_lua_function<ActionResult>("perform_action_collided_with", { actor });
+  /* ActionResult result = */ call_lua_function<ActionResult>("perform_action_collided_with", { actor }, ActionResult::Success);
   return;
 }
 
@@ -1576,31 +1576,31 @@ void Thing::perform_action_collided_with_wall(Direction d, StringKey tile_type)
 
 ActionResult Thing::be_object_of(Action& action, ThingRef subject)
 {
-  ActionResult result = call_lua_function<ActionResult>("be_object_of_action_" + action.get_type(), { subject });
+  ActionResult result = call_lua_function<ActionResult>("be_object_of_action_" + action.get_type(), { subject }, ActionResult::Success);
   return result;
 }
 
 ActionResult Thing::be_object_of(Action & action, ThingRef subject, ThingRef target)
 {
-  ActionResult result = call_lua_function<ActionResult>("be_object_of_action_" + action.get_type(), { subject, target });
+  ActionResult result = call_lua_function<ActionResult>("be_object_of_action_" + action.get_type(), { subject, target }, ActionResult::Success);
   return result;
 }
 
 ActionResult Thing::be_object_of(Action & action, ThingRef subject, Direction direction)
 {
-  ActionResult result = call_lua_function<ActionResult>("be_object_of_action_" + action.get_type(), { subject, NULL, direction.x(), direction.y(), direction.z() });
+  ActionResult result = call_lua_function<ActionResult>("be_object_of_action_" + action.get_type(), { subject, NULL, direction.x(), direction.y(), direction.z() }, ActionResult::Success);
   return result;
 }
 
 ActionResult Thing::perform_action_hurt_by(ThingRef subject)
 {
-  ActionResult result = call_lua_function<ActionResult>("be_object_of_action_hurt", { subject });
+  ActionResult result = call_lua_function<ActionResult>("be_object_of_action_hurt", { subject }, ActionResult::Success);
   return result;
 }
 
 ActionResult Thing::perform_action_attacked_by(ThingRef subject, ThingRef target)
 {
-  ActionResult result = call_lua_function<ActionResult>("be_object_of_action_attack", { subject, target });
+  ActionResult result = call_lua_function<ActionResult>("be_object_of_action_attack", { subject, target }, ActionResult::Success);
   return result;
 }
 
@@ -1619,14 +1619,14 @@ bool Thing::perform_action_deequipped_by(ThingRef actor, WearLocation& location)
   }
   else
   {
-    ActionResult result = call_lua_function<ActionResult>("perform_action_deequipped_by", { actor });
+    ActionResult result = call_lua_function<ActionResult>("perform_action_deequipped_by", { actor }, ActionResult::Success);
     return was_successful(result);
   }
 }
 
 bool Thing::perform_action_equipped_by(ThingRef actor, WearLocation& location)
 {
-  ActionResult result = call_lua_function<ActionResult>("perform_action_equipped_by", { actor });
+  ActionResult result = call_lua_function<ActionResult>("perform_action_equipped_by", { actor }, ActionResult::Success);
   bool subclass_result = was_successful(result);
 
   if (subclass_result == true)
@@ -1648,7 +1648,7 @@ bool Thing::perform_action_equipped_by(ThingRef actor, WearLocation& location)
 
 bool Thing::perform_action_unwielded_by(ThingRef actor)
 {
-  ActionResult result = call_lua_function<ActionResult>("perform_action_unwielded_by", { actor });
+  ActionResult result = call_lua_function<ActionResult>("perform_action_unwielded_by", { actor }, ActionResult::Success);
   return was_successful(result);
 }
 
@@ -1696,7 +1696,7 @@ ActionResult Thing::can_contain(ThingRef thing)
   }
   else
   {
-    return call_lua_function<ActionResult>("can_contain", { thing });
+    return call_lua_function<ActionResult>("can_contain", { thing }, ActionResult::Success);
   }
 }
 
