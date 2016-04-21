@@ -24,10 +24,11 @@ MEDIUM THINGS
         - ID of thing responsible for modifier
         - Lua function to call to modify the property
         - Number of ticks modifier stays in place, or 0 if permanent until explicitly removed
-    [ ] Export "add_property_modifier", "remove_property_modifier" to Lua
+    [X] Export "add_property_modifier", "remove_property_modifier" to Lua
         - Either of these causes a recalculation of transient property values
 
-[ ] Rewrite autobind code using new property modifiers        
+[ ] Rewrite autobind code using new property modifiers
+[ ] Rewrite LightSource lighting code using new property modifiers
 [ ] Write attire (wear) action code
 [ ] Write open, close Action code
 [ ] Write lock, unlock Action code
