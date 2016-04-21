@@ -119,6 +119,13 @@ public:
 
     T value = get<T>(key);
     /// @todo Call the appropriate modifier functions.
+    auto& modifiers = m_modifiers[key];
+
+    for (auto& modifier : modifiers)
+    {
+      //value = Lua::call_modifier_function<T>(key, id, value);
+    }
+
     m_modified_dictionary.emplace(std::make_pair(key, value));
   }
 

@@ -15,7 +15,7 @@ MEDIUM THINGS
 [ ] Add a function that allows for automatic substitution of substrings, instead of concatenating macros as is done now. This will be needed for easy creation of display strings in Lua.
     [ ] Export said function to Lua
 [/] Transient properties
-    [X] Cached set of properties
+    [/] Cached set of properties
         - Property is recalculated upon:
             - base property changing
             - add_property_modifier / remove_property_modifier
