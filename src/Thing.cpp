@@ -1238,12 +1238,12 @@ void Thing::draw_to(sf::RenderTarget& target,
   target.draw(rectangle);
 }
 
-bool Thing::is_opaque() const
+bool Thing::is_opaque()
 {
   return
-    (get_intrinsic<int>("opacity_red") >= 255) &&
-    (get_intrinsic<int>("opacity_green") >= 255) &&
-    (get_intrinsic<int>("opacity_blue") >= 255);
+    (get_modified_property<int>("opacity_red") >= 255) &&
+    (get_modified_property<int>("opacity_green") >= 255) &&
+    (get_modified_property<int>("opacity_blue") >= 255);
 }
 
 void Thing::light_up_surroundings()

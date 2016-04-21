@@ -25,7 +25,7 @@ Action::StateResult ActionQuaff::do_prebegin_work_(AnyMap& params)
   }
 
   // Check that we're capable of drinking at all.
-  if (subject->get_intrinsic<bool>("can_drink"))
+  if (subject->get_modified_property<bool>("can_drink"))
   {
     print_message_try_();
 

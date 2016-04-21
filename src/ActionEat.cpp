@@ -25,7 +25,7 @@ Action::StateResult ActionEat::do_prebegin_work_(AnyMap& params)
   }
 
   // Check that we're capable of eating at all.
-  if (subject->get_intrinsic<bool>("can_eat"))
+  if (subject->get_modified_property<bool>("can_eat"))
   {
     print_message_try_();
 

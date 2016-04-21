@@ -28,7 +28,7 @@ Action::StateResult ActionAttack::do_prebegin_work_(AnyMap& params)
   }
 
   // Make sure we CAN attack.
-  if (!subject->get_intrinsic<bool>("can_attack", false))
+  if (!subject->get_modified_property<bool>("can_attack", false))
   {
     message += YOU + CV(" don't", " doesn't") + " have any way to attack things.";
     the_message_log.add(message);
@@ -103,7 +103,7 @@ Action::StateResult ActionAttack::do_begin_work_(AnyMap& params)
 
   // Check boundaries.
   if ((x_new < 0) || (y_new < 0) ||
-      (x_new >= map_size.x) || (y_new >= map_size.y))
+    (x_new >= map_size.x) || (y_new >= map_size.y))
   {
     message += YOU + " can't attack there; it is out of bounds!";
     the_message_log.add(message);

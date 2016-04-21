@@ -14,7 +14,7 @@ Action::StateResult ActionMix::do_prebegin_work_(AnyMap& params)
   auto object2 = get_second_object();
 
   // Check that we're capable of mixing at all.
-  if (subject->get_intrinsic<bool>("can_mix"))
+  if (subject->get_modified_property<bool>("can_mix"))
   {
     print_message_try_();
 

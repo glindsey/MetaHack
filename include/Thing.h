@@ -436,7 +436,7 @@ public:
                int frame = 0);
 
   /// Simple check to see if a Thing is opaque.
-  bool is_opaque() const;
+  bool is_opaque();
 
   /// Provide light to this Thing's surroundings.
   /// If Thing is not opaque, calls light_up_surroundings() for each Thing

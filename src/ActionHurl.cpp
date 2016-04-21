@@ -46,7 +46,7 @@ Action::StateResult ActionHurl::do_prebegin_work_(AnyMap& params)
   }
 
   /// Check that we have limbs capable of throwing.
-  if (subject->get_intrinsic<bool>("can_throw"))
+  if (subject->get_modified_property<bool>("can_throw"))
   {
     print_message_try_();
 

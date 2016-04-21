@@ -121,6 +121,23 @@ namespace LuaThingFunctions
     return 2;
   }
 
+  int thing_get_location(lua_State* L)
+  {
+    int num_args = lua_gettop(L);
+
+    if (num_args != 1)
+    {
+      CLOG(WARNING, "Lua") << "expected 1 arguments, got " << num_args;
+      return 0;
+    }
+
+    ThingId thing = ThingId(lua_tointeger(L, 1));
+    ThingId location = thing->get_location();
+    lua_pushinteger(L, static_cast<lua_Integer>(location));
+
+    return 1;
+  }
+
   int thing_get_type(lua_State* L)
   {
     int num_args = lua_gettop(L);
@@ -492,11 +509,55 @@ namespace LuaThingFunctions
     return 1;
   }
 
+  int thing_add_property_modifier(lua_State* L)
+  {
+    int num_args = lua_gettop(L);
+
+    if ((num_args < 3) || (num_args > 4))
+    {
+      CLOG(WARNING, "Lua") << "expected 3 or 4 arguments, got " << num_args;
+      return 0;
+    }
+
+    ThingId thing_being_modified = ThingId(lua_tointeger(L, 1));
+    StringKey key = lua_tostring(L, 2);
+    ThingId thing_doing_the_modifying = ThingId(lua_tointeger(L, 3));
+    unsigned int expiration_ticks = (num_args == 4) ? lua_tointeger(L, 4) : 0;
+
+    bool result = thing_being_modified->add_modifier(key, thing_doing_the_modifying, expiration_ticks);
+
+    lua_pushboolean(L, static_cast<int>(result));
+
+    return 1;
+  }
+
+  int thing_remove_property_modifier(lua_State* L)
+  {
+    int num_args = lua_gettop(L);
+
+    if (num_args != 3)
+    {
+      CLOG(WARNING, "Lua") << "expected 3 arguments, got " << num_args;
+      return 0;
+    }
+
+    ThingId thing_being_modified = ThingId(lua_tointeger(L, 1));
+    StringKey key = lua_tostring(L, 2);
+    ThingId thing_doing_the_modifying = ThingId(lua_tointeger(L, 3));
+
+    unsigned int result = thing_being_modified->remove_modifier(key, thing_doing_the_modifying);
+
+    lua_pushinteger(L, static_cast<lua_Integer>(result));
+
+    return 1;
+  }
+
   void register_functions()
   {
     LUA_REGISTER(thing_create);
     LUA_REGISTER(thing_destroy);
     LUA_REGISTER(thing_get_player);
+    LUA_REGISTER(thing_get_location);
     LUA_REGISTER(thing_get_coords);
     LUA_REGISTER(thing_get_type);
     LUA_REGISTER(thing_get_base_property_flag);
@@ -515,5 +576,7 @@ namespace LuaThingFunctions
     LUA_REGISTER(thing_set_base_property_value);
     LUA_REGISTER(thing_set_base_property_string);
     LUA_REGISTER(thing_move_into);
+    LUA_REGISTER(thing_add_property_modifier);
+    LUA_REGISTER(thing_remove_property_modifier);
   }
 } // end namespace LuaThingFunctions
