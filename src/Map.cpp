@@ -127,7 +127,7 @@ int Map::get_index(int x, int y) const
 bool Map::is_in_bounds(int x, int y) const
 {
   return ((x >= 0) && (y >= 0) &&
-          (x < m_map_size.x) &&
+    (x < m_map_size.x) &&
           (y < m_map_size.y));
 }
 
@@ -138,7 +138,7 @@ bool Map::calc_coords(sf::Vector2i origin,
   result = origin + (sf::Vector2i)direction;
 
   bool is_in_bounds = ((result.x >= 0) &&
-                       (result.y >= 0) &&
+    (result.y >= 0) &&
                        (result.x <= m_map_size.x - 1) &&
                        (result.y <= m_map_size.y - 1));
 
@@ -201,8 +201,8 @@ void Map::update_lighting()
       auto& inventory = contents->get_inventory();
       auto& things = inventory.get_things();
       for (auto iter = std::begin(things);
-      iter != std::end(things);
-        ++iter)
+           iter != std::end(things);
+           ++iter)
       {
         ThingId thing = iter->second;
         thing->light_up_surroundings();
@@ -364,9 +364,9 @@ void Map::add_light(ThingId source)
 
   sf::Vector2i coords = maptile->get_coords();
 
-  int light_color_red = source->get_base_property<int>("light_color_red");
-  int light_color_green = source->get_base_property<int>("light_color_green");
-  int light_color_blue = source->get_base_property<int>("light_color_blue");
+  int light_color_red = source->get_modified_property<int>("light_color_red");
+  int light_color_green = source->get_modified_property<int>("light_color_green");
+  int light_color_blue = source->get_modified_property<int>("light_color_blue");
   sf::Color light_color = sf::Color(light_color_red, light_color_green, light_color_blue, 255);
 
   /// @todo Re-implement direction.
@@ -379,7 +379,7 @@ void Map::add_light(ThingId source)
 
   /// @todo: Handle "dark sources" with negative light strength properly --
   ///        right now they'll cause Very Bad Behavior!
-  int max_depth_squared = source->get_base_property<int>("light_strength");
+  int max_depth_squared = source->get_modified_property<int>("light_strength");
 
   // Add a light influence to the tile the light is on.
   LightInfluence influence;
@@ -411,7 +411,7 @@ void Map::add_light(ThingId source)
   // Northwest  x - - - - - - x
 
   if ((light_direction == Direction::Self) ||
-      (light_direction == Direction::Up) ||
+    (light_direction == Direction::Up) ||
       (light_direction == Direction::Down) ||
       (light_direction == Direction::Northwest) ||
       (light_direction == Direction::North))
@@ -419,7 +419,7 @@ void Map::add_light(ThingId source)
     do_recursive_lighting(source, coords, light_color, max_depth_squared, 1);
   }
   if ((light_direction == Direction::Self) ||
-      (light_direction == Direction::Up) ||
+    (light_direction == Direction::Up) ||
       (light_direction == Direction::Down) ||
       (light_direction == Direction::North) ||
       (light_direction == Direction::Northeast))
@@ -427,7 +427,7 @@ void Map::add_light(ThingId source)
     do_recursive_lighting(source, coords, light_color, max_depth_squared, 2);
   }
   if ((light_direction == Direction::Self) ||
-      (light_direction == Direction::Up) ||
+    (light_direction == Direction::Up) ||
       (light_direction == Direction::Down) ||
       (light_direction == Direction::Northeast) ||
       (light_direction == Direction::East))
@@ -435,7 +435,7 @@ void Map::add_light(ThingId source)
     do_recursive_lighting(source, coords, light_color, max_depth_squared, 3);
   }
   if ((light_direction == Direction::Self) ||
-      (light_direction == Direction::Up) ||
+    (light_direction == Direction::Up) ||
       (light_direction == Direction::Down) ||
       (light_direction == Direction::East) ||
       (light_direction == Direction::Southeast))
@@ -443,7 +443,7 @@ void Map::add_light(ThingId source)
     do_recursive_lighting(source, coords, light_color, max_depth_squared, 4);
   }
   if ((light_direction == Direction::Self) ||
-      (light_direction == Direction::Up) ||
+    (light_direction == Direction::Up) ||
       (light_direction == Direction::Down) ||
       (light_direction == Direction::Southeast) ||
       (light_direction == Direction::South))
@@ -451,7 +451,7 @@ void Map::add_light(ThingId source)
     do_recursive_lighting(source, coords, light_color, max_depth_squared, 5);
   }
   if ((light_direction == Direction::Self) ||
-      (light_direction == Direction::Up) ||
+    (light_direction == Direction::Up) ||
       (light_direction == Direction::Down) ||
       (light_direction == Direction::South) ||
       (light_direction == Direction::Southwest))
@@ -459,7 +459,7 @@ void Map::add_light(ThingId source)
     do_recursive_lighting(source, coords, light_color, max_depth_squared, 6);
   }
   if ((light_direction == Direction::Self) ||
-      (light_direction == Direction::Up) ||
+    (light_direction == Direction::Up) ||
       (light_direction == Direction::Down) ||
       (light_direction == Direction::Southwest) ||
       (light_direction == Direction::West))
@@ -467,7 +467,7 @@ void Map::add_light(ThingId source)
     do_recursive_lighting(source, coords, light_color, max_depth_squared, 7);
   }
   if ((light_direction == Direction::Self) ||
-      (light_direction == Direction::Up) ||
+    (light_direction == Direction::Up) ||
       (light_direction == Direction::Down) ||
       (light_direction == Direction::West) ||
       (light_direction == Direction::Northwest))
@@ -568,7 +568,7 @@ void Map::set_view(sf::RenderTarget& target,
                                             messagelog_area_height + (static_cast<float>(screen_size.y - (status_area_height + messagelog_area_height)) / zoom_level) / 2);
 
   target.setView(sf::View(sf::FloatRect((center.x - window_center.x),
-                                        (center.y - window_center.y),
+    (center.y - window_center.y),
                                         (screen_size.x / zoom_level),
                                         (screen_size.y / zoom_level))));
 }

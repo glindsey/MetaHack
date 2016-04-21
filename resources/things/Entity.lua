@@ -7,7 +7,6 @@ Entity.intrinsics.name = "[Entity]"
 Entity.intrinsics.plural = "[Entities]"
 
 Entity.intrinsics.bodypart_body_count = 1
-Entity.intrinsics.is_entity = true
 Entity.intrinsics.opacity_red = 255
 Entity.intrinsics.opacity_green = 255
 Entity.intrinsics.opacity_blue = 255

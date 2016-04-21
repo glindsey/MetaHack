@@ -58,7 +58,7 @@ Action::StateResult ActionWield::do_begin_work_(AnyMap& params)
   {
     /// @todo Move all of this into a separate ActionUnwield, and queue it instead.
     // Check if this item is bound.
-    if (object->get_base_property<bool>("bound"))
+    if (object->get_modified_property<bool>("bound"))
     {
       StringDisplay message;
       message = YOU + " cannot unwield " + get_object_string_() + "; it is magically bound to " + YOUR + " " + bodypart_desc + "!";
@@ -87,15 +87,6 @@ Action::StateResult ActionWield::do_begin_work_(AnyMap& params)
     subject->set_wielded(object, hand);
     message = YOU_ARE + " now wielding " + get_object_string_() + " with " + YOUR + " " + bodypart_desc + ".";
     the_message_log.add(message);
-
-    // If the weapon autobinds, bind it.
-    if (object->get_base_property<bool>("autobinds"))
-    {
-      object->set_base_property<bool>("bound", true);
-      StringDisplay message;
-      message = get_object_string_() + " magically binds itself to " + YOUR + " " + bodypart_desc + "!";
-      the_message_log.add(message);
-    }
 
     result = StateResult::Success();
   }

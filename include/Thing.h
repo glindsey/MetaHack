@@ -63,6 +63,8 @@ public:
   StringKey const& get_type() const;
   StringKey const& get_parent_type() const;
 
+  bool is_subtype_of(StringKey that_type) const;
+
   /// Return whether a Thing is wielded by this Entity.
   /// This is used by InventoryArea to show wielded status.
   /// @param[in] thing Thing to check
@@ -129,7 +131,7 @@ public:
   template<typename T>
   T get_base_property(StringKey key, T default_value = T())
   {
-    PropertyDictionary& properties = pImpl->properties;
+    ModifiablePropertyDictionary& properties = pImpl->properties;
 
     if (properties.contains(key))
     {
@@ -152,7 +154,7 @@ public:
   template<typename T>
   bool set_base_property(StringKey key, T value)
   {
-    PropertyDictionary& properties = pImpl->properties;
+    ModifiablePropertyDictionary& properties = pImpl->properties;
     bool existed = properties.contains(key);
     properties.set<T>(key, value);
 
@@ -166,65 +168,49 @@ public:
   template<typename T>
   void add_to_base_property(StringKey key, T add_value)
   {
-    PropertyDictionary& properties = pImpl->properties;
+    ModifiablePropertyDictionary& properties = pImpl->properties;
     T existing_value = properties.get<T>(key);
     T new_value = existing_value + add_value;
     properties.set<T>(key, new_value);
   }
 
-#if 0
-  /// Get a transient property of this Thing.
-  /// If the transient property is not found, the method falls back upon the
+  /// Get a modified property of this Thing.
+  /// If the modified property is not found, the method falls back upon the
   /// base value for that property (if any).
   /// @param key            Name of the property to get.
   /// @param default_value  Default value to use, if any.
-  /// @return The transient (or base) property value for that key.
+  /// @return The modified (or base) property value for that key.
   template<typename T>
-  T get_transient_property(StringKey key, T default_value = T())
+  T get_modified_property(StringKey key, T default_value = T())
   {
-    PropertyDictionary& transient_properties = pImpl->transient_properties;
+    ModifiablePropertyDictionary& properties = pImpl->properties;
 
-    if (transient_properties.has_modifier_for(key))
+    if (!properties.contains(key))
     {
-      return transient_properties.get<T>(key);
+      T value = pImpl->metadata.get_intrinsic<T>(key, default_value);
+      properties.set<T>(key, value);
     }
-    else
-    {
-      T value = get_base_property<T>(key, default_value);
-      transient_properties.set<T>(key, value);
-      return value;
-    }
+
+    return properties.get_modified<T>(key);
   }
 
-  /// Sets a transient property of this Thing.
-  /// If the transient property is not found, it is created.
-  /// @param key    Key of the transient property to set.
-  /// @param value  Value to set the transient property to.
-  /// @return Boolean indicating whether the transient property previously
-  ///         existed.
-  template<typename T>
-  bool set_transient_property(StringKey key, T value)
-  {
-    PropertyDictionary& transient_properties = pImpl->transient_properties;
-    bool existed = transient_properties.has_modifier_for(key);
-    transient_properties.set<T>(key, value);
+  /// Add a property modifier to this Thing.
+  /// @param  key               Name of property to modify.
+  /// @param  id                ID of Thing that is responsible for modifying it.
+  /// @param  expiration_ticks  Number of ticks until modifier is removed, or 0
+  ///                           if it is never removed.
+  ///
+  /// @see ModifiablePropertyDictionary::add_modifier
+  ///
+  /// @return True if the function was added; false if it already existed.
+  bool add_modifier(StringKey key, ThingId id, unsigned int expiration_ticks = 0);
 
-    return existed;
-  }
-
-  /// Adds to a transient property of this Thing.
-  /// If the transient property is not found, it is created from the base.
-  /// @param key    Key of the property to set.
-  /// @param value  Value to add to the property.
-  template<typename T>
-  void add_to_transient_property(StringKey key, T add_value)
-  {
-    PropertyDictionary& transient_properties = pImpl->transient_properties;
-    T existing_value = transient_properties.get<T>(key);
-    T new_value = existing_value + add_value;
-    transient_properties.set<T>(key, new_value);
-  }
-#endif
+  /// Remove all modifier functions for a given key and thing ID.
+  /// @param  key               Name of property to modify.
+  /// @param  id                ID of Thing that is responsible for modifying it.
+  ///
+  /// @return The number of modifiers erased.
+  unsigned int remove_modifier(StringKey key, ThingId id);
 
   /// Get the quantity this thing represents.
   unsigned int get_quantity();

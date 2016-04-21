@@ -33,6 +33,23 @@ ThingManager::~ThingManager()
 {
 }
 
+bool ThingManager::first_is_subtype_of_second(StringKey first, StringKey second)
+{
+  StringKey first_parent = MDC::get_collection("thing").get(first).get_intrinsic<StringKey>("parent");
+
+  if (first_parent.empty())
+  {
+    return false;
+  }
+
+  if (first_parent == second)
+  {
+    return true;
+  }
+
+  return first_is_subtype_of_second(first_parent, second);
+}
+
 ThingId ThingManager::create(StringKey type)
 {
   ThingId new_id = ThingId(m_nextThingId);

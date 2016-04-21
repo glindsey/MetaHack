@@ -7,6 +7,12 @@
 #include "Thing.h"
 #include "ThingId.h"
 
+// === MACROS =================================================================
+#define STRINGIFY(x) #x
+#define LUA_REGISTER(x) do { the_lua_instance.register_function(STRINGIFY(x), x); } while(0)
+
+// === FUNCTIONS ==============================================================
+
 namespace LuaThingFunctions
 {
   int thing_create(lua_State* L)
@@ -132,6 +138,114 @@ namespace LuaThingFunctions
     return 1;
   }
 
+  int thing_get_base_property_flag(lua_State* L)
+  {
+    int num_args = lua_gettop(L);
+
+    if (num_args != 2)
+    {
+      CLOG(WARNING, "Lua") << "expected 2 arguments, got " << num_args;
+      return 0;
+    }
+
+    ThingId thing = ThingId(lua_tointeger(L, 1));
+    const char* key = lua_tostring(L, 2);
+    bool result = thing->get_base_property<bool>(key);
+    lua_pushboolean(L, result);
+
+    return 1;
+  }
+
+  int thing_get_base_property_value(lua_State* L)
+  {
+    int num_args = lua_gettop(L);
+
+    if (num_args != 2)
+    {
+      CLOG(WARNING, "Lua") << "expected 2 arguments, got " << num_args;
+      return 0;
+    }
+
+    ThingId thing = ThingId(lua_tointeger(L, 1));
+    const char* key = lua_tostring(L, 2);
+    int result = thing->get_base_property<int>(key);
+    lua_pushinteger(L, result);
+
+    return 1;
+  }
+
+  int thing_get_base_property_string(lua_State* L)
+  {
+    int num_args = lua_gettop(L);
+
+    if (num_args != 2)
+    {
+      CLOG(WARNING, "Lua") << "expected 2 arguments, got " << num_args;
+      return 0;
+    }
+
+    ThingId thing = ThingId(lua_tointeger(L, 1));
+    const char* key = lua_tostring(L, 2);
+    StringKey result = thing->get_base_property<StringKey>(key).c_str();
+    lua_pushstring(L, result.c_str());
+
+    return 1;
+  }
+
+  int thing_get_modified_property_flag(lua_State* L)
+  {
+    int num_args = lua_gettop(L);
+
+    if (num_args != 2)
+    {
+      CLOG(WARNING, "Lua") << "expected 2 arguments, got " << num_args;
+      return 0;
+    }
+
+    ThingId thing = ThingId(lua_tointeger(L, 1));
+    const char* key = lua_tostring(L, 2);
+    bool result = thing->get_modified_property<bool>(key);
+    lua_pushboolean(L, result);
+
+    return 1;
+  }
+
+  int thing_get_modified_property_value(lua_State* L)
+  {
+    int num_args = lua_gettop(L);
+
+    if (num_args != 2)
+    {
+      CLOG(WARNING, "Lua") << "expected 2 arguments, got " << num_args;
+      return 0;
+    }
+
+    ThingId thing = ThingId(lua_tointeger(L, 1));
+    const char* key = lua_tostring(L, 2);
+    int result = thing->get_modified_property<int>(key);
+    lua_pushinteger(L, result);
+
+    return 1;
+  }
+
+  int thing_get_modified_property_string(lua_State* L)
+  {
+    int num_args = lua_gettop(L);
+
+    if (num_args != 2)
+    {
+      CLOG(WARNING, "Lua") << "expected 2 arguments, got " << num_args;
+      return 0;
+    }
+
+    ThingId thing = ThingId(lua_tointeger(L, 1));
+    const char* key = lua_tostring(L, 2);
+    StringKey result = thing->get_modified_property<StringKey>(key).c_str();
+    lua_pushstring(L, result.c_str());
+
+    return 1;
+  }
+
   int thing_get_intrinsic_flag(lua_State* L)
   {
     int num_args = lua_gettop(L);
@@ -183,60 +297,6 @@ namespace LuaThingFunctions
 
     StringKey result = thing->get_intrinsic<StringKey>(key).c_str();
 
-    lua_pushstring(L, result.c_str());
-
-    return 1;
-  }
-
-  int thing_get_property_flag(lua_State* L)
-  {
-    int num_args = lua_gettop(L);
-
-    if (num_args != 2)
-    {
-      CLOG(WARNING, "Lua") << "expected 2 arguments, got " << num_args;
-      return 0;
-    }
-
-    ThingId thing = ThingId(lua_tointeger(L, 1));
-    const char* key = lua_tostring(L, 2);
-    bool result = thing->get_base_property<bool>(key);
-    lua_pushboolean(L, result);
-
-    return 1;
-  }
-
-  int thing_get_property_value(lua_State* L)
-  {
-    int num_args = lua_gettop(L);
-
-    if (num_args != 2)
-    {
-      CLOG(WARNING, "Lua") << "expected 2 arguments, got " << num_args;
-      return 0;
-    }
-
-    ThingId thing = ThingId(lua_tointeger(L, 1));
-    const char* key = lua_tostring(L, 2);
-    int result = thing->get_base_property<int>(key);
-    lua_pushinteger(L, result);
-
-    return 1;
-  }
-
-  int thing_get_property_string(lua_State* L)
-  {
-    int num_args = lua_gettop(L);
-
-    if (num_args != 2)
-    {
-      CLOG(WARNING, "Lua") << "expected 2 arguments, got " << num_args;
-      return 0;
-    }
-
-    ThingId thing = ThingId(lua_tointeger(L, 1));
-    const char* key = lua_tostring(L, 2);
-    StringKey result = thing->get_base_property<StringKey>(key).c_str();
     lua_pushstring(L, result.c_str());
 
     return 1;
@@ -357,7 +417,7 @@ namespace LuaThingFunctions
     return 1;
   }
 
-  int thing_set_property_flag(lua_State* L)
+  int thing_set_base_property_flag(lua_State* L)
   {
     int num_args = lua_gettop(L);
 
@@ -375,7 +435,7 @@ namespace LuaThingFunctions
     return 0;
   }
 
-  int thing_set_property_value(lua_State* L)
+  int thing_set_base_property_value(lua_State* L)
   {
     int num_args = lua_gettop(L);
 
@@ -393,7 +453,7 @@ namespace LuaThingFunctions
     return 0;
   }
 
-  int thing_set_property_string(lua_State* L)
+  int thing_set_base_property_string(lua_State* L)
   {
     int num_args = lua_gettop(L);
 
@@ -434,23 +494,26 @@ namespace LuaThingFunctions
 
   void register_functions()
   {
-    the_lua_instance.register_function("thing_create", thing_create);
-    the_lua_instance.register_function("thing_destroy", thing_destroy);
-    the_lua_instance.register_function("thing_get_player", thing_get_player);
-    the_lua_instance.register_function("thing_get_coords", thing_get_coords);
-    the_lua_instance.register_function("thing_get_type", thing_get_type);
-    the_lua_instance.register_function("thing_get_intrinsic_flag", thing_get_intrinsic_flag);
-    the_lua_instance.register_function("thing_get_intrinsic_value", thing_get_intrinsic_value);
-    the_lua_instance.register_function("thing_get_intrinsic_string", thing_get_intrinsic_string);
-    the_lua_instance.register_function("thing_get_property_flag", thing_get_property_flag);
-    the_lua_instance.register_function("thing_get_property_value", thing_get_property_value);
-    the_lua_instance.register_function("thing_get_property_string", thing_get_property_string);
-    the_lua_instance.register_function("thing_queue_action", thing_queue_action);
-    the_lua_instance.register_function("thing_queue_targeted_action", thing_queue_targeted_action);
-    the_lua_instance.register_function("thing_queue_directional_action", thing_queue_directional_action);
-    the_lua_instance.register_function("thing_set_property_flag", thing_set_property_flag);
-    the_lua_instance.register_function("thing_set_property_value", thing_set_property_value);
-    the_lua_instance.register_function("thing_set_property_string", thing_set_property_string);
-    the_lua_instance.register_function("thing_move_into", thing_move_into);
+    LUA_REGISTER(thing_create);
+    LUA_REGISTER(thing_destroy);
+    LUA_REGISTER(thing_get_player);
+    LUA_REGISTER(thing_get_coords);
+    LUA_REGISTER(thing_get_type);
+    LUA_REGISTER(thing_get_base_property_flag);
+    LUA_REGISTER(thing_get_base_property_value);
+    LUA_REGISTER(thing_get_base_property_string);
+    LUA_REGISTER(thing_get_modified_property_flag);
+    LUA_REGISTER(thing_get_modified_property_value);
+    LUA_REGISTER(thing_get_modified_property_string);
+    LUA_REGISTER(thing_get_intrinsic_flag);
+    LUA_REGISTER(thing_get_intrinsic_value);
+    LUA_REGISTER(thing_get_intrinsic_string);
+    LUA_REGISTER(thing_queue_action);
+    LUA_REGISTER(thing_queue_targeted_action);
+    LUA_REGISTER(thing_queue_directional_action);
+    LUA_REGISTER(thing_set_base_property_flag);
+    LUA_REGISTER(thing_set_base_property_value);
+    LUA_REGISTER(thing_set_base_property_string);
+    LUA_REGISTER(thing_move_into);
   }
 } // end namespace LuaThingFunctions

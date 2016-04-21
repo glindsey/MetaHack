@@ -12,8 +12,10 @@ SMALL THINGS
 
 MEDIUM THINGS
 =============
+[ ] Add a function that allows for automatic substitution of substrings, instead of concatenating macros as is done now. This will be needed for easy creation of display strings in Lua.
+    [ ] Export said function to Lua
 [/] Transient properties
-    [/] Cached set of properties
+    [X] Cached set of properties
         - Property is recalculated upon:
             - base property changing
             - add_property_modifier / remove_property_modifier
@@ -24,7 +26,8 @@ MEDIUM THINGS
         - Number of ticks modifier stays in place, or 0 if permanent until explicitly removed
     [ ] Export "add_property_modifier", "remove_property_modifier" to Lua
         - Either of these causes a recalculation of transient property values
-        
+
+[ ] Rewrite autobind code using new property modifiers        
 [ ] Write attire (wear) action code
 [ ] Write open, close Action code
 [ ] Write lock, unlock Action code

@@ -183,7 +183,7 @@ ThingId Inventory::get_largest_thing()
   auto iter_largest = things_.cbegin();
 
   for (ThingMap::const_iterator iter = things_.cbegin();
-  iter != things_.cend(); ++iter)
+       iter != things_.cend(); ++iter)
   {
     if (is_smaller_than(iter_largest->second, iter->second))
     {
@@ -199,7 +199,7 @@ ThingId Inventory::get_entity()
     find_if([&](const ThingPair& thing_pair)
   {
     ThingId ref = thing_pair.second;
-    return ((ref->get_intrinsic<bool>("is_entity") == true) && (ref->get_base_property<int>("hp") > 0));
+    return ((ref->is_subtype_of("Entity")) && (ref->get_modified_property<int>("hp") > 0));
   });
 
   if (iter != things_.cend())

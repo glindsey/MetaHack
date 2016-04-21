@@ -157,7 +157,7 @@ bool Thing::do_die()
       }
       else
       {
-        bool living = get_base_property<bool>("living");
+        bool living = get_modified_property<bool>("living");
         if (living)
         {
           message = this->get_you_or_identifying_string() + " " +
@@ -411,12 +411,12 @@ void Thing::set_worn(ThingId thing, WearLocation location)
 
 bool Thing::can_currently_see()
 {
-  return get_intrinsic<bool>("can_see", false) && (get_base_property<int>("counters.blind", 0) == 0);
+  return get_modified_property<bool>("can_see", false);
 }
 
 bool Thing::can_currently_move()
 {
-  return get_intrinsic<bool>("can_move", false) && (get_base_property<int>("counters.paralyzed", 0) == 0);
+  return get_modified_property<bool>("can_move", false);
 }
 
 void Thing::set_gender(Gender gender)
@@ -576,6 +576,22 @@ StringKey const& Thing::get_parent_type() const
   return pImpl->metadata.get_intrinsic<StringKey>("parent");
 }
 
+bool Thing::is_subtype_of(StringKey that_type) const
+{
+  StringKey this_type = get_type();
+  return GAME.get_thing_manager().first_is_subtype_of_second(this_type, that_type);
+}
+
+bool Thing::add_modifier(StringKey key, ThingId id, unsigned int expiration_ticks)
+{
+  return pImpl->properties.add_modifier(key, id, expiration_ticks);
+}
+
+unsigned int Thing::remove_modifier(StringKey key, ThingId id)
+{
+  return pImpl->properties.remove_modifier(key, id);
+}
+
 unsigned int Thing::get_quantity()
 {
   return get_base_property<unsigned int>("quantity", 1);
@@ -622,7 +638,7 @@ bool Thing::can_see(ThingId thing)
   MapId thing_map_id = thing->get_map_id();
 
   if ((entity_map_id == MapFactory::null_map_id) ||
-      (thing_map_id == MapFactory::null_map_id) ||
+    (thing_map_id == MapFactory::null_map_id) ||
       (entity_map_id != thing_map_id))
   {
     return false;
@@ -895,7 +911,7 @@ StringDisplay Thing::get_display_plural() const
 
 StringDisplay Thing::get_proper_name()
 {
-  return get_base_property<std::string>("proper_name");
+  return get_modified_property<std::string>("proper_name");
 }
 
 void Thing::set_proper_name(StringDisplay name)
@@ -917,7 +933,7 @@ StringDisplay Thing::get_identifying_string_without_possessives(bool definite)
 
   if (is_player())
   {
-    if (get_base_property<int>("hp") > 0)
+    if (get_modified_property<int>("hp") > 0)
     {
       return "you";
     }
@@ -956,7 +972,7 @@ StringDisplay Thing::get_identifying_string_without_possessives(bool definite)
     article += get_quantity() + " ";
   }
 
-  if (get_intrinsic<bool>("is_entity") && get_base_property<int>("hp") <= 0)
+  if (is_subtype_of("Entity") && get_modified_property<int>("hp") <= 0)
   {
     adjectives += "dead ";
   }
@@ -970,7 +986,7 @@ StringDisplay Thing::get_you_or_identifying_string(bool definite)
 {
   if (is_player())
   {
-    if (get_base_property<int>("hp") > 0)
+    if (get_modified_property<int>("hp") > 0)
     {
       return "you";
     }
@@ -1007,7 +1023,7 @@ StringDisplay Thing::get_identifying_string(bool definite)
   StringDisplay noun;
   StringDisplay suffix;
 
-  owned = location->get_intrinsic<bool>("is_entity");
+  owned = location->is_subtype_of("Entity");
 
   if (quantity == 1)
   {
@@ -1053,7 +1069,7 @@ StringDisplay Thing::get_identifying_string(bool definite)
     }
   }
 
-  if (get_intrinsic<bool>("is_entity") && get_base_property<int>("hp") <= 0)
+  if (is_subtype_of("Entity") && get_modified_property<int>("hp") <= 0)
   {
     adjectives += "dead ";
   }
@@ -1078,7 +1094,7 @@ StringDisplay const& Thing::choose_verb(StringDisplay const& verb12,
 
 int Thing::get_mass()
 {
-  return get_intrinsic<int>("physical_mass") * get_base_property<unsigned int>("quantity");
+  return get_modified_property<int>("physical_mass") * get_base_property<unsigned int>("quantity");
 }
 
 StringDisplay const& Thing::get_subject_pronoun() const
@@ -1241,7 +1257,7 @@ void Thing::light_up_surroundings()
     ///       shine simply if it's in the player's inventory.
 
     //if (!is_opaque() || is_wielding(light) || has_equipped(light))
-    if (!is_opaque() || get_intrinsic<bool>("is_entity"))
+    if (!is_opaque() || is_subtype_of("Entity"))
     {
       auto& things = get_inventory().get_things();
       for (auto& thing_pair : things)
@@ -1255,7 +1271,7 @@ void Thing::light_up_surroundings()
   ThingId location = get_location();
 
   // Use visitor pattern.
-  if ((location != MU) && this->get_base_property<bool>("light_lit"))
+  if ((location != MU) && this->get_modified_property<bool>("light_lit"))
   {
     location->be_lit_by(this->get_id());
   }
@@ -1277,7 +1293,7 @@ void Thing::be_lit_by(ThingId light)
   ///       shine simply if it's in the player's inventory.
 
   //if (!is_opaque() || is_wielding(light) || has_equipped(light))
-  if (!is_opaque() || get_intrinsic<bool>("is_entity"))
+  if (!is_opaque() || is_subtype_of("Entity"))
   {
     ThingId location = get_location();
     if (location != MU)
@@ -1545,8 +1561,8 @@ bool Thing::process()
 
   // Process inventory.
   for (auto iter = std::begin(things);
-  iter != std::end(things);
-    ++iter)
+       iter != std::end(things);
+       ++iter)
   {
     ThingId thing = iter->second;
     /* bool dead = */ thing->process();
@@ -1606,7 +1622,7 @@ ActionResult Thing::perform_action_attacked_by(ThingId subject, ThingId target)
 
 bool Thing::perform_action_deequipped_by(ThingId actor, WearLocation& location)
 {
-  if (this->get_base_property<bool>("bound"))
+  if (this->get_modified_property<bool>("bound"))
   {
     StringDisplay message;
     message = actor->get_identifying_string() + " cannot take off " + this->get_identifying_string() +
@@ -1629,20 +1645,6 @@ bool Thing::perform_action_equipped_by(ThingId actor, WearLocation& location)
   ActionResult result = call_lua_function<ActionResult, ThingId>("perform_action_equipped_by", { actor }, ActionResult::Success);
   bool subclass_result = was_successful(result);
 
-  if (subclass_result == true)
-  {
-    if (this->get_base_property<bool>("autobinds"))
-    {
-      this->set_base_property<bool>("bound", true);
-      StringDisplay message;
-      message = this->get_identifying_string() + " magically binds itself to " +
-        actor->get_possessive() + " " +
-        actor->get_bodypart_description(location.part,
-                                        location.number) + "!";
-      the_message_log.add(message);
-    }
-  }
-
   return subclass_result;
 }
 
@@ -1662,7 +1664,7 @@ bool Thing::can_merge_with(ThingId other) const
 
   // Things with inventories can never merge.
   if ((get_intrinsic<int>("inventory_size") != 0) ||
-      (other->get_intrinsic<int>("inventory_size") != 0))
+    (other->get_intrinsic<int>("inventory_size") != 0))
   {
     return false;
   }
@@ -1712,10 +1714,10 @@ bool Thing::_process_self()
   int counter_busy = get_base_property<int>("counter_busy");
 
   // Is this an entity that is now dead?
-  if ((get_base_property<bool>("is_entity") == true) && (get_base_property<int>("hp") <= 0))
+  if (is_subtype_of("Entity") && (get_modified_property<int>("hp") <= 0))
   {
     // Did the entity JUST die?
-    if (get_base_property<bool>("dead") != true)
+    if (get_modified_property<bool>("dead") != true)
     {
       // Perform the "die" action.
       // (This sets the "dead" property and clears out any pending actions.)
