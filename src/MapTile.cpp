@@ -237,10 +237,7 @@ void MapTile::add_light_influence(ThingId source,
         addColor.a = 255;
 
         unsigned int index = d.get_map_index();
-        m_calculated_light_colors[index].r = saturation_add(m_calculated_light_colors[index].r, addColor.r);
-        m_calculated_light_colors[index].g = saturation_add(m_calculated_light_colors[index].g, addColor.g);
-        m_calculated_light_colors[index].b = saturation_add(m_calculated_light_colors[index].b, addColor.b);
-        m_calculated_light_colors[index].a = saturation_add(m_calculated_light_colors[index].a, addColor.a);
+        m_calculated_light_colors[index] = saturation_add(m_calculated_light_colors[index], addColor);
       }
     }
   }
@@ -250,11 +247,11 @@ sf::Color MapTile::get_light_level() const
 {
   if (m_calculated_light_colors.count(Direction::Self.get_map_index()) == 0)
   {
-    return sf::Color::Black;
+    return m_ambient_light_color; // sf::Color::Black;
   }
   else
   {
-    return m_calculated_light_colors.at(Direction::Self.get_map_index());
+    return saturation_add(m_ambient_light_color, m_calculated_light_colors.at(Direction::Self.get_map_index()));
   }
 }
 
@@ -262,11 +259,11 @@ sf::Color MapTile::get_wall_light_level(Direction direction) const
 {
   if (m_calculated_light_colors.count(direction.get_map_index()) == 0)
   {
-    return sf::Color::Black;
+    return m_ambient_light_color; // sf::Color::Black;
   }
   else
   {
-    return m_calculated_light_colors.at(direction.get_map_index());
+    return saturation_add(m_ambient_light_color, m_calculated_light_colors.at(direction.get_map_index()));
   }
 }
 

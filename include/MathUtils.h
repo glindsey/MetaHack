@@ -74,6 +74,17 @@ inline unsigned char saturation_add(unsigned char const& a,
   return static_cast<unsigned char>((temp <= 255U) ? temp : 255U);
 }
 
+inline sf::Color saturation_add(sf::Color const& a,
+                                sf::Color const& b)
+{
+  sf::Color temp;
+  temp.r = saturation_add(a.r, b.r);
+  temp.g = saturation_add(a.g, b.g);
+  temp.b = saturation_add(a.b, b.b);
+  temp.a = saturation_add(a.a, b.a);
+  return temp;
+}
+
 inline bool flip_coin()
 {
   uniform_int_dist coin(0, 1);
