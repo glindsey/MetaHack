@@ -6,7 +6,7 @@ LightSource = inheritsFrom(Thing, "LightSource")
 LightSource.intrinsics.name = "[LightSource]"
 LightSource.intrinsics.plural = "[LightSources]"
 
-LightSource.intrinsics.light_lit = true
+LightSource.intrinsics.lit = true
 LightSource.intrinsics.light_color_red = 64
 LightSource.intrinsics.light_color_green = 64
 LightSource.intrinsics.light_color_blue = 64
@@ -26,13 +26,13 @@ end
 
 function LightSource.be_object_of_action_use(id)
     local name = thing_get_intrinsic_string(id, "name")
-    local is_lit = thing_get_property_flag(id, "light_lit")
+    local is_lit = thing_get_modified_property_flag(id, "lit")
     is_lit = not is_lit
     if is_lit then
         messageLog_add("You light the " .. name .. ".")
     else
         messageLog_add("You extinguish the " .. name .. ".")
     end
-    thing_set_property_flag(id, "light_lit", is_lit)
+    thing_set_base_property_flag(id, "lit", is_lit)
     return ActionResult.Success
 end

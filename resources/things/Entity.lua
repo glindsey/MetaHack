@@ -29,7 +29,7 @@ end
 
 function Entity.get_tile_offset(id, frame)
     -- If entity's hit points are <= 0, show the "dead" tile.
-    local hp = thing_get_property_value(id, "hp")
+    local hp = thing_get_modified_property_value(id, "hp")
     if (hp > 0) then
         return 0, 0
     else

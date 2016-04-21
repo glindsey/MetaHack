@@ -7,5 +7,10 @@ Weapon.intrinsics.name = "[Weapon]"
 Weapon.intrinsics.plural = "[Weapons]"
 
 function Weapon.get_description()
-	return "A thing designed or used for inflicting bodily harm or physical damage."
+    return "A thing designed or used for inflicting bodily harm or physical damage."
 end
+
+function Weapon.be_object_of_action_wield(object, subject)   
+    print("*** Got call to be_object_of_action_wield(" .. object .. ", " .. subject .. ")")
+    return ActionResult.Success
+end 

@@ -1257,7 +1257,7 @@ void Thing::light_up_surroundings()
     ///       shine simply if it's in the player's inventory.
 
     //if (!is_opaque() || is_wielding(light) || has_equipped(light))
-    if (!is_opaque() || is_subtype_of("Entity"))
+    if (!is_opaque() || get_location()->is_subtype_of("Entity"))
     {
       auto& things = get_inventory().get_things();
       for (auto& thing_pair : things)
@@ -1271,7 +1271,7 @@ void Thing::light_up_surroundings()
   ThingId location = get_location();
 
   // Use visitor pattern.
-  if ((location != MU) && this->get_modified_property<bool>("light_lit"))
+  if ((location != MU) && this->get_modified_property<bool>("lit"))
   {
     location->be_lit_by(this->get_id());
   }
@@ -1293,9 +1293,9 @@ void Thing::be_lit_by(ThingId light)
   ///       shine simply if it's in the player's inventory.
 
   //if (!is_opaque() || is_wielding(light) || has_equipped(light))
-  if (!is_opaque() || is_subtype_of("Entity"))
+  ThingId location = get_location();
+  if (!is_opaque() || location->is_subtype_of("Entity"))
   {
-    ThingId location = get_location();
     if (location != MU)
     {
       location->be_lit_by(light);
