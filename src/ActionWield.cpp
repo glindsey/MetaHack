@@ -17,12 +17,12 @@ Action::StateResult ActionWield::do_prebegin_work_(AnyMap& params)
     subject->get_bodypart_description(BodyPart::Hand, hand);
   ThingId currently_wielded = subject->get_wielding(hand);
 
-  StringDisplay thing_name = (object != MU) ? get_object_string_() : "nothing";
+  StringDisplay thing_name = (object != ThingId::Mu()) ? get_object_string_() : "nothing";
 
   // If it is us, or it is what is already being wielded, it means to unwield whatever is wielded.
   if ((object == subject) || (object == currently_wielded))
   {
-    set_object(MU);
+    set_object(ThingId::Mu());
   }
 
   // Check that we have hands capable of wielding anything.
@@ -54,7 +54,7 @@ Action::StateResult ActionWield::do_begin_work_(AnyMap& params)
   bool was_wielding = false;
 
   // First, check if we're already wielding something.
-  if (currently_wielded != MU)
+  if (currently_wielded != ThingId::Mu())
   {
     /// @todo Move all of this into a separate ActionUnwield, and queue it instead.
     // Check if this item is bound.
@@ -71,7 +71,7 @@ Action::StateResult ActionWield::do_begin_work_(AnyMap& params)
     // Try to unwield the old item.
     if (currently_wielded->perform_action_unwielded_by(subject))
     {
-      subject->set_wielded(MU, hand);
+      subject->set_wielded(ThingId::Mu(), hand);
       was_wielding = true;
     }
     else

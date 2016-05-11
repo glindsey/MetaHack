@@ -18,7 +18,7 @@ struct Action::Impl
     state{ Action::State::Pending },
     subject{ subject_ },
     objects{},
-    target_thing{ MU },
+    target_thing{ ThingId::Mu() },
     target_direction{ Direction::None },
     quantity{ 1 }
   {}
@@ -44,7 +44,7 @@ struct Action::Impl
 
 Action::Action()
   :
-  pImpl{ new Impl(MU) }
+  pImpl{ new Impl(ThingId::Mu()) }
 {
   SET_UP_LOGGER("Action", true);
 }
@@ -204,7 +204,7 @@ void Action::set_target(ThingId thing) const
 
 void Action::set_target(Direction direction) const
 {
-  pImpl->target_thing = MU;
+  pImpl->target_thing = ThingId::Mu();
   pImpl->target_direction = direction;
 }
 
@@ -241,7 +241,7 @@ Action::StateResult Action::do_prebegin_work(AnyMap& params)
   if (!subject_can_be_in_limbo())
   {
     // Make sure we're not in limbo!
-    if ((location == MU) || (current_tile == nullptr))
+    if ((location == ThingId::Mu()) || (current_tile == nullptr))
     {
       /// @todo This message could be made less awkward for verbs that take objects.
       message = YOU + " can't " + VERB + " because " + YOU_DO + " not exist physically!";
@@ -366,7 +366,7 @@ StringDisplay Action::get_object_string_()
     }
     else
     {
-      if (get_object() == MU)
+      if (get_object() == ThingId::Mu())
       {
         description += "nothing";
       }

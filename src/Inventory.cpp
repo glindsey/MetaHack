@@ -18,7 +18,7 @@ Inventory::~Inventory()
 bool Inventory::add(ThingId thing)
 {
   // If thing is Mu, exit returning false.
-  if (thing == MU)
+  if (thing == ThingId::Mu())
   {
     return false;
   }
@@ -132,7 +132,7 @@ ThingId Inventory::get(InventorySlot slot)
 
 ThingId Inventory::split(ThingId thing, unsigned int target_quantity)
 {
-  ThingId target_thing = MU;
+  ThingId target_thing = ThingId::Mu();
 
   if (target_quantity > 0)
   {
@@ -208,7 +208,7 @@ ThingId Inventory::get_entity()
   }
   else
   {
-    return MU;
+    return ThingId::Mu();
   }
 }
 
@@ -235,7 +235,7 @@ ThingMap::iterator Inventory::find(ThingId target_id)
 
 bool Inventory::is_smaller_than(ThingId a, ThingId b)
 {
-  if ((a == MU) || (b == MU)) return false;
+  if ((a == ThingId::Mu()) || (b == ThingId::Mu())) return false;
 
   return (a->get_mass() < b->get_mass());
 }

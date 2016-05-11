@@ -222,7 +222,7 @@ public:
   ThingId get_id() const;
 
   /// Return the root location of this Thing, traversing up the location
-  /// chain until MU is reached.
+  /// chain until ThingId::Mu() is reached.
   ThingId get_root_location() const;
 
   /// Return the location of this thing.

@@ -33,6 +33,12 @@ public:
     archive(m_id);
   }
 
+  /// Static method to return the ThingId::Mu() (nothingness) ID.
+  static ThingId Mu()
+  {
+    return ThingId();
+  }
+
   /// Convert to Lua integer.
   /// @warning If for some crazy reason m_id is somehow larger than
   ///          2^53, this will NOT WORK PROPERLY due to precision loss.

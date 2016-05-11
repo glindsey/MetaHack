@@ -54,7 +54,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Personal\projects\MetaHack\include;C:\Personal\projects\MetaHack\gui;C:\Personal\projects\MetaHack\src\impl;C:\Personal\libraries\SFGUI\include;C:\Personal\libraries\SFML-feature-VS2015\include;C:\Personal\libraries\luajit-2.0\src;C:\Personal\libraries\boost_1_59_0;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <IncludePath>C:\Personal\projects\MetaHack\include;C:\Personal\projects\MetaHack\gui;C:\Personal\projects\MetaHack\src\impl;C:\Personal\libraries\SFML-2.3.2\include;C:\Personal\libraries\luajit-2.0\src;C:\Personal\libraries\boost_1_60_0;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
     <LibraryPath>C:\Personal\projects\MetaHack\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">
@@ -64,7 +64,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\Personal\projects\MetaHack\include;C:\Personal\projects\MetaHack\gui;C:\Personal\projects\MetaHack\src\impl;C:\Personal\libraries\SFGUI\include;C:\Personal\libraries\SFML-feature-VS2015\include;C:\Personal\libraries\luajit-2.0\src;C:\Personal\libraries\boost_1_59_0;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <IncludePath>C:\Personal\projects\MetaHack\include;C:\Personal\projects\MetaHack\gui;C:\Personal\projects\MetaHack\src\impl;C:\Personal\libraries\SFML-2.3.2\include;C:\Personal\libraries\luajit-2.0\src;C:\Personal\libraries\boost_1_60_0;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
     <LibraryPath>C:\Personal\projects\MetaHack\lib;$(LibraryPath)</LibraryPath>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>

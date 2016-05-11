@@ -33,7 +33,7 @@ public:
     metadata{ metadata_ },
     properties{},
     ref{ ref_ },
-    location{ MU },
+    location{ ThingId::Mu() },
     map_tile{ nullptr },
     inventory{ Inventory() },
     gender{ Gender::None },
@@ -53,7 +53,7 @@ public:
     metadata{ metadata_ },
     properties{},
     ref{ ref_ },
-    location{ MU },
+    location{ ThingId::Mu() },
     map_tile{ tile },
     inventory{ Inventory() },
     gender{ Gender::None },
@@ -80,7 +80,7 @@ public:
     gender{ other.gender },
     map_memory{ other.map_memory },
     tiles_currently_seen{ TilesSeen() },  // don't copy
-    pending_actions{ ActionQueue() },             // don't copy
+    pending_actions{ ActionQueue() },     // don't copy
     wielded_items{ WieldingMap() },       // don't copy
     equipped_items{ WearingMap() }        // don't copy
   {}
@@ -136,7 +136,7 @@ public:
 
   bool is_wielding(ThingId thing, unsigned int& hand)
   {
-    if (thing == MU)
+    if (thing == ThingId::Mu())
     {
       return false;
     }
@@ -161,7 +161,7 @@ public:
   {
     if (wielded_items.count(hand) == 0)
     {
-      return MU;
+      return ThingId::Mu();
     }
     else
     {
@@ -171,7 +171,7 @@ public:
 
   bool is_wearing(ThingId thing, WearLocation& location)
   {
-    if (thing == MU)
+    if (thing == ThingId::Mu())
     {
       return false;
     }

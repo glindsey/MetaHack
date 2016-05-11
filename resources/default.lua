@@ -138,7 +138,7 @@ function vector2(xValue, yValue)
 end
 
 -- === USEFUL GLOBALS =========================================================
-MU = 0
+ThingId::Mu() = 0
 
 
 print("*** Default Lua script executed.")

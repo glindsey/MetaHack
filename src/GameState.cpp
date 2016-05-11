@@ -116,7 +116,7 @@ bool GameState::process_tick()
 
 GameState& GameState::instance()
 {
-  ASSERT_CONDITION(p_instance);
+  ASSERT_CONDITION(p_instance != nullptr);
 
   return *(p_instance);
 }

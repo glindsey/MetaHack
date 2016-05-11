@@ -14,7 +14,7 @@ Action::StateResult ActionTakeOut::do_prebegin_work_(AnyMap& params)
   auto container = object->get_location();
 
   // Verify that the Action has an object.
-  if (object == MU)
+  if (object == ThingId::Mu())
   {
     return StateResult::Failure();
   }

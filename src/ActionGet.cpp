@@ -15,7 +15,7 @@ Action::StateResult ActionGet::do_prebegin_work_(AnyMap& params)
   ThingId location = subject->get_location();
 
   // Verify that the Action has an object.
-  if (object == MU)
+  if (object == ThingId::Mu())
   {
     return StateResult::Failure();
   }

@@ -248,7 +248,7 @@ bool Thing::do_deequip(ThingId thing, unsigned int& action_time)
 
       if (thing->perform_action_deequipped_by(pImpl->ref, location))
       {
-        set_worn(MU, location);
+        set_worn(ThingId::Mu(), location);
 
         StringDisplay wear_desc = get_bodypart_description(location.part, location.number);
         message = this->get_you_or_identifying_string() + " " +
@@ -387,7 +387,7 @@ bool Thing::do_equip(ThingId thing, unsigned int& action_time)
 
 void Thing::set_wielded(ThingId thing, unsigned int hand)
 {
-  if (thing == MU)
+  if (thing == ThingId::Mu())
   {
     pImpl->wielded_items.erase(hand);
   }
@@ -399,7 +399,7 @@ void Thing::set_wielded(ThingId thing, unsigned int hand)
 
 void Thing::set_worn(ThingId thing, WearLocation location)
 {
-  if (thing == MU)
+  if (thing == ThingId::Mu())
   {
     pImpl->equipped_items.erase(location);
   }
@@ -609,7 +609,7 @@ ThingId Thing::get_id() const
 
 ThingId Thing::get_root_location() const
 {
-  if (pImpl->location == MU)
+  if (pImpl->location == ThingId::Mu())
   {
     return pImpl->ref;
   }
@@ -711,7 +711,7 @@ void Thing::find_seen_tiles()
 
   // Are we on a map?  Bail out if we aren't.
   ThingId location = get_location();
-  if (location == MU)
+  if (location == ThingId::Mu())
   {
     return;
   }
@@ -801,7 +801,7 @@ bool Thing::move_into(ThingId new_location)
       if (new_location->get_inventory().add(pImpl->ref))
       {
         // Try to lock our old location.
-        if (pImpl->location != MU)
+        if (pImpl->location != ThingId::Mu())
         {
           pImpl->location->get_inventory().remove(pImpl->ref);
         }
@@ -847,14 +847,14 @@ Inventory& Thing::get_inventory()
 bool Thing::is_inside_another_thing() const
 {
   ThingId location = pImpl->location;
-  if (location == MU)
+  if (location == ThingId::Mu())
   {
     // Thing is a part of the MapTile such as the floor.
     return false;
   }
 
   ThingId location2 = location->get_location();
-  if (location2 == MU)
+  if (location2 == ThingId::Mu())
   {
     // Thing is directly on the floor.
     return false;
@@ -866,7 +866,7 @@ MapTile* Thing::get_maptile() const
 {
   ThingId location = pImpl->location;
 
-  if (location == MU)
+  if (location == ThingId::Mu())
   {
     return _get_maptile();
   }
@@ -880,7 +880,7 @@ MapId Thing::get_map_id() const
 {
   ThingId location = pImpl->location;
 
-  if (location == MU)
+  if (location == ThingId::Mu())
   {
     MapTile* maptile = _get_maptile();
     if (maptile != nullptr)
@@ -1271,7 +1271,7 @@ void Thing::light_up_surroundings()
   ThingId location = get_location();
 
   // Use visitor pattern.
-  if ((location != MU) && this->get_modified_property<bool>("lit"))
+  if ((location != ThingId::Mu()) && this->get_modified_property<bool>("lit"))
   {
     location->be_lit_by(this->get_id());
   }
@@ -1281,7 +1281,7 @@ void Thing::be_lit_by(ThingId light)
 {
   call_lua_function<ActionResult, ThingId>("on_lit_by", { light }, ActionResult::Success);
 
-  if (get_location() == MU)
+  if (get_location() == ThingId::Mu())
   {
     GAME.get_map_factory().get(get_map_id()).add_light(light);
   }
@@ -1296,7 +1296,7 @@ void Thing::be_lit_by(ThingId light)
   ThingId location = get_location();
   if (!is_opaque() || location->is_subtype_of("Entity"))
   {
-    if (location != MU)
+    if (location != ThingId::Mu())
     {
       location->be_lit_by(light);
     }
@@ -1314,7 +1314,7 @@ void Thing::spill()
   for (ThingPair thing_pair : things)
   {
     ThingId thing = thing_pair.second;
-    if (pImpl->location != MU)
+    if (pImpl->location != ThingId::Mu())
     {
       ActionResult can_contain = pImpl->location->can_contain(thing);
 
@@ -1369,7 +1369,7 @@ void Thing::destroy()
     spill();
   }
 
-  if (old_location != MU)
+  if (old_location != ThingId::Mu())
   {
     old_location->get_inventory().remove(pImpl->ref);
   }

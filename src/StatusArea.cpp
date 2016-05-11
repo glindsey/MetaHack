@@ -49,7 +49,7 @@ void StatusArea::render_contents_(sf::RenderTexture& texture, int frame)
   render_text.setCharacterSize(Settings.get<unsigned int>("text_default_size"));
   render_text.setPosition(origin.x, origin.y);
 
-  if (player != MU)
+  if (player != ThingId::Mu())
   {
     // Render player name
     StringDisplay name = player->get_proper_name();

@@ -73,6 +73,4 @@ private:
 
 #define GAME  GameState::instance()
 
-#define MU  GameState::instance().get_thing_manager().get_mu()
-
 #endif // GAMESTATE_H

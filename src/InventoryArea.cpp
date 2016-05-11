@@ -100,7 +100,7 @@ void InventoryArea::set_viewed(ThingId thing)
 
 void InventoryArea::toggle_selection(InventorySlot selection)
 {
-  if (pImpl->viewed == MU)
+  if (pImpl->viewed == ThingId::Mu())
   {
     return;
   }
@@ -145,7 +145,7 @@ std::vector<ThingId> InventoryArea::get_selected_things()
 {
   std::vector<ThingId> things;
 
-  if (pImpl->viewed != MU)
+  if (pImpl->viewed != ThingId::Mu())
   {
     Inventory& inventory = pImpl->viewed->get_inventory();
 
@@ -175,7 +175,7 @@ unsigned int InventoryArea::get_max_quantity() const
 {
   unsigned int result;
 
-  if (pImpl->viewed == MU)
+  if (pImpl->viewed == ThingId::Mu())
   {
     return 0;
   }
@@ -190,7 +190,7 @@ unsigned int InventoryArea::get_max_quantity() const
   {
     ThingId thing = inventory.get(pImpl->selected_slots[0]);
 
-    if (thing == MU)
+    if (thing == ThingId::Mu())
     {
       result = 0;
     }
@@ -248,9 +248,9 @@ ThingId InventoryArea::get_thing(InventorySlot selection)
 {
   ThingId viewed = pImpl->viewed;
 
-  if (viewed == MU)
+  if (viewed == ThingId::Mu())
   {
-    return MU;
+    return ThingId::Mu();
   }
 
   Inventory& inventory = pImpl->viewed->get_inventory();
@@ -265,7 +265,7 @@ ThingId InventoryArea::get_thing(InventorySlot selection)
       "Requested non-existent inventory slot " <<
       static_cast<unsigned int>(selection) <<
       ", returning Mu!";
-    return MU;
+    return ThingId::Mu();
   }
 }
 
@@ -282,7 +282,7 @@ void InventoryArea::render_contents_(sf::RenderTexture& texture, int frame)
   float text_offset_y = Settings.get<float>("window_text_offset_y");
 
   // Get a reference to the location we're referring to.
-  if (pImpl->viewed == MU)
+  if (pImpl->viewed == ThingId::Mu())
   {
     set_text("Invalid Viewed Object!");
     return;

@@ -19,7 +19,7 @@ Action::StateResult ActionClose::do_begin_work_(AnyMap& params)
   the_message_log.add("We're sorry, but that action has not yet been implemented.");
 
 #if 0
-  if (thing != MU)
+  if (thing != ThingId::Mu())
   {
     success = actor->do_close(thing, action_time);
   }

@@ -14,7 +14,7 @@ Action::StateResult ActionPutInto::do_prebegin_work_(AnyMap& params)
   auto container = get_target_thing();
 
   // Verify that the Action has an object.
-  if (object == MU)
+  if (object == ThingId::Mu())
   {
     return StateResult::Failure();
   }

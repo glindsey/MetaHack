@@ -115,7 +115,7 @@ Action::StateResult ActionAttack::do_begin_work_(AnyMap& params)
 
   // See if the tile to move into contains another creature.
   ThingId creature = new_floor->get_inventory().get_entity();
-  if (creature == MU)
+  if (creature == ThingId::Mu())
   {
     /// @todo Deal with attacking other stuff, MapTiles, etc.
     message = "Attacking non-entity things is not yet supported!";
