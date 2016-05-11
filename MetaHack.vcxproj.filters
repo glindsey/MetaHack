@@ -13,24 +13,21 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Actions">
+      <UniqueIdentifier>{3a58d7d7-a1d1-4435-8f09-20d646081c56}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Map Features">
+      <UniqueIdentifier>{be47de27-b524-43a5-830c-65cf97636bb6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GUI Elements">
+      <UniqueIdentifier>{41ec2d36-1834-4765-bb9a-cb665c7f8e1b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="App States">
+      <UniqueIdentifier>{c64b3cd5-4ed5-46a1-a3bc-710ceb9d4bd6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\Action.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ActionResult.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\App.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\AppStateGameMode.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\AppStateMainMenu.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\AppStateSplashScreen.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Beatitude.h">
@@ -76,9 +73,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Map.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\MapFactory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\MapTile.h">
@@ -135,27 +129,6 @@
     <ClInclude Include="include\LightInfluence.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\MapCorridor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\MapDiamond.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\MapDonutRoom.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\MapFeature.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\MapGenerator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\MapLRoom.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\MapRoom.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\New.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -177,79 +150,7 @@
     <ClInclude Include="include\MessageLogView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\ActionWait.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ActionMove.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ActionAttack.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ActionAttire.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ActionClose.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ActionDrop.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ActionEat.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ActionFill.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ActionGet.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ActionHurl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ActionInscribe.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ActionMix.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ActionOpen.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ActionPutInto.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ActionQuaff.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ActionRead.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ActionShoot.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ActionTakeOut.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ActionUse.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ActionWield.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ActionDie.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ActionCRTP.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\LuaThingFunctions.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ActionLock.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ActionUnlock.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\stdafx.h">
@@ -264,54 +165,156 @@
     <ClInclude Include="include\SFMLEventHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="gui\GUICloseHandle.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="gui\GUIDesktop.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="gui\GUIEvent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="gui\GUILabel.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="gui\GUIObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="gui\GUIResizeHandle.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="gui\GUIShrinkHandle.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="gui\GUITitleBar.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="gui\GUIWindow.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\AppState.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\ModifiablePropertyDictionary.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\ThingId.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\Action.h">
+      <Filter>Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ActionAttack.h">
+      <Filter>Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ActionAttire.h">
+      <Filter>Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ActionClose.h">
+      <Filter>Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ActionCRTP.h">
+      <Filter>Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ActionDie.h">
+      <Filter>Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ActionDrop.h">
+      <Filter>Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ActionEat.h">
+      <Filter>Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ActionFill.h">
+      <Filter>Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ActionGet.h">
+      <Filter>Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ActionHurl.h">
+      <Filter>Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ActionInscribe.h">
+      <Filter>Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ActionLock.h">
+      <Filter>Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ActionMix.h">
+      <Filter>Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ActionMove.h">
+      <Filter>Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ActionOpen.h">
+      <Filter>Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ActionPutInto.h">
+      <Filter>Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ActionQuaff.h">
+      <Filter>Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ActionRead.h">
+      <Filter>Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ActionResult.h">
+      <Filter>Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ActionShoot.h">
+      <Filter>Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ActionTakeOut.h">
+      <Filter>Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ActionUnlock.h">
+      <Filter>Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ActionUse.h">
+      <Filter>Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ActionWait.h">
+      <Filter>Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ActionWield.h">
+      <Filter>Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MapCorridor.h">
+      <Filter>Map Features</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MapDiamond.h">
+      <Filter>Map Features</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MapDonutRoom.h">
+      <Filter>Map Features</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MapFactory.h">
+      <Filter>Map Features</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MapFeature.h">
+      <Filter>Map Features</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MapGenerator.h">
+      <Filter>Map Features</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MapLRoom.h">
+      <Filter>Map Features</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MapRoom.h">
+      <Filter>Map Features</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\GUICloseHandle.h">
+      <Filter>GUI Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\GUIDesktop.h">
+      <Filter>GUI Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\GUIEvent.h">
+      <Filter>GUI Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\GUILabel.h">
+      <Filter>GUI Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\GUIObject.h">
+      <Filter>GUI Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\GUIResizeHandle.h">
+      <Filter>GUI Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\GUIShrinkHandle.h">
+      <Filter>GUI Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\GUITitleBar.h">
+      <Filter>GUI Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\GUIWindow.h">
+      <Filter>GUI Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="include\AppState.h">
+      <Filter>App States</Filter>
+    </ClInclude>
+    <ClInclude Include="include\AppStateGameMode.h">
+      <Filter>App States</Filter>
+    </ClInclude>
+    <ClInclude Include="include\AppStateMainMenu.h">
+      <Filter>App States</Filter>
+    </ClInclude>
+    <ClInclude Include="include\AppStateSplashScreen.h">
+      <Filter>App States</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\AppStateGameMode.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\AppStateMainMenu.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\AppStateSplashScreen.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\ConfigSettings.cpp">
@@ -338,9 +341,6 @@
     <ClCompile Include="src\Map.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\MapFactory.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\MapTile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -362,34 +362,10 @@
     <ClCompile Include="src\TileSheet.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\mapfeatures\MapCorridor.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\mapfeatures\MapDiamond.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\mapfeatures\MapDonutRoom.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\mapfeatures\MapFeature.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\mapfeatures\MapGenerator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\mapfeatures\MapLRoom.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\mapfeatures\MapRoom.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\ThingManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Action.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\PropertyDictionary.cpp">
@@ -410,76 +386,10 @@
     <ClCompile Include="src\MessageLogView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\ActionWait.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ActionMove.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ActionAttack.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ActionDrop.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ActionEat.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ActionGet.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ActionQuaff.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ActionUse.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ActionWield.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ActionPutInto.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ActionTakeOut.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ActionAttire.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ActionOpen.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ActionClose.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ActionFill.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ActionHurl.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ActionInscribe.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ActionMix.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ActionRead.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ActionShoot.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\LuaThingFunctions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Direction.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ActionLock.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ActionUnlock.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\stdafx.cpp">
@@ -488,38 +398,140 @@
     <ClCompile Include="src\LuaObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="gui\GUICloseHandle.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="gui\GUIDesktop.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="gui\GUILabel.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="gui\GUIObject.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="gui\GUIResizeHandle.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="gui\GUIShrinkHandle.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="gui\GUITitleBar.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="gui\GUIWindow.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\AppState.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\ModifiablePropertyDictionary.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\ThingId.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Action.cpp">
+      <Filter>Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ActionAttack.cpp">
+      <Filter>Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ActionAttire.cpp">
+      <Filter>Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ActionClose.cpp">
+      <Filter>Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ActionDrop.cpp">
+      <Filter>Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ActionEat.cpp">
+      <Filter>Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ActionFill.cpp">
+      <Filter>Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ActionGet.cpp">
+      <Filter>Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ActionHurl.cpp">
+      <Filter>Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ActionInscribe.cpp">
+      <Filter>Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ActionLock.cpp">
+      <Filter>Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ActionMix.cpp">
+      <Filter>Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ActionMove.cpp">
+      <Filter>Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ActionOpen.cpp">
+      <Filter>Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ActionPutInto.cpp">
+      <Filter>Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ActionQuaff.cpp">
+      <Filter>Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ActionRead.cpp">
+      <Filter>Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ActionShoot.cpp">
+      <Filter>Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ActionTakeOut.cpp">
+      <Filter>Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ActionUnlock.cpp">
+      <Filter>Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ActionUse.cpp">
+      <Filter>Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ActionWait.cpp">
+      <Filter>Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ActionWield.cpp">
+      <Filter>Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\mapfeatures\MapCorridor.cpp">
+      <Filter>Map Features</Filter>
+    </ClCompile>
+    <ClCompile Include="src\mapfeatures\MapDiamond.cpp">
+      <Filter>Map Features</Filter>
+    </ClCompile>
+    <ClCompile Include="src\mapfeatures\MapDonutRoom.cpp">
+      <Filter>Map Features</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MapFactory.cpp">
+      <Filter>Map Features</Filter>
+    </ClCompile>
+    <ClCompile Include="src\mapfeatures\MapFeature.cpp">
+      <Filter>Map Features</Filter>
+    </ClCompile>
+    <ClCompile Include="src\mapfeatures\MapGenerator.cpp">
+      <Filter>Map Features</Filter>
+    </ClCompile>
+    <ClCompile Include="src\mapfeatures\MapLRoom.cpp">
+      <Filter>Map Features</Filter>
+    </ClCompile>
+    <ClCompile Include="src\mapfeatures\MapRoom.cpp">
+      <Filter>Map Features</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\GUICloseHandle.cpp">
+      <Filter>GUI Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\GUIDesktop.cpp">
+      <Filter>GUI Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\GUILabel.cpp">
+      <Filter>GUI Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\GUIObject.cpp">
+      <Filter>GUI Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\GUIResizeHandle.cpp">
+      <Filter>GUI Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\GUIShrinkHandle.cpp">
+      <Filter>GUI Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\GUITitleBar.cpp">
+      <Filter>GUI Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\GUIWindow.cpp">
+      <Filter>GUI Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AppState.cpp">
+      <Filter>App States</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AppStateGameMode.cpp">
+      <Filter>App States</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AppStateMainMenu.cpp">
+      <Filter>App States</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AppStateSplashScreen.cpp">
+      <Filter>App States</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
