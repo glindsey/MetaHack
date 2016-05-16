@@ -541,16 +541,19 @@ public:
   ActionResult can_contain(ThingId thing);
 
 private:
+  /// Reference to game state.
+  GameState& m_game;
+
   /// Pimpl implementation
   /// We don't use CopyablePimpl because you can't copy a Thing;
   /// you can clone it but that's a different concept.
   Pimpl<ThingImpl> pImpl;
 
   /// Named Constructor
-  Thing(Metadata& metadata, ThingId ref);
+  Thing(GameState& game, Metadata& metadata, ThingId ref);
 
   /// Floor Constructor
-  Thing(MapTile* map_tile, Metadata& metadata, ThingId ref);
+  Thing(GameState& game, MapTile* map_tile, Metadata& metadata, ThingId ref);
 
   /// Clone Constructor
   Thing(Thing const& original, ThingId ref);

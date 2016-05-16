@@ -145,7 +145,7 @@ void MapTile::draw_to(sf::RenderTarget& target,
 
 void MapTile::set_tile_type(StringKey type)
 {
-  m_p_metadata = &(m_p_metadata->get_collection().get(type));
+  m_p_metadata = &(m_p_metadata->get_metadata_collection().get(type));
 }
 
 StringKey MapTile::get_tile_type() const

@@ -57,7 +57,7 @@ Metadata::Metadata(MetadataCollection& collection, StringKey type)
 Metadata::~Metadata()
 {}
 
-MetadataCollection& Metadata::get_collection()
+MetadataCollection& Metadata::get_metadata_collection()
 {
   return m_collection;
 }

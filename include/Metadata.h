@@ -27,7 +27,7 @@ public:
   Metadata(MetadataCollection& collection, StringKey type);
   virtual ~Metadata();
 
-  MetadataCollection& get_collection();
+  MetadataCollection& get_metadata_collection();
 
   StringKey const& get_type() const;
 

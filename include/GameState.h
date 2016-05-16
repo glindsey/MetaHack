@@ -7,6 +7,7 @@
 
 // Forward declarations
 class MapFactory;
+class MetadataCollection;
 class ThingManager;
 
 /// Class that encapsulates the entire state of the game data.
@@ -32,6 +33,7 @@ public:
 
   MapFactory& get_maps();
   ThingManager& get_things();
+  MetadataCollection& get_metadata_collection(StringKey category);
 
   /// Set the game player.
   /// If the caller attempts to set a ThingId of a Thing that does not exist,
@@ -60,6 +62,9 @@ private:
 
   /// Pointer to the Thing Manager object.
   std::unique_ptr<ThingManager> m_thing_manager;
+
+  /// A collection of collections -- a metacollection!
+  boost::ptr_unordered_map<StringKey, MetadataCollection> m_metacollection;
 
   /// Reference to the Thing that is serving as the player.
   ThingId m_player;

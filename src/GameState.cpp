@@ -65,6 +65,16 @@ ThingManager& GameState::get_things()
   return *(m_thing_manager.get());
 }
 
+MetadataCollection & GameState::get_metadata_collection(StringKey category)
+{
+  if (m_metacollection.count(category) == 0)
+  {
+    m_metacollection.insert(category, NEW MetadataCollection(category));
+  }
+
+  return m_metacollection.at(category);
+}
+
 bool GameState::set_player(ThingId ref)
 {
   ASSERT_CONDITION(ref != get_things().get_mu());

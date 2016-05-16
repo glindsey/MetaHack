@@ -32,7 +32,7 @@ namespace LuaThingFunctions
 
     // Check to make sure the Thing is actually creatable.
     /// @todo Might want the ability to disable this check for debugging purposes?
-    Metadata& thing_metadata = MDC::get_collection("thing").get(new_thing_type);
+    Metadata& thing_metadata = GAME.get_metadata_collection("thing").get(new_thing_type);
     bool is_creatable = thing_metadata.get_intrinsic<bool>("creatable", false);
 
     if (is_creatable)

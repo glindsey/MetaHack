@@ -8,6 +8,7 @@
 #include "Thing.h"
 
 // Forward declarations
+class GameState;
 class MapFeature;
 class MapGenerator;
 class MapTile;
@@ -19,7 +20,7 @@ class ThingId;
 #endif
 
 /// Class representing a map, which is a grid of locations for Things.
-class Map final
+class Map
 {
   friend class MapFactory;
 
@@ -107,7 +108,7 @@ public:
   MapFeature& add_map_feature(MapFeature* feature);
 
 protected:
-  Map(MapId mapId, int width, int height);
+  Map(GameState& game, MapId mapId, int width, int height);
 
   /// Initialize a new Map.
   /// This unfortunately has to be separated from the constructor due to
@@ -136,6 +137,9 @@ protected:
                              float slope_B = 0);
 
 private:
+  /// Reference to game state.
+  GameState& m_game;
+
   /// Map ID.
   MapId m_map_id;
 

@@ -22,20 +22,26 @@
 // Static member initialization.
 sf::Color const Thing::wall_outline_color_ = sf::Color(255, 255, 255, 64);
 
-Thing::Thing(Metadata& metadata, ThingId ref)
-  : pImpl(metadata, ref)
+Thing::Thing(GameState& game, Metadata& metadata, ThingId ref)
+  : 
+  m_game{ game },
+  pImpl(metadata, ref)
 {
   initialize();
 }
 
-Thing::Thing(MapTile* map_tile, Metadata& metadata, ThingId ref)
-  : pImpl(map_tile, metadata, ref)
+Thing::Thing(GameState& game, MapTile* map_tile, Metadata& metadata, ThingId ref)
+  : 
+  m_game{ game },
+  pImpl(map_tile, metadata, ref)
 {
   initialize();
 }
 
 Thing::Thing(Thing const& original, ThingId ref)
-  : pImpl(*(original.pImpl), ref)
+  : 
+  m_game{ original.m_game },
+  pImpl(*(original.pImpl), ref)
 {
   initialize();
 }
@@ -770,7 +776,7 @@ void Thing::add_memory_vertices_to(sf::VertexArray& vertices,
 
   StringKey tile_type = pImpl->map_memory[game_map.get_index(x, y)];
   if (tile_type == "") { tile_type = "MTUnknown"; }
-  Metadata* tile_metadata = &(MDC::get_collection("maptile").get(tile_type));
+  Metadata* tile_metadata = &(m_game.get_metadata_collection("maptile").get(tile_type));
 
   /// @todo Call a script to handle selecting a tile other than the one
   ///       in the upper-left corner.

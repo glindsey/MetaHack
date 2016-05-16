@@ -14,7 +14,7 @@ MapFactory::MapFactory(GameState& game)
 {
   // Create and add the "null map" to the list.
   current_map_id = 0;
-  std::unique_ptr<Map> new_map{ NEW Map { current_map_id, 1, 1 } };
+  std::unique_ptr<Map> new_map{ NEW Map { m_game, current_map_id, 1, 1 } };
   m_maps[current_map_id] = std::move(new_map);
 
   // Register the Map Lua functions.
@@ -56,7 +56,7 @@ MapId MapFactory::create(int x, int y)
 {
   ++current_map_id;
 
-  std::unique_ptr<Map> new_map{ NEW Map{ current_map_id, x, y } };
+  std::unique_ptr<Map> new_map{ NEW Map{ m_game, current_map_id, x, y } };
   m_maps[current_map_id] = std::move(new_map);
   m_maps[current_map_id]->initialize();
 

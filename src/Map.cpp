@@ -49,8 +49,9 @@ struct Map::Impl
 };
 
 /// @todo Have this take an sf::Vector2i instead of width x height
-Map::Map(MapId map_id, int width, int height)
+Map::Map(GameState& game, MapId map_id, int width, int height)
   :
+  m_game{ game },
   m_map_id{ map_id },
   m_map_size{ width, height },
   m_generator{ NEW MapGenerator(*this) },
@@ -68,7 +69,7 @@ Map::Map(MapId map_id, int width, int height)
   pImpl->map_memory_vertices.resize(m_map_size.x * m_map_size.y * 80);
 
   // Create the tiles themselves.
-  MetadataCollection& collection = MDC::get_collection("maptile");
+  MetadataCollection& collection = m_game.get_metadata_collection("maptile");
   for (int y = 0; y < height; ++y)
   {
     for (int x = 0; x < width; ++x)

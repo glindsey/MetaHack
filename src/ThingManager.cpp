@@ -37,7 +37,7 @@ ThingManager::~ThingManager()
 
 bool ThingManager::first_is_subtype_of_second(StringKey first, StringKey second)
 {
-  StringKey first_parent = MDC::get_collection("thing").get(first).get_intrinsic<StringKey>("parent");
+  StringKey first_parent = m_game.get_metadata_collection("thing").get(first).get_intrinsic<StringKey>("parent");
 
   if (first_parent.empty())
   {
@@ -56,9 +56,9 @@ ThingId ThingManager::create(StringKey type)
 {
   ThingId new_id = ThingId(m_nextThingId);
   ++m_nextThingId;
-  Metadata& metadata = MDC::get_collection("thing").get(type);
+  Metadata& metadata = m_game.get_metadata_collection("thing").get(type);
 
-  std::unique_ptr<Thing> new_thing{ new Thing{ metadata, new_id } };
+  std::unique_ptr<Thing> new_thing{ new Thing{ m_game, metadata, new_id } };
   m_thing_map[new_id] = std::move(new_thing);
 
   if (m_initialized)
@@ -73,9 +73,9 @@ ThingId ThingManager::create_tile_contents(MapTile* map_tile)
 {
   ThingId new_id = ThingId(m_nextThingId);
   ++m_nextThingId;
-  Metadata& metadata = MDC::get_collection("thing").get("TileContents");
+  Metadata& metadata = m_game.get_metadata_collection("thing").get("TileContents");
 
-  std::unique_ptr<Thing> new_thing{ new Thing { map_tile, metadata, new_id } };
+  std::unique_ptr<Thing> new_thing{ new Thing { m_game, map_tile, metadata, new_id } };
   m_thing_map[new_id] = std::move(new_thing);
 
   return ThingId(new_id);
