@@ -6,7 +6,6 @@
 #include "ConfigSettings.h"
 #include "ErrorHandler.h"
 #include "KeyBuffer.h"
-#include "New.h"
 
 struct MessageLog::Impl
 {

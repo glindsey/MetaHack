@@ -3,7 +3,6 @@
 #include "StateMachine.h"
 
 #include "ErrorHandler.h"
-#include "New.h"
 #include "State.h"
 
 struct StateMachine::Impl

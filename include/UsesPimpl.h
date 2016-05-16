@@ -3,8 +3,6 @@
 
 #include "stdafx.h"
 
-#include "New.h"
-
 /// A template that helps classes that use the PIMPL idiom by getting rid of
 /// much of the boilerplate. This template disallows PIMPL copying, and so
 /// should be used in non-copyable classes.

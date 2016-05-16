@@ -6,7 +6,6 @@
 #include "Direction.h"
 #include "ErrorHandler.h"
 #include "Gender.h"
-#include "New.h"
 
 std::unique_ptr<Lua> Lua::instance_;
 

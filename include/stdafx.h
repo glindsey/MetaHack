@@ -68,6 +68,9 @@
 // EasyLogging++ includes
 #include "easyloggingpp/easylogging++.h"
 
+// The special debugging "NEW" function.
+#include "New.h"
+
 // Lua includes
 extern "C"
 {

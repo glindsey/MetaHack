@@ -6,7 +6,6 @@
 
 #include "App.h"
 #include "ConfigSettings.h"
-#include "New.h"
 
 namespace metagui
 {

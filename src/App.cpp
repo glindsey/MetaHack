@@ -9,7 +9,6 @@
 #include "ErrorHandler.h"
 #include "MessageLog.h"
 #include "MessageLogView.h"
-#include "New.h"
 #include "StateMachine.h"
 
 // Global declarations

@@ -25,7 +25,18 @@ sf::Color const Thing::wall_outline_color_ = sf::Color(255, 255, 255, 64);
 Thing::Thing(GameState& game, Metadata& metadata, ThingId ref)
   : 
   m_game{ game },
-  pImpl(metadata, ref)
+  m_metadata{ metadata },
+  m_properties{},
+  m_ref{ ref },
+  m_location{ ThingId::Mu() },
+  m_map_tile{ nullptr },
+  m_inventory{ Inventory() },
+  m_gender{ Gender::None },
+  m_map_memory{ MapMemory() },
+  m_tiles_currently_seen{ TilesSeen() },
+  m_pending_actions{ ActionQueue() },
+  m_wielded_items{ WieldingMap() },
+  m_equipped_items{ WearingMap() }
 {
   initialize();
 }
@@ -33,7 +44,18 @@ Thing::Thing(GameState& game, Metadata& metadata, ThingId ref)
 Thing::Thing(GameState& game, MapTile* map_tile, Metadata& metadata, ThingId ref)
   : 
   m_game{ game },
-  pImpl(map_tile, metadata, ref)
+  m_metadata{ metadata },
+  m_properties{},
+  m_ref{ ref },
+  m_location{ ThingId::Mu() },
+  m_map_tile{ map_tile },
+  m_inventory{ Inventory() },
+  m_gender{ Gender::None },
+  m_map_memory{ MapMemory() },
+  m_tiles_currently_seen{ TilesSeen() },
+  m_pending_actions{ ActionQueue() },
+  m_wielded_items{ WieldingMap() },
+  m_equipped_items{ WearingMap() }
 {
   initialize();
 }
@@ -41,7 +63,18 @@ Thing::Thing(GameState& game, MapTile* map_tile, Metadata& metadata, ThingId ref
 Thing::Thing(Thing const& original, ThingId ref)
   : 
   m_game{ original.m_game },
-  pImpl(*(original.pImpl), ref)
+  m_metadata{ original.m_metadata },
+  m_properties{ original.m_properties },
+  m_ref{ ref },
+  m_location{ original.m_location },
+  m_map_tile{ original.m_map_tile },
+  m_inventory{ Inventory() },             // don't copy
+  m_gender{ original.m_gender },
+  m_map_memory{ original.m_map_memory },
+  m_tiles_currently_seen{ TilesSeen() },  // don't copy
+  m_pending_actions{ ActionQueue() },     // don't copy
+  m_wielded_items{ WieldingMap() },       // don't copy
+  m_equipped_items{ WearingMap() }        // don't copy
 {
   initialize();
 }
@@ -51,7 +84,7 @@ void Thing::initialize()
   SET_UP_LOGGER("Thing", true);
 
   /// Get our maximum HP. (The Lua script will automatically pick it from a range.)
-  int max_hp = pImpl->metadata.get_intrinsic<int>("maxhp");
+  int max_hp = m_metadata.get_intrinsic<int>("maxhp");
   set_base_property<int>("maxhp", max_hp);
 
   /// Also set our HP to that value.
@@ -64,12 +97,12 @@ Thing::~Thing()
 
 void Thing::queue_action(std::unique_ptr<Action> pAction)
 {
-  pImpl->pending_actions.push_back(std::move(pAction));
+  m_pending_actions.push_back(std::move(pAction));
 }
 
 bool Thing::action_is_pending() const
 {
-  return !(pImpl->pending_actions.empty());
+  return !(m_pending_actions.empty());
 }
 
 bool Thing::action_is_in_progress()
@@ -77,9 +110,16 @@ bool Thing::action_is_in_progress()
   return (get_base_property<int>("counter_busy") > 0);
 }
 
-ThingId Thing::get_wielding(unsigned int& hand)
+ThingId Thing::get_wielding_in(unsigned int& hand)
 {
-  return pImpl->wielding_in(hand);
+  if (m_wielded_items.count(hand) == 0)
+  {
+    return ThingId::Mu();
+  }
+  else
+  {
+    return m_wielded_items[hand];
+  }
 }
 
 bool Thing::is_wielding(ThingId thing)
@@ -90,7 +130,25 @@ bool Thing::is_wielding(ThingId thing)
 
 bool Thing::is_wielding(ThingId thing, unsigned int& hand)
 {
-  return pImpl->is_wielding(thing, hand);
+  if (thing == ThingId::Mu())
+  {
+    return false;
+  }
+  auto found_item =
+    std::find_if(m_wielded_items.cbegin(),
+                 m_wielded_items.cend(),
+                 [&](WieldingPair const& p)
+  { return p.second == thing; });
+
+  if (found_item == m_wielded_items.cend())
+  {
+    return false;
+  }
+  else
+  {
+    hand = found_item->first;
+    return true;
+  }
 }
 
 bool Thing::has_equipped(ThingId thing)
@@ -101,7 +159,25 @@ bool Thing::has_equipped(ThingId thing)
 
 bool Thing::has_equipped(ThingId thing, WearLocation& location)
 {
-  return pImpl->is_wearing(thing, location);
+  if (thing == ThingId::Mu())
+  {
+    return false;
+  }
+  auto found_item =
+    std::find_if(m_equipped_items.cbegin(),
+                 m_equipped_items.cend(),
+                 [&](WearingPair const& p)
+  { return p.second == thing; });
+
+  if (found_item == m_equipped_items.cend())
+  {
+    return false;
+  }
+  else
+  {
+    location = found_item->first;
+    return true;
+  }
 }
 
 bool Thing::can_reach(ThingId thing)
@@ -181,7 +257,7 @@ bool Thing::do_die()
       set_base_property<bool>("dead", true);
 
       // Clear any pending actions.
-      pImpl->pending_actions.clear();
+      m_pending_actions.clear();
 
       return true;
     case ActionResult::Failure:
@@ -218,7 +294,7 @@ ActionResult Thing::can_deequip(ThingId thing, unsigned int& action_time)
   action_time = 1;
 
   // Check that it isn't US!
-  if (thing == pImpl->ref)
+  if (thing == m_ref)
   {
     return ActionResult::FailureSelfReference;
   }
@@ -252,7 +328,7 @@ bool Thing::do_deequip(ThingId thing, unsigned int& action_time)
       WearLocation location;
       this->has_equipped(thing, location);
 
-      if (thing->perform_action_deequipped_by(pImpl->ref, location))
+      if (thing->perform_action_deequipped_by(m_ref, location))
       {
         set_worn(ThingId::Mu(), location);
 
@@ -288,7 +364,7 @@ ActionResult Thing::can_equip(ThingId thing, unsigned int& action_time)
   action_time = 1;
 
   // Check that it isn't US!
-  if (thing == pImpl->ref)
+  if (thing == m_ref)
   {
     return ActionResult::FailureSelfReference;
   }
@@ -327,7 +403,7 @@ bool Thing::do_equip(ThingId thing, unsigned int& action_time)
     {
       WearLocation location;
 
-      if (thing->perform_action_equipped_by(pImpl->ref, location))
+      if (thing->perform_action_equipped_by(m_ref, location))
       {
         set_worn(thing, location);
 
@@ -395,11 +471,11 @@ void Thing::set_wielded(ThingId thing, unsigned int hand)
 {
   if (thing == ThingId::Mu())
   {
-    pImpl->wielded_items.erase(hand);
+    m_wielded_items.erase(hand);
   }
   else
   {
-    pImpl->wielded_items[hand] = thing;
+    m_wielded_items[hand] = thing;
   }
 }
 
@@ -407,11 +483,11 @@ void Thing::set_worn(ThingId thing, WearLocation location)
 {
   if (thing == ThingId::Mu())
   {
-    pImpl->equipped_items.erase(location);
+    m_equipped_items.erase(location);
   }
   else
   {
-    pImpl->equipped_items[location] = thing;
+    m_equipped_items[location] = thing;
   }
 }
 
@@ -427,12 +503,12 @@ bool Thing::can_currently_move()
 
 void Thing::set_gender(Gender gender)
 {
-  pImpl->gender = gender;
+  m_gender = gender;
 }
 
 Gender Thing::get_gender() const
 {
-  return pImpl->gender;
+  return m_gender;
 }
 
 Gender Thing::get_gender_or_you() const
@@ -443,7 +519,7 @@ Gender Thing::get_gender_or_you() const
   }
   else
   {
-    return pImpl->gender;
+    return m_gender;
   }
 }
 
@@ -569,17 +645,17 @@ StringDisplay Thing::get_bodypart_plural(BodyPart part) const
 
 bool Thing::is_player() const
 {
-  return (GAME.get_player() == pImpl->ref);
+  return (GAME.get_player() == m_ref);
 }
 
 StringKey const& Thing::get_type() const
 {
-  return pImpl->metadata.get_type();
+  return m_metadata.get_type();
 }
 
 StringKey const& Thing::get_parent_type() const
 {
-  return pImpl->metadata.get_intrinsic<StringKey>("parent");
+  return m_metadata.get_intrinsic<StringKey>("parent");
 }
 
 bool Thing::is_subtype_of(StringKey that_type) const
@@ -590,12 +666,12 @@ bool Thing::is_subtype_of(StringKey that_type) const
 
 bool Thing::add_modifier(StringKey key, ThingId id, unsigned int expiration_ticks)
 {
-  return pImpl->properties.add_modifier(key, id, expiration_ticks);
+  return m_properties.add_modifier(key, id, expiration_ticks);
 }
 
 unsigned int Thing::remove_modifier(StringKey key, ThingId id)
 {
-  return pImpl->properties.remove_modifier(key, id);
+  return m_properties.remove_modifier(key, id);
 }
 
 unsigned int Thing::get_quantity()
@@ -610,25 +686,25 @@ void Thing::set_quantity(unsigned int quantity)
 
 ThingId Thing::get_id() const
 {
-  return pImpl->ref;
+  return m_ref;
 }
 
 ThingId Thing::get_root_location() const
 {
-  if (pImpl->location == ThingId::Mu())
+  if (m_location == ThingId::Mu())
   {
-    return pImpl->ref;
+    return m_ref;
   }
   else
   {
-    auto location = pImpl->location;
+    auto location = m_location;
     return location->get_root_location();
   }
 }
 
 ThingId Thing::get_location() const
 {
-  return pImpl->location;
+  return m_location;
 }
 
 bool Thing::can_see(ThingId thing)
@@ -701,7 +777,7 @@ bool Thing::can_see(int xTile, int yTile)
   if (can_currently_see())
   {
     // Return seen data.
-    return pImpl->tiles_currently_seen[game_map.get_index(xTile, yTile)];
+    return m_tiles_currently_seen[game_map.get_index(xTile, yTile)];
   }
   else
   {
@@ -723,7 +799,7 @@ void Thing::find_seen_tiles()
   }
 
   // Clear the "tile seen" bitset.
-  pImpl->tiles_currently_seen.reset();
+  m_tiles_currently_seen.reset();
 
   // Hang on, can we actually see?
   // If not, bail out.
@@ -746,7 +822,7 @@ StringKey Thing::get_memory_at(int x, int y) const
   }
 
   Map& game_map = GAME.get_maps().get(this->get_map_id());
-  return pImpl->map_memory[game_map.get_index(x, y)];
+  return m_map_memory[game_map.get_index(x, y)];
 }
 
 StringKey Thing::get_memory_at(sf::Vector2i coords) const
@@ -774,7 +850,7 @@ void Thing::add_memory_vertices_to(sf::VertexArray& vertices,
   sf::Vector2f vNW(location.x - ts2, location.y - ts2);
   sf::Vector2f vNE(location.x + ts2, location.y - ts2);
 
-  StringKey tile_type = pImpl->map_memory[game_map.get_index(x, y)];
+  StringKey tile_type = m_map_memory[game_map.get_index(x, y)];
   if (tile_type == "") { tile_type = "MTUnknown"; }
   Metadata* tile_metadata = &(m_game.get_metadata_collection("maptile").get(tile_type));
 
@@ -791,7 +867,7 @@ void Thing::add_memory_vertices_to(sf::VertexArray& vertices,
 bool Thing::move_into(ThingId new_location)
 {
   MapId old_map_id = this->get_map_id();
-  ThingId old_location = pImpl->location;
+  ThingId old_location = m_location;
 
   if (new_location == old_location)
   {
@@ -799,21 +875,21 @@ bool Thing::move_into(ThingId new_location)
     return true;
   }
 
-  ActionResult can_contain = new_location->can_contain(pImpl->ref);
+  ActionResult can_contain = new_location->can_contain(m_ref);
 
   switch (can_contain)
   {
     case ActionResult::Success:
-      if (new_location->get_inventory().add(pImpl->ref))
+      if (new_location->get_inventory().add(m_ref))
       {
         // Try to lock our old location.
-        if (pImpl->location != ThingId::Mu())
+        if (m_location != ThingId::Mu())
         {
-          pImpl->location->get_inventory().remove(pImpl->ref);
+          m_location->get_inventory().remove(m_ref);
         }
 
         // Set the location to the new location.
-        pImpl->location = new_location;
+        m_location = new_location;
 
         MapId new_map_id = this->get_map_id();
         if (old_map_id != new_map_id)
@@ -822,14 +898,14 @@ bool Thing::move_into(ThingId new_location)
           {
             /// @todo Save old map memory.
           }
-          pImpl->map_memory.clear();
-          pImpl->tiles_currently_seen.clear();
+          m_map_memory.clear();
+          m_tiles_currently_seen.clear();
           if (new_map_id != MapFactory::null_map_id)
           {
             Map& new_map = GAME.get_maps().get(new_map_id);
             sf::Vector2i new_map_size = new_map.get_size();
-            pImpl->map_memory.resize(new_map_size.x * new_map_size.y);
-            pImpl->tiles_currently_seen.resize(new_map_size.x * new_map_size.y);
+            m_map_memory.resize(new_map_size.x * new_map_size.y);
+            m_tiles_currently_seen.resize(new_map_size.x * new_map_size.y);
             /// @todo Load new map memory if it exists somewhere.
           }
         }
@@ -847,12 +923,12 @@ bool Thing::move_into(ThingId new_location)
 
 Inventory& Thing::get_inventory()
 {
-  return pImpl->inventory;
+  return m_inventory;
 }
 
 bool Thing::is_inside_another_thing() const
 {
-  ThingId location = pImpl->location;
+  ThingId location = m_location;
   if (location == ThingId::Mu())
   {
     // Thing is a part of the MapTile such as the floor.
@@ -870,7 +946,7 @@ bool Thing::is_inside_another_thing() const
 
 MapTile* Thing::get_maptile() const
 {
-  ThingId location = pImpl->location;
+  ThingId location = m_location;
 
   if (location == ThingId::Mu())
   {
@@ -884,7 +960,7 @@ MapTile* Thing::get_maptile() const
 
 MapId Thing::get_map_id() const
 {
-  ThingId location = pImpl->location;
+  ThingId location = m_location;
 
   if (location == ThingId::Mu())
   {
@@ -907,12 +983,12 @@ MapId Thing::get_map_id() const
 StringDisplay Thing::get_display_name() const
 {
   /// @todo Implement adding adjectives.
-  return pImpl->metadata.get_intrinsic<std::string>("name");
+  return m_metadata.get_intrinsic<std::string>("name");
 }
 
 StringDisplay Thing::get_display_plural() const
 {
-  return pImpl->metadata.get_intrinsic<std::string>("plural");
+  return m_metadata.get_intrinsic<std::string>("plural");
 }
 
 StringDisplay Thing::get_proper_name()
@@ -1088,7 +1164,7 @@ StringDisplay Thing::get_identifying_string(bool definite)
 StringDisplay const& Thing::choose_verb(StringDisplay const& verb12,
                                         StringDisplay const& verb3)
 {
-  if ((GAME.get_player() == pImpl->ref) || (get_base_property<unsigned int>("quantity") > 1))
+  if ((GAME.get_player() == m_ref) || (get_base_property<unsigned int>("quantity") > 1))
   {
     return verb12;
   }
@@ -1130,7 +1206,7 @@ StringDisplay const& Thing::get_possessive_pronoun() const
 
 StringDisplay Thing::get_possessive()
 {
-  if (GAME.get_player() == pImpl->ref)
+  if (GAME.get_player() == m_ref)
   {
     return "your";
   }
@@ -1143,7 +1219,7 @@ StringDisplay Thing::get_possessive()
 sf::Vector2u Thing::get_tile_sheet_coords(int frame)
 {
   /// Get tile coordinates on the sheet.
-  sf::Vector2u start_coords = pImpl->metadata.get_tile_coords();
+  sf::Vector2u start_coords = m_metadata.get_tile_coords();
 
   /// Call the Lua function to get the offset (tile to choose).
   sf::Vector2u offset = call_lua_function<sf::Vector2u>("get_tile_offset", { frame });
@@ -1320,16 +1396,16 @@ void Thing::spill()
   for (ThingPair thing_pair : things)
   {
     ThingId thing = thing_pair.second;
-    if (pImpl->location != ThingId::Mu())
+    if (m_location != ThingId::Mu())
     {
-      ActionResult can_contain = pImpl->location->can_contain(thing);
+      ActionResult can_contain = m_location->can_contain(thing);
 
       switch (can_contain)
       {
         case ActionResult::Success:
 
           // Try to move this into the Thing's location.
-          success = thing->move_into(pImpl->location);
+          success = thing->move_into(m_location);
           if (success)
           {
             auto container_string = this->get_identifying_string();
@@ -1367,7 +1443,7 @@ void Thing::spill()
 
 void Thing::destroy()
 {
-  auto old_location = pImpl->location;
+  auto old_location = m_location;
 
   if (get_intrinsic<int>("inventory_size") != 0)
   {
@@ -1377,7 +1453,7 @@ void Thing::destroy()
 
   if (old_location != ThingId::Mu())
   {
-    old_location->get_inventory().remove(pImpl->ref);
+    old_location->get_inventory().remove(m_ref);
   }
 }
 
@@ -1563,7 +1639,7 @@ bool Thing::process()
   // This is because things can be deleted/removed from the inventory
   // over the course of processing them, and this might screw up the
   // iterator.
-  auto things = pImpl->inventory.get_things();
+  auto things = m_inventory.get_things();
 
   // Process inventory.
   for (auto iter = std::begin(things);
@@ -1680,10 +1756,10 @@ bool Thing::can_merge_with(ThingId other) const
   ///       queried on a Thing and pulls the default, but it was NOT queried
   ///       on the second thing, the property dictionaries will NOT match.
   ///       I have not yet found a good solution to this problem.
-  auto& our_properties = this->pImpl->properties;
-  auto& other_properties = other->pImpl->properties;
+  auto& our_properties = this->m_properties;
+  auto& other_properties = other->m_properties;
 
-  if ((this->pImpl->properties) == (other->pImpl->properties))
+  if ((this->m_properties) == (other->m_properties))
   {
     return true;
   }
@@ -1710,7 +1786,7 @@ ActionResult Thing::can_contain(ThingId thing)
 
 void Thing::set_location(ThingId target)
 {
-  pImpl->location = target;
+  m_location = target;
 }
 
 // *** PROTECTED METHODS ******************************************************
@@ -1740,10 +1816,10 @@ bool Thing::_process_self()
     add_to_base_property<int>("counter_busy", -1);
   }
   // Otherwise if actions are pending...
-  else if (!pImpl->pending_actions.empty())
+  else if (!m_pending_actions.empty())
   {
     // Process the front action.
-    std::unique_ptr<Action>& action = pImpl->pending_actions.front();
+    std::unique_ptr<Action>& action = m_pending_actions.front();
     bool action_done = action->process(get_id(), {});
     if (action_done)
     {
@@ -1752,7 +1828,7 @@ bool Thing::_process_self()
         get_type() << "): Action " <<
         action->get_type() << " is done, popping";
 
-      pImpl->pending_actions.pop_front();
+      m_pending_actions.pop_front();
     }
   } // end if (actions pending)
 
@@ -1761,7 +1837,7 @@ bool Thing::_process_self()
 
 std::vector<StringKey>& Thing::get_map_memory()
 {
-  return pImpl->map_memory;
+  return m_map_memory;
 }
 
 void Thing::do_recursive_visibility(int octant,
@@ -1889,8 +1965,8 @@ void Thing::do_recursive_visibility(int octant,
           slope_A = loop_slope(to_v2f(new_coords), to_v2f(tile_coords));
         }
       }
-      pImpl->tiles_currently_seen[game_map.get_index(new_coords.x, new_coords.y)] = true;
-      pImpl->map_memory[game_map.get_index(new_coords.x, new_coords.y)] = game_map.get_tile(new_coords.x,
+      m_tiles_currently_seen[game_map.get_index(new_coords.x, new_coords.y)] = true;
+      m_map_memory[game_map.get_index(new_coords.x, new_coords.y)] = game_map.get_tile(new_coords.x,
                                                                                             new_coords.y).get_tile_type();
     }
     new_coords -= (sf::Vector2i)dir;
@@ -1903,9 +1979,7 @@ void Thing::do_recursive_visibility(int octant,
   }
 }
 
-// *** PRIVATE METHODS ********************************************************
-
 MapTile* Thing::_get_maptile() const
 {
-  return pImpl->map_tile;
+  return m_map_tile;
 }

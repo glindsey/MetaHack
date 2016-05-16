@@ -6,7 +6,6 @@
 #include "LuaObject.h"
 #include "Map.h"
 #include "MapFactory.h"
-#include "New.h"
 #include "Thing.h"
 #include "ThingManager.h"
 

@@ -223,7 +223,6 @@
     <ClInclude Include="include\TileSheet.h" />
     <ClInclude Include="include\UsesPimpl.h" />
     <ClInclude Include="include\Visitor.h" />
-    <ClInclude Include="src\impl\ThingImpl.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="gui\GUICloseHandle.cpp" />

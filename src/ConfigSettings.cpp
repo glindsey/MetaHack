@@ -3,7 +3,6 @@
 #include "ConfigSettings.h"
 
 #include "ErrorHandler.h"
-#include "New.h"
 
 std::unique_ptr<ConfigSettings> ConfigSettings::instance_;
 

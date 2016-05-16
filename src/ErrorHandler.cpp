@@ -3,7 +3,6 @@
 #include "ErrorHandler.h"
 
 #include "App.h"
-#include "New.h"
 
 struct ErrorHandler::Impl
 {

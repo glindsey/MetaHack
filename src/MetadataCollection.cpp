@@ -3,7 +3,6 @@
 #include "MetadataCollection.h"
 
 #include "Metadata.h"
-#include "New.h"
 
 MetadataCollection::MetadataCollection(StringKey category)
   :

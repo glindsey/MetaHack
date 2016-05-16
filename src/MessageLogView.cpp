@@ -6,7 +6,6 @@
 #include "ConfigSettings.h"
 #include "ErrorHandler.h"
 #include "MessageLog.h"
-#include "New.h"
 
 MessageLogView::MessageLogView(MessageLog& model,
                                sf::IntRect dimensions)

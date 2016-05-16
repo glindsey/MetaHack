@@ -11,7 +11,12 @@
 #include "GameObject.h"
 #include "Gender.h"
 #include "LuaObject.h"
+#include "MapTile.h"
 #include "Metadata.h"
+#include "ModifiablePropertyDictionary.h"
+#include "ThingId.h"
+#include "ThingManager.h"
+
 
 // Forward declarations
 class AIStrategy;
@@ -22,13 +27,19 @@ class ThingFactory;
 class ThingId;
 class Thing;
 
-// Using Declarations
+// Using declarations.
+using WieldingMap = std::unordered_map<unsigned int, ThingId>;
+using WieldingPair = std::pair<unsigned int, ThingId>;
+
+using WearingMap = std::unordered_map<WearLocation, ThingId>;
+using WearingPair = std::pair<WearLocation, ThingId>;
+
+using MapMemory = std::vector<StringKey>;
+using TilesSeen = boost::dynamic_bitset<>;
+using ActionQueue = std::deque< std::unique_ptr<Action> >;
 
 /// Typedef for the factory method.
 using ThingCreator = std::shared_ptr<Thing>(*)(void);
-
-#include "ThingImpl.h"
-#include "UsesPimpl.h"
 
 // Thing is any object in the game, animate or not.
 class Thing
@@ -54,7 +65,7 @@ public:
   bool action_is_in_progress();
 
   /// Get the thing being wielded in the specified hand, if any.
-  ThingId get_wielding(unsigned int & hand);
+  ThingId get_wielding_in(unsigned int & hand);
 
   /// Returns true if this thing is the current player.
   /// By default, returns false. Overridden by Entity class.
@@ -119,7 +130,7 @@ public:
   template<typename T>
   T get_intrinsic(StringKey key, T default_value = T()) const
   {
-    return pImpl->metadata.get_intrinsic<T>(key, default_value);
+    return m_metadata.get_intrinsic<T>(key, default_value);
   }
 
   /// Get a base property of this Thing.
@@ -131,16 +142,14 @@ public:
   template<typename T>
   T get_base_property(StringKey key, T default_value = T())
   {
-    ModifiablePropertyDictionary& properties = pImpl->properties;
-
-    if (properties.contains(key))
+    if (m_properties.contains(key))
     {
-      return properties.get<T>(key);
+      return m_properties.get<T>(key);
     }
     else
     {
-      T value = pImpl->metadata.get_intrinsic<T>(key, default_value);
-      properties.set<T>(key, value);
+      T value = m_metadata.get_intrinsic<T>(key, default_value);
+      m_properties.set<T>(key, value);
       return value;
     }
   }
@@ -154,9 +163,8 @@ public:
   template<typename T>
   bool set_base_property(StringKey key, T value)
   {
-    ModifiablePropertyDictionary& properties = pImpl->properties;
-    bool existed = properties.contains(key);
-    properties.set<T>(key, value);
+    bool existed = m_properties.contains(key);
+    m_properties.set<T>(key, value);
 
     return existed;
   }
@@ -168,10 +176,9 @@ public:
   template<typename T>
   void add_to_base_property(StringKey key, T add_value)
   {
-    ModifiablePropertyDictionary& properties = pImpl->properties;
-    T existing_value = properties.get<T>(key);
+    T existing_value = m_properties.get<T>(key);
     T new_value = existing_value + add_value;
-    properties.set<T>(key, new_value);
+    m_properties.set<T>(key, new_value);
   }
 
   /// Get a modified property of this Thing.
@@ -183,15 +190,13 @@ public:
   template<typename T>
   T get_modified_property(StringKey key, T default_value = T())
   {
-    ModifiablePropertyDictionary& properties = pImpl->properties;
-
-    if (!properties.contains(key))
+    if (!m_properties.contains(key))
     {
-      T value = pImpl->metadata.get_intrinsic<T>(key, default_value);
-      properties.set<T>(key, value);
+      T value = m_metadata.get_intrinsic<T>(key, default_value);
+      m_properties.set<T>(key, value);
     }
 
-    return properties.get_modified<T>(key);
+    return m_properties.get_modified<T>(key);
   }
 
   /// Add a property modifier to this Thing.
@@ -261,8 +266,6 @@ public:
 
   /// Attempt to equip (wear) a thing.
   bool do_equip(ThingId thing_id, unsigned int& action_time);
-
-  ActionResult can_wield(ThingId thing_id, unsigned int hand, unsigned int& action_time);
 
   void set_wielded(ThingId thing, unsigned int hand);
 
@@ -540,15 +543,7 @@ public:
   /// @return ActionResult specifying whether the thing can be held here.
   ActionResult can_contain(ThingId thing);
 
-private:
-  /// Reference to game state.
-  GameState& m_game;
-
-  /// Pimpl implementation
-  /// We don't use CopyablePimpl because you can't copy a Thing;
-  /// you can clone it but that's a different concept.
-  Pimpl<ThingImpl> pImpl;
-
+protected:
   /// Named Constructor
   Thing(GameState& game, Metadata& metadata, ThingId ref);
 
@@ -576,9 +571,6 @@ private:
   /// Those are the responsibility of the caller.
   void set_location(ThingId target);
 
-  /// Outline color for walls when drawing on-screen.
-  static sf::Color const wall_outline_color_;
-
   /// Gets this location's maptile.
   virtual MapTile* _get_maptile() const;
 
@@ -597,6 +589,56 @@ private:
   {
     return the_lua_instance.call_thing_function<ReturnType, ArgType>(function_name, get_id(), args, default_result);
   }
+
+private:
+  /// Reference to game state.
+  GameState& m_game;
+
+  /// Reference to this Thing's metadata.
+  Metadata& m_metadata;
+
+  /// Property dictionary.
+  ModifiablePropertyDictionary m_properties;
+
+  /// Reference to this Thing.
+  ThingId m_ref;
+
+  /// Reference to this Thing's location.
+  ThingId m_location;
+
+  /// If this Thing is a Floor, pointer to the MapTile it is on.
+  MapTile* m_map_tile;
+
+  /// This Thing's inventory.
+  Inventory m_inventory;
+
+  /// Gender of this entity.
+  Gender m_gender = Gender::None;
+
+  /// Entity's spacial memory of map tiles.
+  /// @todo Regarding memory, it would be AWESOME if it could fade out
+  ///       VERY gradually, over a long period of time. Seeing it would
+  ///       reset the memory counter to 0, or possibly just add a large
+  ///       amount to the counter so that places you see more frequently
+  ///       stay in your mind longer.
+  MapMemory m_map_memory;
+
+  /// Bitset for tiles currently seen.
+  /// This deals with tiles observed at this particular instant.
+  TilesSeen m_tiles_currently_seen;
+
+  /// Queue of pending_actions to be performed.
+  ActionQueue m_pending_actions;
+
+  /// Map of items wielded.
+  WieldingMap m_wielded_items;
+
+  /// Map of things worn.
+  WearingMap m_equipped_items;
+
+  /// Outline color for walls when drawing on-screen.
+  static sf::Color const wall_outline_color_;
+
 };
 
 #endif // THING_H

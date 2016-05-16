@@ -2,8 +2,6 @@
 
 #include "KeyBuffer.h"
 
-#include "New.h"
-
 struct KeyBuffer::Impl
 {
   /// Buffer holding the string being composed.

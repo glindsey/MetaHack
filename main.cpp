@@ -2,7 +2,6 @@
 
 #include "App.h"
 #include "ErrorHandler.h"
-#include "New.h"
 
 INITIALIZE_EASYLOGGINGPP
 
