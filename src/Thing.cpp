@@ -352,7 +352,7 @@ bool Thing::do_equip(ThingId thing, unsigned int& action_time)
       {
         message = this->get_you_or_identifying_string() + " " +
           this->choose_verb("try", "tries") +
-          " to equip " + this->get_idlexive_pronoun() +
+          " to equip " + this->get_reflexive_pronoun() +
           ", which seriously shouldn't happen.";
         CLOG(WARNING, "Thing") << "NPC tried to equip self!?";
       }
@@ -1009,7 +1009,7 @@ StringDisplay Thing::get_self_or_identifying_string(ThingId other, bool definite
 {
   if (other == get_id())
   {
-    return get_idlexive_pronoun();
+    return get_reflexive_pronoun();
   }
 
   return get_identifying_string(definite);
@@ -1113,7 +1113,7 @@ StringDisplay const& Thing::get_object_pronoun() const
   return getObjPro(get_gender_or_you());
 }
 
-StringDisplay const& Thing::get_idlexive_pronoun() const
+StringDisplay const& Thing::get_reflexive_pronoun() const
 {
   return getRefPro(get_gender_or_you());
 }

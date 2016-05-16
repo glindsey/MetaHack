@@ -402,7 +402,7 @@ public:
   StringDisplay const& get_object_pronoun() const;
 
   /// Get the appropriate reflexive pronoun for the Thing.
-  StringDisplay const& get_idlexive_pronoun() const;
+  StringDisplay const& get_reflexive_pronoun() const;
 
   /// Get the appropriate possessive adjective for the Thing.
   StringDisplay const& get_possessive_adjective() const;

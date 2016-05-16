@@ -362,7 +362,7 @@ StringDisplay Action::get_object_string_()
   {
     if (get_object() == get_subject())
     {
-      description += get_subject()->get_idlexive_pronoun();
+      description += get_subject()->get_reflexive_pronoun();
     }
     else
     {
@@ -410,11 +410,11 @@ StringDisplay Action::get_target_string_()
 
   if (target == subject)
   {
-    return subject->get_idlexive_pronoun();
+    return subject->get_reflexive_pronoun();
   }
   else if ((objects.size() == 1) && (target == get_object()))
   {
-    return get_object()->get_idlexive_pronoun();
+    return get_object()->get_reflexive_pronoun();
   }
   else
   {

@@ -23,7 +23,7 @@ using ActionMap = std::unordered_map<StringKey, ActionCreator>;
 #define YOU_SUBJ  (get_subject()->get_subject_pronoun())     // "you/he/she/it/etc."
 #define YOU_OBJ   (get_subject()->get_object_pronoun())      // "you/him/her/it/etc."
 #define YOUR      (get_subject()->get_possessive())          // "your/his/her/its/etc."
-#define YOURSELF  (get_subject()->get_idlexive_pronoun())   // "yourself/himself/herself/itself/etc."
+#define YOURSELF  (get_subject()->get_reflexive_pronoun())   // "yourself/himself/herself/itself/etc."
 
 #define CV(p12, p3)  (get_subject()->choose_verb(p12, p3))   // shortcut for "Subject - Choose Verb"
 #define OBJCV(p12, p3)  (get_object()->choose_verb(p12, p3)) // shortcut for "Object - Choose Verb"

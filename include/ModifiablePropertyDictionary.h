@@ -46,7 +46,7 @@ public:
 
     boost::any value = m_modified_dictionary.at(key);
 
-    /// Try to cast the setting to the desired type.
+    // Try to cast the setting to the desired type.
     T* p_value = boost::any_cast<T>(&value);
 
     // Bail if it didn't work.
