@@ -18,7 +18,7 @@ using MapId = unsigned int;
 class MapFactory
 {
 public:
-  MapFactory();
+  MapFactory(GameState& game);
   virtual ~MapFactory();
 
   /// Serialization function.
@@ -43,6 +43,9 @@ public:
 
 protected:
 private:
+  /// Reference to current game state.
+  GameState& m_game;
+
   /// Collection of maps.
   std::unordered_map<MapId, std::unique_ptr<Map>> m_maps;
 

@@ -101,7 +101,7 @@ void Inventory::consolidate_items()
 
 bool Inventory::contains(ThingId thing)
 {
-  if (GAME.get_thing_manager().exists(thing) == false) return false;
+  if (GAME.get_things().exists(thing) == false) return false;
 
   return (find(thing) != things_.cend());
 }
@@ -113,7 +113,7 @@ bool Inventory::contains(InventorySlot slot)
 
 InventorySlot Inventory::get(ThingId thing)
 {
-  if (GAME.get_thing_manager().exists(thing) == false) return INVSLOT_INVALID;
+  if (GAME.get_things().exists(thing) == false) return INVSLOT_INVALID;
 
   auto iter = find(thing);
 
@@ -144,7 +144,7 @@ ThingId Inventory::split(ThingId thing, unsigned int target_quantity)
       unsigned int source_quantity = source_thing->get_quantity();
       if (target_quantity < source_quantity)
       {
-        target_thing = GAME.get_thing_manager().clone(source_thing);
+        target_thing = GAME.get_things().clone(source_thing);
         source_thing->set_quantity(source_quantity - target_quantity);
         target_thing->set_quantity(target_quantity);
       }

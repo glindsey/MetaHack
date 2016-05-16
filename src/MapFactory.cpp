@@ -8,7 +8,9 @@
 
 const MapId MapFactory::null_map_id = static_cast<MapId>(0);
 
-MapFactory::MapFactory()
+MapFactory::MapFactory(GameState& game)
+  :
+  m_game{ game }
 {
   // Create and add the "null map" to the list.
   current_map_id = 0;

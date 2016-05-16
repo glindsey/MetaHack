@@ -579,7 +579,7 @@ StringKey const& Thing::get_parent_type() const
 bool Thing::is_subtype_of(StringKey that_type) const
 {
   StringKey this_type = get_type();
-  return GAME.get_thing_manager().first_is_subtype_of_second(this_type, that_type);
+  return GAME.get_things().first_is_subtype_of_second(this_type, that_type);
 }
 
 bool Thing::add_modifier(StringKey key, ThingId id, unsigned int expiration_ticks)
@@ -690,7 +690,7 @@ bool Thing::can_see(int xTile, int yTile)
     return true;
   }
 
-  Map& game_map = GAME.get_map_factory().get(map_id);
+  Map& game_map = GAME.get_maps().get(map_id);
 
   if (can_currently_see())
   {
@@ -739,7 +739,7 @@ StringKey Thing::get_memory_at(int x, int y) const
     return "???";
   }
 
-  Map& game_map = GAME.get_map_factory().get(this->get_map_id());
+  Map& game_map = GAME.get_maps().get(this->get_map_id());
   return pImpl->map_memory[game_map.get_index(x, y)];
 }
 
@@ -756,7 +756,7 @@ void Thing::add_memory_vertices_to(sf::VertexArray& vertices,
   {
     return;
   }
-  Map& game_map = GAME.get_map_factory().get(map_id);
+  Map& game_map = GAME.get_maps().get(map_id);
 
   static sf::Vertex new_vertex;
   float ts = Settings.get<float>("map_tile_size");
@@ -820,7 +820,7 @@ bool Thing::move_into(ThingId new_location)
           pImpl->tiles_currently_seen.clear();
           if (new_map_id != MapFactory::null_map_id)
           {
-            Map& new_map = GAME.get_map_factory().get(new_map_id);
+            Map& new_map = GAME.get_maps().get(new_map_id);
             sf::Vector2i new_map_size = new_map.get_size();
             pImpl->map_memory.resize(new_map_size.x * new_map_size.y);
             pImpl->tiles_currently_seen.resize(new_map_size.x * new_map_size.y);
@@ -1283,7 +1283,7 @@ void Thing::be_lit_by(ThingId light)
 
   if (get_location() == ThingId::Mu())
   {
-    GAME.get_map_factory().get(get_map_id()).add_light(light);
+    GAME.get_maps().get(get_map_id()).add_light(light);
   }
 
   /// @todo Figure out how we want to handle light sources.
@@ -1775,7 +1775,7 @@ void Thing::do_recursive_visibility(int octant,
 
   MapTile* tile = get_maptile();
   sf::Vector2i tile_coords = tile->get_coords();
-  Map& game_map = GAME.get_map_factory().get(get_map_id());
+  Map& game_map = GAME.get_maps().get(get_map_id());
 
   static const int mv = 128;
   static constexpr int mw = (mv * mv);

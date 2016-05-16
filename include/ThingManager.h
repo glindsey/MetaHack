@@ -13,13 +13,13 @@ class Thing;
 class ThingMetadata;
 
 /// ThingManager is a factory to create and manage all the Things in the game.
-class ThingManager final
+class ThingManager
 {
   friend class ThingId;
 
 public:
   /// Constructor.
-  ThingManager();
+  ThingManager(GameState& game);
   ~ThingManager();
 
   /// Serialization function.
@@ -71,6 +71,9 @@ protected:
   Thing const& get(ThingId data) const;
 
 private:
+  /// Reference to the game state.
+  GameState& m_game;
+
   /// Boolean indicating whether ThingManager is initialized.
   bool m_initialized = false;
 

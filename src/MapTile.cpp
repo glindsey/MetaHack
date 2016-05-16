@@ -188,7 +188,7 @@ void MapTile::set_ambient_light_level(sf::Color level)
 
 void MapTile::be_lit_by(ThingId light)
 {
-  GAME.get_map_factory().get(get_map_id()).add_light(light);
+  GAME.get_maps().get(get_map_id()).add_light(light);
 }
 
 void MapTile::clear_light_influences()
@@ -602,13 +602,13 @@ MapTile::MapTile(sf::Vector2i coords, Metadata& metadata, MapId map_id)
   // "this" pointer passed in.
   /// @todo The type of this floor should eventually be specified as
   ///       part of the constructor.
-  m_tile_contents = GAME.get_thing_manager().create_tile_contents(this);
+  m_tile_contents = GAME.get_things().create_tile_contents(this);
 }
 
 MapTile const& MapTile::get_adjacent_tile(Direction direction) const
 {
   sf::Vector2i coords = get_coords();
-  Map const& map = GAME.get_map_factory().get(get_map_id());
+  Map const& map = GAME.get_maps().get(get_map_id());
   MapTile const& tile = *this;
 
   sf::Vector2i adjacent_coords = coords + (sf::Vector2i)direction;

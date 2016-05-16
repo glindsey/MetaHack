@@ -18,8 +18,8 @@ GameState::GameState()
 
   p_instance = this;
 
-  m_thing_manager.reset(NEW ThingManager());
-  m_map_factory.reset(NEW MapFactory());
+  m_thing_manager.reset(NEW ThingManager(*this));
+  m_map_factory.reset(NEW MapFactory(*this));
 }
 
 GameState::GameState(FileName filename)
@@ -51,14 +51,14 @@ void GameState::save_state(FileName filename)
 #endif
 }
 
-MapFactory& GameState::get_map_factory()
+MapFactory& GameState::get_maps()
 {
   ASSERT_CONDITION(m_map_factory);
 
   return *(m_map_factory.get());
 }
 
-ThingManager& GameState::get_thing_manager()
+ThingManager& GameState::get_things()
 {
   ASSERT_CONDITION(m_thing_manager);
 
@@ -67,7 +67,7 @@ ThingManager& GameState::get_thing_manager()
 
 bool GameState::set_player(ThingId ref)
 {
-  ASSERT_CONDITION(ref != get_thing_manager().get_mu());
+  ASSERT_CONDITION(ref != get_things().get_mu());
 
   m_player = ref;
   return true;
@@ -91,7 +91,7 @@ bool GameState::process_tick()
 
     // Get the map the player is on.
     MapId current_map_id = player->get_map_id();
-    Map& current_map = GAME.get_map_factory().get(current_map_id);
+    Map& current_map = GAME.get_maps().get(current_map_id);
 
     // Process everything on the map, and increment game clock.
     current_map.process();

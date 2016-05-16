@@ -30,8 +30,8 @@ public:
   /// @todo WRITE ME
   void save_state(FileName filename);
 
-  MapFactory& get_map_factory();
-  ThingManager& get_thing_manager();
+  MapFactory& get_maps();
+  ThingManager& get_things();
 
   /// Set the game player.
   /// If the caller attempts to set a ThingId of a Thing that does not exist,

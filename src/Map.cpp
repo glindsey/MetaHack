@@ -675,7 +675,7 @@ int Map::LUA_get_tile_contents(lua_State* L)
   MapId map_id = static_cast<MapId>(static_cast<unsigned int>(lua_tointeger(L, 1)));
   sf::Vector2i coords = sf::Vector2i(static_cast<int>(lua_tointeger(L, 2)), static_cast<int>(lua_tointeger(L, 3)));
 
-  auto& map_tile = GAME.get_map_factory().get(map_id).get_tile(coords);
+  auto& map_tile = GAME.get_maps().get(map_id).get_tile(coords);
   ThingId contents = map_tile.get_tile_contents();
 
   lua_pushinteger(L, contents);
@@ -695,7 +695,7 @@ int Map::LUA_get_start_coords(lua_State* L)
 
   MapId map_id = static_cast<MapId>(static_cast<unsigned int>(lua_tointeger(L, 1)));
 
-  auto& map = GAME.get_map_factory().get(map_id);
+  auto& map = GAME.get_maps().get(map_id);
   auto coords = map.get_start_coords();
 
   lua_pushinteger(L, coords.x);
@@ -718,7 +718,7 @@ int Map::LUA_map_add_feature(lua_State* L)
 
   MapId map_id = static_cast<MapId>(static_cast<unsigned int>(lua_tointeger(L, 1)));
 
-  auto& map = GAME.get_map_factory().get(map_id);
+  auto& map = GAME.get_maps().get(map_id);
 
   std::string feature = lua_tostring(L, 2);
 

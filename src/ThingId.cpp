@@ -7,10 +7,10 @@
 
 Thing* ThingId::operator->()
 {
-  return &(GAME.get_thing_manager().get(m_id));
+  return &(GAME.get_things().get(m_id));
 }
 
 Thing const* ThingId::operator->() const
 {
-  return &(GAME.get_thing_manager().get(m_id));
+  return &(GAME.get_things().get(m_id));
 }

@@ -37,7 +37,7 @@ namespace LuaThingFunctions
 
     if (is_creatable)
     {
-      new_thing = GAME.get_thing_manager().create(new_thing_type);
+      new_thing = GAME.get_things().create(new_thing_type);
       success = new_thing->move_into(thing);
 
       if (success && (num_args > 2))

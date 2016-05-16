@@ -145,13 +145,13 @@ StringKey const& AppStateGameMode::get_name()
 bool AppStateGameMode::initialize()
 {
   // Create the player.
-  ThingId player = get_game_state().get_thing_manager().create("Human");
+  ThingId player = get_game_state().get_things().create("Human");
   player->set_proper_name("John Doe");
   get_game_state().set_player(player);
 
   // Create the game map.
-  MapId current_map_id = GAME.get_map_factory().create(64, 64);
-  Map& game_map = GAME.get_map_factory().get(current_map_id);
+  MapId current_map_id = GAME.get_maps().create(64, 64);
+  Map& game_map = GAME.get_maps().get(current_map_id);
 
   // Move player to start position on the map.
   auto& start_coords = game_map.get_start_coords();
@@ -193,7 +193,7 @@ void AppStateGameMode::render_map(sf::RenderTexture& texture, int frame)
   ThingId player = get_game_state().get_player();
   ThingId location = player->get_location();
 
-  if (location == get_game_state().get_thing_manager().get_mu())
+  if (location == get_game_state().get_things().get_mu())
   {
     throw std::runtime_error("Uh oh, the player's location appears to have been deleted!");
   }
@@ -208,7 +208,7 @@ void AppStateGameMode::render_map(sf::RenderTexture& texture, int frame)
     MapTile* tile = player->get_maptile();
     if (tile != nullptr)
     {
-      Map& game_map = GAME.get_map_factory().get(tile->get_map_id());
+      Map& game_map = GAME.get_maps().get(tile->get_map_id());
       sf::Vector2i tile_coords = tile->get_coords();
       sf::Vector2f player_pixel_coords = MapTile::get_pixel_coords(tile_coords);
       sf::Vector2f cursor_pixel_coords = MapTile::get_pixel_coords(m_cursor_coords);
@@ -391,7 +391,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           {
             ThingId thing = inventory_area.get_viewed();
             ThingId location = thing->get_location();
-            if (location != get_game_state().get_thing_manager().get_mu())
+            if (location != get_game_state().get_things().get_mu())
             {
               inventory_area.set_viewed(location);
             }
@@ -939,7 +939,7 @@ sf::IntRect AppStateGameMode::calc_message_log_dims()
 void AppStateGameMode::reset_inventory_area()
 {
   ThingId player = m_game_state->get_player();
-  Map& game_map = GAME.get_map_factory().get(player->get_map_id());
+  Map& game_map = GAME.get_maps().get(player->get_map_id());
 
   /// @todo This is ugly; fix it.
   InventoryArea& inventory_area = dynamic_cast<InventoryArea&>(the_desktop.get_child("InventoryArea"));
@@ -989,7 +989,7 @@ sf::IntRect AppStateGameMode::calc_inventory_dims()
 bool AppStateGameMode::move_cursor(Direction direction)
 {
   ThingId player = m_game_state->get_player();
-  Map& game_map = GAME.get_map_factory().get(player->get_map_id());
+  Map& game_map = GAME.get_maps().get(player->get_map_id());
   bool result;
 
   result = game_map.calc_coords(m_cursor_coords, direction, m_cursor_coords);

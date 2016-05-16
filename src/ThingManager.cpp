@@ -11,7 +11,9 @@
 #include "Thing.h"
 #include "ThingId.h"
 
-ThingManager::ThingManager()
+ThingManager::ThingManager(GameState& game)
+  :
+  m_game{ game }
 {
   // Set up the logger.
   SET_UP_LOGGER("Thing", true);
