@@ -221,3 +221,6 @@ pip-log.txt
 html/
 doxygen/
 *.opendb
+
+# Get rid of the Intellisense DB.
+*.VC.db
