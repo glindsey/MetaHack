@@ -178,6 +178,7 @@
     <ClInclude Include="include\Direction.h" />
     <ClInclude Include="include\ErrorHandler.h" />
     <ClInclude Include="include\ModifiablePropertyDictionary.h" />
+    <ClInclude Include="include\Property.h" />
     <ClInclude Include="include\SFMLEventHandler.h" />
     <ClInclude Include="include\GameObject.h" />
     <ClInclude Include="include\GameState.h" />

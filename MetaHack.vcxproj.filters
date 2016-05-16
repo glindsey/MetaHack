@@ -309,6 +309,9 @@
     <ClInclude Include="include\AppStateSplashScreen.h">
       <Filter>App States</Filter>
     </ClInclude>
+    <ClInclude Include="include\Property.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">
