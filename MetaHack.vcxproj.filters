@@ -533,6 +533,9 @@
     <ClCompile Include="src\AppStateSplashScreen.cpp">
       <Filter>App States</Filter>
     </ClCompile>
+    <ClCompile Include="include\Property.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\default.lua">

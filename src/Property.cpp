@@ -1,4 +1,11 @@
+#include "..\include\Property.h"
 #include "Property.h"
+
+Property::Property(Property const & other)
+{
+  m_type = other.m_type;
+  m_data = other.m_data;
+}
 
 Property::Property(double number)
 {
@@ -182,4 +189,38 @@ Property::operator sf::Vector2i()
   {
     throw std::bad_cast();
   }
+}
+
+bool Property::operator==(Property const & lhs, Property const & rhs)
+{
+  if (lhs.m_type == rhs.m_type)
+  {
+    switch (lhs.m_type)
+    {
+      case Type::Number: return (lhs.m_data.number == rhs.m_data.number);
+      case Type::String: return (lhs.m_data.str == rhs.m_data.str);
+      case Type::Boolean: return (lhs.m_data.boolean == rhs.m_data.boolean);
+      case Type::Color: return (lhs.m_data.color == rhs.m_data.color);
+      case Type::Vector2i: return (lhs.m_data.vector2i == rhs.m_data.vector2i);
+      default: return false;
+    }
+  }
+  return false;
+}
+
+bool Property::operator<(Property const & lhs, Property const & rhs)
+{
+  if (lhs.m_type == rhs.m_type)
+  {
+    switch (lhs.m_type)
+    {
+      case Type::Number: return (lhs.m_data.number < rhs.m_data.number);
+      case Type::String: return (lhs.m_data.str < rhs.m_data.str);
+      case Type::Boolean: return (lhs.m_data.boolean < rhs.m_data.boolean);
+      case Type::Color: return (lhs.m_data.color < rhs.m_data.color);
+      case Type::Vector2i: return (lhs.m_data.vector2i < rhs.m_data.vector2i);
+      default: return false;
+    }
+  }
+  return false;
 }

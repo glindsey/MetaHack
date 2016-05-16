@@ -234,6 +234,7 @@
     <ClCompile Include="gui\GUIShrinkHandle.cpp" />
     <ClCompile Include="gui\GUITitleBar.cpp" />
     <ClCompile Include="gui\GUIWindow.cpp" />
+    <ClCompile Include="include\Property.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\Action.cpp" />
     <ClCompile Include="src\ActionAttack.cpp" />

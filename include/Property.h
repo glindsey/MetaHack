@@ -6,7 +6,8 @@
 
 /// Definition of a Property within the system.
 /// Implemented as a tagged union, because frankly I got sick of trying to
-/// deal with boost::variant and whatnot.
+/// deal with boost::variant and whatnot. It isn't the most elegant, but it
+/// is nice and legible.
 class Property
 {
 public:
@@ -19,6 +20,7 @@ public:
     Vector2i
   };
 
+  Property(Property const& other);
   Property(double number);
   Property(float number);
   Property(int number);
@@ -41,6 +43,20 @@ public:
   operator bool();
   operator sf::Color();
   operator sf::Vector2i();
+
+  friend bool operator==(Property const& lhs, Property const& rhs);
+
+  friend bool operator!=(Property const & lhs, Property const & rhs)
+  {
+    return !(lhs == rhs);
+  }
+
+  friend bool operator<(Property const& lhs, Property const& rhs);
+
+  friend bool operator>(Property const& lhs, Property const& rhs)
+  {
+    return (rhs < lhs);
+  }
 
 protected:
 private:
