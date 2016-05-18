@@ -1,4 +1,5 @@
-#include "..\include\Property.h"
+#include "stdafx.h"
+
 #include "Property.h"
 
 Property::Property(Property const & other)
@@ -10,58 +11,58 @@ Property::Property(Property const & other)
 Property::Property(double number)
 {
   m_type = Type::Number;
-  m_data.number = number;
+  m_data = number;
 }
 
 Property::Property(float number)
 {
   m_type = Type::Number;
-  m_data.number = static_cast<double>(number);
+  m_data = static_cast<double>(number);
 }
 
 Property::Property(int number)
 {
   m_type = Type::Number;
-  m_data.number = static_cast<double>(number);
+  m_data = static_cast<double>(number);
 }
 
 Property::Property(unsigned int number)
 {
   m_type = Type::Number;
-  m_data.number = static_cast<double>(number);
+  m_data = static_cast<double>(number);
 }
 
 Property::Property(std::string str)
 {
   m_type = Type::String;
-  m_data.str = str;
+  m_data = str;
 }
 
-Property::Property(StringDisplay str)
+Property::Property(std::wstring wstr)
 {
-  m_type = Type::String;
-  m_data.str = static_cast<std::string>(str);
+  m_type = Type::WString;
+  m_data = wstr;
 }
 
 Property::Property(bool boolean)
 {
   m_type = Type::Boolean;
-  m_data.boolean = boolean;
+  m_data = boolean;
 }
 
 Property::Property(sf::Color color)
 {
   m_type = Type::Color;
-  m_data.color = color;
+  m_data = color;
 }
 
 Property::Property(sf::Vector2i vector2i)
 {
   m_type = Type::Vector2i;
-  m_data.vector2i = vector2i;
+  m_data = vector2i;
 }
 
-Type Property::type()
+Property::Type Property::type()
 {
   return m_type;
 }
@@ -79,148 +80,240 @@ std::string Property::type_name()
   }
 }
 
-Property::operator double()
+Property::operator double() const
 {
-  if (m_type == Type::Number)
+  double dest;
+  switch (m_type)
   {
-    return m_data.number;
-  }
-  else
-  {
-    throw std::bad_cast();
-  }
-
-}
-
-Property::operator float()
-{
-  if (m_type == Type::Number)
-  {
-    return static_cast<float>(m_data.number);
-  }
-  else
-  {
-    throw std::bad_cast();
-  }
-
-}
-
-Property::operator int()
-{
-  if (m_type == Type::Number)
-  {
-    return static_cast<int>(m_data.number);
-  }
-  else
-  {
-    throw std::bad_cast();
-  }
-
-}
-
-Property::operator unsigned int()
-{
-  if (m_type == Type::Number)
-  {
-    return static_cast<unsigned int>(m_data.number);
-  }
-  else
-  {
-    throw std::bad_cast();
-  }
-
-}
-
-Property::operator std::string()
-{
-  if (m_type == Type::String)
-  {
-    return m_data.str;
-  }
-  else
-  {
-    throw std::bad_cast();
-  }
-}
-
-Property::operator StringDisplay()
-{
-  if (m_type == Type::String)
-  {
-    return static_cast<StringDisplay>(m_data.str);
-  }
-  else
-  {
-    throw std::bad_cast();
-  }
-}
-
-Property::operator bool()
-{
-  if (m_type == Type::Boolean)
-  {
-    return m_data.boolean;
-  }
-  else
-  {
-    throw std::bad_cast();
-  }
-}
-
-Property::operator sf::Color()
-{
-  if (m_type == Type::Color)
-  {
-    return m_data.color;
-  }
-  else
-  {
-    throw std::bad_cast();
-  }
-}
-
-Property::operator sf::Vector2i()
-{
-  if (m_type == Type::Vector2i)
-  {
-    return m_data.vector2i;
-  }
-  else
-  {
-    throw std::bad_cast();
-  }
-}
-
-bool Property::operator==(Property const & lhs, Property const & rhs)
-{
-  if (lhs.m_type == rhs.m_type)
-  {
-    switch (lhs.m_type)
+    case Type::Number:
+      dest = boost::any_cast<double>(m_data);
+      break;
+    case Type::String:
     {
-      case Type::Number: return (lhs.m_data.number == rhs.m_data.number);
-      case Type::String: return (lhs.m_data.str == rhs.m_data.str);
-      case Type::Boolean: return (lhs.m_data.boolean == rhs.m_data.boolean);
-      case Type::Color: return (lhs.m_data.color == rhs.m_data.color);
-      case Type::Vector2i: return (lhs.m_data.vector2i == rhs.m_data.vector2i);
-      default: return false;
+      auto src = boost::any_cast<std::string>(m_data);
+      dest = boost::lexical_cast<double>(src);
+      break;
     }
+    case Type::WString:
+    {
+      auto src = boost::any_cast<std::wstring>(m_data);
+      dest = boost::lexical_cast<double>(src);
+      break;
+    }
+    default:
+      throw std::bad_cast();
   }
-  return false;
+
+  return dest;
 }
 
-bool Property::operator<(Property const & lhs, Property const & rhs)
+Property::operator float() const
 {
-  if (lhs.m_type == rhs.m_type)
+  float dest;
+  switch (m_type)
   {
-    switch (lhs.m_type)
+    case Type::Number:
+      dest = static_cast<float>(boost::any_cast<double>(m_data));
+      break;
+    case Type::String:
     {
-      case Type::Number: return (lhs.m_data.number < rhs.m_data.number);
-      case Type::String: return (lhs.m_data.str < rhs.m_data.str);
-      case Type::Boolean: return (lhs.m_data.boolean < rhs.m_data.boolean);
-      case Type::Color: return (lhs.m_data.color < rhs.m_data.color);
-      case Type::Vector2i: return (lhs.m_data.vector2i < rhs.m_data.vector2i);
-      default: return false;
+      auto src = boost::any_cast<std::string>(m_data);
+      dest = boost::lexical_cast<float>(src);
+      break;
     }
+    case Type::WString:
+    {
+      auto src = boost::any_cast<std::wstring>(m_data);
+      dest = boost::lexical_cast<float>(src);
+      break;
+    }
+    default:
+      throw std::bad_cast();
   }
-  return false;
+
+  return dest;
 }
+
+Property::operator int() const
+{
+  int dest;
+  switch (m_type)
+  {
+    case Type::Number:
+      dest = static_cast<int>(boost::any_cast<double>(m_data));
+      break;
+    case Type::String:
+    {
+      auto src = boost::any_cast<std::string>(m_data);
+      dest = boost::lexical_cast<int>(src);
+      break;
+    }
+    case Type::WString:
+    {
+      auto src = boost::any_cast<std::wstring>(m_data);
+      dest = boost::lexical_cast<int>(src);
+      break;
+    }
+    default:
+      throw std::bad_cast();
+  }
+
+  return dest;
+}
+
+Property::operator unsigned int() const
+{
+  unsigned int dest;
+  switch (m_type)
+  {
+    case Type::Number:
+      dest = static_cast<unsigned int>(boost::any_cast<double>(m_data));
+      break;
+    case Type::String:
+    {
+      auto src = boost::any_cast<std::string>(m_data);
+      dest = boost::lexical_cast<unsigned int>(src);
+      break;
+    }
+    case Type::WString:
+    {
+      auto src = boost::any_cast<std::wstring>(m_data);
+      dest = boost::lexical_cast<unsigned int>(src);
+      break;
+    }
+    default:
+      throw std::bad_cast();
+  }
+
+  return dest;
+}
+
+Property::operator std::string() const
+{
+  std::string dest{};
+
+  switch (m_type)
+  {
+    case Type::String:
+      dest = boost::any_cast<std::string>(m_data);
+      break;
+    case Type::WString:
+    {
+      // Convert wstring to UTF-8 string
+      std::wstring_convert<std::codecvt_utf8<wchar_t>> convert;
+      dest = convert.to_bytes(boost::any_cast<std::wstring>(m_data));
+      break;
+    }
+    case Type::Number:
+      dest = boost::lexical_cast<std::string>(boost::any_cast<double>(m_data));
+      break;
+    case Type::Boolean:
+      dest = boost::any_cast<bool>(m_data) ? "true" : "false";
+      break;
+    case Type::Color:
+    {
+      auto src = boost::any_cast<sf::Color>(m_data);
+      dest = "(" +
+        std::to_string(src.r) + ", " +
+        std::to_string(src.g) + ", " +
+        std::to_string(src.b) + ", " +
+        std::to_string(src.a) + ")";
+      break;
+    }
+    case Type::Vector2i:
+    {
+      auto src = boost::any_cast<sf::Vector2i>(m_data);
+      std::string dest = "(" +
+        std::to_string(src.x) + ", " +
+        std::to_string(src.y) + ")";
+      break;
+    }
+    default:
+      throw std::bad_cast();
+  }
+
+  return dest;
+}
+
+Property::operator std::wstring() const
+{
+  std::wstring dest;
+  switch (m_type)
+  {
+    case Type::WString:
+      dest = boost::any_cast<std::wstring>(m_data);
+      break;
+    case Type::String:
+    {
+      // Convert UTF-8 string to wstring
+      std::wstring_convert<std::codecvt_utf8<wchar_t>> convert;
+      dest = convert.from_bytes(boost::any_cast<std::string>(m_data));
+      break;
+    }
+    case Type::Number:
+      dest = boost::lexical_cast<std::wstring>(boost::any_cast<double>(m_data));
+      break;
+    case Type::Boolean:
+      dest = boost::any_cast<bool>(m_data) ? L"true" : L"false";
+      break;
+    case Type::Color:
+    {
+      auto src = boost::any_cast<sf::Color>(m_data);
+      dest = L"(" +
+        std::to_wstring(src.r) + L", " +
+        std::to_wstring(src.g) + L", " +
+        std::to_wstring(src.b) + L", " +
+        std::to_wstring(src.a) + L")";
+      break;
+    }
+    case Type::Vector2i:
+    {
+      auto src = boost::any_cast<sf::Vector2i>(m_data);
+      dest = L"(" +
+        std::to_wstring(src.x) + L", " +
+        std::to_wstring(src.y) + L")";
+      break;
+    }
+    default:
+      throw std::bad_cast();
+  }
+
+  return dest;
+}
+
+Property::operator bool() const
+{
+  /// @todo Parse string, wstring to create a boolean?
+  switch (m_type)
+  {
+    case Type::Boolean:
+      return boost::any_cast<bool>(m_data);
+    default:
+      throw std::bad_cast();
+  }
+}
+
+Property::operator sf::Color() const
+{
+  /// @todo Parse string, wstring to create a color?
+  switch (m_type)
+  {
+    case Type::Color:
+      return boost::any_cast<sf::Color>(m_data);
+    default:
+      throw std::bad_cast();
+  }
+}
+
+Property::operator sf::Vector2i() const
+{
+  /// @todo Parse string, wstring to create a vector?
+  switch (m_type)
+  {
+    case Type::Vector2i:
+      return boost::any_cast<sf::Vector2i>(m_data);
+    default:
+      throw std::bad_cast();
+  }
+}
+

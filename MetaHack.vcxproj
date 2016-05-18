@@ -234,7 +234,6 @@
     <ClCompile Include="gui\GUIShrinkHandle.cpp" />
     <ClCompile Include="gui\GUITitleBar.cpp" />
     <ClCompile Include="gui\GUIWindow.cpp" />
-    <ClCompile Include="include\Property.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\Action.cpp" />
     <ClCompile Include="src\ActionAttack.cpp" />
@@ -291,6 +290,7 @@
     <ClCompile Include="src\Metadata.cpp" />
     <ClCompile Include="src\MetadataCollection.cpp" />
     <ClCompile Include="src\ModifiablePropertyDictionary.cpp" />
+    <ClCompile Include="src\Property.cpp" />
     <ClCompile Include="src\PropertyDictionary.cpp" />
     <ClCompile Include="src\State.cpp" />
     <ClCompile Include="src\StateMachine.cpp" />

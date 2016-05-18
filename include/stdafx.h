@@ -5,6 +5,7 @@
 #include <cctype>
 #include <cinttypes>
 #include <climits>
+#include <codecvt>
 #include <crtdbg.h>
 #include <cstdbool>
 #include <deque>

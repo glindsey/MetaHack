@@ -25,15 +25,12 @@
     <Filter Include="App States">
       <UniqueIdentifier>{c64b3cd5-4ed5-46a1-a3bc-710ceb9d4bd6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Types">
+      <UniqueIdentifier>{fc4cfdb3-3d4e-4fd9-8582-0b0ad3143c2b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\App.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Beatitude.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\BodyPart.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\common_enums.h">
@@ -42,16 +39,10 @@
     <ClInclude Include="include\ConfigSettings.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Direction.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\ErrorHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\GameObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Gender.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\GeoVector.h">
@@ -82,9 +73,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\MessageLog.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Ordinal.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Renderable.h">
@@ -133,9 +121,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\common_functions.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\IntegerRange.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\MetadataCollection.h">
@@ -309,8 +294,26 @@
     <ClInclude Include="include\AppStateSplashScreen.h">
       <Filter>App States</Filter>
     </ClInclude>
+    <ClInclude Include="include\Beatitude.h">
+      <Filter>Types</Filter>
+    </ClInclude>
+    <ClInclude Include="include\BodyPart.h">
+      <Filter>Types</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Direction.h">
+      <Filter>Types</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Gender.h">
+      <Filter>Types</Filter>
+    </ClInclude>
+    <ClInclude Include="include\IntegerRange.h">
+      <Filter>Types</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Ordinal.h">
+      <Filter>Types</Filter>
+    </ClInclude>
     <ClInclude Include="include\Property.h">
-      <Filter>Header Files</Filter>
+      <Filter>Types</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -324,9 +327,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\GameObject.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Gender.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Inventory.cpp">
@@ -387,9 +387,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\LuaThingFunctions.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Direction.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\stdafx.cpp">
@@ -533,8 +530,14 @@
     <ClCompile Include="src\AppStateSplashScreen.cpp">
       <Filter>App States</Filter>
     </ClCompile>
-    <ClCompile Include="include\Property.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\Direction.cpp">
+      <Filter>Types</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Gender.cpp">
+      <Filter>Types</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Property.cpp">
+      <Filter>Types</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
