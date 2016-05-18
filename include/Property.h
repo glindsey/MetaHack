@@ -32,6 +32,12 @@ public:
   Property(sf::Color color);
   Property(sf::Vector2i vector2i);
 
+  Property& operator=(Property other)
+  {
+    std::swap(*this, other);
+    return *this;
+  }
+  
   Type type();
   std::string type_name();
 
@@ -172,6 +178,11 @@ public:
   friend bool operator>=(Property const& lhs, Property const& rhs)
   {
     return !(lhs < rhs);
+  }
+
+  friend std::ostream& operator<<(std::ostream& out, Property const& prop)
+  {
+    return out << static_cast<std::string>(prop);
   }
 
 protected:
