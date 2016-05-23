@@ -1,73 +1,73 @@
 #include "stdafx.h"
 
-#include "Property.h"
+#include "PropertyValue.h"
 
-Property::Property(Property const & other)
+PropertyValue::PropertyValue(PropertyValue const & other)
 {
   m_type = other.m_type;
   m_data = other.m_data;
 }
 
-Property::Property(double number)
+PropertyValue::PropertyValue(double number)
 {
   m_type = Type::Number;
   m_data = number;
 }
 
-Property::Property(float number)
+PropertyValue::PropertyValue(float number)
 {
   m_type = Type::Number;
   m_data = static_cast<double>(number);
 }
 
-Property::Property(int number)
+PropertyValue::PropertyValue(int number)
 {
   m_type = Type::Number;
   m_data = static_cast<double>(number);
 }
 
-Property::Property(unsigned int number)
+PropertyValue::PropertyValue(unsigned int number)
 {
   m_type = Type::Number;
   m_data = static_cast<double>(number);
 }
 
-Property::Property(std::string str)
+PropertyValue::PropertyValue(std::string str)
 {
   m_type = Type::String;
   m_data = str;
 }
 
-Property::Property(std::wstring wstr)
+PropertyValue::PropertyValue(std::wstring wstr)
 {
   m_type = Type::WString;
   m_data = wstr;
 }
 
-Property::Property(bool boolean)
+PropertyValue::PropertyValue(bool boolean)
 {
   m_type = Type::Boolean;
   m_data = boolean;
 }
 
-Property::Property(sf::Color color)
+PropertyValue::PropertyValue(sf::Color color)
 {
   m_type = Type::Color;
   m_data = color;
 }
 
-Property::Property(sf::Vector2i vector2i)
+PropertyValue::PropertyValue(sf::Vector2i vector2i)
 {
   m_type = Type::Vector2i;
   m_data = vector2i;
 }
 
-Property::Type Property::type()
+PropertyValue::Type PropertyValue::type()
 {
   return m_type;
 }
 
-std::string Property::type_name()
+std::string PropertyValue::type_name()
 {
   switch (m_type)
   {
@@ -80,7 +80,7 @@ std::string Property::type_name()
   }
 }
 
-Property::operator double() const
+PropertyValue::operator double() const
 {
   double dest;
   switch (m_type)
@@ -107,7 +107,7 @@ Property::operator double() const
   return dest;
 }
 
-Property::operator float() const
+PropertyValue::operator float() const
 {
   float dest;
   switch (m_type)
@@ -134,7 +134,7 @@ Property::operator float() const
   return dest;
 }
 
-Property::operator int() const
+PropertyValue::operator int() const
 {
   int dest;
   switch (m_type)
@@ -161,7 +161,7 @@ Property::operator int() const
   return dest;
 }
 
-Property::operator unsigned int() const
+PropertyValue::operator unsigned int() const
 {
   unsigned int dest;
   switch (m_type)
@@ -188,7 +188,7 @@ Property::operator unsigned int() const
   return dest;
 }
 
-Property::operator std::string() const
+PropertyValue::operator std::string() const
 {
   std::string dest{};
 
@@ -235,7 +235,7 @@ Property::operator std::string() const
   return dest;
 }
 
-Property::operator std::wstring() const
+PropertyValue::operator std::wstring() const
 {
   std::wstring dest;
   switch (m_type)
@@ -281,7 +281,7 @@ Property::operator std::wstring() const
   return dest;
 }
 
-Property::operator bool() const
+PropertyValue::operator bool() const
 {
   /// @todo Parse string, wstring to create a boolean?
   switch (m_type)
@@ -293,7 +293,7 @@ Property::operator bool() const
   }
 }
 
-Property::operator sf::Color() const
+PropertyValue::operator sf::Color() const
 {
   /// @todo Parse string, wstring to create a color?
   switch (m_type)
@@ -305,7 +305,7 @@ Property::operator sf::Color() const
   }
 }
 
-Property::operator sf::Vector2i() const
+PropertyValue::operator sf::Vector2i() const
 {
   /// @todo Parse string, wstring to create a vector?
   switch (m_type)

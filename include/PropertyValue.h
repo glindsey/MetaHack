@@ -4,11 +4,11 @@
 
 #include "common_types.h"
 
-/// Definition of a Property within the system.
+/// Definition of a PropertyValue within the system.
 /// Wrapper around boost::any, basically.
 /// A separate "type" enum is used to speed up conversions between types;
 /// otherwise we'd have to do string comparisons on typeid() results.
-class Property
+class PropertyValue
 {
 public:
   enum class Type
@@ -21,18 +21,18 @@ public:
     Vector2i
   };
 
-  Property(Property const& other);
-  Property(double number);
-  Property(float number);
-  Property(int number);
-  Property(unsigned int number);
-  Property(std::string str);
-  Property(std::wstring wstr);
-  Property(bool boolean);
-  Property(sf::Color color);
-  Property(sf::Vector2i vector2i);
+  PropertyValue(PropertyValue const& other);
+  PropertyValue(double number);
+  PropertyValue(float number);
+  PropertyValue(int number);
+  PropertyValue(unsigned int number);
+  PropertyValue(std::string str);
+  PropertyValue(std::wstring wstr);
+  PropertyValue(bool boolean);
+  PropertyValue(sf::Color color);
+  PropertyValue(sf::Vector2i vector2i);
 
-  Property& operator=(Property other)
+  PropertyValue& operator=(PropertyValue other)
   {
     std::swap(*this, other);
     return *this;
@@ -51,7 +51,7 @@ public:
   operator sf::Color() const;
   operator sf::Vector2i() const;
 
-  friend bool operator==(Property const& lhs, Property const& rhs)
+  friend bool operator==(PropertyValue const& lhs, PropertyValue const& rhs)
   {
     if (lhs.m_type != rhs.m_type)
     {
@@ -101,12 +101,12 @@ public:
     }
   }
 
-  friend bool operator!=(Property const& lhs, Property const& rhs)
+  friend bool operator!=(PropertyValue const& lhs, PropertyValue const& rhs)
   {
     return !(lhs == rhs);
   }
 
-  friend bool operator<(Property const & lhs, Property const & rhs)
+  friend bool operator<(PropertyValue const & lhs, PropertyValue const & rhs)
   {
     if (lhs.m_type != rhs.m_type)
     {
@@ -165,22 +165,22 @@ public:
     }
   }
 
-  friend bool operator>(Property const& lhs, Property const& rhs)
+  friend bool operator>(PropertyValue const& lhs, PropertyValue const& rhs)
   {
     return (rhs < lhs);
   }
 
-  friend bool operator<=(Property const& lhs, Property const& rhs)
+  friend bool operator<=(PropertyValue const& lhs, PropertyValue const& rhs)
   {
     return !(lhs > rhs);
   }
 
-  friend bool operator>=(Property const& lhs, Property const& rhs)
+  friend bool operator>=(PropertyValue const& lhs, PropertyValue const& rhs)
   {
     return !(lhs < rhs);
   }
 
-  friend std::ostream& operator<<(std::ostream& out, Property const& prop)
+  friend std::ostream& operator<<(std::ostream& out, PropertyValue const& prop)
   {
     return out << static_cast<std::string>(prop);
   }
@@ -188,10 +188,10 @@ public:
 protected:
 private:
 
-  /// Type of this Property.
+  /// Type of this PropertyValue.
   Type m_type;
 
-  /// Data for this Property.
+  /// Data for this PropertyValue.
   boost::any m_data;
 
 };

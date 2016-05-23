@@ -315,7 +315,7 @@
     <ClInclude Include="include\Ordinal.h">
       <Filter>Types</Filter>
     </ClInclude>
-    <ClInclude Include="include\Property.h">
+    <ClInclude Include="include\PropertyValue.h">
       <Filter>Types</Filter>
     </ClInclude>
   </ItemGroup>
@@ -369,9 +369,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\ThingManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\PropertyDictionary.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\IntegerRange.cpp">
@@ -539,8 +536,11 @@
     <ClCompile Include="src\Gender.cpp">
       <Filter>Types</Filter>
     </ClCompile>
-    <ClCompile Include="src\Property.cpp">
+    <ClCompile Include="src\PropertyValue.cpp">
       <Filter>Types</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PropertyDictionary.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
