@@ -28,6 +28,9 @@
     <Filter Include="Types">
       <UniqueIdentifier>{fc4cfdb3-3d4e-4fd9-8582-0b0ad3143c2b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{77a3351a-cfa7-45aa-ba4d-fe17aae1e83d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\App.h">
@@ -651,6 +654,12 @@
     </None>
     <None Include="resources\things\WeaponStriking.lua">
       <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\shaders\default.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="resources\shaders\default.vert">
+      <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
 </Project>

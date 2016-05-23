@@ -317,6 +317,8 @@
     <None Include="resources\maptiles\MTWall.lua" />
     <None Include="resources\maptiles\MTWallStone.lua" />
     <None Include="resources\scripts\map.lua" />
+    <None Include="resources\shaders\default.frag" />
+    <None Include="resources\shaders\default.vert" />
     <None Include="resources\things\Animal.lua" />
     <None Include="resources\things\Biped.lua" />
     <None Include="resources\things\Blob.lua" />

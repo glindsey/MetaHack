@@ -38,8 +38,8 @@ void main()
   {
     // Red rendering (for dead entities)
     fragment_color.r = luminance;
-    fragment_color.g = 0;
-    fragment_color.b = 0;
+    fragment_color.g = 0.0;
+    fragment_color.b = 0.0;
     fragment_color.a = gl_Color.a * pixel.a;
   }
   else if (effect == EFFECT_SEPIA)
@@ -58,9 +58,9 @@ void main()
     // Lightest should be (0.945, 0.945, 0.831)
     // Darkest should ideally be some sort of dark ink color, but for
     // the time being it'll be (0, 0, 0) which makes the math much easier.
-    fragment_color.r = (1 - luminance) * 0.71;
-    fragment_color.g = (1 - luminance) * 0.71;
-    fragment_color.b = (1 - luminance) * 0.62;
+    fragment_color.r = (1.0 - luminance) * 0.71;
+    fragment_color.g = (1.0 - luminance) * 0.71;
+    fragment_color.b = (1.0 - luminance) * 0.62;
     fragment_color.a = gl_Color.a * pixel.a;
   }
   else

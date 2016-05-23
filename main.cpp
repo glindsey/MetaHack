@@ -35,6 +35,13 @@ int main(int argc, char* argv[])
       // Create and open the main window.
       app_window.reset(NEW sf::RenderWindow(sf::VideoMode(1066, 600), "Magicule Saga"));
 
+      auto settings = app_window->getSettings();
+      LOG(INFO) << "depthBits = " << settings.depthBits;
+      LOG(INFO) << "stencilBits = " << settings.stencilBits;
+      LOG(INFO) << "antialiasingLevel = " << settings.antialiasingLevel;
+      LOG(INFO) << "version = " << settings.majorVersion << "." << settings.minorVersion;
+      LOG(INFO) << "attributeFlags = 0x" << hexify<uint32_t>(settings.attributeFlags);
+
       // Create and run the app instance.
       app.reset(NEW App(*(app_window.get())));
       app->run();
