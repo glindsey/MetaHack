@@ -221,7 +221,6 @@
     <ClInclude Include="include\ThingId.h" />
     <ClInclude Include="include\ThingManager.h" />
     <ClInclude Include="include\TileSheet.h" />
-    <ClInclude Include="include\UsesPimpl.h" />
     <ClInclude Include="include\Visitor.h" />
   </ItemGroup>
   <ItemGroup>

@@ -22,7 +22,7 @@ struct SpritePrototype
   SpritePrototype(sf::Vector2u spriteCoords_ = sf::Vector2u(0, 0),
                   unsigned int numAnimFrames_ = 1,
                   SpriteAnimationStyle animationStyle_ =
-                  SpriteAnimationsStyle::IdlePlusLoop,
+                  SpriteAnimationStyle::IdlePlusLoop,
                   unsigned int numDirections_ = 1,
                   unsigned int rendersPerFrame_ = 1)
     : spriteCoords(spriteCoords_),
@@ -32,7 +32,7 @@ struct SpritePrototype
     rendersPerFrame(rendersPerFrame_) {}
 
   /// Coordinates of the upper-left tile for the sprite.
-  unsigned sf::Vector2u spriteCoords;
+  sf::Vector2u spriteCoords;
 
   /// Number of animation frames composing the sprite.
   unsigned int numAnimFrames;
@@ -51,15 +51,6 @@ struct SpritePrototype
   /// Sprite animation speed (in screen renders).
   /// An animation speed of 0 means the sprite frame is changed manually.
   unsigned int rendersPerFrame;
-};
-
-class SpritePrototype
-{
-public:
-  SpritePrototype() {}
-  virtual ~SpritePrototype() {}
-protected:
-private:
 };
 
 #endif // SPRITEPROTOTYPE_H

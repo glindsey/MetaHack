@@ -111,9 +111,6 @@
     <ClInclude Include="include\Metadata.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\UsesPimpl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\LightInfluence.h">
       <Filter>Header Files</Filter>
     </ClInclude>
