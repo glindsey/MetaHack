@@ -1831,6 +1831,18 @@ bool Thing::_process_self()
       m_pending_actions.pop_front();
     }
   } // end if (actions pending)
+  // Otherwise if there are no other pending actions...
+  else
+  {
+    // If entity is not the player, call the Lua process function on this Thing.
+    /// @todo Should this be called regardless of whether actions are pending
+    ///       or not? In other words, should a Thing be able to "change its mind"
+    ///       and clear out any pending actions?
+    if (!is_player())
+    {
+      ActionResult result = call_lua_function<ActionResult>("process");
+    }
+  }
 
   return true;
 }

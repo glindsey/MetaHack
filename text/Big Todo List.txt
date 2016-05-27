@@ -1,10 +1,18 @@
 BIG TODO LIST
 
+REQUIRED LUA FUNCTIONS
+======================
+[ ] Add Lua functions "on_base_property_change_XXX", "on_transient_property_change_XXX" for when Thing properties are modified. Pass in the old value and the new value.
+[ ] Export "thing_set_quantity" / "thing_modify_quantity" functions to Lua
+[ ] Add Lua function "get_property_name_XXXX" for properties, so they can be added to Thing descriptions in a sensible manner (e.g. "a blind cave bat", but not "a blind dagger"
+	-- Is this really needed?
+[ ] Export "generate_string" string builder function to Lua (see below)
+[ ] Create Lua functions to allow queuing of Actions (needed for enemy AI!)
+[ ] Export functions so enemy AI is able to sense its environment (e.g. ability to access memory, senses)
+
 SMALL THINGS
 ============
 [ ] Feature: If nothing is selected and ']' is pressed, auto-select @ (you).
-[ ] Add Lua functions "on_base_property_change_XXX", "on_transient_property_change_XXX" for when Thing properties are modified. Pass in the old value and the new value.
-[ ] Export "thing_set_quantity" / "thing_modify_quantity" functions to Lua
 [ ] BUG: Using "/" look command reveals inventory of squares player can't see
 [X] BUG: HP display in status area is screwed up
 [ ] Look at some of the intrinsics like "movable", "lockable", et cetera and see if they can be removed.
@@ -12,12 +20,10 @@ SMALL THINGS
 
 MEDIUM THINGS
 =============
-[ ] Add Lua function "get_property_name_XXXX" for properties, so they can be added to Thing descriptions in a sensible manner (e.g. "a blind cave bat", but not "a blind dagger"
 [X] Get rid of all singletons except for the App singleton.
 [X] When a StringDisplay is passed to/from Lua, it should be automatically converted between UTF-8 and UTF-16 as appropriate.
 [X] Have StringDisplay be an alias for std::wstring instead of sf::String, in order to decouple a bit from SFML
-[ ] Add a function that allows for automatic substitution of substrings, instead of concatenating macros as is done now. This will be needed for easy creation of display strings in Lua.
-    [ ] Export said function to Lua
+[ ] Add a "generate_string" function that allows for automatic substitution of substrings, instead of concatenating macros as is done now. This will be needed for easy creation of display strings in Lua.
 [/] Transient properties
     [/] Cached set of properties
         - Property is recalculated upon:
@@ -38,8 +44,6 @@ MEDIUM THINGS
 [ ] Write lock, unlock Action code
 [ ] Transition die code into Action subclass (?)
 [ ] Some more verbs: clean, push, shatter(?), unwield
-[ ] Create (and call) each Thing's "process()" Lua function (needed for enemy AI!)
-[ ] Create Lua functions to allow queuing of Actions (needed for enemy AI!)
 [ ] Fix quantities (they are not currently being respected for get/drop actions)
 [X] Death conditions
     [/] For player
