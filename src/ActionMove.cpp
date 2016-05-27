@@ -8,7 +8,7 @@
 #include "Thing.h"
 #include "ThingId.h"
 
-ACTION_SRC_BOILERPLATE(ActionMove, "move", "move")
+ACTION_SRC_BOILERPLATE(ActionMove, "move", L"move")
 
 Action::StateResult ActionMove::do_prebegin_work_(AnyMap& params)
 {
@@ -22,17 +22,17 @@ Action::StateResult ActionMove::do_prebegin_work_(AnyMap& params)
   {
     print_message_try_();
 
-    message = "But ";
+    message = L"But ";
   }
   else
   {
-    message = "";
+    message = L"";
   }
 
   // Make sure we CAN move.
   if (!subject->get_intrinsic<bool>("can_move", false))
   {
-    message += YOU + CV(" don't", " doesn't") + " have the capability of movement.";
+    message += YOU + CV(L" don't", L" doesn't") + L" have the capability of movement.";
     the_message_log.add(message);
     return Action::StateResult::Failure();
   }
@@ -40,7 +40,7 @@ Action::StateResult ActionMove::do_prebegin_work_(AnyMap& params)
   // Make sure we can move RIGHT NOW.
   if (!subject->can_currently_move())
   {
-    message += YOU + " can't move right now.";
+    message += YOU + L" can't move right now.";
     the_message_log.add(message);
     return Action::StateResult::Failure();
   }
@@ -48,7 +48,7 @@ Action::StateResult ActionMove::do_prebegin_work_(AnyMap& params)
   // Make sure we're not confined inside another thing.
   if (subject->is_inside_another_thing())
   {
-    message += YOU_ARE + " inside " + location->get_identifying_string(false) + " and " + ARE + " not going anywhere!";
+    message += YOU_ARE + L" inside " + location->get_identifying_string(false) + L" and " + ARE + L" not going anywhere!";
 
     the_message_log.add(message);
     return Action::StateResult::Failure();
@@ -71,13 +71,13 @@ Action::StateResult ActionMove::do_begin_work_(AnyMap& params)
   if (new_direction == Direction::Up)
   {
     /// @todo Write up/down movement code
-    message = "Up/down movement is not yet supported!";
+    message = L"Up/down movement is not yet supported!";
     the_message_log.add(message);
   }
   else if (new_direction == Direction::Down)
   {
     /// @todo Write up/down movement code
-    message = "Up/down movement is not yet supported!";
+    message = L"Up/down movement is not yet supported!";
     the_message_log.add(message);
   }
   else
@@ -94,7 +94,7 @@ Action::StateResult ActionMove::do_begin_work_(AnyMap& params)
     if ((x_new < 0) || (y_new < 0) ||
         (x_new >= map_size.x) || (y_new >= map_size.y))
     {
-      message += YOU + " can't move there; it is out of bounds!";
+      message += YOU + L" can't move there; it is out of bounds!";
       the_message_log.add(message);
     }
     else
@@ -128,9 +128,9 @@ Action::StateResult ActionMove::do_begin_work_(AnyMap& params)
         else
         {
           StringDisplay tile_description = new_tile.get_display_name();
-          message += YOU_ARE + " stopped by " +
-            getIndefArt(tile_description) + " " +
-            tile_description + ".";
+          message += YOU_ARE + L" stopped by " +
+            getIndefArt(tile_description) + L" " +
+            tile_description + L".";
           the_message_log.add(message);
         }
       } // end else if (tile does not contain creature)

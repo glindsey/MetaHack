@@ -25,7 +25,7 @@ ThingId MapTile::get_tile_contents() const
 
 StringDisplay MapTile::get_display_name() const
 {
-  return m_p_metadata->get_intrinsic<std::string>("name");
+  return m_p_metadata->get_intrinsic<StringDisplay>("name");
 }
 
 sf::Vector2u MapTile::get_tile_sheet_coords(int frame) const

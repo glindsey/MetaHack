@@ -4,7 +4,7 @@
 #include "Thing.h"
 #include "ThingId.h"
 
-ACTION_SRC_BOILERPLATE(ActionTakeOut, "takeout", "remove")
+ACTION_SRC_BOILERPLATE(ActionTakeOut, "takeout", L"remove")
 
 Action::StateResult ActionTakeOut::do_prebegin_work_(AnyMap& params)
 {
@@ -25,13 +25,13 @@ Action::StateResult ActionTakeOut::do_prebegin_work_(AnyMap& params)
     if (IS_PLAYER)
     {
       /// @todo Maybe allow player to voluntarily exit a container?
-      message = "I'm afraid you can't do that.  "
-        "(At least, not in this version...)";
+      message = L"I'm afraid you can't do that.  "
+        L"(At least, not in this version...)";
     }
     else
     {
-      message = YOU_TRY + " to take " + YOURSELF +
-        "out, which seriously shouldn't happen.";
+      message = YOU_TRY + L" to take " + YOURSELF +
+        L"out, which seriously shouldn't happen.";
       CLOG(WARNING, "Action") << "NPC tried to take self out!?";
     }
     the_message_log.add(message);
@@ -48,7 +48,7 @@ Action::StateResult ActionTakeOut::do_prebegin_work_(AnyMap& params)
     //  " from its container.";
     //the_message_log.add(message);
 
-    message = "But " + THE_FOO + " is not inside a container!";
+    message = L"But " + THE_FOO + L" is not inside a container!";
     the_message_log.add(message);
 
     return StateResult::Failure();
@@ -59,7 +59,7 @@ Action::StateResult ActionTakeOut::do_prebegin_work_(AnyMap& params)
   {
     print_message_try_();
 
-    message = YOU + " cannot reach " + THE_FOO + ".";
+    message = YOU + L" cannot reach " + THE_FOO + L".";
     the_message_log.add(message);
 
     return StateResult::Failure();
@@ -92,7 +92,7 @@ Action::StateResult ActionTakeOut::do_begin_work_(AnyMap& params)
     }
     else
     {
-      message = YOU + " could not take " + get_object_string_() + " out of " + get_target_string_() + " for some inexplicable reason.";
+      message = YOU + L" could not take " + get_object_string_() + L" out of " + get_target_string_() + L" for some inexplicable reason.";
       the_message_log.add(message);
 
       MAJOR_ERROR("Could not move Thing out of Container even though be_object_of returned Success");
@@ -114,12 +114,12 @@ Action::StateResult ActionTakeOut::do_abort_work_(AnyMap& params)
 
 void ActionTakeOut::print_message_try_()
 {
-  StringDisplay message = YOU_TRY + " to " + VERB + " " + get_object_string_() + " from " + get_target_string_() + ".";
+  StringDisplay message = YOU_TRY + L" to " + VERB + L" " + get_object_string_() + L" from " + get_target_string_() + L".";
   the_message_log.add(message);
 }
 
 void ActionTakeOut::print_message_do_()
 {
-  StringDisplay message = YOU + " " + CV(VERB, VERB3) + " " + get_object_string_() + " from " + get_target_string_() + ".";
+  StringDisplay message = YOU + L" " + CV(VERB, VERB3) + L" " + get_object_string_() + L" from " + get_target_string_() + L".";
   the_message_log.add(message);
 }

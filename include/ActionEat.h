@@ -16,17 +16,17 @@ class ActionEat
 public:
   StringDisplay const get_verbed() const override
   {
-    return "ate";
+    return L"ate";
   }
 
   StringDisplay const get_verb_pp() const override
   {
-    return "eaten";
+    return L"eaten";
   }
 
   StringDisplay const get_verbable() const override
   {
-    return "edible";
+    return L"edible";
   }
 
 protected:

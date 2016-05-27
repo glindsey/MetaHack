@@ -4,7 +4,7 @@
 #include "Thing.h"
 #include "ThingId.h"
 
-ACTION_SRC_BOILERPLATE(ActionHurl, "hurl", "throw")
+ACTION_SRC_BOILERPLATE(ActionHurl, "hurl", L"throw")
 
 Action::StateResult ActionHurl::do_prebegin_work_(AnyMap& params)
 {
@@ -18,12 +18,12 @@ Action::StateResult ActionHurl::do_prebegin_work_(AnyMap& params)
   {
     if (IS_PLAYER)
     {
-      message = "Throw yourself?  Throw yourself what, a party?";
+      message = L"Throw yourself?  Throw yourself what, a party?";
     }
     else
     {
-      message = YOU_TRY + " to throw " + YOURSELF +
-        ", which seriously shouldn't happen.";
+      message = YOU_TRY + L" to throw " + YOURSELF +
+        L", which seriously shouldn't happen.";
       CLOG(WARNING, "Action") << "NPC tried to throw self!?";
     }
     the_message_log.add(message);
@@ -34,12 +34,12 @@ Action::StateResult ActionHurl::do_prebegin_work_(AnyMap& params)
   // Check that it's in our inventory.
   if (!subject->get_inventory().contains(object))
   {
-    message = YOU_TRY + " to throw " + THE_FOO + ".";
+    message = YOU_TRY + L" to throw " + THE_FOO + L".";
     the_message_log.add(message);
 
-    message = "But " + THE_FOO + OBJCV(" are", " is") +
-      " not actually in " + YOUR +
-      " inventory!";
+    message = L"But " + THE_FOO + FOO_IS +
+      L" not actually in " + YOUR +
+      L" inventory!";
     the_message_log.add(message);
 
     return StateResult::Failure();
@@ -50,7 +50,7 @@ Action::StateResult ActionHurl::do_prebegin_work_(AnyMap& params)
   {
     print_message_try_();
 
-    message = "But, as " + getIndefArt(subject->get_display_name()) + subject->get_display_name() + "," + YOU_ARE + " not capable of throwing anything.";
+    message = L"But, as " + getIndefArt(subject->get_display_name()) + subject->get_display_name() + L"," + YOU_ARE + L" not capable of throwing anything.";
     the_message_log.add(message);
 
     return StateResult::Failure();
@@ -61,7 +61,7 @@ Action::StateResult ActionHurl::do_prebegin_work_(AnyMap& params)
   {
     print_message_try_();
 
-    message = YOU + " cannot throw something " + YOU_ARE + "wearing.";
+    message = YOU + L" cannot throw something " + YOU_ARE + L"wearing.";
     the_message_log.add(message);
 
     return StateResult::Failure();
@@ -91,7 +91,7 @@ Action::StateResult ActionHurl::do_begin_work_(AnyMap& params)
     }
     else
     {
-      message = YOU + " could not throw " + THE_FOO + " for some inexplicable reason.";
+      message = YOU + L" could not throw " + THE_FOO + L" for some inexplicable reason.";
       the_message_log.add(message);
 
       CLOG(WARNING, "Action") << "Could not throw Thing " << object <<

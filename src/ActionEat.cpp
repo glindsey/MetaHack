@@ -4,7 +4,7 @@
 #include "Thing.h"
 #include "ThingId.h"
 
-ACTION_SRC_BOILERPLATE(ActionEat, "eat", "eat")
+ACTION_SRC_BOILERPLATE(ActionEat, "eat", L"eat")
 
 Action::StateResult ActionEat::do_prebegin_work_(AnyMap& params)
 {
@@ -18,7 +18,7 @@ Action::StateResult ActionEat::do_prebegin_work_(AnyMap& params)
     print_message_try_();
 
     /// @todo Handle "unusual" cases (e.g. zombies?)
-    message = "But " + YOU + " really " + CV("aren't", "isn't") + " that tasty, so " + YOU + CV(" stop.", " stops.");
+    message = L"But " + YOU + L" really " + CV(L"aren't", L"isn't") + L" that tasty, so " + YOU + CV(L" stop.", L" stops.");
     the_message_log.add(message);
 
     return Action::StateResult::Failure();
@@ -29,7 +29,7 @@ Action::StateResult ActionEat::do_prebegin_work_(AnyMap& params)
   {
     print_message_try_();
 
-    message = "But, as " + getIndefArt(subject->get_display_name()) + subject->get_display_name() + "," + YOU_ARE + " not capable of eating.";
+    message = L"But, as " + getIndefArt(subject->get_display_name()) + subject->get_display_name() + L"," + YOU_ARE + L" not capable of eating.";
     the_message_log.add(message);
 
     return Action::StateResult::Failure();

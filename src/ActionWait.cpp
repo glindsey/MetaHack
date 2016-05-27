@@ -4,7 +4,7 @@
 #include "Thing.h"
 #include "ThingId.h"
 
-ACTION_SRC_BOILERPLATE(ActionWait, "wait", "wait")
+ACTION_SRC_BOILERPLATE(ActionWait, "wait", L"wait")
 
 Action::StateResult ActionWait::do_prebegin_work_(AnyMap& params)
 {
@@ -15,8 +15,8 @@ Action::StateResult ActionWait::do_prebegin_work_(AnyMap& params)
 Action::StateResult ActionWait::do_begin_work_(AnyMap& params)
 {
   StringDisplay message =
-    YOU + " successfully" + CV(" stay", " stays") +
-    " where " + YOU_SUBJ_ARE + ".";
+    YOU + L" successfully" + CV(L" stay", L" stays") +
+    L" where " + YOU_SUBJ_ARE + L".";
 
   the_message_log.add(message);
 

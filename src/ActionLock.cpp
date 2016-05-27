@@ -4,7 +4,7 @@
 #include "Thing.h"
 #include "ThingId.h"
 
-ACTION_SRC_BOILERPLATE(ActionLock, "lock", "lock")
+ACTION_SRC_BOILERPLATE(ActionLock, "lock", L"lock")
 
 Action::StateResult ActionLock::do_prebegin_work_(AnyMap& params)
 {
@@ -16,7 +16,7 @@ Action::StateResult ActionLock::do_begin_work_(AnyMap& params)
   bool success = false;
   unsigned int action_time = 0;
 
-  the_message_log.add("We're sorry, but that action has not yet been implemented.");
+  the_message_log.add(L"We're sorry, but that action has not yet been implemented.");
 
   return{ success, action_time };
 }

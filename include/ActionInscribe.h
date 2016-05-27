@@ -23,12 +23,12 @@ class ActionInscribe
 public:
   StringDisplay const get_verbed() const override
   {
-    return "wrote";
+    return L"wrote";
   }
 
   StringDisplay const get_verb_pp() const override
   {
-    return "written";
+    return L"written";
   }
 
 protected:

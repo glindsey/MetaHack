@@ -12,15 +12,16 @@
 
 /// StringKey is a string used internally as a key, rather than one that is
 /// meant to be displayed on-screen.
-/// A StringKey is a normal std::string and therefore supports standard ASCII
-/// only.
+/// It is a synonym for std::string.
 using StringKey = std::string;
 
 /// StringDisplay is a string meant to be displayed on-screen.
-using StringDisplay = sf::String;
+/// It is a synonym for std::wstring.
+using StringDisplay = std::wstring;
 
 /// Definition of a single character taken from StringDisplay.
-using CharDisplay = sf::Uint32;
+/// It is a synonym for wchar_t;
+using CharDisplay = wchar_t;
 
 /// FileName is, well, a filename.
 using FileName = std::string;

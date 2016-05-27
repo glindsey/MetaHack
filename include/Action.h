@@ -28,16 +28,16 @@ using ActionMap = std::unordered_map<StringKey, ActionCreator>;
 #define CV(p12, p3)  (get_subject()->choose_verb(p12, p3))   // shortcut for "Subject - Choose Verb"
 #define OBJCV(p12, p3)  (get_object()->choose_verb(p12, p3)) // shortcut for "Object - Choose Verb"
 
-#define ARE   (get_subject()->choose_verb(" are", " is"))
-#define WERE  (get_subject()->choose_verb(" were", " was"))
-#define DO    (get_subject()->choose_verb(" do", " does"))
-#define GET   (get_subject()->choose_verb(" get", " gets"))
-#define HAVE  (get_subject()->choose_verb(" have", " has"))
-#define SEEM  (get_subject()->choose_verb(" seem", " seems"))
-#define TRY   (get_subject()->choose_verb(" try", " tries"))
+#define ARE   (get_subject()->choose_verb(L" are", L" is"))
+#define WERE  (get_subject()->choose_verb(L" were", L" was"))
+#define DO    (get_subject()->choose_verb(L" do", L" does"))
+#define GET   (get_subject()->choose_verb(L" get", L" gets"))
+#define HAVE  (get_subject()->choose_verb(L" have", L" has"))
+#define SEEM  (get_subject()->choose_verb(L" seem", L" seems"))
+#define TRY   (get_subject()->choose_verb(L" try", L" tries"))
 
-#define FOO_IS    OBJCV(" are", " is")
-#define FOO_HAS   OBJCV(" have", " has")
+#define FOO_IS    OBJCV(L" are", L" is")
+#define FOO_HAS   OBJCV(L" have", L" has")
 
 #define IS_PLAYER (get_subject()->is_player())
 
@@ -173,7 +173,7 @@ public:
   /// Return the first-/second-person singular form of the verb to be performed.
   virtual StringDisplay const get_verb() const
   {
-    return "[action]";
+    return L"[action]";
   }
 
   /// Return the third-person singular form of the verb to be performed.
@@ -181,7 +181,7 @@ public:
   virtual StringDisplay const get_verb3() const
   {
     StringDisplay verb = get_verb();
-    return verb + "s";
+    return verb + L"s";
   }
 
   /// Return the present participle form of the verb to be performed.
@@ -193,13 +193,13 @@ public:
     --verb_last_char;
     CharDisplay last_character = *verb_last_char;
 
-    if (StringDisplay("aeiou").find(last_character) != sf::String::InvalidPos)
+    if (StringDisplay(L"aeiou").find(last_character) != StringDisplay::npos)
     {
-      return verb.substring(0, verb.getSize() - 1) + "ing";
+      return verb.substr(0, verb.length() - 1) + L"ing";
     }
     else
     {
-      return verb + "ing";
+      return verb + L"ing";
     }
   }
 
@@ -212,13 +212,13 @@ public:
     --verb_last_char;
     CharDisplay last_character = *verb_last_char;
 
-    if (StringDisplay("aeiou").find(last_character) != sf::String::InvalidPos)
+    if (StringDisplay(L"aeiou").find(last_character) != StringDisplay::npos)
     {
-      return verb.substring(0, verb.getSize() - 1) + "ed";
+      return verb.substr(0, verb.length() - 1) + L"ed";
     }
     else
     {
-      return verb + "ed";
+      return verb + L"ed";
     }
   }
 
@@ -238,13 +238,13 @@ public:
     --verb_last_char;
     CharDisplay last_character = *verb_last_char;
 
-    if (StringDisplay("aeiou").find(last_character) != sf::String::InvalidPos)
+    if (StringDisplay(L"aeiou").find(last_character) != StringDisplay::npos)
     {
-      return verb.substring(0, verb.getSize() - 1) + "able";
+      return verb.substr(0, verb.length() - 1) + L"able";
     }
     else
     {
-      return verb + "able";
+      return verb + L"able";
     }
   }
 

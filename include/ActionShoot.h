@@ -16,7 +16,7 @@ class ActionShoot
 public:
   StringDisplay const get_verbed() const override
   {
-    return "shot";
+    return L"shot";
   }
 
 protected:

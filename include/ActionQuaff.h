@@ -17,17 +17,17 @@ class ActionQuaff
 public:
   StringDisplay const get_verbed() const override
   {
-    return "drank from";
+    return L"drank from";
   }
 
   StringDisplay const get_verbing() const override
   {
-    return "drinking from";
+    return L"drinking from";
   }
 
   StringDisplay const get_verbable() const override
   {
-    return "potable";
+    return L"potable";
   }
 
 protected:

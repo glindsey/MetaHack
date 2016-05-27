@@ -17,12 +17,12 @@ class ActionAttire
 public:
   StringDisplay const get_verbed() const override
   {
-    return "wore";
+    return L"wore";
   }
 
   StringDisplay const get_verb_pp() const override
   {
-    return "worn";
+    return L"worn";
   }
 
 protected:

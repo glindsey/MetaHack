@@ -234,7 +234,7 @@ bool Thing::do_die()
     case ActionResult::Success:
       if (this->is_player())
       {
-        message = this->get_you_or_identifying_string() + " die...";
+        message = this->get_you_or_identifying_string() + L" die...";
         the_message_log.add(message);
       }
       else
@@ -242,13 +242,13 @@ bool Thing::do_die()
         bool living = get_modified_property<bool>("living");
         if (living)
         {
-          message = this->get_you_or_identifying_string() + " " +
-            this->choose_verb("are", "is") + " killed!";
+          message = this->get_you_or_identifying_string() + L" " +
+            this->choose_verb(L"are", L"is") + L" killed!";
         }
         else
         {
-          message = this->get_you_or_identifying_string() + " " +
-            this->choose_verb("are", "is") + " destroyed!";
+          message = this->get_you_or_identifying_string() + L" " +
+            this->choose_verb(L"are", L"is") + L" destroyed!";
         }
         the_message_log.add(message);
       }
@@ -263,7 +263,7 @@ bool Thing::do_die()
     case ActionResult::Failure:
     default:
       message = this->get_you_or_identifying_string() +
-        this->choose_verb(" manage", " manages") + " to avoid dying.";
+        this->choose_verb(L" manage", L" manages") + L" to avoid dying.";
       the_message_log.add(message);
       return false;
   }
@@ -279,10 +279,10 @@ bool Thing::do_attack(ThingId thing, unsigned int& action_time)
   if (reachable)
   {
     /// @todo Write attack code.
-    message = this->get_you_or_identifying_string() + " " +
-      this->choose_verb("try", "tries") + " to attack " +
-      thing->get_identifying_string() + ", but " +
-      this->choose_verb("are", "is") + " stopped by the programmer's procrastination!";
+    message = this->get_you_or_identifying_string() + L" " +
+      this->choose_verb(L"try", L"tries") + L" to attack " +
+      thing->get_identifying_string() + L", but " +
+      this->choose_verb(L"are", L"is") + L" stopped by the programmer's procrastination!";
     the_message_log.add(message);
   }
 
@@ -315,9 +315,9 @@ bool Thing::do_deequip(ThingId thing, unsigned int& action_time)
   ActionResult deequip_try = this->can_deequip(thing, action_time);
   StringDisplay thing_name = thing->get_identifying_string();
 
-  message = this->get_you_or_identifying_string() + " " +
-    this->choose_verb("try", "tries") +
-    " to take off " + thing_name;
+  message = this->get_you_or_identifying_string() + L" " +
+    this->choose_verb(L"try", L"tries") +
+    L" to take off " + thing_name;
   the_message_log.add(message);
 
   switch (deequip_try)
@@ -333,9 +333,9 @@ bool Thing::do_deequip(ThingId thing, unsigned int& action_time)
         set_worn(ThingId::Mu(), location);
 
         StringDisplay wear_desc = get_bodypart_description(location.part, location.number);
-        message = this->get_you_or_identifying_string() + " " +
-          this->choose_verb("are", "is") + " no longer wearing " + thing_name +
-          " on " + this->get_possessive() + " " + wear_desc + ".";
+        message = this->get_you_or_identifying_string() + L" " +
+          this->choose_verb(L"are", L"is") + L" no longer wearing " + thing_name +
+          L" on " + this->get_possessive() + L" " + wear_desc + L".";
         the_message_log.add(message);
         return true;
       }
@@ -344,8 +344,8 @@ bool Thing::do_deequip(ThingId thing, unsigned int& action_time)
 
     case ActionResult::FailureItemNotEquipped:
     {
-      message = this->get_you_or_identifying_string() + " " +
-        this->choose_verb("are", "is") + " not wearing " + thing_name + ".";
+      message = this->get_you_or_identifying_string() + L" " +
+        this->choose_verb(L"are", L"is") + L" not wearing " + thing_name + L".";
       the_message_log.add(message);
       return true;
     }
@@ -409,10 +409,10 @@ bool Thing::do_equip(ThingId thing, unsigned int& action_time)
 
         StringDisplay wear_desc = get_bodypart_description(location.part,
                                                            location.number);
-        message = this->get_you_or_identifying_string() + " " +
-          this->choose_verb(" are", " is") +
-          " now wearing " + thing_name +
-          " on " + this->get_possessive() + " " + wear_desc + ".";
+        message = this->get_you_or_identifying_string() + L" " +
+          this->choose_verb(L" are", L" is") +
+          L" now wearing " + thing_name +
+          L" on " + this->get_possessive() + L" " + wear_desc + L".";
         the_message_log.add(message);
         return true;
       }
@@ -422,14 +422,14 @@ bool Thing::do_equip(ThingId thing, unsigned int& action_time)
     case ActionResult::FailureSelfReference:
       if (is_player())
       {
-        message = "To equip yourself, choose what you want to equip first.";
+        message = L"To equip yourself, choose what you want to equip first.";
       }
       else
       {
-        message = this->get_you_or_identifying_string() + " " +
-          this->choose_verb("try", "tries") +
-          " to equip " + this->get_reflexive_pronoun() +
-          ", which seriously shouldn't happen.";
+        message = this->get_you_or_identifying_string() + L" " +
+          this->choose_verb(L"try", L"tries") +
+          L" to equip " + this->get_reflexive_pronoun() +
+          L", which seriously shouldn't happen.";
         CLOG(WARNING, "Thing") << "NPC tried to equip self!?";
       }
       the_message_log.add(message);
@@ -437,24 +437,24 @@ bool Thing::do_equip(ThingId thing, unsigned int& action_time)
 
     case ActionResult::FailureThingOutOfReach:
     {
-      message = this->get_you_or_identifying_string() + " " +
-        this->choose_verb("try", "tries") +
-        " to equip " + thing_name + ".";
+      message = this->get_you_or_identifying_string() + L" " +
+        this->choose_verb(L"try", L"tries") +
+        L" to equip " + thing_name + L".";
       the_message_log.add(message);
 
-      message = thing_name + " is not in " + this->get_possessive() + " inventory.";
+      message = thing_name + L" is not in " + this->get_possessive() + L" inventory.";
       the_message_log.add(message);
     }
     break;
 
     case ActionResult::FailureItemNotEquippable:
     {
-      message = this->get_you_or_identifying_string() + " " +
-        this->choose_verb("try", "tries") +
-        " to equip " + thing_name + ".";
+      message = this->get_you_or_identifying_string() + L" " +
+        this->choose_verb(L"try", L"tries") +
+        L" to equip " + thing_name + L".";
       the_message_log.add(message);
 
-      message = thing_name + " is not an equippable item.";
+      message = thing_name + L" is not an equippable item.";
       the_message_log.add(message);
     }
     break;
@@ -569,37 +569,37 @@ StringDisplay Thing::get_bodypart_name(BodyPart part) const
   switch (part)
   {
     case BodyPart::Body:
-      return get_intrinsic<std::string>("bodypart_body_name");
+      return get_intrinsic<StringDisplay>("bodypart_body_name");
     case BodyPart::Skin:
-      return get_intrinsic<std::string>("bodypart_skin_name");
+      return get_intrinsic<StringDisplay>("bodypart_skin_name");
     case BodyPart::Head:
-      return get_intrinsic<std::string>("bodypart_head_name");
+      return get_intrinsic<StringDisplay>("bodypart_head_name");
     case BodyPart::Ear:
-      return get_intrinsic<std::string>("bodypart_ear_name");
+      return get_intrinsic<StringDisplay>("bodypart_ear_name");
     case BodyPart::Eye:
-      return get_intrinsic<std::string>("bodypart_eye_name");
+      return get_intrinsic<StringDisplay>("bodypart_eye_name");
     case BodyPart::Nose:
-      return get_intrinsic<std::string>("bodypart_nose_name");
+      return get_intrinsic<StringDisplay>("bodypart_nose_name");
     case BodyPart::Mouth:
-      return get_intrinsic<std::string>("bodypart_mouth_name");
+      return get_intrinsic<StringDisplay>("bodypart_mouth_name");
     case BodyPart::Neck:
-      return get_intrinsic<std::string>("bodypart_neck_name");
+      return get_intrinsic<StringDisplay>("bodypart_neck_name");
     case BodyPart::Chest:
-      return get_intrinsic<std::string>("bodypart_chest_name");
+      return get_intrinsic<StringDisplay>("bodypart_chest_name");
     case BodyPart::Arm:
-      return get_intrinsic<std::string>("bodypart_arm_name");
+      return get_intrinsic<StringDisplay>("bodypart_arm_name");
     case BodyPart::Hand:
-      return get_intrinsic<std::string>("bodypart_hand_name");
+      return get_intrinsic<StringDisplay>("bodypart_hand_name");
     case BodyPart::Leg:
-      return get_intrinsic<std::string>("bodypart_leg_name");
+      return get_intrinsic<StringDisplay>("bodypart_leg_name");
     case BodyPart::Foot:
-      return get_intrinsic<std::string>("bodypart_foot_name");
+      return get_intrinsic<StringDisplay>("bodypart_foot_name");
     case BodyPart::Wing:
-      return get_intrinsic<std::string>("bodypart_wing_name");
+      return get_intrinsic<StringDisplay>("bodypart_wing_name");
     case BodyPart::Tail:
-      return get_intrinsic<std::string>("bodypart_tail_name");
+      return get_intrinsic<StringDisplay>("bodypart_tail_name");
     default:
-      return "squeedlyspooch (unknown BodyPart)";
+      return L"squeedlyspooch (unknown BodyPart)";
   }
 }
 
@@ -609,37 +609,37 @@ StringDisplay Thing::get_bodypart_plural(BodyPart part) const
   switch (part)
   {
     case BodyPart::Body:
-      return get_intrinsic<std::string>("bodypart_body_plural", get_bodypart_name(BodyPart::Body) + "s");
+      return get_intrinsic<StringDisplay>("bodypart_body_plural", get_bodypart_name(BodyPart::Body) + L"s");
     case BodyPart::Skin:
-      return get_intrinsic<std::string>("bodypart_skin_plural", get_bodypart_name(BodyPart::Skin) + "s");
+      return get_intrinsic<StringDisplay>("bodypart_skin_plural", get_bodypart_name(BodyPart::Skin) + L"s");
     case BodyPart::Head:
-      return get_intrinsic<std::string>("bodypart_head_plural", get_bodypart_name(BodyPart::Head) + "s");
+      return get_intrinsic<StringDisplay>("bodypart_head_plural", get_bodypart_name(BodyPart::Head) + L"s");
     case BodyPart::Ear:
-      return get_intrinsic<std::string>("bodypart_ear_plural", get_bodypart_name(BodyPart::Ear) + "s");
+      return get_intrinsic<StringDisplay>("bodypart_ear_plural", get_bodypart_name(BodyPart::Ear) + L"s");
     case BodyPart::Eye:
-      return get_intrinsic<std::string>("bodypart_eye_plural", get_bodypart_name(BodyPart::Eye) + "s");
+      return get_intrinsic<StringDisplay>("bodypart_eye_plural", get_bodypart_name(BodyPart::Eye) + L"s");
     case BodyPart::Nose:
-      return get_intrinsic<std::string>("bodypart_nose_plural", get_bodypart_name(BodyPart::Nose) + "s");
+      return get_intrinsic<StringDisplay>("bodypart_nose_plural", get_bodypart_name(BodyPart::Nose) + L"s");
     case BodyPart::Mouth:
-      return get_intrinsic<std::string>("bodypart_mouth_plural", get_bodypart_name(BodyPart::Mouth) + "s");
+      return get_intrinsic<StringDisplay>("bodypart_mouth_plural", get_bodypart_name(BodyPart::Mouth) + L"s");
     case BodyPart::Neck:
-      return get_intrinsic<std::string>("bodypart_neck_plural", get_bodypart_name(BodyPart::Neck) + "s");
+      return get_intrinsic<StringDisplay>("bodypart_neck_plural", get_bodypart_name(BodyPart::Neck) + L"s");
     case BodyPart::Chest:
-      return get_intrinsic<std::string>("bodypart_chest_plural", get_bodypart_name(BodyPart::Chest) + "s");
+      return get_intrinsic<StringDisplay>("bodypart_chest_plural", get_bodypart_name(BodyPart::Chest) + L"s");
     case BodyPart::Arm:
-      return get_intrinsic<std::string>("bodypart_arm_plural", get_bodypart_name(BodyPart::Arm) + "s");
+      return get_intrinsic<StringDisplay>("bodypart_arm_plural", get_bodypart_name(BodyPart::Arm) + L"s");
     case BodyPart::Hand:
-      return get_intrinsic<std::string>("bodypart_hand_plural", get_bodypart_name(BodyPart::Hand) + "s");
+      return get_intrinsic<StringDisplay>("bodypart_hand_plural", get_bodypart_name(BodyPart::Hand) + L"s");
     case BodyPart::Leg:
-      return get_intrinsic<std::string>("bodypart_leg_plural", get_bodypart_name(BodyPart::Leg) + "s");
+      return get_intrinsic<StringDisplay>("bodypart_leg_plural", get_bodypart_name(BodyPart::Leg) + L"s");
     case BodyPart::Foot:
-      return get_intrinsic<std::string>("bodypart_foot_plural", get_bodypart_name(BodyPart::Foot) + "s");
+      return get_intrinsic<StringDisplay>("bodypart_foot_plural", get_bodypart_name(BodyPart::Foot) + L"s");
     case BodyPart::Wing:
-      return get_intrinsic<std::string>("bodypart_wing_plural", get_bodypart_name(BodyPart::Wing) + "s");
+      return get_intrinsic<StringDisplay>("bodypart_wing_plural", get_bodypart_name(BodyPart::Wing) + L"s");
     case BodyPart::Tail:
-      return get_intrinsic<std::string>("bodypart_tail_plural", get_bodypart_name(BodyPart::Tail) + "s");
+      return get_intrinsic<StringDisplay>("bodypart_tail_plural", get_bodypart_name(BodyPart::Tail) + L"s");
     default:
-      return "squeedlyspooches (unknown BodyParts)";
+      return L"squeedlyspooches (unknown BodyParts)";
   }
 }
 
@@ -983,22 +983,22 @@ MapId Thing::get_map_id() const
 StringDisplay Thing::get_display_name() const
 {
   /// @todo Implement adding adjectives.
-  return m_metadata.get_intrinsic<std::string>("name");
+  return m_metadata.get_intrinsic<StringDisplay>("name");
 }
 
 StringDisplay Thing::get_display_plural() const
 {
-  return m_metadata.get_intrinsic<std::string>("plural");
+  return m_metadata.get_intrinsic<StringDisplay>("plural");
 }
 
 StringDisplay Thing::get_proper_name()
 {
-  return get_modified_property<std::string>("proper_name");
+  return get_modified_property<StringDisplay>("proper_name");
 }
 
 void Thing::set_proper_name(StringDisplay name)
 {
-  set_base_property<std::string>("proper_name", name);
+  set_base_property<StringDisplay>("proper_name", name);
 }
 
 StringDisplay Thing::get_identifying_string_without_possessives(bool definite)
@@ -1017,11 +1017,11 @@ StringDisplay Thing::get_identifying_string_without_possessives(bool definite)
   {
     if (get_modified_property<int>("hp") > 0)
     {
-      return "you";
+      return L"you";
     }
     else
     {
-      return "your corpse";
+      return L"your corpse";
     }
   }
 
@@ -1031,16 +1031,16 @@ StringDisplay Thing::get_identifying_string_without_possessives(bool definite)
 
     if (definite)
     {
-      article = "the ";
+      article = L"the ";
     }
     else
     {
-      article = getIndefArt(noun) + " ";
+      article = getIndefArt(noun) + L" ";
     }
 
-    if (get_proper_name().isEmpty() == false)
+    if (get_proper_name().empty() == false)
     {
-      suffix = " named " + get_proper_name();
+      suffix = L" named " + get_proper_name();
     }
   }
   else
@@ -1049,14 +1049,14 @@ StringDisplay Thing::get_identifying_string_without_possessives(bool definite)
 
     if (definite)
     {
-      article = "the ";
+      article = L"the ";
     }
-    article += get_quantity() + " ";
+    article += std::to_wstring(get_quantity()) + L" ";
   }
 
   if (is_subtype_of("Entity") && get_modified_property<int>("hp") <= 0)
   {
-    adjectives += "dead ";
+    adjectives += L"dead ";
   }
 
   name = article + adjectives + noun + suffix;
@@ -1070,11 +1070,11 @@ StringDisplay Thing::get_you_or_identifying_string(bool definite)
   {
     if (get_modified_property<int>("hp") > 0)
     {
-      return "you";
+      return L"you";
     }
     else
     {
-      return "your corpse";
+      return L"your corpse";
     }
   }
 
@@ -1113,23 +1113,23 @@ StringDisplay Thing::get_identifying_string(bool definite)
 
     if (owned)
     {
-      article = location->get_possessive() + " ";
+      article = location->get_possessive() + L" ";
     }
     else
     {
       if (definite)
       {
-        article = "the ";
+        article = L"the ";
       }
       else
       {
-        article = getIndefArt(noun) + " ";
+        article = getIndefArt(noun) + L" ";
       }
     }
 
-    if (get_proper_name().isEmpty() == false)
+    if (get_proper_name().empty() == false)
     {
-      suffix = " named " + get_proper_name();
+      suffix = L" named " + get_proper_name();
     }
   }
   else
@@ -1138,22 +1138,22 @@ StringDisplay Thing::get_identifying_string(bool definite)
 
     if (owned)
     {
-      article = location->get_possessive() + " ";
+      article = location->get_possessive() + L" ";
     }
     else
     {
       if (definite)
       {
-        article = "the ";
+        article = L"the ";
       }
 
-      article += get_quantity() + " ";
+      article += std::to_wstring(get_quantity()) + L" ";
     }
   }
 
   if (is_subtype_of("Entity") && get_modified_property<int>("hp") <= 0)
   {
-    adjectives += "dead ";
+    adjectives += L"dead ";
   }
 
   name = article + adjectives + noun + suffix;
@@ -1208,11 +1208,11 @@ StringDisplay Thing::get_possessive()
 {
   if (GAME.get_player() == m_ref)
   {
-    return "your";
+    return L"your";
   }
   else
   {
-    return get_identifying_string_without_possessives(true) + "'s";
+    return get_identifying_string_without_possessives(true) + L"'s";
   }
 }
 
@@ -1410,7 +1410,7 @@ void Thing::spill()
           {
             auto container_string = this->get_identifying_string();
             auto thing_string = thing->get_identifying_string();
-            message = thing_string + this->choose_verb(" tumble", " tumbles") + " out of " + container_string + ".";
+            message = thing_string + this->choose_verb(L" tumble", L" tumbles") + L" out of " + container_string + L".";
             the_message_log.add(message);
           }
           else
@@ -1418,7 +1418,7 @@ void Thing::spill()
             // We couldn't move it, so just destroy it.
             auto container_string = this->get_identifying_string();
             auto thing_string = thing->get_identifying_string();
-            message = thing_string + this->choose_verb(" vanish", " vanishes") + " in a puff of logic.";
+            message = thing_string + this->choose_verb(L" vanish", L" vanishes") + L" in a puff of logic.";
             the_message_log.add(message);
             thing->destroy();
           }
@@ -1468,7 +1468,7 @@ StringDisplay Thing::get_bodypart_description(BodyPart part,
   switch (total_number)
   {
     case 0: // none of them!?  shouldn't occur!
-      result = "non-existent " + part_name;
+      result = L"non-existent " + part_name;
       CLOG(WARNING, "Thing") << "Request for description of " << result << "!?";
       break;
 
@@ -1480,10 +1480,10 @@ StringDisplay Thing::get_bodypart_description(BodyPart part,
       switch (number)
       {
         case 0:
-          result = "right " + part_name;
+          result = L"right " + part_name;
           break;
         case 1:
-          result = "left " + part_name;
+          result = L"left " + part_name;
           break;
         default:
           break;
@@ -1494,13 +1494,13 @@ StringDisplay Thing::get_bodypart_description(BodyPart part,
       switch (number)
       {
         case 0:
-          result = "right " + part_name;
+          result = L"right " + part_name;
           break;
         case 1:
-          result = "center " + part_name;
+          result = L"center " + part_name;
           break;
         case 2:
-          result = "left " + part_name;
+          result = L"left " + part_name;
           break;
         default:
           break;
@@ -1513,16 +1513,16 @@ StringDisplay Thing::get_bodypart_description(BodyPart part,
         switch (number)
         {
           case 0:
-            result = "front right " + part_name;
+            result = L"front right " + part_name;
             break;
           case 1:
-            result = "front left " + part_name;
+            result = L"front left " + part_name;
             break;
           case 2:
-            result = "rear right " + part_name;
+            result = L"rear right " + part_name;
             break;
           case 3:
-            result = "rear left " + part_name;
+            result = L"rear left " + part_name;
             break;
           default:
             break;
@@ -1533,16 +1533,16 @@ StringDisplay Thing::get_bodypart_description(BodyPart part,
         switch (number)
         {
           case 0:
-            result = "upper right " + part_name;
+            result = L"upper right " + part_name;
             break;
           case 1:
-            result = "upper left " + part_name;
+            result = L"upper left " + part_name;
             break;
           case 2:
-            result = "lower right " + part_name;
+            result = L"lower right " + part_name;
             break;
           case 3:
-            result = "lower left " + part_name;
+            result = L"lower left " + part_name;
             break;
           default:
             break;
@@ -1556,22 +1556,22 @@ StringDisplay Thing::get_bodypart_description(BodyPart part,
         switch (number)
         {
           case 0:
-            result = "front right " + part_name;
+            result = L"front right " + part_name;
             break;
           case 1:
-            result = "front left " + part_name;
+            result = L"front left " + part_name;
             break;
           case 2:
-            result = "middle right " + part_name;
+            result = L"middle right " + part_name;
             break;
           case 3:
-            result = "middle left " + part_name;
+            result = L"middle left " + part_name;
             break;
           case 4:
-            result = "rear right " + part_name;
+            result = L"rear right " + part_name;
             break;
           case 5:
-            result = "rear left " + part_name;
+            result = L"rear left " + part_name;
             break;
           default:
             break;
@@ -1582,22 +1582,22 @@ StringDisplay Thing::get_bodypart_description(BodyPart part,
         switch (number)
         {
           case 0:
-            result = "upper right " + part_name;
+            result = L"upper right " + part_name;
             break;
           case 1:
-            result = "upper left " + part_name;
+            result = L"upper left " + part_name;
             break;
           case 2:
-            result = "middle right " + part_name;
+            result = L"middle right " + part_name;
             break;
           case 3:
-            result = "middle left " + part_name;
+            result = L"middle left " + part_name;
             break;
           case 4:
-            result = "lower right " + part_name;
+            result = L"lower right " + part_name;
             break;
           case 5:
-            result = "lower left " + part_name;
+            result = L"lower left " + part_name;
             break;
           default:
             break;
@@ -1610,9 +1610,9 @@ StringDisplay Thing::get_bodypart_description(BodyPart part,
   }
 
   // Anything else and we just return the ordinal name.
-  if (result.isEmpty())
+  if (result.empty())
   {
-    result = Ordinal::get(number) + " " + part_name;
+    result = Ordinal::get(number) + L" " + part_name;
   }
 
   return result;
@@ -1707,11 +1707,11 @@ bool Thing::perform_action_deequipped_by(ThingId actor, WearLocation& location)
   if (this->get_modified_property<bool>("bound"))
   {
     StringDisplay message;
-    message = actor->get_identifying_string() + " cannot take off " + this->get_identifying_string() +
-      "; it is magically bound to " +
-      actor->get_possessive_adjective() + " " +
+    message = actor->get_identifying_string() + L" cannot take off " + this->get_identifying_string() +
+      L"; it is magically bound to " +
+      actor->get_possessive_adjective() + L" " +
       actor->get_bodypart_description(location.part,
-                                      location.number) + "!";
+                                      location.number) + L"!";
     the_message_log.add(message);
     return false;
   }
@@ -1824,7 +1824,7 @@ bool Thing::_process_self()
     if (action_done)
     {
       CLOG(TRACE, "Thing") << "Thing " <<
-        get_id().to_string() << "( " <<
+        get_id() << "( " <<
         get_type() << "): Action " <<
         action->get_type() << " is done, popping";
 

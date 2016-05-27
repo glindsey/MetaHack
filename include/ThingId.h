@@ -3,6 +3,8 @@
 
 #include "stdafx.h"
 
+#include "common_types.h"
+
 // Forward declaration
 class Thing;
 class ThingManager;
@@ -16,12 +18,12 @@ class ThingId
   friend struct std::hash<ThingId>;
 
 public:
-  ThingId::ThingId()
+  ThingId()
     :
     m_id{ 0 }
   {}
 
-  ThingId::ThingId(uint64_t id)
+  ThingId(uint64_t id)
     :
     m_id{ id }
   {}
@@ -53,49 +55,54 @@ public:
     return m_id;
   }
 
-  bool ThingId::operator<(ThingId const& other) const
+  operator StringKey() const
+  {
+    return str(m_id);
+  }
+
+  operator StringDisplay() const
+  {
+    return wstr(m_id);
+  }
+
+  bool operator<(ThingId const& other) const
   {
     return (this->m_id < other.m_id);
   }
 
-  bool ThingId::operator<=(ThingId const& other) const
+  bool operator<=(ThingId const& other) const
   {
     return (this->m_id <= other.m_id);
   }
 
-  bool ThingId::operator>(ThingId const& other) const
+  bool operator>(ThingId const& other) const
   {
     return !operator<=(other);
   }
 
-  bool ThingId::operator>=(ThingId const& other) const
+  bool operator>=(ThingId const& other) const
   {
     return !operator<(other);
   }
 
-  bool ThingId::operator==(ThingId const& other) const
+  bool operator==(ThingId const& other) const
   {
     return (this->m_id == other.m_id);
   }
 
-  bool ThingId::operator==(uint64_t const& other) const
+  bool operator==(uint64_t const& other) const
   {
     return (this->m_id == other);
   }
 
-  bool ThingId::operator!=(ThingId const& other) const
+  bool operator!=(ThingId const& other) const
   {
     return !operator==(other);
   }
 
-  bool ThingId::operator!=(uint64_t const& other) const
+  bool operator!=(uint64_t const& other) const
   {
     return !operator==(other);
-  }
-
-  std::string ThingId::to_string() const
-  {
-    return str(m_id);
   }
 
   friend std::ostream& operator<< (std::ostream& stream, ThingId const& thing)

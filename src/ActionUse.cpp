@@ -4,7 +4,7 @@
 #include "Thing.h"
 #include "ThingId.h"
 
-ACTION_SRC_BOILERPLATE(ActionUse, "use", "use")
+ACTION_SRC_BOILERPLATE(ActionUse, "use", L"use")
 
 Action::StateResult ActionUse::do_prebegin_work_(AnyMap& params)
 {
@@ -15,17 +15,17 @@ Action::StateResult ActionUse::do_prebegin_work_(AnyMap& params)
   // Check that it is not us!
   if (subject == object)
   {
-    message = YOU_TRY + " to use " + THE_FOO + ".";
+    message = YOU_TRY + L" to use " + THE_FOO + L".";
     the_message_log.add(message);
 
     if (IS_PLAYER)
     {
-      message = YOU_ARE + " already using " + YOURSELF + " to the best of " + YOUR + " ability.";
+      message = YOU_ARE + L" already using " + YOURSELF + L" to the best of " + YOUR + L" ability.";
       the_message_log.add(message);
     }
     else
     {
-      message = "That seriously shouldn't happen!";
+      message = L"That seriously shouldn't happen!";
       the_message_log.add(message);
 
       CLOG(WARNING, "Action") << "NPC tried to use self!?";
@@ -64,8 +64,7 @@ Action::StateResult ActionUse::do_finish_work_(AnyMap& params)
   switch (object->be_object_of(*this, subject))
   {
     case ActionResult::SuccessDestroyed:
-      message = THE_FOO + OBJCV(" disintegrate", " disintegrates") + " after " + YOU + CV(" use ",
-                                                                                          " uses ") + OBJ_PRO_FOO + "!";
+      message = THE_FOO + OBJCV(L" disintegrate", L" disintegrates") + L" after " + YOU + CV(L" use ", L" uses ") + OBJ_PRO_FOO + L"!";
       the_message_log.add(message);
 
       object->destroy();

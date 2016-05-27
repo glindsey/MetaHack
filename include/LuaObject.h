@@ -281,6 +281,19 @@ public:
     return return_value;
   }
 
+  template <> std::wstring pop_value()
+  {
+    std::wstring return_value;
+    char const* return_ptr = lua_tostring(L_, -1);
+    if (return_ptr != nullptr)
+    {
+      std::string return_string = std::string(return_ptr);
+      return_value = utf8_to_wstring(return_string);
+    }
+    lua_pop(L_, 1);
+    return return_value;
+  }
+
   template <> sf::Vector2u pop_value()
   {
     sf::Vector2u return_value = sf::Vector2u(lua_tointeger(L_, -2),
@@ -316,6 +329,7 @@ public:
   template<> unsigned int stack_slots<double>() { return 1; }
   template<> unsigned int stack_slots<bool>() { return 1; }
   template<> unsigned int stack_slots<std::string>() { return 1; }
+  template<> unsigned int stack_slots<std::wstring>() { return 1; }
   template<> unsigned int stack_slots<sf::Vector2u>() { return 2; }
   template<> unsigned int stack_slots<sf::Color>() { return 4; }
   template<> unsigned int stack_slots<ActionResult>() { return 1; }

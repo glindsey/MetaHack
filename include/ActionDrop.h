@@ -17,12 +17,12 @@ class ActionDrop
 public:
   StringDisplay const get_verbable() const override
   {
-    return "droppable";
+    return L"droppable";
   }
 
   StringDisplay const get_verbed() const override
   {
-    return "dropped";
+    return L"dropped";
   }
 
 protected:

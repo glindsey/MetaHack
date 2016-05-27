@@ -58,14 +58,14 @@ void StatusArea::render_contents_(sf::RenderTexture& texture, int frame)
     StringDisplay type = player->get_display_name();
     type[0] = std::toupper(type[0], std::locale());
 
-    render_text.setString(name + " the " + type);
+    render_text.setString(name + L" the " + type);
     texture.draw(render_text);
 
     // Render HP
     render_text.setFont(the_default_mono_font);
     render_text.setColor(text_dim_color);
     render_text.setPosition(origin.x, origin.y + line_spacing);
-    render_text.setString("HP");
+    render_text.setString(L"HP");
     texture.draw(render_text);
 
     int hp = player->get_modified_property<int>("hp");
@@ -86,29 +86,29 @@ void StatusArea::render_contents_(sf::RenderTexture& texture, int frame)
       render_text.setColor(text_danger_color);
     }
 
-    StringDisplay hp_string = hp + "/" + max_hp;
+    StringDisplay hp_string = boost::lexical_cast<StringDisplay>(hp) + L"/" + boost::lexical_cast<StringDisplay>(max_hp);
 
     render_text.setPosition(origin.x + 30, origin.y + line_spacing);
     render_text.setString(hp_string);
     texture.draw(render_text);
 
     // Render attributes
-    render_attribute(texture, "XP", "xp", { origin.x, origin.y + (2 * line_spacing) });
-    render_attribute(texture, "STR", "attribute_strength", { origin.x + (0 * attrib_spacing), origin.y + (3 * line_spacing) });
-    render_attribute(texture, "VIG", "attribute_vigilance", { origin.x + (1 * attrib_spacing), origin.y + (3 * line_spacing) });
-    render_attribute(texture, "END", "attribute_endurance", { origin.x + (2 * attrib_spacing), origin.y + (3 * line_spacing) });
-    render_attribute(texture, "CHA", "attribute_charisma", { origin.x + (3 * attrib_spacing), origin.y + (3 * line_spacing) });
-    render_attribute(texture, "INT", "attribute_intelligence", { origin.x + (4 * attrib_spacing), origin.y + (3 * line_spacing) });
-    render_attribute(texture, "AGI", "attribute_agility", { origin.x + (5 * attrib_spacing), origin.y + (3 * line_spacing) });
-    render_attribute(texture, "LUC", "attribute_luck", { origin.x + (6 * attrib_spacing), origin.y + (3 * line_spacing) });
-    render_attribute(texture, "VIT", "attribute_vitality", { origin.x + (7 * attrib_spacing), origin.y + (3 * line_spacing) });
-    render_attribute(texture, "AUR", "attribute_aura", { origin.x + (8 * attrib_spacing), origin.y + (3 * line_spacing) });
+    render_attribute(texture, L"XP", "xp", { origin.x, origin.y + (2 * line_spacing) });
+    render_attribute(texture, L"STR", "attribute_strength", { origin.x + (0 * attrib_spacing), origin.y + (3 * line_spacing) });
+    render_attribute(texture, L"VIG", "attribute_vigilance", { origin.x + (1 * attrib_spacing), origin.y + (3 * line_spacing) });
+    render_attribute(texture, L"END", "attribute_endurance", { origin.x + (2 * attrib_spacing), origin.y + (3 * line_spacing) });
+    render_attribute(texture, L"CHA", "attribute_charisma", { origin.x + (3 * attrib_spacing), origin.y + (3 * line_spacing) });
+    render_attribute(texture, L"INT", "attribute_intelligence", { origin.x + (4 * attrib_spacing), origin.y + (3 * line_spacing) });
+    render_attribute(texture, L"AGI", "attribute_agility", { origin.x + (5 * attrib_spacing), origin.y + (3 * line_spacing) });
+    render_attribute(texture, L"LUC", "attribute_luck", { origin.x + (6 * attrib_spacing), origin.y + (3 * line_spacing) });
+    render_attribute(texture, L"VIT", "attribute_vitality", { origin.x + (7 * attrib_spacing), origin.y + (3 * line_spacing) });
+    render_attribute(texture, L"AUR", "attribute_aura", { origin.x + (8 * attrib_spacing), origin.y + (3 * line_spacing) });
   }
 
   return;
 }
 
-void StatusArea::render_attribute(sf::RenderTarget& target, StringDisplay abbrev, StringDisplay name, sf::Vector2f location)
+void StatusArea::render_attribute(sf::RenderTarget& target, StringDisplay abbrev, StringKey name, sf::Vector2f location)
 {
   sf::Text render_text;
   sf::Color text_color = the_config.get<sf::Color>("text_color");
@@ -120,10 +120,10 @@ void StatusArea::render_attribute(sf::RenderTarget& target, StringDisplay abbrev
   render_text.setColor(text_dim_color);
   render_text.setCharacterSize(the_config.get<unsigned int>("text_default_size"));
   render_text.setPosition(location.x, location.y);
-  render_text.setString(abbrev + ":");
+  render_text.setString(abbrev + L":");
   target.draw(render_text);
 
-  StringDisplay attr_string = std::to_string(player->get_modified_property<int>(name));
+  StringDisplay attr_string = std::to_wstring(player->get_modified_property<int>(name));
 
   render_text.setColor(text_color);
   render_text.setPosition(location.x + 40, location.y);
@@ -133,5 +133,5 @@ void StatusArea::render_attribute(sf::RenderTarget& target, StringDisplay abbrev
 
 StringDisplay StatusArea::get_test_label()
 {
-  return "Testing GUILabel";
+  return L"Testing GUILabel";
 }

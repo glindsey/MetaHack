@@ -4,77 +4,77 @@
 
 StringDisplay const subjectPronounArray[] =
 {
-  "it",
-  "he",
-  "she",
-  "ze",
-  "ey",
-  "I",
-  "you",
-  "they",
-  "this one",
-  "something",
-  "someone"
+  L"it",
+  L"he",
+  L"she",
+  L"ze",
+  L"ey",
+  L"I",
+  L"you",
+  L"they",
+  L"this one",
+  L"something",
+  L"someone"
 };
 
 StringDisplay const objectPronounArray[] =
 {
-  "it",
-  "him",
-  "her",
-  "hir",
-  "em",
-  "me",
-  "you",
-  "them",
-  "this one",
-  "something",
-  "someone"
+  L"it",
+  L"him",
+  L"her",
+  L"hir",
+  L"em",
+  L"me",
+  L"you",
+  L"them",
+  L"this one",
+  L"something",
+  L"someone"
 };
 
 StringDisplay const reflexivePronounArray[] =
 {
-  "itself",
-  "himself",
-  "herself",
-  "hirself",
-  "emself",
-  "myself",
-  "yourself",
-  "themselves",
-  "itself",
-  "itself",
-  "him/herself"
+  L"itself",
+  L"himself",
+  L"herself",
+  L"hirself",
+  L"emself",
+  L"myself",
+  L"yourself",
+  L"themselves",
+  L"itself",
+  L"itself",
+  L"him/herself"
 };
 
 StringDisplay const possessiveAdjectiveArray[] =
 {
-  "its",
-  "his",
-  "her",
-  "hir",
-  "eir",
-  "my",
-  "your",
-  "their",
-  "its",
-  "its",
-  "his/her"
+  L"its",
+  L"his",
+  L"her",
+  L"hir",
+  L"eir",
+  L"my",
+  L"your",
+  L"their",
+  L"its",
+  L"its",
+  L"his/her"
 };
 
 StringDisplay const possessivePronounArray[] =
 {
-  "its",
-  "his",
-  "hers",
-  "hirs",
-  "eirs",
-  "mine",
-  "yours",
-  "theirs",
-  "this one's",
-  "its",
-  "his/hers"
+  L"its",
+  L"his",
+  L"hers",
+  L"hirs",
+  L"eirs",
+  L"mine",
+  L"yours",
+  L"theirs",
+  L"this one's",
+  L"its",
+  L"his/hers"
 };
 
 StringDisplay const& getSubjPro(Gender gender)
@@ -139,11 +139,11 @@ StringDisplay const& getPossPro(Gender gender)
 
 StringDisplay const& getIndefArt(StringDisplay const& desc)
 {
-  static StringDisplay const articleAn = "an";
-  static StringDisplay const articleA = "a";
-  static StringDisplay const articleNull = "";
+  static StringDisplay const articleAn = L"an";
+  static StringDisplay const articleA = L"a";
+  static StringDisplay const articleNull = L"";
 
-  if (desc.isEmpty())
+  if (desc.empty())
   {
     return articleNull;
   }

@@ -260,6 +260,26 @@ inline std::ostream& operator<<(std::ostream& os, Direction const& d)
   return os;
 }
 
+inline std::wostream& operator<<(std::wostream& os, Direction const& d)
+{
+  if (d == Direction::None) os << L"none";
+  else if (d == Direction::Self) os << L"self";
+  else if (d == Direction::North) os << L"north";
+  else if (d == Direction::Northeast) os << L"northeast";
+  else if (d == Direction::East) os << L"east";
+  else if (d == Direction::Southeast) os << L"southeast";
+  else if (d == Direction::South) os << L"south";
+  else if (d == Direction::Southwest) os << L"southwest";
+  else if (d == Direction::West) os << L"west";
+  else if (d == Direction::Northwest) os << L"northwest";
+  else
+  {
+    os << L"??? (" << d.x() << L", " << d.y() << L", " << d.z() << L")";
+  }
+
+  return os;
+}
+
 #if 0
 enum class Direction
 {

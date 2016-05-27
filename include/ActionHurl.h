@@ -16,12 +16,12 @@ class ActionHurl
 public:
   StringDisplay const get_verbed() const override
   {
-    return "threw";
+    return L"threw";
   }
 
   StringDisplay const get_verb_pp() const override
   {
-    return "thrown";
+    return L"thrown";
   }
 
 protected:

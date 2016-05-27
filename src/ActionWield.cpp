@@ -4,7 +4,7 @@
 #include "Thing.h"
 #include "ThingId.h"
 
-ACTION_SRC_BOILERPLATE(ActionWield, "wield", "wield")
+ACTION_SRC_BOILERPLATE(ActionWield, "wield", L"wield")
 
 Action::StateResult ActionWield::do_prebegin_work_(AnyMap& params)
 {
@@ -17,7 +17,7 @@ Action::StateResult ActionWield::do_prebegin_work_(AnyMap& params)
     subject->get_bodypart_description(BodyPart::Hand, hand);
   ThingId currently_wielded = subject->get_wielding_in(hand);
 
-  StringDisplay thing_name = (object != ThingId::Mu()) ? get_object_string_() : "nothing";
+  StringDisplay thing_name = (object != ThingId::Mu()) ? get_object_string_() : L"nothing";
 
   // If it is us, or it is what is already being wielded, it means to unwield whatever is wielded.
   if ((object == subject) || (object == currently_wielded))
@@ -30,7 +30,7 @@ Action::StateResult ActionWield::do_prebegin_work_(AnyMap& params)
   {
     print_message_try_();
 
-    message = YOU_HAVE + " no way to wield anything!";
+    message = YOU_HAVE + L" no way to wield anything!";
     the_message_log.add(message);
 
     return StateResult::Failure();
@@ -61,7 +61,7 @@ Action::StateResult ActionWield::do_begin_work_(AnyMap& params)
     if (object->get_modified_property<bool>("bound"))
     {
       StringDisplay message;
-      message = YOU + " cannot unwield " + get_object_string_() + "; it is magically bound to " + YOUR + " " + bodypart_desc + "!";
+      message = YOU + L" cannot unwield " + get_object_string_() + L"; it is magically bound to " + YOUR + L" " + bodypart_desc + L"!";
       the_message_log.add(message);
 
       // Premature exit.
@@ -85,7 +85,7 @@ Action::StateResult ActionWield::do_begin_work_(AnyMap& params)
   if (object->be_object_of(*this, subject) == ActionResult::Success)
   {
     subject->set_wielded(object, hand);
-    message = YOU_ARE + " now wielding " + get_object_string_() + " with " + YOUR + " " + bodypart_desc + ".";
+    message = YOU_ARE + L" now wielding " + get_object_string_() + L" with " + YOUR + L" " + bodypart_desc + L".";
     the_message_log.add(message);
 
     result = StateResult::Success();

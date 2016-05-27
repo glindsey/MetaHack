@@ -5,7 +5,7 @@
 #include "Thing.h"
 #include "ThingId.h"
 
-ACTION_SRC_BOILERPLATE(ActionDrop, "drop", "drop")
+ACTION_SRC_BOILERPLATE(ActionDrop, "drop", L"drop")
 
 Action::StateResult ActionDrop::do_prebegin_work_(AnyMap& params)
 {
@@ -25,8 +25,7 @@ Action::StateResult ActionDrop::do_prebegin_work_(AnyMap& params)
   {
     print_message_try_();
 
-    message = THE_FOO + object->choose_verb(" are ", " is ") +
-      "not in " + YOUR + " inventory!";
+    message = THE_FOO + FOO_IS + L"not in " + YOUR + L" inventory!";
     the_message_log.add(message);
 
     return Action::StateResult::Failure();
@@ -38,7 +37,7 @@ Action::StateResult ActionDrop::do_prebegin_work_(AnyMap& params)
     print_message_try_();
 
     /// @todo Perhaps automatically try to unwield the item before dropping?
-    message = YOU + " cannot drop something that is currently being wielded.";
+    message = YOU + L" cannot drop something that is currently being wielded.";
     the_message_log.add(message);
 
     return Action::StateResult::Failure();
@@ -49,7 +48,7 @@ Action::StateResult ActionDrop::do_prebegin_work_(AnyMap& params)
   {
     print_message_try_();
 
-    message = YOU + " cannot drop something that is currently being worn.";
+    message = YOU + L" cannot drop something that is currently being worn.";
     the_message_log.add(message);
 
     return Action::StateResult::Failure();
@@ -60,7 +59,7 @@ Action::StateResult ActionDrop::do_prebegin_work_(AnyMap& params)
   {
     print_message_try_();
 
-    message = THE_FOO + " cannot be moved.";
+    message = THE_FOO + L" cannot be moved.";
     the_message_log.add(message);
 
     return Action::StateResult::Failure();
@@ -81,13 +80,13 @@ Action::StateResult ActionDrop::do_begin_work_(AnyMap& params)
 
   if (object == subject)
   {
-    message = YOU + CV(" hurl ", " hurls ") + YOURSELF + " to the " +
-      location->get_display_name() + "!";
+    message = YOU + CV(L" hurl ", L" hurls ") + YOURSELF + L" to the " +
+      location->get_display_name() + L"!";
     the_message_log.add(message);
     /// @todo Possible damage from hurling yourself to the ground!
-    message = (IS_PLAYER ? "Fortunately, " : "") + YOU_SEEM + " unharmed.";
+    message = (IS_PLAYER ? L"Fortunately, " : L"") + YOU_SEEM + L" unharmed.";
     the_message_log.add(message);
-    message = YOU_GET + " up.";
+    message = YOU_GET + L" up.";
     the_message_log.add(message);
   }
   else if (object != ThingId::Mu())
@@ -105,7 +104,7 @@ Action::StateResult ActionDrop::do_begin_work_(AnyMap& params)
         }
         else
         {
-          message = YOU + " could not drop " + THE_FOO + " for some inexplicable reason.";
+          message = YOU + L" could not drop " + THE_FOO + L" for some inexplicable reason.";
           the_message_log.add(message);
 
           CLOG(WARNING, "Action") << "Could not drop Thing " << object <<
@@ -123,7 +122,7 @@ Action::StateResult ActionDrop::do_begin_work_(AnyMap& params)
       // the future that can't contain certain Things.
       print_message_try_();
 
-      message = location->get_identifying_string() + " cannot hold " + THE_FOO + ".";
+      message = location->get_identifying_string() + L" cannot hold " + THE_FOO + L".";
       the_message_log.add(message);
     }
   }

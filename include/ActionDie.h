@@ -17,7 +17,7 @@ class ActionDie
 public:
   virtual StringDisplay const get_verbable() const override
   {
-    return "mortal";
+    return L"mortal";
   }
 
 protected:

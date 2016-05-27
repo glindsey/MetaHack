@@ -4,7 +4,7 @@
 #include "Thing.h"
 #include "ThingId.h"
 
-ACTION_SRC_BOILERPLATE(ActionOpen, "open", "open")
+ACTION_SRC_BOILERPLATE(ActionOpen, "open", L"open")
 
 Action::StateResult ActionOpen::do_prebegin_work_(AnyMap& params)
 {
@@ -16,7 +16,7 @@ Action::StateResult ActionOpen::do_begin_work_(AnyMap& params)
   bool success = false;
   unsigned int action_time = 0;
 
-  the_message_log.add("We're sorry, but that action has not yet been implemented.");
+  the_message_log.add(L"We're sorry, but that action has not yet been implemented.");
 
 #if 0
   if (thing != ThingId::Mu())

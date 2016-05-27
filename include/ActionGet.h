@@ -17,17 +17,17 @@ class ActionGet
 public:
   StringDisplay const get_verbing() const override
   {
-    return "getting";
+    return L"getting";
   }
 
   StringDisplay const get_verbed() const override
   {
-    return "got";
+    return L"got";
   }
 
   StringDisplay const get_verb_pp() const override
   {
-    return "gotten";
+    return L"gotten";
   }
 
 protected:

@@ -13,7 +13,7 @@ MessageLogView::MessageLogView(MessageLog& model,
   metagui::Window("MessageLogView", dimensions),
   m_model(model)
 {
-  set_text("Message Log");
+  set_text(L"Message Log");
 }
 
 MessageLogView::~MessageLogView()

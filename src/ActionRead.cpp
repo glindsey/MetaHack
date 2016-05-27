@@ -4,7 +4,7 @@
 #include "Thing.h"
 #include "ThingId.h"
 
-ACTION_SRC_BOILERPLATE(ActionRead, "read", "read")
+ACTION_SRC_BOILERPLATE(ActionRead, "read", L"read")
 
 Action::StateResult ActionRead::do_prebegin_work_(AnyMap& params)
 {
@@ -16,7 +16,7 @@ Action::StateResult ActionRead::do_prebegin_work_(AnyMap& params)
   {
     print_message_try_();
 
-    message = YOU_ARE + " not smart enough to read " + FOOSELF + ".";
+    message = YOU_ARE + L" not smart enough to read " + FOOSELF + L".";
     the_message_log.add(message);
 
     return StateResult::Failure();
@@ -52,8 +52,7 @@ Action::StateResult ActionRead::do_finish_work_(AnyMap& params)
   switch (object->be_object_of(*this, subject))
   {
     case ActionResult::SuccessDestroyed:
-      message = THE_FOO + OBJCV(" disintegrate", " disintegrates") + " after " + YOU + CV(" read ",
-                                                                                          " reads ") + OBJ_PRO_FOO + "!";
+      message = THE_FOO + OBJCV(L" disintegrate", L" disintegrates") + L" after " + YOU + CV(L" read ", L" reads ") + OBJ_PRO_FOO + L"!";
       the_message_log.add(message);
 
       object->destroy();
@@ -84,6 +83,6 @@ Action::StateResult ActionRead::do_abort_work_(AnyMap& params)
 
 void ActionRead::print_message_cant_()
 {
-  StringDisplay message = THE_FOO + FOO_HAS + " no writing to read.";
+  StringDisplay message = THE_FOO + FOO_HAS + L" no writing to read.";
   the_message_log.add(message);
 }

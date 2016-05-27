@@ -4,7 +4,7 @@
 #include "Thing.h"
 #include "ThingId.h"
 
-ACTION_SRC_BOILERPLATE(ActionQuaff, "quaff", "drink from")
+ACTION_SRC_BOILERPLATE(ActionQuaff, "quaff", L"drink from")
 
 Action::StateResult ActionQuaff::do_prebegin_work_(AnyMap& params)
 {
@@ -18,7 +18,7 @@ Action::StateResult ActionQuaff::do_prebegin_work_(AnyMap& params)
     print_message_try_();
 
     /// @todo When drinking self, special message if caller is a liquid-based organism.
-    message = "Ewwww... no.";
+    message = L"Ewwww... no.";
     the_message_log.add(message);
 
     return Action::StateResult::Failure();
@@ -29,7 +29,7 @@ Action::StateResult ActionQuaff::do_prebegin_work_(AnyMap& params)
   {
     print_message_try_();
 
-    message = "But, as " + getIndefArt(subject->get_display_name()) + subject->get_display_name() + "," + YOU_ARE + " not capable of drinking liquids.";
+    message = L"But, as " + getIndefArt(subject->get_display_name()) + subject->get_display_name() + L"," + YOU_ARE + L" not capable of drinking liquids.";
     the_message_log.add(message);
 
     return Action::StateResult::Failure();
@@ -40,7 +40,7 @@ Action::StateResult ActionQuaff::do_prebegin_work_(AnyMap& params)
   {
     print_message_try_();
 
-    message = YOU + " cannot drink from that!";
+    message = YOU + L" cannot drink from that!";
     the_message_log.add(message);
 
     return Action::StateResult::Failure();
@@ -52,7 +52,7 @@ Action::StateResult ActionQuaff::do_prebegin_work_(AnyMap& params)
   {
     print_message_try_();
 
-    message = "But " + THE_FOO + FOO_IS + " empty!";
+    message = L"But " + THE_FOO + FOO_IS + L" empty!";
     the_message_log.add(message);
 
     return Action::StateResult::Failure();

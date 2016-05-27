@@ -4,7 +4,7 @@
 #include "Thing.h"
 #include "ThingId.h"
 
-ACTION_SRC_BOILERPLATE(ActionPutInto, "putinto", "store")
+ACTION_SRC_BOILERPLATE(ActionPutInto, "putinto", L"store")
 
 Action::StateResult ActionPutInto::do_prebegin_work_(AnyMap& params)
 {
@@ -24,12 +24,12 @@ Action::StateResult ActionPutInto::do_prebegin_work_(AnyMap& params)
   {
     if (IS_PLAYER)
     {
-      message = "That would be an interesting topological exercise.";
+      message = L"That would be an interesting topological exercise.";
     }
     else
     {
-      message = YOU_TRY + " to store " + THE_FOO +
-        "inside itself, which seriously shouldn't happen.";
+      message = YOU_TRY + L" to store " + THE_FOO +
+        L"inside itself, which seriously shouldn't happen.";
       CLOG(WARNING, "Action") << "NPC tried to store a container in itself!?";
     }
 
@@ -42,14 +42,14 @@ Action::StateResult ActionPutInto::do_prebegin_work_(AnyMap& params)
     if (IS_PLAYER)
     {
       /// @todo Possibly allow player to voluntarily enter a container?
-      message = "I'm afraid you can't do that.  "
-        "(At least, not in this version...)";
+      message = L"I'm afraid you can't do that.  "
+        L"(At least, not in this version...)";
     }
     else
     {
-      message = YOU_TRY + " to store " + YOURSELF +
-        "into " + THE_TARGET_THING +
-        ", which seriously shouldn't happen.";
+      message = YOU_TRY + L" to store " + YOURSELF +
+        L"into " + THE_TARGET_THING +
+        L", which seriously shouldn't happen.";
       CLOG(WARNING, "Action") << "NPC tried to store self!?";
     }
     the_message_log.add(message);
@@ -62,12 +62,12 @@ Action::StateResult ActionPutInto::do_prebegin_work_(AnyMap& params)
   {
     if (IS_PLAYER)
     {
-      message = "Store something in yourself?  What do you think you are, a drug mule?";
+      message = L"Store something in yourself?  What do you think you are, a drug mule?";
     }
     else
     {
-      message = YOU_TRY + " to store " + THE_FOO + "into " + YOURSELF +
-        ", which seriously shouldn't happen.";
+      message = YOU_TRY + L" to store " + THE_FOO + L"into " + YOURSELF +
+        L", which seriously shouldn't happen.";
       CLOG(WARNING, "Action") << "NPC tried to store into self!?";
     }
     the_message_log.add(message);
@@ -80,7 +80,7 @@ Action::StateResult ActionPutInto::do_prebegin_work_(AnyMap& params)
   {
     print_message_try_();
 
-    message = THE_TARGET_THING + " is not a container!";
+    message = THE_TARGET_THING + L" is not a container!";
     the_message_log.add(message);
 
     return StateResult::Failure();
@@ -91,8 +91,8 @@ Action::StateResult ActionPutInto::do_prebegin_work_(AnyMap& params)
   {
     print_message_try_();
 
-    message = THE_FOO + " is already in " +
-      THE_TARGET_THING + "!";
+    message = THE_FOO + L" is already in " +
+      THE_TARGET_THING + L"!";
     the_message_log.add(message);
 
     return StateResult::Failure();
@@ -103,7 +103,7 @@ Action::StateResult ActionPutInto::do_prebegin_work_(AnyMap& params)
   {
     print_message_try_();
 
-    message = YOU + " cannot reach " + THE_TARGET_THING + ".";
+    message = YOU + L" cannot reach " + THE_TARGET_THING + L".";
     the_message_log.add(message);
 
     return StateResult::Failure();
@@ -114,7 +114,7 @@ Action::StateResult ActionPutInto::do_prebegin_work_(AnyMap& params)
   {
     print_message_try_();
 
-    message = YOU + " cannot store something that is currently being wielded.";
+    message = YOU + L" cannot store something that is currently being wielded.";
     the_message_log.add(message);
 
     return StateResult::Failure();
@@ -126,7 +126,7 @@ Action::StateResult ActionPutInto::do_prebegin_work_(AnyMap& params)
     print_message_try_();
 
     /// @todo Perhaps automatically try to unwield the item before dropping?
-    message = YOU + "cannot store something that is currently being worn.";
+    message = YOU + L"cannot store something that is currently being worn.";
     the_message_log.add(message);
 
     return StateResult::Failure();
@@ -155,7 +155,7 @@ Action::StateResult ActionPutInto::do_begin_work_(AnyMap& params)
     }
     else
     {
-      message = YOU + " could not move " + THE_FOO + " into " + THE_TARGET_THING + " for some inexplicable reason.";
+      message = YOU + L" could not move " + THE_FOO + L" into " + THE_TARGET_THING + L" for some inexplicable reason.";
       the_message_log.add(message);
 
       MAJOR_ERROR("Could not move Thing into Container even though be_object_of returned Success");
@@ -177,12 +177,12 @@ Action::StateResult ActionPutInto::do_abort_work_(AnyMap& params)
 
 void ActionPutInto::print_message_try_()
 {
-  StringDisplay message = YOU_TRY + " to " + VERB + " " + get_object_string_() + " into " + get_target_string_() + ".";
+  StringDisplay message = YOU_TRY + L" to " + VERB + L" " + get_object_string_() + L" into " + get_target_string_() + L".";
   the_message_log.add(message);
 }
 
 void ActionPutInto::print_message_do_()
 {
-  StringDisplay message = YOU + " " + CV(VERB, VERB3) + " " + get_object_string_() + " into " + get_target_string_() + ".";
+  StringDisplay message = YOU + L" " + CV(VERB, VERB3) + L" " + get_object_string_() + L" into " + get_target_string_() + L".";
   the_message_log.add(message);
 }

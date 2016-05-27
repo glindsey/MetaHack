@@ -95,7 +95,7 @@ bool Action::process(ThingId actor, AnyMap params)
   if (counter_busy > 0)
   {
     CLOG(TRACE, "Action") << "Thing #" <<
-      actor.to_string() << " (" <<
+      actor << " (" <<
       actor->get_type() << "): counter_busy = " <<
       counter_busy << "%d, decrementing";
 
@@ -116,7 +116,7 @@ bool Action::process(ThingId actor, AnyMap params)
     Action::StateResult result{ false, 0 };
 
     CLOG(TRACE, "Action") << "Thing #" <<
-      actor.to_string() << " (" <<
+      actor << " (" <<
       actor->get_type().c_str() << "): Action " <<
       get_type().c_str() << " is in state " <<
       str(get_state()) << ", counter_busy = " <<
@@ -244,7 +244,7 @@ Action::StateResult Action::do_prebegin_work(AnyMap& params)
     if ((location == ThingId::Mu()) || (current_tile == nullptr))
     {
       /// @todo This message could be made less awkward for verbs that take objects.
-      message = YOU + " can't " + VERB + " because " + YOU_DO + " not exist physically!";
+      message = YOU + L" can't " + VERB + L" because " + YOU_DO + L" not exist physically!";
       the_message_log.add(message);
       return StateResult::Failure();
     }
@@ -261,7 +261,7 @@ Action::StateResult Action::do_prebegin_work(AnyMap& params)
         {
           print_message_try_();
 
-          message = "However, " + OBJ_PRO_FOO + FOO_IS + " out of " + YOUR + " reach.";
+          message = L"However, " + OBJ_PRO_FOO + FOO_IS + L" out of " + YOUR + L" reach.";
           the_message_log.add(message);
 
           return StateResult::Failure();
@@ -275,12 +275,12 @@ Action::StateResult Action::do_prebegin_work(AnyMap& params)
         {
           print_message_try_();
 
-          message = "However, " + OBJ_PRO_FOO + FOO_IS + " not in " + YOUR + " inventory";
+          message = L"However, " + OBJ_PRO_FOO + FOO_IS + L" not in " + YOUR + L" inventory";
           if (subject->can_reach(object))
           {
-            message += " (pick it up first)";
+            message += L" (pick it up first)";
           }
-          message += ".";
+          message += L".";
           the_message_log.add(message);
 
           return StateResult::Failure();
@@ -333,7 +333,7 @@ Action::StateResult Action::do_prebegin_work_(AnyMap& params)
 
 Action::StateResult Action::do_begin_work_(AnyMap& params)
 {
-  the_message_log.add("We're sorry, but that action has not yet been implemented.");
+  the_message_log.add(L"We're sorry, but that action has not yet been implemented.");
 
   return Action::StateResult::Failure();
 }
@@ -356,7 +356,7 @@ StringDisplay Action::get_object_string_()
 
   if (get_objects().size() == 0)
   {
-    description += "nothing";
+    description += L"nothing";
   }
   else if (get_objects().size() == 1)
   {
@@ -368,13 +368,13 @@ StringDisplay Action::get_object_string_()
     {
       if (get_object() == ThingId::Mu())
       {
-        description += "nothing";
+        description += L"nothing";
       }
       else
       {
         if (get_quantity() > 1)
         {
-          description += get_quantity() + " of";
+          description += get_quantity() + L" of";
         }
         description += get_object()->get_identifying_string(true);
       }
@@ -382,20 +382,20 @@ StringDisplay Action::get_object_string_()
   }
   else if (get_objects().size() == 2)
   {
-    description += get_object()->get_identifying_string(true) + " and " + get_second_object()->get_identifying_string(true);
+    description += get_object()->get_identifying_string(true) + L" and " + get_second_object()->get_identifying_string(true);
   }
   else if (get_objects().size() > 1)
   {
     /// @todo May want to change this depending on whether subject is the player.
     ///       If not, we should print "several items" or something to that effect.
-    description += "the items";
+    description += L"the items";
   }
   else
   {
     auto new_direction = get_target_direction();
     if (new_direction != Direction::None)
     {
-      description += str(new_direction);
+      description += wstr(new_direction);
     }
   }
 
@@ -425,46 +425,46 @@ StringDisplay Action::get_target_string_()
 void Action::print_message_try_()
 {
   StringDisplay object_string = get_object_string_();
-  if (!object_string.isEmpty()) object_string = " " + object_string;
-  StringDisplay message = YOU_TRY + " to " + VERB + " " + get_object_string_() + ".";
+  if (!object_string.empty()) object_string = L" " + object_string;
+  StringDisplay message = YOU_TRY + L" to " + VERB + L" " + get_object_string_() + L".";
   the_message_log.add(message);
 }
 
 void Action::print_message_do_()
 {
   StringDisplay object_string = get_object_string_();
-  if (!object_string.isEmpty()) object_string = " " + object_string;
-  StringDisplay message = YOU + " " + CV(VERB, VERB3) + " " + get_object_string_() + ".";
+  if (!object_string.empty()) object_string = L" " + object_string;
+  StringDisplay message = YOU + L" " + CV(VERB, VERB3) + L" " + get_object_string_() + L".";
   the_message_log.add(message);
 }
 
 void Action::print_message_begin_()
 {
   StringDisplay object_string = get_object_string_();
-  if (!object_string.isEmpty()) object_string = " " + object_string;
-  StringDisplay message = YOU + " " + CV("begin", "begins") + " to " + VERB + object_string + ".";
+  if (!object_string.empty()) object_string = L" " + object_string;
+  StringDisplay message = YOU + L" " + CV(L"begin", L"begins") + L" to " + VERB + object_string + L".";
   the_message_log.add(message);
 }
 
 void Action::print_message_stop_()
 {
   StringDisplay object_string = get_object_string_();
-  if (!object_string.isEmpty()) object_string = " " + object_string;
-  StringDisplay message = YOU + " " + CV("stop ", "stops ") + VERBING + object_string + ".";
+  if (!object_string.empty()) object_string = L" " + object_string;
+  StringDisplay message = YOU + L" " + CV(L"stop ", L"stops ") + VERBING + object_string + L".";
   the_message_log.add(message);
 }
 
 void Action::print_message_finish_()
 {
   StringDisplay object_string = get_object_string_();
-  if (!object_string.isEmpty()) object_string = " " + object_string;
-  StringDisplay message = YOU + " " + CV("finish ", "finishes ") + VERBING + object_string + ".";
+  if (!object_string.empty()) object_string = L" " + object_string;
+  StringDisplay message = YOU + L" " + CV(L"finish ", L"finishes ") + VERBING + object_string + L".";
   the_message_log.add(message);
 }
 
 void Action::print_message_cant_()
 {
-  StringDisplay message = YOU + " can't " + VERB + " that!";
+  StringDisplay message = YOU + L" can't " + VERB + L" that!";
   the_message_log.add(message);
 }
 

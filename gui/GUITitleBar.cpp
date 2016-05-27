@@ -54,7 +54,7 @@ namespace metagui
 
     texture.draw(title_rect);
 
-    if (titlebar_text.isEmpty() == false)
+    if (titlebar_text.empty() == false)
     {
       title_text.setString(titlebar_text);
       title_text.setFont(the_default_bold_font);

@@ -16,7 +16,7 @@ class ActionMix
 public:
   StringDisplay const get_verbable() const override
   {
-    return "miscable";
+    return L"miscable";
   }
 
 protected:

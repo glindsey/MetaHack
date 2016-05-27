@@ -4,7 +4,7 @@
 #include "Thing.h"
 #include "ThingId.h"
 
-ACTION_SRC_BOILERPLATE(ActionMix, "mix", "mix")
+ACTION_SRC_BOILERPLATE(ActionMix, "mix", L"mix")
 
 Action::StateResult ActionMix::do_prebegin_work_(AnyMap& params)
 {
@@ -18,7 +18,7 @@ Action::StateResult ActionMix::do_prebegin_work_(AnyMap& params)
   {
     print_message_try_();
 
-    message = "But, as " + getIndefArt(subject->get_display_name()) + subject->get_display_name() + "," + YOU_ARE + " not capable of mixing anything together.";
+    message = L"But, as " + getIndefArt(subject->get_display_name()) + subject->get_display_name() + L"," + YOU_ARE + L" not capable of mixing anything together.";
     the_message_log.add(message);
 
     return Action::StateResult::Failure();
@@ -29,7 +29,7 @@ Action::StateResult ActionMix::do_prebegin_work_(AnyMap& params)
   {
     print_message_try_();
 
-    message = "Those are both the same container!";
+    message = L"Those are both the same container!";
     the_message_log.add(message);
 
     return Action::StateResult::Failure();
@@ -40,7 +40,7 @@ Action::StateResult ActionMix::do_prebegin_work_(AnyMap& params)
   {
     print_message_try_();
 
-    message = "But that makes absolutely no sense.";
+    message = L"But that makes absolutely no sense.";
     the_message_log.add(message);
 
     return Action::StateResult::Failure();
@@ -51,7 +51,7 @@ Action::StateResult ActionMix::do_prebegin_work_(AnyMap& params)
   {
     print_message_try_();
 
-    message = "But at least one of them is out of " + YOUR + " reach.";
+    message = L"But at least one of them is out of " + YOUR + L" reach.";
     the_message_log.add(message);
 
     return Action::StateResult::Failure();
@@ -62,7 +62,7 @@ Action::StateResult ActionMix::do_prebegin_work_(AnyMap& params)
   {
     print_message_try_();
 
-    message = "But at least one of them doesn't hold liquid!";
+    message = L"But at least one of them doesn't hold liquid!";
     the_message_log.add(message);
 
     return Action::StateResult::Failure(); //ActionResult::FailureNotLiquidCarrier;
@@ -75,7 +75,7 @@ Action::StateResult ActionMix::do_prebegin_work_(AnyMap& params)
   {
     print_message_try_();
 
-    message = "But at least one of them is empty!";
+    message = L"But at least one of them is empty!";
     the_message_log.add(message);
 
     return Action::StateResult::Failure(); //ActionResult::FailureContainerIsEmpty;
@@ -94,7 +94,7 @@ Action::StateResult ActionMix::do_begin_work_(AnyMap& params)
   //the_message_log.add(message);
   //thing1->perform_action_mixed_with_by(thing2, pImpl->ref);
 
-  the_message_log.add("We're sorry, but that action has not yet been implemented.");
+  the_message_log.add(L"We're sorry, but that action has not yet been implemented.");
 
   return Action::StateResult::Failure();
 }

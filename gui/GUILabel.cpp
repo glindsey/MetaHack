@@ -27,7 +27,7 @@ namespace metagui
 
     /// @todo Flesh this out; right now it is EXTREMELY rudimentary
     StringDisplay str = get_text();
-    if (!str.isEmpty())
+    if (!str.empty())
     {
       sf::Text text{ str, the_default_font, the_config.get<unsigned int>("text_default_size") };
       text.setColor(the_config.get<sf::Color>("text_color"));

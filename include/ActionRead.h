@@ -17,7 +17,7 @@ class ActionRead
 public:
   StringDisplay const get_verbed() const override
   {
-    return "read";
+    return L"read";
   }
 
 protected:

@@ -7,7 +7,7 @@
 #include "Thing.h"
 #include "ThingId.h"
 
-ACTION_SRC_BOILERPLATE(ActionAttack, "attack", "attack")
+ACTION_SRC_BOILERPLATE(ActionAttack, "attack", L"attack")
 
 Action::StateResult ActionAttack::do_prebegin_work_(AnyMap& params)
 {
@@ -20,17 +20,17 @@ Action::StateResult ActionAttack::do_prebegin_work_(AnyMap& params)
   if (!IS_PLAYER)
   {
     print_message_try_();
-    message = "But ";
+    message = L"But ";
   }
   else
   {
-    message = "";
+    message = L"";
   }
 
   // Make sure we CAN attack.
   if (!subject->get_modified_property<bool>("can_attack", false))
   {
-    message += YOU + CV(" don't", " doesn't") + " have any way to attack things.";
+    message += YOU + CV(L" don't", L" doesn't") + L" have any way to attack things.";
     the_message_log.add(message);
     return StateResult::Failure();
   }
@@ -38,7 +38,7 @@ Action::StateResult ActionAttack::do_prebegin_work_(AnyMap& params)
   // Make sure we can move RIGHT NOW.
   if (!subject->can_currently_move())
   {
-    message += YOU + " can't move right now.";
+    message += YOU + L" can't move right now.";
     the_message_log.add(message);
     return StateResult::Failure();
   }
@@ -47,7 +47,7 @@ Action::StateResult ActionAttack::do_prebegin_work_(AnyMap& params)
   if (new_direction == Direction::Self)
   {
     /// @todo Allow attacking yourself!
-    message = YOU + " wisely" + CV(" refrain", " refrains") + " from pummelling " + YOURSELF + ".";
+    message = YOU + L" wisely" + CV(L" refrain", L" refrains") + L" from pummelling " + YOURSELF + L".";
     the_message_log.add(message);
     return StateResult::Failure();
   }
@@ -56,7 +56,7 @@ Action::StateResult ActionAttack::do_prebegin_work_(AnyMap& params)
   /// @todo Allow for attacking when swallowed!
   if (subject->is_inside_another_thing())
   {
-    message += YOU_ARE + " inside " + location->get_identifying_string(false) + " and " + ARE + " not going anywhere!";
+    message += YOU_ARE + L" inside " + location->get_identifying_string(false) + L" and " + ARE + L" not going anywhere!";
 
     the_message_log.add(message);
     return StateResult::Failure();
@@ -65,7 +65,7 @@ Action::StateResult ActionAttack::do_prebegin_work_(AnyMap& params)
   if (new_direction == Direction::Up)
   {
     /// @todo Write up/down attack code
-    message = "attacking the ceiling is not yet supported!";
+    message = L"attacking the ceiling is not yet supported!";
     the_message_log.add(message);
     return StateResult::Failure();
   }
@@ -73,7 +73,7 @@ Action::StateResult ActionAttack::do_prebegin_work_(AnyMap& params)
   if (new_direction == Direction::Down)
   {
     /// @todo Write up/down attack code
-    message = "attacking the floor is not yet supported!";
+    message = L"attacking the floor is not yet supported!";
     the_message_log.add(message);
     return StateResult::Failure();
   }
@@ -105,7 +105,7 @@ Action::StateResult ActionAttack::do_begin_work_(AnyMap& params)
   if ((x_new < 0) || (y_new < 0) ||
     (x_new >= map_size.x) || (y_new >= map_size.y))
   {
-    message += YOU + " can't attack there; it is out of bounds!";
+    message += YOU + L" can't attack there; it is out of bounds!";
     the_message_log.add(message);
     return StateResult::Failure();
   }
@@ -118,7 +118,7 @@ Action::StateResult ActionAttack::do_begin_work_(AnyMap& params)
   if (creature == ThingId::Mu())
   {
     /// @todo Deal with attacking other stuff, MapTiles, etc.
-    message = "Attacking non-entity things is not yet supported!";
+    message = L"Attacking non-entity things is not yet supported!";
     the_message_log.add(message);
     return StateResult::Failure();
   }

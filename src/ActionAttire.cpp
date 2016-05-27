@@ -4,7 +4,7 @@
 #include "Thing.h"
 #include "ThingId.h"
 
-ACTION_SRC_BOILERPLATE(ActionAttire, "attire", "wear")
+ACTION_SRC_BOILERPLATE(ActionAttire, "attire", L"wear")
 
 Action::StateResult ActionAttire::do_prebegin_work_(AnyMap& params)
 {
@@ -13,7 +13,7 @@ Action::StateResult ActionAttire::do_prebegin_work_(AnyMap& params)
 
 Action::StateResult ActionAttire::do_begin_work_(AnyMap& params)
 {
-  the_message_log.add("We're sorry, but that action has not yet been implemented.");
+  the_message_log.add(L"We're sorry, but that action has not yet been implemented.");
 
   return Action::StateResult::Failure();
 }
