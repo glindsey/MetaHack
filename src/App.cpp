@@ -109,7 +109,7 @@ App::App(sf::RenderWindow& app_window)
   the_lua_instance.register_function("messageLog_add", App::LUA_add);
 
   // Get the state machine.
-  StateMachine& sm = *(m_state_machine.get());
+  StateMachine& sm = *m_state_machine;
 
   // Add states to the state machine.
   sm.add_state(NEW AppStateSplashScreen(sm, app_window));
@@ -213,42 +213,42 @@ bool App::has_window_focus()
 
 boost::random::mt19937 & App::get_rng()
 {
-  return *(m_rng.get());
+  return *m_rng;
 }
 
 sf::Font & App::get_default_font()
 {
-  return *(m_default_font.get());
+  return *m_default_font;
 }
 
 sf::Font & App::get_default_bold_font()
 {
-  return *(m_default_bold_font.get());
+  return *m_default_bold_font;
 }
 
 sf::Font & App::get_default_mono_font()
 {
-  return *(m_default_mono_font.get());
+  return *m_default_mono_font;
 }
 
 sf::Font & App::get_default_unicode_font()
 {
-  return *(m_default_unicode_font.get());
+  return *m_default_unicode_font;
 }
 
 sf::Shader & App::get_shader()
 {
-  return *(m_shader.get());
+  return *m_shader;
 }
 
 MessageLog & App::get_message_log()
 {
-  return *(m_message_log.get());
+  return *m_message_log;
 }
 
 metagui::Desktop & App::get_gui_desktop()
 {
-  return *(m_gui_desktop.get());
+  return *m_gui_desktop;
 }
 
 App & App::instance()
@@ -291,7 +291,7 @@ void App::run()
       m_app_window.clear();
       m_app_texture->clear(sf::Color::Red);
 
-      m_state_machine->render(*(m_app_texture.get()), s_frame_counter);
+      m_state_machine->render(*m_app_texture, s_frame_counter);
 
       m_app_texture->display();
       sf::Sprite sprite(m_app_texture->getTexture());

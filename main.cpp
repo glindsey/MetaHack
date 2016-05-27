@@ -43,7 +43,7 @@ int main(int argc, char* argv[])
       LOG(INFO) << "attributeFlags = 0x" << hexify<uint32_t>(settings.attributeFlags);
 
       // Create and run the app instance.
-      app.reset(NEW App(*(app_window.get())));
+      app.reset(NEW App(*app_window));
       app->run();
     }
 #ifdef NDEBUG

@@ -265,7 +265,7 @@ namespace metagui
     {
       for (auto& child_pair : children)
       {
-        functor(*((child_pair.second).get()), args...);
+        functor(*(child_pair.second), args...);
       }
     }
 

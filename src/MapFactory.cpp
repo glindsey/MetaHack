@@ -32,11 +32,11 @@ Map const& MapFactory::get(MapId map_id) const
 {
   if (m_maps.count(map_id) == 0)
   {
-    return *(m_maps.at(null_map_id).get());
+    return *m_maps.at(null_map_id);
   }
   else
   {
-    return *(m_maps.at(map_id).get());
+    return *m_maps.at(map_id);
   }
 }
 
@@ -44,11 +44,11 @@ Map& MapFactory::get(MapId map_id)
 {
   if (m_maps.count(map_id) == 0)
   {
-    return *(m_maps.at(null_map_id).get());
+    return *m_maps.at(null_map_id);
   }
   else
   {
-    return *(m_maps.at(map_id).get());
+    return *m_maps.at(map_id);
   }
 }
 

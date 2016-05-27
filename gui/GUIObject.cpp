@@ -238,7 +238,7 @@ namespace metagui
       throw std::runtime_error("Tried to add already-present child \"" + name + "\" of GUI object \"" + get_name() + "\"");
     }
 
-    Object& child_ref = *(child.get());
+    Object& child_ref = *child;
     child->set_parent(this);
 
     // This odd syntax is in order to work around VS compiler bug when having
@@ -277,7 +277,7 @@ namespace metagui
   {
     if (child_exists(name))
     {
-      return *(m_children.at(name).get());
+      return *m_children.at(name);
     }
 
     throw std::runtime_error("Tried to get non-existent child \"" + name + "\" of GUI object \"" + get_name() + "\"");
@@ -349,7 +349,7 @@ namespace metagui
 
   bool Object::render(sf::RenderTexture& parent_texture, int frame)
   {
-    sf::RenderTexture& our_texture = *(m_bg_texture.get());
+    sf::RenderTexture& our_texture = *m_bg_texture;
 
     our_texture.clear(sf::Color::Blue);
 

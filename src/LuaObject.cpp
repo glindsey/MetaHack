@@ -39,12 +39,12 @@ Lua::~Lua()
 
 Lua& Lua::instance()
 {
-  if (Lua::instance_ == nullptr)
+  if (!Lua::instance_)
   {
     Lua::instance_.reset(NEW Lua());
   }
 
-  return *(Lua::instance_.get());
+  return *(Lua::instance_);
 }
 
 void Lua::register_function(StringKey name, lua_CFunction func)

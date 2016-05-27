@@ -56,7 +56,7 @@ ConfigSettings& ConfigSettings::instance()
     instance_.reset(NEW ConfigSettings());
   }
 
-  return *(instance_.get());
+  return *instance_;
 }
 
 int ConfigSettings::LUA_get_config(lua_State* L)

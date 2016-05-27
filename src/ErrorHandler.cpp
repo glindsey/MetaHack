@@ -26,12 +26,12 @@ ErrorHandler::~ErrorHandler()
 
 ErrorHandler& ErrorHandler::instance()
 {
-  if (Impl::handler_instance.get() == nullptr)
+  if (!Impl::handler_instance)
   {
     Impl::handler_instance.reset(NEW ErrorHandler());
   }
 
-  return *(Impl::handler_instance.get());
+  return *Impl::handler_instance;
 }
 
 void ErrorHandler::handleMajorError(char* buf,

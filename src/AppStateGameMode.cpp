@@ -182,7 +182,7 @@ bool AppStateGameMode::terminate()
 
 GameState& AppStateGameMode::get_game_state()
 {
-  return *(m_game_state.get());
+  return *m_game_state;
 }
 
 // === PROTECTED METHODS ======================================================

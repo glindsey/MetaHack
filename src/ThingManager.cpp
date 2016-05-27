@@ -119,12 +119,12 @@ Thing& ThingManager::get(ThingId id)
 {
   try
   {
-    return *(m_thing_map.at(id).get());
+    return *(m_thing_map.at(id));
   }
   catch (std::out_of_range&)
   {
     CLOG(WARNING, "Thing") << "Tried to get thing " << id << " which does not exist";
-    return *(m_thing_map[get_mu()].get());
+    return *(m_thing_map[get_mu()]);
   }
 }
 
@@ -132,12 +132,12 @@ Thing const& ThingManager::get(ThingId id) const
 {
   try
   {
-    return *(m_thing_map.at(id).get());
+    return *(m_thing_map.at(id));
   }
   catch (std::out_of_range&)
   {
     CLOG(WARNING, "Thing") << "Tried to get thing " << id << " which does not exist";
-    return *(m_thing_map.at(get_mu()).get());
+    return *(m_thing_map.at(get_mu()));
   }
 }
 

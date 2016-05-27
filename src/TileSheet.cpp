@@ -110,7 +110,7 @@ TileSheet& TileSheet::instance()
     instance_.reset(NEW TileSheet());
   }
 
-  return *(instance_.get());
+  return *(instance_);
 }
 
 sf::Vector2u TileSheet::load_collection(FileName const& filename)

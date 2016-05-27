@@ -54,14 +54,14 @@ MapFactory& GameState::get_maps()
 {
   ASSERT_CONDITION(m_map_factory);
 
-  return *(m_map_factory.get());
+  return *m_map_factory;
 }
 
 ThingManager& GameState::get_things()
 {
   ASSERT_CONDITION(m_thing_manager);
 
-  return *(m_thing_manager.get());
+  return *m_thing_manager;
 }
 
 MetadataCollection & GameState::get_metadata_collection(StringKey category)

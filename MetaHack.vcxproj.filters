@@ -48,9 +48,6 @@
     <ClInclude Include="include\GameObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\GeoVector.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\GetLetterKey.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -58,9 +55,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\InventoryArea.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\InventorySlot.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\KeyBuffer.h">
@@ -79,9 +73,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Renderable.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ShaderEffect.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\SpritePrototype.h">
@@ -109,9 +100,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Metadata.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\LightInfluence.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\New.h">
@@ -312,6 +300,18 @@
     <ClInclude Include="include\Ordinal.h">
       <Filter>Types</Filter>
     </ClInclude>
+    <ClInclude Include="include\LightInfluence.h">
+      <Filter>Types</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ShaderEffect.h">
+      <Filter>Types</Filter>
+    </ClInclude>
+    <ClInclude Include="include\InventorySlot.h">
+      <Filter>Types</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GeoVector.h">
+      <Filter>Types</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">
@@ -363,9 +363,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\ThingManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\IntegerRange.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Metadata.cpp">
@@ -532,6 +529,9 @@
     </ClCompile>
     <ClCompile Include="src\PropertyDictionary.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\IntegerRange.cpp">
+      <Filter>Types</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
