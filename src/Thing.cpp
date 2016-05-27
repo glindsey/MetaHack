@@ -1313,7 +1313,7 @@ void Thing::draw_to(sf::RenderTarget& target,
   rectangle.setPosition(target_coords);
   rectangle.setSize(sf::Vector2f(static_cast<float>(target_size),
                                  static_cast<float>(target_size)));
-  rectangle.setTexture(&(TS.getTexture()));
+  rectangle.setTexture(&(the_tilesheet.getTexture()));
   rectangle.setTextureRect(texture_coords);
   rectangle.setFillColor(thing_color);
 

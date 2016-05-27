@@ -352,11 +352,11 @@ void InventoryArea::render_contents_(sf::RenderTexture& texture, int frame)
     }
 
     // 4. Display the tile representing the item.
-    TS.getTexture().setSmooth(true);
+    the_tilesheet.getTexture().setSmooth(true);
     thing->draw_to(texture,
                    sf::Vector2f(static_cast<float>(text_coord_x + 75), static_cast<float>(text_coord_y)),
                    static_cast<unsigned int>(line_spacing_y - 1), false, frame);
-    TS.getTexture().setSmooth(false);
+    the_tilesheet.getTexture().setSmooth(false);
 
     unsigned int wield_location;
     WearLocation wear_location;

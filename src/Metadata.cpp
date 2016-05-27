@@ -40,7 +40,7 @@ Metadata::Metadata(MetadataCollection& collection, StringKey type)
   {
     sf::Vector2u tile_location;
 
-    tile_location = TS.load_collection(pngfile_string);
+    tile_location = the_tilesheet.load_collection(pngfile_string);
     CLOG(TRACE, "Metadata") << "Tiles for " << qualified_name <<
       " were placed on the TileSheet at " << tile_location;
 

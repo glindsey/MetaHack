@@ -580,7 +580,7 @@ void Map::draw_to(sf::RenderTarget& target)
 
   sf::RenderStates render_states = sf::RenderStates::Default;
   render_states.shader = &the_shader;
-  render_states.texture = &(TS.getTexture());
+  render_states.texture = &(the_tilesheet.getTexture());
 
   the_shader.setParameter("effect", ShaderEffect::Lighting);
   //the_shader.setParameter("effect", ShaderEffect::Default);

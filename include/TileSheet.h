@@ -7,10 +7,9 @@
 class TileSheet
 {
 public:
-  virtual ~TileSheet();
+  TileSheet();
 
-  /// Get the singleton tilesheet instance.
-  static TileSheet& instance();
+  virtual ~TileSheet();
 
   /// Load a tile collection from disk and find a place to put them.
   /// @return The location that the tiles were placed on the sheet.
@@ -66,17 +65,11 @@ public:
                                    sf::Vector2f ll_coord);
 
 protected:
-  TileSheet();
 
 private:
   struct Impl;
   std::unique_ptr<Impl> pImpl;
 
-  /// Static instance.
-  static std::unique_ptr<TileSheet> instance_;
 };
-
-/// Macro to ease typing.
-#define  TS       TileSheet::instance()
 
 #endif // TILESHEET_H

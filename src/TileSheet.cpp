@@ -6,9 +6,6 @@
 #include "ErrorHandler.h"
 #include "MathUtils.h"
 
-// Static declarations.
-std::unique_ptr<TileSheet> TileSheet::instance_;
-
 struct TileSheet::Impl
 {
   sf::Texture texture;
@@ -101,16 +98,6 @@ TileSheet::TileSheet()
 TileSheet::~TileSheet()
 {
   //dtor
-}
-
-TileSheet& TileSheet::instance()
-{
-  if (!instance_)
-  {
-    instance_.reset(NEW TileSheet());
-  }
-
-  return *(instance_);
 }
 
 sf::Vector2u TileSheet::load_collection(FileName const& filename)

@@ -49,8 +49,11 @@ public:
   /// Get the MessageLog instance.
   MessageLog& get_message_log();
 
-  /// Get the Destop instance.
+  /// Get the Desktop instance.
   metagui::Desktop& get_gui_desktop();
+
+  /// Get the TileSheet instance.
+  TileSheet& get_tilesheet();
 
   /// Get the current App instance.
   /// If no App instance currently exists, throws an exception.
@@ -93,6 +96,9 @@ private:
   /// The message log.
   std::unique_ptr<MessageLog> m_message_log;
 
+  /// The tilesheet.
+  std::unique_ptr<TileSheet> m_tilesheet;
+
   static int s_frame_counter;
 
   /// A static pointer to the existing App instance.
@@ -117,5 +123,7 @@ private:
 #define the_shader                App::instance().get_shader()
 #define the_RNG                   App::instance().get_rng()
 #define the_message_log           App::instance().get_message_log()
+#define the_tilesheet             App::instance().get_tilesheet()
+
 
 #endif // APP_H

@@ -108,6 +108,9 @@ App::App(sf::RenderWindow& app_window)
   //the_lua_instance.register_function("print", App::LUA_redirect_print);
   the_lua_instance.register_function("messageLog_add", App::LUA_add);
 
+  // Create the tilesheet.
+  m_tilesheet.reset(NEW TileSheet());
+
   // Get the state machine.
   StateMachine& sm = *m_state_machine;
 
@@ -249,6 +252,11 @@ MessageLog & App::get_message_log()
 metagui::Desktop & App::get_gui_desktop()
 {
   return *m_gui_desktop;
+}
+
+TileSheet & App::get_tilesheet()
+{
+  return *m_tilesheet;
 }
 
 App & App::instance()
