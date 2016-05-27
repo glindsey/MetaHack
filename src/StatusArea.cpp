@@ -33,20 +33,20 @@ void StatusArea::render_contents_(sf::RenderTexture& texture, int frame)
 {
   sf::IntRect pane_dims = get_relative_dimensions();
   ThingId player = GAME.get_player();
-  sf::Vector2f origin(Settings.get<float>("window_text_offset_x"),
-                      Settings.get<float>("window_text_offset_y"));
-  sf::Color text_color = Settings.get<sf::Color>("text_color");
-  sf::Color text_dim_color = Settings.get<sf::Color>("text_dim_color");
-  sf::Color text_warning_color = Settings.get<sf::Color>("text_warning_color");
-  sf::Color text_danger_color = Settings.get<sf::Color>("text_danger_color");
-  float line_spacing = the_default_font.getLineSpacing(Settings.get<unsigned int>("text_default_size")) + 3.0f;
+  sf::Vector2f origin(the_config.get<float>("window_text_offset_x"),
+                      the_config.get<float>("window_text_offset_y"));
+  sf::Color text_color = the_config.get<sf::Color>("text_color");
+  sf::Color text_dim_color = the_config.get<sf::Color>("text_dim_color");
+  sf::Color text_warning_color = the_config.get<sf::Color>("text_warning_color");
+  sf::Color text_danger_color = the_config.get<sf::Color>("text_danger_color");
+  float line_spacing = the_default_font.getLineSpacing(the_config.get<unsigned int>("text_default_size")) + 3.0f;
   float attrib_spacing = 75.0f;
 
   // Text offsets relative to the background rectangle.
   sf::Text render_text;
   render_text.setFont(the_default_font);
   render_text.setColor(text_color);
-  render_text.setCharacterSize(Settings.get<unsigned int>("text_default_size"));
+  render_text.setCharacterSize(the_config.get<unsigned int>("text_default_size"));
   render_text.setPosition(origin.x, origin.y);
 
   if (player != ThingId::Mu())
@@ -111,14 +111,14 @@ void StatusArea::render_contents_(sf::RenderTexture& texture, int frame)
 void StatusArea::render_attribute(sf::RenderTarget& target, StringDisplay abbrev, StringDisplay name, sf::Vector2f location)
 {
   sf::Text render_text;
-  sf::Color text_color = Settings.get<sf::Color>("text_color");
-  sf::Color text_dim_color = Settings.get<sf::Color>("text_dim_color");
+  sf::Color text_color = the_config.get<sf::Color>("text_color");
+  sf::Color text_dim_color = the_config.get<sf::Color>("text_dim_color");
   ThingId player = GAME.get_player();
 
   // Render STR
   render_text.setFont(the_default_mono_font);
   render_text.setColor(text_dim_color);
-  render_text.setCharacterSize(Settings.get<unsigned int>("text_default_size"));
+  render_text.setCharacterSize(the_config.get<unsigned int>("text_default_size"));
   render_text.setPosition(location.x, location.y);
   render_text.setString(abbrev + ":");
   target.draw(render_text);

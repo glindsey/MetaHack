@@ -39,11 +39,11 @@ void MessageLogView::render_contents_(sf::RenderTexture& texture, int frame)
   // Dimensions of the pane.
   sf::IntRect pane_dims = get_relative_dimensions();
 
-  float lineSpacing = the_default_font.getLineSpacing(Settings.get<unsigned int>("text_default_size"));
+  float lineSpacing = the_default_font.getLineSpacing(the_config.get<unsigned int>("text_default_size"));
 
   // Text offsets relative to the background rectangle.
-  float text_offset_x = Settings.get<float>("window_text_offset_x");
-  float text_offset_y = Settings.get<float>("window_text_offset_y");
+  float text_offset_x = the_config.get<float>("window_text_offset_x");
+  float text_offset_y = the_config.get<float>("window_text_offset_y");
 
   // Start at the bottom, most recent text and work upwards.
   float text_coord_x = text_offset_x;
@@ -52,7 +52,7 @@ void MessageLogView::render_contents_(sf::RenderTexture& texture, int frame)
   sf::Text render_text;
 
   render_text.setFont(the_default_font);
-  render_text.setCharacterSize(Settings.get<unsigned int>("text_default_size"));
+  render_text.setCharacterSize(the_config.get<unsigned int>("text_default_size"));
 
   // If we have the focus, put the current command at the bottom of the log.
   if (get_focus() == true)
@@ -62,8 +62,8 @@ void MessageLogView::render_contents_(sf::RenderTexture& texture, int frame)
       sf::Vector2f(text_coord_x, text_coord_y),
       frame,
       the_default_font,
-      Settings.get<unsigned int>("text_default_size"),
-      Settings.get<sf::Color>("text_highlight_color"));
+      the_config.get<unsigned int>("text_default_size"),
+      the_config.get<sf::Color>("text_highlight_color"));
 
     text_coord_y -= lineSpacing;
   }
@@ -76,7 +76,7 @@ void MessageLogView::render_contents_(sf::RenderTexture& texture, int frame)
   {
     render_text.setString(*iter);
     render_text.setPosition(text_coord_x, text_coord_y);
-    render_text.setColor(Settings.get<sf::Color>("text_color"));
+    render_text.setColor(the_config.get<sf::Color>("text_color"));
     texture.draw(render_text);
     if (text_coord_y < text_offset_y) break;
     text_coord_y -= lineSpacing;

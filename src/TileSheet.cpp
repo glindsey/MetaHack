@@ -41,7 +41,7 @@ struct TileSheet::Impl
   {
     sf::Vector2u start(0, 0);
 
-    uint32_t texture_size_in_tiles = texture_size / Settings.get<unsigned int>("map_tile_size");
+    uint32_t texture_size_in_tiles = texture_size / the_config.get<unsigned int>("map_tile_size");
 
     while (start.y < texture_size_in_tiles)
     {
@@ -90,8 +90,8 @@ TileSheet::TileSheet()
     FATAL_ERROR("Could not create TileSheet texture. Now we're sad.");
   }
 
-  uint32_t used_map_size = (pImpl->texture_size / Settings.get<unsigned int>("map_tile_size")) *
-    (pImpl->texture_size / Settings.get<unsigned int>("map_tile_size"));
+  uint32_t used_map_size = (pImpl->texture_size / the_config.get<unsigned int>("map_tile_size")) *
+    (pImpl->texture_size / the_config.get<unsigned int>("map_tile_size"));
   pImpl->used.resize(used_map_size);
 }
 
@@ -110,7 +110,7 @@ sf::Vector2u TileSheet::load_collection(FileName const& filename)
 
   image.createMaskFromColor(sf::Color(255, 0, 255));
 
-  unsigned int tile_size = Settings.get<unsigned int>("map_tile_size");
+  unsigned int tile_size = the_config.get<unsigned int>("map_tile_size");
 
   sf::Vector2u image_size = image.getSize();
 
@@ -130,7 +130,7 @@ sf::Vector2u TileSheet::load_collection(FileName const& filename)
 sf::IntRect TileSheet::get_tile(sf::Vector2u tile) const
 {
   sf::IntRect rect;
-  unsigned int tile_size = Settings.get<unsigned int>("map_tile_size");
+  unsigned int tile_size = the_config.get<unsigned int>("map_tile_size");
   rect.left = tile.x * tile_size;
   rect.top = tile.y * tile_size;
   rect.width = tile_size;
@@ -160,7 +160,7 @@ void TileSheet::add_quad(sf::VertexArray& vertices,
                          sf::Vector2f ll_coord, sf::Vector2f lr_coord)
 {
   sf::Vertex new_vertex;
-  float ts(Settings.get<float>("map_tile_size"));
+  float ts(the_config.get<float>("map_tile_size"));
   sf::Vector2f texNW(tile_coords.x * ts, tile_coords.y * ts);
 
   new_vertex.color = bg_color;
@@ -193,7 +193,7 @@ void TileSheet::add_gradient_quad(sf::VertexArray& vertices,
                                   sf::Color colorW, sf::Color colorC, sf::Color colorE,
                                   sf::Color colorSW, sf::Color colorS, sf::Color colorSE)
 {
-  float ts(Settings.get<float>("map_tile_size"));
+  float ts(the_config.get<float>("map_tile_size"));
   float half_ts = (ts / 2.0f);
 
   sf::Vector2f coordC((coordNW.x + coordNE.x + coordSE.x + coordSW.x) / 4, (coordNW.y + coordNE.y + coordSE.y + coordSW.y) / 4);

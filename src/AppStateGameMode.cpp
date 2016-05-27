@@ -224,8 +224,8 @@ void AppStateGameMode::render_map(sf::RenderTexture& texture, int frame)
         auto& cursor_tile = game_map.get_tile(m_cursor_coords);
         cursor_tile.draw_highlight(texture,
                                    cursor_pixel_coords,
-                                   Settings.get<sf::Color>("cursor_border_color"),
-                                   Settings.get<sf::Color>("cursor_bg_color"),
+                                   the_config.get<sf::Color>("cursor_border_color"),
+                                   the_config.get<sf::Color>("cursor_bg_color"),
                                    frame);
       }
       else
@@ -926,8 +926,8 @@ void AppStateGameMode::add_zoom(float zoom_amount)
 sf::IntRect AppStateGameMode::calc_message_log_dims()
 {
   sf::IntRect messageLogDims;
-  unsigned int inventory_area_width = Settings.get<unsigned int>("inventory_area_width");
-  unsigned int messagelog_area_height = Settings.get<unsigned int>("messagelog_area_height");
+  unsigned int inventory_area_width = the_config.get<unsigned int>("inventory_area_width");
+  unsigned int messagelog_area_height = the_config.get<unsigned int>("messagelog_area_height");
   messageLogDims.width = m_app_window.getSize().x - (inventory_area_width + 24);
   messageLogDims.height = messagelog_area_height - 10;
   //messageLogDims.height = static_cast<int>(m_app_window.getSize().y * 0.25f) - 10;
@@ -968,8 +968,8 @@ sf::IntRect AppStateGameMode::calc_status_area_dims()
   sf::IntRect invAreaDims = the_desktop.get_child("InventoryArea").get_relative_dimensions();
   statusAreaDims.width = m_app_window.getSize().x -
     (invAreaDims.width + 24);
-  statusAreaDims.height = Settings.get<int>("status_area_height");
-  statusAreaDims.top = m_app_window.getSize().y - (Settings.get<int>("status_area_height") + 5);
+  statusAreaDims.height = the_config.get<int>("status_area_height");
+  statusAreaDims.top = m_app_window.getSize().y - (the_config.get<int>("status_area_height") + 5);
   statusAreaDims.left = 12;
   return statusAreaDims;
 }
@@ -978,7 +978,7 @@ sf::IntRect AppStateGameMode::calc_inventory_dims()
 {
   sf::IntRect messageLogDims = the_desktop.get_child("MessageLogView").get_relative_dimensions();
   sf::IntRect inventoryAreaDims;
-  inventoryAreaDims.width = Settings.get<int>("inventory_area_width");
+  inventoryAreaDims.width = the_config.get<int>("inventory_area_width");
   inventoryAreaDims.height = m_app_window.getSize().y - 10;
   inventoryAreaDims.left = m_app_window.getSize().x - (inventoryAreaDims.width + 3);
   inventoryAreaDims.top = 5;

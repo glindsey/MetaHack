@@ -4,8 +4,6 @@
 
 #include "ErrorHandler.h"
 
-std::unique_ptr<ConfigSettings> ConfigSettings::instance_;
-
 ConfigSettings::ConfigSettings()
 {
   SET_UP_LOGGER("ConfigSettings", true);
@@ -39,52 +37,9 @@ ConfigSettings::ConfigSettings()
   set("status_area_height", 90);
   set("map_tile_size", 32);
 
-  // Register the Lua functions to access settings.
-  the_lua_instance.register_function("get_config", ConfigSettings::LUA_get_config);
-  //the_lua_instance.register_function("set_config", ConfigSettings::LUA_set_config);
 }
 
 ConfigSettings::~ConfigSettings()
 {
   //dtor
-}
-
-ConfigSettings& ConfigSettings::instance()
-{
-  if (instance_ == nullptr)
-  {
-    instance_.reset(NEW ConfigSettings());
-  }
-
-  return *instance_;
-}
-
-int ConfigSettings::LUA_get_config(lua_State* L)
-{
-  // Make sure the instance actually exists.
-  ConfigSettings& instance = ConfigSettings::instance();
-
-  AnyMap& dictionary = instance.get_dictionary();
-
-  int num_args = lua_gettop(L);
-
-  if (num_args != 1)
-  {
-    CLOG(WARNING, "ConfigSettings") << "expected 1 arguments, got " << num_args;
-    return 0;
-  }
-
-  const char* key = lua_tostring(L, 1);
-
-  if (dictionary.count(key) == 0)
-  {
-    lua_pushnil(L);
-    return 1;
-  }
-  else
-  {
-    boost::any result = dictionary[key];
-    int args = the_lua_instance.push_value<boost::any>(result);
-    return args;
-  }
 }

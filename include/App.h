@@ -9,6 +9,7 @@
 #include "GUIDesktop.h"
 
 // Forward declarations
+class ConfigSettings;
 class MessageLog;
 class MessageLogView;
 class StateMachine;
@@ -27,6 +28,9 @@ public:
   sf::RenderWindow& get_window();
 
   bool has_window_focus();
+
+  /// Get the app config settings.
+  ConfigSettings& get_config();
 
   /// Get the random number generator.
   boost::random::mt19937& get_rng();
@@ -75,6 +79,9 @@ private:
   bool m_is_running;
   bool m_has_window_focus;
 
+  /// The config settings instance.
+  std::unique_ptr<ConfigSettings> m_config;
+
   /// The RNG instance.
   std::unique_ptr<boost::random::mt19937> m_rng;
 
@@ -112,9 +119,13 @@ private:
 
   /// Lua function to add a message to the message log.
   static int LUA_add(lua_State* L);
+
+  /// Lua function to access config settings.
+  static int LUA_get_config(lua_State* L);
 };
 
 // Here are a few macros to save on typing.
+#define the_config                App::instance().get_config()
 #define the_default_font          App::instance().get_default_font()
 #define the_default_bold_font     App::instance().get_default_bold_font()
 #define the_default_mono_font     App::instance().get_default_mono_font()

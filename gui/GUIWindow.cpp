@@ -63,27 +63,27 @@ namespace metagui
   {
     sf::Vector2u size = get_size();
 
-    float line_spacing_y = the_default_font.getLineSpacing(Settings.get<unsigned int>("text_default_size"));
+    float line_spacing_y = the_default_font.getLineSpacing(the_config.get<unsigned int>("text_default_size"));
 
     // Text offsets relative to the background rectangle.
-    float text_offset_x = Settings.get<float>("window_text_offset_x");
-    float text_offset_y = Settings.get<float>("window_text_offset_y");
+    float text_offset_x = the_config.get<float>("window_text_offset_x");
+    float text_offset_y = the_config.get<float>("window_text_offset_y");
 
     // Clear the target.
-    texture.clear(Settings.get<sf::Color>("window_bg_color"));
+    texture.clear(the_config.get<sf::Color>("window_bg_color"));
 
     // Render subclass contents, if any.
     render_contents_(texture, frame);
 
     // Draw the border.
-    float border_width = Settings.get<float>("window_border_width");
+    float border_width = the_config.get<float>("window_border_width");
     m_border_shape.setPosition(sf::Vector2f(border_width, border_width));
     m_border_shape.setSize(sf::Vector2f(static_cast<float>(size.x - (2 * border_width)), static_cast<float>(size.y - (2 * border_width))));
     m_border_shape.setFillColor(sf::Color::Transparent);
     m_border_shape.setOutlineColor(
       get_focus() ?
-      Settings.get<sf::Color>("window_focused_border_color") :
-      Settings.get<sf::Color>("window_border_color"));
+      the_config.get<sf::Color>("window_focused_border_color") :
+      the_config.get<sf::Color>("window_border_color"));
     m_border_shape.setOutlineThickness(border_width);
 
     //texture.setView(sf::View(sf::FloatRect(0.0f, 0.0f, static_cast<float>(target.getSize().x), static_cast<float>(target.getSize().y))));

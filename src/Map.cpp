@@ -561,9 +561,9 @@ void Map::set_view(sf::RenderTarget& target,
                    float zoom_level)
 {
   sf::Vector2u screen_size = target.getSize();
-  unsigned int inventory_area_width = Settings.get<unsigned int>("inventory_area_width");
-  unsigned int status_area_height = Settings.get<unsigned int>("status_area_height");
-  unsigned int messagelog_area_height = Settings.get<unsigned int>("messagelog_area_height");
+  unsigned int inventory_area_width = the_config.get<unsigned int>("inventory_area_width");
+  unsigned int status_area_height = the_config.get<unsigned int>("status_area_height");
+  unsigned int messagelog_area_height = the_config.get<unsigned int>("messagelog_area_height");
 
   sf::Vector2f window_center = sf::Vector2f((static_cast<float>(screen_size.x - inventory_area_width) / zoom_level) / 2,
                                             messagelog_area_height + (static_cast<float>(screen_size.y - (status_area_height + messagelog_area_height)) / zoom_level) / 2);

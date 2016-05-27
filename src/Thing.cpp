@@ -841,7 +841,7 @@ void Thing::add_memory_vertices_to(sf::VertexArray& vertices,
   Map& game_map = GAME.get_maps().get(map_id);
 
   static sf::Vertex new_vertex;
-  float ts = Settings.get<float>("map_tile_size");
+  float ts = the_config.get<float>("map_tile_size");
   float ts2 = ts * 0.5f;
 
   sf::Vector2f location(x * ts, y * ts);
@@ -1235,7 +1235,7 @@ void Thing::add_floor_vertices_to(sf::VertexArray& vertices,
                                   int frame)
 {
   sf::Vertex new_vertex;
-  float ts = Settings.get<float>("map_tile_size");
+  float ts = the_config.get<float>("map_tile_size");
   float ts2 = ts * 0.5f;
 
   MapTile* root_tile = this->get_maptile();
@@ -1289,10 +1289,10 @@ void Thing::draw_to(sf::RenderTarget& target,
 
   if (target_size == 0)
   {
-    target_size = Settings.get<unsigned int>("map_tile_size");
+    target_size = the_config.get<unsigned int>("map_tile_size");
   }
 
-  unsigned int tile_size = Settings.get<unsigned int>("map_tile_size");
+  unsigned int tile_size = the_config.get<unsigned int>("map_tile_size");
 
   sf::Vector2u tile_coords = this->get_tile_sheet_coords(frame);
   texture_coords.left = tile_coords.x * tile_size;

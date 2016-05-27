@@ -41,7 +41,7 @@ void MapTile::add_floor_vertices_to(sf::VertexArray& vertices,
                                     int frame)
 {
   sf::Vertex new_vertex;
-  float ts = Settings.get<float>("map_tile_size");
+  float ts = the_config.get<float>("map_tile_size");
   float half_ts = ts * 0.5f;
 
   sf::Vector2i const& coords = get_coords();
@@ -113,10 +113,10 @@ void MapTile::draw_to(sf::RenderTarget& target,
 
   if (target_size == 0)
   {
-    target_size = Settings.get<unsigned int>("map_tile_size");
+    target_size = the_config.get<unsigned int>("map_tile_size");
   }
 
-  auto tile_size = Settings.get<unsigned int>("map_tile_size");
+  auto tile_size = the_config.get<unsigned int>("map_tile_size");
 
   sf::Vector2u tile_coords = this->get_tile_sheet_coords(frame);
   texture_coords.left = tile_coords.x * tile_size;
@@ -291,7 +291,7 @@ void MapTile::draw_highlight(sf::RenderTarget& target,
                              sf::Color bgColor,
                              int frame)
 {
-  float half_ts(Settings.get<float>("map_tile_size") * 0.5f);
+  float half_ts(the_config.get<float>("map_tile_size") * 0.5f);
   sf::Vector2f vSW(location.x - half_ts, location.y + half_ts);
   sf::Vector2f vSE(location.x + half_ts, location.y + half_ts);
   sf::Vector2f vNW(location.x - half_ts, location.y - half_ts);
@@ -299,14 +299,14 @@ void MapTile::draw_highlight(sf::RenderTarget& target,
 
   sf::RectangleShape box_shape;
   sf::Vector2f box_position;
-  sf::Vector2f box_size(Settings.get<float>("map_tile_size"), Settings.get<float>("map_tile_size"));
+  sf::Vector2f box_size(the_config.get<float>("map_tile_size"), the_config.get<float>("map_tile_size"));
   sf::Vector2f box_half_size(box_size.x / 2, box_size.y / 2);
   box_position.x = (location.x - box_half_size.x);
   box_position.y = (location.y - box_half_size.y);
   box_shape.setPosition(box_position);
   box_shape.setSize(box_size);
   box_shape.setOutlineColor(fgColor);
-  box_shape.setOutlineThickness(Settings.get<float>("tile_highlight_border_width"));
+  box_shape.setOutlineThickness(the_config.get<float>("tile_highlight_border_width"));
   box_shape.setFillColor(bgColor);
 
   target.draw(box_shape);
@@ -361,13 +361,13 @@ void MapTile::add_wall_vertices_to(sf::VertexArray& vertices,
   sf::Color wall_w_color_s{ sf::Color::White };
 
   // Full tile size.
-  float ts(Settings.get<float>("map_tile_size"));
+  float ts(the_config.get<float>("map_tile_size"));
 
   // Half of the tile size.
-  float half_ts(Settings.get<float>("map_tile_size") * 0.5f);
+  float half_ts(the_config.get<float>("map_tile_size") * 0.5f);
 
   // Wall size (configurable).
-  float ws(Settings.get<float>("map_tile_size") * 0.4f);
+  float ws(the_config.get<float>("map_tile_size") * 0.4f);
 
   // Adjacent tiles
   MapTile const& adjacent_tile_n = get_adjacent_tile(Direction::North);
@@ -573,8 +573,8 @@ void MapTile::add_wall_vertices_to(sf::VertexArray& vertices,
 
 sf::Vector2f MapTile::get_pixel_coords(int x, int y)
 {
-  return sf::Vector2f(static_cast<float>(x) * Settings.get<float>("map_tile_size"),
-                      static_cast<float>(y) * Settings.get<float>("map_tile_size"));
+  return sf::Vector2f(static_cast<float>(x) * the_config.get<float>("map_tile_size"),
+                      static_cast<float>(y) * the_config.get<float>("map_tile_size"));
 }
 
 sf::Vector2f MapTile::get_pixel_coords(sf::Vector2i tile)

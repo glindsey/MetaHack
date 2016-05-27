@@ -28,15 +28,7 @@ public:
   template<typename T>
   T get(StringKey key) const
   {
-    // Bail if the setting doesn't exist.
-    if (m_dictionary.count(key) == 0)
-    {
-      CLOG(WARNING, "PropertyDictionary") <<
-        "Attempted to retrieve nonexistent key \"" << key << "\"";
-      return T();
-    }
-
-    boost::any value = m_dictionary.at(key);
+    boost::any value = get<boost::any>(key);
 
     /// Try to cast the setting to the desired type.
     T* p_value = boost::any_cast<T>(&value);
@@ -49,6 +41,22 @@ public:
 
     // Return the requested value.
     return *(p_value);
+  }
+
+  /// Template specialization for boost::any.
+  template<>
+  boost::any get(StringKey key) const
+  {
+    // Bail if the setting doesn't exist.
+    if (m_dictionary.count(key) == 0)
+    {
+      CLOG(WARNING, "PropertyDictionary") <<
+        "Attempted to retrieve nonexistent key \"" << key << "\"";
+      return boost::any();
+    }
+
+    // Return the requested value.
+    return m_dictionary.at(key);
   }
 
   // Various template specializations for certain types.

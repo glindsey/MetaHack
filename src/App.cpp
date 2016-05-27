@@ -23,8 +23,8 @@ typedef boost::random::uniform_int_distribution<> uniform_int_dist;
 sf::IntRect calc_message_log_dimensions(sf::RenderWindow& window)
 {
   sf::IntRect messageLogDims;
-  unsigned int inventory_area_width = Settings.get<unsigned int>("inventory_area_width");
-  unsigned int messagelog_area_height = Settings.get<unsigned int>("messagelog_area_height");
+  unsigned int inventory_area_width = the_config.get<unsigned int>("inventory_area_width");
+  unsigned int messagelog_area_height = the_config.get<unsigned int>("messagelog_area_height");
   messageLogDims.width = window.getSize().x - (inventory_area_width + 24);
   messageLogDims.height = messagelog_area_height - 10;
   //messageLogDims.height = static_cast<int>(window.getSize().y * 0.25f) - 10;
@@ -54,6 +54,9 @@ App::App(sf::RenderWindow& app_window)
   // Register the App logger.
   el::Loggers::getLogger("App");
 
+  // First thing's first: load config settings.
+  m_config.reset(NEW ConfigSettings());
+
   // Create the app texture for off-screen composition.
   m_app_texture->create(m_app_window.getSize().x, m_app_window.getSize().y);
 
@@ -65,28 +68,28 @@ App::App(sf::RenderWindow& app_window)
 
   // Create the default fonts.
   m_default_font.reset(NEW sf::Font());
-  FileName font_name = "resources/fonts/" + Settings.get<std::string>("font_name_default") + ".ttf";
+  FileName font_name = "resources/fonts/" + m_config->get<std::string>("font_name_default") + ".ttf";
   if (m_default_font->loadFromFile(font_name) == false)
   {
     CLOG(FATAL, "App") << "Could not load the default font";
   }
 
   m_default_bold_font.reset(NEW sf::Font());
-  font_name = "resources/fonts/" + Settings.get<std::string>("font_name_bold") + ".ttf";
+  font_name = "resources/fonts/" + m_config->get<std::string>("font_name_bold") + ".ttf";
   if (m_default_bold_font->loadFromFile(font_name) == false)
   {
     CLOG(FATAL, "App") << "Could not load the default bold font";
   }
 
   m_default_mono_font.reset(NEW sf::Font());
-  font_name = "resources/fonts/" + Settings.get<std::string>("font_name_mono") + ".ttf";
+  font_name = "resources/fonts/" + m_config->get<std::string>("font_name_mono") + ".ttf";
   if (m_default_mono_font->loadFromFile(font_name) == false)
   {
     CLOG(FATAL, "App") << "Could not load the default monospace font";
   }
 
   m_default_unicode_font.reset(NEW sf::Font());
-  font_name = "resources/fonts/" + Settings.get<std::string>("font_name_unicode") + ".ttf";
+  font_name = "resources/fonts/" + m_config->get<std::string>("font_name_unicode") + ".ttf";
   if (m_default_unicode_font->loadFromFile(font_name) == false)
   {
     CLOG(FATAL, "App") << "Could not load the default Unicode font";
@@ -107,6 +110,7 @@ App::App(sf::RenderWindow& app_window)
   the_lua_instance.register_function("app_get_frame_counter", App::LUA_get_frame_counter);
   //the_lua_instance.register_function("print", App::LUA_redirect_print);
   the_lua_instance.register_function("messageLog_add", App::LUA_add);
+  the_lua_instance.register_function("get_config", App::LUA_get_config);
 
   // Create the tilesheet.
   m_tilesheet.reset(NEW TileSheet());
@@ -212,6 +216,11 @@ sf::RenderWindow& App::get_window()
 bool App::has_window_focus()
 {
   return m_has_window_focus;
+}
+
+ConfigSettings & App::get_config()
+{
+  return *m_config;
 }
 
 boost::random::mt19937 & App::get_rng()
@@ -360,4 +369,29 @@ int App::LUA_add(lua_State* L)
   }
 
   return 0;
+}
+
+int App::LUA_get_config(lua_State* L)
+{
+  int num_args = lua_gettop(L);
+
+  if (num_args != 1)
+  {
+    CLOG(WARNING, "ConfigSettings") << "expected 1 arguments, got " << num_args;
+    return 0;
+  }
+
+  const char* key = lua_tostring(L, 1);
+
+  if (!the_config.contains(key))
+  {
+    lua_pushnil(L);
+    return 1;
+  }
+  else
+  {
+    boost::any result = the_config.get<boost::any>(key);
+    int args = the_lua_instance.push_value<boost::any>(result);
+    return args;
+  }
 }
