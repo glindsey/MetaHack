@@ -57,6 +57,9 @@ App::App(sf::RenderWindow& app_window)
   // First thing's first: load config settings.
   m_config.reset(NEW ConfigSettings());
 
+  // Second: create the Lua state.
+  m_lua.reset(NEW Lua());
+
   // Create the app texture for off-screen composition.
   m_app_texture->create(m_app_window.getSize().x, m_app_window.getSize().y);
 
@@ -107,10 +110,10 @@ App::App(sf::RenderWindow& app_window)
   m_message_log.reset(NEW MessageLog());
 
   // Register Lua functions.
-  the_lua_instance.register_function("app_get_frame_counter", App::LUA_get_frame_counter);
-  //the_lua_instance.register_function("print", App::LUA_redirect_print);
-  the_lua_instance.register_function("messageLog_add", App::LUA_add);
-  the_lua_instance.register_function("get_config", App::LUA_get_config);
+  m_lua->register_function("app_get_frame_counter", App::LUA_get_frame_counter);
+  //m_lua->register_function("print", App::LUA_redirect_print);
+  m_lua->register_function("messageLog_add", App::LUA_add);
+  m_lua->register_function("get_config", App::LUA_get_config);
 
   // Create the tilesheet.
   m_tilesheet.reset(NEW TileSheet());
@@ -221,6 +224,11 @@ bool App::has_window_focus()
 ConfigSettings & App::get_config()
 {
   return *m_config;
+}
+
+Lua & App::get_lua()
+{
+  return *m_lua;
 }
 
 boost::random::mt19937 & App::get_rng()
@@ -346,7 +354,8 @@ int App::LUA_redirect_print(lua_State* L)
       std::string str = lua_tostring(L, i);
       the_message_log.add(str);
     }
-    else {
+    else 
+    {
       /* Do something with non-strings if you like */
     }
   }
@@ -391,7 +400,7 @@ int App::LUA_get_config(lua_State* L)
   else
   {
     boost::any result = the_config.get<boost::any>(key);
-    int args = the_lua_instance.push_value<boost::any>(result);
+    int args = instance().m_lua->push_value<boost::any>(result);
     return args;
   }
 }

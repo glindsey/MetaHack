@@ -12,6 +12,7 @@ SMALL THINGS
 
 MEDIUM THINGS
 =============
+[X] Get rid of all singletons except for the App singleton.
 [ ] When a StringDisplay is passed to/from Lua, it should be automatically converted between UTF-8 and UTF-16 as appropriate.
 [ ] Have StringDisplay be an alias for std::wstring instead of sf::String, in order to decouple a bit from SFML
 [ ] Add a function that allows for automatic substitution of substrings, instead of concatenating macros as is done now. This will be needed for easy creation of display strings in Lua.

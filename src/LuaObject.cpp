@@ -7,8 +7,6 @@
 #include "ErrorHandler.h"
 #include "Gender.h"
 
-std::unique_ptr<Lua> Lua::instance_;
-
 Lua::Lua()
 {
   // Initialize the logger.
@@ -35,16 +33,6 @@ Lua::~Lua()
 {
   /// Clean up Lua.
   lua_close(L_);
-}
-
-Lua& Lua::instance()
-{
-  if (!Lua::instance_)
-  {
-    Lua::instance_.reset(NEW Lua());
-  }
-
-  return *(Lua::instance_);
 }
 
 void Lua::register_function(StringKey name, lua_CFunction func)

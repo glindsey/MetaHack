@@ -11,14 +11,13 @@
 /// Forward declarations
 enum class ActionResult;
 
-/// Global Lua interface
+/// This class encapsulates the Lua state and interface as an object.
 class Lua : public boost::noncopyable
 {
 public:
-  virtual ~Lua();
+  Lua();
 
-  /// Get the Lua instance.
-  static Lua& instance();
+  virtual ~Lua();
 
   /// Register a function with Lua.
   void register_function(StringKey name, lua_CFunction func);
@@ -549,17 +548,8 @@ public:
   static int LUA_trace(lua_State* L);
 
 private:
-  /// Constructor (private because this is a singleton).
-  Lua();
-
   /// Private Lua state.
   lua_State* L_;
-
-  /// Unique pointer to singleton instance.
-  static std::unique_ptr<Lua> instance_;
 };
-
-#define the_lua_instance (Lua::instance())
-#define the_lua_state   (Lua::instance().state())
 
 #endif // LUA_H

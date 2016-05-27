@@ -10,6 +10,7 @@
 
 // Forward declarations
 class ConfigSettings;
+class Lua;
 class MessageLog;
 class MessageLogView;
 class StateMachine;
@@ -31,6 +32,9 @@ public:
 
   /// Get the app config settings.
   ConfigSettings& get_config();
+
+  /// Get the Lua state object.
+  Lua& get_lua();
 
   /// Get the random number generator.
   boost::random::mt19937& get_rng();
@@ -82,6 +86,9 @@ private:
   /// The config settings instance.
   std::unique_ptr<ConfigSettings> m_config;
 
+  /// The Lua state object.
+  std::unique_ptr<Lua> m_lua;
+
   /// The RNG instance.
   std::unique_ptr<boost::random::mt19937> m_rng;
 
@@ -126,6 +133,8 @@ private:
 
 // Here are a few macros to save on typing.
 #define the_config                App::instance().get_config()
+#define the_lua_instance          App::instance().get_lua()
+#define the_lua_state             App::instance().get_lua().state()
 #define the_default_font          App::instance().get_default_font()
 #define the_default_bold_font     App::instance().get_default_bold_font()
 #define the_default_mono_font     App::instance().get_default_mono_font()
