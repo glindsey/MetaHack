@@ -8,8 +8,11 @@ Dagger.intrinsics.plural = "daggers"
 Dagger.intrinsics.creatable = true
 
 Dagger.intrinsics.physical_mass = 1
-Dagger.intrinsics.rustable = true
+
+function Dagger.can_have_action_rust_done_by(id)
+    return true
+end
 
 function Dagger.get_description()
-	return "A small blade with a hilt."
+    return "A small blade with a hilt."
 end

@@ -11,12 +11,16 @@ SackCloth.intrinsics.inventory_size = 10
 
 SackCloth.intrinsics.open = true
 
-function Container.can_have_action_open_done_by(id)
+function SackCloth.can_have_action_open_done_by(id)
     return false
 end
 
-function Container.can_have_action_close_done_by(id)
+function SackCloth.can_have_action_close_done_by(id)
     return false
+end
+
+function SackCloth.can_have_action_burn_done_by(id)
+    return true
 end
 
 function SackCloth.get_description()

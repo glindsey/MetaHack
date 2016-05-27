@@ -7,8 +7,10 @@ ChestWooden.intrinsics.name = "wooden chest"
 ChestWooden.intrinsics.plural = "wooden chests"
 ChestWooden.intrinsics.creatable = true
 
-ChestWooden.intrinsics.flammable = true
+function ChestWooden.can_have_action_burn_done_by(id)
+    return true
+end
 
 function ChestWooden.get_description()
-	return "A wooden chest."
+    return "A wooden chest."
 end

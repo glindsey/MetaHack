@@ -13,6 +13,10 @@ Sconce.intrinsics.light_color_blue = 112
 Sconce.intrinsics.light_level = 256
 Sconce.intrinsics.light_strength = 48
 
+function Sconce.can_have_action_burn_done_by(id)
+    return true
+end
+
 function Sconce.get_description()
     return "A flaming torch secured in a holder that is attached to a wall."
 end

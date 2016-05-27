@@ -27,6 +27,10 @@ function Entity.can_have_action_hurt_done_by(id)
     return true
 end
 
+function Entity.can_have_action_burn_done_by(id)
+    return true
+end
+
 function Entity.get_tile_offset(id, frame)
     -- If entity's hit points are <= 0, show the "dead" tile.
     local hp = thing_get_modified_property_value(id, "hp")
