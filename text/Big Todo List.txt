@@ -2,6 +2,7 @@ BIG TODO LIST
 
 SMALL THINGS
 ============
+[ ] Feature: If nothing is selected and ']' is pressed, auto-select @ (you).
 [ ] Add Lua function "get_property_name_XXXX" for properties, so they can be added to Thing descriptions in a sensible manner (e.g. "a blind cave bat", but not "a blind dagger"
 [ ] Add Lua functions "on_base_property_change_XXX", "on_transient_property_change_XXX" for when Thing properties are modified. Pass in the old value and the new value.
 [ ] Export "thing_set_quantity" / "thing_modify_quantity" functions to Lua
