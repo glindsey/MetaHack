@@ -11,6 +11,7 @@
 #include "GameObject.h"
 #include "Gender.h"
 #include "LuaObject.h"
+#include "MapMemoryChunk.h"
 #include "MapTile.h"
 #include "Metadata.h"
 #include "ModifiablePropertyDictionary.h"
@@ -34,7 +35,7 @@ using WieldingPair = std::pair<unsigned int, ThingId>;
 using WearingMap = std::unordered_map<WearLocation, ThingId>;
 using WearingPair = std::pair<WearLocation, ThingId>;
 
-using MapMemory = std::vector<StringKey>;
+using MapMemory = std::vector<MapMemoryChunk>;
 using TilesSeen = boost::dynamic_bitset<>;
 using ActionQueue = std::deque< std::unique_ptr<Action> >;
 
@@ -249,10 +250,10 @@ public:
   void find_seen_tiles();
 
   /// Get the remembered tile type at the specified coordinates.
-  StringKey get_memory_at(int x, int y) const;
+  MapMemoryChunk const& get_memory_at(int x, int y) const;
 
   /// Get the remembered tile type at the specified coordinates.
-  StringKey get_memory_at(sf::Vector2i coords) const;
+  MapMemoryChunk const& get_memory_at(sf::Vector2i coords) const;
 
   /// Add the memory of a particular tile to a VertexArray.
   void add_memory_vertices_to(sf::VertexArray& vertices, int x, int y);
@@ -557,7 +558,7 @@ protected:
   void initialize();
 
   /// Get a reference to this Entity's map memory.
-  std::vector<StringKey>& get_map_memory();
+  MapMemory& get_map_memory();
 
   /// Perform the recursive visibility scan for an octant.
   /// Used by find_seen_tiles.

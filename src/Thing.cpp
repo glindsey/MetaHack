@@ -814,18 +814,18 @@ void Thing::find_seen_tiles()
   }
 }
 
-StringKey Thing::get_memory_at(int x, int y) const
+MapMemoryChunk const& Thing::get_memory_at(int x, int y) const
 {
   if (this->get_map_id() == MapFactory::null_map_id)
   {
-    return "???";
+    return{ "???", GAME.get_game_clock() };
   }
 
   Map& game_map = GAME.get_maps().get(this->get_map_id());
   return m_map_memory[game_map.get_index(x, y)];
 }
 
-StringKey Thing::get_memory_at(sf::Vector2i coords) const
+MapMemoryChunk const& Thing::get_memory_at(sf::Vector2i coords) const
 {
   return this->get_memory_at(coords.x, coords.y);
 }
@@ -850,7 +850,7 @@ void Thing::add_memory_vertices_to(sf::VertexArray& vertices,
   sf::Vector2f vNW(location.x - ts2, location.y - ts2);
   sf::Vector2f vNE(location.x + ts2, location.y - ts2);
 
-  StringKey tile_type = m_map_memory[game_map.get_index(x, y)];
+  StringKey tile_type = m_map_memory[game_map.get_index(x, y)].get_type();
   if (tile_type == "") { tile_type = "MTUnknown"; }
   Metadata* tile_metadata = &(m_game.get_metadata_collection("maptile").get(tile_type));
 
@@ -1847,7 +1847,7 @@ bool Thing::_process_self()
   return true;
 }
 
-std::vector<StringKey>& Thing::get_map_memory()
+MapMemory& Thing::get_map_memory()
 {
   return m_map_memory;
 }
@@ -1978,8 +1978,10 @@ void Thing::do_recursive_visibility(int octant,
         }
       }
       m_tiles_currently_seen[game_map.get_index(new_coords.x, new_coords.y)] = true;
-      m_map_memory[game_map.get_index(new_coords.x, new_coords.y)] = game_map.get_tile(new_coords.x,
-                                                                                            new_coords.y).get_tile_type();
+
+      MapMemoryChunk new_memory{ game_map.get_tile(new_coords.x, new_coords.y).get_tile_type(),
+                                 GAME.get_game_clock() };
+      m_map_memory[game_map.get_index(new_coords.x, new_coords.y)] = new_memory;
     }
     new_coords -= (sf::Vector2i)dir;
   }

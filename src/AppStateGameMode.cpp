@@ -89,9 +89,13 @@ void AppStateGameMode::execute()
 
   // If outstanding player actions have completed...
   auto player = GAME.get_player();
-  if (ticked && !player->action_is_pending() && !player->action_is_in_progress())
+  if (ticked)
   {
-    reset_inventory_area();
+    GAME.increment_game_clock();
+    if (!player->action_is_pending() && !player->action_is_in_progress())
+    {
+      reset_inventory_area();
+    }
   }
 }
 

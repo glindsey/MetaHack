@@ -23,6 +23,9 @@ using StringDisplay = std::wstring;
 /// It is a synonym for wchar_t;
 using CharDisplay = wchar_t;
 
+/// Game ticks in the game.
+using GameTick = uint32_t;
+
 /// FileName is, well, a filename.
 using FileName = std::string;
 

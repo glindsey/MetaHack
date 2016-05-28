@@ -312,6 +312,9 @@
     <ClInclude Include="include\GeoVector.h">
       <Filter>Types</Filter>
     </ClInclude>
+    <ClInclude Include="include\MapMemoryChunk.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">

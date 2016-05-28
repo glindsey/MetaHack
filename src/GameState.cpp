@@ -74,6 +74,22 @@ MetadataCollection & GameState::get_metadata_collection(StringKey category)
   return m_metacollection.at(category);
 }
 
+GameTick const & GameState::get_game_clock() const
+{
+  return m_game_clock;
+}
+
+void GameState::set_game_clock(GameTick game_clock)
+{
+  m_game_clock = game_clock;
+}
+
+void GameState::increment_game_clock()
+{
+  /// @todo Check for the unlikely, but not impossible, chance of rollover.
+  ++m_game_clock;
+}
+
 bool GameState::set_player(ThingId ref)
 {
   ASSERT_CONDITION(ref != get_things().get_mu());
