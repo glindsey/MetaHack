@@ -5,6 +5,7 @@
 #include "Action.h"
 
 #include "MessageLog.h"
+#include "StringTransforms.h"
 #include "Thing.h"
 #include "ThingManager.h"
 #include "ThingId.h"
@@ -484,6 +485,23 @@ std::unique_ptr<Action> Action::create(StringKey key, ThingId subject)
   {
     throw std::runtime_error("Requested non-existent action " + key);
   }
+}
+
+/// @todo IMPLEMENT ME
+StringDisplay Action::make_string(StringDisplay pattern)
+{
+  StringDisplay new_string = replace_tokens(pattern,
+                                            [](StringDisplay token) -> StringDisplay
+  {
+    return token;
+  });
+
+  new_string = replace_choose_tokens(pattern, [](StringDisplay token) -> bool
+  {
+    return true;
+  });
+
+  return new_string;
 }
 
 ActionMap const & Action::get_map()

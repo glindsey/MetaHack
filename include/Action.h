@@ -263,15 +263,18 @@ public:
 
     ;
 
-  /// A static function that registers an action subclass in a database.
+  /// A static method that registers an action subclass in a database.
   static void register_action_as(StringKey key, ActionCreator creator);
 
-  /// A static function that checks if a key exists.
+  /// A static method that checks if a key exists.
   static bool exists(StringKey key);
 
-  /// A static function that returns an Action associated with a key.
+  /// A static method that returns an Action associated with a key.
   /// If the requested key does not exist, throws an exception.
   static std::unique_ptr<Action> create(StringKey key, ThingId subject);
+
+  /// A method for composing a string from a pattern for this action.
+  StringDisplay make_string(StringDisplay pattern);
 
   /// Get a const reference to the action map.
   static ActionMap const& get_map();
