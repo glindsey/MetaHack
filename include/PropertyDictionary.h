@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 
+#include "Direction.h"
 #include "ErrorHandler.h"
 #include "Metadata.h"
 
@@ -153,6 +154,11 @@ inline bool operator==(boost::any const& lhs, boost::any const& rhs)
   if (ltype == typeid(bool))
   {
     return boost::any_cast<bool>(lhs) == boost::any_cast<bool>(rhs);
+  }
+
+  if (ltype == typeid(Direction))
+  {
+    return boost::any_cast<Direction>(lhs) == boost::any_cast<Direction>(rhs);
   }
 
   if (ltype == typeid(sf::Color))

@@ -5,6 +5,7 @@
 #include "App.h"
 #include "MapTile.h"
 #include "MathUtils.h"
+#include "RNGUtils.h"
 #include "ThingManager.h"
 
 // Static declarations

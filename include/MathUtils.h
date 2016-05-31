@@ -3,13 +3,9 @@
 
 #include "stdafx.h"
 
-#include "App.h"
-
 constexpr double PI = 3.14159265359;
 constexpr double PI_HALF = PI / 2.0;
 constexpr double PI_QUARTER = PI / 4.0;
-
-typedef boost::random::uniform_int_distribution<> uniform_int_dist;
 
 inline unsigned int next_power_of_two(unsigned int n)
 {
@@ -83,49 +79,6 @@ inline sf::Color saturation_add(sf::Color const& a,
   temp.b = saturation_add(a.b, b.b);
   temp.a = saturation_add(a.a, b.a);
   return temp;
-}
-
-inline bool flip_coin()
-{
-  uniform_int_dist coin(0, 1);
-  return (coin(the_RNG) == 0 ? false : true);
-}
-
-/// Pick a number out of a uniform distribution.
-inline unsigned int pick_uniform(unsigned int min, unsigned int max)
-{
-  uniform_int_dist number(min, max);
-  return number(the_RNG);
-}
-
-/// Pick a number out of a uniform distribution.
-inline int pick_uniform(int min, int max)
-{
-  uniform_int_dist number(min, max);
-  return number(the_RNG);
-}
-
-/// Choose one of two alternatives at random.
-template <class T> T choose_random(T a, T b)
-{
-  uniform_int_dist choose(0, 1);
-  int choice = choose(the_RNG);
-  return (choice ? a : b);
-}
-
-/// Choose one of three alternatives at random.
-template <class T> T choose_random(T a, T b, T c)
-{
-  uniform_int_dist choose(0, 2);
-  int choice = choose(the_RNG);
-  switch (choice)
-  {
-    case 0: return a;
-    case 1: return b;
-    case 2: return c;
-
-    default: return b;  // should not happen, here to shut compiler up
-  }
 }
 
 /// Divide and round up.

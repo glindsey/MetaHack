@@ -5,6 +5,7 @@
 
 #include "stdafx.h"
 
+#include "Direction.h"
 #include "ErrorHandler.h"
 #include "ThingId.h"
 
@@ -123,36 +124,32 @@ public:
     if (boost::any_cast<std::string>(&value))
     {
       std::string cast_value = boost::any_cast<std::string>(value);
-      lua_pushstring(L_, cast_value.c_str());
-      return 1;
+      return push_value(cast_value);
     }
     else if (boost::any_cast<bool>(&value))
     {
       bool cast_value = boost::any_cast<bool>(value);
-      lua_pushboolean(L_, cast_value);
-      return 1;
+      return push_value(cast_value);
     }
     else if (boost::any_cast<double>(&value))
     {
       double cast_value = boost::any_cast<double>(value);
-      lua_pushnumber(L_, static_cast<lua_Number>(cast_value));
-      return 1;
+      return push_value(cast_value);
     }
     else if (boost::any_cast<sf::Vector2i>(&value))
     {
       sf::Vector2i cast_value = boost::any_cast<sf::Vector2i>(value);
-      lua_pushinteger(L_, cast_value.x);
-      lua_pushinteger(L_, cast_value.y);
-      return 2;
+      return push_value(cast_value);
+    }
+    else if (boost::any_cast<Direction>(&value))
+    {
+      Direction cast_value = boost::any_cast<Direction>(value);
+      return push_value(cast_value);
     }
     else if (boost::any_cast<sf::Color>(&value))
     {
       sf::Color cast_value = boost::any_cast<sf::Color>(value);
-      lua_pushinteger(L_, cast_value.r);
-      lua_pushinteger(L_, cast_value.g);
-      lua_pushinteger(L_, cast_value.b);
-      lua_pushinteger(L_, cast_value.a);
-      return 4;
+      return push_value(cast_value);
     }
     else
     {
@@ -210,6 +207,14 @@ public:
     return 2;
   }
 
+  template <> int push_value(Direction value)
+  {
+    sf::Vector3i vec = static_cast<sf::Vector3i>(value);
+    lua_pushnumber(L_, static_cast<lua_Integer>(vec.x));
+    lua_pushnumber(L_, static_cast<lua_Integer>(vec.y));
+    lua_pushnumber(L_, static_cast<lua_Integer>(vec.z));
+    return 3;
+  }
   template <> int push_value(sf::Color value)
   {
     lua_pushnumber(L_, static_cast<lua_Integer>(value.r));
@@ -300,6 +305,15 @@ public:
                                              lua_tointeger(L_, -1));
     lua_pop(L_, 2);
     return return_value;
+  }
+
+  template <> Direction pop_value()
+  {
+    sf::Vector3i return_value = sf::Vector3i(lua_tointeger(L_, -3),
+                                             lua_tointeger(L_, -2),
+                                             lua_tointeger(L_, -1));
+    lua_pop(L_, 3);
+    return Direction(return_value);
   }
 
   template <> sf::Color pop_value()

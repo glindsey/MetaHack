@@ -8,6 +8,7 @@
 #include "Map.h"
 #include "MapTileMetadata.h"
 #include "MathUtils.h"
+#include "RNGUtils.h"
 #include "ThingManager.h"
 #include "TileSheet.h"
 
@@ -229,7 +230,7 @@ void MapTile::add_light_influence(ThingId source,
       //if (!is_opaque() || (d != Direction::Self))
       {
         float light_factor = (1.0f - dist_factor);
-        float wall_factor = calculate_light_factor(influence.coords, get_coords(), d);
+        float wall_factor = Direction::calculate_light_factor(influence.coords, get_coords(), d);
 
         addColor.r = static_cast<sf::Uint8>(light_color.r * wall_factor * light_factor);
         addColor.g = static_cast<sf::Uint8>(light_color.g * wall_factor * light_factor);

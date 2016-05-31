@@ -3,8 +3,6 @@
 #include "LuaObject.h"
 
 #include "ActionResult.h"
-#include "Direction.h"
-#include "ErrorHandler.h"
 #include "Gender.h"
 
 Lua::Lua()
