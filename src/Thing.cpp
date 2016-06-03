@@ -1341,10 +1341,12 @@ void Thing::light_up_surroundings()
     //if (!is_opaque() || is_wielding(light) || has_equipped(light))
     if (!is_opaque() || get_location()->is_subtype_of("Entity"))
     {
-      auto& things = get_inventory().get_things();
-      for (auto& thing_pair : things)
+      auto& inventory = get_inventory();
+      for (auto iter = inventory.begin(); 
+           iter != inventory.end(); 
+           ++iter)
       {
-        ThingId thing = thing_pair.second;
+        ThingId thing = iter->second;
         thing->light_up_surroundings();
       }
     }
@@ -1388,14 +1390,15 @@ void Thing::be_lit_by(ThingId light)
 void Thing::spill()
 {
   Inventory& inventory = get_inventory();
-  ThingMap const& things = inventory.get_things();
   StringDisplay message;
   bool success = false;
 
   // Step through all contents of this Thing.
-  for (ThingPair thing_pair : things)
+  for (auto iter = inventory.begin();
+       iter != inventory.end();
+       ++iter)
   {
-    ThingId thing = thing_pair.second;
+    ThingId thing = iter->second;
     if (m_location != ThingId::Mu())
     {
       ActionResult can_contain = m_location->can_contain(thing);
@@ -1635,15 +1638,15 @@ BodyPart Thing::is_equippable_on() const
 
 bool Thing::process()
 {
-  // Get a copy of the inventory's list of things.
+  // Get a copy of the Thing's inventory.
   // This is because things can be deleted/removed from the inventory
-  // over the course of processing them, and this might screw up the
+  // over the course of processing them, and this could invalidate the
   // iterator.
-  auto things = m_inventory.get_things();
+  Inventory temp_inventory{ m_inventory };
 
   // Process inventory.
-  for (auto iter = std::begin(things);
-       iter != std::end(things);
+  for (auto iter = temp_inventory.begin();
+       iter != temp_inventory.end();
        ++iter)
   {
     ThingId thing = iter->second;

@@ -32,12 +32,17 @@ public:
   /// @return The number of items in the inventory.
   unsigned int count();
 
-  /// Gets a map of all of the things in the inventory.
-  /// @return A map associating InventorySlot objects to
-  ///         std::shared_ptr<Thing> pointers.
-  /// @warning This function exposes too much of the class internals
-  ///          to the outside, and I may decide to refactor it later.
-  ThingMap const& get_things();
+  /// Gets a beginning iterator to the things map.
+  ThingMap::iterator begin();
+
+  /// Gets an ending iterator to the things map.
+  ThingMap::iterator end();
+
+  /// Gets a beginning const iterator to the things map.
+  ThingMap::const_iterator cbegin();
+
+  /// Gets an ending const iterator to the things map.
+  ThingMap::const_iterator cend();
 
   /// Finds items with identical qualities and combines them into a single
   /// aggregate item.
@@ -46,9 +51,9 @@ public:
   bool contains(ThingId thing);
   bool contains(InventorySlot slot);
 
-  InventorySlot get(ThingId thing);
+  InventorySlot operator[](ThingId thing);
 
-  ThingId get(InventorySlot slot);
+  ThingId operator[](InventorySlot slot);
 
   /// Splits an inventory item with a quantity > 1 into two items.
   /// This function clones the item in question, and splits the

@@ -70,7 +70,7 @@ Action::StateResult ActionEat::do_finish_work_(AnyMap& params)
   auto object = get_object();
 
   print_message_finish_();
-  object->get_inventory().get(INVSLOT_ZERO)->destroy();
+  object->get_inventory()[INVSLOT_ZERO]->destroy();
   return Action::StateResult::Success();
 }
 

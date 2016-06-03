@@ -64,6 +64,26 @@ unsigned int Inventory::count()
   return things_.size();
 }
 
+ThingMap::iterator Inventory::begin()
+{
+  return std::begin(things_);
+}
+
+ThingMap::iterator Inventory::end()
+{
+  return std::end(things_);
+}
+
+ThingMap::const_iterator Inventory::cbegin()
+{
+  return things_.cbegin();
+}
+
+ThingMap::const_iterator Inventory::cend()
+{
+  return things_.cend();
+}
+
 ThingMap const& Inventory::get_things()
 {
   return things_;
@@ -111,6 +131,20 @@ bool Inventory::contains(InventorySlot slot)
   return (things_.count(slot) != 0);
 }
 
+InventorySlot Inventory::operator[](ThingId thing)
+{
+  if (GAME.get_things().exists(thing) == false) return INVSLOT_INVALID;
+
+  auto iter = find(thing);
+
+  if (iter != things_.cend())
+  {
+    return iter->first;
+  }
+
+  return INVSLOT_INVALID;
+}
+
 InventorySlot Inventory::get(ThingId thing)
 {
   if (GAME.get_things().exists(thing) == false) return INVSLOT_INVALID;
@@ -123,6 +157,11 @@ InventorySlot Inventory::get(ThingId thing)
   }
 
   return INVSLOT_INVALID;
+}
+
+ThingId Inventory::operator[](InventorySlot slot)
+{
+  return (things_.at(slot));
 }
 
 ThingId Inventory::get(InventorySlot slot)

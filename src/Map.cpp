@@ -200,9 +200,8 @@ void Map::update_lighting()
     {
       ThingId contents = TILE(x, y).get_tile_contents();
       auto& inventory = contents->get_inventory();
-      auto& things = inventory.get_things();
-      for (auto iter = std::begin(things);
-           iter != std::end(things);
+      for (auto iter = inventory.begin();
+           iter != inventory.end();
            ++iter)
       {
         ThingId thing = iter->second;

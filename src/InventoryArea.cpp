@@ -153,7 +153,7 @@ std::vector<ThingId> InventoryArea::get_selected_things()
     iter != std::end(pImpl->selected_slots);
       ++iter)
     {
-      ThingId thing = inventory.get(*iter);
+      ThingId thing = inventory[*iter];
       things.push_back(thing);
     }
   }
@@ -188,7 +188,7 @@ unsigned int InventoryArea::get_max_quantity() const
   }
   else
   {
-    ThingId thing = inventory.get(pImpl->selected_slots[0]);
+    ThingId thing = inventory[pImpl->selected_slots[0]];
 
     if (thing == ThingId::Mu())
     {
@@ -257,7 +257,7 @@ ThingId InventoryArea::get_thing(InventorySlot selection)
 
   if (inventory.contains(selection))
   {
-    return inventory.get(selection);
+    return inventory[selection];
   }
   else
   {
@@ -298,10 +298,9 @@ void InventoryArea::render_contents_(sf::RenderTexture& texture, int frame)
   ///       truncating them at the edge of the box.  This must be fixed.
   /// @todo Also need to display some details about the item, such as whether it
   ///       is equipped, what magicules are equipped to it, et cetera.
-  auto& things = inventory.get_things();
-
-  for (auto iter = things.cbegin();
-  iter != things.cend(); ++iter)
+  for (auto iter = inventory.cbegin();
+       iter != inventory.cend(); 
+       ++iter)
   {
     auto& slot = (*iter).first;
     ThingId thing = (*iter).second;
