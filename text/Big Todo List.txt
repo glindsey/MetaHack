@@ -21,7 +21,7 @@ MEDIUM THINGS
 =============
 [/] Add a "generate_string" function that allows for automatic substitution of substrings, instead of concatenating macros as is done now. This will be needed for easy creation of display strings in Lua.
 
-[ ] Add the ability to pass Direction to/from Lua
+[X] Add the ability to pass Direction to/from Lua
     - Required if Direction enums will be stored as properties
 
 [/] Transient properties
