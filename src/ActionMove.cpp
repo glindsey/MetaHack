@@ -63,6 +63,10 @@ Action::StateResult ActionMove::do_begin_work_(AnyMap& params)
 
   StringDisplay message;
 
+  // === TEST CODE ===
+  message = make_string(L"Testing make_string() -- $$foo = $foo");
+  the_message_log.add(message);
+
   auto subject = get_subject();
   ThingId location = subject->get_location();
   MapTile* current_tile = subject->get_maptile();

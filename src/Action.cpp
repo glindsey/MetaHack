@@ -493,7 +493,12 @@ StringDisplay Action::make_string(StringDisplay pattern)
   StringDisplay new_string = replace_tokens(pattern,
                                             [](StringDisplay token) -> StringDisplay
   {
-    return token;
+      if (token == StringDisplay(L"foo"))
+      {
+          return L"BAR";
+      }
+      
+      return token;
   });
 
   new_string = replace_choose_tokens(pattern, [](StringDisplay token) -> bool

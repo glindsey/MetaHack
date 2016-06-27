@@ -808,6 +808,12 @@ void Thing::find_seen_tiles()
     return;
   }
 
+  /// @todo Handle field-of-view here.
+  ///       Field of view for an Entity can be:
+  ///          * NARROW (90 degrees straight ahead)
+  ///		   * WIDE (180 degrees in facing direction)
+  ///          * FRONTBACK (90 degrees ahead/90 degrees back)
+  ///          * FULL (all 360 degrees)
   for (int n = 1; n <= 8; ++n)
   {
     do_recursive_visibility(n);

@@ -84,11 +84,6 @@ ThingMap::const_iterator Inventory::cend()
   return things_.cend();
 }
 
-ThingMap const& Inventory::get_things()
-{
-  return things_;
-}
-
 void Inventory::consolidate_items()
 {
   auto first_iter = std::begin(things_);
@@ -145,26 +140,7 @@ InventorySlot Inventory::operator[](ThingId thing)
   return INVSLOT_INVALID;
 }
 
-InventorySlot Inventory::get(ThingId thing)
-{
-  if (GAME.get_things().exists(thing) == false) return INVSLOT_INVALID;
-
-  auto iter = find(thing);
-
-  if (iter != things_.cend())
-  {
-    return iter->first;
-  }
-
-  return INVSLOT_INVALID;
-}
-
 ThingId Inventory::operator[](InventorySlot slot)
-{
-  return (things_.at(slot));
-}
-
-ThingId Inventory::get(InventorySlot slot)
 {
   return (things_.at(slot));
 }

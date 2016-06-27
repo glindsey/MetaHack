@@ -156,7 +156,13 @@ bool AppStateGameMode::initialize()
   get_game_state().set_player(player);
 
   // Create the game map.
+  /// @todo This shouldn't be hardcoded here
+#ifdef NDEBUG
   MapId current_map_id = GAME.get_maps().create(64, 64);
+#else
+  MapId current_map_id = GAME.get_maps().create(16, 16);
+#endif
+
   Map& game_map = GAME.get_maps().get(current_map_id);
 
   // Move player to start position on the map.

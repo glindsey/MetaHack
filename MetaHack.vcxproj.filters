@@ -28,7 +28,16 @@
     <Filter Include="Types">
       <UniqueIdentifier>{fc4cfdb3-3d4e-4fd9-8582-0b0ad3143c2b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Shaders">
+    <Filter Include="Resource Files\Thing Scripts">
+      <UniqueIdentifier>{644086c3-23c6-4ef7-9258-1512a394120c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\MapTile Scripts">
+      <UniqueIdentifier>{b1fae8d5-f589-4b88-960f-c830a3f9058b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Other Scripts">
+      <UniqueIdentifier>{cb70d4b5-22c1-42ff-b1f8-55604229f88e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Shaders">
       <UniqueIdentifier>{77a3351a-cfa7-45aa-ba4d-fe17aae1e83d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -544,122 +553,122 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="resources\default.lua">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="resources\things\Rock.lua">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="resources\things\Biped.lua">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="resources\things\Thing.lua">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="resources\things\Human.lua">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="resources\scripts\map.lua">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="README.md">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="resources\things\LightSource.lua">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="resources\things\Sconce.lua">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="resources\things\Entity.lua">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="resources\things\Animal.lua">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="resources\things\Blob.lua">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="resources\things\ChestWooden.lua">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="resources\things\Coin.lua">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="resources\things\CoinGold.lua">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="resources\things\Container.lua">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="resources\things\Dagger.lua">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="resources\things\LightOrb.lua">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="resources\things\Mu.lua">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="resources\things\RockLichen.lua">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="resources\things\SackCloth.lua">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="resources\things\Sapient.lua">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="resources\maptiles\MTFloor.lua">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="resources\maptiles\MTFloorDirt.lua">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="resources\maptiles\MTFloorStone.lua">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="resources\maptiles\MTUnknown.lua">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="resources\maptiles\MTWall.lua">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="resources\maptiles\MTWallStone.lua">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="resources\things\Chest.lua">
       <Filter>Resource Files</Filter>
     </None>
     <None Include=".gitignore">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="resources\things\TileContents.lua">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="resources\deepcopy.lua">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="resources\things\Weapon.lua">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="resources\things\WeaponCutting.lua">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="resources\things\WeaponStabbing.lua">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="resources\things\WeaponStrangling.lua">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="resources\things\WeaponStriking.lua">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="resources\shaders\default.frag">
-      <Filter>Shaders</Filter>
+      <Filter>Resource Files\Shaders</Filter>
     </None>
     <None Include="resources\shaders\default.vert">
-      <Filter>Shaders</Filter>
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="resources\things\Animal.lua">
+      <Filter>Resource Files\Thing Scripts</Filter>
+    </None>
+    <None Include="resources\things\Biped.lua">
+      <Filter>Resource Files\Thing Scripts</Filter>
+    </None>
+    <None Include="resources\things\Blob.lua">
+      <Filter>Resource Files\Thing Scripts</Filter>
+    </None>
+    <None Include="resources\things\Chest.lua">
+      <Filter>Resource Files\Thing Scripts</Filter>
+    </None>
+    <None Include="resources\things\ChestWooden.lua">
+      <Filter>Resource Files\Thing Scripts</Filter>
+    </None>
+    <None Include="resources\things\Coin.lua">
+      <Filter>Resource Files\Thing Scripts</Filter>
+    </None>
+    <None Include="resources\things\CoinGold.lua">
+      <Filter>Resource Files\Thing Scripts</Filter>
+    </None>
+    <None Include="resources\things\Container.lua">
+      <Filter>Resource Files\Thing Scripts</Filter>
+    </None>
+    <None Include="resources\things\Dagger.lua">
+      <Filter>Resource Files\Thing Scripts</Filter>
+    </None>
+    <None Include="resources\things\Entity.lua">
+      <Filter>Resource Files\Thing Scripts</Filter>
+    </None>
+    <None Include="resources\things\Human.lua">
+      <Filter>Resource Files\Thing Scripts</Filter>
+    </None>
+    <None Include="resources\things\LightOrb.lua">
+      <Filter>Resource Files\Thing Scripts</Filter>
+    </None>
+    <None Include="resources\things\LightSource.lua">
+      <Filter>Resource Files\Thing Scripts</Filter>
+    </None>
+    <None Include="resources\things\Mu.lua">
+      <Filter>Resource Files\Thing Scripts</Filter>
+    </None>
+    <None Include="resources\things\Rock.lua">
+      <Filter>Resource Files\Thing Scripts</Filter>
+    </None>
+    <None Include="resources\things\RockLichen.lua">
+      <Filter>Resource Files\Thing Scripts</Filter>
+    </None>
+    <None Include="resources\things\SackCloth.lua">
+      <Filter>Resource Files\Thing Scripts</Filter>
+    </None>
+    <None Include="resources\things\Sapient.lua">
+      <Filter>Resource Files\Thing Scripts</Filter>
+    </None>
+    <None Include="resources\things\Sconce.lua">
+      <Filter>Resource Files\Thing Scripts</Filter>
+    </None>
+    <None Include="resources\things\Thing.lua">
+      <Filter>Resource Files\Thing Scripts</Filter>
+    </None>
+    <None Include="resources\things\TileContents.lua">
+      <Filter>Resource Files\Thing Scripts</Filter>
+    </None>
+    <None Include="resources\things\Weapon.lua">
+      <Filter>Resource Files\Thing Scripts</Filter>
+    </None>
+    <None Include="resources\things\WeaponCutting.lua">
+      <Filter>Resource Files\Thing Scripts</Filter>
+    </None>
+    <None Include="resources\things\WeaponStabbing.lua">
+      <Filter>Resource Files\Thing Scripts</Filter>
+    </None>
+    <None Include="resources\things\WeaponStrangling.lua">
+      <Filter>Resource Files\Thing Scripts</Filter>
+    </None>
+    <None Include="resources\things\WeaponStriking.lua">
+      <Filter>Resource Files\Thing Scripts</Filter>
+    </None>
+    <None Include="resources\maptiles\MTFloor.lua">
+      <Filter>Resource Files\MapTile Scripts</Filter>
+    </None>
+    <None Include="resources\maptiles\MTFloorDirt.lua">
+      <Filter>Resource Files\MapTile Scripts</Filter>
+    </None>
+    <None Include="resources\maptiles\MTFloorStone.lua">
+      <Filter>Resource Files\MapTile Scripts</Filter>
+    </None>
+    <None Include="resources\maptiles\MTUnknown.lua">
+      <Filter>Resource Files\MapTile Scripts</Filter>
+    </None>
+    <None Include="resources\maptiles\MTWall.lua">
+      <Filter>Resource Files\MapTile Scripts</Filter>
+    </None>
+    <None Include="resources\maptiles\MTWallStone.lua">
+      <Filter>Resource Files\MapTile Scripts</Filter>
+    </None>
+    <None Include="resources\deepcopy.lua">
+      <Filter>Resource Files\Other Scripts</Filter>
+    </None>
+    <None Include="resources\default.lua">
+      <Filter>Resource Files\Other Scripts</Filter>
+    </None>
+    <None Include="resources\scripts\map.lua">
+      <Filter>Resource Files\Other Scripts</Filter>
     </None>
   </ItemGroup>
 </Project>

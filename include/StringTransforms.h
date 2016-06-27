@@ -4,6 +4,8 @@
 
 #include "common_functions.h"
 
+#include <boost/tokenizer.hpp>
+
 /// Find and replace all occurrences of a substring with another string.
 /// @todo TEST ME
 inline StringDisplay find_and_replace(StringDisplay str, StringDisplay find_str, StringDisplay replace_str)
@@ -21,26 +23,46 @@ inline StringDisplay find_and_replace(StringDisplay str, StringDisplay find_str,
 /// Find all occurrence of tokens, e.g. $xxx. 
 /// The passed-in functor is called with the string "xxx" as an argument,
 /// and returns another string to replace it with.
-/// @todo TEST ME
+/// @warning This function WILL recursively expand tokens, so be careful
+///          not to create an infinite loop.
+/// @todo Get this to replace "$$" with "$". Right now this won't work.
 inline StringDisplay replace_tokens(StringDisplay str,
                                     std::function<StringDisplay(StringDisplay)> functor)
 {
+  LOG(INFO) << "Replacing tokens in: \"" << str << "\"";
+
   auto loc = str.begin();
+
   while (loc != str.end())
   {
     loc = std::find(str.begin(), str.end(), L'$');
-    auto token_loc = loc + 1;
-    auto token_end_loc = std::find_if_not(token_loc, str.end(), [](wchar_t ch)
+
+    if (loc != str.end())
     {
-      return iswalnum(ch);
-    }) - 1;
+        auto token_loc = loc + 1;
+        auto token_end_loc = std::find_if(token_loc, str.end(), [](wchar_t ch)
+        {
+            return iswspace(ch);
+        });
 
-    StringDisplay token_str{ token_loc, token_end_loc };
-    std::transform(token_str.begin(), token_str.end(), token_str.begin(), ::towlower);
+        StringDisplay token_str{ token_loc, token_end_loc };
+        LOG(INFO) << "Found token: \"" << token_str << "\"";
 
-    StringDisplay replace_str = functor(token_str);
+        std::transform(token_str.begin(), token_str.end(), token_str.begin(), ::towlower);
 
-    str = StringDisplay(str.begin(), loc - 1) + replace_str + StringDisplay(token_end_loc + 1, str.end());
+        StringDisplay replace_str = functor(token_str);
+
+        LOG(INFO) << "Replacing with: \"" << replace_str << "\"";
+
+        auto new_str = StringDisplay(str.begin(), loc) + replace_str;
+        if (token_end_loc != str.end())
+        {
+            new_str += StringDisplay(token_end_loc + 1, str.end());
+        }
+        str = new_str;
+
+        LOG(INFO) << "String is now: \"" << str << "\"";
+    }
   }
 
   return str;
@@ -50,7 +72,7 @@ inline StringDisplay replace_tokens(StringDisplay str,
 /// The passed-in functor is called with the string "xxx" as an argument.
 /// The entire thing is replaced with "yyy" if the functor returns true, or
 /// "zzz" if the functor returns false.
-/// @todo TEST ME
+/// @todo FIX ME. This is definitely incorrect.
 inline StringDisplay replace_choose_tokens(StringDisplay str,
                                            std::function<bool(StringDisplay)> functor)
 {
