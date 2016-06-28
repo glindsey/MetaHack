@@ -487,22 +487,30 @@ std::unique_ptr<Action> Action::create(StringKey key, ThingId subject)
   }
 }
 
-/// @todo IMPLEMENT ME
+/// @todo IMPLEMENT ME MORE
 StringDisplay Action::make_string(StringDisplay pattern)
 {
   StringDisplay new_string = replace_tokens(pattern,
                                             [](StringDisplay token) -> StringDisplay
   {
-      if (token == StringDisplay(L"foo"))
-      {
-          return L"BAR";
-      }
-      
-      return token;
-  });
+    if (token == L"foo")
+    {
+      return L"BAR";
+    }
 
-  new_string = replace_choose_tokens(pattern, [](StringDisplay token) -> bool
+    return token;
+  }, 
+                                            [](StringDisplay token) -> bool
   {
+    if (token == L"true")
+    {
+      return true;
+    }
+    else if (token == L"false")
+    {
+      return false;
+    }
+
     return true;
   });
 

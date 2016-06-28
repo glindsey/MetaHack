@@ -6,104 +6,233 @@
 
 #include <boost/tokenizer.hpp>
 
-/// Find and replace all occurrences of a substring with another string.
-/// @todo TEST ME
-inline StringDisplay find_and_replace(StringDisplay str, StringDisplay find_str, StringDisplay replace_str)
+/// Enum used for the replace_tokens state machine.
+enum class TokenizerState
 {
-  size_t loc = 0;
-  while (loc != str.length())
+  Text,               ///< Just copying text as normal.
+  ParsingToken,       ///< Parsing a token name.
+  ParsingChoice,      ///< Parsing a choice selector.
+  ParsingChoiceTrue,  ///< Parsing the "true" portion of a choice selector.
+  ParsingChoiceFalse, ///< Parsing the "false" portion of a choice selector.
+  ParsingChoiceError, ///< State when the selector contained an invalid character.
+  MemberCount
+};
+
+inline std::ostream& operator<<(std::ostream& os, TokenizerState state)
+{
+  switch (state)
   {
-    loc = str.find(find_str, loc);
-    str = str.substr(0, loc - 1) + replace_str + str.substr(loc + find_str.length());
-    loc += find_str.length();
+    case TokenizerState::Text: os << "Text"; break;
+    case TokenizerState::ParsingToken: os << "ParsingToken"; break;
+    case TokenizerState::ParsingChoice: os << "ParsingChoice"; break;
+    case TokenizerState::ParsingChoiceTrue: os << "ParsingChoiceTrue"; break;
+    case TokenizerState::ParsingChoiceFalse: os << "ParsingChoiceFalse"; break;
+    case TokenizerState::ParsingChoiceError: os << "ParsingChoiceError"; break;
+    default: os << "??? (" << static_cast<int>(state) << ")";
   }
-  return str;
+
+  return os;
 }
 
-/// Find all occurrence of tokens, e.g. $xxx. 
-/// The passed-in functor is called with the string "xxx" as an argument,
-/// and returns another string to replace it with.
-/// @warning This function WILL recursively expand tokens, so be careful
-///          not to create an infinite loop.
-/// @todo Get this to replace "$$" with "$". Right now this won't work.
+/// Find all occurrence of tokens, e.g. `$xxx` or `$(xxx?yyy:zzz)`.
+///
+/// For tokens of form `$xxx`:
+///   The passed-in functor `token_functor` is called with the string `xxx` as
+/// an argument, and returns another string to replace it with.
+///
+/// For tokens of form `$(xxx?yyy:zzz)`:
+///   The passed-in functor `choose_functor` is called with the string `xxx` as
+/// an argument. If the functor returns true, the token will be replaced by the
+/// string `yyy`; otherwise, it will be replaced by the string `zzz`.
+///
+/// String `xxx` must not be blank, and must consist of alphanumeric characters
+/// only.
+/// Strings `yyy` or `zzz` can be blank, and can consist of any characters
+/// other than ":" for string `yyy` or ")" for string `zzz`.
+///
+/// The string `$$` is recognized as a single `$` instead of being parsed as a
+/// token.
+///
+/// In all cases, a backslash can be used to escape any character and prevent
+/// it from being recognized as a token delimiter.
 inline StringDisplay replace_tokens(StringDisplay str,
-                                    std::function<StringDisplay(StringDisplay)> functor)
+                                    std::function<StringDisplay(StringDisplay)> token_functor,
+                                    std::function<bool(StringDisplay)> choose_functor)
 {
-  LOG(INFO) << "Replacing tokens in: \"" << str << "\"";
+  TokenizerState state = TokenizerState::Text;
+  StringDisplay out_str;
+  StringDisplay token_name;
+  StringDisplay token_result;
+  StringDisplay selector_true;
+  StringDisplay selector_false;
+  StringDisplay discard_string;
+  StringDisplay* current_string = &out_str;
+
+  LOG(TRACE) << "Replacing tokens in: \"" << str << "\"";
+
+  str += L'\0';
 
   auto loc = str.begin();
 
   while (loc != str.end())
   {
-    loc = std::find(str.begin(), str.end(), L'$');
-
-    if (loc != str.end())
+    // Handle characters escaped with a backslash.
+    if (*loc == '\\')
     {
-        auto token_loc = loc + 1;
-        auto token_end_loc = std::find_if(token_loc, str.end(), [](wchar_t ch)
+      ++loc;
+      if (loc == str.end()) break;
+      
+      *current_string += *loc;
+
+      ++loc;
+      if (loc == str.end()) break;
+    }
+
+    switch (state)
+    {
+      case TokenizerState::Text:
+
+        if (*loc == L'$')
         {
-            return iswspace(ch);
-        });
-
-        StringDisplay token_str{ token_loc, token_end_loc };
-        LOG(INFO) << "Found token: \"" << token_str << "\"";
-
-        std::transform(token_str.begin(), token_str.end(), token_str.begin(), ::towlower);
-
-        StringDisplay replace_str = functor(token_str);
-
-        LOG(INFO) << "Replacing with: \"" << replace_str << "\"";
-
-        auto new_str = StringDisplay(str.begin(), loc) + replace_str;
-        if (token_end_loc != str.end())
-        {
-            new_str += StringDisplay(token_end_loc + 1, str.end());
+          state = TokenizerState::ParsingToken;
+          current_string = &token_name;
+          token_name.clear();
         }
-        str = new_str;
+        else if (*loc != L'\0')
+        {
+          out_str += *loc;
+        }
+        break;
 
-        LOG(INFO) << "String is now: \"" << str << "\"";
-    }
-  }
+      case TokenizerState::ParsingToken:
+        if (token_name.empty())
+        {
+          if (*loc == L'$')
+          {
+            out_str += L'$';
+            state = TokenizerState::Text;
+            current_string = &out_str;
+            break;
+          }
+          else if (*loc == L'(')
+          {
+            state = TokenizerState::ParsingChoice;
+            current_string = &token_name;
+            token_name.clear();
+            break;
+          }
+        }
 
-  return str;
-}
+        if (iswalpha(*loc))
+        {
+          token_name += *loc;
+        }
+        else
+        {
+          if (!token_name.empty())
+          {
+            LOG(TRACE) << "Found token: \"" << token_name << "\"";
+            std::transform(token_name.begin(), token_name.end(), token_name.begin(), ::towlower);
+            token_result = token_functor(token_name);
+            LOG(TRACE) << "Replacing token with: \"" << token_result << "\"";
+            out_str += token_result;
 
-/// Find all occurrences of "choose" tokens, e.g. $(xxx?yyy:zzz). 
-/// The passed-in functor is called with the string "xxx" as an argument.
-/// The entire thing is replaced with "yyy" if the functor returns true, or
-/// "zzz" if the functor returns false.
-/// @todo FIX ME. This is definitely incorrect.
-inline StringDisplay replace_choose_tokens(StringDisplay str,
-                                           std::function<bool(StringDisplay)> functor)
-{
-  StringDisplay original_str = str;
-  auto loc = str.begin();
-  while (loc != str.end())
+            if (*loc != L'\0')
+            {
+              out_str += *loc;
+            }
+          }
+          state = TokenizerState::Text;
+          current_string = &out_str;
+        }
+        break;
+
+      case TokenizerState::ParsingChoice:
+        if (iswalpha(*loc))
+        {
+          token_name += *loc;
+        }
+        else if (*loc == L'?')
+        {
+          if (!token_name.empty())
+          {
+            LOG(TRACE) << "Found selector token: \"" << token_name << "\"";
+            std::transform(token_name.begin(), token_name.end(), token_name.begin(), ::towlower);
+            selector_true.clear();
+            state = TokenizerState::ParsingChoiceTrue;
+            current_string = &selector_true;
+          }
+          else
+          {
+            LOG(WARNING) << "Selector name empty, skipping token";
+            state = TokenizerState::ParsingChoiceError;
+            current_string = &discard_string;
+          }
+        }
+        else
+        {
+          LOG(WARNING) << "Invalid character \"" << *loc << "\" seen in selector name \"" << token_name << "\", skipping token";
+          state = TokenizerState::ParsingChoiceError;
+          current_string = &discard_string;
+        }
+        break;
+
+      case TokenizerState::ParsingChoiceTrue:
+        if (*loc == L':')
+        {
+          LOG(TRACE) << "Found selector 'true' string: \"" << selector_true << "\"";
+          selector_false.clear();
+          state = TokenizerState::ParsingChoiceFalse;
+          current_string = &selector_false;
+        }
+        else
+        {
+          selector_true += *loc;
+        }
+        break;
+
+      case TokenizerState::ParsingChoiceFalse:
+        if (*loc == L')')
+        {
+          LOG(TRACE) << "Found selector 'false' string: \"" << selector_false << "\"";
+          bool result = choose_functor(token_name);
+          token_result = (result ? selector_true : selector_false);
+          LOG(TRACE) << "Replacing token with: \"" << token_result << "\"";
+          out_str += (result ? selector_true : selector_false);
+          state = TokenizerState::Text;
+          current_string = &out_str;
+        }
+        else
+        {
+          selector_false += *loc;
+        }
+        break;
+
+      case TokenizerState::ParsingChoiceError:
+        if (*loc == L')')
+        {
+          state = TokenizerState::Text;
+          current_string = &out_str;
+        }
+        break;
+
+      default:
+        LOG(WARNING) << "Unknown tokenizer state " << state;
+        state = TokenizerState::Text;
+        current_string = &out_str;
+        break;
+
+    } // end switch
+    ++loc;
+
+  } // end while
+
+  LOG(TRACE) << "String is now: \"" << str << "\"";
+
+  if (state != TokenizerState::Text)
   {
-    StringDisplay token_start_str = L"$(";
-    loc = std::search(str.begin(), str.end(), token_start_str.begin(), token_start_str.end());
-    auto token_loc = loc + 2;
-    auto left_loc = std::find(token_loc, str.end(), L'?') + 1;
-    auto right_loc = std::find(left_loc, str.end(), L':') + 1;
-    auto close_loc = std::find(right_loc, str.end(), L')');
-    if ((token_loc == str.end()) ||
-        (left_loc == str.end()) ||
-        (right_loc == str.end()) ||
-        (close_loc == str.end()))
-    {
-      throw std::runtime_error(("Malformed choose token in " + wstring_to_utf8(original_str)).c_str());
-    }
-
-    StringDisplay token_str{ token_loc, left_loc - 1 };
-    std::transform(token_str.begin(), token_str.end(), token_str.begin(), ::towlower);
-    StringDisplay left_str{ left_loc, right_loc - 1 };
-    StringDisplay right_str{ right_loc, close_loc - 1 };
-
-    StringDisplay replace_str = functor(token_str) ? left_str : right_str;
-
-    str = StringDisplay(str.begin(), loc - 1) + replace_str + StringDisplay(close_loc + 1, str.end());
+    LOG(WARNING) << "End of string while in tokenizer state " << state;
   }
 
-  return str;
+  return out_str;
 }
-
