@@ -273,7 +273,9 @@ public:
   /// If the requested key does not exist, throws an exception.
   static std::unique_ptr<Action> create(StringKey key, ThingId subject);
 
-  /// A method for composing a string from a pattern for this action.
+  /// A method for composing a string from a pattern for an action.
+  StringDisplay make_string(StringDisplay pattern, std::vector<StringDisplay> optional_strings);
+
   StringDisplay make_string(StringDisplay pattern);
 
   /// Get a const reference to the action map.

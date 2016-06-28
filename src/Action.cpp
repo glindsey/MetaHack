@@ -487,8 +487,14 @@ std::unique_ptr<Action> Action::create(StringKey key, ThingId subject)
   }
 }
 
-/// @todo IMPLEMENT ME MORE
+
 StringDisplay Action::make_string(StringDisplay pattern)
+{
+  return make_string(pattern, {});
+}
+
+/// @todo Implement more tokens; in particular, implement optional string vector.
+StringDisplay Action::make_string(StringDisplay pattern, std::vector<StringDisplay> optional_strings)
 {
   StringDisplay new_string = replace_tokens(pattern,
                                             [&](StringDisplay token) -> StringDisplay
