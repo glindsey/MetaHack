@@ -491,22 +491,151 @@ std::unique_ptr<Action> Action::create(StringKey key, ThingId subject)
 StringDisplay Action::make_string(StringDisplay pattern)
 {
   StringDisplay new_string = replace_tokens(pattern,
-                                            [](StringDisplay token) -> StringDisplay
+                                            [&](StringDisplay token) -> StringDisplay
   {
-    if (token == L"foo")
+    if (token == L"are")
     {
-      return L"BAR";
+      return get_subject()->choose_verb(L" are", L" is");
+    }
+    if (token == L"were")
+    {
+      return get_subject()->choose_verb(L" were", L" was");
+    }
+    if (token == L"do")
+    {
+      return get_subject()->choose_verb(L" do", L" does");
+    }
+    if (token == L"get")
+    {
+      return get_subject()->choose_verb(L" get", L" gets");
+    }
+    if (token == L"have")
+    {
+      return get_subject()->choose_verb(L" have", L" has");
+    }
+    if (token == L"seem")
+    {
+      return get_subject()->choose_verb(L" seem", L" seems");
+    }
+    if (token == L"try")
+    {
+      return get_subject()->choose_verb(L" try", L" tries");
     }
 
-    return token;
-  }, 
-                                            [](StringDisplay token) -> bool
+    if (token == L"foo_is")
+    {
+      return get_object()->choose_verb(L" are", L" is");
+    }
+    if (token == L"foo_has")
+    {
+      return get_object()->choose_verb(L" have", L" has");
+    }
+
+    if (token == L"the_foo")
+    {
+      return get_object_string_();
+    }
+
+    if (token == L"the_foos_location")
+    {
+      return get_object()->get_location()->get_identifying_string(true);
+    }
+
+    if (token == L"the_target_thing")
+    {
+      return get_target_thing()->get_identifying_string(true);
+    }
+
+    if (token == L"fooself")
+    {
+      return get_object()->get_self_or_identifying_string(get_subject(), true);
+    }
+
+    if (token == L"subj_pro_foo")
+    {
+      return get_object()->get_subject_pronoun();
+    }
+
+    if (token == L"obj_pro_foo")
+    {
+      return get_object()->get_object_pronoun();
+    }
+
+    if (token == L"verb")
+    {
+      return get_verb();
+    }
+    if (token == L"verb3")
+    {
+      return get_verb3();
+    }
+    if (token == L"verbed")
+    {
+      return get_verbed();
+    }
+    if (token == L"verbing")
+    {
+      return get_verbing();
+    }
+    if (token == L"verb_pp")
+    {
+      return get_verb_pp();
+    }
+
+    if (token == L"you")
+    {
+      return get_subject()->get_you_or_identifying_string();
+    }
+    if (token == L"you_subj")
+    {
+      return get_subject()->get_subject_pronoun();
+    }
+    if (token == L"you_obj")
+    {
+      return get_subject()->get_object_pronoun();
+    }
+    if (token == L"your")
+    {
+      return get_subject()->get_possessive();
+    }
+    if (token == L"yourself")
+    {
+      return get_subject()->get_reflexive_pronoun();
+    }
+
+    if (token == L"targdir")
+    {
+      std::wstringstream ss;
+      ss << get_target_direction();
+      return ss.str();
+    }
+
+    return L"(" + token + L")";
+  },
+                                            [&](StringDisplay token) -> bool
   {
+    if (token == L"cv")
+    {
+      return get_subject()->is_third_person();
+    }
+    if (token == L"objcv")
+    {
+      return get_object()->is_third_person();
+    }
+    if (token == L"is_player")
+    {
+      return get_subject()->is_player();
+    }
+    if (token == L"targcv")
+    {
+      return get_target_thing()->is_third_person();
+    }
+
     if (token == L"true")
     {
       return true;
     }
-    else if (token == L"false")
+    if (token == L"false")
     {
       return false;
     }

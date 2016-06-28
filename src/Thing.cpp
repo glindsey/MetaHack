@@ -822,9 +822,11 @@ void Thing::find_seen_tiles()
 
 MapMemoryChunk const& Thing::get_memory_at(int x, int y) const
 {
+  static MapMemoryChunk null_memory_chunk{ "???", GAME.get_game_clock() };
+
   if (this->get_map_id() == MapFactory::null_map_id)
   {
-    return{ "???", GAME.get_game_clock() };
+    return null_memory_chunk;
   }
 
   Map& game_map = GAME.get_maps().get(this->get_map_id());
@@ -1165,6 +1167,11 @@ StringDisplay Thing::get_identifying_string(bool definite)
   name = article + adjectives + noun + suffix;
 
   return name;
+}
+
+bool Thing::is_third_person()
+{
+  return (GAME.get_player() == m_ref) || (get_base_property<unsigned int>("quantity") > 1);
 }
 
 StringDisplay const& Thing::choose_verb(StringDisplay const& verb12,

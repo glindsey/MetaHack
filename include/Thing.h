@@ -386,6 +386,12 @@ public:
   /// get_possessive_adjective().
   StringDisplay get_possessive();
 
+  /// Return true if a third-person verb form should be used.
+  /// This function checks to see if this Thing is currently designated as
+  /// the player (in the ThingFactory), or has a quantity greater than zero.
+  /// If so, it returns true; otherwise, it returns false.
+  bool is_third_person();
+
   /// Choose which verb form to use based on first/second/third person.
   /// This function checks to see if this Thing is currently designated as
   /// the player (in the ThingFactory), or has a quantity greater than zero.

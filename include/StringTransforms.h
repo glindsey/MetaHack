@@ -46,7 +46,7 @@ inline std::ostream& operator<<(std::ostream& os, TokenizerState state)
 /// string `yyy`; otherwise, it will be replaced by the string `zzz`.
 ///
 /// String `xxx` must not be blank, and must consist of alphanumeric characters
-/// only.
+/// and underscores only.
 /// Strings `yyy` or `zzz` can be blank, and can consist of any characters
 /// other than ":" for string `yyy` or ")" for string `zzz`.
 ///
@@ -123,7 +123,7 @@ inline StringDisplay replace_tokens(StringDisplay str,
           }
         }
 
-        if (iswalpha(*loc))
+        if (iswalpha(*loc) || (*loc == L'_'))
         {
           token_name += *loc;
         }
@@ -148,7 +148,7 @@ inline StringDisplay replace_tokens(StringDisplay str,
         break;
 
       case TokenizerState::ParsingChoice:
-        if (iswalpha(*loc))
+        if (iswalpha(*loc) || (*loc == '_'))
         {
           token_name += *loc;
         }
