@@ -274,9 +274,9 @@ public:
   static std::unique_ptr<Action> create(StringKey key, ThingId subject);
 
   /// A method for composing a string from a pattern for an action.
-  StringDisplay make_string(StringDisplay pattern, std::vector<StringDisplay> optional_strings);
+  StringDisplay make_string(StringDisplay pattern, std::vector<StringDisplay> optional_strings) const;
 
-  StringDisplay make_string(StringDisplay pattern);
+  StringDisplay make_string(StringDisplay pattern) const;
 
   /// Get a const reference to the action map.
   static ActionMap const& get_map();
@@ -363,7 +363,7 @@ protected:
   ///
   /// This method can be overridden if necessary to customze the description for a
   /// particular action.
-  virtual StringDisplay get_object_string_();
+  virtual StringDisplay get_object_string_() const;
 
   /// Describes the target in terms of the subject or object.
   /// This string will vary based on the presence of objects or a direction
@@ -374,7 +374,7 @@ protected:
   ///
   /// This method can be overridden if necessary to customze the description for a
   /// particular action.
-  virtual StringDisplay get_target_string_();
+  virtual StringDisplay get_target_string_() const;
 
   /// Print a "[SUBJECT] try to [VERB]" message.
   /// The message will vary based on the presence of objects or a direction
@@ -383,7 +383,7 @@ protected:
   ///
   /// This method can be overridden if necessary to customze the message for a
   /// particular action.
-  virtual void print_message_try_();
+  virtual void print_message_try_() const;
 
   /// Print a "[SUBJECT] [VERB]" message.
   /// The message will vary based on the presence of objects or a direction
@@ -392,7 +392,7 @@ protected:
   ///
   /// This method can be overridden if necessary to customze the message for a
   /// particular action.
-  virtual void print_message_do_();
+  virtual void print_message_do_() const;
 
   /// Print a "[SUBJECT] begin to [VERB]" message.
   /// The message will vary based on the presence of objects or a direction
@@ -401,7 +401,7 @@ protected:
   ///
   /// This method can be overridden if necessary to customze the message for a
   /// particular action.
-  virtual void print_message_begin_();
+  virtual void print_message_begin_() const;
 
   /// Print a "[SUBJECT] stop [VERBING]" message.
   /// The message will vary based on the presence of objects or a direction
@@ -410,7 +410,7 @@ protected:
   ///
   /// This method can be overridden if necessary to customze the message for a
   /// particular action.
-  virtual void print_message_stop_();
+  virtual void print_message_stop_() const;
 
   /// Print a "[SUBJECT] finish [VERBING]" message.
   /// The message will vary based on the presence of objects or a direction
@@ -419,7 +419,7 @@ protected:
   ///
   /// This method can be overridden if necessary to customze the message for a
   /// particular action.
-  virtual void print_message_finish_();
+  virtual void print_message_finish_() const;
 
   /// Print a "[SUBJECT] can't [VERB] that!" message.
   /// The message will vary based on the presence of objects or a direction
@@ -429,7 +429,7 @@ protected:
   /// @todo Finish implementing me, right now the default implementation is too simple.
   /// This method can be overridden if necessary to customze the message for a
   /// particular action.
-  virtual void print_message_cant_();
+  virtual void print_message_cant_() const;
 
 private:
   struct Impl;

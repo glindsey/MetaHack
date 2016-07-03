@@ -81,7 +81,7 @@ Action::StateResult ActionRead::do_abort_work_(AnyMap& params)
   return Action::StateResult::Success();
 }
 
-void ActionRead::print_message_cant_()
+void ActionRead::print_message_cant_() const
 {
   StringDisplay message = THE_FOO + FOO_HAS + L" no writing to read.";
   the_message_log.add(message);

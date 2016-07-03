@@ -14,9 +14,10 @@ Action::StateResult ActionWait::do_prebegin_work_(AnyMap& params)
 
 Action::StateResult ActionWait::do_begin_work_(AnyMap& params)
 {
-  StringDisplay message =
-    YOU + L" successfully" + CV(L" stay", L" stays") +
-    L" where " + YOU_SUBJ_ARE + L".";
+  StringDisplay message = make_string(L"$you successfully $(cv?stay:stays) where $you_subj $are.");
+
+  //YOU + L" successfully" + CV(L" stay", L" stays") +
+  //L" where " + YOU_SUBJ_ARE + L".";
 
   the_message_log.add(message);
 

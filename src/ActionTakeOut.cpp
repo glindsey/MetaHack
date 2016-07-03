@@ -112,13 +112,13 @@ Action::StateResult ActionTakeOut::do_abort_work_(AnyMap& params)
   return Action::StateResult::Success();
 }
 
-void ActionTakeOut::print_message_try_()
+void ActionTakeOut::print_message_try_() const
 {
   StringDisplay message = YOU_TRY + L" to " + VERB + L" " + get_object_string_() + L" from " + get_target_string_() + L".";
   the_message_log.add(message);
 }
 
-void ActionTakeOut::print_message_do_()
+void ActionTakeOut::print_message_do_() const
 {
   StringDisplay message = YOU + L" " + CV(VERB, VERB3) + L" " + get_object_string_() + L" from " + get_target_string_() + L".";
   the_message_log.add(message);

@@ -30,6 +30,6 @@ protected:
   virtual StateResult do_finish_work_(AnyMap& params) override;
   virtual StateResult do_abort_work_(AnyMap& params) override;
 
-  virtual void print_message_try_() override;
-  virtual void print_message_do_() override;
+  virtual void print_message_try_() const override;
+  virtual void print_message_do_() const override;
 };

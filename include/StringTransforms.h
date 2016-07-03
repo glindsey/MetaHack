@@ -131,10 +131,10 @@ inline StringDisplay replace_tokens(StringDisplay str,
         {
           if (!token_name.empty())
           {
-            LOG(TRACE) << "Found token: \"" << token_name << "\"";
+            //LOG(TRACE) << "Found token: \"" << token_name << "\"";
             std::transform(token_name.begin(), token_name.end(), token_name.begin(), ::towlower);
             token_result = token_functor(token_name);
-            LOG(TRACE) << "Replacing token with: \"" << token_result << "\"";
+            //LOG(TRACE) << "Replacing token with: \"" << token_result << "\"";
             out_str += token_result;
 
             if (*loc != L'\0')
@@ -156,7 +156,7 @@ inline StringDisplay replace_tokens(StringDisplay str,
         {
           if (!token_name.empty())
           {
-            LOG(TRACE) << "Found selector token: \"" << token_name << "\"";
+            //LOG(TRACE) << "Found selector token: \"" << token_name << "\"";
             std::transform(token_name.begin(), token_name.end(), token_name.begin(), ::towlower);
             selector_true.clear();
             state = TokenizerState::ParsingChoiceTrue;
@@ -180,7 +180,7 @@ inline StringDisplay replace_tokens(StringDisplay str,
       case TokenizerState::ParsingChoiceTrue:
         if (*loc == L':')
         {
-          LOG(TRACE) << "Found selector 'true' string: \"" << selector_true << "\"";
+          //LOG(TRACE) << "Found selector 'true' string: \"" << selector_true << "\"";
           selector_false.clear();
           state = TokenizerState::ParsingChoiceFalse;
           current_string = &selector_false;
@@ -194,10 +194,10 @@ inline StringDisplay replace_tokens(StringDisplay str,
       case TokenizerState::ParsingChoiceFalse:
         if (*loc == L')')
         {
-          LOG(TRACE) << "Found selector 'false' string: \"" << selector_false << "\"";
+          //LOG(TRACE) << "Found selector 'false' string: \"" << selector_false << "\"";
           bool result = choose_functor(token_name);
           token_result = (result ? selector_true : selector_false);
-          LOG(TRACE) << "Replacing token with: \"" << token_result << "\"";
+          //LOG(TRACE) << "Replacing token with: \"" << token_result << "\"";
           out_str += (result ? selector_true : selector_false);
           state = TokenizerState::Text;
           current_string = &out_str;
@@ -227,7 +227,7 @@ inline StringDisplay replace_tokens(StringDisplay str,
 
   } // end while
 
-  LOG(TRACE) << "String is now: \"" << str << "\"";
+  //LOG(TRACE) << "String is now: \"" << out_str << "\"";
 
   if (state != TokenizerState::Text)
   {
