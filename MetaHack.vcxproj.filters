@@ -330,6 +330,9 @@
     <ClInclude Include="include\RNGUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\ActionTurn.h">
+      <Filter>Actions</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">
@@ -550,6 +553,9 @@
     </ClCompile>
     <ClCompile Include="src\IntegerRange.cpp">
       <Filter>Types</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ActionTurn.cpp">
+      <Filter>Actions</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

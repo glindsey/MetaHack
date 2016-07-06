@@ -1,0 +1,119 @@
+List of String Tokens available in MetaHack
+===========================================
+
+VERB FORMS
+----------
+$verb
+    Action verb in first-person form. ("attack", "drink", throw", etc.)
+
+$verb3
+    Action verb in third-person form. ("attacks", "drinks", throws", etc.)
+
+$verbed
+    Action verb in past-tense form. ("attacked", "drank", "threw", etc.)
+
+$verbing
+    Action verb in gerund form. ("attacking", "drinking", asking", etc.)
+
+$verb_pp, $verbpp
+    Action verb in past participle form. ("attacked", "drunk", thrown", etc.)
+
+
+PREDEFINED VERBS
+----------------
+*Note*: For below, first choice is displayed if subject is the player or is of a quantity greater than 1; otherwise second choice is displayed.
+
+$are
+    "are"/"is" depending on subject form
+
+$were
+    "were"/"was" depending on subject form
+
+$do
+    "do"/"does" depending on subject form
+
+$get
+    "get"/"gets" depending on subject form
+
+$have
+    "have"/"has" depending on subject form
+
+$seem
+    "seem"/"seems" depending on subject form
+
+$try
+    "try"/"tries" depending on subject form
+
+$foo_is, $foois
+    "are"/"is" depending on OBJECT form
+
+$foo_has, $foohas
+    "have"/"has" depending on OBJECT form
+
+
+SUBJECT DESCRIPTORS
+-------------------
+$you
+    Description of the subject; "you" if subject is the player.
+
+$you_subj
+    Subject pronoun (he/she/it/etc.); "you" if subject is the player.
+
+$you_obj
+    Object pronoun (him/her/it/etc.); "you" if subject is the player.
+
+$your
+    Possessive pronoun (his/her/its/etc.); "your" if subject is the player.
+
+$yourself
+    Reflexive pronoun (himself/herself/itself/etc.); "yourself" if subject is the player.
+
+
+OBJECT DESCRIPTORS
+------------------
+$the_foo, $thefoo
+    Description of the object(s), e.g. "the orc", "your steel knife"
+
+$the_foos_location, $thefooslocation
+    Description of the first object's location.
+
+$fooself
+    Description of the first object, or if subject == object, a reflexive pronoun ("yourself" / "itself" / etc.).
+
+$subj_pro_foo
+    Subject pronoun (he/she/it/etc.) for the verb object.
+
+$obj_pro_foo
+    Object pronoun (him/her/it/etc.) for the verb object.
+
+
+TARGET DESCRIPTORS
+==================
+$targdir
+    Target direction (north, northeast, east, etc.) if one exists.
+
+
+SELECTORS
+=========
+$(cv?x,y) [also subj_cv, subjcv]
+    Displays `x` if subject is the player or is of a quantity greater than 1; otherwise displays `y`.
+
+$(obj_cv?x,y) [also objcv]
+    Displays `x` if the object is the player or is of a quantity greater than 1; otherwise displays `y`.
+
+$(targ_cv?x,y) [also targcv]
+    Displays `x` if the target is the player or is of a quantity greater than 1; otherwise displays `y`.
+
+$(is_player?x:y) [also isplayer]
+    Displays `x` if the object is the player; otherwise displays `y`.
+
+$(true?x,y)
+    Displays `x`. Used for debugging purposes.
+
+$(false?x,y)
+    Displays `y`. Used for debugging purposes.
+
+OTHER
+-----
+$n, where `n` is a number
+    Displays the `n`-th string in the vector passed as an optional argument to make_string.

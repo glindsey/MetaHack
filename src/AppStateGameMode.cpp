@@ -36,6 +36,7 @@
 #include "ActionRead.h"
 #include "ActionShoot.h"
 #include "ActionTakeOut.h"
+#include "ActionTurn.h"
 #include "ActionUnlock.h"
 #include "ActionUse.h"
 #include "ActionWait.h"
@@ -332,6 +333,10 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           }
           else
           {
+            p_action.reset(new ActionTurn(player));
+            p_action->set_target(key_direction);
+            player->queue_action(std::move(p_action));
+
             p_action.reset(new ActionMove(player));
             p_action->set_target(key_direction);
             player->queue_action(std::move(p_action));
@@ -475,7 +480,24 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
         // *** No ALT, YES CTRL, SHIFT is irrelevant ******************************
       if (!key.alt && key.control)
       {
-        switch (key.code)
+        if (key_direction != Direction::None)
+        {
+            if (key_direction == Direction::Self)
+            {
+                p_action.reset(new ActionWait(player));
+                player->queue_action(std::move(p_action));
+                result = SFMLEventResult::Handled;
+            }
+            else
+            {
+        // CTRL-arrow -- Turn without moving
+                p_action.reset(new ActionTurn(player));
+                p_action->set_target(key_direction);
+                player->queue_action(std::move(p_action));
+                result = SFMLEventResult::Handled;
+            }
+        }
+        else switch (key.code)
         {
           // CTRL-MINUS -- Zoom out
           case sf::Keyboard::Key::Dash:
@@ -889,17 +911,33 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 #endif
 
       // *** YES ALT, YES CTRL, SHIFT is irrelevant *****************************
-      // Right now we don't have any CTRL-ALT-* combinations.
-#if 0
       if (key.alt && key.control)
       {
-        switch (key.code)
+        if (key_direction != Direction::None)
         {
+          if (key_direction == Direction::Self)
+          {
+            p_action.reset(new ActionWait(player));
+            player->queue_action(std::move(p_action));
+            result = SFMLEventResult::Handled;
+          }
+          else
+          {
+            // CTRL-ALT-arrow -- Move without turning
+            p_action.reset(new ActionMove(player));
+            p_action->set_target(key_direction);
+            player->queue_action(std::move(p_action));
+            result = SFMLEventResult::Handled;
+          }
+        }
+        else switch (key.code)
+        {
+          // There are no other CTRL-ALT key combinations right now.
           default:
             break;
         }
       }
-#endif
+
       break;
     } // end case GameInputState::Map
 

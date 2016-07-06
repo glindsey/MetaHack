@@ -160,6 +160,7 @@
     <ClInclude Include="include\ActionResult.h" />
     <ClInclude Include="include\ActionShoot.h" />
     <ClInclude Include="include\ActionTakeOut.h" />
+    <ClInclude Include="include\ActionTurn.h" />
     <ClInclude Include="include\ActionUnlock.h" />
     <ClInclude Include="include\ActionUse.h" />
     <ClInclude Include="include\ActionWait.h" />
@@ -255,6 +256,7 @@
     <ClCompile Include="src\ActionRead.cpp" />
     <ClCompile Include="src\ActionShoot.cpp" />
     <ClCompile Include="src\ActionTakeOut.cpp" />
+    <ClCompile Include="src\ActionTurn.cpp" />
     <ClCompile Include="src\ActionUnlock.cpp" />
     <ClCompile Include="src\ActionUse.cpp" />
     <ClCompile Include="src\ActionWait.cpp" />

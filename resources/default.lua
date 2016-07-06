@@ -90,7 +90,7 @@ function inheritsFrom(baseClass, className)
         
         -- Add this class to the base class' list of children.
         baseClass.children = baseClass.children or {}
-        baseClass.children[className] = new_class;
+        baseClass.children[className] = new_class
     end
 
     function new_class:class()
