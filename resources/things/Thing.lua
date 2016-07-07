@@ -36,7 +36,7 @@ Thing.intrinsics.quantity = 1
 
 function Thing.get_display_name(id)
     local quantity = thing_get_modified_property_value(id, "quantity")
-    if quantity > 1
+    if quantity > 1 then
         return intrinsics.plural
     else
         return intrinsics.name
@@ -96,16 +96,14 @@ function Thing.process()
     return ActionResult.Success
 end
 
-function Thing:get_intrinsic(name)
-    local result = self.intrinsics[name]
+function Thing:get_intrinsic(key)
+    local result = self.intrinsics[key]
     
     if (result == nil) then
         local superclass = self.superClass()
         
         if (superclass ~= nil) then
-            return self.superClass():get_intrinsic(name)
-        else
-            --error("Traversed all the way to root class but could not find " .. name)
+            return self.superClass():get_intrinsic(key)
         end
     else
         -- Look for special cases.

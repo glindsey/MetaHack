@@ -37,18 +37,23 @@ ThingManager::~ThingManager()
 
 bool ThingManager::first_is_subtype_of_second(StringKey first, StringKey second)
 {
+  //CLOG(TRACE, "Thing") << "Checking if " << first << " is a subtype of " << second << "...";
+
   StringKey first_parent = m_game.get_metadata_collection("thing").get(first).get_intrinsic<StringKey>("parent");
 
   if (first_parent.empty())
   {
+    //CLOG(TRACE, "Thing") << first << " parent is empty, returning false";
     return false;
   }
 
   if (first_parent == second)
   {
+    //CLOG(TRACE, "Thing") << first << " parent = " << second << ", returning true";
     return true;
   }
 
+  //CLOG(TRACE, "Thing") << first << " parent = " << first_parent << ", recursing...";
   return first_is_subtype_of_second(first_parent, second);
 }
 

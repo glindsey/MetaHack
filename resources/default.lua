@@ -64,6 +64,9 @@ function inheritsFrom(baseClass, className)
     
     local new_class = {}
 
+    -- Set the type name of this class.
+    new_class.typeName = className
+
     -- new_class:create() is disabled because we don't actually create
     -- instances of these classes; instead they operate on C++ Thing instances.
         
@@ -74,9 +77,8 @@ function inheritsFrom(baseClass, className)
     --  return newinst
     --end
 
-    -- Add the default intrinsics and properties tables if they don't exist.
+    -- Add the default intrinsics table if it doesn't exist.
     new_class.intrinsics = new_class.intrinsics or {}
-    new_class.defaults = new_class.defaults or {}
     
     if nil ~= baseClass then	
         -- Do a deep copy of the base class, for starters.
@@ -85,8 +87,16 @@ function inheritsFrom(baseClass, className)
         -- Inherit from the base class.
         setmetatable(new_class, { __index = baseClass })
 
+        -- Reset the type name of this class. (It will have been overwritten by the deep copy.)
+        new_class.typeName = className
+
         -- Add the other class as this class' parent.
-        new_class.intrinsics.parent = baseClass.type
+        if baseClass.typeName ~= nil then
+            print("Setting parent of " .. new_class.typeName .. " to " .. baseClass.typeName)
+        else
+            print(new_class.typeName .. " has no parent")
+        end
+        new_class.intrinsics.parent = baseClass.typeName
         
         -- Add this class to the base class' list of children.
         baseClass.children = baseClass.children or {}

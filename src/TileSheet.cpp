@@ -15,12 +15,21 @@ struct TileSheet::Impl
   /// Return bitset index based on coordinates.
   unsigned int get_index(unsigned int x, unsigned int y)
   {
-    return (y * texture_size) + x;
+    uint32_t texture_size_in_tiles = texture_size / the_config.get<unsigned int>("map_tile_size");
+    return (y * texture_size_in_tiles) + x;
   }
 
   /// Return true if the requested area is totally unused.
   bool area_is_unused(sf::Vector2u start, sf::Vector2u size)
   {
+    uint32_t texture_size_in_tiles = texture_size / the_config.get<unsigned int>("map_tile_size");
+
+    if (((start.x + size.x) > texture_size_in_tiles) ||
+        ((start.y + size.y) > texture_size_in_tiles))
+    {
+      return false;
+    }
+
     for (unsigned int y = start.y; y < start.y + size.y; ++y)
     {
       for (unsigned int x = start.x; x < start.x + size.x; ++x)
@@ -53,6 +62,7 @@ struct TileSheet::Impl
         }
         ++start.x;
       }
+      start.x = 0;
       ++start.y;
     }
 
@@ -79,6 +89,8 @@ struct TileSheet::Impl
 TileSheet::TileSheet()
   : pImpl(NEW Impl())
 {
+  SET_UP_LOGGER("TileSheet", true);
+
   /// @todo Make this a configurable setting.
   pImpl->texture_size = 1024;
   //pImpl->texture_size = pImpl->texture.getMaximumSize();
@@ -90,9 +102,12 @@ TileSheet::TileSheet()
     FATAL_ERROR("Could not create TileSheet texture. Now we're sad.");
   }
 
-  uint32_t used_map_size = (pImpl->texture_size / the_config.get<unsigned int>("map_tile_size")) *
-    (pImpl->texture_size / the_config.get<unsigned int>("map_tile_size"));
+  uint32_t texture_dimension_in_tiles = pImpl->texture_size / the_config.get<unsigned int>("map_tile_size");
+  uint32_t used_map_size = texture_dimension_in_tiles * texture_dimension_in_tiles;
   pImpl->used.resize(used_map_size);
+
+  CLOG(TRACE, "TileSheet") << "Created " << pImpl->texture_size << " x " << pImpl->texture_size << " tilesheet texture";
+  CLOG(TRACE, "TileSheet") << "Fits " << texture_dimension_in_tiles << " x " << texture_dimension_in_tiles << " tiles";
 }
 
 TileSheet::~TileSheet()

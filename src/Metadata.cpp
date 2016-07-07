@@ -39,6 +39,7 @@ Metadata::Metadata(MetadataCollection& collection, StringKey type)
   if (fs::exists(pngfile_path))
   {
     sf::Vector2u tile_location;
+    CLOG(TRACE, "Metadata") << "Tiles were found for " << qualified_name;
 
     tile_location = the_tilesheet.load_collection(pngfile_string);
     CLOG(TRACE, "Metadata") << "Tiles for " << qualified_name <<
