@@ -8,6 +8,6 @@ Sapient.intrinsics.plural = "[Sapients]"
 
 Sapient.intrinsics.can_talk = true
 
-function Sapient.get_description()
+function Sapient.get_brief_description()
 	return "An animal that is capable of free will and independent thought."
 end

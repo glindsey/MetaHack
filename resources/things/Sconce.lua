@@ -17,7 +17,7 @@ function Sconce.can_have_action_burn_done_by(id)
     return true
 end
 
-function Sconce.get_description()
+function Sconce.get_brief_description()
     return "A flaming torch secured in a holder that is attached to a wall."
 end
 

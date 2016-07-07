@@ -17,6 +17,6 @@ function Chest.can_have_action_unlock_done_by(id)
     return true
 end
 
-function Chest.get_description()
+function Chest.get_brief_description()
     return "A large strong box, typically made of wood and used for storage or shipping."
 end

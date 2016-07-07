@@ -6,7 +6,7 @@ Weapon = inheritsFrom(Thing, "Weapon")
 Weapon.intrinsics.name = "[Weapon]"
 Weapon.intrinsics.plural = "[Weapons]"
 
-function Weapon.get_description()
+function Weapon.get_brief_description()
     return "A thing designed or used for inflicting bodily harm or physical damage."
 end
 

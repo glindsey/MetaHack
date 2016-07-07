@@ -22,6 +22,6 @@ Biped.intrinsics.bodypart_foot_count = 2
 
 Biped.intrinsics.can_throw = true
 
-function Biped.get_description()
+function Biped.get_brief_description()
 	return "An animal that uses two legs for walking."
 end

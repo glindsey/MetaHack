@@ -5,6 +5,6 @@ require "resources/maptiles/MTFloor"
 MTFloorStone = inheritsFrom(MTFloor, "MTFloorStone")
 MTFloorStone.intrinsics.name = "stone floor"
 
-function MTFloorStone.get_description()
+function MTFloorStone.get_brief_description()
 	return "A stone floor."
 end

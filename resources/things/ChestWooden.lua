@@ -11,6 +11,6 @@ function ChestWooden.can_have_action_burn_done_by(id)
     return true
 end
 
-function ChestWooden.get_description()
+function ChestWooden.get_brief_description()
     return "A wooden chest."
 end

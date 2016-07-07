@@ -6,6 +6,6 @@ WeaponCutting = inheritsFrom(Weapon, "WeaponCutting")
 WeaponCutting.intrinsics.name = "[WeaponCutting]"
 WeaponCutting.intrinsics.plural = "[WeaponCutting]"
 
-function WeaponCutting.get_description()
+function WeaponCutting.get_brief_description()
 	return "A weapon that is designed to inflict cutting damage."
 end

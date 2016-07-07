@@ -13,7 +13,7 @@ LightSource.intrinsics.light_color_blue = 64
 LightSource.intrinsics.light_level = 256
 LightSource.intrinsics.light_strength = 64
 
-function LightSource.get_description()
+function LightSource.get_brief_description()
     return "A source of illumination."
 end
 

@@ -327,7 +327,7 @@ public:
 
   /// Return this thing's description.
   /// Adds adjective qualifiers (such as "fireproof", "waterproof", etc.)
-  /// @todo Add adjective qualifiers.s
+  /// @todo Add adjective qualifiers.
   StringDisplay get_display_name() const;
 
   /// Return this object's plural.

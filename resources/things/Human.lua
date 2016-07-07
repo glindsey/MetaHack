@@ -21,6 +21,6 @@ Human.intrinsics.attribute_charisma = range(13, 17)
 Human.intrinsics.attribute_vigilance = range(13, 17)
 Human.intrinsics.attribute_luck = range(13, 17)
 
-function Human.get_description()
+function Human.get_brief_description()
 	return "A human being."
 end

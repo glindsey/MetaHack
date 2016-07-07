@@ -11,7 +11,7 @@ MTUnknown.intrinsics.opacity_green = 255
 MTUnknown.intrinsics.opacity_blue = 255
 
 
-function MTUnknown.get_description()
+function MTUnknown.get_brief_description()
 	return "Unexplored space."
 end
 

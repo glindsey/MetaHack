@@ -10,6 +10,6 @@ Mu.intrinsics.opacity_red = 0
 Mu.intrinsics.opacity_green = 0
 Mu.intrinsics.opacity_blue = 0
 
-function Mu.get_description()
+function Mu.get_brief_description()
 	return "A completely empty space; the absence of all things."
 end

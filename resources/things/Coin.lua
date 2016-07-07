@@ -8,7 +8,7 @@ Coin.intrinsics.plural = "[Coins]"
 
 Coin.intrinsics.physical_mass = 1
 
-function Coin.get_description()
+function Coin.get_brief_description()
     return "A flat, typically round piece of metal with an official stamp, used as money."
 end
 

@@ -15,6 +15,6 @@ LightOrb.intrinsics.light_strength = 255
 
 LightOrb.intrinsics.physical_mass = 2
 
-function LightOrb.get_description()
+function LightOrb.get_brief_description()
 	return "A glowing orb, used for testing."
 end

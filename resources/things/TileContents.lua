@@ -11,6 +11,6 @@ TileContents.intrinsics.opacity_green = 0
 TileContents.intrinsics.opacity_blue = 0
 TileContents.intrinsics.inventory_size = -1
 
-function TileContents.get_description()
+function TileContents.get_brief_description()
 	return "The things that are held or included in this tile."
 end

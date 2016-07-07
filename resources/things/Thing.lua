@@ -34,7 +34,16 @@ Thing.intrinsics.locked = false
 Thing.intrinsics.open = true
 Thing.intrinsics.quantity = 1
 
-function Thing.get_description(id)
+function Thing.get_display_name(id)
+    local quantity = thing_get_modified_property_value(id, "quantity")
+    if quantity > 1
+        return intrinsics.plural
+    else
+        return intrinsics.name
+    end
+end
+
+function Thing.get_brief_description(id)
     return "Thing #" .. id .. ", which has no description associated with it."
 end
 

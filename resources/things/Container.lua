@@ -16,6 +16,6 @@ function Container.can_have_action_close_done_by(id)
     return true
 end
 
-function Container.get_description()
+function Container.get_brief_description()
     return "An object that can be used to hold or transport something."
 end

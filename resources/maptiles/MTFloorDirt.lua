@@ -5,6 +5,6 @@ require "resources/maptiles/MTFloor"
 MTFloorDirt = inheritsFrom(MTFloor, "MTFloorDirt")
 MTFloorDirt.intrinsics.name = "dirt floor"
 
-function MTFloorDirt.get_description()
+function MTFloorDirt.get_brief_description()
 	return "A dirt floor."
 end
