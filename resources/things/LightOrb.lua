@@ -7,11 +7,10 @@ LightOrb.intrinsics.name = "magical lighting orb"
 LightOrb.intrinsics.plural = "magical lighting orbs"
 LightOrb.intrinsics.creatable = true
 
-LightOrb.intrinsics.light_color_red = 255
-LightOrb.intrinsics.light_color_green = 255
+LightOrb.intrinsics.light_color_red = 128
+LightOrb.intrinsics.light_color_green = 128
 LightOrb.intrinsics.light_color_blue = 255
-LightOrb.intrinsics.light_level = 256
-LightOrb.intrinsics.light_strength = 255
+LightOrb.intrinsics.light_strength = 128
 
 LightOrb.intrinsics.physical_mass = 2
 

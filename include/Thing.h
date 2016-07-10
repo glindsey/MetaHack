@@ -42,6 +42,19 @@ using ActionQueue = std::deque< std::unique_ptr<Action> >;
 /// Typedef for the factory method.
 using ThingCreator = std::shared_ptr<Thing>(*)(void);
 
+// Associated enum classes to aid in parameter legibility.
+enum class ArticleChoice
+{
+  Indefinite,
+  Definite
+};
+
+enum class UsePossessives
+{
+  No,
+  Yes
+};
+
 // Thing is any object in the game, animate or not.
 class Thing
   :
@@ -141,7 +154,7 @@ public:
   /// @param default_value  Default value to use, if any.
   /// @return The property (or default) value for that key.
   template<typename T>
-  T get_base_property(StringKey key, T default_value = T())
+  T get_base_property(StringKey key, T default_value = T()) const
   {
     if (m_properties.contains(key))
     {
@@ -189,7 +202,7 @@ public:
   /// @param default_value  Default value to use, if any.
   /// @return The modified (or base) property value for that key.
   template<typename T>
-  T get_modified_property(StringKey key, T default_value = T())
+  T get_modified_property(StringKey key, T default_value = T()) const
   {
     if (!m_properties.contains(key))
     {
@@ -219,7 +232,7 @@ public:
   unsigned int remove_modifier(StringKey key, ThingId id);
 
   /// Get the quantity this thing represents.
-  unsigned int get_quantity();
+  unsigned int get_quantity() const;
 
   /// Set the quantity this thing represents.
   void set_quantity(unsigned int quantity);
@@ -325,16 +338,17 @@ public:
   /// Return the MapId this Thing is currently on, or 0 if not on a map.
   MapId get_map_id() const;
 
-  /// Return this thing's description.
-  /// Adds adjective qualifiers (such as "fireproof", "waterproof", etc.)
-  /// @todo Add adjective qualifiers.
+  /// Return this object's adjective qualifiers (such as "fireproof", "waterproof", etc.)
+  StringDisplay get_display_adjectives() const;
+
+  /// Return this object's name.
   StringDisplay get_display_name() const;
 
   /// Return this object's plural.
   StringDisplay get_display_plural() const;
 
   /// Get the thing's proper name (if any).
-  StringDisplay get_proper_name();
+  StringDisplay get_proper_name() const;
 
   /// Set this thing's proper name.
   void set_proper_name(StringDisplay name);
@@ -343,10 +357,9 @@ public:
   /// If it IS the player, it'll return "you".
   /// Otherwise it calls get_identifying_string().
   ///
-  /// @param definite   If true, uses definite articles.
-  ///                   If false, uses indefinite articles.
-  ///                   Defaults to true.
-  StringDisplay get_you_or_identifying_string(bool definite = true);
+  /// @param articles Choose whether to use definite or indefinite articles.
+  ///                 Defaults to definite articles.
+  StringDisplay get_you_or_identifying_string(ArticleChoice articles = ArticleChoice::Definite) const;
 
   /// Return a string that identifies this thing.
   /// If it matches the object passed in as "other", it'll return
@@ -354,28 +367,23 @@ public:
   /// Otherwise it calls get_identifying_string().
   ///
   /// @param other      The "other" to compare to.
-  /// @param definite   If true, uses definite articles.
-  ///                   If false, uses indefinite articles.
-  ///                   Defaults to true.
-  StringDisplay get_self_or_identifying_string(ThingId other, bool definite = true);
+  /// @param articles Choose whether to use definite or indefinite articles.
+  ///                 Defaults to definite articles.
+  StringDisplay get_self_or_identifying_string(ThingId other, ArticleChoice articles = ArticleChoice::Definite) const;
 
   /// Return a string that identifies this thing.
   /// Returns "the/a/an" and a description of the thing, such as
   /// "the chair".
-  /// If it is carried by the player, it'll return "your (thing)".
+  /// If it is carried by the player, and possessives = true, it'll 
+  /// return "your (thing)".
   /// Likewise, if it is carried by another Entity it'll return
   /// "(Entity)'s (thing)".
-  /// @param definite   If true, uses definite articles.
-  ///                   If false, uses indefinite articles.
-  ///                   Defaults to true.
-  StringDisplay get_identifying_string(bool definite = true);
-
-  /// Return a string that identifies this thing without using possessives.
-  /// The same as get_identifying_string, but without using any possessives.
-  /// @param definite   If true, uses definite articles.
-  ///                   If false, uses indefinite articles.
-  ///                   Defaults to true.
-  StringDisplay get_identifying_string_without_possessives(bool definite = true);
+  /// @param articles Choose whether to use definite or indefinite articles.
+  ///                 Defaults to definite articles.
+  /// @param possessives  Choose whether to use possessive articles when appropriate.
+  ///                     Defaults to using them.
+  StringDisplay get_identifying_string(ArticleChoice articles = ArticleChoice::Definite, 
+                                       UsePossessives possessives = UsePossessives::Yes) const;
 
   /// Choose the proper possessive form
   /// For a Thing, this is simply "the", as Things cannot own things.
@@ -605,7 +613,9 @@ private:
   Metadata& m_metadata;
 
   /// Property dictionary.
-  ModifiablePropertyDictionary m_properties;
+  /// Defined as mutable, because a "get" method can cache a default value
+  /// for a key if one doesn't already exist.
+  ModifiablePropertyDictionary mutable m_properties;
 
   /// Reference to this Thing.
   ThingId m_ref;

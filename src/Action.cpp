@@ -47,7 +47,7 @@ Action::Action()
   :
   pImpl{ new Impl(ThingId::Mu()) }
 {
-  SET_UP_LOGGER("Action", true);
+  SET_UP_LOGGER("Action", false);
 }
 
 Action::Action(ThingId subject)
@@ -372,13 +372,14 @@ StringDisplay Action::get_object_string_() const
         {
           description += get_quantity() + L" of";
         }
-        description += get_object()->get_identifying_string(true);
+        description += get_object()->get_identifying_string(ArticleChoice::Definite);
       }
     }
   }
   else if (get_objects().size() == 2)
   {
-    description += get_object()->get_identifying_string(true) + L" and " + get_second_object()->get_identifying_string(true);
+    description += get_object()->get_identifying_string(ArticleChoice::Definite) + L" and " + 
+      get_second_object()->get_identifying_string(ArticleChoice::Definite);
   }
   else if (get_objects().size() > 1)
   {
@@ -414,7 +415,7 @@ StringDisplay Action::get_target_string_() const
   }
   else
   {
-    return target->get_identifying_string(true);
+    return target->get_identifying_string(ArticleChoice::Definite);
   }
 }
 
@@ -544,17 +545,17 @@ StringDisplay Action::make_string(StringDisplay pattern, std::vector<StringDispl
 
     if ((token == L"the_foos_location") || (token == L"thefooslocation"))
     {
-      return get_object()->get_location()->get_identifying_string(true);
+      return get_object()->get_location()->get_identifying_string(ArticleChoice::Definite);
     }
 
     if ((token == L"the_target_thing") || (token == L"thetargetthing"))
     {
-      return get_target_thing()->get_identifying_string(true);
+      return get_target_thing()->get_identifying_string(ArticleChoice::Definite);
     }
 
     if (token == L"fooself")
     {
-      return get_object()->get_self_or_identifying_string(get_subject(), true);
+      return get_object()->get_self_or_identifying_string(get_subject(), ArticleChoice::Definite);
     }
 
     if ((token == L"subj_pro_foo") || (token == L"subjprofoo"))

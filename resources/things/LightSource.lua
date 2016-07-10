@@ -10,7 +10,6 @@ LightSource.intrinsics.lit = true
 LightSource.intrinsics.light_color_red = 64
 LightSource.intrinsics.light_color_green = 64
 LightSource.intrinsics.light_color_blue = 64
-LightSource.intrinsics.light_level = 256
 LightSource.intrinsics.light_strength = 64
 
 function LightSource.get_brief_description()

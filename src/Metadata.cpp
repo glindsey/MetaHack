@@ -10,7 +10,7 @@ Metadata::Metadata(MetadataCollection& collection, StringKey type)
   m_collection{ collection },
   m_type{ type }
 {
-  SET_UP_LOGGER("Metadata", true);
+  SET_UP_LOGGER("Metadata", false);
 
   StringKey category = collection.get_category();
 

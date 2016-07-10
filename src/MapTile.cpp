@@ -232,9 +232,9 @@ void MapTile::add_light_influence(ThingId source,
         float light_factor = (1.0f - dist_factor);
         float wall_factor = Direction::calculate_light_factor(influence.coords, get_coords(), d);
 
-        addColor.r = static_cast<sf::Uint8>(light_color.r * wall_factor * light_factor);
-        addColor.g = static_cast<sf::Uint8>(light_color.g * wall_factor * light_factor);
-        addColor.b = static_cast<sf::Uint8>(light_color.b * wall_factor * light_factor);
+        addColor.r = static_cast<sf::Uint8>(static_cast<float>(light_color.r) * wall_factor * light_factor);
+        addColor.g = static_cast<sf::Uint8>(static_cast<float>(light_color.g) * wall_factor * light_factor);
+        addColor.b = static_cast<sf::Uint8>(static_cast<float>(light_color.b) * wall_factor * light_factor);
         addColor.a = 255;
 
         unsigned int index = d.get_map_index();

@@ -674,7 +674,7 @@ unsigned int Thing::remove_modifier(StringKey key, ThingId id)
   return m_properties.remove_modifier(key, id);
 }
 
-unsigned int Thing::get_quantity()
+unsigned int Thing::get_quantity() const
 {
   return get_base_property<unsigned int>("quantity", 1);
 }
@@ -988,6 +988,19 @@ MapId Thing::get_map_id() const
   }
 }
 
+StringDisplay Thing::get_display_adjectives() const
+{
+  StringDisplay adjectives;
+
+  if (is_subtype_of("Entity") && get_modified_property<int>("hp") <= 0)
+  {
+    adjectives += L"dead ";
+  }
+
+  /// @todo Implement more adjectives.
+  return adjectives;
+}
+
 StringDisplay Thing::get_display_name() const
 {
   /// @todo Implement adding adjectives.
@@ -999,7 +1012,7 @@ StringDisplay Thing::get_display_plural() const
   return m_metadata.get_intrinsic<StringDisplay>("plural");
 }
 
-StringDisplay Thing::get_proper_name()
+StringDisplay Thing::get_proper_name() const
 {
   return get_modified_property<StringDisplay>("proper_name");
 }
@@ -1009,70 +1022,7 @@ void Thing::set_proper_name(StringDisplay name)
   set_base_property<StringDisplay>("proper_name", name);
 }
 
-StringDisplay Thing::get_identifying_string_without_possessives(bool definite)
-{
-  ThingId location = this->get_location();
-  unsigned int quantity = this->get_quantity();
-
-  StringDisplay name;
-
-  StringDisplay article;
-  StringDisplay adjectives;
-  StringDisplay noun;
-  StringDisplay suffix;
-
-  if (is_player())
-  {
-    if (get_modified_property<int>("hp") > 0)
-    {
-      return L"you";
-    }
-    else
-    {
-      return L"your corpse";
-    }
-  }
-
-  if (quantity == 1)
-  {
-    noun = get_display_name();
-
-    if (definite)
-    {
-      article = L"the ";
-    }
-    else
-    {
-      article = getIndefArt(noun) + L" ";
-    }
-
-    if (get_proper_name().empty() == false)
-    {
-      suffix = L" named " + get_proper_name();
-    }
-  }
-  else
-  {
-    noun = get_display_plural();
-
-    if (definite)
-    {
-      article = L"the ";
-    }
-    article += std::to_wstring(get_quantity()) + L" ";
-  }
-
-  if (is_subtype_of("Entity") && get_modified_property<int>("hp") <= 0)
-  {
-    adjectives += L"dead ";
-  }
-
-  name = article + adjectives + noun + suffix;
-
-  return name;
-}
-
-StringDisplay Thing::get_you_or_identifying_string(bool definite)
+StringDisplay Thing::get_you_or_identifying_string(ArticleChoice articles) const
 {
   if (is_player())
   {
@@ -1086,20 +1036,21 @@ StringDisplay Thing::get_you_or_identifying_string(bool definite)
     }
   }
 
-  return get_identifying_string(definite);
+  return get_identifying_string(articles);
 }
 
-StringDisplay Thing::get_self_or_identifying_string(ThingId other, bool definite)
+StringDisplay Thing::get_self_or_identifying_string(ThingId other, ArticleChoice articles) const
 {
   if (other == get_id())
   {
     return get_reflexive_pronoun();
   }
 
-  return get_identifying_string(definite);
+  return get_identifying_string(articles);
 }
 
-StringDisplay Thing::get_identifying_string(bool definite)
+StringDisplay Thing::get_identifying_string(ArticleChoice articles, 
+                                            UsePossessives possessives) const
 {
   ThingId location = this->get_location();
   unsigned int quantity = this->get_quantity();
@@ -1119,13 +1070,13 @@ StringDisplay Thing::get_identifying_string(bool definite)
   {
     noun = get_display_name();
 
-    if (owned)
+    if (owned && (possessives == UsePossessives::Yes))
     {
       article = location->get_possessive() + L" ";
     }
     else
     {
-      if (definite)
+      if (articles == ArticleChoice::Definite)
       {
         article = L"the ";
       }
@@ -1144,13 +1095,13 @@ StringDisplay Thing::get_identifying_string(bool definite)
   {
     noun = get_display_plural();
 
-    if (owned)
+    if (owned && (possessives == UsePossessives::Yes))
     {
       article = location->get_possessive() + L" ";
     }
     else
     {
-      if (definite)
+      if (articles == ArticleChoice::Definite)
       {
         article = L"the ";
       }
@@ -1159,10 +1110,7 @@ StringDisplay Thing::get_identifying_string(bool definite)
     }
   }
 
-  if (is_subtype_of("Entity") && get_modified_property<int>("hp") <= 0)
-  {
-    adjectives += L"dead ";
-  }
+  adjectives = get_display_adjectives();
 
   name = article + adjectives + noun + suffix;
 
@@ -1225,7 +1173,8 @@ StringDisplay Thing::get_possessive()
   }
   else
   {
-    return get_identifying_string_without_possessives(true) + L"'s";
+    return get_identifying_string(ArticleChoice::Definite, 
+                                  UsePossessives::No) + L"'s";
   }
 }
 
@@ -1343,16 +1292,26 @@ bool Thing::is_opaque()
 
 void Thing::light_up_surroundings()
 {
+  ThingId location = get_location();
+
   if (get_intrinsic<int>("inventory_size") != 0)
   {
     /// @todo Figure out how we want to handle light sources.
     ///       If we want to be more accurate, the light should only
     ///       be able to be seen when a character is wielding or has
     ///       equipped it. If we want to be easier, the light should
-    ///       shine simply if it's in the player's inventory.
+    ///       shine simply if it's in an entity's inventory.
+
+    bool opaque = location->is_opaque();
+    bool is_entity = this->is_subtype_of("Entity");
+
+    CLOG(DEBUG, "Thing") << "light_up_surroundings - this->type = " << this->get_type() <<
+      ", location->type = " << location->get_type() <<
+      ", location->opaque = " << opaque <<
+      ", this->is_subtype_of(\"Entity\") = " << is_entity;
 
     //if (!is_opaque() || is_wielding(light) || has_equipped(light))
-    if (!is_opaque() || get_location()->is_subtype_of("Entity"))
+    if (!opaque || is_entity)
     {
       auto& inventory = get_inventory();
       for (auto iter = inventory.begin(); 
@@ -1365,8 +1324,6 @@ void Thing::light_up_surroundings()
     }
   }
 
-  ThingId location = get_location();
-
   // Use visitor pattern.
   if ((location != ThingId::Mu()) && this->get_modified_property<bool>("lit"))
   {
@@ -1378,22 +1335,25 @@ void Thing::be_lit_by(ThingId light)
 {
   call_lua_function<ActionResult, ThingId>("on_lit_by", { light }, ActionResult::Success);
 
+  ThingId location = get_location();
+
   if (get_location() == ThingId::Mu())
   {
     GAME.get_maps().get(get_map_id()).add_light(light);
   }
-
-  /// @todo Figure out how we want to handle light sources.
-  ///       If we want to be more accurate, the light should only
-  ///       be able to be seen when a character is wielding or has
-  ///       equipped it. If we want to be easier, the light should
-  ///       shine simply if it's in the player's inventory.
-
-  //if (!is_opaque() || is_wielding(light) || has_equipped(light))
-  ThingId location = get_location();
-  if (!is_opaque() || location->is_subtype_of("Entity"))
+  else
   {
-    if (location != ThingId::Mu())
+    /// @todo Figure out how we want to handle light sources.
+    ///       If we want to be more accurate, the light should only
+    ///       be able to be seen when a character is wielding or has
+    ///       equipped it. If we want to be easier, the light should
+    ///       shine simply if it's in the player's inventory.
+
+    bool opaque = this->is_opaque();
+    bool is_entity = this->is_subtype_of("Entity");
+
+    //if (!is_opaque() || is_wielding(light) || has_equipped(light))
+    if (!opaque || is_entity)
     {
       location->be_lit_by(light);
     }

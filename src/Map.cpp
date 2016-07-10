@@ -368,6 +368,7 @@ void Map::add_light(ThingId source)
   int light_color_green = source->get_modified_property<int>("light_color_green");
   int light_color_blue = source->get_modified_property<int>("light_color_blue");
   sf::Color light_color = sf::Color(light_color_red, light_color_green, light_color_blue, 255);
+  int max_depth_squared = source->get_modified_property<int>("light_strength");
 
   /// @todo Re-implement direction.
   Direction light_direction = Direction::Up;
@@ -379,7 +380,6 @@ void Map::add_light(ThingId source)
 
   /// @todo: Handle "dark sources" with negative light strength properly --
   ///        right now they'll cause Very Bad Behavior!
-  int max_depth_squared = source->get_modified_property<int>("light_strength");
 
   // Add a light influence to the tile the light is on.
   LightInfluence influence;

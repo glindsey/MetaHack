@@ -393,7 +393,7 @@ void InventoryArea::render_contents_(sf::RenderTexture& texture, int frame)
       }
     }
 
-    item_name << thing->get_identifying_string_without_possessives(false);
+    item_name << thing->get_identifying_string(ArticleChoice::Indefinite, UsePossessives::No);
 
     if (wielding)
     {

@@ -56,7 +56,7 @@ Action::StateResult ActionAttack::do_prebegin_work_(AnyMap& params)
   /// @todo Allow for attacking when swallowed!
   if (subject->is_inside_another_thing())
   {
-    message += YOU_ARE + L" inside " + location->get_identifying_string(false) + L" and " + ARE + L" not going anywhere!";
+    message += YOU_ARE + L" inside " + location->get_identifying_string(ArticleChoice::Indefinite) + L" and " + ARE + L" not going anywhere!";
 
     the_message_log.add(message);
     return StateResult::Failure();

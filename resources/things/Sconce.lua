@@ -10,7 +10,6 @@ Sconce.intrinsics.creatable = true
 Sconce.intrinsics.light_color_red = 160
 Sconce.intrinsics.light_color_green = 128
 Sconce.intrinsics.light_color_blue = 112
-Sconce.intrinsics.light_level = 256
 Sconce.intrinsics.light_strength = 48
 
 function Sconce.can_have_action_burn_done_by(id)
