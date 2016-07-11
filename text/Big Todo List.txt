@@ -130,3 +130,32 @@ MIND-BOGGLINGLY ENORMOUS THINGS
     * Temporary polymorphs are far trickier; we need a way to stash the existing Thing somewhere, and then revert back to it at death.
         * Original form could be stashed in Limbo; the temporary polymorph would need to store its ThingId to know what to revert to
         * There's also the question of which attributes get copied over.
+
+
+LIQUID TYPES
+------------
+* brilliant
+* caustic
+* effervescent
+* foaming
+* luminous
+* milky
+* murky
+* oily
+* sparkling
+* viscous
+
+LIQUID COLORS
+-------------
+fuchsia
+crimson
+scarlet
+amber
+golden
+emerald
+turquoise
+cerulean
+azure
+indigo
+violet
+black
