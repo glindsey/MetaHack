@@ -111,19 +111,7 @@ MapRoom::MapRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
       if (okay)
       {
         // Clear out the box.
-        for (int x_coord = rect.left;
-        x_coord <= rect.left + rect.width - 1;
-          ++x_coord)
-        {
-          for (int y_coord = rect.top;
-          y_coord <= rect.top + rect.height - 1;
-            ++y_coord)
-          {
-            auto& tile = get_map().get_tile(x_coord, y_coord);
-            tile.set_tile_type("MTFloorDirt");
-          }
-        }
-
+        set_box(rect, "MTFloorDirt");
         set_coords(rect);
 
         // Add the surrounding walls as potential connection points.

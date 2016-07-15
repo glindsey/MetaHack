@@ -1,25 +1,25 @@
 #include "stdafx.h"
 
-#include "MapCorridor.h"
+#include "MapCrossCorridor.h"
 
 #include "App.h"
 #include "MapTile.h"
 
 // Static declarations
 /// @todo These should be passed in as arguments
-unsigned int MapCorridor::maxLength = 48;
-unsigned int MapCorridor::minLength = 3;
-unsigned int MapCorridor::maxRetries = 100;
+unsigned int MapCrossCorridor::maxLength = 48;
+unsigned int MapCrossCorridor::minLength = 3;
+unsigned int MapCrossCorridor::maxRetries = 100;
 
 // Local typedefs
 typedef boost::random::uniform_int_distribution<> uniform_int_dist;
 
-struct MapCorridor::Impl
+struct MapCrossCorridor::Impl
 {
   sf::Vector2i endingCoords;
 };
 
-MapCorridor::MapCorridor(Map& m, PropertyDictionary const& s, GeoVector vec)
+MapCrossCorridor::MapCrossCorridor(Map& m, PropertyDictionary const& s, GeoVector vec)
   :
   MapFeature{ m, s, vec },
   pImpl(NEW Impl())
@@ -32,44 +32,45 @@ MapCorridor::MapCorridor(Map& m, PropertyDictionary const& s, GeoVector vec)
 
   while (numTries < maxRetries)
   {
-    int corridorLen(lenDist(the_RNG));
+    int mainCorridorLen(lenDist(the_RNG));
+    int subCorridorLen(lenDist(the_RNG));
 
-    int xMin, xMax, yMin, yMax;
+    int mainXMin, mainXMax, mainYMin, mainYMax;
 
     if (direction == Direction::North)
     {
-      yMax = startingCoords.y - 1;
-      yMin = yMax - (corridorLen - 1);
-      xMin = startingCoords.x;
-      xMax = startingCoords.x;
+      mainYMax = startingCoords.y - 1;
+      mainYMin = mainYMax - (corridorLen - 1);
+      mainXMin = startingCoords.x;
+      mainXMax = startingCoords.x;
       pImpl->endingCoords.x = startingCoords.x;
-      pImpl->endingCoords.y = yMin - 1;
+      pImpl->endingCoords.y = mainYMin - 1;
     }
     else if (direction == Direction::South)
     {
-      yMin = startingCoords.y + 1;
-      yMax = yMin + (corridorLen - 1);
-      xMin = startingCoords.x;
-      xMax = startingCoords.x;
+      mainYMin = startingCoords.y + 1;
+      mainYMax = mainYMin + (corridorLen - 1);
+      mainXMin = startingCoords.x;
+      mainXMax = startingCoords.x;
       pImpl->endingCoords.x = startingCoords.x;
-      pImpl->endingCoords.y = yMax + 1;
+      pImpl->endingCoords.y = mainYMax + 1;
     }
     else if (direction == Direction::West)
     {
-      xMax = startingCoords.x - 1;
-      xMin = xMax - (corridorLen - 1);
-      yMin = startingCoords.y;
-      yMax = startingCoords.y;
-      pImpl->endingCoords.x = xMin - 1;
+      mainXMax = startingCoords.x - 1;
+      mainXMin = mainXMax - (corridorLen - 1);
+      mainYMin = startingCoords.y;
+      mainYMax = startingCoords.y;
+      pImpl->endingCoords.x = mainXMin - 1;
       pImpl->endingCoords.y = startingCoords.y;
     }
     else if (direction == Direction::East)
     {
-      xMin = startingCoords.x + 1;
-      xMax = xMin + (corridorLen - 1);
-      yMin = startingCoords.y;
-      yMax = startingCoords.y;
-      pImpl->endingCoords.x = xMax + 1;
+      mainXMin = startingCoords.x + 1;
+      mainXMax = mainXMin + (corridorLen - 1);
+      mainYMin = startingCoords.y;
+      mainYMax = startingCoords.y;
+      pImpl->endingCoords.x = mainXMax + 1;
       pImpl->endingCoords.y = startingCoords.y;
     }
     else
@@ -77,15 +78,15 @@ MapCorridor::MapCorridor(Map& m, PropertyDictionary const& s, GeoVector vec)
       throw MapFeatureException("Invalid direction passed to MapCorridor constructor");
     }
 
-    if ((get_map().is_in_bounds(xMin - 1, yMin - 1)) &&
-        (get_map().is_in_bounds(xMax + 1, yMax + 1)))
+    if ((get_map().is_in_bounds(mainXMin - 1, mainYMin - 1)) &&
+        (get_map().is_in_bounds(mainXMax + 1, mainYMax + 1)))
     {
       bool okay = true;
 
-      // Verify that corridor and surrounding area are solid walls.
-      for (int xCheck = xMin - 1; xCheck <= xMax + 1; ++xCheck)
+      // Verify that main corridor and surrounding area are solid walls.
+      for (int xCheck = mainXMin - 1; xCheck <= mainXMax + 1; ++xCheck)
       {
-        for (int yCheck = yMin - 1; yCheck <= yMax + 1; ++yCheck)
+        for (int yCheck = mainYMin - 1; yCheck <= mainYMax + 1; ++yCheck)
         {
           auto& tile = get_map().get_tile(xCheck, yCheck);
           if (tile.is_empty_space())
@@ -100,24 +101,24 @@ MapCorridor::MapCorridor(Map& m, PropertyDictionary const& s, GeoVector vec)
       if (okay)
       {
         // Clear out the box.
-        set_box({ xMin, yMin }, { xMax, yMax }, "MTFloorDirt");
+        set_box({ mainXMin, mainYMin }, { mainXMax, mainYMax }, "MTFloorDirt");
 
-        set_coords(sf::IntRect(xMin, yMin,
-                               (xMax - xMin) + 1,
-                               (yMax - yMin) + 1));
+        set_coords(sf::IntRect(mainXMin, mainYMin,
+                               (mainXMax - mainXMin) + 1,
+                               (mainYMax - mainYMin) + 1));
 
         // Add the surrounding walls as potential connection points.
         // First the horizontal walls...
-        for (int xCoord = xMin; xCoord <= xMax; ++xCoord)
+        for (int xCoord = mainXMin; xCoord <= mainXMax; ++xCoord)
         {
-          add_growth_vector(GeoVector(xCoord, yMin - 1, Direction::North));
-          add_growth_vector(GeoVector(xCoord, yMax + 1, Direction::South));
+          add_growth_vector(GeoVector(xCoord, mainYMin - 1, Direction::North));
+          add_growth_vector(GeoVector(xCoord, mainYMax + 1, Direction::South));
         }
         // Now the vertical walls.
-        for (int yCoord = yMin; yCoord <= yMax; ++yCoord)
+        for (int yCoord = mainYMin; yCoord <= mainYMax; ++yCoord)
         {
-          add_growth_vector(GeoVector(xMin - 1, yCoord, Direction::West));
-          add_growth_vector(GeoVector(xMax + 1, yCoord, Direction::East));
+          add_growth_vector(GeoVector(mainXMin - 1, yCoord, Direction::West));
+          add_growth_vector(GeoVector(mainXMax + 1, yCoord, Direction::East));
         }
 
         /// @todo: Put either a door or an open area at the starting coords.

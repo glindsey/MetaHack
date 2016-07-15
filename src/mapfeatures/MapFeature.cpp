@@ -140,3 +140,25 @@ void MapFeature::add_growth_vector(GeoVector vec)
 {
   pImpl->vecs.push_back(vec);
 }
+
+void MapFeature::set_box(sf::Vector2u upper_left, sf::Vector2u lower_right, std::string tile_type)
+{
+  Map& map = get_map();
+
+  for (int xCheck = upper_left.x; xCheck <= lower_right.x; ++xCheck)
+  {
+    for (int yCheck = upper_left.y; yCheck <= lower_right.y; ++yCheck)
+    {
+      if (map.is_in_bounds(xCheck, yCheck))
+      {
+        auto& tile = get_map().get_tile(xCheck, yCheck);
+        tile.set_tile_type(tile_type);
+      }
+    }
+  }
+}
+
+void MapFeature::set_box(sf::IntRect rect, std::string tile_type)
+{
+  set_box({ rect.left, rect.top }, { rect.left + rect.width - 1, rect.top + rect.height - 1 }, tile_type);
+}
