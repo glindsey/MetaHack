@@ -7,6 +7,7 @@
 #include "ThingManager.h"
 
 // Static declarations
+/// @todo These should be passed in as arguments
 unsigned int MapDiamond::maxHalfSize = 4;
 unsigned int MapDiamond::minHalfSize = 2;
 unsigned int MapDiamond::maxRetries = 100;

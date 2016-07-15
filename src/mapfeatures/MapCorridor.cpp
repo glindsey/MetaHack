@@ -6,6 +6,7 @@
 #include "MapTile.h"
 
 // Static declarations
+/// @todo These should be passed in as arguments
 unsigned int MapCorridor::maxLength = 48;
 unsigned int MapCorridor::minLength = 3;
 unsigned int MapCorridor::maxRetries = 100;

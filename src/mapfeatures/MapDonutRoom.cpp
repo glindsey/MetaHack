@@ -8,6 +8,7 @@
 #include "ThingManager.h"
 
 // Static declarations
+/// @todo These should be passed in as arguments
 unsigned int MapDonutRoom::max_width = 20;
 unsigned int MapDonutRoom::min_width = 7;
 unsigned int MapDonutRoom::max_height = 20;

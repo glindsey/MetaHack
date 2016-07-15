@@ -3,6 +3,8 @@
 
 #include "stdafx.h"
 
+#include <memory>
+
 #include "Direction.h"
 #include "GeoVector.h"
 #include "Map.h"
@@ -22,6 +24,8 @@ public:
   unsigned int get_num_growth_vectors() const;
   GeoVector const& get_random_growth_vector() const;
   bool erase_growth_vector(GeoVector vec);
+
+  static std::unique_ptr<MapFeature> construct(Map& game_map, PropertyDictionary const& settings, GeoVector vec);
 
   virtual bool create(GeoVector vec) = 0;
 

@@ -2,13 +2,8 @@
 
 #include "MapGenerator.h"
 
-#include "MapCorridor.h"
-#include "MapDiamond.h"
-#include "MapDonutRoom.h"
-#include "MapLRoom.h"
-#include "MapRoom.h"
-
 #include "App.h"
+#include "MapFeature.h"
 #include "MapTile.h"
 #include "MathUtils.h"
 #include "PropertyDictionary.h"
@@ -169,14 +164,17 @@ void MapGenerator::generate()
   // Create the initial room.
   CLOG(TRACE, "MapGenerator") << "Making starting room...";
 
-  MapFeature& startingRoom =
-    pImpl->game_map.add_map_feature(NEW MapRoom(pImpl->game_map, feature_settings));
+  GeoVector startingVector{ pImpl->getRandomFilledSquare(), Direction::Self };
+  feature_settings.set<std::string>("type", "room");
+  std::unique_ptr<MapFeature> startRoom = MapFeature::construct(pImpl->game_map, feature_settings, startingVector);
 
-  if (!startingRoom.create(GeoVector(pImpl->getRandomFilledSquare(),
-                                     Direction::Self)))
+  if (!startRoom)
   {
     throw std::exception("Could not make starting room for player!");
   }
+
+  MapFeature& startingRoom = pImpl->game_map.add_map_feature(startRoom.get());
+  startRoom.release();
 
   sf::IntRect startBox = startingRoom.get_coords();
   CLOG(TRACE, "MapGenerator") << "Starting room is at " << startBox;
@@ -236,43 +234,14 @@ bool MapGenerator::add_feature(PropertyDictionary const& feature_settings)
 
   if (pImpl->getGrowthVector(nextGrowthVector))
   {
-    std::string feature_type = feature_settings.get<std::string>("type");
-
-    if (feature_type == "room")
-    {
-      feature.reset(NEW MapRoom(pImpl->game_map, feature_settings));
-    }
-    else if (feature_type == "corridor")
-    {
-      feature.reset(NEW MapCorridor(pImpl->game_map, feature_settings));
-    }
-    else if (feature_type == "room_l")
-    {
-      feature.reset(NEW MapLRoom(pImpl->game_map, feature_settings));
-    }
-    else if (feature_type == "room_diamond")
-    {
-      feature.reset(NEW MapDiamond(pImpl->game_map, feature_settings));
-    }
-    else if (feature_type == "room_torus")
-    {
-      feature.reset(NEW MapDonutRoom(pImpl->game_map, feature_settings));
-    }
-    else
-    {
-      CLOG(WARNING, "MapGenerator") << "Unknown feature type \"" <<
-        feature_type << "\" requested";
-    }
+    feature = MapFeature::construct(pImpl->game_map, feature_settings, nextGrowthVector);
   }
 
   if (feature)
   {
-    if (feature->create(nextGrowthVector))
-    {
-      pImpl->game_map.add_map_feature(feature.get());
-      feature.release();
-      return true;
-    }
+    pImpl->game_map.add_map_feature(feature.get());
+    feature.release();
+    return true;
   }
 
   return false;

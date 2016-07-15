@@ -8,6 +8,7 @@
 #include "ThingManager.h"
 
 // Static declarations
+/// @todo These should be passed in as arguments
 unsigned int MapRoom::max_width = 15;
 unsigned int MapRoom::min_width = 3;
 unsigned int MapRoom::max_height = 15;

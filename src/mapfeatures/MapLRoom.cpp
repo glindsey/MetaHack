@@ -9,6 +9,7 @@
 #include "ThingManager.h"
 
 // Static declarations
+/// @todo These should be passed in as arguments
 unsigned int MapLRoom::horiz_leg_max_width = 20;
 unsigned int MapLRoom::horiz_leg_min_width = 10;
 unsigned int MapLRoom::horiz_leg_max_height = 7;
