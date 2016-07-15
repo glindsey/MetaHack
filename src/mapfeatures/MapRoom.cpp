@@ -18,19 +18,9 @@ unsigned int MapRoom::max_retries = 100;
 // Local typedefs
 typedef boost::random::uniform_int_distribution<> uniform_int_dist;
 
-MapRoom::MapRoom(Map& m, PropertyDictionary const& s)
+MapRoom::MapRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
   :
-  MapFeature{ m, s }
-{
-  //ctor
-}
-
-MapRoom::~MapRoom()
-{
-  //dtor
-}
-
-bool MapRoom::create(GeoVector vec)
+  MapFeature{ m, s, vec }
 {
   unsigned int num_tries = 0;
 
@@ -89,8 +79,7 @@ bool MapRoom::create(GeoVector vec)
     }
     else
     {
-      CLOG(WARNING, "MapGenerator") << "Invalid direction";
-      return false;
+      throw MapFeatureException("Invalid direction passed to MapRoom constructor");
     }
 
     if ((get_map().is_in_bounds(rect.left - 1,
@@ -162,12 +151,12 @@ bool MapRoom::create(GeoVector vec)
                                              starting_coords.y);
         startTile.set_tile_type("MTFloorDirt");
 
-        return true;
+        return;
       }
     }
 
     ++num_tries;
   }
 
-  return false;
+  throw MapFeatureException("Out of tries attempting to make MapLRoom");
 }

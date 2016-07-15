@@ -19,19 +19,9 @@ unsigned int MapDonutRoom::max_retries = 500;
 // Local typedefs
 typedef boost::random::uniform_int_distribution<> uniform_int_dist;
 
-MapDonutRoom::MapDonutRoom(Map& m, PropertyDictionary const& s)
+MapDonutRoom::MapDonutRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
   :
-  MapFeature{ m, s }
-{
-  //ctor
-}
-
-MapDonutRoom::~MapDonutRoom()
-{
-  //dtor
-}
-
-bool MapDonutRoom::create(GeoVector vec)
+  MapFeature{ m, s, vec }
 {
   unsigned int num_tries = 0;
 
@@ -82,8 +72,7 @@ bool MapDonutRoom::create(GeoVector vec)
     }
     else
     {
-      CLOG(WARNING, "MapGenerator") << "Invalid direction";
-      return false;
+      throw MapFeatureException("Invalid direction passed to MapDonutRoom constructor");
     }
 
     if ((get_map().is_in_bounds(rect.left - 1,
@@ -194,12 +183,12 @@ bool MapDonutRoom::create(GeoVector vec)
                                              starting_coords.y);
         startTile.set_tile_type("MTFloorDirt");
 
-        return true;
+        return;
       }
     }
 
     ++num_tries;
   }
 
-  return false;
+  throw MapFeatureException("Out of tries attempting to make MapDonutRoom");
 }

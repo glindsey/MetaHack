@@ -10,15 +10,16 @@ class PropertyDictionary;
 
 class MapDiamond : public MapFeature
 {
+  friend class MapFeature;
+
 public:
-  MapDiamond(Map& m, PropertyDictionary const& settings);
-  virtual ~MapDiamond();
+
 protected:
   /// Create a diamond-shaped room of random size adjacent to starting
   /// coordinates in the direction indicated.
   /// Checks to make sure the box does not intersect any existing features.
   /// Attempts to create the box maxFeatureRetries times before giving up.
-  virtual bool create(GeoVector vec) override;
+  MapDiamond(Map& m, PropertyDictionary const& settings, GeoVector vec);
 
 private:
   struct Impl;

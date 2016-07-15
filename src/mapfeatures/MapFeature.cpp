@@ -15,21 +15,23 @@ typedef boost::random::uniform_int_distribution<> uniform_int_dist;
 
 struct MapFeature::Impl
 {
-  Impl(Map& m, PropertyDictionary const& s)
+  Impl(Map& m, PropertyDictionary const& s, GeoVector vec)
     :
     gameMap{ m },
-    settings{ s }
+    settings{ s },
+    start_vec{ vec }
   {}
 
   Map& gameMap;
   PropertyDictionary settings;
   sf::IntRect coords;
+  GeoVector start_vec;
   std::deque<GeoVector> vecs;
 };
 
-MapFeature::MapFeature(Map& m, PropertyDictionary const& s)
+MapFeature::MapFeature(Map& m, PropertyDictionary const& s, GeoVector vec)
   :
-  pImpl(NEW Impl(m, s))
+  pImpl(NEW Impl(m, s, vec))
 {}
 
 MapFeature::~MapFeature()
@@ -81,41 +83,47 @@ std::unique_ptr<MapFeature> MapFeature::construct(Map& game_map, PropertyDiction
   std::unique_ptr<MapFeature> feature;
   std::string feature_type = settings.get<std::string>("type");
 
-  if (feature_type == "room")
+  try
   {
-    feature.reset(NEW MapRoom(game_map, settings));
-  }
-  else if (feature_type == "corridor")
-  {
-    feature.reset(NEW MapCorridor(game_map, settings));
-  }
-  else if (feature_type == "room_l")
-  {
-    feature.reset(NEW MapLRoom(game_map, settings));
-  }
-  else if (feature_type == "room_diamond")
-  {
-    feature.reset(NEW MapDiamond(game_map, settings));
-  }
-  else if (feature_type == "room_torus")
-  {
-    feature.reset(NEW MapDonutRoom(game_map, settings));
-  }
-  else
-  {
-    CLOG(WARNING, "MapGenerator") << "Unknown feature type \"" <<
-      feature_type << "\" requested";
-  }
-
-  if (feature)
-  {
-    if (feature->create(vec))
+    if (feature_type == "room")
     {
-      return feature;
+      feature.reset(NEW MapRoom(game_map, settings, vec));
+    }
+    else if (feature_type == "corridor")
+    {
+      feature.reset(NEW MapCorridor(game_map, settings, vec));
+    }
+    else if (feature_type == "room_l")
+    {
+      feature.reset(NEW MapLRoom(game_map, settings, vec));
+    }
+    else if (feature_type == "room_diamond")
+    {
+      feature.reset(NEW MapDiamond(game_map, settings, vec));
+    }
+    else if (feature_type == "room_torus")
+    {
+      feature.reset(NEW MapDonutRoom(game_map, settings, vec));
+    }
+    else
+    {
+      CLOG(WARNING, "MapGenerator") << "Unknown feature type \"" <<
+        feature_type << "\" requested";
     }
   }
+  catch (MapFeatureException&)
+  {
+    // This is okay; we can assume that sometimes rooms will fail to construct
+    // due to there simply being insufficient space left on the map.
+  }
+  catch (...)
+  {
+    // Any other exceptions should be thrown.
+    throw;
+  }
 
-  return std::unique_ptr<MapFeature>();
+  // Return either our feature, or an empty unique_ptr if no feature was created.
+  return feature;
 }
 
 void MapFeature::set_coords(sf::IntRect coords)

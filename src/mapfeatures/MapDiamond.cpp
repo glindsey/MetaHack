@@ -20,20 +20,10 @@ struct MapDiamond::Impl
   bool dummy;
 };
 
-MapDiamond::MapDiamond(Map& m, PropertyDictionary const& s)
+MapDiamond::MapDiamond(Map& m, PropertyDictionary const& s, GeoVector vec)
   :
-  MapFeature{ m, s },
+  MapFeature{ m, s, vec },
   pImpl(NEW Impl())
-{
-  //ctor
-}
-
-MapDiamond::~MapDiamond()
-{
-  //dtor
-}
-
-bool MapDiamond::create(GeoVector vec)
 {
   unsigned int numTries = 0;
   uniform_int_dist hsDist(minHalfSize, maxHalfSize);
@@ -74,8 +64,7 @@ bool MapDiamond::create(GeoVector vec)
     }
     else
     {
-      CLOG(WARNING, "MapGenerator") << "Invalid Direction passed into createRoom";
-      return false;
+      throw MapFeatureException("Invalid direction passed to MapDiamond constructor");
     }
 
     if ((get_map().is_in_bounds(xCenter - (diamondHalfSize + 1),
@@ -143,12 +132,12 @@ bool MapDiamond::create(GeoVector vec)
                                              startingCoords.y);
         startTile.set_tile_type("MTFloorDirt");
 
-        return true;
+        return;
       }
     }
 
     ++numTries;
   }
 
-  return false;
+  throw MapFeatureException("Out of tries attempting to make MapDiamond");
 }

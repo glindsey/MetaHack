@@ -10,17 +10,17 @@ class PropertyDictionary;
 
 class MapLRoom : public MapFeature
 {
-public:
-  MapLRoom(Map& m, PropertyDictionary const& settings);
-  virtual ~MapLRoom();
+  friend class MapFeature;
 
+public:
+
+protected:
   /// Create an L-shaped room of random size adjacent to starting
   /// coordinates in the direction indicated.
   /// Checks to make sure the box does not intersect any existing features.
   /// Attempts to create the box maxFeatureRetries times before giving up.
-  virtual bool create(GeoVector vec) override;
+  MapLRoom(Map& m, PropertyDictionary const& settings, GeoVector vec);
 
-protected:
 private:
   static unsigned int horiz_leg_max_width;
   static unsigned int horiz_leg_min_width;

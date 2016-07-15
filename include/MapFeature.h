@@ -9,12 +9,45 @@
 #include "GeoVector.h"
 #include "Map.h"
 
+/// Exception class for map features.
+class MapFeatureException : std::exception
+{
+public:
+  MapFeatureException()
+    :
+    std::exception(),
+    m_what{ "Unknown MapFeatureException" }
+  {}
+
+  MapFeatureException(char const* what)
+    :
+    std::exception(),
+    m_what{ what }
+  {}
+
+  virtual ~MapFeatureException()
+  {}
+
+  virtual const char* what() const
+  {
+    return m_what;
+  }
+
+private:
+  char const* m_what;
+};
+
 /// Superclass for all map features (rooms, corridors, et cetera).  Maintains
 /// a list of vectors at which new features can (theoretically) be attached.
 class MapFeature
 {
+  friend class MapCorridor;
+  friend class MapDiamond;
+  friend class MapDonutRoom;
+  friend class MapLRoom;
+  friend class MapRoom;
+
 public:
-  MapFeature(Map& m, PropertyDictionary const& settings);
   virtual ~MapFeature();
 
   sf::IntRect const& get_coords() const;
@@ -27,14 +60,15 @@ public:
 
   static std::unique_ptr<MapFeature> construct(Map& game_map, PropertyDictionary const& settings, GeoVector vec);
 
-  virtual bool create(GeoVector vec) = 0;
-
 protected:
+  MapFeature(Map& m, PropertyDictionary const& settings, GeoVector vec);
+
   void set_coords(sf::IntRect coords);
   void clear_growth_vectors();
   void add_growth_vector(GeoVector vec);
 
 private:
+
   struct Impl;
   std::unique_ptr<Impl> pImpl;
 };

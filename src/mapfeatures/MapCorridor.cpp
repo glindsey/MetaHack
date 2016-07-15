@@ -19,20 +19,10 @@ struct MapCorridor::Impl
   sf::Vector2i endingCoords;
 };
 
-MapCorridor::MapCorridor(Map& m, PropertyDictionary const& s)
+MapCorridor::MapCorridor(Map& m, PropertyDictionary const& s, GeoVector vec)
   :
-  MapFeature{ m, s },
+  MapFeature{ m, s, vec },
   pImpl(NEW Impl())
-{
-  //ctor
-}
-
-MapCorridor::~MapCorridor()
-{
-  //dtor
-}
-
-bool MapCorridor::create(GeoVector vec)
 {
   unsigned int numTries = 0;
   uniform_int_dist lenDist(minLength, maxLength);
@@ -84,8 +74,7 @@ bool MapCorridor::create(GeoVector vec)
     }
     else
     {
-      CLOG(WARNING, "MapGenerator") << "Invalid Direction passed into createCorridor";
-      return false;
+      throw MapFeatureException("Invalid direction passed to MapCorridor constructor");
     }
 
     if ((get_map().is_in_bounds(xMin - 1, yMin - 1)) &&
@@ -172,8 +161,7 @@ bool MapCorridor::create(GeoVector vec)
         }
         else
         {
-          CLOG(WARNING, "MapGenerator") << "Invalid Direction passed into createCorridor";
-          return false;
+          throw MapFeatureException("Invalid direction passed to MapCorridor constructor");
         }
 
         if (get_map().is_in_bounds(checkCoords.x, checkCoords.y))
@@ -189,14 +177,14 @@ bool MapCorridor::create(GeoVector vec)
           }
         }
 
-        return true;
+        return;
       }
     }
 
     ++numTries;
   }
 
-  return false;
+  throw MapFeatureException("Out of tries attempting to make MapCorridor");
 }
 
 sf::Vector2i const& MapCorridor::getEndingCoords() const
