@@ -90,23 +90,9 @@ MapRoom::MapRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
       bool okay = true;
 
       // Verify that box and surrounding area are solid walls.
-      for (int x_check = rect.left - 1;
-      x_check <= rect.left + rect.width;
-        ++x_check)
-      {
-        for (int y_check = rect.top - 1;
-        y_check <= rect.top + rect.height;
-          ++y_check)
-        {
-          auto& tile = get_map().get_tile(x_check, y_check);
-          if (tile.is_empty_space())
-          {
-            okay = false;
-            break;
-          }
-        }
-        if (okay == false) break;
-      }
+      okay = does_box_pass_criterion({ rect.left - 1, rect.top - 1 },
+                                     { rect.left + rect.width, rect.top + rect.height },
+                                     [&](MapTile& tile) { return !tile.is_empty_space(); });
 
       if (okay)
       {

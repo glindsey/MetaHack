@@ -141,7 +141,25 @@ void MapFeature::add_growth_vector(GeoVector vec)
   pImpl->vecs.push_back(vec);
 }
 
-void MapFeature::set_box(sf::Vector2u upper_left, sf::Vector2u lower_right, std::string tile_type)
+bool MapFeature::does_box_pass_criterion(sf::Vector2i upper_left,
+                                        sf::Vector2i lower_right,
+                                        std::function<bool(MapTile&)> criterion)
+{
+  for (int xCheck = upper_left.x; xCheck <= lower_right.x; ++xCheck)
+  {
+    for (int yCheck = upper_left.y; yCheck <= lower_right.y; ++yCheck)
+    {
+      auto& tile = get_map().get_tile(xCheck, yCheck);
+      if (!criterion(tile))
+      {
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
+void MapFeature::set_box(sf::Vector2i upper_left, sf::Vector2i lower_right, std::string tile_type)
 {
   Map& map = get_map();
 

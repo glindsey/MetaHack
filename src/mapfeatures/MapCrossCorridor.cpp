@@ -36,11 +36,13 @@ MapCrossCorridor::MapCrossCorridor(Map& m, PropertyDictionary const& s, GeoVecto
     int subCorridorLen(lenDist(the_RNG));
 
     int mainXMin, mainXMax, mainYMin, mainYMax;
+    int subXMin, subXMax, subYMin, subYMax;
 
+    // Create main corridor bounds.
     if (direction == Direction::North)
     {
       mainYMax = startingCoords.y - 1;
-      mainYMin = mainYMax - (corridorLen - 1);
+      mainYMin = mainYMax - (mainCorridorLen - 1);
       mainXMin = startingCoords.x;
       mainXMax = startingCoords.x;
       pImpl->endingCoords.x = startingCoords.x;
@@ -49,7 +51,7 @@ MapCrossCorridor::MapCrossCorridor(Map& m, PropertyDictionary const& s, GeoVecto
     else if (direction == Direction::South)
     {
       mainYMin = startingCoords.y + 1;
-      mainYMax = mainYMin + (corridorLen - 1);
+      mainYMax = mainYMin + (mainCorridorLen - 1);
       mainXMin = startingCoords.x;
       mainXMax = startingCoords.x;
       pImpl->endingCoords.x = startingCoords.x;
@@ -58,7 +60,7 @@ MapCrossCorridor::MapCrossCorridor(Map& m, PropertyDictionary const& s, GeoVecto
     else if (direction == Direction::West)
     {
       mainXMax = startingCoords.x - 1;
-      mainXMin = mainXMax - (corridorLen - 1);
+      mainXMin = mainXMax - (mainCorridorLen - 1);
       mainYMin = startingCoords.y;
       mainYMax = startingCoords.y;
       pImpl->endingCoords.x = mainXMin - 1;
@@ -67,7 +69,7 @@ MapCrossCorridor::MapCrossCorridor(Map& m, PropertyDictionary const& s, GeoVecto
     else if (direction == Direction::East)
     {
       mainXMin = startingCoords.x + 1;
-      mainXMax = mainXMin + (corridorLen - 1);
+      mainXMax = mainXMin + (mainCorridorLen - 1);
       mainYMin = startingCoords.y;
       mainYMax = startingCoords.y;
       pImpl->endingCoords.x = mainXMax + 1;
@@ -76,6 +78,29 @@ MapCrossCorridor::MapCrossCorridor(Map& m, PropertyDictionary const& s, GeoVecto
     else
     {
       throw MapFeatureException("Invalid direction passed to MapCorridor constructor");
+    }
+
+    // Create sub corridor bounds.
+    if ((direction == Direction::North) || (direction == Direction::South))
+    {
+      uniform_int_dist subXDist(mainXMin - subCorridorLen, mainXMin + subCorridorLen);
+      uniform_int_dist subYDist(mainYMin, mainYMax);
+
+      subXMin = subXDist(the_RNG);
+      subXMax = subXMin + (subCorridorLen - 1);
+      subYMin = subYDist(the_RNG);
+      subYMax = subYMin;
+    }
+    else if ((direction == Direction::East) || (direction == Direction::West))
+    {
+      uniform_int_dist subXDist(mainXMin, mainXMax);
+      uniform_int_dist subYDist(mainYMin - subCorridorLen, mainYMin + subCorridorLen);
+
+      subXMin = subXDist(the_RNG);
+      subXMax = subXMin;
+      subYMin = subYDist(the_RNG);
+      subYMax = subYMin + (subCorridorLen - 1);
+
     }
 
     if ((get_map().is_in_bounds(mainXMin - 1, mainYMin - 1)) &&
@@ -155,7 +180,7 @@ MapCrossCorridor::MapCrossCorridor(Map& m, PropertyDictionary const& s, GeoVecto
         }
         else
         {
-          throw MapFeatureException("Invalid direction passed to MapCorridor constructor");
+          throw MapFeatureException("Invalid direction passed to MapCrossCorridor constructor");
         }
 
         if (get_map().is_in_bounds(checkCoords.x, checkCoords.y))
@@ -178,10 +203,5 @@ MapCrossCorridor::MapCrossCorridor(Map& m, PropertyDictionary const& s, GeoVecto
     ++numTries;
   }
 
-  throw MapFeatureException("Out of tries attempting to make MapCorridor");
-}
-
-sf::Vector2i const& MapCorridor::getEndingCoords() const
-{
-  return pImpl->endingCoords;
+  throw MapFeatureException("Out of tries attempting to make MapCrossCorridor");
 }

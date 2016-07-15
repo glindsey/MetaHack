@@ -77,21 +77,10 @@ MapDiamond::MapDiamond(Map& m, PropertyDictionary const& s, GeoVector vec)
       // Verify that box and surrounding area are solid walls.
       /// @todo: Constrain this to only check around the edges of the
       ///        diamond, instead of the entire enclosing box.
-      for (int xCheck = xCenter - (diamondHalfSize + 1);
-      xCheck <= xCenter + (diamondHalfSize + 1); ++xCheck)
-      {
-        for (int yCheck = yCenter - (diamondHalfSize + 1);
-        yCheck <= yCenter + (diamondHalfSize + 1); ++yCheck)
-        {
-          auto& tile = get_map().get_tile(xCheck, yCheck);
-          if (tile.is_empty_space())
-          {
-            okay = false;
-            break;
-          }
-        }
-        if (okay == false) break;
-      }
+
+      okay = does_box_pass_criterion({ xCenter - (diamondHalfSize + 1), yCenter - (diamondHalfSize + 1) },
+                                     { xCenter + (diamondHalfSize + 1), yCenter + (diamondHalfSize + 1) },
+                                     [&](MapTile& tile) { return !tile.is_empty_space(); });
 
       if (okay)
       {

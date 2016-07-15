@@ -120,41 +120,14 @@ MapLRoom::MapLRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
       bool okay = true;
 
       // Verify that both boxes and surrounding area are solid walls.
-      for (int x_check = vert_rect.left - 1;
-      x_check <= vert_rect.left + vert_rect.width;
-        ++x_check)
-      {
-        for (int y_check = vert_rect.top - 1;
-        y_check <= vert_rect.top + vert_rect.height;
-          ++y_check)
-        {
-          auto& tile = get_map().get_tile(x_check, y_check);
-          if (tile.is_empty_space())
-          {
-            okay = false;
-            break;
-          }
-        }
-        if (okay == false) break;
-      }
+      okay = does_box_pass_criterion({ vert_rect.left - 1, vert_rect.top - 1 },
+                                     { vert_rect.left + vert_rect.width, vert_rect.top + vert_rect.height },
+                                     [&](MapTile& tile) { return !tile.is_empty_space(); });
 
-      for (int x_check = horiz_rect.left - 1;
-      x_check <= horiz_rect.left + horiz_rect.width;
-        ++x_check)
-      {
-        for (int y_check = horiz_rect.top - 1;
-        y_check <= horiz_rect.top + horiz_rect.height;
-          ++y_check)
-        {
-          auto& tile = get_map().get_tile(x_check, y_check);
-          if (tile.is_empty_space())
-          {
-            okay = false;
-            break;
-          }
-        }
-        if (okay == false) break;
-      }
+
+      okay &= does_box_pass_criterion({ horiz_rect.left - 1, horiz_rect.top - 1 },
+                                      { horiz_rect.left + horiz_rect.width, horiz_rect.top + horiz_rect.height },
+                                     [&](MapTile& tile) { return !tile.is_empty_space(); });
 
       if (okay)
       {

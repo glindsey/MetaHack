@@ -67,13 +67,25 @@ protected:
   void clear_growth_vectors();
   void add_growth_vector(GeoVector vec);
 
+  /// Check that all tiles within the area bounded by (upper_left.x, 
+  /// upper_left.y) to (lower_right.x, lower_right.y), inclusive, 
+  /// meet a specific criterion.
+  /// @param upper_left Coordinates of upper-left corner of box.
+  /// @param lower_right Coordinates of lower-right corner of box.
+  /// @param criterion Functor that is passed a MapTile reference and should
+  ///                  return true if the criterion is met and false if not.
+  /// @return True if all tiles meet the criterion, false otherwise.
+  bool does_box_pass_criterion(sf::Vector2i upper_left, 
+                               sf::Vector2i lower_right,
+                               std::function<bool(MapTile&)> criterion);
+
   /// Set all tiles within the area bounded by (upper_left.x, upper_left.y) to
   /// (lower_right.x, lower_right.y), inclusive, to the specified tile type.
   /// If any tiles are out of bounds for the map, they are ignored.
   /// @param upper_left Coordinates of upper-left corner of box.
   /// @param lower_right Coordinates of lower-right corner of box.
   /// @param tile_type Type to set tiles to.
-  void set_box(sf::Vector2u upper_left, sf::Vector2u lower_right, std::string tile_type);
+  void set_box(sf::Vector2i upper_left, sf::Vector2i lower_right, std::string tile_type);
 
   /// Set all tiles bounded by an IntRect (inclusive) to the specified tile type.
   /// @param rect IntRect specifying the rectangle to set.

@@ -83,19 +83,9 @@ MapCorridor::MapCorridor(Map& m, PropertyDictionary const& s, GeoVector vec)
       bool okay = true;
 
       // Verify that corridor and surrounding area are solid walls.
-      for (int xCheck = xMin - 1; xCheck <= xMax + 1; ++xCheck)
-      {
-        for (int yCheck = yMin - 1; yCheck <= yMax + 1; ++yCheck)
-        {
-          auto& tile = get_map().get_tile(xCheck, yCheck);
-          if (tile.is_empty_space())
-          {
-            okay = false;
-            break;
-          }
-        }
-        if (okay == false) break;
-      }
+      okay = does_box_pass_criterion({ xMin - 1, yMin - 1 },
+                                     { xMax + 1, yMax + 1 },
+                                     [&](MapTile& tile) { return !tile.is_empty_space(); });
 
       if (okay)
       {
