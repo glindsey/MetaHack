@@ -240,7 +240,7 @@ Action::StateResult Action::do_prebegin_work(AnyMap& params)
     if ((location == ThingId::Mu()) || (current_tile == nullptr))
     {
       /// @todo This message could be made less awkward for verbs that take objects.
-      message = YOU + L" can't " + VERB + L" because " + YOU_DO + L" not exist physically!";
+      message = make_string(L"$you can't $verb because $you $do not exist physically!");
       the_message_log.add(message);
       return StateResult::Failure();
     }
@@ -257,7 +257,7 @@ Action::StateResult Action::do_prebegin_work(AnyMap& params)
         {
           print_message_try_();
 
-          message = L"However, " + OBJ_PRO_FOO + FOO_IS + L" out of " + YOUR + L" reach.";
+          message = make_string(L"However, $obj_pro_foo $foo_is out of $your reach.");
           the_message_log.add(message);
 
           return StateResult::Failure();
@@ -271,7 +271,7 @@ Action::StateResult Action::do_prebegin_work(AnyMap& params)
         {
           print_message_try_();
 
-          message = L"However, " + OBJ_PRO_FOO + FOO_IS + L" not in " + YOUR + L" inventory";
+          message = make_string(L"However, $obj_pro_foo $foo_is not in $your inventory");
           if (subject->can_reach(object))
           {
             message += L" (pick it up first)";
@@ -423,7 +423,7 @@ void Action::print_message_try_() const
 {
   StringDisplay object_string = get_object_string_();
   if (!object_string.empty()) object_string = L" " + object_string;
-  StringDisplay message = YOU_TRY + L" to " + VERB + L" " + get_object_string_() + L".";
+  StringDisplay message = make_string(L"$you $try to $verb $the_foo.");
   the_message_log.add(message);
 }
 
@@ -431,7 +431,7 @@ void Action::print_message_do_() const
 {
   StringDisplay object_string = get_object_string_();
   if (!object_string.empty()) object_string = L" " + object_string;
-  StringDisplay message = YOU + L" " + CV(VERB, VERB3) + L" " + get_object_string_() + L".";
+  StringDisplay message = make_string(L"$you $cverb $the_foo.");
   the_message_log.add(message);
 }
 
@@ -439,7 +439,7 @@ void Action::print_message_begin_() const
 {
   StringDisplay object_string = get_object_string_();
   if (!object_string.empty()) object_string = L" " + object_string;
-  StringDisplay message = YOU + L" " + CV(L"begin", L"begins") + L" to " + VERB + object_string + L".";
+  StringDisplay message = make_string(L"$you $(cv?begin:begins) to $verb $the_foo.");
   the_message_log.add(message);
 }
 
@@ -447,7 +447,7 @@ void Action::print_message_stop_() const
 {
   StringDisplay object_string = get_object_string_();
   if (!object_string.empty()) object_string = L" " + object_string;
-  StringDisplay message = YOU + L" " + CV(L"stop ", L"stops ") + VERBING + object_string + L".";
+  StringDisplay message = make_string(L"$you $(cv?stop:stops) $verbing $the_foo.");
   the_message_log.add(message);
 }
 
@@ -455,13 +455,13 @@ void Action::print_message_finish_() const
 {
   StringDisplay object_string = get_object_string_();
   if (!object_string.empty()) object_string = L" " + object_string;
-  StringDisplay message = YOU + L" " + CV(L"finish ", L"finishes ") + VERBING + object_string + L".";
+  StringDisplay message = make_string(L"$you $(cv?finish:finishes) $verbing $the_foo.");
   the_message_log.add(message);
 }
 
 void Action::print_message_cant_() const
 {
-  StringDisplay message = YOU + L" can't " + VERB + L" that!";
+  StringDisplay message = make_string(L"$you can't $verb that!");
   the_message_log.add(message);
 }
 
@@ -587,6 +587,14 @@ StringDisplay Action::make_string(StringDisplay pattern, std::vector<StringDispl
     if ((token == L"verb_pp") || (token == L"verbpp"))
     {
       return get_verb_pp();
+    }
+    if (token == L"cverb")
+    {
+      return (get_subject()->is_third_person() ? get_verb() : get_verb3());
+    }
+    if (token == L"objcverb")
+    {
+      return (get_object()->is_third_person() ? get_verb() : get_verb3());
     }
 
     if (token == L"you")
