@@ -32,7 +32,7 @@ Action::StateResult ActionMove::do_prebegin_work_(AnyMap& params)
   // Make sure we CAN move.
   if (!subject->get_intrinsic<bool>("can_move", false))
   {
-    message += YOU + CV(L" don't", L" doesn't") + L" have the capability of movement.";
+    message += make_string(L"$you $(cv?don't:doesn't) have the capability of movement.");
     the_message_log.add(message);
     return Action::StateResult::Failure();
   }
@@ -40,7 +40,7 @@ Action::StateResult ActionMove::do_prebegin_work_(AnyMap& params)
   // Make sure we can move RIGHT NOW.
   if (!subject->can_currently_move())
   {
-    message += YOU + L" can't move right now.";
+    message += make_string(L"$you can't move right now.");
     the_message_log.add(message);
     return Action::StateResult::Failure();
   }
@@ -48,7 +48,8 @@ Action::StateResult ActionMove::do_prebegin_work_(AnyMap& params)
   // Make sure we're not confined inside another thing.
   if (subject->is_inside_another_thing())
   {
-    message += YOU_ARE + L" inside " + location->get_identifying_string(ArticleChoice::Indefinite) + L" and " + ARE + L" not going anywhere!";
+    message += make_string(L"$you $are inside $0 and $are not going anywhere!",
+                           { location->get_identifying_string(ArticleChoice::Indefinite) });
 
     the_message_log.add(message);
     return Action::StateResult::Failure();
@@ -94,7 +95,7 @@ Action::StateResult ActionMove::do_begin_work_(AnyMap& params)
     if ((x_new < 0) || (y_new < 0) ||
         (x_new >= map_size.x) || (y_new >= map_size.y))
     {
-      message += YOU + L" can't move there; it is out of bounds!";
+      message += make_string(L"$you can't move there; it is out of bounds!");
       the_message_log.add(message);
     }
     else
@@ -128,9 +129,12 @@ Action::StateResult ActionMove::do_begin_work_(AnyMap& params)
         else
         {
           StringDisplay tile_description = new_tile.get_display_name();
-          message += YOU_ARE + L" stopped by " +
-            getIndefArt(tile_description) + L" " +
-            tile_description + L".";
+          message += make_string(L"$you $are stopped by $0 $1.",
+          {
+            getIndefArt(tile_description),
+            tile_description
+          });
+
           the_message_log.add(message);
         }
       } // end else if (tile does not contain creature)

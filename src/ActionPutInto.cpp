@@ -28,8 +28,7 @@ Action::StateResult ActionPutInto::do_prebegin_work_(AnyMap& params)
     }
     else
     {
-      message = YOU_TRY + L" to store " + THE_FOO +
-        L"inside itself, which seriously shouldn't happen.";
+      message = make_string(L"$you $try to store $the_foo inside itself, which seriously shouldn't happen.");
       CLOG(WARNING, "Action") << "NPC tried to store a container in itself!?";
     }
 
@@ -47,9 +46,7 @@ Action::StateResult ActionPutInto::do_prebegin_work_(AnyMap& params)
     }
     else
     {
-      message = YOU_TRY + L" to store " + YOURSELF +
-        L"into " + THE_TARGET_THING +
-        L", which seriously shouldn't happen.";
+      message = make_string(L"$you $try to store $yourself into $the_target_thing, which seriously shouldn't happen.");
       CLOG(WARNING, "Action") << "NPC tried to store self!?";
     }
     the_message_log.add(message);
@@ -66,8 +63,7 @@ Action::StateResult ActionPutInto::do_prebegin_work_(AnyMap& params)
     }
     else
     {
-      message = YOU_TRY + L" to store " + THE_FOO + L"into " + YOURSELF +
-        L", which seriously shouldn't happen.";
+      message = make_string(L"$you $try to store $the_foo into $yourself, which seriously shouldn't happen.");
       CLOG(WARNING, "Action") << "NPC tried to store into self!?";
     }
     the_message_log.add(message);
@@ -80,7 +76,7 @@ Action::StateResult ActionPutInto::do_prebegin_work_(AnyMap& params)
   {
     print_message_try_();
 
-    message = THE_TARGET_THING + L" is not a container!";
+    message = make_string(L"$the_target_thing is not a container!");
     the_message_log.add(message);
 
     return StateResult::Failure();
@@ -91,8 +87,7 @@ Action::StateResult ActionPutInto::do_prebegin_work_(AnyMap& params)
   {
     print_message_try_();
 
-    message = THE_FOO + L" is already in " +
-      THE_TARGET_THING + L"!";
+    message = make_string(L"$the_foo is already in $the_target_thing!");
     the_message_log.add(message);
 
     return StateResult::Failure();
@@ -103,7 +98,7 @@ Action::StateResult ActionPutInto::do_prebegin_work_(AnyMap& params)
   {
     print_message_try_();
 
-    message = YOU + L" cannot reach " + THE_TARGET_THING + L".";
+    message = make_string(L"$you cannot reach $the_target_thing.");
     the_message_log.add(message);
 
     return StateResult::Failure();
@@ -114,7 +109,7 @@ Action::StateResult ActionPutInto::do_prebegin_work_(AnyMap& params)
   {
     print_message_try_();
 
-    message = YOU + L" cannot store something that is currently being wielded.";
+    message = make_string(L"$you cannot store something that is currently being wielded.");
     the_message_log.add(message);
 
     return StateResult::Failure();
@@ -126,7 +121,7 @@ Action::StateResult ActionPutInto::do_prebegin_work_(AnyMap& params)
     print_message_try_();
 
     /// @todo Perhaps automatically try to unwield the item before dropping?
-    message = YOU + L"cannot store something that is currently being worn.";
+    message = make_string(L"$you cannot store something that is currently being worn.");
     the_message_log.add(message);
 
     return StateResult::Failure();
@@ -155,7 +150,7 @@ Action::StateResult ActionPutInto::do_begin_work_(AnyMap& params)
     }
     else
     {
-      message = YOU + L" could not move " + THE_FOO + L" into " + THE_TARGET_THING + L" for some inexplicable reason.";
+      message = make_string(L"$you could not move $the_foo into $the_target_thing for some inexplicable reason.");
       the_message_log.add(message);
 
       MAJOR_ERROR("Could not move Thing into Container even though be_object_of returned Success");
@@ -177,12 +172,12 @@ Action::StateResult ActionPutInto::do_abort_work_(AnyMap& params)
 
 void ActionPutInto::print_message_try_() const
 {
-  StringDisplay message = YOU_TRY + L" to " + VERB + L" " + get_object_string_() + L" into " + get_target_string_() + L".";
+  StringDisplay message = make_string(L"$you $try to $verb $the_foo into $the_target_thing.");
   the_message_log.add(message);
 }
 
 void ActionPutInto::print_message_do_() const
 {
-  StringDisplay message = YOU + L" " + CV(VERB, VERB3) + L" " + get_object_string_() + L" into " + get_target_string_() + L".";
+  StringDisplay message = make_string(L"$you $cverb $the_foo into $the_target_thing.");
   the_message_log.add(message);
 }

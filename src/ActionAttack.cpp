@@ -30,7 +30,7 @@ Action::StateResult ActionAttack::do_prebegin_work_(AnyMap& params)
   // Make sure we CAN attack.
   if (!subject->get_modified_property<bool>("can_attack", false))
   {
-    message += YOU + CV(L" don't", L" doesn't") + L" have any way to attack things.";
+    message += make_string(L"$you $(cv?don't:doesn't) have any way to attack things.");
     the_message_log.add(message);
     return StateResult::Failure();
   }
@@ -38,7 +38,7 @@ Action::StateResult ActionAttack::do_prebegin_work_(AnyMap& params)
   // Make sure we can move RIGHT NOW.
   if (!subject->can_currently_move())
   {
-    message += YOU + L" can't move right now.";
+    message += make_string(L"$you can't move right now.");
     the_message_log.add(message);
     return StateResult::Failure();
   }
@@ -47,7 +47,7 @@ Action::StateResult ActionAttack::do_prebegin_work_(AnyMap& params)
   if (new_direction == Direction::Self)
   {
     /// @todo Allow attacking yourself!
-    message = YOU + L" wisely" + CV(L" refrain", L" refrains") + L" from pummelling " + YOURSELF + L".";
+    message = make_string(L"$you wisely $(cv?refrain:refrains) from pummelling $yourself.");
     the_message_log.add(message);
     return StateResult::Failure();
   }
@@ -56,7 +56,8 @@ Action::StateResult ActionAttack::do_prebegin_work_(AnyMap& params)
   /// @todo Allow for attacking when swallowed!
   if (subject->is_inside_another_thing())
   {
-    message += YOU_ARE + L" inside " + location->get_identifying_string(ArticleChoice::Indefinite) + L" and " + ARE + L" not going anywhere!";
+    message += make_string(L"$you $are inside $0 and $are not going anywhere!",
+                           { location->get_identifying_string(ArticleChoice::Indefinite) });
 
     the_message_log.add(message);
     return StateResult::Failure();
@@ -105,7 +106,7 @@ Action::StateResult ActionAttack::do_begin_work_(AnyMap& params)
   if ((x_new < 0) || (y_new < 0) ||
     (x_new >= map_size.x) || (y_new >= map_size.y))
   {
-    message += YOU + L" can't attack there; it is out of bounds!";
+    message += make_string(L"$you can't attack there; it is out of bounds!");
     the_message_log.add(message);
     return StateResult::Failure();
   }

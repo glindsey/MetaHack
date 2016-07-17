@@ -550,7 +550,7 @@ StringDisplay Action::make_string(StringDisplay pattern, std::vector<StringDispl
 
     if ((token == L"the_target_thing") || (token == L"thetargetthing"))
     {
-      return get_target_thing()->get_identifying_string(ArticleChoice::Definite);
+      return get_target_string_();
     }
 
     if (token == L"fooself")
@@ -625,6 +625,29 @@ StringDisplay Action::make_string(StringDisplay pattern, std::vector<StringDispl
       return ss.str();
     }
 
+    // Check for a numerical token.
+    try
+    {
+      unsigned int converted = static_cast<unsigned int>(std::stoi(token));
+
+      // Check that the optional arguments are at least this size.
+      if (converted < optional_strings.size())
+      {
+        // Return the string passed in.
+        return optional_strings.at(converted);
+      }
+    }
+    catch (std::invalid_argument&)
+    {
+      // Not a number, so bail.
+    }
+    catch (...)
+    {
+      // Throw anything else.
+      throw;
+    }
+
+    // Nothing else matched, return default.
     return L"(" + token + L")";
   },
                                             [&](StringDisplay token) -> bool
@@ -633,7 +656,7 @@ StringDisplay Action::make_string(StringDisplay pattern, std::vector<StringDispl
     {
       return get_subject()->is_third_person();
     }
-    if ((token == L"objcv") || (token == L"obj_cv"))
+    if ((token == L"objcv") || (token == L"obj_cv") || (token == L"foocv") || (token == L"foo_cv"))
     {
       return get_object()->is_third_person();
     }

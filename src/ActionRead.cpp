@@ -16,7 +16,7 @@ Action::StateResult ActionRead::do_prebegin_work_(AnyMap& params)
   {
     print_message_try_();
 
-    message = YOU_ARE + L" not smart enough to read " + FOOSELF + L".";
+    message = make_string(L"$you $are not smart enough to read $fooself.");
     the_message_log.add(message);
 
     return StateResult::Failure();
@@ -52,7 +52,7 @@ Action::StateResult ActionRead::do_finish_work_(AnyMap& params)
   switch (object->be_object_of(*this, subject))
   {
     case ActionResult::SuccessDestroyed:
-      message = THE_FOO + OBJCV(L" disintegrate", L" disintegrates") + L" after " + YOU + CV(L" read ", L" reads ") + OBJ_PRO_FOO + L"!";
+      message = make_string(L"$the_foo $(objcv?disintegrate:disintegrates) after $you $cverb $obj_pro_foo!");
       the_message_log.add(message);
 
       object->destroy();
@@ -83,6 +83,6 @@ Action::StateResult ActionRead::do_abort_work_(AnyMap& params)
 
 void ActionRead::print_message_cant_() const
 {
-  StringDisplay message = THE_FOO + FOO_HAS + L" no writing to read.";
+  StringDisplay message = make_string(L"$the_foo $foo_has no writing to read.");
   the_message_log.add(message);
 }

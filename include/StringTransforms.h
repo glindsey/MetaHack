@@ -123,7 +123,7 @@ inline StringDisplay replace_tokens(StringDisplay str,
           }
         }
 
-        if (iswalpha(*loc) || (*loc == L'_'))
+        if (iswalnum(*loc) || (*loc == L'_'))
         {
           token_name += *loc;
         }
@@ -148,7 +148,7 @@ inline StringDisplay replace_tokens(StringDisplay str,
         break;
 
       case TokenizerState::ParsingChoice:
-        if (iswalpha(*loc) || (*loc == '_'))
+        if (iswalnum(*loc) || (*loc == '_'))
         {
           token_name += *loc;
         }
