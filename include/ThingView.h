@@ -32,6 +32,26 @@ public:
 
 	/// @todo Method to set location to draw to on texture.
 
+	/// Sets the location of this Thing on the target texture.
+	/// If the new location is different from previous, this method may
+	/// reinitialize cached render data.
+	/// @param target_coords Target coords for the Thing's upper-left corner.
+	void set_location(sf::Vector2f target_coords);
+
+	/// Gets the location of this Thing on the target texture.
+	/// @return Target coords for the Thing's upper-left corner.
+	sf::Vector2f get_location();
+
+	/// Sets the size of this Thing on the target texture.
+	/// If the new size is different from previous, this method may
+	/// reinitialize cached render data.
+	/// @param target_coords Size of the Thing, in pixels.
+	void set_size(sf::Vector2u target_size);
+
+	/// Gets the size of this Thing on the target texture.
+	/// @return Size of the Thing, in pixels.
+	sf::Vector2u get_size();
+
 	/// Update any cached render data associated with thing.
 	/// @param thing	ID of the thing that is percieving the map.
 	virtual void update_render_data(ThingId thing) = 0;
@@ -46,4 +66,10 @@ protected:
 private:
 	/// Thing ID associated with this view.
 	ThingId m_thing_id;
+
+	/// Target coordinates for the Thing.
+	sf::Vector2f m_target_coords;
+
+	/// Target size for the Thing, in pixels.
+	sf::Vector2u m_target_size;
 };
