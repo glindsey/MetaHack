@@ -342,6 +342,9 @@
     <ClInclude Include="include\MapStandard2DView.h">
       <Filter>Object Views</Filter>
     </ClInclude>
+    <ClInclude Include="include\ThingView.h">
+      <Filter>Object Views</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">
@@ -570,6 +573,9 @@
       <Filter>Object Views</Filter>
     </ClCompile>
     <ClCompile Include="src\MapStandard2DView.cpp">
+      <Filter>Object Views</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ThingView.cpp">
       <Filter>Object Views</Filter>
     </ClCompile>
   </ItemGroup>

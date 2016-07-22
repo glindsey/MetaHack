@@ -226,6 +226,7 @@
     <ClInclude Include="include\Thing.h" />
     <ClInclude Include="include\ThingId.h" />
     <ClInclude Include="include\ThingManager.h" />
+    <ClInclude Include="include\ThingView.h" />
     <ClInclude Include="include\TileSheet.h" />
     <ClInclude Include="include\Visitor.h" />
   </ItemGroup>
@@ -309,6 +310,7 @@
     <ClCompile Include="src\Thing.cpp" />
     <ClCompile Include="src\ThingId.cpp" />
     <ClCompile Include="src\ThingManager.cpp" />
+    <ClCompile Include="src\ThingView.cpp" />
     <ClCompile Include="src\TileSheet.cpp" />
   </ItemGroup>
   <ItemGroup>

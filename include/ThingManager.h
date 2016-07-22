@@ -16,6 +16,7 @@ class ThingMetadata;
 class ThingManager
 {
   friend class ThingId;
+  friend class ThingView;
 
 public:
   /// Constructor.
@@ -58,7 +59,7 @@ public:
 
   /// Get the ThingId of Mu (nothingness).
   /// @return The ThingId of Mu.
-  ThingId get_mu() const;
+  static ThingId get_mu();
 
 protected:
 

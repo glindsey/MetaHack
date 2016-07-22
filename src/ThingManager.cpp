@@ -146,7 +146,7 @@ Thing const& ThingManager::get(ThingId id) const
   }
 }
 
-ThingId ThingManager::get_mu() const
+ThingId ThingManager::get_mu()
 {
   return ThingId();
 }
