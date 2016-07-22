@@ -34,18 +34,6 @@ struct Map::Impl
 
   /// Pointer deque of map features.
   boost::ptr_deque<MapFeature> features;
-
-  /// "Seen" map vertex array.
-  sf::VertexArray map_seen_vertices;
-
-  /// Outlines map vertex array.
-  sf::VertexArray map_outline_vertices;
-
-  /// "Memory" map vertex array.
-  sf::VertexArray map_memory_vertices;
-
-  /// Thing vertex array.
-  sf::VertexArray thing_vertices;
 };
 
 /// @todo Have this take an sf::Vector2i instead of width x height
@@ -61,13 +49,6 @@ Map::Map(GameState& game, MapId map_id, int width, int height)
 
   CLOG(TRACE, "Map") << "Creating map of size " << width << " x " << height;
 
-  // Create vertices:
-  // 4 vertices * 4 quads for the floor
-  // 4 vertices * 4 quads * 4 potential walls
-  // = 16 + 64 = 80 possible vertices per tile.
-  pImpl->map_seen_vertices.resize(m_map_size.x * m_map_size.y * 80);
-  pImpl->map_memory_vertices.resize(m_map_size.x * m_map_size.y * 80);
-
   // Create the tiles themselves.
   MetadataCollection& collection = m_game.get_metadata_collection("maptile");
   for (int y = 0; y < height; ++y)
@@ -82,14 +63,6 @@ Map::Map(GameState& game, MapId map_id, int width, int height)
       new_tile->set_ambient_light_level(ambient_light_level);
     }
   }
-
-  // Create the vertex arrays.
-  pImpl->map_seen_vertices.clear();
-  pImpl->map_seen_vertices.setPrimitiveType(sf::PrimitiveType::Quads);
-  pImpl->map_memory_vertices.clear();
-  pImpl->map_memory_vertices.setPrimitiveType(sf::PrimitiveType::Quads);
-  pImpl->thing_vertices.clear();
-  pImpl->thing_vertices.setPrimitiveType(sf::PrimitiveType::Quads);
 
   CLOG(TRACE, "Map") << "Map created.";
 }
@@ -474,121 +447,6 @@ void Map::add_light(ThingId source)
   {
     do_recursive_lighting(source, coords, light_color, max_depth_squared, 8);
   }
-}
-
-void Map::update_tile_vertices(ThingId thing)
-{
-  auto location = thing->get_location();
-
-  static sf::Vector2f position;
-
-  // Loop through and draw tiles.
-  pImpl->map_seen_vertices.clear();
-  pImpl->map_memory_vertices.clear();
-
-  for (int y = 0; y < m_map_size.y; ++y)
-  {
-    for (int x = 0; x < m_map_size.x; ++x)
-    {
-      auto& tile = TILE(x, y);
-      bool this_is_empty = tile.is_empty_space();
-      bool nw_is_empty = ((x > 0) && (y > 0)) ? (thing->can_see(x - 1, y - 1) && TILE(x - 1, y - 1).is_empty_space()) : false;
-      bool n_is_empty = (y > 0) ? (thing->can_see(x, y - 1) && TILE(x, y - 1).is_empty_space()) : false;
-      bool ne_is_empty = ((x < m_map_size.x - 1) && (y > 0)) ? (thing->can_see(x + 1, y - 1) && TILE(x + 1, y - 1).is_empty_space()) : false;
-      bool e_is_empty = (x < m_map_size.x - 1) ? (thing->can_see(x + 1, y) && TILE(x + 1, y).is_empty_space()) : false;
-      bool se_is_empty = ((x < m_map_size.x - 1) && (y < m_map_size.y - 1)) ? (thing->can_see(x + 1, y + 1) && TILE(x + 1, y + 1).is_empty_space()) : false;
-      bool s_is_empty = (y < m_map_size.y - 1) ? (thing->can_see(x, y + 1) && TILE(x, y + 1).is_empty_space()) : false;
-      bool sw_is_empty = ((x > 0) && (y < m_map_size.y - 1)) ? (thing->can_see(x - 1, y + 1) && TILE(x - 1, y + 1).is_empty_space()) : false;
-      bool w_is_empty = (x > 0) ? (thing->can_see(x - 1, y) && TILE(x - 1, y).is_empty_space()) : false;
-
-      if (thing->can_see(x, y))
-      {
-        if (this_is_empty)
-        {
-          tile.add_floor_vertices_to(pImpl->map_seen_vertices, true);
-        }
-        else
-        {
-          tile.add_wall_vertices_to(pImpl->map_seen_vertices, true,
-                                    nw_is_empty, n_is_empty,
-                                    ne_is_empty, e_is_empty,
-                                    se_is_empty, s_is_empty,
-                                    sw_is_empty, w_is_empty);
-        }
-      }
-      else
-      {
-        thing->add_memory_vertices_to(pImpl->map_memory_vertices, x, y);
-      }
-    } // end for (int x)
-  } // end for (int y)
-}
-
-void Map::update_thing_vertices(ThingId thing, int frame)
-{
-  // Loop through and draw things.
-  pImpl->thing_vertices.clear();
-  for (int y = 0; y < m_map_size.y; ++y)
-  {
-    for (int x = 0; x < m_map_size.x; ++x)
-    {
-      ThingId contents = TILE(x, y).get_tile_contents();
-      Inventory& inv = contents->get_inventory();
-
-      if (thing->can_see(x, y))
-      {
-        if (inv.count() > 0)
-        {
-          ThingId biggest_thing = inv.get_largest_thing();
-          if (biggest_thing != ThingId::Mu())
-          {
-            biggest_thing->add_floor_vertices_to(pImpl->thing_vertices, true, frame);
-          }
-        }
-      }
-
-      if (inv.contains(thing))
-      {
-        thing->add_floor_vertices_to(pImpl->thing_vertices, true, frame);
-      }
-    }
-  }
-}
-
-void Map::set_view(sf::RenderTarget& target,
-                   sf::Vector2f center,
-                   float zoom_level)
-{
-  sf::Vector2u screen_size = target.getSize();
-  unsigned int inventory_area_width = the_config.get<unsigned int>("inventory_area_width");
-  unsigned int status_area_height = the_config.get<unsigned int>("status_area_height");
-  unsigned int messagelog_area_height = the_config.get<unsigned int>("messagelog_area_height");
-
-  sf::Vector2f window_center = sf::Vector2f((static_cast<float>(screen_size.x - inventory_area_width) / zoom_level) / 2,
-                                            messagelog_area_height + (static_cast<float>(screen_size.y - (status_area_height + messagelog_area_height)) / zoom_level) / 2);
-
-  target.setView(sf::View(sf::FloatRect((center.x - window_center.x),
-    (center.y - window_center.y),
-                                        (screen_size.x / zoom_level),
-                                        (screen_size.y / zoom_level))));
-}
-
-void Map::draw_to(sf::RenderTarget& target)
-{
-  the_shader.setParameter("texture", sf::Shader::CurrentTexture);
-
-  sf::RenderStates render_states = sf::RenderStates::Default;
-  render_states.shader = &the_shader;
-  render_states.texture = &(the_tilesheet.getTexture());
-
-  the_shader.setParameter("effect", ShaderEffect::Lighting);
-  //the_shader.setParameter("effect", ShaderEffect::Default);
-  target.draw(pImpl->map_seen_vertices, render_states);
-  the_shader.setParameter("effect", ShaderEffect::Sepia);
-  target.draw(pImpl->map_memory_vertices, render_states);
-  the_shader.setParameter("effect", ShaderEffect::Lighting);
-  //the_shader.setParameter("effect", ShaderEffect::Default);
-  target.draw(pImpl->thing_vertices, render_states);
 }
 
 MapTile const& Map::get_tile(int x, int y) const

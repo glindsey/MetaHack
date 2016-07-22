@@ -14,6 +14,9 @@ class MapStandard2DView : public MapView
 {
 public:
 	/// Constructor.
+	MapStandard2DView();
+
+	/// Constructor.
 	/// @param map	ID of Map object to associate with this view.
 	MapStandard2DView(MapId map_id);
 
@@ -22,8 +25,11 @@ public:
 	virtual bool render(sf::RenderTexture& texture, int frame) override;
 
 protected:
+	/// Reinitialize cached map render data.
+	virtual void reset_cached_render_data() override;
 
 private:
+
 	/// "Seen" map vertex array.
 	sf::VertexArray m_map_seen_vertices;
 

@@ -8,6 +8,7 @@
 #include "Direction.h"
 #include "GameState.h"
 #include "InventoryArea.h"
+#include "MapView.h"
 #include "StatusArea.h"
 
 /// Object that represents the game mode state.
@@ -60,6 +61,9 @@ private:
 
   /// The current game state.
   std::unique_ptr<GameState> m_game_state;
+
+  /// The current MapView.
+  std::unique_ptr<MapView> m_map_view;
 
   /// True if the application window is in focus, false otherwise.
   bool m_window_in_focus;

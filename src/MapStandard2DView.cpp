@@ -4,6 +4,11 @@
 
 #include "ShaderEffect.h"
 
+MapStandard2DView::MapStandard2DView()
+	:
+	MapView()
+{}
+
 MapStandard2DView::MapStandard2DView(MapId map_id)
 	:
 	MapView(map_id)
@@ -112,4 +117,25 @@ bool MapStandard2DView::render(sf::RenderTexture& texture, int frame)
 	texture.draw(m_thing_vertices, render_states);
 
 	return true;
+}
+
+void MapStandard2DView::reset_cached_render_data()
+{
+	auto& map = get_map();
+	auto map_size = map.get_size();
+
+	// Create vertices:
+	// 4 vertices * 4 quads for the floor
+	// 4 vertices * 4 quads * 4 potential walls
+	// = 16 + 64 = 80 possible vertices per tile.
+	m_map_seen_vertices.resize(map_size.x * map_size.y * 80);
+	m_map_memory_vertices.resize(map_size.x * map_size.y * 80);
+
+	// Create the vertex arrays.
+	m_map_seen_vertices.clear();
+	m_map_seen_vertices.setPrimitiveType(sf::PrimitiveType::Quads);
+	m_map_memory_vertices.clear();
+	m_map_memory_vertices.setPrimitiveType(sf::PrimitiveType::Quads);
+	m_thing_vertices.clear();
+	m_thing_vertices.setPrimitiveType(sf::PrimitiveType::Quads);
 }

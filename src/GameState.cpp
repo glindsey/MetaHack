@@ -130,9 +130,6 @@ bool GameState::process_tick()
     {
       // Update map lighting.
       current_map.update_lighting();
-
-      // Update tile vertex array.
-      current_map.update_tile_vertices(player);
     }
     return true;
   }

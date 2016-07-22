@@ -51,16 +51,6 @@ public:
 
   void add_light(ThingId source);
 
-  void update_tile_vertices(ThingId thing);
-
-  void update_thing_vertices(ThingId thing, int frame);
-
-  void set_view(sf::RenderTarget& target,
-                sf::Vector2f center,
-                float zoom_level);
-
-  void draw_to(sf::RenderTarget& target);
-
   MapTile const& get_tile(int x, int y) const;
 
   MapTile& get_tile(int x, int y);

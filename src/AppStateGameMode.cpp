@@ -10,6 +10,7 @@
 #include "KeyBuffer.h"
 #include "Map.h"
 #include "MapFactory.h"
+#include "MapStandard2DView.h"
 #include "MapTile.h"
 #include "MessageLog.h"
 #include "MessageLogView.h"
@@ -51,6 +52,7 @@ AppStateGameMode::AppStateGameMode(StateMachine& state_machine, sf::RenderWindow
            std::bind(&AppStateGameMode::render_map, this, std::placeholders::_1, std::placeholders::_2)),
   m_app_window{ m_app_window },
   m_game_state{ NEW GameState() },
+  m_map_view{ NEW MapStandard2DView() },
   m_window_in_focus{ true },
   m_inventory_area_shows_player{ false },
   m_map_zoom_level{ 1.0f },
@@ -92,6 +94,9 @@ void AppStateGameMode::execute()
   auto player = GAME.get_player();
   if (ticked)
   {
+	// Update view's cached tile data.
+    m_map_view->update_tiles(player);
+
     GAME.increment_game_clock();
     if (!player->action_is_pending() && !player->action_is_in_progress())
     {
@@ -178,10 +183,15 @@ bool AppStateGameMode::initialize()
   m_inventory_area_shows_player = false;
   reset_inventory_area();
 
+  // Set the map view.
+  m_map_view->set_map_id(current_map_id);
+
   // Get the map ready.
   game_map.update_lighting();
-  game_map.update_tile_vertices(player);
-  game_map.update_thing_vertices(player, 0);
+
+  // Get the map view ready.
+  m_map_view->update_tiles(player);
+  m_map_view->update_things(player, 0);
 
   the_message_log.add(L"Welcome to the Etheric Catacombs!");
 
@@ -227,12 +237,12 @@ void AppStateGameMode::render_map(sf::RenderTexture& texture, int frame)
       sf::Vector2f cursor_pixel_coords = MapTile::get_pixel_coords(m_cursor_coords);
 
       // Update thing vertex array.
-      game_map.update_thing_vertices(player, frame);
+      m_map_view->update_things(player, frame);
 
       if (m_current_input_state == GameInputState::CursorLook)
       {
-        game_map.set_view(texture, cursor_pixel_coords, m_map_zoom_level);
-        game_map.draw_to(texture);
+        m_map_view->set_view(texture, cursor_pixel_coords, m_map_zoom_level);
+		m_map_view->render(texture, frame);
 
         auto& cursor_tile = game_map.get_tile(m_cursor_coords);
         cursor_tile.draw_highlight(texture,
@@ -243,8 +253,8 @@ void AppStateGameMode::render_map(sf::RenderTexture& texture, int frame)
       }
       else
       {
-        game_map.set_view(texture, player_pixel_coords, m_map_zoom_level);
-        game_map.draw_to(texture);
+		m_map_view->set_view(texture, player_pixel_coords, m_map_zoom_level);
+		m_map_view->render(texture, frame);
       }
     }
   }
