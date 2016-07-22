@@ -28,6 +28,11 @@ MapFactory::~MapFactory()
   //dtor
 }
 
+bool MapFactory::exists(MapId map_id) const
+{
+    return m_maps.count(map_id);
+}
+
 Map const& MapFactory::get(MapId map_id) const
 {
   if (m_maps.count(map_id) == 0)

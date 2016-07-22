@@ -29,6 +29,9 @@ public:
     //archive(m_maps, current_map_id);
   }
 
+  /// Returns whether a specified MapId exists in the map.
+  bool exists(MapId map_id) const;
+
   /// Gets a reference to a Map by ID.
   Map const& get(MapId map_id) const;
 

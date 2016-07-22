@@ -40,6 +40,9 @@
     <Filter Include="Resource Files\Shaders">
       <UniqueIdentifier>{77a3351a-cfa7-45aa-ba4d-fe17aae1e83d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Object Views">
+      <UniqueIdentifier>{310b5b1e-9be6-4227-8799-6b5fdc29b60b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\App.h">
@@ -237,9 +240,6 @@
     <ClInclude Include="include\MapDonutRoom.h">
       <Filter>Map Features</Filter>
     </ClInclude>
-    <ClInclude Include="include\MapFactory.h">
-      <Filter>Map Features</Filter>
-    </ClInclude>
     <ClInclude Include="include\MapFeature.h">
       <Filter>Map Features</Filter>
     </ClInclude>
@@ -332,6 +332,15 @@
     </ClInclude>
     <ClInclude Include="include\ActionTurn.h">
       <Filter>Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MapFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MapView.h">
+      <Filter>Object Views</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MapStandard2DView.h">
+      <Filter>Object Views</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -491,9 +500,6 @@
     <ClCompile Include="src\mapfeatures\MapDonutRoom.cpp">
       <Filter>Map Features</Filter>
     </ClCompile>
-    <ClCompile Include="src\MapFactory.cpp">
-      <Filter>Map Features</Filter>
-    </ClCompile>
     <ClCompile Include="src\mapfeatures\MapFeature.cpp">
       <Filter>Map Features</Filter>
     </ClCompile>
@@ -556,6 +562,15 @@
     </ClCompile>
     <ClCompile Include="src\ActionTurn.cpp">
       <Filter>Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MapFactory.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MapView.cpp">
+      <Filter>Object Views</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MapStandard2DView.cpp">
+      <Filter>Object Views</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

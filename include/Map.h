@@ -23,6 +23,7 @@ class ThingId;
 class Map
 {
   friend class MapFactory;
+  friend class MapView;
 
 public:
   ~Map();

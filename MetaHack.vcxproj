@@ -179,6 +179,8 @@
     <ClInclude Include="include\Direction.h" />
     <ClInclude Include="include\ErrorHandler.h" />
     <ClInclude Include="include\MapMemoryChunk.h" />
+    <ClInclude Include="include\MapStandard2DView.h" />
+    <ClInclude Include="include\MapView.h" />
     <ClInclude Include="include\ModifiablePropertyDictionary.h" />
     <ClInclude Include="include\RNGUtils.h" />
     <ClInclude Include="include\SFMLEventHandler.h" />
@@ -287,7 +289,9 @@
     <ClCompile Include="src\mapfeatures\MapGenerator.cpp" />
     <ClCompile Include="src\mapfeatures\MapLRoom.cpp" />
     <ClCompile Include="src\mapfeatures\MapRoom.cpp" />
+    <ClCompile Include="src\MapStandard2DView.cpp" />
     <ClCompile Include="src\MapTile.cpp" />
+    <ClCompile Include="src\MapView.cpp" />
     <ClCompile Include="src\MessageLog.cpp" />
     <ClCompile Include="src\MessageLogView.cpp" />
     <ClCompile Include="src\Metadata.cpp" />
