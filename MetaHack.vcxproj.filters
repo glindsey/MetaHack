@@ -697,5 +697,8 @@
     <None Include="resources\scripts\map.lua">
       <Filter>Resource Files\Other Scripts</Filter>
     </None>
+    <None Include="resources\things\FlaskGlass.lua">
+      <Filter>Resource Files\Thing Scripts</Filter>
+    </None>
   </ItemGroup>
 </Project>
