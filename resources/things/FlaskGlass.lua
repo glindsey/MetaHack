@@ -7,8 +7,12 @@ FlaskGlass.intrinsics.name = "glass flask"
 FlaskGlass.intrinsics.plural = "glass flasks"
 
 FlaskGlass.intrinsics.inventory_size = 1
+FlaskGlass.intrinsics.opacity_red = 0
+FlaskGlass.intrinsics.opacity_green = 0
+FlaskGlass.intrinsics.opacity_blue = 0
 
-function Thing.can_contain(id)
+
+function FlaskGlass.can_contain(id)
     -- A flask can contain both solids and liquids, so always return success.
     return ActionResult.Success
 end
