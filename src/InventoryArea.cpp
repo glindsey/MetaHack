@@ -56,7 +56,7 @@ struct InventoryArea::Impl
     unsigned int char_number = static_cast<unsigned int>(character);
 
     ASSERT_CONDITION(((char_number >= 0x40) && (char_number <= 0x5a)) ||
-                     ((char_number >= 0x61) && (char_number <= 0x7a)));
+      ((char_number >= 0x61) && (char_number <= 0x7a)));
 
     if (char_number == 0x40)
     {
@@ -150,8 +150,8 @@ std::vector<ThingId> InventoryArea::get_selected_things()
     Inventory& inventory = pImpl->viewed->get_inventory();
 
     for (auto iter = std::begin(pImpl->selected_slots);
-    iter != std::end(pImpl->selected_slots);
-      ++iter)
+         iter != std::end(pImpl->selected_slots);
+         ++iter)
     {
       ThingId thing = inventory[*iter];
       things.push_back(thing);
@@ -299,7 +299,7 @@ void InventoryArea::render_contents_(sf::RenderTexture& texture, int frame)
   /// @todo Also need to display some details about the item, such as whether it
   ///       is equipped, what magicules are equipped to it, et cetera.
   for (auto iter = inventory.cbegin();
-       iter != inventory.cend(); 
+       iter != inventory.cend();
        ++iter)
   {
     auto& slot = (*iter).first;

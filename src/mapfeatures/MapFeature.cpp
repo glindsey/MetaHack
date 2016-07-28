@@ -142,8 +142,8 @@ void MapFeature::add_growth_vector(GeoVector vec)
 }
 
 bool MapFeature::does_box_pass_criterion(sf::Vector2i upper_left,
-                                        sf::Vector2i lower_right,
-                                        std::function<bool(MapTile&)> criterion)
+                                         sf::Vector2i lower_right,
+                                         std::function<bool(MapTile&)> criterion)
 {
   for (int xCheck = upper_left.x; xCheck <= lower_right.x; ++xCheck)
   {

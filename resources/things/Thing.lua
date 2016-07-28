@@ -47,6 +47,15 @@ function Thing.get_brief_description(id)
     return "Thing #" .. id .. ", which has no description associated with it."
 end
 
+function Thing.can_contain(id)
+    -- By default a Thing can only contain solid objects.
+    if thing_get_intrinsic_flag("liquid") == true
+        return ActionResult.Failure
+    end
+
+    return ActionResult.Success
+end
+
 function Thing.can_have_action_drop_done_by(id)
     return true
 end
@@ -67,16 +76,16 @@ function Thing.can_have_action_putinto_done_by(id)
     return true
 end
 
+function Thing.can_have_action_quaff_done_by(id)
+    return false
+end
+
 function Thing.can_have_action_takeout_done_by(id)
     return true
 end
 
 function Thing.can_have_action_wield_done_by(id)
     return true
-end
-
-function Thing.can_contain(id)
-    return ActionResult.Success
 end
 
 function Thing.get_tile_offset(id, frame)
@@ -98,10 +107,10 @@ end
 
 function Thing:get_intrinsic(key)
     local result = self.intrinsics[key]
-    
+
     if (result == nil) then
         local superclass = self.superClass()
-        
+
         if (superclass ~= nil) then
             return self.superClass():get_intrinsic(key)
         end

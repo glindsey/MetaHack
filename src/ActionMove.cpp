@@ -49,7 +49,7 @@ Action::StateResult ActionMove::do_prebegin_work_(AnyMap& params)
   if (subject->is_inside_another_thing())
   {
     message += make_string(L"$you $are inside $0 and $are not going anywhere!",
-                           { location->get_identifying_string(ArticleChoice::Indefinite) });
+    { location->get_identifying_string(ArticleChoice::Indefinite) });
 
     the_message_log.add(message);
     return Action::StateResult::Failure();
@@ -93,7 +93,7 @@ Action::StateResult ActionMove::do_begin_work_(AnyMap& params)
 
     // Check boundaries.
     if ((x_new < 0) || (y_new < 0) ||
-        (x_new >= map_size.x) || (y_new >= map_size.y))
+      (x_new >= map_size.x) || (y_new >= map_size.y))
     {
       message += make_string(L"$you can't move there; it is out of bounds!");
       the_message_log.add(message);

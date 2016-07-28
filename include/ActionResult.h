@@ -112,6 +112,6 @@ inline void ActionResult_add_to_lua(Lua* lua_instance)
                          "SuccessSelfReference", ActionResult::SuccessSelfReference,
                          "SuccessSwapHands", ActionResult::SuccessSwapHands,
                          0
-                         );
+  );
 }
 #endif // ACTIONRESULT_H

@@ -35,17 +35,6 @@ Action::StateResult ActionQuaff::do_prebegin_work_(AnyMap& params)
     return Action::StateResult::Failure();
   }
 
-  // Check that it is something that contains a liquid.
-  if (!object->get_intrinsic<bool>("liquid_carrier"))
-  {
-    print_message_try_();
-
-    message = YOU + L" cannot drink from that!";
-    the_message_log.add(message);
-
-    return Action::StateResult::Failure();
-  }
-
   // Check that it is not empty.
   Inventory& inv = object->get_inventory();
   if (inv.count() == 0)
@@ -65,17 +54,27 @@ Action::StateResult ActionQuaff::do_begin_work_(AnyMap& params)
 {
   auto subject = get_subject();
   auto object = get_object();
+  auto contents = object->get_inventory()[INVSLOT_ZERO];
 
   print_message_begin_();
 
   // Do the drinking action here.
-  /// @todo Figure out drinking time.
-  ActionResult result = object->be_object_of(*this, subject);
+  /// @todo We drink from the object, but it's what is inside that is
+  ///       actually being consumed. Do we call be_object_of() on the
+  ///       object, or on the object's contents?
+  ///       For now I am assuming we do it on the contents, since they
+  ///       are what will affect the drinker.
+  /// @todo Figure out drinking time. This will vary based on the contents
+  ///       being consumed.
+  ActionResult result = contents->be_object_of(*this, subject);
 
   switch (result)
   {
     case ActionResult::Success:
+      return Action::StateResult::Success();
+
     case ActionResult::SuccessDestroyed:
+      contents->destroy();
       return Action::StateResult::Success();
 
     case ActionResult::Failure:
@@ -93,7 +92,6 @@ Action::StateResult ActionQuaff::do_finish_work_(AnyMap& params)
   auto object = get_object();
 
   print_message_finish_();
-  object->get_inventory()[INVSLOT_ZERO]->destroy();
   return Action::StateResult::Success();
 }
 

@@ -46,7 +46,7 @@ Action::StateResult ActionTurn::do_prebegin_work_(AnyMap& params)
     the_message_log.add(message);
     return Action::StateResult::Failure();
   }
-  
+
   return Action::StateResult::Success();
 }
 
@@ -63,11 +63,10 @@ Action::StateResult ActionTurn::do_begin_work_(AnyMap& params)
   Direction new_direction = get_target_direction();
 
   if ((new_direction != Direction::Up) &&
-      (new_direction != Direction::Down))
+    (new_direction != Direction::Down))
   {
     /// @todo Change facing direction.
     result = StateResult::Success();
-
   } // end else if (other direction)
 
   return result;

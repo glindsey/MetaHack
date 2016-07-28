@@ -57,7 +57,7 @@ Action::StateResult ActionAttack::do_prebegin_work_(AnyMap& params)
   if (subject->is_inside_another_thing())
   {
     message += make_string(L"$you $are inside $0 and $are not going anywhere!",
-                           { location->get_identifying_string(ArticleChoice::Indefinite) });
+    { location->get_identifying_string(ArticleChoice::Indefinite) });
 
     the_message_log.add(message);
     return StateResult::Failure();

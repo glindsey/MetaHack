@@ -378,7 +378,7 @@ StringDisplay Action::get_object_string_() const
   }
   else if (get_objects().size() == 2)
   {
-    description += get_object()->get_identifying_string(ArticleChoice::Definite) + L" and " + 
+    description += get_object()->get_identifying_string(ArticleChoice::Definite) + L" and " +
       get_second_object()->get_identifying_string(ArticleChoice::Definite);
   }
   else if (get_objects().size() > 1)
@@ -487,7 +487,6 @@ std::unique_ptr<Action> Action::create(StringKey key, ThingId subject)
     throw std::runtime_error("Requested non-existent action " + key);
   }
 }
-
 
 StringDisplay Action::make_string(StringDisplay pattern) const
 {

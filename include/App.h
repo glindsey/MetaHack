@@ -145,5 +145,4 @@ private:
 #define the_message_log           App::instance().get_message_log()
 #define the_tilesheet             App::instance().get_tilesheet()
 
-
 #endif // APP_H

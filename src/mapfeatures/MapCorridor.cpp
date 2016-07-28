@@ -78,13 +78,13 @@ MapCorridor::MapCorridor(Map& m, PropertyDictionary const& s, GeoVector vec)
     }
 
     if ((get_map().is_in_bounds(xMin - 1, yMin - 1)) &&
-        (get_map().is_in_bounds(xMax + 1, yMax + 1)))
+      (get_map().is_in_bounds(xMax + 1, yMax + 1)))
     {
       bool okay = true;
 
       // Verify that corridor and surrounding area are solid walls.
       okay = does_box_pass_criterion({ xMin - 1, yMin - 1 },
-                                     { xMax + 1, yMax + 1 },
+      { xMax + 1, yMax + 1 },
                                      [&](MapTile& tile) { return !tile.is_empty_space(); });
 
       if (okay)
@@ -93,7 +93,7 @@ MapCorridor::MapCorridor(Map& m, PropertyDictionary const& s, GeoVector vec)
         set_box({ xMin, yMin }, { xMax, yMax }, "MTFloorDirt");
 
         set_coords(sf::IntRect(xMin, yMin,
-                               (xMax - xMin) + 1,
+          (xMax - xMin) + 1,
                                (yMax - yMin) + 1));
 
         // Add the surrounding walls as potential connection points.

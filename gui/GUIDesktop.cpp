@@ -87,8 +87,8 @@ namespace metagui
           auto& button_info = m_button_info[index];
 
           if ((button_info.dragging == true) ||
-              (button_info.pressed &&
-               distance(point, button_info.location) > EventDragging::drag_threshold))
+            (button_info.pressed &&
+             distance(point, button_info.location) > EventDragging::drag_threshold))
           {
             if (button_info.dragging != true)
             {

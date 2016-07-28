@@ -110,24 +110,23 @@ MapLRoom::MapLRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
 
     if ((get_map().is_in_bounds(vert_rect.left - 1,
                                 vert_rect.top - 1)) &&
-        (get_map().is_in_bounds(vert_rect.left + vert_rect.width,
-                                vert_rect.top + vert_rect.height)) &&
-        (get_map().is_in_bounds(horiz_rect.left - 1,
-                                horiz_rect.top - 1)) &&
-        (get_map().is_in_bounds(horiz_rect.left + horiz_rect.width,
-                                horiz_rect.top + horiz_rect.height)))
+                                (get_map().is_in_bounds(vert_rect.left + vert_rect.width,
+                                                        vert_rect.top + vert_rect.height)) &&
+                                                        (get_map().is_in_bounds(horiz_rect.left - 1,
+                                                                                horiz_rect.top - 1)) &&
+                                                                                (get_map().is_in_bounds(horiz_rect.left + horiz_rect.width,
+                                                                                                        horiz_rect.top + horiz_rect.height)))
     {
       bool okay = true;
 
       // Verify that both boxes and surrounding area are solid walls.
       okay = does_box_pass_criterion({ vert_rect.left - 1, vert_rect.top - 1 },
-                                     { vert_rect.left + vert_rect.width, vert_rect.top + vert_rect.height },
+      { vert_rect.left + vert_rect.width, vert_rect.top + vert_rect.height },
                                      [&](MapTile& tile) { return !tile.is_empty_space(); });
-
 
       okay &= does_box_pass_criterion({ horiz_rect.left - 1, horiz_rect.top - 1 },
-                                      { horiz_rect.left + horiz_rect.width, horiz_rect.top + horiz_rect.height },
-                                     [&](MapTile& tile) { return !tile.is_empty_space(); });
+      { horiz_rect.left + horiz_rect.width, horiz_rect.top + horiz_rect.height },
+                                      [&](MapTile& tile) { return !tile.is_empty_space(); });
 
       if (okay)
       {
@@ -151,32 +150,32 @@ MapLRoom::MapLRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
 
         // Horizontal rectangle, horizontal walls...
         for (int x_coord = horiz_rect.left + 1;
-        x_coord <= horiz_rect.left + horiz_rect.width - 1;
-          ++x_coord)
+             x_coord <= horiz_rect.left + horiz_rect.width - 1;
+             ++x_coord)
         {
           add_growth_vector(GeoVector(x_coord, horiz_rect.top - 1, Direction::North));
           add_growth_vector(GeoVector(x_coord, horiz_rect.top + horiz_rect.height, Direction::South));
         }
         // Vertical rectangle, horizontal walls...
         for (int x_coord = vert_rect.left + 1;
-        x_coord <= vert_rect.left + vert_rect.width - 1;
-          ++x_coord)
+             x_coord <= vert_rect.left + vert_rect.width - 1;
+             ++x_coord)
         {
           add_growth_vector(GeoVector(x_coord, vert_rect.top - 1, Direction::North));
           add_growth_vector(GeoVector(x_coord, vert_rect.top + vert_rect.height, Direction::South));
         }
         // Horizontal rectangle, vertical walls...
         for (int y_coord = horiz_rect.top + 1;
-        y_coord <= horiz_rect.top + horiz_rect.height - 1;
-          ++y_coord)
+             y_coord <= horiz_rect.top + horiz_rect.height - 1;
+             ++y_coord)
         {
           add_growth_vector(GeoVector(horiz_rect.left - 1, y_coord, Direction::West));
           add_growth_vector(GeoVector(horiz_rect.left + horiz_rect.width, y_coord, Direction::East));
         }
         // Vertical rectangle, vertical walls...
         for (int y_coord = vert_rect.top + 1;
-        y_coord <= vert_rect.top + vert_rect.height - 1;
-          ++y_coord)
+             y_coord <= vert_rect.top + vert_rect.height - 1;
+             ++y_coord)
         {
           add_growth_vector(GeoVector(vert_rect.left - 1, y_coord, Direction::West));
           add_growth_vector(GeoVector(vert_rect.left + vert_rect.width, y_coord, Direction::East));

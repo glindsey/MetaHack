@@ -217,7 +217,7 @@ namespace metagui
         //        Do not pass to children, and do not call handle_event_after_children.
 
         if ((result != Event::Result::Ignored) &&
-            (result != Event::Result::Handled))
+          (result != Event::Result::Handled))
         {
           for (auto& z_pair : m_zorder_map)
           {
@@ -233,7 +233,7 @@ namespace metagui
         }
 
         if ((result != Event::Result::Ignored) &&
-            (result != Event::Result::Handled))
+          (result != Event::Result::Handled))
         {
           result = handle_event_after_children(event);
         }

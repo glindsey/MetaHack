@@ -94,7 +94,7 @@ void AppStateGameMode::execute()
   auto player = GAME.get_player();
   if (ticked)
   {
-	// Update view's cached tile data.
+    // Update view's cached tile data.
     m_map_view->update_tiles(player);
 
     GAME.increment_game_clock();
@@ -242,7 +242,7 @@ void AppStateGameMode::render_map(sf::RenderTexture& texture, int frame)
       if (m_current_input_state == GameInputState::CursorLook)
       {
         m_map_view->set_view(texture, cursor_pixel_coords, m_map_zoom_level);
-		m_map_view->render(texture, frame);
+        m_map_view->render(texture, frame);
 
         auto& cursor_tile = game_map.get_tile(m_cursor_coords);
         cursor_tile.draw_highlight(texture,
@@ -253,8 +253,8 @@ void AppStateGameMode::render_map(sf::RenderTexture& texture, int frame)
       }
       else
       {
-		m_map_view->set_view(texture, player_pixel_coords, m_map_zoom_level);
-		m_map_view->render(texture, frame);
+        m_map_view->set_view(texture, player_pixel_coords, m_map_zoom_level);
+        m_map_view->render(texture, frame);
       }
     }
   }
@@ -492,20 +492,20 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
       {
         if (key_direction != Direction::None)
         {
-            if (key_direction == Direction::Self)
-            {
-                p_action.reset(new ActionWait(player));
-                player->queue_action(std::move(p_action));
-                result = SFMLEventResult::Handled;
-            }
-            else
-            {
-        // CTRL-arrow -- Turn without moving
-                p_action.reset(new ActionTurn(player));
-                p_action->set_target(key_direction);
-                player->queue_action(std::move(p_action));
-                result = SFMLEventResult::Handled;
-            }
+          if (key_direction == Direction::Self)
+          {
+            p_action.reset(new ActionWait(player));
+            player->queue_action(std::move(p_action));
+            result = SFMLEventResult::Handled;
+          }
+          else
+          {
+            // CTRL-arrow -- Turn without moving
+            p_action.reset(new ActionTurn(player));
+            p_action->set_target(key_direction);
+            player->queue_action(std::move(p_action));
+            result = SFMLEventResult::Handled;
+          }
         }
         else switch (key.code)
         {

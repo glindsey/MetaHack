@@ -69,8 +69,8 @@ MapDiamond::MapDiamond(Map& m, PropertyDictionary const& s, GeoVector vec)
 
     if ((get_map().is_in_bounds(xCenter - (diamondHalfSize + 1),
                                 yCenter - (diamondHalfSize + 1))) &&
-        (get_map().is_in_bounds(xCenter + (diamondHalfSize + 1),
-                                yCenter + (diamondHalfSize + 1))))
+                                (get_map().is_in_bounds(xCenter + (diamondHalfSize + 1),
+                                                        yCenter + (diamondHalfSize + 1))))
     {
       bool okay = true;
 
@@ -79,19 +79,19 @@ MapDiamond::MapDiamond(Map& m, PropertyDictionary const& s, GeoVector vec)
       ///        diamond, instead of the entire enclosing box.
 
       okay = does_box_pass_criterion({ xCenter - (diamondHalfSize + 1), yCenter - (diamondHalfSize + 1) },
-                                     { xCenter + (diamondHalfSize + 1), yCenter + (diamondHalfSize + 1) },
+      { xCenter + (diamondHalfSize + 1), yCenter + (diamondHalfSize + 1) },
                                      [&](MapTile& tile) { return !tile.is_empty_space(); });
 
       if (okay)
       {
         // Clear out a diamond.
         for (int xCounter = -diamondHalfSize;
-        xCounter <= diamondHalfSize;
-          ++xCounter)
+             xCounter <= diamondHalfSize;
+             ++xCounter)
         {
           for (int yCounter = -(diamondHalfSize - abs(xCounter));
-          yCounter <= diamondHalfSize - abs(xCounter);
-            ++yCounter)
+               yCounter <= diamondHalfSize - abs(xCounter);
+               ++yCounter)
           {
             int xCoord = xCenter + xCounter;
             int yCoord = yCenter + yCounter;

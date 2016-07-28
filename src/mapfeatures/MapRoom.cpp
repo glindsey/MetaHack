@@ -84,14 +84,14 @@ MapRoom::MapRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
 
     if ((get_map().is_in_bounds(rect.left - 1,
                                 rect.top - 1)) &&
-        (get_map().is_in_bounds(rect.left + rect.width,
-                                rect.top + rect.height)))
+                                (get_map().is_in_bounds(rect.left + rect.width,
+                                                        rect.top + rect.height)))
     {
       bool okay = true;
 
       // Verify that box and surrounding area are solid walls.
       okay = does_box_pass_criterion({ rect.left - 1, rect.top - 1 },
-                                     { rect.left + rect.width, rect.top + rect.height },
+      { rect.left + rect.width, rect.top + rect.height },
                                      [&](MapTile& tile) { return !tile.is_empty_space(); });
 
       if (okay)
@@ -104,16 +104,16 @@ MapRoom::MapRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
 
         // Horizontal walls...
         for (int x_coord = rect.left + 1;
-        x_coord <= rect.left + rect.width - 1;
-          ++x_coord)
+             x_coord <= rect.left + rect.width - 1;
+             ++x_coord)
         {
           add_growth_vector(GeoVector(x_coord, rect.top - 1, Direction::North));
           add_growth_vector(GeoVector(x_coord, rect.top + rect.height, Direction::South));
         }
         // Vertical walls...
         for (int y_coord = rect.top + 1;
-        y_coord <= rect.top + rect.height - 1;
-          ++y_coord)
+             y_coord <= rect.top + rect.height - 1;
+             ++y_coord)
         {
           add_growth_vector(GeoVector(rect.left - 1, y_coord, Direction::West));
           add_growth_vector(GeoVector(rect.left + rect.width, y_coord, Direction::East));

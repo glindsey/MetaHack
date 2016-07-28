@@ -46,10 +46,13 @@ Action::StateResult ActionEat::do_begin_work_(AnyMap& params)
   print_message_begin_();
 
   // Do the eating action here.
-  /// @todo Figure out eating time.
-  ActionResult result = object->be_object_of(*this, subject);
+  /// @todo "Partially eaten" status for things that were started to be eaten
+  ///       but were interrupted.
+  /// @todo Figure out eating time. This will obviously vary based on the
+  ///       object being eaten.
+  m_last_eat_result = object->be_object_of(*this, subject);
 
-  switch (result)
+  switch (m_last_eat_result)
   {
     case ActionResult::Success:
     case ActionResult::SuccessDestroyed:
@@ -60,7 +63,7 @@ Action::StateResult ActionEat::do_begin_work_(AnyMap& params)
       return Action::StateResult::Failure();
 
     default:
-      CLOG(WARNING, "Action") << "Unknown ActionResult " << result;
+      CLOG(WARNING, "Action") << "Unknown ActionResult " << m_last_eat_result;
       return Action::StateResult::Failure();
   }
 }
@@ -70,7 +73,12 @@ Action::StateResult ActionEat::do_finish_work_(AnyMap& params)
   auto object = get_object();
 
   print_message_finish_();
-  object->get_inventory()[INVSLOT_ZERO]->destroy();
+
+  if (m_last_eat_result == ActionResult::SuccessDestroyed)
+  {
+    object->destroy();
+  }
+
   return Action::StateResult::Success();
 }
 

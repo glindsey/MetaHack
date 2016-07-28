@@ -36,7 +36,6 @@ ConfigSettings::ConfigSettings()
   set("messagelog_area_height", 200);
   set("status_area_height", 90);
   set("map_tile_size", 32);
-
 }
 
 ConfigSettings::~ConfigSettings()

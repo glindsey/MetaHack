@@ -355,7 +355,7 @@ int App::LUA_redirect_print(lua_State* L)
       StringDisplay wstr = utf8_to_wstring(str);
       the_message_log.add(wstr);
     }
-    else 
+    else
     {
       /* Do something with non-strings if you like */
     }

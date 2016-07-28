@@ -37,7 +37,6 @@ public:
   int z() const;
   sf::Vector2f half() const;
 
-
   // Casts
   explicit operator sf::Vector2i() const;
   explicit operator sf::Vector2f() const;

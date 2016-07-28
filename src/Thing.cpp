@@ -23,7 +23,7 @@
 sf::Color const Thing::wall_outline_color_ = sf::Color(255, 255, 255, 64);
 
 Thing::Thing(GameState& game, Metadata& metadata, ThingId ref)
-  : 
+  :
   m_game{ game },
   m_metadata{ metadata },
   m_properties{},
@@ -42,7 +42,7 @@ Thing::Thing(GameState& game, Metadata& metadata, ThingId ref)
 }
 
 Thing::Thing(GameState& game, MapTile* map_tile, Metadata& metadata, ThingId ref)
-  : 
+  :
   m_game{ game },
   m_metadata{ metadata },
   m_properties{},
@@ -61,7 +61,7 @@ Thing::Thing(GameState& game, MapTile* map_tile, Metadata& metadata, ThingId ref
 }
 
 Thing::Thing(Thing const& original, ThingId ref)
-  : 
+  :
   m_game{ original.m_game },
   m_metadata{ original.m_metadata },
   m_properties{ original.m_properties },
@@ -1049,7 +1049,7 @@ StringDisplay Thing::get_self_or_identifying_string(ThingId other, ArticleChoice
   return get_identifying_string(articles);
 }
 
-StringDisplay Thing::get_identifying_string(ArticleChoice articles, 
+StringDisplay Thing::get_identifying_string(ArticleChoice articles,
                                             UsePossessives possessives) const
 {
   ThingId location = this->get_location();
@@ -1173,7 +1173,7 @@ StringDisplay Thing::get_possessive()
   }
   else
   {
-    return get_identifying_string(ArticleChoice::Definite, 
+    return get_identifying_string(ArticleChoice::Definite,
                                   UsePossessives::No) + L"'s";
   }
 }
@@ -1314,8 +1314,8 @@ void Thing::light_up_surroundings()
     if (!opaque || is_entity)
     {
       auto& inventory = get_inventory();
-      for (auto iter = inventory.begin(); 
-           iter != inventory.end(); 
+      for (auto iter = inventory.begin();
+           iter != inventory.end();
            ++iter)
       {
         ThingId thing = iter->second;

@@ -81,7 +81,7 @@ inline StringDisplay replace_tokens(StringDisplay str,
     {
       ++loc;
       if (loc == str.end()) break;
-      
+
       *current_string += *loc;
 
       ++loc;
@@ -221,10 +221,8 @@ inline StringDisplay replace_tokens(StringDisplay str,
         state = TokenizerState::Text;
         current_string = &out_str;
         break;
-
     } // end switch
     ++loc;
-
   } // end while
 
   //LOG(TRACE) << "String is now: \"" << out_str << "\"";

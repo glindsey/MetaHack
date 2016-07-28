@@ -69,7 +69,6 @@ protected:
 private:
   struct Impl;
   std::unique_ptr<Impl> pImpl;
-
 };
 
 #endif // TILESHEET_H

@@ -25,7 +25,7 @@ struct TileSheet::Impl
     uint32_t texture_size_in_tiles = texture_size / the_config.get<unsigned int>("map_tile_size");
 
     if (((start.x + size.x) > texture_size_in_tiles) ||
-        ((start.y + size.y) > texture_size_in_tiles))
+      ((start.y + size.y) > texture_size_in_tiles))
     {
       return false;
     }
@@ -153,7 +153,7 @@ sf::IntRect TileSheet::get_tile(sf::Vector2u tile) const
 
 #ifdef DEBUG
   if ((rect.left < 0) || (rect.top < 0) ||
-      (rect.left + rect.width >= static_cast<int>(pImpl->texture.getSize().x)) ||
+    (rect.left + rect.width >= static_cast<int>(pImpl->texture.getSize().x)) ||
       (rect.top + rect.height >= static_cast<int>(pImpl->texture.getSize().y)))
   {
     MAJOR_ERROR("Request for tile (%d, %d) is out of bounds on the sprite sheet!",

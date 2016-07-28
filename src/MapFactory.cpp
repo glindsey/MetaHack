@@ -30,7 +30,7 @@ MapFactory::~MapFactory()
 
 bool MapFactory::exists(MapId map_id) const
 {
-    return m_maps.count(map_id);
+  return m_maps.count(map_id);
 }
 
 Map const& MapFactory::get(MapId map_id) const

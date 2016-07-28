@@ -61,7 +61,7 @@ inline void Gender_add_to_lua(Lua* lua_instance)
                          "UnknownPerson", Gender::UnknownPerson,
                          "Count", Gender::Count,
                          0
-                         );
+  );
 }
 
 StringDisplay const& getSubjPro(Gender gender);

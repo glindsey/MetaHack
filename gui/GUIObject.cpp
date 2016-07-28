@@ -456,7 +456,7 @@ namespace metagui
     auto bottom = top + (static_cast<int>(get_size().y) - 1);
 
     return ((point.x >= left) && (point.x <= right) &&
-            (point.y >= top) && (point.y <= bottom));
+      (point.y >= top) && (point.y <= bottom));
   }
 
   Event::Result Object::handle_event_before_children(EventDragFinished& event)

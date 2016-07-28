@@ -77,13 +77,13 @@ MapDonutRoom::MapDonutRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
 
     if ((get_map().is_in_bounds(rect.left - 1,
                                 rect.top - 1)) &&
-        (get_map().is_in_bounds(rect.left + rect.width,
-                                rect.top + rect.height)))
+                                (get_map().is_in_bounds(rect.left + rect.width,
+                                                        rect.top + rect.height)))
     {
       bool okay = true;
 
       okay = does_box_pass_criterion({ rect.left - 1, rect.top - 1 },
-                                     { rect.left + rect.width, rect.top + rect.height },
+      { rect.left + rect.width, rect.top + rect.height },
                                      [&](MapTile& tile) { return !tile.is_empty_space(); });
 
       // Create the hole location.
@@ -99,7 +99,7 @@ MapDonutRoom::MapDonutRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
       // Make sure the hole isn't TOO small.
       // GSL GRUMBLE: WHY does abs() return a signed value?!?
       if ((static_cast<unsigned int>(abs(x_hole_right - x_hole_left)) < min_hole_size - 1) ||
-          (static_cast<unsigned int>(abs(y_hole_bottom - y_hole_top)) < min_hole_size - 1))
+        (static_cast<unsigned int>(abs(y_hole_bottom - y_hole_top)) < min_hole_size - 1))
       {
         okay = false;
       }
@@ -111,15 +111,15 @@ MapDonutRoom::MapDonutRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
       {
         // Clear out the box EXCEPT FOR the hole.
         for (int x_coord = rect.left;
-        x_coord <= rect.left + rect.width - 1;
-          ++x_coord)
+             x_coord <= rect.left + rect.width - 1;
+             ++x_coord)
         {
           for (int y_coord = rect.top;
-          y_coord <= rect.top + rect.height - 1;
-            ++y_coord)
+               y_coord <= rect.top + rect.height - 1;
+               ++y_coord)
           {
             if (!((x_coord >= x_hole_left) && (x_coord <= x_hole_right) &&
-                  (y_coord >= y_hole_top) && (y_coord <= y_hole_bottom)))
+              (y_coord >= y_hole_top) && (y_coord <= y_hole_bottom)))
             {
               auto& tile = get_map().get_tile(x_coord, y_coord);
               tile.set_tile_type("MTFloorDirt");
@@ -133,16 +133,16 @@ MapDonutRoom::MapDonutRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
 
         // Horizontal walls...
         for (int x_coord = rect.left + 1;
-        x_coord <= rect.left + rect.width - 1;
-          ++x_coord)
+             x_coord <= rect.left + rect.width - 1;
+             ++x_coord)
         {
           add_growth_vector(GeoVector(x_coord, rect.top - 1, Direction::North));
           add_growth_vector(GeoVector(x_coord, rect.top + rect.height, Direction::South));
         }
         // Vertical walls...
         for (int y_coord = rect.top + 1;
-        y_coord <= rect.top + rect.height - 1;
-          ++y_coord)
+             y_coord <= rect.top + rect.height - 1;
+             ++y_coord)
         {
           add_growth_vector(GeoVector(rect.left - 1, y_coord, Direction::West));
           add_growth_vector(GeoVector(rect.left + rect.width, y_coord, Direction::East));

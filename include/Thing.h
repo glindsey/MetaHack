@@ -18,7 +18,6 @@
 #include "ThingId.h"
 #include "ThingManager.h"
 
-
 // Forward declarations
 class AIStrategy;
 class Entity;
@@ -374,7 +373,7 @@ public:
   /// Return a string that identifies this thing.
   /// Returns "the/a/an" and a description of the thing, such as
   /// "the chair".
-  /// If it is carried by the player, and possessives = true, it'll 
+  /// If it is carried by the player, and possessives = true, it'll
   /// return "your (thing)".
   /// Likewise, if it is carried by another Entity it'll return
   /// "(Entity)'s (thing)".
@@ -382,7 +381,7 @@ public:
   ///                 Defaults to definite articles.
   /// @param possessives  Choose whether to use possessive articles when appropriate.
   ///                     Defaults to using them.
-  StringDisplay get_identifying_string(ArticleChoice articles = ArticleChoice::Definite, 
+  StringDisplay get_identifying_string(ArticleChoice articles = ArticleChoice::Definite,
                                        UsePossessives possessives = UsePossessives::Yes) const;
 
   /// Choose the proper possessive form
@@ -655,7 +654,6 @@ private:
 
   /// Outline color for walls when drawing on-screen.
   static sf::Color const wall_outline_color_;
-
 };
 
 #endif // THING_H
