@@ -77,7 +77,7 @@ using ActionMap = std::unordered_map<StringKey, ActionCreator>;
   {                                                                           \
     Action::register_action_as(type, &T::create_);                            \
   }                                                                           \
-  T::T(ThingId subject) : Action(subject) {}                                 \
+  T::T(ThingId subject) : Action(subject) {}                                  \
   T::~T() {}                                                                  \
   StringKey const T::get_type() const                                         \
   {                                                                           \
@@ -264,6 +264,7 @@ public:
     ;
 
   /// A static method that registers an action subclass in a database.
+  /// Required so that Lua scripts can instantiate Actions on Things.
   static void register_action_as(StringKey key, ActionCreator creator);
 
   /// A static method that checks if a key exists.
@@ -361,7 +362,7 @@ protected:
   /// @note The string returned has a leading space on it unless no objects or
   ///       direction are found, in order to make message composition cleaner.
   ///
-  /// This method can be overridden if necessary to customze the description for a
+  /// This method can be overridden if necessary to customize the description for a
   /// particular action.
   virtual StringDisplay get_object_string_() const;
 
@@ -372,7 +373,7 @@ protected:
   ///   * If the target equals the object, returns "[OBJECT-REFLEXIVE-PRONOUN]".
   ///   * Otherwise returns the target description.
   ///
-  /// This method can be overridden if necessary to customze the description for a
+  /// This method can be overridden if necessary to customize the description for a
   /// particular action.
   virtual StringDisplay get_target_string_() const;
 
@@ -381,7 +382,7 @@ protected:
   /// for the action, using get_object_string().
   /// "Try to" will be conjugated for the subject as "tries to" if needed.
   ///
-  /// This method can be overridden if necessary to customze the message for a
+  /// This method can be overridden if necessary to customize the message for a
   /// particular action.
   virtual void print_message_try_() const;
 
@@ -390,7 +391,7 @@ protected:
   /// for the action, using get_object_string().
   /// VERB will be conjugated for the subject as needed.
   ///
-  /// This method can be overridden if necessary to customze the message for a
+  /// This method can be overridden if necessary to customize the message for a
   /// particular action.
   virtual void print_message_do_() const;
 
@@ -399,7 +400,7 @@ protected:
   /// for the action, using get_object_string().
   /// "Begin to" will be conjugated for the subject as "begins to" if needed.
   ///
-  /// This method can be overridden if necessary to customze the message for a
+  /// This method can be overridden if necessary to customize the message for a
   /// particular action.
   virtual void print_message_begin_() const;
 
@@ -408,7 +409,7 @@ protected:
   /// for the action, using get_object_string().
   /// "Stop" will be conjugated for the subject as "stops" if needed.
   ///
-  /// This method can be overridden if necessary to customze the message for a
+  /// This method can be overridden if necessary to customize the message for a
   /// particular action.
   virtual void print_message_stop_() const;
 
@@ -417,7 +418,7 @@ protected:
   /// for the action, using get_object_string().
   /// "Finish" will be conjugated for the subject as "finishes" if needed.
   ///
-  /// This method can be overridden if necessary to customze the message for a
+  /// This method can be overridden if necessary to customize the message for a
   /// particular action.
   virtual void print_message_finish_() const;
 
@@ -427,7 +428,7 @@ protected:
   /// "Finish" will be conjugated for the subject as "finishes" if needed.
   ///
   /// @todo Finish implementing me, right now the default implementation is too simple.
-  /// This method can be overridden if necessary to customze the message for a
+  /// This method can be overridden if necessary to customize the message for a
   /// particular action.
   virtual void print_message_cant_() const;
 
