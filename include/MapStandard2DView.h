@@ -19,13 +19,15 @@ public:
   /// @param map	ID of Map object to associate with this view.
   MapStandard2DView(MapId map_id);
 
-  virtual void update_tiles(ThingId thing) override;
-  virtual void update_things(ThingId thing, int frame) override;
+  virtual void update_tiles(ThingId viewer) override;
+  virtual void update_things(ThingId viewer, int frame) override;
   virtual bool render(sf::RenderTexture& texture, int frame) override;
 
 protected:
   /// Reinitialize cached map render data.
   virtual void reset_cached_render_data() override;
+
+
 
 private:
 
