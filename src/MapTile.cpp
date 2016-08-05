@@ -29,119 +29,12 @@ StringDisplay MapTile::get_display_name() const
   return m_p_metadata->get_intrinsic<StringDisplay>("name");
 }
 
-sf::Vector2u MapTile::get_tile_sheet_coords(int frame) const
+sf::Vector2u MapTile::get_tile_sheet_coords() const
 {
   /// @todo Deal with selecting one of the other tiles.
   sf::Vector2u start_coords = m_p_metadata->get_tile_coords();
   sf::Vector2u tile_coords(start_coords.x + m_tile_offset, start_coords.y);
   return tile_coords;
-}
-
-void MapTile::add_floor_vertices_to(sf::VertexArray& vertices,
-                                    bool use_lighting,
-                                    int frame)
-{
-  sf::Vertex new_vertex;
-  float ts = the_config.get<float>("map_tile_size");
-  float half_ts = ts * 0.5f;
-
-  sf::Vector2i const& coords = get_coords();
-  MapTile const& tileN = get_adjacent_tile(Direction::North);
-  MapTile const& tileNE = get_adjacent_tile(Direction::Northeast);
-  MapTile const& tileE = get_adjacent_tile(Direction::East);
-  MapTile const& tileSE = get_adjacent_tile(Direction::Southeast);
-  MapTile const& tileS = get_adjacent_tile(Direction::South);
-  MapTile const& tileSW = get_adjacent_tile(Direction::Southwest);
-  MapTile const& tileW = get_adjacent_tile(Direction::West);
-  MapTile const& tileNW = get_adjacent_tile(Direction::Northwest);
-
-  sf::Color light{ sf::Color::White };
-  sf::Color lightN{ sf::Color::White };
-  sf::Color lightNE{ sf::Color::White };
-  sf::Color lightE{ sf::Color::White };
-  sf::Color lightSE{ sf::Color::White };
-  sf::Color lightS{ sf::Color::White };
-  sf::Color lightSW{ sf::Color::White };
-  sf::Color lightW{ sf::Color::White };
-  sf::Color lightNW{ sf::Color::White };
-
-  if (use_lighting)
-  {
-    sf::Color colorN{ tileN.get_light_level() };
-    sf::Color colorNE{ tileNE.get_light_level() };
-    sf::Color colorE{ tileE.get_light_level() };
-    sf::Color colorSE{ tileSE.get_light_level() };
-    sf::Color colorS{ tileS.get_light_level() };
-    sf::Color colorSW{ tileSW.get_light_level() };
-    sf::Color colorW{ tileW.get_light_level() };
-    sf::Color colorNW{ tileNW.get_light_level() };
-
-    light = get_light_level();
-    lightN = average(light, colorN);
-    lightNE = average(light, colorN, colorNE, colorE);
-    lightE = average(light, colorE);
-    lightSE = average(light, colorE, colorSE, colorS);
-    lightS = average(light, colorS);
-    lightSW = average(light, colorS, colorSW, colorW);
-    lightW = average(light, colorW);
-    lightNW = average(light, colorW, colorNW, colorN);
-  }
-
-  sf::Vector2f location{ coords.x * ts, coords.y * ts };
-  sf::Vector2f vNE{ location.x + half_ts, location.y - half_ts };
-  sf::Vector2f vSE{ location.x + half_ts, location.y + half_ts };
-  sf::Vector2f vSW{ location.x - half_ts, location.y + half_ts };
-  sf::Vector2f vNW{ location.x - half_ts, location.y - half_ts };
-
-  sf::Vector2u tile_coords = this->get_tile_sheet_coords(frame);
-
-  TileSheet::add_gradient_quad(vertices, tile_coords,
-                               vNW, vNE,
-                               vSW, vSE,
-                               lightNW, lightN, lightNE,
-                               lightW, light, lightE,
-                               lightSW, lightS, lightSE);
-}
-
-void MapTile::draw_to(sf::RenderTarget& target,
-                      sf::Vector2f target_coords,
-                      unsigned int target_size,
-                      bool use_lighting,
-                      int frame)
-{
-  sf::RectangleShape rectangle;
-  sf::IntRect texture_coords;
-
-  if (target_size == 0)
-  {
-    target_size = the_config.get<unsigned int>("map_tile_size");
-  }
-
-  auto tile_size = the_config.get<unsigned int>("map_tile_size");
-
-  sf::Vector2u tile_coords = this->get_tile_sheet_coords(frame);
-  texture_coords.left = tile_coords.x * tile_size;
-  texture_coords.top = tile_coords.y * tile_size;
-  texture_coords.width = tile_size;
-  texture_coords.height = tile_size;
-
-  sf::Color thing_color;
-  if (use_lighting)
-  {
-    thing_color = get_light_level();
-  }
-  else
-  {
-    thing_color = sf::Color::White;
-  }
-
-  rectangle.setPosition(target_coords);
-  rectangle.setSize(sf::Vector2f(static_cast<float>(target_size), static_cast<float>(target_size)));
-  rectangle.setTexture(&(the_tilesheet.getTexture()));
-  rectangle.setTextureRect(texture_coords);
-  rectangle.setFillColor(thing_color);
-
-  target.draw(rectangle);
 }
 
 void MapTile::set_tile_type(StringKey type)
@@ -388,7 +281,7 @@ void MapTile::add_wall_vertices_to(sf::VertexArray& vertices,
   sf::Vector2f vTileW(location.x - half_ts, location.y);
   sf::Vector2f vTileNW(location.x - half_ts, location.y - half_ts);
 
-  sf::Vector2u tile_coords = this->get_tile_sheet_coords(0);
+  sf::Vector2u tile_coords = this->get_tile_sheet_coords();
 
   if (use_lighting)
   {

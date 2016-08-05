@@ -1,5 +1,6 @@
 #include "stdafx.h"
 
+#include "ConfigSettings.h"
 #include "MapStandard2DView.h"
 
 #include "ShaderEffect.h"
@@ -45,7 +46,8 @@ void MapStandard2DView::update_tiles(ThingId viewer)
       {
         if (this_is_empty)
         {
-          tile.add_floor_vertices_to(m_map_seen_vertices, true);
+          add_tile_floor_vertices({ x, y });
+          //tile.add_floor_vertices_to(m_map_seen_vertices, true);
         }
         else
         {
@@ -138,4 +140,66 @@ void MapStandard2DView::reset_cached_render_data()
   m_map_memory_vertices.setPrimitiveType(sf::PrimitiveType::Quads);
   m_thing_vertices.clear();
   m_thing_vertices.setPrimitiveType(sf::PrimitiveType::Quads);
+}
+
+void MapStandard2DView::add_tile_vertices(sf::Vector2i coords)
+{
+}
+
+void MapStandard2DView::add_tile_floor_vertices(sf::Vector2i coords)
+{
+  auto& map = get_map();
+
+  auto& tile = map.get_tile(coords);
+  auto& tileN = map.get_tile(coords + sf::Vector2i(Direction::North));
+  auto& tileNE = map.get_tile(coords + sf::Vector2i(Direction::Northeast));
+  auto& tileE = map.get_tile(coords + sf::Vector2i(Direction::East));
+  auto& tileSE = map.get_tile(coords + sf::Vector2i(Direction::Southeast));
+  auto& tileS = map.get_tile(coords + sf::Vector2i(Direction::South));
+  auto& tileSW = map.get_tile(coords + sf::Vector2i(Direction::Southwest));
+  auto& tileW = map.get_tile(coords + sf::Vector2i(Direction::West));
+  auto& tileNW = map.get_tile(coords + sf::Vector2i(Direction::Northwest));
+
+  sf::Vertex new_vertex;
+  float ts = the_config.get<float>("map_tile_size");
+  float half_ts = ts * 0.5f;
+
+  sf::Color colorN{ tileN.get_light_level() };
+  sf::Color colorNE{ tileNE.get_light_level() };
+  sf::Color colorE{ tileE.get_light_level() };
+  sf::Color colorSE{ tileSE.get_light_level() };
+  sf::Color colorS{ tileS.get_light_level() };
+  sf::Color colorSW{ tileSW.get_light_level() };
+  sf::Color colorW{ tileW.get_light_level() };
+  sf::Color colorNW{ tileNW.get_light_level() };
+
+  sf::Color light = tile.get_light_level();
+  sf::Color lightN = average(light, colorN);
+  sf::Color lightNE = average(light, colorN, colorNE, colorE);
+  sf::Color lightE = average(light, colorE);
+  sf::Color lightSE = average(light, colorE, colorSE, colorS);
+  sf::Color lightS = average(light, colorS);
+  sf::Color lightSW = average(light, colorS, colorSW, colorW);
+  sf::Color lightW = average(light, colorW);
+  sf::Color lightNW = average(light, colorW, colorNW, colorN);
+
+  sf::Vector2f location{ coords.x * ts, coords.y * ts };
+  sf::Vector2f vNE{ location.x + half_ts, location.y - half_ts };
+  sf::Vector2f vSE{ location.x + half_ts, location.y + half_ts };
+  sf::Vector2f vSW{ location.x - half_ts, location.y + half_ts };
+  sf::Vector2f vNW{ location.x - half_ts, location.y - half_ts };
+
+  sf::Vector2u tile_coords = tile.get_tile_sheet_coords();
+
+  TileSheet::add_gradient_quad(m_map_seen_vertices, tile_coords,
+                                vNW, vNE,
+                                vSW, vSE,
+                                lightNW, lightN, lightNE,
+                                lightW, light, lightE,
+                                lightSW, lightS, lightSE);
+}
+
+void MapStandard2DView::add_tile_wall_vertices(sf::Vector2i coords)
+{
+  /// @todo IMPLEMENT ME
 }

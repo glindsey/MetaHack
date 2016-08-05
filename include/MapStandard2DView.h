@@ -27,15 +27,19 @@ protected:
   /// Reinitialize cached map render data.
   virtual void reset_cached_render_data() override;
 
+  /// Add the vertices for the maptile located at the coordinates specified.
+  void add_tile_vertices(sf::Vector2i coords);
 
+  /// Add the floor vertices for the maptile located at the coordinates specified.
+  void add_tile_floor_vertices(sf::Vector2i coords);
+
+  /// Add the wall vertices for the maptile located at the coordinates specified.
+  void add_tile_wall_vertices(sf::Vector2i coords);
 
 private:
 
   /// "Seen" map vertex array.
   sf::VertexArray m_map_seen_vertices;
-
-  /// Outlines map vertex array.
-  sf::VertexArray m_map_outline_vertices;
 
   /// "Memory" map vertex array.
   sf::VertexArray m_map_memory_vertices;

@@ -437,7 +437,7 @@ public:
   /// @param frame Animation frame number.
   void add_floor_vertices_to(sf::VertexArray& vertices,
                              bool use_lighting = true,
-                             int frame = 0) override;
+                             int frame = 0);
 
   /// Draw this Thing onto a RenderTexture, at the specified coordinates.
   /// @param target Texture to draw onto.

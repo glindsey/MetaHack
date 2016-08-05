@@ -59,7 +59,7 @@ protected:
   /// Get reference to Thing associated with this view.
   Thing& get_thing();
 
-  /// Reinitialize cached map render data.
+  /// Reinitialize cached Thing render data.
   virtual void reset_cached_render_data() = 0;
 
 private:
