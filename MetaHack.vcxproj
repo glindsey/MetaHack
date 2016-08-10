@@ -183,10 +183,13 @@
     <ClInclude Include="include\ConfigSettings.h" />
     <ClInclude Include="include\Direction.h" />
     <ClInclude Include="include\ErrorHandler.h" />
+    <ClInclude Include="include\Event.h" />
     <ClInclude Include="include\MapMemoryChunk.h" />
     <ClInclude Include="include\MapStandard2DView.h" />
     <ClInclude Include="include\MapView.h" />
     <ClInclude Include="include\ModifiablePropertyDictionary.h" />
+    <ClInclude Include="include\Observable.h" />
+    <ClInclude Include="include\Observer.h" />
     <ClInclude Include="include\RNGUtils.h" />
     <ClInclude Include="include\SFMLEventHandler.h" />
     <ClInclude Include="include\GameObject.h" />

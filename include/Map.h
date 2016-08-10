@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 
+#include "Observable.h"
 #include "MapFactory.h"
 #include "Renderable.h"
 #include "Thing.h"
@@ -21,6 +22,8 @@ class ThingId;
 
 /// Class representing a map, which is a grid of locations for Things.
 class Map
+  :
+  public Observable<Map>
 {
   friend class MapFactory;
   friend class MapView;

@@ -43,6 +43,9 @@
     <Filter Include="Object Views">
       <UniqueIdentifier>{310b5b1e-9be6-4227-8799-6b5fdc29b60b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Design Pattern Templates">
+      <UniqueIdentifier>{b443a7fd-d3a7-4def-b8d1-5da638d54160}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\App.h">
@@ -344,6 +347,15 @@
     </ClInclude>
     <ClInclude Include="include\ThingView.h">
       <Filter>Object Views</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Observer.h">
+      <Filter>Design Pattern Templates</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Observable.h">
+      <Filter>Design Pattern Templates</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Event.h">
+      <Filter>Design Pattern Templates</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
