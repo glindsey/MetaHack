@@ -33,7 +33,7 @@ void StatusArea::render_contents_(sf::RenderTexture& texture, int frame)
 {
   sf::IntRect pane_dims = get_relative_dimensions();
   ThingId player = GAME.get_player();
-  sf::Vector2f origin(the_config.get<float>("window_text_offset_x"),
+  Vec2f origin(the_config.get<float>("window_text_offset_x"),
                       the_config.get<float>("window_text_offset_y"));
   sf::Color text_color = the_config.get<sf::Color>("text_color");
   sf::Color text_dim_color = the_config.get<sf::Color>("text_dim_color");
@@ -108,7 +108,7 @@ void StatusArea::render_contents_(sf::RenderTexture& texture, int frame)
   return;
 }
 
-void StatusArea::render_attribute(sf::RenderTarget& target, StringDisplay abbrev, StringKey name, sf::Vector2f location)
+void StatusArea::render_attribute(sf::RenderTarget& target, StringDisplay abbrev, StringKey name, Vec2f location)
 {
   sf::Text render_text;
   sf::Color text_color = the_config.get<sf::Color>("text_color");

@@ -20,7 +20,7 @@ void MapStandard2DView::update_tiles(ThingId viewer)
   auto& map = get_map();
   auto& map_size = map.get_size();
 
-  static sf::Vector2f position;
+  static Vec2f position;
 
   // Loop through and draw tiles.
   m_map_seen_vertices.clear();
@@ -113,7 +113,7 @@ void MapStandard2DView::reset_cached_render_data()
   m_thing_vertices.setPrimitiveType(sf::PrimitiveType::Quads);
 }
 
-void MapStandard2DView::add_tile_vertices(ThingId viewer, sf::Vector2i coords)
+void MapStandard2DView::add_tile_vertices(ThingId viewer, Vec2i coords)
 {
   auto& map = get_map();
   auto& map_size = map.get_size();
@@ -152,19 +152,19 @@ void MapStandard2DView::add_tile_vertices(ThingId viewer, sf::Vector2i coords)
   }
 }
 
-void MapStandard2DView::add_tile_floor_vertices(sf::Vector2i coords)
+void MapStandard2DView::add_tile_floor_vertices(Vec2i coords)
 {
   auto& map = get_map();
 
   auto& tile = map.get_tile(coords);
-  auto& tileN = map.get_tile(coords + sf::Vector2i(Direction::North));
-  auto& tileNE = map.get_tile(coords + sf::Vector2i(Direction::Northeast));
-  auto& tileE = map.get_tile(coords + sf::Vector2i(Direction::East));
-  auto& tileSE = map.get_tile(coords + sf::Vector2i(Direction::Southeast));
-  auto& tileS = map.get_tile(coords + sf::Vector2i(Direction::South));
-  auto& tileSW = map.get_tile(coords + sf::Vector2i(Direction::Southwest));
-  auto& tileW = map.get_tile(coords + sf::Vector2i(Direction::West));
-  auto& tileNW = map.get_tile(coords + sf::Vector2i(Direction::Northwest));
+  auto& tileN = map.get_tile(coords + Vec2i(Direction::North));
+  auto& tileNE = map.get_tile(coords + Vec2i(Direction::Northeast));
+  auto& tileE = map.get_tile(coords + Vec2i(Direction::East));
+  auto& tileSE = map.get_tile(coords + Vec2i(Direction::Southeast));
+  auto& tileS = map.get_tile(coords + Vec2i(Direction::South));
+  auto& tileSW = map.get_tile(coords + Vec2i(Direction::Southwest));
+  auto& tileW = map.get_tile(coords + Vec2i(Direction::West));
+  auto& tileNW = map.get_tile(coords + Vec2i(Direction::Northwest));
 
   sf::Vertex new_vertex;
   float ts = the_config.get<float>("map_tile_size");
@@ -189,13 +189,13 @@ void MapStandard2DView::add_tile_floor_vertices(sf::Vector2i coords)
   sf::Color lightW = average(light, colorW);
   sf::Color lightNW = average(light, colorW, colorNW, colorN);
 
-  sf::Vector2f location{ coords.x * ts, coords.y * ts };
-  sf::Vector2f vNE{ location.x + half_ts, location.y - half_ts };
-  sf::Vector2f vSE{ location.x + half_ts, location.y + half_ts };
-  sf::Vector2f vSW{ location.x - half_ts, location.y + half_ts };
-  sf::Vector2f vNW{ location.x - half_ts, location.y - half_ts };
+  Vec2f location{ coords.x * ts, coords.y * ts };
+  Vec2f vNE{ location.x + half_ts, location.y - half_ts };
+  Vec2f vSE{ location.x + half_ts, location.y + half_ts };
+  Vec2f vSW{ location.x - half_ts, location.y + half_ts };
+  Vec2f vNW{ location.x - half_ts, location.y - half_ts };
 
-  sf::Vector2u tile_coords = tile.get_tile_sheet_coords();
+  Vec2u tile_coords = tile.get_tile_sheet_coords();
 
   TileSheet::add_gradient_quad(m_map_seen_vertices, tile_coords,
                                 vNW, vNE,
@@ -205,7 +205,7 @@ void MapStandard2DView::add_tile_floor_vertices(sf::Vector2i coords)
                                 lightSW, lightS, lightSE);
 }
 
-void MapStandard2DView::add_tile_wall_vertices(sf::Vector2i coords)
+void MapStandard2DView::add_tile_wall_vertices(Vec2i coords)
 {
   /// @todo IMPLEMENT ME
 }
@@ -225,7 +225,7 @@ void MapStandard2DView::add_thing_floor_vertices(ThingId thing,
     return;
   }
 
-  sf::Vector2i const& coords = root_tile->get_coords();
+  Vec2i const& coords = root_tile->get_coords();
 
   sf::Color thing_color;
   if (use_lighting)
@@ -237,12 +237,12 @@ void MapStandard2DView::add_thing_floor_vertices(ThingId thing,
     thing_color = sf::Color::White;
   }
 
-  sf::Vector2f location(coords.x * ts, coords.y * ts);
-  sf::Vector2f vSW(location.x - ts2, location.y + ts2);
-  sf::Vector2f vSE(location.x + ts2, location.y + ts2);
-  sf::Vector2f vNW(location.x - ts2, location.y - ts2);
-  sf::Vector2f vNE(location.x + ts2, location.y - ts2);
-  sf::Vector2u tile_coords = thing->get_tile_sheet_coords(frame);
+  Vec2f location(coords.x * ts, coords.y * ts);
+  Vec2f vSW(location.x - ts2, location.y + ts2);
+  Vec2f vSE(location.x + ts2, location.y + ts2);
+  Vec2f vNW(location.x - ts2, location.y - ts2);
+  Vec2f vNE(location.x + ts2, location.y - ts2);
+  Vec2u tile_coords = thing->get_tile_sheet_coords(frame);
 
   TileSheet::add_quad(m_thing_vertices,
                       tile_coords, thing_color,

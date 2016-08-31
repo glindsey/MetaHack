@@ -15,6 +15,11 @@ public:
     x{ x_ }, y{ y_ }
   {}
 
+  Vec2(sf::Vector2<T> vec)
+    :
+    x{ vec.x }, y{ vec.y } 
+  {}
+
   virtual ~Vec2() = default;
   Vec2(Vec2 const& other) = default;
   Vec2(Vec2&& other) = default;
@@ -73,86 +78,14 @@ public:
     return arctan(static_cast<double>(y) / static_cast<double>(x));
   }
 
+  operator sf::Vector2<T>() const
+  {
+    return{ x, y };
+  }
+
   T x, y;
 };
 
-class Vec2f 
-  : 
-  public Vec2<float>
-{
-public:
-  Vec2f()
-    :
-    Vec2()
-  {}
-
-  Vec2f(float x_, float y_)
-    :
-    Vec2(x_, y_)
-  {}
-
-  virtual ~Vec2f() = default;
-  Vec2f(Vec2f const& other) = default;
-  Vec2f(Vec2f&& other) = default;
-  Vec2f& operator=(Vec2f const& other) = default;
-  Vec2f& operator=(Vec2f&& other) = default;
-
-  operator sf::Vector2f() const
-  {
-    return{ x, y };
-  }
-};
-
-class Vec2i 
-  : 
-  public Vec2<int>
-{
-public:
-  Vec2i()
-    :
-    Vec2()
-  {}
-
-  Vec2i(int x_, int y_)
-    :
-    Vec2(x_, y_)
-  {}
-
-  virtual ~Vec2i() = default;
-  Vec2i(Vec2i const& other) = default;
-  Vec2i(Vec2i&& other) = default;
-  Vec2i& operator=(Vec2i const& other) = default;
-  Vec2i& operator=(Vec2i&& other) = default;
-
-  operator sf::Vector2i() const
-  {
-    return{ x, y };
-  }
-};
-
-class Vec2u 
-  : 
-  public Vec2<unsigned int>
-{
-public:
-  Vec2u()
-    :
-    Vec2()
-  {}
-
-  Vec2u(unsigned int x_, unsigned int y_)
-    :
-    Vec2(x_, y_)
-  {}
-
-  virtual ~Vec2u() = default;
-  Vec2u(Vec2u const& other) = default;
-  Vec2u(Vec2u&& other) = default;
-  Vec2u& operator=(Vec2u const& other) = default;
-  Vec2u& operator=(Vec2u&& other) = default;
-
-  operator sf::Vector2u() const
-  {
-    return{ x, y };
-  }
-};
+using Vec2f = Vec2<float>;
+using Vec2i = Vec2<int>;
+using Vec2u = Vec2<unsigned int>;

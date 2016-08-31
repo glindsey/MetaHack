@@ -250,7 +250,7 @@ public:
   bool can_see(ThingId thing);
 
   /// Return whether the Entity can see the requested tile.
-  bool can_see(sf::Vector2i coords);
+  bool can_see(Vec2i coords);
 
   /// Return whether the Entity can see the requested tile.
   bool can_see(int x, int y);
@@ -265,7 +265,7 @@ public:
   MapMemoryChunk const& get_memory_at(int x, int y) const;
 
   /// Get the remembered tile type at the specified coordinates.
-  MapMemoryChunk const& get_memory_at(sf::Vector2i coords) const;
+  MapMemoryChunk const& get_memory_at(Vec2i coords) const;
 
   /// Add the memory of a particular tile to a VertexArray.
   void add_memory_vertices_to(sf::VertexArray& vertices, int x, int y);
@@ -428,7 +428,7 @@ public:
   StringDisplay const& get_possessive_pronoun() const;
 
   /// Return the coordinates of the tile representing the thing.
-  sf::Vector2u get_tile_sheet_coords(int frame);
+  Vec2u get_tile_sheet_coords(int frame);
 
   /// Simple check to see if a Thing is opaque.
   bool is_opaque();

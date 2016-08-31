@@ -9,7 +9,7 @@ namespace metagui
 {
   ShrinkHandle::ShrinkHandle(StringKey name)
     :
-    Object(name, sf::Vector2i(0, 0))
+    Object(name, Vec2i(0, 0))
   {}
 
   ShrinkHandle::~ShrinkHandle()
@@ -21,7 +21,7 @@ namespace metagui
   void ShrinkHandle::render_self_before_children_(sf::RenderTexture& texture, int frame)
   {
   }
-  void ShrinkHandle::handle_parent_size_changed_(sf::Vector2u parent_size)
+  void ShrinkHandle::handle_parent_size_changed_(Vec2u parent_size)
   {
   }
 }; // end namespace metagui

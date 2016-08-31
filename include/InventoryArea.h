@@ -50,7 +50,7 @@ protected:
 
   void draw_thing(ThingId thing,
                   sf::RenderTarget& target,
-                  sf::Vector2f target_coords,
+                  Vec2f target_coords,
                   unsigned int target_size = 0,
                   bool use_lighting = true,
                   int frame = 0);

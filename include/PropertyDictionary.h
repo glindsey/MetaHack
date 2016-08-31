@@ -166,14 +166,14 @@ inline bool operator==(boost::any const& lhs, boost::any const& rhs)
     return boost::any_cast<sf::Color>(lhs) == boost::any_cast<sf::Color>(rhs);
   }
 
-  if (ltype == typeid(sf::Vector2i))
+  if (ltype == typeid(Vec2i))
   {
-    return boost::any_cast<sf::Vector2i>(lhs) == boost::any_cast<sf::Vector2i>(rhs);
+    return boost::any_cast<Vec2i>(lhs) == boost::any_cast<Vec2i>(rhs);
   }
 
-  if (ltype == typeid(sf::Vector2u))
+  if (ltype == typeid(Vec2u))
   {
-    return boost::any_cast<sf::Vector2u>(lhs) == boost::any_cast<sf::Vector2u>(rhs);
+    return boost::any_cast<Vec2u>(lhs) == boost::any_cast<Vec2u>(rhs);
   }
 
   throw std::runtime_error("Comparison of boost::any type \"" + std::string(ltype.name()) + "\" is not supported");

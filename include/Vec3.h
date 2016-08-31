@@ -15,6 +15,11 @@ public:
     x{ x_ }, y{ y_ }, z{ z_ }
   {}
 
+  Vec3(sf::Vector3<T> vec)
+    :
+    x{ vec.x }, y{ vec.y }, z{ vec.z }
+  {}
+
 
   virtual ~Vec3() = default;
   Vec3(Vec3 const& other) = default;
@@ -67,61 +72,13 @@ public:
     return os;
   }
 
+  operator sf::Vector3<T>() const
+  {
+    return{ x, y, z };
+  }
 
   T x, y, z;
 };
 
-
-class Vec3f
-  :
-  public Vec3<float>
-{
-public:
-  Vec3f()
-    :
-    Vec3()
-  {}
-
-  Vec3f(float x_, float y_, float z_)
-    :
-    Vec3(x_, y_, z_)
-  {}
-
-  virtual ~Vec3f() = default;
-  Vec3f(Vec3f const& other) = default;
-  Vec3f(Vec3f&& other) = default;
-  Vec3f& operator=(Vec3f const& other) = default;
-  Vec3f& operator=(Vec3f&& other) = default;
-
-  operator sf::Vector3f() const
-  {
-    return{ x, y, z };
-  }
-};
-
-class Vec3i
-  :
-  public Vec3<int>
-{
-public:
-  Vec3i()
-    :
-    Vec3()
-  {}
-
-  Vec3i(int x_, int y_, int z_)
-    :
-    Vec3(x_, y_, z_)
-  {}
-
-  virtual ~Vec3i() = default;
-  Vec3i(Vec3i const& other) = default;
-  Vec3i(Vec3i&& other) = default;
-  Vec3i& operator=(Vec3i const& other) = default;
-  Vec3i& operator=(Vec3i&& other) = default;
-
-  operator sf::Vector3i() const
-  {
-    return{ x, y, z };
-  }
-};
+using Vec3f = Vec3<float>;
+using Vec3i = Vec3<int>;

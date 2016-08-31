@@ -241,7 +241,7 @@ bool KeyBuffer::get_enter()
 }
 
 void KeyBuffer::render(sf::RenderTexture& texture,
-                       sf::Vector2f coords,
+                       Vec2f coords,
                        unsigned int frame,
                        sf::Font const& font,
                        unsigned int font_size,
@@ -269,8 +269,8 @@ void KeyBuffer::render(sf::RenderTexture& texture,
   texture.draw(render_text);
 
   // *** CURSOR ***************************************************************
-  sf::Vector2f cursor_coords;
-  sf::Vector2f cursor_size;
+  Vec2f cursor_coords;
+  Vec2f cursor_size;
   sf::Color cursor_color = fg_color;
 
   if (pImpl->replacing)
@@ -296,11 +296,11 @@ void KeyBuffer::render(sf::RenderTexture& texture,
   {
     sf::Glyph glyph = font.getGlyph(pImpl->buffer[pImpl->cursor_position],
                                     font_size, false);
-    cursor_size = sf::Vector2f(glyph.bounds.width, font_height);
+    cursor_size = Vec2f(glyph.bounds.width, font_height);
   }
   else
   {
-    cursor_size = sf::Vector2f(2, font_height);
+    cursor_size = Vec2f(2, font_height);
   }
 
   sf::RectangleShape cursor_rect;

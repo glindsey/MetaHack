@@ -9,7 +9,7 @@
 
 namespace metagui
 {
-  Object::Object(StringKey name, sf::Vector2i location, sf::Vector2u size)
+  Object::Object(StringKey name, Vec2i location, Vec2u size)
   {
     SET_UP_LOGGER("GUI", true);
 
@@ -111,22 +111,22 @@ namespace metagui
     return m_text;
   }
 
-  sf::Vector2i Object::get_relative_location()
+  Vec2i Object::get_relative_location()
   {
     return m_location;
   }
 
-  void Object::set_relative_location(sf::Vector2i location)
+  void Object::set_relative_location(Vec2i location)
   {
     m_location = location;
   }
 
-  sf::Vector2u Object::get_size()
+  Vec2u Object::get_size()
   {
     return m_size;
   }
 
-  void Object::set_size(sf::Vector2u size)
+  void Object::set_size(Vec2u size)
   {
     m_size = size;
 
@@ -159,8 +159,8 @@ namespace metagui
   sf::IntRect Object::get_relative_dimensions()
   {
     sf::IntRect dimensions;
-    sf::Vector2i location = get_relative_location();
-    sf::Vector2u size = get_size();
+    Vec2i location = get_relative_location();
+    Vec2u size = get_size();
     dimensions.left = location.x;
     dimensions.top = location.y;
     dimensions.width = size.x;
@@ -175,13 +175,13 @@ namespace metagui
                static_cast<unsigned int>(dimensions.height) });
   }
 
-  sf::Vector2i Object::get_absolute_location()
+  Vec2i Object::get_absolute_location()
   {
-    sf::Vector2i absolute_location = get_relative_location();
+    Vec2i absolute_location = get_relative_location();
 
     if (m_parent != nullptr)
     {
-      sf::Vector2i child_area_absolute_location =
+      Vec2i child_area_absolute_location =
         m_parent->get_absolute_location();
 
       if (m_decor_cached != true)
@@ -195,13 +195,13 @@ namespace metagui
     return absolute_location;
   }
 
-  void Object::set_absolute_location(sf::Vector2i location)
+  void Object::set_absolute_location(Vec2i location)
   {
-    sf::Vector2i relative_location = location;
+    Vec2i relative_location = location;
 
     if (m_parent != nullptr)
     {
-      sf::Vector2i child_area_absolute_location =
+      Vec2i child_area_absolute_location =
         m_parent->get_absolute_location();
 
       if (m_decor_cached != true)
@@ -218,8 +218,8 @@ namespace metagui
   sf::IntRect Object::get_absolute_dimensions()
   {
     sf::IntRect dimensions;
-    sf::Vector2i location = get_absolute_location();
-    sf::Vector2u size = get_size();
+    Vec2i location = get_absolute_location();
+    Vec2u size = get_size();
     dimensions.left = location.x;
     dimensions.top = location.y;
     dimensions.width = size.x;
@@ -337,12 +337,12 @@ namespace metagui
     m_zorder_map.clear();
   }
 
-  sf::Vector2i Object::get_child_area_location()
+  Vec2i Object::get_child_area_location()
   {
     return{ 0, 0 };
   }
 
-  sf::Vector2u Object::get_child_area_size()
+  Vec2u Object::get_child_area_size()
   {
     return get_size();
   }
@@ -382,8 +382,8 @@ namespace metagui
       our_texture.display();
 
       // Create the RectangleShape that will be drawn onto the target.
-      m_bg_shape.setPosition(sf::Vector2f(static_cast<float>(m_location.x), static_cast<float>(m_location.y)));
-      m_bg_shape.setSize(sf::Vector2f(static_cast<float>(m_size.x), static_cast<float>(m_size.y)));
+      m_bg_shape.setPosition(Vec2f(static_cast<float>(m_location.x), static_cast<float>(m_location.y)));
+      m_bg_shape.setSize(Vec2f(static_cast<float>(m_size.x), static_cast<float>(m_size.y)));
       m_bg_shape.setTexture(&(m_bg_texture->getTexture()));
       m_bg_shape.setTextureRect(sf::IntRect(0, 0, m_size.x, m_size.y));
 
@@ -448,7 +448,7 @@ namespace metagui
     handle_set_flag_(name, value);
   }
 
-  bool Object::contains_point(sf::Vector2i point)
+  bool Object::contains_point(Vec2i point)
   {
     auto left = get_absolute_location().x;
     auto top = get_absolute_location().y;
@@ -677,7 +677,7 @@ namespace metagui
   void Object::handle_set_flag_(StringKey name, bool enabled)
   {}
 
-  void Object::handle_parent_size_changed_(sf::Vector2u parent_size)
+  void Object::handle_parent_size_changed_(Vec2u parent_size)
   {
   }
 }; // end namespace metagui

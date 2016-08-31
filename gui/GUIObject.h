@@ -58,7 +58,7 @@ namespace metagui
     public RenderableToTexture
   {
   public:
-    explicit Object(StringKey name, sf::Vector2i location = sf::Vector2i(0, 0), sf::Vector2u size = sf::Vector2u(0, 0));
+    explicit Object(StringKey name, Vec2i location = Vec2i(0, 0), Vec2u size = Vec2u(0, 0));
     Object(StringKey name, sf::IntRect dimensions);
     virtual ~Object();
 
@@ -106,20 +106,20 @@ namespace metagui
     StringDisplay get_text();
 
     /// Get location relative to parent object's client area.
-    sf::Vector2i get_relative_location();
+    Vec2i get_relative_location();
 
     /// Set location relative to parent object's client area.
-    void set_relative_location(sf::Vector2i location);
+    void set_relative_location(Vec2i location);
 
-    sf::Vector2u get_size();
-    void set_size(sf::Vector2u size);
+    Vec2u get_size();
+    void set_size(Vec2u size);
 
     sf::IntRect get_relative_dimensions();
     void set_relative_dimensions(sf::IntRect dimensions);
 
     // Get absolute location relative to root object.
-    sf::Vector2i get_absolute_location();
-    void set_absolute_location(sf::Vector2i location);
+    Vec2i get_absolute_location();
+    void set_absolute_location(Vec2i location);
 
     sf::IntRect get_absolute_dimensions();
 
@@ -276,12 +276,12 @@ namespace metagui
     /// its own upper-left corner.
     /// By default, the child area encompasses the entire object, so this
     /// returns (0, 0); however, subclasses can override this behavior.
-    virtual sf::Vector2i get_child_area_location();
+    virtual Vec2i get_child_area_location();
 
     /// Get the size of this object's child area.
     /// By default, the child area encompasses the entire object, so this
     /// returns get_size(); however, subclasses can override this behavior.
-    virtual sf::Vector2u get_child_area_size();
+    virtual Vec2u get_child_area_size();
 
     /// Render this object, and all of its children, to the parent texture.
     bool render(sf::RenderTexture& texture, int frame);
@@ -305,7 +305,7 @@ namespace metagui
     /// Returns whether the specified point falls within this object's bounds.
     /// @param  point   Point to check.
     /// @return True if the point is within the object, false otherwise.
-    bool contains_point(sf::Vector2i point);
+    bool contains_point(Vec2i point);
 
     Event::Result handle_event_before_children(EventDragFinished& event);
     Event::Result handle_event_after_children(EventDragFinished& event);
@@ -369,7 +369,7 @@ namespace metagui
 
     /// Handles the parent's size being changed.
     /// The default behavior is to do nothing.
-    virtual void handle_parent_size_changed_(sf::Vector2u parent_size);
+    virtual void handle_parent_size_changed_(Vec2u parent_size);
 
   private:
     /// The name of this object.
@@ -403,7 +403,7 @@ namespace metagui
     bool m_being_dragged = false;
 
     /// The location that the last drag started.
-    sf::Vector2i m_drag_start_location;
+    Vec2i m_drag_start_location;
 
     /// The text for this object. The way this text is used is dependent on the
     /// sort of control it is; e.g. for a Pane this is the pane title, for a
@@ -412,13 +412,13 @@ namespace metagui
     StringDisplay m_text;
 
     /// Object location, relative to parent.
-    sf::Vector2i m_location;
+    Vec2i m_location;
 
     /// Location as captured at last mousedown.
-    sf::Vector2i m_absolute_location_drag_start;
+    Vec2i m_absolute_location_drag_start;
 
     /// Object size.
-    sf::Vector2u m_size;
+    Vec2u m_size;
 
     /// Background texture.
     std::unique_ptr<sf::RenderTexture> m_bg_texture;
@@ -443,8 +443,8 @@ namespace metagui
   };
 
   /// Convenience function for calculating the distance between two
-  /// sf::Vector2i points.
-  inline unsigned int distance(sf::Vector2i first, sf::Vector2i second)
+  /// Vec2i points.
+  inline unsigned int distance(Vec2i first, Vec2i second)
   {
     int x_distance = first.x - second.x;
     int y_distance = first.y - second.y;

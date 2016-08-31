@@ -59,7 +59,7 @@ void MessageLogView::render_contents_(sf::RenderTexture& texture, int frame)
   {
     m_model.get_key_buffer().render(
       texture,
-      sf::Vector2f(text_coord_x, text_coord_y),
+      Vec2f(text_coord_x, text_coord_y),
       frame,
       the_default_font,
       the_config.get<unsigned int>("text_default_size"),

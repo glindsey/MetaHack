@@ -9,10 +9,10 @@ namespace metagui
 {
   CloseHandle::CloseHandle(StringKey name)
     :
-    Object(name, sf::Vector2i(0, 0))
+    Object(name, Vec2i(0, 0))
   {}
 
-  void CloseHandle::handle_parent_size_changed_(sf::Vector2u parent_size)
+  void CloseHandle::handle_parent_size_changed_(Vec2u parent_size)
   {
   }
 

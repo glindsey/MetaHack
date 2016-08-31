@@ -33,7 +33,7 @@ public:
   virtual StringDisplay get_display_name() const override final;
 
   /// Return the coordinates of the tile on the tilesheet.
-  sf::Vector2u get_tile_sheet_coords() const;
+  Vec2u get_tile_sheet_coords() const;
 
   /// Sets the tile type, without doing gameplay checks.
   /// Used to set up the map before gameplay begins.
@@ -55,7 +55,7 @@ public:
   void set_coords(int x, int y);
 
   /// Get the current tile's location.
-  sf::Vector2i const& get_coords() const;
+  Vec2i const& get_coords() const;
 
   /// Get a reference to the map this tile belongs to.
   MapId get_map_id() const;
@@ -89,7 +89,7 @@ public:
   bool is_opaque() const;
 
   void draw_highlight(sf::RenderTarget& target,
-                      sf::Vector2f location,
+                      Vec2f location,
                       sf::Color fgColor,
                       sf::Color bgColor,
                       int frame);
@@ -114,14 +114,14 @@ public:
                             bool sw_is_empty, bool w_is_empty);
 
   /// Get the coordinates associated with a tile.
-  static sf::Vector2f get_pixel_coords(int x, int y);
+  static Vec2f get_pixel_coords(int x, int y);
 
   /// Get the coordinates associated with a tile.
-  static sf::Vector2f get_pixel_coords(sf::Vector2i tile);
+  static Vec2f get_pixel_coords(Vec2i tile);
 
 protected:
   /// Constructor, callable only by Map class.
-  MapTile(sf::Vector2i coords, Metadata& metadata, MapId map_id);
+  MapTile(Vec2i coords, Metadata& metadata, MapId map_id);
 
   /// Get a reference to an adjacent tile.
   MapTile const & get_adjacent_tile(Direction direction) const;
@@ -133,7 +133,7 @@ private:
   MapId m_map_id;
 
   /// This MapTile's coordinates on the map.
-  sf::Vector2i m_coords;
+  Vec2i m_coords;
 
   /// Pointer to this MapTile's metadata.
   /// This has to be a pointer rather than a reference because it can be

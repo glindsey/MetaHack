@@ -6,7 +6,7 @@
 #include "MathUtils.h"
 
 /// Directional vector in 3-D space.
-/// A std::vector or sf::Vector3i could be used here, but I'd like to keep
+/// A std::vector or Vec3i could be used here, but I'd like to keep
 /// game directional information separated by class for code legibility.
 /// (Plus, I can enforce restrictions, such as the fact that this must be a
 ///  unit vector.)
@@ -16,8 +16,8 @@ public:
   Direction();
   Direction(int x, int y, int z);
   Direction(int x, int y);
-  Direction(sf::Vector2i vec);
-  Direction(sf::Vector3i vec);
+  Direction(Vec2i vec);
+  Direction(Vec3i vec);
 
   // Explicit defaults not specifically needed, but here for completeness
   Direction(Direction const&) = default;
@@ -35,20 +35,20 @@ public:
   int x() const;
   int y() const;
   int z() const;
-  sf::Vector2f half() const;
+  Vec2f half() const;
 
   // Casts
-  explicit operator sf::Vector2i() const;
-  explicit operator sf::Vector2f() const;
-  explicit operator sf::Vector3i() const;
-  explicit operator sf::Vector3f() const;
+  explicit operator Vec2i() const;
+  explicit operator Vec2f() const;
+  explicit operator Vec3i() const;
+  explicit operator Vec3f() const;
 
   // Other methods
   unsigned int get_map_index() const;
 
   // Static methods
   static Direction get_approx(int xSrc, int ySrc, int xDst, int yDst);
-  static float calculate_light_factor(sf::Vector2i source, sf::Vector2i target, Direction direction);
+  static float calculate_light_factor(Vec2i source, Vec2i target, Direction direction);
 
   // Static directions used for common directions
   static Direction const None;

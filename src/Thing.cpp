@@ -215,8 +215,8 @@ bool Thing::is_adjacent_to(ThingId thing)
     return false;
   }
 
-  sf::Vector2i const& our_coords = our_maptile->get_coords();
-  sf::Vector2i const& thing_coords = thing_maptile->get_coords();
+  Vec2i const& our_coords = our_maptile->get_coords();
+  Vec2i const& thing_coords = thing_maptile->get_coords();
 
   return adjacent(our_coords, thing_coords);
 }
@@ -732,12 +732,12 @@ bool Thing::can_see(ThingId thing)
     return false;
   }
 
-  sf::Vector2i thing_coords = thing_location->get_coords();
+  Vec2i thing_coords = thing_location->get_coords();
 
   return can_see(thing_coords.x, thing_coords.y);
 }
 
-bool Thing::can_see(sf::Vector2i coords)
+bool Thing::can_see(Vec2i coords)
 {
   return this->can_see(coords.x, coords.y);
 }
@@ -765,7 +765,7 @@ bool Thing::can_see(int xTile, int yTile)
     return false;
   }
 
-  sf::Vector2i tile_coords = tile->get_coords();
+  Vec2i tile_coords = tile->get_coords();
 
   if ((tile_coords.x == xTile) && (tile_coords.y == yTile))
   {
@@ -833,7 +833,7 @@ MapMemoryChunk const& Thing::get_memory_at(int x, int y) const
   return m_map_memory[game_map.get_index(x, y)];
 }
 
-MapMemoryChunk const& Thing::get_memory_at(sf::Vector2i coords) const
+MapMemoryChunk const& Thing::get_memory_at(Vec2i coords) const
 {
   return this->get_memory_at(coords.x, coords.y);
 }
@@ -852,11 +852,11 @@ void Thing::add_memory_vertices_to(sf::VertexArray& vertices,
   float ts = the_config.get<float>("map_tile_size");
   float ts2 = ts * 0.5f;
 
-  sf::Vector2f location(x * ts, y * ts);
-  sf::Vector2f vSW(location.x - ts2, location.y + ts2);
-  sf::Vector2f vSE(location.x + ts2, location.y + ts2);
-  sf::Vector2f vNW(location.x - ts2, location.y - ts2);
-  sf::Vector2f vNE(location.x + ts2, location.y - ts2);
+  Vec2f location(x * ts, y * ts);
+  Vec2f vSW(location.x - ts2, location.y + ts2);
+  Vec2f vSE(location.x + ts2, location.y + ts2);
+  Vec2f vNW(location.x - ts2, location.y - ts2);
+  Vec2f vNE(location.x + ts2, location.y - ts2);
 
   StringKey tile_type = m_map_memory[game_map.get_index(x, y)].get_type();
   if (tile_type == "") { tile_type = "MTUnknown"; }
@@ -864,7 +864,7 @@ void Thing::add_memory_vertices_to(sf::VertexArray& vertices,
 
   /// @todo Call a script to handle selecting a tile other than the one
   ///       in the upper-left corner.
-  sf::Vector2u tile_coords = tile_metadata->get_tile_coords();
+  Vec2u tile_coords = tile_metadata->get_tile_coords();
 
   TileSheet::add_quad(vertices,
                       tile_coords, sf::Color::White,
@@ -911,7 +911,7 @@ bool Thing::move_into(ThingId new_location)
           if (new_map_id != MapFactory::null_map_id)
           {
             Map& new_map = GAME.get_maps().get(new_map_id);
-            sf::Vector2i new_map_size = new_map.get_size();
+            Vec2i new_map_size = new_map.get_size();
             m_map_memory.resize(new_map_size.x * new_map_size.y);
             m_tiles_currently_seen.resize(new_map_size.x * new_map_size.y);
             /// @todo Load new map memory if it exists somewhere.
@@ -1178,16 +1178,16 @@ StringDisplay Thing::get_possessive()
   }
 }
 
-sf::Vector2u Thing::get_tile_sheet_coords(int frame)
+Vec2u Thing::get_tile_sheet_coords(int frame)
 {
   /// Get tile coordinates on the sheet.
-  sf::Vector2u start_coords = m_metadata.get_tile_coords();
+  Vec2u start_coords = m_metadata.get_tile_coords();
 
   /// Call the Lua function to get the offset (tile to choose).
-  sf::Vector2u offset = call_lua_function<sf::Vector2u>("get_tile_offset", { frame });
+  Vec2u offset = call_lua_function<Vec2u>("get_tile_offset", { frame });
 
   /// Add them to get the resulting coordinates.
-  sf::Vector2u tile_coords = start_coords + offset;
+  Vec2u tile_coords = start_coords + offset;
 
   return tile_coords;
 }
@@ -1743,7 +1743,7 @@ void Thing::do_recursive_visibility(int octant,
                                     float slope_A,
                                     float slope_B)
 {
-  sf::Vector2i new_coords;
+  Vec2i new_coords;
   //int x = 0;
   //int y = 0;
 
@@ -1754,90 +1754,90 @@ void Thing::do_recursive_visibility(int octant,
   }
 
   MapTile* tile = get_maptile();
-  sf::Vector2i tile_coords = tile->get_coords();
+  Vec2i tile_coords = tile->get_coords();
   Map& game_map = GAME.get_maps().get(get_map_id());
 
   static const int mv = 128;
   static constexpr int mw = (mv * mv);
 
-  std::function< bool(sf::Vector2f, sf::Vector2f, float) > loop_condition;
+  std::function< bool(Vec2f, Vec2f, float) > loop_condition;
   Direction dir;
-  std::function< float(sf::Vector2f, sf::Vector2f) > recurse_slope;
-  std::function< float(sf::Vector2f, sf::Vector2f) > loop_slope;
+  std::function< float(Vec2f, Vec2f) > recurse_slope;
+  std::function< float(Vec2f, Vec2f) > loop_slope;
 
   switch (octant)
   {
     case 1:
       new_coords.x = static_cast<int>(rint(static_cast<float>(tile_coords.x) - (slope_A * static_cast<float>(depth))));
       new_coords.y = tile_coords.y - depth;
-      loop_condition = [](sf::Vector2f a, sf::Vector2f b, float c) { return calc_slope(a, b) >= c; };
+      loop_condition = [](Vec2f a, Vec2f b, float c) { return calc_slope(a, b) >= c; };
       dir = Direction::West;
-      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_slope(a + Direction::Southwest.half(), b); };
-      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_slope(a + Direction::Northwest.half(), b); };
+      recurse_slope = [](Vec2f a, Vec2f b) { return calc_slope(a + Direction::Southwest.half(), b); };
+      loop_slope = [](Vec2f a, Vec2f b) { return calc_slope(a + Direction::Northwest.half(), b); };
       break;
 
     case 2:
       new_coords.x = static_cast<int>(rint(static_cast<float>(tile_coords.x) + (slope_A * static_cast<float>(depth))));
       new_coords.y = tile_coords.y - depth;
-      loop_condition = [](sf::Vector2f a, sf::Vector2f b, float c) { return calc_slope(a, b) <= c; };
+      loop_condition = [](Vec2f a, Vec2f b, float c) { return calc_slope(a, b) <= c; };
       dir = Direction::East;
-      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_slope(a + Direction::Southeast.half(), b); };
-      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return -calc_slope(a + Direction::Northeast.half(), b); };
+      recurse_slope = [](Vec2f a, Vec2f b) { return calc_slope(a + Direction::Southeast.half(), b); };
+      loop_slope = [](Vec2f a, Vec2f b) { return -calc_slope(a + Direction::Northeast.half(), b); };
       break;
 
     case 3:
       new_coords.x = tile_coords.x + depth;
       new_coords.y = static_cast<int>(rint(static_cast<float>(tile_coords.y) - (slope_A * static_cast<float>(depth))));
-      loop_condition = [](sf::Vector2f a, sf::Vector2f b, float c) { return calc_inv_slope(a, b) <= c; };
+      loop_condition = [](Vec2f a, Vec2f b, float c) { return calc_inv_slope(a, b) <= c; };
       dir = Direction::North;
-      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_inv_slope(a + Direction::Northwest.half(), b); };
-      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return -calc_inv_slope(a + Direction::Northeast.half(), b); };
+      recurse_slope = [](Vec2f a, Vec2f b) { return calc_inv_slope(a + Direction::Northwest.half(), b); };
+      loop_slope = [](Vec2f a, Vec2f b) { return -calc_inv_slope(a + Direction::Northeast.half(), b); };
       break;
 
     case 4:
       new_coords.x = tile_coords.x + depth;
       new_coords.y = static_cast<int>(rint(static_cast<float>(tile_coords.y) + (slope_A * static_cast<float>(depth))));
-      loop_condition = [](sf::Vector2f a, sf::Vector2f b, float c) { return calc_inv_slope(a, b) >= c; };
+      loop_condition = [](Vec2f a, Vec2f b, float c) { return calc_inv_slope(a, b) >= c; };
       dir = Direction::South;
-      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_inv_slope(a + Direction::Southwest.half(), b); };
-      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_inv_slope(a + Direction::Southeast.half(), b); };
+      recurse_slope = [](Vec2f a, Vec2f b) { return calc_inv_slope(a + Direction::Southwest.half(), b); };
+      loop_slope = [](Vec2f a, Vec2f b) { return calc_inv_slope(a + Direction::Southeast.half(), b); };
       break;
 
     case 5:
       new_coords.x = static_cast<int>(rint(static_cast<float>(tile_coords.x) + (slope_A * static_cast<float>(depth))));
       new_coords.y = tile_coords.y + depth;
-      loop_condition = [](sf::Vector2f a, sf::Vector2f b, float c) { return calc_slope(a, b) >= c; };
+      loop_condition = [](Vec2f a, Vec2f b, float c) { return calc_slope(a, b) >= c; };
       dir = Direction::East;
-      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_slope(a + Direction::Northeast.half(), b); };
-      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_slope(a + Direction::Southeast.half(), b); };
+      recurse_slope = [](Vec2f a, Vec2f b) { return calc_slope(a + Direction::Northeast.half(), b); };
+      loop_slope = [](Vec2f a, Vec2f b) { return calc_slope(a + Direction::Southeast.half(), b); };
       break;
 
     case 6:
       new_coords.x = static_cast<int>(rint(static_cast<float>(tile_coords.x) - (slope_A * static_cast<float>(depth))));
       new_coords.y = tile_coords.y + depth;
-      loop_condition = [](sf::Vector2f a, sf::Vector2f b, float c) { return calc_slope(a, b) <= c; };
+      loop_condition = [](Vec2f a, Vec2f b, float c) { return calc_slope(a, b) <= c; };
       dir = Direction::West;
-      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_slope(a + Direction::Northwest.half(), b); };
-      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return -calc_slope(a + Direction::Southwest.half(), b); };
+      recurse_slope = [](Vec2f a, Vec2f b) { return calc_slope(a + Direction::Northwest.half(), b); };
+      loop_slope = [](Vec2f a, Vec2f b) { return -calc_slope(a + Direction::Southwest.half(), b); };
       break;
 
     case 7:
       new_coords.x = tile_coords.x - depth;
       new_coords.y = static_cast<int>(rint(static_cast<float>(tile_coords.y) + (slope_A * static_cast<float>(depth))));
-      loop_condition = [](sf::Vector2f a, sf::Vector2f b, float c) { return calc_inv_slope(a, b) <= c; };
+      loop_condition = [](Vec2f a, Vec2f b, float c) { return calc_inv_slope(a, b) <= c; };
       dir = Direction::South;
-      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_inv_slope(a + Direction::Southeast.half(), b); };
-      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return -calc_inv_slope(a + Direction::Southwest.half(), b); };
+      recurse_slope = [](Vec2f a, Vec2f b) { return calc_inv_slope(a + Direction::Southeast.half(), b); };
+      loop_slope = [](Vec2f a, Vec2f b) { return -calc_inv_slope(a + Direction::Southwest.half(), b); };
       break;
 
     case 8:
       new_coords.x = tile_coords.x - depth;
       new_coords.y = static_cast<int>(rint(static_cast<float>(tile_coords.y) - (slope_A * static_cast<float>(depth))));
 
-      loop_condition = [](sf::Vector2f a, sf::Vector2f b, float c) { return calc_inv_slope(a, b) >= c; };
+      loop_condition = [](Vec2f a, Vec2f b, float c) { return calc_inv_slope(a, b) >= c; };
       dir = Direction::North;
-      recurse_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_inv_slope(a + Direction::Northeast.half(), b); };
-      loop_slope = [](sf::Vector2f a, sf::Vector2f b) { return calc_inv_slope(a + Direction::Northwest.half(), b); };
+      recurse_slope = [](Vec2f a, Vec2f b) { return calc_inv_slope(a + Direction::Northeast.half(), b); };
+      loop_slope = [](Vec2f a, Vec2f b) { return calc_inv_slope(a + Direction::Northwest.half(), b); };
       break;
 
     default:
@@ -1851,14 +1851,14 @@ void Thing::do_recursive_visibility(int octant,
     {
       if (game_map.tile_is_opaque(new_coords))
       {
-        if (!game_map.tile_is_opaque(new_coords + (sf::Vector2i)dir))
+        if (!game_map.tile_is_opaque(new_coords + (Vec2i)dir))
         {
           do_recursive_visibility(octant, depth + 1, slope_A, recurse_slope(to_v2f(new_coords), to_v2f(tile_coords)));
         }
       }
       else
       {
-        if (game_map.tile_is_opaque(new_coords + (sf::Vector2i)dir))
+        if (game_map.tile_is_opaque(new_coords + (Vec2i)dir))
         {
           slope_A = loop_slope(to_v2f(new_coords), to_v2f(tile_coords));
         }
@@ -1869,9 +1869,9 @@ void Thing::do_recursive_visibility(int octant,
                                  GAME.get_game_clock() };
       m_map_memory[game_map.get_index(new_coords.x, new_coords.y)] = new_memory;
     }
-    new_coords -= (sf::Vector2i)dir;
+    new_coords -= (Vec2i)dir;
   }
-  new_coords += (sf::Vector2i)dir;
+  new_coords += (Vec2i)dir;
 
   if ((depth < mv) && (!game_map.get_tile(new_coords.x, new_coords.y).is_opaque()))
   {

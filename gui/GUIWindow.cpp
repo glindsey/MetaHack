@@ -12,7 +12,7 @@
 
 namespace metagui
 {
-  Window::Window(StringKey name, sf::Vector2i location, sf::Vector2u size)
+  Window::Window(StringKey name, Vec2i location, Vec2u size)
     :
     Object(name, location, size)
   {
@@ -35,9 +35,9 @@ namespace metagui
 
   // === PROTECTED METHODS ======================================================
 
-  sf::Vector2i Window::get_child_area_location()
+  Vec2i Window::get_child_area_location()
   {
-    sf::Vector2i child_location{ 0, 0 };
+    Vec2i child_location{ 0, 0 };
 
     if (m_titlebar_cached == true)
     {
@@ -47,7 +47,7 @@ namespace metagui
     return child_location;
   }
 
-  sf::Vector2u Window::get_child_area_size()
+  Vec2u Window::get_child_area_size()
   {
     auto child_size = get_size();
 
@@ -61,7 +61,7 @@ namespace metagui
 
   void Window::render_self_before_children_(sf::RenderTexture& texture, int frame)
   {
-    sf::Vector2u size = get_size();
+    Vec2u size = get_size();
 
     float line_spacing_y = the_default_font.getLineSpacing(the_config.get<unsigned int>("text_default_size"));
 
@@ -77,8 +77,8 @@ namespace metagui
 
     // Draw the border.
     float border_width = the_config.get<float>("window_border_width");
-    m_border_shape.setPosition(sf::Vector2f(border_width, border_width));
-    m_border_shape.setSize(sf::Vector2f(static_cast<float>(size.x - (2 * border_width)), static_cast<float>(size.y - (2 * border_width))));
+    m_border_shape.setPosition(Vec2f(border_width, border_width));
+    m_border_shape.setSize(Vec2f(static_cast<float>(size.x - (2 * border_width)), static_cast<float>(size.y - (2 * border_width))));
     m_border_shape.setFillColor(sf::Color::Transparent);
     m_border_shape.setOutlineColor(
       get_focus() ?

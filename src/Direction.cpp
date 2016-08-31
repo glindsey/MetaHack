@@ -43,12 +43,12 @@ Direction::Direction(int x, int y)
   Direction(x, y, 0)
 {}
 
-Direction::Direction(sf::Vector2i vec)
+Direction::Direction(Vec2i vec)
   :
   Direction(vec.x, vec.y, 0)
 {}
 
-Direction::Direction(sf::Vector3i vec)
+Direction::Direction(Vec3i vec)
   :
   Direction(vec.x, vec.y, vec.z)
 {}
@@ -88,30 +88,30 @@ int Direction::z() const
   return m_z;
 }
 
-sf::Vector2f Direction::half() const
+Vec2f Direction::half() const
 {
-  return sf::Vector2f(m_halfx, m_halfy);
+  return Vec2f(m_halfx, m_halfy);
 }
 
 // Casts
-Direction::operator sf::Vector2i() const
+Direction::operator Vec2i() const
 {
-  return sf::Vector2i(m_x, m_y);
+  return Vec2i(m_x, m_y);
 }
 
-Direction::operator sf::Vector2f() const
+Direction::operator Vec2f() const
 {
-  return sf::Vector2f((float)m_x, (float)m_y);
+  return Vec2f((float)m_x, (float)m_y);
 }
 
-Direction::operator sf::Vector3i() const
+Direction::operator Vec3i() const
 {
-  return sf::Vector3i(m_x, m_y, m_z);
+  return Vec3i(m_x, m_y, m_z);
 }
 
-Direction::operator sf::Vector3f() const
+Direction::operator Vec3f() const
 {
-  return sf::Vector3f((float)m_x, (float)m_y, (float)m_z);
+  return Vec3f((float)m_x, (float)m_y, (float)m_z);
 }
 
 // Other methods
@@ -184,7 +184,7 @@ Direction Direction::get_approx(int xSrc, int ySrc, int xDst, int yDst)
 
 /// Determine light factor based on light source, wall location, and which wall
 /// the light is hitting.
-float Direction::calculate_light_factor(sf::Vector2i source, sf::Vector2i target, Direction direction)
+float Direction::calculate_light_factor(Vec2i source, Vec2i target, Direction direction)
 {
   float x_diff = abs((float)(source.x - target.x));
   float y_diff = abs((float)(source.y - target.y));

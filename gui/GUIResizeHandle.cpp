@@ -32,7 +32,7 @@ namespace metagui
 
     /// @todo FINISH ME
   }
-  void ResizeHandle::handle_parent_size_changed_(sf::Vector2u parent_size)
+  void ResizeHandle::handle_parent_size_changed_(Vec2u parent_size)
   {
   }
 }; // end namespace metagui

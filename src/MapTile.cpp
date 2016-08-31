@@ -29,11 +29,11 @@ StringDisplay MapTile::get_display_name() const
   return m_p_metadata->get_intrinsic<StringDisplay>("name");
 }
 
-sf::Vector2u MapTile::get_tile_sheet_coords() const
+Vec2u MapTile::get_tile_sheet_coords() const
 {
   /// @todo Deal with selecting one of the other tiles.
-  sf::Vector2u start_coords = m_p_metadata->get_tile_coords();
-  sf::Vector2u tile_coords(start_coords.x + m_tile_offset, start_coords.y);
+  Vec2u start_coords = m_p_metadata->get_tile_coords();
+  Vec2u tile_coords(start_coords.x + m_tile_offset, start_coords.y);
   return tile_coords;
 }
 
@@ -65,7 +65,7 @@ void MapTile::set_coords(int x, int y)
   m_coords.y = y;
 }
 
-sf::Vector2i const& MapTile::get_coords() const
+Vec2i const& MapTile::get_coords() const
 {
   return m_coords;
 }
@@ -180,21 +180,21 @@ bool MapTile::is_opaque() const
 }
 
 void MapTile::draw_highlight(sf::RenderTarget& target,
-                             sf::Vector2f location,
+                             Vec2f location,
                              sf::Color fgColor,
                              sf::Color bgColor,
                              int frame)
 {
   float half_ts(the_config.get<float>("map_tile_size") * 0.5f);
-  sf::Vector2f vSW(location.x - half_ts, location.y + half_ts);
-  sf::Vector2f vSE(location.x + half_ts, location.y + half_ts);
-  sf::Vector2f vNW(location.x - half_ts, location.y - half_ts);
-  sf::Vector2f vNE(location.x + half_ts, location.y - half_ts);
+  Vec2f vSW(location.x - half_ts, location.y + half_ts);
+  Vec2f vSE(location.x + half_ts, location.y + half_ts);
+  Vec2f vNW(location.x - half_ts, location.y - half_ts);
+  Vec2f vNE(location.x + half_ts, location.y - half_ts);
 
   sf::RectangleShape box_shape;
-  sf::Vector2f box_position;
-  sf::Vector2f box_size(the_config.get<float>("map_tile_size"), the_config.get<float>("map_tile_size"));
-  sf::Vector2f box_half_size(box_size.x / 2, box_size.y / 2);
+  Vec2f box_position;
+  Vec2f box_size(the_config.get<float>("map_tile_size"), the_config.get<float>("map_tile_size"));
+  Vec2f box_half_size(box_size.x / 2, box_size.y / 2);
   box_position.x = (location.x - box_half_size.x);
   box_position.y = (location.y - box_half_size.y);
   box_shape.setPosition(box_position);
@@ -270,18 +270,18 @@ void MapTile::add_wall_vertices_to(sf::VertexArray& vertices,
   MapTile const& adjacent_tile_w = get_adjacent_tile(Direction::West);
 
   // Tile vertices.
-  sf::Vector2f location(m_coords.x * ts,
+  Vec2f location(m_coords.x * ts,
                         m_coords.y * ts);
-  sf::Vector2f vTileN(location.x, location.y - half_ts);
-  sf::Vector2f vTileNE(location.x + half_ts, location.y - half_ts);
-  sf::Vector2f vTileE(location.x + half_ts, location.y);
-  sf::Vector2f vTileSE(location.x + half_ts, location.y + half_ts);
-  sf::Vector2f vTileS(location.x, location.y + half_ts);
-  sf::Vector2f vTileSW(location.x - half_ts, location.y + half_ts);
-  sf::Vector2f vTileW(location.x - half_ts, location.y);
-  sf::Vector2f vTileNW(location.x - half_ts, location.y - half_ts);
+  Vec2f vTileN(location.x, location.y - half_ts);
+  Vec2f vTileNE(location.x + half_ts, location.y - half_ts);
+  Vec2f vTileE(location.x + half_ts, location.y);
+  Vec2f vTileSE(location.x + half_ts, location.y + half_ts);
+  Vec2f vTileS(location.x, location.y + half_ts);
+  Vec2f vTileSW(location.x - half_ts, location.y + half_ts);
+  Vec2f vTileW(location.x - half_ts, location.y);
+  Vec2f vTileNW(location.x - half_ts, location.y - half_ts);
 
-  sf::Vector2u tile_coords = this->get_tile_sheet_coords();
+  Vec2u tile_coords = this->get_tile_sheet_coords();
 
   if (use_lighting)
   {
@@ -343,8 +343,8 @@ void MapTile::add_wall_vertices_to(sf::VertexArray& vertices,
   // NORTH WALL
   if (n_is_empty)
   {
-    sf::Vector2f vS(vTileN.x, vTileN.y + ws);
-    sf::Vector2f vSW(vTileNW.x, vTileNW.y + ws);
+    Vec2f vS(vTileN.x, vTileN.y + ws);
+    Vec2f vSW(vTileNW.x, vTileNW.y + ws);
     if (w_is_empty)
     {
       vSW.x += ws;
@@ -353,7 +353,7 @@ void MapTile::add_wall_vertices_to(sf::VertexArray& vertices,
     {
       vSW.x -= ws;
     }
-    sf::Vector2f vSE(vTileNE.x, vTileNE.y + ws);
+    Vec2f vSE(vTileNE.x, vTileNE.y + ws);
     if (e_is_empty)
     {
       vSE.x -= ws;
@@ -374,8 +374,8 @@ void MapTile::add_wall_vertices_to(sf::VertexArray& vertices,
   // EAST WALL
   if (e_is_empty)
   {
-    sf::Vector2f vW(vTileE.x - ws, vTileE.y);
-    sf::Vector2f vNW(vTileNE.x - ws, vTileNE.y);
+    Vec2f vW(vTileE.x - ws, vTileE.y);
+    Vec2f vNW(vTileNE.x - ws, vTileNE.y);
     if (n_is_empty)
     {
       vNW.y += ws;
@@ -384,7 +384,7 @@ void MapTile::add_wall_vertices_to(sf::VertexArray& vertices,
     {
       vNW.y -= ws;
     }
-    sf::Vector2f vSW(vTileSE.x - ws, vTileSE.y);
+    Vec2f vSW(vTileSE.x - ws, vTileSE.y);
     if (s_is_empty)
     {
       vSW.y -= ws;
@@ -405,8 +405,8 @@ void MapTile::add_wall_vertices_to(sf::VertexArray& vertices,
   // SOUTH WALL
   if (s_is_empty)
   {
-    sf::Vector2f vN(vTileS.x, vTileS.y - ws);
-    sf::Vector2f vNW(vTileSW.x, vTileSW.y - ws);
+    Vec2f vN(vTileS.x, vTileS.y - ws);
+    Vec2f vNW(vTileSW.x, vTileSW.y - ws);
     if (w_is_empty)
     {
       vNW.x += ws;
@@ -415,7 +415,7 @@ void MapTile::add_wall_vertices_to(sf::VertexArray& vertices,
     {
       vNW.x -= ws;
     }
-    sf::Vector2f vNE(vTileSE.x, vTileSE.y - ws);
+    Vec2f vNE(vTileSE.x, vTileSE.y - ws);
     if (e_is_empty)
     {
       vNE.x -= ws;
@@ -436,8 +436,8 @@ void MapTile::add_wall_vertices_to(sf::VertexArray& vertices,
   // WEST WALL
   if (w_is_empty)
   {
-    sf::Vector2f vE(vTileW.x + ws, vTileW.y);
-    sf::Vector2f vNE(vTileNW.x + ws, vTileNW.y);
+    Vec2f vE(vTileW.x + ws, vTileW.y);
+    Vec2f vNE(vTileNW.x + ws, vTileNW.y);
     if (n_is_empty)
     {
       vNE.y += ws;
@@ -446,7 +446,7 @@ void MapTile::add_wall_vertices_to(sf::VertexArray& vertices,
     {
       vNE.y -= ws;
     }
-    sf::Vector2f vSE(vTileSW.x + ws, vTileSW.y);
+    Vec2f vSE(vTileSW.x + ws, vTileSW.y);
     if (s_is_empty)
     {
       vSE.y -= ws;
@@ -465,20 +465,20 @@ void MapTile::add_wall_vertices_to(sf::VertexArray& vertices,
   }
 }
 
-sf::Vector2f MapTile::get_pixel_coords(int x, int y)
+Vec2f MapTile::get_pixel_coords(int x, int y)
 {
-  return sf::Vector2f(static_cast<float>(x) * the_config.get<float>("map_tile_size"),
+  return Vec2f(static_cast<float>(x) * the_config.get<float>("map_tile_size"),
                       static_cast<float>(y) * the_config.get<float>("map_tile_size"));
 }
 
-sf::Vector2f MapTile::get_pixel_coords(sf::Vector2i tile)
+Vec2f MapTile::get_pixel_coords(Vec2i tile)
 {
   return get_pixel_coords(tile.x, tile.y);
 }
 
 // === PROTECTED METHODS ======================================================
 
-MapTile::MapTile(sf::Vector2i coords, Metadata& metadata, MapId map_id)
+MapTile::MapTile(Vec2i coords, Metadata& metadata, MapId map_id)
   :
   m_map_id{ map_id },
   m_coords{ coords },
@@ -501,10 +501,10 @@ MapTile::MapTile(sf::Vector2i coords, Metadata& metadata, MapId map_id)
 
 MapTile const& MapTile::get_adjacent_tile(Direction direction) const
 {
-  sf::Vector2i coords = get_coords();
+  Vec2i coords = get_coords();
   Map const& map = GAME.get_maps().get(get_map_id());
   MapTile const& tile = *this;
 
-  sf::Vector2i adjacent_coords = coords + (sf::Vector2i)direction;
+  Vec2i adjacent_coords = coords + (Vec2i)direction;
   return map.get_tile(adjacent_coords);
 }

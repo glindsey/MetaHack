@@ -28,7 +28,7 @@ MapDiamond::MapDiamond(Map& m, PropertyDictionary const& s, GeoVector vec)
   unsigned int numTries = 0;
   uniform_int_dist hsDist(minHalfSize, maxHalfSize);
 
-  sf::Vector2i& startingCoords = vec.start_point;
+  Vec2i& startingCoords = vec.start_point;
   Direction& direction = vec.direction;
 
   while (numTries < maxRetries)

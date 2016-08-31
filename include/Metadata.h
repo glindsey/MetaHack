@@ -31,7 +31,7 @@ public:
 
   StringKey const& get_type() const;
 
-  sf::Vector2u get_tile_coords();
+  Vec2u get_tile_coords();
 
   template <typename ReturnType>
   ReturnType get_intrinsic(StringKey name, ReturnType default_value = ReturnType())

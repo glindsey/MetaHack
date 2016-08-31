@@ -34,7 +34,7 @@ ThingId ThingView::get_thing_id()
   return m_thing_id;
 }
 
-void ThingView::set_location(sf::Vector2f target_coords)
+void ThingView::set_location(Vec2f target_coords)
 {
   if (target_coords != m_target_coords)
   {
@@ -43,12 +43,12 @@ void ThingView::set_location(sf::Vector2f target_coords)
   }
 }
 
-sf::Vector2f ThingView::get_location()
+Vec2f ThingView::get_location()
 {
   return m_target_coords;
 }
 
-void ThingView::set_size(sf::Vector2u target_size)
+void ThingView::set_size(Vec2u target_size)
 {
   if (target_size != m_target_size)
   {
@@ -57,7 +57,7 @@ void ThingView::set_size(sf::Vector2u target_size)
   }
 }
 
-sf::Vector2u ThingView::get_size()
+Vec2u ThingView::get_size()
 {
   return m_target_size;
 }

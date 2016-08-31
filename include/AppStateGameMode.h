@@ -78,7 +78,7 @@ private:
   GameInputState m_current_input_state;
 
   /// Current location of the cursor on the map.
-  sf::Vector2i m_cursor_coords;
+  Vec2i m_cursor_coords;
 
   /// Action in progress (if any).
   /// Used for an action that needs a "target".

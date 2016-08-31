@@ -38,7 +38,7 @@ MapLRoom::MapLRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
   uniform_int_dist vert_height_dist(vert_leg_min_height,
                                     vert_leg_max_height);
 
-  sf::Vector2i& starting_coords = vec.start_point;
+  Vec2i& starting_coords = vec.start_point;
   Direction& direction = vec.direction;
 
   while (num_tries < max_retries)

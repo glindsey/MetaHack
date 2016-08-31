@@ -26,7 +26,7 @@ inline double calc_slope(double x1, double y1, double x2, double y2)
   return (x1 - x2) / (y1 - y2);
 }
 
-inline float calc_slope(sf::Vector2f s1, sf::Vector2f s2)
+inline float calc_slope(Vec2f s1, Vec2f s2)
 {
   float x_dist = static_cast<float>(s1.x - s2.x);
   float y_dist = static_cast<float>(s1.y - s2.y);
@@ -38,7 +38,7 @@ inline double calc_inv_slope(double x1, double y1, double x2, double y2)
   return (y1 - y2) / (x1 - x2);
 }
 
-inline float calc_inv_slope(sf::Vector2f s1, sf::Vector2f s2)
+inline float calc_inv_slope(Vec2f s1, Vec2f s2)
 {
   float x_dist = static_cast<float>(s1.x - s2.x);
   float y_dist = static_cast<float>(s1.y - s2.y);
@@ -50,16 +50,16 @@ inline int calc_vis_distance(int x1, int y1, int x2, int y2)
   return ((x1 - x2) * (x1 - x2)) + ((y1 - y2) * (y1 - y2));
 }
 
-inline float calc_vis_distance(sf::Vector2i s1, sf::Vector2i s2)
+inline float calc_vis_distance(Vec2i s1, Vec2i s2)
 {
   float x_dist = static_cast<float>(s1.x - s2.x);
   float y_dist = static_cast<float>(s1.y - s2.y);
   return (x_dist * x_dist) + (y_dist * y_dist);
 }
 
-inline sf::Vector2f to_v2f(sf::Vector2i vec)
+inline Vec2f to_v2f(Vec2i vec)
 {
-  return sf::Vector2f{ static_cast<float>(vec.x), static_cast<float>(vec.y) };
+  return Vec2f{ static_cast<float>(vec.x), static_cast<float>(vec.y) };
 }
 
 inline unsigned char saturation_add(unsigned char const& a,
@@ -113,7 +113,7 @@ inline sf::Color average(sf::Color first, sf::Color second, sf::Color third, sf:
 /// In this context, adjacent includes corners as well as edges.
 /// (e.g. A tile at (4, 4) and a tile at (5, 5) are considered adjacent.)
 /// A tile is also considered adjacent to itself.
-inline bool adjacent(sf::Vector2i first, sf::Vector2i second)
+inline bool adjacent(Vec2i first, Vec2i second)
 {
   return ((abs(first.x - second.x) <= 1) && (abs(first.y - second.y) <= 1));
 }

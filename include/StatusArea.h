@@ -15,7 +15,7 @@ protected:
   virtual void render_contents_(sf::RenderTexture& texture, int frame) override;
 
 private:
-  void render_attribute(sf::RenderTarget& target, StringDisplay abbrev, StringKey name, sf::Vector2f location);
+  void render_attribute(sf::RenderTarget& target, StringDisplay abbrev, StringKey name, Vec2f location);
 
   StringDisplay get_test_label();
 

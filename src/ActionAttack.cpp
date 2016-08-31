@@ -95,12 +95,12 @@ Action::StateResult ActionAttack::do_begin_work_(AnyMap& params)
   unsigned int action_time;
 
   // Figure out our target location.
-  sf::Vector2i coords = current_tile->get_coords();
-  sf::Vector2i offset = (sf::Vector2i)new_direction;
+  Vec2i coords = current_tile->get_coords();
+  Vec2i offset = (Vec2i)new_direction;
   int x_new = coords.x + offset.x;
   int y_new = coords.y + offset.y;
   Map& current_map = GAME.get_maps().get(subject->get_map_id());
-  sf::Vector2i map_size = current_map.get_size();
+  Vec2i map_size = current_map.get_size();
 
   // Check boundaries.
   if ((x_new < 0) || (y_new < 0) ||

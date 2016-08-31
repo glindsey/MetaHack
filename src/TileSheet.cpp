@@ -20,7 +20,7 @@ struct TileSheet::Impl
   }
 
   /// Return true if the requested area is totally unused.
-  bool area_is_unused(sf::Vector2u start, sf::Vector2u size)
+  bool area_is_unused(Vec2u start, Vec2u size)
   {
     uint32_t texture_size_in_tiles = texture_size / the_config.get<unsigned int>("map_tile_size");
 
@@ -46,9 +46,9 @@ struct TileSheet::Impl
   /// Find the first free tile area.
   /// @param size Size of the area to search for, IN TILES.
   /// @todo This is an extremely naive algorithm and can definitely be optimized.
-  sf::Vector2u find_unused_area(sf::Vector2u size)
+  Vec2u find_unused_area(Vec2u size)
   {
-    sf::Vector2u start(0, 0);
+    Vec2u start(0, 0);
 
     uint32_t texture_size_in_tiles = texture_size / the_config.get<unsigned int>("map_tile_size");
 
@@ -74,7 +74,7 @@ struct TileSheet::Impl
   /// @param upper_left_corner  Upper-left corner of rectangle.
   /// @param size               Size of the rectangle to mark.
   /// @todo This is an extremely naive algorithm and can definitely be optimized.
-  void mark_tiles_used(sf::Vector2u upper_left_corner, sf::Vector2u size)
+  void mark_tiles_used(Vec2u upper_left_corner, Vec2u size)
   {
     for (uint32_t y = upper_left_corner.y; y < upper_left_corner.y + size.y; ++y)
     {
@@ -115,7 +115,7 @@ TileSheet::~TileSheet()
   //dtor
 }
 
-sf::Vector2u TileSheet::load_collection(FileName const& filename)
+Vec2u TileSheet::load_collection(FileName const& filename)
 {
   sf::Image image;
   if (!image.loadFromFile(filename))
@@ -127,13 +127,13 @@ sf::Vector2u TileSheet::load_collection(FileName const& filename)
 
   unsigned int tile_size = the_config.get<unsigned int>("map_tile_size");
 
-  sf::Vector2u image_size = image.getSize();
+  Vec2u image_size = image.getSize();
 
-  sf::Vector2u image_size_in_tiles =
-    sf::Vector2u(divide_and_round_up(image_size.x, tile_size),
+  Vec2u image_size_in_tiles =
+    Vec2u(divide_and_round_up(image_size.x, tile_size),
                  divide_and_round_up(image_size.y, tile_size));
 
-  sf::Vector2u free_coords = pImpl->find_unused_area(image_size_in_tiles);
+  Vec2u free_coords = pImpl->find_unused_area(image_size_in_tiles);
 
   pImpl->texture.update(image, free_coords.x * tile_size, free_coords.y * tile_size);
 
@@ -142,7 +142,7 @@ sf::Vector2u TileSheet::load_collection(FileName const& filename)
   return free_coords;
 }
 
-sf::IntRect TileSheet::get_tile(sf::Vector2u tile) const
+sf::IntRect TileSheet::get_tile(Vec2u tile) const
 {
   sf::IntRect rect;
   unsigned int tile_size = the_config.get<unsigned int>("map_tile_size");
@@ -170,13 +170,13 @@ sf::Texture& TileSheet::getTexture(void)
 }
 
 void TileSheet::add_quad(sf::VertexArray& vertices,
-                         sf::Vector2u tile_coords, sf::Color bg_color,
-                         sf::Vector2f ul_coord, sf::Vector2f ur_coord,
-                         sf::Vector2f ll_coord, sf::Vector2f lr_coord)
+                         Vec2u tile_coords, sf::Color bg_color,
+                         Vec2f ul_coord, Vec2f ur_coord,
+                         Vec2f ll_coord, Vec2f lr_coord)
 {
   sf::Vertex new_vertex;
   float ts(the_config.get<float>("map_tile_size"));
-  sf::Vector2f texNW(tile_coords.x * ts, tile_coords.y * ts);
+  Vec2f texNW(tile_coords.x * ts, tile_coords.y * ts);
 
   new_vertex.color = bg_color;
 
@@ -185,25 +185,25 @@ void TileSheet::add_quad(sf::VertexArray& vertices,
   vertices.append(new_vertex);
 
   new_vertex.position = ur_coord;
-  new_vertex.texCoords = sf::Vector2f(texNW.x + ts,
+  new_vertex.texCoords = Vec2f(texNW.x + ts,
                                       texNW.y);
   vertices.append(new_vertex);
 
   new_vertex.position = lr_coord;
-  new_vertex.texCoords = sf::Vector2f(texNW.x + ts,
+  new_vertex.texCoords = Vec2f(texNW.x + ts,
                                       texNW.y + ts);
   vertices.append(new_vertex);
 
   new_vertex.position = ll_coord;
-  new_vertex.texCoords = sf::Vector2f(texNW.x,
+  new_vertex.texCoords = Vec2f(texNW.x,
                                       texNW.y + ts);
   vertices.append(new_vertex);
 }
 
 void TileSheet::add_gradient_quad(sf::VertexArray& vertices,
-                                  sf::Vector2u tile_coords,
-                                  sf::Vector2f coordNW, sf::Vector2f coordNE,
-                                  sf::Vector2f coordSW, sf::Vector2f coordSE,
+                                  Vec2u tile_coords,
+                                  Vec2f coordNW, Vec2f coordNE,
+                                  Vec2f coordSW, Vec2f coordSE,
                                   sf::Color colorNW, sf::Color colorN, sf::Color colorNE,
                                   sf::Color colorW, sf::Color colorC, sf::Color colorE,
                                   sf::Color colorSW, sf::Color colorS, sf::Color colorSE)
@@ -211,21 +211,21 @@ void TileSheet::add_gradient_quad(sf::VertexArray& vertices,
   float ts(the_config.get<float>("map_tile_size"));
   float half_ts = (ts / 2.0f);
 
-  sf::Vector2f coordC((coordNW.x + coordNE.x + coordSE.x + coordSW.x) / 4, (coordNW.y + coordNE.y + coordSE.y + coordSW.y) / 4);
-  sf::Vector2f coordN((coordNW.x + coordNE.x) / 2, (coordNW.y + coordNE.y) / 2);
-  sf::Vector2f coordE((coordNE.x + coordSE.x) / 2, (coordNE.y + coordSE.y) / 2);
-  sf::Vector2f coordS((coordSW.x + coordSE.x) / 2, (coordSW.y + coordSE.y) / 2);
-  sf::Vector2f coordW((coordNW.x + coordSW.x) / 2, (coordNW.y + coordSW.y) / 2);
+  Vec2f coordC((coordNW.x + coordNE.x + coordSE.x + coordSW.x) / 4, (coordNW.y + coordNE.y + coordSE.y + coordSW.y) / 4);
+  Vec2f coordN((coordNW.x + coordNE.x) / 2, (coordNW.y + coordNE.y) / 2);
+  Vec2f coordE((coordNE.x + coordSE.x) / 2, (coordNE.y + coordSE.y) / 2);
+  Vec2f coordS((coordSW.x + coordSE.x) / 2, (coordSW.y + coordSE.y) / 2);
+  Vec2f coordW((coordNW.x + coordSW.x) / 2, (coordNW.y + coordSW.y) / 2);
 
-  sf::Vector2f texNW(tile_coords.x * ts, tile_coords.y * ts);
-  sf::Vector2f texN(texNW.x + half_ts, texNW.y);
-  sf::Vector2f texNE(texNW.x + ts, texNW.y);
-  sf::Vector2f texE(texNW.x + ts, texNW.y + half_ts);
-  sf::Vector2f texSE(texNW.x + ts, texNW.y + ts);
-  sf::Vector2f texS(texNW.x + half_ts, texNW.y + ts);
-  sf::Vector2f texSW(texNW.x, texNW.y + ts);
-  sf::Vector2f texW(texNW.x, texNW.y + half_ts);
-  sf::Vector2f texC(texNW.x + half_ts, texNW.y + half_ts);
+  Vec2f texNW(tile_coords.x * ts, tile_coords.y * ts);
+  Vec2f texN(texNW.x + half_ts, texNW.y);
+  Vec2f texNE(texNW.x + ts, texNW.y);
+  Vec2f texE(texNW.x + ts, texNW.y + half_ts);
+  Vec2f texSE(texNW.x + ts, texNW.y + ts);
+  Vec2f texS(texNW.x + half_ts, texNW.y + ts);
+  Vec2f texSW(texNW.x, texNW.y + ts);
+  Vec2f texW(texNW.x, texNW.y + half_ts);
+  Vec2f texC(texNW.x + half_ts, texNW.y + half_ts);
 
   // Upper left
   vertices.append(sf::Vertex(coordNW, colorNW, texNW));
@@ -254,10 +254,10 @@ void TileSheet::add_gradient_quad(sf::VertexArray& vertices,
 
 void TileSheet::add_outline_vertices(sf::VertexArray& vertices,
                                      sf::Color bg_color,
-                                     sf::Vector2f ul_coord,
-                                     sf::Vector2f ur_coord,
-                                     sf::Vector2f lr_coord,
-                                     sf::Vector2f ll_coord)
+                                     Vec2f ul_coord,
+                                     Vec2f ur_coord,
+                                     Vec2f lr_coord,
+                                     Vec2f ll_coord)
 {
   sf::Vertex new_vertex;
 

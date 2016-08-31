@@ -27,7 +27,7 @@ MapRoom::MapRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
   uniform_int_dist width_dist(min_width, max_width);
   uniform_int_dist height_dist(min_height, max_height);
 
-  sf::Vector2i& starting_coords = vec.start_point;
+  Vec2i& starting_coords = vec.start_point;
   Direction& direction = vec.direction;
 
   while (num_tries < max_retries)

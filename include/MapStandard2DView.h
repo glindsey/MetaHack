@@ -29,13 +29,13 @@ protected:
   virtual void reset_cached_render_data() override;
 
   /// Add the vertices for the maptile located at the coordinates specified.
-  void add_tile_vertices(ThingId viewer, sf::Vector2i coords);
+  void add_tile_vertices(ThingId viewer, Vec2i coords);
 
   /// Add the floor vertices for the maptile located at the coordinates specified.
-  void add_tile_floor_vertices(sf::Vector2i coords);
+  void add_tile_floor_vertices(Vec2i coords);
 
   /// Add the wall vertices for the maptile located at the coordinates specified.
-  void add_tile_wall_vertices(sf::Vector2i coords);
+  void add_tile_wall_vertices(Vec2i coords);
 
   /// Add the floor vertices for the thing specified.
   void add_thing_floor_vertices(ThingId thing, bool use_lighting, int frame);

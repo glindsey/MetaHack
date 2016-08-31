@@ -13,12 +13,12 @@ public:
 
   /// Load a tile collection from disk and find a place to put them.
   /// @return The location that the tiles were placed on the sheet.
-  sf::Vector2u load_collection(FileName const& filename);
+  Vec2u load_collection(FileName const& filename);
 
   /// Get a particular tile from the sheet.
   /// @warning Assumes tile is within the bounds of the loaded texture,
   ///          unless DEBUG is defined, in order to save execution time.
-  sf::IntRect get_tile(sf::Vector2u tile) const;
+  sf::IntRect get_tile(Vec2u tile) const;
 
   /// Get a reference to the texture to render.
   sf::Texture& getTexture(void);
@@ -35,15 +35,15 @@ public:
   /// @param ll_coord Lower-left coordinates.
   /// @param lr_coord Lower-right coordinates.
   static void add_quad(sf::VertexArray& vertices,
-                       sf::Vector2u tile_coords, sf::Color bg_color,
-                       sf::Vector2f ul_coord, sf::Vector2f ur_coord,
-                       sf::Vector2f ll_coord, sf::Vector2f lr_coord);
+                       Vec2u tile_coords, sf::Color bg_color,
+                       Vec2f ul_coord, Vec2f ur_coord,
+                       Vec2f ll_coord, Vec2f lr_coord);
 
   /// Add a quad with colors specified in a 3x3 grid.
   static void add_gradient_quad(sf::VertexArray& vertices,
-                                sf::Vector2u tile_coords,
-                                sf::Vector2f coordNW, sf::Vector2f coordNE,
-                                sf::Vector2f coordSW, sf::Vector2f coordSE,
+                                Vec2u tile_coords,
+                                Vec2f coordNW, Vec2f coordNE,
+                                Vec2f coordSW, Vec2f coordSE,
                                 sf::Color colorNW, sf::Color colorN, sf::Color colorNE,
                                 sf::Color colorW, sf::Color colorC, sf::Color colorE,
                                 sf::Color colorSW, sf::Color colorS, sf::Color colorSE);
@@ -59,10 +59,10 @@ public:
   /// @param ll_coord Lower-left coordinates.
   static void add_outline_vertices(sf::VertexArray& vertices,
                                    sf::Color bg_color,
-                                   sf::Vector2f ul_coord,
-                                   sf::Vector2f ur_coord,
-                                   sf::Vector2f lr_coord,
-                                   sf::Vector2f ll_coord);
+                                   Vec2f ul_coord,
+                                   Vec2f ur_coord,
+                                   Vec2f lr_coord,
+                                   Vec2f ll_coord);
 
 protected:
 

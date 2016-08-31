@@ -19,7 +19,7 @@ enum class SpriteAnimationStyle
 /// Definition of a single sprite prototype in the sheet.
 struct SpritePrototype
 {
-  SpritePrototype(sf::Vector2u spriteCoords_ = sf::Vector2u(0, 0),
+  SpritePrototype(Vec2u spriteCoords_ = Vec2u(0, 0),
                   unsigned int numAnimFrames_ = 1,
                   SpriteAnimationStyle animationStyle_ =
                   SpriteAnimationStyle::IdlePlusLoop,
@@ -32,7 +32,7 @@ struct SpritePrototype
     rendersPerFrame(rendersPerFrame_) {}
 
   /// Coordinates of the upper-left tile for the sprite.
-  sf::Vector2u spriteCoords;
+  Vec2u spriteCoords;
 
   /// Number of animation frames composing the sprite.
   unsigned int numAnimFrames;

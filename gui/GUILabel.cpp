@@ -7,7 +7,7 @@
 
 namespace metagui
 {
-  Label::Label(StringKey name, sf::Vector2i location)
+  Label::Label(StringKey name, Vec2i location)
     :
     Object(name, location)
   {}
@@ -23,7 +23,7 @@ namespace metagui
     float line_spacing_y = the_default_font.getLineSpacing(the_config.get<unsigned int>("text_default_size"));
 
     // Text offsets relative to the background rectangle.
-    sf::Vector2f offset{ 3.0f, 3.0f };
+    Vec2f offset{ 3.0f, 3.0f };
 
     /// @todo Flesh this out; right now it is EXTREMELY rudimentary
     StringDisplay str = get_text();

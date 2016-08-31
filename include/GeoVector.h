@@ -11,11 +11,11 @@ struct GeoVector
 {
   GeoVector()
   {
-    start_point = sf::Vector2i(0, 0);
+    start_point = Vec2i(0, 0);
     direction = Direction::Self;
   }
 
-  GeoVector(sf::Vector2i start, Direction dir)
+  GeoVector(Vec2i start, Direction dir)
   {
     start_point = start;
     direction = dir;
@@ -23,7 +23,7 @@ struct GeoVector
 
   GeoVector(int x, int y, Direction dir)
   {
-    start_point = sf::Vector2i(x, y);
+    start_point = Vec2i(x, y);
     direction = dir;
   }
 
@@ -38,7 +38,7 @@ struct GeoVector
     return !(*this == other);
   }
 
-  sf::Vector2i start_point;
+  Vec2i start_point;
   Direction direction;
 };
 

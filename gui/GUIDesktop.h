@@ -21,13 +21,13 @@ namespace metagui
       bool dragging;
 
       /// Absolute location of the press or release.
-      sf::Vector2i location;
+      Vec2i location;
 
       /// Time elapsed since the last button state change.
       sf::Clock elapsed;
     };
 
-    explicit Desktop(StringKey name, sf::Vector2u size);
+    explicit Desktop(StringKey name, Vec2u size);
     virtual ~Desktop();
 
     /// Handles an SFML event and translates it into a GUI event if necessary.
@@ -43,7 +43,7 @@ namespace metagui
     std::array< MouseButtonInfo, sf::Mouse::ButtonCount > m_button_info;
 
     /// Constantly updated mouse location.
-    sf::Vector2i m_mouse_location;
+    Vec2i m_mouse_location;
   };
 }; // end namespace metagui
 

@@ -38,7 +38,7 @@ public:
   /// @todo Not sure this actually belongs here. It seems more specific to
   ///       AppStateGameMode itself.
   void set_view(sf::RenderTarget& target,
-                sf::Vector2f center,
+                Vec2f center,
                 float zoom_level);
 
   /// Update any cached render data associated with map tiles.

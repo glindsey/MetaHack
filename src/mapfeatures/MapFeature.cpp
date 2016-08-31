@@ -141,8 +141,8 @@ void MapFeature::add_growth_vector(GeoVector vec)
   pImpl->vecs.push_back(vec);
 }
 
-bool MapFeature::does_box_pass_criterion(sf::Vector2i upper_left,
-                                         sf::Vector2i lower_right,
+bool MapFeature::does_box_pass_criterion(Vec2i upper_left,
+                                         Vec2i lower_right,
                                          std::function<bool(MapTile&)> criterion)
 {
   for (int xCheck = upper_left.x; xCheck <= lower_right.x; ++xCheck)
@@ -159,7 +159,7 @@ bool MapFeature::does_box_pass_criterion(sf::Vector2i upper_left,
   return true;
 }
 
-void MapFeature::set_box(sf::Vector2i upper_left, sf::Vector2i lower_right, std::string tile_type)
+void MapFeature::set_box(Vec2i upper_left, Vec2i lower_right, std::string tile_type)
 {
   Map& map = get_map();
 

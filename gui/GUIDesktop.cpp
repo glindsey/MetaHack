@@ -7,9 +7,9 @@
 
 namespace metagui
 {
-  Desktop::Desktop(StringKey name, sf::Vector2u size)
+  Desktop::Desktop(StringKey name, Vec2u size)
     :
-    Object(name, sf::Vector2i(0, 0), size)
+    Object(name, Vec2i(0, 0), size)
   {}
 
   Desktop::~Desktop()
@@ -40,7 +40,7 @@ namespace metagui
 
       case sf::Event::EventType::MouseButtonPressed:
       {
-        sf::Vector2i point{ sfml_event.mouseButton.x, sfml_event.mouseButton.y };
+        Vec2i point{ sfml_event.mouseButton.x, sfml_event.mouseButton.y };
         auto& button{ m_button_info[static_cast<unsigned int>(sfml_event.mouseButton.button)] };
 
         button.pressed = true;
@@ -57,7 +57,7 @@ namespace metagui
 
       case sf::Event::EventType::MouseButtonReleased:
       {
-        sf::Vector2i point{ sfml_event.mouseButton.x, sfml_event.mouseButton.y };
+        Vec2i point{ sfml_event.mouseButton.x, sfml_event.mouseButton.y };
         auto& button{ m_button_info[static_cast<unsigned int>(sfml_event.mouseButton.button)] };
 
         button.pressed = false;
@@ -78,7 +78,7 @@ namespace metagui
 
       case sf::Event::EventType::MouseMoved:
       {
-        sf::Vector2i point{ sfml_event.mouseMove.x, sfml_event.mouseMove.y };
+        Vec2i point{ sfml_event.mouseMove.x, sfml_event.mouseMove.y };
         m_mouse_location = point;
 
         /// @todo Handle things like dragging, resizing

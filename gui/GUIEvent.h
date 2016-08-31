@@ -33,40 +33,40 @@ namespace metagui
 
   struct EventDragFinished : public Event
   {
-    EventDragFinished(sf::Mouse::Button button_, sf::Vector2i current_location_)
+    EventDragFinished(sf::Mouse::Button button_, Vec2i current_location_)
       :
       button(button_),
       current_location(current_location_)
     {}
 
     sf::Mouse::Button const button;
-    sf::Vector2i const current_location;
+    Vec2i const current_location;
   };
 
   struct EventDragStarted : public Event
   {
-    EventDragStarted(sf::Mouse::Button button_, sf::Vector2i start_location_)
+    EventDragStarted(sf::Mouse::Button button_, Vec2i start_location_)
       :
       button(button_),
       start_location(start_location_)
     {}
 
     sf::Mouse::Button const button;
-    sf::Vector2i const start_location;
+    Vec2i const start_location;
 
     /// Number of pixels you have to move before it is considered "dragging" the object.
   };
 
   struct EventDragging : public Event
   {
-    EventDragging(sf::Mouse::Button button_, sf::Vector2i current_location_)
+    EventDragging(sf::Mouse::Button button_, Vec2i current_location_)
       :
       button(button_),
       current_location(current_location_)
     {}
 
     sf::Mouse::Button const button;
-    sf::Vector2i const current_location;
+    Vec2i const current_location;
 
     /// Number of pixels you have to move before it is considered "dragging" the object.
     static unsigned int const drag_threshold = 16;
@@ -92,24 +92,24 @@ namespace metagui
 
   struct EventMouseDown : public Event
   {
-    EventMouseDown(sf::Mouse::Button button_, sf::Vector2i location_)
+    EventMouseDown(sf::Mouse::Button button_, Vec2i location_)
       :
       button(button_),
       location(location_)
     {}
 
     sf::Mouse::Button const button;
-    sf::Vector2i const location;
+    Vec2i const location;
   };
 
   struct EventResized : public Event
   {
     EventResized(sf::Event::SizeEvent size)
       :
-      new_size({ size.width, size.height })
+      new_size{ size.width, size.height }
     {}
 
-    sf::Vector2u const new_size;
+    Vec2u const new_size;
   };
 
   /// Using declaration for an EventDelegate.

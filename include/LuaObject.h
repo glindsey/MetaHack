@@ -113,7 +113,7 @@ public:
   ///  * StringKey
   ///  * bool
   ///  * double
-  ///  * sf::Vector2i
+  ///  * Vec2i
   ///  * sf::Color
   /// @param    value   Value to deduce the type of.
   /// @return           The number of arguments pushed to the stack.
@@ -136,9 +136,9 @@ public:
       double cast_value = boost::any_cast<double>(value);
       return push_value(cast_value);
     }
-    else if (boost::any_cast<sf::Vector2i>(&value))
+    else if (boost::any_cast<Vec2i>(&value))
     {
-      sf::Vector2i cast_value = boost::any_cast<sf::Vector2i>(value);
+      Vec2i cast_value = boost::any_cast<Vec2i>(value);
       return push_value(cast_value);
     }
     else if (boost::any_cast<Direction>(&value))
@@ -200,7 +200,7 @@ public:
     return 1;
   }
 
-  template <> int push_value(sf::Vector2u value)
+  template <> int push_value(Vec2u value)
   {
     lua_pushnumber(L_, static_cast<lua_Integer>(value.x));
     lua_pushnumber(L_, static_cast<lua_Integer>(value.y));
@@ -209,7 +209,7 @@ public:
 
   template <> int push_value(Direction value)
   {
-    sf::Vector3i vec = static_cast<sf::Vector3i>(value);
+    Vec3i vec = static_cast<Vec3i>(value);
     lua_pushnumber(L_, static_cast<lua_Integer>(vec.x));
     lua_pushnumber(L_, static_cast<lua_Integer>(vec.y));
     lua_pushnumber(L_, static_cast<lua_Integer>(vec.z));
@@ -299,9 +299,9 @@ public:
     return return_value;
   }
 
-  template <> sf::Vector2u pop_value()
+  template <> Vec2u pop_value()
   {
-    sf::Vector2u return_value = sf::Vector2u(lua_tointeger(L_, -2),
+    Vec2u return_value = Vec2u(lua_tointeger(L_, -2),
                                              lua_tointeger(L_, -1));
     lua_pop(L_, 2);
     return return_value;
@@ -309,7 +309,7 @@ public:
 
   template <> Direction pop_value()
   {
-    sf::Vector3i return_value = sf::Vector3i(lua_tointeger(L_, -3),
+    Vec3i return_value = Vec3i(lua_tointeger(L_, -3),
                                              lua_tointeger(L_, -2),
                                              lua_tointeger(L_, -1));
     lua_pop(L_, 3);
@@ -344,7 +344,7 @@ public:
   template<> unsigned int stack_slots<bool>() { return 1; }
   template<> unsigned int stack_slots<std::string>() { return 1; }
   template<> unsigned int stack_slots<std::wstring>() { return 1; }
-  template<> unsigned int stack_slots<sf::Vector2u>() { return 2; }
+  template<> unsigned int stack_slots<Vec2u>() { return 2; }
   template<> unsigned int stack_slots<sf::Color>() { return 4; }
   template<> unsigned int stack_slots<ActionResult>() { return 1; }
 

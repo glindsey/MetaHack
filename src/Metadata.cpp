@@ -38,7 +38,7 @@ Metadata::Metadata(MetadataCollection& collection, StringKey type)
 
   if (fs::exists(pngfile_path))
   {
-    sf::Vector2u tile_location;
+    Vec2u tile_location;
     CLOG(TRACE, "Metadata") << "Tiles were found for " << qualified_name;
 
     tile_location = the_tilesheet.load_collection(pngfile_string);
@@ -68,9 +68,9 @@ StringKey const& Metadata::get_type() const
   return m_type;
 }
 
-sf::Vector2u Metadata::get_tile_coords()
+Vec2u Metadata::get_tile_coords()
 {
-  sf::Vector2u tile_location;
+  Vec2u tile_location;
   tile_location.x = get_intrinsic<int>("tile_location_x");
   tile_location.y = get_intrinsic<int>("tile_location_y");
   return tile_location;

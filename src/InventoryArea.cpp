@@ -353,7 +353,7 @@ void InventoryArea::render_contents_(sf::RenderTexture& texture, int frame)
     // 4. Display the tile representing the item.
     the_tilesheet.getTexture().setSmooth(true);
     draw_thing(thing, texture,
-               sf::Vector2f(static_cast<float>(text_coord_x + 75), static_cast<float>(text_coord_y)),
+               Vec2f(static_cast<float>(text_coord_x + 75), static_cast<float>(text_coord_y)),
                static_cast<unsigned int>(line_spacing_y - 1), false, frame);
     the_tilesheet.getTexture().setSmooth(false);
 
@@ -418,7 +418,7 @@ void InventoryArea::render_contents_(sf::RenderTexture& texture, int frame)
     // 7. Display a nice separator line.
     sf::RectangleShape separator_line;
     separator_line.setPosition(text_coord_x + 10, text_coord_y);
-    separator_line.setSize(sf::Vector2f(static_cast<float>(pane_dims.width - 25), 1.0f));
+    separator_line.setSize(Vec2f(static_cast<float>(pane_dims.width - 25), 1.0f));
     separator_line.setFillColor(the_config.get<sf::Color>("window_border_color"));
     texture.draw(separator_line);
 
@@ -437,7 +437,7 @@ void InventoryArea::render_contents_(sf::RenderTexture& texture, int frame)
 
 void InventoryArea::draw_thing(ThingId thing, 
                                sf::RenderTarget& target, 
-                               sf::Vector2f target_coords, 
+                               Vec2f target_coords, 
                                unsigned int target_size, 
                                bool use_lighting, 
                                int frame)
@@ -460,7 +460,7 @@ void InventoryArea::draw_thing(ThingId thing,
 
   unsigned int tile_size = the_config.get<unsigned int>("map_tile_size");
 
-  sf::Vector2u tile_coords = thing->get_tile_sheet_coords(frame);
+  Vec2u tile_coords = thing->get_tile_sheet_coords(frame);
   texture_coords.left = tile_coords.x * tile_size;
   texture_coords.top = tile_coords.y * tile_size;
   texture_coords.width = tile_size;
@@ -477,7 +477,7 @@ void InventoryArea::draw_thing(ThingId thing,
   }
 
   rectangle.setPosition(target_coords);
-  rectangle.setSize(sf::Vector2f(static_cast<float>(target_size),
+  rectangle.setSize(Vec2f(static_cast<float>(target_size),
                                  static_cast<float>(target_size)));
   rectangle.setTexture(&(the_tilesheet.getTexture()));
   rectangle.setTextureRect(texture_coords);

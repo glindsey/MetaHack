@@ -9,7 +9,7 @@ namespace metagui
 {
   TitleBar::TitleBar(StringKey name)
     :
-    Object(name, sf::Vector2i(0, 0))
+    Object(name, Vec2i(0, 0))
   {}
 
   TitleBar::~TitleBar()
@@ -35,10 +35,10 @@ namespace metagui
     float text_offset_y = the_config.get<float>("window_text_offset_y");
     float border_width = the_config.get<float>("window_border_width");
 
-    sf::Vector2f rect_position{ border_width, border_width };
-    sf::Vector2f rect_size{ static_cast<float>(parent_size.x - (border_width * 2)),
+    Vec2f rect_position{ border_width, border_width };
+    Vec2f rect_size{ static_cast<float>(parent_size.x - (border_width * 2)),
       static_cast<float>(line_spacing_y + (text_offset_y * 2) - (border_width * 2)) };
-    sf::Vector2f text_position{ text_offset_x + line_spacing_y, text_offset_y };
+    Vec2f text_position{ text_offset_x + line_spacing_y, text_offset_y };
 
     // Draw the title in the upper-left corner.
     sf::RectangleShape title_rect;
@@ -68,14 +68,14 @@ namespace metagui
     texture.display();
   }
 
-  void TitleBar::handle_parent_size_changed_(sf::Vector2u parent_size)
+  void TitleBar::handle_parent_size_changed_(Vec2u parent_size)
   {
     float line_spacing_y = the_default_font.getLineSpacing(the_config.get<unsigned int>("text_default_size"));
 
     // Text offsets relative to the background rectangle.
     float text_offset_y = the_config.get<float>("window_text_offset_y");
 
-    sf::Vector2u our_size{ parent_size.x, static_cast<unsigned int>(line_spacing_y + (text_offset_y * 2)) };
+    Vec2u our_size{ parent_size.x, static_cast<unsigned int>(line_spacing_y + (text_offset_y * 2)) };
 
     set_size(our_size);
   }
