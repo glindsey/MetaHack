@@ -21,7 +21,7 @@ struct MapGenerator::Impl
     {
       for (int x = 0; x < game_map.get_size().x; ++x)
       {
-        auto& tile = game_map.get_tile(x, y);
+        auto& tile = game_map.get_tile({ x, y });
         tile.set_tile_type("MTWallStone");
       }
     }
@@ -50,8 +50,7 @@ struct MapGenerator::Impl
         {
           if (vec.start_point.y > 0)
           {
-            auto& checkTile = game_map.get_tile(vec.start_point.x,
-                                                vec.start_point.y - 1);
+            auto& checkTile = game_map.get_tile({ vec.start_point.x, vec.start_point.y - 1 });
             vecOkay = !checkTile.is_empty_space();
           }
         }
@@ -59,8 +58,7 @@ struct MapGenerator::Impl
         {
           if (vec.start_point.x < mapSize.x - 1)
           {
-            auto& checkTile = game_map.get_tile(vec.start_point.x + 1,
-                                                vec.start_point.y);
+            auto& checkTile = game_map.get_tile({ vec.start_point.x + 1, vec.start_point.y });
             vecOkay = !checkTile.is_empty_space();
           }
         }
@@ -68,8 +66,7 @@ struct MapGenerator::Impl
         {
           if (vec.start_point.y < mapSize.y - 1)
           {
-            auto& checkTile = game_map.get_tile(vec.start_point.x,
-                                                vec.start_point.y + 1);
+            auto& checkTile = game_map.get_tile({ vec.start_point.x, vec.start_point.y + 1 });
             vecOkay = !checkTile.is_empty_space();
           }
         }
@@ -77,8 +74,7 @@ struct MapGenerator::Impl
         {
           if (vec.start_point.x > 0)
           {
-            auto& checkTile = game_map.get_tile(vec.start_point.x - 1,
-                                                vec.start_point.y);
+            auto& checkTile = game_map.get_tile({ vec.start_point.x - 1, vec.start_point.y });
             vecOkay = !checkTile.is_empty_space();
           }
         }
@@ -130,7 +126,7 @@ struct MapGenerator::Impl
     {
       coords.x = xDist(the_RNG);
       coords.y = yDist(the_RNG);
-    } while (game_map.get_tile(coords.x, coords.y).is_empty_space());
+    } while (game_map.get_tile(coords).is_empty_space());
 
     return coords;
   }

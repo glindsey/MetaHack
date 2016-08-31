@@ -54,10 +54,6 @@ public:
 
   void add_light(ThingId source);
 
-  MapTile const& get_tile(int x, int y) const;
-
-  MapTile& get_tile(int x, int y);
-
   MapTile const & get_tile(Vec2i tile) const;
 
   MapTile& get_tile(Vec2i tile);
@@ -74,10 +70,10 @@ public:
   bool set_start_coords(Vec2i start_coords);
 
   /// Get the index of a particular X/Y coordinate.
-  int get_index(int x, int y) const;
+  int get_index(Vec2i coords) const;
 
   /// Get whether a particular X/Y coordinate is in bounds.
-  bool is_in_bounds(int x, int y) const;
+  bool is_in_bounds(Vec2i coords) const;
 
   /// Calculate coordinates corresponding to a direction, if possible.
   bool calc_coords(Vec2i origin,

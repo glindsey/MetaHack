@@ -149,7 +149,7 @@ bool MapFeature::does_box_pass_criterion(Vec2i upper_left,
   {
     for (int yCheck = upper_left.y; yCheck <= lower_right.y; ++yCheck)
     {
-      auto& tile = get_map().get_tile(xCheck, yCheck);
+      auto& tile = get_map().get_tile({ xCheck, yCheck });
       if (!criterion(tile))
       {
         return false;
@@ -167,9 +167,9 @@ void MapFeature::set_box(Vec2i upper_left, Vec2i lower_right, std::string tile_t
   {
     for (int yCheck = upper_left.y; yCheck <= lower_right.y; ++yCheck)
     {
-      if (map.is_in_bounds(xCheck, yCheck))
+      if (map.is_in_bounds({ xCheck, yCheck }))
       {
-        auto& tile = get_map().get_tile(xCheck, yCheck);
+        auto& tile = get_map().get_tile({ xCheck, yCheck });
         tile.set_tile_type(tile_type);
       }
     }

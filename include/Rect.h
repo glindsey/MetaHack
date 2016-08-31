@@ -17,6 +17,10 @@ public:
     x{ x_ }, y{ y_ }, width{ width_ }, height{ height_ }
   {}
 
+  Rect(sf::Rect<T> rect)
+    :
+    x{ rect.left }, y{ rect.top }, width{ rect.width }, height{ rect.height }
+  {}
 
   virtual ~Rect() = default;
   Rect(Rect const& other) = default;
@@ -53,7 +57,7 @@ public:
 
   T right()
   {
-    return x + width;
+    return (x + width) - 1;
   }
 
   T top()
@@ -63,7 +67,7 @@ public:
 
   T bottom()
   {
-    return y + height;
+    return (y + height) - 1;
   }
 
   Vec2<T> top_left()
@@ -76,56 +80,13 @@ public:
     return{ bottom(), right() };
   }
 
+  operator sf::Rect<T>() const
+  {
+    return{ x, y, width, height };
+  }
+
   T x, y, width, height;
 };
 
-class Rectf : public Rect<float>
-{
-  Rectf()
-    :
-    Rect()
-  {}
-
-  Rectf(float x_, float y_, float width_, float height_)
-    :
-    Rect(x_, y_, width_, height_)
-  {}
-
-
-  virtual ~Rectf() = default;
-  Rectf(Rectf const& other) = default;
-  Rectf(Rectf&& other) = default;
-  Rectf& operator=(Rectf const& other) = default;
-  Rectf& operator=(Rectf&& other) = default;
-
-  operator sf::FloatRect() const
-  {
-    return{ x, y, width, height };
-  }
-
-};
-
-class Recti : public Rect<int>
-{
-  Recti()
-    :
-    Rect()
-  {}
-
-  Recti(int x_, int y_, int width_, int height_)
-    :
-    Rect(x_, y_, width_, height_)
-  {}
-
-
-  virtual ~Recti() = default;
-  Recti(Recti const& other) = default;
-  Recti(Recti&& other) = default;
-  Recti& operator=(Recti const& other) = default;
-  Recti& operator=(Recti&& other) = default;
-
-  operator sf::IntRect() const
-  {
-    return{ x, y, width, height };
-  }
-};
+using Rectf = Rect<float>;
+using Recti = Rect<int>;

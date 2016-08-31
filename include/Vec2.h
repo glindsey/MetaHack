@@ -78,6 +78,19 @@ public:
     return arctan(static_cast<double>(y) / static_cast<double>(x));
   }
 
+  static T square_distance(Vec2 const& first, Vec2 const& second)
+  {
+    auto xDiff = (first.x > second.x) ? (first.x - second.x) : (second.x - first.x);
+    auto yDiff = (first.y > second.y) ? (first.y - second.y) : (second.y - first.y);
+
+    return (xDiff * xDiff) + (yDiff * yDiff);
+  }
+
+  static T distance(Vec2 const& first, Vec2 const& second)
+  {
+    return static_cast<T>(sqrt(square_distance(first, second)));
+  }
+
   operator sf::Vector2<T>() const
   {
     return{ x, y };

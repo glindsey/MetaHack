@@ -252,9 +252,6 @@ public:
   /// Return whether the Entity can see the requested tile.
   bool can_see(Vec2i coords);
 
-  /// Return whether the Entity can see the requested tile.
-  bool can_see(int x, int y);
-
   /// Find out which tiles on the map can be seen by this Entity.
   /// In the process, tiles in the Entity's visual memory are updated.
   /// This method uses a recursive raycasting algorithm to figure out what
@@ -262,13 +259,10 @@ public:
   void find_seen_tiles();
 
   /// Get the remembered tile type at the specified coordinates.
-  MapMemoryChunk const& get_memory_at(int x, int y) const;
-
-  /// Get the remembered tile type at the specified coordinates.
   MapMemoryChunk const& get_memory_at(Vec2i coords) const;
 
   /// Add the memory of a particular tile to a VertexArray.
-  void add_memory_vertices_to(sf::VertexArray& vertices, int x, int y);
+  void add_memory_vertices_to(sf::VertexArray& vertices, Vec2i coords);
 
   ActionResult can_deequip(ThingId thing_id, unsigned int& action_time);
 

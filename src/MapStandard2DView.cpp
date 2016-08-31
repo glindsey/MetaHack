@@ -47,10 +47,10 @@ void MapStandard2DView::update_things(ThingId viewer, int frame)
   {
     for (int x = 0; x < map_size.x; ++x)
     {
-      ThingId contents = map.get_tile(x, y).get_tile_contents();
+      ThingId contents = map.get_tile({ x, y }).get_tile_contents();
       Inventory& inv = contents->get_inventory();
 
-      if (viewer->can_see(x, y))
+      if (viewer->can_see({ x, y }))
       {
         if (inv.count() > 0)
         {
@@ -122,14 +122,14 @@ void MapStandard2DView::add_tile_vertices(ThingId viewer, Vec2i coords)
 
   auto& tile = map.get_tile(coords);
   bool this_is_empty = tile.is_empty_space();
-  bool nw_is_empty = ((x > 0) && (y > 0)) ? (viewer->can_see(x - 1, y - 1) && map.get_tile(x - 1, y - 1).is_empty_space()) : false;
-  bool n_is_empty = (y > 0) ? (viewer->can_see(x, y - 1) && map.get_tile(x, y - 1).is_empty_space()) : false;
-  bool ne_is_empty = ((x < map_size.x - 1) && (y > 0)) ? (viewer->can_see(x + 1, y - 1) && map.get_tile(x + 1, y - 1).is_empty_space()) : false;
-  bool e_is_empty = (x < map_size.x - 1) ? (viewer->can_see(x + 1, y) && map.get_tile(x + 1, y).is_empty_space()) : false;
-  bool se_is_empty = ((x < map_size.x - 1) && (y < map_size.y - 1)) ? (viewer->can_see(x + 1, y + 1) && map.get_tile(x + 1, y + 1).is_empty_space()) : false;
-  bool s_is_empty = (y < map_size.y - 1) ? (viewer->can_see(x, y + 1) && map.get_tile(x, y + 1).is_empty_space()) : false;
-  bool sw_is_empty = ((x > 0) && (y < map_size.y - 1)) ? (viewer->can_see(x - 1, y + 1) && map.get_tile(x - 1, y + 1).is_empty_space()) : false;
-  bool w_is_empty = (x > 0) ? (viewer->can_see(x - 1, y) && map.get_tile(x - 1, y).is_empty_space()) : false;
+  bool nw_is_empty = ((x > 0) && (y > 0)) ? (viewer->can_see({ x - 1, y - 1 }) && map.get_tile({ x - 1, y - 1 }).is_empty_space()) : false;
+  bool n_is_empty = (y > 0) ? (viewer->can_see({ x, y - 1 }) && map.get_tile({ x, y - 1 }).is_empty_space()) : false;
+  bool ne_is_empty = ((x < map_size.x - 1) && (y > 0)) ? (viewer->can_see({ x + 1, y - 1 }) && map.get_tile({ x + 1, y - 1 }).is_empty_space()) : false;
+  bool e_is_empty = (x < map_size.x - 1) ? (viewer->can_see({ x + 1, y }) && map.get_tile({ x + 1, y }).is_empty_space()) : false;
+  bool se_is_empty = ((x < map_size.x - 1) && (y < map_size.y - 1)) ? (viewer->can_see({ x + 1, y + 1 }) && map.get_tile({ x + 1, y + 1 }).is_empty_space()) : false;
+  bool s_is_empty = (y < map_size.y - 1) ? (viewer->can_see({ x, y + 1 }) && map.get_tile({ x, y + 1 }).is_empty_space()) : false;
+  bool sw_is_empty = ((x > 0) && (y < map_size.y - 1)) ? (viewer->can_see({ x - 1, y + 1 }) && map.get_tile({ x - 1, y + 1 }).is_empty_space()) : false;
+  bool w_is_empty = (x > 0) ? (viewer->can_see({ x - 1, y }) && map.get_tile({ x - 1, y }).is_empty_space()) : false;
 
   if (viewer->can_see(coords))
   {
@@ -148,7 +148,7 @@ void MapStandard2DView::add_tile_vertices(ThingId viewer, Vec2i coords)
   }
   else
   {
-    viewer->add_memory_vertices_to(m_map_memory_vertices, x, y);
+    viewer->add_memory_vertices_to(m_map_memory_vertices, { x, y });
   }
 }
 

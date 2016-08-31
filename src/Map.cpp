@@ -17,7 +17,7 @@
 #include "MapGenerator.h"
 
 #define VERTEX(x, y) (20 * (pImpl->map_size.x * y) + x)
-#define TILE(x, y) (pImpl->tiles[get_index(x, y)])
+#define TILE(x, y) (pImpl->tiles[get_index({ x, y })])
 
 // Local typedefs
 typedef boost::random::uniform_int_distribution<> uniform_int_dist;
@@ -93,16 +93,15 @@ Map::~Map()
   //dtor
 }
 
-int Map::get_index(int x, int y) const
+int Map::get_index(Vec2i coords) const
 {
-  return (y * m_map_size.x) + x;
+  return (coords.y * m_map_size.x) + coords.x;
 }
 
-bool Map::is_in_bounds(int x, int y) const
+bool Map::is_in_bounds(Vec2i coords) const
 {
-  return ((x >= 0) && (y >= 0) &&
-    (x < m_map_size.x) &&
-          (y < m_map_size.y));
+  return ((coords.x >= 0) && (coords.y >= 0) &&
+    (coords.x < m_map_size.x) && (coords.y < m_map_size.y));
 }
 
 bool Map::calc_coords(Vec2i origin,
@@ -111,12 +110,7 @@ bool Map::calc_coords(Vec2i origin,
 {
   result = origin + (Vec2i)direction;
 
-  bool is_in_bounds = ((result.x >= 0) &&
-    (result.y >= 0) &&
-                       (result.x <= m_map_size.x - 1) &&
-                       (result.y <= m_map_size.y - 1));
-
-  return is_in_bounds;
+  return is_in_bounds(result);
 }
 
 MapId Map::get_map_id() const
@@ -136,7 +130,7 @@ Vec2i const& Map::get_start_coords() const
 
 bool Map::set_start_coords(Vec2i start_coords)
 {
-  if (is_in_bounds(start_coords.x, start_coords.y))
+  if (is_in_bounds(start_coords))
   {
     pImpl->start_coords = start_coords;
     return true;
@@ -359,7 +353,7 @@ void Map::add_light(ThingId source)
   influence.coords = coords;
   influence.color = light_color;
   influence.intensity = max_depth_squared;
-  get_tile(coords.x, coords.y).add_light_influence(source, influence);
+  get_tile(coords).add_light_influence(source, influence);
 
   // Octant is an integer representing the following:
   // \ 1|2 /  |
@@ -449,34 +443,24 @@ void Map::add_light(ThingId source)
   }
 }
 
-MapTile const& Map::get_tile(int x, int y) const
-{
-  if (x < 0) x = 0;
-  if (x >= m_map_size.x) x = m_map_size.x - 1;
-  if (y < 0) y = 0;
-  if (y >= m_map_size.y) y = m_map_size.y - 1;
-
-  return TILE(x, y);
-}
-
-MapTile& Map::get_tile(int x, int y)
-{
-  if (x < 0) x = 0;
-  if (x >= m_map_size.x) x = m_map_size.x - 1;
-  if (y < 0) y = 0;
-  if (y >= m_map_size.y) y = m_map_size.y - 1;
-
-  return TILE(x, y);
-}
-
 MapTile const& Map::get_tile(Vec2i tile) const
 {
-  return get_tile(tile.x, tile.y);
+  if (tile.x < 0) tile.x = 0;
+  if (tile.x >= m_map_size.x) tile.x = m_map_size.x - 1;
+  if (tile.y < 0) tile.y = 0;
+  if (tile.y >= m_map_size.y) tile.y = m_map_size.y - 1;
+
+  return TILE(tile.x, tile.y);
 }
 
 MapTile& Map::get_tile(Vec2i tile)
 {
-  return get_tile(tile.x, tile.y);
+  if (tile.x < 0) tile.x = 0;
+  if (tile.x >= m_map_size.x) tile.x = m_map_size.x - 1;
+  if (tile.y < 0) tile.y = 0;
+  if (tile.y >= m_map_size.y) tile.y = m_map_size.y - 1;
+
+  return TILE(tile.x, tile.y);
 }
 
 bool Map::tile_is_opaque(Vec2i tile)

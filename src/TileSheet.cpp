@@ -13,10 +13,10 @@ struct TileSheet::Impl
   boost::dynamic_bitset<> used;
 
   /// Return bitset index based on coordinates.
-  unsigned int get_index(unsigned int x, unsigned int y)
+  unsigned int get_index(Vec2u coords)
   {
     uint32_t texture_size_in_tiles = texture_size / the_config.get<unsigned int>("map_tile_size");
-    return (y * texture_size_in_tiles) + x;
+    return (coords.y * texture_size_in_tiles) + coords.x;
   }
 
   /// Return true if the requested area is totally unused.
@@ -34,7 +34,7 @@ struct TileSheet::Impl
     {
       for (unsigned int x = start.x; x < start.x + size.x; ++x)
       {
-        if (used[get_index(x, y)])
+        if (used[get_index({ x, y })])
         {
           return false;
         }
@@ -80,7 +80,7 @@ struct TileSheet::Impl
     {
       for (uint32_t x = upper_left_corner.x; x < upper_left_corner.x + size.x; ++x)
       {
-        used[get_index(x, y)] = true;
+        used[get_index({ x, y })] = true;
       }
     }
   }

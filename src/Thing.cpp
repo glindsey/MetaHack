@@ -734,15 +734,10 @@ bool Thing::can_see(ThingId thing)
 
   Vec2i thing_coords = thing_location->get_coords();
 
-  return can_see(thing_coords.x, thing_coords.y);
+  return can_see(thing_coords);
 }
 
 bool Thing::can_see(Vec2i coords)
-{
-  return this->can_see(coords.x, coords.y);
-}
-
-bool Thing::can_see(int xTile, int yTile)
 {
   // Make sure we are able to see at all.
   if (!can_currently_see())
@@ -767,7 +762,7 @@ bool Thing::can_see(int xTile, int yTile)
 
   Vec2i tile_coords = tile->get_coords();
 
-  if ((tile_coords.x == xTile) && (tile_coords.y == yTile))
+  if ((tile_coords.x == coords.x) && (tile_coords.y == coords.y))
   {
     return true;
   }
@@ -777,7 +772,7 @@ bool Thing::can_see(int xTile, int yTile)
   if (can_currently_see())
   {
     // Return seen data.
-    return m_tiles_currently_seen[game_map.get_index(xTile, yTile)];
+    return m_tiles_currently_seen[game_map.get_index(coords)];
   }
   else
   {
@@ -820,7 +815,7 @@ void Thing::find_seen_tiles()
   }
 }
 
-MapMemoryChunk const& Thing::get_memory_at(int x, int y) const
+MapMemoryChunk const& Thing::get_memory_at(Vec2i coords) const
 {
   static MapMemoryChunk null_memory_chunk{ "???", GAME.get_game_clock() };
 
@@ -830,16 +825,12 @@ MapMemoryChunk const& Thing::get_memory_at(int x, int y) const
   }
 
   Map& game_map = GAME.get_maps().get(this->get_map_id());
-  return m_map_memory[game_map.get_index(x, y)];
+  return m_map_memory[game_map.get_index(coords)];
 }
 
-MapMemoryChunk const& Thing::get_memory_at(Vec2i coords) const
-{
-  return this->get_memory_at(coords.x, coords.y);
-}
-
+/// @todo Move this into MapView
 void Thing::add_memory_vertices_to(sf::VertexArray& vertices,
-                                   int x, int y)
+                                   Vec2i coords)
 {
   MapId map_id = this->get_map_id();
   if (map_id == MapFactory::null_map_id)
@@ -852,13 +843,13 @@ void Thing::add_memory_vertices_to(sf::VertexArray& vertices,
   float ts = the_config.get<float>("map_tile_size");
   float ts2 = ts * 0.5f;
 
-  Vec2f location(x * ts, y * ts);
+  Vec2f location(coords.x * ts, coords.y * ts);
   Vec2f vSW(location.x - ts2, location.y + ts2);
   Vec2f vSE(location.x + ts2, location.y + ts2);
   Vec2f vNW(location.x - ts2, location.y - ts2);
   Vec2f vNE(location.x + ts2, location.y - ts2);
 
-  StringKey tile_type = m_map_memory[game_map.get_index(x, y)].get_type();
+  StringKey tile_type = m_map_memory[game_map.get_index(coords)].get_type();
   if (tile_type == "") { tile_type = "MTUnknown"; }
   Metadata* tile_metadata = &(m_game.get_metadata_collection("maptile").get(tile_type));
 
@@ -1863,17 +1854,17 @@ void Thing::do_recursive_visibility(int octant,
           slope_A = loop_slope(to_v2f(new_coords), to_v2f(tile_coords));
         }
       }
-      m_tiles_currently_seen[game_map.get_index(new_coords.x, new_coords.y)] = true;
+      m_tiles_currently_seen[game_map.get_index(new_coords)] = true;
 
-      MapMemoryChunk new_memory{ game_map.get_tile(new_coords.x, new_coords.y).get_tile_type(),
+      MapMemoryChunk new_memory{ game_map.get_tile(new_coords).get_tile_type(),
                                  GAME.get_game_clock() };
-      m_map_memory[game_map.get_index(new_coords.x, new_coords.y)] = new_memory;
+      m_map_memory[game_map.get_index(new_coords)] = new_memory;
     }
     new_coords -= (Vec2i)dir;
   }
   new_coords += (Vec2i)dir;
 
-  if ((depth < mv) && (!game_map.get_tile(new_coords.x, new_coords.y).is_opaque()))
+  if ((depth < mv) && (!game_map.get_tile(new_coords).is_opaque()))
   {
     do_recursive_visibility(octant, depth + 1, slope_A, slope_B);
   }

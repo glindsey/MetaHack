@@ -111,7 +111,7 @@ Action::StateResult ActionAttack::do_begin_work_(AnyMap& params)
     return StateResult::Failure();
   }
 
-  auto& new_tile = current_map.get_tile(x_new, y_new);
+  auto& new_tile = current_map.get_tile({ x_new, y_new });
   ThingId new_floor = new_tile.get_tile_contents();
 
   // See if the tile to move into contains another creature.
