@@ -75,7 +75,7 @@ protected:
     return observedObject;
   }
 
-  /// Template virtual method for event handling, overridden by subclasses.
+  /// Virtual method for event handling, overridden by subclasses.
   virtual void notifyOfEvent_(Event& event)
   {
 

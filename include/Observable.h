@@ -15,11 +15,7 @@ public:
   /// Notifies all observers of this object that it is being deleted.
   ~Observable()
   {
-    for (auto observer : observers)
-    {
-      Event event;
-      observer->notifyOfEvent(event);
-    }
+    notifyObservers(Event::Destroyed);
   }
 
   /// Register an observer with this observable.
@@ -35,6 +31,15 @@ public:
     if (foundObserver != observers.end())
     {
       observers.erase(foundObserver);
+    }
+  }
+
+  /// Notify all observers of an event.
+  void notifyObservers(Event event)
+  {
+    for (auto observer : observers)
+    {
+      observer->notifyOfEvent(event);
     }
   }
 
