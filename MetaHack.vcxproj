@@ -190,6 +190,7 @@
     <ClInclude Include="include\ModifiablePropertyDictionary.h" />
     <ClInclude Include="include\Observable.h" />
     <ClInclude Include="include\Observer.h" />
+    <ClInclude Include="include\Rect.h" />
     <ClInclude Include="include\RNGUtils.h" />
     <ClInclude Include="include\SFMLEventHandler.h" />
     <ClInclude Include="include\GameObject.h" />
@@ -236,6 +237,8 @@
     <ClInclude Include="include\ThingManager.h" />
     <ClInclude Include="include\ThingView.h" />
     <ClInclude Include="include\TileSheet.h" />
+    <ClInclude Include="include\Vec2.h" />
+    <ClInclude Include="include\Vec3.h" />
     <ClInclude Include="include\Visitor.h" />
   </ItemGroup>
   <ItemGroup>

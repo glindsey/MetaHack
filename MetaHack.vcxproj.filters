@@ -357,6 +357,15 @@
     <ClInclude Include="include\Event.h">
       <Filter>Design Pattern Templates</Filter>
     </ClInclude>
+    <ClInclude Include="include\Vec2.h">
+      <Filter>Types</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Vec3.h">
+      <Filter>Types</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Rect.h">
+      <Filter>Types</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">
