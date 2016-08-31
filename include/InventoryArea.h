@@ -48,6 +48,13 @@ public:
 protected:
   virtual void render_contents_(sf::RenderTexture& texture, int frame) override;
 
+  void draw_thing(ThingId thing,
+                  sf::RenderTarget& target,
+                  sf::Vector2f target_coords,
+                  unsigned int target_size = 0,
+                  bool use_lighting = true,
+                  int frame = 0);
+
 private:
   struct Impl;
   std::unique_ptr<Impl> pImpl;

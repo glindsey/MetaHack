@@ -17,7 +17,6 @@ MapStandard2DView::MapStandard2DView(MapId map_id)
 
 void MapStandard2DView::update_tiles(ThingId viewer)
 {
-  auto location = viewer->get_location();
   auto& map = get_map();
   auto& map_size = map.get_size();
 
@@ -31,39 +30,9 @@ void MapStandard2DView::update_tiles(ThingId viewer)
   {
     for (int x = 0; x < map_size.x; ++x)
     {
-      auto& tile = map.get_tile(x, y);
-      bool this_is_empty = tile.is_empty_space();
-      bool nw_is_empty = ((x > 0) && (y > 0)) ? (viewer->can_see(x - 1, y - 1) && map.get_tile(x - 1, y - 1).is_empty_space()) : false;
-      bool n_is_empty = (y > 0) ? (viewer->can_see(x, y - 1) && map.get_tile(x, y - 1).is_empty_space()) : false;
-      bool ne_is_empty = ((x < map_size.x - 1) && (y > 0)) ? (viewer->can_see(x + 1, y - 1) && map.get_tile(x + 1, y - 1).is_empty_space()) : false;
-      bool e_is_empty = (x < map_size.x - 1) ? (viewer->can_see(x + 1, y) && map.get_tile(x + 1, y).is_empty_space()) : false;
-      bool se_is_empty = ((x < map_size.x - 1) && (y < map_size.y - 1)) ? (viewer->can_see(x + 1, y + 1) && map.get_tile(x + 1, y + 1).is_empty_space()) : false;
-      bool s_is_empty = (y < map_size.y - 1) ? (viewer->can_see(x, y + 1) && map.get_tile(x, y + 1).is_empty_space()) : false;
-      bool sw_is_empty = ((x > 0) && (y < map_size.y - 1)) ? (viewer->can_see(x - 1, y + 1) && map.get_tile(x - 1, y + 1).is_empty_space()) : false;
-      bool w_is_empty = (x > 0) ? (viewer->can_see(x - 1, y) && map.get_tile(x - 1, y).is_empty_space()) : false;
-
-      if (viewer->can_see(x, y))
-      {
-        if (this_is_empty)
-        {
-          add_tile_floor_vertices({ x, y });
-          //tile.add_floor_vertices_to(m_map_seen_vertices, true);
-        }
-        else
-        {
-          tile.add_wall_vertices_to(m_map_seen_vertices, true,
-                                    nw_is_empty, n_is_empty,
-                                    ne_is_empty, e_is_empty,
-                                    se_is_empty, s_is_empty,
-                                    sw_is_empty, w_is_empty);
-        }
-      }
-      else
-      {
-        viewer->add_memory_vertices_to(m_map_memory_vertices, x, y);
-      }
-    } // end for (int x)
-  } // end for (int y)
+      add_tile_vertices(viewer, { x, y });
+    }
+  }
 }
 
 void MapStandard2DView::update_things(ThingId viewer, int frame)
@@ -85,17 +54,19 @@ void MapStandard2DView::update_things(ThingId viewer, int frame)
       {
         if (inv.count() > 0)
         {
+          // Only draw the largest thing on that tile.
           ThingId biggest_thing = inv.get_largest_thing();
           if (biggest_thing != ThingId::Mu())
           {
-            biggest_thing->add_floor_vertices_to(m_thing_vertices, true, frame);
+            add_thing_floor_vertices(biggest_thing, true, frame);
           }
         }
       }
 
+      // Always draw the viewer itself last, if it is present at that tile.
       if (inv.contains(viewer))
       {
-        viewer->add_floor_vertices_to(m_thing_vertices, true, frame);
+        add_thing_floor_vertices(viewer, true, frame);
       }
     }
   }
@@ -142,8 +113,43 @@ void MapStandard2DView::reset_cached_render_data()
   m_thing_vertices.setPrimitiveType(sf::PrimitiveType::Quads);
 }
 
-void MapStandard2DView::add_tile_vertices(sf::Vector2i coords)
+void MapStandard2DView::add_tile_vertices(ThingId viewer, sf::Vector2i coords)
 {
+  auto& map = get_map();
+  auto& map_size = map.get_size();
+  auto& x = coords.x;
+  auto& y = coords.y;
+
+  auto& tile = map.get_tile(coords);
+  bool this_is_empty = tile.is_empty_space();
+  bool nw_is_empty = ((x > 0) && (y > 0)) ? (viewer->can_see(x - 1, y - 1) && map.get_tile(x - 1, y - 1).is_empty_space()) : false;
+  bool n_is_empty = (y > 0) ? (viewer->can_see(x, y - 1) && map.get_tile(x, y - 1).is_empty_space()) : false;
+  bool ne_is_empty = ((x < map_size.x - 1) && (y > 0)) ? (viewer->can_see(x + 1, y - 1) && map.get_tile(x + 1, y - 1).is_empty_space()) : false;
+  bool e_is_empty = (x < map_size.x - 1) ? (viewer->can_see(x + 1, y) && map.get_tile(x + 1, y).is_empty_space()) : false;
+  bool se_is_empty = ((x < map_size.x - 1) && (y < map_size.y - 1)) ? (viewer->can_see(x + 1, y + 1) && map.get_tile(x + 1, y + 1).is_empty_space()) : false;
+  bool s_is_empty = (y < map_size.y - 1) ? (viewer->can_see(x, y + 1) && map.get_tile(x, y + 1).is_empty_space()) : false;
+  bool sw_is_empty = ((x > 0) && (y < map_size.y - 1)) ? (viewer->can_see(x - 1, y + 1) && map.get_tile(x - 1, y + 1).is_empty_space()) : false;
+  bool w_is_empty = (x > 0) ? (viewer->can_see(x - 1, y) && map.get_tile(x - 1, y).is_empty_space()) : false;
+
+  if (viewer->can_see(coords))
+  {
+    if (this_is_empty)
+    {
+      add_tile_floor_vertices({ x, y });
+    }
+    else
+    {
+      tile.add_wall_vertices_to(m_map_seen_vertices, true,
+                                nw_is_empty, n_is_empty,
+                                ne_is_empty, e_is_empty,
+                                se_is_empty, s_is_empty,
+                                sw_is_empty, w_is_empty);
+    }
+  }
+  else
+  {
+    viewer->add_memory_vertices_to(m_map_memory_vertices, x, y);
+  }
 }
 
 void MapStandard2DView::add_tile_floor_vertices(sf::Vector2i coords)
@@ -202,4 +208,44 @@ void MapStandard2DView::add_tile_floor_vertices(sf::Vector2i coords)
 void MapStandard2DView::add_tile_wall_vertices(sf::Vector2i coords)
 {
   /// @todo IMPLEMENT ME
+}
+
+void MapStandard2DView::add_thing_floor_vertices(ThingId thing,
+                                                 bool use_lighting,
+                                                 int frame)
+{
+  sf::Vertex new_vertex;
+  float ts = the_config.get<float>("map_tile_size");
+  float ts2 = ts * 0.5f;
+
+  MapTile* root_tile = thing->get_maptile();
+  if (!root_tile)
+  {
+    // Item's root location isn't a MapTile, so it can't be rendered.
+    return;
+  }
+
+  sf::Vector2i const& coords = root_tile->get_coords();
+
+  sf::Color thing_color;
+  if (use_lighting)
+  {
+    thing_color = root_tile->get_light_level();
+  }
+  else
+  {
+    thing_color = sf::Color::White;
+  }
+
+  sf::Vector2f location(coords.x * ts, coords.y * ts);
+  sf::Vector2f vSW(location.x - ts2, location.y + ts2);
+  sf::Vector2f vSE(location.x + ts2, location.y + ts2);
+  sf::Vector2f vNW(location.x - ts2, location.y - ts2);
+  sf::Vector2f vNE(location.x + ts2, location.y - ts2);
+  sf::Vector2u tile_coords = thing->get_tile_sheet_coords(frame);
+
+  TileSheet::add_quad(m_thing_vertices,
+                      tile_coords, thing_color,
+                      vNW, vNE,
+                      vSW, vSE);
 }

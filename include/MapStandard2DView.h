@@ -21,6 +21,7 @@ public:
 
   virtual void update_tiles(ThingId viewer) override;
   virtual void update_things(ThingId viewer, int frame) override;
+  
   virtual bool render(sf::RenderTexture& texture, int frame) override;
 
 protected:
@@ -28,13 +29,16 @@ protected:
   virtual void reset_cached_render_data() override;
 
   /// Add the vertices for the maptile located at the coordinates specified.
-  void add_tile_vertices(sf::Vector2i coords);
+  void add_tile_vertices(ThingId viewer, sf::Vector2i coords);
 
   /// Add the floor vertices for the maptile located at the coordinates specified.
   void add_tile_floor_vertices(sf::Vector2i coords);
 
   /// Add the wall vertices for the maptile located at the coordinates specified.
   void add_tile_wall_vertices(sf::Vector2i coords);
+
+  /// Add the floor vertices for the thing specified.
+  void add_thing_floor_vertices(ThingId thing, bool use_lighting, int frame);
 
 private:
 

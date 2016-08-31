@@ -352,9 +352,9 @@ void InventoryArea::render_contents_(sf::RenderTexture& texture, int frame)
 
     // 4. Display the tile representing the item.
     the_tilesheet.getTexture().setSmooth(true);
-    thing->draw_to(texture,
-                   sf::Vector2f(static_cast<float>(text_coord_x + 75), static_cast<float>(text_coord_y)),
-                   static_cast<unsigned int>(line_spacing_y - 1), false, frame);
+    draw_thing(thing, texture,
+               sf::Vector2f(static_cast<float>(text_coord_x + 75), static_cast<float>(text_coord_y)),
+               static_cast<unsigned int>(line_spacing_y - 1), false, frame);
     the_tilesheet.getTexture().setSmooth(false);
 
     unsigned int wield_location;
@@ -433,4 +433,55 @@ void InventoryArea::render_contents_(sf::RenderTexture& texture, int frame)
   title_string[0] = toupper(title_string[0]);
   set_text(title_string);
   return;
+}
+
+void InventoryArea::draw_thing(ThingId thing, 
+                               sf::RenderTarget& target, 
+                               sf::Vector2f target_coords, 
+                               unsigned int target_size, 
+                               bool use_lighting, 
+                               int frame)
+{
+  MapTile* root_tile = thing->get_maptile();
+
+  if (!root_tile)
+  {
+    // Item's root location isn't a MapTile, so it can't be rendered.
+    return;
+  }
+
+  sf::RectangleShape rectangle;
+  sf::IntRect texture_coords;
+
+  if (target_size == 0)
+  {
+    target_size = the_config.get<unsigned int>("map_tile_size");
+  }
+
+  unsigned int tile_size = the_config.get<unsigned int>("map_tile_size");
+
+  sf::Vector2u tile_coords = thing->get_tile_sheet_coords(frame);
+  texture_coords.left = tile_coords.x * tile_size;
+  texture_coords.top = tile_coords.y * tile_size;
+  texture_coords.width = tile_size;
+  texture_coords.height = tile_size;
+
+  sf::Color thing_color;
+  if (use_lighting)
+  {
+    thing_color = root_tile->get_light_level();
+  }
+  else
+  {
+    thing_color = sf::Color::White;
+  }
+
+  rectangle.setPosition(target_coords);
+  rectangle.setSize(sf::Vector2f(static_cast<float>(target_size),
+                                 static_cast<float>(target_size)));
+  rectangle.setTexture(&(the_tilesheet.getTexture()));
+  rectangle.setTextureRect(texture_coords);
+  rectangle.setFillColor(thing_color);
+
+  target.draw(rectangle);
 }

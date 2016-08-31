@@ -53,7 +53,7 @@ public:
 
   /// Update any cached render data associated with thing.
   /// @param thing	ID of the thing that is percieving the map.
-  virtual void update_render_data(ThingId thing) = 0;
+  virtual void update_render_data(ThingId viewer) = 0;
 
 protected:
   /// Get reference to Thing associated with this view.

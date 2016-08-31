@@ -430,28 +430,6 @@ public:
   /// Return the coordinates of the tile representing the thing.
   sf::Vector2u get_tile_sheet_coords(int frame);
 
-  /// Add this Thing to a VertexArray to be drawn.
-  /// @param vertices Array to add vertices to.
-  /// @param use_lighting If true, calculate lighting when adding.
-  ///                     If false, store directly w/white bg color.
-  /// @param frame Animation frame number.
-  void add_floor_vertices_to(sf::VertexArray& vertices,
-                             bool use_lighting = true,
-                             int frame = 0);
-
-  /// Draw this Thing onto a RenderTexture, at the specified coordinates.
-  /// @param target Texture to draw onto.
-  /// @param target_coords Coordinates to draw the Thing at.
-  /// @param target_size Target size of thing, in pixels.
-  /// @param use_lighting If true, calculate lighting when adding.
-  ///                     If false, store directly w/white bg color.
-  /// @param frame Animation frame number.
-  void draw_to(sf::RenderTarget& target,
-               sf::Vector2f target_coords,
-               unsigned int target_size = 0,
-               bool use_lighting = true,
-               int frame = 0);
-
   /// Simple check to see if a Thing is opaque.
   bool is_opaque();
 
