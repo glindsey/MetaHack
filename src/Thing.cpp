@@ -974,7 +974,6 @@ StringDisplay Thing::get_display_adjectives() const
 
 StringDisplay Thing::get_display_name() const
 {
-  /// @todo Implement adding adjectives.
   return m_metadata.get_intrinsic<StringDisplay>("name");
 }
 
@@ -995,19 +994,25 @@ void Thing::set_proper_name(StringDisplay name)
 
 StringDisplay Thing::get_you_or_identifying_string(ArticleChoice articles) const
 {
+  StringDisplay str;
+
   if (is_player())
   {
     if (get_modified_property<int>("hp") > 0)
     {
-      return L"you";
+      str += L"you";
     }
     else
     {
-      return L"your corpse";
+      str += L"your corpse";
     }
   }
+  else
+  {
+    str += get_identifying_string(articles);
+  }
 
-  return get_identifying_string(articles);
+  return str;
 }
 
 StringDisplay Thing::get_self_or_identifying_string(ThingId other, ArticleChoice articles) const
@@ -1030,6 +1035,12 @@ StringDisplay Thing::get_identifying_string(ArticleChoice articles,
 
   bool owned;
 
+  StringDisplay debug_prefix;
+  if (the_config.get<bool>("debug_show_thing_ids") == true)
+  {
+    debug_prefix = L"(#" + static_cast<StringDisplay>(get_id()) + L") ";
+  }
+  
   StringDisplay article;
   StringDisplay adjectives;
   StringDisplay noun;
@@ -1083,7 +1094,7 @@ StringDisplay Thing::get_identifying_string(ArticleChoice articles,
 
   adjectives = get_display_adjectives();
 
-  name = article + adjectives + noun + suffix;
+  name = debug_prefix + article + adjectives + noun + suffix;
 
   return name;
 }

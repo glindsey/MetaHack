@@ -13,7 +13,7 @@ function Marcher.get_brief_description()
     return "A testing Entity that endlessly marches left and right."
 end
 
-function Marcher.process()
-    print "DEBUG: Marcher.process() called."
+function Marcher.process(id)
+    print("DEBUG: Marcher.process() called for object " .. id .. ".")
     return ActionResult.Success
 end
