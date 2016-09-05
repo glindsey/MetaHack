@@ -351,6 +351,7 @@
     <None Include="resources\things\Dagger.lua" />
     <None Include="resources\things\Entity.lua" />
     <None Include="resources\things\FlaskGlass.lua" />
+    <None Include="resources\things\Marcher.lua" />
     <None Include="resources\things\TileContents.lua" />
     <None Include="resources\things\Human.lua" />
     <None Include="resources\things\LightOrb.lua" />

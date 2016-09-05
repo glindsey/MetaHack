@@ -37,8 +37,12 @@ if current_map_id ~= 0 then
     local coins2_id = thing_create(map_get_tile_contents(current_map_id, start_x - 1, start_y - 1), "CoinGold", 10)
 
     -- TESTING CODE: Create a rock lichen northeast of the player.
-    print("Creating rock lichen...");
-    local lichen_id = thing_create(map_get_tile_contents(current_map_id, start_x + 1, start_y - 1), "RockLichen")
+    --print("Creating rock lichen...");
+    --local lichen_id = thing_create(map_get_tile_contents(current_map_id, start_x + 1, start_y - 1), "RockLichen")
+
+    -- TESTING CODE: Create a test marcher northeast of the player.
+    print("Creating marcher robot...");
+    local marcher_id = thing_create(map_get_tile_contents(current_map_id, start_x + 1, start_y - 1), "Marcher")
 
     -- TESTING CODE: Create a dagger southeast of the player.
     print("Creating dagger...");

@@ -131,7 +131,7 @@ Action::StateResult ActionAttack::do_begin_work_(AnyMap& params)
   if (reachable)
   {
     /// @todo Write actual attack code here.
-    message = make_string(L"$you $try to attack $foo, but $are stopped by the programmer's procrastination!");
+    message = make_string(L"$you $try to attack $the_foo, but $are stopped by the programmer's procrastination!");
     the_message_log.add(message);
   }
 
