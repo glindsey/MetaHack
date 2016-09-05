@@ -84,6 +84,10 @@ function Thing.can_have_action_takeout_done_by(id)
     return true
 end
 
+function Thing.can_have_action_unwield_done_by(id)
+    return true
+end
+
 function Thing.can_have_action_wield_done_by(id)
     return true
 end

@@ -54,13 +54,12 @@ Action::StateResult ActionUnwield::do_begin_work_(AnyMap& params)
   }
 
   // Try to unwield the item.
-  auto lua_result = object->call_lua_function<ActionResult, ThingId>("perform_action_unwielded_by", { subject }, ActionResult::Success);
-  if (lua_result == ActionResult::Success)
+  auto lua_result = object->be_object_of(*this, subject);
+  if (object->be_object_of(*this, subject) == ActionResult::Success)
   {
     StringDisplay message;
     message = make_string(L"$you unwield $foo. $you are now wielding nothing in $your $0.", { bodypart_desc });
     subject->set_wielded(ThingId::Mu(), hand);
-    result = Action::StateResult::Success();
   }
 
   return result;
