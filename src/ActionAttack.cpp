@@ -91,8 +91,8 @@ Action::StateResult ActionAttack::do_begin_work_(AnyMap& params)
   MapTile* current_tile = subject->get_maptile();
   auto new_direction = get_target_direction();
 
-  bool success;
-  unsigned int action_time;
+  bool success = false;
+  unsigned int action_time = 0;
 
   // Figure out our target location.
   Vec2i coords = current_tile->get_coords();
@@ -115,8 +115,9 @@ Action::StateResult ActionAttack::do_begin_work_(AnyMap& params)
   ThingId new_floor = new_tile.get_tile_contents();
 
   // See if the tile to move into contains another creature.
-  ThingId creature = new_floor->get_inventory().get_entity();
-  if (creature == ThingId::Mu())
+  auto object = new_floor->get_inventory().get_entity();
+  set_object(object);
+  if (object == ThingId::Mu())
   {
     /// @todo Deal with attacking other stuff, MapTiles, etc.
     message = L"Attacking non-entity things is not yet supported!";
@@ -124,7 +125,15 @@ Action::StateResult ActionAttack::do_begin_work_(AnyMap& params)
     return StateResult::Failure();
   }
 
-  success = subject->do_attack(creature, action_time);
+  bool reachable = subject->is_adjacent_to(object);
+  /// @todo deal with Entities in your Inventory -- WTF do you do THEN?
+
+  if (reachable)
+  {
+    /// @todo Write actual attack code here.
+    message = make_string(L"$you $try to attack $foo, but $are stopped by the programmer's procrastination!");
+    the_message_log.add(message);
+  }
 
   return{ success, action_time };
 }

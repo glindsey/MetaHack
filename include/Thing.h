@@ -128,13 +128,6 @@ public:
   /// @return True if the Thing died, false if the death was avoided.
   bool do_die();
 
-  /// Attempt to (melee) attack a thing.
-  /// @param[in] thing Thing to attack.
-  /// @param[out] action_time The time it took to attack it.
-  /// @return true if attack was performed (whether it succeeded or not),
-  ///         false if it wasn't performed
-  bool do_attack(ThingId thing, unsigned int& action_time);
-
   /// Get an intrinsic of this Thing.
   /// If the intrinsic is not found, returns the default value.
   /// @param key            Name of the intrinsic to get.
@@ -512,11 +505,7 @@ public:
   /// Perform an action when this thing is equipped.
   /// If this function returns false, the action is aborted.
   bool perform_action_equipped_by(ThingId actor, WearLocation& location);
-
-  /// Perform an action when this thing is unwielded.
-  /// If this function returns false, the action is aborted.
-  bool perform_action_unwielded_by(ThingId actor);
-
+  
   /// Returns whether the Thing can merge with another Thing.
   /// Calls an overridden subclass function.
   bool can_merge_with(ThingId other) const;

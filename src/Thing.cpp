@@ -269,26 +269,6 @@ bool Thing::do_die()
   }
 }
 
-bool Thing::do_attack(ThingId thing, unsigned int& action_time)
-{
-  StringDisplay message;
-
-  bool reachable = this->is_adjacent_to(thing);
-  /// @todo deal with Entities in your Inventory -- WTF do you do THEN?
-
-  if (reachable)
-  {
-    /// @todo Write attack code.
-    message = this->get_you_or_identifying_string() + L" " +
-      this->choose_verb(L"try", L"tries") + L" to attack " +
-      thing->get_identifying_string() + L", but " +
-      this->choose_verb(L"are", L"is") + L" stopped by the programmer's procrastination!";
-    the_message_log.add(message);
-  }
-
-  return false;
-}
-
 ActionResult Thing::can_deequip(ThingId thing, unsigned int& action_time)
 {
   action_time = 1;
@@ -1605,12 +1585,6 @@ bool Thing::perform_action_equipped_by(ThingId actor, WearLocation& location)
   bool subclass_result = was_successful(result);
 
   return subclass_result;
-}
-
-bool Thing::perform_action_unwielded_by(ThingId actor)
-{
-  ActionResult result = call_lua_function<ActionResult, ThingId>("perform_action_unwielded_by", { actor }, ActionResult::Success);
-  return was_successful(result);
 }
 
 bool Thing::can_merge_with(ThingId other) const
