@@ -116,7 +116,7 @@ App::App(sf::RenderWindow& app_window)
   m_lua->register_function("get_config", App::LUA_get_config);
 
   // Create the tilesheet.
-  m_tilesheet.reset(NEW TileSheet());
+  m_tilesheet.reset(NEW TileSheet(m_config->get<unsigned int>("map_tile_size")));
 
   // Get the state machine.
   StateMachine& sm = *m_state_machine;

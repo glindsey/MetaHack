@@ -179,6 +179,7 @@ bool MapTile::is_opaque() const
     (m_p_metadata->get_intrinsic<int>("opacity_blue") >= 255);
 }
 
+/// @todo Move this into MapView
 void MapTile::draw_highlight(sf::RenderTarget& target,
                              Vec2f location,
                              sf::Color fgColor,
@@ -206,6 +207,7 @@ void MapTile::draw_highlight(sf::RenderTarget& target,
   target.draw(box_shape);
 }
 
+/// @todo Move this into MapView
 void MapTile::add_wall_vertices_to(sf::VertexArray& vertices,
                                    bool use_lighting,
                                    bool nw_is_empty, bool n_is_empty,
@@ -363,12 +365,12 @@ void MapTile::add_wall_vertices_to(sf::VertexArray& vertices,
       vSE.x += ws;
     }
 
-    TileSheet::add_gradient_quad(vertices, tile_coords,
-                                 vTileNW, vTileNE,
-                                 vSW, vSE,
-                                 wall_n_color_w, wall_n_color, wall_n_color_e,
-                                 wall_n_color_w, wall_n_color, wall_n_color_e,
-                                 wall_n_color_w, wall_n_color, wall_n_color_e);
+    the_tilesheet.add_gradient_quad(vertices, tile_coords,
+                                    vTileNW, vTileNE,
+                                    vSW, vSE,
+                                    wall_n_color_w, wall_n_color, wall_n_color_e,
+                                    wall_n_color_w, wall_n_color, wall_n_color_e,
+                                    wall_n_color_w, wall_n_color, wall_n_color_e);
   }
 
   // EAST WALL
@@ -394,12 +396,12 @@ void MapTile::add_wall_vertices_to(sf::VertexArray& vertices,
       vSW.y += ws;
     }
 
-    TileSheet::add_gradient_quad(vertices, tile_coords,
-                                 vNW, vTileNE,
-                                 vSW, vTileSE,
-                                 wall_e_color_n, wall_e_color_n, wall_e_color_n,
-                                 wall_e_color, wall_e_color, wall_e_color,
-                                 wall_e_color_s, wall_e_color_s, wall_e_color_s);
+    the_tilesheet.add_gradient_quad(vertices, tile_coords,
+                                    vNW, vTileNE,
+                                    vSW, vTileSE,
+                                    wall_e_color_n, wall_e_color_n, wall_e_color_n,
+                                    wall_e_color, wall_e_color, wall_e_color,
+                                    wall_e_color_s, wall_e_color_s, wall_e_color_s);
   }
 
   // SOUTH WALL
@@ -425,12 +427,12 @@ void MapTile::add_wall_vertices_to(sf::VertexArray& vertices,
       vNE.x += ws;
     }
 
-    TileSheet::add_gradient_quad(vertices, tile_coords,
-                                 vNW, vNE,
-                                 vTileSW, vTileSE,
-                                 wall_s_color_w, wall_s_color, wall_s_color_e,
-                                 wall_s_color_w, wall_s_color, wall_s_color_e,
-                                 wall_s_color_w, wall_s_color, wall_s_color_e);
+    the_tilesheet.add_gradient_quad(vertices, tile_coords,
+                                    vNW, vNE,
+                                    vTileSW, vTileSE,
+                                    wall_s_color_w, wall_s_color, wall_s_color_e,
+                                    wall_s_color_w, wall_s_color, wall_s_color_e,
+                                    wall_s_color_w, wall_s_color, wall_s_color_e);
   }
 
   // WEST WALL
@@ -456,12 +458,12 @@ void MapTile::add_wall_vertices_to(sf::VertexArray& vertices,
       vSE.y += ws;
     }
 
-    TileSheet::add_gradient_quad(vertices, tile_coords,
-                                 vTileNW, vNE,
-                                 vTileSW, vSE,
-                                 wall_w_color_n, wall_w_color_n, wall_w_color_n,
-                                 wall_w_color, wall_w_color, wall_w_color,
-                                 wall_w_color_s, wall_w_color_s, wall_w_color_s);
+    the_tilesheet.add_gradient_quad(vertices, tile_coords,
+                                    vTileNW, vNE,
+                                    vTileSW, vSE,
+                                    wall_w_color_n, wall_w_color_n, wall_w_color_n,
+                                    wall_w_color, wall_w_color, wall_w_color,
+                                    wall_w_color_s, wall_w_color_s, wall_w_color_s);
   }
 }
 

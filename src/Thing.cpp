@@ -837,10 +837,10 @@ void Thing::add_memory_vertices_to(sf::VertexArray& vertices,
   ///       in the upper-left corner.
   Vec2u tile_coords = tile_metadata->get_tile_coords();
 
-  TileSheet::add_quad(vertices,
-                      tile_coords, sf::Color::White,
-                      vNW, vNE,
-                      vSW, vSE);
+  the_tilesheet.add_quad(vertices,
+                         tile_coords, sf::Color::White,
+                         vNW, vNE,
+                         vSW, vSE);
 }
 
 bool Thing::move_into(ThingId new_location)

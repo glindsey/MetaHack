@@ -197,13 +197,13 @@ void MapStandard2DView::add_tile_floor_vertices(Vec2i coords)
 
   Vec2u tile_coords = tile.get_tile_sheet_coords();
 
-  TileSheet::add_gradient_quad(m_map_seen_vertices, tile_coords,
-                                vNW, vNE,
-                                vSW, vSE,
-                                lightNW, lightN, lightNE,
-                                lightW, light, lightE,
-                                lightSW, lightS, lightSE);
-}
+  the_tilesheet.add_gradient_quad(m_map_seen_vertices, tile_coords,
+                                  vNW, vNE,
+                                  vSW, vSE,
+                                  lightNW, lightN, lightNE,
+                                  lightW, light, lightE,
+                                  lightSW, lightS, lightSE);
+  }
 
 void MapStandard2DView::add_tile_wall_vertices(Vec2i coords)
 {
@@ -244,8 +244,8 @@ void MapStandard2DView::add_thing_floor_vertices(ThingId thing,
   Vec2f vNE(location.x + ts2, location.y - ts2);
   Vec2u tile_coords = thing->get_tile_sheet_coords(frame);
 
-  TileSheet::add_quad(m_thing_vertices,
-                      tile_coords, thing_color,
-                      vNW, vNE,
-                      vSW, vSE);
+  the_tilesheet.add_quad(m_thing_vertices,
+                        tile_coords, thing_color,
+                        vNW, vNE,
+                        vSW, vSE);
 }

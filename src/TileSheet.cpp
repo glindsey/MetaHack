@@ -6,108 +6,33 @@
 #include "ErrorHandler.h"
 #include "MathUtils.h"
 
-struct TileSheet::Impl
-{
-  sf::Texture texture;
-  unsigned int texture_size;
-  boost::dynamic_bitset<> used;
-
-  /// Return bitset index based on coordinates.
-  unsigned int get_index(Vec2u coords)
-  {
-    uint32_t texture_size_in_tiles = texture_size / the_config.get<unsigned int>("map_tile_size");
-    return (coords.y * texture_size_in_tiles) + coords.x;
-  }
-
-  /// Return true if the requested area is totally unused.
-  bool area_is_unused(Vec2u start, Vec2u size)
-  {
-    uint32_t texture_size_in_tiles = texture_size / the_config.get<unsigned int>("map_tile_size");
-
-    if (((start.x + size.x) > texture_size_in_tiles) ||
-      ((start.y + size.y) > texture_size_in_tiles))
-    {
-      return false;
-    }
-
-    for (unsigned int y = start.y; y < start.y + size.y; ++y)
-    {
-      for (unsigned int x = start.x; x < start.x + size.x; ++x)
-      {
-        if (used[get_index({ x, y })])
-        {
-          return false;
-        }
-      }
-    }
-    return true;
-  }
-
-  /// Find the first free tile area.
-  /// @param size Size of the area to search for, IN TILES.
-  /// @todo This is an extremely naive algorithm and can definitely be optimized.
-  Vec2u find_unused_area(Vec2u size)
-  {
-    Vec2u start(0, 0);
-
-    uint32_t texture_size_in_tiles = texture_size / the_config.get<unsigned int>("map_tile_size");
-
-    while (start.y < texture_size_in_tiles)
-    {
-      while (start.x < texture_size_in_tiles)
-      {
-        if (area_is_unused(start, size))
-        {
-          return start;
-        }
-        ++start.x;
-      }
-      start.x = 0;
-      ++start.y;
-    }
-
-    /// If we got here, there's no free space.
-    throw std::out_of_range("Out of space on tile sheet");
-  }
-
-  /// Mark a rectangle of tiles as being used.
-  /// @param upper_left_corner  Upper-left corner of rectangle.
-  /// @param size               Size of the rectangle to mark.
-  /// @todo This is an extremely naive algorithm and can definitely be optimized.
-  void mark_tiles_used(Vec2u upper_left_corner, Vec2u size)
-  {
-    for (uint32_t y = upper_left_corner.y; y < upper_left_corner.y + size.y; ++y)
-    {
-      for (uint32_t x = upper_left_corner.x; x < upper_left_corner.x + size.x; ++x)
-      {
-        used[get_index({ x, y })] = true;
-      }
-    }
-  }
-};
-
-TileSheet::TileSheet()
-  : pImpl(NEW Impl())
+TileSheet::TileSheet(unsigned int tileSize_)
+  :
+  tileSize{ tileSize_ }
 {
   SET_UP_LOGGER("TileSheet", true);
 
   /// @todo Make this a configurable setting.
-  pImpl->texture_size = 1024;
-  //pImpl->texture_size = pImpl->texture.getMaximumSize();
+  textureSize = 1024;
+ 
+  //textureSize = pImpl->texture.getMaximumSize();
 
-  bool success = pImpl->texture.create(pImpl->texture_size, pImpl->texture_size);
+  bool success = texture.create(textureSize, textureSize);
 
   if (!success)
   {
     FATAL_ERROR("Could not create TileSheet texture. Now we're sad.");
   }
 
-  uint32_t texture_dimension_in_tiles = pImpl->texture_size / the_config.get<unsigned int>("map_tile_size");
+  uint32_t texture_dimension_in_tiles = textureSize / tileSize;
   uint32_t used_map_size = texture_dimension_in_tiles * texture_dimension_in_tiles;
-  pImpl->used.resize(used_map_size);
+  used.resize(used_map_size);
 
-  CLOG(TRACE, "TileSheet") << "Created " << pImpl->texture_size << " x " << pImpl->texture_size << " tilesheet texture";
-  CLOG(TRACE, "TileSheet") << "Fits " << texture_dimension_in_tiles << " x " << texture_dimension_in_tiles << " tiles";
+  CLOG(TRACE, "TileSheet") << "Created " << textureSize << " x " << textureSize << " tilesheet texture";
+  CLOG(TRACE, "TileSheet") << "Fits "
+    << texture_dimension_in_tiles << " x " << texture_dimension_in_tiles
+    << " tiles of size "
+    << tileSize << " x " << tileSize;
 }
 
 TileSheet::~TileSheet()
@@ -125,19 +50,17 @@ Vec2u TileSheet::load_collection(FileName const& filename)
 
   image.createMaskFromColor(sf::Color(255, 0, 255));
 
-  unsigned int tile_size = the_config.get<unsigned int>("map_tile_size");
-
   Vec2u image_size = image.getSize();
 
   Vec2u image_size_in_tiles =
-    Vec2u(divide_and_round_up(image_size.x, tile_size),
-                 divide_and_round_up(image_size.y, tile_size));
+    Vec2u(divide_and_round_up(image_size.x, tileSize),
+                 divide_and_round_up(image_size.y, tileSize));
 
-  Vec2u free_coords = pImpl->find_unused_area(image_size_in_tiles);
+  Vec2u free_coords = find_unused_area(image_size_in_tiles);
 
-  pImpl->texture.update(image, free_coords.x * tile_size, free_coords.y * tile_size);
+  texture.update(image, free_coords.x * tileSize, free_coords.y * tileSize);
 
-  pImpl->mark_tiles_used(free_coords, image_size_in_tiles);
+  mark_tiles_used(free_coords, image_size_in_tiles);
 
   return free_coords;
 }
@@ -145,11 +68,10 @@ Vec2u TileSheet::load_collection(FileName const& filename)
 sf::IntRect TileSheet::get_tile(Vec2u tile) const
 {
   sf::IntRect rect;
-  unsigned int tile_size = the_config.get<unsigned int>("map_tile_size");
-  rect.left = tile.x * tile_size;
-  rect.top = tile.y * tile_size;
-  rect.width = tile_size;
-  rect.height = tile_size;
+  rect.left = tile.x * tileSize;
+  rect.top = tile.y * tileSize;
+  rect.width = tileSize;
+  rect.height = tileSize;
 
 #ifdef DEBUG
   if ((rect.left < 0) || (rect.top < 0) ||
@@ -166,7 +88,7 @@ sf::IntRect TileSheet::get_tile(Vec2u tile) const
 
 sf::Texture& TileSheet::getTexture(void)
 {
-  return pImpl->texture;
+  return texture;
 }
 
 void TileSheet::add_quad(sf::VertexArray& vertices,
@@ -175,7 +97,7 @@ void TileSheet::add_quad(sf::VertexArray& vertices,
                          Vec2f ll_coord, Vec2f lr_coord)
 {
   sf::Vertex new_vertex;
-  float ts(the_config.get<float>("map_tile_size"));
+  float ts{ static_cast<float>(tileSize) };
   Vec2f texNW(tile_coords.x * ts, tile_coords.y * ts);
 
   new_vertex.color = bg_color;
@@ -185,18 +107,15 @@ void TileSheet::add_quad(sf::VertexArray& vertices,
   vertices.append(new_vertex);
 
   new_vertex.position = ur_coord;
-  new_vertex.texCoords = Vec2f(texNW.x + ts,
-                                      texNW.y);
+  new_vertex.texCoords = Vec2f(texNW.x + ts, texNW.y);
   vertices.append(new_vertex);
 
   new_vertex.position = lr_coord;
-  new_vertex.texCoords = Vec2f(texNW.x + ts,
-                                      texNW.y + ts);
+  new_vertex.texCoords = Vec2f(texNW.x + ts, texNW.y + ts);
   vertices.append(new_vertex);
 
   new_vertex.position = ll_coord;
-  new_vertex.texCoords = Vec2f(texNW.x,
-                                      texNW.y + ts);
+  new_vertex.texCoords = Vec2f(texNW.x, texNW.y + ts);
   vertices.append(new_vertex);
 }
 
@@ -208,8 +127,8 @@ void TileSheet::add_gradient_quad(sf::VertexArray& vertices,
                                   sf::Color colorW, sf::Color colorC, sf::Color colorE,
                                   sf::Color colorSW, sf::Color colorS, sf::Color colorSE)
 {
-  float ts(the_config.get<float>("map_tile_size"));
-  float half_ts = (ts / 2.0f);
+  float ts{ static_cast<float>(tileSize) };
+  float half_ts{ ts / 2.0f };
 
   Vec2f coordC((coordNW.x + coordNE.x + coordSE.x + coordSW.x) / 4, (coordNW.y + coordNE.y + coordSE.y + coordSW.y) / 4);
   Vec2f coordN((coordNW.x + coordNE.x) / 2, (coordNW.y + coordNE.y) / 2);
@@ -280,4 +199,74 @@ void TileSheet::add_outline_vertices(sf::VertexArray& vertices,
   new_vertex.color = bg_color;
   new_vertex.position = ul_coord;
   vertices.append(new_vertex);
+}
+
+/// === PROTECTED METHODS =====================================================
+
+unsigned int TileSheet::get_index(Vec2u coords)
+{
+  uint32_t texture_size_in_tiles = textureSize / tileSize;
+  return (coords.y * texture_size_in_tiles) + coords.x;
+}
+
+bool TileSheet::area_is_unused(Vec2u start, Vec2u size)
+{
+  uint32_t texture_size_in_tiles = textureSize / tileSize;
+
+  if (((start.x + size.x) > texture_size_in_tiles) ||
+    ((start.y + size.y) > texture_size_in_tiles))
+  {
+    return false;
+  }
+
+  for (unsigned int y = start.y; y < start.y + size.y; ++y)
+  {
+    for (unsigned int x = start.x; x < start.x + size.x; ++x)
+    {
+      if (used[get_index({ x, y })])
+      {
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
+Vec2u TileSheet::find_unused_area(Vec2u size)
+{
+  Vec2u start(0, 0);
+
+  uint32_t texture_size_in_tiles = textureSize / tileSize;
+
+  while (start.y < texture_size_in_tiles)
+  {
+    while (start.x < texture_size_in_tiles)
+    {
+      if (area_is_unused(start, size))
+      {
+        return start;
+      }
+      ++start.x;
+    }
+    start.x = 0;
+    ++start.y;
+  }
+
+  /// If we got here, there's no free space.
+  throw std::out_of_range("Out of space on tile sheet");
+}
+
+/// Mark a rectangle of tiles as being used.
+/// @param upper_left_corner  Upper-left corner of rectangle.
+/// @param size               Size of the rectangle to mark.
+/// @todo This is an extremely naive algorithm and can definitely be optimized.
+void TileSheet::mark_tiles_used(Vec2u upper_left_corner, Vec2u size)
+{
+  for (uint32_t y = upper_left_corner.y; y < upper_left_corner.y + size.y; ++y)
+  {
+    for (uint32_t x = upper_left_corner.x; x < upper_left_corner.x + size.x; ++x)
+    {
+      used[get_index({ x, y })] = true;
+    }
+  }
 }

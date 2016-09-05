@@ -3,11 +3,11 @@
 
 #include "stdafx.h"
 
-/// Sheet containing all tiles in the application.
+/// Sheet that contains a group of tiles on one texture.
 class TileSheet
 {
 public:
-  TileSheet();
+  TileSheet(unsigned int tileSize);
 
   virtual ~TileSheet();
 
@@ -34,19 +34,19 @@ public:
   /// @param ur_coord Upper-right coordinates.
   /// @param ll_coord Lower-left coordinates.
   /// @param lr_coord Lower-right coordinates.
-  static void add_quad(sf::VertexArray& vertices,
-                       Vec2u tile_coords, sf::Color bg_color,
-                       Vec2f ul_coord, Vec2f ur_coord,
-                       Vec2f ll_coord, Vec2f lr_coord);
+  void add_quad(sf::VertexArray& vertices,
+                Vec2u tile_coords, sf::Color bg_color,
+                Vec2f ul_coord, Vec2f ur_coord,
+                Vec2f ll_coord, Vec2f lr_coord);
 
   /// Add a quad with colors specified in a 3x3 grid.
-  static void add_gradient_quad(sf::VertexArray& vertices,
-                                Vec2u tile_coords,
-                                Vec2f coordNW, Vec2f coordNE,
-                                Vec2f coordSW, Vec2f coordSE,
-                                sf::Color colorNW, sf::Color colorN, sf::Color colorNE,
-                                sf::Color colorW, sf::Color colorC, sf::Color colorE,
-                                sf::Color colorSW, sf::Color colorS, sf::Color colorSE);
+  void add_gradient_quad(sf::VertexArray& vertices,
+                         Vec2u tile_coords,
+                         Vec2f coordNW, Vec2f coordNE,
+                         Vec2f coordSW, Vec2f coordSE,
+                         sf::Color colorNW, sf::Color colorN, sf::Color colorNE,
+                         sf::Color colorW, sf::Color colorC, sf::Color colorE,
+                         sf::Color colorSW, sf::Color colorS, sf::Color colorSE);
 
   /// Add outline vertices to the requested vertex array.
   /// This method draws a hollow quadrilateral in the color specified by
@@ -57,18 +57,38 @@ public:
   /// @param ur_coord Upper-right coordinates.
   /// @param lr_coord Lower-right coordinates.
   /// @param ll_coord Lower-left coordinates.
-  static void add_outline_vertices(sf::VertexArray& vertices,
-                                   sf::Color bg_color,
-                                   Vec2f ul_coord,
-                                   Vec2f ur_coord,
-                                   Vec2f lr_coord,
-                                   Vec2f ll_coord);
+  void add_outline_vertices(sf::VertexArray& vertices,
+                            sf::Color bg_color,
+                            Vec2f ul_coord,
+                            Vec2f ur_coord,
+                            Vec2f lr_coord,
+                            Vec2f ll_coord);
 
 protected:
+  /// Return bitset index based on coordinates.
+  unsigned int get_index(Vec2u coords);
+
+  /// Return true if the requested area is totally unused.
+  bool area_is_unused(Vec2u start, Vec2u size);
+
+  /// Find the first free tile area.
+  /// @param size Size of the area to search for, IN TILES.
+  /// @todo This is an extremely naive algorithm and can definitely be optimized.
+  Vec2u find_unused_area(Vec2u size);
+
+  /// Mark a rectangle of tiles as being used.
+  /// @param upper_left_corner  Upper-left corner of rectangle.
+  /// @param size               Size of the rectangle to mark.
+  /// @todo This is an extremely naive algorithm and can definitely be optimized.
+  void mark_tiles_used(Vec2u upper_left_corner, Vec2u size);
+
 
 private:
-  struct Impl;
-  std::unique_ptr<Impl> pImpl;
+  sf::Texture texture;
+  unsigned int textureSize;
+  unsigned int tileSize;
+  boost::dynamic_bitset<> used;
+
 };
 
 #endif // TILESHEET_H
