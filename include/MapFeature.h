@@ -65,7 +65,7 @@ protected:
 
   void set_coords(sf::IntRect coords);
   void clear_growth_vectors();
-  void add_growth_vector(GeoVector vec);
+  void add_growth_vector(GeoVector vec, bool highPriority = false);
 
   /// Check that all tiles within the area bounded by (upper_left.x,
   /// upper_left.y) to (lower_right.x, lower_right.y), inclusive,

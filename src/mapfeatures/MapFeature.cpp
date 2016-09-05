@@ -26,7 +26,8 @@ struct MapFeature::Impl
   PropertyDictionary settings;
   sf::IntRect coords;
   GeoVector start_vec;
-  std::deque<GeoVector> vecs;
+  std::deque<GeoVector> highPriorityVecs;
+  std::deque<GeoVector> lowPriorityVecs;
 };
 
 MapFeature::MapFeature(Map& m, PropertyDictionary const& s, GeoVector vec)
@@ -54,24 +55,45 @@ PropertyDictionary const& MapFeature::get_settings() const
 
 unsigned int MapFeature::get_num_growth_vectors() const
 {
-  return pImpl->vecs.size();
+  return pImpl->highPriorityVecs.size() + pImpl->lowPriorityVecs.size();
 }
 
 GeoVector const& MapFeature::get_random_growth_vector() const
 {
-  uniform_int_dist vecDist(0, pImpl->vecs.size() - 1);
-  int randomVector = vecDist(the_RNG);
-  return pImpl->vecs[randomVector];
+  if (pImpl->highPriorityVecs.size() > 0)
+  {
+    uniform_int_dist vecDist(0, pImpl->highPriorityVecs.size() - 1);
+    int randomVector = vecDist(the_RNG);
+    return pImpl->highPriorityVecs[randomVector];
+  }
+  else if (pImpl->lowPriorityVecs.size() > 0)
+  {
+    uniform_int_dist vecDist(0, pImpl->lowPriorityVecs.size() - 1);
+    int randomVector = vecDist(the_RNG);
+    return pImpl->lowPriorityVecs[randomVector];
+  }
+  else
+  {
+    throw MapFeatureException("Out of growth vectors");
+  }
 }
 
 bool MapFeature::erase_growth_vector(GeoVector vec)
 {
   std::deque<GeoVector>::iterator iter;
-  iter = std::find(pImpl->vecs.begin(), pImpl->vecs.end(), vec);
+  iter = std::find(pImpl->highPriorityVecs.begin(), pImpl->highPriorityVecs.end(), vec);
 
-  if (iter != pImpl->vecs.end())
+  if (iter != pImpl->highPriorityVecs.end())
   {
-    pImpl->vecs.erase(iter);
+    pImpl->highPriorityVecs.erase(iter);
+    return true;
+  }
+
+  iter = std::find(pImpl->lowPriorityVecs.begin(), pImpl->lowPriorityVecs.end(), vec);
+
+  if (iter != pImpl->lowPriorityVecs.end())
+  {
+    pImpl->lowPriorityVecs.erase(iter);
     return true;
   }
 
@@ -133,12 +155,15 @@ void MapFeature::set_coords(sf::IntRect coords)
 
 void MapFeature::clear_growth_vectors()
 {
-  pImpl->vecs.clear();
+  pImpl->highPriorityVecs.clear();
+  pImpl->lowPriorityVecs.clear();
 }
 
-void MapFeature::add_growth_vector(GeoVector vec)
+void MapFeature::add_growth_vector(GeoVector vec, bool highPriority)
 {
-  pImpl->vecs.push_back(vec);
+  (highPriority == true ? 
+   pImpl->highPriorityVecs : 
+   pImpl->lowPriorityVecs).push_back(vec);
 }
 
 bool MapFeature::does_box_pass_criterion(Vec2i upper_left,

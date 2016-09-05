@@ -49,7 +49,7 @@ end
 
 function Thing.can_contain(id)
     -- By default a Thing can only contain solid objects.
-    if thing_get_intrinsic_flag("liquid") == true
+    if thing_get_intrinsic_flag("liquid") == true then
         return ActionResult.Failure
     end
 
