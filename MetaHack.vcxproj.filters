@@ -366,6 +366,9 @@
     <ClInclude Include="include\Rect.h">
       <Filter>Types</Filter>
     </ClInclude>
+    <ClInclude Include="include\ActionUnwield.h">
+      <Filter>Actions</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">
@@ -598,6 +601,9 @@
     </ClCompile>
     <ClCompile Include="src\ThingView.cpp">
       <Filter>Object Views</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ActionUnwield.cpp">
+      <Filter>Actions</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

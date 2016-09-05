@@ -167,6 +167,7 @@
     <ClInclude Include="include\ActionTakeOut.h" />
     <ClInclude Include="include\ActionTurn.h" />
     <ClInclude Include="include\ActionUnlock.h" />
+    <ClInclude Include="include\ActionUnwield.h" />
     <ClInclude Include="include\ActionUse.h" />
     <ClInclude Include="include\ActionWait.h" />
     <ClInclude Include="include\ActionWield.h" />
@@ -272,6 +273,7 @@
     <ClCompile Include="src\ActionTakeOut.cpp" />
     <ClCompile Include="src\ActionTurn.cpp" />
     <ClCompile Include="src\ActionUnlock.cpp" />
+    <ClCompile Include="src\ActionUnwield.cpp" />
     <ClCompile Include="src\ActionUse.cpp" />
     <ClCompile Include="src\ActionWait.cpp" />
     <ClCompile Include="src\ActionWield.cpp" />

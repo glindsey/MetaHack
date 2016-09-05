@@ -529,6 +529,15 @@ public:
   /// @return ActionResult specifying whether the thing can be held here.
   ActionResult can_contain(ThingId thing);
 
+  /// Syntactic sugar for calling call_lua_function().
+  template < typename ReturnType, typename ArgType = lua_Integer>
+  ReturnType call_lua_function(std::string function_name,
+                               std::vector<ArgType> const& args = {},
+                               ReturnType default_result = ReturnType())
+  {
+    return the_lua_instance.call_thing_function<ReturnType, ArgType>(function_name, get_id(), args, default_result);
+  }
+
 protected:
   /// Named Constructor
   Thing(GameState& game, Metadata& metadata, ThingId ref);
@@ -566,15 +575,6 @@ protected:
   /// @return true if the Thing continues to exist after the tick;
   ///         false if the Thing ceases to exist.
   virtual bool _process_self();
-
-  /// Syntactic sugar for calling call_lua_function().
-  template < typename ReturnType, typename ArgType = lua_Integer>
-  ReturnType call_lua_function(std::string function_name,
-                               std::vector<ArgType> const& args = {},
-                               ReturnType default_result = ReturnType())
-  {
-    return the_lua_instance.call_thing_function<ReturnType, ArgType>(function_name, get_id(), args, default_result);
-  }
 
 private:
   /// Reference to game state.

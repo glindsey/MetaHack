@@ -250,6 +250,18 @@ Action::StateResult Action::do_prebegin_work(AnyMap& params)
   {
     for (auto object : objects)
     {
+      if (object_can_be_self())
+      {
+        if (subject == object)
+        {
+          // If object can be self, we bypass other checks and let the action
+          // subclass handle it.
+          /// @todo Not sure this is the best option... think more about this later.
+          return do_prebegin_work_(params);
+        }
+      }
+
+
       if (!object_can_be_out_of_reach())
       {
         // Check that each object is within reach.

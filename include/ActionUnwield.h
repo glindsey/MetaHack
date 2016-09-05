@@ -6,15 +6,12 @@
 #include "ActionCRTP.h"
 #include "ThingId.h"
 
-class ActionWield
+class ActionUnwield
   :
-  public Action, public ActionCRTP<ActionWield>
+  public Action, public ActionCRTP<ActionUnwield>
 {
-  ACTION_HDR_BOILERPLATE(ActionWield)
+  ACTION_HDR_BOILERPLATE(ActionUnwield)
     ACTION_TRAIT(can_be_subject_only)
-    ACTION_TRAIT(can_be_subject_verb_object)
-    ACTION_TRAIT(object_can_be_self)
-    ACTION_TRAIT(object_must_be_in_inventory)
 
 protected:
   virtual StateResult do_prebegin_work_(AnyMap& params) override;
