@@ -202,7 +202,7 @@ namespace metagui
     {
       Event::Result result = Event::Result::Pending;
 
-      if (m_disabled_cached == false)
+      if (m_cached_flags.disabled == false)
       {
         // Check the event for us first.
         result = handle_event_before_children(event);
@@ -383,21 +383,17 @@ namespace metagui
     /// how it propogates along the object tree.
     bool m_focus = false;
 
-    /// Boolean indicating whether this object is hidden.
-    /// Cached from m_flags so we don't keep looking it up.
-    bool m_hidden_cached = false;
+    /// Definition of struct of cached flag values.
+    struct CachedFlags
+    {
+      bool hidden = false;
+      bool disabled = false;
+      bool draggable = false;
+      bool decor = false;
+    };
 
-    /// Boolean indicating whether this object is disabled.
-    /// Cached from m_flags so we don't keep looking it up.
-    bool m_disabled_cached = false;
-
-    /// Boolean indicating whether this object is draggable.
-    /// Cached from m_flags so we don't keep looking it up.
-    bool m_draggable_cached = false;
-
-    /// Boolean indicating whether this object is a decoration.
-    /// Cached from m_flags so we don't keep looking it up.
-    bool m_decor_cached = false;
+    /// Struct of cached flag values.
+    CachedFlags m_cached_flags;
 
     /// Boolean indicating whether this object is currently being dragged.
     bool m_being_dragged = false;

@@ -60,7 +60,7 @@ namespace metagui
 
   void Object::set_focus(bool focus)
   {
-    if ((m_disabled_cached == false) || (m_hidden_cached == false))
+    if ((m_cached_flags.disabled == false) || (m_cached_flags.hidden == false))
     {
       if (m_parent != nullptr)
       {
@@ -90,7 +90,7 @@ namespace metagui
 
   void Object::set_global_focus(bool focus)
   {
-    if ((m_disabled_cached == false) || (m_hidden_cached == false))
+    if ((m_cached_flags.disabled == false) || (m_cached_flags.hidden == false))
     {
       if (m_parent != nullptr)
       {
@@ -128,6 +128,9 @@ namespace metagui
 
   void Object::set_size(Vec2u size)
   {
+    // Do nothing if requested size is same as current size.
+    if (m_size == size) return;
+
     m_size = size;
 
     // Would be better not to create a texture if size is 0 in either dimension
@@ -138,7 +141,7 @@ namespace metagui
 
     if (m_parent != nullptr)
     {
-      auto max_size = ((m_decor_cached == true) ?
+      auto max_size = ((m_cached_flags.decor == true) ?
                        m_parent->get_size() :
                        m_parent->get_child_area_size());
 
@@ -184,7 +187,7 @@ namespace metagui
       Vec2i child_area_absolute_location =
         m_parent->get_absolute_location();
 
-      if (m_decor_cached != true)
+      if (m_cached_flags.decor != true)
       {
         child_area_absolute_location += m_parent->get_child_area_location();
       }
@@ -204,7 +207,7 @@ namespace metagui
       Vec2i child_area_absolute_location =
         m_parent->get_absolute_location();
 
-      if (m_decor_cached != true)
+      if (m_cached_flags.decor != true)
       {
         child_area_absolute_location += m_parent->get_child_area_location();
       }
@@ -353,7 +356,7 @@ namespace metagui
 
     our_texture.clear(sf::Color::Blue);
 
-    if (m_hidden_cached == false)
+    if (m_cached_flags.hidden == false)
     {
       /// Render self to our bg texture.
       render_self_before_children_(our_texture, frame);
@@ -426,7 +429,7 @@ namespace metagui
       {
         set_focus(false);
       }
-      m_hidden_cached = value;
+      m_cached_flags.hidden = value;
     }
     else if (name == "disabled")
     {
@@ -434,15 +437,15 @@ namespace metagui
       {
         set_focus(false);
       }
-      m_disabled_cached = value;
+      m_cached_flags.disabled = value;
     }
     else if (name == "draggable")
     {
-      m_draggable_cached = value;
+      m_cached_flags.draggable = value;
     }
     else if (name == "decor")
     {
-      m_decor_cached = value;
+      m_cached_flags.decor = value;
     }
 
     handle_set_flag_(name, value);
@@ -504,7 +507,7 @@ namespace metagui
 
     if (result != Event::Result::Handled)
     {
-      if (contains_point(event.start_location) && m_draggable_cached == true)
+      if (contains_point(event.start_location) && m_cached_flags.draggable == true)
       {
         m_being_dragged = true;
         m_drag_start_location = event.start_location;
