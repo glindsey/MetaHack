@@ -4,7 +4,7 @@
 
 #include "Metadata.h"
 
-MetadataCollection::MetadataCollection(StringKey category)
+MetadataCollection::MetadataCollection(std::string category)
   :
   m_category{ category }
 {}
@@ -12,12 +12,12 @@ MetadataCollection::MetadataCollection(StringKey category)
 MetadataCollection::~MetadataCollection()
 {}
 
-StringKey MetadataCollection::get_category()
+std::string MetadataCollection::get_category()
 {
   return m_category;
 }
 
-Metadata& MetadataCollection::get(StringKey type)
+Metadata& MetadataCollection::get(std::string type)
 {
   if (type.empty())
   {

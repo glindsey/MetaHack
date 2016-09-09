@@ -2,82 +2,82 @@
 
 #include "Gender.h"
 
-StringDisplay const subjectPronounArray[] =
+std::string const subjectPronounArray[] =
 {
-  L"it",
-  L"he",
-  L"she",
-  L"ze",
-  L"ey",
-  L"I",
-  L"you",
-  L"they",
-  L"this one",
-  L"something",
-  L"someone"
+  "it",
+  "he",
+  "she",
+  "ze",
+  "ey",
+  "I",
+  "you",
+  "they",
+  "this one",
+  "something",
+  "someone"
 };
 
-StringDisplay const objectPronounArray[] =
+std::string const objectPronounArray[] =
 {
-  L"it",
-  L"him",
-  L"her",
-  L"hir",
-  L"em",
-  L"me",
-  L"you",
-  L"them",
-  L"this one",
-  L"something",
-  L"someone"
+  "it",
+  "him",
+  "her",
+  "hir",
+  "em",
+  "me",
+  "you",
+  "them",
+  "this one",
+  "something",
+  "someone"
 };
 
-StringDisplay const reflexivePronounArray[] =
+std::string const reflexivePronounArray[] =
 {
-  L"itself",
-  L"himself",
-  L"herself",
-  L"hirself",
-  L"emself",
-  L"myself",
-  L"yourself",
-  L"themselves",
-  L"itself",
-  L"itself",
-  L"him/herself"
+  "itself",
+  "himself",
+  "herself",
+  "hirself",
+  "emself",
+  "myself",
+  "yourself",
+  "themselves",
+  "itself",
+  "itself",
+  "him/herself"
 };
 
-StringDisplay const possessiveAdjectiveArray[] =
+std::string const possessiveAdjectiveArray[] =
 {
-  L"its",
-  L"his",
-  L"her",
-  L"hir",
-  L"eir",
-  L"my",
-  L"your",
-  L"their",
-  L"its",
-  L"its",
-  L"his/her"
+  "its",
+  "his",
+  "her",
+  "hir",
+  "eir",
+  "my",
+  "your",
+  "their",
+  "its",
+  "its",
+  "his/her"
 };
 
-StringDisplay const possessivePronounArray[] =
+std::string const possessivePronounArray[] =
 {
-  L"its",
-  L"his",
-  L"hers",
-  L"hirs",
-  L"eirs",
-  L"mine",
-  L"yours",
-  L"theirs",
-  L"this one's",
-  L"its",
-  L"his/hers"
+  "its",
+  "his",
+  "hers",
+  "hirs",
+  "eirs",
+  "mine",
+  "yours",
+  "theirs",
+  "this one's",
+  "its",
+  "his/hers"
 };
 
-StringDisplay const& getSubjPro(Gender gender)
+std::string const& getSubjPro(Gender gender)
 {
   if ((int)gender < (int)Gender::Count)
   {
@@ -89,7 +89,7 @@ StringDisplay const& getSubjPro(Gender gender)
   }
 }
 
-StringDisplay const& getObjPro(Gender gender)
+std::string const& getObjPro(Gender gender)
 {
   if ((int)gender < (int)Gender::Count)
   {
@@ -101,7 +101,7 @@ StringDisplay const& getObjPro(Gender gender)
   }
 }
 
-StringDisplay const& getRefPro(Gender gender)
+std::string const& getRefPro(Gender gender)
 {
   if ((int)gender < (int)Gender::Count)
   {
@@ -113,7 +113,7 @@ StringDisplay const& getRefPro(Gender gender)
   }
 }
 
-StringDisplay const& getPossAdj(Gender gender)
+std::string const& getPossAdj(Gender gender)
 {
   if ((int)gender < (int)Gender::Count)
   {
@@ -125,7 +125,7 @@ StringDisplay const& getPossAdj(Gender gender)
   }
 }
 
-StringDisplay const& getPossPro(Gender gender)
+std::string const& getPossPro(Gender gender)
 {
   if ((int)gender < (int)Gender::Count)
   {
@@ -137,11 +137,11 @@ StringDisplay const& getPossPro(Gender gender)
   }
 }
 
-StringDisplay const& getIndefArt(StringDisplay const& desc)
+std::string const& getIndefArt(std::string const& desc)
 {
-  static StringDisplay const articleAn = L"an";
-  static StringDisplay const articleA = L"a";
-  static StringDisplay const articleNull = L"";
+  static std::string const articleAn = "an";
+  static std::string const articleA = "a";
+  static std::string const articleNull = "";
 
   if (desc.empty())
   {

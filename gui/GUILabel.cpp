@@ -7,7 +7,7 @@
 
 namespace metagui
 {
-  Label::Label(StringKey name, Vec2i location)
+  Label::Label(std::string name, Vec2i location)
     :
     Object(name, location)
   {}
@@ -32,7 +32,7 @@ namespace metagui
     ///         - Handle word wrapping correctly
     ///         - Handle drop-in tokens for changing text color/style
     ///         - Handle proper text alignment (left/centered/right)
-    StringDisplay str = get_text();
+    std::string str = get_text();
     if (!str.empty())
     {
       sf::Text text{ str, the_default_font, the_config.get<unsigned int>("text_default_size") };

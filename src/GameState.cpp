@@ -64,7 +64,7 @@ ThingManager& GameState::get_things()
   return *m_thing_manager;
 }
 
-MetadataCollection & GameState::get_metadata_collection(StringKey category)
+MetadataCollection & GameState::get_metadata_collection(std::string category)
 {
   if (m_metacollection.count(category) == 0)
   {

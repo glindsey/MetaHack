@@ -28,7 +28,7 @@ namespace LuaThingFunctions
     }
 
     ThingId thing = ThingId(lua_tointeger(L, 1));
-    StringKey new_thing_type = lua_tostring(L, 2);
+    std::string new_thing_type = lua_tostring(L, 2);
 
     // Check to make sure the Thing is actually creatable.
     /// @todo Might want the ability to disable this check for debugging purposes?
@@ -149,7 +149,7 @@ namespace LuaThingFunctions
     }
 
     ThingId thing = ThingId(lua_tointeger(L, 1));
-    StringKey result = thing->get_type();
+    std::string result = thing->get_type();
     lua_pushstring(L, result.c_str());
 
     return 1;
@@ -203,7 +203,7 @@ namespace LuaThingFunctions
 
     ThingId thing = ThingId(lua_tointeger(L, 1));
     const char* key = lua_tostring(L, 2);
-    StringKey result = thing->get_base_property<StringKey>(key).c_str();
+    std::string result = thing->get_base_property<std::string>(key).c_str();
     lua_pushstring(L, result.c_str());
 
     return 1;
@@ -257,7 +257,7 @@ namespace LuaThingFunctions
 
     ThingId thing = ThingId(lua_tointeger(L, 1));
     const char* key = lua_tostring(L, 2);
-    StringKey result = thing->get_modified_property<StringKey>(key).c_str();
+    std::string result = thing->get_modified_property<std::string>(key).c_str();
     lua_pushstring(L, result.c_str());
 
     return 1;
@@ -312,7 +312,7 @@ namespace LuaThingFunctions
     ThingId thing = ThingId(lua_tointeger(L, 1));
     const char* key = lua_tostring(L, 2);
 
-    StringKey result = thing->get_intrinsic<StringKey>(key).c_str();
+    std::string result = thing->get_intrinsic<std::string>(key).c_str();
 
     lua_pushstring(L, result.c_str());
 
@@ -330,7 +330,7 @@ namespace LuaThingFunctions
     }
 
     ThingId thing = ThingId(lua_tointeger(L, 1));
-    StringKey action_type = lua_tostring(L, 2);
+    std::string action_type = lua_tostring(L, 2);
 
     if (!Action::exists(action_type))
     {
@@ -366,7 +366,7 @@ namespace LuaThingFunctions
     }
 
     ThingId thing = ThingId(lua_tointeger(L, 1));
-    StringKey action_type = lua_tostring(L, 2);
+    std::string action_type = lua_tostring(L, 2);
     ThingId target = ThingId(lua_tointeger(L, 3));
 
     if (!Action::exists(action_type))
@@ -404,7 +404,7 @@ namespace LuaThingFunctions
     }
 
     ThingId thing = ThingId(lua_tointeger(L, 1));
-    StringKey action_type = lua_tostring(L, 2);
+    std::string action_type = lua_tostring(L, 2);
     int x = lua_tointeger(L, 3);
     int y = lua_tointeger(L, 4);
     int z = lua_tointeger(L, 5);
@@ -483,8 +483,8 @@ namespace LuaThingFunctions
     ThingId thing = ThingId(lua_tointeger(L, 1));
     const char* key = lua_tostring(L, 2);
     const char* value = lua_tostring(L, 3);
-    StringKey svalue = StringKey(value);
-    thing->set_base_property<StringKey>(key, svalue);
+    std::string svalue = std::string(value);
+    thing->set_base_property<std::string>(key, svalue);
 
     return 0;
   }
@@ -520,7 +520,7 @@ namespace LuaThingFunctions
     }
 
     ThingId thing_being_modified = ThingId(lua_tointeger(L, 1));
-    StringKey key = lua_tostring(L, 2);
+    std::string key = lua_tostring(L, 2);
     ThingId thing_doing_the_modifying = ThingId(lua_tointeger(L, 3));
     unsigned int expiration_ticks = (num_args == 4) ? lua_tointeger(L, 4) : 0;
 
@@ -542,7 +542,7 @@ namespace LuaThingFunctions
     }
 
     ThingId thing_being_modified = ThingId(lua_tointeger(L, 1));
-    StringKey key = lua_tostring(L, 2);
+    std::string key = lua_tostring(L, 2);
     ThingId thing_doing_the_modifying = ThingId(lua_tointeger(L, 3));
 
     unsigned int result = thing_being_modified->remove_modifier(key, thing_doing_the_modifying);

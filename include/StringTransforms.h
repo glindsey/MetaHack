@@ -55,22 +55,22 @@ inline std::ostream& operator<<(std::ostream& os, TokenizerState state)
 ///
 /// In all cases, a backslash can be used to escape any character and prevent
 /// it from being recognized as a token delimiter.
-inline StringDisplay replace_tokens(StringDisplay str,
-                                    std::function<StringDisplay(StringDisplay)> token_functor,
-                                    std::function<bool(StringDisplay)> choose_functor)
+inline std::string replace_tokens(std::string str,
+                                    std::function<std::string(std::string)> token_functor,
+                                    std::function<bool(std::string)> choose_functor)
 {
   TokenizerState state = TokenizerState::Text;
-  StringDisplay out_str;
-  StringDisplay token_name;
-  StringDisplay token_result;
-  StringDisplay selector_true;
-  StringDisplay selector_false;
-  StringDisplay discard_string;
-  StringDisplay* current_string = &out_str;
+  std::string out_str;
+  std::string token_name;
+  std::string token_result;
+  std::string selector_true;
+  std::string selector_false;
+  std::string discard_string;
+  std::string* current_string = &out_str;
 
   LOG(TRACE) << "Replacing tokens in: \"" << str << "\"";
 
-  str += L'\0';
+  str += '\0';
 
   auto loc = str.begin();
 
@@ -92,7 +92,7 @@ inline StringDisplay replace_tokens(StringDisplay str,
     {
       case TokenizerState::Text:
 
-        if (*loc == L'$')
+        if (*loc == '$')
         {
           state = TokenizerState::ParsingToken;
           current_string = &token_name;
@@ -107,14 +107,14 @@ inline StringDisplay replace_tokens(StringDisplay str,
       case TokenizerState::ParsingToken:
         if (token_name.empty())
         {
-          if (*loc == L'$')
+          if (*loc == '$')
           {
-            out_str += L'$';
+            out_str += '$';
             state = TokenizerState::Text;
             current_string = &out_str;
             break;
           }
-          else if (*loc == L'(')
+          else if (*loc == '(')
           {
             state = TokenizerState::ParsingChoice;
             current_string = &token_name;
@@ -123,7 +123,7 @@ inline StringDisplay replace_tokens(StringDisplay str,
           }
         }
 
-        if (iswalnum(*loc) || (*loc == L'_'))
+        if (iswalnum(*loc) || (*loc == '_'))
         {
           token_name += *loc;
         }
@@ -152,7 +152,7 @@ inline StringDisplay replace_tokens(StringDisplay str,
         {
           token_name += *loc;
         }
-        else if (*loc == L'?')
+        else if (*loc == '?')
         {
           if (!token_name.empty())
           {
@@ -178,7 +178,7 @@ inline StringDisplay replace_tokens(StringDisplay str,
         break;
 
       case TokenizerState::ParsingChoiceTrue:
-        if (*loc == L':')
+        if (*loc == ':')
         {
           //LOG(TRACE) << "Found selector 'true' string: \"" << selector_true << "\"";
           selector_false.clear();
@@ -192,7 +192,7 @@ inline StringDisplay replace_tokens(StringDisplay str,
         break;
 
       case TokenizerState::ParsingChoiceFalse:
-        if (*loc == L')')
+        if (*loc == ')')
         {
           //LOG(TRACE) << "Found selector 'false' string: \"" << selector_false << "\"";
           bool result = choose_functor(token_name);
@@ -209,7 +209,7 @@ inline StringDisplay replace_tokens(StringDisplay str,
         break;
 
       case TokenizerState::ParsingChoiceError:
-        if (*loc == L')')
+        if (*loc == ')')
         {
           state = TokenizerState::Text;
           current_string = &out_str;

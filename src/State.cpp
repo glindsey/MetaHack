@@ -14,7 +14,7 @@ State::State(StateMachine& state_machine)
 State::~State()
 {}
 
-bool State::change_to(StringKey const& new_state)
+bool State::change_to(std::string const& new_state)
 {
   // Ask the state machine to change to the requested state.
   if (m_state_machine.change_to(new_state))

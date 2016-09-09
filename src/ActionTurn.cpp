@@ -8,11 +8,11 @@
 #include "Thing.h"
 #include "ThingId.h"
 
-ACTION_SRC_BOILERPLATE(ActionTurn, "turn", L"turn")
+ACTION_SRC_BOILERPLATE(ActionTurn, "turn", "turn")
 
 Action::StateResult ActionTurn::do_prebegin_work_(AnyMap& params)
 {
-  StringDisplay message;
+  std::string message;
 
   auto subject = get_subject();
   auto location = subject->get_location();
@@ -22,11 +22,11 @@ Action::StateResult ActionTurn::do_prebegin_work_(AnyMap& params)
   {
     print_message_try_();
 
-    message = L"But ";
+    message = "But ";
   }
   else
   {
-    message = L"";
+    message = "";
   }
 
   // Make sure we CAN move.
@@ -34,7 +34,7 @@ Action::StateResult ActionTurn::do_prebegin_work_(AnyMap& params)
   ///       might be able to swivel in place without being able to move.
   if (!subject->get_intrinsic<bool>("can_move", false))
   {
-    message += YOU + CV(L" don't", L" doesn't") + L" have the capability of movement.";
+    message += YOU + CV(" don't", " doesn't") + " have the capability of movement.";
     the_message_log.add(message);
     return Action::StateResult::Failure();
   }
@@ -42,7 +42,7 @@ Action::StateResult ActionTurn::do_prebegin_work_(AnyMap& params)
   // Make sure we can move RIGHT NOW.
   if (!subject->can_currently_move())
   {
-    message += YOU + L" can't move right now.";
+    message += YOU + " can't move right now.";
     the_message_log.add(message);
     return Action::StateResult::Failure();
   }
@@ -55,7 +55,7 @@ Action::StateResult ActionTurn::do_begin_work_(AnyMap& params)
 {
   StateResult result = StateResult::Failure();
 
-  StringDisplay message;
+  std::string message;
 
   auto subject = get_subject();
   ThingId location = subject->get_location();

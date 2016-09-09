@@ -7,7 +7,7 @@
 
 namespace metagui
 {
-  ShrinkHandle::ShrinkHandle(StringKey name)
+  ShrinkHandle::ShrinkHandle(std::string name)
     :
     Object(name, Vec2i(0, 0))
   {}

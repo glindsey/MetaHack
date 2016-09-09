@@ -37,6 +37,7 @@
 #include <boost/functional/hash.hpp>
 #include <boost/math/special_functions/sign.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/locale.hpp>
 #include <boost/log/core.hpp>
 #include <boost/log/trivial.hpp>
 #include <boost/noncopyable.hpp>
@@ -79,3 +80,6 @@ extern "C"
 #include <lualib.h>
 #include <lauxlib.h>
 }
+
+// Namespace directives
+namespace bl = boost::locale;

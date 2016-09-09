@@ -31,12 +31,12 @@ public:
     //archive(m_thing_map);
   }
 
-  bool first_is_subtype_of_second(StringKey first, StringKey second);
+  bool first_is_subtype_of_second(std::string first, std::string second);
 
   /// Create a particular object given the type name.
   /// @param type The type name of the object to create.
   /// @return ThingId of the new object created.
-  ThingId create(StringKey type);
+  ThingId create(std::string type);
 
   /// Create a floor object.
   /// @param map_tile Pointer to the map tile associated.

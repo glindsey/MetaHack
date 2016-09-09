@@ -14,9 +14,9 @@ class ActionMix
     ACTION_TRAIT(can_be_subject_verb_objects)
 
 public:
-  StringDisplay const get_verbable() const override
+  std::string const get_verbable() const override
   {
-    return L"miscable";
+    return "miscable";
   }
 
 protected:

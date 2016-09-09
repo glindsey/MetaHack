@@ -4,11 +4,11 @@
 #include "Thing.h"
 #include "ThingId.h"
 
-ACTION_SRC_BOILERPLATE(ActionPutInto, "putinto", L"store")
+ACTION_SRC_BOILERPLATE(ActionPutInto, "putinto", "store")
 
 Action::StateResult ActionPutInto::do_prebegin_work_(AnyMap& params)
 {
-  StringDisplay message;
+  std::string message;
   auto subject = get_subject();
   auto object = get_object();
   auto container = get_target_thing();
@@ -24,11 +24,11 @@ Action::StateResult ActionPutInto::do_prebegin_work_(AnyMap& params)
   {
     if (IS_PLAYER)
     {
-      message = L"That would be an interesting topological exercise.";
+      message = "That would be an interesting topological exercise.";
     }
     else
     {
-      message = make_string(L"$you $try to store $the_foo inside itself, which seriously shouldn't happen.");
+      message = make_string("$you $try to store $the_foo inside itself, which seriously shouldn't happen.");
       CLOG(WARNING, "Action") << "NPC tried to store a container in itself!?";
     }
 
@@ -41,12 +41,12 @@ Action::StateResult ActionPutInto::do_prebegin_work_(AnyMap& params)
     if (IS_PLAYER)
     {
       /// @todo Possibly allow player to voluntarily enter a container?
-      message = L"I'm afraid you can't do that.  "
-        L"(At least, not in this version...)";
+      message = "I'm afraid you can't do that.  "
+        "(At least, not in this version...)";
     }
     else
     {
-      message = make_string(L"$you $try to store $yourself into $the_target_thing, which seriously shouldn't happen.");
+      message = make_string("$you $try to store $yourself into $the_target_thing, which seriously shouldn't happen.");
       CLOG(WARNING, "Action") << "NPC tried to store self!?";
     }
     the_message_log.add(message);
@@ -59,11 +59,11 @@ Action::StateResult ActionPutInto::do_prebegin_work_(AnyMap& params)
   {
     if (IS_PLAYER)
     {
-      message = L"Store something in yourself?  What do you think you are, a drug mule?";
+      message = "Store something in yourself?  What do you think you are, a drug mule?";
     }
     else
     {
-      message = make_string(L"$you $try to store $the_foo into $yourself, which seriously shouldn't happen.");
+      message = make_string("$you $try to store $the_foo into $yourself, which seriously shouldn't happen.");
       CLOG(WARNING, "Action") << "NPC tried to store into self!?";
     }
     the_message_log.add(message);
@@ -76,7 +76,7 @@ Action::StateResult ActionPutInto::do_prebegin_work_(AnyMap& params)
   {
     print_message_try_();
 
-    message = make_string(L"$the_target_thing is not a container!");
+    message = make_string("$the_target_thing is not a container!");
     the_message_log.add(message);
 
     return StateResult::Failure();
@@ -87,7 +87,7 @@ Action::StateResult ActionPutInto::do_prebegin_work_(AnyMap& params)
   {
     print_message_try_();
 
-    message = make_string(L"$the_foo is already in $the_target_thing!");
+    message = make_string("$the_foo is already in $the_target_thing!");
     the_message_log.add(message);
 
     return StateResult::Failure();
@@ -98,7 +98,7 @@ Action::StateResult ActionPutInto::do_prebegin_work_(AnyMap& params)
   {
     print_message_try_();
 
-    message = make_string(L"$you cannot reach $the_target_thing.");
+    message = make_string("$you cannot reach $the_target_thing.");
     the_message_log.add(message);
 
     return StateResult::Failure();
@@ -109,7 +109,7 @@ Action::StateResult ActionPutInto::do_prebegin_work_(AnyMap& params)
   {
     print_message_try_();
 
-    message = make_string(L"$you cannot store something that is currently being wielded.");
+    message = make_string("$you cannot store something that is currently being wielded.");
     the_message_log.add(message);
 
     return StateResult::Failure();
@@ -121,7 +121,7 @@ Action::StateResult ActionPutInto::do_prebegin_work_(AnyMap& params)
     print_message_try_();
 
     /// @todo Perhaps automatically try to unwield the item before dropping?
-    message = make_string(L"$you cannot store something that is currently being worn.");
+    message = make_string("$you cannot store something that is currently being worn.");
     the_message_log.add(message);
 
     return StateResult::Failure();
@@ -134,7 +134,7 @@ Action::StateResult ActionPutInto::do_begin_work_(AnyMap& params)
 {
   /// @todo Handle putting a certain quantity of an item.
   Action::StateResult result = StateResult::Failure();
-  StringDisplay message;
+  std::string message;
   auto subject = get_subject();
   auto object = get_object();
   auto container = get_target_thing();
@@ -150,7 +150,7 @@ Action::StateResult ActionPutInto::do_begin_work_(AnyMap& params)
     }
     else
     {
-      message = make_string(L"$you could not move $the_foo into $the_target_thing for some inexplicable reason.");
+      message = make_string("$you could not move $the_foo into $the_target_thing for some inexplicable reason.");
       the_message_log.add(message);
 
       MAJOR_ERROR("Could not move Thing into Container even though be_object_of returned Success");
@@ -172,12 +172,12 @@ Action::StateResult ActionPutInto::do_abort_work_(AnyMap& params)
 
 void ActionPutInto::print_message_try_() const
 {
-  StringDisplay message = make_string(L"$you $try to $verb $the_foo into $the_target_thing.");
+  std::string message = make_string("$you $try to $verb $the_foo into $the_target_thing.");
   the_message_log.add(message);
 }
 
 void ActionPutInto::print_message_do_() const
 {
-  StringDisplay message = make_string(L"$you $cverb $the_foo into $the_target_thing.");
+  std::string message = make_string("$you $cverb $the_foo into $the_target_thing.");
   the_message_log.add(message);
 }

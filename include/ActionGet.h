@@ -15,19 +15,19 @@ class ActionGet
     ACTION_TRAIT(can_take_a_quantity)
 
 public:
-  StringDisplay const get_verbing() const override
+  std::string const get_verbing() const override
   {
-    return L"getting";
+    return "getting";
   }
 
-  StringDisplay const get_verbed() const override
+  std::string const get_verbed() const override
   {
-    return L"got";
+    return "got";
   }
 
-  StringDisplay const get_verb_pp() const override
+  std::string const get_verb_pp() const override
   {
-    return L"gotten";
+    return "gotten";
   }
 
 protected:

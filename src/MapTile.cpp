@@ -24,9 +24,9 @@ ThingId MapTile::get_tile_contents() const
   return m_tile_contents;
 }
 
-StringDisplay MapTile::get_display_name() const
+std::string MapTile::get_display_name() const
 {
-  return m_p_metadata->get_intrinsic<StringDisplay>("name");
+  return m_p_metadata->get_intrinsic<std::string>("name");
 }
 
 Vec2u MapTile::get_tile_sheet_coords() const
@@ -37,12 +37,12 @@ Vec2u MapTile::get_tile_sheet_coords() const
   return tile_coords;
 }
 
-void MapTile::set_tile_type(StringKey type)
+void MapTile::set_tile_type(std::string type)
 {
   m_p_metadata = &(m_p_metadata->get_metadata_collection().get(type));
 }
 
-StringKey MapTile::get_tile_type() const
+std::string MapTile::get_tile_type() const
 {
   return m_p_metadata->get_type();
 }

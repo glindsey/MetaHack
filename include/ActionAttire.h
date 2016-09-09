@@ -15,14 +15,14 @@ class ActionAttire
     ACTION_TRAIT(object_must_be_in_inventory)
 
 public:
-  StringDisplay const get_verbed() const override
+  std::string const get_verbed() const override
   {
-    return L"wore";
+    return "wore";
   }
 
-  StringDisplay const get_verb_pp() const override
+  std::string const get_verb_pp() const override
   {
-    return L"worn";
+    return "worn";
   }
 
 protected:

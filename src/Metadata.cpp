@@ -5,14 +5,14 @@
 #include "ErrorHandler.h"
 #include "MetadataCollection.h"
 
-Metadata::Metadata(MetadataCollection& collection, StringKey type)
+Metadata::Metadata(MetadataCollection& collection, std::string type)
   :
   m_collection{ collection },
   m_type{ type }
 {
   SET_UP_LOGGER("Metadata", false);
 
-  StringKey category = collection.get_category();
+  std::string category = collection.get_category();
 
   // Look for the various files containing this metadata.
   FileName resource_string = "resources/" + category + "s/" + type;
@@ -21,7 +21,7 @@ Metadata::Metadata(MetadataCollection& collection, StringKey type)
   FileName luafile_string = resource_string + ".lua";
   fs::path luafile_path = fs::path(luafile_string);
 
-  StringKey qualified_name = category + "!" + type;
+  std::string qualified_name = category + "!" + type;
 
   /// Try to load and run this Thing's Lua script.
   if (fs::exists(luafile_path))
@@ -63,7 +63,7 @@ MetadataCollection& Metadata::get_metadata_collection()
   return m_collection;
 }
 
-StringKey const& Metadata::get_type() const
+std::string const& Metadata::get_type() const
 {
   return m_type;
 }

@@ -9,7 +9,7 @@
 
 namespace metagui
 {
-  Object::Object(StringKey name, Vec2i location, Vec2u size)
+  Object::Object(std::string name, Vec2i location, Vec2u size)
   {
     SET_UP_LOGGER("GUI", true);
 
@@ -19,7 +19,7 @@ namespace metagui
     set_size(size);
   }
 
-  Object::Object(StringKey name, sf::IntRect dimensions)
+  Object::Object(std::string name, sf::IntRect dimensions)
   {
     SET_UP_LOGGER("GUI", true);
 
@@ -33,7 +33,7 @@ namespace metagui
     //dtor
   }
 
-  StringKey Object::get_name()
+  std::string Object::get_name()
   {
     return m_name;
   }
@@ -101,12 +101,12 @@ namespace metagui
     }
   }
 
-  void Object::set_text(StringDisplay text)
+  void Object::set_text(std::string text)
   {
     m_text = text;
   }
 
-  StringDisplay Object::get_text()
+  std::string Object::get_text()
   {
     return m_text;
   }
@@ -234,7 +234,7 @@ namespace metagui
   {
     ASSERT_CONDITION(child);
 
-    StringKey name = child->get_name();
+    std::string name = child->get_name();
 
     if (child_exists(name))
     {
@@ -271,12 +271,12 @@ namespace metagui
     return add_child(std::move(child), z_order);
   }
 
-  bool Object::child_exists(StringKey name)
+  bool Object::child_exists(std::string name)
   {
     return (m_children.count(name) > 0);
   }
 
-  Object& Object::get_child(StringKey name)
+  Object& Object::get_child(std::string name)
   {
     if (child_exists(name))
     {
@@ -286,7 +286,7 @@ namespace metagui
     throw std::runtime_error("Tried to get non-existent child \"" + name + "\" of GUI object \"" + get_name() + "\"");
   }
 
-  std::unique_ptr<Object> Object::remove_child(StringKey name)
+  std::unique_ptr<Object> Object::remove_child(std::string name)
   {
     if (child_exists(name))
     {
@@ -403,7 +403,7 @@ namespace metagui
     }
   }
 
-  void Object::set_flag(StringKey name, bool value)
+  void Object::set_flag(std::string name, bool value)
   {
     if ((m_flags.count(name) == 0) || (m_flags[name] != value))
     {
@@ -412,7 +412,7 @@ namespace metagui
     }
   }
 
-  bool Object::get_flag(StringKey name, bool default_value)
+  bool Object::get_flag(std::string name, bool default_value)
   {
     if (m_flags.count(name) == 0)
     {
@@ -421,7 +421,7 @@ namespace metagui
     return m_flags[name];
   }
 
-  void Object::handle_set_flag(StringKey name, bool value)
+  void Object::handle_set_flag(std::string name, bool value)
   {
     if (name == "hidden")
     {
@@ -677,7 +677,7 @@ namespace metagui
     return Event::Result::Acknowledged;
   }
 
-  void Object::handle_set_flag_(StringKey name, bool enabled)
+  void Object::handle_set_flag_(std::string name, bool enabled)
   {}
 
   void Object::handle_parent_size_changed_(Vec2u parent_size)

@@ -15,9 +15,9 @@ class ActionDie
     ACTION_TRAIT(subject_can_be_in_limbo)
 
 public:
-  virtual StringDisplay const get_verbable() const override
+  virtual std::string const get_verbable() const override
   {
-    return L"mortal";
+    return "mortal";
   }
 
 protected:

@@ -16,7 +16,7 @@ namespace metagui
     virtual ~ShrinkHandle();
 
   protected:
-    explicit ShrinkHandle(StringKey name);
+    explicit ShrinkHandle(std::string name);
     virtual void render_self_before_children_(sf::RenderTexture& texture, int frame) override final;
     virtual void handle_parent_size_changed_(Vec2u parent_size) override final;
 

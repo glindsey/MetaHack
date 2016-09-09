@@ -7,7 +7,7 @@
 
 namespace metagui
 {
-  TitleBar::TitleBar(StringKey name)
+  TitleBar::TitleBar(std::string name)
     :
     Object(name, Vec2i(0, 0))
   {}

@@ -12,7 +12,7 @@
 
 namespace metagui
 {
-  Window::Window(StringKey name, Vec2i location, Vec2u size)
+  Window::Window(std::string name, Vec2i location, Vec2u size)
     :
     Object(name, location, size)
   {
@@ -21,7 +21,7 @@ namespace metagui
     set_flag("draggable", true);
   }
 
-  Window::Window(StringKey name, sf::IntRect dimensions)
+  Window::Window(std::string name, sf::IntRect dimensions)
     :
     Object(name, dimensions)
   {
@@ -91,13 +91,13 @@ namespace metagui
     texture.draw(m_border_shape);
   }
 
-  void Window::handle_set_flag_(StringKey name, bool enabled)
+  void Window::handle_set_flag_(std::string name, bool enabled)
   {
     if (name == "titlebar")
     {
       m_titlebar_cached = enabled;
 
-      StringKey name = get_name() + "_titlebar";
+      std::string name = get_name() + "_titlebar";
 
       if (enabled)
       {
@@ -113,7 +113,7 @@ namespace metagui
     }
     else if (name == "resizable")
     {
-      StringKey name = get_name() + "_resizehandle";
+      std::string name = get_name() + "_resizehandle";
       if (enabled)
       {
         if (!child_exists(name))
@@ -128,7 +128,7 @@ namespace metagui
     }
     else if (name == "closable")
     {
-      StringKey name = get_name() + "_closehandle";
+      std::string name = get_name() + "_closehandle";
       if (enabled)
       {
         if (!child_exists(name))
@@ -143,7 +143,7 @@ namespace metagui
     }
     else if (name == "shrinkable")
     {
-      StringKey name = get_name() + "_shrinkhandle";
+      std::string name = get_name() + "_shrinkhandle";
       if (enabled)
       {
         if (!child_exists(name))

@@ -13,7 +13,7 @@ PropertyDictionary::PropertyDictionary()
 PropertyDictionary::~PropertyDictionary()
 {}
 
-bool PropertyDictionary::contains(StringKey key) const
+bool PropertyDictionary::contains(std::string key) const
 {
   return (m_dictionary.count(key) != 0);
 }
@@ -23,7 +23,7 @@ AnyMap& PropertyDictionary::get_dictionary()
   return m_dictionary;
 }
 
-void PropertyDictionary::after_set_(StringKey key)
+void PropertyDictionary::after_set_(std::string key)
 {
 }
 

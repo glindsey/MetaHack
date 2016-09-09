@@ -33,7 +33,7 @@ Lua::~Lua()
   lua_close(L_);
 }
 
-void Lua::register_function(StringKey name, lua_CFunction func)
+void Lua::register_function(std::string name, lua_CFunction func)
 {
   lua_register(L_, name.c_str(), func);
 }
@@ -74,7 +74,7 @@ void Lua::require(FileName packagename, bool fatal)
   }
 }
 
-void Lua::set_global(StringKey name, lua_Integer value)
+void Lua::set_global(std::string name, lua_Integer value)
 {
   lua_pushinteger(L_, value);
   lua_setglobal(L_, name.c_str());

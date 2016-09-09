@@ -15,19 +15,19 @@ class ActionQuaff
     ACTION_TRAIT(can_be_subject_verb_direction)
 
 public:
-  StringDisplay const get_verbed() const override
+  std::string const get_verbed() const override
   {
-    return L"drank from";
+    return "drank from";
   }
 
-  StringDisplay const get_verbing() const override
+  std::string const get_verbing() const override
   {
-    return L"drinking from";
+    return "drinking from";
   }
 
-  StringDisplay const get_verbable() const override
+  std::string const get_verbable() const override
   {
-    return L"potable";
+    return "potable";
   }
 
 protected:

@@ -4,19 +4,11 @@
 #include "stdafx.h"
 
 template<typename T>
-StringDisplay wstr(T const& t)
-{
-  std::wstringstream wstream;
-  wstream << t;
-  return StringDisplay(wstream.str());
-}
-
-template<typename T>
-StringKey str(T const& t)
+std::string str(T const& t)
 {
   std::stringstream stream;
   stream << t;
-  return StringKey(stream.str());
+  return std::string(stream.str());
 }
 
 inline bool strip_quotes(std::string& str)
@@ -57,20 +49,6 @@ std::string hexify(T i)
     << std::hex << i;
 
   return buf.str().c_str();
-}
-
-// convert UTF-8 string to wstring
-inline std::wstring utf8_to_wstring(const std::string& str)
-{
-  std::wstring_convert<std::codecvt_utf8<wchar_t>> myconv;
-  return myconv.from_bytes(str);
-}
-
-// convert wstring to UTF-8 string
-inline std::string wstring_to_utf8(const std::wstring& str)
-{
-  std::wstring_convert<std::codecvt_utf8<wchar_t>> myconv;
-  return myconv.to_bytes(str);
 }
 
 namespace std

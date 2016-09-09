@@ -16,7 +16,7 @@ class Thing;
 
 // === USING DECLARATIONS =====================================================
 using ActionCreator = std::function<std::unique_ptr<Action>(ThingId)>;
-using ActionMap = std::unordered_map<StringKey, ActionCreator>;
+using ActionMap = std::unordered_map<std::string, ActionCreator>;
 
 // === MESSAGE HELPER MACROS ==================================================
 #define YOU       (get_subject()->get_you_or_identifying_string())  // "you" or descriptive noun like "the goblin"
@@ -28,16 +28,16 @@ using ActionMap = std::unordered_map<StringKey, ActionCreator>;
 #define CV(p12, p3)  (get_subject()->choose_verb(p12, p3))   // shortcut for "Subject - Choose Verb"
 #define OBJCV(p12, p3)  (get_object()->choose_verb(p12, p3)) // shortcut for "Object - Choose Verb"
 
-#define ARE   (get_subject()->choose_verb(L" are", L" is"))
-#define WERE  (get_subject()->choose_verb(L" were", L" was"))
-#define DO    (get_subject()->choose_verb(L" do", L" does"))
-#define GET   (get_subject()->choose_verb(L" get", L" gets"))
-#define HAVE  (get_subject()->choose_verb(L" have", L" has"))
-#define SEEM  (get_subject()->choose_verb(L" seem", L" seems"))
-#define TRY   (get_subject()->choose_verb(L" try", L" tries"))
+#define ARE   (get_subject()->choose_verb(" are", " is"))
+#define WERE  (get_subject()->choose_verb(" were", " was"))
+#define DO    (get_subject()->choose_verb(" do", " does"))
+#define GET   (get_subject()->choose_verb(" get", " gets"))
+#define HAVE  (get_subject()->choose_verb(" have", " has"))
+#define SEEM  (get_subject()->choose_verb(" seem", " seems"))
+#define TRY   (get_subject()->choose_verb(" try", " tries"))
 
-#define FOO_IS    OBJCV(L" are", L" is")
-#define FOO_HAS   OBJCV(L" have", L" has")
+#define FOO_IS    OBJCV(" are", " is")
+#define FOO_HAS   OBJCV(" have", " has")
 
 #define IS_PLAYER (get_subject()->is_player())
 
@@ -79,11 +79,11 @@ using ActionMap = std::unordered_map<StringKey, ActionCreator>;
   }                                                                           \
   T::T(ThingId subject) : Action(subject) {}                                  \
   T::~T() {}                                                                  \
-  StringKey const T::get_type() const                                         \
+  std::string const T::get_type() const                                         \
   {                                                                           \
     return type;                                                              \
   }                                                                           \
-  StringDisplay const T::get_verb() const                                     \
+  std::string const T::get_verb() const                                     \
   {                                                                           \
     return verb;                                                              \
   }                                                                           \
@@ -97,8 +97,8 @@ using ActionMap = std::unordered_map<StringKey, ActionCreator>;
   public:                                                                     \
     explicit T(ThingId subject);                                             \
     virtual ~T();                                                             \
-    virtual StringKey const get_type() const override;                        \
-    virtual StringDisplay const get_verb() const override;                    \
+    virtual std::string const get_type() const override;                        \
+    virtual std::string const get_verb() const override;                    \
     static T prototype;
 
 // === ACTION TRAITS ==========================================================
@@ -165,86 +165,86 @@ public:
   Direction get_target_direction() const;
   unsigned int get_quantity() const;
 
-  virtual StringKey const get_type() const
+  virtual std::string const get_type() const
   {
     return "[Action]";
   }
 
   /// Return the first-/second-person singular form of the verb to be performed.
-  virtual StringDisplay const get_verb() const
+  virtual std::string const get_verb() const
   {
-    return L"[action]";
+    return "[action]";
   }
 
   /// Return the third-person singular form of the verb to be performed.
   /// By default, appends an "s" to get_verb().
-  virtual StringDisplay const get_verb3() const
+  virtual std::string const get_verb3() const
   {
-    StringDisplay verb = get_verb();
-    return verb + L"s";
+    std::string verb = get_verb();
+    return verb + "s";
   }
 
   /// Return the present participle form of the verb to be performed.
   /// By default, tries to use standard compositional rules to make the form.
-  virtual StringDisplay const get_verbing() const
+  virtual std::string const get_verbing() const
   {
-    StringDisplay verb = get_verb();
+    std::string verb = get_verb();
     auto verb_last_char = verb.end();
     --verb_last_char;
-    CharDisplay last_character = *verb_last_char;
+    char last_character = *verb_last_char;
 
-    if (StringDisplay(L"aeiou").find(last_character) != StringDisplay::npos)
+    if (std::string("aeiou").find(last_character) != std::string::npos)
     {
-      return verb.substr(0, verb.length() - 1) + L"ing";
+      return verb.substr(0, verb.length() - 1) + "ing";
     }
     else
     {
-      return verb + L"ing";
+      return verb + "ing";
     }
   }
 
   /// Return the past form of the verb to be performed.
   /// By default, tries to use standard compositional rules to make the form.
-  virtual StringDisplay const get_verbed() const
+  virtual std::string const get_verbed() const
   {
-    StringDisplay verb = get_verb();
+    std::string verb = get_verb();
     auto verb_last_char = verb.end();
     --verb_last_char;
-    CharDisplay last_character = *verb_last_char;
+    char last_character = *verb_last_char;
 
-    if (StringDisplay(L"aeiou").find(last_character) != StringDisplay::npos)
+    if (std::string("aeiou").find(last_character) != std::string::npos)
     {
-      return verb.substr(0, verb.length() - 1) + L"ed";
+      return verb.substr(0, verb.length() - 1) + "ed";
     }
     else
     {
-      return verb + L"ed";
+      return verb + "ed";
     }
   }
 
   /// Return the past participle form of the verb to be performed.
   /// By default, returns the past form, as it is the same for most verbs.
-  virtual StringDisplay const get_verb_pp() const
+  virtual std::string const get_verb_pp() const
   {
     return get_verbed();
   }
 
   /// Return the adjective form of the verb to be performed.
   /// By default, tries to use standard compositional rules to make the form.
-  virtual StringDisplay const get_verbable() const
+  virtual std::string const get_verbable() const
   {
-    StringDisplay verb = get_verb();
+    std::string verb = get_verb();
     auto verb_last_char = verb.end();
     --verb_last_char;
-    CharDisplay last_character = *verb_last_char;
+    char last_character = *verb_last_char;
 
-    if (StringDisplay(L"aeiou").find(last_character) != StringDisplay::npos)
+    if (std::string("aeiou").find(last_character) != std::string::npos)
     {
-      return verb.substr(0, verb.length() - 1) + L"able";
+      return verb.substr(0, verb.length() - 1) + "able";
     }
     else
     {
-      return verb + L"able";
+      return verb + "able";
     }
   }
 
@@ -266,19 +266,19 @@ public:
 
   /// A static method that registers an action subclass in a database.
   /// Required so that Lua scripts can instantiate Actions on Things.
-  static void register_action_as(StringKey key, ActionCreator creator);
+  static void register_action_as(std::string key, ActionCreator creator);
 
   /// A static method that checks if a key exists.
-  static bool exists(StringKey key);
+  static bool exists(std::string key);
 
   /// A static method that returns an Action associated with a key.
   /// If the requested key does not exist, throws an exception.
-  static std::unique_ptr<Action> create(StringKey key, ThingId subject);
+  static std::unique_ptr<Action> create(std::string key, ThingId subject);
 
   /// A method for composing a string from a pattern for an action.
-  StringDisplay make_string(StringDisplay pattern, std::vector<StringDisplay> optional_strings) const;
+  std::string make_string(std::string pattern, std::vector<std::string> optional_strings) const;
 
-  StringDisplay make_string(StringDisplay pattern) const;
+  std::string make_string(std::string pattern) const;
 
   /// Get a const reference to the action map.
   static ActionMap const& get_map();
@@ -365,7 +365,7 @@ protected:
   ///
   /// This method can be overridden if necessary to customize the description for a
   /// particular action.
-  virtual StringDisplay get_object_string_() const;
+  virtual std::string get_object_string_() const;
 
   /// Describes the target in terms of the subject or object.
   /// This string will vary based on the presence of objects or a direction
@@ -376,7 +376,7 @@ protected:
   ///
   /// This method can be overridden if necessary to customize the description for a
   /// particular action.
-  virtual StringDisplay get_target_string_() const;
+  virtual std::string get_target_string_() const;
 
   /// Print a "[SUBJECT] try to [VERB]" message.
   /// The message will vary based on the presence of objects or a direction

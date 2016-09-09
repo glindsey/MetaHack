@@ -20,14 +20,14 @@ public:
   virtual ~PropertyDictionary();
 
   /// Check if a particular key exists.
-  bool contains(StringKey key) const;
+  bool contains(std::string key) const;
 
   /// Get a base entry from the dictionary.
   /// @param key  Key of the setting to retrieve.
   /// @return     The entry requested.
   ///             If the entry does not exist, returns a new instance of T.
   template<typename T>
-  T get(StringKey key) const
+  T get(std::string key) const
   {
     boost::any value = get<boost::any>(key);
 
@@ -46,7 +46,7 @@ public:
 
   /// Template specialization for boost::any.
   template<>
-  boost::any get(StringKey key) const
+  boost::any get(std::string key) const
   {
     // Bail if the setting doesn't exist.
     if (m_dictionary.count(key) == 0)
@@ -65,11 +65,11 @@ public:
   // break round-tripping. (i.e. Any time Lua writes a value it will be
   // stored as a double does to Lua's "a number is a number" typing. No way
   // to get around that.)
-  template<> int get(StringKey key) const { return static_cast<int>(get<double>(key)); }
-  template<> unsigned int get(StringKey key) const { return static_cast<unsigned int>(get<double>(key)); }
-  template<> long int get(StringKey key) const { return static_cast<long int>(get<double>(key)); }
-  template<> unsigned long int get(StringKey key) const { return static_cast<unsigned long int>(get<double>(key)); }
-  template<> float get(StringKey key) const { return static_cast<float>(get<double>(key)); }
+  template<> int get(std::string key) const { return static_cast<int>(get<double>(key)); }
+  template<> unsigned int get(std::string key) const { return static_cast<unsigned int>(get<double>(key)); }
+  template<> long int get(std::string key) const { return static_cast<long int>(get<double>(key)); }
+  template<> unsigned long int get(std::string key) const { return static_cast<unsigned long int>(get<double>(key)); }
+  template<> float get(std::string key) const { return static_cast<float>(get<double>(key)); }
 
   /// Add/alter an entry in the base dictionary.
   /// Erases any entry in the modified dictionary, if one exists.
@@ -80,7 +80,7 @@ public:
   /// @return       True if the entry already existed and has been changed.
   ///               False if a new entry was added.
   template<typename T>
-  bool set(StringKey key, T value)
+  bool set(std::string key, T value)
   {
     bool existed = (m_dictionary.count(key) != 0);
     boost::any insert_value = value;
@@ -90,7 +90,7 @@ public:
       m_dictionary.erase(key);
     }
 
-    m_dictionary.insert(std::pair<StringKey, boost::any>(key, insert_value));
+    m_dictionary.insert(std::pair<std::string, boost::any>(key, insert_value));
     after_set_(key);
 
     return existed;
@@ -98,17 +98,17 @@ public:
 
   // Various template specializations for certain types.
   // See get() specalizations for explanation.
-  template<> bool set(StringKey key, int value) { return set<double>(key, static_cast<double>(value)); }
-  template<> bool set(StringKey key, unsigned int value) { return set<double>(key, static_cast<double>(value)); }
-  template<> bool set(StringKey key, long int value) { return set<double>(key, static_cast<double>(value)); }
-  template<> bool set(StringKey key, unsigned long int value) { return set<double>(key, static_cast<double>(value)); }
-  template<> bool set(StringKey key, float value) { return set<double>(key, static_cast<double>(value)); }
-  template<> bool set(StringKey key, char const* value) { return set<std::string>(key, std::string(value)); }
+  template<> bool set(std::string key, int value) { return set<double>(key, static_cast<double>(value)); }
+  template<> bool set(std::string key, unsigned int value) { return set<double>(key, static_cast<double>(value)); }
+  template<> bool set(std::string key, long int value) { return set<double>(key, static_cast<double>(value)); }
+  template<> bool set(std::string key, unsigned long int value) { return set<double>(key, static_cast<double>(value)); }
+  template<> bool set(std::string key, float value) { return set<double>(key, static_cast<double>(value)); }
+  template<> bool set(std::string key, char const* value) { return set<std::string>(key, std::string(value)); }
 
   /// Overridable function to be called after a set() is performed.
   /// Default behavior is to do nothing.
   /// @param key  Key that was set.
-  virtual void after_set_(StringKey key);
+  virtual void after_set_(std::string key);
 
   /// Overloaded equality operator.
   bool operator==(PropertyDictionary const& other) const;

@@ -27,7 +27,7 @@ namespace metagui
       sf::Clock elapsed;
     };
 
-    explicit Desktop(StringKey name, Vec2u size);
+    explicit Desktop(std::string name, Vec2u size);
     virtual ~Desktop();
 
     /// Handles an SFML event and translates it into a GUI event if necessary.

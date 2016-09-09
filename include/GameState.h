@@ -33,7 +33,7 @@ public:
 
   MapFactory& get_maps();
   ThingManager& get_things();
-  MetadataCollection& get_metadata_collection(StringKey category);
+  MetadataCollection& get_metadata_collection(std::string category);
 
   GameTick const& get_game_clock() const;
   void set_game_clock(GameTick game_clock);
@@ -68,7 +68,7 @@ private:
   std::unique_ptr<ThingManager> m_thing_manager;
 
   /// A collection of collections -- a metacollection!
-  boost::ptr_unordered_map<StringKey, MetadataCollection> m_metacollection;
+  boost::ptr_unordered_map<std::string, MetadataCollection> m_metacollection;
 
   /// Reference to the Thing that is serving as the player.
   ThingId m_player;

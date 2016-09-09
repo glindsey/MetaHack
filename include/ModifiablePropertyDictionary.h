@@ -17,7 +17,7 @@ struct PropertyModifier
 
 // Using aliases
 using ExpirationMap = std::unordered_map<ThingId, unsigned int>;
-using ModifierMap = std::unordered_map<StringKey, ExpirationMap>;
+using ModifierMap = std::unordered_map<std::string, ExpirationMap>;
 
 /// Class that extends PropertyDictionary with the ability to have "modifier"
 /// functions that temporarily modify base properties.
@@ -36,7 +36,7 @@ public:
   ///             If the entry does not exist, it is recalculated via the
   ///             property modifiers associated with it.
   template<typename T>
-  T get_modified(StringKey key)
+  T get_modified(std::string key)
   {
     // Recalculate if the setting doesn't exist.
     if (m_modified_dictionary.count(key) == 0)
@@ -61,24 +61,24 @@ public:
 
   // Various template specializations for certain types.
   // See get() specalizations for explanation.
-  template<> int get_modified(StringKey key) { return static_cast<int>(get_modified<double>(key)); }
-  template<> unsigned int get_modified(StringKey key) { return static_cast<unsigned int>(get_modified<double>(key)); }
-  template<> long int get_modified(StringKey key) { return static_cast<long int>(get_modified<double>(key)); }
-  template<> unsigned long int get_modified(StringKey key) { return static_cast<unsigned long int>(get_modified<double>(key)); }
-  template<> float get_modified(StringKey key) { return static_cast<float>(get_modified<double>(key)); }
+  template<> int get_modified(std::string key) { return static_cast<int>(get_modified<double>(key)); }
+  template<> unsigned int get_modified(std::string key) { return static_cast<unsigned int>(get_modified<double>(key)); }
+  template<> long int get_modified(std::string key) { return static_cast<long int>(get_modified<double>(key)); }
+  template<> unsigned long int get_modified(std::string key) { return static_cast<unsigned long int>(get_modified<double>(key)); }
+  template<> float get_modified(std::string key) { return static_cast<float>(get_modified<double>(key)); }
 
   /// Overridden function to be called after a set() is performed.
   /// Erases the equivalent key in the modified dictionary.
   /// @param key  Key that was set.
-  virtual void after_set_(StringKey key);
+  virtual void after_set_(std::string key);
 
   /// Check if modifier functions exist for a particular key.
   /// @return Number of modifiers for the key.
-  unsigned int has_modifier_for(StringKey key) const;
+  unsigned int has_modifier_for(std::string key) const;
 
   /// Check if a modifier function exists for a particular key and ID.
   /// @return Number of modifiers for the key and ID. (Should be 0 or 1.)
-  unsigned int has_modifier_for(StringKey key, ThingId id) const;
+  unsigned int has_modifier_for(std::string key, ThingId id) const;
 
   /// Add a modifier function for a given property and ID.
   /// @param  key               Name of property to add a modifier function for.
@@ -96,21 +96,21 @@ public:
   /// new one will be added.
   ///
   /// @return True if the function was added; false if it already existed.
-  bool add_modifier(StringKey key, ThingId id, unsigned int expiration_ticks = 0);
+  bool add_modifier(std::string key, ThingId id, unsigned int expiration_ticks = 0);
 
   /// Remove all modifier functions for a given key.
   /// @return The number of modifiers erased.
-  unsigned int remove_modifier(StringKey key);
+  unsigned int remove_modifier(std::string key);
 
   /// Remove all modifier functions for a given key and thing ID.
   /// @return The number of modifiers erased.
-  unsigned int remove_modifier(StringKey key, ThingId id);
+  unsigned int remove_modifier(std::string key, ThingId id);
 
   /// Run all the modifier functions for a property given a value to modify.
   /// @param  key     Property to run the modifiers for.
   /// @return The resulting value.
   template<typename T>
-  void run_modifiers(StringKey key)
+  void run_modifiers(std::string key)
   {
     if (m_modified_dictionary.count(key) != 0)
     {
@@ -132,7 +132,7 @@ public:
   /// Add/subtract ticks from all modifier expiration_ticks, if applicable.
   /// Upon expiration a modifier will be automatically removed.
   /// @param  ticks   Number of ticks to add/subtract.
-  void add_ticks(StringKey key, int ticks);
+  void add_ticks(std::string key, int ticks);
 
   /// Overloaded equality operator.
   bool operator==(ModifiablePropertyDictionary const& other) const;

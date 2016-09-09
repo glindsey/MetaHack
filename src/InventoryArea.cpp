@@ -284,7 +284,7 @@ void InventoryArea::render_contents_(sf::RenderTexture& texture, int frame)
   // Get a reference to the location we're referring to.
   if (pImpl->viewed == ThingId::Mu())
   {
-    set_text(L"Invalid Viewed Object!");
+    set_text("Invalid Viewed Object!");
     return;
   }
 
@@ -429,7 +429,7 @@ void InventoryArea::render_contents_(sf::RenderTexture& texture, int frame)
   // TODO: Might want to define a specific "get_inventory_name()" method
   //       for Thing that defaults to "XXXX's inventory" but can be
   //       overridden to say stuff like "Things on the floor".
-  sf::String title_string = pImpl->viewed->get_possessive() + L" inventory";
+  sf::String title_string = pImpl->viewed->get_possessive() + " inventory";
   title_string[0] = toupper(title_string[0]);
   set_text(title_string);
   return;

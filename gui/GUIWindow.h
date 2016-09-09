@@ -11,8 +11,8 @@ namespace metagui
     public Object, public ObjectVisitable<Window>
   {
   public:
-    Window(StringKey name, Vec2i location, Vec2u size = Vec2u(0, 0));
-    Window(StringKey name, sf::IntRect dimensions);
+    Window(std::string name, Vec2i location, Vec2u size = Vec2u(0, 0));
+    Window(std::string name, sf::IntRect dimensions);
     virtual ~Window();
 
     /// Get the upper-left corner of this object's child area, relative to
@@ -27,7 +27,7 @@ namespace metagui
   protected:
     virtual void render_self_before_children_(sf::RenderTexture& texture, int frame) override final;
 
-    virtual void handle_set_flag_(StringKey name, bool enabled) override;
+    virtual void handle_set_flag_(std::string name, bool enabled) override;
 
     /// Temporary function used to render the contents of classes derived from
     /// GUIWindow until they can be properly replaced with child controls.

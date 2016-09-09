@@ -13,7 +13,7 @@ public:
     m_tick{}
   {}
 
-  MapMemoryChunk(StringKey type, GameTick tick)
+  MapMemoryChunk(std::string type, GameTick tick)
     :
     m_type{ type },
     m_tick{ tick }
@@ -22,7 +22,7 @@ public:
   virtual ~MapMemoryChunk()
   {}
 
-  StringKey const& get_type()
+  std::string const& get_type()
   {
     return m_type;
   }
@@ -33,8 +33,8 @@ public:
   }
 
 private:
-  /// StringKey representing the type of tile remembered.
-  StringKey m_type;
+  /// std::string representing the type of tile remembered.
+  std::string m_type;
 
   /// Tick of the game clock when the tile was remembered.
   GameTick m_tick;

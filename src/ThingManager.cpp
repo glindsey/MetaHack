@@ -35,11 +35,11 @@ ThingManager::~ThingManager()
 {
 }
 
-bool ThingManager::first_is_subtype_of_second(StringKey first, StringKey second)
+bool ThingManager::first_is_subtype_of_second(std::string first, std::string second)
 {
   //CLOG(TRACE, "Thing") << "Checking if " << first << " is a subtype of " << second << "...";
 
-  StringKey first_parent = m_game.get_metadata_collection("thing").get(first).get_intrinsic<StringKey>("parent");
+  std::string first_parent = m_game.get_metadata_collection("thing").get(first).get_intrinsic<std::string>("parent");
 
   if (first_parent.empty())
   {
@@ -57,7 +57,7 @@ bool ThingManager::first_is_subtype_of_second(StringKey first, StringKey second)
   return first_is_subtype_of_second(first_parent, second);
 }
 
-ThingId ThingManager::create(StringKey type)
+ThingId ThingManager::create(std::string type)
 {
   ThingId new_id = ThingId(m_nextThingId);
   ++m_nextThingId;

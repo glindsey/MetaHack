@@ -10,7 +10,7 @@
 #include "ThingManager.h"
 #include "ThingId.h"
 
-std::unordered_map<StringKey, ActionCreator> Action::action_map;
+std::unordered_map<std::string, ActionCreator> Action::action_map;
 
 struct Action::Impl
 {
@@ -226,7 +226,7 @@ unsigned int Action::get_quantity() const
 
 Action::StateResult Action::do_prebegin_work(AnyMap& params)
 {
-  StringDisplay message;
+  std::string message;
 
   auto subject = get_subject();
   auto& objects = get_objects();
@@ -240,7 +240,7 @@ Action::StateResult Action::do_prebegin_work(AnyMap& params)
     if ((location == ThingId::Mu()) || (current_tile == nullptr))
     {
       /// @todo This message could be made less awkward for verbs that take objects.
-      message = make_string(L"$you can't $verb because $you $do not exist physically!");
+      message = make_string("$you can't $verb because $you $do not exist physically!");
       the_message_log.add(message);
       return StateResult::Failure();
     }
@@ -269,7 +269,7 @@ Action::StateResult Action::do_prebegin_work(AnyMap& params)
         {
           print_message_try_();
 
-          message = make_string(L"However, $obj_pro_foo $foo_is out of $your reach.");
+          message = make_string("However, $obj_pro_foo $foo_is out of $your reach.");
           the_message_log.add(message);
 
           return StateResult::Failure();
@@ -283,12 +283,12 @@ Action::StateResult Action::do_prebegin_work(AnyMap& params)
         {
           print_message_try_();
 
-          message = make_string(L"However, $obj_pro_foo $foo_is not in $your inventory");
+          message = make_string("However, $obj_pro_foo $foo_is not in $your inventory");
           if (subject->can_reach(object))
           {
-            message += L" (pick it up first)";
+            message += " (pick it up first)";
           }
-          message += L".";
+          message += ".";
           the_message_log.add(message);
 
           return StateResult::Failure();
@@ -341,7 +341,7 @@ Action::StateResult Action::do_prebegin_work_(AnyMap& params)
 
 Action::StateResult Action::do_begin_work_(AnyMap& params)
 {
-  the_message_log.add(L"We're sorry, but that action has not yet been implemented.");
+  the_message_log.add("We're sorry, but that action has not yet been implemented.");
 
   return Action::StateResult::Failure();
 }
@@ -358,13 +358,13 @@ Action::StateResult Action::do_abort_work_(AnyMap& params)
   return Action::StateResult::Success();
 }
 
-StringDisplay Action::get_object_string_() const
+std::string Action::get_object_string_() const
 {
-  StringDisplay description;
+  std::string description;
 
   if (get_objects().size() == 0)
   {
-    description += L"nothing";
+    description += "nothing";
   }
   else if (get_objects().size() == 1)
   {
@@ -376,13 +376,13 @@ StringDisplay Action::get_object_string_() const
     {
       if (get_object() == ThingId::Mu())
       {
-        description += L"nothing";
+        description += "nothing";
       }
       else
       {
         if (get_quantity() > 1)
         {
-          description += get_quantity() + L" of";
+          description += get_quantity() + " of";
         }
         description += get_object()->get_identifying_string(ArticleChoice::Definite);
       }
@@ -390,28 +390,28 @@ StringDisplay Action::get_object_string_() const
   }
   else if (get_objects().size() == 2)
   {
-    description += get_object()->get_identifying_string(ArticleChoice::Definite) + L" and " +
+    description += get_object()->get_identifying_string(ArticleChoice::Definite) + " and " +
       get_second_object()->get_identifying_string(ArticleChoice::Definite);
   }
   else if (get_objects().size() > 1)
   {
     /// @todo May want to change this depending on whether subject is the player.
     ///       If not, we should print "several items" or something to that effect.
-    description += L"the items";
+    description += "the items";
   }
   else
   {
     auto new_direction = get_target_direction();
     if (new_direction != Direction::None)
     {
-      description += wstr(new_direction);
+      description += str(new_direction);
     }
   }
 
   return description;
 }
 
-StringDisplay Action::get_target_string_() const
+std::string Action::get_target_string_() const
 {
   auto subject = get_subject();
   auto& objects = get_objects();
@@ -433,61 +433,61 @@ StringDisplay Action::get_target_string_() const
 
 void Action::print_message_try_() const
 {
-  StringDisplay object_string = get_object_string_();
-  if (!object_string.empty()) object_string = L" " + object_string;
-  StringDisplay message = make_string(L"$you $try to $verb $the_foo.");
+  std::string object_string = get_object_string_();
+  if (!object_string.empty()) object_string = " " + object_string;
+  std::string message = make_string("$you $try to $verb $the_foo.");
   the_message_log.add(message);
 }
 
 void Action::print_message_do_() const
 {
-  StringDisplay object_string = get_object_string_();
-  if (!object_string.empty()) object_string = L" " + object_string;
-  StringDisplay message = make_string(L"$you $cverb $the_foo.");
+  std::string object_string = get_object_string_();
+  if (!object_string.empty()) object_string = " " + object_string;
+  std::string message = make_string("$you $cverb $the_foo.");
   the_message_log.add(message);
 }
 
 void Action::print_message_begin_() const
 {
-  StringDisplay object_string = get_object_string_();
-  if (!object_string.empty()) object_string = L" " + object_string;
-  StringDisplay message = make_string(L"$you $(cv?begin:begins) to $verb $the_foo.");
+  std::string object_string = get_object_string_();
+  if (!object_string.empty()) object_string = " " + object_string;
+  std::string message = make_string("$you $(cv?begin:begins) to $verb $the_foo.");
   the_message_log.add(message);
 }
 
 void Action::print_message_stop_() const
 {
-  StringDisplay object_string = get_object_string_();
-  if (!object_string.empty()) object_string = L" " + object_string;
-  StringDisplay message = make_string(L"$you $(cv?stop:stops) $verbing $the_foo.");
+  std::string object_string = get_object_string_();
+  if (!object_string.empty()) object_string = " " + object_string;
+  std::string message = make_string("$you $(cv?stop:stops) $verbing $the_foo.");
   the_message_log.add(message);
 }
 
 void Action::print_message_finish_() const
 {
-  StringDisplay object_string = get_object_string_();
-  if (!object_string.empty()) object_string = L" " + object_string;
-  StringDisplay message = make_string(L"$you $(cv?finish:finishes) $verbing $the_foo.");
+  std::string object_string = get_object_string_();
+  if (!object_string.empty()) object_string = " " + object_string;
+  std::string message = make_string("$you $(cv?finish:finishes) $verbing $the_foo.");
   the_message_log.add(message);
 }
 
 void Action::print_message_cant_() const
 {
-  StringDisplay message = make_string(L"$you can't $verb that!");
+  std::string message = make_string("$you can't $verb that!");
   the_message_log.add(message);
 }
 
-void Action::register_action_as(StringKey key, ActionCreator creator)
+void Action::register_action_as(std::string key, ActionCreator creator)
 {
   Action::action_map.insert({ key, creator });
 }
 
-bool Action::exists(StringKey key)
+bool Action::exists(std::string key)
 {
   return Action::action_map.count(key) != 0;
 }
 
-std::unique_ptr<Action> Action::create(StringKey key, ThingId subject)
+std::unique_ptr<Action> Action::create(std::string key, ThingId subject)
 {
   if (Action::action_map.count(key) != 0)
   {
@@ -500,138 +500,138 @@ std::unique_ptr<Action> Action::create(StringKey key, ThingId subject)
   }
 }
 
-StringDisplay Action::make_string(StringDisplay pattern) const
+std::string Action::make_string(std::string pattern) const
 {
   return make_string(pattern, {});
 }
 
 /// @todo Implement more tokens; in particular, implement optional string vector.
-StringDisplay Action::make_string(StringDisplay pattern, std::vector<StringDisplay> optional_strings) const
+std::string Action::make_string(std::string pattern, std::vector<std::string> optional_strings) const
 {
-  StringDisplay new_string = replace_tokens(pattern,
-                                            [&](StringDisplay token) -> StringDisplay
+  std::string new_string = replace_tokens(pattern,
+                                            [&](std::string token) -> std::string
   {
-    if (token == L"are")
+    if (token == "are")
     {
-      return get_subject()->choose_verb(L"are", L"is");
+      return get_subject()->choose_verb("are", "is");
     }
-    if (token == L"were")
+    if (token == "were")
     {
-      return get_subject()->choose_verb(L"were", L"was");
+      return get_subject()->choose_verb("were", "was");
     }
-    if (token == L"do")
+    if (token == "do")
     {
-      return get_subject()->choose_verb(L"do", L"does");
+      return get_subject()->choose_verb("do", "does");
     }
-    if (token == L"get")
+    if (token == "get")
     {
-      return get_subject()->choose_verb(L"get", L"gets");
+      return get_subject()->choose_verb("get", "gets");
     }
-    if (token == L"have")
+    if (token == "have")
     {
-      return get_subject()->choose_verb(L"have", L"has");
+      return get_subject()->choose_verb("have", "has");
     }
-    if (token == L"seem")
+    if (token == "seem")
     {
-      return get_subject()->choose_verb(L"seem", L"seems");
+      return get_subject()->choose_verb("seem", "seems");
     }
-    if (token == L"try")
+    if (token == "try")
     {
-      return get_subject()->choose_verb(L"try", L"tries");
-    }
-
-    if ((token == L"foo_is") || (token == L"foois"))
-    {
-      return get_object()->choose_verb(L"are", L"is");
-    }
-    if ((token == L"foo_has") || (token == L"foohas"))
-    {
-      return get_object()->choose_verb(L"have", L"has");
+      return get_subject()->choose_verb("try", "tries");
     }
 
-    if ((token == L"the_foo") || (token == L"thefoo"))
+    if ((token == "foo_is") || (token == "foois"))
+    {
+      return get_object()->choose_verb("are", "is");
+    }
+    if ((token == "foo_has") || (token == "foohas"))
+    {
+      return get_object()->choose_verb("have", "has");
+    }
+
+    if ((token == "the_foo") || (token == "thefoo"))
     {
       return get_object_string_();
     }
 
-    if ((token == L"the_foos_location") || (token == L"thefooslocation"))
+    if ((token == "the_foos_location") || (token == "thefooslocation"))
     {
       return get_object()->get_location()->get_identifying_string(ArticleChoice::Definite);
     }
 
-    if ((token == L"the_target_thing") || (token == L"thetargetthing"))
+    if ((token == "the_target_thing") || (token == "thetargetthing"))
     {
       return get_target_string_();
     }
 
-    if (token == L"fooself")
+    if (token == "fooself")
     {
       return get_object()->get_self_or_identifying_string(get_subject(), ArticleChoice::Definite);
     }
 
-    if ((token == L"subj_pro_foo") || (token == L"subjprofoo"))
+    if ((token == "subj_pro_foo") || (token == "subjprofoo"))
     {
       return get_object()->get_subject_pronoun();
     }
 
-    if ((token == L"obj_pro_foo") || (token == L"objprofoo"))
+    if ((token == "obj_pro_foo") || (token == "objprofoo"))
     {
       return get_object()->get_object_pronoun();
     }
 
-    if (token == L"verb")
+    if (token == "verb")
     {
       return get_verb();
     }
-    if (token == L"verb3")
+    if (token == "verb3")
     {
       return get_verb3();
     }
-    if (token == L"verbed")
+    if (token == "verbed")
     {
       return get_verbed();
     }
-    if (token == L"verbing")
+    if (token == "verbing")
     {
       return get_verbing();
     }
-    if ((token == L"verb_pp") || (token == L"verbpp"))
+    if ((token == "verb_pp") || (token == "verbpp"))
     {
       return get_verb_pp();
     }
-    if (token == L"cverb")
+    if (token == "cverb")
     {
       return (get_subject()->is_third_person() ? get_verb() : get_verb3());
     }
-    if (token == L"objcverb")
+    if (token == "objcverb")
     {
       return (get_object()->is_third_person() ? get_verb() : get_verb3());
     }
 
-    if (token == L"you")
+    if (token == "you")
     {
       return get_subject()->get_you_or_identifying_string();
     }
-    if ((token == L"you_subj") || (token == L"yousubj"))
+    if ((token == "you_subj") || (token == "yousubj"))
     {
       return get_subject()->get_subject_pronoun();
     }
-    if ((token == L"you_obj") || (token == L"youobj"))
+    if ((token == "you_obj") || (token == "youobj"))
     {
       return get_subject()->get_object_pronoun();
     }
-    if (token == L"your")
+    if (token == "your")
     {
       return get_subject()->get_possessive();
     }
-    if (token == L"yourself")
+    if (token == "yourself")
     {
       return get_subject()->get_reflexive_pronoun();
     }
 
-    if (token == L"targdir")
+    if (token == "targdir")
     {
-      std::wstringstream ss;
+      std::stringstream ss;
       ss << get_target_direction();
       return ss.str();
     }
@@ -659,32 +659,32 @@ StringDisplay Action::make_string(StringDisplay pattern, std::vector<StringDispl
     }
 
     // Nothing else matched, return default.
-    return L"(" + token + L")";
+    return "(" + token + ")";
   },
-                                            [&](StringDisplay token) -> bool
+                                            [&](std::string token) -> bool
   {
-    if ((token == L"cv") || (token == L"subjcv") || (token == L"subj_cv"))
+    if ((token == "cv") || (token == "subjcv") || (token == "subj_cv"))
     {
       return get_subject()->is_third_person();
     }
-    if ((token == L"objcv") || (token == L"obj_cv") || (token == L"foocv") || (token == L"foo_cv"))
+    if ((token == "objcv") || (token == "obj_cv") || (token == "foocv") || (token == "foo_cv"))
     {
       return get_object()->is_third_person();
     }
-    if ((token == L"is_player") || (token == L"isplayer"))
+    if ((token == "is_player") || (token == "isplayer"))
     {
       return get_subject()->is_player();
     }
-    if ((token == L"targcv") || (token == L"targ_cv"))
+    if ((token == "targcv") || (token == "targ_cv"))
     {
       return get_target_thing()->is_third_person();
     }
 
-    if (token == L"true")
+    if (token == "true")
     {
       return true;
     }
-    if (token == L"false")
+    if (token == "false")
     {
       return false;
     }

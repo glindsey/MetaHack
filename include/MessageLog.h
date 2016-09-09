@@ -17,13 +17,13 @@ public:
 
   /// Add a message to the message log.
   /// The message added is automatically capitalized if it isn't already.
-  void add(StringDisplay message);
+  void add(std::string message);
 
   /// Get the maximum size of the message queue.
   unsigned int get_message_queue_size();
 
   /// Get a reference to the message queue.
-  std::deque<StringDisplay>& get_message_queue();
+  std::deque<std::string>& get_message_queue();
 
   /// Get the key buffer used for entering debug commands.
   KeyBuffer& get_key_buffer();

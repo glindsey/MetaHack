@@ -352,8 +352,7 @@ int App::LUA_redirect_print(lua_State* L)
     if (lua_isstring(L, i))
     {
       std::string str = lua_tostring(L, i);
-      StringDisplay wstr = utf8_to_wstring(str);
-      the_message_log.add(wstr);
+      the_message_log.add(str);
     }
     else
     {
@@ -375,8 +374,7 @@ int App::LUA_add(lua_State* L)
   else
   {
     std::string str = lua_tostring(L, 1);
-    StringDisplay wstr = utf8_to_wstring(str);
-    the_message_log.add(wstr);
+    the_message_log.add(str);
   }
 
   return 0;

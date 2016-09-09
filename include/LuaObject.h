@@ -21,7 +21,7 @@ public:
   virtual ~Lua();
 
   /// Register a function with Lua.
-  void register_function(StringKey name, lua_CFunction func);
+  void register_function(std::string name, lua_CFunction func);
 
   /// Execute a particular file.
   void do_file(FileName filename);
@@ -31,7 +31,7 @@ public:
 
   /// Sets a global to a particular integer value.
   /// If the global currently exists it will be overwritten.
-  void set_global(StringKey name, lua_Integer value);
+  void set_global(std::string name, lua_Integer value);
 
   /// Adds an enumerated type into Lua.
   ///
@@ -110,7 +110,7 @@ public:
   /// Attempts to deduce the type of a boost::any and push the required
   /// values onto the Lua stack.
   /// Supported types include:
-  ///  * StringKey
+  ///  * std::string
   ///  * bool
   ///  * double
   ///  * Vec2i
@@ -286,19 +286,6 @@ public:
     return return_value;
   }
 
-  template <> std::wstring pop_value()
-  {
-    std::wstring return_value;
-    char const* return_ptr = lua_tostring(L_, -1);
-    if (return_ptr != nullptr)
-    {
-      std::string return_string = std::string(return_ptr);
-      return_value = utf8_to_wstring(return_string);
-    }
-    lua_pop(L_, 1);
-    return return_value;
-  }
-
   template <> Vec2u pop_value()
   {
     Vec2u return_value = Vec2u(lua_tointeger(L_, -2),
@@ -338,12 +325,12 @@ public:
   template<> unsigned int stack_slots<void>() { return 0; }
   template<> unsigned int stack_slots<unsigned int>() { return 1; }
   template<> unsigned int stack_slots<int>() { return 1; }
+  template<> unsigned int stack_slots<int64_t>() { return 1; }
   template<> unsigned int stack_slots<ThingId>() { return 1; }
   template<> unsigned int stack_slots<float>() { return 1; }
   template<> unsigned int stack_slots<double>() { return 1; }
   template<> unsigned int stack_slots<bool>() { return 1; }
   template<> unsigned int stack_slots<std::string>() { return 1; }
-  template<> unsigned int stack_slots<std::wstring>() { return 1; }
   template<> unsigned int stack_slots<Vec2u>() { return 2; }
   template<> unsigned int stack_slots<sf::Color>() { return 4; }
   template<> unsigned int stack_slots<ActionResult>() { return 1; }
@@ -371,7 +358,7 @@ public:
                                  ResultType default_result = ResultType())
   {
     ResultType return_value = default_result;
-    StringKey name = caller->get_type();
+    std::string name = caller->get_type();
 
     int start_stack = lua_gettop(L_);
 
@@ -449,7 +436,7 @@ public:
   ///                       (defaults to default constructor of type).
   /// @return       The value of the intrinsic.
   template < typename ReturnType >
-  ReturnType Lua::get_type_intrinsic(StringKey type, StringKey name, ReturnType default_value = ReturnType())
+  ReturnType Lua::get_type_intrinsic(std::string type, std::string name, ReturnType default_value = ReturnType())
   {
     ReturnType return_value = default_value;
 
@@ -515,7 +502,7 @@ public:
   /// @param name   Name of intrinsic to set.
   /// @param value  Value to set intrinsic to.
   template < typename ValueType >
-  void set_type_intrinsic(StringKey type, StringKey name, ValueType value)
+  void set_type_intrinsic(std::string type, std::string name, ValueType value)
   {
     int start_stack = lua_gettop(L_);
 

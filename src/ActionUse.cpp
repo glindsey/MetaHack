@@ -4,28 +4,28 @@
 #include "Thing.h"
 #include "ThingId.h"
 
-ACTION_SRC_BOILERPLATE(ActionUse, "use", L"use")
+ACTION_SRC_BOILERPLATE(ActionUse, "use", "use")
 
 Action::StateResult ActionUse::do_prebegin_work_(AnyMap& params)
 {
-  StringDisplay message;
+  std::string message;
   auto subject = get_subject();
   auto object = get_object();
 
   // Check that it is not us!
   if (subject == object)
   {
-    message = YOU_TRY + L" to use " + THE_FOO + L".";
+    message = YOU_TRY + " to use " + THE_FOO + ".";
     the_message_log.add(message);
 
     if (IS_PLAYER)
     {
-      message = YOU_ARE + L" already using " + YOURSELF + L" to the best of " + YOUR + L" ability.";
+      message = YOU_ARE + " already using " + YOURSELF + " to the best of " + YOUR + " ability.";
       the_message_log.add(message);
     }
     else
     {
-      message = L"That seriously shouldn't happen!";
+      message = "That seriously shouldn't happen!";
       the_message_log.add(message);
 
       CLOG(WARNING, "Action") << "NPC tried to use self!?";
@@ -40,7 +40,7 @@ Action::StateResult ActionUse::do_prebegin_work_(AnyMap& params)
 Action::StateResult ActionUse::do_begin_work_(AnyMap& params)
 {
   StateResult result = StateResult::Failure();
-  StringDisplay message;
+  std::string message;
   auto subject = get_subject();
   auto object = get_object();
 
@@ -54,7 +54,7 @@ Action::StateResult ActionUse::do_begin_work_(AnyMap& params)
 Action::StateResult ActionUse::do_finish_work_(AnyMap& params)
 {
   StateResult result = StateResult::Failure();
-  StringDisplay message;
+  std::string message;
   auto subject = get_subject();
   auto object = get_object();
 
@@ -64,7 +64,7 @@ Action::StateResult ActionUse::do_finish_work_(AnyMap& params)
   switch (object->be_object_of(*this, subject))
   {
     case ActionResult::SuccessDestroyed:
-      message = THE_FOO + OBJCV(L" disintegrate", L" disintegrates") + L" after " + YOU + CV(L" use ", L" uses ") + OBJ_PRO_FOO + L"!";
+      message = THE_FOO + OBJCV(" disintegrate", " disintegrates") + " after " + YOU + CV(" use ", " uses ") + OBJ_PRO_FOO + "!";
       the_message_log.add(message);
 
       object->destroy();

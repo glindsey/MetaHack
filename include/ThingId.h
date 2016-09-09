@@ -55,14 +55,9 @@ public:
     return m_id;
   }
 
-  operator StringKey() const
+  operator std::string() const
   {
     return str(m_id);
-  }
-
-  operator StringDisplay() const
-  {
-    return wstr(m_id);
   }
 
   bool operator<(ThingId const& other) const

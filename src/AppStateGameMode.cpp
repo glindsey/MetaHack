@@ -76,12 +76,11 @@ void AppStateGameMode::execute()
   if (debug_buffer.get_enter())
   {
     /// Call the Lua interpreter with the command.
-    StringDisplay contents = debug_buffer.get_buffer();
-    the_message_log.add(L"> " + contents);
-    std::string luaCommand = wstring_to_utf8(contents);
+    std::string luaCommand = debug_buffer.get_buffer();
+    the_message_log.add("> " + luaCommand);
     if (luaL_dostring(the_lua_state, luaCommand.c_str()))
     {
-      StringDisplay result = utf8_to_wstring(lua_tostring(the_lua_state, -1));
+      std::string result = lua_tostring(the_lua_state, -1);
       the_message_log.add(result);
     }
 
@@ -148,9 +147,9 @@ SFMLEventResult AppStateGameMode::handle_sfml_event(sf::Event& event)
   return result;
 }
 
-StringKey const& AppStateGameMode::get_name()
+std::string const& AppStateGameMode::get_name()
 {
-  static StringKey name = "AppStateGameMode";
+  static std::string name = "AppStateGameMode";
   return name;
 }
 
@@ -158,7 +157,7 @@ bool AppStateGameMode::initialize()
 {
   // Create the player.
   ThingId player = get_game_state().get_things().create("Human");
-  player->set_proper_name(L"John Doe");
+  player->set_proper_name("John Doe");
   get_game_state().set_player(player);
 
   // Create the game map.
@@ -193,7 +192,7 @@ bool AppStateGameMode::initialize()
   m_map_view->update_tiles(player);
   m_map_view->update_things(player, 0);
 
-  the_message_log.add(L"Welcome to the Etheric Catacombs!");
+  the_message_log.add("Welcome to the Etheric Catacombs!");
 
   return true;
 }
@@ -325,7 +324,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
         }
         else if (key.code == sf::Keyboard::Key::Escape)
         {
-          the_message_log.add(L"Press CTRL-ALT-Q to quit the game.");
+          the_message_log.add("Press CTRL-ALT-Q to quit the game.");
           result = SFMLEventResult::Handled;
         }
       }
@@ -375,13 +374,13 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             unsigned int slot_count = inventory_area.get_selected_slot_count();
             if (slot_count < 1)
             {
-              the_message_log.add(L"You have to have something selected "
-                                  L"before you can choose a quantity.");
+              the_message_log.add("You have to have something selected "
+                                  "before you can choose a quantity.");
             }
             else if (slot_count > 1)
             {
-              the_message_log.add(L"You can only have one thing selected "
-                                  L"when choosing a quantity.");
+              the_message_log.add("You can only have one thing selected "
+                                  "when choosing a quantity.");
             }
             else
             {
@@ -398,13 +397,13 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             unsigned int slot_count = inventory_area.get_selected_slot_count();
             if (slot_count < 1)
             {
-              the_message_log.add(L"You have to have something selected "
-                                  L"before you can choose a quantity.");
+              the_message_log.add("You have to have something selected "
+                                  "before you can choose a quantity.");
             }
             else if (slot_count > 1)
             {
-              the_message_log.add(L"You can only have one thing selected "
-                                  L"when choosing a quantity.");
+              the_message_log.add("You can only have one thing selected "
+                                  "when choosing a quantity.");
             }
             else
             {
@@ -424,7 +423,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             }
             else
             {
-              the_message_log.add(L"You are at the top of the inventory tree.");
+              the_message_log.add("You are at the top of the inventory tree.");
             }
           }
           break;
@@ -449,27 +448,27 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
                   else // if (container.is_locked())
                   {
                     the_message_log.add(thing->get_identifying_string() +
-                                        thing->choose_verb(L" are", L" is") +
-                                        L" locked.");
+                                        thing->choose_verb(" are", " is") +
+                                        " locked.");
                   }
                 }
                 else // if (!container.is_open())
                 {
                   the_message_log.add(thing->get_identifying_string() +
-                                      thing->choose_verb(L" are", L" is") +
-                                      L" closed.");
+                                      thing->choose_verb(" are", " is") +
+                                      " closed.");
                 }
               }
               else // if (!thing.is_container())
               {
                 the_message_log.add(thing->get_identifying_string() +
-                                    thing->choose_verb(L" are", L" is") +
-                                    L" not a container.");
+                                    thing->choose_verb(" are", " is") +
+                                    " not a container.");
               }
             }
             else
             {
-              the_message_log.add(L"Nothing is currently selected.");
+              the_message_log.add("Nothing is currently selected.");
             }
             break;
           }
@@ -529,7 +528,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::A:    // Attire
             if (things.size() == 0)
             {
-              the_message_log.add(L"Please choose the item(s) to wear first.");
+              the_message_log.add("Please choose the item(s) to wear first.");
             }
             else
             {
@@ -551,7 +550,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             {
               // No item specified, so ask for a direction.
               m_action_in_progress.reset(new ActionClose(player));
-              the_message_log.add(L"Choose a direction to close.");
+              the_message_log.add("Choose a direction to close.");
               m_current_input_state = GameInputState::TargetSelection;
               inventory_area.clear_selected_slots();
             }
@@ -574,7 +573,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::D:    // Drop
             if (things.size() == 0)
             {
-              the_message_log.add(L"Please choose the item(s) to drop first.");
+              the_message_log.add("Please choose the item(s) to drop first.");
             }
             else
             {
@@ -594,7 +593,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::E:
             if (things.size() == 0)
             {
-              the_message_log.add(L"Please choose the item(s) to eat first.");
+              the_message_log.add("Please choose the item(s) to eat first.");
             }
             else
             {
@@ -614,17 +613,17 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::F:
             if (things.size() == 0)
             {
-              the_message_log.add(L"Please select the item to fill first.");
+              the_message_log.add("Please select the item to fill first.");
             }
             else if (things.size() > 1)
             {
-              the_message_log.add(L"You can only fill one item at a time.");
+              the_message_log.add("You can only fill one item at a time.");
             }
             else
             {
               m_action_in_progress.reset(new ActionFill(player));
               m_action_in_progress->set_object(things.front());
-              the_message_log.add(L"Choose an item or direction to fill from.");
+              the_message_log.add("Choose an item or direction to fill from.");
               m_current_input_state = GameInputState::TargetSelection;
               inventory_area.clear_selected_slots();
             }
@@ -635,7 +634,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::G:
             if (things.size() == 0)
             {
-              the_message_log.add(L"Please select the item(s) to pick up first.");
+              the_message_log.add("Please select the item(s) to pick up first.");
             }
             else
             {
@@ -655,17 +654,17 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::H:
             if (things.size() == 0)
             {
-              the_message_log.add(L"Please select the item you want to hurl first.");
+              the_message_log.add("Please select the item you want to hurl first.");
             }
             else if (things.size() > 1)
             {
-              the_message_log.add(L"You can only hurl one item at once.");
+              the_message_log.add("You can only hurl one item at once.");
             }
             else
             {
               m_action_in_progress.reset(new ActionHurl(player));
               m_action_in_progress->set_object(things.front());
-              the_message_log.add(L"Choose a direction to hurl the item.");
+              the_message_log.add("Choose a direction to hurl the item.");
               m_current_input_state = GameInputState::TargetSelection;
               inventory_area.clear_selected_slots();
             }
@@ -676,7 +675,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::I:
             if (things.size() > 1)
             {
-              the_message_log.add(L"You can only write with one item at a time.");
+              the_message_log.add("You can only write with one item at a time.");
             }
             else
             {
@@ -686,7 +685,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
                 m_action_in_progress->set_object(things.front());
               }
 
-              the_message_log.add(L"Choose an item or direction to write on.");
+              the_message_log.add("Choose an item or direction to write on.");
               m_current_input_state = GameInputState::TargetSelection;
               inventory_area.clear_selected_slots();
             }
@@ -697,11 +696,11 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::M:
             if (things.size() == 0)
             {
-              the_message_log.add(L"Please select the two items you want to mix together first.");
+              the_message_log.add("Please select the two items you want to mix together first.");
             }
             else if (things.size() != 2)
             {
-              the_message_log.add(L"You must select exactly two items to mix together.");
+              the_message_log.add("You must select exactly two items to mix together.");
             }
             else
             {
@@ -719,7 +718,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             {
               // No item specified, so ask for a direction.
               m_action_in_progress.reset(new ActionOpen(player));
-              the_message_log.add(L"Choose a direction to open.");
+              the_message_log.add("Choose a direction to open.");
               m_current_input_state = GameInputState::TargetSelection;
               inventory_area.clear_selected_slots();
             }
@@ -742,13 +741,13 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::P:
             if (things.size() == 0)
             {
-              the_message_log.add(L"Please select the item(s) you want to store first.");
+              the_message_log.add("Please select the item(s) you want to store first.");
             }
             else
             {
               m_action_in_progress.reset(new ActionPutInto(player));
               m_action_in_progress->set_objects(things);
-              the_message_log.add(L"Choose a container to put the item(s) into.");
+              the_message_log.add("Choose a container to put the item(s) into.");
               m_current_input_state = GameInputState::TargetSelection;
               inventory_area.clear_selected_slots();
             }
@@ -759,7 +758,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::Q:
             if (things.size() == 0)
             {
-              the_message_log.add(L"Please select the item(s) you want to quaff from first.");
+              the_message_log.add("Please select the item(s) you want to quaff from first.");
             }
             else
             {
@@ -779,7 +778,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::R:
             if (things.size() == 0)
             {
-              the_message_log.add(L"Please select the item(s) you want to read first.");
+              the_message_log.add("Please select the item(s) you want to read first.");
             }
             else
             {
@@ -801,11 +800,11 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             /// if no item is selected.
             if (things.size() < 1)
             {
-              the_message_log.add(L"Please choose the item to shoot first.");
+              the_message_log.add("Please choose the item to shoot first.");
             }
             if (things.size() > 1)
             {
-              the_message_log.add(L"You can only shoot one item at once.");
+              the_message_log.add("You can only shoot one item at once.");
             }
             else
             {
@@ -813,7 +812,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
               ///       Otherwise, wield the selected item and fire it.
               m_action_in_progress.reset(new ActionShoot(player));
               m_action_in_progress->set_object(things.front());
-              the_message_log.add(L"Choose a direction to shoot.");
+              the_message_log.add("Choose a direction to shoot.");
               m_current_input_state = GameInputState::TargetSelection;
               inventory_area.clear_selected_slots();
             }
@@ -824,7 +823,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::T:
             if (things.size() == 0)
             {
-              the_message_log.add(L"Please select the item(s) to take out first.");
+              the_message_log.add("Please select the item(s) to take out first.");
             }
             else
             {
@@ -841,7 +840,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::U:
             if (things.size() == 0)
             {
-              the_message_log.add(L"Please choose the item to use first.");
+              the_message_log.add("Please choose the item to use first.");
             }
             else
             {
@@ -861,11 +860,11 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::W:
             if (things.size() == 0)
             {
-              the_message_log.add(L"Please choose the item to wield first.");
+              the_message_log.add("Please choose the item to wield first.");
             }
             else if (things.size() > 1)
             {
-              the_message_log.add(L"You may only wield one item at a time.");
+              the_message_log.add("You may only wield one item at a time.");
             }
             else
             {
@@ -884,13 +883,13 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             {
               // No item specified, so ask for a direction.
               m_action_in_progress.reset(new ActionAttack(player));
-              the_message_log.add(L"Choose a direction to attack.");
+              the_message_log.add("Choose a direction to attack.");
               m_current_input_state = GameInputState::TargetSelection;
               inventory_area.clear_selected_slots();
             }
             else if (things.size() > 1)
             {
-              the_message_log.add(L"You can only attack one item at once.");
+              the_message_log.add("You can only attack one item at once.");
             }
             else
             {
@@ -1071,7 +1070,7 @@ SFMLEventResult AppStateGameMode::handle_key_press_target_selection(ThingId play
 
   if (!key.alt && !key.control && key.code == sf::Keyboard::Key::Escape)
   {
-    the_message_log.add(L"Aborted.");
+    the_message_log.add("Aborted.");
     m_inventory_area_shows_player = false;
     reset_inventory_area();
     m_current_input_state = GameInputState::Map;

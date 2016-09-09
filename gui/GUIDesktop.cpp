@@ -7,7 +7,7 @@
 
 namespace metagui
 {
-  Desktop::Desktop(StringKey name, Vec2u size)
+  Desktop::Desktop(std::string name, Vec2u size)
     :
     Object(name, Vec2i(0, 0), size)
   {}

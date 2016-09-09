@@ -4,11 +4,11 @@
 #include "Thing.h"
 #include "ThingId.h"
 
-ACTION_SRC_BOILERPLATE(ActionTakeOut, "takeout", L"remove")
+ACTION_SRC_BOILERPLATE(ActionTakeOut, "takeout", "remove")
 
 Action::StateResult ActionTakeOut::do_prebegin_work_(AnyMap& params)
 {
-  StringDisplay message;
+  std::string message;
   auto subject = get_subject();
   auto object = get_object();
   auto container = object->get_location();
@@ -25,13 +25,13 @@ Action::StateResult ActionTakeOut::do_prebegin_work_(AnyMap& params)
     if (IS_PLAYER)
     {
       /// @todo Maybe allow player to voluntarily exit a container?
-      message = L"I'm afraid you can't do that.  "
-        L"(At least, not in this version...)";
+      message = "I'm afraid you can't do that.  "
+        "(At least, not in this version...)";
     }
     else
     {
-      message = YOU_TRY + L" to take " + YOURSELF +
-        L"out, which seriously shouldn't happen.";
+      message = YOU_TRY + " to take " + YOURSELF +
+        "out, which seriously shouldn't happen.";
       CLOG(WARNING, "Action") << "NPC tried to take self out!?";
     }
     the_message_log.add(message);
@@ -48,7 +48,7 @@ Action::StateResult ActionTakeOut::do_prebegin_work_(AnyMap& params)
     //  " from its container.";
     //the_message_log.add(message);
 
-    message = L"But " + THE_FOO + L" is not inside a container!";
+    message = "But " + THE_FOO + " is not inside a container!";
     the_message_log.add(message);
 
     return StateResult::Failure();
@@ -59,7 +59,7 @@ Action::StateResult ActionTakeOut::do_prebegin_work_(AnyMap& params)
   {
     print_message_try_();
 
-    message = YOU + L" cannot reach " + THE_FOO + L".";
+    message = YOU + " cannot reach " + THE_FOO + ".";
     the_message_log.add(message);
 
     return StateResult::Failure();
@@ -72,7 +72,7 @@ Action::StateResult ActionTakeOut::do_begin_work_(AnyMap& params)
 {
   /// @todo Handle taking out a certain quantity of an item.
   Action::StateResult result = StateResult::Failure();
-  StringDisplay message;
+  std::string message;
   auto subject = get_subject();
   auto object = get_object();
   auto container = object->get_location();
@@ -92,7 +92,7 @@ Action::StateResult ActionTakeOut::do_begin_work_(AnyMap& params)
     }
     else
     {
-      message = YOU + L" could not take " + get_object_string_() + L" out of " + get_target_string_() + L" for some inexplicable reason.";
+      message = YOU + " could not take " + get_object_string_() + " out of " + get_target_string_() + " for some inexplicable reason.";
       the_message_log.add(message);
 
       MAJOR_ERROR("Could not move Thing out of Container even though be_object_of returned Success");
@@ -114,12 +114,12 @@ Action::StateResult ActionTakeOut::do_abort_work_(AnyMap& params)
 
 void ActionTakeOut::print_message_try_() const
 {
-  StringDisplay message = YOU_TRY + L" to " + VERB + L" " + get_object_string_() + L" from " + get_target_string_() + L".";
+  std::string message = YOU_TRY + " to " + VERB + " " + get_object_string_() + " from " + get_target_string_() + ".";
   the_message_log.add(message);
 }
 
 void ActionTakeOut::print_message_do_() const
 {
-  StringDisplay message = YOU + L" " + CV(VERB, VERB3) + L" " + get_object_string_() + L" from " + get_target_string_() + L".";
+  std::string message = YOU + " " + CV(VERB, VERB3) + " " + get_object_string_() + " from " + get_target_string_() + ".";
   the_message_log.add(message);
 }

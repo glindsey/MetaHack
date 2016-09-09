@@ -4,11 +4,11 @@
 #include "Thing.h"
 #include "ThingId.h"
 
-ACTION_SRC_BOILERPLATE(ActionRead, "read", L"read")
+ACTION_SRC_BOILERPLATE(ActionRead, "read", "read")
 
 Action::StateResult ActionRead::do_prebegin_work_(AnyMap& params)
 {
-  StringDisplay message;
+  std::string message;
   auto subject = get_subject();
   auto object = get_object();
 
@@ -16,7 +16,7 @@ Action::StateResult ActionRead::do_prebegin_work_(AnyMap& params)
   {
     print_message_try_();
 
-    message = make_string(L"$you $are not smart enough to read $fooself.");
+    message = make_string("$you $are not smart enough to read $fooself.");
     the_message_log.add(message);
 
     return StateResult::Failure();
@@ -28,7 +28,7 @@ Action::StateResult ActionRead::do_prebegin_work_(AnyMap& params)
 Action::StateResult ActionRead::do_begin_work_(AnyMap& params)
 {
   StateResult result = StateResult::Failure();
-  StringDisplay message;
+  std::string message;
   auto subject = get_subject();
   auto object = get_object();
 
@@ -42,7 +42,7 @@ Action::StateResult ActionRead::do_begin_work_(AnyMap& params)
 Action::StateResult ActionRead::do_finish_work_(AnyMap& params)
 {
   StateResult result = StateResult::Failure();
-  StringDisplay message;
+  std::string message;
   auto subject = get_subject();
   auto object = get_object();
 
@@ -52,7 +52,7 @@ Action::StateResult ActionRead::do_finish_work_(AnyMap& params)
   switch (object->be_object_of(*this, subject))
   {
     case ActionResult::SuccessDestroyed:
-      message = make_string(L"$the_foo $(objcv?disintegrate:disintegrates) after $you $cverb $obj_pro_foo!");
+      message = make_string("$the_foo $(objcv?disintegrate:disintegrates) after $you $cverb $obj_pro_foo!");
       the_message_log.add(message);
 
       object->destroy();
@@ -83,6 +83,6 @@ Action::StateResult ActionRead::do_abort_work_(AnyMap& params)
 
 void ActionRead::print_message_cant_() const
 {
-  StringDisplay message = make_string(L"$the_foo $foo_has no writing to read.");
+  std::string message = make_string("$the_foo $foo_has no writing to read.");
   the_message_log.add(message);
 }

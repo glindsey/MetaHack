@@ -4,16 +4,16 @@
 #include "Thing.h"
 #include "ThingId.h"
 
-ACTION_SRC_BOILERPLATE(ActionUnwield, "unwield", L"unwield")
+ACTION_SRC_BOILERPLATE(ActionUnwield, "unwield", "unwield")
 
 Action::StateResult ActionUnwield::do_prebegin_work_(AnyMap& params)
 {
-  StringDisplay message;
+  std::string message;
   auto subject = get_subject();
 
   /// @todo Support wielding in other hand(s).
   unsigned int hand = 0;
-  StringDisplay bodypart_desc =
+  std::string bodypart_desc =
     subject->get_bodypart_description(BodyPart::Hand, hand);
 
   set_object(subject->get_wielding_in(hand));
@@ -21,7 +21,7 @@ Action::StateResult ActionUnwield::do_prebegin_work_(AnyMap& params)
 
   if (object == ThingId::Mu())
   {
-    message = make_string(L"$you $are not currently wielding anything!");
+    message = make_string("$you $are not currently wielding anything!");
     the_message_log.add(message);
     return StateResult::Failure();
   }
@@ -32,21 +32,21 @@ Action::StateResult ActionUnwield::do_prebegin_work_(AnyMap& params)
 Action::StateResult ActionUnwield::do_begin_work_(AnyMap& params)
 {
   Action::StateResult result = StateResult::Failure();
-  StringDisplay message;
+  std::string message;
 
   auto subject = get_subject();
   auto object = get_object();
 
   /// @todo Support wielding in other hand(s).
   unsigned int hand = 0;
-  StringDisplay bodypart_desc =
+  std::string bodypart_desc =
     subject->get_bodypart_description(BodyPart::Hand, hand);
 
   // Check if the wielded item is bound.
   if (object->get_modified_property<bool>("bound"))
   {
-    StringDisplay message;
-    message = make_string(L"$you cannot unwield $foo; it is magically bound to $your $0!", { bodypart_desc });
+    std::string message;
+    message = make_string("$you cannot unwield $foo; it is magically bound to $your $0!", { bodypart_desc });
     the_message_log.add(message);
 
     // Premature exit.
@@ -57,8 +57,8 @@ Action::StateResult ActionUnwield::do_begin_work_(AnyMap& params)
   auto lua_result = object->be_object_of(*this, subject);
   if (object->be_object_of(*this, subject) == ActionResult::Success)
   {
-    StringDisplay message;
-    message = make_string(L"$you unwield $foo. $you are now wielding nothing in $your $0.", { bodypart_desc });
+    std::string message;
+    message = make_string("$you unwield $foo. $you are now wielding nothing in $your $0.", { bodypart_desc });
     subject->set_wielded(ThingId::Mu(), hand);
   }
 

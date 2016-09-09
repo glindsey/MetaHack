@@ -26,6 +26,10 @@ int main(int argc, char* argv[])
     try
 #endif
     {
+      // Generate system default locale and set it globally.
+      bl::generator gen;
+      std::locale::global(gen("en_US.UTF-8"));
+      
       // Check to make sure shaders are available.
       if (!sf::Shader::isAvailable())
       {
@@ -53,6 +57,8 @@ int main(int argc, char* argv[])
     }
 #endif
   }
+
+  /// @todo Handle ICU cleanup gracefully; doesn't look like boost::locale takes care of it.
 
   return EXIT_SUCCESS;
 }

@@ -13,7 +13,7 @@ public:
   virtual ~GameObject();
 
   /// Return this game object's description.
-  virtual StringDisplay get_display_name() const = 0;
+  virtual std::string get_display_name() const = 0;
 
 protected:
 private:

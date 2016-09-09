@@ -12,12 +12,12 @@ ModifiablePropertyDictionary::ModifiablePropertyDictionary()
 ModifiablePropertyDictionary::~ModifiablePropertyDictionary()
 {}
 
-void ModifiablePropertyDictionary::after_set_(StringKey key)
+void ModifiablePropertyDictionary::after_set_(std::string key)
 {
   m_modified_dictionary.erase(key);
 }
 
-unsigned int ModifiablePropertyDictionary::has_modifier_for(StringKey key) const
+unsigned int ModifiablePropertyDictionary::has_modifier_for(std::string key) const
 {
   if (m_modifiers.count(key) != 0)
   {
@@ -27,7 +27,7 @@ unsigned int ModifiablePropertyDictionary::has_modifier_for(StringKey key) const
   return 0;
 }
 
-unsigned int ModifiablePropertyDictionary::has_modifier_for(StringKey key, ThingId id) const
+unsigned int ModifiablePropertyDictionary::has_modifier_for(std::string key, ThingId id) const
 {
   if (m_modifiers.count(key) != 0)
   {
@@ -37,7 +37,7 @@ unsigned int ModifiablePropertyDictionary::has_modifier_for(StringKey key, Thing
   return 0;
 }
 
-bool ModifiablePropertyDictionary::add_modifier(StringKey key, ThingId id, unsigned int expiration_ticks)
+bool ModifiablePropertyDictionary::add_modifier(std::string key, ThingId id, unsigned int expiration_ticks)
 {
   if (m_modifiers.count(key) == 0)
   {
@@ -54,7 +54,7 @@ bool ModifiablePropertyDictionary::add_modifier(StringKey key, ThingId id, unsig
   return false;
 }
 
-unsigned int ModifiablePropertyDictionary::remove_modifier(StringKey key)
+unsigned int ModifiablePropertyDictionary::remove_modifier(std::string key)
 {
   if (m_modifiers.count(key) != 0)
   {
@@ -67,7 +67,7 @@ unsigned int ModifiablePropertyDictionary::remove_modifier(StringKey key)
   return 0;
 }
 
-unsigned int ModifiablePropertyDictionary::remove_modifier(StringKey key, ThingId id)
+unsigned int ModifiablePropertyDictionary::remove_modifier(std::string key, ThingId id)
 {
   if (m_modifiers.count(key) != 0)
   {
@@ -86,7 +86,7 @@ unsigned int ModifiablePropertyDictionary::remove_modifier(StringKey key, ThingI
   return 0;
 }
 
-void ModifiablePropertyDictionary::add_ticks(StringKey key, int ticks)
+void ModifiablePropertyDictionary::add_ticks(std::string key, int ticks)
 {
   for (auto& modifier_pair : m_modifiers)
   {

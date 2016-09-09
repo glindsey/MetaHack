@@ -24,26 +24,26 @@ class Metadata
   friend class MetadataCollection;
 
 public:
-  Metadata(MetadataCollection& collection, StringKey type);
+  Metadata(MetadataCollection& collection, std::string type);
   virtual ~Metadata();
 
   MetadataCollection& get_metadata_collection();
 
-  StringKey const& get_type() const;
+  std::string const& get_type() const;
 
   Vec2u get_tile_coords();
 
   template <typename ReturnType>
-  ReturnType get_intrinsic(StringKey name, ReturnType default_value = ReturnType())
+  ReturnType get_intrinsic(std::string name, ReturnType default_value = ReturnType())
   {
-    StringKey type = this->get_type();
+    std::string type = this->get_type();
     return the_lua_instance.get_type_intrinsic<ReturnType>(type, name, default_value);
   }
 
   template <typename ValueType>
-  void set_intrinsic(StringKey name, ValueType value)
+  void set_intrinsic(std::string name, ValueType value)
   {
-    StringKey type = this->get_type();
+    std::string type = this->get_type();
     the_lua_instance.set_type_intrinsic<ValueType>(type, name, value);
   }
 
@@ -54,7 +54,7 @@ private:
   MetadataCollection& m_collection;
 
   /// The type associated with this metadata.
-  StringKey m_type;
+  std::string m_type;
 };
 
 #endif // METADATA_H
