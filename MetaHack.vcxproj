@@ -366,6 +366,7 @@
     <ClInclude Include="include\StateMachine.h" />
     <ClInclude Include="include\StatusArea.h" />
     <ClInclude Include="include\stdafx.h" />
+    <ClInclude Include="include\StringDictionary.h" />
     <ClInclude Include="include\StringTransforms.h" />
     <ClInclude Include="include\Thing.h" />
     <ClInclude Include="include\ThingId.h" />
