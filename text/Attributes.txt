@@ -37,26 +37,26 @@ Counters
 
 Proficiencies
 =============
-	- Range from 0 (unskilled) to 4 (expert)	
 	- Named "proficiency_XXXXX" where XXXXX is the weapon category
 	- Affects damage done with a weapon
 	- Affects chance of landing a hit
 	- Affects chance of landing a critical hit
 	- Wielding an item that isn't technically a weapon always equates to a proficiency of 0
+    - Maybe not just for weapons? Could have proficiency for lockpicking, for example
 
 Attack Procedure
 ================
 	1) Determine if you were accurate enough to hit.
 		- For a WIELDED weapon:
 			- Proficiency of 0 = 50% chance of hitting
-			- Proficiency of 4 = 90% chance of hitting
-			- Accuracy Rating = (50 + (Proficiency * 10)) * Luck Factor = (42.5 to 103.5)
+			- Proficiency of 10 = 90% chance of hitting
+			- Accuracy Rating = (50 + (Proficiency * 4)) * Luck Factor = (42.5 to 103.5)
 		- For a THROWN or FIRED weapon:
 			- Proficiency of 0 = 10% chance of hitting
 			- Proficiency of 4 = 90% chance of hitting
-			- Accuracy Rating = (10 + (Proficiency * 20)) * Luck Factor = (8.5 to 103.5)
+			- Accuracy Rating = (10 + (Proficiency * 8)) * Luck Factor = (8.5 to 103.5)
 		- You hit if RAND(0, 100) is less than your accuracy rating.
-        
+
 	2) Determine if the enemy was quick enough to dodge/parry.
 		- For a WIELDED weapon:
 			- ((AGI * VIG) / 10) * Luck Factor = Dodge Rating (0 to 103.5)
@@ -69,15 +69,15 @@ Attack Procedure
 	3) Determine if the enemy's armor deflected the hit.
 		- Calculated by the individual Lua script for the armor.
 		- May be affected by the type of damage done (piercing, cutting, etc.)
-	
+
 	4) Determine the damage you did.
 		- Calculated by the individual Lua script for the weapon.
 		- May be multiplied by an attribute factor for certain weapons, e.g. large weapons do more damage with higher STR.
-	
+
 	5) Determine the damage deflected by the enemy's armor.
 		- Calculated by the individual Lua script for the armor.
 		- May be affected by the type of damage done (piercing, cutting, etc.)
-    
+
 Attributes
 ==========
 	- Range from 0 to 30
