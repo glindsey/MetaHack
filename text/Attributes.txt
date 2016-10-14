@@ -37,6 +37,7 @@ Counters
 
 Proficiencies
 =============
+	- Range from 0 (unskilled) to 10 (master)
 	- Named "proficiency_XXXXX" where XXXXX is the weapon category
 	- Affects damage done with a weapon
 	- Affects chance of landing a hit
