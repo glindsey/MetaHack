@@ -66,8 +66,9 @@ MEDIUM THINGS
 
 BIG THINGS
 ==========
-[ ] Introduce boost::locale into the codebase, use for properly handling strings.
-    - Doing this will actually help a great deal with rendering text on screen, since boost::locale handles things such as word breaks.
+[ ] Localization
+    - I originally thought about using boost::locale into the codebase, use for properly handling strings, but this may make Lua stuff problematic.
+    - Instead I'm thinking of XML files that map string IDs to strings in different languages. They can be parsed into property trees when the scripts are loaded.
 
 [ ] Re-introduce the concept of facing direction...?
     - A "marching" entity would need to keep track of its current direction in order to keep moving that way. A local Lua variable would work, but leads to the problem of loads/saves not preserving the variable (as Lua state is not serialized on load/save).
