@@ -105,7 +105,9 @@ public:
   ///
   /// @param value    Value to push.
   /// @return The number of stack slots used.
-  template < typename T > int push_value(T value) { return 0; }
+  /// @note The default implementation is left blank so type errors can be
+  ///       caught at compile time instead of causing subtle runtime errors.
+  template < typename T > int push_value(T value);
 
   /// Attempts to deduce the type of a boost::any and push the required
   /// values onto the Lua stack.
@@ -170,6 +172,12 @@ public:
     return 1;
   }
 
+  template <> int push_value(int64_t value)
+  {
+    lua_pushinteger(L_, static_cast<lua_Integer>(value));
+    return 1;
+  }
+
   template <> int push_value(ThingId value)
   {
     lua_pushinteger(L_, static_cast<lua_Integer>(value));
@@ -202,6 +210,13 @@ public:
 
   template <> int push_value(Vec2u value)
   {	  
+    lua_pushinteger(L_, static_cast<lua_Integer>(value.x));
+    lua_pushinteger(L_, static_cast<lua_Integer>(value.y));
+    return 2;
+  }
+
+  template <> int push_value(Vec2i value)
+  {
     lua_pushinteger(L_, static_cast<lua_Integer>(value.x));
     lua_pushinteger(L_, static_cast<lua_Integer>(value.y));
     return 2;
@@ -242,6 +257,13 @@ public:
   template <> int pop_value()
   {
     int return_value = static_cast<int>(lua_tointeger(L_, -1));
+    lua_pop(L_, 1);
+    return return_value;
+  }
+
+  template <> int64_t pop_value()
+  {
+    int64_t return_value = static_cast<int64_t>(lua_tointeger(L_, -1));
     lua_pop(L_, 1);
     return return_value;
   }
@@ -294,6 +316,14 @@ public:
     return return_value;
   }
 
+  template <> Vec2i pop_value()
+  {
+    Vec2i return_value = Vec2i(static_cast<unsigned int>(lua_tointeger(L_, -2)),
+                               static_cast<unsigned int>(lua_tointeger(L_, -1)));
+    lua_pop(L_, 2);
+    return return_value;
+  }
+
   template <> Direction pop_value()
   {
     Vec3i return_value = Vec3i(static_cast<int>(lua_tointeger(L_, -3)),
@@ -331,6 +361,7 @@ public:
   template<> unsigned int stack_slots<double>() { return 1; }
   template<> unsigned int stack_slots<bool>() { return 1; }
   template<> unsigned int stack_slots<std::string>() { return 1; }
+  template<> unsigned int stack_slots<Vec2i>() { return 2; }
   template<> unsigned int stack_slots<Vec2u>() { return 2; }
   template<> unsigned int stack_slots<sf::Color>() { return 4; }
   template<> unsigned int stack_slots<ActionResult>() { return 1; }
