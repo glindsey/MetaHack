@@ -131,7 +131,7 @@ void InventoryArea::toggle_selection(InventorySlot selection)
   }
 }
 
-unsigned int InventoryArea::get_selected_slot_count() const
+size_t InventoryArea::get_selected_slot_count() const
 {
   return pImpl->selected_slots.size();
 }
@@ -309,7 +309,7 @@ void InventoryArea::render_contents_(sf::RenderTexture& texture, int frame)
 
     // 1. Figure out whether this is selected or not, and set FG color.
     sf::Color fg_color = the_config.get<sf::Color>("text_color");
-    unsigned int selection_order = 0;
+    size_t selection_order = 0;
     auto slot_iter = std::find(pImpl->selected_slots.begin(),
                                pImpl->selected_slots.end(),
                                slot);

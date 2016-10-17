@@ -649,7 +649,7 @@ bool Thing::add_modifier(std::string key, ThingId id, unsigned int expiration_ti
   return m_properties.add_modifier(key, id, expiration_ticks);
 }
 
-unsigned int Thing::remove_modifier(std::string key, ThingId id)
+size_t Thing::remove_modifier(std::string key, ThingId id)
 {
   return m_properties.remove_modifier(key, id);
 }

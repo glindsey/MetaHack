@@ -485,7 +485,7 @@ MapFeature& Map::get_random_map_feature()
     FATAL_ERROR("get_random_map_feature() called but map doesn't contain any features yet!");
   }
 
-  uniform_int_dist featureDist(0, pImpl->features.size() - 1);
+  uniform_int_dist featureDist(0, static_cast<int>(pImpl->features.size() - 1));
   int featureIndex = featureDist(the_RNG);
   return pImpl->features[featureIndex];
 }

@@ -19,7 +19,7 @@ struct KeyBuffer::Impl
   /// Set character at cursor location, or insert/replace if string is not long enough.
   void set_character(char const c)
   {
-    unsigned int position = cursor_position;
+    auto position = cursor_position;
 
     if (position >= buffer.length())
     {
@@ -42,7 +42,7 @@ struct KeyBuffer::Impl
   /// Delete character at cursor location.
   void del_character()
   {
-    unsigned int position = cursor_position;
+    auto position = cursor_position;
 
     if (position >= buffer.length())
     {
@@ -207,7 +207,7 @@ metagui::Event::Result KeyBuffer::handle_key_press(metagui::EventKeyPressed& eve
   return result;
 }
 
-unsigned int KeyBuffer::get_cursor_position() const
+size_t KeyBuffer::get_cursor_position() const
 {
   return pImpl->cursor_position;
 }

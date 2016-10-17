@@ -371,7 +371,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::Subtract:
           {
             /// @todo Need a way to choose which inventory we're affecting.
-            unsigned int slot_count = inventory_area.get_selected_slot_count();
+            auto slot_count = inventory_area.get_selected_slot_count();
             if (slot_count < 1)
             {
               the_message_log.add("You have to have something selected "
@@ -394,7 +394,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::Equal:
           case sf::Keyboard::Key::Add:
           {
-            unsigned int slot_count = inventory_area.get_selected_slot_count();
+            auto slot_count = inventory_area.get_selected_slot_count();
             if (slot_count < 1)
             {
               the_message_log.add("You have to have something selected "
@@ -430,7 +430,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
           case sf::Keyboard::Key::RBracket:
           {
-            unsigned int slot_count = inventory_area.get_selected_slot_count();
+            auto slot_count = inventory_area.get_selected_slot_count();
 
             if (slot_count > 0)
             {

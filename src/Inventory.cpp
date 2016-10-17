@@ -59,7 +59,7 @@ void Inventory::clear()
   things_.clear();
 }
 
-unsigned int Inventory::count()
+size_t Inventory::count()
 {
   return things_.size();
 }

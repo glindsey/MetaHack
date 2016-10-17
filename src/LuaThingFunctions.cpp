@@ -42,8 +42,8 @@ namespace LuaThingFunctions
 
       if (success && (num_args > 2))
       {
-        int quantity = lua_tointeger(L, 3);
-        new_thing->set_quantity(static_cast<unsigned int>(quantity));
+        unsigned int quantity = static_cast<unsigned int>(lua_tointeger(L, 3));
+        new_thing->set_quantity(quantity);
       }
     }
 
@@ -405,9 +405,9 @@ namespace LuaThingFunctions
 
     ThingId thing = ThingId(lua_tointeger(L, 1));
     std::string action_type = lua_tostring(L, 2);
-    int x = lua_tointeger(L, 3);
-    int y = lua_tointeger(L, 4);
-    int z = lua_tointeger(L, 5);
+    int x = static_cast<int>(lua_tointeger(L, 3));
+    int y = static_cast<int>(lua_tointeger(L, 4));
+    int z = static_cast<int>(lua_tointeger(L, 5));
     Direction direction{ x, y, z };
 
     if (!Action::exists(action_type))
@@ -522,7 +522,7 @@ namespace LuaThingFunctions
     ThingId thing_being_modified = ThingId(lua_tointeger(L, 1));
     std::string key = lua_tostring(L, 2);
     ThingId thing_doing_the_modifying = ThingId(lua_tointeger(L, 3));
-    unsigned int expiration_ticks = (num_args == 4) ? lua_tointeger(L, 4) : 0;
+    unsigned int expiration_ticks = (num_args == 4) ? static_cast<unsigned int>(lua_tointeger(L, 4)) : 0;
 
     bool result = thing_being_modified->add_modifier(key, thing_doing_the_modifying, expiration_ticks);
 

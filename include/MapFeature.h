@@ -54,7 +54,7 @@ public:
   Map& get_map() const;
   PropertyDictionary const& get_settings() const;
 
-  unsigned int get_num_growth_vectors() const;
+  size_t get_num_growth_vectors() const;
   GeoVector const& get_random_growth_vector() const;
   bool erase_growth_vector(GeoVector vec);
 

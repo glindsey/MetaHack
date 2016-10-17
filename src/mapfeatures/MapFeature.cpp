@@ -53,7 +53,7 @@ PropertyDictionary const& MapFeature::get_settings() const
   return pImpl->settings;
 }
 
-unsigned int MapFeature::get_num_growth_vectors() const
+size_t MapFeature::get_num_growth_vectors() const
 {
   return pImpl->highPriorityVecs.size() + pImpl->lowPriorityVecs.size();
 }
@@ -62,13 +62,13 @@ GeoVector const& MapFeature::get_random_growth_vector() const
 {
   if (pImpl->highPriorityVecs.size() > 0)
   {
-    uniform_int_dist vecDist(0, pImpl->highPriorityVecs.size() - 1);
+    uniform_int_dist vecDist(0, static_cast<int>(pImpl->highPriorityVecs.size() - 1));
     int randomVector = vecDist(the_RNG);
     return pImpl->highPriorityVecs[randomVector];
   }
   else if (pImpl->lowPriorityVecs.size() > 0)
   {
-    uniform_int_dist vecDist(0, pImpl->lowPriorityVecs.size() - 1);
+    uniform_int_dist vecDist(0, static_cast<int>(pImpl->lowPriorityVecs.size() - 1));
     int randomVector = vecDist(the_RNG);
     return pImpl->lowPriorityVecs[randomVector];
   }

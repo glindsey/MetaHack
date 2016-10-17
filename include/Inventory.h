@@ -30,7 +30,7 @@ public:
 
   /// Gets the current count of this inventory.
   /// @return The number of items in the inventory.
-  unsigned int count();
+  size_t count();
 
   /// Gets a beginning iterator to the things map.
   ThingMap::iterator begin();

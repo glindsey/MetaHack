@@ -28,7 +28,7 @@ public:
   void set_viewed(ThingId thing);
 
   void toggle_selection(InventorySlot selection);
-  unsigned int get_selected_slot_count() const;
+  size_t get_selected_slot_count() const;
   std::vector<InventorySlot> const& get_selected_slots();
   std::vector<ThingId> get_selected_things();
   void clear_selected_slots();

@@ -201,26 +201,26 @@ public:
   }
 
   template <> int push_value(Vec2u value)
-  {
-    lua_pushnumber(L_, static_cast<lua_Integer>(value.x));
-    lua_pushnumber(L_, static_cast<lua_Integer>(value.y));
+  {	  
+    lua_pushinteger(L_, static_cast<lua_Integer>(value.x));
+    lua_pushinteger(L_, static_cast<lua_Integer>(value.y));
     return 2;
   }
 
   template <> int push_value(Direction value)
   {
     Vec3i vec = static_cast<Vec3i>(value);
-    lua_pushnumber(L_, static_cast<lua_Integer>(vec.x));
-    lua_pushnumber(L_, static_cast<lua_Integer>(vec.y));
-    lua_pushnumber(L_, static_cast<lua_Integer>(vec.z));
+    lua_pushinteger(L_, static_cast<lua_Integer>(vec.x));
+    lua_pushinteger(L_, static_cast<lua_Integer>(vec.y));
+    lua_pushinteger(L_, static_cast<lua_Integer>(vec.z));
     return 3;
   }
   template <> int push_value(sf::Color value)
   {
-    lua_pushnumber(L_, static_cast<lua_Integer>(value.r));
-    lua_pushnumber(L_, static_cast<lua_Integer>(value.g));
-    lua_pushnumber(L_, static_cast<lua_Integer>(value.b));
-    lua_pushnumber(L_, static_cast<lua_Integer>(value.a));
+    lua_pushinteger(L_, static_cast<lua_Integer>(value.r));
+    lua_pushinteger(L_, static_cast<lua_Integer>(value.g));
+    lua_pushinteger(L_, static_cast<lua_Integer>(value.b));
+    lua_pushinteger(L_, static_cast<lua_Integer>(value.a));
     return 4;
   }
 
@@ -234,14 +234,14 @@ public:
 
   template <> unsigned int pop_value()
   {
-    unsigned int return_value = lua_tointeger(L_, -1);
+    unsigned int return_value = static_cast<unsigned int>(lua_tointeger(L_, -1));
     lua_pop(L_, 1);
     return return_value;
   }
 
   template <> int pop_value()
   {
-    int return_value = lua_tointeger(L_, -1);
+    int return_value = static_cast<int>(lua_tointeger(L_, -1));
     lua_pop(L_, 1);
     return return_value;
   }
@@ -288,27 +288,27 @@ public:
 
   template <> Vec2u pop_value()
   {
-    Vec2u return_value = Vec2u(lua_tointeger(L_, -2),
-                                             lua_tointeger(L_, -1));
+    Vec2u return_value = Vec2u(static_cast<unsigned int>(lua_tointeger(L_, -2)),
+                               static_cast<unsigned int>(lua_tointeger(L_, -1)));
     lua_pop(L_, 2);
     return return_value;
   }
 
   template <> Direction pop_value()
   {
-    Vec3i return_value = Vec3i(lua_tointeger(L_, -3),
-                                             lua_tointeger(L_, -2),
-                                             lua_tointeger(L_, -1));
+    Vec3i return_value = Vec3i(static_cast<int>(lua_tointeger(L_, -3)),
+                               static_cast<int>(lua_tointeger(L_, -2)),
+                               static_cast<int>(lua_tointeger(L_, -1)));
     lua_pop(L_, 3);
     return Direction(return_value);
   }
 
   template <> sf::Color pop_value()
   {
-    sf::Color return_value = sf::Color(lua_tointeger(L_, -4),
-                                       lua_tointeger(L_, -3),
-                                       lua_tointeger(L_, -2),
-                                       lua_tointeger(L_, -1));
+    sf::Color return_value = sf::Color(static_cast<sf::Uint8>(lua_tointeger(L_, -4)),
+                                       static_cast<sf::Uint8>(lua_tointeger(L_, -3)),
+                                       static_cast<sf::Uint8>(lua_tointeger(L_, -2)),
+                                       static_cast<sf::Uint8>(lua_tointeger(L_, -1)));
     lua_pop(L_, 4);
     return return_value;
   }

@@ -74,11 +74,11 @@ public:
 
   /// Check if modifier functions exist for a particular key.
   /// @return Number of modifiers for the key.
-  unsigned int has_modifier_for(std::string key) const;
+  size_t has_modifier_for(std::string key) const;
 
   /// Check if a modifier function exists for a particular key and ID.
   /// @return Number of modifiers for the key and ID. (Should be 0 or 1.)
-  unsigned int has_modifier_for(std::string key, ThingId id) const;
+  size_t has_modifier_for(std::string key, ThingId id) const;
 
   /// Add a modifier function for a given property and ID.
   /// @param  key               Name of property to add a modifier function for.
@@ -100,11 +100,11 @@ public:
 
   /// Remove all modifier functions for a given key.
   /// @return The number of modifiers erased.
-  unsigned int remove_modifier(std::string key);
+  size_t remove_modifier(std::string key);
 
   /// Remove all modifier functions for a given key and thing ID.
   /// @return The number of modifiers erased.
-  unsigned int remove_modifier(std::string key, ThingId id);
+  size_t remove_modifier(std::string key, ThingId id);
 
   /// Run all the modifier functions for a property given a value to modify.
   /// @param  key     Property to run the modifiers for.

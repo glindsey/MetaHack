@@ -17,7 +17,7 @@ public:
   metagui::Event::Result KeyBuffer::handle_key_press(metagui::EventKeyPressed& event);
 
   /// Get the current cursor position.
-  unsigned int get_cursor_position() const;
+  size_t get_cursor_position() const;
 
   /// Set the current cursor position.
   void set_cursor_position(size_t position);

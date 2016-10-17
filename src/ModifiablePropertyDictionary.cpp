@@ -17,7 +17,7 @@ void ModifiablePropertyDictionary::after_set_(std::string key)
   m_modified_dictionary.erase(key);
 }
 
-unsigned int ModifiablePropertyDictionary::has_modifier_for(std::string key) const
+size_t ModifiablePropertyDictionary::has_modifier_for(std::string key) const
 {
   if (m_modifiers.count(key) != 0)
   {
@@ -27,7 +27,7 @@ unsigned int ModifiablePropertyDictionary::has_modifier_for(std::string key) con
   return 0;
 }
 
-unsigned int ModifiablePropertyDictionary::has_modifier_for(std::string key, ThingId id) const
+size_t ModifiablePropertyDictionary::has_modifier_for(std::string key, ThingId id) const
 {
   if (m_modifiers.count(key) != 0)
   {
@@ -54,7 +54,7 @@ bool ModifiablePropertyDictionary::add_modifier(std::string key, ThingId id, uns
   return false;
 }
 
-unsigned int ModifiablePropertyDictionary::remove_modifier(std::string key)
+size_t ModifiablePropertyDictionary::remove_modifier(std::string key)
 {
   if (m_modifiers.count(key) != 0)
   {
@@ -67,7 +67,7 @@ unsigned int ModifiablePropertyDictionary::remove_modifier(std::string key)
   return 0;
 }
 
-unsigned int ModifiablePropertyDictionary::remove_modifier(std::string key, ThingId id)
+size_t ModifiablePropertyDictionary::remove_modifier(std::string key, ThingId id)
 {
   if (m_modifiers.count(key) != 0)
   {

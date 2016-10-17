@@ -221,7 +221,7 @@ public:
   /// @param  id                ID of Thing that is responsible for modifying it.
   ///
   /// @return The number of modifiers erased.
-  unsigned int remove_modifier(std::string key, ThingId id);
+  size_t remove_modifier(std::string key, ThingId id);
 
   /// Get the quantity this thing represents.
   unsigned int get_quantity() const;
