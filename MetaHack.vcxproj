@@ -458,6 +458,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="src\StringDictionary.cpp" />
     <ClCompile Include="src\Thing.cpp" />
     <ClCompile Include="src\ThingId.cpp" />
     <ClCompile Include="src\ThingManager.cpp" />

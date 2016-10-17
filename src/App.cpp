@@ -10,6 +10,7 @@
 #include "MessageLog.h"
 #include "MessageLogView.h"
 #include "StateMachine.h"
+#include "StringDictionary.h"
 
 // Global declarations
 std::unique_ptr<App> app_;
@@ -117,6 +118,10 @@ App::App(sf::RenderWindow& app_window)
 
   // Create the tilesheet.
   m_tilesheet.reset(NEW TileSheet(m_config->get<unsigned int>("map_tile_size")));
+
+  // Create the string dictionary.
+  /// @todo Change this so language can be specified.
+  m_string_dictionary.reset(NEW StringDictionary("en"));
 
   // Get the state machine.
   StateMachine& sm = *m_state_machine;
@@ -274,6 +279,11 @@ metagui::Desktop & App::get_gui_desktop()
 TileSheet & App::get_tilesheet()
 {
   return *m_tilesheet;
+}
+
+StringDictionary & App::get_dictionary()
+{
+  return *m_string_dictionary;
 }
 
 App & App::instance()

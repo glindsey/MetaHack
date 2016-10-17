@@ -14,6 +14,7 @@ class Lua;
 class MessageLog;
 class MessageLogView;
 class StateMachine;
+class StringDictionary;
 class TileSheet;
 
 class App : public SFMLEventHandler, public boost::noncopyable
@@ -62,6 +63,9 @@ public:
 
   /// Get the TileSheet instance.
   TileSheet& get_tilesheet();
+
+  /// Get the StringDictionary instance.
+  StringDictionary& get_dictionary();
 
   /// Get the current App instance.
   /// If no App instance currently exists, throws an exception.
@@ -113,6 +117,9 @@ private:
   /// The tilesheet.
   std::unique_ptr<TileSheet> m_tilesheet;
 
+  /// The string dictionary.
+  std::unique_ptr<StringDictionary> m_string_dictionary;
+
   static int s_frame_counter;
 
   /// A static pointer to the existing App instance.
@@ -129,6 +136,8 @@ private:
 
   /// Lua function to access config settings.
   static int LUA_get_config(lua_State* L);
+
+  /// @todo Add Lua functions to get/set dictionary values.
 };
 
 // Here are a few macros to save on typing.
@@ -144,5 +153,6 @@ private:
 #define the_RNG                   App::instance().get_rng()
 #define the_message_log           App::instance().get_message_log()
 #define the_tilesheet             App::instance().get_tilesheet()
+#define the_dictionary			  App::instance().get_dictionary()
 
 #endif // APP_H

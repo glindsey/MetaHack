@@ -608,6 +608,9 @@
     <ClCompile Include="src\ActionUnwield.cpp">
       <Filter>Actions</Filter>
     </ClCompile>
+    <ClCompile Include="src\StringDictionary.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md">
