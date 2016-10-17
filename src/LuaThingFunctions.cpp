@@ -545,7 +545,7 @@ namespace LuaThingFunctions
     std::string key = lua_tostring(L, 2);
     ThingId thing_doing_the_modifying = ThingId(lua_tointeger(L, 3));
 
-    unsigned int result = thing_being_modified->remove_modifier(key, thing_doing_the_modifying);
+    size_t result = thing_being_modified->remove_modifier(key, thing_doing_the_modifying);
 
     lua_pushinteger(L, static_cast<lua_Integer>(result));
 
