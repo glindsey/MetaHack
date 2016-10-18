@@ -7,9 +7,6 @@
 #include "ErrorHandler.h"
 #include "Metadata.h"
 
-// Namespace aliases
-namespace pt = boost::property_tree;
-
 /// Class that handles a dictionary that associates data of various types
 /// with keys.
 class PropertyDictionary

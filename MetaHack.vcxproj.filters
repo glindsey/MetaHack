@@ -736,5 +736,8 @@
     <None Include="resources\things\Marcher.lua">
       <Filter>Resource Files\Thing Scripts</Filter>
     </None>
+    <None Include="resources\strings.en.json">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

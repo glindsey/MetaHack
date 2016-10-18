@@ -4,10 +4,6 @@
 
 #define BOOST_FILESYSTEM_NO_DEPRECATED
 
-// Namespace aliases
-namespace fs = boost::filesystem;
-namespace pt = boost::property_tree;
-
 // Using declarations
 using StringMap = std::unordered_map<std::string, std::string>;
 
@@ -20,9 +16,9 @@ public:
 	~StringDictionary();
 
 	/// Add the strings in the specified file to the dictionary.
-	/// The dictionary language and ".xml" will be appended to the filename;
+	/// The dictionary language and ".json" will be appended to the filename;
 	/// for example, StringDictionary("en")::load_file("strings") will try to
-	/// load the file named "strings.en.xml".
+	/// load the file named "strings.en.json".
 	/// @param filename_ The name of file to load, _without_ extension.
 	/// @return True if the file was successfully loaded and parsed, false otherwise.
 	bool load_file(std::string filename_);

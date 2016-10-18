@@ -53,7 +53,7 @@ App::App(sf::RenderWindow& app_window)
   }
 
   // Register the App logger.
-  el::Loggers::getLogger("App");
+  SET_UP_LOGGER("App", true);
 
   // First thing's first: load config settings.
   m_config.reset(NEW ConfigSettings());
@@ -119,9 +119,10 @@ App::App(sf::RenderWindow& app_window)
   // Create the tilesheet.
   m_tilesheet.reset(NEW TileSheet(m_config->get<unsigned int>("map_tile_size")));
 
-  // Create the string dictionary.
+  // Create the string dictionary, and try to load the default translation file.
   /// @todo Change this so language can be specified.
   m_string_dictionary.reset(NEW StringDictionary("en"));
+  m_string_dictionary->load_file("resources/strings");
 
   // Get the state machine.
   StateMachine& sm = *m_state_machine;

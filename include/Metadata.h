@@ -15,10 +15,6 @@
 
 #define BOOST_FILESYSTEM_NO_DEPRECATED
 
-// Namespace aliases
-namespace fs = boost::filesystem;
-namespace pt = boost::property_tree;
-
 class Metadata
 {
   friend class MetadataCollection;

@@ -5,6 +5,9 @@
 #include "ErrorHandler.h"
 #include "MetadataCollection.h"
 
+// Namespace aliases
+namespace fs = boost::filesystem;
+
 Metadata::Metadata(MetadataCollection& collection, std::string type)
   :
   m_collection{ collection },
