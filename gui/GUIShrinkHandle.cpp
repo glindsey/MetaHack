@@ -3,7 +3,8 @@
 #include "GUIShrinkHandle.h"
 
 #include "App.h"
-#include "ConfigSettings.h"
+#include "IConfigSettings.h"
+#include "Service.h"
 
 namespace metagui
 {

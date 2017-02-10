@@ -2,7 +2,6 @@
 
 #include "TileSheet.h"
 
-#include "ConfigSettings.h"
 #include "ErrorHandler.h"
 #include "MathUtils.h"
 

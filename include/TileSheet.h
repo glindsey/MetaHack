@@ -87,7 +87,7 @@ private:
   sf::Texture texture;
   unsigned int textureSize;
   unsigned int tileSize;
-  boost::dynamic_bitset<> used;
+  boost::dynamic_bitset<size_t> used; // size_t gets rid of 64-bit compile warning
 
 };
 

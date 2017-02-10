@@ -6,16 +6,21 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 
+#define BOOST_FILESYSTEM_NO_DEPRECATED
+
 // Namespace aliases
 namespace fs = boost::filesystem;
 namespace pt = boost::property_tree;
 
-StringDictionary::StringDictionary(std::string language_)
-  :
-  language(language_)
+StringDictionary::StringDictionary(std::string filename_)
 {
   // Register the logger.
   SET_UP_LOGGER("StringDictionary", true);
+
+  if (!filename_.empty())
+  {
+    load_file(filename_);
+  }
 }
 
 StringDictionary::~StringDictionary()
@@ -24,7 +29,7 @@ StringDictionary::~StringDictionary()
 bool StringDictionary::load_file(std::string filename_)
 {
   // Look for the file requested.
-  FileName filename = filename_ + "." + language + ".json";
+  FileName filename = filename_ + ".json";
 
   /// Try to load the requested file.
   if (fs::exists(filename))
@@ -38,7 +43,7 @@ bool StringDictionary::load_file(std::string filename_)
 
       for (auto& value : file_contents)
       {
-        add(value.first, value.second.data(), language);
+        add(value.first, value.second.data());
       }
     }
     catch (pt::json_parser_error&)
@@ -57,19 +62,9 @@ bool StringDictionary::load_file(std::string filename_)
   }
 }
 
-bool StringDictionary::add(std::string id_, std::string str_, std::string language_ = "")
+bool StringDictionary::add(std::string id_, std::string str_)
 {
   CLOG(TRACE, "StringDictionary") << "Adding \"" << id_ << "\" = \"" << str_ << "\"";
-
-  if (language_ == "")
-  {
-    language_ = language;
-  }
-
-  if (language_ != language)
-  {
-    return false;
-  }
 
   if (strings.count(id_) == 0)
   {
@@ -82,9 +77,9 @@ bool StringDictionary::add(std::string id_, std::string str_, std::string langua
   return true;
 }
 
-std::string const& StringDictionary::operator[](std::string id_) const
+void StringDictionary::clear()
 {
-  return get(id_);
+  strings.clear();
 }
 
 std::string const& StringDictionary::get(std::string id_) const

@@ -3,7 +3,6 @@
 #include "MessageLog.h"
 
 #include "App.h"
-#include "ConfigSettings.h"
 #include "ErrorHandler.h"
 #include "KeyBuffer.h"
 

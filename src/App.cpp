@@ -5,10 +5,11 @@
 #include "AppStateGameMode.h"
 #include "AppStateMainMenu.h"
 #include "AppStateSplashScreen.h"
-#include "ConfigSettings.h"
 #include "ErrorHandler.h"
+#include "FallbackConfigSettings.h"
 #include "MessageLog.h"
 #include "MessageLogView.h"
+#include "Service.h"
 #include "StateMachine.h"
 #include "StringDictionary.h"
 
@@ -24,8 +25,10 @@ typedef boost::random::uniform_int_distribution<> uniform_int_dist;
 sf::IntRect calc_message_log_dimensions(sf::RenderWindow& window)
 {
   sf::IntRect messageLogDims;
-  unsigned int inventory_area_width = the_config.get<unsigned int>("inventory_area_width");
-  unsigned int messagelog_area_height = the_config.get<unsigned int>("messagelog_area_height");
+  auto& config = Service<IConfigSettings>::get();
+
+  unsigned int inventory_area_width = config.get<unsigned int>("inventory_area_width");
+  unsigned int messagelog_area_height = config.get<unsigned int>("messagelog_area_height");
   messageLogDims.width = window.getSize().x - (inventory_area_width + 24);
   messageLogDims.height = messagelog_area_height - 10;
   //messageLogDims.height = static_cast<int>(window.getSize().y * 0.25f) - 10;
@@ -56,7 +59,9 @@ App::App(sf::RenderWindow& app_window)
   SET_UP_LOGGER("App", true);
 
   // First thing's first: load config settings.
-  m_config.reset(NEW ConfigSettings());
+  Service<IConfigSettings>::provide(NEW FallbackConfigSettings());
+
+  auto& config = Service<IConfigSettings>::get();
 
   // Second: create the Lua state.
   m_lua.reset(NEW Lua());
@@ -72,28 +77,28 @@ App::App(sf::RenderWindow& app_window)
 
   // Create the default fonts.
   m_default_font.reset(NEW sf::Font());
-  FileName font_name = "resources/fonts/" + m_config->get<std::string>("font_name_default") + ".ttf";
+  FileName font_name = "resources/fonts/" + config.get<std::string>("font_name_default") + ".ttf";
   if (m_default_font->loadFromFile(font_name) == false)
   {
     CLOG(FATAL, "App") << "Could not load the default font";
   }
 
   m_default_bold_font.reset(NEW sf::Font());
-  font_name = "resources/fonts/" + m_config->get<std::string>("font_name_bold") + ".ttf";
+  font_name = "resources/fonts/" + config.get<std::string>("font_name_bold") + ".ttf";
   if (m_default_bold_font->loadFromFile(font_name) == false)
   {
     CLOG(FATAL, "App") << "Could not load the default bold font";
   }
 
   m_default_mono_font.reset(NEW sf::Font());
-  font_name = "resources/fonts/" + m_config->get<std::string>("font_name_mono") + ".ttf";
+  font_name = "resources/fonts/" + config.get<std::string>("font_name_mono") + ".ttf";
   if (m_default_mono_font->loadFromFile(font_name) == false)
   {
     CLOG(FATAL, "App") << "Could not load the default monospace font";
   }
 
   m_default_unicode_font.reset(NEW sf::Font());
-  font_name = "resources/fonts/" + m_config->get<std::string>("font_name_unicode") + ".ttf";
+  font_name = "resources/fonts/" + config.get<std::string>("font_name_unicode") + ".ttf";
   if (m_default_unicode_font->loadFromFile(font_name) == false)
   {
     CLOG(FATAL, "App") << "Could not load the default Unicode font";
@@ -117,12 +122,11 @@ App::App(sf::RenderWindow& app_window)
   m_lua->register_function("get_config", App::LUA_get_config);
 
   // Create the tilesheet.
-  m_tilesheet.reset(NEW TileSheet(m_config->get<unsigned int>("map_tile_size")));
+  m_tilesheet.reset(NEW TileSheet(config.get<unsigned int>("map_tile_size")));
 
   // Create the string dictionary, and try to load the default translation file.
   /// @todo Change this so language can be specified.
-  m_string_dictionary.reset(NEW StringDictionary("en"));
-  m_string_dictionary->load_file("resources/strings");
+  Service<IStringDictionary>::provide(NEW StringDictionary("resources/strings.en"));
 
   // Get the state machine.
   StateMachine& sm = *m_state_machine;
@@ -227,11 +231,6 @@ bool App::has_window_focus()
   return m_has_window_focus;
 }
 
-ConfigSettings & App::get_config()
-{
-  return *m_config;
-}
-
 Lua & App::get_lua()
 {
   return *m_lua;
@@ -280,11 +279,6 @@ metagui::Desktop & App::get_gui_desktop()
 TileSheet & App::get_tilesheet()
 {
   return *m_tilesheet;
-}
-
-StringDictionary & App::get_dictionary()
-{
-  return *m_string_dictionary;
 }
 
 App & App::instance()
@@ -394,6 +388,7 @@ int App::LUA_add(lua_State* L)
 int App::LUA_get_config(lua_State* L)
 {
   int num_args = lua_gettop(L);
+  auto& config = Service<IConfigSettings>::get();
 
   if (num_args != 1)
   {
@@ -403,14 +398,14 @@ int App::LUA_get_config(lua_State* L)
 
   const char* key = lua_tostring(L, 1);
 
-  if (!the_config.contains(key))
+  if (!config.contains(key))
   {
     lua_pushnil(L);
     return 1;
   }
   else
   {
-    boost::any result = the_config.get<boost::any>(key);
+    boost::any result = config.get<boost::any>(key);
     int args = instance().m_lua->push_value<boost::any>(result);
     return args;
   }

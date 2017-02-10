@@ -3,7 +3,6 @@
 #include "Map.h"
 
 #include "App.h"
-#include "ConfigSettings.h"
 #include "GameState.h"
 #include "Inventory.h"
 #include "LightInfluence.h"

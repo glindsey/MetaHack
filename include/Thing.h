@@ -35,7 +35,7 @@ using WearingMap = std::unordered_map<WearLocation, ThingId>;
 using WearingPair = std::pair<WearLocation, ThingId>;
 
 using MapMemory = std::vector<MapMemoryChunk>;
-using TilesSeen = boost::dynamic_bitset<>;
+using TilesSeen = boost::dynamic_bitset<size_t>; // size_t gets rid of 64-bit compile warning
 using ActionQueue = std::deque< std::unique_ptr<Action> >;
 
 /// Typedef for the factory method.

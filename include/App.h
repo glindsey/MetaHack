@@ -31,9 +31,6 @@ public:
 
   bool has_window_focus();
 
-  /// Get the app config settings.
-  ConfigSettings& get_config();
-
   /// Get the Lua state object.
   Lua& get_lua();
 
@@ -64,9 +61,6 @@ public:
   /// Get the TileSheet instance.
   TileSheet& get_tilesheet();
 
-  /// Get the StringDictionary instance.
-  StringDictionary& get_dictionary();
-
   /// Get the current App instance.
   /// If no App instance currently exists, throws an exception.
   static App& instance();
@@ -86,9 +80,6 @@ private:
   std::unique_ptr<StateMachine> m_state_machine;
   bool m_is_running;
   bool m_has_window_focus;
-
-  /// The config settings instance.
-  std::unique_ptr<ConfigSettings> m_config;
 
   /// The Lua state object.
   std::unique_ptr<Lua> m_lua;
@@ -117,9 +108,6 @@ private:
   /// The tilesheet.
   std::unique_ptr<TileSheet> m_tilesheet;
 
-  /// The string dictionary.
-  std::unique_ptr<StringDictionary> m_string_dictionary;
-
   static int s_frame_counter;
 
   /// A static pointer to the existing App instance.
@@ -141,7 +129,6 @@ private:
 };
 
 // Here are a few macros to save on typing.
-#define the_config                App::instance().get_config()
 #define the_lua_instance          App::instance().get_lua()
 #define the_lua_state             App::instance().get_lua().state()
 #define the_default_font          App::instance().get_default_font()
@@ -153,6 +140,5 @@ private:
 #define the_RNG                   App::instance().get_rng()
 #define the_message_log           App::instance().get_message_log()
 #define the_tilesheet             App::instance().get_tilesheet()
-#define the_dictionary			  App::instance().get_dictionary()
 
 #endif // APP_H

@@ -46,15 +46,15 @@
     <Filter Include="Design Pattern Templates">
       <UniqueIdentifier>{b443a7fd-d3a7-4def-b8d1-5da638d54160}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Services">
+      <UniqueIdentifier>{05c73e6e-b6c5-4e68-b327-fcb9bfc76344}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\App.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\common_enums.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ConfigSettings.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\ErrorHandler.h">
@@ -142,9 +142,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\LuaObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Visitor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\SFMLEventHandler.h">
@@ -369,15 +366,30 @@
     <ClInclude Include="include\ActionUnwield.h">
       <Filter>Actions</Filter>
     </ClInclude>
+    <ClInclude Include="include\Service.h">
+      <Filter>Design Pattern Templates</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Visitor.h">
+      <Filter>Design Pattern Templates</Filter>
+    </ClInclude>
+    <ClInclude Include="include\NullStringDictionary.h">
+      <Filter>Services</Filter>
+    </ClInclude>
     <ClInclude Include="include\StringDictionary.h">
-      <Filter>Header Files</Filter>
+      <Filter>Services</Filter>
+    </ClInclude>
+    <ClInclude Include="include\IStringDictionary.h">
+      <Filter>Services</Filter>
+    </ClInclude>
+    <ClInclude Include="include\IConfigSettings.h">
+      <Filter>Services</Filter>
+    </ClInclude>
+    <ClInclude Include="include\FallbackConfigSettings.h">
+      <Filter>Services</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ConfigSettings.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\ErrorHandler.cpp">
@@ -608,8 +620,17 @@
     <ClCompile Include="src\ActionUnwield.cpp">
       <Filter>Actions</Filter>
     </ClCompile>
+    <ClCompile Include="src\IStringDictionary.cpp">
+      <Filter>Services</Filter>
+    </ClCompile>
     <ClCompile Include="src\StringDictionary.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Services</Filter>
+    </ClCompile>
+    <ClCompile Include="src\IConfigSettings.cpp">
+      <Filter>Services</Filter>
+    </ClCompile>
+    <ClCompile Include="src\FallbackConfigSettings.cpp">
+      <Filter>Services</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

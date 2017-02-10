@@ -3,12 +3,13 @@
 #include "MapTile.h"
 
 #include "App.h"
-#include "ConfigSettings.h"
 #include "GameState.h"
+#include "IConfigSettings.h"
 #include "Map.h"
 #include "MapTileMetadata.h"
 #include "MathUtils.h"
 #include "RNGUtils.h"
+#include "Service.h"
 #include "ThingManager.h"
 #include "TileSheet.h"
 
@@ -186,7 +187,10 @@ void MapTile::draw_highlight(sf::RenderTarget& target,
                              sf::Color bgColor,
                              int frame)
 {
-  float half_ts(the_config.get<float>("map_tile_size") * 0.5f);
+  auto& config = Service<IConfigSettings>::get();
+  auto map_tile_size = config.get<float>("map_tile_size");
+
+  float half_ts(map_tile_size * 0.5f);
   Vec2f vSW(location.x - half_ts, location.y + half_ts);
   Vec2f vSE(location.x + half_ts, location.y + half_ts);
   Vec2f vNW(location.x - half_ts, location.y - half_ts);
@@ -194,14 +198,14 @@ void MapTile::draw_highlight(sf::RenderTarget& target,
 
   sf::RectangleShape box_shape;
   Vec2f box_position;
-  Vec2f box_size(the_config.get<float>("map_tile_size"), the_config.get<float>("map_tile_size"));
+  Vec2f box_size(map_tile_size, map_tile_size);
   Vec2f box_half_size(box_size.x / 2, box_size.y / 2);
   box_position.x = (location.x - box_half_size.x);
   box_position.y = (location.y - box_half_size.y);
   box_shape.setPosition(box_position);
   box_shape.setSize(box_size);
   box_shape.setOutlineColor(fgColor);
-  box_shape.setOutlineThickness(the_config.get<float>("tile_highlight_border_width"));
+  box_shape.setOutlineThickness(config.get<float>("tile_highlight_border_width"));
   box_shape.setFillColor(bgColor);
 
   target.draw(box_shape);
@@ -215,6 +219,9 @@ void MapTile::add_wall_vertices_to(sf::VertexArray& vertices,
                                    bool se_is_empty, bool s_is_empty,
                                    bool sw_is_empty, bool w_is_empty)
 {
+  auto& config = Service<IConfigSettings>::get();
+  auto map_tile_size = config.get<float>("map_tile_size");
+
   // Checks to see N/S/E/W walls.
   bool player_sees_n_wall{ false };
   bool player_sees_s_wall{ false };
@@ -257,13 +264,13 @@ void MapTile::add_wall_vertices_to(sf::VertexArray& vertices,
   sf::Color wall_w_color_s{ sf::Color::White };
 
   // Full tile size.
-  float ts(the_config.get<float>("map_tile_size"));
+  float ts(map_tile_size);
 
   // Half of the tile size.
-  float half_ts(the_config.get<float>("map_tile_size") * 0.5f);
+  float half_ts(map_tile_size * 0.5f);
 
   // Wall size (configurable).
-  float ws(the_config.get<float>("map_tile_size") * 0.4f);
+  float ws(map_tile_size * 0.4f);
 
   // Adjacent tiles
   MapTile const& adjacent_tile_n = get_adjacent_tile(Direction::North);
@@ -469,8 +476,11 @@ void MapTile::add_wall_vertices_to(sf::VertexArray& vertices,
 
 Vec2f MapTile::get_pixel_coords(int x, int y)
 {
-  return Vec2f(static_cast<float>(x) * the_config.get<float>("map_tile_size"),
-                      static_cast<float>(y) * the_config.get<float>("map_tile_size"));
+  auto& config = Service<IConfigSettings>::get();
+  auto map_tile_size = config.get<float>("map_tile_size");
+
+  return Vec2f(static_cast<float>(x) * map_tile_size, 
+               static_cast<float>(y) * map_tile_size);
 }
 
 Vec2f MapTile::get_pixel_coords(Vec2i tile)

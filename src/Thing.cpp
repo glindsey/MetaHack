@@ -3,10 +3,10 @@
 #include "Thing.h"
 
 #include "App.h"
-#include "ConfigSettings.h"
 #include "Direction.h"
 #include "GameState.h"
 #include "Gender.h"
+#include "IConfigSettings.h"
 #include "IntegerRange.h"
 #include "Inventory.h"
 #include "Map.h"
@@ -16,6 +16,7 @@
 #include "MessageLog.h"
 #include "Metadata.h"
 #include "Ordinal.h"
+#include "Service.h"
 #include "ThingManager.h"
 #include "TileSheet.h"
 
@@ -812,6 +813,8 @@ MapMemoryChunk const& Thing::get_memory_at(Vec2i coords) const
 void Thing::add_memory_vertices_to(sf::VertexArray& vertices,
                                    Vec2i coords)
 {
+  auto& config = Service<IConfigSettings>::get();
+
   MapId map_id = this->get_map_id();
   if (map_id == MapFactory::null_map_id)
   {
@@ -820,7 +823,7 @@ void Thing::add_memory_vertices_to(sf::VertexArray& vertices,
   Map& game_map = GAME.get_maps().get(map_id);
 
   static sf::Vertex new_vertex;
-  float ts = the_config.get<float>("map_tile_size");
+  float ts = config.get<float>("map_tile_size");
   float ts2 = ts * 0.5f;
 
   Vec2f location(coords.x * ts, coords.y * ts);
@@ -1028,6 +1031,8 @@ std::string Thing::get_self_or_identifying_string(ThingId other, ArticleChoice a
 std::string Thing::get_identifying_string(ArticleChoice articles,
                                             UsePossessives possessives) const
 {
+  auto& config = Service<IConfigSettings>::get();
+
   ThingId location = this->get_location();
   unsigned int quantity = this->get_quantity();
 
@@ -1036,7 +1041,7 @@ std::string Thing::get_identifying_string(ArticleChoice articles,
   bool owned;
 
   std::string debug_prefix;
-  if (the_config.get<bool>("debug_show_thing_ids") == true)
+  if (config.get<bool>("debug_show_thing_ids") == true)
   {
     debug_prefix = "(#" + static_cast<std::string>(get_id()) + ") ";
   }

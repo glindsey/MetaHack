@@ -3,8 +3,9 @@
 #include "MapView.h"
 
 #include "App.h"
-#include "ConfigSettings.h"
 #include "GameState.h"
+#include "IConfigSettings.h"
+#include "Service.h"
 
 MapView::MapView()
   :
@@ -35,10 +36,11 @@ MapId MapView::get_map_id()
 
 void MapView::set_view(sf::RenderTarget & target, Vec2f center, float zoom_level)
 {
+  auto& config = Service<IConfigSettings>::get();
   Vec2u screen_size = target.getSize();
-  unsigned int inventory_area_width = the_config.get<unsigned int>("inventory_area_width");
-  unsigned int status_area_height = the_config.get<unsigned int>("status_area_height");
-  unsigned int messagelog_area_height = the_config.get<unsigned int>("messagelog_area_height");
+  unsigned int inventory_area_width = config.get<unsigned int>("inventory_area_width");
+  unsigned int status_area_height = config.get<unsigned int>("status_area_height");
+  unsigned int messagelog_area_height = config.get<unsigned int>("messagelog_area_height");
 
   Vec2f window_center = Vec2f((static_cast<float>(screen_size.x - inventory_area_width) / zoom_level) / 2,
                                             messagelog_area_height + (static_cast<float>(screen_size.y - (status_area_height + messagelog_area_height)) / zoom_level) / 2);

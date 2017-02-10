@@ -3,7 +3,6 @@
 #include "ThingView.h"
 
 #include "App.h"
-#include "ConfigSettings.h"
 #include "GameState.h"
 #include "ThingManager.h"
 

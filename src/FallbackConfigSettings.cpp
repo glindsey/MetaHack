@@ -1,10 +1,10 @@
 #include "stdafx.h"
 
-#include "ConfigSettings.h"
+#include "FallbackConfigSettings.h"
 
 #include "ErrorHandler.h"
 
-ConfigSettings::ConfigSettings()
+FallbackConfigSettings::FallbackConfigSettings()
 {
   SET_UP_LOGGER("ConfigSettings", true);
 
@@ -39,7 +39,7 @@ ConfigSettings::ConfigSettings()
   set("map_tile_size", 32);
 }
 
-ConfigSettings::~ConfigSettings()
+FallbackConfigSettings::~FallbackConfigSettings()
 {
   //dtor
 }

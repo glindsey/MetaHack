@@ -1,7 +1,8 @@
 #include "stdafx.h"
 
-#include "ConfigSettings.h"
+#include "IConfigSettings.h"
 #include "MapStandard2DView.h"
+#include "Service.h"
 
 #include "ShaderEffect.h"
 
@@ -154,6 +155,7 @@ void MapStandard2DView::add_tile_vertices(ThingId viewer, Vec2i coords)
 
 void MapStandard2DView::add_tile_floor_vertices(Vec2i coords)
 {
+  auto& config = Service<IConfigSettings>::get();
   auto& map = get_map();
 
   auto& tile = map.get_tile(coords);
@@ -167,7 +169,7 @@ void MapStandard2DView::add_tile_floor_vertices(Vec2i coords)
   auto& tileNW = map.get_tile(coords + Vec2i(Direction::Northwest));
 
   sf::Vertex new_vertex;
-  float ts = the_config.get<float>("map_tile_size");
+  float ts = config.get<float>("map_tile_size");
   float half_ts = ts * 0.5f;
 
   sf::Color colorN{ tileN.get_light_level() };
@@ -214,8 +216,9 @@ void MapStandard2DView::add_thing_floor_vertices(ThingId thing,
                                                  bool use_lighting,
                                                  int frame)
 {
+  auto& config = Service<IConfigSettings>::get();
   sf::Vertex new_vertex;
-  float ts = the_config.get<float>("map_tile_size");
+  float ts = config.get<float>("map_tile_size");
   float ts2 = ts * 0.5f;
 
   MapTile* root_tile = thing->get_maptile();
