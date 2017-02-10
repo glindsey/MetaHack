@@ -1,3 +1,4 @@
 {
-	"TESTING": "A test string"
+	"TESTING": "A test string",
+	"WELCOME_MSG": "Welcome to the Etheric Catacombs!"
 }

@@ -7,6 +7,7 @@
 #include "GetLetterKey.h"
 #include "IConfigSettings.h"
 #include "InventoryArea.h"
+#include "IStringDictionary.h"
 #include "KeyBuffer.h"
 #include "Map.h"
 #include "MapFactory.h"
@@ -156,9 +157,12 @@ std::string const& AppStateGameMode::get_name()
 
 bool AppStateGameMode::initialize()
 {
+  auto& config = Service<IConfigSettings>::get();
+  auto& dict = Service<IStringDictionary>::get();
+
   // Create the player.
   ThingId player = get_game_state().get_things().create("Human");
-  player->set_proper_name("John Doe");
+  player->set_proper_name(config.get<std::string>("player_name"));
   get_game_state().set_player(player);
 
   // Create the game map.
@@ -193,7 +197,7 @@ bool AppStateGameMode::initialize()
   m_map_view->update_tiles(player);
   m_map_view->update_things(player, 0);
 
-  the_message_log.add("Welcome to the Etheric Catacombs!");
+  the_message_log.add(dict.get("WELCOME_MSG"));
 
   return true;
 }
