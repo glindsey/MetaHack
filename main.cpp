@@ -15,7 +15,17 @@ int main(int argc, char* argv[])
 
   LOG(INFO) << "Entered main()";
 
+  // Generate system default locale and set it globally.
+  // This is done BEFORE setting CRT debug flags, because the ICU library
+  // causes false positives (due to global destructors running after the
+  // memory leak report is generated).
+  // EDIT: Unfortunately that doesn't seem to fix the problem. Argh.
+  bl::generator gen;
+  std::locale::global(gen("en_US.UTF-8"));
+
+#ifdef _DEBUG
   _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+#endif
 
   // Scoping everything here so it is properly destroyed before checking for memory leaks.
   {
@@ -25,11 +35,7 @@ int main(int argc, char* argv[])
 #ifdef NDEBUG
     try
 #endif
-    {
-      // Generate system default locale and set it globally.
-      bl::generator gen;
-      std::locale::global(gen("en_US.UTF-8"));
-      
+    {     
       // Check to make sure shaders are available.
       if (!sf::Shader::isAvailable())
       {
