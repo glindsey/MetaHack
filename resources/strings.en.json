@@ -1,4 +1,5 @@
 {
 	"TESTING": "A test string",
+	"NOT_IMPLEMENTED_MSG": "We're sorry, but that action has not yet been implemented.",
 	"WELCOME_MSG": "Welcome to the Etheric Catacombs!"
 }

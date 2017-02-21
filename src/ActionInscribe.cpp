@@ -3,6 +3,8 @@
 #include "ActionInscribe.h"
 #include "Thing.h"
 #include "ThingId.h"
+#include "IStringDictionary.h"
+#include "Service.h"
 
 ACTION_SRC_BOILERPLATE(ActionInscribe, "inscribe", "write")
 
@@ -13,7 +15,8 @@ Action::StateResult ActionInscribe::do_prebegin_work_(AnyMap& params)
 
 Action::StateResult ActionInscribe::do_begin_work_(AnyMap& params)
 {
-  the_message_log.add("We're sorry, but that action has not yet been implemented.");
+  auto& dict = Service<IStringDictionary>::get();
+  the_message_log.add(dict.get("NOT_IMPLEMENTED_MSG"));
 
   return Action::StateResult::Failure();
 }

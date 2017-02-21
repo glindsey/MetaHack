@@ -3,6 +3,8 @@
 #include "ActionClose.h"
 #include "Thing.h"
 #include "ThingId.h"
+#include "IStringDictionary.h"
+#include "Service.h"
 
 ACTION_SRC_BOILERPLATE(ActionClose, "close", "close")
 
@@ -16,7 +18,8 @@ Action::StateResult ActionClose::do_begin_work_(AnyMap& params)
   bool success = false;
   unsigned int action_time = 0;
 
-  the_message_log.add("We're sorry, but that action has not yet been implemented.");
+  auto& dict = Service<IStringDictionary>::get();
+  the_message_log.add(dict.get("NOT_IMPLEMENTED_MSG"));
 
 #if 0
   if (thing != ThingId::Mu())

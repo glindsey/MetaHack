@@ -3,6 +3,8 @@
 #include "ActionMix.h"
 #include "Thing.h"
 #include "ThingId.h"
+#include "IStringDictionary.h"
+#include "Service.h"
 
 ACTION_SRC_BOILERPLATE(ActionMix, "mix", "mix")
 
@@ -94,7 +96,8 @@ Action::StateResult ActionMix::do_begin_work_(AnyMap& params)
   //the_message_log.add(message);
   //thing1->perform_action_mixed_with_by(thing2, pImpl->ref);
 
-  the_message_log.add("We're sorry, but that action has not yet been implemented.");
+  auto& dict = Service<IStringDictionary>::get();
+  the_message_log.add(dict.get("NOT_IMPLEMENTED_MSG"));
 
   return Action::StateResult::Failure();
 }
