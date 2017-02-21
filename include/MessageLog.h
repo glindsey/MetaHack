@@ -15,16 +15,13 @@ public:
 
   /// Add a message to the message log.
   /// The message added is automatically capitalized if it isn't already.
-  void add(std::string message);
+  virtual void add(std::string message) override;
 
   /// Get the maximum size of the message queue.
-  unsigned int get_message_queue_size();
+  virtual unsigned int get_message_queue_size() override;
 
   /// Get a reference to the message queue.
-  std::deque<std::string>& get_message_queue();
-
-  /// Get the key buffer used for entering debug commands.
-  IKeyBuffer& get_key_buffer();
+  virtual std::deque<std::string>& get_message_queue() override;
 
 protected:
 

@@ -5,17 +5,22 @@
 #include "App.h"
 #include "ErrorHandler.h"
 #include "IConfigSettings.h"
-#include "MessageLog.h"
+#include "IKeyBuffer.h"
+#include "IMessageLog.h"
 #include "Service.h"
 
 MessageLogView::MessageLogView(std::string name,
-                               MessageLog& model,
+                               IMessageLog& model,
+                               IKeyBuffer& key_buffer,
                                sf::IntRect dimensions)
   :
   metagui::Window(name, dimensions),
-  m_model(model)
+  m_model(model),
+  m_key_buffer(key_buffer)
 {
   set_text("Message Log");
+  startObserving(model);
+  startObserving(key_buffer);
 }
 
 MessageLogView::~MessageLogView()
@@ -28,7 +33,7 @@ metagui::Event::Result MessageLogView::handle_event_before_children_(metagui::Ev
   /// @todo This is ugly, fix later
   if (get_global_focus() == true)
   {
-    return static_cast<metagui::Event::Result>(m_model.get_key_buffer().handle_key_press(event));
+    return static_cast<metagui::Event::Result>(m_key_buffer.handle_key_press(event));
   }
   else
   {
@@ -62,7 +67,7 @@ void MessageLogView::render_contents_(sf::RenderTexture& texture, int frame)
   // If we have the focus, put the current command at the bottom of the log.
   if (get_focus() == true)
   {
-    m_model.get_key_buffer().render(
+    m_key_buffer.render(
       texture,
       Vec2f(text_coord_x, text_coord_y),
       frame,
@@ -88,4 +93,9 @@ void MessageLogView::render_contents_(sf::RenderTexture& texture, int frame)
   }
 
   return;
+}
+
+void MessageLogView::notifyOfEvent_(Observable & observed, Event & event)
+{
+  /// @todo WRITE ME
 }

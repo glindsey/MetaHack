@@ -2,10 +2,10 @@
 
 #include <deque>
 
-#include "IKeyBuffer.h"
+#include "Observable.h"
 
 /// Interface for a game message log.
-class IMessageLog
+class IMessageLog : public Observable
 {
 public:
   virtual ~IMessageLog() = 0;
@@ -22,9 +22,6 @@ public:
 
   /// Get a reference to the message queue.
   virtual std::deque<std::string>& get_message_queue() = 0;
-
-  /// Get the key buffer used for entering debug commands.
-  virtual IKeyBuffer& get_key_buffer() = 0;
 
 protected:
 private:

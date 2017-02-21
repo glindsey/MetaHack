@@ -647,6 +647,12 @@
     <ClCompile Include="src\MessageLog.cpp">
       <Filter>Services</Filter>
     </ClCompile>
+    <ClCompile Include="src\Observer.cpp">
+      <Filter>Design Pattern Templates</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Observable.cpp">
+      <Filter>Design Pattern Templates</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md">

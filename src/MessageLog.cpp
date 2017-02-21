@@ -4,7 +4,6 @@
 
 #include "App.h"
 #include "ErrorHandler.h"
-#include "KeyBuffer.h"
 
 struct MessageLog::Impl
 {
@@ -14,9 +13,6 @@ struct MessageLog::Impl
 
   /// Queue of previous messages.
   std::deque<std::string> message_queue;
-
-  /// Key buffer for the current command.
-  KeyBuffer buffer;
 };
 
 MessageLog::MessageLog()
@@ -51,9 +47,4 @@ unsigned int MessageLog::get_message_queue_size()
 std::deque<std::string>& MessageLog::get_message_queue()
 {
   return pImpl->message_queue;
-}
-
-IKeyBuffer& MessageLog::get_key_buffer()
-{
-  return pImpl->buffer;
 }

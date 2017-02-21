@@ -4,85 +4,50 @@
 
 #include "Event.h"
 
+// Forward declarations
+class Observable;
 
-/// Template class that implements an Observer of a particular object.
-/// The object `Obj` being observed must obey the following rules:
-///   1. It must derive from `Observable<Obj>`.
+/// Class that implements an Observer of one or more objects.
+/// Each object being observed must obey the following rules:
+///   1. It must derive from `Observable`.
 ///   2. It must not be destroyed without notifying the Observer.
-///      (If it is derived from `Observable<Obj>` this will happen
+///      (If it is derived from `Observable` this will happen
 ///      automatically upon destruction.)
-template <class ObservedType>
 class Observer
 {
 public:
   /// Default constructor.
-  Observer()
-    :
-    observedObject{ nullptr }
-  {}
+  Observer();
 
   /// Constructor that starts off observing an object.
   /// Registers with the object given.
   /// @param object   The object to observe.
-  Observer(ObservedType& object)
-  {
-    setObservedObject(object);
-  }
+  Observer(Observable& object);
 
   /// Destructor.
   /// Deregisters with observed object, if there is one.
-  virtual ~Observer()
-  {
-    clearObservedObjectIfNecessary();
-  }
+  virtual ~Observer();
 
-  /// Set the object to be observed.
-  /// If an object is already being observed, this method will first
-  /// deregister with that object.
-  void setObservedObject(ObservedType& object)
-  {
-    clearObservedObjectIfNecessary();
-    object.registerObserver(*this);
-    observedObject = &object;
-  }
+  /// Start observing an object.
+  virtual void startObserving(Observable& observed);
 
-  /// Clear the observed object, if necessary.
-  /// If no object is being observed, this method simply returns.
-  void clearObservedObjectIfNecessary()
-  {
-    if (observedObject != nullptr)
-    {
-      observedObject->deregisterObserver(*this);
-      observedObject = nullptr;
-    }
-  }
+  /// Stop observing an object.
+  virtual void stopObserving(Observable& observed);
 
-  /// Concrete method for special event handling (such as "Destroyed").
-  void notifyOfEvent(Event& event)
-  {
-    notifyOfEvent_(event);
-    if (event == Event::Destroyed)
-    {
-      observedObject = nullptr;
-    }
-  }
+  /// Clear all observed objects.
+  virtual void stopObservingAll();
 
+  /// Final method for special event handling (such as "Destroyed").
+  virtual void notifyOfEvent(Observable& observed, Event& event) final;
 
 protected:
-  /// Get a const pointer to the observed object.
-  ObservedType const* getObservedObject()
-  {
-    return observedObject;
-  }
+  /// Get a const pointer to the vector of observed object.
+  virtual std::vector<Observable*> const getObservedObjects() const final;
 
   /// Virtual method for event handling, overridden by subclasses.
-  virtual void notifyOfEvent_(Event& event)
-  {
-
-  }
+  virtual void notifyOfEvent_(Observable& observed, Event& event) = 0;
 
 private:
-  /// Pointer to object being observed.
-  /// Equal to nullptr if no object is currently being observed.
-  ObservedType*  observedObject;
+  /// Vector of objects being observed.
+  std::vector<Observable*> observedObjects;
 };

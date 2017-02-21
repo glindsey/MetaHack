@@ -23,7 +23,7 @@ class ThingId;
 /// Class representing a map, which is a grid of locations for Things.
 class Map
   :
-  public Observable<Map>
+  public Observable
 {
   friend class MapFactory;
   friend class MapView;

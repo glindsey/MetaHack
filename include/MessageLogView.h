@@ -4,20 +4,28 @@
 #include "stdafx.h"
 
 #include "GUIWindow.h"
+#include "Observer.h"
 
 /// Forward declarations
-class MessageLog;
+class IKeyBuffer;
+class IMessageLog;
 
 /// A class that acts as a View for a MessageLog model instance.
-class MessageLogView : public metagui::Window
+class MessageLogView 
+  : 
+  public metagui::Window,
+  public Observer
 {
 public:
   /// Create a message log view tied to the specified model.
   /// @param  name        The name of the view.
-  /// @param  model       The MessageLog model to tie the view to.
+  /// @param  model       The MessageLog instance to tie the view to.
+  /// @param  key_buffer  The KeyBuffer instance to tie the view to.
   /// @param  dimensions  The initial dimensions of the view.
+  /// @warning Lifetime of this object MUST outlast the MessageLog/KeyBuffer passed in!
   MessageLogView(std::string name, 
-                 MessageLog& model,
+                 IMessageLog& model,
+                 IKeyBuffer& key_buffer,
                  sf::IntRect dimensions);
 
   virtual ~MessageLogView();
@@ -31,10 +39,18 @@ protected:
   /// @param  frame   Current frame counter.
   virtual void render_contents_(sf::RenderTexture& texture, int frame) override;
 
+  /// Handle incoming events from observed objects.
+  /// @param  observed  Object sending the event.
+  /// @param  event     Event to process.
+  virtual void notifyOfEvent_(Observable& observed, Event& event) override;
+
 private:
 
   /// Reference to the associated MessageLog model.
-  MessageLog& m_model;
+  IMessageLog& m_model;
+
+  /// Reference to the associated KeyBuffer model.
+  IKeyBuffer& m_key_buffer;
 };
 
 #endif // MESSAGELOGVIEW_H

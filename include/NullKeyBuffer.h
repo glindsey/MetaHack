@@ -11,50 +11,35 @@ class NullKeyBuffer : public IKeyBuffer
 public:
   virtual ~NullKeyBuffer() {}
 
-  /// Process a key event.
-  virtual metagui::Event::Result handle_key_press(metagui::EventKeyPressed& event)
+  virtual metagui::Event::Result handle_key_press(metagui::EventKeyPressed& event) override
   {
     return metagui::Event::Result::Ignored;
   }
 
-  /// Get the current cursor position.
-  virtual size_t get_cursor_position() const
+  virtual size_t get_cursor_position() const override
   {
     return 0;
   }
 
-  /// Set the current cursor position.
-  virtual void set_cursor_position(size_t position) {}
+  virtual void set_cursor_position(size_t position) override {}
 
-  /// Get the current buffer contents.
-  virtual std::string const& get_buffer() const { return null_buffer; }
+  virtual std::string const& get_buffer() const override { return null_buffer; }
 
-  /// Set the current buffer contents, putting cursor at the end.
-  virtual void set_buffer(std::string buf) {}
+  virtual void set_buffer(std::string buf) override {}
 
-  /// Clear the current buffer contents.
-  virtual void clear_buffer() {}
+  virtual void clear_buffer() override {}
 
-  /// Get whether the buffer is ready for processing.
-  virtual bool get_enter() 
+  virtual bool get_enter() override
   { 
     return false; 
   }
 
-  /// Render onto a target.
-  /// @param target Target to render onto.
-  /// @param coords Coordinates to render at.
-  /// @param frame Current frame (used for cursor flash).
-  /// @param font Font to use.
-  /// @param font_size Font size to use.
-  /// @param fg_color Foreground color to use.
-  /// @todo Split this out into a view.
   virtual void render(sf::RenderTexture& texture,
                       Vec2f coords,
                       unsigned int frame,
                       sf::Font const& font,
                       unsigned int font_size,
-                      sf::Color const& fg_color)
+                      sf::Color const& fg_color) override
   {}
 
 private:

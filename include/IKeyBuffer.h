@@ -3,9 +3,10 @@
 #include "stdafx.h"
 
 #include "GUIEvent.h"
+#include "Observable.h"
 
 /// Interface for an input buffer.
-class IKeyBuffer
+class IKeyBuffer: public Observable
 {
 public:
   virtual ~IKeyBuffer() {}

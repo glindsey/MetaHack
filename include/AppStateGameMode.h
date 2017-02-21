@@ -8,6 +8,7 @@
 #include "Direction.h"
 #include "GameState.h"
 #include "InventoryArea.h"
+#include "KeyBuffer.h"
 #include "MapView.h"
 #include "StatusArea.h"
 
@@ -58,6 +59,9 @@ protected:
 private:
   /// Application window.
   sf::RenderWindow& m_app_window;
+
+  /// The debug key buffer.
+  std::unique_ptr<KeyBuffer> m_debug_buffer;
 
   /// The current game state.
   std::unique_ptr<GameState> m_game_state;

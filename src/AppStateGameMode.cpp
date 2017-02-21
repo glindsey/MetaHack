@@ -53,6 +53,7 @@ AppStateGameMode::AppStateGameMode(StateMachine& state_machine, sf::RenderWindow
   AppState(state_machine,
            std::bind(&AppStateGameMode::render_map, this, std::placeholders::_1, std::placeholders::_2)),
   m_app_window{ m_app_window },
+  m_debug_buffer{ NEW KeyBuffer() },
   m_game_state{ NEW GameState() },
   m_map_view{ NEW MapStandard2DView() },
   m_window_in_focus{ true },
@@ -61,7 +62,7 @@ AppStateGameMode::AppStateGameMode(StateMachine& state_machine, sf::RenderWindow
   m_current_input_state{ GameInputState::Map },
   m_cursor_coords{ 0, 0 }
 {
-  the_desktop.add_child(NEW MessageLogView("MessageLogView", the_message_log, calc_message_log_dims())).set_flag("titlebar", true);
+  the_desktop.add_child(NEW MessageLogView("MessageLogView", the_message_log, *(m_debug_buffer.get()), calc_message_log_dims())).set_flag("titlebar", true);
   the_desktop.add_child(NEW InventoryArea("InventoryArea", calc_inventory_dims())).set_flag("titlebar", true);
   the_desktop.add_child(NEW StatusArea("StatusArea", calc_status_area_dims())).set_global_focus(true);
 }
@@ -76,12 +77,10 @@ AppStateGameMode::~AppStateGameMode()
 void AppStateGameMode::execute()
 {
   // First, check for debug commands ready to be run.
-  IKeyBuffer& debug_buffer = the_message_log.get_key_buffer();
-
-  if (debug_buffer.get_enter())
+  if (m_debug_buffer->get_enter())
   {
     /// Call the Lua interpreter with the command.
-    std::string luaCommand = debug_buffer.get_buffer();
+    std::string luaCommand = m_debug_buffer->get_buffer();
     the_message_log.add("> " + luaCommand);
     if (luaL_dostring(the_lua_state, luaCommand.c_str()))
     {
@@ -89,7 +88,7 @@ void AppStateGameMode::execute()
       the_message_log.add(result);
     }
 
-    debug_buffer.clear_buffer();
+    m_debug_buffer->clear_buffer();
   }
 
   bool ticked = GAME.process_tick();
