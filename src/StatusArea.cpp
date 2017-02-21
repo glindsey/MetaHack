@@ -15,8 +15,8 @@ struct StatusArea::Impl
   bool dummy;
 };
 
-StatusArea::StatusArea(sf::IntRect dimensions)
-  : metagui::Window("StatusArea", dimensions),
+StatusArea::StatusArea(std::string name, sf::IntRect dimensions)
+  : metagui::Window(name, dimensions),
   pImpl(NEW Impl())
 {
   //ctor

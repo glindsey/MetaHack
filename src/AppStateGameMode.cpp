@@ -61,13 +61,16 @@ AppStateGameMode::AppStateGameMode(StateMachine& state_machine, sf::RenderWindow
   m_current_input_state{ GameInputState::Map },
   m_cursor_coords{ 0, 0 }
 {
-  the_desktop.add_child(NEW MessageLogView(the_message_log, calc_message_log_dims())).set_flag("titlebar", true);
-  the_desktop.add_child(NEW InventoryArea(calc_inventory_dims())).set_flag("titlebar", true);
-  the_desktop.add_child(NEW StatusArea(calc_status_area_dims())).set_global_focus(true);
+  the_desktop.add_child(NEW MessageLogView("MessageLogView", the_message_log, calc_message_log_dims())).set_flag("titlebar", true);
+  the_desktop.add_child(NEW InventoryArea("InventoryArea", calc_inventory_dims())).set_flag("titlebar", true);
+  the_desktop.add_child(NEW StatusArea("StatusArea", calc_status_area_dims())).set_global_focus(true);
 }
 
 AppStateGameMode::~AppStateGameMode()
 {
+  the_desktop.remove_child("StatusArea");
+  the_desktop.remove_child("InventoryArea");
+  the_desktop.remove_child("MessageLogView");
 }
 
 void AppStateGameMode::execute()

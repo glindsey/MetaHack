@@ -8,10 +8,11 @@
 #include "MessageLog.h"
 #include "Service.h"
 
-MessageLogView::MessageLogView(MessageLog& model,
+MessageLogView::MessageLogView(std::string name,
+                               MessageLog& model,
                                sf::IntRect dimensions)
   :
-  metagui::Window("MessageLogView", dimensions),
+  metagui::Window(name, dimensions),
   m_model(model)
 {
   set_text("Message Log");

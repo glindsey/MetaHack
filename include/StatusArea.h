@@ -8,7 +8,7 @@
 class StatusArea : public metagui::Window
 {
 public:
-  explicit StatusArea(sf::IntRect dimensions);
+  explicit StatusArea(std::string name, sf::IntRect dimensions);
   virtual ~StatusArea();
 
 protected:

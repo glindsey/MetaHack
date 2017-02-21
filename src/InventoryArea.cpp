@@ -76,8 +76,9 @@ struct InventoryArea::Impl
   }
 };
 
-InventoryArea::InventoryArea(sf::IntRect dimensions)
-  : metagui::Window("InventoryArea", dimensions),
+InventoryArea::InventoryArea(std::string name,
+                             sf::IntRect dimensions)
+  : metagui::Window(name, dimensions),
   pImpl(NEW Impl())
 {
   SET_UP_LOGGER("InventoryArea", true);

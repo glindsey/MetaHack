@@ -13,9 +13,11 @@ class MessageLogView : public metagui::Window
 {
 public:
   /// Create a message log view tied to the specified model.
+  /// @param  name        The name of the view.
   /// @param  model       The MessageLog model to tie the view to.
   /// @param  dimensions  The initial dimensions of the view.
-  MessageLogView(MessageLog& model,
+  MessageLogView(std::string name, 
+                 MessageLog& model,
                  sf::IntRect dimensions);
 
   virtual ~MessageLogView();

@@ -21,7 +21,7 @@ class InventoryArea :
   public metagui::Window
 {
 public:
-  explicit InventoryArea(sf::IntRect dimensions);
+  explicit InventoryArea(std::string name, sf::IntRect dimensions);
   virtual ~InventoryArea();
 
   ThingId get_viewed() const;
