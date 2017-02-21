@@ -8,7 +8,7 @@
 class IConfigSettings : public PropertyDictionary
 {
 public:
-  virtual ~IConfigSettings() {}
+  virtual ~IConfigSettings();
 
   /// Return a Null Object that implements this interface.
   static IConfigSettings* getNull();

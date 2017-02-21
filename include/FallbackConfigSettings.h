@@ -9,6 +9,5 @@ class FallbackConfigSettings : public IConfigSettings
 {
 public:
   FallbackConfigSettings();
-
   virtual ~FallbackConfigSettings();
 };

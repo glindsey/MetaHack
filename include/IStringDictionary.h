@@ -4,6 +4,8 @@
 class IStringDictionary
 {
 public:
+  virtual ~IStringDictionary();
+
   /// Return a Null Object that implements this interface.
   static IStringDictionary* getNull();
 

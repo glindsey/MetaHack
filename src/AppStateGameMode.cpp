@@ -76,7 +76,7 @@ AppStateGameMode::~AppStateGameMode()
 void AppStateGameMode::execute()
 {
   // First, check for debug commands ready to be run.
-  KeyBuffer& debug_buffer = the_message_log.get_key_buffer();
+  IKeyBuffer& debug_buffer = the_message_log.get_key_buffer();
 
   if (debug_buffer.get_enter())
   {

@@ -326,11 +326,15 @@
     <ClInclude Include="include\ErrorHandler.h" />
     <ClInclude Include="include\Event.h" />
     <ClInclude Include="include\IConfigSettings.h" />
+    <ClInclude Include="include\IKeyBuffer.h" />
+    <ClInclude Include="include\IMessageLog.h" />
     <ClInclude Include="include\IStringDictionary.h" />
     <ClInclude Include="include\MapMemoryChunk.h" />
     <ClInclude Include="include\MapStandard2DView.h" />
     <ClInclude Include="include\MapView.h" />
     <ClInclude Include="include\ModifiablePropertyDictionary.h" />
+    <ClInclude Include="include\NullKeyBuffer.h" />
+    <ClInclude Include="include\NullMessageLog.h" />
     <ClInclude Include="include\NullStringDictionary.h" />
     <ClInclude Include="include\Observable.h" />
     <ClInclude Include="include\Observer.h" />
@@ -434,6 +438,7 @@
     <ClCompile Include="src\GameState.cpp" />
     <ClCompile Include="src\Gender.cpp" />
     <ClCompile Include="src\IConfigSettings.cpp" />
+    <ClCompile Include="src\IMessageLog.cpp" />
     <ClCompile Include="src\IntegerRange.cpp" />
     <ClCompile Include="src\Inventory.cpp" />
     <ClCompile Include="src\InventoryArea.cpp" />

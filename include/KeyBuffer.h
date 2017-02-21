@@ -3,11 +3,11 @@
 
 #include "stdafx.h"
 
-#include "GUIEvent.h"
+#include "IKeyBuffer.h"
 
 /// This class encapsulates the idea of an input buffer which is added to or
 /// removed from using SFML KeyPressed events.
-class KeyBuffer
+class KeyBuffer : public IKeyBuffer
 {
 public:
   KeyBuffer();

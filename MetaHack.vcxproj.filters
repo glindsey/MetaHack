@@ -84,9 +84,6 @@
     <ClInclude Include="include\MathUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\MessageLog.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\Renderable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -387,6 +384,21 @@
     <ClInclude Include="include\FallbackConfigSettings.h">
       <Filter>Services</Filter>
     </ClInclude>
+    <ClInclude Include="include\IKeyBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\IMessageLog.h">
+      <Filter>Services</Filter>
+    </ClInclude>
+    <ClInclude Include="include\NullMessageLog.h">
+      <Filter>Services</Filter>
+    </ClInclude>
+    <ClInclude Include="include\NullKeyBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MessageLog.h">
+      <Filter>Services</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">
@@ -411,9 +423,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\MapTile.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\MessageLog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\State.cpp">
@@ -630,6 +639,12 @@
       <Filter>Services</Filter>
     </ClCompile>
     <ClCompile Include="src\FallbackConfigSettings.cpp">
+      <Filter>Services</Filter>
+    </ClCompile>
+    <ClCompile Include="src\IMessageLog.cpp">
+      <Filter>Services</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MessageLog.cpp">
       <Filter>Services</Filter>
     </ClCompile>
   </ItemGroup>

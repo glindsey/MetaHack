@@ -53,7 +53,7 @@ std::deque<std::string>& MessageLog::get_message_queue()
   return pImpl->message_queue;
 }
 
-KeyBuffer& MessageLog::get_key_buffer()
+IKeyBuffer& MessageLog::get_key_buffer()
 {
   return pImpl->buffer;
 }

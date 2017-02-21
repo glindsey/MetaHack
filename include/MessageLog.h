@@ -3,12 +3,10 @@
 
 #include "stdafx.h"
 
-#include "GUIObject.h"
-#include "KeyBuffer.h"
-#include "LuaObject.h"
+#include "IMessageLog.h"
 
 /// A class that keeps track of game messages, and is renderable on-screen.
-class MessageLog
+class MessageLog : public IMessageLog
 {
 public:
   MessageLog();
@@ -26,7 +24,7 @@ public:
   std::deque<std::string>& get_message_queue();
 
   /// Get the key buffer used for entering debug commands.
-  KeyBuffer& get_key_buffer();
+  IKeyBuffer& get_key_buffer();
 
 protected:
 
