@@ -42,7 +42,7 @@ protected:
   /// Handle incoming events from observed objects.
   /// @param  observed  Object sending the event.
   /// @param  event     Event to process.
-  virtual void notifyOfEvent_(Observable& observed, Event& event) override;
+  virtual void notifyOfEvent_(Observable& observed, Event event) override;
 
 private:
 

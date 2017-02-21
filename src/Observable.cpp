@@ -14,6 +14,7 @@ void Observable::registerObserver(Observer& observer)
   if (foundObserver == observers.end())
   {
     observers.push_back(&observer);
+    observer.notifyOfEvent(*this, Event::Registered);
   }
 }
 

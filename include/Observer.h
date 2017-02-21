@@ -38,14 +38,14 @@ public:
   virtual void stopObservingAll();
 
   /// Final method for special event handling (such as "Destroyed").
-  virtual void notifyOfEvent(Observable& observed, Event& event) final;
+  virtual void notifyOfEvent(Observable& observed, Event event) final;
 
 protected:
   /// Get a const pointer to the vector of observed object.
   virtual std::vector<Observable*> const getObservedObjects() const final;
 
   /// Virtual method for event handling, overridden by subclasses.
-  virtual void notifyOfEvent_(Observable& observed, Event& event) = 0;
+  virtual void notifyOfEvent_(Observable& observed, Event event) = 0;
 
 private:
   /// Vector of objects being observed.

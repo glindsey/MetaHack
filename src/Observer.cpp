@@ -45,7 +45,7 @@ void Observer::stopObservingAll()
   observedObjects.clear();
 }
 
-void Observer::notifyOfEvent(Observable& observed, Event& event)
+void Observer::notifyOfEvent(Observable& observed, Event event)
 {
   notifyOfEvent_(observed, event);
   if (event == Event::Destroyed)

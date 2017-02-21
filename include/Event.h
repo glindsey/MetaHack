@@ -4,5 +4,6 @@
 enum class Event
 {
   Destroyed,
+  Registered,
   Updated
 };
