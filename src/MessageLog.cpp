@@ -33,8 +33,7 @@ MessageLog::~MessageLog()
 
 void MessageLog::add(std::string message)
 {
-  message = bl::to_title(message);
-  //message[0] = toupper(message[0]);
+  message[0] = toupper(message[0], std::locale());
 
   pImpl->message_queue.push_front(message);
 
