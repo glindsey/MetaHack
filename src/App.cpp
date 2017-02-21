@@ -113,6 +113,7 @@ App::App(sf::RenderWindow& app_window)
   }
 
   // Create the message log.
+  Service<IMessageLog>::provide(NEW MessageLog());
   m_message_log.reset(NEW MessageLog());
 
   // Register Lua functions.
