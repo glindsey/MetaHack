@@ -20,7 +20,7 @@ Action::StateResult ActionUnlock::do_begin_work_(AnyMap& params)
   unsigned int action_time = 0;
 
   auto& dict = Service<IStringDictionary>::get();
-  Service<IMessageLog>::get().add(dict.get("NOT_IMPLEMENTED_MSG"));
+  Service<IMessageLog>::get().add(dict.get("ACTION_NOT_IMPLEMENTED"));
 
   return{ success, action_time };
 }

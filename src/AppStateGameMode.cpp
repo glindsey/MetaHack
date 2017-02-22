@@ -18,6 +18,7 @@
 #include "MessageLogView.h"
 #include "Service.h"
 #include "StatusArea.h"
+#include "StringTransforms.h"
 #include "Thing.h"
 #include "ThingManager.h"
 
@@ -162,7 +163,6 @@ std::string const& AppStateGameMode::get_name()
 bool AppStateGameMode::initialize()
 {
   auto& config = Service<IConfigSettings>::get();
-  auto& dict = Service<IStringDictionary>::get();
 
   // Create the player.
   ThingId player = get_game_state().get_things().create("Human");
@@ -201,7 +201,7 @@ bool AppStateGameMode::initialize()
   m_map_view->update_tiles(player);
   m_map_view->update_things(player, 0);
 
-  Service<IMessageLog>::get().add(dict.get("WELCOME_MSG"));
+  put_tmsg("WELCOME_MSG");
 
   return true;
 }
@@ -333,7 +333,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
         }
         else if (key.code == sf::Keyboard::Key::Escape)
         {
-          Service<IMessageLog>::get().add("Press CTRL-ALT-Q to quit the game.");
+          put_tmsg("QUIT_MSG");
           result = SFMLEventResult::Handled;
         }
       }
@@ -383,13 +383,11 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             auto slot_count = m_inventory_selection->get_selected_slot_count();
             if (slot_count < 1)
             {
-              Service<IMessageLog>::get().add("You have to have something selected "
-                                  "before you can choose a quantity.");
+              put_tmsg("QUANTITY_SUBTRACT_NEED_SOMETHING_SELECTED");
             }
             else if (slot_count > 1)
             {
-              Service<IMessageLog>::get().add("You can only have one thing selected "
-                                  "when choosing a quantity.");
+              put_tmsg("QUANTITY_SUBTRACT_NEED_ONE_THING_SELECTED");
             }
             else
             {
@@ -406,13 +404,11 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             auto slot_count = m_inventory_selection->get_selected_slot_count();
             if (slot_count < 1)
             {
-              Service<IMessageLog>::get().add("You have to have something selected "
-                                  "before you can choose a quantity.");
+              put_tmsg("QUANTITY_SUBTRACT_NEED_SOMETHING_SELECTED");
             }
             else if (slot_count > 1)
             {
-              Service<IMessageLog>::get().add("You can only have one thing selected "
-                                  "when choosing a quantity.");
+              put_tmsg("QUANTITY_SUBTRACT_NEED_ONE_THING_SELECTED");
             }
             else
             {
@@ -432,7 +428,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             }
             else
             {
-              Service<IMessageLog>::get().add("You are at the top of the inventory tree.");
+              put_tmsg("AT_TOP_OF_INVENTORY_TREE");
             }
           }
           break;
@@ -456,28 +452,27 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
                   }
                   else // if (container.is_locked())
                   {
-                    Service<IMessageLog>::get().add(thing->get_identifying_string() +
-                                        thing->choose_verb(" are", " is") +
-                                        " locked.");
+                    std::string message = Action::make_string(player, thing, "THE_FOO_IS_LOCKED");
+                    put_msg(message);
                   }
                 }
                 else // if (!container.is_open())
                 {
-                  Service<IMessageLog>::get().add(thing->get_identifying_string() +
-                                      thing->choose_verb(" are", " is") +
-                                      " closed.");
+                  /// @todo Need a way to make this cleaner.
+                  std::string message = Action::make_string(player, thing, "THE_FOO_IS_CLOSED");
+                  put_msg(message);
                 }
               }
               else // if (!thing.is_container())
               {
-                Service<IMessageLog>::get().add(thing->get_identifying_string() +
-                                    thing->choose_verb(" are", " is") +
-                                    " not a container.");
+                /// @todo This probably doesn't belong here.
+                std::string message = Action::make_string(player, thing, "THE_FOO_IS_NOT_A_CONTAINER");
+                put_msg(message);
               }
             }
             else
             {
-              Service<IMessageLog>::get().add("Nothing is currently selected.");
+              put_tmsg("NOTHING_IS_SELECTED");
             }
             break;
           }
@@ -537,7 +532,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::A:    // Attire
             if (things.size() == 0)
             {
-              Service<IMessageLog>::get().add("Please choose the item(s) to wear first.");
+              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ITEMS_FIRST"), { tr("VERB_INF_WEAR") }));
             }
             else
             {
@@ -559,7 +554,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             {
               // No item specified, so ask for a direction.
               m_action_in_progress.reset(new ActionClose(player));
-              Service<IMessageLog>::get().add("Choose a direction to close.");
+              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_DIRECTION"), { tr("VERB_INF_CLOSE") }));
               m_current_input_state = GameInputState::TargetSelection;
               m_inventory_selection->clear_selected_slots();
             }
@@ -582,7 +577,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::D:    // Drop
             if (things.size() == 0)
             {
-              Service<IMessageLog>::get().add("Please choose the item(s) to drop first.");
+              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ITEMS_FIRST"), { tr("VERB_INF_DROP") }));
             }
             else
             {
@@ -602,7 +597,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::E:
             if (things.size() == 0)
             {
-              Service<IMessageLog>::get().add("Please choose the item(s) to eat first.");
+              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ITEMS_FIRST"), { tr("VERB_INF_EAT") }));
             }
             else
             {
@@ -622,17 +617,17 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::F:
             if (things.size() == 0)
             {
-              Service<IMessageLog>::get().add("Please select the item to fill first.");
+              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ITEM_FIRST"), { tr("VERB_INF_FILL") }));
             }
             else if (things.size() > 1)
             {
-              Service<IMessageLog>::get().add("You can only fill one item at a time.");
+              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ONLY_ONE_AT_A_TIME"), { tr("VERB_INF_FILL") }));
             }
             else
             {
               m_action_in_progress.reset(new ActionFill(player));
               m_action_in_progress->set_object(things.front());
-              Service<IMessageLog>::get().add("Choose an item or direction to fill from.");
+              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ITEM_OR_DIRECTION"), { tr("VERB_GER_FILL") }));
               m_current_input_state = GameInputState::TargetSelection;
               m_inventory_selection->clear_selected_slots();
             }
@@ -643,7 +638,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::G:
             if (things.size() == 0)
             {
-              Service<IMessageLog>::get().add("Please select the item(s) to pick up first.");
+              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ITEMS_FIRST"), { tr("VERB_INF_GET") }));
             }
             else
             {
@@ -663,17 +658,17 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::H:
             if (things.size() == 0)
             {
-              Service<IMessageLog>::get().add("Please select the item you want to hurl first.");
+              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ITEM_FIRST"), { tr("VERB_INF_THROW") }));
             }
             else if (things.size() > 1)
             {
-              Service<IMessageLog>::get().add("You can only hurl one item at once.");
+              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ONLY_ONE_AT_A_TIME"), { tr("VERB_INF_THROW") }));
             }
             else
             {
               m_action_in_progress.reset(new ActionHurl(player));
               m_action_in_progress->set_object(things.front());
-              Service<IMessageLog>::get().add("Choose a direction to hurl the item.");
+              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_DIRECTION"), { tr("VERB_INF_THROW") }));
               m_current_input_state = GameInputState::TargetSelection;
               m_inventory_selection->clear_selected_slots();
             }
@@ -684,7 +679,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::I:
             if (things.size() > 1)
             {
-              Service<IMessageLog>::get().add("You can only write with one item at a time.");
+              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ONLY_ONE_AT_A_TIME"), { tr("VERB_INF_WRITE") }));
             }
             else
             {
@@ -694,7 +689,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
                 m_action_in_progress->set_object(things.front());
               }
 
-              Service<IMessageLog>::get().add("Choose an item or direction to write on.");
+              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ITEM_OR_DIRECTION"), { tr("VERB_GER_WRITE") }));
               m_current_input_state = GameInputState::TargetSelection;
               m_inventory_selection->clear_selected_slots();
             }
@@ -705,11 +700,11 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::M:
             if (things.size() == 0)
             {
-              Service<IMessageLog>::get().add("Please select the two items you want to mix together first.");
+              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_TWO_ITEMS_FIRST"), { tr("VERB_INF_MIX") }));
             }
             else if (things.size() != 2)
             {
-              Service<IMessageLog>::get().add("You must select exactly two items to mix together.");
+              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_EXACTLY_TWO_AT_A_TIME"), { tr("VERB_INF_MIX") }));
             }
             else
             {
@@ -727,7 +722,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             {
               // No item specified, so ask for a direction.
               m_action_in_progress.reset(new ActionOpen(player));
-              Service<IMessageLog>::get().add("Choose a direction to open.");
+              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_DIRECTION"), { tr("VERB_INF_OPEN") }));
               m_current_input_state = GameInputState::TargetSelection;
               m_inventory_selection->clear_selected_slots();
             }
@@ -750,13 +745,13 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::P:
             if (things.size() == 0)
             {
-              Service<IMessageLog>::get().add("Please select the item(s) you want to store first.");
+              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ITEMS_FIRST"), { tr("VERB_INF_STORE") }));
             }
             else
             {
               m_action_in_progress.reset(new ActionPutInto(player));
               m_action_in_progress->set_objects(things);
-              Service<IMessageLog>::get().add("Choose a container to put the item(s) into.");
+              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_CONTAINER"), { tr("VERB_DESC_STORE") }));
               m_current_input_state = GameInputState::TargetSelection;
               m_inventory_selection->clear_selected_slots();
             }
@@ -767,7 +762,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::Q:
             if (things.size() == 0)
             {
-              Service<IMessageLog>::get().add("Please select the item(s) you want to quaff from first.");
+              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ITEMS_FIRST"), { tr("VERB_INF_DRINK") }));
             }
             else
             {
@@ -784,10 +779,11 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             break;
 
             // CTRL-R -- read an item
+            /// @todo Maybe allow reading from direction?
           case sf::Keyboard::Key::R:
             if (things.size() == 0)
             {
-              Service<IMessageLog>::get().add("Please select the item(s) you want to read first.");
+              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ITEMS_FIRST"), { tr("VERB_INF_READ") }));
             }
             else
             {
@@ -809,11 +805,11 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             /// if no item is selected.
             if (things.size() < 1)
             {
-              Service<IMessageLog>::get().add("Please choose the item to shoot first.");
+              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ITEM_FIRST"), { tr("VERB_INF_SHOOT") }));
             }
             if (things.size() > 1)
             {
-              Service<IMessageLog>::get().add("You can only shoot one item at once.");
+              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ONLY_ONE_AT_A_TIME"), { tr("VERB_INF_SHOOT") }));
             }
             else
             {
@@ -821,7 +817,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
               ///       Otherwise, wield the selected item and fire it.
               m_action_in_progress.reset(new ActionShoot(player));
               m_action_in_progress->set_object(things.front());
-              Service<IMessageLog>::get().add("Choose a direction to shoot.");
+              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_DIRECTION"), { tr("VERB_INF_SHOOT") }));
               m_current_input_state = GameInputState::TargetSelection;
               m_inventory_selection->clear_selected_slots();
             }
@@ -832,7 +828,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::T:
             if (things.size() == 0)
             {
-              Service<IMessageLog>::get().add("Please select the item(s) to take out first.");
+              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ITEMS_FIRST"), { tr("VERB_INF_REMOVE") }));
             }
             else
             {
@@ -849,7 +845,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::U:
             if (things.size() == 0)
             {
-              Service<IMessageLog>::get().add("Please choose the item to use first.");
+              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ITEMS_FIRST"), { tr("VERB_INF_USE") }));
             }
             else
             {
@@ -869,11 +865,11 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::W:
             if (things.size() == 0)
             {
-              Service<IMessageLog>::get().add("Please choose the item to wield first.");
+              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ITEM_FIRST"), { tr("VERB_INF_WIELD") }));
             }
             else if (things.size() > 1)
             {
-              Service<IMessageLog>::get().add("You may only wield one item at a time.");
+              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ONLY_ONE_AT_A_TIME"), { tr("VERB_INF_WIELD") }));
             }
             else
             {
@@ -892,13 +888,13 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             {
               // No item specified, so ask for a direction.
               m_action_in_progress.reset(new ActionAttack(player));
-              Service<IMessageLog>::get().add("Choose a direction to attack.");
+              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_DIRECTION"), { tr("VERB_INF_ATTACK") }));
               m_current_input_state = GameInputState::TargetSelection;
               m_inventory_selection->clear_selected_slots();
             }
             else if (things.size() > 1)
             {
-              Service<IMessageLog>::get().add("You can only attack one item at once.");
+              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ONLY_ONE_AT_A_TIME"), { tr("VERB_INF_ATTACK") }));
             }
             else
             {
@@ -1082,7 +1078,7 @@ SFMLEventResult AppStateGameMode::handle_key_press_target_selection(ThingId play
 
   if (!key.alt && !key.control && key.code == sf::Keyboard::Key::Escape)
   {
-    Service<IMessageLog>::get().add("Aborted.");
+    put_tmsg("ABORTED");
     m_inventory_area_shows_player = false;
     reset_inventory_selection();
     m_current_input_state = GameInputState::Map;

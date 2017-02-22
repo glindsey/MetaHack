@@ -129,15 +129,19 @@ private:
 };
 
 // Here are a few macros to save on typing.
-#define the_lua_instance          App::instance().get_lua()
-#define the_lua_state             App::instance().get_lua().state()
-#define the_default_font          App::instance().get_default_font()
-#define the_default_bold_font     App::instance().get_default_bold_font()
-#define the_default_mono_font     App::instance().get_default_mono_font()
-#define the_default_unicode_font  App::instance().get_default_unicode_font()
-#define the_desktop               App::instance().get_gui_desktop()
-#define the_shader                App::instance().get_shader()
-#define the_RNG                   App::instance().get_rng()
-#define the_tilesheet             App::instance().get_tilesheet()
+#define the_lua_instance          (App::instance().get_lua())
+#define the_lua_state             (App::instance().get_lua().state())
+#define the_default_font          (App::instance().get_default_font())
+#define the_default_bold_font     (App::instance().get_default_bold_font())
+#define the_default_mono_font     (App::instance().get_default_mono_font())
+#define the_default_unicode_font  (App::instance().get_default_unicode_font())
+#define the_desktop               (App::instance().get_gui_desktop())
+#define the_shader                (App::instance().get_shader())
+#define the_RNG                   (App::instance().get_rng())
+#define the_tilesheet             (App::instance().get_tilesheet())
+
+#define tr(x)                     (Service<IStringDictionary>::get().get(x))
+#define put_msg(x)                do { Service<IMessageLog>::get().add(x); } while(0)
+#define put_tmsg(x)               do { Service<IMessageLog>::get().add(tr(x)); } while(0)
 
 #endif // APP_H

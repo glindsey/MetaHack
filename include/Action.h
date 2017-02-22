@@ -277,8 +277,12 @@ public:
 
   /// A method for composing a string from a pattern for an action.
   std::string make_string(std::string pattern, std::vector<std::string> optional_strings) const;
-
   std::string make_string(std::string pattern) const;
+
+  /// A static method for composing strings from patterns.
+  static std::string make_string(ThingId subject, ThingId object, std::string pattern, std::vector<std::string> optional_strings);
+  static std::string make_string(ThingId subject, ThingId object, std::string pattern);
+ 
 
   /// Get a const reference to the action map.
   static ActionMap const& get_map();

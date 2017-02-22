@@ -344,7 +344,7 @@ Action::StateResult Action::do_prebegin_work_(AnyMap& params)
 Action::StateResult Action::do_begin_work_(AnyMap& params)
 {
   auto& dict = Service<IStringDictionary>::get();
-  Service<IMessageLog>::get().add(dict.get("NOT_IMPLEMENTED_MSG"));
+  Service<IMessageLog>::get().add(dict.get("ACTION_NOT_IMPLEMENTED"));
 
   return Action::StateResult::Failure();
 }
@@ -681,6 +681,155 @@ std::string Action::make_string(std::string pattern, std::vector<std::string> op
     if ((token == "targcv") || (token == "targ_cv"))
     {
       return get_target_thing()->is_third_person();
+    }
+
+    if (token == "true")
+    {
+      return true;
+    }
+    if (token == "false")
+    {
+      return false;
+    }
+
+    return true;
+  });
+
+  return new_string;
+}
+
+std::string Action::make_string(ThingId subject, ThingId object, std::string pattern)
+{
+  return make_string(subject, object, pattern, {});
+}
+
+std::string Action::make_string(ThingId subject, ThingId object, std::string pattern, std::vector<std::string> optional_strings)
+{
+  std::string new_string = replace_tokens(pattern,
+                                          [&](std::string token) -> std::string
+  {
+    if (token == "are")
+    {
+      return subject->choose_verb("are", "is");
+    }
+    if (token == "were")
+    {
+      return subject->choose_verb("were", "was");
+    }
+    if (token == "do")
+    {
+      return subject->choose_verb("do", "does");
+    }
+    if (token == "get")
+    {
+      return subject->choose_verb("get", "gets");
+    }
+    if (token == "have")
+    {
+      return subject->choose_verb("have", "has");
+    }
+    if (token == "seem")
+    {
+      return subject->choose_verb("seem", "seems");
+    }
+    if (token == "try")
+    {
+      return subject->choose_verb("try", "tries");
+    }
+
+    if ((token == "foo_is") || (token == "foois"))
+    {
+      return object->choose_verb("are", "is");
+    }
+    if ((token == "foo_has") || (token == "foohas"))
+    {
+      return object->choose_verb("have", "has");
+    }
+
+    if ((token == "the_foo") || (token == "thefoo"))
+    {
+      return object->get_identifying_string(ArticleChoice::Definite);
+    }
+
+    if ((token == "the_foos_location") || (token == "thefooslocation"))
+    {
+      return object->get_location()->get_identifying_string(ArticleChoice::Definite);
+    }
+
+    if (token == "fooself")
+    {
+      return object->get_self_or_identifying_string(subject, ArticleChoice::Definite);
+    }
+
+    if ((token == "subj_pro_foo") || (token == "subjprofoo"))
+    {
+      return object->get_subject_pronoun();
+    }
+
+    if ((token == "obj_pro_foo") || (token == "objprofoo"))
+    {
+      return object->get_object_pronoun();
+    }
+
+    if (token == "you")
+    {
+      return subject->get_you_or_identifying_string();
+    }
+    if ((token == "you_subj") || (token == "yousubj"))
+    {
+      return subject->get_subject_pronoun();
+    }
+    if ((token == "you_obj") || (token == "youobj"))
+    {
+      return subject->get_object_pronoun();
+    }
+    if (token == "your")
+    {
+      return subject->get_possessive();
+    }
+    if (token == "yourself")
+    {
+      return subject->get_reflexive_pronoun();
+    }
+
+    // Check for a numerical token.
+    try
+    {
+      unsigned int converted = static_cast<unsigned int>(std::stoi(token));
+
+      // Check that the optional arguments are at least this size.
+      if (converted < optional_strings.size())
+      {
+        // Return the string passed in.
+        return optional_strings.at(converted);
+      }
+    }
+    catch (std::invalid_argument&)
+    {
+      // Not a number, so bail.
+    }
+    catch (...)
+    {
+      // Throw anything else.
+      throw;
+    }
+
+    // Nothing else matched, return default.
+    return "(" + token + ")";
+  },
+                                          [&](std::string token) -> bool
+  {
+    if ((token == "cv") || (token == "subjcv") || (token == "subj_cv"))
+    {
+      return subject->is_third_person();
+    }
+    if ((token == "objcv") || (token == "obj_cv") || (token == "foocv") || (token == "foo_cv"))
+    {
+      return object->is_third_person();
+    }
+    if ((token == "is_player") || (token == "isplayer"))
+    {
+      return subject->is_player();
     }
 
     if (token == "true")

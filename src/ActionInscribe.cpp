@@ -17,7 +17,7 @@ Action::StateResult ActionInscribe::do_prebegin_work_(AnyMap& params)
 Action::StateResult ActionInscribe::do_begin_work_(AnyMap& params)
 {
   auto& dict = Service<IStringDictionary>::get();
-  Service<IMessageLog>::get().add(dict.get("NOT_IMPLEMENTED_MSG"));
+  Service<IMessageLog>::get().add(dict.get("ACTION_NOT_IMPLEMENTED"));
 
   return Action::StateResult::Failure();
 }

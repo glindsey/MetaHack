@@ -98,7 +98,7 @@ Action::StateResult ActionMix::do_begin_work_(AnyMap& params)
   //thing1->perform_action_mixed_with_by(thing2, pImpl->ref);
 
   auto& dict = Service<IStringDictionary>::get();
-  Service<IMessageLog>::get().add(dict.get("NOT_IMPLEMENTED_MSG"));
+  Service<IMessageLog>::get().add(dict.get("ACTION_NOT_IMPLEMENTED"));
 
   return Action::StateResult::Failure();
 }
