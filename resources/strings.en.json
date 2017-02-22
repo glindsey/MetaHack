@@ -123,5 +123,8 @@
 	"VERB_WRITE_2": "write",
 	"VERB_WRITE_3": "writes",
 	"VERB_WRITE_GER": "writing on",
-	"WELCOME_MSG": "Welcome to the Etheric Catacombs!"
+	"WELCOME_MSG": "Welcome to the Etheric Catacombs!",
+	"YOU_ARE_DESTROYED": "$you $are destroyed!",
+	"YOU_ARE_KILLED": "$you $are killed!",
+	"YOU_DIE": "$you ($cverb:dies:die)..."
 }
