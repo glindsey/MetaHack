@@ -241,9 +241,7 @@ Action::StateResult Action::do_prebegin_work(AnyMap& params)
     // Make sure we're not in limbo!
     if ((location == ThingId::Mu()) || (current_tile == nullptr))
     {
-      /// @todo This message could be made less awkward for verbs that take objects.
-      message = make_string("$you can't $verb because $you $do not exist physically!");
-      Service<IMessageLog>::get().add(message);
+      put_msg(make_string(tr("DONT_EXIST_PHYSICALLY")));
       return StateResult::Failure();
     }
   }
@@ -271,8 +269,7 @@ Action::StateResult Action::do_prebegin_work(AnyMap& params)
         {
           print_message_try_();
 
-          message = make_string("However, $obj_pro_foo $foo_is out of $your reach.");
-          Service<IMessageLog>::get().add(message);
+          put_msg(make_string(tr("OBJECT_OUT_OF_REACH")));
 
           return StateResult::Failure();
         }
@@ -285,13 +282,13 @@ Action::StateResult Action::do_prebegin_work(AnyMap& params)
         {
           print_message_try_();
 
-          message = make_string("However, $obj_pro_foo $foo_is not in $your inventory");
+          message = make_string(tr("OBJECT_NOT_IN_INVENTORY"));
           if (subject->can_reach(object))
           {
-            message += " (pick it up first)";
+            message += tr("PICK_UP_OBJECT_FIRST");
           }
           message += ".";
-          Service<IMessageLog>::get().add(message);
+          put_msg(message);
 
           return StateResult::Failure();
         }
@@ -343,8 +340,7 @@ Action::StateResult Action::do_prebegin_work_(AnyMap& params)
 
 Action::StateResult Action::do_begin_work_(AnyMap& params)
 {
-  auto& dict = Service<IStringDictionary>::get();
-  Service<IMessageLog>::get().add(dict.get("ACTION_NOT_IMPLEMENTED"));
+  put_tmsg("ACTION_NOT_IMPLEMENTED");
 
   return Action::StateResult::Failure();
 }
@@ -436,48 +432,32 @@ std::string Action::get_target_string_() const
 
 void Action::print_message_try_() const
 {
-  std::string object_string = get_object_string_();
-  if (!object_string.empty()) object_string = " " + object_string;
-  std::string message = make_string("$you $try to $verb $the_foo.");
-  Service<IMessageLog>::get().add(message);
+  put_msg(make_string(tr("ACTION_TRY_TO_VERB_THE_FOO")));
 }
 
 void Action::print_message_do_() const
 {
-  std::string object_string = get_object_string_();
-  if (!object_string.empty()) object_string = " " + object_string;
-  std::string message = make_string("$you $cverb $the_foo.");
-  Service<IMessageLog>::get().add(message);
+  put_msg(make_string(tr("ACTION_CVERB_THE_FOO")));
 }
 
 void Action::print_message_begin_() const
 {
-  std::string object_string = get_object_string_();
-  if (!object_string.empty()) object_string = " " + object_string;
-  std::string message = make_string("$you $(cv?begin:begins) to $verb $the_foo.");
-  Service<IMessageLog>::get().add(message);
+  put_msg(make_string(tr("ACTION_BEGIN_TO_VERB_THE_FOO")));
 }
 
 void Action::print_message_stop_() const
 {
-  std::string object_string = get_object_string_();
-  if (!object_string.empty()) object_string = " " + object_string;
-  std::string message = make_string("$you $(cv?stop:stops) $verbing $the_foo.");
-  Service<IMessageLog>::get().add(message);
+  put_msg(make_string(tr("ACTION_STOP_VERBING_THE_FOO")));
 }
 
 void Action::print_message_finish_() const
 {
-  std::string object_string = get_object_string_();
-  if (!object_string.empty()) object_string = " " + object_string;
-  std::string message = make_string("$you $(cv?finish:finishes) $verbing $the_foo.");
-  Service<IMessageLog>::get().add(message);
+  put_msg(make_string(tr("ACTION_FINISH_VERBING_THE_FOO")));
 }
 
 void Action::print_message_cant_() const
 {
-  std::string message = make_string("$you can't $verb that!");
-  Service<IMessageLog>::get().add(message);
+  put_msg(make_string(tr("ACTION_CANT_VERB_THAT")));
 }
 
 void Action::register_action_as(std::string key, ActionCreator creator)
@@ -516,40 +496,40 @@ std::string Action::make_string(std::string pattern, std::vector<std::string> op
   {
     if (token == "are")
     {
-      return get_subject()->choose_verb("are", "is");
+      return get_subject()->choose_verb(tr("VERB_BE_2"), tr("VERB_BE_3"));
     }
     if (token == "were")
     {
-      return get_subject()->choose_verb("were", "was");
+      return get_subject()->choose_verb(tr("VERB_BE_P2"), tr("VERB_BE_P3"));
     }
     if (token == "do")
     {
-      return get_subject()->choose_verb("do", "does");
+      return get_subject()->choose_verb(tr("VERB_DO_2"), tr("VERB_DO_3"));
     }
     if (token == "get")
     {
-      return get_subject()->choose_verb("get", "gets");
+      return get_subject()->choose_verb(tr("VERB_GET_2"), tr("VERB_GET_3"));
     }
     if (token == "have")
     {
-      return get_subject()->choose_verb("have", "has");
+      return get_subject()->choose_verb(tr("VERB_HAVE_2"), tr("VERB_HAVE_3"));
     }
     if (token == "seem")
     {
-      return get_subject()->choose_verb("seem", "seems");
+      return get_subject()->choose_verb(tr("VERB_SEEM_2"), tr("VERB_SEEM_3"));
     }
     if (token == "try")
     {
-      return get_subject()->choose_verb("try", "tries");
+      return get_subject()->choose_verb(tr("VERB_TRY_2"), tr("VERB_TRY_3"));
     }
 
     if ((token == "foo_is") || (token == "foois"))
     {
-      return get_object()->choose_verb("are", "is");
+      return get_object()->choose_verb(tr("VERB_BE_2"), tr("VERB_BE_3"));
     }
     if ((token == "foo_has") || (token == "foohas"))
     {
-      return get_object()->choose_verb("have", "has");
+      return get_object()->choose_verb(tr("VERB_HAVE_2"), tr("VERB_HAVE_3"));
     }
 
     if ((token == "the_foo") || (token == "thefoo"))
@@ -710,40 +690,40 @@ std::string Action::make_string(ThingId subject, ThingId object, std::string pat
   {
     if (token == "are")
     {
-      return subject->choose_verb("are", "is");
+      return subject->choose_verb(tr("VERB_BE_2"), tr("VERB_BE_3"));
     }
     if (token == "were")
     {
-      return subject->choose_verb("were", "was");
+      return subject->choose_verb(tr("VERB_BE_P2"), tr("VERB_BE_P3"));
     }
     if (token == "do")
     {
-      return subject->choose_verb("do", "does");
+      return subject->choose_verb(tr("VERB_DO_2"), tr("VERB_DO_3"));
     }
     if (token == "get")
     {
-      return subject->choose_verb("get", "gets");
+      return subject->choose_verb(tr("VERB_GET_2"), tr("VERB_GET_3"));
     }
     if (token == "have")
     {
-      return subject->choose_verb("have", "has");
+      return subject->choose_verb(tr("VERB_HAVE_2"), tr("VERB_HAVE_3"));
     }
     if (token == "seem")
     {
-      return subject->choose_verb("seem", "seems");
+      return subject->choose_verb(tr("VERB_SEEM_2"), tr("VERB_SEEM_3"));
     }
     if (token == "try")
     {
-      return subject->choose_verb("try", "tries");
+      return subject->choose_verb(tr("VERB_TRY_2"), tr("VERB_TRY_3"));
     }
 
     if ((token == "foo_is") || (token == "foois"))
     {
-      return object->choose_verb("are", "is");
+      return object->choose_verb(tr("VERB_BE_2"), tr("VERB_BE_3"));
     }
     if ((token == "foo_has") || (token == "foohas"))
     {
-      return object->choose_verb("have", "has");
+      return object->choose_verb(tr("VERB_HAVE_2"), tr("VERB_HAVE_3"));
     }
 
     if ((token == "the_foo") || (token == "thefoo"))

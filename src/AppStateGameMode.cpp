@@ -532,7 +532,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::A:    // Attire
             if (things.size() == 0)
             {
-              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ITEMS_FIRST"), { tr("VERB_INF_WEAR") }));
+              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ITEMS_FIRST"), { tr("VERB_WEAR_2") }));
             }
             else
             {
@@ -554,7 +554,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             {
               // No item specified, so ask for a direction.
               m_action_in_progress.reset(new ActionClose(player));
-              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_DIRECTION"), { tr("VERB_INF_CLOSE") }));
+              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_DIRECTION"), { tr("VERB_CLOSE_2") }));
               m_current_input_state = GameInputState::TargetSelection;
               m_inventory_selection->clear_selected_slots();
             }
@@ -577,7 +577,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::D:    // Drop
             if (things.size() == 0)
             {
-              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ITEMS_FIRST"), { tr("VERB_INF_DROP") }));
+              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ITEMS_FIRST"), { tr("VERB_DROP_2") }));
             }
             else
             {
@@ -597,7 +597,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::E:
             if (things.size() == 0)
             {
-              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ITEMS_FIRST"), { tr("VERB_INF_EAT") }));
+              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ITEMS_FIRST"), { tr("VERB_EAT_2") }));
             }
             else
             {
@@ -617,17 +617,17 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::F:
             if (things.size() == 0)
             {
-              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ITEM_FIRST"), { tr("VERB_INF_FILL") }));
+              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ITEM_FIRST"), { tr("VERB_FILL_2") }));
             }
             else if (things.size() > 1)
             {
-              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ONLY_ONE_AT_A_TIME"), { tr("VERB_INF_FILL") }));
+              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ONLY_ONE_AT_A_TIME"), { tr("VERB_FILL_2") }));
             }
             else
             {
               m_action_in_progress.reset(new ActionFill(player));
               m_action_in_progress->set_object(things.front());
-              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ITEM_OR_DIRECTION"), { tr("VERB_GER_FILL") }));
+              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ITEM_OR_DIRECTION"), { tr("VERB_FILL_GER") }));
               m_current_input_state = GameInputState::TargetSelection;
               m_inventory_selection->clear_selected_slots();
             }
@@ -638,7 +638,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::G:
             if (things.size() == 0)
             {
-              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ITEMS_FIRST"), { tr("VERB_INF_GET") }));
+              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ITEMS_FIRST"), { tr("VERB_PICKUP_2") }));
             }
             else
             {
@@ -658,17 +658,17 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::H:
             if (things.size() == 0)
             {
-              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ITEM_FIRST"), { tr("VERB_INF_THROW") }));
+              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ITEM_FIRST"), { tr("VERB_THROW_2") }));
             }
             else if (things.size() > 1)
             {
-              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ONLY_ONE_AT_A_TIME"), { tr("VERB_INF_THROW") }));
+              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ONLY_ONE_AT_A_TIME"), { tr("VERB_THROW_2") }));
             }
             else
             {
               m_action_in_progress.reset(new ActionHurl(player));
               m_action_in_progress->set_object(things.front());
-              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_DIRECTION"), { tr("VERB_INF_THROW") }));
+              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_DIRECTION"), { tr("VERB_THROW_2") }));
               m_current_input_state = GameInputState::TargetSelection;
               m_inventory_selection->clear_selected_slots();
             }
@@ -679,7 +679,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::I:
             if (things.size() > 1)
             {
-              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ONLY_ONE_AT_A_TIME"), { tr("VERB_INF_WRITE") }));
+              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ONLY_ONE_AT_A_TIME"), { tr("VERB_WRITE_2") }));
             }
             else
             {
@@ -689,7 +689,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
                 m_action_in_progress->set_object(things.front());
               }
 
-              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ITEM_OR_DIRECTION"), { tr("VERB_GER_WRITE") }));
+              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ITEM_OR_DIRECTION"), { tr("VERB_WRITE_GER") }));
               m_current_input_state = GameInputState::TargetSelection;
               m_inventory_selection->clear_selected_slots();
             }
@@ -700,11 +700,11 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::M:
             if (things.size() == 0)
             {
-              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_TWO_ITEMS_FIRST"), { tr("VERB_INF_MIX") }));
+              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_TWO_ITEMS_FIRST"), { tr("VERB_MIX_2") }));
             }
             else if (things.size() != 2)
             {
-              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_EXACTLY_TWO_AT_A_TIME"), { tr("VERB_INF_MIX") }));
+              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_EXACTLY_TWO_AT_A_TIME"), { tr("VERB_MIX_2") }));
             }
             else
             {
@@ -722,7 +722,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             {
               // No item specified, so ask for a direction.
               m_action_in_progress.reset(new ActionOpen(player));
-              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_DIRECTION"), { tr("VERB_INF_OPEN") }));
+              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_DIRECTION"), { tr("VERB_OPEN_2") }));
               m_current_input_state = GameInputState::TargetSelection;
               m_inventory_selection->clear_selected_slots();
             }
@@ -745,13 +745,13 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::P:
             if (things.size() == 0)
             {
-              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ITEMS_FIRST"), { tr("VERB_INF_STORE") }));
+              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ITEMS_FIRST"), { tr("VERB_STORE_2") }));
             }
             else
             {
               m_action_in_progress.reset(new ActionPutInto(player));
               m_action_in_progress->set_objects(things);
-              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_CONTAINER"), { tr("VERB_DESC_STORE") }));
+              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_CONTAINER"), { tr("VERB_STORE_DESC") }));
               m_current_input_state = GameInputState::TargetSelection;
               m_inventory_selection->clear_selected_slots();
             }
@@ -762,7 +762,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::Q:
             if (things.size() == 0)
             {
-              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ITEMS_FIRST"), { tr("VERB_INF_DRINK") }));
+              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ITEMS_FIRST"), { tr("VERB_DRINK_2") }));
             }
             else
             {
@@ -783,7 +783,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::R:
             if (things.size() == 0)
             {
-              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ITEMS_FIRST"), { tr("VERB_INF_READ") }));
+              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ITEMS_FIRST"), { tr("VERB_READ_2") }));
             }
             else
             {
@@ -805,11 +805,11 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             /// if no item is selected.
             if (things.size() < 1)
             {
-              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ITEM_FIRST"), { tr("VERB_INF_SHOOT") }));
+              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ITEM_FIRST"), { tr("VERB_SHOOT_2") }));
             }
             if (things.size() > 1)
             {
-              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ONLY_ONE_AT_A_TIME"), { tr("VERB_INF_SHOOT") }));
+              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ONLY_ONE_AT_A_TIME"), { tr("VERB_SHOOT_2") }));
             }
             else
             {
@@ -817,7 +817,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
               ///       Otherwise, wield the selected item and fire it.
               m_action_in_progress.reset(new ActionShoot(player));
               m_action_in_progress->set_object(things.front());
-              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_DIRECTION"), { tr("VERB_INF_SHOOT") }));
+              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_DIRECTION"), { tr("VERB_SHOOT_2") }));
               m_current_input_state = GameInputState::TargetSelection;
               m_inventory_selection->clear_selected_slots();
             }
@@ -828,7 +828,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::T:
             if (things.size() == 0)
             {
-              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ITEMS_FIRST"), { tr("VERB_INF_REMOVE") }));
+              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ITEMS_FIRST"), { tr("VERB_REMOVE_2") }));
             }
             else
             {
@@ -845,7 +845,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::U:
             if (things.size() == 0)
             {
-              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ITEMS_FIRST"), { tr("VERB_INF_USE") }));
+              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ITEMS_FIRST"), { tr("VERB_USE_2") }));
             }
             else
             {
@@ -865,11 +865,11 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::W:
             if (things.size() == 0)
             {
-              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ITEM_FIRST"), { tr("VERB_INF_WIELD") }));
+              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ITEM_FIRST"), { tr("VERB_WIELD_2") }));
             }
             else if (things.size() > 1)
             {
-              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ONLY_ONE_AT_A_TIME"), { tr("VERB_INF_WIELD") }));
+              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ONLY_ONE_AT_A_TIME"), { tr("VERB_WIELD_2") }));
             }
             else
             {
@@ -888,13 +888,13 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             {
               // No item specified, so ask for a direction.
               m_action_in_progress.reset(new ActionAttack(player));
-              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_DIRECTION"), { tr("VERB_INF_ATTACK") }));
+              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_DIRECTION"), { tr("VERB_ATTACK_2") }));
               m_current_input_state = GameInputState::TargetSelection;
               m_inventory_selection->clear_selected_slots();
             }
             else if (things.size() > 1)
             {
-              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ONLY_ONE_AT_A_TIME"), { tr("VERB_INF_ATTACK") }));
+              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ONLY_ONE_AT_A_TIME"), { tr("VERB_ATTACK_2") }));
             }
             else
             {

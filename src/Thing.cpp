@@ -7,6 +7,7 @@
 #include "GameState.h"
 #include "Gender.h"
 #include "IConfigSettings.h"
+#include "IStringDictionary.h"
 #include "IntegerRange.h"
 #include "Inventory.h"
 #include "Map.h"
@@ -1065,7 +1066,7 @@ std::string Thing::get_identifying_string(ArticleChoice articles,
     {
       if (articles == ArticleChoice::Definite)
       {
-        article = "the ";
+        article = tr("ARTICLE_DEFINITE") + " ";
       }
       else
       {
