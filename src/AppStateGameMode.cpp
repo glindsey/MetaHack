@@ -1013,9 +1013,6 @@ void AppStateGameMode::reset_inventory_selection()
   ThingId player = m_game_state->get_player();
   Map& game_map = GAME.get_maps().get(player->get_map_id());
 
-  /// @todo This is ugly; fix it.
-  InventoryArea& inventory_area = dynamic_cast<InventoryArea&>(the_desktop.get_child("InventoryArea"));
-
   if (m_inventory_area_shows_player == true)
   {
     m_inventory_selection->set_viewed(player);
