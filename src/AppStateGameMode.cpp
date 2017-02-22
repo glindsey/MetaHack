@@ -312,8 +312,6 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
     case GameInputState::Map:
     {
       std::unique_ptr<Action> p_action;
-      /// @todo This is ugly; fix it.
-      InventoryArea& inventory_area = dynamic_cast<InventoryArea&>(the_desktop.get_child("InventoryArea"));
 
       std::vector<ThingId>& things = m_inventory_selection->get_selected_things();
       int key_number = get_letter_key(key);
@@ -1095,8 +1093,6 @@ SFMLEventResult AppStateGameMode::handle_key_press_target_selection(ThingId play
   {
     if (!key.alt && !key.control && key_number != -1)
     {
-      /// @todo This is ugly; fix it
-      InventoryArea& inventory_area = dynamic_cast<InventoryArea&>(the_desktop.get_child("InventoryArea"));
       m_action_in_progress->set_target(m_inventory_selection->get_thing(static_cast<InventorySlot>(key_number)));
       player->queue_action(std::move(m_action_in_progress));
       m_inventory_area_shows_player = false;

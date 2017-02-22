@@ -5,12 +5,6 @@
 #include "InventorySlot.h"
 #include "Observable.h"
 
-enum class InventoryType
-{
-  Inside,
-  Around
-};
-
 // Forward declarations
 class Container;
 class Thing;
@@ -42,9 +36,6 @@ public:
   bool dec_selected_quantity();
 
   ThingId get_thing(InventorySlot selection);
-
-  InventoryType get_inventory_type();
-  void set_inventory_type(InventoryType type);
 
   /// @todo Not sure if these actually belong here, or somewhere else.
   static char get_character(InventorySlot slot);

@@ -69,9 +69,6 @@
     <ClInclude Include="include\Inventory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\InventoryArea.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\KeyBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -127,9 +124,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\GameState.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\MessageLogView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\LuaThingFunctions.h">
@@ -402,6 +396,12 @@
     <ClInclude Include="include\InventorySelection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\MessageLogView.h">
+      <Filter>Object Views</Filter>
+    </ClInclude>
+    <ClInclude Include="include\InventoryArea.h">
+      <Filter>Object Views</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">
@@ -414,9 +414,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Inventory.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\InventoryArea.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\KeyBuffer.cpp">
@@ -456,9 +453,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\GameState.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\MessageLogView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\LuaThingFunctions.cpp">
@@ -658,6 +652,12 @@
     </ClCompile>
     <ClCompile Include="src\InventorySelection.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\InventoryArea.cpp">
+      <Filter>Object Views</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MessageLogView.cpp">
+      <Filter>Object Views</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
