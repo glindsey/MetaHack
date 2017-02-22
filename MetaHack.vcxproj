@@ -328,6 +328,7 @@
     <ClInclude Include="include\IConfigSettings.h" />
     <ClInclude Include="include\IKeyBuffer.h" />
     <ClInclude Include="include\IMessageLog.h" />
+    <ClInclude Include="include\InventorySelection.h" />
     <ClInclude Include="include\IStringDictionary.h" />
     <ClInclude Include="include\MapMemoryChunk.h" />
     <ClInclude Include="include\MapStandard2DView.h" />
@@ -442,6 +443,7 @@
     <ClCompile Include="src\IntegerRange.cpp" />
     <ClCompile Include="src\Inventory.cpp" />
     <ClCompile Include="src\InventoryArea.cpp" />
+    <ClCompile Include="src\InventorySelection.cpp" />
     <ClCompile Include="src\IStringDictionary.cpp" />
     <ClCompile Include="src\KeyBuffer.cpp" />
     <ClCompile Include="src\LuaObject.cpp" />

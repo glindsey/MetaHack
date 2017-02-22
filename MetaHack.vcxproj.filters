@@ -399,6 +399,9 @@
     <ClInclude Include="include\MessageLog.h">
       <Filter>Services</Filter>
     </ClInclude>
+    <ClInclude Include="include\InventorySelection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">
@@ -652,6 +655,9 @@
     </ClCompile>
     <ClCompile Include="src\Observable.cpp">
       <Filter>Design Pattern Templates</Filter>
+    </ClCompile>
+    <ClCompile Include="src\InventorySelection.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

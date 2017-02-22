@@ -1,49 +1,28 @@
-#ifndef INVENTORYAREA_H
-#define INVENTORYAREA_H
+#pragma once
 
 #include "stdafx.h"
 
 #include "GUIWindow.h"
 #include "InventorySlot.h"
-
-enum class InventoryType
-{
-  Inside,
-  Around
-};
+#include "Observer.h"
 
 // Forward declarations
 class Container;
+class InventorySelection;
 class Thing;
 class ThingId;
 
 class InventoryArea :
-  public metagui::Window
+  public metagui::Window,
+  public Observer
 {
 public:
-  explicit InventoryArea(std::string name, sf::IntRect dimensions);
+  explicit InventoryArea(std::string name, 
+                         InventorySelection& inventory_selection,
+                         sf::IntRect dimensions);
   virtual ~InventoryArea();
 
-  ThingId get_viewed() const;
-  void set_viewed(ThingId thing);
-
-  void toggle_selection(InventorySlot selection);
-  size_t get_selected_slot_count() const;
-  std::vector<InventorySlot> const& get_selected_slots();
-  std::vector<ThingId> get_selected_things();
-  void clear_selected_slots();
-
-  unsigned int get_selected_quantity() const;
-  unsigned int get_max_quantity() const;
-  unsigned int reset_selected_quantity();
-  bool set_selected_quantity(unsigned int amount);
-  bool inc_selected_quantity();
-  bool dec_selected_quantity();
-
-  ThingId get_thing(InventorySlot selection);
-
-  InventoryType get_inventory_type();
-  void set_inventory_type(InventoryType type);
+  virtual void notifyOfEvent_(Observable& observed, Event event);
 
 protected:
   virtual void render_contents_(sf::RenderTexture& texture, int frame) override;
@@ -56,8 +35,6 @@ protected:
                   int frame = 0);
 
 private:
-  struct Impl;
-  std::unique_ptr<Impl> pImpl;
+  /// Inventory selection we are bound to.
+  InventorySelection& m_inventory_selection;
 };
-
-#endif // STATUSAREA_H

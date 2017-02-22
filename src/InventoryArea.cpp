@@ -5,83 +5,22 @@
 #include "App.h"
 #include "IConfigSettings.h"
 #include "Inventory.h"
+#include "InventorySelection.h"
 #include "MapTile.h"
 #include "Service.h"
 #include "Thing.h"
 #include "ThingManager.h"
 #include "TileSheet.h"
 
-struct InventoryArea::Impl
-{
-  /// Thing whose contents (or surroundings) are currently being viewed.
-  ThingId viewed;
-
-  /// Vector of selected inventory slots.
-  std::vector< InventorySlot > selected_slots;
-
-  /// Reference to quantity of topmost selected item.
-  unsigned int selected_quantity;
-
-  char get_character(InventorySlot slot)
-  {
-    return get_character(static_cast<unsigned int>(slot));
-  }
-
-  char get_character(unsigned int slot_number)
-  {
-    char character;
-
-    if (slot_number == 0)
-    {
-      character = '@';
-    }
-    else if (slot_number < 26)
-    {
-      character = '`' + static_cast<char>(slot_number);
-    }
-    else if (slot_number < 52)
-    {
-      character = '@' + static_cast<char>(slot_number - 26);
-    }
-    else
-    {
-      character = ' ';
-    }
-
-    return character;
-  }
-
-  InventorySlot get_slot(char character)
-  {
-    unsigned int slot_number;
-    unsigned int char_number = static_cast<unsigned int>(character);
-
-    ASSERT_CONDITION(((char_number >= 0x40) && (char_number <= 0x5a)) ||
-      ((char_number >= 0x61) && (char_number <= 0x7a)));
-
-    if (char_number == 0x40)
-    {
-      slot_number = 0;
-    }
-    else if (char_number <= 0x5a)
-    {
-      slot_number = char_number - 64;
-    }
-    else
-    {
-      slot_number = char_number - 70;
-    }
-
-    return static_cast<InventorySlot>(slot_number);
-  }
-};
-
 InventoryArea::InventoryArea(std::string name,
+                             InventorySelection& inventory_selection,
                              sf::IntRect dimensions)
-  : metagui::Window(name, dimensions),
-  pImpl(NEW Impl())
+  : 
+  metagui::Window(name, dimensions),
+  m_inventory_selection(inventory_selection)
 {
   SET_UP_LOGGER("InventoryArea", true);
+  startObserving(inventory_selection);
 }
 
 InventoryArea::~InventoryArea()
@@ -89,191 +28,14 @@ InventoryArea::~InventoryArea()
   //dtor
 }
 
-ThingId InventoryArea::get_viewed() const
+void InventoryArea::notifyOfEvent_(Observable & observed, Event event)
 {
-  return pImpl->viewed;
-}
-
-void InventoryArea::set_viewed(ThingId thing)
-{
-  pImpl->viewed = thing;
-  pImpl->selected_slots.clear();
-}
-
-void InventoryArea::toggle_selection(InventorySlot selection)
-{
-  if (pImpl->viewed == ThingId::Mu())
-  {
-    return;
-  }
-
-  Inventory& inventory = pImpl->viewed->get_inventory();
-
-  if (inventory.contains(selection))
-  {
-    auto iter = std::find(std::begin(pImpl->selected_slots),
-                          std::end(pImpl->selected_slots),
-                          selection);
-    if (iter == std::end(pImpl->selected_slots))
-    {
-      CLOG(TRACE, "InventoryArea") <<
-        "Adding slot " << static_cast<unsigned int>(selection) <<
-        "to selected things";
-      pImpl->selected_slots.push_back(selection);
-    }
-    else
-    {
-      CLOG(TRACE, "InventoryArea") <<
-        "Removing slot " << static_cast<unsigned int>(selection) <<
-        "from selected things";
-      pImpl->selected_slots.erase(iter);
-    }
-
-    reset_selected_quantity();
-  }
-}
-
-size_t InventoryArea::get_selected_slot_count() const
-{
-  return pImpl->selected_slots.size();
-}
-
-std::vector<InventorySlot> const& InventoryArea::get_selected_slots()
-{
-  return pImpl->selected_slots;
-}
-
-std::vector<ThingId> InventoryArea::get_selected_things()
-{
-  std::vector<ThingId> things;
-
-  if (pImpl->viewed != ThingId::Mu())
-  {
-    Inventory& inventory = pImpl->viewed->get_inventory();
-
-    for (auto iter = std::begin(pImpl->selected_slots);
-         iter != std::end(pImpl->selected_slots);
-         ++iter)
-    {
-      ThingId thing = inventory[*iter];
-      things.push_back(thing);
-    }
-  }
-
-  return things;
-}
-
-void InventoryArea::clear_selected_slots()
-{
-  pImpl->selected_slots.clear();
-}
-
-unsigned int InventoryArea::get_selected_quantity() const
-{
-  return pImpl->selected_quantity;
-}
-
-unsigned int InventoryArea::get_max_quantity() const
-{
-  unsigned int result;
-
-  if (pImpl->viewed == ThingId::Mu())
-  {
-    return 0;
-  }
-
-  Inventory& inventory = pImpl->viewed->get_inventory();
-
-  if (pImpl->selected_slots.size() == 0)
-  {
-    result = 0;
-  }
-  else
-  {
-    ThingId thing = inventory[pImpl->selected_slots[0]];
-
-    if (thing == ThingId::Mu())
-    {
-      result = 0;
-    }
-    else
-    {
-      result = thing->get_quantity();
-    }
-  }
-
-  return result;
-}
-
-unsigned int InventoryArea::reset_selected_quantity()
-{
-  pImpl->selected_quantity = get_max_quantity();
-  return pImpl->selected_quantity;
-}
-
-bool InventoryArea::set_selected_quantity(unsigned int amount)
-{
-  if (amount > 0)
-  {
-    unsigned int maximum = get_max_quantity();
-    if (amount <= maximum)
-    {
-      pImpl->selected_quantity = amount;
-      return true;
-    }
-  }
-  return false;
-}
-
-bool InventoryArea::inc_selected_quantity()
-{
-  unsigned int maximum = get_max_quantity();
-  if (pImpl->selected_quantity < maximum)
-  {
-    ++(pImpl->selected_quantity);
-    return true;
-  }
-  return false;
-}
-
-bool InventoryArea::dec_selected_quantity()
-{
-  if (pImpl->selected_quantity > 1)
-  {
-    --(pImpl->selected_quantity);
-    return true;
-  }
-  return false;
-}
-
-ThingId InventoryArea::get_thing(InventorySlot selection)
-{
-  ThingId viewed = pImpl->viewed;
-
-  if (viewed == ThingId::Mu())
-  {
-    return ThingId::Mu();
-  }
-
-  Inventory& inventory = pImpl->viewed->get_inventory();
-
-  if (inventory.contains(selection))
-  {
-    return inventory[selection];
-  }
-  else
-  {
-    CLOG(WARNING, "InventoryArea") <<
-      "Requested non-existent inventory slot " <<
-      static_cast<unsigned int>(selection) <<
-      ", returning Mu!";
-    return ThingId::Mu();
-  }
+  /// @todo WRITE ME
 }
 
 void InventoryArea::render_contents_(sf::RenderTexture& texture, int frame)
 {
-  auto& config = Service<IConfigSettings>::get();
+  auto& config = Service<IConfigSettings>::get();  
 
   // Dimensions of the pane.
   sf::IntRect pane_dims = get_relative_dimensions();
@@ -286,7 +48,8 @@ void InventoryArea::render_contents_(sf::RenderTexture& texture, int frame)
   float text_offset_y = config.get<float>("window_text_offset_y");
 
   // Get a reference to the location we're referring to.
-  if (pImpl->viewed == ThingId::Mu())
+  auto& viewed_thing = m_inventory_selection.get_viewed();
+  if (viewed_thing == ThingId::Mu())
   {
     set_text("Invalid Viewed Object!");
     return;
@@ -296,7 +59,8 @@ void InventoryArea::render_contents_(sf::RenderTexture& texture, int frame)
   float text_coord_x = text_offset_x;
   float text_coord_y = text_offset_y + (line_spacing_y * 1.5f);
 
-  Inventory& inventory = pImpl->viewed->get_inventory();
+  Inventory& inventory = viewed_thing->get_inventory();
+  auto& selected_slots = m_inventory_selection.get_selected_slots();
 
   /// @todo At the moment this does not split lines that are too long, instead
   ///       truncating them at the edge of the box.  This must be fixed.
@@ -314,14 +78,14 @@ void InventoryArea::render_contents_(sf::RenderTexture& texture, int frame)
     // 1. Figure out whether this is selected or not, and set FG color.
     sf::Color fg_color = config.get<sf::Color>("text_color");
     size_t selection_order = 0;
-    auto slot_iter = std::find(pImpl->selected_slots.begin(),
-                               pImpl->selected_slots.end(),
+    auto slot_iter = std::find(selected_slots.begin(),
+                               selected_slots.end(),
                                slot);
 
-    if (slot_iter != pImpl->selected_slots.end())
+    if (slot_iter != selected_slots.end())
     {
       fg_color = config.get<sf::Color>("text_highlight_color");
-      selection_order = (slot_iter - pImpl->selected_slots.begin()) + 1;
+      selection_order = (slot_iter - selected_slots.begin()) + 1;
     }
 
     // 2. Display the selection order.
@@ -343,7 +107,7 @@ void InventoryArea::render_contents_(sf::RenderTexture& texture, int frame)
       std::stringstream slot_id;
       char item_char;
 
-      item_char = pImpl->get_character(slot_number);
+      item_char = InventorySelection::get_character(slot_number);
 
       slot_id << item_char << ":";
       render_text.setFont(the_default_mono_font);
@@ -363,8 +127,8 @@ void InventoryArea::render_contents_(sf::RenderTexture& texture, int frame)
 
     unsigned int wield_location;
     WearLocation wear_location;
-    bool wielding = pImpl->viewed->is_wielding(thing, wield_location);
-    bool wearing = pImpl->viewed->has_equipped(thing, wear_location);
+    bool wielding = viewed_thing->is_wielding(thing, wield_location);
+    bool wearing = viewed_thing->has_equipped(thing, wear_location);
 
     // 5. TODO: Display "worn" or "equipped" icon if necessary.
     if (wielding)
@@ -391,9 +155,10 @@ void InventoryArea::render_contents_(sf::RenderTexture& texture, int frame)
     if (selection_order == 1)
     {
       unsigned int max_quantity = thing->get_quantity();
-      if ((max_quantity > 1) && (pImpl->selected_quantity < max_quantity))
+      unsigned int selected_quantity = m_inventory_selection.get_selected_quantity();
+      if ((max_quantity > 1) && (selected_quantity < max_quantity))
       {
-        item_name << "(Sel: " << pImpl->selected_quantity << ") ";
+        item_name << "(Sel: " << selected_quantity << ") ";
       }
     }
 
@@ -401,11 +166,11 @@ void InventoryArea::render_contents_(sf::RenderTexture& texture, int frame)
 
     if (wielding)
     {
-      item_name << " (" << pImpl->viewed->get_bodypart_description(BodyPart::Hand, wield_location) << ")";
+      item_name << " (" << viewed_thing->get_bodypart_description(BodyPart::Hand, wield_location) << ")";
     }
     else if (wearing)
     {
-      item_name << " (" << pImpl->viewed->get_bodypart_description(wear_location.part, wear_location.number) << ")";
+      item_name << " (" << viewed_thing->get_bodypart_description(wear_location.part, wear_location.number) << ")";
     }
 
     render_text.setFont(the_default_font);
@@ -433,7 +198,7 @@ void InventoryArea::render_contents_(sf::RenderTexture& texture, int frame)
   // TODO: Might want to define a specific "get_inventory_name()" method
   //       for Thing that defaults to "XXXX's inventory" but can be
   //       overridden to say stuff like "Things on the floor".
-  sf::String title_string = pImpl->viewed->get_possessive() + " inventory";
+  sf::String title_string = viewed_thing->get_possessive() + " inventory";
   title_string[0] = toupper(title_string[0]);
   set_text(title_string);
   return;

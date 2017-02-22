@@ -47,7 +47,7 @@ protected:
   SFMLEventResult handle_key_press(sf::Event::KeyEvent& key);
   SFMLEventResult handle_mouse_wheel(sf::Event::MouseWheelEvent& wheel);
   sf::IntRect calc_message_log_dims();
-  void reset_inventory_area();
+  void reset_inventory_selection();
   sf::IntRect calc_status_area_dims();
   sf::IntRect calc_inventory_dims();
   bool move_cursor(Direction direction);
@@ -68,6 +68,9 @@ private:
 
   /// The current MapView.
   std::unique_ptr<MapView> m_map_view;
+
+  /// The current InventorySelection.
+  std::unique_ptr<InventorySelection> m_inventory_selection;
 
   /// True if the application window is in focus, false otherwise.
   bool m_window_in_focus;
