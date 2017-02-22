@@ -236,7 +236,7 @@ bool Thing::do_die()
       if (this->is_player())
       {
         message = this->get_you_or_identifying_string() + " die...";
-        the_message_log.add(message);
+        Service<IMessageLog>::get().add(message);
       }
       else
       {
@@ -251,7 +251,7 @@ bool Thing::do_die()
           message = this->get_you_or_identifying_string() + " " +
             this->choose_verb("are", "is") + " destroyed!";
         }
-        the_message_log.add(message);
+        Service<IMessageLog>::get().add(message);
       }
 
       // Set the property saying the entity is dead.
@@ -265,7 +265,7 @@ bool Thing::do_die()
     default:
       message = this->get_you_or_identifying_string() +
         this->choose_verb(" manage", " manages") + " to avoid dying.";
-      the_message_log.add(message);
+      Service<IMessageLog>::get().add(message);
       return false;
   }
 }
@@ -299,7 +299,7 @@ bool Thing::do_deequip(ThingId thing, unsigned int& action_time)
   message = this->get_you_or_identifying_string() + " " +
     this->choose_verb("try", "tries") +
     " to take off " + thing_name;
-  the_message_log.add(message);
+  Service<IMessageLog>::get().add(message);
 
   switch (deequip_try)
   {
@@ -317,7 +317,7 @@ bool Thing::do_deequip(ThingId thing, unsigned int& action_time)
         message = this->get_you_or_identifying_string() + " " +
           this->choose_verb("are", "is") + " no longer wearing " + thing_name +
           " on " + this->get_possessive() + " " + wear_desc + ".";
-        the_message_log.add(message);
+        Service<IMessageLog>::get().add(message);
         return true;
       }
     }
@@ -327,7 +327,7 @@ bool Thing::do_deequip(ThingId thing, unsigned int& action_time)
     {
       message = this->get_you_or_identifying_string() + " " +
         this->choose_verb("are", "is") + " not wearing " + thing_name + ".";
-      the_message_log.add(message);
+      Service<IMessageLog>::get().add(message);
       return true;
     }
     break;
@@ -394,7 +394,7 @@ bool Thing::do_equip(ThingId thing, unsigned int& action_time)
           this->choose_verb(" are", " is") +
           " now wearing " + thing_name +
           " on " + this->get_possessive() + " " + wear_desc + ".";
-        the_message_log.add(message);
+        Service<IMessageLog>::get().add(message);
         return true;
       }
     }
@@ -413,7 +413,7 @@ bool Thing::do_equip(ThingId thing, unsigned int& action_time)
           ", which seriously shouldn't happen.";
         CLOG(WARNING, "Thing") << "NPC tried to equip self!?";
       }
-      the_message_log.add(message);
+      Service<IMessageLog>::get().add(message);
       break;
 
     case ActionResult::FailureThingOutOfReach:
@@ -421,10 +421,10 @@ bool Thing::do_equip(ThingId thing, unsigned int& action_time)
       message = this->get_you_or_identifying_string() + " " +
         this->choose_verb("try", "tries") +
         " to equip " + thing_name + ".";
-      the_message_log.add(message);
+      Service<IMessageLog>::get().add(message);
 
       message = thing_name + " is not in " + this->get_possessive() + " inventory.";
-      the_message_log.add(message);
+      Service<IMessageLog>::get().add(message);
     }
     break;
 
@@ -433,10 +433,10 @@ bool Thing::do_equip(ThingId thing, unsigned int& action_time)
       message = this->get_you_or_identifying_string() + " " +
         this->choose_verb("try", "tries") +
         " to equip " + thing_name + ".";
-      the_message_log.add(message);
+      Service<IMessageLog>::get().add(message);
 
       message = thing_name + " is not an equippable item.";
-      the_message_log.add(message);
+      Service<IMessageLog>::get().add(message);
     }
     break;
 
@@ -1284,7 +1284,7 @@ void Thing::spill()
             auto container_string = this->get_identifying_string();
             auto thing_string = thing->get_identifying_string();
             message = thing_string + this->choose_verb(" tumble", " tumbles") + " out of " + container_string + ".";
-            the_message_log.add(message);
+            Service<IMessageLog>::get().add(message);
           }
           else
           {
@@ -1292,7 +1292,7 @@ void Thing::spill()
             auto container_string = this->get_identifying_string();
             auto thing_string = thing->get_identifying_string();
             message = thing_string + this->choose_verb(" vanish", " vanishes") + " in a puff of logic.";
-            the_message_log.add(message);
+            Service<IMessageLog>::get().add(message);
             thing->destroy();
           }
 
@@ -1585,7 +1585,7 @@ bool Thing::perform_action_deequipped_by(ThingId actor, WearLocation& location)
       actor->get_possessive_adjective() + " " +
       actor->get_bodypart_description(location.part,
                                       location.number) + "!";
-    the_message_log.add(message);
+    Service<IMessageLog>::get().add(message);
     return false;
   }
   else

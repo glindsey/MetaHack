@@ -2,6 +2,8 @@
 
 #include "ActionDrop.h"
 #include "ActionMove.h"
+#include "IMessageLog.h"
+#include "Service.h"
 #include "Thing.h"
 #include "ThingId.h"
 
@@ -26,7 +28,7 @@ Action::StateResult ActionDrop::do_prebegin_work_(AnyMap& params)
     print_message_try_();
 
     message = THE_FOO + FOO_IS + "not in " + YOUR + " inventory!";
-    the_message_log.add(message);
+    Service<IMessageLog>::get().add(message);
 
     return Action::StateResult::Failure();
   }
@@ -38,7 +40,7 @@ Action::StateResult ActionDrop::do_prebegin_work_(AnyMap& params)
 
     /// @todo Perhaps automatically try to unwield the item before dropping?
     message = YOU + " cannot drop something that is currently being wielded.";
-    the_message_log.add(message);
+    Service<IMessageLog>::get().add(message);
 
     return Action::StateResult::Failure();
   }
@@ -49,7 +51,7 @@ Action::StateResult ActionDrop::do_prebegin_work_(AnyMap& params)
     print_message_try_();
 
     message = YOU + " cannot drop something that is currently being worn.";
-    the_message_log.add(message);
+    Service<IMessageLog>::get().add(message);
 
     return Action::StateResult::Failure();
   }
@@ -60,7 +62,7 @@ Action::StateResult ActionDrop::do_prebegin_work_(AnyMap& params)
     print_message_try_();
 
     message = THE_FOO + " cannot be moved.";
-    the_message_log.add(message);
+    Service<IMessageLog>::get().add(message);
 
     return Action::StateResult::Failure();
   }
@@ -82,12 +84,12 @@ Action::StateResult ActionDrop::do_begin_work_(AnyMap& params)
   {
     message = YOU + CV(" hurl ", " hurls ") + YOURSELF + " to the " +
       location->get_display_name() + "!";
-    the_message_log.add(message);
+    Service<IMessageLog>::get().add(message);
     /// @todo Possible damage from hurling yourself to the ground!
     message = (IS_PLAYER ? "Fortunately, " : "") + YOU_SEEM + " unharmed.";
-    the_message_log.add(message);
+    Service<IMessageLog>::get().add(message);
     message = YOU_GET + " up.";
-    the_message_log.add(message);
+    Service<IMessageLog>::get().add(message);
   }
   else if (object != ThingId::Mu())
   {
@@ -105,7 +107,7 @@ Action::StateResult ActionDrop::do_begin_work_(AnyMap& params)
         else
         {
           message = YOU + " could not drop " + THE_FOO + " for some inexplicable reason.";
-          the_message_log.add(message);
+          Service<IMessageLog>::get().add(message);
 
           CLOG(WARNING, "Action") << "Could not drop Thing " << object <<
             " even though be_object_of returned Success";
@@ -123,7 +125,7 @@ Action::StateResult ActionDrop::do_begin_work_(AnyMap& params)
       print_message_try_();
 
       message = location->get_identifying_string() + " cannot hold " + THE_FOO + ".";
-      the_message_log.add(message);
+      Service<IMessageLog>::get().add(message);
     }
   }
 

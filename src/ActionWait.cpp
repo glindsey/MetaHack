@@ -1,6 +1,9 @@
 #include "stdafx.h"
 
 #include "ActionWait.h"
+#include "IMessageLog.h"
+#include "IStringDictionary.h"
+#include "Service.h"
 #include "Thing.h"
 #include "ThingId.h"
 
@@ -19,7 +22,7 @@ Action::StateResult ActionWait::do_begin_work_(AnyMap& params)
   //YOU + " successfully" + CV(" stay", " stays") +
   //" where " + YOU_SUBJ_ARE + ".";
 
-  the_message_log.add(message);
+  Service<IMessageLog>::get().add(message);
 
   return{ true, 1 };
 }

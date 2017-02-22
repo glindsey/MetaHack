@@ -1,10 +1,11 @@
 #include "stdafx.h"
 
 #include "ActionMix.h"
-#include "Thing.h"
-#include "ThingId.h"
+#include "IMessageLog.h"
 #include "IStringDictionary.h"
 #include "Service.h"
+#include "Thing.h"
+#include "ThingId.h"
 
 ACTION_SRC_BOILERPLATE(ActionMix, "mix", "mix")
 
@@ -21,7 +22,7 @@ Action::StateResult ActionMix::do_prebegin_work_(AnyMap& params)
     print_message_try_();
 
     message = "But, as " + getIndefArt(subject->get_display_name()) + subject->get_display_name() + "," + YOU_ARE + " not capable of mixing anything together.";
-    the_message_log.add(message);
+    Service<IMessageLog>::get().add(message);
 
     return Action::StateResult::Failure();
   }
@@ -32,7 +33,7 @@ Action::StateResult ActionMix::do_prebegin_work_(AnyMap& params)
     print_message_try_();
 
     message = "Those are both the same container!";
-    the_message_log.add(message);
+    Service<IMessageLog>::get().add(message);
 
     return Action::StateResult::Failure();
   }
@@ -43,7 +44,7 @@ Action::StateResult ActionMix::do_prebegin_work_(AnyMap& params)
     print_message_try_();
 
     message = "But that makes absolutely no sense.";
-    the_message_log.add(message);
+    Service<IMessageLog>::get().add(message);
 
     return Action::StateResult::Failure();
   }
@@ -54,7 +55,7 @@ Action::StateResult ActionMix::do_prebegin_work_(AnyMap& params)
     print_message_try_();
 
     message = "But at least one of them is out of " + YOUR + " reach.";
-    the_message_log.add(message);
+    Service<IMessageLog>::get().add(message);
 
     return Action::StateResult::Failure();
   }
@@ -65,7 +66,7 @@ Action::StateResult ActionMix::do_prebegin_work_(AnyMap& params)
     print_message_try_();
 
     message = "But at least one of them doesn't hold liquid!";
-    the_message_log.add(message);
+    Service<IMessageLog>::get().add(message);
 
     return Action::StateResult::Failure(); //ActionResult::FailureNotLiquidCarrier;
   }
@@ -78,7 +79,7 @@ Action::StateResult ActionMix::do_prebegin_work_(AnyMap& params)
     print_message_try_();
 
     message = "But at least one of them is empty!";
-    the_message_log.add(message);
+    Service<IMessageLog>::get().add(message);
 
     return Action::StateResult::Failure(); //ActionResult::FailureContainerIsEmpty;
   }
@@ -93,11 +94,11 @@ Action::StateResult ActionMix::do_begin_work_(AnyMap& params)
 {
   /// @todo IMPLEMENT ME
   //message = YOU + CV(" mix ", " mixes ") + LIQUID1 + " with " + LIQUID2 + ".";
-  //the_message_log.add(message);
+  //Service<IMessageLog>::get().add(message);
   //thing1->perform_action_mixed_with_by(thing2, pImpl->ref);
 
   auto& dict = Service<IStringDictionary>::get();
-  the_message_log.add(dict.get("NOT_IMPLEMENTED_MSG"));
+  Service<IMessageLog>::get().add(dict.get("NOT_IMPLEMENTED_MSG"));
 
   return Action::StateResult::Failure();
 }

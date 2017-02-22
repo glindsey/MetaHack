@@ -1,6 +1,9 @@
 #include "stdafx.h"
 
 #include "ActionRead.h"
+#include "IMessageLog.h"
+#include "IStringDictionary.h"
+#include "Service.h"
 #include "Thing.h"
 #include "ThingId.h"
 
@@ -17,7 +20,7 @@ Action::StateResult ActionRead::do_prebegin_work_(AnyMap& params)
     print_message_try_();
 
     message = make_string("$you $are not smart enough to read $fooself.");
-    the_message_log.add(message);
+    Service<IMessageLog>::get().add(message);
 
     return StateResult::Failure();
   }
@@ -53,7 +56,7 @@ Action::StateResult ActionRead::do_finish_work_(AnyMap& params)
   {
     case ActionResult::SuccessDestroyed:
       message = make_string("$the_foo $(objcv?disintegrate:disintegrates) after $you $cverb $obj_pro_foo!");
-      the_message_log.add(message);
+      Service<IMessageLog>::get().add(message);
 
       object->destroy();
       result = StateResult::Success();
@@ -84,5 +87,5 @@ Action::StateResult ActionRead::do_abort_work_(AnyMap& params)
 void ActionRead::print_message_cant_() const
 {
   std::string message = make_string("$the_foo $foo_has no writing to read.");
-  the_message_log.add(message);
+  Service<IMessageLog>::get().add(message);
 }

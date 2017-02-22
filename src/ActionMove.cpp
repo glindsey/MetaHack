@@ -4,7 +4,10 @@
 
 #include "ActionAttack.h"
 #include "GameState.h"
+#include "IMessageLog.h"
+#include "IStringDictionary.h"
 #include "Map.h"
+#include "Service.h"
 #include "Thing.h"
 #include "ThingId.h"
 
@@ -33,7 +36,7 @@ Action::StateResult ActionMove::do_prebegin_work_(AnyMap& params)
   if (!subject->get_intrinsic<bool>("can_move", false))
   {
     message += make_string("$you $(cv?don't:doesn't) have the capability of movement.");
-    the_message_log.add(message);
+    Service<IMessageLog>::get().add(message);
     return Action::StateResult::Failure();
   }
 
@@ -41,7 +44,7 @@ Action::StateResult ActionMove::do_prebegin_work_(AnyMap& params)
   if (!subject->can_currently_move())
   {
     message += make_string("$you can't move right now.");
-    the_message_log.add(message);
+    Service<IMessageLog>::get().add(message);
     return Action::StateResult::Failure();
   }
 
@@ -51,7 +54,7 @@ Action::StateResult ActionMove::do_prebegin_work_(AnyMap& params)
     message += make_string("$you $are inside $0 and $are not going anywhere!",
     { location->get_identifying_string(ArticleChoice::Indefinite) });
 
-    the_message_log.add(message);
+    Service<IMessageLog>::get().add(message);
     return Action::StateResult::Failure();
   }
 
@@ -73,13 +76,13 @@ Action::StateResult ActionMove::do_begin_work_(AnyMap& params)
   {
     /// @todo Write up/down movement code
     message = "Up/down movement is not yet supported!";
-    the_message_log.add(message);
+    Service<IMessageLog>::get().add(message);
   }
   else if (new_direction == Direction::Down)
   {
     /// @todo Write up/down movement code
     message = "Up/down movement is not yet supported!";
-    the_message_log.add(message);
+    Service<IMessageLog>::get().add(message);
   }
   else
   {
@@ -96,7 +99,7 @@ Action::StateResult ActionMove::do_begin_work_(AnyMap& params)
       (x_new >= map_size.x) || (y_new >= map_size.y))
     {
       message += make_string("$you can't move there; it is out of bounds!");
-      the_message_log.add(message);
+      Service<IMessageLog>::get().add(message);
     }
     else
     {
@@ -135,7 +138,7 @@ Action::StateResult ActionMove::do_begin_work_(AnyMap& params)
             tile_description
           });
 
-          the_message_log.add(message);
+          Service<IMessageLog>::get().add(message);
         }
       } // end else if (tile does not contain creature)
     } // end else if (not out of bounds)

@@ -2,6 +2,8 @@
 
 #include "ActionGet.h"
 #include "ActionMove.h"
+#include "IMessageLog.h"
+#include "Service.h"
 #include "Thing.h"
 #include "ThingId.h"
 
@@ -33,7 +35,7 @@ Action::StateResult ActionGet::do_prebegin_work_(AnyMap& params)
         "up, which seriously shouldn't happen.";
       CLOG(WARNING, "Action") << "NPC tried to pick self up!?";
     }
-    the_message_log.add(message);
+    Service<IMessageLog>::get().add(message);
     return StateResult::Failure();
   }
 
@@ -41,10 +43,10 @@ Action::StateResult ActionGet::do_prebegin_work_(AnyMap& params)
   if (subject->get_inventory().contains(object))
   {
     message = YOU_TRY + " to pick up " + THE_FOO + ".";
-    the_message_log.add(message);
+    Service<IMessageLog>::get().add(message);
 
     message = THE_FOO + FOO_IS + " already in " + YOUR + " inventory!";
-    the_message_log.add(message);
+    Service<IMessageLog>::get().add(message);
     return StateResult::Failure();
   }
 
@@ -52,20 +54,20 @@ Action::StateResult ActionGet::do_prebegin_work_(AnyMap& params)
   if (false)
   {
     message = YOU_TRY + " to pick up " + THE_FOO + ".";
-    the_message_log.add(message);
+    Service<IMessageLog>::get().add(message);
 
     message = YOUR + " inventory cannot accommodate " + THE_FOO + ".";
-    the_message_log.add(message);
+    Service<IMessageLog>::get().add(message);
     return StateResult::Failure();
   }
 
   if (!object->can_have_action_done_by(subject, ActionMove::prototype))
   {
     message = YOU_TRY + " to pick up " + THE_FOO + ".";
-    the_message_log.add(message);
+    Service<IMessageLog>::get().add(message);
 
     message = YOU + " cannot move " + THE_FOO + ".";
-    the_message_log.add(message);
+    Service<IMessageLog>::get().add(message);
     return StateResult::Failure();
   }
 
@@ -83,7 +85,7 @@ Action::StateResult ActionGet::do_begin_work_(AnyMap& params)
   if (object->be_object_of(*this, subject) == ActionResult::Success)
   {
     message = YOU + CV(" pick", " picks") + " up " + THE_FOO + ".";
-    the_message_log.add(message);
+    Service<IMessageLog>::get().add(message);
     if (object->move_into(subject))
     {
       /// @todo Figure out action time.
@@ -92,7 +94,7 @@ Action::StateResult ActionGet::do_begin_work_(AnyMap& params)
     else // could not add to inventory
     {
       message = YOU + " could not pick up " + THE_FOO + " for some inexplicable reason.";
-      the_message_log.add(message);
+      Service<IMessageLog>::get().add(message);
 
       CLOG(WARNING, "Action") << "Could not move Thing " << object <<
         " even though be_object_of returned Success";

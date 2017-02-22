@@ -358,7 +358,7 @@ int App::LUA_redirect_print(lua_State* L)
     if (lua_isstring(L, i))
     {
       std::string str = lua_tostring(L, i);
-      the_message_log.add(str);
+      Service<IMessageLog>::get().add(str);
     }
     else
     {
@@ -380,7 +380,7 @@ int App::LUA_add(lua_State* L)
   else
   {
     std::string str = lua_tostring(L, 1);
-    the_message_log.add(str);
+    Service<IMessageLog>::get().add(str);
   }
 
   return 0;

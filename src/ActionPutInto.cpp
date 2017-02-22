@@ -1,6 +1,9 @@
 #include "stdafx.h"
 
 #include "ActionPutInto.h"
+#include "IMessageLog.h"
+#include "IStringDictionary.h"
+#include "Service.h"
 #include "Thing.h"
 #include "ThingId.h"
 
@@ -49,7 +52,7 @@ Action::StateResult ActionPutInto::do_prebegin_work_(AnyMap& params)
       message = make_string("$you $try to store $yourself into $the_target_thing, which seriously shouldn't happen.");
       CLOG(WARNING, "Action") << "NPC tried to store self!?";
     }
-    the_message_log.add(message);
+    Service<IMessageLog>::get().add(message);
 
     return StateResult::Failure();
   }
@@ -66,7 +69,7 @@ Action::StateResult ActionPutInto::do_prebegin_work_(AnyMap& params)
       message = make_string("$you $try to store $the_foo into $yourself, which seriously shouldn't happen.");
       CLOG(WARNING, "Action") << "NPC tried to store into self!?";
     }
-    the_message_log.add(message);
+    Service<IMessageLog>::get().add(message);
 
     return StateResult::Failure();
   }
@@ -77,7 +80,7 @@ Action::StateResult ActionPutInto::do_prebegin_work_(AnyMap& params)
     print_message_try_();
 
     message = make_string("$the_target_thing is not a container!");
-    the_message_log.add(message);
+    Service<IMessageLog>::get().add(message);
 
     return StateResult::Failure();
   }
@@ -88,7 +91,7 @@ Action::StateResult ActionPutInto::do_prebegin_work_(AnyMap& params)
     print_message_try_();
 
     message = make_string("$the_foo is already in $the_target_thing!");
-    the_message_log.add(message);
+    Service<IMessageLog>::get().add(message);
 
     return StateResult::Failure();
   }
@@ -99,7 +102,7 @@ Action::StateResult ActionPutInto::do_prebegin_work_(AnyMap& params)
     print_message_try_();
 
     message = make_string("$you cannot reach $the_target_thing.");
-    the_message_log.add(message);
+    Service<IMessageLog>::get().add(message);
 
     return StateResult::Failure();
   }
@@ -110,7 +113,7 @@ Action::StateResult ActionPutInto::do_prebegin_work_(AnyMap& params)
     print_message_try_();
 
     message = make_string("$you cannot store something that is currently being wielded.");
-    the_message_log.add(message);
+    Service<IMessageLog>::get().add(message);
 
     return StateResult::Failure();
   }
@@ -122,7 +125,7 @@ Action::StateResult ActionPutInto::do_prebegin_work_(AnyMap& params)
 
     /// @todo Perhaps automatically try to unwield the item before dropping?
     message = make_string("$you cannot store something that is currently being worn.");
-    the_message_log.add(message);
+    Service<IMessageLog>::get().add(message);
 
     return StateResult::Failure();
   }
@@ -151,7 +154,7 @@ Action::StateResult ActionPutInto::do_begin_work_(AnyMap& params)
     else
     {
       message = make_string("$you could not move $the_foo into $the_target_thing for some inexplicable reason.");
-      the_message_log.add(message);
+      Service<IMessageLog>::get().add(message);
 
       MAJOR_ERROR("Could not move Thing into Container even though be_object_of returned Success");
     }
@@ -173,11 +176,11 @@ Action::StateResult ActionPutInto::do_abort_work_(AnyMap& params)
 void ActionPutInto::print_message_try_() const
 {
   std::string message = make_string("$you $try to $verb $the_foo into $the_target_thing.");
-  the_message_log.add(message);
+  Service<IMessageLog>::get().add(message);
 }
 
 void ActionPutInto::print_message_do_() const
 {
   std::string message = make_string("$you $cverb $the_foo into $the_target_thing.");
-  the_message_log.add(message);
+  Service<IMessageLog>::get().add(message);
 }

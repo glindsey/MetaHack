@@ -3,6 +3,9 @@
 #include "ActionWield.h"
 
 #include "ActionUnwield.h"
+#include "IMessageLog.h"
+#include "IStringDictionary.h"
+#include "Service.h"
 #include "Thing.h"
 #include "ThingId.h"
 
@@ -33,7 +36,7 @@ Action::StateResult ActionWield::do_prebegin_work_(AnyMap& params)
   {
     std::string message;
     message = make_string("$you must unwield what you are currently wielding in your $0 first.", { bodypart_desc });
-    the_message_log.add(message);
+    Service<IMessageLog>::get().add(message);
 
     return StateResult::Failure();
   }
@@ -44,7 +47,7 @@ Action::StateResult ActionWield::do_prebegin_work_(AnyMap& params)
     print_message_try_();
 
     message = make_string("$you $have no way to wield anything!");
-    the_message_log.add(message);
+    Service<IMessageLog>::get().add(message);
 
     return StateResult::Failure();
   }
@@ -70,7 +73,7 @@ Action::StateResult ActionWield::do_begin_work_(AnyMap& params)
   {
     subject->set_wielded(object, hand);
     message = YOU_ARE + " now wielding " + get_object_string_() + " with " + YOUR + " " + bodypart_desc + ".";
-    the_message_log.add(message);
+    Service<IMessageLog>::get().add(message);
 
     result = StateResult::Success();
   }

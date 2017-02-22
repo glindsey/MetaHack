@@ -1,6 +1,9 @@
 #include "stdafx.h"
 
 #include "ActionQuaff.h"
+#include "IMessageLog.h"
+#include "IStringDictionary.h"
+#include "Service.h"
 #include "Thing.h"
 #include "ThingId.h"
 
@@ -19,7 +22,7 @@ Action::StateResult ActionQuaff::do_prebegin_work_(AnyMap& params)
 
     /// @todo When drinking self, special message if caller is a liquid-based organism.
     message = "Ewwww... no.";
-    the_message_log.add(message);
+    Service<IMessageLog>::get().add(message);
 
     return Action::StateResult::Failure();
   }
@@ -30,7 +33,7 @@ Action::StateResult ActionQuaff::do_prebegin_work_(AnyMap& params)
     print_message_try_();
 
     message = "But, as " + getIndefArt(subject->get_display_name()) + subject->get_display_name() + "," + YOU_ARE + " not capable of drinking liquids.";
-    the_message_log.add(message);
+    Service<IMessageLog>::get().add(message);
 
     return Action::StateResult::Failure();
   }
@@ -42,7 +45,7 @@ Action::StateResult ActionQuaff::do_prebegin_work_(AnyMap& params)
     print_message_try_();
 
     message = "But " + THE_FOO + FOO_IS + " empty!";
-    the_message_log.add(message);
+    Service<IMessageLog>::get().add(message);
 
     return Action::StateResult::Failure();
   }

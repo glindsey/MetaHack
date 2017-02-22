@@ -1,6 +1,9 @@
 #include "stdafx.h"
 
 #include "ActionUse.h"
+#include "IMessageLog.h"
+#include "IStringDictionary.h"
+#include "Service.h"
 #include "Thing.h"
 #include "ThingId.h"
 
@@ -16,17 +19,17 @@ Action::StateResult ActionUse::do_prebegin_work_(AnyMap& params)
   if (subject == object)
   {
     message = YOU_TRY + " to use " + THE_FOO + ".";
-    the_message_log.add(message);
+    Service<IMessageLog>::get().add(message);
 
     if (IS_PLAYER)
     {
       message = YOU_ARE + " already using " + YOURSELF + " to the best of " + YOUR + " ability.";
-      the_message_log.add(message);
+      Service<IMessageLog>::get().add(message);
     }
     else
     {
       message = "That seriously shouldn't happen!";
-      the_message_log.add(message);
+      Service<IMessageLog>::get().add(message);
 
       CLOG(WARNING, "Action") << "NPC tried to use self!?";
     }
@@ -65,7 +68,7 @@ Action::StateResult ActionUse::do_finish_work_(AnyMap& params)
   {
     case ActionResult::SuccessDestroyed:
       message = THE_FOO + OBJCV(" disintegrate", " disintegrates") + " after " + YOU + CV(" use ", " uses ") + OBJ_PRO_FOO + "!";
-      the_message_log.add(message);
+      Service<IMessageLog>::get().add(message);
 
       object->destroy();
       result = StateResult::Success();

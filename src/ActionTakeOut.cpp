@@ -1,6 +1,9 @@
 #include "stdafx.h"
 
 #include "ActionTakeOut.h"
+#include "IMessageLog.h"
+#include "IStringDictionary.h"
+#include "Service.h"
 #include "Thing.h"
 #include "ThingId.h"
 
@@ -34,7 +37,7 @@ Action::StateResult ActionTakeOut::do_prebegin_work_(AnyMap& params)
         "out, which seriously shouldn't happen.";
       CLOG(WARNING, "Action") << "NPC tried to take self out!?";
     }
-    the_message_log.add(message);
+    Service<IMessageLog>::get().add(message);
 
     return StateResult::Failure();
   }
@@ -46,10 +49,10 @@ Action::StateResult ActionTakeOut::do_prebegin_work_(AnyMap& params)
 
     //message = YOU_TRY + " to remove " + THE_FOO +
     //  " from its container.";
-    //the_message_log.add(message);
+    //Service<IMessageLog>::get().add(message);
 
     message = "But " + THE_FOO + " is not inside a container!";
-    the_message_log.add(message);
+    Service<IMessageLog>::get().add(message);
 
     return StateResult::Failure();
   }
@@ -60,7 +63,7 @@ Action::StateResult ActionTakeOut::do_prebegin_work_(AnyMap& params)
     print_message_try_();
 
     message = YOU + " cannot reach " + THE_FOO + ".";
-    the_message_log.add(message);
+    Service<IMessageLog>::get().add(message);
 
     return StateResult::Failure();
   }
@@ -93,7 +96,7 @@ Action::StateResult ActionTakeOut::do_begin_work_(AnyMap& params)
     else
     {
       message = YOU + " could not take " + get_object_string_() + " out of " + get_target_string_() + " for some inexplicable reason.";
-      the_message_log.add(message);
+      Service<IMessageLog>::get().add(message);
 
       MAJOR_ERROR("Could not move Thing out of Container even though be_object_of returned Success");
     }
@@ -115,11 +118,11 @@ Action::StateResult ActionTakeOut::do_abort_work_(AnyMap& params)
 void ActionTakeOut::print_message_try_() const
 {
   std::string message = YOU_TRY + " to " + VERB + " " + get_object_string_() + " from " + get_target_string_() + ".";
-  the_message_log.add(message);
+  Service<IMessageLog>::get().add(message);
 }
 
 void ActionTakeOut::print_message_do_() const
 {
   std::string message = YOU + " " + CV(VERB, VERB3) + " " + get_object_string_() + " from " + get_target_string_() + ".";
-  the_message_log.add(message);
+  Service<IMessageLog>::get().add(message);
 }

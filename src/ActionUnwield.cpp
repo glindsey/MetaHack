@@ -1,6 +1,9 @@
 #include "stdafx.h"
 
 #include "ActionUnwield.h"
+#include "IMessageLog.h"
+#include "IStringDictionary.h"
+#include "Service.h"
 #include "Thing.h"
 #include "ThingId.h"
 
@@ -22,7 +25,7 @@ Action::StateResult ActionUnwield::do_prebegin_work_(AnyMap& params)
   if (object == ThingId::Mu())
   {
     message = make_string("$you $are not currently wielding anything!");
-    the_message_log.add(message);
+    Service<IMessageLog>::get().add(message);
     return StateResult::Failure();
   }
 
@@ -47,7 +50,7 @@ Action::StateResult ActionUnwield::do_begin_work_(AnyMap& params)
   {
     std::string message;
     message = make_string("$you cannot unwield $foo; it is magically bound to $your $0!", { bodypart_desc });
-    the_message_log.add(message);
+    Service<IMessageLog>::get().add(message);
 
     // Premature exit.
     return result;

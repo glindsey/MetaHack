@@ -243,7 +243,7 @@ Action::StateResult Action::do_prebegin_work(AnyMap& params)
     {
       /// @todo This message could be made less awkward for verbs that take objects.
       message = make_string("$you can't $verb because $you $do not exist physically!");
-      the_message_log.add(message);
+      Service<IMessageLog>::get().add(message);
       return StateResult::Failure();
     }
   }
@@ -272,7 +272,7 @@ Action::StateResult Action::do_prebegin_work(AnyMap& params)
           print_message_try_();
 
           message = make_string("However, $obj_pro_foo $foo_is out of $your reach.");
-          the_message_log.add(message);
+          Service<IMessageLog>::get().add(message);
 
           return StateResult::Failure();
         }
@@ -291,7 +291,7 @@ Action::StateResult Action::do_prebegin_work(AnyMap& params)
             message += " (pick it up first)";
           }
           message += ".";
-          the_message_log.add(message);
+          Service<IMessageLog>::get().add(message);
 
           return StateResult::Failure();
         }
@@ -344,7 +344,7 @@ Action::StateResult Action::do_prebegin_work_(AnyMap& params)
 Action::StateResult Action::do_begin_work_(AnyMap& params)
 {
   auto& dict = Service<IStringDictionary>::get();
-  the_message_log.add(dict.get("NOT_IMPLEMENTED_MSG"));
+  Service<IMessageLog>::get().add(dict.get("NOT_IMPLEMENTED_MSG"));
 
   return Action::StateResult::Failure();
 }
@@ -439,7 +439,7 @@ void Action::print_message_try_() const
   std::string object_string = get_object_string_();
   if (!object_string.empty()) object_string = " " + object_string;
   std::string message = make_string("$you $try to $verb $the_foo.");
-  the_message_log.add(message);
+  Service<IMessageLog>::get().add(message);
 }
 
 void Action::print_message_do_() const
@@ -447,7 +447,7 @@ void Action::print_message_do_() const
   std::string object_string = get_object_string_();
   if (!object_string.empty()) object_string = " " + object_string;
   std::string message = make_string("$you $cverb $the_foo.");
-  the_message_log.add(message);
+  Service<IMessageLog>::get().add(message);
 }
 
 void Action::print_message_begin_() const
@@ -455,7 +455,7 @@ void Action::print_message_begin_() const
   std::string object_string = get_object_string_();
   if (!object_string.empty()) object_string = " " + object_string;
   std::string message = make_string("$you $(cv?begin:begins) to $verb $the_foo.");
-  the_message_log.add(message);
+  Service<IMessageLog>::get().add(message);
 }
 
 void Action::print_message_stop_() const
@@ -463,7 +463,7 @@ void Action::print_message_stop_() const
   std::string object_string = get_object_string_();
   if (!object_string.empty()) object_string = " " + object_string;
   std::string message = make_string("$you $(cv?stop:stops) $verbing $the_foo.");
-  the_message_log.add(message);
+  Service<IMessageLog>::get().add(message);
 }
 
 void Action::print_message_finish_() const
@@ -471,13 +471,13 @@ void Action::print_message_finish_() const
   std::string object_string = get_object_string_();
   if (!object_string.empty()) object_string = " " + object_string;
   std::string message = make_string("$you $(cv?finish:finishes) $verbing $the_foo.");
-  the_message_log.add(message);
+  Service<IMessageLog>::get().add(message);
 }
 
 void Action::print_message_cant_() const
 {
   std::string message = make_string("$you can't $verb that!");
-  the_message_log.add(message);
+  Service<IMessageLog>::get().add(message);
 }
 
 void Action::register_action_as(std::string key, ActionCreator creator)

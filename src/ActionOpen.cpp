@@ -1,10 +1,11 @@
 #include "stdafx.h"
 
 #include "ActionOpen.h"
-#include "Thing.h"
-#include "ThingId.h"
+#include "IMessageLog.h"
 #include "IStringDictionary.h"
 #include "Service.h"
+#include "Thing.h"
+#include "ThingId.h"
 
 ACTION_SRC_BOILERPLATE(ActionOpen, "open", "open")
 
@@ -19,7 +20,7 @@ Action::StateResult ActionOpen::do_begin_work_(AnyMap& params)
   unsigned int action_time = 0;
 
   auto& dict = Service<IStringDictionary>::get();
-  the_message_log.add(dict.get("NOT_IMPLEMENTED_MSG"));
+  Service<IMessageLog>::get().add(dict.get("NOT_IMPLEMENTED_MSG"));
 
 #if 0
   if (thing != ThingId::Mu())

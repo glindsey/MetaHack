@@ -4,7 +4,10 @@
 
 #include "ActionAttack.h"
 #include "GameState.h"
+#include "IMessageLog.h"
+#include "IStringDictionary.h"
 #include "Map.h"
+#include "Service.h"
 #include "Thing.h"
 #include "ThingId.h"
 
@@ -35,7 +38,7 @@ Action::StateResult ActionTurn::do_prebegin_work_(AnyMap& params)
   if (!subject->get_intrinsic<bool>("can_move", false))
   {
     message += YOU + CV(" don't", " doesn't") + " have the capability of movement.";
-    the_message_log.add(message);
+    Service<IMessageLog>::get().add(message);
     return Action::StateResult::Failure();
   }
 
@@ -43,7 +46,7 @@ Action::StateResult ActionTurn::do_prebegin_work_(AnyMap& params)
   if (!subject->can_currently_move())
   {
     message += YOU + " can't move right now.";
-    the_message_log.add(message);
+    Service<IMessageLog>::get().add(message);
     return Action::StateResult::Failure();
   }
 

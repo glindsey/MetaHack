@@ -138,7 +138,6 @@ private:
 #define the_desktop               App::instance().get_gui_desktop()
 #define the_shader                App::instance().get_shader()
 #define the_RNG                   App::instance().get_rng()
-#define the_message_log           App::instance().get_message_log()
 #define the_tilesheet             App::instance().get_tilesheet()
 
 #endif // APP_H

@@ -1,10 +1,11 @@
 #include "stdafx.h"
 
 #include "ActionUnlock.h"
-#include "Thing.h"
-#include "ThingId.h"
+#include "IMessageLog.h"
 #include "IStringDictionary.h"
 #include "Service.h"
+#include "Thing.h"
+#include "ThingId.h"
 
 ACTION_SRC_BOILERPLATE(ActionUnlock, "unlock", "unlock")
 
@@ -19,7 +20,7 @@ Action::StateResult ActionUnlock::do_begin_work_(AnyMap& params)
   unsigned int action_time = 0;
 
   auto& dict = Service<IStringDictionary>::get();
-  the_message_log.add(dict.get("NOT_IMPLEMENTED_MSG"));
+  Service<IMessageLog>::get().add(dict.get("NOT_IMPLEMENTED_MSG"));
 
   return{ success, action_time };
 }

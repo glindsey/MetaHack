@@ -2,8 +2,10 @@
 
 #include "ActionAttack.h"
 #include "GameState.h"
+#include "IMessageLog.h"
 #include "Map.h"
 #include "MapFactory.h"
+#include "Service.h"
 #include "Thing.h"
 #include "ThingId.h"
 
@@ -31,7 +33,7 @@ Action::StateResult ActionAttack::do_prebegin_work_(AnyMap& params)
   if (!subject->get_modified_property<bool>("can_attack", false))
   {
     message += make_string("$you $(cv?don't:doesn't) have any way to attack things.");
-    the_message_log.add(message);
+    Service<IMessageLog>::get().add(message);
     return StateResult::Failure();
   }
 
@@ -39,7 +41,7 @@ Action::StateResult ActionAttack::do_prebegin_work_(AnyMap& params)
   if (!subject->can_currently_move())
   {
     message += make_string("$you can't move right now.");
-    the_message_log.add(message);
+    Service<IMessageLog>::get().add(message);
     return StateResult::Failure();
   }
 
@@ -48,7 +50,7 @@ Action::StateResult ActionAttack::do_prebegin_work_(AnyMap& params)
   {
     /// @todo Allow attacking yourself!
     message = make_string("$you wisely $(cv?refrain:refrains) from pummelling $yourself.");
-    the_message_log.add(message);
+    Service<IMessageLog>::get().add(message);
     return StateResult::Failure();
   }
 
@@ -59,7 +61,7 @@ Action::StateResult ActionAttack::do_prebegin_work_(AnyMap& params)
     message += make_string("$you $are inside $0 and $are not going anywhere!",
     { location->get_identifying_string(ArticleChoice::Indefinite) });
 
-    the_message_log.add(message);
+    Service<IMessageLog>::get().add(message);
     return StateResult::Failure();
   }
 
@@ -67,7 +69,7 @@ Action::StateResult ActionAttack::do_prebegin_work_(AnyMap& params)
   {
     /// @todo Write up/down attack code
     message = "attacking the ceiling is not yet supported!";
-    the_message_log.add(message);
+    Service<IMessageLog>::get().add(message);
     return StateResult::Failure();
   }
 
@@ -75,7 +77,7 @@ Action::StateResult ActionAttack::do_prebegin_work_(AnyMap& params)
   {
     /// @todo Write up/down attack code
     message = "attacking the floor is not yet supported!";
-    the_message_log.add(message);
+    Service<IMessageLog>::get().add(message);
     return StateResult::Failure();
   }
 
@@ -107,7 +109,7 @@ Action::StateResult ActionAttack::do_begin_work_(AnyMap& params)
     (x_new >= map_size.x) || (y_new >= map_size.y))
   {
     message += make_string("$you can't attack there; it is out of bounds!");
-    the_message_log.add(message);
+    Service<IMessageLog>::get().add(message);
     return StateResult::Failure();
   }
 
@@ -121,7 +123,7 @@ Action::StateResult ActionAttack::do_begin_work_(AnyMap& params)
   {
     /// @todo Deal with attacking other stuff, MapTiles, etc.
     message = "Attacking non-entity things is not yet supported!";
-    the_message_log.add(message);
+    Service<IMessageLog>::get().add(message);
     return StateResult::Failure();
   }
 
@@ -132,7 +134,7 @@ Action::StateResult ActionAttack::do_begin_work_(AnyMap& params)
   {
     /// @todo Write actual attack code here.
     message = make_string("$you $try to attack $the_foo, but $are stopped by the programmer's procrastination!");
-    the_message_log.add(message);
+    Service<IMessageLog>::get().add(message);
   }
 
   return{ success, action_time };
