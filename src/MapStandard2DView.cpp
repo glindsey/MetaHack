@@ -9,7 +9,9 @@
 MapStandard2DView::MapStandard2DView(Map& map)
   :
   MapView(map)
-{}
+{
+  reset_cached_render_data();
+}
 
 void MapStandard2DView::update_tiles(ThingId viewer)
 {
