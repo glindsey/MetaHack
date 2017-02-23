@@ -15,6 +15,7 @@
 #include "MapTile.h"
 #include "Metadata.h"
 #include "ModifiablePropertyDictionary.h"
+#include "Observable.h"
 #include "ThingId.h"
 #include "ThingManager.h"
 
@@ -54,10 +55,13 @@ enum class UsePossessives
   Yes
 };
 
-// Thing is any object in the game, animate or not.
+/// Thing is any object in the game, animate or not.
+/// @todo Still a LOT of cruft in this class that should be refactored out,
+///       e.g. the wearing/wielding stuff.
 class Thing
   :
-  public GameObject
+  public GameObject,
+  public Observable
 {
   friend class AIStrategy;
   friend class ThingFactory;
@@ -364,6 +368,8 @@ public:
   /// return "your (thing)".
   /// Likewise, if it is carried by another Entity it'll return
   /// "(Entity)'s (thing)".
+  /// @todo Make localizable. (How? Use Lua scripts maybe?)
+  ///
   /// @param articles Choose whether to use definite or indefinite articles.
   ///                 Defaults to definite articles.
   /// @param possessives  Choose whether to use possessive articles when appropriate.
@@ -376,6 +382,8 @@ public:
   /// This function checks to see if this Thing is currently designated as
   /// the player (in the ThingFactory).  If so, it returns "your".  If not,
   /// it returns get_name() + "'s".
+  /// @todo Make localizable. (How? Use Lua scripts maybe?)
+  ///
   /// @note If you want a possessive pronoun like his/her/its/etc., use
   /// get_possessive_adjective().
   std::string get_possessive();
@@ -399,6 +407,10 @@ public:
   /// Return this thing's mass.
   int get_mass();
 
+  /// @addtogroup Pronouns
+  /// @todo Make localizable. (How? Use Lua scripts maybe?)
+  /// @{
+
   /// Get the appropriate subject pronoun for the Thing.
   std::string const& get_subject_pronoun() const;
 
@@ -413,6 +425,8 @@ public:
 
   /// Get the appropriate possessive pronoun for the Thing.
   std::string const& get_possessive_pronoun() const;
+
+  /// @}
 
   /// Return the coordinates of the tile representing the thing.
   Vec2u get_tile_sheet_coords(int frame);

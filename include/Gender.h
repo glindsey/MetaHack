@@ -1,5 +1,6 @@
-#ifndef GENDER_H
-#define GENDER_H
+#pragma once
+/// @file Gender.h Handles gender-specific language.
+/// @todo Make this localizable. (That's going to be a MAJOR pain.)
 
 #include "stdafx.h"
 
@@ -70,5 +71,3 @@ std::string const& getRefPro(Gender gender);
 std::string const& getPossAdj(Gender gender);
 std::string const& getPossPro(Gender gender);
 std::string const& getIndefArt(std::string const& desc);
-
-#endif // GENDER_H

@@ -91,6 +91,8 @@ void Thing::initialize()
 
   /// Also set our HP to that value.
   set_base_property<int>("hp", max_hp);
+
+  notifyObservers(Event::Updated);
 }
 
 Thing::~Thing()
@@ -261,6 +263,7 @@ bool Thing::do_die()
       // Clear any pending actions.
       m_pending_actions.clear();
 
+      notifyObservers(Event::Updated);
       return true;
     case ActionResult::Failure:
     default:
@@ -893,6 +896,7 @@ bool Thing::move_into(ThingId new_location)
           }
         }
         this->find_seen_tiles();
+        notifyObservers(Event::Updated);
         return true;
       } // end if (add to new inventory was successful)
 
@@ -1231,7 +1235,8 @@ void Thing::light_up_surroundings()
 
 void Thing::be_lit_by(ThingId light)
 {
-  call_lua_function<ActionResult, ThingId>("on_lit_by", { light }, ActionResult::Success);
+  auto result = call_lua_function<ActionResult, ThingId>("on_lit_by", { light }, ActionResult::Success);
+  if (result == ActionResult::Success) notifyObservers(Event::Updated);
 
   ThingId location = get_location();
 
@@ -1297,6 +1302,8 @@ void Thing::spill()
             thing->destroy();
           }
 
+          notifyObservers(Event::Updated);
+
           break;
 
         case ActionResult::FailureInventoryFull:
@@ -1329,6 +1336,8 @@ void Thing::destroy()
   {
     old_location->get_inventory().remove(m_ref);
   }
+
+  notifyObservers(Event::Updated);
 }
 
 std::string Thing::get_bodypart_description(BodyPart part,
@@ -1698,6 +1707,17 @@ bool Thing::_process_self()
 
       m_pending_actions.pop_front();
     }
+
+    /// @todo This needs to be changed so it only is called if the Action
+    ///       materially affected the thing in some way. Two ways to do this
+    ///       that I can see:
+    ///         1) The Action calls notifyObservers. Requires the Action
+    ///            to have access to that method; right now it doesn't.
+    ///         2) The Action returns some sort of indication that the Thing
+    ///            was modified as a result. This could be done by changing
+    ///            the return type from a bool to a struct of some sort.
+    notifyObservers(Event::Updated);
+
   } // end if (actions pending)
   // Otherwise if there are no other pending actions...
   else
