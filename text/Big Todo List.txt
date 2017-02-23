@@ -51,10 +51,9 @@ MEDIUM THINGS
         - Player do_die() is called, but graceful game shutdown is not yet done
     [X] For other Things
 [ ] Make it easier for enum classes to be defined, to have an operator<< defined, and to have it exposed to Lua.
-[ ] Replace the error/trace functions with boost logging facilities
 [ ] Light bleed across tiles
     - Simple convolution that bleeds a bit of light from a tile into adjacent ones, will make shadows way less sharp
-[/] Split MessageLog into model/view (MessageLog and MessageLogPane)
+[X] Split MessageLog into model/view (MessageLog and MessageLogPane)
 [ ] Allow for scrolling back in MessageLog
 [ ] Allow for lines with different colors (and fonts?) in MessageLog
 [/] Show the "wielded" / "equipped" tiles in the Inventory
@@ -66,9 +65,9 @@ MEDIUM THINGS
 
 BIG THINGS
 ==========
-[ ] Localization
+[/] Localization
     - I originally thought about using boost::locale into the codebase, use for properly handling strings, but this may make Lua stuff problematic.
-    - Instead I'm thinking of XML files that map string IDs to strings in different languages. They can be parsed into property trees when the scripts are loaded.
+    - Instead I'm thinking of JSON files that map string IDs to strings in different languages. They can be parsed into property trees when the scripts are loaded.
 
 [ ] Re-introduce the concept of facing direction...?
     - A "marching" entity would need to keep track of its current direction in order to keep moving that way. A local Lua variable would work, but leads to the problem of loads/saves not preserving the variable (as Lua state is not serialized on load/save).
@@ -128,7 +127,7 @@ MIND-BOGGLINGLY ENORMOUS THINGS
 [ ] Implement saving/loading of the entire game state
     - I've *barely* started to do this, by writing serialization functions.
 
-[ ] Refactor rendering to allow for swapping out rendering engines
+[/] Refactor rendering to allow for swapping out rendering engines
 
 ??? THINGS
 ==========
@@ -166,6 +165,10 @@ azure
 indigo
 violet
 black
+
+Monster Ideas
+===============================================================================
+cynicism elemental
 
 Text Renderer Tokenizer (probably not needed if boost::locale is used)
 ===============================================================================
