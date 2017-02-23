@@ -7,27 +7,15 @@
 #include "IConfigSettings.h"
 #include "Service.h"
 
-MapView::MapView()
-  :
-  m_map_id(MapFactory::null_map_id)
-{}
-
 MapView::MapView(MapId map_id)
   :
   m_map_id(map_id)
-{}
+{
+  reset_cached_render_data();
+}
 
 MapView::~MapView()
 {}
-
-void MapView::set_map_id(MapId map_id)
-{
-  if (map_id != m_map_id)
-  {
-    m_map_id = map_id;
-    reset_cached_render_data();
-  }
-}
 
 MapId MapView::get_map_id()
 {

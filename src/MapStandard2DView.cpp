@@ -6,11 +6,6 @@
 
 #include "ShaderEffect.h"
 
-MapStandard2DView::MapStandard2DView()
-  :
-  MapView()
-{}
-
 MapStandard2DView::MapStandard2DView(MapId map_id)
   :
   MapView(map_id)

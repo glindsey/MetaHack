@@ -57,7 +57,6 @@ AppStateGameMode::AppStateGameMode(StateMachine& state_machine, sf::RenderWindow
   m_app_window{ m_app_window },
   m_debug_buffer{ NEW KeyBuffer() },
   m_game_state{ NEW GameState() },
-  m_map_view{ NEW MapStandard2DView() },
   m_inventory_selection{ NEW InventorySelection() },
   m_window_in_focus{ true },
   m_inventory_area_shows_player{ false },
@@ -192,7 +191,7 @@ bool AppStateGameMode::initialize()
   reset_inventory_selection();
 
   // Set the map view.
-  m_map_view->set_map_id(current_map_id);
+  m_map_view.reset(NEW MapStandard2DView(current_map_id));
 
   // Get the map ready.
   game_map.update_lighting();

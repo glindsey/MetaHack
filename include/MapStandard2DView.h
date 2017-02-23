@@ -13,9 +13,6 @@ class MapStandard2DView : public MapView
 {
 public:
   /// Constructor.
-  MapStandard2DView();
-
-  /// Constructor.
   /// @param map	ID of Map object to associate with this view.
   MapStandard2DView(MapId map_id);
 
