@@ -11,7 +11,6 @@ MapView::MapView(MapId map_id)
   :
   m_map_id(map_id)
 {
-  reset_cached_render_data();
 }
 
 MapView::~MapView()
