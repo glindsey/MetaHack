@@ -191,7 +191,7 @@ bool AppStateGameMode::initialize()
   reset_inventory_selection();
 
   // Set the map view.
-  m_map_view.reset(NEW MapStandard2DView(current_map_id));
+  m_map_view.reset(NEW MapStandard2DView(game_map));
 
   // Get the map ready.
   game_map.update_lighting();

@@ -6,9 +6,9 @@
 
 #include "ShaderEffect.h"
 
-MapStandard2DView::MapStandard2DView(MapId map_id)
+MapStandard2DView::MapStandard2DView(Map& map)
   :
-  MapView(map_id)
+  MapView(map)
 {}
 
 void MapStandard2DView::update_tiles(ThingId viewer)

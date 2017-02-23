@@ -7,19 +7,14 @@
 #include "IConfigSettings.h"
 #include "Service.h"
 
-MapView::MapView(MapId map_id)
+MapView::MapView(Map& map)
   :
-  m_map_id(map_id)
+  m_map(map)
 {
 }
 
 MapView::~MapView()
 {}
-
-MapId MapView::get_map_id()
-{
-  return m_map_id;
-}
 
 void MapView::set_view(sf::RenderTarget & target, Vec2f center, float zoom_level)
 {
@@ -40,5 +35,5 @@ void MapView::set_view(sf::RenderTarget & target, Vec2f center, float zoom_level
 
 Map& MapView::get_map()
 {
-  return GAME.get_maps().get(m_map_id);
+  return m_map;
 }

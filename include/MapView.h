@@ -8,20 +8,16 @@
 // Forward declarations
 class ThingId;
 
-/// Abstract cLass representing a view of a Map object.
+/// Abstract class representing a view of a Map object.
 class MapView : public RenderableToTexture
 {
 public:
   /// Constructor.
-  /// @param map	ID of Map object to associate with this view.
-  explicit MapView(MapId map_id);
+  /// @param map	Reference to Map object to associate with this view.
+  explicit MapView(Map& map);
 
   /// Destructor.
   virtual ~MapView();
-
-  /// Gets the current map ID.
-  /// @return The ID of the map associated with this view.
-  MapId get_map_id();
 
   /// Sets map view information.
   /// @param center The place to center the rendered map on.
@@ -50,6 +46,6 @@ protected:
   virtual void reset_cached_render_data() = 0;
 
 private:
-  /// Map ID associated with this view.
-  MapId const m_map_id;
+  /// Map associated with this view.
+  Map& m_map;
 };

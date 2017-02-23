@@ -13,8 +13,8 @@ class MapStandard2DView : public MapView
 {
 public:
   /// Constructor.
-  /// @param map	ID of Map object to associate with this view.
-  MapStandard2DView(MapId map_id);
+  /// @param map	Reference to Map object to associate with this view.
+  MapStandard2DView(Map& map);
 
   virtual void update_tiles(ThingId viewer) override;
   virtual void update_things(ThingId viewer, int frame) override;
