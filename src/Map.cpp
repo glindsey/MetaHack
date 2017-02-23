@@ -4,6 +4,7 @@
 
 #include "App.h"
 #include "GameState.h"
+#include "Grid2D.h"
 #include "Inventory.h"
 #include "LightInfluence.h"
 #include "MapTile.h"
@@ -16,7 +17,7 @@
 #include "MapGenerator.h"
 
 #define VERTEX(x, y) (20 * (pImpl->map_size.x * y) + x)
-#define TILE(x, y) (pImpl->tiles[get_index({ x, y })])
+#define TILE(x, y) (pImpl->tiles->get({ x, y }))
 
 // Local typedefs
 typedef boost::random::uniform_int_distribution<> uniform_int_dist;
@@ -25,8 +26,8 @@ const sf::Color Map::ambient_light_level = sf::Color(48, 48, 48, 255);
 
 struct Map::Impl
 {
-  /// Pointer vector of tiles.
-  boost::ptr_vector< MapTile > tiles;
+  /// Grid of tiles.
+  std::unique_ptr< Grid2D< MapTile > > tiles;
 
   /// Player starting location.
   Vec2i start_coords;
@@ -50,18 +51,16 @@ Map::Map(GameState& game, MapId map_id, int width, int height)
 
   // Create the tiles themselves.
   MetadataCollection& collection = m_game.get_metadata_collection("maptile");
-  for (int y = 0; y < height; ++y)
-  {
-    for (int x = 0; x < width; ++x)
-    {
-      Metadata& metadata = collection.get("MTUnknown");
+  Metadata& unknown_metadata = collection.get("MTUnknown");
 
-      MapTile* new_tile = NEW MapTile({ x, y }, metadata, map_id);
-      pImpl->tiles.push_back(new_tile);
-      new_tile->set_coords(x, y);
-      new_tile->set_ambient_light_level(ambient_light_level);
-    }
-  }
+  pImpl->tiles.reset(NEW Grid2D<MapTile>({ width, height }, 
+                                         [&](Vec2i coords) -> MapTile* 
+  {
+    MapTile* new_tile = NEW MapTile(coords, unknown_metadata, map_id);
+    new_tile->set_coords(coords);
+    new_tile->set_ambient_light_level(ambient_light_level);
+    return new_tile;
+  }));
 
   CLOG(TRACE, "Map") << "Map created.";
 

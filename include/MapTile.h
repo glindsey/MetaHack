@@ -54,6 +54,8 @@ public:
   /// Set the current tile's location.
   void set_coords(int x, int y);
 
+  void set_coords(Vec2i coords);
+
   /// Get the current tile's location.
   Vec2i const& get_coords() const;
 

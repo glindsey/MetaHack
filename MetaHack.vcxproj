@@ -325,6 +325,7 @@
     <ClInclude Include="include\Direction.h" />
     <ClInclude Include="include\ErrorHandler.h" />
     <ClInclude Include="include\Event.h" />
+    <ClInclude Include="include\Grid2D.h" />
     <ClInclude Include="include\IConfigSettings.h" />
     <ClInclude Include="include\IKeyBuffer.h" />
     <ClInclude Include="include\IMessageLog.h" />

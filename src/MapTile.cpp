@@ -66,6 +66,11 @@ void MapTile::set_coords(int x, int y)
   m_coords.y = y;
 }
 
+void MapTile::set_coords(Vec2i coords)
+{
+  m_coords = coords;
+}
+
 Vec2i const& MapTile::get_coords() const
 {
   return m_coords;
