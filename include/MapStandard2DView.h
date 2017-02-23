@@ -37,6 +37,9 @@ protected:
   /// Add the floor vertices for the thing specified.
   void add_thing_floor_vertices(ThingId thing, bool use_lighting, int frame);
 
+  virtual void notifyOfEvent_(Observable& observed, Event event) override;
+
+
 private:
 
   /// "Seen" map vertex array.

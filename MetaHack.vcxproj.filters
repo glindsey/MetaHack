@@ -611,9 +611,6 @@
     <ClCompile Include="src\ActionTurn.cpp">
       <Filter>Actions</Filter>
     </ClCompile>
-    <ClCompile Include="src\MapFactory.cpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\MapView.cpp">
       <Filter>Object Views</Filter>
     </ClCompile>
@@ -658,6 +655,9 @@
     </ClCompile>
     <ClCompile Include="src\MessageLogView.cpp">
       <Filter>Object Views</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MapFactory.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -83,6 +83,9 @@ public:
   /// Get Map ID.
   MapId get_map_id() const;
 
+  /// @todo Not sure all the "feature" stuff should be public.
+  ///       But not sure how to scope it better either.
+
   /// Clear the collection of map features.
   void clear_map_features();
 

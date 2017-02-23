@@ -64,6 +64,8 @@ Map::Map(GameState& game, MapId map_id, int width, int height)
   }
 
   CLOG(TRACE, "Map") << "Map created.";
+
+  notifyObservers(Event::Updated);
 }
 
 void Map::initialize()
@@ -85,6 +87,8 @@ void Map::initialize()
   }
 
   CLOG(TRACE, "Map") << "Map initialized.";
+
+  notifyObservers(Event::Updated);
 }
 
 Map::~Map()
@@ -147,6 +151,8 @@ void Map::process()
       contents->process();
     }
   }
+
+  notifyObservers(Event::Updated);
 }
 
 void Map::update_lighting()
@@ -176,6 +182,8 @@ void Map::update_lighting()
       }
     }
   }
+
+  notifyObservers(Event::Updated);
 }
 
 void Map::do_recursive_lighting(ThingId source,
@@ -440,6 +448,8 @@ void Map::add_light(ThingId source)
   {
     do_recursive_lighting(source, coords, light_color, max_depth_squared, 8);
   }
+
+  notifyObservers(Event::Updated);
 }
 
 MapTile const& Map::get_tile(Vec2i tile) const

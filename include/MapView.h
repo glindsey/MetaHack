@@ -3,13 +3,16 @@
 #include "stdafx.h"
 
 #include "Map.h"
+#include "Observer.h"
 #include "Renderable.h"
 
 // Forward declarations
 class ThingId;
 
 /// Abstract class representing a view of a Map object.
-class MapView : public RenderableToTexture
+class MapView 
+  : 
+  public RenderableToTexture
 {
 public:
   /// Constructor.
@@ -44,6 +47,8 @@ protected:
 
   /// Reinitialize cached map render data.
   virtual void reset_cached_render_data() = 0;
+
+  virtual void notifyOfEvent_(Observable& observed, Event event) = 0;
 
 private:
   /// Map associated with this view.

@@ -247,3 +247,8 @@ void MapStandard2DView::add_thing_floor_vertices(ThingId thing,
                         vNW, vNE,
                         vSW, vSE);
 }
+
+void MapStandard2DView::notifyOfEvent_(Observable & observed, Event event)
+{
+  /// @todo WRITE ME
+}
