@@ -405,6 +405,12 @@
     <ClInclude Include="include\Grid2D.h">
       <Filter>Types</Filter>
     </ClInclude>
+    <ClInclude Include="include\MapTileStandard2DView.h">
+      <Filter>Object Views</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MapTileView.h">
+      <Filter>Object Views</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">
@@ -661,6 +667,12 @@
     </ClCompile>
     <ClCompile Include="src\MapFactory.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MapTileView.cpp">
+      <Filter>Object Views</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MapTileStandard2DView.cpp">
+      <Filter>Object Views</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

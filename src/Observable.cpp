@@ -14,7 +14,7 @@ void Observable::registerObserver(Observer& observer)
   if (foundObserver == observers.end())
   {
     observers.push_back(&observer);
-    observer.notifyOfEvent(*this, Event::Registered);
+    //observer.notifyOfEvent(*this, Event::Registered); // <-- can NOT do this safely because registration is usually done in constructors
   }
 }
 

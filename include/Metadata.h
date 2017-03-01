@@ -27,10 +27,17 @@ public:
 
   std::string const& get_type() const;
 
-  Vec2u get_tile_coords();
+  Vec2u get_tile_coords() const;
 
   template <typename ReturnType>
   ReturnType get_intrinsic(std::string name, ReturnType default_value = ReturnType())
+  {
+    std::string type = this->get_type();
+    return the_lua_instance.get_type_intrinsic<ReturnType>(type, name, default_value);
+  }
+
+  template <typename ReturnType>
+  ReturnType get_intrinsic(std::string name, ReturnType default_value = ReturnType()) const
   {
     std::string type = this->get_type();
     return the_lua_instance.get_type_intrinsic<ReturnType>(type, name, default_value);

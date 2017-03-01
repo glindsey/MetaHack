@@ -12,6 +12,7 @@ class ThingId;
 /// Abstract class representing a view of a Map object.
 class MapView 
   : 
+  public Observer,
   public RenderableToTexture
 {
 public:
@@ -40,6 +41,13 @@ public:
   /// @param thing	ID of the thing that is percieving the map.
   /// @param frame	Current animation frame number.
   virtual void update_things(ThingId thing, int frame) = 0;
+
+
+  virtual void draw_highlight(sf::RenderTarget& target,
+                              Vec2f location,
+                              sf::Color fgColor,
+                              sf::Color bgColor,
+                              int frame) = 0;
 
 protected:
   /// Get reference to Map associated with this view.

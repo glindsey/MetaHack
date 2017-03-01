@@ -4,9 +4,11 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "Grid2D.h"
 #include "MapView.h"
 
 // Forward declarations
+class MapTileStandard2DView;
 
 /// Class representing the standard 2D (pseudo-3D) view of a Map object.
 class MapStandard2DView : public MapView
@@ -21,18 +23,14 @@ public:
   
   virtual bool render(sf::RenderTexture& texture, int frame) override;
 
+  virtual void draw_highlight(sf::RenderTarget& target,
+                              Vec2f location,
+                              sf::Color fgColor,
+                              sf::Color bgColor,
+                              int frame) override;
 protected:
   /// Reinitialize cached map render data.
   virtual void reset_cached_render_data() override;
-
-  /// Add the vertices for the maptile located at the coordinates specified.
-  void add_tile_vertices(ThingId viewer, Vec2i coords);
-
-  /// Add the floor vertices for the maptile located at the coordinates specified.
-  void add_tile_floor_vertices(Vec2i coords);
-
-  /// Add the wall vertices for the maptile located at the coordinates specified.
-  void add_tile_wall_vertices(Vec2i coords);
 
   /// Add the floor vertices for the thing specified.
   void add_thing_floor_vertices(ThingId thing, bool use_lighting, int frame);
@@ -50,4 +48,7 @@ private:
 
   /// Thing vertex array.
   sf::VertexArray m_thing_vertices;
+
+  /// Grid of tile views.
+  std::unique_ptr< Grid2D< MapTileStandard2DView > > m_map_tile_views;
 };

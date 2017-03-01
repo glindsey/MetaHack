@@ -71,7 +71,7 @@ std::string const& Metadata::get_type() const
   return m_type;
 }
 
-Vec2u Metadata::get_tile_coords()
+Vec2u Metadata::get_tile_coords() const
 {
   Vec2u tile_location;
   tile_location.x = get_intrinsic<int>("tile_location_x");

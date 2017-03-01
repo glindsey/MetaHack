@@ -8,6 +8,7 @@
 #include "Inventory.h"
 #include "LightInfluence.h"
 #include "MapFactory.h"
+#include "Observable.h"
 #include "Thing.h"
 #include "ThingId.h"
 #include "TileSheet.h"
@@ -17,9 +18,12 @@ class Entity;
 class Floor;
 class Metadata;
 
+/// Class representing one tile of the map.
+/// @todo Add notifyObservers calls where needed
 class MapTile
   :
-  public GameObject
+  public GameObject,
+  public Observable
 {
   friend class Map;
 
@@ -31,9 +35,6 @@ public:
 
   /// Return this tile's description.
   virtual std::string get_display_name() const override final;
-
-  /// Return the coordinates of the tile on the tilesheet.
-  Vec2u get_tile_sheet_coords() const;
 
   /// Sets the tile type, without doing gameplay checks.
   /// Used to set up the map before gameplay begins.
@@ -90,43 +91,21 @@ public:
   /// Get whether the tile is opaque or not.
   bool is_opaque() const;
 
-  void draw_highlight(sf::RenderTarget& target,
-                      Vec2f location,
-                      sf::Color fgColor,
-                      sf::Color bgColor,
-                      int frame);
-
-  /// Add this MapTile's walls to a VertexArray to be drawn.
-  /// @param vertices Array to add vertices to.
-  /// @param use_lighting If true, calculate lighting when adding.
-  ///                     If false, store directly w/white bg color.
-  /// @param nw_is_empty  Whether tile to the northwest is empty.
-  /// @param n_is_empty   Whether tile to the north is empty.
-  /// @param ne_is_empty  Whether tile to the northeast is empty.
-  /// @param e_is_empty   Whether tile to the east is empty.
-  /// @param se_is_empty  Whether tile to the southeast is empty.
-  /// @param s_is_empty   Whether tile to the south is empty.
-  /// @param sw_is_empty  Whether tile to the southwest is empty.
-  /// @param w_is_empty   Whether tile to the west is empty.
-  void add_wall_vertices_to(sf::VertexArray& vertices,
-                            bool use_lighting,
-                            bool nw_is_empty, bool n_is_empty,
-                            bool ne_is_empty, bool e_is_empty,
-                            bool se_is_empty, bool s_is_empty,
-                            bool sw_is_empty, bool w_is_empty);
-
-  /// Get the coordinates associated with a tile.
+    /// Get the coordinates associated with a tile.
   static Vec2f get_pixel_coords(int x, int y);
 
   /// Get the coordinates associated with a tile.
   static Vec2f get_pixel_coords(Vec2i tile);
 
+  /// Get a reference to an adjacent tile.
+  MapTile const & get_adjacent_tile(Direction direction) const;
+
+  /// Get a const reference to this tile's metadata.
+  Metadata const & get_metadata() const;
+
 protected:
   /// Constructor, callable only by Map class.
   MapTile(Vec2i coords, Metadata& metadata, MapId map_id);
-
-  /// Get a reference to an adjacent tile.
-  MapTile const & get_adjacent_tile(Direction direction) const;
 
 private:
   static bool initialized;
@@ -164,9 +143,6 @@ private:
   /// 128 < value <= 255: result = max(original + (value - 128), 255)
   /// The alpha channel is ignored.
   std::map<ThingId, LightInfluence> m_lights;
-
-  /// Random tile offset.
-  int m_tile_offset;
 };
 
 #endif // MAPTILE_H

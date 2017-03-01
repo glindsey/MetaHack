@@ -488,7 +488,6 @@ std::string Action::make_string(std::string pattern) const
   return make_string(pattern, {});
 }
 
-/// @todo Implement more tokens; in particular, implement optional string vector.
 std::string Action::make_string(std::string pattern, std::vector<std::string> optional_strings) const
 {
   std::string new_string = replace_tokens(pattern,

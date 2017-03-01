@@ -333,6 +333,8 @@
     <ClInclude Include="include\IStringDictionary.h" />
     <ClInclude Include="include\MapMemoryChunk.h" />
     <ClInclude Include="include\MapStandard2DView.h" />
+    <ClInclude Include="include\MapTileStandard2DView.h" />
+    <ClInclude Include="include\MapTileView.h" />
     <ClInclude Include="include\MapView.h" />
     <ClInclude Include="include\ModifiablePropertyDictionary.h" />
     <ClInclude Include="include\NullKeyBuffer.h" />
@@ -460,6 +462,8 @@
     <ClCompile Include="src\mapfeatures\MapRoom.cpp" />
     <ClCompile Include="src\MapStandard2DView.cpp" />
     <ClCompile Include="src\MapTile.cpp" />
+    <ClCompile Include="src\MapTileStandard2DView.cpp" />
+    <ClCompile Include="src\MapTileView.cpp" />
     <ClCompile Include="src\MapView.cpp" />
     <ClCompile Include="src\MessageLog.cpp" />
     <ClCompile Include="src\MessageLogView.cpp" />

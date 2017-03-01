@@ -11,6 +11,7 @@ MapView::MapView(Map& map)
   :
   m_map(map)
 {
+  startObserving(map);
 }
 
 MapView::~MapView()

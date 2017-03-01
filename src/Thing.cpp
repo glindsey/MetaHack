@@ -738,13 +738,14 @@ bool Thing::can_see(Vec2i coords)
     return false;
   }
 
-  // If the coordinates are where we are, then yes, we can indeed see the tile.
+  // If we aren't on a valid maptile, we can't see anything.
   auto tile = get_maptile();
   if (tile == nullptr)
   {
     return false;
   }
 
+  // If the coordinates are where we are, then yes, we can indeed see the tile, regardless.
   Vec2i tile_coords = tile->get_coords();
 
   if ((tile_coords.x == coords.x) && (tile_coords.y == coords.y))
@@ -753,16 +754,16 @@ bool Thing::can_see(Vec2i coords)
   }
 
   Map& game_map = GAME.get_maps().get(map_id);
+  auto map_size = game_map.get_size();
 
-  if (can_currently_see())
-  {
-    // Return seen data.
-    return m_tiles_currently_seen[game_map.get_index(coords)];
-  }
-  else
+  // Check for coords out of bounds. If they're out of bounds, we can't see it.
+  if ((coords.x < 0) || (coords.y < 0) || (coords.x >= map_size.x) || (coords.y >= map_size.y))
   {
     return false;
   }
+
+  // Return seen data.
+  return m_tiles_currently_seen[game_map.get_index(coords)];
 }
 
 void Thing::find_seen_tiles()

@@ -253,8 +253,7 @@ void AppStateGameMode::render_map(sf::RenderTexture& texture, int frame)
         m_map_view->set_view(texture, cursor_pixel_coords, m_map_zoom_level);
         m_map_view->render(texture, frame);
 
-        auto& cursor_tile = game_map.get_tile(m_cursor_coords);
-        cursor_tile.draw_highlight(texture,
+        m_map_view->draw_highlight(texture,
                                    cursor_pixel_coords,
                                    config.get<sf::Color>("cursor_border_color"),
                                    config.get<sf::Color>("cursor_bg_color"),
