@@ -6,10 +6,12 @@
 
 #include "MapTileView.h"
 
+#include "ThingStandard2DView.h"
+
 // Forward declarations
 
 /// Class representing the standard 2D (pseudo-3D) view of a MapTile object.
-class MapTileStandard2DView : public MapTileView
+class MapTileStandard2DView : public MapTileView<ThingStandard2DView>
 {
   friend class MapStandard2DView;
 

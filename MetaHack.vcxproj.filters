@@ -411,6 +411,9 @@
     <ClInclude Include="include\MapTileView.h">
       <Filter>Object Views</Filter>
     </ClInclude>
+    <ClInclude Include="include\ThingStandard2DView.h">
+      <Filter>Object Views</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">
@@ -668,10 +671,10 @@
     <ClCompile Include="src\MapFactory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\MapTileView.cpp">
+    <ClCompile Include="src\MapTileStandard2DView.cpp">
       <Filter>Object Views</Filter>
     </ClCompile>
-    <ClCompile Include="src\MapTileStandard2DView.cpp">
+    <ClCompile Include="src\ThingStandard2DView.cpp">
       <Filter>Object Views</Filter>
     </ClCompile>
   </ItemGroup>

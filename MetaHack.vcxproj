@@ -389,6 +389,7 @@
     <ClInclude Include="include\Thing.h" />
     <ClInclude Include="include\ThingId.h" />
     <ClInclude Include="include\ThingManager.h" />
+    <ClInclude Include="include\ThingStandard2DView.h" />
     <ClInclude Include="include\ThingView.h" />
     <ClInclude Include="include\TileSheet.h" />
     <ClInclude Include="include\Vec2.h" />
@@ -463,7 +464,6 @@
     <ClCompile Include="src\MapStandard2DView.cpp" />
     <ClCompile Include="src\MapTile.cpp" />
     <ClCompile Include="src\MapTileStandard2DView.cpp" />
-    <ClCompile Include="src\MapTileView.cpp" />
     <ClCompile Include="src\MapView.cpp" />
     <ClCompile Include="src\MessageLog.cpp" />
     <ClCompile Include="src\MessageLogView.cpp" />
@@ -488,6 +488,7 @@
     <ClCompile Include="src\Thing.cpp" />
     <ClCompile Include="src\ThingId.cpp" />
     <ClCompile Include="src\ThingManager.cpp" />
+    <ClCompile Include="src\ThingStandard2DView.cpp" />
     <ClCompile Include="src\ThingView.cpp" />
     <ClCompile Include="src\TileSheet.cpp" />
   </ItemGroup>
