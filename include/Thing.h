@@ -258,9 +258,6 @@ public:
   /// Get the remembered tile type at the specified coordinates.
   MapMemoryChunk const& get_memory_at(Vec2i coords) const;
 
-  /// Add the memory of a particular tile to a VertexArray.
-  void add_memory_vertices_to(sf::VertexArray& vertices, Vec2i coords);
-
   ActionResult can_deequip(ThingId thing_id, unsigned int& action_time);
 
   /// Attempt to de-equip (remove) a thing.

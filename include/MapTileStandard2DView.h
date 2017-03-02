@@ -36,6 +36,12 @@ protected:
                          sf::VertexArray& seen_vertices,
                          sf::VertexArray& memory_vertices);
 
+  /// Add the vertices from the viewer's memory.
+  /// @param vertices Array to add vertices to.
+  /// @param viewer Thing that is remembering this tile.
+  void add_memory_vertices_to(sf::VertexArray & vertices,
+                              ThingId viewer);
+
   /// Add the floor vertices for the maptile to a VertexArray to be drawn.
   /// @param vertices Array to add vertices to.
   void add_tile_floor_vertices(sf::VertexArray& vertices);

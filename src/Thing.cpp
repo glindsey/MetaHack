@@ -814,43 +814,6 @@ MapMemoryChunk const& Thing::get_memory_at(Vec2i coords) const
   return m_map_memory[game_map.get_index(coords)];
 }
 
-/// @todo Move this into MapView
-void Thing::add_memory_vertices_to(sf::VertexArray& vertices,
-                                   Vec2i coords)
-{
-  auto& config = Service<IConfigSettings>::get();
-
-  MapId map_id = this->get_map_id();
-  if (map_id == MapFactory::null_map_id)
-  {
-    return;
-  }
-  Map& game_map = GAME.get_maps().get(map_id);
-
-  static sf::Vertex new_vertex;
-  float ts = config.get<float>("map_tile_size");
-  float ts2 = ts * 0.5f;
-
-  Vec2f location(coords.x * ts, coords.y * ts);
-  Vec2f vSW(location.x - ts2, location.y + ts2);
-  Vec2f vSE(location.x + ts2, location.y + ts2);
-  Vec2f vNW(location.x - ts2, location.y - ts2);
-  Vec2f vNE(location.x + ts2, location.y - ts2);
-
-  std::string tile_type = m_map_memory[game_map.get_index(coords)].get_type();
-  if (tile_type == "") { tile_type = "MTUnknown"; }
-  Metadata* tile_metadata = &(m_game.get_metadata_collection("maptile").get(tile_type));
-
-  /// @todo Call a script to handle selecting a tile other than the one
-  ///       in the upper-left corner.
-  Vec2u tile_coords = tile_metadata->get_tile_coords();
-
-  the_tilesheet.add_quad(vertices,
-                         tile_coords, sf::Color::White,
-                         vNW, vNE,
-                         vSW, vSE);
-}
-
 bool Thing::move_into(ThingId new_location)
 {
   MapId old_map_id = this->get_map_id();
