@@ -1171,10 +1171,10 @@ void Thing::light_up_surroundings()
     bool opaque = location->is_opaque();
     bool is_entity = this->is_subtype_of("Entity");
 
-    CLOG(DEBUG, "Thing") << "light_up_surroundings - this->type = " << this->get_type() <<
+    /*CLOG(DEBUG, "Thing") << "light_up_surroundings - this->type = " << this->get_type() <<
       ", location->type = " << location->get_type() <<
       ", location->opaque = " << opaque <<
-      ", this->is_subtype_of(\"Entity\") = " << is_entity;
+      ", this->is_subtype_of(\"Entity\") = " << is_entity;*/
 
     //if (!is_opaque() || is_wielding(light) || has_equipped(light))
     if (!opaque || is_entity)
