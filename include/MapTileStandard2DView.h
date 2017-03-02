@@ -38,6 +38,17 @@ protected:
   /// @param vertices Array to add vertices to.
   void add_tile_floor_vertices(sf::VertexArray& vertices);
 
+  /// Add the floor vertices for the things on this tile to a VertexArray to be drawn.
+  void add_things_floor_vertices(ThingId viewer,
+                                 sf::VertexArray& vertices, 
+                                 bool use_lighting, int frame);
+
+  /// Add the floor vertices for the thing specified.
+  /// @todo Move into a Thing view.
+  void add_thing_floor_vertices(ThingId thing, 
+                                sf::VertexArray& vertices, 
+                                bool use_lighting, int frame);
+
   /// Add this MapTile's walls to a VertexArray to be drawn.
   /// @param vertices Array to add vertices to.
   /// @param use_lighting If true, calculate lighting when adding.

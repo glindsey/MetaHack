@@ -32,9 +32,6 @@ protected:
   /// Reinitialize cached map render data.
   virtual void reset_cached_render_data() override;
 
-  /// Add the floor vertices for the thing specified.
-  void add_thing_floor_vertices(ThingId thing, bool use_lighting, int frame);
-
   virtual void notifyOfEvent_(Observable& observed, Event event) override;
 
 

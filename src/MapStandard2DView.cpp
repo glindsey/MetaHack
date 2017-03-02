@@ -45,7 +45,6 @@ void MapStandard2DView::update_tiles(ThingId viewer)
 
 void MapStandard2DView::update_things(ThingId viewer, int frame)
 {
-  /// @todo Move this into MapTileStandard2DView.
   auto& map = get_map();
   auto& map_size = map.get_size();
 
@@ -55,27 +54,7 @@ void MapStandard2DView::update_things(ThingId viewer, int frame)
   {
     for (int x = 0; x < map_size.x; ++x)
     {
-      ThingId contents = map.get_tile({ x, y }).get_tile_contents();
-      Inventory& inv = contents->get_inventory();
-
-      if (viewer->can_see({ x, y }))
-      {
-        if (inv.count() > 0)
-        {
-          // Only draw the largest thing on that tile.
-          ThingId biggest_thing = inv.get_largest_thing();
-          if (biggest_thing != ThingId::Mu())
-          {
-            add_thing_floor_vertices(biggest_thing, true, frame);
-          }
-        }
-      }
-
-      // Always draw the viewer itself last, if it is present at that tile.
-      if (inv.contains(viewer))
-      {
-        add_thing_floor_vertices(viewer, true, frame);
-      }
+      m_map_tile_views->get({ x, y }).add_things_floor_vertices(viewer, m_thing_vertices, true, frame);
     }
   }
 }
@@ -150,47 +129,6 @@ void MapStandard2DView::reset_cached_render_data()
   m_map_memory_vertices.setPrimitiveType(sf::PrimitiveType::Quads);
   m_thing_vertices.clear();
   m_thing_vertices.setPrimitiveType(sf::PrimitiveType::Quads);
-}
-
-void MapStandard2DView::add_thing_floor_vertices(ThingId thing,
-                                                 bool use_lighting,
-                                                 int frame)
-{
-  auto& config = Service<IConfigSettings>::get();
-  sf::Vertex new_vertex;
-  float ts = config.get<float>("map_tile_size");
-  float ts2 = ts * 0.5f;
-
-  MapTile* root_tile = thing->get_maptile();
-  if (!root_tile)
-  {
-    // Item's root location isn't a MapTile, so it can't be rendered.
-    return;
-  }
-
-  Vec2i const& coords = root_tile->get_coords();
-
-  sf::Color thing_color;
-  if (use_lighting)
-  {
-    thing_color = root_tile->get_light_level();
-  }
-  else
-  {
-    thing_color = sf::Color::White;
-  }
-
-  Vec2f location(coords.x * ts, coords.y * ts);
-  Vec2f vSW(location.x - ts2, location.y + ts2);
-  Vec2f vSE(location.x + ts2, location.y + ts2);
-  Vec2f vNW(location.x - ts2, location.y - ts2);
-  Vec2f vNE(location.x + ts2, location.y - ts2);
-  Vec2u tile_coords = thing->get_tile_sheet_coords(frame);
-
-  the_tilesheet.add_quad(m_thing_vertices,
-                        tile_coords, thing_color,
-                        vNW, vNE,
-                        vSW, vSE);
 }
 
 void MapStandard2DView::notifyOfEvent_(Observable & observed, Event event)

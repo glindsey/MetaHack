@@ -26,6 +26,14 @@ void Observer::startObserving(Observable& observed)
   }
 }
 
+void Observer::startObserving(std::vector<Observable*> observed_vector)
+{
+  for (auto observed_ptr : observed_vector)
+  {
+    startObserving(*observed_ptr);
+  }
+}
+
 void Observer::stopObserving(Observable& observed)
 {
   auto& foundObserved = std::find(observedObjects.begin(), observedObjects.end(), &observed);
@@ -33,6 +41,14 @@ void Observer::stopObserving(Observable& observed)
   {
     observed.deregisterObserver(*this);
     observedObjects.erase(foundObserved);
+  }
+}
+
+void Observer::stopObserving(std::vector<Observable*> observed_vector)
+{
+  for (auto observed_ptr : observed_vector)
+  {
+    stopObserving(*observed_ptr);
   }
 }
 

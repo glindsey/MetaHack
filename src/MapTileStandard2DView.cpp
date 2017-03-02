@@ -116,6 +116,75 @@ void MapTileStandard2DView::add_tile_floor_vertices(sf::VertexArray& vertices)
                                   lightSW, lightS, lightSE);
 }
 
+void MapTileStandard2DView::add_things_floor_vertices(ThingId viewer,
+                                                      sf::VertexArray & vertices,
+                                                      bool use_lighting, int frame)
+{
+  auto& tile = get_map_tile();
+  auto coords = tile.get_coords();
+  ThingId contents = tile.get_tile_contents();
+  Inventory& inv = contents->get_inventory();
+
+  if (viewer->can_see(coords))
+  {
+    if (inv.count() > 0)
+    {
+      // Only draw the largest thing on that tile.
+      ThingId biggest_thing = inv.get_largest_thing();
+      if (biggest_thing != ThingId::Mu())
+      {
+        add_thing_floor_vertices(biggest_thing, vertices, use_lighting, frame);
+      }
+    }
+  }
+
+  // Always draw the viewer itself last, if it is present at that tile.
+  if (inv.contains(viewer))
+  {
+    add_thing_floor_vertices(viewer, vertices, use_lighting, frame);
+  }
+}
+
+void MapTileStandard2DView::add_thing_floor_vertices(ThingId thing, sf::VertexArray & vertices, bool use_lighting, int frame)
+{
+  auto& config = Service<IConfigSettings>::get();
+  sf::Vertex new_vertex;
+  float ts = config.get<float>("map_tile_size");
+  float ts2 = ts * 0.5f;
+
+  MapTile* root_tile = thing->get_maptile();
+  if (!root_tile)
+  {
+    // Item's root location isn't a MapTile, so it can't be rendered.
+    return;
+  }
+
+  Vec2i const& coords = root_tile->get_coords();
+
+  sf::Color thing_color;
+  if (use_lighting)
+  {
+    thing_color = root_tile->get_light_level();
+  }
+  else
+  {
+    thing_color = sf::Color::White;
+  }
+
+  Vec2f location(coords.x * ts, coords.y * ts);
+  Vec2f vSW(location.x - ts2, location.y + ts2);
+  Vec2f vSE(location.x + ts2, location.y + ts2);
+  Vec2f vNW(location.x - ts2, location.y - ts2);
+  Vec2f vNE(location.x + ts2, location.y - ts2);
+  Vec2u tile_coords = thing->get_tile_sheet_coords(frame);
+
+  the_tilesheet.add_quad(vertices,
+                         tile_coords, thing_color,
+                         vNW, vNE,
+                         vSW, vSE);
+}
+
+
 void MapTileStandard2DView::add_wall_vertices_to(sf::VertexArray& vertices,
                                                  bool use_lighting,
                                                  bool nw_is_empty, bool n_is_empty,

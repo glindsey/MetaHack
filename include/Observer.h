@@ -31,8 +31,16 @@ public:
   /// Start observing an object.
   virtual void startObserving(Observable& observed);
 
+  /// Start observing a list of objects.
+  /// @warning It is assumed that all pointers in the list are valid!
+  virtual void startObserving(std::vector<Observable*> observed_vector);
+
   /// Stop observing an object.
   virtual void stopObserving(Observable& observed);
+
+  /// Stop observing a list of objects.
+  /// @warning It is assumed that all pointers in the list are valid!
+  virtual void stopObserving(std::vector<Observable*> observed_vector);
 
   /// Clear all observed objects.
   virtual void stopObservingAll();
