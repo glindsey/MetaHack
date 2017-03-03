@@ -15,6 +15,11 @@ Some notes about the codebase:
 * The current codebase depends on some hardcoded pathnames; library include files are expected to be in `C:\personal\libraries`, for example. Sorry, but I'm the only one working on it, so fixing this hasn't been a priority.
 * At the moment, the engine is extremely incomplete, with most functionality still unimplemented.
 
+Progress
+--------
+
+Progress on the project is tracked on a Trello board located at https://trello.com/b/VIiPQJP7/metahack.
+
 
 Interface
 ---------
@@ -117,26 +122,17 @@ Hopefully one day I will be able to document those files a bit more thoroughly h
 Known Bugs / Issues
 -------------------
 
-* Library and include directories in the project are absolute at the moment, instead of being relative to the project.
+Please refer to the Trello above.
 
-* Resizing the window is slightly broken; there's an issue where small vertical lines appear between tiles when the window is resized to certain sizes. I'm guessing this has something to do with int/float conversion when viewports are resized, but I'll have to investigate it further.
-
-* There is a grand total of one enemy so far, and you can't attack it.
-
-* Picking up/dropping a set number of an item isn't working; something I did recently must have broken it.
-
-TODO List
----------
-The TODO list is currently a text file called "Big Todo List.txt". It can be found in the repository.
 
 FAQOWBIALAT (Frequently Asked Questions, Or Would Be If Anyone Looked At This)
 ------------------------------------------------------------------------------
 * Q: Why is development of this so slow and erratic?
 
-    * A: I have a full-time job and a family. Finding time to work on an open-source project such as this is difficult at best, and impossible at worst. Still, I try to work on it when I can.
+    * A: I have a full-time job and a family. Finding time to work on a project such as this is difficult at best, and impossible at worst. Still, I try to work on it when I can.
 
 License
 -------
 The GUI code in this work (under the "include/gui" and "src/gui" subdirectories and henceforth referred to as *MetaGUI*) is licensed under the Creative Commons Attribution 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by/4.0/.
 
-The remainder of the code, art, sounds, and any other resource files used to run the engine are licensed under the Creative Commons Attribution-ShareAlike 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/.
+The remainder of the code, art, sounds, and any other resource files used to run the engine are licensed under the Creative Commons Attribution-ShareAlike 4.0 International License, unless otherwise specified. To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/.
