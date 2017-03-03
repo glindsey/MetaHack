@@ -112,8 +112,6 @@ Action::StateResult ActionMove::do_begin_work_(AnyMap& params)
       {
         /// @todo Setting choosing whether auto-attack is on.
         /// @todo Only attack hostiles.
-        /// @todo Change this to pushing an attack action onto the subject's queue
-        ///       instead of just segueing right into the attack.
         std::unique_ptr<ActionAttack> action_attack{ new ActionAttack(subject) };
         action_attack->set_target(new_direction);
 
