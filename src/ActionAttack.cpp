@@ -6,8 +6,8 @@
 #include "Map.h"
 #include "MapFactory.h"
 #include "Service.h"
-#include "Thing.h"
-#include "ThingId.h"
+#include "Entity.h"
+#include "EntityId.h"
 
 ACTION_SRC_BOILERPLATE(ActionAttack, "attack", "attack")
 
@@ -114,12 +114,12 @@ Action::StateResult ActionAttack::do_begin_work_(AnyMap& params)
   }
 
   auto& new_tile = current_map.get_tile({ x_new, y_new });
-  ThingId new_floor = new_tile.get_tile_contents();
+  EntityId new_floor = new_tile.get_tile_contents();
 
   // See if the tile to move into contains another creature.
   auto object = new_floor->get_inventory().get_entity();
   set_object(object);
-  if (object == ThingId::Mu())
+  if (object == EntityId::Mu())
   {
     /// @todo Deal with attacking other stuff, MapTiles, etc.
     message = "Attacking non-entity things is not yet supported!";

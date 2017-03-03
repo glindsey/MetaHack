@@ -6,24 +6,24 @@
 #include "common_types.h"
 
 // Forward declaration
-class Thing;
-class ThingManager;
+class Entity;
+class EntityPool;
 
 /// Definition of a ID/version pair.
 /// Although internally this is a 64-bit integer, LuaJIT stores all numbers
 /// as doubles, which means we are limited to 2^53 valid IDs. That's still
 /// an enormous number, though (9 quadrillion IDs), so I THINK we'll be okay.
-class ThingId
+class EntityId
 {
-  friend struct std::hash<ThingId>;
+  friend struct std::hash<EntityId>;
 
 public:
-  ThingId()
+  EntityId()
     :
     m_id{ 0 }
   {}
 
-  ThingId(uint64_t id)
+  EntityId(uint64_t id)
     :
     m_id{ id }
   {}
@@ -35,10 +35,10 @@ public:
     archive(m_id);
   }
 
-  /// Static method to return the ThingId::Mu() (nothingness) ID.
-  static ThingId Mu()
+  /// Static method to return the EntityId::Mu() (nothingness) ID.
+  static EntityId Mu()
   {
-    return ThingId();
+    return EntityId();
   }
 
   /// Convert to Lua integer.
@@ -60,27 +60,27 @@ public:
     return str(m_id);
   }
 
-  bool operator<(ThingId const& other) const
+  bool operator<(EntityId const& other) const
   {
     return (this->m_id < other.m_id);
   }
 
-  bool operator<=(ThingId const& other) const
+  bool operator<=(EntityId const& other) const
   {
     return (this->m_id <= other.m_id);
   }
 
-  bool operator>(ThingId const& other) const
+  bool operator>(EntityId const& other) const
   {
     return !operator<=(other);
   }
 
-  bool operator>=(ThingId const& other) const
+  bool operator>=(EntityId const& other) const
   {
     return !operator<(other);
   }
 
-  bool operator==(ThingId const& other) const
+  bool operator==(EntityId const& other) const
   {
     return (this->m_id == other.m_id);
   }
@@ -90,7 +90,7 @@ public:
     return (this->m_id == other);
   }
 
-  bool operator!=(ThingId const& other) const
+  bool operator!=(EntityId const& other) const
   {
     return !operator==(other);
   }
@@ -100,7 +100,7 @@ public:
     return !operator==(other);
   }
 
-  friend std::ostream& operator<< (std::ostream& stream, ThingId const& thing)
+  friend std::ostream& operator<< (std::ostream& stream, EntityId const& thing)
   {
     stream << thing.m_id;
 
@@ -108,10 +108,10 @@ public:
   }
 
   /// Call to get the thing associated with this.
-  Thing* operator->(void);
+  Entity* operator->(void);
 
   /// Call to get the thing associated with this.
-  Thing const* operator->(void) const;
+  Entity const* operator->(void) const;
 
 private:
   uint64_t m_id;
@@ -119,11 +119,11 @@ private:
 
 namespace std
 {
-  /// Hash functor for ThingId
+  /// Hash functor for EntityId
   template<>
-  struct hash<ThingId>
+  struct hash<EntityId>
   {
-    std::size_t operator()(const ThingId& key) const
+    std::size_t operator()(const EntityId& key) const
     {
       std::size_t seed = 0;
 

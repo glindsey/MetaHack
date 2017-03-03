@@ -6,8 +6,8 @@
 #include "LuaObject.h"
 #include "Map.h"
 #include "MapFactory.h"
-#include "Thing.h"
-#include "ThingManager.h"
+#include "Entity.h"
+#include "EntityPool.h"
 
 GameState* GameState::p_instance = nullptr;
 
@@ -17,7 +17,7 @@ GameState::GameState()
 
   p_instance = this;
 
-  m_thing_manager.reset(NEW ThingManager(*this));
+  m_thing_manager.reset(NEW EntityPool(*this));
   m_map_factory.reset(NEW MapFactory(*this));
 }
 
@@ -57,7 +57,7 @@ MapFactory& GameState::get_maps()
   return *m_map_factory;
 }
 
-ThingManager& GameState::get_things()
+EntityPool& GameState::get_things()
 {
   ASSERT_CONDITION(m_thing_manager);
 
@@ -90,7 +90,7 @@ void GameState::increment_game_clock(ElapsedTime added_time)
   m_game_clock += added_time;
 }
 
-bool GameState::set_player(ThingId ref)
+bool GameState::set_player(EntityId ref)
 {
   ASSERT_CONDITION(ref != get_things().get_mu());
 
@@ -98,18 +98,18 @@ bool GameState::set_player(ThingId ref)
   return true;
 }
 
-ThingId GameState::get_player() const
+EntityId GameState::get_player() const
 {
   return m_player;
 }
 
 bool GameState::process_tick()
 {
-  ThingId player = get_player();
+  EntityId player = get_player();
 
   if (player->action_is_pending() || player->action_is_in_progress())
   {
-    // QUESTION: Do we want to update all Things, PERIOD?  In other words, should
+    // QUESTION: Do we want to update all Entities, PERIOD?  In other words, should
     //           other maps keep playing themselves if the player is not on them?
     //           While this would be awesome, I'd imagine the resulting per-turn
     //           lag would quickly grow intolerable.

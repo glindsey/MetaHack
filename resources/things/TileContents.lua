@@ -1,8 +1,8 @@
 -- Definition of special functions for the TileContents object type.
 
-require "resources/things/Thing"
+require "resources/things/Entity"
 
-TileContents = inheritsFrom(Thing, "TileContents")
+TileContents = inheritsFrom(Entity, "TileContents")
 TileContents.intrinsics.name = "area"
 TileContents.intrinsics.plural = "areas"
 

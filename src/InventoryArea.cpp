@@ -8,8 +8,8 @@
 #include "InventorySelection.h"
 #include "MapTile.h"
 #include "Service.h"
-#include "Thing.h"
-#include "ThingManager.h"
+#include "Entity.h"
+#include "EntityPool.h"
 #include "TileSheet.h"
 
 InventoryArea::InventoryArea(std::string name,
@@ -49,7 +49,7 @@ void InventoryArea::render_contents_(sf::RenderTexture& texture, int frame)
 
   // Get a reference to the location we're referring to.
   auto& viewed_thing = m_inventory_selection.get_viewed();
-  if (viewed_thing == ThingId::Mu())
+  if (viewed_thing == EntityId::Mu())
   {
     set_text("Invalid Viewed Object!");
     return;
@@ -71,7 +71,7 @@ void InventoryArea::render_contents_(sf::RenderTexture& texture, int frame)
        ++iter)
   {
     auto& slot = (*iter).first;
-    ThingId thing = (*iter).second;
+    EntityId thing = (*iter).second;
     unsigned int slot_number = static_cast<unsigned int>(slot);
     sf::Text render_text;
 
@@ -196,15 +196,15 @@ void InventoryArea::render_contents_(sf::RenderTexture& texture, int frame)
 
   // Figure out the title.
   // TODO: Might want to define a specific "get_inventory_name()" method
-  //       for Thing that defaults to "XXXX's inventory" but can be
-  //       overridden to say stuff like "Things on the floor".
+  //       for Entity that defaults to "XXXX's inventory" but can be
+  //       overridden to say stuff like "Entities on the floor".
   sf::String title_string = viewed_thing->get_possessive() + " inventory";
   title_string[0] = toupper(title_string[0]);
   set_text(title_string);
   return;
 }
 
-void InventoryArea::draw_thing(ThingId thing, 
+void InventoryArea::draw_thing(EntityId thing, 
                                sf::RenderTarget& target, 
                                Vec2f target_coords, 
                                unsigned int target_size, 

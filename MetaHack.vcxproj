@@ -358,7 +358,7 @@
     <ClInclude Include="include\KeyBuffer.h" />
     <ClInclude Include="include\LightInfluence.h" />
     <ClInclude Include="include\LuaObject.h" />
-    <ClInclude Include="include\LuaThingFunctions.h" />
+    <ClInclude Include="include\LuaEntityFunctions.h" />
     <ClInclude Include="include\Map.h" />
     <ClInclude Include="include\MapCorridor.h" />
     <ClInclude Include="include\MapDiamond.h" />
@@ -386,11 +386,11 @@
     <ClInclude Include="include\stdafx.h" />
     <ClInclude Include="include\StringDictionary.h" />
     <ClInclude Include="include\StringTransforms.h" />
-    <ClInclude Include="include\Thing.h" />
-    <ClInclude Include="include\ThingId.h" />
-    <ClInclude Include="include\ThingManager.h" />
-    <ClInclude Include="include\ThingStandard2DView.h" />
-    <ClInclude Include="include\ThingView.h" />
+    <ClInclude Include="include\Entity.h" />
+    <ClInclude Include="include\EntityId.h" />
+    <ClInclude Include="include\EntityPool.h" />
+    <ClInclude Include="include\EntityStandard2DView.h" />
+    <ClInclude Include="include\EntityView.h" />
     <ClInclude Include="include\TileSheet.h" />
     <ClInclude Include="include\Vec2.h" />
     <ClInclude Include="include\Vec3.h" />
@@ -451,7 +451,7 @@
     <ClCompile Include="src\IStringDictionary.cpp" />
     <ClCompile Include="src\KeyBuffer.cpp" />
     <ClCompile Include="src\LuaObject.cpp" />
-    <ClCompile Include="src\LuaThingFunctions.cpp" />
+    <ClCompile Include="src\LuaEntityFunctions.cpp" />
     <ClCompile Include="src\Map.cpp" />
     <ClCompile Include="src\MapFactory.cpp" />
     <ClCompile Include="src\mapfeatures\MapCorridor.cpp" />
@@ -485,11 +485,11 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\StringDictionary.cpp" />
-    <ClCompile Include="src\Thing.cpp" />
-    <ClCompile Include="src\ThingId.cpp" />
-    <ClCompile Include="src\ThingManager.cpp" />
-    <ClCompile Include="src\ThingStandard2DView.cpp" />
-    <ClCompile Include="src\ThingView.cpp" />
+    <ClCompile Include="src\Entity.cpp" />
+    <ClCompile Include="src\EntityId.cpp" />
+    <ClCompile Include="src\EntityPool.cpp" />
+    <ClCompile Include="src\EntityStandard2DView.cpp" />
+    <ClCompile Include="src\EntityView.cpp" />
     <ClCompile Include="src\TileSheet.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -529,7 +529,7 @@
     <None Include="resources\things\SackCloth.lua" />
     <None Include="resources\things\Sapient.lua" />
     <None Include="resources\things\Sconce.lua" />
-    <None Include="resources\things\Thing.lua" />
+    <None Include="resources\things\Entity.lua" />
     <None Include="resources\things\Weapon.lua" />
     <None Include="resources\things\WeaponCutting.lua" />
     <None Include="resources\things\WeaponStabbing.lua" />

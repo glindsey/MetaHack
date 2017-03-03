@@ -3,8 +3,8 @@
 #include "ActionEat.h"
 #include "IMessageLog.h"
 #include "Service.h"
-#include "Thing.h"
-#include "ThingId.h"
+#include "Entity.h"
+#include "EntityId.h"
 
 ACTION_SRC_BOILERPLATE(ActionEat, "eat", "eat")
 

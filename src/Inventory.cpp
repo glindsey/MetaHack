@@ -3,8 +3,8 @@
 #include "Inventory.h"
 
 #include "GameState.h"
-#include "Thing.h"
-#include "ThingManager.h"
+#include "Entity.h"
+#include "EntityPool.h"
 
 Inventory::Inventory()
 {
@@ -15,10 +15,10 @@ Inventory::~Inventory()
   //dtor
 }
 
-bool Inventory::add(ThingId thing)
+bool Inventory::add(EntityId thing)
 {
   // If thing is Mu, exit returning false.
-  if (thing == ThingId::Mu())
+  if (thing == EntityId::Mu())
   {
     return false;
   }
@@ -64,22 +64,22 @@ size_t Inventory::count()
   return things_.size();
 }
 
-ThingMap::iterator Inventory::begin()
+EntityMap::iterator Inventory::begin()
 {
   return std::begin(things_);
 }
 
-ThingMap::iterator Inventory::end()
+EntityMap::iterator Inventory::end()
 {
   return std::end(things_);
 }
 
-ThingMap::const_iterator Inventory::cbegin()
+EntityMap::const_iterator Inventory::cbegin()
 {
   return things_.cbegin();
 }
 
-ThingMap::const_iterator Inventory::cend()
+EntityMap::const_iterator Inventory::cend()
 {
   return things_.cend();
 }
@@ -95,8 +95,8 @@ void Inventory::consolidate_items()
 
     while (second_iter != std::end(things_))
     {
-      ThingId first_thing = first_iter->second;
-      ThingId second_thing = second_iter->second;
+      EntityId first_thing = first_iter->second;
+      EntityId second_thing = second_iter->second;
 
       if (first_thing->can_merge_with(second_thing))
       {
@@ -114,7 +114,7 @@ void Inventory::consolidate_items()
   }
 }
 
-bool Inventory::contains(ThingId thing)
+bool Inventory::contains(EntityId thing)
 {
   if (GAME.get_things().exists(thing) == false) return false;
 
@@ -126,7 +126,7 @@ bool Inventory::contains(InventorySlot slot)
   return (things_.count(slot) != 0);
 }
 
-InventorySlot Inventory::operator[](ThingId thing)
+InventorySlot Inventory::operator[](EntityId thing)
 {
   if (GAME.get_things().exists(thing) == false) return INVSLOT_INVALID;
 
@@ -140,14 +140,14 @@ InventorySlot Inventory::operator[](ThingId thing)
   return INVSLOT_INVALID;
 }
 
-ThingId Inventory::operator[](InventorySlot slot)
+EntityId Inventory::operator[](InventorySlot slot)
 {
   return (things_.at(slot));
 }
 
-ThingId Inventory::split(ThingId thing, unsigned int target_quantity)
+EntityId Inventory::split(EntityId thing, unsigned int target_quantity)
 {
-  ThingId target_thing = ThingId::Mu();
+  EntityId target_thing = EntityId::Mu();
 
   if (target_quantity > 0)
   {
@@ -155,7 +155,7 @@ ThingId Inventory::split(ThingId thing, unsigned int target_quantity)
 
     if (iter != things_.cend())
     {
-      ThingId source_thing = iter->second;
+      EntityId source_thing = iter->second;
       unsigned int source_quantity = source_thing->get_quantity();
       if (target_quantity < source_quantity)
       {
@@ -169,9 +169,9 @@ ThingId Inventory::split(ThingId thing, unsigned int target_quantity)
   return target_thing;
 }
 
-ThingId Inventory::remove(InventorySlot slot)
+EntityId Inventory::remove(InventorySlot slot)
 {
-  ThingId removed_thing;
+  EntityId removed_thing;
   if (things_.count(slot) != 0)
   {
     removed_thing = things_[slot];
@@ -180,9 +180,9 @@ ThingId Inventory::remove(InventorySlot slot)
   return removed_thing;
 }
 
-ThingId Inventory::remove(ThingId thing)
+EntityId Inventory::remove(EntityId thing)
 {
-  ThingId removed_thing;
+  EntityId removed_thing;
 
   auto iter = find(thing);
   if (iter != things_.cend())
@@ -193,11 +193,11 @@ ThingId Inventory::remove(ThingId thing)
   return removed_thing;
 }
 
-ThingId Inventory::get_largest_thing()
+EntityId Inventory::get_largest_thing()
 {
   auto iter_largest = things_.cbegin();
 
-  for (ThingMap::const_iterator iter = things_.cbegin();
+  for (EntityMap::const_iterator iter = things_.cbegin();
        iter != things_.cend(); ++iter)
   {
     if (is_smaller_than(iter_largest->second, iter->second))
@@ -208,12 +208,12 @@ ThingId Inventory::get_largest_thing()
   return iter_largest->second;
 }
 
-ThingId Inventory::get_entity()
+EntityId Inventory::get_entity()
 {
   auto iter =
-    find_if([&](const ThingPair& thing_pair)
+    find_if([&](const EntityPair& thing_pair)
   {
-    ThingId ref = thing_pair.second;
+    EntityId ref = thing_pair.second;
     return ((ref->is_subtype_of("DynamicEntity")) && (ref->get_modified_property<int>("hp") > 0));
   });
 
@@ -223,24 +223,24 @@ ThingId Inventory::get_entity()
   }
   else
   {
-    return ThingId::Mu();
+    return EntityId::Mu();
   }
 }
 
-ThingMap::iterator Inventory::find_if(std::function<bool(ThingPair const&)> functor)
+EntityMap::iterator Inventory::find_if(std::function<bool(EntityPair const&)> functor)
 {
-  ThingMap::iterator iter =
+  EntityMap::iterator iter =
     std::find_if(things_.begin(), things_.end(), functor);
   return iter;
 }
 
-ThingMap::iterator Inventory::find(ThingId target_id)
+EntityMap::iterator Inventory::find(EntityId target_id)
 {
-  ThingMap::iterator iter =
+  EntityMap::iterator iter =
     std::find_if(
       things_.begin(),
       things_.end(),
-      [&](ThingPair const& thing_pair)
+      [&](EntityPair const& thing_pair)
   {
     return thing_pair.second == target_id;
   });
@@ -248,9 +248,9 @@ ThingMap::iterator Inventory::find(ThingId target_id)
   return iter;
 }
 
-bool Inventory::is_smaller_than(ThingId a, ThingId b)
+bool Inventory::is_smaller_than(EntityId a, EntityId b)
 {
-  if ((a == ThingId::Mu()) || (b == ThingId::Mu())) return false;
+  if ((a == EntityId::Mu()) || (b == EntityId::Mu())) return false;
 
   return (a->get_mass() < b->get_mass());
 }

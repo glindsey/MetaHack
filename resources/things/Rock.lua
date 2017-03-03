@@ -1,8 +1,8 @@
 -- Definition of special functions for the Rock object type.
 
-require "resources/things/Thing"
+require "resources/things/Entity"
 
-Rock = inheritsFrom(Thing, "Rock")
+Rock = inheritsFrom(Entity, "Rock")
 Rock.intrinsics.name = "rock"
 Rock.intrinsics.plural = "rocks"
 Rock.intrinsics.creatable = true

@@ -1,8 +1,8 @@
 -- Definition of special functions for the Coin object type.
 
-require "resources/things/Thing"
+require "resources/things/Entity"
 
-Coin = inheritsFrom(Thing, "Coin")
+Coin = inheritsFrom(Entity, "Coin")
 Coin.intrinsics.name = "[Coin]"
 Coin.intrinsics.plural = "[Coins]"
 

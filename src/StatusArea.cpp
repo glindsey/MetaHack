@@ -7,8 +7,8 @@
 #include "GameState.h"
 #include "IConfigSettings.h"
 #include "Service.h"
-#include "Thing.h"
-#include "ThingManager.h"
+#include "Entity.h"
+#include "EntityPool.h"
 
 struct StatusArea::Impl
 {
@@ -35,7 +35,7 @@ void StatusArea::render_contents_(sf::RenderTexture& texture, int frame)
   auto& config = Service<IConfigSettings>::get();
 
   sf::IntRect pane_dims = get_relative_dimensions();
-  ThingId player = GAME.get_player();
+  EntityId player = GAME.get_player();
   Vec2f origin(config.get<float>("window_text_offset_x"),
                config.get<float>("window_text_offset_y"));
   sf::Color text_color = config.get<sf::Color>("text_color");
@@ -53,7 +53,7 @@ void StatusArea::render_contents_(sf::RenderTexture& texture, int frame)
   render_text.setCharacterSize(text_default_size);
   render_text.setPosition(origin.x, origin.y);
 
-  if (player != ThingId::Mu())
+  if (player != EntityId::Mu())
   {
     // Render player name
     std::string name = player->get_proper_name();
@@ -119,7 +119,7 @@ void StatusArea::render_attribute(sf::RenderTarget& target, std::string abbrev, 
   sf::Text render_text;
   sf::Color text_color = config.get<sf::Color>("text_color");
   sf::Color text_dim_color = config.get<sf::Color>("text_dim_color");
-  ThingId player = GAME.get_player();
+  EntityId player = GAME.get_player();
 
   // Render STR
   render_text.setFont(the_default_mono_font);

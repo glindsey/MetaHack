@@ -7,7 +7,7 @@
 #include "Renderable.h"
 
 // Forward declarations
-class ThingId;
+class EntityId;
 
 /// Abstract class representing a view of a Map object.
 class MapView 
@@ -35,12 +35,12 @@ public:
 
   /// Update any cached render data associated with map tiles.
   /// @param thing	ID of the thing that is percieving the map.
-  virtual void update_tiles(ThingId thing) = 0;
+  virtual void update_tiles(EntityId thing) = 0;
 
   /// Update any cached render data associated with map things.
   /// @param thing	ID of the thing that is percieving the map.
   /// @param frame	Current animation frame number.
-  virtual void update_things(ThingId thing, int frame) = 0;
+  virtual void update_things(EntityId thing, int frame) = 0;
 
 
   virtual void draw_highlight(sf::RenderTarget& target,

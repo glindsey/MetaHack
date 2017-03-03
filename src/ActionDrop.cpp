@@ -4,8 +4,8 @@
 #include "ActionMove.h"
 #include "IMessageLog.h"
 #include "Service.h"
-#include "Thing.h"
-#include "ThingId.h"
+#include "Entity.h"
+#include "EntityId.h"
 
 ACTION_SRC_BOILERPLATE(ActionDrop, "drop", "drop")
 
@@ -14,7 +14,7 @@ Action::StateResult ActionDrop::do_prebegin_work_(AnyMap& params)
   std::string message;
   auto subject = get_subject();
   auto object = get_object();
-  ThingId location = subject->get_location();
+  EntityId location = subject->get_location();
 
   // If it's us, this is a special case. Return success.
   if (subject == object)
@@ -76,7 +76,7 @@ Action::StateResult ActionDrop::do_begin_work_(AnyMap& params)
   std::string message;
   auto subject = get_subject();
   auto object = get_objects().front();
-  ThingId location = subject->get_location();
+  EntityId location = subject->get_location();
 
   /// @todo Handle dropping a certain quantity of an item.
 
@@ -91,7 +91,7 @@ Action::StateResult ActionDrop::do_begin_work_(AnyMap& params)
     message = YOU_GET + " up.";
     Service<IMessageLog>::get().add(message);
   }
-  else if (object != ThingId::Mu())
+  else if (object != EntityId::Mu())
   {
     if (location->can_contain(object) == ActionResult::Success)
     {
@@ -109,7 +109,7 @@ Action::StateResult ActionDrop::do_begin_work_(AnyMap& params)
           message = YOU + " could not drop " + THE_FOO + " for some inexplicable reason.";
           Service<IMessageLog>::get().add(message);
 
-          CLOG(WARNING, "Action") << "Could not drop Thing " << object <<
+          CLOG(WARNING, "Action") << "Could not drop Entity " << object <<
             " even though be_object_of returned Success";
         }
       }
@@ -121,7 +121,7 @@ Action::StateResult ActionDrop::do_begin_work_(AnyMap& params)
     else // can't contain the thing
     {
       // This is mighty strange, but I suppose there might be MapTiles in
-      // the future that can't contain certain Things.
+      // the future that can't contain certain Entities.
       print_message_try_();
 
       message = location->get_identifying_string() + " cannot hold " + THE_FOO + ".";

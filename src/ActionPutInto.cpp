@@ -4,8 +4,8 @@
 #include "IMessageLog.h"
 #include "IStringDictionary.h"
 #include "Service.h"
-#include "Thing.h"
-#include "ThingId.h"
+#include "Entity.h"
+#include "EntityId.h"
 
 ACTION_SRC_BOILERPLATE(ActionPutInto, "putinto", "store")
 
@@ -17,7 +17,7 @@ Action::StateResult ActionPutInto::do_prebegin_work_(AnyMap& params)
   auto container = get_target_thing();
 
   // Verify that the Action has an object.
-  if (object == ThingId::Mu())
+  if (object == EntityId::Mu())
   {
     return StateResult::Failure();
   }
@@ -156,7 +156,7 @@ Action::StateResult ActionPutInto::do_begin_work_(AnyMap& params)
       message = make_string("$you could not move $the_foo into $the_target_thing for some inexplicable reason.");
       Service<IMessageLog>::get().add(message);
 
-      MAJOR_ERROR("Could not move Thing into Container even though be_object_of returned Success");
+      MAJOR_ERROR("Could not move Entity into Container even though be_object_of returned Success");
     }
   }
 

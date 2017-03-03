@@ -19,8 +19,8 @@
 #include "Service.h"
 #include "StatusArea.h"
 #include "StringTransforms.h"
-#include "Thing.h"
-#include "ThingManager.h"
+#include "Entity.h"
+#include "EntityPool.h"
 
 /// Actions that can be performed.
 #include "ActionAttack.h"
@@ -165,7 +165,7 @@ bool AppStateGameMode::initialize()
   auto& config = Service<IConfigSettings>::get();
 
   // Create the player.
-  ThingId player = get_game_state().get_things().create("Human");
+  EntityId player = get_game_state().get_things().create("Human");
   player->set_proper_name(config.get<std::string>("player_name"));
   get_game_state().set_player(player);
 
@@ -223,8 +223,8 @@ void AppStateGameMode::render_map(sf::RenderTexture& texture, int frame)
 
   texture.clear();
 
-  ThingId player = get_game_state().get_player();
-  ThingId location = player->get_location();
+  EntityId player = get_game_state().get_player();
+  EntityId location = player->get_location();
 
   if (location == get_game_state().get_things().get_mu())
   {
@@ -234,7 +234,7 @@ void AppStateGameMode::render_map(sf::RenderTexture& texture, int frame)
   /// @todo We need a way to determine if the player is directly on a map,
   ///       and render either the map, or a container interior.
   ///       Should probably use an overridden "render_surroundings" method
-  ///       for Things.
+  ///       for Entities.
 
   if (!player->is_inside_another_thing())
   {
@@ -274,7 +274,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 {
   SFMLEventResult result = SFMLEventResult::Ignored;
 
-  ThingId player = get_game_state().get_player();
+  EntityId player = get_game_state().get_player();
 
   // *** Handle keys processed in any mode.
   if (!key.alt && !key.control)
@@ -312,7 +312,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
     {
       std::unique_ptr<Action> p_action;
 
-      std::vector<ThingId>& things = m_inventory_selection->get_selected_things();
+      std::vector<EntityId>& things = m_inventory_selection->get_selected_things();
       int key_number = get_letter_key(key);
       Direction key_direction = get_direction_key(key);
 
@@ -419,8 +419,8 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
           case sf::Keyboard::Key::LBracket:
           {
-            ThingId thing = m_inventory_selection->get_viewed();
-            ThingId location = thing->get_location();
+            EntityId thing = m_inventory_selection->get_viewed();
+            EntityId location = thing->get_location();
             if (location != get_game_state().get_things().get_mu())
             {
               m_inventory_selection->set_viewed(location);
@@ -438,13 +438,13 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
             if (slot_count > 0)
             {
-              ThingId thing = m_inventory_selection->get_selected_things().at(0);
+              EntityId thing = m_inventory_selection->get_selected_things().at(0);
               if (thing->get_intrinsic<int>("inventory_size") != 0)
               {
-                if (!thing->can_have_action_done_by(ThingId::Mu(), ActionOpen::prototype) ||
+                if (!thing->can_have_action_done_by(EntityId::Mu(), ActionOpen::prototype) ||
                     thing->get_modified_property<bool>("open"))
                 {
-                  if (!thing->can_have_action_done_by(ThingId::Mu(), ActionLock::prototype) ||
+                  if (!thing->can_have_action_done_by(EntityId::Mu(), ActionLock::prototype) ||
                       !thing->get_modified_property<bool>("locked"))
                   {
                     m_inventory_selection->set_viewed(thing);
@@ -531,7 +531,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::A:    // Attire
             if (things.size() == 0)
             {
-              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ITEMS_FIRST"), { tr("VERB_WEAR_2") }));
+              put_msg(Action::make_string(player, EntityId::Mu(), tr("CHOOSE_ITEMS_FIRST"), { tr("VERB_WEAR_2") }));
             }
             else
             {
@@ -553,7 +553,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             {
               // No item specified, so ask for a direction.
               m_action_in_progress.reset(new ActionClose(player));
-              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_DIRECTION"), { tr("VERB_CLOSE_2") }));
+              put_msg(Action::make_string(player, EntityId::Mu(), tr("CHOOSE_DIRECTION"), { tr("VERB_CLOSE_2") }));
               m_current_input_state = GameInputState::TargetSelection;
               m_inventory_selection->clear_selected_slots();
             }
@@ -576,7 +576,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::D:    // Drop
             if (things.size() == 0)
             {
-              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ITEMS_FIRST"), { tr("VERB_DROP_2") }));
+              put_msg(Action::make_string(player, EntityId::Mu(), tr("CHOOSE_ITEMS_FIRST"), { tr("VERB_DROP_2") }));
             }
             else
             {
@@ -596,7 +596,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::E:
             if (things.size() == 0)
             {
-              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ITEMS_FIRST"), { tr("VERB_EAT_2") }));
+              put_msg(Action::make_string(player, EntityId::Mu(), tr("CHOOSE_ITEMS_FIRST"), { tr("VERB_EAT_2") }));
             }
             else
             {
@@ -616,17 +616,17 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::F:
             if (things.size() == 0)
             {
-              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ITEM_FIRST"), { tr("VERB_FILL_2") }));
+              put_msg(Action::make_string(player, EntityId::Mu(), tr("CHOOSE_ITEM_FIRST"), { tr("VERB_FILL_2") }));
             }
             else if (things.size() > 1)
             {
-              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ONLY_ONE_AT_A_TIME"), { tr("VERB_FILL_2") }));
+              put_msg(Action::make_string(player, EntityId::Mu(), tr("CHOOSE_ONLY_ONE_AT_A_TIME"), { tr("VERB_FILL_2") }));
             }
             else
             {
               m_action_in_progress.reset(new ActionFill(player));
               m_action_in_progress->set_object(things.front());
-              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ITEM_OR_DIRECTION"), { tr("VERB_FILL_GER") }));
+              put_msg(Action::make_string(player, EntityId::Mu(), tr("CHOOSE_ITEM_OR_DIRECTION"), { tr("VERB_FILL_GER") }));
               m_current_input_state = GameInputState::TargetSelection;
               m_inventory_selection->clear_selected_slots();
             }
@@ -637,7 +637,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::G:
             if (things.size() == 0)
             {
-              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ITEMS_FIRST"), { tr("VERB_PICKUP_2") }));
+              put_msg(Action::make_string(player, EntityId::Mu(), tr("CHOOSE_ITEMS_FIRST"), { tr("VERB_PICKUP_2") }));
             }
             else
             {
@@ -657,17 +657,17 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::H:
             if (things.size() == 0)
             {
-              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ITEM_FIRST"), { tr("VERB_THROW_2") }));
+              put_msg(Action::make_string(player, EntityId::Mu(), tr("CHOOSE_ITEM_FIRST"), { tr("VERB_THROW_2") }));
             }
             else if (things.size() > 1)
             {
-              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ONLY_ONE_AT_A_TIME"), { tr("VERB_THROW_2") }));
+              put_msg(Action::make_string(player, EntityId::Mu(), tr("CHOOSE_ONLY_ONE_AT_A_TIME"), { tr("VERB_THROW_2") }));
             }
             else
             {
               m_action_in_progress.reset(new ActionHurl(player));
               m_action_in_progress->set_object(things.front());
-              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_DIRECTION"), { tr("VERB_THROW_2") }));
+              put_msg(Action::make_string(player, EntityId::Mu(), tr("CHOOSE_DIRECTION"), { tr("VERB_THROW_2") }));
               m_current_input_state = GameInputState::TargetSelection;
               m_inventory_selection->clear_selected_slots();
             }
@@ -678,7 +678,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::I:
             if (things.size() > 1)
             {
-              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ONLY_ONE_AT_A_TIME"), { tr("VERB_WRITE_2") }));
+              put_msg(Action::make_string(player, EntityId::Mu(), tr("CHOOSE_ONLY_ONE_AT_A_TIME"), { tr("VERB_WRITE_2") }));
             }
             else
             {
@@ -688,7 +688,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
                 m_action_in_progress->set_object(things.front());
               }
 
-              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ITEM_OR_DIRECTION"), { tr("VERB_WRITE_GER") }));
+              put_msg(Action::make_string(player, EntityId::Mu(), tr("CHOOSE_ITEM_OR_DIRECTION"), { tr("VERB_WRITE_GER") }));
               m_current_input_state = GameInputState::TargetSelection;
               m_inventory_selection->clear_selected_slots();
             }
@@ -699,11 +699,11 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::M:
             if (things.size() == 0)
             {
-              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_TWO_ITEMS_FIRST"), { tr("VERB_MIX_2") }));
+              put_msg(Action::make_string(player, EntityId::Mu(), tr("CHOOSE_TWO_ITEMS_FIRST"), { tr("VERB_MIX_2") }));
             }
             else if (things.size() != 2)
             {
-              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_EXACTLY_TWO_AT_A_TIME"), { tr("VERB_MIX_2") }));
+              put_msg(Action::make_string(player, EntityId::Mu(), tr("CHOOSE_EXACTLY_TWO_AT_A_TIME"), { tr("VERB_MIX_2") }));
             }
             else
             {
@@ -721,7 +721,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             {
               // No item specified, so ask for a direction.
               m_action_in_progress.reset(new ActionOpen(player));
-              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_DIRECTION"), { tr("VERB_OPEN_2") }));
+              put_msg(Action::make_string(player, EntityId::Mu(), tr("CHOOSE_DIRECTION"), { tr("VERB_OPEN_2") }));
               m_current_input_state = GameInputState::TargetSelection;
               m_inventory_selection->clear_selected_slots();
             }
@@ -744,13 +744,13 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::P:
             if (things.size() == 0)
             {
-              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ITEMS_FIRST"), { tr("VERB_STORE_2") }));
+              put_msg(Action::make_string(player, EntityId::Mu(), tr("CHOOSE_ITEMS_FIRST"), { tr("VERB_STORE_2") }));
             }
             else
             {
               m_action_in_progress.reset(new ActionPutInto(player));
               m_action_in_progress->set_objects(things);
-              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_CONTAINER"), { tr("VERB_STORE_DESC") }));
+              put_msg(Action::make_string(player, EntityId::Mu(), tr("CHOOSE_CONTAINER"), { tr("VERB_STORE_DESC") }));
               m_current_input_state = GameInputState::TargetSelection;
               m_inventory_selection->clear_selected_slots();
             }
@@ -761,7 +761,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::Q:
             if (things.size() == 0)
             {
-              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ITEMS_FIRST"), { tr("VERB_DRINK_2") }));
+              put_msg(Action::make_string(player, EntityId::Mu(), tr("CHOOSE_ITEMS_FIRST"), { tr("VERB_DRINK_2") }));
             }
             else
             {
@@ -782,7 +782,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::R:
             if (things.size() == 0)
             {
-              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ITEMS_FIRST"), { tr("VERB_READ_2") }));
+              put_msg(Action::make_string(player, EntityId::Mu(), tr("CHOOSE_ITEMS_FIRST"), { tr("VERB_READ_2") }));
             }
             else
             {
@@ -804,11 +804,11 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             /// if no item is selected.
             if (things.size() < 1)
             {
-              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ITEM_FIRST"), { tr("VERB_SHOOT_2") }));
+              put_msg(Action::make_string(player, EntityId::Mu(), tr("CHOOSE_ITEM_FIRST"), { tr("VERB_SHOOT_2") }));
             }
             if (things.size() > 1)
             {
-              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ONLY_ONE_AT_A_TIME"), { tr("VERB_SHOOT_2") }));
+              put_msg(Action::make_string(player, EntityId::Mu(), tr("CHOOSE_ONLY_ONE_AT_A_TIME"), { tr("VERB_SHOOT_2") }));
             }
             else
             {
@@ -816,7 +816,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
               ///       Otherwise, wield the selected item and fire it.
               m_action_in_progress.reset(new ActionShoot(player));
               m_action_in_progress->set_object(things.front());
-              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_DIRECTION"), { tr("VERB_SHOOT_2") }));
+              put_msg(Action::make_string(player, EntityId::Mu(), tr("CHOOSE_DIRECTION"), { tr("VERB_SHOOT_2") }));
               m_current_input_state = GameInputState::TargetSelection;
               m_inventory_selection->clear_selected_slots();
             }
@@ -827,7 +827,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::T:
             if (things.size() == 0)
             {
-              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ITEMS_FIRST"), { tr("VERB_REMOVE_2") }));
+              put_msg(Action::make_string(player, EntityId::Mu(), tr("CHOOSE_ITEMS_FIRST"), { tr("VERB_REMOVE_2") }));
             }
             else
             {
@@ -844,7 +844,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::U:
             if (things.size() == 0)
             {
-              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ITEMS_FIRST"), { tr("VERB_USE_2") }));
+              put_msg(Action::make_string(player, EntityId::Mu(), tr("CHOOSE_ITEMS_FIRST"), { tr("VERB_USE_2") }));
             }
             else
             {
@@ -864,11 +864,11 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::W:
             if (things.size() == 0)
             {
-              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ITEM_FIRST"), { tr("VERB_WIELD_2") }));
+              put_msg(Action::make_string(player, EntityId::Mu(), tr("CHOOSE_ITEM_FIRST"), { tr("VERB_WIELD_2") }));
             }
             else if (things.size() > 1)
             {
-              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ONLY_ONE_AT_A_TIME"), { tr("VERB_WIELD_2") }));
+              put_msg(Action::make_string(player, EntityId::Mu(), tr("CHOOSE_ONLY_ONE_AT_A_TIME"), { tr("VERB_WIELD_2") }));
             }
             else
             {
@@ -887,13 +887,13 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             {
               // No item specified, so ask for a direction.
               m_action_in_progress.reset(new ActionAttack(player));
-              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_DIRECTION"), { tr("VERB_ATTACK_2") }));
+              put_msg(Action::make_string(player, EntityId::Mu(), tr("CHOOSE_DIRECTION"), { tr("VERB_ATTACK_2") }));
               m_current_input_state = GameInputState::TargetSelection;
               m_inventory_selection->clear_selected_slots();
             }
             else if (things.size() > 1)
             {
-              put_msg(Action::make_string(player, ThingId::Mu(), tr("CHOOSE_ONLY_ONE_AT_A_TIME"), { tr("VERB_ATTACK_2") }));
+              put_msg(Action::make_string(player, EntityId::Mu(), tr("CHOOSE_ONLY_ONE_AT_A_TIME"), { tr("VERB_ATTACK_2") }));
             }
             else
             {
@@ -1003,7 +1003,7 @@ sf::IntRect AppStateGameMode::calc_message_log_dims()
 
 void AppStateGameMode::reset_inventory_selection()
 {
-  ThingId player = m_game_state->get_player();
+  EntityId player = m_game_state->get_player();
   Map& game_map = GAME.get_maps().get(player->get_map_id());
 
   if (m_inventory_area_shows_player == true)
@@ -1014,7 +1014,7 @@ void AppStateGameMode::reset_inventory_selection()
   {
     if (m_current_input_state == GameInputState::CursorLook)
     {
-      ThingId floor_id = game_map.get_tile(m_cursor_coords).get_tile_contents();
+      EntityId floor_id = game_map.get_tile(m_cursor_coords).get_tile_contents();
       m_inventory_selection->set_viewed(floor_id);
     }
     else
@@ -1054,7 +1054,7 @@ sf::IntRect AppStateGameMode::calc_inventory_dims()
 
 bool AppStateGameMode::move_cursor(Direction direction)
 {
-  ThingId player = m_game_state->get_player();
+  EntityId player = m_game_state->get_player();
   Map& game_map = GAME.get_maps().get(player->get_map_id());
   bool result;
 
@@ -1063,7 +1063,7 @@ bool AppStateGameMode::move_cursor(Direction direction)
   return result;
 }
 
-SFMLEventResult AppStateGameMode::handle_key_press_target_selection(ThingId player, sf::Event::KeyEvent& key)
+SFMLEventResult AppStateGameMode::handle_key_press_target_selection(EntityId player, sf::Event::KeyEvent& key)
 {
   SFMLEventResult result = SFMLEventResult::Ignored;
   int key_number = get_letter_key(key);
@@ -1114,7 +1114,7 @@ SFMLEventResult AppStateGameMode::handle_key_press_target_selection(ThingId play
   return result;
 }
 
-SFMLEventResult AppStateGameMode::handle_key_press_cursor_look(ThingId player, sf::Event::KeyEvent& key)
+SFMLEventResult AppStateGameMode::handle_key_press_cursor_look(EntityId player, sf::Event::KeyEvent& key)
 {
   SFMLEventResult result = SFMLEventResult::Ignored;
 

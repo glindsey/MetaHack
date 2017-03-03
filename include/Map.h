@@ -6,21 +6,21 @@
 #include "Observable.h"
 #include "MapFactory.h"
 #include "Renderable.h"
-#include "Thing.h"
+#include "Entity.h"
 
 // Forward declarations
 class GameState;
 class MapFeature;
 class MapGenerator;
 class MapTile;
-class ThingId;
+class EntityId;
 
 // VS compatibility
 #ifdef WIN32   //WINDOWS
 #define constexpr const
 #endif
 
-/// Class representing a map, which is a grid of locations for Things.
+/// Class representing a map, which is a grid of locations for Entities.
 class Map
   :
   public Observable
@@ -47,12 +47,12 @@ public:
     archive(pImpl);
   }
 
-  /// Process all Things on this map.
+  /// Process all Entities on this map.
   void process();
 
   void update_lighting();
 
-  void add_light(ThingId source);
+  void add_light(EntityId source);
 
   MapTile const & get_tile(Vec2i tile) const;
 
@@ -120,7 +120,7 @@ protected:
   ///  / | \   |
   /// / 6|5 \  |
 
-  void do_recursive_lighting(ThingId source,
+  void do_recursive_lighting(EntityId source,
                              Vec2i const& origin,
                              sf::Color const& light_color,
                              int const max_depth_squared,
@@ -144,12 +144,12 @@ private:
   struct Impl;
   std::unique_ptr<Impl> pImpl;
 
-  /// Lua function to get the tile contents Thing at a specific location.
+  /// Lua function to get the tile contents Entity at a specific location.
   /// Takes three parameters:
   ///   - The MapID of the map in question.
   ///   - x, y location of the tile contents to retrieve
   /// It returns:
-  ///   - ID of the requested Thing, or nil if it does not exist.
+  ///   - ID of the requested Entity, or nil if it does not exist.
   /// Notes:
   ///   - The Map that the tile is retrieved from is the one the player is on.
   static int LUA_get_tile_contents(lua_State* L);

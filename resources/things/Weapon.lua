@@ -1,8 +1,8 @@
 -- Definition of special functions for the Weapon object type.
 
-require "resources/things/Thing"
+require "resources/things/Entity"
 
-Weapon = inheritsFrom(Thing, "Weapon")
+Weapon = inheritsFrom(Entity, "Weapon")
 Weapon.intrinsics.name = "[Weapon]"
 Weapon.intrinsics.plural = "[Weapons]"
 

@@ -19,7 +19,7 @@ enum class Gender
   SecondPerson = 6,
   Plural = 7,
   Hanar = 8,
-  UnknownThing = 9,
+  UnknownEntity = 9,
   UnknownPerson = 10,
   Count
 };
@@ -37,7 +37,7 @@ inline std::ostream& operator<<(std::ostream& os, Gender gender)
     case Gender::SecondPerson: os << "SecondPerson"; break;
     case Gender::Plural: os << "Plural"; break;
     case Gender::Hanar: os << "Hanar"; break;
-    case Gender::UnknownThing: os << "UnknownThing"; break;
+    case Gender::UnknownEntity: os << "UnknownEntity"; break;
     case Gender::UnknownPerson: os << "UnknownPerson"; break;
     case Gender::Count: os << "Count"; break;
     default: os << "???"; break;
@@ -58,7 +58,7 @@ inline void Gender_add_to_lua(Lua* lua_instance)
                          "SecondPerson", Gender::SecondPerson,
                          "Plural", Gender::Plural,
                          "Hanar", Gender::Hanar,
-                         "UnknownThing", Gender::UnknownThing,
+                         "UnknownEntity", Gender::UnknownEntity,
                          "UnknownPerson", Gender::UnknownPerson,
                          "Count", Gender::Count,
                          0

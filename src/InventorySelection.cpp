@@ -4,13 +4,13 @@
 
 #include "App.h"
 #include "Inventory.h"
-#include "Thing.h"
-#include "ThingId.h"
+#include "Entity.h"
+#include "EntityId.h"
 
 struct InventorySelection::Impl
 {
-  /// Thing whose contents (or surroundings) are currently being viewed.
-  ThingId viewed;
+  /// Entity whose contents (or surroundings) are currently being viewed.
+  EntityId viewed;
 
   /// Vector of selected inventory slots.
   std::vector< InventorySlot > selected_slots;
@@ -28,7 +28,7 @@ InventorySelection::InventorySelection()
   SET_UP_LOGGER("InventorySelection", true);
 }
 
-InventorySelection::InventorySelection(ThingId thing)
+InventorySelection::InventorySelection(EntityId thing)
   :
   InventorySelection()
 {
@@ -40,12 +40,12 @@ InventorySelection::~InventorySelection()
   //dtor
 }
 
-ThingId InventorySelection::get_viewed() const
+EntityId InventorySelection::get_viewed() const
 {
   return pImpl->viewed;
 }
 
-void InventorySelection::set_viewed(ThingId thing)
+void InventorySelection::set_viewed(EntityId thing)
 {
   pImpl->viewed = thing;
   pImpl->selected_slots.clear();
@@ -54,7 +54,7 @@ void InventorySelection::set_viewed(ThingId thing)
 
 void InventorySelection::toggle_selection(InventorySlot selection)
 {
-  if (pImpl->viewed == ThingId::Mu())
+  if (pImpl->viewed == EntityId::Mu())
   {
     return;
   }
@@ -95,11 +95,11 @@ std::vector<InventorySlot> const& InventorySelection::get_selected_slots()
   return pImpl->selected_slots;
 }
 
-std::vector<ThingId> InventorySelection::get_selected_things()
+std::vector<EntityId> InventorySelection::get_selected_things()
 {
-  std::vector<ThingId> things;
+  std::vector<EntityId> things;
 
-  if (pImpl->viewed != ThingId::Mu())
+  if (pImpl->viewed != EntityId::Mu())
   {
     Inventory& inventory = pImpl->viewed->get_inventory();
 
@@ -107,7 +107,7 @@ std::vector<ThingId> InventorySelection::get_selected_things()
          iter != std::end(pImpl->selected_slots);
          ++iter)
     {
-      ThingId thing = inventory[*iter];
+      EntityId thing = inventory[*iter];
       things.push_back(thing);
     }
   }
@@ -130,7 +130,7 @@ unsigned int InventorySelection::get_max_quantity() const
 {
   unsigned int result;
 
-  if (pImpl->viewed == ThingId::Mu())
+  if (pImpl->viewed == EntityId::Mu())
   {
     return 0;
   }
@@ -143,9 +143,9 @@ unsigned int InventorySelection::get_max_quantity() const
   }
   else
   {
-    ThingId thing = inventory[pImpl->selected_slots[0]];
+    EntityId thing = inventory[pImpl->selected_slots[0]];
 
-    if (thing == ThingId::Mu())
+    if (thing == EntityId::Mu())
     {
       result = 0;
     }
@@ -203,13 +203,13 @@ bool InventorySelection::dec_selected_quantity()
   return false;
 }
 
-ThingId InventorySelection::get_thing(InventorySlot selection)
+EntityId InventorySelection::get_thing(InventorySlot selection)
 {
-  ThingId viewed = pImpl->viewed;
+  EntityId viewed = pImpl->viewed;
 
-  if (viewed == ThingId::Mu())
+  if (viewed == EntityId::Mu())
   {
-    return ThingId::Mu();
+    return EntityId::Mu();
   }
 
   Inventory& inventory = pImpl->viewed->get_inventory();
@@ -224,7 +224,7 @@ ThingId InventorySelection::get_thing(InventorySlot selection)
       "Requested non-existent inventory slot " <<
       static_cast<unsigned int>(selection) <<
       ", returning Mu!";
-    return ThingId::Mu();
+    return EntityId::Mu();
   }
 }
 

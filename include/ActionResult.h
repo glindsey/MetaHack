@@ -26,7 +26,7 @@ enum class ActionResult
   FailureTargetNotAContainer = -9,
   FailureNotInsideContainer = -8,
   FailureContainerOutOfReach = -7,
-  FailureThingOutOfReach = -6,
+  FailureEntityOutOfReach = -6,
   FailureAlreadyPresent = -5,
   FailureInventoryCantContain = -4,
   FailureInventoryFull = -3,
@@ -65,7 +65,7 @@ inline std::ostream& operator<<(std::ostream& os, ActionResult result)
     case ActionResult::FailureTargetNotAContainer: os << "FailureTargetNotAContainer"; break;
     case ActionResult::FailureNotInsideContainer: os << "FailureNotInsideContainer"; break;
     case ActionResult::FailureContainerOutOfReach: os << "FailureContainerOutOfReach"; break;
-    case ActionResult::FailureThingOutOfReach: os << "FailureThingOutOfReach"; break;
+    case ActionResult::FailureEntityOutOfReach: os << "FailureEntityOutOfReach"; break;
     case ActionResult::FailureAlreadyPresent: os << "FailureAlreadyPresent"; break;
     case ActionResult::FailureInventoryCantContain: os << "FailureInventoryCantContain"; break;
     case ActionResult::FailureInventoryFull: os << "FailureInventoryFull"; break;
@@ -100,7 +100,7 @@ inline void ActionResult_add_to_lua(Lua* lua_instance)
                          "FailureTargetNotAContainer", ActionResult::FailureTargetNotAContainer,
                          "FailureNotInsideContainer", ActionResult::FailureNotInsideContainer,
                          "FailureContainerOutOfReach", ActionResult::FailureContainerOutOfReach,
-                         "FailureThingOutOfReach", ActionResult::FailureThingOutOfReach,
+                         "FailureEntityOutOfReach", ActionResult::FailureEntityOutOfReach,
                          "FailureAlreadyPresent", ActionResult::FailureAlreadyPresent,
                          "FailureInventoryCantContain", ActionResult::FailureInventoryCantContain,
                          "FailureInventoryFull", ActionResult::FailureInventoryFull,

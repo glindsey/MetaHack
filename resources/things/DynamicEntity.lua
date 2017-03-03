@@ -1,8 +1,8 @@
 -- Definition of special functions for the DynamicEntity object type.
 
-require "resources/things/Thing"
+require "resources/things/Entity"
 
-DynamicEntity = inheritsFrom(Thing, "DynamicEntity")
+DynamicEntity = inheritsFrom(Entity, "DynamicEntity")
 DynamicEntity.intrinsics.name = "[DynamicEntity]"
 DynamicEntity.intrinsics.plural = "[DynamicEntities]"
 

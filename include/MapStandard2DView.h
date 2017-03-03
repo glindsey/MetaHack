@@ -18,8 +18,8 @@ public:
   /// @param map	Reference to Map object to associate with this view.
   MapStandard2DView(Map& map);
 
-  virtual void update_tiles(ThingId viewer) override;
-  virtual void update_things(ThingId viewer, int frame) override;
+  virtual void update_tiles(EntityId viewer) override;
+  virtual void update_things(EntityId viewer, int frame) override;
   
   virtual bool render(sf::RenderTexture& texture, int frame) override;
 
@@ -43,7 +43,7 @@ private:
   /// "Memory" map vertex array.
   sf::VertexArray m_map_memory_vertices;
 
-  /// Thing vertex array.
+  /// Entity vertex array.
   sf::VertexArray m_thing_vertices;
 
   /// Grid of tile views.

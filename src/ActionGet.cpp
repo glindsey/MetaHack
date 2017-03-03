@@ -4,8 +4,8 @@
 #include "ActionMove.h"
 #include "IMessageLog.h"
 #include "Service.h"
-#include "Thing.h"
-#include "ThingId.h"
+#include "Entity.h"
+#include "EntityId.h"
 
 ACTION_SRC_BOILERPLATE(ActionGet, "get", "get")
 
@@ -14,10 +14,10 @@ Action::StateResult ActionGet::do_prebegin_work_(AnyMap& params)
   std::string message;
   auto subject = get_subject();
   auto object = get_object();
-  ThingId location = subject->get_location();
+  EntityId location = subject->get_location();
 
   // Verify that the Action has an object.
-  if (object == ThingId::Mu())
+  if (object == EntityId::Mu())
   {
     return StateResult::Failure();
   }
@@ -96,7 +96,7 @@ Action::StateResult ActionGet::do_begin_work_(AnyMap& params)
       message = YOU + " could not pick up " + THE_FOO + " for some inexplicable reason.";
       Service<IMessageLog>::get().add(message);
 
-      CLOG(WARNING, "Action") << "Could not move Thing " << object <<
+      CLOG(WARNING, "Action") << "Could not move Entity " << object <<
         " even though be_object_of returned Success";
     }
   }

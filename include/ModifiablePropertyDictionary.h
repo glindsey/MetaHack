@@ -8,15 +8,15 @@
 /// Struct describing a property modifier.
 struct PropertyModifier
 {
-  /// ID of the Thing responsible for doing the modification.
-  ThingId       id;
+  /// ID of the Entity responsible for doing the modification.
+  EntityId       id;
 
   /// Expiration time, in ticks, for this modifier, or 0 if no expiration.
   unsigned int  expiration_ticks;
 };
 
 // Using aliases
-using ExpirationMap = std::unordered_map<ThingId, unsigned int>;
+using ExpirationMap = std::unordered_map<EntityId, unsigned int>;
 using ModifierMap = std::unordered_map<std::string, ExpirationMap>;
 
 /// Class that extends PropertyDictionary with the ability to have "modifier"
@@ -78,25 +78,25 @@ public:
 
   /// Check if a modifier function exists for a particular key and ID.
   /// @return Number of modifiers for the key and ID. (Should be 0 or 1.)
-  size_t has_modifier_for(std::string key, ThingId id) const;
+  size_t has_modifier_for(std::string key, EntityId id) const;
 
   /// Add a modifier function for a given property and ID.
   /// @param  key               Name of property to add a modifier function for.
-  /// @param  id                ThingId of the Thing responsible for this function.
+  /// @param  id                EntityId of the Entity responsible for this function.
   /// @param  expiration_ticks  Number of ticks until modifier expires, or 0 if it
   ///                           never expires. Defaults to 0.
   ///
   /// The resulting function should be named "modify_property_XXX"
   /// where XXX is the name of the property to modify, and it should be
-  /// a member of a Thing-derived Lua class. It should take two parameters:
-  /// The ID of the Thing being affected, and the property value prior to
+  /// a member of a Entity-derived Lua class. It should take two parameters:
+  /// The ID of the Entity being affected, and the property value prior to
   /// modification; and it should return the property value after modification.
   ///
   /// If a modifier function already exists for a given property and ID, no
   /// new one will be added.
   ///
   /// @return True if the function was added; false if it already existed.
-  bool add_modifier(std::string key, ThingId id, unsigned int expiration_ticks = 0);
+  bool add_modifier(std::string key, EntityId id, unsigned int expiration_ticks = 0);
 
   /// Remove all modifier functions for a given key.
   /// @return The number of modifiers erased.
@@ -104,7 +104,7 @@ public:
 
   /// Remove all modifier functions for a given key and thing ID.
   /// @return The number of modifiers erased.
-  size_t remove_modifier(std::string key, ThingId id);
+  size_t remove_modifier(std::string key, EntityId id);
 
   /// Run all the modifier functions for a property given a value to modify.
   /// @param  key     Property to run the modifiers for.

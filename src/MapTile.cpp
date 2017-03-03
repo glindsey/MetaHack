@@ -10,7 +10,7 @@
 #include "MathUtils.h"
 #include "RNGUtils.h"
 #include "Service.h"
-#include "ThingManager.h"
+#include "EntityPool.h"
 #include "TileSheet.h"
 
 typedef boost::random::uniform_int_distribution<> uniform_int_dist;
@@ -20,7 +20,7 @@ bool MapTile::initialized = false;
 MapTile::~MapTile()
 {}
 
-ThingId MapTile::get_tile_contents() const
+EntityId MapTile::get_tile_contents() const
 {
   return m_tile_contents;
 }
@@ -47,7 +47,7 @@ bool MapTile::is_empty_space() const
 
 /// @todo: Implement this to cover different entity types.
 ///        For example, a non-corporeal DynamicEntity can move through solid matter.
-bool MapTile::can_be_traversed_by(ThingId thing) const
+bool MapTile::can_be_traversed_by(EntityId thing) const
 {
   return is_empty_space();
 }
@@ -78,7 +78,7 @@ void MapTile::set_ambient_light_level(sf::Color level)
   m_ambient_light_color = level;
 }
 
-void MapTile::be_lit_by(ThingId light)
+void MapTile::be_lit_by(EntityId light)
 {
   GAME.get_maps().get(get_map_id()).add_light(light);
 }
@@ -89,7 +89,7 @@ void MapTile::clear_light_influences()
   m_calculated_light_colors.clear();
 }
 
-void MapTile::add_light_influence(ThingId source,
+void MapTile::add_light_influence(EntityId source,
                                   LightInfluence influence)
 {
   if (m_lights.count(source) == 0)

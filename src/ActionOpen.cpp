@@ -4,8 +4,8 @@
 #include "IMessageLog.h"
 #include "IStringDictionary.h"
 #include "Service.h"
-#include "Thing.h"
-#include "ThingId.h"
+#include "Entity.h"
+#include "EntityId.h"
 
 ACTION_SRC_BOILERPLATE(ActionOpen, "open", "open")
 
@@ -23,7 +23,7 @@ Action::StateResult ActionOpen::do_begin_work_(AnyMap& params)
   Service<IMessageLog>::get().add(dict.get("ACTION_NOT_IMPLEMENTED"));
 
 #if 0
-  if (thing != ThingId::Mu())
+  if (thing != EntityId::Mu())
   {
     success = actor->do_open(thing, action_time);
   }

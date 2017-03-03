@@ -96,13 +96,7 @@
     <ClInclude Include="include\StatusArea.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Thing.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\TileSheet.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ThingManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\common_types.h">
@@ -126,9 +120,6 @@
     <ClInclude Include="include\GameState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\LuaThingFunctions.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -139,9 +130,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\ModifiablePropertyDictionary.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ThingId.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Action.h">
@@ -333,9 +321,6 @@
     <ClInclude Include="include\MapStandard2DView.h">
       <Filter>Object Views</Filter>
     </ClInclude>
-    <ClInclude Include="include\ThingView.h">
-      <Filter>Object Views</Filter>
-    </ClInclude>
     <ClInclude Include="include\Observer.h">
       <Filter>Design Pattern Templates</Filter>
     </ClInclude>
@@ -411,8 +396,23 @@
     <ClInclude Include="include\MapTileView.h">
       <Filter>Object Views</Filter>
     </ClInclude>
-    <ClInclude Include="include\ThingStandard2DView.h">
+    <ClInclude Include="include\EntityPool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EntityId.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Entity.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EntityStandard2DView.h">
       <Filter>Object Views</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EntityView.h">
+      <Filter>Object Views</Filter>
+    </ClInclude>
+    <ClInclude Include="include\LuaEntityFunctions.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -446,16 +446,10 @@
     <ClCompile Include="src\StatusArea.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Thing.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\TileSheet.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ThingManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Metadata.cpp">
@@ -467,9 +461,6 @@
     <ClCompile Include="src\GameState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\LuaThingFunctions.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -477,9 +468,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\ModifiablePropertyDictionary.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ThingId.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Action.cpp">
@@ -629,9 +617,6 @@
     <ClCompile Include="src\MapStandard2DView.cpp">
       <Filter>Object Views</Filter>
     </ClCompile>
-    <ClCompile Include="src\ThingView.cpp">
-      <Filter>Object Views</Filter>
-    </ClCompile>
     <ClCompile Include="src\ActionUnwield.cpp">
       <Filter>Actions</Filter>
     </ClCompile>
@@ -674,8 +659,23 @@
     <ClCompile Include="src\MapTileStandard2DView.cpp">
       <Filter>Object Views</Filter>
     </ClCompile>
-    <ClCompile Include="src\ThingStandard2DView.cpp">
+    <ClCompile Include="src\EntityPool.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EntityId.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Entity.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EntityStandard2DView.cpp">
       <Filter>Object Views</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EntityView.cpp">
+      <Filter>Object Views</Filter>
+    </ClCompile>
+    <ClCompile Include="src\LuaEntityFunctions.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -745,9 +745,6 @@
     <None Include="resources\things\Sconce.lua">
       <Filter>Resource Files\Entity Scripts</Filter>
     </None>
-    <None Include="resources\things\Thing.lua">
-      <Filter>Resource Files\Entity Scripts</Filter>
-    </None>
     <None Include="resources\things\TileContents.lua">
       <Filter>Resource Files\Entity Scripts</Filter>
     </None>
@@ -803,6 +800,9 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="resources\things\DynamicEntity.lua">
+      <Filter>Resource Files\Entity Scripts</Filter>
+    </None>
+    <None Include="resources\things\Entity.lua">
       <Filter>Resource Files\Entity Scripts</Filter>
     </None>
   </ItemGroup>

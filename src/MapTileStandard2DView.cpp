@@ -22,7 +22,7 @@ Vec2u MapTileStandard2DView::get_tile_sheet_coords() const
   return tile_coords;
 }
 
-void MapTileStandard2DView::add_tile_vertices(ThingId viewer,
+void MapTileStandard2DView::add_tile_vertices(EntityId viewer,
                                               sf::VertexArray& seen_vertices,
                                               sf::VertexArray& memory_vertices)
 {
@@ -63,7 +63,7 @@ void MapTileStandard2DView::add_tile_vertices(ThingId viewer,
 }
 
 void MapTileStandard2DView::add_memory_vertices_to(sf::VertexArray& vertices,
-                                                   ThingId viewer)
+                                                   EntityId viewer)
 {
   auto& config = Service<IConfigSettings>::get();
   auto& tile = get_map_tile();
@@ -154,13 +154,13 @@ void MapTileStandard2DView::add_tile_floor_vertices(sf::VertexArray& vertices)
                                   lightSW, lightS, lightSE);
 }
 
-void MapTileStandard2DView::add_things_floor_vertices(ThingId viewer,
+void MapTileStandard2DView::add_things_floor_vertices(EntityId viewer,
                                                       sf::VertexArray & vertices,
                                                       bool use_lighting, int frame)
 {
   auto& tile = get_map_tile();
   auto coords = tile.get_coords();
-  ThingId contents = tile.get_tile_contents();
+  EntityId contents = tile.get_tile_contents();
   Inventory& inv = contents->get_inventory();
 
   if (viewer->can_see(coords))
@@ -168,8 +168,8 @@ void MapTileStandard2DView::add_things_floor_vertices(ThingId viewer,
     if (inv.count() > 0)
     {
       // Only draw the largest thing on that tile.
-      ThingId biggest_thing = inv.get_largest_thing();
-      if (biggest_thing != ThingId::Mu())
+      EntityId biggest_thing = inv.get_largest_thing();
+      if (biggest_thing != EntityId::Mu())
       {
         add_thing_floor_vertices(biggest_thing, vertices, use_lighting, frame);
       }
@@ -183,7 +183,7 @@ void MapTileStandard2DView::add_things_floor_vertices(ThingId viewer,
   }
 }
 
-void MapTileStandard2DView::add_thing_floor_vertices(ThingId thing, sf::VertexArray & vertices, bool use_lighting, int frame)
+void MapTileStandard2DView::add_thing_floor_vertices(EntityId thing, sf::VertexArray & vertices, bool use_lighting, int frame)
 {
   auto& config = Service<IConfigSettings>::get();
   sf::Vertex new_vertex;
@@ -243,9 +243,9 @@ void MapTileStandard2DView::add_wall_vertices_to(sf::VertexArray& vertices,
   bool player_sees_w_wall{ false };
 
   // Player.
-  ThingId player = GAME.get_player();
+  EntityId player = GAME.get_player();
 
-  if (player != ThingId::Mu())
+  if (player != EntityId::Mu())
   {
     auto player_tile = player->get_maptile();
     auto player_coords = player_tile->get_coords();

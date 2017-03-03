@@ -1,8 +1,8 @@
 -- Definition of special functions for the Mu (nothingness) object type.
 
-require "resources/things/Thing"
+require "resources/things/Entity"
 
-Mu = inheritsFrom(Thing, "Mu")
+Mu = inheritsFrom(Entity, "Mu")
 Mu.intrinsics.name = "[Mu]"
 Mu.intrinsics.plural = "[Mu]"
 

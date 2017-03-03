@@ -8,20 +8,20 @@
 #include "MessageLog.h"
 #include "Service.h"
 #include "StringTransforms.h"
-#include "Thing.h"
-#include "ThingManager.h"
-#include "ThingId.h"
+#include "Entity.h"
+#include "EntityPool.h"
+#include "EntityId.h"
 
 std::unordered_map<std::string, ActionCreator> Action::action_map;
 
 struct Action::Impl
 {
-  Impl(ThingId subject_)
+  Impl(EntityId subject_)
     :
     state{ Action::State::Pending },
     subject{ subject_ },
     objects{},
-    target_thing{ ThingId::Mu() },
+    target_thing{ EntityId::Mu() },
     target_direction{ Direction::None },
     quantity{ 1 }
   {}
@@ -30,13 +30,13 @@ struct Action::Impl
   Action::State state;
 
   /// The subject performing the action.
-  ThingId subject;
+  EntityId subject;
 
   /// The objects of the action.
-  std::vector<ThingId> objects;
+  std::vector<EntityId> objects;
 
-  /// Target Thing for the action (if any).
-  ThingId target_thing;
+  /// Target Entity for the action (if any).
+  EntityId target_thing;
 
   /// Direction for the action (if any).
   Direction target_direction;
@@ -47,12 +47,12 @@ struct Action::Impl
 
 Action::Action()
   :
-  pImpl{ new Impl(ThingId::Mu()) }
+  pImpl{ new Impl(EntityId::Mu()) }
 {
   SET_UP_LOGGER("Action", false);
 }
 
-Action::Action(ThingId subject)
+Action::Action(EntityId subject)
   :
   pImpl{ new Impl(subject) }
 {}
@@ -60,44 +60,44 @@ Action::Action(ThingId subject)
 Action::~Action()
 {}
 
-ThingId Action::get_subject() const
+EntityId Action::get_subject() const
 {
   return pImpl->subject;
 }
 
-void Action::set_object(ThingId object)
+void Action::set_object(EntityId object)
 {
   pImpl->objects.clear();
   pImpl->objects.push_back(object);
 }
 
-void Action::set_objects(std::vector<ThingId> objects)
+void Action::set_objects(std::vector<EntityId> objects)
 {
   pImpl->objects = objects;
 }
 
-std::vector<ThingId> const& Action::get_objects() const
+std::vector<EntityId> const& Action::get_objects() const
 {
   return pImpl->objects;
 }
 
-ThingId Action::get_object() const
+EntityId Action::get_object() const
 {
   return pImpl->objects[0];
 }
 
-ThingId Action::get_second_object() const
+EntityId Action::get_second_object() const
 {
   return pImpl->objects[1];
 }
 
-bool Action::process(ThingId actor, AnyMap params)
+bool Action::process(EntityId actor, AnyMap params)
 {
   // If entity is currently busy, decrement by one and return.
   int counter_busy = actor->get_base_property<int>("counter_busy");
   if (counter_busy > 0)
   {
-    CLOG(TRACE, "Action") << "Thing #" <<
+    CLOG(TRACE, "Action") << "Entity #" <<
       actor << " (" <<
       actor->get_type() << "): counter_busy = " <<
       counter_busy << "%d, decrementing";
@@ -113,7 +113,7 @@ bool Action::process(ThingId actor, AnyMap params)
     counter_busy = actor->get_base_property<int>("counter_busy");
     Action::StateResult result{ false, 0 };
 
-    CLOG(TRACE, "Action") << "Thing #" <<
+    CLOG(TRACE, "Action") << "Entity #" <<
       actor << " (" <<
       actor->get_type().c_str() << "): Action " <<
       get_type().c_str() << " is in state " <<
@@ -194,7 +194,7 @@ Action::State Action::get_state()
   return pImpl->state;
 }
 
-void Action::set_target(ThingId thing) const
+void Action::set_target(EntityId thing) const
 {
   pImpl->target_thing = thing;
   pImpl->target_direction = Direction::None;
@@ -202,7 +202,7 @@ void Action::set_target(ThingId thing) const
 
 void Action::set_target(Direction direction) const
 {
-  pImpl->target_thing = ThingId::Mu();
+  pImpl->target_thing = EntityId::Mu();
   pImpl->target_direction = direction;
 }
 
@@ -211,7 +211,7 @@ void Action::set_quantity(unsigned int quantity) const
   pImpl->quantity = quantity;
 }
 
-ThingId Action::get_target_thing() const
+EntityId Action::get_target_thing() const
 {
   return pImpl->target_thing;
 }
@@ -239,7 +239,7 @@ Action::StateResult Action::do_prebegin_work(AnyMap& params)
   if (!subject_can_be_in_limbo())
   {
     // Make sure we're not in limbo!
-    if ((location == ThingId::Mu()) || (current_tile == nullptr))
+    if ((location == EntityId::Mu()) || (current_tile == nullptr))
     {
       put_msg(make_string(tr("DONT_EXIST_PHYSICALLY")));
       return StateResult::Failure();
@@ -373,7 +373,7 @@ std::string Action::get_object_string_() const
     }
     else
     {
-      if (get_object() == ThingId::Mu())
+      if (get_object() == EntityId::Mu())
       {
         description += "nothing";
       }
@@ -470,7 +470,7 @@ bool Action::exists(std::string key)
   return Action::action_map.count(key) != 0;
 }
 
-std::unique_ptr<Action> Action::create(std::string key, ThingId subject)
+std::unique_ptr<Action> Action::create(std::string key, EntityId subject)
 {
   if (Action::action_map.count(key) != 0)
   {
@@ -677,12 +677,12 @@ std::string Action::make_string(std::string pattern, std::vector<std::string> op
   return new_string;
 }
 
-std::string Action::make_string(ThingId subject, ThingId object, std::string pattern)
+std::string Action::make_string(EntityId subject, EntityId object, std::string pattern)
 {
   return make_string(subject, object, pattern, {});
 }
 
-std::string Action::make_string(ThingId subject, ThingId object, std::string pattern, std::vector<std::string> optional_strings)
+std::string Action::make_string(EntityId subject, EntityId object, std::string pattern, std::vector<std::string> optional_strings)
 {
   std::string new_string = replace_tokens(pattern,
                                           [&](std::string token) -> std::string

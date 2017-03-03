@@ -2,7 +2,7 @@
 
 #include "LuaObject.h"
 
-namespace LuaThingFunctions
+namespace LuaEntityFunctions
 {
   void register_functions();
-} // end namespace LuaThingFunctions
+} // end namespace LuaEntityFunctions

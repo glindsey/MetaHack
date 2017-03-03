@@ -6,10 +6,10 @@
 #include "Observer.h"
 
 // Forward declarations
-class ThingId;
+class EntityId;
 
 /// Abstract class representing a view of a MapTile object.
-template< class ThingViewSubclass >
+template< class EntityViewSubclass >
 class MapTileView
   :
   public Observer
@@ -36,7 +36,7 @@ protected:
 
   /// Add thing view to vector.
   /// @note The MapTileView instance will *assume ownership* of the view.
-  void add_thing_view(ThingViewSubclass* thing_view)
+  void add_thing_view(EntityViewSubclass* thing_view)
   {
     auto& iter = std::find(m_thing_views.begin(), m_thing_views.end(), thing_view);
     if (iter == m_thing_views.end())
@@ -49,7 +49,7 @@ protected:
   /// @param thing_view Pointer to view to delete.
   /// @return True if the view was found and deleted, false if not.
   /// @warning The pointer passed in will *no longer be valid* if the view is found and deleted!
-  bool delete_thing_view(ThingViewSubclass* thing_view)
+  bool delete_thing_view(EntityViewSubclass* thing_view)
   {
     auto& iter = std::find(m_thing_views.begin(), m_thing_views.end(), thing_view);
     if (iter != m_thing_views.end())
@@ -65,7 +65,7 @@ protected:
   }
 
   /// Get vector of thing views.
-  std::vector<ThingViewSubclass> const& get_thing_views()
+  std::vector<EntityViewSubclass> const& get_thing_views()
   {
     return m_thing_views;
   }
@@ -81,6 +81,6 @@ private:
   /// MapTile associated with this view.
   MapTile& m_map_tile;
 
-  /// Vector of Thing views.
-  std::vector<ThingViewSubclass> m_thing_views;
+  /// Vector of Entity views.
+  std::vector<EntityViewSubclass> m_thing_views;
 };

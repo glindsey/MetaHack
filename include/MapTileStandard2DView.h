@@ -6,12 +6,12 @@
 
 #include "MapTileView.h"
 
-#include "ThingStandard2DView.h"
+#include "EntityStandard2DView.h"
 
 // Forward declarations
 
 /// Class representing the standard 2D (pseudo-3D) view of a MapTile object.
-class MapTileStandard2DView : public MapTileView<ThingStandard2DView>
+class MapTileStandard2DView : public MapTileView<EntityStandard2DView>
 {
   friend class MapStandard2DView;
 
@@ -29,31 +29,31 @@ protected:
 
 
   /// Add the vertices for the maptile to the seen and memory vertices.
-  /// @param viewer Thing that is viewing this tile.
+  /// @param viewer Entity that is viewing this tile.
   /// @param seen_vertices Array to add seen vertices to.
   /// @param memory_vertices Array to add memory vertices to.
-  void add_tile_vertices(ThingId viewer, 
+  void add_tile_vertices(EntityId viewer, 
                          sf::VertexArray& seen_vertices,
                          sf::VertexArray& memory_vertices);
 
   /// Add the vertices from the viewer's memory.
   /// @param vertices Array to add vertices to.
-  /// @param viewer Thing that is remembering this tile.
+  /// @param viewer Entity that is remembering this tile.
   void add_memory_vertices_to(sf::VertexArray & vertices,
-                              ThingId viewer);
+                              EntityId viewer);
 
   /// Add the floor vertices for the maptile to a VertexArray to be drawn.
   /// @param vertices Array to add vertices to.
   void add_tile_floor_vertices(sf::VertexArray& vertices);
 
   /// Add the floor vertices for the things on this tile to a VertexArray to be drawn.
-  void add_things_floor_vertices(ThingId viewer,
+  void add_things_floor_vertices(EntityId viewer,
                                  sf::VertexArray& vertices, 
                                  bool use_lighting, int frame);
 
   /// Add the floor vertices for the thing specified.
-  /// @todo Move into a Thing view.
-  void add_thing_floor_vertices(ThingId thing, 
+  /// @todo Move into a Entity view.
+  void add_thing_floor_vertices(EntityId thing, 
                                 sf::VertexArray& vertices, 
                                 bool use_lighting, int frame);
 

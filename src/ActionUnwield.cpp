@@ -4,8 +4,8 @@
 #include "IMessageLog.h"
 #include "IStringDictionary.h"
 #include "Service.h"
-#include "Thing.h"
-#include "ThingId.h"
+#include "Entity.h"
+#include "EntityId.h"
 
 ACTION_SRC_BOILERPLATE(ActionUnwield, "unwield", "unwield")
 
@@ -22,7 +22,7 @@ Action::StateResult ActionUnwield::do_prebegin_work_(AnyMap& params)
   set_object(subject->get_wielding_in(hand));
   auto object = get_object();
 
-  if (object == ThingId::Mu())
+  if (object == EntityId::Mu())
   {
     message = make_string("$you $are not currently wielding anything!");
     Service<IMessageLog>::get().add(message);
@@ -62,7 +62,7 @@ Action::StateResult ActionUnwield::do_begin_work_(AnyMap& params)
   {
     std::string message;
     message = make_string("$you unwield $foo. $you are now wielding nothing in $your $0.", { bodypart_desc });
-    subject->set_wielded(ThingId::Mu(), hand);
+    subject->set_wielded(EntityId::Mu(), hand);
   }
 
   return result;

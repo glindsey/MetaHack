@@ -9,8 +9,8 @@
 // Forward declarations
 class Container;
 class InventorySelection;
-class Thing;
-class ThingId;
+class Entity;
+class EntityId;
 
 class InventoryArea :
   public metagui::Window,
@@ -27,7 +27,7 @@ public:
 protected:
   virtual void render_contents_(sf::RenderTexture& texture, int frame) override;
 
-  void draw_thing(ThingId thing,
+  void draw_thing(EntityId thing,
                   sf::RenderTarget& target,
                   Vec2f target_coords,
                   unsigned int target_size = 0,

@@ -4,8 +4,8 @@
 #include "IMessageLog.h"
 #include "IStringDictionary.h"
 #include "Service.h"
-#include "Thing.h"
-#include "ThingId.h"
+#include "Entity.h"
+#include "EntityId.h"
 
 ACTION_SRC_BOILERPLATE(ActionTakeOut, "takeout", "remove")
 
@@ -17,7 +17,7 @@ Action::StateResult ActionTakeOut::do_prebegin_work_(AnyMap& params)
   auto container = object->get_location();
 
   // Verify that the Action has an object.
-  if (object == ThingId::Mu())
+  if (object == EntityId::Mu())
   {
     return StateResult::Failure();
   }
@@ -98,7 +98,7 @@ Action::StateResult ActionTakeOut::do_begin_work_(AnyMap& params)
       message = YOU + " could not take " + get_object_string_() + " out of " + get_target_string_() + " for some inexplicable reason.";
       Service<IMessageLog>::get().add(message);
 
-      MAJOR_ERROR("Could not move Thing out of Container even though be_object_of returned Success");
+      MAJOR_ERROR("Could not move Entity out of Container even though be_object_of returned Success");
     }
   }
 

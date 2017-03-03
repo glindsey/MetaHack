@@ -4,8 +4,8 @@
 #include "IMessageLog.h"
 #include "IStringDictionary.h"
 #include "Service.h"
-#include "Thing.h"
-#include "ThingId.h"
+#include "Entity.h"
+#include "EntityId.h"
 
 ACTION_SRC_BOILERPLATE(ActionShoot, "shoot", "shoot")
 

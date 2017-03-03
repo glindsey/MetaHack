@@ -6,7 +6,7 @@
 #include "MapTile.h"
 #include "MathUtils.h"
 #include "RNGUtils.h"
-#include "ThingManager.h"
+#include "EntityPool.h"
 
 // Static declarations
 /// @todo These should be passed in as arguments

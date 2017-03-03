@@ -8,8 +8,8 @@
 #include "IStringDictionary.h"
 #include "Map.h"
 #include "Service.h"
-#include "Thing.h"
-#include "ThingId.h"
+#include "Entity.h"
+#include "EntityId.h"
 
 ACTION_SRC_BOILERPLATE(ActionTurn, "turn", "turn")
 
@@ -61,7 +61,7 @@ Action::StateResult ActionTurn::do_begin_work_(AnyMap& params)
   std::string message;
 
   auto subject = get_subject();
-  ThingId location = subject->get_location();
+  EntityId location = subject->get_location();
   MapTile* current_tile = subject->get_maptile();
   Direction new_direction = get_target_direction();
 

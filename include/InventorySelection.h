@@ -7,25 +7,25 @@
 
 // Forward declarations
 class Container;
-class Thing;
-class ThingId;
+class Entity;
+class EntityId;
 
 /// InventorySelection is sort of the controller that binds an InventoryView
-/// to a Thing to be displayed.
+/// to a Entity to be displayed.
 class InventorySelection : public Observable
 {
 public:
   InventorySelection();
-  explicit InventorySelection(ThingId thing);
+  explicit InventorySelection(EntityId thing);
   virtual ~InventorySelection();
 
-  ThingId get_viewed() const;
-  void set_viewed(ThingId thing);
+  EntityId get_viewed() const;
+  void set_viewed(EntityId thing);
 
   void toggle_selection(InventorySlot selection);
   size_t get_selected_slot_count() const;
   std::vector<InventorySlot> const& get_selected_slots();
-  std::vector<ThingId> get_selected_things();
+  std::vector<EntityId> get_selected_things();
   void clear_selected_slots();
 
   unsigned int get_selected_quantity() const;
@@ -35,7 +35,7 @@ public:
   bool inc_selected_quantity();
   bool dec_selected_quantity();
 
-  ThingId get_thing(InventorySlot selection);
+  EntityId get_thing(InventorySlot selection);
 
   /// @todo Not sure if these actually belong here, or somewhere else.
   static char get_character(InventorySlot slot);

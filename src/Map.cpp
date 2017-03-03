@@ -10,7 +10,7 @@
 #include "MapTile.h"
 #include "MathUtils.h"
 #include "ShaderEffect.h"
-#include "ThingManager.h"
+#include "EntityPool.h"
 #include "TileSheet.h"
 
 #include "MapFeature.h"
@@ -146,7 +146,7 @@ void Map::process()
   {
     for (int x = 0; x < m_map_size.x; ++x)
     {
-      ThingId contents = TILE(x, y).get_tile_contents();
+      EntityId contents = TILE(x, y).get_tile_contents();
       contents->process();
     }
   }
@@ -169,13 +169,13 @@ void Map::update_lighting()
   {
     for (int x = 0; x < m_map_size.x; ++x)
     {
-      ThingId contents = TILE(x, y).get_tile_contents();
+      EntityId contents = TILE(x, y).get_tile_contents();
       auto& inventory = contents->get_inventory();
       for (auto iter = inventory.begin();
            iter != inventory.end();
            ++iter)
       {
-        ThingId thing = iter->second;
+        EntityId thing = iter->second;
         thing->light_up_surroundings();
         //add_light(thing);
       }
@@ -185,7 +185,7 @@ void Map::update_lighting()
   notifyObservers(Event::Updated);
 }
 
-void Map::do_recursive_lighting(ThingId source,
+void Map::do_recursive_lighting(EntityId source,
                                 Vec2i const& origin,
                                 sf::Color const& light_color,
                                 int const max_depth_squared,
@@ -324,7 +324,7 @@ void Map::do_recursive_lighting(ThingId source,
   }
 }
 
-void Map::add_light(ThingId source)
+void Map::add_light(EntityId source)
 {
   // Get the map tile the light source is on.
   auto maptile = source->get_maptile();
@@ -526,7 +526,7 @@ int Map::LUA_get_tile_contents(lua_State* L)
   Vec2i coords = Vec2i(static_cast<int>(lua_tointeger(L, 2)), static_cast<int>(lua_tointeger(L, 3)));
 
   auto& map_tile = GAME.get_maps().get(map_id).get_tile(coords);
-  ThingId contents = map_tile.get_tile_contents();
+  EntityId contents = map_tile.get_tile_contents();
 
   lua_pushinteger(L, contents);
 

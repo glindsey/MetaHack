@@ -1,11 +1,11 @@
 #include "stdafx.h"
 
-#include "LuaThingFunctions.h"
+#include "LuaEntityFunctions.h"
 
 #include "ErrorHandler.h"
 #include "GameState.h"
-#include "Thing.h"
-#include "ThingId.h"
+#include "Entity.h"
+#include "EntityId.h"
 
 // === MACROS =================================================================
 #define STRINGIFY(x) #x
@@ -13,12 +13,12 @@
 
 // === FUNCTIONS ==============================================================
 
-namespace LuaThingFunctions
+namespace LuaEntityFunctions
 {
   int thing_create(lua_State* L)
   {
     bool success = false;
-    ThingId new_thing;
+    EntityId new_thing;
     int num_args = lua_gettop(L);
 
     if ((num_args < 2) || (num_args > 3))
@@ -27,10 +27,10 @@ namespace LuaThingFunctions
       return 0;
     }
 
-    ThingId thing = ThingId(lua_tointeger(L, 1));
+    EntityId thing = EntityId(lua_tointeger(L, 1));
     std::string new_thing_type = lua_tostring(L, 2);
 
-    // Check to make sure the Thing is actually creatable.
+    // Check to make sure the Entity is actually creatable.
     /// @todo Might want the ability to disable this check for debugging purposes?
     Metadata& thing_metadata = GAME.get_metadata_collection("thing").get(new_thing_type);
     bool is_creatable = thing_metadata.get_intrinsic<bool>("creatable", false);
@@ -69,7 +69,7 @@ namespace LuaThingFunctions
       return 0;
     }
 
-    ThingId thing = ThingId(lua_tointeger(L, 1));
+    EntityId thing = EntityId(lua_tointeger(L, 1));
     thing->destroy();
 
     return 0;
@@ -85,7 +85,7 @@ namespace LuaThingFunctions
       return 0;
     }
 
-    ThingId player = GAME.get_player();
+    EntityId player = GAME.get_player();
     lua_pushinteger(L, player);
 
     return 1;
@@ -101,7 +101,7 @@ namespace LuaThingFunctions
       return 0;
     }
 
-    ThingId thing = ThingId(lua_tointeger(L, 1));
+    EntityId thing = EntityId(lua_tointeger(L, 1));
 
     MapId map_id = GAME.get_player()->get_map_id();
     auto maptile = thing->get_maptile();
@@ -131,8 +131,8 @@ namespace LuaThingFunctions
       return 0;
     }
 
-    ThingId thing = ThingId(lua_tointeger(L, 1));
-    ThingId location = thing->get_location();
+    EntityId thing = EntityId(lua_tointeger(L, 1));
+    EntityId location = thing->get_location();
     lua_pushinteger(L, static_cast<lua_Integer>(location));
 
     return 1;
@@ -148,7 +148,7 @@ namespace LuaThingFunctions
       return 0;
     }
 
-    ThingId thing = ThingId(lua_tointeger(L, 1));
+    EntityId thing = EntityId(lua_tointeger(L, 1));
     std::string result = thing->get_type();
     lua_pushstring(L, result.c_str());
 
@@ -165,7 +165,7 @@ namespace LuaThingFunctions
       return 0;
     }
 
-    ThingId thing = ThingId(lua_tointeger(L, 1));
+    EntityId thing = EntityId(lua_tointeger(L, 1));
     const char* key = lua_tostring(L, 2);
     bool result = thing->get_base_property<bool>(key);
     lua_pushboolean(L, result);
@@ -183,7 +183,7 @@ namespace LuaThingFunctions
       return 0;
     }
 
-    ThingId thing = ThingId(lua_tointeger(L, 1));
+    EntityId thing = EntityId(lua_tointeger(L, 1));
     const char* key = lua_tostring(L, 2);
     int result = thing->get_base_property<int>(key);
     lua_pushinteger(L, result);
@@ -201,7 +201,7 @@ namespace LuaThingFunctions
       return 0;
     }
 
-    ThingId thing = ThingId(lua_tointeger(L, 1));
+    EntityId thing = EntityId(lua_tointeger(L, 1));
     const char* key = lua_tostring(L, 2);
     std::string result = thing->get_base_property<std::string>(key).c_str();
     lua_pushstring(L, result.c_str());
@@ -219,7 +219,7 @@ namespace LuaThingFunctions
       return 0;
     }
 
-    ThingId thing = ThingId(lua_tointeger(L, 1));
+    EntityId thing = EntityId(lua_tointeger(L, 1));
     const char* key = lua_tostring(L, 2);
     bool result = thing->get_modified_property<bool>(key);
     lua_pushboolean(L, result);
@@ -237,7 +237,7 @@ namespace LuaThingFunctions
       return 0;
     }
 
-    ThingId thing = ThingId(lua_tointeger(L, 1));
+    EntityId thing = EntityId(lua_tointeger(L, 1));
     const char* key = lua_tostring(L, 2);
     int result = thing->get_modified_property<int>(key);
     lua_pushinteger(L, result);
@@ -255,7 +255,7 @@ namespace LuaThingFunctions
       return 0;
     }
 
-    ThingId thing = ThingId(lua_tointeger(L, 1));
+    EntityId thing = EntityId(lua_tointeger(L, 1));
     const char* key = lua_tostring(L, 2);
     std::string result = thing->get_modified_property<std::string>(key).c_str();
     lua_pushstring(L, result.c_str());
@@ -273,7 +273,7 @@ namespace LuaThingFunctions
       return 0;
     }
 
-    ThingId thing = ThingId(lua_tointeger(L, 1));
+    EntityId thing = EntityId(lua_tointeger(L, 1));
     const char* key = lua_tostring(L, 2);
     bool result = thing->get_intrinsic<bool>(key);
     lua_pushboolean(L, result);
@@ -291,7 +291,7 @@ namespace LuaThingFunctions
       return 0;
     }
 
-    ThingId thing = ThingId(lua_tointeger(L, 1));
+    EntityId thing = EntityId(lua_tointeger(L, 1));
     const char* key = lua_tostring(L, 2);
     int result = thing->get_intrinsic<int>(key);
     lua_pushinteger(L, result);
@@ -309,7 +309,7 @@ namespace LuaThingFunctions
       return 0;
     }
 
-    ThingId thing = ThingId(lua_tointeger(L, 1));
+    EntityId thing = EntityId(lua_tointeger(L, 1));
     const char* key = lua_tostring(L, 2);
 
     std::string result = thing->get_intrinsic<std::string>(key).c_str();
@@ -329,7 +329,7 @@ namespace LuaThingFunctions
       return 0;
     }
 
-    ThingId thing = ThingId(lua_tointeger(L, 1));
+    EntityId thing = EntityId(lua_tointeger(L, 1));
     std::string action_type = lua_tostring(L, 2);
 
     if (!Action::exists(action_type))
@@ -339,13 +339,13 @@ namespace LuaThingFunctions
     }
 
     std::unique_ptr<Action> new_action = Action::create(action_type, thing);
-    std::vector<ThingId> objects;
+    std::vector<EntityId> objects;
 
     if (num_args > 2)
     {
       for (int arg_number = 3; arg_number <= num_args; ++arg_number)
       {
-        objects.push_back(ThingId(lua_tointeger(L, arg_number)));
+        objects.push_back(EntityId(lua_tointeger(L, arg_number)));
       }
     }
 
@@ -365,9 +365,9 @@ namespace LuaThingFunctions
       return 0;
     }
 
-    ThingId thing = ThingId(lua_tointeger(L, 1));
+    EntityId thing = EntityId(lua_tointeger(L, 1));
     std::string action_type = lua_tostring(L, 2);
-    ThingId target = ThingId(lua_tointeger(L, 3));
+    EntityId target = EntityId(lua_tointeger(L, 3));
 
     if (!Action::exists(action_type))
     {
@@ -376,13 +376,13 @@ namespace LuaThingFunctions
     }
 
     std::unique_ptr<Action> new_action = Action::create(action_type, thing);
-    std::vector<ThingId> objects;
+    std::vector<EntityId> objects;
 
     if (num_args > 3)
     {
       for (int arg_number = 4; arg_number <= num_args; ++arg_number)
       {
-        objects.push_back(ThingId(lua_tointeger(L, arg_number)));
+        objects.push_back(EntityId(lua_tointeger(L, arg_number)));
       }
     }
 
@@ -403,7 +403,7 @@ namespace LuaThingFunctions
       return 0;
     }
 
-    ThingId thing = ThingId(lua_tointeger(L, 1));
+    EntityId thing = EntityId(lua_tointeger(L, 1));
     std::string action_type = lua_tostring(L, 2);
     int x = static_cast<int>(lua_tointeger(L, 3));
     int y = static_cast<int>(lua_tointeger(L, 4));
@@ -417,13 +417,13 @@ namespace LuaThingFunctions
     }
 
     std::unique_ptr<Action> new_action = Action::create(action_type, thing);
-    std::vector<ThingId> objects;
+    std::vector<EntityId> objects;
 
     if (num_args > 5)
     {
       for (int arg_number = 6; arg_number <= num_args; ++arg_number)
       {
-        objects.push_back(ThingId(lua_tointeger(L, arg_number)));
+        objects.push_back(EntityId(lua_tointeger(L, arg_number)));
       }
     }
 
@@ -444,7 +444,7 @@ namespace LuaThingFunctions
       return 0;
     }
 
-    ThingId thing = ThingId(lua_tointeger(L, 1));
+    EntityId thing = EntityId(lua_tointeger(L, 1));
     const char* key = lua_tostring(L, 2);
     bool value = (lua_toboolean(L, 3) != 0);
     thing->set_base_property<bool>(key, value);
@@ -462,7 +462,7 @@ namespace LuaThingFunctions
       return 0;
     }
 
-    ThingId thing = ThingId(lua_tointeger(L, 1));
+    EntityId thing = EntityId(lua_tointeger(L, 1));
     const char* key = lua_tostring(L, 2);
     int value = static_cast<int>(lua_tointeger(L, 3));
     thing->set_base_property<int>(key, value);
@@ -480,7 +480,7 @@ namespace LuaThingFunctions
       return 0;
     }
 
-    ThingId thing = ThingId(lua_tointeger(L, 1));
+    EntityId thing = EntityId(lua_tointeger(L, 1));
     const char* key = lua_tostring(L, 2);
     const char* value = lua_tostring(L, 3);
     std::string svalue = std::string(value);
@@ -499,8 +499,8 @@ namespace LuaThingFunctions
       return 0;
     }
 
-    ThingId thing_to_move = ThingId(lua_tointeger(L, 1));
-    ThingId thing_destination = ThingId(lua_tointeger(L, 2));
+    EntityId thing_to_move = EntityId(lua_tointeger(L, 1));
+    EntityId thing_destination = EntityId(lua_tointeger(L, 2));
 
     bool result = thing_to_move->move_into(thing_destination);
 
@@ -519,9 +519,9 @@ namespace LuaThingFunctions
       return 0;
     }
 
-    ThingId thing_being_modified = ThingId(lua_tointeger(L, 1));
+    EntityId thing_being_modified = EntityId(lua_tointeger(L, 1));
     std::string key = lua_tostring(L, 2);
-    ThingId thing_doing_the_modifying = ThingId(lua_tointeger(L, 3));
+    EntityId thing_doing_the_modifying = EntityId(lua_tointeger(L, 3));
     unsigned int expiration_ticks = (num_args == 4) ? static_cast<unsigned int>(lua_tointeger(L, 4)) : 0;
 
     bool result = thing_being_modified->add_modifier(key, thing_doing_the_modifying, expiration_ticks);
@@ -541,9 +541,9 @@ namespace LuaThingFunctions
       return 0;
     }
 
-    ThingId thing_being_modified = ThingId(lua_tointeger(L, 1));
+    EntityId thing_being_modified = EntityId(lua_tointeger(L, 1));
     std::string key = lua_tostring(L, 2);
-    ThingId thing_doing_the_modifying = ThingId(lua_tointeger(L, 3));
+    EntityId thing_doing_the_modifying = EntityId(lua_tointeger(L, 3));
 
     size_t result = thing_being_modified->remove_modifier(key, thing_doing_the_modifying);
 
@@ -579,4 +579,4 @@ namespace LuaThingFunctions
     LUA_REGISTER(thing_add_property_modifier);
     LUA_REGISTER(thing_remove_property_modifier);
   }
-} // end namespace LuaThingFunctions
+} // end namespace LuaEntityFunctions

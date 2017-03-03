@@ -1,8 +1,8 @@
 -- Definition of special functions for the LightSource object type.
 
-require "resources/things/Thing"
+require "resources/things/Entity"
 
-LightSource = inheritsFrom(Thing, "LightSource")
+LightSource = inheritsFrom(Entity, "LightSource")
 LightSource.intrinsics.name = "[LightSource]"
 LightSource.intrinsics.plural = "[LightSources]"
 

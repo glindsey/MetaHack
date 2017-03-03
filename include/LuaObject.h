@@ -7,7 +7,7 @@
 
 #include "Direction.h"
 #include "ErrorHandler.h"
-#include "ThingId.h"
+#include "EntityId.h"
 
 /// Forward declarations
 enum class ActionResult;
@@ -178,7 +178,7 @@ public:
     return 1;
   }
 
-  template <> int push_value(ThingId value)
+  template <> int push_value(EntityId value)
   {
     lua_pushinteger(L_, static_cast<lua_Integer>(value));
     return 1;
@@ -268,11 +268,11 @@ public:
     return return_value;
   }
 
-  template <> ThingId pop_value()
+  template <> EntityId pop_value()
   {
     lua_Integer return_value = lua_tointeger(L_, -1);
     lua_pop(L_, 1);
-    return ThingId(return_value);
+    return EntityId(return_value);
   }
 
   template <> float pop_value()
@@ -356,7 +356,7 @@ public:
   template<> unsigned int stack_slots<unsigned int>() { return 1; }
   template<> unsigned int stack_slots<int>() { return 1; }
   template<> unsigned int stack_slots<int64_t>() { return 1; }
-  template<> unsigned int stack_slots<ThingId>() { return 1; }
+  template<> unsigned int stack_slots<EntityId>() { return 1; }
   template<> unsigned int stack_slots<float>() { return 1; }
   template<> unsigned int stack_slots<double>() { return 1; }
   template<> unsigned int stack_slots<bool>() { return 1; }
@@ -374,7 +374,7 @@ public:
   /// there.
   ///
   /// @param function_name  Name of the function to call
-  /// @param caller         ThingId to the thing calling the function
+  /// @param caller         EntityId to the thing calling the function
   /// @param args           Vector of arguments to pass to the function
   /// @param default_result The default result if function is not found
   ///                       after traversing the entire parent tree.
@@ -384,7 +384,7 @@ public:
   /// @return The result of the call.
   template < typename ResultType, typename ArgType >
   ResultType call_thing_function(std::string function_name,
-                                 ThingId caller,
+                                 EntityId caller,
                                  std::vector<ArgType> const& args,
                                  ResultType default_result = ResultType())
   {
@@ -460,7 +460,7 @@ public:
     return return_value;
   }
 
-  /// Get a Thing type intrinsic.
+  /// Get a Entity type intrinsic.
   /// @param type           Name of type to get intrinsic of.
   /// @param name           Name of intrinsic to get.
   /// @param default_value  Default value if intrinsic does not exist
@@ -528,7 +528,7 @@ public:
     return return_value;
   }
 
-  /// Set a Thing type intrinsic.
+  /// Set a Entity type intrinsic.
   /// @param type   Name of type to set intrinsic of.
   /// @param name   Name of intrinsic to set.
   /// @param value  Value to set intrinsic to.

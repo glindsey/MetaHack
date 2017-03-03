@@ -4,7 +4,7 @@
 
 #include "App.h"
 #include "MapTile.h"
-#include "ThingManager.h"
+#include "EntityPool.h"
 
 // Static declarations
 /// @todo These should be passed in as arguments

@@ -1,8 +1,8 @@
 -- Definition of special functions for the Container object type.
 
-require "resources/things/Thing"
+require "resources/things/Entity"
 
-Container = inheritsFrom(Thing, "Container")
+Container = inheritsFrom(Entity, "Container")
 Container.intrinsics.name = "[Container]"
 Container.intrinsics.plural = "[Containers]"
 

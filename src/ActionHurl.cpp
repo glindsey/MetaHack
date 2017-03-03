@@ -3,8 +3,8 @@
 #include "ActionHurl.h"
 #include "IMessageLog.h"
 #include "Service.h"
-#include "Thing.h"
-#include "ThingId.h"
+#include "Entity.h"
+#include "EntityId.h"
 
 ACTION_SRC_BOILERPLATE(ActionHurl, "hurl", "throw")
 
@@ -79,7 +79,7 @@ Action::StateResult ActionHurl::do_begin_work_(AnyMap& params)
   auto subject = get_subject();
   auto object = get_object();
   auto direction = get_target_direction();
-  ThingId new_location = subject->get_location();
+  EntityId new_location = subject->get_location();
 
   if (object->be_object_of(*this, subject, direction) == ActionResult::Success)
   {
@@ -87,7 +87,7 @@ Action::StateResult ActionHurl::do_begin_work_(AnyMap& params)
     {
       print_message_do_();
 
-      /// @todo When throwing, set Thing's direction and velocity
+      /// @todo When throwing, set Entity's direction and velocity
       /// @todo Figure out action time.
       result = StateResult::Success();
     }
@@ -96,7 +96,7 @@ Action::StateResult ActionHurl::do_begin_work_(AnyMap& params)
       message = YOU + " could not throw " + THE_FOO + " for some inexplicable reason.";
       Service<IMessageLog>::get().add(message);
 
-      CLOG(WARNING, "Action") << "Could not throw Thing " << object <<
+      CLOG(WARNING, "Action") << "Could not throw Entity " << object <<
         " even though be_object_of returned Success";
     }
   }

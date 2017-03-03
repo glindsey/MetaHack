@@ -8,14 +8,14 @@
 #include "Direction.h"
 #include "GameState.h"
 #include "MessageLog.h"
-#include "ThingId.h"
+#include "EntityId.h"
 
 // === FORWARD DECLARATIONS ===================================================
 class Action;
-class Thing;
+class Entity;
 
 // === USING DECLARATIONS =====================================================
-using ActionCreator = std::function<std::unique_ptr<Action>(ThingId)>;
+using ActionCreator = std::function<std::unique_ptr<Action>(EntityId)>;
 using ActionMap = std::unordered_map<std::string, ActionCreator>;
 
 // === MESSAGE HELPER MACROS ==================================================
@@ -77,7 +77,7 @@ using ActionMap = std::unordered_map<std::string, ActionCreator>;
   {                                                                           \
     Action::register_action_as(type, &T::create_);                            \
   }                                                                           \
-  T::T(ThingId subject) : Action(subject) {}                                  \
+  T::T(EntityId subject) : Action(subject) {}                                  \
   T::~T() {}                                                                  \
   std::string const T::get_type() const                                         \
   {                                                                           \
@@ -95,7 +95,7 @@ using ActionMap = std::unordered_map<std::string, ActionCreator>;
   private:                                                                    \
     T();                                                                      \
   public:                                                                     \
-    explicit T(ThingId subject);                                             \
+    explicit T(EntityId subject);                                             \
     virtual ~T();                                                             \
     virtual std::string const get_type() const override;                        \
     virtual std::string const get_verb() const override;                    \
@@ -140,28 +140,28 @@ public:
     Processed     ///< The action is totally done and can be popped off the queue.
   };
 
-  explicit Action(ThingId subject);
+  explicit Action(EntityId subject);
   virtual ~Action();
 
-  ThingId get_subject() const;
+  EntityId get_subject() const;
 
-  void set_object(ThingId object);
-  void set_objects(std::vector<ThingId> objects);
+  void set_object(EntityId object);
+  void set_objects(std::vector<EntityId> objects);
 
-  std::vector<ThingId> const& get_objects() const;
-  ThingId get_object() const;
-  ThingId get_second_object() const;
+  std::vector<EntityId> const& get_objects() const;
+  EntityId get_object() const;
+  EntityId get_second_object() const;
 
-  bool process(ThingId actor, AnyMap params);
+  bool process(EntityId actor, AnyMap params);
 
   void set_state(Action::State state);
   Action::State get_state();
 
-  void set_target(ThingId thing) const;
+  void set_target(EntityId thing) const;
   void set_target(Direction direction) const;
   void set_quantity(unsigned int quantity) const;
 
-  ThingId get_target_thing() const;
+  EntityId get_target_thing() const;
   Direction get_target_direction() const;
   unsigned int get_quantity() const;
 
@@ -265,7 +265,7 @@ public:
     ;
 
   /// A static method that registers an action subclass in a database.
-  /// Required so that Lua scripts can instantiate Actions on Things.
+  /// Required so that Lua scripts can instantiate Actions on Entities.
   static void register_action_as(std::string key, ActionCreator creator);
 
   /// A static method that checks if a key exists.
@@ -273,15 +273,15 @@ public:
 
   /// A static method that returns an Action associated with a key.
   /// If the requested key does not exist, throws an exception.
-  static std::unique_ptr<Action> create(std::string key, ThingId subject);
+  static std::unique_ptr<Action> create(std::string key, EntityId subject);
 
   /// A method for composing a string from a pattern for an action.
   std::string make_string(std::string pattern, std::vector<std::string> optional_strings) const;
   std::string make_string(std::string pattern) const;
 
   /// A static method for composing strings from patterns.
-  static std::string make_string(ThingId subject, ThingId object, std::string pattern, std::vector<std::string> optional_strings);
-  static std::string make_string(ThingId subject, ThingId object, std::string pattern);
+  static std::string make_string(EntityId subject, EntityId object, std::string pattern, std::vector<std::string> optional_strings);
+  static std::string make_string(EntityId subject, EntityId object, std::string pattern);
  
 
   /// Get a const reference to the action map.

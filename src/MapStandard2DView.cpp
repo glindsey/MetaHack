@@ -23,7 +23,7 @@ MapStandard2DView::MapStandard2DView(Map& map)
 
 }
 
-void MapStandard2DView::update_tiles(ThingId viewer)
+void MapStandard2DView::update_tiles(EntityId viewer)
 {
   auto& map = get_map();
   auto& map_size = map.get_size();
@@ -43,7 +43,7 @@ void MapStandard2DView::update_tiles(ThingId viewer)
   }
 }
 
-void MapStandard2DView::update_things(ThingId viewer, int frame)
+void MapStandard2DView::update_things(EntityId viewer, int frame)
 {
   auto& map = get_map();
   auto& map_size = map.get_size();

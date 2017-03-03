@@ -8,8 +8,8 @@
 #include "IStringDictionary.h"
 #include "Map.h"
 #include "Service.h"
-#include "Thing.h"
-#include "ThingId.h"
+#include "Entity.h"
+#include "EntityId.h"
 
 ACTION_SRC_BOILERPLATE(ActionMove, "move", "move")
 
@@ -68,7 +68,7 @@ Action::StateResult ActionMove::do_begin_work_(AnyMap& params)
   std::string message;
 
   auto subject = get_subject();
-  ThingId location = subject->get_location();
+  EntityId location = subject->get_location();
   MapTile* current_tile = subject->get_maptile();
   Direction new_direction = get_target_direction();
 
@@ -104,11 +104,11 @@ Action::StateResult ActionMove::do_begin_work_(AnyMap& params)
     else
     {
       auto& new_tile = current_map.get_tile({ x_new, y_new });
-      ThingId new_floor = new_tile.get_tile_contents();
+      EntityId new_floor = new_tile.get_tile_contents();
 
       // See if the tile to move into contains another creature.
-      ThingId creature = new_floor->get_inventory().get_entity();
-      if (creature != ThingId::Mu())
+      EntityId creature = new_floor->get_inventory().get_entity();
+      if (creature != EntityId::Mu())
       {
         /// @todo Setting choosing whether auto-attack is on.
         /// @todo Only attack hostiles.

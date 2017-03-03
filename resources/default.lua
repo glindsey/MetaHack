@@ -1,4 +1,4 @@
--- Default Lua script read when ThingManager is first initialized.
+-- Default Lua script read when EntityPool is first initialized.
 
 require "resources/deepcopy"
 
@@ -68,7 +68,7 @@ function inheritsFrom(baseClass, className)
     new_class.typeName = className
 
     -- new_class:create() is disabled because we don't actually create
-    -- instances of these classes; instead they operate on C++ Thing instances.
+    -- instances of these classes; instead they operate on C++ Entity instances.
         
     --local class_mt = { __index = new_class }
     --function new_class:create()
@@ -125,7 +125,7 @@ function inheritsFrom(baseClass, className)
     end
 
     
-    -- @todo Register class name with the ThingManager
+    -- @todo Register class name with the EntityPool
     --thingManager_register(className)
     new_class.intrinsics.type = className  
     return new_class

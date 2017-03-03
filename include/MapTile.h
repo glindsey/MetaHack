@@ -9,8 +9,8 @@
 #include "LightInfluence.h"
 #include "MapFactory.h"
 #include "Observable.h"
-#include "Thing.h"
-#include "ThingId.h"
+#include "Entity.h"
+#include "EntityId.h"
 #include "TileSheet.h"
 
 // Forward declarations
@@ -31,7 +31,7 @@ public:
   virtual ~MapTile();
 
   /// Get the tile's contents object.
-  ThingId get_tile_contents() const;
+  EntityId get_tile_contents() const;
 
   /// Return this tile's description.
   virtual std::string get_display_name() const override final;
@@ -50,7 +50,7 @@ public:
   bool is_empty_space() const;
 
   /// Returns whether a tile can be traversed by a certain DynamicEntity.
-  bool can_be_traversed_by(ThingId thing) const;
+  bool can_be_traversed_by(EntityId thing) const;
 
   /// Set the current tile's location.
   void set_coords(int x, int y);
@@ -69,13 +69,13 @@ public:
   /// Receive light from the specified LightSource.
   /// Gets the Map this tile belongs to and does a recursive
   /// raycasting algorithm on it.
-  virtual void be_lit_by(ThingId light);
+  virtual void be_lit_by(EntityId light);
 
   /// Clear light influences.
   void clear_light_influences();
 
   /// Add a light influence to the tile.
-  void add_light_influence(ThingId source,
+  void add_light_influence(EntityId source,
                            LightInfluence influence);
 
   /// Get the light shining on a tile.
@@ -121,8 +121,8 @@ private:
   /// modified after MapTile construction.
   Metadata* m_p_metadata;
 
-  /// Reference to the Thing that represents this tile's contents.
-  ThingId m_tile_contents;
+  /// Reference to the Entity that represents this tile's contents.
+  EntityId m_tile_contents;
 
   /// Tile's light level.
   /// Levels for the various color channels are interpreted as such:
@@ -142,7 +142,7 @@ private:
   /// 0 <= value <= 128: result = (original * (value / 128))
   /// 128 < value <= 255: result = max(original + (value - 128), 255)
   /// The alpha channel is ignored.
-  std::map<ThingId, LightInfluence> m_lights;
+  std::map<EntityId, LightInfluence> m_lights;
 };
 
 #endif // MAPTILE_H

@@ -26,7 +26,7 @@ Metadata::Metadata(MetadataCollection& collection, std::string type)
 
   std::string qualified_name = category + "!" + type;
 
-  /// Try to load and run this Thing's Lua script.
+  /// Try to load and run this Entity's Lua script.
   if (fs::exists(luafile_path))
   {
     CLOG(INFO, "Metadata") << "Loading Lua script for " <<

@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include "Thing.h"
+#include "Entity.h"
 
 #include "App.h"
 #include "Direction.h"
@@ -18,19 +18,19 @@
 #include "Metadata.h"
 #include "Ordinal.h"
 #include "Service.h"
-#include "ThingManager.h"
+#include "EntityPool.h"
 #include "TileSheet.h"
 
 // Static member initialization.
-sf::Color const Thing::wall_outline_color_ = sf::Color(255, 255, 255, 64);
+sf::Color const Entity::wall_outline_color_ = sf::Color(255, 255, 255, 64);
 
-Thing::Thing(GameState& game, Metadata& metadata, ThingId ref)
+Entity::Entity(GameState& game, Metadata& metadata, EntityId ref)
   :
   m_game{ game },
   m_metadata{ metadata },
   m_properties{},
   m_ref{ ref },
-  m_location{ ThingId::Mu() },
+  m_location{ EntityId::Mu() },
   m_map_tile{ nullptr },
   m_inventory{ Inventory() },
   m_gender{ Gender::None },
@@ -43,13 +43,13 @@ Thing::Thing(GameState& game, Metadata& metadata, ThingId ref)
   initialize();
 }
 
-Thing::Thing(GameState& game, MapTile* map_tile, Metadata& metadata, ThingId ref)
+Entity::Entity(GameState& game, MapTile* map_tile, Metadata& metadata, EntityId ref)
   :
   m_game{ game },
   m_metadata{ metadata },
   m_properties{},
   m_ref{ ref },
-  m_location{ ThingId::Mu() },
+  m_location{ EntityId::Mu() },
   m_map_tile{ map_tile },
   m_inventory{ Inventory() },
   m_gender{ Gender::None },
@@ -62,7 +62,7 @@ Thing::Thing(GameState& game, MapTile* map_tile, Metadata& metadata, ThingId ref
   initialize();
 }
 
-Thing::Thing(Thing const& original, ThingId ref)
+Entity::Entity(Entity const& original, EntityId ref)
   :
   m_game{ original.m_game },
   m_metadata{ original.m_metadata },
@@ -81,9 +81,9 @@ Thing::Thing(Thing const& original, ThingId ref)
   initialize();
 }
 
-void Thing::initialize()
+void Entity::initialize()
 {
-  SET_UP_LOGGER("Thing", true);
+  SET_UP_LOGGER("Entity", true);
 
   /// Get our maximum HP. (The Lua script will automatically pick it from a range.)
   int max_hp = m_metadata.get_intrinsic<int>("maxhp");
@@ -95,30 +95,30 @@ void Thing::initialize()
   notifyObservers(Event::Updated);
 }
 
-Thing::~Thing()
+Entity::~Entity()
 {
 }
 
-void Thing::queue_action(std::unique_ptr<Action> pAction)
+void Entity::queue_action(std::unique_ptr<Action> pAction)
 {
   m_pending_actions.push_back(std::move(pAction));
 }
 
-bool Thing::action_is_pending() const
+bool Entity::action_is_pending() const
 {
   return !(m_pending_actions.empty());
 }
 
-bool Thing::action_is_in_progress()
+bool Entity::action_is_in_progress()
 {
   return (get_base_property<int>("counter_busy") > 0);
 }
 
-ThingId Thing::get_wielding_in(unsigned int& hand)
+EntityId Entity::get_wielding_in(unsigned int& hand)
 {
   if (m_wielded_items.count(hand) == 0)
   {
-    return ThingId::Mu();
+    return EntityId::Mu();
   }
   else
   {
@@ -126,15 +126,15 @@ ThingId Thing::get_wielding_in(unsigned int& hand)
   }
 }
 
-bool Thing::is_wielding(ThingId thing)
+bool Entity::is_wielding(EntityId thing)
 {
   unsigned int dummy;
   return is_wielding(thing, dummy);
 }
 
-bool Thing::is_wielding(ThingId thing, unsigned int& hand)
+bool Entity::is_wielding(EntityId thing, unsigned int& hand)
 {
-  if (thing == ThingId::Mu())
+  if (thing == EntityId::Mu())
   {
     return false;
   }
@@ -155,15 +155,15 @@ bool Thing::is_wielding(ThingId thing, unsigned int& hand)
   }
 }
 
-bool Thing::has_equipped(ThingId thing)
+bool Entity::has_equipped(EntityId thing)
 {
   WearLocation dummy;
   return has_equipped(thing, dummy);
 }
 
-bool Thing::has_equipped(ThingId thing, WearLocation& location)
+bool Entity::has_equipped(EntityId thing, WearLocation& location)
 {
-  if (thing == ThingId::Mu())
+  if (thing == EntityId::Mu())
   {
     return false;
   }
@@ -184,7 +184,7 @@ bool Thing::has_equipped(ThingId thing, WearLocation& location)
   }
 }
 
-bool Thing::can_reach(ThingId thing)
+bool Entity::can_reach(EntityId thing)
 {
   // Check if it is our location.
   auto our_location = get_location();
@@ -209,7 +209,7 @@ bool Thing::can_reach(ThingId thing)
   return false;
 }
 
-bool Thing::is_adjacent_to(ThingId thing)
+bool Entity::is_adjacent_to(EntityId thing)
 {
   // Get the coordinates we are at.
   MapTile* our_maptile = get_maptile();
@@ -225,7 +225,7 @@ bool Thing::is_adjacent_to(ThingId thing)
   return adjacent(our_coords, thing_coords);
 }
 
-bool Thing::do_die()
+bool Entity::do_die()
 {
   /// @todo Handle stuff like auto-activating life-saving items here.
   /// @todo Pass in the cause of death somehow.
@@ -274,7 +274,7 @@ bool Thing::do_die()
   }
 }
 
-ActionResult Thing::can_deequip(ThingId thing, unsigned int& action_time)
+ActionResult Entity::can_deequip(EntityId thing, unsigned int& action_time)
 {
   action_time = 1;
 
@@ -290,11 +290,11 @@ ActionResult Thing::can_deequip(ThingId thing, unsigned int& action_time)
     return ActionResult::FailureItemNotEquipped;
   }
 
-  /// @todo Finish Thing::can_deequip code
+  /// @todo Finish Entity::can_deequip code
   return ActionResult::Success;
 }
 
-bool Thing::do_deequip(ThingId thing, unsigned int& action_time)
+bool Entity::do_deequip(EntityId thing, unsigned int& action_time)
 {
   std::string message;
   ActionResult deequip_try = this->can_deequip(thing, action_time);
@@ -315,7 +315,7 @@ bool Thing::do_deequip(ThingId thing, unsigned int& action_time)
 
       if (thing->perform_action_deequipped_by(m_ref, location))
       {
-        set_worn(ThingId::Mu(), location);
+        set_worn(EntityId::Mu(), location);
 
         std::string wear_desc = get_bodypart_description(location.part, location.number);
         message = this->get_you_or_identifying_string() + " " +
@@ -337,14 +337,14 @@ bool Thing::do_deequip(ThingId thing, unsigned int& action_time)
     break;
 
     default:
-      CLOG(WARNING, "Thing") << "Unknown ActionResult " << deequip_try;
+      CLOG(WARNING, "Entity") << "Unknown ActionResult " << deequip_try;
       break;
   }
 
   return false;
 }
 
-ActionResult Thing::can_equip(ThingId thing, unsigned int& action_time)
+ActionResult Entity::can_equip(EntityId thing, unsigned int& action_time)
 {
   action_time = 1;
 
@@ -357,7 +357,7 @@ ActionResult Thing::can_equip(ThingId thing, unsigned int& action_time)
   // Check that it's in our inventory.
   if (!this->get_inventory().contains(thing))
   {
-    return ActionResult::FailureThingOutOfReach;
+    return ActionResult::FailureEntityOutOfReach;
   }
 
   BodyPart part = thing->is_equippable_on();
@@ -371,11 +371,11 @@ ActionResult Thing::can_equip(ThingId thing, unsigned int& action_time)
     /// @todo Check that entity has free body part(s) to equip item on.
   }
 
-  /// @todo Finish Thing::can_equip code
+  /// @todo Finish Entity::can_equip code
   return ActionResult::Success;
 }
 
-bool Thing::do_equip(ThingId thing, unsigned int& action_time)
+bool Entity::do_equip(EntityId thing, unsigned int& action_time)
 {
   std::string message;
 
@@ -415,12 +415,12 @@ bool Thing::do_equip(ThingId thing, unsigned int& action_time)
           this->choose_verb("try", "tries") +
           " to equip " + this->get_reflexive_pronoun() +
           ", which seriously shouldn't happen.";
-        CLOG(WARNING, "Thing") << "NPC tried to equip self!?";
+        CLOG(WARNING, "Entity") << "NPC tried to equip self!?";
       }
       Service<IMessageLog>::get().add(message);
       break;
 
-    case ActionResult::FailureThingOutOfReach:
+    case ActionResult::FailureEntityOutOfReach:
     {
       message = this->get_you_or_identifying_string() + " " +
         this->choose_verb("try", "tries") +
@@ -445,16 +445,16 @@ bool Thing::do_equip(ThingId thing, unsigned int& action_time)
     break;
 
     default:
-      CLOG(WARNING, "Thing") << "Unknown ActionResult " << equip_try;
+      CLOG(WARNING, "Entity") << "Unknown ActionResult " << equip_try;
       break;
   }
 
   return false;
 }
 
-void Thing::set_wielded(ThingId thing, unsigned int hand)
+void Entity::set_wielded(EntityId thing, unsigned int hand)
 {
-  if (thing == ThingId::Mu())
+  if (thing == EntityId::Mu())
   {
     m_wielded_items.erase(hand);
   }
@@ -464,9 +464,9 @@ void Thing::set_wielded(ThingId thing, unsigned int hand)
   }
 }
 
-void Thing::set_worn(ThingId thing, WearLocation location)
+void Entity::set_worn(EntityId thing, WearLocation location)
 {
-  if (thing == ThingId::Mu())
+  if (thing == EntityId::Mu())
   {
     m_equipped_items.erase(location);
   }
@@ -476,27 +476,27 @@ void Thing::set_worn(ThingId thing, WearLocation location)
   }
 }
 
-bool Thing::can_currently_see()
+bool Entity::can_currently_see()
 {
   return get_modified_property<bool>("can_see", false);
 }
 
-bool Thing::can_currently_move()
+bool Entity::can_currently_move()
 {
   return get_modified_property<bool>("can_move", false);
 }
 
-void Thing::set_gender(Gender gender)
+void Entity::set_gender(Gender gender)
 {
   m_gender = gender;
 }
 
-Gender Thing::get_gender() const
+Gender Entity::get_gender() const
 {
   return m_gender;
 }
 
-Gender Thing::get_gender_or_you() const
+Gender Entity::get_gender_or_you() const
 {
   if (is_player())
   {
@@ -509,7 +509,7 @@ Gender Thing::get_gender_or_you() const
 }
 
 /// Get the number of a particular body part the DynamicEntity has.
-unsigned int Thing::get_bodypart_number(BodyPart part) const
+unsigned int Entity::get_bodypart_number(BodyPart part) const
 {
   switch (part)
   {
@@ -549,7 +549,7 @@ unsigned int Thing::get_bodypart_number(BodyPart part) const
 }
 
 /// Get the appropriate body part name for the DynamicEntity.
-std::string Thing::get_bodypart_name(BodyPart part) const
+std::string Entity::get_bodypart_name(BodyPart part) const
 {
   switch (part)
   {
@@ -589,7 +589,7 @@ std::string Thing::get_bodypart_name(BodyPart part) const
 }
 
 /// Get the appropriate body part plural for the DynamicEntity.
-std::string Thing::get_bodypart_plural(BodyPart part) const
+std::string Entity::get_bodypart_plural(BodyPart part) const
 {
   switch (part)
   {
@@ -628,55 +628,55 @@ std::string Thing::get_bodypart_plural(BodyPart part) const
   }
 }
 
-bool Thing::is_player() const
+bool Entity::is_player() const
 {
   return (GAME.get_player() == m_ref);
 }
 
-std::string const& Thing::get_type() const
+std::string const& Entity::get_type() const
 {
   return m_metadata.get_type();
 }
 
-std::string const& Thing::get_parent_type() const
+std::string const& Entity::get_parent_type() const
 {
   return m_metadata.get_intrinsic<std::string>("parent");
 }
 
-bool Thing::is_subtype_of(std::string that_type) const
+bool Entity::is_subtype_of(std::string that_type) const
 {
   std::string this_type = get_type();
   return GAME.get_things().first_is_subtype_of_second(this_type, that_type);
 }
 
-bool Thing::add_modifier(std::string key, ThingId id, unsigned int expiration_ticks)
+bool Entity::add_modifier(std::string key, EntityId id, unsigned int expiration_ticks)
 {
   return m_properties.add_modifier(key, id, expiration_ticks);
 }
 
-size_t Thing::remove_modifier(std::string key, ThingId id)
+size_t Entity::remove_modifier(std::string key, EntityId id)
 {
   return m_properties.remove_modifier(key, id);
 }
 
-unsigned int Thing::get_quantity() const
+unsigned int Entity::get_quantity() const
 {
   return get_base_property<unsigned int>("quantity", 1);
 }
 
-void Thing::set_quantity(unsigned int quantity)
+void Entity::set_quantity(unsigned int quantity)
 {
   set_base_property<unsigned int>("quantity", quantity);
 }
 
-ThingId Thing::get_id() const
+EntityId Entity::get_id() const
 {
   return m_ref;
 }
 
-ThingId Thing::get_root_location() const
+EntityId Entity::get_root_location() const
 {
-  if (m_location == ThingId::Mu())
+  if (m_location == EntityId::Mu())
   {
     return m_ref;
   }
@@ -687,12 +687,12 @@ ThingId Thing::get_root_location() const
   }
 }
 
-ThingId Thing::get_location() const
+EntityId Entity::get_location() const
 {
   return m_location;
 }
 
-bool Thing::can_see(ThingId thing)
+bool Entity::can_see(EntityId thing)
 {
   // Make sure we are able to see at all.
   if (!can_currently_see())
@@ -722,7 +722,7 @@ bool Thing::can_see(ThingId thing)
   return can_see(thing_coords);
 }
 
-bool Thing::can_see(Vec2i coords)
+bool Entity::can_see(Vec2i coords)
 {
   // Make sure we are able to see at all.
   if (!can_currently_see())
@@ -766,15 +766,15 @@ bool Thing::can_see(Vec2i coords)
   return m_tiles_currently_seen[game_map.get_index(coords)];
 }
 
-void Thing::find_seen_tiles()
+void Entity::find_seen_tiles()
 {
   //sf::Clock elapsed;
 
   //elapsed.restart();
 
   // Are we on a map?  Bail out if we aren't.
-  ThingId location = get_location();
-  if (location == ThingId::Mu())
+  EntityId location = get_location();
+  if (location == EntityId::Mu())
   {
     return;
   }
@@ -801,7 +801,7 @@ void Thing::find_seen_tiles()
   }
 }
 
-MapMemoryChunk const& Thing::get_memory_at(Vec2i coords) const
+MapMemoryChunk const& Entity::get_memory_at(Vec2i coords) const
 {
   static MapMemoryChunk null_memory_chunk{ "???", GAME.get_game_clock() };
 
@@ -814,10 +814,10 @@ MapMemoryChunk const& Thing::get_memory_at(Vec2i coords) const
   return m_map_memory[game_map.get_index(coords)];
 }
 
-bool Thing::move_into(ThingId new_location)
+bool Entity::move_into(EntityId new_location)
 {
   MapId old_map_id = this->get_map_id();
-  ThingId old_location = m_location;
+  EntityId old_location = m_location;
 
   if (new_location == old_location)
   {
@@ -833,7 +833,7 @@ bool Thing::move_into(ThingId new_location)
       if (new_location->get_inventory().add(m_ref))
       {
         // Try to lock our old location.
-        if (m_location != ThingId::Mu())
+        if (m_location != EntityId::Mu())
         {
           m_location->get_inventory().remove(m_ref);
         }
@@ -872,34 +872,34 @@ bool Thing::move_into(ThingId new_location)
   return false;
 }
 
-Inventory& Thing::get_inventory()
+Inventory& Entity::get_inventory()
 {
   return m_inventory;
 }
 
-bool Thing::is_inside_another_thing() const
+bool Entity::is_inside_another_thing() const
 {
-  ThingId location = m_location;
-  if (location == ThingId::Mu())
+  EntityId location = m_location;
+  if (location == EntityId::Mu())
   {
-    // Thing is a part of the MapTile such as the floor.
+    // Entity is a part of the MapTile such as the floor.
     return false;
   }
 
-  ThingId location2 = location->get_location();
-  if (location2 == ThingId::Mu())
+  EntityId location2 = location->get_location();
+  if (location2 == EntityId::Mu())
   {
-    // Thing is directly on the floor.
+    // Entity is directly on the floor.
     return false;
   }
   return true;
 }
 
-MapTile* Thing::get_maptile() const
+MapTile* Entity::get_maptile() const
 {
-  ThingId location = m_location;
+  EntityId location = m_location;
 
-  if (location == ThingId::Mu())
+  if (location == EntityId::Mu())
   {
     return _get_maptile();
   }
@@ -909,11 +909,11 @@ MapTile* Thing::get_maptile() const
   }
 }
 
-MapId Thing::get_map_id() const
+MapId Entity::get_map_id() const
 {
-  ThingId location = m_location;
+  EntityId location = m_location;
 
-  if (location == ThingId::Mu())
+  if (location == EntityId::Mu())
   {
     MapTile* maptile = _get_maptile();
     if (maptile != nullptr)
@@ -931,7 +931,7 @@ MapId Thing::get_map_id() const
   }
 }
 
-std::string Thing::get_display_adjectives() const
+std::string Entity::get_display_adjectives() const
 {
   std::string adjectives;
 
@@ -944,27 +944,27 @@ std::string Thing::get_display_adjectives() const
   return adjectives;
 }
 
-std::string Thing::get_display_name() const
+std::string Entity::get_display_name() const
 {
   return m_metadata.get_intrinsic<std::string>("name");
 }
 
-std::string Thing::get_display_plural() const
+std::string Entity::get_display_plural() const
 {
   return m_metadata.get_intrinsic<std::string>("plural");
 }
 
-std::string Thing::get_proper_name() const
+std::string Entity::get_proper_name() const
 {
   return get_modified_property<std::string>("proper_name");
 }
 
-void Thing::set_proper_name(std::string name)
+void Entity::set_proper_name(std::string name)
 {
   set_base_property<std::string>("proper_name", name);
 }
 
-std::string Thing::get_you_or_identifying_string(ArticleChoice articles) const
+std::string Entity::get_you_or_identifying_string(ArticleChoice articles) const
 {
   std::string str;
 
@@ -987,7 +987,7 @@ std::string Thing::get_you_or_identifying_string(ArticleChoice articles) const
   return str;
 }
 
-std::string Thing::get_self_or_identifying_string(ThingId other, ArticleChoice articles) const
+std::string Entity::get_self_or_identifying_string(EntityId other, ArticleChoice articles) const
 {
   if (other == get_id())
   {
@@ -997,12 +997,12 @@ std::string Thing::get_self_or_identifying_string(ThingId other, ArticleChoice a
   return get_identifying_string(articles);
 }
 
-std::string Thing::get_identifying_string(ArticleChoice articles,
+std::string Entity::get_identifying_string(ArticleChoice articles,
                                             UsePossessives possessives) const
 {
   auto& config = Service<IConfigSettings>::get();
 
-  ThingId location = this->get_location();
+  EntityId location = this->get_location();
   unsigned int quantity = this->get_quantity();
 
   std::string name;
@@ -1073,12 +1073,12 @@ std::string Thing::get_identifying_string(ArticleChoice articles,
   return name;
 }
 
-bool Thing::is_third_person()
+bool Entity::is_third_person()
 {
   return (GAME.get_player() == m_ref) || (get_base_property<unsigned int>("quantity") > 1);
 }
 
-std::string const& Thing::choose_verb(std::string const& verb12,
+std::string const& Entity::choose_verb(std::string const& verb12,
                                         std::string const& verb3)
 {
   if ((GAME.get_player() == m_ref) || (get_base_property<unsigned int>("quantity") > 1))
@@ -1091,37 +1091,37 @@ std::string const& Thing::choose_verb(std::string const& verb12,
   }
 }
 
-int Thing::get_mass()
+int Entity::get_mass()
 {
   return get_modified_property<int>("physical_mass") * get_base_property<unsigned int>("quantity");
 }
 
-std::string const& Thing::get_subject_pronoun() const
+std::string const& Entity::get_subject_pronoun() const
 {
   return getSubjPro(get_gender_or_you());
 }
 
-std::string const& Thing::get_object_pronoun() const
+std::string const& Entity::get_object_pronoun() const
 {
   return getObjPro(get_gender_or_you());
 }
 
-std::string const& Thing::get_reflexive_pronoun() const
+std::string const& Entity::get_reflexive_pronoun() const
 {
   return getRefPro(get_gender_or_you());
 }
 
-std::string const& Thing::get_possessive_adjective() const
+std::string const& Entity::get_possessive_adjective() const
 {
   return getPossAdj(get_gender_or_you());
 }
 
-std::string const& Thing::get_possessive_pronoun() const
+std::string const& Entity::get_possessive_pronoun() const
 {
   return getPossPro(get_gender_or_you());
 }
 
-std::string Thing::get_possessive()
+std::string Entity::get_possessive()
 {
   if (GAME.get_player() == m_ref)
   {
@@ -1134,7 +1134,7 @@ std::string Thing::get_possessive()
   }
 }
 
-Vec2u Thing::get_tile_sheet_coords(int frame)
+Vec2u Entity::get_tile_sheet_coords(int frame)
 {
   /// Get tile coordinates on the sheet.
   Vec2u start_coords = m_metadata.get_tile_coords();
@@ -1148,7 +1148,7 @@ Vec2u Thing::get_tile_sheet_coords(int frame)
   return tile_coords;
 }
 
-bool Thing::is_opaque()
+bool Entity::is_opaque()
 {
   return
     (get_modified_property<int>("opacity_red") >= 255) &&
@@ -1156,9 +1156,9 @@ bool Thing::is_opaque()
     (get_modified_property<int>("opacity_blue") >= 255);
 }
 
-void Thing::light_up_surroundings()
+void Entity::light_up_surroundings()
 {
-  ThingId location = get_location();
+  EntityId location = get_location();
 
   if (get_intrinsic<int>("inventory_size") != 0)
   {
@@ -1171,7 +1171,7 @@ void Thing::light_up_surroundings()
     bool opaque = location->is_opaque();
     bool is_entity = this->is_subtype_of("DynamicEntity");
 
-    /*CLOG(DEBUG, "Thing") << "light_up_surroundings - this->type = " << this->get_type() <<
+    /*CLOG(DEBUG, "Entity") << "light_up_surroundings - this->type = " << this->get_type() <<
       ", location->type = " << location->get_type() <<
       ", location->opaque = " << opaque <<
       ", this->is_subtype_of(\"DynamicEntity\") = " << is_entity;*/
@@ -1184,27 +1184,27 @@ void Thing::light_up_surroundings()
            iter != inventory.end();
            ++iter)
       {
-        ThingId thing = iter->second;
+        EntityId thing = iter->second;
         thing->light_up_surroundings();
       }
     }
   }
 
   // Use visitor pattern.
-  if ((location != ThingId::Mu()) && this->get_modified_property<bool>("lit"))
+  if ((location != EntityId::Mu()) && this->get_modified_property<bool>("lit"))
   {
     location->be_lit_by(this->get_id());
   }
 }
 
-void Thing::be_lit_by(ThingId light)
+void Entity::be_lit_by(EntityId light)
 {
-  auto result = call_lua_function<ActionResult, ThingId>("on_lit_by", { light }, ActionResult::Success);
+  auto result = call_lua_function<ActionResult, EntityId>("on_lit_by", { light }, ActionResult::Success);
   if (result == ActionResult::Success) notifyObservers(Event::Updated);
 
-  ThingId location = get_location();
+  EntityId location = get_location();
 
-  if (get_location() == ThingId::Mu())
+  if (get_location() == EntityId::Mu())
   {
     GAME.get_maps().get(get_map_id()).add_light(light);
   }
@@ -1227,19 +1227,19 @@ void Thing::be_lit_by(ThingId light)
   }
 }
 
-void Thing::spill()
+void Entity::spill()
 {
   Inventory& inventory = get_inventory();
   std::string message;
   bool success = false;
 
-  // Step through all contents of this Thing.
+  // Step through all contents of this Entity.
   for (auto iter = inventory.begin();
        iter != inventory.end();
        ++iter)
   {
-    ThingId thing = iter->second;
-    if (m_location != ThingId::Mu())
+    EntityId thing = iter->second;
+    if (m_location != EntityId::Mu())
     {
       ActionResult can_contain = m_location->can_contain(thing);
 
@@ -1247,7 +1247,7 @@ void Thing::spill()
       {
         case ActionResult::Success:
 
-          // Try to move this into the Thing's location.
+          // Try to move this into the Entity's location.
           success = thing->move_into(m_location);
           if (success)
           {
@@ -1271,7 +1271,7 @@ void Thing::spill()
           break;
 
         case ActionResult::FailureInventoryFull:
-          /// @todo Handle the situation where the Thing's container can't hold the Thing.
+          /// @todo Handle the situation where the Entity's container can't hold the Entity.
           break;
 
         default:
@@ -1283,20 +1283,20 @@ void Thing::spill()
       // Container's location is Mu, so just destroy it without a message.
       thing->destroy();
     }
-  } // end for (contents of Thing)
+  } // end for (contents of Entity)
 }
 
-void Thing::destroy()
+void Entity::destroy()
 {
   auto old_location = m_location;
 
   if (get_intrinsic<int>("inventory_size") != 0)
   {
-    // Spill the contents of this Thing into the Thing's location.
+    // Spill the contents of this Entity into the Entity's location.
     spill();
   }
 
-  if (old_location != ThingId::Mu())
+  if (old_location != EntityId::Mu())
   {
     old_location->get_inventory().remove(m_ref);
   }
@@ -1304,7 +1304,7 @@ void Thing::destroy()
   notifyObservers(Event::Updated);
 }
 
-std::string Thing::get_bodypart_description(BodyPart part,
+std::string Entity::get_bodypart_description(BodyPart part,
                                               unsigned int number)
 {
   unsigned int total_number = this->get_bodypart_number(part);
@@ -1316,7 +1316,7 @@ std::string Thing::get_bodypart_description(BodyPart part,
   {
     case 0: // none of them!?  shouldn't occur!
       result = "non-existent " + part_name;
-      CLOG(WARNING, "Thing") << "Request for description of " << result << "!?";
+      CLOG(WARNING, "Entity") << "Request for description of " << result << "!?";
       break;
 
     case 1: // only one of them
@@ -1465,24 +1465,24 @@ std::string Thing::get_bodypart_description(BodyPart part,
   return result;
 }
 
-bool Thing::can_have_action_done_by(ThingId thing, Action& action)
+bool Entity::can_have_action_done_by(EntityId thing, Action& action)
 {
   return call_lua_function<bool>("can_have_action_" + action.get_type() + "_done_by", { thing }, false);
 }
 
-bool Thing::is_miscible_with(ThingId thing)
+bool Entity::is_miscible_with(EntityId thing)
 {
   return call_lua_function<bool>("is_miscible_with", { thing }, false);
 }
 
-BodyPart Thing::is_equippable_on() const
+BodyPart Entity::is_equippable_on() const
 {
   return BodyPart::Count;
 }
 
-bool Thing::process()
+bool Entity::process()
 {
-  // Get a copy of the Thing's inventory.
+  // Get a copy of the Entity's inventory.
   // This is because things can be deleted/removed from the inventory
   // over the course of processing them, and this could invalidate the
   // iterator.
@@ -1493,7 +1493,7 @@ bool Thing::process()
        iter != temp_inventory.end();
        ++iter)
   {
-    ThingId thing = iter->second;
+    EntityId thing = iter->second;
     /* bool dead = */ thing->process();
   }
 
@@ -1501,55 +1501,55 @@ bool Thing::process()
   return _process_self();
 }
 
-ActionResult Thing::perform_action_died()
+ActionResult Entity::perform_action_died()
 {
   ActionResult result = call_lua_function<ActionResult>("perform_action_died", {}, ActionResult::Success);
   return result;
 }
 
-void Thing::perform_action_collided_with(ThingId actor)
+void Entity::perform_action_collided_with(EntityId actor)
 {
-  /* ActionResult result = */ call_lua_function<ActionResult, ThingId>("perform_action_collided_with", { actor }, ActionResult::Success);
+  /* ActionResult result = */ call_lua_function<ActionResult, EntityId>("perform_action_collided_with", { actor }, ActionResult::Success);
   return;
 }
 
-void Thing::perform_action_collided_with_wall(Direction d, std::string tile_type)
+void Entity::perform_action_collided_with_wall(Direction d, std::string tile_type)
 {
   /// @todo Implement me; right now there's no way to pass one enum and one string to a Lua function.
   return;
 }
 
-ActionResult Thing::be_object_of(Action& action, ThingId subject)
+ActionResult Entity::be_object_of(Action& action, EntityId subject)
 {
-  ActionResult result = call_lua_function<ActionResult, ThingId>("be_object_of_action_" + action.get_type(), { subject }, ActionResult::Success);
+  ActionResult result = call_lua_function<ActionResult, EntityId>("be_object_of_action_" + action.get_type(), { subject }, ActionResult::Success);
   return result;
 }
 
-ActionResult Thing::be_object_of(Action & action, ThingId subject, ThingId target)
+ActionResult Entity::be_object_of(Action & action, EntityId subject, EntityId target)
 {
-  ActionResult result = call_lua_function<ActionResult, ThingId>("be_object_of_action_" + action.get_type(), { subject, target }, ActionResult::Success);
+  ActionResult result = call_lua_function<ActionResult, EntityId>("be_object_of_action_" + action.get_type(), { subject, target }, ActionResult::Success);
   return result;
 }
 
-ActionResult Thing::be_object_of(Action & action, ThingId subject, Direction direction)
+ActionResult Entity::be_object_of(Action & action, EntityId subject, Direction direction)
 {
   ActionResult result = call_lua_function<ActionResult>("be_object_of_action_" + action.get_type(), { subject, NULL, direction.x(), direction.y(), direction.z() }, ActionResult::Success);
   return result;
 }
 
-ActionResult Thing::perform_action_hurt_by(ThingId subject)
+ActionResult Entity::perform_action_hurt_by(EntityId subject)
 {
-  ActionResult result = call_lua_function<ActionResult, ThingId>("be_object_of_action_hurt", { subject }, ActionResult::Success);
+  ActionResult result = call_lua_function<ActionResult, EntityId>("be_object_of_action_hurt", { subject }, ActionResult::Success);
   return result;
 }
 
-ActionResult Thing::perform_action_attacked_by(ThingId subject, ThingId target)
+ActionResult Entity::perform_action_attacked_by(EntityId subject, EntityId target)
 {
-  ActionResult result = call_lua_function<ActionResult, ThingId>("be_object_of_action_attack", { subject, target }, ActionResult::Success);
+  ActionResult result = call_lua_function<ActionResult, EntityId>("be_object_of_action_attack", { subject, target }, ActionResult::Success);
   return result;
 }
 
-bool Thing::perform_action_deequipped_by(ThingId actor, WearLocation& location)
+bool Entity::perform_action_deequipped_by(EntityId actor, WearLocation& location)
 {
   if (this->get_modified_property<bool>("bound"))
   {
@@ -1564,28 +1564,28 @@ bool Thing::perform_action_deequipped_by(ThingId actor, WearLocation& location)
   }
   else
   {
-    ActionResult result = call_lua_function<ActionResult, ThingId>("perform_action_deequipped_by", { actor }, ActionResult::Success);
+    ActionResult result = call_lua_function<ActionResult, EntityId>("perform_action_deequipped_by", { actor }, ActionResult::Success);
     return was_successful(result);
   }
 }
 
-bool Thing::perform_action_equipped_by(ThingId actor, WearLocation& location)
+bool Entity::perform_action_equipped_by(EntityId actor, WearLocation& location)
 {
-  ActionResult result = call_lua_function<ActionResult, ThingId>("perform_action_equipped_by", { actor }, ActionResult::Success);
+  ActionResult result = call_lua_function<ActionResult, EntityId>("perform_action_equipped_by", { actor }, ActionResult::Success);
   bool subclass_result = was_successful(result);
 
   return subclass_result;
 }
 
-bool Thing::can_merge_with(ThingId other) const
+bool Entity::can_merge_with(EntityId other) const
 {
-  // Things with different types can't merge (obviously).
+  // Entities with different types can't merge (obviously).
   if (other->get_type() != get_type())
   {
     return false;
   }
 
-  // Things with inventories can never merge.
+  // Entities with inventories can never merge.
   if ((get_intrinsic<int>("inventory_size") != 0) ||
     (other->get_intrinsic<int>("inventory_size") != 0))
   {
@@ -1594,7 +1594,7 @@ bool Thing::can_merge_with(ThingId other) const
 
   // If the things have the exact same properties, merge is okay.
   /// @todo Handle default properties. Right now, if a property was
-  ///       queried on a Thing and pulls the default, but it was NOT queried
+  ///       queried on a Entity and pulls the default, but it was NOT queried
   ///       on the second thing, the property dictionaries will NOT match.
   ///       I have not yet found a good solution to this problem.
   auto& our_properties = this->m_properties;
@@ -1608,7 +1608,7 @@ bool Thing::can_merge_with(ThingId other) const
   return false;
 }
 
-ActionResult Thing::can_contain(ThingId thing)
+ActionResult Entity::can_contain(EntityId thing)
 {
   unsigned int inventory_size = get_intrinsic<unsigned int>("inventory_size");
   if (inventory_size == 0)
@@ -1621,18 +1621,18 @@ ActionResult Thing::can_contain(ThingId thing)
   }
   else
   {
-    return call_lua_function<ActionResult, ThingId>("can_contain", { thing }, ActionResult::Success);
+    return call_lua_function<ActionResult, EntityId>("can_contain", { thing }, ActionResult::Success);
   }
 }
 
-void Thing::set_location(ThingId target)
+void Entity::set_location(EntityId target)
 {
   m_location = target;
 }
 
 // *** PROTECTED METHODS ******************************************************
 
-bool Thing::_process_self()
+bool Entity::_process_self()
 {
   int counter_busy = get_base_property<int>("counter_busy");
 
@@ -1664,7 +1664,7 @@ bool Thing::_process_self()
     bool action_done = action->process(get_id(), {});
     if (action_done)
     {
-      CLOG(TRACE, "Thing") << "Thing " <<
+      CLOG(TRACE, "Entity") << "Entity " <<
         get_id() << "( " <<
         get_type() << "): Action " <<
         action->get_type() << " is done, popping";
@@ -1677,7 +1677,7 @@ bool Thing::_process_self()
     ///       that I can see:
     ///         1) The Action calls notifyObservers. Requires the Action
     ///            to have access to that method; right now it doesn't.
-    ///         2) The Action returns some sort of indication that the Thing
+    ///         2) The Action returns some sort of indication that the Entity
     ///            was modified as a result. This could be done by changing
     ///            the return type from a bool to a struct of some sort.
     notifyObservers(Event::Updated);
@@ -1686,9 +1686,9 @@ bool Thing::_process_self()
   // Otherwise if there are no other pending actions...
   else
   {
-    // If entity is not the player, call the Lua process function on this Thing.
+    // If entity is not the player, call the Lua process function on this Entity.
     /// @todo Should this be called regardless of whether actions are pending
-    ///       or not? In other words, should a Thing be able to "change its mind"
+    ///       or not? In other words, should a Entity be able to "change its mind"
     ///       and clear out any pending actions?
     if (!is_player())
     {
@@ -1699,12 +1699,12 @@ bool Thing::_process_self()
   return true;
 }
 
-MapMemory& Thing::get_map_memory()
+MapMemory& Entity::get_map_memory()
 {
   return m_map_memory;
 }
 
-void Thing::do_recursive_visibility(int octant,
+void Entity::do_recursive_visibility(int octant,
                                     int depth,
                                     float slope_A,
                                     float slope_B)
@@ -1845,7 +1845,7 @@ void Thing::do_recursive_visibility(int octant,
   }
 }
 
-MapTile* Thing::_get_maptile() const
+MapTile* Entity::_get_maptile() const
 {
   return m_map_tile;
 }
