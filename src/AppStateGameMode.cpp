@@ -95,14 +95,15 @@ void AppStateGameMode::execute()
 
   bool ticked = GAME.process_tick();
 
-  // If outstanding player actions have completed...
-  auto player = GAME.get_player();
+  // If the game clock ticked (player action started or is in progress)...
   if (ticked)
   {
+    auto player = GAME.get_player();
+    
     // Update view's cached tile data.
     m_map_view->update_tiles(player);
 
-    GAME.increment_game_clock();
+    // If the action completed, reset the inventory selection.
     if (!player->action_is_pending() && !player->action_is_in_progress())
     {
       reset_inventory_selection();

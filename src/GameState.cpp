@@ -74,20 +74,20 @@ MetadataCollection & GameState::get_metadata_collection(std::string category)
   return m_metacollection.at(category);
 }
 
-GameTick const & GameState::get_game_clock() const
+ElapsedTime const & GameState::get_game_clock() const
 {
   return m_game_clock;
 }
 
-void GameState::set_game_clock(GameTick game_clock)
+void GameState::set_game_clock(ElapsedTime game_clock)
 {
   m_game_clock = game_clock;
 }
 
-void GameState::increment_game_clock()
+void GameState::increment_game_clock(ElapsedTime added_time)
 {
   /// @todo Check for the unlikely, but not impossible, chance of rollover.
-  ++m_game_clock;
+  m_game_clock += added_time;
 }
 
 bool GameState::set_player(ThingId ref)
@@ -120,7 +120,7 @@ bool GameState::process_tick()
 
     // Process everything on the map, and increment game clock.
     current_map.process();
-    ++m_game_clock;
+    increment_game_clock(ElapsedTime(1));
 
     // If player can see the map...
     /// @todo IMPLEMENT THIS CHECK

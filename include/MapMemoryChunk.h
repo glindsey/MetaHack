@@ -10,13 +10,13 @@ public:
   MapMemoryChunk()
     :
     m_type{},
-    m_tick{}
+    m_memory_time{}
   {}
 
-  MapMemoryChunk(std::string type, GameTick tick)
+  MapMemoryChunk(std::string type, ElapsedTime memory_type)
     :
     m_type{ type },
-    m_tick{ tick }
+    m_memory_time{ memory_type }
   {}
 
   virtual ~MapMemoryChunk()
@@ -27,15 +27,15 @@ public:
     return m_type;
   }
 
-  GameTick get_tick()
+  ElapsedTime get_memory_time()
   {
-    return m_tick;
+    return m_memory_time;
   }
 
 private:
   /// std::string representing the type of tile remembered.
   std::string m_type;
 
-  /// Tick of the game clock when the tile was remembered.
-  GameTick m_tick;
+  /// Elapsed game time when the tile was remembered.
+  ElapsedTime m_memory_time;
 };

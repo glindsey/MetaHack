@@ -3,6 +3,7 @@
 // Standard library includes
 #include <algorithm>
 #include <cctype>
+#include <chrono> // Trigger ;)
 #include <cinttypes>
 #include <climits>
 #include <codecvt>

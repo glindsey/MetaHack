@@ -15,8 +15,8 @@
 //       that obtaining a sorted list will be a bit more difficult. However,
 //       there won't be many times we NEED a sorted list.
 
-/// Game ticks in the game.
-using GameTick = uint32_t;
+/// Elapsed time in the game, in milliseconds.
+using ElapsedTime = std::chrono::duration<uint64_t, std::milli>;
 
 /// FileName is, well, a filename.
 using FileName = std::string;

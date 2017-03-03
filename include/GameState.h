@@ -35,9 +35,9 @@ public:
   ThingManager& get_things();
   MetadataCollection& get_metadata_collection(std::string category);
 
-  GameTick const& get_game_clock() const;
-  void set_game_clock(GameTick game_clock);
-  void increment_game_clock();
+  ElapsedTime const& get_game_clock() const;
+  void set_game_clock(ElapsedTime game_clock);
+  void increment_game_clock(ElapsedTime added_time);
 
   /// Set the game player.
   /// If the caller attempts to set a ThingId of a Thing that does not exist,
@@ -74,7 +74,7 @@ private:
   ThingId m_player;
 
   /// Current game clock, in ticks. Ticks represent tens of milliseconds.
-  GameTick m_game_clock;
+  ElapsedTime m_game_clock;
 
   /// Static pointer to the singleton instance of the GameState.
   static GameState* p_instance;
