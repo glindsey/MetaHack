@@ -46,7 +46,7 @@ bool MapTile::is_empty_space() const
 }
 
 /// @todo: Implement this to cover different entity types.
-///        For example, a non-corporeal Entity can move through solid matter.
+///        For example, a non-corporeal DynamicEntity can move through solid matter.
 bool MapTile::can_be_traversed_by(ThingId thing) const
 {
   return is_empty_space();

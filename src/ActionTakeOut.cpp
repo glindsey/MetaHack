@@ -42,7 +42,7 @@ Action::StateResult ActionTakeOut::do_prebegin_work_(AnyMap& params)
     return StateResult::Failure();
   }
 
-  // Check that the container is not a MapTile or Entity.
+  // Check that the container is not a MapTile or DynamicEntity.
   if (!object->is_inside_another_thing())
   {
     print_message_try_();

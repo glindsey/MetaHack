@@ -128,7 +128,7 @@ Action::StateResult ActionAttack::do_begin_work_(AnyMap& params)
   }
 
   bool reachable = subject->is_adjacent_to(object);
-  /// @todo deal with Entities in your Inventory -- WTF do you do THEN?
+  /// @todo deal with DynamicEntities in your Inventory -- WTF do you do THEN?
 
   if (reachable)
   {

@@ -21,7 +21,7 @@
 
 // Forward declarations
 class AIStrategy;
-class Entity;
+class DynamicEntity;
 class MapTile;
 class Inventory;
 class ThingFactory;
@@ -70,22 +70,22 @@ class Thing
 public:
   virtual ~Thing();
 
-  /// Queue an action for this Entity to perform.
+  /// Queue an action for this DynamicEntity to perform.
   /// pAction The Action to queue. The Action is MOVED when queued,
   ///         e.g. pAction will be `nullptr` after queuing.
   void queue_action(std::unique_ptr<Action> pAction);
 
-  /// Return whether there is an action pending for this Entity.
+  /// Return whether there is an action pending for this DynamicEntity.
   bool action_is_pending() const;
 
-  /// Return whether there is an action currently in progress for this Entity.
+  /// Return whether there is an action currently in progress for this DynamicEntity.
   bool action_is_in_progress();
 
   /// Get the thing being wielded in the specified hand, if any.
   ThingId get_wielding_in(unsigned int & hand);
 
   /// Returns true if this thing is the current player.
-  /// By default, returns false. Overridden by Entity class.
+  /// By default, returns false. Overridden by DynamicEntity class.
   virtual bool is_player() const;
 
   std::string const& get_type() const;
@@ -93,39 +93,39 @@ public:
 
   bool is_subtype_of(std::string that_type) const;
 
-  /// Return whether a Thing is wielded by this Entity.
+  /// Return whether a Thing is wielded by this DynamicEntity.
   /// This is used by InventoryArea to show wielded status.
   /// @param[in] thing Thing to check
-  /// @return true if the Thing is wielded by the Entity.
+  /// @return true if the Thing is wielded by the DynamicEntity.
   bool is_wielding(ThingId thing);
 
-  /// Return whether a Thing is wielded by this Entity.
+  /// Return whether a Thing is wielded by this DynamicEntity.
   /// This is used by InventoryArea to show wielded status.
   /// @param[in] thing Thing to check
   /// @param[out] number Hand number it is wielded in.
-  /// @return true if the Thing is wielded by the Entity.
+  /// @return true if the Thing is wielded by the DynamicEntity.
   bool is_wielding(ThingId thing, unsigned int& number);
 
-  /// Return whether a Thing is equipped (worn) by this Entity.
+  /// Return whether a Thing is equipped (worn) by this DynamicEntity.
   /// @param[in] thing Thing to check
   /// @return true if the Thing is being worn.
   bool has_equipped(ThingId thing);
 
-  /// Return whether a Thing is being worn by this Entity.
+  /// Return whether a Thing is being worn by this DynamicEntity.
   /// @param[in] thing Thing to check
   /// @param[out] location of the worn Thing, if worn
   /// @return true if the Thing is being worn.
   bool has_equipped(ThingId thing, WearLocation& location);
 
-  /// Return whether a Thing is within reach of the Entity.
+  /// Return whether a Thing is within reach of the DynamicEntity.
   /// @param[in] thing Thing to check
-  /// @return true if the Thing is in the Entity's inventory or is at the
-  ///         same location as the Entity, false otherwise.
+  /// @return true if the Thing is in the DynamicEntity's inventory or is at the
+  ///         same location as the DynamicEntity, false otherwise.
   bool can_reach(ThingId thing);
 
-  /// Return whether a Thing is adjacent to this Entity.
+  /// Return whether a Thing is adjacent to this DynamicEntity.
   /// @param[in] thing Thing to check
-  /// @return true if the Thing is at the same place or adjacent to this Entity, false otherwise.
+  /// @return true if the Thing is at the same place or adjacent to this DynamicEntity, false otherwise.
   bool is_adjacent_to(ThingId thing);
 
   /// Die.
@@ -243,14 +243,14 @@ public:
   /// Return the location of this thing.
   ThingId get_location() const;
 
-  /// Return whether the Entity can see the requested Thing.
+  /// Return whether the DynamicEntity can see the requested Thing.
   bool can_see(ThingId thing);
 
-  /// Return whether the Entity can see the requested tile.
+  /// Return whether the DynamicEntity can see the requested tile.
   bool can_see(Vec2i coords);
 
-  /// Find out which tiles on the map can be seen by this Entity.
-  /// In the process, tiles in the Entity's visual memory are updated.
+  /// Find out which tiles on the map can be seen by this DynamicEntity.
+  /// In the process, tiles in the DynamicEntity's visual memory are updated.
   /// This method uses a recursive raycasting algorithm to figure out what
   /// can be seen at a particular position.
   void find_seen_tiles();
@@ -272,12 +272,12 @@ public:
 
   void set_worn(ThingId thing, WearLocation location);
 
-  /// Return whether this Entity can currently see.
+  /// Return whether this DynamicEntity can currently see.
   /// @todo Implement blindness counter, blindness due to wearing blindfold,
   ///       et cetera.
   bool can_currently_see();
 
-  /// Return whether this Entity can currently move.
+  /// Return whether this DynamicEntity can currently move.
   /// @todo Implement paralysis counter, and/or other reasons to be immobile.
   bool can_currently_move();
 
@@ -287,13 +287,13 @@ public:
 
   Gender get_gender_or_you() const;
 
-  /// Get the number of a particular body part the Entity has.
+  /// Get the number of a particular body part the DynamicEntity has.
   unsigned int get_bodypart_number(BodyPart part) const;
 
-  /// Get the appropriate body part name for the Entity.
+  /// Get the appropriate body part name for the DynamicEntity.
   std::string get_bodypart_name(BodyPart part) const;
 
-  /// Get the appropriate body part plural for the Entity.
+  /// Get the appropriate body part plural for the DynamicEntity.
   std::string get_bodypart_plural(BodyPart part) const;
 
   /// Get the appropriate description for a body part.
@@ -363,8 +363,8 @@ public:
   /// "the chair".
   /// If it is carried by the player, and possessives = true, it'll
   /// return "your (thing)".
-  /// Likewise, if it is carried by another Entity it'll return
-  /// "(Entity)'s (thing)".
+  /// Likewise, if it is carried by another DynamicEntity it'll return
+  /// "(DynamicEntity)'s (thing)".
   /// @todo Make localizable. (How? Use Lua scripts maybe?)
   ///
   /// @param articles Choose whether to use definite or indefinite articles.
@@ -503,8 +503,8 @@ public:
   /// Perform an action when this thing is used to hit a target.
   /// This action executes when the thing is wielded by an entity, and an
   /// attack successfully hits its target.  It is a side-effect in addition
-  /// to the damage done by Entity::attack(entity).
-  /// @see Entity::attack
+  /// to the damage done by DynamicEntity::attack(entity).
+  /// @see DynamicEntity::attack
   /// @note Is there a better name for this? Current name sounds like the
   ///       object is the target, instead of the implement.
   ActionResult perform_action_attacked_by(ThingId subject, ThingId target);
@@ -551,7 +551,7 @@ protected:
   /// Initializer; called by all constructors.
   void initialize();
 
-  /// Get a reference to this Entity's map memory.
+  /// Get a reference to this DynamicEntity's map memory.
   MapMemory& get_map_memory();
 
   /// Perform the recursive visibility scan for an octant.
@@ -603,7 +603,7 @@ private:
   /// Gender of this entity.
   Gender m_gender = Gender::None;
 
-  /// Entity's spacial memory of map tiles.
+  /// DynamicEntity's spacial memory of map tiles.
   /// @todo Regarding memory, it would be AWESOME if it could fade out
   ///       VERY gradually, over a long period of time. Seeing it would
   ///       reset the memory counter to 0, or possibly just add a large

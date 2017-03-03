@@ -29,7 +29,7 @@ bool Inventory::add(ThingId thing)
     if (things_.count(INVSLOT_ZERO) != 0)
     {
       /// @todo Move anything in this slot to a new slot.  This will be required
-      ///       if it's possible to change the ID of the player Entity.
+      ///       if it's possible to change the ID of the player DynamicEntity.
       MAJOR_ERROR("Slot 0 of inventory already contains the player!");
     }
     things_[INVSLOT_ZERO] = thing;
@@ -214,7 +214,7 @@ ThingId Inventory::get_entity()
     find_if([&](const ThingPair& thing_pair)
   {
     ThingId ref = thing_pair.second;
-    return ((ref->is_subtype_of("Entity")) && (ref->get_modified_property<int>("hp") > 0));
+    return ((ref->is_subtype_of("DynamicEntity")) && (ref->get_modified_property<int>("hp") > 0));
   });
 
   if (iter != things_.cend())

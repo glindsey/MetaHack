@@ -516,7 +516,7 @@
     <None Include="resources\things\CoinGold.lua" />
     <None Include="resources\things\Container.lua" />
     <None Include="resources\things\Dagger.lua" />
-    <None Include="resources\things\Entity.lua" />
+    <None Include="resources\things\DynamicEntity.lua" />
     <None Include="resources\things\FlaskGlass.lua" />
     <None Include="resources\things\Marcher.lua" />
     <None Include="resources\things\TileContents.lua" />

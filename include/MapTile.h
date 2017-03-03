@@ -14,7 +14,7 @@
 #include "TileSheet.h"
 
 // Forward declarations
-class Entity;
+class DynamicEntity;
 class Floor;
 class Metadata;
 
@@ -49,7 +49,7 @@ public:
   /// Returns whether a tile is empty space, e.g. no wall in the way.
   bool is_empty_space() const;
 
-  /// Returns whether a tile can be traversed by a certain Entity.
+  /// Returns whether a tile can be traversed by a certain DynamicEntity.
   bool can_be_traversed_by(ThingId thing) const;
 
   /// Set the current tile's location.

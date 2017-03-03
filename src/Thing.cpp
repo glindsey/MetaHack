@@ -508,7 +508,7 @@ Gender Thing::get_gender_or_you() const
   }
 }
 
-/// Get the number of a particular body part the Entity has.
+/// Get the number of a particular body part the DynamicEntity has.
 unsigned int Thing::get_bodypart_number(BodyPart part) const
 {
   switch (part)
@@ -548,7 +548,7 @@ unsigned int Thing::get_bodypart_number(BodyPart part) const
   }
 }
 
-/// Get the appropriate body part name for the Entity.
+/// Get the appropriate body part name for the DynamicEntity.
 std::string Thing::get_bodypart_name(BodyPart part) const
 {
   switch (part)
@@ -588,7 +588,7 @@ std::string Thing::get_bodypart_name(BodyPart part) const
   }
 }
 
-/// Get the appropriate body part plural for the Entity.
+/// Get the appropriate body part plural for the DynamicEntity.
 std::string Thing::get_bodypart_plural(BodyPart part) const
 {
   switch (part)
@@ -790,7 +790,7 @@ void Thing::find_seen_tiles()
   }
 
   /// @todo Handle field-of-view here.
-  ///       Field of view for an Entity can be:
+  ///       Field of view for an DynamicEntity can be:
   ///          * NARROW (90 degrees straight ahead)
   ///		   * WIDE (180 degrees in facing direction)
   ///          * FRONTBACK (90 degrees ahead/90 degrees back)
@@ -935,7 +935,7 @@ std::string Thing::get_display_adjectives() const
 {
   std::string adjectives;
 
-  if (is_subtype_of("Entity") && get_modified_property<int>("hp") <= 0)
+  if (is_subtype_of("DynamicEntity") && get_modified_property<int>("hp") <= 0)
   {
     adjectives += "dead ";
   }
@@ -1020,7 +1020,7 @@ std::string Thing::get_identifying_string(ArticleChoice articles,
   std::string noun;
   std::string suffix;
 
-  owned = location->is_subtype_of("Entity");
+  owned = location->is_subtype_of("DynamicEntity");
 
   if (quantity == 1)
   {
@@ -1169,12 +1169,12 @@ void Thing::light_up_surroundings()
     ///       shine simply if it's in an entity's inventory.
 
     bool opaque = location->is_opaque();
-    bool is_entity = this->is_subtype_of("Entity");
+    bool is_entity = this->is_subtype_of("DynamicEntity");
 
     /*CLOG(DEBUG, "Thing") << "light_up_surroundings - this->type = " << this->get_type() <<
       ", location->type = " << location->get_type() <<
       ", location->opaque = " << opaque <<
-      ", this->is_subtype_of(\"Entity\") = " << is_entity;*/
+      ", this->is_subtype_of(\"DynamicEntity\") = " << is_entity;*/
 
     //if (!is_opaque() || is_wielding(light) || has_equipped(light))
     if (!opaque || is_entity)
@@ -1217,7 +1217,7 @@ void Thing::be_lit_by(ThingId light)
     ///       shine simply if it's in the player's inventory.
 
     bool opaque = this->is_opaque();
-    bool is_entity = this->is_subtype_of("Entity");
+    bool is_entity = this->is_subtype_of("DynamicEntity");
 
     //if (!is_opaque() || is_wielding(light) || has_equipped(light))
     if (!opaque || is_entity)
@@ -1637,7 +1637,7 @@ bool Thing::_process_self()
   int counter_busy = get_base_property<int>("counter_busy");
 
   // Is this an entity that is now dead?
-  if (is_subtype_of("Entity") && (get_modified_property<int>("hp") <= 0))
+  if (is_subtype_of("DynamicEntity") && (get_modified_property<int>("hp") <= 0))
   {
     // Did the entity JUST die?
     if (get_modified_property<bool>("dead") != true)

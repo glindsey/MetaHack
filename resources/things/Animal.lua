@@ -1,8 +1,8 @@
 -- Definition of special functions for the Animal object type.
 
-require "resources/things/Entity"
+require "resources/things/DynamicEntity"
 
-Animal = inheritsFrom(Entity, "Animal")
+Animal = inheritsFrom(DynamicEntity, "Animal")
 Animal.intrinsics.name = "[Animal]"
 Animal.intrinsics.plural = "[Animal]"
 

@@ -1,8 +1,8 @@
 -- Definition of special functions for the Blob object type.
 
-require "resources/things/Entity"
+require "resources/things/DynamicEntity"
 
-Blob = inheritsFrom(Entity, "Blob")
+Blob = inheritsFrom(DynamicEntity, "Blob")
 Blob.intrinsics.name = "[Blob]"
 Blob.intrinsics.plural = "[Blobs]"
 

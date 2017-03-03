@@ -348,8 +348,8 @@ void Map::add_light(ThingId source)
 
   /// @todo Handle the special case of Direction::Self.
   /// If a light source's direction is set to "Self", it should be treated as
-  /// omnidirectional but dimmer when not held by an Entity, and the same
-  /// direction as the Entity when it is held.
+  /// omnidirectional but dimmer when not held by an DynamicEntity, and the same
+  /// direction as the DynamicEntity when it is held.
 
   /// @todo: Handle "dark sources" with negative light strength properly --
   ///        right now they'll cause Very Bad Behavior!
