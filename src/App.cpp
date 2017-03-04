@@ -10,6 +10,7 @@
 #include "MessageLog.h"
 #include "MessageLogView.h"
 #include "Service.h"
+#include "Standard2DGraphicViews.h"
 #include "StateMachine.h"
 #include "StringDictionary.h"
 
@@ -128,6 +129,10 @@ App::App(sf::RenderWindow& app_window)
   // Create the string dictionary, and try to load the default translation file.
   /// @todo Change this so language can be specified.
   Service<IStringDictionary>::provide(NEW StringDictionary("resources/strings.en"));
+
+  // Create the standard map views provider.
+  /// @todo Make this configurable.
+  Service<IGraphicViews>::provide(NEW Standard2DGraphicViews());
 
   // Get the state machine.
   StateMachine& sm = *m_state_machine;

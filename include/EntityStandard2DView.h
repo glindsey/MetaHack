@@ -9,15 +9,17 @@
 /// Class representing the standard 2D (pseudo-3D) view of a Entity object.
 class EntityStandard2DView : public EntityView
 {
-public:
-  /// Constructor.
-  explicit EntityStandard2DView(Entity& thing);
+  friend class Standard2DGraphicViews;
 
+public:
   /// Destructor.
   virtual ~EntityStandard2DView();
 
   
 protected:
+  /// Constructor.
+  explicit EntityStandard2DView(Entity& thing);
+
   virtual void notifyOfEvent_(Observable& observed, Event event) override;
 
 private:

@@ -11,18 +11,19 @@
 // Forward declarations
 
 /// Class representing the standard 2D (pseudo-3D) view of a MapTile object.
-class MapTileStandard2DView : public MapTileView<EntityStandard2DView>
+class MapTileStandard2DView : public MapTileView
 {
   friend class MapStandard2DView;
+  friend class Standard2DGraphicViews;
 
 public:
-  /// Constructor.
-  /// @param map	Reference to Map object to associate with this view.
-  MapTileStandard2DView(MapTile& map_tile);
 
   //virtual bool render(sf::RenderTexture& texture, int frame) override;
 
 protected:
+  /// Constructor.
+  /// @param map	Reference to Map object to associate with this view.
+  MapTileStandard2DView(MapTile& map_tile);
 
   /// Return the coordinates of the tile on the tilesheet.
   Vec2u get_tile_sheet_coords() const;

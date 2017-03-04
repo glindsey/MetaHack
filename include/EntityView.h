@@ -10,10 +10,10 @@ class EntityView
   : 
   public Observer
 {
-public:
-  /// Constructor.
-  explicit EntityView(Entity& thing);
+  friend class NullGraphicViews;
+  friend class Standard2DGraphicViews;
 
+public:
   /// Destructor.
   virtual ~EntityView();
 
@@ -38,6 +38,9 @@ public:
   Vec2u get_size();
 
 protected:
+  /// Constructor.
+  explicit EntityView(Entity& thing);
+
   /// Get reference to Entity associated with this view.
   Entity& get_thing();
 

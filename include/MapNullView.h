@@ -4,16 +4,12 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "Grid2D.h"
 #include "MapView.h"
 
-// Forward declarations
-class MapTileStandard2DView;
-
-/// Class representing the standard 2D (pseudo-3D) view of a Map object.
-class MapStandard2DView : public MapView
+/// Class representing a null view of a Map object.
+class MapNullView : public MapView
 {
-  friend class Standard2DGraphicViews;
+  friend class NullGraphicViews;
 
 public:
   virtual void update_tiles(EntityId viewer) override;
@@ -31,25 +27,8 @@ protected:
   /// Constructor.
   /// Private because map views should be obtained via the IGraphicViews service.
   /// @param map	Reference to Map object to associate with this view.
-  MapStandard2DView(Map& map);
-
-  /// Reinitialize cached map render data.
-  void reset_cached_render_data();
+  MapNullView(Map& map);
 
   virtual void notifyOfEvent_(Observable& observed, Event event) override;
 
-
-private:
-
-  /// "Seen" map vertex array.
-  sf::VertexArray m_map_seen_vertices;
-
-  /// "Memory" map vertex array.
-  sf::VertexArray m_map_memory_vertices;
-
-  /// Entity vertex array.
-  sf::VertexArray m_thing_vertices;
-
-  /// Grid of tile views.
-  std::unique_ptr< Grid2D< MapTileStandard2DView > > m_map_tile_views;
 };

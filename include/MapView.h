@@ -53,9 +53,6 @@ protected:
   /// Get reference to Map associated with this view.
   Map& get_map();
 
-  /// Reinitialize cached map render data.
-  virtual void reset_cached_render_data() = 0;
-
   virtual void notifyOfEvent_(Observable& observed, Event event) = 0;
 
 private:

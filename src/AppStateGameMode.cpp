@@ -6,6 +6,7 @@
 #include "App.h"
 #include "GetLetterKey.h"
 #include "IConfigSettings.h"
+#include "IGraphicViews.h"
 #include "InventoryArea.h"
 #include "InventorySelection.h"
 #include "IStringDictionary.h"
@@ -192,7 +193,7 @@ bool AppStateGameMode::initialize()
   reset_inventory_selection();
 
   // Set the map view.
-  m_map_view.reset(NEW MapStandard2DView(game_map));
+  m_map_view.reset(Service<IGraphicViews>::get().createMapView(game_map));
 
   // Get the map ready.
   game_map.update_lighting();

@@ -414,6 +414,24 @@
     <ClInclude Include="include\LuaEntityFunctions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\IGraphicViews.h">
+      <Filter>Services</Filter>
+    </ClInclude>
+    <ClInclude Include="include\NullGraphicViews.h">
+      <Filter>Services</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Standard2DGraphicViews.h">
+      <Filter>Services</Filter>
+    </ClInclude>
+    <ClInclude Include="include\EntityNullView.h">
+      <Filter>Object Views</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MapTileNullView.h">
+      <Filter>Object Views</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MapNullView.h">
+      <Filter>Object Views</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">
@@ -676,6 +694,21 @@
     </ClCompile>
     <ClCompile Include="src\LuaEntityFunctions.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\IGraphicViews.cpp">
+      <Filter>Services</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Standard2DGraphicViews.cpp">
+      <Filter>Services</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EntityNullView.cpp">
+      <Filter>Object Views</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MapTileNullView.cpp">
+      <Filter>Object Views</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MapNullView.cpp">
+      <Filter>Object Views</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
