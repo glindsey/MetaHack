@@ -166,7 +166,7 @@ bool AppStateGameMode::initialize()
   auto& config = Service<IConfigSettings>::get();
 
   // Create the player.
-  EntityId player = get_game_state().get_things().create("Human");
+  EntityId player = get_game_state().get_entities().create("Human");
   player->set_proper_name(config.get<std::string>("player_name"));
   get_game_state().set_player(player);
 
@@ -227,7 +227,7 @@ void AppStateGameMode::render_map(sf::RenderTexture& texture, int frame)
   EntityId player = get_game_state().get_player();
   EntityId location = player->get_location();
 
-  if (location == get_game_state().get_things().get_mu())
+  if (location == get_game_state().get_entities().get_mu())
   {
     throw std::runtime_error("Uh oh, the player's location appears to have been deleted!");
   }
@@ -247,7 +247,7 @@ void AppStateGameMode::render_map(sf::RenderTexture& texture, int frame)
       Vec2f player_pixel_coords = MapTile::get_pixel_coords(tile_coords);
       Vec2f cursor_pixel_coords = MapTile::get_pixel_coords(m_cursor_coords);
 
-      // Update thing vertex array.
+      // Update entity vertex array.
       m_map_view->update_things(player, frame);
 
       if (m_current_input_state == GameInputState::CursorLook)
@@ -313,7 +313,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
     {
       std::unique_ptr<Action> p_action;
 
-      std::vector<EntityId>& things = m_inventory_selection->get_selected_things();
+      std::vector<EntityId>& entities = m_inventory_selection->get_selected_things();
       int key_number = get_letter_key(key);
       Direction key_direction = get_direction_key(key);
 
@@ -420,9 +420,9 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
           case sf::Keyboard::Key::LBracket:
           {
-            EntityId thing = m_inventory_selection->get_viewed();
-            EntityId location = thing->get_location();
-            if (location != get_game_state().get_things().get_mu())
+            EntityId entity = m_inventory_selection->get_viewed();
+            EntityId location = entity->get_location();
+            if (location != get_game_state().get_entities().get_mu())
             {
               m_inventory_selection->set_viewed(location);
             }
@@ -439,34 +439,34 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
             if (slot_count > 0)
             {
-              EntityId thing = m_inventory_selection->get_selected_things().at(0);
-              if (thing->get_intrinsic<int>("inventory_size") != 0)
+              EntityId entity = m_inventory_selection->get_selected_things().at(0);
+              if (entity->get_intrinsic<int>("inventory_size") != 0)
               {
-                if (!thing->can_have_action_done_by(EntityId::Mu(), ActionOpen::prototype) ||
-                    thing->get_modified_property<bool>("open"))
+                if (!entity->can_have_action_done_by(EntityId::Mu(), ActionOpen::prototype) ||
+                    entity->get_modified_property<bool>("open"))
                 {
-                  if (!thing->can_have_action_done_by(EntityId::Mu(), ActionLock::prototype) ||
-                      !thing->get_modified_property<bool>("locked"))
+                  if (!entity->can_have_action_done_by(EntityId::Mu(), ActionLock::prototype) ||
+                      !entity->get_modified_property<bool>("locked"))
                   {
-                    m_inventory_selection->set_viewed(thing);
+                    m_inventory_selection->set_viewed(entity);
                   }
                   else // if (container.is_locked())
                   {
-                    std::string message = Action::make_string(player, thing, "THE_FOO_IS_LOCKED");
+                    std::string message = Action::make_string(player, entity, "THE_FOO_IS_LOCKED");
                     put_msg(message);
                   }
                 }
                 else // if (!container.is_open())
                 {
                   /// @todo Need a way to make this cleaner.
-                  std::string message = Action::make_string(player, thing, "THE_FOO_IS_CLOSED");
+                  std::string message = Action::make_string(player, entity, "THE_FOO_IS_CLOSED");
                   put_msg(message);
                 }
               }
-              else // if (!thing.is_container())
+              else // if (!entity.is_container())
               {
                 /// @todo This probably doesn't belong here.
-                std::string message = Action::make_string(player, thing, "THE_FOO_IS_NOT_A_CONTAINER");
+                std::string message = Action::make_string(player, entity, "THE_FOO_IS_NOT_A_CONTAINER");
                 put_msg(message);
               }
             }
@@ -530,16 +530,16 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
             // CTRL-A -- attire/adorn
           case sf::Keyboard::Key::A:    // Attire
-            if (things.size() == 0)
+            if (entities.size() == 0)
             {
               put_msg(Action::make_string(player, EntityId::Mu(), tr("CHOOSE_ITEMS_FIRST"), { tr("VERB_WEAR_2") }));
             }
             else
             {
-              for (auto thing : things)
+              for (auto entity : entities)
               {
                 p_action.reset(new ActionAttire(player));
-                p_action->set_object(thing);
+                p_action->set_object(entity);
                 player->queue_action(std::move(p_action));
               }
               m_inventory_area_shows_player = false;
@@ -550,7 +550,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
             // CTRL-C -- close items
           case sf::Keyboard::Key::C:    // Close
-            if (things.size() == 0)
+            if (entities.size() == 0)
             {
               // No item specified, so ask for a direction.
               m_action_in_progress.reset(new ActionClose(player));
@@ -561,10 +561,10 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             else
             {
               // Item(s) specified, so proceed with items.
-              for (auto thing : things)
+              for (auto entity : entities)
               {
                 p_action.reset(new ActionClose(player));
-                p_action->set_object(thing);
+                p_action->set_object(entity);
                 player->queue_action(std::move(p_action));
               }
               m_inventory_area_shows_player = false;
@@ -575,16 +575,16 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
             // CTRL-D -- drop items
           case sf::Keyboard::Key::D:    // Drop
-            if (things.size() == 0)
+            if (entities.size() == 0)
             {
               put_msg(Action::make_string(player, EntityId::Mu(), tr("CHOOSE_ITEMS_FIRST"), { tr("VERB_DROP_2") }));
             }
             else
             {
-              for (auto thing : things)
+              for (auto entity : entities)
               {
                 p_action.reset(new ActionDrop(player));
-                p_action->set_object(thing);
+                p_action->set_object(entity);
                 player->queue_action(std::move(p_action));
               }
               m_inventory_area_shows_player = false;
@@ -595,16 +595,16 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
             // CTRL-E -- eat items
           case sf::Keyboard::Key::E:
-            if (things.size() == 0)
+            if (entities.size() == 0)
             {
               put_msg(Action::make_string(player, EntityId::Mu(), tr("CHOOSE_ITEMS_FIRST"), { tr("VERB_EAT_2") }));
             }
             else
             {
-              for (auto thing : things)
+              for (auto entity : entities)
               {
                 p_action.reset(new ActionEat(player));
-                p_action->set_object(thing);
+                p_action->set_object(entity);
                 player->queue_action(std::move(p_action));
               }
               m_inventory_area_shows_player = false;
@@ -615,18 +615,18 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
             // CTRL-F -- fill item(s)
           case sf::Keyboard::Key::F:
-            if (things.size() == 0)
+            if (entities.size() == 0)
             {
               put_msg(Action::make_string(player, EntityId::Mu(), tr("CHOOSE_ITEM_FIRST"), { tr("VERB_FILL_2") }));
             }
-            else if (things.size() > 1)
+            else if (entities.size() > 1)
             {
               put_msg(Action::make_string(player, EntityId::Mu(), tr("CHOOSE_ONLY_ONE_AT_A_TIME"), { tr("VERB_FILL_2") }));
             }
             else
             {
               m_action_in_progress.reset(new ActionFill(player));
-              m_action_in_progress->set_object(things.front());
+              m_action_in_progress->set_object(entities.front());
               put_msg(Action::make_string(player, EntityId::Mu(), tr("CHOOSE_ITEM_OR_DIRECTION"), { tr("VERB_FILL_GER") }));
               m_current_input_state = GameInputState::TargetSelection;
               m_inventory_selection->clear_selected_slots();
@@ -636,16 +636,16 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
             // CTRL-G -- get (pick up) items
           case sf::Keyboard::Key::G:
-            if (things.size() == 0)
+            if (entities.size() == 0)
             {
               put_msg(Action::make_string(player, EntityId::Mu(), tr("CHOOSE_ITEMS_FIRST"), { tr("VERB_PICKUP_2") }));
             }
             else
             {
-              for (auto thing : things)
+              for (auto entity : entities)
               {
                 p_action.reset(new ActionGet(player));
-                p_action->set_object(thing);
+                p_action->set_object(entity);
                 player->queue_action(std::move(p_action));
               }
               m_inventory_area_shows_player = false;
@@ -656,18 +656,18 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
             // CTRL-H -- hurl items
           case sf::Keyboard::Key::H:
-            if (things.size() == 0)
+            if (entities.size() == 0)
             {
               put_msg(Action::make_string(player, EntityId::Mu(), tr("CHOOSE_ITEM_FIRST"), { tr("VERB_THROW_2") }));
             }
-            else if (things.size() > 1)
+            else if (entities.size() > 1)
             {
               put_msg(Action::make_string(player, EntityId::Mu(), tr("CHOOSE_ONLY_ONE_AT_A_TIME"), { tr("VERB_THROW_2") }));
             }
             else
             {
               m_action_in_progress.reset(new ActionHurl(player));
-              m_action_in_progress->set_object(things.front());
+              m_action_in_progress->set_object(entities.front());
               put_msg(Action::make_string(player, EntityId::Mu(), tr("CHOOSE_DIRECTION"), { tr("VERB_THROW_2") }));
               m_current_input_state = GameInputState::TargetSelection;
               m_inventory_selection->clear_selected_slots();
@@ -677,16 +677,16 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
             // CTRL-I -- inscribe with an item
           case sf::Keyboard::Key::I:
-            if (things.size() > 1)
+            if (entities.size() > 1)
             {
               put_msg(Action::make_string(player, EntityId::Mu(), tr("CHOOSE_ONLY_ONE_AT_A_TIME"), { tr("VERB_WRITE_2") }));
             }
             else
             {
               m_action_in_progress.reset(new ActionInscribe(player));
-              if (things.size() != 0)
+              if (entities.size() != 0)
               {
-                m_action_in_progress->set_object(things.front());
+                m_action_in_progress->set_object(entities.front());
               }
 
               put_msg(Action::make_string(player, EntityId::Mu(), tr("CHOOSE_ITEM_OR_DIRECTION"), { tr("VERB_WRITE_GER") }));
@@ -698,18 +698,18 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
             // CTRL-M -- mix items
           case sf::Keyboard::Key::M:
-            if (things.size() == 0)
+            if (entities.size() == 0)
             {
               put_msg(Action::make_string(player, EntityId::Mu(), tr("CHOOSE_TWO_ITEMS_FIRST"), { tr("VERB_MIX_2") }));
             }
-            else if (things.size() != 2)
+            else if (entities.size() != 2)
             {
               put_msg(Action::make_string(player, EntityId::Mu(), tr("CHOOSE_EXACTLY_TWO_AT_A_TIME"), { tr("VERB_MIX_2") }));
             }
             else
             {
               p_action.reset(new ActionMix(player));
-              p_action->set_objects(things);
+              p_action->set_objects(entities);
               player->queue_action(std::move(p_action));
               m_inventory_area_shows_player = false;
               reset_inventory_selection();
@@ -718,7 +718,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             break;
 
           case sf::Keyboard::Key::O:    // Open
-            if (things.size() == 0)
+            if (entities.size() == 0)
             {
               // No item specified, so ask for a direction.
               m_action_in_progress.reset(new ActionOpen(player));
@@ -729,10 +729,10 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             else
             {
               // Item(s) specified, so proceed with items.
-              for (auto thing : things)
+              for (auto entity : entities)
               {
                 p_action.reset(new ActionOpen(player));
-                p_action->set_object(thing);
+                p_action->set_object(entity);
                 player->queue_action(std::move(p_action));
               }
               m_inventory_area_shows_player = false;
@@ -743,14 +743,14 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
             // CTRL-P -- put item in another item
           case sf::Keyboard::Key::P:
-            if (things.size() == 0)
+            if (entities.size() == 0)
             {
               put_msg(Action::make_string(player, EntityId::Mu(), tr("CHOOSE_ITEMS_FIRST"), { tr("VERB_STORE_2") }));
             }
             else
             {
               m_action_in_progress.reset(new ActionPutInto(player));
-              m_action_in_progress->set_objects(things);
+              m_action_in_progress->set_objects(entities);
               put_msg(Action::make_string(player, EntityId::Mu(), tr("CHOOSE_CONTAINER"), { tr("VERB_STORE_DESC") }));
               m_current_input_state = GameInputState::TargetSelection;
               m_inventory_selection->clear_selected_slots();
@@ -760,16 +760,16 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
             // CTRL-Q -- quaff (drink) from items
           case sf::Keyboard::Key::Q:
-            if (things.size() == 0)
+            if (entities.size() == 0)
             {
               put_msg(Action::make_string(player, EntityId::Mu(), tr("CHOOSE_ITEMS_FIRST"), { tr("VERB_DRINK_2") }));
             }
             else
             {
-              for (auto thing : things)
+              for (auto entity : entities)
               {
                 p_action.reset(new ActionQuaff(player));
-                p_action->set_object(thing);
+                p_action->set_object(entity);
                 player->queue_action(std::move(p_action));
               }
               m_inventory_area_shows_player = false;
@@ -781,16 +781,16 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             // CTRL-R -- read an item
             /// @todo Maybe allow reading from direction?
           case sf::Keyboard::Key::R:
-            if (things.size() == 0)
+            if (entities.size() == 0)
             {
               put_msg(Action::make_string(player, EntityId::Mu(), tr("CHOOSE_ITEMS_FIRST"), { tr("VERB_READ_2") }));
             }
             else
             {
-              for (auto thing : things)
+              for (auto entity : entities)
               {
                 p_action.reset(new ActionRead(player));
-                p_action->set_object(thing);
+                p_action->set_object(entity);
                 player->queue_action(std::move(p_action));
               }
               m_inventory_area_shows_player = false;
@@ -803,11 +803,11 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::S:
             /// @todo Skip the item check here, as we want to shoot our wielded weapon
             /// if no item is selected.
-            if (things.size() < 1)
+            if (entities.size() < 1)
             {
               put_msg(Action::make_string(player, EntityId::Mu(), tr("CHOOSE_ITEM_FIRST"), { tr("VERB_SHOOT_2") }));
             }
-            if (things.size() > 1)
+            if (entities.size() > 1)
             {
               put_msg(Action::make_string(player, EntityId::Mu(), tr("CHOOSE_ONLY_ONE_AT_A_TIME"), { tr("VERB_SHOOT_2") }));
             }
@@ -816,7 +816,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
               /// @todo If no items are selected, fire your wielded item.
               ///       Otherwise, wield the selected item and fire it.
               m_action_in_progress.reset(new ActionShoot(player));
-              m_action_in_progress->set_object(things.front());
+              m_action_in_progress->set_object(entities.front());
               put_msg(Action::make_string(player, EntityId::Mu(), tr("CHOOSE_DIRECTION"), { tr("VERB_SHOOT_2") }));
               m_current_input_state = GameInputState::TargetSelection;
               m_inventory_selection->clear_selected_slots();
@@ -826,14 +826,14 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
             // CTRL-T -- take item out of container
           case sf::Keyboard::Key::T:
-            if (things.size() == 0)
+            if (entities.size() == 0)
             {
               put_msg(Action::make_string(player, EntityId::Mu(), tr("CHOOSE_ITEMS_FIRST"), { tr("VERB_REMOVE_2") }));
             }
             else
             {
               p_action.reset(new ActionTakeOut(player));
-              p_action->set_objects(things);
+              p_action->set_objects(entities);
               player->queue_action(std::move(p_action));
               m_inventory_area_shows_player = false;
               reset_inventory_selection();
@@ -843,16 +843,16 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
             // CTRL-U -- use an item
           case sf::Keyboard::Key::U:
-            if (things.size() == 0)
+            if (entities.size() == 0)
             {
               put_msg(Action::make_string(player, EntityId::Mu(), tr("CHOOSE_ITEMS_FIRST"), { tr("VERB_USE_2") }));
             }
             else
             {
-              for (auto thing : things)
+              for (auto entity : entities)
               {
                 p_action.reset(new ActionUse(player));
-                p_action->set_object(thing);
+                p_action->set_object(entity);
                 player->queue_action(std::move(p_action));
               }
               m_inventory_area_shows_player = false;
@@ -863,18 +863,18 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
             // CTRL-W -- wield item
           case sf::Keyboard::Key::W:
-            if (things.size() == 0)
+            if (entities.size() == 0)
             {
               put_msg(Action::make_string(player, EntityId::Mu(), tr("CHOOSE_ITEM_FIRST"), { tr("VERB_WIELD_2") }));
             }
-            else if (things.size() > 1)
+            else if (entities.size() > 1)
             {
               put_msg(Action::make_string(player, EntityId::Mu(), tr("CHOOSE_ONLY_ONE_AT_A_TIME"), { tr("VERB_WIELD_2") }));
             }
             else
             {
               p_action.reset(new ActionWield(player));
-              p_action->set_object(things.front());
+              p_action->set_object(entities.front());
               player->queue_action(std::move(p_action));
               m_inventory_area_shows_player = false;
               reset_inventory_selection();
@@ -884,7 +884,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
 
             // CTRL-X -- Xplicit attack
           case sf::Keyboard::Key::X:
-            if (things.size() == 0)
+            if (entities.size() == 0)
             {
               // No item specified, so ask for a direction.
               m_action_in_progress.reset(new ActionAttack(player));
@@ -892,7 +892,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
               m_current_input_state = GameInputState::TargetSelection;
               m_inventory_selection->clear_selected_slots();
             }
-            else if (things.size() > 1)
+            else if (entities.size() > 1)
             {
               put_msg(Action::make_string(player, EntityId::Mu(), tr("CHOOSE_ONLY_ONE_AT_A_TIME"), { tr("VERB_ATTACK_2") }));
             }
@@ -900,7 +900,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             {
               // Item(s) specified, so proceed with items.
               p_action.reset(new ActionAttack(player));
-              p_action->set_object(things.front());
+              p_action->set_object(entities.front());
               player->queue_action(std::move(p_action));
               m_inventory_area_shows_player = false;
               reset_inventory_selection();
@@ -1089,7 +1089,7 @@ SFMLEventResult AppStateGameMode::handle_key_press_target_selection(EntityId pla
   {
     if (!key.alt && !key.control && key_number != -1)
     {
-      m_action_in_progress->set_target(m_inventory_selection->get_thing(static_cast<InventorySlot>(key_number)));
+      m_action_in_progress->set_target(m_inventory_selection->get_entity(static_cast<InventorySlot>(key_number)));
       player->queue_action(std::move(m_action_in_progress));
       m_inventory_area_shows_player = false;
       reset_inventory_selection();

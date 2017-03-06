@@ -102,7 +102,7 @@ public:
   /// @return The number of modifiers erased.
   size_t remove_modifier(std::string key);
 
-  /// Remove all modifier functions for a given key and thing ID.
+  /// Remove all modifier functions for a given key and entity ID.
   /// @return The number of modifiers erased.
   size_t remove_modifier(std::string key, EntityId id);
 

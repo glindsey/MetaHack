@@ -50,7 +50,7 @@ public:
   bool is_empty_space() const;
 
   /// Returns whether a tile can be traversed by a certain DynamicEntity.
-  bool can_be_traversed_by(EntityId thing) const;
+  bool can_be_traversed_by(EntityId entity) const;
 
   /// Set the current tile's location.
   void set_coords(int x, int y);
@@ -137,7 +137,7 @@ private:
   std::map<unsigned int, sf::Color> m_calculated_light_colors;
 
   /// A map of LightInfluences, representing the amount of light that
-  /// each thing is contributing to this map tile.
+  /// each entity is contributing to this map tile.
   /// Levels for the various color channels are interpreted as such:
   /// 0 <= value <= 128: result = (original * (value / 128))
   /// 128 < value <= 255: result = max(original + (value - 128), 255)

@@ -82,7 +82,7 @@ namespace metagui
         Vec2i point{ sfml_event.mouseMove.x, sfml_event.mouseMove.y };
         m_mouse_location = point;
 
-        /// @todo Handle things like dragging, resizing
+        /// @todo Handle entities like dragging, resizing
         for (unsigned int index = 0; index < sf::Mouse::ButtonCount; ++index)
         {
           auto& button_info = m_button_info[index];

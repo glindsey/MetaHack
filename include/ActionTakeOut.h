@@ -20,7 +20,7 @@ class ActionTakeOut
     ACTION_TRAIT(can_be_subject_verb_objects)
     ACTION_TRAIT(object_can_be_out_of_reach)
 
-    /// @todo Handle taking multiple items out of a thing. Right now only the
+    /// @todo Handle taking multiple items out of a entity. Right now only the
     ///       first item is processed.
 public:
 

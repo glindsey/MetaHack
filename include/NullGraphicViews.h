@@ -35,4 +35,9 @@ public:
     return NEW MapNullView(map);
   }
 
+  /// Load any required view resources associated with the specified metadata.
+  virtual void loadViewResourcesFor(Metadata& metadata) override
+  {
+  }
+
 };

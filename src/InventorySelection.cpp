@@ -28,11 +28,11 @@ InventorySelection::InventorySelection()
   SET_UP_LOGGER("InventorySelection", true);
 }
 
-InventorySelection::InventorySelection(EntityId thing)
+InventorySelection::InventorySelection(EntityId entity)
   :
   InventorySelection()
 {
-  set_viewed(thing);
+  set_viewed(entity);
 }
 
 InventorySelection::~InventorySelection()
@@ -45,9 +45,9 @@ EntityId InventorySelection::get_viewed() const
   return pImpl->viewed;
 }
 
-void InventorySelection::set_viewed(EntityId thing)
+void InventorySelection::set_viewed(EntityId entity)
 {
-  pImpl->viewed = thing;
+  pImpl->viewed = entity;
   pImpl->selected_slots.clear();
   notifyObservers(Event::Updated);
 }
@@ -70,14 +70,14 @@ void InventorySelection::toggle_selection(InventorySlot selection)
     {
       CLOG(TRACE, "InventorySelection") <<
         "Adding slot " << static_cast<unsigned int>(selection) <<
-        "to selected things";
+        "to selected entities";
       pImpl->selected_slots.push_back(selection);
     }
     else
     {
       CLOG(TRACE, "InventorySelection") <<
         "Removing slot " << static_cast<unsigned int>(selection) <<
-        "from selected things";
+        "from selected entities";
       pImpl->selected_slots.erase(iter);
     }
 
@@ -97,7 +97,7 @@ std::vector<InventorySlot> const& InventorySelection::get_selected_slots()
 
 std::vector<EntityId> InventorySelection::get_selected_things()
 {
-  std::vector<EntityId> things;
+  std::vector<EntityId> entities;
 
   if (pImpl->viewed != EntityId::Mu())
   {
@@ -107,12 +107,12 @@ std::vector<EntityId> InventorySelection::get_selected_things()
          iter != std::end(pImpl->selected_slots);
          ++iter)
     {
-      EntityId thing = inventory[*iter];
-      things.push_back(thing);
+      EntityId entity = inventory[*iter];
+      entities.push_back(entity);
     }
   }
 
-  return things;
+  return entities;
 }
 
 void InventorySelection::clear_selected_slots()
@@ -143,15 +143,15 @@ unsigned int InventorySelection::get_max_quantity() const
   }
   else
   {
-    EntityId thing = inventory[pImpl->selected_slots[0]];
+    EntityId entity = inventory[pImpl->selected_slots[0]];
 
-    if (thing == EntityId::Mu())
+    if (entity == EntityId::Mu())
     {
       result = 0;
     }
     else
     {
-      result = thing->get_quantity();
+      result = entity->get_quantity();
     }
   }
 
@@ -203,7 +203,7 @@ bool InventorySelection::dec_selected_quantity()
   return false;
 }
 
-EntityId InventorySelection::get_thing(InventorySlot selection)
+EntityId InventorySelection::get_entity(InventorySlot selection)
 {
   EntityId viewed = pImpl->viewed;
 

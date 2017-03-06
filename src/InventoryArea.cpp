@@ -3,7 +3,9 @@
 #include "InventoryArea.h"
 
 #include "App.h"
+#include "EntityView.h"
 #include "IConfigSettings.h"
+#include "IGraphicViews.h"
 #include "Inventory.h"
 #include "InventorySelection.h"
 #include "MapTile.h"
@@ -35,7 +37,9 @@ void InventoryArea::notifyOfEvent_(Observable & observed, Event event)
 
 void InventoryArea::render_contents_(sf::RenderTexture& texture, int frame)
 {
-  auto& config = Service<IConfigSettings>::get();  
+  auto& config = Service<IConfigSettings>::get();
+  auto& views = Service<IGraphicViews>::get();
+  auto& entity_pool = GAME.get_entities();
 
   // Dimensions of the pane.
   sf::IntRect pane_dims = get_relative_dimensions();
@@ -71,7 +75,7 @@ void InventoryArea::render_contents_(sf::RenderTexture& texture, int frame)
        ++iter)
   {
     auto& slot = (*iter).first;
-    EntityId thing = (*iter).second;
+    EntityId entity = (*iter).second;
     unsigned int slot_number = static_cast<unsigned int>(slot);
     sf::Text render_text;
 
@@ -119,16 +123,15 @@ void InventoryArea::render_contents_(sf::RenderTexture& texture, int frame)
     }
 
     // 4. Display the tile representing the item.
-    the_tilesheet.getTexture().setSmooth(true);
-    draw_thing(thing, texture,
-               Vec2f(static_cast<float>(text_coord_x + 75), static_cast<float>(text_coord_y)),
-               static_cast<unsigned int>(line_spacing_y - 1), false, frame);
-    the_tilesheet.getTexture().setSmooth(false);
+    auto entity_view = std::unique_ptr<EntityView>(views.createEntityView(entity_pool.get(entity)));
+    entity_view->set_location({ static_cast<float>(text_coord_x + 75), static_cast<float>(text_coord_y) });
+    entity_view->set_size({ line_spacing_y - 1, line_spacing_y - 1 } );
+    entity_view->draw(texture, false, true, frame);
 
     unsigned int wield_location;
     WearLocation wear_location;
-    bool wielding = viewed_thing->is_wielding(thing, wield_location);
-    bool wearing = viewed_thing->has_equipped(thing, wear_location);
+    bool wielding = viewed_thing->is_wielding(entity, wield_location);
+    bool wearing = viewed_thing->has_equipped(entity, wear_location);
 
     // 5. TODO: Display "worn" or "equipped" icon if necessary.
     if (wielding)
@@ -154,7 +157,7 @@ void InventoryArea::render_contents_(sf::RenderTexture& texture, int frame)
     std::stringstream item_name;
     if (selection_order == 1)
     {
-      unsigned int max_quantity = thing->get_quantity();
+      unsigned int max_quantity = entity->get_quantity();
       unsigned int selected_quantity = m_inventory_selection.get_selected_quantity();
       if ((max_quantity > 1) && (selected_quantity < max_quantity))
       {
@@ -162,7 +165,7 @@ void InventoryArea::render_contents_(sf::RenderTexture& texture, int frame)
       }
     }
 
-    item_name << thing->get_identifying_string(ArticleChoice::Indefinite, UsePossessives::No);
+    item_name << entity->get_identifying_string(ArticleChoice::Indefinite, UsePossessives::No);
 
     if (wielding)
     {
@@ -202,57 +205,4 @@ void InventoryArea::render_contents_(sf::RenderTexture& texture, int frame)
   title_string[0] = toupper(title_string[0]);
   set_text(title_string);
   return;
-}
-
-void InventoryArea::draw_thing(EntityId thing, 
-                               sf::RenderTarget& target, 
-                               Vec2f target_coords, 
-                               unsigned int target_size, 
-                               bool use_lighting, 
-                               int frame)
-{
-  auto& config = Service<IConfigSettings>::get();
-
-  MapTile* root_tile = thing->get_maptile();
-
-  if (!root_tile)
-  {
-    // Item's root location isn't a MapTile, so it can't be rendered.
-    return;
-  }
-
-  sf::RectangleShape rectangle;
-  sf::IntRect texture_coords;
-
-  if (target_size == 0)
-  {
-    target_size = config.get<unsigned int>("map_tile_size");
-  }
-
-  unsigned int tile_size = config.get<unsigned int>("map_tile_size");
-
-  Vec2u tile_coords = thing->get_tile_sheet_coords(frame);
-  texture_coords.left = tile_coords.x * tile_size;
-  texture_coords.top = tile_coords.y * tile_size;
-  texture_coords.width = tile_size;
-  texture_coords.height = tile_size;
-
-  sf::Color thing_color;
-  if (use_lighting)
-  {
-    thing_color = root_tile->get_light_level();
-  }
-  else
-  {
-    thing_color = sf::Color::White;
-  }
-
-  rectangle.setPosition(target_coords);
-  rectangle.setSize(Vec2f(static_cast<float>(target_size),
-                                 static_cast<float>(target_size)));
-  rectangle.setTexture(&(the_tilesheet.getTexture()));
-  rectangle.setTextureRect(texture_coords);
-  rectangle.setFillColor(thing_color);
-
-  target.draw(rectangle);
 }

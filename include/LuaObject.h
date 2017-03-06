@@ -374,7 +374,7 @@ public:
   /// there.
   ///
   /// @param function_name  Name of the function to call
-  /// @param caller         EntityId to the thing calling the function
+  /// @param caller         EntityId to the entity calling the function
   /// @param args           Vector of arguments to pass to the function
   /// @param default_result The default result if function is not found
   ///                       after traversing the entire parent tree.

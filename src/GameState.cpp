@@ -57,7 +57,7 @@ MapFactory& GameState::get_maps()
   return *m_map_factory;
 }
 
-EntityPool& GameState::get_things()
+EntityPool& GameState::get_entities()
 {
   ASSERT_CONDITION(m_thing_manager);
 
@@ -92,7 +92,7 @@ void GameState::increment_game_clock(ElapsedTime added_time)
 
 bool GameState::set_player(EntityId ref)
 {
-  ASSERT_CONDITION(ref != get_things().get_mu());
+  ASSERT_CONDITION(ref != get_entities().get_mu());
 
   m_player = ref;
   return true;

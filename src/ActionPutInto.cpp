@@ -22,7 +22,7 @@ Action::StateResult ActionPutInto::do_prebegin_work_(AnyMap& params)
     return StateResult::Failure();
   }
 
-  // Check that the thing and container aren't the same thing.
+  // Check that the entity and container aren't the same entity.
   if (object == container)
   {
     if (IS_PLAYER)
@@ -38,7 +38,7 @@ Action::StateResult ActionPutInto::do_prebegin_work_(AnyMap& params)
     return StateResult::Failure();
   }
 
-  // Check that the thing is not US!
+  // Check that the entity is not US!
   if (object == subject)
   {
     if (IS_PLAYER)
@@ -85,7 +85,7 @@ Action::StateResult ActionPutInto::do_prebegin_work_(AnyMap& params)
     return StateResult::Failure();
   }
 
-  // Check that the thing's location isn't already the container.
+  // Check that the entity's location isn't already the container.
   if (object->get_location() == container)
   {
     print_message_try_();

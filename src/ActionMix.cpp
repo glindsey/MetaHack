@@ -27,7 +27,7 @@ Action::StateResult ActionMix::do_prebegin_work_(AnyMap& params)
     return Action::StateResult::Failure();
   }
 
-  // Check that they aren't both the same thing.
+  // Check that they aren't both the same entity.
   if (object1 == object2)
   {
     print_message_try_();

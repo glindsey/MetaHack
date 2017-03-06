@@ -48,7 +48,7 @@ Action::StateResult ActionEat::do_begin_work_(AnyMap& params)
   print_message_begin_();
 
   // Do the eating action here.
-  /// @todo "Partially eaten" status for things that were started to be eaten
+  /// @todo "Partially eaten" status for entities that were started to be eaten
   ///       but were interrupted.
   /// @todo Figure out eating time. This will obviously vary based on the
   ///       object being eaten.

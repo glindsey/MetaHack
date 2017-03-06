@@ -59,15 +59,17 @@ public:
   /// @return The EntityId of Mu.
   static EntityId get_mu();
 
-protected:
-
   /// Get a reference to the Entity associated with a particular EntityId.
   /// If the ID does not exist, returns Mu.
+  /// @note Should only be called by views.
   Entity& get(EntityId data);
 
   /// Get a reference to the Entity associated with a particular EntityId.
   /// If the ID does not exist, returns Mu.
+  /// @note Should only be called by views.
   Entity const& get(EntityId data) const;
+
+protected:
 
 private:
   /// Reference to the game state.

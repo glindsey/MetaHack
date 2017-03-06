@@ -7,10 +7,10 @@
 
 Entity* EntityId::operator->()
 {
-  return &(GAME.get_things().get(m_id));
+  return &(GAME.get_entities().get(m_id));
 }
 
 Entity const* EntityId::operator->() const
 {
-  return &(GAME.get_things().get(m_id));
+  return &(GAME.get_entities().get(m_id));
 }

@@ -6,11 +6,11 @@
 #include "GameState.h"
 #include "EntityPool.h"
 
-EntityView::EntityView(Entity& thing)
+EntityView::EntityView(Entity& entity)
   :
-  m_thing(thing)
+  m_entity(entity)
 {
-  startObserving(thing);
+  startObserving(entity);
 }
 
 EntityView::~EntityView()
@@ -29,7 +29,7 @@ Vec2f EntityView::get_location()
   return m_target_coords;
 }
 
-void EntityView::set_size(Vec2u target_size)
+void EntityView::set_size(Vec2f target_size)
 {
   if (target_size != m_target_size)
   {
@@ -37,12 +37,12 @@ void EntityView::set_size(Vec2u target_size)
   }
 }
 
-Vec2u EntityView::get_size()
+Vec2f EntityView::get_size()
 {
   return m_target_size;
 }
 
-Entity& EntityView::get_thing()
+Entity& EntityView::get_entity()
 {
-  return m_thing;
+  return m_entity;
 }

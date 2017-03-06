@@ -7,10 +7,11 @@
 
 #include "ShaderEffect.h"
 
-MapTileStandard2DView::MapTileStandard2DView(MapTile& map_tile)
+MapTileStandard2DView::MapTileStandard2DView(MapTile& map_tile, TileSheet& tile_sheet)
   :
   MapTileView(map_tile),
-  m_tile_offset{ pick_uniform(0, 4) }
+  m_tile_offset{ pick_uniform(0, 4) },
+  m_tile_sheet{ tile_sheet }
 {
 }
 
@@ -94,10 +95,10 @@ void MapTileStandard2DView::add_memory_vertices_to(sf::VertexArray& vertices,
   ///       in the upper-left corner.
   Vec2u tile_coords = tile_metadata->get_tile_coords();
 
-  the_tilesheet.add_quad(vertices,
-                         tile_coords, sf::Color::White,
-                         vNW, vNE,
-                         vSW, vSE);
+  m_tile_sheet.add_quad(vertices,
+                        tile_coords, sf::Color::White,
+                        vNW, vNE,
+                        vSW, vSE);
 }
 
 void MapTileStandard2DView::add_tile_floor_vertices(sf::VertexArray& vertices)
@@ -146,12 +147,12 @@ void MapTileStandard2DView::add_tile_floor_vertices(sf::VertexArray& vertices)
 
   Vec2u tile_coords = get_tile_sheet_coords();
 
-  the_tilesheet.add_gradient_quad(vertices, tile_coords,
-                                  vNW, vNE,
-                                  vSW, vSE,
-                                  lightNW, lightN, lightNE,
-                                  lightW, light, lightE,
-                                  lightSW, lightS, lightSE);
+  m_tile_sheet.add_gradient_quad(vertices, tile_coords,
+                                 vNW, vNE,
+                                 vSW, vSE,
+                                 lightNW, lightN, lightNE,
+                                 lightW, light, lightE,
+                                 lightSW, lightS, lightSE);
 }
 
 void MapTileStandard2DView::add_things_floor_vertices(EntityId viewer,
@@ -167,7 +168,7 @@ void MapTileStandard2DView::add_things_floor_vertices(EntityId viewer,
   {
     if (inv.count() > 0)
     {
-      // Only draw the largest thing on that tile.
+      // Only draw the largest entity on that tile.
       EntityId biggest_thing = inv.get_largest_thing();
       if (biggest_thing != EntityId::Mu())
       {
@@ -183,14 +184,14 @@ void MapTileStandard2DView::add_things_floor_vertices(EntityId viewer,
   }
 }
 
-void MapTileStandard2DView::add_thing_floor_vertices(EntityId thing, sf::VertexArray & vertices, bool use_lighting, int frame)
+void MapTileStandard2DView::add_thing_floor_vertices(EntityId entity, sf::VertexArray & vertices, bool use_lighting, int frame)
 {
   auto& config = Service<IConfigSettings>::get();
   sf::Vertex new_vertex;
   float ts = config.get<float>("map_tile_size");
   float ts2 = ts * 0.5f;
 
-  MapTile* root_tile = thing->get_maptile();
+  MapTile* root_tile = entity->get_maptile();
   if (!root_tile)
   {
     // Item's root location isn't a MapTile, so it can't be rendered.
@@ -214,12 +215,12 @@ void MapTileStandard2DView::add_thing_floor_vertices(EntityId thing, sf::VertexA
   Vec2f vSE(location.x + ts2, location.y + ts2);
   Vec2f vNW(location.x - ts2, location.y - ts2);
   Vec2f vNE(location.x + ts2, location.y - ts2);
-  Vec2u tile_coords = thing->get_tile_sheet_coords(frame);
+  Vec2u tile_coords = entity->get_tile_sheet_coords(frame);
 
-  the_tilesheet.add_quad(vertices,
-                         tile_coords, thing_color,
-                         vNW, vNE,
-                         vSW, vSE);
+  m_tile_sheet.add_quad(vertices,
+                        tile_coords, thing_color,
+                        vNW, vNE,
+                        vSW, vSE);
 }
 
 
@@ -389,12 +390,12 @@ void MapTileStandard2DView::add_wall_vertices_to(sf::VertexArray& vertices,
       vSE.x += ws;
     }
 
-    the_tilesheet.add_gradient_quad(vertices, tile_sheet_coords,
-                                    vTileNW, vTileNE,
-                                    vSW, vSE,
-                                    wall_n_color_w, wall_n_color, wall_n_color_e,
-                                    wall_n_color_w, wall_n_color, wall_n_color_e,
-                                    wall_n_color_w, wall_n_color, wall_n_color_e);
+    m_tile_sheet.add_gradient_quad(vertices, tile_sheet_coords,
+                                   vTileNW, vTileNE,
+                                   vSW, vSE,
+                                   wall_n_color_w, wall_n_color, wall_n_color_e,
+                                   wall_n_color_w, wall_n_color, wall_n_color_e,
+                                   wall_n_color_w, wall_n_color, wall_n_color_e);
   }
 
   // EAST WALL
@@ -420,12 +421,12 @@ void MapTileStandard2DView::add_wall_vertices_to(sf::VertexArray& vertices,
       vSW.y += ws;
     }
 
-    the_tilesheet.add_gradient_quad(vertices, tile_sheet_coords,
-                                    vNW, vTileNE,
-                                    vSW, vTileSE,
-                                    wall_e_color_n, wall_e_color_n, wall_e_color_n,
-                                    wall_e_color, wall_e_color, wall_e_color,
-                                    wall_e_color_s, wall_e_color_s, wall_e_color_s);
+    m_tile_sheet.add_gradient_quad(vertices, tile_sheet_coords,
+                                   vNW, vTileNE,
+                                   vSW, vTileSE,
+                                   wall_e_color_n, wall_e_color_n, wall_e_color_n,
+                                   wall_e_color, wall_e_color, wall_e_color,
+                                   wall_e_color_s, wall_e_color_s, wall_e_color_s);
   }
 
   // SOUTH WALL
@@ -451,12 +452,12 @@ void MapTileStandard2DView::add_wall_vertices_to(sf::VertexArray& vertices,
       vNE.x += ws;
     }
 
-    the_tilesheet.add_gradient_quad(vertices, tile_sheet_coords,
-                                    vNW, vNE,
-                                    vTileSW, vTileSE,
-                                    wall_s_color_w, wall_s_color, wall_s_color_e,
-                                    wall_s_color_w, wall_s_color, wall_s_color_e,
-                                    wall_s_color_w, wall_s_color, wall_s_color_e);
+    m_tile_sheet.add_gradient_quad(vertices, tile_sheet_coords,
+                                   vNW, vNE,
+                                   vTileSW, vTileSE,
+                                   wall_s_color_w, wall_s_color, wall_s_color_e,
+                                   wall_s_color_w, wall_s_color, wall_s_color_e,
+                                   wall_s_color_w, wall_s_color, wall_s_color_e);
   }
 
   // WEST WALL
@@ -482,12 +483,12 @@ void MapTileStandard2DView::add_wall_vertices_to(sf::VertexArray& vertices,
       vSE.y += ws;
     }
 
-    the_tilesheet.add_gradient_quad(vertices, tile_sheet_coords,
-                                    vTileNW, vNE,
-                                    vTileSW, vSE,
-                                    wall_w_color_n, wall_w_color_n, wall_w_color_n,
-                                    wall_w_color, wall_w_color, wall_w_color,
-                                    wall_w_color_s, wall_w_color_s, wall_w_color_s);
+    m_tile_sheet.add_gradient_quad(vertices, tile_sheet_coords,
+                                   vTileNW, vNE,
+                                   vTileSW, vSE,
+                                   wall_w_color_n, wall_w_color_n, wall_w_color_n,
+                                   wall_w_color, wall_w_color, wall_w_color,
+                                   wall_w_color_s, wall_w_color_s, wall_w_color_s);
   }
 }
 

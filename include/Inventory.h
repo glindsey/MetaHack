@@ -21,9 +21,9 @@ public:
   virtual ~Inventory();
 
   /// Adds the passed Entity to the inventory.
-  /// @param thing Entity to add to the inventory.
+  /// @param entity Entity to add to the inventory.
   /// @return True if the add succeeded; false otherwise.
-  bool add(EntityId thing);
+  bool add(EntityId entity);
 
   /// Clears this inventory.
   void clear();
@@ -32,26 +32,26 @@ public:
   /// @return The number of items in the inventory.
   size_t count();
 
-  /// Gets a beginning iterator to the things map.
+  /// Gets a beginning iterator to the entities map.
   EntityMap::iterator begin();
 
-  /// Gets an ending iterator to the things map.
+  /// Gets an ending iterator to the entities map.
   EntityMap::iterator end();
 
-  /// Gets a beginning const iterator to the things map.
+  /// Gets a beginning const iterator to the entities map.
   EntityMap::const_iterator cbegin();
 
-  /// Gets an ending const iterator to the things map.
+  /// Gets an ending const iterator to the entities map.
   EntityMap::const_iterator cend();
 
   /// Finds items with identical qualities and combines them into a single
   /// aggregate item.
   void consolidate_items();
 
-  bool contains(EntityId thing);
+  bool contains(EntityId entity);
   bool contains(InventorySlot slot);
 
-  InventorySlot operator[](EntityId thing);
+  InventorySlot operator[](EntityId entity);
 
   EntityId operator[](InventorySlot slot);
 
@@ -62,12 +62,12 @@ public:
   /// a player needs to perform an action on a portion of an item group
   /// (such as dropping 50 gold coins).
   /// The newly created object is <i>not</i> included in the inventory.
-  /// @param thing Reference to the thing to split.
+  /// @param entity Reference to the entity to split.
   /// @param target_quantity Target quantity to split out.
   /// @return The UUID of the new Entity.
-  EntityId split(EntityId thing, unsigned int target_quantity);
+  EntityId split(EntityId entity, unsigned int target_quantity);
 
-  EntityId remove(EntityId thing);
+  EntityId remove(EntityId entity);
 
   EntityId remove(InventorySlot slot);
 

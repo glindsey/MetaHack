@@ -15,16 +15,16 @@ Inventory::~Inventory()
   //dtor
 }
 
-bool Inventory::add(EntityId thing)
+bool Inventory::add(EntityId entity)
 {
-  // If thing is Mu, exit returning false.
-  if (thing == EntityId::Mu())
+  // If entity is Mu, exit returning false.
+  if (entity == EntityId::Mu())
   {
     return false;
   }
 
-  // If the thing is the player, it goes into slot 0.
-  if (thing == GAME.get_player())
+  // If the entity is the player, it goes into slot 0.
+  if (entity == GAME.get_player())
   {
     if (things_.count(INVSLOT_ZERO) != 0)
     {
@@ -32,11 +32,11 @@ bool Inventory::add(EntityId thing)
       ///       if it's possible to change the ID of the player DynamicEntity.
       MAJOR_ERROR("Slot 0 of inventory already contains the player!");
     }
-    things_[INVSLOT_ZERO] = thing;
+    things_[INVSLOT_ZERO] = entity;
     return true;
   }
 
-  auto found_thing_id = find(thing);
+  auto found_thing_id = find(entity);
 
   if (found_thing_id == things_.cend())
   {
@@ -44,7 +44,7 @@ bool Inventory::add(EntityId thing)
     {
       if (things_.count(slot) == 0)
       {
-        things_[slot] = thing;
+        things_[slot] = entity;
         consolidate_items();
         return true;
       }
@@ -114,11 +114,11 @@ void Inventory::consolidate_items()
   }
 }
 
-bool Inventory::contains(EntityId thing)
+bool Inventory::contains(EntityId entity)
 {
-  if (GAME.get_things().exists(thing) == false) return false;
+  if (GAME.get_entities().exists(entity) == false) return false;
 
-  return (find(thing) != things_.cend());
+  return (find(entity) != things_.cend());
 }
 
 bool Inventory::contains(InventorySlot slot)
@@ -126,11 +126,11 @@ bool Inventory::contains(InventorySlot slot)
   return (things_.count(slot) != 0);
 }
 
-InventorySlot Inventory::operator[](EntityId thing)
+InventorySlot Inventory::operator[](EntityId entity)
 {
-  if (GAME.get_things().exists(thing) == false) return INVSLOT_INVALID;
+  if (GAME.get_entities().exists(entity) == false) return INVSLOT_INVALID;
 
-  auto iter = find(thing);
+  auto iter = find(entity);
 
   if (iter != things_.cend())
   {
@@ -145,13 +145,13 @@ EntityId Inventory::operator[](InventorySlot slot)
   return (things_.at(slot));
 }
 
-EntityId Inventory::split(EntityId thing, unsigned int target_quantity)
+EntityId Inventory::split(EntityId entity, unsigned int target_quantity)
 {
   EntityId target_thing = EntityId::Mu();
 
   if (target_quantity > 0)
   {
-    auto iter = find(thing);
+    auto iter = find(entity);
 
     if (iter != things_.cend())
     {
@@ -159,7 +159,7 @@ EntityId Inventory::split(EntityId thing, unsigned int target_quantity)
       unsigned int source_quantity = source_thing->get_quantity();
       if (target_quantity < source_quantity)
       {
-        target_thing = GAME.get_things().clone(source_thing);
+        target_thing = GAME.get_entities().clone(source_thing);
         source_thing->set_quantity(source_quantity - target_quantity);
         target_thing->set_quantity(target_quantity);
       }
@@ -180,11 +180,11 @@ EntityId Inventory::remove(InventorySlot slot)
   return removed_thing;
 }
 
-EntityId Inventory::remove(EntityId thing)
+EntityId Inventory::remove(EntityId entity)
 {
   EntityId removed_thing;
 
-  auto iter = find(thing);
+  auto iter = find(entity);
   if (iter != things_.cend())
   {
     removed_thing = iter->second;

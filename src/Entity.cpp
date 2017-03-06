@@ -126,15 +126,15 @@ EntityId Entity::get_wielding_in(unsigned int& hand)
   }
 }
 
-bool Entity::is_wielding(EntityId thing)
+bool Entity::is_wielding(EntityId entity)
 {
   unsigned int dummy;
-  return is_wielding(thing, dummy);
+  return is_wielding(entity, dummy);
 }
 
-bool Entity::is_wielding(EntityId thing, unsigned int& hand)
+bool Entity::is_wielding(EntityId entity, unsigned int& hand)
 {
-  if (thing == EntityId::Mu())
+  if (entity == EntityId::Mu())
   {
     return false;
   }
@@ -142,7 +142,7 @@ bool Entity::is_wielding(EntityId thing, unsigned int& hand)
     std::find_if(m_wielded_items.cbegin(),
                  m_wielded_items.cend(),
                  [&](WieldingPair const& p)
-  { return p.second == thing; });
+  { return p.second == entity; });
 
   if (found_item == m_wielded_items.cend())
   {
@@ -155,15 +155,15 @@ bool Entity::is_wielding(EntityId thing, unsigned int& hand)
   }
 }
 
-bool Entity::has_equipped(EntityId thing)
+bool Entity::has_equipped(EntityId entity)
 {
   WearLocation dummy;
-  return has_equipped(thing, dummy);
+  return has_equipped(entity, dummy);
 }
 
-bool Entity::has_equipped(EntityId thing, WearLocation& location)
+bool Entity::has_equipped(EntityId entity, WearLocation& location)
 {
-  if (thing == EntityId::Mu())
+  if (entity == EntityId::Mu())
   {
     return false;
   }
@@ -171,7 +171,7 @@ bool Entity::has_equipped(EntityId thing, WearLocation& location)
     std::find_if(m_equipped_items.cbegin(),
                  m_equipped_items.cend(),
                  [&](WearingPair const& p)
-  { return p.second == thing; });
+  { return p.second == entity; });
 
   if (found_item == m_equipped_items.cend())
   {
@@ -184,24 +184,24 @@ bool Entity::has_equipped(EntityId thing, WearLocation& location)
   }
 }
 
-bool Entity::can_reach(EntityId thing)
+bool Entity::can_reach(EntityId entity)
 {
   // Check if it is our location.
   auto our_location = get_location();
-  if (our_location == thing)
+  if (our_location == entity)
   {
     return true;
   }
 
   // Check if it's at our location.
-  auto thing_location = thing->get_location();
+  auto thing_location = entity->get_location();
   if (our_location == thing_location)
   {
     return true;
   }
 
   // Check if it's in our inventory.
-  if (this->get_inventory().contains(thing))
+  if (this->get_inventory().contains(entity))
   {
     return true;
   }
@@ -209,11 +209,11 @@ bool Entity::can_reach(EntityId thing)
   return false;
 }
 
-bool Entity::is_adjacent_to(EntityId thing)
+bool Entity::is_adjacent_to(EntityId entity)
 {
   // Get the coordinates we are at.
   MapTile* our_maptile = get_maptile();
-  MapTile* thing_maptile = thing->get_maptile();
+  MapTile* thing_maptile = entity->get_maptile();
   if ((our_maptile == nullptr) || (thing_maptile == nullptr))
   {
     return false;
@@ -274,18 +274,18 @@ bool Entity::do_die()
   }
 }
 
-ActionResult Entity::can_deequip(EntityId thing, unsigned int& action_time)
+ActionResult Entity::can_deequip(EntityId entity, unsigned int& action_time)
 {
   action_time = 1;
 
   // Check that it isn't US!
-  if (thing == m_ref)
+  if (entity == m_ref)
   {
     return ActionResult::FailureSelfReference;
   }
 
   // Check that it's already being worn.
-  if (!this->has_equipped(thing))
+  if (!this->has_equipped(entity))
   {
     return ActionResult::FailureItemNotEquipped;
   }
@@ -294,11 +294,11 @@ ActionResult Entity::can_deequip(EntityId thing, unsigned int& action_time)
   return ActionResult::Success;
 }
 
-bool Entity::do_deequip(EntityId thing, unsigned int& action_time)
+bool Entity::do_deequip(EntityId entity, unsigned int& action_time)
 {
   std::string message;
-  ActionResult deequip_try = this->can_deequip(thing, action_time);
-  std::string thing_name = thing->get_identifying_string();
+  ActionResult deequip_try = this->can_deequip(entity, action_time);
+  std::string thing_name = entity->get_identifying_string();
 
   message = this->get_you_or_identifying_string() + " " +
     this->choose_verb("try", "tries") +
@@ -311,9 +311,9 @@ bool Entity::do_deequip(EntityId thing, unsigned int& action_time)
     {
       // Get the body part this item is equipped on.
       WearLocation location;
-      this->has_equipped(thing, location);
+      this->has_equipped(entity, location);
 
-      if (thing->perform_action_deequipped_by(m_ref, location))
+      if (entity->perform_action_deequipped_by(m_ref, location))
       {
         set_worn(EntityId::Mu(), location);
 
@@ -344,23 +344,23 @@ bool Entity::do_deequip(EntityId thing, unsigned int& action_time)
   return false;
 }
 
-ActionResult Entity::can_equip(EntityId thing, unsigned int& action_time)
+ActionResult Entity::can_equip(EntityId entity, unsigned int& action_time)
 {
   action_time = 1;
 
   // Check that it isn't US!
-  if (thing == m_ref)
+  if (entity == m_ref)
   {
     return ActionResult::FailureSelfReference;
   }
 
   // Check that it's in our inventory.
-  if (!this->get_inventory().contains(thing))
+  if (!this->get_inventory().contains(entity))
   {
     return ActionResult::FailureEntityOutOfReach;
   }
 
-  BodyPart part = thing->is_equippable_on();
+  BodyPart part = entity->is_equippable_on();
 
   if (part == BodyPart::Count)
   {
@@ -375,12 +375,12 @@ ActionResult Entity::can_equip(EntityId thing, unsigned int& action_time)
   return ActionResult::Success;
 }
 
-bool Entity::do_equip(EntityId thing, unsigned int& action_time)
+bool Entity::do_equip(EntityId entity, unsigned int& action_time)
 {
   std::string message;
 
-  ActionResult equip_try = this->can_equip(thing, action_time);
-  std::string thing_name = thing->get_identifying_string();
+  ActionResult equip_try = this->can_equip(entity, action_time);
+  std::string thing_name = entity->get_identifying_string();
 
   switch (equip_try)
   {
@@ -388,9 +388,9 @@ bool Entity::do_equip(EntityId thing, unsigned int& action_time)
     {
       WearLocation location;
 
-      if (thing->perform_action_equipped_by(m_ref, location))
+      if (entity->perform_action_equipped_by(m_ref, location))
       {
-        set_worn(thing, location);
+        set_worn(entity, location);
 
         std::string wear_desc = get_bodypart_description(location.part,
                                                            location.number);
@@ -452,27 +452,27 @@ bool Entity::do_equip(EntityId thing, unsigned int& action_time)
   return false;
 }
 
-void Entity::set_wielded(EntityId thing, unsigned int hand)
+void Entity::set_wielded(EntityId entity, unsigned int hand)
 {
-  if (thing == EntityId::Mu())
+  if (entity == EntityId::Mu())
   {
     m_wielded_items.erase(hand);
   }
   else
   {
-    m_wielded_items[hand] = thing;
+    m_wielded_items[hand] = entity;
   }
 }
 
-void Entity::set_worn(EntityId thing, WearLocation location)
+void Entity::set_worn(EntityId entity, WearLocation location)
 {
-  if (thing == EntityId::Mu())
+  if (entity == EntityId::Mu())
   {
     m_equipped_items.erase(location);
   }
   else
   {
-    m_equipped_items[location] = thing;
+    m_equipped_items[location] = entity;
   }
 }
 
@@ -646,7 +646,7 @@ std::string const& Entity::get_parent_type() const
 bool Entity::is_subtype_of(std::string that_type) const
 {
   std::string this_type = get_type();
-  return GAME.get_things().first_is_subtype_of_second(this_type, that_type);
+  return GAME.get_entities().first_is_subtype_of_second(this_type, that_type);
 }
 
 bool Entity::add_modifier(std::string key, EntityId id, unsigned int expiration_ticks)
@@ -692,7 +692,7 @@ EntityId Entity::get_location() const
   return m_location;
 }
 
-bool Entity::can_see(EntityId thing)
+bool Entity::can_see(EntityId entity)
 {
   // Make sure we are able to see at all.
   if (!can_currently_see())
@@ -702,7 +702,7 @@ bool Entity::can_see(EntityId thing)
 
   // Are we on a map?  Bail out if we aren't.
   MapId entity_map_id = this->get_map_id();
-  MapId thing_map_id = thing->get_map_id();
+  MapId thing_map_id = entity->get_map_id();
 
   if ((entity_map_id == MapFactory::null_map_id) ||
     (thing_map_id == MapFactory::null_map_id) ||
@@ -711,7 +711,7 @@ bool Entity::can_see(EntityId thing)
     return false;
   }
 
-  auto thing_location = thing->get_maptile();
+  auto thing_location = entity->get_maptile();
   if (thing_location == nullptr)
   {
     return false;
@@ -1184,8 +1184,8 @@ void Entity::light_up_surroundings()
            iter != inventory.end();
            ++iter)
       {
-        EntityId thing = iter->second;
-        thing->light_up_surroundings();
+        EntityId entity = iter->second;
+        entity->light_up_surroundings();
       }
     }
   }
@@ -1238,21 +1238,21 @@ void Entity::spill()
        iter != inventory.end();
        ++iter)
   {
-    EntityId thing = iter->second;
+    EntityId entity = iter->second;
     if (m_location != EntityId::Mu())
     {
-      ActionResult can_contain = m_location->can_contain(thing);
+      ActionResult can_contain = m_location->can_contain(entity);
 
       switch (can_contain)
       {
         case ActionResult::Success:
 
           // Try to move this into the Entity's location.
-          success = thing->move_into(m_location);
+          success = entity->move_into(m_location);
           if (success)
           {
             auto container_string = this->get_identifying_string();
-            auto thing_string = thing->get_identifying_string();
+            auto thing_string = entity->get_identifying_string();
             message = thing_string + this->choose_verb(" tumble", " tumbles") + " out of " + container_string + ".";
             Service<IMessageLog>::get().add(message);
           }
@@ -1260,10 +1260,10 @@ void Entity::spill()
           {
             // We couldn't move it, so just destroy it.
             auto container_string = this->get_identifying_string();
-            auto thing_string = thing->get_identifying_string();
+            auto thing_string = entity->get_identifying_string();
             message = thing_string + this->choose_verb(" vanish", " vanishes") + " in a puff of logic.";
             Service<IMessageLog>::get().add(message);
-            thing->destroy();
+            entity->destroy();
           }
 
           notifyObservers(Event::Updated);
@@ -1281,7 +1281,7 @@ void Entity::spill()
     else
     {
       // Container's location is Mu, so just destroy it without a message.
-      thing->destroy();
+      entity->destroy();
     }
   } // end for (contents of Entity)
 }
@@ -1465,14 +1465,14 @@ std::string Entity::get_bodypart_description(BodyPart part,
   return result;
 }
 
-bool Entity::can_have_action_done_by(EntityId thing, Action& action)
+bool Entity::can_have_action_done_by(EntityId entity, Action& action)
 {
-  return call_lua_function<bool>("can_have_action_" + action.get_type() + "_done_by", { thing }, false);
+  return call_lua_function<bool>("can_have_action_" + action.get_type() + "_done_by", { entity }, false);
 }
 
-bool Entity::is_miscible_with(EntityId thing)
+bool Entity::is_miscible_with(EntityId entity)
 {
-  return call_lua_function<bool>("is_miscible_with", { thing }, false);
+  return call_lua_function<bool>("is_miscible_with", { entity }, false);
 }
 
 BodyPart Entity::is_equippable_on() const
@@ -1483,7 +1483,7 @@ BodyPart Entity::is_equippable_on() const
 bool Entity::process()
 {
   // Get a copy of the Entity's inventory.
-  // This is because things can be deleted/removed from the inventory
+  // This is because entities can be deleted/removed from the inventory
   // over the course of processing them, and this could invalidate the
   // iterator.
   Inventory temp_inventory{ m_inventory };
@@ -1493,8 +1493,8 @@ bool Entity::process()
        iter != temp_inventory.end();
        ++iter)
   {
-    EntityId thing = iter->second;
-    /* bool dead = */ thing->process();
+    EntityId entity = iter->second;
+    /* bool dead = */ entity->process();
   }
 
   // Process self last.
@@ -1592,10 +1592,10 @@ bool Entity::can_merge_with(EntityId other) const
     return false;
   }
 
-  // If the things have the exact same properties, merge is okay.
+  // If the entities have the exact same properties, merge is okay.
   /// @todo Handle default properties. Right now, if a property was
   ///       queried on a Entity and pulls the default, but it was NOT queried
-  ///       on the second thing, the property dictionaries will NOT match.
+  ///       on the second entity, the property dictionaries will NOT match.
   ///       I have not yet found a good solution to this problem.
   auto& our_properties = this->m_properties;
   auto& other_properties = other->m_properties;
@@ -1608,7 +1608,7 @@ bool Entity::can_merge_with(EntityId other) const
   return false;
 }
 
-ActionResult Entity::can_contain(EntityId thing)
+ActionResult Entity::can_contain(EntityId entity)
 {
   unsigned int inventory_size = get_intrinsic<unsigned int>("inventory_size");
   if (inventory_size == 0)
@@ -1621,7 +1621,7 @@ ActionResult Entity::can_contain(EntityId thing)
   }
   else
   {
-    return call_lua_function<ActionResult, EntityId>("can_contain", { thing }, ActionResult::Success);
+    return call_lua_function<ActionResult, EntityId>("can_contain", { entity }, ActionResult::Success);
   }
 }
 
@@ -1673,7 +1673,7 @@ bool Entity::_process_self()
     }
 
     /// @todo This needs to be changed so it only is called if the Action
-    ///       materially affected the thing in some way. Two ways to do this
+    ///       materially affected the entity in some way. Two ways to do this
     ///       that I can see:
     ///         1) The Action calls notifyObservers. Requires the Action
     ///            to have access to that method; right now it doesn't.

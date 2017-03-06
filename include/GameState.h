@@ -32,7 +32,7 @@ public:
   void save_state(FileName filename);
 
   MapFactory& get_maps();
-  EntityPool& get_things();
+  EntityPool& get_entities();
   MetadataCollection& get_metadata_collection(std::string category);
 
   ElapsedTime const& get_game_clock() const;

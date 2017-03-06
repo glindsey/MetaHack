@@ -15,12 +15,17 @@ public:
   /// Destructor.
   virtual ~EntityStandard2DView();
 
-  
+  virtual void draw(sf::RenderTarget& target,
+                    bool use_lighting,
+                    bool use_smoothing,
+                    int frame) override;
 protected:
   /// Constructor.
-  explicit EntityStandard2DView(Entity& thing);
+  explicit EntityStandard2DView(Entity& entity, TileSheet& tile_sheet);
 
   virtual void notifyOfEvent_(Observable& observed, Event event) override;
 
 private:
+  /// Reference to tilesheet storing entity graphics.
+  TileSheet& m_tile_sheet;
 };

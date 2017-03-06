@@ -100,17 +100,17 @@ public:
     return !operator==(other);
   }
 
-  friend std::ostream& operator<< (std::ostream& stream, EntityId const& thing)
+  friend std::ostream& operator<< (std::ostream& stream, EntityId const& entity)
   {
-    stream << thing.m_id;
+    stream << entity.m_id;
 
     return stream;
   }
 
-  /// Call to get the thing associated with this.
+  /// Call to get the entity associated with this.
   Entity* operator->(void);
 
-  /// Call to get the thing associated with this.
+  /// Call to get the entity associated with this.
   Entity const* operator->(void) const;
 
 private:

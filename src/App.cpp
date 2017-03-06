@@ -59,7 +59,7 @@ App::App(sf::RenderWindow& app_window)
   // Register the App logger.
   SET_UP_LOGGER("App", true);
 
-  // First thing's first: load config settings.
+  // First entity's first: load config settings.
   Service<IConfigSettings>::provide(NEW FallbackConfigSettings());
 
   auto& config = Service<IConfigSettings>::get();
@@ -78,28 +78,28 @@ App::App(sf::RenderWindow& app_window)
 
   // Create the default fonts.
   m_default_font.reset(NEW sf::Font());
-  FileName font_name = "resources/fonts/" + config.get<std::string>("font_name_default") + ".ttf";
+  FileName font_name = "resources/font/" + config.get<std::string>("font_name_default") + ".ttf";
   if (m_default_font->loadFromFile(font_name) == false)
   {
     CLOG(FATAL, "App") << "Could not load the default font";
   }
 
   m_default_bold_font.reset(NEW sf::Font());
-  font_name = "resources/fonts/" + config.get<std::string>("font_name_bold") + ".ttf";
+  font_name = "resources/font/" + config.get<std::string>("font_name_bold") + ".ttf";
   if (m_default_bold_font->loadFromFile(font_name) == false)
   {
     CLOG(FATAL, "App") << "Could not load the default bold font";
   }
 
   m_default_mono_font.reset(NEW sf::Font());
-  font_name = "resources/fonts/" + config.get<std::string>("font_name_mono") + ".ttf";
+  font_name = "resources/font/" + config.get<std::string>("font_name_mono") + ".ttf";
   if (m_default_mono_font->loadFromFile(font_name) == false)
   {
     CLOG(FATAL, "App") << "Could not load the default monospace font";
   }
 
   m_default_unicode_font.reset(NEW sf::Font());
-  font_name = "resources/fonts/" + config.get<std::string>("font_name_unicode") + ".ttf";
+  font_name = "resources/font/" + config.get<std::string>("font_name_unicode") + ".ttf";
   if (m_default_unicode_font->loadFromFile(font_name) == false)
   {
     CLOG(FATAL, "App") << "Could not load the default Unicode font";
@@ -107,8 +107,8 @@ App::App(sf::RenderWindow& app_window)
 
   // Create the shader program.
   m_shader.reset(NEW sf::Shader());
-  if (m_shader->loadFromFile("resources/shaders/default.vert",
-                             "resources/shaders/default.frag") == false)
+  if (m_shader->loadFromFile("resources/shader/default.vert",
+                             "resources/shader/default.frag") == false)
   {
     CLOG(FATAL, "App") << "Could not load the default shaders";
   }
@@ -122,9 +122,6 @@ App::App(sf::RenderWindow& app_window)
   //m_lua->register_function("print", App::LUA_redirect_print);
   m_lua->register_function("messageLog_add", App::LUA_add);
   m_lua->register_function("get_config", App::LUA_get_config);
-
-  // Create the tilesheet.
-  m_tilesheet.reset(NEW TileSheet(config.get<unsigned int>("map_tile_size")));
 
   // Create the string dictionary, and try to load the default translation file.
   /// @todo Change this so language can be specified.
@@ -284,7 +281,7 @@ metagui::Desktop & App::get_gui_desktop()
 
 TileSheet & App::get_tilesheet()
 {
-  return *m_tilesheet;
+  return *m_tile_sheet;
 }
 
 App & App::instance()

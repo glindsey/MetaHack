@@ -7,7 +7,7 @@
 
 /// Enum representing possible results from an action.
 /// Note that a "Failure*" result doesn't necessarily mean a complete failure,
-/// just that things did not go as planned. There may still be side effects
+/// just that entities did not go as planned. There may still be side effects
 /// resulting from the attempt.
 enum class ActionResult
 {

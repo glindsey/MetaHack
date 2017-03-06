@@ -2,13 +2,20 @@
 
 #include "EntityNullView.h"
 
-EntityNullView::EntityNullView(Entity& thing)
+EntityNullView::EntityNullView(Entity& entity)
   :
-  EntityView(thing)
+  EntityView(entity)
 {
 }
 
 EntityNullView::~EntityNullView()
+{
+}
+
+void EntityNullView::draw(sf::RenderTarget& target,
+                          bool use_lighting,
+                          bool use_smoothing,
+                          int frame)
 {
 }
 

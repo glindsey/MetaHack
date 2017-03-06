@@ -106,7 +106,7 @@ private:
   std::unique_ptr<MessageLog> m_message_log;
 
   /// The tilesheet.
-  std::unique_ptr<TileSheet> m_tilesheet;
+  std::unique_ptr<TileSheet> m_tile_sheet;
 
   static int s_frame_counter;
 
@@ -138,7 +138,6 @@ private:
 #define the_desktop               (App::instance().get_gui_desktop())
 #define the_shader                (App::instance().get_shader())
 #define the_RNG                   (App::instance().get_rng())
-#define the_tilesheet             (App::instance().get_tilesheet())
 
 #define tr(x)                     (Service<IStringDictionary>::get().get(x))
 #define put_msg(x)                do { Service<IMessageLog>::get().add(x); } while(0)

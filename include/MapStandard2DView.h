@@ -30,8 +30,9 @@ public:
 protected:
   /// Constructor.
   /// Private because map views should be obtained via the IGraphicViews service.
-  /// @param map	Reference to Map object to associate with this view.
-  MapStandard2DView(Map& map);
+  /// @param map	    Reference to Map object to associate with this view.
+  /// @param tile_sheet Reference to tilesheet containing graphics to display.
+  MapStandard2DView(Map& map, TileSheet& tile_sheet);
 
   /// Reinitialize cached map render data.
   void reset_cached_render_data();
@@ -52,4 +53,7 @@ private:
 
   /// Grid of tile views.
   std::unique_ptr< Grid2D< MapTileStandard2DView > > m_map_tile_views;
+
+  /// Reference to tilesheet containing tiles/entities.
+  TileSheet& m_tile_sheet;
 };

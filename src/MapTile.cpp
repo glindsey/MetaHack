@@ -47,7 +47,7 @@ bool MapTile::is_empty_space() const
 
 /// @todo: Implement this to cover different entity types.
 ///        For example, a non-corporeal DynamicEntity can move through solid matter.
-bool MapTile::can_be_traversed_by(EntityId thing) const
+bool MapTile::can_be_traversed_by(EntityId entity) const
 {
   return is_empty_space();
 }
@@ -206,11 +206,11 @@ MapTile::MapTile(Vec2i coords, Metadata& metadata, MapId map_id)
     initialized = true;
   }
 
-  // Tile contents thing is created here, or else the pImpl would need the
+  // Tile contents entity is created here, or else the pImpl would need the
   // "this" pointer passed in.
   /// @todo The type of this floor should eventually be specified as
   ///       part of the constructor.
-  m_tile_contents = GAME.get_things().create_tile_contents(this);
+  m_tile_contents = GAME.get_entities().create_tile_contents(this);
 }
 
 MapTile const& MapTile::get_adjacent_tile(Direction direction) const

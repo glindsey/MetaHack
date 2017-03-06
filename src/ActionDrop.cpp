@@ -118,7 +118,7 @@ Action::StateResult ActionDrop::do_begin_work_(AnyMap& params)
         // be_object_of() will print any relevant messages
       }
     }
-    else // can't contain the thing
+    else // can't contain the entity
     {
       // This is mighty strange, but I suppose there might be MapTiles in
       // the future that can't contain certain Entities.

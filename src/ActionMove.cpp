@@ -48,7 +48,7 @@ Action::StateResult ActionMove::do_prebegin_work_(AnyMap& params)
     return Action::StateResult::Failure();
   }
 
-  // Make sure we're not confined inside another thing.
+  // Make sure we're not confined inside another entity.
   if (subject->is_inside_another_thing())
   {
     message += make_string("$you $are inside $0 and $are not going anywhere!",

@@ -76,10 +76,10 @@ public:
   /// Return whether there is an action currently in progress for this DynamicEntity.
   bool action_is_in_progress();
 
-  /// Get the thing being wielded in the specified hand, if any.
+  /// Get the entity being wielded in the specified hand, if any.
   EntityId get_wielding_in(unsigned int & hand);
 
-  /// Returns true if this thing is the current player.
+  /// Returns true if this entity is the current player.
   /// By default, returns false. Overridden by DynamicEntity class.
   virtual bool is_player() const;
 
@@ -90,38 +90,38 @@ public:
 
   /// Return whether a Entity is wielded by this DynamicEntity.
   /// This is used by InventoryArea to show wielded status.
-  /// @param[in] thing Entity to check
+  /// @param[in] entity Entity to check
   /// @return true if the Entity is wielded by the DynamicEntity.
-  bool is_wielding(EntityId thing);
+  bool is_wielding(EntityId entity);
 
   /// Return whether a Entity is wielded by this DynamicEntity.
   /// This is used by InventoryArea to show wielded status.
-  /// @param[in] thing Entity to check
+  /// @param[in] entity Entity to check
   /// @param[out] number Hand number it is wielded in.
   /// @return true if the Entity is wielded by the DynamicEntity.
-  bool is_wielding(EntityId thing, unsigned int& number);
+  bool is_wielding(EntityId entity, unsigned int& number);
 
   /// Return whether a Entity is equipped (worn) by this DynamicEntity.
-  /// @param[in] thing Entity to check
+  /// @param[in] entity Entity to check
   /// @return true if the Entity is being worn.
-  bool has_equipped(EntityId thing);
+  bool has_equipped(EntityId entity);
 
   /// Return whether a Entity is being worn by this DynamicEntity.
-  /// @param[in] thing Entity to check
+  /// @param[in] entity Entity to check
   /// @param[out] location of the worn Entity, if worn
   /// @return true if the Entity is being worn.
-  bool has_equipped(EntityId thing, WearLocation& location);
+  bool has_equipped(EntityId entity, WearLocation& location);
 
   /// Return whether a Entity is within reach of the DynamicEntity.
-  /// @param[in] thing Entity to check
+  /// @param[in] entity Entity to check
   /// @return true if the Entity is in the DynamicEntity's inventory or is at the
   ///         same location as the DynamicEntity, false otherwise.
-  bool can_reach(EntityId thing);
+  bool can_reach(EntityId entity);
 
   /// Return whether a Entity is adjacent to this DynamicEntity.
-  /// @param[in] thing Entity to check
+  /// @param[in] entity Entity to check
   /// @return true if the Entity is at the same place or adjacent to this DynamicEntity, false otherwise.
-  bool is_adjacent_to(EntityId thing);
+  bool is_adjacent_to(EntityId entity);
 
   /// Die.
   /// @return True if the Entity died, false if the death was avoided.
@@ -215,31 +215,31 @@ public:
   /// @return True if the function was added; false if it already existed.
   bool add_modifier(std::string key, EntityId id, unsigned int expiration_ticks = 0);
 
-  /// Remove all modifier functions for a given key and thing ID.
+  /// Remove all modifier functions for a given key and entity ID.
   /// @param  key               Name of property to modify.
   /// @param  id                ID of Entity that is responsible for modifying it.
   ///
   /// @return The number of modifiers erased.
   size_t remove_modifier(std::string key, EntityId id);
 
-  /// Get the quantity this thing represents.
+  /// Get the quantity this entity represents.
   unsigned int get_quantity() const;
 
-  /// Set the quantity this thing represents.
+  /// Set the quantity this entity represents.
   void set_quantity(unsigned int quantity);
 
-  /// Return a reference to this thing.
+  /// Return a reference to this entity.
   EntityId get_id() const;
 
   /// Return the root location of this Entity, traversing up the location
   /// chain until EntityId::Mu() is reached.
   EntityId get_root_location() const;
 
-  /// Return the location of this thing.
+  /// Return the location of this entity.
   EntityId get_location() const;
 
   /// Return whether the DynamicEntity can see the requested Entity.
-  bool can_see(EntityId thing);
+  bool can_see(EntityId entity);
 
   /// Return whether the DynamicEntity can see the requested tile.
   bool can_see(Vec2i coords);
@@ -255,17 +255,17 @@ public:
 
   ActionResult can_deequip(EntityId thing_id, unsigned int& action_time);
 
-  /// Attempt to de-equip (remove) a thing.
+  /// Attempt to de-equip (remove) a entity.
   bool do_deequip(EntityId thing_id, unsigned int& action_time);
 
   ActionResult can_equip(EntityId thing_id, unsigned int& action_time);
 
-  /// Attempt to equip (wear) a thing.
+  /// Attempt to equip (wear) a entity.
   bool do_equip(EntityId thing_id, unsigned int& action_time);
 
-  void set_wielded(EntityId thing, unsigned int hand);
+  void set_wielded(EntityId entity, unsigned int hand);
 
-  void set_worn(EntityId thing, WearLocation location);
+  void set_worn(EntityId entity, WearLocation location);
 
   /// Return whether this DynamicEntity can currently see.
   /// @todo Implement blindness counter, blindness due to wearing blindfold,
@@ -303,18 +303,18 @@ public:
 
   /// Returns true if a particular Action can be performed on this Entity by
   /// the specified Entity.
-  /// @param thing  The Entity doing the Action.
+  /// @param entity  The Entity doing the Action.
   /// @param action Reference to the Action to perform.
   /// @return true if the Action can be performed, false otherwise.
-  bool can_have_action_done_by(EntityId thing, Action& action);
+  bool can_have_action_done_by(EntityId entity, Action& action);
 
   /// Returns a reference to the inventory.
   Inventory& get_inventory();
 
-  /// Returns true if this thing is inside another Entity.
+  /// Returns true if this entity is inside another Entity.
   bool is_inside_another_thing() const;
 
-  /// Get the MapTile this thing is on, or nullptr if not on a map.
+  /// Get the MapTile this entity is on, or nullptr if not on a map.
   MapTile* get_maptile() const;
 
   /// Return the MapId this Entity is currently on, or 0 if not on a map.
@@ -329,13 +329,13 @@ public:
   /// Return this object's plural.
   std::string get_display_plural() const;
 
-  /// Get the thing's proper name (if any).
+  /// Get the entity's proper name (if any).
   std::string get_proper_name() const;
 
-  /// Set this thing's proper name.
+  /// Set this entity's proper name.
   void set_proper_name(std::string name);
 
-  /// Return a string that identifies this thing.
+  /// Return a string that identifies this entity.
   /// If it IS the player, it'll return "you".
   /// Otherwise it calls get_identifying_string().
   ///
@@ -343,7 +343,7 @@ public:
   ///                 Defaults to definite articles.
   std::string get_you_or_identifying_string(ArticleChoice articles = ArticleChoice::Definite) const;
 
-  /// Return a string that identifies this thing.
+  /// Return a string that identifies this entity.
   /// If it matches the object passed in as "other", it'll return
   /// the appropriate reflexive pronoun ("yourself", "itself", etc.).
   /// Otherwise it calls get_identifying_string().
@@ -353,13 +353,13 @@ public:
   ///                 Defaults to definite articles.
   std::string get_self_or_identifying_string(EntityId other, ArticleChoice articles = ArticleChoice::Definite) const;
 
-  /// Return a string that identifies this thing.
-  /// Returns "the/a/an" and a description of the thing, such as
+  /// Return a string that identifies this entity.
+  /// Returns "the/a/an" and a description of the entity, such as
   /// "the chair".
   /// If it is carried by the player, and possessives = true, it'll
-  /// return "your (thing)".
+  /// return "your (entity)".
   /// Likewise, if it is carried by another DynamicEntity it'll return
-  /// "(DynamicEntity)'s (thing)".
+  /// "(DynamicEntity)'s (entity)".
   /// @todo Make localizable. (How? Use Lua scripts maybe?)
   ///
   /// @param articles Choose whether to use definite or indefinite articles.
@@ -370,7 +370,7 @@ public:
                                        UsePossessives possessives = UsePossessives::Yes) const;
 
   /// Choose the proper possessive form
-  /// For a Entity, this is simply "the", as Entities cannot own things.
+  /// For a Entity, this is simply "the", as Entities cannot own entities.
   /// This function checks to see if this Entity is currently designated as
   /// the player.  If so, it returns "your".  If not, it returns get_name() + "'s".
   /// @todo Make localizable. (How? Use Lua scripts maybe?)
@@ -395,7 +395,7 @@ public:
   std::string const& choose_verb(std::string const& verb2,
                                    std::string const& verb3);
 
-  /// Return this thing's mass.
+  /// Return this entity's mass.
   int get_mass();
 
   /// @addtogroup Pronouns
@@ -419,7 +419,7 @@ public:
 
   /// @}
 
-  /// Return the coordinates of the tile representing the thing.
+  /// Return the coordinates of the tile representing the entity.
   Vec2u get_tile_sheet_coords(int frame);
 
   /// Simple check to see if a Entity is opaque.
@@ -444,28 +444,28 @@ public:
   /// Attempt to move this Entity into a location.
   bool move_into(EntityId new_location);
 
-  /// Return whether or not this thing can be mixed with another Entity.
+  /// Return whether or not this entity can be mixed with another Entity.
   /// The default behavior for this is to return false.
-  bool is_miscible_with(EntityId thing);
+  bool is_miscible_with(EntityId entity);
 
-  /// Return the body part this thing is equippable on.
-  /// If thing is not equippable, return BodyPart::Count.
+  /// Return the body part this entity is equippable on.
+  /// If entity is not equippable, return BodyPart::Count.
   BodyPart is_equippable_on() const;
 
   /// Process this Entity and its inventory for a single tick.
   bool process();
 
-  /// Perform an action when this thing dies.
+  /// Perform an action when this entity dies.
   /// @return If this function returns Failure, the death is avoided.
   /// @warning The function must reset whatever caused the death in the
   ///          first place, or the Entity will just immediately die again
   ///          on the next call to process()!
   ActionResult perform_action_died();
 
-  /// Perform an action when this thing collides with another thing.
-  void perform_action_collided_with(EntityId thing);
+  /// Perform an action when this entity collides with another entity.
+  void perform_action_collided_with(EntityId entity);
 
-  /// Perform an action when this thing collides with a wall.
+  /// Perform an action when this entity collides with a wall.
   void perform_action_collided_with_wall(Direction d, std::string tile_type);
 
   /// Perform the effects of being a object of a particular action.
@@ -491,11 +491,11 @@ public:
   ///         (if possible).
   ActionResult be_object_of(Action & action, EntityId subject, Direction direction);
 
-  /// Perform an action when this thing is hit by an attack.
+  /// Perform an action when this entity is hit by an attack.
   ActionResult perform_action_hurt_by(EntityId subject);
 
-  /// Perform an action when this thing is used to hit a target.
-  /// This action executes when the thing is wielded by an entity, and an
+  /// Perform an action when this entity is used to hit a target.
+  /// This action executes when the entity is wielded by an entity, and an
   /// attack successfully hits its target.  It is a side-effect in addition
   /// to the damage done by DynamicEntity::attack(entity).
   /// @see DynamicEntity::attack
@@ -503,11 +503,11 @@ public:
   ///       object is the target, instead of the implement.
   ActionResult perform_action_attacked_by(EntityId subject, EntityId target);
 
-  /// Perform an action when this thing is de-equipped (taken off).
+  /// Perform an action when this entity is de-equipped (taken off).
   /// If this function returns false, the action is aborted.
   bool perform_action_deequipped_by(EntityId actor, WearLocation& location);
 
-  /// Perform an action when this thing is equipped.
+  /// Perform an action when this entity is equipped.
   /// If this function returns false, the action is aborted.
   bool perform_action_equipped_by(EntityId actor, WearLocation& location);
   
@@ -515,13 +515,13 @@ public:
   /// Calls an overridden subclass function.
   bool can_merge_with(EntityId other) const;
 
-  /// Returns whether the Entity can hold a certain thing.
+  /// Returns whether the Entity can hold a certain entity.
   /// If Entity's inventory size is 0, returns
   /// ActionResult::FailureTargetNotAContainer.
   /// Otherwise, calls Lua function "can_contain()" for the Entity's type.
-  /// @param thing Entity to check.
-  /// @return ActionResult specifying whether the thing can be held here.
-  ActionResult can_contain(EntityId thing);
+  /// @param entity Entity to check.
+  /// @return ActionResult specifying whether the entity can be held here.
+  ActionResult can_contain(EntityId entity);
 
   /// Syntactic sugar for calling call_lua_function().
   template < typename ReturnType, typename ArgType = lua_Integer>
@@ -555,7 +555,7 @@ protected:
                                float slope_A = 1,
                                float slope_B = 0);
 
-  /// Set the location of this thing.
+  /// Set the location of this entity.
   /// Does no checks, nor does it update the source/target inventories.
   /// Those are the responsibility of the caller.
   void set_location(EntityId target);
@@ -615,7 +615,7 @@ private:
   /// Map of items wielded.
   WieldingMap m_wielded_items;
 
-  /// Map of things worn.
+  /// Map of entities worn.
   WearingMap m_equipped_items;
 
   /// Outline color for walls when drawing on-screen.

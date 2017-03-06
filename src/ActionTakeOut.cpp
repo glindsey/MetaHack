@@ -22,7 +22,7 @@ Action::StateResult ActionTakeOut::do_prebegin_work_(AnyMap& params)
     return StateResult::Failure();
   }
 
-  // Check that the thing isn't US!
+  // Check that the entity isn't US!
   if (object == subject)
   {
     if (IS_PLAYER)

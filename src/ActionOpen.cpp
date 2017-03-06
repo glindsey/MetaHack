@@ -23,9 +23,9 @@ Action::StateResult ActionOpen::do_begin_work_(AnyMap& params)
   Service<IMessageLog>::get().add(dict.get("ACTION_NOT_IMPLEMENTED"));
 
 #if 0
-  if (thing != EntityId::Mu())
+  if (entity != EntityId::Mu())
   {
-    success = actor->do_open(thing, action_time);
+    success = actor->do_open(entity, action_time);
   }
 #endif
 

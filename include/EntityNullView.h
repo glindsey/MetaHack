@@ -15,10 +15,14 @@ public:
   /// Destructor.
   virtual ~EntityNullView();
 
-  
+  virtual void draw(sf::RenderTarget& target,
+                    bool use_lighting,
+                    bool use_smoothing,
+                    int frame) override;
+
 protected:
   /// Constructor.
-  explicit EntityNullView(Entity& thing);
+  explicit EntityNullView(Entity& entity);
 
   virtual void notifyOfEvent_(Observable& observed, Event event) override;
 

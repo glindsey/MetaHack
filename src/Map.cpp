@@ -82,7 +82,7 @@ void Map::initialize()
     ///       this will do.
     CLOG(TRACE, "Map") << "Executing Map Lua script.";
     the_lua_instance.set_global("current_map_id", m_map_id);
-    the_lua_instance.require("resources/scripts/map");
+    the_lua_instance.require("resources/script/map");
   }
 
   CLOG(TRACE, "Map") << "Map initialized.";
@@ -175,9 +175,9 @@ void Map::update_lighting()
            iter != inventory.end();
            ++iter)
       {
-        EntityId thing = iter->second;
-        thing->light_up_surroundings();
-        //add_light(thing);
+        EntityId entity = iter->second;
+        entity->light_up_surroundings();
+        //add_light(entity);
       }
     }
   }

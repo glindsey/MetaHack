@@ -157,7 +157,7 @@ public:
   void set_state(Action::State state);
   Action::State get_state();
 
-  void set_target(EntityId thing) const;
+  void set_target(EntityId entity) const;
   void set_target(Direction direction) const;
   void set_quantity(unsigned int quantity) const;
 

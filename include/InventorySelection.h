@@ -16,11 +16,11 @@ class InventorySelection : public Observable
 {
 public:
   InventorySelection();
-  explicit InventorySelection(EntityId thing);
+  explicit InventorySelection(EntityId entity);
   virtual ~InventorySelection();
 
   EntityId get_viewed() const;
-  void set_viewed(EntityId thing);
+  void set_viewed(EntityId entity);
 
   void toggle_selection(InventorySlot selection);
   size_t get_selected_slot_count() const;
@@ -35,7 +35,7 @@ public:
   bool inc_selected_quantity();
   bool dec_selected_quantity();
 
-  EntityId get_thing(InventorySlot selection);
+  EntityId get_entity(InventorySlot selection);
 
   /// @todo Not sure if these actually belong here, or somewhere else.
   static char get_character(InventorySlot slot);

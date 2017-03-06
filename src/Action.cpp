@@ -194,9 +194,9 @@ Action::State Action::get_state()
   return pImpl->state;
 }
 
-void Action::set_target(EntityId thing) const
+void Action::set_target(EntityId entity) const
 {
-  pImpl->target_thing = thing;
+  pImpl->target_thing = entity;
   pImpl->target_direction = Direction::None;
 }
 

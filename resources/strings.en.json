@@ -22,7 +22,7 @@
 	"OBJECT_NOT_IN_INVENTORY": "However, $obj_pro_foo $foo_is not in $your inventory.",
 	"OBJECT_OUT_OF_REACH": "However, $obj_pro_foo $foo_is out of $your reach.",
 	"PICK_UP_OBJECT_FIRST": " (Pick it up first.)",
-	"QUANTITY_SUBTRACT_NEED_ONE_THING_SELECTED": "You can only have one thing selected when choosing a quantity.",
+	"QUANTITY_SUBTRACT_NEED_ONE_THING_SELECTED": "You can only have one entity selected when choosing a quantity.",
 	"QUANTITY_SUBTRACT_NEED_SOMETHING_SELECTED": "You have to have something selected before you can choose a quantity.",
 	"QUIT_MSG": "Press CTRL-ALT-Q to quit the game.",
 	"THE_FOO_IS_CLOSED": "$the_foo $foo_is closed.",

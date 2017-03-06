@@ -5,33 +5,31 @@
 #include "ErrorHandler.h"
 #include "MathUtils.h"
 
-TileSheet::TileSheet(unsigned int tileSize_)
+TileSheet::TileSheet(unsigned int tileSize, unsigned int textureSize)
   :
-  tileSize{ tileSize_ }
+  m_tileSize{ tileSize },
+  m_textureSize{ textureSize }
 {
   SET_UP_LOGGER("TileSheet", true);
 
-  /// @todo Make this a configurable setting.
-  textureSize = 1024;
- 
-  //textureSize = pImpl->texture.getMaximumSize();
+  if (m_textureSize == 0) m_textureSize = m_texture.getMaximumSize();
 
-  bool success = texture.create(textureSize, textureSize);
+  bool success = m_texture.create(m_textureSize, m_textureSize);
 
   if (!success)
   {
     FATAL_ERROR("Could not create TileSheet texture. Now we're sad.");
   }
 
-  uint32_t texture_dimension_in_tiles = textureSize / tileSize;
+  uint32_t texture_dimension_in_tiles = m_textureSize / m_tileSize;
   uint32_t used_map_size = texture_dimension_in_tiles * texture_dimension_in_tiles;
-  used.resize(used_map_size);
+  m_used.resize(used_map_size);
 
-  CLOG(TRACE, "TileSheet") << "Created " << textureSize << " x " << textureSize << " tilesheet texture";
+  CLOG(TRACE, "TileSheet") << "Created " << m_textureSize << " x " << m_textureSize << " tilesheet texture";
   CLOG(TRACE, "TileSheet") << "Fits "
     << texture_dimension_in_tiles << " x " << texture_dimension_in_tiles
     << " tiles of size "
-    << tileSize << " x " << tileSize;
+    << m_tileSize << " x " << m_tileSize;
 }
 
 TileSheet::~TileSheet()
@@ -52,12 +50,12 @@ Vec2u TileSheet::load_collection(FileName const& filename)
   Vec2u image_size = image.getSize();
 
   Vec2u image_size_in_tiles =
-    Vec2u(divide_and_round_up(image_size.x, tileSize),
-                 divide_and_round_up(image_size.y, tileSize));
+    Vec2u(divide_and_round_up(image_size.x, m_tileSize),
+          divide_and_round_up(image_size.y, m_tileSize));
 
   Vec2u free_coords = find_unused_area(image_size_in_tiles);
 
-  texture.update(image, free_coords.x * tileSize, free_coords.y * tileSize);
+  m_texture.update(image, free_coords.x * m_tileSize, free_coords.y * m_tileSize);
 
   mark_tiles_used(free_coords, image_size_in_tiles);
 
@@ -67,15 +65,15 @@ Vec2u TileSheet::load_collection(FileName const& filename)
 sf::IntRect TileSheet::get_tile(Vec2u tile) const
 {
   sf::IntRect rect;
-  rect.left = tile.x * tileSize;
-  rect.top = tile.y * tileSize;
-  rect.width = tileSize;
-  rect.height = tileSize;
+  rect.left = tile.x * m_tileSize;
+  rect.top = tile.y * m_tileSize;
+  rect.width = m_tileSize;
+  rect.height = m_tileSize;
 
-#ifdef DEBUG
+#ifdef _DEBUG
   if ((rect.left < 0) || (rect.top < 0) ||
-    (rect.left + rect.width >= static_cast<int>(pImpl->texture.getSize().x)) ||
-      (rect.top + rect.height >= static_cast<int>(pImpl->texture.getSize().y)))
+    (rect.left + rect.width >= static_cast<int>(m_texture.getSize().x)) ||
+      (rect.top + rect.height >= static_cast<int>(m_texture.getSize().y)))
   {
     MAJOR_ERROR("Request for tile (%d, %d) is out of bounds on the sprite sheet!",
                 tile.x, tile.y);
@@ -87,7 +85,7 @@ sf::IntRect TileSheet::get_tile(Vec2u tile) const
 
 sf::Texture& TileSheet::getTexture(void)
 {
-  return texture;
+  return m_texture;
 }
 
 void TileSheet::add_quad(sf::VertexArray& vertices,
@@ -96,7 +94,7 @@ void TileSheet::add_quad(sf::VertexArray& vertices,
                          Vec2f ll_coord, Vec2f lr_coord)
 {
   sf::Vertex new_vertex;
-  float ts{ static_cast<float>(tileSize) };
+  float ts{ static_cast<float>(m_tileSize) };
   Vec2f texNW(tile_coords.x * ts, tile_coords.y * ts);
 
   new_vertex.color = bg_color;
@@ -126,7 +124,7 @@ void TileSheet::add_gradient_quad(sf::VertexArray& vertices,
                                   sf::Color colorW, sf::Color colorC, sf::Color colorE,
                                   sf::Color colorSW, sf::Color colorS, sf::Color colorSE)
 {
-  float ts{ static_cast<float>(tileSize) };
+  float ts{ static_cast<float>(m_tileSize) };
   float half_ts{ ts / 2.0f };
 
   Vec2f coordC((coordNW.x + coordNE.x + coordSE.x + coordSW.x) / 4, (coordNW.y + coordNE.y + coordSE.y + coordSW.y) / 4);
@@ -204,13 +202,13 @@ void TileSheet::add_outline_vertices(sf::VertexArray& vertices,
 
 unsigned int TileSheet::get_index(Vec2u coords)
 {
-  uint32_t texture_size_in_tiles = textureSize / tileSize;
+  uint32_t texture_size_in_tiles = m_textureSize / m_tileSize;
   return (coords.y * texture_size_in_tiles) + coords.x;
 }
 
 bool TileSheet::area_is_unused(Vec2u start, Vec2u size)
 {
-  uint32_t texture_size_in_tiles = textureSize / tileSize;
+  uint32_t texture_size_in_tiles = m_textureSize / m_tileSize;
 
   if (((start.x + size.x) > texture_size_in_tiles) ||
     ((start.y + size.y) > texture_size_in_tiles))
@@ -222,7 +220,7 @@ bool TileSheet::area_is_unused(Vec2u start, Vec2u size)
   {
     for (unsigned int x = start.x; x < start.x + size.x; ++x)
     {
-      if (used[get_index({ x, y })])
+      if (m_used[get_index({ x, y })])
       {
         return false;
       }
@@ -235,7 +233,7 @@ Vec2u TileSheet::find_unused_area(Vec2u size)
 {
   Vec2u start(0, 0);
 
-  uint32_t texture_size_in_tiles = textureSize / tileSize;
+  uint32_t texture_size_in_tiles = m_textureSize / m_tileSize;
 
   while (start.y < texture_size_in_tiles)
   {
@@ -265,7 +263,7 @@ void TileSheet::mark_tiles_used(Vec2u upper_left_corner, Vec2u size)
   {
     for (uint32_t x = upper_left_corner.x; x < upper_left_corner.x + size.x; ++x)
     {
-      used[get_index({ x, y })] = true;
+      m_used[get_index({ x, y })] = true;
     }
   }
 }

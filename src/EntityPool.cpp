@@ -39,7 +39,7 @@ bool EntityPool::first_is_subtype_of_second(std::string first, std::string secon
 {
   //CLOG(TRACE, "Entity") << "Checking if " << first << " is a subtype of " << second << "...";
 
-  std::string first_parent = m_game.get_metadata_collection("thing").get(first).get_intrinsic<std::string>("parent");
+  std::string first_parent = m_game.get_metadata_collection("entity").get(first).get_intrinsic<std::string>("parent");
 
   if (first_parent.empty())
   {
@@ -61,7 +61,7 @@ EntityId EntityPool::create(std::string type)
 {
   EntityId new_id = EntityId(m_nextEntityId);
   ++m_nextEntityId;
-  Metadata& metadata = m_game.get_metadata_collection("thing").get(type);
+  Metadata& metadata = m_game.get_metadata_collection("entity").get(type);
 
   std::unique_ptr<Entity> new_thing{ new Entity{ m_game, metadata, new_id } };
   m_thing_map[new_id] = std::move(new_thing);
@@ -78,7 +78,7 @@ EntityId EntityPool::create_tile_contents(MapTile* map_tile)
 {
   EntityId new_id = EntityId(m_nextEntityId);
   ++m_nextEntityId;
-  Metadata& metadata = m_game.get_metadata_collection("thing").get("TileContents");
+  Metadata& metadata = m_game.get_metadata_collection("entity").get("TileContents");
 
   std::unique_ptr<Entity> new_thing{ new Entity { m_game, map_tile, metadata, new_id } };
   m_thing_map[new_id] = std::move(new_thing);
@@ -128,7 +128,7 @@ Entity& EntityPool::get(EntityId id)
   }
   catch (std::out_of_range&)
   {
-    CLOG(WARNING, "Entity") << "Tried to get thing " << id << " which does not exist";
+    CLOG(WARNING, "Entity") << "Tried to get entity " << id << " which does not exist";
     return *(m_thing_map[get_mu()]);
   }
 }
@@ -141,7 +141,7 @@ Entity const& EntityPool::get(EntityId id) const
   }
   catch (std::out_of_range&)
   {
-    CLOG(WARNING, "Entity") << "Tried to get thing " << id << " which does not exist";
+    CLOG(WARNING, "Entity") << "Tried to get entity " << id << " which does not exist";
     return *(m_thing_map.at(get_mu()));
   }
 }

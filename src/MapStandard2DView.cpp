@@ -8,9 +8,10 @@
 
 #include "ShaderEffect.h"
 
-MapStandard2DView::MapStandard2DView(Map& map)
+MapStandard2DView::MapStandard2DView(Map& map, TileSheet& tile_sheet)
   :
-  MapView(map)
+  MapView(map),
+  m_tile_sheet(tile_sheet)
 {
   reset_cached_render_data();
 
@@ -18,7 +19,7 @@ MapStandard2DView::MapStandard2DView(Map& map)
   m_map_tile_views.reset(new Grid2D<MapTileStandard2DView>(map.get_size(), 
                                                            [&](Vec2i coords) -> MapTileStandard2DView*
   {
-    return NEW MapTileStandard2DView(map.get_tile(coords));
+    return NEW MapTileStandard2DView(map.get_tile(coords), m_tile_sheet);
   }));
 
 }
@@ -48,7 +49,7 @@ void MapStandard2DView::update_things(EntityId viewer, int frame)
   auto& map = get_map();
   auto& map_size = map.get_size();
 
-  // Loop through and draw things.
+  // Loop through and draw entities.
   m_thing_vertices.clear();
   for (int y = 0; y < map_size.y; ++y)
   {
@@ -65,7 +66,7 @@ bool MapStandard2DView::render(sf::RenderTexture& texture, int frame)
 
   sf::RenderStates render_states = sf::RenderStates::Default;
   render_states.shader = &the_shader;
-  render_states.texture = &(the_tilesheet.getTexture());
+  render_states.texture = &(m_tile_sheet.getTexture());
 
   the_shader.setParameter("effect", ShaderEffect::Lighting);
   //the_shader.setParameter("effect", ShaderEffect::Default);

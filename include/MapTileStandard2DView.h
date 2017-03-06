@@ -22,8 +22,7 @@ public:
 
 protected:
   /// Constructor.
-  /// @param map	Reference to Map object to associate with this view.
-  MapTileStandard2DView(MapTile& map_tile);
+  MapTileStandard2DView(MapTile& map_tile, TileSheet& tile_sheet);
 
   /// Return the coordinates of the tile on the tilesheet.
   Vec2u get_tile_sheet_coords() const;
@@ -47,14 +46,14 @@ protected:
   /// @param vertices Array to add vertices to.
   void add_tile_floor_vertices(sf::VertexArray& vertices);
 
-  /// Add the floor vertices for the things on this tile to a VertexArray to be drawn.
+  /// Add the floor vertices for the entities on this tile to a VertexArray to be drawn.
   void add_things_floor_vertices(EntityId viewer,
                                  sf::VertexArray& vertices, 
                                  bool use_lighting, int frame);
 
-  /// Add the floor vertices for the thing specified.
+  /// Add the floor vertices for the entity specified.
   /// @todo Move into a Entity view.
-  void add_thing_floor_vertices(EntityId thing, 
+  void add_thing_floor_vertices(EntityId entity, 
                                 sf::VertexArray& vertices, 
                                 bool use_lighting, int frame);
 
@@ -84,4 +83,6 @@ private:
   /// Random tile offset.
   int m_tile_offset;
 
+  /// Reference to tilesheet containing MapTile graphics.
+  TileSheet& m_tile_sheet;
 };

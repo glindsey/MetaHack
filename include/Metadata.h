@@ -53,7 +53,7 @@ public:
 protected:
 
 private:
-  /// Reference to the collection this metadata is in (e.g. "maptile", "thing", etc.)
+  /// Reference to the collection this metadata is in (e.g. "maptile", "entity", etc.)
   MetadataCollection& m_collection;
 
   /// The type associated with this metadata.

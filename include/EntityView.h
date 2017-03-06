@@ -31,26 +31,31 @@ public:
   /// If the new size is different from previous, this method may
   /// reinitialize cached render data.
   /// @param target_coords Size of the Entity, in pixels.
-  void set_size(Vec2u target_size);
+  void set_size(Vec2f target_size);
 
   /// Gets the size of this Entity on the target texture.
   /// @return Size of the Entity, in pixels.
-  Vec2u get_size();
+  Vec2f get_size();
+
+  virtual void draw(sf::RenderTarget& target,
+                    bool use_lighting,
+                    bool use_smoothing,
+                    int frame) = 0;
 
 protected:
   /// Constructor.
-  explicit EntityView(Entity& thing);
+  explicit EntityView(Entity& entity);
 
   /// Get reference to Entity associated with this view.
-  Entity& get_thing();
+  Entity& get_entity();
 
 private:
   /// Reference to Entity associated with this view.
-  Entity& m_thing;
+  Entity& m_entity;
 
   /// Target coordinates for the Entity.
   Vec2f m_target_coords;
 
   /// Target size for the Entity, in pixels.
-  Vec2u m_target_size;
+  Vec2f m_target_size;
 };

@@ -7,7 +7,7 @@
 class TileSheet
 {
 public:
-  TileSheet(unsigned int tileSize);
+  TileSheet(unsigned int tileSize, unsigned int textureSize);
 
   virtual ~TileSheet();
 
@@ -84,10 +84,10 @@ protected:
 
 
 private:
-  sf::Texture texture;
-  unsigned int textureSize;
-  unsigned int tileSize;
-  boost::dynamic_bitset<size_t> used; // size_t gets rid of 64-bit compile warning
+  sf::Texture m_texture;
+  unsigned int m_textureSize;
+  unsigned int m_tileSize;
+  boost::dynamic_bitset<size_t> m_used; // size_t gets rid of 64-bit compile warning
 
 };
 

@@ -7,6 +7,7 @@ class Map;
 class MapView;
 class MapTile;
 class MapTileView;
+class Metadata;
 
 /// Interface for providing graphic views of game objects.
 class IGraphicViews
@@ -28,4 +29,7 @@ public:
   /// Return a Map view.
   /// @warning The caller assumes ownership of the created view!
   virtual MapView* createMapView(Map& map) = 0;
+
+  /// Load any required view resources associated with the specified metadata.
+  virtual void loadViewResourcesFor(Metadata& metadata) = 0;
 };

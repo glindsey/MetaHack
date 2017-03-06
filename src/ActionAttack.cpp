@@ -32,7 +32,7 @@ Action::StateResult ActionAttack::do_prebegin_work_(AnyMap& params)
   // Make sure we CAN attack.
   if (!subject->get_modified_property<bool>("can_attack", false))
   {
-    message += make_string("$you $(cv?don't:doesn't) have any way to attack things.");
+    message += make_string("$you $(cv?don't:doesn't) have any way to attack entities.");
     Service<IMessageLog>::get().add(message);
     return StateResult::Failure();
   }
@@ -54,7 +54,7 @@ Action::StateResult ActionAttack::do_prebegin_work_(AnyMap& params)
     return StateResult::Failure();
   }
 
-  // Make sure we're not confined inside another thing.
+  // Make sure we're not confined inside another entity.
   /// @todo Allow for attacking when swallowed!
   if (subject->is_inside_another_thing())
   {
@@ -122,7 +122,7 @@ Action::StateResult ActionAttack::do_begin_work_(AnyMap& params)
   if (object == EntityId::Mu())
   {
     /// @todo Deal with attacking other stuff, MapTiles, etc.
-    message = "Attacking non-entity things is not yet supported!";
+    message = "Attacking static entities is not yet supported!";
     Service<IMessageLog>::get().add(message);
     return StateResult::Failure();
   }
