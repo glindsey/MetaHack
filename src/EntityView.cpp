@@ -46,3 +46,8 @@ Entity& EntityView::get_entity()
 {
   return m_entity;
 }
+
+Entity const& EntityView::get_entity() const
+{
+  return m_entity;
+}

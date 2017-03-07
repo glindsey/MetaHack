@@ -21,6 +21,8 @@ public:
   /// Destructor.
   virtual ~MapTileView() {}
 
+  virtual std::string get_view_name() = 0;
+
 protected:
   /// Constructor.
   /// @param map	Reference to MapTile object to associate with this view.

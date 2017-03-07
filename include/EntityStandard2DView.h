@@ -19,6 +19,12 @@ public:
                     bool use_lighting,
                     bool use_smoothing,
                     int frame) override;
+
+  virtual std::string get_view_name() override;
+
+  /// Return the coordinates of the entity on the tilesheet.
+  Vec2u get_tile_sheet_coords(int frame) const;
+  
 protected:
   /// Constructor.
   explicit EntityStandard2DView(Entity& entity, TileSheet& tile_sheet);

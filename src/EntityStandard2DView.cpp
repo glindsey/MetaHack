@@ -50,7 +50,7 @@ void EntityStandard2DView::draw(sf::RenderTarget& target,
     target_size = { static_cast<float>(tile_size), static_cast<float>(tile_size) };
   }
 
-  Vec2u tile_coords = entity.get_tile_sheet_coords(frame);
+  Vec2u tile_coords = get_tile_sheet_coords(frame);
   texture_coords.left = tile_coords.x * tile_size;
   texture_coords.top = tile_coords.y * tile_size;
   texture_coords.width = tile_size;
@@ -83,4 +83,25 @@ void EntityStandard2DView::draw(sf::RenderTarget& target,
   {
     texture.setSmooth(false);
   }
+}
+
+std::string EntityStandard2DView::get_view_name()
+{
+  return "standard2D";
+}
+
+Vec2u EntityStandard2DView::get_tile_sheet_coords(int frame) const
+{
+  auto& entity = get_entity();
+
+  /// Get tile coordinates on the sheet.
+  Vec2u start_coords = entity.get_metadata().get_tile_coords();
+
+  /// Call the Lua function to get the offset (tile to choose).
+  Vec2u offset = entity.call_lua_function<Vec2u>("get_tile_offset", { frame });
+
+  /// Add them to get the resulting coordinates.
+  Vec2u tile_coords = start_coords + offset;
+
+  return tile_coords;
 }

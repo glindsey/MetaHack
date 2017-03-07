@@ -24,6 +24,11 @@
 // Static member initialization.
 sf::Color const Entity::wall_outline_color_ = sf::Color(255, 255, 255, 64);
 
+Metadata const & Entity::get_metadata() const
+{
+  return m_metadata;
+}
+
 Entity::Entity(GameState& game, Metadata& metadata, EntityId ref)
   :
   m_game{ game },
@@ -1132,20 +1137,6 @@ std::string Entity::get_possessive()
     return get_identifying_string(ArticleChoice::Definite,
                                   UsePossessives::No) + "'s";
   }
-}
-
-Vec2u Entity::get_tile_sheet_coords(int frame)
-{
-  /// Get tile coordinates on the sheet.
-  Vec2u start_coords = m_metadata.get_tile_coords();
-
-  /// Call the Lua function to get the offset (tile to choose).
-  Vec2u offset = call_lua_function<Vec2u>("get_tile_offset", { frame });
-
-  /// Add them to get the resulting coordinates.
-  Vec2u tile_coords = start_coords + offset;
-
-  return tile_coords;
 }
 
 bool Entity::is_opaque()

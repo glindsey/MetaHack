@@ -42,12 +42,16 @@ public:
                     bool use_smoothing,
                     int frame) = 0;
 
+  virtual std::string get_view_name() = 0;
+
 protected:
   /// Constructor.
   explicit EntityView(Entity& entity);
 
   /// Get reference to Entity associated with this view.
   Entity& get_entity();
+
+  Entity const& get_entity() const;
 
 private:
   /// Reference to Entity associated with this view.

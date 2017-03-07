@@ -27,6 +27,8 @@ public:
                               sf::Color bgColor,
                               int frame) override;
 
+  virtual std::string get_view_name() override;
+
 protected:
   /// Constructor.
   /// Private because map views should be obtained via the IGraphicViews service.
