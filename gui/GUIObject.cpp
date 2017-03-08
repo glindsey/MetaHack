@@ -127,6 +127,7 @@ namespace metagui
     return m_size;
   }
 
+  /// @todo Minimum texture size, configurable by subclass.
   void Object::set_size(Vec2u size)
   {
     // Do nothing if requested size is same as current size.
