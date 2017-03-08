@@ -79,7 +79,7 @@ namespace metagui
         new_size.x = (move_amount.x > -(old_size.x)) ? (old_size.x + move_amount.x) : 0;
         new_size.y = (move_amount.y > -(old_size.y)) ? (old_size.y + move_amount.y) : 0;
 
-        set_size(new_size);
+        parent->set_size(new_size);
         result = Event::Result::Handled;
       }
     }
