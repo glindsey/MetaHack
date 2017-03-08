@@ -30,7 +30,7 @@ protected:
     :
     m_map_tile(map_tile)
   {
-    startObserving(map_tile);
+    //startObserving(map_tile);
   }
 
   /// Get reference to MapTile associated with this view.
@@ -43,8 +43,6 @@ protected:
   {
     return m_map_tile;
   }
-
-  virtual void notifyOfEvent_(Observable& observed, Event event) = 0;
 
 private:
   /// MapTile associated with this view.

@@ -1,82 +1,62 @@
+/// @file Observer.cpp
+/// Observer implementation for observer pattern.
+/// Adapted from http://0xfede.io/2015/12/13/T-C++-ObserverPattern.html
+
+
 #include "stdafx.h"
 
 #include "Observer.h"
-#include "Observable.h"
 
-Observer::Observer()
-{}
+#include "Assert.h"
 
-Observer::Observer(Observable& object)
+#include "Event.h"
+#include "Subject.h"
+
+class Observer::Impl
 {
-  startObserving(object);
-}
+
+public:
+  std::unordered_map<Subject*, int> observations;
+};
+
+Observer::Observer() :
+  pImpl(new Impl())
+{}
 
 Observer::~Observer()
 {
-  stopObservingAll();
-}
-
-void Observer::startObserving(Observable& observed)
-{
-  auto& foundObserved = std::find(observedObjects.begin(), observedObjects.end(), &observed);
-  if (foundObserved == observedObjects.end())
+  for (auto& observation : pImpl->observations)
   {
-    observed.registerObserver(*this);
-    observedObjects.push_back(&observed);
+    Assert(!observation.second,
+           "\nReason:\tobserver went out of scope while registered with at least one subject." <<
+           "\nSubject:\t" << observation.first <<
+           "\nObserver:\t" << *this);
   }
 }
 
-void Observer::startObserving(std::vector<Observable*> observed_vector)
+void Observer::onEvent(Event const& event)
 {
-  for (auto observed_ptr : observed_vector)
+  if (event.getId() == Subject::Registration::id)
   {
-    startObserving(*observed_ptr);
-  }
-}
-
-void Observer::stopObserving(Observable& observed)
-{
-  auto& foundObserved = std::find(observedObjects.begin(), observedObjects.end(), &observed);
-  if (foundObserved != observedObjects.end())
-  {
-    observed.deregisterObserver(*this);
-    observedObjects.erase(foundObserved);
-  }
-}
-
-void Observer::stopObserving(std::vector<Observable*> observed_vector)
-{
-  for (auto observed_ptr : observed_vector)
-  {
-    stopObserving(*observed_ptr);
-  }
-}
-
-void Observer::stopObservingAll()
-{
-  for (auto& observed : observedObjects)
-  {
-    observed->deregisterObserver(*this);
-  }
-  observedObjects.clear();
-}
-
-void Observer::notifyOfEvent(Observable& observed, Event event)
-{
-  notifyOfEvent_(observed, event);
-  if (event == Event::Destroyed)
-  {
-    // Can't call stopObserving() as we don't want to call deregisterObserver().
-    auto& foundObserved = std::find(observedObjects.begin(), observedObjects.end(), &observed);
-    if (foundObserved != observedObjects.end())
+    auto e = static_cast<const Subject::Registration&>(event);
+    if (e.state == Subject::Registration::State::Registered)
     {
-      observedObjects.erase(foundObserved);
+      ++(pImpl->observations[e.subject]);
     }
-  }
-}
+    else if (e.state == Subject::Registration::State::Unregistered)
+    {
+      if (!--pImpl->observations[e.subject])
+      {
+        pImpl->observations.erase(e.subject);
+      }
+    }
 
-/// Get a const pointer to the observed object.
-std::vector<Observable*> const Observer::getObservedObjects() const
-{
-  return observedObjects;
+    return;
+  }
+
+  Assert(false,
+         "\nReason:\tobserver implictly did not handle event." <<
+         "\nSubject:\t" << *event.subject <<
+         "\nObserver:\t" << *this <<
+         "\nEvent:\t" << event);
 }

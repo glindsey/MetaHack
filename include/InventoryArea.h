@@ -22,8 +22,6 @@ public:
                          sf::IntRect dimensions);
   virtual ~InventoryArea();
 
-  virtual void notifyOfEvent_(Observable& observed, Event event);
-
 protected:
   virtual void render_contents_(sf::RenderTexture& texture, int frame) override;
 

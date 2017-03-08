@@ -31,6 +31,4 @@ protected:
   /// @param map	Reference to Map object to associate with this view.
   MapNullView(Map& map);
 
-  virtual void notifyOfEvent_(Observable& observed, Event event) override;
-
 };

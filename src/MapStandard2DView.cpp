@@ -136,8 +136,3 @@ void MapStandard2DView::reset_cached_render_data()
   m_thing_vertices.clear();
   m_thing_vertices.setPrimitiveType(sf::PrimitiveType::Quads);
 }
-
-void MapStandard2DView::notifyOfEvent_(Observable & observed, Event event)
-{
-  /// @todo WRITE ME
-}

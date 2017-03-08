@@ -39,9 +39,6 @@ protected:
   /// Reinitialize cached map render data.
   void reset_cached_render_data();
 
-  virtual void notifyOfEvent_(Observable& observed, Event event) override;
-
-
 private:
 
   /// "Seen" map vertex array.

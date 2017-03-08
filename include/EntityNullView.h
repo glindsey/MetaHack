@@ -26,7 +26,5 @@ protected:
   /// Constructor.
   explicit EntityNullView(Entity& entity);
 
-  virtual void notifyOfEvent_(Observable& observed, Event event) override;
-
 private:
 };

@@ -324,9 +324,6 @@
     <ClInclude Include="include\Observer.h">
       <Filter>Design Pattern Templates</Filter>
     </ClInclude>
-    <ClInclude Include="include\Observable.h">
-      <Filter>Design Pattern Templates</Filter>
-    </ClInclude>
     <ClInclude Include="include\Event.h">
       <Filter>Design Pattern Templates</Filter>
     </ClInclude>
@@ -431,6 +428,15 @@
     </ClInclude>
     <ClInclude Include="include\MapNullView.h">
       <Filter>Object Views</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Serializable.h">
+      <Filter>Design Pattern Templates</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Assert.h">
+      <Filter>Design Pattern Templates</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Subject.h">
+      <Filter>Design Pattern Templates</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -659,9 +665,6 @@
     <ClCompile Include="src\Observer.cpp">
       <Filter>Design Pattern Templates</Filter>
     </ClCompile>
-    <ClCompile Include="src\Observable.cpp">
-      <Filter>Design Pattern Templates</Filter>
-    </ClCompile>
     <ClCompile Include="src\InventorySelection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -709,6 +712,12 @@
     </ClCompile>
     <ClCompile Include="src\MapNullView.cpp">
       <Filter>Object Views</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Subject.cpp">
+      <Filter>Design Pattern Templates</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Event.cpp">
+      <Filter>Design Pattern Templates</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

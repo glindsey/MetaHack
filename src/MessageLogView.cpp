@@ -19,8 +19,8 @@ MessageLogView::MessageLogView(std::string name,
   m_key_buffer(key_buffer)
 {
   set_text("Message Log");
-  startObserving(model);
-  startObserving(key_buffer);
+  //startObserving(model);
+  //startObserving(key_buffer);
 }
 
 MessageLogView::~MessageLogView()
@@ -93,9 +93,4 @@ void MessageLogView::render_contents_(sf::RenderTexture& texture, int frame)
   }
 
   return;
-}
-
-void MessageLogView::notifyOfEvent_(Observable& observed, Event event)
-{
-  /// @todo WRITE ME
 }

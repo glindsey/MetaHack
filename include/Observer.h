@@ -2,60 +2,25 @@
 
 #include <utility>
 
-#include "Event.h"
+#include "Serializable.h"
 
 // Forward declarations
-class Observable;
+class Event;
 
-/// Class that implements an Observer of one or more objects.
-/// Each object being observed must obey the following rules:
-///   1. It must derive from `Observable`.
-///   2. It must not be destroyed without notifying the Observer.
-///      (If it is derived from `Observable` this will happen
-///      automatically upon destruction.)
-class Observer
+/// Observer declaration for observer pattern.
+/// Adapted from http://0xfede.io/2015/12/13/T-C++-ObserverPattern.html
+class Observer : public Serializable
 {
+  friend class Subject;
+
 public:
-  /// Default constructor.
   Observer();
-
-  /// Constructor that starts off observing an object.
-  /// Registers with the object given.
-  /// @param object   The object to observe.
-  Observer(Observable& object);
-
-  /// Destructor.
-  /// Deregisters with observed object, if there is one.
-  virtual ~Observer();
-
-  /// Start observing an object.
-  virtual void startObserving(Observable& observed);
-
-  /// Start observing a list of objects.
-  /// @warning It is assumed that all pointers in the list are valid!
-  virtual void startObserving(std::vector<Observable*> observed_vector);
-
-  /// Stop observing an object.
-  virtual void stopObserving(Observable& observed);
-
-  /// Stop observing a list of objects.
-  /// @warning It is assumed that all pointers in the list are valid!
-  virtual void stopObserving(std::vector<Observable*> observed_vector);
-
-  /// Clear all observed objects.
-  virtual void stopObservingAll();
-
-  /// Final method for special event handling (such as "Destroyed").
-  virtual void notifyOfEvent(Observable& observed, Event event) final;
+  virtual ~Observer() = 0;
 
 protected:
-  /// Get a const pointer to the vector of observed object.
-  virtual std::vector<Observable*> const getObservedObjects() const final;
-
-  /// Virtual method for event handling, overridden by subclasses.
-  virtual void notifyOfEvent_(Observable& observed, Event event) = 0;
+  virtual void onEvent(Event const& event);
 
 private:
-  /// Vector of objects being observed.
-  std::vector<Observable*> observedObjects;
+  class Impl;
+  const std::unique_ptr<Impl> pImpl;
 };

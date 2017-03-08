@@ -512,7 +512,3 @@ void MapTileStandard2DView::add_wall_vertices_to(sf::VertexArray& vertices,
   }
 }
 
-void MapTileStandard2DView::notifyOfEvent_(Observable & observed, Event event)
-{
-  /// @todo WRITE ME
-}

@@ -23,5 +23,4 @@ protected:
   /// @param map	Reference to Map object to associate with this view.
   MapTileNullView(MapTile& map_tile);
 
-  virtual void notifyOfEvent_(Observable& observed, Event event) override;
 };

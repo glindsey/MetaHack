@@ -10,7 +10,7 @@ EntityView::EntityView(Entity& entity)
   :
   m_entity(entity)
 {
-  startObserving(entity);
+  //startObserving(entity);
 }
 
 EntityView::~EntityView()

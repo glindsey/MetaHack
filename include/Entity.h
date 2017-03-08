@@ -15,7 +15,7 @@
 #include "MapTile.h"
 #include "Metadata.h"
 #include "ModifiablePropertyDictionary.h"
-#include "Observable.h"
+#include "Subject.h"
 #include "EntityId.h"
 #include "EntityPool.h"
 
@@ -57,7 +57,7 @@ enum class UsePossessives
 class Entity
   :
   public GameObject,
-  public Observable
+  public Subject
 {
   friend class AIStrategy;
   friend class EntityPool;

@@ -17,6 +17,14 @@ void EntityNullView::draw(sf::RenderTarget& target,
                           bool use_smoothing,
                           int frame)
 {
+<<<<<<< HEAD
+}
+=======
+}
+
+std::string EntityNullView::get_view_name()
+{
+  return "null";
 }
 
 std::string EntityNullView::get_view_name()
@@ -28,3 +36,4 @@ void EntityNullView::notifyOfEvent_(Observable & observed, Event event)
 {
   /// @todo WRITE ME
 }
+>>>>>>> origin/master

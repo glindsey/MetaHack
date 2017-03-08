@@ -30,6 +30,13 @@ void MapNullView::draw_highlight(sf::RenderTarget& target,
                                  int frame)
 {
 }
+<<<<<<< HEAD
+=======
+
+std::string MapNullView::get_view_name()
+{
+  return "null";
+}
 
 std::string MapNullView::get_view_name()
 {
@@ -40,3 +47,4 @@ void MapNullView::notifyOfEvent_(Observable & observed, Event event)
 {
   /// @todo WRITE ME
 }
+>>>>>>> origin/master

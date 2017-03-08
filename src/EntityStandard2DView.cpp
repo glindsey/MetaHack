@@ -18,11 +18,6 @@ EntityStandard2DView::~EntityStandard2DView()
 {
 }
 
-void EntityStandard2DView::notifyOfEvent_(Observable & observed, Event event)
-{
-  /// @todo WRITE ME
-}
-
 void EntityStandard2DView::draw(sf::RenderTarget& target,
                                 bool use_lighting,
                                 bool use_smoothing,

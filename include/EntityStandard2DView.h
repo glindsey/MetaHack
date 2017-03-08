@@ -29,8 +29,6 @@ protected:
   /// Constructor.
   explicit EntityStandard2DView(Entity& entity, TileSheet& tile_sheet);
 
-  virtual void notifyOfEvent_(Observable& observed, Event event) override;
-
 private:
   /// Reference to tilesheet storing entity graphics.
   TileSheet& m_tile_sheet;

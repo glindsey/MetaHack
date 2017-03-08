@@ -80,8 +80,6 @@ protected:
                             bool se_is_empty, bool s_is_empty,
                             bool sw_is_empty, bool w_is_empty);
 
-  virtual void notifyOfEvent_(Observable& observed, Event event) override;
-
 
 private:
   /// Random tile offset.
