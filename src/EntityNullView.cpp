@@ -27,6 +27,11 @@ std::string EntityNullView::get_view_name()
   return "null";
 }
 
+std::string EntityNullView::get_view_name()
+{
+  return "null";
+}
+
 void EntityNullView::notifyOfEvent_(Observable & observed, Event event)
 {
   /// @todo WRITE ME
