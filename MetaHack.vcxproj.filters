@@ -432,10 +432,10 @@
     <ClInclude Include="include\Serializable.h">
       <Filter>Design Pattern Templates</Filter>
     </ClInclude>
-    <ClInclude Include="include\Assert.h">
+    <ClInclude Include="include\Subject.h">
       <Filter>Design Pattern Templates</Filter>
     </ClInclude>
-    <ClInclude Include="include\Subject.h">
+    <ClInclude Include="include\AssertHelper.h">
       <Filter>Design Pattern Templates</Filter>
     </ClInclude>
   </ItemGroup>

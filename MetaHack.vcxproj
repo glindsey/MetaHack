@@ -316,7 +316,7 @@
     <ClInclude Include="include\AppStateGameMode.h" />
     <ClInclude Include="include\AppStateMainMenu.h" />
     <ClInclude Include="include\AppStateSplashScreen.h" />
-    <ClInclude Include="include\Assert.h" />
+    <ClInclude Include="include\AssertHelper.h" />
     <ClInclude Include="include\Beatitude.h" />
     <ClInclude Include="include\BodyPart.h" />
     <ClInclude Include="include\common_enums.h" />

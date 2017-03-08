@@ -5,7 +5,7 @@
 #include <queue>
 #include <unordered_set>
 
-#include "Assert.h"
+#include "AssertHelper.h"
 #include "Event.h"
 #include "Observer.h"
 

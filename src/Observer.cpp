@@ -7,7 +7,7 @@
 
 #include "Observer.h"
 
-#include "Assert.h"
+#include "AssertHelper.h"
 
 #include "Event.h"
 #include "Subject.h"

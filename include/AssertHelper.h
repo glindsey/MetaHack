@@ -5,6 +5,7 @@
 /// Not exactly a "design pattern" I know, but goes well here.
 
 #include <iostream>
+#include <sstream>
 
 #ifndef NDEBUG
 #define Assert(condition, message) do { std::stringstream os; os << message; _Assert(condition, #condition, __FILE__, __LINE__, os); } while (0)
