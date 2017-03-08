@@ -321,12 +321,6 @@
     <ClInclude Include="include\MapStandard2DView.h">
       <Filter>Object Views</Filter>
     </ClInclude>
-    <ClInclude Include="include\Observer.h">
-      <Filter>Design Pattern Templates</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Event.h">
-      <Filter>Design Pattern Templates</Filter>
-    </ClInclude>
     <ClInclude Include="include\Vec2.h">
       <Filter>Types</Filter>
     </ClInclude>
@@ -338,12 +332,6 @@
     </ClInclude>
     <ClInclude Include="include\ActionUnwield.h">
       <Filter>Actions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Service.h">
-      <Filter>Design Pattern Templates</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Visitor.h">
-      <Filter>Design Pattern Templates</Filter>
     </ClInclude>
     <ClInclude Include="include\NullStringDictionary.h">
       <Filter>Services</Filter>
@@ -429,13 +417,25 @@
     <ClInclude Include="include\MapNullView.h">
       <Filter>Object Views</Filter>
     </ClInclude>
-    <ClInclude Include="include\Serializable.h">
+    <ClInclude Include="design_patterns\AssertHelper.h">
       <Filter>Design Pattern Templates</Filter>
     </ClInclude>
-    <ClInclude Include="include\Subject.h">
+    <ClInclude Include="design_patterns\Event.h">
       <Filter>Design Pattern Templates</Filter>
     </ClInclude>
-    <ClInclude Include="include\AssertHelper.h">
+    <ClInclude Include="design_patterns\Observer.h">
+      <Filter>Design Pattern Templates</Filter>
+    </ClInclude>
+    <ClInclude Include="design_patterns\Serializable.h">
+      <Filter>Design Pattern Templates</Filter>
+    </ClInclude>
+    <ClInclude Include="design_patterns\Service.h">
+      <Filter>Design Pattern Templates</Filter>
+    </ClInclude>
+    <ClInclude Include="design_patterns\Subject.h">
+      <Filter>Design Pattern Templates</Filter>
+    </ClInclude>
+    <ClInclude Include="design_patterns\Visitor.h">
       <Filter>Design Pattern Templates</Filter>
     </ClInclude>
   </ItemGroup>
@@ -662,9 +662,6 @@
     <ClCompile Include="src\MessageLog.cpp">
       <Filter>Services</Filter>
     </ClCompile>
-    <ClCompile Include="src\Observer.cpp">
-      <Filter>Design Pattern Templates</Filter>
-    </ClCompile>
     <ClCompile Include="src\InventorySelection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -713,10 +710,13 @@
     <ClCompile Include="src\MapNullView.cpp">
       <Filter>Object Views</Filter>
     </ClCompile>
-    <ClCompile Include="src\Subject.cpp">
+    <ClCompile Include="design_patterns\Event.cpp">
       <Filter>Design Pattern Templates</Filter>
     </ClCompile>
-    <ClCompile Include="src\Event.cpp">
+    <ClCompile Include="design_patterns\Observer.cpp">
+      <Filter>Design Pattern Templates</Filter>
+    </ClCompile>
+    <ClCompile Include="design_patterns\Subject.cpp">
       <Filter>Design Pattern Templates</Filter>
     </ClCompile>
   </ItemGroup>
