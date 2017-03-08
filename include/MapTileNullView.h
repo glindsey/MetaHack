@@ -15,11 +15,12 @@ class MapTileNullView : public MapTileView
 
 public:
   //virtual bool render(sf::RenderTexture& texture, int frame) override;
-  
+
+  virtual std::string get_view_name() override;
+
 protected:
   /// Constructor.
   /// @param map	Reference to Map object to associate with this view.
   MapTileNullView(MapTile& map_tile);
 
-  virtual void notifyOfEvent_(Observable& observed, Event event) override;
 };

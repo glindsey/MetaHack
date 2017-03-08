@@ -110,6 +110,11 @@ void MapStandard2DView::draw_highlight(sf::RenderTarget& target,
   target.draw(box_shape);
 }
 
+std::string MapStandard2DView::get_view_name()
+{
+  return "standard2D";
+}
+
 
 void MapStandard2DView::reset_cached_render_data()
 {
@@ -130,9 +135,4 @@ void MapStandard2DView::reset_cached_render_data()
   m_map_memory_vertices.setPrimitiveType(sf::PrimitiveType::Quads);
   m_thing_vertices.clear();
   m_thing_vertices.setPrimitiveType(sf::PrimitiveType::Quads);
-}
-
-void MapStandard2DView::notifyOfEvent_(Observable & observed, Event event)
-{
-  /// @todo WRITE ME
 }

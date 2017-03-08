@@ -15,7 +15,7 @@
 #include "MapTile.h"
 #include "Metadata.h"
 #include "ModifiablePropertyDictionary.h"
-#include "Observable.h"
+#include "Subject.h"
 #include "EntityId.h"
 #include "EntityPool.h"
 
@@ -57,7 +57,7 @@ enum class UsePossessives
 class Entity
   :
   public GameObject,
-  public Observable
+  public Subject
 {
   friend class AIStrategy;
   friend class EntityPool;
@@ -419,8 +419,6 @@ public:
 
   /// @}
 
-  /// Return the coordinates of the tile representing the entity.
-  Vec2u get_tile_sheet_coords(int frame);
 
   /// Simple check to see if a Entity is opaque.
   bool is_opaque();
@@ -531,6 +529,17 @@ public:
   {
     return the_lua_instance.call_thing_function<ReturnType, ArgType>(function_name, get_id(), args, default_result);
   }
+
+  template < typename ReturnType, typename ArgType = lua_Integer>
+  ReturnType call_lua_function(std::string function_name,
+                               std::vector<ArgType> const& args = {},
+                               ReturnType default_result = ReturnType()) const
+  {
+    return the_lua_instance.call_thing_function<ReturnType, ArgType>(function_name, get_id(), args, default_result);
+  }
+
+  /// Get a const reference to this tile's metadata.
+  Metadata const & get_metadata() const;
 
 protected:
   /// Named Constructor

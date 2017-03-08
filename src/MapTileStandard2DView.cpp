@@ -7,6 +7,11 @@
 
 #include "ShaderEffect.h"
 
+std::string MapTileStandard2DView::get_view_name()
+{
+  return "standard2D";
+}
+
 MapTileStandard2DView::MapTileStandard2DView(MapTile& map_tile, TileSheet& tile_sheet)
   :
   MapTileView(map_tile),
@@ -23,6 +28,20 @@ Vec2u MapTileStandard2DView::get_tile_sheet_coords() const
   return tile_coords;
 }
 
+/// @todo Instead of repeating this method in EntityStandard2DView, call the view from here.
+Vec2u MapTileStandard2DView::get_entity_tile_sheet_coords(Entity& entity, int frame) const
+{
+  /// Get tile coordinates on the sheet.
+  Vec2u start_coords = entity.get_metadata().get_tile_coords();
+
+  /// Call the Lua function to get the offset (tile to choose).
+  Vec2u offset = entity.call_lua_function<Vec2u>("get_tile_offset", { frame });
+
+  /// Add them to get the resulting coordinates.
+  Vec2u tile_coords = start_coords + offset;
+
+  return tile_coords;
+}
 void MapTileStandard2DView::add_tile_vertices(EntityId viewer,
                                               sf::VertexArray& seen_vertices,
                                               sf::VertexArray& memory_vertices)
@@ -184,14 +203,15 @@ void MapTileStandard2DView::add_things_floor_vertices(EntityId viewer,
   }
 }
 
-void MapTileStandard2DView::add_thing_floor_vertices(EntityId entity, sf::VertexArray & vertices, bool use_lighting, int frame)
+void MapTileStandard2DView::add_thing_floor_vertices(EntityId entityId, sf::VertexArray & vertices, bool use_lighting, int frame)
 {
+  auto& entity = GAME.get_entities().get(entityId);
   auto& config = Service<IConfigSettings>::get();
   sf::Vertex new_vertex;
   float ts = config.get<float>("map_tile_size");
   float ts2 = ts * 0.5f;
 
-  MapTile* root_tile = entity->get_maptile();
+  MapTile* root_tile = entityId->get_maptile();
   if (!root_tile)
   {
     // Item's root location isn't a MapTile, so it can't be rendered.
@@ -215,7 +235,7 @@ void MapTileStandard2DView::add_thing_floor_vertices(EntityId entity, sf::Vertex
   Vec2f vSE(location.x + ts2, location.y + ts2);
   Vec2f vNW(location.x - ts2, location.y - ts2);
   Vec2f vNE(location.x + ts2, location.y - ts2);
-  Vec2u tile_coords = entity->get_tile_sheet_coords(frame);
+  Vec2u tile_coords = get_entity_tile_sheet_coords(entity, frame);
 
   m_tile_sheet.add_quad(vertices,
                         tile_coords, thing_color,
@@ -492,7 +512,3 @@ void MapTileStandard2DView::add_wall_vertices_to(sf::VertexArray& vertices,
   }
 }
 
-void MapTileStandard2DView::notifyOfEvent_(Observable & observed, Event event)
-{
-  /// @todo WRITE ME
-}

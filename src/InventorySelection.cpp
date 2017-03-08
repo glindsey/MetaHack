@@ -49,7 +49,7 @@ void InventorySelection::set_viewed(EntityId entity)
 {
   pImpl->viewed = entity;
   pImpl->selected_slots.clear();
-  notifyObservers(Event::Updated);
+  //notifyObservers(Event::Updated);
 }
 
 void InventorySelection::toggle_selection(InventorySlot selection)
@@ -118,7 +118,7 @@ std::vector<EntityId> InventorySelection::get_selected_things()
 void InventorySelection::clear_selected_slots()
 {
   pImpl->selected_slots.clear();
-  notifyObservers(Event::Updated);
+  //notifyObservers(Event::Updated);
 }
 
 unsigned int InventorySelection::get_selected_quantity() const
@@ -161,7 +161,7 @@ unsigned int InventorySelection::get_max_quantity() const
 unsigned int InventorySelection::reset_selected_quantity()
 {
   pImpl->selected_quantity = get_max_quantity();
-  notifyObservers(Event::Updated);
+  //notifyObservers(Event::Updated);
   return pImpl->selected_quantity;
 }
 
@@ -173,7 +173,7 @@ bool InventorySelection::set_selected_quantity(unsigned int amount)
     if (amount <= maximum)
     {
       pImpl->selected_quantity = amount;
-      notifyObservers(Event::Updated);
+      //notifyObservers(Event::Updated);
       return true;
     }
   }
@@ -186,7 +186,7 @@ bool InventorySelection::inc_selected_quantity()
   if (pImpl->selected_quantity < maximum)
   {
     ++(pImpl->selected_quantity);
-    notifyObservers(Event::Updated);
+    //notifyObservers(Event::Updated);
     return true;
   }
   return false;
@@ -197,7 +197,7 @@ bool InventorySelection::dec_selected_quantity()
   if (pImpl->selected_quantity > 1)
   {
     --(pImpl->selected_quantity);
-    notifyObservers(Event::Updated);
+    //notifyObservers(Event::Updated);
     return true;
   }
   return false;

@@ -2,10 +2,10 @@
 
 #include <deque>
 
-#include "Observable.h"
+#include "Subject.h"
 
 /// Interface for a game message log.
-class IMessageLog : public Observable
+class IMessageLog : public Subject
 {
 public:
   virtual ~IMessageLog() = 0;

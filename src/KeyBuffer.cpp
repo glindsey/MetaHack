@@ -206,7 +206,7 @@ metagui::Event::Result KeyBuffer::handle_key_press(metagui::EventKeyPressed& eve
 
   if (result == metagui::Event::Result::Handled)
   {
-    notifyObservers(Event::Updated);
+    //notifyObservers(Event::Updated);
   }
 
   return result;
@@ -220,7 +220,7 @@ size_t KeyBuffer::get_cursor_position() const
 void KeyBuffer::set_cursor_position(size_t position)
 {
   pImpl->cursor_position = std::min(pImpl->buffer.length(), position);
-  notifyObservers(Event::Updated);
+  //notifyObservers(Event::Updated);
 }
 
 std::string const& KeyBuffer::get_buffer() const
@@ -232,7 +232,7 @@ void KeyBuffer::set_buffer(std::string buf)
 {
   pImpl->buffer = buf;
   pImpl->cursor_position = buf.length();
-  notifyObservers(Event::Updated);
+  //notifyObservers(Event::Updated);
 }
 
 void KeyBuffer::clear_buffer()
@@ -240,7 +240,7 @@ void KeyBuffer::clear_buffer()
   pImpl->buffer.clear();
   pImpl->cursor_position = 0;
   pImpl->enter = false;
-  notifyObservers(Event::Updated);
+  //notifyObservers(Event::Updated);
 }
 
 bool KeyBuffer::get_enter()

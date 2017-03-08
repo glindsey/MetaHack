@@ -23,12 +23,12 @@ public:
                               sf::Color bgColor,
                               int frame) override;
 
+  virtual std::string get_view_name() override;
+
 protected:
   /// Constructor.
   /// Private because map views should be obtained via the IGraphicViews service.
   /// @param map	Reference to Map object to associate with this view.
   MapNullView(Map& map);
-
-  virtual void notifyOfEvent_(Observable& observed, Event event) override;
 
 };

@@ -27,6 +27,8 @@ public:
                               sf::Color bgColor,
                               int frame) override;
 
+  virtual std::string get_view_name() override;
+
 protected:
   /// Constructor.
   /// Private because map views should be obtained via the IGraphicViews service.
@@ -36,9 +38,6 @@ protected:
 
   /// Reinitialize cached map render data.
   void reset_cached_render_data();
-
-  virtual void notifyOfEvent_(Observable& observed, Event event) override;
-
 
 private:
 

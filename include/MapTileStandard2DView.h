@@ -20,6 +20,8 @@ public:
 
   //virtual bool render(sf::RenderTexture& texture, int frame) override;
 
+  virtual std::string get_view_name() override;
+
 protected:
   /// Constructor.
   MapTileStandard2DView(MapTile& map_tile, TileSheet& tile_sheet);
@@ -27,6 +29,8 @@ protected:
   /// Return the coordinates of the tile on the tilesheet.
   Vec2u get_tile_sheet_coords() const;
 
+
+  Vec2u get_entity_tile_sheet_coords(Entity & entity, int frame) const;
 
   /// Add the vertices for the maptile to the seen and memory vertices.
   /// @param viewer Entity that is viewing this tile.
@@ -75,8 +79,6 @@ protected:
                             bool ne_is_empty, bool e_is_empty,
                             bool se_is_empty, bool s_is_empty,
                             bool sw_is_empty, bool w_is_empty);
-
-  virtual void notifyOfEvent_(Observable& observed, Event event) override;
 
 
 private:

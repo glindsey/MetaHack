@@ -21,6 +21,8 @@ public:
   /// Destructor.
   virtual ~MapTileView() {}
 
+  virtual std::string get_view_name() = 0;
+
 protected:
   /// Constructor.
   /// @param map	Reference to MapTile object to associate with this view.
@@ -28,7 +30,7 @@ protected:
     :
     m_map_tile(map_tile)
   {
-    startObserving(map_tile);
+    //startObserving(map_tile);
   }
 
   /// Get reference to MapTile associated with this view.
@@ -41,8 +43,6 @@ protected:
   {
     return m_map_tile;
   }
-
-  virtual void notifyOfEvent_(Observable& observed, Event event) = 0;
 
 private:
   /// MapTile associated with this view.

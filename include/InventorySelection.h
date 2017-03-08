@@ -3,7 +3,7 @@
 #include "stdafx.h"
 
 #include "InventorySlot.h"
-#include "Observable.h"
+#include "Subject.h"
 
 // Forward declarations
 class Container;
@@ -12,7 +12,7 @@ class EntityId;
 
 /// InventorySelection is sort of the controller that binds an InventoryView
 /// to a Entity to be displayed.
-class InventorySelection : public Observable
+class InventorySelection : public Subject
 {
 public:
   InventorySelection();

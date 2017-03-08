@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 
-#include "Observable.h"
+#include "Subject.h"
 #include "MapFactory.h"
 #include "Renderable.h"
 #include "Entity.h"
@@ -23,7 +23,7 @@ class EntityId;
 /// Class representing a map, which is a grid of locations for Entities.
 class Map
   :
-  public Observable
+  public Subject
 {
   friend class MapFactory;
   friend class MapView;

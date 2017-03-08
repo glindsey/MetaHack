@@ -10,7 +10,7 @@ EntityView::EntityView(Entity& entity)
   :
   m_entity(entity)
 {
-  startObserving(entity);
+  //startObserving(entity);
 }
 
 EntityView::~EntityView()
@@ -43,6 +43,11 @@ Vec2f EntityView::get_size()
 }
 
 Entity& EntityView::get_entity()
+{
+  return m_entity;
+}
+
+Entity const& EntityView::get_entity() const
 {
   return m_entity;
 }

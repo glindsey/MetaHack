@@ -24,6 +24,11 @@
 // Static member initialization.
 sf::Color const Entity::wall_outline_color_ = sf::Color(255, 255, 255, 64);
 
+Metadata const & Entity::get_metadata() const
+{
+  return m_metadata;
+}
+
 Entity::Entity(GameState& game, Metadata& metadata, EntityId ref)
   :
   m_game{ game },
@@ -92,7 +97,7 @@ void Entity::initialize()
   /// Also set our HP to that value.
   set_base_property<int>("hp", max_hp);
 
-  notifyObservers(Event::Updated);
+  //notifyObservers(Event::Updated);
 }
 
 Entity::~Entity()
@@ -263,7 +268,7 @@ bool Entity::do_die()
       // Clear any pending actions.
       m_pending_actions.clear();
 
-      notifyObservers(Event::Updated);
+      //notifyObservers(Event::Updated);
       return true;
     case ActionResult::Failure:
     default:
@@ -860,7 +865,7 @@ bool Entity::move_into(EntityId new_location)
           }
         }
         this->find_seen_tiles();
-        notifyObservers(Event::Updated);
+        //notifyObservers(Event::Updated);
         return true;
       } // end if (add to new inventory was successful)
 
@@ -1134,20 +1139,6 @@ std::string Entity::get_possessive()
   }
 }
 
-Vec2u Entity::get_tile_sheet_coords(int frame)
-{
-  /// Get tile coordinates on the sheet.
-  Vec2u start_coords = m_metadata.get_tile_coords();
-
-  /// Call the Lua function to get the offset (tile to choose).
-  Vec2u offset = call_lua_function<Vec2u>("get_tile_offset", { frame });
-
-  /// Add them to get the resulting coordinates.
-  Vec2u tile_coords = start_coords + offset;
-
-  return tile_coords;
-}
-
 bool Entity::is_opaque()
 {
   return
@@ -1200,7 +1191,10 @@ void Entity::light_up_surroundings()
 void Entity::be_lit_by(EntityId light)
 {
   auto result = call_lua_function<ActionResult, EntityId>("on_lit_by", { light }, ActionResult::Success);
-  if (result == ActionResult::Success) notifyObservers(Event::Updated);
+  if (result == ActionResult::Success)
+  {
+    //notifyObservers(Event::Updated);
+  }
 
   EntityId location = get_location();
 
@@ -1266,7 +1260,7 @@ void Entity::spill()
             entity->destroy();
           }
 
-          notifyObservers(Event::Updated);
+          //notifyObservers(Event::Updated);
 
           break;
 
@@ -1301,7 +1295,7 @@ void Entity::destroy()
     old_location->get_inventory().remove(m_ref);
   }
 
-  notifyObservers(Event::Updated);
+  //notifyObservers(Event::Updated);
 }
 
 std::string Entity::get_bodypart_description(BodyPart part,
@@ -1680,7 +1674,7 @@ bool Entity::_process_self()
     ///         2) The Action returns some sort of indication that the Entity
     ///            was modified as a result. This could be done by changing
     ///            the return type from a bool to a struct of some sort.
-    notifyObservers(Event::Updated);
+    //notifyObservers(Event::Updated);
 
   } // end if (actions pending)
   // Otherwise if there are no other pending actions...

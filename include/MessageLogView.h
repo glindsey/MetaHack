@@ -39,11 +39,6 @@ protected:
   /// @param  frame   Current frame counter.
   virtual void render_contents_(sf::RenderTexture& texture, int frame) override;
 
-  /// Handle incoming events from observed objects.
-  /// @param  observed  Object sending the event.
-  /// @param  event     Event to process.
-  virtual void notifyOfEvent_(Observable& observed, Event event) override;
-
 private:
 
   /// Reference to the associated MessageLog model.

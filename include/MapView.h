@@ -49,11 +49,11 @@ public:
                               sf::Color bgColor,
                               int frame) = 0;
 
+  virtual std::string get_view_name() = 0;
+
 protected:
   /// Get reference to Map associated with this view.
   Map& get_map();
-
-  virtual void notifyOfEvent_(Observable& observed, Event event) = 0;
 
 private:
   /// Map associated with this view.

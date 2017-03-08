@@ -20,11 +20,11 @@ public:
                     bool use_smoothing,
                     int frame) override;
 
+  virtual std::string get_view_name() override;
+
 protected:
   /// Constructor.
   explicit EntityNullView(Entity& entity);
-
-  virtual void notifyOfEvent_(Observable& observed, Event event) override;
 
 private:
 };

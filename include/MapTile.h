@@ -8,7 +8,7 @@
 #include "Inventory.h"
 #include "LightInfluence.h"
 #include "MapFactory.h"
-#include "Observable.h"
+#include "Subject.h"
 #include "Entity.h"
 #include "EntityId.h"
 #include "TileSheet.h"
@@ -23,7 +23,7 @@ class Metadata;
 class MapTile
   :
   public GameObject,
-  public Observable
+  public Subject
 {
   friend class Map;
 

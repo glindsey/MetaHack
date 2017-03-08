@@ -22,17 +22,12 @@ InventoryArea::InventoryArea(std::string name,
   m_inventory_selection(inventory_selection)
 {
   SET_UP_LOGGER("InventoryArea", true);
-  startObserving(inventory_selection);
+  //startObserving(inventory_selection);
 }
 
 InventoryArea::~InventoryArea()
 {
   //dtor
-}
-
-void InventoryArea::notifyOfEvent_(Observable & observed, Event event)
-{
-  /// @todo WRITE ME
 }
 
 void InventoryArea::render_contents_(sf::RenderTexture& texture, int frame)

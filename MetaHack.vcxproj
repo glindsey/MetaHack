@@ -316,6 +316,7 @@
     <ClInclude Include="include\AppStateGameMode.h" />
     <ClInclude Include="include\AppStateMainMenu.h" />
     <ClInclude Include="include\AppStateSplashScreen.h" />
+    <ClInclude Include="include\Assert.h" />
     <ClInclude Include="include\Beatitude.h" />
     <ClInclude Include="include\BodyPart.h" />
     <ClInclude Include="include\common_enums.h" />
@@ -345,10 +346,11 @@
     <ClInclude Include="include\NullKeyBuffer.h" />
     <ClInclude Include="include\NullMessageLog.h" />
     <ClInclude Include="include\NullStringDictionary.h" />
-    <ClInclude Include="include\Observable.h" />
+    <ClInclude Include="include\Subject.h" />
     <ClInclude Include="include\Observer.h" />
     <ClInclude Include="include\Rect.h" />
     <ClInclude Include="include\RNGUtils.h" />
+    <ClInclude Include="include\Serializable.h" />
     <ClInclude Include="include\Service.h" />
     <ClInclude Include="include\SFMLEventHandler.h" />
     <ClInclude Include="include\GameObject.h" />
@@ -443,6 +445,7 @@
     <ClCompile Include="src\AppStateMainMenu.cpp" />
     <ClCompile Include="src\AppStateSplashScreen.cpp" />
     <ClCompile Include="src\EntityNullView.cpp" />
+    <ClCompile Include="src\Event.cpp" />
     <ClCompile Include="src\FallbackConfigSettings.cpp" />
     <ClCompile Include="src\Direction.cpp" />
     <ClCompile Include="src\ErrorHandler.cpp" />
@@ -480,7 +483,7 @@
     <ClCompile Include="src\Metadata.cpp" />
     <ClCompile Include="src\MetadataCollection.cpp" />
     <ClCompile Include="src\ModifiablePropertyDictionary.cpp" />
-    <ClCompile Include="src\Observable.cpp" />
+    <ClCompile Include="src\Subject.cpp" />
     <ClCompile Include="src\Observer.cpp" />
     <ClCompile Include="src\PropertyDictionary.cpp" />
     <ClCompile Include="src\Standard2DGraphicViews.cpp" />
