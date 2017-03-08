@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 
-#include "ActionResult.h"
+#include "actions/ActionResult.h"
 #include "App.h"
 #include "ErrorHandler.h"
 #include "IntegerRange.h"

@@ -2,7 +2,7 @@
 
 #include "LuaObject.h"
 
-#include "ActionResult.h"
+#include "actions/ActionResult.h"
 #include "Gender.h"
 
 Lua::Lua()

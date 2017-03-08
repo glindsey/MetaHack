@@ -3,14 +3,17 @@
 
 #include "stdafx.h"
 
-#include "Action.h"
 #include "AppState.h"
-#include "Direction.h"
-#include "GameState.h"
-#include "InventoryArea.h"
-#include "KeyBuffer.h"
-#include "MapView.h"
-#include "StatusArea.h"
+
+// Forward declarations
+class Action;
+class Direction;
+class EntityId;
+class GameState;
+class InventorySelection;
+class KeyBuffer;
+class MapView;
+
 
 /// Object that represents the game mode state.
 /// Anything about the game that needs to be saved should go into the

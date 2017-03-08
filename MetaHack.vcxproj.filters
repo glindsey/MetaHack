@@ -132,84 +132,6 @@
     <ClInclude Include="include\ModifiablePropertyDictionary.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\Action.h">
-      <Filter>Actions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ActionAttack.h">
-      <Filter>Actions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ActionAttire.h">
-      <Filter>Actions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ActionClose.h">
-      <Filter>Actions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ActionCRTP.h">
-      <Filter>Actions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ActionDie.h">
-      <Filter>Actions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ActionDrop.h">
-      <Filter>Actions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ActionEat.h">
-      <Filter>Actions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ActionFill.h">
-      <Filter>Actions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ActionGet.h">
-      <Filter>Actions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ActionHurl.h">
-      <Filter>Actions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ActionInscribe.h">
-      <Filter>Actions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ActionLock.h">
-      <Filter>Actions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ActionMix.h">
-      <Filter>Actions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ActionMove.h">
-      <Filter>Actions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ActionOpen.h">
-      <Filter>Actions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ActionPutInto.h">
-      <Filter>Actions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ActionQuaff.h">
-      <Filter>Actions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ActionRead.h">
-      <Filter>Actions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ActionResult.h">
-      <Filter>Actions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ActionShoot.h">
-      <Filter>Actions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ActionTakeOut.h">
-      <Filter>Actions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ActionUnlock.h">
-      <Filter>Actions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ActionUse.h">
-      <Filter>Actions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ActionWait.h">
-      <Filter>Actions</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ActionWield.h">
-      <Filter>Actions</Filter>
-    </ClInclude>
     <ClInclude Include="include\MapCorridor.h">
       <Filter>Map Features</Filter>
     </ClInclude>
@@ -309,9 +231,6 @@
     <ClInclude Include="include\RNGUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\ActionTurn.h">
-      <Filter>Actions</Filter>
-    </ClInclude>
     <ClInclude Include="include\MapFactory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -329,9 +248,6 @@
     </ClInclude>
     <ClInclude Include="include\Rect.h">
       <Filter>Types</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ActionUnwield.h">
-      <Filter>Actions</Filter>
     </ClInclude>
     <ClInclude Include="include\NullStringDictionary.h">
       <Filter>Services</Filter>
@@ -438,6 +354,90 @@
     <ClInclude Include="design_patterns\Visitor.h">
       <Filter>Design Pattern Templates</Filter>
     </ClInclude>
+    <ClInclude Include="actions\Action.h">
+      <Filter>Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\ActionAttack.h">
+      <Filter>Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\ActionAttire.h">
+      <Filter>Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\ActionClose.h">
+      <Filter>Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\ActionCRTP.h">
+      <Filter>Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\ActionDie.h">
+      <Filter>Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\ActionDrop.h">
+      <Filter>Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\ActionEat.h">
+      <Filter>Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\ActionFill.h">
+      <Filter>Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\ActionGet.h">
+      <Filter>Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\ActionHurl.h">
+      <Filter>Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\ActionInscribe.h">
+      <Filter>Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\ActionLock.h">
+      <Filter>Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\ActionMix.h">
+      <Filter>Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\ActionMove.h">
+      <Filter>Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\ActionOpen.h">
+      <Filter>Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\ActionPutInto.h">
+      <Filter>Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\ActionQuaff.h">
+      <Filter>Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\ActionRead.h">
+      <Filter>Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\ActionResult.h">
+      <Filter>Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\ActionShoot.h">
+      <Filter>Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\ActionTakeOut.h">
+      <Filter>Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\ActionTurn.h">
+      <Filter>Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\ActionUnlock.h">
+      <Filter>Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\ActionUnwield.h">
+      <Filter>Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\ActionUse.h">
+      <Filter>Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\ActionWait.h">
+      <Filter>Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\ActionWield.h">
+      <Filter>Actions</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">
@@ -493,75 +493,6 @@
     </ClCompile>
     <ClCompile Include="src\ModifiablePropertyDictionary.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Action.cpp">
-      <Filter>Actions</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ActionAttack.cpp">
-      <Filter>Actions</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ActionAttire.cpp">
-      <Filter>Actions</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ActionClose.cpp">
-      <Filter>Actions</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ActionDrop.cpp">
-      <Filter>Actions</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ActionEat.cpp">
-      <Filter>Actions</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ActionFill.cpp">
-      <Filter>Actions</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ActionGet.cpp">
-      <Filter>Actions</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ActionHurl.cpp">
-      <Filter>Actions</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ActionInscribe.cpp">
-      <Filter>Actions</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ActionLock.cpp">
-      <Filter>Actions</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ActionMix.cpp">
-      <Filter>Actions</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ActionMove.cpp">
-      <Filter>Actions</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ActionOpen.cpp">
-      <Filter>Actions</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ActionPutInto.cpp">
-      <Filter>Actions</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ActionQuaff.cpp">
-      <Filter>Actions</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ActionRead.cpp">
-      <Filter>Actions</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ActionShoot.cpp">
-      <Filter>Actions</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ActionTakeOut.cpp">
-      <Filter>Actions</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ActionUnlock.cpp">
-      <Filter>Actions</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ActionUse.cpp">
-      <Filter>Actions</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ActionWait.cpp">
-      <Filter>Actions</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ActionWield.cpp">
-      <Filter>Actions</Filter>
     </ClCompile>
     <ClCompile Include="src\mapfeatures\MapCorridor.cpp">
       <Filter>Map Features</Filter>
@@ -632,17 +563,11 @@
     <ClCompile Include="src\IntegerRange.cpp">
       <Filter>Types</Filter>
     </ClCompile>
-    <ClCompile Include="src\ActionTurn.cpp">
-      <Filter>Actions</Filter>
-    </ClCompile>
     <ClCompile Include="src\MapView.cpp">
       <Filter>Object Views</Filter>
     </ClCompile>
     <ClCompile Include="src\MapStandard2DView.cpp">
       <Filter>Object Views</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ActionUnwield.cpp">
-      <Filter>Actions</Filter>
     </ClCompile>
     <ClCompile Include="src\IStringDictionary.cpp">
       <Filter>Services</Filter>
@@ -718,6 +643,81 @@
     </ClCompile>
     <ClCompile Include="design_patterns\Subject.cpp">
       <Filter>Design Pattern Templates</Filter>
+    </ClCompile>
+    <ClCompile Include="actions\Action.cpp">
+      <Filter>Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="actions\ActionAttack.cpp">
+      <Filter>Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="actions\ActionAttire.cpp">
+      <Filter>Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="actions\ActionClose.cpp">
+      <Filter>Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="actions\ActionDrop.cpp">
+      <Filter>Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="actions\ActionEat.cpp">
+      <Filter>Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="actions\ActionFill.cpp">
+      <Filter>Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="actions\ActionGet.cpp">
+      <Filter>Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="actions\ActionHurl.cpp">
+      <Filter>Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="actions\ActionInscribe.cpp">
+      <Filter>Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="actions\ActionLock.cpp">
+      <Filter>Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="actions\ActionMix.cpp">
+      <Filter>Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="actions\ActionMove.cpp">
+      <Filter>Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="actions\ActionOpen.cpp">
+      <Filter>Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="actions\ActionPutInto.cpp">
+      <Filter>Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="actions\ActionQuaff.cpp">
+      <Filter>Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="actions\ActionRead.cpp">
+      <Filter>Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="actions\ActionShoot.cpp">
+      <Filter>Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="actions\ActionTakeOut.cpp">
+      <Filter>Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="actions\ActionTurn.cpp">
+      <Filter>Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="actions\ActionUnlock.cpp">
+      <Filter>Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="actions\ActionUnwield.cpp">
+      <Filter>Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="actions\ActionUse.cpp">
+      <Filter>Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="actions\ActionWait.cpp">
+      <Filter>Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="actions\ActionWield.cpp">
+      <Filter>Actions</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

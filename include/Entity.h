@@ -3,8 +3,8 @@
 
 #include "stdafx.h"
 
-#include "Action.h"
-#include "ActionResult.h"
+#include "actions/Action.h"
+#include "actions/ActionResult.h"
 #include "BodyPart.h"
 #include "Direction.h"
 #include "ErrorHandler.h"

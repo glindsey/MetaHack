@@ -95,14 +95,14 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\Personal\projects\MetaHack\design_patterns;C:\Personal\projects\MetaHack\include;C:\Personal\projects\MetaHack\gui;C:\Personal\projects\MetaHack\src\impl;C:\personal\libraries\win32\SFML-2.3.2\include;C:\personal\libraries\win32\luajit-2.0\src;C:\personal\libraries\boost-1.61.0-vs2015\include\boost-1_61;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <IncludePath>C:\Personal\projects\MetaHack;C:\Personal\projects\MetaHack\design_patterns;C:\Personal\projects\MetaHack\include;C:\Personal\projects\MetaHack\gui;C:\Personal\projects\MetaHack\src\impl;C:\personal\libraries\win32\SFML-2.3.2\include;C:\personal\libraries\win32\luajit-2.0\src;C:\personal\libraries\boost-1.61.0-vs2015\include\boost-1_61;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
     <LibraryPath>C:\Personal\projects\MetaHack\lib\win32;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\Personal\projects\MetaHack\design_patterns;C:\Personal\projects\MetaHack\include;C:\Personal\projects\MetaHack\gui;C:\Personal\projects\MetaHack\src\impl;C:\personal\libraries\x64\SFML-2.3.2\include;C:\personal\libraries\x64\luajit-2.0\src;C:\personal\libraries\boost64-1.61.0-vs2015\include\boost-1_61;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <IncludePath>C:\Personal\projects\MetaHack;C:\Personal\projects\MetaHack\design_patterns;C:\Personal\projects\MetaHack\include;C:\Personal\projects\MetaHack\gui;C:\Personal\projects\MetaHack\src\impl;C:\personal\libraries\x64\SFML-2.3.2\include;C:\personal\libraries\x64\luajit-2.0\src;C:\personal\libraries\boost64-1.61.0-vs2015\include\boost-1_61;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
     <LibraryPath>C:\Personal\projects\MetaHack\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">
@@ -119,7 +119,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\Personal\projects\MetaHack\design_patterns;C:\Personal\projects\MetaHack\include;C:\Personal\projects\MetaHack\gui;C:\Personal\projects\MetaHack\src\impl;C:\personal\libraries\win32\SFML-2.3.2\include;C:\personal\libraries\win32\luajit-2.0\src;C:\personal\libraries\boost-1.61.0-vs2015\include\boost-1_61;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <IncludePath>C:\Personal\projects\MetaHack;C:\Personal\projects\MetaHack\design_patterns;C:\Personal\projects\MetaHack\include;C:\Personal\projects\MetaHack\gui;C:\Personal\projects\MetaHack\src\impl;C:\personal\libraries\win32\SFML-2.3.2\include;C:\personal\libraries\win32\luajit-2.0\src;C:\personal\libraries\boost-1.61.0-vs2015\include\boost-1_61;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
     <LibraryPath>C:\Personal\projects\MetaHack\lib\win32;$(LibraryPath)</LibraryPath>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
@@ -127,7 +127,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\Personal\projects\MetaHack\design_patterns;C:\Personal\projects\MetaHack\include;C:\Personal\projects\MetaHack\gui;C:\Personal\projects\MetaHack\src\impl;C:\personal\libraries\x64\SFML-2.3.2\include;C:\personal\libraries\x64\luajit-2.0\src;C:\personal\libraries\boost64-1.61.0-vs2015\include\boost-1_61;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <IncludePath>C:\Personal\projects\MetaHack;C:\Personal\projects\MetaHack\design_patterns;C:\Personal\projects\MetaHack\include;C:\Personal\projects\MetaHack\gui;C:\Personal\projects\MetaHack\src\impl;C:\personal\libraries\x64\SFML-2.3.2\include;C:\personal\libraries\x64\luajit-2.0\src;C:\personal\libraries\boost64-1.61.0-vs2015\include\boost-1_61;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
     <LibraryPath>C:\Personal\projects\MetaHack\lib\x64;$(LibraryPath)</LibraryPath>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
@@ -274,6 +274,34 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="actions\Action.h" />
+    <ClInclude Include="actions\ActionAttack.h" />
+    <ClInclude Include="actions\ActionAttire.h" />
+    <ClInclude Include="actions\ActionClose.h" />
+    <ClInclude Include="actions\ActionCRTP.h" />
+    <ClInclude Include="actions\ActionDie.h" />
+    <ClInclude Include="actions\ActionDrop.h" />
+    <ClInclude Include="actions\ActionEat.h" />
+    <ClInclude Include="actions\ActionFill.h" />
+    <ClInclude Include="actions\ActionGet.h" />
+    <ClInclude Include="actions\ActionHurl.h" />
+    <ClInclude Include="actions\ActionInscribe.h" />
+    <ClInclude Include="actions\ActionLock.h" />
+    <ClInclude Include="actions\ActionMix.h" />
+    <ClInclude Include="actions\ActionMove.h" />
+    <ClInclude Include="actions\ActionOpen.h" />
+    <ClInclude Include="actions\ActionPutInto.h" />
+    <ClInclude Include="actions\ActionQuaff.h" />
+    <ClInclude Include="actions\ActionRead.h" />
+    <ClInclude Include="actions\ActionResult.h" />
+    <ClInclude Include="actions\ActionShoot.h" />
+    <ClInclude Include="actions\ActionTakeOut.h" />
+    <ClInclude Include="actions\ActionTurn.h" />
+    <ClInclude Include="actions\ActionUnlock.h" />
+    <ClInclude Include="actions\ActionUnwield.h" />
+    <ClInclude Include="actions\ActionUse.h" />
+    <ClInclude Include="actions\ActionWait.h" />
+    <ClInclude Include="actions\ActionWield.h" />
     <ClInclude Include="design_patterns\AssertHelper.h" />
     <ClInclude Include="design_patterns\Event.h" />
     <ClInclude Include="design_patterns\Observer.h" />
@@ -290,34 +318,6 @@
     <ClInclude Include="gui\GUIShrinkHandle.h" />
     <ClInclude Include="gui\GUITitleBar.h" />
     <ClInclude Include="gui\GUIWindow.h" />
-    <ClInclude Include="include\Action.h" />
-    <ClInclude Include="include\ActionAttack.h" />
-    <ClInclude Include="include\ActionAttire.h" />
-    <ClInclude Include="include\ActionClose.h" />
-    <ClInclude Include="include\ActionCRTP.h" />
-    <ClInclude Include="include\ActionDie.h" />
-    <ClInclude Include="include\ActionDrop.h" />
-    <ClInclude Include="include\ActionEat.h" />
-    <ClInclude Include="include\ActionFill.h" />
-    <ClInclude Include="include\ActionGet.h" />
-    <ClInclude Include="include\ActionHurl.h" />
-    <ClInclude Include="include\ActionInscribe.h" />
-    <ClInclude Include="include\ActionLock.h" />
-    <ClInclude Include="include\ActionMix.h" />
-    <ClInclude Include="include\ActionMove.h" />
-    <ClInclude Include="include\ActionOpen.h" />
-    <ClInclude Include="include\ActionPutInto.h" />
-    <ClInclude Include="include\ActionQuaff.h" />
-    <ClInclude Include="include\ActionRead.h" />
-    <ClInclude Include="include\ActionResult.h" />
-    <ClInclude Include="include\ActionShoot.h" />
-    <ClInclude Include="include\ActionTakeOut.h" />
-    <ClInclude Include="include\ActionTurn.h" />
-    <ClInclude Include="include\ActionUnlock.h" />
-    <ClInclude Include="include\ActionUnwield.h" />
-    <ClInclude Include="include\ActionUse.h" />
-    <ClInclude Include="include\ActionWait.h" />
-    <ClInclude Include="include\ActionWield.h" />
     <ClInclude Include="include\App.h" />
     <ClInclude Include="include\AppState.h" />
     <ClInclude Include="include\AppStateGameMode.h" />
@@ -405,6 +405,31 @@
     <ClInclude Include="include\Vec3.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="actions\Action.cpp" />
+    <ClCompile Include="actions\ActionAttack.cpp" />
+    <ClCompile Include="actions\ActionAttire.cpp" />
+    <ClCompile Include="actions\ActionClose.cpp" />
+    <ClCompile Include="actions\ActionDrop.cpp" />
+    <ClCompile Include="actions\ActionEat.cpp" />
+    <ClCompile Include="actions\ActionFill.cpp" />
+    <ClCompile Include="actions\ActionGet.cpp" />
+    <ClCompile Include="actions\ActionHurl.cpp" />
+    <ClCompile Include="actions\ActionInscribe.cpp" />
+    <ClCompile Include="actions\ActionLock.cpp" />
+    <ClCompile Include="actions\ActionMix.cpp" />
+    <ClCompile Include="actions\ActionMove.cpp" />
+    <ClCompile Include="actions\ActionOpen.cpp" />
+    <ClCompile Include="actions\ActionPutInto.cpp" />
+    <ClCompile Include="actions\ActionQuaff.cpp" />
+    <ClCompile Include="actions\ActionRead.cpp" />
+    <ClCompile Include="actions\ActionShoot.cpp" />
+    <ClCompile Include="actions\ActionTakeOut.cpp" />
+    <ClCompile Include="actions\ActionTurn.cpp" />
+    <ClCompile Include="actions\ActionUnlock.cpp" />
+    <ClCompile Include="actions\ActionUnwield.cpp" />
+    <ClCompile Include="actions\ActionUse.cpp" />
+    <ClCompile Include="actions\ActionWait.cpp" />
+    <ClCompile Include="actions\ActionWield.cpp" />
     <ClCompile Include="design_patterns\Event.cpp" />
     <ClCompile Include="design_patterns\Observer.cpp" />
     <ClCompile Include="design_patterns\Subject.cpp" />
@@ -417,31 +442,6 @@
     <ClCompile Include="gui\GUITitleBar.cpp" />
     <ClCompile Include="gui\GUIWindow.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="src\Action.cpp" />
-    <ClCompile Include="src\ActionAttack.cpp" />
-    <ClCompile Include="src\ActionAttire.cpp" />
-    <ClCompile Include="src\ActionClose.cpp" />
-    <ClCompile Include="src\ActionDrop.cpp" />
-    <ClCompile Include="src\ActionEat.cpp" />
-    <ClCompile Include="src\ActionFill.cpp" />
-    <ClCompile Include="src\ActionGet.cpp" />
-    <ClCompile Include="src\ActionHurl.cpp" />
-    <ClCompile Include="src\ActionInscribe.cpp" />
-    <ClCompile Include="src\ActionLock.cpp" />
-    <ClCompile Include="src\ActionMix.cpp" />
-    <ClCompile Include="src\ActionMove.cpp" />
-    <ClCompile Include="src\ActionOpen.cpp" />
-    <ClCompile Include="src\ActionPutInto.cpp" />
-    <ClCompile Include="src\ActionQuaff.cpp" />
-    <ClCompile Include="src\ActionRead.cpp" />
-    <ClCompile Include="src\ActionShoot.cpp" />
-    <ClCompile Include="src\ActionTakeOut.cpp" />
-    <ClCompile Include="src\ActionTurn.cpp" />
-    <ClCompile Include="src\ActionUnlock.cpp" />
-    <ClCompile Include="src\ActionUnwield.cpp" />
-    <ClCompile Include="src\ActionUse.cpp" />
-    <ClCompile Include="src\ActionWait.cpp" />
-    <ClCompile Include="src\ActionWield.cpp" />
     <ClCompile Include="src\App.cpp" />
     <ClCompile Include="src\AppState.cpp" />
     <ClCompile Include="src\AppStateGameMode.cpp" />
