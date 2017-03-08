@@ -440,9 +440,9 @@ namespace metagui
       }
       m_cached_flags.disabled = value;
     }
-    else if (name == "draggable")
+    else if (name == "movable")
     {
-      m_cached_flags.draggable = value;
+      m_cached_flags.movable = value;
     }
     else if (name == "decor")
     {
@@ -467,16 +467,13 @@ namespace metagui
   {
     Event::Result result = handle_event_before_children_(event);
 
-    if (result != Event::Result::Handled)
-    {
-      m_being_dragged = false;
-    }
-
     return result;
   }
 
   Event::Result Object::handle_event_after_children(EventDragFinished& event)
   {
+    m_being_dragged = false;
+
     Event::Result result = handle_event_after_children_(event);
 
     return result;
@@ -484,19 +481,16 @@ namespace metagui
 
   Event::Result Object::handle_event_before_children(EventDragStarted& event)
   {
-    Event::Result result = handle_event_before_children_(event);
+    Event::Result result;
 
-    if (result != Event::Result::Handled)
+    if (contains_point(event.start_location))
     {
-      if (contains_point(event.start_location))
-      {
-        result = Event::Result::Acknowledged;
-      }
-      else
-      {
-        // We "Ignore" the event so it is not passed to children.
-        result = Event::Result::Ignored;
-      }
+      result = handle_event_before_children_(event);
+    }
+    else
+    {
+      // We "Ignore" the event so it is not passed to children.
+      result = Event::Result::Ignored;
     }
 
     return result;
@@ -504,21 +498,20 @@ namespace metagui
 
   Event::Result Object::handle_event_after_children(EventDragStarted& event)
   {
-    Event::Result result = handle_event_after_children_(event);
+    Event::Result result;
 
-    if (result != Event::Result::Handled)
+    if (contains_point(event.start_location))
     {
-      if (contains_point(event.start_location) && m_cached_flags.draggable == true)
-      {
-        m_being_dragged = true;
-        m_drag_start_location = event.start_location;
-        m_absolute_location_drag_start = get_absolute_location();
-        result = Event::Result::Handled;
-      }
-      else
-      {
-        result = Event::Result::Acknowledged;
-      }
+      m_being_dragged = true;
+      m_drag_start_location = event.start_location;
+      m_absolute_location_drag_start = get_absolute_location();
+
+      result = handle_event_after_children_(event);
+    }
+    else
+    {
+      // We "Ignore" the event so it is not passed to children.
+      result = Event::Result::Ignored;
     }
 
     return result;
@@ -537,8 +530,9 @@ namespace metagui
     if (result != Event::Result::Handled)
     {
       // If we got here, all children ignored the event (or there are no
-      // children) so we want to process it if we are draggable.
-      if (m_being_dragged == true)
+      // children), and there's no subclass override -- so we want to 
+      // process it if we are movable.
+      if ((m_being_dragged == true) && (m_cached_flags.movable == true))
       {
         auto move_amount = event.current_location - m_drag_start_location;
         auto new_coords = m_absolute_location_drag_start + move_amount;
@@ -606,6 +600,16 @@ namespace metagui
   void Object::set_focus_only(bool focus)
   {
     m_focus = focus;
+  }
+
+  bool Object::is_being_dragged()
+  {
+    return m_being_dragged;
+  }
+
+  Vec2i Object::get_drag_start_location()
+  {
+    return m_drag_start_location;
   }
 
   void Object::render_self_before_children_(sf::RenderTexture& texture, int frame)

@@ -1,5 +1,11 @@
 #pragma once
 
+// Preprocessor constants
+#define NOMINMAX
+
+// EasyLogging++ includes
+#include "easyloggingpp/easylogging++.h"
+
 // Standard library includes
 #include <algorithm>
 #include <cctype>
@@ -64,9 +70,6 @@
 #include "common_types.h"
 #include "common_enums.h"
 #include "common_functions.h"
-
-// EasyLogging++ includes
-#include "easyloggingpp/easylogging++.h"
 
 // The special debugging "NEW" function.
 #include "New.h"

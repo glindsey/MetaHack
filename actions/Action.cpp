@@ -49,7 +49,6 @@ Action::Action()
   :
   pImpl{ new Impl(EntityId::Mu()) }
 {
-  SET_UP_LOGGER("Action", false);
 }
 
 Action::Action(EntityId subject)

@@ -336,6 +336,12 @@ namespace metagui
     /// Set the focus of an object without clearing sibling focuses (foci?).
     void set_focus_only(bool focus);
 
+    /// Returns whether this object is currently being dragged.
+    bool is_being_dragged();
+
+    /// Returns the location of the start of the last drag.
+    Vec2i get_drag_start_location();
+
     /// Called before rendering the object's children.
     /// Default behavior is to do nothing.
     virtual void render_self_before_children_(sf::RenderTexture& texture, int frame);
@@ -371,6 +377,7 @@ namespace metagui
     /// The default behavior is to do nothing.
     virtual void handle_parent_size_changed_(Vec2u parent_size);
 
+
   private:
     /// The name of this object.
     std::string m_name;
@@ -388,14 +395,14 @@ namespace metagui
     {
       bool hidden = false;
       bool disabled = false;
-      bool draggable = false;
+      bool movable = false;
       bool decor = false;
     };
 
     /// Struct of cached flag values.
     CachedFlags m_cached_flags;
 
-    /// Boolean indicating whether this object is currently being dragged.
+    /// Boolean indicating whether a drag is currently in progress.
     bool m_being_dragged = false;
 
     /// The location that the last drag started.

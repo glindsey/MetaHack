@@ -18,8 +18,9 @@ namespace metagui
     Object(name, location, size)
   {
     // *** TESTING CODE ***
-    // Set this object to be draggable.
-    set_flag("draggable", true);
+    // Set this object to be movable and resizable.
+    set_flag("movable", true);
+    set_flag("resizable", true);
   }
 
   Window::Window(std::string name, sf::IntRect dimensions)
@@ -27,8 +28,9 @@ namespace metagui
     Object(name, dimensions)
   {
     // *** TESTING CODE ***
-    // Set this object to be draggable.
-    set_flag("draggable", true);
+    // Set this object to be movable and resizable.
+    set_flag("movable", true);
+    set_flag("resizable", true);
   }
 
   Window::~Window()

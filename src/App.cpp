@@ -59,6 +59,15 @@ App::App(sf::RenderWindow& app_window)
   // Register the App logger.
   SET_UP_LOGGER("App", true);
 
+  // Register the Action logger too; this can't be done in the Action()
+  // constructor due to some nasty crap I'm doing with static prototype
+  // Action objects.
+  /// @todo Kill the prototype object registration deal. It's more trouble
+  ///       than it's worth, since static initialization order is not
+  ///       defined.
+  SET_UP_LOGGER("Action", false);
+
+
   // First entity's first: load config settings.
   Service<IConfigSettings>::provide(NEW FallbackConfigSettings());
 
