@@ -417,6 +417,10 @@ namespace metagui
     /// Background texture.
     std::unique_ptr<sf::RenderTexture> m_bg_texture;
 
+    /// Size of the background texture.
+    /// Should be equal to the next largest power of 2 after m_size.
+    Vec2u m_bg_texture_size;
+
     /// Background shape.
     sf::RectangleShape m_bg_shape;
 

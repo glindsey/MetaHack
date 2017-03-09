@@ -136,12 +136,21 @@ namespace metagui
       if (size.y > max_size.y) size.y = max_size.y;
     }
 
-    m_bg_texture.reset(NEW sf::RenderTexture());
-    m_bg_texture->create(size.x, size.y);
-
+    // Texture size should be the nearest power-of-2, for speed.
+    Vec2u new_texture_size{ next_power_of_two(size.x), next_power_of_two(size.y) };
+    if (new_texture_size != m_bg_texture_size)
+    {
+      m_bg_texture_size = new_texture_size;
+      m_bg_texture.reset(NEW sf::RenderTexture());
+      m_bg_texture->create(m_bg_texture_size.x, m_bg_texture_size.y);
+    }
+    
     // Set "dirty" for both this object and its parent.
+    // (Right now flagForRedraw() will automatically set the flag on the 
+    //  parent chain, but I'll leave the other line commented out just in
+    //  case I change the behavior later.)
     flagForRedraw();
-    if (m_parent != nullptr) m_parent->flagForRedraw();
+    //if (m_parent != nullptr) m_parent->flagForRedraw();
 
     // Inform children of the parent size change.
     for (auto& child : m_children)
