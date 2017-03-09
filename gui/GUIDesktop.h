@@ -36,7 +36,7 @@ namespace metagui
   protected:
     virtual metagui::Event::Result handle_event_before_children_(EventResized& event) final;
 
-    virtual void render_self_before_children_(sf::RenderTexture& texture, int frame) override final;
+    virtual void drawPreChildren_(sf::RenderTexture& texture, int frame) override final;
 
   private:
     /// An array of data for each possible mouse button.

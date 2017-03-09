@@ -26,7 +26,6 @@ public:
 
   Subject* subject;
 
-protected:
   void serialize(std::ostream& o) const;
 };
 

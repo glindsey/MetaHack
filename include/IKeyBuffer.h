@@ -6,9 +6,41 @@
 #include "Subject.h"
 
 /// Interface for an input buffer.
-class IKeyBuffer: public Subject
+class IKeyBuffer : public Subject
 {
 public:
+  struct EventBufferChanged : public ConcreteEvent<EventBufferChanged>
+  {
+    EventBufferChanged(std::string buffer_)
+      :
+      buffer{ buffer_ }
+    {}
+
+    std::string const buffer;
+
+    void serialize(std::ostream& os) const
+    {
+      Event::serialize(os);
+      os << " | buffer: \"" << buffer << "\"";
+    }
+  };
+
+  struct EventCursorMoved : public ConcreteEvent<EventCursorMoved>
+  {
+    EventCursorMoved(size_t position_)
+      :
+      position{ position_ }
+    {}
+
+    size_t const position;
+
+    void serialize(std::ostream& os) const
+    {
+      Event::serialize(os);
+      os << " | position: \"" << position << "\"";
+    }
+  };
+
   virtual ~IKeyBuffer() {}
 
   /// Process a key event.
@@ -46,4 +78,7 @@ public:
                       sf::Font const& font,
                       unsigned int font_size,
                       sf::Color const& fg_color) = 0;
+
+  virtual std::unordered_set<EventID> registeredEvents() const override final;
+
 };

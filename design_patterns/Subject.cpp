@@ -9,6 +9,19 @@
 #include "Event.h"
 #include "Observer.h"
 
+// Debugging
+/// If this is defined, subject debug printouts will be emitted to std::cerr.
+//#define DEBUG_SUBJECT
+
+
+#ifdef DEBUG_SUBJECT
+#define DEBUG_SUBJECT_PRINT(x) do { std::cerr << x << std::endl; } while(0)
+#define DEBUG_SUBJECT_PRINT_EVENT(x, y) do { std::cerr << x; y->serialize(std::cerr); std::cerr << std::endl; } while(0)
+#else
+#define DEBUG_SUBJECT_PRINT(x)
+#define DEBUG_SUBJECT_PRINT_EVENT(x, y)
+#endif
+
 /// Subject implementation for observer pattern.
 /// Adapted from http://0xfede.io/2015/12/13/T-C++-ObserverPattern.html
 class Subject::Impl
@@ -40,13 +53,13 @@ Subject::Subject() :
 
 Subject::~Subject()
 {
-  for (auto& observers : pImpl->observers)
+  for (auto& eventObservers : pImpl->observers)
   {
-    Assert(!observers.second.size(),
+    Assert(!eventObservers.second.size(),
            "\nReason:\tsubject went out of scope while at least one observer is still registered for one of its events" <<
            "\nSubject:\t" << this <<
-           "\nObserver:\t" << *observers.second.begin() <<
-           "\nEvent:\t" << observers.first);
+           "\nObserver:\t" << *eventObservers.second.begin() <<
+           "\nEvent:\t" << eventObservers.first);
   }
 }
 
@@ -54,25 +67,37 @@ void Subject::addObserver(Observer& observer, EventID eventID)
 {
   pImpl->registerEventsIfNeeded(*this);
 
-  auto observers = pImpl->observers.find(eventID);
-  Assert(observers != pImpl->observers.end(),
-         "\nReason:\tattempted to add an observer for an unregistered event." <<
-         "\nSubject:\t" << *this <<
-         "\nObserver:\t" << observer <<
-         "\nEvent:\t" << eventID);
+  if (eventID == EventID::All)
+  {
+    for (auto& id : registeredEvents())
+    {
+      addObserver(observer, id);
+    }
+  }
+  else
+  {
+    auto observers = pImpl->observers.find(eventID);
+    Assert(observers != pImpl->observers.end(),
+           "\nReason:\tattempted to add an observer for an unregistered event." <<
+           "\nSubject:\t" << *this <<
+           "\nObserver:\t" << observer <<
+           "\nEvent:\t" << eventID);
 
-  bool observerIsNotAlreadyObserving = observers->second.insert(&observer).second;
-  Assert(observerIsNotAlreadyObserving,
-         "\nReason:\tattempted to add an observer for an event it is already observing." <<
-         "\nSubject:\t" << *this <<
-         "\nObserver:\t" << observer <<
-         "\nEvent:\t" << eventID);
+    bool observerIsNotAlreadyObserving = observers->second.insert(&observer).second;
+    Assert(observerIsNotAlreadyObserving,
+           "\nReason:\tattempted to add an observer for an event it is already observing." <<
+           "\nSubject:\t" << *this <<
+           "\nObserver:\t" << observer <<
+           "\nEvent:\t" << eventID);
 
-  Registration e;
-  e.state = Registration::State::Registered;
-  e.subject = this;
+    Registration e;
+    e.state = Registration::State::Registered;
+    e.subject = this;
 
-  observer.onEvent(e);
+    DEBUG_SUBJECT_PRINT("Registered Observer " << observer << "for EventID " << eventID);
+
+    observer.onEvent(e);
+  }
 }
 
 void Subject::removeObserver(Observer& observer, EventID eventID)
@@ -86,6 +111,8 @@ void Subject::removeObserver(Observer& observer, EventID eventID)
     {
       removalCount += observers.second.erase(&observer);
     }
+
+    DEBUG_SUBJECT_PRINT("Deegistered Observer " << observer << "for all Events");
   }
   else
   {
@@ -97,6 +124,8 @@ void Subject::removeObserver(Observer& observer, EventID eventID)
            "\nEvent:\t" << eventID);
 
     removalCount = observers->second.erase(&observer);
+
+    DEBUG_SUBJECT_PRINT("Deregistered Observer " << observer << "for EventID " << eventID);
   }
 
   Assert(removalCount != 0,
@@ -130,7 +159,6 @@ void Subject::broadcast(Event& event)
   {
     if (shouldBroadcast)
     {
-
       auto finalEvent = event.heapClone();
 
       auto dispatchBlock = [=]() mutable
@@ -140,6 +168,8 @@ void Subject::broadcast(Event& event)
                "\nReason:\tattempted to notify observers for an unregistered event." <<
                "\nSubject:\t" << *this <<
                "\nEvent:\t" << *finalEvent);
+
+        DEBUG_SUBJECT_PRINT_EVENT("Broadcasting: ", finalEvent);
 
         for (Observer* observer : observers->second)
         {

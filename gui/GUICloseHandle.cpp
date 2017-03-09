@@ -23,7 +23,7 @@ namespace metagui
   }
 
   // === PROTECTED METHODS ======================================================
-  void CloseHandle::render_self_before_children_(sf::RenderTexture& texture, int frame)
+  void CloseHandle::drawPreChildren_(sf::RenderTexture& texture, int frame)
   {
   }
 }; // end namespace metagui

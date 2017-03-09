@@ -30,7 +30,7 @@ StatusArea::~StatusArea()
   //dtor
 }
 
-void StatusArea::render_contents_(sf::RenderTexture& texture, int frame)
+void StatusArea::drawContents_(sf::RenderTexture& texture, int frame)
 {
   auto& config = Service<IConfigSettings>::get();
 

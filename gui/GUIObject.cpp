@@ -39,26 +39,6 @@ namespace metagui
     return m_name;
   }
 
-  void Object::set_pre_child_render_functor(RenderFunctor functor)
-  {
-    m_pre_child_render_functor = functor;
-  }
-
-  void Object::clear_pre_child_render_functor()
-  {
-    m_pre_child_render_functor = RenderFunctor();
-  }
-
-  void Object::set_post_child_render_functor(RenderFunctor functor)
-  {
-    m_post_child_render_functor = functor;
-  }
-
-  void Object::clear_post_child_render_functor()
-  {
-    m_post_child_render_functor = RenderFunctor();
-  }
-
   void Object::set_focus(bool focus)
   {
     if ((m_cached_flags.disabled == false) || (m_cached_flags.hidden == false))
@@ -104,6 +84,7 @@ namespace metagui
 
   void Object::set_text(std::string text)
   {
+    if (m_text != text) flagForRedraw();
     m_text = text;
   }
 
@@ -120,6 +101,10 @@ namespace metagui
   void Object::set_relative_location(Vec2i location)
   {
     m_location = location;
+    if (m_parent != nullptr)
+    {
+      m_parent->flagForRedraw();
+    }
   }
 
   Vec2u Object::get_size()
@@ -153,6 +138,10 @@ namespace metagui
 
     m_bg_texture.reset(NEW sf::RenderTexture());
     m_bg_texture->create(size.x, size.y);
+
+    // Set "dirty" for both this object and its parent.
+    flagForRedraw();
+    if (m_parent != nullptr) m_parent->flagForRedraw();
 
     // Inform children of the parent size change.
     for (auto& child : m_children)
@@ -356,35 +345,14 @@ namespace metagui
   {
     sf::RenderTexture& our_texture = *m_bg_texture;
 
-    our_texture.clear(sf::Color::Blue);
-
     if (m_cached_flags.hidden == false)
     {
-      /// Render self to our bg texture.
-      render_self_before_children_(our_texture, frame);
-
-      /// If a pre-child render functor is present, call that.
-      if (m_pre_child_render_functor)
+      if (m_flagForRedraw == true)
       {
-        m_pre_child_render_functor(our_texture, frame);
+        our_texture.clear(sf::Color::Transparent);
+        draw(frame);
+        m_flagForRedraw = false;
       }
-
-      /// Render all child objects to our bg texture.
-      for (auto& z_pair : m_zorder_map)
-      {
-        m_children.at(z_pair.second)->render(our_texture, frame);
-      }
-
-      /// If a post-child render functor is present, call that.
-      if (m_post_child_render_functor)
-      {
-        m_post_child_render_functor(our_texture, frame);
-      }
-
-      /// Render self after children are done.
-      render_self_after_children_(our_texture, frame);
-
-      our_texture.display();
 
       // Create the RectangleShape that will be drawn onto the target.
       m_bg_shape.setPosition(Vec2f(static_cast<float>(m_location.x), static_cast<float>(m_location.y)));
@@ -402,6 +370,34 @@ namespace metagui
     else
     {
       return false;
+    }
+  }
+
+  void Object::draw(int frame)
+  {
+    sf::RenderTexture& our_texture = *m_bg_texture;
+
+    /// Render self to our bg texture.
+    drawPreChildren_(our_texture, frame);
+
+    /// Render all child objects to our bg texture.
+    for (auto& z_pair : m_zorder_map)
+    {
+      m_children.at(z_pair.second)->render(our_texture, frame);
+    }
+
+    /// Render self after children are done.
+    drawPostChildren_(our_texture, frame);
+
+    our_texture.display();
+  }
+
+  void Object::flagForRedraw()
+  {
+    m_flagForRedraw = true;
+    if (m_parent)
+    {
+      m_parent->flagForRedraw();
     }
   }
 
@@ -588,6 +584,7 @@ namespace metagui
   void Object::set_parent(Object* parent)
   {
     m_parent = parent;
+    m_parent->flagForRedraw();
   }
 
   void Object::clear_child_focuses()
@@ -600,6 +597,7 @@ namespace metagui
 
   void Object::set_focus_only(bool focus)
   {
+    if (m_focus != focus) flagForRedraw();
     m_focus = focus;
   }
 
@@ -613,12 +611,12 @@ namespace metagui
     return m_drag_start_location;
   }
 
-  void Object::render_self_before_children_(sf::RenderTexture& texture, int frame)
+  void Object::drawPreChildren_(sf::RenderTexture& texture, int frame)
   {
     // Default behavior is to do nothing.
   }
 
-  void Object::render_self_after_children_(sf::RenderTexture& texture, int frame)
+  void Object::drawPostChildren_(sf::RenderTexture& texture, int frame)
   {
     // Default behavior is to do nothing.
   }

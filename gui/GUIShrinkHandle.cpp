@@ -19,7 +19,7 @@ namespace metagui
   }
 
   // === PROTECTED METHODS ======================================================
-  void ShrinkHandle::render_self_before_children_(sf::RenderTexture& texture, int frame)
+  void ShrinkHandle::drawPreChildren_(sf::RenderTexture& texture, int frame)
   {
   }
   void ShrinkHandle::handle_parent_size_changed_(Vec2u parent_size)

@@ -22,15 +22,15 @@ InventoryArea::InventoryArea(std::string name,
   m_inventory_selection(inventory_selection)
 {
   SET_UP_LOGGER("InventoryArea", true);
-  //startObserving(inventory_selection);
+  m_inventory_selection.addObserver(*this, EventID::All);
 }
 
 InventoryArea::~InventoryArea()
 {
-  //dtor
+  m_inventory_selection.removeObserver(*this);
 }
 
-void InventoryArea::render_contents_(sf::RenderTexture& texture, int frame)
+void InventoryArea::drawContents_(sf::RenderTexture& texture, int frame)
 {
   auto& config = Service<IConfigSettings>::get();
   auto& views = Service<IGraphicViews>::get();
@@ -200,4 +200,11 @@ void InventoryArea::render_contents_(sf::RenderTexture& texture, int frame)
   title_string[0] = toupper(title_string[0]);
   set_text(title_string);
   return;
+}
+
+void InventoryArea::onEvent(Event const & event)
+{
+  /// @todo Flesh this out a bit more.
+  ///       Right now we just set the "dirty" flag for the view so it is redrawn.
+  flagForRedraw();
 }

@@ -28,9 +28,33 @@ public:
                       sf::Color const& fg_color) override;
 
 protected:
+  /// Helper function to insert a character depending on shift.
+  metagui::Event::Result insertCharacter(metagui::EventKeyPressed& event, char shifted, char unshifted);
+
+  /// Set character at cursor location, or insert/replace if string is not long enough.
+  void set_character(char const c);
+
+  /// Delete character at cursor location.
+  void del_character();
+
+  /// Move cursor left.
+  bool left_cursor();
+
+  /// Move cursor right.
+  bool right_cursor();
+
 private:
-  struct Impl;
-  std::unique_ptr<Impl> pImpl;
+  /// Buffer holding the string being composed.
+  std::string m_buffer;
+
+  /// Cursor location within string.
+  size_t m_cursorPosition;
+
+  /// If true, we are replacing.  If false, we are inserting.
+  bool m_replacing;
+
+  /// If true, command is ready to be processed.
+  bool m_enter;
 };
 
 #endif // KEYBUFFER_H

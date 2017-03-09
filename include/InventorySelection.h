@@ -2,18 +2,56 @@
 
 #include "stdafx.h"
 
+#include "EntityId.h"
 #include "InventorySlot.h"
 #include "Subject.h"
 
 // Forward declarations
 class Container;
 class Entity;
-class EntityId;
 
 /// InventorySelection is sort of the controller that binds an InventoryView
 /// to a Entity to be displayed.
 class InventorySelection : public Subject
 {
+  struct EventEntityChanged : public ConcreteEvent<EventEntityChanged>
+  {
+    EventEntityChanged(EntityId id_)
+      :
+      entityId(id_)
+    {}
+
+    EntityId const entityId;
+
+    void serialize(std::ostream& os) const
+    {
+      Event::serialize(os);
+      os << " | id:" << entityId;
+    }
+  };
+
+  struct EventSelectionChanged : public ConcreteEvent<EventSelectionChanged>
+  {
+    EventSelectionChanged(std::vector<InventorySlot> slots_, unsigned int quantity_)
+      :
+      slots{ slots_ },
+      quantity{ quantity_ }
+    {}
+
+    std::vector<InventorySlot> const slots;
+    unsigned int quantity;
+
+    void serialize(std::ostream& os) const
+    {
+      Event::serialize(os);
+      os << " | quantity: " << quantity << " | slots:";
+      for (auto& slot : slots)
+      {
+        os << " " << slot;
+      }
+    }
+  };
+
 public:
   InventorySelection();
   explicit InventorySelection(EntityId entity);
@@ -43,6 +81,7 @@ public:
   static InventorySlot get_slot(char character);
 
 protected:
+  virtual std::unordered_set<EventID> registeredEvents() const override;
 
 private:
   struct Impl;

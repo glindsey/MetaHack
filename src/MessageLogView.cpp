@@ -19,12 +19,15 @@ MessageLogView::MessageLogView(std::string name,
   m_key_buffer(key_buffer)
 {
   set_text("Message Log");
-  //startObserving(model);
-  //startObserving(key_buffer);
+  m_model.addObserver(*this, EventID::All);
+  m_key_buffer.addObserver(*this, EventID::All);
 }
 
 MessageLogView::~MessageLogView()
-{}
+{
+  m_key_buffer.removeObserver(*this);
+  m_model.removeObserver(*this);
+}
 
 metagui::Event::Result MessageLogView::handle_event_before_children_(metagui::EventKeyPressed& event)
 {
@@ -33,6 +36,7 @@ metagui::Event::Result MessageLogView::handle_event_before_children_(metagui::Ev
   /// @todo This is ugly, fix later
   if (get_global_focus() == true)
   {
+    flagForRedraw();
     return static_cast<metagui::Event::Result>(m_key_buffer.handle_key_press(event));
   }
   else
@@ -41,7 +45,7 @@ metagui::Event::Result MessageLogView::handle_event_before_children_(metagui::Ev
   }
 }
 
-void MessageLogView::render_contents_(sf::RenderTexture& texture, int frame)
+void MessageLogView::drawContents_(sf::RenderTexture& texture, int frame)
 {
   auto& config = Service<IConfigSettings>::get();
   auto text_default_size = config.get<unsigned int>("text_default_size");
@@ -93,4 +97,11 @@ void MessageLogView::render_contents_(sf::RenderTexture& texture, int frame)
   }
 
   return;
+}
+
+void MessageLogView::onEvent(Event const & event)
+{
+  /// @todo Flesh this out a bit more.
+  ///       Right now we just set the "dirty" flag for the view so it is redrawn.
+  flagForRedraw();
 }

@@ -146,8 +146,8 @@ namespace metagui
     return Event::Result::Acknowledged;
   }
 
-  void Desktop::render_self_before_children_(sf::RenderTexture& texture, int frame)
+  void Desktop::drawPreChildren_(sf::RenderTexture& texture, int frame)
   {
-    texture.clear(sf::Color::Magenta);
   }
+
 }; // end namespace metagui

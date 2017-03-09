@@ -49,6 +49,9 @@
     <Filter Include="Resource Files\Entity Scripts">
       <UniqueIdentifier>{06c6fd7c-3a0b-4f86-8f04-7f670fb0dc37}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Views Derived From GUI Elements">
+      <UniqueIdentifier>{497c8148-28e9-406e-bfea-d92fc2c22982}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\App.h">
@@ -282,12 +285,6 @@
     <ClInclude Include="include\InventorySelection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\MessageLogView.h">
-      <Filter>Object Views</Filter>
-    </ClInclude>
-    <ClInclude Include="include\InventoryArea.h">
-      <Filter>Object Views</Filter>
-    </ClInclude>
     <ClInclude Include="include\Grid2D.h">
       <Filter>Types</Filter>
     </ClInclude>
@@ -437,6 +434,12 @@
     </ClInclude>
     <ClInclude Include="actions\ActionWield.h">
       <Filter>Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="include\InventoryArea.h">
+      <Filter>Views Derived From GUI Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MessageLogView.h">
+      <Filter>Views Derived From GUI Elements</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -590,12 +593,6 @@
     <ClCompile Include="src\InventorySelection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\InventoryArea.cpp">
-      <Filter>Object Views</Filter>
-    </ClCompile>
-    <ClCompile Include="src\MessageLogView.cpp">
-      <Filter>Object Views</Filter>
-    </ClCompile>
     <ClCompile Include="src\MapFactory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -718,6 +715,15 @@
     </ClCompile>
     <ClCompile Include="actions\ActionWield.cpp">
       <Filter>Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="src\InventoryArea.cpp">
+      <Filter>Views Derived From GUI Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MessageLogView.cpp">
+      <Filter>Views Derived From GUI Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="include\IKeyBuffer.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

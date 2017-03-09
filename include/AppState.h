@@ -17,8 +17,8 @@ class AppState :
 {
 public:
   AppState(StateMachine& state_machine,
-           metagui::RenderFunctor pre_render_functor = metagui::RenderFunctor(),
-           metagui::RenderFunctor post_render_functor = metagui::RenderFunctor());
+           metagui::RenderFunctor preDesktopRenderFunctor = metagui::RenderFunctor(),
+           metagui::RenderFunctor postDesktopRenderFunctor = metagui::RenderFunctor());
 
   virtual ~AppState();
 
@@ -27,6 +27,8 @@ public:
 
 protected:
 private:
+  metagui::RenderFunctor m_preDesktopRenderFunctor;
+  metagui::RenderFunctor m_postDesktopRenderFunctor;
 };
 
 #endif // APPSTATE_H

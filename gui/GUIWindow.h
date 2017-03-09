@@ -1,5 +1,4 @@
-#ifndef GUIWINDOWPANE_H
-#define GUIWINDOWPANE_H
+#pragma once
 
 #include "stdafx.h"
 
@@ -25,13 +24,13 @@ namespace metagui
     virtual Vec2u get_child_area_size() override final;
 
   protected:
-    virtual void render_self_before_children_(sf::RenderTexture& texture, int frame) override final;
+    virtual void drawPreChildren_(sf::RenderTexture& texture, int frame) override final;
 
     virtual void handle_set_flag_(std::string name, bool enabled) override;
 
     /// Temporary function used to render the contents of classes derived from
     /// GUIWindow until they can be properly replaced with child controls.
-    virtual void render_contents_(sf::RenderTexture& texture, int frame);
+    virtual void drawContents_(sf::RenderTexture& texture, int frame);
 
     virtual Event::Result handle_event_after_children_(EventDragStarted& event) override;
 
@@ -43,5 +42,3 @@ namespace metagui
     bool m_titlebar_cached = false;
   };
 }; // end namespace metagui
-
-#endif // GUIWINDOWPANE_H

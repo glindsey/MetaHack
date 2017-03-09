@@ -441,6 +441,7 @@
     <ClCompile Include="gui\GUIShrinkHandle.cpp" />
     <ClCompile Include="gui\GUITitleBar.cpp" />
     <ClCompile Include="gui\GUIWindow.cpp" />
+    <ClCompile Include="include\IKeyBuffer.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\App.cpp" />
     <ClCompile Include="src\AppState.cpp" />

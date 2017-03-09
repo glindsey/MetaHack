@@ -116,34 +116,31 @@ SFMLEventResult AppStateGameMode::handle_sfml_event(sf::Event& event)
 {
   SFMLEventResult result = SFMLEventResult::Ignored;
 
-  if (result != SFMLEventResult::Handled)
+  switch (event.type)
   {
-    switch (event.type)
+    case sf::Event::EventType::Resized:
     {
-      case sf::Event::EventType::Resized:
-      {
-        the_desktop.set_size({ event.size.width, event.size.height });
-        the_desktop.get_child("MessageLogView").set_relative_dimensions(calc_message_log_dims());
-        the_desktop.get_child("InventoryArea").set_relative_dimensions(calc_inventory_dims());
-        the_desktop.get_child("StatusArea").set_relative_dimensions(calc_status_area_dims());
-        result = SFMLEventResult::Acknowledged;
-        break;
-      }
-
-      case sf::Event::EventType::KeyPressed:
-        result = this->handle_key_press(event.key);
-        break;
-
-      case sf::Event::EventType::KeyReleased:
-        break;
-
-      case sf::Event::EventType::MouseWheelMoved:
-        result = this->handle_mouse_wheel(event.mouseWheel);
-        break;
-
-      default:
-        break;
+      the_desktop.set_size({ event.size.width, event.size.height });
+      the_desktop.get_child("MessageLogView").set_relative_dimensions(calc_message_log_dims());
+      the_desktop.get_child("InventoryArea").set_relative_dimensions(calc_inventory_dims());
+      the_desktop.get_child("StatusArea").set_relative_dimensions(calc_status_area_dims());
+      result = SFMLEventResult::Acknowledged;
+      break;
     }
+
+    case sf::Event::EventType::KeyPressed:
+      result = this->handle_key_press(event.key);
+      break;
+
+    case sf::Event::EventType::KeyReleased:
+      break;
+
+    case sf::Event::EventType::MouseWheelMoved:
+      result = this->handle_mouse_wheel(event.mouseWheel);
+      break;
+
+    default:
+      break;
   }
 
   // Finally let the GUI handle events.

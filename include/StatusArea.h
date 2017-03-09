@@ -12,7 +12,7 @@ public:
   virtual ~StatusArea();
 
 protected:
-  virtual void render_contents_(sf::RenderTexture& texture, int frame) override;
+  virtual void drawContents_(sf::RenderTexture& texture, int frame) override;
 
 private:
   void render_attribute(sf::RenderTarget& target, std::string abbrev, std::string name, Vec2f location);

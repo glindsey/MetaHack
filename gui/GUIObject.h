@@ -64,24 +64,6 @@ namespace metagui
 
     std::string get_name();
 
-    /// Set pre-child render functor.
-    /// If present, this functor is called after render_self_before_children_()
-    /// is executed, but before children are rendered.
-    /// @param  functor   Functor to call.
-    void set_pre_child_render_functor(RenderFunctor functor);
-
-    /// Clear the pre-child render functor.
-    void clear_pre_child_render_functor();
-
-    /// Set post-child render functor.
-    /// If present, this functor is called after children are rendered,
-    /// but before render_self_after_children_() is executed.
-    /// @param  functor   Functor to call.
-    void set_post_child_render_functor(RenderFunctor functor);
-
-    /// Clear the pre-child render functor.
-    void clear_post_child_render_functor();
-
     /// Set whether this object has focus.
     /// When set to "true", will also unfocus any sibling controls.
     /// If the object is hidden or disabled, this method will do nothing.
@@ -330,6 +312,12 @@ namespace metagui
 
     void set_parent(Object* parent);
 
+    /// Redraw this object on its own background texture.
+    void draw(int frame);
+
+    /// Flag this object, and its parents, to be redrawn.
+    void flagForRedraw();
+
     /// Clear the focus of all of this object's children.
     void clear_child_focuses();
 
@@ -344,11 +332,11 @@ namespace metagui
 
     /// Called before rendering the object's children.
     /// Default behavior is to do nothing.
-    virtual void render_self_before_children_(sf::RenderTexture& texture, int frame);
+    virtual void drawPreChildren_(sf::RenderTexture& texture, int frame);
 
     /// Called after rendering the object's children.
     /// Default behavior is to do nothing.
-    virtual void render_self_after_children_(sf::RenderTexture& texture, int frame);
+    virtual void drawPostChildren_(sf::RenderTexture& texture, int frame);
 
     virtual Event::Result handle_event_before_children_(EventDragFinished& event);
     virtual Event::Result handle_event_after_children_(EventDragFinished& event);
@@ -390,6 +378,9 @@ namespace metagui
     /// how it propogates along the object tree.
     bool m_focus = false;
 
+    /// Flag indicating whether this object needs to be redrawn.
+    bool m_flagForRedraw = true;
+
     /// Definition of struct of cached flag values.
     struct CachedFlags
     {
@@ -428,12 +419,6 @@ namespace metagui
 
     /// Background shape.
     sf::RectangleShape m_bg_shape;
-
-    /// Pre-child render functor.
-    RenderFunctor m_pre_child_render_functor;
-
-    /// Post-child render functor.
-    RenderFunctor m_post_child_render_functor;
 
     /// Map of flags that can be set/cleared for this object.
     BoolMap m_flags;

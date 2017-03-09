@@ -62,7 +62,7 @@ namespace metagui
     return child_size;
   }
 
-  void Window::render_self_before_children_(sf::RenderTexture& texture, int frame)
+  void Window::drawPreChildren_(sf::RenderTexture& texture, int frame)
   {
     auto& config = Service<IConfigSettings>::get();
     Vec2u size = get_size();
@@ -77,7 +77,7 @@ namespace metagui
     texture.clear(config.get<sf::Color>("window_bg_color"));
 
     // Render subclass contents, if any.
-    render_contents_(texture, frame);
+    drawContents_(texture, frame);
 
     // Draw the border.
     float border_width = config.get<float>("window_border_width");
@@ -162,7 +162,7 @@ namespace metagui
     }
   }
 
-  void Window::render_contents_(sf::RenderTexture& texture, int frame)
+  void Window::drawContents_(sf::RenderTexture& texture, int frame)
   {}
 
   Event::Result Window::handle_event_after_children_(EventDragStarted & event)

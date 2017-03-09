@@ -19,7 +19,7 @@ namespace metagui
   }
 
   // === PROTECTED METHODS ======================================================
-  void TitleBar::render_self_before_children_(sf::RenderTexture& texture, int frame)
+  void TitleBar::drawPreChildren_(sf::RenderTexture& texture, int frame)
   {
     auto& config = Service<IConfigSettings>::get();
 

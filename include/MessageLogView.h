@@ -37,7 +37,9 @@ protected:
   /// Render the contents of this view to the specified target.
   /// @param  target  RenderTarget to render onto.
   /// @param  frame   Current frame counter.
-  virtual void render_contents_(sf::RenderTexture& texture, int frame) override;
+  virtual void drawContents_(sf::RenderTexture& texture, int frame) override;
+
+  virtual void onEvent(Event const& event) override;
 
 private:
 

@@ -2,97 +2,15 @@
 
 #include "KeyBuffer.h"
 
-struct KeyBuffer::Impl
+KeyBuffer::KeyBuffer()
 {
-  /// Buffer holding the string being composed.
-  std::string buffer;
-
-  /// Cursor location within string.
-  size_t cursor_position;
-
-  /// If true, we are replacing.  If false, we are inserting.
-  bool replacing;
-
-  /// If true, command is ready to be processed.
-  bool enter;
-
-  /// Set character at cursor location, or insert/replace if string is not long enough.
-  void set_character(char const c)
-  {
-    auto position = cursor_position;
-
-    if (position >= buffer.length())
-    {
-      buffer += c;
-    }
-    else
-    {
-      if (replacing)
-      {
-        buffer[position] = c;
-      }
-      else
-      {
-        buffer.insert(buffer.begin() + position, c);
-      }
-    }
-    cursor_position = position + 1;
-  }
-
-  /// Delete character at cursor location.
-  void del_character()
-  {
-    auto position = cursor_position;
-
-    if (position >= buffer.length())
-    {
-      return;
-    }
-
-    buffer.erase(position, 1);
-    cursor_position = position;
-  }
-
-  /// Move cursor left.
-  bool left_cursor()
-  {
-    if (cursor_position == 0)
-    {
-      return false;
-    }
-    --cursor_position;
-    return true;
-  }
-
-  /// Move cursor right.
-  bool right_cursor()
-  {
-    if (cursor_position == buffer.length())
-    {
-      return false;
-    }
-    ++cursor_position;
-    return true;
-  }
-};
-
-KeyBuffer::KeyBuffer() :
-  pImpl(NEW Impl())
-{
-  this->clear_buffer();
-  pImpl->replacing = false;
+  clear_buffer();
+  m_replacing = false;
 }
 
 KeyBuffer::~KeyBuffer()
 {
   //dtor
-}
-
-#define INSERT(x, y)                                               \
-{                                                                  \
-  pImpl->set_character((event.shift ? x : y));                     \
-  result = metagui::Event::Result::Handled;                        \
-  break;                                                           \
 }
 
 metagui::Event::Result KeyBuffer::handle_key_press(metagui::EventKeyPressed& event)
@@ -103,110 +21,105 @@ metagui::Event::Result KeyBuffer::handle_key_press(metagui::EventKeyPressed& eve
   {
     switch (event.code)
     {
-      case sf::Keyboard::Key::Tilde:      INSERT('~', '`');
-      case sf::Keyboard::Key::Num1:       INSERT('!', '1');
-      case sf::Keyboard::Key::Num2:       INSERT('@', '2');
-      case sf::Keyboard::Key::Num3:       INSERT('#', '3');
-      case sf::Keyboard::Key::Num4:       INSERT('$', '4');
-      case sf::Keyboard::Key::Num5:       INSERT('%', '5');
-      case sf::Keyboard::Key::Num6:       INSERT('^', '6');
-      case sf::Keyboard::Key::Num7:       INSERT('&', '7');
-      case sf::Keyboard::Key::Num8:       INSERT('*', '8');
-      case sf::Keyboard::Key::Num9:       INSERT('(', '9');
-      case sf::Keyboard::Key::Num0:       INSERT(')', '0');
-      case sf::Keyboard::Key::Dash:       INSERT('_', '-');
-      case sf::Keyboard::Key::Equal:      INSERT('+', '=');
-      case sf::Keyboard::Key::Q:          INSERT('Q', 'q');
-      case sf::Keyboard::Key::W:          INSERT('W', 'w');
-      case sf::Keyboard::Key::E:          INSERT('E', 'e');
-      case sf::Keyboard::Key::R:          INSERT('R', 'r');
-      case sf::Keyboard::Key::T:          INSERT('T', 't');
-      case sf::Keyboard::Key::Y:          INSERT('Y', 'y');
-      case sf::Keyboard::Key::U:          INSERT('U', 'u');
-      case sf::Keyboard::Key::I:          INSERT('I', 'i');
-      case sf::Keyboard::Key::O:          INSERT('O', 'o');
-      case sf::Keyboard::Key::P:          INSERT('P', 'p');
-      case sf::Keyboard::Key::LBracket:   INSERT('{', '[');
-      case sf::Keyboard::Key::RBracket:   INSERT('}', ']');
-      case sf::Keyboard::Key::BackSlash:  INSERT('|', '\\');
-      case sf::Keyboard::Key::A:          INSERT('A', 'a');
-      case sf::Keyboard::Key::S:          INSERT('S', 's');
-      case sf::Keyboard::Key::D:          INSERT('D', 'd');
-      case sf::Keyboard::Key::F:          INSERT('F', 'f');
-      case sf::Keyboard::Key::G:          INSERT('G', 'g');
-      case sf::Keyboard::Key::H:          INSERT('H', 'h');
-      case sf::Keyboard::Key::J:          INSERT('J', 'j');
-      case sf::Keyboard::Key::K:          INSERT('K', 'k');
-      case sf::Keyboard::Key::L:          INSERT('L', 'l');
-      case sf::Keyboard::Key::SemiColon:  INSERT(':', ';');
-      case sf::Keyboard::Key::Quote:      INSERT('"', '\'');
-      case sf::Keyboard::Key::Z:          INSERT('Z', 'z');
-      case sf::Keyboard::Key::X:          INSERT('X', 'x');
-      case sf::Keyboard::Key::C:          INSERT('C', 'c');
-      case sf::Keyboard::Key::V:          INSERT('V', 'v');
-      case sf::Keyboard::Key::B:          INSERT('B', 'b');
-      case sf::Keyboard::Key::N:          INSERT('N', 'n');
-      case sf::Keyboard::Key::M:          INSERT('M', 'm');
-      case sf::Keyboard::Key::Comma:      INSERT('<', ',');
-      case sf::Keyboard::Key::Period:     INSERT('>', '.');
-      case sf::Keyboard::Key::Slash:      INSERT('?', '/');
-      case sf::Keyboard::Key::Space:      INSERT(' ', ' ');
+      case sf::Keyboard::Key::Tilde:      return insertCharacter(event, '~', '`');
+      case sf::Keyboard::Key::Num1:       return insertCharacter(event, '!', '1');
+      case sf::Keyboard::Key::Num2:       return insertCharacter(event, '@', '2');
+      case sf::Keyboard::Key::Num3:       return insertCharacter(event, '#', '3');
+      case sf::Keyboard::Key::Num4:       return insertCharacter(event, '$', '4');
+      case sf::Keyboard::Key::Num5:       return insertCharacter(event, '%', '5');
+      case sf::Keyboard::Key::Num6:       return insertCharacter(event, '^', '6');
+      case sf::Keyboard::Key::Num7:       return insertCharacter(event, '&', '7');
+      case sf::Keyboard::Key::Num8:       return insertCharacter(event, '*', '8');
+      case sf::Keyboard::Key::Num9:       return insertCharacter(event, '(', '9');
+      case sf::Keyboard::Key::Num0:       return insertCharacter(event, ')', '0');
+      case sf::Keyboard::Key::Dash:       return insertCharacter(event, '_', '-');
+      case sf::Keyboard::Key::Equal:      return insertCharacter(event, '+', '=');
+      case sf::Keyboard::Key::Q:          return insertCharacter(event, 'Q', 'q');
+      case sf::Keyboard::Key::W:          return insertCharacter(event, 'W', 'w');
+      case sf::Keyboard::Key::E:          return insertCharacter(event, 'E', 'e');
+      case sf::Keyboard::Key::R:          return insertCharacter(event, 'R', 'r');
+      case sf::Keyboard::Key::T:          return insertCharacter(event, 'T', 't');
+      case sf::Keyboard::Key::Y:          return insertCharacter(event, 'Y', 'y');
+      case sf::Keyboard::Key::U:          return insertCharacter(event, 'U', 'u');
+      case sf::Keyboard::Key::I:          return insertCharacter(event, 'I', 'i');
+      case sf::Keyboard::Key::O:          return insertCharacter(event, 'O', 'o');
+      case sf::Keyboard::Key::P:          return insertCharacter(event, 'P', 'p');
+      case sf::Keyboard::Key::LBracket:   return insertCharacter(event, '{', '[');
+      case sf::Keyboard::Key::RBracket:   return insertCharacter(event, '}', ']');
+      case sf::Keyboard::Key::BackSlash:  return insertCharacter(event, '|', '\\');
+      case sf::Keyboard::Key::A:          return insertCharacter(event, 'A', 'a');
+      case sf::Keyboard::Key::S:          return insertCharacter(event, 'S', 's');
+      case sf::Keyboard::Key::D:          return insertCharacter(event, 'D', 'd');
+      case sf::Keyboard::Key::F:          return insertCharacter(event, 'F', 'f');
+      case sf::Keyboard::Key::G:          return insertCharacter(event, 'G', 'g');
+      case sf::Keyboard::Key::H:          return insertCharacter(event, 'H', 'h');
+      case sf::Keyboard::Key::J:          return insertCharacter(event, 'J', 'j');
+      case sf::Keyboard::Key::K:          return insertCharacter(event, 'K', 'k');
+      case sf::Keyboard::Key::L:          return insertCharacter(event, 'L', 'l');
+      case sf::Keyboard::Key::SemiColon:  return insertCharacter(event, ':', ';');
+      case sf::Keyboard::Key::Quote:      return insertCharacter(event, '"', '\'');
+      case sf::Keyboard::Key::Z:          return insertCharacter(event, 'Z', 'z');
+      case sf::Keyboard::Key::X:          return insertCharacter(event, 'X', 'x');
+      case sf::Keyboard::Key::C:          return insertCharacter(event, 'C', 'c');
+      case sf::Keyboard::Key::V:          return insertCharacter(event, 'V', 'v');
+      case sf::Keyboard::Key::B:          return insertCharacter(event, 'B', 'b');
+      case sf::Keyboard::Key::N:          return insertCharacter(event, 'N', 'n');
+      case sf::Keyboard::Key::M:          return insertCharacter(event, 'M', 'm');
+      case sf::Keyboard::Key::Comma:      return insertCharacter(event, '<', ',');
+      case sf::Keyboard::Key::Period:     return insertCharacter(event, '>', '.');
+      case sf::Keyboard::Key::Slash:      return insertCharacter(event, '?', '/');
+      case sf::Keyboard::Key::Space:      return insertCharacter(event, ' ', ' ');
       case sf::Keyboard::Key::Left:
-        pImpl->left_cursor();
+        left_cursor();
         result = metagui::Event::Result::Handled;
         break;
       case sf::Keyboard::Key::Right:
-        pImpl->right_cursor();
+        right_cursor();
         result = metagui::Event::Result::Handled;
         break;
       case sf::Keyboard::Key::BackSpace:
-        if (pImpl->left_cursor())
+        if (left_cursor())
         {
-          pImpl->del_character();
+          del_character();
         }
         result = metagui::Event::Result::Handled;
         break;
       case sf::Keyboard::Key::Insert:
-        pImpl->replacing = !(pImpl->replacing);
+        m_replacing = !(m_replacing);
         result = metagui::Event::Result::Handled;
         break;
       case sf::Keyboard::Key::Delete:
-        pImpl->del_character();
+        del_character();
         result = metagui::Event::Result::Handled;
         break;
       case sf::Keyboard::Key::Home:
-        pImpl->cursor_position = 0;
+        m_cursorPosition = 0;
         result = metagui::Event::Result::Handled;
         break;
       case sf::Keyboard::Key::End:
-        pImpl->cursor_position = pImpl->buffer.length();
+        m_cursorPosition = m_buffer.length();
         result = metagui::Event::Result::Handled;
         break;
-      case sf::Keyboard::Key::Divide:     INSERT('/', '/');
-      case sf::Keyboard::Key::Multiply:   INSERT('*', '*');
-      case sf::Keyboard::Key::Subtract:   INSERT('-', '-');
-      case sf::Keyboard::Key::Add:        INSERT('+', '+');
-      case sf::Keyboard::Key::Numpad0:    INSERT('0', '0');
-      case sf::Keyboard::Key::Numpad1:    INSERT('1', '1');
-      case sf::Keyboard::Key::Numpad2:    INSERT('2', '2');
-      case sf::Keyboard::Key::Numpad3:    INSERT('3', '3');
-      case sf::Keyboard::Key::Numpad4:    INSERT('4', '4');
-      case sf::Keyboard::Key::Numpad5:    INSERT('5', '5');
-      case sf::Keyboard::Key::Numpad6:    INSERT('6', '6');
-      case sf::Keyboard::Key::Numpad7:    INSERT('7', '7');
-      case sf::Keyboard::Key::Numpad8:    INSERT('8', '8');
-      case sf::Keyboard::Key::Numpad9:    INSERT('9', '9');
+      case sf::Keyboard::Key::Divide:     return insertCharacter(event, '/', '/');
+      case sf::Keyboard::Key::Multiply:   return insertCharacter(event, '*', '*');
+      case sf::Keyboard::Key::Subtract:   return insertCharacter(event, '-', '-');
+      case sf::Keyboard::Key::Add:        return insertCharacter(event, '+', '+');
+      case sf::Keyboard::Key::Numpad0:    return insertCharacter(event, '0', '0');
+      case sf::Keyboard::Key::Numpad1:    return insertCharacter(event, '1', '1');
+      case sf::Keyboard::Key::Numpad2:    return insertCharacter(event, '2', '2');
+      case sf::Keyboard::Key::Numpad3:    return insertCharacter(event, '3', '3');
+      case sf::Keyboard::Key::Numpad4:    return insertCharacter(event, '4', '4');
+      case sf::Keyboard::Key::Numpad5:    return insertCharacter(event, '5', '5');
+      case sf::Keyboard::Key::Numpad6:    return insertCharacter(event, '6', '6');
+      case sf::Keyboard::Key::Numpad7:    return insertCharacter(event, '7', '7');
+      case sf::Keyboard::Key::Numpad8:    return insertCharacter(event, '8', '8');
+      case sf::Keyboard::Key::Numpad9:    return insertCharacter(event, '9', '9');
       case sf::Keyboard::Key::Return:
-        pImpl->enter = true;
+        m_enter = true;
         result = metagui::Event::Result::Handled;
         break;
       default: break;
     }
-  }
-
-  if (result == metagui::Event::Result::Handled)
-  {
-    //notifyObservers(Event::Updated);
   }
 
   return result;
@@ -214,40 +127,42 @@ metagui::Event::Result KeyBuffer::handle_key_press(metagui::EventKeyPressed& eve
 
 size_t KeyBuffer::get_cursor_position() const
 {
-  return pImpl->cursor_position;
+  return m_cursorPosition;
 }
 
 void KeyBuffer::set_cursor_position(size_t position)
 {
-  pImpl->cursor_position = std::min(pImpl->buffer.length(), position);
-  //notifyObservers(Event::Updated);
+  m_cursorPosition = std::min(m_buffer.length(), position);
+  broadcast(EventCursorMoved(position));
 }
 
 std::string const& KeyBuffer::get_buffer() const
 {
-  return pImpl->buffer;
+  return m_buffer;
 }
 
 void KeyBuffer::set_buffer(std::string buf)
 {
-  pImpl->buffer = buf;
-  pImpl->cursor_position = buf.length();
-  //notifyObservers(Event::Updated);
+  m_buffer = buf;
+  broadcast(EventBufferChanged(m_buffer));
+  set_cursor_position(buf.length());
 }
 
 void KeyBuffer::clear_buffer()
 {
-  pImpl->buffer.clear();
-  pImpl->cursor_position = 0;
-  pImpl->enter = false;
-  //notifyObservers(Event::Updated);
+  m_buffer.clear();
+  broadcast(EventBufferChanged(m_buffer));
+  m_cursorPosition = 0;
+  broadcast(EventCursorMoved(m_cursorPosition));
+  m_enter = false;
 }
 
 bool KeyBuffer::get_enter()
 {
-  return pImpl->enter;
+  return m_enter;
 }
 
+/// @todo Move this into a view.
 void KeyBuffer::render(sf::RenderTexture& texture,
                        Vec2f coords,
                        unsigned int frame,
@@ -271,7 +186,7 @@ void KeyBuffer::render(sf::RenderTexture& texture,
   x_position += render_text.getLocalBounds().width;
 
   // *** RENDER TEXT **********************************************************
-  render_text.setString(pImpl->buffer);
+  render_text.setString(m_buffer);
   render_text.setPosition(x_position, coords.y);
   render_text.setStyle(sf::Text::Style::Regular);
   texture.draw(render_text);
@@ -281,7 +196,7 @@ void KeyBuffer::render(sf::RenderTexture& texture,
   Vec2f cursor_size;
   sf::Color cursor_color = fg_color;
 
-  if (pImpl->replacing)
+  if (m_replacing)
   {
     cursor_color.r >>= 1;
     cursor_color.g >>= 1;
@@ -298,11 +213,11 @@ void KeyBuffer::render(sf::RenderTexture& texture,
 
   float font_height = font.getLineSpacing(font_size);
 
-  cursor_coords = render_text.findCharacterPos(pImpl->cursor_position);
+  cursor_coords = render_text.findCharacterPos(m_cursorPosition);
 
-  if (pImpl->replacing)
+  if (m_replacing)
   {
-    sf::Glyph glyph = font.getGlyph(pImpl->buffer[pImpl->cursor_position],
+    sf::Glyph glyph = font.getGlyph(m_buffer[m_cursorPosition],
                                     font_size, false);
     cursor_size = Vec2f(glyph.bounds.width, font_height);
   }
@@ -318,4 +233,80 @@ void KeyBuffer::render(sf::RenderTexture& texture,
   texture.draw(cursor_rect);
 
   texture.display();
+}
+
+metagui::Event::Result KeyBuffer::insertCharacter(metagui::EventKeyPressed& event, char shifted, char unshifted)
+{                                                                  
+  set_character((event.shift ? shifted : unshifted));                     
+  return metagui::Event::Result::Handled;                        
+}
+
+
+/// Set character at cursor location, or insert/replace if string is not long enough.
+void KeyBuffer::set_character(char const c)
+{
+  auto position = m_cursorPosition;
+
+  if (position >= m_buffer.length())
+  {
+    m_buffer += c;
+  }
+  else
+  {
+    if (m_replacing)
+    {
+      m_buffer[position] = c;
+    }
+    else
+    {
+      m_buffer.insert(m_buffer.begin() + position, c);
+    }
+  }
+  m_cursorPosition = position + 1;
+
+  broadcast(EventBufferChanged(m_buffer));
+  broadcast(EventCursorMoved(m_cursorPosition));
+}
+
+/// Delete character at cursor location.
+void KeyBuffer::del_character()
+{
+  auto position = m_cursorPosition;
+
+  if (position >= m_buffer.length())
+  {
+    return;
+  }
+
+  m_buffer.erase(position, 1);
+  m_cursorPosition = position;
+
+  broadcast(EventBufferChanged(m_buffer));
+  broadcast(EventCursorMoved(m_cursorPosition));
+}
+
+/// Move cursor left.
+bool KeyBuffer::left_cursor()
+{
+  if (m_cursorPosition == 0)
+  {
+    return false;
+  }
+  --m_cursorPosition;
+  broadcast(EventCursorMoved(m_cursorPosition));
+
+  return true;
+}
+
+/// Move cursor right.
+bool KeyBuffer::right_cursor()
+{
+  if (m_cursorPosition == m_buffer.length())
+  {
+    return false;
+  }
+  ++m_cursorPosition;
+  broadcast(EventCursorMoved(m_cursorPosition));
+
+  return true;
 }

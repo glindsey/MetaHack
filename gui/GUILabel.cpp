@@ -19,7 +19,7 @@ namespace metagui
   }
 
   // === PROTECTED METHODS ======================================================
-  void Label::render_self_before_children_(sf::RenderTexture& texture, int frame)
+  void Label::drawPreChildren_(sf::RenderTexture& texture, int frame)
   {
     auto& config = Service<IConfigSettings>::get();
     float line_spacing_y = the_default_font.getLineSpacing(config.get<unsigned int>("text_default_size"));

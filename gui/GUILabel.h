@@ -15,7 +15,7 @@ namespace metagui
     virtual ~Label();
 
   protected:
-    virtual void render_self_before_children_(sf::RenderTexture& texture, int frame) override final;
+    virtual void drawPreChildren_(sf::RenderTexture& texture, int frame) override final;
 
   private:
   };

@@ -30,7 +30,7 @@ public:
 
 protected:
   /// Return the set of events this Subject provides.
-  /// By default, returns nothing. Most be overridden with the events
+  /// By default, returns nothing. Must be overridden with the events
   /// declared in the Subject subclass.
   virtual std::unordered_set<EventID> registeredEvents() const;
 
