@@ -65,16 +65,16 @@ AppStateGameMode::AppStateGameMode(StateMachine& state_machine, sf::RenderWindow
   m_current_input_state{ GameInputState::Map },
   m_cursor_coords{ 0, 0 }
 {
-  the_desktop.add_child(NEW MessageLogView("MessageLogView", Service<IMessageLog>::get(), *(m_debug_buffer.get()), calc_message_log_dims())).set_flag("titlebar", true);
-  the_desktop.add_child(NEW InventoryArea("InventoryArea", *(m_inventory_selection.get()), calc_inventory_dims())).set_flag("titlebar", true);
-  the_desktop.add_child(NEW StatusArea("StatusArea", calc_status_area_dims())).set_global_focus(true);
+  the_desktop.addChild(NEW MessageLogView("MessageLogView", Service<IMessageLog>::get(), *(m_debug_buffer.get()), calc_message_log_dims())).setFlag("titlebar", true);
+  the_desktop.addChild(NEW InventoryArea("InventoryArea", *(m_inventory_selection.get()), calc_inventory_dims())).setFlag("titlebar", true);
+  the_desktop.addChild(NEW StatusArea("StatusArea", calc_status_area_dims())).setGlobalFocus(true);
 }
 
 AppStateGameMode::~AppStateGameMode()
 {
-  the_desktop.remove_child("StatusArea");
-  the_desktop.remove_child("InventoryArea");
-  the_desktop.remove_child("MessageLogView");
+  the_desktop.removeChild("StatusArea");
+  the_desktop.removeChild("InventoryArea");
+  the_desktop.removeChild("MessageLogView");
 }
 
 void AppStateGameMode::execute()
@@ -120,10 +120,10 @@ SFMLEventResult AppStateGameMode::handle_sfml_event(sf::Event& event)
   {
     case sf::Event::EventType::Resized:
     {
-      the_desktop.set_size({ event.size.width, event.size.height });
-      the_desktop.get_child("MessageLogView").set_relative_dimensions(calc_message_log_dims());
-      the_desktop.get_child("InventoryArea").set_relative_dimensions(calc_inventory_dims());
-      the_desktop.get_child("StatusArea").set_relative_dimensions(calc_status_area_dims());
+      the_desktop.setSize({ event.size.width, event.size.height });
+      the_desktop.getChild("MessageLogView").setRelativeDimensions(calc_message_log_dims());
+      the_desktop.getChild("InventoryArea").setRelativeDimensions(calc_inventory_dims());
+      the_desktop.getChild("StatusArea").setRelativeDimensions(calc_status_area_dims());
       result = SFMLEventResult::Acknowledged;
       break;
     }
@@ -152,7 +152,7 @@ SFMLEventResult AppStateGameMode::handle_sfml_event(sf::Event& event)
   return result;
 }
 
-std::string const& AppStateGameMode::get_name()
+std::string const& AppStateGameMode::getName()
 {
   static std::string name = "AppStateGameMode";
   return name;
@@ -283,12 +283,12 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
       {
         case GameInputState::Map:
           m_current_input_state = GameInputState::MessageLog;
-          the_desktop.get_child("MessageLogView").set_global_focus(true);
+          the_desktop.getChild("MessageLogView").setGlobalFocus(true);
           return SFMLEventResult::Handled;
 
         case GameInputState::MessageLog:
           m_current_input_state = GameInputState::Map;
-          the_desktop.get_child("StatusArea").set_global_focus(true);
+          the_desktop.getChild("StatusArea").setGlobalFocus(true);
           return SFMLEventResult::Handled;
 
         default:
@@ -1025,7 +1025,7 @@ void AppStateGameMode::reset_inventory_selection()
 sf::IntRect AppStateGameMode::calc_status_area_dims()
 {
   sf::IntRect statusAreaDims;
-  sf::IntRect invAreaDims = the_desktop.get_child("InventoryArea").get_relative_dimensions();
+  sf::IntRect invAreaDims = the_desktop.getChild("InventoryArea").getRelativeDimensions();
   auto& config = Service<IConfigSettings>::get();
 
   statusAreaDims.width = m_app_window.getSize().x -
@@ -1038,7 +1038,7 @@ sf::IntRect AppStateGameMode::calc_status_area_dims()
 
 sf::IntRect AppStateGameMode::calc_inventory_dims()
 {
-  sf::IntRect messageLogDims = the_desktop.get_child("MessageLogView").get_relative_dimensions();
+  sf::IntRect messageLogDims = the_desktop.getChild("MessageLogView").getRelativeDimensions();
   sf::IntRect inventoryAreaDims;
   auto& config = Service<IConfigSettings>::get();
 

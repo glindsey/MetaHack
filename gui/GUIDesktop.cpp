@@ -25,16 +25,16 @@ namespace metagui
       case sf::Event::EventType::KeyPressed:
       {
         EventKeyPressed event{ sfml_event.key };
-        handle_gui_event(event);
+        handleGUIEvent(event);
         sfml_result = SFMLEventResult::Handled;
       }
       break;
 
       case sf::Event::EventType::Resized:
       {
-        set_size({ sfml_event.size.width, sfml_event.size.height });
+        setSize({ sfml_event.size.width, sfml_event.size.height });
         EventResized event{ sfml_event.size };
-        handle_gui_event(event);
+        handleGUIEvent(event);
         sfml_result = SFMLEventResult::Acknowledged;
       }
       break;
@@ -49,7 +49,7 @@ namespace metagui
         button.elapsed.restart();
 
         EventMouseDown event{ sfml_event.mouseButton.button, point };
-        handle_gui_event(event);
+        handleGUIEvent(event);
 
         /// @todo Handle click, double-click, etc.
         sfml_result = SFMLEventResult::Acknowledged;
@@ -69,7 +69,7 @@ namespace metagui
         {
           button.dragging = false;
           EventDragFinished event{ sfml_event.mouseButton.button, point };
-          handle_gui_event(event);
+          handleGUIEvent(event);
         }
 
         /// @todo Handle click, double-click, etc.
@@ -95,11 +95,11 @@ namespace metagui
             {
               button_info.dragging = true;
               EventDragStarted event{ static_cast<sf::Mouse::Button>(index), button_info.location };
-              handle_gui_event(event);
+              handleGUIEvent(event);
             }
 
             EventDragging event{ static_cast<sf::Mouse::Button>(index), point };
-            handle_gui_event(event);
+            handleGUIEvent(event);
 
             sfml_result = SFMLEventResult::Handled;
           }
@@ -123,7 +123,7 @@ namespace metagui
             {
               button.dragging = false;
               EventDragFinished event{ sfml_event.mouseButton.button, button.location };
-              handle_gui_event(event);
+              handleGUIEvent(event);
             }
           }
         }
@@ -140,9 +140,9 @@ namespace metagui
 
   // === PROTECTED METHODS ======================================================
 
-  Event::Result Desktop::handle_event_before_children_(EventResized& event)
+  Event::Result Desktop::handleGUIEventPreChildren_(EventResized& event)
   {
-    set_size({ event.new_size.x, event.new_size.y });
+    setSize({ event.new_size.x, event.new_size.y });
     return Event::Result::Acknowledged;
   }
 

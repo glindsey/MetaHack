@@ -16,7 +16,7 @@ AppState::AppState(StateMachine& state_machine,
 
 AppState::~AppState()
 {
-  the_desktop.clear_children();
+  the_desktop.clearChildren();
 }
 
 bool AppState::render(sf::RenderTexture& texture, int frame)

@@ -49,7 +49,7 @@ SFMLEventResult AppStateMainMenu::handle_sfml_event(sf::Event& event)
   return result;
 }
 
-std::string const& AppStateMainMenu::get_name()
+std::string const& AppStateMainMenu::getName()
 {
   static std::string name = "AppStateMainMenu";
   return name;

@@ -29,7 +29,7 @@ StateMachine::~StateMachine()
   //dtor
 }
 
-std::string const& StateMachine::get_name()
+std::string const& StateMachine::getName()
 {
   return pImpl->machine_name;
 }
@@ -38,7 +38,7 @@ bool StateMachine::add_state(State* state)
 {
   ASSERT_NOT_NULL(state);
 
-  std::string state_name = state->get_name();
+  std::string state_name = state->getName();
 
   if (pImpl->state_map.count(state_name) == 0)
   {
@@ -48,7 +48,7 @@ bool StateMachine::add_state(State* state)
   else
   {
     MAJOR_ERROR("Attempted to add state \"%s\" to state machine \"%s\" more than once",
-                state_name.c_str(), this->get_name().c_str());
+                state_name.c_str(), this->getName().c_str());
     return false;
   }
 }
@@ -57,12 +57,12 @@ bool StateMachine::delete_state(State* state)
 {
   ASSERT_NOT_NULL(state);
 
-  return delete_state(state->get_name());
+  return delete_state(state->getName());
 }
 
 bool StateMachine::delete_state(std::string const& state_name)
 {
-  if (state_name == pImpl->current_state->get_name())
+  if (state_name == pImpl->current_state->getName())
   {
     MAJOR_ERROR("Attempted to delete state \"%s\" while it was the current state",
                 state_name.c_str());
@@ -71,7 +71,7 @@ bool StateMachine::delete_state(std::string const& state_name)
   if (pImpl->state_map.count(state_name) == 0)
   {
     MAJOR_ERROR("Attempted to delete state \"%s\" to state machine \"%s\" when it wasn't in there",
-                state_name.c_str(), this->get_name().c_str());
+                state_name.c_str(), this->getName().c_str());
     return false;
   }
   else
@@ -123,8 +123,8 @@ bool StateMachine::change_to(State* state)
     if (terminator_result == false)
     {
       CLOG(WARNING, "StateMachine") << "Terminator for state \"" <<
-        pImpl->current_state->get_name() << "\" in state machine \"" <<
-        this->get_name() << "\" returned false";
+        pImpl->current_state->getName() << "\" in state machine \"" <<
+        this->getName() << "\" returned false";
     }
   }
 
@@ -138,8 +138,8 @@ bool StateMachine::change_to(State* state)
       if (initializer_result == false)
       {
         CLOG(WARNING, "StateMachine") << "Initializer for state \"" <<
-          pImpl->current_state->get_name() << "\" in state machine \"" <<
-          this->get_name() << "\" returned false";
+          pImpl->current_state->getName() << "\" in state machine \"" <<
+          this->getName() << "\" returned false";
       }
     }
   }
@@ -152,7 +152,7 @@ bool StateMachine::change_to(std::string const& new_state_name)
   if (pImpl->state_map.count(new_state_name) == 0)
   {
     MAJOR_ERROR("Attempted to change to state \"%s\" to state machine \"%s\" when it wasn't in there",
-                new_state_name.c_str(), this->get_name().c_str());
+                new_state_name.c_str(), this->getName().c_str());
     return false;
   }
   else
@@ -176,6 +176,6 @@ std::string const& StateMachine::get_current_state_name()
   }
   else
   {
-    return pImpl->current_state->get_name();
+    return pImpl->current_state->getName();
   }
 }

@@ -61,7 +61,7 @@ public:
   bool tile_is_opaque(Vec2i tile);
 
   /// Get the map's size.
-  Vec2i const& get_size() const;
+  Vec2i const& getSize() const;
 
   /// Get player's starting location.
   Vec2i const& get_start_coords() const;

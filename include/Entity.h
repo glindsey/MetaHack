@@ -372,7 +372,7 @@ public:
   /// Choose the proper possessive form
   /// For a Entity, this is simply "the", as Entities cannot own entities.
   /// This function checks to see if this Entity is currently designated as
-  /// the player.  If so, it returns "your".  If not, it returns get_name() + "'s".
+  /// the player.  If so, it returns "your".  If not, it returns getName() + "'s".
   /// @todo Make localizable. (How? Use Lua scripts maybe?)
   ///
   /// @note If you want a possessive pronoun like his/her/its/etc., use

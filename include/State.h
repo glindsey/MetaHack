@@ -19,7 +19,7 @@ public:
   virtual ~State();
 
   // Get the name of this state.
-  virtual std::string const& get_name() = 0;
+  virtual std::string const& getName() = 0;
 
   // Initialize the state upon entering it.
   virtual bool initialize() = 0;

@@ -18,7 +18,7 @@ MessageLogView::MessageLogView(std::string name,
   m_model(model),
   m_key_buffer(key_buffer)
 {
-  set_text("Message Log");
+  setText("Message Log");
   m_model.addObserver(*this, EventID::All);
   m_key_buffer.addObserver(*this, EventID::All);
 }
@@ -29,12 +29,12 @@ MessageLogView::~MessageLogView()
   m_model.removeObserver(*this);
 }
 
-metagui::Event::Result MessageLogView::handle_event_before_children_(metagui::EventKeyPressed& event)
+metagui::Event::Result MessageLogView::handleGUIEventPreChildren_(metagui::EventKeyPressed& event)
 {
-  CLOG(TRACE, "GUI") << "MessageLogView::handle_event_before_children_(EventKeyPressed&) called";
+  CLOG(TRACE, "GUI") << "MessageLogView::handleGUIEventPreChildren_(EventKeyPressed&) called";
 
   /// @todo This is ugly, fix later
-  if (get_global_focus() == true)
+  if (getGlobalFocus() == true)
   {
     flagForRedraw();
     return static_cast<metagui::Event::Result>(m_key_buffer.handle_key_press(event));
@@ -51,7 +51,7 @@ void MessageLogView::drawContents_(sf::RenderTexture& texture, int frame)
   auto text_default_size = config.get<unsigned int>("text_default_size");
 
   // Dimensions of the pane.
-  sf::IntRect pane_dims = get_relative_dimensions();
+  sf::IntRect pane_dims = getRelativeDimensions();
 
   float lineSpacing = the_default_font.getLineSpacing(text_default_size);
 
@@ -69,7 +69,7 @@ void MessageLogView::drawContents_(sf::RenderTexture& texture, int frame)
   render_text.setCharacterSize(text_default_size);
 
   // If we have the focus, put the current command at the bottom of the log.
-  if (get_focus() == true)
+  if (getFocus() == true)
   {
     m_key_buffer.render(
       texture,

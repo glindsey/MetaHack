@@ -17,9 +17,9 @@ struct MapGenerator::Impl
   /// Fill map with stone.
   void clearMap()
   {
-    for (int y = 0; y < game_map.get_size().y; ++y)
+    for (int y = 0; y < game_map.getSize().y; ++y)
     {
-      for (int x = 0; x < game_map.get_size().x; ++x)
+      for (int x = 0; x < game_map.getSize().x; ++x)
       {
         auto& tile = game_map.get_tile({ x, y });
         tile.set_tile_type("MTWallStone");
@@ -31,7 +31,7 @@ struct MapGenerator::Impl
   bool getGrowthVector(GeoVector& growthVector)
   {
     unsigned int numRetries = 0;
-    Vec2i const& mapSize = game_map.get_size();
+    Vec2i const& mapSize = game_map.getSize();
 
     while (numRetries < limits.maxAdjacentRetries)
     {
@@ -101,7 +101,7 @@ struct MapGenerator::Impl
   /// boundaries.
   Vec2i getRandomSquare()
   {
-    Vec2i mapSize = game_map.get_size();
+    Vec2i mapSize = game_map.getSize();
     uniform_int_dist xDist(1, mapSize.x - 2);
     uniform_int_dist yDist(1, mapSize.y - 2);
 
@@ -116,7 +116,7 @@ struct MapGenerator::Impl
   ///          or function will loop indefinitely!
   Vec2i getRandomFilledSquare()
   {
-    Vec2i mapSize = game_map.get_size();
+    Vec2i mapSize = game_map.getSize();
     uniform_int_dist xDist(1, mapSize.x - 2);
     uniform_int_dist yDist(1, mapSize.y - 2);
 

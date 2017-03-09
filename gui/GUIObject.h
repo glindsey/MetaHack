@@ -62,7 +62,7 @@ namespace metagui
     Object(std::string name, sf::IntRect dimensions);
     virtual ~Object();
 
-    std::string get_name();
+    std::string getName();
 
     /// Set whether this object has focus.
     /// When set to "true", will also unfocus any sibling controls.
@@ -70,40 +70,40 @@ namespace metagui
     /// @note This only sets whether the object has focus in the context of its
     ///       parent. If the parent does not have focus, this object will not
     ///       be focused in the GUI until it does.
-    void set_focus(bool focus);
+    void setFocus(bool focus);
 
     /// Get whether this object has focus.
-    bool get_focus();
+    bool getFocus();
 
     /// Get whether this object has global focus (i.e., the entire chain of
     /// its parents also have focus).
-    bool get_global_focus();
+    bool getGlobalFocus();
 
     /// Set whether this object has global focus.
     /// If the object is hidden or disabled, this method will do nothing.
     /// @param  focus   Whether this object has focus or not.
-    void set_global_focus(bool focus);
+    void setGlobalFocus(bool focus);
 
-    void set_text(std::string text);
-    std::string get_text();
+    void setText(std::string text);
+    std::string getText();
 
     /// Get location relative to parent object's client area.
-    Vec2i get_relative_location();
+    Vec2i getRelativeLocation();
 
     /// Set location relative to parent object's client area.
-    void set_relative_location(Vec2i location);
+    void setRelativeLocation(Vec2i location);
 
-    Vec2u get_size();
-    void set_size(Vec2u size);
+    Vec2u getSize();
+    void setSize(Vec2u size);
 
-    sf::IntRect get_relative_dimensions();
-    void set_relative_dimensions(sf::IntRect dimensions);
+    sf::IntRect getRelativeDimensions();
+    void setRelativeDimensions(sf::IntRect dimensions);
 
     // Get absolute location relative to root object.
-    Vec2i get_absolute_location();
-    void set_absolute_location(Vec2i location);
+    Vec2i getAbsoluteLocation();
+    void setAbsoluteLocation(Vec2i location);
 
-    sf::IntRect get_absolute_dimensions();
+    sf::IntRect getAbsoluteDimensions();
 
     /// Add a child GUIObject underneath this one.
     /// *This GUIObject assumes ownership of the child.*
@@ -111,8 +111,8 @@ namespace metagui
     /// @param z_order  Z-order to put this child at. If omitted, uses the
     ///                 highest Z-order currently in the map, plus one.
     /// @return A reference to the child added.
-    Object& add_child(std::unique_ptr<Object> child,
-                      uint32_t z_order);
+    Object& addChild(std::unique_ptr<Object> child,
+                     uint32_t z_order);
 
     /// Add a child GUIObject underneath this one.
     /// *This GUIObject assumes ownership of the child.*
@@ -121,7 +121,7 @@ namespace metagui
     /// @param child    std::unique_ptr to child to add.
     ///
     /// @return A reference to the child added.
-    Object& add_child(std::unique_ptr<Object> child);
+    Object& addChild(std::unique_ptr<Object> child);
 
     /// Add a child GUIObject underneath this one.
     /// *This GUIObject assumes ownership of the child.*
@@ -130,10 +130,10 @@ namespace metagui
     ///                 highest Z-order currently in the map, plus one.
     /// @return A reference to the child added.
     template< typename T >
-    T& add_child(T* child, uint32_t z_order)
+    T& addChild(T* child, uint32_t z_order)
     {
       std::unique_ptr<Object> child_ptr(child);
-      return dynamic_cast<T&>(add_child(std::move(child_ptr), z_order));
+      return dynamic_cast<T&>(addChild(std::move(child_ptr), z_order));
     }
 
     /// Add a child GUIObject underneath this one.
@@ -144,10 +144,10 @@ namespace metagui
     ///
     /// @return A reference to the child added.
     template< typename T >
-    T& add_child(T* child)
+    T& addChild(T* child)
     {
       std::unique_ptr<Object> child_ptr(child);
-      return dynamic_cast<T&>(add_child(std::move(child_ptr)));
+      return dynamic_cast<T&>(addChild(std::move(child_ptr)));
     }
 
     /// Add a child GUIObject underneath this one.
@@ -157,7 +157,7 @@ namespace metagui
     /// @param child    std::unique_ptr to child to add.
     ///
     /// @return A reference to the child added.
-    Object& add_child_top(std::unique_ptr<Object> child);
+    Object& addChildTop(std::unique_ptr<Object> child);
 
     /// Add a child GUIObject underneath this one.
     /// *This GUIObject assumes ownership of the child.*
@@ -167,27 +167,27 @@ namespace metagui
     ///
     /// @return A reference to the child added.
     template< typename T >
-    T& add_child_top(T* child)
+    T& addChildTop(T* child)
     {
       std::unique_ptr<Object> child_ptr(child);
-      return dynamic_cast<T&>(add_child_top(std::move(child_ptr)));
+      return dynamic_cast<T&>(addChildTop(std::move(child_ptr)));
     }
 
     /// Handle an incoming event.
-    /// Calls the method handle_event_before_children() first.
+    /// Calls the method handleGUIEventPreChildren() first.
     /// If it returns anything other than Handled, it then passes the
     /// event down to each child in sequence, stopping only if one of them
     /// returns Handled. If the event still isn't Handled after all children
     /// have seen it, handle_event_after_children_ is called.
     template< typename T >
-    Event::Result handle_gui_event(T& event)
+    Event::Result handleGUIEvent(T& event)
     {
       Event::Result result = Event::Result::Pending;
 
       if (m_cached_flags.disabled == false)
       {
         // Check the event for us first.
-        result = handle_event_before_children(event);
+        result = handleGUIEventPreChildren(event);
 
         // Possible results here:
         //   * The event doesn't apply to us at all. (Ignored)
@@ -205,7 +205,7 @@ namespace metagui
           {
             Event::Result child_result = Event::Result::Acknowledged;
             auto& child = m_children.at(z_pair.second);
-            child_result = child->handle_gui_event(event);
+            child_result = child->handleGUIEvent(event);
             if (child_result == Event::Result::Handled)
             {
               result = Event::Result::Handled;
@@ -217,33 +217,33 @@ namespace metagui
         if ((result != Event::Result::Ignored) &&
           (result != Event::Result::Handled))
         {
-          result = handle_event_after_children(event);
+          result = handleGUIEventPostChildren(event);
         }
       }
 
       return result;
     }
 
-    bool child_exists(std::string name);
+    bool childExists(std::string name);
 
-    Object& get_child(std::string name);
+    Object& getChild(std::string name);
 
     /// Remove the child object with the given name, if it exists.
     /// @param name   Name of the child object to remove.
     /// @return Pointer to the removed object if it existed,
     ///         empty unique_ptr otherwise.
-    std::unique_ptr<Object> remove_child(std::string name);
+    std::unique_ptr<Object> removeChild(std::string name);
 
     /// Get lowest Z-order of all this object's children.
     /// If no children are present, returns zero.
-    uint32_t get_lowest_child_z_order();
+    uint32_t getLowestChildZOrder();
 
     /// Get highest Z-order of all this object's children.
     /// If no children are present, returns zero.
-    uint32_t get_highest_child_z_order();
+    uint32_t getHighestChildZOrder();
 
     template< typename ...args >
-    void visit_children(std::function<void(Object&, args...)> functor)
+    void visitChildren(std::function<void(Object&, args...)> functor)
     {
       for (auto& child_pair : children)
       {
@@ -252,18 +252,18 @@ namespace metagui
     }
 
     /// Clear all children from this GUIObject.
-    void clear_children();
+    void clearChildren();
 
     /// Get the upper-left corner of this object's child area, relative to
     /// its own upper-left corner.
     /// By default, the child area encompasses the entire object, so this
     /// returns (0, 0); however, subclasses can override this behavior.
-    virtual Vec2i get_child_area_location();
+    virtual Vec2i getChildAreaLocation();
 
     /// Get the size of this object's child area.
     /// By default, the child area encompasses the entire object, so this
-    /// returns get_size(); however, subclasses can override this behavior.
-    virtual Vec2u get_child_area_size();
+    /// returns getSize(); however, subclasses can override this behavior.
+    virtual Vec2u getChildAreaSize();
 
     /// Render this object, and all of its children, to the parent texture.
     bool render(sf::RenderTexture& texture, int frame);
@@ -272,45 +272,45 @@ namespace metagui
     /// Calls the virtual method handle_set_flag_ if the flag has been
     /// changed; this allows subclasses to perform specific actions based on
     /// certain flags (such as setting/clearing "titlebar").
-    void set_flag(std::string name, bool enabled);
+    void setFlag(std::string name, bool enabled);
 
     /// Get an object flag.
     /// A flag that does not exist will be initialized and set to false or
     /// the default value given.
-    bool get_flag(std::string name, bool default_value = false);
+    bool getFlag(std::string name, bool default_value = false);
 
     /// Handles a flag being set/cleared.
     /// If this function does not handle a particular flag, calls the
-    /// virtual function handle_set_flag_().
-    void handle_set_flag(std::string name, bool enabled);
+    /// virtual function handleSetFlag_().
+    void handleSetFlag(std::string name, bool enabled);
 
     /// Returns whether the specified point falls within this object's bounds.
     /// @param  point   Point to check.
     /// @return True if the point is within the object, false otherwise.
-    bool contains_point(Vec2i point);
+    bool containsPoint(Vec2i point);
 
-    Event::Result handle_event_before_children(EventDragFinished& event);
-    Event::Result handle_event_after_children(EventDragFinished& event);
+    Event::Result handleGUIEventPreChildren(EventDragFinished& event);
+    Event::Result handleGUIEventPostChildren(EventDragFinished& event);
 
-    Event::Result handle_event_before_children(EventDragStarted& event);
-    Event::Result handle_event_after_children(EventDragStarted& event);
+    Event::Result handleGUIEventPreChildren(EventDragStarted& event);
+    Event::Result handleGUIEventPostChildren(EventDragStarted& event);
 
-    Event::Result handle_event_before_children(EventDragging& event);
-    Event::Result handle_event_after_children(EventDragging& event);
+    Event::Result handleGUIEventPreChildren(EventDragging& event);
+    Event::Result handleGUIEventPostChildren(EventDragging& event);
 
-    Event::Result handle_event_before_children(EventKeyPressed& event);
-    Event::Result handle_event_after_children(EventKeyPressed& event);
+    Event::Result handleGUIEventPreChildren(EventKeyPressed& event);
+    Event::Result handleGUIEventPostChildren(EventKeyPressed& event);
 
-    Event::Result handle_event_before_children(EventMouseDown& event);
-    Event::Result handle_event_after_children(EventMouseDown& event);
+    Event::Result handleGUIEventPreChildren(EventMouseDown& event);
+    Event::Result handleGUIEventPostChildren(EventMouseDown& event);
 
-    Event::Result handle_event_before_children(EventResized& event);
-    Event::Result handle_event_after_children(EventResized& event);
+    Event::Result handleGUIEventPreChildren(EventResized& event);
+    Event::Result handleGUIEventPostChildren(EventResized& event);
 
   protected:
-    Object* get_parent();
+    Object* getParent();
 
-    void set_parent(Object* parent);
+    void setParent(Object* parent);
 
     /// Redraw this object on its own background texture.
     void draw(int frame);
@@ -319,16 +319,16 @@ namespace metagui
     void flagForRedraw();
 
     /// Clear the focus of all of this object's children.
-    void clear_child_focuses();
+    void clearChildFocuses();
 
     /// Set the focus of an object without clearing sibling focuses (foci?).
-    void set_focus_only(bool focus);
+    void setFocusOnly(bool focus);
 
     /// Returns whether this object is currently being dragged.
-    bool is_being_dragged();
+    bool isBeingDragged();
 
     /// Returns the location of the start of the last drag.
-    Vec2i get_drag_start_location();
+    Vec2i getDragStartLocation();
 
     /// Called before rendering the object's children.
     /// Default behavior is to do nothing.
@@ -338,32 +338,32 @@ namespace metagui
     /// Default behavior is to do nothing.
     virtual void drawPostChildren_(sf::RenderTexture& texture, int frame);
 
-    virtual Event::Result handle_event_before_children_(EventDragFinished& event);
-    virtual Event::Result handle_event_after_children_(EventDragFinished& event);
+    virtual Event::Result handleGUIEventPreChildren_(EventDragFinished& event);
+    virtual Event::Result handleGUIEventPostChildren_(EventDragFinished& event);
 
-    virtual Event::Result handle_event_before_children_(EventDragStarted& event);
-    virtual Event::Result handle_event_after_children_(EventDragStarted& event);
+    virtual Event::Result handleGUIEventPreChildren_(EventDragStarted& event);
+    virtual Event::Result handleGUIEventPostChildren_(EventDragStarted& event);
 
-    virtual Event::Result handle_event_before_children_(EventDragging& event);
-    virtual Event::Result handle_event_after_children_(EventDragging& event);
+    virtual Event::Result handleGUIEventPreChildren_(EventDragging& event);
+    virtual Event::Result handleGUIEventPostChildren_(EventDragging& event);
 
-    virtual Event::Result handle_event_before_children_(EventKeyPressed& event);
-    virtual Event::Result handle_event_after_children_(EventKeyPressed& event);
+    virtual Event::Result handleGUIEventPreChildren_(EventKeyPressed& event);
+    virtual Event::Result handleGUIEventPostChildren_(EventKeyPressed& event);
 
-    virtual Event::Result handle_event_before_children_(EventMouseDown& event);
-    virtual Event::Result handle_event_after_children_(EventMouseDown& event);
+    virtual Event::Result handleGUIEventPreChildren_(EventMouseDown& event);
+    virtual Event::Result handleGUIEventPostChildren_(EventMouseDown& event);
 
-    virtual Event::Result handle_event_before_children_(EventResized& event);
-    virtual Event::Result handle_event_after_children_(EventResized& event);
+    virtual Event::Result handleGUIEventPreChildren_(EventResized& event);
+    virtual Event::Result handleGUIEventPostChildren_(EventResized& event);
 
     /// Handles a flag being set/cleared.
-    /// This method is called by set_flag() if the value was changed.
+    /// This method is called by setFlag() if the value was changed.
     /// The default behavior is to do nothing.
-    virtual void handle_set_flag_(std::string name, bool enabled);
+    virtual void handleSetFlag_(std::string name, bool enabled);
 
     /// Handles the parent's size being changed.
     /// The default behavior is to do nothing.
-    virtual void handle_parent_size_changed_(Vec2u parent_size);
+    virtual void handleParentSizeChanged_(Vec2u parent_size);
 
 
   private:
@@ -379,7 +379,7 @@ namespace metagui
     bool m_focus = false;
 
     /// Flag indicating whether this object needs to be redrawn.
-    bool m_flagForRedraw = true;
+    bool m_flag_for_redraw = true;
 
     /// Definition of struct of cached flag values.
     struct CachedFlags

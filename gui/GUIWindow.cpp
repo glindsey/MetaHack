@@ -19,8 +19,8 @@ namespace metagui
   {
     // *** TESTING CODE ***
     // Set this object to be movable and resizable.
-    set_flag("movable", true);
-    set_flag("resizable", true);
+    setFlag("movable", true);
+    setFlag("resizable", true);
   }
 
   Window::Window(std::string name, sf::IntRect dimensions)
@@ -29,8 +29,8 @@ namespace metagui
   {
     // *** TESTING CODE ***
     // Set this object to be movable and resizable.
-    set_flag("movable", true);
-    set_flag("resizable", true);
+    setFlag("movable", true);
+    setFlag("resizable", true);
   }
 
   Window::~Window()
@@ -38,25 +38,25 @@ namespace metagui
 
   // === PROTECTED METHODS ======================================================
 
-  Vec2i Window::get_child_area_location()
+  Vec2i Window::getChildAreaLocation()
   {
     Vec2i child_location{ 0, 0 };
 
     if (m_titlebar_cached == true)
     {
-      child_location.y += get_child(get_name() + "_titlebar").get_size().y;
+      child_location.y += getChild(getName() + "_titlebar").getSize().y;
     }
 
     return child_location;
   }
 
-  Vec2u Window::get_child_area_size()
+  Vec2u Window::getChildAreaSize()
   {
-    auto child_size = get_size();
+    auto child_size = getSize();
 
     if (m_titlebar_cached == true)
     {
-      child_size.y -= get_child(get_name() + "_titlebar").get_size().y;
+      child_size.y -= getChild(getName() + "_titlebar").getSize().y;
     }
 
     return child_size;
@@ -65,7 +65,7 @@ namespace metagui
   void Window::drawPreChildren_(sf::RenderTexture& texture, int frame)
   {
     auto& config = Service<IConfigSettings>::get();
-    Vec2u size = get_size();
+    Vec2u size = getSize();
 
     float line_spacing_y = the_default_font.getLineSpacing(config.get<unsigned int>("text_default_size"));
 
@@ -85,7 +85,7 @@ namespace metagui
     m_border_shape.setSize(Vec2f(static_cast<float>(size.x - (2 * border_width)), static_cast<float>(size.y - (2 * border_width))));
     m_border_shape.setFillColor(sf::Color::Transparent);
     m_border_shape.setOutlineColor(
-      get_focus() ?
+      getFocus() ?
       config.get<sf::Color>("window_focused_border_color") :
       config.get<sf::Color>("window_border_color"));
     m_border_shape.setOutlineThickness(border_width);
@@ -95,69 +95,69 @@ namespace metagui
     texture.draw(m_border_shape);
   }
 
-  void Window::handle_set_flag_(std::string name, bool enabled)
+  void Window::handleSetFlag_(std::string name, bool enabled)
   {
     if (name == "titlebar")
     {
       m_titlebar_cached = enabled;
 
-      std::string name = get_name() + "_titlebar";
+      std::string name = getName() + "_titlebar";
 
       if (enabled)
       {
-        if (!child_exists(name))
+        if (!childExists(name))
         {
-          add_child(new TitleBar(name)).set_flag("decor", true);
+          addChild(new TitleBar(name)).setFlag("decor", true);
         }
       }
       else
       {
-        remove_child(name);
+        removeChild(name);
       }
     }
     else if (name == "resizable")
     {
-      std::string name = get_name() + "_resizehandle";
+      std::string name = getName() + "_resizehandle";
       if (enabled)
       {
-        if (!child_exists(name))
+        if (!childExists(name))
         {
-          add_child(new ResizeHandle(name)).set_flag("decor", true);
+          addChild(new ResizeHandle(name)).setFlag("decor", true);
         }
       }
       else
       {
-        remove_child(name);
+        removeChild(name);
       }
     }
     else if (name == "closable")
     {
-      std::string name = get_name() + "_closehandle";
+      std::string name = getName() + "_closehandle";
       if (enabled)
       {
-        if (!child_exists(name))
+        if (!childExists(name))
         {
-          add_child(new CloseHandle(name)).set_flag("decor", true);
+          addChild(new CloseHandle(name)).setFlag("decor", true);
         }
       }
       else
       {
-        remove_child(name);
+        removeChild(name);
       }
     }
     else if (name == "shrinkable")
     {
-      std::string name = get_name() + "_shrinkhandle";
+      std::string name = getName() + "_shrinkhandle";
       if (enabled)
       {
-        if (!child_exists(name))
+        if (!childExists(name))
         {
-          add_child(new ShrinkHandle(name)).set_flag("decor", true);
+          addChild(new ShrinkHandle(name)).setFlag("decor", true);
         }
       }
       else
       {
-        remove_child(name);
+        removeChild(name);
       }
     }
   }
@@ -165,13 +165,13 @@ namespace metagui
   void Window::drawContents_(sf::RenderTexture& texture, int frame)
   {}
 
-  Event::Result Window::handle_event_after_children_(EventDragStarted & event)
+  Event::Result Window::handleGUIEventPostChildren_(EventDragStarted & event)
   {
     // If the window has a titlebar, only allow window dragging via the titlebar.
-    if (child_exists(get_name() + "_titlebar"))
+    if (childExists(getName() + "_titlebar"))
     {
-      auto& child = get_child(get_name() + "_titlebar");
-      if (!child.contains_point(event.start_location))
+      auto& child = getChild(getName() + "_titlebar");
+      if (!child.containsPoint(event.start_location))
       {
         return Event::Result::Handled;
       }

@@ -31,11 +31,11 @@ public:
   /// If the new size is different from previous, this method may
   /// reinitialize cached render data.
   /// @param target_coords Size of the Entity, in pixels.
-  void set_size(Vec2f target_size);
+  void setSize(Vec2f target_size);
 
   /// Gets the size of this Entity on the target texture.
   /// @return Size of the Entity, in pixels.
-  Vec2f get_size();
+  Vec2f getSize();
 
   virtual void draw(sf::RenderTarget& target,
                     bool use_lighting,

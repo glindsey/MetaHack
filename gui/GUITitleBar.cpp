@@ -23,13 +23,13 @@ namespace metagui
   {
     auto& config = Service<IConfigSettings>::get();
 
-    if (get_parent() == nullptr)
+    if (getParent() == nullptr)
     {
       return;
     }
 
-    auto parent_size = get_parent()->get_size();
-    auto titlebar_text = get_parent()->get_text();
+    auto parent_size = getParent()->getSize();
+    auto titlebar_text = getParent()->getText();
 
     float line_spacing_y = the_default_font.getLineSpacing(config.get<unsigned int>("text_default_size"));
 
@@ -48,7 +48,7 @@ namespace metagui
     sf::Text title_text;
 
     title_rect.setFillColor(config.get<sf::Color>("window_bg_color"));
-    title_rect.setOutlineColor(get_parent()->get_focus() ?
+    title_rect.setOutlineColor(getParent()->getFocus() ?
                                config.get<sf::Color>("window_focused_border_color") :
                                config.get<sf::Color>("window_border_color"));
     title_rect.setOutlineThickness(border_width);
@@ -71,7 +71,7 @@ namespace metagui
     texture.display();
   }
 
-  void TitleBar::handle_parent_size_changed_(Vec2u parent_size)
+  void TitleBar::handleParentSizeChanged_(Vec2u parent_size)
   {
     auto& config = Service<IConfigSettings>::get();
     float line_spacing_y = the_default_font.getLineSpacing(config.get<unsigned int>("text_default_size"));
@@ -81,6 +81,6 @@ namespace metagui
 
     Vec2u our_size{ parent_size.x, static_cast<unsigned int>(line_spacing_y + (text_offset_y * 2)) };
 
-    set_size(our_size);
+    setSize(our_size);
   }
 }; // end namespace metagui

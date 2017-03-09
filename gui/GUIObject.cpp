@@ -16,8 +16,8 @@ namespace metagui
 
     m_name = name;
     m_parent = nullptr;
-    set_relative_location(location);
-    set_size(size);
+    setRelativeLocation(location);
+    setSize(size);
   }
 
   Object::Object(std::string name, sf::IntRect dimensions)
@@ -26,7 +26,7 @@ namespace metagui
 
     m_name = name;
     m_parent = nullptr;
-    set_relative_dimensions(dimensions);
+    setRelativeDimensions(dimensions);
   }
 
   Object::~Object()
@@ -34,71 +34,71 @@ namespace metagui
     //dtor
   }
 
-  std::string Object::get_name()
+  std::string Object::getName()
   {
     return m_name;
   }
 
-  void Object::set_focus(bool focus)
+  void Object::setFocus(bool focus)
   {
     if ((m_cached_flags.disabled == false) || (m_cached_flags.hidden == false))
     {
       if (m_parent != nullptr)
       {
-        m_parent->clear_child_focuses();
+        m_parent->clearChildFocuses();
       }
 
-      set_focus_only(focus);
+      setFocusOnly(focus);
     }
   }
 
-  bool Object::get_focus()
+  bool Object::getFocus()
   {
     return m_focus;
   }
 
-  bool Object::get_global_focus()
+  bool Object::getGlobalFocus()
   {
     bool global_focus = m_focus;
 
     if ((global_focus == true) && (m_parent != nullptr))
     {
-      global_focus &= m_parent->get_global_focus();
+      global_focus &= m_parent->getGlobalFocus();
     }
 
     return global_focus;
   }
 
-  void Object::set_global_focus(bool focus)
+  void Object::setGlobalFocus(bool focus)
   {
     if ((m_cached_flags.disabled == false) || (m_cached_flags.hidden == false))
     {
       if (m_parent != nullptr)
       {
-        m_parent->set_global_focus(focus);
+        m_parent->setGlobalFocus(focus);
       }
 
-      set_focus(focus);
+      setFocus(focus);
     }
   }
 
-  void Object::set_text(std::string text)
+  void Object::setText(std::string text)
   {
     if (m_text != text) flagForRedraw();
     m_text = text;
   }
 
-  std::string Object::get_text()
+  std::string Object::getText()
   {
     return m_text;
   }
 
-  Vec2i Object::get_relative_location()
+  Vec2i Object::getRelativeLocation()
   {
     return m_location;
   }
 
-  void Object::set_relative_location(Vec2i location)
+  void Object::setRelativeLocation(Vec2i location)
   {
     m_location = location;
     if (m_parent != nullptr)
@@ -107,13 +107,13 @@ namespace metagui
     }
   }
 
-  Vec2u Object::get_size()
+  Vec2u Object::getSize()
   {
     return m_size;
   }
 
   /// @todo Minimum texture size, configurable by subclass.
-  void Object::set_size(Vec2u size)
+  void Object::setSize(Vec2u size)
   {
     // Do nothing if requested size is same as current size.
     if (m_size == size) return;
@@ -129,8 +129,8 @@ namespace metagui
     if (m_parent != nullptr)
     {
       auto max_size = ((m_cached_flags.decor == true) ?
-                       m_parent->get_size() :
-                       m_parent->get_child_area_size());
+                       m_parent->getSize() :
+                       m_parent->getChildAreaSize());
 
       if (size.x > max_size.x) size.x = max_size.x;
       if (size.y > max_size.y) size.y = max_size.y;
@@ -155,15 +155,15 @@ namespace metagui
     // Inform children of the parent size change.
     for (auto& child : m_children)
     {
-      child.second->handle_parent_size_changed_(size);
+      child.second->handleParentSizeChanged_(size);
     }
   }
 
-  sf::IntRect Object::get_relative_dimensions()
+  sf::IntRect Object::getRelativeDimensions()
   {
     sf::IntRect dimensions;
-    Vec2i location = get_relative_location();
-    Vec2u size = get_size();
+    Vec2i location = getRelativeLocation();
+    Vec2u size = getSize();
     dimensions.left = location.x;
     dimensions.top = location.y;
     dimensions.width = size.x;
@@ -171,25 +171,25 @@ namespace metagui
     return dimensions;
   }
 
-  void Object::set_relative_dimensions(sf::IntRect dimensions)
+  void Object::setRelativeDimensions(sf::IntRect dimensions)
   {
-    set_relative_location({ dimensions.left, dimensions.top });
-    set_size({ static_cast<unsigned int>(dimensions.width),
+    setRelativeLocation({ dimensions.left, dimensions.top });
+    setSize({ static_cast<unsigned int>(dimensions.width),
                static_cast<unsigned int>(dimensions.height) });
   }
 
-  Vec2i Object::get_absolute_location()
+  Vec2i Object::getAbsoluteLocation()
   {
-    Vec2i absolute_location = get_relative_location();
+    Vec2i absolute_location = getRelativeLocation();
 
     if (m_parent != nullptr)
     {
       Vec2i child_area_absolute_location =
-        m_parent->get_absolute_location();
+        m_parent->getAbsoluteLocation();
 
       if (m_cached_flags.decor != true)
       {
-        child_area_absolute_location += m_parent->get_child_area_location();
+        child_area_absolute_location += m_parent->getChildAreaLocation();
       }
 
       absolute_location += child_area_absolute_location;
@@ -198,31 +198,31 @@ namespace metagui
     return absolute_location;
   }
 
-  void Object::set_absolute_location(Vec2i location)
+  void Object::setAbsoluteLocation(Vec2i location)
   {
     Vec2i relative_location = location;
 
     if (m_parent != nullptr)
     {
       Vec2i child_area_absolute_location =
-        m_parent->get_absolute_location();
+        m_parent->getAbsoluteLocation();
 
       if (m_cached_flags.decor != true)
       {
-        child_area_absolute_location += m_parent->get_child_area_location();
+        child_area_absolute_location += m_parent->getChildAreaLocation();
       }
 
       relative_location -= child_area_absolute_location;
     }
 
-    set_relative_location(relative_location);
+    setRelativeLocation(relative_location);
   }
 
-  sf::IntRect Object::get_absolute_dimensions()
+  sf::IntRect Object::getAbsoluteDimensions()
   {
     sf::IntRect dimensions;
-    Vec2i location = get_absolute_location();
-    Vec2u size = get_size();
+    Vec2i location = getAbsoluteLocation();
+    Vec2u size = getSize();
     dimensions.left = location.x;
     dimensions.top = location.y;
     dimensions.width = size.x;
@@ -230,19 +230,19 @@ namespace metagui
     return dimensions;
   }
 
-  Object& Object::add_child(std::unique_ptr<Object> child, uint32_t z_order)
+  Object& Object::addChild(std::unique_ptr<Object> child, uint32_t z_order)
   {
     ASSERT_CONDITION(child);
 
-    std::string name = child->get_name();
+    std::string name = child->getName();
 
-    if (child_exists(name))
+    if (childExists(name))
     {
-      throw std::runtime_error("Tried to add already-present child \"" + name + "\" of GUI object \"" + get_name() + "\"");
+      throw std::runtime_error("Tried to add already-present child \"" + name + "\" of GUI object \"" + getName() + "\"");
     }
 
     Object& child_ref = *child;
-    child->set_parent(this);
+    child->setParent(this);
 
     // This odd syntax is in order to work around VS compiler bug when having
     // a unique_ptr as a map value. See:
@@ -250,45 +250,45 @@ namespace metagui
     m_children.insert<ChildMap::value_type>(ChildMap::value_type(name, std::move(child)));
     m_zorder_map.insert({ z_order, name });
 
-    child_ref.handle_parent_size_changed_(get_size());
+    child_ref.handleParentSizeChanged_(getSize());
 
     CLOG(TRACE, "GUI") << "Added child \"" << name <<
       "\" (with Z-order " << z_order <<
-      ") to parent \"" << get_name() << "\"";
+      ") to parent \"" << getName() << "\"";
 
     return child_ref;
   }
 
-  Object& Object::add_child(std::unique_ptr<Object> child)
+  Object& Object::addChild(std::unique_ptr<Object> child)
   {
-    uint32_t z_order = get_highest_child_z_order() + 1;
-    return add_child(std::move(child), z_order);
+    uint32_t z_order = getHighestChildZOrder() + 1;
+    return addChild(std::move(child), z_order);
   }
 
-  Object & Object::add_child_top(std::unique_ptr<Object> child)
+  Object & Object::addChildTop(std::unique_ptr<Object> child)
   {
-    uint32_t z_order = get_lowest_child_z_order() - 1;
-    return add_child(std::move(child), z_order);
+    uint32_t z_order = getLowestChildZOrder() - 1;
+    return addChild(std::move(child), z_order);
   }
 
-  bool Object::child_exists(std::string name)
+  bool Object::childExists(std::string name)
   {
     return (m_children.count(name) > 0);
   }
 
-  Object& Object::get_child(std::string name)
+  Object& Object::getChild(std::string name)
   {
-    if (child_exists(name))
+    if (childExists(name))
     {
       return *m_children.at(name);
     }
 
-    throw std::runtime_error("Tried to get non-existent child \"" + name + "\" of GUI object \"" + get_name() + "\"");
+    throw std::runtime_error("Tried to get non-existent child \"" + name + "\" of GUI object \"" + getName() + "\"");
   }
 
-  std::unique_ptr<Object> Object::remove_child(std::string name)
+  std::unique_ptr<Object> Object::removeChild(std::string name)
   {
-    if (child_exists(name))
+    if (childExists(name))
     {
       // This moves the object out of the stored unique_ptr.
       std::unique_ptr<Object> moved_object = std::move(m_children.at(name));
@@ -313,7 +313,7 @@ namespace metagui
     return std::unique_ptr<Object>();
   }
 
-  uint32_t Object::get_lowest_child_z_order()
+  uint32_t Object::getLowestChildZOrder()
   {
     if (m_zorder_map.size() > 0)
     {
@@ -323,7 +323,7 @@ namespace metagui
     return 0;
   }
 
-  uint32_t Object::get_highest_child_z_order()
+  uint32_t Object::getHighestChildZOrder()
   {
     if (m_zorder_map.size() > 0)
     {
@@ -334,20 +334,20 @@ namespace metagui
     return 0;
   }
 
-  void Object::clear_children()
+  void Object::clearChildren()
   {
     m_children.clear();
     m_zorder_map.clear();
   }
 
-  Vec2i Object::get_child_area_location()
+  Vec2i Object::getChildAreaLocation()
   {
     return{ 0, 0 };
   }
 
-  Vec2u Object::get_child_area_size()
+  Vec2u Object::getChildAreaSize()
   {
-    return get_size();
+    return getSize();
   }
 
   bool Object::render(sf::RenderTexture& parent_texture, int frame)
@@ -356,11 +356,11 @@ namespace metagui
 
     if (m_cached_flags.hidden == false)
     {
-      if (m_flagForRedraw == true)
+      if (m_flag_for_redraw == true)
       {
         our_texture.clear(sf::Color::Transparent);
         draw(frame);
-        m_flagForRedraw = false;
+        m_flag_for_redraw = false;
       }
 
       // Create the RectangleShape that will be drawn onto the target.
@@ -403,38 +403,38 @@ namespace metagui
 
   void Object::flagForRedraw()
   {
-    m_flagForRedraw = true;
+    m_flag_for_redraw = true;
     if (m_parent)
     {
       m_parent->flagForRedraw();
     }
   }
 
-  void Object::set_flag(std::string name, bool value)
+  void Object::setFlag(std::string name, bool value)
   {
     if ((m_flags.count(name) == 0) || (m_flags[name] != value))
     {
       m_flags[name] = value;
-      handle_set_flag(name, value);
+      handleSetFlag(name, value);
     }
   }
 
-  bool Object::get_flag(std::string name, bool default_value)
+  bool Object::getFlag(std::string name, bool default_value)
   {
     if (m_flags.count(name) == 0)
     {
-      set_flag(name, default_value);
+      setFlag(name, default_value);
     }
     return m_flags[name];
   }
 
-  void Object::handle_set_flag(std::string name, bool value)
+  void Object::handleSetFlag(std::string name, bool value)
   {
     if (name == "hidden")
     {
       if (value == true)
       {
-        set_focus(false);
+        setFocus(false);
       }
       m_cached_flags.hidden = value;
     }
@@ -442,7 +442,7 @@ namespace metagui
     {
       if (value == true)
       {
-        set_focus(false);
+        setFocus(false);
       }
       m_cached_flags.disabled = value;
     }
@@ -455,43 +455,43 @@ namespace metagui
       m_cached_flags.decor = value;
     }
 
-    handle_set_flag_(name, value);
+    handleSetFlag_(name, value);
   }
 
-  bool Object::contains_point(Vec2i point)
+  bool Object::containsPoint(Vec2i point)
   {
-    auto left = get_absolute_location().x;
-    auto top = get_absolute_location().y;
-    auto right = left + (static_cast<int>(get_size().x) - 1);
-    auto bottom = top + (static_cast<int>(get_size().y) - 1);
+    auto left = getAbsoluteLocation().x;
+    auto top = getAbsoluteLocation().y;
+    auto right = left + (static_cast<int>(getSize().x) - 1);
+    auto bottom = top + (static_cast<int>(getSize().y) - 1);
 
     return ((point.x >= left) && (point.x <= right) &&
       (point.y >= top) && (point.y <= bottom));
   }
 
-  Event::Result Object::handle_event_before_children(EventDragFinished& event)
+  Event::Result Object::handleGUIEventPreChildren(EventDragFinished& event)
   {
-    Event::Result result = handle_event_before_children_(event);
+    Event::Result result = handleGUIEventPreChildren_(event);
 
     return result;
   }
 
-  Event::Result Object::handle_event_after_children(EventDragFinished& event)
+  Event::Result Object::handleGUIEventPostChildren(EventDragFinished& event)
   {
     m_being_dragged = false;
 
-    Event::Result result = handle_event_after_children_(event);
+    Event::Result result = handleGUIEventPostChildren_(event);
 
     return result;
   }
 
-  Event::Result Object::handle_event_before_children(EventDragStarted& event)
+  Event::Result Object::handleGUIEventPreChildren(EventDragStarted& event)
   {
     Event::Result result;
 
-    if (contains_point(event.start_location))
+    if (containsPoint(event.start_location))
     {
-      result = handle_event_before_children_(event);
+      result = handleGUIEventPreChildren_(event);
     }
     else
     {
@@ -502,17 +502,17 @@ namespace metagui
     return result;
   }
 
-  Event::Result Object::handle_event_after_children(EventDragStarted& event)
+  Event::Result Object::handleGUIEventPostChildren(EventDragStarted& event)
   {
     Event::Result result;
 
-    if (contains_point(event.start_location))
+    if (containsPoint(event.start_location))
     {
       m_being_dragged = true;
       m_drag_start_location = event.start_location;
-      m_absolute_location_drag_start = get_absolute_location();
+      m_absolute_location_drag_start = getAbsoluteLocation();
 
-      result = handle_event_after_children_(event);
+      result = handleGUIEventPostChildren_(event);
     }
     else
     {
@@ -523,15 +523,15 @@ namespace metagui
     return result;
   }
 
-  Event::Result Object::handle_event_before_children(EventDragging& event)
+  Event::Result Object::handleGUIEventPreChildren(EventDragging& event)
   {
     // We "Acknowledge" the event so it is passed to children.
-    return handle_event_before_children_(event);
+    return handleGUIEventPreChildren_(event);
   }
 
-  Event::Result Object::handle_event_after_children(EventDragging& event)
+  Event::Result Object::handleGUIEventPostChildren(EventDragging& event)
   {
-    Event::Result result = handle_event_after_children_(event);
+    Event::Result result = handleGUIEventPostChildren_(event);
 
     if (result != Event::Result::Handled)
     {
@@ -543,7 +543,7 @@ namespace metagui
         auto move_amount = event.current_location - m_drag_start_location;
         auto new_coords = m_absolute_location_drag_start + move_amount;
 
-        set_absolute_location(new_coords);
+        setAbsoluteLocation(new_coords);
         result = Event::Result::Handled;
       }
       else
@@ -555,67 +555,67 @@ namespace metagui
     return result;
   }
 
-  Event::Result Object::handle_event_before_children(EventKeyPressed& event)
+  Event::Result Object::handleGUIEventPreChildren(EventKeyPressed& event)
   {
-    return handle_event_before_children_(event);
+    return handleGUIEventPreChildren_(event);
   }
 
-  Event::Result Object::handle_event_after_children(EventKeyPressed& event)
+  Event::Result Object::handleGUIEventPostChildren(EventKeyPressed& event)
   {
-    return handle_event_after_children_(event);
+    return handleGUIEventPostChildren_(event);
   }
 
-  Event::Result Object::handle_event_before_children(EventMouseDown& event)
+  Event::Result Object::handleGUIEventPreChildren(EventMouseDown& event)
   {
-    return handle_event_before_children_(event);
+    return handleGUIEventPreChildren_(event);
   }
 
-  Event::Result Object::handle_event_after_children(EventMouseDown& event)
+  Event::Result Object::handleGUIEventPostChildren(EventMouseDown& event)
   {
-    return handle_event_after_children_(event);
+    return handleGUIEventPostChildren_(event);
   }
 
-  Event::Result Object::handle_event_before_children(EventResized& event)
+  Event::Result Object::handleGUIEventPreChildren(EventResized& event)
   {
-    return handle_event_before_children_(event);
+    return handleGUIEventPreChildren_(event);
   }
 
-  Event::Result Object::handle_event_after_children(EventResized& event)
+  Event::Result Object::handleGUIEventPostChildren(EventResized& event)
   {
-    return handle_event_after_children_(event);
+    return handleGUIEventPostChildren_(event);
   }
 
-  Object * Object::get_parent()
+  Object * Object::getParent()
   {
     return m_parent;
   }
 
-  void Object::set_parent(Object* parent)
+  void Object::setParent(Object* parent)
   {
     m_parent = parent;
     m_parent->flagForRedraw();
   }
 
-  void Object::clear_child_focuses()
+  void Object::clearChildFocuses()
   {
     for (auto& child_pair : m_children)
     {
-      child_pair.second->set_focus_only(false);
+      child_pair.second->setFocusOnly(false);
     }
   }
 
-  void Object::set_focus_only(bool focus)
+  void Object::setFocusOnly(bool focus)
   {
     if (m_focus != focus) flagForRedraw();
     m_focus = focus;
   }
 
-  bool Object::is_being_dragged()
+  bool Object::isBeingDragged()
   {
     return m_being_dragged;
   }
 
-  Vec2i Object::get_drag_start_location()
+  Vec2i Object::getDragStartLocation()
   {
     return m_drag_start_location;
   }
@@ -630,70 +630,70 @@ namespace metagui
     // Default behavior is to do nothing.
   }
 
-  Event::Result Object::handle_event_before_children_(EventDragFinished& event)
+  Event::Result Object::handleGUIEventPreChildren_(EventDragFinished& event)
   {
     return Event::Result::Acknowledged;
   }
 
-  Event::Result Object::handle_event_after_children_(EventDragFinished& event)
+  Event::Result Object::handleGUIEventPostChildren_(EventDragFinished& event)
   {
     return Event::Result::Acknowledged;
   }
 
-  Event::Result Object::handle_event_before_children_(EventDragStarted& event)
+  Event::Result Object::handleGUIEventPreChildren_(EventDragStarted& event)
   {
     return Event::Result::Acknowledged;
   }
 
-  Event::Result Object::handle_event_after_children_(EventDragStarted& event)
+  Event::Result Object::handleGUIEventPostChildren_(EventDragStarted& event)
   {
     return Event::Result::Acknowledged;
   }
 
-  Event::Result Object::handle_event_before_children_(EventDragging& event)
+  Event::Result Object::handleGUIEventPreChildren_(EventDragging& event)
   {
     return Event::Result::Acknowledged;
   }
 
-  Event::Result Object::handle_event_after_children_(EventDragging& event)
+  Event::Result Object::handleGUIEventPostChildren_(EventDragging& event)
   {
     return Event::Result::Acknowledged;
   }
 
-  Event::Result Object::handle_event_before_children_(EventKeyPressed& event)
+  Event::Result Object::handleGUIEventPreChildren_(EventKeyPressed& event)
   {
     return Event::Result::Acknowledged;
   }
 
-  Event::Result Object::handle_event_after_children_(EventKeyPressed& event)
+  Event::Result Object::handleGUIEventPostChildren_(EventKeyPressed& event)
   {
     return Event::Result::Acknowledged;
   }
 
-  Event::Result Object::handle_event_before_children_(EventMouseDown& event)
+  Event::Result Object::handleGUIEventPreChildren_(EventMouseDown& event)
   {
     return Event::Result::Acknowledged;
   }
 
-  Event::Result Object::handle_event_after_children_(EventMouseDown& event)
+  Event::Result Object::handleGUIEventPostChildren_(EventMouseDown& event)
   {
     return Event::Result::Acknowledged;
   }
 
-  Event::Result Object::handle_event_before_children_(EventResized& event)
+  Event::Result Object::handleGUIEventPreChildren_(EventResized& event)
   {
     return Event::Result::Acknowledged;
   }
 
-  Event::Result Object::handle_event_after_children_(EventResized& event)
+  Event::Result Object::handleGUIEventPostChildren_(EventResized& event)
   {
     return Event::Result::Acknowledged;
   }
 
-  void Object::handle_set_flag_(std::string name, bool enabled)
+  void Object::handleSetFlag_(std::string name, bool enabled)
   {}
 
-  void Object::handle_parent_size_changed_(Vec2u parent_size)
+  void Object::handleParentSizeChanged_(Vec2u parent_size)
   {
   }
 }; // end namespace metagui

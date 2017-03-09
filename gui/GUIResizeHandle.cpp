@@ -23,7 +23,7 @@ namespace metagui
   {
     auto& config = Service<IConfigSettings>::get();
 
-    auto parent = get_parent();
+    auto parent = getParent();
     if (parent == nullptr)
     {
       return;
@@ -32,7 +32,7 @@ namespace metagui
     /// @todo FINISH ME. Right now this is just a dead-stupid square.
     sf::RectangleShape rect;
 
-    rect.setFillColor(get_parent()->get_focus() ?
+    rect.setFillColor(getParent()->getFocus() ?
                       config.get<sf::Color>("window_focused_border_color") :
                       config.get<sf::Color>("window_border_color"));
     rect.setOutlineThickness(0);
@@ -43,18 +43,18 @@ namespace metagui
 
   }
 
-  void ResizeHandle::handle_parent_size_changed_(Vec2u parent_size)
+  void ResizeHandle::handleParentSizeChanged_(Vec2u parent_size)
   {
-    set_relative_location({ static_cast<int>(parent_size.x - s_handle_size),
+    setRelativeLocation({ static_cast<int>(parent_size.x - s_handle_size),
                           static_cast<int>(parent_size.y - s_handle_size) });
   }
 
-  Event::Result ResizeHandle::handle_event_after_children_(EventDragStarted & event)
+  Event::Result ResizeHandle::handleGUIEventPostChildren_(EventDragStarted & event)
   {
-    auto parent = get_parent();
+    auto parent = getParent();
     if (parent)
     {
-      m_parent_size_start = parent->get_size();
+      m_parent_size_start = parent->getSize();
 
       return Event::Result::Acknowledged;
     }
@@ -62,16 +62,16 @@ namespace metagui
     return Event::Result::Ignored;
   }
 
-  Event::Result ResizeHandle::handle_event_after_children_(EventDragging & event)
+  Event::Result ResizeHandle::handleGUIEventPostChildren_(EventDragging & event)
   {
     Event::Result result = Event::Result::Ignored;
 
-    auto parent = get_parent();
+    auto parent = getParent();
     if (parent)
     {
-      if (is_being_dragged() == true)
+      if (isBeingDragged() == true)
       {
-        auto move_amount = event.current_location - get_drag_start_location();
+        auto move_amount = event.current_location - getDragStartLocation();
 
         Vec2i old_size{ static_cast<int>(m_parent_size_start.x), static_cast<int>(m_parent_size_start.y) };
         Vec2u new_size;
@@ -79,7 +79,7 @@ namespace metagui
         new_size.x = (move_amount.x > -(old_size.x)) ? (old_size.x + move_amount.x) : 0;
         new_size.y = (move_amount.y > -(old_size.y)) ? (old_size.y + move_amount.y) : 0;
 
-        parent->set_size(new_size);
+        parent->setSize(new_size);
         result = Event::Result::Handled;
       }
     }

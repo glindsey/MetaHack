@@ -21,7 +21,7 @@ public:
   virtual ~StateMachine();
 
   /// Get the name of this state machine.
-  std::string const& get_name();
+  std::string const& getName();
 
   /// Add a state to the machine.
   /// The new state must be allocated on the heap, as the ptr_map will take

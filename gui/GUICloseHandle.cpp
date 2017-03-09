@@ -13,7 +13,7 @@ namespace metagui
     Object(name, Vec2i(0, 0))
   {}
 
-  void CloseHandle::handle_parent_size_changed_(Vec2u parent_size)
+  void CloseHandle::handleParentSizeChanged_(Vec2u parent_size)
   {
   }
 

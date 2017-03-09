@@ -120,7 +120,7 @@ MapId Map::get_map_id() const
   return m_map_id;
 }
 
-Vec2i const& Map::get_size() const
+Vec2i const& Map::getSize() const
 {
   return m_map_size;
 }

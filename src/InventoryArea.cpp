@@ -37,7 +37,7 @@ void InventoryArea::drawContents_(sf::RenderTexture& texture, int frame)
   auto& entity_pool = GAME.get_entities();
 
   // Dimensions of the pane.
-  sf::IntRect pane_dims = get_relative_dimensions();
+  sf::IntRect pane_dims = getRelativeDimensions();
 
   float line_spacing_y = the_default_font.getLineSpacing(config.get<unsigned int>("text_default_size"));
   float item_spacing_y = 4.0f;
@@ -50,7 +50,7 @@ void InventoryArea::drawContents_(sf::RenderTexture& texture, int frame)
   auto& viewed_thing = m_inventory_selection.get_viewed();
   if (viewed_thing == EntityId::Mu())
   {
-    set_text("Invalid Viewed Object!");
+    setText("Invalid Viewed Object!");
     return;
   }
 
@@ -120,7 +120,7 @@ void InventoryArea::drawContents_(sf::RenderTexture& texture, int frame)
     // 4. Display the tile representing the item.
     auto entity_view = std::unique_ptr<EntityView>(views.createEntityView(entity_pool.get(entity)));
     entity_view->set_location({ static_cast<float>(text_coord_x + 75), static_cast<float>(text_coord_y) });
-    entity_view->set_size({ line_spacing_y - 1, line_spacing_y - 1 } );
+    entity_view->setSize({ line_spacing_y - 1, line_spacing_y - 1 } );
     entity_view->draw(texture, false, true, frame);
 
     unsigned int wield_location;
@@ -198,7 +198,7 @@ void InventoryArea::drawContents_(sf::RenderTexture& texture, int frame)
   //       overridden to say stuff like "Entities on the floor".
   sf::String title_string = viewed_thing->get_possessive() + " inventory";
   title_string[0] = toupper(title_string[0]);
-  set_text(title_string);
+  setText(title_string);
   return;
 }
 

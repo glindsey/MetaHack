@@ -17,22 +17,22 @@ namespace metagui
     /// Get the upper-left corner of this object's child area, relative to
     /// its own upper-left corner, taking into account any decorator
     /// elements added to this window.
-    virtual Vec2i get_child_area_location() override final;
+    virtual Vec2i getChildAreaLocation() override final;
 
     /// Get the size of this window's child area, taking into account any
     /// decorator elements added to this window.
-    virtual Vec2u get_child_area_size() override final;
+    virtual Vec2u getChildAreaSize() override final;
 
   protected:
     virtual void drawPreChildren_(sf::RenderTexture& texture, int frame) override final;
 
-    virtual void handle_set_flag_(std::string name, bool enabled) override;
+    virtual void handleSetFlag_(std::string name, bool enabled) override;
 
     /// Temporary function used to render the contents of classes derived from
     /// GUIWindow until they can be properly replaced with child controls.
     virtual void drawContents_(sf::RenderTexture& texture, int frame);
 
-    virtual Event::Result handle_event_after_children_(EventDragStarted& event) override;
+    virtual Event::Result handleGUIEventPostChildren_(EventDragStarted& event) override;
 
   private:
     /// Border shape.

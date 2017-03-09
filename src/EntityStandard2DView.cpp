@@ -38,7 +38,7 @@ void EntityStandard2DView::draw(sf::RenderTarget& target,
   sf::IntRect texture_coords;
 
   auto target_coords = get_location();
-  auto target_size = get_size();
+  auto target_size = getSize();
   auto tile_size = config.get<unsigned int>("map_tile_size");
   if (target_size == 0)
   {

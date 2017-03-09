@@ -38,7 +38,7 @@ public:
 
   virtual SFMLEventResult handle_sfml_event(sf::Event& event) override;
 
-  virtual std::string const& get_name() override;
+  virtual std::string const& getName() override;
   virtual bool initialize() override;
   virtual void execute() override;
   virtual bool terminate() override;

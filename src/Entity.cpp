@@ -759,7 +759,7 @@ bool Entity::can_see(Vec2i coords)
   }
 
   Map& game_map = GAME.get_maps().get(map_id);
-  auto map_size = game_map.get_size();
+  auto map_size = game_map.getSize();
 
   // Check for coords out of bounds. If they're out of bounds, we can't see it.
   if ((coords.x < 0) || (coords.y < 0) || (coords.x >= map_size.x) || (coords.y >= map_size.y))
@@ -858,7 +858,7 @@ bool Entity::move_into(EntityId new_location)
           if (new_map_id != MapFactory::null_map_id)
           {
             Map& new_map = GAME.get_maps().get(new_map_id);
-            Vec2i new_map_size = new_map.get_size();
+            Vec2i new_map_size = new_map.getSize();
             m_map_memory.resize(new_map_size.x * new_map_size.y);
             m_tiles_currently_seen.resize(new_map_size.x * new_map_size.y);
             /// @todo Load new map memory if it exists somewhere.

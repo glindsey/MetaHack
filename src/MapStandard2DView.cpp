@@ -16,7 +16,7 @@ MapStandard2DView::MapStandard2DView(Map& map, TileSheet& tile_sheet)
   reset_cached_render_data();
 
   // Create a grid of tile views, each tied to a map tile.
-  m_map_tile_views.reset(new Grid2D<MapTileStandard2DView>(map.get_size(), 
+  m_map_tile_views.reset(new Grid2D<MapTileStandard2DView>(map.getSize(), 
                                                            [&](Vec2i coords) -> MapTileStandard2DView*
   {
     return NEW MapTileStandard2DView(map.get_tile(coords), m_tile_sheet);
@@ -27,7 +27,7 @@ MapStandard2DView::MapStandard2DView(Map& map, TileSheet& tile_sheet)
 void MapStandard2DView::update_tiles(EntityId viewer)
 {
   auto& map = get_map();
-  auto& map_size = map.get_size();
+  auto& map_size = map.getSize();
 
   static Vec2f position;
 
@@ -47,7 +47,7 @@ void MapStandard2DView::update_tiles(EntityId viewer)
 void MapStandard2DView::update_things(EntityId viewer, int frame)
 {
   auto& map = get_map();
-  auto& map_size = map.get_size();
+  auto& map_size = map.getSize();
 
   // Loop through and draw entities.
   m_thing_vertices.clear();
@@ -119,7 +119,7 @@ std::string MapStandard2DView::get_view_name()
 void MapStandard2DView::reset_cached_render_data()
 {
   auto& map = get_map();
-  auto map_size = map.get_size();
+  auto map_size = map.getSize();
 
   // Create vertices:
   // 4 vertices * 4 quads for the floor

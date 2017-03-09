@@ -31,7 +31,7 @@ public:
   virtual ~MessageLogView();
 
   /// Handle a KeyPressed event.
-  virtual metagui::Event::Result MessageLogView::handle_event_before_children_(metagui::EventKeyPressed& event);
+  virtual metagui::Event::Result MessageLogView::handleGUIEventPreChildren_(metagui::EventKeyPressed& event);
 
 protected:
   /// Render the contents of this view to the specified target.

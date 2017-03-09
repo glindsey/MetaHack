@@ -29,7 +29,7 @@ Vec2f EntityView::get_location()
   return m_target_coords;
 }
 
-void EntityView::set_size(Vec2f target_size)
+void EntityView::setSize(Vec2f target_size)
 {
   if (target_size != m_target_size)
   {
@@ -37,7 +37,7 @@ void EntityView::set_size(Vec2f target_size)
   }
 }
 
-Vec2f EntityView::get_size()
+Vec2f EntityView::getSize()
 {
   return m_target_size;
 }

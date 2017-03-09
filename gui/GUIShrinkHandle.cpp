@@ -22,7 +22,7 @@ namespace metagui
   void ShrinkHandle::drawPreChildren_(sf::RenderTexture& texture, int frame)
   {
   }
-  void ShrinkHandle::handle_parent_size_changed_(Vec2u parent_size)
+  void ShrinkHandle::handleParentSizeChanged_(Vec2u parent_size)
   {
   }
 }; // end namespace metagui

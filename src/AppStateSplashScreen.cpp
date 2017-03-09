@@ -28,7 +28,7 @@ SFMLEventResult AppStateSplashScreen::handle_sfml_event(sf::Event& event)
   return SFMLEventResult::Ignored;
 }
 
-std::string const& AppStateSplashScreen::get_name()
+std::string const& AppStateSplashScreen::getName()
 {
   static std::string name = "AppStateSplashScreen";
   return name;

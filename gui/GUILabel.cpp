@@ -34,7 +34,7 @@ namespace metagui
     ///         - Handle word wrapping correctly
     ///         - Handle drop-in tokens for changing text color/style
     ///         - Handle proper text alignment (left/centered/right)
-    std::string str = get_text();
+    std::string str = getText();
     if (!str.empty())
     {
       sf::Text text{ str, the_default_font, config.get<unsigned int>("text_default_size") };
@@ -42,14 +42,14 @@ namespace metagui
       text.setPosition(offset);
 
       // Resize vertically if "resize_to_fit" is true.
-      // Must do prior to drawing, as set_size() deletes and recreates the
+      // Must do prior to drawing, as setSize() deletes and recreates the
       // background texture when called.
       /// @todo Flesh this out as well.
-      if (get_flag("resize_to_fit") == true)
+      if (getFlag("resize_to_fit") == true)
       {
-        auto current_x_size = get_size().y;
+        auto current_x_size = getSize().y;
         auto new_y_size = text.getGlobalBounds().height;
-        set_size({ current_x_size, static_cast<unsigned int>(new_y_size) });
+        setSize({ current_x_size, static_cast<unsigned int>(new_y_size) });
       }
 
       // Draw to the background texture.

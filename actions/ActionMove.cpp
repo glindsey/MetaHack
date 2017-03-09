@@ -92,7 +92,7 @@ Action::StateResult ActionMove::do_begin_work_(AnyMap& params)
     int x_new = coords.x + offset.x;
     int y_new = coords.y + offset.y;
     Map& current_map = GAME.get_maps().get(subject->get_map_id());
-    Vec2i map_size = current_map.get_size();
+    Vec2i map_size = current_map.getSize();
 
     // Check boundaries.
     if ((x_new < 0) || (y_new < 0) ||

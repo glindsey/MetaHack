@@ -24,8 +24,8 @@ bool State::change_to(std::string const& new_state)
   else
   {
     MAJOR_ERROR("State manager \"%s\" could not change to new state \"%s\"",
-                m_state_machine.get_name().c_str(),
-                this->get_name().c_str());
+                m_state_machine.getName().c_str(),
+                this->getName().c_str());
     return false;
   }
 }

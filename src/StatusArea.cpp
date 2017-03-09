@@ -22,7 +22,7 @@ StatusArea::StatusArea(std::string name, sf::IntRect dimensions)
   //ctor
   //std::function<std::string()> label_function = std::bind(&StatusArea::get_test_label, this);
   //GUILabel* label = NEW GUILabel( {0, 0, dimensions.width / 2, dimensions.height / 2}, label_function );
-  //add_child(label);
+  //addChild(label);
 }
 
 StatusArea::~StatusArea()
@@ -34,7 +34,7 @@ void StatusArea::drawContents_(sf::RenderTexture& texture, int frame)
 {
   auto& config = Service<IConfigSettings>::get();
 
-  sf::IntRect pane_dims = get_relative_dimensions();
+  sf::IntRect pane_dims = getRelativeDimensions();
   EntityId player = GAME.get_player();
   Vec2f origin(config.get<float>("window_text_offset_x"),
                config.get<float>("window_text_offset_y"));
