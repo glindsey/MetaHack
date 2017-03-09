@@ -24,8 +24,8 @@ void EntityStandard2DView::draw(sf::RenderTarget& target,
                                 int frame)
 {
   auto& config = Service<IConfigSettings>::get();
-  auto& entity = get_entity();
-  MapTile* root_tile = get_entity().get_maptile();
+  auto& entity = getEntity();
+  MapTile* root_tile = getEntity().get_maptile();
   auto& texture = m_tile_sheet.getTexture();
 
   if (!root_tile)
@@ -37,7 +37,7 @@ void EntityStandard2DView::draw(sf::RenderTarget& target,
   sf::RectangleShape rectangle;
   sf::IntRect texture_coords;
 
-  auto target_coords = get_location();
+  auto target_coords = getLocation();
   auto target_size = getSize();
   auto tile_size = config.get<unsigned int>("map_tile_size");
   if (target_size == 0)
@@ -80,14 +80,14 @@ void EntityStandard2DView::draw(sf::RenderTarget& target,
   }
 }
 
-std::string EntityStandard2DView::get_view_name()
+std::string EntityStandard2DView::getViewName()
 {
   return "standard2D";
 }
 
 Vec2u EntityStandard2DView::get_tile_sheet_coords(int frame) const
 {
-  auto& entity = get_entity();
+  auto& entity = getEntity();
 
   /// Get tile coordinates on the sheet.
   Vec2u start_coords = entity.get_metadata().get_tile_coords();

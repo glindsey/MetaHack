@@ -31,7 +31,7 @@ void MapNullView::draw_highlight(sf::RenderTarget& target,
 {
 }
 
-std::string MapNullView::get_view_name()
+std::string MapNullView::getViewName()
 {
   return "null";
 }

@@ -192,14 +192,14 @@ bool Entity::has_equipped(EntityId entity, WearLocation& location)
 bool Entity::can_reach(EntityId entity)
 {
   // Check if it is our location.
-  auto our_location = get_location();
+  auto our_location = getLocation();
   if (our_location == entity)
   {
     return true;
   }
 
   // Check if it's at our location.
-  auto thing_location = entity->get_location();
+  auto thing_location = entity->getLocation();
   if (our_location == thing_location)
   {
     return true;
@@ -692,7 +692,7 @@ EntityId Entity::get_root_location() const
   }
 }
 
-EntityId Entity::get_location() const
+EntityId Entity::getLocation() const
 {
   return m_location;
 }
@@ -778,7 +778,7 @@ void Entity::find_seen_tiles()
   //elapsed.restart();
 
   // Are we on a map?  Bail out if we aren't.
-  EntityId location = get_location();
+  EntityId location = getLocation();
   if (location == EntityId::Mu())
   {
     return;
@@ -891,7 +891,7 @@ bool Entity::is_inside_another_thing() const
     return false;
   }
 
-  EntityId location2 = location->get_location();
+  EntityId location2 = location->getLocation();
   if (location2 == EntityId::Mu())
   {
     // Entity is directly on the floor.
@@ -1007,7 +1007,7 @@ std::string Entity::get_identifying_string(ArticleChoice articles,
 {
   auto& config = Service<IConfigSettings>::get();
 
-  EntityId location = this->get_location();
+  EntityId location = this->getLocation();
   unsigned int quantity = this->get_quantity();
 
   std::string name;
@@ -1149,7 +1149,7 @@ bool Entity::is_opaque()
 
 void Entity::light_up_surroundings()
 {
-  EntityId location = get_location();
+  EntityId location = getLocation();
 
   if (get_intrinsic<int>("inventory_size") != 0)
   {
@@ -1196,9 +1196,9 @@ void Entity::be_lit_by(EntityId light)
     //notifyObservers(Event::Updated);
   }
 
-  EntityId location = get_location();
+  EntityId location = getLocation();
 
-  if (get_location() == EntityId::Mu())
+  if (getLocation() == EntityId::Mu())
   {
     GAME.get_maps().get(get_map_id()).add_light(light);
   }
@@ -1619,7 +1619,7 @@ ActionResult Entity::can_contain(EntityId entity)
   }
 }
 
-void Entity::set_location(EntityId target)
+void Entity::setLocation(EntityId target)
 {
   m_location = target;
 }

@@ -20,7 +20,7 @@ public:
                     bool use_smoothing,
                     int frame) override;
 
-  virtual std::string get_view_name() override;
+  virtual std::string getViewName() override;
 
 protected:
   /// Constructor.

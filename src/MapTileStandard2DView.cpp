@@ -7,7 +7,7 @@
 
 #include "ShaderEffect.h"
 
-std::string MapTileStandard2DView::get_view_name()
+std::string MapTileStandard2DView::getViewName()
 {
   return "standard2D";
 }

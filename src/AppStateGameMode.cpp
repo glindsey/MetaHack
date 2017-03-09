@@ -222,7 +222,7 @@ void AppStateGameMode::render_map(sf::RenderTexture& texture, int frame)
   texture.clear();
 
   EntityId player = get_game_state().get_player();
-  EntityId location = player->get_location();
+  EntityId location = player->getLocation();
 
   if (location == get_game_state().get_entities().get_mu())
   {
@@ -418,7 +418,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
           case sf::Keyboard::Key::LBracket:
           {
             EntityId entity = m_inventory_selection->get_viewed();
-            EntityId location = entity->get_location();
+            EntityId location = entity->getLocation();
             if (location != get_game_state().get_entities().get_mu())
             {
               m_inventory_selection->set_viewed(location);
@@ -1017,7 +1017,7 @@ void AppStateGameMode::reset_inventory_selection()
     }
     else
     {
-      m_inventory_selection->set_viewed(player->get_location());
+      m_inventory_selection->set_viewed(player->getLocation());
     }
   }
 }
@@ -1086,7 +1086,7 @@ SFMLEventResult AppStateGameMode::handle_key_press_target_selection(EntityId pla
   {
     if (!key.alt && !key.control && key_number != -1)
     {
-      m_action_in_progress->set_target(m_inventory_selection->get_entity(static_cast<InventorySlot>(key_number)));
+      m_action_in_progress->set_target(m_inventory_selection->getEntity(static_cast<InventorySlot>(key_number)));
       player->queue_action(std::move(m_action_in_progress));
       m_inventory_area_shows_player = false;
       reset_inventory_selection();

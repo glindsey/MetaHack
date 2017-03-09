@@ -16,7 +16,7 @@ Action::StateResult ActionAttack::do_prebegin_work_(AnyMap& params)
   std::string message;
 
   auto subject = get_subject();
-  auto location = subject->get_location();
+  auto location = subject->getLocation();
   auto new_direction = get_target_direction();
 
   if (!IS_PLAYER)
@@ -89,7 +89,7 @@ Action::StateResult ActionAttack::do_begin_work_(AnyMap& params)
   std::string message;
 
   auto subject = get_subject();
-  auto location = subject->get_location();
+  auto location = subject->getLocation();
   MapTile* current_tile = subject->get_maptile();
   auto new_direction = get_target_direction();
 
@@ -117,7 +117,7 @@ Action::StateResult ActionAttack::do_begin_work_(AnyMap& params)
   EntityId new_floor = new_tile.get_tile_contents();
 
   // See if the tile to move into contains another creature.
-  auto object = new_floor->get_inventory().get_entity();
+  auto object = new_floor->get_inventory().getEntity();
   set_object(object);
   if (object == EntityId::Mu())
   {

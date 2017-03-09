@@ -18,7 +18,7 @@ Action::StateResult ActionTurn::do_prebegin_work_(AnyMap& params)
   std::string message;
 
   auto subject = get_subject();
-  auto location = subject->get_location();
+  auto location = subject->getLocation();
   auto new_direction = get_target_direction();
 
   if (!IS_PLAYER)
@@ -61,7 +61,7 @@ Action::StateResult ActionTurn::do_begin_work_(AnyMap& params)
   std::string message;
 
   auto subject = get_subject();
-  EntityId location = subject->get_location();
+  EntityId location = subject->getLocation();
   MapTile* current_tile = subject->get_maptile();
   Direction new_direction = get_target_direction();
 

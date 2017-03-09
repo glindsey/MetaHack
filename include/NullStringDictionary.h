@@ -8,7 +8,7 @@ public:
   /// Create a null string dictionary.
   NullStringDictionary() {}
 
-  virtual bool load_file(std::string filename_) override
+  virtual bool loadFile(std::string filename_) override
   {
     return true;
   }

@@ -18,10 +18,10 @@ public:
   virtual void add(std::string message) override;
 
   /// Get the maximum size of the message queue.
-  virtual unsigned int get_message_queue_size() override;
+  virtual unsigned int getMessageQueueSize() override;
 
   /// Get a reference to the message queue.
-  virtual std::deque<std::string>& get_message_queue() override;
+  virtual std::deque<std::string>& getMessageQueue() override;
 
 protected:
 

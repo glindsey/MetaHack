@@ -20,7 +20,7 @@ public:
                     bool use_smoothing,
                     int frame) override;
 
-  virtual std::string get_view_name() override;
+  virtual std::string getViewName() override;
 
   /// Return the coordinates of the entity on the tilesheet.
   Vec2u get_tile_sheet_coords(int frame) const;

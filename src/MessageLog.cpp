@@ -41,12 +41,12 @@ void MessageLog::add(std::string message)
   broadcast(EventMessageAdded(message));
 }
 
-unsigned int MessageLog::get_message_queue_size()
+unsigned int MessageLog::getMessageQueueSize()
 {
   return pImpl->message_queue_size;
 }
 
-std::deque<std::string>& MessageLog::get_message_queue()
+std::deque<std::string>& MessageLog::getMessageQueue()
 {
   return pImpl->message_queue;
 }

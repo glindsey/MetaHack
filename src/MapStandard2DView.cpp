@@ -110,7 +110,7 @@ void MapStandard2DView::draw_highlight(sf::RenderTarget& target,
   target.draw(box_shape);
 }
 
-std::string MapStandard2DView::get_view_name()
+std::string MapStandard2DView::getViewName()
 {
   return "standard2D";
 }

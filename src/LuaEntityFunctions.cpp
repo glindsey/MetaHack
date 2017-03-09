@@ -132,7 +132,7 @@ namespace LuaEntityFunctions
     }
 
     EntityId entity = EntityId(lua_tointeger(L, 1));
-    EntityId location = entity->get_location();
+    EntityId location = entity->getLocation();
     lua_pushinteger(L, static_cast<lua_Integer>(location));
 
     return 1;

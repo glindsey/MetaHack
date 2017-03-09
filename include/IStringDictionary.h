@@ -13,7 +13,7 @@ public:
   /// The extension ".json" will be appended to the filename.
   /// @param filename_ The name of file to load, _without_ extension.
   /// @return True if the file was successfully loaded and parsed, false otherwise.
-  virtual bool load_file(std::string filename_) = 0;
+  virtual bool loadFile(std::string filename_) = 0;
 
   /// Add the specified string to the dictionary.
   /// If the specified ID already exists in the dictionary, it will

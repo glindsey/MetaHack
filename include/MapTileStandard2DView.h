@@ -20,7 +20,7 @@ public:
 
   //virtual bool render(sf::RenderTexture& texture, int frame) override;
 
-  virtual std::string get_view_name() override;
+  virtual std::string getViewName() override;
 
 protected:
   /// Constructor.

@@ -34,10 +34,10 @@ public:
   virtual void add(std::string message) = 0;
 
   /// Get the maximum size of the message queue.
-  virtual unsigned int get_message_queue_size() = 0;
+  virtual unsigned int getMessageQueueSize() = 0;
 
   /// Get a reference to the message queue.
-  virtual std::deque<std::string>& get_message_queue() = 0;
+  virtual std::deque<std::string>& getMessageQueue() = 0;
 
   virtual std::unordered_set<EventID> registeredEvents() const override final;
 

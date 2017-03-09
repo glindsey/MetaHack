@@ -49,7 +49,7 @@ public:
                               sf::Color bgColor,
                               int frame) = 0;
 
-  virtual std::string get_view_name() = 0;
+  virtual std::string getViewName() = 0;
 
 protected:
   /// Get reference to Map associated with this view.

@@ -14,7 +14,7 @@ Action::StateResult ActionGet::do_prebegin_work_(AnyMap& params)
   std::string message;
   auto subject = get_subject();
   auto object = get_object();
-  EntityId location = subject->get_location();
+  EntityId location = subject->getLocation();
 
   // Verify that the Action has an object.
   if (object == EntityId::Mu())

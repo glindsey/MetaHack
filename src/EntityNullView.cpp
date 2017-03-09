@@ -19,7 +19,7 @@ void EntityNullView::draw(sf::RenderTarget& target,
 {
 }
 
-std::string EntityNullView::get_view_name()
+std::string EntityNullView::getViewName()
 {
   return "null";
 }

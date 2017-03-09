@@ -208,7 +208,7 @@ EntityId Inventory::get_largest_thing()
   return iter_largest->second;
 }
 
-EntityId Inventory::get_entity()
+EntityId Inventory::getEntity()
 {
   auto iter =
     find_if([&](const EntityPair& thing_pair)

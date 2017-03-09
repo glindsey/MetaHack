@@ -21,7 +21,7 @@ public:
   /// Destructor.
   virtual ~MapTileView() {}
 
-  virtual std::string get_view_name() = 0;
+  virtual std::string getViewName() = 0;
 
 protected:
   /// Constructor.

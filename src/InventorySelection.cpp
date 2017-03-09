@@ -204,7 +204,7 @@ bool InventorySelection::dec_selected_quantity()
   return false;
 }
 
-EntityId InventorySelection::get_entity(InventorySlot selection)
+EntityId InventorySelection::getEntity(InventorySlot selection)
 {
   EntityId viewed = pImpl->viewed;
 

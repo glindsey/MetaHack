@@ -14,12 +14,12 @@ public:
 
   virtual void add(std::string message) override {}
 
-  virtual unsigned int get_message_queue_size() override
+  virtual unsigned int getMessageQueueSize() override
   {
     return 0;
   }
 
-  virtual std::deque<std::string>& get_message_queue() override { return message_queue; }
+  virtual std::deque<std::string>& getMessageQueue() override { return message_queue; }
 
 protected:
 private:

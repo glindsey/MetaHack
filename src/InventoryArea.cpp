@@ -119,7 +119,7 @@ void InventoryArea::drawContents_(sf::RenderTexture& texture, int frame)
 
     // 4. Display the tile representing the item.
     auto entity_view = std::unique_ptr<EntityView>(views.createEntityView(entity_pool.get(entity)));
-    entity_view->set_location({ static_cast<float>(text_coord_x + 75), static_cast<float>(text_coord_y) });
+    entity_view->setLocation({ static_cast<float>(text_coord_x + 75), static_cast<float>(text_coord_y) });
     entity_view->setSize({ line_spacing_y - 1, line_spacing_y - 1 } );
     entity_view->draw(texture, false, true, frame);
 

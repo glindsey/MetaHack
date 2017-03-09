@@ -19,14 +19,14 @@ StringDictionary::StringDictionary(std::string filename_)
 
   if (!filename_.empty())
   {
-    load_file(filename_);
+    loadFile(filename_);
   }
 }
 
 StringDictionary::~StringDictionary()
 {}
 
-bool StringDictionary::load_file(std::string filename_)
+bool StringDictionary::loadFile(std::string filename_)
 {
   // Look for the file requested.
   FileName filename = filename_ + ".json";

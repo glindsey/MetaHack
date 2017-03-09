@@ -27,7 +27,7 @@ public:
                               sf::Color bgColor,
                               int frame) override;
 
-  virtual std::string get_view_name() override;
+  virtual std::string getViewName() override;
 
 protected:
   /// Constructor.

@@ -73,7 +73,7 @@ public:
   bool inc_selected_quantity();
   bool dec_selected_quantity();
 
-  EntityId get_entity(InventorySlot selection);
+  EntityId getEntity(InventorySlot selection);
 
   /// @todo Not sure if these actually belong here, or somewhere else.
   static char get_character(InventorySlot slot);

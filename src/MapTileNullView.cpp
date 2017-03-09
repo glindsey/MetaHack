@@ -2,7 +2,7 @@
 
 #include "MapTileNullView.h"
 
-std::string MapTileNullView::get_view_name()
+std::string MapTileNullView::getViewName()
 {
   return "null";
 }

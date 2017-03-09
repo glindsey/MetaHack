@@ -14,7 +14,7 @@ Action::StateResult ActionTakeOut::do_prebegin_work_(AnyMap& params)
   std::string message;
   auto subject = get_subject();
   auto object = get_object();
-  auto container = object->get_location();
+  auto container = object->getLocation();
 
   // Verify that the Action has an object.
   if (object == EntityId::Mu())
@@ -78,8 +78,8 @@ Action::StateResult ActionTakeOut::do_begin_work_(AnyMap& params)
   std::string message;
   auto subject = get_subject();
   auto object = get_object();
-  auto container = object->get_location();
-  auto new_location = container->get_location();
+  auto container = object->getLocation();
+  auto new_location = container->getLocation();
 
   // Set the target to be the container as a kludge for message printing.
   set_target(container);

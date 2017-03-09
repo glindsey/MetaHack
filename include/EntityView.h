@@ -21,11 +21,11 @@ public:
   /// If the new location is different from previous, this method may
   /// reinitialize cached render data.
   /// @param target_coords Target coords for the Entity's upper-left corner.
-  void set_location(Vec2f target_coords);
+  void setLocation(Vec2f target_coords);
 
   /// Gets the location of this Entity on the target texture.
   /// @return Target coords for the Entity's upper-left corner.
-  Vec2f get_location();
+  Vec2f getLocation();
 
   /// Sets the size of this Entity on the target texture.
   /// If the new size is different from previous, this method may
@@ -42,16 +42,16 @@ public:
                     bool use_smoothing,
                     int frame) = 0;
 
-  virtual std::string get_view_name() = 0;
+  virtual std::string getViewName() = 0;
 
 protected:
   /// Constructor.
   explicit EntityView(Entity& entity);
 
   /// Get reference to Entity associated with this view.
-  Entity& get_entity();
+  Entity& getEntity();
 
-  Entity const& get_entity() const;
+  Entity const& getEntity() const;
 
 private:
   /// Reference to Entity associated with this view.

@@ -79,7 +79,7 @@ Action::StateResult ActionHurl::do_begin_work_(AnyMap& params)
   auto subject = get_subject();
   auto object = get_object();
   auto direction = get_target_direction();
-  EntityId new_location = subject->get_location();
+  EntityId new_location = subject->getLocation();
 
   if (object->be_object_of(*this, subject, direction) == ActionResult::Success)
   {

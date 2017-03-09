@@ -14,7 +14,7 @@ Action::StateResult ActionDrop::do_prebegin_work_(AnyMap& params)
   std::string message;
   auto subject = get_subject();
   auto object = get_object();
-  EntityId location = subject->get_location();
+  EntityId location = subject->getLocation();
 
   // If it's us, this is a special case. Return success.
   if (subject == object)
@@ -76,7 +76,7 @@ Action::StateResult ActionDrop::do_begin_work_(AnyMap& params)
   std::string message;
   auto subject = get_subject();
   auto object = get_objects().front();
-  EntityId location = subject->get_location();
+  EntityId location = subject->getLocation();
 
   /// @todo Handle dropping a certain quantity of an item.
 

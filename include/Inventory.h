@@ -72,7 +72,7 @@ public:
   EntityId remove(InventorySlot slot);
 
   EntityId get_largest_thing();
-  EntityId get_entity();
+  EntityId getEntity();
 
 protected:
   EntityMap::iterator find(EntityId target);

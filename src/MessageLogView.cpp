@@ -84,7 +84,7 @@ void MessageLogView::drawContents_(sf::RenderTexture& texture, int frame)
 
   // Draw each of the message_queue in the queue.
   /// @todo Split lines that are too long instead of truncating them.
-  auto& message_queue = m_model.get_message_queue();
+  auto& message_queue = m_model.getMessageQueue();
 
   for (auto iter = message_queue.begin(); iter != message_queue.end(); ++iter)
   {

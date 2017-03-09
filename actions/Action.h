@@ -43,7 +43,7 @@ using ActionMap = std::unordered_map<std::string, ActionCreator>;
 
 #define THE_FOO   (get_object_string_())
 
-#define THE_FOOS_LOCATION  (get_object()->get_location()->get_identifying_string(ArticleChoice::Definite))
+#define THE_FOOS_LOCATION  (get_object()->getLocation()->get_identifying_string(ArticleChoice::Definite))
 #define THE_TARGET_THING   (get_target_thing()->get_identifying_string(ArticleChoice::Definite))
 
 #define FOOSELF (get_object()->get_self_or_identifying_string(get_subject(), ArticleChoice::Definite))

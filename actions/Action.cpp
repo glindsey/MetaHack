@@ -231,7 +231,7 @@ Action::StateResult Action::do_prebegin_work(AnyMap& params)
 
   auto subject = get_subject();
   auto& objects = get_objects();
-  auto location = subject->get_location();
+  auto location = subject->getLocation();
   MapTile* current_tile = subject->get_maptile();
   auto new_direction = get_target_direction();
 
@@ -537,7 +537,7 @@ std::string Action::make_string(std::string pattern, std::vector<std::string> op
 
     if ((token == "the_foos_location") || (token == "thefooslocation"))
     {
-      return get_object()->get_location()->get_identifying_string(ArticleChoice::Definite);
+      return get_object()->getLocation()->get_identifying_string(ArticleChoice::Definite);
     }
 
     if ((token == "the_target_thing") || (token == "thetargetthing"))
@@ -731,7 +731,7 @@ std::string Action::make_string(EntityId subject, EntityId object, std::string p
 
     if ((token == "the_foos_location") || (token == "thefooslocation"))
     {
-      return object->get_location()->get_identifying_string(ArticleChoice::Definite);
+      return object->getLocation()->get_identifying_string(ArticleChoice::Definite);
     }
 
     if (token == "fooself")

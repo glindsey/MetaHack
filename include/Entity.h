@@ -236,7 +236,7 @@ public:
   EntityId get_root_location() const;
 
   /// Return the location of this entity.
-  EntityId get_location() const;
+  EntityId getLocation() const;
 
   /// Return whether the DynamicEntity can see the requested Entity.
   bool can_see(EntityId entity);
@@ -567,7 +567,7 @@ protected:
   /// Set the location of this entity.
   /// Does no checks, nor does it update the source/target inventories.
   /// Those are the responsibility of the caller.
-  void set_location(EntityId target);
+  void setLocation(EntityId target);
 
   /// Gets this location's maptile.
   virtual MapTile* _get_maptile() const;

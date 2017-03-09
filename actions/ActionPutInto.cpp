@@ -86,7 +86,7 @@ Action::StateResult ActionPutInto::do_prebegin_work_(AnyMap& params)
   }
 
   // Check that the entity's location isn't already the container.
-  if (object->get_location() == container)
+  if (object->getLocation() == container)
   {
     print_message_try_();
 
