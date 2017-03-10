@@ -7,30 +7,47 @@
 #include "Entity.h"
 #include "EntityId.h"
 
-ACTION_SRC_BOILERPLATE(ActionLock, "lock", "lock")
-
-Action::StateResult ActionLock::do_prebegin_work_(AnyMap& params)
+namespace Actions
 {
-  return Action::StateResult::Success();
-}
+  ActionLock ActionLock::prototype;
+  ActionLock::ActionLock() : Action("lock", "LOCK", ActionLock::create_) {}
+  ActionLock::ActionLock(EntityId subject) : Action(subject, "lock", "LOCK") {}
+  ActionLock::~ActionLock() {}
 
-Action::StateResult ActionLock::do_begin_work_(AnyMap& params)
-{
-  bool success = false;
-  unsigned int action_time = 0;
+  std::unordered_set<Action::Trait> const & ActionLock::getTraits() const
+  {
+    static std::unordered_set<Action::Trait> traits =
+    {
+      Trait::CanBeSubjectVerbObjectPrepositionTarget,
+      Trait::CanBeSubjectVerbObjectPrepositionDirection
+    };
 
-  auto& dict = Service<IStringDictionary>::get();
-  Service<IMessageLog>::get().add(dict.get("ACTION_NOT_IMPLEMENTED"));
+    return traits;
+  }
 
-  return{ success, action_time };
-}
+  StateResult ActionLock::do_prebegin_work_(AnyMap& params)
+  {
+    return StateResult::Success();
+  }
 
-Action::StateResult ActionLock::do_finish_work_(AnyMap& params)
-{
-  return Action::StateResult::Success();
-}
+  StateResult ActionLock::do_begin_work_(AnyMap& params)
+  {
+    bool success = false;
+    unsigned int action_time = 0;
 
-Action::StateResult ActionLock::do_abort_work_(AnyMap& params)
-{
-  return Action::StateResult::Success();
+    auto& dict = Service<IStringDictionary>::get();
+    Service<IMessageLog>::get().add(dict.get("ACTION_NOT_IMPLEMENTED"));
+
+    return{ success, action_time };
+  }
+
+  StateResult ActionLock::do_finish_work_(AnyMap& params)
+  {
+    return StateResult::Success();
+  }
+
+  StateResult ActionLock::do_abort_work_(AnyMap& params)
+  {
+    return StateResult::Success();
+  }
 }

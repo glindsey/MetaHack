@@ -7,27 +7,44 @@
 #include "Entity.h"
 #include "EntityId.h"
 
-ACTION_SRC_BOILERPLATE(ActionFill, "fill", "fill")
-
-Action::StateResult ActionFill::do_prebegin_work_(AnyMap& params)
+namespace Actions
 {
-  return Action::StateResult::Success();
-}
+  ActionFill ActionFill::prototype;
+  ActionFill::ActionFill() : Action("fill", "FILL", ActionFill::create_) {}
+  ActionFill::ActionFill(EntityId subject) : Action(subject, "fill", "FILL") {}
+  ActionFill::~ActionFill() {}
 
-Action::StateResult ActionFill::do_begin_work_(AnyMap& params)
-{
-  auto& dict = Service<IStringDictionary>::get();
-  Service<IMessageLog>::get().add(dict.get("ACTION_NOT_IMPLEMENTED"));
+  std::unordered_set<Action::Trait> const & ActionFill::getTraits() const
+  {
+    static std::unordered_set<Action::Trait> traits =
+    {
+      Trait::CanBeSubjectVerbObjectPrepositionTarget
+    };
 
-  return Action::StateResult::Failure();
-}
+    return traits;
+  }
 
-Action::StateResult ActionFill::do_finish_work_(AnyMap& params)
-{
-  return Action::StateResult::Success();
-}
+  StateResult ActionFill::do_prebegin_work_(AnyMap& params)
+  {
+    return StateResult::Success();
+  }
 
-Action::StateResult ActionFill::do_abort_work_(AnyMap& params)
-{
-  return Action::StateResult::Success();
-}
+  StateResult ActionFill::do_begin_work_(AnyMap& params)
+  {
+    auto& dict = Service<IStringDictionary>::get();
+    Service<IMessageLog>::get().add(dict.get("ACTION_NOT_IMPLEMENTED"));
+
+    return StateResult::Failure();
+  }
+
+  StateResult ActionFill::do_finish_work_(AnyMap& params)
+  {
+    return StateResult::Success();
+  }
+
+  StateResult ActionFill::do_abort_work_(AnyMap& params)
+  {
+    return StateResult::Success();
+  }
+} // end namespace
+

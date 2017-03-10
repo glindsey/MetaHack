@@ -7,27 +7,45 @@
 #include "Entity.h"
 #include "EntityId.h"
 
-ACTION_SRC_BOILERPLATE(ActionInscribe, "inscribe", "write")
-
-Action::StateResult ActionInscribe::do_prebegin_work_(AnyMap& params)
+namespace Actions
 {
-  return Action::StateResult::Success();
-}
+  ActionInscribe ActionInscribe::prototype;
+  ActionInscribe::ActionInscribe() : Action("inscribe", "WRITE", ActionInscribe::create_) {}
+  ActionInscribe::ActionInscribe(EntityId subject) : Action(subject, "inscribe", "WRITE") {}
+  ActionInscribe::~ActionInscribe() {}
 
-Action::StateResult ActionInscribe::do_begin_work_(AnyMap& params)
-{
-  auto& dict = Service<IStringDictionary>::get();
-  Service<IMessageLog>::get().add(dict.get("ACTION_NOT_IMPLEMENTED"));
+  std::unordered_set<Action::Trait> const & ActionInscribe::getTraits() const
+  {
+    static std::unordered_set<Action::Trait> traits =
+    {
+      Trait::CanBeSubjectVerbDirection,
+      Trait::CanBeSubjectVerbObjectPrepositionTarget,
+      Trait::CanBeSubjectVerbObjectPrepositionDirection
+    };
 
-  return Action::StateResult::Failure();
-}
+    return traits;
+  }
 
-Action::StateResult ActionInscribe::do_finish_work_(AnyMap& params)
-{
-  return Action::StateResult::Success();
-}
+  StateResult ActionInscribe::do_prebegin_work_(AnyMap& params)
+  {
+    return StateResult::Success();
+  }
 
-Action::StateResult ActionInscribe::do_abort_work_(AnyMap& params)
-{
-  return Action::StateResult::Success();
-}
+  StateResult ActionInscribe::do_begin_work_(AnyMap& params)
+  {
+    auto& dict = Service<IStringDictionary>::get();
+    Service<IMessageLog>::get().add(dict.get("ACTION_NOT_IMPLEMENTED"));
+
+    return StateResult::Failure();
+  }
+
+  StateResult ActionInscribe::do_finish_work_(AnyMap& params)
+  {
+    return StateResult::Success();
+  }
+
+  StateResult ActionInscribe::do_abort_work_(AnyMap& params)
+  {
+    return StateResult::Success();
+  }
+} // end namespace

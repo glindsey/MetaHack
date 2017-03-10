@@ -6,23 +6,29 @@
 #include "ActionCRTP.h"
 #include "EntityId.h"
 
-class ActionPutInto
-  :
-  public Action, public ActionCRTP<ActionPutInto>
+namespace Actions
 {
-  ACTION_HDR_BOILERPLATE(ActionPutInto)
-    ACTION_TRAIT(can_be_subject_verb_object_preposition_target)
-    ACTION_TRAIT(can_be_subject_verb_objects_preposition_target)
+  class ActionPutInto
+    :
+    public Action, public ActionCRTP<ActionPutInto>
+  {
+  private:
+    ActionPutInto();
+  public:
+    explicit ActionPutInto(EntityId subject);
+    virtual ~ActionPutInto();
+    static ActionPutInto prototype;
 
-    /// @todo Handle putting multiple items into a entity. Right now only the
-    ///       first item is processed.
+    virtual std::unordered_set<Action::Trait> const& getTraits() const override;
 
-protected:
-  virtual StateResult do_prebegin_work_(AnyMap& params) override;
-  virtual StateResult do_begin_work_(AnyMap& params) override;
-  virtual StateResult do_finish_work_(AnyMap& params) override;
-  virtual StateResult do_abort_work_(AnyMap& params) override;
+  protected:
+    virtual StateResult do_prebegin_work_(AnyMap& params) override;
+    virtual StateResult do_begin_work_(AnyMap& params) override;
+    virtual StateResult do_finish_work_(AnyMap& params) override;
+    virtual StateResult do_abort_work_(AnyMap& params) override;
 
-  virtual void print_message_try_() const override;
-  virtual void print_message_do_() const override;
-};
+    virtual void print_message_try_() const override;
+    virtual void print_message_do_() const override;
+  };
+ 
+} // end namespace

@@ -276,7 +276,8 @@
   <ItemGroup>
     <ClInclude Include="actions\Action.h" />
     <ClInclude Include="actions\ActionAttack.h" />
-    <ClInclude Include="actions\ActionAttire.h" />
+    <ClInclude Include="actions\ActionTakeOff.h" />
+    <ClInclude Include="actions\ActionWear.h" />
     <ClInclude Include="actions\ActionClose.h" />
     <ClInclude Include="actions\ActionCRTP.h" />
     <ClInclude Include="actions\ActionDie.h" />
@@ -407,8 +408,10 @@
   <ItemGroup>
     <ClCompile Include="actions\Action.cpp" />
     <ClCompile Include="actions\ActionAttack.cpp" />
-    <ClCompile Include="actions\ActionAttire.cpp" />
+    <ClCompile Include="actions\ActionTakeOff.cpp" />
+    <ClCompile Include="actions\ActionWear.cpp" />
     <ClCompile Include="actions\ActionClose.cpp" />
+    <ClCompile Include="actions\ActionDie.cpp" />
     <ClCompile Include="actions\ActionDrop.cpp" />
     <ClCompile Include="actions\ActionEat.cpp" />
     <ClCompile Include="actions\ActionFill.cpp" />

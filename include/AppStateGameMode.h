@@ -6,7 +6,10 @@
 #include "AppState.h"
 
 // Forward declarations
-class Action;
+namespace Actions
+{
+  class Action;
+}
 class Direction;
 class EntityId;
 class GameState;
@@ -93,7 +96,7 @@ private:
 
   /// Action in progress (if any).
   /// Used for an action that needs a "target".
-  std::unique_ptr<Action> m_action_in_progress;
+  std::unique_ptr<Actions::Action> m_action_in_progress;
 };
 
 #endif // APPSTATEGAMEMODE_H

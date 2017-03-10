@@ -6,28 +6,27 @@
 #include "ActionCRTP.h"
 #include "EntityId.h"
 
-class ActionDrop
-  :
-  public Action, public ActionCRTP<ActionDrop>
+namespace Actions
 {
-  ACTION_HDR_BOILERPLATE(ActionDrop)
-    ACTION_TRAIT(can_be_subject_verb_object)
-    ACTION_TRAIT(can_take_a_quantity)
-
-public:
-  std::string const get_verbable() const override
+  class ActionDrop
+    :
+    public Action, public ActionCRTP<ActionDrop>
   {
-    return "droppable";
-  }
+  private:
+    ActionDrop();
+  public:
+    explicit ActionDrop(EntityId subject);
+    virtual ~ActionDrop();
+    static ActionDrop prototype;
 
-  std::string const get_verbed() const override
-  {
-    return "dropped";
-  }
+    virtual std::unordered_set<Action::Trait> const& getTraits() const override;
 
-protected:
-  virtual StateResult do_prebegin_work_(AnyMap& params) override;
-  virtual StateResult do_begin_work_(AnyMap& params) override;
-  virtual StateResult do_finish_work_(AnyMap& params) override;
-  virtual StateResult do_abort_work_(AnyMap& params) override;
-};
+  protected:
+    virtual StateResult do_prebegin_work_(AnyMap& params) override;
+    virtual StateResult do_begin_work_(AnyMap& params) override;
+    virtual StateResult do_finish_work_(AnyMap& params) override;
+    virtual StateResult do_abort_work_(AnyMap& params) override;
+  };
+
+} // end namespace
+

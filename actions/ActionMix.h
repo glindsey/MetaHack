@@ -6,22 +6,26 @@
 #include "ActionCRTP.h"
 #include "EntityId.h"
 
-class ActionMix
-  :
-  public Action, public ActionCRTP<ActionMix>
+namespace Actions
 {
-  ACTION_HDR_BOILERPLATE(ActionMix)
-    ACTION_TRAIT(can_be_subject_verb_objects)
-
-public:
-  std::string const get_verbable() const override
+  class ActionMix
+    :
+    public Action, public ActionCRTP<ActionMix>
   {
-    return "miscable";
-  }
+  private:
+    ActionMix();
+  public:
+    explicit ActionMix(EntityId subject);
+    virtual ~ActionMix();
+    static ActionMix prototype;
 
-protected:
-  virtual StateResult do_prebegin_work_(AnyMap& params) override;
-  virtual StateResult do_begin_work_(AnyMap& params) override;
-  virtual StateResult do_finish_work_(AnyMap& params) override;
-  virtual StateResult do_abort_work_(AnyMap& params) override;
-};
+    virtual std::unordered_set<Action::Trait> const& getTraits() const override;
+
+  protected:
+    virtual StateResult do_prebegin_work_(AnyMap& params) override;
+    virtual StateResult do_begin_work_(AnyMap& params) override;
+    virtual StateResult do_finish_work_(AnyMap& params) override;
+    virtual StateResult do_abort_work_(AnyMap& params) override;
+  };
+
+} // end namespace

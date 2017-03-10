@@ -36,7 +36,7 @@ using WearingPair = std::pair<WearLocation, EntityId>;
 
 using MapMemory = std::vector<MapMemoryChunk>;
 using TilesSeen = boost::dynamic_bitset<size_t>; // size_t gets rid of 64-bit compile warning
-using ActionQueue = std::deque< std::unique_ptr<Action> >;
+using ActionQueue = std::deque< std::unique_ptr<Actions::Action> >;
 
 // Associated enum classes to aid in parameter legibility.
 enum class ArticleChoice
@@ -68,7 +68,7 @@ public:
   /// Queue an action for this DynamicEntity to perform.
   /// pAction The Action to queue. The Action is MOVED when queued,
   ///         e.g. pAction will be `nullptr` after queuing.
-  void queue_action(std::unique_ptr<Action> pAction);
+  void queue_action(std::unique_ptr<Actions::Action> pAction);
 
   /// Return whether there is an action pending for this DynamicEntity.
   bool action_is_pending() const;
@@ -306,7 +306,7 @@ public:
   /// @param entity  The Entity doing the Action.
   /// @param action Reference to the Action to perform.
   /// @return true if the Action can be performed, false otherwise.
-  bool can_have_action_done_by(EntityId entity, Action& action);
+  bool can_have_action_done_by(EntityId entity, Actions::Action& action);
 
   /// Returns a reference to the inventory.
   Inventory& get_inventory();
@@ -471,7 +471,7 @@ public:
   /// @param subject  The subject performing the action.
   /// @return Result of the action. If Failure, the action is aborted
   ///         (if possible).
-  ActionResult be_object_of(Action & action, EntityId subject);
+  ActionResult be_object_of(Actions::Action& action, EntityId subject);
 
   /// Perform the effects of being a object of an action with a target.
   /// @param action   The action to be the target of.
@@ -479,7 +479,7 @@ public:
   /// @param target   The target of the action.
   /// @return Result of the action. If Failure, the action is aborted
   ///         (if possible).
-  ActionResult be_object_of(Action & action, EntityId subject, EntityId target);
+  ActionResult be_object_of(Actions::Action& action, EntityId subject, EntityId target);
 
   /// Perform the effects of being a object of an action with a direction.
   /// @param action     The action to be the target of.
@@ -487,7 +487,7 @@ public:
   /// @param direction  The direction of the action.
   /// @return Result of the action. If Failure, the action is aborted
   ///         (if possible).
-  ActionResult be_object_of(Action & action, EntityId subject, Direction direction);
+  ActionResult be_object_of(Actions::Action& action, EntityId subject, Direction direction);
 
   /// Perform an action when this entity is hit by an attack.
   ActionResult perform_action_hurt_by(EntityId subject);

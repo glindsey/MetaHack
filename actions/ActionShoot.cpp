@@ -7,27 +7,47 @@
 #include "Entity.h"
 #include "EntityId.h"
 
-ACTION_SRC_BOILERPLATE(ActionShoot, "shoot", "shoot")
-
-Action::StateResult ActionShoot::do_prebegin_work_(AnyMap& params)
+namespace Actions
 {
-  return Action::StateResult::Success();
-}
+  //ACTION_SRC_BOILERPLATE(ActionShoot, "shoot", "shoot")
+  //ACTION_TRAIT(can_be_subject_verb_object_preposition_direction)
 
-Action::StateResult ActionShoot::do_begin_work_(AnyMap& params)
-{
-  auto& dict = Service<IStringDictionary>::get();
-  Service<IMessageLog>::get().add(dict.get("ACTION_NOT_IMPLEMENTED"));
+  ActionShoot ActionShoot::prototype;
+  ActionShoot::ActionShoot() : Action("shoot", "SHOOT", ActionShoot::create_) {}
+  ActionShoot::ActionShoot(EntityId subject) : Action(subject, "shoot", "SHOOT") {}
+  ActionShoot::~ActionShoot() {}
 
-  return Action::StateResult::Failure();
-}
+  std::unordered_set<Action::Trait> const & ActionShoot::getTraits() const
+  {
+    static std::unordered_set<Action::Trait> traits =
+    {
+      Trait::CanBeSubjectVerbObjectPrepositionDirection
+    };
 
-Action::StateResult ActionShoot::do_finish_work_(AnyMap& params)
-{
-  return Action::StateResult::Success();
-}
+    return traits;
+  }
 
-Action::StateResult ActionShoot::do_abort_work_(AnyMap& params)
-{
-  return Action::StateResult::Success();
-}
+  StateResult ActionShoot::do_prebegin_work_(AnyMap& params)
+  {
+    return StateResult::Success();
+  }
+
+  StateResult ActionShoot::do_begin_work_(AnyMap& params)
+  {
+    auto& dict = Service<IStringDictionary>::get();
+    Service<IMessageLog>::get().add(dict.get("ACTION_NOT_IMPLEMENTED"));
+
+    return StateResult::Failure();
+  }
+
+  StateResult ActionShoot::do_finish_work_(AnyMap& params)
+  {
+    return StateResult::Success();
+  }
+
+  StateResult ActionShoot::do_abort_work_(AnyMap& params)
+  {
+    return StateResult::Success();
+  }
+} // end namespace
+

@@ -6,24 +6,28 @@
 #include "ActionCRTP.h"
 #include "EntityId.h"
 
-class ActionRead
-  :
-  public Action, public ActionCRTP<ActionRead>
+namespace Actions
 {
-  ACTION_HDR_BOILERPLATE(ActionRead)
-    ACTION_TRAIT(can_be_subject_verb_object)
-    ACTION_TRAIT(can_be_subject_verb_direction)
-
-public:
-  std::string const get_verbed() const override
+  class ActionRead
+    :
+    public Action, public ActionCRTP<ActionRead>
   {
-    return "read";
-  }
+  private:
+    ActionRead();
+  public:
+    explicit ActionRead(EntityId subject);
+    virtual ~ActionRead();
+    static ActionRead prototype;
 
-protected:
-  virtual StateResult do_prebegin_work_(AnyMap& params) override;
-  virtual StateResult do_begin_work_(AnyMap& params) override;
-  virtual StateResult do_finish_work_(AnyMap& params) override;
-  virtual StateResult do_abort_work_(AnyMap& params) override;
-  virtual void print_message_cant_() const override;
-};
+    virtual std::unordered_set<Action::Trait> const& getTraits() const override;
+
+  protected:
+    virtual StateResult do_prebegin_work_(AnyMap& params) override;
+    virtual StateResult do_begin_work_(AnyMap& params) override;
+    virtual StateResult do_finish_work_(AnyMap& params) override;
+    virtual StateResult do_abort_work_(AnyMap& params) override;
+
+    virtual void print_message_cant_() const override;
+  };
+
+} // end namespace

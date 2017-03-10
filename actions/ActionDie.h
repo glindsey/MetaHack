@@ -6,23 +6,26 @@
 #include "ActionCRTP.h"
 #include "EntityId.h"
 
-class ActionDie
-  :
-  public Action, public ActionCRTP<ActionDie>
+namespace Actions
 {
-  ACTION_HDR_BOILERPLATE(ActionDie)
-    ACTION_TRAIT(can_be_subject_only)
-    ACTION_TRAIT(subject_can_be_in_limbo)
-
-public:
-  virtual std::string const get_verbable() const override
+  class ActionDie
+    :
+    public Action, public ActionCRTP<ActionDie>
   {
-    return "mortal";
-  }
+  private:
+    ActionDie();
+  public:
+    explicit ActionDie(EntityId subject);
+    virtual ~ActionDie();
+    static ActionDie prototype;
 
-protected:
-  virtual StateResult do_prebegin_work_(AnyMap& params) override;
-  virtual StateResult do_begin_work_(AnyMap& params) override;
-  virtual StateResult do_finish_work_(AnyMap& params) override;
-  virtual StateResult do_abort_work_(AnyMap& params) override;
-};
+    virtual std::unordered_set<Action::Trait> const& getTraits() const override;
+
+  protected:
+    virtual StateResult do_prebegin_work_(AnyMap& params) override;
+    virtual StateResult do_begin_work_(AnyMap& params) override;
+    virtual StateResult do_finish_work_(AnyMap& params) override;
+    virtual StateResult do_abort_work_(AnyMap& params) override;
+  };
+
+} // end namespace

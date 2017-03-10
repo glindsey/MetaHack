@@ -7,122 +7,140 @@
 #include "Entity.h"
 #include "EntityId.h"
 
-ACTION_SRC_BOILERPLATE(ActionTakeOut, "takeout", "remove")
-
-Action::StateResult ActionTakeOut::do_prebegin_work_(AnyMap& params)
+namespace Actions
 {
-  std::string message;
-  auto subject = get_subject();
-  auto object = get_object();
-  auto container = object->getLocation();
+  ActionTakeOut ActionTakeOut::prototype;
+  ActionTakeOut::ActionTakeOut() : Action("takeout", "REMOVE", ActionTakeOut::create_) {}
+  ActionTakeOut::ActionTakeOut(EntityId subject) : Action(subject, "takeout", "REMOVE") {}
+  ActionTakeOut::~ActionTakeOut() {}
 
-  // Verify that the Action has an object.
-  if (object == EntityId::Mu())
+  std::unordered_set<Action::Trait> const & ActionTakeOut::getTraits() const
   {
-    return StateResult::Failure();
+    static std::unordered_set<Action::Trait> traits =
+    {
+      Trait::CanBeSubjectVerbObject,
+      Trait::CanBeSubjectVerbObjects,
+      Trait::ObjectCanBeOutOfReach
+    };
+
+    return traits;
   }
 
-  // Check that the entity isn't US!
-  if (object == subject)
+  StateResult ActionTakeOut::do_prebegin_work_(AnyMap& params)
   {
-    if (IS_PLAYER)
+    std::string message;
+    auto subject = get_subject();
+    auto object = get_object();
+    auto container = object->getLocation();
+
+    // Verify that the Action has an object.
+    if (object == EntityId::Mu())
     {
-      /// @todo Maybe allow player to voluntarily exit a container?
-      message = "I'm afraid you can't do that.  "
-        "(At least, not in this version...)";
+      return StateResult::Failure();
     }
-    else
+
+    // Check that the entity isn't US!
+    if (object == subject)
     {
-      message = YOU_TRY + " to take " + YOURSELF +
-        "out, which seriously shouldn't happen.";
-      CLOG(WARNING, "Action") << "NPC tried to take self out!?";
-    }
-    Service<IMessageLog>::get().add(message);
-
-    return StateResult::Failure();
-  }
-
-  // Check that the container is not a MapTile or DynamicEntity.
-  if (!object->is_inside_another_thing())
-  {
-    print_message_try_();
-
-    //message = YOU_TRY + " to remove " + THE_FOO +
-    //  " from its container.";
-    //Service<IMessageLog>::get().add(message);
-
-    message = "But " + THE_FOO + " is not inside a container!";
-    Service<IMessageLog>::get().add(message);
-
-    return StateResult::Failure();
-  }
-
-  // Check that the container is within reach.
-  if (!subject->can_reach(container))
-  {
-    print_message_try_();
-
-    message = YOU + " cannot reach " + THE_FOO + ".";
-    Service<IMessageLog>::get().add(message);
-
-    return StateResult::Failure();
-  }
-
-  return StateResult::Success();
-}
-
-Action::StateResult ActionTakeOut::do_begin_work_(AnyMap& params)
-{
-  /// @todo Handle taking out a certain quantity of an item.
-  Action::StateResult result = StateResult::Failure();
-  std::string message;
-  auto subject = get_subject();
-  auto object = get_object();
-  auto container = object->getLocation();
-  auto new_location = container->getLocation();
-
-  // Set the target to be the container as a kludge for message printing.
-  set_target(container);
-
-  if (object->be_object_of(*this, subject) == ActionResult::Success)
-  {
-    if (object->move_into(new_location))
-    {
-      print_message_do_();
-
-      /// @todo Figure out action time.
-      result = StateResult::Success();
-    }
-    else
-    {
-      message = YOU + " could not take " + get_object_string_() + " out of " + get_target_string_() + " for some inexplicable reason.";
+      if (IS_PLAYER)
+      {
+        /// @todo Maybe allow player to voluntarily exit a container?
+        message = "I'm afraid you can't do that.  "
+          "(At least, not in this version...)";
+      }
+      else
+      {
+        message = YOU_TRY + " to take " + YOURSELF +
+          "out, which seriously shouldn't happen.";
+        CLOG(WARNING, "Action") << "NPC tried to take self out!?";
+      }
       Service<IMessageLog>::get().add(message);
 
-      MAJOR_ERROR("Could not move Entity out of Container even though be_object_of returned Success");
+      return StateResult::Failure();
     }
+
+    // Check that the container is not a MapTile or DynamicEntity.
+    if (!object->is_inside_another_thing())
+    {
+      print_message_try_();
+
+      //message = YOU_TRY + " to remove " + THE_FOO +
+      //  " from its container.";
+      //Service<IMessageLog>::get().add(message);
+
+      message = "But " + THE_FOO + " is not inside a container!";
+      Service<IMessageLog>::get().add(message);
+
+      return StateResult::Failure();
+    }
+
+    // Check that the container is within reach.
+    if (!subject->can_reach(container))
+    {
+      print_message_try_();
+
+      message = YOU + " cannot reach " + THE_FOO + ".";
+      Service<IMessageLog>::get().add(message);
+
+      return StateResult::Failure();
+    }
+
+    return StateResult::Success();
   }
 
-  return result;
-}
+  StateResult ActionTakeOut::do_begin_work_(AnyMap& params)
+  {
+    /// @todo Handle taking out a certain quantity of an item.
+    StateResult result = StateResult::Failure();
+    std::string message;
+    auto subject = get_subject();
+    auto object = get_object();
+    auto container = object->getLocation();
+    auto new_location = container->getLocation();
 
-Action::StateResult ActionTakeOut::do_finish_work_(AnyMap& params)
-{
-  return Action::StateResult::Success();
-}
+    // Set the target to be the container as a kludge for message printing.
+    set_target(container);
 
-Action::StateResult ActionTakeOut::do_abort_work_(AnyMap& params)
-{
-  return Action::StateResult::Success();
-}
+    if (object->be_object_of(*this, subject) == ActionResult::Success)
+    {
+      if (object->move_into(new_location))
+      {
+        print_message_do_();
 
-void ActionTakeOut::print_message_try_() const
-{
-  std::string message = YOU_TRY + " to " + VERB + " " + get_object_string_() + " from " + get_target_string_() + ".";
-  Service<IMessageLog>::get().add(message);
-}
+        /// @todo Figure out action time.
+        result = StateResult::Success();
+      }
+      else
+      {
+        message = YOU + " could not take " + get_object_string_() + " out of " + get_target_string_() + " for some inexplicable reason.";
+        Service<IMessageLog>::get().add(message);
 
-void ActionTakeOut::print_message_do_() const
-{
-  std::string message = YOU + " " + CV(VERB, VERB3) + " " + get_object_string_() + " from " + get_target_string_() + ".";
-  Service<IMessageLog>::get().add(message);
+        MAJOR_ERROR("Could not move Entity out of Container even though be_object_of returned Success");
+      }
+    }
+
+    return result;
+  }
+
+  StateResult ActionTakeOut::do_finish_work_(AnyMap& params)
+  {
+    return StateResult::Success();
+  }
+
+  StateResult ActionTakeOut::do_abort_work_(AnyMap& params)
+  {
+    return StateResult::Success();
+  }
+
+  void ActionTakeOut::print_message_try_() const
+  {
+    std::string message = YOU_TRY + " to " + VERB + " " + get_object_string_() + " from " + get_target_string_() + ".";
+    Service<IMessageLog>::get().add(message);
+  }
+
+  void ActionTakeOut::print_message_do_() const
+  {
+    std::string message = YOU + " " + CV(VERB, VERB3) + " " + get_object_string_() + " from " + get_target_string_() + ".";
+    Service<IMessageLog>::get().add(message);
+  }
 }

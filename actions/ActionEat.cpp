@@ -6,86 +6,102 @@
 #include "Entity.h"
 #include "EntityId.h"
 
-ACTION_SRC_BOILERPLATE(ActionEat, "eat", "eat")
-
-Action::StateResult ActionEat::do_prebegin_work_(AnyMap& params)
+namespace Actions
 {
-  std::string message;
-  auto subject = get_subject();
-  auto object = get_object();
+  ActionEat ActionEat::prototype;
+  ActionEat::ActionEat() : Action("eat", "EAT", ActionEat::create_) {}
+  ActionEat::ActionEat(EntityId subject) : Action(subject, "eat", "EAT") {}
+  ActionEat::~ActionEat() {}
 
-  // Check that it isn't US!
-  if (subject == object)
+  std::unordered_set<Action::Trait> const & ActionEat::getTraits() const
   {
-    print_message_try_();
+    static std::unordered_set<Action::Trait> traits =
+    {
+      Trait::CanBeSubjectVerbObject
+    };
 
-    /// @todo Handle "unusual" cases (e.g. zombies?)
-    message = "But " + YOU + " really " + CV("aren't", "isn't") + " that tasty, so " + YOU + CV(" stop.", " stops.");
-    Service<IMessageLog>::get().add(message);
-
-    return Action::StateResult::Failure();
+    return traits;
   }
 
-  // Check that we're capable of eating at all.
-  if (subject->get_modified_property<bool>("can_eat"))
+  StateResult ActionEat::do_prebegin_work_(AnyMap& params)
   {
-    print_message_try_();
+    std::string message;
+    auto subject = get_subject();
+    auto object = get_object();
 
-    message = "But, as " + getIndefArt(subject->get_display_name()) + subject->get_display_name() + "," + YOU_ARE + " not capable of eating.";
-    Service<IMessageLog>::get().add(message);
+    // Check that it isn't US!
+    if (subject == object)
+    {
+      print_message_try_();
 
-    return Action::StateResult::Failure();
+      /// @todo Handle "unusual" cases (e.g. zombies?)
+      message = "But " + YOU + " really " + CV("aren't", "isn't") + " that tasty, so " + YOU + CV(" stop.", " stops.");
+      Service<IMessageLog>::get().add(message);
+
+      return StateResult::Failure();
+    }
+
+    // Check that we're capable of eating at all.
+    if (subject->get_modified_property<bool>("can_eat"))
+    {
+      print_message_try_();
+
+      message = "But, as " + getIndefArt(subject->get_display_name()) + subject->get_display_name() + "," + YOU_ARE + " not capable of eating.";
+      Service<IMessageLog>::get().add(message);
+
+      return StateResult::Failure();
+    }
+
+    return StateResult::Success();
   }
 
-  return Action::StateResult::Success();
-}
-
-Action::StateResult ActionEat::do_begin_work_(AnyMap& params)
-{
-  auto subject = get_subject();
-  auto object = get_object();
-
-  print_message_begin_();
-
-  // Do the eating action here.
-  /// @todo "Partially eaten" status for entities that were started to be eaten
-  ///       but were interrupted.
-  /// @todo Figure out eating time. This will obviously vary based on the
-  ///       object being eaten.
-  m_last_eat_result = object->be_object_of(*this, subject);
-
-  switch (m_last_eat_result)
+  StateResult ActionEat::do_begin_work_(AnyMap& params)
   {
-    case ActionResult::Success:
-    case ActionResult::SuccessDestroyed:
-      return Action::StateResult::Success();
+    auto subject = get_subject();
+    auto object = get_object();
 
-    case ActionResult::Failure:
-      print_message_stop_();
-      return Action::StateResult::Failure();
+    print_message_begin_();
 
-    default:
-      CLOG(WARNING, "Action") << "Unknown ActionResult " << m_last_eat_result;
-      return Action::StateResult::Failure();
-  }
-}
+    // Do the eating action here.
+    /// @todo "Partially eaten" status for entities that were started to be eaten
+    ///       but were interrupted.
+    /// @todo Figure out eating time. This will obviously vary based on the
+    ///       object being eaten.
+    m_last_eat_result = object->be_object_of(*this, subject);
 
-Action::StateResult ActionEat::do_finish_work_(AnyMap& params)
-{
-  auto object = get_object();
+    switch (m_last_eat_result)
+    {
+      case ActionResult::Success:
+      case ActionResult::SuccessDestroyed:
+        return StateResult::Success();
 
-  print_message_finish_();
+      case ActionResult::Failure:
+        print_message_stop_();
+        return StateResult::Failure();
 
-  if (m_last_eat_result == ActionResult::SuccessDestroyed)
-  {
-    object->destroy();
+      default:
+        CLOG(WARNING, "Action") << "Unknown ActionResult " << m_last_eat_result;
+        return StateResult::Failure();
+    }
   }
 
-  return Action::StateResult::Success();
-}
+  StateResult ActionEat::do_finish_work_(AnyMap& params)
+  {
+    auto object = get_object();
 
-Action::StateResult ActionEat::do_abort_work_(AnyMap& params)
-{
-  print_message_stop_();
-  return Action::StateResult::Success();
-}
+    print_message_finish_();
+
+    if (m_last_eat_result == ActionResult::SuccessDestroyed)
+    {
+      object->destroy();
+    }
+
+    return StateResult::Success();
+  }
+
+  StateResult ActionEat::do_abort_work_(AnyMap& params)
+  {
+    print_message_stop_();
+    return StateResult::Success();
+  }
+} // end namespace

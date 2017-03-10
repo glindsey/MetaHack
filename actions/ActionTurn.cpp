@@ -11,76 +11,92 @@
 #include "Entity.h"
 #include "EntityId.h"
 
-ACTION_SRC_BOILERPLATE(ActionTurn, "turn", "turn")
-
-Action::StateResult ActionTurn::do_prebegin_work_(AnyMap& params)
+namespace Actions
 {
-  std::string message;
+  ActionTurn ActionTurn::prototype;
+  ActionTurn::ActionTurn() : Action("turn", "TURN", ActionTurn::create_) {}
+  ActionTurn::ActionTurn(EntityId subject) : Action(subject, "turn", "TURN") {}
+  ActionTurn::~ActionTurn() {}
 
-  auto subject = get_subject();
-  auto location = subject->getLocation();
-  auto new_direction = get_target_direction();
-
-  if (!IS_PLAYER)
+  std::unordered_set<Action::Trait> const & ActionTurn::getTraits() const
   {
-    print_message_try_();
+    static std::unordered_set<Action::Trait> traits =
+    {
+      Trait::CanBeSubjectVerbDirection
+    };
 
-    message = "But ";
-  }
-  else
-  {
-    message = "";
+    return traits;
   }
 
-  // Make sure we CAN move.
-  /// @todo Split moving/turning up? It seems reasonable that a creature
-  ///       might be able to swivel in place without being able to move.
-  if (!subject->get_intrinsic<bool>("can_move", false))
+  StateResult ActionTurn::do_prebegin_work_(AnyMap& params)
   {
-    message += YOU + CV(" don't", " doesn't") + " have the capability of movement.";
-    Service<IMessageLog>::get().add(message);
-    return Action::StateResult::Failure();
+    std::string message;
+
+    auto subject = get_subject();
+    auto location = subject->getLocation();
+    auto new_direction = get_target_direction();
+
+    if (!IS_PLAYER)
+    {
+      print_message_try_();
+
+      message = "But ";
+    }
+    else
+    {
+      message = "";
+    }
+
+    // Make sure we CAN move.
+    /// @todo Split moving/turning up? It seems reasonable that a creature
+    ///       might be able to swivel in place without being able to move.
+    if (!subject->get_intrinsic<bool>("can_move", false))
+    {
+      message += YOU + CV(" don't", " doesn't") + " have the capability of movement.";
+      Service<IMessageLog>::get().add(message);
+      return StateResult::Failure();
+    }
+
+    // Make sure we can move RIGHT NOW.
+    if (!subject->can_currently_move())
+    {
+      message += YOU + " can't move right now.";
+      Service<IMessageLog>::get().add(message);
+      return StateResult::Failure();
+    }
+
+    return StateResult::Success();
   }
 
-  // Make sure we can move RIGHT NOW.
-  if (!subject->can_currently_move())
+  /// @todo Implement me.
+  StateResult ActionTurn::do_begin_work_(AnyMap& params)
   {
-    message += YOU + " can't move right now.";
-    Service<IMessageLog>::get().add(message);
-    return Action::StateResult::Failure();
+    StateResult result = StateResult::Failure();
+
+    std::string message;
+
+    auto subject = get_subject();
+    EntityId location = subject->getLocation();
+    MapTile* current_tile = subject->get_maptile();
+    Direction new_direction = get_target_direction();
+
+    if ((new_direction != Direction::Up) &&
+      (new_direction != Direction::Down))
+    {
+      /// @todo Change facing direction.
+      result = StateResult::Success();
+    } // end else if (other direction)
+
+    return result;
   }
 
-  return Action::StateResult::Success();
-}
-
-/// @todo Implement me.
-Action::StateResult ActionTurn::do_begin_work_(AnyMap& params)
-{
-  StateResult result = StateResult::Failure();
-
-  std::string message;
-
-  auto subject = get_subject();
-  EntityId location = subject->getLocation();
-  MapTile* current_tile = subject->get_maptile();
-  Direction new_direction = get_target_direction();
-
-  if ((new_direction != Direction::Up) &&
-    (new_direction != Direction::Down))
+  StateResult ActionTurn::do_finish_work_(AnyMap& params)
   {
-    /// @todo Change facing direction.
-    result = StateResult::Success();
-  } // end else if (other direction)
+    return StateResult::Success();
+  }
 
-  return result;
-}
-
-Action::StateResult ActionTurn::do_finish_work_(AnyMap& params)
-{
-  return Action::StateResult::Success();
-}
-
-Action::StateResult ActionTurn::do_abort_work_(AnyMap& params)
-{
-  return Action::StateResult::Success();
+  StateResult ActionTurn::do_abort_work_(AnyMap& params)
+  {
+    return StateResult::Success();
+  }
 }

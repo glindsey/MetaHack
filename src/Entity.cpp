@@ -104,7 +104,7 @@ Entity::~Entity()
 {
 }
 
-void Entity::queue_action(std::unique_ptr<Action> pAction)
+void Entity::queue_action(std::unique_ptr<Actions::Action> pAction)
 {
   m_pending_actions.push_back(std::move(pAction));
 }
@@ -1459,7 +1459,7 @@ std::string Entity::get_bodypart_description(BodyPart part,
   return result;
 }
 
-bool Entity::can_have_action_done_by(EntityId entity, Action& action)
+bool Entity::can_have_action_done_by(EntityId entity, Actions::Action& action)
 {
   return call_lua_function<bool>("can_have_action_" + action.get_type() + "_done_by", { entity }, false);
 }
@@ -1513,19 +1513,19 @@ void Entity::perform_action_collided_with_wall(Direction d, std::string tile_typ
   return;
 }
 
-ActionResult Entity::be_object_of(Action& action, EntityId subject)
+ActionResult Entity::be_object_of(Actions::Action& action, EntityId subject)
 {
   ActionResult result = call_lua_function<ActionResult, EntityId>("be_object_of_action_" + action.get_type(), { subject }, ActionResult::Success);
   return result;
 }
 
-ActionResult Entity::be_object_of(Action & action, EntityId subject, EntityId target)
+ActionResult Entity::be_object_of(Actions::Action& action, EntityId subject, EntityId target)
 {
   ActionResult result = call_lua_function<ActionResult, EntityId>("be_object_of_action_" + action.get_type(), { subject, target }, ActionResult::Success);
   return result;
 }
 
-ActionResult Entity::be_object_of(Action & action, EntityId subject, Direction direction)
+ActionResult Entity::be_object_of(Actions::Action& action, EntityId subject, Direction direction)
 {
   ActionResult result = call_lua_function<ActionResult>("be_object_of_action_" + action.get_type(), { subject, NULL, direction.x(), direction.y(), direction.z() }, ActionResult::Success);
   return result;
@@ -1654,7 +1654,7 @@ bool Entity::_process_self()
   else if (!m_pending_actions.empty())
   {
     // Process the front action.
-    std::unique_ptr<Action>& action = m_pending_actions.front();
+    std::unique_ptr<Actions::Action>& action = m_pending_actions.front();
     bool action_done = action->process(get_id(), {});
     if (action_done)
     {

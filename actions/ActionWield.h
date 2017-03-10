@@ -6,19 +6,26 @@
 #include "ActionCRTP.h"
 #include "EntityId.h"
 
-class ActionWield
-  :
-  public Action, public ActionCRTP<ActionWield>
+namespace Actions
 {
-  ACTION_HDR_BOILERPLATE(ActionWield)
-    ACTION_TRAIT(can_be_subject_only)
-    ACTION_TRAIT(can_be_subject_verb_object)
-    ACTION_TRAIT(object_can_be_self)
-    ACTION_TRAIT(object_must_be_in_inventory)
+  class ActionWield
+    :
+    public Action, public ActionCRTP<ActionWield>
+  {
+  private:
+    ActionWield();
+  public:
+    explicit ActionWield(EntityId subject);
+    virtual ~ActionWield();
+    static ActionWield prototype;
 
-protected:
-  virtual StateResult do_prebegin_work_(AnyMap& params) override;
-  virtual StateResult do_begin_work_(AnyMap& params) override;
-  virtual StateResult do_finish_work_(AnyMap& params) override;
-  virtual StateResult do_abort_work_(AnyMap& params) override;
-};
+    virtual std::unordered_set<Action::Trait> const& getTraits() const override;
+
+  protected:
+    virtual StateResult do_prebegin_work_(AnyMap& params) override;
+    virtual StateResult do_begin_work_(AnyMap& params) override;
+    virtual StateResult do_finish_work_(AnyMap& params) override;
+    virtual StateResult do_abort_work_(AnyMap& params) override;
+  };
+
+} // end namespace

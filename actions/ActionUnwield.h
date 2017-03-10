@@ -6,16 +6,26 @@
 #include "ActionCRTP.h"
 #include "EntityId.h"
 
-class ActionUnwield
-  :
-  public Action, public ActionCRTP<ActionUnwield>
+namespace Actions
 {
-  ACTION_HDR_BOILERPLATE(ActionUnwield)
-    ACTION_TRAIT(can_be_subject_only)
+  class ActionUnwield
+    :
+    public Action, public ActionCRTP<ActionUnwield>
+  {
+  private:
+    ActionUnwield();
+  public:
+    explicit ActionUnwield(EntityId subject);
+    virtual ~ActionUnwield();
+    static ActionUnwield prototype;
 
-protected:
-  virtual StateResult do_prebegin_work_(AnyMap& params) override;
-  virtual StateResult do_begin_work_(AnyMap& params) override;
-  virtual StateResult do_finish_work_(AnyMap& params) override;
-  virtual StateResult do_abort_work_(AnyMap& params) override;
-};
+    virtual std::unordered_set<Action::Trait> const& getTraits() const override;
+
+  protected:
+    virtual StateResult do_prebegin_work_(AnyMap& params) override;
+    virtual StateResult do_begin_work_(AnyMap& params) override;
+    virtual StateResult do_finish_work_(AnyMap& params) override;
+    virtual StateResult do_abort_work_(AnyMap& params) override;
+  };
+
+} // end namespace

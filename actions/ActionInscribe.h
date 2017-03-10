@@ -11,29 +11,26 @@
 /// class system. It is taken to mean:
 ///     `subject` writes using finger on `target` (for writing in dust)
 ///     `subject` writes using `object` on `target` (for writing with item)
-class ActionInscribe
-  :
-  public Action, public ActionCRTP<ActionInscribe>
+namespace Actions
 {
-  ACTION_HDR_BOILERPLATE(ActionInscribe)
-    ACTION_TRAIT(can_be_subject_verb_direction)
-    ACTION_TRAIT(can_be_subject_verb_object_preposition_target)
-    ACTION_TRAIT(can_be_subject_verb_object_preposition_direction)
-
-public:
-  std::string const get_verbed() const override
+  class ActionInscribe
+    :
+    public Action, public ActionCRTP<ActionInscribe>
   {
-    return "wrote";
-  }
+  private:
+    ActionInscribe();
+  public:
+    explicit ActionInscribe(EntityId subject);
+    virtual ~ActionInscribe();
+    static ActionInscribe prototype;
 
-  std::string const get_verb_pp() const override
-  {
-    return "written";
-  }
+    virtual std::unordered_set<Action::Trait> const& getTraits() const override;
 
-protected:
-  virtual StateResult do_prebegin_work_(AnyMap& params) override;
-  virtual StateResult do_begin_work_(AnyMap& params) override;
-  virtual StateResult do_finish_work_(AnyMap& params) override;
-  virtual StateResult do_abort_work_(AnyMap& params) override;
-};
+  protected:
+    virtual StateResult do_prebegin_work_(AnyMap& params) override;
+    virtual StateResult do_begin_work_(AnyMap& params) override;
+    virtual StateResult do_finish_work_(AnyMap& params) override;
+    virtual StateResult do_abort_work_(AnyMap& params) override;
+  };
+
+} // end namespace

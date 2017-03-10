@@ -7,32 +7,50 @@
 #include "Entity.h"
 #include "EntityId.h"
 
-ACTION_SRC_BOILERPLATE(ActionWait, "wait", "wait")
-
-Action::StateResult ActionWait::do_prebegin_work_(AnyMap& params)
+namespace Actions
 {
-  // We can always wait.
-  return Action::StateResult::Success();
-}
+  ActionWait ActionWait::prototype;
+  ActionWait::ActionWait() : Action("wait", "WAIT", ActionWait::create_) {}
+  ActionWait::ActionWait(EntityId subject) : Action(subject, "wait", "WAIT") {}
+  ActionWait::~ActionWait() {}
 
-Action::StateResult ActionWait::do_begin_work_(AnyMap& params)
-{
-  std::string message = make_string("$you successfully $(cv?stay:stays) where $you_subj $are.");
+  std::unordered_set<Action::Trait> const & ActionWait::getTraits() const
+  {
+    static std::unordered_set<Action::Trait> traits =
+    {
+      Trait::CanBeSubjectOnly
+    };
 
-  //YOU + " successfully" + CV(" stay", " stays") +
-  //" where " + YOU_SUBJ_ARE + ".";
+    return traits;
+  }
 
-  Service<IMessageLog>::get().add(message);
+  StateResult ActionWait::do_prebegin_work_(AnyMap& params)
+  {
+    // We can always wait.
+    return StateResult::Success();
+  }
 
-  return{ true, 1 };
-}
+  StateResult ActionWait::do_begin_work_(AnyMap& params)
+  {
+    /// @todo Temporary message, remove or change
+    std::string message = make_string("$you successfully $(cv?stay:stays) where $you_subj $are.");
 
-Action::StateResult ActionWait::do_finish_work_(AnyMap& params)
-{
-  return Action::StateResult::Success();
-}
+    //YOU + " successfully" + CV(" stay", " stays") +
+    //" where " + YOU_SUBJ_ARE + ".";
 
-Action::StateResult ActionWait::do_abort_work_(AnyMap& params)
-{
-  return Action::StateResult::Success();
-}
+    Service<IMessageLog>::get().add(message);
+
+    return{ true, 1 };
+  }
+
+  StateResult ActionWait::do_finish_work_(AnyMap& params)
+  {
+    return StateResult::Success();
+  }
+
+  StateResult ActionWait::do_abort_work_(AnyMap& params)
+  {
+    return StateResult::Success();
+  }
+} // end namespace
+

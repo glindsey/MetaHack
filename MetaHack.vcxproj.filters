@@ -357,9 +357,6 @@
     <ClInclude Include="actions\ActionAttack.h">
       <Filter>Actions</Filter>
     </ClInclude>
-    <ClInclude Include="actions\ActionAttire.h">
-      <Filter>Actions</Filter>
-    </ClInclude>
     <ClInclude Include="actions\ActionClose.h">
       <Filter>Actions</Filter>
     </ClInclude>
@@ -440,6 +437,12 @@
     </ClInclude>
     <ClInclude Include="include\MessageLogView.h">
       <Filter>Views Derived From GUI Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\ActionWear.h">
+      <Filter>Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\ActionTakeOff.h">
+      <Filter>Actions</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -647,9 +650,6 @@
     <ClCompile Include="actions\ActionAttack.cpp">
       <Filter>Actions</Filter>
     </ClCompile>
-    <ClCompile Include="actions\ActionAttire.cpp">
-      <Filter>Actions</Filter>
-    </ClCompile>
     <ClCompile Include="actions\ActionClose.cpp">
       <Filter>Actions</Filter>
     </ClCompile>
@@ -724,6 +724,15 @@
     </ClCompile>
     <ClCompile Include="include\IKeyBuffer.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="actions\ActionDie.cpp">
+      <Filter>Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="actions\ActionWear.cpp">
+      <Filter>Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="actions\ActionTakeOff.cpp">
+      <Filter>Actions</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

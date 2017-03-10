@@ -6,17 +6,26 @@
 #include "ActionCRTP.h"
 #include "EntityId.h"
 
-class ActionAttack
-  :
-  public Action, public ActionCRTP<ActionAttack>
+namespace Actions
 {
-  ACTION_HDR_BOILERPLATE(ActionAttack)
-    ACTION_TRAIT(can_be_subject_verb_object)
-    ACTION_TRAIT(can_be_subject_verb_direction)
+  class ActionAttack
+    :
+    public Action, public ActionCRTP<ActionAttack>
+  {
+  private:
+    ActionAttack();
+  public:
+    explicit ActionAttack(EntityId subject);
+    virtual ~ActionAttack();
+    static ActionAttack prototype;
 
-protected:
-  virtual StateResult do_prebegin_work_(AnyMap& params) override;
-  virtual StateResult do_begin_work_(AnyMap& params) override;
-  virtual StateResult do_finish_work_(AnyMap& params) override;
-  virtual StateResult do_abort_work_(AnyMap& params) override;
-};
+    virtual std::unordered_set<Action::Trait> const& getTraits() const override;
+
+  protected:
+    virtual StateResult do_prebegin_work_(AnyMap& params) override;
+    virtual StateResult do_begin_work_(AnyMap& params) override;
+    virtual StateResult do_finish_work_(AnyMap& params) override;
+    virtual StateResult do_abort_work_(AnyMap& params) override;
+  };
+
+} // end namespace

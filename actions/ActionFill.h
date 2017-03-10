@@ -6,16 +6,26 @@
 #include "ActionCRTP.h"
 #include "EntityId.h"
 
-class ActionFill
-  :
-  public Action, public ActionCRTP<ActionFill>
+namespace Actions
 {
-  ACTION_HDR_BOILERPLATE(ActionFill)
-    ACTION_TRAIT(can_be_subject_verb_object_preposition_target)
+  class ActionFill
+    :
+    public Action, public ActionCRTP<ActionFill>
+  {
+  private:
+    ActionFill();
+  public:
+    explicit ActionFill(EntityId subject);
+    virtual ~ActionFill();
+    static ActionFill prototype;
 
-protected:
-  virtual StateResult do_prebegin_work_(AnyMap& params) override;
-  virtual StateResult do_begin_work_(AnyMap& params) override;
-  virtual StateResult do_finish_work_(AnyMap& params) override;
-  virtual StateResult do_abort_work_(AnyMap& params) override;
-};
+    virtual std::unordered_set<Action::Trait> const& getTraits() const override;
+
+  protected:
+    virtual StateResult do_prebegin_work_(AnyMap& params) override;
+    virtual StateResult do_begin_work_(AnyMap& params) override;
+    virtual StateResult do_finish_work_(AnyMap& params) override;
+    virtual StateResult do_abort_work_(AnyMap& params) override;
+  };
+
+} // end namespace

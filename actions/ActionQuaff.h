@@ -6,33 +6,26 @@
 #include "ActionCRTP.h"
 #include "EntityId.h"
 
-class ActionQuaff
-  :
-  public Action, public ActionCRTP<ActionQuaff>
+namespace Actions
 {
-  ACTION_HDR_BOILERPLATE(ActionQuaff)
-    ACTION_TRAIT(can_be_subject_verb_object)
-    ACTION_TRAIT(can_be_subject_verb_direction)
-
-public:
-  std::string const get_verbed() const override
+  class ActionQuaff
+    :
+    public Action, public ActionCRTP<ActionQuaff>
   {
-    return "drank from";
-  }
+  private:
+    ActionQuaff();
+  public:
+    explicit ActionQuaff(EntityId subject);
+    virtual ~ActionQuaff();
+    static ActionQuaff prototype;
 
-  std::string const get_verbing() const override
-  {
-    return "drinking from";
-  }
+    virtual std::unordered_set<Action::Trait> const& getTraits() const override;
 
-  std::string const get_verbable() const override
-  {
-    return "potable";
-  }
+  protected:
+    virtual StateResult do_prebegin_work_(AnyMap& params) override;
+    virtual StateResult do_begin_work_(AnyMap& params) override;
+    virtual StateResult do_finish_work_(AnyMap& params) override;
+    virtual StateResult do_abort_work_(AnyMap& params) override;
+  };
 
-protected:
-  virtual StateResult do_prebegin_work_(AnyMap& params) override;
-  virtual StateResult do_begin_work_(AnyMap& params) override;
-  virtual StateResult do_finish_work_(AnyMap& params) override;
-  virtual StateResult do_abort_work_(AnyMap& params) override;
-};
+} // end namespace

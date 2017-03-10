@@ -1,25 +1,25 @@
-#ifndef ACTIONCRTP_H
-#define ACTIONCRTP_H
+#pragma once
 
 #include "stdafx.h"
 
 #include "Action.h"
 #include "EntityId.h"
 
-/// Template class implementing the Curiously Recurring Template Pattern
-/// to present several create() functions.
-template <class Derived>
-class ActionCRTP
+namespace Actions
 {
-public:
-
-  /// Implement a create_() function that will be registerable with a factory class.
-  static std::unique_ptr<Action> create_(EntityId subject)
+  /// Template class implementing the Curiously Recurring Template Pattern
+  /// to present several create() functions.
+  template <class Derived>
+  class ActionCRTP
   {
-    std::unique_ptr<Action> action{ new Derived{ subject } };
+  public:
 
-    return std::move(action);
-  }
-};
+    /// Implement a create_() function that will be registerable with a factory class.
+    static std::unique_ptr<Action> create_(EntityId subject)
+    {
+      std::unique_ptr<Action> action{ new Derived{ subject } };
 
-#endif // ACTIONCRTP_H
+      return std::move(action);
+    }
+  };
+}

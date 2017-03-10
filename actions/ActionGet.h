@@ -6,33 +6,26 @@
 #include "ActionCRTP.h"
 #include "EntityId.h"
 
-class ActionGet
-  :
-  public Action, public ActionCRTP<ActionGet>
+namespace Actions
 {
-  ACTION_HDR_BOILERPLATE(ActionGet)
-    ACTION_TRAIT(can_be_subject_verb_object)
-    ACTION_TRAIT(can_take_a_quantity)
-
-public:
-  std::string const get_verbing() const override
+  class ActionGet
+    :
+    public Action, public ActionCRTP<ActionGet>
   {
-    return "getting";
-  }
+  private:
+    ActionGet();
+  public:
+    explicit ActionGet(EntityId subject);
+    virtual ~ActionGet();
+    static ActionGet prototype;
 
-  std::string const get_verbed() const override
-  {
-    return "got";
-  }
+    virtual std::unordered_set<Action::Trait> const& getTraits() const override;
 
-  std::string const get_verb_pp() const override
-  {
-    return "gotten";
-  }
+  protected:
+    virtual StateResult do_prebegin_work_(AnyMap& params) override;
+    virtual StateResult do_begin_work_(AnyMap& params) override;
+    virtual StateResult do_finish_work_(AnyMap& params) override;
+    virtual StateResult do_abort_work_(AnyMap& params) override;
+  };
 
-protected:
-  virtual StateResult do_prebegin_work_(AnyMap& params) override;
-  virtual StateResult do_begin_work_(AnyMap& params) override;
-  virtual StateResult do_finish_work_(AnyMap& params) override;
-  virtual StateResult do_abort_work_(AnyMap& params) override;
-};
+} // end namespace

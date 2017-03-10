@@ -7,30 +7,48 @@
 #include "Entity.h"
 #include "EntityId.h"
 
-ACTION_SRC_BOILERPLATE(ActionUnlock, "unlock", "unlock")
-
-Action::StateResult ActionUnlock::do_prebegin_work_(AnyMap& params)
+namespace Actions
 {
-  return Action::StateResult::Success();
-}
+  ActionUnlock ActionUnlock::prototype;
+  ActionUnlock::ActionUnlock() : Action("unlock", "UNLOCK", ActionUnlock::create_) {}
+  ActionUnlock::ActionUnlock(EntityId subject) : Action(subject, "unlock", "UNLOCK") {}
+  ActionUnlock::~ActionUnlock() {}
 
-Action::StateResult ActionUnlock::do_begin_work_(AnyMap& params)
-{
-  bool success = false;
-  unsigned int action_time = 0;
+  std::unordered_set<Action::Trait> const & ActionUnlock::getTraits() const
+  {
+    static std::unordered_set<Action::Trait> traits =
+    {
+      Trait::CanBeSubjectVerbObjectPrepositionTarget,
+      Trait::CanBeSubjectVerbObjectPrepositionDirection
+    };
 
-  auto& dict = Service<IStringDictionary>::get();
-  Service<IMessageLog>::get().add(dict.get("ACTION_NOT_IMPLEMENTED"));
+    return traits;
+  }
 
-  return{ success, action_time };
-}
+  StateResult ActionUnlock::do_prebegin_work_(AnyMap& params)
+  {
+    return StateResult::Success();
+  }
 
-Action::StateResult ActionUnlock::do_finish_work_(AnyMap& params)
-{
-  return Action::StateResult::Success();
-}
+  StateResult ActionUnlock::do_begin_work_(AnyMap& params)
+  {
+    bool success = false;
+    unsigned int action_time = 0;
 
-Action::StateResult ActionUnlock::do_abort_work_(AnyMap& params)
-{
-  return Action::StateResult::Success();
-}
+    auto& dict = Service<IStringDictionary>::get();
+    Service<IMessageLog>::get().add(dict.get("ACTION_NOT_IMPLEMENTED"));
+
+    return{ success, action_time };
+  }
+
+  StateResult ActionUnlock::do_finish_work_(AnyMap& params)
+  {
+    return StateResult::Success();
+  }
+
+  StateResult ActionUnlock::do_abort_work_(AnyMap& params)
+  {
+    return StateResult::Success();
+  }
+} // end namespace
+

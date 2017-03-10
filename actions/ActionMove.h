@@ -7,16 +7,26 @@
 #include <string>
 #include <vector>
 
-class ActionMove
-  :
-  public Action, public ActionCRTP<ActionMove>
+namespace Actions
 {
-  ACTION_HDR_BOILERPLATE(ActionMove)
-    ACTION_TRAIT(can_be_subject_verb_direction)
+  class ActionMove
+    :
+    public Action, public ActionCRTP<ActionMove>
+  {
+  private:
+    ActionMove();
+  public:
+    explicit ActionMove(EntityId subject);
+    virtual ~ActionMove();
+    static ActionMove prototype;
 
-protected:
-  virtual StateResult do_prebegin_work_(AnyMap& params) override;
-  virtual StateResult do_begin_work_(AnyMap& params) override;
-  virtual StateResult do_finish_work_(AnyMap& params) override;
-  virtual StateResult do_abort_work_(AnyMap& params) override;
-};
+    virtual std::unordered_set<Action::Trait> const& getTraits() const override;
+
+  protected:
+    virtual StateResult do_prebegin_work_(AnyMap& params) override;
+    virtual StateResult do_begin_work_(AnyMap& params) override;
+    virtual StateResult do_finish_work_(AnyMap& params) override;
+    virtual StateResult do_abort_work_(AnyMap& params) override;
+  };
+
+} // end namespace

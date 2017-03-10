@@ -6,17 +6,26 @@
 #include "ActionCRTP.h"
 #include "EntityId.h"
 
-class ActionClose
-  :
-  public Action, public ActionCRTP<ActionClose>
+namespace Actions
 {
-  ACTION_HDR_BOILERPLATE(ActionClose)
-    ACTION_TRAIT(can_be_subject_verb_object)
-    ACTION_TRAIT(can_be_subject_verb_direction)
+  class ActionClose
+    :
+    public Action, public ActionCRTP<ActionClose>
+  {
+  private:
+    ActionClose();
+  public:
+    explicit ActionClose(EntityId subject);
+    virtual ~ActionClose();
+    static ActionClose prototype;
 
-protected:
-  virtual StateResult do_prebegin_work_(AnyMap& params) override;
-  virtual StateResult do_begin_work_(AnyMap& params) override;
-  virtual StateResult do_finish_work_(AnyMap& params) override;
-  virtual StateResult do_abort_work_(AnyMap& params) override;
-};
+    virtual std::unordered_set<Action::Trait> const& getTraits() const override;
+
+  protected:
+    virtual StateResult do_prebegin_work_(AnyMap& params) override;
+    virtual StateResult do_begin_work_(AnyMap& params) override;
+    virtual StateResult do_finish_work_(AnyMap& params) override;
+    virtual StateResult do_abort_work_(AnyMap& params) override;
+  };
+
+} // end namespace

@@ -7,37 +7,55 @@
 #include "Entity.h"
 #include "EntityId.h"
 
-ACTION_SRC_BOILERPLATE(ActionOpen, "open", "open")
-
-Action::StateResult ActionOpen::do_prebegin_work_(AnyMap& params)
+namespace Actions
 {
-  return Action::StateResult::Success();
-}
+  ActionOpen ActionOpen::prototype;
+  ActionOpen::ActionOpen() : Action("open", "OPEN", ActionOpen::create_) {}
+  ActionOpen::ActionOpen(EntityId subject) : Action(subject, "open", "OPEN") {}
+  ActionOpen::~ActionOpen() {}
 
-Action::StateResult ActionOpen::do_begin_work_(AnyMap& params)
-{
-  bool success = false;
-  unsigned int action_time = 0;
+  std::unordered_set<Action::Trait> const & ActionOpen::getTraits() const
+  {
+    static std::unordered_set<Action::Trait> traits =
+    {
+      Trait::CanBeSubjectVerbObject,
+      Trait::CanBeSubjectVerbDirection
+    };
 
-  auto& dict = Service<IStringDictionary>::get();
-  Service<IMessageLog>::get().add(dict.get("ACTION_NOT_IMPLEMENTED"));
+    return traits;
+  }
+
+  StateResult ActionOpen::do_prebegin_work_(AnyMap& params)
+  {
+    return StateResult::Success();
+  }
+
+  StateResult ActionOpen::do_begin_work_(AnyMap& params)
+  {
+    bool success = false;
+    unsigned int action_time = 0;
+
+    auto& dict = Service<IStringDictionary>::get();
+    Service<IMessageLog>::get().add(dict.get("ACTION_NOT_IMPLEMENTED"));
 
 #if 0
-  if (entity != EntityId::Mu())
-  {
-    success = actor->do_open(entity, action_time);
-  }
+    if (entity != EntityId::Mu())
+    {
+      success = actor->do_open(entity, action_time);
+    }
 #endif
 
-  return{ success, action_time };
-}
+    return{ success, action_time };
+  }
 
-Action::StateResult ActionOpen::do_finish_work_(AnyMap& params)
-{
-  return Action::StateResult::Success();
-}
+  StateResult ActionOpen::do_finish_work_(AnyMap& params)
+  {
+    return StateResult::Success();
+  }
 
-Action::StateResult ActionOpen::do_abort_work_(AnyMap& params)
-{
-  return Action::StateResult::Success();
-}
+  StateResult ActionOpen::do_abort_work_(AnyMap& params)
+  {
+    return StateResult::Success();
+  }
+} // end namespace
+

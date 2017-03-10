@@ -332,13 +332,13 @@ namespace LuaEntityFunctions
     EntityId entity = EntityId(lua_tointeger(L, 1));
     std::string action_type = lua_tostring(L, 2);
 
-    if (!Action::exists(action_type))
+    if (!Actions::Action::exists(action_type))
     {
       MAJOR_ERROR("Lua script requested queue of non-existent Action \"%s\"", action_type.c_str());
       return 0;
     }
 
-    std::unique_ptr<Action> new_action = Action::create(action_type, entity);
+    std::unique_ptr<Actions::Action> new_action = Actions::Action::create(action_type, entity);
     std::vector<EntityId> objects;
 
     if (num_args > 2)
@@ -369,13 +369,13 @@ namespace LuaEntityFunctions
     std::string action_type = lua_tostring(L, 2);
     EntityId target = EntityId(lua_tointeger(L, 3));
 
-    if (!Action::exists(action_type))
+    if (!Actions::Action::exists(action_type))
     {
       MAJOR_ERROR("Lua script requested queue of non-existent Action \"%s\"", action_type.c_str());
       return 0;
     }
 
-    std::unique_ptr<Action> new_action = Action::create(action_type, entity);
+    std::unique_ptr<Actions::Action> new_action = Actions::Action::create(action_type, entity);
     std::vector<EntityId> objects;
 
     if (num_args > 3)
@@ -410,13 +410,13 @@ namespace LuaEntityFunctions
     int z = static_cast<int>(lua_tointeger(L, 5));
     Direction direction{ x, y, z };
 
-    if (!Action::exists(action_type))
+    if (!Actions::Action::exists(action_type))
     {
       MAJOR_ERROR("Lua script requested queue of non-existent Action \"%s\"", action_type.c_str());
       return 0;
     }
 
-    std::unique_ptr<Action> new_action = Action::create(action_type, entity);
+    std::unique_ptr<Actions::Action> new_action = Actions::Action::create(action_type, entity);
     std::vector<EntityId> objects;
 
     if (num_args > 5)

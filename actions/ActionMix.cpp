@@ -7,108 +7,124 @@
 #include "Entity.h"
 #include "EntityId.h"
 
-ACTION_SRC_BOILERPLATE(ActionMix, "mix", "mix")
-
-Action::StateResult ActionMix::do_prebegin_work_(AnyMap& params)
+namespace Actions
 {
-  std::string message;
-  auto subject = get_subject();
-  auto object1 = get_object();
-  auto object2 = get_second_object();
+  ActionMix ActionMix::prototype;
+  ActionMix::ActionMix() : Action("mix", "MIX", ActionMix::create_) {}
+  ActionMix::ActionMix(EntityId subject) : Action(subject, "mix", "MIX") {}
+  ActionMix::~ActionMix() {}
 
-  // Check that we're capable of mixing at all.
-  if (subject->get_modified_property<bool>("can_mix"))
+  std::unordered_set<Action::Trait> const & ActionMix::getTraits() const
   {
-    print_message_try_();
+    static std::unordered_set<Action::Trait> traits =
+    {
+      Trait::CanBeSubjectVerbObjects
+    };
 
-    message = "But, as " + getIndefArt(subject->get_display_name()) + subject->get_display_name() + "," + YOU_ARE + " not capable of mixing anything together.";
-    Service<IMessageLog>::get().add(message);
-
-    return Action::StateResult::Failure();
+    return traits;
   }
 
-  // Check that they aren't both the same entity.
-  if (object1 == object2)
+  StateResult ActionMix::do_prebegin_work_(AnyMap& params)
   {
-    print_message_try_();
+    std::string message;
+    auto subject = get_subject();
+    auto object1 = get_object();
+    auto object2 = get_second_object();
 
-    message = "Those are both the same container!";
-    Service<IMessageLog>::get().add(message);
+    // Check that we're capable of mixing at all.
+    if (subject->get_modified_property<bool>("can_mix"))
+    {
+      print_message_try_();
 
-    return Action::StateResult::Failure();
+      message = "But, as " + getIndefArt(subject->get_display_name()) + subject->get_display_name() + "," + YOU_ARE + " not capable of mixing anything together.";
+      Service<IMessageLog>::get().add(message);
+
+      return StateResult::Failure();
+    }
+
+    // Check that they aren't both the same entity.
+    if (object1 == object2)
+    {
+      print_message_try_();
+
+      message = "Those are both the same container!";
+      Service<IMessageLog>::get().add(message);
+
+      return StateResult::Failure();
+    }
+
+    // Check that neither of them is us.
+    if (object1 == subject || object2 == subject)
+    {
+      print_message_try_();
+
+      message = "But that makes absolutely no sense.";
+      Service<IMessageLog>::get().add(message);
+
+      return StateResult::Failure();
+    }
+
+    // Check that both are within reach.
+    if (!subject->can_reach(object1) || !subject->can_reach(object2))
+    {
+      print_message_try_();
+
+      message = "But at least one of them is out of " + YOUR + " reach.";
+      Service<IMessageLog>::get().add(message);
+
+      return StateResult::Failure();
+    }
+
+    // Check that both are liquid containers.
+    if (!object1->get_intrinsic<bool>("liquid_carrier") || !object2->get_intrinsic<bool>("liquid_carrier"))
+    {
+      print_message_try_();
+
+      message = "But at least one of them doesn't hold liquid!";
+      Service<IMessageLog>::get().add(message);
+
+      return StateResult::Failure(); //ActionResult::FailureNotLiquidCarrier;
+    }
+
+    // Check that neither is empty.
+    Inventory& inv1 = object1->get_inventory();
+    Inventory& inv2 = object2->get_inventory();
+    if (inv1.count() == 0 || inv2.count() == 0)
+    {
+      print_message_try_();
+
+      message = "But at least one of them is empty!";
+      Service<IMessageLog>::get().add(message);
+
+      return StateResult::Failure(); //ActionResult::FailureContainerIsEmpty;
+    }
+
+    /// @todo Anything else needed here?
+    ///       You need some sort of limbs to mix substances, right?
+
+    return StateResult::Success();
   }
 
-  // Check that neither of them is us.
-  if (object1 == subject || object2 == subject)
+  StateResult ActionMix::do_begin_work_(AnyMap& params)
   {
-    print_message_try_();
+    /// @todo IMPLEMENT ME
+    //message = YOU + CV(" mix ", " mixes ") + LIQUID1 + " with " + LIQUID2 + ".";
+    //Service<IMessageLog>::get().add(message);
+    //thing1->perform_action_mixed_with_by(thing2, pImpl->ref);
 
-    message = "But that makes absolutely no sense.";
-    Service<IMessageLog>::get().add(message);
+    auto& dict = Service<IStringDictionary>::get();
+    Service<IMessageLog>::get().add(dict.get("ACTION_NOT_IMPLEMENTED"));
 
-    return Action::StateResult::Failure();
+    return StateResult::Failure();
   }
 
-  // Check that both are within reach.
-  if (!subject->can_reach(object1) || !subject->can_reach(object2))
+  StateResult ActionMix::do_finish_work_(AnyMap& params)
   {
-    print_message_try_();
-
-    message = "But at least one of them is out of " + YOUR + " reach.";
-    Service<IMessageLog>::get().add(message);
-
-    return Action::StateResult::Failure();
+    return StateResult::Success();
   }
 
-  // Check that both are liquid containers.
-  if (!object1->get_intrinsic<bool>("liquid_carrier") || !object2->get_intrinsic<bool>("liquid_carrier"))
+  StateResult ActionMix::do_abort_work_(AnyMap& params)
   {
-    print_message_try_();
-
-    message = "But at least one of them doesn't hold liquid!";
-    Service<IMessageLog>::get().add(message);
-
-    return Action::StateResult::Failure(); //ActionResult::FailureNotLiquidCarrier;
+    return StateResult::Success();
   }
-
-  // Check that neither is empty.
-  Inventory& inv1 = object1->get_inventory();
-  Inventory& inv2 = object2->get_inventory();
-  if (inv1.count() == 0 || inv2.count() == 0)
-  {
-    print_message_try_();
-
-    message = "But at least one of them is empty!";
-    Service<IMessageLog>::get().add(message);
-
-    return Action::StateResult::Failure(); //ActionResult::FailureContainerIsEmpty;
-  }
-
-  /// @todo Anything else needed here?
-  ///       You need some sort of limbs to mix substances, right?
-
-  return Action::StateResult::Success();
-}
-
-Action::StateResult ActionMix::do_begin_work_(AnyMap& params)
-{
-  /// @todo IMPLEMENT ME
-  //message = YOU + CV(" mix ", " mixes ") + LIQUID1 + " with " + LIQUID2 + ".";
-  //Service<IMessageLog>::get().add(message);
-  //thing1->perform_action_mixed_with_by(thing2, pImpl->ref);
-
-  auto& dict = Service<IStringDictionary>::get();
-  Service<IMessageLog>::get().add(dict.get("ACTION_NOT_IMPLEMENTED"));
-
-  return Action::StateResult::Failure();
-}
-
-Action::StateResult ActionMix::do_finish_work_(AnyMap& params)
-{
-  return Action::StateResult::Success();
-}
-
-Action::StateResult ActionMix::do_abort_work_(AnyMap& params)
-{
-  return Action::StateResult::Success();
 }
