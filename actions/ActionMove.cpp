@@ -18,9 +18,9 @@ namespace Actions
   ActionMove::ActionMove(EntityId subject) : Action(subject, "move", "MOVE") {}
   ActionMove::~ActionMove() {}
 
-  std::unordered_set<Action::Trait> const & ActionMove::getTraits() const
+  std::unordered_set<Trait> const & ActionMove::getTraits() const
   {
-    static std::unordered_set<Action::Trait> traits =
+    static std::unordered_set<Trait> traits =
     {
       Trait::CanBeSubjectVerbDirection
     };

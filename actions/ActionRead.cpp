@@ -14,9 +14,9 @@ namespace Actions
   ActionRead::ActionRead(EntityId subject) : Action(subject, "read", "READ") {}
   ActionRead::~ActionRead() {}
 
-  std::unordered_set<Action::Trait> const & ActionRead::getTraits() const
+  std::unordered_set<Trait> const & ActionRead::getTraits() const
   {
-    static std::unordered_set<Action::Trait> traits =
+    static std::unordered_set<Trait> traits =
     {
       Trait::CanBeSubjectVerbObject,
       Trait::CanBeSubjectVerbDirection

@@ -18,9 +18,9 @@ namespace Actions
   ActionTurn::ActionTurn(EntityId subject) : Action(subject, "turn", "TURN") {}
   ActionTurn::~ActionTurn() {}
 
-  std::unordered_set<Action::Trait> const & ActionTurn::getTraits() const
+  std::unordered_set<Trait> const & ActionTurn::getTraits() const
   {
-    static std::unordered_set<Action::Trait> traits =
+    static std::unordered_set<Trait> traits =
     {
       Trait::CanBeSubjectVerbDirection
     };

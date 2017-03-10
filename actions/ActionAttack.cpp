@@ -16,9 +16,9 @@ namespace Actions
   ActionAttack::ActionAttack(EntityId subject) : Action(subject, "attack", "ATTACK") {}
   ActionAttack::~ActionAttack() {}
 
-  std::unordered_set<Action::Trait> const & ActionAttack::getTraits() const
+  std::unordered_set<Trait> const & ActionAttack::getTraits() const
   {
-    static std::unordered_set<Action::Trait> traits = 
+    static std::unordered_set<Trait> traits = 
     {
       Trait::CanBeSubjectVerbObject,
       Trait::CanBeSubjectVerbDirection

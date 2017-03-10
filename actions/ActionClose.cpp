@@ -14,9 +14,9 @@ namespace Actions
   ActionClose::ActionClose(EntityId subject) : Action(subject, "close", "CLOSE") {}
   ActionClose::~ActionClose() {}
 
-  std::unordered_set<Action::Trait> const & ActionClose::getTraits() const
+  std::unordered_set<Trait> const & ActionClose::getTraits() const
   {
-    static std::unordered_set<Action::Trait> traits =
+    static std::unordered_set<Trait> traits =
     {
       Trait::CanBeSubjectVerbObject,
       Trait::CanBeSubjectVerbDirection

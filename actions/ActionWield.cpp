@@ -16,9 +16,9 @@ namespace Actions
   ActionWield::ActionWield(EntityId subject) : Action(subject, "wield", "WIELD") {}
   ActionWield::~ActionWield() {}
 
-  std::unordered_set<Action::Trait> const & ActionWield::getTraits() const
+  std::unordered_set<Trait> const & ActionWield::getTraits() const
   {
-    static std::unordered_set<Action::Trait> traits =
+    static std::unordered_set<Trait> traits =
     {
       Trait::CanBeSubjectVerbObject,
       Trait::CanBeSubjectVerbObjectPrepositionBodypart,

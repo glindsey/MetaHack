@@ -19,7 +19,7 @@ namespace Actions
     virtual ~ActionRead();
     static ActionRead prototype;
 
-    virtual std::unordered_set<Action::Trait> const& getTraits() const override;
+    virtual std::unordered_set<Trait> const& getTraits() const override;
 
   protected:
     virtual StateResult do_prebegin_work_(AnyMap& params) override;

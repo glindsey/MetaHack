@@ -14,9 +14,9 @@ namespace Actions
   ActionInscribe::ActionInscribe(EntityId subject) : Action(subject, "inscribe", "WRITE") {}
   ActionInscribe::~ActionInscribe() {}
 
-  std::unordered_set<Action::Trait> const & ActionInscribe::getTraits() const
+  std::unordered_set<Trait> const & ActionInscribe::getTraits() const
   {
-    static std::unordered_set<Action::Trait> traits =
+    static std::unordered_set<Trait> traits =
     {
       Trait::CanBeSubjectVerbDirection,
       Trait::CanBeSubjectVerbObjectPrepositionTarget,

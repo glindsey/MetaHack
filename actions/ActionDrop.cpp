@@ -14,9 +14,9 @@ namespace Actions
   ActionDrop::ActionDrop(EntityId subject) : Action(subject, "drop", "DROP") {}
   ActionDrop::~ActionDrop() {}
 
-  std::unordered_set<Action::Trait> const & ActionDrop::getTraits() const
+  std::unordered_set<Trait> const & ActionDrop::getTraits() const
   {
-    static std::unordered_set<Action::Trait> traits =
+    static std::unordered_set<Trait> traits =
     {
       Trait::CanBeSubjectVerbObject,
       Trait::CanTakeAQuantity

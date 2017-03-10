@@ -14,9 +14,9 @@ namespace Actions
   ActionGet::ActionGet(EntityId subject) : Action(subject, "get", "GET") {}
   ActionGet::~ActionGet() {}
 
-  std::unordered_set<Action::Trait> const & ActionGet::getTraits() const
+  std::unordered_set<Trait> const & ActionGet::getTraits() const
   {
-    static std::unordered_set<Action::Trait> traits =
+    static std::unordered_set<Trait> traits =
     {
       Trait::CanBeSubjectVerbObject,
       Trait::CanTakeAQuantity

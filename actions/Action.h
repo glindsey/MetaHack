@@ -18,6 +18,10 @@ namespace Actions
   using ActionCreator = std::function<std::unique_ptr<Action>(EntityId)>;
   using ActionMap = std::unordered_map<std::string, ActionCreator>;
   
+  /// A free function for composing strings from patterns.
+  std::string make_string(EntityId subject, EntityId object, std::string pattern, std::vector<std::string> optional_strings);
+  std::string make_string(EntityId subject, EntityId object, std::string pattern);
+
   /// Struct containing the results of an action state.
   struct StateResult
   {
@@ -46,6 +50,26 @@ namespace Actions
     Processed     ///< The action is totally done and can be popped off the queue.
   };
 
+  /// Possible action traits.
+  enum class Trait
+  {
+    CanBeSubjectOnly,
+    CanBeSubjectVerbObject,
+    CanBeSubjectVerbBodypart,
+    CanBeSubjectVerbDirection,
+    CanBeSubjectVerbObjects,
+    CanBeSubjectVerbObjectPrepositionTarget,
+    CanBeSubjectVerbObjectsPrepositionTarget,
+    CanBeSubjectVerbObjectPrepositionBodypart,
+    CanBeSubjectVerbObjectPrepositionDirection,
+    CanTakeAQuantity,
+    SubjectCanBeInLimbo,
+    ObjectCanBeOutOfReach,
+    ObjectCanBeSelf,
+    ObjectMustBeInInventory,
+    MemberCount
+  };
+
   /// Class describing an action to execute.
   class Action
     :
@@ -53,32 +77,12 @@ namespace Actions
   {
   public:
 
-    /// Possible action traits.
-    enum class Trait
-    {
-      CanBeSubjectOnly,
-      CanBeSubjectVerbObject,
-      CanBeSubjectVerbBodypart,
-      CanBeSubjectVerbDirection,
-      CanBeSubjectVerbObjects,
-      CanBeSubjectVerbObjectPrepositionTarget,
-      CanBeSubjectVerbObjectsPrepositionTarget,
-      CanBeSubjectVerbObjectPrepositionBodypart,
-      CanBeSubjectVerbObjectPrepositionDirection,
-      CanTakeAQuantity,
-      SubjectCanBeInLimbo,
-      ObjectCanBeOutOfReach,
-      ObjectCanBeSelf,
-      ObjectMustBeInInventory,
-      MemberCount
-    };
-
     explicit Action(EntityId subject, std::string type, std::string verb);
     virtual ~Action();
 
-    virtual std::unordered_set<Action::Trait> const& getTraits() const;
+    virtual std::unordered_set<Trait> const& getTraits() const;
 
-    bool hasTrait(Action::Trait trait) const;
+    bool hasTrait(Trait trait) const;
 
     EntityId get_subject() const;
 
@@ -143,10 +147,6 @@ namespace Actions
     /// A method for composing a string from a pattern for an action.
     std::string make_string(std::string pattern, std::vector<std::string> optional_strings) const;
     std::string make_string(std::string pattern) const;
-
-    /// A static method for composing strings from patterns.
-    static std::string make_string(EntityId subject, EntityId object, std::string pattern, std::vector<std::string> optional_strings);
-    static std::string make_string(EntityId subject, EntityId object, std::string pattern);
 
     /// Get a const reference to the action map.
     static ActionMap const& get_map();
@@ -391,7 +391,7 @@ namespace Actions
     virtual ~ActionXXXX();
     static ActionXXXX prototype;
 
-    virtual std::unordered_set<Action::Trait> const& getTraits() const override;
+    virtual std::unordered_set<Trait> const& getTraits() const override;
 
   protected:
     virtual StateResult do_prebegin_work_(AnyMap& params) override;
@@ -410,9 +410,9 @@ ActionXXXX::ActionXXXX() : Action("xxxx", "XXXX", ActionXXXX::create_) {}
 ActionXXXX::ActionXXXX(EntityId subject) : Action(subject, "xxxx", "XXXX") {}
 ActionXXXX::~ActionXXXX() {}
 
-std::unordered_set<Action::Trait> const & ActionXXXX::getTraits() const
+std::unordered_set<Trait> const & ActionXXXX::getTraits() const
 {
-  static std::unordered_set<Action::Trait> traits =
+  static std::unordered_set<Trait> traits =
   {
     Trait::XXXX,
     Trait::YYYY

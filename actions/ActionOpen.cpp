@@ -14,9 +14,9 @@ namespace Actions
   ActionOpen::ActionOpen(EntityId subject) : Action(subject, "open", "OPEN") {}
   ActionOpen::~ActionOpen() {}
 
-  std::unordered_set<Action::Trait> const & ActionOpen::getTraits() const
+  std::unordered_set<Trait> const & ActionOpen::getTraits() const
   {
-    static std::unordered_set<Action::Trait> traits =
+    static std::unordered_set<Trait> traits =
     {
       Trait::CanBeSubjectVerbObject,
       Trait::CanBeSubjectVerbDirection

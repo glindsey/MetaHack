@@ -14,9 +14,9 @@ namespace Actions
   ActionMix::ActionMix(EntityId subject) : Action(subject, "mix", "MIX") {}
   ActionMix::~ActionMix() {}
 
-  std::unordered_set<Action::Trait> const & ActionMix::getTraits() const
+  std::unordered_set<Trait> const & ActionMix::getTraits() const
   {
-    static std::unordered_set<Action::Trait> traits =
+    static std::unordered_set<Trait> traits =
     {
       Trait::CanBeSubjectVerbObjects
     };

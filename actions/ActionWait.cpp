@@ -14,9 +14,9 @@ namespace Actions
   ActionWait::ActionWait(EntityId subject) : Action(subject, "wait", "WAIT") {}
   ActionWait::~ActionWait() {}
 
-  std::unordered_set<Action::Trait> const & ActionWait::getTraits() const
+  std::unordered_set<Trait> const & ActionWait::getTraits() const
   {
-    static std::unordered_set<Action::Trait> traits =
+    static std::unordered_set<Trait> traits =
     {
       Trait::CanBeSubjectOnly
     };

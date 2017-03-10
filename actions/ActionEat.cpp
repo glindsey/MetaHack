@@ -13,9 +13,9 @@ namespace Actions
   ActionEat::ActionEat(EntityId subject) : Action(subject, "eat", "EAT") {}
   ActionEat::~ActionEat() {}
 
-  std::unordered_set<Action::Trait> const & ActionEat::getTraits() const
+  std::unordered_set<Trait> const & ActionEat::getTraits() const
   {
-    static std::unordered_set<Action::Trait> traits =
+    static std::unordered_set<Trait> traits =
     {
       Trait::CanBeSubjectVerbObject
     };

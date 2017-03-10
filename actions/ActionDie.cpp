@@ -14,9 +14,9 @@ namespace Actions
   ActionDie::ActionDie(EntityId subject) : Action(subject, "die", "DIE") {}
   ActionDie::~ActionDie() {}
 
-  std::unordered_set<Action::Trait> const & ActionDie::getTraits() const
+  std::unordered_set<Trait> const & ActionDie::getTraits() const
   {
-    static std::unordered_set<Action::Trait> traits =
+    static std::unordered_set<Trait> traits =
     {
       Trait::CanBeSubjectOnly,
       Trait::SubjectCanBeInLimbo

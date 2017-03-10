@@ -14,9 +14,9 @@ namespace Actions
   ActionUnwield::ActionUnwield(EntityId subject) : Action(subject, "unwield", "UNWIELD") {}
   ActionUnwield::~ActionUnwield() {}
 
-  std::unordered_set<Action::Trait> const & ActionUnwield::getTraits() const
+  std::unordered_set<Trait> const & ActionUnwield::getTraits() const
   {
-    static std::unordered_set<Action::Trait> traits =
+    static std::unordered_set<Trait> traits =
     {
       Trait::CanBeSubjectOnly,
       Trait::CanBeSubjectVerbBodypart

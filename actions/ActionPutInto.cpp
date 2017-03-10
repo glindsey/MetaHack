@@ -14,9 +14,9 @@ namespace Actions
   ActionPutInto::ActionPutInto(EntityId subject) : Action(subject, "putinto", "STORE") {}
   ActionPutInto::~ActionPutInto() {}
 
-  std::unordered_set<Action::Trait> const & ActionPutInto::getTraits() const
+  std::unordered_set<Trait> const & ActionPutInto::getTraits() const
   {
-    static std::unordered_set<Action::Trait> traits =
+    static std::unordered_set<Trait> traits =
     {
       Trait::CanBeSubjectVerbObjectPrepositionTarget,
       Trait::CanBeSubjectVerbObjectsPrepositionTarget

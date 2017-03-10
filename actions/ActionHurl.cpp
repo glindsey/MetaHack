@@ -14,9 +14,9 @@ namespace Actions
   ActionHurl::ActionHurl(EntityId subject) : Action(subject, "hurl", "THROW") {}
   ActionHurl::~ActionHurl() {}
 
-  std::unordered_set<Action::Trait> const & ActionHurl::getTraits() const
+  std::unordered_set<Trait> const & ActionHurl::getTraits() const
   {
-    static std::unordered_set<Action::Trait> traits =
+    static std::unordered_set<Trait> traits =
     {
       Trait::CanBeSubjectVerbObjectPrepositionDirection
     };

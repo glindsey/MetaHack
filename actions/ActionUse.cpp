@@ -14,9 +14,9 @@ namespace Actions
   ActionUse::ActionUse(EntityId subject) : Action(subject, "use", "USE") {}
   ActionUse::~ActionUse() {}
 
-  std::unordered_set<Action::Trait> const & ActionUse::getTraits() const
+  std::unordered_set<Trait> const & ActionUse::getTraits() const
   {
-    static std::unordered_set<Action::Trait> traits =
+    static std::unordered_set<Trait> traits =
     {
       Trait::CanBeSubjectVerbObject
     };

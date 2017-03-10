@@ -14,9 +14,9 @@ namespace Actions
   ActionTakeOff::ActionTakeOff(EntityId subject) : Action(subject, "takeoff", "UNWEAR") {}
   ActionTakeOff::~ActionTakeOff() {}
 
-  std::unordered_set<Action::Trait> const & ActionTakeOff::getTraits() const
+  std::unordered_set<Trait> const & ActionTakeOff::getTraits() const
   {
-    static std::unordered_set<Action::Trait> traits =
+    static std::unordered_set<Trait> traits =
     {
       Trait::CanBeSubjectVerbBodypart
     };

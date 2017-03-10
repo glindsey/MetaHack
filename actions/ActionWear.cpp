@@ -14,9 +14,9 @@ namespace Actions
   ActionWear::ActionWear(EntityId subject) : Action(subject, "wear", "WEAR") {}
   ActionWear::~ActionWear() {}
 
-  std::unordered_set<Action::Trait> const & ActionWear::getTraits() const
+  std::unordered_set<Trait> const & ActionWear::getTraits() const
   {
-    static std::unordered_set<Action::Trait> traits =
+    static std::unordered_set<Trait> traits =
     {
       Trait::CanBeSubjectVerbObjectPrepositionBodypart,
       Trait::ObjectMustBeInInventory

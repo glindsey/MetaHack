@@ -14,9 +14,9 @@ namespace Actions
   ActionLock::ActionLock(EntityId subject) : Action(subject, "lock", "LOCK") {}
   ActionLock::~ActionLock() {}
 
-  std::unordered_set<Action::Trait> const & ActionLock::getTraits() const
+  std::unordered_set<Trait> const & ActionLock::getTraits() const
   {
-    static std::unordered_set<Action::Trait> traits =
+    static std::unordered_set<Trait> traits =
     {
       Trait::CanBeSubjectVerbObjectPrepositionTarget,
       Trait::CanBeSubjectVerbObjectPrepositionDirection

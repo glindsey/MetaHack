@@ -14,9 +14,9 @@ namespace Actions
   ActionTakeOut::ActionTakeOut(EntityId subject) : Action(subject, "takeout", "REMOVE") {}
   ActionTakeOut::~ActionTakeOut() {}
 
-  std::unordered_set<Action::Trait> const & ActionTakeOut::getTraits() const
+  std::unordered_set<Trait> const & ActionTakeOut::getTraits() const
   {
-    static std::unordered_set<Action::Trait> traits =
+    static std::unordered_set<Trait> traits =
     {
       Trait::CanBeSubjectVerbObject,
       Trait::CanBeSubjectVerbObjects,
