@@ -360,7 +360,11 @@ namespace metagui
       {
         our_texture.clear(sf::Color::Transparent);
         draw(frame);
-        m_flag_for_redraw = false;
+
+        if (m_cached_flags.animated == false)
+        {
+          m_flag_for_redraw = false;
+        }
       }
 
       // Create the RectangleShape that will be drawn onto the target.
