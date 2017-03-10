@@ -4,9 +4,9 @@
 #include "MapTileNullView.h"
 #include "New.h"
 
-MapNullView::MapNullView(Map& map)
+MapNullView::MapNullView(std::string name, Map& map, Vec2u size)
   :
-  MapView(map)
+  MapView(name, map, size)
 {
 }
 
@@ -18,7 +18,7 @@ void MapNullView::update_things(EntityId viewer, int frame)
 {
 }
 
-bool MapNullView::render(sf::RenderTexture& texture, int frame)
+bool MapNullView::render_map(sf::RenderTexture& texture, int frame)
 {
   return true;
 }

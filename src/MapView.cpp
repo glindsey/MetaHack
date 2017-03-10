@@ -7,8 +7,9 @@
 #include "IConfigSettings.h"
 #include "Service.h"
 
-MapView::MapView(Map& map)
+MapView::MapView(std::string name, Map& map, Vec2u size)
   :
+  metagui::Object(name, { 0, 0 }, size),
   m_map(map)
 {
   //startObserving(map);

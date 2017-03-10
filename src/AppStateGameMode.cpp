@@ -65,9 +65,9 @@ AppStateGameMode::AppStateGameMode(StateMachine& state_machine, sf::RenderWindow
   m_current_input_state{ GameInputState::Map },
   m_cursor_coords{ 0, 0 }
 {
-  the_desktop.addChild(NEW MessageLogView("MessageLogView", Service<IMessageLog>::get(), *(m_debug_buffer.get()), calc_message_log_dims())).setFlag("titlebar", true);
-  the_desktop.addChild(NEW InventoryArea("InventoryArea", *(m_inventory_selection.get()), calc_inventory_dims())).setFlag("titlebar", true);
-  the_desktop.addChild(NEW StatusArea("StatusArea", calc_status_area_dims())).setGlobalFocus(true);
+  the_desktop.addChild(NEW MessageLogView("MessageLogView", Service<IMessageLog>::get(), *(m_debug_buffer.get()), calc_message_log_dims()))->setFlag("titlebar", true);
+  the_desktop.addChild(NEW InventoryArea("InventoryArea", *(m_inventory_selection.get()), calc_inventory_dims()))->setFlag("titlebar", true);
+  the_desktop.addChild(NEW StatusArea("StatusArea", calc_status_area_dims()))->setGlobalFocus(true);
 }
 
 AppStateGameMode::~AppStateGameMode()
@@ -190,7 +190,7 @@ bool AppStateGameMode::initialize()
   reset_inventory_selection();
 
   // Set the map view.
-  m_map_view.reset(Service<IGraphicViews>::get().createMapView(game_map));
+  m_map_view = the_desktop.addChild(Service<IGraphicViews>::get().createMapView("MainMapView", game_map, the_desktop.getSize()));
 
   // Get the map ready.
   game_map.update_lighting();
@@ -206,6 +206,8 @@ bool AppStateGameMode::initialize()
 
 bool AppStateGameMode::terminate()
 {
+  the_desktop.removeChild("MainMapView");
+
   return true;
 }
 
@@ -250,7 +252,7 @@ void AppStateGameMode::render_map(sf::RenderTexture& texture, int frame)
       if (m_current_input_state == GameInputState::CursorLook)
       {
         m_map_view->set_view(texture, cursor_pixel_coords, m_map_zoom_level);
-        m_map_view->render(texture, frame);
+        m_map_view->render_map(texture, frame);
 
         m_map_view->draw_highlight(texture,
                                    cursor_pixel_coords,
@@ -261,7 +263,7 @@ void AppStateGameMode::render_map(sf::RenderTexture& texture, int frame)
       else
       {
         m_map_view->set_view(texture, player_pixel_coords, m_map_zoom_level);
-        m_map_view->render(texture, frame);
+        m_map_view->render_map(texture, frame);
       }
     }
   }

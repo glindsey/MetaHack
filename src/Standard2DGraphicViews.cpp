@@ -36,9 +36,9 @@ MapTileView* Standard2DGraphicViews::createMapTileView(MapTile& map_tile)
   return NEW MapTileStandard2DView(map_tile, getTileSheet());
 }
 
-MapView* Standard2DGraphicViews::createMapView(Map& map)
+MapView* Standard2DGraphicViews::createMapView(std::string name, Map& map, Vec2u size)
 {
-  return NEW MapStandard2DView(map, getTileSheet());
+  return NEW MapStandard2DView(name, map, size, getTileSheet());
 }
 
 TileSheet& Standard2DGraphicViews::getTileSheet()

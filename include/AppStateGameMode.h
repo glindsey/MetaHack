@@ -69,8 +69,9 @@ private:
   /// The current game state.
   std::unique_ptr<GameState> m_game_state;
 
-  /// The current MapView.
-  std::unique_ptr<MapView> m_map_view;
+  /// Reference to the current MapView.
+  MapView* m_map_view;
+  //std::unique_ptr<MapView> m_map_view;
 
   /// The current InventorySelection.
   std::unique_ptr<InventorySelection> m_inventory_selection;

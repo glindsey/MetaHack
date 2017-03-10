@@ -4,7 +4,6 @@
 #include "stdafx.h"
 
 #include "GUIEvent.h"
-#include "Renderable.h"
 #include "SFMLEventHandler.h"
 
 #include "Visitor.h"
@@ -54,8 +53,7 @@ namespace metagui
 
   /// Virtual superclass of all GUI objects on screen.
   /// @todo Should child objects store Z-order?
-  class Object :
-    public RenderableToTexture
+  class Object
   {
   public:
     explicit Object(std::string name, Vec2i location = Vec2i(0, 0), Vec2u size = Vec2u(0, 0));
@@ -110,8 +108,8 @@ namespace metagui
     /// @param child    std::unique_ptr to child to add.
     /// @param z_order  Z-order to put this child at. If omitted, uses the
     ///                 highest Z-order currently in the map, plus one.
-    /// @return A reference to the child added.
-    Object& addChild(std::unique_ptr<Object> child,
+    /// @return A pointer to the child added.
+    Object* addChild(std::unique_ptr<Object> child,
                      uint32_t z_order);
 
     /// Add a child GUIObject underneath this one.
@@ -120,20 +118,20 @@ namespace metagui
     /// the child map, plus one.
     /// @param child    std::unique_ptr to child to add.
     ///
-    /// @return A reference to the child added.
-    Object& addChild(std::unique_ptr<Object> child);
+    /// @return A pointer to the child added.
+    Object* addChild(std::unique_ptr<Object> child);
 
     /// Add a child GUIObject underneath this one.
     /// *This GUIObject assumes ownership of the child.*
     /// @param child    Pointer to child to add.
     /// @param z_order  Z-order to put this child at. If omitted, uses the
     ///                 highest Z-order currently in the map, plus one.
-    /// @return A reference to the child added.
+    /// @return A pointer to the child added.
     template< typename T >
-    T& addChild(T* child, uint32_t z_order)
+    T* addChild(T* child, uint32_t z_order)
     {
       std::unique_ptr<Object> child_ptr(child);
-      return dynamic_cast<T&>(addChild(std::move(child_ptr), z_order));
+      return dynamic_cast<T*>(addChild(std::move(child_ptr), z_order));
     }
 
     /// Add a child GUIObject underneath this one.
@@ -142,12 +140,12 @@ namespace metagui
     /// the child map, plus one.
     /// @param child    Pointer to child to add.
     ///
-    /// @return A reference to the child added.
+    /// @return A pointer to the child added.
     template< typename T >
-    T& addChild(T* child)
+    T* addChild(T* child)
     {
       std::unique_ptr<Object> child_ptr(child);
-      return dynamic_cast<T&>(addChild(std::move(child_ptr)));
+      return dynamic_cast<T*>(addChild(std::move(child_ptr)));
     }
 
     /// Add a child GUIObject underneath this one.
@@ -156,8 +154,8 @@ namespace metagui
     /// the child map, minus one.
     /// @param child    std::unique_ptr to child to add.
     ///
-    /// @return A reference to the child added.
-    Object& addChildTop(std::unique_ptr<Object> child);
+    /// @return A pointer to the child added.
+    Object* addChildTop(std::unique_ptr<Object> child);
 
     /// Add a child GUIObject underneath this one.
     /// *This GUIObject assumes ownership of the child.*
@@ -167,10 +165,10 @@ namespace metagui
     ///
     /// @return A reference to the child added.
     template< typename T >
-    T& addChildTop(T* child)
+    T* addChildTop(T* child)
     {
       std::unique_ptr<Object> child_ptr(child);
-      return dynamic_cast<T&>(addChildTop(std::move(child_ptr)));
+      return dynamic_cast<T*>(addChildTop(std::move(child_ptr)));
     }
 
     /// Handle an incoming event.
@@ -384,10 +382,11 @@ namespace metagui
     /// Definition of struct of cached flag values.
     struct CachedFlags
     {
-      bool hidden = false;
-      bool disabled = false;
-      bool movable = false;
-      bool decor = false;
+      bool hidden = false;     ///< Means this object, and its children, are not displayed.
+      bool disabled = false;   ///< Means this object does not process events.
+      bool animated = false;   ///< Means this object must be redrawn every frame.
+      bool movable = false;    ///< Means this object can be moved via dragging.
+      bool decor = false;      ///< Means this object is part of its parent's decor.
     };
 
     /// Struct of cached flag values.

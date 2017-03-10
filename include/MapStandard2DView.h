@@ -16,10 +16,10 @@ class MapStandard2DView : public MapView
   friend class Standard2DGraphicViews;
 
 public:
+  virtual bool render_map(sf::RenderTexture& texture, int frame) override;
+
   virtual void update_tiles(EntityId viewer) override;
   virtual void update_things(EntityId viewer, int frame) override;
-  
-  virtual bool render(sf::RenderTexture& texture, int frame) override;
 
   virtual void draw_highlight(sf::RenderTarget& target,
                               Vec2f location,
@@ -32,9 +32,15 @@ public:
 protected:
   /// Constructor.
   /// Private because map views should be obtained via the IGraphicViews service.
+  /// @param name       Name of this view.
   /// @param map	    Reference to Map object to associate with this view.
+  /// @param size       Size of the view to create.
   /// @param tile_sheet Reference to tilesheet containing graphics to display.
-  MapStandard2DView(Map& map, TileSheet& tile_sheet);
+  MapStandard2DView(std::string name, Map& map, Vec2u size, TileSheet& tile_sheet);
+
+  /// Called before rendering the object's children.
+  /// Default behavior is to do nothing.
+  virtual void drawPreChildren_(sf::RenderTexture& texture, int frame) override;
 
   /// Reinitialize cached map render data.
   void reset_cached_render_data();

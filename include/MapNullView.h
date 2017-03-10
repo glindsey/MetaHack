@@ -15,7 +15,7 @@ public:
   virtual void update_tiles(EntityId viewer) override;
   virtual void update_things(EntityId viewer, int frame) override;
   
-  virtual bool render(sf::RenderTexture& texture, int frame) override;
+  virtual bool render_map(sf::RenderTexture& texture, int frame) override;
 
   virtual void draw_highlight(sf::RenderTarget& target,
                               Vec2f location,
@@ -28,7 +28,8 @@ public:
 protected:
   /// Constructor.
   /// Private because map views should be obtained via the IGraphicViews service.
+  /// @param name   The name of this view.
   /// @param map	Reference to Map object to associate with this view.
-  MapNullView(Map& map);
+  MapNullView(std::string name, Map& map, Vec2u size);
 
 };

@@ -230,7 +230,7 @@ namespace metagui
     return dimensions;
   }
 
-  Object& Object::addChild(std::unique_ptr<Object> child, uint32_t z_order)
+  Object* Object::addChild(std::unique_ptr<Object> child, uint32_t z_order)
   {
     ASSERT_CONDITION(child);
 
@@ -241,8 +241,8 @@ namespace metagui
       throw std::runtime_error("Tried to add already-present child \"" + name + "\" of GUI object \"" + getName() + "\"");
     }
 
-    Object& child_ref = *child;
     child->setParent(this);
+    auto child_ptr = child.get();
 
     // This odd syntax is in order to work around VS compiler bug when having
     // a unique_ptr as a map value. See:
@@ -250,22 +250,22 @@ namespace metagui
     m_children.insert<ChildMap::value_type>(ChildMap::value_type(name, std::move(child)));
     m_zorder_map.insert({ z_order, name });
 
-    child_ref.handleParentSizeChanged_(getSize());
+    child_ptr->handleParentSizeChanged_(getSize());
 
     CLOG(TRACE, "GUI") << "Added child \"" << name <<
       "\" (with Z-order " << z_order <<
       ") to parent \"" << getName() << "\"";
 
-    return child_ref;
+    return child_ptr;
   }
 
-  Object& Object::addChild(std::unique_ptr<Object> child)
+  Object* Object::addChild(std::unique_ptr<Object> child)
   {
     uint32_t z_order = getHighestChildZOrder() + 1;
     return addChild(std::move(child), z_order);
   }
 
-  Object & Object::addChildTop(std::unique_ptr<Object> child)
+  Object* Object::addChildTop(std::unique_ptr<Object> child)
   {
     uint32_t z_order = getLowestChildZOrder() - 1;
     return addChild(std::move(child), z_order);
@@ -356,7 +356,7 @@ namespace metagui
 
     if (m_cached_flags.hidden == false)
     {
-      if (m_flag_for_redraw == true)
+      if ((m_flag_for_redraw == true) || (m_cached_flags.animated == true))
       {
         our_texture.clear(sf::Color::Transparent);
         draw(frame);
@@ -445,6 +445,10 @@ namespace metagui
         setFocus(false);
       }
       m_cached_flags.disabled = value;
+    }
+    else if (name == "animated")
+    {
+      m_cached_flags.animated = value;
     }
     else if (name == "movable")
     {

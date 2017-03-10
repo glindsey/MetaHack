@@ -107,7 +107,7 @@ namespace metagui
       {
         if (!childExists(name))
         {
-          addChild(new TitleBar(name)).setFlag("decor", true);
+          addChild(new TitleBar(name))->setFlag("decor", true);
         }
       }
       else
@@ -122,7 +122,7 @@ namespace metagui
       {
         if (!childExists(name))
         {
-          addChild(new ResizeHandle(name)).setFlag("decor", true);
+          addChild(new ResizeHandle(name))->setFlag("decor", true);
         }
       }
       else
@@ -137,7 +137,7 @@ namespace metagui
       {
         if (!childExists(name))
         {
-          addChild(new CloseHandle(name)).setFlag("decor", true);
+          addChild(new CloseHandle(name))->setFlag("decor", true);
         }
       }
       else
@@ -152,7 +152,7 @@ namespace metagui
       {
         if (!childExists(name))
         {
-          addChild(new ShrinkHandle(name)).setFlag("decor", true);
+          addChild(new ShrinkHandle(name))->setFlag("decor", true);
         }
       }
       else

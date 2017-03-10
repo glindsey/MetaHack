@@ -4,7 +4,6 @@
 
 #include "Map.h"
 #include "Observer.h"
-#include "Renderable.h"
 
 // Forward declarations
 class EntityId;
@@ -12,13 +11,13 @@ class EntityId;
 /// Abstract class representing a view of a Map object.
 class MapView 
   : 
-  public Observer,
-  public RenderableToTexture
+  public metagui::Object,
+  public Observer
 {
 public:
   /// Constructor.
   /// @param map	Reference to Map object to associate with this view.
-  explicit MapView(Map& map);
+  explicit MapView(std::string name, Map& map, Vec2u size);
 
   /// Destructor.
   virtual ~MapView();
@@ -32,6 +31,10 @@ public:
   void set_view(sf::RenderTarget& target,
                 Vec2f center,
                 float zoom_level);
+
+  /// Render the map to a texture.
+  /// @todo Get rid of this in favor of the metagui::Object render methods.
+  virtual bool render_map(sf::RenderTexture& texture, int frame) = 0;
 
   /// Update any cached render data associated with map tiles.
   /// @param entity	ID of the entity that is percieving the map.

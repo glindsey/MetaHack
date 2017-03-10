@@ -8,9 +8,9 @@
 
 #include "ShaderEffect.h"
 
-MapStandard2DView::MapStandard2DView(Map& map, TileSheet& tile_sheet)
+MapStandard2DView::MapStandard2DView(std::string name, Map& map, Vec2u size, TileSheet& tile_sheet)
   :
-  MapView(map),
+  MapView(name, map, size),
   m_tile_sheet(tile_sheet)
 {
   reset_cached_render_data();
@@ -60,7 +60,7 @@ void MapStandard2DView::update_things(EntityId viewer, int frame)
   }
 }
 
-bool MapStandard2DView::render(sf::RenderTexture& texture, int frame)
+bool MapStandard2DView::render_map(sf::RenderTexture& texture, int frame)
 {
   the_shader.setParameter("texture", sf::Shader::CurrentTexture);
 
@@ -115,6 +115,11 @@ std::string MapStandard2DView::getViewName()
   return "standard2D";
 }
 
+
+void MapStandard2DView::drawPreChildren_(sf::RenderTexture & texture, int frame)
+{
+  /// @todo WRITE ME
+}
 
 void MapStandard2DView::reset_cached_render_data()
 {
