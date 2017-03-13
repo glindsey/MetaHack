@@ -43,7 +43,7 @@ namespace Actions
     {
       print_message_try_();
 
-      message = maketr("ACTION_NOT_IN_INVENTORY");
+      message = maketr("ACTION_FOO_NOT_IN_INVENTORY");
       Service<IMessageLog>::get().add(message);
 
       return StateResult::Failure();
@@ -55,7 +55,7 @@ namespace Actions
       print_message_try_();
 
       /// @todo Perhaps automatically try to unwield the item before dropping?
-      message = maketr("ACTION_CANT_VERB_WIELDED");
+      message = maketr("ACTION_YOU_CANT_VERB_WIELDED");
       Service<IMessageLog>::get().add(message);
 
       return StateResult::Failure();
@@ -66,7 +66,7 @@ namespace Actions
     {
       print_message_try_();
 
-      message = maketr("ACTION_CANT_VERB_WORN"); 
+      message = maketr("ACTION_YOU_CANT_VERB_WORN"); 
       Service<IMessageLog>::get().add(message);
 
       return StateResult::Failure();
@@ -98,7 +98,7 @@ namespace Actions
 
     if (object == subject)
     {
-      message = maketr("ACTION_THROW_SELF_TO_GROUND", { location->get_display_name() });
+      message = maketr("ACTION_YOU_THROW_SELF_TO_GROUND", { location->get_display_name() });
       Service<IMessageLog>::get().add(message);
       /// @todo Possible damage from hurling yourself to the ground!
       message = maketr("YOU_SEEM_UNHARMED", { IS_PLAYER ? tr("PREFIX_FORTUNATELY") : "" });
@@ -121,7 +121,7 @@ namespace Actions
           }
           else
           {
-            message = maketr("ACTION_CANT_VERB_FOO_UNKNOWN");
+            message = maketr("ACTION_YOU_CANT_VERB_FOO_UNKNOWN");
             Service<IMessageLog>::get().add(message);
 
             CLOG(WARNING, "Action") << "Could not drop Entity " << object <<

@@ -49,7 +49,7 @@ namespace Actions
     // Make sure we CAN attack.
     if (!subject->get_modified_property<bool>("can_attack", false))
     {
-      message += maketr("ACTION_CANT_ATTACK");
+      message += maketr("ACTION_YOU_CANT_ATTACK");
       Service<IMessageLog>::get().add(message);
       return StateResult::Failure();
     }
@@ -57,7 +57,7 @@ namespace Actions
     // Make sure we can move RIGHT NOW.
     if (!subject->can_currently_move())
     {
-      message += maketr("ACTION_CANT_MOVE_NOW");
+      message += maketr("ACTION_YOU_CANT_MOVE_NOW");
       Service<IMessageLog>::get().add(message);
       return StateResult::Failure();
     }
@@ -66,7 +66,7 @@ namespace Actions
     if (new_direction == Direction::Self)
     {
       /// @todo Allow attacking yourself!
-      message = maketr("ACTION_WONT_ATTACK_SELF");
+      message = maketr("ACTION_YOU_WONT_ATTACK_SELF");
       Service<IMessageLog>::get().add(message);
       return StateResult::Failure();
     }
@@ -75,7 +75,7 @@ namespace Actions
     /// @todo Allow for attacking when swallowed!
     if (subject->is_inside_another_thing())
     {
-      message += maketr("ACTION_INSIDE_OBJECT",
+      message += maketr("ACTION_YOU_ARE_INSIDE_OBJECT",
       { location->get_identifying_string(ArticleChoice::Indefinite) });
 
       Service<IMessageLog>::get().add(message);
@@ -85,7 +85,7 @@ namespace Actions
     if (new_direction == Direction::Up)
     {
       /// @todo Write up/down attack code
-      message = tr("ACTION_CANT_ATTACK_CEILING");
+      message = tr("ACTION_YOU_CANT_ATTACK_CEILING");
       Service<IMessageLog>::get().add(message);
       return StateResult::Failure();
     }
@@ -93,7 +93,7 @@ namespace Actions
     if (new_direction == Direction::Down)
     {
       /// @todo Write up/down attack code
-      message = tr("ACTION_CANT_ATTACK_FLOOR");
+      message = tr("ACTION_YOU_CANT_ATTACK_FLOOR");
       Service<IMessageLog>::get().add(message);
       return StateResult::Failure();
     }
@@ -125,7 +125,7 @@ namespace Actions
     if ((x_new < 0) || (y_new < 0) ||
       (x_new >= map_size.x) || (y_new >= map_size.y))
     {
-      message += maketr("ACTION_CANT_VERB_THERE");
+      message += maketr("ACTION_YOU_CANT_VERB_THERE");
       Service<IMessageLog>::get().add(message);
       return StateResult::Failure();
     }
@@ -139,7 +139,7 @@ namespace Actions
     if (object == EntityId::Mu())
     {
       /// @todo Deal with attacking other stuff, MapTiles, etc.
-      message = maketr("ACTION_CANT_VERB_NOTHING");
+      message = maketr("ACTION_YOU_CANT_VERB_NOTHING");
       Service<IMessageLog>::get().add(message);
       return StateResult::Failure();
     }

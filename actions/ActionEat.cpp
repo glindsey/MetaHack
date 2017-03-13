@@ -2,6 +2,7 @@
 
 #include "ActionEat.h"
 #include "IMessageLog.h"
+#include "IStringDictionary.h"
 #include "Service.h"
 #include "Entity.h"
 #include "EntityId.h"
@@ -35,7 +36,7 @@ namespace Actions
       print_message_try_();
 
       /// @todo Handle "unusual" cases (e.g. zombies?)
-      message = "But " + YOU + " really " + CV("aren't", "isn't") + " that tasty, so " + YOU + CV(" stop.", " stops.");
+      message = maketr("ACTION_YOU_WONT_EAT_SELF");
       Service<IMessageLog>::get().add(message);
 
       return StateResult::Failure();
@@ -45,8 +46,7 @@ namespace Actions
     if (subject->get_modified_property<bool>("can_eat"))
     {
       print_message_try_();
-
-      message = "But, as " + getIndefArt(subject->get_display_name()) + subject->get_display_name() + "," + YOU_ARE + " not capable of eating.";
+      message = maketr("ACTION_YOU_ARE_NOT_CAPABLE_OF_VERBING", { getIndefArt(subject->get_display_name()), subject->get_display_name() });
       Service<IMessageLog>::get().add(message);
 
       return StateResult::Failure();

@@ -643,32 +643,32 @@ namespace Actions
 
   void Action::print_message_try_() const
   {
-    put_maketr("ACTION_TRY_TO_VERB_THE_FOO");
+    put_maketr("ACTION_YOU_TRY_TO_VERB_THE_FOO");
   }
 
   void Action::print_message_do_() const
   {
-    put_maketr("ACTION_CVERB_THE_FOO");
+    put_maketr("ACTION_YOU_CVERB_THE_FOO");
   }
 
   void Action::print_message_begin_() const
   {
-    put_maketr("ACTION_BEGIN_TO_VERB_THE_FOO");
+    put_maketr("ACTION_YOU_BEGIN_TO_VERB_THE_FOO");
   }
 
   void Action::print_message_stop_() const
   {
-    put_maketr("ACTION_STOP_VERBING_THE_FOO");
+    put_maketr("ACTION_YOU_STOP_VERBING_THE_FOO");
   }
 
   void Action::print_message_finish_() const
   {
-    put_maketr("ACTION_FINISH_VERBING_THE_FOO");
+    put_maketr("ACTION_YOU_FINISH_VERBING_THE_FOO");
   }
 
   void Action::print_message_cant_() const
   {
-    put_maketr("ACTION_CANT_VERB_THAT");
+    put_maketr("ACTION_YOU_CANT_VERB_THAT");
   }
 
   void Action::register_action_as(std::string key, ActionCreator creator)
