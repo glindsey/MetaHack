@@ -3,6 +3,7 @@
 #include "ActionDrop.h"
 #include "ActionMove.h"
 #include "IMessageLog.h"
+#include "IStringDictionary.h"
 #include "Service.h"
 #include "Entity.h"
 #include "EntityId.h"
@@ -42,7 +43,7 @@ namespace Actions
     {
       print_message_try_();
 
-      message = THE_FOO + FOO_IS + "not in " + YOUR + " inventory!";
+      message = maketr("ACTION_NOT_IN_INVENTORY");
       Service<IMessageLog>::get().add(message);
 
       return StateResult::Failure();
@@ -54,7 +55,7 @@ namespace Actions
       print_message_try_();
 
       /// @todo Perhaps automatically try to unwield the item before dropping?
-      message = YOU + " cannot drop something that is currently being wielded.";
+      message = maketr("ACTION_CANT_VERB_WIELDED");
       Service<IMessageLog>::get().add(message);
 
       return StateResult::Failure();
@@ -65,7 +66,7 @@ namespace Actions
     {
       print_message_try_();
 
-      message = YOU + " cannot drop something that is currently being worn.";
+      message = maketr("ACTION_CANT_VERB_WORN"); 
       Service<IMessageLog>::get().add(message);
 
       return StateResult::Failure();
@@ -76,7 +77,7 @@ namespace Actions
     {
       print_message_try_();
 
-      message = THE_FOO + " cannot be moved.";
+      message = maketr("ACTION_FOO_CANT_BE_VERBED");
       Service<IMessageLog>::get().add(message);
 
       return StateResult::Failure();
@@ -97,13 +98,12 @@ namespace Actions
 
     if (object == subject)
     {
-      message = YOU + CV(" hurl ", " hurls ") + YOURSELF + " to the " +
-        location->get_display_name() + "!";
+      message = maketr("ACTION_THROW_SELF_TO_GROUND", { location->get_display_name() });
       Service<IMessageLog>::get().add(message);
       /// @todo Possible damage from hurling yourself to the ground!
-      message = (IS_PLAYER ? "Fortunately, " : "") + YOU_SEEM + " unharmed.";
+      message = maketr("YOU_SEEM_UNHARMED", { IS_PLAYER ? tr("PREFIX_FORTUNATELY") : "" });
       Service<IMessageLog>::get().add(message);
-      message = YOU_GET + " up.";
+      message = maketr("YOU_GET_UP");
       Service<IMessageLog>::get().add(message);
     }
     else if (object != EntityId::Mu())
@@ -121,7 +121,7 @@ namespace Actions
           }
           else
           {
-            message = YOU + " could not drop " + THE_FOO + " for some inexplicable reason.";
+            message = maketr("ACTION_CANT_VERB_FOO_UNKNOWN");
             Service<IMessageLog>::get().add(message);
 
             CLOG(WARNING, "Action") << "Could not drop Entity " << object <<
@@ -139,7 +139,7 @@ namespace Actions
         // the future that can't contain certain Entities.
         print_message_try_();
 
-        message = location->get_identifying_string() + " cannot hold " + THE_FOO + ".";
+        message = maketr("LOCATION_CANT_HOLD_FOO", { location->get_identifying_string() });
         Service<IMessageLog>::get().add(message);
       }
     }
