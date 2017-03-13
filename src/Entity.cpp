@@ -1459,6 +1459,7 @@ std::string Entity::get_bodypart_description(BodyPart part,
   return result;
 }
 
+/// @todo Have the script return an optional reason if an action can't be done.
 bool Entity::can_have_action_done_by(EntityId entity, Actions::Action& action)
 {
   return call_lua_function<bool>("can_have_action_" + action.get_type() + "_done_by", { entity }, false);

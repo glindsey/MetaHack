@@ -480,7 +480,7 @@ namespace Actions
           {
             print_message_try_();
 
-            put_maketr("OBJECT_OUT_OF_REACH");
+            put_maketr("THE_FOO_IS_OUT_OF_REACH");
 
             return StateResult::Failure();
           }
@@ -493,7 +493,7 @@ namespace Actions
           {
             print_message_try_();
 
-            message = make_string(tr("OBJECT_NOT_IN_INVENTORY"));
+            message = make_string(tr("THE_FOO_IS_NOT_IN_YOUR_INVENTORY"));
             if (subject->can_reach(object))
             {
               message += tr("PICK_UP_OBJECT_FIRST");
