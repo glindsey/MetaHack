@@ -36,12 +36,11 @@ namespace Actions
     {
       if (IS_PLAYER)
       {
-        message = "Throw yourself?  Throw yourself what, a party?";
+        message = maketr("ACTION_YOU_TRY_TO_THROW_YOURSELF_HUMOROUS");
       }
       else
       {
-        message = YOU_TRY + " to throw " + YOURSELF +
-          ", which seriously shouldn't happen.";
+        message = maketr("ACTION_YOU_TRY_TO_VERB_YOURSELF_INVALID");
         CLOG(WARNING, "Action") << "NPC tried to throw self!?";
       }
       Service<IMessageLog>::get().add(message);
@@ -52,12 +51,10 @@ namespace Actions
     // Check that it's in our inventory.
     if (!subject->get_inventory().contains(object))
     {
-      message = YOU_TRY + " to throw " + THE_FOO + ".";
+      message = maketr("ACTION_YOU_TRY_TO_VERB_THE_FOO");
       Service<IMessageLog>::get().add(message);
 
-      message = "But " + THE_FOO + FOO_IS +
-        " not actually in " + YOUR +
-        " inventory!";
+      message = maketr("THE_FOO_IS_NOT_IN_YOUR_INVENTORY");
       Service<IMessageLog>::get().add(message);
 
       return StateResult::Failure();
@@ -68,7 +65,7 @@ namespace Actions
     {
       print_message_try_();
 
-      message = "But, as " + getIndefArt(subject->get_display_name()) + subject->get_display_name() + "," + YOU_ARE + " not capable of throwing anything.";
+      message = maketr("ACTION_YOU_ARE_NOT_CAPABLE_OF_VERBING", { getIndefArt(subject->get_display_name()), subject->get_display_name() });
       Service<IMessageLog>::get().add(message);
 
       return StateResult::Failure();
@@ -79,7 +76,7 @@ namespace Actions
     {
       print_message_try_();
 
-      message = YOU + " cannot throw something " + YOU_ARE + "wearing.";
+      message = maketr("ACTION_YOU_CANT_VERB_WORN");
       Service<IMessageLog>::get().add(message);
 
       return StateResult::Failure();
@@ -109,7 +106,7 @@ namespace Actions
       }
       else
       {
-        message = YOU + " could not throw " + THE_FOO + " for some inexplicable reason.";
+        message = maketr("ACTION_YOU_CANT_VERB_FOO_UNKNOWN");
         Service<IMessageLog>::get().add(message);
 
         CLOG(WARNING, "Action") << "Could not throw Entity " << object <<
