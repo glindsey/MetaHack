@@ -142,5 +142,6 @@ private:
 #define tr(x)                     (Service<IStringDictionary>::get().get(x))
 #define put_msg(x)                do { Service<IMessageLog>::get().add(x); } while(0)
 #define put_tmsg(x)               do { Service<IMessageLog>::get().add(tr(x)); } while(0)
+#define put_maketr(x)             put_msg(maketr(x))
 
 #endif // APP_H

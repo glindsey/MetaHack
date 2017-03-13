@@ -452,7 +452,7 @@ namespace Actions
       // Make sure we're not in limbo!
       if ((location == EntityId::Mu()) || (current_tile == nullptr))
       {
-        put_msg(make_string(tr("DONT_EXIST_PHYSICALLY")));
+        put_maketr("DONT_EXIST_PHYSICALLY");
         return StateResult::Failure();
       }
     }
@@ -480,7 +480,7 @@ namespace Actions
           {
             print_message_try_();
 
-            put_msg(make_string(tr("OBJECT_OUT_OF_REACH")));
+            put_maketr("OBJECT_OUT_OF_REACH");
 
             return StateResult::Failure();
           }
@@ -643,32 +643,32 @@ namespace Actions
 
   void Action::print_message_try_() const
   {
-    put_msg(make_string(tr("ACTION_TRY_TO_VERB_THE_FOO")));
+    put_maketr("ACTION_TRY_TO_VERB_THE_FOO");
   }
 
   void Action::print_message_do_() const
   {
-    put_msg(make_string(tr("ACTION_CVERB_THE_FOO")));
+    put_maketr("ACTION_CVERB_THE_FOO");
   }
 
   void Action::print_message_begin_() const
   {
-    put_msg(make_string(tr("ACTION_BEGIN_TO_VERB_THE_FOO")));
+    put_maketr("ACTION_BEGIN_TO_VERB_THE_FOO");
   }
 
   void Action::print_message_stop_() const
   {
-    put_msg(make_string(tr("ACTION_STOP_VERBING_THE_FOO")));
+    put_maketr("ACTION_STOP_VERBING_THE_FOO");
   }
 
   void Action::print_message_finish_() const
   {
-    put_msg(make_string(tr("ACTION_FINISH_VERBING_THE_FOO")));
+    put_maketr("ACTION_FINISH_VERBING_THE_FOO");
   }
 
   void Action::print_message_cant_() const
   {
-    put_msg(make_string(tr("ACTION_CANT_VERB_THAT")));
+    put_maketr("ACTION_CANT_VERB_THAT");
   }
 
   void Action::register_action_as(std::string key, ActionCreator creator)
@@ -692,6 +692,16 @@ namespace Actions
     {
       throw std::runtime_error("Requested non-existent action " + key);
     }
+  }
+
+  std::string Action::maketr(std::string key) const
+  {
+    return make_string(tr(key), {});
+  }
+
+  std::string Action::maketr(std::string key, std::vector<std::string> optional_strings) const
+  {
+    return make_string(tr(key), optional_strings);
   }
 
   std::string Action::make_string(std::string pattern) const
