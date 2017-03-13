@@ -20,69 +20,19 @@ namespace Actions
     static std::unordered_set<Trait> traits =
     {
       Trait::CanBeSubjectVerbObject,
-      Trait::CanTakeAQuantity
+      Trait::CanTakeAQuantity,
+      Trait::ObjectMustNotBeWielded,
+      Trait::ObjectMustNotBeWorn,
+      Trait::ObjectMustBeInInventory,
+      Trait::ObjectMustBeMovableBySubject
     };
 
     return traits;
   }
+
   StateResult ActionDrop::do_prebegin_work_(AnyMap& params)
   {
-    std::string message;
-    auto subject = get_subject();
-    auto object = get_object();
-    EntityId location = subject->getLocation();
-
-    // If it's us, this is a special case. Return success.
-    if (subject == object)
-    {
-      return StateResult::Success();
-    }
-
-    // Check that it's in our inventory.
-    if (!subject->get_inventory().contains(object))
-    {
-      print_message_try_();
-
-      message = maketr("ACTION_FOO_NOT_IN_INVENTORY");
-      Service<IMessageLog>::get().add(message);
-
-      return StateResult::Failure();
-    }
-
-    // Check that we're not wielding the item.
-    if (subject->is_wielding(object))
-    {
-      print_message_try_();
-
-      /// @todo Perhaps automatically try to unwield the item before dropping?
-      message = maketr("ACTION_YOU_CANT_VERB_WIELDED");
-      Service<IMessageLog>::get().add(message);
-
-      return StateResult::Failure();
-    }
-
-    // Check that we're not wearing the item.
-    if (subject->has_equipped(object))
-    {
-      print_message_try_();
-
-      message = maketr("ACTION_YOU_CANT_VERB_WORN"); 
-      Service<IMessageLog>::get().add(message);
-
-      return StateResult::Failure();
-    }
-
-    // Check that we can move the item.
-    if (!object->can_have_action_done_by(subject, ActionMove::prototype))
-    {
-      print_message_try_();
-
-      message = maketr("ACTION_FOO_CANT_BE_VERBED");
-      Service<IMessageLog>::get().add(message);
-
-      return StateResult::Failure();
-    }
-
+    // All checks handled in Action class via traits.
     return StateResult::Success();
   }
 
@@ -98,7 +48,7 @@ namespace Actions
 
     if (object == subject)
     {
-      message = maketr("ACTION_YOU_THROW_SELF_TO_GROUND", { location->get_display_name() });
+      message = maketr("YOU_THROW_SELF_TO_GROUND", { location->get_display_name() });
       Service<IMessageLog>::get().add(message);
       /// @todo Possible damage from hurling yourself to the ground!
       message = maketr("YOU_SEEM_UNHARMED", { IS_PLAYER ? tr("PREFIX_FORTUNATELY") : "" });
@@ -121,7 +71,7 @@ namespace Actions
           }
           else
           {
-            message = maketr("ACTION_YOU_CANT_VERB_FOO_UNKNOWN");
+            message = maketr("YOU_CANT_VERB_FOO_UNKNOWN");
             Service<IMessageLog>::get().add(message);
 
             CLOG(WARNING, "Action") << "Could not drop Entity " << object <<

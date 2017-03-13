@@ -26,32 +26,7 @@ namespace Actions
 
   StateResult ActionUse::do_prebegin_work_(AnyMap& params)
   {
-    std::string message;
-    auto subject = get_subject();
-    auto object = get_object();
-
-    // Check that it is not us!
-    if (subject == object)
-    {
-      message = YOU_TRY + " to use " + THE_FOO + ".";
-      Service<IMessageLog>::get().add(message);
-
-      if (IS_PLAYER)
-      {
-        message = YOU_ARE + " already using " + YOURSELF + " to the best of " + YOUR + " ability.";
-        Service<IMessageLog>::get().add(message);
-      }
-      else
-      {
-        message = "That seriously shouldn't happen!";
-        Service<IMessageLog>::get().add(message);
-
-        CLOG(WARNING, "Action") << "NPC tried to use self!?";
-      }
-
-      return StateResult::Failure();
-    }
-
+    // All checks done in Action class via traits.
     return StateResult::Success();
   }
 

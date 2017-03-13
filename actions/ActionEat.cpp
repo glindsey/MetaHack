@@ -18,7 +18,8 @@ namespace Actions
   {
     static std::unordered_set<Trait> traits =
     {
-      Trait::CanBeSubjectVerbObject
+      Trait::CanBeSubjectVerbObject,
+      Trait::ObjectCanBeSelf
     };
 
     return traits;
@@ -36,17 +37,7 @@ namespace Actions
       print_message_try_();
 
       /// @todo Handle "unusual" cases (e.g. zombies?)
-      message = maketr("ACTION_YOU_WONT_EAT_SELF");
-      Service<IMessageLog>::get().add(message);
-
-      return StateResult::Failure();
-    }
-
-    // Check that we're capable of eating at all.
-    if (subject->get_modified_property<bool>("can_eat"))
-    {
-      print_message_try_();
-      message = maketr("ACTION_YOU_ARE_NOT_CAPABLE_OF_VERBING", { getIndefArt(subject->get_display_name()), subject->get_display_name() });
+      message = maketr("YOU_TRY_TO_EAT_YOURSELF_HUMOROUS");
       Service<IMessageLog>::get().add(message);
 
       return StateResult::Failure();

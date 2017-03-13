@@ -33,32 +33,6 @@ namespace Actions
     auto object = get_object();
     auto container = object->getLocation();
 
-    // Verify that the Action has an object.
-    if (object == EntityId::Mu())
-    {
-      return StateResult::Failure();
-    }
-
-    // Check that the entity isn't US!
-    if (object == subject)
-    {
-      if (IS_PLAYER)
-      {
-        /// @todo Maybe allow player to voluntarily exit a container?
-        message = "I'm afraid you can't do that.  "
-          "(At least, not in this version...)";
-      }
-      else
-      {
-        message = YOU_TRY + " to take " + YOURSELF +
-          "out, which seriously shouldn't happen.";
-        CLOG(WARNING, "Action") << "NPC tried to take self out!?";
-      }
-      Service<IMessageLog>::get().add(message);
-
-      return StateResult::Failure();
-    }
-
     // Check that the container is not a MapTile or DynamicEntity.
     if (!object->is_inside_another_thing())
     {

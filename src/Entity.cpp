@@ -4,6 +4,7 @@
 
 #include "App.h"
 #include "Direction.h"
+#include "EntityPool.h"
 #include "GameState.h"
 #include "Gender.h"
 #include "IConfigSettings.h"
@@ -18,7 +19,7 @@
 #include "Metadata.h"
 #include "Ordinal.h"
 #include "Service.h"
-#include "EntityPool.h"
+#include "StringTransforms.h"
 #include "TileSheet.h"
 
 // Static member initialization.
@@ -243,22 +244,13 @@ bool Entity::do_die()
     case ActionResult::Success:
       if (this->is_player())
       {
-        message = this->get_you_or_identifying_string() + " die...";
+        message = StringTransforms::maketr(get_id(), 0, "YOU_DIE");
         Service<IMessageLog>::get().add(message);
       }
       else
       {
         bool living = get_modified_property<bool>("living");
-        if (living)
-        {
-          message = this->get_you_or_identifying_string() + " " +
-            this->choose_verb("are", "is") + " killed!";
-        }
-        else
-        {
-          message = this->get_you_or_identifying_string() + " " +
-            this->choose_verb("are", "is") + " destroyed!";
-        }
+        message = StringTransforms::maketr(get_id(), 0, living ? "YOU_ARE_KILLED" : "YOU_ARE_DESTROYED");
         Service<IMessageLog>::get().add(message);
       }
 
@@ -272,8 +264,7 @@ bool Entity::do_die()
       return true;
     case ActionResult::Failure:
     default:
-      message = this->get_you_or_identifying_string() +
-        this->choose_verb(" manage", " manages") + " to avoid dying.";
+      message = StringTransforms::maketr(get_id(), 0, "YOU_MANAGE_TO_AVOID_DYING");
       Service<IMessageLog>::get().add(message);
       return false;
   }
@@ -299,13 +290,14 @@ ActionResult Entity::can_deequip(EntityId entity, unsigned int& action_time)
   return ActionResult::Success;
 }
 
+/// @todo Refactor into an Action
 bool Entity::do_deequip(EntityId entity, unsigned int& action_time)
 {
   std::string message;
   ActionResult deequip_try = this->can_deequip(entity, action_time);
   std::string thing_name = entity->get_identifying_string();
 
-  message = this->get_you_or_identifying_string() + " " +
+  message = this->get_subject_you_or_identifying_string() + " " +
     this->choose_verb("try", "tries") +
     " to take off " + thing_name;
   Service<IMessageLog>::get().add(message);
@@ -323,9 +315,9 @@ bool Entity::do_deequip(EntityId entity, unsigned int& action_time)
         set_worn(EntityId::Mu(), location);
 
         std::string wear_desc = get_bodypart_description(location.part, location.number);
-        message = this->get_you_or_identifying_string() + " " +
+        message = this->get_subject_you_or_identifying_string() + " " +
           this->choose_verb("are", "is") + " no longer wearing " + thing_name +
-          " on " + this->get_possessive() + " " + wear_desc + ".";
+          " on " + this->get_possessive_of(wear_desc) + ".";
         Service<IMessageLog>::get().add(message);
         return true;
       }
@@ -334,7 +326,7 @@ bool Entity::do_deequip(EntityId entity, unsigned int& action_time)
 
     case ActionResult::FailureItemNotEquipped:
     {
-      message = this->get_you_or_identifying_string() + " " +
+      message = this->get_subject_you_or_identifying_string() + " " +
         this->choose_verb("are", "is") + " not wearing " + thing_name + ".";
       Service<IMessageLog>::get().add(message);
       return true;
@@ -380,6 +372,7 @@ ActionResult Entity::can_equip(EntityId entity, unsigned int& action_time)
   return ActionResult::Success;
 }
 
+/// @todo Refactor into an Action
 bool Entity::do_equip(EntityId entity, unsigned int& action_time)
 {
   std::string message;
@@ -399,10 +392,10 @@ bool Entity::do_equip(EntityId entity, unsigned int& action_time)
 
         std::string wear_desc = get_bodypart_description(location.part,
                                                            location.number);
-        message = this->get_you_or_identifying_string() + " " +
+        message = this->get_subject_you_or_identifying_string() + " " +
           this->choose_verb(" are", " is") +
           " now wearing " + thing_name +
-          " on " + this->get_possessive() + " " + wear_desc + ".";
+          " on " + this->get_possessive_of(wear_desc) + ".";
         Service<IMessageLog>::get().add(message);
         return true;
       }
@@ -416,7 +409,7 @@ bool Entity::do_equip(EntityId entity, unsigned int& action_time)
       }
       else
       {
-        message = this->get_you_or_identifying_string() + " " +
+        message = this->get_subject_you_or_identifying_string() + " " +
           this->choose_verb("try", "tries") +
           " to equip " + this->get_reflexive_pronoun() +
           ", which seriously shouldn't happen.";
@@ -427,19 +420,19 @@ bool Entity::do_equip(EntityId entity, unsigned int& action_time)
 
     case ActionResult::FailureEntityOutOfReach:
     {
-      message = this->get_you_or_identifying_string() + " " +
+      message = this->get_subject_you_or_identifying_string() + " " +
         this->choose_verb("try", "tries") +
         " to equip " + thing_name + ".";
       Service<IMessageLog>::get().add(message);
 
-      message = thing_name + " is not in " + this->get_possessive() + " inventory.";
+      message = thing_name + " is not in " + this->get_possessive_of("inventory") + ".";
       Service<IMessageLog>::get().add(message);
     }
     break;
 
     case ActionResult::FailureItemNotEquippable:
     {
-      message = this->get_you_or_identifying_string() + " " +
+      message = this->get_subject_you_or_identifying_string() + " " +
         this->choose_verb("try", "tries") +
         " to equip " + thing_name + ".";
       Service<IMessageLog>::get().add(message);
@@ -554,6 +547,7 @@ unsigned int Entity::get_bodypart_number(BodyPart part) const
 }
 
 /// Get the appropriate body part name for the DynamicEntity.
+/// @todo Figure out how to cleanly localize this.
 std::string Entity::get_bodypart_name(BodyPart part) const
 {
   switch (part)
@@ -594,6 +588,7 @@ std::string Entity::get_bodypart_name(BodyPart part) const
 }
 
 /// Get the appropriate body part plural for the DynamicEntity.
+/// @todo Figure out how to cleanly localize this.
 std::string Entity::get_bodypart_plural(BodyPart part) const
 {
   switch (part)
@@ -942,18 +937,21 @@ std::string Entity::get_display_adjectives() const
 
   if (is_subtype_of("DynamicEntity") && get_modified_property<int>("hp") <= 0)
   {
-    adjectives += "dead ";
+    adjectives += tr("ADJECTIVE_DEAD");
   }
 
   /// @todo Implement more adjectives.
+
   return adjectives;
 }
 
+/// @todo Figure out how to cleanly localize this.
 std::string Entity::get_display_name() const
 {
   return m_metadata.get_intrinsic<std::string>("name");
 }
 
+/// @todo Figure out how to cleanly localize this.
 std::string Entity::get_display_plural() const
 {
   return m_metadata.get_intrinsic<std::string>("plural");
@@ -969,7 +967,7 @@ void Entity::set_proper_name(std::string name)
   set_base_property<std::string>("proper_name", name);
 }
 
-std::string Entity::get_you_or_identifying_string(ArticleChoice articles) const
+std::string Entity::get_subject_you_or_identifying_string(ArticleChoice articles) const
 {
   std::string str;
 
@@ -977,16 +975,39 @@ std::string Entity::get_you_or_identifying_string(ArticleChoice articles) const
   {
     if (get_modified_property<int>("hp") > 0)
     {
-      str += "you";
+      str = tr("PRONOUN_SUBJECT_YOU");
     }
     else
     {
-      str += "your corpse";
+      str = StringTransforms::make_string_numerical_tokens_only(tr("PRONOUN_POSSESSIVE_YOU"), { tr("NOUN_CORPSE") });
     }
   }
   else
   {
-    str += get_identifying_string(articles);
+    str = get_identifying_string(articles);
+  }
+
+  return str;
+}
+
+std::string Entity::get_object_you_or_identifying_string(ArticleChoice articles) const
+{
+  std::string str;
+
+  if (is_player())
+  {
+    if (get_modified_property<int>("hp") > 0)
+    {
+      str = tr("PRONOUN_OBJECT_YOU");
+    }
+    else
+    {
+      str = StringTransforms::make_string_numerical_tokens_only(tr("PRONOUN_POSSESSIVE_YOU"), { tr("NOUN_CORPSE") });
+    }
+  }
+  else
+  {
+    str = get_identifying_string(articles);
   }
 
   return str;
@@ -1020,12 +1041,13 @@ std::string Entity::get_identifying_string(ArticleChoice articles,
     debug_prefix = "(#" + static_cast<std::string>(get_id()) + ") ";
   }
   
-  std::string article;
   std::string adjectives;
   std::string noun;
+  std::string description;
   std::string suffix;
 
   owned = location->is_subtype_of("DynamicEntity");
+  adjectives = get_display_adjectives();
 
   if (quantity == 1)
   {
@@ -1033,47 +1055,51 @@ std::string Entity::get_identifying_string(ArticleChoice articles,
 
     if (owned && (possessives == UsePossessives::Yes))
     {
-      article = location->get_possessive() + " ";
+      description = location->get_possessive_of(noun, adjectives);
     }
     else
     {
       if (articles == ArticleChoice::Definite)
       {
-        article = tr("ARTICLE_DEFINITE") + " ";
+        description = tr("ARTICLE_DEFINITE") + " " + adjectives + " " + noun;
       }
       else
       {
-        article = getIndefArt(noun) + " ";
+        description = getIndefArt(noun) + " " + adjectives + " " + noun;
       }
     }
 
     if (get_proper_name().empty() == false)
     {
-      suffix = " named " + get_proper_name();
+      suffix = tr("VERB_NAME_PP") + " " + get_proper_name();
     }
   }
   else
   {
-    noun = get_display_plural();
+    noun = get_display_plural() + " " + std::to_string(get_quantity());
 
     if (owned && (possessives == UsePossessives::Yes))
     {
-      article = location->get_possessive() + " ";
+      description = location->get_possessive_of(noun, adjectives);
     }
     else
     {
       if (articles == ArticleChoice::Definite)
       {
-        article = "the ";
+        description = tr("ARTICLE_DEFINITE") + " " + adjectives + " " + noun;
       }
-
-      article += std::to_string(get_quantity()) + " ";
+      else
+      {
+        description = adjectives + " " + noun;
+      }
     }
   }
 
-  adjectives = get_display_adjectives();
-
-  name = debug_prefix + article + adjectives + noun + suffix;
+  name = StringTransforms::make_string_numerical_tokens_only(tr("PATTERN_DISPLAY_NAME"), {
+    debug_prefix,
+    description,
+    suffix
+  });
 
   return name;
 }
@@ -1126,16 +1152,19 @@ std::string const& Entity::get_possessive_pronoun() const
   return getPossPro(get_gender_or_you());
 }
 
-std::string Entity::get_possessive()
+std::string Entity::get_possessive_of(std::string owned, std::string adjectives)
 {
   if (GAME.get_player() == m_ref)
   {
-    return "your";
+    return StringTransforms::make_string_numerical_tokens_only(tr("PRONOUN_POSSESSIVE_YOU"), { adjectives, owned });
   }
   else
   {
-    return get_identifying_string(ArticleChoice::Definite,
-                                  UsePossessives::No) + "'s";
+    return StringTransforms::make_string_numerical_tokens_only(tr("PATTERN_POSSESSIVE"), {
+      get_identifying_string(ArticleChoice::Definite, UsePossessives::No),
+      adjectives,
+      owned
+    });
   }
 }
 
@@ -1221,6 +1250,7 @@ void Entity::be_lit_by(EntityId light)
   }
 }
 
+/// @todo Make this into an Action.
 void Entity::spill()
 {
   Inventory& inventory = get_inventory();
@@ -1298,6 +1328,7 @@ void Entity::destroy()
   //notifyObservers(Event::Updated);
 }
 
+/// @todo Figure out how to localize this.
 std::string Entity::get_bodypart_description(BodyPart part,
                                               unsigned int number)
 {

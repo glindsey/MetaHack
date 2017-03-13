@@ -335,15 +335,27 @@ public:
   /// Set this entity's proper name.
   void set_proper_name(std::string name);
 
-  /// Return a string that identifies this entity.
+  /// Return a string that identifies this entity, in the subjective case.
   /// If it IS the player, it'll return "you".
   /// Otherwise it calls get_identifying_string().
   ///
   /// @param articles Choose whether to use definite or indefinite articles.
   ///                 Defaults to definite articles.
-  std::string get_you_or_identifying_string(ArticleChoice articles = ArticleChoice::Definite) const;
+  std::string get_subject_you_or_identifying_string(ArticleChoice articles = ArticleChoice::Definite) const;
 
-  /// Return a string that identifies this entity.
+  /// Return a string that identifies this entity, in the objective case.
+  /// If it IS the player, it'll return "you".
+  /// Otherwise it calls get_identifying_string().
+  ///
+  /// @param articles Choose whether to use definite or indefinite articles.
+  ///                 Defaults to definite articles.
+  ///
+  /// @note In English this has the same results as 
+  /// get_subject_you_or_identifying_string(), but _this will not be the case
+  /// in all languages_.
+  std::string get_object_you_or_identifying_string(ArticleChoice articles = ArticleChoice::Definite) const;
+
+  /// Return a string that identifies this entity, 
   /// If it matches the object passed in as "other", it'll return
   /// the appropriate reflexive pronoun ("yourself", "itself", etc.).
   /// Otherwise it calls get_identifying_string().
@@ -369,15 +381,18 @@ public:
   std::string get_identifying_string(ArticleChoice articles = ArticleChoice::Definite,
                                        UsePossessives possessives = UsePossessives::Yes) const;
 
-  /// Choose the proper possessive form
-  /// For a Entity, this is simply "the", as Entities cannot own entities.
+  /// Choose the proper possessive form for a string passed in.
+  /// For a Entity, this is simply "the foo", as Entities cannot own entities.
   /// This function checks to see if this Entity is currently designated as
-  /// the player.  If so, it returns "your".  If not, it returns getName() + "'s".
+  /// the player.  If so, it returns "your foo".  If not, it returns getName() + "'s foo".
   /// @todo Make localizable. (How? Use Lua scripts maybe?)
+  ///
+  /// @param owned      String name of the thing that is possessed.
+  /// @param adjectives Optional adjectives to add.
   ///
   /// @note If you want a possessive pronoun like his/her/its/etc., use
   /// get_possessive_adjective().
-  std::string get_possessive();
+  std::string get_possessive_of(std::string owned, std::string adjectives = "");
 
   /// Return true if a third-person verb form should be used.
   /// This function checks to see if this Entity is currently designated as

@@ -114,7 +114,6 @@ function Entity:get_intrinsic(key)
 
     if (result == nil) then
         local superclass = self.superClass()
-
         if (superclass ~= nil) then
             return self.superClass():get_intrinsic(key)
         end

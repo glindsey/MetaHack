@@ -18,7 +18,7 @@ public:
     return true;
   }
 
-  virtual std::string const& get(std::string id_) const override
+  virtual std::string get(std::string id_) const override
   {
     return id_;
   }

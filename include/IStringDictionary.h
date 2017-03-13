@@ -32,13 +32,13 @@ public:
   /// @param id_	ID of the string to get.
   /// @return The translated string, or the ID if it doesn't exist in the
   ///         dictionary.
-  virtual std::string const& get(std::string id_) const = 0;
+  virtual std::string get(std::string id_) const = 0;
 
   /// Clears out the dictionary.
   virtual void clear() = 0;
 
   /// Convenience operator[] for the dictionary.
-  std::string const& operator[](std::string id_) const
+  std::string operator[](std::string id_) const
   {
     return get(id_);
   }

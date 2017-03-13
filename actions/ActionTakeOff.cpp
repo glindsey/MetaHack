@@ -18,7 +18,8 @@ namespace Actions
   {
     static std::unordered_set<Trait> traits =
     {
-      Trait::CanBeSubjectVerbBodypart
+      Trait::CanBeSubjectVerbBodypart,
+      Trait::ObjectMustBeWorn
     };
 
     return traits;
@@ -32,7 +33,7 @@ namespace Actions
   StateResult ActionTakeOff::do_begin_work_(AnyMap& params)
   {
     auto& dict = Service<IStringDictionary>::get();
-    Service<IMessageLog>::get().add(dict.get("ACTION_NOT_IMPLEMENTED"));
+    Service<IMessageLog>::get().add(dict.get("ACTN_NOT_IMPLEMENTED"));
 
     return StateResult::Failure();
   }

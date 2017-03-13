@@ -32,7 +32,7 @@ namespace Actions
   StateResult ActionFill::do_begin_work_(AnyMap& params)
   {
     auto& dict = Service<IStringDictionary>::get();
-    Service<IMessageLog>::get().add(dict.get("ACTION_NOT_IMPLEMENTED"));
+    Service<IMessageLog>::get().add(dict.get("ACTN_NOT_IMPLEMENTED"));
 
     return StateResult::Failure();
   }

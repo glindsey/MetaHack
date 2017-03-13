@@ -508,6 +508,7 @@
     <ClCompile Include="src\EntityPool.cpp" />
     <ClCompile Include="src\EntityStandard2DView.cpp" />
     <ClCompile Include="src\EntityView.cpp" />
+    <ClCompile Include="src\StringTransforms.cpp" />
     <ClCompile Include="src\TileSheet.cpp" />
   </ItemGroup>
   <ItemGroup>

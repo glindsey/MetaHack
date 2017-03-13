@@ -196,7 +196,7 @@ void InventoryArea::drawContents_(sf::RenderTexture& texture, int frame)
   // TODO: Might want to define a specific "get_inventory_name()" method
   //       for Entity that defaults to "XXXX's inventory" but can be
   //       overridden to say stuff like "Entities on the floor".
-  sf::String title_string = viewed_thing->get_possessive() + " inventory";
+  sf::String title_string = viewed_thing->get_possessive_of("inventory");
   title_string[0] = toupper(title_string[0]);
   setText(title_string);
   return;

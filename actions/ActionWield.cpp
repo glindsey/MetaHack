@@ -40,7 +40,7 @@ namespace Actions
       subject->get_bodypart_description(BodyPart::Hand, hand);
     EntityId currently_wielded = subject->get_wielding_in(hand);
 
-    std::string thing_name = (object != EntityId::Mu()) ? get_object_string_() : "nothing";
+    std::string thing_name = (object != EntityId::Mu()) ? get_object_string_() : tr("NOTHING");
 
     // If it is us, or it is what is already being wielded, it means to unwield whatever is wielded.
     if ((object == subject) || (object == currently_wielded) || (object == EntityId::Mu()))
@@ -53,7 +53,7 @@ namespace Actions
     else if (currently_wielded != EntityId::Mu())
     {
       std::string message;
-      message = make_string("$you must unwield what you are currently wielding in your $0 first.", { bodypart_desc });
+      message = maketr("YOU_MUST_UNWIELD_FIRST", { bodypart_desc });
       Service<IMessageLog>::get().add(message);
 
       return StateResult::Failure();
@@ -64,7 +64,7 @@ namespace Actions
     {
       print_message_try_();
 
-      message = make_string("$you $have no way to wield anything!");
+      message = maketr("YOU_HAVE_NO_GRASPING_LIMBS");
       Service<IMessageLog>::get().add(message);
 
       return StateResult::Failure();
@@ -80,7 +80,8 @@ namespace Actions
     auto subject = get_subject();
     auto object = get_object();
 
-    /// @todo Support wielding in other hand(s).
+    /// @todo Support wielding in other hand(s). This will also include
+    ///       shifting an already-wielded weapon to another hand.
     unsigned int hand = 0;
     std::string bodypart_desc =
       subject->get_bodypart_description(BodyPart::Hand, hand);
@@ -90,7 +91,7 @@ namespace Actions
     if (object->be_object_of(*this, subject) == ActionResult::Success)
     {
       subject->set_wielded(object, hand);
-      message = YOU_ARE + " now wielding " + get_object_string_() + " with " + YOUR + " " + bodypart_desc + ".";
+      message = maketr("YOU_ARE_NOW_WIELDING", { get_object_string_(), subject->get_possessive_of(bodypart_desc) });
       Service<IMessageLog>::get().add(message);
 
       result = StateResult::Success();

@@ -19,7 +19,10 @@ namespace Actions
     static std::unordered_set<Trait> traits =
     {
       Trait::CanBeSubjectVerbObject,
-      Trait::CanBeSubjectVerbDirection
+      Trait::CanBeSubjectVerbDirection,
+      Trait::ObjectCanBeSelf,
+      Trait::ObjectMustNotBeEmpty,
+      Trait::ObjectMustBeLiquidCarrier
     };
 
     return traits;
@@ -27,45 +30,7 @@ namespace Actions
 
   StateResult ActionQuaff::do_prebegin_work_(AnyMap& params)
   {
-    std::string message;
-    auto subject = get_subject();
-    auto object = get_object();
-
-    // Check that it isn't US!
-    if (subject == object)
-    {
-      print_message_try_();
-
-      /// @todo When drinking self, special message if caller is a liquid-based organism.
-      message = "Ewwww... no.";
-      Service<IMessageLog>::get().add(message);
-
-      return StateResult::Failure();
-    }
-
-    // Check that we're capable of drinking at all.
-    if (subject->get_modified_property<bool>("can_drink"))
-    {
-      print_message_try_();
-
-      message = "But, as " + getIndefArt(subject->get_display_name()) + subject->get_display_name() + "," + YOU_ARE + " not capable of drinking liquids.";
-      Service<IMessageLog>::get().add(message);
-
-      return StateResult::Failure();
-    }
-
-    // Check that it is not empty.
-    Inventory& inv = object->get_inventory();
-    if (inv.count() == 0)
-    {
-      print_message_try_();
-
-      message = "But " + THE_FOO + FOO_IS + " empty!";
-      Service<IMessageLog>::get().add(message);
-
-      return StateResult::Failure();
-    }
-
+    // All checks handled by Action class via traits.
     return StateResult::Success();
   }
 

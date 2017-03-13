@@ -734,6 +734,9 @@
     <ClCompile Include="actions\ActionTakeOff.cpp">
       <Filter>Actions</Filter>
     </ClCompile>
+    <ClCompile Include="src\StringTransforms.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md">

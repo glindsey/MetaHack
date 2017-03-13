@@ -3,6 +3,7 @@
 #include "common_types.h"
 
 #include "Action.h"
+#include "ActionMove.h"
 
 #include "IStringDictionary.h"
 #include "MessageLog.h"
@@ -15,155 +16,6 @@
 namespace Actions
 {
   std::unordered_map<std::string, ActionCreator> Action::action_map;
-
-  std::string make_string(EntityId subject, EntityId object, std::string pattern)
-  {
-    return make_string(subject, object, pattern, {});
-  }
-
-  std::string make_string(EntityId subject, EntityId object, std::string pattern, std::vector<std::string> optional_strings)
-  {
-    std::string new_string = replace_tokens(pattern,
-                                            [&](std::string token) -> std::string
-    {
-      if (token == "are")
-      {
-        return subject->choose_verb(tr("VERB_BE_2"), tr("VERB_BE_3"));
-      }
-      if (token == "were")
-      {
-        return subject->choose_verb(tr("VERB_BE_P2"), tr("VERB_BE_P3"));
-      }
-      if (token == "do")
-      {
-        return subject->choose_verb(tr("VERB_DO_2"), tr("VERB_DO_3"));
-      }
-      if (token == "get")
-      {
-        return subject->choose_verb(tr("VERB_GET_2"), tr("VERB_GET_3"));
-      }
-      if (token == "have")
-      {
-        return subject->choose_verb(tr("VERB_HAVE_2"), tr("VERB_HAVE_3"));
-      }
-      if (token == "seem")
-      {
-        return subject->choose_verb(tr("VERB_SEEM_2"), tr("VERB_SEEM_3"));
-      }
-      if (token == "try")
-      {
-        return subject->choose_verb(tr("VERB_TRY_2"), tr("VERB_TRY_3"));
-      }
-
-      if ((token == "foo_is") || (token == "foois"))
-      {
-        return object->choose_verb(tr("VERB_BE_2"), tr("VERB_BE_3"));
-      }
-      if ((token == "foo_has") || (token == "foohas"))
-      {
-        return object->choose_verb(tr("VERB_HAVE_2"), tr("VERB_HAVE_3"));
-      }
-
-      if ((token == "the_foo") || (token == "thefoo"))
-      {
-        return object->get_identifying_string(ArticleChoice::Definite);
-      }
-
-      if ((token == "the_foos_location") || (token == "thefooslocation"))
-      {
-        return object->getLocation()->get_identifying_string(ArticleChoice::Definite);
-      }
-
-      if (token == "fooself")
-      {
-        return object->get_self_or_identifying_string(subject, ArticleChoice::Definite);
-      }
-
-      if ((token == "subj_pro_foo") || (token == "subjprofoo"))
-      {
-        return object->get_subject_pronoun();
-      }
-
-      if ((token == "obj_pro_foo") || (token == "objprofoo"))
-      {
-        return object->get_object_pronoun();
-      }
-
-      if (token == "you")
-      {
-        return subject->get_you_or_identifying_string();
-      }
-      if ((token == "you_subj") || (token == "yousubj"))
-      {
-        return subject->get_subject_pronoun();
-      }
-      if ((token == "you_obj") || (token == "youobj"))
-      {
-        return subject->get_object_pronoun();
-      }
-      if (token == "your")
-      {
-        return subject->get_possessive();
-      }
-      if (token == "yourself")
-      {
-        return subject->get_reflexive_pronoun();
-      }
-
-      // Check for a numerical token.
-      try
-      {
-        unsigned int converted = static_cast<unsigned int>(std::stoi(token));
-
-        // Check that the optional arguments are at least this size.
-        if (converted < optional_strings.size())
-        {
-          // Return the string passed in.
-          return optional_strings.at(converted);
-        }
-      }
-      catch (std::invalid_argument&)
-      {
-        // Not a number, so bail.
-      }
-      catch (...)
-      {
-        // Throw anything else.
-        throw;
-      }
-
-      // Nothing else matched, return default.
-      return "(" + token + ")";
-    },
-                                            [&](std::string token) -> bool
-    {
-      if ((token == "cv") || (token == "subjcv") || (token == "subj_cv"))
-      {
-        return subject->is_third_person();
-      }
-      if ((token == "objcv") || (token == "obj_cv") || (token == "foocv") || (token == "foo_cv"))
-      {
-        return object->is_third_person();
-      }
-      if ((token == "is_player") || (token == "isplayer"))
-      {
-        return subject->is_player();
-      }
-
-      if (token == "true")
-      {
-        return true;
-      }
-      if (token == "false")
-      {
-        return false;
-      }
-
-      return true;
-    });
-
-    return new_string;
-  }
 
   struct Action::Impl
   {
@@ -447,12 +299,59 @@ namespace Actions
     MapTile* current_tile = subject->get_maptile();
     auto new_direction = get_target_direction();
 
+    // Check that we're capable of eating at all.
+    if (!subject->get_intrinsic<bool>("can_" + get_type()))
+    {
+      print_message_try_();
+      message = maketr("YOU_ARE_NOT_CAPABLE_OF_VERBING", { getIndefArt(subject->get_display_name()), subject->get_display_name() });
+      Service<IMessageLog>::get().add(message);
+
+      return StateResult::Failure();
+    }
+
+    // Check that we're capable of eating right now.
+    if (!subject->get_modified_property<bool>("can_" + get_type()))
+    {
+      print_message_try_();
+      message = maketr("YOU_CANT_VERB_NOW", { getIndefArt(subject->get_display_name()), subject->get_display_name() });
+      Service<IMessageLog>::get().add(message);
+
+      return StateResult::Failure();
+    }
+
+    if (hasTrait(Trait::SubjectMustBeAbleToMove))
+    {
+      // Make sure we can move RIGHT NOW.
+      if (!subject->can_currently_move())
+      {
+        message += maketr("YOU_CANT_MOVE_NOW");
+        Service<IMessageLog>::get().add(message);
+        return StateResult::Failure();
+      }
+    }
+
     if (!hasTrait(Trait::SubjectCanBeInLimbo))
     {
       // Make sure we're not in limbo!
       if ((location == EntityId::Mu()) || (current_tile == nullptr))
       {
         put_maketr("DONT_EXIST_PHYSICALLY");
+        return StateResult::Failure();
+      }
+    }
+
+    if (hasTrait(Trait::SubjectCanNotBeInsideAnotherObject))
+    {
+      // Make sure we're not confined inside another entity.
+      /// @todo Allow for attacking when swallowed!
+      if (subject->is_inside_another_thing())
+      {
+        print_message_try_();
+
+        message += maketr("YOU_ARE_INSIDE_OBJECT",
+        { location->get_identifying_string(ArticleChoice::Indefinite) });
+
+        Service<IMessageLog>::get().add(message);
         return StateResult::Failure();
       }
     }
@@ -471,7 +370,65 @@ namespace Actions
             return do_prebegin_work_(params);
           }
         }
+        else
+        {
+          if (subject == object)
+          {
+            if (!IS_PLAYER)
+            {
+              put_maketr("YOU_TRY_TO_VERB_YOURSELF_INVALID");
+              CLOG(WARNING, "Action") << "NPC tried to " << get_type() << " self!?";
+            }
 
+            put_maketr("YOU_CANT_VERB_YOURSELF");
+
+            return StateResult::Failure();
+          }
+        }
+
+        if (hasTrait(Trait::ObjectMustBeLiquidCarrier))
+        {
+          // Check that both are liquid containers.
+          if (!object->get_intrinsic<bool>("liquid_carrier"))
+          {
+            print_message_try_();
+
+            put_maketr("THE_FOO_IS_NOT_A_LIQUID_CARRIER");
+            Service<IMessageLog>::get().add(message);
+
+            return StateResult::Failure();
+          }
+        }
+
+        if (hasTrait(Trait::ObjectMustNotBeEmpty))
+        {
+          // Check that it is not empty.
+          Inventory& inv = object->get_inventory();
+          if (inv.count() == 0)
+          {
+            print_message_try_();
+
+            message = maketr("THE_FOO_IS_EMPTY");
+            Service<IMessageLog>::get().add(message);
+
+            return StateResult::Failure();
+          }
+        }
+
+        if (hasTrait(Trait::ObjectMustBeEmpty))
+        {
+          // Check that it is not empty.
+          Inventory& inv = object->get_inventory();
+          if (inv.count() != 0)
+          {
+            print_message_try_();
+
+            message = maketr("THE_FOO_IS_NOT_EMPTY");
+            Service<IMessageLog>::get().add(message);
+
+            return StateResult::Failure();
+          }
+        }
 
         if (!hasTrait(Trait::ObjectCanBeOutOfReach))
         {
@@ -500,6 +457,91 @@ namespace Actions
             }
             message += ".";
             put_msg(message);
+
+            return StateResult::Failure();
+          }
+        }
+
+        if (hasTrait(Trait::ObjectMustNotBeInInventory))
+        {
+          // Check if it's already in our inventory.
+          if (subject->get_inventory().contains(object))
+          {
+            print_message_try_();
+
+            message = maketr("THE_FOO_IS_ALREADY_IN_YOUR_INVENTORY");
+            Service<IMessageLog>::get().add(message);
+            return StateResult::Failure();
+          }
+        }
+
+        if (hasTrait(Trait::ObjectMustBeWielded))
+        {
+          // Check to see if the object is being wielded.
+          if (!subject->is_wielding(object))
+          {
+            print_message_try_();
+
+            /// @todo Perhaps automatically try to unwield the item before dropping?
+            message = maketr("FOO_MUST_BE_WIELDED");
+            Service<IMessageLog>::get().add(message);
+
+            return StateResult::Failure();
+          }
+        }
+
+        if (hasTrait(Trait::ObjectMustBeWorn))
+        {
+          // Check to see if the object is being worn.
+          if (!subject->has_equipped(object))
+          {
+            print_message_try_();
+
+            message = maketr("FOO_MUST_BE_WORN");
+            Service<IMessageLog>::get().add(message);
+
+            return StateResult::Failure();
+          }
+        }
+
+        if (hasTrait(Trait::ObjectMustNotBeWielded))
+        {
+          // Check to see if the object is being wielded.
+          if (subject->is_wielding(object))
+          {
+            print_message_try_();
+
+            /// @todo Perhaps automatically try to unwield the item before dropping?
+            message = maketr("YOU_CANT_VERB_WIELDED");
+            Service<IMessageLog>::get().add(message);
+
+            return StateResult::Failure();
+          }
+        }
+
+        if (hasTrait(Trait::ObjectMustNotBeWorn))
+        {
+          // Check to see if the object is being worn.
+          if (subject->has_equipped(object))
+          {
+            print_message_try_();
+
+            message = maketr("YOU_CANT_VERB_WORN");
+            Service<IMessageLog>::get().add(message);
+
+            return StateResult::Failure();
+          }
+        }
+
+        if (hasTrait(Trait::ObjectMustBeMovableBySubject))
+        {
+          // Check to see if we can move the object.
+          if (!object->can_have_action_done_by(subject, ActionMove::prototype))
+          {
+            print_message_try_();
+
+            message = maketr("YOU_CANT_MOVE_THE_FOO");
+            Service<IMessageLog>::get().add(message);
 
             return StateResult::Failure();
           }
@@ -551,7 +593,7 @@ namespace Actions
 
   StateResult Action::do_begin_work_(AnyMap& params)
   {
-    put_tmsg("ACTION_NOT_IMPLEMENTED");
+    put_tmsg("ACTN_NOT_IMPLEMENTED");
 
     return StateResult::Failure();
   }
@@ -643,32 +685,104 @@ namespace Actions
 
   void Action::print_message_try_() const
   {
-    put_maketr("ACTION_YOU_TRY_TO_VERB_THE_FOO");
+    auto& objects = get_objects();
+    if (objects.size() == 0)
+    {
+      put_maketr("YOU_TRY_TO_VERB");
+    }
+    else if (objects.size() == 1)
+    {
+      put_maketr("YOU_TRY_TO_VERB_THE_FOO");
+    }
+    else
+    {
+
+    }
   }
 
   void Action::print_message_do_() const
   {
-    put_maketr("ACTION_YOU_CVERB_THE_FOO");
+    auto& objects = get_objects();
+    if (objects.size() == 0)
+    {
+      put_maketr("YOU_CVERB");
+    }
+    else if (objects.size() == 1)
+    {
+      put_maketr("YOU_CVERB_THE_FOO");
+    }
+    else
+    {
+      put_maketr("YOU_CVERB_THE_ITEMS");
+    }
   }
 
   void Action::print_message_begin_() const
   {
-    put_maketr("ACTION_YOU_BEGIN_TO_VERB_THE_FOO");
+    auto& objects = get_objects();
+    if (objects.size() == 0)
+    {
+      put_maketr("YOU_BEGIN_TO_VERB");
+    }
+    else if (objects.size() == 1)
+    {
+      put_maketr("YOU_BEGIN_TO_VERB_THE_FOO");
+    }
+    else
+    {
+      put_maketr("YOU_BEGIN_TO_VERB_THE_ITEMS");
+    }
   }
 
   void Action::print_message_stop_() const
   {
-    put_maketr("ACTION_YOU_STOP_VERBING_THE_FOO");
+    auto& objects = get_objects();
+    if (objects.size() == 0)
+    {
+      put_maketr("YOU_STOP_VERBING");
+    }
+    else if (objects.size() == 1)
+    {
+      put_maketr("YOU_STOP_VERBING_THE_FOO");
+    }
+    else
+    {
+      put_maketr("YOU_STOP_VERBING_THE_ITEMS");
+    }
   }
 
   void Action::print_message_finish_() const
   {
-    put_maketr("ACTION_YOU_FINISH_VERBING_THE_FOO");
+    auto& objects = get_objects();
+    if (objects.size() == 0)
+    {
+      put_maketr("YOU_FINISH_VERBING");
+    }
+    else if (objects.size() == 1)
+    {
+      put_maketr("YOU_FINISH_VERBING_THE_FOO");
+    }
+    else
+    {
+      put_maketr("YOU_FINISH_VERBING_THE_ITEMS");
+    }
   }
 
   void Action::print_message_cant_() const
   {
-    put_maketr("ACTION_YOU_CANT_VERB_THAT");
+    auto& objects = get_objects();
+    if (objects.size() == 0)
+    {
+      put_maketr("YOU_CANT_VERB");
+    }
+    else if (objects.size() == 1)
+    {
+      put_maketr("YOU_CANT_VERB_THAT");
+    }
+    else
+    {
+      put_maketr("YOU_CANT_VERB_THOSE");
+    }
   }
 
   void Action::register_action_as(std::string key, ActionCreator creator)
@@ -711,8 +825,8 @@ namespace Actions
 
   std::string Action::make_string(std::string pattern, std::vector<std::string> optional_strings) const
   {
-    std::string new_string = replace_tokens(pattern,
-                                            [&](std::string token) -> std::string
+    std::string new_string = StringTransforms::replace_tokens(pattern,
+                                                              [&](std::string token) -> std::string
     {
       if (token == "are")
       {
@@ -772,12 +886,12 @@ namespace Actions
         return get_object()->get_self_or_identifying_string(get_subject(), ArticleChoice::Definite);
       }
 
-      if ((token == "subj_pro_foo") || (token == "subjprofoo"))
+      if ((token == "foo_pro_sub") || (token == "fooprosub"))
       {
         return get_object()->get_subject_pronoun();
       }
 
-      if ((token == "obj_pro_foo") || (token == "objprofoo"))
+      if ((token == "foo_pro_obj") || (token == "fooproobj"))
       {
         return get_object()->get_object_pronoun();
       }
@@ -813,19 +927,15 @@ namespace Actions
 
       if (token == "you")
       {
-        return get_subject()->get_you_or_identifying_string();
+        return get_subject()->get_subject_you_or_identifying_string();
       }
-      if ((token == "you_subj") || (token == "yousubj"))
+      if ((token == "you_pro_sub") || (token == "youprosub"))
       {
         return get_subject()->get_subject_pronoun();
       }
-      if ((token == "you_obj") || (token == "youobj"))
+      if ((token == "you_pro_obj") || (token == "youproobj"))
       {
         return get_subject()->get_object_pronoun();
-      }
-      if (token == "your")
-      {
-        return get_subject()->get_possessive();
       }
       if (token == "yourself")
       {
@@ -862,7 +972,16 @@ namespace Actions
       }
 
       // Nothing else matched, return default.
-      return "(" + token + ")";
+      return "[" + token + "]";
+    },
+    [&](std::string token, std::string arg) -> std::string
+    {
+      if (token == "your")
+      {
+        return get_subject()->get_possessive_of(arg);
+      }
+
+      return "[" + token + "(" + arg + ")]";
     },
                                             [&](std::string token) -> bool
     {

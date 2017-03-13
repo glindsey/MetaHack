@@ -22,7 +22,8 @@ namespace Actions
     static std::unordered_set<Trait> traits = 
     {
       Trait::CanBeSubjectVerbObject,
-      Trait::CanBeSubjectVerbDirection
+      Trait::CanBeSubjectVerbDirection,
+      Trait::SubjectCanNotBeInsideAnotherObject     ///< @todo Allow for attacking when swallowed!
     };
 
     return traits;
@@ -36,48 +37,11 @@ namespace Actions
     auto location = subject->getLocation();
     auto new_direction = get_target_direction();
 
-    if (!IS_PLAYER)
-    {
-      print_message_try_();
-      message = "But ";
-    }
-    else
-    {
-      message = "";
-    }
-
-    // Make sure we CAN attack.
-    if (!subject->get_modified_property<bool>("can_attack", false))
-    {
-      message += maketr("ACTION_YOU_CANT_ATTACK");
-      Service<IMessageLog>::get().add(message);
-      return StateResult::Failure();
-    }
-
-    // Make sure we can move RIGHT NOW.
-    if (!subject->can_currently_move())
-    {
-      message += maketr("ACTION_YOU_CANT_MOVE_NOW");
-      Service<IMessageLog>::get().add(message);
-      return StateResult::Failure();
-    }
-
     // Check if we're attacking ourself.
     if (new_direction == Direction::Self)
     {
       /// @todo Allow attacking yourself!
-      message = maketr("ACTION_YOU_WONT_ATTACK_SELF");
-      Service<IMessageLog>::get().add(message);
-      return StateResult::Failure();
-    }
-
-    // Make sure we're not confined inside another entity.
-    /// @todo Allow for attacking when swallowed!
-    if (subject->is_inside_another_thing())
-    {
-      message += maketr("ACTION_YOU_ARE_INSIDE_OBJECT",
-      { location->get_identifying_string(ArticleChoice::Indefinite) });
-
+      message += maketr("YOU_TRY_TO_ATTACK_YOURSELF_HUMOROUS");
       Service<IMessageLog>::get().add(message);
       return StateResult::Failure();
     }
@@ -85,7 +49,7 @@ namespace Actions
     if (new_direction == Direction::Up)
     {
       /// @todo Write up/down attack code
-      message = tr("ACTION_YOU_CANT_ATTACK_CEILING");
+      message = tr("YOU_CANT_ATTACK_CEILING");
       Service<IMessageLog>::get().add(message);
       return StateResult::Failure();
     }
@@ -93,7 +57,7 @@ namespace Actions
     if (new_direction == Direction::Down)
     {
       /// @todo Write up/down attack code
-      message = tr("ACTION_YOU_CANT_ATTACK_FLOOR");
+      message = tr("YOU_CANT_ATTACK_FLOOR");
       Service<IMessageLog>::get().add(message);
       return StateResult::Failure();
     }
@@ -125,7 +89,7 @@ namespace Actions
     if ((x_new < 0) || (y_new < 0) ||
       (x_new >= map_size.x) || (y_new >= map_size.y))
     {
-      message += maketr("ACTION_YOU_CANT_VERB_THERE");
+      message += maketr("YOU_CANT_VERB_THERE");
       Service<IMessageLog>::get().add(message);
       return StateResult::Failure();
     }
@@ -139,7 +103,7 @@ namespace Actions
     if (object == EntityId::Mu())
     {
       /// @todo Deal with attacking other stuff, MapTiles, etc.
-      message = maketr("ACTION_YOU_CANT_VERB_NOTHING");
+      message = maketr("YOU_CANT_VERB_NOTHING");
       Service<IMessageLog>::get().add(message);
       return StateResult::Failure();
     }
@@ -150,7 +114,7 @@ namespace Actions
     if (reachable)
     {
       /// @todo Write actual attack code here.
-      message = maketr("ACTION_ATTACK_UNFINISHED");
+      message = maketr("ACTN_ATTACK_UNFINISHED");
       Service<IMessageLog>::get().add(message);
     }
 

@@ -82,7 +82,7 @@ void StringDictionary::clear()
   strings.clear();
 }
 
-std::string const& StringDictionary::get(std::string id_) const
+std::string StringDictionary::get(std::string id_) const
 {
   if (strings.count(id_) != 0)
   {

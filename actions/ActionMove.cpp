@@ -22,7 +22,8 @@ namespace Actions
   {
     static std::unordered_set<Trait> traits =
     {
-      Trait::CanBeSubjectVerbDirection
+      Trait::CanBeSubjectVerbDirection,
+      Trait::SubjectCanNotBeInsideAnotherObject
     };
 
     return traits;
@@ -30,49 +31,7 @@ namespace Actions
 
   StateResult ActionMove::do_prebegin_work_(AnyMap& params)
   {
-    std::string message;
-
-    auto subject = get_subject();
-    auto location = subject->getLocation();
-    auto new_direction = get_target_direction();
-
-    if (!IS_PLAYER)
-    {
-      print_message_try_();
-
-      message = "But ";
-    }
-    else
-    {
-      message = "";
-    }
-
-    // Make sure we CAN move.
-    if (!subject->get_intrinsic<bool>("can_move", false))
-    {
-      message += make_string("$you $(cv?don't:doesn't) have the capability of movement.");
-      Service<IMessageLog>::get().add(message);
-      return StateResult::Failure();
-    }
-
-    // Make sure we can move RIGHT NOW.
-    if (!subject->can_currently_move())
-    {
-      message += make_string("$you can't move right now.");
-      Service<IMessageLog>::get().add(message);
-      return StateResult::Failure();
-    }
-
-    // Make sure we're not confined inside another entity.
-    if (subject->is_inside_another_thing())
-    {
-      message += make_string("$you $are inside $0 and $are not going anywhere!",
-      { location->get_identifying_string(ArticleChoice::Indefinite) });
-
-      Service<IMessageLog>::get().add(message);
-      return StateResult::Failure();
-    }
-
+    // All checks handled in Action by traits.
     return StateResult::Success();
   }
 

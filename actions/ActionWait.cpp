@@ -32,12 +32,8 @@ namespace Actions
 
   StateResult ActionWait::do_begin_work_(AnyMap& params)
   {
-    /// @todo Temporary message, remove or change
-    std::string message = make_string("$you successfully $(cv?stay:stays) where $you_subj $are.");
-
-    //YOU + " successfully" + CV(" stay", " stays") +
-    //" where " + YOU_SUBJ_ARE + ".";
-
+    /// @todo Handle a variable amount of time.
+    std::string message = maketr("YOU_VERB_FOR_X_TIME", { std::to_string(1) });
     Service<IMessageLog>::get().add(message);
 
     return{ true, 1 };

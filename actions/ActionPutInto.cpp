@@ -19,7 +19,9 @@ namespace Actions
     static std::unordered_set<Trait> traits =
     {
       Trait::CanBeSubjectVerbObjectPrepositionTarget,
-      Trait::CanBeSubjectVerbObjectsPrepositionTarget
+      Trait::CanBeSubjectVerbObjectsPrepositionTarget,
+      Trait::ObjectMustNotBeWielded,
+      Trait::ObjectMustNotBeWorn
     };
 
     return traits;
@@ -54,42 +56,6 @@ namespace Actions
       return StateResult::Failure();
     }
 
-    // Check that the entity is not US!
-    if (object == subject)
-    {
-      if (IS_PLAYER)
-      {
-        /// @todo Possibly allow player to voluntarily enter a container?
-        message = "I'm afraid you can't do that.  "
-          "(At least, not in this version...)";
-      }
-      else
-      {
-        message = make_string("$you $try to store $yourself into $the_target_thing, which seriously shouldn't happen.");
-        CLOG(WARNING, "Action") << "NPC tried to store self!?";
-      }
-      Service<IMessageLog>::get().add(message);
-
-      return StateResult::Failure();
-    }
-
-    // Check that the container is not US!
-    if (container == subject)
-    {
-      if (IS_PLAYER)
-      {
-        message = "Store something in yourself?  What do you think you are, a drug mule?";
-      }
-      else
-      {
-        message = make_string("$you $try to store $the_foo into $yourself, which seriously shouldn't happen.");
-        CLOG(WARNING, "Action") << "NPC tried to store into self!?";
-      }
-      Service<IMessageLog>::get().add(message);
-
-      return StateResult::Failure();
-    }
-
     // Check that the container actually IS a container.
     if (container->get_intrinsic<int>("inventory_size") == 0)
     {
@@ -118,29 +84,6 @@ namespace Actions
       print_message_try_();
 
       message = make_string("$you cannot reach $the_target_thing.");
-      Service<IMessageLog>::get().add(message);
-
-      return StateResult::Failure();
-    }
-
-    // Check that we're not wielding the item.
-    if (subject->is_wielding(object))
-    {
-      print_message_try_();
-
-      message = make_string("$you cannot store something that is currently being wielded.");
-      Service<IMessageLog>::get().add(message);
-
-      return StateResult::Failure();
-    }
-
-    // Check that we're not wearing the item.
-    if (subject->has_equipped(object))
-    {
-      print_message_try_();
-
-      /// @todo Perhaps automatically try to unwield the item before dropping?
-      message = make_string("$you cannot store something that is currently being worn.");
       Service<IMessageLog>::get().add(message);
 
       return StateResult::Failure();

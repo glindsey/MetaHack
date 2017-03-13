@@ -19,7 +19,8 @@ namespace Actions
     static std::unordered_set<Trait> traits =
     {
       Trait::CanBeSubjectOnly,
-      Trait::CanBeSubjectVerbBodypart
+      Trait::CanBeSubjectVerbBodypart,
+      Trait::ObjectMustBeWielded
     };
 
     return traits;
@@ -27,24 +28,7 @@ namespace Actions
 
   StateResult ActionUnwield::do_prebegin_work_(AnyMap& params)
   {
-    std::string message;
-    auto subject = get_subject();
-
-    /// @todo Support wielding in other hand(s).
-    unsigned int hand = 0;
-    std::string bodypart_desc =
-      subject->get_bodypart_description(BodyPart::Hand, hand);
-
-    set_object(subject->get_wielding_in(hand));
-    auto object = get_object();
-
-    if (object == EntityId::Mu())
-    {
-      message = make_string("$you $are not currently wielding anything!");
-      Service<IMessageLog>::get().add(message);
-      return StateResult::Failure();
-    }
-
+    // All checks done by Action class via traits.
     return StateResult::Success();
   }
 
@@ -65,7 +49,7 @@ namespace Actions
     if (object->get_modified_property<bool>("bound"))
     {
       std::string message;
-      message = make_string("$you cannot unwield $foo; it is magically bound to $your $0!", { bodypart_desc });
+      message = make_string("$you cannot unwield $foo; it is magically bound to $0!", { subject->get_possessive_of(bodypart_desc) });
       Service<IMessageLog>::get().add(message);
 
       // Premature exit.
@@ -77,7 +61,7 @@ namespace Actions
     if (object->be_object_of(*this, subject) == ActionResult::Success)
     {
       std::string message;
-      message = make_string("$you unwield $foo. $you are now wielding nothing in $your $0.", { bodypart_desc });
+      message = make_string("$you unwield $foo. $you are now wielding nothing in $0.", { subject->get_possessive_of(bodypart_desc) });
       subject->set_wielded(EntityId::Mu(), hand);
     }
 

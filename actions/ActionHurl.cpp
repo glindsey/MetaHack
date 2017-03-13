@@ -18,7 +18,9 @@ namespace Actions
   {
     static std::unordered_set<Trait> traits =
     {
-      Trait::CanBeSubjectVerbObjectPrepositionDirection
+      Trait::CanBeSubjectVerbObjectPrepositionDirection,
+      Trait::ObjectMustNotBeWorn,
+      Trait::ObjectMustBeInInventory
     };
 
     return traits;
@@ -30,57 +32,6 @@ namespace Actions
     auto subject = get_subject();
     auto object = get_object();
     auto new_direction = get_target_direction();
-
-    // Check that it isn't US!
-    if (object == subject)
-    {
-      if (IS_PLAYER)
-      {
-        message = maketr("ACTION_YOU_TRY_TO_THROW_YOURSELF_HUMOROUS");
-      }
-      else
-      {
-        message = maketr("ACTION_YOU_TRY_TO_VERB_YOURSELF_INVALID");
-        CLOG(WARNING, "Action") << "NPC tried to throw self!?";
-      }
-      Service<IMessageLog>::get().add(message);
-
-      return StateResult::Failure();
-    }
-
-    // Check that it's in our inventory.
-    if (!subject->get_inventory().contains(object))
-    {
-      message = maketr("ACTION_YOU_TRY_TO_VERB_THE_FOO");
-      Service<IMessageLog>::get().add(message);
-
-      message = maketr("THE_FOO_IS_NOT_IN_YOUR_INVENTORY");
-      Service<IMessageLog>::get().add(message);
-
-      return StateResult::Failure();
-    }
-
-    /// Check that we have limbs capable of throwing.
-    if (subject->get_modified_property<bool>("can_throw"))
-    {
-      print_message_try_();
-
-      message = maketr("ACTION_YOU_ARE_NOT_CAPABLE_OF_VERBING", { getIndefArt(subject->get_display_name()), subject->get_display_name() });
-      Service<IMessageLog>::get().add(message);
-
-      return StateResult::Failure();
-    }
-
-    /// Check that we're not wearing the item.
-    if (subject->has_equipped(object))
-    {
-      print_message_try_();
-
-      message = maketr("ACTION_YOU_CANT_VERB_WORN");
-      Service<IMessageLog>::get().add(message);
-
-      return StateResult::Failure();
-    }
 
     return StateResult::Success();
   }
@@ -106,7 +57,7 @@ namespace Actions
       }
       else
       {
-        message = maketr("ACTION_YOU_CANT_VERB_FOO_UNKNOWN");
+        message = maketr("YOU_CANT_VERB_FOO_UNKNOWN");
         Service<IMessageLog>::get().add(message);
 
         CLOG(WARNING, "Action") << "Could not throw Entity " << object <<

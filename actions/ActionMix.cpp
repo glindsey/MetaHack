@@ -1,11 +1,11 @@
 #include "stdafx.h"
 
 #include "ActionMix.h"
+#include "Entity.h"
+#include "EntityId.h"
 #include "IMessageLog.h"
 #include "IStringDictionary.h"
 #include "Service.h"
-#include "Entity.h"
-#include "EntityId.h"
 
 namespace Actions
 {
@@ -30,17 +30,6 @@ namespace Actions
     auto subject = get_subject();
     auto object1 = get_object();
     auto object2 = get_second_object();
-
-    // Check that we're capable of mixing at all.
-    if (subject->get_modified_property<bool>("can_mix"))
-    {
-      print_message_try_();
-
-      message = "But, as " + getIndefArt(subject->get_display_name()) + subject->get_display_name() + "," + YOU_ARE + " not capable of mixing anything together.";
-      Service<IMessageLog>::get().add(message);
-
-      return StateResult::Failure();
-    }
 
     // Check that they aren't both the same entity.
     if (object1 == object2)
@@ -69,7 +58,7 @@ namespace Actions
     {
       print_message_try_();
 
-      message = "But at least one of them is out of " + YOUR + " reach.";
+      message = make_string("But at least one of them is out of $your(reach).");
       Service<IMessageLog>::get().add(message);
 
       return StateResult::Failure();
@@ -113,7 +102,7 @@ namespace Actions
     //thing1->perform_action_mixed_with_by(thing2, pImpl->ref);
 
     auto& dict = Service<IStringDictionary>::get();
-    Service<IMessageLog>::get().add(dict.get("ACTION_NOT_IMPLEMENTED"));
+    Service<IMessageLog>::get().add(dict.get("ACTN_NOT_IMPLEMENTED"));
 
     return StateResult::Failure();
   }

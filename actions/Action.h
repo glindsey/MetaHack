@@ -18,10 +18,6 @@ namespace Actions
   using ActionCreator = std::function<std::unique_ptr<Action>(EntityId)>;
   using ActionMap = std::unordered_map<std::string, ActionCreator>;
   
-  /// A free function for composing strings from patterns.
-  std::string make_string(EntityId subject, EntityId object, std::string pattern, std::vector<std::string> optional_strings);
-  std::string make_string(EntityId subject, EntityId object, std::string pattern);
-
   /// Struct containing the results of an action state.
   struct StateResult
   {
@@ -64,9 +60,20 @@ namespace Actions
     CanBeSubjectVerbObjectPrepositionDirection,
     CanTakeAQuantity,
     SubjectCanBeInLimbo,
+    SubjectCanNotBeInsideAnotherObject,
+    SubjectMustBeAbleToMove,
+    ObjectMustBeWielded,
+    ObjectMustBeWorn,
+    ObjectMustNotBeWielded,
+    ObjectMustNotBeWorn,
     ObjectCanBeOutOfReach,
     ObjectCanBeSelf,
+    ObjectMustBeEmpty,
+    ObjectMustBeMovableBySubject,
     ObjectMustBeInInventory,
+    ObjectMustNotBeEmpty,
+    ObjectMustNotBeInInventory,
+    ObjectMustBeLiquidCarrier,
     MemberCount
   };
 
@@ -329,7 +336,7 @@ namespace Actions
 } // end namespace
 
   // === MESSAGE HELPER MACROS ==================================================
-#define YOU       (get_subject()->get_you_or_identifying_string())  // "you" or descriptive noun like "the goblin"
+#define YOU       (get_subject()->get_subject_you_or_identifying_string())  // "you" or descriptive noun like "the goblin"
 #define YOU_SUBJ  (get_subject()->get_subject_pronoun())     // "you/he/she/it/etc."
 #define YOU_OBJ   (get_subject()->get_object_pronoun())      // "you/him/her/it/etc."
 #define YOUR      (get_subject()->get_possessive())          // "your/his/her/its/etc."

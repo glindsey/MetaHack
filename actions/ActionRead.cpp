@@ -35,7 +35,7 @@ namespace Actions
     {
       print_message_try_();
 
-      message = make_string("$you $are not smart enough to read $fooself.");
+      message = maketr("READ_TOO_STUPID");
       Service<IMessageLog>::get().add(message);
 
       return StateResult::Failure();
@@ -71,7 +71,7 @@ namespace Actions
     switch (object->be_object_of(*this, subject))
     {
       case ActionResult::SuccessDestroyed:
-        message = make_string("$the_foo $(objcv?disintegrate:disintegrates) after $you $cverb $obj_pro_foo!");
+        message = make_string("$the_foo $(objcv?disintegrate:disintegrates) after $you $cverb $foo_pro_obj!");
         Service<IMessageLog>::get().add(message);
 
         object->destroy();
