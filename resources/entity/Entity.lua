@@ -96,6 +96,18 @@ function Entity.get_tile_offset(id, frame)
     return 0, 0
 end
 
+function Entity.get_tile_character_code(id, frame)
+    return 0x003f           -- question mark
+end
+
+function Entity.get_tile_bg_color(id, frame)
+    return 0, 0, 0, 255     -- black
+end
+
+function Entity.get_tile_fg_color(id, frame)
+    return 255, 255, 0, 255 -- yellow
+end
+
 function Entity.on_create(id)
     --messageLog_add("Entity.on_create() called, new ID = " .. id)
     return ActionResult.Success
