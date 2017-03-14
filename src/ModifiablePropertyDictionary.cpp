@@ -37,7 +37,7 @@ size_t ModifiablePropertyDictionary::has_modifier_for(std::string key, EntityId 
   return 0;
 }
 
-bool ModifiablePropertyDictionary::add_modifier(std::string key, EntityId id, unsigned int expiration_ticks)
+bool ModifiablePropertyDictionary::add_modifier(std::string key, EntityId id, ElapsedTime expires_at)
 {
   if (m_modifiers.count(key) == 0)
   {
@@ -46,7 +46,7 @@ bool ModifiablePropertyDictionary::add_modifier(std::string key, EntityId id, un
 
   if (m_modifiers.at(key).count(id) == 0)
   {
-    m_modifiers.at(key).emplace(std::make_pair(id, expiration_ticks));
+    m_modifiers.at(key).emplace(std::make_pair(id, expires_at));
     m_modified_dictionary.erase(key);
     return true;
   }
@@ -86,13 +86,36 @@ size_t ModifiablePropertyDictionary::remove_modifier(std::string key, EntityId i
   return 0;
 }
 
-void ModifiablePropertyDictionary::add_ticks(std::string key, int ticks)
+void ModifiablePropertyDictionary::remove_expired_modifiers(std::string key, ElapsedTime current_game_time)
 {
-  for (auto& modifier_pair : m_modifiers)
+  if (m_modifiers.count(key) != 0)
   {
-    for (auto& property_pair : modifier_pair.second)
+    auto& expiration_map = m_modifiers.at(key);
+    auto& expiration_iter = expiration_map.begin();
+    while (expiration_iter != expiration_map.end())
     {
-      property_pair.second += ticks;
+      if (expiration_iter->second >= current_game_time)
+      {
+        expiration_iter = expiration_map.erase(expiration_iter);
+      }
+      else
+      {
+        ++expiration_iter;
+      }
+    }
+  }
+
+
+}
+
+void ModifiablePropertyDictionary::add_ticks(std::string key, ElapsedTime ticks)
+{
+  if (m_modifiers.count(key) != 0)
+  {
+    auto& expiration_map = m_modifiers.at(key);
+    for (auto& expiration_pair : expiration_map)
+    {
+      expiration_pair.second += ticks;
     }
   }
 }

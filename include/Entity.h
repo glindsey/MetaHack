@@ -207,13 +207,12 @@ public:
   /// Add a property modifier to this Entity.
   /// @param  key               Name of property to modify.
   /// @param  id                ID of Entity that is responsible for modifying it.
-  /// @param  expiration_ticks  Number of ticks until modifier is removed, or 0
-  ///                           if it is never removed.
+  /// @param  expires_at        Game time that this modifier expires, or 0 if it never does
   ///
   /// @see ModifiablePropertyDictionary::add_modifier
   ///
   /// @return True if the function was added; false if it already existed.
-  bool add_modifier(std::string key, EntityId id, unsigned int expiration_ticks = 0);
+  bool add_modifier(std::string key, EntityId id, ElapsedTime expires_at = ElapsedTime(0));
 
   /// Remove all modifier functions for a given key and entity ID.
   /// @param  key               Name of property to modify.

@@ -522,9 +522,9 @@ namespace LuaEntityFunctions
     EntityId thing_being_modified = EntityId(lua_tointeger(L, 1));
     std::string key = lua_tostring(L, 2);
     EntityId thing_doing_the_modifying = EntityId(lua_tointeger(L, 3));
-    unsigned int expiration_ticks = (num_args == 4) ? static_cast<unsigned int>(lua_tointeger(L, 4)) : 0;
+    unsigned int expires_at = (num_args == 4) ? static_cast<unsigned int>(lua_tointeger(L, 4)) : 0;
 
-    bool result = thing_being_modified->add_modifier(key, thing_doing_the_modifying, expiration_ticks);
+    bool result = thing_being_modified->add_modifier(key, thing_doing_the_modifying, ElapsedTime(expires_at));
 
     lua_pushboolean(L, static_cast<int>(result));
 

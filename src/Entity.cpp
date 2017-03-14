@@ -649,9 +649,9 @@ bool Entity::is_subtype_of(std::string that_type) const
   return GAME.get_entities().first_is_subtype_of_second(this_type, that_type);
 }
 
-bool Entity::add_modifier(std::string key, EntityId id, unsigned int expiration_ticks)
+bool Entity::add_modifier(std::string key, EntityId id, ElapsedTime expires_at)
 {
-  return m_properties.add_modifier(key, id, expiration_ticks);
+  return m_properties.add_modifier(key, id, expires_at);
 }
 
 size_t Entity::remove_modifier(std::string key, EntityId id)

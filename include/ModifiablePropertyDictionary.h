@@ -9,14 +9,14 @@
 struct PropertyModifier
 {
   /// ID of the Entity responsible for doing the modification.
-  EntityId       id;
+  EntityId id;
 
-  /// Expiration time, in ticks, for this modifier, or 0 if no expiration.
-  unsigned int  expiration_ticks;
+  /// Game time that this modifier expires at, or 0 if no expiration.
+  ElapsedTime expires_at;
 };
 
 // Using aliases
-using ExpirationMap = std::unordered_map<EntityId, unsigned int>;
+using ExpirationMap = std::unordered_map<EntityId, ElapsedTime>;
 using ModifierMap = std::unordered_map<std::string, ExpirationMap>;
 
 /// Class that extends PropertyDictionary with the ability to have "modifier"
@@ -41,7 +41,7 @@ public:
     // Recalculate if the setting doesn't exist.
     if (m_modified_dictionary.count(key) == 0)
     {
-      run_modifiers<T>(key);
+      run_modifiers_for<T>(key);
     }
 
     boost::any value = m_modified_dictionary.at(key);
@@ -96,7 +96,7 @@ public:
   /// new one will be added.
   ///
   /// @return True if the function was added; false if it already existed.
-  bool add_modifier(std::string key, EntityId id, unsigned int expiration_ticks = 0);
+  bool add_modifier(std::string key, EntityId id, ElapsedTime expires_at = ElapsedTime(0));
 
   /// Remove all modifier functions for a given key.
   /// @return The number of modifiers erased.
@@ -106,11 +106,14 @@ public:
   /// @return The number of modifiers erased.
   size_t remove_modifier(std::string key, EntityId id);
 
+  /// Given a current game time, remove all expired modifiers for a key.
+  void remove_expired_modifiers(std::string key, ElapsedTime current_game_time);
+
   /// Run all the modifier functions for a property given a value to modify.
   /// @param  key     Property to run the modifiers for.
   /// @return The resulting value.
   template<typename T>
-  void run_modifiers(std::string key)
+  void run_modifiers_for(std::string key)
   {
     if (m_modified_dictionary.count(key) != 0)
     {
@@ -132,7 +135,7 @@ public:
   /// Add/subtract ticks from all modifier expiration_ticks, if applicable.
   /// Upon expiration a modifier will be automatically removed.
   /// @param  ticks   Number of ticks to add/subtract.
-  void add_ticks(std::string key, int ticks);
+  void add_ticks(std::string key, ElapsedTime ticks);
 
   /// Overloaded equality operator.
   bool operator==(ModifiablePropertyDictionary const& other) const;
