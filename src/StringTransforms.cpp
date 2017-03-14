@@ -7,6 +7,9 @@
 #include "IStringDictionary.h"
 #include "Service.h"
 
+#include <boost/algorithm/string.hpp>
+#include <boost/regex.hpp>
+
 namespace StringTransforms
 {
   std::ostream& operator<<(std::ostream& os, TokenizerState state)
@@ -246,6 +249,11 @@ namespace StringTransforms
   ///   The passed-in functor `token_functor` is called with the string `xxx` as
   /// an argument, and returns another string to replace it with.
   ///
+  /// For token of form `$xxx(yyy)`:
+  ///   The passed-in functor `token_argument_functor` is called with the strings
+  /// `xxx` and `yyy` as arguments, and returns another string to replace the whole
+  /// thing with.
+  ///
   /// For tokens of form `$(xxx?yyy:zzz)`:
   ///   The passed-in functor `choose_functor` is called with the string `xxx` as
   /// an argument. If the functor returns true, the token will be replaced by the
@@ -261,6 +269,9 @@ namespace StringTransforms
   ///
   /// In all cases, a backslash can be used to escape any character and prevent
   /// it from being recognized as a token delimiter.
+  /// 
+  /// The final string has all whitespace sequences reduced to a single space
+  /// each, and has excess whitespace trimmed from the head and tail.
   std::string replace_tokens(std::string str,
                              std::function<std::string(std::string)> token_functor,
                              std::function<std::string(std::string, std::string)> token_argument_functor,
@@ -475,7 +486,22 @@ namespace StringTransforms
     {
       LOG(WARNING) << "End of string while in tokenizer state " << state;
     }
+    
+    //boost::regex expr("\\w+");
+    //std::string fmt(" ");
+    //out_str = boost::regex_replace(out_str, expr, fmt, boost::match_default | boost::regex_constants::format_literal);
+    out_str = remove_extra_whitespace_from(out_str);
+    boost::trim(out_str);
 
     return out_str;
+  }
+
+  std::string remove_extra_whitespace_from(std::string input)
+  {
+    std::string output;
+    std::unique_copy(input.begin(), input.end(),
+                     std::back_insert_iterator<std::string>(output),
+                     [](char a, char b) { return std::isspace(a) && std::isspace(b); });
+    return output;
   }
 } // end namespace

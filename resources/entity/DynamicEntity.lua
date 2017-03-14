@@ -13,6 +13,9 @@ DynamicEntity.intrinsics.opacity_blue = 255
 DynamicEntity.intrinsics.living = true
 DynamicEntity.intrinsics.inventory_size = -1
 
+DynamicEntity.intrinsics.can_die = true
+
+
 DynamicEntity.intrinsics.xp = 0
 
 function DynamicEntity.can_have_action_attack_done_by(id)

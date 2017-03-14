@@ -1076,7 +1076,7 @@ std::string Entity::get_identifying_string(ArticleChoice articles,
   }
   else
   {
-    noun = get_display_plural() + " " + std::to_string(get_quantity());
+    noun = std::to_string(get_quantity()) + " " + get_display_plural();
 
     if (owned && (possessives == UsePossessives::Yes))
     {

@@ -10,8 +10,8 @@
 namespace Actions
 {
   ActionTakeOut ActionTakeOut::prototype;
-  ActionTakeOut::ActionTakeOut() : Action("takeout", "REMOVE", ActionTakeOut::create_) {}
-  ActionTakeOut::ActionTakeOut(EntityId subject) : Action(subject, "takeout", "REMOVE") {}
+  ActionTakeOut::ActionTakeOut() : Action("remove", "REMOVE", ActionTakeOut::create_) {}
+  ActionTakeOut::ActionTakeOut(EntityId subject) : Action(subject, "remove", "REMOVE") {}
   ActionTakeOut::~ActionTakeOut() {}
 
   std::unordered_set<Trait> const & ActionTakeOut::getTraits() const

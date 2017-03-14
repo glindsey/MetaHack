@@ -10,8 +10,8 @@
 namespace Actions
 {
   ActionTakeOff ActionTakeOff::prototype;
-  ActionTakeOff::ActionTakeOff() : Action("takeoff", "UNWEAR", ActionTakeOff::create_) {}
-  ActionTakeOff::ActionTakeOff(EntityId subject) : Action(subject, "takeoff", "UNWEAR") {}
+  ActionTakeOff::ActionTakeOff() : Action("disrobe", "DISROBE", ActionTakeOff::create_) {}
+  ActionTakeOff::ActionTakeOff(EntityId subject) : Action(subject, "disrobe", "DISROBE") {}
   ActionTakeOff::~ActionTakeOff() {}
 
   std::unordered_set<Trait> const & ActionTakeOff::getTraits() const

@@ -10,8 +10,8 @@
 namespace Actions
 {
   ActionQuaff ActionQuaff::prototype;
-  ActionQuaff::ActionQuaff() : Action("quaff", "DRINK", ActionQuaff::create_) {}
-  ActionQuaff::ActionQuaff(EntityId subject) : Action(subject, "quaff", "DRINK") {}
+  ActionQuaff::ActionQuaff() : Action("drink", "DRINK", ActionQuaff::create_) {}
+  ActionQuaff::ActionQuaff(EntityId subject) : Action(subject, "drink", "DRINK") {}
   ActionQuaff::~ActionQuaff() {}
 
   std::unordered_set<Trait> const & ActionQuaff::getTraits() const
