@@ -6,12 +6,6 @@
 #include "MapTile.h"
 #include "EntityPool.h"
 
-// Static declarations
-/// @todo These should be passed in as arguments
-unsigned int MapDiamond::maxHalfSize = 4;
-unsigned int MapDiamond::minHalfSize = 2;
-unsigned int MapDiamond::maxRetries = 100;
-
 // Local typedefs
 typedef boost::random::uniform_int_distribution<> uniform_int_dist;
 
@@ -26,12 +20,15 @@ MapDiamond::MapDiamond(Map& m, PropertyDictionary const& s, GeoVector vec)
   pImpl(NEW Impl())
 {
   unsigned int numTries = 0;
-  uniform_int_dist hsDist(minHalfSize, maxHalfSize);
+  uniform_int_dist hsDist(s.get<unsigned int>("min_half_size", 2),
+                          s.get<unsigned int>("max_half_size", 4));
+  unsigned int max_retries = s.get<unsigned int>("max_retries", 100);
+  std::string floor_type = s.get<std::string>("floor_type", "MTFloorDirt");
 
   Vec2i& startingCoords = vec.start_point;
   Direction& direction = vec.direction;
 
-  while (numTries < maxRetries)
+  while (numTries < max_retries)
   {
     int diamondHalfSize = hsDist(the_RNG);
 
@@ -94,7 +91,7 @@ MapDiamond::MapDiamond(Map& m, PropertyDictionary const& s, GeoVector vec)
             int xCoord = xCenter + xCounter;
             int yCoord = yCenter + yCounter;
             auto& tile = get_map().get_tile({ xCoord, yCoord });
-            tile.set_tile_type("MTFloorDirt");
+            tile.set_tile_type(floor_type);
           }
         }
 
@@ -116,7 +113,7 @@ MapDiamond::MapDiamond(Map& m, PropertyDictionary const& s, GeoVector vec)
         /// @todo Put either a door or an open area at the starting coords.
         ///       Right now we just make it an open area.
         auto& startTile = get_map().get_tile(startingCoords);
-        startTile.set_tile_type("MTFloorDirt");
+        startTile.set_tile_type(floor_type);
 
         return;
       }

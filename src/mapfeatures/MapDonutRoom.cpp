@@ -7,15 +7,6 @@
 #include "MathUtils.h"
 #include "EntityPool.h"
 
-// Static declarations
-/// @todo These should be passed in as arguments
-unsigned int MapDonutRoom::max_width = 20;
-unsigned int MapDonutRoom::min_width = 7;
-unsigned int MapDonutRoom::max_height = 20;
-unsigned int MapDonutRoom::min_height = 7;
-unsigned int MapDonutRoom::min_hole_size = 5;
-unsigned int MapDonutRoom::max_retries = 500;
-
 // Local typedefs
 typedef boost::random::uniform_int_distribution<> uniform_int_dist;
 
@@ -25,8 +16,14 @@ MapDonutRoom::MapDonutRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
 {
   unsigned int num_tries = 0;
 
-  uniform_int_dist width_dist(min_width, max_width);
-  uniform_int_dist height_dist(min_height, max_height);
+  uniform_int_dist width_dist(s.get<unsigned int>("min_width", 7),
+                              s.get<unsigned int>("max_width", 20));
+  uniform_int_dist height_dist(s.get<unsigned int>("min_height", 7), 
+                               s.get<unsigned int>("max_height", 20));
+  unsigned int min_hole_size = s.get<unsigned int>("min_hole_size", 5);
+  unsigned int max_retries = s.get<unsigned int>("max_retries", 500);
+  std::string floor_type = s.get<std::string>("floor_type", "MTFloorDirt");
+  
 
   Vec2i& starting_coords = vec.start_point;
   Direction& direction = vec.direction;
@@ -120,7 +117,7 @@ MapDonutRoom::MapDonutRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
               (y_coord >= y_hole_top) && (y_coord <= y_hole_bottom)))
             {
               auto& tile = get_map().get_tile({ x_coord, y_coord });
-              tile.set_tile_type("MTFloorDirt");
+              tile.set_tile_type(floor_type);
             }
           }
         }
@@ -163,7 +160,7 @@ MapDonutRoom::MapDonutRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
         /// @todo Put either a door or an open area at the starting coords.
         ///       Right now we just make it an open area.
         auto& startTile = get_map().get_tile(starting_coords);
-        startTile.set_tile_type("MTFloorDirt");
+        startTile.set_tile_type(floor_type);
 
         return;
       }

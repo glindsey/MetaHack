@@ -29,10 +29,6 @@ protected:
 private:
   struct Impl;
   std::unique_ptr<Impl> pImpl;
-
-  static unsigned int maxLength;
-  static unsigned int minLength;
-  static unsigned int maxRetries;
 };
 
 #endif // MAPCORRIDOR_H

@@ -5,12 +5,6 @@
 #include "App.h"
 #include "MapTile.h"
 
-// Static declarations
-/// @todo These should be passed in as arguments
-unsigned int MapCorridor::maxLength = 48;
-unsigned int MapCorridor::minLength = 3;
-unsigned int MapCorridor::maxRetries = 100;
-
 // Local typedefs
 typedef boost::random::uniform_int_distribution<> uniform_int_dist;
 
@@ -25,12 +19,15 @@ MapCorridor::MapCorridor(Map& m, PropertyDictionary const& s, GeoVector vec)
   pImpl(NEW Impl())
 {
   unsigned int numTries = 0;
-  uniform_int_dist lenDist(minLength, maxLength);
+  uniform_int_dist lenDist(s.get<unsigned int>("min_length", 3), 
+                           s.get<unsigned int>("max_length", 48));
+  unsigned int max_retries = s.get<unsigned int>("max_retries", 100);
+  std::string floor_type = s.get<std::string>("floor_type", "MTFloorDirt");
 
   Vec2i& startingCoords = vec.start_point;
   Direction& direction = vec.direction;
 
-  while (numTries < maxRetries)
+  while (numTries < max_retries)
   {
     int corridorLen(lenDist(the_RNG));
 
@@ -91,7 +88,7 @@ MapCorridor::MapCorridor(Map& m, PropertyDictionary const& s, GeoVector vec)
       if (okay)
       {
         // Clear out the box.
-        set_box({ xMin, yMin }, { xMax, yMax }, "MTFloorDirt");
+        set_box({ xMin, yMin }, { xMax, yMax }, floor_type);
 
         set_coords(sf::IntRect(xMin, yMin, (xMax - xMin) + 1, (yMax - yMin) + 1));
 
@@ -116,7 +113,7 @@ MapCorridor::MapCorridor(Map& m, PropertyDictionary const& s, GeoVector vec)
         /// @todo: Put either a door or an open area at the starting coords.
         ///        Right now we just make it an open area.
         auto& startTile = get_map().get_tile(startingCoords);
-        startTile.set_tile_type("MTFloorDirt");
+        startTile.set_tile_type(floor_type);
 
         /// Check the tile two past the ending tile.
         /// If it is open space, there should be a small chance
@@ -156,7 +153,7 @@ MapCorridor::MapCorridor(Map& m, PropertyDictionary const& s, GeoVector vec)
           {
             /// @todo Do a throw to see if it opens up. Right now it always does.
             auto& endTile = get_map().get_tile(pImpl->endingCoords);
-            endTile.set_tile_type("MTFloorDirt");
+            endTile.set_tile_type(floor_type);
           }
         }
 

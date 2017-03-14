@@ -8,18 +8,6 @@
 #include "RNGUtils.h"
 #include "EntityPool.h"
 
-// Static declarations
-/// @todo These should be passed in as arguments
-unsigned int MapLRoom::horiz_leg_max_width = 20;
-unsigned int MapLRoom::horiz_leg_min_width = 10;
-unsigned int MapLRoom::horiz_leg_max_height = 7;
-unsigned int MapLRoom::horiz_leg_min_height = 3;
-unsigned int MapLRoom::vert_leg_max_width = 7;
-unsigned int MapLRoom::vert_leg_min_width = 3;
-unsigned int MapLRoom::vert_leg_max_height = 20;
-unsigned int MapLRoom::vert_leg_min_height = 10;
-unsigned int MapLRoom::max_retries = 500;
-
 // Local typedefs
 typedef boost::random::uniform_int_distribution<> uniform_int_dist;
 
@@ -29,14 +17,16 @@ MapLRoom::MapLRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
 {
   unsigned int num_tries = 0;
 
-  uniform_int_dist horiz_width_dist(horiz_leg_min_width,
-                                    horiz_leg_max_width);
-  uniform_int_dist horiz_height_dist(horiz_leg_min_height,
-                                     horiz_leg_max_height);
-  uniform_int_dist vert_width_dist(vert_leg_min_width,
-                                   vert_leg_max_width);
-  uniform_int_dist vert_height_dist(vert_leg_min_height,
-                                    vert_leg_max_height);
+  uniform_int_dist horiz_width_dist(s.get<unsigned int>("horiz_leg_min_width", 10),
+                                    s.get<unsigned int>("horiz_leg_max_width", 20));
+  uniform_int_dist horiz_height_dist(s.get<unsigned int>("horiz_leg_min_height", 3),
+                                     s.get<unsigned int>("horiz_leg_max_height", 7));
+  uniform_int_dist vert_width_dist(s.get<unsigned int>("vert_leg_min_width", 10),
+                                   s.get<unsigned int>("vert_leg_max_width", 20));
+  uniform_int_dist vert_height_dist(s.get<unsigned int>("vert_leg_min_height", 3),
+                                    s.get<unsigned int>("vert_leg_max_height", 7));
+  unsigned int max_retries = s.get<unsigned int>("max_retries", 500);
+  std::string floor_type = s.get<std::string>("floor_type", "MTFloorDirt");
 
   Vec2i& starting_coords = vec.start_point;
   Direction& direction = vec.direction;
@@ -127,8 +117,8 @@ MapLRoom::MapLRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
       if (okay)
       {
         // Clear out the boxes.
-        set_box(vert_rect, "MTFloorDirt");
-        set_box(horiz_rect, "MTFloorDirt");
+        set_box(vert_rect, floor_type);
+        set_box(horiz_rect, floor_type);
 
         unsigned int x_min = std::min(horiz_rect.left, vert_rect.left);
         unsigned int y_min = std::min(horiz_rect.top, vert_rect.top);
@@ -180,7 +170,7 @@ MapLRoom::MapLRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
         /// @todo Put either a door or an open area at the starting coords.
         ///       Right now we just make it an open area.
         auto& startTile = get_map().get_tile(starting_coords);
-        startTile.set_tile_type("MTFloorDirt");
+        startTile.set_tile_type(floor_type);
 
         return;
       }

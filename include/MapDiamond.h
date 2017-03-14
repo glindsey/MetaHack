@@ -24,10 +24,6 @@ protected:
 private:
   struct Impl;
   std::unique_ptr<Impl> pImpl;
-
-  static unsigned int maxHalfSize;
-  static unsigned int minHalfSize;
-  static unsigned int maxRetries;
 };
 
 #endif // MAPDIAMOND_H

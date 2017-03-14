@@ -22,15 +22,6 @@ protected:
   MapLRoom(Map& m, PropertyDictionary const& settings, GeoVector vec);
 
 private:
-  static unsigned int horiz_leg_max_width;
-  static unsigned int horiz_leg_min_width;
-  static unsigned int horiz_leg_max_height;
-  static unsigned int horiz_leg_min_height;
-  static unsigned int vert_leg_max_width;
-  static unsigned int vert_leg_min_width;
-  static unsigned int vert_leg_max_height;
-  static unsigned int vert_leg_min_height;
-  static unsigned int max_retries;
 };
 
 #endif // MAPLROOM_H

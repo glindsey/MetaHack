@@ -16,8 +16,33 @@ public:
 
   virtual ~PropertyDictionary();
 
+  /// Clears the entire dictionary out.
+  void clear();
+
   /// Check if a particular key exists.
   bool contains(std::string key) const;
+
+  /// Get a base entry from the dictionary, passing in a default value.
+  /// @param key  Key of the setting to retrieve.
+  /// @return     The entry requested.
+  ///             If the entry does not exist, returns the default value given.
+  template<typename T>
+  T get(std::string key, T default_value) const
+  {
+    boost::any value = getAny(key);
+
+    /// Try to cast the setting to the desired type.
+    T* p_value = boost::any_cast<T>(&value);
+
+    // Bail if it didn't work.
+    if (p_value == nullptr)
+    {
+      return default_value;
+    }
+
+    // Return the requested value.
+    return *(p_value);
+  }
 
   /// Get a base entry from the dictionary.
   /// @param key  Key of the setting to retrieve.
@@ -39,6 +64,19 @@ public:
 
     // Return the requested value.
     return *(p_value);
+  }
+
+  /// Non-warning get() method for boost::any.
+  boost::any getAny(std::string key) const
+  {
+    // Bail if the setting doesn't exist.
+    if (m_dictionary.count(key) == 0)
+    {
+      return boost::any();
+    }
+
+    // Return the requested value.
+    return m_dictionary.at(key);
   }
 
   /// Template specialization for boost::any.

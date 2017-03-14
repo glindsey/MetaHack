@@ -22,12 +22,6 @@ protected:
   MapDonutRoom(Map& m, PropertyDictionary const& settings, GeoVector vec);
 
 private:
-  static unsigned int max_width;
-  static unsigned int min_width;
-  static unsigned int max_height;
-  static unsigned int min_height;
-  static unsigned int min_hole_size;
-  static unsigned int max_retries;
 };
 
 #endif // MAPDONUTROOM_H

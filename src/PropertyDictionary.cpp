@@ -13,6 +13,11 @@ PropertyDictionary::PropertyDictionary()
 PropertyDictionary::~PropertyDictionary()
 {}
 
+void PropertyDictionary::clear()
+{
+  m_dictionary.clear();
+}
+
 bool PropertyDictionary::contains(std::string key) const
 {
   return (m_dictionary.count(key) != 0);

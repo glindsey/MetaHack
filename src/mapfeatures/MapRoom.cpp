@@ -7,14 +7,6 @@
 #include "MathUtils.h"
 #include "EntityPool.h"
 
-// Static declarations
-/// @todo These should be passed in as arguments
-unsigned int MapRoom::max_width = 15;
-unsigned int MapRoom::min_width = 3;
-unsigned int MapRoom::max_height = 15;
-unsigned int MapRoom::min_height = 3;
-unsigned int MapRoom::max_retries = 100;
-
 // Local typedefs
 typedef boost::random::uniform_int_distribution<> uniform_int_dist;
 
@@ -24,8 +16,12 @@ MapRoom::MapRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
 {
   unsigned int num_tries = 0;
 
-  uniform_int_dist width_dist(min_width, max_width);
-  uniform_int_dist height_dist(min_height, max_height);
+  uniform_int_dist width_dist(s.get<unsigned int>("min_width", 2), 
+                              s.get<unsigned int>("max_width", 15));
+  uniform_int_dist height_dist(s.get<unsigned int>("min_height", 2), 
+                               s.get<unsigned int>("max_height", 15));
+  unsigned int max_retries = s.get<unsigned int>("max_retries", 100);
+  std::string floor_type = s.get<std::string>("floor_type", "MTFloorDirt");
 
   Vec2i& starting_coords = vec.start_point;
   Direction& direction = vec.direction;
@@ -95,7 +91,7 @@ MapRoom::MapRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
       if (okay)
       {
         // Clear out the box.
-        set_box(rect, "MTFloorDirt");
+        set_box(rect, floor_type);
         set_coords(rect);
 
         // Add the surrounding walls as potential connection points.
@@ -120,7 +116,7 @@ MapRoom::MapRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
         /// @todo Put either a door or an open area at the starting coords.
         ///       Right now we just make it an open area.
         auto& startTile = get_map().get_tile(starting_coords);
-        startTile.set_tile_type("MTFloorDirt");
+        startTile.set_tile_type(floor_type);
 
         return;
       }
