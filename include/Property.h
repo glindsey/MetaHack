@@ -18,7 +18,8 @@ using EightBits = uint8_t;
 using Index = uint32_t;
 using Integer = int32_t;
 using BigInteger = int64_t;
-using Real = double;
+using Real = float;
+using Number = double;
 using Color = sf::Color;
 
 /// Second attempt to create a Property class to represent, well, a property.
@@ -40,10 +41,8 @@ public:
     Boolean,
     String,
     EightBits,
-    Index,
-    Integer,
+    Number,
     BigInteger,
-    Real,
     IntegerVec2,
     Direction,
     Color
@@ -57,10 +56,8 @@ public:
       case Type::Boolean: os << "Boolean"; break;
       case Type::String: os << "String"; break;
       case Type::EightBits: os << "EightBits"; break;
-      case Type::Index: os << "Index"; break;
-      case Type::Integer: os << "Integer"; break;
+      case Type::Number: os << "Number"; break;
       case Type::BigInteger: os << "BigInteger"; break;
-      case Type::Real: os << "Real"; break;
       case Type::IntegerVec2: os << "IntegerVec2"; break;
       case Type::Direction: os << "Direction"; break;
       case Type::Color: os << "Color"; break;
@@ -133,10 +130,10 @@ public:
   explicit Property(Boolean value) : m_type{ Type::Boolean }, m_value{ value } {}
   explicit Property(String value) : m_type{ Type::String }, m_value{ value } {}
   explicit Property(EightBits value) : m_type{ Type::EightBits }, m_value{ value } {}
-  explicit Property(Index value) : m_type{ Type::Index }, m_value{ value } {}
-  explicit Property(Integer value) : m_type{ Type::Integer }, m_value{ value } {}
+  explicit Property(Index value) : m_type{ Type::Number }, m_value{ value } {}
+  explicit Property(Integer value) : m_type{ Type::Number }, m_value{ value } {}
   explicit Property(BigInteger value) : m_type{ Type::BigInteger }, m_value{ value } {}
-  explicit Property(Real value) : m_type{ Type::Real }, m_value{ value } {}
+  explicit Property(Real value) : m_type{ Type::Number }, m_value{ value } {}
   explicit Property(IntegerVec2 value) : m_type{ Type::IntegerVec2 }, m_value{ value } {}
   explicit Property(Direction value) : m_type{ Type::Direction }, m_value{ value } {}
   explicit Property(Color value) : m_type{ Type::Color }, m_value{ value } {}
@@ -150,96 +147,120 @@ public:
 
   template <typename T> T as() const
   {
-    throw InvalidPropertyCastException();
+    return as(T());
   }
 
-  template <> Boolean as() const
+  template <typename T> T as(T default_value) const
   {
-    if (type() == Type::Boolean)
+    throw InvalidPropertyCastException("(unknown)", type());
+  }
+
+  template <> Boolean as(Boolean default_value) const
+  {
+    switch (type())
     {
-      return boost::any_cast<Boolean>(m_value);
+      case Type::Null: return default_value;
+      case Type::Boolean: return boost::any_cast<Boolean>(m_value);
+      default: break;
     }
     throw InvalidPropertyCastException("Boolean", type());
   }
 
-  template <> String as() const
+  template <> String as(String default_value) const
   {
-    if (type() == Type::String)
+    switch (Type())
     {
-      return boost::any_cast<String>(m_value);
+      case Type::Null: return default_value;
+      case Type::String: return boost::any_cast<String>(m_value);
+      default: break;
     }
     throw InvalidPropertyCastException("String", type());
   }
 
-  template <> EightBits as() const
+  template <> EightBits as(EightBits default_value) const
   {
-    if (type() == Type::EightBits)
+    switch (type())
     {
-      return boost::any_cast<EightBits>(m_value);
+      case Type::Null: return default_value;
+      case Type::EightBits: return boost::any_cast<EightBits>(m_value);
+      default: break;
     }
     throw InvalidPropertyCastException("EightBits", type());
   }
 
-  template <> Index as() const
+  template <> Index as(Index default_value) const
   {
-    if (type() == Type::Index)
+    switch (type())
     {
-      return boost::any_cast<Index>(m_value);
+      case Type::Null: return default_value;
+      case Type::Number: return static_cast<Index>(boost::any_cast<Number>(m_value));
+      default: break;
     }
     throw InvalidPropertyCastException("Index", type());
   }
 
-
-  template <> Integer as() const
+  template <> Integer as(Integer default_value) const
   {
-    if (type() == Type::Integer)
+    switch (type())
     {
-      return boost::any_cast<Integer>(m_value);
+      case Type::Null: return default_value;
+      case Type::Number: return static_cast<Integer>(boost::any_cast<Number>(m_value));
+      default: break;
     }
     throw InvalidPropertyCastException("Integer", type());
   }
 
-  template <> BigInteger as() const
+  template <> BigInteger as(BigInteger default_value) const
   {
-    if (type() == Type::BigInteger)
+    switch (type())
     {
-      return boost::any_cast<BigInteger>(m_value);
+      case Type::Null: return default_value;
+      case Type::BigInteger: return boost::any_cast<BigInteger>(m_value);
+      default: break;
     }
     throw InvalidPropertyCastException("BigInteger", type());
   }
 
-  template <> Real as() const
+  template <> Real as(Real default_value) const
   {
-    if (type() == Type::Real)
+    switch (type())
     {
-      return boost::any_cast<Real>(m_value);
+      case Type::Null: return default_value;
+      case Type::Number: return static_cast<Real>(boost::any_cast<Number>(m_value));
+      default: break;
     }
     throw InvalidPropertyCastException("Real", type());
   }
 
-  template <> IntegerVec2 as() const
+  template <> IntegerVec2 as(IntegerVec2 default_value) const
   {
-    if (type() == Type::IntegerVec2)
+    switch (type())
     {
-      return boost::any_cast<IntegerVec2>(m_value);
+      case Type::Null: return default_value;
+      case Type::IntegerVec2: return boost::any_cast<IntegerVec2>(m_value);
+      default: break;
     }
     throw InvalidPropertyCastException("IntegerVec2", type());
   }
 
-  template <> Direction as() const
+  template <> Direction as(Direction default_value) const
   {
-    if (type() == Type::Direction)
+    switch (type())
     {
-      return boost::any_cast<Direction>(m_value);
+      case Type::Null: return default_value;
+      case Type::Direction: return boost::any_cast<Direction>(m_value);
+      default: break;
     }
     throw InvalidPropertyCastException("Direction", type());
   }
   
-  template <> Color as() const
+  template <> Color as(Color default_value) const
   {
-    if (type() == Type::Color)
+    switch (type())
     {
-      return boost::any_cast<Color>(m_value);
+      case Type::Null: return default_value;
+      case Type::Color: return boost::any_cast<Color>(m_value);
+      default: break;
     }
     throw InvalidPropertyCastException("Color", type());
   }
@@ -257,6 +278,12 @@ public:
     }
   }
 
+  static Property const& null()
+  {
+    static Property null_property{};
+    return null_property;
+  }
+
   static void addTypeEnumToLua(Lua* lua_instance)
   {
     lua_instance->add_enum("PropertyType",
@@ -264,10 +291,8 @@ public:
                            "Boolean", Type::Boolean,
                            "String", Type::String,
                            "EightBits", Type::EightBits,
-                           "Index", Type::Index,
-                           "Integer", Type::Integer,
+                           "Number", Type::Number,
                            "BigInteger", Type::BigInteger,
-                           "Real", Type::Real,
                            "IntegerVec2", Type::IntegerVec2,
                            "Direction", Type::Direction,
                            "Color", Type::Color,
@@ -294,10 +319,8 @@ public:
     switch (type())
     { 
       case Type::EightBits: m_value = boost::any_cast<EightBits>(m_value) + static_cast<EightBits>(1); break;
-      case Type::Index: m_value = boost::any_cast<Index>(m_value) + 1U; break;
-      case Type::Integer: m_value = boost::any_cast<Integer>(m_value) + 1; break;
+      case Type::Number: m_value = boost::any_cast<Number>(m_value) + 1.0; break;
       case Type::BigInteger: m_value = boost::any_cast<BigInteger>(m_value) + 1L; break;
-      case Type::Real: m_value = boost::any_cast<Real>(m_value) + 1.0; break;
       default: throw InvalidPropertyOperationException("operator++", type());
     }
     return *this;
@@ -315,10 +338,8 @@ public:
     switch (m_type)
     {
       case Type::EightBits: m_value = boost::any_cast<EightBits>(m_value) - static_cast<EightBits>(1); break;
-      case Type::Index: m_value = boost::any_cast<Index>(m_value) - 1U; break;
-      case Type::Integer: m_value = boost::any_cast<Integer>(m_value) - 1; break;
+      case Type::Number: m_value = boost::any_cast<Index>(m_value) - 1.0; break;
       case Type::BigInteger: m_value = boost::any_cast<BigInteger>(m_value) - 1L; break;
-      case Type::Real: m_value = boost::any_cast<Real>(m_value) - 1.0; break;
       default: throw InvalidPropertyOperationException("operator--", type());
     }
     return *this;
@@ -341,10 +362,8 @@ public:
     {
       case Type::String: m_value = boost::any_cast<String>(m_value) + boost::any_cast<String>(rhs.m_value); break;
       case Type::EightBits: m_value = boost::any_cast<EightBits>(m_value) + boost::any_cast<EightBits>(rhs.m_value); break;
-      case Type::Index: m_value = boost::any_cast<Index>(m_value) + boost::any_cast<Index>(rhs.m_value); break;
-      case Type::Integer: m_value = boost::any_cast<Integer>(m_value) + boost::any_cast<Integer>(rhs.m_value); break;
+      case Type::Number: m_value = boost::any_cast<Number>(m_value) + boost::any_cast<Number>(rhs.m_value); break;
       case Type::BigInteger: m_value = boost::any_cast<BigInteger>(m_value) + boost::any_cast<BigInteger>(rhs.m_value); break;
-      case Type::Real: m_value = boost::any_cast<Real>(m_value) + boost::any_cast<Real>(rhs.m_value); break;
       case Type::IntegerVec2: m_value = boost::any_cast<IntegerVec2>(m_value) + boost::any_cast<IntegerVec2>(rhs.m_value); break;
       case Type::Color: m_value = boost::any_cast<Color>(m_value) + boost::any_cast<Color>(rhs.m_value); break;
       default: throw InvalidPropertyOperationException("operator+=", type());
@@ -361,10 +380,8 @@ public:
     switch (type())
     {
       case Type::EightBits: m_value = boost::any_cast<EightBits>(m_value) - boost::any_cast<EightBits>(rhs.m_value); break;
-      case Type::Index: m_value = boost::any_cast<Index>(m_value) - boost::any_cast<Index>(rhs.m_value); break;
-      case Type::Integer: m_value = boost::any_cast<Integer>(m_value) - boost::any_cast<Integer>(rhs.m_value); break;
+      case Type::Number: m_value = boost::any_cast<Index>(m_value) - boost::any_cast<Number>(rhs.m_value); break;
       case Type::BigInteger: m_value = boost::any_cast<BigInteger>(m_value) - boost::any_cast<BigInteger>(rhs.m_value); break;
-      case Type::Real: m_value = boost::any_cast<Real>(m_value) - boost::any_cast<Real>(rhs.m_value); break;
       case Type::IntegerVec2: m_value = boost::any_cast<IntegerVec2>(m_value) - boost::any_cast<IntegerVec2>(rhs.m_value); break;
       case Type::Color: m_value = boost::any_cast<Color>(m_value) - boost::any_cast<Color>(rhs.m_value); break;
       default: throw InvalidPropertyOperationException("operator-=", type());
@@ -380,9 +397,8 @@ public:
     }
     switch (type())
     {
-      case Type::Integer: m_value = boost::any_cast<Integer>(m_value) * boost::any_cast<Integer>(rhs.m_value); break;
+      case Type::Number: m_value = boost::any_cast<Number>(m_value) * boost::any_cast<Number>(rhs.m_value); break;
       case Type::BigInteger: m_value = boost::any_cast<BigInteger>(m_value) * boost::any_cast<BigInteger>(rhs.m_value); break;
-      case Type::Real: m_value = boost::any_cast<Real>(m_value) * boost::any_cast<Real>(rhs.m_value); break;
       default: throw InvalidPropertyOperationException("operator*=", type());
     }
     return *this;
@@ -396,9 +412,8 @@ public:
     }
     switch (type())
     {
-      case Type::Integer: m_value = boost::any_cast<Integer>(m_value) / boost::any_cast<Integer>(rhs.m_value); break;
+      case Type::Number: m_value = boost::any_cast<Number>(m_value) / boost::any_cast<Number>(rhs.m_value); break;
       case Type::BigInteger: m_value = boost::any_cast<BigInteger>(m_value) / boost::any_cast<BigInteger>(rhs.m_value); break;
-      case Type::Real: m_value = boost::any_cast<Real>(m_value) / boost::any_cast<Real>(rhs.m_value); break;
       default: throw InvalidPropertyOperationException("operator/=", type());
     }
     return *this;
@@ -413,8 +428,6 @@ public:
     switch (type())
     {
       case Type::EightBits: m_value = boost::any_cast<EightBits>(m_value) % boost::any_cast<EightBits>(rhs.m_value); break;
-      case Type::Index: m_value = boost::any_cast<Index>(m_value) % boost::any_cast<Index>(rhs.m_value); break;
-      case Type::Integer: m_value = boost::any_cast<Integer>(m_value) % boost::any_cast<Integer>(rhs.m_value); break;
       case Type::BigInteger: m_value = boost::any_cast<BigInteger>(m_value) % boost::any_cast<BigInteger>(rhs.m_value); break;
       default: throw InvalidPropertyOperationException("operator%=", type());
     }
@@ -430,10 +443,8 @@ public:
       case Property::Type::Boolean: os << boost::any_cast<Boolean>(obj.m_value); break;
       case Property::Type::String: os << boost::any_cast<String>(obj.m_value); break;
       case Property::Type::EightBits: os << boost::any_cast<EightBits>(obj.m_value); break;
-      case Property::Type::Index: os << boost::any_cast<Index>(obj.m_value); break;
-      case Property::Type::Integer: os << boost::any_cast<Integer>(obj.m_value); break;
+      case Property::Type::Number: os << boost::any_cast<Number>(obj.m_value); break;
       case Property::Type::BigInteger: os << boost::any_cast<BigInteger>(obj.m_value); break;
-      case Property::Type::Real: os << boost::any_cast<Real>(obj.m_value); break;
       case Property::Type::IntegerVec2: os << boost::any_cast<IntegerVec2>(obj.m_value); break;
       case Property::Type::Direction: os << boost::any_cast<Direction>(obj.m_value); break;
       case Property::Type::Color: os << boost::any_cast<Color>(obj.m_value); break;
@@ -475,10 +486,8 @@ public:
       case Property::Type::Boolean: return std::tie(lhs.m_type, *boost::any_cast<Boolean*>(&lhs.m_value)) < std::tie(rhs.m_type, *boost::any_cast<Boolean*>(&rhs.m_value));
       case Property::Type::String: return std::tie(lhs.m_type, *boost::any_cast<String*>(&lhs.m_value)) < std::tie(rhs.m_type, *boost::any_cast<String*>(&rhs.m_value));
       case Property::Type::EightBits: return std::tie(lhs.m_type, *boost::any_cast<EightBits*>(&lhs.m_value)) < std::tie(rhs.m_type, *boost::any_cast<EightBits*>(&rhs.m_value));
-      case Property::Type::Index: return std::tie(lhs.m_type, *boost::any_cast<Index*>(&lhs.m_value)) < std::tie(rhs.m_type, *boost::any_cast<Index*>(&rhs.m_value));
-      case Property::Type::Integer: return std::tie(lhs.m_type, *boost::any_cast<Integer*>(&lhs.m_value)) < std::tie(rhs.m_type, *boost::any_cast<Integer*>(&rhs.m_value));
+      case Property::Type::Number: return std::tie(lhs.m_type, *boost::any_cast<Number*>(&lhs.m_value)) < std::tie(rhs.m_type, *boost::any_cast<Number*>(&rhs.m_value));
       case Property::Type::BigInteger: return std::tie(lhs.m_type, *boost::any_cast<BigInteger*>(&lhs.m_value)) < std::tie(rhs.m_type, *boost::any_cast<BigInteger*>(&rhs.m_value));
-      case Property::Type::Real: return std::tie(lhs.m_type, *boost::any_cast<Real*>(&lhs.m_value)) < std::tie(rhs.m_type, *boost::any_cast<Real*>(&rhs.m_value));
       case Property::Type::IntegerVec2: return std::tie(lhs.m_type, *boost::any_cast<IntegerVec2*>(&lhs.m_value)) < std::tie(rhs.m_type, *boost::any_cast<IntegerVec2*>(&rhs.m_value));
       case Property::Type::Direction: return std::tie(lhs.m_type, *boost::any_cast<Direction*>(&lhs.m_value)) < std::tie(rhs.m_type, *boost::any_cast<Direction*>(&rhs.m_value));
       case Property::Type::Color: return std::tie(lhs.m_type, *boost::any_cast<Color*>(&lhs.m_value)) < std::tie(rhs.m_type, *boost::any_cast<Color*>(&rhs.m_value));
@@ -510,10 +519,8 @@ public:
       case Property::Type::Boolean: return boost::any_cast<Boolean>(lhs.m_value) == boost::any_cast<Boolean>(rhs.m_value);
       case Property::Type::String: return boost::any_cast<String>(lhs.m_value) == boost::any_cast<String>(rhs.m_value);
       case Property::Type::EightBits: return boost::any_cast<EightBits>(lhs.m_value) == boost::any_cast<EightBits>(rhs.m_value);
-      case Property::Type::Index: return boost::any_cast<Index>(lhs.m_value) == boost::any_cast<Index>(rhs.m_value);
-      case Property::Type::Integer: return boost::any_cast<Integer>(lhs.m_value) == boost::any_cast<Integer>(rhs.m_value);
+      case Property::Type::Number: return boost::any_cast<Number>(lhs.m_value) == boost::any_cast<Number>(rhs.m_value);
       case Property::Type::BigInteger: return boost::any_cast<BigInteger>(lhs.m_value) == boost::any_cast<BigInteger>(rhs.m_value);
-      case Property::Type::Real: return boost::any_cast<Real>(lhs.m_value) == boost::any_cast<Real>(rhs.m_value);
       case Property::Type::IntegerVec2: return boost::any_cast<IntegerVec2>(lhs.m_value) == boost::any_cast<IntegerVec2>(rhs.m_value);
       case Property::Type::Direction: return boost::any_cast<Direction>(lhs.m_value) == boost::any_cast<Direction>(rhs.m_value);
       case Property::Type::Color: return boost::any_cast<Color>(lhs.m_value) == boost::any_cast<Color>(rhs.m_value);
@@ -533,3 +540,4 @@ private:
 };
 
 using PropertyMap = std::unordered_map<std::string, Property>;
+using PropertyPair = std::pair<std::string, Property>;

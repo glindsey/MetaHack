@@ -180,7 +180,7 @@ bool MapTile::is_opaque() const
 RealVec2 MapTile::get_pixel_coords(int x, int y)
 {
   auto& config = Service<IConfigSettings>::get();
-  auto map_tile_size = config.get<float>("map_tile_size");
+  auto map_tile_size = config.get("map_tile_size").as<Real>();
 
   return RealVec2(static_cast<float>(x) * map_tile_size, 
                static_cast<float>(y) * map_tile_size);

@@ -103,7 +103,7 @@ bool MapFeature::erase_growth_vector(GeoVector vec)
 std::unique_ptr<MapFeature> MapFeature::construct(Map& game_map, PropertyDictionary const & settings, GeoVector vec)
 {
   std::unique_ptr<MapFeature> feature;
-  std::string feature_type = settings.get<std::string>("type");
+  std::string feature_type = settings.get("type").as<String>();
 
   try
   {

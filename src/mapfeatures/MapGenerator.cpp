@@ -161,10 +161,10 @@ void MapGenerator::generate()
   CLOG(TRACE, "MapGenerator") << "Making starting room...";
 
   GeoVector startingVector{ pImpl->getRandomFilledSquare(), Direction::Self };
-  feature_settings.set<std::string>("type", "room");
-  feature_settings.set<unsigned int>("min_width", 5);
-  feature_settings.set<unsigned int>("min_height", 5);
-  feature_settings.set<unsigned int>("max_retries", 100);
+  feature_settings.set("type", "room");
+  feature_settings.set("min_width", 5);
+  feature_settings.set("min_height", 5);
+  feature_settings.set("max_retries", 100);
   std::unique_ptr<MapFeature> startRoom = MapFeature::construct(pImpl->game_map, feature_settings, startingVector);
 
   if (!startRoom)
@@ -200,51 +200,51 @@ void MapGenerator::generate()
     switch (chosen_feature)
     {
       case 0:
-        feature_settings.set<std::string>("type", "room_diamond");
-        feature_settings.set<unsigned int>("max_half_size", 4);
-        feature_settings.set<unsigned int>("min_half_size", 2);
-        feature_settings.set<unsigned int>("max_retries", 100);
+        feature_settings.set("type", "room_diamond");
+        feature_settings.set("max_half_size", 4);
+        feature_settings.set("min_half_size", 2);
+        feature_settings.set("max_retries", 100);
         break;
 
       case 1:
-        feature_settings.set<std::string>("type", "room_l");
-        feature_settings.set<unsigned int>("horiz_leg_max_width", 20);
-        feature_settings.set<unsigned int>("horiz_leg_min_width", 10);
-        feature_settings.set<unsigned int>("horiz_leg_max_height", 7);
-        feature_settings.set<unsigned int>("horiz_leg_min_height", 3);
-        feature_settings.set<unsigned int>("vert_leg_max_width", 7);
-        feature_settings.set<unsigned int>("vert_leg_min_width", 3);
-        feature_settings.set<unsigned int>("vert_leg_max_height", 20);
-        feature_settings.set<unsigned int>("vert_leg_min_height", 10);
-        feature_settings.set<unsigned int>("max_retries", 500);
+        feature_settings.set("type", "room_l");
+        feature_settings.set("horiz_leg_max_width", 20);
+        feature_settings.set("horiz_leg_min_width", 10);
+        feature_settings.set("horiz_leg_max_height", 7);
+        feature_settings.set("horiz_leg_min_height", 3);
+        feature_settings.set("vert_leg_max_width", 7);
+        feature_settings.set("vert_leg_min_width", 3);
+        feature_settings.set("vert_leg_max_height", 20);
+        feature_settings.set("vert_leg_min_height", 10);
+        feature_settings.set("max_retries", 500);
         break;
 
       case 2:
-        feature_settings.set<std::string>("type", "room_torus");
-        feature_settings.set<unsigned int>("max_width", 20);
-        feature_settings.set<unsigned int>("min_width", 7);
-        feature_settings.set<unsigned int>("max_height", 20);
-        feature_settings.set<unsigned int>("min_height", 7);
-        feature_settings.set<unsigned int>("min_hole_size", 5);
-        feature_settings.set<unsigned int>("max_retries", 500);
+        feature_settings.set("type", "room_torus");
+        feature_settings.set("max_width", 20);
+        feature_settings.set("min_width", 7);
+        feature_settings.set("max_height", 20);
+        feature_settings.set("min_height", 7);
+        feature_settings.set("min_hole_size", 5);
+        feature_settings.set("max_retries", 500);
         break;
 
       case 3:
       case 4:
       case 5:
-        feature_settings.set<std::string>("type", "corridor");
-        feature_settings.set<unsigned int>("max_length", 48);
-        feature_settings.set<unsigned int>("min_length", 3);
-        feature_settings.set<unsigned int>("max_retries", 100);
+        feature_settings.set("type", "corridor");
+        feature_settings.set("max_length", 48);
+        feature_settings.set("min_length", 3);
+        feature_settings.set("max_retries", 100);
         break;
 
       default:
-        feature_settings.set<std::string>("type", "room");
-        feature_settings.set<unsigned int>("max_width", 15);
-        feature_settings.set<unsigned int>("min_width", 3);
-        feature_settings.set<unsigned int>("max_height", 15);
-        feature_settings.set<unsigned int>("min_height", 3);
-        feature_settings.set<unsigned int>("max_retries", 100);
+        feature_settings.set("type", "room");
+        feature_settings.set("max_width", 15);
+        feature_settings.set("min_width", 3);
+        feature_settings.set("max_height", 15);
+        feature_settings.set("min_height", 3);
+        feature_settings.set("max_retries", 100);
         break;
     }
 

@@ -97,7 +97,7 @@ void MapTileStandard2DView::add_memory_vertices_to(sf::VertexArray& vertices,
   Map& game_map = GAME.get_maps().get(map_id);
 
   static sf::Vertex new_vertex;
-  float ts = config.get<float>("map_tile_size");
+  float ts = config.get("map_tile_size").as<Real>();
   float ts2 = ts * 0.5f;
 
   RealVec2 location(coords.x * ts, coords.y * ts);
@@ -136,7 +136,7 @@ void MapTileStandard2DView::add_tile_floor_vertices(sf::VertexArray& vertices)
   auto& tileNW = tile.get_adjacent_tile(Direction::Northwest);
 
   sf::Vertex new_vertex;
-  float ts = config.get<float>("map_tile_size");
+  float ts = config.get("map_tile_size").as<Real>();
   float half_ts = ts * 0.5f;
 
   sf::Color colorN{ tileN.get_light_level() };
@@ -208,7 +208,7 @@ void MapTileStandard2DView::add_thing_floor_vertices(EntityId entityId, sf::Vert
   auto& entity = GAME.get_entities().get(entityId);
   auto& config = Service<IConfigSettings>::get();
   sf::Vertex new_vertex;
-  float ts = config.get<float>("map_tile_size");
+  float ts = config.get("map_tile_size").as<Real>();
   float ts2 = ts * 0.5f;
 
   MapTile* root_tile = entityId->get_maptile();
@@ -252,7 +252,7 @@ void MapTileStandard2DView::add_wall_vertices_to(sf::VertexArray& vertices,
                                                  bool sw_is_empty, bool w_is_empty)
 {
   auto& config = Service<IConfigSettings>::get();
-  auto map_tile_size = config.get<float>("map_tile_size");
+  auto map_tile_size = config.get("map_tile_size").as<Real>();
 
   // This tile.
   MapTile& tile = get_map_tile();

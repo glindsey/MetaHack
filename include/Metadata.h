@@ -5,12 +5,11 @@
 
 #include "actions/ActionResult.h"
 #include "App.h"
+#include "EntityId.h"
 #include "ErrorHandler.h"
 #include "IntegerRange.h"
 #include "LuaObject.h"
 #include "MetadataCollection.h"
-#include "PropertyDictionary.h"
-#include "EntityId.h"
 #include "Tilesheet.h"
 
 #define BOOST_FILESYSTEM_NO_DEPRECATED

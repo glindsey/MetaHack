@@ -1,11 +1,11 @@
-#ifndef PROPERTYDICTIONARY_H
-#define PROPERTYDICTIONARY_H
+#pragma once
 
 #include "stdafx.h"
 
 #include "Direction.h"
 #include "ErrorHandler.h"
 #include "Metadata.h"
+#include "Property.h"
 
 /// Class that handles a dictionary that associates data of various types
 /// with keys.
@@ -22,123 +22,31 @@ public:
   /// Check if a particular key exists.
   bool contains(std::string key) const;
 
-  /// Get a base entry from the dictionary, passing in a default value.
-  /// @param key  Key of the setting to retrieve.
-  /// @return     The entry requested.
-  ///             If the entry does not exist, returns the default value given.
-  template<typename T>
-  T get(std::string key, T default_value) const
-  {
-    boost::any value = getAny(key);
-
-    /// Try to cast the setting to the desired type.
-    T* p_value = boost::any_cast<T>(&value);
-
-    // Bail if it didn't work.
-    if (p_value == nullptr)
-    {
-      return default_value;
-    }
-
-    // Return the requested value.
-    return *(p_value);
-  }
-
   /// Get a base entry from the dictionary.
   /// @param key  Key of the setting to retrieve.
   /// @return     The entry requested.
-  ///             If the entry does not exist, returns a new instance of T.
-  template<typename T>
-  T get(std::string key) const
-  {
-    boost::any value = get<boost::any>(key);
-
-    /// Try to cast the setting to the desired type.
-    T* p_value = boost::any_cast<T>(&value);
-
-    // Bail if it didn't work.
-    if (p_value == nullptr)
-    {
-      return T();
-    }
-
-    // Return the requested value.
-    return *(p_value);
-  }
-
-  /// Non-warning get() method for boost::any.
-  boost::any getAny(std::string key) const
-  {
-    // Bail if the setting doesn't exist.
-    if (m_dictionary.count(key) == 0)
-    {
-      return boost::any();
-    }
-
-    // Return the requested value.
-    return m_dictionary.at(key);
-  }
-
-  /// Template specialization for boost::any.
-  template<>
-  boost::any get(std::string key) const
-  {
-    // Bail if the setting doesn't exist.
-    if (m_dictionary.count(key) == 0)
-    {
-      CLOG(WARNING, "PropertyDictionary") <<
-        "Attempted to retrieve nonexistent key \"" << key << "\"";
-      return boost::any();
-    }
-
-    // Return the requested value.
-    return m_dictionary.at(key);
-  }
-
-  // Various template specializations for certain types.
-  // These are required because otherwise Lua access of these types will
-  // break round-tripping. (i.e. Any time Lua writes a value it will be
-  // stored as a double does to Lua's "a number is a number" typing. No way
-  // to get around that.)
-  template<> int get(std::string key) const { return static_cast<int>(get<double>(key)); }
-  template<> unsigned int get(std::string key) const { return static_cast<unsigned int>(get<double>(key)); }
-  template<> long int get(std::string key) const { return static_cast<long int>(get<double>(key)); }
-  template<> unsigned long int get(std::string key) const { return static_cast<unsigned long int>(get<double>(key)); }
-  template<> float get(std::string key) const { return static_cast<float>(get<double>(key)); }
+  ///             If the entry does not exist, returns a null Property.
+  Property const& get(String key) const;
 
   /// Add/alter an entry in the base dictionary.
   /// Erases any entry in the modified dictionary, if one exists.
   ///
-  /// @note         The type being added must be copyable... I think.
+  /// @note         The type being added must be copyable.
   /// @param key    Key of the entry to add/alter.
   /// @param value  Value to set it to.
   /// @return       True if the entry already existed and has been changed.
-  ///               False if a new entry was added.
-  template<typename T>
-  bool set(std::string key, T value)
-  {
-    bool existed = (m_dictionary.count(key) != 0);
-    boost::any insert_value = value;
+  ///               False if a new entry was added. 
+  bool set(std::string key, Property const& value);
 
-    if (existed)
-    {
-      m_dictionary.erase(key);
-    }
-
-    m_dictionary.insert(std::pair<std::string, boost::any>(key, insert_value));
-    after_set_(key);
-
-    return existed;
-  }
-
-  // Various template specializations for certain types.
-  // See get() specalizations for explanation.
-  template<> bool set(std::string key, int value) { return set<double>(key, static_cast<double>(value)); }
-  template<> bool set(std::string key, unsigned int value) { return set<double>(key, static_cast<double>(value)); }
-  template<> bool set(std::string key, long int value) { return set<double>(key, static_cast<double>(value)); }
-  template<> bool set(std::string key, unsigned long int value) { return set<double>(key, static_cast<double>(value)); }
-  template<> bool set(std::string key, float value) { return set<double>(key, static_cast<double>(value)); }
-  template<> bool set(std::string key, char const* value) { return set<std::string>(key, std::string(value)); }
+  inline bool set(std::string key, Boolean value) { return set(key, Property(value)); }
+  inline bool set(std::string key, String value) { return set(key, Property(value)); }
+  inline bool set(std::string key, EightBits value) { return set(key, Property(value)); }
+  inline bool set(std::string key, Index value) { return set(key, Property(value)); }
+  inline bool set(std::string key, Integer value) { return set(key, Property(value)); }
+  inline bool set(std::string key, BigInteger value) { return set(key, Property(value)); }
+  inline bool set(std::string key, IntegerVec2 value) { return set(key, Property(value)); }
+  inline bool set(std::string key, Direction value) { return set(key, Property(value)); }
+  inline bool set(std::string key, Color value) { return set(key, Property(value)); }
 
   /// Overridable function to be called after a set() is performed.
   /// Default behavior is to do nothing.
@@ -156,67 +64,9 @@ public:
 
 protected:
   /// Get a reference to the dictionary map itself.
-  AnyMap& get_dictionary();
+  PropertyMap& get_dictionary();
 
 private:
   /// The base property dictionary.
-  AnyMap m_dictionary;
+  PropertyMap m_dictionary;
 };
-
-/// Equality operator overload for boost::any.
-/// Only works for certain values, which is unfortunate, but there's no other
-/// safe way to handle equality for boost::any.
-inline bool operator==(boost::any const& lhs, boost::any const& rhs)
-{
-  auto& ltype = lhs.type();
-  auto& rtype = rhs.type();
-
-  if (ltype != rtype)
-  {
-    return false;
-  }
-
-  if (ltype == typeid(std::string))
-  {
-    return boost::any_cast<std::string>(lhs) == boost::any_cast<std::string>(rhs);
-  }
-
-  if (ltype == typeid(double))
-  {
-    return boost::any_cast<double>(lhs) == boost::any_cast<double>(rhs);
-  }
-
-  if (ltype == typeid(bool))
-  {
-    return boost::any_cast<bool>(lhs) == boost::any_cast<bool>(rhs);
-  }
-
-  if (ltype == typeid(Direction))
-  {
-    return boost::any_cast<Direction>(lhs) == boost::any_cast<Direction>(rhs);
-  }
-
-  if (ltype == typeid(sf::Color))
-  {
-    return boost::any_cast<sf::Color>(lhs) == boost::any_cast<sf::Color>(rhs);
-  }
-
-  if (ltype == typeid(IntegerVec2))
-  {
-    return boost::any_cast<IntegerVec2>(lhs) == boost::any_cast<IntegerVec2>(rhs);
-  }
-
-  if (ltype == typeid(Vec2u))
-  {
-    return boost::any_cast<Vec2u>(lhs) == boost::any_cast<Vec2u>(rhs);
-  }
-
-  throw std::runtime_error("Comparison of boost::any type \"" + std::string(ltype.name()) + "\" is not supported");
-}
-
-inline bool operator!=(boost::any const& op1, boost::any const& op2)
-{
-  return !(op1 == op2);
-}
-
-#endif // PROPERTYDICTIONARY_H

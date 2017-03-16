@@ -33,8 +33,8 @@ namespace metagui
     sf::RectangleShape rect;
 
     rect.setFillColor(getParent()->getFocus() ?
-                      config.get<sf::Color>("window_focused_border_color") :
-                      config.get<sf::Color>("window_border_color"));
+                      config.get("window_focused_border_color").as<Color>() :
+                      config.get("window_border_color").as<Color>());
     rect.setOutlineThickness(0);
     rect.setPosition({ 0, 0 });
     rect.setSize({ static_cast<unsigned int>(s_handle_size), static_cast<unsigned int>(s_handle_size) });

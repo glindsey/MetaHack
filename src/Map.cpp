@@ -572,7 +572,7 @@ int Map::LUA_map_add_feature(lua_State* L)
 
   std::string feature = lua_tostring(L, 2);
 
-  feature_settings.set<std::string>("type", feature);
+  feature_settings.set("type", feature);
 
   bool success = map.m_generator->add_feature(feature_settings);
 

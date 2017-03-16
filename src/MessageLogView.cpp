@@ -48,7 +48,7 @@ metagui::Event::Result MessageLogView::handleGUIEventPreChildren_(metagui::Event
 void MessageLogView::drawContents_(sf::RenderTexture& texture, int frame)
 {
   auto& config = Service<IConfigSettings>::get();
-  auto text_default_size = config.get<unsigned int>("text_default_size");
+  auto text_default_size = config.get("text_default_size").as<Integer>();
 
   // Dimensions of the pane.
   sf::IntRect pane_dims = getRelativeDimensions();
@@ -56,8 +56,8 @@ void MessageLogView::drawContents_(sf::RenderTexture& texture, int frame)
   float lineSpacing = the_default_font.getLineSpacing(text_default_size);
 
   // Text offsets relative to the background rectangle.
-  float text_offset_x = config.get<float>("window_text_offset_x");
-  float text_offset_y = config.get<float>("window_text_offset_y");
+  auto text_offset_x = config.get("window_text_offset_x").as<Real>();
+  auto text_offset_y = config.get("window_text_offset_y").as<Real>();
 
   // Start at the bottom, most recent text and work upwards.
   float text_coord_x = text_offset_x;
@@ -77,7 +77,7 @@ void MessageLogView::drawContents_(sf::RenderTexture& texture, int frame)
       frame,
       the_default_font,
       text_default_size,
-      config.get<sf::Color>("text_highlight_color"));
+      config.get("text_highlight_color").as<Color>());
 
     text_coord_y -= lineSpacing;
   }
@@ -90,7 +90,7 @@ void MessageLogView::drawContents_(sf::RenderTexture& texture, int frame)
   {
     render_text.setString(*iter);
     render_text.setPosition(text_coord_x, text_coord_y);
-    render_text.setColor(config.get<sf::Color>("text_color"));
+    render_text.setColor(config.get("text_color").as<Color>());
     texture.draw(render_text);
     if (text_coord_y < text_offset_y) break;
     text_coord_y -= lineSpacing;

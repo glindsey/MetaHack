@@ -149,12 +149,12 @@ public:
   {
     if (m_properties.contains(key))
     {
-      return m_properties.get<T>(key);
+      return m_properties.get(key).as<T>();
     }
     else
     {
       T value = m_metadata.get_intrinsic<T>(key, default_value);
-      m_properties.set<T>(key, value);
+      m_properties.set(key, Property(value));
       return value;
     }
   }
@@ -169,7 +169,7 @@ public:
   bool set_base_property(std::string key, T value)
   {
     bool existed = m_properties.contains(key);
-    m_properties.set<T>(key, value);
+    m_properties.set(key, Property(value));
 
     return existed;
   }
@@ -181,9 +181,9 @@ public:
   template<typename T>
   void add_to_base_property(std::string key, T add_value)
   {
-    T existing_value = m_properties.get<T>(key);
+    T existing_value = m_properties.get(key).as<T>();
     T new_value = existing_value + add_value;
-    m_properties.set<T>(key, new_value);
+    m_properties.set(key, Property(new_value));
   }
 
   /// Get a modified property of this Entity.
@@ -198,10 +198,10 @@ public:
     if (!m_properties.contains(key))
     {
       T value = m_metadata.get_intrinsic<T>(key, default_value);
-      m_properties.set<T>(key, value);
+      m_properties.set(key, Property(value));
     }
 
-    return m_properties.get_modified<T>(key);
+    return m_properties.get_modified(key).as<T>();
   }
 
   /// Add a property modifier to this Entity.

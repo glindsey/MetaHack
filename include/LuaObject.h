@@ -11,6 +11,7 @@
 
 /// Forward declarations
 enum class ActionResult;
+class Property;
 
 /// This class encapsulates the Lua state and interface as an object.
 class Lua : public boost::noncopyable
@@ -101,143 +102,34 @@ public:
   ///
   int get_enum_value(int index);
 
-  /// Push a value to a Lua function, if possible.
+  /// Pushes a property onto the Lua stack.
   ///
-  /// @param value    Value to push.
-  /// @return The number of stack slots used.
-  /// @note The default implementation is left blank so type errors can be
-  ///       caught at compile time instead of causing subtle runtime errors.
-  template < typename T > int push_value(T value);
-
-  /// Attempts to deduce the type of a boost::any and push the required
-  /// values onto the Lua stack.
-  /// Supported types include:
-  ///  * std::string
-  ///  * bool
-  ///  * double
+  /// Currently supported types are:
+  ///  * Boolean
+  ///  * String
+  ///  * Number
   ///  * IntegerVec2
-  ///  * sf::Color
+  ///  * Direction
+  ///  * Color
+  ///
   /// @param    value   Value to deduce the type of.
   /// @return           The number of arguments pushed to the stack.
   ///                   If the type could not be deduced, it will push
   ///                   nil and return 1.
-  template <> int push_value(boost::any value)
-  {
-    if (boost::any_cast<std::string>(&value))
-    {
-      std::string cast_value = boost::any_cast<std::string>(value);
-      return push_value(cast_value);
-    }
-    else if (boost::any_cast<bool>(&value))
-    {
-      bool cast_value = boost::any_cast<bool>(value);
-      return push_value(cast_value);
-    }
-    else if (boost::any_cast<double>(&value))
-    {
-      double cast_value = boost::any_cast<double>(value);
-      return push_value(cast_value);
-    }
-    else if (boost::any_cast<IntegerVec2>(&value))
-    {
-      IntegerVec2 cast_value = boost::any_cast<IntegerVec2>(value);
-      return push_value(cast_value);
-    }
-    else if (boost::any_cast<Direction>(&value))
-    {
-      Direction cast_value = boost::any_cast<Direction>(value);
-      return push_value(cast_value);
-    }
-    else if (boost::any_cast<sf::Color>(&value))
-    {
-      sf::Color cast_value = boost::any_cast<sf::Color>(value);
-      return push_value(cast_value);
-    }
-    else
-    {
-      lua_pushnil(L_);
-      return 1;
-    }
-  }
+  int push_value(Property property);
 
-  template <> int push_value(unsigned int value)
-  {
-    lua_pushinteger(L_, static_cast<lua_Integer>(value));
-    return 1;
-  }
-
-  template <> int push_value(int value)
-  {
-    lua_pushinteger(L_, static_cast<lua_Integer>(value));
-    return 1;
-  }
-
-  template <> int push_value(int64_t value)
-  {
-    lua_pushinteger(L_, static_cast<lua_Integer>(value));
-    return 1;
-  }
-
-  template <> int push_value(EntityId value)
-  {
-    lua_pushinteger(L_, static_cast<lua_Integer>(value));
-    return 1;
-  }
-
-  template <> int push_value(float value)
-  {
-    lua_pushnumber(L_, static_cast<lua_Number>(value));
-    return 1;
-  }
-
-  template <> int push_value(double value)
-  {
-    lua_pushnumber(L_, static_cast<lua_Number>(value));
-    return 1;
-  }
-
-  template <> int push_value(bool value)
-  {
-    lua_pushboolean(L_, static_cast<int>(value));
-    return 1;
-  }
-
-  template <> int push_value(std::string value)
-  {
-    lua_pushstring(L_, value.c_str());
-    return 1;
-  }
-
-  template <> int push_value(Vec2u value)
-  {	  
-    lua_pushinteger(L_, static_cast<lua_Integer>(value.x));
-    lua_pushinteger(L_, static_cast<lua_Integer>(value.y));
-    return 2;
-  }
-
-  template <> int push_value(IntegerVec2 value)
-  {
-    lua_pushinteger(L_, static_cast<lua_Integer>(value.x));
-    lua_pushinteger(L_, static_cast<lua_Integer>(value.y));
-    return 2;
-  }
-
-  template <> int push_value(Direction value)
-  {
-    Vec3i vec = static_cast<Vec3i>(value);
-    lua_pushinteger(L_, static_cast<lua_Integer>(vec.x));
-    lua_pushinteger(L_, static_cast<lua_Integer>(vec.y));
-    lua_pushinteger(L_, static_cast<lua_Integer>(vec.z));
-    return 3;
-  }
-  template <> int push_value(sf::Color value)
-  {
-    lua_pushinteger(L_, static_cast<lua_Integer>(value.r));
-    lua_pushinteger(L_, static_cast<lua_Integer>(value.g));
-    lua_pushinteger(L_, static_cast<lua_Integer>(value.b));
-    lua_pushinteger(L_, static_cast<lua_Integer>(value.a));
-    return 4;
-  }
+  int push_value(unsigned int value);
+  int push_value(int value);
+  int push_value(int64_t value);
+  int push_value(EntityId value);
+  int push_value(float value);
+  int push_value(double value);
+  int push_value(bool value);
+  int push_value(std::string value);
+  int push_value(Vec2u value);
+  int push_value(IntegerVec2 value);
+  int push_value(Direction value);
+  int push_value(sf::Color value);
 
   /// Pop a value from a Lua function, if possible.
   ///
@@ -563,7 +455,7 @@ public:
         lua_pushvalue(L_, -2);                         // class set class <
         lua_remove(L_, -3);                            // set class <
         lua_pushstring(L_, name.c_str());              // set class name <
-        push_value<ValueType>(value);                  // set class name value <
+        push_value(value);                             // set class name value <
         int num_args = 2 + stack_slots<ValueType>();
         int result = lua_pcall(L_, num_args, 0, 0);    // (nil|err) <
         if (result != 0)

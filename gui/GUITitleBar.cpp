@@ -31,12 +31,12 @@ namespace metagui
     auto parent_size = getParent()->getSize();
     auto titlebar_text = getParent()->getText();
 
-    float line_spacing_y = the_default_font.getLineSpacing(config.get<unsigned int>("text_default_size"));
+    float line_spacing_y = the_default_font.getLineSpacing(static_cast<unsigned int>(config.get("text_default_size").as<Integer>()));
 
     // Text offsets relative to the background rectangle.
-    float text_offset_x = config.get<float>("window_text_offset_x");
-    float text_offset_y = config.get<float>("window_text_offset_y");
-    float border_width = config.get<float>("window_border_width");
+    float text_offset_x = config.get("window_text_offset_x").as<Real>();
+    float text_offset_y = config.get("window_text_offset_y").as<Real>();
+    float border_width = config.get("window_border_width").as<Real>();
 
     RealVec2 rect_position{ border_width, border_width };
     RealVec2 rect_size{ static_cast<float>(parent_size.x - (border_width * 2)),
@@ -47,10 +47,10 @@ namespace metagui
     sf::RectangleShape title_rect;
     sf::Text title_text;
 
-    title_rect.setFillColor(config.get<sf::Color>("window_bg_color"));
+    title_rect.setFillColor(config.get("window_bg_color").as<Color>());
     title_rect.setOutlineColor(getParent()->getFocus() ?
-                               config.get<sf::Color>("window_focused_border_color") :
-                               config.get<sf::Color>("window_border_color"));
+                               config.get("window_focused_border_color").as<Color>() :
+                               config.get("window_border_color").as<Color>());
     title_rect.setOutlineThickness(border_width);
     title_rect.setPosition(rect_position);
     title_rect.setSize(rect_size);
@@ -61,9 +61,9 @@ namespace metagui
     {
       title_text.setString(titlebar_text);
       title_text.setFont(the_default_bold_font);
-      title_text.setCharacterSize(config.get<unsigned int>("text_default_size"));
+      title_text.setCharacterSize(static_cast<unsigned int>(config.get("text_default_size").as<Integer>()));
 
-      title_text.setColor(config.get<sf::Color>("text_color"));
+      title_text.setColor(config.get("text_color").as<Color>());
       title_text.setPosition(text_position);
       texture.draw(title_text);
     }
@@ -74,10 +74,10 @@ namespace metagui
   void TitleBar::handleParentSizeChanged_(Vec2u parent_size)
   {
     auto& config = Service<IConfigSettings>::get();
-    float line_spacing_y = the_default_font.getLineSpacing(config.get<unsigned int>("text_default_size"));
+    float line_spacing_y = the_default_font.getLineSpacing(static_cast<unsigned int>(config.get("text_default_size").as<Integer>()));
 
     // Text offsets relative to the background rectangle.
-    float text_offset_y = config.get<float>("window_text_offset_y");
+    float text_offset_y = config.get("window_text_offset_y").as<Real>();
 
     Vec2u our_size{ parent_size.x, static_cast<unsigned int>(line_spacing_y + (text_offset_y * 2)) };
 

@@ -28,11 +28,10 @@ sf::IntRect calc_message_log_dimensions(sf::RenderWindow& window)
   sf::IntRect messageLogDims;
   auto& config = Service<IConfigSettings>::get();
 
-  unsigned int inventory_area_width = config.get<unsigned int>("inventory_area_width");
-  unsigned int messagelog_area_height = config.get<unsigned int>("messagelog_area_height");
+  auto inventory_area_width = config.get("inventory_area_width").as<Integer>();
+  auto messagelog_area_height = config.get("messagelog_area_height").as<Integer>();
   messageLogDims.width = window.getSize().x - (inventory_area_width + 24);
   messageLogDims.height = messagelog_area_height - 10;
-  //messageLogDims.height = static_cast<int>(window.getSize().y * 0.25f) - 10;
   messageLogDims.left = 12;
   messageLogDims.top = 5;
   return messageLogDims;
@@ -87,28 +86,28 @@ App::App(sf::RenderWindow& app_window)
 
   // Create the default fonts.
   m_default_font.reset(NEW sf::Font());
-  FileName font_name = "resources/font/" + config.get<std::string>("font_name_default") + ".ttf";
+  FileName font_name = "resources/font/" + config.get("font_name_default").as<String>() + ".ttf";
   if (m_default_font->loadFromFile(font_name) == false)
   {
     CLOG(FATAL, "App") << "Could not load the default font";
   }
 
   m_default_bold_font.reset(NEW sf::Font());
-  font_name = "resources/font/" + config.get<std::string>("font_name_bold") + ".ttf";
+  font_name = "resources/font/" + config.get("font_name_bold").as<String>() + ".ttf";
   if (m_default_bold_font->loadFromFile(font_name) == false)
   {
     CLOG(FATAL, "App") << "Could not load the default bold font";
   }
 
   m_default_mono_font.reset(NEW sf::Font());
-  font_name = "resources/font/" + config.get<std::string>("font_name_mono") + ".ttf";
+  font_name = "resources/font/" + config.get("font_name_mono").as<String>() + ".ttf";
   if (m_default_mono_font->loadFromFile(font_name) == false)
   {
     CLOG(FATAL, "App") << "Could not load the default monospace font";
   }
 
   m_default_unicode_font.reset(NEW sf::Font());
-  font_name = "resources/font/" + config.get<std::string>("font_name_unicode") + ".ttf";
+  font_name = "resources/font/" + config.get("font_name_unicode").as<String>() + ".ttf";
   if (m_default_unicode_font->loadFromFile(font_name) == false)
   {
     CLOG(FATAL, "App") << "Could not load the default Unicode font";
@@ -417,8 +416,8 @@ int App::LUA_get_config(lua_State* L)
   }
   else
   {
-    boost::any result = config.get<boost::any>(key);
-    int args = instance().m_lua->push_value<boost::any>(result);
+    auto result = config.get(key);
+    int args = instance().m_lua->push_value(result);
     return args;
   }
 }

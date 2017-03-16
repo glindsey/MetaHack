@@ -36,13 +36,13 @@ void StatusArea::drawContents_(sf::RenderTexture& texture, int frame)
 
   sf::IntRect pane_dims = getRelativeDimensions();
   EntityId player = GAME.get_player();
-  RealVec2 origin(config.get<float>("window_text_offset_x"),
-               config.get<float>("window_text_offset_y"));
-  sf::Color text_color = config.get<sf::Color>("text_color");
-  sf::Color text_dim_color = config.get<sf::Color>("text_dim_color");
-  sf::Color text_warning_color = config.get<sf::Color>("text_warning_color");
-  sf::Color text_danger_color = config.get<sf::Color>("text_danger_color");
-  unsigned int text_default_size = config.get<unsigned int>("text_default_size");
+  RealVec2 origin(config.get("window_text_offset_x").as<Real>(),
+               config.get("window_text_offset_y").as<Real>());
+  sf::Color text_color = config.get("text_color").as<Color>();
+  sf::Color text_dim_color = config.get("text_dim_color").as<Color>();
+  sf::Color text_warning_color = config.get("text_warning_color").as<Color>();
+  sf::Color text_danger_color = config.get("text_danger_color").as<Color>();
+  auto text_default_size = config.get("text_default_size").as<Integer>();
   float line_spacing = the_default_font.getLineSpacing(text_default_size) + 3.0f;
   float attrib_spacing = 75.0f;
 
@@ -117,14 +117,14 @@ void StatusArea::render_attribute(sf::RenderTarget& target, std::string abbrev, 
   auto& config = Service<IConfigSettings>::get();
 
   sf::Text render_text;
-  sf::Color text_color = config.get<sf::Color>("text_color");
-  sf::Color text_dim_color = config.get<sf::Color>("text_dim_color");
+  sf::Color text_color = config.get("text_color").as<Color>();
+  sf::Color text_dim_color = config.get("text_dim_color").as<Color>();
   EntityId player = GAME.get_player();
 
   // Render STR
   render_text.setFont(the_default_mono_font);
   render_text.setColor(text_dim_color);
-  render_text.setCharacterSize(config.get<unsigned int>("text_default_size"));
+  render_text.setCharacterSize(config.get("text_default_size").as<Integer>());
   render_text.setPosition(location.x, location.y);
   render_text.setString(abbrev + ":");
   target.draw(render_text);

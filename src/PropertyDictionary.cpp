@@ -24,7 +24,48 @@ bool PropertyDictionary::contains(std::string key) const
   return (m_dictionary.count(key) != 0);
 }
 
-AnyMap& PropertyDictionary::get_dictionary()
+/// Get a base entry from the dictionary.
+/// @param key  Key of the setting to retrieve.
+/// @return     The entry requested.
+///             If the entry does not exist, returns a null Property.
+
+Property const & PropertyDictionary::get(String key) const
+{
+  if (m_dictionary.count(key) == 0)
+  {
+    return Property::null();
+  }
+  else
+  {
+    return m_dictionary.at(key);
+  }
+}
+
+/// Add/alter an entry in the base dictionary.
+/// Erases any entry in the modified dictionary, if one exists.
+///
+/// @note         The type being added must be copyable.
+/// @param key    Key of the entry to add/alter.
+/// @param value  Value to set it to.
+/// @return       True if the entry already existed and has been changed.
+///               False if a new entry was added. 
+
+bool PropertyDictionary::set(std::string key, Property const & value)
+{
+  bool existed = (m_dictionary.count(key) != 0);
+
+  if (existed)
+  {
+    m_dictionary.erase(key);
+  }
+
+  m_dictionary.insert(PropertyPair(key, value));
+  after_set_(key);
+
+  return existed;
+}
+
+PropertyMap& PropertyDictionary::get_dictionary()
 {
   return m_dictionary;
 }
@@ -54,14 +95,6 @@ bool PropertyDictionary::operator==(PropertyDictionary const& other) const
 
     auto our_value = pair.second;
     auto other_value = other.m_dictionary.at(key);
-
-    auto& our_type = our_value.type();
-    auto& other_type = other_value.type();
-
-    if (our_type != other_type)
-    {
-      return false;
-    }
 
     if (our_value != other_value)
     {

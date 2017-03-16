@@ -1036,7 +1036,7 @@ std::string Entity::get_identifying_string(ArticleChoice articles,
   bool owned;
 
   std::string debug_prefix;
-  if (config.get<bool>("debug_show_thing_ids") == true)
+  if (config.get("debug_show_thing_ids").as<Boolean>() == true)
   {
     debug_prefix = "(#" + static_cast<std::string>(get_id()) + ") ";
   }

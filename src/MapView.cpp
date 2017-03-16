@@ -22,9 +22,9 @@ void MapView::set_view(sf::RenderTarget & target, RealVec2 center, float zoom_le
 {
   auto& config = Service<IConfigSettings>::get();
   Vec2u screen_size = target.getSize();
-  unsigned int inventory_area_width = config.get<unsigned int>("inventory_area_width");
-  unsigned int status_area_height = config.get<unsigned int>("status_area_height");
-  unsigned int messagelog_area_height = config.get<unsigned int>("messagelog_area_height");
+  unsigned int inventory_area_width = config.get("inventory_area_width").as<Integer>();
+  unsigned int status_area_height = config.get("status_area_height").as<Integer>();
+  unsigned int messagelog_area_height = config.get("messagelog_area_height").as<Integer>();
 
   RealVec2 window_center = RealVec2((static_cast<float>(screen_size.x - inventory_area_width) / zoom_level) / 2,
                                             messagelog_area_height + (static_cast<float>(screen_size.y - (status_area_height + messagelog_area_height)) / zoom_level) / 2);
