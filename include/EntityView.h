@@ -21,21 +21,21 @@ public:
   /// If the new location is different from previous, this method may
   /// reinitialize cached render data.
   /// @param target_coords Target coords for the Entity's upper-left corner.
-  void setLocation(Vec2f target_coords);
+  void setLocation(RealVec2 target_coords);
 
   /// Gets the location of this Entity on the target texture.
   /// @return Target coords for the Entity's upper-left corner.
-  Vec2f getLocation();
+  RealVec2 getLocation();
 
   /// Sets the size of this Entity on the target texture.
   /// If the new size is different from previous, this method may
   /// reinitialize cached render data.
   /// @param target_coords Size of the Entity, in pixels.
-  void setSize(Vec2f target_size);
+  void setSize(RealVec2 target_size);
 
   /// Gets the size of this Entity on the target texture.
   /// @return Size of the Entity, in pixels.
-  Vec2f getSize();
+  RealVec2 getSize();
 
   virtual void draw(sf::RenderTarget& target,
                     bool use_lighting,
@@ -58,8 +58,8 @@ private:
   Entity& m_entity;
 
   /// Target coordinates for the Entity.
-  Vec2f m_target_coords;
+  RealVec2 m_target_coords;
 
   /// Target size for the Entity, in pixels.
-  Vec2f m_target_size;
+  RealVec2 m_target_size;
 };

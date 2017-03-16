@@ -18,7 +18,7 @@ MapView::MapView(std::string name, Map& map, Vec2u size)
 MapView::~MapView()
 {}
 
-void MapView::set_view(sf::RenderTarget & target, Vec2f center, float zoom_level)
+void MapView::set_view(sf::RenderTarget & target, RealVec2 center, float zoom_level)
 {
   auto& config = Service<IConfigSettings>::get();
   Vec2u screen_size = target.getSize();
@@ -26,13 +26,15 @@ void MapView::set_view(sf::RenderTarget & target, Vec2f center, float zoom_level
   unsigned int status_area_height = config.get<unsigned int>("status_area_height");
   unsigned int messagelog_area_height = config.get<unsigned int>("messagelog_area_height");
 
-  Vec2f window_center = Vec2f((static_cast<float>(screen_size.x - inventory_area_width) / zoom_level) / 2,
+  RealVec2 window_center = RealVec2((static_cast<float>(screen_size.x - inventory_area_width) / zoom_level) / 2,
                                             messagelog_area_height + (static_cast<float>(screen_size.y - (status_area_height + messagelog_area_height)) / zoom_level) / 2);
 
-  target.setView(sf::View(sf::FloatRect((center.x - window_center.x),
-    (center.y - window_center.y),
-                                        (screen_size.x / zoom_level),
-                                        (screen_size.y / zoom_level))));
+  auto rect = sf::FloatRect(static_cast<float>(center.x - window_center.x),
+                            static_cast<float>(center.y - window_center.y),
+                            static_cast<float>(screen_size.x / zoom_level),
+                            static_cast<float>(screen_size.y / zoom_level));
+
+  target.setView(sf::View(rect));
 }
 
 Map& MapView::get_map()

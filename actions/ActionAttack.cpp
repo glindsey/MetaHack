@@ -78,12 +78,12 @@ namespace Actions
     unsigned int action_time = 0;
 
     // Figure out our target location.
-    Vec2i coords = current_tile->get_coords();
-    Vec2i offset = (Vec2i)new_direction;
+    IntegerVec2 coords = current_tile->get_coords();
+    IntegerVec2 offset = (IntegerVec2)new_direction;
     int x_new = coords.x + offset.x;
     int y_new = coords.y + offset.y;
     Map& current_map = GAME.get_maps().get(subject->get_map_id());
-    Vec2i map_size = current_map.getSize();
+    IntegerVec2 map_size = current_map.getSize();
 
     // Check boundaries.
     if ((x_new < 0) || (y_new < 0) ||

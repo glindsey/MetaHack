@@ -10,7 +10,7 @@
 
 namespace metagui
 {
-  Object::Object(std::string name, Vec2i location, Vec2u size)
+  Object::Object(std::string name, IntegerVec2 location, Vec2u size)
   {
     SET_UP_LOGGER("GUI", true);
 
@@ -93,12 +93,12 @@ namespace metagui
     return m_text;
   }
 
-  Vec2i Object::getRelativeLocation()
+  IntegerVec2 Object::getRelativeLocation()
   {
     return m_location;
   }
 
-  void Object::setRelativeLocation(Vec2i location)
+  void Object::setRelativeLocation(IntegerVec2 location)
   {
     m_location = location;
     if (m_parent != nullptr)
@@ -162,7 +162,7 @@ namespace metagui
   sf::IntRect Object::getRelativeDimensions()
   {
     sf::IntRect dimensions;
-    Vec2i location = getRelativeLocation();
+    IntegerVec2 location = getRelativeLocation();
     Vec2u size = getSize();
     dimensions.left = location.x;
     dimensions.top = location.y;
@@ -178,13 +178,13 @@ namespace metagui
                static_cast<unsigned int>(dimensions.height) });
   }
 
-  Vec2i Object::getAbsoluteLocation()
+  IntegerVec2 Object::getAbsoluteLocation()
   {
-    Vec2i absolute_location = getRelativeLocation();
+    IntegerVec2 absolute_location = getRelativeLocation();
 
     if (m_parent != nullptr)
     {
-      Vec2i child_area_absolute_location =
+      IntegerVec2 child_area_absolute_location =
         m_parent->getAbsoluteLocation();
 
       if (m_cached_flags.decor != true)
@@ -198,13 +198,13 @@ namespace metagui
     return absolute_location;
   }
 
-  void Object::setAbsoluteLocation(Vec2i location)
+  void Object::setAbsoluteLocation(IntegerVec2 location)
   {
-    Vec2i relative_location = location;
+    IntegerVec2 relative_location = location;
 
     if (m_parent != nullptr)
     {
-      Vec2i child_area_absolute_location =
+      IntegerVec2 child_area_absolute_location =
         m_parent->getAbsoluteLocation();
 
       if (m_cached_flags.decor != true)
@@ -221,7 +221,7 @@ namespace metagui
   sf::IntRect Object::getAbsoluteDimensions()
   {
     sf::IntRect dimensions;
-    Vec2i location = getAbsoluteLocation();
+    IntegerVec2 location = getAbsoluteLocation();
     Vec2u size = getSize();
     dimensions.left = location.x;
     dimensions.top = location.y;
@@ -340,7 +340,7 @@ namespace metagui
     m_zorder_map.clear();
   }
 
-  Vec2i Object::getChildAreaLocation()
+  IntegerVec2 Object::getChildAreaLocation()
   {
     return{ 0, 0 };
   }
@@ -368,8 +368,8 @@ namespace metagui
       }
 
       // Create the RectangleShape that will be drawn onto the target.
-      m_bg_shape.setPosition(Vec2f(static_cast<float>(m_location.x), static_cast<float>(m_location.y)));
-      m_bg_shape.setSize(Vec2f(static_cast<float>(m_size.x), static_cast<float>(m_size.y)));
+      m_bg_shape.setPosition(RealVec2(static_cast<float>(m_location.x), static_cast<float>(m_location.y)));
+      m_bg_shape.setSize(RealVec2(static_cast<float>(m_size.x), static_cast<float>(m_size.y)));
       m_bg_shape.setTexture(&(m_bg_texture->getTexture()));
       m_bg_shape.setTextureRect(sf::IntRect(0, 0, m_size.x, m_size.y));
 
@@ -466,7 +466,7 @@ namespace metagui
     handleSetFlag_(name, value);
   }
 
-  bool Object::containsPoint(Vec2i point)
+  bool Object::containsPoint(IntegerVec2 point)
   {
     auto left = getAbsoluteLocation().x;
     auto top = getAbsoluteLocation().y;
@@ -623,7 +623,7 @@ namespace metagui
     return m_being_dragged;
   }
 
-  Vec2i Object::getDragStartLocation()
+  IntegerVec2 Object::getDragStartLocation()
   {
     return m_drag_start_location;
   }

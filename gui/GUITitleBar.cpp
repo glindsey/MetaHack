@@ -10,7 +10,7 @@ namespace metagui
 {
   TitleBar::TitleBar(std::string name)
     :
-    Object(name, Vec2i(0, 0))
+    Object(name, IntegerVec2(0, 0))
   {}
 
   TitleBar::~TitleBar()
@@ -38,10 +38,10 @@ namespace metagui
     float text_offset_y = config.get<float>("window_text_offset_y");
     float border_width = config.get<float>("window_border_width");
 
-    Vec2f rect_position{ border_width, border_width };
-    Vec2f rect_size{ static_cast<float>(parent_size.x - (border_width * 2)),
+    RealVec2 rect_position{ border_width, border_width };
+    RealVec2 rect_size{ static_cast<float>(parent_size.x - (border_width * 2)),
       static_cast<float>(line_spacing_y + (text_offset_y * 2) - (border_width * 2)) };
-    Vec2f text_position{ text_offset_x + line_spacing_y, text_offset_y };
+    RealVec2 text_position{ text_offset_x + line_spacing_y, text_offset_y };
 
     // Draw the title in the upper-left corner.
     sf::RectangleShape title_rect;

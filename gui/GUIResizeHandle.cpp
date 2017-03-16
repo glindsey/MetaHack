@@ -73,7 +73,7 @@ namespace metagui
       {
         auto move_amount = event.current_location - getDragStartLocation();
 
-        Vec2i old_size{ static_cast<int>(m_parent_size_start.x), static_cast<int>(m_parent_size_start.y) };
+        IntegerVec2 old_size{ static_cast<int>(m_parent_size_start.x), static_cast<int>(m_parent_size_start.y) };
         Vec2u new_size;
         
         new_size.x = (move_amount.x > -(old_size.x)) ? (old_size.x + move_amount.x) : 0;

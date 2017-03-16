@@ -8,7 +8,7 @@
 
 namespace metagui
 {
-  Label::Label(std::string name, Vec2i location)
+  Label::Label(std::string name, IntegerVec2 location)
     :
     Object(name, location)
   {}
@@ -25,7 +25,7 @@ namespace metagui
     float line_spacing_y = the_default_font.getLineSpacing(config.get<unsigned int>("text_default_size"));
 
     // Text offsets relative to the background rectangle.
-    Vec2f offset{ 3.0f, 3.0f };
+    RealVec2 offset{ 3.0f, 3.0f };
 
     /// @todo Flesh this out; right now it is EXTREMELY rudimentary.
     ///       All it does is render a straight text string; no word wrap,

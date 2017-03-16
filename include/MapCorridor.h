@@ -15,7 +15,7 @@ class MapCorridor : public MapFeature
 public:
 
   /// Get this corridor's ending coordinates.
-  Vec2i const& getEndingCoords() const;
+  IntegerVec2 const& getEndingCoords() const;
 
 protected:
   /// Create a corridor of random length, given starting coordinates

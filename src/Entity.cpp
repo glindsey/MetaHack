@@ -225,8 +225,8 @@ bool Entity::is_adjacent_to(EntityId entity)
     return false;
   }
 
-  Vec2i const& our_coords = our_maptile->get_coords();
-  Vec2i const& thing_coords = thing_maptile->get_coords();
+  IntegerVec2 const& our_coords = our_maptile->get_coords();
+  IntegerVec2 const& thing_coords = thing_maptile->get_coords();
 
   return adjacent(our_coords, thing_coords);
 }
@@ -717,12 +717,12 @@ bool Entity::can_see(EntityId entity)
     return false;
   }
 
-  Vec2i thing_coords = thing_location->get_coords();
+  IntegerVec2 thing_coords = thing_location->get_coords();
 
   return can_see(thing_coords);
 }
 
-bool Entity::can_see(Vec2i coords)
+bool Entity::can_see(IntegerVec2 coords)
 {
   // Make sure we are able to see at all.
   if (!can_currently_see())
@@ -746,7 +746,7 @@ bool Entity::can_see(Vec2i coords)
   }
 
   // If the coordinates are where we are, then yes, we can indeed see the tile, regardless.
-  Vec2i tile_coords = tile->get_coords();
+  IntegerVec2 tile_coords = tile->get_coords();
 
   if ((tile_coords.x == coords.x) && (tile_coords.y == coords.y))
   {
@@ -801,7 +801,7 @@ void Entity::find_seen_tiles()
   }
 }
 
-MapMemoryChunk const& Entity::get_memory_at(Vec2i coords) const
+MapMemoryChunk const& Entity::get_memory_at(IntegerVec2 coords) const
 {
   static MapMemoryChunk null_memory_chunk{ "???", GAME.get_game_clock() };
 
@@ -853,7 +853,7 @@ bool Entity::move_into(EntityId new_location)
           if (new_map_id != MapFactory::null_map_id)
           {
             Map& new_map = GAME.get_maps().get(new_map_id);
-            Vec2i new_map_size = new_map.getSize();
+            IntegerVec2 new_map_size = new_map.getSize();
             m_map_memory.resize(new_map_size.x * new_map_size.y);
             m_tiles_currently_seen.resize(new_map_size.x * new_map_size.y);
             /// @todo Load new map memory if it exists somewhere.
@@ -1735,7 +1735,7 @@ void Entity::do_recursive_visibility(int octant,
                                     float slope_A,
                                     float slope_B)
 {
-  Vec2i new_coords;
+  IntegerVec2 new_coords;
   //int x = 0;
   //int y = 0;
 
@@ -1746,90 +1746,90 @@ void Entity::do_recursive_visibility(int octant,
   }
 
   MapTile* tile = get_maptile();
-  Vec2i tile_coords = tile->get_coords();
+  IntegerVec2 tile_coords = tile->get_coords();
   Map& game_map = GAME.get_maps().get(get_map_id());
 
   static const int mv = 128;
   static constexpr int mw = (mv * mv);
 
-  std::function< bool(Vec2f, Vec2f, float) > loop_condition;
+  std::function< bool(RealVec2, RealVec2, float) > loop_condition;
   Direction dir;
-  std::function< float(Vec2f, Vec2f) > recurse_slope;
-  std::function< float(Vec2f, Vec2f) > loop_slope;
+  std::function< float(RealVec2, RealVec2) > recurse_slope;
+  std::function< float(RealVec2, RealVec2) > loop_slope;
 
   switch (octant)
   {
     case 1:
       new_coords.x = static_cast<int>(rint(static_cast<float>(tile_coords.x) - (slope_A * static_cast<float>(depth))));
       new_coords.y = tile_coords.y - depth;
-      loop_condition = [](Vec2f a, Vec2f b, float c) { return calc_slope(a, b) >= c; };
+      loop_condition = [](RealVec2 a, RealVec2 b, float c) { return calc_slope(a, b) >= c; };
       dir = Direction::West;
-      recurse_slope = [](Vec2f a, Vec2f b) { return calc_slope(a + Direction::Southwest.half(), b); };
-      loop_slope = [](Vec2f a, Vec2f b) { return calc_slope(a + Direction::Northwest.half(), b); };
+      recurse_slope = [](RealVec2 a, RealVec2 b) { return calc_slope(a + Direction::Southwest.half(), b); };
+      loop_slope = [](RealVec2 a, RealVec2 b) { return calc_slope(a + Direction::Northwest.half(), b); };
       break;
 
     case 2:
       new_coords.x = static_cast<int>(rint(static_cast<float>(tile_coords.x) + (slope_A * static_cast<float>(depth))));
       new_coords.y = tile_coords.y - depth;
-      loop_condition = [](Vec2f a, Vec2f b, float c) { return calc_slope(a, b) <= c; };
+      loop_condition = [](RealVec2 a, RealVec2 b, float c) { return calc_slope(a, b) <= c; };
       dir = Direction::East;
-      recurse_slope = [](Vec2f a, Vec2f b) { return calc_slope(a + Direction::Southeast.half(), b); };
-      loop_slope = [](Vec2f a, Vec2f b) { return -calc_slope(a + Direction::Northeast.half(), b); };
+      recurse_slope = [](RealVec2 a, RealVec2 b) { return calc_slope(a + Direction::Southeast.half(), b); };
+      loop_slope = [](RealVec2 a, RealVec2 b) { return -calc_slope(a + Direction::Northeast.half(), b); };
       break;
 
     case 3:
       new_coords.x = tile_coords.x + depth;
       new_coords.y = static_cast<int>(rint(static_cast<float>(tile_coords.y) - (slope_A * static_cast<float>(depth))));
-      loop_condition = [](Vec2f a, Vec2f b, float c) { return calc_inv_slope(a, b) <= c; };
+      loop_condition = [](RealVec2 a, RealVec2 b, float c) { return calc_inv_slope(a, b) <= c; };
       dir = Direction::North;
-      recurse_slope = [](Vec2f a, Vec2f b) { return calc_inv_slope(a + Direction::Northwest.half(), b); };
-      loop_slope = [](Vec2f a, Vec2f b) { return -calc_inv_slope(a + Direction::Northeast.half(), b); };
+      recurse_slope = [](RealVec2 a, RealVec2 b) { return calc_inv_slope(a + Direction::Northwest.half(), b); };
+      loop_slope = [](RealVec2 a, RealVec2 b) { return -calc_inv_slope(a + Direction::Northeast.half(), b); };
       break;
 
     case 4:
       new_coords.x = tile_coords.x + depth;
       new_coords.y = static_cast<int>(rint(static_cast<float>(tile_coords.y) + (slope_A * static_cast<float>(depth))));
-      loop_condition = [](Vec2f a, Vec2f b, float c) { return calc_inv_slope(a, b) >= c; };
+      loop_condition = [](RealVec2 a, RealVec2 b, float c) { return calc_inv_slope(a, b) >= c; };
       dir = Direction::South;
-      recurse_slope = [](Vec2f a, Vec2f b) { return calc_inv_slope(a + Direction::Southwest.half(), b); };
-      loop_slope = [](Vec2f a, Vec2f b) { return calc_inv_slope(a + Direction::Southeast.half(), b); };
+      recurse_slope = [](RealVec2 a, RealVec2 b) { return calc_inv_slope(a + Direction::Southwest.half(), b); };
+      loop_slope = [](RealVec2 a, RealVec2 b) { return calc_inv_slope(a + Direction::Southeast.half(), b); };
       break;
 
     case 5:
       new_coords.x = static_cast<int>(rint(static_cast<float>(tile_coords.x) + (slope_A * static_cast<float>(depth))));
       new_coords.y = tile_coords.y + depth;
-      loop_condition = [](Vec2f a, Vec2f b, float c) { return calc_slope(a, b) >= c; };
+      loop_condition = [](RealVec2 a, RealVec2 b, float c) { return calc_slope(a, b) >= c; };
       dir = Direction::East;
-      recurse_slope = [](Vec2f a, Vec2f b) { return calc_slope(a + Direction::Northeast.half(), b); };
-      loop_slope = [](Vec2f a, Vec2f b) { return calc_slope(a + Direction::Southeast.half(), b); };
+      recurse_slope = [](RealVec2 a, RealVec2 b) { return calc_slope(a + Direction::Northeast.half(), b); };
+      loop_slope = [](RealVec2 a, RealVec2 b) { return calc_slope(a + Direction::Southeast.half(), b); };
       break;
 
     case 6:
       new_coords.x = static_cast<int>(rint(static_cast<float>(tile_coords.x) - (slope_A * static_cast<float>(depth))));
       new_coords.y = tile_coords.y + depth;
-      loop_condition = [](Vec2f a, Vec2f b, float c) { return calc_slope(a, b) <= c; };
+      loop_condition = [](RealVec2 a, RealVec2 b, float c) { return calc_slope(a, b) <= c; };
       dir = Direction::West;
-      recurse_slope = [](Vec2f a, Vec2f b) { return calc_slope(a + Direction::Northwest.half(), b); };
-      loop_slope = [](Vec2f a, Vec2f b) { return -calc_slope(a + Direction::Southwest.half(), b); };
+      recurse_slope = [](RealVec2 a, RealVec2 b) { return calc_slope(a + Direction::Northwest.half(), b); };
+      loop_slope = [](RealVec2 a, RealVec2 b) { return -calc_slope(a + Direction::Southwest.half(), b); };
       break;
 
     case 7:
       new_coords.x = tile_coords.x - depth;
       new_coords.y = static_cast<int>(rint(static_cast<float>(tile_coords.y) + (slope_A * static_cast<float>(depth))));
-      loop_condition = [](Vec2f a, Vec2f b, float c) { return calc_inv_slope(a, b) <= c; };
+      loop_condition = [](RealVec2 a, RealVec2 b, float c) { return calc_inv_slope(a, b) <= c; };
       dir = Direction::South;
-      recurse_slope = [](Vec2f a, Vec2f b) { return calc_inv_slope(a + Direction::Southeast.half(), b); };
-      loop_slope = [](Vec2f a, Vec2f b) { return -calc_inv_slope(a + Direction::Southwest.half(), b); };
+      recurse_slope = [](RealVec2 a, RealVec2 b) { return calc_inv_slope(a + Direction::Southeast.half(), b); };
+      loop_slope = [](RealVec2 a, RealVec2 b) { return -calc_inv_slope(a + Direction::Southwest.half(), b); };
       break;
 
     case 8:
       new_coords.x = tile_coords.x - depth;
       new_coords.y = static_cast<int>(rint(static_cast<float>(tile_coords.y) - (slope_A * static_cast<float>(depth))));
 
-      loop_condition = [](Vec2f a, Vec2f b, float c) { return calc_inv_slope(a, b) >= c; };
+      loop_condition = [](RealVec2 a, RealVec2 b, float c) { return calc_inv_slope(a, b) >= c; };
       dir = Direction::North;
-      recurse_slope = [](Vec2f a, Vec2f b) { return calc_inv_slope(a + Direction::Northeast.half(), b); };
-      loop_slope = [](Vec2f a, Vec2f b) { return calc_inv_slope(a + Direction::Northwest.half(), b); };
+      recurse_slope = [](RealVec2 a, RealVec2 b) { return calc_inv_slope(a + Direction::Northeast.half(), b); };
+      loop_slope = [](RealVec2 a, RealVec2 b) { return calc_inv_slope(a + Direction::Northwest.half(), b); };
       break;
 
     default:
@@ -1843,14 +1843,14 @@ void Entity::do_recursive_visibility(int octant,
     {
       if (game_map.tile_is_opaque(new_coords))
       {
-        if (!game_map.tile_is_opaque(new_coords + (Vec2i)dir))
+        if (!game_map.tile_is_opaque(new_coords + (IntegerVec2)dir))
         {
           do_recursive_visibility(octant, depth + 1, slope_A, recurse_slope(to_v2f(new_coords), to_v2f(tile_coords)));
         }
       }
       else
       {
-        if (game_map.tile_is_opaque(new_coords + (Vec2i)dir))
+        if (game_map.tile_is_opaque(new_coords + (IntegerVec2)dir))
         {
           slope_A = loop_slope(to_v2f(new_coords), to_v2f(tile_coords));
         }
@@ -1861,9 +1861,9 @@ void Entity::do_recursive_visibility(int octant,
                                  GAME.get_game_clock() };
       m_map_memory[game_map.get_index(new_coords)] = new_memory;
     }
-    new_coords -= (Vec2i)dir;
+    new_coords -= (IntegerVec2)dir;
   }
-  new_coords += (Vec2i)dir;
+  new_coords += (IntegerVec2)dir;
 
   if ((depth < mv) && (!game_map.get_tile(new_coords).is_opaque()))
   {

@@ -36,14 +36,14 @@ public:
   /// @param lr_coord Lower-right coordinates.
   void add_quad(sf::VertexArray& vertices,
                 Vec2u tile_coords, sf::Color bg_color,
-                Vec2f ul_coord, Vec2f ur_coord,
-                Vec2f ll_coord, Vec2f lr_coord);
+                RealVec2 ul_coord, RealVec2 ur_coord,
+                RealVec2 ll_coord, RealVec2 lr_coord);
 
   /// Add a quad with colors specified in a 3x3 grid.
   void add_gradient_quad(sf::VertexArray& vertices,
                          Vec2u tile_coords,
-                         Vec2f coordNW, Vec2f coordNE,
-                         Vec2f coordSW, Vec2f coordSE,
+                         RealVec2 coordNW, RealVec2 coordNE,
+                         RealVec2 coordSW, RealVec2 coordSE,
                          sf::Color colorNW, sf::Color colorN, sf::Color colorNE,
                          sf::Color colorW, sf::Color colorC, sf::Color colorE,
                          sf::Color colorSW, sf::Color colorS, sf::Color colorSE);
@@ -59,10 +59,10 @@ public:
   /// @param ll_coord Lower-left coordinates.
   void add_outline_vertices(sf::VertexArray& vertices,
                             sf::Color bg_color,
-                            Vec2f ul_coord,
-                            Vec2f ur_coord,
-                            Vec2f lr_coord,
-                            Vec2f ll_coord);
+                            RealVec2 ul_coord,
+                            RealVec2 ur_coord,
+                            RealVec2 lr_coord,
+                            RealVec2 ll_coord);
 
 protected:
   /// Return bitset index based on coordinates.

@@ -242,9 +242,9 @@ void AppStateGameMode::render_map(sf::RenderTexture& texture, int frame)
     if (tile != nullptr)
     {
       Map& game_map = GAME.get_maps().get(tile->get_map_id());
-      Vec2i tile_coords = tile->get_coords();
-      Vec2f player_pixel_coords = MapTile::get_pixel_coords(tile_coords);
-      Vec2f cursor_pixel_coords = MapTile::get_pixel_coords(m_cursor_coords);
+      IntegerVec2 tile_coords = tile->get_coords();
+      RealVec2 player_pixel_coords = MapTile::get_pixel_coords(tile_coords);
+      RealVec2 cursor_pixel_coords = MapTile::get_pixel_coords(m_cursor_coords);
 
       // Update entity vertex array.
       m_map_view->update_things(player, frame);

@@ -115,7 +115,7 @@ public:
   ///  * std::string
   ///  * bool
   ///  * double
-  ///  * Vec2i
+  ///  * IntegerVec2
   ///  * sf::Color
   /// @param    value   Value to deduce the type of.
   /// @return           The number of arguments pushed to the stack.
@@ -138,9 +138,9 @@ public:
       double cast_value = boost::any_cast<double>(value);
       return push_value(cast_value);
     }
-    else if (boost::any_cast<Vec2i>(&value))
+    else if (boost::any_cast<IntegerVec2>(&value))
     {
-      Vec2i cast_value = boost::any_cast<Vec2i>(value);
+      IntegerVec2 cast_value = boost::any_cast<IntegerVec2>(value);
       return push_value(cast_value);
     }
     else if (boost::any_cast<Direction>(&value))
@@ -215,7 +215,7 @@ public:
     return 2;
   }
 
-  template <> int push_value(Vec2i value)
+  template <> int push_value(IntegerVec2 value)
   {
     lua_pushinteger(L_, static_cast<lua_Integer>(value.x));
     lua_pushinteger(L_, static_cast<lua_Integer>(value.y));
@@ -316,9 +316,9 @@ public:
     return return_value;
   }
 
-  template <> Vec2i pop_value()
+  template <> IntegerVec2 pop_value()
   {
-    Vec2i return_value = Vec2i(static_cast<unsigned int>(lua_tointeger(L_, -2)),
+    IntegerVec2 return_value = IntegerVec2(static_cast<unsigned int>(lua_tointeger(L_, -2)),
                                static_cast<unsigned int>(lua_tointeger(L_, -1)));
     lua_pop(L_, 2);
     return return_value;
@@ -361,7 +361,7 @@ public:
   template<> unsigned int stack_slots<double>() { return 1; }
   template<> unsigned int stack_slots<bool>() { return 1; }
   template<> unsigned int stack_slots<std::string>() { return 1; }
-  template<> unsigned int stack_slots<Vec2i>() { return 2; }
+  template<> unsigned int stack_slots<IntegerVec2>() { return 2; }
   template<> unsigned int stack_slots<Vec2u>() { return 2; }
   template<> unsigned int stack_slots<sf::Color>() { return 4; }
   template<> unsigned int stack_slots<ActionResult>() { return 1; }

@@ -10,7 +10,7 @@ namespace metagui
 {
   ShrinkHandle::ShrinkHandle(std::string name)
     :
-    Object(name, Vec2i(0, 0))
+    Object(name, IntegerVec2(0, 0))
   {}
 
   ShrinkHandle::~ShrinkHandle()

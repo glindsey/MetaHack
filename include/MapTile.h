@@ -55,10 +55,10 @@ public:
   /// Set the current tile's location.
   void set_coords(int x, int y);
 
-  void set_coords(Vec2i coords);
+  void set_coords(IntegerVec2 coords);
 
   /// Get the current tile's location.
-  Vec2i const& get_coords() const;
+  IntegerVec2 const& get_coords() const;
 
   /// Get a reference to the map this tile belongs to.
   MapId get_map_id() const;
@@ -92,10 +92,10 @@ public:
   bool is_opaque() const;
 
     /// Get the coordinates associated with a tile.
-  static Vec2f get_pixel_coords(int x, int y);
+  static RealVec2 get_pixel_coords(int x, int y);
 
   /// Get the coordinates associated with a tile.
-  static Vec2f get_pixel_coords(Vec2i tile);
+  static RealVec2 get_pixel_coords(IntegerVec2 tile);
 
   /// Get a reference to an adjacent tile.
   MapTile const & get_adjacent_tile(Direction direction) const;
@@ -105,7 +105,7 @@ public:
 
 protected:
   /// Constructor, callable only by Map class.
-  MapTile(Vec2i coords, Metadata& metadata, MapId map_id);
+  MapTile(IntegerVec2 coords, Metadata& metadata, MapId map_id);
 
 private:
   static bool initialized;
@@ -114,7 +114,7 @@ private:
   MapId m_map_id;
 
   /// This MapTile's coordinates on the map.
-  Vec2i m_coords;
+  IntegerVec2 m_coords;
 
   /// Pointer to this MapTile's metadata.
   /// This has to be a pointer rather than a reference because it can be

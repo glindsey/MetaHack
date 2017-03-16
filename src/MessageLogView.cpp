@@ -73,7 +73,7 @@ void MessageLogView::drawContents_(sf::RenderTexture& texture, int frame)
   {
     m_key_buffer.render(
       texture,
-      Vec2f(text_coord_x, text_coord_y),
+      RealVec2(text_coord_x, text_coord_y),
       frame,
       the_default_font,
       text_default_size,

@@ -100,11 +100,11 @@ void MapTileStandard2DView::add_memory_vertices_to(sf::VertexArray& vertices,
   float ts = config.get<float>("map_tile_size");
   float ts2 = ts * 0.5f;
 
-  Vec2f location(coords.x * ts, coords.y * ts);
-  Vec2f vSW(location.x - ts2, location.y + ts2);
-  Vec2f vSE(location.x + ts2, location.y + ts2);
-  Vec2f vNW(location.x - ts2, location.y - ts2);
-  Vec2f vNE(location.x + ts2, location.y - ts2);
+  RealVec2 location(coords.x * ts, coords.y * ts);
+  RealVec2 vSW(location.x - ts2, location.y + ts2);
+  RealVec2 vSE(location.x + ts2, location.y + ts2);
+  RealVec2 vNW(location.x - ts2, location.y - ts2);
+  RealVec2 vNE(location.x + ts2, location.y - ts2);
 
   std::string tile_type = viewer->get_memory_at(coords).get_type();
   if (tile_type == "") { tile_type = "MTUnknown"; }
@@ -158,11 +158,11 @@ void MapTileStandard2DView::add_tile_floor_vertices(sf::VertexArray& vertices)
   sf::Color lightW = average(light, colorW);
   sf::Color lightNW = average(light, colorW, colorNW, colorN);
 
-  Vec2f location{ coords.x * ts, coords.y * ts };
-  Vec2f vNE{ location.x + half_ts, location.y - half_ts };
-  Vec2f vSE{ location.x + half_ts, location.y + half_ts };
-  Vec2f vSW{ location.x - half_ts, location.y + half_ts };
-  Vec2f vNW{ location.x - half_ts, location.y - half_ts };
+  RealVec2 location{ coords.x * ts, coords.y * ts };
+  RealVec2 vNE{ location.x + half_ts, location.y - half_ts };
+  RealVec2 vSE{ location.x + half_ts, location.y + half_ts };
+  RealVec2 vSW{ location.x - half_ts, location.y + half_ts };
+  RealVec2 vNW{ location.x - half_ts, location.y - half_ts };
 
   Vec2u tile_coords = get_tile_sheet_coords();
 
@@ -218,7 +218,7 @@ void MapTileStandard2DView::add_thing_floor_vertices(EntityId entityId, sf::Vert
     return;
   }
 
-  Vec2i const& coords = root_tile->get_coords();
+  IntegerVec2 const& coords = root_tile->get_coords();
 
   sf::Color thing_color;
   if (use_lighting)
@@ -230,11 +230,11 @@ void MapTileStandard2DView::add_thing_floor_vertices(EntityId entityId, sf::Vert
     thing_color = sf::Color::White;
   }
 
-  Vec2f location(coords.x * ts, coords.y * ts);
-  Vec2f vSW(location.x - ts2, location.y + ts2);
-  Vec2f vSE(location.x + ts2, location.y + ts2);
-  Vec2f vNW(location.x - ts2, location.y - ts2);
-  Vec2f vNE(location.x + ts2, location.y - ts2);
+  RealVec2 location(coords.x * ts, coords.y * ts);
+  RealVec2 vSW(location.x - ts2, location.y + ts2);
+  RealVec2 vSE(location.x + ts2, location.y + ts2);
+  RealVec2 vNW(location.x - ts2, location.y - ts2);
+  RealVec2 vNE(location.x + ts2, location.y - ts2);
   Vec2u tile_coords = get_entity_tile_sheet_coords(entity, frame);
 
   m_tile_sheet.add_quad(vertices,
@@ -317,16 +317,16 @@ void MapTileStandard2DView::add_wall_vertices_to(sf::VertexArray& vertices,
 
   // Tile vertices.
   auto tile_coords = tile.get_coords();
-  Vec2f location(tile_coords.x * ts,
+  RealVec2 location(tile_coords.x * ts,
                  tile_coords.y * ts);
-  Vec2f vTileN(location.x, location.y - half_ts);
-  Vec2f vTileNE(location.x + half_ts, location.y - half_ts);
-  Vec2f vTileE(location.x + half_ts, location.y);
-  Vec2f vTileSE(location.x + half_ts, location.y + half_ts);
-  Vec2f vTileS(location.x, location.y + half_ts);
-  Vec2f vTileSW(location.x - half_ts, location.y + half_ts);
-  Vec2f vTileW(location.x - half_ts, location.y);
-  Vec2f vTileNW(location.x - half_ts, location.y - half_ts);
+  RealVec2 vTileN(location.x, location.y - half_ts);
+  RealVec2 vTileNE(location.x + half_ts, location.y - half_ts);
+  RealVec2 vTileE(location.x + half_ts, location.y);
+  RealVec2 vTileSE(location.x + half_ts, location.y + half_ts);
+  RealVec2 vTileS(location.x, location.y + half_ts);
+  RealVec2 vTileSW(location.x - half_ts, location.y + half_ts);
+  RealVec2 vTileW(location.x - half_ts, location.y);
+  RealVec2 vTileNW(location.x - half_ts, location.y - half_ts);
 
   Vec2u tile_sheet_coords = this->get_tile_sheet_coords();
 
@@ -390,8 +390,8 @@ void MapTileStandard2DView::add_wall_vertices_to(sf::VertexArray& vertices,
   // NORTH WALL
   if (n_is_empty)
   {
-    Vec2f vS(vTileN.x, vTileN.y + ws);
-    Vec2f vSW(vTileNW.x, vTileNW.y + ws);
+    RealVec2 vS(vTileN.x, vTileN.y + ws);
+    RealVec2 vSW(vTileNW.x, vTileNW.y + ws);
     if (w_is_empty)
     {
       vSW.x += ws;
@@ -400,7 +400,7 @@ void MapTileStandard2DView::add_wall_vertices_to(sf::VertexArray& vertices,
     {
       vSW.x -= ws;
     }
-    Vec2f vSE(vTileNE.x, vTileNE.y + ws);
+    RealVec2 vSE(vTileNE.x, vTileNE.y + ws);
     if (e_is_empty)
     {
       vSE.x -= ws;
@@ -421,8 +421,8 @@ void MapTileStandard2DView::add_wall_vertices_to(sf::VertexArray& vertices,
   // EAST WALL
   if (e_is_empty)
   {
-    Vec2f vW(vTileE.x - ws, vTileE.y);
-    Vec2f vNW(vTileNE.x - ws, vTileNE.y);
+    RealVec2 vW(vTileE.x - ws, vTileE.y);
+    RealVec2 vNW(vTileNE.x - ws, vTileNE.y);
     if (n_is_empty)
     {
       vNW.y += ws;
@@ -431,7 +431,7 @@ void MapTileStandard2DView::add_wall_vertices_to(sf::VertexArray& vertices,
     {
       vNW.y -= ws;
     }
-    Vec2f vSW(vTileSE.x - ws, vTileSE.y);
+    RealVec2 vSW(vTileSE.x - ws, vTileSE.y);
     if (s_is_empty)
     {
       vSW.y -= ws;
@@ -452,8 +452,8 @@ void MapTileStandard2DView::add_wall_vertices_to(sf::VertexArray& vertices,
   // SOUTH WALL
   if (s_is_empty)
   {
-    Vec2f vN(vTileS.x, vTileS.y - ws);
-    Vec2f vNW(vTileSW.x, vTileSW.y - ws);
+    RealVec2 vN(vTileS.x, vTileS.y - ws);
+    RealVec2 vNW(vTileSW.x, vTileSW.y - ws);
     if (w_is_empty)
     {
       vNW.x += ws;
@@ -462,7 +462,7 @@ void MapTileStandard2DView::add_wall_vertices_to(sf::VertexArray& vertices,
     {
       vNW.x -= ws;
     }
-    Vec2f vNE(vTileSE.x, vTileSE.y - ws);
+    RealVec2 vNE(vTileSE.x, vTileSE.y - ws);
     if (e_is_empty)
     {
       vNE.x -= ws;
@@ -483,8 +483,8 @@ void MapTileStandard2DView::add_wall_vertices_to(sf::VertexArray& vertices,
   // WEST WALL
   if (w_is_empty)
   {
-    Vec2f vE(vTileW.x + ws, vTileW.y);
-    Vec2f vNE(vTileNW.x + ws, vTileNW.y);
+    RealVec2 vE(vTileW.x + ws, vTileW.y);
+    RealVec2 vNE(vTileNW.x + ws, vTileNW.y);
     if (n_is_empty)
     {
       vNE.y += ws;
@@ -493,7 +493,7 @@ void MapTileStandard2DView::add_wall_vertices_to(sf::VertexArray& vertices,
     {
       vNE.y -= ws;
     }
-    Vec2f vSE(vTileSW.x + ws, vTileSW.y);
+    RealVec2 vSE(vTileSW.x + ws, vTileSW.y);
     if (s_is_empty)
     {
       vSE.y -= ws;

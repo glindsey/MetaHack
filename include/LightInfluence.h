@@ -3,7 +3,7 @@
 
 struct LightInfluence
 {
-  Vec2i coords;  ///< Coordinates of the light.
+  IntegerVec2 coords;  ///< Coordinates of the light.
   sf::Color color;      ///< Color of the light.
   int intensity;        ///< Intensity of the light.
 };

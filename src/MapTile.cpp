@@ -58,12 +58,12 @@ void MapTile::set_coords(int x, int y)
   m_coords.y = y;
 }
 
-void MapTile::set_coords(Vec2i coords)
+void MapTile::set_coords(IntegerVec2 coords)
 {
   m_coords = coords;
 }
 
-Vec2i const& MapTile::get_coords() const
+IntegerVec2 const& MapTile::get_coords() const
 {
   return m_coords;
 }
@@ -177,23 +177,23 @@ bool MapTile::is_opaque() const
     (m_p_metadata->get_intrinsic<int>("opacity_blue") >= 255);
 }
 
-Vec2f MapTile::get_pixel_coords(int x, int y)
+RealVec2 MapTile::get_pixel_coords(int x, int y)
 {
   auto& config = Service<IConfigSettings>::get();
   auto map_tile_size = config.get<float>("map_tile_size");
 
-  return Vec2f(static_cast<float>(x) * map_tile_size, 
+  return RealVec2(static_cast<float>(x) * map_tile_size, 
                static_cast<float>(y) * map_tile_size);
 }
 
-Vec2f MapTile::get_pixel_coords(Vec2i tile)
+RealVec2 MapTile::get_pixel_coords(IntegerVec2 tile)
 {
   return get_pixel_coords(tile.x, tile.y);
 }
 
 // === PROTECTED METHODS ======================================================
 
-MapTile::MapTile(Vec2i coords, Metadata& metadata, MapId map_id)
+MapTile::MapTile(IntegerVec2 coords, Metadata& metadata, MapId map_id)
   :
   m_map_id{ map_id },
   m_coords{ coords },
@@ -215,11 +215,11 @@ MapTile::MapTile(Vec2i coords, Metadata& metadata, MapId map_id)
 
 MapTile const& MapTile::get_adjacent_tile(Direction direction) const
 {
-  Vec2i coords = get_coords();
+  IntegerVec2 coords = get_coords();
   Map const& map = GAME.get_maps().get(get_map_id());
   MapTile const& tile = *this;
 
-  Vec2i adjacent_coords = coords + (Vec2i)direction;
+  IntegerVec2 adjacent_coords = coords + (IntegerVec2)direction;
   return map.get_tile(adjacent_coords);
 }
 

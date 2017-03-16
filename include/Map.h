@@ -54,31 +54,31 @@ public:
 
   void add_light(EntityId source);
 
-  MapTile const & get_tile(Vec2i tile) const;
+  MapTile const & get_tile(IntegerVec2 tile) const;
 
-  MapTile& get_tile(Vec2i tile);
+  MapTile& get_tile(IntegerVec2 tile);
 
-  bool tile_is_opaque(Vec2i tile);
+  bool tile_is_opaque(IntegerVec2 tile);
 
   /// Get the map's size.
-  Vec2i const& getSize() const;
+  IntegerVec2 const& getSize() const;
 
   /// Get player's starting location.
-  Vec2i const& get_start_coords() const;
+  IntegerVec2 const& get_start_coords() const;
 
   /// Set player's starting location.
-  bool set_start_coords(Vec2i start_coords);
+  bool set_start_coords(IntegerVec2 start_coords);
 
   /// Get the index of a particular X/Y coordinate.
-  int get_index(Vec2i coords) const;
+  int get_index(IntegerVec2 coords) const;
 
   /// Get whether a particular X/Y coordinate is in bounds.
-  bool is_in_bounds(Vec2i coords) const;
+  bool is_in_bounds(IntegerVec2 coords) const;
 
   /// Calculate coordinates corresponding to a direction, if possible.
-  bool calc_coords(Vec2i origin,
+  bool calc_coords(IntegerVec2 origin,
                    Direction direction,
-                   Vec2i& result);
+                   IntegerVec2& result);
 
   /// Get Map ID.
   MapId get_map_id() const;
@@ -121,7 +121,7 @@ protected:
   /// / 6|5 \  |
 
   void do_recursive_lighting(EntityId source,
-                             Vec2i const& origin,
+                             IntegerVec2 const& origin,
                              sf::Color const& light_color,
                              int const max_depth_squared,
                              int octant,
@@ -137,7 +137,7 @@ private:
   MapId m_map_id;
 
   /// Map size.
-  Vec2i m_map_size;
+  IntegerVec2 m_map_size;
 
   std::unique_ptr<MapGenerator> m_generator;
 

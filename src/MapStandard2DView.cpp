@@ -17,7 +17,7 @@ MapStandard2DView::MapStandard2DView(std::string name, Map& map, Vec2u size, Til
 
   // Create a grid of tile views, each tied to a map tile.
   m_map_tile_views.reset(new Grid2D<MapTileStandard2DView>(map.getSize(), 
-                                                           [&](Vec2i coords) -> MapTileStandard2DView*
+                                                           [&](IntegerVec2 coords) -> MapTileStandard2DView*
   {
     return NEW MapTileStandard2DView(map.get_tile(coords), m_tile_sheet);
   }));
@@ -29,7 +29,7 @@ void MapStandard2DView::update_tiles(EntityId viewer)
   auto& map = get_map();
   auto& map_size = map.getSize();
 
-  static Vec2f position;
+  static RealVec2 position;
 
   // Loop through and draw tiles.
   m_map_seen_vertices.clear();
@@ -81,7 +81,7 @@ bool MapStandard2DView::render_map(sf::RenderTexture& texture, int frame)
 }
 
 void MapStandard2DView::draw_highlight(sf::RenderTarget& target,
-                                       Vec2f location,
+                                       RealVec2 location,
                                        sf::Color fgColor,
                                        sf::Color bgColor,
                                        int frame)
@@ -90,15 +90,15 @@ void MapStandard2DView::draw_highlight(sf::RenderTarget& target,
   auto map_tile_size = config.get<float>("map_tile_size");
 
   float half_ts(map_tile_size * 0.5f);
-  Vec2f vSW(location.x - half_ts, location.y + half_ts);
-  Vec2f vSE(location.x + half_ts, location.y + half_ts);
-  Vec2f vNW(location.x - half_ts, location.y - half_ts);
-  Vec2f vNE(location.x + half_ts, location.y - half_ts);
+  RealVec2 vSW(location.x - half_ts, location.y + half_ts);
+  RealVec2 vSE(location.x + half_ts, location.y + half_ts);
+  RealVec2 vNW(location.x - half_ts, location.y - half_ts);
+  RealVec2 vNE(location.x + half_ts, location.y - half_ts);
 
   sf::RectangleShape box_shape;
-  Vec2f box_position;
-  Vec2f box_size(map_tile_size, map_tile_size);
-  Vec2f box_half_size(box_size.x / 2, box_size.y / 2);
+  RealVec2 box_position;
+  RealVec2 box_size(map_tile_size, map_tile_size);
+  RealVec2 box_half_size(box_size.x / 2, box_size.y / 2);
   box_position.x = (location.x - box_half_size.x);
   box_position.y = (location.y - box_half_size.y);
   box_shape.setPosition(box_position);

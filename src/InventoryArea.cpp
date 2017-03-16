@@ -185,7 +185,7 @@ void InventoryArea::drawContents_(sf::RenderTexture& texture, int frame)
     // 7. Display a nice separator line.
     sf::RectangleShape separator_line;
     separator_line.setPosition(text_coord_x + 10, text_coord_y);
-    separator_line.setSize(Vec2f(static_cast<float>(pane_dims.width - 25), 1.0f));
+    separator_line.setSize(RealVec2(static_cast<float>(pane_dims.width - 25), 1.0f));
     separator_line.setFillColor(config.get<sf::Color>("window_border_color"));
     texture.draw(separator_line);
 

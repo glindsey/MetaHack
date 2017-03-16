@@ -13,7 +13,7 @@
 
 namespace metagui
 {
-  Window::Window(std::string name, Vec2i location, Vec2u size)
+  Window::Window(std::string name, IntegerVec2 location, Vec2u size)
     :
     Object(name, location, size)
   {
@@ -38,9 +38,9 @@ namespace metagui
 
   // === PROTECTED METHODS ======================================================
 
-  Vec2i Window::getChildAreaLocation()
+  IntegerVec2 Window::getChildAreaLocation()
   {
-    Vec2i child_location{ 0, 0 };
+    IntegerVec2 child_location{ 0, 0 };
 
     if (m_titlebar_cached == true)
     {
@@ -81,8 +81,8 @@ namespace metagui
 
     // Draw the border.
     float border_width = config.get<float>("window_border_width");
-    m_border_shape.setPosition(Vec2f(border_width, border_width));
-    m_border_shape.setSize(Vec2f(static_cast<float>(size.x - (2 * border_width)), static_cast<float>(size.y - (2 * border_width))));
+    m_border_shape.setPosition(RealVec2(border_width, border_width));
+    m_border_shape.setSize(RealVec2(static_cast<float>(size.x - (2 * border_width)), static_cast<float>(size.y - (2 * border_width))));
     m_border_shape.setFillColor(sf::Color::Transparent);
     m_border_shape.setOutlineColor(
       getFocus() ?

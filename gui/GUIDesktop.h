@@ -21,7 +21,7 @@ namespace metagui
       bool dragging;
 
       /// Absolute location of the press or release.
-      Vec2i location;
+      IntegerVec2 location;
 
       /// Time elapsed since the last button state change.
       sf::Clock elapsed;
@@ -43,7 +43,7 @@ namespace metagui
     std::array< MouseButtonInfo, sf::Mouse::ButtonCount > m_button_info;
 
     /// Constantly updated mouse location.
-    Vec2i m_mouse_location;
+    IntegerVec2 m_mouse_location;
   };
 }; // end namespace metagui
 

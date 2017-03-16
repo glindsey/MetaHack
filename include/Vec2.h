@@ -15,9 +15,10 @@ public:
     x{ x_ }, y{ y_ }
   {}
 
-  Vec2(sf::Vector2<T> vec)
+  template <typename U>
+  Vec2(sf::Vector2<U> vec)
     :
-    x{ vec.x }, y{ vec.y } 
+    x{ static_cast<T>(vec.x) }, y{ static_cast<T>(vec.y) } 
   {}
 
   virtual ~Vec2() = default;
@@ -91,14 +92,15 @@ public:
     return static_cast<T>(sqrt(square_distance(first, second)));
   }
 
-  operator sf::Vector2<T>() const
+  template <typename U>
+  operator sf::Vector2<U>() const
   {
-    return{ x, y };
+    return{ static_cast<U>(x), static_cast<U>(y) };
   }
 
   T x, y;
 };
 
-using Vec2f = Vec2<float>;
-using Vec2i = Vec2<int>;
+using RealVec2 = Vec2<float>;
+using IntegerVec2 = Vec2<int32_t>;
 using Vec2u = Vec2<unsigned int>;

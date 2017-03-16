@@ -10,7 +10,7 @@ typedef boost::random::uniform_int_distribution<> uniform_int_dist;
 
 struct MapCorridor::Impl
 {
-  Vec2i endingCoords;
+  IntegerVec2 endingCoords;
 };
 
 MapCorridor::MapCorridor(Map& m, PropertyDictionary const& s, GeoVector vec)
@@ -24,7 +24,7 @@ MapCorridor::MapCorridor(Map& m, PropertyDictionary const& s, GeoVector vec)
   unsigned int max_retries = s.get<unsigned int>("max_retries", 100);
   std::string floor_type = s.get<std::string>("floor_type", "MTFloorDirt");
 
-  Vec2i& startingCoords = vec.start_point;
+  IntegerVec2& startingCoords = vec.start_point;
   Direction& direction = vec.direction;
 
   while (numTries < max_retries)
@@ -120,7 +120,7 @@ MapCorridor::MapCorridor(Map& m, PropertyDictionary const& s, GeoVector vec)
         /// (maybe 5%) that the corridor opens up into it.  This
         /// will allow for some loops in the map instead of it being
         /// nothing but a tree.
-        Vec2i checkCoords;
+        IntegerVec2 checkCoords;
         if (direction == Direction::North)
         {
           checkCoords.x = startingCoords.x;
@@ -167,7 +167,7 @@ MapCorridor::MapCorridor(Map& m, PropertyDictionary const& s, GeoVector vec)
   throw MapFeatureException("Out of tries attempting to make MapCorridor");
 }
 
-Vec2i const& MapCorridor::getEndingCoords() const
+IntegerVec2 const& MapCorridor::getEndingCoords() const
 {
   return pImpl->endingCoords;
 }

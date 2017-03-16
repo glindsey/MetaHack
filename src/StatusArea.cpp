@@ -36,7 +36,7 @@ void StatusArea::drawContents_(sf::RenderTexture& texture, int frame)
 
   sf::IntRect pane_dims = getRelativeDimensions();
   EntityId player = GAME.get_player();
-  Vec2f origin(config.get<float>("window_text_offset_x"),
+  RealVec2 origin(config.get<float>("window_text_offset_x"),
                config.get<float>("window_text_offset_y"));
   sf::Color text_color = config.get<sf::Color>("text_color");
   sf::Color text_dim_color = config.get<sf::Color>("text_dim_color");
@@ -51,7 +51,7 @@ void StatusArea::drawContents_(sf::RenderTexture& texture, int frame)
   render_text.setFont(the_default_font);
   render_text.setColor(text_color);
   render_text.setCharacterSize(text_default_size);
-  render_text.setPosition(origin.x, origin.y);
+  render_text.setPosition({ origin.x, origin.y });
 
   if (player != EntityId::Mu())
   {
@@ -68,7 +68,7 @@ void StatusArea::drawContents_(sf::RenderTexture& texture, int frame)
     // Render HP
     render_text.setFont(the_default_mono_font);
     render_text.setColor(text_dim_color);
-    render_text.setPosition(origin.x, origin.y + line_spacing);
+    render_text.setPosition({ origin.x, origin.y + line_spacing });
     render_text.setString("HP");
     texture.draw(render_text);
 
@@ -112,7 +112,7 @@ void StatusArea::drawContents_(sf::RenderTexture& texture, int frame)
   return;
 }
 
-void StatusArea::render_attribute(sf::RenderTarget& target, std::string abbrev, std::string name, Vec2f location)
+void StatusArea::render_attribute(sf::RenderTarget& target, std::string abbrev, std::string name, RealVec2 location)
 {
   auto& config = Service<IConfigSettings>::get();
 

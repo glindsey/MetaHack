@@ -10,14 +10,14 @@ namespace metagui
     public Object, public ObjectVisitable<Window>
   {
   public:
-    Window(std::string name, Vec2i location, Vec2u size = Vec2u(0, 0));
+    Window(std::string name, IntegerVec2 location, Vec2u size = Vec2u(0, 0));
     Window(std::string name, sf::IntRect dimensions);
     virtual ~Window();
 
     /// Get the upper-left corner of this object's child area, relative to
     /// its own upper-left corner, taking into account any decorator
     /// elements added to this window.
-    virtual Vec2i getChildAreaLocation() override final;
+    virtual IntegerVec2 getChildAreaLocation() override final;
 
     /// Get the size of this window's child area, taking into account any
     /// decorator elements added to this window.

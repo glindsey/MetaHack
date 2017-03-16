@@ -90,12 +90,12 @@ sf::Texture& TileSheet::getTexture(void)
 
 void TileSheet::add_quad(sf::VertexArray& vertices,
                          Vec2u tile_coords, sf::Color bg_color,
-                         Vec2f ul_coord, Vec2f ur_coord,
-                         Vec2f ll_coord, Vec2f lr_coord)
+                         RealVec2 ul_coord, RealVec2 ur_coord,
+                         RealVec2 ll_coord, RealVec2 lr_coord)
 {
   sf::Vertex new_vertex;
   float ts{ static_cast<float>(m_tileSize) };
-  Vec2f texNW(tile_coords.x * ts, tile_coords.y * ts);
+  RealVec2 texNW(tile_coords.x * ts, tile_coords.y * ts);
 
   new_vertex.color = bg_color;
 
@@ -104,22 +104,22 @@ void TileSheet::add_quad(sf::VertexArray& vertices,
   vertices.append(new_vertex);
 
   new_vertex.position = ur_coord;
-  new_vertex.texCoords = Vec2f(texNW.x + ts, texNW.y);
+  new_vertex.texCoords = RealVec2(texNW.x + ts, texNW.y);
   vertices.append(new_vertex);
 
   new_vertex.position = lr_coord;
-  new_vertex.texCoords = Vec2f(texNW.x + ts, texNW.y + ts);
+  new_vertex.texCoords = RealVec2(texNW.x + ts, texNW.y + ts);
   vertices.append(new_vertex);
 
   new_vertex.position = ll_coord;
-  new_vertex.texCoords = Vec2f(texNW.x, texNW.y + ts);
+  new_vertex.texCoords = RealVec2(texNW.x, texNW.y + ts);
   vertices.append(new_vertex);
 }
 
 void TileSheet::add_gradient_quad(sf::VertexArray& vertices,
                                   Vec2u tile_coords,
-                                  Vec2f coordNW, Vec2f coordNE,
-                                  Vec2f coordSW, Vec2f coordSE,
+                                  RealVec2 coordNW, RealVec2 coordNE,
+                                  RealVec2 coordSW, RealVec2 coordSE,
                                   sf::Color colorNW, sf::Color colorN, sf::Color colorNE,
                                   sf::Color colorW, sf::Color colorC, sf::Color colorE,
                                   sf::Color colorSW, sf::Color colorS, sf::Color colorSE)
@@ -127,21 +127,21 @@ void TileSheet::add_gradient_quad(sf::VertexArray& vertices,
   float ts{ static_cast<float>(m_tileSize) };
   float half_ts{ ts / 2.0f };
 
-  Vec2f coordC((coordNW.x + coordNE.x + coordSE.x + coordSW.x) / 4, (coordNW.y + coordNE.y + coordSE.y + coordSW.y) / 4);
-  Vec2f coordN((coordNW.x + coordNE.x) / 2, (coordNW.y + coordNE.y) / 2);
-  Vec2f coordE((coordNE.x + coordSE.x) / 2, (coordNE.y + coordSE.y) / 2);
-  Vec2f coordS((coordSW.x + coordSE.x) / 2, (coordSW.y + coordSE.y) / 2);
-  Vec2f coordW((coordNW.x + coordSW.x) / 2, (coordNW.y + coordSW.y) / 2);
+  RealVec2 coordC((coordNW.x + coordNE.x + coordSE.x + coordSW.x) / 4, (coordNW.y + coordNE.y + coordSE.y + coordSW.y) / 4);
+  RealVec2 coordN((coordNW.x + coordNE.x) / 2, (coordNW.y + coordNE.y) / 2);
+  RealVec2 coordE((coordNE.x + coordSE.x) / 2, (coordNE.y + coordSE.y) / 2);
+  RealVec2 coordS((coordSW.x + coordSE.x) / 2, (coordSW.y + coordSE.y) / 2);
+  RealVec2 coordW((coordNW.x + coordSW.x) / 2, (coordNW.y + coordSW.y) / 2);
 
-  Vec2f texNW(tile_coords.x * ts, tile_coords.y * ts);
-  Vec2f texN(texNW.x + half_ts, texNW.y);
-  Vec2f texNE(texNW.x + ts, texNW.y);
-  Vec2f texE(texNW.x + ts, texNW.y + half_ts);
-  Vec2f texSE(texNW.x + ts, texNW.y + ts);
-  Vec2f texS(texNW.x + half_ts, texNW.y + ts);
-  Vec2f texSW(texNW.x, texNW.y + ts);
-  Vec2f texW(texNW.x, texNW.y + half_ts);
-  Vec2f texC(texNW.x + half_ts, texNW.y + half_ts);
+  RealVec2 texNW(tile_coords.x * ts, tile_coords.y * ts);
+  RealVec2 texN(texNW.x + half_ts, texNW.y);
+  RealVec2 texNE(texNW.x + ts, texNW.y);
+  RealVec2 texE(texNW.x + ts, texNW.y + half_ts);
+  RealVec2 texSE(texNW.x + ts, texNW.y + ts);
+  RealVec2 texS(texNW.x + half_ts, texNW.y + ts);
+  RealVec2 texSW(texNW.x, texNW.y + ts);
+  RealVec2 texW(texNW.x, texNW.y + half_ts);
+  RealVec2 texC(texNW.x + half_ts, texNW.y + half_ts);
 
   // Upper left
   vertices.append(sf::Vertex(coordNW, colorNW, texNW));
@@ -170,10 +170,10 @@ void TileSheet::add_gradient_quad(sf::VertexArray& vertices,
 
 void TileSheet::add_outline_vertices(sf::VertexArray& vertices,
                                      sf::Color bg_color,
-                                     Vec2f ul_coord,
-                                     Vec2f ur_coord,
-                                     Vec2f lr_coord,
-                                     Vec2f ll_coord)
+                                     RealVec2 ul_coord,
+                                     RealVec2 ur_coord,
+                                     RealVec2 lr_coord,
+                                     RealVec2 ll_coord)
 {
   sf::Vertex new_vertex;
 

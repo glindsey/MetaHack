@@ -75,8 +75,8 @@ protected:
   /// @param criterion Functor that is passed a MapTile reference and should
   ///                  return true if the criterion is met and false if not.
   /// @return True if all tiles meet the criterion, false otherwise.
-  bool does_box_pass_criterion(Vec2i upper_left,
-                               Vec2i lower_right,
+  bool does_box_pass_criterion(IntegerVec2 upper_left,
+                               IntegerVec2 lower_right,
                                std::function<bool(MapTile&)> criterion);
 
   /// Set all tiles within the area bounded by (upper_left.x, upper_left.y) to
@@ -85,7 +85,7 @@ protected:
   /// @param upper_left Coordinates of upper-left corner of box.
   /// @param lower_right Coordinates of lower-right corner of box.
   /// @param tile_type Type to set tiles to.
-  void set_box(Vec2i upper_left, Vec2i lower_right, std::string tile_type);
+  void set_box(IntegerVec2 upper_left, IntegerVec2 lower_right, std::string tile_type);
 
   /// Set all tiles bounded by an IntRect (inclusive) to the specified tile type.
   /// @param rect IntRect specifying the rectangle to set.

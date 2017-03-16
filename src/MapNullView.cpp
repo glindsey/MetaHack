@@ -24,7 +24,7 @@ bool MapNullView::render_map(sf::RenderTexture& texture, int frame)
 }
 
 void MapNullView::draw_highlight(sf::RenderTarget& target,
-                                 Vec2f location,
+                                 RealVec2 location,
                                  sf::Color fgColor,
                                  sf::Color bgColor,
                                  int frame)

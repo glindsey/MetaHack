@@ -73,7 +73,7 @@ public:
   /// @param fg_color Foreground color to use.
   /// @todo Split this out into a view.
   virtual void render(sf::RenderTexture& texture,
-                      Vec2f coords,
+                      RealVec2 coords,
                       unsigned int frame,
                       sf::Font const& font,
                       unsigned int font_size,

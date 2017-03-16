@@ -164,14 +164,14 @@ bool KeyBuffer::get_enter()
 
 /// @todo Move this into a view.
 void KeyBuffer::render(sf::RenderTexture& texture,
-                       Vec2f coords,
+                       RealVec2 coords,
                        unsigned int frame,
                        sf::Font const& font,
                        unsigned int font_size,
                        sf::Color const& fg_color)
 {
   sf::Text render_text;
-  float x_position = coords.x;
+  auto x_position = coords.x;
 
   render_text.setFont(font);
   render_text.setCharacterSize(font_size);
@@ -179,7 +179,7 @@ void KeyBuffer::render(sf::RenderTexture& texture,
 
   // *** PROMPT ***************************************************************
   render_text.setString("> ");
-  render_text.setPosition(x_position, coords.y);
+  render_text.setPosition({ x_position, coords.y });
   render_text.setStyle(sf::Text::Style::Bold);
   texture.draw(render_text);
 
@@ -187,13 +187,13 @@ void KeyBuffer::render(sf::RenderTexture& texture,
 
   // *** RENDER TEXT **********************************************************
   render_text.setString(m_buffer);
-  render_text.setPosition(x_position, coords.y);
+  render_text.setPosition({ x_position, coords.y });
   render_text.setStyle(sf::Text::Style::Regular);
   texture.draw(render_text);
 
   // *** CURSOR ***************************************************************
-  Vec2f cursor_coords;
-  Vec2f cursor_size;
+  RealVec2 cursor_coords;
+  RealVec2 cursor_size;
   sf::Color cursor_color = fg_color;
 
   if (m_replacing)
@@ -219,11 +219,11 @@ void KeyBuffer::render(sf::RenderTexture& texture,
   {
     sf::Glyph glyph = font.getGlyph(m_buffer[m_cursorPosition],
                                     font_size, false);
-    cursor_size = Vec2f(glyph.bounds.width, font_height);
+    cursor_size = RealVec2(glyph.bounds.width, font_height);
   }
   else
   {
-    cursor_size = Vec2f(2, font_height);
+    cursor_size = RealVec2(2, font_height);
   }
 
   sf::RectangleShape cursor_rect;

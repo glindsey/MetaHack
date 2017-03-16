@@ -18,7 +18,7 @@ public:
   virtual bool render_map(sf::RenderTexture& texture, int frame) override;
 
   virtual void draw_highlight(sf::RenderTarget& target,
-                              Vec2f location,
+                              RealVec2 location,
                               sf::Color fgColor,
                               sf::Color bgColor,
                               int frame) override;

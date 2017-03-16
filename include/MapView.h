@@ -29,7 +29,7 @@ public:
   ///       AppStateGameMode itself; or possibly the interface is fine but
   ///       the implementation should go into MapStandard2DView.
   void set_view(sf::RenderTarget& target,
-                Vec2f center,
+                RealVec2 center,
                 float zoom_level);
 
   /// Render the map to a texture.
@@ -47,7 +47,7 @@ public:
 
 
   virtual void draw_highlight(sf::RenderTarget& target,
-                              Vec2f location,
+                              RealVec2 location,
                               sf::Color fgColor,
                               sf::Color bgColor,
                               int frame) = 0;

@@ -241,7 +241,7 @@ public:
   bool can_see(EntityId entity);
 
   /// Return whether the DynamicEntity can see the requested tile.
-  bool can_see(Vec2i coords);
+  bool can_see(IntegerVec2 coords);
 
   /// Find out which tiles on the map can be seen by this DynamicEntity.
   /// In the process, tiles in the DynamicEntity's visual memory are updated.
@@ -250,7 +250,7 @@ public:
   void find_seen_tiles();
 
   /// Get the remembered tile type at the specified coordinates.
-  MapMemoryChunk const& get_memory_at(Vec2i coords) const;
+  MapMemoryChunk const& get_memory_at(IntegerVec2 coords) const;
 
   ActionResult can_deequip(EntityId thing_id, unsigned int& action_time);
 

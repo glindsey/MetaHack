@@ -16,7 +16,7 @@ EntityView::EntityView(Entity& entity)
 EntityView::~EntityView()
 {}
 
-void EntityView::setLocation(Vec2f target_coords)
+void EntityView::setLocation(RealVec2 target_coords)
 {
   if (target_coords != m_target_coords)
   {
@@ -24,12 +24,12 @@ void EntityView::setLocation(Vec2f target_coords)
   }
 }
 
-Vec2f EntityView::getLocation()
+RealVec2 EntityView::getLocation()
 {
   return m_target_coords;
 }
 
-void EntityView::setSize(Vec2f target_size)
+void EntityView::setSize(RealVec2 target_size)
 {
   if (target_size != m_target_size)
   {
@@ -37,7 +37,7 @@ void EntityView::setSize(Vec2f target_size)
   }
 }
 
-Vec2f EntityView::getSize()
+RealVec2 EntityView::getSize()
 {
   return m_target_size;
 }

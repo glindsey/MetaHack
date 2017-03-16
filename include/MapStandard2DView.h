@@ -22,7 +22,7 @@ public:
   virtual void update_things(EntityId viewer, int frame) override;
 
   virtual void draw_highlight(sf::RenderTarget& target,
-                              Vec2f location,
+                              RealVec2 location,
                               sf::Color fgColor,
                               sf::Color bgColor,
                               int frame) override;

@@ -21,7 +21,7 @@ public:
   virtual void clear_buffer() override;
   virtual bool get_enter() override;
   virtual void render(sf::RenderTexture& texture,
-                      Vec2f coords,
+                      RealVec2 coords,
                       unsigned int frame,
                       sf::Font const& font,
                       unsigned int font_size,

@@ -25,7 +25,7 @@ MapDiamond::MapDiamond(Map& m, PropertyDictionary const& s, GeoVector vec)
   unsigned int max_retries = s.get<unsigned int>("max_retries", 100);
   std::string floor_type = s.get<std::string>("floor_type", "MTFloorDirt");
 
-  Vec2i& startingCoords = vec.start_point;
+  IntegerVec2& startingCoords = vec.start_point;
   Direction& direction = vec.direction;
 
   while (numTries < max_retries)

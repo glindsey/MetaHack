@@ -201,9 +201,9 @@ inline bool operator==(boost::any const& lhs, boost::any const& rhs)
     return boost::any_cast<sf::Color>(lhs) == boost::any_cast<sf::Color>(rhs);
   }
 
-  if (ltype == typeid(Vec2i))
+  if (ltype == typeid(IntegerVec2))
   {
-    return boost::any_cast<Vec2i>(lhs) == boost::any_cast<Vec2i>(rhs);
+    return boost::any_cast<IntegerVec2>(lhs) == boost::any_cast<IntegerVec2>(rhs);
   }
 
   if (ltype == typeid(Vec2u))

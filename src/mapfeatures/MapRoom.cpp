@@ -23,7 +23,7 @@ MapRoom::MapRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
   unsigned int max_retries = s.get<unsigned int>("max_retries", 100);
   std::string floor_type = s.get<std::string>("floor_type", "MTFloorDirt");
 
-  Vec2i& starting_coords = vec.start_point;
+  IntegerVec2& starting_coords = vec.start_point;
   Direction& direction = vec.direction;
 
   while (num_tries < max_retries)

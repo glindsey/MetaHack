@@ -56,7 +56,7 @@ namespace metagui
   class Object
   {
   public:
-    explicit Object(std::string name, Vec2i location = Vec2i(0, 0), Vec2u size = Vec2u(0, 0));
+    explicit Object(std::string name, IntegerVec2 location = IntegerVec2(0, 0), Vec2u size = Vec2u(0, 0));
     Object(std::string name, sf::IntRect dimensions);
     virtual ~Object();
 
@@ -86,10 +86,10 @@ namespace metagui
     std::string getText();
 
     /// Get location relative to parent object's client area.
-    Vec2i getRelativeLocation();
+    IntegerVec2 getRelativeLocation();
 
     /// Set location relative to parent object's client area.
-    void setRelativeLocation(Vec2i location);
+    void setRelativeLocation(IntegerVec2 location);
 
     Vec2u getSize();
     void setSize(Vec2u size);
@@ -98,8 +98,8 @@ namespace metagui
     void setRelativeDimensions(sf::IntRect dimensions);
 
     // Get absolute location relative to root object.
-    Vec2i getAbsoluteLocation();
-    void setAbsoluteLocation(Vec2i location);
+    IntegerVec2 getAbsoluteLocation();
+    void setAbsoluteLocation(IntegerVec2 location);
 
     sf::IntRect getAbsoluteDimensions();
 
@@ -256,7 +256,7 @@ namespace metagui
     /// its own upper-left corner.
     /// By default, the child area encompasses the entire object, so this
     /// returns (0, 0); however, subclasses can override this behavior.
-    virtual Vec2i getChildAreaLocation();
+    virtual IntegerVec2 getChildAreaLocation();
 
     /// Get the size of this object's child area.
     /// By default, the child area encompasses the entire object, so this
@@ -285,7 +285,7 @@ namespace metagui
     /// Returns whether the specified point falls within this object's bounds.
     /// @param  point   Point to check.
     /// @return True if the point is within the object, false otherwise.
-    bool containsPoint(Vec2i point);
+    bool containsPoint(IntegerVec2 point);
 
     Event::Result handleGUIEventPreChildren(EventDragFinished& event);
     Event::Result handleGUIEventPostChildren(EventDragFinished& event);
@@ -326,7 +326,7 @@ namespace metagui
     bool isBeingDragged();
 
     /// Returns the location of the start of the last drag.
-    Vec2i getDragStartLocation();
+    IntegerVec2 getDragStartLocation();
 
     /// Called before rendering the object's children.
     /// Default behavior is to do nothing.
@@ -396,7 +396,7 @@ namespace metagui
     bool m_being_dragged = false;
 
     /// The location that the last drag started.
-    Vec2i m_drag_start_location;
+    IntegerVec2 m_drag_start_location;
 
     /// The text for this object. The way this text is used is dependent on the
     /// sort of control it is; e.g. for a Pane this is the pane title, for a
@@ -405,10 +405,10 @@ namespace metagui
     std::string m_text;
 
     /// Object location, relative to parent.
-    Vec2i m_location;
+    IntegerVec2 m_location;
 
     /// Location as captured at last mousedown.
-    Vec2i m_absolute_location_drag_start;
+    IntegerVec2 m_absolute_location_drag_start;
 
     /// Object size.
     Vec2u m_size;
@@ -434,8 +434,8 @@ namespace metagui
   };
 
   /// Convenience function for calculating the distance between two
-  /// Vec2i points.
-  inline unsigned int distance(Vec2i first, Vec2i second)
+  /// IntegerVec2 points.
+  inline unsigned int distance(IntegerVec2 first, IntegerVec2 second)
   {
     int x_distance = first.x - second.x;
     int y_distance = first.y - second.y;
