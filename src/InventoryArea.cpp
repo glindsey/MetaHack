@@ -39,12 +39,12 @@ void InventoryArea::drawContents_(sf::RenderTexture& texture, int frame)
   // Dimensions of the pane.
   sf::IntRect pane_dims = getRelativeDimensions();
 
-  float line_spacing_y = the_default_font.getLineSpacing(config.get<unsigned int>("text_default_size"));
+  float line_spacing_y = the_default_font.getLineSpacing(config.get("text_default_size").as<Integer>());
   float item_spacing_y = 4.0f;
 
   // Text offsets relative to the background rectangle.
-  float text_offset_x = config.get<float>("window_text_offset_x");
-  float text_offset_y = config.get<float>("window_text_offset_y");
+  float text_offset_x = config.get("window_text_offset_x").as<Real>();
+  float text_offset_y = config.get("window_text_offset_y").as<Real>();
 
   // Get a reference to the location we're referring to.
   auto& viewed_thing = m_inventory_selection.get_viewed();
@@ -75,7 +75,7 @@ void InventoryArea::drawContents_(sf::RenderTexture& texture, int frame)
     sf::Text render_text;
 
     // 1. Figure out whether this is selected or not, and set FG color.
-    sf::Color fg_color = config.get<sf::Color>("text_color");
+    sf::Color fg_color = config.get("text_color").as<Color>();
     size_t selection_order = 0;
     auto slot_iter = std::find(selected_slots.begin(),
                                selected_slots.end(),
@@ -83,7 +83,7 @@ void InventoryArea::drawContents_(sf::RenderTexture& texture, int frame)
 
     if (slot_iter != selected_slots.end())
     {
-      fg_color = config.get<sf::Color>("text_highlight_color");
+      fg_color = config.get("text_highlight_color").as<Color>();
       selection_order = (slot_iter - selected_slots.begin()) + 1;
     }
 
@@ -93,7 +93,7 @@ void InventoryArea::drawContents_(sf::RenderTexture& texture, int frame)
       std::stringstream selection_number;
       selection_number << "[" << selection_order << "]" << std::endl;
       render_text.setFont(the_default_mono_font);
-      render_text.setCharacterSize(config.get<unsigned int>("text_mono_default_size"));
+      render_text.setCharacterSize(config.get("text_mono_default_size").as<Integer>());
       render_text.setString(selection_number.str());
       render_text.setPosition(text_coord_x + 26, text_coord_y);
       render_text.setColor(fg_color);
@@ -110,7 +110,7 @@ void InventoryArea::drawContents_(sf::RenderTexture& texture, int frame)
 
       slot_id << item_char << ":";
       render_text.setFont(the_default_mono_font);
-      render_text.setCharacterSize(config.get<unsigned int>("text_mono_default_size"));
+      render_text.setCharacterSize(config.get("text_mono_default_size").as<Integer>());
       render_text.setString(slot_id.str());
       render_text.setPosition(text_coord_x + 55, text_coord_y);
       render_text.setColor(fg_color);
@@ -132,7 +132,7 @@ void InventoryArea::drawContents_(sf::RenderTexture& texture, int frame)
     if (wielding)
     {
       render_text.setFont(the_default_mono_font);
-      render_text.setCharacterSize(config.get<unsigned int>("text_mono_default_size"));
+      render_text.setCharacterSize(config.get("text_mono_default_size").as<Integer>());
       render_text.setString("W");
       render_text.setPosition(text_coord_x + 11, text_coord_y);
       render_text.setColor(fg_color);
@@ -141,7 +141,7 @@ void InventoryArea::drawContents_(sf::RenderTexture& texture, int frame)
     else if (wearing)
     {
       render_text.setFont(the_default_mono_font);
-      render_text.setCharacterSize(config.get<unsigned int>("text_mono_default_size"));
+      render_text.setCharacterSize(config.get("text_mono_default_size").as<Integer>());
       render_text.setString("E");
       render_text.setPosition(text_coord_x + 11, text_coord_y);
       render_text.setColor(fg_color);
@@ -172,7 +172,7 @@ void InventoryArea::drawContents_(sf::RenderTexture& texture, int frame)
     }
 
     render_text.setFont(the_default_font);
-    render_text.setCharacterSize(config.get<unsigned int>("text_default_size"));
+    render_text.setCharacterSize(config.get("text_default_size").as<Integer>());
     render_text.setString(item_name.str());
     render_text.setPosition(text_coord_x + 80 + line_spacing_y,
                             text_coord_y + 1);
@@ -186,7 +186,7 @@ void InventoryArea::drawContents_(sf::RenderTexture& texture, int frame)
     sf::RectangleShape separator_line;
     separator_line.setPosition(text_coord_x + 10, text_coord_y);
     separator_line.setSize(RealVec2(static_cast<float>(pane_dims.width - 25), 1.0f));
-    separator_line.setFillColor(config.get<sf::Color>("window_border_color"));
+    separator_line.setFillColor(config.get("window_border_color").as<Color>());
     texture.draw(separator_line);
 
     text_coord_y += item_spacing_y;
