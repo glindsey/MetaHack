@@ -4,6 +4,7 @@
 
 #include "ErrorHandler.h"
 #include "IntegerRange.h"
+#include "Property.h"
 
 PropertyDictionary::PropertyDictionary()
 {

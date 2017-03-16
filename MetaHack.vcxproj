@@ -490,7 +490,6 @@
     <ClCompile Include="src\Metadata.cpp" />
     <ClCompile Include="src\MetadataCollection.cpp" />
     <ClCompile Include="src\ModifiablePropertyDictionary.cpp" />
-    <ClCompile Include="src\Property.cpp" />
     <ClCompile Include="src\PropertyDictionary.cpp" />
     <ClCompile Include="src\Standard2DGraphicViews.cpp" />
     <ClCompile Include="src\State.cpp" />
