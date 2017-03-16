@@ -352,6 +352,7 @@
     <ClInclude Include="include\NullKeyBuffer.h" />
     <ClInclude Include="include\NullMessageLog.h" />
     <ClInclude Include="include\NullStringDictionary.h" />
+    <ClInclude Include="include\Property.h" />
     <ClInclude Include="include\Rect.h" />
     <ClInclude Include="include\RNGUtils.h" />
     <ClInclude Include="include\SFMLEventHandler.h" />
@@ -489,6 +490,7 @@
     <ClCompile Include="src\Metadata.cpp" />
     <ClCompile Include="src\MetadataCollection.cpp" />
     <ClCompile Include="src\ModifiablePropertyDictionary.cpp" />
+    <ClCompile Include="src\Property.cpp" />
     <ClCompile Include="src\PropertyDictionary.cpp" />
     <ClCompile Include="src\Standard2DGraphicViews.cpp" />
     <ClCompile Include="src\State.cpp" />

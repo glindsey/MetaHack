@@ -444,6 +444,9 @@
     <ClInclude Include="actions\ActionTakeOff.h">
       <Filter>Actions</Filter>
     </ClInclude>
+    <ClInclude Include="include\Property.h">
+      <Filter>Types</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">
@@ -735,6 +738,9 @@
       <Filter>Actions</Filter>
     </ClCompile>
     <ClCompile Include="src\StringTransforms.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Property.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

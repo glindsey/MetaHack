@@ -4,6 +4,7 @@
 
 #include "actions/ActionResult.h"
 #include "Gender.h"
+#include "Property.h"
 
 Lua::Lua()
 {
@@ -19,6 +20,7 @@ Lua::Lua()
   /// @todo All of the other registration required... which will be a lot.
   ActionResult_add_to_lua(this);
   Gender_add_to_lua(this);
+  Property::addTypeEnumToLua(this);
 
   // Register the trace function.
   register_function("print_trace", Lua::LUA_trace);
@@ -82,22 +84,23 @@ void Lua::set_global(std::string name, lua_Integer value)
 
 bool Lua::add_enum(const char* tname, ...)
 {
-  // NOTE: Here's the Lua code we're building and executing to define the
-  //       enum.
-  //
-  // <tname> = setmetatable( {}, {
-  //      __index = {
-  //          <name1> = {
-  //              value = <value1>,
-  //              type = \"<tname>\"
-  //          },
-  //          ...
-  //      },
-  //      __newindex = function(table, key, value)
-  //          error(\"Attempt to modify read-only table\")
-  //      end,
-  //      __metatable = false
-  // });
+  /// @note Here's the Lua code we're building and executing to define the
+  ///       enum.
+  /// ```
+  /// <tname> = setmetatable( {}, {
+  ///      __index = {
+  ///          <name1> = {
+  ///              value = <value1>,
+  ///              type = \"<tname>\"
+  ///          },
+  ///          ...
+  ///      },
+  ///      __newindex = function(table, key, value)
+  ///          error(\"Attempt to modify read-only table\")
+  ///      end,
+  ///      __metatable = false
+  /// });
+  /// ```
 
   va_list args;
   std::stringstream code;
