@@ -3,6 +3,7 @@
 #include "LuaObject.h"
 
 #include "actions/ActionResult.h"
+#include "Direction.h"
 #include "Gender.h"
 #include "Property.h"
 
@@ -17,10 +18,10 @@ Lua::Lua()
   // Load the base libraries.
   luaL_openlibs(L_);
 
-  /// @todo All of the other registration required... which will be a lot.
-  ActionResult_add_to_lua(this);
-  Gender_add_to_lua(this);
-  Property::addTypeEnumToLua(this);
+  // Register enums.
+  addActionResultEnumToLua();
+  addGenderEnumToLua();
+  addPropertyTypeEnumToLua();
 
   // Register the trace function.
   register_function("print_trace", Lua::LUA_trace);
@@ -181,7 +182,9 @@ int Lua::push_value(Property property)
     case Property::Type::Null: lua_pushnil(L_); return 1;
     case Property::Type::Boolean: return push_value(property.as<Boolean>());
     case Property::Type::String: return push_value(property.as<String>());
+    case Property::Type::EightBits: return push_value(property.as<EightBits>());
     case Property::Type::Number: return push_value(property.as<Number>());
+    case Property::Type::BigInteger: return push_value(property.as<BigInteger>());
     case Property::Type::IntegerVec2: return push_value(property.as<IntegerVec2>());
     case Property::Type::Direction: return push_value(property.as<Direction>());
     case Property::Type::Color: return push_value(property.as<Color>());
@@ -276,6 +279,150 @@ int Lua::push_value(sf::Color value)
   return 4;
 }
 
+Property Lua::pop_value(Property::Type type)
+{
+  std::unique_ptr<Property> property(new Property());
+  switch (type)
+  {
+    case Property::Type::Null: 
+      break;
+
+    case Property::Type::Boolean:
+      property.reset(new Property(static_cast<Boolean>(lua_tointeger(L_, -1))));
+      lua_pop(L_, 1);
+      break;
+
+    case Property::Type::String: 
+      property.reset(new Property(lua_tostring(L_, -1)));
+      lua_pop(L_, 1);
+      break;
+
+    case Property::Type::EightBits: 
+      property.reset(new Property(static_cast<EightBits>(lua_tointeger(L_, -1))));
+      lua_pop(L_, 1);
+      break;
+
+    case Property::Type::Number:
+      property.reset(new Property(static_cast<Real>(lua_tonumber(L_, -1))));
+      lua_pop(L_, 1);
+      break;
+
+    case Property::Type::BigInteger: 
+      property.reset(new Property(static_cast<BigInteger>(lua_tointeger(L_, -1))));
+      lua_pop(L_, 1);
+      break;
+
+    case Property::Type::IntegerVec2:
+      property.reset(new Property(IntegerVec2(static_cast<int>(lua_tointeger(L_, -2)),
+                                              static_cast<int>(lua_tointeger(L_, -1)))));
+      lua_pop(L_, 2);
+      break;
+
+    case Property::Type::Direction: 
+      property.reset(new Property(Direction(static_cast<int>(lua_tointeger(L_, -3)),
+                                            static_cast<int>(lua_tointeger(L_, -2)),
+                                            static_cast<int>(lua_tointeger(L_, -1)))));
+      lua_pop(L_, 3);
+      break;
+
+    case Property::Type::Color: 
+      property.reset(new Property(Color(static_cast<int>(lua_tointeger(L_, -4)),
+                                        static_cast<int>(lua_tointeger(L_, -3)),
+                                        static_cast<int>(lua_tointeger(L_, -2)),
+                                        static_cast<int>(lua_tointeger(L_, -1)))));
+      lua_pop(L_, 4);
+      break;
+
+    default:
+      break;
+  }
+
+  return *property;
+}
+
+unsigned int Lua::stack_slots(Property::Type type)
+{
+  switch (type)
+  {
+    case Property::Type::Null: return 0;
+    case Property::Type::Boolean: return 1;
+    case Property::Type::String: return 1;
+    case Property::Type::EightBits: return 1;
+    case Property::Type::Number: return 1;
+    case Property::Type::BigInteger: return 1;
+    case Property::Type::IntegerVec2: return 2;
+    case Property::Type::Direction: return 3;
+    case Property::Type::Color: return 4;
+    default: return 0;
+  }
+}
+
+Property Lua::get_type_intrinsic(std::string category, std::string name, Property::Type type, Property default_value)
+{
+  Property return_value = default_value;
+
+  int start_stack = lua_gettop(L_);
+
+  // Push category onto the stack. (+1)
+  lua_getglobal(L_, category.c_str());           // category <
+
+  if (lua_isnoneornil(L_, -1))
+  {
+    // Category not found -- pop the name back off. (-1)
+    lua_pop(L_, 1);
+    MAJOR_ERROR("Lua class %s was not found", category.c_str());
+  }
+  else
+  {
+    // Push name of function onto the stack. (+1)
+    lua_getfield(L_, -1, "get_intrinsic");             // category get <
+
+    if (lua_isnoneornil(L_, -1))
+    {
+      // Function not found -- pop the function and category names back off. (-2)
+      lua_pop(L_, 2);
+      MAJOR_ERROR("Lua function %s:get_intrinsic() was not found", category.c_str());
+    }
+    else
+    {
+      // Push the class name up to the front of the stack.
+      lua_pushvalue(L_, -2);                 // category get category <
+      lua_remove(L_, -3);                    // get category <
+      lua_pushstring(L_, name.c_str());      // get category name <
+
+      int num_results = stack_slots(type);
+      int result = lua_pcall(L_, 2, num_results, 0);   // (result|nil|err) <
+      if (result == 0)
+      {
+        return_value = pop_value(type);
+      }
+      else
+      {
+        // Get the error message.
+        char const* error_message = lua_tostring(L_, -1);
+        MAJOR_ERROR("Error calling %s:get_intrinsic(%s): %s", category.c_str(), name.c_str(), error_message);
+
+        // Pop the error message off the stack. (-1)
+        lua_pop(L_, 1);
+      }
+    }
+  }
+
+  int end_stack = lua_gettop(L_);
+
+  if (start_stack != end_stack)
+  {
+    FATAL_ERROR("*** LUA STACK MISMATCH (%s:get_intrinsic): Started at %d, ended at %d", name.c_str(), start_stack, end_stack);
+  }
+
+  return return_value;
+}
+
+Property Lua::get_type_intrinsic(std::string category, std::string name, Property::Type type)
+{
+  return get_type_intrinsic(category, name, type, Property(type));
+}
+
 lua_State* Lua::state()
 {
   return L_;
@@ -296,4 +443,73 @@ int Lua::LUA_trace(lua_State* L)
   }
 
   return 0;
+}
+
+void Lua::addActionResultEnumToLua()
+{
+  add_enum("ActionResult",
+           "FailureActorCantPerform", ActionResult::FailureActorCantPerform,
+           "FailureContainerIsEmpty", ActionResult::FailureContainerIsEmpty,
+           "FailureContainerCantBeSelf", ActionResult::FailureContainerCantBeSelf,
+           "FailureCircularReference", ActionResult::FailureCircularReference,
+           "FailureItemNotEquippable", ActionResult::FailureItemNotEquippable,
+           "FailureItemNotEquipped", ActionResult::FailureItemNotEquipped,
+           "FailureItemWielded", ActionResult::FailureItemWielded,
+           "FailureItemEquipped", ActionResult::FailureItemEquipped,
+           "FailureNotEnoughHands", ActionResult::FailureNotEnoughHands,
+           "FailureTooStupid", ActionResult::FailureTooStupid,
+           "FailureNotLiquidCarrier", ActionResult::FailureNotLiquidCarrier,
+           "FailureSelfReference", ActionResult::FailureSelfReference,
+           "FailureTargetNotAContainer", ActionResult::FailureTargetNotAContainer,
+           "FailureNotInsideContainer", ActionResult::FailureNotInsideContainer,
+           "FailureContainerOutOfReach", ActionResult::FailureContainerOutOfReach,
+           "FailureEntityOutOfReach", ActionResult::FailureEntityOutOfReach,
+           "FailureAlreadyPresent", ActionResult::FailureAlreadyPresent,
+           "FailureInventoryCantContain", ActionResult::FailureInventoryCantContain,
+           "FailureInventoryFull", ActionResult::FailureInventoryFull,
+           "FailureNotPresent", ActionResult::FailureNotPresent,
+           "Failure", ActionResult::Failure,
+           "Pending", ActionResult::Pending,
+           "Success", ActionResult::Success,
+           "SuccessDestroyed", ActionResult::SuccessDestroyed,
+           "SuccessSelfReference", ActionResult::SuccessSelfReference,
+           "SuccessSwapHands", ActionResult::SuccessSwapHands,
+           0
+  );
+}
+
+void Lua::addGenderEnumToLua()
+{
+  add_enum("Gender",
+           "None", Gender::None,
+           "Male", Gender::Male,
+           "Female", Gender::Female,
+           "Neuter", Gender::Neuter,
+           "Spivak", Gender::Spivak,
+           "FirstPerson", Gender::FirstPerson,
+           "SecondPerson", Gender::SecondPerson,
+           "Plural", Gender::Plural,
+           "Hanar", Gender::Hanar,
+           "UnknownEntity", Gender::UnknownEntity,
+           "UnknownPerson", Gender::UnknownPerson,
+           "Count", Gender::Count,
+           0
+  );
+}
+
+void Lua::addPropertyTypeEnumToLua()
+{
+  add_enum("PropertyType",
+           "Null", Property::Type::Null,
+           "Boolean", Property::Type::Boolean,
+           "String", Property::Type::String,
+           "EightBits", Property::Type::EightBits,
+           "Number", Property::Type::Number,
+           "BigInteger", Property::Type::BigInteger,
+           "IntegerVec2", Property::Type::IntegerVec2,
+           "EntityId", Property::Type::EntityId,
+           "ActionResult", Property::Type::ActionResult,
+           "Direction", Property::Type::Direction,
+           "Color", Property::Type::Color,
+           0);
 }

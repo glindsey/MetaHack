@@ -5,12 +5,14 @@
 
 #include "stdafx.h"
 
-#include "Direction.h"
 #include "ErrorHandler.h"
-#include "EntityId.h"
+#include "Property.h"
 
-/// Forward declarations
-enum class ActionResult;
+/// @todo Following should be removable after legacy template methods are gone
+#include "actions/ActionResult.h"
+#include "Direction.h"
+
+// Forward declarations
 class Property;
 
 /// This class encapsulates the Lua state and interface as an object.
@@ -242,6 +244,8 @@ public:
     return return_value;
   }
 
+  Property pop_value(Property::Type type);
+
   /// Return the number of Lua stack slots associated with a particular value.
   template < typename T > unsigned int stack_slots();
   template<> unsigned int stack_slots<void>() { return 0; }
@@ -257,6 +261,8 @@ public:
   template<> unsigned int stack_slots<Vec2u>() { return 2; }
   template<> unsigned int stack_slots<sf::Color>() { return 4; }
   template<> unsigned int stack_slots<ActionResult>() { return 1; }
+
+  unsigned int stack_slots(Property::Type type);
 
   /// Try to call a Lua function that takes the caller and a vector of
   /// arguments and returns a result.
@@ -352,6 +358,23 @@ public:
     return return_value;
   }
 
+  /// Get a Entity category intrinsic.
+  /// @param category       Name of category to get intrinsic of.
+  /// @param name           Name of intrinsic to get.
+  /// @param type           Type of intrinsic to get.
+  /// @param default_value  Default value if intrinsic does not exist
+  ///                       (defaults to default constructor of type).
+  /// @return       The value of the intrinsic. 
+  Property get_type_intrinsic(std::string category,
+                              std::string name,
+                              Property::Type type,
+                              Property default_value);
+
+  Property get_type_intrinsic(std::string category, 
+                              std::string name,
+                              Property::Type type);
+
+
   /// Get a Entity type intrinsic.
   /// @param type           Name of type to get intrinsic of.
   /// @param name           Name of intrinsic to get.
@@ -359,7 +382,7 @@ public:
   ///                       (defaults to default constructor of type).
   /// @return       The value of the intrinsic.
   template < typename ReturnType >
-  ReturnType Lua::get_type_intrinsic(std::string type, std::string name, ReturnType default_value = ReturnType())
+  ReturnType get_type_intrinsic(std::string type, std::string name, ReturnType default_value = ReturnType())
   {
     ReturnType return_value = default_value;
 
@@ -484,6 +507,18 @@ public:
   lua_State* state();
 
   static int LUA_trace(lua_State* L);
+
+  /// Add the "ActionResult" enum to the Lua instance.
+  /// @see ActionResult
+  void addActionResultEnumToLua();
+
+  /// Add the "Gender" enum to the Lua instance.
+  /// @see Gender
+  void addGenderEnumToLua();
+
+  /// Add the "Property::Type" enum to the Lua instance.
+  /// @see Property::Type
+  void addPropertyTypeEnumToLua();
 
 private:
   /// Private Lua state.

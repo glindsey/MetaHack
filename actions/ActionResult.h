@@ -1,14 +1,13 @@
-#ifndef ACTIONRESULT_H
-#define ACTIONRESULT_H
+#pragma once
 
 #include "stdafx.h"
 
-#include "LuaObject.h"
-
 /// Enum representing possible results from an action.
 /// Note that a "Failure*" result doesn't necessarily mean a complete failure,
-/// just that entities did not go as planned. There may still be side effects
+/// just that things did not go as planned. There may still be side effects
 /// resulting from the attempt.
+/// @note If this class is changed, remember to also change the method that
+///       adds it to Lua in LuaObject.h!
 enum class ActionResult
 {
   FailureActorCantPerform = -21, ///< Used when an actor is intrinsically incapable of performing an Action
@@ -81,37 +80,3 @@ inline std::ostream& operator<<(std::ostream& os, ActionResult result)
 
   return os;
 }
-
-inline void ActionResult_add_to_lua(Lua* lua_instance)
-{
-  lua_instance->add_enum("ActionResult",
-                         "FailureActorCantPerform", ActionResult::FailureActorCantPerform,
-                         "FailureContainerIsEmpty", ActionResult::FailureContainerIsEmpty,
-                         "FailureContainerCantBeSelf", ActionResult::FailureContainerCantBeSelf,
-                         "FailureCircularReference", ActionResult::FailureCircularReference,
-                         "FailureItemNotEquippable", ActionResult::FailureItemNotEquippable,
-                         "FailureItemNotEquipped", ActionResult::FailureItemNotEquipped,
-                         "FailureItemWielded", ActionResult::FailureItemWielded,
-                         "FailureItemEquipped", ActionResult::FailureItemEquipped,
-                         "FailureNotEnoughHands", ActionResult::FailureNotEnoughHands,
-                         "FailureTooStupid", ActionResult::FailureTooStupid,
-                         "FailureNotLiquidCarrier", ActionResult::FailureNotLiquidCarrier,
-                         "FailureSelfReference", ActionResult::FailureSelfReference,
-                         "FailureTargetNotAContainer", ActionResult::FailureTargetNotAContainer,
-                         "FailureNotInsideContainer", ActionResult::FailureNotInsideContainer,
-                         "FailureContainerOutOfReach", ActionResult::FailureContainerOutOfReach,
-                         "FailureEntityOutOfReach", ActionResult::FailureEntityOutOfReach,
-                         "FailureAlreadyPresent", ActionResult::FailureAlreadyPresent,
-                         "FailureInventoryCantContain", ActionResult::FailureInventoryCantContain,
-                         "FailureInventoryFull", ActionResult::FailureInventoryFull,
-                         "FailureNotPresent", ActionResult::FailureNotPresent,
-                         "Failure", ActionResult::Failure,
-                         "Pending", ActionResult::Pending,
-                         "Success", ActionResult::Success,
-                         "SuccessDestroyed", ActionResult::SuccessDestroyed,
-                         "SuccessSelfReference", ActionResult::SuccessSelfReference,
-                         "SuccessSwapHands", ActionResult::SuccessSwapHands,
-                         0
-  );
-}
-#endif // ACTIONRESULT_H

@@ -5,8 +5,10 @@
 #include <boost/any.hpp>
 #include <SFML/Graphics.hpp>
 
+#include "actions/ActionResult.h"
 #include "App.h"
 #include "Direction.h"
+#include "EntityId.h"
 #include "ErrorHandler.h"
 #include "Vec2.h"
 #include "LuaObject.h"
@@ -35,6 +37,8 @@ class Property final // final because it doesn't have a virtual dtor, don't want
 {
 public:
   /// Enum of the valid property types.
+  /// @note If this class is changed, remember to also change the method that
+  ///       adds it to Lua in LuaObject.h!
   enum class Type
   {
     Null,
@@ -44,6 +48,8 @@ public:
     Number,
     BigInteger,
     IntegerVec2,
+    EntityId,
+    ActionResult,
     Direction,
     Color
   };
@@ -59,6 +65,8 @@ public:
       case Type::Number: os << "Number"; break;
       case Type::BigInteger: os << "BigInteger"; break;
       case Type::IntegerVec2: os << "IntegerVec2"; break;
+      case Type::EntityId: os << "EntityId"; break;
+      case Type::ActionResult: os << "ActionResult"; break;
       case Type::Direction: os << "Direction"; break;
       case Type::Color: os << "Color"; break;
       default: os << "??? (" << static_cast<int>(type) << ")"; break;
@@ -126,7 +134,27 @@ public:
 
   };
 
+  /// @todo Add Number, EntityId, ActionResult to Property enum and getter/setters.
   Property() : m_type{ Type::Null } {}
+
+  explicit Property(Type type) : m_type{ type }
+  {
+    switch (m_type)
+    {
+      case Type::Boolean: m_value = Boolean(); break;
+      case Type::String: m_value = String(); break;
+      case Type::EightBits: m_value = EightBits(); break;
+      case Type::Number: m_value = Number(); break;
+      case Type::BigInteger: m_value = BigInteger(); break;
+      case Type::EntityId: m_value = EntityId(); break;
+      case Type::ActionResult: m_value = ActionResult(); break;
+      case Type::IntegerVec2: m_value = IntegerVec2(); break;
+      case Type::Direction: m_value = Direction(); break;
+      case Type::Color: m_value = Color(); break;
+      default: break;
+    }
+  }
+
   explicit Property(Boolean value) : m_type{ Type::Boolean }, m_value{ value } {}
   explicit Property(String value) : m_type{ Type::String }, m_value{ value } {}
   explicit Property(char const* value) : m_type{ Type::String }, m_value{ std::string(value) } {}
@@ -135,6 +163,8 @@ public:
   explicit Property(Integer value) : m_type{ Type::Number }, m_value{ static_cast<Number>(value) } {}
   explicit Property(BigInteger value) : m_type{ Type::BigInteger }, m_value{ value } {}
   explicit Property(Real value) : m_type{ Type::Number }, m_value{ static_cast<Number>(value) } {}
+  explicit Property(EntityId value) : m_type{ Type::EntityId }, m_value{ value } {}
+  explicit Property(ActionResult value) : m_type{ Type::ActionResult }, m_value{ value } {}
   explicit Property(IntegerVec2 value) : m_type{ Type::IntegerVec2 }, m_value{ value } {}
   explicit Property(Direction value) : m_type{ Type::Direction }, m_value{ value } {}
   explicit Property(Color value) : m_type{ Type::Color }, m_value{ value } {}
@@ -233,6 +263,28 @@ public:
     throw InvalidPropertyCastException("Real", type());
   }
 
+  template <> EntityId as(EntityId default_value) const
+  {
+    switch (type())
+    {
+      case Type::Null: return default_value;
+      case Type::EntityId: return boost::any_cast<EntityId>(m_value);
+      default: break;
+    }
+    throw InvalidPropertyCastException("EntityId", type());
+  }
+
+  template <> ActionResult as(ActionResult default_value) const
+  {
+    switch (type())
+    {
+      case Type::Null: return default_value;
+      case Type::ActionResult: return boost::any_cast<ActionResult>(m_value);
+      default: break;
+    }
+    throw InvalidPropertyCastException("ActionResult", type());
+  }
+
   template <> IntegerVec2 as(IntegerVec2 default_value) const
   {
     switch (type())
@@ -284,23 +336,7 @@ public:
     static Property null_property{};
     return null_property;
   }
-
-  static void addTypeEnumToLua(Lua* lua_instance)
-  {
-    lua_instance->add_enum("PropertyType",
-                           "Null", Type::Null,
-                           "Boolean", Type::Boolean,
-                           "String", Type::String,
-                           "EightBits", Type::EightBits,
-                           "Number", Type::Number,
-                           "BigInteger", Type::BigInteger,
-                           "IntegerVec2", Type::IntegerVec2,
-                           "Direction", Type::Direction,
-                           "Color", Type::Color,
-                           0
-    );
-  }
-
+  
   /// @warning Returns whether the property is non-null, NOT if the property 
   /// is not equal to false!
   explicit operator Boolean() const
@@ -446,6 +482,8 @@ public:
       case Property::Type::EightBits: os << boost::any_cast<EightBits>(obj.m_value); break;
       case Property::Type::Number: os << boost::any_cast<Number>(obj.m_value); break;
       case Property::Type::BigInteger: os << boost::any_cast<BigInteger>(obj.m_value); break;
+      case Property::Type::EntityId: os << boost::any_cast<EntityId>(obj.m_value); break;
+      case Property::Type::ActionResult: os << boost::any_cast<ActionResult>(obj.m_value); break;
       case Property::Type::IntegerVec2: os << boost::any_cast<IntegerVec2>(obj.m_value); break;
       case Property::Type::Direction: os << boost::any_cast<Direction>(obj.m_value); break;
       case Property::Type::Color: os << boost::any_cast<Color>(obj.m_value); break;
@@ -489,6 +527,8 @@ public:
       case Property::Type::EightBits: return std::tie(lhs.m_type, *boost::any_cast<EightBits*>(&lhs.m_value)) < std::tie(rhs.m_type, *boost::any_cast<EightBits*>(&rhs.m_value));
       case Property::Type::Number: return std::tie(lhs.m_type, *boost::any_cast<Number*>(&lhs.m_value)) < std::tie(rhs.m_type, *boost::any_cast<Number*>(&rhs.m_value));
       case Property::Type::BigInteger: return std::tie(lhs.m_type, *boost::any_cast<BigInteger*>(&lhs.m_value)) < std::tie(rhs.m_type, *boost::any_cast<BigInteger*>(&rhs.m_value));
+      case Property::Type::EntityId: return std::tie(lhs.m_type, *boost::any_cast<EntityId*>(&lhs.m_value)) < std::tie(rhs.m_type, *boost::any_cast<EntityId*>(&rhs.m_value));
+      case Property::Type::ActionResult: return std::tie(lhs.m_type, *boost::any_cast<ActionResult*>(&lhs.m_value)) < std::tie(rhs.m_type, *boost::any_cast<ActionResult*>(&rhs.m_value));
       case Property::Type::IntegerVec2: return std::tie(lhs.m_type, *boost::any_cast<IntegerVec2*>(&lhs.m_value)) < std::tie(rhs.m_type, *boost::any_cast<IntegerVec2*>(&rhs.m_value));
       case Property::Type::Direction: return std::tie(lhs.m_type, *boost::any_cast<Direction*>(&lhs.m_value)) < std::tie(rhs.m_type, *boost::any_cast<Direction*>(&rhs.m_value));
       case Property::Type::Color: return std::tie(lhs.m_type, *boost::any_cast<Color*>(&lhs.m_value)) < std::tie(rhs.m_type, *boost::any_cast<Color*>(&rhs.m_value));
@@ -522,6 +562,8 @@ public:
       case Property::Type::EightBits: return boost::any_cast<EightBits>(lhs.m_value) == boost::any_cast<EightBits>(rhs.m_value);
       case Property::Type::Number: return boost::any_cast<Number>(lhs.m_value) == boost::any_cast<Number>(rhs.m_value);
       case Property::Type::BigInteger: return boost::any_cast<BigInteger>(lhs.m_value) == boost::any_cast<BigInteger>(rhs.m_value);
+      case Property::Type::EntityId: return boost::any_cast<EntityId>(lhs.m_value) == boost::any_cast<EntityId>(rhs.m_value);
+      case Property::Type::ActionResult: return boost::any_cast<ActionResult>(lhs.m_value) == boost::any_cast<ActionResult>(rhs.m_value);
       case Property::Type::IntegerVec2: return boost::any_cast<IntegerVec2>(lhs.m_value) == boost::any_cast<IntegerVec2>(rhs.m_value);
       case Property::Type::Direction: return boost::any_cast<Direction>(lhs.m_value) == boost::any_cast<Direction>(rhs.m_value);
       case Property::Type::Color: return boost::any_cast<Color>(lhs.m_value) == boost::any_cast<Color>(rhs.m_value);
