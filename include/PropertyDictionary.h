@@ -38,15 +38,11 @@ public:
   ///               False if a new entry was added. 
   bool set(std::string key, Property const& value);
 
-  inline bool set(std::string key, Boolean value) { return set(key, Property(value)); }
-  inline bool set(std::string key, String value) { return set(key, Property(value)); }
-  inline bool set(std::string key, EightBits value) { return set(key, Property(value)); }
-  inline bool set(std::string key, Index value) { return set(key, Property(value)); }
-  inline bool set(std::string key, Integer value) { return set(key, Property(value)); }
-  inline bool set(std::string key, BigInteger value) { return set(key, Property(value)); }
-  inline bool set(std::string key, IntegerVec2 value) { return set(key, Property(value)); }
-  inline bool set(std::string key, Direction value) { return set(key, Property(value)); }
-  inline bool set(std::string key, Color value) { return set(key, Property(value)); }
+  template <typename T> bool set(std::string key, T value) 
+  { 
+    Property property = Property(value);
+    return set(key, property); 
+  }
 
   /// Overridable function to be called after a set() is performed.
   /// Default behavior is to do nothing.

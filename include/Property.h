@@ -129,11 +129,12 @@ public:
   Property() : m_type{ Type::Null } {}
   explicit Property(Boolean value) : m_type{ Type::Boolean }, m_value{ value } {}
   explicit Property(String value) : m_type{ Type::String }, m_value{ value } {}
+  explicit Property(char const* value) : m_type{ Type::String }, m_value{ std::string(value) } {}
   explicit Property(EightBits value) : m_type{ Type::EightBits }, m_value{ value } {}
-  explicit Property(Index value) : m_type{ Type::Number }, m_value{ value } {}
-  explicit Property(Integer value) : m_type{ Type::Number }, m_value{ value } {}
+  explicit Property(Index value) : m_type{ Type::Number }, m_value{ static_cast<Number>(value) } {}
+  explicit Property(Integer value) : m_type{ Type::Number }, m_value{ static_cast<Number>(value) } {}
   explicit Property(BigInteger value) : m_type{ Type::BigInteger }, m_value{ value } {}
-  explicit Property(Real value) : m_type{ Type::Number }, m_value{ value } {}
+  explicit Property(Real value) : m_type{ Type::Number }, m_value{ static_cast<Number>(value) } {}
   explicit Property(IntegerVec2 value) : m_type{ Type::IntegerVec2 }, m_value{ value } {}
   explicit Property(Direction value) : m_type{ Type::Direction }, m_value{ value } {}
   explicit Property(Color value) : m_type{ Type::Color }, m_value{ value } {}
@@ -168,7 +169,7 @@ public:
 
   template <> String as(String default_value) const
   {
-    switch (Type())
+    switch (type())
     {
       case Type::Null: return default_value;
       case Type::String: return boost::any_cast<String>(m_value);
