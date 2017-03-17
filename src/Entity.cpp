@@ -92,11 +92,11 @@ void Entity::initialize()
   SET_UP_LOGGER("Entity", true);
 
   /// Get our maximum HP. (The Lua script will automatically pick it from a range.)
-  int max_hp = m_metadata.get_intrinsic<int>("maxhp");
-  set_base_property<int>("maxhp", max_hp);
+  auto max_hp = m_metadata.get_intrinsic("maxhp", Property::Type::Integer);
+  set_base_property("maxhp", max_hp);
 
   /// Also set our HP to that value.
-  set_base_property<int>("hp", max_hp);
+  set_base_property("hp", max_hp);
 
   //notifyObservers(Event::Updated);
 }
@@ -117,7 +117,7 @@ bool Entity::action_is_pending() const
 
 bool Entity::action_is_in_progress()
 {
-  return (get_base_property<int>("counter_busy") > 0);
+  return (get_base_property("counter_busy", Property::Type::Integer).as<uint32_t>() > 0);
 }
 
 EntityId Entity::get_wielding_in(unsigned int& hand)
@@ -249,13 +249,13 @@ bool Entity::do_die()
       }
       else
       {
-        bool living = get_modified_property<bool>("living");
+        bool living = get_modified_property("living", Property::Type::Boolean).as<bool>();
         message = StringTransforms::maketr(get_id(), 0, living ? "YOU_ARE_KILLED" : "YOU_ARE_DESTROYED");
         Service<IMessageLog>::get().add(message);
       }
 
       // Set the property saying the entity is dead.
-      set_base_property<bool>("dead", true);
+      set_base_property("dead", Property(true));
 
       // Clear any pending actions.
       m_pending_actions.clear();
@@ -476,12 +476,12 @@ void Entity::set_worn(EntityId entity, WearLocation location)
 
 bool Entity::can_currently_see()
 {
-  return get_modified_property<bool>("can_see", false);
+  return get_modified_property("can_see", Property::Type::Boolean, Property(false)).as<bool>();
 }
 
 bool Entity::can_currently_move()
 {
-  return get_modified_property<bool>("can_move", false);
+  return get_modified_property("can_move", Property::Type::Boolean, Property(false)).as<bool>();
 }
 
 void Entity::set_gender(Gender gender)
@@ -512,35 +512,35 @@ unsigned int Entity::get_bodypart_number(BodyPart part) const
   switch (part)
   {
     case BodyPart::Body:
-      return get_intrinsic<int>("bodypart_body_count");
+      return get_intrinsic("bodypart_body_count", Property::Type::Integer).as<uint32_t>();
     case BodyPart::Skin:
-      return get_intrinsic<int>("bodypart_skin_count");
+      return get_intrinsic("bodypart_skin_count", Property::Type::Integer).as<uint32_t>();
     case BodyPart::Head:
-      return get_intrinsic<int>("bodypart_head_count");
+      return get_intrinsic("bodypart_head_count", Property::Type::Integer).as<uint32_t>();
     case BodyPart::Ear:
-      return get_intrinsic<int>("bodypart_ear_count");
+      return get_intrinsic("bodypart_ear_count", Property::Type::Integer).as<uint32_t>();
     case BodyPart::Eye:
-      return get_intrinsic<int>("bodypart_eye_count");
+      return get_intrinsic("bodypart_eye_count", Property::Type::Integer).as<uint32_t>();
     case BodyPart::Nose:
-      return get_intrinsic<int>("bodypart_nose_count");
+      return get_intrinsic("bodypart_nose_count", Property::Type::Integer).as<uint32_t>();
     case BodyPart::Mouth:
-      return get_intrinsic<int>("bodypart_mouth_count");
+      return get_intrinsic("bodypart_mouth_count", Property::Type::Integer).as<uint32_t>();
     case BodyPart::Neck:
-      return get_intrinsic<int>("bodypart_neck_count");
+      return get_intrinsic("bodypart_neck_count", Property::Type::Integer).as<uint32_t>();
     case BodyPart::Chest:
-      return get_intrinsic<int>("bodypart_chest_count");
+      return get_intrinsic("bodypart_chest_count", Property::Type::Integer).as<uint32_t>();
     case BodyPart::Arm:
-      return get_intrinsic<int>("bodypart_arm_count");
+      return get_intrinsic("bodypart_arm_count", Property::Type::Integer).as<uint32_t>();
     case BodyPart::Hand:
-      return get_intrinsic<int>("bodypart_hand_count");
+      return get_intrinsic("bodypart_hand_count", Property::Type::Integer).as<uint32_t>();
     case BodyPart::Leg:
-      return get_intrinsic<int>("bodypart_leg_count");
+      return get_intrinsic("bodypart_leg_count", Property::Type::Integer).as<uint32_t>();
     case BodyPart::Foot:
-      return get_intrinsic<int>("bodypart_foot_count");
+      return get_intrinsic("bodypart_foot_count", Property::Type::Integer).as<uint32_t>();
     case BodyPart::Wing:
-      return get_intrinsic<int>("bodypart_wing_count");
+      return get_intrinsic("bodypart_wing_count", Property::Type::Integer).as<uint32_t>();
     case BodyPart::Tail:
-      return get_intrinsic<int>("bodypart_tail_count");
+      return get_intrinsic("bodypart_tail_count", Property::Type::Integer).as<uint32_t>();
     default:
       return 0;
   }
@@ -553,35 +553,35 @@ std::string Entity::get_bodypart_name(BodyPart part) const
   switch (part)
   {
     case BodyPart::Body:
-      return get_intrinsic<std::string>("bodypart_body_name");
+      return get_intrinsic("bodypart_body_name", Property::Type::String).as<std::string>();
     case BodyPart::Skin:
-      return get_intrinsic<std::string>("bodypart_skin_name");
+      return get_intrinsic("bodypart_skin_name", Property::Type::String).as<std::string>();
     case BodyPart::Head:
-      return get_intrinsic<std::string>("bodypart_head_name");
+      return get_intrinsic("bodypart_head_name", Property::Type::String).as<std::string>();
     case BodyPart::Ear:
-      return get_intrinsic<std::string>("bodypart_ear_name");
+      return get_intrinsic("bodypart_ear_name", Property::Type::String).as<std::string>();
     case BodyPart::Eye:
-      return get_intrinsic<std::string>("bodypart_eye_name");
+      return get_intrinsic("bodypart_eye_name", Property::Type::String).as<std::string>();
     case BodyPart::Nose:
-      return get_intrinsic<std::string>("bodypart_nose_name");
+      return get_intrinsic("bodypart_nose_name", Property::Type::String).as<std::string>();
     case BodyPart::Mouth:
-      return get_intrinsic<std::string>("bodypart_mouth_name");
+      return get_intrinsic("bodypart_mouth_name", Property::Type::String).as<std::string>();
     case BodyPart::Neck:
-      return get_intrinsic<std::string>("bodypart_neck_name");
+      return get_intrinsic("bodypart_neck_name", Property::Type::String).as<std::string>();
     case BodyPart::Chest:
-      return get_intrinsic<std::string>("bodypart_chest_name");
+      return get_intrinsic("bodypart_chest_name", Property::Type::String).as<std::string>();
     case BodyPart::Arm:
-      return get_intrinsic<std::string>("bodypart_arm_name");
+      return get_intrinsic("bodypart_arm_name", Property::Type::String).as<std::string>();
     case BodyPart::Hand:
-      return get_intrinsic<std::string>("bodypart_hand_name");
+      return get_intrinsic("bodypart_hand_name", Property::Type::String).as<std::string>();
     case BodyPart::Leg:
-      return get_intrinsic<std::string>("bodypart_leg_name");
+      return get_intrinsic("bodypart_leg_name", Property::Type::String).as<std::string>();
     case BodyPart::Foot:
-      return get_intrinsic<std::string>("bodypart_foot_name");
+      return get_intrinsic("bodypart_foot_name", Property::Type::String).as<std::string>();
     case BodyPart::Wing:
-      return get_intrinsic<std::string>("bodypart_wing_name");
+      return get_intrinsic("bodypart_wing_name", Property::Type::String).as<std::string>();
     case BodyPart::Tail:
-      return get_intrinsic<std::string>("bodypart_tail_name");
+      return get_intrinsic("bodypart_tail_name", Property::Type::String).as<std::string>();
     default:
       return "squeedlyspooch (unknown BodyPart)";
   }
@@ -647,6 +647,95 @@ bool Entity::is_subtype_of(std::string that_type) const
 {
   std::string this_type = get_type();
   return GAME.get_entities().first_is_subtype_of_second(this_type, that_type);
+}
+
+/// Get an intrinsic of this Entity.
+/// If the intrinsic is not found, returns the default value.
+/// @param key            Name of the intrinsic to get.
+/// @param type           Type of the intrinsic to get.
+/// @param default_value  Default value to use, if any.
+/// @return The intrinsic (or default) value for that key.
+Property Entity::get_intrinsic(std::string key, Property::Type type, Property default_value) const
+{
+  return m_metadata.get_intrinsic(key, type, default_value);
+}
+
+Property Entity::get_intrinsic(std::string key, Property::Type type) const
+{
+  return get_intrinsic(key, type, Property(type));
+}
+/// Get a base property of this Entity.
+/// If the base property is not found, the method falls back upon the
+/// intrinsic for that property (if any).
+/// @param key            Name of the property to get.
+/// @param type           Type of the property to get.
+/// @param default_value  Default value to use, if any.
+/// @return The property (or default) value for that key.
+Property Entity::get_base_property(std::string key, Property::Type type, Property default_value) const
+{
+  if (m_properties.contains(key))
+  {
+    return m_properties.get(key);
+  }
+  else
+  {
+    Property value = m_metadata.get_intrinsic(key, type, default_value);
+    m_properties.set(key, Property(value));
+    return value;
+  }
+}
+
+Property Entity::get_base_property(std::string key, Property::Type type) const
+{
+  return get_base_property(key, type, Property(type));
+}
+
+/// Sets a base property of this Entity.
+/// If the base property is not found, it is created.
+///
+/// @param key    Key of the property to set.
+/// @param value  Value to set the property to.
+/// @return Boolean indicating whether the property previously existed.
+bool Entity::set_base_property(std::string key, Property value)
+{
+  bool existed = m_properties.contains(key);
+  m_properties.set(key, value);
+
+  return existed;
+}
+
+/// Adds to a base property of this Entity.
+/// If the base property is not found, it is created.
+/// @param key    Key of the property to set.
+/// @param value  Value to add to the property.
+void Entity::add_to_base_property(std::string key, Property add_value)
+{
+  Property existing_value = m_properties.get(key);
+  Property new_value = existing_value + add_value;
+  m_properties.set(key, new_value);
+}
+
+/// Get a modified property of this Entity.
+/// If the modified property is not found, the method falls back upon the
+/// base value for that property (if any).
+/// @param key            Name of the property to get.
+/// @param type           Type of the property to get.
+/// @param default_value  Default value to use, if any.
+/// @return The modified (or base) property value for that key.
+Property Entity::get_modified_property(std::string key, Property::Type type, Property default_value) const
+{
+  if (!m_properties.contains(key))
+  {
+    Property value = m_metadata.get_intrinsic(key, type, default_value);
+    m_properties.set(key, Property(value));
+  }
+
+  return m_properties.get_modified(key);
+}
+
+Property Entity::get_modified_property(std::string key, Property::Type type) const
+{
+  return get_modified_property(key, type, Property(type));
 }
 
 bool Entity::add_modifier(std::string key, EntityId id, ElapsedTime expires_at)

@@ -29,7 +29,7 @@ bool PropertyDictionary::contains(std::string key) const
 /// @return     The entry requested.
 ///             If the entry does not exist, returns a null Property.
 
-Property const & PropertyDictionary::get(String key) const
+Property const & PropertyDictionary::get(std::string key) const
 {
   if (m_dictionary.count(key) == 0)
   {

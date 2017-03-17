@@ -26,7 +26,7 @@ public:
   /// @param key  Key of the setting to retrieve.
   /// @return     The entry requested.
   ///             If the entry does not exist, returns a null Property.
-  Property const& get(String key) const;
+  Property const& get(std::string key) const;
 
   /// Add/alter an entry in the base dictionary.
   /// Erases any entry in the modified dictionary, if one exists.

@@ -65,6 +65,7 @@ App::App(sf::RenderWindow& app_window)
   ///       than it's worth, since static initialization order is not
   ///       defined.
   SET_UP_LOGGER("Action", false);
+  SET_UP_LOGGER("Property", true);
 
 
   // First entity's first: load config settings.

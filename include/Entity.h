@@ -130,34 +130,21 @@ public:
   /// Get an intrinsic of this Entity.
   /// If the intrinsic is not found, returns the default value.
   /// @param key            Name of the intrinsic to get.
+  /// @param type           Type of the intrinsic to get.
   /// @param default_value  Default value to use, if any.
   /// @return The intrinsic (or default) value for that key.
-  template<typename T>
-  T get_intrinsic(std::string key, T default_value = T()) const
-  {
-    return m_metadata.get_intrinsic<T>(key, default_value);
-  }
+  Property get_intrinsic(std::string key, Property::Type type, Property default_value) const;
+  Property get_intrinsic(std::string key, Property::Type type) const;
 
   /// Get a base property of this Entity.
   /// If the base property is not found, the method falls back upon the
   /// intrinsic for that property (if any).
   /// @param key            Name of the property to get.
+  /// @param type           Type of the property to get.
   /// @param default_value  Default value to use, if any.
   /// @return The property (or default) value for that key.
-  template<typename T>
-  T get_base_property(std::string key, T default_value = T()) const
-  {
-    if (m_properties.contains(key))
-    {
-      return m_properties.get(key).as<T>();
-    }
-    else
-    {
-      T value = m_metadata.get_intrinsic<T>(key, default_value);
-      m_properties.set(key, Property(value));
-      return value;
-    }
-  }
+  Property get_base_property(std::string key, Property::Type type, Property default_value) const;
+  Property get_base_property(std::string key, Property::Type type) const;
 
   /// Sets a base property of this Entity.
   /// If the base property is not found, it is created.
@@ -165,44 +152,23 @@ public:
   /// @param key    Key of the property to set.
   /// @param value  Value to set the property to.
   /// @return Boolean indicating whether the property previously existed.
-  template<typename T>
-  bool set_base_property(std::string key, T value)
-  {
-    bool existed = m_properties.contains(key);
-    m_properties.set(key, Property(value));
-
-    return existed;
-  }
+  bool set_base_property(std::string key, Property value);
 
   /// Adds to a base property of this Entity.
   /// If the base property is not found, it is created.
   /// @param key    Key of the property to set.
   /// @param value  Value to add to the property.
-  template<typename T>
-  void add_to_base_property(std::string key, T add_value)
-  {
-    T existing_value = m_properties.get(key).as<T>();
-    T new_value = existing_value + add_value;
-    m_properties.set(key, Property(new_value));
-  }
+  void add_to_base_property(std::string key, Property add_value);
 
   /// Get a modified property of this Entity.
   /// If the modified property is not found, the method falls back upon the
   /// base value for that property (if any).
   /// @param key            Name of the property to get.
+  /// @param type           Type of the property to get.
   /// @param default_value  Default value to use, if any.
   /// @return The modified (or base) property value for that key.
-  template<typename T>
-  T get_modified_property(std::string key, T default_value = T()) const
-  {
-    if (!m_properties.contains(key))
-    {
-      T value = m_metadata.get_intrinsic<T>(key, default_value);
-      m_properties.set(key, Property(value));
-    }
-
-    return m_properties.get_modified(key).as<T>();
-  }
+  Property get_modified_property(std::string key, Property::Type type, Property default_value) const;
+  Property get_modified_property(std::string key, Property::Type type) const;
 
   /// Add a property modifier to this Entity.
   /// @param  key               Name of property to modify.
