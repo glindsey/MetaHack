@@ -513,48 +513,10 @@
     <ClCompile Include="src\TileSheet.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include=".gitignore" />
-    <None Include="README.md" />
-    <None Include="resources\deepcopy.lua" />
-    <None Include="resources\default.lua" />
-    <None Include="resources\entity\Animal.lua" />
-    <None Include="resources\entity\Biped.lua" />
-    <None Include="resources\entity\Blob.lua" />
-    <None Include="resources\entity\Chest.lua" />
-    <None Include="resources\entity\ChestWooden.lua" />
-    <None Include="resources\entity\Coin.lua" />
-    <None Include="resources\entity\CoinGold.lua" />
-    <None Include="resources\entity\Container.lua" />
-    <None Include="resources\entity\Dagger.lua" />
-    <None Include="resources\entity\DynamicEntity.lua" />
-    <None Include="resources\entity\Entity.lua" />
-    <None Include="resources\entity\FlaskGlass.lua" />
-    <None Include="resources\entity\Human.lua" />
-    <None Include="resources\entity\LightOrb.lua" />
-    <None Include="resources\entity\LightSource.lua" />
-    <None Include="resources\entity\Marcher.lua" />
-    <None Include="resources\entity\Mu.lua" />
-    <None Include="resources\entity\Rock.lua" />
-    <None Include="resources\entity\RockLichen.lua" />
-    <None Include="resources\entity\SackCloth.lua" />
-    <None Include="resources\entity\Sapient.lua" />
-    <None Include="resources\entity\Sconce.lua" />
-    <None Include="resources\entity\TileContents.lua" />
-    <None Include="resources\entity\Weapon.lua" />
-    <None Include="resources\entity\WeaponCutting.lua" />
-    <None Include="resources\entity\WeaponStabbing.lua" />
-    <None Include="resources\entity\WeaponStrangling.lua" />
-    <None Include="resources\entity\WeaponStriking.lua" />
-    <None Include="resources\maptile\MTFloor.lua" />
-    <None Include="resources\maptile\MTFloorDirt.lua" />
-    <None Include="resources\maptile\MTFloorStone.lua" />
-    <None Include="resources\maptile\MTUnknown.lua" />
-    <None Include="resources\maptile\MTWall.lua" />
-    <None Include="resources\maptile\MTWallStone.lua" />
-    <None Include="resources\script\map.lua" />
-    <None Include="resources\shader\default.frag" />
-    <None Include="resources\shader\default.vert" />
-    <None Include="resources\strings.en.json" />
+    <None Include="resources\**">
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
