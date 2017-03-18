@@ -514,10 +514,48 @@
     <ClCompile Include="src\TileSheet.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="resources\**">
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
-    </None>
+    <None Include="resources\entity\Biped.png" />
+    <None Include="resources\entity\ChestIron.png" />
+    <None Include="resources\entity\ChestWooden.png" />
+    <None Include="resources\entity\CoinCopper.png" />
+    <None Include="resources\entity\CoinGold.png" />
+    <None Include="resources\entity\CoinSilver.png" />
+    <None Include="resources\entity\Dagger.png" />
+    <None Include="resources\entity\DoorWooden.png" />
+    <None Include="resources\entity\Entity.png" />
+    <None Include="resources\entity\FlaskGlass.png" />
+    <None Include="resources\entity\Fountain.png" />
+    <None Include="resources\entity\GridBug.png" />
+    <None Include="resources\entity\Human.png" />
+    <None Include="resources\entity\LightOrb.png" />
+    <None Include="resources\entity\Mu.png" />
+    <None Include="resources\entity\Rock.png" />
+    <None Include="resources\entity\RockLichen.png" />
+    <None Include="resources\entity\SackCloth.png" />
+    <None Include="resources\entity\Sconce.png" />
+    <None Include="resources\entity\Scroll.png" />
+    <None Include="resources\entity\Sink.png" />
+    <None Include="resources\entity\Thing.png" />
+    <None Include="resources\entity\WallStone.png" />
+    <None Include="resources\font\TLDPR1.jpg" />
+    <None Include="resources\font\TLDPR2.jpg" />
+    <None Include="resources\font\TLDPR3.jpg" />
+    <None Include="resources\font\TLDPR4.jpg" />
+    <None Include="resources\font\TLDPR5.jpg" />
+    <None Include="resources\graphic\IconEquipped.png" />
+    <None Include="resources\graphic\IconWielded.png" />
+    <None Include="resources\graphic\other\461223131.jpg" />
+    <None Include="resources\graphic\other\461223141.jpg" />
+    <None Include="resources\graphic\other\get-ye-sack.png" />
+    <None Include="resources\graphic\other\palette.png" />
+    <None Include="resources\graphic\other\tilesheet.png" />
+    <None Include="resources\maptile\MTFloorDirt.png" />
+    <None Include="resources\maptile\MTFloorGrass.png" />
+    <None Include="resources\maptile\MTFloorStone.png" />
+    <None Include="resources\maptile\MTStairsDown.png" />
+    <None Include="resources\maptile\MTStairsUp.png" />
+    <None Include="resources\maptile\MTUnknown.png" />
+    <None Include="resources\maptile\MTWallStone.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

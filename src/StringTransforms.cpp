@@ -287,7 +287,7 @@ namespace StringTransforms
     std::string discard_string;
     std::string* current_string = &out_str;
 
-    LOG(TRACE) << "Replacing tokens in: \"" << str << "\"";
+    CLOG(TRACE, "StringTransforms") << "Replacing tokens in: \"" << str << "\"";
 
     str += '\0';
 
@@ -350,7 +350,7 @@ namespace StringTransforms
           {
             if (!token_name.empty())
             {
-              LOG(TRACE) << "Found token: \"" << token_name << "\"";
+              CLOG(TRACE, "StringTransforms") << "Found token: \"" << token_name << "\"";
               std::transform(token_name.begin(), token_name.end(), token_name.begin(), ::towlower);
               if (*loc == '(')
               {
@@ -361,7 +361,7 @@ namespace StringTransforms
               else
               {
                 token_result = token_functor(token_name);
-                LOG(TRACE) << "Replacing token with: \"" << token_result << "\"";
+                CLOG(TRACE, "StringTransforms") << "Replacing token with: \"" << token_result << "\"";
                 out_str += token_result;
 
                 if (*loc != L'\0')
@@ -384,9 +384,9 @@ namespace StringTransforms
         case TokenizerState::ParsingTokenArgument:
           if (*loc == ')')
           {
-            LOG(TRACE) << "Found token argument: \"" << token_argument << "\"";
+            CLOG(TRACE, "StringTransforms") << "Found token argument: \"" << token_argument << "\"";
             token_result = token_argument_functor(token_name, token_argument);
-            LOG(TRACE) << "Replacing token with: \"" << token_result << "\"";
+            CLOG(TRACE, "StringTransforms") << "Replacing token with: \"" << token_result << "\"";
             out_str += token_result;
 
             if (*loc != L'\0')
@@ -411,7 +411,7 @@ namespace StringTransforms
           {
             if (!token_name.empty())
             {
-              LOG(TRACE) << "Found selector token: \"" << token_name << "\"";
+              CLOG(TRACE, "StringTransforms") << "Found selector token: \"" << token_name << "\"";
               std::transform(token_name.begin(), token_name.end(), token_name.begin(), ::towlower);
               selector_true.clear();
               state = TokenizerState::ParsingChoiceTrue;
@@ -419,14 +419,14 @@ namespace StringTransforms
             }
             else
             {
-              LOG(WARNING) << "Selector name empty, skipping token";
+              CLOG(WARNING, "StringTransforms") << "Selector name empty, skipping token";
               state = TokenizerState::ParsingChoiceError;
               current_string = &discard_string;
             }
           }
           else
           {
-            LOG(WARNING) << "Invalid character \"" << *loc << "\" seen in selector name \"" << token_name << "\", skipping token";
+            CLOG(WARNING, "StringTransforms") << "Invalid character \"" << *loc << "\" seen in selector name \"" << token_name << "\", skipping token";
             state = TokenizerState::ParsingChoiceError;
             current_string = &discard_string;
           }
@@ -435,7 +435,7 @@ namespace StringTransforms
         case TokenizerState::ParsingChoiceTrue:
           if (*loc == ':')
           {
-            LOG(TRACE) << "Found selector 'true' string: \"" << selector_true << "\"";
+            CLOG(TRACE, "StringTransforms") << "Found selector 'true' string: \"" << selector_true << "\"";
             selector_false.clear();
             state = TokenizerState::ParsingChoiceFalse;
             current_string = &selector_false;
@@ -449,7 +449,7 @@ namespace StringTransforms
         case TokenizerState::ParsingChoiceFalse:
           if (*loc == ')')
           {
-            LOG(TRACE) << "Found selector 'false' string: \"" << selector_false << "\"";
+            CLOG(TRACE, "StringTransforms") << "Found selector 'false' string: \"" << selector_false << "\"";
             bool result = choose_functor(token_name);
             token_result = (result ? selector_true : selector_false);
             //LOG(TRACE) << "Replacing token with: \"" << token_result << "\"";
@@ -472,7 +472,7 @@ namespace StringTransforms
           break;
 
         default:
-          LOG(WARNING) << "Unknown tokenizer state " << state;
+          CLOG(WARNING, "StringTransforms") << "Unknown tokenizer state " << state;
           state = TokenizerState::Text;
           current_string = &out_str;
           break;
@@ -480,11 +480,11 @@ namespace StringTransforms
       ++loc;
     } // end while
 
-      LOG(TRACE) << "String is now: \"" << out_str << "\"";
+    CLOG(TRACE, "StringTransforms") << "String is now: \"" << out_str << "\"";
 
     if (state != TokenizerState::Text)
     {
-      LOG(WARNING) << "End of string while in tokenizer state " << state;
+      CLOG(WARNING, "StringTransforms") << "End of string while in tokenizer state " << state;
     }
     
     //boost::regex expr("\\w+");

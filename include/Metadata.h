@@ -27,7 +27,7 @@ public:
 
   std::string const& get_type() const;
 
-  Vec2u get_tile_coords() const;
+  UintVec2 get_tile_coords() const;
 
   Property get_intrinsic(std::string name, Property::Type type, Property default_value) const;
   Property get_intrinsic(std::string name, Property::Type type) const;

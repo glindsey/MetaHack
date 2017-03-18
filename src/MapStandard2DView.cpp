@@ -8,7 +8,7 @@
 
 #include "ShaderEffect.h"
 
-MapStandard2DView::MapStandard2DView(std::string name, Map& map, Vec2u size, TileSheet& tile_sheet)
+MapStandard2DView::MapStandard2DView(std::string name, Map& map, UintVec2 size, TileSheet& tile_sheet)
   :
   MapView(name, map, size),
   m_tile_sheet(tile_sheet)
@@ -17,7 +17,7 @@ MapStandard2DView::MapStandard2DView(std::string name, Map& map, Vec2u size, Til
 
   // Create a grid of tile views, each tied to a map tile.
   m_map_tile_views.reset(new Grid2D<MapTileStandard2DView>(map.getSize(), 
-                                                           [&](IntegerVec2 coords) -> MapTileStandard2DView*
+                                                           [&](IntVec2 coords) -> MapTileStandard2DView*
   {
     return NEW MapTileStandard2DView(map.get_tile(coords), m_tile_sheet);
   }));
@@ -87,7 +87,7 @@ void MapStandard2DView::draw_highlight(sf::RenderTarget& target,
                                        int frame)
 {
   auto& config = Service<IConfigSettings>::get();
-  auto map_tile_size = config.get("map_tile_size").as<Real>();
+  auto map_tile_size = config.get("map_tile_size").as<float>();
 
   float half_ts(map_tile_size * 0.5f);
   RealVec2 vSW(location.x - half_ts, location.y + half_ts);
@@ -104,7 +104,7 @@ void MapStandard2DView::draw_highlight(sf::RenderTarget& target,
   box_shape.setPosition(box_position);
   box_shape.setSize(box_size);
   box_shape.setOutlineColor(fgColor);
-  box_shape.setOutlineThickness(config.get("tile_highlight_border_width").as<Real>());
+  box_shape.setOutlineThickness(config.get("tile_highlight_border_width").as<float>());
   box_shape.setFillColor(bgColor);
 
   target.draw(box_shape);

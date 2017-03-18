@@ -8,7 +8,7 @@
 
 namespace metagui
 {
-  Label::Label(std::string name, IntegerVec2 location)
+  Label::Label(std::string name, IntVec2 location)
     :
     Object(name, location)
   {}
@@ -22,7 +22,7 @@ namespace metagui
   void Label::drawPreChildren_(sf::RenderTexture& texture, int frame)
   {
     auto& config = Service<IConfigSettings>::get();
-    float line_spacing_y = the_default_font.getLineSpacing(config.get("text_default_size").as<Integer>());
+    float line_spacing_y = the_default_font.getLineSpacing(config.get("text_default_size").as<int32_t>());
 
     // Text offsets relative to the background rectangle.
     RealVec2 offset{ 3.0f, 3.0f };
@@ -37,7 +37,7 @@ namespace metagui
     std::string str = getText();
     if (!str.empty())
     {
-      sf::Text text{ str, the_default_font, static_cast<unsigned int>(config.get("text_default_size").as<Integer>()) };
+      sf::Text text{ str, the_default_font, static_cast<unsigned int>(config.get("text_default_size").as<int32_t>()) };
       text.setColor(config.get("text_color").as<Color>());
       text.setPosition(offset);
 

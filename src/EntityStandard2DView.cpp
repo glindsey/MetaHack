@@ -39,13 +39,13 @@ void EntityStandard2DView::draw(sf::RenderTarget& target,
 
   auto target_coords = getLocation();
   auto target_size = getSize();
-  auto tile_size = config.get("map_tile_size").as<Integer>();
+  auto tile_size = config.get("map_tile_size").as<int32_t>();
   if (target_size == RealVec2(0, 0))
   {
     target_size = { static_cast<float>(tile_size), static_cast<float>(tile_size) };
   }
 
-  Vec2u tile_coords = get_tile_sheet_coords(frame);
+  UintVec2 tile_coords = get_tile_sheet_coords(frame);
   texture_coords.left = tile_coords.x * tile_size;
   texture_coords.top = tile_coords.y * tile_size;
   texture_coords.width = tile_size;
@@ -85,18 +85,19 @@ std::string EntityStandard2DView::getViewName()
   return "standard2D";
 }
 
-Vec2u EntityStandard2DView::get_tile_sheet_coords(int frame) const
+UintVec2 EntityStandard2DView::get_tile_sheet_coords(int frame) const
 {
   auto& entity = getEntity();
 
   /// Get tile coordinates on the sheet.
-  Vec2u start_coords = entity.get_metadata().get_tile_coords();
+  UintVec2 start_coords = entity.get_metadata().get_tile_coords();
 
   /// Call the Lua function to get the offset (tile to choose).
-  Vec2u offset = entity.call_lua_function<Vec2u>("get_tile_offset", { frame });
+  UintVec2 offset = entity.call_lua_function("get_tile_offset", { Property(frame) }, 
+                                             Property::Type::IntVec2).as<UintVec2>();
 
   /// Add them to get the resulting coordinates.
-  Vec2u tile_coords = start_coords + offset;
+  UintVec2 tile_coords = start_coords + offset;
 
   return tile_coords;
 }

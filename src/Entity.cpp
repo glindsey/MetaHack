@@ -225,8 +225,8 @@ bool Entity::is_adjacent_to(EntityId entity)
     return false;
   }
 
-  IntegerVec2 const& our_coords = our_maptile->get_coords();
-  IntegerVec2 const& thing_coords = thing_maptile->get_coords();
+  IntVec2 const& our_coords = our_maptile->get_coords();
+  IntVec2 const& thing_coords = thing_maptile->get_coords();
 
   return adjacent(our_coords, thing_coords);
 }
@@ -507,124 +507,124 @@ Gender Entity::get_gender_or_you() const
 }
 
 /// Get the number of a particular body part the DynamicEntity has.
-unsigned int Entity::get_bodypart_number(BodyPart part) const
+Property Entity::get_bodypart_number(BodyPart part) const
 {
   switch (part)
   {
     case BodyPart::Body:
-      return get_intrinsic("bodypart_body_count", Property::Type::Integer).as<uint32_t>();
+      return get_intrinsic("bodypart_body_count", Property::Type::Integer);
     case BodyPart::Skin:
-      return get_intrinsic("bodypart_skin_count", Property::Type::Integer).as<uint32_t>();
+      return get_intrinsic("bodypart_skin_count", Property::Type::Integer);
     case BodyPart::Head:
-      return get_intrinsic("bodypart_head_count", Property::Type::Integer).as<uint32_t>();
+      return get_intrinsic("bodypart_head_count", Property::Type::Integer);
     case BodyPart::Ear:
-      return get_intrinsic("bodypart_ear_count", Property::Type::Integer).as<uint32_t>();
+      return get_intrinsic("bodypart_ear_count", Property::Type::Integer);
     case BodyPart::Eye:
-      return get_intrinsic("bodypart_eye_count", Property::Type::Integer).as<uint32_t>();
+      return get_intrinsic("bodypart_eye_count", Property::Type::Integer);
     case BodyPart::Nose:
-      return get_intrinsic("bodypart_nose_count", Property::Type::Integer).as<uint32_t>();
+      return get_intrinsic("bodypart_nose_count", Property::Type::Integer);
     case BodyPart::Mouth:
-      return get_intrinsic("bodypart_mouth_count", Property::Type::Integer).as<uint32_t>();
+      return get_intrinsic("bodypart_mouth_count", Property::Type::Integer);
     case BodyPart::Neck:
-      return get_intrinsic("bodypart_neck_count", Property::Type::Integer).as<uint32_t>();
+      return get_intrinsic("bodypart_neck_count", Property::Type::Integer);
     case BodyPart::Chest:
-      return get_intrinsic("bodypart_chest_count", Property::Type::Integer).as<uint32_t>();
+      return get_intrinsic("bodypart_chest_count", Property::Type::Integer);
     case BodyPart::Arm:
-      return get_intrinsic("bodypart_arm_count", Property::Type::Integer).as<uint32_t>();
+      return get_intrinsic("bodypart_arm_count", Property::Type::Integer);
     case BodyPart::Hand:
-      return get_intrinsic("bodypart_hand_count", Property::Type::Integer).as<uint32_t>();
+      return get_intrinsic("bodypart_hand_count", Property::Type::Integer);
     case BodyPart::Leg:
-      return get_intrinsic("bodypart_leg_count", Property::Type::Integer).as<uint32_t>();
+      return get_intrinsic("bodypart_leg_count", Property::Type::Integer);
     case BodyPart::Foot:
-      return get_intrinsic("bodypart_foot_count", Property::Type::Integer).as<uint32_t>();
+      return get_intrinsic("bodypart_foot_count", Property::Type::Integer);
     case BodyPart::Wing:
-      return get_intrinsic("bodypart_wing_count", Property::Type::Integer).as<uint32_t>();
+      return get_intrinsic("bodypart_wing_count", Property::Type::Integer);
     case BodyPart::Tail:
-      return get_intrinsic("bodypart_tail_count", Property::Type::Integer).as<uint32_t>();
+      return get_intrinsic("bodypart_tail_count", Property::Type::Integer);
     default:
-      return 0;
+      return Property(0);
   }
 }
 
 /// Get the appropriate body part name for the DynamicEntity.
 /// @todo Figure out how to cleanly localize this.
-std::string Entity::get_bodypart_name(BodyPart part) const
+Property Entity::get_bodypart_name(BodyPart part) const
 {
   switch (part)
   {
     case BodyPart::Body:
-      return get_intrinsic("bodypart_body_name", Property::Type::String).as<std::string>();
+      return get_intrinsic("bodypart_body_name", Property::Type::String);
     case BodyPart::Skin:
-      return get_intrinsic("bodypart_skin_name", Property::Type::String).as<std::string>();
+      return get_intrinsic("bodypart_skin_name", Property::Type::String);
     case BodyPart::Head:
-      return get_intrinsic("bodypart_head_name", Property::Type::String).as<std::string>();
+      return get_intrinsic("bodypart_head_name", Property::Type::String);
     case BodyPart::Ear:
-      return get_intrinsic("bodypart_ear_name", Property::Type::String).as<std::string>();
+      return get_intrinsic("bodypart_ear_name", Property::Type::String);
     case BodyPart::Eye:
-      return get_intrinsic("bodypart_eye_name", Property::Type::String).as<std::string>();
+      return get_intrinsic("bodypart_eye_name", Property::Type::String);
     case BodyPart::Nose:
-      return get_intrinsic("bodypart_nose_name", Property::Type::String).as<std::string>();
+      return get_intrinsic("bodypart_nose_name", Property::Type::String);
     case BodyPart::Mouth:
-      return get_intrinsic("bodypart_mouth_name", Property::Type::String).as<std::string>();
+      return get_intrinsic("bodypart_mouth_name", Property::Type::String);
     case BodyPart::Neck:
-      return get_intrinsic("bodypart_neck_name", Property::Type::String).as<std::string>();
+      return get_intrinsic("bodypart_neck_name", Property::Type::String);
     case BodyPart::Chest:
-      return get_intrinsic("bodypart_chest_name", Property::Type::String).as<std::string>();
+      return get_intrinsic("bodypart_chest_name", Property::Type::String);
     case BodyPart::Arm:
-      return get_intrinsic("bodypart_arm_name", Property::Type::String).as<std::string>();
+      return get_intrinsic("bodypart_arm_name", Property::Type::String);
     case BodyPart::Hand:
-      return get_intrinsic("bodypart_hand_name", Property::Type::String).as<std::string>();
+      return get_intrinsic("bodypart_hand_name", Property::Type::String);
     case BodyPart::Leg:
-      return get_intrinsic("bodypart_leg_name", Property::Type::String).as<std::string>();
+      return get_intrinsic("bodypart_leg_name", Property::Type::String);
     case BodyPart::Foot:
-      return get_intrinsic("bodypart_foot_name", Property::Type::String).as<std::string>();
+      return get_intrinsic("bodypart_foot_name", Property::Type::String);
     case BodyPart::Wing:
-      return get_intrinsic("bodypart_wing_name", Property::Type::String).as<std::string>();
+      return get_intrinsic("bodypart_wing_name", Property::Type::String);
     case BodyPart::Tail:
-      return get_intrinsic("bodypart_tail_name", Property::Type::String).as<std::string>();
+      return get_intrinsic("bodypart_tail_name", Property::Type::String);
     default:
-      return "squeedlyspooch (unknown BodyPart)";
+      return Property("squeedlyspooch (unknown BodyPart)");
   }
 }
 
 /// Get the appropriate body part plural for the DynamicEntity.
 /// @todo Figure out how to cleanly localize this.
-std::string Entity::get_bodypart_plural(BodyPart part) const
+Property Entity::get_bodypart_plural(BodyPart part) const
 {
   switch (part)
   {
     case BodyPart::Body:
-      return get_intrinsic<std::string>("bodypart_body_plural", get_bodypart_name(BodyPart::Body) + "s");
+      return get_intrinsic("bodypart_body_plural", Property::Type::String, get_bodypart_name(BodyPart::Body) + Property("s"));
     case BodyPart::Skin:
-      return get_intrinsic<std::string>("bodypart_skin_plural", get_bodypart_name(BodyPart::Skin) + "s");
+      return get_intrinsic("bodypart_skin_plural", Property::Type::String, get_bodypart_name(BodyPart::Skin) + Property("s"));
     case BodyPart::Head:
-      return get_intrinsic<std::string>("bodypart_head_plural", get_bodypart_name(BodyPart::Head) + "s");
+      return get_intrinsic("bodypart_head_plural", Property::Type::String, get_bodypart_name(BodyPart::Head) + Property("s"));
     case BodyPart::Ear:
-      return get_intrinsic<std::string>("bodypart_ear_plural", get_bodypart_name(BodyPart::Ear) + "s");
+      return get_intrinsic("bodypart_ear_plural", Property::Type::String, get_bodypart_name(BodyPart::Ear) + Property("s"));
     case BodyPart::Eye:
-      return get_intrinsic<std::string>("bodypart_eye_plural", get_bodypart_name(BodyPart::Eye) + "s");
+      return get_intrinsic("bodypart_eye_plural", Property::Type::String, get_bodypart_name(BodyPart::Eye) + Property("s"));
     case BodyPart::Nose:
-      return get_intrinsic<std::string>("bodypart_nose_plural", get_bodypart_name(BodyPart::Nose) + "s");
+      return get_intrinsic("bodypart_nose_plural", Property::Type::String, get_bodypart_name(BodyPart::Nose) + Property("s"));
     case BodyPart::Mouth:
-      return get_intrinsic<std::string>("bodypart_mouth_plural", get_bodypart_name(BodyPart::Mouth) + "s");
+      return get_intrinsic("bodypart_mouth_plural", Property::Type::String, get_bodypart_name(BodyPart::Mouth) + Property("s"));
     case BodyPart::Neck:
-      return get_intrinsic<std::string>("bodypart_neck_plural", get_bodypart_name(BodyPart::Neck) + "s");
+      return get_intrinsic("bodypart_neck_plural", Property::Type::String, get_bodypart_name(BodyPart::Neck) + Property("s"));
     case BodyPart::Chest:
-      return get_intrinsic<std::string>("bodypart_chest_plural", get_bodypart_name(BodyPart::Chest) + "s");
+      return get_intrinsic("bodypart_chest_plural", Property::Type::String, get_bodypart_name(BodyPart::Chest) + Property("s"));
     case BodyPart::Arm:
-      return get_intrinsic<std::string>("bodypart_arm_plural", get_bodypart_name(BodyPart::Arm) + "s");
+      return get_intrinsic("bodypart_arm_plural", Property::Type::String, get_bodypart_name(BodyPart::Arm) + Property("s"));
     case BodyPart::Hand:
-      return get_intrinsic<std::string>("bodypart_hand_plural", get_bodypart_name(BodyPart::Hand) + "s");
+      return get_intrinsic("bodypart_hand_plural", Property::Type::String, get_bodypart_name(BodyPart::Hand) + Property("s"));
     case BodyPart::Leg:
-      return get_intrinsic<std::string>("bodypart_leg_plural", get_bodypart_name(BodyPart::Leg) + "s");
+      return get_intrinsic("bodypart_leg_plural", Property::Type::String, get_bodypart_name(BodyPart::Leg) + Property("s"));
     case BodyPart::Foot:
-      return get_intrinsic<std::string>("bodypart_foot_plural", get_bodypart_name(BodyPart::Foot) + "s");
+      return get_intrinsic("bodypart_foot_plural", Property::Type::String, get_bodypart_name(BodyPart::Foot) + Property("s"));
     case BodyPart::Wing:
-      return get_intrinsic<std::string>("bodypart_wing_plural", get_bodypart_name(BodyPart::Wing) + "s");
+      return get_intrinsic("bodypart_wing_plural", Property::Type::String, get_bodypart_name(BodyPart::Wing) + Property("s"));
     case BodyPart::Tail:
-      return get_intrinsic<std::string>("bodypart_tail_plural", get_bodypart_name(BodyPart::Tail) + "s");
+      return get_intrinsic("bodypart_tail_plural", Property::Type::String, get_bodypart_name(BodyPart::Tail) + Property("s"));
     default:
-      return "squeedlyspooches (unknown BodyParts)";
+      return Property("squeedlyspooches (unknown BodyParts)");
   }
 }
 
@@ -638,9 +638,9 @@ std::string const& Entity::get_type() const
   return m_metadata.get_type();
 }
 
-std::string const& Entity::get_parent_type() const
+std::string Entity::get_parent_type() const
 {
-  return m_metadata.get_intrinsic<std::string>("parent");
+  return m_metadata.get_intrinsic("parent", Property::Type::String).as<std::string>();
 }
 
 bool Entity::is_subtype_of(std::string that_type) const
@@ -750,12 +750,12 @@ size_t Entity::remove_modifier(std::string key, EntityId id)
 
 unsigned int Entity::get_quantity() const
 {
-  return get_base_property<unsigned int>("quantity", 1);
+  return get_base_property("quantity", Property::Type::Integer, Property(1)).as<uint32_t>();
 }
 
 void Entity::set_quantity(unsigned int quantity)
 {
-  set_base_property<unsigned int>("quantity", quantity);
+  set_base_property("quantity", Property(quantity));
 }
 
 EntityId Entity::get_id() const
@@ -806,12 +806,12 @@ bool Entity::can_see(EntityId entity)
     return false;
   }
 
-  IntegerVec2 thing_coords = thing_location->get_coords();
+  IntVec2 thing_coords = thing_location->get_coords();
 
   return can_see(thing_coords);
 }
 
-bool Entity::can_see(IntegerVec2 coords)
+bool Entity::can_see(IntVec2 coords)
 {
   // Make sure we are able to see at all.
   if (!can_currently_see())
@@ -835,7 +835,7 @@ bool Entity::can_see(IntegerVec2 coords)
   }
 
   // If the coordinates are where we are, then yes, we can indeed see the tile, regardless.
-  IntegerVec2 tile_coords = tile->get_coords();
+  IntVec2 tile_coords = tile->get_coords();
 
   if ((tile_coords.x == coords.x) && (tile_coords.y == coords.y))
   {
@@ -890,7 +890,7 @@ void Entity::find_seen_tiles()
   }
 }
 
-MapMemoryChunk const& Entity::get_memory_at(IntegerVec2 coords) const
+MapMemoryChunk const& Entity::get_memory_at(IntVec2 coords) const
 {
   static MapMemoryChunk null_memory_chunk{ "???", GAME.get_game_clock() };
 
@@ -942,7 +942,7 @@ bool Entity::move_into(EntityId new_location)
           if (new_map_id != MapFactory::null_map_id)
           {
             Map& new_map = GAME.get_maps().get(new_map_id);
-            IntegerVec2 new_map_size = new_map.getSize();
+            IntVec2 new_map_size = new_map.getSize();
             m_map_memory.resize(new_map_size.x * new_map_size.y);
             m_tiles_currently_seen.resize(new_map_size.x * new_map_size.y);
             /// @todo Load new map memory if it exists somewhere.
@@ -1024,7 +1024,7 @@ std::string Entity::get_display_adjectives() const
 {
   std::string adjectives;
 
-  if (is_subtype_of("DynamicEntity") && get_modified_property<int>("hp") <= 0)
+  if (is_subtype_of("DynamicEntity") && get_modified_property("hp", Property::Type::Integer).as<int32_t>() <= 0)
   {
     adjectives += tr("ADJECTIVE_DEAD");
   }
@@ -1037,23 +1037,23 @@ std::string Entity::get_display_adjectives() const
 /// @todo Figure out how to cleanly localize this.
 std::string Entity::get_display_name() const
 {
-  return m_metadata.get_intrinsic<std::string>("name");
+  return m_metadata.get_intrinsic("name", Property::Type::String).as<std::string>();
 }
 
 /// @todo Figure out how to cleanly localize this.
 std::string Entity::get_display_plural() const
 {
-  return m_metadata.get_intrinsic<std::string>("plural");
+  return m_metadata.get_intrinsic("plural", Property::Type::String).as<std::string>();
 }
 
 std::string Entity::get_proper_name() const
 {
-  return get_modified_property<std::string>("proper_name");
+  return get_modified_property("proper_name", Property::Type::String).as<std::string>();
 }
 
 void Entity::set_proper_name(std::string name)
 {
-  set_base_property<std::string>("proper_name", name);
+  set_base_property("proper_name", Property(name));
 }
 
 std::string Entity::get_subject_you_or_identifying_string(ArticleChoice articles) const
@@ -1062,7 +1062,7 @@ std::string Entity::get_subject_you_or_identifying_string(ArticleChoice articles
 
   if (is_player())
   {
-    if (get_modified_property<int>("hp") > 0)
+    if (get_modified_property("hp", Property::Type::Integer).as<int32_t>() > 0)
     {
       str = tr("PRONOUN_SUBJECT_YOU");
     }
@@ -1085,7 +1085,7 @@ std::string Entity::get_object_you_or_identifying_string(ArticleChoice articles)
 
   if (is_player())
   {
-    if (get_modified_property<int>("hp") > 0)
+    if (get_modified_property("hp", Property::Type::Integer).as<int32_t>() > 0)
     {
       str = tr("PRONOUN_OBJECT_YOU");
     }
@@ -1125,7 +1125,7 @@ std::string Entity::get_identifying_string(ArticleChoice articles,
   bool owned;
 
   std::string debug_prefix;
-  if (config.get("debug_show_thing_ids").as<Boolean>() == true)
+  if (config.get("debug_show_thing_ids").as<bool>() == true)
   {
     debug_prefix = "(#" + static_cast<std::string>(get_id()) + ") ";
   }
@@ -1195,13 +1195,13 @@ std::string Entity::get_identifying_string(ArticleChoice articles,
 
 bool Entity::is_third_person()
 {
-  return (GAME.get_player() == m_ref) || (get_base_property<unsigned int>("quantity") > 1);
+  return (GAME.get_player() == m_ref) || (get_base_property("quantity", Property::Type::Integer).as<uint32_t>() > 1);
 }
 
 std::string const& Entity::choose_verb(std::string const& verb12,
                                         std::string const& verb3)
 {
-  if ((GAME.get_player() == m_ref) || (get_base_property<unsigned int>("quantity") > 1))
+  if ((GAME.get_player() == m_ref) || (get_base_property("quantity", Property::Type::Integer).as<uint32_t>() > 1))
   {
     return verb12;
   }
@@ -1213,7 +1213,8 @@ std::string const& Entity::choose_verb(std::string const& verb12,
 
 int Entity::get_mass()
 {
-  return get_modified_property<int>("physical_mass") * get_base_property<unsigned int>("quantity");
+  return get_modified_property("physical_mass", Property::Type::Integer).as<uint32_t>() * 
+    get_base_property("quantity", Property::Type::Integer).as<uint32_t>();
 }
 
 std::string const& Entity::get_subject_pronoun() const
@@ -1260,16 +1261,16 @@ std::string Entity::get_possessive_of(std::string owned, std::string adjectives)
 bool Entity::is_opaque()
 {
   return
-    (get_modified_property<int>("opacity_red") >= 255) &&
-    (get_modified_property<int>("opacity_green") >= 255) &&
-    (get_modified_property<int>("opacity_blue") >= 255);
+    (get_modified_property("opacity_red", Property::Type::Integer).as<int32_t>() >= 255) &&
+    (get_modified_property("opacity_green", Property::Type::Integer).as<int32_t>() >= 255) &&
+    (get_modified_property("opacity_blue", Property::Type::Integer).as<int32_t>() >= 255);
 }
 
 void Entity::light_up_surroundings()
 {
   EntityId location = getLocation();
 
-  if (get_intrinsic<int>("inventory_size") != 0)
+  if (get_intrinsic("inventory_size", Property::Type::Integer).as<uint32_t>() != 0)
   {
     /// @todo Figure out how we want to handle light sources.
     ///       If we want to be more accurate, the light should only
@@ -1300,7 +1301,7 @@ void Entity::light_up_surroundings()
   }
 
   // Use visitor pattern.
-  if ((location != EntityId::Mu()) && this->get_modified_property<bool>("lit"))
+  if ((location != EntityId::Mu()) && this->get_modified_property("lit", Property::Type::Boolean).as<bool>())
   {
     location->be_lit_by(this->get_id());
   }
@@ -1308,8 +1309,8 @@ void Entity::light_up_surroundings()
 
 void Entity::be_lit_by(EntityId light)
 {
-  auto result = call_lua_function<ActionResult, EntityId>("on_lit_by", { light }, ActionResult::Success);
-  if (result == ActionResult::Success)
+  auto result = call_lua_function("on_lit_by", { Property(light) }, Property::Type::ActionResult, Property(ActionResult::Success));
+  if (result.as<ActionResult>() == ActionResult::Success)
   {
     //notifyObservers(Event::Updated);
   }
@@ -1403,7 +1404,7 @@ void Entity::destroy()
 {
   auto old_location = m_location;
 
-  if (get_intrinsic<int>("inventory_size") != 0)
+  if (get_intrinsic("inventory_size", Property::Type::Integer).as<uint32_t>() != 0)
   {
     // Spill the contents of this Entity into the Entity's location.
     spill();
@@ -1418,11 +1419,10 @@ void Entity::destroy()
 }
 
 /// @todo Figure out how to localize this.
-std::string Entity::get_bodypart_description(BodyPart part,
-                                              unsigned int number)
+std::string Entity::get_bodypart_description(BodyPart part, uint32_t number)
 {
-  unsigned int total_number = this->get_bodypart_number(part);
-  std::string part_name = this->get_bodypart_name(part);
+  uint32_t total_number = this->get_bodypart_number(part).as<uint32_t>();
+  std::string part_name = this->get_bodypart_name(part).as<std::string>();
   std::string result;
 
   ASSERT_CONDITION(number < total_number);
@@ -1582,12 +1582,16 @@ std::string Entity::get_bodypart_description(BodyPart part,
 /// @todo Have the script return an optional reason if an action can't be done.
 bool Entity::can_have_action_done_by(EntityId entity, Actions::Action& action)
 {
-  return call_lua_function<bool>("can_have_action_" + action.get_type() + "_done_by", { entity }, false);
+  return call_lua_function("can_have_action_" + action.get_type() + "_done_by", { Property(entity) }, 
+                           Property::Type::Boolean, 
+                           Property(false)).as<bool>();
 }
 
 bool Entity::is_miscible_with(EntityId entity)
 {
-  return call_lua_function<bool>("is_miscible_with", { entity }, false);
+  return call_lua_function("is_miscible_with", { Property(entity) }, 
+                           Property::Type::Boolean, 
+                           Property(false)).as<bool>();
 }
 
 BodyPart Entity::is_equippable_on() const
@@ -1618,13 +1622,17 @@ bool Entity::process()
 
 ActionResult Entity::perform_action_died()
 {
-  ActionResult result = call_lua_function<ActionResult>("perform_action_died", {}, ActionResult::Success);
+  ActionResult result = call_lua_function("perform_action_died", {}, 
+                                          Property::Type::ActionResult, 
+                                          Property(ActionResult::Success)).as<ActionResult>();
   return result;
 }
 
 void Entity::perform_action_collided_with(EntityId actor)
 {
-  /* ActionResult result = */ call_lua_function<ActionResult, EntityId>("perform_action_collided_with", { actor }, ActionResult::Success);
+  /* ActionResult result = */ call_lua_function("perform_action_collided_with", { Property(actor) }, 
+                                                Property::Type::ActionResult, 
+                                                Property(ActionResult::Success));
   return;
 }
 
@@ -1636,37 +1644,47 @@ void Entity::perform_action_collided_with_wall(Direction d, std::string tile_typ
 
 ActionResult Entity::be_object_of(Actions::Action& action, EntityId subject)
 {
-  ActionResult result = call_lua_function<ActionResult, EntityId>("be_object_of_action_" + action.get_type(), { subject }, ActionResult::Success);
+  ActionResult result = call_lua_function("be_object_of_action_" + action.get_type(), { Property(subject) }, 
+                                          Property::Type::ActionResult,
+                                          Property(ActionResult::Success)).as<ActionResult>();
   return result;
 }
 
 ActionResult Entity::be_object_of(Actions::Action& action, EntityId subject, EntityId target)
 {
-  ActionResult result = call_lua_function<ActionResult, EntityId>("be_object_of_action_" + action.get_type(), { subject, target }, ActionResult::Success);
+  ActionResult result = call_lua_function("be_object_of_action_" + action.get_type(), { Property(subject), Property(target) }, 
+                                          Property::Type::ActionResult,
+                                          Property(ActionResult::Success)).as<ActionResult>();
   return result;
 }
 
 ActionResult Entity::be_object_of(Actions::Action& action, EntityId subject, Direction direction)
 {
-  ActionResult result = call_lua_function<ActionResult>("be_object_of_action_" + action.get_type(), { subject, NULL, direction.x(), direction.y(), direction.z() }, ActionResult::Success);
+  ActionResult result = call_lua_function("be_object_of_action_" + action.get_type(), { Property(subject), Property(direction.x()), Property(direction.y()), Property(direction.z()) }, 
+                                          Property::Type::ActionResult,
+                                          Property(ActionResult::Success)).as<ActionResult>();
   return result;
 }
 
 ActionResult Entity::perform_action_hurt_by(EntityId subject)
 {
-  ActionResult result = call_lua_function<ActionResult, EntityId>("be_object_of_action_hurt", { subject }, ActionResult::Success);
+  ActionResult result = call_lua_function("be_object_of_action_hurt", { Property(subject) }, 
+                                          Property::Type::ActionResult, 
+                                          Property(ActionResult::Success)).as<ActionResult>();
   return result;
 }
 
 ActionResult Entity::perform_action_attacked_by(EntityId subject, EntityId target)
 {
-  ActionResult result = call_lua_function<ActionResult, EntityId>("be_object_of_action_attack", { subject, target }, ActionResult::Success);
+  ActionResult result = call_lua_function("be_object_of_action_attack", { Property(subject), Property(target) }, 
+                                          Property::Type::ActionResult,
+                                          Property(ActionResult::Success)).as<ActionResult>();
   return result;
 }
 
 bool Entity::perform_action_deequipped_by(EntityId actor, WearLocation& location)
 {
-  if (this->get_modified_property<bool>("bound"))
+  if (this->get_modified_property("bound", Property::Type::Boolean).as<bool>())
   {
     std::string message;
     message = actor->get_identifying_string() + " cannot take off " + this->get_identifying_string() +
@@ -1679,14 +1697,18 @@ bool Entity::perform_action_deequipped_by(EntityId actor, WearLocation& location
   }
   else
   {
-    ActionResult result = call_lua_function<ActionResult, EntityId>("perform_action_deequipped_by", { actor }, ActionResult::Success);
+    ActionResult result = call_lua_function("perform_action_deequipped_by", { Property(actor) }, 
+                                            Property::Type::ActionResult,
+                                            Property(ActionResult::Success)).as<ActionResult>();
     return was_successful(result);
   }
 }
 
 bool Entity::perform_action_equipped_by(EntityId actor, WearLocation& location)
 {
-  ActionResult result = call_lua_function<ActionResult, EntityId>("perform_action_equipped_by", { actor }, ActionResult::Success);
+  ActionResult result = call_lua_function("perform_action_equipped_by", { Property(actor) }, 
+                                          Property::Type::ActionResult,
+                                          Property(ActionResult::Success)).as<ActionResult>();
   bool subclass_result = was_successful(result);
 
   return subclass_result;
@@ -1701,8 +1723,8 @@ bool Entity::can_merge_with(EntityId other) const
   }
 
   // Entities with inventories can never merge.
-  if ((get_intrinsic<int>("inventory_size") != 0) ||
-    (other->get_intrinsic<int>("inventory_size") != 0))
+  if ((get_intrinsic("inventory_size", Property::Type::Integer).as<uint32_t>() != 0) ||
+    (other->get_intrinsic("inventory_size", Property::Type::Integer).as<uint32_t>() != 0))
   {
     return false;
   }
@@ -1725,7 +1747,7 @@ bool Entity::can_merge_with(EntityId other) const
 
 ActionResult Entity::can_contain(EntityId entity)
 {
-  unsigned int inventory_size = get_intrinsic<unsigned int>("inventory_size");
+  unsigned int inventory_size = get_intrinsic("inventory_size", Property::Type::Integer).as<uint32_t>();
   if (inventory_size == 0)
   {
     return ActionResult::FailureTargetNotAContainer;
@@ -1736,8 +1758,40 @@ ActionResult Entity::can_contain(EntityId entity)
   }
   else
   {
-    return call_lua_function<ActionResult, EntityId>("can_contain", { entity }, ActionResult::Success);
+    return call_lua_function("can_contain", { Property(entity) }, 
+                             Property::Type::ActionResult,
+                             Property(ActionResult::Success)).as<ActionResult>();
   }
+}
+
+Property Entity::call_lua_function(std::string function_name,
+                                   std::vector<Property> const& args,
+                                   Property::Type result_type,
+                                   Property default_result)
+{
+  return the_lua_instance.call_thing_function(function_name, get_id(), args, result_type, default_result);
+}
+
+Property Entity::call_lua_function(std::string function_name,
+                                   std::vector<Property> const& args,
+                                   Property::Type result_type)
+{
+  return call_lua_function(function_name, args, result_type, Property(result_type));
+}
+
+Property Entity::call_lua_function(std::string function_name,
+                                   std::vector<Property> const& args,
+                                   Property::Type result_type,
+                                   Property default_result) const
+{
+  return the_lua_instance.call_thing_function(function_name, get_id(), args, result_type, default_result);
+}
+
+Property Entity::call_lua_function(std::string function_name,
+                                   std::vector<Property> const& args,
+                                   Property::Type result_type) const
+{
+  return call_lua_function(function_name, args, result_type, Property(result_type));
 }
 
 void Entity::setLocation(EntityId target)
@@ -1749,13 +1803,13 @@ void Entity::setLocation(EntityId target)
 
 bool Entity::_process_self()
 {
-  int counter_busy = get_base_property<int>("counter_busy");
+  int counter_busy = get_base_property("counter_busy", Property::Type::Integer).as<int32_t>();
 
   // Is this an entity that is now dead?
-  if (is_subtype_of("DynamicEntity") && (get_modified_property<int>("hp") <= 0))
+  if (is_subtype_of("DynamicEntity") && (get_modified_property("hp", Property::Type::Integer).as<int32_t>() <= 0))
   {
     // Did the entity JUST die?
-    if (get_modified_property<bool>("dead") != true)
+    if (get_modified_property("dead", Property::Type::Boolean).as<bool>() != true)
     {
       // Perform the "die" action.
       // (This sets the "dead" property and clears out any pending actions.)
@@ -1769,7 +1823,7 @@ bool Entity::_process_self()
   else if (counter_busy > 0)
   {
     // Decrement busy counter.
-    add_to_base_property<int>("counter_busy", -1);
+    add_to_base_property("counter_busy", Property(-1));
   }
   // Otherwise if actions are pending...
   else if (!m_pending_actions.empty())
@@ -1807,7 +1861,7 @@ bool Entity::_process_self()
     ///       and clear out any pending actions?
     if (!is_player())
     {
-      ActionResult result = call_lua_function<ActionResult>("process");
+      ActionResult result = call_lua_function("process", {}, Property::Type::ActionResult).as<ActionResult>();
     }
   }
 
@@ -1824,7 +1878,7 @@ void Entity::do_recursive_visibility(int octant,
                                     float slope_A,
                                     float slope_B)
 {
-  IntegerVec2 new_coords;
+  IntVec2 new_coords;
   //int x = 0;
   //int y = 0;
 
@@ -1835,7 +1889,7 @@ void Entity::do_recursive_visibility(int octant,
   }
 
   MapTile* tile = get_maptile();
-  IntegerVec2 tile_coords = tile->get_coords();
+  IntVec2 tile_coords = tile->get_coords();
   Map& game_map = GAME.get_maps().get(get_map_id());
 
   static const int mv = 128;
@@ -1932,14 +1986,14 @@ void Entity::do_recursive_visibility(int octant,
     {
       if (game_map.tile_is_opaque(new_coords))
       {
-        if (!game_map.tile_is_opaque(new_coords + (IntegerVec2)dir))
+        if (!game_map.tile_is_opaque(new_coords + (IntVec2)dir))
         {
           do_recursive_visibility(octant, depth + 1, slope_A, recurse_slope(to_v2f(new_coords), to_v2f(tile_coords)));
         }
       }
       else
       {
-        if (game_map.tile_is_opaque(new_coords + (IntegerVec2)dir))
+        if (game_map.tile_is_opaque(new_coords + (IntVec2)dir))
         {
           slope_A = loop_slope(to_v2f(new_coords), to_v2f(tile_coords));
         }
@@ -1950,9 +2004,9 @@ void Entity::do_recursive_visibility(int octant,
                                  GAME.get_game_clock() };
       m_map_memory[game_map.get_index(new_coords)] = new_memory;
     }
-    new_coords -= (IntegerVec2)dir;
+    new_coords -= (IntVec2)dir;
   }
-  new_coords += (IntegerVec2)dir;
+  new_coords += (IntVec2)dir;
 
   if ((depth < mv) && (!game_map.get_tile(new_coords).is_opaque()))
   {

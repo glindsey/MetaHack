@@ -28,7 +28,7 @@ public:
 
   /// Return a Map view.
   /// @warning The caller assumes ownership of the created view!
-  virtual MapView* createMapView(std::string name, Map& map, Vec2u size) = 0;
+  virtual MapView* createMapView(std::string name, Map& map, UintVec2 size) = 0;
   
   /// Load any required view resources associated with the specified metadata.
   virtual void loadViewResourcesFor(Metadata& metadata) = 0;

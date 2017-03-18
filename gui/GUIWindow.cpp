@@ -13,7 +13,7 @@
 
 namespace metagui
 {
-  Window::Window(std::string name, IntegerVec2 location, Vec2u size)
+  Window::Window(std::string name, IntVec2 location, UintVec2 size)
     :
     Object(name, location, size)
   {
@@ -38,9 +38,9 @@ namespace metagui
 
   // === PROTECTED METHODS ======================================================
 
-  IntegerVec2 Window::getChildAreaLocation()
+  IntVec2 Window::getChildAreaLocation()
   {
-    IntegerVec2 child_location{ 0, 0 };
+    IntVec2 child_location{ 0, 0 };
 
     if (m_titlebar_cached == true)
     {
@@ -50,7 +50,7 @@ namespace metagui
     return child_location;
   }
 
-  Vec2u Window::getChildAreaSize()
+  UintVec2 Window::getChildAreaSize()
   {
     auto child_size = getSize();
 
@@ -65,13 +65,13 @@ namespace metagui
   void Window::drawPreChildren_(sf::RenderTexture& texture, int frame)
   {
     auto& config = Service<IConfigSettings>::get();
-    Vec2u size = getSize();
+    UintVec2 size = getSize();
 
-    float line_spacing_y = the_default_font.getLineSpacing(static_cast<unsigned int>(config.get("text_default_size").as<Integer>()));
+    float line_spacing_y = the_default_font.getLineSpacing(config.get("text_default_size").as<uint32_t>());
 
     // Text offsets relative to the background rectangle.
-    float text_offset_x = config.get("window_text_offset_x").as<Real>();
-    float text_offset_y = config.get("window_text_offset_y").as<Real>();
+    float text_offset_x = config.get("window_text_offset_x").as<float>();
+    float text_offset_y = config.get("window_text_offset_y").as<float>();
 
     // Clear the target.
     texture.clear(config.get("window_bg_color").as<Color>());
@@ -80,7 +80,7 @@ namespace metagui
     drawContents_(texture, frame);
 
     // Draw the border.
-    float border_width = config.get("window_border_width").as<Real>();
+    float border_width = config.get("window_border_width").as<float>();
     m_border_shape.setPosition(RealVec2(border_width, border_width));
     m_border_shape.setSize(RealVec2(static_cast<float>(size.x - (2 * border_width)), static_cast<float>(size.y - (2 * border_width))));
     m_border_shape.setFillColor(sf::Color::Transparent);

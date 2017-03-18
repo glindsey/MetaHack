@@ -37,7 +37,7 @@ TileSheet::~TileSheet()
   //dtor
 }
 
-Vec2u TileSheet::load_collection(FileName const& filename)
+UintVec2 TileSheet::load_collection(FileName const& filename)
 {
   sf::Image image;
   if (!image.loadFromFile(filename))
@@ -47,13 +47,13 @@ Vec2u TileSheet::load_collection(FileName const& filename)
 
   image.createMaskFromColor(sf::Color(255, 0, 255));
 
-  Vec2u image_size = image.getSize();
+  UintVec2 image_size = image.getSize();
 
-  Vec2u image_size_in_tiles =
-    Vec2u(divide_and_round_up(image_size.x, m_tileSize),
+  UintVec2 image_size_in_tiles =
+    UintVec2(divide_and_round_up(image_size.x, m_tileSize),
           divide_and_round_up(image_size.y, m_tileSize));
 
-  Vec2u free_coords = find_unused_area(image_size_in_tiles);
+  UintVec2 free_coords = find_unused_area(image_size_in_tiles);
 
   m_texture.update(image, free_coords.x * m_tileSize, free_coords.y * m_tileSize);
 
@@ -62,7 +62,7 @@ Vec2u TileSheet::load_collection(FileName const& filename)
   return free_coords;
 }
 
-sf::IntRect TileSheet::get_tile(Vec2u tile) const
+sf::IntRect TileSheet::get_tile(UintVec2 tile) const
 {
   sf::IntRect rect;
   rect.left = tile.x * m_tileSize;
@@ -89,7 +89,7 @@ sf::Texture& TileSheet::getTexture(void)
 }
 
 void TileSheet::add_quad(sf::VertexArray& vertices,
-                         Vec2u tile_coords, sf::Color bg_color,
+                         UintVec2 tile_coords, sf::Color bg_color,
                          RealVec2 ul_coord, RealVec2 ur_coord,
                          RealVec2 ll_coord, RealVec2 lr_coord)
 {
@@ -117,7 +117,7 @@ void TileSheet::add_quad(sf::VertexArray& vertices,
 }
 
 void TileSheet::add_gradient_quad(sf::VertexArray& vertices,
-                                  Vec2u tile_coords,
+                                  UintVec2 tile_coords,
                                   RealVec2 coordNW, RealVec2 coordNE,
                                   RealVec2 coordSW, RealVec2 coordSE,
                                   sf::Color colorNW, sf::Color colorN, sf::Color colorNE,
@@ -200,13 +200,13 @@ void TileSheet::add_outline_vertices(sf::VertexArray& vertices,
 
 /// === PROTECTED METHODS =====================================================
 
-unsigned int TileSheet::get_index(Vec2u coords)
+unsigned int TileSheet::get_index(UintVec2 coords)
 {
   uint32_t texture_size_in_tiles = m_textureSize / m_tileSize;
   return (coords.y * texture_size_in_tiles) + coords.x;
 }
 
-bool TileSheet::area_is_unused(Vec2u start, Vec2u size)
+bool TileSheet::area_is_unused(UintVec2 start, UintVec2 size)
 {
   uint32_t texture_size_in_tiles = m_textureSize / m_tileSize;
 
@@ -229,9 +229,9 @@ bool TileSheet::area_is_unused(Vec2u start, Vec2u size)
   return true;
 }
 
-Vec2u TileSheet::find_unused_area(Vec2u size)
+UintVec2 TileSheet::find_unused_area(UintVec2 size)
 {
-  Vec2u start(0, 0);
+  UintVec2 start(0, 0);
 
   uint32_t texture_size_in_tiles = m_textureSize / m_tileSize;
 
@@ -257,7 +257,7 @@ Vec2u TileSheet::find_unused_area(Vec2u size)
 /// @param upper_left_corner  Upper-left corner of rectangle.
 /// @param size               Size of the rectangle to mark.
 /// @todo This is an extremely naive algorithm and can definitely be optimized.
-void TileSheet::mark_tiles_used(Vec2u upper_left_corner, Vec2u size)
+void TileSheet::mark_tiles_used(UintVec2 upper_left_corner, UintVec2 size)
 {
   for (uint32_t y = upper_left_corner.y; y < upper_left_corner.y + size.y; ++y)
   {

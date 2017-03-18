@@ -48,7 +48,7 @@ metagui::Event::Result MessageLogView::handleGUIEventPreChildren_(metagui::Event
 void MessageLogView::drawContents_(sf::RenderTexture& texture, int frame)
 {
   auto& config = Service<IConfigSettings>::get();
-  auto text_default_size = config.get("text_default_size").as<Integer>();
+  auto text_default_size = config.get("text_default_size").as<int32_t>();
 
   // Dimensions of the pane.
   sf::IntRect pane_dims = getRelativeDimensions();
@@ -56,8 +56,8 @@ void MessageLogView::drawContents_(sf::RenderTexture& texture, int frame)
   float lineSpacing = the_default_font.getLineSpacing(text_default_size);
 
   // Text offsets relative to the background rectangle.
-  auto text_offset_x = config.get("window_text_offset_x").as<Real>();
-  auto text_offset_y = config.get("window_text_offset_y").as<Real>();
+  auto text_offset_x = config.get("window_text_offset_x").as<float>();
+  auto text_offset_y = config.get("window_text_offset_y").as<float>();
 
   // Start at the bottom, most recent text and work upwards.
   float text_coord_x = text_offset_x;

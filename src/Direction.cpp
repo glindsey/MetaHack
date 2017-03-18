@@ -43,7 +43,7 @@ Direction::Direction(int x, int y)
   Direction(x, y, 0)
 {}
 
-Direction::Direction(IntegerVec2 vec)
+Direction::Direction(IntVec2 vec)
   :
   Direction(vec.x, vec.y, 0)
 {}
@@ -94,9 +94,9 @@ RealVec2 Direction::half() const
 }
 
 // Casts
-Direction::operator IntegerVec2() const
+Direction::operator IntVec2() const
 {
-  return IntegerVec2(m_x, m_y);
+  return IntVec2(m_x, m_y);
 }
 
 Direction::operator RealVec2() const
@@ -184,7 +184,7 @@ Direction Direction::get_approx(int xSrc, int ySrc, int xDst, int yDst)
 
 /// Determine light factor based on light source, wall location, and which wall
 /// the light is hitting.
-float Direction::calculate_light_factor(IntegerVec2 source, IntegerVec2 target, Direction direction)
+float Direction::calculate_light_factor(IntVec2 source, IntVec2 target, Direction direction)
 {
   float x_diff = abs((float)(source.x - target.x));
   float y_diff = abs((float)(source.y - target.y));

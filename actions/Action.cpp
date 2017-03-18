@@ -116,7 +116,7 @@ namespace Actions
   bool Action::process(EntityId actor, AnyMap params)
   {
     // If entity is currently busy, decrement by one and return.
-    int counter_busy = actor->get_base_property<int>("counter_busy");
+    int counter_busy = actor->get_base_property("counter_busy", Property::Type::Integer).as<int32_t>();
     if (counter_busy > 0)
     {
       CLOG(TRACE, "Action") << "Entity #" <<
@@ -124,7 +124,7 @@ namespace Actions
         actor->get_type() << "): counter_busy = " <<
         counter_busy << "%d, decrementing";
 
-      actor->add_to_base_property<int>("counter_busy", -1);
+      actor->add_to_base_property("counter_busy", Property(-1));
       return false;
     }
 
@@ -132,7 +132,7 @@ namespace Actions
     // target actor is busy.
     while ((pImpl->state != State::Processed) && (counter_busy == 0))
     {
-      counter_busy = actor->get_base_property<int>("counter_busy");
+      counter_busy = actor->get_base_property("counter_busy", Property::Type::Integer).as<int32_t>();
       StateResult result{ false, 0 };
 
       CLOG(TRACE, "Action") << "Entity #" <<
@@ -150,13 +150,13 @@ namespace Actions
           if (result.success)
           {
             // Update the busy counter.
-            pImpl->subject->set_base_property<int>("counter_busy", result.elapsed_time);
+            pImpl->subject->set_base_property("counter_busy", Property(result.elapsed_time));
             set_state(State::PreBegin);
           }
           else
           {
             // Clear the busy counter.
-            pImpl->subject->set_base_property<int>("counter_busy", 0);
+            pImpl->subject->set_base_property("counter_busy", Property(0));
             set_state(State::PostFinish);
           }
           break;
@@ -169,13 +169,13 @@ namespace Actions
           if (result.success)
           {
             // Update the busy counter.
-            pImpl->subject->set_base_property<int>("counter_busy", result.elapsed_time);
+            pImpl->subject->set_base_property("counter_busy", Property(result.elapsed_time));
             set_state(State::InProgress);
           }
           else
           {
             // Clear the busy counter.
-            pImpl->subject->set_base_property<int>("counter_busy", 0);
+            pImpl->subject->set_base_property("counter_busy", Property(0));
             set_state(State::PostFinish);
           }
           break;
@@ -183,14 +183,14 @@ namespace Actions
         case State::InProgress:
           result = do_finish_work(params);
 
-          pImpl->subject->set_base_property<int>("counter_busy", result.elapsed_time);
+          pImpl->subject->set_base_property("counter_busy", Property(result.elapsed_time));
           set_state(State::PostFinish);
           break;
 
         case State::Interrupted:
           result = do_abort_work(params);
 
-          pImpl->subject->add_to_base_property<int>("counter_busy", result.elapsed_time);
+          pImpl->subject->add_to_base_property("counter_busy", Property(result.elapsed_time));
           set_state(State::PostFinish);
           break;
 
@@ -300,7 +300,7 @@ namespace Actions
     auto new_direction = get_target_direction();
 
     // Check that we're capable of eating at all.
-    if (!subject->get_intrinsic<bool>("can_" + get_type()))
+    if (!subject->get_intrinsic("can_" + get_type(), Property::Type::Boolean).as<bool>())
     {
       print_message_try_();
       message = maketr("YOU_ARE_NOT_CAPABLE_OF_VERBING", { getIndefArt(subject->get_display_name()), subject->get_display_name() });
@@ -310,7 +310,7 @@ namespace Actions
     }
 
     // Check that we're capable of eating right now.
-    if (!subject->get_modified_property<bool>("can_" + get_type()))
+    if (!subject->get_modified_property("can_" + get_type(), Property::Type::Boolean).as<bool>())
     {
       print_message_try_();
       message = maketr("YOU_CANT_VERB_NOW", { getIndefArt(subject->get_display_name()), subject->get_display_name() });
@@ -389,7 +389,7 @@ namespace Actions
         if (hasTrait(Trait::ObjectMustBeLiquidCarrier))
         {
           // Check that both are liquid containers.
-          if (!object->get_intrinsic<bool>("liquid_carrier"))
+          if (!object->get_intrinsic("liquid_carrier", Property::Type::Boolean).as<bool>())
           {
             print_message_try_();
 

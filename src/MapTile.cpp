@@ -27,7 +27,7 @@ EntityId MapTile::get_tile_contents() const
 
 std::string MapTile::get_display_name() const
 {
-  return m_p_metadata->get_intrinsic<std::string>("name");
+  return m_p_metadata->get_intrinsic("name", Property::Type::String).as<std::string>();
 }
 
 void MapTile::set_tile_type(std::string type)
@@ -42,7 +42,7 @@ std::string MapTile::get_tile_type() const
 
 bool MapTile::is_empty_space() const
 {
-  return m_p_metadata->get_intrinsic<bool>("passable");
+  return m_p_metadata->get_intrinsic("passable", Property::Type::Boolean).as<bool>();
 }
 
 /// @todo: Implement this to cover different entity types.
@@ -58,12 +58,12 @@ void MapTile::set_coords(int x, int y)
   m_coords.y = y;
 }
 
-void MapTile::set_coords(IntegerVec2 coords)
+void MapTile::set_coords(IntVec2 coords)
 {
   m_coords = coords;
 }
 
-IntegerVec2 const& MapTile::get_coords() const
+IntVec2 const& MapTile::get_coords() const
 {
   return m_coords;
 }
@@ -161,9 +161,9 @@ sf::Color MapTile::get_wall_light_level(Direction direction) const
 
 sf::Color MapTile::get_opacity() const
 {
-  return sf::Color(m_p_metadata->get_intrinsic<int>("opacity_red"),
-                   m_p_metadata->get_intrinsic<int>("opacity_green"),
-                   m_p_metadata->get_intrinsic<int>("opacity_blue"),
+  return sf::Color(m_p_metadata->get_intrinsic("opacity_red", Property::Type::Integer).as<int>(),
+                   m_p_metadata->get_intrinsic("opacity_green", Property::Type::Integer).as<int>(),
+                   m_p_metadata->get_intrinsic("opacity_blue", Property::Type::Integer).as<int>(),
                    255);
 }
 
@@ -172,28 +172,28 @@ bool MapTile::is_opaque() const
   /// @todo Check the tile's inventory to see if there's anything huge enough
   ///       to block the view of stuff behind it.
   return
-    (m_p_metadata->get_intrinsic<int>("opacity_red") >= 255) &&
-    (m_p_metadata->get_intrinsic<int>("opacity_green") >= 255) &&
-    (m_p_metadata->get_intrinsic<int>("opacity_blue") >= 255);
+    (m_p_metadata->get_intrinsic("opacity_red", Property::Type::Integer).as<int>() >= 255) &&
+    (m_p_metadata->get_intrinsic("opacity_green", Property::Type::Integer).as<int>() >= 255) &&
+    (m_p_metadata->get_intrinsic("opacity_blue", Property::Type::Integer).as<int>() >= 255);
 }
 
 RealVec2 MapTile::get_pixel_coords(int x, int y)
 {
   auto& config = Service<IConfigSettings>::get();
-  auto map_tile_size = config.get("map_tile_size").as<Real>();
+  auto map_tile_size = config.get("map_tile_size").as<float>();
 
   return RealVec2(static_cast<float>(x) * map_tile_size, 
                static_cast<float>(y) * map_tile_size);
 }
 
-RealVec2 MapTile::get_pixel_coords(IntegerVec2 tile)
+RealVec2 MapTile::get_pixel_coords(IntVec2 tile)
 {
   return get_pixel_coords(tile.x, tile.y);
 }
 
 // === PROTECTED METHODS ======================================================
 
-MapTile::MapTile(IntegerVec2 coords, Metadata& metadata, MapId map_id)
+MapTile::MapTile(IntVec2 coords, Metadata& metadata, MapId map_id)
   :
   m_map_id{ map_id },
   m_coords{ coords },
@@ -215,11 +215,11 @@ MapTile::MapTile(IntegerVec2 coords, Metadata& metadata, MapId map_id)
 
 MapTile const& MapTile::get_adjacent_tile(Direction direction) const
 {
-  IntegerVec2 coords = get_coords();
+  IntVec2 coords = get_coords();
   Map const& map = GAME.get_maps().get(get_map_id());
   MapTile const& tile = *this;
 
-  IntegerVec2 adjacent_coords = coords + (IntegerVec2)direction;
+  IntVec2 adjacent_coords = coords + (IntVec2)direction;
   return map.get_tile(adjacent_coords);
 }
 

@@ -33,40 +33,40 @@ namespace metagui
 
   struct EventDragFinished : public Event
   {
-    EventDragFinished(sf::Mouse::Button button_, IntegerVec2 current_location_)
+    EventDragFinished(sf::Mouse::Button button_, IntVec2 current_location_)
       :
       button(button_),
       current_location(current_location_)
     {}
 
     sf::Mouse::Button const button;
-    IntegerVec2 const current_location;
+    IntVec2 const current_location;
   };
 
   struct EventDragStarted : public Event
   {
-    EventDragStarted(sf::Mouse::Button button_, IntegerVec2 start_location_)
+    EventDragStarted(sf::Mouse::Button button_, IntVec2 start_location_)
       :
       button(button_),
       start_location(start_location_)
     {}
 
     sf::Mouse::Button const button;
-    IntegerVec2 const start_location;
+    IntVec2 const start_location;
 
     /// Number of pixels you have to move before it is considered "dragging" the object.
   };
 
   struct EventDragging : public Event
   {
-    EventDragging(sf::Mouse::Button button_, IntegerVec2 current_location_)
+    EventDragging(sf::Mouse::Button button_, IntVec2 current_location_)
       :
       button(button_),
       current_location(current_location_)
     {}
 
     sf::Mouse::Button const button;
-    IntegerVec2 const current_location;
+    IntVec2 const current_location;
 
     /// Number of pixels you have to move before it is considered "dragging" the object.
     static unsigned int const drag_threshold = 16;
@@ -92,14 +92,14 @@ namespace metagui
 
   struct EventMouseDown : public Event
   {
-    EventMouseDown(sf::Mouse::Button button_, IntegerVec2 location_)
+    EventMouseDown(sf::Mouse::Button button_, IntVec2 location_)
       :
       button(button_),
       location(location_)
     {}
 
     sf::Mouse::Button const button;
-    IntegerVec2 const location;
+    IntVec2 const location;
   };
 
   struct EventResized : public Event
@@ -109,7 +109,7 @@ namespace metagui
       new_size{ size.width, size.height }
     {}
 
-    Vec2u const new_size;
+    UintVec2 const new_size;
   };
 
   /// Using declaration for an EventDelegate.

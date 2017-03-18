@@ -27,10 +27,10 @@ protected:
   MapTileStandard2DView(MapTile& map_tile, TileSheet& tile_sheet);
 
   /// Return the coordinates of the tile on the tilesheet.
-  Vec2u get_tile_sheet_coords() const;
+  UintVec2 get_tile_sheet_coords() const;
 
 
-  Vec2u get_entity_tile_sheet_coords(Entity & entity, int frame) const;
+  UintVec2 get_entity_tile_sheet_coords(Entity & entity, int frame) const;
 
   /// Add the vertices for the maptile to the seen and memory vertices.
   /// @param viewer Entity that is viewing this tile.

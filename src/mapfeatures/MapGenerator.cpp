@@ -31,7 +31,7 @@ struct MapGenerator::Impl
   bool getGrowthVector(GeoVector& growthVector)
   {
     unsigned int numRetries = 0;
-    IntegerVec2 const& mapSize = game_map.getSize();
+    IntVec2 const& mapSize = game_map.getSize();
 
     while (numRetries < limits.maxAdjacentRetries)
     {
@@ -99,13 +99,13 @@ struct MapGenerator::Impl
 
   /// Get a random square on the map, regardless of usage, excluding the map
   /// boundaries.
-  IntegerVec2 getRandomSquare()
+  IntVec2 getRandomSquare()
   {
-    IntegerVec2 mapSize = game_map.getSize();
+    IntVec2 mapSize = game_map.getSize();
     uniform_int_dist xDist(1, mapSize.x - 2);
     uniform_int_dist yDist(1, mapSize.y - 2);
 
-    IntegerVec2 coords;
+    IntVec2 coords;
     coords.x = xDist(the_RNG);
     coords.y = yDist(the_RNG);
     return coords;
@@ -114,13 +114,13 @@ struct MapGenerator::Impl
   /// Get a random filled square on the map, excluding the map boundaries.
   /// @warning Assumes there's at least one non-empty space on the map,
   ///          or function will loop indefinitely!
-  IntegerVec2 getRandomFilledSquare()
+  IntVec2 getRandomFilledSquare()
   {
-    IntegerVec2 mapSize = game_map.getSize();
+    IntVec2 mapSize = game_map.getSize();
     uniform_int_dist xDist(1, mapSize.x - 2);
     uniform_int_dist yDist(1, mapSize.y - 2);
 
-    IntegerVec2 coords;
+    IntVec2 coords;
 
     do
     {
@@ -178,7 +178,7 @@ void MapGenerator::generate()
   sf::IntRect startBox = startingRoom.get_coords();
   CLOG(TRACE, "MapGenerator") << "Starting room is at " << startBox;
 
-  IntegerVec2 startCoords(startBox.left + (startBox.width / 2),
+  IntVec2 startCoords(startBox.left + (startBox.width / 2),
                            startBox.top + (startBox.height / 2));
 
   CLOG(TRACE, "MapGenerator") << "Setting start coords to " << startCoords;

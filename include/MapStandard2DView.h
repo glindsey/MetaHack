@@ -36,7 +36,7 @@ protected:
   /// @param map	    Reference to Map object to associate with this view.
   /// @param size       Size of the view to create.
   /// @param tile_sheet Reference to tilesheet containing graphics to display.
-  MapStandard2DView(std::string name, Map& map, Vec2u size, TileSheet& tile_sheet);
+  MapStandard2DView(std::string name, Map& map, UintVec2 size, TileSheet& tile_sheet);
 
   /// Called before rendering the object's children.
   /// Default behavior is to do nothing.

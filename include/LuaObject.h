@@ -1,7 +1,5 @@
+#pragma once
 // Lua enum binding modified from code Copyright (c) 2010 Tom Distler.
-
-#ifndef LUA_H
-#define LUA_H
 
 #include "stdafx.h"
 
@@ -36,6 +34,9 @@ public:
   /// Sets a global to a particular integer value.
   /// If the global currently exists it will be overwritten.
   void set_global(std::string name, lua_Integer value);
+
+  void stackDump();
+
 
   /// Adds an enumerated type into Lua.
   ///
@@ -111,7 +112,7 @@ public:
   ///  * Boolean
   ///  * String
   ///  * Number
-  ///  * IntegerVec2
+  ///  * IntVec2
   ///  * Direction
   ///  * Color
   ///
@@ -128,8 +129,8 @@ public:
   int push_value(double value);
   int push_value(bool value);
   int push_value(std::string value);
-  int push_value(Vec2u value);
-  int push_value(IntegerVec2 value);
+  int push_value(UintVec2 value);
+  int push_value(IntVec2 value);
   int push_value(Direction value);
   int push_value(sf::Color value);
 
@@ -215,5 +216,3 @@ private:
   /// Private Lua state.
   lua_State mutable* L_;
 };
-
-#endif // LUA_H

@@ -1,5 +1,4 @@
-#ifndef THING_H
-#define THING_H
+#pragma once
 
 #include "stdafx.h"
 
@@ -84,7 +83,7 @@ public:
   virtual bool is_player() const;
 
   std::string const& get_type() const;
-  std::string const& get_parent_type() const;
+  std::string get_parent_type() const;
 
   bool is_subtype_of(std::string that_type) const;
 
@@ -207,7 +206,7 @@ public:
   bool can_see(EntityId entity);
 
   /// Return whether the DynamicEntity can see the requested tile.
-  bool can_see(IntegerVec2 coords);
+  bool can_see(IntVec2 coords);
 
   /// Find out which tiles on the map can be seen by this DynamicEntity.
   /// In the process, tiles in the DynamicEntity's visual memory are updated.
@@ -216,7 +215,7 @@ public:
   void find_seen_tiles();
 
   /// Get the remembered tile type at the specified coordinates.
-  MapMemoryChunk const& get_memory_at(IntegerVec2 coords) const;
+  MapMemoryChunk const& get_memory_at(IntVec2 coords) const;
 
   ActionResult can_deequip(EntityId thing_id, unsigned int& action_time);
 
@@ -248,13 +247,13 @@ public:
   Gender get_gender_or_you() const;
 
   /// Get the number of a particular body part the DynamicEntity has.
-  unsigned int get_bodypart_number(BodyPart part) const;
+  Property get_bodypart_number(BodyPart part) const;
 
   /// Get the appropriate body part name for the DynamicEntity.
-  std::string get_bodypart_name(BodyPart part) const;
+  Property get_bodypart_name(BodyPart part) const;
 
   /// Get the appropriate body part plural for the DynamicEntity.
-  std::string get_bodypart_plural(BodyPart part) const;
+  Property get_bodypart_plural(BodyPart part) const;
 
   /// Get the appropriate description for a body part.
   /// This takes the body part name and the number referencing the particular
@@ -264,7 +263,7 @@ public:
   /// In most cases the default implementation here will work, but if a
   /// creature has (for example) a strange configuration of limbs this can be
   /// overridden.
-  std::string get_bodypart_description(BodyPart part, unsigned int number);
+  std::string get_bodypart_description(BodyPart part, uint32_t number);
 
   /// Returns true if a particular Action can be performed on this Entity by
   /// the specified Entity.
@@ -502,21 +501,23 @@ public:
   ActionResult can_contain(EntityId entity);
 
   /// Syntactic sugar for calling call_lua_function().
-  template < typename ReturnType, typename ArgType = lua_Integer>
-  ReturnType call_lua_function(std::string function_name,
-                               std::vector<ArgType> const& args = {},
-                               ReturnType default_result = ReturnType())
-  {
-    return the_lua_instance.call_thing_function<ReturnType, ArgType>(function_name, get_id(), args, default_result);
-  }
+  Property call_lua_function(std::string function_name,
+                             std::vector<Property> const& args,
+                             Property::Type result_type,
+                             Property default_result);
 
-  template < typename ReturnType, typename ArgType = lua_Integer>
-  ReturnType call_lua_function(std::string function_name,
-                               std::vector<ArgType> const& args = {},
-                               ReturnType default_result = ReturnType()) const
-  {
-    return the_lua_instance.call_thing_function<ReturnType, ArgType>(function_name, get_id(), args, default_result);
-  }
+  Property call_lua_function(std::string function_name,
+                             std::vector<Property> const& args,
+                             Property::Type result_type);
+
+  Property call_lua_function(std::string function_name,
+                             std::vector<Property> const& args,
+                             Property::Type result_type,
+                             Property default_result) const;
+
+  Property call_lua_function(std::string function_name,
+                             std::vector<Property> const& args,
+                             Property::Type result_type) const;
 
   /// Get a const reference to this tile's metadata.
   Metadata const & get_metadata() const;
@@ -610,5 +611,3 @@ private:
   /// Outline color for walls when drawing on-screen.
   static sf::Color const wall_outline_color_;
 };
-
-#endif // THING_H

@@ -102,5 +102,5 @@ public:
 };
 
 using RealVec2 = Vec2<float>;
-using IntegerVec2 = Vec2<int32_t>;
-using Vec2u = Vec2<unsigned int>;
+using IntVec2 = Vec2<int32_t>;
+using UintVec2 = Vec2<uint32_t>;

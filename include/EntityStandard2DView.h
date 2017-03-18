@@ -23,7 +23,7 @@ public:
   virtual std::string getViewName() override;
 
   /// Return the coordinates of the entity on the tilesheet.
-  Vec2u get_tile_sheet_coords(int frame) const;
+  UintVec2 get_tile_sheet_coords(int frame) const;
   
 protected:
   /// Constructor.

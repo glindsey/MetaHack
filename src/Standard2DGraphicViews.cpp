@@ -16,8 +16,8 @@ namespace fs = boost::filesystem;
 Standard2DGraphicViews::Standard2DGraphicViews()
 {
   auto& config = Service<IConfigSettings>::get();
-  auto tileSize = config.get("map_tile_size").as<Integer>();
-  auto textureSize = config.get("tilesheet_texture_size").as<Integer>();
+  auto tileSize = config.get("map_tile_size").as<int32_t>();
+  auto textureSize = config.get("tilesheet_texture_size").as<int32_t>();
 
   m_tile_sheet.reset(NEW TileSheet(tileSize, textureSize));
 }
@@ -36,7 +36,7 @@ MapTileView* Standard2DGraphicViews::createMapTileView(MapTile& map_tile)
   return NEW MapTileStandard2DView(map_tile, getTileSheet());
 }
 
-MapView* Standard2DGraphicViews::createMapView(std::string name, Map& map, Vec2u size)
+MapView* Standard2DGraphicViews::createMapView(std::string name, Map& map, UintVec2 size)
 {
   return NEW MapStandard2DView(name, map, size, getTileSheet());
 }
@@ -57,16 +57,16 @@ void Standard2DGraphicViews::loadViewResourcesFor(Metadata& metadata)
 
   if (fs::exists(pngfile_path))
   {
-    Vec2u tile_location;
+    UintVec2 tile_location;
     CLOG(TRACE, "Metadata") << "Tiles were found for " << qualified_name;
 
     tile_location = m_tile_sheet->load_collection(pngfile_string);
     CLOG(TRACE, "Metadata") << "Tiles for " << qualified_name <<
       " were placed on the TileSheet at " << tile_location;
 
-    metadata.set_intrinsic<bool>("has_tiles", true);
-    metadata.set_intrinsic<int>("tile_location_x", tile_location.x);
-    metadata.set_intrinsic<int>("tile_location_y", tile_location.y);
+    metadata.set_intrinsic("has_tiles", Property(true));
+    metadata.set_intrinsic("tile_location_x", Property(tile_location.x));
+    metadata.set_intrinsic("tile_location_y", Property(tile_location.y));
   }
   else
   {

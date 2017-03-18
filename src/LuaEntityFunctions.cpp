@@ -33,7 +33,7 @@ namespace LuaEntityFunctions
     // Check to make sure the Entity is actually creatable.
     /// @todo Might want the ability to disable this check for debugging purposes?
     Metadata& thing_metadata = GAME.get_metadata_collection("entity").get(new_thing_type);
-    bool is_creatable = thing_metadata.get_intrinsic<bool>("creatable", false);
+    bool is_creatable = thing_metadata.get_intrinsic("creatable", Property::Type::Boolean, Property(false)).as<bool>();
 
     if (is_creatable)
     {
@@ -167,7 +167,7 @@ namespace LuaEntityFunctions
 
     EntityId entity = EntityId(lua_tointeger(L, 1));
     const char* key = lua_tostring(L, 2);
-    bool result = entity->get_base_property<bool>(key);
+    bool result = entity->get_base_property(key, Property::Type::Boolean).as<bool>();
     lua_pushboolean(L, result);
 
     return 1;
@@ -185,7 +185,7 @@ namespace LuaEntityFunctions
 
     EntityId entity = EntityId(lua_tointeger(L, 1));
     const char* key = lua_tostring(L, 2);
-    int result = entity->get_base_property<int>(key);
+    int result = entity->get_base_property(key, Property::Type::Integer).as<int32_t>();
     lua_pushinteger(L, result);
 
     return 1;
@@ -203,7 +203,7 @@ namespace LuaEntityFunctions
 
     EntityId entity = EntityId(lua_tointeger(L, 1));
     const char* key = lua_tostring(L, 2);
-    std::string result = entity->get_base_property<std::string>(key).c_str();
+    std::string result = entity->get_base_property(key, Property::Type::String).as<std::string>();
     lua_pushstring(L, result.c_str());
 
     return 1;
@@ -221,7 +221,7 @@ namespace LuaEntityFunctions
 
     EntityId entity = EntityId(lua_tointeger(L, 1));
     const char* key = lua_tostring(L, 2);
-    bool result = entity->get_modified_property<bool>(key);
+    bool result = entity->get_modified_property(key, Property::Type::Boolean).as<bool>();
     lua_pushboolean(L, result);
 
     return 1;
@@ -239,7 +239,7 @@ namespace LuaEntityFunctions
 
     EntityId entity = EntityId(lua_tointeger(L, 1));
     const char* key = lua_tostring(L, 2);
-    int result = entity->get_modified_property<int>(key);
+    int result = entity->get_modified_property(key, Property::Type::Integer).as<int32_t>();
     lua_pushinteger(L, result);
 
     return 1;
@@ -257,7 +257,7 @@ namespace LuaEntityFunctions
 
     EntityId entity = EntityId(lua_tointeger(L, 1));
     const char* key = lua_tostring(L, 2);
-    std::string result = entity->get_modified_property<std::string>(key).c_str();
+    std::string result = entity->get_modified_property(key, Property::Type::String).as<std::string>();
     lua_pushstring(L, result.c_str());
 
     return 1;
@@ -275,7 +275,7 @@ namespace LuaEntityFunctions
 
     EntityId entity = EntityId(lua_tointeger(L, 1));
     const char* key = lua_tostring(L, 2);
-    bool result = entity->get_intrinsic<bool>(key);
+    bool result = entity->get_intrinsic(key, Property::Type::Boolean).as<bool>();
     lua_pushboolean(L, result);
 
     return 1;
@@ -293,7 +293,7 @@ namespace LuaEntityFunctions
 
     EntityId entity = EntityId(lua_tointeger(L, 1));
     const char* key = lua_tostring(L, 2);
-    int result = entity->get_intrinsic<int>(key);
+    int result = entity->get_intrinsic(key, Property::Type::Integer).as<int32_t>();
     lua_pushinteger(L, result);
 
     return 1;
@@ -312,7 +312,7 @@ namespace LuaEntityFunctions
     EntityId entity = EntityId(lua_tointeger(L, 1));
     const char* key = lua_tostring(L, 2);
 
-    std::string result = entity->get_intrinsic<std::string>(key).c_str();
+    std::string result = entity->get_intrinsic(key, Property::Type::String).as<std::string>();
 
     lua_pushstring(L, result.c_str());
 
@@ -447,7 +447,7 @@ namespace LuaEntityFunctions
     EntityId entity = EntityId(lua_tointeger(L, 1));
     const char* key = lua_tostring(L, 2);
     bool value = (lua_toboolean(L, 3) != 0);
-    entity->set_base_property<bool>(key, value);
+    entity->set_base_property(key, Property(value));
 
     return 0;
   }
@@ -464,8 +464,8 @@ namespace LuaEntityFunctions
 
     EntityId entity = EntityId(lua_tointeger(L, 1));
     const char* key = lua_tostring(L, 2);
-    int value = static_cast<int>(lua_tointeger(L, 3));
-    entity->set_base_property<int>(key, value);
+    int32_t value = static_cast<int32_t>(lua_tointeger(L, 3));
+    entity->set_base_property(key, Property(value));
 
     return 0;
   }
@@ -484,7 +484,7 @@ namespace LuaEntityFunctions
     const char* key = lua_tostring(L, 2);
     const char* value = lua_tostring(L, 3);
     std::string svalue = std::string(value);
-    entity->set_base_property<std::string>(key, svalue);
+    entity->set_base_property(key, Property(svalue));
 
     return 0;
   }

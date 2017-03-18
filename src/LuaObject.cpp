@@ -85,6 +85,39 @@ void Lua::set_global(std::string name, lua_Integer value)
   lua_setglobal(L_, name.c_str());
 }
 
+void Lua::stackDump()
+{
+  printf("Lua Stack Dump: ");
+  int i;
+  int top = lua_gettop(L_);
+  for (i = 1; i <= top; i++)
+  {  /* repeat for each level */
+    int t = lua_type(L_, i);
+    switch (t)
+    {
+
+      case LUA_TSTRING:  /* strings */
+        printf("\"%s\"", lua_tostring(L_, i));
+        break;
+
+      case LUA_TBOOLEAN:  /* booleans */
+        printf(lua_toboolean(L_, i) ? "true" : "false");
+        break;
+
+      case LUA_TNUMBER:  /* numbers */
+        printf("%g", lua_tonumber(L_, i));
+        break;
+
+      default:  /* other values */
+        printf("[%s]", lua_typename(L_, t));
+        break;
+
+    }
+    printf("  ");  /* put a separator */
+  }
+  printf("\n");  /* end the listing */
+}
+
 bool Lua::add_enum(const char* tname, ...)
 {
   /// @note Here's the Lua code we're building and executing to define the
@@ -168,7 +201,7 @@ int Lua::get_enum_value(int index)
 ///  * Boolean
 ///  * String
 ///  * Number
-///  * IntegerVec2
+///  * IntVec2
 ///  * Direction
 ///  * Color
 ///
@@ -181,16 +214,14 @@ int Lua::push_value(Property property)
 {
   switch (property.type())
   {
-    case Property::Type::Null: lua_pushnil(L_); return 1;
-    case Property::Type::Boolean: return push_value(property.as<bool>());
-    case Property::Type::String: return push_value(property.as<std::string>());
-    case Property::Type::EightBits:  
-    case Property::Type::Integer:    
-    case Property::Type::Number:     
-    case Property::Type::BigInteger: return push_value(property.as<double>());
-    case Property::Type::IntegerVec2: return push_value(property.as<IntegerVec2>());
+    case Property::Type::Null:      lua_pushnil(L_); return 1;
+    case Property::Type::Boolean:   return push_value(property.as<bool>());
+    case Property::Type::String:    return push_value(property.as<std::string>());
+    case Property::Type::Integer:   return push_value(property.as<int64_t>());
+    case Property::Type::Number:    return push_value(property.as<double>());
+    case Property::Type::IntVec2:   return push_value(property.as<IntVec2>());
     case Property::Type::Direction: return push_value(property.as<Direction>());
-    case Property::Type::Color: return push_value(property.as<Color>());
+    case Property::Type::Color:     return push_value(property.as<Color>());
     default:
     {
       std::stringstream ss;
@@ -250,14 +281,14 @@ int Lua::push_value(std::string value)
   return 1;
 }
 
-int Lua::push_value(Vec2u value)
+int Lua::push_value(UintVec2 value)
 {
   lua_pushinteger(L_, static_cast<lua_Integer>(value.x));
   lua_pushinteger(L_, static_cast<lua_Integer>(value.y));
   return 2;
 }
 
-int Lua::push_value(IntegerVec2 value)
+int Lua::push_value(IntVec2 value)
 {
   lua_pushinteger(L_, static_cast<lua_Integer>(value.x));
   lua_pushinteger(L_, static_cast<lua_Integer>(value.y));
@@ -291,7 +322,7 @@ Property Lua::pop_value(Property::Type type)
       break;
 
     case Property::Type::Boolean:
-      property.reset(new Property(static_cast<bool>(lua_tointeger(L_, -1))));
+      property.reset(new Property(static_cast<bool>(lua_toboolean(L_, -1))));
       lua_pop(L_, 1);
       break;
 
@@ -300,13 +331,8 @@ Property Lua::pop_value(Property::Type type)
       lua_pop(L_, 1);
       break;
 
-    case Property::Type::EightBits: 
-      property.reset(new Property(static_cast<uint8_t>(lua_tointeger(L_, -1))));
-      lua_pop(L_, 1);
-      break;
-
     case Property::Type::Integer:
-      property.reset(new Property(static_cast<int32_t>(lua_tonumber(L_, -1))));
+      property.reset(new Property(static_cast<int64_t>(lua_tointeger(L_, -1))));
       lua_pop(L_, 1);
       break;
 
@@ -315,14 +341,22 @@ Property Lua::pop_value(Property::Type type)
       lua_pop(L_, 1);
       break;
 
-    case Property::Type::BigInteger: 
-      property.reset(new Property(static_cast<int64_t>(lua_tointeger(L_, -1))));
+    case Property::Type::ActionResult:
+      if (!check_enum_type("ActionResult", -1))
+      {
+        CLOG(ERROR, "Lua") << "Expected ActionResult on the Lua stack, not found" << type;
+        stackDump();
+      }
+      else
+      {
+        property.reset(new Property(static_cast<ActionResult>(get_enum_value(-1))));
+      }
       lua_pop(L_, 1);
       break;
 
-    case Property::Type::IntegerVec2:
-      property.reset(new Property(IntegerVec2(static_cast<int>(lua_tointeger(L_, -2)),
-                                              static_cast<int>(lua_tointeger(L_, -1)))));
+    case Property::Type::IntVec2:
+      property.reset(new Property(IntVec2(static_cast<int>(lua_tointeger(L_, -2)),
+                                          static_cast<int>(lua_tointeger(L_, -1)))));
       lua_pop(L_, 2);
       break;
 
@@ -342,6 +376,7 @@ Property Lua::pop_value(Property::Type type)
       break;
 
     default:
+      CLOG(ERROR, "Lua") << "Unsupported Property::Type " << type;
       break;
   }
 
@@ -355,13 +390,13 @@ unsigned int Lua::stack_slots(Property::Type type) const
     case Property::Type::Null: return 0;
     case Property::Type::Boolean: return 1;
     case Property::Type::String: return 1;
-    case Property::Type::EightBits: return 1;
+    case Property::Type::Integer: return 1;
     case Property::Type::Number: return 1;
-    case Property::Type::BigInteger: return 1;
-    case Property::Type::IntegerVec2: return 2;
+    case Property::Type::ActionResult: return 1;
+    case Property::Type::IntVec2: return 2;
     case Property::Type::Direction: return 3;
     case Property::Type::Color: return 4;
-    default: return 0;
+    default: CLOG(ERROR, "Lua") << "Unsupported Property::Type " << type; return 0;
   }
 }
 
@@ -416,7 +451,9 @@ Property Lua::call_thing_function(std::string function_name,
         }
 
         // Call the function with N+1 arguments and R results. (-(N+2), +R) = R-(N+2)
+        //stackDump();
         int result = lua_pcall(L_, lua_args + 1, stack_slots(result_type), 0);
+        //stackDump();
         if (result == 0)
         {
           // Pop the return value off of the stack. (-R)
@@ -556,7 +593,9 @@ void Lua::set_type_intrinsic(std::string group, std::string name, Property value
       lua_pushstring(L_, name.c_str());              // set group name <
       push_value(value);                             // set group name value <
       int num_args = 2 + stack_slots(value.type());
+      //stackDump();
       int result = lua_pcall(L_, num_args, 0, 0);    // (nil|err) <
+      //stackDump();
       if (result != 0)
       {
         // Get the error message.
@@ -657,12 +696,9 @@ void Lua::addPropertyTypeEnumToLua()
            "Null", Property::Type::Null,
            "Boolean", Property::Type::Boolean,
            "String", Property::Type::String,
-           "EightBits", Property::Type::EightBits,
            "Integer", Property::Type::Integer,
-           "BigInteger", Property::Type::BigInteger,
            "Number", Property::Type::Number,
-           "IntegerVec2", Property::Type::IntegerVec2,
-           "EntityId", Property::Type::EntityId,
+           "IntVec2", Property::Type::IntVec2,
            "ActionResult", Property::Type::ActionResult,
            "Direction", Property::Type::Direction,
            "Color", Property::Type::Color,

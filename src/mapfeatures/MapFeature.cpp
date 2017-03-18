@@ -103,7 +103,7 @@ bool MapFeature::erase_growth_vector(GeoVector vec)
 std::unique_ptr<MapFeature> MapFeature::construct(Map& game_map, PropertyDictionary const & settings, GeoVector vec)
 {
   std::unique_ptr<MapFeature> feature;
-  std::string feature_type = settings.get("type").as<String>();
+  std::string feature_type = settings.get("type").as<std::string>();
 
   try
   {
@@ -166,8 +166,8 @@ void MapFeature::add_growth_vector(GeoVector vec, bool highPriority)
    pImpl->lowPriorityVecs).push_back(vec);
 }
 
-bool MapFeature::does_box_pass_criterion(IntegerVec2 upper_left,
-                                         IntegerVec2 lower_right,
+bool MapFeature::does_box_pass_criterion(IntVec2 upper_left,
+                                         IntVec2 lower_right,
                                          std::function<bool(MapTile&)> criterion)
 {
   for (int xCheck = upper_left.x; xCheck <= lower_right.x; ++xCheck)
@@ -184,7 +184,7 @@ bool MapFeature::does_box_pass_criterion(IntegerVec2 upper_left,
   return true;
 }
 
-void MapFeature::set_box(IntegerVec2 upper_left, IntegerVec2 lower_right, std::string tile_type)
+void MapFeature::set_box(IntVec2 upper_left, IntVec2 lower_right, std::string tile_type)
 {
   Map& map = get_map();
 
