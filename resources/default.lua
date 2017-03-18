@@ -150,5 +150,6 @@ end
 -- === USEFUL GLOBALS =========================================================
 Mu = 0
 
+require('resources/entity/GameObject')
 
 print("*** Default Lua script executed.")

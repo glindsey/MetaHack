@@ -1,6 +1,6 @@
 -- Definition of the Entity object type, which all others inherit from.
 
-Entity = inheritsFrom(nil, "Entity")
+Entity = inheritsFrom(GameObject, "Entity")
 Entity.intrinsics.name = "[Entity]"
 Entity.intrinsics.plural = "[Entities]"
 
@@ -33,6 +33,12 @@ Entity.intrinsics.counter_busy = 0
 Entity.intrinsics.locked = false
 Entity.intrinsics.open = true
 Entity.intrinsics.quantity = 1
+
+Entity.intrinsics.inventory_size_is_integer = true
+Entity.intrinsics.physical_mass_is_integer = true
+Entity.intrinsics.counter_busy_is_integer = true
+Entity.intrinsics.quantity_is_integer = true
+
 
 function Entity.get_display_name(id)
     local quantity = thing_get_modified_property_value(id, "quantity")
@@ -120,32 +126,3 @@ end
 function Entity.process()
     return ActionResult.Success
 end
-
-function Entity:get_intrinsic(key)
-    local result = self.intrinsics[key]
-
-    if (result == nil) then
-        local superclass = self.superClass()
-        if (superclass ~= nil) then
-            return self.superClass():get_intrinsic(key)
-        end
-    else
-        -- Look for special cases.
-        if (type(result) == "table") then
-            if (result.type == "range") then
-                --print("Range type found, returning " .. tostring(result.min) .. " and " .. tostring(result.max))
-                return math.random(result.min, result.max)
-            elseif (result.type == "vector2") then
-                return result.x, result.y
-            end
-        end
-
-        -- Got here? Just return the result.
-        return result
-    end
-end
-
-function Entity:set_intrinsic(name, value)
-    self.intrinsics[name] = value
-end
-

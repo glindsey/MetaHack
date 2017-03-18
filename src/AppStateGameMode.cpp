@@ -179,8 +179,12 @@ bool AppStateGameMode::initialize()
 
   // Move player to start position on the map.
   auto& start_coords = game_map.get_start_coords();
+
   auto start_floor = game_map.get_tile(start_coords).get_tile_contents();
-  /* bool player_moved = */ player->move_into(start_floor);
+  ASSERT_CONDITION(start_floor);
+
+  bool player_moved = player->move_into(start_floor);
+  ASSERT_CONDITION(player_moved);
 
   // Set cursor to starting location.
   m_cursor_coords = start_coords;

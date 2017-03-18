@@ -33,7 +33,7 @@ namespace LuaEntityFunctions
     // Check to make sure the Entity is actually creatable.
     /// @todo Might want the ability to disable this check for debugging purposes?
     Metadata& thing_metadata = GAME.get_metadata_collection("entity").get(new_thing_type);
-    bool is_creatable = thing_metadata.get_intrinsic("creatable", Property::Type::Boolean, Property(false)).as<bool>();
+    bool is_creatable = thing_metadata.get_intrinsic("creatable", Property::Type::Boolean, Property::from(false)).as<bool>();
 
     if (is_creatable)
     {
@@ -447,7 +447,7 @@ namespace LuaEntityFunctions
     EntityId entity = EntityId(lua_tointeger(L, 1));
     const char* key = lua_tostring(L, 2);
     bool value = (lua_toboolean(L, 3) != 0);
-    entity->set_base_property(key, Property(value));
+    entity->set_base_property(key, Property::from(value));
 
     return 0;
   }
@@ -465,7 +465,7 @@ namespace LuaEntityFunctions
     EntityId entity = EntityId(lua_tointeger(L, 1));
     const char* key = lua_tostring(L, 2);
     int32_t value = static_cast<int32_t>(lua_tointeger(L, 3));
-    entity->set_base_property(key, Property(value));
+    entity->set_base_property(key, Property::from(value));
 
     return 0;
   }
@@ -484,7 +484,7 @@ namespace LuaEntityFunctions
     const char* key = lua_tostring(L, 2);
     const char* value = lua_tostring(L, 3);
     std::string svalue = std::string(value);
-    entity->set_base_property(key, Property(svalue));
+    entity->set_base_property(key, Property::from(svalue));
 
     return 0;
   }

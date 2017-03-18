@@ -3,41 +3,44 @@
 #include "Property.h"
 
 Property::Property() : m_type{ Type::Null } {}
+Property::~Property() {}
 
-Property::Property(Type type) : m_type{ type }
+Property Property::empty(Type type)
 {
-  switch (m_type)
+  switch (type)
   {
-    case Type::Boolean:      m_value = bool(); break;
-    case Type::String:       m_value = std::string(); break;
-    case Type::Integer:      m_value = int64_t(); break;
-    case Type::Number:       m_value = double(); break;
-    case Type::ActionResult: m_value = ActionResult(); break;
-    case Type::IntVec2:      m_value = IntVec2(); break;
-    case Type::Direction:    m_value = Direction(); break;
-    case Type::Color:        m_value = Color(); break;
-    default: break;
+    case Type::Boolean:      return Property::from(false);
+    case Type::String:       return Property::from(std::string());
+    case Type::Integer:      return Property::from(0LL);
+    case Type::Number:       return Property::from(0.0);
+    case Type::ActionResult: return Property::from(ActionResult::Pending);
+    case Type::IntVec2:      return Property::from(IntVec2(0, 0));
+    case Type::Direction:    return Property::from(Direction::None);
+    case Type::Color:        return Property::from(Color::Transparent);
+    case Type::PropertyType: return Property::from(Property::Type::Null);
+    default: return Property();
   }
 }
 
-Property::Property(bool value)         : m_type{ Type::Boolean }, m_value{ value } {}
-Property::Property(char value)         : m_type{ Type::String }, m_value{ std::string(1, value) } {}
-Property::Property(std::string value)  : m_type{ Type::String }, m_value{ value } {}
-Property::Property(char const* value)  : m_type{ Type::String }, m_value{ value ? std::string(value) : std::string() } {}
-Property::Property(uint8_t value)      : m_type{ Type::Integer }, m_value{ static_cast<int64_t>(value) } {}
-Property::Property(uint32_t value)     : m_type{ Type::Integer }, m_value{ static_cast<int64_t>(value) } {}
-Property::Property(int32_t value)      : m_type{ Type::Integer }, m_value{ static_cast<int64_t>(value) } {}
-Property::Property(uint64_t value)     : m_type{ Type::Integer }, m_value{ static_cast<int64_t>(value) } {}
-Property::Property(int64_t value)      : m_type{ Type::Integer }, m_value{ value } {}
-Property::Property(EntityId value)     : m_type{ Type::Integer }, m_value{ static_cast<int64_t>(value) } {}
-Property::Property(float value)        : m_type{ Type::Number }, m_value{ static_cast<double>(value) } {}
-Property::Property(double value)       : m_type{ Type::Number }, m_value{ value } {}
-Property::Property(ActionResult value) : m_type{ Type::ActionResult }, m_value{ value } {}
-Property::Property(UintVec2 value)     : m_type{ Type::IntVec2 }, m_value{ UintVec2(value.x, value.y) } {}
-Property::Property(IntVec2 value)      : m_type{ Type::IntVec2 }, m_value{ value } {}
-Property::Property(Direction value)    : m_type{ Type::Direction }, m_value{ value } {}
-Property::Property(Color value)        : m_type{ Type::Color }, m_value{ value } {}
-Property::~Property() {}
+Property Property::from(bool value) { return Property(Type::Boolean, value); }
+Property Property::from(char value) { return Property(Type::String, std::string(1, value)); }
+Property Property::from(std::string value) { return Property(Type::String, value); }
+Property Property::from(char const* value) { return Property(Type::String, value ? std::string(value) : std::string()); }
+Property Property::from(uint8_t value) { return Property(Type::Integer, static_cast<int64_t>(value)); }
+Property Property::from(uint32_t value) { return Property(Type::Integer, static_cast<int64_t>(value)); }
+Property Property::from(int32_t value) { return Property(Type::Integer, static_cast<int64_t>(value)); }
+Property Property::from(uint64_t value) { return Property(Type::Integer, static_cast<int64_t>(value)); }
+Property Property::from(int64_t value) { return Property(Type::Integer, value); }
+Property Property::from(EntityId value) { return Property(Type::Integer, static_cast<int64_t>(value)); }
+Property Property::from(float value) { return Property(Type::Number, static_cast<double>(value)); }
+Property Property::from(double value) { return Property(Type::Number, value); }
+Property Property::from(ActionResult value) { return Property(Type::ActionResult, value); }
+Property Property::from(UintVec2 value) { return Property(Type::IntVec2, UintVec2(value.x, value.y)); }
+Property Property::from(IntVec2 value) { return Property(Type::IntVec2, value); }
+Property Property::from(Direction value) { return Property(Type::Direction, value); }
+Property Property::from(Color value) { return Property(Type::Color, value); }
+Property Property::from(Property::Type value) { return Property(Type::PropertyType, value); }
+
 
 bool Property::as_bool(bool default_value) const
 {
@@ -151,7 +154,7 @@ EntityId Property::as_EntityId(EntityId default_value) const
   {
     case Type::Null:    return default_value;
     case Type::Integer: return static_cast<EntityId>(boost::any_cast<int64_t>(m_value));
-    case Type::Number:  return static_cast<EntityId>(boost::any_cast<double>(m_value));
+    case Type::Number:  return static_cast<EntityId>(static_cast<uint64_t>((boost::any_cast<double>(m_value))));
     default: break;
   }
   throw InvalidPropertyCastException("EntityId", type());
@@ -214,6 +217,17 @@ Color Property::as_Color(Color default_value) const
     default: break;
   }
   throw InvalidPropertyCastException("Color", type());
+}
+
+Property::Type Property::as_PropertyType(Property::Type default_value) const
+{
+  switch (type())
+  {
+    case Type::Null:         return default_value;
+    case Type::PropertyType: return boost::any_cast<Property::Type>(m_value);
+    default: break;
+  }
+  throw InvalidPropertyCastException("PropertyType", type());
 }
 
 Property::Type Property::type() const
@@ -342,4 +356,9 @@ Property& Property::operator%=(Property const& rhs)
   }
   return *this;
 }
+
+Property::Property(Property::Type type, boost::any value)
+  :
+  m_type{ type }, m_value{ value }
+{}
 

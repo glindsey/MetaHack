@@ -93,7 +93,7 @@ UintVec2 EntityStandard2DView::get_tile_sheet_coords(int frame) const
   UintVec2 start_coords = entity.get_metadata().get_tile_coords();
 
   /// Call the Lua function to get the offset (tile to choose).
-  UintVec2 offset = entity.call_lua_function("get_tile_offset", { Property(frame) }, 
+  UintVec2 offset = entity.call_lua_function("get_tile_offset", { Property::from(frame) },
                                              Property::Type::IntVec2).as<UintVec2>();
 
   /// Add them to get the resulting coordinates.

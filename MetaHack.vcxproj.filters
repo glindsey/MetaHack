@@ -68228,6 +68228,9 @@
     <None Include="resources\maptile\MTWallStone.lua">
       <Filter>Resource Files\MapTile Scripts</Filter>
     </None>
+    <None Include="resources\entity\GameObject.lua">
+      <Filter>Resource Files\Other Scripts</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="resources\entity\Biped.png">

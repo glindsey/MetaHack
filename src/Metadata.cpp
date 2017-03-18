@@ -73,7 +73,7 @@ Property Metadata::get_intrinsic(std::string name, Property::Type type, Property
 
 Property Metadata::get_intrinsic(std::string name, Property::Type type) const
 {
-  return get_intrinsic(name, type, Property(type));
+  return get_intrinsic(name, type, Property::empty(type));
 }
 
 void Metadata::set_intrinsic(std::string name, Property value)

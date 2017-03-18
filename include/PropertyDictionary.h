@@ -40,7 +40,7 @@ public:
 
   template <typename T> bool set(std::string key, T value) 
   { 
-    Property property = Property(value);
+    Property property = Property::from(value);
     return set(key, property); 
   }
 

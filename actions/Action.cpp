@@ -124,7 +124,7 @@ namespace Actions
         actor->get_type() << "): counter_busy = " <<
         counter_busy << "%d, decrementing";
 
-      actor->add_to_base_property("counter_busy", Property(-1));
+      actor->add_to_base_property("counter_busy", Property::from(-1));
       return false;
     }
 
@@ -150,13 +150,13 @@ namespace Actions
           if (result.success)
           {
             // Update the busy counter.
-            pImpl->subject->set_base_property("counter_busy", Property(result.elapsed_time));
+            pImpl->subject->set_base_property("counter_busy", Property::from(result.elapsed_time));
             set_state(State::PreBegin);
           }
           else
           {
             // Clear the busy counter.
-            pImpl->subject->set_base_property("counter_busy", Property(0));
+            pImpl->subject->set_base_property("counter_busy", Property::from(0));
             set_state(State::PostFinish);
           }
           break;
@@ -169,13 +169,13 @@ namespace Actions
           if (result.success)
           {
             // Update the busy counter.
-            pImpl->subject->set_base_property("counter_busy", Property(result.elapsed_time));
+            pImpl->subject->set_base_property("counter_busy", Property::from(result.elapsed_time));
             set_state(State::InProgress);
           }
           else
           {
             // Clear the busy counter.
-            pImpl->subject->set_base_property("counter_busy", Property(0));
+            pImpl->subject->set_base_property("counter_busy", Property::from(0));
             set_state(State::PostFinish);
           }
           break;
@@ -183,14 +183,14 @@ namespace Actions
         case State::InProgress:
           result = do_finish_work(params);
 
-          pImpl->subject->set_base_property("counter_busy", Property(result.elapsed_time));
+          pImpl->subject->set_base_property("counter_busy", Property::from(result.elapsed_time));
           set_state(State::PostFinish);
           break;
 
         case State::Interrupted:
           result = do_abort_work(params);
 
-          pImpl->subject->add_to_base_property("counter_busy", Property(result.elapsed_time));
+          pImpl->subject->add_to_base_property("counter_busy", Property::from(result.elapsed_time));
           set_state(State::PostFinish);
           break;
 

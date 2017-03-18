@@ -55,15 +55,8 @@ App::App(sf::RenderWindow& app_window)
     throw std::runtime_error("Tried to create more than one App instance");
   }
 
-  // Register the App logger.
+  // Register loggers.
   SET_UP_LOGGER("App", true);
-
-  // Register the Action logger too; this can't be done in the Action()
-  // constructor due to some nasty crap I'm doing with static prototype
-  // Action objects.
-  /// @todo Kill the prototype object registration deal. It's more trouble
-  ///       than it's worth, since static initialization order is not
-  ///       defined.
   SET_UP_LOGGER("Action", false);
   SET_UP_LOGGER("Property", true);
   SET_UP_LOGGER("StringTransforms", true);

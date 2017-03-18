@@ -26,10 +26,10 @@ class Property final // final because it doesn't have a virtual dtor, don't want
 public:
   /// Enum of the valid property types.
   /// @note If this class is changed, remember to also change the method that
-  ///       adds it to Lua in LuaObject.h!
+  ///       adds it to Lua in LuaObject.cpp!
   enum class Type
   {
-    Null,
+    Null = 0,
     Boolean,
     String,
     Integer,        ///< Internally represented by int64_t
@@ -37,7 +37,10 @@ public:
     IntVec2,
     ActionResult,
     Direction,
-    Color
+    Color,
+    PropertyType,   ///< Property::Type representing a Property::Type. How meta.
+    Unknown,        ///< Internally represented by a string, but only to contain the unknown Lua type
+    Count           ///< Just for bookkeeping, doesn't need to be in LuaObject
   };
 
   friend std::ostream& operator<<(std::ostream& os, Type const& type)
@@ -53,6 +56,8 @@ public:
       case Type::ActionResult: os << "ActionResult"; break;
       case Type::Direction:    os << "Direction"; break;
       case Type::Color:        os << "Color"; break;
+      case Type::PropertyType: os << "PropertyType"; break;
+      case Type::Unknown:      os << "Unknown"; break;
       default:                 os << "??? (" << static_cast<int>(type) << ")"; break;
     }
     return os;
@@ -119,31 +124,33 @@ public:
   };
 
   Property();
-  explicit Property(Type type);
-  explicit Property(bool value);
-  explicit Property(char value);
-  explicit Property(std::string value);
-  explicit Property(char const* value);
-  explicit Property(uint8_t value);
-  explicit Property(uint32_t value);
-  explicit Property(int32_t value);
-  explicit Property(uint64_t value);
-  explicit Property(int64_t value);
-  explicit Property(EntityId value);
-  explicit Property(float value);
-  explicit Property(double value);
-  explicit Property(ActionResult value);
-  explicit Property(UintVec2 value);
-  explicit Property(IntVec2 value);
-  explicit Property(Direction value);
-  explicit Property(Color value);
-
   Property(Property const& other) = default;
   Property(Property&& other) = default;
   Property& operator=(Property const& other) = default;
   Property& operator=(Property&& other) noexcept = default;
 
   ~Property();
+
+  static Property empty(Type type);
+
+  static Property from(bool value);
+  static Property from(char value);
+  static Property from(std::string value);
+  static Property from(char const* value);
+  static Property from(uint8_t value);
+  static Property from(uint32_t value);
+  static Property from(int32_t value);
+  static Property from(uint64_t value);
+  static Property from(int64_t value);
+  static Property from(EntityId value);
+  static Property from(float value);
+  static Property from(double value);
+  static Property from(ActionResult value);
+  static Property from(UintVec2 value);
+  static Property from(IntVec2 value);
+  static Property from(Direction value);
+  static Property from(Color value);
+  static Property from(Property::Type value);
 
   template <typename T> 
   T as() const 
@@ -157,37 +164,39 @@ public:
     throw InvalidPropertyCastException("(unknown)", type());
   }
 
-  template <> bool         as(bool         default_value) const { return as_bool(default_value); }
-  template <> std::string  as(std::string  default_value) const { return as_string(default_value); }
-  template <> uint8_t      as(uint8_t      default_value) const { return as_uint8_t(default_value); }
-  template <> uint32_t     as(uint32_t     default_value) const { return as_uint32_t(default_value); }
-  template <> int32_t      as(int32_t      default_value) const { return as_int32_t(default_value); }
-  template <> uint64_t     as(uint64_t     default_value) const { return as_uint64_t(default_value); }
-  template <> int64_t      as(int64_t      default_value) const { return as_int64_t(default_value); }
-  template <> float        as(float        default_value) const { return as_float(default_value); }
-  template <> double       as(double       default_value) const { return as_double(default_value); }
-  template <> EntityId     as(EntityId     default_value) const { return as_EntityId(default_value); }
-  template <> ActionResult as(ActionResult default_value) const { return as_ActionResult(default_value); }
-  template <> UintVec2     as(UintVec2     default_value) const { return as_UintVec2(default_value); }
-  template <> IntVec2      as(IntVec2      default_value) const { return as_IntVec2(default_value); }
-  template <> Direction    as(Direction    default_value) const { return as_Direction(default_value); }
-  template <> Color        as(Color        default_value) const { return as_Color(default_value); }
+  template <> bool           as(bool           default_value) const { return as_bool(default_value); }
+  template <> std::string    as(std::string    default_value) const { return as_string(default_value); }
+  template <> uint8_t        as(uint8_t        default_value) const { return as_uint8_t(default_value); }
+  template <> uint32_t       as(uint32_t       default_value) const { return as_uint32_t(default_value); }
+  template <> int32_t        as(int32_t        default_value) const { return as_int32_t(default_value); }
+  template <> uint64_t       as(uint64_t       default_value) const { return as_uint64_t(default_value); }
+  template <> int64_t        as(int64_t        default_value) const { return as_int64_t(default_value); }
+  template <> float          as(float          default_value) const { return as_float(default_value); }
+  template <> double         as(double         default_value) const { return as_double(default_value); }
+  template <> EntityId       as(EntityId       default_value) const { return as_EntityId(default_value); }
+  template <> ActionResult   as(ActionResult   default_value) const { return as_ActionResult(default_value); }
+  template <> UintVec2       as(UintVec2       default_value) const { return as_UintVec2(default_value); }
+  template <> IntVec2        as(IntVec2        default_value) const { return as_IntVec2(default_value); }
+  template <> Direction      as(Direction      default_value) const { return as_Direction(default_value); }
+  template <> Color          as(Color          default_value) const { return as_Color(default_value); }
+  template <> Property::Type as(Property::Type default_value) const { return as_PropertyType(default_value); }
   
-  bool as_bool(bool default_value) const;
-  std::string as_string(std::string default_value) const;
-  uint8_t as_uint8_t(uint8_t default_value) const;
-  uint32_t as_uint32_t(uint32_t default_value) const;
-  int32_t as_int32_t(int32_t default_value) const;
-  uint64_t as_uint64_t(uint64_t default_value) const;
-  int64_t as_int64_t(int64_t default_value) const;
-  float as_float(float default_value) const;
-  double as_double(double default_value) const;
-  EntityId as_EntityId(EntityId default_value) const;
-  ActionResult as_ActionResult(ActionResult default_value) const;
-  UintVec2 as_UintVec2(UintVec2 default_value) const;
-  IntVec2 as_IntVec2(IntVec2 default_value) const;
-  Direction as_Direction(Direction default_value) const;
-  Color as_Color(Color default_value) const;
+  bool           as_bool        (bool           default_value) const;
+  std::string    as_string      (std::string    default_value) const;
+  uint8_t        as_uint8_t     (uint8_t        default_value) const;
+  uint32_t       as_uint32_t    (uint32_t       default_value) const;
+  int32_t        as_int32_t     (int32_t        default_value) const;
+  uint64_t       as_uint64_t    (uint64_t       default_value) const;
+  int64_t        as_int64_t     (int64_t        default_value) const;
+  float          as_float       (float          default_value) const;
+  double         as_double      (double         default_value) const;
+  EntityId       as_EntityId    (EntityId       default_value) const;
+  ActionResult   as_ActionResult(ActionResult   default_value) const;
+  UintVec2       as_UintVec2    (UintVec2       default_value) const;
+  IntVec2        as_IntVec2     (IntVec2        default_value) const;
+  Direction      as_Direction   (Direction      default_value) const;
+  Color          as_Color       (Color          default_value) const;
+  Property::Type as_PropertyType(Property::Type default_value) const;
 
   Type type() const;
 
@@ -217,6 +226,8 @@ public:
       case Property::Type::IntVec2:      os << boost::any_cast<IntVec2>(obj.m_value); break;
       case Property::Type::Direction:    os << boost::any_cast<Direction>(obj.m_value); break;
       case Property::Type::Color:        os << boost::any_cast<Color>(obj.m_value); break;
+      case Property::Type::PropertyType: os << boost::any_cast<Property::Type>(obj.m_value); break;
+      case Property::Type::Unknown:      os << boost::any_cast<std::string>(obj.m_value); break;
       default:                           os << "???"; break;
     }
     os << ")";
@@ -260,6 +271,8 @@ public:
       case Property::Type::IntVec2:      return std::tie(lhs.m_type, *boost::any_cast<IntVec2*>(&lhs.m_value)) < std::tie(rhs.m_type, *boost::any_cast<IntVec2*>(&rhs.m_value));
       case Property::Type::Direction:    return std::tie(lhs.m_type, *boost::any_cast<Direction*>(&lhs.m_value)) < std::tie(rhs.m_type, *boost::any_cast<Direction*>(&rhs.m_value));
       case Property::Type::Color:        return std::tie(lhs.m_type, *boost::any_cast<Color*>(&lhs.m_value)) < std::tie(rhs.m_type, *boost::any_cast<Color*>(&rhs.m_value));
+      case Property::Type::PropertyType: return std::tie(lhs.m_type, *boost::any_cast<Property::Type*>(&lhs.m_value)) < std::tie(rhs.m_type, *boost::any_cast<Property::Type*>(&rhs.m_value));
+      case Property::Type::Unknown:      return std::tie(lhs.m_type, *boost::any_cast<std::string*>(&lhs.m_value)) < std::tie(rhs.m_type, *boost::any_cast<std::string*>(&rhs.m_value));
       default: 
         throw Property::InvalidPropertyOperationException("operator<", lhs.m_type);
     }
@@ -294,7 +307,9 @@ public:
       case Property::Type::IntVec2:      return boost::any_cast<IntVec2>(lhs.m_value) == boost::any_cast<IntVec2>(rhs.m_value);
       case Property::Type::Direction:    return boost::any_cast<Direction>(lhs.m_value) == boost::any_cast<Direction>(rhs.m_value);
       case Property::Type::Color:        return boost::any_cast<Color>(lhs.m_value) == boost::any_cast<Color>(rhs.m_value);
-      default: 
+      case Property::Type::PropertyType: return boost::any_cast<Property::Type>(lhs.m_value) == boost::any_cast<Property::Type>(rhs.m_value);
+      case Property::Type::Unknown:      return boost::any_cast<std::string>(lhs.m_value) == boost::any_cast<std::string>(rhs.m_value);
+      default:
         throw Property::InvalidPropertyOperationException("operator==", lhs.m_type);
     }
   }
@@ -303,6 +318,9 @@ public:
   {
     return !(lhs == rhs);
   }
+
+protected:
+  Property(Property::Type type, boost::any value);
 
 private:
   Type m_type;

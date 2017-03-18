@@ -70,7 +70,7 @@ EntityId EntityPool::create(std::string type)
   {
     m_thing_map[new_id]->call_lua_function("on_create", {}, 
                                            Property::Type::ActionResult, 
-                                           Property(ActionResult::Success));
+                                           Property::from(ActionResult::Success));
   }
 
   return EntityId(new_id);

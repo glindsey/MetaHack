@@ -64,9 +64,9 @@ void Standard2DGraphicViews::loadViewResourcesFor(Metadata& metadata)
     CLOG(TRACE, "Metadata") << "Tiles for " << qualified_name <<
       " were placed on the TileSheet at " << tile_location;
 
-    metadata.set_intrinsic("has_tiles", Property(true));
-    metadata.set_intrinsic("tile_location_x", Property(tile_location.x));
-    metadata.set_intrinsic("tile_location_y", Property(tile_location.y));
+    metadata.set_intrinsic("has_tiles", Property::from(true));
+    metadata.set_intrinsic("tile_location_x", Property::from(tile_location.x));
+    metadata.set_intrinsic("tile_location_y", Property::from(tile_location.y));
   }
   else
   {

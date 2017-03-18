@@ -35,7 +35,7 @@ public:
   /// If the global currently exists it will be overwritten.
   void set_global(std::string name, lua_Integer value);
 
-  void stackDump();
+  void stackDump() const;
 
 
   /// Adds an enumerated type into Lua.
@@ -115,6 +115,7 @@ public:
   ///  * IntVec2
   ///  * Direction
   ///  * Color
+  ///  * Property::Type
   ///
   /// @param    value   Value to deduce the type of.
   /// @return           The number of arguments pushed to the stack.
@@ -133,9 +134,13 @@ public:
   int push_value(IntVec2 value);
   int push_value(Direction value);
   int push_value(sf::Color value);
+  int push_value(Property::Type value);
+
+  /// Pop a type from a Lua function, if possible.
+  /// @return The popped type, as a Property::Type.
+  Property::Type pop_type();
 
   /// Pop a value from a Lua function, if possible.
-  ///
   /// @return The popped value.
   Property pop_value(Property::Type type);
 

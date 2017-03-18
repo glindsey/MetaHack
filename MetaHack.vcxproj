@@ -528,6 +528,7 @@
     <None Include="resources\entity\DynamicEntity.lua" />
     <None Include="resources\entity\Entity.lua" />
     <None Include="resources\entity\FlaskGlass.lua" />
+    <None Include="resources\entity\GameObject.lua" />
     <None Include="resources\entity\Human.lua" />
     <None Include="resources\entity\LightOrb.lua" />
     <None Include="resources\entity\LightSource.lua" />
