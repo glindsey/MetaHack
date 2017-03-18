@@ -66,7 +66,7 @@ App::App(sf::RenderWindow& app_window)
   ///       defined.
   SET_UP_LOGGER("Action", false);
   SET_UP_LOGGER("Property", true);
-  SET_UP_LOGGER("StringTransforms", false);
+  SET_UP_LOGGER("StringTransforms", true);
 
 
   // First entity's first: load config settings.

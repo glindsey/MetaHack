@@ -354,9 +354,9 @@ namespace StringTransforms
               std::transform(token_name.begin(), token_name.end(), token_name.begin(), ::towlower);
               if (*loc == '(')
               {
-                token_argument.clear();
                 state = TokenizerState::ParsingTokenArgument;
-                current_string = &out_str;
+                current_string = &token_argument;
+                token_argument.clear();
               }
               else
               {
@@ -389,16 +389,12 @@ namespace StringTransforms
             CLOG(TRACE, "StringTransforms") << "Replacing token with: \"" << token_result << "\"";
             out_str += token_result;
 
-            if (*loc != L'\0')
-            {
-              out_str += *loc;
-            }
             state = TokenizerState::Text;
             current_string = &out_str;
           }
           else
           {
-            token_name += *loc;
+            token_argument += *loc;
           }
           break;
 

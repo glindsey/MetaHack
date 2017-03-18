@@ -502,7 +502,14 @@ Gender Entity::get_gender_or_you() const
   }
   else
   {
-    return m_gender;
+    if (get_quantity() > 1)
+    {
+      return Gender::Plural;
+    }
+    else
+    {
+      return m_gender;
+    }
   }
 }
 
