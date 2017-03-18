@@ -64,6 +64,9 @@
     <Filter Include="Resource Files\Miscellaneous">
       <UniqueIdentifier>{1356e6a5-6ca0-4825-b962-fc8a70d54f5e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Map Scripts">
+      <UniqueIdentifier>{937b91ce-f8b6-4836-9297-d77782c086b8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\App.h">
@@ -68108,5 +68111,342 @@
     <None Include="resources\strings.en.json">
       <Filter>Resource Files\Dictionaries</Filter>
     </None>
+    <None Include="resources\deepcopy.lua">
+      <Filter>Resource Files\Other Scripts</Filter>
+    </None>
+    <None Include="resources\default.lua">
+      <Filter>Resource Files\Other Scripts</Filter>
+    </None>
+    <None Include="resources\script\map.lua">
+      <Filter>Resource Files\Map Scripts</Filter>
+    </None>
+    <None Include="resources\entity\Animal.lua">
+      <Filter>Resource Files\Entity Scripts</Filter>
+    </None>
+    <None Include="resources\entity\Biped.lua">
+      <Filter>Resource Files\Entity Scripts</Filter>
+    </None>
+    <None Include="resources\entity\Blob.lua">
+      <Filter>Resource Files\Entity Scripts</Filter>
+    </None>
+    <None Include="resources\entity\Chest.lua">
+      <Filter>Resource Files\Entity Scripts</Filter>
+    </None>
+    <None Include="resources\entity\ChestWooden.lua">
+      <Filter>Resource Files\Entity Scripts</Filter>
+    </None>
+    <None Include="resources\entity\Coin.lua">
+      <Filter>Resource Files\Entity Scripts</Filter>
+    </None>
+    <None Include="resources\entity\CoinGold.lua">
+      <Filter>Resource Files\Entity Scripts</Filter>
+    </None>
+    <None Include="resources\entity\Container.lua">
+      <Filter>Resource Files\Entity Scripts</Filter>
+    </None>
+    <None Include="resources\entity\Dagger.lua">
+      <Filter>Resource Files\Entity Scripts</Filter>
+    </None>
+    <None Include="resources\entity\DynamicEntity.lua">
+      <Filter>Resource Files\Entity Scripts</Filter>
+    </None>
+    <None Include="resources\entity\Entity.lua">
+      <Filter>Resource Files\Entity Scripts</Filter>
+    </None>
+    <None Include="resources\entity\FlaskGlass.lua">
+      <Filter>Resource Files\Entity Scripts</Filter>
+    </None>
+    <None Include="resources\entity\Human.lua">
+      <Filter>Resource Files\Entity Scripts</Filter>
+    </None>
+    <None Include="resources\entity\LightOrb.lua">
+      <Filter>Resource Files\Entity Scripts</Filter>
+    </None>
+    <None Include="resources\entity\LightSource.lua">
+      <Filter>Resource Files\Entity Scripts</Filter>
+    </None>
+    <None Include="resources\entity\Marcher.lua">
+      <Filter>Resource Files\Entity Scripts</Filter>
+    </None>
+    <None Include="resources\entity\Mu.lua">
+      <Filter>Resource Files\Entity Scripts</Filter>
+    </None>
+    <None Include="resources\entity\Rock.lua">
+      <Filter>Resource Files\Entity Scripts</Filter>
+    </None>
+    <None Include="resources\entity\RockLichen.lua">
+      <Filter>Resource Files\Entity Scripts</Filter>
+    </None>
+    <None Include="resources\entity\SackCloth.lua">
+      <Filter>Resource Files\Entity Scripts</Filter>
+    </None>
+    <None Include="resources\entity\Sapient.lua">
+      <Filter>Resource Files\Entity Scripts</Filter>
+    </None>
+    <None Include="resources\entity\Sconce.lua">
+      <Filter>Resource Files\Entity Scripts</Filter>
+    </None>
+    <None Include="resources\entity\TileContents.lua">
+      <Filter>Resource Files\Entity Scripts</Filter>
+    </None>
+    <None Include="resources\entity\Weapon.lua">
+      <Filter>Resource Files\Entity Scripts</Filter>
+    </None>
+    <None Include="resources\entity\WeaponCutting.lua">
+      <Filter>Resource Files\Entity Scripts</Filter>
+    </None>
+    <None Include="resources\entity\WeaponStabbing.lua">
+      <Filter>Resource Files\Entity Scripts</Filter>
+    </None>
+    <None Include="resources\entity\WeaponStrangling.lua">
+      <Filter>Resource Files\Entity Scripts</Filter>
+    </None>
+    <None Include="resources\entity\WeaponStriking.lua">
+      <Filter>Resource Files\Entity Scripts</Filter>
+    </None>
+    <None Include="resources\shader\default.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="resources\shader\default.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="resources\maptile\MTFloor.lua">
+      <Filter>Resource Files\MapTile Scripts</Filter>
+    </None>
+    <None Include="resources\maptile\MTFloorDirt.lua">
+      <Filter>Resource Files\MapTile Scripts</Filter>
+    </None>
+    <None Include="resources\maptile\MTFloorStone.lua">
+      <Filter>Resource Files\MapTile Scripts</Filter>
+    </None>
+    <None Include="resources\maptile\MTUnknown.lua">
+      <Filter>Resource Files\MapTile Scripts</Filter>
+    </None>
+    <None Include="resources\maptile\MTWall.lua">
+      <Filter>Resource Files\MapTile Scripts</Filter>
+    </None>
+    <None Include="resources\maptile\MTWallStone.lua">
+      <Filter>Resource Files\MapTile Scripts</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="resources\entity\Biped.png">
+      <Filter>Resource Files\Graphics</Filter>
+    </Image>
+    <Image Include="resources\entity\ChestIron.png">
+      <Filter>Resource Files\Graphics</Filter>
+    </Image>
+    <Image Include="resources\entity\ChestWooden.png">
+      <Filter>Resource Files\Graphics</Filter>
+    </Image>
+    <Image Include="resources\entity\CoinCopper.png">
+      <Filter>Resource Files\Graphics</Filter>
+    </Image>
+    <Image Include="resources\entity\CoinGold.png">
+      <Filter>Resource Files\Graphics</Filter>
+    </Image>
+    <Image Include="resources\entity\CoinSilver.png">
+      <Filter>Resource Files\Graphics</Filter>
+    </Image>
+    <Image Include="resources\entity\Dagger.png">
+      <Filter>Resource Files\Graphics</Filter>
+    </Image>
+    <Image Include="resources\entity\DoorWooden.png">
+      <Filter>Resource Files\Graphics</Filter>
+    </Image>
+    <Image Include="resources\entity\Entity.png">
+      <Filter>Resource Files\Graphics</Filter>
+    </Image>
+    <Image Include="resources\entity\FlaskGlass.png">
+      <Filter>Resource Files\Graphics</Filter>
+    </Image>
+    <Image Include="resources\entity\Fountain.png">
+      <Filter>Resource Files\Graphics</Filter>
+    </Image>
+    <Image Include="resources\entity\GridBug.png">
+      <Filter>Resource Files\Graphics</Filter>
+    </Image>
+    <Image Include="resources\entity\Human.png">
+      <Filter>Resource Files\Graphics</Filter>
+    </Image>
+    <Image Include="resources\entity\LightOrb.png">
+      <Filter>Resource Files\Graphics</Filter>
+    </Image>
+    <Image Include="resources\entity\Mu.png">
+      <Filter>Resource Files\Graphics</Filter>
+    </Image>
+    <Image Include="resources\entity\Rock.png">
+      <Filter>Resource Files\Graphics</Filter>
+    </Image>
+    <Image Include="resources\entity\RockLichen.png">
+      <Filter>Resource Files\Graphics</Filter>
+    </Image>
+    <Image Include="resources\entity\SackCloth.png">
+      <Filter>Resource Files\Graphics</Filter>
+    </Image>
+    <Image Include="resources\entity\Sconce.png">
+      <Filter>Resource Files\Graphics</Filter>
+    </Image>
+    <Image Include="resources\entity\Scroll.png">
+      <Filter>Resource Files\Graphics</Filter>
+    </Image>
+    <Image Include="resources\entity\Sink.png">
+      <Filter>Resource Files\Graphics</Filter>
+    </Image>
+    <Image Include="resources\entity\Thing.png">
+      <Filter>Resource Files\Graphics</Filter>
+    </Image>
+    <Image Include="resources\entity\WallStone.png">
+      <Filter>Resource Files\Graphics</Filter>
+    </Image>
+    <Image Include="resources\maptile\MTFloorDirt.png">
+      <Filter>Resource Files\Graphics</Filter>
+    </Image>
+    <Image Include="resources\maptile\MTFloorGrass.png">
+      <Filter>Resource Files\Graphics</Filter>
+    </Image>
+    <Image Include="resources\maptile\MTFloorStone.png">
+      <Filter>Resource Files\Graphics</Filter>
+    </Image>
+    <Image Include="resources\maptile\MTStairsDown.png">
+      <Filter>Resource Files\Graphics</Filter>
+    </Image>
+    <Image Include="resources\maptile\MTStairsUp.png">
+      <Filter>Resource Files\Graphics</Filter>
+    </Image>
+    <Image Include="resources\maptile\MTUnknown.png">
+      <Filter>Resource Files\Graphics</Filter>
+    </Image>
+    <Image Include="resources\maptile\MTWallStone.png">
+      <Filter>Resource Files\Graphics</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="resources\font\angltrr.ttf">
+      <Filter>Resource Files\Fonts</Filter>
+    </Font>
+    <Font Include="resources\font\berylium bd it.ttf">
+      <Filter>Resource Files\Fonts</Filter>
+    </Font>
+    <Font Include="resources\font\berylium bd.ttf">
+      <Filter>Resource Files\Fonts</Filter>
+    </Font>
+    <Font Include="resources\font\berylium rg it.ttf">
+      <Filter>Resource Files\Fonts</Filter>
+    </Font>
+    <Font Include="resources\font\berylium rg.ttf">
+      <Filter>Resource Files\Fonts</Filter>
+    </Font>
+    <Font Include="resources\font\DAYROM__.ttf">
+      <Filter>Resource Files\Fonts</Filter>
+    </Font>
+    <Font Include="resources\font\DAYROM_X.ttf">
+      <Filter>Resource Files\Fonts</Filter>
+    </Font>
+    <Font Include="resources\font\DejaVuSansMono.ttf">
+      <Filter>Resource Files\Fonts</Filter>
+    </Font>
+    <Font Include="resources\font\DejaVuSansMono-Bold.ttf">
+      <Filter>Resource Files\Fonts</Filter>
+    </Font>
+    <Font Include="resources\font\DejaVuSansMono-BoldOblique.ttf">
+      <Filter>Resource Files\Fonts</Filter>
+    </Font>
+    <Font Include="resources\font\DejaVuSansMono-Oblique.ttf">
+      <Filter>Resource Files\Fonts</Filter>
+    </Font>
+    <Font Include="resources\font\Derivia.TTF">
+      <Filter>Resource Files\Fonts</Filter>
+    </Font>
+    <Font Include="resources\font\Dustismo_Roman.ttf">
+      <Filter>Resource Files\Fonts</Filter>
+    </Font>
+    <Font Include="resources\font\Dustismo_Roman_Bold.ttf">
+      <Filter>Resource Files\Fonts</Filter>
+    </Font>
+    <Font Include="resources\font\Dustismo_Roman_Italic.ttf">
+      <Filter>Resource Files\Fonts</Filter>
+    </Font>
+    <Font Include="resources\font\Dustismo_Roman_Italic_Bold.ttf">
+      <Filter>Resource Files\Fonts</Filter>
+    </Font>
+    <Font Include="resources\font\FreeMono.ttf">
+      <Filter>Resource Files\Fonts</Filter>
+    </Font>
+    <Font Include="resources\font\FreeMonoBold.ttf">
+      <Filter>Resource Files\Fonts</Filter>
+    </Font>
+    <Font Include="resources\font\FreeMonoBoldOblique.ttf">
+      <Filter>Resource Files\Fonts</Filter>
+    </Font>
+    <Font Include="resources\font\FreeMonoOblique.ttf">
+      <Filter>Resource Files\Fonts</Filter>
+    </Font>
+    <Font Include="resources\font\FreeSans.ttf">
+      <Filter>Resource Files\Fonts</Filter>
+    </Font>
+    <Font Include="resources\font\FreeSansBold.ttf">
+      <Filter>Resource Files\Fonts</Filter>
+    </Font>
+    <Font Include="resources\font\FreeSansBoldOblique.ttf">
+      <Filter>Resource Files\Fonts</Filter>
+    </Font>
+    <Font Include="resources\font\FreeSansOblique.ttf">
+      <Filter>Resource Files\Fonts</Filter>
+    </Font>
+    <Font Include="resources\font\FreeSerif.ttf">
+      <Filter>Resource Files\Fonts</Filter>
+    </Font>
+    <Font Include="resources\font\FreeSerifBold.ttf">
+      <Filter>Resource Files\Fonts</Filter>
+    </Font>
+    <Font Include="resources\font\FreeSerifBoldItalic.ttf">
+      <Filter>Resource Files\Fonts</Filter>
+    </Font>
+    <Font Include="resources\font\FreeSerifItalic.ttf">
+      <Filter>Resource Files\Fonts</Filter>
+    </Font>
+    <Font Include="resources\font\Imperator Bold.ttf">
+      <Filter>Resource Files\Fonts</Filter>
+    </Font>
+    <Font Include="resources\font\Imperator.ttf">
+      <Filter>Resource Files\Fonts</Filter>
+    </Font>
+    <Font Include="resources\font\ImperatorBronze.ttf">
+      <Filter>Resource Files\Fonts</Filter>
+    </Font>
+    <Font Include="resources\font\ImperatorBronzeSmallCaps.ttf">
+      <Filter>Resource Files\Fonts</Filter>
+    </Font>
+    <Font Include="resources\font\ImperatorPlaque.ttf">
+      <Filter>Resource Files\Fonts</Filter>
+    </Font>
+    <Font Include="resources\font\ImperatorSmallCaps Bold.ttf">
+      <Filter>Resource Files\Fonts</Filter>
+    </Font>
+    <Font Include="resources\font\ImperatorSmallCaps.ttf">
+      <Filter>Resource Files\Fonts</Filter>
+    </Font>
+    <Font Include="resources\font\OLDSH___.TTF">
+      <Filter>Resource Files\Fonts</Filter>
+    </Font>
+    <Font Include="resources\font\OLDSIH__.TTF">
+      <Filter>Resource Files\Fonts</Filter>
+    </Font>
+    <Font Include="resources\font\OLDSSCH_.TTF">
+      <Filter>Resource Files\Fonts</Filter>
+    </Font>
+    <Font Include="resources\font\OptimusPrinceps.ttf">
+      <Filter>Resource Files\Fonts</Filter>
+    </Font>
+    <Font Include="resources\font\OptimusPrincepsSemiBold.ttf">
+      <Filter>Resource Files\Fonts</Filter>
+    </Font>
+    <Font Include="resources\font\Servus_text_display_italic.ttf">
+      <Filter>Resource Files\Fonts</Filter>
+    </Font>
+    <Font Include="resources\font\unifont-8.0.01.ttf">
+      <Filter>Resource Files\Fonts</Filter>
+    </Font>
   </ItemGroup>
 </Project>
