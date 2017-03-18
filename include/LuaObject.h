@@ -1,7 +1,5 @@
+#pragma once
 // Lua enum binding modified from code Copyright (c) 2010 Tom Distler.
-
-#ifndef LUA_H
-#define LUA_H
 
 #include "stdafx.h"
 
@@ -13,6 +11,7 @@
 #include "Direction.h"
 
 // Forward declarations
+class EntityId;
 class Property;
 
 /// This class encapsulates the Lua state and interface as an object.
@@ -35,6 +34,9 @@ public:
   /// Sets a global to a particular integer value.
   /// If the global currently exists it will be overwritten.
   void set_global(std::string name, lua_Integer value);
+
+  void stackDump();
+
 
   /// Adds an enumerated type into Lua.
   ///
@@ -84,7 +86,7 @@ public:
   ///   ...
   /// }
   ///
-  bool check_enum_type(const char* tname, int index);
+  bool check_enum_type(const char* tname, int index) const;
 
   /// Gets the enum value as an integer.
   ///
@@ -110,7 +112,7 @@ public:
   ///  * Boolean
   ///  * String
   ///  * Number
-  ///  * IntegerVec2
+  ///  * IntVec2
   ///  * Direction
   ///  * Color
   ///
@@ -119,7 +121,6 @@ public:
   ///                   If the type could not be deduced, it will push
   ///                   nil and return 1.
   int push_value(Property property);
-
   int push_value(unsigned int value);
   int push_value(int value);
   int push_value(int64_t value);
@@ -128,141 +129,19 @@ public:
   int push_value(double value);
   int push_value(bool value);
   int push_value(std::string value);
-  int push_value(Vec2u value);
-  int push_value(IntegerVec2 value);
+  int push_value(UintVec2 value);
+  int push_value(IntVec2 value);
   int push_value(Direction value);
   int push_value(sf::Color value);
 
   /// Pop a value from a Lua function, if possible.
   ///
   /// @return The popped value.
-  template < typename T > T pop_value();
-
-  template <> void pop_value()
-  {}
-
-  template <> unsigned int pop_value()
-  {
-    unsigned int return_value = static_cast<unsigned int>(lua_tointeger(L_, -1));
-    lua_pop(L_, 1);
-    return return_value;
-  }
-
-  template <> int pop_value()
-  {
-    int return_value = static_cast<int>(lua_tointeger(L_, -1));
-    lua_pop(L_, 1);
-    return return_value;
-  }
-
-  template <> int64_t pop_value()
-  {
-    int64_t return_value = static_cast<int64_t>(lua_tointeger(L_, -1));
-    lua_pop(L_, 1);
-    return return_value;
-  }
-
-  template <> EntityId pop_value()
-  {
-    lua_Integer return_value = lua_tointeger(L_, -1);
-    lua_pop(L_, 1);
-    return EntityId(return_value);
-  }
-
-  template <> float pop_value()
-  {
-    float return_value = static_cast<float>(lua_tonumber(L_, -1));
-    lua_pop(L_, 1);
-    return return_value;
-  }
-
-  template <> double pop_value()
-  {
-    double return_value = lua_tonumber(L_, -1);
-    lua_pop(L_, 1);
-    return return_value;
-  }
-
-  template <> bool pop_value()
-  {
-    bool return_value = (lua_toboolean(L_, -1) != 0);
-    lua_pop(L_, 1);
-    return return_value;
-  }
-
-  template <> std::string pop_value()
-  {
-    std::string return_value;
-    char const* return_ptr = lua_tostring(L_, -1);
-    if (return_ptr != nullptr)
-    {
-      return_value = std::string(return_ptr);
-    }
-    lua_pop(L_, 1);
-    return return_value;
-  }
-
-  template <> Vec2u pop_value()
-  {
-    Vec2u return_value = Vec2u(static_cast<unsigned int>(lua_tointeger(L_, -2)),
-                               static_cast<unsigned int>(lua_tointeger(L_, -1)));
-    lua_pop(L_, 2);
-    return return_value;
-  }
-
-  template <> IntegerVec2 pop_value()
-  {
-    IntegerVec2 return_value = IntegerVec2(static_cast<unsigned int>(lua_tointeger(L_, -2)),
-                               static_cast<unsigned int>(lua_tointeger(L_, -1)));
-    lua_pop(L_, 2);
-    return return_value;
-  }
-
-  template <> Direction pop_value()
-  {
-    Vec3i return_value = Vec3i(static_cast<int>(lua_tointeger(L_, -3)),
-                               static_cast<int>(lua_tointeger(L_, -2)),
-                               static_cast<int>(lua_tointeger(L_, -1)));
-    lua_pop(L_, 3);
-    return Direction(return_value);
-  }
-
-  template <> sf::Color pop_value()
-  {
-    sf::Color return_value = sf::Color(static_cast<sf::Uint8>(lua_tointeger(L_, -4)),
-                                       static_cast<sf::Uint8>(lua_tointeger(L_, -3)),
-                                       static_cast<sf::Uint8>(lua_tointeger(L_, -2)),
-                                       static_cast<sf::Uint8>(lua_tointeger(L_, -1)));
-    lua_pop(L_, 4);
-    return return_value;
-  }
-
-  template <> ActionResult pop_value()
-  {
-    ActionResult return_value = static_cast<ActionResult>(get_enum_value(-1));
-    lua_pop(L_, 1);
-    return return_value;
-  }
-
   Property pop_value(Property::Type type);
 
   /// Return the number of Lua stack slots associated with a particular value.
-  template < typename T > unsigned int stack_slots();
-  template<> unsigned int stack_slots<void>() { return 0; }
-  template<> unsigned int stack_slots<unsigned int>() { return 1; }
-  template<> unsigned int stack_slots<int>() { return 1; }
-  template<> unsigned int stack_slots<int64_t>() { return 1; }
-  template<> unsigned int stack_slots<EntityId>() { return 1; }
-  template<> unsigned int stack_slots<float>() { return 1; }
-  template<> unsigned int stack_slots<double>() { return 1; }
-  template<> unsigned int stack_slots<bool>() { return 1; }
-  template<> unsigned int stack_slots<std::string>() { return 1; }
-  template<> unsigned int stack_slots<IntegerVec2>() { return 2; }
-  template<> unsigned int stack_slots<Vec2u>() { return 2; }
-  template<> unsigned int stack_slots<sf::Color>() { return 4; }
-  template<> unsigned int stack_slots<ActionResult>() { return 1; }
+  unsigned int stack_slots(Property::Type type) const;
 
-  unsigned int stack_slots(Property::Type type);
 
   /// Try to call a Lua function that takes the caller and a vector of
   /// arguments and returns a result.
@@ -274,232 +153,45 @@ public:
   /// @param function_name  Name of the function to call
   /// @param caller         EntityId to the entity calling the function
   /// @param args           Vector of arguments to pass to the function
+  /// @param result_type    Expected return type of the function
   /// @param default_result The default result if function is not found
   ///                       after traversing the entire parent tree.
   ///                       Defaults to the default constructor of the
   ///                       return type.
   ///
   /// @return The result of the call.
-  template < typename ResultType, typename ArgType >
-  ResultType call_thing_function(std::string function_name,
-                                 EntityId caller,
-                                 std::vector<ArgType> const& args,
-                                 ResultType default_result = ResultType())
-  {
-    ResultType return_value = default_result;
-    std::string name = caller->get_type();
+  Property call_thing_function(std::string function_name,
+                               EntityId caller,
+                               std::vector<Property> const& args,
+                               Property::Type result_type,
+                               Property default_result);
 
-    int start_stack = lua_gettop(L_);
+  Property call_thing_function(std::string function_name,
+                               EntityId caller,
+                               std::vector<Property> const& args,
+                               Property::Type result_type);
 
-    // Push name of class onto the stack. (+1)
-    lua_getglobal(L_, name.c_str());
-
-    if (lua_isnoneornil(L_, -1))
-    {
-      // Class not found -- pop the name back off. (-1)
-      lua_pop(L_, 1);
-    }
-    else
-    {
-      // Push name of function onto the stack. (+1)
-      lua_getfield(L_, -1, function_name.c_str());
-
-      if (lua_isnoneornil(L_, -1))
-      {
-        // Function not found -- pop the function and class names back off. (-2)
-        lua_pop(L_, 2);
-
-        CLOG(WARNING, "Lua") << "Could not find Lua function "
-          << name << ":"
-          << function_name;
-      }
-      else
-      {
-        // Remove the class name from the stack. (-1)
-        lua_remove(L_, -2);
-
-        // Push the caller's ID onto the stack. (+1)
-        lua_pushinteger(L_, caller);
-
-        // Push the arguments onto the stack. (+N)
-        unsigned int lua_args = 0;
-        for (auto& arg : args)
-        {
-          lua_args += stack_slots<ArgType>();
-          push_value(arg);
-        }
-
-        // Call the function with N+1 arguments and R results. (-(N+2), +R) = R-(N+2)
-        int result = lua_pcall(L_, lua_args + 1, stack_slots<ResultType>(), 0);
-        if (result == 0)
-        {
-          // Pop the return value off of the stack. (-R)
-          return_value = pop_value<ResultType>();
-        }
-        else
-        {
-          // Get the error message.
-          char const* error_message = lua_tostring(L_, -1);
-          MAJOR_ERROR("Error calling %s.%s: %s", name.c_str(), function_name.c_str(), error_message);
-
-          // Pop the error message off the stack. (-1)
-          lua_pop(L_, 1);
-        }
-      }
-    }
-
-    int end_stack = lua_gettop(L_);
-
-    if (start_stack != end_stack)
-    {
-      FATAL_ERROR("*** LUA STACK MISMATCH (%s.%s): Started at %d, ended at %d", name.c_str(), function_name.c_str(), start_stack, end_stack);
-    }
-
-    return return_value;
-  }
-
-  /// Get a Entity category intrinsic.
-  /// @param category       Name of category to get intrinsic of.
+  /// Get a Entity group intrinsic.
+  /// @param group          Name of group to get intrinsic of.
   /// @param name           Name of intrinsic to get.
   /// @param type           Type of intrinsic to get.
   /// @param default_value  Default value if intrinsic does not exist
   ///                       (defaults to default constructor of type).
   /// @return       The value of the intrinsic. 
-  Property get_type_intrinsic(std::string category,
+  Property get_type_intrinsic(std::string group,
                               std::string name,
                               Property::Type type,
                               Property default_value);
 
-  Property get_type_intrinsic(std::string category, 
+  Property get_type_intrinsic(std::string group, 
                               std::string name,
                               Property::Type type);
 
-
-  /// Get a Entity type intrinsic.
-  /// @param type           Name of type to get intrinsic of.
-  /// @param name           Name of intrinsic to get.
-  /// @param default_value  Default value if intrinsic does not exist
-  ///                       (defaults to default constructor of type).
-  /// @return       The value of the intrinsic.
-  template < typename ReturnType >
-  ReturnType get_type_intrinsic(std::string type, std::string name, ReturnType default_value = ReturnType())
-  {
-    ReturnType return_value = default_value;
-
-    int start_stack = lua_gettop(L_);
-
-    // Push type of class onto the stack. (+1)
-    lua_getglobal(L_, type.c_str());           // class <
-
-    if (lua_isnoneornil(L_, -1))
-    {
-      // Class not found -- pop the name back off. (-1)
-      lua_pop(L_, 1);
-      MAJOR_ERROR("Lua class %s was not found", type.c_str());
-    }
-    else
-    {
-      // Push name of function onto the stack. (+1)
-      lua_getfield(L_, -1, "get_intrinsic");             // class get <
-
-      if (lua_isnoneornil(L_, -1))
-      {
-        // Function not found -- pop the function and class names back off. (-2)
-        lua_pop(L_, 2);
-        MAJOR_ERROR("Lua function %s:get_intrinsic() was not found", type.c_str());
-      }
-      else
-      {
-        // Push the class name up to the front of the stack.
-        lua_pushvalue(L_, -2);                 // class get class <
-        lua_remove(L_, -3);                    // get class <
-        lua_pushstring(L_, name.c_str());      // get class name <
-
-        int num_results = stack_slots<ReturnType>();
-        int result = lua_pcall(L_, 2, num_results, 0);   // (result|nil|err) <
-        if (result == 0)
-        {
-          return_value = pop_value<ReturnType>();
-        }
-        else
-        {
-          // Get the error message.
-          char const* error_message = lua_tostring(L_, -1);
-          MAJOR_ERROR("Error calling %s:get_intrinsic(%s): %s", type.c_str(), name.c_str(), error_message);
-
-          // Pop the error message off the stack. (-1)
-          lua_pop(L_, 1);
-        }
-      }
-    }
-
-    int end_stack = lua_gettop(L_);
-
-    if (start_stack != end_stack)
-    {
-      FATAL_ERROR("*** LUA STACK MISMATCH (%s:get_intrinsic): Started at %d, ended at %d", name.c_str(), start_stack, end_stack);
-    }
-
-    return return_value;
-  }
-
-  /// Set a Entity type intrinsic.
-  /// @param type   Name of type to set intrinsic of.
-  /// @param name   Name of intrinsic to set.
-  /// @param value  Value to set intrinsic to.
-  template < typename ValueType >
-  void set_type_intrinsic(std::string type, std::string name, ValueType value)
-  {
-    int start_stack = lua_gettop(L_);
-
-    // Push type of class onto the stack. (+1)
-    lua_getglobal(L_, type.c_str());           // class <
-
-    if (lua_isnoneornil(L_, -1))
-    {
-      // Class not found -- pop the name back off. (-1)
-      lua_pop(L_, 1);
-      MAJOR_ERROR("Lua class %s was not found", type.c_str());
-    }
-    else
-    {
-      // Push name of function onto the stack. (+1)
-      lua_getfield(L_, -1, "set_intrinsic");             // class get <
-
-      if (lua_isnoneornil(L_, -1))
-      {
-        // Function not found -- pop the function and class names back off. (-2)
-        lua_pop(L_, 2);
-        MAJOR_ERROR("Lua function %s:set_intrinsic() was not found", type.c_str());
-      }
-      else
-      {
-        // Push the class name up to the front of the stack.
-        lua_pushvalue(L_, -2);                         // class set class <
-        lua_remove(L_, -3);                            // set class <
-        lua_pushstring(L_, name.c_str());              // set class name <
-        push_value(value);                             // set class name value <
-        int num_args = 2 + stack_slots<ValueType>();
-        int result = lua_pcall(L_, num_args, 0, 0);    // (nil|err) <
-        if (result != 0)
-        {
-          // Get the error message.
-          char const* error_message = lua_tostring(L_, -1);
-          MAJOR_ERROR("Error calling %s:set_intrinsic(%s): %s", type.c_str(), name.c_str(), error_message);
-
-          // Pop the error message off the stack. (-1)
-          lua_pop(L_, 1);
-        }
-      }
-    }
-
-    int end_stack = lua_gettop(L_);
-
-    if (start_stack != end_stack)
-    {
-      FATAL_ERROR("*** LUA STACK MISMATCH (%s:set_intrinsic): Started at %d, ended at %d", name.c_str(), start_stack, end_stack);
-    }
-  }
+  /// Set a Entity group intrinsic.
+  /// @param group    Name of group to set intrinsic of.
+  /// @param name     Name of intrinsic to set.
+  /// @param value    Value to set intrinsic to.
+  void set_type_intrinsic(std::string group, std::string name, Property value);
 
   /// Return the Lua state.
   /// @todo For cleanliness, this should not be exposed; all Lua interaction
@@ -522,7 +214,5 @@ public:
 
 private:
   /// Private Lua state.
-  lua_State* L_;
+  lua_State mutable* L_;
 };
-
-#endif // LUA_H

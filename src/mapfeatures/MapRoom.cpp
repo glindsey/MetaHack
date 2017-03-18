@@ -16,14 +16,14 @@ MapRoom::MapRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
 {
   unsigned int num_tries = 0;
 
-  uniform_int_dist width_dist(s.get("min_width").as<Integer>(2),
-                              s.get("max_width").as<Integer>(15));
-  uniform_int_dist height_dist(s.get("min_height").as<Integer>(2),
-                               s.get("max_height").as<Integer>(15));
-  unsigned int max_retries = s.get("max_retries").as<Integer>(100);
-  std::string floor_type = s.get("floor_type").as<String>("MTFloorDirt");
+  uniform_int_dist width_dist(s.get("min_width").as<int32_t>(2),
+                              s.get("max_width").as<int32_t>(15));
+  uniform_int_dist height_dist(s.get("min_height").as<int32_t>(2),
+                               s.get("max_height").as<int32_t>(15));
+  unsigned int max_retries = s.get("max_retries").as<int32_t>(100);
+  std::string floor_type = s.get("floor_type").as<std::string>("MTFloorDirt");
 
-  IntegerVec2& starting_coords = vec.start_point;
+  IntVec2& starting_coords = vec.start_point;
   Direction& direction = vec.direction;
 
   while (num_tries < max_retries)

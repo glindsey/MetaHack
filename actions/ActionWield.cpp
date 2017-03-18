@@ -60,7 +60,7 @@ namespace Actions
     }
 
     // Check that we have hands capable of wielding anything.
-    if (subject->get_bodypart_number(BodyPart::Hand) == 0)
+    if (subject->get_bodypart_number(BodyPart::Hand).as<uint32_t>() == 0)
     {
       print_message_try_();
 

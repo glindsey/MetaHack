@@ -10,7 +10,7 @@
 
 namespace metagui
 {
-  Object::Object(std::string name, IntegerVec2 location, Vec2u size)
+  Object::Object(std::string name, IntVec2 location, UintVec2 size)
   {
     SET_UP_LOGGER("GUI", true);
 
@@ -93,12 +93,12 @@ namespace metagui
     return m_text;
   }
 
-  IntegerVec2 Object::getRelativeLocation()
+  IntVec2 Object::getRelativeLocation()
   {
     return m_location;
   }
 
-  void Object::setRelativeLocation(IntegerVec2 location)
+  void Object::setRelativeLocation(IntVec2 location)
   {
     m_location = location;
     if (m_parent != nullptr)
@@ -107,13 +107,13 @@ namespace metagui
     }
   }
 
-  Vec2u Object::getSize()
+  UintVec2 Object::getSize()
   {
     return m_size;
   }
 
   /// @todo Minimum texture size, configurable by subclass.
-  void Object::setSize(Vec2u size)
+  void Object::setSize(UintVec2 size)
   {
     // Do nothing if requested size is same as current size.
     if (m_size == size) return;
@@ -137,7 +137,7 @@ namespace metagui
     }
 
     // Texture size should be the nearest power-of-2, for speed.
-    Vec2u new_texture_size{ next_power_of_two(size.x), next_power_of_two(size.y) };
+    UintVec2 new_texture_size{ next_power_of_two(size.x), next_power_of_two(size.y) };
     if (new_texture_size != m_bg_texture_size)
     {
       m_bg_texture_size = new_texture_size;
@@ -162,8 +162,8 @@ namespace metagui
   sf::IntRect Object::getRelativeDimensions()
   {
     sf::IntRect dimensions;
-    IntegerVec2 location = getRelativeLocation();
-    Vec2u size = getSize();
+    IntVec2 location = getRelativeLocation();
+    UintVec2 size = getSize();
     dimensions.left = location.x;
     dimensions.top = location.y;
     dimensions.width = size.x;
@@ -178,13 +178,13 @@ namespace metagui
                static_cast<unsigned int>(dimensions.height) });
   }
 
-  IntegerVec2 Object::getAbsoluteLocation()
+  IntVec2 Object::getAbsoluteLocation()
   {
-    IntegerVec2 absolute_location = getRelativeLocation();
+    IntVec2 absolute_location = getRelativeLocation();
 
     if (m_parent != nullptr)
     {
-      IntegerVec2 child_area_absolute_location =
+      IntVec2 child_area_absolute_location =
         m_parent->getAbsoluteLocation();
 
       if (m_cached_flags.decor != true)
@@ -198,13 +198,13 @@ namespace metagui
     return absolute_location;
   }
 
-  void Object::setAbsoluteLocation(IntegerVec2 location)
+  void Object::setAbsoluteLocation(IntVec2 location)
   {
-    IntegerVec2 relative_location = location;
+    IntVec2 relative_location = location;
 
     if (m_parent != nullptr)
     {
-      IntegerVec2 child_area_absolute_location =
+      IntVec2 child_area_absolute_location =
         m_parent->getAbsoluteLocation();
 
       if (m_cached_flags.decor != true)
@@ -221,8 +221,8 @@ namespace metagui
   sf::IntRect Object::getAbsoluteDimensions()
   {
     sf::IntRect dimensions;
-    IntegerVec2 location = getAbsoluteLocation();
-    Vec2u size = getSize();
+    IntVec2 location = getAbsoluteLocation();
+    UintVec2 size = getSize();
     dimensions.left = location.x;
     dimensions.top = location.y;
     dimensions.width = size.x;
@@ -340,12 +340,12 @@ namespace metagui
     m_zorder_map.clear();
   }
 
-  IntegerVec2 Object::getChildAreaLocation()
+  IntVec2 Object::getChildAreaLocation()
   {
     return{ 0, 0 };
   }
 
-  Vec2u Object::getChildAreaSize()
+  UintVec2 Object::getChildAreaSize()
   {
     return getSize();
   }
@@ -466,7 +466,7 @@ namespace metagui
     handleSetFlag_(name, value);
   }
 
-  bool Object::containsPoint(IntegerVec2 point)
+  bool Object::containsPoint(IntVec2 point)
   {
     auto left = getAbsoluteLocation().x;
     auto top = getAbsoluteLocation().y;
@@ -623,7 +623,7 @@ namespace metagui
     return m_being_dragged;
   }
 
-  IntegerVec2 Object::getDragStartLocation()
+  IntVec2 Object::getDragStartLocation()
   {
     return m_drag_start_location;
   }
@@ -701,7 +701,7 @@ namespace metagui
   void Object::handleSetFlag_(std::string name, bool enabled)
   {}
 
-  void Object::handleParentSizeChanged_(Vec2u parent_size)
+  void Object::handleParentSizeChanged_(UintVec2 parent_size)
   {
   }
 }; // end namespace metagui

@@ -18,7 +18,7 @@ namespace metagui
   protected:
     explicit CloseHandle(std::string name);
     virtual void drawPreChildren_(sf::RenderTexture& texture, int frame) override final;
-    virtual void handleParentSizeChanged_(Vec2u parent_size) override final;
+    virtual void handleParentSizeChanged_(UintVec2 parent_size) override final;
 
   private:
   };

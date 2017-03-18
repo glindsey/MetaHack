@@ -16,7 +16,7 @@ public:
   Direction();
   Direction(int x, int y, int z);
   Direction(int x, int y);
-  Direction(IntegerVec2 vec);
+  Direction(IntVec2 vec);
   Direction(Vec3i vec);
 
   // Explicit defaults not specifically needed, but here for completeness
@@ -38,7 +38,7 @@ public:
   RealVec2 half() const;
 
   // Casts
-  explicit operator IntegerVec2() const;
+  explicit operator IntVec2() const;
   explicit operator RealVec2() const;
   explicit operator Vec3i() const;
   explicit operator Vec3f() const;
@@ -48,7 +48,7 @@ public:
 
   // Static methods
   static Direction get_approx(int xSrc, int ySrc, int xDst, int yDst);
-  static float calculate_light_factor(IntegerVec2 source, IntegerVec2 target, Direction direction);
+  static float calculate_light_factor(IntVec2 source, IntVec2 target, Direction direction);
 
   // Static directions used for common directions
   static Direction const None;

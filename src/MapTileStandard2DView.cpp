@@ -20,25 +20,26 @@ MapTileStandard2DView::MapTileStandard2DView(MapTile& map_tile, TileSheet& tile_
 {
 }
 
-Vec2u MapTileStandard2DView::get_tile_sheet_coords() const
+UintVec2 MapTileStandard2DView::get_tile_sheet_coords() const
 {
   /// @todo Deal with selecting one of the other tiles.
-  Vec2u start_coords = get_map_tile().get_metadata().get_tile_coords();
-  Vec2u tile_coords(start_coords.x + m_tile_offset, start_coords.y);
+  UintVec2 start_coords = get_map_tile().get_metadata().get_tile_coords();
+  UintVec2 tile_coords(start_coords.x + m_tile_offset, start_coords.y);
   return tile_coords;
 }
 
 /// @todo Instead of repeating this method in EntityStandard2DView, call the view from here.
-Vec2u MapTileStandard2DView::get_entity_tile_sheet_coords(Entity& entity, int frame) const
+UintVec2 MapTileStandard2DView::get_entity_tile_sheet_coords(Entity& entity, int frame) const
 {
   /// Get tile coordinates on the sheet.
-  Vec2u start_coords = entity.get_metadata().get_tile_coords();
+  UintVec2 start_coords = entity.get_metadata().get_tile_coords();
 
   /// Call the Lua function to get the offset (tile to choose).
-  Vec2u offset = entity.call_lua_function<Vec2u>("get_tile_offset", { frame });
+  UintVec2 offset = entity.call_lua_function("get_tile_offset", { Property(frame) }, 
+                                             Property::Type::IntVec2).as<UintVec2>();
 
   /// Add them to get the resulting coordinates.
-  Vec2u tile_coords = start_coords + offset;
+  UintVec2 tile_coords = start_coords + offset;
 
   return tile_coords;
 }
@@ -97,7 +98,7 @@ void MapTileStandard2DView::add_memory_vertices_to(sf::VertexArray& vertices,
   Map& game_map = GAME.get_maps().get(map_id);
 
   static sf::Vertex new_vertex;
-  float ts = config.get("map_tile_size").as<Real>();
+  float ts = config.get("map_tile_size").as<float>();
   float ts2 = ts * 0.5f;
 
   RealVec2 location(coords.x * ts, coords.y * ts);
@@ -112,7 +113,7 @@ void MapTileStandard2DView::add_memory_vertices_to(sf::VertexArray& vertices,
 
   /// @todo Call a script to handle selecting a tile other than the one
   ///       in the upper-left corner.
-  Vec2u tile_coords = tile_metadata->get_tile_coords();
+  UintVec2 tile_coords = tile_metadata->get_tile_coords();
 
   m_tile_sheet.add_quad(vertices,
                         tile_coords, sf::Color::White,
@@ -136,7 +137,7 @@ void MapTileStandard2DView::add_tile_floor_vertices(sf::VertexArray& vertices)
   auto& tileNW = tile.get_adjacent_tile(Direction::Northwest);
 
   sf::Vertex new_vertex;
-  float ts = config.get("map_tile_size").as<Real>();
+  float ts = config.get("map_tile_size").as<float>();
   float half_ts = ts * 0.5f;
 
   sf::Color colorN{ tileN.get_light_level() };
@@ -164,7 +165,7 @@ void MapTileStandard2DView::add_tile_floor_vertices(sf::VertexArray& vertices)
   RealVec2 vSW{ location.x - half_ts, location.y + half_ts };
   RealVec2 vNW{ location.x - half_ts, location.y - half_ts };
 
-  Vec2u tile_coords = get_tile_sheet_coords();
+  UintVec2 tile_coords = get_tile_sheet_coords();
 
   m_tile_sheet.add_gradient_quad(vertices, tile_coords,
                                  vNW, vNE,
@@ -208,7 +209,7 @@ void MapTileStandard2DView::add_thing_floor_vertices(EntityId entityId, sf::Vert
   auto& entity = GAME.get_entities().get(entityId);
   auto& config = Service<IConfigSettings>::get();
   sf::Vertex new_vertex;
-  float ts = config.get("map_tile_size").as<Real>();
+  float ts = config.get("map_tile_size").as<float>();
   float ts2 = ts * 0.5f;
 
   MapTile* root_tile = entityId->get_maptile();
@@ -218,7 +219,7 @@ void MapTileStandard2DView::add_thing_floor_vertices(EntityId entityId, sf::Vert
     return;
   }
 
-  IntegerVec2 const& coords = root_tile->get_coords();
+  IntVec2 const& coords = root_tile->get_coords();
 
   sf::Color thing_color;
   if (use_lighting)
@@ -235,7 +236,7 @@ void MapTileStandard2DView::add_thing_floor_vertices(EntityId entityId, sf::Vert
   RealVec2 vSE(location.x + ts2, location.y + ts2);
   RealVec2 vNW(location.x - ts2, location.y - ts2);
   RealVec2 vNE(location.x + ts2, location.y - ts2);
-  Vec2u tile_coords = get_entity_tile_sheet_coords(entity, frame);
+  UintVec2 tile_coords = get_entity_tile_sheet_coords(entity, frame);
 
   m_tile_sheet.add_quad(vertices,
                         tile_coords, thing_color,
@@ -252,7 +253,7 @@ void MapTileStandard2DView::add_wall_vertices_to(sf::VertexArray& vertices,
                                                  bool sw_is_empty, bool w_is_empty)
 {
   auto& config = Service<IConfigSettings>::get();
-  auto map_tile_size = config.get("map_tile_size").as<Real>();
+  auto map_tile_size = config.get("map_tile_size").as<float>();
 
   // This tile.
   MapTile& tile = get_map_tile();
@@ -328,7 +329,7 @@ void MapTileStandard2DView::add_wall_vertices_to(sf::VertexArray& vertices,
   RealVec2 vTileW(location.x - half_ts, location.y);
   RealVec2 vTileNW(location.x - half_ts, location.y - half_ts);
 
-  Vec2u tile_sheet_coords = this->get_tile_sheet_coords();
+  UintVec2 tile_sheet_coords = this->get_tile_sheet_coords();
 
   if (use_lighting)
   {

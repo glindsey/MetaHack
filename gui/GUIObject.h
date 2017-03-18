@@ -56,7 +56,7 @@ namespace metagui
   class Object
   {
   public:
-    explicit Object(std::string name, IntegerVec2 location = IntegerVec2(0, 0), Vec2u size = Vec2u(0, 0));
+    explicit Object(std::string name, IntVec2 location = IntVec2(0, 0), UintVec2 size = UintVec2(0, 0));
     Object(std::string name, sf::IntRect dimensions);
     virtual ~Object();
 
@@ -86,20 +86,20 @@ namespace metagui
     std::string getText();
 
     /// Get location relative to parent object's client area.
-    IntegerVec2 getRelativeLocation();
+    IntVec2 getRelativeLocation();
 
     /// Set location relative to parent object's client area.
-    void setRelativeLocation(IntegerVec2 location);
+    void setRelativeLocation(IntVec2 location);
 
-    Vec2u getSize();
-    void setSize(Vec2u size);
+    UintVec2 getSize();
+    void setSize(UintVec2 size);
 
     sf::IntRect getRelativeDimensions();
     void setRelativeDimensions(sf::IntRect dimensions);
 
     // Get absolute location relative to root object.
-    IntegerVec2 getAbsoluteLocation();
-    void setAbsoluteLocation(IntegerVec2 location);
+    IntVec2 getAbsoluteLocation();
+    void setAbsoluteLocation(IntVec2 location);
 
     sf::IntRect getAbsoluteDimensions();
 
@@ -256,12 +256,12 @@ namespace metagui
     /// its own upper-left corner.
     /// By default, the child area encompasses the entire object, so this
     /// returns (0, 0); however, subclasses can override this behavior.
-    virtual IntegerVec2 getChildAreaLocation();
+    virtual IntVec2 getChildAreaLocation();
 
     /// Get the size of this object's child area.
     /// By default, the child area encompasses the entire object, so this
     /// returns getSize(); however, subclasses can override this behavior.
-    virtual Vec2u getChildAreaSize();
+    virtual UintVec2 getChildAreaSize();
 
     /// Render this object, and all of its children, to the parent texture.
     bool render(sf::RenderTexture& texture, int frame);
@@ -285,7 +285,7 @@ namespace metagui
     /// Returns whether the specified point falls within this object's bounds.
     /// @param  point   Point to check.
     /// @return True if the point is within the object, false otherwise.
-    bool containsPoint(IntegerVec2 point);
+    bool containsPoint(IntVec2 point);
 
     Event::Result handleGUIEventPreChildren(EventDragFinished& event);
     Event::Result handleGUIEventPostChildren(EventDragFinished& event);
@@ -326,7 +326,7 @@ namespace metagui
     bool isBeingDragged();
 
     /// Returns the location of the start of the last drag.
-    IntegerVec2 getDragStartLocation();
+    IntVec2 getDragStartLocation();
 
     /// Called before rendering the object's children.
     /// Default behavior is to do nothing.
@@ -361,7 +361,7 @@ namespace metagui
 
     /// Handles the parent's size being changed.
     /// The default behavior is to do nothing.
-    virtual void handleParentSizeChanged_(Vec2u parent_size);
+    virtual void handleParentSizeChanged_(UintVec2 parent_size);
 
 
   private:
@@ -396,7 +396,7 @@ namespace metagui
     bool m_being_dragged = false;
 
     /// The location that the last drag started.
-    IntegerVec2 m_drag_start_location;
+    IntVec2 m_drag_start_location;
 
     /// The text for this object. The way this text is used is dependent on the
     /// sort of control it is; e.g. for a Pane this is the pane title, for a
@@ -405,20 +405,20 @@ namespace metagui
     std::string m_text;
 
     /// Object location, relative to parent.
-    IntegerVec2 m_location;
+    IntVec2 m_location;
 
     /// Location as captured at last mousedown.
-    IntegerVec2 m_absolute_location_drag_start;
+    IntVec2 m_absolute_location_drag_start;
 
     /// Object size.
-    Vec2u m_size;
+    UintVec2 m_size;
 
     /// Background texture.
     std::unique_ptr<sf::RenderTexture> m_bg_texture;
 
     /// Size of the background texture.
     /// Should be equal to the next largest power of 2 after m_size.
-    Vec2u m_bg_texture_size;
+    UintVec2 m_bg_texture_size;
 
     /// Background shape.
     sf::RectangleShape m_bg_shape;
@@ -434,8 +434,8 @@ namespace metagui
   };
 
   /// Convenience function for calculating the distance between two
-  /// IntegerVec2 points.
-  inline unsigned int distance(IntegerVec2 first, IntegerVec2 second)
+  /// IntVec2 points.
+  inline unsigned int distance(IntVec2 first, IntVec2 second)
   {
     int x_distance = first.x - second.x;
     int y_distance = first.y - second.y;

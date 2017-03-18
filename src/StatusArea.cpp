@@ -36,13 +36,13 @@ void StatusArea::drawContents_(sf::RenderTexture& texture, int frame)
 
   sf::IntRect pane_dims = getRelativeDimensions();
   EntityId player = GAME.get_player();
-  RealVec2 origin(config.get("window_text_offset_x").as<Real>(),
-               config.get("window_text_offset_y").as<Real>());
+  RealVec2 origin(config.get("window_text_offset_x").as<float>(),
+               config.get("window_text_offset_y").as<float>());
   sf::Color text_color = config.get("text_color").as<Color>();
   sf::Color text_dim_color = config.get("text_dim_color").as<Color>();
   sf::Color text_warning_color = config.get("text_warning_color").as<Color>();
   sf::Color text_danger_color = config.get("text_danger_color").as<Color>();
-  auto text_default_size = config.get("text_default_size").as<Integer>();
+  auto text_default_size = config.get("text_default_size").as<int32_t>();
   float line_spacing = the_default_font.getLineSpacing(text_default_size) + 3.0f;
   float attrib_spacing = 75.0f;
 
@@ -72,8 +72,8 @@ void StatusArea::drawContents_(sf::RenderTexture& texture, int frame)
     render_text.setString("HP");
     texture.draw(render_text);
 
-    int hp = player->get_modified_property<int>("hp");
-    int max_hp = player->get_modified_property<int>("maxhp");
+    int hp = player->get_modified_property("hp", Property::Type::Integer).as<int>();
+    int max_hp = player->get_modified_property("maxhp", Property::Type::Integer).as<int>();
 
     float hp_percentage = static_cast<float>(hp) / static_cast<float>(max_hp);
 
@@ -124,12 +124,12 @@ void StatusArea::render_attribute(sf::RenderTarget& target, std::string abbrev, 
   // Render STR
   render_text.setFont(the_default_mono_font);
   render_text.setColor(text_dim_color);
-  render_text.setCharacterSize(config.get("text_default_size").as<Integer>());
+  render_text.setCharacterSize(config.get("text_default_size").as<int32_t>());
   render_text.setPosition(location.x, location.y);
   render_text.setString(abbrev + ":");
   target.draw(render_text);
 
-  std::string attr_string = std::to_string(player->get_modified_property<int>(name));
+  std::string attr_string = std::to_string(player->get_modified_property(name, Property::Type::Integer).as<int>());
 
   render_text.setColor(text_color);
   render_text.setPosition(location.x + 40, location.y);

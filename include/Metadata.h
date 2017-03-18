@@ -10,6 +10,7 @@
 #include "IntegerRange.h"
 #include "LuaObject.h"
 #include "MetadataCollection.h"
+#include "Property.h"
 #include "Tilesheet.h"
 
 #define BOOST_FILESYSTEM_NO_DEPRECATED
@@ -26,29 +27,12 @@ public:
 
   std::string const& get_type() const;
 
-  Vec2u get_tile_coords() const;
+  UintVec2 get_tile_coords() const;
 
-  template <typename ReturnType>
-  ReturnType get_intrinsic(std::string name, ReturnType default_value = ReturnType())
-  {
-    std::string type = this->get_type();
-    return the_lua_instance.get_type_intrinsic<ReturnType>(type, name, default_value);
-  }
-
-  template <typename ReturnType>
-  ReturnType get_intrinsic(std::string name, ReturnType default_value = ReturnType()) const
-  {
-    std::string type = this->get_type();
-    return the_lua_instance.get_type_intrinsic<ReturnType>(type, name, default_value);
-  }
-
-  template <typename ValueType>
-  void set_intrinsic(std::string name, ValueType value)
-  {
-    std::string type = this->get_type();
-    the_lua_instance.set_type_intrinsic<ValueType>(type, name, value);
-  }
-
+  Property get_intrinsic(std::string name, Property::Type type, Property default_value) const;
+  Property get_intrinsic(std::string name, Property::Type type) const;
+  void set_intrinsic(std::string name, Property value);
+  
 protected:
 
 private:

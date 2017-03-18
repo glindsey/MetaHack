@@ -30,13 +30,13 @@ struct Map::Impl
   std::unique_ptr< Grid2D< MapTile > > tiles;
 
   /// Player starting location.
-  IntegerVec2 start_coords;
+  IntVec2 start_coords;
 
   /// Pointer deque of map features.
   boost::ptr_deque<MapFeature> features;
 };
 
-/// @todo Have this take an IntegerVec2 instead of width x height
+/// @todo Have this take an IntVec2 instead of width x height
 Map::Map(GameState& game, MapId map_id, int width, int height)
   :
   m_game{ game },
@@ -54,7 +54,7 @@ Map::Map(GameState& game, MapId map_id, int width, int height)
   Metadata& unknown_metadata = collection.get("MTUnknown");
 
   pImpl->tiles.reset(NEW Grid2D<MapTile>({ width, height }, 
-                                         [&](IntegerVec2 coords) -> MapTile* 
+                                         [&](IntVec2 coords) -> MapTile* 
   {
     MapTile* new_tile = NEW MapTile(coords, unknown_metadata, map_id);
     new_tile->set_coords(coords);
@@ -95,22 +95,22 @@ Map::~Map()
   //dtor
 }
 
-int Map::get_index(IntegerVec2 coords) const
+int Map::get_index(IntVec2 coords) const
 {
   return (coords.y * m_map_size.x) + coords.x;
 }
 
-bool Map::is_in_bounds(IntegerVec2 coords) const
+bool Map::is_in_bounds(IntVec2 coords) const
 {
   return ((coords.x >= 0) && (coords.y >= 0) &&
     (coords.x < m_map_size.x) && (coords.y < m_map_size.y));
 }
 
-bool Map::calc_coords(IntegerVec2 origin,
+bool Map::calc_coords(IntVec2 origin,
                       Direction direction,
-                      IntegerVec2& result)
+                      IntVec2& result)
 {
-  result = origin + (IntegerVec2)direction;
+  result = origin + (IntVec2)direction;
 
   return is_in_bounds(result);
 }
@@ -120,17 +120,17 @@ MapId Map::get_map_id() const
   return m_map_id;
 }
 
-IntegerVec2 const& Map::getSize() const
+IntVec2 const& Map::getSize() const
 {
   return m_map_size;
 }
 
-IntegerVec2 const& Map::get_start_coords() const
+IntVec2 const& Map::get_start_coords() const
 {
   return pImpl->start_coords;
 }
 
-bool Map::set_start_coords(IntegerVec2 start_coords)
+bool Map::set_start_coords(IntVec2 start_coords)
 {
   if (is_in_bounds(start_coords))
   {
@@ -186,7 +186,7 @@ void Map::update_lighting()
 }
 
 void Map::do_recursive_lighting(EntityId source,
-                                IntegerVec2 const& origin,
+                                IntVec2 const& origin,
                                 sf::Color const& light_color,
                                 int const max_depth_squared,
                                 int octant,
@@ -194,7 +194,7 @@ void Map::do_recursive_lighting(EntityId source,
                                 float slope_A,
                                 float slope_B)
 {
-  IntegerVec2 new_coords;
+  IntVec2 new_coords;
 
   sf::Color addColor;
 
@@ -289,7 +289,7 @@ void Map::do_recursive_lighting(EntityId source,
     {
       if (get_tile(new_coords).is_opaque())
       {
-        if (!get_tile(new_coords + (IntegerVec2)dir).is_opaque())
+        if (!get_tile(new_coords + (IntVec2)dir).is_opaque())
         {
           do_recursive_lighting(source, origin, light_color,
                                 max_depth_squared,
@@ -299,7 +299,7 @@ void Map::do_recursive_lighting(EntityId source,
       }
       else
       {
-        if (get_tile(new_coords + (IntegerVec2)dir).is_opaque())
+        if (get_tile(new_coords + (IntVec2)dir).is_opaque())
         {
           slope_A = loop_slope(to_v2f(new_coords), to_v2f(origin));
         }
@@ -311,9 +311,9 @@ void Map::do_recursive_lighting(EntityId source,
       influence.intensity = max_depth_squared;
       get_tile(new_coords).add_light_influence(source, influence);
     }
-    new_coords -= (IntegerVec2)dir;
+    new_coords -= (IntVec2)dir;
   }
-  new_coords += (IntegerVec2)dir;
+  new_coords += (IntVec2)dir;
 
   if ((depth*depth < max_depth_squared) && (!get_tile(new_coords).is_opaque()))
   {
@@ -335,13 +335,13 @@ void Map::add_light(EntityId source)
 
   /// @todo Check if any opaque containers are between the light source and the map.
 
-  IntegerVec2 coords = maptile->get_coords();
+  IntVec2 coords = maptile->get_coords();
 
-  int light_color_red = source->get_modified_property<int>("light_color_red");
-  int light_color_green = source->get_modified_property<int>("light_color_green");
-  int light_color_blue = source->get_modified_property<int>("light_color_blue");
+  int light_color_red = source->get_modified_property("light_color_red", Property::Type::Integer).as<int>();
+  int light_color_green = source->get_modified_property("light_color_green", Property::Type::Integer).as<int>();
+  int light_color_blue = source->get_modified_property("light_color_blue", Property::Type::Integer).as<int>();
   sf::Color light_color = sf::Color(light_color_red, light_color_green, light_color_blue, 255);
-  int max_depth_squared = source->get_modified_property<int>("light_strength");
+  int max_depth_squared = source->get_modified_property("light_strength", Property::Type::Integer).as<int>();
 
   /// @todo Re-implement direction.
   Direction light_direction = Direction::Up;
@@ -451,7 +451,7 @@ void Map::add_light(EntityId source)
   //notifyObservers(Event::Updated);
 }
 
-MapTile const& Map::get_tile(IntegerVec2 tile) const
+MapTile const& Map::get_tile(IntVec2 tile) const
 {
   if (tile.x < 0) tile.x = 0;
   if (tile.x >= m_map_size.x) tile.x = m_map_size.x - 1;
@@ -461,7 +461,7 @@ MapTile const& Map::get_tile(IntegerVec2 tile) const
   return TILE(tile.x, tile.y);
 }
 
-MapTile& Map::get_tile(IntegerVec2 tile)
+MapTile& Map::get_tile(IntVec2 tile)
 {
   if (tile.x < 0) tile.x = 0;
   if (tile.x >= m_map_size.x) tile.x = m_map_size.x - 1;
@@ -471,7 +471,7 @@ MapTile& Map::get_tile(IntegerVec2 tile)
   return TILE(tile.x, tile.y);
 }
 
-bool Map::tile_is_opaque(IntegerVec2 tile)
+bool Map::tile_is_opaque(IntVec2 tile)
 {
   if ((tile.x < 0) || (tile.x >= m_map_size.x) || (tile.y < 0) || (tile.y >= m_map_size.y))
   {
@@ -523,7 +523,7 @@ int Map::LUA_get_tile_contents(lua_State* L)
   }
 
   MapId map_id = static_cast<MapId>(static_cast<unsigned int>(lua_tointeger(L, 1)));
-  IntegerVec2 coords = IntegerVec2(static_cast<int>(lua_tointeger(L, 2)), static_cast<int>(lua_tointeger(L, 3)));
+  IntVec2 coords = IntVec2(static_cast<int>(lua_tointeger(L, 2)), static_cast<int>(lua_tointeger(L, 3)));
 
   auto& map_tile = GAME.get_maps().get(map_id).get_tile(coords);
   EntityId contents = map_tile.get_tile_contents();

@@ -30,7 +30,7 @@ public:
   }
 
   /// Return a Map view.
-  virtual MapView* createMapView(std::string name, Map& map, Vec2u size) override
+  virtual MapView* createMapView(std::string name, Map& map, UintVec2 size) override
   {
     return NEW MapNullView(name, map, size);
   }

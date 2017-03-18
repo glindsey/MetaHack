@@ -23,7 +23,7 @@ public:
 
   virtual MapTileView* createMapTileView(MapTile& map_tile) override;
 
-  virtual MapView* createMapView(std::string name, Map& map, Vec2u size) override;
+  virtual MapView* createMapView(std::string name, Map& map, UintVec2 size) override;
 
   virtual void loadViewResourcesFor(Metadata& metadata) override;
 

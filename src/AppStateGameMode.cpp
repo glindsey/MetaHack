@@ -164,7 +164,7 @@ bool AppStateGameMode::initialize()
 
   // Create the player.
   EntityId player = get_game_state().get_entities().create("Human");
-  player->set_proper_name(config.get("player_name").as<String>());
+  player->set_proper_name(config.get("player_name").as<std::string>());
   get_game_state().set_player(player);
 
   // Create the game map.
@@ -242,7 +242,7 @@ void AppStateGameMode::render_map(sf::RenderTexture& texture, int frame)
     if (tile != nullptr)
     {
       Map& game_map = GAME.get_maps().get(tile->get_map_id());
-      IntegerVec2 tile_coords = tile->get_coords();
+      IntVec2 tile_coords = tile->get_coords();
       RealVec2 player_pixel_coords = MapTile::get_pixel_coords(tile_coords);
       RealVec2 cursor_pixel_coords = MapTile::get_pixel_coords(m_cursor_coords);
 
@@ -439,13 +439,13 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             if (slot_count > 0)
             {
               EntityId entity = m_inventory_selection->get_selected_things().at(0);
-              if (entity->get_intrinsic<int>("inventory_size") != 0)
+              if (entity->get_intrinsic("inventory_size", Property::Type::Integer).as<unsigned int>() != 0)
               {
                 if (!entity->can_have_action_done_by(EntityId::Mu(), Actions::ActionOpen::prototype) ||
-                    entity->get_modified_property<bool>("open"))
+                    entity->get_modified_property("open", Property::Type::Boolean).as<bool>())
                 {
                   if (!entity->can_have_action_done_by(EntityId::Mu(), Actions::ActionLock::prototype) ||
-                      !entity->get_modified_property<bool>("locked"))
+                      !entity->get_modified_property("locked", Property::Type::Boolean).as<bool>())
                   {
                     m_inventory_selection->set_viewed(entity);
                   }
@@ -991,8 +991,8 @@ sf::IntRect AppStateGameMode::calc_message_log_dims()
   sf::IntRect messageLogDims;
   auto& config = Service<IConfigSettings>::get();
 
-  auto inventory_area_width = config.get("inventory_area_width").as<Integer>();
-  auto messagelog_area_height = config.get("messagelog_area_height").as<Integer>();
+  auto inventory_area_width = config.get("inventory_area_width").as<uint32_t>();
+  auto messagelog_area_height = config.get("messagelog_area_height").as<uint32_t>();
   messageLogDims.width = m_app_window.getSize().x - (inventory_area_width + 24);
   messageLogDims.height = messagelog_area_height - 10;
   //messageLogDims.height = static_cast<int>(m_app_window.getSize().y * 0.25f) - 10;
@@ -1032,8 +1032,8 @@ sf::IntRect AppStateGameMode::calc_status_area_dims()
 
   statusAreaDims.width = m_app_window.getSize().x -
     (invAreaDims.width + 24);
-  statusAreaDims.height = config.get("status_area_height").as<Integer>();
-  statusAreaDims.top = m_app_window.getSize().y - (config.get("status_area_height").as<Integer>() + 5);
+  statusAreaDims.height = config.get("status_area_height").as<int32_t>();
+  statusAreaDims.top = m_app_window.getSize().y - (config.get("status_area_height").as<int32_t>() + 5);
   statusAreaDims.left = 12;
   return statusAreaDims;
 }
@@ -1044,7 +1044,7 @@ sf::IntRect AppStateGameMode::calc_inventory_dims()
   sf::IntRect inventoryAreaDims;
   auto& config = Service<IConfigSettings>::get();
 
-  inventoryAreaDims.width = config.get("inventory_area_width").as<Integer>();
+  inventoryAreaDims.width = config.get("inventory_area_width").as<int32_t>();
   inventoryAreaDims.height = m_app_window.getSize().y - 10;
   inventoryAreaDims.left = m_app_window.getSize().x - (inventoryAreaDims.width + 3);
   inventoryAreaDims.top = 5;

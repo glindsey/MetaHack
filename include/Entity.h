@@ -1,5 +1,4 @@
-#ifndef THING_H
-#define THING_H
+#pragma once
 
 #include "stdafx.h"
 
@@ -84,7 +83,7 @@ public:
   virtual bool is_player() const;
 
   std::string const& get_type() const;
-  std::string const& get_parent_type() const;
+  std::string get_parent_type() const;
 
   bool is_subtype_of(std::string that_type) const;
 
@@ -130,34 +129,21 @@ public:
   /// Get an intrinsic of this Entity.
   /// If the intrinsic is not found, returns the default value.
   /// @param key            Name of the intrinsic to get.
+  /// @param type           Type of the intrinsic to get.
   /// @param default_value  Default value to use, if any.
   /// @return The intrinsic (or default) value for that key.
-  template<typename T>
-  T get_intrinsic(std::string key, T default_value = T()) const
-  {
-    return m_metadata.get_intrinsic<T>(key, default_value);
-  }
+  Property get_intrinsic(std::string key, Property::Type type, Property default_value) const;
+  Property get_intrinsic(std::string key, Property::Type type) const;
 
   /// Get a base property of this Entity.
   /// If the base property is not found, the method falls back upon the
   /// intrinsic for that property (if any).
   /// @param key            Name of the property to get.
+  /// @param type           Type of the property to get.
   /// @param default_value  Default value to use, if any.
   /// @return The property (or default) value for that key.
-  template<typename T>
-  T get_base_property(std::string key, T default_value = T()) const
-  {
-    if (m_properties.contains(key))
-    {
-      return m_properties.get(key).as<T>();
-    }
-    else
-    {
-      T value = m_metadata.get_intrinsic<T>(key, default_value);
-      m_properties.set(key, Property(value));
-      return value;
-    }
-  }
+  Property get_base_property(std::string key, Property::Type type, Property default_value) const;
+  Property get_base_property(std::string key, Property::Type type) const;
 
   /// Sets a base property of this Entity.
   /// If the base property is not found, it is created.
@@ -165,44 +151,23 @@ public:
   /// @param key    Key of the property to set.
   /// @param value  Value to set the property to.
   /// @return Boolean indicating whether the property previously existed.
-  template<typename T>
-  bool set_base_property(std::string key, T value)
-  {
-    bool existed = m_properties.contains(key);
-    m_properties.set(key, Property(value));
-
-    return existed;
-  }
+  bool set_base_property(std::string key, Property value);
 
   /// Adds to a base property of this Entity.
   /// If the base property is not found, it is created.
   /// @param key    Key of the property to set.
   /// @param value  Value to add to the property.
-  template<typename T>
-  void add_to_base_property(std::string key, T add_value)
-  {
-    T existing_value = m_properties.get(key).as<T>();
-    T new_value = existing_value + add_value;
-    m_properties.set(key, Property(new_value));
-  }
+  void add_to_base_property(std::string key, Property add_value);
 
   /// Get a modified property of this Entity.
   /// If the modified property is not found, the method falls back upon the
   /// base value for that property (if any).
   /// @param key            Name of the property to get.
+  /// @param type           Type of the property to get.
   /// @param default_value  Default value to use, if any.
   /// @return The modified (or base) property value for that key.
-  template<typename T>
-  T get_modified_property(std::string key, T default_value = T()) const
-  {
-    if (!m_properties.contains(key))
-    {
-      T value = m_metadata.get_intrinsic<T>(key, default_value);
-      m_properties.set(key, Property(value));
-    }
-
-    return m_properties.get_modified(key).as<T>();
-  }
+  Property get_modified_property(std::string key, Property::Type type, Property default_value) const;
+  Property get_modified_property(std::string key, Property::Type type) const;
 
   /// Add a property modifier to this Entity.
   /// @param  key               Name of property to modify.
@@ -241,7 +206,7 @@ public:
   bool can_see(EntityId entity);
 
   /// Return whether the DynamicEntity can see the requested tile.
-  bool can_see(IntegerVec2 coords);
+  bool can_see(IntVec2 coords);
 
   /// Find out which tiles on the map can be seen by this DynamicEntity.
   /// In the process, tiles in the DynamicEntity's visual memory are updated.
@@ -250,7 +215,7 @@ public:
   void find_seen_tiles();
 
   /// Get the remembered tile type at the specified coordinates.
-  MapMemoryChunk const& get_memory_at(IntegerVec2 coords) const;
+  MapMemoryChunk const& get_memory_at(IntVec2 coords) const;
 
   ActionResult can_deequip(EntityId thing_id, unsigned int& action_time);
 
@@ -282,13 +247,13 @@ public:
   Gender get_gender_or_you() const;
 
   /// Get the number of a particular body part the DynamicEntity has.
-  unsigned int get_bodypart_number(BodyPart part) const;
+  Property get_bodypart_number(BodyPart part) const;
 
   /// Get the appropriate body part name for the DynamicEntity.
-  std::string get_bodypart_name(BodyPart part) const;
+  Property get_bodypart_name(BodyPart part) const;
 
   /// Get the appropriate body part plural for the DynamicEntity.
-  std::string get_bodypart_plural(BodyPart part) const;
+  Property get_bodypart_plural(BodyPart part) const;
 
   /// Get the appropriate description for a body part.
   /// This takes the body part name and the number referencing the particular
@@ -298,7 +263,7 @@ public:
   /// In most cases the default implementation here will work, but if a
   /// creature has (for example) a strange configuration of limbs this can be
   /// overridden.
-  std::string get_bodypart_description(BodyPart part, unsigned int number);
+  std::string get_bodypart_description(BodyPart part, uint32_t number);
 
   /// Returns true if a particular Action can be performed on this Entity by
   /// the specified Entity.
@@ -536,21 +501,23 @@ public:
   ActionResult can_contain(EntityId entity);
 
   /// Syntactic sugar for calling call_lua_function().
-  template < typename ReturnType, typename ArgType = lua_Integer>
-  ReturnType call_lua_function(std::string function_name,
-                               std::vector<ArgType> const& args = {},
-                               ReturnType default_result = ReturnType())
-  {
-    return the_lua_instance.call_thing_function<ReturnType, ArgType>(function_name, get_id(), args, default_result);
-  }
+  Property call_lua_function(std::string function_name,
+                             std::vector<Property> const& args,
+                             Property::Type result_type,
+                             Property default_result);
 
-  template < typename ReturnType, typename ArgType = lua_Integer>
-  ReturnType call_lua_function(std::string function_name,
-                               std::vector<ArgType> const& args = {},
-                               ReturnType default_result = ReturnType()) const
-  {
-    return the_lua_instance.call_thing_function<ReturnType, ArgType>(function_name, get_id(), args, default_result);
-  }
+  Property call_lua_function(std::string function_name,
+                             std::vector<Property> const& args,
+                             Property::Type result_type);
+
+  Property call_lua_function(std::string function_name,
+                             std::vector<Property> const& args,
+                             Property::Type result_type,
+                             Property default_result) const;
+
+  Property call_lua_function(std::string function_name,
+                             std::vector<Property> const& args,
+                             Property::Type result_type) const;
 
   /// Get a const reference to this tile's metadata.
   Metadata const & get_metadata() const;
@@ -644,5 +611,3 @@ private:
   /// Outline color for walls when drawing on-screen.
   static sf::Color const wall_outline_color_;
 };
-
-#endif // THING_H

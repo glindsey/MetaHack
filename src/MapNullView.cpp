@@ -4,7 +4,7 @@
 #include "MapTileNullView.h"
 #include "New.h"
 
-MapNullView::MapNullView(std::string name, Map& map, Vec2u size)
+MapNullView::MapNullView(std::string name, Map& map, UintVec2 size)
   :
   MapView(name, map, size)
 {

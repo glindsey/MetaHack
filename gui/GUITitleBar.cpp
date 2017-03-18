@@ -10,7 +10,7 @@ namespace metagui
 {
   TitleBar::TitleBar(std::string name)
     :
-    Object(name, IntegerVec2(0, 0))
+    Object(name, IntVec2(0, 0))
   {}
 
   TitleBar::~TitleBar()
@@ -31,12 +31,12 @@ namespace metagui
     auto parent_size = getParent()->getSize();
     auto titlebar_text = getParent()->getText();
 
-    float line_spacing_y = the_default_font.getLineSpacing(static_cast<unsigned int>(config.get("text_default_size").as<Integer>()));
+    float line_spacing_y = the_default_font.getLineSpacing(config.get("text_default_size").as<uint32_t>());
 
     // Text offsets relative to the background rectangle.
-    float text_offset_x = config.get("window_text_offset_x").as<Real>();
-    float text_offset_y = config.get("window_text_offset_y").as<Real>();
-    float border_width = config.get("window_border_width").as<Real>();
+    float text_offset_x = config.get("window_text_offset_x").as<float>();
+    float text_offset_y = config.get("window_text_offset_y").as<float>();
+    float border_width = config.get("window_border_width").as<float>();
 
     RealVec2 rect_position{ border_width, border_width };
     RealVec2 rect_size{ static_cast<float>(parent_size.x - (border_width * 2)),
@@ -61,7 +61,7 @@ namespace metagui
     {
       title_text.setString(titlebar_text);
       title_text.setFont(the_default_bold_font);
-      title_text.setCharacterSize(static_cast<unsigned int>(config.get("text_default_size").as<Integer>()));
+      title_text.setCharacterSize(config.get("text_default_size").as<uint32_t>());
 
       title_text.setColor(config.get("text_color").as<Color>());
       title_text.setPosition(text_position);
@@ -71,15 +71,15 @@ namespace metagui
     texture.display();
   }
 
-  void TitleBar::handleParentSizeChanged_(Vec2u parent_size)
+  void TitleBar::handleParentSizeChanged_(UintVec2 parent_size)
   {
     auto& config = Service<IConfigSettings>::get();
-    float line_spacing_y = the_default_font.getLineSpacing(static_cast<unsigned int>(config.get("text_default_size").as<Integer>()));
+    float line_spacing_y = the_default_font.getLineSpacing(config.get("text_default_size").as<uint32_t>());
 
     // Text offsets relative to the background rectangle.
-    float text_offset_y = config.get("window_text_offset_y").as<Real>();
+    float text_offset_y = config.get("window_text_offset_y").as<float>();
 
-    Vec2u our_size{ parent_size.x, static_cast<unsigned int>(line_spacing_y + (text_offset_y * 2)) };
+    UintVec2 our_size{ parent_size.x, static_cast<unsigned int>(line_spacing_y + (text_offset_y * 2)) };
 
     setSize(our_size);
   }

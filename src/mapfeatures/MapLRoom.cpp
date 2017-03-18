@@ -17,18 +17,18 @@ MapLRoom::MapLRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
 {
   unsigned int num_tries = 0;
 
-  uniform_int_dist horiz_width_dist(s.get("horiz_leg_min_width").as<Integer>(10),
-                                    s.get("horiz_leg_max_width").as<Integer>(20));
-  uniform_int_dist horiz_height_dist(s.get("horiz_leg_min_height").as<Integer>(3),
-                                     s.get("horiz_leg_max_height").as<Integer>(7));
-  uniform_int_dist vert_width_dist(s.get("vert_leg_min_width").as<Integer>(10),
-                                   s.get("vert_leg_max_width").as<Integer>(20));
-  uniform_int_dist vert_height_dist(s.get("vert_leg_min_height").as<Integer>(3),
-                                    s.get("vert_leg_max_height").as<Integer>(7));
-  unsigned int max_retries = s.get("max_retries").as<Integer>(500);
-  std::string floor_type = s.get("floor_type").as<String>("MTFloorDirt");
+  uniform_int_dist horiz_width_dist(s.get("horiz_leg_min_width").as<int32_t>(10),
+                                    s.get("horiz_leg_max_width").as<int32_t>(20));
+  uniform_int_dist horiz_height_dist(s.get("horiz_leg_min_height").as<int32_t>(3),
+                                     s.get("horiz_leg_max_height").as<int32_t>(7));
+  uniform_int_dist vert_width_dist(s.get("vert_leg_min_width").as<int32_t>(10),
+                                   s.get("vert_leg_max_width").as<int32_t>(20));
+  uniform_int_dist vert_height_dist(s.get("vert_leg_min_height").as<int32_t>(3),
+                                    s.get("vert_leg_max_height").as<int32_t>(7));
+  unsigned int max_retries = s.get("max_retries").as<int32_t>(500);
+  std::string floor_type = s.get("floor_type").as<std::string>("MTFloorDirt");
 
-  IntegerVec2& starting_coords = vec.start_point;
+  IntVec2& starting_coords = vec.start_point;
   Direction& direction = vec.direction;
 
   while (num_tries < max_retries)

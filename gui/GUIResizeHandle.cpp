@@ -43,7 +43,7 @@ namespace metagui
 
   }
 
-  void ResizeHandle::handleParentSizeChanged_(Vec2u parent_size)
+  void ResizeHandle::handleParentSizeChanged_(UintVec2 parent_size)
   {
     setRelativeLocation({ static_cast<int>(parent_size.x - s_handle_size),
                           static_cast<int>(parent_size.y - s_handle_size) });
@@ -73,8 +73,8 @@ namespace metagui
       {
         auto move_amount = event.current_location - getDragStartLocation();
 
-        IntegerVec2 old_size{ static_cast<int>(m_parent_size_start.x), static_cast<int>(m_parent_size_start.y) };
-        Vec2u new_size;
+        IntVec2 old_size{ static_cast<int>(m_parent_size_start.x), static_cast<int>(m_parent_size_start.y) };
+        UintVec2 new_size;
         
         new_size.x = (move_amount.x > -(old_size.x)) ? (old_size.x + move_amount.x) : 0;
         new_size.y = (move_amount.y > -(old_size.y)) ? (old_size.y + move_amount.y) : 0;

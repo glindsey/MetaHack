@@ -18,7 +18,7 @@ namespace metagui
   protected:
     explicit ResizeHandle(std::string name);
     virtual void drawPreChildren_(sf::RenderTexture& texture, int frame) override final;
-    virtual void handleParentSizeChanged_(Vec2u parent_size) override final;
+    virtual void handleParentSizeChanged_(UintVec2 parent_size) override final;
 
     virtual Event::Result handleGUIEventPostChildren_(EventDragStarted& event) override;
     virtual Event::Result handleGUIEventPostChildren_(EventDragging& event) override;
@@ -29,7 +29,7 @@ namespace metagui
     static unsigned int const s_handle_size = 10;
 
     /// The starting parent size before the resize drag began.
-    Vec2u m_parent_size_start;
+    UintVec2 m_parent_size_start;
 
   };
 }; // end namespace metagui

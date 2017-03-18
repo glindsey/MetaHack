@@ -13,12 +13,12 @@ public:
 
   /// Load a tile collection from disk and find a place to put them.
   /// @return The location that the tiles were placed on the sheet.
-  Vec2u load_collection(FileName const& filename);
+  UintVec2 load_collection(FileName const& filename);
 
   /// Get a particular tile from the sheet.
   /// @warning Assumes tile is within the bounds of the loaded texture,
   ///          unless DEBUG is defined, in order to save execution time.
-  sf::IntRect get_tile(Vec2u tile) const;
+  sf::IntRect get_tile(UintVec2 tile) const;
 
   /// Get a reference to the texture to render.
   sf::Texture& getTexture(void);
@@ -35,13 +35,13 @@ public:
   /// @param ll_coord Lower-left coordinates.
   /// @param lr_coord Lower-right coordinates.
   void add_quad(sf::VertexArray& vertices,
-                Vec2u tile_coords, sf::Color bg_color,
+                UintVec2 tile_coords, sf::Color bg_color,
                 RealVec2 ul_coord, RealVec2 ur_coord,
                 RealVec2 ll_coord, RealVec2 lr_coord);
 
   /// Add a quad with colors specified in a 3x3 grid.
   void add_gradient_quad(sf::VertexArray& vertices,
-                         Vec2u tile_coords,
+                         UintVec2 tile_coords,
                          RealVec2 coordNW, RealVec2 coordNE,
                          RealVec2 coordSW, RealVec2 coordSE,
                          sf::Color colorNW, sf::Color colorN, sf::Color colorNE,
@@ -66,21 +66,21 @@ public:
 
 protected:
   /// Return bitset index based on coordinates.
-  unsigned int get_index(Vec2u coords);
+  unsigned int get_index(UintVec2 coords);
 
   /// Return true if the requested area is totally unused.
-  bool area_is_unused(Vec2u start, Vec2u size);
+  bool area_is_unused(UintVec2 start, UintVec2 size);
 
   /// Find the first free tile area.
   /// @param size Size of the area to search for, IN TILES.
   /// @todo This is an extremely naive algorithm and can definitely be optimized.
-  Vec2u find_unused_area(Vec2u size);
+  UintVec2 find_unused_area(UintVec2 size);
 
   /// Mark a rectangle of tiles as being used.
   /// @param upper_left_corner  Upper-left corner of rectangle.
   /// @param size               Size of the rectangle to mark.
   /// @todo This is an extremely naive algorithm and can definitely be optimized.
-  void mark_tiles_used(Vec2u upper_left_corner, Vec2u size);
+  void mark_tiles_used(UintVec2 upper_left_corner, UintVec2 size);
 
 
 private:

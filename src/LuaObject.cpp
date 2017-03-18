@@ -4,6 +4,8 @@
 
 #include "actions/ActionResult.h"
 #include "Direction.h"
+#include "Entity.h"
+#include "EntityId.h"
 #include "Gender.h"
 #include "Property.h"
 
@@ -83,6 +85,39 @@ void Lua::set_global(std::string name, lua_Integer value)
   lua_setglobal(L_, name.c_str());
 }
 
+void Lua::stackDump()
+{
+  printf("Lua Stack Dump: ");
+  int i;
+  int top = lua_gettop(L_);
+  for (i = 1; i <= top; i++)
+  {  /* repeat for each level */
+    int t = lua_type(L_, i);
+    switch (t)
+    {
+
+      case LUA_TSTRING:  /* strings */
+        printf("\"%s\"", lua_tostring(L_, i));
+        break;
+
+      case LUA_TBOOLEAN:  /* booleans */
+        printf(lua_toboolean(L_, i) ? "true" : "false");
+        break;
+
+      case LUA_TNUMBER:  /* numbers */
+        printf("%g", lua_tonumber(L_, i));
+        break;
+
+      default:  /* other values */
+        printf("[%s]", lua_typename(L_, t));
+        break;
+
+    }
+    printf("  ");  /* put a separator */
+  }
+  printf("\n");  /* end the listing */
+}
+
 bool Lua::add_enum(const char* tname, ...)
 {
   /// @note Here's the Lua code we're building and executing to define the
@@ -133,7 +168,7 @@ bool Lua::add_enum(const char* tname, ...)
   return true;
 }
 
-bool Lua::check_enum_type(const char* tname, int index)
+bool Lua::check_enum_type(const char* tname, int index) const
 {
   lua_pushstring(L_, "type");
   lua_gettable(L_, index - 1);
@@ -166,7 +201,7 @@ int Lua::get_enum_value(int index)
 ///  * Boolean
 ///  * String
 ///  * Number
-///  * IntegerVec2
+///  * IntVec2
 ///  * Direction
 ///  * Color
 ///
@@ -179,15 +214,14 @@ int Lua::push_value(Property property)
 {
   switch (property.type())
   {
-    case Property::Type::Null: lua_pushnil(L_); return 1;
-    case Property::Type::Boolean: return push_value(property.as<Boolean>());
-    case Property::Type::String: return push_value(property.as<String>());
-    case Property::Type::EightBits: return push_value(property.as<EightBits>());
-    case Property::Type::Number: return push_value(property.as<Number>());
-    case Property::Type::BigInteger: return push_value(property.as<BigInteger>());
-    case Property::Type::IntegerVec2: return push_value(property.as<IntegerVec2>());
+    case Property::Type::Null:      lua_pushnil(L_); return 1;
+    case Property::Type::Boolean:   return push_value(property.as<bool>());
+    case Property::Type::String:    return push_value(property.as<std::string>());
+    case Property::Type::Integer:   return push_value(property.as<int64_t>());
+    case Property::Type::Number:    return push_value(property.as<double>());
+    case Property::Type::IntVec2:   return push_value(property.as<IntVec2>());
     case Property::Type::Direction: return push_value(property.as<Direction>());
-    case Property::Type::Color: return push_value(property.as<Color>());
+    case Property::Type::Color:     return push_value(property.as<Color>());
     default:
     {
       std::stringstream ss;
@@ -247,14 +281,14 @@ int Lua::push_value(std::string value)
   return 1;
 }
 
-int Lua::push_value(Vec2u value)
+int Lua::push_value(UintVec2 value)
 {
   lua_pushinteger(L_, static_cast<lua_Integer>(value.x));
   lua_pushinteger(L_, static_cast<lua_Integer>(value.y));
   return 2;
 }
 
-int Lua::push_value(IntegerVec2 value)
+int Lua::push_value(IntVec2 value)
 {
   lua_pushinteger(L_, static_cast<lua_Integer>(value.x));
   lua_pushinteger(L_, static_cast<lua_Integer>(value.y));
@@ -288,7 +322,7 @@ Property Lua::pop_value(Property::Type type)
       break;
 
     case Property::Type::Boolean:
-      property.reset(new Property(static_cast<Boolean>(lua_tointeger(L_, -1))));
+      property.reset(new Property(static_cast<bool>(lua_toboolean(L_, -1))));
       lua_pop(L_, 1);
       break;
 
@@ -297,24 +331,32 @@ Property Lua::pop_value(Property::Type type)
       lua_pop(L_, 1);
       break;
 
-    case Property::Type::EightBits: 
-      property.reset(new Property(static_cast<EightBits>(lua_tointeger(L_, -1))));
+    case Property::Type::Integer:
+      property.reset(new Property(static_cast<int64_t>(lua_tointeger(L_, -1))));
       lua_pop(L_, 1);
       break;
 
     case Property::Type::Number:
-      property.reset(new Property(static_cast<Real>(lua_tonumber(L_, -1))));
+      property.reset(new Property(static_cast<double>(lua_tonumber(L_, -1))));
       lua_pop(L_, 1);
       break;
 
-    case Property::Type::BigInteger: 
-      property.reset(new Property(static_cast<BigInteger>(lua_tointeger(L_, -1))));
+    case Property::Type::ActionResult:
+      if (!check_enum_type("ActionResult", -1))
+      {
+        CLOG(ERROR, "Lua") << "Expected ActionResult on the Lua stack, not found" << type;
+        stackDump();
+      }
+      else
+      {
+        property.reset(new Property(static_cast<ActionResult>(get_enum_value(-1))));
+      }
       lua_pop(L_, 1);
       break;
 
-    case Property::Type::IntegerVec2:
-      property.reset(new Property(IntegerVec2(static_cast<int>(lua_tointeger(L_, -2)),
-                                              static_cast<int>(lua_tointeger(L_, -1)))));
+    case Property::Type::IntVec2:
+      property.reset(new Property(IntVec2(static_cast<int>(lua_tointeger(L_, -2)),
+                                          static_cast<int>(lua_tointeger(L_, -1)))));
       lua_pop(L_, 2);
       break;
 
@@ -334,61 +376,155 @@ Property Lua::pop_value(Property::Type type)
       break;
 
     default:
+      CLOG(ERROR, "Lua") << "Unsupported Property::Type " << type;
       break;
   }
 
   return *property;
 }
 
-unsigned int Lua::stack_slots(Property::Type type)
+unsigned int Lua::stack_slots(Property::Type type) const
 {
   switch (type)
   {
     case Property::Type::Null: return 0;
     case Property::Type::Boolean: return 1;
     case Property::Type::String: return 1;
-    case Property::Type::EightBits: return 1;
+    case Property::Type::Integer: return 1;
     case Property::Type::Number: return 1;
-    case Property::Type::BigInteger: return 1;
-    case Property::Type::IntegerVec2: return 2;
+    case Property::Type::ActionResult: return 1;
+    case Property::Type::IntVec2: return 2;
     case Property::Type::Direction: return 3;
     case Property::Type::Color: return 4;
-    default: return 0;
+    default: CLOG(ERROR, "Lua") << "Unsupported Property::Type " << type; return 0;
   }
 }
 
-Property Lua::get_type_intrinsic(std::string category, std::string name, Property::Type type, Property default_value)
+Property Lua::call_thing_function(std::string function_name, 
+                                  EntityId caller, 
+                                  std::vector<Property> const & args, 
+                                  Property::Type result_type,
+                                  Property default_result)
+{
+  {
+    Property return_value = default_result;
+    std::string group = caller->get_type();
+
+    int start_stack = lua_gettop(L_);
+
+    // Push name of group onto the stack. (+1)
+    lua_getglobal(L_, group.c_str());
+
+    if (lua_isnoneornil(L_, -1))
+    {
+      // Category not found -- pop the group back off. (-1)
+      lua_pop(L_, 1);
+    }
+    else
+    {
+      // Push name of function onto the stack. (+1)
+      lua_getfield(L_, -1, function_name.c_str());
+
+      if (lua_isnoneornil(L_, -1))
+      {
+        // Function not found -- pop the function and group names back off. (-2)
+        lua_pop(L_, 2);
+
+        CLOG(WARNING, "Lua") << "Could not find Lua function "
+          << group << ":"
+          << function_name;
+      }
+      else
+      {
+        // Remove the group name from the stack. (-1)
+        lua_remove(L_, -2);
+
+        // Push the caller's ID onto the stack. (+1)
+        lua_pushinteger(L_, caller);
+
+        // Push the arguments onto the stack. (+N)
+        unsigned int lua_args = 0;
+        for (auto& arg : args)
+        {
+          lua_args += stack_slots(arg.type());
+          push_value(arg);
+        }
+
+        // Call the function with N+1 arguments and R results. (-(N+2), +R) = R-(N+2)
+        //stackDump();
+        int result = lua_pcall(L_, lua_args + 1, stack_slots(result_type), 0);
+        //stackDump();
+        if (result == 0)
+        {
+          // Pop the return value off of the stack. (-R)
+          return_value = pop_value(result_type);
+        }
+        else
+        {
+          // Get the error message.
+          char const* error_message = lua_tostring(L_, -1);
+          MAJOR_ERROR("Error calling %s.%s: %s", group.c_str(), function_name.c_str(), error_message);
+
+          // Pop the error message off the stack. (-1)
+          lua_pop(L_, 1);
+        }
+      }
+    }
+
+    int end_stack = lua_gettop(L_);
+
+    if (start_stack != end_stack)
+    {
+      FATAL_ERROR("*** LUA STACK MISMATCH (%s.%s): Started at %d, ended at %d", group.c_str(), function_name.c_str(), start_stack, end_stack);
+    }
+
+    return return_value;
+  }
+}
+
+Property Lua::call_thing_function(std::string function_name, 
+                                  EntityId caller, 
+                                  std::vector<Property> const & args, 
+                                  Property::Type result_type)
+{
+  return call_thing_function(function_name, caller, args, result_type, Property(result_type));
+}
+
+Property Lua::get_type_intrinsic(std::string group,
+                                 std::string name, 
+                                 Property::Type type, 
+                                 Property default_value)
 {
   Property return_value = default_value;
 
   int start_stack = lua_gettop(L_);
 
-  // Push category onto the stack. (+1)
-  lua_getglobal(L_, category.c_str());           // category <
+  // Push group onto the stack. (+1)
+  lua_getglobal(L_, group.c_str());           // group <
 
   if (lua_isnoneornil(L_, -1))
   {
     // Category not found -- pop the name back off. (-1)
     lua_pop(L_, 1);
-    MAJOR_ERROR("Lua class %s was not found", category.c_str());
+    MAJOR_ERROR("Lua class %s was not found", group.c_str());
   }
   else
   {
     // Push name of function onto the stack. (+1)
-    lua_getfield(L_, -1, "get_intrinsic");             // category get <
+    lua_getfield(L_, -1, "get_intrinsic");             // group get <
 
     if (lua_isnoneornil(L_, -1))
     {
-      // Function not found -- pop the function and category names back off. (-2)
+      // Function not found -- pop the function and group names back off. (-2)
       lua_pop(L_, 2);
-      MAJOR_ERROR("Lua function %s:get_intrinsic() was not found", category.c_str());
+      MAJOR_ERROR("Lua function %s:get_intrinsic() was not found", group.c_str());
     }
     else
     {
       // Push the class name up to the front of the stack.
-      lua_pushvalue(L_, -2);                 // category get category <
-      lua_remove(L_, -3);                    // get category <
-      lua_pushstring(L_, name.c_str());      // get category name <
+      lua_pushvalue(L_, -2);                 // group get group <
+      lua_remove(L_, -3);                    // get group <
+      lua_pushstring(L_, name.c_str());      // get group name <
 
       int num_results = stack_slots(type);
       int result = lua_pcall(L_, 2, num_results, 0);   // (result|nil|err) <
@@ -400,7 +536,7 @@ Property Lua::get_type_intrinsic(std::string category, std::string name, Propert
       {
         // Get the error message.
         char const* error_message = lua_tostring(L_, -1);
-        MAJOR_ERROR("Error calling %s:get_intrinsic(%s): %s", category.c_str(), name.c_str(), error_message);
+        MAJOR_ERROR("Error calling %s:get_intrinsic(%s): %s", group.c_str(), name.c_str(), error_message);
 
         // Pop the error message off the stack. (-1)
         lua_pop(L_, 1);
@@ -418,9 +554,66 @@ Property Lua::get_type_intrinsic(std::string category, std::string name, Propert
   return return_value;
 }
 
-Property Lua::get_type_intrinsic(std::string category, std::string name, Property::Type type)
+Property Lua::get_type_intrinsic(std::string group,
+                                 std::string name, 
+                                 Property::Type type)
 {
-  return get_type_intrinsic(category, name, type, Property(type));
+  return get_type_intrinsic(group, name, type, Property(type));
+}
+
+void Lua::set_type_intrinsic(std::string group, std::string name, Property value)
+{
+  int start_stack = lua_gettop(L_);
+
+  // Push type of group onto the stack. (+1)
+  lua_getglobal(L_, group.c_str());           // group <
+
+  if (lua_isnoneornil(L_, -1))
+  {
+    // Category not found -- pop the name back off. (-1)
+    lua_pop(L_, 1);
+    MAJOR_ERROR("Lua class %s was not found", group.c_str());
+  }
+  else
+  {
+    // Push name of function onto the stack. (+1)
+    lua_getfield(L_, -1, "set_intrinsic");             // group get <
+
+    if (lua_isnoneornil(L_, -1))
+    {
+      // Function not found -- pop the function and group names back off. (-2)
+      lua_pop(L_, 2);
+      MAJOR_ERROR("Lua function %s:set_intrinsic() was not found", group.c_str());
+    }
+    else
+    {
+      // Push the group name up to the front of the stack.
+      lua_pushvalue(L_, -2);                         // group set group <
+      lua_remove(L_, -3);                            // set group <
+      lua_pushstring(L_, name.c_str());              // set group name <
+      push_value(value);                             // set group name value <
+      int num_args = 2 + stack_slots(value.type());
+      //stackDump();
+      int result = lua_pcall(L_, num_args, 0, 0);    // (nil|err) <
+      //stackDump();
+      if (result != 0)
+      {
+        // Get the error message.
+        char const* error_message = lua_tostring(L_, -1);
+        MAJOR_ERROR("Error calling %s:set_intrinsic(%s): %s", group.c_str(), name.c_str(), error_message);
+
+        // Pop the error message off the stack. (-1)
+        lua_pop(L_, 1);
+      }
+    }
+  }
+
+  int end_stack = lua_gettop(L_);
+
+  if (start_stack != end_stack)
+  {
+    FATAL_ERROR("*** LUA STACK MISMATCH (%s:set_intrinsic): Started at %d, ended at %d", name.c_str(), start_stack, end_stack);
+  }
 }
 
 lua_State* Lua::state()
@@ -503,11 +696,9 @@ void Lua::addPropertyTypeEnumToLua()
            "Null", Property::Type::Null,
            "Boolean", Property::Type::Boolean,
            "String", Property::Type::String,
-           "EightBits", Property::Type::EightBits,
+           "Integer", Property::Type::Integer,
            "Number", Property::Type::Number,
-           "BigInteger", Property::Type::BigInteger,
-           "IntegerVec2", Property::Type::IntegerVec2,
-           "EntityId", Property::Type::EntityId,
+           "IntVec2", Property::Type::IntVec2,
            "ActionResult", Property::Type::ActionResult,
            "Direction", Property::Type::Direction,
            "Color", Property::Type::Color,
