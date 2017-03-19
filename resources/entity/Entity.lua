@@ -41,7 +41,7 @@ Entity.intrinsics.quantity_is_integer = true
 
 
 function Entity.get_display_name(id)
-    local quantity = thing_get_modified_property_value(id, "quantity")
+    local quantity = thing_get_modified_property(id, "quantity")
     if quantity > 1 then
         return intrinsics.plural, PropertyType.String
     else
@@ -55,7 +55,7 @@ end
 
 function Entity.can_contain(id)
     -- By default a Entity can only contain solid objects.
-    if thing_get_intrinsic_flag(id, "liquid") == true then
+    if thing_get_intrinsic(id, "liquid") == true then
         return ActionResult.Failure, PropertyType.ActionResult
     end
 

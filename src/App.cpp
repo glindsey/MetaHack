@@ -58,8 +58,9 @@ App::App(sf::RenderWindow& app_window)
   // Register loggers.
   SET_UP_LOGGER("App", true);
   SET_UP_LOGGER("Action", false);
+  SET_UP_LOGGER("Lua", true);
   SET_UP_LOGGER("Property", true);
-  SET_UP_LOGGER("StringTransforms", true);
+  SET_UP_LOGGER("StringTransforms", false);
 
 
   // First entity's first: load config settings.

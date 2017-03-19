@@ -24,12 +24,12 @@ end
 function LightSource.can_have_action_use_done_by(id)
     -- This SHOULD check if a creature is sentient.
     -- For now just return true.
-    return true, PropertyType.String
+    return true, PropertyType.Boolean
 end
 
 function LightSource.be_object_of_action_use(object, subject)
-    local name = thing_get_intrinsic_string(object, "name")
-    local is_lit = thing_get_modified_property_flag(object, "lit")
+    local name = thing_get_intrinsic(object, "name")
+    local is_lit = thing_get_modified_property(object, "lit")
     is_lit = not is_lit
     if is_lit then
         messageLog_add("You light the " .. name .. ".")
@@ -38,6 +38,6 @@ function LightSource.be_object_of_action_use(object, subject)
         messageLog_add("You extinguish the " .. name .. ".")
         thing_remove_property_modifier(subject, "attribute_strength", object)
     end
-    thing_set_base_property_flag(id, "lit", is_lit)
+    thing_set_base_property(object, "lit", is_lit, PropertyType.Boolean)
     return ActionResult.Success, PropertyType.ActionResult
 end

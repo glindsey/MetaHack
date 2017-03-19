@@ -13,7 +13,7 @@ function Coin.get_brief_description()
 end
 
 function Coin.get_tile_offset(id, frame)
-    local quantity = thing_get_base_property_value(id, "quantity")
+    local quantity = thing_get_base_property(id, "quantity")
     if (quantity < 10) then
         return 0, 0, PropertyType.IntVec2
     elseif (quantity < 100) then

@@ -11,9 +11,6 @@
 
 Lua::Lua()
 {
-  // Initialize the logger.
-  SET_UP_LOGGER("Lua", true);
-
   // Initialize the Lua interpreter.
   L_ = luaL_newstate();
 

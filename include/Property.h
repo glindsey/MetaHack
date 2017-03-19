@@ -212,13 +212,13 @@ public:
   Property& operator/=(Property const& rhs);
   Property& operator%=(Property const& rhs);
 
-  friend std::ostream& operator<<(std::ostream os, Property const& obj)
+  friend std::ostream& operator<<(std::ostream& os, Property const& obj)
   {
     os << obj.m_type << "(";
     switch (obj.m_type)
     {
       case Property::Type::Null:         break;
-      case Property::Type::Boolean:      os << boost::any_cast<bool>(obj.m_value); break;
+      case Property::Type::Boolean:      os << (boost::any_cast<bool>(obj.m_value) ? "true" : "false"); break;
       case Property::Type::String:       os << boost::any_cast<std::string>(obj.m_value); break;
       case Property::Type::Integer:      os << boost::any_cast<int64_t>(obj.m_value); break;
       case Property::Type::Number:       os << boost::any_cast<double>(obj.m_value); break;

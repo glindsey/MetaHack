@@ -155,7 +155,7 @@ namespace LuaEntityFunctions
     return 1;
   }
 
-  int thing_get_base_property_flag(lua_State* L)
+  int thing_get_base_property(lua_State* L)
   {
     int num_args = lua_gettop(L);
 
@@ -167,13 +167,13 @@ namespace LuaEntityFunctions
 
     EntityId entity = EntityId(lua_tointeger(L, 1));
     const char* key = lua_tostring(L, 2);
-    bool result = entity->get_base_property(key).as<bool>();
-    lua_pushboolean(L, result);
+    auto result = entity->get_base_property(key);
+    auto slot_count = the_lua_instance.push_value(result);
 
-    return 1;
+    return slot_count;
   }
 
-  int thing_get_base_property_value(lua_State* L)
+  int thing_get_modified_property(lua_State* L)
   {
     int num_args = lua_gettop(L);
 
@@ -185,13 +185,13 @@ namespace LuaEntityFunctions
 
     EntityId entity = EntityId(lua_tointeger(L, 1));
     const char* key = lua_tostring(L, 2);
-    int result = entity->get_base_property(key).as<int32_t>();
-    lua_pushinteger(L, result);
+    auto result = entity->get_modified_property(key);
+    auto slot_count = the_lua_instance.push_value(result);
 
-    return 1;
+    return slot_count;
   }
 
-  int thing_get_base_property_string(lua_State* L)
+  int thing_get_intrinsic(lua_State* L)
   {
     int num_args = lua_gettop(L);
 
@@ -203,120 +203,10 @@ namespace LuaEntityFunctions
 
     EntityId entity = EntityId(lua_tointeger(L, 1));
     const char* key = lua_tostring(L, 2);
-    std::string result = entity->get_base_property(key).as<std::string>();
-    lua_pushstring(L, result.c_str());
+    auto result = entity->get_intrinsic(key);
+    auto slot_count = the_lua_instance.push_value(result);
 
-    return 1;
-  }
-
-  int thing_get_modified_property_flag(lua_State* L)
-  {
-    int num_args = lua_gettop(L);
-
-    if (num_args != 2)
-    {
-      CLOG(WARNING, "Lua") << "expected 2 arguments, got " << num_args;
-      return 0;
-    }
-
-    EntityId entity = EntityId(lua_tointeger(L, 1));
-    const char* key = lua_tostring(L, 2);
-    bool result = entity->get_modified_property(key).as<bool>();
-    lua_pushboolean(L, result);
-
-    return 1;
-  }
-
-  int thing_get_modified_property_value(lua_State* L)
-  {
-    int num_args = lua_gettop(L);
-
-    if (num_args != 2)
-    {
-      CLOG(WARNING, "Lua") << "expected 2 arguments, got " << num_args;
-      return 0;
-    }
-
-    EntityId entity = EntityId(lua_tointeger(L, 1));
-    const char* key = lua_tostring(L, 2);
-    int result = entity->get_modified_property(key).as<int32_t>();
-    lua_pushinteger(L, result);
-
-    return 1;
-  }
-
-  int thing_get_modified_property_string(lua_State* L)
-  {
-    int num_args = lua_gettop(L);
-
-    if (num_args != 2)
-    {
-      CLOG(WARNING, "Lua") << "expected 2 arguments, got " << num_args;
-      return 0;
-    }
-
-    EntityId entity = EntityId(lua_tointeger(L, 1));
-    const char* key = lua_tostring(L, 2);
-    std::string result = entity->get_modified_property(key).as<std::string>();
-    lua_pushstring(L, result.c_str());
-
-    return 1;
-  }
-
-  int thing_get_intrinsic_flag(lua_State* L)
-  {
-    int num_args = lua_gettop(L);
-
-    if (num_args != 2)
-    {
-      CLOG(WARNING, "Lua") << "expected 2 arguments, got " << num_args;
-      return 0;
-    }
-
-    EntityId entity = EntityId(lua_tointeger(L, 1));
-    const char* key = lua_tostring(L, 2);
-    bool result = entity->get_intrinsic(key).as<bool>();
-    lua_pushboolean(L, result);
-
-    return 1;
-  }
-
-  int thing_get_intrinsic_value(lua_State* L)
-  {
-    int num_args = lua_gettop(L);
-
-    if (num_args != 2)
-    {
-      CLOG(WARNING, "Lua") << "expected 2 arguments, got " << num_args;
-      return 0;
-    }
-
-    EntityId entity = EntityId(lua_tointeger(L, 1));
-    const char* key = lua_tostring(L, 2);
-    int result = entity->get_intrinsic(key).as<int32_t>();
-    lua_pushinteger(L, result);
-
-    return 1;
-  }
-
-  int thing_get_intrinsic_string(lua_State* L)
-  {
-    int num_args = lua_gettop(L);
-
-    if (num_args != 2)
-    {
-      CLOG(WARNING, "Lua") << "expected 2 arguments, got " << num_args;
-      return 0;
-    }
-
-    EntityId entity = EntityId(lua_tointeger(L, 1));
-    const char* key = lua_tostring(L, 2);
-
-    std::string result = entity->get_intrinsic(key).as<std::string>();
-
-    lua_pushstring(L, result.c_str());
-
-    return 1;
+    return slot_count;
   }
 
   int thing_queue_action(lua_State* L)
@@ -434,61 +324,28 @@ namespace LuaEntityFunctions
     return 1;
   }
 
-  int thing_set_base_property_flag(lua_State* L)
+  int thing_set_base_property(lua_State* L)
   {
     int num_args = lua_gettop(L);
 
-    if (num_args != 3)
+    if (num_args < 4)
     {
-      CLOG(WARNING, "Lua") << "expected 3 arguments, got %d" << num_args;
+      CLOG(WARNING, "Lua") << "expected >= 4 arguments, got %d" << num_args;
       return 0;
     }
 
-    EntityId entity = EntityId(lua_tointeger(L, 1));
-    const char* key = lua_tostring(L, 2);
-    bool value = (lua_toboolean(L, 3) != 0);
-    entity->set_base_property(key, Property::from(value));
+    auto entity = EntityId(lua_tointeger(L, 1));
+    auto key = std::string(lua_tostring(L, 2));
+    auto type = the_lua_instance.pop_type();
+    auto value = the_lua_instance.pop_value(type);
+
+    CLOG(TRACE, "Lua") << "Setting property " << key << 
+      " of entity " << entity << " to " << value;
+    entity->set_base_property(key, value);
 
     return 0;
   }
-
-  int thing_set_base_property_value(lua_State* L)
-  {
-    int num_args = lua_gettop(L);
-
-    if (num_args != 3)
-    {
-      CLOG(WARNING, "Lua") << "expected 3 arguments, got %d" << num_args;
-      return 0;
-    }
-
-    EntityId entity = EntityId(lua_tointeger(L, 1));
-    const char* key = lua_tostring(L, 2);
-    int32_t value = static_cast<int32_t>(lua_tointeger(L, 3));
-    entity->set_base_property(key, Property::from(value));
-
-    return 0;
-  }
-
-  int thing_set_base_property_string(lua_State* L)
-  {
-    int num_args = lua_gettop(L);
-
-    if (num_args != 3)
-    {
-      CLOG(WARNING, "Lua") << "expected 3 arguments, got %d" << num_args;
-      return 0;
-    }
-
-    EntityId entity = EntityId(lua_tointeger(L, 1));
-    const char* key = lua_tostring(L, 2);
-    const char* value = lua_tostring(L, 3);
-    std::string svalue = std::string(value);
-    entity->set_base_property(key, Property::from(svalue));
-
-    return 0;
-  }
-
+    
   int thing_move_into(lua_State* L)
   {
     int num_args = lua_gettop(L);
@@ -560,21 +417,13 @@ namespace LuaEntityFunctions
     LUA_REGISTER(thing_get_location);
     LUA_REGISTER(thing_get_coords);
     LUA_REGISTER(thing_get_type);
-    LUA_REGISTER(thing_get_base_property_flag);
-    LUA_REGISTER(thing_get_base_property_value);
-    LUA_REGISTER(thing_get_base_property_string);
-    LUA_REGISTER(thing_get_modified_property_flag);
-    LUA_REGISTER(thing_get_modified_property_value);
-    LUA_REGISTER(thing_get_modified_property_string);
-    LUA_REGISTER(thing_get_intrinsic_flag);
-    LUA_REGISTER(thing_get_intrinsic_value);
-    LUA_REGISTER(thing_get_intrinsic_string);
+    LUA_REGISTER(thing_get_base_property);
+    LUA_REGISTER(thing_get_modified_property);
+    LUA_REGISTER(thing_get_intrinsic);
     LUA_REGISTER(thing_queue_action);
     LUA_REGISTER(thing_queue_targeted_action);
     LUA_REGISTER(thing_queue_directional_action);
-    LUA_REGISTER(thing_set_base_property_flag);
-    LUA_REGISTER(thing_set_base_property_value);
-    LUA_REGISTER(thing_set_base_property_string);
+    LUA_REGISTER(thing_set_base_property);
     LUA_REGISTER(thing_move_into);
     LUA_REGISTER(thing_add_property_modifier);
     LUA_REGISTER(thing_remove_property_modifier);

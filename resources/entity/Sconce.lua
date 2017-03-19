@@ -21,7 +21,7 @@ function Sconce.get_brief_description()
 end
 
 function Sconce.get_tile_offset(id, frame)
-    local is_lit = thing_get_modified_property_flag(id, "lit")
+    local is_lit = thing_get_modified_property(id, "lit")
     if is_lit then
         return (math.floor(frame / 6) % 3) + 1, 0, PropertyType.IntVec2
     else
