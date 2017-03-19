@@ -22,5 +22,5 @@ Human.intrinsics.attribute_vigilance = range(13, 17)
 Human.intrinsics.attribute_luck = range(13, 17)
 
 function Human.get_brief_description()
-	return "A human being."
+	return "A human being.", PropertyType.String
 end

@@ -19,5 +19,5 @@ MTUnknown.intrinsics.tile_fg_color_green = 64
 MTUnknown.intrinsics.tile_fg_color_blue = 0
 
 function MTUnknown.get_brief_description()
-	return "Unexplored space."
+	return "Unexplored space.", PropertyType.String
 end

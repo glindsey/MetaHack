@@ -11,5 +11,5 @@ MTFloor.intrinsics.opacity_green = 0;
 MTFloor.intrinsics.opacity_blue = 0;
 
 function MTFloor.get_brief_description()
-	return "A floor."
+	return "A floor.", PropertyType.String
 end

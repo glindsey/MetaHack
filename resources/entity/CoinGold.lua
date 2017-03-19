@@ -8,5 +8,5 @@ CoinGold.intrinsics.plural = "gold coins"
 CoinGold.intrinsics.creatable = true
 
 function CoinGold.get_brief_description()
-	return "A coin made out of gold."
+	return "A coin made out of gold.", PropertyType.String
 end

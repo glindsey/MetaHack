@@ -13,18 +13,18 @@ LightSource.intrinsics.light_color_blue = 64
 LightSource.intrinsics.light_strength = 64
 
 function LightSource.get_brief_description()
-    return "A source of illumination."
+    return "A source of illumination.", PropertyType.String
 end
 
 function LightSource.modify_property_attribute_strength(id, old_value)
     new_value = old_value + 1
-    return new_value
+    return new_value, PropertyType.Integer
 end
 
 function LightSource.can_have_action_use_done_by(id)
     -- This SHOULD check if a creature is sentient.
     -- For now just return true.
-    return true
+    return true, PropertyType.String
 end
 
 function LightSource.be_object_of_action_use(object, subject)
@@ -39,5 +39,5 @@ function LightSource.be_object_of_action_use(object, subject)
         thing_remove_property_modifier(subject, "attribute_strength", object)
     end
     thing_set_base_property_flag(id, "lit", is_lit)
-    return ActionResult.Success
+    return ActionResult.Success, PropertyType.ActionResult
 end

@@ -14,13 +14,13 @@ FlaskGlass.intrinsics.opacity_blue = 0
 
 function FlaskGlass.can_contain(id)
     -- A flask can contain both solids and liquids, so always return success.
-    return ActionResult.Success
+    return ActionResult.Success, PropertyType.ActionResult
 end
 
 function FlaskGlass.can_have_action_quaff_done_by(id)
-    return true
+    return true, PropertyType.ActionResult
 end
 
 function FlaskGlass.get_brief_description()
-    return "A glass container with a narrow mouth and flat bottom, suitable for holding liquids."
+    return "A glass container with a narrow mouth and flat bottom, suitable for holding liquids.", PropertyType.ActionResult
 end

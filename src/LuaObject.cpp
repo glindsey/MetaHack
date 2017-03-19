@@ -436,6 +436,7 @@ Property Lua::call_thing_function(std::string function_name,
 {
   {
     Property return_value = default_result;
+    Property::Type return_type;
     std::string group = caller->get_type();
 
     int start_stack = lua_gettop(L_);
@@ -478,12 +479,14 @@ Property Lua::call_thing_function(std::string function_name,
           push_value(arg);
         }
 
-        // Call the function with N+1 arguments and R results. (-(N+2), +R) = R-(N+2)
+        // Call the function with N+1 arguments and R+1 results. (-(N+2), +(R+1)) = R-(N+1)
         //stackDump();
-        int result = lua_pcall(L_, lua_args + 1, stack_slots(result_type), 0);
+        int result = lua_pcall(L_, lua_args + 1, stack_slots(result_type) + 1, 0);
         //stackDump();
         if (result == 0)
         {
+          // Pop the return type off of the stack. (-1)
+          return_type = pop_type();
           // Pop the return value off of the stack. (-R)
           return_value = pop_value(result_type);
         }
@@ -518,7 +521,7 @@ Property Lua::call_thing_function(std::string function_name,
   return call_thing_function(function_name, caller, args, result_type, Property::empty(result_type));
 }
 
-Property Lua::get_type_intrinsic(std::string group,
+Property Lua::get_group_intrinsic(std::string group,
                                  std::string name, 
                                  Property::Type type, 
                                  Property default_value)
@@ -583,23 +586,17 @@ Property Lua::get_type_intrinsic(std::string group,
     FATAL_ERROR("*** LUA STACK MISMATCH (%s:get_intrinsic): Started at %d, ended at %d", name.c_str(), start_stack, end_stack);
   }
 
-  bool breakpoint = false;
-  if (name == "inventory_size")
-  {
-    breakpoint = true;
-  }
-
   return return_value;
 }
 
-Property Lua::get_type_intrinsic(std::string group,
+Property Lua::get_group_intrinsic(std::string group,
                                  std::string name, 
                                  Property::Type type)
 {
-  return get_type_intrinsic(group, name, type, Property::empty(type));
+  return get_group_intrinsic(group, name, type, Property::empty(type));
 }
 
-void Lua::set_type_intrinsic(std::string group, std::string name, Property value)
+void Lua::set_group_intrinsic(std::string group, std::string name, Property value)
 {
   int start_stack = lua_gettop(L_);
 

@@ -12,5 +12,5 @@ TileContents.intrinsics.opacity_blue = 0
 TileContents.intrinsics.inventory_size = -1
 
 function TileContents.get_brief_description()
-	return "The entities that are held or included in this tile."
+	return "The entities that are held or included in this tile.", PropertyType.String
 end

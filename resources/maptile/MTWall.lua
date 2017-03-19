@@ -11,5 +11,5 @@ MTWall.intrinsics.opacity_green = 255
 MTWall.intrinsics.opacity_blue = 255
 
 function MTWall.get_brief_description()
-	return "A wall."
+	return "A wall.", PropertyType.String
 end

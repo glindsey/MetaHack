@@ -7,5 +7,5 @@ WeaponStriking.intrinsics.name = "[WeaponStriking]"
 WeaponStriking.intrinsics.plural = "[WeaponStriking]"
 
 function WeaponStriking.get_brief_description()
-	return "A weapon that is designed to inflict striking damage."
+	return "A weapon that is designed to inflict striking damage.", PropertyType.String
 end

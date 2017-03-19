@@ -31,7 +31,7 @@ function GameObject.get_brief_description(id)
 end
 
 function GameObject.get_tile_offset(id, frame)
-    return 0, 0
+    return 0, 0, PropertyType.IntVec2
 end
 
 function GameObject:get_tile_character_code(id, frame)

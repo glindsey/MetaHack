@@ -10,5 +10,5 @@ Rock.intrinsics.creatable = true
 Rock.intrinsics.physical_mass = 3
 
 function Rock.get_brief_description()
-	return "A stone of any size, especially one small enough to be picked up and used as a projectile."
+	return "A stone of any size, especially one small enough to be picked up and used as a projectile.", PropertyType.String
 end

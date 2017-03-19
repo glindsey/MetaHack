@@ -183,12 +183,12 @@ public:
   /// @param default_value  Default value if intrinsic does not exist
   ///                       (defaults to default constructor of type).
   /// @return       The value of the intrinsic. 
-  Property get_type_intrinsic(std::string group,
+  Property get_group_intrinsic(std::string group,
                               std::string name,
                               Property::Type type,
                               Property default_value);
 
-  Property get_type_intrinsic(std::string group, 
+  Property get_group_intrinsic(std::string group, 
                               std::string name,
                               Property::Type type);
 
@@ -196,7 +196,7 @@ public:
   /// @param group    Name of group to set intrinsic of.
   /// @param name     Name of intrinsic to set.
   /// @param value    Value to set intrinsic to.
-  void set_type_intrinsic(std::string group, std::string name, Property value);
+  void set_group_intrinsic(std::string group, std::string name, Property value);
 
   /// Return the Lua state.
   /// @todo For cleanliness, this should not be exposed; all Lua interaction

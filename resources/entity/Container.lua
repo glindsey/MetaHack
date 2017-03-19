@@ -9,13 +9,13 @@ Container.intrinsics.plural = "[Containers]"
 Container.intrinsics.inventory_size = -1
 
 function Container.can_have_action_open_done_by(id)
-    return true
+    return true, PropertyType.Boolean
 end
 
 function Container.can_have_action_close_done_by(id)
-    return true
+    return true, PropertyType.Boolean
 end
 
 function Container.get_brief_description()
-    return "An object that can be used to hold or transport something."
+    return "An object that can be used to hold or transport something.", PropertyType.String
 end

@@ -6,5 +6,5 @@ MTFloorStone = inheritsFrom(MTFloor, "MTFloorStone")
 MTFloorStone.intrinsics.name = "stone floor"
 
 function MTFloorStone.get_brief_description()
-	return "A stone floor."
+	return "A stone floor.", PropertyType.String
 end

@@ -7,5 +7,5 @@ WeaponStrangling.intrinsics.name = "[WeaponStrangling]"
 WeaponStrangling.intrinsics.plural = "[WeaponStrangling]"
 
 function WeaponStrangling.get_brief_description()
-	return "A weapon that is designed to inflict strangling damage."
+	return "A weapon that is designed to inflict strangling damage.", PropertyType.String
 end

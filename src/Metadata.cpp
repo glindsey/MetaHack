@@ -68,7 +68,7 @@ UintVec2 Metadata::get_tile_coords() const
 Property Metadata::get_intrinsic(std::string name, Property::Type type, Property default_value) const
 {
   std::string group = this->get_type();
-  return the_lua_instance.get_type_intrinsic(group, name, type, default_value);
+  return the_lua_instance.get_group_intrinsic(group, name, type, default_value);
 }
 
 Property Metadata::get_intrinsic(std::string name, Property::Type type) const
@@ -79,5 +79,5 @@ Property Metadata::get_intrinsic(std::string name, Property::Type type) const
 void Metadata::set_intrinsic(std::string name, Property value)
 {
   std::string group = this->get_type();
-  the_lua_instance.set_type_intrinsic(group, name, value);
+  the_lua_instance.set_group_intrinsic(group, name, value);
 }
