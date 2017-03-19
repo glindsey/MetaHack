@@ -65,8 +65,8 @@ namespace Actions
     }
 
     // Check that both are liquid containers.
-    if (!object1->get_intrinsic("liquid_carrier", Property::Type::Boolean).as<bool>() || 
-        !object2->get_intrinsic("liquid_carrier", Property::Type::Boolean).as<bool>())
+    if (!object1->get_intrinsic("liquid_carrier").as<bool>() || 
+        !object2->get_intrinsic("liquid_carrier").as<bool>())
     {
       print_message_try_();
 

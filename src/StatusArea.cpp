@@ -72,8 +72,8 @@ void StatusArea::drawContents_(sf::RenderTexture& texture, int frame)
     render_text.setString("HP");
     texture.draw(render_text);
 
-    int hp = player->get_modified_property("hp", Property::Type::Integer).as<int>();
-    int max_hp = player->get_modified_property("maxhp", Property::Type::Integer).as<int>();
+    int hp = player->get_modified_property("hp").as<int>();
+    int max_hp = player->get_modified_property("maxhp").as<int>();
 
     float hp_percentage = static_cast<float>(hp) / static_cast<float>(max_hp);
 
@@ -129,7 +129,7 @@ void StatusArea::render_attribute(sf::RenderTarget& target, std::string abbrev, 
   render_text.setString(abbrev + ":");
   target.draw(render_text);
 
-  std::string attr_string = std::to_string(player->get_modified_property(name, Property::Type::Integer).as<int>());
+  std::string attr_string = std::to_string(player->get_modified_property(name).as<int>());
 
   render_text.setColor(text_color);
   render_text.setPosition(location.x + 40, location.y);

@@ -58,22 +58,22 @@ std::string const& Metadata::get_type() const
 UintVec2 Metadata::get_tile_coords() const
 {
   UintVec2 tile_location {
-    get_intrinsic("tile_location_x", Property::Type::Number).as<uint32_t>(),
-    get_intrinsic("tile_location_y", Property::Type::Number).as<uint32_t>() 
+    get_intrinsic("tile_location_x").as<uint32_t>(),
+    get_intrinsic("tile_location_y").as<uint32_t>() 
   };
 
   return tile_location;
 }
 
-Property Metadata::get_intrinsic(std::string name, Property::Type type, Property default_value) const
+Property Metadata::get_intrinsic(std::string name, Property default_value) const
 {
   std::string group = this->get_type();
-  return the_lua_instance.get_group_intrinsic(group, name, type, default_value);
+  return the_lua_instance.get_group_intrinsic(group, name, default_value);
 }
 
-Property Metadata::get_intrinsic(std::string name, Property::Type type) const
+Property Metadata::get_intrinsic(std::string name) const
 {
-  return get_intrinsic(name, type, Property::empty(type));
+  return get_intrinsic(name, Property());
 }
 
 void Metadata::set_intrinsic(std::string name, Property value)

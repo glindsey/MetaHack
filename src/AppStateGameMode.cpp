@@ -443,13 +443,13 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             if (slot_count > 0)
             {
               EntityId entity = m_inventory_selection->get_selected_things().at(0);
-              if (entity->get_intrinsic("inventory_size", Property::Type::Integer).as<unsigned int>() != 0)
+              if (entity->get_intrinsic("inventory_size").as<unsigned int>() != 0)
               {
                 if (!entity->can_have_action_done_by(EntityId::Mu(), Actions::ActionOpen::prototype) ||
-                    entity->get_modified_property("open", Property::Type::Boolean).as<bool>())
+                    entity->get_modified_property("open").as<bool>())
                 {
                   if (!entity->can_have_action_done_by(EntityId::Mu(), Actions::ActionLock::prototype) ||
-                      !entity->get_modified_property("locked", Property::Type::Boolean).as<bool>())
+                      !entity->get_modified_property("locked").as<bool>())
                   {
                     m_inventory_selection->set_viewed(entity);
                   }

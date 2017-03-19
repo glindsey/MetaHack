@@ -214,7 +214,7 @@ EntityId Inventory::getEntity()
     find_if([&](const EntityPair& thing_pair)
   {
     EntityId ref = thing_pair.second;
-    return ((ref->is_subtype_of("DynamicEntity")) && (ref->get_modified_property("hp", Property::Type::Integer).as<int32_t>() > 0));
+    return ((ref->is_subtype_of("DynamicEntity")) && (ref->get_modified_property("hp").as<int32_t>() > 0));
   });
 
   if (iter != things_.cend())

@@ -29,8 +29,8 @@ public:
 
   UintVec2 get_tile_coords() const;
 
-  Property get_intrinsic(std::string name, Property::Type type, Property default_value) const;
-  Property get_intrinsic(std::string name, Property::Type type) const;
+  Property get_intrinsic(std::string name, Property default_value) const;
+  Property get_intrinsic(std::string name) const;
   void set_intrinsic(std::string name, Property value);
   
 protected:

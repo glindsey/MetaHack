@@ -116,7 +116,7 @@ namespace Actions
   bool Action::process(EntityId actor, AnyMap params)
   {
     // If entity is currently busy, decrement by one and return.
-    int counter_busy = actor->get_base_property("counter_busy", Property::Type::Integer).as<int32_t>();
+    int counter_busy = actor->get_base_property("counter_busy").as<int32_t>();
     if (counter_busy > 0)
     {
       CLOG(TRACE, "Action") << "Entity #" <<
@@ -132,7 +132,7 @@ namespace Actions
     // target actor is busy.
     while ((pImpl->state != State::Processed) && (counter_busy == 0))
     {
-      counter_busy = actor->get_base_property("counter_busy", Property::Type::Integer).as<int32_t>();
+      counter_busy = actor->get_base_property("counter_busy").as<int32_t>();
       StateResult result{ false, 0 };
 
       CLOG(TRACE, "Action") << "Entity #" <<
@@ -300,7 +300,7 @@ namespace Actions
     auto new_direction = get_target_direction();
 
     // Check that we're capable of eating at all.
-    if (!subject->get_intrinsic("can_" + get_type(), Property::Type::Boolean).as<bool>())
+    if (!subject->get_intrinsic("can_" + get_type()).as<bool>())
     {
       print_message_try_();
       message = maketr("YOU_ARE_NOT_CAPABLE_OF_VERBING", { getIndefArt(subject->get_display_name()), subject->get_display_name() });
@@ -310,7 +310,7 @@ namespace Actions
     }
 
     // Check that we're capable of eating right now.
-    if (!subject->get_modified_property("can_" + get_type(), Property::Type::Boolean).as<bool>())
+    if (!subject->get_modified_property("can_" + get_type()).as<bool>())
     {
       print_message_try_();
       message = maketr("YOU_CANT_VERB_NOW", { getIndefArt(subject->get_display_name()), subject->get_display_name() });
@@ -389,7 +389,7 @@ namespace Actions
         if (hasTrait(Trait::ObjectMustBeLiquidCarrier))
         {
           // Check that both are liquid containers.
-          if (!object->get_intrinsic("liquid_carrier", Property::Type::Boolean).as<bool>())
+          if (!object->get_intrinsic("liquid_carrier").as<bool>())
           {
             print_message_try_();
 

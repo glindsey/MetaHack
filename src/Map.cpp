@@ -337,11 +337,11 @@ void Map::add_light(EntityId source)
 
   IntVec2 coords = maptile->get_coords();
 
-  int light_color_red = source->get_modified_property("light_color_red", Property::Type::Integer).as<int>();
-  int light_color_green = source->get_modified_property("light_color_green", Property::Type::Integer).as<int>();
-  int light_color_blue = source->get_modified_property("light_color_blue", Property::Type::Integer).as<int>();
+  int light_color_red = source->get_modified_property("light_color_red").as<int>();
+  int light_color_green = source->get_modified_property("light_color_green").as<int>();
+  int light_color_blue = source->get_modified_property("light_color_blue").as<int>();
   sf::Color light_color = sf::Color(light_color_red, light_color_green, light_color_blue, 255);
-  int max_depth_squared = source->get_modified_property("light_strength", Property::Type::Integer).as<int>();
+  int max_depth_squared = source->get_modified_property("light_strength").as<int>();
 
   /// @todo Re-implement direction.
   Direction light_direction = Direction::Up;

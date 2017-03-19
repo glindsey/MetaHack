@@ -46,7 +46,7 @@ namespace Actions
       subject->get_bodypart_description(BodyPart::Hand, hand);
 
     // Check if the wielded item is bound.
-    if (object->get_modified_property("bound", Property::Type::Boolean).as<bool>())
+    if (object->get_modified_property("bound").as<bool>())
     {
       std::string message;
       message = make_string("$you cannot unwield $foo; it is magically bound to $0!", { subject->get_possessive_of(bodypart_desc) });

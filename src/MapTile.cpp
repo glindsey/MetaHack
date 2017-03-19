@@ -27,7 +27,7 @@ EntityId MapTile::get_tile_contents() const
 
 std::string MapTile::get_display_name() const
 {
-  return m_p_metadata->get_intrinsic("name", Property::Type::String).as<std::string>();
+  return m_p_metadata->get_intrinsic("name").as<std::string>();
 }
 
 void MapTile::set_tile_type(std::string type)
@@ -42,7 +42,7 @@ std::string MapTile::get_tile_type() const
 
 bool MapTile::is_empty_space() const
 {
-  return m_p_metadata->get_intrinsic("passable", Property::Type::Boolean).as<bool>();
+  return m_p_metadata->get_intrinsic("passable").as<bool>();
 }
 
 /// @todo: Implement this to cover different entity types.
@@ -161,9 +161,9 @@ sf::Color MapTile::get_wall_light_level(Direction direction) const
 
 sf::Color MapTile::get_opacity() const
 {
-  return sf::Color(m_p_metadata->get_intrinsic("opacity_red", Property::Type::Integer).as<int>(),
-                   m_p_metadata->get_intrinsic("opacity_green", Property::Type::Integer).as<int>(),
-                   m_p_metadata->get_intrinsic("opacity_blue", Property::Type::Integer).as<int>(),
+  return sf::Color(m_p_metadata->get_intrinsic("opacity_red").as<int>(),
+                   m_p_metadata->get_intrinsic("opacity_green").as<int>(),
+                   m_p_metadata->get_intrinsic("opacity_blue").as<int>(),
                    255);
 }
 
@@ -172,9 +172,9 @@ bool MapTile::is_opaque() const
   /// @todo Check the tile's inventory to see if there's anything huge enough
   ///       to block the view of stuff behind it.
   return
-    (m_p_metadata->get_intrinsic("opacity_red", Property::Type::Integer).as<int>() >= 255) &&
-    (m_p_metadata->get_intrinsic("opacity_green", Property::Type::Integer).as<int>() >= 255) &&
-    (m_p_metadata->get_intrinsic("opacity_blue", Property::Type::Integer).as<int>() >= 255);
+    (m_p_metadata->get_intrinsic("opacity_red").as<int>() >= 255) &&
+    (m_p_metadata->get_intrinsic("opacity_green").as<int>() >= 255) &&
+    (m_p_metadata->get_intrinsic("opacity_blue").as<int>() >= 255);
 }
 
 RealVec2 MapTile::get_pixel_coords(int x, int y)

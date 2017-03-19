@@ -129,21 +129,19 @@ public:
   /// Get an intrinsic of this Entity.
   /// If the intrinsic is not found, returns the default value.
   /// @param key            Name of the intrinsic to get.
-  /// @param type           Type of the intrinsic to get.
   /// @param default_value  Default value to use, if any.
   /// @return The intrinsic (or default) value for that key.
-  Property get_intrinsic(std::string key, Property::Type type, Property default_value) const;
-  Property get_intrinsic(std::string key, Property::Type type) const;
+  Property get_intrinsic(std::string key, Property default_value) const;
+  Property get_intrinsic(std::string key) const;
 
   /// Get a base property of this Entity.
   /// If the base property is not found, the method falls back upon the
   /// intrinsic for that property (if any).
   /// @param key            Name of the property to get.
-  /// @param type           Type of the property to get.
   /// @param default_value  Default value to use, if any.
   /// @return The property (or default) value for that key.
-  Property get_base_property(std::string key, Property::Type type, Property default_value) const;
-  Property get_base_property(std::string key, Property::Type type) const;
+  Property get_base_property(std::string key, Property default_value) const;
+  Property get_base_property(std::string key) const;
 
   /// Sets a base property of this Entity.
   /// If the base property is not found, it is created.
@@ -163,11 +161,11 @@ public:
   /// If the modified property is not found, the method falls back upon the
   /// base value for that property (if any).
   /// @param key            Name of the property to get.
-  /// @param type           Type of the property to get.
+ 
   /// @param default_value  Default value to use, if any.
   /// @return The modified (or base) property value for that key.
-  Property get_modified_property(std::string key, Property::Type type, Property default_value) const;
-  Property get_modified_property(std::string key, Property::Type type) const;
+  Property get_modified_property(std::string key, Property default_value) const;
+  Property get_modified_property(std::string key) const;
 
   /// Add a property modifier to this Entity.
   /// @param  key               Name of property to modify.
@@ -503,21 +501,17 @@ public:
   /// Syntactic sugar for calling call_lua_function().
   Property call_lua_function(std::string function_name,
                              std::vector<Property> const& args,
-                             Property::Type result_type,
                              Property default_result);
 
   Property call_lua_function(std::string function_name,
-                             std::vector<Property> const& args,
-                             Property::Type result_type);
+                             std::vector<Property> const& args);
 
   Property call_lua_function(std::string function_name,
                              std::vector<Property> const& args,
-                             Property::Type result_type,
                              Property default_result) const;
 
   Property call_lua_function(std::string function_name,
-                             std::vector<Property> const& args,
-                             Property::Type result_type) const;
+                             std::vector<Property> const& args) const;
 
   /// Get a const reference to this tile's metadata.
   Metadata const & get_metadata() const;

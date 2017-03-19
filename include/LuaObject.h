@@ -158,7 +158,6 @@ public:
   /// @param function_name  Name of the function to call
   /// @param caller         EntityId to the entity calling the function
   /// @param args           Vector of arguments to pass to the function
-  /// @param result_type    Expected return type of the function
   /// @param default_result The default result if function is not found
   ///                       after traversing the entire parent tree.
   ///                       Defaults to the default constructor of the
@@ -168,29 +167,23 @@ public:
   Property call_thing_function(std::string function_name,
                                EntityId caller,
                                std::vector<Property> const& args,
-                               Property::Type result_type,
                                Property default_result);
 
   Property call_thing_function(std::string function_name,
                                EntityId caller,
-                               std::vector<Property> const& args,
-                               Property::Type result_type);
+                               std::vector<Property> const& args);
 
   /// Get a Entity group intrinsic.
   /// @param group          Name of group to get intrinsic of.
   /// @param name           Name of intrinsic to get.
-  /// @param type           Type of intrinsic to get.
-  /// @param default_value  Default value if intrinsic does not exist
-  ///                       (defaults to default constructor of type).
+  /// @param default_value  Default value if intrinsic does not exist.
   /// @return       The value of the intrinsic. 
   Property get_group_intrinsic(std::string group,
                               std::string name,
-                              Property::Type type,
                               Property default_value);
 
   Property get_group_intrinsic(std::string group, 
-                              std::string name,
-                              Property::Type type);
+                              std::string name);
 
   /// Set a Entity group intrinsic.
   /// @param group    Name of group to set intrinsic of.

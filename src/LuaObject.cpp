@@ -330,6 +330,7 @@ Property::Type Lua::pop_type()
   else
   {
     return_value = static_cast<Property::Type>(get_enum_value(-1));
+    //CLOG(TRACE, "Lua") << "Saw PropertyType " << return_value;
   }
   lua_pop(L_, 1);
   return return_value;
@@ -340,7 +341,8 @@ Property Lua::pop_value(Property::Type type)
   Property property;
   switch (type)
   {
-    case Property::Type::Null: 
+    case Property::Type::Null:
+      lua_pop(L_, 1);
       break;
 
     case Property::Type::Boolean:
@@ -414,7 +416,7 @@ unsigned int Lua::stack_slots(Property::Type type) const
 {
   switch (type)
   {
-    case Property::Type::Null: return 0;
+    case Property::Type::Null: return 1;     // 1, because nil is still a Lua value
     case Property::Type::Boolean: return 1;
     case Property::Type::String: return 1;
     case Property::Type::Integer: return 1;
@@ -431,7 +433,6 @@ unsigned int Lua::stack_slots(Property::Type type) const
 Property Lua::call_thing_function(std::string function_name, 
                                   EntityId caller, 
                                   std::vector<Property> const & args, 
-                                  Property::Type result_type,
                                   Property default_result)
 {
   {
@@ -481,14 +482,15 @@ Property Lua::call_thing_function(std::string function_name,
 
         // Call the function with N+1 arguments and R+1 results. (-(N+2), +(R+1)) = R-(N+1)
         //stackDump();
-        int result = lua_pcall(L_, lua_args + 1, stack_slots(result_type) + 1, 0);
+        // auto number_of_results = stack_slots(result_type) + 1
+        int result = lua_pcall(L_, lua_args + 1, LUA_MULTRET, 0);
         //stackDump();
         if (result == 0)
         {
           // Pop the return type off of the stack. (-1)
           return_type = pop_type();
           // Pop the return value off of the stack. (-R)
-          return_value = pop_value(result_type);
+          return_value = pop_value(return_type);
         }
         else
         {
@@ -515,19 +517,18 @@ Property Lua::call_thing_function(std::string function_name,
 
 Property Lua::call_thing_function(std::string function_name, 
                                   EntityId caller, 
-                                  std::vector<Property> const & args, 
-                                  Property::Type result_type)
+                                  std::vector<Property> const & args)
 {
-  return call_thing_function(function_name, caller, args, result_type, Property::empty(result_type));
+  return call_thing_function(function_name, caller, args, Property());
 }
 
 Property Lua::get_group_intrinsic(std::string group,
-                                 std::string name, 
-                                 Property::Type type, 
+                                 std::string name,
                                  Property default_value)
 {
   Property return_value = default_value;
   Property::Type return_type = default_value.type();
+  //CLOG(TRACE, "Lua") << "Looking for " << group << " intrinsic \"" << name << "\"";
 
   int start_stack = lua_gettop(L_);
 
@@ -538,7 +539,7 @@ Property Lua::get_group_intrinsic(std::string group,
   {
     // Category not found -- pop the name back off. (-1)
     lua_pop(L_, 1);
-    MAJOR_ERROR("Lua class %s was not found", group.c_str());
+    CLOG(ERROR, "Lua") << "Lua class " << group << " was not found";
   }
   else
   {
@@ -549,7 +550,7 @@ Property Lua::get_group_intrinsic(std::string group,
     {
       // Function not found -- pop the function and group names back off. (-2)
       lua_pop(L_, 2);
-      MAJOR_ERROR("Lua function %s:get_intrinsic() was not found", group.c_str());
+      CLOG(ERROR, "Lua") << "Lua function " << group << ":get_intrinsic() was not found";
     }
     else
     {
@@ -558,20 +559,21 @@ Property Lua::get_group_intrinsic(std::string group,
       lua_remove(L_, -3);                    // get group <
       lua_pushstring(L_, name.c_str());      // get group name <
 
-      int num_results = stack_slots(type) + 1;
       //stackDump();
-      int result = lua_pcall(L_, 2, num_results, 0);   // (result|nil|err) <
+      // auto number_of_results = stack_slots(result_type) + 1
+      int result = lua_pcall(L_, 2, LUA_MULTRET, 0);   // (result|nil|err) <
       //stackDump();
       if (result == 0)
       {
         return_type = pop_type();
-        return_value = pop_value(type);
+        return_value = pop_value(return_type);
       }
       else
       {
         // Get the error message.
         char const* error_message = lua_tostring(L_, -1);
-        MAJOR_ERROR("Error calling %s:get_intrinsic(%s): %s", group.c_str(), name.c_str(), error_message);
+        CLOG(ERROR, "Lua") << "Error calling " << group <<
+          ":get_intrinsic(" << name << "): " << error_message;
 
         // Pop the error message off the stack. (-1)
         lua_pop(L_, 1);
@@ -583,17 +585,17 @@ Property Lua::get_group_intrinsic(std::string group,
 
   if (start_stack != end_stack)
   {
-    FATAL_ERROR("*** LUA STACK MISMATCH (%s:get_intrinsic): Started at %d, ended at %d", name.c_str(), start_stack, end_stack);
+    CLOG(FATAL, "Lua") << "*** LUA STACK MISMATCH (" << group <<
+      ":get_intrinsic): Started at " << start_stack << ", ended at " << end_stack;
   }
 
   return return_value;
 }
 
 Property Lua::get_group_intrinsic(std::string group,
-                                 std::string name, 
-                                 Property::Type type)
+                                 std::string name)
 {
-  return get_group_intrinsic(group, name, type, Property::empty(type));
+  return get_group_intrinsic(group, name, Property());
 }
 
 void Lua::set_group_intrinsic(std::string group, std::string name, Property value)
