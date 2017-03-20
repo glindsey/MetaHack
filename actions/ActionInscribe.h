@@ -4,7 +4,7 @@
 
 #include "Action.h"
 #include "ActionCRTP.h"
-#include "EntityId.h"
+#include "entity/EntityId.h"
 
 /// Action subclass describing writing on something.
 /// ActionInscribe is a little backwards due to the limitations of the

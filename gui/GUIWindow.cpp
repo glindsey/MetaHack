@@ -7,8 +7,8 @@
 #include "GUIResizeHandle.h"
 #include "GUIShrinkHandle.h"
 
-#include "App.h"
-#include "IConfigSettings.h"
+#include "game/App.h"
+#include "services/IConfigSettings.h"
 #include "Service.h"
 
 namespace metagui

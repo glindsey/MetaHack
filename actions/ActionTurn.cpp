@@ -3,13 +3,13 @@
 #include "ActionTurn.h"
 
 #include "ActionAttack.h"
-#include "GameState.h"
-#include "IMessageLog.h"
-#include "IStringDictionary.h"
-#include "Map.h"
+#include "game/GameState.h"
+#include "services/IMessageLog.h"
+#include "services/IStringDictionary.h"
+#include "map/Map.h"
 #include "Service.h"
-#include "Entity.h"
-#include "EntityId.h"
+#include "entity/Entity.h"
+#include "entity/EntityId.h"
 
 namespace Actions
 {

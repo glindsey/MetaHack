@@ -1,17 +1,17 @@
 #include "stdafx.h"
 
-#include "common_types.h"
+#include "types/common.h"
 
 #include "Action.h"
 #include "ActionMove.h"
 
-#include "IStringDictionary.h"
-#include "MessageLog.h"
+#include "services/IStringDictionary.h"
+#include "services/MessageLog.h"
 #include "Service.h"
-#include "StringTransforms.h"
-#include "Entity.h"
-#include "EntityPool.h"
-#include "EntityId.h"
+#include "utilities/StringTransforms.h"
+#include "entity/Entity.h"
+#include "entity/EntityPool.h"
+#include "entity/EntityId.h"
 
 namespace Actions
 {

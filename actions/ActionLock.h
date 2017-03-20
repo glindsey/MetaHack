@@ -4,7 +4,7 @@
 
 #include "Action.h"
 #include "ActionCRTP.h"
-#include "EntityId.h"
+#include "entity/EntityId.h"
 
 namespace Actions
 {

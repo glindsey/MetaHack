@@ -2,11 +2,11 @@
 
 #include "stdafx.h"
 
-#include "App.h"
-#include "Direction.h"
-#include "GameState.h"
-#include "MessageLog.h"
-#include "EntityId.h"
+#include "game/App.h"
+#include "types/Direction.h"
+#include "game/GameState.h"
+#include "services/MessageLog.h"
+#include "entity/EntityId.h"
 
 namespace Actions
 {

@@ -2,11 +2,11 @@
 
 #include "ActionDrop.h"
 #include "ActionMove.h"
-#include "IMessageLog.h"
-#include "IStringDictionary.h"
+#include "services/IMessageLog.h"
+#include "services/IStringDictionary.h"
 #include "Service.h"
-#include "Entity.h"
-#include "EntityId.h"
+#include "entity/Entity.h"
+#include "entity/EntityId.h"
 
 namespace Actions
 {

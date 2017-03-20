@@ -1,10 +1,10 @@
 #include "stdafx.h"
 
 #include "ActionMix.h"
-#include "Entity.h"
-#include "EntityId.h"
-#include "IMessageLog.h"
-#include "IStringDictionary.h"
+#include "entity/Entity.h"
+#include "entity/EntityId.h"
+#include "services/IMessageLog.h"
+#include "services/IStringDictionary.h"
 #include "Service.h"
 
 namespace Actions

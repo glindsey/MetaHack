@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include "App.h"
+#include "game/App.h"
 #include "ErrorHandler.h"
 
 INITIALIZE_EASYLOGGINGPP

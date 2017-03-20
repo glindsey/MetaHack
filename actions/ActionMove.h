@@ -2,7 +2,7 @@
 
 #include "Action.h"
 #include "ActionCRTP.h"
-#include "EntityId.h"
+#include "entity/EntityId.h"
 
 #include <string>
 #include <vector>

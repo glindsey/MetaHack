@@ -3,7 +3,7 @@
 #include "stdafx.h"
 
 #include "Action.h"
-#include "EntityId.h"
+#include "entity/EntityId.h"
 
 namespace Actions
 {

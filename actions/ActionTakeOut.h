@@ -4,7 +4,7 @@
 
 #include "Action.h"
 #include "ActionCRTP.h"
-#include "EntityId.h"
+#include "entity/EntityId.h"
 
 /// Action class for taking an item out of another item.
 /// Why does this item have the "object can be out of reach" trait? Well, the

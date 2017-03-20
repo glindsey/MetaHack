@@ -4,7 +4,7 @@
 #include "stdafx.h"
 
 #include "GUIEvent.h"
-#include "SFMLEventHandler.h"
+#include "types/ISFMLEventHandler.h"
 
 #include "Visitor.h"
 

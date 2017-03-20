@@ -4,7 +4,7 @@
 #define NOMINMAX
 
 // EasyLogging++ includes
-#include "easyloggingpp/easylogging++.h"
+#include "third_party/easyloggingpp/easylogging++.h"
 
 // Standard library includes
 #include <algorithm>
@@ -58,21 +58,20 @@
 #include <boost/serialization/strong_typedef.hpp>
 
 // Cereal includes
-#include <cereal/archives/xml.hpp>
-#include <cereal/types/memory.hpp>
-#include <cereal/types/polymorphic.hpp>
+#include <third_party/cereal/archives/xml.hpp>
+#include <third_party/cereal/types/memory.hpp>
+#include <third_party/cereal/types/polymorphic.hpp>
 
 // SFML includes
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 
 // Our convenience includes
-#include "common_types.h"
-#include "common_enums.h"
-#include "common_functions.h"
+#include "types/common.h"
+#include "utilities/CommonFunctions.h"
 
 // The special debugging "NEW" function.
-#include "New.h"
+#include "utilities/New.h"
 
 // Lua includes
 extern "C"

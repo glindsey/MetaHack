@@ -1,10 +1,10 @@
 #include "stdafx.h"
 
 #include "ActionHurl.h"
-#include "IMessageLog.h"
+#include "services/IMessageLog.h"
 #include "Service.h"
-#include "Entity.h"
-#include "EntityId.h"
+#include "entity/Entity.h"
+#include "entity/EntityId.h"
 
 
 namespace Actions

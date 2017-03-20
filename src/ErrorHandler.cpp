@@ -2,7 +2,7 @@
 
 #include "ErrorHandler.h"
 
-#include "App.h"
+#include "game/App.h"
 
 struct ErrorHandler::Impl
 {
