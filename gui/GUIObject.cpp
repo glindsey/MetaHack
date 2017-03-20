@@ -601,7 +601,7 @@ namespace metagui
   void Object::setParent(Object* parent)
   {
     m_parent = parent;
-    m_parent->flagForRedraw();
+    if (m_parent) m_parent->flagForRedraw();
   }
 
   void Object::clearChildFocuses()
