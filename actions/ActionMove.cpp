@@ -49,13 +49,13 @@ namespace Actions
     if (new_direction == Direction::Up)
     {
       /// @todo Write up/down movement code
-      message = "Up/down movement is not yet supported!";
+      message = maketr("ACTN_NOT_IMPLEMENTED");
       Service<IMessageLog>::get().add(message);
     }
     else if (new_direction == Direction::Down)
     {
       /// @todo Write up/down movement code
-      message = "Up/down movement is not yet supported!";
+      message = maketr("ACTN_NOT_IMPLEMENTED");
       Service<IMessageLog>::get().add(message);
     }
     else
@@ -72,7 +72,7 @@ namespace Actions
       if ((x_new < 0) || (y_new < 0) ||
         (x_new >= map_size.x) || (y_new >= map_size.y))
       {
-        message += make_string("$you can't move there; it is out of bounds!");
+        message += maketr("YOU_CANT_VERB_THERE");
         Service<IMessageLog>::get().add(message);
       }
       else
@@ -104,7 +104,7 @@ namespace Actions
           else
           {
             std::string tile_description = new_tile.get_display_name();
-            message += make_string("$you $are stopped by $0 $1.",
+            message += maketr("YOU_ARE_STOPPED_BY",
             {
               getIndefArt(tile_description),
               tile_description

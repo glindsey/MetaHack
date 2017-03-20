@@ -45,11 +45,11 @@ namespace Actions
     {
       if (IS_PLAYER)
       {
-        message = "That would be an interesting topological exercise.";
+        message = maketr("YOU_TRY_TO_STORE_THE_FOO_INSIDE_ITSELF_HUMOROUS");
       }
       else
       {
-        message = make_string("$you $try to store $the_foo inside itself, which seriously shouldn't happen.");
+        message = maketr("YOU_TRY_TO_STORE_THE_FOO_INSIDE_ITSELF_INVALID");
         CLOG(WARNING, "Action") << "NPC tried to store a container in itself!?";
       }
 
@@ -61,7 +61,7 @@ namespace Actions
     {
       print_message_try_();
 
-      message = make_string("$the_target_thing is not a container!");
+      message = maketr("THE_TARGET_IS_NOT_A_CONTAINER");
       Service<IMessageLog>::get().add(message);
 
       return StateResult::Failure();
@@ -72,7 +72,7 @@ namespace Actions
     {
       print_message_try_();
 
-      message = make_string("$the_foo is already in $the_target_thing!");
+      message = maketr("THE_FOO_IS_ALREADY_IN_THE_TARGET");
       Service<IMessageLog>::get().add(message);
 
       return StateResult::Failure();
@@ -83,7 +83,7 @@ namespace Actions
     {
       print_message_try_();
 
-      message = make_string("$you cannot reach $the_target_thing.");
+      message = maketr("THE_TARGET_IS_OUT_OF_REACH");
       Service<IMessageLog>::get().add(message);
 
       return StateResult::Failure();
@@ -112,7 +112,7 @@ namespace Actions
       }
       else
       {
-        message = make_string("$you could not move $the_foo into $the_target_thing for some inexplicable reason.");
+        message = maketr("YOU_CANT_VERB_FOO_PREPOSITION_TARGET_UNKNOWN", { "into" });
         Service<IMessageLog>::get().add(message);
 
         CLOG(ERROR, "Action") << "Could not move Entity into Container even though be_object_of returned Success";
@@ -134,13 +134,13 @@ namespace Actions
 
   void ActionPutInto::print_message_try_() const
   {
-    std::string message = make_string("$you $try to $verb $the_foo into $the_target_thing.");
+    std::string message = maketr("YOU_TRY_TO_VERB_THE_FOO_PREPOSITION_TARGET", { "into" });
     Service<IMessageLog>::get().add(message);
   }
 
   void ActionPutInto::print_message_do_() const
   {
-    std::string message = make_string("$you $cverb $the_foo into $the_target_thing.");
+    std::string message = maketr("YOU_VERB_THE_FOO_PREPOSITION_TARGET", { "into" });
     Service<IMessageLog>::get().add(message);
   }
 } // end namespace

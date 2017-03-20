@@ -896,6 +896,11 @@ namespace Actions
         return get_object()->get_object_pronoun();
       }
 
+      if ((token == "foo_pro_ref") || (token == "fooproref"))
+      {
+        return get_object()->get_reflexive_pronoun();
+      }
+
       if (token == "verb")
       {
         return get_verb();
