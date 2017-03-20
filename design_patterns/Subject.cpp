@@ -142,7 +142,7 @@ void Subject::broadcast(Event& event)
 
   event.subject = this;
 
-  shouldBroadcast(event, [&](Event& event, bool shouldBroadcast)
+  broadcast_(event, [&](Event& event, bool shouldBroadcast)
   {
     if (shouldBroadcast)
     {
@@ -181,9 +181,9 @@ void Subject::broadcast(Event& event)
   });
 }
 
-void Subject::shouldBroadcast(Event &event, BroadcastDelegate shouldBroadcast)
+void Subject::broadcast_(Event &event, BroadcastDelegate broadcast_delegate)
 {
-  shouldBroadcast(event, true);
+  broadcast_delegate(event, true);
 }
 
 void Subject::Registration::serialize(std::ostream& o) const

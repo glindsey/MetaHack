@@ -36,7 +36,8 @@ protected:
 
   void broadcast(Event& event);
   using BroadcastDelegate = std::function<void(Event& event, bool shouldBroadcast)>;
-  virtual void shouldBroadcast(Event& event, BroadcastDelegate shouldBroadcast);
+
+  virtual void broadcast_(Event& event, BroadcastDelegate broadcast_delegate);
 
 private:
   class Impl;

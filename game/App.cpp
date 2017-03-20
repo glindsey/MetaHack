@@ -42,7 +42,7 @@ App::App(sf::RenderWindow& app_window)
   :
   m_app_window{ app_window },
   m_app_texture{ NEW sf::RenderTexture() },
-  m_state_machine{ NEW StateMachine("app_state_machine") },
+  m_state_machine{ NEW StateMachine(*this, "app_state_machine") },
   m_is_running{ false },
   m_has_window_focus{ false }
 {
@@ -193,6 +193,7 @@ SFMLEventResult App::handle_sfml_event(sf::Event& event)
     {
       m_has_window_focus = true;
       result = SFMLEventResult::Handled;
+      broadcast(EventAppWindowFocusChanged({ true }));
       break;
     }
 
@@ -200,6 +201,7 @@ SFMLEventResult App::handle_sfml_event(sf::Event& event)
     {
       m_has_window_focus = false;
       result = SFMLEventResult::Handled;
+      broadcast(EventAppWindowFocusChanged({ false }));
       break;
     }
 
@@ -211,6 +213,7 @@ SFMLEventResult App::handle_sfml_event(sf::Event& event)
         sf::FloatRect(0, 0, static_cast<float>(event.size.width), static_cast<float>(event.size.height))));
 
       result = SFMLEventResult::Acknowledged;
+      broadcast(EventAppWindowResized({ event.size.width, event.size.height }));
       break;
     }
 
@@ -218,11 +221,14 @@ SFMLEventResult App::handle_sfml_event(sf::Event& event)
     {
       m_is_running = false;
       result = SFMLEventResult::Handled;
+      broadcast(EventAppWindowClosed());
       break;
     }
 
     case sf::Event::EventType::KeyPressed:
     {
+      bool do_key_broadcast = true;
+
       switch (event.key.code)
       {
         case sf::Keyboard::Key::Q:
@@ -230,12 +236,24 @@ SFMLEventResult App::handle_sfml_event(sf::Event& event)
           {
             m_is_running = false;
             result = SFMLEventResult::Handled;
+            broadcast(EventAppQuitRequested());
+            do_key_broadcast = false;
           }
           break;
 
         default:
           break;
       }
+
+      if (do_key_broadcast)
+      {
+        broadcast(EventKeyPressed(event.key.code, 
+                                  event.key.alt, 
+                                  event.key.control, 
+                                  event.key.shift, 
+                                  event.key.system));
+      }
+
       break;
     }
 
@@ -321,6 +339,17 @@ App & App::instance()
   {
     throw std::runtime_error("App instance was requested, but it does not exist");
   }
+}
+
+std::unordered_set<EventID> App::registeredEvents() const
+{
+  auto events = Subject::registeredEvents();
+  events.insert(EventAppQuitRequested::id);
+  events.insert(EventAppWindowClosed::id);
+  events.insert(EventAppWindowFocusChanged::id);
+  events.insert(EventAppWindowResized::id);
+  events.insert(EventKeyPressed::id);
+  return events;
 }
 
 void App::run()

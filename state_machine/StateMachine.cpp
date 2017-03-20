@@ -6,20 +6,28 @@
 
 struct StateMachine::Impl
 {
+  Impl(Subject& event_passer_) 
+    : 
+    event_passer{ event_passer_ } 
+  {}
+
+  Subject& event_passer;
   boost::ptr_map<std::string, State> state_map;
   State* current_state;
   std::string machine_name;
 };
 
-StateMachine::StateMachine(std::string const& machine_name)
-  : pImpl(NEW Impl())
+StateMachine::StateMachine(Subject& event_passer, std::string const& machine_name)
+  : pImpl(NEW Impl(event_passer))
 {
   pImpl->current_state = nullptr;
   pImpl->machine_name = machine_name;
+  pImpl->event_passer.addObserver(*this, EventID::All);
 }
 
 StateMachine::~StateMachine()
 {
+  pImpl->event_passer.removeObserver(*this, EventID::All);
   change_to(nullptr);
 }
 
@@ -171,4 +179,11 @@ std::string const& StateMachine::get_current_state_name()
   {
     return pImpl->current_state->getName();
   }
+}
+
+std::unordered_set<EventID> StateMachine::registeredEvents() const
+{
+  auto events = Subject::registeredEvents();
+  /// @todo WRITE ME
+  return events;
 }

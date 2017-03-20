@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 
+#include "Subject.h"
 #include "lua/LuaObject.h"
 #include "types/ISFMLEventHandler.h"
 
@@ -17,10 +18,96 @@ class StateMachine;
 class StringDictionary;
 class TileSheet;
 
-class App : public ISFMLEventHandler, public boost::noncopyable
+class App : public ISFMLEventHandler, public Subject
 {
 public:
+  struct EventAppQuitRequested : public ConcreteEvent<EventAppQuitRequested>
+  {
+    EventAppQuitRequested()
+    {}
+
+    void serialize(std::ostream& os) const
+    {
+      Event::serialize(os);
+    }
+  };
+
+  struct EventAppWindowResized : public ConcreteEvent<EventAppWindowResized>
+  {
+    EventAppWindowResized(UintVec2 new_size_)
+      :
+      new_size(new_size_)
+    {}
+
+    UintVec2 const new_size;
+
+    void serialize(std::ostream& os) const
+    {
+      Event::serialize(os);
+      os << " | new size:" << new_size;
+    }
+  };
+
+  struct EventAppWindowClosed : public ConcreteEvent<EventAppWindowClosed>
+  {
+    EventAppWindowClosed()
+    {}
+
+    void serialize(std::ostream& os) const
+    {
+      Event::serialize(os);
+    }
+  };
+
+  struct EventAppWindowFocusChanged : public ConcreteEvent<EventAppWindowFocusChanged>
+  {
+    EventAppWindowFocusChanged(bool focused_)
+      :
+      focused{ focused_ }
+    {}
+
+    bool const focused;
+
+    void serialize(std::ostream& os) const
+    {
+      Event::serialize(os);
+      os << " | focused: " << (focused ? "true" : "false");
+    }
+  };
+
+  struct EventKeyPressed : public ConcreteEvent<EventKeyPressed>
+  {
+    EventKeyPressed(sf::Keyboard::Key code_, bool alt_, bool control_, bool shift_, bool system_)
+      :
+      code{ code_ },
+      alt{ alt_ },
+      control{ control_ },
+      shift{ shift_ },
+      system{ system_ }
+    {}
+
+    sf::Keyboard::Key const code;
+    bool const alt;
+    bool const control;
+    bool const shift;
+    bool const system;
+
+    void serialize(std::ostream& os) const
+    {
+      Event::serialize(os);
+      os << " | code: " << (code ? "true" : "false") <<
+        " | alt: " << (alt ? "true" : "false") <<
+        " | control: " << (control ? "true" : "false") <<
+        " | shift: " << (shift ? "true" : "false") <<
+        " | system: " << (system ? "true" : "false");
+    }
+  };
+
   explicit App(sf::RenderWindow& app_window);
+  App(App const&) = delete;
+  App(App&&) = delete;
+  App& operator=(App const&) = delete;
+  App& operator=(App&&) = delete;
   virtual ~App();
 
   void run();
@@ -66,6 +153,7 @@ public:
   static App& instance();
 
 protected:
+  virtual std::unordered_set<EventID> registeredEvents() const override;
 
 private:
   sf::RenderWindow& m_app_window;

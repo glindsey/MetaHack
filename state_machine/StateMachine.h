@@ -3,6 +3,8 @@
 
 #include "stdafx.h"
 
+#include "Observer.h"
+#include "Subject.h"
 #include "types/IRenderable.h"
 #include "types/ISFMLEventHandler.h"
 
@@ -14,10 +16,16 @@ class State;
 class StateMachine :
   virtual public RenderableToTexture,
   virtual public ISFMLEventHandler,
-  virtual public boost::noncopyable
+  public Observer,
+  public Subject
 {
 public:
-  explicit StateMachine(std::string const& machine_name);
+  explicit StateMachine(Subject& event_passer, std::string const& machine_name);
+  StateMachine(StateMachine const&) = delete;
+  StateMachine(StateMachine&&) = delete;
+  StateMachine& operator=(StateMachine const&) = delete;
+  StateMachine& operator=(StateMachine&&) = delete;
+
   virtual ~StateMachine();
 
   /// Get the name of this state machine.
@@ -79,6 +87,8 @@ public:
   std::string const& get_current_state_name();
 
 protected:
+  virtual std::unordered_set<EventID> registeredEvents() const override;
+
 private:
   struct Impl;
   std::unique_ptr<Impl> pImpl;
