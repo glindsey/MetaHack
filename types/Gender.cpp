@@ -160,3 +160,9 @@ std::string const& getIndefArt(std::string const& desc)
       return articleA;
   }
 }
+
+std::string const& getDefArt(std::string const& desc)
+{
+  static std::string const articleThe = "the";
+  return articleThe;
+}

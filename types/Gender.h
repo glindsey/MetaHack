@@ -52,3 +52,4 @@ std::string const& getRefPro(Gender gender);
 std::string const& getPossAdj(Gender gender);
 std::string const& getPossPro(Gender gender);
 std::string const& getIndefArt(std::string const& desc);
+std::string const& getDefArt(std::string const& desc);

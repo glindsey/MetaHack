@@ -42,7 +42,17 @@ namespace Actions
       //  " from its container.";
       //Service<IMessageLog>::get().add(message);
 
-      message = "But " + THE_FOO + " is not inside a container!";
+      if (IS_PLAYER)
+      {
+        message = maketr("CONJUNCTION_BUT") + " ";
+      }
+
+      message += maketr("THE_FOO_IS_NOT_PREPOSITION_NOUN", 
+      { 
+        maketr("PREPOSITION_INSIDE"), 
+        getIndefArt(maketr("NOUN_CONTAINER"))
+      });
+
       Service<IMessageLog>::get().add(message);
 
       return StateResult::Failure();

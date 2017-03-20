@@ -204,7 +204,7 @@ bool AppStateGameMode::initialize()
   m_map_view->update_tiles(player);
   m_map_view->update_things(player, 0);
 
-  put_tmsg("WELCOME_MSG");
+  put_msg(tr("WELCOME_MSG"));
 
   return true;
 }
@@ -337,7 +337,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
         }
         else if (key.code == sf::Keyboard::Key::Escape)
         {
-          put_tmsg("QUIT_MSG");
+          put_msg(tr("QUIT_MSG"));
           result = SFMLEventResult::Handled;
         }
       }
@@ -387,11 +387,11 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             auto slot_count = m_inventory_selection->get_selected_slot_count();
             if (slot_count < 1)
             {
-              put_tmsg("QUANTITY_SUBTRACT_NEED_SOMETHING_SELECTED");
+              put_msg(tr("QUANTITY_NEED_SOMETHING_SELECTED"));
             }
             else if (slot_count > 1)
             {
-              put_tmsg("QUANTITY_SUBTRACT_NEED_ONE_THING_SELECTED");
+              put_msg(tr("QUANTITY_NEED_ONE_THING_SELECTED"));
             }
             else
             {
@@ -408,11 +408,11 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             auto slot_count = m_inventory_selection->get_selected_slot_count();
             if (slot_count < 1)
             {
-              put_tmsg("QUANTITY_SUBTRACT_NEED_SOMETHING_SELECTED");
+              put_msg(tr("QUANTITY_NEED_SOMETHING_SELECTED"));
             }
             else if (slot_count > 1)
             {
-              put_tmsg("QUANTITY_SUBTRACT_NEED_ONE_THING_SELECTED");
+              put_msg(tr("QUANTITY_NEED_ONE_THING_SELECTED"));
             }
             else
             {
@@ -432,7 +432,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             }
             else
             {
-              put_tmsg("AT_TOP_OF_INVENTORY_TREE");
+              put_msg(tr("AT_TOP_OF_INVENTORY_TREE"));
             }
           }
           break;
@@ -476,7 +476,7 @@ SFMLEventResult AppStateGameMode::handle_key_press(sf::Event::KeyEvent& key)
             }
             else
             {
-              put_tmsg("NOTHING_IS_SELECTED");
+              put_msg(tr("NOTHING_IS_SELECTED"));
             }
             break;
           }
@@ -1082,7 +1082,7 @@ SFMLEventResult AppStateGameMode::handle_key_press_target_selection(EntityId pla
 
   if (!key.alt && !key.control && key.code == sf::Keyboard::Key::Escape)
   {
-    put_tmsg("ABORTED");
+    put_msg(tr("ABORTED"));
     m_inventory_area_shows_player = false;
     reset_inventory_selection();
     m_current_input_state = GameInputState::Map;

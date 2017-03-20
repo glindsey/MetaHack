@@ -335,7 +335,7 @@ namespace Actions
       // Make sure we're not in limbo!
       if ((location == EntityId::Mu()) || (current_tile == nullptr))
       {
-        put_maketr("DONT_EXIST_PHYSICALLY");
+        put_msg(maketr("DONT_EXIST_PHYSICALLY"));
         return StateResult::Failure();
       }
     }
@@ -376,11 +376,11 @@ namespace Actions
           {
             if (!IS_PLAYER)
             {
-              put_maketr("YOU_TRY_TO_VERB_YOURSELF_INVALID");
+              put_msg(maketr("YOU_TRY_TO_VERB_YOURSELF_INVALID"));
               CLOG(WARNING, "Action") << "NPC tried to " << get_type() << " self!?";
             }
 
-            put_maketr("YOU_CANT_VERB_YOURSELF");
+            put_msg(maketr("YOU_CANT_VERB_YOURSELF"));
 
             return StateResult::Failure();
           }
@@ -393,7 +393,7 @@ namespace Actions
           {
             print_message_try_();
 
-            put_maketr("THE_FOO_IS_NOT_A_LIQUID_CARRIER");
+            put_msg(maketr("THE_FOO_IS_NOT_A_LIQUID_CARRIER"));
             Service<IMessageLog>::get().add(message);
 
             return StateResult::Failure();
@@ -437,7 +437,7 @@ namespace Actions
           {
             print_message_try_();
 
-            put_maketr("THE_FOO_IS_OUT_OF_REACH");
+            put_msg(maketr("CONJUNCTION_HOWEVER") + " " + maketr("THE_FOO_IS_OUT_OF_REACH"));
 
             return StateResult::Failure();
           }
@@ -450,10 +450,10 @@ namespace Actions
           {
             print_message_try_();
 
-            message = make_string(tr("THE_FOO_IS_NOT_IN_YOUR_INVENTORY"));
+            message = maketr("CONJUNCTION_HOWEVER") + " " + maketr("THE_FOO_IS_NOT_IN_YOUR_INVENTORY");
             if (subject->can_reach(object))
             {
-              message += tr("PICK_UP_OBJECT_FIRST");
+              message += maketr("PICK_UP_OBJECT_FIRST");
             }
             message += ".";
             put_msg(message);
@@ -470,7 +470,7 @@ namespace Actions
             print_message_try_();
 
             message = maketr("THE_FOO_IS_ALREADY_IN_YOUR_INVENTORY");
-            Service<IMessageLog>::get().add(message);
+            put_msg(message);
             return StateResult::Failure();
           }
         }
@@ -484,8 +484,7 @@ namespace Actions
 
             /// @todo Perhaps automatically try to unwield the item before dropping?
             message = maketr("FOO_MUST_BE_WIELDED");
-            Service<IMessageLog>::get().add(message);
-
+            put_msg(message);
             return StateResult::Failure();
           }
         }
@@ -498,8 +497,7 @@ namespace Actions
             print_message_try_();
 
             message = maketr("FOO_MUST_BE_WORN");
-            Service<IMessageLog>::get().add(message);
-
+            put_msg(message);
             return StateResult::Failure();
           }
         }
@@ -513,8 +511,7 @@ namespace Actions
 
             /// @todo Perhaps automatically try to unwield the item before dropping?
             message = maketr("YOU_CANT_VERB_WIELDED");
-            Service<IMessageLog>::get().add(message);
-
+            put_msg(message);
             return StateResult::Failure();
           }
         }
@@ -527,8 +524,7 @@ namespace Actions
             print_message_try_();
 
             message = maketr("YOU_CANT_VERB_WORN");
-            Service<IMessageLog>::get().add(message);
-
+            put_msg(message);
             return StateResult::Failure();
           }
         }
@@ -541,8 +537,7 @@ namespace Actions
             print_message_try_();
 
             message = maketr("YOU_CANT_MOVE_THE_FOO");
-            Service<IMessageLog>::get().add(message);
-
+            put_msg(message);
             return StateResult::Failure();
           }
         }
@@ -593,7 +588,7 @@ namespace Actions
 
   StateResult Action::do_begin_work_(AnyMap& params)
   {
-    put_tmsg("ACTN_NOT_IMPLEMENTED");
+    put_msg(maketr("ACTN_NOT_IMPLEMENTED"));
 
     return StateResult::Failure();
   }
@@ -616,7 +611,7 @@ namespace Actions
 
     if (get_objects().size() == 0)
     {
-      description += "nothing";
+      description += maketr("NOUN_NOTHING");
     }
     else if (get_objects().size() == 1)
     {
@@ -628,13 +623,13 @@ namespace Actions
       {
         if (get_object() == EntityId::Mu())
         {
-          description += "nothing";
+          description += maketr("NOUN_NOTHING");
         }
         else
         {
           if (get_quantity() > 1)
           {
-            description += get_quantity() + " of";
+            description += get_quantity() + " " + maketr("PREPOSITION_OF");
           }
           description += get_object()->get_identifying_string(ArticleChoice::Definite);
         }
@@ -642,14 +637,15 @@ namespace Actions
     }
     else if (get_objects().size() == 2)
     {
-      description += get_object()->get_identifying_string(ArticleChoice::Definite) + " and " +
+      description += get_object()->get_identifying_string(ArticleChoice::Definite) + " " + maketr("CONJUNCTION_AND") + " " +
         get_second_object()->get_identifying_string(ArticleChoice::Definite);
     }
     else if (get_objects().size() > 1)
     {
       /// @todo May want to change this depending on whether subject is the player.
       ///       If not, we should print "several items" or something to that effect.
-      description += "the items";
+      auto string_items = maketr("NOUN_ITEMS");
+      description += getDefArt(string_items) + " " + string_items;
     }
     else
     {
@@ -688,11 +684,11 @@ namespace Actions
     auto& objects = get_objects();
     if (objects.size() == 0)
     {
-      put_maketr("YOU_TRY_TO_VERB");
+      put_msg(maketr("YOU_TRY_TO_VERB"));
     }
     else if (objects.size() == 1)
     {
-      put_maketr("YOU_TRY_TO_VERB_THE_FOO");
+      put_msg(maketr("YOU_TRY_TO_VERB_THE_FOO"));
     }
     else
     {
@@ -705,15 +701,15 @@ namespace Actions
     auto& objects = get_objects();
     if (objects.size() == 0)
     {
-      put_maketr("YOU_CVERB");
+      put_msg(maketr("YOU_CVERB"));
     }
     else if (objects.size() == 1)
     {
-      put_maketr("YOU_CVERB_THE_FOO");
+      put_msg(maketr("YOU_CVERB_THE_FOO"));
     }
     else
     {
-      put_maketr("YOU_CVERB_THE_ITEMS");
+      put_msg(maketr("YOU_CVERB_THE_ITEMS"));
     }
   }
 
@@ -722,15 +718,15 @@ namespace Actions
     auto& objects = get_objects();
     if (objects.size() == 0)
     {
-      put_maketr("YOU_BEGIN_TO_VERB");
+      put_msg(maketr("YOU_BEGIN_TO_VERB"));
     }
     else if (objects.size() == 1)
     {
-      put_maketr("YOU_BEGIN_TO_VERB_THE_FOO");
+      put_msg(maketr("YOU_BEGIN_TO_VERB_THE_FOO"));
     }
     else
     {
-      put_maketr("YOU_BEGIN_TO_VERB_THE_ITEMS");
+      put_msg(maketr("YOU_BEGIN_TO_VERB_THE_ITEMS"));
     }
   }
 
@@ -739,15 +735,15 @@ namespace Actions
     auto& objects = get_objects();
     if (objects.size() == 0)
     {
-      put_maketr("YOU_STOP_VERBING");
+      put_msg(maketr("YOU_STOP_VERBING"));
     }
     else if (objects.size() == 1)
     {
-      put_maketr("YOU_STOP_VERBING_THE_FOO");
+      put_msg(maketr("YOU_STOP_VERBING_THE_FOO"));
     }
     else
     {
-      put_maketr("YOU_STOP_VERBING_THE_ITEMS");
+      put_msg(maketr("YOU_STOP_VERBING_THE_ITEMS"));
     }
   }
 
@@ -756,15 +752,15 @@ namespace Actions
     auto& objects = get_objects();
     if (objects.size() == 0)
     {
-      put_maketr("YOU_FINISH_VERBING");
+      put_msg(maketr("YOU_FINISH_VERBING"));
     }
     else if (objects.size() == 1)
     {
-      put_maketr("YOU_FINISH_VERBING_THE_FOO");
+      put_msg(maketr("YOU_FINISH_VERBING_THE_FOO"));
     }
     else
     {
-      put_maketr("YOU_FINISH_VERBING_THE_ITEMS");
+      put_msg(maketr("YOU_FINISH_VERBING_THE_ITEMS"));
     }
   }
 
@@ -773,15 +769,15 @@ namespace Actions
     auto& objects = get_objects();
     if (objects.size() == 0)
     {
-      put_maketr("YOU_CANT_VERB");
+      put_msg(maketr("YOU_CANT_VERB"));
     }
     else if (objects.size() == 1)
     {
-      put_maketr("YOU_CANT_VERB_THAT");
+      put_msg(maketr("YOU_CANT_VERB_THAT"));
     }
     else
     {
-      put_maketr("YOU_CANT_VERB_THOSE");
+      put_msg(maketr("YOU_CANT_VERB_THOSE"));
     }
   }
 

@@ -40,7 +40,7 @@ namespace Actions
       subject->get_bodypart_description(BodyPart::Hand, hand);
     EntityId currently_wielded = subject->get_wielding_in(hand);
 
-    std::string thing_name = (object != EntityId::Mu()) ? get_object_string_() : tr("NOTHING");
+    std::string thing_name = (object != EntityId::Mu()) ? get_object_string_() : tr("NOUN_NOTHING");
 
     // If it is us, or it is what is already being wielded, it means to unwield whatever is wielded.
     if ((object == subject) || (object == currently_wielded) || (object == EntityId::Mu()))
