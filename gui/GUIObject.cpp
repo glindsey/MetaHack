@@ -299,6 +299,12 @@ namespace metagui
         }
       }
 
+      // This clears the child's parent pointer.
+      moved_object->setParent(nullptr);
+
+      CLOG(TRACE, "GUI") << "Removed child \"" << name <<
+        "\" from parent \"" << getName() << "\"";
+
       // This returns the object we removed.
       return std::move(moved_object);
     }
