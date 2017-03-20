@@ -2,6 +2,7 @@
 
 #include "state_machine/StateMachine.h"
 
+#include "AssertHelper.h"
 #include "ErrorHandler.h"
 #include "state_machine/State.h"
 
@@ -15,18 +16,13 @@ struct StateMachine::Impl
 StateMachine::StateMachine(std::string const& machine_name)
   : pImpl(NEW Impl())
 {
-  SET_UP_LOGGER("StateMachine", true);
-
   pImpl->current_state = nullptr;
   pImpl->machine_name = machine_name;
-
-  //ctor
 }
 
 StateMachine::~StateMachine()
 {
   change_to(nullptr);
-  //dtor
 }
 
 std::string const& StateMachine::getName()
@@ -36,7 +32,7 @@ std::string const& StateMachine::getName()
 
 bool StateMachine::add_state(State* state)
 {
-  ASSERT_NOT_NULL(state);
+  Assert("StateMachine", state, "tried to add null state to StateMachine");
 
   std::string state_name = state->getName();
 
@@ -55,7 +51,7 @@ bool StateMachine::add_state(State* state)
 
 bool StateMachine::delete_state(State* state)
 {
-  ASSERT_NOT_NULL(state);
+  Assert("StateMachine", state, "tried to delete null state from StateMachine");
 
   return delete_state(state->getName());
 }

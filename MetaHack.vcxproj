@@ -381,7 +381,7 @@
     <ClInclude Include="maptile\MapTile.h" />
     <ClInclude Include="utilities\MathUtils.h" />
     <ClInclude Include="services\MessageLog.h" />
-    <ClInclude Include="include\MessageLogView.h" />
+    <ClInclude Include="windows\MessageLogView.h" />
     <ClInclude Include="metadata\Metadata.h" />
     <ClInclude Include="metadata\MetadataCollection.h" />
     <ClInclude Include="utilities\New.h" />
@@ -392,7 +392,7 @@
     <ClInclude Include="services\Standard2DGraphicViews.h" />
     <ClInclude Include="state_machine\State.h" />
     <ClInclude Include="state_machine\StateMachine.h" />
-    <ClInclude Include="include\StatusArea.h" />
+    <ClInclude Include="windows\StatusArea.h" />
     <ClInclude Include="include\stdafx.h" />
     <ClInclude Include="services\StringDictionary.h" />
     <ClInclude Include="utilities\StringTransforms.h" />
@@ -484,7 +484,7 @@
     <ClCompile Include="maptile\MapTileStandard2DView.cpp" />
     <ClCompile Include="map\MapView.cpp" />
     <ClCompile Include="services\MessageLog.cpp" />
-    <ClCompile Include="src\MessageLogView.cpp" />
+    <ClCompile Include="windows\MessageLogView.cpp" />
     <ClCompile Include="metadata\Metadata.cpp" />
     <ClCompile Include="metadata\MetadataCollection.cpp" />
     <ClCompile Include="properties\ModifiablePropertyDictionary.cpp" />
@@ -493,7 +493,7 @@
     <ClCompile Include="services\Standard2DGraphicViews.cpp" />
     <ClCompile Include="state_machine\State.cpp" />
     <ClCompile Include="state_machine\StateMachine.cpp" />
-    <ClCompile Include="src\StatusArea.cpp" />
+    <ClCompile Include="windows\StatusArea.cpp" />
     <ClCompile Include="src\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

@@ -14,9 +14,6 @@ namespace pt = boost::property_tree;
 
 StringDictionary::StringDictionary(std::string filename_)
 {
-  // Register the logger.
-  SET_UP_LOGGER("StringDictionary", false);
-
   if (!filename_.empty())
   {
     loadFile(filename_);

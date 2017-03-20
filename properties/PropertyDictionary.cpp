@@ -8,7 +8,6 @@
 
 PropertyDictionary::PropertyDictionary()
 {
-  SET_UP_LOGGER("PropertyDictionary", true);
 }
 
 PropertyDictionary::~PropertyDictionary()

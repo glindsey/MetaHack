@@ -15,9 +15,6 @@ EntityPool::EntityPool(GameState& game)
   :
   m_game{ game }
 {
-  // Set up the logger.
-  SET_UP_LOGGER("Entity", true);
-
   // Register the Entity Lua functions.
   LuaEntityFunctions::register_functions();
 

@@ -6,7 +6,6 @@
 #include "game/AppStateMainMenu.h"
 #include "game/AppStateSplashScreen.h"
 #include "ErrorHandler.h"
-#include "MessageLogView.h"
 #include "Service.h"
 #include "services/FallbackConfigSettings.h"
 #include "services/MessageLog.h"
@@ -15,6 +14,7 @@
 #include "state_machine/StateMachine.h"
 #include "tilesheet/TileSheet.h"
 #include "types/SFMLEventResult.h"
+#include "windows/MessageLogView.h"
 
 // Global declarations
 std::unique_ptr<App> app_;
@@ -60,9 +60,27 @@ App::App(sf::RenderWindow& app_window)
   // Register loggers.
   SET_UP_LOGGER("App", true);
   SET_UP_LOGGER("Action", false);
+  SET_UP_LOGGER("ConfigSettings", true);
+  SET_UP_LOGGER("Entity", true);
+  SET_UP_LOGGER("Game", true);
+  SET_UP_LOGGER("GameState", true);
+  SET_UP_LOGGER("GUI", true);
+  SET_UP_LOGGER("Inventory", true);
+  SET_UP_LOGGER("InventoryArea", true);
+  SET_UP_LOGGER("InventorySelection", true);
   SET_UP_LOGGER("Lua", true);
+  SET_UP_LOGGER("Map", true);
+  SET_UP_LOGGER("MapGenerator", true);
+  SET_UP_LOGGER("Metadata", false);
+  SET_UP_LOGGER("ModifiablePropertyDictionary", true);
   SET_UP_LOGGER("Property", true);
+  SET_UP_LOGGER("PropertyDictionary", true);
+  SET_UP_LOGGER("StateMachine", true);
+  SET_UP_LOGGER("StringDictionary", false);
   SET_UP_LOGGER("StringTransforms", false);
+  SET_UP_LOGGER("Subject", true);
+  SET_UP_LOGGER("TileSheet", true);
+  SET_UP_LOGGER("Observer", true);
 
 
   // First entity's first: load config settings.

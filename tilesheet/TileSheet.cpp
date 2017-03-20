@@ -10,8 +10,6 @@ TileSheet::TileSheet(unsigned int tileSize, unsigned int textureSize)
   m_tileSize{ tileSize },
   m_textureSize{ textureSize }
 {
-  SET_UP_LOGGER("TileSheet", true);
-
   if (m_textureSize == 0) m_textureSize = m_texture.getMaximumSize();
 
   bool success = m_texture.create(m_textureSize, m_textureSize);

@@ -65,7 +65,7 @@ private:
   std::unique_ptr<MapFactory> m_map_factory;
 
   /// Pointer to the Entity Manager object.
-  std::unique_ptr<EntityPool> m_thing_manager;
+  std::unique_ptr<EntityPool> m_entity_pool;
 
   /// A collection of collections -- a metacollection!
   boost::ptr_unordered_map<std::string, MetadataCollection> m_metacollection;

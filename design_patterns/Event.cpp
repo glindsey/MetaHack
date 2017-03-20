@@ -11,8 +11,8 @@ EventID Event::getId() const
   return id;
 }
 
-void Event::serialize(std::ostream& o) const
+void Event::serialize(std::ostream& os) const
 {
-  Serializable::serialize(o);
-  o << " | subject: <" << subject << ">";
+  Serializable::serialize(os);
+  os << " | subject: <" << subject << ">";
 };

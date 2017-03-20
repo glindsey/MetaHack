@@ -2,6 +2,7 @@
 
 #include "inventory/InventorySelection.h"
 
+#include "AssertHelper.h"
 #include "game/App.h"
 #include "inventory/Inventory.h"
 #include "entity/Entity.h"
@@ -25,7 +26,6 @@ InventorySelection::InventorySelection()
   :
   pImpl(NEW Impl())
 {
-  SET_UP_LOGGER("InventorySelection", true);
 }
 
 InventorySelection::InventorySelection(EntityId entity)
@@ -263,8 +263,10 @@ InventorySlot InventorySelection::get_slot(char character)
   unsigned int slot_number;
   unsigned int char_number = static_cast<unsigned int>(character);
 
-  ASSERT_CONDITION(((char_number >= 0x40) && (char_number <= 0x5a)) ||
-    ((char_number >= 0x61) && (char_number <= 0x7a)));
+  Assert("Inventory",
+         ((char_number >= 0x40) && (char_number <= 0x5a)) ||
+         ((char_number >= 0x61) && (char_number <= 0x7a)),
+         "tried to get the slot number for invalid character \"" << character << "\"");
 
   if (char_number == 0x40)
   {

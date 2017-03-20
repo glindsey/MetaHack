@@ -15,8 +15,6 @@ Metadata::Metadata(MetadataCollection& collection, std::string type)
   m_collection{ collection },
   m_type{ type }
 {
-  SET_UP_LOGGER("Metadata", false);
-
   std::string category = collection.get_category();
 
   // Look for the various files containing this metadata.

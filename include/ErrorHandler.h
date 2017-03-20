@@ -13,6 +13,8 @@
 #endif
 
 #define STR(x)  #x
+
+/// @todo Change this to choose the logging level instead of just enabled/disabled
 #define SET_UP_LOGGER(name, enabled)                                      \
 {                                                                         \
   el::Loggers::getLogger(name);                                           \
@@ -45,29 +47,6 @@
                                              __LINE__,                    \
                                              __FUNCTION_NAME__);          \
 }
-
-#ifndef NDEBUG
-
-#define ASSERT_NOT_NULL(ptr)                                              \
-{                                                                         \
-  if (ptr == nullptr)                                                     \
-  {                                                                       \
-    FATAL_ERROR("Invalid null pointer: \"" #ptr "\"");                    \
-  }                                                                       \
-}                                                                         \
-
-#define ASSERT_CONDITION(condition)                                       \
-{                                                                         \
-  if (!(condition))                                                       \
-  {                                                                       \
-    FATAL_ERROR("Assertion failed: \"" #condition "\"");                  \
-  }                                                                       \
-}                                                                         \
-
-#else
-#define ASSERT_NOT_NULL(ptr)
-#define ASSERT_CONDITION(condition)
-#endif
 
 class ErrorHandler :
   public boost::noncopyable

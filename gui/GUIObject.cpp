@@ -4,6 +4,7 @@
 
 #include <exception>
 
+#include "AssertHelper.h"
 #include "game/App.h"
 #include "services/IConfigSettings.h"
 #include "Service.h"
@@ -12,8 +13,6 @@ namespace metagui
 {
   Object::Object(std::string name, IntVec2 location, UintVec2 size)
   {
-    SET_UP_LOGGER("GUI", true);
-
     m_name = name;
     m_parent = nullptr;
     setRelativeLocation(location);
@@ -22,8 +21,6 @@ namespace metagui
 
   Object::Object(std::string name, sf::IntRect dimensions)
   {
-    SET_UP_LOGGER("GUI", true);
-
     m_name = name;
     m_parent = nullptr;
     setRelativeDimensions(dimensions);
@@ -232,15 +229,12 @@ namespace metagui
 
   Object* Object::addChild(std::unique_ptr<Object> child, uint32_t z_order)
   {
-    ASSERT_CONDITION(child);
+    Assert("GUI", child, "tried to add null child to a GUI object");
 
     std::string name = child->getName();
 
-    if (childExists(name))
-    {
-      throw std::runtime_error("Tried to add already-present child \"" + name + "\" of GUI object \"" + getName() + "\"");
-    }
-
+    Assert("GUI", !childExists(name), "Tried to add already-present child \"" + name + "\" of GUI object \"" + getName() + "\"");
+    
     child->setParent(this);
     auto child_ptr = child.get();
 

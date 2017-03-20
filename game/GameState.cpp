@@ -2,36 +2,37 @@
 
 #include "game/GameState.h"
 
+#include "AssertHelper.h"
+#include "entity/Entity.h"
+#include "entity/EntityPool.h"
 #include "ErrorHandler.h"
 #include "lua/LuaObject.h"
 #include "map/Map.h"
 #include "map/MapFactory.h"
-#include "entity/Entity.h"
-#include "entity/EntityPool.h"
 
 GameState* GameState::p_instance = nullptr;
 
 GameState::GameState()
 {
-  ASSERT_CONDITION(p_instance == nullptr);
+  Assert("GameState", p_instance == nullptr, "tried to create more than one GameState instance at a time");
 
   p_instance = this;
 
-  m_thing_manager.reset(NEW EntityPool(*this));
+  m_entity_pool.reset(NEW EntityPool(*this));
   m_map_factory.reset(NEW MapFactory(*this));
 }
 
 GameState::GameState(FileName filename)
 {
 #if 0
-  ASSERT_CONDITION(p_instance == nullptr);
+  Assert("GameState", p_instance == nullptr, "tried to create more than one GameState instance at a time");
 
   p_instance = this;
 
   std::ifstream fs{ filename.c_str() };
   cereal::XMLInputArchive iarchive{ fs };
 
-  iarchive(m_map_factory, m_thing_manager, m_player);
+  iarchive(m_map_factory, m_entity_pool, m_player);
 #endif
 }
 
@@ -46,22 +47,22 @@ void GameState::save_state(FileName filename)
   std::ofstream fs{ filename.c_str() };
   cereal::XMLOutputArchive oarchive{ fs };
 
-  oarchive(m_map_factory, m_thing_manager, m_player);
+  oarchive(m_map_factory, m_entity_pool, m_player);
 #endif
 }
 
 MapFactory& GameState::get_maps()
 {
-  ASSERT_CONDITION(m_map_factory);
+  Assert("GameState", m_map_factory, "MapFactory does not exist");
 
   return *m_map_factory;
 }
 
 EntityPool& GameState::get_entities()
 {
-  ASSERT_CONDITION(m_thing_manager);
+  Assert("GameState", m_entity_pool, "EntityPool does not exist");
 
-  return *m_thing_manager;
+  return *m_entity_pool;
 }
 
 MetadataCollection & GameState::get_metadata_collection(std::string category)
@@ -92,7 +93,7 @@ void GameState::increment_game_clock(ElapsedTime added_time)
 
 bool GameState::set_player(EntityId ref)
 {
-  ASSERT_CONDITION(ref != get_entities().get_mu());
+  Assert("GameState", ref != get_entities().get_mu(), "tried to make nothingness the player");
 
   m_player = ref;
   return true;
@@ -138,7 +139,7 @@ bool GameState::process_tick()
 
 GameState& GameState::instance()
 {
-  ASSERT_CONDITION(p_instance != nullptr);
+  Assert("GameState", p_instance != nullptr, "tried to get non-existent GameState instance");
 
   return *(p_instance);
 }

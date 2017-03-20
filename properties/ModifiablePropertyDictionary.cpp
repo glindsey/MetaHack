@@ -6,7 +6,6 @@
 
 ModifiablePropertyDictionary::ModifiablePropertyDictionary()
 {
-  SET_UP_LOGGER("ModifiablePropertyDictionary", true);
 }
 
 ModifiablePropertyDictionary::~ModifiablePropertyDictionary()

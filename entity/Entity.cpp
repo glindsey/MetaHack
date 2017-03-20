@@ -2,22 +2,23 @@
 
 #include "entity/Entity.h"
 
-#include "game/App.h"
-#include "types/Direction.h"
+#include "AssertHelper.h"
 #include "entity/EntityPool.h"
+#include "game/App.h"
 #include "game/GameState.h"
-#include "types/Gender.h"
-#include "services/IConfigSettings.h"
-#include "services/IStringDictionary.h"
-#include "types/IntegerRange.h"
 #include "inventory/Inventory.h"
 #include "map/Map.h"
 #include "maptile/MapTile.h"
-#include "utilities/MathUtils.h"
-#include "services/MessageLog.h"
 #include "metadata/Metadata.h"
-#include "utilities/Ordinal.h"
 #include "Service.h"
+#include "services/IConfigSettings.h"
+#include "services/IStringDictionary.h"
+#include "services/MessageLog.h"
+#include "types/Direction.h"
+#include "types/Gender.h"
+#include "types/IntegerRange.h"
+#include "utilities/MathUtils.h"
+#include "utilities/Ordinal.h"
 #include "utilities/StringTransforms.h"
 
 
@@ -88,8 +89,6 @@ Entity::Entity(Entity const& original, EntityId ref)
 
 void Entity::initialize()
 {
-  SET_UP_LOGGER("Entity", true);
-
   /// Get our maximum HP. (The Lua script will automatically pick it from a range.)
   auto max_hp = m_metadata.get_intrinsic("maxhp");
   set_base_property("maxhp", max_hp);
@@ -1413,7 +1412,7 @@ std::string Entity::get_bodypart_description(BodyPart part, uint32_t number)
   std::string part_name = this->get_bodypart_name(part).as<std::string>();
   std::string result;
 
-  ASSERT_CONDITION(number < total_number);
+  Assert("Entity", number < total_number, "asked for bodypart " << number << " of " << total_number);
   switch (total_number)
   {
     case 0: // none of them!?  shouldn't occur!

@@ -6,8 +6,6 @@
 
 FallbackConfigSettings::FallbackConfigSettings()
 {
-  SET_UP_LOGGER("ConfigSettings", true);
-
   /// @todo These settings should be read from an XML file.
   set("debug_show_thing_ids", true);
   set("window_border_color", sf::Color(96, 48, 32, 255));

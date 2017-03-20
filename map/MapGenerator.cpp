@@ -141,7 +141,6 @@ struct MapGenerator::Impl
 MapGenerator::MapGenerator(Map& m)
   : pImpl(NEW Impl(m))
 {
-  SET_UP_LOGGER("MapGenerator", true);
 }
 
 MapGenerator::~MapGenerator()

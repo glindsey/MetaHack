@@ -3,6 +3,7 @@
 #include "game/AppStateGameMode.h"
 
 #include "actions/Action.h"
+#include "AssertHelper.h"
 #include "entity/Entity.h"
 #include "entity/EntityPool.h"
 #include "game/App.h"
@@ -14,13 +15,13 @@
 #include "map/MapFactory.h"
 #include "map/MapStandard2DView.h"
 #include "maptile/MapTile.h"
-#include "MessageLogView.h"
 #include "Service.h"
 #include "services/IConfigSettings.h"
 #include "services/IGraphicViews.h"
 #include "services/IStringDictionary.h"
 #include "services/MessageLog.h"
-#include "StatusArea.h"
+#include "windows/MessageLogView.h"
+#include "windows/StatusArea.h"
 #include "utilities/StringTransforms.h"
 
 /// Actions that can be performed.
@@ -181,10 +182,10 @@ bool AppStateGameMode::initialize()
   auto& start_coords = game_map.get_start_coords();
 
   auto start_floor = game_map.get_tile(start_coords).get_tile_contents();
-  ASSERT_CONDITION(start_floor);
+  Assert("Game", start_floor, "starting tile floor doesn't exist");
 
   bool player_moved = player->move_into(start_floor);
-  ASSERT_CONDITION(player_moved);
+  Assert("Game", player_moved, "player could not be moved into starting tile");
 
   // Set cursor to starting location.
   m_cursor_coords = start_coords;

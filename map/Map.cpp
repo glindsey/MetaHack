@@ -44,8 +44,6 @@ Map::Map(GameState& game, MapId map_id, int width, int height)
   m_generator{ NEW MapGenerator(*this) },
   pImpl{ NEW Impl{} }
 {
-  SET_UP_LOGGER("Map", true);
-
   CLOG(TRACE, "Map") << "Creating map of size " << width << " x " << height;
 
   // Create the tiles themselves.

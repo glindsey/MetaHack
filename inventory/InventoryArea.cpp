@@ -20,7 +20,6 @@ InventoryArea::InventoryArea(std::string name,
   metagui::Window(name, dimensions),
   m_inventory_selection(inventory_selection)
 {
-  SET_UP_LOGGER("InventoryArea", true);
   m_inventory_selection.addObserver(*this, EventID::All);
 }
 
