@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 
-#include "ErrorHandler.h"
 #include "properties/Property.h"
 
 /// @todo Following should be removable after legacy template methods are gone

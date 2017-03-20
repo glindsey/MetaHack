@@ -1,6 +1,5 @@
 #include "stdafx.h"
 
-#include "ErrorHandler.h"
 #include "services/StringDictionary.h"
 
 #include <boost/property_tree/ptree.hpp>

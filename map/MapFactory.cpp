@@ -73,14 +73,14 @@ bool MapFactory::destroy(MapId map_id)
   // Can't destroy current map.
   if (map_id == current_map_id)
   {
-    MAJOR_ERROR("Attempted to destroy the current map!");
+    CLOG(ERROR, "MapFactory") << "attempted to destroy the current map";
     return false;
   }
 
   // Can't destroy current map.
   if (map_id == null_map_id)
   {
-    MAJOR_ERROR("Attempted to destroy the null map!");
+    CLOG(ERROR, "MapFactory") << "attempted to destroy the null map";
     return false;
   }
 

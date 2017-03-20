@@ -2,14 +2,13 @@
 
 #include "entity/EntityPool.h"
 
+#include "entity/Entity.h"
+#include "entity/EntityId.h"
 #include "game/App.h"
-#include "ErrorHandler.h"
 #include "game/GameState.h"
 #include "lua/LuaObject.h"
 #include "lua/LuaEntityFunctions.h"
 #include "metadata/Metadata.h"
-#include "entity/Entity.h"
-#include "entity/EntityId.h"
 
 EntityPool::EntityPool(GameState& game)
   :
@@ -20,10 +19,7 @@ EntityPool::EntityPool(GameState& game)
 
   // Create the "nothingness" object.
   EntityId mu = create("Mu");
-  if (mu != 0ULL)
-  {
-    FATAL_ERROR("Mu's ID is %" PRIu64 " instead of zero!", static_cast<uint64_t>(mu));
-  }
+  Assert("EntityPool", (mu != 0ULL), "Mu's ID is " << mu << " instead of zero!");
 
   m_initialized = true;
 }

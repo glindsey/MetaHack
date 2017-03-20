@@ -2,8 +2,6 @@
 
 #include "state_machine/StateMachine.h"
 
-#include "AssertHelper.h"
-#include "ErrorHandler.h"
 #include "state_machine/State.h"
 
 struct StateMachine::Impl
@@ -43,8 +41,8 @@ bool StateMachine::add_state(State* state)
   }
   else
   {
-    MAJOR_ERROR("Attempted to add state \"%s\" to state machine \"%s\" more than once",
-                state_name.c_str(), this->getName().c_str());
+    CLOG(ERROR, "StateMachine") << "attempted to add state \"" << state_name <<
+      "\" to state machine \"" << getName() << "\" more than once";
     return false;
   }
 }
@@ -60,14 +58,13 @@ bool StateMachine::delete_state(std::string const& state_name)
 {
   if (state_name == pImpl->current_state->getName())
   {
-    MAJOR_ERROR("Attempted to delete state \"%s\" while it was the current state",
-                state_name.c_str());
+    CLOG(ERROR, "StateMachine") << "attempted to delete state \"" << state_name << "\" while it was the current state";
   }
 
   if (pImpl->state_map.count(state_name) == 0)
   {
-    MAJOR_ERROR("Attempted to delete state \"%s\" to state machine \"%s\" when it wasn't in there",
-                state_name.c_str(), this->getName().c_str());
+    CLOG(ERROR, "StateMachine") << "attempted to delete state \"" << state_name <<
+      "\" to state machine \"" << getName() << "\" when it didn't exist";
     return false;
   }
   else
@@ -147,8 +144,8 @@ bool StateMachine::change_to(std::string const& new_state_name)
 {
   if (pImpl->state_map.count(new_state_name) == 0)
   {
-    MAJOR_ERROR("Attempted to change to state \"%s\" to state machine \"%s\" when it wasn't in there",
-                new_state_name.c_str(), this->getName().c_str());
+    CLOG(ERROR, "StateMachine") << "attempted to change to state \"" << new_state_name <<
+      "\" in state machine \"" << getName() << "\" when it doesn't exist";
     return false;
   }
   else

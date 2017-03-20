@@ -41,7 +41,6 @@ public:
     return EntityId();
   }
 
-
   explicit operator bool() const
   {
     return m_id != 0;
@@ -69,6 +68,12 @@ public:
   operator std::string() const
   {
     return str(m_id);
+  }
+
+  friend std::ostream& operator<<(std::ostream& os, EntityId& id)
+  {
+    os << str(id);
+    return os;
   }
 
   bool operator<(EntityId const& other) const

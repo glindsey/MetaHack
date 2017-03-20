@@ -89,7 +89,7 @@ namespace Actions
         message = YOU + " could not take " + get_object_string_() + " out of " + get_target_string_() + " for some inexplicable reason.";
         Service<IMessageLog>::get().add(message);
 
-        MAJOR_ERROR("Could not move Entity out of Container even though be_object_of returned Success");
+        CLOG(ERROR, "Action") << "Could not move Entity out of Container even though be_object_of returned Success";
       }
     }
 

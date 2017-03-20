@@ -3,14 +3,9 @@
 
 #include "stdafx.h"
 
-#include "actions/ActionResult.h"
-#include "game/App.h"
-#include "entity/EntityId.h"
-#include "ErrorHandler.h"
-#include "types/IntegerRange.h"
-#include "lua/LuaObject.h"
-#include "metadata/MetadataCollection.h"
-#include "properties/Property.h"
+// Forward declarations
+class MetadataCollection;
+class Property;
 
 #define BOOST_FILESYSTEM_NO_DEPRECATED
 

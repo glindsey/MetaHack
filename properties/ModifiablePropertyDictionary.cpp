@@ -2,8 +2,6 @@
 
 #include "properties/ModifiablePropertyDictionary.h"
 
-#include "ErrorHandler.h"
-
 ModifiablePropertyDictionary::ModifiablePropertyDictionary()
 {
 }

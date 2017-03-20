@@ -3,7 +3,6 @@
 #include "services/MessageLog.h"
 
 #include "game/App.h"
-#include "ErrorHandler.h"
 
 struct MessageLog::Impl
 {

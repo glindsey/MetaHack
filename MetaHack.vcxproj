@@ -332,7 +332,6 @@
     <ClInclude Include="entity\EntityNullView.h" />
     <ClInclude Include="services\FallbackConfigSettings.h" />
     <ClInclude Include="types\Direction.h" />
-    <ClInclude Include="include\ErrorHandler.h" />
     <ClInclude Include="types\Grid2D.h" />
     <ClInclude Include="services\IConfigSettings.h" />
     <ClInclude Include="services\IGraphicViews.h" />
@@ -454,7 +453,6 @@
     <ClCompile Include="entity\EntityNullView.cpp" />
     <ClCompile Include="services\FallbackConfigSettings.cpp" />
     <ClCompile Include="types\Direction.cpp" />
-    <ClCompile Include="src\ErrorHandler.cpp" />
     <ClCompile Include="game\GameState.cpp" />
     <ClCompile Include="types\Gender.cpp" />
     <ClCompile Include="services\IConfigSettings.cpp" />

@@ -2,7 +2,6 @@
 
 #include "lua/LuaEntityFunctions.h"
 
-#include "ErrorHandler.h"
 #include "game/GameState.h"
 #include "entity/Entity.h"
 #include "entity/EntityId.h"
@@ -224,7 +223,7 @@ namespace LuaEntityFunctions
 
     if (!Actions::Action::exists(action_type))
     {
-      MAJOR_ERROR("Lua script requested queue of non-existent Action \"%s\"", action_type.c_str());
+      CLOG(ERROR, "Lua") << "Lua script requested queue of non-existent Action \"" << action_type << "\"";
       return 0;
     }
 
@@ -261,7 +260,7 @@ namespace LuaEntityFunctions
 
     if (!Actions::Action::exists(action_type))
     {
-      MAJOR_ERROR("Lua script requested queue of non-existent Action \"%s\"", action_type.c_str());
+      CLOG(ERROR, "Lua") << "Lua script requested queue of non-existent Action \"" << action_type << "\"";
       return 0;
     }
 
@@ -302,7 +301,7 @@ namespace LuaEntityFunctions
 
     if (!Actions::Action::exists(action_type))
     {
-      MAJOR_ERROR("Lua script requested queue of non-existent Action \"%s\"", action_type.c_str());
+      CLOG(ERROR, "Lua") << "Lua script requested queue of non-existent Action \"" << action_type << "\"";
       return 0;
     }
 

@@ -3,7 +3,6 @@
 #include "types/IntegerRange.h"
 
 #include "game/App.h"
-#include "ErrorHandler.h"
 
 IntegerRange::IntegerRange()
   :

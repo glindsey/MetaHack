@@ -2,9 +2,6 @@
 
 #include "stdafx.h"
 
-#include "types/Direction.h"
-#include "ErrorHandler.h"
-#include "metadata/Metadata.h"
 #include "properties/Property.h"
 
 /// Class that handles a dictionary that associates data of various types

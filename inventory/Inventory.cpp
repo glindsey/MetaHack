@@ -30,7 +30,7 @@ bool Inventory::add(EntityId entity)
     {
       /// @todo Move anything in this slot to a new slot.  This will be required
       ///       if it's possible to change the ID of the player DynamicEntity.
-      MAJOR_ERROR("Slot 0 of inventory already contains the player!");
+      CLOG(ERROR, "Inventory") << "slot 0 of inventory already contains the player";
     }
     things_[INVSLOT_ZERO] = entity;
     return true;

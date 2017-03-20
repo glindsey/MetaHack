@@ -62,11 +62,11 @@ void Lua::require(FileName packagename, bool fatal)
   {
     if (fatal)
     {
-      FATAL_ERROR("%s", lua_tostring(L_, -1));
+      CLOG(FATAL, "Lua") << "Could not load Lua script \"" << packagename << "\": " << lua_tostring(L_, -1);
     }
     else
     {
-      MAJOR_ERROR("%s", lua_tostring(L_, -1));
+      CLOG(ERROR, "Lua") << "Could not load Lua script \"" << packagename << "\": " << lua_tostring(L_, -1);
     }
   }
   else
@@ -229,7 +229,7 @@ int Lua::push_value(Property property)
     {
       std::stringstream ss;
       ss << property.type();
-      MAJOR_ERROR("Attempted to push Property of type %s to Lua", ss.str().c_str());
+      CLOG(ERROR, "Lua") << "Attempted to push Property of type " << ss.str() << " to Lua";
       lua_pushnil(L_);
       return 1;
     }
@@ -493,7 +493,7 @@ Property Lua::call_thing_function(std::string function_name,
         {
           // Get the error message.
           char const* error_message = lua_tostring(L_, -1);
-          MAJOR_ERROR("Error calling %s.%s: %s", group.c_str(), function_name.c_str(), error_message);
+          CLOG(ERROR, "Lua") << "Error calling " << group << "." << function_name << ": " << error_message;
 
           // Pop the error message off the stack. (-1)
           lua_pop(L_, 1);
@@ -505,7 +505,8 @@ Property Lua::call_thing_function(std::string function_name,
 
     if (start_stack != end_stack)
     {
-      FATAL_ERROR("*** LUA STACK MISMATCH (%s.%s): Started at %d, ended at %d", group.c_str(), function_name.c_str(), start_stack, end_stack);
+      CLOG(FATAL, "Lua") << "*** LUA STACK MISMATCH (" << group <<
+        ":" << function_name << "): Started at " << start_stack << ", ended at " << end_stack;
     }
 
     return return_value;
@@ -606,7 +607,7 @@ void Lua::set_group_intrinsic(std::string group, std::string name, Property valu
   {
     // Category not found -- pop the name back off. (-1)
     lua_pop(L_, 1);
-    MAJOR_ERROR("Lua class %s was not found", group.c_str());
+    CLOG(ERROR, "Lua") << "Lua class " << group << " was not found";
   }
   else
   {
@@ -617,7 +618,7 @@ void Lua::set_group_intrinsic(std::string group, std::string name, Property valu
     {
       // Function not found -- pop the function and group names back off. (-2)
       lua_pop(L_, 2);
-      MAJOR_ERROR("Lua function %s:set_intrinsic() was not found", group.c_str());
+      CLOG(ERROR, "Lua") << "Lua function " << group << ":set_intrinsic() was not found";
     }
     else
     {
@@ -634,7 +635,7 @@ void Lua::set_group_intrinsic(std::string group, std::string name, Property valu
       {
         // Get the error message.
         char const* error_message = lua_tostring(L_, -1);
-        MAJOR_ERROR("Error calling %s:set_intrinsic(%s): %s", group.c_str(), name.c_str(), error_message);
+        CLOG(ERROR, "Lua") << "Error calling " << group << ":set_intrinsic(" << name << "): " << error_message;
 
         // Pop the error message off the stack. (-1)
         lua_pop(L_, 1);
@@ -646,7 +647,8 @@ void Lua::set_group_intrinsic(std::string group, std::string name, Property valu
 
   if (start_stack != end_stack)
   {
-    FATAL_ERROR("*** LUA STACK MISMATCH (%s:set_intrinsic): Started at %d, ended at %d", name.c_str(), start_stack, end_stack);
+    CLOG(FATAL, "Lua") << "*** LUA STACK MISMATCH (" << name << 
+      ":set_intrinsic): Started at " << start_stack << ", ended at " << end_stack;
   }
 }
 

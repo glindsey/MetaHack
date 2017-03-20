@@ -6,7 +6,6 @@
 #include "actions/ActionResult.h"
 #include "types/BodyPart.h"
 #include "types/Direction.h"
-#include "ErrorHandler.h"
 #include "types/GameObject.h"
 #include "types/Gender.h"
 #include "lua/LuaObject.h"

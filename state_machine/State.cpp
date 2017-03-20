@@ -3,7 +3,6 @@
 #include "state_machine/State.h"
 
 #include "game/App.h"
-#include "ErrorHandler.h"
 #include "state_machine/StateMachine.h"
 
 State::State(StateMachine& state_machine)
@@ -23,9 +22,8 @@ bool State::change_to(std::string const& new_state)
   }
   else
   {
-    MAJOR_ERROR("State manager \"%s\" could not change to new state \"%s\"",
-                m_state_machine.getName().c_str(),
-                this->getName().c_str());
+    CLOG(ERROR, "StateMachine") << "State machine \"" << m_state_machine.getName() <<
+      "\" could not change to new state \"" << getName() << "\"";
     return false;
   }
 }

@@ -2,7 +2,6 @@
 
 #include "tilesheet/TileSheet.h"
 
-#include "ErrorHandler.h"
 #include "utilities/MathUtils.h"
 
 TileSheet::TileSheet(unsigned int tileSize, unsigned int textureSize)
@@ -14,11 +13,8 @@ TileSheet::TileSheet(unsigned int tileSize, unsigned int textureSize)
 
   bool success = m_texture.create(m_textureSize, m_textureSize);
 
-  if (!success)
-  {
-    FATAL_ERROR("Could not create TileSheet texture. Now we're sad.");
-  }
-
+  Assert("TileSheet", success, "could not create TileSheet texture; now we're sad.");
+  
   uint32_t texture_dimension_in_tiles = m_textureSize / m_tileSize;
   uint32_t used_map_size = texture_dimension_in_tiles * texture_dimension_in_tiles;
   m_used.resize(used_map_size);
@@ -73,8 +69,7 @@ sf::IntRect TileSheet::get_tile(UintVec2 tile) const
     (rect.left + rect.width >= static_cast<int>(m_texture.getSize().x)) ||
       (rect.top + rect.height >= static_cast<int>(m_texture.getSize().y)))
   {
-    MAJOR_ERROR("Request for tile (%d, %d) is out of bounds on the sprite sheet!",
-                tile.x, tile.y);
+    CLOG(ERROR, "TileSheet") << "Request for tile (" << tile.x << ", " << tile.y << ") is out of bounds on the sprite sheet!";
   }
 #endif // DEBUG
 

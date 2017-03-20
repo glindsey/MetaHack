@@ -9,6 +9,21 @@
 #include <iostream>
 #include <sstream>
 
+#define STR(x) #x
+/// @todo Change this to choose the logging level instead of just enabled/disabled
+#define SET_UP_LOGGER(name, enabled)                                      \
+{                                                                         \
+  el::Loggers::getLogger(name);                                           \
+  el::Configurations conf;                                                \
+  conf.setToDefault();                                                    \
+  conf.set(el::Level::Global,                                             \
+           el::ConfigurationType::Enabled, STR(enabled));                 \
+  conf.set(el::Level::Global,                                             \
+           el::ConfigurationType::Format,                                 \
+           "[%logger] %loc %level: %msg");                                \
+  el::Loggers::reconfigureLogger(name, conf);                             \
+}
+
 #ifndef NDEBUG
 #define Assert(logger, condition, message)                                     \
 do                                                                             \

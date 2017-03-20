@@ -3,9 +3,8 @@
 #include "windows/MessageLogView.h"
 
 #include "game/App.h"
-#include "ErrorHandler.h"
-#include "services/IConfigSettings.h"
 #include "keybuffer/IKeyBuffer.h"
+#include "services/IConfigSettings.h"
 #include "services/IMessageLog.h"
 #include "Service.h"
 

@@ -2,6 +2,7 @@
 
 #include "map/Map.h"
 
+#include "AssertHelper.h"
 #include "game/App.h"
 #include "game/GameState.h"
 #include "types/Grid2D.h"
@@ -191,6 +192,7 @@ void Map::do_recursive_lighting(EntityId source,
                                 float slope_A,
                                 float slope_B)
 {
+  Assert("Entity", octant >= 1 && octant <= 8, "Octant" << octant << "passed in is not between 1 and 8 inclusively");
   IntVec2 new_coords;
 
   sf::Color addColor;
@@ -276,7 +278,6 @@ void Map::do_recursive_lighting(EntityId source,
       break;
 
     default:
-      MAJOR_ERROR("Octant passed to do_recursive_lighting was %d (not 1 to 8)!", octant);
       break;
   }
 
@@ -485,11 +486,8 @@ void Map::clear_map_features()
 
 MapFeature& Map::get_random_map_feature()
 {
-  if (pImpl->features.size() < 1)
-  {
-    FATAL_ERROR("get_random_map_feature() called but map doesn't contain any features yet!");
-  }
-
+  Assert("MapGenerator", pImpl->features.size() < 1, "get_random_map_feature() called but map doesn't contain any features yet!");
+  
   uniform_int_dist featureDist(0, static_cast<int>(pImpl->features.size() - 1));
   int featureIndex = featureDist(the_RNG);
   return pImpl->features[featureIndex];

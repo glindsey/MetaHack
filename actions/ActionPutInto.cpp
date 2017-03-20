@@ -115,7 +115,7 @@ namespace Actions
         message = make_string("$you could not move $the_foo into $the_target_thing for some inexplicable reason.");
         Service<IMessageLog>::get().add(message);
 
-        MAJOR_ERROR("Could not move Entity into Container even though be_object_of returned Success");
+        CLOG(ERROR, "Action") << "Could not move Entity into Container even though be_object_of returned Success";
       }
     }
 

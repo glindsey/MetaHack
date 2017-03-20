@@ -41,7 +41,7 @@ public:
 
   /// Set the game player.
   /// If the caller attempts to set a EntityId of a Entity that does not exist,
-  /// the program will abort with a FATAL_ERROR call.
+  /// the program will abort with a FATAL log.
   /// @note Changing the player ID has not been testing as of this writing,
   ///       and unpredictable results may occur!
   /// @param ref EntityId of the Entity to set as the player.

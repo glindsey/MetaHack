@@ -2,8 +2,6 @@
 
 #include "services/FallbackConfigSettings.h"
 
-#include "ErrorHandler.h"
-
 FallbackConfigSettings::FallbackConfigSettings()
 {
   /// @todo These settings should be read from an XML file.

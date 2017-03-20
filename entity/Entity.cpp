@@ -1850,6 +1850,7 @@ void Entity::do_recursive_visibility(int octant,
                                     float slope_A,
                                     float slope_B)
 {
+  Assert("Entity", octant >= 1 && octant <= 8, "Octant" << octant << "passed in is not between 1 and 8 inclusively");
   IntVec2 new_coords;
   //int x = 0;
   //int y = 0;
@@ -1948,7 +1949,6 @@ void Entity::do_recursive_visibility(int octant,
       break;
 
     default:
-      MAJOR_ERROR("Octant passed to do_recursive_visibility was %d (not 1 to 8)!", octant);
       break;
   }
 

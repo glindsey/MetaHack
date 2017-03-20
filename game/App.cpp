@@ -5,7 +5,6 @@
 #include "game/AppStateGameMode.h"
 #include "game/AppStateMainMenu.h"
 #include "game/AppStateSplashScreen.h"
-#include "ErrorHandler.h"
 #include "Service.h"
 #include "services/FallbackConfigSettings.h"
 #include "services/MessageLog.h"
@@ -62,6 +61,7 @@ App::App(sf::RenderWindow& app_window)
   SET_UP_LOGGER("Action", false);
   SET_UP_LOGGER("ConfigSettings", true);
   SET_UP_LOGGER("Entity", true);
+  SET_UP_LOGGER("EntityPool", true);
   SET_UP_LOGGER("Game", true);
   SET_UP_LOGGER("GameState", true);
   SET_UP_LOGGER("GUI", true);
@@ -70,6 +70,7 @@ App::App(sf::RenderWindow& app_window)
   SET_UP_LOGGER("InventorySelection", true);
   SET_UP_LOGGER("Lua", true);
   SET_UP_LOGGER("Map", true);
+  SET_UP_LOGGER("MapFactory", true);
   SET_UP_LOGGER("MapGenerator", true);
   SET_UP_LOGGER("Metadata", false);
   SET_UP_LOGGER("ModifiablePropertyDictionary", true);

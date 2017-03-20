@@ -2,10 +2,8 @@
 
 #include "game/GameState.h"
 
-#include "AssertHelper.h"
 #include "entity/Entity.h"
 #include "entity/EntityPool.h"
-#include "ErrorHandler.h"
 #include "lua/LuaObject.h"
 #include "map/Map.h"
 #include "map/MapFactory.h"

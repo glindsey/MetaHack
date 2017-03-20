@@ -2,10 +2,10 @@
 
 #include "metadata/Metadata.h"
 
-#include "ErrorHandler.h"
-#include "services/IGraphicViews.h"
+#include "game/App.h"
 #include "metadata/MetadataCollection.h"
 #include "Service.h"
+#include "services/IGraphicViews.h"
 
 // Namespace aliases
 namespace fs = boost::filesystem;

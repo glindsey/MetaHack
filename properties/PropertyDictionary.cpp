@@ -2,8 +2,6 @@
 
 #include "properties/PropertyDictionary.h"
 
-#include "ErrorHandler.h"
-#include "types/IntegerRange.h"
 #include "properties/Property.h"
 
 PropertyDictionary::PropertyDictionary()

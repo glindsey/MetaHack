@@ -67,6 +67,7 @@
 #include <SFML/System.hpp>
 
 // Our convenience includes
+#include "AssertHelper.h"
 #include "types/common.h"
 #include "utilities/CommonFunctions.h"
 
