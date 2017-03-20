@@ -71,7 +71,7 @@ namespace Actions
     switch (object->be_object_of(*this, subject))
     {
       case ActionResult::SuccessDestroyed:
-        message = make_string("$the_foo $(objcv?disintegrate:disintegrates) after $you $cverb $foo_pro_obj!");
+        message = maketr("THE_FOO_DISINTEGRATES_AFTER_YOU_VERB");
         Service<IMessageLog>::get().add(message);
 
         object->destroy();
@@ -102,7 +102,7 @@ namespace Actions
 
   void ActionRead::print_message_cant_() const
   {
-    std::string message = make_string("$the_foo $foo_has no writing to read.");
+    std::string message = maketr("THE_FOO_HAS_NO_NOUN_TO_VERB", { "writing" });
     Service<IMessageLog>::get().add(message);
   }
 } // end namespace

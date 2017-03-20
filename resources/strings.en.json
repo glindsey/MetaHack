@@ -35,6 +35,8 @@
   "QUANTITY_SUBTRACT_NEED_SOMETHING_SELECTED": "You have to have something selected before you can choose a quantity.",
   "QUIT_MSG": "Press CTRL-ALT-Q to quit the game.",
   "READ_TOO_STUPID": "$you $are not smart enough to read $fooself.",
+  "THE_FOO_DISINTEGRATES_AFTER_YOU_VERB": "$the_foo $(objcv?disintegrate:disintegrates) after $you $cverb $foo_pro_obj!",
+  "THE_FOO_HAS_NO_NOUN_TO_VERB": "$the_foo $foo_has no $0 to $verb.",
   "THE_FOO_IS_ALREADY_IN_THE_TARGET": "$the_foo is already in $the_target_thing!",
   "THE_FOO_IS_ALREADY_IN_YOUR_INVENTORY": "$the_foo $foo_is already in $your(inventory)!",
   "THE_FOO_IS_CLOSED": "$the_foo $foo_is closed.",
