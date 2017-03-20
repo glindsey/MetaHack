@@ -20,7 +20,8 @@ class StateMachine :
   public Subject
 {
 public:
-  explicit StateMachine(Subject& event_passer, std::string const& machine_name);
+  explicit StateMachine(Subject& event_passer, 
+                        std::string const& machine_name);
   StateMachine(StateMachine const&) = delete;
   StateMachine(StateMachine&&) = delete;
   StateMachine& operator=(StateMachine const&) = delete;

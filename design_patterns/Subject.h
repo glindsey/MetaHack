@@ -32,11 +32,12 @@ protected:
   /// Return the set of events this Subject provides.
   /// By default, returns nothing. Must be overridden with the events
   /// declared in the Subject subclass.
+  using RegisteredEventsDelegate = std::function<std::unordered_set<EventID>()>;
   virtual std::unordered_set<EventID> registeredEvents() const;
 
   void broadcast(Event& event);
-  using BroadcastDelegate = std::function<void(Event& event, bool shouldBroadcast)>;
 
+  using BroadcastDelegate = std::function<void(Event& event, bool shouldBroadcast)>;
   virtual void broadcast_(Event& event, BroadcastDelegate broadcast_delegate);
 
 private:

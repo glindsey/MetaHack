@@ -17,7 +17,8 @@ struct StateMachine::Impl
   std::string machine_name;
 };
 
-StateMachine::StateMachine(Subject& event_passer, std::string const& machine_name)
+StateMachine::StateMachine(Subject& event_passer, 
+                           std::string const& machine_name)
   : pImpl(NEW Impl(event_passer))
 {
   pImpl->current_state = nullptr;
