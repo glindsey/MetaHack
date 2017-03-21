@@ -8,16 +8,10 @@ GameObject.intrinsics.plural = "[GameObjects]"
 GameObject.intrinsics.inventory_size = 0
 GameObject.intrinsics.living = false
 GameObject.intrinsics.passable = false
-GameObject.intrinsics.opacity_red = 255
-GameObject.intrinsics.opacity_green = 255
-GameObject.intrinsics.opacity_blue = 255
+GameObject.intrinsics.opacity = { type = "color", r = 255, g = 255, b = 255 }
 GameObject.intrinsics.tile_character_code = 0x003f   -- question mark
-GameObject.intrinsics.tile_bg_color_red = 0          -- black
-GameObject.intrinsics.tile_bg_color_green = 0
-GameObject.intrinsics.tile_bg_color_blue = 0
-GameObject.intrinsics.tile_fg_color_red = 128        -- brown
-GameObject.intrinsics.tile_fg_color_green = 64
-GameObject.intrinsics.tile_fg_color_blue = 0
+GameObject.intrinsics.tile_bg_color = { type = "color", r = 0, g = 0, b = 0 } -- black
+GameObject.intrinsics.tile_fg_color = { type = "color", r = 32, g = 32, b = 32 } -- dark gray
 
 GameObject.intrinsics.inventory_size_is_integer = true
 
@@ -39,17 +33,19 @@ function GameObject:get_tile_character_code(id, frame)
 end
 
 function GameObject.get_tile_bg_color(id, frame)
-    return intrinsics.tile_bg_color_red,
-           intrinsics.tile_bg_color_green,
-           intrinsics.tile_bg_color_blue,
-           255
+    return intrinsics.tile_bg_color.r,
+           intrinsics.tile_bg_color.g,
+           intrinsics.tile_bg_color.b,
+           255,
+           PropertyType.Color
 end
 
 function GameObject.get_tile_fg_color(id, frame)
-    return intrinsics.tile_fg_color_red,
-           intrinsics.tile_fg_color_green,
-           intrinsics.tile_fg_color_blue,
-           255
+    return intrinsics.tile_fg_color.r,
+           intrinsics.tile_fg_color.g,
+           intrinsics.tile_fg_color.b,
+           255,
+           PropertyType.Color
 end
 
 function GameObject.on_create(id)
@@ -66,6 +62,10 @@ function GameObject:get_intrinsic(key)
 
     if (key_type == PropertyType.IntVec2) then
         return values.x, values.y, key_type
+    else if (key_type == PropertyType.Direction) then
+        return values.x, values.y, values.z, key_type
+    else if (key_type == PropertyType.Color) then
+        return values.r, values.g, values.b, values.a, key_type
     end
             
     return values, key_type
@@ -116,6 +116,14 @@ function GameObject:get_intrinsic_(key)
                 return math.random(value.min, value.max), PropertyType.Integer
             elseif (value.type == "vector2") then
                 return { x = value.x, y = value.y }, PropertyType.IntVec2
+            elseif (value.type == "direction") then
+                return { x = value.x, y = value.y, z = value.z }, PropertyType.Direction
+            elseif (value.type == "color") then
+                local alpha = 255
+                if (value.a != null) then
+                  alpha = value.a
+                end
+                return { r = value.r, g = value.g, b = value.b, a = alpha }, PropertyType.Color
             else
                 return value.type, PropertyType.Unknown
             end

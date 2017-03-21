@@ -7,9 +7,7 @@ LightSource.intrinsics.name = "[LightSource]"
 LightSource.intrinsics.plural = "[LightSources]"
 
 LightSource.intrinsics.lit = true
-LightSource.intrinsics.light_color_red = 64
-LightSource.intrinsics.light_color_green = 64
-LightSource.intrinsics.light_color_blue = 64
+LightSource.intrinsics.light_color = { type = "color", r = 64, g = 64, b = 64 }
 LightSource.intrinsics.light_strength = 64
 
 function LightSource.get_brief_description()

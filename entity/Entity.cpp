@@ -1244,12 +1244,15 @@ std::string Entity::get_possessive_of(std::string owned, std::string adjectives)
   }
 }
 
+sf::Color Entity::get_opacity() const
+{
+  return get_modified_property("opacity").as<Color>();
+}
+
 bool Entity::is_opaque()
 {
-  return
-    (get_modified_property("opacity_red").as<int32_t>() >= 255) &&
-    (get_modified_property("opacity_green").as<int32_t>() >= 255) &&
-    (get_modified_property("opacity_blue").as<int32_t>() >= 255);
+  auto opacity = get_opacity();
+  return opacity.r >= 255 && opacity.g >= 255 && opacity.b >= 255;
 }
 
 void Entity::light_up_surroundings()

@@ -159,20 +159,15 @@ sf::Color MapTile::get_wall_light_level(Direction direction) const
 
 sf::Color MapTile::get_opacity() const
 {
-  return sf::Color(m_p_metadata->get_intrinsic("opacity_red").as<int>(),
-                   m_p_metadata->get_intrinsic("opacity_green").as<int>(),
-                   m_p_metadata->get_intrinsic("opacity_blue").as<int>(),
-                   255);
+  return m_p_metadata->get_intrinsic("opacity").as<Color>();
 }
 
 bool MapTile::is_opaque() const
 {
   /// @todo Check the tile's inventory to see if there's anything huge enough
   ///       to block the view of stuff behind it.
-  return
-    (m_p_metadata->get_intrinsic("opacity_red").as<int>() >= 255) &&
-    (m_p_metadata->get_intrinsic("opacity_green").as<int>() >= 255) &&
-    (m_p_metadata->get_intrinsic("opacity_blue").as<int>() >= 255);
+  auto opacity = get_opacity();
+  return opacity.r >= 255 && opacity.g >= 255 && opacity.b >= 255;
 }
 
 RealVec2 MapTile::get_pixel_coords(int x, int y)

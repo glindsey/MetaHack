@@ -355,6 +355,8 @@ public:
   /// get_possessive_adjective().
   std::string get_possessive_of(std::string owned, std::string adjectives = "");
 
+  sf::Color get_opacity() const;
+
   /// Return true if a third-person verb form should be used.
   /// This function checks to see if this Entity is currently designated as
   /// the player, or has a quantity greater than zero.

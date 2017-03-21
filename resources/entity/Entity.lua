@@ -24,10 +24,12 @@ Entity.intrinsics.bodypart_tail_name = "tail"
 
 Entity.intrinsics.inventory_size = 0
 Entity.intrinsics.living = false
-Entity.intrinsics.opacity_red = 255
-Entity.intrinsics.opacity_green = 255
-Entity.intrinsics.opacity_blue = 255
+Entity.intrinsics.opacity = { type = "color", r = 255, g = 255, b = 255 }
 Entity.intrinsics.physical_mass = 0
+Entity.intrinsics.physical_size = 1 -- not used now, but might be one day...
+Entity.intrinsics.tile_character_code = 0x003f   -- question mark
+Entity.intrinsics.tile_bg_color = { type = "color", r = 0, g = 0, b = 0 } -- black
+Entity.intrinsics.tile_fg_color = { type = "color", r = 255, g = 255, b = 0 } -- yellow
 
 Entity.intrinsics.counter_busy = 0
 Entity.intrinsics.locked = false

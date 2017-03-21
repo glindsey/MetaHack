@@ -7,9 +7,7 @@ FlaskGlass.intrinsics.name = "glass flask"
 FlaskGlass.intrinsics.plural = "glass flasks"
 
 FlaskGlass.intrinsics.inventory_size = 1
-FlaskGlass.intrinsics.opacity_red = 0
-FlaskGlass.intrinsics.opacity_green = 0
-FlaskGlass.intrinsics.opacity_blue = 0
+FlaskGlass.intrinsics.opacity = { type = "color", r = 0, g = 0, b = 0 }
 
 
 function FlaskGlass.can_contain(id)
