@@ -26,11 +26,8 @@ class EntityId;
 class Entity;
 
 // Using declarations.
-using WieldingMap = std::unordered_map<unsigned int, EntityId>;
-using WieldingPair = std::pair<unsigned int, EntityId>;
-
-using WearingMap = std::unordered_map<WearLocation, EntityId>;
-using WearingPair = std::pair<WearLocation, EntityId>;
+using BodyLocationMap = std::unordered_map<BodyLocation, EntityId>;
+using BodyLocationPair = std::pair<BodyLocation, EntityId>;
 
 using MapMemory = std::vector<MapMemoryChunk>;
 using TilesSeen = boost::dynamic_bitset<size_t>; // size_t gets rid of 64-bit compile warning
@@ -74,8 +71,8 @@ public:
   /// Return whether there is an action currently in progress for this DynamicEntity.
   bool action_is_in_progress();
 
-  /// Get the entity being wielded in the specified hand, if any.
-  EntityId get_wielding_in(unsigned int & hand);
+  /// Get the entity being wielded with the specified bodypart, if any.
+  EntityId get_wielding_in(BodyLocation& location);
 
   /// Returns true if this entity is the current player.
   /// By default, returns false. Overridden by DynamicEntity class.
@@ -95,20 +92,20 @@ public:
   /// Return whether a Entity is wielded by this DynamicEntity.
   /// This is used by InventoryArea to show wielded status.
   /// @param[in] entity Entity to check
-  /// @param[out] number Hand number it is wielded in.
+  /// @param[out] number Body part it is wielded with.
   /// @return true if the Entity is wielded by the DynamicEntity.
-  bool is_wielding(EntityId entity, unsigned int& number);
+  bool is_wielding(EntityId entity, BodyLocation& location);
 
   /// Return whether a Entity is equipped (worn) by this DynamicEntity.
   /// @param[in] entity Entity to check
   /// @return true if the Entity is being worn.
-  bool has_equipped(EntityId entity);
+  bool is_wearing(EntityId entity);
 
   /// Return whether a Entity is being worn by this DynamicEntity.
   /// @param[in] entity Entity to check
   /// @param[out] location of the worn Entity, if worn
   /// @return true if the Entity is being worn.
-  bool has_equipped(EntityId entity, WearLocation& location);
+  bool is_wearing(EntityId entity, BodyLocation& location);
 
   /// Return whether a Entity is within reach of the DynamicEntity.
   /// @param[in] entity Entity to check
@@ -213,20 +210,10 @@ public:
 
   /// Get the remembered tile type at the specified coordinates.
   MapMemoryChunk const& get_memory_at(IntVec2 coords) const;
+   
+  void set_wielded(EntityId entity, BodyLocation location);
 
-  ActionResult can_deequip(EntityId thing_id, unsigned int& action_time);
-
-  /// Attempt to de-equip (remove) a entity.
-  bool do_deequip(EntityId thing_id, unsigned int& action_time);
-
-  ActionResult can_equip(EntityId thing_id, unsigned int& action_time);
-
-  /// Attempt to equip (wear) a entity.
-  bool do_equip(EntityId thing_id, unsigned int& action_time);
-
-  void set_wielded(EntityId entity, unsigned int hand);
-
-  void set_worn(EntityId entity, WearLocation location);
+  void set_worn(EntityId entity, BodyLocation location);
 
   /// Return whether this DynamicEntity can currently see.
   /// @todo Implement blindness counter, blindness due to wearing blindfold,
@@ -260,7 +247,7 @@ public:
   /// In most cases the default implementation here will work, but if a
   /// creature has (for example) a strange configuration of limbs this can be
   /// overridden.
-  std::string get_bodypart_description(BodyPart part, uint32_t number);
+  std::string get_bodypart_description(BodyLocation location);
 
   /// Returns true if a particular Action can be performed on this Entity by
   /// the specified Entity.
@@ -481,11 +468,11 @@ public:
 
   /// Perform an action when this entity is de-equipped (taken off).
   /// If this function returns false, the action is aborted.
-  bool perform_action_deequipped_by(EntityId actor, WearLocation& location);
+  bool perform_action_deequipped_by(EntityId actor, BodyLocation& location);
 
   /// Perform an action when this entity is equipped.
   /// If this function returns false, the action is aborted.
-  bool perform_action_equipped_by(EntityId actor, WearLocation& location);
+  bool perform_action_equipped_by(EntityId actor, BodyLocation& location);
   
   /// Returns whether the Entity can merge with another Entity.
   /// Calls an overridden subclass function.
@@ -598,10 +585,10 @@ private:
   ActionQueue m_pending_actions;
 
   /// Map of items wielded.
-  WieldingMap m_wielded_items;
+  BodyLocationMap m_wielded_items;
 
   /// Map of entities worn.
-  WearingMap m_equipped_items;
+  BodyLocationMap m_equipped_items;
 
   /// Outline color for walls when drawing on-screen.
   static sf::Color const wall_outline_color_;

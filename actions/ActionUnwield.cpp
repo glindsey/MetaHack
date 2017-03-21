@@ -40,10 +40,10 @@ namespace Actions
     auto subject = get_subject();
     auto object = get_object();
 
-    /// @todo Support wielding in other hand(s).
-    unsigned int hand = 0;
-    std::string bodypart_desc =
-      subject->get_bodypart_description(BodyPart::Hand, hand);
+    BodyLocation wield_location;
+    subject->is_wielding(object, wield_location);
+
+    std::string bodypart_desc = subject->get_bodypart_description(wield_location);
 
     // Check if the wielded item is bound.
     if (object->get_modified_property("bound").as<bool>())
@@ -57,12 +57,13 @@ namespace Actions
     }
 
     // Try to unwield the item.
+    /// @todo Unwielding shouldn't be instantaneous...?
     auto lua_result = object->be_object_of(*this, subject);
     if (object->be_object_of(*this, subject) == ActionResult::Success)
     {
       std::string message;
       message = make_string("$you unwield $foo. $you are now wielding nothing in $0.", { subject->get_possessive_of(bodypart_desc) });
-      subject->set_wielded(EntityId::Mu(), hand);
+      subject->set_wielded(EntityId::Mu(), wield_location);
     }
 
     return result;

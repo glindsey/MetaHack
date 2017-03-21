@@ -121,10 +121,10 @@ void InventoryArea::drawContents_(sf::RenderTexture& texture, int frame)
     entity_view->setSize({ line_spacing_y - 1, line_spacing_y - 1 } );
     entity_view->draw(texture, false, true, frame);
 
-    unsigned int wield_location;
-    WearLocation wear_location;
+    BodyLocation wield_location;
+    BodyLocation wear_location;
     bool wielding = viewed_thing->is_wielding(entity, wield_location);
-    bool wearing = viewed_thing->has_equipped(entity, wear_location);
+    bool wearing = viewed_thing->is_wearing(entity, wear_location);
 
     // 5. TODO: Display "worn" or "equipped" icon if necessary.
     if (wielding)
@@ -162,11 +162,11 @@ void InventoryArea::drawContents_(sf::RenderTexture& texture, int frame)
 
     if (wielding)
     {
-      item_name << " (" << viewed_thing->get_bodypart_description(BodyPart::Hand, wield_location) << ")";
+      item_name << " (" << viewed_thing->get_bodypart_description(wield_location) << ")";
     }
     else if (wearing)
     {
-      item_name << " (" << viewed_thing->get_bodypart_description(wear_location.part, wear_location.number) << ")";
+      item_name << " (" << viewed_thing->get_bodypart_description(wear_location) << ")";
     }
 
     render_text.setFont(the_default_font);

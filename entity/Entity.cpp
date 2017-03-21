@@ -43,8 +43,8 @@ Entity::Entity(GameState& game, Metadata& metadata, EntityId ref)
   m_map_memory{ MapMemory() },
   m_tiles_currently_seen{ TilesSeen() },
   m_pending_actions{ ActionQueue() },
-  m_wielded_items{ WieldingMap() },
-  m_equipped_items{ WearingMap() }
+  m_wielded_items{ BodyLocationMap() },
+  m_equipped_items{ BodyLocationMap() }
 {
   initialize();
 }
@@ -62,8 +62,8 @@ Entity::Entity(GameState& game, MapTile* map_tile, Metadata& metadata, EntityId 
   m_map_memory{ MapMemory() },
   m_tiles_currently_seen{ TilesSeen() },
   m_pending_actions{ ActionQueue() },
-  m_wielded_items{ WieldingMap() },
-  m_equipped_items{ WearingMap() }
+  m_wielded_items{ BodyLocationMap() },
+  m_equipped_items{ BodyLocationMap() }
 {
   initialize();
 }
@@ -81,8 +81,8 @@ Entity::Entity(Entity const& original, EntityId ref)
   m_map_memory{ original.m_map_memory },
   m_tiles_currently_seen{ TilesSeen() },  // don't copy
   m_pending_actions{ ActionQueue() },     // don't copy
-  m_wielded_items{ WieldingMap() },       // don't copy
-  m_equipped_items{ WearingMap() }        // don't copy
+  m_wielded_items{ BodyLocationMap() },       // don't copy
+  m_equipped_items{ BodyLocationMap() }        // don't copy
 {
   initialize();
 }
@@ -118,25 +118,25 @@ bool Entity::action_is_in_progress()
   return (get_base_property("counter_busy").as<uint32_t>() > 0);
 }
 
-EntityId Entity::get_wielding_in(unsigned int& hand)
+EntityId Entity::get_wielding_in(BodyLocation& location)
 {
-  if (m_wielded_items.count(hand) == 0)
+  if (m_wielded_items.count(location) == 0)
   {
     return EntityId::Mu();
   }
   else
   {
-    return m_wielded_items[hand];
+    return m_wielded_items[location];
   }
 }
 
 bool Entity::is_wielding(EntityId entity)
 {
-  unsigned int dummy;
+  BodyLocation dummy;
   return is_wielding(entity, dummy);
 }
 
-bool Entity::is_wielding(EntityId entity, unsigned int& hand)
+bool Entity::is_wielding(EntityId entity, BodyLocation& location)
 {
   if (entity == EntityId::Mu())
   {
@@ -145,7 +145,7 @@ bool Entity::is_wielding(EntityId entity, unsigned int& hand)
   auto found_item =
     std::find_if(m_wielded_items.cbegin(),
                  m_wielded_items.cend(),
-                 [&](WieldingPair const& p)
+                 [&](BodyLocationPair const& p)
   { return p.second == entity; });
 
   if (found_item == m_wielded_items.cend())
@@ -154,18 +154,18 @@ bool Entity::is_wielding(EntityId entity, unsigned int& hand)
   }
   else
   {
-    hand = found_item->first;
+    location = found_item->first;
     return true;
   }
 }
 
-bool Entity::has_equipped(EntityId entity)
+bool Entity::is_wearing(EntityId entity)
 {
-  WearLocation dummy;
-  return has_equipped(entity, dummy);
+  BodyLocation dummy;
+  return is_wearing(entity, dummy);
 }
 
-bool Entity::has_equipped(EntityId entity, WearLocation& location)
+bool Entity::is_wearing(EntityId entity, BodyLocation& location)
 {
   if (entity == EntityId::Mu())
   {
@@ -174,7 +174,7 @@ bool Entity::has_equipped(EntityId entity, WearLocation& location)
   auto found_item =
     std::find_if(m_equipped_items.cbegin(),
                  m_equipped_items.cend(),
-                 [&](WearingPair const& p)
+                 [&](BodyLocationPair const& p)
   { return p.second == entity; });
 
   if (found_item == m_equipped_items.cend())
@@ -268,199 +268,19 @@ bool Entity::do_die()
   }
 }
 
-ActionResult Entity::can_deequip(EntityId entity, unsigned int& action_time)
-{
-  action_time = 1;
-
-  // Check that it isn't US!
-  if (entity == m_ref)
-  {
-    return ActionResult::FailureSelfReference;
-  }
-
-  // Check that it's already being worn.
-  if (!this->has_equipped(entity))
-  {
-    return ActionResult::FailureItemNotEquipped;
-  }
-
-  /// @todo Finish Entity::can_deequip code
-  return ActionResult::Success;
-}
-
-/// @todo Refactor into an Action
-bool Entity::do_deequip(EntityId entity, unsigned int& action_time)
-{
-  std::string message;
-  ActionResult deequip_try = this->can_deequip(entity, action_time);
-  std::string thing_name = entity->get_identifying_string();
-
-  message = this->get_subject_you_or_identifying_string() + " " +
-    this->choose_verb("try", "tries") +
-    " to take off " + thing_name;
-  Service<IMessageLog>::get().add(message);
-
-  switch (deequip_try)
-  {
-    case ActionResult::Success:
-    {
-      // Get the body part this item is equipped on.
-      WearLocation location;
-      this->has_equipped(entity, location);
-
-      if (entity->perform_action_deequipped_by(m_ref, location))
-      {
-        set_worn(EntityId::Mu(), location);
-
-        std::string wear_desc = get_bodypart_description(location.part, location.number);
-        message = this->get_subject_you_or_identifying_string() + " " +
-          this->choose_verb("are", "is") + " no longer wearing " + thing_name +
-          " on " + this->get_possessive_of(wear_desc) + ".";
-        Service<IMessageLog>::get().add(message);
-        return true;
-      }
-    }
-    break;
-
-    case ActionResult::FailureItemNotEquipped:
-    {
-      message = this->get_subject_you_or_identifying_string() + " " +
-        this->choose_verb("are", "is") + " not wearing " + thing_name + ".";
-      Service<IMessageLog>::get().add(message);
-      return true;
-    }
-    break;
-
-    default:
-      CLOG(WARNING, "Entity") << "Unknown ActionResult " << deequip_try;
-      break;
-  }
-
-  return false;
-}
-
-ActionResult Entity::can_equip(EntityId entity, unsigned int& action_time)
-{
-  action_time = 1;
-
-  // Check that it isn't US!
-  if (entity == m_ref)
-  {
-    return ActionResult::FailureSelfReference;
-  }
-
-  // Check that it's in our inventory.
-  if (!this->get_inventory().contains(entity))
-  {
-    return ActionResult::FailureEntityOutOfReach;
-  }
-
-  BodyPart part = entity->is_equippable_on();
-
-  if (part == BodyPart::Count)
-  {
-    return ActionResult::FailureItemNotEquippable;
-  }
-  else
-  {
-    /// @todo Check that entity has free body part(s) to equip item on.
-  }
-
-  /// @todo Finish Entity::can_equip code
-  return ActionResult::Success;
-}
-
-/// @todo Refactor into an Action
-bool Entity::do_equip(EntityId entity, unsigned int& action_time)
-{
-  std::string message;
-
-  ActionResult equip_try = this->can_equip(entity, action_time);
-  std::string thing_name = entity->get_identifying_string();
-
-  switch (equip_try)
-  {
-    case ActionResult::Success:
-    {
-      WearLocation location;
-
-      if (entity->perform_action_equipped_by(m_ref, location))
-      {
-        set_worn(entity, location);
-
-        std::string wear_desc = get_bodypart_description(location.part,
-                                                           location.number);
-        message = this->get_subject_you_or_identifying_string() + " " +
-          this->choose_verb(" are", " is") +
-          " now wearing " + thing_name +
-          " on " + this->get_possessive_of(wear_desc) + ".";
-        Service<IMessageLog>::get().add(message);
-        return true;
-      }
-    }
-    break;
-
-    case ActionResult::FailureSelfReference:
-      if (is_player())
-      {
-        message = "To equip yourself, choose what you want to equip first.";
-      }
-      else
-      {
-        message = this->get_subject_you_or_identifying_string() + " " +
-          this->choose_verb("try", "tries") +
-          " to equip " + this->get_reflexive_pronoun() +
-          ", which seriously shouldn't happen.";
-        CLOG(WARNING, "Entity") << "NPC tried to equip self!?";
-      }
-      Service<IMessageLog>::get().add(message);
-      break;
-
-    case ActionResult::FailureEntityOutOfReach:
-    {
-      message = this->get_subject_you_or_identifying_string() + " " +
-        this->choose_verb("try", "tries") +
-        " to equip " + thing_name + ".";
-      Service<IMessageLog>::get().add(message);
-
-      message = thing_name + " is not in " + this->get_possessive_of("inventory") + ".";
-      Service<IMessageLog>::get().add(message);
-    }
-    break;
-
-    case ActionResult::FailureItemNotEquippable:
-    {
-      message = this->get_subject_you_or_identifying_string() + " " +
-        this->choose_verb("try", "tries") +
-        " to equip " + thing_name + ".";
-      Service<IMessageLog>::get().add(message);
-
-      message = thing_name + " is not an equippable item.";
-      Service<IMessageLog>::get().add(message);
-    }
-    break;
-
-    default:
-      CLOG(WARNING, "Entity") << "Unknown ActionResult " << equip_try;
-      break;
-  }
-
-  return false;
-}
-
-void Entity::set_wielded(EntityId entity, unsigned int hand)
+void Entity::set_wielded(EntityId entity, BodyLocation location)
 {
   if (entity == EntityId::Mu())
   {
-    m_wielded_items.erase(hand);
+    m_wielded_items.erase(location);
   }
   else
   {
-    m_wielded_items[hand] = entity;
+    m_wielded_items[location] = entity;
   }
 }
 
-void Entity::set_worn(EntityId entity, WearLocation location)
+void Entity::set_worn(EntityId entity, BodyLocation location)
 {
   if (entity == EntityId::Mu())
   {
@@ -1275,7 +1095,7 @@ void Entity::light_up_surroundings()
       ", location->opaque = " << opaque <<
       ", this->is_subtype_of(\"DynamicEntity\") = " << is_entity;*/
 
-    //if (!is_opaque() || is_wielding(light) || has_equipped(light))
+    //if (!is_opaque() || is_wielding(light) || is_wearing(light))
     if (!opaque || is_entity)
     {
       auto& inventory = get_inventory();
@@ -1322,7 +1142,7 @@ void Entity::be_lit_by(EntityId light)
     bool opaque = this->is_opaque();
     bool is_entity = this->is_subtype_of("DynamicEntity");
 
-    //if (!is_opaque() || is_wielding(light) || has_equipped(light))
+    //if (!is_opaque() || is_wielding(light) || is_wearing(light))
     if (!opaque || is_entity)
     {
       location->be_lit_by(light);
@@ -1409,13 +1229,13 @@ void Entity::destroy()
 }
 
 /// @todo Figure out how to localize this.
-std::string Entity::get_bodypart_description(BodyPart part, uint32_t number)
+std::string Entity::get_bodypart_description(BodyLocation location)
 {
-  uint32_t total_number = this->get_bodypart_number(part).as<uint32_t>();
-  std::string part_name = this->get_bodypart_name(part).as<std::string>();
+  uint32_t total_number = this->get_bodypart_number(location.part).as<uint32_t>();
+  std::string part_name = this->get_bodypart_name(location.part).as<std::string>();
   std::string result;
 
-  Assert("Entity", number < total_number, "asked for bodypart " << number << " of " << total_number);
+  Assert("Entity", location.number < total_number, "asked for bodypart " << location.number << " of " << total_number);
   switch (total_number)
   {
     case 0: // none of them!?  shouldn't occur!
@@ -1428,7 +1248,7 @@ std::string Entity::get_bodypart_description(BodyPart part, uint32_t number)
       break;
 
     case 2: // assume a right and left one.
-      switch (number)
+      switch (location.number)
       {
         case 0:
           result = "right " + part_name;
@@ -1442,7 +1262,7 @@ std::string Entity::get_bodypart_description(BodyPart part, uint32_t number)
       break;
 
     case 3: // assume right, center, and left.
-      switch (number)
+      switch (location.number)
       {
         case 0:
           result = "right " + part_name;
@@ -1459,9 +1279,9 @@ std::string Entity::get_bodypart_description(BodyPart part, uint32_t number)
       break;
 
     case 4: // Legs/feet assume front/rear, others assume upper/lower.
-      if ((part == BodyPart::Leg) || (part == BodyPart::Foot))
+      if ((location.part == BodyPart::Leg) || (location.part == BodyPart::Foot))
       {
-        switch (number)
+        switch (location.number)
         {
           case 0:
             result = "front right " + part_name;
@@ -1481,7 +1301,7 @@ std::string Entity::get_bodypart_description(BodyPart part, uint32_t number)
       }
       else
       {
-        switch (number)
+        switch (location.number)
         {
           case 0:
             result = "upper right " + part_name;
@@ -1502,9 +1322,9 @@ std::string Entity::get_bodypart_description(BodyPart part, uint32_t number)
       break;
 
     case 6: // Legs/feet assume front/middle/rear, others upper/middle/lower.
-      if ((part == BodyPart::Leg) || (part == BodyPart::Foot))
+      if ((location.part == BodyPart::Leg) || (location.part == BodyPart::Foot))
       {
-        switch (number)
+        switch (location.number)
         {
           case 0:
             result = "front right " + part_name;
@@ -1530,7 +1350,7 @@ std::string Entity::get_bodypart_description(BodyPart part, uint32_t number)
       }
       else
       {
-        switch (number)
+        switch (location.number)
         {
           case 0:
             result = "upper right " + part_name;
@@ -1563,7 +1383,7 @@ std::string Entity::get_bodypart_description(BodyPart part, uint32_t number)
   // Anything else and we just return the ordinal name.
   if (result.empty())
   {
-    result = Ordinal::get(number) + " " + part_name;
+    result = Ordinal::get(location.number) + " " + part_name;
   }
 
   return result;
@@ -1663,7 +1483,7 @@ ActionResult Entity::perform_action_attacked_by(EntityId subject, EntityId targe
   return result;
 }
 
-bool Entity::perform_action_deequipped_by(EntityId actor, WearLocation& location)
+bool Entity::perform_action_deequipped_by(EntityId actor, BodyLocation& location)
 {
   if (this->get_modified_property("bound").as<bool>())
   {
@@ -1671,8 +1491,7 @@ bool Entity::perform_action_deequipped_by(EntityId actor, WearLocation& location
     message = actor->get_identifying_string() + " cannot take off " + this->get_identifying_string() +
       "; it is magically bound to " +
       actor->get_possessive_adjective() + " " +
-      actor->get_bodypart_description(location.part,
-                                      location.number) + "!";
+      actor->get_bodypart_description(location) + "!";
     Service<IMessageLog>::get().add(message);
     return false;
   }
@@ -1684,7 +1503,7 @@ bool Entity::perform_action_deequipped_by(EntityId actor, WearLocation& location
   }
 }
 
-bool Entity::perform_action_equipped_by(EntityId actor, WearLocation& location)
+bool Entity::perform_action_equipped_by(EntityId actor, BodyLocation& location)
 {
   ActionResult result = call_lua_function("perform_action_equipped_by", { Property::from(actor) },
                                           Property::from(ActionResult::Success)).as<ActionResult>();

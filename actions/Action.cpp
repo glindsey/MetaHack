@@ -492,7 +492,7 @@ namespace Actions
         if (hasTrait(Trait::ObjectMustBeWorn))
         {
           // Check to see if the object is being worn.
-          if (!subject->has_equipped(object))
+          if (!subject->is_wearing(object))
           {
             print_message_try_();
 
@@ -519,7 +519,7 @@ namespace Actions
         if (hasTrait(Trait::ObjectMustNotBeWorn))
         {
           // Check to see if the object is being worn.
-          if (subject->has_equipped(object))
+          if (subject->is_wearing(object))
           {
             print_message_try_();
 

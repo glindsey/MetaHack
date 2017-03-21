@@ -53,13 +53,17 @@ inline std::ostream& operator<<(std::ostream& os, BodyPart const& part)
 }
 
 /// Struct identifying a place that an item is worn.
-struct WearLocation
+struct BodyLocation
 {
-  WearLocation()
-  {
-    part = BodyPart::Count;
-    number = 0;
-  }
+  BodyLocation()
+    :
+    part{ BodyPart::Count }, number{ 0 }
+  {}
+
+  BodyLocation(BodyPart part_, unsigned int number_)
+    :
+    part{ part_ }, number{ number_ }
+  {}
 
   BodyPart part;
   unsigned int number;
@@ -73,11 +77,11 @@ struct WearLocation
 
 namespace std
 {
-  /// Hash functor for WearLocation
+  /// Hash functor for BodyLocation
   template<>
-  struct hash<WearLocation>
+  struct hash<BodyLocation>
   {
-    std::size_t operator()(const WearLocation& key) const
+    std::size_t operator()(const BodyLocation& key) const
     {
       std::size_t seed = 0;
 
@@ -89,32 +93,32 @@ namespace std
   };
 }
 
-inline bool operator==(const WearLocation& lhs, const WearLocation& rhs)
+inline bool operator==(const BodyLocation& lhs, const BodyLocation& rhs)
 {
   return lhs.index() == rhs.index();
 }
 
-inline bool operator!=(const WearLocation& lhs, const WearLocation& rhs)
+inline bool operator!=(const BodyLocation& lhs, const BodyLocation& rhs)
 {
   return !operator==(lhs, rhs);
 }
 
-inline bool operator<(const WearLocation& lhs, const WearLocation& rhs)
+inline bool operator<(const BodyLocation& lhs, const BodyLocation& rhs)
 {
   return lhs.index() < rhs.index();
 }
 
-inline bool operator>(const WearLocation& lhs, const WearLocation& rhs)
+inline bool operator>(const BodyLocation& lhs, const BodyLocation& rhs)
 {
   return operator<(rhs, lhs);
 }
 
-inline bool operator<=(const WearLocation& lhs, const WearLocation& rhs)
+inline bool operator<=(const BodyLocation& lhs, const BodyLocation& rhs)
 {
   return !operator>(lhs, rhs);
 }
 
-inline bool operator>=(const WearLocation& lhs, const WearLocation& rhs)
+inline bool operator>=(const BodyLocation& lhs, const BodyLocation& rhs)
 {
   return !operator<(lhs, rhs);
 }

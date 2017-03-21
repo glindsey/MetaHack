@@ -34,13 +34,14 @@ namespace Actions
     std::string message;
     auto subject = get_subject();
     auto object = get_object();
-    /// @todo Support wielding in other hand(s).
-    unsigned int hand = 0;
-    std::string bodypart_desc =
-      subject->get_bodypart_description(BodyPart::Hand, hand);
-    EntityId currently_wielded = subject->get_wielding_in(hand);
 
-    std::string thing_name = (object != EntityId::Mu()) ? get_object_string_() : tr("NOUN_NOTHING");
+    /// @todo Support wielding in other hand(s). This will also include
+    ///       shifting an already-wielded weapon to another hand.
+    /// @todo Support wielding in ANY prehensile limb (e.g. a tail).
+    m_body_location = { BodyPart::Hand, 0 };
+    EntityId currently_wielded = subject->get_wielding_in(m_body_location);
+
+    std::string bodypart_desc = subject->get_bodypart_description(m_body_location);
 
     // If it is us, or it is what is already being wielded, it means to unwield whatever is wielded.
     if ((object == subject) || (object == currently_wielded) || (object == EntityId::Mu()))
@@ -75,33 +76,32 @@ namespace Actions
 
   StateResult ActionWield::do_begin_work_(AnyMap& params)
   {
-    StateResult result = StateResult::Failure();
-    std::string message;
+    /// @todo Wielding should take time -- should not be instantaneously done here.
     auto subject = get_subject();
     auto object = get_object();
 
-    /// @todo Support wielding in other hand(s). This will also include
-    ///       shifting an already-wielded weapon to another hand.
-    unsigned int hand = 0;
-    std::string bodypart_desc =
-      subject->get_bodypart_description(BodyPart::Hand, hand);
-    EntityId currently_wielded = subject->get_wielding_in(hand);
+    print_message_begin_();
 
     // If we HAVE a new item, try to wield it.
     if (object->be_object_of(*this, subject) == ActionResult::Success)
     {
-      subject->set_wielded(object, hand);
-      message = maketr("YOU_ARE_NOW_WIELDING", { get_object_string_(), subject->get_possessive_of(bodypart_desc) });
-      Service<IMessageLog>::get().add(message);
-
-      result = StateResult::Success();
+      /// @todo Figure out action time.
+      return StateResult::Success();
     }
 
-    return result;
+    return StateResult::Failure();
   }
 
   StateResult ActionWield::do_finish_work_(AnyMap& params)
   {
+    auto subject = get_subject();
+    auto object = get_object();
+    std::string bodypart_desc =
+      subject->get_bodypart_description(m_body_location);
+
+    subject->set_wielded(object, m_body_location);
+    put_msg(maketr("YOU_ARE_NOW_WIELDING_THE_FOO", { subject->get_possessive_of(bodypart_desc) }));
+
     return StateResult::Success();
   }
 
