@@ -80,8 +80,9 @@ public:
   static char get_character(unsigned int slot_number);
   static InventorySlot get_slot(char character);
 
-protected:
   virtual std::unordered_set<EventID> registeredEvents() const override;
+
+protected:
 
 private:
   struct Impl;

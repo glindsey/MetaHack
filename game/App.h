@@ -152,8 +152,9 @@ public:
   /// If no App instance currently exists, throws an exception.
   static App& instance();
 
-protected:
   virtual std::unordered_set<EventID> registeredEvents() const override;
+
+protected:
 
 private:
   sf::RenderWindow& m_app_window;

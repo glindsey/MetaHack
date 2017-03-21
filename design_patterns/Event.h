@@ -21,7 +21,7 @@ public:
 
   virtual ~Event() = default;
 
-  virtual Event* heapClone() = 0;
+  virtual Event* heapClone() const = 0;
   virtual EventID getId() const;
 
   Subject* subject;
@@ -37,7 +37,7 @@ class ConcreteEvent : public B
 public:
   static const EventID id;
 
-  Event* heapClone();
+  Event* heapClone() const;
   EventID getId() const;
 };
 
@@ -52,7 +52,7 @@ EventID ConcreteEvent<T, B, eID>::getId() const
 }
 
 template <class T, class B, EventID eID>
-Event* ConcreteEvent<T, B, eID>::heapClone()
+Event* ConcreteEvent<T, B, eID>::heapClone() const
 {
-  return new T(static_cast<T&>(*this));
+  return new T(static_cast<T const&>(*this));
 }

@@ -185,6 +185,16 @@ std::string const& StateMachine::get_current_state_name()
 std::unordered_set<EventID> StateMachine::registeredEvents() const
 {
   auto events = Subject::registeredEvents();
-  /// @todo WRITE ME
+  auto& forwarder_events = pImpl->event_passer.registeredEvents();
+  events.insert(forwarder_events.begin(), forwarder_events.end());
+  
   return events;
+}
+
+void StateMachine::onEvent(Event const& event)
+{
+  std::unique_ptr<Event> event_copy{ event.heapClone() };
+  /// @todo Flesh this out to handle the events we care about.
+  ///       For now, just forward it on to listeners.
+  broadcast(*event_copy);
 }

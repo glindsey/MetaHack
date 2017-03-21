@@ -90,6 +90,8 @@ public:
 protected:
   virtual std::unordered_set<EventID> registeredEvents() const override;
 
+  virtual void onEvent(Event const& event) override;
+
 private:
   struct Impl;
   std::unique_ptr<Impl> pImpl;
