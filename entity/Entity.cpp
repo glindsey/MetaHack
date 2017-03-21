@@ -2,6 +2,8 @@
 
 #include "entity/Entity.h"
 
+#include "actions/Action.h"
+#include "actions/ActionDie.h"
 #include "AssertHelper.h"
 #include "entity/EntityPool.h"
 #include "game/App.h"
@@ -42,7 +44,8 @@ Entity::Entity(GameState& game, Metadata& metadata, EntityId ref)
   m_gender{ Gender::None },
   m_map_memory{ MapMemory() },
   m_tiles_currently_seen{ TilesSeen() },
-  m_pending_actions{ ActionQueue() },
+  m_pending_involuntary_actions{ ActionQueue() },
+  m_pending_voluntary_actions{ ActionQueue() },
   m_wielded_items{ BodyLocationMap() },
   m_equipped_items{ BodyLocationMap() }
 {
@@ -61,7 +64,8 @@ Entity::Entity(GameState& game, MapTile* map_tile, Metadata& metadata, EntityId 
   m_gender{ Gender::None },
   m_map_memory{ MapMemory() },
   m_tiles_currently_seen{ TilesSeen() },
-  m_pending_actions{ ActionQueue() },
+  m_pending_involuntary_actions{ ActionQueue() },
+  m_pending_voluntary_actions{ ActionQueue() },
   m_wielded_items{ BodyLocationMap() },
   m_equipped_items{ BodyLocationMap() }
 {
@@ -80,7 +84,8 @@ Entity::Entity(Entity const& original, EntityId ref)
   m_gender{ original.m_gender },
   m_map_memory{ original.m_map_memory },
   m_tiles_currently_seen{ TilesSeen() },  // don't copy
-  m_pending_actions{ ActionQueue() },     // don't copy
+  m_pending_involuntary_actions{ ActionQueue() },     // don't copy
+  m_pending_voluntary_actions{ ActionQueue() },     // don't copy
   m_wielded_items{ BodyLocationMap() },       // don't copy
   m_equipped_items{ BodyLocationMap() }        // don't copy
 {
@@ -103,19 +108,72 @@ Entity::~Entity()
 {
 }
 
-void Entity::queue_action(std::unique_ptr<Actions::Action> pAction)
+void Entity::queue_action(std::unique_ptr<Actions::Action> action)
 {
-  m_pending_actions.push_back(std::move(pAction));
+  CLOG(TRACE, "Entity") << "Entity " <<
+    get_id() << "( " <<
+    get_type() << "): Queuing Action " <<
+    action->get_type();
+
+  m_pending_voluntary_actions.push_back(std::move(action));
+}
+
+void Entity::queue_action(Actions::Action * p_action)
+{
+  std::unique_ptr<Actions::Action> action(p_action);
+  queue_action(std::move(action));
+}
+
+void Entity::queue_involuntary_action(std::unique_ptr<Actions::Action> action)
+{
+  CLOG(TRACE, "Entity") << "Entity " <<
+    get_id() << "( " <<
+    get_type() << "): Queuing Involuntary Action " <<
+    action->get_type();
+
+  m_pending_involuntary_actions.push_front(std::move(action));
+}
+
+void Entity::queue_involuntary_action(Actions::Action * p_action)
+{
+  std::unique_ptr<Actions::Action> action(p_action);
+  queue_involuntary_action(std::move(action));
 }
 
 bool Entity::action_is_pending() const
 {
-  return !(m_pending_actions.empty());
+  return !voluntary_action_is_pending() || !involuntary_action_is_pending();
+}
+
+bool Entity::voluntary_action_is_pending() const
+{
+  return !(m_pending_voluntary_actions.empty());
+}
+
+bool Entity::involuntary_action_is_pending() const
+{
+  return !(m_pending_involuntary_actions.empty());
 }
 
 bool Entity::action_is_in_progress()
 {
   return (get_base_property("counter_busy").as<uint32_t>() > 0);
+}
+
+void Entity::clear_pending_actions()
+{
+  clear_pending_voluntary_actions();
+  clear_pending_involuntary_actions();
+}
+
+void Entity::clear_pending_voluntary_actions()
+{
+  m_pending_voluntary_actions.clear();
+}
+
+void Entity::clear_pending_involuntary_actions()
+{
+  m_pending_involuntary_actions.clear();
 }
 
 EntityId Entity::get_wielding_in(BodyLocation& location)
@@ -256,7 +314,7 @@ bool Entity::do_die()
       set_base_property("dead", Property::from(true));
 
       // Clear any pending actions.
-      m_pending_actions.clear();
+      clear_pending_actions();
 
       //notifyObservers(Event::Updated);
       return true;
@@ -1407,7 +1465,7 @@ BodyPart Entity::is_equippable_on() const
   return BodyPart::Count;
 }
 
-bool Entity::process()
+bool Entity::process_involuntary_actions()
 {
   // Get a copy of the Entity's inventory.
   // This is because entities can be deleted/removed from the inventory
@@ -1421,11 +1479,32 @@ bool Entity::process()
        ++iter)
   {
     EntityId entity = iter->second;
-    /* bool dead = */ entity->process();
+    /* bool dead = */ entity->process_involuntary_actions();
   }
 
   // Process self last.
-  return _process_self();
+  return _process_own_involuntary_actions();
+}
+
+bool Entity::process_voluntary_actions()
+{
+  // Get a copy of the Entity's inventory.
+  // This is because entities can be deleted/removed from the inventory
+  // over the course of processing them, and this could invalidate the
+  // iterator.
+  Inventory temp_inventory{ m_inventory };
+
+  // Process inventory.
+  for (auto iter = temp_inventory.begin();
+       iter != temp_inventory.end();
+       ++iter)
+  {
+    EntityId entity = iter->second;
+    /* bool dead = */ entity->process_voluntary_actions();
+  }
+
+  // Process self last.
+  return _process_own_voluntary_actions();
 }
 
 ActionResult Entity::perform_action_died()
@@ -1446,6 +1525,13 @@ void Entity::perform_action_collided_with_wall(Direction d, std::string tile_typ
 {
   /// @todo Implement me; right now there's no way to pass one enum and one string to a Lua function.
   return;
+}
+
+ActionResult Entity::perform_intransitive_action(Actions::Action& action)
+{
+  ActionResult result = call_lua_function("perform_intransitive_action_" + action.get_type(), {},
+                                          Property::from(ActionResult::Success)).as<ActionResult>();
+  return result;
 }
 
 ActionResult Entity::be_object_of(Actions::Action& action, EntityId subject)
@@ -1593,9 +1679,16 @@ void Entity::setLocation(EntityId target)
   m_location = target;
 }
 
+std::unordered_set<EventID> Entity::registeredEvents() const
+{
+  auto events = Subject::registeredEvents();
+  /// @todo Add our own events here
+  return events;
+}
+
 // *** PROTECTED METHODS ******************************************************
 
-bool Entity::_process_self()
+bool Entity::_process_own_involuntary_actions()
 {
   int counter_busy = get_base_property("counter_busy").as<int32_t>();
 
@@ -1607,24 +1700,71 @@ bool Entity::_process_self()
     {
       // Perform the "die" action.
       // (This sets the "dead" property and clears out any pending actions.)
-      if (this->do_die() == true)
-      {
-        /// @todo Handle player death by transitioning to game end state.
-      }
+      std::unique_ptr<Actions::Action> dieAction(NEW Actions::ActionDie(get_id()));
+      this->queue_involuntary_action(std::move(dieAction));
     }
   }
-  // Otherwise if this entity is busy...
-  else if (counter_busy > 0)
+
+  // If actions are pending...
+  if (!m_pending_voluntary_actions.empty())
+  {
+    // Process the front action.
+    std::unique_ptr<Actions::Action>& action = m_pending_involuntary_actions.front();
+    bool action_done = action->process({});
+    if (action_done)
+    {
+      CLOG(TRACE, "Entity") << "Entity " <<
+        get_id() << "( " <<
+        get_type() << "): Involuntary Action " <<
+        action->get_type() << " is done, popping";
+
+      m_pending_involuntary_actions.pop_front();
+    }
+
+    /// @todo This needs to be changed so it only is called if the Action
+    ///       materially affected the entity in some way. Two ways to do this
+    ///       that I can see:
+    ///         1) The Action calls notifyObservers. Requires the Action
+    ///            to have access to that method; right now it doesn't.
+    ///         2) The Action returns some sort of indication that the Entity
+    ///            was modified as a result. This could be done by changing
+    ///            the return type from a bool to a struct of some sort.
+    //notifyObservers(Event::Updated);
+
+  } // end if (actions pending)
+
+  return true;
+}
+
+bool Entity::_process_own_voluntary_actions()
+{
+  int counter_busy = get_base_property("counter_busy").as<int32_t>();
+
+  // Is this an entity that is now dead?
+  if (is_subtype_of("DynamicEntity") && (get_modified_property("hp").as<int32_t>() <= 0))
+  {
+    // Did the entity JUST die?
+    if (get_modified_property("dead").as<bool>() != true)
+    {
+      // Perform the "die" action.
+      // (This sets the "dead" property and clears out any pending actions.)
+      std::unique_ptr<Actions::Action> dieAction(NEW Actions::ActionDie(get_id()));
+      this->queue_involuntary_action(std::move(dieAction));
+    }
+  }
+
+  // If this entity is busy...
+  if (counter_busy > 0)
   {
     // Decrement busy counter.
     add_to_base_property("counter_busy", Property::from(-1));
   }
   // Otherwise if actions are pending...
-  else if (!m_pending_actions.empty())
+  else if (!m_pending_voluntary_actions.empty())
   {
     // Process the front action.
-    std::unique_ptr<Actions::Action>& action = m_pending_actions.front();
-    bool action_done = action->process(get_id(), {});
+    std::unique_ptr<Actions::Action>& action = m_pending_voluntary_actions.front();
+    bool action_done = action->process({});
     if (action_done)
     {
       CLOG(TRACE, "Entity") << "Entity " <<
@@ -1632,7 +1772,7 @@ bool Entity::_process_self()
         get_type() << "): Action " <<
         action->get_type() << " is done, popping";
 
-      m_pending_actions.pop_front();
+      m_pending_voluntary_actions.pop_front();
     }
 
     /// @todo This needs to be changed so it only is called if the Action
@@ -1650,9 +1790,6 @@ bool Entity::_process_self()
   else
   {
     // If entity is not the player, call the Lua process function on this Entity.
-    /// @todo Should this be called regardless of whether actions are pending
-    ///       or not? In other words, should a Entity be able to "change its mind"
-    ///       and clear out any pending actions?
     if (!is_player())
     {
       ActionResult result = call_lua_function("process", {}).as<ActionResult>();
