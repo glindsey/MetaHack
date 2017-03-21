@@ -42,7 +42,6 @@ App::App(sf::RenderWindow& app_window)
   :
   m_app_window{ app_window },
   m_app_texture{ NEW sf::RenderTexture() },
-  m_state_machine{ NEW StateMachine("app_state_machine", this) },
   m_is_running{ false },
   m_has_window_focus{ false }
 {
@@ -91,6 +90,9 @@ App::App(sf::RenderWindow& app_window)
 
   // Second: create the Lua state.
   m_lua.reset(NEW Lua());
+
+  // Next, create the app state machine.
+  m_state_machine.reset(NEW StateMachine("app_state_machine", this)),
 
   // Create the app texture for off-screen composition.
   m_app_texture->create(m_app_window.getSize().x, m_app_window.getSize().y);

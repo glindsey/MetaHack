@@ -10,6 +10,11 @@ MapNullView::MapNullView(std::string name, Map& map, UintVec2 size)
 {
 }
 
+bool MapNullView::onEvent_(Event const & event)
+{
+  return true;
+}
+
 void MapNullView::update_tiles(EntityId viewer)
 {
 }

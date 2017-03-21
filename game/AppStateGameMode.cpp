@@ -991,9 +991,10 @@ void AppStateGameMode::add_zoom(float zoom_amount)
   m_map_zoom_level = current_zoom_level;
 }
 
-void AppStateGameMode::onEvent(Event const & event)
+bool AppStateGameMode::onEvent_(Event const& event)
 {
   /// @todo WRITE ME
+  return true;
 }
 
 sf::IntRect AppStateGameMode::calc_message_log_dims()

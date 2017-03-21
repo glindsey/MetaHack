@@ -12,3 +12,8 @@ MapTileNullView::MapTileNullView(MapTile& map_tile)
   MapTileView(map_tile)
 {
 }
+
+bool MapTileNullView::onEvent_(Event const & event)
+{
+  return true;
+}

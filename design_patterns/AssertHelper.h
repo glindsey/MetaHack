@@ -36,21 +36,13 @@ do                                                                             \
   }                                                                            \
 } while (0)
 
+void _Assert_Print(char const* logger,
+                   char const* condition_string,
+                   char const* file_name,
+                   unsigned int line_number,
+                   std::stringstream const& message);
+
 #else
 #define Assert(condition, message)
 #endif
 
-namespace
-{
-  inline void _Assert_Print(char const* logger,
-                            char const* condition_string,
-                            char const* file_name,
-                            unsigned int line_number,
-                            std::stringstream const& message)
-  {
-    CLOG(FATAL, logger) << "\nAssertion Failed:" << condition_string
-      << "\nFile:" << file_name
-      << "\nLine:" << line_number
-      << "\n" << message.str();
-  }
-}

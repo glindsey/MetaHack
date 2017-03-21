@@ -195,7 +195,8 @@ void Subject::unicast(Event& event, Observer& observer)
 
       auto dispatchBlock = [=, &observer]() mutable
       {
-        auto all_observers_of_event = pImpl->observers.find(finalEvent->getId());
+        auto eventId = finalEvent->getId();
+        auto all_observers_of_event = pImpl->observers.find(eventId);
         Assert("Subject", all_observers_of_event != pImpl->observers.end(),
                "\nReason:\tattempted to notify observer for an unregistered event." <<
                "\nSubject:\t" << *this <<

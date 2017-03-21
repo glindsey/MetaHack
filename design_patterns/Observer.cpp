@@ -54,9 +54,13 @@ void Observer::onEvent(Event const& event)
     return;
   }
 
-  Assert("Observer", false,
-         "\nReason:\tobserver implictly did not handle event." <<
-         "\nSubject:\t" << *event.subject <<
-         "\nObserver:\t" << *this <<
-         "\nEvent:\t" << event);
+  if (!onEvent_(event))
+  {
+    Assert("Observer", false,
+           "\nReason:\tobserver implicitly did not handle event." <<
+           "\nSubject:\t" << *event.subject <<
+           "\nObserver:\t" << *this <<
+           "\nEvent:\t" << event);
+  }
 }
+  

@@ -14,6 +14,11 @@ EntityStandard2DView::EntityStandard2DView(Entity& entity, TileSheet& tile_sheet
 {
 }
 
+bool EntityStandard2DView::onEvent_(Event const & event)
+{
+  return true;
+}
+
 EntityStandard2DView::~EntityStandard2DView()
 {
 }

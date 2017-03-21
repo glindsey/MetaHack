@@ -62,9 +62,9 @@ function GameObject:get_intrinsic(key)
 
     if (key_type == PropertyType.IntVec2) then
         return values.x, values.y, key_type
-    else if (key_type == PropertyType.Direction) then
+    elseif (key_type == PropertyType.Direction) then
         return values.x, values.y, values.z, key_type
-    else if (key_type == PropertyType.Color) then
+    elseif (key_type == PropertyType.Color) then
         return values.r, values.g, values.b, values.a, key_type
     end
             
@@ -120,7 +120,7 @@ function GameObject:get_intrinsic_(key)
                 return { x = value.x, y = value.y, z = value.z }, PropertyType.Direction
             elseif (value.type == "color") then
                 local alpha = 255
-                if (value.a != null) then
+                if (value.a ~= nil) then
                   alpha = value.a
                 end
                 return { r = value.r, g = value.g, b = value.b, a = alpha }, PropertyType.Color

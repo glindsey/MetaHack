@@ -29,6 +29,8 @@ protected:
   /// Constructor.
   explicit EntityStandard2DView(Entity& entity, TileSheet& tile_sheet);
 
+  virtual bool onEvent_(Event const& event) override;
+
 private:
   /// Reference to tilesheet storing entity graphics.
   TileSheet& m_tile_sheet;

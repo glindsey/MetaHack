@@ -18,7 +18,8 @@ public:
   virtual ~Observer() = 0;
 
 protected:
-  virtual void onEvent(Event const& event);
+  void onEvent(Event const& event);
+  virtual bool onEvent_(Event const& event) = 0;
 
 private:
   class Impl;

@@ -19,7 +19,7 @@ EntityPool::EntityPool(GameState& game)
 
   // Create the "nothingness" object.
   EntityId mu = create("Mu");
-  Assert("EntityPool", (mu != 0ULL), "Mu's ID is " << mu << " instead of zero!");
+  Assert("EntityPool", (mu == 0ULL), "Mu's ID is " << mu << " instead of zero!");
 
   m_initialized = true;
 }

@@ -8,6 +8,11 @@ EntityNullView::EntityNullView(Entity& entity)
 {
 }
 
+bool EntityNullView::onEvent_(Event const & event)
+{
+  return true;
+}
+
 EntityNullView::~EntityNullView()
 {
 }

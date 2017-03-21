@@ -45,6 +45,8 @@ protected:
   /// Reinitialize cached map render data.
   void reset_cached_render_data();
 
+  virtual bool onEvent_(Event const& event) override;
+
 private:
 
   /// "Seen" map vertex array.

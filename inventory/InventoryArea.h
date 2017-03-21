@@ -25,7 +25,7 @@ public:
 protected:
   virtual void drawContents_(sf::RenderTexture& texture, int frame) override;
 
-  virtual void onEvent(Event const& event) override;
+  virtual bool onEvent_(Event const& event) override;
 
 private:
   /// Inventory selection we are bound to.
