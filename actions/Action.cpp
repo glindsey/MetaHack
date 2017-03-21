@@ -113,18 +113,15 @@ namespace Actions
     return pImpl->objects[1];
   }
 
-  bool Action::process(EntityId actor, AnyMap params)
+  bool Action::process(AnyMap params)
   {
+    auto subject = get_subject();
+
     // If entity is currently busy, decrement by one and return.
-    int counter_busy = actor->get_base_property("counter_busy").as<int32_t>();
+    int counter_busy = subject->get_base_property("counter_busy").as<int32_t>();
     if (counter_busy > 0)
     {
-      CLOG(TRACE, "Action") << "Entity #" <<
-        actor << " (" <<
-        actor->get_type() << "): counter_busy = " <<
-        counter_busy << "%d, decrementing";
-
-      actor->add_to_base_property("counter_busy", Property::from(-1));
+      subject->add_to_base_property("counter_busy", Property::from(-1));
       return false;
     }
 
@@ -132,15 +129,14 @@ namespace Actions
     // target actor is busy.
     while ((pImpl->state != State::Processed) && (counter_busy == 0))
     {
-      counter_busy = actor->get_base_property("counter_busy").as<int32_t>();
+      counter_busy = subject->get_base_property("counter_busy").as<int32_t>();
       StateResult result{ false, 0 };
 
       CLOG(TRACE, "Action") << "Entity #" <<
-        actor << " (" <<
-        actor->get_type().c_str() << "): Action " <<
+        subject << " (" <<
+        subject->get_type().c_str() << "): Action " <<
         get_type().c_str() << " is in state " <<
-        str(get_state()) << ", counter_busy = " <<
-        counter_busy;
+        str(get_state());
 
       switch (pImpl->state)
       {
@@ -208,6 +204,13 @@ namespace Actions
 
   void Action::set_state(State state)
   {
+    auto subject = get_subject();
+    CLOG(TRACE, "Action") << "Entity #" <<
+      subject << " (" <<
+      subject->get_type().c_str() << "): Action " <<
+      get_type().c_str() << " switching to state " <<
+      str(get_state());
+
     pImpl->state = state;
   }
 

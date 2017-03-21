@@ -145,7 +145,8 @@ void Map::process()
     for (int x = 0; x < m_map_size.x; ++x)
     {
       EntityId contents = TILE(x, y).get_tile_contents();
-      contents->process();
+      contents->process_voluntary_actions();
+      contents->process_involuntary_actions();
     }
   }
 

@@ -79,12 +79,13 @@ namespace Actions
 
   /// Class describing an action to execute.
   class Action
-    :
-    public boost::noncopyable
   {
   public:
-
     explicit Action(EntityId subject, std::string type, std::string verb);
+    Action(Action const&) = delete;
+    Action(Action&&) = delete;
+    Action& operator=(Action const&) = delete;
+    Action& operator=(Action&&) = delete;
     virtual ~Action();
 
     virtual std::unordered_set<Trait> const& getTraits() const;
@@ -100,7 +101,7 @@ namespace Actions
     EntityId get_object() const;
     EntityId get_second_object() const;
 
-    bool process(EntityId actor, AnyMap params);
+    bool process(AnyMap params);
 
     void set_state(State state);
     State get_state();

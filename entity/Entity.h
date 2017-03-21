@@ -61,15 +61,47 @@ public:
   virtual ~Entity();
 
   /// Queue an action for this DynamicEntity to perform.
-  /// pAction The Action to queue. The Action is MOVED when queued,
-  ///         e.g. pAction will be `nullptr` after queuing.
-  void queue_action(std::unique_ptr<Actions::Action> pAction);
+  /// @param action The Action to queue. The Action is MOVED when queued,
+  ///               e.g. pAction will be `nullptr` after queuing.
+  void queue_action(std::unique_ptr<Actions::Action> action);
 
-  /// Return whether there is an action pending for this DynamicEntity.
+  /// Queue an action for this DynamicEntity to perform.
+  /// @param p_action The Action to queue. The queue takes ownership of the
+  ///                 pointer.
+  void queue_action(Actions::Action* p_action);
+
+  /// Queue an involuntary action for this DynamicEntity to perform.
+  /// @param action The Action to queue. The Action is MOVED when queued,
+  ///               e.g. pAction will be `nullptr` after queuing.
+  void queue_involuntary_action(std::unique_ptr<Actions::Action> action);
+
+  /// Queue an involuntary action for this DynamicEntity to perform.
+  /// The action is pushed to the FRONT of the queue, so it is next to be
+  /// popped.
+  /// @param p_action The Action to queue. The queue takes ownership of the
+  ///                 pointer.
+  void queue_involuntary_action(Actions::Action* p_action);
+
+  /// Return whether there is any action pending for this DynamicEntity.
   bool action_is_pending() const;
+
+  /// Return whether there is a voluntary action pending for this DynamicEntity.
+  bool voluntary_action_is_pending() const;
+
+  /// Return whether there is an involuntary action pending for this DynamicEntity.
+  bool involuntary_action_is_pending() const;
 
   /// Return whether there is an action currently in progress for this DynamicEntity.
   bool action_is_in_progress();
+
+  /// Clear all pending actions in this Entity's queues.
+  void clear_pending_actions();
+
+  /// Clear all pending voluntary actions in this Entity's queue.
+  void clear_pending_voluntary_actions();
+
+  /// Clear all pending involuntary actions in this Entity's queue.
+  void clear_pending_involuntary_actions();
 
   /// Get the entity being wielded with the specified bodypart, if any.
   EntityId get_wielding_in(BodyLocation& location);
@@ -415,8 +447,11 @@ public:
   /// If entity is not equippable, return BodyPart::Count.
   BodyPart is_equippable_on() const;
 
-  /// Process this Entity and its inventory for a single tick.
-  bool process();
+  /// Process involuntary actions of this Entity and its inventory for a single tick.
+  bool process_involuntary_actions();
+
+  /// Process voluntary actions of this Entity and its inventory for a single tick.
+  bool process_voluntary_actions();
 
   /// Perform an action when this entity dies.
   /// @return If this function returns Failure, the death is avoided.
@@ -430,6 +465,17 @@ public:
 
   /// Perform an action when this entity collides with a wall.
   void perform_action_collided_with_wall(Direction d, std::string tile_type);
+
+  /// Perform the effects of being the subject of a particular action.
+  /// This is typically called on intransitive verbs (ones that do not take
+  /// an object); "die" is a good example. You can't "die something" (though
+  /// you can "dye something" but that's beside the point), so this would be
+  /// an appropriate method to call.
+  /// 
+  /// @param action   The action to be the target of.
+  /// @return Result of the action. If Failure, the action is aborted
+  ///         (if possible).
+  ActionResult perform_intransitive_action(Actions::Action& action);
 
   /// Perform the effects of being a object of a particular action.
   /// @param action   The action to be the target of.
@@ -504,6 +550,8 @@ public:
   /// Get a const reference to this tile's metadata.
   Metadata const & get_metadata() const;
 
+  virtual std::unordered_set<EventID> registeredEvents() const override;
+
 protected:
   /// Named Constructor
   Entity(GameState& game, Metadata& metadata, EntityId ref);
@@ -535,12 +583,21 @@ protected:
   /// Gets this location's maptile.
   virtual MapTile* _get_maptile() const;
 
-  /// Process this Entity for a single tick.
+  /// Process this Entity's involuntary actions for a single tick.
+  /// Voluntary actions are only processed when the Entity is not busy.
   /// The function returns false to indicate to its parent that it no longer
   /// exists and should be deleted.
   /// @return true if the Entity continues to exist after the tick;
   ///         false if the Entity ceases to exist.
-  virtual bool _process_self();
+  virtual bool _process_own_involuntary_actions();
+
+  /// Process this Entity's voluntary actions for a single tick.
+  /// Involuntary actions are processed even if the Entity is busy.
+  /// The function returns false to indicate to its parent that it no longer
+  /// exists and should be deleted.
+  /// @return true if the Entity continues to exist after the tick;
+  ///         false if the Entity ceases to exist.
+  virtual bool _process_own_voluntary_actions();
 
 private:
   /// Reference to game state.
@@ -581,8 +638,11 @@ private:
   /// This deals with tiles observed at this particular instant.
   TilesSeen m_tiles_currently_seen;
 
-  /// Queue of pending_actions to be performed.
-  ActionQueue m_pending_actions;
+  /// Queue of pending involuntary actions to be performed.
+  ActionQueue m_pending_involuntary_actions;
+
+  /// Queue of pending voluntary actions to be performed.
+  ActionQueue m_pending_voluntary_actions;
 
   /// Map of items wielded.
   BodyLocationMap m_wielded_items;
