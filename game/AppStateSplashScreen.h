@@ -23,6 +23,8 @@ public:
 protected:
   void render_splash(sf::RenderTexture& texture, int frame);
 
+  virtual void onEvent(Event const& event) override;
+
 private:
   sf::Texture m_splash_graphic;
   sf::Sprite m_splash_sprite;

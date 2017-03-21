@@ -55,3 +55,8 @@ void AppStateSplashScreen::render_splash(sf::RenderTexture& texture, int frame)
   texture.draw(m_splash_sprite);
   texture.display();
 }
+
+void AppStateSplashScreen::onEvent(Event const & event)
+{
+  /// @todo WRITE ME
+}

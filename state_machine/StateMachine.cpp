@@ -6,29 +6,29 @@
 
 struct StateMachine::Impl
 {
-  Impl(Subject& event_passer_) 
+  Impl(Subject* parent_) 
     : 
-    event_passer{ event_passer_ } 
+    parent{ parent_ } 
   {}
 
-  Subject& event_passer;
+  Subject* const parent;
   boost::ptr_map<std::string, State> state_map;
   State* current_state;
   std::string machine_name;
 };
 
-StateMachine::StateMachine(Subject& event_passer, 
-                           std::string const& machine_name)
-  : pImpl(NEW Impl(event_passer))
+StateMachine::StateMachine(std::string const& machine_name,
+                           Subject* parent)
+  : pImpl(NEW Impl(parent))
 {
   pImpl->current_state = nullptr;
   pImpl->machine_name = machine_name;
-  pImpl->event_passer.addObserver(*this, EventID::All);
+  if (pImpl->parent) pImpl->parent->addObserver(*this, EventID::All);
 }
 
 StateMachine::~StateMachine()
 {
-  pImpl->event_passer.removeObserver(*this, EventID::All);
+  if (pImpl->parent) pImpl->parent->removeObserver(*this, EventID::All);
   change_to(nullptr);
 }
 
@@ -185,8 +185,11 @@ std::string const& StateMachine::get_current_state_name()
 std::unordered_set<EventID> StateMachine::registeredEvents() const
 {
   auto events = Subject::registeredEvents();
-  auto& forwarder_events = pImpl->event_passer.registeredEvents();
-  events.insert(forwarder_events.begin(), forwarder_events.end());
+  if (pImpl->parent)
+  {
+    auto& forwarder_events = pImpl->parent->registeredEvents();
+    events.insert(forwarder_events.begin(), forwarder_events.end());
+  }
   
   return events;
 }
@@ -195,6 +198,6 @@ void StateMachine::onEvent(Event const& event)
 {
   std::unique_ptr<Event> event_copy{ event.heapClone() };
   /// @todo Flesh this out to handle the events we care about.
-  ///       For now, just forward it on to listeners.
-  broadcast(*event_copy);
+  ///       For now, just forward it on to the current state.
+  unicast(*event_copy, *get_current_state());
 }

@@ -20,8 +20,8 @@ class StateMachine :
   public Subject
 {
 public:
-  explicit StateMachine(Subject& event_passer, 
-                        std::string const& machine_name);
+  explicit StateMachine(std::string const& machine_name,
+                        Subject* parent);
   StateMachine(StateMachine const&) = delete;
   StateMachine(StateMachine&&) = delete;
   StateMachine& operator=(StateMachine const&) = delete;
@@ -87,9 +87,9 @@ public:
   /// @return Name of current state, or "(none)" if no state is current.
   std::string const& get_current_state_name();
 
-protected:
   virtual std::unordered_set<EventID> registeredEvents() const override;
 
+protected:
   virtual void onEvent(Event const& event) override;
 
 private:

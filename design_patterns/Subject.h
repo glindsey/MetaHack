@@ -35,10 +35,14 @@ public:
   virtual std::unordered_set<EventID> registeredEvents() const;
 
 protected:
-  void broadcast(Event& event);
+  using BroadcastDelegate = std::function<void(Event& event, bool shouldSend)>;
+  using UnicastDelegate = std::function<void(Event& event, Observer& observer, bool shouldSend)>;
 
-  using BroadcastDelegate = std::function<void(Event& event, bool shouldBroadcast)>;
-  virtual void broadcast_(Event& event, BroadcastDelegate broadcast_delegate);
+  void broadcast(Event& event);
+  void unicast(Event & event, Observer & observer);
+
+  virtual void broadcast_(Event& event, BroadcastDelegate do_broadcast);
+  virtual void unicast_(Event& event, Observer& observer, UnicastDelegate do_unicast);
 
 private:
   class Impl;

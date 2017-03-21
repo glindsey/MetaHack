@@ -3,6 +3,8 @@
 
 #include "stdafx.h"
 
+#include "Observer.h"
+#include "Subject.h"
 #include "types/IRenderable.h"
 #include "types/ISFMLEventHandler.h"
 
@@ -12,10 +14,16 @@ class StateMachine;
 class State :
   public RenderableToTexture,
   public ISFMLEventHandler,
-  public boost::noncopyable
+  public Observer,
+  public Subject
 {
 public:
   explicit State(StateMachine& state_machine);
+  State(State const&) = delete;
+  State(State&&) = delete;
+  State& operator=(State const&) = delete;
+  State& operator=(State&&) = delete;
+
   virtual ~State();
 
   // Get the name of this state.
@@ -32,6 +40,8 @@ public:
 
   // Tell state machine to change to a new state.
   bool change_to(std::string const& new_state);
+
+  virtual std::unordered_set<EventID> registeredEvents() const override;
 
 protected:
 private:

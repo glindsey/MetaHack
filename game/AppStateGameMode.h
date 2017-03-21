@@ -62,6 +62,8 @@ protected:
 
   void add_zoom(float zoom_amount);
 
+  virtual void onEvent(Event const& event) override;
+
 private:
   /// Application window.
   sf::RenderWindow& m_app_window;

@@ -80,3 +80,8 @@ void AppStateMainMenu::render_title(sf::RenderTexture & texture, int frame)
   texture.draw(m_subtitle);
   texture.display();
 }
+
+void AppStateMainMenu::onEvent(Event const & event)
+{
+  /// @todo WRITE ME
+}

@@ -142,9 +142,9 @@ void Subject::broadcast(Event& event)
 
   event.subject = this;
 
-  broadcast_(event, [&](Event& event, bool shouldBroadcast)
+  broadcast_(event, [&](Event& event, bool shouldSend)
   {
-    if (shouldBroadcast)
+    if (shouldSend)
     {
       auto finalEvent = event.heapClone();
 
@@ -181,9 +181,63 @@ void Subject::broadcast(Event& event)
   });
 }
 
-void Subject::broadcast_(Event &event, BroadcastDelegate broadcast_delegate)
+void Subject::unicast(Event& event, Observer& observer)
 {
-  broadcast_delegate(event, true);
+  pImpl->registerEventsIfNeeded(*this);
+
+  event.subject = this;
+
+  unicast_(event, observer, [&](Event& event, Observer& observer, bool shouldSend)
+  {
+    if (shouldSend)
+    {
+      auto finalEvent = event.heapClone();
+
+      auto dispatchBlock = [=, &observer]() mutable
+      {
+        auto all_observers_of_event = pImpl->observers.find(finalEvent->getId());
+        Assert("Subject", all_observers_of_event != pImpl->observers.end(),
+               "\nReason:\tattempted to notify observer for an unregistered event." <<
+               "\nSubject:\t" << *this <<
+               "\nEvent:\t" << *finalEvent);
+
+        auto observer_exists = all_observers_of_event->second.count(&observer);
+        Assert("Subject", observer_exists,
+               "\nReason:\tattempted to notify observer not registered for event." <<
+               "\nSubject:\t" << *this <<
+               "\nObserver:\t" << observer <<
+               "\nEvent:\t" << *finalEvent);
+
+        CLOG(TRACE, "Subject") << "Unicasting " << *finalEvent << " to " << observer;
+
+        observer.onEvent(*finalEvent);
+
+        delete finalEvent;
+
+        pImpl->eventQueue.pop();
+        if (!pImpl->eventQueue.empty())
+        {
+          pImpl->eventQueue.front()();
+        }
+      };
+
+      pImpl->eventQueue.push(dispatchBlock);
+      if (pImpl->eventQueue.size() == 1)
+      {
+        pImpl->eventQueue.front()();
+      }
+    }
+  });
+}
+
+void Subject::broadcast_(Event& event, BroadcastDelegate do_broadcast)
+{
+  do_broadcast(event, true);
+}
+
+void Subject::unicast_(Event& event, Observer& observer, UnicastDelegate do_unicast)
+{
+  do_unicast(event, observer, true);
 }
 
 void Subject::Registration::serialize(std::ostream& o) const

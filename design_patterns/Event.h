@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Serializable.h"
+#include "utilities/New.h"
 
 // Forward declarations
 class Subject;
@@ -54,5 +55,5 @@ EventID ConcreteEvent<T, B, eID>::getId() const
 template <class T, class B, EventID eID>
 Event* ConcreteEvent<T, B, eID>::heapClone() const
 {
-  return new T(static_cast<T const&>(*this));
+  return NEW T(static_cast<T const&>(*this));
 }

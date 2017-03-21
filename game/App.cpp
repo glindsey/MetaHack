@@ -42,7 +42,7 @@ App::App(sf::RenderWindow& app_window)
   :
   m_app_window{ app_window },
   m_app_texture{ NEW sf::RenderTexture() },
-  m_state_machine{ NEW StateMachine(*this, "app_state_machine") },
+  m_state_machine{ NEW StateMachine("app_state_machine", this) },
   m_is_running{ false },
   m_has_window_focus{ false }
 {
