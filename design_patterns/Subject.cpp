@@ -74,7 +74,7 @@ void Subject::addObserver(Observer& observer, EventID eventID, ObserverPriority 
 
     auto& prioritizedObservers = getObservers(eventID);
     auto insertResult = prioritizedObservers.insert({ priority, ObserversSet() });
-    auto observersSet = (insertResult.first)->second;
+    auto& observersSet = (insertResult.first)->second;
     observersSet.insert(&observer);
 
     Registration e;
