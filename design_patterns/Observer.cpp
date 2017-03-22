@@ -27,7 +27,7 @@ Observer::~Observer()
 {
   for (auto& observation : pImpl->observations)
   {
-    Assert("Observer", !observation.second,
+    Assert("ObserverPattern", !observation.second,
            "\nReason:\tobserver went out of scope while registered with at least one subject." <<
            "\nSubject:\t" << observation.first <<
            "\nObserver:\t" << *this);
@@ -56,7 +56,7 @@ void Observer::onEvent(Event const& event)
 
   if (!onEvent_(event))
   {
-    Assert("Observer", false,
+    Assert("ObserverPattern", false,
            "\nReason:\tobserver implicitly did not handle event." <<
            "\nSubject:\t" << *event.subject <<
            "\nObserver:\t" << *this <<

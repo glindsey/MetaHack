@@ -9,6 +9,13 @@
 
 // Forward declarations
 class Observer;
+using ObserverPriority = int32_t;
+using ObserversSet = std::unordered_set<Observer*>;
+using PrioritizedObservers = std::map<ObserverPriority, ObserversSet>;
+using PrioritizedObserversPair = std::pair<ObserverPriority, ObserversSet>;
+using EventObservers = std::unordered_map<EventID, PrioritizedObservers>;
+using EventObserversPair = std::pair<EventID, PrioritizedObservers>;
+using EventQueue = std::queue<std::function<void()>>;
 
 /// Subject declaration for observer pattern.
 /// Adapted from http://0xfede.io/2015/12/13/T-C++-ObserverPattern.html
@@ -25,7 +32,7 @@ public:
   Subject();
   virtual ~Subject();
 
-  void addObserver(Observer& observer, EventID eventID);
+  void addObserver(Observer& observer, EventID eventID, ObserverPriority priority = 0);
   void removeObserver(Observer& observer, EventID eventID = EventID::All);
 
   /// Return the set of events this Subject provides.
@@ -40,6 +47,11 @@ protected:
 
   void broadcast(Event& event);
   void unicast(Event & event, Observer & observer);
+
+  size_t getObserverCount(EventID eventID) const;
+  PrioritizedObservers& getObservers(EventID eventID);
+  PrioritizedObservers const& getObservers(EventID eventID) const;
+  bool Subject::observerIsObservingEvent(Observer& observer, EventID eventID) const;
 
   virtual void broadcast_(Event& event, BroadcastDelegate do_broadcast);
   virtual void unicast_(Event& event, Observer& observer, UnicastDelegate do_unicast);
