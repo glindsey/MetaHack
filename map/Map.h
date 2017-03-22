@@ -48,7 +48,7 @@ public:
   }
 
   /// Process all Entities on this map.
-  void process();
+  void process_entities();
 
   void update_lighting();
 

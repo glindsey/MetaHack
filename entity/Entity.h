@@ -196,14 +196,14 @@ public:
   Property get_modified_property(std::string key) const;
 
   /// Add a property modifier to this Entity.
-  /// @param  key               Name of property to modify.
-  /// @param  id                ID of Entity that is responsible for modifying it.
-  /// @param  expires_at        Game time that this modifier expires, or 0 if it never does
+  /// @param  key   Name of property to modify.
+  /// @param  id    ID of Entity that is responsible for modifying it.
+  /// @param  info  Info for this modifier, as a PropertyModifierInfo struct.
   ///
   /// @see ModifiablePropertyDictionary::add_modifier
   ///
   /// @return True if the function was added; false if it already existed.
-  bool add_modifier(std::string key, EntityId id, ElapsedTime expires_at = ElapsedTime(0));
+  bool add_modifier(std::string key, EntityId id, PropertyModifierInfo const& info);
 
   /// Remove all modifier functions for a given key and entity ID.
   /// @param  key               Name of property to modify.
@@ -612,7 +612,7 @@ private:
   ModifiablePropertyDictionary mutable m_properties;
 
   /// Reference to this Entity.
-  EntityId m_ref;
+  EntityId m_id;
 
   /// Reference to this Entity's location.
   EntityId m_location;

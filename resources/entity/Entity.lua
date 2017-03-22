@@ -65,39 +65,39 @@ function Entity.can_contain(id)
 end
 
 function Entity.can_have_action_drop_done_by(id)
-    return true, ActionResult.Boolean
+    return true, PropertyType.Boolean
 end
 
 function Entity.can_have_action_get_done_by(id)
-    return true, ActionResult.Boolean
+    return true, PropertyType.Boolean
 end
 
 function Entity.can_have_action_hurl_done_by(id)
-    return true, ActionResult.Boolean
+    return true, PropertyType.Boolean
 end
 
 function Entity.can_have_action_move_done_by(id)
-    return true, ActionResult.Boolean
+    return true, PropertyType.Boolean
 end
 
 function Entity.can_have_action_putinto_done_by(id)
-    return true, ActionResult.Boolean
+    return true, PropertyType.Boolean
 end
 
 function Entity.can_have_action_quaff_done_by(id)
-    return false, ActionResult.Boolean
+    return false, PropertyType.Boolean
 end
 
 function Entity.can_have_action_takeout_done_by(id)
-    return true, ActionResult.Boolean
+    return true, PropertyType.Boolean
 end
 
 function Entity.can_have_action_unwield_done_by(id)
-    return true, ActionResult.Boolean
+    return true, PropertyType.Boolean
 end
 
 function Entity.can_have_action_wield_done_by(id)
-    return true, ActionResult.Boolean
+    return true, PropertyType.Boolean
 end
 
 function Entity.get_tile_offset(id, frame)

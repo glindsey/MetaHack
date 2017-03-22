@@ -72,15 +72,15 @@ App::App(sf::RenderWindow& app_window)
   SET_UP_LOGGER("MapFactory", true);
   SET_UP_LOGGER("MapGenerator", true);
   SET_UP_LOGGER("Metadata", false);
-  SET_UP_LOGGER("ModifiablePropertyDictionary", true);
-  SET_UP_LOGGER("Property", true);
-  SET_UP_LOGGER("PropertyDictionary", true);
-  SET_UP_LOGGER("StateMachine", true);
+  SET_UP_LOGGER("ModifiablePropertyDictionary", false);
+  SET_UP_LOGGER("Observer", false);
+  SET_UP_LOGGER("Property", false);
+  SET_UP_LOGGER("PropertyDictionary", false);
+  SET_UP_LOGGER("StateMachine", false);
   SET_UP_LOGGER("StringDictionary", false);
   SET_UP_LOGGER("StringTransforms", false);
-  SET_UP_LOGGER("Subject", true);
+  SET_UP_LOGGER("Subject", false);
   SET_UP_LOGGER("TileSheet", true);
-  SET_UP_LOGGER("Observer", true);
 
 
   // First entity's first: load config settings.

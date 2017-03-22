@@ -5,19 +5,42 @@
 
 #include "properties/PropertyDictionary.h"
 
-/// Struct describing a property modifier.
-struct PropertyModifier
+// Forward declarations
+class EntityId;
+
+/// Struct with property modifier details.
+struct PropertyModifierInfo
 {
-  /// ID of the Entity responsible for doing the modification.
-  EntityId id;
+  PropertyModifierInfo(std::string responsible_group_,                       
+                       ElapsedTime expires_at_, 
+                       std::string reason_,
+                       std::string suffix_)
+    :
+    responsible_group{ responsible_group_ },
+    expires_at{ expires_at_ },
+    reason{ reason_ },
+    suffix{ suffix_ }
+  {}
+
+  /// The Lua class responsible for this modifier.
+  std::string responsible_group;
 
   /// Game time that this modifier expires at, or 0 if no expiration.
   ElapsedTime expires_at;
+
+  /// Optional string key to use as a "reason" description.
+  std::string reason;
+
+  /// Optional suffix to tack onto the name of the modifier function.
+  std::string suffix;
 };
 
 // Using aliases
-using ExpirationMap = std::unordered_map<EntityId, ElapsedTime>;
-using ModifierMap = std::unordered_map<std::string, ExpirationMap>;
+using ModifierEntityMap = std::unordered_map<EntityId, PropertyModifierInfo>;
+using ModifierMap = std::unordered_map<std::string, ModifierEntityMap>;
+
+using ModifierEntityPair = std::pair<EntityId, PropertyModifierInfo>;
+using ModifierInfo = std::pair<std::string, ModifierEntityMap>;
 
 /// Class that extends PropertyDictionary with the ability to have "modifier"
 /// functions that temporarily modify base properties.
@@ -26,94 +49,69 @@ class ModifiablePropertyDictionary
   public PropertyDictionary
 {
 public:
-  ModifiablePropertyDictionary();
+  ModifiablePropertyDictionary() = default;
+  ModifiablePropertyDictionary(EntityId owner);
 
   virtual ~ModifiablePropertyDictionary();
 
   /// Get a modified entry from the dictionary.
-  /// @param key  Key of the setting to retrieve.
+  /// @param name Name of the property to retrieve.
   /// @return     The entry requested.
   ///             If the entry does not exist, it is recalculated via the
   ///             property modifiers associated with it.
-  Property get_modified(std::string key)
-  {
-    // Recalculate if the setting doesn't exist.
-    if (m_modified_dictionary.count(key) == 0)
-    {
-      run_modifiers_for(key);
-    }
-
-    return m_modified_dictionary.at(key);
-  }
+  Property get_modified(std::string name);
 
   /// Overridden function to be called after a set() is performed.
   /// Erases the equivalent key in the modified dictionary.
-  /// @param key  Key that was set.
-  virtual void after_set_(std::string key);
+  /// @param name  Name of property that was set.
+  virtual void after_set_(std::string name);
 
-  /// Check if modifier functions exist for a particular key.
-  /// @return Number of modifiers for the key.
-  size_t has_modifier_for(std::string key) const;
+  /// Check if modifier functions exist for a particular property.
+  /// @param name  Name of property to check.
+  /// @return Number of modifiers for the property.
+  size_t has_modifier_for(std::string name) const;
 
   /// Check if a modifier function exists for a particular key and ID.
+  /// @param name Name of property to check.
+  /// @param id   ID of the Entity responsible for the modifier.
   /// @return Number of modifiers for the key and ID. (Should be 0 or 1.)
-  size_t has_modifier_for(std::string key, EntityId id) const;
+  size_t has_modifier_for(std::string name, EntityId id) const;
 
   /// Add a modifier function for a given property and ID.
-  /// @param  key               Name of property to add a modifier function for.
-  /// @param  id                EntityId of the Entity responsible for this function.
-  /// @param  expiration_ticks  Number of ticks until modifier expires, or 0 if it
-  ///                           never expires. Defaults to 0.
+  /// @param  name        Name of property to add a modifier function for.
+  /// @param  id          EntityId of the Entity responsible for this function.
+  /// @param  info        Info regarding this modifier, in a PropertyModifierInfo struct.
   ///
-  /// The resulting function should be named "modify_property_XXX"
-  /// where XXX is the name of the property to modify, and it should be
-  /// a member of a Entity-derived Lua class. It should take two parameters:
-  /// The ID of the Entity being affected, and the property value prior to
-  /// modification; and it should return the property value after modification.
+  /// @see LuaObject::call_modifier_function
   ///
   /// If a modifier function already exists for a given property and ID, no
   /// new one will be added.
   ///
   /// @return True if the function was added; false if it already existed.
-  bool add_modifier(std::string key, EntityId id, ElapsedTime expires_at = ElapsedTime(0));
+  bool add_modifier(std::string name, 
+                    EntityId id, 
+                    PropertyModifierInfo const& info);
 
-  /// Remove all modifier functions for a given key.
+  /// Remove all modifier functions for a given property.
+  /// @param name   Name of the property to remove modifiers from.
   /// @return The number of modifiers erased.
-  size_t remove_modifier(std::string key);
+  size_t remove_all_modifiers(std::string name);
 
   /// Remove all modifier functions for a given key and entity ID.
+  /// @param name   Name of the property to remove modifiers from.
+  /// @param id     Entity responsible for the modifier.
   /// @return The number of modifiers erased.
-  size_t remove_modifier(std::string key, EntityId id);
+  size_t remove_modifier(std::string name, EntityId id);
 
   /// Given a current game time, remove all expired modifiers for a key.
-  void remove_expired_modifiers(std::string key, ElapsedTime current_game_time);
+  /// @param name               Name of the property to remove modifiers from.
+  /// @param current_game_time  The elapsed game time, in ticks.
+  void remove_expired_modifiers(std::string name, ElapsedTime current_game_time);
 
   /// Run all the modifier functions for a property given a value to modify.
-  /// @param  key     Property to run the modifiers for.
+  /// @param  name  Property to run the modifiers for.
   /// @return The resulting value.
-  void run_modifiers_for(std::string key)
-  {
-    if (m_modified_dictionary.count(key) != 0)
-    {
-      m_modified_dictionary.erase(key);
-    }
-
-    Property value = get(key);
-    /// @todo Call the appropriate modifier functions.
-    auto& modifiers = m_modifiers[key];
-
-    for (auto& modifier : modifiers)
-    {
-      //value = Lua::call_modifier_function<T>(key, id, value);
-    }
-
-    m_modified_dictionary.emplace(std::make_pair(key, value));
-  }
-
-  /// Add/subtract ticks from all modifier expiration_ticks, if applicable.
-  /// Upon expiration a modifier will be automatically removed.
-  /// @param  ticks   Number of ticks to add/subtract.
-  void add_ticks(std::string key, ElapsedTime ticks);
+  void run_modifiers_for(std::string name);
 
   /// Overloaded equality operator.
   bool operator==(ModifiablePropertyDictionary const& other) const;

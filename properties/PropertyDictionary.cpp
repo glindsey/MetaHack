@@ -4,9 +4,10 @@
 
 #include "properties/Property.h"
 
-PropertyDictionary::PropertyDictionary()
-{
-}
+PropertyDictionary::PropertyDictionary(EntityId owner)
+  :
+  m_owner{ owner }
+{}
 
 PropertyDictionary::~PropertyDictionary()
 {}
@@ -69,6 +70,11 @@ PropertyMap& PropertyDictionary::get_dictionary()
 
 void PropertyDictionary::after_set_(std::string key)
 {
+}
+
+EntityId PropertyDictionary::get_owner()
+{
+  return m_owner;
 }
 
 /// @todo Verify that this is correct. I *think* it is but it has not been tested.

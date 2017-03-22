@@ -368,6 +368,7 @@ namespace LuaEntityFunctions
   int thing_add_property_modifier(lua_State* L)
   {
     int num_args = lua_gettop(L);
+    bool result = false;
 
     if ((num_args < 3) || (num_args > 4))
     {
@@ -380,7 +381,8 @@ namespace LuaEntityFunctions
     EntityId thing_doing_the_modifying = EntityId(lua_tointeger(L, 3));
     unsigned int expires_at = (num_args == 4) ? static_cast<unsigned int>(lua_tointeger(L, 4)) : 0;
 
-    bool result = thing_being_modified->add_modifier(key, thing_doing_the_modifying, ElapsedTime(expires_at));
+    /// @todo FIX ME
+    //result = thing_being_modified->add_modifier(key, thing_doing_the_modifying, ElapsedTime(expires_at));
 
     lua_pushboolean(L, static_cast<int>(result));
 

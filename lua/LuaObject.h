@@ -190,6 +190,25 @@ public:
   /// @param value    Value to set intrinsic to.
   void set_group_intrinsic(std::string group, std::string name, Property value);
 
+  /// Call a Lua property modifier function.
+  /// Calls the Lua function `GROUP:modify_property_PROP[_SFX]()` where:
+  ///   * GROUP is the Lua class responsible for the modifier
+  ///   * PROP is the name of the property to be affected
+  ///   * SFX is an optional suffix
+  ///
+  /// The function takes three arguments:
+  ///   * The ID of the Entity the property belongs to
+  ///   * The ID of the Entity affecting the property
+  ///   * The value of the property before being modified.
+  ///
+  /// It returns the modified value of the property.
+  Property call_modifier_function(std::string property_name,
+                                  Property unmodified_value,
+                                  EntityId affected_id,
+                                  std::string responsible_group, 
+                                  EntityId responsible_id,
+                                  std::string suffix = "");
+
   /// Return the Lua state.
   /// @todo For cleanliness, this should not be exposed; all Lua interaction
   ///       should go through the Lua class.

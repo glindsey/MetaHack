@@ -32,12 +32,12 @@ Metadata const & Entity::get_metadata() const
   return m_metadata;
 }
 
-Entity::Entity(GameState& game, Metadata& metadata, EntityId ref)
+Entity::Entity(GameState& game, Metadata& metadata, EntityId id)
   :
   m_game{ game },
   m_metadata{ metadata },
-  m_properties{},
-  m_ref{ ref },
+  m_properties{ id },
+  m_id{ id },
   m_location{ EntityId::Mu() },
   m_map_tile{ nullptr },
   m_inventory{ Inventory() },
@@ -52,12 +52,12 @@ Entity::Entity(GameState& game, Metadata& metadata, EntityId ref)
   initialize();
 }
 
-Entity::Entity(GameState& game, MapTile* map_tile, Metadata& metadata, EntityId ref)
+Entity::Entity(GameState& game, MapTile* map_tile, Metadata& metadata, EntityId id)
   :
   m_game{ game },
   m_metadata{ metadata },
-  m_properties{},
-  m_ref{ ref },
+  m_properties{ id },
+  m_id{ id },
   m_location{ EntityId::Mu() },
   m_map_tile{ map_tile },
   m_inventory{ Inventory() },
@@ -77,7 +77,7 @@ Entity::Entity(Entity const& original, EntityId ref)
   m_game{ original.m_game },
   m_metadata{ original.m_metadata },
   m_properties{ original.m_properties },
-  m_ref{ ref },
+  m_id{ ref },
   m_location{ original.m_location },
   m_map_tile{ original.m_map_tile },
   m_inventory{ Inventory() },             // don't copy
@@ -111,7 +111,7 @@ Entity::~Entity()
 void Entity::queue_action(std::unique_ptr<Actions::Action> action)
 {
   CLOG(TRACE, "Entity") << "Entity " <<
-    get_id() << "( " <<
+    get_id() << " (" <<
     get_type() << "): Queuing Action " <<
     action->get_type();
 
@@ -127,7 +127,7 @@ void Entity::queue_action(Actions::Action * p_action)
 void Entity::queue_involuntary_action(std::unique_ptr<Actions::Action> action)
 {
   CLOG(TRACE, "Entity") << "Entity " <<
-    get_id() << "( " <<
+    get_id() << " (" <<
     get_type() << "): Queuing Involuntary Action " <<
     action->get_type();
 
@@ -142,7 +142,7 @@ void Entity::queue_involuntary_action(Actions::Action * p_action)
 
 bool Entity::action_is_pending() const
 {
-  return !voluntary_action_is_pending() || !involuntary_action_is_pending();
+  return voluntary_action_is_pending() || involuntary_action_is_pending();
 }
 
 bool Entity::voluntary_action_is_pending() const
@@ -513,7 +513,7 @@ Property Entity::get_bodypart_plural(BodyPart part) const
 
 bool Entity::is_player() const
 {
-  return (GAME.get_player() == m_ref);
+  return (GAME.get_player() == m_id);
 }
 
 std::string const& Entity::get_type() const
@@ -602,9 +602,9 @@ Property Entity::get_modified_property(std::string key) const
   return get_modified_property(key, Property());
 }
 
-bool Entity::add_modifier(std::string key, EntityId id, ElapsedTime expires_at)
+bool Entity::add_modifier(std::string key, EntityId id, PropertyModifierInfo const& info)
 {
-  return m_properties.add_modifier(key, id, expires_at);
+  return m_properties.add_modifier(key, id, info);
 }
 
 size_t Entity::remove_modifier(std::string key, EntityId id)
@@ -624,14 +624,14 @@ void Entity::set_quantity(unsigned int quantity)
 
 EntityId Entity::get_id() const
 {
-  return m_ref;
+  return m_id;
 }
 
 EntityId Entity::get_root_location() const
 {
   if (m_location == EntityId::Mu())
   {
-    return m_ref;
+    return m_id;
   }
   else
   {
@@ -778,17 +778,17 @@ bool Entity::move_into(EntityId new_location)
     return true;
   }
 
-  ActionResult can_contain = new_location->can_contain(m_ref);
+  ActionResult can_contain = new_location->can_contain(m_id);
 
   switch (can_contain)
   {
     case ActionResult::Success:
-      if (new_location->get_inventory().add(m_ref))
+      if (new_location->get_inventory().add(m_id))
       {
         // Try to lock our old location.
         if (m_location != EntityId::Mu())
         {
-          m_location->get_inventory().remove(m_ref);
+          m_location->get_inventory().remove(m_id);
         }
 
         // Set the location to the new location.
@@ -1059,13 +1059,13 @@ std::string Entity::get_identifying_string(ArticleChoice articles,
 
 bool Entity::is_third_person()
 {
-  return (GAME.get_player() == m_ref) || (get_base_property("quantity").as<uint32_t>() > 1);
+  return (GAME.get_player() == m_id) || (get_base_property("quantity").as<uint32_t>() > 1);
 }
 
 std::string const& Entity::choose_verb(std::string const& verb12,
                                         std::string const& verb3)
 {
-  if ((GAME.get_player() == m_ref) || (get_base_property("quantity").as<uint32_t>() > 1))
+  if ((GAME.get_player() == m_id) || (get_base_property("quantity").as<uint32_t>() > 1))
   {
     return verb12;
   }
@@ -1108,7 +1108,7 @@ std::string const& Entity::get_possessive_pronoun() const
 
 std::string Entity::get_possessive_of(std::string owned, std::string adjectives)
 {
-  if (GAME.get_player() == m_ref)
+  if (GAME.get_player() == m_id)
   {
     return StringTransforms::make_string_numerical_tokens_only(tr("PRONOUN_POSSESSIVE_YOU"), { adjectives, owned });
   }
@@ -1280,7 +1280,7 @@ void Entity::destroy()
 
   if (old_location != EntityId::Mu())
   {
-    old_location->get_inventory().remove(m_ref);
+    old_location->get_inventory().remove(m_id);
   }
 
   //notifyObservers(Event::Updated);
@@ -1691,6 +1691,7 @@ std::unordered_set<EventID> Entity::registeredEvents() const
 bool Entity::_process_own_involuntary_actions()
 {
   int counter_busy = get_base_property("counter_busy").as<int32_t>();
+  bool entity_updated = false;
 
   // Is this an entity that is now dead?
   if (is_subtype_of("DynamicEntity") && (get_modified_property("hp").as<int32_t>() <= 0))
@@ -1705,22 +1706,26 @@ bool Entity::_process_own_involuntary_actions()
     }
   }
 
-  // If actions are pending...
-  if (!m_pending_voluntary_actions.empty())
+  // While actions are pending...
+  while (!m_pending_involuntary_actions.empty())
   {
     // Process the front action.
+    // @todo Find a way to update the entity_updated variable.
     std::unique_ptr<Actions::Action>& action = m_pending_involuntary_actions.front();
     bool action_done = action->process({});
     if (action_done)
     {
       CLOG(TRACE, "Entity") << "Entity " <<
-        get_id() << "( " <<
+        get_id() << " (" <<
         get_type() << "): Involuntary Action " <<
         action->get_type() << " is done, popping";
 
       m_pending_involuntary_actions.pop_front();
     }
+  } // end while (actions pending)
 
+  if (entity_updated)
+  {
     /// @todo This needs to be changed so it only is called if the Action
     ///       materially affected the entity in some way. Two ways to do this
     ///       that I can see:
@@ -1730,8 +1735,7 @@ bool Entity::_process_own_involuntary_actions()
     ///            was modified as a result. This could be done by changing
     ///            the return type from a bool to a struct of some sort.
     //notifyObservers(Event::Updated);
-
-  } // end if (actions pending)
+  }
 
   return true;
 }
@@ -1759,37 +1763,48 @@ bool Entity::_process_own_voluntary_actions()
     // Decrement busy counter.
     add_to_base_property("counter_busy", Property::from(-1));
   }
-  // Otherwise if actions are pending...
+  // Otherwise if there are pending actions...
   else if (!m_pending_voluntary_actions.empty())
   {
-    // Process the front action.
-    std::unique_ptr<Actions::Action>& action = m_pending_voluntary_actions.front();
-    bool action_done = action->process({});
-    if (action_done)
-    {
-      CLOG(TRACE, "Entity") << "Entity " <<
-        get_id() << "( " <<
-        get_type() << "): Action " <<
-        action->get_type() << " is done, popping";
+    bool entity_updated = false;
 
-      m_pending_voluntary_actions.pop_front();
+    // While actions are pending and we're not busy...
+    while (!m_pending_voluntary_actions.empty() && counter_busy == 0)
+    {
+      // Process the front action.
+      // @todo Find a way to update the entity_updated variable.
+      std::unique_ptr<Actions::Action>& action = m_pending_voluntary_actions.front();
+      bool action_done = action->process({});
+      if (action_done)
+      {
+        CLOG(TRACE, "Entity") << "Entity " <<
+          get_id() << " (" <<
+          get_type() << "): Action " <<
+          action->get_type() << " is done, popping";
+
+        m_pending_voluntary_actions.pop_front();
+      }
+    } // end while (actions pending and not busy)
+
+    if (entity_updated)
+    {
+      /// @todo This needs to be changed so it only is called if the Action
+      ///       materially affected the entity in some way. Two ways to do this
+      ///       that I can see:
+      ///         1) The Action calls notifyObservers. Requires the Action
+      ///            to have access to that method; right now it doesn't.
+      ///         2) The Action returns some sort of indication that the Entity
+      ///            was modified as a result. This could be done by changing
+      ///            the return type from a bool to a struct of some sort.
+      //notifyObservers(Event::Updated);
     }
 
-    /// @todo This needs to be changed so it only is called if the Action
-    ///       materially affected the entity in some way. Two ways to do this
-    ///       that I can see:
-    ///         1) The Action calls notifyObservers. Requires the Action
-    ///            to have access to that method; right now it doesn't.
-    ///         2) The Action returns some sort of indication that the Entity
-    ///            was modified as a result. This could be done by changing
-    ///            the return type from a bool to a struct of some sort.
-    //notifyObservers(Event::Updated);
-
   } // end if (actions pending)
-  // Otherwise if there are no other pending actions...
+  // Otherwise if there are no pending actions...
   else
   {
-    // If entity is not the player, call the Lua process function on this Entity.
+    // If entity is not the player, call the Lua process function on this 
+    // Entity, which runs the AI and may queue new actions.
     if (!is_player())
     {
       ActionResult result = call_lua_function("process", {}).as<ActionResult>();

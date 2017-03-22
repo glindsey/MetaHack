@@ -138,7 +138,7 @@ bool Map::set_start_coords(IntVec2 start_coords)
   return false;
 }
 
-void Map::process()
+void Map::process_entities()
 {
   for (int y = 0; y < m_map_size.y; ++y)
   {

@@ -106,7 +106,9 @@ bool GameState::process_tick()
 {
   EntityId player = get_player();
 
-  if (player->action_is_pending() || player->action_is_in_progress())
+  auto player_action_pending = player->action_is_pending();
+  auto player_action_in_progress = player->action_is_in_progress();
+  if (player_action_pending || player_action_in_progress)
   {
     // QUESTION: Do we want to update all Entities, PERIOD?  In other words, should
     //           other maps keep playing themselves if the player is not on them?
@@ -118,7 +120,7 @@ bool GameState::process_tick()
     Map& current_map = GAME.get_maps().get(current_map_id);
 
     // Process everything on the map, and increment game clock.
-    current_map.process();
+    current_map.process_entities();
     increment_game_clock(ElapsedTime(1));
 
     // If player can see the map...

@@ -4,12 +4,16 @@
 
 #include "properties/Property.h"
 
+// Forward declarations
+class EntityId;
+
 /// Class that handles a dictionary that associates data of various types
 /// with keys.
 class PropertyDictionary
 {
 public:
-  PropertyDictionary();
+  PropertyDictionary() = default;
+  PropertyDictionary(EntityId owner);
 
   virtual ~PropertyDictionary();
 
@@ -46,6 +50,9 @@ public:
   /// @param key  Key that was set.
   virtual void after_set_(std::string key);
 
+  /// Get the owner of this dictionary, if any.
+  EntityId get_owner();
+
   /// Overloaded equality operator.
   bool operator==(PropertyDictionary const& other) const;
 
@@ -62,4 +69,7 @@ protected:
 private:
   /// The base property dictionary.
   PropertyMap m_dictionary;
+
+  /// The owner of this dictionary, if any.
+  EntityId m_owner;
 };
