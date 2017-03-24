@@ -5,7 +5,7 @@
 
 IStringDictionary::~IStringDictionary() {}
 
-IStringDictionary* IStringDictionary::getNull()
+IStringDictionary* IStringDictionary::getDefault()
 {
   return NEW NullStringDictionary();
 }

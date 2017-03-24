@@ -7,7 +7,7 @@ public:
   virtual ~IStringDictionary();
 
   /// Return a Null Object that implements this interface.
-  static IStringDictionary* getNull();
+  static IStringDictionary* getDefault();
 
   /// Add the strings in the specified file to the dictionary.
   /// The extension ".json" will be appended to the filename.

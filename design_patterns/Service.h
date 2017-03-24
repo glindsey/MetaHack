@@ -3,8 +3,9 @@
 #include <memory>
 
 /// Static class which provides a particular service to the application.
-/// The Service template parameter must contain a getNull() static method that
-/// returns a Null Object that implements the interface.
+/// The Service template parameter must contain a getDefault() static method that
+/// returns a default object (usually a Null Object) that implements the interface.
+/// (Could enforce this with some fancy SFINAE magic but it's probably not worth it.)
 template <class ServiceInterface>
 class Service final
 {
@@ -43,7 +44,7 @@ private:
 
     if (!service)
     {
-      service.reset(ServiceInterface::getNull());
+      service.reset(ServiceInterface::getDefault());
     }
 
     return *(service.get());

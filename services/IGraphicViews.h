@@ -16,7 +16,7 @@ public:
   virtual ~IGraphicViews();
 
   /// Return a Null Object that implements this interface.
-  static IGraphicViews* getNull();
+  static IGraphicViews* getDefault();
 
   /// Return an Entity view.
   /// @warning The caller assumes ownership of the created view!

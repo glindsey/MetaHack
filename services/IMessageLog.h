@@ -27,7 +27,7 @@ public:
   virtual ~IMessageLog() = 0;
 
   /// Return a Null Object that implements this interface.
-  static IMessageLog* getNull();
+  static IMessageLog* getDefault();
 
   /// Add a message to the message log.
   /// The message added is automatically capitalized if it isn't already.

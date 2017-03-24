@@ -6,7 +6,7 @@
 IGraphicViews::~IGraphicViews()
 {}
 
-IGraphicViews* IGraphicViews::getNull()
+IGraphicViews* IGraphicViews::getDefault()
 {
   return NEW NullGraphicViews();
 }

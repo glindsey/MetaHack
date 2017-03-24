@@ -5,7 +5,7 @@
 
 IConfigSettings::~IConfigSettings() {}
 
-IConfigSettings* IConfigSettings::getNull()
+IConfigSettings* IConfigSettings::getDefault()
 {
   return NEW FallbackConfigSettings();
 }

@@ -11,6 +11,6 @@ public:
   virtual ~IConfigSettings();
 
   /// Return a Null Object that implements this interface.
-  static IConfigSettings* getNull();
+  static IConfigSettings* getDefault();
 
 };

@@ -6,7 +6,7 @@
 IMessageLog::~IMessageLog()
 {}
 
-IMessageLog* IMessageLog::getNull()
+IMessageLog* IMessageLog::getDefault()
 {
   return NEW NullMessageLog();
 }
