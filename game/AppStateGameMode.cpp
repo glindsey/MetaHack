@@ -20,8 +20,8 @@
 #include "services/IGraphicViews.h"
 #include "services/IStringDictionary.h"
 #include "services/MessageLog.h"
-#include "windows/MessageLogView.h"
-#include "windows/StatusArea.h"
+#include "game_windows/MessageLogView.h"
+#include "game_windows/StatusArea.h"
 #include "utilities/StringTransforms.h"
 
 /// Actions that can be performed.

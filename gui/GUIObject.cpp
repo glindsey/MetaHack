@@ -477,25 +477,25 @@ namespace metagui
       (point.y >= top) && (point.y <= bottom));
   }
 
-  Event::Result Object::handleGUIEventPreChildren(EventDragFinished& event)
+  GUIEvent::Result Object::handleGUIEventPreChildren(GUIEventDragFinished& event)
   {
-    Event::Result result = handleGUIEventPreChildren_(event);
+    GUIEvent::Result result = handleGUIEventPreChildren_(event);
 
     return result;
   }
 
-  Event::Result Object::handleGUIEventPostChildren(EventDragFinished& event)
+  GUIEvent::Result Object::handleGUIEventPostChildren(GUIEventDragFinished& event)
   {
     m_being_dragged = false;
 
-    Event::Result result = handleGUIEventPostChildren_(event);
+    GUIEvent::Result result = handleGUIEventPostChildren_(event);
 
     return result;
   }
 
-  Event::Result Object::handleGUIEventPreChildren(EventDragStarted& event)
+  GUIEvent::Result Object::handleGUIEventPreChildren(GUIEventDragStarted& event)
   {
-    Event::Result result;
+    GUIEvent::Result result;
 
     if (containsPoint(event.start_location))
     {
@@ -504,15 +504,15 @@ namespace metagui
     else
     {
       // We "Ignore" the event so it is not passed to children.
-      result = Event::Result::Ignored;
+      result = GUIEvent::Result::Ignored;
     }
 
     return result;
   }
 
-  Event::Result Object::handleGUIEventPostChildren(EventDragStarted& event)
+  GUIEvent::Result Object::handleGUIEventPostChildren(GUIEventDragStarted& event)
   {
-    Event::Result result;
+    GUIEvent::Result result;
 
     if (containsPoint(event.start_location))
     {
@@ -525,23 +525,23 @@ namespace metagui
     else
     {
       // We "Ignore" the event so it is not passed to children.
-      result = Event::Result::Ignored;
+      result = GUIEvent::Result::Ignored;
     }
 
     return result;
   }
 
-  Event::Result Object::handleGUIEventPreChildren(EventDragging& event)
+  GUIEvent::Result Object::handleGUIEventPreChildren(GUIEventDragging& event)
   {
     // We "Acknowledge" the event so it is passed to children.
     return handleGUIEventPreChildren_(event);
   }
 
-  Event::Result Object::handleGUIEventPostChildren(EventDragging& event)
+  GUIEvent::Result Object::handleGUIEventPostChildren(GUIEventDragging& event)
   {
-    Event::Result result = handleGUIEventPostChildren_(event);
+    GUIEvent::Result result = handleGUIEventPostChildren_(event);
 
-    if (result != Event::Result::Handled)
+    if (result != GUIEvent::Result::Handled)
     {
       // If we got here, all children ignored the event (or there are no
       // children), and there's no subclass override -- so we want to 
@@ -552,45 +552,52 @@ namespace metagui
         auto new_coords = m_absolute_location_drag_start + move_amount;
 
         setAbsoluteLocation(new_coords);
-        result = Event::Result::Handled;
+        result = GUIEvent::Result::Handled;
       }
       else
       {
-        result = Event::Result::Ignored;
+        result = GUIEvent::Result::Ignored;
       }
     }
 
     return result;
   }
 
-  Event::Result Object::handleGUIEventPreChildren(EventKeyPressed& event)
+  GUIEvent::Result Object::handleGUIEventPreChildren(GUIEventKeyPressed& event)
   {
     return handleGUIEventPreChildren_(event);
   }
 
-  Event::Result Object::handleGUIEventPostChildren(EventKeyPressed& event)
+  GUIEvent::Result Object::handleGUIEventPostChildren(GUIEventKeyPressed& event)
   {
     return handleGUIEventPostChildren_(event);
   }
 
-  Event::Result Object::handleGUIEventPreChildren(EventMouseDown& event)
+  GUIEvent::Result Object::handleGUIEventPreChildren(GUIEventMouseDown& event)
   {
     return handleGUIEventPreChildren_(event);
   }
 
-  Event::Result Object::handleGUIEventPostChildren(EventMouseDown& event)
+  GUIEvent::Result Object::handleGUIEventPostChildren(GUIEventMouseDown& event)
   {
     return handleGUIEventPostChildren_(event);
   }
 
-  Event::Result Object::handleGUIEventPreChildren(EventResized& event)
+  GUIEvent::Result Object::handleGUIEventPreChildren(GUIEventResized& event)
   {
     return handleGUIEventPreChildren_(event);
   }
 
-  Event::Result Object::handleGUIEventPostChildren(EventResized& event)
+  GUIEvent::Result Object::handleGUIEventPostChildren(GUIEventResized& event)
   {
     return handleGUIEventPostChildren_(event);
+  }
+
+  std::unordered_set<EventID> Object::registeredEvents() const
+  {
+    auto events = Subject::registeredEvents();
+    /// @todo Add our own events here
+    return events;
   }
 
   Object * Object::getParent()
@@ -638,64 +645,64 @@ namespace metagui
     // Default behavior is to do nothing.
   }
 
-  Event::Result Object::handleGUIEventPreChildren_(EventDragFinished& event)
+  GUIEvent::Result Object::handleGUIEventPreChildren_(GUIEventDragFinished& event)
   {
-    return Event::Result::Acknowledged;
+    return GUIEvent::Result::Acknowledged;
   }
 
-  Event::Result Object::handleGUIEventPostChildren_(EventDragFinished& event)
+  GUIEvent::Result Object::handleGUIEventPostChildren_(GUIEventDragFinished& event)
   {
-    return Event::Result::Acknowledged;
+    return GUIEvent::Result::Acknowledged;
   }
 
-  Event::Result Object::handleGUIEventPreChildren_(EventDragStarted& event)
+  GUIEvent::Result Object::handleGUIEventPreChildren_(GUIEventDragStarted& event)
   {
-    return Event::Result::Acknowledged;
+    return GUIEvent::Result::Acknowledged;
   }
 
-  Event::Result Object::handleGUIEventPostChildren_(EventDragStarted& event)
+  GUIEvent::Result Object::handleGUIEventPostChildren_(GUIEventDragStarted& event)
   {
-    return Event::Result::Acknowledged;
+    return GUIEvent::Result::Acknowledged;
   }
 
-  Event::Result Object::handleGUIEventPreChildren_(EventDragging& event)
+  GUIEvent::Result Object::handleGUIEventPreChildren_(GUIEventDragging& event)
   {
-    return Event::Result::Acknowledged;
+    return GUIEvent::Result::Acknowledged;
   }
 
-  Event::Result Object::handleGUIEventPostChildren_(EventDragging& event)
+  GUIEvent::Result Object::handleGUIEventPostChildren_(GUIEventDragging& event)
   {
-    return Event::Result::Acknowledged;
+    return GUIEvent::Result::Acknowledged;
   }
 
-  Event::Result Object::handleGUIEventPreChildren_(EventKeyPressed& event)
+  GUIEvent::Result Object::handleGUIEventPreChildren_(GUIEventKeyPressed& event)
   {
-    return Event::Result::Acknowledged;
+    return GUIEvent::Result::Acknowledged;
   }
 
-  Event::Result Object::handleGUIEventPostChildren_(EventKeyPressed& event)
+  GUIEvent::Result Object::handleGUIEventPostChildren_(GUIEventKeyPressed& event)
   {
-    return Event::Result::Acknowledged;
+    return GUIEvent::Result::Acknowledged;
   }
 
-  Event::Result Object::handleGUIEventPreChildren_(EventMouseDown& event)
+  GUIEvent::Result Object::handleGUIEventPreChildren_(GUIEventMouseDown& event)
   {
-    return Event::Result::Acknowledged;
+    return GUIEvent::Result::Acknowledged;
   }
 
-  Event::Result Object::handleGUIEventPostChildren_(EventMouseDown& event)
+  GUIEvent::Result Object::handleGUIEventPostChildren_(GUIEventMouseDown& event)
   {
-    return Event::Result::Acknowledged;
+    return GUIEvent::Result::Acknowledged;
   }
 
-  Event::Result Object::handleGUIEventPreChildren_(EventResized& event)
+  GUIEvent::Result Object::handleGUIEventPreChildren_(GUIEventResized& event)
   {
-    return Event::Result::Acknowledged;
+    return GUIEvent::Result::Acknowledged;
   }
 
-  Event::Result Object::handleGUIEventPostChildren_(EventResized& event)
+  GUIEvent::Result Object::handleGUIEventPostChildren_(GUIEventResized& event)
   {
-    return Event::Result::Acknowledged;
+    return GUIEvent::Result::Acknowledged;
   }
 
   void Object::handleSetFlag_(std::string name, bool enabled)
@@ -703,5 +710,10 @@ namespace metagui
 
   void Object::handleParentSizeChanged_(UintVec2 parent_size)
   {
+  }
+
+  EventResult Object::onEvent_(Event const& event)
+  {
+    return{ EventHandled::Yes, ContinueBroadcasting::Yes };
   }
 }; // end namespace metagui

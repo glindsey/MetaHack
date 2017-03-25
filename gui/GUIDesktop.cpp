@@ -24,7 +24,7 @@ namespace metagui
     {
       case sf::Event::EventType::KeyPressed:
       {
-        EventKeyPressed event{ sfml_event.key };
+        GUIEventKeyPressed event{ sfml_event.key };
         handleGUIEvent(event);
         sfml_result = SFMLEventResult::Handled;
       }
@@ -33,7 +33,7 @@ namespace metagui
       case sf::Event::EventType::Resized:
       {
         setSize({ sfml_event.size.width, sfml_event.size.height });
-        EventResized event{ sfml_event.size };
+        GUIEventResized event{ sfml_event.size };
         handleGUIEvent(event);
         sfml_result = SFMLEventResult::Acknowledged;
       }
@@ -48,7 +48,7 @@ namespace metagui
         button.location = point;
         button.elapsed.restart();
 
-        EventMouseDown event{ sfml_event.mouseButton.button, point };
+        GUIEventMouseDown event{ sfml_event.mouseButton.button, point };
         handleGUIEvent(event);
 
         /// @todo Handle click, double-click, etc.
@@ -68,7 +68,7 @@ namespace metagui
         if (button.dragging)
         {
           button.dragging = false;
-          EventDragFinished event{ sfml_event.mouseButton.button, point };
+          GUIEventDragFinished event{ sfml_event.mouseButton.button, point };
           handleGUIEvent(event);
         }
 
@@ -89,16 +89,16 @@ namespace metagui
 
           if ((button_info.dragging == true) ||
             (button_info.pressed &&
-             distance(point, button_info.location) > EventDragging::drag_threshold))
+             distance(point, button_info.location) > GUIEventDragging::drag_threshold))
           {
             if (button_info.dragging != true)
             {
               button_info.dragging = true;
-              EventDragStarted event{ static_cast<sf::Mouse::Button>(index), button_info.location };
+              GUIEventDragStarted event{ static_cast<sf::Mouse::Button>(index), button_info.location };
               handleGUIEvent(event);
             }
 
-            EventDragging event{ static_cast<sf::Mouse::Button>(index), point };
+            GUIEventDragging event{ static_cast<sf::Mouse::Button>(index), point };
             handleGUIEvent(event);
 
             sfml_result = SFMLEventResult::Handled;
@@ -122,7 +122,7 @@ namespace metagui
             if (button.dragging)
             {
               button.dragging = false;
-              EventDragFinished event{ sfml_event.mouseButton.button, button.location };
+              GUIEventDragFinished event{ sfml_event.mouseButton.button, button.location };
               handleGUIEvent(event);
             }
           }
@@ -140,10 +140,10 @@ namespace metagui
 
   // === PROTECTED METHODS ======================================================
 
-  Event::Result Desktop::handleGUIEventPreChildren_(EventResized& event)
+  GUIEvent::Result Desktop::handleGUIEventPreChildren_(GUIEventResized& event)
   {
     setSize({ event.new_size.x, event.new_size.y });
-    return Event::Result::Acknowledged;
+    return GUIEvent::Result::Acknowledged;
   }
 
   void Desktop::drawPreChildren_(sf::RenderTexture& texture, int frame)

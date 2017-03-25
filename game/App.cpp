@@ -13,7 +13,7 @@
 #include "state_machine/StateMachine.h"
 #include "tilesheet/TileSheet.h"
 #include "types/SFMLEventResult.h"
-#include "windows/MessageLogView.h"
+#include "game_windows/MessageLogView.h"
 
 // Global declarations
 std::unique_ptr<App> app_;

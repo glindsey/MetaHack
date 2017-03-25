@@ -13,7 +13,7 @@ public:
   KeyBuffer();
   virtual ~KeyBuffer();
 
-  virtual metagui::Event::Result KeyBuffer::handle_key_press(metagui::EventKeyPressed& event) override;
+  virtual metagui::GUIEvent::Result KeyBuffer::handle_key_press(metagui::GUIEventKeyPressed& event) override;
   virtual size_t get_cursor_position() const override;
   virtual void set_cursor_position(size_t position) override;
   virtual std::string const& get_buffer() const override;
@@ -29,7 +29,7 @@ public:
 
 protected:
   /// Helper function to insert a character depending on shift.
-  metagui::Event::Result insertCharacter(metagui::EventKeyPressed& event, char shifted, char unshifted);
+  metagui::GUIEvent::Result insertCharacter(metagui::GUIEventKeyPressed& event, char shifted, char unshifted);
 
   /// Set character at cursor location, or insert/replace if string is not long enough.
   void set_character(char const c);

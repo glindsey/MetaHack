@@ -6,6 +6,8 @@
 #include "GUIEvent.h"
 #include "types/ISFMLEventHandler.h"
 
+#include "Observer.h"
+#include "Subject.h"
 #include "Visitor.h"
 
 namespace metagui
@@ -53,7 +55,7 @@ namespace metagui
 
   /// Virtual superclass of all GUI objects on screen.
   /// @todo Should child objects store Z-order?
-  class Object
+  class Object : public Subject, public Observer
   {
   public:
     explicit Object(std::string name, IntVec2 location = IntVec2(0, 0), UintVec2 size = UintVec2(0, 0));
@@ -178,9 +180,9 @@ namespace metagui
     /// returns Handled. If the event still isn't Handled after all children
     /// have seen it, handle_event_after_children_ is called.
     template< typename T >
-    Event::Result handleGUIEvent(T& event)
+    GUIEvent::Result handleGUIEvent(T& event)
     {
-      Event::Result result = Event::Result::Pending;
+      GUIEvent::Result result = GUIEvent::Result::Pending;
 
       if (m_cached_flags.disabled == false)
       {
@@ -196,24 +198,24 @@ namespace metagui
         //   * The event applies to us, and we handled it. (Handled)
         //        Do not pass to children, and do not call handle_event_after_children.
 
-        if ((result != Event::Result::Ignored) &&
-          (result != Event::Result::Handled))
+        if ((result != GUIEvent::Result::Ignored) &&
+          (result != GUIEvent::Result::Handled))
         {
           for (auto& z_pair : m_zorder_map)
           {
-            Event::Result child_result = Event::Result::Acknowledged;
+            GUIEvent::Result child_result = GUIEvent::Result::Acknowledged;
             auto& child = m_children.at(z_pair.second);
             child_result = child->handleGUIEvent(event);
-            if (child_result == Event::Result::Handled)
+            if (child_result == GUIEvent::Result::Handled)
             {
-              result = Event::Result::Handled;
+              result = GUIEvent::Result::Handled;
               break;
             }
           }
         }
 
-        if ((result != Event::Result::Ignored) &&
-          (result != Event::Result::Handled))
+        if ((result != GUIEvent::Result::Ignored) &&
+          (result != GUIEvent::Result::Handled))
         {
           result = handleGUIEventPostChildren(event);
         }
@@ -287,23 +289,25 @@ namespace metagui
     /// @return True if the point is within the object, false otherwise.
     bool containsPoint(IntVec2 point);
 
-    Event::Result handleGUIEventPreChildren(EventDragFinished& event);
-    Event::Result handleGUIEventPostChildren(EventDragFinished& event);
+    GUIEvent::Result handleGUIEventPreChildren(GUIEventDragFinished& event);
+    GUIEvent::Result handleGUIEventPostChildren(GUIEventDragFinished& event);
 
-    Event::Result handleGUIEventPreChildren(EventDragStarted& event);
-    Event::Result handleGUIEventPostChildren(EventDragStarted& event);
+    GUIEvent::Result handleGUIEventPreChildren(GUIEventDragStarted& event);
+    GUIEvent::Result handleGUIEventPostChildren(GUIEventDragStarted& event);
 
-    Event::Result handleGUIEventPreChildren(EventDragging& event);
-    Event::Result handleGUIEventPostChildren(EventDragging& event);
+    GUIEvent::Result handleGUIEventPreChildren(GUIEventDragging& event);
+    GUIEvent::Result handleGUIEventPostChildren(GUIEventDragging& event);
 
-    Event::Result handleGUIEventPreChildren(EventKeyPressed& event);
-    Event::Result handleGUIEventPostChildren(EventKeyPressed& event);
+    GUIEvent::Result handleGUIEventPreChildren(GUIEventKeyPressed& event);
+    GUIEvent::Result handleGUIEventPostChildren(GUIEventKeyPressed& event);
 
-    Event::Result handleGUIEventPreChildren(EventMouseDown& event);
-    Event::Result handleGUIEventPostChildren(EventMouseDown& event);
+    GUIEvent::Result handleGUIEventPreChildren(GUIEventMouseDown& event);
+    GUIEvent::Result handleGUIEventPostChildren(GUIEventMouseDown& event);
 
-    Event::Result handleGUIEventPreChildren(EventResized& event);
-    Event::Result handleGUIEventPostChildren(EventResized& event);
+    GUIEvent::Result handleGUIEventPreChildren(GUIEventResized& event);
+    GUIEvent::Result handleGUIEventPostChildren(GUIEventResized& event);
+
+    virtual std::unordered_set<EventID> registeredEvents() const override;
 
   protected:
     Object* getParent();
@@ -336,23 +340,23 @@ namespace metagui
     /// Default behavior is to do nothing.
     virtual void drawPostChildren_(sf::RenderTexture& texture, int frame);
 
-    virtual Event::Result handleGUIEventPreChildren_(EventDragFinished& event);
-    virtual Event::Result handleGUIEventPostChildren_(EventDragFinished& event);
+    virtual GUIEvent::Result handleGUIEventPreChildren_(GUIEventDragFinished& event);
+    virtual GUIEvent::Result handleGUIEventPostChildren_(GUIEventDragFinished& event);
 
-    virtual Event::Result handleGUIEventPreChildren_(EventDragStarted& event);
-    virtual Event::Result handleGUIEventPostChildren_(EventDragStarted& event);
+    virtual GUIEvent::Result handleGUIEventPreChildren_(GUIEventDragStarted& event);
+    virtual GUIEvent::Result handleGUIEventPostChildren_(GUIEventDragStarted& event);
 
-    virtual Event::Result handleGUIEventPreChildren_(EventDragging& event);
-    virtual Event::Result handleGUIEventPostChildren_(EventDragging& event);
+    virtual GUIEvent::Result handleGUIEventPreChildren_(GUIEventDragging& event);
+    virtual GUIEvent::Result handleGUIEventPostChildren_(GUIEventDragging& event);
 
-    virtual Event::Result handleGUIEventPreChildren_(EventKeyPressed& event);
-    virtual Event::Result handleGUIEventPostChildren_(EventKeyPressed& event);
+    virtual GUIEvent::Result handleGUIEventPreChildren_(GUIEventKeyPressed& event);
+    virtual GUIEvent::Result handleGUIEventPostChildren_(GUIEventKeyPressed& event);
 
-    virtual Event::Result handleGUIEventPreChildren_(EventMouseDown& event);
-    virtual Event::Result handleGUIEventPostChildren_(EventMouseDown& event);
+    virtual GUIEvent::Result handleGUIEventPreChildren_(GUIEventMouseDown& event);
+    virtual GUIEvent::Result handleGUIEventPostChildren_(GUIEventMouseDown& event);
 
-    virtual Event::Result handleGUIEventPreChildren_(EventResized& event);
-    virtual Event::Result handleGUIEventPostChildren_(EventResized& event);
+    virtual GUIEvent::Result handleGUIEventPreChildren_(GUIEventResized& event);
+    virtual GUIEvent::Result handleGUIEventPostChildren_(GUIEventResized& event);
 
     /// Handles a flag being set/cleared.
     /// This method is called by setFlag() if the value was changed.
@@ -363,6 +367,7 @@ namespace metagui
     /// The default behavior is to do nothing.
     virtual void handleParentSizeChanged_(UintVec2 parent_size);
 
+    virtual EventResult onEvent_(Event const& event);
 
   private:
     /// The name of this object.

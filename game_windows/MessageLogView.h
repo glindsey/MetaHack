@@ -13,8 +13,7 @@ class IMessageLog;
 /// A class that acts as a View for a MessageLog model instance.
 class MessageLogView 
   : 
-  public metagui::Window,
-  public Observer
+  public metagui::Window
 {
 public:
   /// Create a message log view tied to the specified model.
@@ -31,7 +30,7 @@ public:
   virtual ~MessageLogView();
 
   /// Handle a KeyPressed event.
-  virtual metagui::Event::Result MessageLogView::handleGUIEventPreChildren_(metagui::EventKeyPressed& event);
+  virtual metagui::GUIEvent::Result MessageLogView::handleGUIEventPreChildren_(metagui::GUIEventKeyPressed& event);
 
 protected:
   /// Render the contents of this view to the specified target.

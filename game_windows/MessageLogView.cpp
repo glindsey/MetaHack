@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include "windows/MessageLogView.h"
+#include "game_windows/MessageLogView.h"
 
 #include "game/App.h"
 #include "keybuffer/IKeyBuffer.h"
@@ -28,19 +28,19 @@ MessageLogView::~MessageLogView()
   m_model.removeObserver(*this);
 }
 
-metagui::Event::Result MessageLogView::handleGUIEventPreChildren_(metagui::EventKeyPressed& event)
+metagui::GUIEvent::Result MessageLogView::handleGUIEventPreChildren_(metagui::GUIEventKeyPressed& event)
 {
-  CLOG(TRACE, "GUI") << "MessageLogView::handleGUIEventPreChildren_(EventKeyPressed&) called";
+  CLOG(TRACE, "GUI") << "MessageLogView::handleGUIEventPreChildren_(GUIEventKeyPressed&) called";
 
   /// @todo This is ugly, fix later
   if (getGlobalFocus() == true)
   {
     flagForRedraw();
-    return static_cast<metagui::Event::Result>(m_key_buffer.handle_key_press(event));
+    return static_cast<metagui::GUIEvent::Result>(m_key_buffer.handle_key_press(event));
   }
   else
   {
-    return metagui::Event::Result::Acknowledged;
+    return metagui::GUIEvent::Result::Acknowledged;
   }
 }
 

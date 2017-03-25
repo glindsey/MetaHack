@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include "windows/StatusArea.h"
+#include "game_windows/StatusArea.h"
 
 #include "GUILabel.h"
 #include "game/App.h"
@@ -92,6 +92,11 @@ void StatusArea::drawContents_(sf::RenderTexture& texture, int frame)
 
     std::string hp_string = boost::lexical_cast<std::string>(hp) + "/" + boost::lexical_cast<std::string>(max_hp);
 
+    render_text.setPosition(origin.x + 200, origin.y);
+    render_text.setString(std::to_string(GAME.get_game_clock().count()));
+    texture.draw(render_text);
+
+    // Render game time
     render_text.setPosition(origin.x + 30, origin.y + line_spacing);
     render_text.setString(hp_string);
     texture.draw(render_text);

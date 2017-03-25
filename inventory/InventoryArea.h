@@ -13,8 +13,7 @@ class Entity;
 class EntityId;
 
 class InventoryArea :
-  public metagui::Window,
-  public Observer
+  public metagui::Window
 {
 public:
   explicit InventoryArea(std::string name, 

@@ -49,22 +49,22 @@ namespace metagui
                           static_cast<int>(parent_size.y - s_handle_size) });
   }
 
-  Event::Result ResizeHandle::handleGUIEventPostChildren_(EventDragStarted & event)
+  GUIEvent::Result ResizeHandle::handleGUIEventPostChildren_(GUIEventDragStarted & event)
   {
     auto parent = getParent();
     if (parent)
     {
       m_parent_size_start = parent->getSize();
 
-      return Event::Result::Acknowledged;
+      return GUIEvent::Result::Acknowledged;
     }
 
-    return Event::Result::Ignored;
+    return GUIEvent::Result::Ignored;
   }
 
-  Event::Result ResizeHandle::handleGUIEventPostChildren_(EventDragging & event)
+  GUIEvent::Result ResizeHandle::handleGUIEventPostChildren_(GUIEventDragging & event)
   {
-    Event::Result result = Event::Result::Ignored;
+    GUIEvent::Result result = GUIEvent::Result::Ignored;
 
     auto parent = getParent();
     if (parent)
@@ -80,7 +80,7 @@ namespace metagui
         new_size.y = (move_amount.y > -(old_size.y)) ? (old_size.y + move_amount.y) : 0;
 
         parent->setSize(new_size);
-        result = Event::Result::Handled;
+        result = GUIEvent::Result::Handled;
       }
     }
 

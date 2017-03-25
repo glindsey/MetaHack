@@ -11,8 +11,7 @@ class EntityId;
 /// Abstract class representing a view of a Map object.
 class MapView 
   : 
-  public metagui::Object,
-  public Observer
+  public metagui::Object
 {
 public:
   /// Constructor.

@@ -5,7 +5,7 @@
 namespace metagui
 {
   /// Superclass for MetaGUI events.
-  struct Event
+  struct GUIEvent
   {
   public:
     /// Enum class for results that events can return.
@@ -25,15 +25,15 @@ namespace metagui
     };
 
     /// Virtual destructor.
-    virtual ~Event() {}
+    virtual ~GUIEvent() {}
 
   protected:
-    Event() {}
+    GUIEvent() {}
   };
 
-  struct EventDragFinished : public Event
+  struct GUIEventDragFinished : public GUIEvent
   {
-    EventDragFinished(sf::Mouse::Button button_, IntVec2 current_location_)
+    GUIEventDragFinished(sf::Mouse::Button button_, IntVec2 current_location_)
       :
       button(button_),
       current_location(current_location_)
@@ -43,9 +43,9 @@ namespace metagui
     IntVec2 const current_location;
   };
 
-  struct EventDragStarted : public Event
+  struct GUIEventDragStarted : public GUIEvent
   {
-    EventDragStarted(sf::Mouse::Button button_, IntVec2 start_location_)
+    GUIEventDragStarted(sf::Mouse::Button button_, IntVec2 start_location_)
       :
       button(button_),
       start_location(start_location_)
@@ -57,9 +57,9 @@ namespace metagui
     /// Number of pixels you have to move before it is considered "dragging" the object.
   };
 
-  struct EventDragging : public Event
+  struct GUIEventDragging : public GUIEvent
   {
-    EventDragging(sf::Mouse::Button button_, IntVec2 current_location_)
+    GUIEventDragging(sf::Mouse::Button button_, IntVec2 current_location_)
       :
       button(button_),
       current_location(current_location_)
@@ -72,9 +72,9 @@ namespace metagui
     static unsigned int const drag_threshold = 16;
   };
 
-  struct EventKeyPressed : public Event
+  struct GUIEventKeyPressed : public GUIEvent
   {
-    EventKeyPressed(sf::Event::KeyEvent& event)
+    GUIEventKeyPressed(sf::Event::KeyEvent& event)
       :
       code(event.code),
       alt(event.alt),
@@ -90,9 +90,9 @@ namespace metagui
     bool const system;
   };
 
-  struct EventMouseDown : public Event
+  struct GUIEventMouseDown : public GUIEvent
   {
-    EventMouseDown(sf::Mouse::Button button_, IntVec2 location_)
+    GUIEventMouseDown(sf::Mouse::Button button_, IntVec2 location_)
       :
       button(button_),
       location(location_)
@@ -102,9 +102,9 @@ namespace metagui
     IntVec2 const location;
   };
 
-  struct EventResized : public Event
+  struct GUIEventResized : public GUIEvent
   {
-    EventResized(sf::Event::SizeEvent size)
+    GUIEventResized(sf::Event::SizeEvent size)
       :
       new_size{ size.width, size.height }
     {}
@@ -114,29 +114,29 @@ namespace metagui
 
   /// Using declaration for an EventDelegate.
   template< class T >
-  using EventDelegate = std::function< Event::Result(Event&) >;
+  using GUIEventDelegate = std::function< GUIEvent::Result(GUIEvent&) >;
 }; // end namespace metagui
 
 namespace std
 {
   /// Stream operator override for metagui::Event::Result.
-  inline ostream& operator<<(ostream& out, metagui::Event::Result const& result)
+  inline ostream& operator<<(ostream& out, metagui::GUIEvent::Result const& result)
   {
     switch (result)
     {
-      case metagui::Event::Result::Pending:
+      case metagui::GUIEvent::Result::Pending:
         out << "Pending";
         break;
-      case metagui::Event::Result::Handled:
+      case metagui::GUIEvent::Result::Handled:
         out << "Handled";
         break;
-      case metagui::Event::Result::Acknowledged:
+      case metagui::GUIEvent::Result::Acknowledged:
         out << "Acknowledged";
         break;
-      case metagui::Event::Result::Ignored:
+      case metagui::GUIEvent::Result::Ignored:
         out << "Ignored";
         break;
-      case metagui::Event::Result::Unknown:
+      case metagui::GUIEvent::Result::Unknown:
         out << "Unknown";
         break;
       default:

@@ -44,7 +44,7 @@ public:
   virtual ~IKeyBuffer() {}
 
   /// Process a key event.
-  virtual metagui::Event::Result handle_key_press(metagui::EventKeyPressed& event) = 0;
+  virtual metagui::GUIEvent::Result handle_key_press(metagui::GUIEventKeyPressed& event) = 0;
 
   /// Get the current cursor position.
   virtual size_t get_cursor_position() const = 0;

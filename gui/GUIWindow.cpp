@@ -165,7 +165,7 @@ namespace metagui
   void Window::drawContents_(sf::RenderTexture& texture, int frame)
   {}
 
-  Event::Result Window::handleGUIEventPostChildren_(EventDragStarted & event)
+  GUIEvent::Result Window::handleGUIEventPostChildren_(GUIEventDragStarted & event)
   {
     // If the window has a titlebar, only allow window dragging via the titlebar.
     if (childExists(getName() + "_titlebar"))
@@ -173,10 +173,10 @@ namespace metagui
       auto& child = getChild(getName() + "_titlebar");
       if (!child.containsPoint(event.start_location))
       {
-        return Event::Result::Handled;
+        return GUIEvent::Result::Handled;
       }
     }
 
-    return Event::Result::Acknowledged;
+    return GUIEvent::Result::Acknowledged;
   }
 }; // end namespace metagui

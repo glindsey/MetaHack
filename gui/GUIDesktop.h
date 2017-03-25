@@ -34,7 +34,7 @@ namespace metagui
     SFMLEventResult handle_sfml_event(sf::Event& sfml_event);
 
   protected:
-    virtual metagui::Event::Result handleGUIEventPreChildren_(EventResized& event) final;
+    virtual GUIEvent::Result handleGUIEventPreChildren_(GUIEventResized& event) final;
 
     virtual void drawPreChildren_(sf::RenderTexture& texture, int frame) override final;
 
