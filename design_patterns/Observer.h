@@ -7,6 +7,17 @@
 // Forward declarations
 class Event;
 
+/// Enum classes for EventResult struct.
+enum class EventHandled { No, Yes };
+enum class ContinueBroadcasting { No, Yes };
+
+/// Return status struct for onEvent_().
+struct EventResult
+{
+  EventHandled event_handled;
+  ContinueBroadcasting continue_broadcasting;
+};
+
 /// Observer declaration for observer pattern.
 /// Adapted from http://0xfede.io/2015/12/13/T-C++-ObserverPattern.html
 class Observer : public Serializable
@@ -18,8 +29,9 @@ public:
   virtual ~Observer() = 0;
 
 protected:
-  void onEvent(Event const& event);
-  virtual bool onEvent_(Event const& event) = 0;
+  bool onEvent(Event const& event);
+
+  virtual EventResult onEvent_(Event const& event) = 0;
 
 private:
   class Impl;

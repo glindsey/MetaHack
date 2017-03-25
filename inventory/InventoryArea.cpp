@@ -200,10 +200,10 @@ void InventoryArea::drawContents_(sf::RenderTexture& texture, int frame)
   return;
 }
 
-bool InventoryArea::onEvent_(Event const & event)
+EventResult InventoryArea::onEvent_(Event const & event)
 {
   /// @todo Flesh this out a bit more.
   ///       Right now we just set the "dirty" flag for the view so it is redrawn.
   flagForRedraw();
-  return true;
+  return{ EventHandled::Yes, ContinueBroadcasting::Yes };
 }

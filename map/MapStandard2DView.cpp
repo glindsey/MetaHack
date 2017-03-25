@@ -142,7 +142,7 @@ void MapStandard2DView::reset_cached_render_data()
   m_thing_vertices.setPrimitiveType(sf::PrimitiveType::Quads);
 }
 
-bool MapStandard2DView::onEvent_(Event const & event)
+EventResult MapStandard2DView::onEvent_(Event const & event)
 {
-  return true;
+  return{ EventHandled::Yes, ContinueBroadcasting::Yes };
 }

@@ -80,7 +80,7 @@ protected:
                             bool se_is_empty, bool s_is_empty,
                             bool sw_is_empty, bool w_is_empty);
 
-  virtual bool onEvent_(Event const& event) override;
+  virtual EventResult onEvent_(Event const& event) override;
 
 private:
   /// Random tile offset.

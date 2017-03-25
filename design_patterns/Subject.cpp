@@ -174,12 +174,15 @@ void Subject::broadcast(Event& event)
         // Return if no observers for this event.
         if (observerCount == 0) return;
 
+        bool keepGoing = true;
         for (auto& priorityPair : prioritizedObservers)
         {
           for (auto& observer : priorityPair.second)
           {
-            observer->onEvent(*finalEvent);
+            keepGoing = observer->onEvent(*finalEvent);
+            if (!keepGoing) break;
           }
+          if (!keepGoing) break;
         }
 
         delete finalEvent;

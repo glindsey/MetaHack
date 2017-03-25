@@ -90,7 +90,7 @@ public:
   virtual std::unordered_set<EventID> registeredEvents() const override;
 
 protected:
-  virtual bool onEvent_(Event const& event) override;
+  virtual EventResult onEvent_(Event const& event) override;
 
 private:
   struct Impl;

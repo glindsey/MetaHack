@@ -34,7 +34,7 @@ Observer::~Observer()
   }
 }
 
-void Observer::onEvent(Event const& event)
+bool Observer::onEvent(Event const& event)
 {
   if (event.getId() == Subject::Registration::id)
   {
@@ -51,16 +51,20 @@ void Observer::onEvent(Event const& event)
       }
     }
 
-    return;
+    return true;
   }
 
-  if (!onEvent_(event))
+  auto eventResults = onEvent_(event);
+
+  if (eventResults.event_handled == EventHandled::No)
   {
     Assert("ObserverPattern", false,
-           "\nReason:\tobserver implicitly did not handle event." <<
+           "\nReason:\tobserver did not handle event it is subscribed to." <<
            "\nSubject:\t" << *event.subject <<
            "\nObserver:\t" << *this <<
            "\nEvent:\t" << event);
   }
+
+  return{ eventResults.continue_broadcasting == ContinueBroadcasting::Yes };
 }
   

@@ -23,7 +23,7 @@ public:
 protected:
   void render_title(sf::RenderTexture& texture, int frame);
 
-  virtual bool onEvent_(Event const& event) override;
+  virtual EventResult onEvent_(Event const& event) override;
 
 private:
   sf::Text m_title;
