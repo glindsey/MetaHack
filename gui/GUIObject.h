@@ -289,6 +289,9 @@ namespace metagui
     /// @return True if the point is within the object, false otherwise.
     bool containsPoint(IntVec2 point);
 
+    /// Flag this object, and its parents, to be redrawn.
+    void flagForRedraw();
+
     GUIEvent::Result handleGUIEventPreChildren(GUIEventDragFinished& event);
     GUIEvent::Result handleGUIEventPostChildren(GUIEventDragFinished& event);
 
@@ -316,9 +319,6 @@ namespace metagui
 
     /// Redraw this object on its own background texture.
     void draw(int frame);
-
-    /// Flag this object, and its parents, to be redrawn.
-    void flagForRedraw();
 
     /// Clear the focus of all of this object's children.
     void clearChildFocuses();

@@ -119,16 +119,6 @@ SFMLEventResult AppStateGameMode::handle_sfml_event(sf::Event& event)
 
   switch (event.type)
   {
-    case sf::Event::EventType::Resized:
-    {
-      the_desktop.setSize({ event.size.width, event.size.height });
-      the_desktop.getChild("MessageLogView").setRelativeDimensions(calc_message_log_dims());
-      the_desktop.getChild("InventoryArea").setRelativeDimensions(calc_inventory_dims());
-      the_desktop.getChild("StatusArea").setRelativeDimensions(calc_status_area_dims());
-      result = SFMLEventResult::Acknowledged;
-      break;
-    }
-
     case sf::Event::EventType::KeyPressed:
       result = this->handle_key_press(event.key);
       break;
@@ -993,6 +983,16 @@ void AppStateGameMode::add_zoom(float zoom_amount)
 
 EventResult AppStateGameMode::onEvent_(Event const& event)
 {
+  if (event.id == App::EventAppWindowResized::id)
+  {
+    auto info = static_cast<App::EventAppWindowResized const&>(event);
+    the_desktop.setSize({ info.new_size.x, info.new_size.y });
+    the_desktop.getChild("MessageLogView").setRelativeDimensions(calc_message_log_dims());
+    the_desktop.getChild("InventoryArea").setRelativeDimensions(calc_inventory_dims());
+    the_desktop.getChild("StatusArea").setRelativeDimensions(calc_status_area_dims());
+    return{ EventHandled::Yes, ContinueBroadcasting::Yes };
+  }
+
   /// @todo WRITE ME
   return{ EventHandled::Yes, ContinueBroadcasting::Yes };
 }
