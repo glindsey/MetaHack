@@ -36,7 +36,7 @@ Observer::~Observer()
 
 bool Observer::onEvent(Event const& event)
 {
-  if (event.getId() == Subject::Registration::id)
+  if (event.getId() == Subject::Registration::id())
   {
     auto e = static_cast<const Subject::Registration&>(event);
     if (e.state == Subject::Registration::State::Registered)

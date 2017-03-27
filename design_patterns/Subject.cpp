@@ -174,17 +174,21 @@ void Subject::broadcast(Event& event)
         // Return if no observers for this event.
         if (observerCount == 0) return;
 
-        bool keepGoing = true;
+        bool keep_going = true;
         for (auto& priorityPair : prioritizedObservers)
         {
           for (auto& observer : priorityPair.second)
           {
-            keepGoing = observer->onEvent(*finalEvent);
-            if (!keepGoing) break;
+            keep_going = observer->onEvent(*finalEvent);
+            if (!keep_going) break;
           }
-          if (!keepGoing) break;
+          if (!keep_going) break;
         }
 
+        if (!keep_going)
+        {
+          CLOG(TRACE, "ObserverPattern") << "Broadcast Halted: " << *finalEvent;
+        }
         delete finalEvent;
 
         pImpl->eventQueue.pop();
@@ -217,15 +221,11 @@ void Subject::unicast(Event& event, Observer& observer)
 
       auto dispatchBlock = [=, &observer]() mutable
       {
-        Assert("ObserverPattern", observerIsObservingEvent(observer, finalEvent->getId()),
-               "\nReason:\tattempted to notify observer not registered for event." <<
-               "\nSubject:\t" << *this <<
-               "\nObserver:\t" << observer <<
-               "\nEvent:\t" << *finalEvent);
-
-        CLOG(TRACE, "ObserverPattern") << "Unicasting " << *finalEvent << " to " << observer;
-
-        observer.onEvent(*finalEvent);
+        if (observerIsObservingEvent(observer, finalEvent->getId()))
+        {
+          CLOG(TRACE, "ObserverPattern") << "Unicasting " << *finalEvent << " to " << observer;
+          observer.onEvent(*finalEvent);
+        }
 
         delete finalEvent;
 

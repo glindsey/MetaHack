@@ -345,11 +345,11 @@ App & App::instance()
 std::unordered_set<EventID> App::registeredEvents() const
 {
   auto events = Subject::registeredEvents();
-  events.insert(EventAppQuitRequested::id);
-  events.insert(EventAppWindowClosed::id);
-  events.insert(EventAppWindowFocusChanged::id);
-  events.insert(EventAppWindowResized::id);
-  events.insert(EventKeyPressed::id);
+  events.insert(EventAppQuitRequested::id());
+  events.insert(EventAppWindowClosed::id());
+  events.insert(EventAppWindowFocusChanged::id());
+  events.insert(EventAppWindowResized::id());
+  events.insert(EventKeyPressed::id());
   return events;
 }
 

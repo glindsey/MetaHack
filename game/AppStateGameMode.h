@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 
+#include "game/App.h"
 #include "game/AppState.h"
 
 // Forward declarations
@@ -48,17 +49,19 @@ public:
 
   GameState& get_game_state();
 
+  std::unordered_set<EventID> registeredEvents() const override;
+
 protected:
   void render_map(sf::RenderTexture& texture, int frame);
-  SFMLEventResult handle_key_press(sf::Event::KeyEvent& key);
+  bool handle_key_press(App::EventKeyPressed const& key);
   SFMLEventResult handle_mouse_wheel(sf::Event::MouseWheelEvent& wheel);
-  sf::IntRect calc_message_log_dims();
-  void reset_inventory_selection();
-  sf::IntRect calc_status_area_dims();
-  sf::IntRect calc_inventory_dims();
-  bool move_cursor(Direction direction);
-  SFMLEventResult handle_key_press_target_selection(EntityId player, sf::Event::KeyEvent& key);
-  SFMLEventResult handle_key_press_cursor_look(EntityId player, sf::Event::KeyEvent& key);
+  sf::IntRect calcMessageLogDims();
+  void resetInventorySelection();
+  sf::IntRect calcStatusAreaDims();
+  sf::IntRect calcInventoryDims();
+  bool moveCursor(Direction direction);
+  bool handleKeyPressTargetSelection(EntityId player, App::EventKeyPressed const& key);
+  bool handleKeyPressCursorLook(EntityId player, App::EventKeyPressed const& key);
 
   void add_zoom(float zoom_amount);
 

@@ -25,6 +25,8 @@ public:
   virtual bool render(sf::RenderTexture& texture, int frame) override final;
   virtual SFMLEventResult handle_sfml_event(sf::Event& event) override;
 
+  virtual std::unordered_set<EventID> registeredEvents() const override;
+
 protected:
 private:
   metagui::RenderFunctor m_preDesktopRenderFunctor;

@@ -44,6 +44,9 @@ public:
   virtual std::unordered_set<EventID> registeredEvents() const override;
 
 protected:
+  // Get a reference to the state machine this state belongs to.
+  StateMachine& getStateMachine();
+
 private:
   // State machine that this state belongs to.
   StateMachine& m_state_machine;

@@ -12,7 +12,8 @@ AppState::AppState(StateMachine& state_machine,
   State{ state_machine },
   m_preDesktopRenderFunctor{ preDesktopRenderFunctor },
   m_postDesktopRenderFunctor{ postDesktopRenderFunctor }
-{}
+{
+}
 
 AppState::~AppState()
 {
@@ -34,4 +35,11 @@ bool AppState::render(sf::RenderTexture& texture, int frame)
 SFMLEventResult AppState::handle_sfml_event(sf::Event & event)
 {
   return SFMLEventResult::Ignored;
+}
+
+std::unordered_set<EventID> AppState::registeredEvents() const
+{
+  auto events = State::registeredEvents();
+  /// @todo Add our own events here
+  return events;
 }

@@ -75,7 +75,7 @@ public:
     }
   };
 
-  struct EventKeyPressed : public ConcreteEvent<EventKeyPressed>
+  struct EventKeyPressed : public ConcreteEvent<EventKeyPressed, Event, EventID(0x10000000)>
   {
     EventKeyPressed(sf::Keyboard::Key code_, bool alt_, bool control_, bool shift_, bool system_)
       :
@@ -95,7 +95,7 @@ public:
     void serialize(std::ostream& os) const
     {
       Event::serialize(os);
-      os << " | code: " << (code ? "true" : "false") <<
+      os << " | code: " << code <<
         " | alt: " << (alt ? "true" : "false") <<
         " | control: " << (control ? "true" : "false") <<
         " | shift: " << (shift ? "true" : "false") <<
