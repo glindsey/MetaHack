@@ -32,7 +32,20 @@ public:
   Subject();
   virtual ~Subject();
 
+  /// Adds an observer of an event emitted by this subject.
+  /// @param observer   Reference to observer to add.
+  /// @param eventID    ID of event to observe, or EventID::All to
+  ///                   subscribe to all events.
+  /// @param priority   Optional priority of the observer. Priorities are
+  ///                   evaluated from lowest number to highest; e.g. -10
+  ///                   is a higher priority than +10. If no priority is
+  ///                   provided, 0 is assumed.
   void addObserver(Observer& observer, EventID eventID, ObserverPriority priority = 0);
+
+  /// Removes an observer of an event emitted by this subject.
+  /// @param observer   Reference to observer to remove.
+  /// @param eventID    ID of event to remove from, or EventID::All to
+  ///                   unsubscribe from all events.
   void removeObserver(Observer& observer, EventID eventID = EventID::All);
 
   /// Return the set of events this Subject provides.

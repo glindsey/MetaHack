@@ -369,6 +369,15 @@ namespace metagui
 
     virtual EventResult onEvent_(Event const& event);
 
+    /// Subscribe to parent events that all objects care about.
+    void subscribeToParentEvents(Subject const& parent, int priority);
+
+    /// Subscribe to any additional events that we care about which are 
+    /// emitted by a parent.
+    /// The default behavior is to do nothing.
+    virtual void subscribeToParentEvents_(Subject const& parent, int priority);
+
+
   private:
     /// The name of this object.
     std::string m_name;

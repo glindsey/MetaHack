@@ -54,7 +54,7 @@ public:
 protected:
   void render_map(sf::RenderTexture& texture, int frame);
   bool handle_key_press(App::EventKeyPressed const& key);
-  SFMLEventResult handle_mouse_wheel(sf::Event::MouseWheelEvent& wheel);
+  bool handle_mouse_wheel(App::EventMouseWheelMoved const& wheel);
   sf::IntRect calcMessageLogDims();
   void resetInventorySelection();
   sf::IntRect calcStatusAreaDims();

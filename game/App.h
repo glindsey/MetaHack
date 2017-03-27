@@ -75,7 +75,7 @@ public:
     }
   };
 
-  struct EventKeyPressed : public ConcreteEvent<EventKeyPressed, Event, EventID(0x10000000)>
+  struct EventKeyPressed : public ConcreteEvent<EventKeyPressed>
   {
     EventKeyPressed(sf::Keyboard::Key code_, bool alt_, bool control_, bool shift_, bool system_)
       :
@@ -100,6 +100,23 @@ public:
         " | control: " << (control ? "true" : "false") <<
         " | shift: " << (shift ? "true" : "false") <<
         " | system: " << (system ? "true" : "false");
+    }
+  };
+
+  struct EventMouseWheelMoved : public ConcreteEvent<EventMouseWheelMoved>  
+  {
+    EventMouseWheelMoved(int delta_, int x_, int y_)
+      : delta{ delta_ }, x{ x_ }, y{ y_ }
+    {}
+
+    int const delta;
+    int const x, y;
+
+    void serialize(std::ostream& os) const
+    {
+      os << " | delta: " << delta <<
+        " | x: " << x <<
+        " | y: " << y;
     }
   };
 

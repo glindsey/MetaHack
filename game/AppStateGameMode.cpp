@@ -124,17 +124,7 @@ SFMLEventResult AppStateGameMode::handle_sfml_event(sf::Event& event)
 {
   SFMLEventResult result = SFMLEventResult::Ignored;
 
-  switch (event.type)
-  {
-    case sf::Event::EventType::MouseWheelMoved:
-      result = this->handle_mouse_wheel(event.mouseWheel);
-      break;
-
-    default:
-      break;
-  }
-
-  // Finally let the GUI handle events.
+  // Let the GUI handle events.
   if (result != SFMLEventResult::Handled)
   {
     result = the_desktop.handle_sfml_event(event);
@@ -957,10 +947,10 @@ bool AppStateGameMode::handle_key_press(App::EventKeyPressed const& key)
   return true;
 }
 
-SFMLEventResult AppStateGameMode::handle_mouse_wheel(sf::Event::MouseWheelEvent& wheel)
+bool AppStateGameMode::handle_mouse_wheel(App::EventMouseWheelMoved const& wheel)
 {
   add_zoom(wheel.delta * 0.05f);
-  return SFMLEventResult::Handled;
+  return false;
 }
 
 void AppStateGameMode::add_zoom(float zoom_amount)
@@ -999,6 +989,15 @@ EventResult AppStateGameMode::onEvent_(Event const& event)
     bool keep_broadcasting = handle_key_press(info);
     return{ 
       EventHandled::Yes, 
+      (keep_broadcasting ? ContinueBroadcasting::Yes : ContinueBroadcasting::No)
+    };
+  }
+  else if (event.getId() == App::EventMouseWheelMoved::id())
+  {
+    auto info = static_cast<App::EventMouseWheelMoved const&>(event);
+    bool keep_broadcasting = handle_mouse_wheel(info);
+    return{
+      EventHandled::Yes,
       (keep_broadcasting ? ContinueBroadcasting::Yes : ContinueBroadcasting::No)
     };
   }

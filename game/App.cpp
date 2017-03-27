@@ -258,6 +258,14 @@ SFMLEventResult App::handle_sfml_event(sf::Event& event)
       break;
     }
 
+    case sf::Event::EventType::MouseWheelMoved:
+    {
+      broadcast(EventMouseWheelMoved(event.mouseWheel.delta,
+                                     event.mouseWheel.x,
+                                     event.mouseWheel.y));
+      break;
+    }
+
     default:
       break;
   }

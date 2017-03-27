@@ -299,6 +299,8 @@ namespace metagui
         }
       }
 
+      removeObserver(*this, EventID::All);
+
       // This clears the child's parent pointer.
       moved_object->setParent(nullptr);
 
@@ -607,7 +609,19 @@ namespace metagui
 
   void Object::setParent(Object* parent)
   {
+    if (m_parent != nullptr)
+    {
+      m_parent->removeObserver(*this, EventID::All);
+    }
+
     m_parent = parent;
+
+    if (parent != nullptr)
+    {
+      /// @todo Handle setting event priorities
+      parent->subscribeToParentEvents(*this, 0 /*parent->getChildZOrder(this)*/);
+    }
+
     if (m_parent) m_parent->flagForRedraw();
   }
 
@@ -716,4 +730,17 @@ namespace metagui
   {
     return{ EventHandled::Yes, ContinueBroadcasting::Yes };
   }
+
+  void Object::subscribeToParentEvents(Subject const& parent, int priority)
+  {
+    /// @todo Subscribe to standard parent events here.
+
+    // Subscribe to any additional events.
+    subscribeToParentEvents_(parent, priority);
+  }
+
+  void Object::subscribeToParentEvents_(Subject const& parent, int priority)
+  {}
+
+
 }; // end namespace metagui
