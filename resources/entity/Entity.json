@@ -1,111 +1,108 @@
 {
   "parent": "GameObject",
 
-  "intrinsics": {
-    "name": "[Entity]",
-    "plural": "[Entities]",
-    "brief_description": "function",
+  "name": "[Entity]",
+  "plural": "[Entities]",
+  "brief_description": "function",
 
-    "bodypart": {
-      "body": {
-        "name": "body",
-        "plural": "bodies"
-      },
-      "skin": {
-        "name": "skin",
-        "plural": "skins"
-      },
-      "head": {
-        "name": "head",
-        "plural": "heads"
-      },
-      "ear": {
-        "name": "ear",
-        "plural": "ears"
-      },
-      "eye": {
-        "name": "eye",
-        "plural": "eyes"
-      },
-      "nose": {
-        "name": "nose",
-        "plural": "noses"
-      },
-      "mouth": {
-        "name": "mouth",
-        "plural": "mouths"
-      },
-      "neck": {
-        "name": "neck",
-        "plural": "necks"
-      },
-      "chest": {
-        "name": "chest",
-        "plural": "chests"
-      },
-      "arm": {
-        "name": "arm",
-        "plural": "arms"
-      },
-      "hand": {
-        "name": "hand",
-        "plural": "hands"
-      },
-      "leg": {
-        "name": "leg",
-        "plural": "legs"
-      },
-      "foot": {
-        "name": "foot",
-        "plural": "feet"
-      },
-      "wing": {
-        "name": "wing",
-        "plural": "wings"
-      },
-      "tail": {
-        "name": "tail",
-        "plural": "tails"
-      }
+  "bodypart": {
+    "body": {
+      "name": "body",
+      "plural": "bodies"
     },
+    "skin": {
+      "name": "skin",
+      "plural": "skins"
+    },
+    "head": {
+      "name": "head",
+      "plural": "heads"
+    },
+    "ear": {
+      "name": "ear",
+      "plural": "ears"
+    },
+    "eye": {
+      "name": "eye",
+      "plural": "eyes"
+    },
+    "nose": {
+      "name": "nose",
+      "plural": "noses"
+    },
+    "mouth": {
+      "name": "mouth",
+      "plural": "mouths"
+    },
+    "neck": {
+      "name": "neck",
+      "plural": "necks"
+    },
+    "chest": {
+      "name": "chest",
+      "plural": "chests"
+    },
+    "arm": {
+      "name": "arm",
+      "plural": "arms"
+    },
+    "hand": {
+      "name": "hand",
+      "plural": "hands"
+    },
+    "leg": {
+      "name": "leg",
+      "plural": "legs"
+    },
+    "foot": {
+      "name": "foot",
+      "plural": "feet"
+    },
+    "wing": {
+      "name": "wing",
+      "plural": "wings"
+    },
+    "tail": {
+      "name": "tail",
+      "plural": "tails"
+    }
+  },
 
-    "inventory_size": 0,
+  "inventory_size": 0,
 
-    "living": false,
-    "passable": false,
-    "opacity": {
+  "living": false,
+  "passable": false,
+  "opacity": {
+    "r": 255,
+    "g": 255,
+    "b": 255
+  },
+  "physical": {
+    "mass": 0,
+    "size": 1
+  },
+  "tile": {
+    "character": "?",
+    "bg_color": {
       "r": 255,
       "g": 255,
       "b": 255
     },
-    "physical": {
-      "mass": 0,
-      "size": 1
+    "fg_color": {
+      "r": 32,
+      "g": 32,
+      "b": 32
     },
-    "tile": {
-      "character": "?",
-      "bg_color": {
-        "r": 255,
-        "g": 255,
-        "b": 255
-      },
-      "fg_color": {
-        "r": 32,
-        "g": 32,
-        "b": 32
-      },
 
-      "can_be_object_of": {
-        "drink": true,
-        "drop": true,
-        "get": true,
-        "hurl": true,
-        "move": true,
-        "putinto": true,
-        "remove": true,
-        "unwield": true,
-        "wield": true
-      }
+    "can_be_object_of": {
+      "drop": true,
+      "get": true,
+      "hurl": true,
+      "move": true,
+      "putinto": true,
+      "remove": true,
+      "unwield": true,
+      "wield": true
     }
   }
 }

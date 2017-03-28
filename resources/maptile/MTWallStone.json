@@ -1,0 +1,20 @@
+{
+  "parent": "MTWall",
+
+  "name": "stone wall",
+  "plural": "stone walls",
+  "brief_description": "A stone wall.",
+  "tile": {
+    "character": "?",
+    "bg_color": {
+      "r": 0,
+      "g": 0,
+      "b": 0
+    },
+    "fg_color": {
+      "r": 128,
+      "g": 64,
+      "b": 0
+    }
+  }
+}

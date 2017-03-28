@@ -1,9 +1,7 @@
 {
   "parent": "DynamicEntity",
 
-  "intrinsics": {
-    "name": "[Blob]",
-    "plural": "[Blobs]",
-    "brief_description": "An amorphous entity with no distinguishable limbs, head, or other extremities."
-  }
+  "name": "[Blob]",
+  "plural": "[Blobs]",
+  "brief_description": "An amorphous entity with no distinguishable limbs, head, or other extremities."
 }

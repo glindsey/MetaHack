@@ -1,0 +1,13 @@
+{
+  "parent": "MTUnknown",
+
+  "name": "floor",
+  "plural": "floors",
+  "brief_description": "A floor.",
+  "passable": true,
+  "opacity": {
+    "r": 0,
+    "g": 0,
+    "b": 0
+  }
+}

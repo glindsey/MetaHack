@@ -1,0 +1,20 @@
+{
+  "parent": "Container",
+
+  "name": "glass flask",
+  "plural": "glass flasks",
+  "brief_description": "A glass container with a narrow mouth and flat bottom, suitable for holding liquids.",
+
+  "inventory_size": 1,
+
+  "opacity": {
+    "r": 0,
+    "g": 0,
+    "b": 0
+  },
+
+  "can_be_object_of": {
+    "close": true,
+    "open": true
+  }
+}

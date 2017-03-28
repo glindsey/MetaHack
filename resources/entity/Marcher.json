@@ -1,0 +1,11 @@
+{
+  "parent": "Biped",
+
+  "name": "marcher robot",
+  "plural": "marcher robots",
+  "brief_description": "A testing biped that endlessly marches left and right.",
+  "creatable": true,
+
+  "proper_name": "Steve",
+  "maxhp_range": [ 1, 1 ]
+}

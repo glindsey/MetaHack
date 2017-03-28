@@ -1,31 +1,29 @@
 {
   "parent": "Entity",
 
-  "intrinsics": {
-    "name": "[DynamicEntity]",
-    "plural": "[DynamicEntities]",
-    "brief_description": "function",
+  "name": "[DynamicEntity]",
+  "plural": "[DynamicEntities]",
+  "brief_description": "function",
 
-    "bodypart": {
-      "body": {
-        "count":  1
-      }
-    },
-
-    "inventory_size": -1,
-    "xp": 0,
-
-    "living": true,
-
-    "can": {
-      "attack": true,
-      "die": true
-    },
-
-    "can_be_object_of": {
-      "attack": true,
-      "burn": true,
-      "hurt": true
+  "bodypart": {
+    "body": {
+      "count":  1
     }
+  },
+
+  "inventory_size": -1,
+  "xp": 0,
+
+  "living": true,
+
+  "can": {
+    "attack": true,
+    "die": true
+  },
+
+  "can_be_object_of": {
+    "attack": true,
+    "burn": true,
+    "hurt": true
   }
 }

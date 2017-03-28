@@ -1,0 +1,9 @@
+{
+  "parent": "Coin",
+
+  "name": "gold coin",
+  "plural": "gold coins",
+  "brief_description": "A coin made out of gold.",
+
+  "creatable": true
+}

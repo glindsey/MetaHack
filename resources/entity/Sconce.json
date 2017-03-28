@@ -1,0 +1,21 @@
+{
+  "parent": "Sconce",
+
+  "name": "torch sconce",
+  "plural": "torch sconces",
+  "brief_description": "A flaming torch secured in a holder that is attached to a wall.",
+  "creatable": true,
+
+  "light": {
+    "color": {
+      "r": 160,
+      "g": 128,
+      "b": 112
+    },
+    "strength": 48
+  },
+
+  "can_be_object_of": {
+    "burn": true
+  }
+}
