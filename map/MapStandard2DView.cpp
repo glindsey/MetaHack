@@ -19,7 +19,7 @@ MapStandard2DView::MapStandard2DView(std::string name, Map& map, UintVec2 size, 
   m_map_tile_views.reset(new Grid2D<MapTileStandard2DView>(map.getSize(), 
                                                            [&](IntVec2 coords) -> MapTileStandard2DView*
   {
-    return NEW MapTileStandard2DView(map.get_tile(coords), m_tile_sheet);
+    return NEW MapTileStandard2DView(map.getTile(coords), m_tile_sheet);
   }));
 
 }

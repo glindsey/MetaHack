@@ -34,7 +34,7 @@ namespace Actions
     auto container = object->getLocation();
 
     // Check that the container is not a MapTile or DynamicEntity.
-    if (!object->is_inside_another_thing())
+    if (!object->isInsideAnotherEntity())
     {
       printMessageTry();
 
@@ -59,13 +59,11 @@ namespace Actions
     }
 
     // Check that the container is within reach.
-    if (!subject->can_reach(container))
+    if (!subject->canReach(container))
     {
       printMessageTry();
 
-      message = YOU + " cannot reach " + THE_FOO + ".";
-      Service<IMessageLog>::get().add(message);
-
+      put_msg(maketr("THE_FOO_IS_OUT_OF_REACH"));
       return StateResult::Failure();
     }
 
@@ -118,13 +116,11 @@ namespace Actions
 
   void ActionTakeOut::printMessageTry() const
   {
-    std::string message = YOU_TRY + " to " + VERB + " " + getObjectString() + " from " + getTargetString() + ".";
-    Service<IMessageLog>::get().add(message);
+    put_msg(maketr("YOU_TRY_TO_VERB_THE_FOO_PREPOSITION_TARGET", { "from" }));
   }
 
   void ActionTakeOut::printMessageDo() const
   {
-    std::string message = YOU + " " + CV(VERB, VERB3) + " " + getObjectString() + " from " + getTargetString() + ".";
-    Service<IMessageLog>::get().add(message);
+    put_msg(maketr("YOU_VERB_THE_FOO_PREPOSITION_TARGET", { "from" }));
   }
 }

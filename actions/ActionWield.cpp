@@ -39,15 +39,15 @@ namespace Actions
     ///       shifting an already-wielded weapon to another hand.
     /// @todo Support wielding in ANY prehensile limb (e.g. a tail).
     m_body_location = { BodyPart::Hand, 0 };
-    EntityId currently_wielded = subject->get_wielding_in(m_body_location);
+    EntityId currently_wielded = subject->getWieldingIn(m_body_location);
 
-    std::string bodypart_desc = subject->get_bodypart_description(m_body_location);
+    std::string bodypart_desc = subject->getBodypartDescription(m_body_location);
 
     // If it is us, or it is what is already being wielded, it means to unwield whatever is wielded.
     if ((object == subject) || (object == currently_wielded) || (object == EntityId::Mu()))
     {
       std::unique_ptr<Action> unwieldAction(NEW ActionUnwield(subject));
-      subject->queue_action(std::move(unwieldAction));
+      subject->queueAction(std::move(unwieldAction));
 
       return StateResult::Failure();
     }
@@ -61,7 +61,7 @@ namespace Actions
     }
 
     // Check that we have hands capable of wielding anything.
-    if (subject->get_bodypart_number(BodyPart::Hand).as<uint32_t>() == 0)
+    if (subject->getBodypartNumber(BodyPart::Hand).as<uint32_t>() == 0)
     {
       printMessageTry();
 
@@ -97,10 +97,10 @@ namespace Actions
     auto subject = getSubject();
     auto object = getObject();
     std::string bodypart_desc =
-      subject->get_bodypart_description(m_body_location);
+      subject->getBodypartDescription(m_body_location);
 
-    subject->set_wielded(object, m_body_location);
-    put_msg(maketr("YOU_ARE_NOW_WIELDING_THE_FOO", { subject->get_possessive_of(bodypart_desc) }));
+    subject->setWielded(object, m_body_location);
+    put_msg(maketr("YOU_ARE_NOW_WIELDING_THE_FOO", { subject->getPossessiveString(bodypart_desc) }));
 
     return StateResult::Success();
   }

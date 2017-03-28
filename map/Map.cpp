@@ -48,15 +48,15 @@ Map::Map(GameState& game, MapId map_id, int width, int height)
   CLOG(TRACE, "Map") << "Creating map of size " << width << " x " << height;
 
   // Create the tiles themselves.
-  MetadataCollection& collection = m_game.get_metadata_collection("maptile");
+  MetadataCollection& collection = m_game.getMetadataCollection("maptile");
   Metadata& unknown_metadata = collection.get("MTUnknown");
 
   pImpl->tiles.reset(NEW Grid2D<MapTile>({ width, height }, 
                                          [&](IntVec2 coords) -> MapTile* 
   {
     MapTile* new_tile = NEW MapTile(coords, unknown_metadata, map_id);
-    new_tile->set_coords(coords);
-    new_tile->set_ambient_light_level(ambient_light_level);
+    new_tile->setCoords(coords);
+    new_tile->setAmbientLightLevel(ambient_light_level);
     return new_tile;
   }));
 
@@ -93,27 +93,27 @@ Map::~Map()
   //dtor
 }
 
-int Map::get_index(IntVec2 coords) const
+int Map::getIndex(IntVec2 coords) const
 {
   return (coords.y * m_map_size.x) + coords.x;
 }
 
-bool Map::is_in_bounds(IntVec2 coords) const
+bool Map::isInBounds(IntVec2 coords) const
 {
   return ((coords.x >= 0) && (coords.y >= 0) &&
     (coords.x < m_map_size.x) && (coords.y < m_map_size.y));
 }
 
-bool Map::calc_coords(IntVec2 origin,
+bool Map::calcCoords(IntVec2 origin,
                       Direction direction,
                       IntVec2& result)
 {
   result = origin + (IntVec2)direction;
 
-  return is_in_bounds(result);
+  return isInBounds(result);
 }
 
-MapId Map::get_map_id() const
+MapId Map::getMapId() const
 {
   return m_map_id;
 }
@@ -123,14 +123,14 @@ IntVec2 const& Map::getSize() const
   return m_map_size;
 }
 
-IntVec2 const& Map::get_start_coords() const
+IntVec2 const& Map::getStartCoords() const
 {
   return pImpl->start_coords;
 }
 
-bool Map::set_start_coords(IntVec2 start_coords)
+bool Map::setStartCoords(IntVec2 start_coords)
 {
-  if (is_in_bounds(start_coords))
+  if (isInBounds(start_coords))
   {
     pImpl->start_coords = start_coords;
     return true;
@@ -138,13 +138,13 @@ bool Map::set_start_coords(IntVec2 start_coords)
   return false;
 }
 
-void Map::process_entities()
+void Map::processEntities()
 {
   for (int y = 0; y < m_map_size.y; ++y)
   {
     for (int x = 0; x < m_map_size.x; ++x)
     {
-      EntityId contents = TILE(x, y).get_tile_contents();
+      EntityId contents = TILE(x, y).getTileContents();
       contents->process_voluntary_actions();
       contents->process_involuntary_actions();
     }
@@ -153,14 +153,14 @@ void Map::process_entities()
   //notifyObservers(Event::Updated);
 }
 
-void Map::update_lighting()
+void Map::updateLighting()
 {
   // Clear it first.
   for (int y = 0; y < m_map_size.y; ++y)
   {
     for (int x = 0; x < m_map_size.x; ++x)
     {
-      TILE(x, y).clear_light_influences();
+      TILE(x, y).clearLightInfluences();
     }
   }
 
@@ -168,15 +168,15 @@ void Map::update_lighting()
   {
     for (int x = 0; x < m_map_size.x; ++x)
     {
-      EntityId contents = TILE(x, y).get_tile_contents();
-      auto& inventory = contents->get_inventory();
+      EntityId contents = TILE(x, y).getTileContents();
+      auto& inventory = contents->getInventory();
       for (auto iter = inventory.begin();
            iter != inventory.end();
            ++iter)
       {
         EntityId entity = iter->second;
         entity->light_up_surroundings();
-        //add_light(entity);
+        //addLight(entity);
       }
     }
   }
@@ -184,7 +184,7 @@ void Map::update_lighting()
   //notifyObservers(Event::Updated);
 }
 
-void Map::do_recursive_lighting(EntityId source,
+void Map::doRecursiveLighting(EntityId source,
                                 IntVec2 const& origin,
                                 sf::Color const& light_color,
                                 int const max_depth_squared,
@@ -286,11 +286,11 @@ void Map::do_recursive_lighting(EntityId source,
   {
     if (calc_vis_distance(new_coords, origin) <= max_depth_squared)
     {
-      if (get_tile(new_coords).is_opaque())
+      if (getTile(new_coords).isOpaque())
       {
-        if (!get_tile(new_coords + (IntVec2)dir).is_opaque())
+        if (!getTile(new_coords + (IntVec2)dir).isOpaque())
         {
-          do_recursive_lighting(source, origin, light_color,
+          doRecursiveLighting(source, origin, light_color,
                                 max_depth_squared,
                                 octant, depth + 1,
                                 slope_A, recurse_slope(to_v2f(new_coords), to_v2f(origin)));
@@ -298,7 +298,7 @@ void Map::do_recursive_lighting(EntityId source,
       }
       else
       {
-        if (get_tile(new_coords + (IntVec2)dir).is_opaque())
+        if (getTile(new_coords + (IntVec2)dir).isOpaque())
         {
           slope_A = loop_slope(to_v2f(new_coords), to_v2f(origin));
         }
@@ -308,25 +308,25 @@ void Map::do_recursive_lighting(EntityId source,
       influence.coords = origin;
       influence.color = light_color;
       influence.intensity = max_depth_squared;
-      get_tile(new_coords).add_light_influence(source, influence);
+      getTile(new_coords).addLightInfluence(source, influence);
     }
     new_coords -= (IntVec2)dir;
   }
   new_coords += (IntVec2)dir;
 
-  if ((depth*depth < max_depth_squared) && (!get_tile(new_coords).is_opaque()))
+  if ((depth*depth < max_depth_squared) && (!getTile(new_coords).isOpaque()))
   {
-    do_recursive_lighting(source, origin, light_color,
+    doRecursiveLighting(source, origin, light_color,
                           max_depth_squared,
                           octant, depth + 1,
                           slope_A, slope_B);
   }
 }
 
-void Map::add_light(EntityId source)
+void Map::addLight(EntityId source)
 {
   // Get the map tile the light source is on.
-  auto maptile = source->get_maptile();
+  auto maptile = source->getMapTile();
   if (maptile == nullptr)
   {
     return;
@@ -334,10 +334,10 @@ void Map::add_light(EntityId source)
 
   /// @todo Check if any opaque containers are between the light source and the map.
 
-  IntVec2 coords = maptile->get_coords();
+  IntVec2 coords = maptile->getCoords();
 
-  auto light_color = source->get_modified_property("light_color").as<Color>();
-  int max_depth_squared = source->get_modified_property("light_strength").as<int>();
+  auto light_color = source->getModifiedProperty("light_color").as<Color>();
+  int max_depth_squared = source->getModifiedProperty("light_strength").as<int>();
 
   /// @todo Re-implement direction.
   Direction light_direction = Direction::Up;
@@ -355,7 +355,7 @@ void Map::add_light(EntityId source)
   influence.coords = coords;
   influence.color = light_color;
   influence.intensity = max_depth_squared;
-  get_tile(coords).add_light_influence(source, influence);
+  getTile(coords).addLightInfluence(source, influence);
 
   // Octant is an integer representing the following:
   // \ 1|2 /  |
@@ -385,7 +385,7 @@ void Map::add_light(EntityId source)
       (light_direction == Direction::Northwest) ||
       (light_direction == Direction::North))
   {
-    do_recursive_lighting(source, coords, light_color, max_depth_squared, 1);
+    doRecursiveLighting(source, coords, light_color, max_depth_squared, 1);
   }
   if ((light_direction == Direction::Self) ||
     (light_direction == Direction::Up) ||
@@ -393,7 +393,7 @@ void Map::add_light(EntityId source)
       (light_direction == Direction::North) ||
       (light_direction == Direction::Northeast))
   {
-    do_recursive_lighting(source, coords, light_color, max_depth_squared, 2);
+    doRecursiveLighting(source, coords, light_color, max_depth_squared, 2);
   }
   if ((light_direction == Direction::Self) ||
     (light_direction == Direction::Up) ||
@@ -401,7 +401,7 @@ void Map::add_light(EntityId source)
       (light_direction == Direction::Northeast) ||
       (light_direction == Direction::East))
   {
-    do_recursive_lighting(source, coords, light_color, max_depth_squared, 3);
+    doRecursiveLighting(source, coords, light_color, max_depth_squared, 3);
   }
   if ((light_direction == Direction::Self) ||
     (light_direction == Direction::Up) ||
@@ -409,7 +409,7 @@ void Map::add_light(EntityId source)
       (light_direction == Direction::East) ||
       (light_direction == Direction::Southeast))
   {
-    do_recursive_lighting(source, coords, light_color, max_depth_squared, 4);
+    doRecursiveLighting(source, coords, light_color, max_depth_squared, 4);
   }
   if ((light_direction == Direction::Self) ||
     (light_direction == Direction::Up) ||
@@ -417,7 +417,7 @@ void Map::add_light(EntityId source)
       (light_direction == Direction::Southeast) ||
       (light_direction == Direction::South))
   {
-    do_recursive_lighting(source, coords, light_color, max_depth_squared, 5);
+    doRecursiveLighting(source, coords, light_color, max_depth_squared, 5);
   }
   if ((light_direction == Direction::Self) ||
     (light_direction == Direction::Up) ||
@@ -425,7 +425,7 @@ void Map::add_light(EntityId source)
       (light_direction == Direction::South) ||
       (light_direction == Direction::Southwest))
   {
-    do_recursive_lighting(source, coords, light_color, max_depth_squared, 6);
+    doRecursiveLighting(source, coords, light_color, max_depth_squared, 6);
   }
   if ((light_direction == Direction::Self) ||
     (light_direction == Direction::Up) ||
@@ -433,7 +433,7 @@ void Map::add_light(EntityId source)
       (light_direction == Direction::Southwest) ||
       (light_direction == Direction::West))
   {
-    do_recursive_lighting(source, coords, light_color, max_depth_squared, 7);
+    doRecursiveLighting(source, coords, light_color, max_depth_squared, 7);
   }
   if ((light_direction == Direction::Self) ||
     (light_direction == Direction::Up) ||
@@ -441,13 +441,13 @@ void Map::add_light(EntityId source)
       (light_direction == Direction::West) ||
       (light_direction == Direction::Northwest))
   {
-    do_recursive_lighting(source, coords, light_color, max_depth_squared, 8);
+    doRecursiveLighting(source, coords, light_color, max_depth_squared, 8);
   }
 
   //notifyObservers(Event::Updated);
 }
 
-MapTile const& Map::get_tile(IntVec2 tile) const
+MapTile const& Map::getTile(IntVec2 tile) const
 {
   if (tile.x < 0) tile.x = 0;
   if (tile.x >= m_map_size.x) tile.x = m_map_size.x - 1;
@@ -457,7 +457,7 @@ MapTile const& Map::get_tile(IntVec2 tile) const
   return TILE(tile.x, tile.y);
 }
 
-MapTile& Map::get_tile(IntVec2 tile)
+MapTile& Map::getTile(IntVec2 tile)
 {
   if (tile.x < 0) tile.x = 0;
   if (tile.x >= m_map_size.x) tile.x = m_map_size.x - 1;
@@ -467,36 +467,36 @@ MapTile& Map::get_tile(IntVec2 tile)
   return TILE(tile.x, tile.y);
 }
 
-bool Map::tile_is_opaque(IntVec2 tile)
+bool Map::tileIsOpaque(IntVec2 tile)
 {
   if ((tile.x < 0) || (tile.x >= m_map_size.x) || (tile.y < 0) || (tile.y >= m_map_size.y))
   {
     return true;
   }
 
-  return TILE(tile.x, tile.y).is_opaque();
+  return TILE(tile.x, tile.y).isOpaque();
 }
 
-void Map::clear_map_features()
+void Map::clearMapFeatures()
 {
   pImpl->features.clear();
 }
 
-MapFeature& Map::get_random_map_feature()
+MapFeature& Map::getRandomMapFeature()
 {
-  Assert("MapGenerator", pImpl->features.size() >= 1, "get_random_map_feature() called but map doesn't contain any features yet!");
+  Assert("MapGenerator", pImpl->features.size() >= 1, "getRandomMapFeature() called but map doesn't contain any features yet!");
   
   uniform_int_dist featureDist(0, static_cast<int>(pImpl->features.size() - 1));
   int featureIndex = featureDist(the_RNG);
   return pImpl->features[featureIndex];
 }
 
-boost::ptr_deque<MapFeature> const& Map::get_map_features() const
+boost::ptr_deque<MapFeature> const& Map::getMapFeatures() const
 {
   return pImpl->features;
 }
 
-MapFeature& Map::add_map_feature(MapFeature* feature)
+MapFeature& Map::addMapFeature(MapFeature* feature)
 {
   if (feature != nullptr)
   {
@@ -505,7 +505,7 @@ MapFeature& Map::add_map_feature(MapFeature* feature)
   return *feature;
 }
 
-int Map::LUA_get_tile_contents(lua_State* L)
+int Map::LUA_getTileContents(lua_State* L)
 {
   int num_args = lua_gettop(L);
 
@@ -518,15 +518,15 @@ int Map::LUA_get_tile_contents(lua_State* L)
   MapId map_id = static_cast<MapId>(static_cast<unsigned int>(lua_tointeger(L, 1)));
   IntVec2 coords = IntVec2(static_cast<int>(lua_tointeger(L, 2)), static_cast<int>(lua_tointeger(L, 3)));
 
-  auto& map_tile = GAME.get_maps().get(map_id).get_tile(coords);
-  EntityId contents = map_tile.get_tile_contents();
+  auto& map_tile = GAME.getMaps().get(map_id).getTile(coords);
+  EntityId contents = map_tile.getTileContents();
 
   lua_pushinteger(L, contents);
 
   return 1;
 }
 
-int Map::LUA_get_start_coords(lua_State* L)
+int Map::LUA_getStartCoords(lua_State* L)
 {
   int num_args = lua_gettop(L);
 
@@ -538,8 +538,8 @@ int Map::LUA_get_start_coords(lua_State* L)
 
   MapId map_id = static_cast<MapId>(static_cast<unsigned int>(lua_tointeger(L, 1)));
 
-  auto& map = GAME.get_maps().get(map_id);
-  auto coords = map.get_start_coords();
+  auto& map = GAME.getMaps().get(map_id);
+  auto coords = map.getStartCoords();
 
   lua_pushinteger(L, coords.x);
   lua_pushinteger(L, coords.y);
@@ -547,7 +547,7 @@ int Map::LUA_get_start_coords(lua_State* L)
   return 2;
 }
 
-int Map::LUA_map_add_feature(lua_State* L)
+int Map::LUA_mapAddFeature(lua_State* L)
 {
   PropertyDictionary feature_settings;
 
@@ -561,7 +561,7 @@ int Map::LUA_map_add_feature(lua_State* L)
 
   MapId map_id = static_cast<MapId>(static_cast<unsigned int>(lua_tointeger(L, 1)));
 
-  auto& map = GAME.get_maps().get(map_id);
+  auto& map = GAME.getMaps().get(map_id);
 
   std::string feature = lua_tostring(L, 2);
 

@@ -53,7 +53,7 @@ size_t ModifiablePropertyDictionary::has_modifier_for(std::string name, EntityId
   return 0;
 }
 
-bool ModifiablePropertyDictionary::add_modifier(std::string name, 
+bool ModifiablePropertyDictionary::addModifier(std::string name, 
                                                 EntityId id, 
                                                 PropertyModifierInfo const & info)
 {
@@ -85,7 +85,7 @@ size_t ModifiablePropertyDictionary::remove_all_modifiers(std::string name)
   return 0;
 }
 
-size_t ModifiablePropertyDictionary::remove_modifier(std::string name, EntityId id)
+size_t ModifiablePropertyDictionary::removeModifier(std::string name, EntityId id)
 {
   if (m_modifiers.count(name) != 0)
   {

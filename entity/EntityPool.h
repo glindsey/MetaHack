@@ -29,7 +29,7 @@ public:
     //archive(m_thing_map);
   }
 
-  bool first_is_subtype_of_second(std::string first, std::string second);
+  bool firstIsSubtypeOfSecond(std::string first, std::string second);
 
   /// Create a particular object given the type name.
   /// @param type The type name of the object to create.
@@ -39,7 +39,7 @@ public:
   /// Create a floor object.
   /// @param map_tile Pointer to the map tile associated.
   /// @return EntityId of the new object created.
-  EntityId create_tile_contents(MapTile* map_tile);
+  EntityId createTileContents(MapTile* map_tile);
 
   /// Clone a particular object.
   /// @param original ID of the object to clone.

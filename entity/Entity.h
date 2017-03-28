@@ -63,104 +63,100 @@ public:
   /// Queue an action for this DynamicEntity to perform.
   /// @param action The Action to queue. The Action is MOVED when queued,
   ///               e.g. pAction will be `nullptr` after queuing.
-  void queue_action(std::unique_ptr<Actions::Action> action);
+  void queueAction(std::unique_ptr<Actions::Action> action);
 
   /// Queue an action for this DynamicEntity to perform.
   /// @param p_action The Action to queue. The queue takes ownership of the
   ///                 pointer.
-  void queue_action(Actions::Action* p_action);
+  void queueAction(Actions::Action* p_action);
 
   /// Queue an involuntary action for this DynamicEntity to perform.
   /// @param action The Action to queue. The Action is MOVED when queued,
   ///               e.g. pAction will be `nullptr` after queuing.
-  void queue_involuntary_action(std::unique_ptr<Actions::Action> action);
+  void queueInvoluntaryAction(std::unique_ptr<Actions::Action> action);
 
   /// Queue an involuntary action for this DynamicEntity to perform.
   /// The action is pushed to the FRONT of the queue, so it is next to be
   /// popped.
   /// @param p_action The Action to queue. The queue takes ownership of the
   ///                 pointer.
-  void queue_involuntary_action(Actions::Action* p_action);
+  void queueInvoluntaryAction(Actions::Action* p_action);
 
   /// Return whether there is any action pending for this DynamicEntity.
-  bool action_is_pending() const;
+  bool anyActionIsPending() const;
 
   /// Return whether there is a voluntary action pending for this DynamicEntity.
-  bool voluntary_action_is_pending() const;
+  bool voluntaryActionIsPending() const;
 
   /// Return whether there is an involuntary action pending for this DynamicEntity.
-  bool involuntary_action_is_pending() const;
+  bool involuntaryActionIsPending() const;
 
   /// Return whether there is an action currently in progress for this DynamicEntity.
-  bool action_is_in_progress();
+  bool actionIsInProgress();
 
   /// Clear all pending actions in this Entity's queues.
-  void clear_pending_actions();
+  void clearAllPendingActions();
 
   /// Clear all pending voluntary actions in this Entity's queue.
-  void clear_pending_voluntary_actions();
+  void clearPendingVoluntaryActions();
 
   /// Clear all pending involuntary actions in this Entity's queue.
-  void clear_pending_involuntary_actions();
+  void clearPendingInvoluntaryActions();
 
   /// Get the entity being wielded with the specified bodypart, if any.
-  EntityId get_wielding_in(BodyLocation& location);
+  EntityId getWieldingIn(BodyLocation& location);
 
   /// Returns true if this entity is the current player.
   /// By default, returns false. Overridden by DynamicEntity class.
-  virtual bool is_player() const;
+  virtual bool isPlayer() const;
 
   std::string const& getType() const;
-  std::string get_parent_type() const;
+  std::string getParentType() const;
 
-  bool is_subtype_of(std::string that_type) const;
+  bool isSubtypeOf(std::string that_type) const;
 
   /// Return whether a Entity is wielded by this DynamicEntity.
   /// This is used by InventoryArea to show wielded status.
   /// @param[in] entity Entity to check
   /// @return true if the Entity is wielded by the DynamicEntity.
-  bool is_wielding(EntityId entity);
+  bool isWielding(EntityId entity);
 
   /// Return whether a Entity is wielded by this DynamicEntity.
   /// This is used by InventoryArea to show wielded status.
   /// @param[in] entity Entity to check
   /// @param[out] number Body part it is wielded with.
   /// @return true if the Entity is wielded by the DynamicEntity.
-  bool is_wielding(EntityId entity, BodyLocation& location);
+  bool isWielding(EntityId entity, BodyLocation& location);
 
   /// Return whether a Entity is equipped (worn) by this DynamicEntity.
   /// @param[in] entity Entity to check
   /// @return true if the Entity is being worn.
-  bool is_wearing(EntityId entity);
+  bool isWearing(EntityId entity);
 
   /// Return whether a Entity is being worn by this DynamicEntity.
   /// @param[in] entity Entity to check
   /// @param[out] location of the worn Entity, if worn
   /// @return true if the Entity is being worn.
-  bool is_wearing(EntityId entity, BodyLocation& location);
+  bool isWearing(EntityId entity, BodyLocation& location);
 
   /// Return whether a Entity is within reach of the DynamicEntity.
   /// @param[in] entity Entity to check
   /// @return true if the Entity is in the DynamicEntity's inventory or is at the
   ///         same location as the DynamicEntity, false otherwise.
-  bool can_reach(EntityId entity);
+  bool canReach(EntityId entity);
 
   /// Return whether a Entity is adjacent to this DynamicEntity.
   /// @param[in] entity Entity to check
   /// @return true if the Entity is at the same place or adjacent to this DynamicEntity, false otherwise.
-  bool is_adjacent_to(EntityId entity);
-
-  /// Die.
-  /// @return True if the Entity died, false if the death was avoided.
-  bool do_die();
+  bool isAdjacentTo(EntityId entity);
 
   /// Get an intrinsic of this Entity.
   /// If the intrinsic is not found, returns the default value.
   /// @param key            Name of the intrinsic to get.
   /// @param default_value  Default value to use, if any.
   /// @return The intrinsic (or default) value for that key.
-  Property get_intrinsic(std::string key, Property default_value) const;
-  Property get_intrinsic(std::string key) const;
+  Property getIntrinsic(std::string key, Property default_value) const;
+  Property getIntrinsic(std::string key) const;
 
   /// Get a base property of this Entity.
   /// If the base property is not found, the method falls back upon the
@@ -168,8 +164,8 @@ public:
   /// @param key            Name of the property to get.
   /// @param default_value  Default value to use, if any.
   /// @return The property (or default) value for that key.
-  Property get_base_property(std::string key, Property default_value) const;
-  Property get_base_property(std::string key) const;
+  Property getBaseProperty(std::string key, Property default_value) const;
+  Property getBaseProperty(std::string key) const;
 
   /// Sets a base property of this Entity.
   /// If the base property is not found, it is created.
@@ -177,13 +173,13 @@ public:
   /// @param key    Key of the property to set.
   /// @param value  Value to set the property to.
   /// @return Boolean indicating whether the property previously existed.
-  bool set_base_property(std::string key, Property value);
+  bool setBaseProperty(std::string key, Property value);
 
   /// Adds to a base property of this Entity.
   /// If the base property is not found, it is created.
   /// @param key    Key of the property to set.
   /// @param value  Value to add to the property.
-  void add_to_base_property(std::string key, Property add_value);
+  void addToBaseProperty(std::string key, Property add_value);
 
   /// Get a modified property of this Entity.
   /// If the modified property is not found, the method falls back upon the
@@ -192,25 +188,25 @@ public:
  
   /// @param default_value  Default value to use, if any.
   /// @return The modified (or base) property value for that key.
-  Property get_modified_property(std::string key, Property default_value) const;
-  Property get_modified_property(std::string key) const;
+  Property getModifiedProperty(std::string key, Property default_value) const;
+  Property getModifiedProperty(std::string key) const;
 
   /// Add a property modifier to this Entity.
   /// @param  key   Name of property to modify.
   /// @param  id    ID of Entity that is responsible for modifying it.
   /// @param  info  Info for this modifier, as a PropertyModifierInfo struct.
   ///
-  /// @see ModifiablePropertyDictionary::add_modifier
+  /// @see ModifiablePropertyDictionary::addModifier
   ///
   /// @return True if the function was added; false if it already existed.
-  bool add_modifier(std::string key, EntityId id, PropertyModifierInfo const& info);
+  bool addModifier(std::string key, EntityId id, PropertyModifierInfo const& info);
 
   /// Remove all modifier functions for a given key and entity ID.
   /// @param  key               Name of property to modify.
   /// @param  id                ID of Entity that is responsible for modifying it.
   ///
   /// @return The number of modifiers erased.
-  size_t remove_modifier(std::string key, EntityId id);
+  size_t removeModifier(std::string key, EntityId id);
 
   /// Get the quantity this entity represents.
   unsigned int getQuantity() const;
@@ -219,57 +215,57 @@ public:
   void setQuantity(unsigned int quantity);
 
   /// Return a reference to this entity.
-  EntityId get_id() const;
+  EntityId getId() const;
 
   /// Return the root location of this Entity, traversing up the location
   /// chain until EntityId::Mu() is reached.
-  EntityId get_root_location() const;
+  EntityId getRootLocation() const;
 
   /// Return the location of this entity.
   EntityId getLocation() const;
 
   /// Return whether the DynamicEntity can see the requested Entity.
-  bool can_see(EntityId entity);
+  bool canSee(EntityId entity);
 
   /// Return whether the DynamicEntity can see the requested tile.
-  bool can_see(IntVec2 coords);
+  bool canSee(IntVec2 coords);
 
   /// Find out which tiles on the map can be seen by this DynamicEntity.
   /// In the process, tiles in the DynamicEntity's visual memory are updated.
   /// This method uses a recursive raycasting algorithm to figure out what
   /// can be seen at a particular position.
-  void find_seen_tiles();
+  void findSeenTiles();
 
   /// Get the remembered tile type at the specified coordinates.
-  MapMemoryChunk const& get_memory_at(IntVec2 coords) const;
+  MapMemoryChunk const& getMemoryAt(IntVec2 coords) const;
    
-  void set_wielded(EntityId entity, BodyLocation location);
+  void setWielded(EntityId entity, BodyLocation location);
 
-  void set_worn(EntityId entity, BodyLocation location);
+  void setWorn(EntityId entity, BodyLocation location);
 
   /// Return whether this DynamicEntity can currently see.
   /// @todo Implement blindness counter, blindness due to wearing blindfold,
   ///       et cetera.
-  bool can_currently_see();
+  bool canCurrentlySee();
 
   /// Return whether this DynamicEntity can currently move.
   /// @todo Implement paralysis counter, and/or other reasons to be immobile.
-  bool can_currently_move();
+  bool canCurrentlyMove();
 
-  void set_gender(Gender gender);
+  void setGender(Gender gender);
 
-  Gender get_gender() const;
+  Gender getGender() const;
 
-  Gender get_gender_or_you() const;
+  Gender getGenderOrYou() const;
 
   /// Get the number of a particular body part the DynamicEntity has.
-  Property get_bodypart_number(BodyPart part) const;
+  Property getBodypartNumber(BodyPart part) const;
 
   /// Get the appropriate body part name for the DynamicEntity.
-  Property get_bodypart_name(BodyPart part) const;
+  Property getBodypartName(BodyPart part) const;
 
   /// Get the appropriate body part plural for the DynamicEntity.
-  Property get_bodypart_plural(BodyPart part) const;
+  Property getBodypartPlural(BodyPart part) const;
 
   /// Get the appropriate description for a body part.
   /// This takes the body part name and the number referencing the particular
@@ -279,71 +275,71 @@ public:
   /// In most cases the default implementation here will work, but if a
   /// creature has (for example) a strange configuration of limbs this can be
   /// overridden.
-  std::string get_bodypart_description(BodyLocation location);
+  std::string getBodypartDescription(BodyLocation location);
 
   /// Returns true if a particular Action can be performed on this Entity by
   /// the specified Entity.
   /// @param entity  The Entity doing the Action.
   /// @param action Reference to the Action to perform.
   /// @return true if the Action can be performed, false otherwise.
-  bool can_have_action_done_by(EntityId entity, Actions::Action& action);
+  bool canHaveActionDoneBy(EntityId entity, Actions::Action& action);
 
   /// Returns a reference to the inventory.
-  Inventory& get_inventory();
+  Inventory& getInventory();
 
   /// Returns true if this entity is inside another Entity.
-  bool is_inside_another_thing() const;
+  bool isInsideAnotherEntity() const;
 
   /// Get the MapTile this entity is on, or nullptr if not on a map.
-  MapTile* get_maptile() const;
+  MapTile* getMapTile() const;
 
   /// Return the MapId this Entity is currently on, or 0 if not on a map.
-  MapId get_map_id() const;
+  MapId getMapId() const;
 
   /// Return this object's adjective qualifiers (such as "fireproof", "waterproof", etc.)
-  std::string get_display_adjectives() const;
+  std::string getDisplayAdjectives() const;
 
   /// Return this object's name.
-  std::string get_display_name() const;
+  std::string getDisplayName() const;
 
   /// Return this object's plural.
-  std::string get_display_plural() const;
+  std::string getDisplayPlural() const;
 
   /// Get the entity's proper name (if any).
-  std::string get_proper_name() const;
+  std::string getProperName() const;
 
   /// Set this entity's proper name.
-  void set_proper_name(std::string name);
+  void setProperName(std::string name);
 
   /// Return a string that identifies this entity, in the subjective case.
   /// If it IS the player, it'll return "you".
-  /// Otherwise it calls get_identifying_string().
+  /// Otherwise it calls getDescriptiveString().
   ///
   /// @param articles Choose whether to use definite or indefinite articles.
   ///                 Defaults to definite articles.
-  std::string get_subject_you_or_identifying_string(ArticleChoice articles = ArticleChoice::Definite) const;
+  std::string getSubjectiveString(ArticleChoice articles = ArticleChoice::Definite) const;
 
   /// Return a string that identifies this entity, in the objective case.
   /// If it IS the player, it'll return "you".
-  /// Otherwise it calls get_identifying_string().
+  /// Otherwise it calls getDescriptiveString().
   ///
   /// @param articles Choose whether to use definite or indefinite articles.
   ///                 Defaults to definite articles.
   ///
   /// @note In English this has the same results as 
-  /// get_subject_you_or_identifying_string(), but _this will not be the case
+  /// getSubjectiveString(), but _this will not be the case
   /// in all languages_.
-  std::string get_object_you_or_identifying_string(ArticleChoice articles = ArticleChoice::Definite) const;
+  std::string getObjectiveString(ArticleChoice articles = ArticleChoice::Definite) const;
 
   /// Return a string that identifies this entity, 
   /// If it matches the object passed in as "other", it'll return
   /// the appropriate reflexive pronoun ("yourself", "itself", etc.).
-  /// Otherwise it calls get_identifying_string().
+  /// Otherwise it calls getDescriptiveString().
   ///
   /// @param other      The "other" to compare to.
   /// @param articles Choose whether to use definite or indefinite articles.
   ///                 Defaults to definite articles.
-  std::string get_self_or_identifying_string(EntityId other, ArticleChoice articles = ArticleChoice::Definite) const;
+  std::string getReflexiveString(EntityId other, ArticleChoice articles = ArticleChoice::Definite) const;
 
   /// Return a string that identifies this entity.
   /// Returns "the/a/an" and a description of the entity, such as
@@ -358,8 +354,8 @@ public:
   ///                 Defaults to definite articles.
   /// @param possessives  Choose whether to use possessive articles when appropriate.
   ///                     Defaults to using them.
-  std::string get_identifying_string(ArticleChoice articles = ArticleChoice::Definite,
-                                       UsePossessives possessives = UsePossessives::Yes) const;
+  std::string getDescriptiveString(ArticleChoice articles = ArticleChoice::Definite,
+                                   UsePossessives possessives = UsePossessives::Yes) const;
 
   /// Choose the proper possessive form for a string passed in.
   /// For a Entity, this is simply "the foo", as Entities cannot own entities.
@@ -371,16 +367,18 @@ public:
   /// @param adjectives Optional adjectives to add.
   ///
   /// @note If you want a possessive pronoun like his/her/its/etc., use
-  /// get_possessive_adjective().
-  std::string get_possessive_of(std::string owned, std::string adjectives = "");
+  /// getPossessiveAdjective().
+  std::string getPossessiveString(std::string owned, std::string adjectives = "");
 
-  sf::Color get_opacity() const;
+  sf::Color getOpacity() const;
 
   /// Return true if a third-person verb form should be used.
   /// This function checks to see if this Entity is currently designated as
   /// the player, or has a quantity greater than zero.
   /// If so, it returns true; otherwise, it returns false.
-  bool is_third_person();
+  /// @todo See if this is different for languages other than English.
+  ///       I'm guessing the answer is "yes, yes it is".
+  bool isThirdPerson();
 
   /// Choose which verb form to use based on first/second/third person.
   /// This function checks to see if this Entity is currently designated as
@@ -389,36 +387,36 @@ public:
   /// string passed as verb3.
   /// @param verb2 The second person or plural verb form, such as "shake"
   /// @param verb3 The third person verb form, such as "shakes"
-  std::string const& choose_verb(std::string const& verb2,
-                                   std::string const& verb3);
+  std::string const& chooseVerb(std::string const& verb2,
+                                std::string const& verb3);
 
   /// Return this entity's mass.
-  int get_mass();
+  int getMass();
 
   /// @addtogroup Pronouns
   /// @todo Make localizable. (How? Use Lua scripts maybe?)
   /// @{
 
   /// Get the appropriate subject pronoun for the Entity.
-  std::string const& get_subject_pronoun() const;
+  std::string const& getSubjectPronoun() const;
 
   /// Get the appropriate object pronoun for the Entity.
-  std::string const& get_object_pronoun() const;
+  std::string const& getObjectPronoun() const;
 
   /// Get the appropriate reflexive pronoun for the Entity.
-  std::string const& get_reflexive_pronoun() const;
+  std::string const& getReflexivePronoun() const;
 
   /// Get the appropriate possessive adjective for the Entity.
-  std::string const& get_possessive_adjective() const;
+  std::string const& getPossessiveAdjective() const;
 
   /// Get the appropriate possessive pronoun for the Entity.
-  std::string const& get_possessive_pronoun() const;
+  std::string const& getPossessivePronoun() const;
 
   /// @}
 
 
   /// Simple check to see if a Entity is opaque.
-  bool is_opaque();
+  bool isOpaque();
 
   /// Provide light to this Entity's surroundings.
   /// If Entity is not opaque, calls light_up_surroundings() for each Entity
@@ -428,7 +426,7 @@ public:
   /// Receive light from the specified light source.
   /// The default behavior is to pass the light source to the location if
   /// this Entity is opaque.
-  void be_lit_by(EntityId light);
+  void beLitBy(EntityId light);
 
   /// Spill the contents of this Entity out into the location of the Entity.
   void spill();
@@ -548,7 +546,7 @@ public:
                              std::vector<Property> const& args) const;
 
   /// Get a const reference to this tile's metadata.
-  Metadata const & get_metadata() const;
+  Metadata const & getMetadata() const;
 
   virtual std::unordered_set<EventID> registeredEvents() const override;
 
@@ -569,7 +567,7 @@ protected:
   MapMemory& get_map_memory();
 
   /// Perform the recursive visibility scan for an octant.
-  /// Used by find_seen_tiles.
+  /// Used by findSeenTiles.
   void do_recursive_visibility(int octant,
                                int depth = 1,
                                float slope_A = 1,

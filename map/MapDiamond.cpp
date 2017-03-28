@@ -64,8 +64,8 @@ MapDiamond::MapDiamond(Map& m, PropertyDictionary const& s, GeoVector vec)
       throw MapFeatureException("Invalid direction passed to MapDiamond constructor");
     }
 
-    if ((getMap().is_in_bounds({ xCenter - (diamondHalfSize + 1), yCenter - (diamondHalfSize + 1) })) &&
-        (getMap().is_in_bounds({ xCenter + (diamondHalfSize + 1), yCenter + (diamondHalfSize + 1) })))
+    if ((getMap().isInBounds({ xCenter - (diamondHalfSize + 1), yCenter - (diamondHalfSize + 1) })) &&
+        (getMap().isInBounds({ xCenter + (diamondHalfSize + 1), yCenter + (diamondHalfSize + 1) })))
     {
       bool okay = true;
 
@@ -75,7 +75,7 @@ MapDiamond::MapDiamond(Map& m, PropertyDictionary const& s, GeoVector vec)
 
       okay = does_box_pass_criterion({ xCenter - (diamondHalfSize + 1), yCenter - (diamondHalfSize + 1) },
       { xCenter + (diamondHalfSize + 1), yCenter + (diamondHalfSize + 1) },
-                                     [&](MapTile& tile) { return !tile.is_empty_space(); });
+                                     [&](MapTile& tile) { return !tile.isEmptySpace(); });
 
       if (okay)
       {
@@ -90,12 +90,12 @@ MapDiamond::MapDiamond(Map& m, PropertyDictionary const& s, GeoVector vec)
           {
             int xCoord = xCenter + xCounter;
             int yCoord = yCenter + yCounter;
-            auto& tile = getMap().get_tile({ xCoord, yCoord });
-            tile.set_tile_type(floor_type);
+            auto& tile = getMap().getTile({ xCoord, yCoord });
+            tile.setTileType(floor_type);
           }
         }
 
-        set_coords(sf::IntRect(xCenter - diamondHalfSize,
+        setCoords(sf::IntRect(xCenter - diamondHalfSize,
                                yCenter - diamondHalfSize,
                                (diamondHalfSize * 2) + 1,
                                (diamondHalfSize * 2) + 1));
@@ -112,8 +112,8 @@ MapDiamond::MapDiamond(Map& m, PropertyDictionary const& s, GeoVector vec)
 
         /// @todo Put either a door or an open area at the starting coords.
         ///       Right now we just make it an open area.
-        auto& startTile = getMap().get_tile(startingCoords);
-        startTile.set_tile_type(floor_type);
+        auto& startTile = getMap().getTile(startingCoords);
+        startTile.setTileType(floor_type);
 
         return;
       }

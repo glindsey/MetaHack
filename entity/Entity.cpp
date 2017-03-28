@@ -27,7 +27,7 @@
 // Static member initialization.
 sf::Color const Entity::wall_outline_color_ = sf::Color(255, 255, 255, 64);
 
-Metadata const & Entity::get_metadata() const
+Metadata const & Entity::getMetadata() const
 {
   return m_metadata;
 }
@@ -95,11 +95,11 @@ Entity::Entity(Entity const& original, EntityId ref)
 void Entity::initialize()
 {
   /// Get our maximum HP. (The Lua script will automatically pick it from a range.)
-  auto max_hp = m_metadata.get_intrinsic("maxhp");
-  set_base_property("maxhp", max_hp);
+  auto max_hp = m_metadata.getIntrinsic("maxhp");
+  setBaseProperty("maxhp", max_hp);
 
   /// Also set our HP to that value.
-  set_base_property("hp", max_hp);
+  setBaseProperty("hp", max_hp);
 
   //notifyObservers(Event::Updated);
 }
@@ -108,75 +108,75 @@ Entity::~Entity()
 {
 }
 
-void Entity::queue_action(std::unique_ptr<Actions::Action> action)
+void Entity::queueAction(std::unique_ptr<Actions::Action> action)
 {
   CLOG(TRACE, "Entity") << "Entity " <<
-    get_id() << " (" <<
+    getId() << " (" <<
     getType() << "): Queuing Action " <<
     action->getType();
 
   m_pending_voluntary_actions.push_back(std::move(action));
 }
 
-void Entity::queue_action(Actions::Action * p_action)
+void Entity::queueAction(Actions::Action * p_action)
 {
   std::unique_ptr<Actions::Action> action(p_action);
-  queue_action(std::move(action));
+  queueAction(std::move(action));
 }
 
-void Entity::queue_involuntary_action(std::unique_ptr<Actions::Action> action)
+void Entity::queueInvoluntaryAction(std::unique_ptr<Actions::Action> action)
 {
   CLOG(TRACE, "Entity") << "Entity " <<
-    get_id() << " (" <<
+    getId() << " (" <<
     getType() << "): Queuing Involuntary Action " <<
     action->getType();
 
   m_pending_involuntary_actions.push_front(std::move(action));
 }
 
-void Entity::queue_involuntary_action(Actions::Action * p_action)
+void Entity::queueInvoluntaryAction(Actions::Action * p_action)
 {
   std::unique_ptr<Actions::Action> action(p_action);
-  queue_involuntary_action(std::move(action));
+  queueInvoluntaryAction(std::move(action));
 }
 
-bool Entity::action_is_pending() const
+bool Entity::anyActionIsPending() const
 {
-  return voluntary_action_is_pending() || involuntary_action_is_pending();
+  return voluntaryActionIsPending() || involuntaryActionIsPending();
 }
 
-bool Entity::voluntary_action_is_pending() const
+bool Entity::voluntaryActionIsPending() const
 {
   return !(m_pending_voluntary_actions.empty());
 }
 
-bool Entity::involuntary_action_is_pending() const
+bool Entity::involuntaryActionIsPending() const
 {
   return !(m_pending_involuntary_actions.empty());
 }
 
-bool Entity::action_is_in_progress()
+bool Entity::actionIsInProgress()
 {
-  return (get_base_property("counter_busy").as<uint32_t>() > 0);
+  return (getBaseProperty("counter_busy").as<uint32_t>() > 0);
 }
 
-void Entity::clear_pending_actions()
+void Entity::clearAllPendingActions()
 {
-  clear_pending_voluntary_actions();
-  clear_pending_involuntary_actions();
+  clearPendingVoluntaryActions();
+  clearPendingInvoluntaryActions();
 }
 
-void Entity::clear_pending_voluntary_actions()
+void Entity::clearPendingVoluntaryActions()
 {
   m_pending_voluntary_actions.clear();
 }
 
-void Entity::clear_pending_involuntary_actions()
+void Entity::clearPendingInvoluntaryActions()
 {
   m_pending_involuntary_actions.clear();
 }
 
-EntityId Entity::get_wielding_in(BodyLocation& location)
+EntityId Entity::getWieldingIn(BodyLocation& location)
 {
   if (m_wielded_items.count(location) == 0)
   {
@@ -188,13 +188,13 @@ EntityId Entity::get_wielding_in(BodyLocation& location)
   }
 }
 
-bool Entity::is_wielding(EntityId entity)
+bool Entity::isWielding(EntityId entity)
 {
   BodyLocation dummy;
-  return is_wielding(entity, dummy);
+  return isWielding(entity, dummy);
 }
 
-bool Entity::is_wielding(EntityId entity, BodyLocation& location)
+bool Entity::isWielding(EntityId entity, BodyLocation& location)
 {
   if (entity == EntityId::Mu())
   {
@@ -217,13 +217,13 @@ bool Entity::is_wielding(EntityId entity, BodyLocation& location)
   }
 }
 
-bool Entity::is_wearing(EntityId entity)
+bool Entity::isWearing(EntityId entity)
 {
   BodyLocation dummy;
-  return is_wearing(entity, dummy);
+  return isWearing(entity, dummy);
 }
 
-bool Entity::is_wearing(EntityId entity, BodyLocation& location)
+bool Entity::isWearing(EntityId entity, BodyLocation& location)
 {
   if (entity == EntityId::Mu())
   {
@@ -246,7 +246,7 @@ bool Entity::is_wearing(EntityId entity, BodyLocation& location)
   }
 }
 
-bool Entity::can_reach(EntityId entity)
+bool Entity::canReach(EntityId entity)
 {
   // Check if it is our location.
   auto our_location = getLocation();
@@ -263,7 +263,7 @@ bool Entity::can_reach(EntityId entity)
   }
 
   // Check if it's in our inventory.
-  if (this->get_inventory().contains(entity))
+  if (this->getInventory().contains(entity))
   {
     return true;
   }
@@ -271,62 +271,23 @@ bool Entity::can_reach(EntityId entity)
   return false;
 }
 
-bool Entity::is_adjacent_to(EntityId entity)
+bool Entity::isAdjacentTo(EntityId entity)
 {
   // Get the coordinates we are at.
-  MapTile* our_maptile = get_maptile();
-  MapTile* thing_maptile = entity->get_maptile();
+  MapTile* our_maptile = getMapTile();
+  MapTile* thing_maptile = entity->getMapTile();
   if ((our_maptile == nullptr) || (thing_maptile == nullptr))
   {
     return false;
   }
 
-  IntVec2 const& our_coords = our_maptile->get_coords();
-  IntVec2 const& thing_coords = thing_maptile->get_coords();
+  IntVec2 const& our_coords = our_maptile->getCoords();
+  IntVec2 const& thing_coords = thing_maptile->getCoords();
 
   return adjacent(our_coords, thing_coords);
 }
 
-bool Entity::do_die()
-{
-  /// @todo Handle stuff like auto-activating life-saving items here.
-  /// @todo Pass in the cause of death somehow.
-
-  ActionResult result = perform_action_died();
-  std::string message;
-
-  switch (result)
-  {
-    case ActionResult::Success:
-      if (this->is_player())
-      {
-        message = StringTransforms::maketr(get_id(), 0, "YOU_DIE");
-        Service<IMessageLog>::get().add(message);
-      }
-      else
-      {
-        bool living = get_modified_property("living").as<bool>();
-        message = StringTransforms::maketr(get_id(), 0, living ? "YOU_ARE_KILLED" : "YOU_ARE_DESTROYED");
-        Service<IMessageLog>::get().add(message);
-      }
-
-      // Set the property saying the entity is dead.
-      set_base_property("dead", Property::from(true));
-
-      // Clear any pending actions.
-      clear_pending_actions();
-
-      //notifyObservers(Event::Updated);
-      return true;
-    case ActionResult::Failure:
-    default:
-      message = StringTransforms::maketr(get_id(), 0, "YOU_MANAGE_TO_AVOID_DYING");
-      Service<IMessageLog>::get().add(message);
-      return false;
-  }
-}
-
-void Entity::set_wielded(EntityId entity, BodyLocation location)
+void Entity::setWielded(EntityId entity, BodyLocation location)
 {
   if (entity == EntityId::Mu())
   {
@@ -338,7 +299,7 @@ void Entity::set_wielded(EntityId entity, BodyLocation location)
   }
 }
 
-void Entity::set_worn(EntityId entity, BodyLocation location)
+void Entity::setWorn(EntityId entity, BodyLocation location)
 {
   if (entity == EntityId::Mu())
   {
@@ -350,29 +311,29 @@ void Entity::set_worn(EntityId entity, BodyLocation location)
   }
 }
 
-bool Entity::can_currently_see()
+bool Entity::canCurrentlySee()
 {
-  return get_modified_property("can_see", Property::from(false)).as<bool>();
+  return getModifiedProperty("can_see", Property::from(false)).as<bool>();
 }
 
-bool Entity::can_currently_move()
+bool Entity::canCurrentlyMove()
 {
-  return get_modified_property("can_move", Property::from(false)).as<bool>();
+  return getModifiedProperty("can_move", Property::from(false)).as<bool>();
 }
 
-void Entity::set_gender(Gender gender)
+void Entity::setGender(Gender gender)
 {
   m_gender = gender;
 }
 
-Gender Entity::get_gender() const
+Gender Entity::getGender() const
 {
   return m_gender;
 }
 
-Gender Entity::get_gender_or_you() const
+Gender Entity::getGenderOrYou() const
 {
-  if (is_player())
+  if (isPlayer())
   {
     return Gender::SecondPerson;
   }
@@ -390,40 +351,40 @@ Gender Entity::get_gender_or_you() const
 }
 
 /// Get the number of a particular body part the DynamicEntity has.
-Property Entity::get_bodypart_number(BodyPart part) const
+Property Entity::getBodypartNumber(BodyPart part) const
 {
   switch (part)
   {
     case BodyPart::Body:
-      return get_intrinsic("bodypart_body_count");
+      return getIntrinsic("bodypart_body_count");
     case BodyPart::Skin:
-      return get_intrinsic("bodypart_skin_count");
+      return getIntrinsic("bodypart_skin_count");
     case BodyPart::Head:
-      return get_intrinsic("bodypart_head_count");
+      return getIntrinsic("bodypart_head_count");
     case BodyPart::Ear:
-      return get_intrinsic("bodypart_ear_count");
+      return getIntrinsic("bodypart_ear_count");
     case BodyPart::Eye:
-      return get_intrinsic("bodypart_eye_count");
+      return getIntrinsic("bodypart_eye_count");
     case BodyPart::Nose:
-      return get_intrinsic("bodypart_nose_count");
+      return getIntrinsic("bodypart_nose_count");
     case BodyPart::Mouth:
-      return get_intrinsic("bodypart_mouth_count");
+      return getIntrinsic("bodypart_mouth_count");
     case BodyPart::Neck:
-      return get_intrinsic("bodypart_neck_count");
+      return getIntrinsic("bodypart_neck_count");
     case BodyPart::Chest:
-      return get_intrinsic("bodypart_chest_count");
+      return getIntrinsic("bodypart_chest_count");
     case BodyPart::Arm:
-      return get_intrinsic("bodypart_arm_count");
+      return getIntrinsic("bodypart_arm_count");
     case BodyPart::Hand:
-      return get_intrinsic("bodypart_hand_count");
+      return getIntrinsic("bodypart_hand_count");
     case BodyPart::Leg:
-      return get_intrinsic("bodypart_leg_count");
+      return getIntrinsic("bodypart_leg_count");
     case BodyPart::Foot:
-      return get_intrinsic("bodypart_foot_count");
+      return getIntrinsic("bodypart_foot_count");
     case BodyPart::Wing:
-      return get_intrinsic("bodypart_wing_count");
+      return getIntrinsic("bodypart_wing_count");
     case BodyPart::Tail:
-      return get_intrinsic("bodypart_tail_count");
+      return getIntrinsic("bodypart_tail_count");
     default:
       return Property::from(0);
   }
@@ -431,40 +392,40 @@ Property Entity::get_bodypart_number(BodyPart part) const
 
 /// Get the appropriate body part name for the DynamicEntity.
 /// @todo Figure out how to cleanly localize this.
-Property Entity::get_bodypart_name(BodyPart part) const
+Property Entity::getBodypartName(BodyPart part) const
 {
   switch (part)
   {
     case BodyPart::Body:
-      return get_intrinsic("bodypart_body_name");
+      return getIntrinsic("bodypart_body_name");
     case BodyPart::Skin:
-      return get_intrinsic("bodypart_skin_name");
+      return getIntrinsic("bodypart_skin_name");
     case BodyPart::Head:
-      return get_intrinsic("bodypart_head_name");
+      return getIntrinsic("bodypart_head_name");
     case BodyPart::Ear:
-      return get_intrinsic("bodypart_ear_name");
+      return getIntrinsic("bodypart_ear_name");
     case BodyPart::Eye:
-      return get_intrinsic("bodypart_eye_name");
+      return getIntrinsic("bodypart_eye_name");
     case BodyPart::Nose:
-      return get_intrinsic("bodypart_nose_name");
+      return getIntrinsic("bodypart_nose_name");
     case BodyPart::Mouth:
-      return get_intrinsic("bodypart_mouth_name");
+      return getIntrinsic("bodypart_mouth_name");
     case BodyPart::Neck:
-      return get_intrinsic("bodypart_neck_name");
+      return getIntrinsic("bodypart_neck_name");
     case BodyPart::Chest:
-      return get_intrinsic("bodypart_chest_name");
+      return getIntrinsic("bodypart_chest_name");
     case BodyPart::Arm:
-      return get_intrinsic("bodypart_arm_name");
+      return getIntrinsic("bodypart_arm_name");
     case BodyPart::Hand:
-      return get_intrinsic("bodypart_hand_name");
+      return getIntrinsic("bodypart_hand_name");
     case BodyPart::Leg:
-      return get_intrinsic("bodypart_leg_name");
+      return getIntrinsic("bodypart_leg_name");
     case BodyPart::Foot:
-      return get_intrinsic("bodypart_foot_name");
+      return getIntrinsic("bodypart_foot_name");
     case BodyPart::Wing:
-      return get_intrinsic("bodypart_wing_name");
+      return getIntrinsic("bodypart_wing_name");
     case BodyPart::Tail:
-      return get_intrinsic("bodypart_tail_name");
+      return getIntrinsic("bodypart_tail_name");
     default:
       return Property::from("squeedlyspooch (unknown BodyPart)");
   }
@@ -472,48 +433,48 @@ Property Entity::get_bodypart_name(BodyPart part) const
 
 /// Get the appropriate body part plural for the DynamicEntity.
 /// @todo Figure out how to cleanly localize this.
-Property Entity::get_bodypart_plural(BodyPart part) const
+Property Entity::getBodypartPlural(BodyPart part) const
 {
   switch (part)
   {
     case BodyPart::Body:
-      return get_intrinsic("bodypart_body_plural", get_bodypart_name(BodyPart::Body) + Property::from("s"));
+      return getIntrinsic("bodypart_body_plural", getBodypartName(BodyPart::Body) + Property::from("s"));
     case BodyPart::Skin:
-      return get_intrinsic("bodypart_skin_plural", get_bodypart_name(BodyPart::Skin) + Property::from("s"));
+      return getIntrinsic("bodypart_skin_plural", getBodypartName(BodyPart::Skin) + Property::from("s"));
     case BodyPart::Head:
-      return get_intrinsic("bodypart_head_plural", get_bodypart_name(BodyPart::Head) + Property::from("s"));
+      return getIntrinsic("bodypart_head_plural", getBodypartName(BodyPart::Head) + Property::from("s"));
     case BodyPart::Ear:
-      return get_intrinsic("bodypart_ear_plural", get_bodypart_name(BodyPart::Ear) + Property::from("s"));
+      return getIntrinsic("bodypart_ear_plural", getBodypartName(BodyPart::Ear) + Property::from("s"));
     case BodyPart::Eye:
-      return get_intrinsic("bodypart_eye_plural", get_bodypart_name(BodyPart::Eye) + Property::from("s"));
+      return getIntrinsic("bodypart_eye_plural", getBodypartName(BodyPart::Eye) + Property::from("s"));
     case BodyPart::Nose:
-      return get_intrinsic("bodypart_nose_plural", get_bodypart_name(BodyPart::Nose) + Property::from("s"));
+      return getIntrinsic("bodypart_nose_plural", getBodypartName(BodyPart::Nose) + Property::from("s"));
     case BodyPart::Mouth:
-      return get_intrinsic("bodypart_mouth_plural", get_bodypart_name(BodyPart::Mouth) + Property::from("s"));
+      return getIntrinsic("bodypart_mouth_plural", getBodypartName(BodyPart::Mouth) + Property::from("s"));
     case BodyPart::Neck:
-      return get_intrinsic("bodypart_neck_plural", get_bodypart_name(BodyPart::Neck) + Property::from("s"));
+      return getIntrinsic("bodypart_neck_plural", getBodypartName(BodyPart::Neck) + Property::from("s"));
     case BodyPart::Chest:
-      return get_intrinsic("bodypart_chest_plural", get_bodypart_name(BodyPart::Chest) + Property::from("s"));
+      return getIntrinsic("bodypart_chest_plural", getBodypartName(BodyPart::Chest) + Property::from("s"));
     case BodyPart::Arm:
-      return get_intrinsic("bodypart_arm_plural", get_bodypart_name(BodyPart::Arm) + Property::from("s"));
+      return getIntrinsic("bodypart_arm_plural", getBodypartName(BodyPart::Arm) + Property::from("s"));
     case BodyPart::Hand:
-      return get_intrinsic("bodypart_hand_plural", get_bodypart_name(BodyPart::Hand) + Property::from("s"));
+      return getIntrinsic("bodypart_hand_plural", getBodypartName(BodyPart::Hand) + Property::from("s"));
     case BodyPart::Leg:
-      return get_intrinsic("bodypart_leg_plural", get_bodypart_name(BodyPart::Leg) + Property::from("s"));
+      return getIntrinsic("bodypart_leg_plural", getBodypartName(BodyPart::Leg) + Property::from("s"));
     case BodyPart::Foot:
-      return get_intrinsic("bodypart_foot_plural", get_bodypart_name(BodyPart::Foot) + Property::from("s"));
+      return getIntrinsic("bodypart_foot_plural", getBodypartName(BodyPart::Foot) + Property::from("s"));
     case BodyPart::Wing:
-      return get_intrinsic("bodypart_wing_plural", get_bodypart_name(BodyPart::Wing) + Property::from("s"));
+      return getIntrinsic("bodypart_wing_plural", getBodypartName(BodyPart::Wing) + Property::from("s"));
     case BodyPart::Tail:
-      return get_intrinsic("bodypart_tail_plural", get_bodypart_name(BodyPart::Tail) + Property::from("s"));
+      return getIntrinsic("bodypart_tail_plural", getBodypartName(BodyPart::Tail) + Property::from("s"));
     default:
       return Property::from("squeedlyspooches (unknown BodyParts)");
   }
 }
 
-bool Entity::is_player() const
+bool Entity::isPlayer() const
 {
-  return (GAME.get_player() == m_id);
+  return (GAME.getPlayer() == m_id);
 }
 
 std::string const& Entity::getType() const
@@ -521,28 +482,28 @@ std::string const& Entity::getType() const
   return m_metadata.getType();
 }
 
-std::string Entity::get_parent_type() const
+std::string Entity::getParentType() const
 {
-  return m_metadata.get_intrinsic("parent").as<std::string>();
+  return m_metadata.getIntrinsic("parent").as<std::string>();
 }
 
-bool Entity::is_subtype_of(std::string that_type) const
+bool Entity::isSubtypeOf(std::string that_type) const
 {
   std::string this_type = getType();
-  return GAME.get_entities().first_is_subtype_of_second(this_type, that_type);
+  return GAME.getEntities().firstIsSubtypeOfSecond(this_type, that_type);
 }
 
-Property Entity::get_intrinsic(std::string key, Property default_value) const
+Property Entity::getIntrinsic(std::string key, Property default_value) const
 {
-  return m_metadata.get_intrinsic(key, default_value);
+  return m_metadata.getIntrinsic(key, default_value);
 }
 
-Property Entity::get_intrinsic(std::string key) const
+Property Entity::getIntrinsic(std::string key) const
 {
-  return get_intrinsic(key, Property());
+  return getIntrinsic(key, Property());
 }
 
-Property Entity::get_base_property(std::string key, Property default_value) const
+Property Entity::getBaseProperty(std::string key, Property default_value) const
 {
   if (m_properties.contains(key))
   {
@@ -550,15 +511,15 @@ Property Entity::get_base_property(std::string key, Property default_value) cons
   }
   else
   {
-    Property value = m_metadata.get_intrinsic(key, default_value);
+    Property value = m_metadata.getIntrinsic(key, default_value);
     m_properties.set(key, Property(value));
     return value;
   }
 }
 
-Property Entity::get_base_property(std::string key) const
+Property Entity::getBaseProperty(std::string key) const
 {
-  return get_base_property(key, Property());
+  return getBaseProperty(key, Property());
 }
 
 /// Sets a base property of this Entity.
@@ -567,7 +528,7 @@ Property Entity::get_base_property(std::string key) const
 /// @param key    Key of the property to set.
 /// @param value  Value to set the property to.
 /// @return Boolean indicating whether the property previously existed.
-bool Entity::set_base_property(std::string key, Property value)
+bool Entity::setBaseProperty(std::string key, Property value)
 {
   bool existed = m_properties.contains(key);
   m_properties.set(key, value);
@@ -579,55 +540,55 @@ bool Entity::set_base_property(std::string key, Property value)
 /// If the base property is not found, it is created.
 /// @param key    Key of the property to set.
 /// @param value  Value to add to the property.
-void Entity::add_to_base_property(std::string key, Property add_value)
+void Entity::addToBaseProperty(std::string key, Property add_value)
 {
   Property existing_value = m_properties.get(key);
   Property new_value = existing_value + add_value;
   m_properties.set(key, new_value);
 }
 
-Property Entity::get_modified_property(std::string key, Property default_value) const
+Property Entity::getModifiedProperty(std::string key, Property default_value) const
 {
   if (!m_properties.contains(key))
   {
-    Property value = m_metadata.get_intrinsic(key, default_value);
+    Property value = m_metadata.getIntrinsic(key, default_value);
     m_properties.set(key, Property(value));
   }
 
   return m_properties.get_modified(key);
 }
 
-Property Entity::get_modified_property(std::string key) const
+Property Entity::getModifiedProperty(std::string key) const
 {
-  return get_modified_property(key, Property());
+  return getModifiedProperty(key, Property());
 }
 
-bool Entity::add_modifier(std::string key, EntityId id, PropertyModifierInfo const& info)
+bool Entity::addModifier(std::string key, EntityId id, PropertyModifierInfo const& info)
 {
-  return m_properties.add_modifier(key, id, info);
+  return m_properties.addModifier(key, id, info);
 }
 
-size_t Entity::remove_modifier(std::string key, EntityId id)
+size_t Entity::removeModifier(std::string key, EntityId id)
 {
-  return m_properties.remove_modifier(key, id);
+  return m_properties.removeModifier(key, id);
 }
 
 unsigned int Entity::getQuantity() const
 {
-  return get_base_property("quantity", Property::from(1)).as<uint32_t>();
+  return getBaseProperty("quantity", Property::from(1)).as<uint32_t>();
 }
 
 void Entity::setQuantity(unsigned int quantity)
 {
-  set_base_property("quantity", Property::from(quantity));
+  setBaseProperty("quantity", Property::from(quantity));
 }
 
-EntityId Entity::get_id() const
+EntityId Entity::getId() const
 {
   return m_id;
 }
 
-EntityId Entity::get_root_location() const
+EntityId Entity::getRootLocation() const
 {
   if (m_location == EntityId::Mu())
   {
@@ -636,7 +597,7 @@ EntityId Entity::get_root_location() const
   else
   {
     auto location = m_location;
-    return location->get_root_location();
+    return location->getRootLocation();
   }
 }
 
@@ -645,17 +606,17 @@ EntityId Entity::getLocation() const
   return m_location;
 }
 
-bool Entity::can_see(EntityId entity)
+bool Entity::canSee(EntityId entity)
 {
   // Make sure we are able to see at all.
-  if (!can_currently_see())
+  if (!canCurrentlySee())
   {
     return false;
   }
 
   // Are we on a map?  Bail out if we aren't.
-  MapId entity_map_id = this->get_map_id();
-  MapId thing_map_id = entity->get_map_id();
+  MapId entity_map_id = this->getMapId();
+  MapId thing_map_id = entity->getMapId();
 
   if ((entity_map_id == MapFactory::null_map_id) ||
     (thing_map_id == MapFactory::null_map_id) ||
@@ -664,26 +625,26 @@ bool Entity::can_see(EntityId entity)
     return false;
   }
 
-  auto thing_location = entity->get_maptile();
+  auto thing_location = entity->getMapTile();
   if (thing_location == nullptr)
   {
     return false;
   }
 
-  IntVec2 thing_coords = thing_location->get_coords();
+  IntVec2 thing_coords = thing_location->getCoords();
 
-  return can_see(thing_coords);
+  return canSee(thing_coords);
 }
 
-bool Entity::can_see(IntVec2 coords)
+bool Entity::canSee(IntVec2 coords)
 {
   // Make sure we are able to see at all.
-  if (!can_currently_see())
+  if (!canCurrentlySee())
   {
     return false;
   }
 
-  MapId map_id = get_map_id();
+  MapId map_id = getMapId();
 
   // Are we on a map?  Bail out if we aren't.
   if (map_id == MapFactory::null_map_id)
@@ -692,21 +653,21 @@ bool Entity::can_see(IntVec2 coords)
   }
 
   // If we aren't on a valid maptile, we can't see anything.
-  auto tile = get_maptile();
+  auto tile = getMapTile();
   if (tile == nullptr)
   {
     return false;
   }
 
   // If the coordinates are where we are, then yes, we can indeed see the tile, regardless.
-  IntVec2 tile_coords = tile->get_coords();
+  IntVec2 tile_coords = tile->getCoords();
 
   if ((tile_coords.x == coords.x) && (tile_coords.y == coords.y))
   {
     return true;
   }
 
-  Map& game_map = GAME.get_maps().get(map_id);
+  Map& game_map = GAME.getMaps().get(map_id);
   auto map_size = game_map.getSize();
 
   // Check for coords out of bounds. If they're out of bounds, we can't see it.
@@ -716,10 +677,10 @@ bool Entity::can_see(IntVec2 coords)
   }
 
   // Return seen data.
-  return m_tiles_currently_seen[game_map.get_index(coords)];
+  return m_tiles_currently_seen[game_map.getIndex(coords)];
 }
 
-void Entity::find_seen_tiles()
+void Entity::findSeenTiles()
 {
   //sf::Clock elapsed;
 
@@ -737,7 +698,7 @@ void Entity::find_seen_tiles()
 
   // Hang on, can we actually see?
   // If not, bail out.
-  if (can_currently_see() == false)
+  if (canCurrentlySee() == false)
   {
     return;
   }
@@ -754,22 +715,22 @@ void Entity::find_seen_tiles()
   }
 }
 
-MapMemoryChunk const& Entity::get_memory_at(IntVec2 coords) const
+MapMemoryChunk const& Entity::getMemoryAt(IntVec2 coords) const
 {
-  static MapMemoryChunk null_memory_chunk{ "???", GAME.get_game_clock() };
+  static MapMemoryChunk null_memory_chunk{ "???", GAME.getGameClock() };
 
-  if (this->get_map_id() == MapFactory::null_map_id)
+  if (this->getMapId() == MapFactory::null_map_id)
   {
     return null_memory_chunk;
   }
 
-  Map& game_map = GAME.get_maps().get(this->get_map_id());
-  return m_map_memory[game_map.get_index(coords)];
+  Map& game_map = GAME.getMaps().get(this->getMapId());
+  return m_map_memory[game_map.getIndex(coords)];
 }
 
 bool Entity::move_into(EntityId new_location)
 {
-  MapId old_map_id = this->get_map_id();
+  MapId old_map_id = this->getMapId();
   EntityId old_location = m_location;
 
   if (new_location == old_location)
@@ -783,18 +744,18 @@ bool Entity::move_into(EntityId new_location)
   switch (can_contain)
   {
     case ActionResult::Success:
-      if (new_location->get_inventory().add(m_id))
+      if (new_location->getInventory().add(m_id))
       {
         // Try to lock our old location.
         if (m_location != EntityId::Mu())
         {
-          m_location->get_inventory().remove(m_id);
+          m_location->getInventory().remove(m_id);
         }
 
         // Set the location to the new location.
         m_location = new_location;
 
-        MapId new_map_id = this->get_map_id();
+        MapId new_map_id = this->getMapId();
         if (old_map_id != new_map_id)
         {
           if (old_map_id != MapFactory::null_map_id)
@@ -805,14 +766,14 @@ bool Entity::move_into(EntityId new_location)
           m_tiles_currently_seen.clear();
           if (new_map_id != MapFactory::null_map_id)
           {
-            Map& new_map = GAME.get_maps().get(new_map_id);
+            Map& new_map = GAME.getMaps().get(new_map_id);
             IntVec2 new_map_size = new_map.getSize();
             m_map_memory.resize(new_map_size.x * new_map_size.y);
             m_tiles_currently_seen.resize(new_map_size.x * new_map_size.y);
             /// @todo Load new map memory if it exists somewhere.
           }
         }
-        this->find_seen_tiles();
+        this->findSeenTiles();
         //notifyObservers(Event::Updated);
         return true;
       } // end if (add to new inventory was successful)
@@ -825,12 +786,12 @@ bool Entity::move_into(EntityId new_location)
   return false;
 }
 
-Inventory& Entity::get_inventory()
+Inventory& Entity::getInventory()
 {
   return m_inventory;
 }
 
-bool Entity::is_inside_another_thing() const
+bool Entity::isInsideAnotherEntity() const
 {
   EntityId location = m_location;
   if (location == EntityId::Mu())
@@ -848,7 +809,7 @@ bool Entity::is_inside_another_thing() const
   return true;
 }
 
-MapTile* Entity::get_maptile() const
+MapTile* Entity::getMapTile() const
 {
   EntityId location = m_location;
 
@@ -858,11 +819,11 @@ MapTile* Entity::get_maptile() const
   }
   else
   {
-    return location->get_maptile();
+    return location->getMapTile();
   }
 }
 
-MapId Entity::get_map_id() const
+MapId Entity::getMapId() const
 {
   EntityId location = m_location;
 
@@ -871,7 +832,7 @@ MapId Entity::get_map_id() const
     MapTile* maptile = _get_maptile();
     if (maptile != nullptr)
     {
-      return maptile->get_map_id();
+      return maptile->getMapId();
     }
     else
     {
@@ -880,15 +841,15 @@ MapId Entity::get_map_id() const
   }
   else
   {
-    return location->get_map_id();
+    return location->getMapId();
   }
 }
 
-std::string Entity::get_display_adjectives() const
+std::string Entity::getDisplayAdjectives() const
 {
   std::string adjectives;
 
-  if (is_subtype_of("DynamicEntity") && get_modified_property("hp").as<int32_t>() <= 0)
+  if (isSubtypeOf("DynamicEntity") && getModifiedProperty("hp").as<int32_t>() <= 0)
   {
     adjectives += tr("ADJECTIVE_DEAD");
   }
@@ -899,34 +860,34 @@ std::string Entity::get_display_adjectives() const
 }
 
 /// @todo Figure out how to cleanly localize this.
-std::string Entity::get_display_name() const
+std::string Entity::getDisplayName() const
 {
-  return m_metadata.get_intrinsic("name").as<std::string>();
+  return m_metadata.getIntrinsic("name").as<std::string>();
 }
 
 /// @todo Figure out how to cleanly localize this.
-std::string Entity::get_display_plural() const
+std::string Entity::getDisplayPlural() const
 {
-  return m_metadata.get_intrinsic("plural").as<std::string>();
+  return m_metadata.getIntrinsic("plural").as<std::string>();
 }
 
-std::string Entity::get_proper_name() const
+std::string Entity::getProperName() const
 {
-  return get_modified_property("proper_name").as<std::string>();
+  return getModifiedProperty("proper_name").as<std::string>();
 }
 
-void Entity::set_proper_name(std::string name)
+void Entity::setProperName(std::string name)
 {
-  set_base_property("proper_name", Property::from(name));
+  setBaseProperty("proper_name", Property::from(name));
 }
 
-std::string Entity::get_subject_you_or_identifying_string(ArticleChoice articles) const
+std::string Entity::getSubjectiveString(ArticleChoice articles) const
 {
   std::string str;
 
-  if (is_player())
+  if (isPlayer())
   {
-    if (get_modified_property("hp").as<int32_t>() > 0)
+    if (getModifiedProperty("hp").as<int32_t>() > 0)
     {
       str = tr("PRONOUN_SUBJECT_YOU");
     }
@@ -937,19 +898,19 @@ std::string Entity::get_subject_you_or_identifying_string(ArticleChoice articles
   }
   else
   {
-    str = get_identifying_string(articles);
+    str = getDescriptiveString(articles);
   }
 
   return str;
 }
 
-std::string Entity::get_object_you_or_identifying_string(ArticleChoice articles) const
+std::string Entity::getObjectiveString(ArticleChoice articles) const
 {
   std::string str;
 
-  if (is_player())
+  if (isPlayer())
   {
-    if (get_modified_property("hp").as<int32_t>() > 0)
+    if (getModifiedProperty("hp").as<int32_t>() > 0)
     {
       str = tr("PRONOUN_OBJECT_YOU");
     }
@@ -960,23 +921,23 @@ std::string Entity::get_object_you_or_identifying_string(ArticleChoice articles)
   }
   else
   {
-    str = get_identifying_string(articles);
+    str = getDescriptiveString(articles);
   }
 
   return str;
 }
 
-std::string Entity::get_self_or_identifying_string(EntityId other, ArticleChoice articles) const
+std::string Entity::getReflexiveString(EntityId other, ArticleChoice articles) const
 {
-  if (other == get_id())
+  if (other == getId())
   {
-    return get_reflexive_pronoun();
+    return getReflexivePronoun();
   }
 
-  return get_identifying_string(articles);
+  return getDescriptiveString(articles);
 }
 
-std::string Entity::get_identifying_string(ArticleChoice articles,
+std::string Entity::getDescriptiveString(ArticleChoice articles,
                                             UsePossessives possessives) const
 {
   auto& config = Service<IConfigSettings>::get();
@@ -991,7 +952,7 @@ std::string Entity::get_identifying_string(ArticleChoice articles,
   std::string debug_prefix;
   if (config.get("debug_show_thing_ids").as<bool>() == true)
   {
-    debug_prefix = "(#" + static_cast<std::string>(get_id()) + ") ";
+    debug_prefix = "(#" + static_cast<std::string>(getId()) + ") ";
   }
   
   std::string adjectives;
@@ -999,16 +960,16 @@ std::string Entity::get_identifying_string(ArticleChoice articles,
   std::string description;
   std::string suffix;
 
-  owned = location->is_subtype_of("DynamicEntity");
-  adjectives = get_display_adjectives();
+  owned = location->isSubtypeOf("DynamicEntity");
+  adjectives = getDisplayAdjectives();
 
   if (quantity == 1)
   {
-    noun = get_display_name();
+    noun = getDisplayName();
 
     if (owned && (possessives == UsePossessives::Yes))
     {
-      description = location->get_possessive_of(noun, adjectives);
+      description = location->getPossessiveString(noun, adjectives);
     }
     else
     {
@@ -1022,18 +983,18 @@ std::string Entity::get_identifying_string(ArticleChoice articles,
       }
     }
 
-    if (get_proper_name().empty() == false)
+    if (getProperName().empty() == false)
     {
-      suffix = tr("VERB_NAME_PP") + " " + get_proper_name();
+      suffix = tr("VERB_NAME_PP") + " " + getProperName();
     }
   }
   else
   {
-    noun = std::to_string(getQuantity()) + " " + get_display_plural();
+    noun = std::to_string(getQuantity()) + " " + getDisplayPlural();
 
     if (owned && (possessives == UsePossessives::Yes))
     {
-      description = location->get_possessive_of(noun, adjectives);
+      description = location->getPossessiveString(noun, adjectives);
     }
     else
     {
@@ -1057,15 +1018,15 @@ std::string Entity::get_identifying_string(ArticleChoice articles,
   return name;
 }
 
-bool Entity::is_third_person()
+bool Entity::isThirdPerson()
 {
-  return (GAME.get_player() == m_id) || (get_base_property("quantity").as<uint32_t>() > 1);
+  return (GAME.getPlayer() == m_id) || (getBaseProperty("quantity").as<uint32_t>() > 1);
 }
 
-std::string const& Entity::choose_verb(std::string const& verb12,
+std::string const& Entity::chooseVerb(std::string const& verb12,
                                         std::string const& verb3)
 {
-  if ((GAME.get_player() == m_id) || (get_base_property("quantity").as<uint32_t>() > 1))
+  if ((GAME.getPlayer() == m_id) || (getBaseProperty("quantity").as<uint32_t>() > 1))
   {
     return verb12;
   }
@@ -1075,61 +1036,61 @@ std::string const& Entity::choose_verb(std::string const& verb12,
   }
 }
 
-int Entity::get_mass()
+int Entity::getMass()
 {
-  return get_modified_property("physical_mass").as<uint32_t>() * 
-    get_base_property("quantity").as<uint32_t>();
+  return getModifiedProperty("physical_mass").as<uint32_t>() * 
+    getBaseProperty("quantity").as<uint32_t>();
 }
 
-std::string const& Entity::get_subject_pronoun() const
+std::string const& Entity::getSubjectPronoun() const
 {
-  return getSubjPro(get_gender_or_you());
+  return getSubjPro(getGenderOrYou());
 }
 
-std::string const& Entity::get_object_pronoun() const
+std::string const& Entity::getObjectPronoun() const
 {
-  return getObjPro(get_gender_or_you());
+  return getObjPro(getGenderOrYou());
 }
 
-std::string const& Entity::get_reflexive_pronoun() const
+std::string const& Entity::getReflexivePronoun() const
 {
-  return getRefPro(get_gender_or_you());
+  return getRefPro(getGenderOrYou());
 }
 
-std::string const& Entity::get_possessive_adjective() const
+std::string const& Entity::getPossessiveAdjective() const
 {
-  return getPossAdj(get_gender_or_you());
+  return getPossAdj(getGenderOrYou());
 }
 
-std::string const& Entity::get_possessive_pronoun() const
+std::string const& Entity::getPossessivePronoun() const
 {
-  return getPossPro(get_gender_or_you());
+  return getPossPro(getGenderOrYou());
 }
 
-std::string Entity::get_possessive_of(std::string owned, std::string adjectives)
+std::string Entity::getPossessiveString(std::string owned, std::string adjectives)
 {
-  if (GAME.get_player() == m_id)
+  if (GAME.getPlayer() == m_id)
   {
     return StringTransforms::make_string_numerical_tokens_only(tr("PRONOUN_POSSESSIVE_YOU"), { adjectives, owned });
   }
   else
   {
     return StringTransforms::make_string_numerical_tokens_only(tr("PATTERN_POSSESSIVE"), {
-      get_identifying_string(ArticleChoice::Definite, UsePossessives::No),
+      getDescriptiveString(ArticleChoice::Definite, UsePossessives::No),
       adjectives,
       owned
     });
   }
 }
 
-sf::Color Entity::get_opacity() const
+sf::Color Entity::getOpacity() const
 {
-  return get_modified_property("opacity").as<Color>();
+  return getModifiedProperty("opacity").as<Color>();
 }
 
-bool Entity::is_opaque()
+bool Entity::isOpaque()
 {
-  auto opacity = get_opacity();
+  auto opacity = getOpacity();
   return opacity.r >= 255 && opacity.g >= 255 && opacity.b >= 255;
 }
 
@@ -1137,7 +1098,7 @@ void Entity::light_up_surroundings()
 {
   EntityId location = getLocation();
 
-  if (get_intrinsic("inventory_size").as<uint32_t>() != 0)
+  if (getIntrinsic("inventory_size").as<uint32_t>() != 0)
   {
     /// @todo Figure out how we want to handle light sources.
     ///       If we want to be more accurate, the light should only
@@ -1145,18 +1106,18 @@ void Entity::light_up_surroundings()
     ///       equipped it. If we want to be easier, the light should
     ///       shine simply if it's in an entity's inventory.
 
-    bool opaque = location->is_opaque();
-    bool is_entity = this->is_subtype_of("DynamicEntity");
+    bool opaque = location->isOpaque();
+    bool is_entity = this->isSubtypeOf("DynamicEntity");
 
     /*CLOG(DEBUG, "Entity") << "light_up_surroundings - this->type = " << this->getType() <<
       ", location->type = " << location->getType() <<
       ", location->opaque = " << opaque <<
-      ", this->is_subtype_of(\"DynamicEntity\") = " << is_entity;*/
+      ", this->isSubtypeOf(\"DynamicEntity\") = " << is_entity;*/
 
-    //if (!is_opaque() || is_wielding(light) || is_wearing(light))
+    //if (!isOpaque() || isWielding(light) || isWearing(light))
     if (!opaque || is_entity)
     {
-      auto& inventory = get_inventory();
+      auto& inventory = getInventory();
       for (auto iter = inventory.begin();
            iter != inventory.end();
            ++iter)
@@ -1168,13 +1129,13 @@ void Entity::light_up_surroundings()
   }
 
   // Use visitor pattern.
-  if ((location != EntityId::Mu()) && this->get_modified_property("lit").as<bool>())
+  if ((location != EntityId::Mu()) && this->getModifiedProperty("lit").as<bool>())
   {
-    location->be_lit_by(this->get_id());
+    location->beLitBy(this->getId());
   }
 }
 
-void Entity::be_lit_by(EntityId light)
+void Entity::beLitBy(EntityId light)
 {
   auto result = call_lua_function("on_lit_by", { Property::from(light) },                                  
                                   Property::from(ActionResult::Success));
@@ -1187,7 +1148,7 @@ void Entity::be_lit_by(EntityId light)
 
   if (getLocation() == EntityId::Mu())
   {
-    GAME.get_maps().get(get_map_id()).add_light(light);
+    GAME.getMaps().get(getMapId()).addLight(light);
   }
   else
   {
@@ -1197,13 +1158,13 @@ void Entity::be_lit_by(EntityId light)
     ///       equipped it. If we want to be easier, the light should
     ///       shine simply if it's in the player's inventory.
 
-    bool opaque = this->is_opaque();
-    bool is_entity = this->is_subtype_of("DynamicEntity");
+    bool opaque = this->isOpaque();
+    bool is_entity = this->isSubtypeOf("DynamicEntity");
 
-    //if (!is_opaque() || is_wielding(light) || is_wearing(light))
+    //if (!isOpaque() || isWielding(light) || isWearing(light))
     if (!opaque || is_entity)
     {
-      location->be_lit_by(light);
+      location->beLitBy(light);
     }
   }
 }
@@ -1211,7 +1172,7 @@ void Entity::be_lit_by(EntityId light)
 /// @todo Make this into an Action.
 void Entity::spill()
 {
-  Inventory& inventory = get_inventory();
+  Inventory& inventory = getInventory();
   std::string message;
   bool success = false;
 
@@ -1233,17 +1194,17 @@ void Entity::spill()
           success = entity->move_into(m_location);
           if (success)
           {
-            auto container_string = this->get_identifying_string();
-            auto thing_string = entity->get_identifying_string();
-            message = thing_string + this->choose_verb(" tumble", " tumbles") + " out of " + container_string + ".";
+            auto container_string = this->getDescriptiveString();
+            auto thing_string = entity->getDescriptiveString();
+            message = thing_string + this->chooseVerb(" tumble", " tumbles") + " out of " + container_string + ".";
             Service<IMessageLog>::get().add(message);
           }
           else
           {
             // We couldn't move it, so just destroy it.
-            auto container_string = this->get_identifying_string();
-            auto thing_string = entity->get_identifying_string();
-            message = thing_string + this->choose_verb(" vanish", " vanishes") + " in a puff of logic.";
+            auto container_string = this->getDescriptiveString();
+            auto thing_string = entity->getDescriptiveString();
+            message = thing_string + this->chooseVerb(" vanish", " vanishes") + " in a puff of logic.";
             Service<IMessageLog>::get().add(message);
             entity->destroy();
           }
@@ -1272,7 +1233,7 @@ void Entity::destroy()
 {
   auto old_location = m_location;
 
-  if (get_intrinsic("inventory_size").as<uint32_t>() != 0)
+  if (getIntrinsic("inventory_size").as<uint32_t>() != 0)
   {
     // Spill the contents of this Entity into the Entity's location.
     spill();
@@ -1280,17 +1241,17 @@ void Entity::destroy()
 
   if (old_location != EntityId::Mu())
   {
-    old_location->get_inventory().remove(m_id);
+    old_location->getInventory().remove(m_id);
   }
 
   //notifyObservers(Event::Updated);
 }
 
 /// @todo Figure out how to localize this.
-std::string Entity::get_bodypart_description(BodyLocation location)
+std::string Entity::getBodypartDescription(BodyLocation location)
 {
-  uint32_t total_number = this->get_bodypart_number(location.part).as<uint32_t>();
-  std::string part_name = this->get_bodypart_name(location.part).as<std::string>();
+  uint32_t total_number = this->getBodypartNumber(location.part).as<uint32_t>();
+  std::string part_name = this->getBodypartName(location.part).as<std::string>();
   std::string result;
 
   Assert("Entity", location.number < total_number, "asked for bodypart " << location.number << " of " << total_number);
@@ -1448,7 +1409,7 @@ std::string Entity::get_bodypart_description(BodyLocation location)
 }
 
 /// @todo Have the script return an optional reason if an action can't be done.
-bool Entity::can_have_action_done_by(EntityId entity, Actions::Action& action)
+bool Entity::canHaveActionDoneBy(EntityId entity, Actions::Action& action)
 {
   return call_lua_function("can_have_action_" + action.getType() + "_done_by", { Property::from(entity) },
                            Property::from(false)).as<bool>();
@@ -1571,13 +1532,13 @@ ActionResult Entity::perform_action_attacked_by(EntityId subject, EntityId targe
 
 bool Entity::perform_action_deequipped_by(EntityId actor, BodyLocation& location)
 {
-  if (this->get_modified_property("bound").as<bool>())
+  if (this->getModifiedProperty("bound").as<bool>())
   {
     std::string message;
-    message = actor->get_identifying_string() + " cannot take off " + this->get_identifying_string() +
+    message = actor->getDescriptiveString() + " cannot take off " + this->getDescriptiveString() +
       "; it is magically bound to " +
-      actor->get_possessive_adjective() + " " +
-      actor->get_bodypart_description(location) + "!";
+      actor->getPossessiveAdjective() + " " +
+      actor->getBodypartDescription(location) + "!";
     Service<IMessageLog>::get().add(message);
     return false;
   }
@@ -1607,8 +1568,8 @@ bool Entity::can_merge_with(EntityId other) const
   }
 
   // Entities with inventories can never merge.
-  if ((get_intrinsic("inventory_size").as<uint32_t>() != 0) ||
-      (other->get_intrinsic("inventory_size").as<uint32_t>() != 0))
+  if ((getIntrinsic("inventory_size").as<uint32_t>() != 0) ||
+      (other->getIntrinsic("inventory_size").as<uint32_t>() != 0))
   {
     return false;
   }
@@ -1631,13 +1592,13 @@ bool Entity::can_merge_with(EntityId other) const
 
 ActionResult Entity::can_contain(EntityId entity)
 {
-  auto inventory_size_property = get_intrinsic("inventory_size");
+  auto inventory_size_property = getIntrinsic("inventory_size");
   int32_t inventory_size = inventory_size_property.as<int32_t>();
   if (inventory_size == 0)
   {
     return ActionResult::FailureTargetNotAContainer;
   }
-  else if (get_inventory().count() >= inventory_size)
+  else if (getInventory().count() >= inventory_size)
   {
     return ActionResult::FailureInventoryFull;
   }
@@ -1652,7 +1613,7 @@ Property Entity::call_lua_function(std::string function_name,
                                    std::vector<Property> const& args,
                                    Property default_result)
 {
-  return the_lua_instance.call_thing_function(function_name, get_id(), args, default_result);
+  return the_lua_instance.call_thing_function(function_name, getId(), args, default_result);
 }
 
 Property Entity::call_lua_function(std::string function_name,
@@ -1665,7 +1626,7 @@ Property Entity::call_lua_function(std::string function_name,
                                    std::vector<Property> const& args,
                                    Property default_result) const
 {
-  return the_lua_instance.call_thing_function(function_name, get_id(), args, default_result);
+  return the_lua_instance.call_thing_function(function_name, getId(), args, default_result);
 }
 
 Property Entity::call_lua_function(std::string function_name,
@@ -1690,19 +1651,19 @@ std::unordered_set<EventID> Entity::registeredEvents() const
 
 bool Entity::_process_own_involuntary_actions()
 {
-  int counter_busy = get_base_property("counter_busy").as<int32_t>();
+  int counter_busy = getBaseProperty("counter_busy").as<int32_t>();
   bool entity_updated = false;
 
   // Is this an entity that is now dead?
-  if (is_subtype_of("DynamicEntity") && (get_modified_property("hp").as<int32_t>() <= 0))
+  if (isSubtypeOf("DynamicEntity") && (getModifiedProperty("hp").as<int32_t>() <= 0))
   {
     // Did the entity JUST die?
-    if (get_modified_property("dead").as<bool>() != true)
+    if (getModifiedProperty("dead").as<bool>() != true)
     {
       // Perform the "die" action.
       // (This sets the "dead" property and clears out any pending actions.)
-      std::unique_ptr<Actions::Action> dieAction(NEW Actions::ActionDie(get_id()));
-      this->queue_involuntary_action(std::move(dieAction));
+      std::unique_ptr<Actions::Action> dieAction(NEW Actions::ActionDie(getId()));
+      this->queueInvoluntaryAction(std::move(dieAction));
     }
   }
 
@@ -1716,7 +1677,7 @@ bool Entity::_process_own_involuntary_actions()
     if (action_done)
     {
       CLOG(TRACE, "Entity") << "Entity " <<
-        get_id() << " (" <<
+        getId() << " (" <<
         getType() << "): Involuntary Action " <<
         action->getType() << " is done, popping";
 
@@ -1742,18 +1703,18 @@ bool Entity::_process_own_involuntary_actions()
 
 bool Entity::_process_own_voluntary_actions()
 {
-  int counter_busy = get_base_property("counter_busy").as<int32_t>();
+  int counter_busy = getBaseProperty("counter_busy").as<int32_t>();
 
   // Is this an entity that is now dead?
-  if (is_subtype_of("DynamicEntity") && (get_modified_property("hp").as<int32_t>() <= 0))
+  if (isSubtypeOf("DynamicEntity") && (getModifiedProperty("hp").as<int32_t>() <= 0))
   {
     // Did the entity JUST die?
-    if (get_modified_property("dead").as<bool>() != true)
+    if (getModifiedProperty("dead").as<bool>() != true)
     {
       // Perform the "die" action.
       // (This sets the "dead" property and clears out any pending actions.)
-      std::unique_ptr<Actions::Action> dieAction(NEW Actions::ActionDie(get_id()));
-      this->queue_involuntary_action(std::move(dieAction));
+      std::unique_ptr<Actions::Action> dieAction(NEW Actions::ActionDie(getId()));
+      this->queueInvoluntaryAction(std::move(dieAction));
     }
   }
 
@@ -1761,7 +1722,7 @@ bool Entity::_process_own_voluntary_actions()
   if (counter_busy > 0)
   {
     // Decrement busy counter.
-    add_to_base_property("counter_busy", Property::from(-1));
+    addToBaseProperty("counter_busy", Property::from(-1));
   }
   // Otherwise if there are pending actions...
   else if (!m_pending_voluntary_actions.empty())
@@ -1778,7 +1739,7 @@ bool Entity::_process_own_voluntary_actions()
       if (action_done)
       {
         CLOG(TRACE, "Entity") << "Entity " <<
-          get_id() << " (" <<
+          getId() << " (" <<
           getType() << "): Action " <<
           action->getType() << " is done, popping";
 
@@ -1805,7 +1766,7 @@ bool Entity::_process_own_voluntary_actions()
   {
     // If entity is not the player, call the Lua process function on this 
     // Entity, which runs the AI and may queue new actions.
-    if (!is_player())
+    if (!isPlayer())
     {
       ActionResult result = call_lua_function("process", {}).as<ActionResult>();
     }
@@ -1830,14 +1791,14 @@ void Entity::do_recursive_visibility(int octant,
   //int y = 0;
 
   // Are we on a map?  Bail out if we aren't.
-  if (is_inside_another_thing())
+  if (isInsideAnotherEntity())
   {
     return;
   }
 
-  MapTile* tile = get_maptile();
-  IntVec2 tile_coords = tile->get_coords();
-  Map& game_map = GAME.get_maps().get(get_map_id());
+  MapTile* tile = getMapTile();
+  IntVec2 tile_coords = tile->getCoords();
+  Map& game_map = GAME.getMaps().get(getMapId());
 
   static const int mv = 128;
   static constexpr int mw = (mv * mv);
@@ -1930,31 +1891,31 @@ void Entity::do_recursive_visibility(int octant,
   {
     if (calc_vis_distance(new_coords, tile_coords) <= mw)
     {
-      if (game_map.tile_is_opaque(new_coords))
+      if (game_map.tileIsOpaque(new_coords))
       {
-        if (!game_map.tile_is_opaque(new_coords + (IntVec2)dir))
+        if (!game_map.tileIsOpaque(new_coords + (IntVec2)dir))
         {
           do_recursive_visibility(octant, depth + 1, slope_A, recurse_slope(to_v2f(new_coords), to_v2f(tile_coords)));
         }
       }
       else
       {
-        if (game_map.tile_is_opaque(new_coords + (IntVec2)dir))
+        if (game_map.tileIsOpaque(new_coords + (IntVec2)dir))
         {
           slope_A = loop_slope(to_v2f(new_coords), to_v2f(tile_coords));
         }
       }
-      m_tiles_currently_seen[game_map.get_index(new_coords)] = true;
+      m_tiles_currently_seen[game_map.getIndex(new_coords)] = true;
 
-      MapMemoryChunk new_memory{ game_map.get_tile(new_coords).get_tile_type(),
-                                 GAME.get_game_clock() };
-      m_map_memory[game_map.get_index(new_coords)] = new_memory;
+      MapMemoryChunk new_memory{ game_map.getTile(new_coords).getTileType(),
+                                 GAME.getGameClock() };
+      m_map_memory[game_map.getIndex(new_coords)] = new_memory;
     }
     new_coords -= (IntVec2)dir;
   }
   new_coords += (IntVec2)dir;
 
-  if ((depth < mv) && (!game_map.get_tile(new_coords).is_opaque()))
+  if ((depth < mv) && (!game_map.getTile(new_coords).isOpaque()))
   {
     do_recursive_visibility(octant, depth + 1, slope_A, slope_B);
   }

@@ -88,7 +88,7 @@ public:
   /// new one will be added.
   ///
   /// @return True if the function was added; false if it already existed.
-  bool add_modifier(std::string name, 
+  bool addModifier(std::string name, 
                     EntityId id, 
                     PropertyModifierInfo const& info);
 
@@ -101,7 +101,7 @@ public:
   /// @param name   Name of the property to remove modifiers from.
   /// @param id     Entity responsible for the modifier.
   /// @return The number of modifiers erased.
-  size_t remove_modifier(std::string name, EntityId id);
+  size_t removeModifier(std::string name, EntityId id);
 
   /// Given a current game time, remove all expired modifiers for a key.
   /// @param name               Name of the property to remove modifiers from.

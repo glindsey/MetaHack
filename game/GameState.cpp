@@ -39,7 +39,7 @@ GameState::~GameState()
   p_instance = nullptr;
 }
 
-void GameState::save_state(FileName filename)
+void GameState::saveState(FileName filename)
 {
 #if 0
   std::ofstream fs{ filename.c_str() };
@@ -49,21 +49,21 @@ void GameState::save_state(FileName filename)
 #endif
 }
 
-MapFactory& GameState::get_maps()
+MapFactory& GameState::getMaps()
 {
   Assert("GameState", m_map_factory, "MapFactory does not exist");
 
   return *m_map_factory;
 }
 
-EntityPool& GameState::get_entities()
+EntityPool& GameState::getEntities()
 {
   Assert("GameState", m_entity_pool, "EntityPool does not exist");
 
   return *m_entity_pool;
 }
 
-MetadataCollection & GameState::get_metadata_collection(std::string category)
+MetadataCollection & GameState::getMetadataCollection(std::string category)
 {
   if (m_metacollection.count(category) == 0)
   {
@@ -73,41 +73,41 @@ MetadataCollection & GameState::get_metadata_collection(std::string category)
   return m_metacollection.at(category);
 }
 
-ElapsedTime const & GameState::get_game_clock() const
+ElapsedTime const & GameState::getGameClock() const
 {
   return m_game_clock;
 }
 
-void GameState::set_game_clock(ElapsedTime game_clock)
+void GameState::setGameClock(ElapsedTime game_clock)
 {
   m_game_clock = game_clock;
 }
 
-void GameState::increment_game_clock(ElapsedTime added_time)
+void GameState::incrementGameClock(ElapsedTime added_time)
 {
   /// @todo Check for the unlikely, but not impossible, chance of rollover.
   m_game_clock += added_time;
 }
 
-bool GameState::set_player(EntityId ref)
+bool GameState::setPlayer(EntityId ref)
 {
-  Assert("GameState", ref != get_entities().get_mu(), "tried to make nothingness the player");
+  Assert("GameState", ref != getEntities().get_mu(), "tried to make nothingness the player");
 
   m_player = ref;
   return true;
 }
 
-EntityId GameState::get_player() const
+EntityId GameState::getPlayer() const
 {
   return m_player;
 }
 
-bool GameState::process_tick()
+bool GameState::processGameClockTick()
 {
-  EntityId player = get_player();
+  EntityId player = getPlayer();
 
-  auto player_action_pending = player->action_is_pending();
-  auto player_action_in_progress = player->action_is_in_progress();
+  auto player_action_pending = player->anyActionIsPending();
+  auto player_action_in_progress = player->actionIsInProgress();
   if (player_action_pending || player_action_in_progress)
   {
     // QUESTION: Do we want to update all Entities, PERIOD?  In other words, should
@@ -116,12 +116,12 @@ bool GameState::process_tick()
     //           lag would quickly grow intolerable.
 
     // Get the map the player is on.
-    MapId current_map_id = player->get_map_id();
-    Map& current_map = GAME.get_maps().get(current_map_id);
+    MapId current_map_id = player->getMapId();
+    Map& current_map = GAME.getMaps().get(current_map_id);
 
     // Process everything on the map, and increment game clock.
-    current_map.process_entities();
-    increment_game_clock(ElapsedTime(1));
+    current_map.processEntities();
+    incrementGameClock(ElapsedTime(1));
 
     // If player can see the map...
     /// @todo IMPLEMENT THIS CHECK
@@ -130,7 +130,7 @@ bool GameState::process_tick()
     if (true /* player is directly on a map */)
     {
       // Update map lighting.
-      current_map.update_lighting();
+      current_map.updateLighting();
     }
     return true;
   }

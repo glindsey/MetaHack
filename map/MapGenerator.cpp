@@ -21,8 +21,8 @@ struct MapGenerator::Impl
     {
       for (int x = 0; x < game_map.getSize().x; ++x)
       {
-        auto& tile = game_map.get_tile({ x, y });
-        tile.set_tile_type("MTWallStone");
+        auto& tile = game_map.getTile({ x, y });
+        tile.setTileType("MTWallStone");
       }
     }
   }
@@ -37,7 +37,7 @@ struct MapGenerator::Impl
     {
       ++numRetries;
 
-      MapFeature& feature = game_map.get_random_map_feature();
+      MapFeature& feature = game_map.getRandomMapFeature();
       if (feature.get_num_growth_vectors() > 0)
       {
         GeoVector vec = feature.get_random_growth_vector();
@@ -50,32 +50,32 @@ struct MapGenerator::Impl
         {
           if (vec.start_point.y > 0)
           {
-            auto& checkTile = game_map.get_tile({ vec.start_point.x, vec.start_point.y - 1 });
-            vecOkay = !checkTile.is_empty_space();
+            auto& checkTile = game_map.getTile({ vec.start_point.x, vec.start_point.y - 1 });
+            vecOkay = !checkTile.isEmptySpace();
           }
         }
         else if (vec.direction == Direction::East)
         {
           if (vec.start_point.x < mapSize.x - 1)
           {
-            auto& checkTile = game_map.get_tile({ vec.start_point.x + 1, vec.start_point.y });
-            vecOkay = !checkTile.is_empty_space();
+            auto& checkTile = game_map.getTile({ vec.start_point.x + 1, vec.start_point.y });
+            vecOkay = !checkTile.isEmptySpace();
           }
         }
         else if (vec.direction == Direction::South)
         {
           if (vec.start_point.y < mapSize.y - 1)
           {
-            auto& checkTile = game_map.get_tile({ vec.start_point.x, vec.start_point.y + 1 });
-            vecOkay = !checkTile.is_empty_space();
+            auto& checkTile = game_map.getTile({ vec.start_point.x, vec.start_point.y + 1 });
+            vecOkay = !checkTile.isEmptySpace();
           }
         }
         else if (vec.direction == Direction::West)
         {
           if (vec.start_point.x > 0)
           {
-            auto& checkTile = game_map.get_tile({ vec.start_point.x - 1, vec.start_point.y });
-            vecOkay = !checkTile.is_empty_space();
+            auto& checkTile = game_map.getTile({ vec.start_point.x - 1, vec.start_point.y });
+            vecOkay = !checkTile.isEmptySpace();
           }
         }
 
@@ -126,7 +126,7 @@ struct MapGenerator::Impl
     {
       coords.x = xDist(the_RNG);
       coords.y = yDist(the_RNG);
-    } while (game_map.get_tile(coords).is_empty_space());
+    } while (game_map.getTile(coords).isEmptySpace());
 
     return coords;
   }
@@ -171,10 +171,10 @@ void MapGenerator::generate()
     throw std::exception("Could not make starting room for player!");
   }
 
-  MapFeature& startingRoom = pImpl->game_map.add_map_feature(startRoom.get());
+  MapFeature& startingRoom = pImpl->game_map.addMapFeature(startRoom.get());
   startRoom.release();
 
-  sf::IntRect startBox = startingRoom.get_coords();
+  sf::IntRect startBox = startingRoom.getCoords();
   CLOG(TRACE, "MapGenerator") << "Starting room is at " << startBox;
 
   IntVec2 startCoords(startBox.left + (startBox.width / 2),
@@ -182,7 +182,7 @@ void MapGenerator::generate()
 
   CLOG(TRACE, "MapGenerator") << "Setting start coords to " << startCoords;
 
-  pImpl->game_map.set_start_coords(startCoords);
+  pImpl->game_map.setStartCoords(startCoords);
 
   // Continue with additional map features.
   CLOG(TRACE, "MapGenerator") << "Making additional map features...";
@@ -264,7 +264,7 @@ bool MapGenerator::add_feature(PropertyDictionary const& feature_settings)
 
   if (feature)
   {
-    pImpl->game_map.add_map_feature(feature.get());
+    pImpl->game_map.addMapFeature(feature.get());
     feature.release();
     return true;
   }

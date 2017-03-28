@@ -30,7 +30,7 @@ void EntityStandard2DView::draw(sf::RenderTarget& target,
 {
   auto& config = Service<IConfigSettings>::get();
   auto& entity = getEntity();
-  MapTile* root_tile = getEntity().get_maptile();
+  MapTile* root_tile = getEntity().getMapTile();
   auto& texture = m_tile_sheet.getTexture();
 
   if (!root_tile)
@@ -59,7 +59,7 @@ void EntityStandard2DView::draw(sf::RenderTarget& target,
   sf::Color thing_color;
   if (use_lighting)
   {
-    thing_color = root_tile->get_light_level();
+    thing_color = root_tile->getLightLevel();
   }
   else
   {
@@ -95,7 +95,7 @@ UintVec2 EntityStandard2DView::get_tile_sheet_coords(int frame) const
   auto& entity = getEntity();
 
   /// Get tile coordinates on the sheet.
-  UintVec2 start_coords = entity.get_metadata().get_tile_coords();
+  UintVec2 start_coords = entity.getMetadata().get_tile_coords();
 
   /// Call the Lua function to get the offset (tile to choose).
   UintVec2 offset = entity.call_lua_function("get_tile_offset", { Property::from(frame) }).as<UintVec2>();

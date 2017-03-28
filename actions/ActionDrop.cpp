@@ -48,7 +48,7 @@ namespace Actions
 
     if (object == subject)
     {
-      message = maketr("YOU_THROW_SELF_TO_GROUND", { location->get_display_name() });
+      message = maketr("YOU_THROW_SELF_TO_GROUND", { location->getDisplayName() });
       Service<IMessageLog>::get().add(message);
       /// @todo Possible damage from hurling yourself to the ground!
       message = maketr("YOU_SEEM_UNHARMED", { IS_PLAYER ? tr("PREFIX_FORTUNATELY") : "" });
@@ -89,7 +89,7 @@ namespace Actions
         // the future that can't contain certain Entities.
         printMessageTry();
 
-        message = maketr("LOCATION_CANT_HOLD_FOO", { location->get_identifying_string() });
+        message = maketr("LOCATION_CANT_HOLD_FOO", { location->getDescriptiveString() });
         Service<IMessageLog>::get().add(message);
       }
     }

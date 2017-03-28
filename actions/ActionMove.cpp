@@ -43,7 +43,7 @@ namespace Actions
 
     auto subject = getSubject();
     EntityId location = subject->getLocation();
-    MapTile* current_tile = subject->get_maptile();
+    MapTile* current_tile = subject->getMapTile();
     Direction new_direction = getTargetDirection();
 
     if (new_direction == Direction::Up)
@@ -61,11 +61,11 @@ namespace Actions
     else
     {
       // Figure out our target location.
-      IntVec2 coords = current_tile->get_coords();
+      IntVec2 coords = current_tile->getCoords();
       IntVec2 offset = (IntVec2)new_direction;
       int x_new = coords.x + offset.x;
       int y_new = coords.y + offset.y;
-      Map& current_map = GAME.get_maps().get(subject->get_map_id());
+      Map& current_map = GAME.getMaps().get(subject->getMapId());
       IntVec2 map_size = current_map.getSize();
 
       // Check boundaries.
@@ -77,11 +77,11 @@ namespace Actions
       }
       else
       {
-        auto& new_tile = current_map.get_tile({ x_new, y_new });
-        EntityId new_floor = new_tile.get_tile_contents();
+        auto& new_tile = current_map.getTile({ x_new, y_new });
+        EntityId new_floor = new_tile.getTileContents();
 
         // See if the tile to move into contains another creature.
-        EntityId creature = new_floor->get_inventory().getEntity();
+        EntityId creature = new_floor->getInventory().getEntity();
         if (creature != EntityId::Mu())
         {
           /// @todo Setting choosing whether auto-attack is on.
@@ -89,13 +89,13 @@ namespace Actions
           std::unique_ptr<ActionAttack> action_attack{ new ActionAttack(subject) };
           action_attack->setTarget(new_direction);
 
-          subject->queue_action(std::move(action_attack));
+          subject->queueAction(std::move(action_attack));
 
           result = StateResult::Success();
         }
         else
         {
-          if (new_tile.can_be_traversed_by(subject))
+          if (new_tile.canBeTraversedBy(subject))
           {
             /// @todo Figure out elapsed movement time.
             result.success = subject->move_into(new_floor);
@@ -103,7 +103,7 @@ namespace Actions
           }
           else
           {
-            std::string tile_description = new_tile.get_display_name();
+            std::string tile_description = new_tile.getDisplayName();
             message += maketr("YOU_ARE_STOPPED_BY",
             {
               getIndefArt(tile_description),

@@ -35,82 +35,82 @@ namespace StringTransforms
     {
       if (token == "are")
       {
-        return subject->choose_verb(tr("VERB_BE_2"), tr("VERB_BE_3"));
+        return subject->chooseVerb(tr("VERB_BE_2"), tr("VERB_BE_3"));
       }
       if (token == "were")
       {
-        return subject->choose_verb(tr("VERB_BE_P2"), tr("VERB_BE_P3"));
+        return subject->chooseVerb(tr("VERB_BE_P2"), tr("VERB_BE_P3"));
       }
       if (token == "do")
       {
-        return subject->choose_verb(tr("VERB_DO_2"), tr("VERB_DO_3"));
+        return subject->chooseVerb(tr("VERB_DO_2"), tr("VERB_DO_3"));
       }
       if (token == "get")
       {
-        return subject->choose_verb(tr("VERB_GET_2"), tr("VERB_GET_3"));
+        return subject->chooseVerb(tr("VERB_GET_2"), tr("VERB_GET_3"));
       }
       if (token == "have")
       {
-        return subject->choose_verb(tr("VERB_HAVE_2"), tr("VERB_HAVE_3"));
+        return subject->chooseVerb(tr("VERB_HAVE_2"), tr("VERB_HAVE_3"));
       }
       if (token == "seem")
       {
-        return subject->choose_verb(tr("VERB_SEEM_2"), tr("VERB_SEEM_3"));
+        return subject->chooseVerb(tr("VERB_SEEM_2"), tr("VERB_SEEM_3"));
       }
       if (token == "try")
       {
-        return subject->choose_verb(tr("VERB_TRY_2"), tr("VERB_TRY_3"));
+        return subject->chooseVerb(tr("VERB_TRY_2"), tr("VERB_TRY_3"));
       }
 
       if ((token == "foo_is") || (token == "foois"))
       {
-        return object->choose_verb(tr("VERB_BE_2"), tr("VERB_BE_3"));
+        return object->chooseVerb(tr("VERB_BE_2"), tr("VERB_BE_3"));
       }
       if ((token == "foo_has") || (token == "foohas"))
       {
-        return object->choose_verb(tr("VERB_HAVE_2"), tr("VERB_HAVE_3"));
+        return object->chooseVerb(tr("VERB_HAVE_2"), tr("VERB_HAVE_3"));
       }
 
       if ((token == "the_foo") || (token == "thefoo"))
       {
-        return object->get_identifying_string(ArticleChoice::Definite);
+        return object->getDescriptiveString(ArticleChoice::Definite);
       }
 
       if ((token == "the_foos_location") || (token == "thefooslocation"))
       {
-        return object->getLocation()->get_identifying_string(ArticleChoice::Definite);
+        return object->getLocation()->getDescriptiveString(ArticleChoice::Definite);
       }
 
       if (token == "fooself")
       {
-        return object->get_self_or_identifying_string(subject, ArticleChoice::Definite);
+        return object->getReflexiveString(subject, ArticleChoice::Definite);
       }
 
       if ((token == "foo_pro_sub") || (token == "fooprosub"))
       {
-        return object->get_subject_pronoun();
+        return object->getSubjectPronoun();
       }
 
       if ((token == "foo_pro_obj") || (token == "fooproobj"))
       {
-        return object->get_object_pronoun();
+        return object->getObjectPronoun();
       }
 
       if (token == "you")
       {
-        return subject->get_subject_you_or_identifying_string();
+        return subject->getSubjectiveString();
       }
       if ((token == "you_pro_sub") || (token == "youprosub"))
       {
-        return subject->get_subject_pronoun();
+        return subject->getSubjectPronoun();
       }
       if ((token == "you_pro_obj") || (token == "youproobj"))
       {
-        return subject->get_object_pronoun();
+        return subject->getObjectPronoun();
       }
       if (token == "yourself")
       {
-        return subject->get_reflexive_pronoun();
+        return subject->getReflexivePronoun();
       }
 
       // Check for a numerical token.
@@ -142,7 +142,7 @@ namespace StringTransforms
     {
       if (token == "your")
       {
-        return subject->get_possessive_of(arg);
+        return subject->getPossessiveString(arg);
       }
 
       return "[" + token + "(" + arg + ")" + "]";
@@ -151,15 +151,15 @@ namespace StringTransforms
     {
       if ((token == "cv") || (token == "subjcv") || (token == "subj_cv"))
       {
-        return subject->is_third_person();
+        return subject->isThirdPerson();
       }
       if ((token == "objcv") || (token == "obj_cv") || (token == "foocv") || (token == "foo_cv"))
       {
-        return object->is_third_person();
+        return object->isThirdPerson();
       }
-      if ((token == "is_player") || (token == "isplayer"))
+      if ((token == "isPlayer") || (token == "isplayer"))
       {
-        return subject->is_player();
+        return subject->isPlayer();
       }
 
       if (token == "true")

@@ -32,7 +32,7 @@ void InventoryArea::drawContents_(sf::RenderTexture& texture, int frame)
 {
   auto& config = Service<IConfigSettings>::get();
   auto& views = Service<IGraphicViews>::get();
-  auto& entity_pool = GAME.get_entities();
+  auto& entity_pool = GAME.getEntities();
 
   // Dimensions of the pane.
   sf::IntRect pane_dims = getRelativeDimensions();
@@ -56,7 +56,7 @@ void InventoryArea::drawContents_(sf::RenderTexture& texture, int frame)
   float text_coord_x = text_offset_x;
   float text_coord_y = text_offset_y + (line_spacing_y * 1.5f);
 
-  Inventory& inventory = viewed_thing->get_inventory();
+  Inventory& inventory = viewed_thing->getInventory();
   auto& selected_slots = m_inventory_selection.get_selected_slots();
 
   /// @todo At the moment this does not split lines that are too long, instead
@@ -123,8 +123,8 @@ void InventoryArea::drawContents_(sf::RenderTexture& texture, int frame)
 
     BodyLocation wield_location;
     BodyLocation wear_location;
-    bool wielding = viewed_thing->is_wielding(entity, wield_location);
-    bool wearing = viewed_thing->is_wearing(entity, wear_location);
+    bool wielding = viewed_thing->isWielding(entity, wield_location);
+    bool wearing = viewed_thing->isWearing(entity, wear_location);
 
     // 5. TODO: Display "worn" or "equipped" icon if necessary.
     if (wielding)
@@ -158,15 +158,15 @@ void InventoryArea::drawContents_(sf::RenderTexture& texture, int frame)
       }
     }
 
-    item_name << entity->get_identifying_string(ArticleChoice::Indefinite, UsePossessives::No);
+    item_name << entity->getDescriptiveString(ArticleChoice::Indefinite, UsePossessives::No);
 
     if (wielding)
     {
-      item_name << " (" << viewed_thing->get_bodypart_description(wield_location) << ")";
+      item_name << " (" << viewed_thing->getBodypartDescription(wield_location) << ")";
     }
     else if (wearing)
     {
-      item_name << " (" << viewed_thing->get_bodypart_description(wear_location) << ")";
+      item_name << " (" << viewed_thing->getBodypartDescription(wear_location) << ")";
     }
 
     render_text.setFont(the_default_font);
@@ -194,7 +194,7 @@ void InventoryArea::drawContents_(sf::RenderTexture& texture, int frame)
   // TODO: Might want to define a specific "get_inventory_name()" method
   //       for Entity that defaults to "XXXX's inventory" but can be
   //       overridden to say stuff like "Entities on the floor".
-  sf::String title_string = viewed_thing->get_possessive_of("inventory");
+  sf::String title_string = viewed_thing->getPossessiveString("inventory");
   title_string[0] = toupper(title_string[0]);
   setText(title_string);
   return;

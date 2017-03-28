@@ -38,7 +38,7 @@ MapFeature::MapFeature(Map& m, PropertyDictionary const& s, GeoVector vec)
 MapFeature::~MapFeature()
 {}
 
-sf::IntRect const& MapFeature::get_coords() const
+sf::IntRect const& MapFeature::getCoords() const
 {
   return pImpl->coords;
 }
@@ -148,7 +148,7 @@ std::unique_ptr<MapFeature> MapFeature::construct(Map& game_map, PropertyDiction
   return feature;
 }
 
-void MapFeature::set_coords(sf::IntRect coords)
+void MapFeature::setCoords(sf::IntRect coords)
 {
   pImpl->coords = coords;
 }
@@ -174,7 +174,7 @@ bool MapFeature::does_box_pass_criterion(IntVec2 upper_left,
   {
     for (int yCheck = upper_left.y; yCheck <= lower_right.y; ++yCheck)
     {
-      auto& tile = getMap().get_tile({ xCheck, yCheck });
+      auto& tile = getMap().getTile({ xCheck, yCheck });
       if (!criterion(tile))
       {
         return false;
@@ -192,10 +192,10 @@ void MapFeature::set_box(IntVec2 upper_left, IntVec2 lower_right, std::string ti
   {
     for (int yCheck = upper_left.y; yCheck <= lower_right.y; ++yCheck)
     {
-      if (map.is_in_bounds({ xCheck, yCheck }))
+      if (map.isInBounds({ xCheck, yCheck }))
       {
-        auto& tile = getMap().get_tile({ xCheck, yCheck });
-        tile.set_tile_type(tile_type);
+        auto& tile = getMap().getTile({ xCheck, yCheck });
+        tile.setTileType(tile_type);
       }
     }
   }

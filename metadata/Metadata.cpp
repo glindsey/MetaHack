@@ -43,7 +43,7 @@ Metadata::Metadata(MetadataCollection& collection, std::string type)
 Metadata::~Metadata()
 {}
 
-MetadataCollection& Metadata::get_metadata_collection()
+MetadataCollection& Metadata::getMetadataCollection()
 {
   return m_collection;
 }
@@ -56,22 +56,22 @@ std::string const& Metadata::getType() const
 UintVec2 Metadata::get_tile_coords() const
 {
   UintVec2 tile_location {
-    get_intrinsic("tile_location_x").as<uint32_t>(),
-    get_intrinsic("tile_location_y").as<uint32_t>() 
+    getIntrinsic("tile_location_x").as<uint32_t>(),
+    getIntrinsic("tile_location_y").as<uint32_t>() 
   };
 
   return tile_location;
 }
 
-Property Metadata::get_intrinsic(std::string name, Property default_value) const
+Property Metadata::getIntrinsic(std::string name, Property default_value) const
 {
   std::string group = this->getType();
   return the_lua_instance.get_group_intrinsic(group, name, default_value);
 }
 
-Property Metadata::get_intrinsic(std::string name) const
+Property Metadata::getIntrinsic(std::string name) const
 {
-  return get_intrinsic(name, Property());
+  return getIntrinsic(name, Property());
 }
 
 void Metadata::set_intrinsic(std::string name, Property value)

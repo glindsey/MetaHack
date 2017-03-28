@@ -41,15 +41,15 @@ namespace Actions
     auto object = getObject();
 
     BodyLocation wield_location;
-    subject->is_wielding(object, wield_location);
+    subject->isWielding(object, wield_location);
 
-    std::string bodypart_desc = subject->get_bodypart_description(wield_location);
+    std::string bodypart_desc = subject->getBodypartDescription(wield_location);
 
     // Check if the wielded item is bound.
-    if (object->get_modified_property("bound").as<bool>())
+    if (object->getModifiedProperty("bound").as<bool>())
     {
       std::string message;
-      message = makeString("$you cannot unwield $foo; it is magically bound to $0!", { subject->get_possessive_of(bodypart_desc) });
+      message = makeString("$you cannot unwield $foo; it is magically bound to $0!", { subject->getPossessiveString(bodypart_desc) });
       Service<IMessageLog>::get().add(message);
 
       // Premature exit.
@@ -62,8 +62,8 @@ namespace Actions
     if (object->be_object_of(*this, subject) == ActionResult::Success)
     {
       std::string message;
-      message = makeString("$you unwield $foo. $you are now wielding nothing in $0.", { subject->get_possessive_of(bodypart_desc) });
-      subject->set_wielded(EntityId::Mu(), wield_location);
+      message = makeString("$you unwield $foo. $you are now wielding nothing in $0.", { subject->getPossessiveString(bodypart_desc) });
+      subject->setWielded(EntityId::Mu(), wield_location);
     }
 
     return result;

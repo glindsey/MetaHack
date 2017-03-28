@@ -56,7 +56,7 @@ UintVec2 TileSheet::load_collection(FileName const& filename)
   return free_coords;
 }
 
-sf::IntRect TileSheet::get_tile(UintVec2 tile) const
+sf::IntRect TileSheet::getTile(UintVec2 tile) const
 {
   sf::IntRect rect;
   rect.left = tile.x * m_tileSize;
@@ -193,7 +193,7 @@ void TileSheet::add_outline_vertices(sf::VertexArray& vertices,
 
 /// === PROTECTED METHODS =====================================================
 
-unsigned int TileSheet::get_index(UintVec2 coords)
+unsigned int TileSheet::getIndex(UintVec2 coords)
 {
   uint32_t texture_size_in_tiles = m_textureSize / m_tileSize;
   return (coords.y * texture_size_in_tiles) + coords.x;
@@ -213,7 +213,7 @@ bool TileSheet::area_is_unused(UintVec2 start, UintVec2 size)
   {
     for (unsigned int x = start.x; x < start.x + size.x; ++x)
     {
-      if (m_used[get_index({ x, y })])
+      if (m_used[getIndex({ x, y })])
       {
         return false;
       }
@@ -256,7 +256,7 @@ void TileSheet::mark_tiles_used(UintVec2 upper_left_corner, UintVec2 size)
   {
     for (uint32_t x = upper_left_corner.x; x < upper_left_corner.x + size.x; ++x)
     {
-      m_used[get_index({ x, y })] = true;
+      m_used[getIndex({ x, y })] = true;
     }
   }
 }

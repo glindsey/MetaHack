@@ -71,18 +71,18 @@ namespace Actions
 
     auto subject = getSubject();
     auto location = subject->getLocation();
-    MapTile* current_tile = subject->get_maptile();
+    MapTile* current_tile = subject->getMapTile();
     auto new_direction = getTargetDirection();
 
     bool success = false;
     unsigned int action_time = 0;
 
     // Figure out our target location.
-    IntVec2 coords = current_tile->get_coords();
+    IntVec2 coords = current_tile->getCoords();
     IntVec2 offset = (IntVec2)new_direction;
     int x_new = coords.x + offset.x;
     int y_new = coords.y + offset.y;
-    Map& current_map = GAME.get_maps().get(subject->get_map_id());
+    Map& current_map = GAME.getMaps().get(subject->getMapId());
     IntVec2 map_size = current_map.getSize();
 
     // Check boundaries.
@@ -94,11 +94,11 @@ namespace Actions
       return StateResult::Failure();
     }
 
-    auto& new_tile = current_map.get_tile({ x_new, y_new });
-    EntityId new_floor = new_tile.get_tile_contents();
+    auto& new_tile = current_map.getTile({ x_new, y_new });
+    EntityId new_floor = new_tile.getTileContents();
 
     // See if the tile to move into contains another creature.
-    auto object = new_floor->get_inventory().getEntity();
+    auto object = new_floor->getInventory().getEntity();
     setObject(object);
     if (object == EntityId::Mu())
     {
@@ -108,7 +108,7 @@ namespace Actions
       return StateResult::Failure();
     }
 
-    bool reachable = subject->is_adjacent_to(object);
+    bool reachable = subject->isAdjacentTo(object);
     /// @todo deal with DynamicEntities in your Inventory -- WTF do you do THEN?
 
     if (reachable)

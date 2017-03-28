@@ -54,7 +54,7 @@ namespace Actions
     }
 
     // Check that both are within reach.
-    if (!subject->can_reach(object1) || !subject->can_reach(object2))
+    if (!subject->canReach(object1) || !subject->canReach(object2))
     {
       printMessageTry();
 
@@ -65,8 +65,8 @@ namespace Actions
     }
 
     // Check that both are liquid containers.
-    if (!object1->get_intrinsic("liquid_carrier").as<bool>() || 
-        !object2->get_intrinsic("liquid_carrier").as<bool>())
+    if (!object1->getIntrinsic("liquid_carrier").as<bool>() || 
+        !object2->getIntrinsic("liquid_carrier").as<bool>())
     {
       printMessageTry();
 
@@ -77,8 +77,8 @@ namespace Actions
     }
 
     // Check that neither is empty.
-    Inventory& inv1 = object1->get_inventory();
-    Inventory& inv2 = object2->get_inventory();
+    Inventory& inv1 = object1->getInventory();
+    Inventory& inv2 = object2->getInventory();
     if (inv1.count() == 0 || inv2.count() == 0)
     {
       printMessageTry();

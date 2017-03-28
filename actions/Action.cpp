@@ -118,10 +118,10 @@ namespace Actions
     auto subject = getSubject();
 
     // If entity is currently busy, decrement by one and return.
-    int counter_busy = subject->get_base_property("counter_busy").as<int32_t>();
+    int counter_busy = subject->getBaseProperty("counter_busy").as<int32_t>();
     if (counter_busy > 0)
     {
-      subject->add_to_base_property("counter_busy", Property::from(-1));
+      subject->addToBaseProperty("counter_busy", Property::from(-1));
       return false;
     }
 
@@ -129,7 +129,7 @@ namespace Actions
     // target actor is busy.
     while ((pImpl->state != State::Processed) && (counter_busy == 0))
     {
-      counter_busy = subject->get_base_property("counter_busy").as<int32_t>();
+      counter_busy = subject->getBaseProperty("counter_busy").as<int32_t>();
       StateResult result{ false, 0 };
 
       CLOG(TRACE, "Action") << "Entity #" <<
@@ -146,13 +146,13 @@ namespace Actions
           if (result.success)
           {
             // Update the busy counter.
-            pImpl->subject->set_base_property("counter_busy", Property::from(result.elapsed_time));
+            pImpl->subject->setBaseProperty("counter_busy", Property::from(result.elapsed_time));
             setState(State::PreBegin);
           }
           else
           {
             // Clear the busy counter.
-            pImpl->subject->set_base_property("counter_busy", Property::from(0));
+            pImpl->subject->setBaseProperty("counter_busy", Property::from(0));
             setState(State::PostFinish);
           }
           break;
@@ -165,13 +165,13 @@ namespace Actions
           if (result.success)
           {
             // Update the busy counter.
-            pImpl->subject->set_base_property("counter_busy", Property::from(result.elapsed_time));
+            pImpl->subject->setBaseProperty("counter_busy", Property::from(result.elapsed_time));
             setState(State::InProgress);
           }
           else
           {
             // Clear the busy counter.
-            pImpl->subject->set_base_property("counter_busy", Property::from(0));
+            pImpl->subject->setBaseProperty("counter_busy", Property::from(0));
             setState(State::PostFinish);
           }
           break;
@@ -179,14 +179,14 @@ namespace Actions
         case State::InProgress:
           result = doFinishWork(params);
 
-          pImpl->subject->set_base_property("counter_busy", Property::from(result.elapsed_time));
+          pImpl->subject->setBaseProperty("counter_busy", Property::from(result.elapsed_time));
           setState(State::PostFinish);
           break;
 
         case State::Interrupted:
           result = doAbortWork(params);
 
-          pImpl->subject->add_to_base_property("counter_busy", Property::from(result.elapsed_time));
+          pImpl->subject->addToBaseProperty("counter_busy", Property::from(result.elapsed_time));
           setState(State::PostFinish);
           break;
 
@@ -299,24 +299,24 @@ namespace Actions
     auto subject = getSubject();
     auto& objects = getObjects();
     auto location = subject->getLocation();
-    MapTile* current_tile = subject->get_maptile();
+    MapTile* current_tile = subject->getMapTile();
     auto new_direction = getTargetDirection();
 
     // Check that we're capable of eating at all.
-    if (!subject->get_intrinsic("can_" + getType()).as<bool>())
+    if (!subject->getIntrinsic("can_" + getType()).as<bool>())
     {
       printMessageTry();
-      message = maketr("YOU_ARE_NOT_CAPABLE_OF_VERBING", { getIndefArt(subject->get_display_name()), subject->get_display_name() });
+      message = maketr("YOU_ARE_NOT_CAPABLE_OF_VERBING", { getIndefArt(subject->getDisplayName()), subject->getDisplayName() });
       Service<IMessageLog>::get().add(message);
 
       return StateResult::Failure();
     }
 
     // Check that we're capable of eating right now.
-    if (!subject->get_modified_property("can_" + getType()).as<bool>())
+    if (!subject->getModifiedProperty("can_" + getType()).as<bool>())
     {
       printMessageTry();
-      message = maketr("YOU_CANT_VERB_NOW", { getIndefArt(subject->get_display_name()), subject->get_display_name() });
+      message = maketr("YOU_CANT_VERB_NOW", { getIndefArt(subject->getDisplayName()), subject->getDisplayName() });
       Service<IMessageLog>::get().add(message);
 
       return StateResult::Failure();
@@ -325,7 +325,7 @@ namespace Actions
     if (hasTrait(Trait::SubjectMustBeAbleToMove))
     {
       // Make sure we can move RIGHT NOW.
-      if (!subject->can_currently_move())
+      if (!subject->canCurrentlyMove())
       {
         message += maketr("YOU_CANT_MOVE_NOW");
         Service<IMessageLog>::get().add(message);
@@ -347,12 +347,12 @@ namespace Actions
     {
       // Make sure we're not confined inside another entity.
       /// @todo Allow for attacking when swallowed!
-      if (subject->is_inside_another_thing())
+      if (subject->isInsideAnotherEntity())
       {
         printMessageTry();
 
         message += maketr("YOU_ARE_INSIDE_OBJECT",
-        { location->get_identifying_string(ArticleChoice::Indefinite) });
+        { location->getDescriptiveString(ArticleChoice::Indefinite) });
 
         Service<IMessageLog>::get().add(message);
         return StateResult::Failure();
@@ -392,7 +392,7 @@ namespace Actions
         if (hasTrait(Trait::ObjectMustBeLiquidCarrier))
         {
           // Check that both are liquid containers.
-          if (!object->get_intrinsic("liquid_carrier").as<bool>())
+          if (!object->getIntrinsic("liquid_carrier").as<bool>())
           {
             printMessageTry();
 
@@ -406,7 +406,7 @@ namespace Actions
         if (hasTrait(Trait::ObjectMustNotBeEmpty))
         {
           // Check that it is not empty.
-          Inventory& inv = object->get_inventory();
+          Inventory& inv = object->getInventory();
           if (inv.count() == 0)
           {
             printMessageTry();
@@ -421,7 +421,7 @@ namespace Actions
         if (hasTrait(Trait::ObjectMustBeEmpty))
         {
           // Check that it is not empty.
-          Inventory& inv = object->get_inventory();
+          Inventory& inv = object->getInventory();
           if (inv.count() != 0)
           {
             printMessageTry();
@@ -436,11 +436,11 @@ namespace Actions
         if (!hasTrait(Trait::ObjectCanBeOutOfReach))
         {
           // Check that each object is within reach.
-          if (!subject->can_reach(object))
+          if (!subject->canReach(object))
           {
             printMessageTry();
 
-            put_msg(maketr("CONJUNCTION_HOWEVER") + " " + maketr("THE_FOO_IS_OUT_OF_REACH"));
+            put_msg(maketr("CONJUNCTION_HOWEVER") + " " + maketr("FOO_PRO_SUB_IS_OUT_OF_REACH"));
 
             return StateResult::Failure();
           }
@@ -449,12 +449,12 @@ namespace Actions
         if (hasTrait(Trait::ObjectMustBeInInventory))
         {
           // Check that each object is in our inventory.
-          if (!subject->get_inventory().contains(object))
+          if (!subject->getInventory().contains(object))
           {
             printMessageTry();
 
-            message = maketr("CONJUNCTION_HOWEVER") + " " + maketr("THE_FOO_IS_NOT_IN_YOUR_INVENTORY");
-            if (subject->can_reach(object))
+            message = maketr("CONJUNCTION_HOWEVER") + " " + maketr("FOO_PRO_SUB_IS_NOT_IN_YOUR_INVENTORY");
+            if (subject->canReach(object))
             {
               message += maketr("PICK_UP_OBJECT_FIRST");
             }
@@ -468,7 +468,7 @@ namespace Actions
         if (hasTrait(Trait::ObjectMustNotBeInInventory))
         {
           // Check if it's already in our inventory.
-          if (subject->get_inventory().contains(object))
+          if (subject->getInventory().contains(object))
           {
             printMessageTry();
 
@@ -481,12 +481,12 @@ namespace Actions
         if (hasTrait(Trait::ObjectMustBeWielded))
         {
           // Check to see if the object is being wielded.
-          if (!subject->is_wielding(object))
+          if (!subject->isWielding(object))
           {
             printMessageTry();
 
             /// @todo Perhaps automatically try to unwield the item before dropping?
-            message = maketr("FOO_MUST_BE_WIELDED");
+            message = maketr("THE_FOO_MUST_BE_WIELDED");
             put_msg(message);
             return StateResult::Failure();
           }
@@ -495,11 +495,11 @@ namespace Actions
         if (hasTrait(Trait::ObjectMustBeWorn))
         {
           // Check to see if the object is being worn.
-          if (!subject->is_wearing(object))
+          if (!subject->isWearing(object))
           {
             printMessageTry();
 
-            message = maketr("FOO_MUST_BE_WORN");
+            message = maketr("THE_FOO_MUST_BE_WORN");
             put_msg(message);
             return StateResult::Failure();
           }
@@ -508,7 +508,7 @@ namespace Actions
         if (hasTrait(Trait::ObjectMustNotBeWielded))
         {
           // Check to see if the object is being wielded.
-          if (subject->is_wielding(object))
+          if (subject->isWielding(object))
           {
             printMessageTry();
 
@@ -522,7 +522,7 @@ namespace Actions
         if (hasTrait(Trait::ObjectMustNotBeWorn))
         {
           // Check to see if the object is being worn.
-          if (subject->is_wearing(object))
+          if (subject->isWearing(object))
           {
             printMessageTry();
 
@@ -535,7 +535,7 @@ namespace Actions
         if (hasTrait(Trait::ObjectMustBeMovableBySubject))
         {
           // Check to see if we can move the object.
-          if (!object->can_have_action_done_by(subject, ActionMove::prototype))
+          if (!object->canHaveActionDoneBy(subject, ActionMove::prototype))
           {
             printMessageTry();
 
@@ -546,7 +546,7 @@ namespace Actions
         }
 
         // Check that we can perform this Action on this object.
-        if (!object->can_have_action_done_by(subject, *this))
+        if (!object->canHaveActionDoneBy(subject, *this))
         {
           printMessageTry();
           printMessageCant();
@@ -620,7 +620,7 @@ namespace Actions
     {
       if (getObject() == getSubject())
       {
-        description += getSubject()->get_reflexive_pronoun();
+        description += getSubject()->getReflexivePronoun();
       }
       else
       {
@@ -634,14 +634,14 @@ namespace Actions
           {
             description += getQuantity() + " " + maketr("PREPOSITION_OF");
           }
-          description += getObject()->get_identifying_string(ArticleChoice::Definite);
+          description += getObject()->getDescriptiveString(ArticleChoice::Definite);
         }
       }
     }
     else if (getObjects().size() == 2)
     {
-      description += getObject()->get_identifying_string(ArticleChoice::Definite) + " " + maketr("CONJUNCTION_AND") + " " +
-        getSecondObject()->get_identifying_string(ArticleChoice::Definite);
+      description += getObject()->getDescriptiveString(ArticleChoice::Definite) + " " + maketr("CONJUNCTION_AND") + " " +
+        getSecondObject()->getDescriptiveString(ArticleChoice::Definite);
     }
     else if (getObjects().size() > 1)
     {
@@ -670,15 +670,15 @@ namespace Actions
 
     if (target == subject)
     {
-      return subject->get_reflexive_pronoun();
+      return subject->getReflexivePronoun();
     }
     else if ((objects.size() == 1) && (target == getObject()))
     {
-      return getObject()->get_reflexive_pronoun();
+      return getObject()->getReflexivePronoun();
     }
     else
     {
-      return target->get_identifying_string(ArticleChoice::Definite);
+      return target->getDescriptiveString(ArticleChoice::Definite);
     }
   }
 
@@ -829,40 +829,40 @@ namespace Actions
     {
       if (token == "are")
       {
-        return getSubject()->choose_verb(tr("VERB_BE_2"), tr("VERB_BE_3"));
+        return getSubject()->chooseVerb(tr("VERB_BE_2"), tr("VERB_BE_3"));
       }
       if (token == "were")
       {
-        return getSubject()->choose_verb(tr("VERB_BE_P2"), tr("VERB_BE_P3"));
+        return getSubject()->chooseVerb(tr("VERB_BE_P2"), tr("VERB_BE_P3"));
       }
       if (token == "do")
       {
-        return getSubject()->choose_verb(tr("VERB_DO_2"), tr("VERB_DO_3"));
+        return getSubject()->chooseVerb(tr("VERB_DO_2"), tr("VERB_DO_3"));
       }
       if (token == "get")
       {
-        return getSubject()->choose_verb(tr("VERB_GET_2"), tr("VERB_GET_3"));
+        return getSubject()->chooseVerb(tr("VERB_GET_2"), tr("VERB_GET_3"));
       }
       if (token == "have")
       {
-        return getSubject()->choose_verb(tr("VERB_HAVE_2"), tr("VERB_HAVE_3"));
+        return getSubject()->chooseVerb(tr("VERB_HAVE_2"), tr("VERB_HAVE_3"));
       }
       if (token == "seem")
       {
-        return getSubject()->choose_verb(tr("VERB_SEEM_2"), tr("VERB_SEEM_3"));
+        return getSubject()->chooseVerb(tr("VERB_SEEM_2"), tr("VERB_SEEM_3"));
       }
       if (token == "try")
       {
-        return getSubject()->choose_verb(tr("VERB_TRY_2"), tr("VERB_TRY_3"));
+        return getSubject()->chooseVerb(tr("VERB_TRY_2"), tr("VERB_TRY_3"));
       }
 
       if ((token == "foo_is") || (token == "foois"))
       {
-        return getObject()->choose_verb(tr("VERB_BE_2"), tr("VERB_BE_3"));
+        return getObject()->chooseVerb(tr("VERB_BE_2"), tr("VERB_BE_3"));
       }
       if ((token == "foo_has") || (token == "foohas"))
       {
-        return getObject()->choose_verb(tr("VERB_HAVE_2"), tr("VERB_HAVE_3"));
+        return getObject()->chooseVerb(tr("VERB_HAVE_2"), tr("VERB_HAVE_3"));
       }
 
       if ((token == "the_foo") || (token == "thefoo"))
@@ -872,7 +872,7 @@ namespace Actions
 
       if ((token == "the_foos_location") || (token == "thefooslocation"))
       {
-        return getObject()->getLocation()->get_identifying_string(ArticleChoice::Definite);
+        return getObject()->getLocation()->getDescriptiveString(ArticleChoice::Definite);
       }
 
       if ((token == "the_target_thing") || (token == "thetargetthing"))
@@ -882,22 +882,22 @@ namespace Actions
 
       if (token == "fooself")
       {
-        return getObject()->get_self_or_identifying_string(getSubject(), ArticleChoice::Definite);
+        return getObject()->getReflexiveString(getSubject(), ArticleChoice::Definite);
       }
 
       if ((token == "foo_pro_sub") || (token == "fooprosub"))
       {
-        return getObject()->get_subject_pronoun();
+        return getObject()->getSubjectPronoun();
       }
 
       if ((token == "foo_pro_obj") || (token == "fooproobj"))
       {
-        return getObject()->get_object_pronoun();
+        return getObject()->getObjectPronoun();
       }
 
       if ((token == "foo_pro_ref") || (token == "fooproref"))
       {
-        return getObject()->get_reflexive_pronoun();
+        return getObject()->getReflexivePronoun();
       }
 
       if (token == "verb")
@@ -922,28 +922,28 @@ namespace Actions
       }
       if (token == "cverb")
       {
-        return (getSubject()->is_third_person() ? getVerb2() : getVerb3());
+        return (getSubject()->isThirdPerson() ? getVerb2() : getVerb3());
       }
       if (token == "objcverb")
       {
-        return (getObject()->is_third_person() ? getVerb2() : getVerb3());
+        return (getObject()->isThirdPerson() ? getVerb2() : getVerb3());
       }
 
       if (token == "you")
       {
-        return getSubject()->get_subject_you_or_identifying_string();
+        return getSubject()->getSubjectiveString();
       }
       if ((token == "you_pro_sub") || (token == "youprosub"))
       {
-        return getSubject()->get_subject_pronoun();
+        return getSubject()->getSubjectPronoun();
       }
       if ((token == "you_pro_obj") || (token == "youproobj"))
       {
-        return getSubject()->get_object_pronoun();
+        return getSubject()->getObjectPronoun();
       }
       if (token == "yourself")
       {
-        return getSubject()->get_reflexive_pronoun();
+        return getSubject()->getReflexivePronoun();
       }
 
       if (token == "targdir")
@@ -982,7 +982,7 @@ namespace Actions
     {
       if (token == "your")
       {
-        return getSubject()->get_possessive_of(arg);
+        return getSubject()->getPossessiveString(arg);
       }
 
       return "[" + token + "(" + arg + ")]";
@@ -991,19 +991,19 @@ namespace Actions
     {
       if ((token == "cv") || (token == "subjcv") || (token == "subj_cv"))
       {
-        return getSubject()->is_third_person();
+        return getSubject()->isThirdPerson();
       }
       if ((token == "objcv") || (token == "obj_cv") || (token == "foocv") || (token == "foo_cv"))
       {
-        return getObject()->is_third_person();
+        return getObject()->isThirdPerson();
       }
-      if ((token == "is_player") || (token == "isplayer"))
+      if ((token == "isPlayer") || (token == "isplayer"))
       {
-        return getSubject()->is_player();
+        return getSubject()->isPlayer();
       }
       if ((token == "targcv") || (token == "targ_cv"))
       {
-        return getTargetThing()->is_third_person();
+        return getTargetThing()->isThirdPerson();
       }
 
       if (token == "true")

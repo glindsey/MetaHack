@@ -38,7 +38,7 @@ namespace Actions
   {
     auto subject = getSubject();
     auto object = getObject();
-    auto contents = object->get_inventory()[INVSLOT_ZERO];
+    auto contents = object->getInventory()[INVSLOT_ZERO];
 
     printMessageBegin();
 

@@ -337,40 +337,40 @@ namespace Actions
 } // end namespace
 
   // === MESSAGE HELPER MACROS ==================================================
-#define YOU       (getSubject()->get_subject_you_or_identifying_string())  // "you" or descriptive noun like "the goblin"
-#define YOU_SUBJ  (getSubject()->get_subject_pronoun())     // "you/he/she/it/etc."
-#define YOU_OBJ   (getSubject()->get_object_pronoun())      // "you/him/her/it/etc."
+#define YOU       (getSubject()->getSubjectiveString())  // "you" or descriptive noun like "the goblin"
+#define YOU_SUBJ  (getSubject()->getSubjectPronoun())     // "you/he/she/it/etc."
+#define YOU_OBJ   (getSubject()->getObjectPronoun())      // "you/him/her/it/etc."
 #define YOUR      (getSubject()->get_possessive())          // "your/his/her/its/etc."
-#define YOURSELF  (getSubject()->get_reflexive_pronoun())   // "yourself/himself/herself/itself/etc."
+#define YOURSELF  (getSubject()->getReflexivePronoun())   // "yourself/himself/herself/itself/etc."
 
-#define CV(p12, p3)  (getSubject()->choose_verb(p12, p3))   // shortcut for "Subject - Choose Verb"
-#define OBJCV(p12, p3)  (getObject()->choose_verb(p12, p3)) // shortcut for "Object - Choose Verb"
+#define CV(p12, p3)  (getSubject()->chooseVerb(p12, p3))   // shortcut for "Subject - Choose Verb"
+#define OBJCV(p12, p3)  (getObject()->chooseVerb(p12, p3)) // shortcut for "Object - Choose Verb"
 
-#define ARE   (getSubject()->choose_verb(" are", " is"))
-#define WERE  (getSubject()->choose_verb(" were", " was"))
-#define DO    (getSubject()->choose_verb(" do", " does"))
-#define GET   (getSubject()->choose_verb(" get", " gets"))
-#define HAVE  (getSubject()->choose_verb(" have", " has"))
-#define SEEM  (getSubject()->choose_verb(" seem", " seems"))
-#define TRY   (getSubject()->choose_verb(" try", " tries"))
+#define ARE   (getSubject()->chooseVerb(" are", " is"))
+#define WERE  (getSubject()->chooseVerb(" were", " was"))
+#define DO    (getSubject()->chooseVerb(" do", " does"))
+#define GET   (getSubject()->chooseVerb(" get", " gets"))
+#define HAVE  (getSubject()->chooseVerb(" have", " has"))
+#define SEEM  (getSubject()->chooseVerb(" seem", " seems"))
+#define TRY   (getSubject()->chooseVerb(" try", " tries"))
 
 #define FOO_IS    OBJCV(" are", " is")
 #define FOO_HAS   OBJCV(" have", " has")
 
-#define IS_PLAYER (getSubject()->is_player())
+#define IS_PLAYER (getSubject()->isPlayer())
 
 #define THE_FOO   (getObjectString())
 
-#define THE_FOOS_LOCATION  (getObject()->getLocation()->get_identifying_string(ArticleChoice::Definite))
-#define THE_TARGET_THING   (getTargetThing()->get_identifying_string(ArticleChoice::Definite))
+#define THE_FOOS_LOCATION  (getObject()->getLocation()->getDescriptiveString(ArticleChoice::Definite))
+#define THE_TARGET_THING   (getTargetThing()->getDescriptiveString(ArticleChoice::Definite))
 
-#define FOOSELF (getObject()->get_self_or_identifying_string(getSubject(), ArticleChoice::Definite))
+#define FOOSELF (getObject()->getReflexiveString(getSubject(), ArticleChoice::Definite))
 
-#define SUBJ_PRO_FOO  (getObject()->get_subject_pronoun())     // "you/he/she/it/etc."
-#define OBJ_PRO_FOO   (getObject()->get_object_pronoun())      // "you/him/her/it/etc."
+#define SUBJ_PRO_FOO  (getObject()->getSubjectPronoun())     // "you/he/she/it/etc."
+#define OBJ_PRO_FOO   (getObject()->getObjectPronoun())      // "you/him/her/it/etc."
 
-  //#define LIQUID1      (liquid1->get_identifying_string())
-  //#define LIQUID2      (liquid2->get_identifying_string())
+  //#define LIQUID1      (liquid1->getDescriptiveString())
+  //#define LIQUID2      (liquid2->getDescriptiveString())
 
 #define YOU_ARE       (YOU + ARE)
 #define YOU_WERE      (YOU + WERE)

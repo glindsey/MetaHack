@@ -44,7 +44,7 @@ namespace Actions
 
     auto subject = getSubject();
     EntityId location = subject->getLocation();
-    MapTile* current_tile = subject->get_maptile();
+    MapTile* current_tile = subject->getMapTile();
     Direction new_direction = getTargetDirection();
 
     if ((new_direction != Direction::Up) &&

@@ -35,7 +35,7 @@ void StatusArea::drawContents_(sf::RenderTexture& texture, int frame)
   auto& config = Service<IConfigSettings>::get();
 
   sf::IntRect pane_dims = getRelativeDimensions();
-  EntityId player = GAME.get_player();
+  EntityId player = GAME.getPlayer();
   RealVec2 origin(config.get("window_text_offset_x").as<float>(),
                config.get("window_text_offset_y").as<float>());
   sf::Color text_color = config.get("text_color").as<Color>();
@@ -56,10 +56,10 @@ void StatusArea::drawContents_(sf::RenderTexture& texture, int frame)
   if (player != EntityId::Mu())
   {
     // Render player name
-    std::string name = player->get_proper_name();
+    std::string name = player->getProperName();
     name[0] = std::toupper(name[0], std::locale());
 
-    std::string type = player->get_display_name();
+    std::string type = player->getDisplayName();
     type[0] = std::toupper(type[0], std::locale());
 
     render_text.setString(name + " the " + type);
@@ -72,8 +72,8 @@ void StatusArea::drawContents_(sf::RenderTexture& texture, int frame)
     render_text.setString("HP");
     texture.draw(render_text);
 
-    int hp = player->get_modified_property("hp").as<int>();
-    int max_hp = player->get_modified_property("maxhp").as<int>();
+    int hp = player->getModifiedProperty("hp").as<int>();
+    int max_hp = player->getModifiedProperty("maxhp").as<int>();
 
     float hp_percentage = static_cast<float>(hp) / static_cast<float>(max_hp);
 
@@ -93,7 +93,7 @@ void StatusArea::drawContents_(sf::RenderTexture& texture, int frame)
     std::string hp_string = boost::lexical_cast<std::string>(hp) + "/" + boost::lexical_cast<std::string>(max_hp);
 
     render_text.setPosition(origin.x + 200, origin.y);
-    render_text.setString(std::to_string(GAME.get_game_clock().count()));
+    render_text.setString(std::to_string(GAME.getGameClock().count()));
     texture.draw(render_text);
 
     // Render game time
@@ -124,7 +124,7 @@ void StatusArea::render_attribute(sf::RenderTarget& target, std::string abbrev, 
   sf::Text render_text;
   sf::Color text_color = config.get("text_color").as<Color>();
   sf::Color text_dim_color = config.get("text_dim_color").as<Color>();
-  EntityId player = GAME.get_player();
+  EntityId player = GAME.getPlayer();
 
   // Render STR
   render_text.setFont(the_default_mono_font);
@@ -134,7 +134,7 @@ void StatusArea::render_attribute(sf::RenderTarget& target, std::string abbrev, 
   render_text.setString(abbrev + ":");
   target.draw(render_text);
 
-  std::string attr_string = std::to_string(player->get_modified_property(name).as<int>());
+  std::string attr_string = std::to_string(player->getModifiedProperty(name).as<int>());
 
   render_text.setColor(text_color);
   render_text.setPosition(location.x + 40, location.y);

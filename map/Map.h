@@ -48,57 +48,57 @@ public:
   }
 
   /// Process all Entities on this map.
-  void process_entities();
+  void processEntities();
 
-  void update_lighting();
+  void updateLighting();
 
-  void add_light(EntityId source);
+  void addLight(EntityId source);
 
-  MapTile const & get_tile(IntVec2 tile) const;
+  MapTile const & getTile(IntVec2 tile) const;
 
-  MapTile& get_tile(IntVec2 tile);
+  MapTile& getTile(IntVec2 tile);
 
-  bool tile_is_opaque(IntVec2 tile);
+  bool tileIsOpaque(IntVec2 tile);
 
   /// Get the map's size.
   IntVec2 const& getSize() const;
 
   /// Get player's starting location.
-  IntVec2 const& get_start_coords() const;
+  IntVec2 const& getStartCoords() const;
 
   /// Set player's starting location.
-  bool set_start_coords(IntVec2 start_coords);
+  bool setStartCoords(IntVec2 start_coords);
 
   /// Get the index of a particular X/Y coordinate.
-  int get_index(IntVec2 coords) const;
+  int getIndex(IntVec2 coords) const;
 
   /// Get whether a particular X/Y coordinate is in bounds.
-  bool is_in_bounds(IntVec2 coords) const;
+  bool isInBounds(IntVec2 coords) const;
 
   /// Calculate coordinates corresponding to a direction, if possible.
-  bool calc_coords(IntVec2 origin,
-                   Direction direction,
-                   IntVec2& result);
+  bool calcCoords(IntVec2 origin,
+                  Direction direction,
+                  IntVec2& result);
 
   /// Get Map ID.
-  MapId get_map_id() const;
+  MapId getMapId() const;
 
   /// @todo Not sure all the "feature" stuff should be public.
   ///       But not sure how to scope it better either.
 
   /// Clear the collection of map features.
-  void clear_map_features();
+  void clearMapFeatures();
 
   /// Get the collection of map features.
-  boost::ptr_deque<MapFeature> const& get_map_features() const;
+  boost::ptr_deque<MapFeature> const& getMapFeatures() const;
 
   /// Get a random map feature from the deque.
-  MapFeature& get_random_map_feature();
+  MapFeature& getRandomMapFeature();
 
   /// Add a map feature to this map.
   /// The feature must be dynamically generated, and the map takes ownership
   /// of it when it is passed in.
-  MapFeature& add_map_feature(MapFeature* feature);
+  MapFeature& addMapFeature(MapFeature* feature);
 
 protected:
   Map(GameState& game, MapId mapId, int width, int height);
@@ -120,14 +120,14 @@ protected:
   ///  / | \   |
   /// / 6|5 \  |
 
-  void do_recursive_lighting(EntityId source,
-                             IntVec2 const& origin,
-                             sf::Color const& light_color,
-                             int const max_depth_squared,
-                             int octant,
-                             int depth = 1,
-                             float slope_A = 1,
-                             float slope_B = 0);
+  void doRecursiveLighting(EntityId source,
+                           IntVec2 const& origin,
+                           sf::Color const& light_color,
+                           int const max_depth_squared,
+                           int octant,
+                           int depth = 1,
+                           float slope_A = 1,
+                           float slope_B = 0);
 
 private:
   /// Reference to game state.
@@ -152,14 +152,14 @@ private:
   ///   - ID of the requested Entity, or nil if it does not exist.
   /// Notes:
   ///   - The Map that the tile is retrieved from is the one the player is on.
-  static int LUA_get_tile_contents(lua_State* L);
+  static int LUA_getTileContents(lua_State* L);
 
   /// Lua function to get the start coords for a map.
   /// Takes one parameter:
   ///   - The MapID of the map in question.
   /// It returns:
   ///   - The x, y location of the map's starting position.
-  static int LUA_get_start_coords(lua_State* L);
+  static int LUA_getStartCoords(lua_State* L);
 
   /// Lua function to add a feature to a map.
   /// Takes two parameters:
@@ -167,7 +167,7 @@ private:
   ///   - A string indicating the type of feature to add.
   /// It returns:
   ///   - A boolean indicating whether the feature could be added to the map.
-  static int LUA_map_add_feature(lua_State* L);
+  static int LUA_mapAddFeature(lua_State* L);
 };
 
 #endif // MAP_H

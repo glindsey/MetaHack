@@ -41,21 +41,21 @@ namespace Actions
     /// @todo Pass in the cause of death somehow.
     if (subject->perform_intransitive_action(*this) == ActionResult::Success)
     {
-      if (subject->is_player())
+      if (subject->isPlayer())
       {
         put_msg(maketr("YOU_DIE"));
       }
       else
       {
-        bool living = subject->get_modified_property("living").as<bool>();
+        bool living = subject->getModifiedProperty("living").as<bool>();
         put_msg(maketr(living ? "YOU_ARE_KILLED" : "YOU_ARE_DESTROYED"));
       }
 
       // Set the property saying the entity is dead.
-      subject->set_base_property("dead", Property::from(true));
+      subject->setBaseProperty("dead", Property::from(true));
 
       // Clear any pending actions.
-      subject->clear_pending_actions();
+      subject->clearAllPendingActions();
 
       /// @todo If Entity is the player, perform graceful shutdown of the game.
       return StateResult::Success();

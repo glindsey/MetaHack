@@ -30,77 +30,72 @@ public:
   virtual ~MapTile();
 
   /// Get the tile's contents object.
-  EntityId get_tile_contents() const;
+  EntityId getTileContents() const;
 
   /// Return this tile's description.
-  virtual std::string get_display_name() const override final;
+  virtual std::string getDisplayName() const override final;
 
   /// Sets the tile type, without doing gameplay checks.
   /// Used to set up the map before gameplay begins.
   /// @param type Type of the tile.
   /// @return None.
-  void set_tile_type(std::string type);
+  void setTileType(std::string type);
 
   /// Gets the current tile type.
   /// @return Type of the tile.
-  std::string get_tile_type() const;
+  std::string getTileType() const;
 
   /// Returns whether a tile is empty space, e.g. no wall in the way.
-  bool is_empty_space() const;
+  bool isEmptySpace() const;
 
   /// Returns whether a tile can be traversed by a certain DynamicEntity.
-  bool can_be_traversed_by(EntityId entity) const;
+  bool canBeTraversedBy(EntityId entity) const;
 
   /// Set the current tile's location.
-  void set_coords(int x, int y);
-
-  void set_coords(IntVec2 coords);
+  void setCoords(IntVec2 coords);
 
   /// Get the current tile's location.
-  IntVec2 const& get_coords() const;
+  IntVec2 const& getCoords() const;
 
   /// Get a reference to the map this tile belongs to.
-  MapId get_map_id() const;
+  MapId getMapId() const;
 
   /// Set the current tile's light level.
-  void set_ambient_light_level(sf::Color level);
+  void setAmbientLightLevel(sf::Color level);
 
   /// Receive light from the specified LightSource.
   /// Gets the Map this tile belongs to and does a recursive
   /// raycasting algorithm on it.
-  virtual void be_lit_by(EntityId light);
+  virtual void beLitBy(EntityId light);
 
   /// Clear light influences.
-  void clear_light_influences();
+  void clearLightInfluences();
 
   /// Add a light influence to the tile.
-  void add_light_influence(EntityId source,
-                           LightInfluence influence);
+  void addLightInfluence(EntityId source,
+                         LightInfluence influence);
 
   /// Get the light shining on a tile.
-  /// Syntactic sugar for get_wall_light_level(Direction::Self).
-  sf::Color get_light_level() const;
+  /// Syntactic sugar for getWallLightLevel(Direction::Self).
+  sf::Color getLightLevel() const;
 
   /// Get the light shining on a tile wall.
-  sf::Color get_wall_light_level(Direction direction) const;
+  sf::Color getWallLightLevel(Direction direction) const;
 
   /// Get the opacity of this tile.
-  sf::Color get_opacity() const;
+  sf::Color getOpacity() const;
 
   /// Get whether the tile is opaque or not.
-  bool is_opaque() const;
-
-    /// Get the coordinates associated with a tile.
-  static RealVec2 get_pixel_coords(int x, int y);
+  bool isOpaque() const;
 
   /// Get the coordinates associated with a tile.
-  static RealVec2 get_pixel_coords(IntVec2 tile);
+  static RealVec2 getPixelCoords(IntVec2 tile);
 
   /// Get a reference to an adjacent tile.
-  MapTile const & get_adjacent_tile(Direction direction) const;
+  MapTile const & getAdjacentTile(Direction direction) const;
 
   /// Get a const reference to this tile's metadata.
-  Metadata const & get_metadata() const;
+  Metadata const & getMetadata() const;
 
 protected:
   /// Constructor, callable only by Map class.

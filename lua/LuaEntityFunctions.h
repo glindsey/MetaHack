@@ -4,5 +4,5 @@
 
 namespace LuaEntityFunctions
 {
-  void register_functions();
+  void registerFunctions();
 } // end namespace LuaEntityFunctions

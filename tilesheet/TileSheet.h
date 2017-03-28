@@ -18,7 +18,7 @@ public:
   /// Get a particular tile from the sheet.
   /// @warning Assumes tile is within the bounds of the loaded texture,
   ///          unless DEBUG is defined, in order to save execution time.
-  sf::IntRect get_tile(UintVec2 tile) const;
+  sf::IntRect getTile(UintVec2 tile) const;
 
   /// Get a reference to the texture to render.
   sf::Texture& getTexture(void);
@@ -66,7 +66,7 @@ public:
 
 protected:
   /// Return bitset index based on coordinates.
-  unsigned int get_index(UintVec2 coords);
+  unsigned int getIndex(UintVec2 coords);
 
   /// Return true if the requested area is totally unused.
   bool area_is_unused(UintVec2 start, UintVec2 size);

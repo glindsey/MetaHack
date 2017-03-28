@@ -74,8 +74,8 @@ MapCorridor::MapCorridor(Map& m, PropertyDictionary const& s, GeoVector vec)
       throw MapFeatureException("Invalid direction passed to MapCorridor constructor");
     }
 
-    if ((getMap().is_in_bounds({ xMin - 1, yMin - 1 })) &&
-      (getMap().is_in_bounds({ xMax + 1, yMax + 1 })))
+    if ((getMap().isInBounds({ xMin - 1, yMin - 1 })) &&
+      (getMap().isInBounds({ xMax + 1, yMax + 1 })))
     {
       bool okay = true;
 
@@ -83,14 +83,14 @@ MapCorridor::MapCorridor(Map& m, PropertyDictionary const& s, GeoVector vec)
       okay = does_box_pass_criterion(
       { xMin - 1, yMin - 1 },
       { xMax + 1, yMax + 1 },
-                                     [&](MapTile& tile) { return !tile.is_empty_space(); });
+                                     [&](MapTile& tile) { return !tile.isEmptySpace(); });
 
       if (okay)
       {
         // Clear out the box.
         set_box({ xMin, yMin }, { xMax, yMax }, floor_type);
 
-        set_coords(sf::IntRect(xMin, yMin, (xMax - xMin) + 1, (yMax - yMin) + 1));
+        setCoords(sf::IntRect(xMin, yMin, (xMax - xMin) + 1, (yMax - yMin) + 1));
 
         // Add the surrounding walls as potential connection points.
         // First the horizontal walls...
@@ -112,8 +112,8 @@ MapCorridor::MapCorridor(Map& m, PropertyDictionary const& s, GeoVector vec)
 
         /// @todo: Put either a door or an open area at the starting coords.
         ///        Right now we just make it an open area.
-        auto& startTile = getMap().get_tile(startingCoords);
-        startTile.set_tile_type(floor_type);
+        auto& startTile = getMap().getTile(startingCoords);
+        startTile.setTileType(floor_type);
 
         /// Check the tile two past the ending tile.
         /// If it is open space, there should be a small chance
@@ -146,14 +146,14 @@ MapCorridor::MapCorridor(Map& m, PropertyDictionary const& s, GeoVector vec)
           throw MapFeatureException("Invalid direction passed to MapCorridor constructor");
         }
 
-        if (getMap().is_in_bounds(checkCoords))
+        if (getMap().isInBounds(checkCoords))
         {
-          auto& checkTile = getMap().get_tile(checkCoords);
-          if (checkTile.is_empty_space())
+          auto& checkTile = getMap().getTile(checkCoords);
+          if (checkTile.isEmptySpace())
           {
             /// @todo Do a throw to see if it opens up. Right now it always does.
-            auto& endTile = getMap().get_tile(pImpl->endingCoords);
-            endTile.set_tile_type(floor_type);
+            auto& endTile = getMap().getTile(pImpl->endingCoords);
+            endTile.setTileType(floor_type);
           }
         }
 

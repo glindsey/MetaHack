@@ -31,12 +31,12 @@ namespace LuaEntityFunctions
 
     // Check to make sure the Entity is actually creatable.
     /// @todo Might want the ability to disable this check for debugging purposes?
-    Metadata& thing_metadata = GAME.get_metadata_collection("entity").get(new_thing_type);
-    bool is_creatable = thing_metadata.get_intrinsic("creatable", Property::from(false)).as<bool>();
+    Metadata& thing_metadata = GAME.getMetadataCollection("entity").get(new_thing_type);
+    bool is_creatable = thing_metadata.getIntrinsic("creatable", Property::from(false)).as<bool>();
 
     if (is_creatable)
     {
-      new_thing = GAME.get_entities().create(new_thing_type);
+      new_thing = GAME.getEntities().create(new_thing_type);
       success = new_thing->move_into(entity);
 
       if (success && (num_args > 2))
@@ -84,7 +84,7 @@ namespace LuaEntityFunctions
       return 0;
     }
 
-    EntityId player = GAME.get_player();
+    EntityId player = GAME.getPlayer();
     lua_pushinteger(L, player);
 
     return 1;
@@ -102,12 +102,12 @@ namespace LuaEntityFunctions
 
     EntityId entity = EntityId(lua_tointeger(L, 1));
 
-    MapId map_id = GAME.get_player()->get_map_id();
-    auto maptile = entity->get_maptile();
+    MapId map_id = GAME.getPlayer()->getMapId();
+    auto maptile = entity->getMapTile();
 
     if (maptile != nullptr)
     {
-      auto coords = maptile->get_coords();
+      auto coords = maptile->getCoords();
       lua_pushinteger(L, coords.x);
       lua_pushinteger(L, coords.y);
     }
@@ -166,7 +166,7 @@ namespace LuaEntityFunctions
 
     EntityId entity = EntityId(lua_tointeger(L, 1));
     const char* key = lua_tostring(L, 2);
-    auto result = entity->get_base_property(key);
+    auto result = entity->getBaseProperty(key);
     auto slot_count = the_lua_instance.push_value(result);
 
     return slot_count;
@@ -184,7 +184,7 @@ namespace LuaEntityFunctions
 
     EntityId entity = EntityId(lua_tointeger(L, 1));
     const char* key = lua_tostring(L, 2);
-    auto result = entity->get_modified_property(key);
+    auto result = entity->getModifiedProperty(key);
     auto slot_count = the_lua_instance.push_value(result);
 
     return slot_count;
@@ -202,7 +202,7 @@ namespace LuaEntityFunctions
 
     EntityId entity = EntityId(lua_tointeger(L, 1));
     const char* key = lua_tostring(L, 2);
-    auto result = entity->get_intrinsic(key);
+    auto result = entity->getIntrinsic(key);
     auto slot_count = the_lua_instance.push_value(result);
 
     return slot_count;
@@ -239,7 +239,7 @@ namespace LuaEntityFunctions
     }
 
     new_action->setObjects(objects);
-    entity->queue_action(std::move(new_action));
+    entity->queueAction(std::move(new_action));
 
     return 1;
   }
@@ -277,7 +277,7 @@ namespace LuaEntityFunctions
 
     new_action->setTarget(target);
     new_action->setObjects(objects);
-    entity->queue_action(std::move(new_action));
+    entity->queueAction(std::move(new_action));
 
     return 1;
   }
@@ -318,7 +318,7 @@ namespace LuaEntityFunctions
 
     new_action->setTarget(direction);
     new_action->setObjects(objects);
-    entity->queue_action(std::move(new_action));
+    entity->queueAction(std::move(new_action));
 
     return 1;
   }
@@ -340,7 +340,7 @@ namespace LuaEntityFunctions
 
     CLOG(TRACE, "Lua") << "Setting property " << key << 
       " of entity " << entity << " to " << value;
-    entity->set_base_property(key, value);
+    entity->setBaseProperty(key, value);
 
     return 0;
   }
@@ -382,7 +382,7 @@ namespace LuaEntityFunctions
     unsigned int expires_at = (num_args == 4) ? static_cast<unsigned int>(lua_tointeger(L, 4)) : 0;
 
     /// @todo FIX ME
-    //result = thing_being_modified->add_modifier(key, thing_doing_the_modifying, ElapsedTime(expires_at));
+    //result = thing_being_modified->addModifier(key, thing_doing_the_modifying, ElapsedTime(expires_at));
 
     lua_pushboolean(L, static_cast<int>(result));
 
@@ -403,14 +403,14 @@ namespace LuaEntityFunctions
     std::string key = lua_tostring(L, 2);
     EntityId thing_doing_the_modifying = EntityId(lua_tointeger(L, 3));
 
-    size_t result = thing_being_modified->remove_modifier(key, thing_doing_the_modifying);
+    size_t result = thing_being_modified->removeModifier(key, thing_doing_the_modifying);
 
     lua_pushinteger(L, static_cast<lua_Integer>(result));
 
     return 1;
   }
 
-  void register_functions()
+  void registerFunctions()
   {
     LUA_REGISTER(thing_create);
     LUA_REGISTER(thing_destroy);

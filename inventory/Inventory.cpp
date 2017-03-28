@@ -24,7 +24,7 @@ bool Inventory::add(EntityId entity)
   }
 
   // If the entity is the player, it goes into slot 0.
-  if (entity == GAME.get_player())
+  if (entity == GAME.getPlayer())
   {
     if (things_.count(INVSLOT_ZERO) != 0)
     {
@@ -116,7 +116,7 @@ void Inventory::consolidate_items()
 
 bool Inventory::contains(EntityId entity)
 {
-  if (GAME.get_entities().exists(entity) == false) return false;
+  if (GAME.getEntities().exists(entity) == false) return false;
 
   return (find(entity) != things_.cend());
 }
@@ -128,7 +128,7 @@ bool Inventory::contains(InventorySlot slot)
 
 InventorySlot Inventory::operator[](EntityId entity)
 {
-  if (GAME.get_entities().exists(entity) == false) return INVSLOT_INVALID;
+  if (GAME.getEntities().exists(entity) == false) return INVSLOT_INVALID;
 
   auto iter = find(entity);
 
@@ -159,7 +159,7 @@ EntityId Inventory::split(EntityId entity, unsigned int target_quantity)
       unsigned int source_quantity = source_thing->getQuantity();
       if (target_quantity < source_quantity)
       {
-        target_thing = GAME.get_entities().clone(source_thing);
+        target_thing = GAME.getEntities().clone(source_thing);
         source_thing->setQuantity(source_quantity - target_quantity);
         target_thing->setQuantity(target_quantity);
       }
@@ -214,7 +214,7 @@ EntityId Inventory::getEntity()
     find_if([&](const EntityPair& thing_pair)
   {
     EntityId ref = thing_pair.second;
-    return ((ref->is_subtype_of("DynamicEntity")) && (ref->get_modified_property("hp").as<int32_t>() > 0));
+    return ((ref->isSubtypeOf("DynamicEntity")) && (ref->getModifiedProperty("hp").as<int32_t>() > 0));
   });
 
   if (iter != things_.cend())
@@ -252,5 +252,5 @@ bool Inventory::is_smaller_than(EntityId a, EntityId b)
 {
   if ((a == EntityId::Mu()) || (b == EntityId::Mu())) return false;
 
-  return (a->get_mass() < b->get_mass());
+  return (a->getMass() < b->getMass());
 }

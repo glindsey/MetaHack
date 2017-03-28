@@ -15,7 +15,7 @@ EntityPool::EntityPool(GameState& game)
   m_game{ game }
 {
   // Register the Entity Lua functions.
-  LuaEntityFunctions::register_functions();
+  LuaEntityFunctions::registerFunctions();
 
   // Create the "nothingness" object.
   EntityId mu = create("Mu");
@@ -28,11 +28,11 @@ EntityPool::~EntityPool()
 {
 }
 
-bool EntityPool::first_is_subtype_of_second(std::string first, std::string second)
+bool EntityPool::firstIsSubtypeOfSecond(std::string first, std::string second)
 {
   //CLOG(TRACE, "Entity") << "Checking if " << first << " is a subtype of " << second << "...";
 
-  std::string first_parent = m_game.get_metadata_collection("entity").get(first).get_intrinsic("parent").as<std::string>();
+  std::string first_parent = m_game.getMetadataCollection("entity").get(first).getIntrinsic("parent").as<std::string>();
 
   if (first_parent.empty())
   {
@@ -47,14 +47,14 @@ bool EntityPool::first_is_subtype_of_second(std::string first, std::string secon
   }
 
   //CLOG(TRACE, "Entity") << first << " parent = " << first_parent << ", recursing...";
-  return first_is_subtype_of_second(first_parent, second);
+  return firstIsSubtypeOfSecond(first_parent, second);
 }
 
 EntityId EntityPool::create(std::string type)
 {
   EntityId new_id = EntityId(m_nextEntityId);
   ++m_nextEntityId;
-  Metadata& metadata = m_game.get_metadata_collection("entity").get(type);
+  Metadata& metadata = m_game.getMetadataCollection("entity").get(type);
 
   std::unique_ptr<Entity> new_thing{ new Entity{ m_game, metadata, new_id } };
   m_thing_map[new_id] = std::move(new_thing);
@@ -68,11 +68,11 @@ EntityId EntityPool::create(std::string type)
   return EntityId(new_id);
 }
 
-EntityId EntityPool::create_tile_contents(MapTile* map_tile)
+EntityId EntityPool::createTileContents(MapTile* map_tile)
 {
   EntityId new_id = EntityId(m_nextEntityId);
   ++m_nextEntityId;
-  Metadata& metadata = m_game.get_metadata_collection("entity").get("TileContents");
+  Metadata& metadata = m_game.getMetadataCollection("entity").get("TileContents");
 
   std::unique_ptr<Entity> new_thing{ new Entity { m_game, map_tile, metadata, new_id } };
   m_thing_map[new_id] = std::move(new_thing);

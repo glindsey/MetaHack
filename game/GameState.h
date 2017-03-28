@@ -29,15 +29,15 @@ public:
   /// Save the game state to disk.
   /// Throws an exception if the game could not be saved.
   /// @todo WRITE ME
-  void save_state(FileName filename);
+  void saveState(FileName filename);
 
-  MapFactory& get_maps();
-  EntityPool& get_entities();
-  MetadataCollection& get_metadata_collection(std::string category);
+  MapFactory& getMaps();
+  EntityPool& getEntities();
+  MetadataCollection& getMetadataCollection(std::string category);
 
-  ElapsedTime const& get_game_clock() const;
-  void set_game_clock(ElapsedTime game_clock);
-  void increment_game_clock(ElapsedTime added_time);
+  ElapsedTime const& getGameClock() const;
+  void setGameClock(ElapsedTime game_clock);
+  void incrementGameClock(ElapsedTime added_time);
 
   /// Set the game player.
   /// If the caller attempts to set a EntityId of a Entity that does not exist,
@@ -46,15 +46,15 @@ public:
   ///       and unpredictable results may occur!
   /// @param ref EntityId of the Entity to set as the player.
   /// @return True if the set was successful, false otherwise.
-  bool set_player(EntityId ref);
+  bool setPlayer(EntityId ref);
 
   /// Get the EntityId of the game player Entity.
   /// @return The player EntityId.
-  EntityId get_player() const;
+  EntityId getPlayer() const;
 
   /// Process a single tick in the game, if one needs to be processed.
   /// @return True if a tick elapsed, false if it did not.
-  bool process_tick();
+  bool processGameClockTick();
 
   static GameState& instance();
 

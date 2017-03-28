@@ -57,7 +57,7 @@ namespace Actions
     }
 
     // Check that the container actually IS a container.
-    if (container->get_intrinsic("inventory_size").as<int32_t>() == 0)
+    if (container->getIntrinsic("inventory_size").as<int32_t>() == 0)
     {
       printMessageTry();
 
@@ -79,7 +79,7 @@ namespace Actions
     }
 
     // Check that the container is within reach.
-    if (!subject->can_reach(container))
+    if (!subject->canReach(container))
     {
       printMessageTry();
 

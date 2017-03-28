@@ -50,7 +50,7 @@ class MapFeature
 public:
   virtual ~MapFeature();
 
-  sf::IntRect const& get_coords() const;
+  sf::IntRect const& getCoords() const;
   Map& getMap() const;
   PropertyDictionary const& get_settings() const;
 
@@ -63,7 +63,7 @@ public:
 protected:
   MapFeature(Map& m, PropertyDictionary const& settings, GeoVector vec);
 
-  void set_coords(sf::IntRect coords);
+  void setCoords(sf::IntRect coords);
   void clear_growth_vectors();
   void add_growth_vector(GeoVector vec, bool highPriority = false);
 

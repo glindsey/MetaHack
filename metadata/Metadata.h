@@ -17,14 +17,14 @@ public:
   Metadata(MetadataCollection& collection, std::string type);
   virtual ~Metadata();
 
-  MetadataCollection& get_metadata_collection();
+  MetadataCollection& getMetadataCollection();
 
   std::string const& getType() const;
 
   UintVec2 get_tile_coords() const;
 
-  Property get_intrinsic(std::string name, Property default_value) const;
-  Property get_intrinsic(std::string name) const;
+  Property getIntrinsic(std::string name, Property default_value) const;
+  Property getIntrinsic(std::string name) const;
   void set_intrinsic(std::string name, Property value);
   
 protected:

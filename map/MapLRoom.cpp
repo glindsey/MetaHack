@@ -98,21 +98,21 @@ MapLRoom::MapLRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
       throw MapFeatureException("Invalid direction passed to MapLRoom constructor");
     }
 
-    if ((getMap().is_in_bounds({ vert_rect.left - 1, vert_rect.top - 1 })) &&
-        (getMap().is_in_bounds({ vert_rect.left + vert_rect.width, vert_rect.top + vert_rect.height })) &&
-        (getMap().is_in_bounds({ horiz_rect.left - 1,horiz_rect.top - 1 })) &&
-        (getMap().is_in_bounds({ horiz_rect.left + horiz_rect.width, horiz_rect.top + horiz_rect.height })))
+    if ((getMap().isInBounds({ vert_rect.left - 1, vert_rect.top - 1 })) &&
+        (getMap().isInBounds({ vert_rect.left + vert_rect.width, vert_rect.top + vert_rect.height })) &&
+        (getMap().isInBounds({ horiz_rect.left - 1,horiz_rect.top - 1 })) &&
+        (getMap().isInBounds({ horiz_rect.left + horiz_rect.width, horiz_rect.top + horiz_rect.height })))
     {
       bool okay = true;
 
       // Verify that both boxes and surrounding area are solid walls.
       okay = does_box_pass_criterion({ vert_rect.left - 1, vert_rect.top - 1 },
       { vert_rect.left + vert_rect.width, vert_rect.top + vert_rect.height },
-                                     [&](MapTile& tile) { return !tile.is_empty_space(); });
+                                     [&](MapTile& tile) { return !tile.isEmptySpace(); });
 
       okay &= does_box_pass_criterion({ horiz_rect.left - 1, horiz_rect.top - 1 },
       { horiz_rect.left + horiz_rect.width, horiz_rect.top + horiz_rect.height },
-                                      [&](MapTile& tile) { return !tile.is_empty_space(); });
+                                      [&](MapTile& tile) { return !tile.isEmptySpace(); });
 
       if (okay)
       {
@@ -127,7 +127,7 @@ MapLRoom::MapLRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
         unsigned int y_max = std::max(horiz_rect.top + horiz_rect.height - 1,
                                       vert_rect.top + vert_rect.height - 1);
 
-        set_coords(sf::IntRect(x_min, y_min,
+        setCoords(sf::IntRect(x_min, y_min,
                                x_max - x_min + 1, y_max - y_min + 1));
 
         // Add the surrounding walls as potential connection points.
@@ -169,8 +169,8 @@ MapLRoom::MapLRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
 
         /// @todo Put either a door or an open area at the starting coords.
         ///       Right now we just make it an open area.
-        auto& startTile = getMap().get_tile(starting_coords);
-        startTile.set_tile_type(floor_type);
+        auto& startTile = getMap().getTile(starting_coords);
+        startTile.setTileType(floor_type);
 
         return;
       }

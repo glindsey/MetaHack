@@ -39,15 +39,15 @@ namespace Actions
     auto object = getObject();
 
     BodyLocation wear_location;
-    subject->is_wearing(object, wear_location);
+    subject->isWearing(object, wear_location);
 
-    std::string bodypart_desc = subject->get_bodypart_description(wear_location);
+    std::string bodypart_desc = subject->getBodypartDescription(wear_location);
 
     // Check if the worn item is bound.
-    if (object->get_modified_property("bound").as<bool>())
+    if (object->getModifiedProperty("bound").as<bool>())
     {
       std::string message;
-      message = makeString("$you cannot take off $foo; it is magically bound to $0!", { subject->get_possessive_of(bodypart_desc) });
+      message = makeString("$you cannot take off $foo; it is magically bound to $0!", { subject->getPossessiveString(bodypart_desc) });
       Service<IMessageLog>::get().add(message);
 
       // Premature exit.
@@ -60,8 +60,8 @@ namespace Actions
     if (object->be_object_of(*this, subject) == ActionResult::Success)
     {
       std::string message;
-      message = makeString("$you take off $foo. $you are now wearing nothing on $0.", { subject->get_possessive_of(bodypart_desc) });
-      subject->set_wielded(EntityId::Mu(), wear_location);
+      message = makeString("$you take off $foo. $you are now wearing nothing on $0.", { subject->getPossessiveString(bodypart_desc) });
+      subject->setWielded(EntityId::Mu(), wear_location);
     }
 
     return result;

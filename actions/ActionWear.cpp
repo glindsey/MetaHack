@@ -68,10 +68,10 @@ namespace Actions
     auto object = getObject();
 
     std::string bodypart_desc =
-      subject->get_bodypart_description(m_body_location);
+      subject->getBodypartDescription(m_body_location);
 
-    subject->set_worn(object, m_body_location);
-    put_msg(maketr("YOU_ARE_NOW_WEARING_THE_FOO", { subject->get_possessive_of(bodypart_desc) }));
+    subject->setWorn(object, m_body_location);
+    put_msg(maketr("YOU_ARE_NOW_WEARING_THE_FOO", { subject->getPossessiveString(bodypart_desc) }));
 
     return StateResult::Success();
   }

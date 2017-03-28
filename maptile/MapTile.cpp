@@ -18,83 +18,77 @@ bool MapTile::initialized = false;
 MapTile::~MapTile()
 {}
 
-EntityId MapTile::get_tile_contents() const
+EntityId MapTile::getTileContents() const
 {
   return m_tile_contents;
 }
 
-std::string MapTile::get_display_name() const
+std::string MapTile::getDisplayName() const
 {
-  return m_p_metadata->get_intrinsic("name").as<std::string>();
+  return m_p_metadata->getIntrinsic("name").as<std::string>();
 }
 
-void MapTile::set_tile_type(std::string type)
+void MapTile::setTileType(std::string type)
 {
-  m_p_metadata = &(m_p_metadata->get_metadata_collection().get(type));
+  m_p_metadata = &(m_p_metadata->getMetadataCollection().get(type));
 }
 
-std::string MapTile::get_tile_type() const
+std::string MapTile::getTileType() const
 {
   return m_p_metadata->getType();
 }
 
-bool MapTile::is_empty_space() const
+bool MapTile::isEmptySpace() const
 {
-  return m_p_metadata->get_intrinsic("passable").as<bool>();
+  return m_p_metadata->getIntrinsic("passable").as<bool>();
 }
 
 /// @todo: Implement this to cover different entity types.
 ///        For example, a non-corporeal DynamicEntity can move through solid matter.
-bool MapTile::can_be_traversed_by(EntityId entity) const
+bool MapTile::canBeTraversedBy(EntityId entity) const
 {
-  return is_empty_space();
+  return isEmptySpace();
 }
 
-void MapTile::set_coords(int x, int y)
-{
-  m_coords.x = x;
-  m_coords.y = y;
-}
-
-void MapTile::set_coords(IntVec2 coords)
+void MapTile::setCoords(IntVec2 coords)
 {
   m_coords = coords;
 }
 
-IntVec2 const& MapTile::get_coords() const
+IntVec2 const& MapTile::getCoords() const
 {
   return m_coords;
 }
 
-MapId MapTile::get_map_id() const
+MapId MapTile::getMapId() const
 {
   return m_map_id;
 }
 
-void MapTile::set_ambient_light_level(sf::Color level)
+void MapTile::setAmbientLightLevel(sf::Color level)
 {
   m_ambient_light_color = level;
 }
 
-void MapTile::be_lit_by(EntityId light)
+void MapTile::beLitBy(EntityId light)
 {
-  GAME.get_maps().get(get_map_id()).add_light(light);
+  GAME.getMaps().get(getMapId()).addLight(light);
 }
 
-void MapTile::clear_light_influences()
+void MapTile::clearLightInfluences()
 {
   m_lights.clear();
   m_calculated_light_colors.clear();
 }
 
-void MapTile::add_light_influence(EntityId source,
+void MapTile::addLightInfluence(EntityId source,
                                   LightInfluence influence)
 {
   if (m_lights.count(source) == 0)
   {
     m_lights[source] = influence;
 
-    float dist_squared = static_cast<float>(calc_vis_distance(get_coords().x, get_coords().y, influence.coords.x, influence.coords.y));
+    float dist_squared = static_cast<float>(calc_vis_distance(getCoords().x, getCoords().y, influence.coords.x, influence.coords.y));
 
     sf::Color light_color = influence.color;
     int light_intensity = influence.intensity;
@@ -116,10 +110,10 @@ void MapTile::add_light_influence(EntityId source,
 
     for (Direction d : directions)
     {
-      //if (!is_opaque() || (d != Direction::Self))
+      //if (!isOpaque() || (d != Direction::Self))
       {
         float light_factor = (1.0f - dist_factor);
-        float wall_factor = Direction::calculate_light_factor(influence.coords, get_coords(), d);
+        float wall_factor = Direction::calculate_light_factor(influence.coords, getCoords(), d);
 
         addColor.r = static_cast<sf::Uint8>(static_cast<float>(light_color.r) * wall_factor * light_factor);
         addColor.g = static_cast<sf::Uint8>(static_cast<float>(light_color.g) * wall_factor * light_factor);
@@ -133,7 +127,7 @@ void MapTile::add_light_influence(EntityId source,
   }
 }
 
-sf::Color MapTile::get_light_level() const
+sf::Color MapTile::getLightLevel() const
 {
   if (m_calculated_light_colors.count(Direction::Self.get_map_index()) == 0)
   {
@@ -145,7 +139,7 @@ sf::Color MapTile::get_light_level() const
   }
 }
 
-sf::Color MapTile::get_wall_light_level(Direction direction) const
+sf::Color MapTile::getWallLightLevel(Direction direction) const
 {
   if (m_calculated_light_colors.count(direction.get_map_index()) == 0)
   {
@@ -157,31 +151,26 @@ sf::Color MapTile::get_wall_light_level(Direction direction) const
   }
 }
 
-sf::Color MapTile::get_opacity() const
+sf::Color MapTile::getOpacity() const
 {
-  return m_p_metadata->get_intrinsic("opacity").as<Color>();
+  return m_p_metadata->getIntrinsic("opacity").as<Color>();
 }
 
-bool MapTile::is_opaque() const
+bool MapTile::isOpaque() const
 {
   /// @todo Check the tile's inventory to see if there's anything huge enough
   ///       to block the view of stuff behind it.
-  auto opacity = get_opacity();
+  auto opacity = getOpacity();
   return opacity.r >= 255 && opacity.g >= 255 && opacity.b >= 255;
 }
 
-RealVec2 MapTile::get_pixel_coords(int x, int y)
+RealVec2 MapTile::getPixelCoords(IntVec2 tile)
 {
   auto& config = Service<IConfigSettings>::get();
   auto map_tile_size = config.get("map_tile_size").as<float>();
 
-  return RealVec2(static_cast<float>(x) * map_tile_size, 
-               static_cast<float>(y) * map_tile_size);
-}
-
-RealVec2 MapTile::get_pixel_coords(IntVec2 tile)
-{
-  return get_pixel_coords(tile.x, tile.y);
+  return RealVec2(static_cast<float>(tile.x) * map_tile_size,
+                  static_cast<float>(tile.y) * map_tile_size);
 }
 
 // === PROTECTED METHODS ======================================================
@@ -203,20 +192,20 @@ MapTile::MapTile(IntVec2 coords, Metadata& metadata, MapId map_id)
   // "this" pointer passed in.
   /// @todo The type of this floor should eventually be specified as
   ///       part of the constructor.
-  m_tile_contents = GAME.get_entities().create_tile_contents(this);
+  m_tile_contents = GAME.getEntities().createTileContents(this);
 }
 
-MapTile const& MapTile::get_adjacent_tile(Direction direction) const
+MapTile const& MapTile::getAdjacentTile(Direction direction) const
 {
-  IntVec2 coords = get_coords();
-  Map const& map = GAME.get_maps().get(get_map_id());
+  IntVec2 coords = getCoords();
+  Map const& map = GAME.getMaps().get(getMapId());
   MapTile const& tile = *this;
 
   IntVec2 adjacent_coords = coords + (IntVec2)direction;
-  return map.get_tile(adjacent_coords);
+  return map.getTile(adjacent_coords);
 }
 
-Metadata const & MapTile::get_metadata() const
+Metadata const & MapTile::getMetadata() const
 {
   return *m_p_metadata;
 }

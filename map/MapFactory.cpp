@@ -18,9 +18,9 @@ MapFactory::MapFactory(GameState& game)
   m_maps[current_map_id] = std::move(new_map);
 
   // Register the Map Lua functions.
-  the_lua_instance.register_function("map_get_tile_contents", Map::LUA_get_tile_contents);
-  the_lua_instance.register_function("map_get_start_coords", Map::LUA_get_start_coords);
-  the_lua_instance.register_function("map_add_feature", Map::LUA_map_add_feature);
+  the_lua_instance.register_function("map_get_tile_contents", Map::LUA_getTileContents);
+  the_lua_instance.register_function("map_get_start_coords", Map::LUA_getStartCoords);
+  the_lua_instance.register_function("map_add_feature", Map::LUA_mapAddFeature);
 }
 
 MapFactory::~MapFactory()

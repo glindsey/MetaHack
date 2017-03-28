@@ -78,21 +78,21 @@ MapRoom::MapRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
       throw MapFeatureException("Invalid direction passed to MapRoom constructor");
     }
 
-    if ((getMap().is_in_bounds({ rect.left - 1, rect.top - 1 })) &&
-        (getMap().is_in_bounds({ rect.left + rect.width, rect.top + rect.height })))
+    if ((getMap().isInBounds({ rect.left - 1, rect.top - 1 })) &&
+        (getMap().isInBounds({ rect.left + rect.width, rect.top + rect.height })))
     {
       bool okay = true;
 
       // Verify that box and surrounding area are solid walls.
       okay = does_box_pass_criterion({ rect.left - 1, rect.top - 1 },
       { rect.left + rect.width, rect.top + rect.height },
-                                     [&](MapTile& tile) { return !tile.is_empty_space(); });
+                                     [&](MapTile& tile) { return !tile.isEmptySpace(); });
 
       if (okay)
       {
         // Clear out the box.
         set_box(rect, floor_type);
-        set_coords(rect);
+        setCoords(rect);
 
         // Add the surrounding walls as potential connection points.
 
@@ -115,8 +115,8 @@ MapRoom::MapRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
 
         /// @todo Put either a door or an open area at the starting coords.
         ///       Right now we just make it an open area.
-        auto& startTile = getMap().get_tile(starting_coords);
-        startTile.set_tile_type(floor_type);
+        auto& startTile = getMap().getTile(starting_coords);
+        startTile.setTileType(floor_type);
 
         return;
       }

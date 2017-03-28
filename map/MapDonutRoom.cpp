@@ -72,14 +72,14 @@ MapDonutRoom::MapDonutRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
       throw MapFeatureException("Invalid direction passed to MapDonutRoom constructor");
     }
 
-    if ((getMap().is_in_bounds({ rect.left - 1, rect.top - 1 })) &&
-      (getMap().is_in_bounds({ rect.left + rect.width, rect.top + rect.height })))
+    if ((getMap().isInBounds({ rect.left - 1, rect.top - 1 })) &&
+      (getMap().isInBounds({ rect.left + rect.width, rect.top + rect.height })))
     {
       bool okay = true;
 
       okay = does_box_pass_criterion({ rect.left - 1, rect.top - 1 },
       { rect.left + rect.width, rect.top + rect.height },
-                                     [&](MapTile& tile) { return !tile.is_empty_space(); });
+                                     [&](MapTile& tile) { return !tile.isEmptySpace(); });
 
       // Create the hole location.
       sf::IntRect hole;
@@ -116,13 +116,13 @@ MapDonutRoom::MapDonutRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
             if (!((x_coord >= x_hole_left) && (x_coord <= x_hole_right) &&
               (y_coord >= y_hole_top) && (y_coord <= y_hole_bottom)))
             {
-              auto& tile = getMap().get_tile({ x_coord, y_coord });
-              tile.set_tile_type(floor_type);
+              auto& tile = getMap().getTile({ x_coord, y_coord });
+              tile.setTileType(floor_type);
             }
           }
         }
 
-        set_coords(rect);
+        setCoords(rect);
 
         // Add the surrounding walls as potential connection points.
 
@@ -159,8 +159,8 @@ MapDonutRoom::MapDonutRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
 
         /// @todo Put either a door or an open area at the starting coords.
         ///       Right now we just make it an open area.
-        auto& startTile = getMap().get_tile(starting_coords);
-        startTile.set_tile_type(floor_type);
+        auto& startTile = getMap().getTile(starting_coords);
+        startTile.setTileType(floor_type);
 
         return;
       }

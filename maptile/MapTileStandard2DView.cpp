@@ -23,7 +23,7 @@ MapTileStandard2DView::MapTileStandard2DView(MapTile& map_tile, TileSheet& tile_
 UintVec2 MapTileStandard2DView::get_tile_sheet_coords() const
 {
   /// @todo Deal with selecting one of the other tiles.
-  UintVec2 start_coords = get_map_tile().get_metadata().get_tile_coords();
+  UintVec2 start_coords = get_map_tile().getMetadata().get_tile_coords();
   UintVec2 tile_coords(start_coords.x + m_tile_offset, start_coords.y);
   return tile_coords;
 }
@@ -32,7 +32,7 @@ UintVec2 MapTileStandard2DView::get_tile_sheet_coords() const
 UintVec2 MapTileStandard2DView::get_entity_tile_sheet_coords(Entity& entity, int frame) const
 {
   /// Get tile coordinates on the sheet.
-  UintVec2 start_coords = entity.get_metadata().get_tile_coords();
+  UintVec2 start_coords = entity.getMetadata().get_tile_coords();
 
   /// Call the Lua function to get the offset (tile to choose).
   UintVec2 offset = entity.call_lua_function("get_tile_offset", { Property::from(frame) }).as<UintVec2>();
@@ -47,21 +47,21 @@ void MapTileStandard2DView::add_tile_vertices(EntityId viewer,
                                               sf::VertexArray& memory_vertices)
 {
   auto& tile = get_map_tile();
-  auto coords = tile.get_coords();
+  auto coords = tile.getCoords();
   auto& x = coords.x;
   auto& y = coords.y;
 
-  bool this_is_empty = tile.is_empty_space();
-  bool nw_is_empty = (viewer->can_see({ x - 1, y - 1 }) && tile.get_adjacent_tile(Direction::Northwest).is_empty_space());
-  bool n_is_empty = (viewer->can_see({ x, y - 1 }) && tile.get_adjacent_tile(Direction::North).is_empty_space());
-  bool ne_is_empty = (viewer->can_see({ x + 1, y - 1 }) && tile.get_adjacent_tile(Direction::Northeast).is_empty_space());
-  bool e_is_empty = (viewer->can_see({ x + 1, y }) && tile.get_adjacent_tile(Direction::East).is_empty_space());
-  bool se_is_empty = (viewer->can_see({ x + 1, y + 1 }) && tile.get_adjacent_tile(Direction::Southeast).is_empty_space());
-  bool s_is_empty = (viewer->can_see({ x, y + 1 }) && tile.get_adjacent_tile(Direction::South).is_empty_space());
-  bool sw_is_empty = (viewer->can_see({ x - 1, y + 1 }) && tile.get_adjacent_tile(Direction::Southwest).is_empty_space());
-  bool w_is_empty = (viewer->can_see({ x - 1, y }) && tile.get_adjacent_tile(Direction::West).is_empty_space());
+  bool this_is_empty = tile.isEmptySpace();
+  bool nw_is_empty = (viewer->canSee({ x - 1, y - 1 }) && tile.getAdjacentTile(Direction::Northwest).isEmptySpace());
+  bool n_is_empty = (viewer->canSee({ x, y - 1 }) && tile.getAdjacentTile(Direction::North).isEmptySpace());
+  bool ne_is_empty = (viewer->canSee({ x + 1, y - 1 }) && tile.getAdjacentTile(Direction::Northeast).isEmptySpace());
+  bool e_is_empty = (viewer->canSee({ x + 1, y }) && tile.getAdjacentTile(Direction::East).isEmptySpace());
+  bool se_is_empty = (viewer->canSee({ x + 1, y + 1 }) && tile.getAdjacentTile(Direction::Southeast).isEmptySpace());
+  bool s_is_empty = (viewer->canSee({ x, y + 1 }) && tile.getAdjacentTile(Direction::South).isEmptySpace());
+  bool sw_is_empty = (viewer->canSee({ x - 1, y + 1 }) && tile.getAdjacentTile(Direction::Southwest).isEmptySpace());
+  bool w_is_empty = (viewer->canSee({ x - 1, y }) && tile.getAdjacentTile(Direction::West).isEmptySpace());
 
-  if (viewer->can_see(coords))
+  if (viewer->canSee(coords))
   {
     if (this_is_empty)
     {
@@ -87,14 +87,14 @@ void MapTileStandard2DView::add_memory_vertices_to(sf::VertexArray& vertices,
 {
   auto& config = Service<IConfigSettings>::get();
   auto& tile = get_map_tile();
-  auto coords = tile.get_coords();
+  auto coords = tile.getCoords();
 
-  MapId map_id = viewer->get_map_id();
+  MapId map_id = viewer->getMapId();
   if (map_id == MapFactory::null_map_id)
   {
     return;
   }
-  Map& game_map = GAME.get_maps().get(map_id);
+  Map& game_map = GAME.getMaps().get(map_id);
 
   static sf::Vertex new_vertex;
   float ts = config.get("map_tile_size").as<float>();
@@ -106,9 +106,9 @@ void MapTileStandard2DView::add_memory_vertices_to(sf::VertexArray& vertices,
   RealVec2 vNW(location.x - ts2, location.y - ts2);
   RealVec2 vNE(location.x + ts2, location.y - ts2);
 
-  std::string tile_type = viewer->get_memory_at(coords).getType();
+  std::string tile_type = viewer->getMemoryAt(coords).getType();
   if (tile_type == "") { tile_type = "MTUnknown"; }
-  Metadata* tile_metadata = &(GAME.get_metadata_collection("maptile").get(tile_type));
+  Metadata* tile_metadata = &(GAME.getMetadataCollection("maptile").get(tile_type));
 
   /// @todo Call a script to handle selecting a tile other than the one
   ///       in the upper-left corner.
@@ -125,30 +125,30 @@ void MapTileStandard2DView::add_tile_floor_vertices(sf::VertexArray& vertices)
   auto& config = Service<IConfigSettings>::get();
 
   auto& tile = get_map_tile();
-  auto& coords = tile.get_coords();
-  auto& tileN = tile.get_adjacent_tile(Direction::North);
-  auto& tileNE = tile.get_adjacent_tile(Direction::Northeast);
-  auto& tileE = tile.get_adjacent_tile(Direction::East);
-  auto& tileSE = tile.get_adjacent_tile(Direction::Southeast);
-  auto& tileS = tile.get_adjacent_tile(Direction::South);
-  auto& tileSW = tile.get_adjacent_tile(Direction::Southwest);
-  auto& tileW = tile.get_adjacent_tile(Direction::West);
-  auto& tileNW = tile.get_adjacent_tile(Direction::Northwest);
+  auto& coords = tile.getCoords();
+  auto& tileN = tile.getAdjacentTile(Direction::North);
+  auto& tileNE = tile.getAdjacentTile(Direction::Northeast);
+  auto& tileE = tile.getAdjacentTile(Direction::East);
+  auto& tileSE = tile.getAdjacentTile(Direction::Southeast);
+  auto& tileS = tile.getAdjacentTile(Direction::South);
+  auto& tileSW = tile.getAdjacentTile(Direction::Southwest);
+  auto& tileW = tile.getAdjacentTile(Direction::West);
+  auto& tileNW = tile.getAdjacentTile(Direction::Northwest);
 
   sf::Vertex new_vertex;
   float ts = config.get("map_tile_size").as<float>();
   float half_ts = ts * 0.5f;
 
-  sf::Color colorN{ tileN.get_light_level() };
-  sf::Color colorNE{ tileNE.get_light_level() };
-  sf::Color colorE{ tileE.get_light_level() };
-  sf::Color colorSE{ tileSE.get_light_level() };
-  sf::Color colorS{ tileS.get_light_level() };
-  sf::Color colorSW{ tileSW.get_light_level() };
-  sf::Color colorW{ tileW.get_light_level() };
-  sf::Color colorNW{ tileNW.get_light_level() };
+  sf::Color colorN{ tileN.getLightLevel() };
+  sf::Color colorNE{ tileNE.getLightLevel() };
+  sf::Color colorE{ tileE.getLightLevel() };
+  sf::Color colorSE{ tileSE.getLightLevel() };
+  sf::Color colorS{ tileS.getLightLevel() };
+  sf::Color colorSW{ tileSW.getLightLevel() };
+  sf::Color colorW{ tileW.getLightLevel() };
+  sf::Color colorNW{ tileNW.getLightLevel() };
 
-  sf::Color light = tile.get_light_level();
+  sf::Color light = tile.getLightLevel();
   sf::Color lightN = average(light, colorN);
   sf::Color lightNE = average(light, colorN, colorNE, colorE);
   sf::Color lightE = average(light, colorE);
@@ -179,11 +179,11 @@ void MapTileStandard2DView::add_things_floor_vertices(EntityId viewer,
                                                       bool use_lighting, int frame)
 {
   auto& tile = get_map_tile();
-  auto coords = tile.get_coords();
-  EntityId contents = tile.get_tile_contents();
-  Inventory& inv = contents->get_inventory();
+  auto coords = tile.getCoords();
+  EntityId contents = tile.getTileContents();
+  Inventory& inv = contents->getInventory();
 
-  if (viewer->can_see(coords))
+  if (viewer->canSee(coords))
   {
     if (inv.count() > 0)
     {
@@ -205,25 +205,25 @@ void MapTileStandard2DView::add_things_floor_vertices(EntityId viewer,
 
 void MapTileStandard2DView::add_thing_floor_vertices(EntityId entityId, sf::VertexArray & vertices, bool use_lighting, int frame)
 {
-  auto& entity = GAME.get_entities().get(entityId);
+  auto& entity = GAME.getEntities().get(entityId);
   auto& config = Service<IConfigSettings>::get();
   sf::Vertex new_vertex;
   float ts = config.get("map_tile_size").as<float>();
   float ts2 = ts * 0.5f;
 
-  MapTile* root_tile = entityId->get_maptile();
+  MapTile* root_tile = entityId->getMapTile();
   if (!root_tile)
   {
     // Item's root location isn't a MapTile, so it can't be rendered.
     return;
   }
 
-  IntVec2 const& coords = root_tile->get_coords();
+  IntVec2 const& coords = root_tile->getCoords();
 
   sf::Color thing_color;
   if (use_lighting)
   {
-    thing_color = root_tile->get_light_level();
+    thing_color = root_tile->getLightLevel();
   }
   else
   {
@@ -264,13 +264,13 @@ void MapTileStandard2DView::add_wall_vertices_to(sf::VertexArray& vertices,
   bool player_sees_w_wall{ false };
 
   // Player.
-  EntityId player = GAME.get_player();
+  EntityId player = GAME.getPlayer();
 
   if (player != EntityId::Mu())
   {
-    auto player_tile = player->get_maptile();
-    auto player_coords = player_tile->get_coords();
-    auto tile_coords = tile.get_coords();
+    auto player_tile = player->getMapTile();
+    auto player_coords = player_tile->getCoords();
+    auto tile_coords = tile.getCoords();
     if (player_tile != nullptr)
     {
       player_sees_n_wall = (player_coords.y <= tile_coords.y);
@@ -310,13 +310,13 @@ void MapTileStandard2DView::add_wall_vertices_to(sf::VertexArray& vertices,
   float ws(map_tile_size * 0.4f);
 
   // Adjacent tiles
-  MapTile const& adjacent_tile_n = tile.get_adjacent_tile(Direction::North);
-  MapTile const& adjacent_tile_e = tile.get_adjacent_tile(Direction::East);
-  MapTile const& adjacent_tile_s = tile.get_adjacent_tile(Direction::South);
-  MapTile const& adjacent_tile_w = tile.get_adjacent_tile(Direction::West);
+  MapTile const& adjacent_tile_n = tile.getAdjacentTile(Direction::North);
+  MapTile const& adjacent_tile_e = tile.getAdjacentTile(Direction::East);
+  MapTile const& adjacent_tile_s = tile.getAdjacentTile(Direction::South);
+  MapTile const& adjacent_tile_w = tile.getAdjacentTile(Direction::West);
 
   // Tile vertices.
-  auto tile_coords = tile.get_coords();
+  auto tile_coords = tile.getCoords();
   RealVec2 location(tile_coords.x * ts,
                  tile_coords.y * ts);
   RealVec2 vTileN(location.x, location.y - half_ts);
@@ -332,13 +332,13 @@ void MapTileStandard2DView::add_wall_vertices_to(sf::VertexArray& vertices,
 
   if (use_lighting)
   {
-    tile_color = tile.get_light_level();
+    tile_color = tile.getLightLevel();
 
     if (player_sees_n_wall)
     {
-      wall_n_color = tile.get_wall_light_level(Direction::North);
-      wall_n_color_w = average(wall_n_color, adjacent_tile_w.get_wall_light_level(Direction::North));
-      wall_n_color_e = average(wall_n_color, adjacent_tile_e.get_wall_light_level(Direction::North));
+      wall_n_color = tile.getWallLightLevel(Direction::North);
+      wall_n_color_w = average(wall_n_color, adjacent_tile_w.getWallLightLevel(Direction::North));
+      wall_n_color_e = average(wall_n_color, adjacent_tile_e.getWallLightLevel(Direction::North));
     }
     else
     {
@@ -349,9 +349,9 @@ void MapTileStandard2DView::add_wall_vertices_to(sf::VertexArray& vertices,
 
     if (player_sees_e_wall)
     {
-      wall_e_color = tile.get_wall_light_level(Direction::East);
-      wall_e_color_n = average(wall_e_color, adjacent_tile_n.get_wall_light_level(Direction::East));
-      wall_e_color_s = average(wall_e_color, adjacent_tile_s.get_wall_light_level(Direction::East));
+      wall_e_color = tile.getWallLightLevel(Direction::East);
+      wall_e_color_n = average(wall_e_color, adjacent_tile_n.getWallLightLevel(Direction::East));
+      wall_e_color_s = average(wall_e_color, adjacent_tile_s.getWallLightLevel(Direction::East));
     }
     else
     {
@@ -362,9 +362,9 @@ void MapTileStandard2DView::add_wall_vertices_to(sf::VertexArray& vertices,
 
     if (player_sees_s_wall)
     {
-      wall_s_color = tile.get_wall_light_level(Direction::South);
-      wall_s_color_w = average(wall_s_color, adjacent_tile_w.get_wall_light_level(Direction::South));
-      wall_s_color_e = average(wall_s_color, adjacent_tile_e.get_wall_light_level(Direction::South));
+      wall_s_color = tile.getWallLightLevel(Direction::South);
+      wall_s_color_w = average(wall_s_color, adjacent_tile_w.getWallLightLevel(Direction::South));
+      wall_s_color_e = average(wall_s_color, adjacent_tile_e.getWallLightLevel(Direction::South));
     }
     else
     {
@@ -375,9 +375,9 @@ void MapTileStandard2DView::add_wall_vertices_to(sf::VertexArray& vertices,
 
     if (player_sees_w_wall)
     {
-      wall_w_color = tile.get_wall_light_level(Direction::West);
-      wall_w_color_n = average(wall_w_color, adjacent_tile_n.get_wall_light_level(Direction::West));
-      wall_w_color_s = average(wall_w_color, adjacent_tile_s.get_wall_light_level(Direction::West));
+      wall_w_color = tile.getWallLightLevel(Direction::West);
+      wall_w_color_n = average(wall_w_color, adjacent_tile_n.getWallLightLevel(Direction::West));
+      wall_w_color_s = average(wall_w_color, adjacent_tile_s.getWallLightLevel(Direction::West));
     }
     else
     {
