@@ -51,7 +51,7 @@ namespace Actions
       message = maketr("YOU_THROW_SELF_TO_GROUND", { location->getDisplayName() });
       Service<IMessageLog>::get().add(message);
       /// @todo Possible damage from hurling yourself to the ground!
-      message = maketr("YOU_SEEM_UNHARMED", { IS_PLAYER ? tr("PREFIX_FORTUNATELY") : "" });
+      message = maketr("YOU_SEEM_UNHARMED", { subject->isPlayer() ? tr("PREFIX_FORTUNATELY") : "" });
       Service<IMessageLog>::get().add(message);
       message = maketr("YOU_GET_UP");
       Service<IMessageLog>::get().add(message);

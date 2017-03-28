@@ -336,57 +336,6 @@ namespace Actions
   }
 } // end namespace
 
-  // === MESSAGE HELPER MACROS ==================================================
-#define YOU       (getSubject()->getSubjectiveString())  // "you" or descriptive noun like "the goblin"
-#define YOU_SUBJ  (getSubject()->getSubjectPronoun())     // "you/he/she/it/etc."
-#define YOU_OBJ   (getSubject()->getObjectPronoun())      // "you/him/her/it/etc."
-#define YOUR      (getSubject()->get_possessive())          // "your/his/her/its/etc."
-#define YOURSELF  (getSubject()->getReflexivePronoun())   // "yourself/himself/herself/itself/etc."
-
-#define CV(p12, p3)  (getSubject()->chooseVerb(p12, p3))   // shortcut for "Subject - Choose Verb"
-#define OBJCV(p12, p3)  (getObject()->chooseVerb(p12, p3)) // shortcut for "Object - Choose Verb"
-
-#define ARE   (getSubject()->chooseVerb(" are", " is"))
-#define WERE  (getSubject()->chooseVerb(" were", " was"))
-#define DO    (getSubject()->chooseVerb(" do", " does"))
-#define GET   (getSubject()->chooseVerb(" get", " gets"))
-#define HAVE  (getSubject()->chooseVerb(" have", " has"))
-#define SEEM  (getSubject()->chooseVerb(" seem", " seems"))
-#define TRY   (getSubject()->chooseVerb(" try", " tries"))
-
-#define FOO_IS    OBJCV(" are", " is")
-#define FOO_HAS   OBJCV(" have", " has")
-
-#define IS_PLAYER (getSubject()->isPlayer())
-
-#define THE_FOO   (getObjectString())
-
-#define THE_FOOS_LOCATION  (getObject()->getLocation()->getDescriptiveString(ArticleChoice::Definite))
-#define THE_TARGET_THING   (getTargetThing()->getDescriptiveString(ArticleChoice::Definite))
-
-#define FOOSELF (getObject()->getReflexiveString(getSubject(), ArticleChoice::Definite))
-
-#define SUBJ_PRO_FOO  (getObject()->getSubjectPronoun())     // "you/he/she/it/etc."
-#define OBJ_PRO_FOO   (getObject()->getObjectPronoun())      // "you/him/her/it/etc."
-
-  //#define LIQUID1      (liquid1->getDescriptiveString())
-  //#define LIQUID2      (liquid2->getDescriptiveString())
-
-#define YOU_ARE       (YOU + ARE)
-#define YOU_WERE      (YOU + WERE)
-#define YOU_SUBJ_ARE  (YOU_SUBJ + ARE)
-#define YOU_DO        (YOU + DO)
-#define YOU_GET       (YOU + GET)
-#define YOU_HAVE      (YOU + HAVE)
-#define YOU_SEEM      (YOU + SEEM)
-#define YOU_TRY       (YOU + TRY)
-
-#define VERB          getVerb2()
-#define VERB3         getVerb3()
-#define VERBING       getVerbing()
-#define VERBED        getVerbed()
-#define VERBPP        getVerbPP()
-
 /* Header template for subclasses: 
 
 namespace Actions

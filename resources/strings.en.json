@@ -349,6 +349,7 @@
   "YOU_GET_UP": "$you get up.",
   "YOU_HAVE_NO_GRASPING_LIMBS": "$you $have no limbs capable of grasping anything!",
   "YOU_MANAGE_TO_AVOID_DYING": "$you $(cv?manage:manages) to avoid dying.",
+  "YOU_MIX_1_WITH_2": "$you $(cv?mix:mixes) $0 with $1.",
   "YOU_MUST_UNWIELD_FIRST": "$you must unwield what you are currently wielding in your $0 first.",
   "YOU_SEEM_UNHARMED": "$0 $you seem unharmed.",
   "YOU_STOP_VERBING": "$you $(cv?stop:stops) $verbing.",

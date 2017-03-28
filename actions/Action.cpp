@@ -377,7 +377,7 @@ namespace Actions
         {
           if (subject == object)
           {
-            if (!IS_PLAYER)
+            if (!subject->isPlayer())
             {
               put_msg(maketr("YOU_TRY_TO_VERB_YOURSELF_INVALID"));
               CLOG(WARNING, "Action") << "NPC tried to " << getType() << " self!?";

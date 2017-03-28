@@ -57,8 +57,7 @@ namespace Actions
     switch (object->be_object_of(*this, subject))
     {
       case ActionResult::SuccessDestroyed:
-        message = THE_FOO + OBJCV(" disintegrate", " disintegrates") + " after " + YOU + CV(" use ", " uses ") + OBJ_PRO_FOO + "!";
-        Service<IMessageLog>::get().add(message);
+        put_msg(maketr("THE_FOO_DISINTEGRATES_AFTER_YOU_VERB"));
 
         object->destroy();
         result = StateResult::Success();

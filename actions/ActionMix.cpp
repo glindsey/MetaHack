@@ -98,8 +98,7 @@ namespace Actions
   StateResult ActionMix::doBeginWorkNVI(AnyMap& params)
   {
     /// @todo IMPLEMENT ME
-    //message = YOU + CV(" mix ", " mixes ") + LIQUID1 + " with " + LIQUID2 + ".";
-    //Service<IMessageLog>::get().add(message);
+    //put_msg(maketr("YOU_MIX_1_WITH_2", { liquid1, liquid2 }));
     //thing1->perform_action_mixed_with_by(thing2, pImpl->ref);
 
     auto& dict = Service<IStringDictionary>::get();

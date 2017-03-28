@@ -38,11 +38,7 @@ namespace Actions
     {
       printMessageTry();
 
-      //message = YOU_TRY + " to remove " + THE_FOO +
-      //  " from its container.";
-      //Service<IMessageLog>::get().add(message);
-
-      if (IS_PLAYER)
+      if (subject->isPlayer())
       {
         message = maketr("CONJUNCTION_BUT") + " ";
       }
@@ -94,9 +90,7 @@ namespace Actions
       }
       else
       {
-        message = YOU + " could not take " + getObjectString() + " out of " + getTargetString() + " for some inexplicable reason.";
-        Service<IMessageLog>::get().add(message);
-
+        put_msg(maketr("YOU_CANT_VERB_FOO_PREPOSITION_TARGET_UNKNOWN", { "from" }));
         CLOG(ERROR, "Action") << "Could not move Entity out of Container even though be_object_of returned Success";
       }
     }

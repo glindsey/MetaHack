@@ -43,7 +43,7 @@ namespace Actions
     // Check that the entity and container aren't the same entity.
     if (object == container)
     {
-      if (IS_PLAYER)
+      if (subject->isPlayer())
       {
         message = maketr("YOU_TRY_TO_STORE_THE_FOO_INSIDE_ITSELF_HUMOROUS");
       }
