@@ -49,14 +49,12 @@ namespace Actions
     if (new_direction == Direction::Up)
     {
       /// @todo Write up/down movement code
-      message = maketr("ACTN_NOT_IMPLEMENTED");
-      Service<IMessageLog>::get().add(message);
+      putTr("ACTN_NOT_IMPLEMENTED");
     }
     else if (new_direction == Direction::Down)
     {
       /// @todo Write up/down movement code
-      message = maketr("ACTN_NOT_IMPLEMENTED");
-      Service<IMessageLog>::get().add(message);
+      putTr("ACTN_NOT_IMPLEMENTED");
     }
     else
     {
@@ -72,9 +70,8 @@ namespace Actions
       if ((x_new < 0) || (y_new < 0) ||
         (x_new >= map_size.x) || (y_new >= map_size.y))
       {
-        message += maketr("YOU_CANT_VERB_THERE");
-        Service<IMessageLog>::get().add(message);
-      }
+        putTr("YOU_CANT_VERB_THERE");
+     }
       else
       {
         auto& new_tile = current_map.getTile({ x_new, y_new });
@@ -104,13 +101,11 @@ namespace Actions
           else
           {
             std::string tile_description = new_tile.getDisplayName();
-            message += maketr("YOU_ARE_STOPPED_BY",
+            putMsg(makeTr("YOU_ARE_STOPPED_BY",
             {
               getIndefArt(tile_description),
               tile_description
-            });
-
-            Service<IMessageLog>::get().add(message);
+            }));
           }
         } // end else if (tile does not contain creature)
       } // end else if (not out of bounds)

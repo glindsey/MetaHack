@@ -43,11 +43,8 @@ namespace Actions
     /// @todo When picking up, check if our inventory is full-up.
     if (false)
     {
-      message = maketr("YOU_TRY_TO_VERB_THE_FOO");
-      Service<IMessageLog>::get().add(message);
-
-      message = maketr("YOUR_INVENTORY_CANT_HOLD_THE_FOO");
-      Service<IMessageLog>::get().add(message);
+      putTr("YOU_TRY_TO_VERB_THE_FOO");
+      putTr("YOUR_INVENTORY_CANT_HOLD_THE_FOO");
       return StateResult::Failure();
     }
 
@@ -64,8 +61,7 @@ namespace Actions
 
     if (object->be_object_of(*this, subject) == ActionResult::Success)
     {
-      message = maketr("YOU_CVERB_THE_FOO");
-      Service<IMessageLog>::get().add(message);
+      putTr("YOU_CVERB_THE_FOO");
       if (object->move_into(subject))
       {
         /// @todo Figure out action time.
@@ -73,8 +69,7 @@ namespace Actions
       }
       else // could not add to inventory
       {
-        message = maketr("YOU_CANT_VERB_FOO_UNKNOWN");
-        Service<IMessageLog>::get().add(message);
+        putTr("YOU_CANT_VERB_FOO_UNKNOWN");
 
         CLOG(WARNING, "Action") << "Could not move Entity " << object <<
           " even though be_object_of returned Success";

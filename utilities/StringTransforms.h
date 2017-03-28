@@ -29,8 +29,8 @@ namespace StringTransforms
   std::string makeString(EntityId subject, EntityId object, std::string pattern, std::vector<std::string> optional_strings);
   std::string makeString(EntityId subject, EntityId object, std::string pattern);
   std::string make_string_numerical_tokens_only(std::string pattern, std::vector<std::string> optional_strings);
-  std::string maketr(EntityId subject, EntityId object, std::string key);
-  std::string maketr(EntityId subject, EntityId object, std::string key, std::vector<std::string> optional_strings);
+  std::string makeTr(EntityId subject, EntityId object, std::string key);
+  std::string makeTr(EntityId subject, EntityId object, std::string key, std::vector<std::string> optional_strings);
   
   std::string replace_tokens(std::string str,
                              std::function<std::string(std::string)> token_functor,

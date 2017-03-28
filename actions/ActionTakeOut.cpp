@@ -40,16 +40,16 @@ namespace Actions
 
       if (subject->isPlayer())
       {
-        message = maketr("CONJUNCTION_BUT") + " ";
+        message = makeTr("CONJUNCTION_BUT") + " ";
       }
 
-      message += maketr("THE_FOO_IS_NOT_PREPOSITION_NOUN", 
+      message += makeTr("THE_FOO_IS_NOT_PREPOSITION_NOUN", 
       { 
-        maketr("PREPOSITION_INSIDE"), 
-        getIndefArt(maketr("NOUN_CONTAINER"))
+        makeTr("PREPOSITION_INSIDE"), 
+        getIndefArt(makeTr("NOUN_CONTAINER"))
       });
 
-      Service<IMessageLog>::get().add(message);
+      putMsg(message);
 
       return StateResult::Failure();
     }
@@ -59,7 +59,7 @@ namespace Actions
     {
       printMessageTry();
 
-      put_msg(maketr("THE_FOO_IS_OUT_OF_REACH"));
+      putTr("THE_FOO_IS_OUT_OF_REACH");
       return StateResult::Failure();
     }
 
@@ -90,7 +90,7 @@ namespace Actions
       }
       else
       {
-        put_msg(maketr("YOU_CANT_VERB_FOO_PREPOSITION_TARGET_UNKNOWN", { "from" }));
+        putMsg(makeTr("YOU_CANT_VERB_FOO_PREPOSITION_TARGET_UNKNOWN", { "from" }));
         CLOG(ERROR, "Action") << "Could not move Entity out of Container even though be_object_of returned Success";
       }
     }
@@ -110,11 +110,11 @@ namespace Actions
 
   void ActionTakeOut::printMessageTry() const
   {
-    put_msg(maketr("YOU_TRY_TO_VERB_THE_FOO_PREPOSITION_TARGET", { "from" }));
+    putMsg(makeTr("YOU_TRY_TO_VERB_THE_FOO_PREPOSITION_TARGET", { "from" }));
   }
 
   void ActionTakeOut::printMessageDo() const
   {
-    put_msg(maketr("YOU_VERB_THE_FOO_PREPOSITION_TARGET", { "from" }));
+    putMsg(makeTr("YOU_VERB_THE_FOO_PREPOSITION_TARGET", { "from" }));
   }
 }

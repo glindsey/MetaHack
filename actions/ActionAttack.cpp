@@ -31,8 +31,6 @@ namespace Actions
 
   StateResult ActionAttack::doPreBeginWorkNVI(AnyMap& params)
   {
-    std::string message;
-
     auto subject = getSubject();
     auto location = subject->getLocation();
     auto new_direction = getTargetDirection();
@@ -41,24 +39,21 @@ namespace Actions
     if (new_direction == Direction::Self)
     {
       /// @todo Allow attacking yourself!
-      message += maketr("YOU_TRY_TO_ATTACK_YOURSELF_HUMOROUS");
-      Service<IMessageLog>::get().add(message);
+      putTr("YOU_TRY_TO_ATTACK_YOURSELF_HUMOROUS");
       return StateResult::Failure();
     }
 
     if (new_direction == Direction::Up)
     {
       /// @todo Write up/down attack code
-      message = tr("YOU_CANT_ATTACK_CEILING");
-      Service<IMessageLog>::get().add(message);
+      putTr("YOU_CANT_ATTACK_CEILING");
       return StateResult::Failure();
     }
 
     if (new_direction == Direction::Down)
     {
       /// @todo Write up/down attack code
-      message = tr("YOU_CANT_ATTACK_FLOOR");
-      Service<IMessageLog>::get().add(message);
+      putTr("YOU_CANT_ATTACK_FLOOR");
       return StateResult::Failure();
     }
 
@@ -67,8 +62,6 @@ namespace Actions
 
   StateResult ActionAttack::doBeginWorkNVI(AnyMap& params)
   {
-    std::string message;
-
     auto subject = getSubject();
     auto location = subject->getLocation();
     MapTile* current_tile = subject->getMapTile();
@@ -89,8 +82,7 @@ namespace Actions
     if ((x_new < 0) || (y_new < 0) ||
       (x_new >= map_size.x) || (y_new >= map_size.y))
     {
-      message += maketr("YOU_CANT_VERB_THERE");
-      Service<IMessageLog>::get().add(message);
+      putTr("YOU_CANT_VERB_THERE");
       return StateResult::Failure();
     }
 
@@ -103,8 +95,7 @@ namespace Actions
     if (object == EntityId::Mu())
     {
       /// @todo Deal with attacking other stuff, MapTiles, etc.
-      message = maketr("YOU_CANT_VERB_NOTHING");
-      Service<IMessageLog>::get().add(message);
+      putTr("YOU_CANT_VERB_NOTHING");
       return StateResult::Failure();
     }
 
@@ -114,8 +105,7 @@ namespace Actions
     if (reachable)
     {
       /// @todo Write actual attack code here.
-      message = maketr("ACTN_ATTACK_UNFINISHED");
-      Service<IMessageLog>::get().add(message);
+      putTr("ACTN_ATTACK_UNFINISHED");
     }
 
     return{ success, action_time };

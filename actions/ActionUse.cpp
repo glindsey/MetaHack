@@ -57,7 +57,7 @@ namespace Actions
     switch (object->be_object_of(*this, subject))
     {
       case ActionResult::SuccessDestroyed:
-        put_msg(maketr("THE_FOO_DISINTEGRATES_AFTER_YOU_VERB"));
+        putTr("THE_FOO_DISINTEGRATES_AFTER_YOU_VERB");
 
         object->destroy();
         result = StateResult::Success();

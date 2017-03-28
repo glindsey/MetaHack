@@ -48,9 +48,8 @@ namespace Actions
     // Check if the wielded item is bound.
     if (object->getModifiedProperty("bound").as<bool>())
     {
-      std::string message;
-      message = makeString("$you cannot unwield $foo; it is magically bound to $0!", { subject->getPossessiveString(bodypart_desc) });
-      Service<IMessageLog>::get().add(message);
+      putMsg(makeTr("YOU_CANT_VERB_FOO_MAGICALLY_BOUND",
+                    { subject->getPossessiveString(bodypart_desc) }));
 
       // Premature exit.
       return result;

@@ -233,12 +233,12 @@ namespace StringTransforms
     return new_string;
   }
 
-  std::string maketr(EntityId subject, EntityId object, std::string key)
+  std::string makeTr(EntityId subject, EntityId object, std::string key)
   {
     return makeString(subject, object, tr(key), {});
   }
 
-  std::string maketr(EntityId subject, EntityId object, std::string key, std::vector<std::string> optional_strings)
+  std::string makeTr(EntityId subject, EntityId object, std::string key, std::vector<std::string> optional_strings)
   {
     return makeString(subject, object, tr(key), optional_strings);
   }

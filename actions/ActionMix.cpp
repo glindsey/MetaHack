@@ -36,9 +36,7 @@ namespace Actions
     {
       printMessageTry();
 
-      message = "Those are both the same container!";
-      Service<IMessageLog>::get().add(message);
-
+      putTr("THOSE_ARE_BOTH_THE_SAME_CONTAINER");
       return StateResult::Failure();
     }
 
@@ -46,10 +44,7 @@ namespace Actions
     if (object1 == subject || object2 == subject)
     {
       printMessageTry();
-
-      message = "But that makes absolutely no sense.";
-      Service<IMessageLog>::get().add(message);
-
+      putTr("THAT_MAKES_NO_SENSE");
       return StateResult::Failure();
     }
 
@@ -57,10 +52,7 @@ namespace Actions
     if (!subject->canReach(object1) || !subject->canReach(object2))
     {
       printMessageTry();
-
-      message = makeString("But at least one of them is out of $your(reach).");
-      Service<IMessageLog>::get().add(message);
-
+      putTr("AT_LEAST_ONE_IS_OUT_OF_REACH");
       return StateResult::Failure();
     }
 
@@ -70,10 +62,8 @@ namespace Actions
     {
       printMessageTry();
 
-      message = "But at least one of them doesn't hold liquid!";
-      Service<IMessageLog>::get().add(message);
-
-      return StateResult::Failure(); //ActionResult::FailureNotLiquidCarrier;
+      putTr("AT_LEAST_ONE_IS_NOT_LIQUID_CONTAINER");
+      return StateResult::Failure();
     }
 
     // Check that neither is empty.
@@ -83,10 +73,8 @@ namespace Actions
     {
       printMessageTry();
 
-      message = "But at least one of them is empty!";
-      Service<IMessageLog>::get().add(message);
-
-      return StateResult::Failure(); //ActionResult::FailureContainerIsEmpty;
+      putTr("AT_LEAST_ONE_IS_EMPTY");
+      return StateResult::Failure();
     }
 
     /// @todo Anything else needed here?
@@ -98,12 +86,10 @@ namespace Actions
   StateResult ActionMix::doBeginWorkNVI(AnyMap& params)
   {
     /// @todo IMPLEMENT ME
-    //put_msg(maketr("YOU_MIX_1_WITH_2", { liquid1, liquid2 }));
+    //putMsg(makeTr("YOU_MIX_1_WITH_2", { liquid1, liquid2 }));
     //thing1->perform_action_mixed_with_by(thing2, pImpl->ref);
 
-    auto& dict = Service<IStringDictionary>::get();
-    Service<IMessageLog>::get().add(dict.get("ACTN_NOT_IMPLEMENTED"));
-
+    putTr("ACTN_NOT_IMPLEMENTED");
     return StateResult::Failure();
   }
 

@@ -294,8 +294,6 @@ namespace Actions
 
   StateResult Action::doPreBeginWork(AnyMap& params)
   {
-    std::string message;
-
     auto subject = getSubject();
     auto& objects = getObjects();
     auto location = subject->getLocation();
@@ -306,9 +304,7 @@ namespace Actions
     if (!subject->getIntrinsic("can_" + getType()).as<bool>())
     {
       printMessageTry();
-      message = maketr("YOU_ARE_NOT_CAPABLE_OF_VERBING", { getIndefArt(subject->getDisplayName()), subject->getDisplayName() });
-      Service<IMessageLog>::get().add(message);
-
+      putMsg(makeTr("YOU_ARE_NOT_CAPABLE_OF_VERBING", { getIndefArt(subject->getDisplayName()), subject->getDisplayName() }));
       return StateResult::Failure();
     }
 
@@ -316,9 +312,7 @@ namespace Actions
     if (!subject->getModifiedProperty("can_" + getType()).as<bool>())
     {
       printMessageTry();
-      message = maketr("YOU_CANT_VERB_NOW", { getIndefArt(subject->getDisplayName()), subject->getDisplayName() });
-      Service<IMessageLog>::get().add(message);
-
+      putMsg(makeTr("YOU_CANT_VERB_NOW", { getIndefArt(subject->getDisplayName()), subject->getDisplayName() }));
       return StateResult::Failure();
     }
 
@@ -327,8 +321,7 @@ namespace Actions
       // Make sure we can move RIGHT NOW.
       if (!subject->canCurrentlyMove())
       {
-        message += maketr("YOU_CANT_MOVE_NOW");
-        Service<IMessageLog>::get().add(message);
+        putTr("YOU_CANT_MOVE_NOW");
         return StateResult::Failure();
       }
     }
@@ -338,7 +331,7 @@ namespace Actions
       // Make sure we're not in limbo!
       if ((location == EntityId::Mu()) || (current_tile == nullptr))
       {
-        put_msg(maketr("DONT_EXIST_PHYSICALLY"));
+        putTr("DONT_EXIST_PHYSICALLY");
         return StateResult::Failure();
       }
     }
@@ -350,11 +343,8 @@ namespace Actions
       if (subject->isInsideAnotherEntity())
       {
         printMessageTry();
-
-        message += maketr("YOU_ARE_INSIDE_OBJECT",
-        { location->getDescriptiveString(ArticleChoice::Indefinite) });
-
-        Service<IMessageLog>::get().add(message);
+        putMsg(makeTr("YOU_ARE_INSIDE_OBJECT",
+        { location->getDescriptiveString(ArticleChoice::Indefinite) }));
         return StateResult::Failure();
       }
     }
@@ -379,12 +369,11 @@ namespace Actions
           {
             if (!subject->isPlayer())
             {
-              put_msg(maketr("YOU_TRY_TO_VERB_YOURSELF_INVALID"));
+              putTr("YOU_TRY_TO_VERB_YOURSELF_INVALID");
               CLOG(WARNING, "Action") << "NPC tried to " << getType() << " self!?";
             }
 
-            put_msg(maketr("YOU_CANT_VERB_YOURSELF"));
-
+            putTr("YOU_CANT_VERB_YOURSELF");
             return StateResult::Failure();
           }
         }
@@ -395,10 +384,7 @@ namespace Actions
           if (!object->getIntrinsic("liquid_carrier").as<bool>())
           {
             printMessageTry();
-
-            put_msg(maketr("THE_FOO_IS_NOT_A_LIQUID_CARRIER"));
-            Service<IMessageLog>::get().add(message);
-
+            putTr("THE_FOO_IS_NOT_A_LIQUID_CARRIER");
             return StateResult::Failure();
           }
         }
@@ -410,10 +396,7 @@ namespace Actions
           if (inv.count() == 0)
           {
             printMessageTry();
-
-            message = maketr("THE_FOO_IS_EMPTY");
-            Service<IMessageLog>::get().add(message);
-
+            putTr("THE_FOO_IS_EMPTY");
             return StateResult::Failure();
           }
         }
@@ -425,10 +408,7 @@ namespace Actions
           if (inv.count() != 0)
           {
             printMessageTry();
-
-            message = maketr("THE_FOO_IS_NOT_EMPTY");
-            Service<IMessageLog>::get().add(message);
-
+            putTr("THE_FOO_IS_NOT_EMPTY");
             return StateResult::Failure();
           }
         }
@@ -439,9 +419,7 @@ namespace Actions
           if (!subject->canReach(object))
           {
             printMessageTry();
-
-            put_msg(maketr("CONJUNCTION_HOWEVER") + " " + maketr("FOO_PRO_SUB_IS_OUT_OF_REACH"));
-
+            putMsg(makeTr("CONJUNCTION_HOWEVER") + " " + makeTr("FOO_PRO_SUB_IS_OUT_OF_REACH"));
             return StateResult::Failure();
           }
         }
@@ -452,15 +430,13 @@ namespace Actions
           if (!subject->getInventory().contains(object))
           {
             printMessageTry();
-
-            message = maketr("CONJUNCTION_HOWEVER") + " " + maketr("FOO_PRO_SUB_IS_NOT_IN_YOUR_INVENTORY");
+            auto message = makeTr("CONJUNCTION_HOWEVER") + " " + makeTr("FOO_PRO_SUB_IS_NOT_IN_YOUR_INVENTORY");
             if (subject->canReach(object))
             {
-              message += maketr("PICK_UP_OBJECT_FIRST");
+              message += makeTr("PICK_UP_OBJECT_FIRST");
             }
             message += ".";
-            put_msg(message);
-
+            putMsg(message);
             return StateResult::Failure();
           }
         }
@@ -471,9 +447,7 @@ namespace Actions
           if (subject->getInventory().contains(object))
           {
             printMessageTry();
-
-            message = maketr("THE_FOO_IS_ALREADY_IN_YOUR_INVENTORY");
-            put_msg(message);
+            putTr("THE_FOO_IS_ALREADY_IN_YOUR_INVENTORY");
             return StateResult::Failure();
           }
         }
@@ -484,10 +458,7 @@ namespace Actions
           if (!subject->isWielding(object))
           {
             printMessageTry();
-
-            /// @todo Perhaps automatically try to unwield the item before dropping?
-            message = maketr("THE_FOO_MUST_BE_WIELDED");
-            put_msg(message);
+            putTr("THE_FOO_MUST_BE_WIELDED");
             return StateResult::Failure();
           }
         }
@@ -498,9 +469,7 @@ namespace Actions
           if (!subject->isWearing(object))
           {
             printMessageTry();
-
-            message = maketr("THE_FOO_MUST_BE_WORN");
-            put_msg(message);
+            putTr("THE_FOO_MUST_BE_WORN");
             return StateResult::Failure();
           }
         }
@@ -513,8 +482,7 @@ namespace Actions
             printMessageTry();
 
             /// @todo Perhaps automatically try to unwield the item before dropping?
-            message = maketr("YOU_CANT_VERB_WIELDED");
-            put_msg(message);
+            putTr("YOU_CANT_VERB_WIELDED");
             return StateResult::Failure();
           }
         }
@@ -525,9 +493,7 @@ namespace Actions
           if (subject->isWearing(object))
           {
             printMessageTry();
-
-            message = maketr("YOU_CANT_VERB_WORN");
-            put_msg(message);
+            putTr("YOU_CANT_VERB_WORN");
             return StateResult::Failure();
           }
         }
@@ -539,8 +505,7 @@ namespace Actions
           {
             printMessageTry();
 
-            message = maketr("YOU_CANT_MOVE_THE_FOO");
-            put_msg(message);
+            putTr("YOU_CANT_MOVE_THE_FOO");
             return StateResult::Failure();
           }
         }
@@ -550,35 +515,30 @@ namespace Actions
         {
           printMessageTry();
           printMessageCant();
-
           return StateResult::Failure();
         }
       }
     }
 
     auto result = doPreBeginWorkNVI(params);
-
     return result;
   }
 
   StateResult Action::doBeginWork(AnyMap& params)
   {
     auto result = doBeginWorkNVI(params);
-
     return result;
   }
 
   StateResult Action::doFinishWork(AnyMap& params)
   {
     auto result = doFinishWorkNVI(params);
-
     return result;
   }
 
   StateResult Action::doAbortWork(AnyMap& params)
   {
     auto result = doAbortWorkNVI(params);
-
     return result;
   }
 
@@ -591,8 +551,7 @@ namespace Actions
 
   StateResult Action::doBeginWorkNVI(AnyMap& params)
   {
-    put_msg(maketr("ACTN_NOT_IMPLEMENTED"));
-
+    putTr("ACTN_NOT_IMPLEMENTED");
     return StateResult::Failure();
   }
 
@@ -614,7 +573,7 @@ namespace Actions
 
     if (getObjects().size() == 0)
     {
-      description += maketr("NOUN_NOTHING");
+      description += makeTr("NOUN_NOTHING");
     }
     else if (getObjects().size() == 1)
     {
@@ -626,13 +585,13 @@ namespace Actions
       {
         if (getObject() == EntityId::Mu())
         {
-          description += maketr("NOUN_NOTHING");
+          description += makeTr("NOUN_NOTHING");
         }
         else
         {
           if (getQuantity() > 1)
           {
-            description += getQuantity() + " " + maketr("PREPOSITION_OF");
+            description += getQuantity() + " " + makeTr("PREPOSITION_OF");
           }
           description += getObject()->getDescriptiveString(ArticleChoice::Definite);
         }
@@ -640,14 +599,14 @@ namespace Actions
     }
     else if (getObjects().size() == 2)
     {
-      description += getObject()->getDescriptiveString(ArticleChoice::Definite) + " " + maketr("CONJUNCTION_AND") + " " +
+      description += getObject()->getDescriptiveString(ArticleChoice::Definite) + " " + makeTr("CONJUNCTION_AND") + " " +
         getSecondObject()->getDescriptiveString(ArticleChoice::Definite);
     }
     else if (getObjects().size() > 1)
     {
       /// @todo May want to change this depending on whether subject is the player.
       ///       If not, we should print "several items" or something to that effect.
-      auto string_items = maketr("NOUN_ITEMS");
+      auto string_items = makeTr("NOUN_ITEMS");
       description += getDefArt(string_items) + " " + string_items;
     }
     else
@@ -687,11 +646,11 @@ namespace Actions
     auto& objects = getObjects();
     if (objects.size() == 0)
     {
-      put_msg(maketr("YOU_TRY_TO_VERB"));
+      putTr("YOU_TRY_TO_VERB");
     }
     else if (objects.size() == 1)
     {
-      put_msg(maketr("YOU_TRY_TO_VERB_THE_FOO"));
+      putTr("YOU_TRY_TO_VERB_THE_FOO");
     }
     else
     {
@@ -704,15 +663,15 @@ namespace Actions
     auto& objects = getObjects();
     if (objects.size() == 0)
     {
-      put_msg(maketr("YOU_CVERB"));
+      putTr("YOU_CVERB");
     }
     else if (objects.size() == 1)
     {
-      put_msg(maketr("YOU_CVERB_THE_FOO"));
+      putTr("YOU_CVERB_THE_FOO");
     }
     else
     {
-      put_msg(maketr("YOU_CVERB_THE_ITEMS"));
+      putTr("YOU_CVERB_THE_ITEMS");
     }
   }
 
@@ -721,15 +680,15 @@ namespace Actions
     auto& objects = getObjects();
     if (objects.size() == 0)
     {
-      put_msg(maketr("YOU_BEGIN_TO_VERB"));
+      putTr("YOU_BEGIN_TO_VERB");
     }
     else if (objects.size() == 1)
     {
-      put_msg(maketr("YOU_BEGIN_TO_VERB_THE_FOO"));
+      putTr("YOU_BEGIN_TO_VERB_THE_FOO");
     }
     else
     {
-      put_msg(maketr("YOU_BEGIN_TO_VERB_THE_ITEMS"));
+      putTr("YOU_BEGIN_TO_VERB_THE_ITEMS");
     }
   }
 
@@ -738,15 +697,15 @@ namespace Actions
     auto& objects = getObjects();
     if (objects.size() == 0)
     {
-      put_msg(maketr("YOU_STOP_VERBING"));
+      putTr("YOU_STOP_VERBING");
     }
     else if (objects.size() == 1)
     {
-      put_msg(maketr("YOU_STOP_VERBING_THE_FOO"));
+      putTr("YOU_STOP_VERBING_THE_FOO");
     }
     else
     {
-      put_msg(maketr("YOU_STOP_VERBING_THE_ITEMS"));
+      putTr("YOU_STOP_VERBING_THE_ITEMS");
     }
   }
 
@@ -755,15 +714,15 @@ namespace Actions
     auto& objects = getObjects();
     if (objects.size() == 0)
     {
-      put_msg(maketr("YOU_FINISH_VERBING"));
+      putTr("YOU_FINISH_VERBING");
     }
     else if (objects.size() == 1)
     {
-      put_msg(maketr("YOU_FINISH_VERBING_THE_FOO"));
+      putTr("YOU_FINISH_VERBING_THE_FOO");
     }
     else
     {
-      put_msg(maketr("YOU_FINISH_VERBING_THE_ITEMS"));
+      putTr("YOU_FINISH_VERBING_THE_ITEMS");
     }
   }
 
@@ -772,15 +731,15 @@ namespace Actions
     auto& objects = getObjects();
     if (objects.size() == 0)
     {
-      put_msg(maketr("YOU_CANT_VERB"));
+      putTr("YOU_CANT_VERB");
     }
     else if (objects.size() == 1)
     {
-      put_msg(maketr("YOU_CANT_VERB_THAT"));
+      putTr("YOU_CANT_VERB_THAT");
     }
     else
     {
-      put_msg(maketr("YOU_CANT_VERB_THOSE"));
+      putTr("YOU_CANT_VERB_THOSE");
     }
   }
 
@@ -807,14 +766,14 @@ namespace Actions
     }
   }
 
-  std::string Action::maketr(std::string key) const
+  std::string Action::makeTr(std::string key) const
   {
-    return makeString(tr(key), {});
+    return makeString(Service<IStringDictionary>::get().get(key), {});
   }
 
-  std::string Action::maketr(std::string key, std::vector<std::string> optional_strings) const
+  std::string Action::makeTr(std::string key, std::vector<std::string> optional_strings) const
   {
-    return makeString(tr(key), optional_strings);
+    return makeString(Service<IStringDictionary>::get().get(key), optional_strings);
   }
 
   std::string Action::makeString(std::string pattern) const

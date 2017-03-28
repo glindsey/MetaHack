@@ -47,8 +47,8 @@ namespace Actions
     if (object->getModifiedProperty("bound").as<bool>())
     {
       std::string message;
-      message = makeString("$you cannot take off $foo; it is magically bound to $0!", { subject->getPossessiveString(bodypart_desc) });
-      Service<IMessageLog>::get().add(message);
+      putMsg(makeTr("YOU_CANT_VERB_FOO_MAGICALLY_BOUND", 
+      { subject->getPossessiveString(bodypart_desc) }));
 
       // Premature exit.
       return result;
@@ -60,7 +60,9 @@ namespace Actions
     if (object->be_object_of(*this, subject) == ActionResult::Success)
     {
       std::string message;
-      message = makeString("$you take off $foo. $you are now wearing nothing on $0.", { subject->getPossessiveString(bodypart_desc) });
+      putMsg(makeTr("YOU_CVERB_THE_FOO") + " " + 
+             makeTr("YOU_ARE_NOW_WEARING_NOTHING", 
+             { subject->getPossessiveString(bodypart_desc) }));
       subject->setWielded(EntityId::Mu(), wear_location);
     }
 

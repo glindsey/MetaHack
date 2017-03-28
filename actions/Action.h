@@ -152,8 +152,8 @@ namespace Actions
     /// If the requested key does not exist, throws an exception.
     static std::unique_ptr<Action> create(std::string key, EntityId subject);
 
-    std::string maketr(std::string key) const;
-    std::string maketr(std::string key, std::vector<std::string> optional_strings) const;
+    std::string makeTr(std::string key) const;
+    std::string makeTr(std::string key, std::vector<std::string> optional_strings) const;
 
     /// A method for composing a string from a pattern for an action.
     std::string makeString(std::string pattern, std::vector<std::string> optional_strings) const;

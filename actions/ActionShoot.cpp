@@ -34,9 +34,7 @@ namespace Actions
 
   StateResult ActionShoot::doBeginWorkNVI(AnyMap& params)
   {
-    auto& dict = Service<IStringDictionary>::get();
-    Service<IMessageLog>::get().add(dict.get("ACTN_NOT_IMPLEMENTED"));
-
+    putTr("ACTN_NOT_IMPLEMENTED");
     return StateResult::Failure();
   }
 

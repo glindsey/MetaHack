@@ -34,10 +34,7 @@ namespace Actions
     if (false) ///< @todo Intelligence tests for reading.
     {
       printMessageTry();
-
-      message = maketr("READ_TOO_STUPID");
-      Service<IMessageLog>::get().add(message);
-
+      putTr("READ_TOO_STUPID");
       return StateResult::Failure();
     }
 
@@ -71,9 +68,7 @@ namespace Actions
     switch (object->be_object_of(*this, subject))
     {
       case ActionResult::SuccessDestroyed:
-        message = maketr("THE_FOO_DISINTEGRATES_AFTER_YOU_VERB");
-        Service<IMessageLog>::get().add(message);
-
+        putTr("THE_FOO_DISINTEGRATES_AFTER_YOU_VERB");
         object->destroy();
         result = StateResult::Success();
         break;
@@ -102,7 +97,6 @@ namespace Actions
 
   void ActionRead::printMessageCant() const
   {
-    std::string message = maketr("THE_FOO_HAS_NO_NOUN_TO_VERB", { "writing" });
-    Service<IMessageLog>::get().add(message);
+    putMsg(makeTr("THE_FOO_HAS_NO_NOUN_TO_VERB", { "writing" }));
   }
 } // end namespace

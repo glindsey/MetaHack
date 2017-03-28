@@ -34,7 +34,7 @@ namespace Actions
 
     if (bodypart == BodyPart::Count)
     {
-      put_msg(maketr("THE_FOO_IS_NOT_VERBABLE"));
+      putTr("THE_FOO_IS_NOT_VERBABLE");
       return StateResult::Failure();
     }
     else
@@ -71,7 +71,7 @@ namespace Actions
       subject->getBodypartDescription(m_body_location);
 
     subject->setWorn(object, m_body_location);
-    put_msg(maketr("YOU_ARE_NOW_WEARING_THE_FOO", { subject->getPossessiveString(bodypart_desc) }));
+    putMsg(makeTr("YOU_ARE_NOW_WEARING_THE_FOO", { subject->getPossessiveString(bodypart_desc) }));
 
     return StateResult::Success();
   }

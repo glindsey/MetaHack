@@ -48,13 +48,10 @@ namespace Actions
 
     if (object == subject)
     {
-      message = maketr("YOU_THROW_SELF_TO_GROUND", { location->getDisplayName() });
-      Service<IMessageLog>::get().add(message);
+      putMsg(makeTr("YOU_THROW_SELF_TO_GROUND", { location->getDisplayName() }));
       /// @todo Possible damage from hurling yourself to the ground!
-      message = maketr("YOU_SEEM_UNHARMED", { subject->isPlayer() ? tr("PREFIX_FORTUNATELY") : "" });
-      Service<IMessageLog>::get().add(message);
-      message = maketr("YOU_GET_UP");
-      Service<IMessageLog>::get().add(message);
+      putMsg(makeTr("YOU_SEEM_UNHARMED", { subject->isPlayer() ? tr("PREFIX_FORTUNATELY") : "" }));
+      putTr("YOU_GET_UP");
     }
     else if (object != EntityId::Mu())
     {
@@ -71,8 +68,7 @@ namespace Actions
           }
           else
           {
-            message = maketr("YOU_CANT_VERB_FOO_UNKNOWN");
-            Service<IMessageLog>::get().add(message);
+            putTr("YOU_CANT_VERB_FOO_UNKNOWN");
 
             CLOG(WARNING, "Action") << "Could not drop Entity " << object <<
               " even though be_object_of returned Success";
@@ -89,8 +85,7 @@ namespace Actions
         // the future that can't contain certain Entities.
         printMessageTry();
 
-        message = maketr("LOCATION_CANT_HOLD_FOO", { location->getDescriptiveString() });
-        Service<IMessageLog>::get().add(message);
+        putMsg(makeTr("LOCATION_CANT_HOLD_FOO", { location->getDescriptiveString() }));
       }
     }
 

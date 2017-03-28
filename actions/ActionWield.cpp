@@ -53,10 +53,7 @@ namespace Actions
     }
     else if (currently_wielded != EntityId::Mu())
     {
-      std::string message;
-      message = maketr("YOU_MUST_UNWIELD_FIRST", { bodypart_desc });
-      Service<IMessageLog>::get().add(message);
-
+      putMsg(makeTr("YOU_MUST_UNWIELD_FIRST", { bodypart_desc }));
       return StateResult::Failure();
     }
 
@@ -64,10 +61,7 @@ namespace Actions
     if (subject->getBodypartNumber(BodyPart::Hand).as<uint32_t>() == 0)
     {
       printMessageTry();
-
-      message = maketr("YOU_HAVE_NO_GRASPING_LIMBS");
-      Service<IMessageLog>::get().add(message);
-
+      putTr("YOU_HAVE_NO_GRASPING_LIMBS");
       return StateResult::Failure();
     }
 
@@ -100,7 +94,8 @@ namespace Actions
       subject->getBodypartDescription(m_body_location);
 
     subject->setWielded(object, m_body_location);
-    put_msg(maketr("YOU_ARE_NOW_WIELDING_THE_FOO", { subject->getPossessiveString(bodypart_desc) }));
+    putMsg(makeTr("YOU_ARE_NOW_WIELDING_THE_FOO",
+                  { subject->getPossessiveString(bodypart_desc) }));
 
     return StateResult::Success();
   }

@@ -33,8 +33,8 @@ namespace Actions
   StateResult ActionWait::doBeginWorkNVI(AnyMap& params)
   {
     /// @todo Handle a variable amount of time.
-    std::string message = maketr("YOU_VERB_FOR_X_TIME", { std::to_string(1) });
-    Service<IMessageLog>::get().add(message);
+    putMsg(makeTr("YOU_VERB_FOR_X_TIME", 
+                  { std::to_string(1) }));
 
     return{ true, 1 };
   }

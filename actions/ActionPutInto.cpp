@@ -45,11 +45,11 @@ namespace Actions
     {
       if (subject->isPlayer())
       {
-        message = maketr("YOU_TRY_TO_STORE_THE_FOO_INSIDE_ITSELF_HUMOROUS");
+        message = makeTr("YOU_TRY_TO_STORE_THE_FOO_INSIDE_ITSELF_HUMOROUS");
       }
       else
       {
-        message = maketr("YOU_TRY_TO_STORE_THE_FOO_INSIDE_ITSELF_INVALID");
+        message = makeTr("YOU_TRY_TO_STORE_THE_FOO_INSIDE_ITSELF_INVALID");
         CLOG(WARNING, "Action") << "NPC tried to store a container in itself!?";
       }
 
@@ -60,10 +60,7 @@ namespace Actions
     if (container->getIntrinsic("inventory_size").as<int32_t>() == 0)
     {
       printMessageTry();
-
-      message = maketr("THE_TARGET_IS_NOT_A_CONTAINER");
-      Service<IMessageLog>::get().add(message);
-
+      putTr("THE_TARGET_IS_NOT_A_CONTAINER");
       return StateResult::Failure();
     }
 
@@ -71,10 +68,7 @@ namespace Actions
     if (object->getLocation() == container)
     {
       printMessageTry();
-
-      message = maketr("THE_FOO_IS_ALREADY_IN_THE_TARGET");
-      Service<IMessageLog>::get().add(message);
-
+      putTr("THE_FOO_IS_ALREADY_IN_THE_TARGET");
       return StateResult::Failure();
     }
 
@@ -82,10 +76,7 @@ namespace Actions
     if (!subject->canReach(container))
     {
       printMessageTry();
-
-      message = maketr("THE_TARGET_IS_OUT_OF_REACH");
-      Service<IMessageLog>::get().add(message);
-
+      putTr("THE_TARGET_IS_OUT_OF_REACH");
       return StateResult::Failure();
     }
 
@@ -112,8 +103,7 @@ namespace Actions
       }
       else
       {
-        message = maketr("YOU_CANT_VERB_FOO_PREPOSITION_TARGET_UNKNOWN", { "into" });
-        Service<IMessageLog>::get().add(message);
+        putMsg(makeTr("YOU_CANT_VERB_FOO_PREPOSITION_TARGET_UNKNOWN", { "into" }));
 
         CLOG(ERROR, "Action") << "Could not move Entity into Container even though be_object_of returned Success";
       }
@@ -134,13 +124,11 @@ namespace Actions
 
   void ActionPutInto::printMessageTry() const
   {
-    std::string message = maketr("YOU_TRY_TO_VERB_THE_FOO_PREPOSITION_TARGET", { "into" });
-    Service<IMessageLog>::get().add(message);
+    putMsg(makeTr("YOU_TRY_TO_VERB_THE_FOO_PREPOSITION_TARGET", { "into" }));
   }
 
   void ActionPutInto::printMessageDo() const
   {
-    std::string message = maketr("YOU_VERB_THE_FOO_PREPOSITION_TARGET", { "into" });
-    Service<IMessageLog>::get().add(message);
+    putMsg(makeTr("YOU_VERB_THE_FOO_PREPOSITION_TARGET", { "into" }));
   }
 } // end namespace

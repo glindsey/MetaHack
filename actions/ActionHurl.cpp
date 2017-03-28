@@ -57,8 +57,7 @@ namespace Actions
       }
       else
       {
-        message = maketr("YOU_CANT_VERB_FOO_UNKNOWN");
-        Service<IMessageLog>::get().add(message);
+        putTr("YOU_CANT_VERB_FOO_UNKNOWN");
 
         CLOG(WARNING, "Action") << "Could not throw Entity " << object <<
           " even though be_object_of returned Success";

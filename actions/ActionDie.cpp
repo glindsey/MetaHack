@@ -43,12 +43,12 @@ namespace Actions
     {
       if (subject->isPlayer())
       {
-        put_msg(maketr("YOU_DIE"));
+        putTr("YOU_DIE");
       }
       else
       {
         bool living = subject->getModifiedProperty("living").as<bool>();
-        put_msg(maketr(living ? "YOU_ARE_KILLED" : "YOU_ARE_DESTROYED"));
+        putMsg(makeTr(living ? "YOU_ARE_KILLED" : "YOU_ARE_DESTROYED"));
       }
 
       // Set the property saying the entity is dead.
@@ -62,7 +62,7 @@ namespace Actions
     }
     else
     {
-      put_msg(maketr("YOU_MANAGE_TO_AVOID_DYING"));
+      putTr("YOU_MANAGE_TO_AVOID_DYING");
       return StateResult::Failure();
     }
   }

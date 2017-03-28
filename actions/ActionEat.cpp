@@ -37,9 +37,7 @@ namespace Actions
       printMessageTry();
 
       /// @todo Handle "unusual" cases (e.g. zombies?)
-      message = maketr("YOU_TRY_TO_EAT_YOURSELF_HUMOROUS");
-      Service<IMessageLog>::get().add(message);
-
+      putTr("YOU_TRY_TO_EAT_YOURSELF_HUMOROUS");
       return StateResult::Failure();
     }
 
