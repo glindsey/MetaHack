@@ -97,7 +97,7 @@ App::App(sf::RenderWindow& app_window)
   m_app_texture->create(m_app_window.getSize().x, m_app_window.getSize().y);
 
   // Create the GUI desktop.
-  m_gui_desktop.reset(NEW metagui::Desktop("Desktop", m_app_window.getSize()));
+  m_gui_desktop.reset(NEW metagui::Desktop(*this, "Desktop", m_app_window.getSize()));
 
   // Create the random number generator and seed it with the current time.
   m_rng.reset(NEW boost::random::mt19937(static_cast<unsigned int>(std::time(0))));

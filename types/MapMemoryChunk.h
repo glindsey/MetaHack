@@ -22,7 +22,7 @@ public:
   virtual ~MapMemoryChunk()
   {}
 
-  std::string const& get_type() const
+  std::string const& getType() const
   {
     return m_type;
   }

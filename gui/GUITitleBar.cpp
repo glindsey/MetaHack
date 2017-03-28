@@ -10,7 +10,7 @@ namespace metagui
 {
   TitleBar::TitleBar(std::string name)
     :
-    Object(name, IntVec2(0, 0))
+    GUIObject(name, IntVec2(0, 0))
   {}
 
   TitleBar::~TitleBar()

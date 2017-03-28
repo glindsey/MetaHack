@@ -194,7 +194,7 @@ std::unordered_set<EventID> StateMachine::registeredEvents() const
   return events;
 }
 
-EventResult StateMachine::onEvent_(Event const& event)
+EventResult StateMachine::onEvent_NVI(Event const& event)
 {
   std::unique_ptr<Event> event_copy{ event.heapClone() };
   /// @todo Flesh this out to handle the events we care about.

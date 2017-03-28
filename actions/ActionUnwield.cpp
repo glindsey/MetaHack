@@ -26,19 +26,19 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionUnwield::do_prebegin_work_(AnyMap& params)
+  StateResult ActionUnwield::doPreBeginWorkNVI(AnyMap& params)
   {
     // All checks done by Action class via traits.
     return StateResult::Success();
   }
 
-  StateResult ActionUnwield::do_begin_work_(AnyMap& params)
+  StateResult ActionUnwield::doBeginWorkNVI(AnyMap& params)
   {
     StateResult result = StateResult::Failure();
     std::string message;
 
-    auto subject = get_subject();
-    auto object = get_object();
+    auto subject = getSubject();
+    auto object = getObject();
 
     BodyLocation wield_location;
     subject->is_wielding(object, wield_location);
@@ -49,7 +49,7 @@ namespace Actions
     if (object->get_modified_property("bound").as<bool>())
     {
       std::string message;
-      message = make_string("$you cannot unwield $foo; it is magically bound to $0!", { subject->get_possessive_of(bodypart_desc) });
+      message = makeString("$you cannot unwield $foo; it is magically bound to $0!", { subject->get_possessive_of(bodypart_desc) });
       Service<IMessageLog>::get().add(message);
 
       // Premature exit.
@@ -62,19 +62,19 @@ namespace Actions
     if (object->be_object_of(*this, subject) == ActionResult::Success)
     {
       std::string message;
-      message = make_string("$you unwield $foo. $you are now wielding nothing in $0.", { subject->get_possessive_of(bodypart_desc) });
+      message = makeString("$you unwield $foo. $you are now wielding nothing in $0.", { subject->get_possessive_of(bodypart_desc) });
       subject->set_wielded(EntityId::Mu(), wield_location);
     }
 
     return result;
   }
 
-  StateResult ActionUnwield::do_finish_work_(AnyMap& params)
+  StateResult ActionUnwield::doFinishWorkNVI(AnyMap& params)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionUnwield::do_abort_work_(AnyMap& params)
+  StateResult ActionUnwield::doAbortWorkNVI(AnyMap& params)
   {
     return StateResult::Success();
   }

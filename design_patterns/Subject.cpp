@@ -82,7 +82,7 @@ void Subject::addObserver(Observer& observer, EventID eventID, ObserverPriority 
     e.subject = this;
 
     CLOG(TRACE, "ObserverPattern") << "Registered Observer " << observer 
-      << "for EventID " << eventID 
+      << " for EventID " << eventID 
       << " with priority " << priority;
 
     observer.onEvent(e);
@@ -107,7 +107,7 @@ void Subject::removeObserver(Observer& observer, EventID eventID)
       }
     }
 
-    CLOG(TRACE, "ObserverPattern") << "Deregistered Observer " << observer << "for all Events";
+    CLOG(TRACE, "ObserverPattern") << "Deregistered Observer " << observer << " for all Events";
   }
   else
   {
@@ -131,11 +131,14 @@ void Subject::removeObserver(Observer& observer, EventID eventID)
       << "for EventID " << eventID;
   }
 
-  Assert("ObserverPattern", removalCount != 0,
-         "\nReason:\tattempted to remove an observer not observing an event." <<
-         "\nSubject:\t" << *this <<
-         "\nObserver:\t" << observer <<
-         "\nEvent:\t" << eventID);
+  if (removalCount == 0)
+  {
+    CLOG(WARNING, "ObserverPattern") 
+      << "Observer " << observer 
+      << " was not registered for " 
+      << ((eventID == EventID::All) ? "any Events" : ("Event " + eventID))
+      << " from Subject " << *this;
+  }
 
   Registration e;
   e.state = Registration::State::Unregistered;
@@ -152,27 +155,30 @@ std::unordered_set<EventID> Subject::registeredEvents() const
   return std::unordered_set<EventID>();
 }
 
-void Subject::broadcast(Event& event)
+bool Subject::broadcast(Event& event)
 {
+  bool result = true;
+
   pImpl->registerEventsIfNeeded(*this);
 
   event.subject = this;
 
-  broadcast_(event, [&](Event& event, bool shouldSend)
+  return broadcast_(event, [&](Event& event, bool shouldSend) -> bool
   {
     if (shouldSend)
     {
       auto finalEvent = event.heapClone();
 
-      auto dispatchBlock = [=]() mutable
+      auto dispatchBlock = [=]() mutable -> bool
       {
         auto observerCount = getObserverCount(finalEvent->getId());
+
+        // Return if no observers for this event.
+        if (observerCount == 0) return true;
+
         auto& prioritizedObservers = getObservers(finalEvent->getId());
 
         CLOG(TRACE, "ObserverPattern") << "Broadcasting: " << *finalEvent;
-
-        // Return if no observers for this event.
-        if (observerCount == 0) return;
 
         bool keep_going = true;
         for (auto& priorityPair : prioritizedObservers)
@@ -196,14 +202,18 @@ void Subject::broadcast(Event& event)
         {
           pImpl->eventQueue.front()();
         }
+
+        return keep_going;
       };
 
       pImpl->eventQueue.push(dispatchBlock);
       if (pImpl->eventQueue.size() == 1)
       {
-        pImpl->eventQueue.front()();
+        result = pImpl->eventQueue.front()();
       }
     }
+
+    return result;
   });
 }
 
@@ -219,12 +229,14 @@ void Subject::unicast(Event& event, Observer& observer)
     {
       auto finalEvent = event.heapClone();
 
-      auto dispatchBlock = [=, &observer]() mutable
+      auto dispatchBlock = [=, &observer]() mutable -> bool
       {
+        bool result = true;
+
         if (observerIsObservingEvent(observer, finalEvent->getId()))
         {
           CLOG(TRACE, "ObserverPattern") << "Unicasting " << *finalEvent << " to " << observer;
-          observer.onEvent(*finalEvent);
+          result = observer.onEvent(*finalEvent);
         }
 
         delete finalEvent;
@@ -234,6 +246,8 @@ void Subject::unicast(Event& event, Observer& observer)
         {
           pImpl->eventQueue.front()();
         }
+
+        return result;
       };
 
       pImpl->eventQueue.push(dispatchBlock);
@@ -299,9 +313,9 @@ bool Subject::observerIsObservingEvent(Observer& observer, EventID eventID) cons
   return false;
 }
 
-void Subject::broadcast_(Event& event, BroadcastDelegate do_broadcast)
+bool Subject::broadcast_(Event& event, BroadcastDelegate do_broadcast)
 {
-  do_broadcast(event, true);
+  return do_broadcast(event, true);
 }
 
 void Subject::unicast_(Event& event, Observer& observer, UnicastDelegate do_unicast)

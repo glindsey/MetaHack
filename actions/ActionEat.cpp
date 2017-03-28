@@ -25,16 +25,16 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionEat::do_prebegin_work_(AnyMap& params)
+  StateResult ActionEat::doPreBeginWorkNVI(AnyMap& params)
   {
     std::string message;
-    auto subject = get_subject();
-    auto object = get_object();
+    auto subject = getSubject();
+    auto object = getObject();
 
     // Check that it isn't US!
     if (subject == object)
     {
-      print_message_try_();
+      printMessageTry();
 
       /// @todo Handle "unusual" cases (e.g. zombies?)
       message = maketr("YOU_TRY_TO_EAT_YOURSELF_HUMOROUS");
@@ -46,12 +46,12 @@ namespace Actions
     return StateResult::Success();
   }
 
-  StateResult ActionEat::do_begin_work_(AnyMap& params)
+  StateResult ActionEat::doBeginWorkNVI(AnyMap& params)
   {
-    auto subject = get_subject();
-    auto object = get_object();
+    auto subject = getSubject();
+    auto object = getObject();
 
-    print_message_begin_();
+    printMessageBegin();
 
     // Do the eating action here.
     /// @todo "Partially eaten" status for entities that were started to be eaten
@@ -67,7 +67,7 @@ namespace Actions
         return StateResult::Success();
 
       case ActionResult::Failure:
-        print_message_stop_();
+        printMessageStop();
         return StateResult::Failure();
 
       default:
@@ -76,11 +76,11 @@ namespace Actions
     }
   }
 
-  StateResult ActionEat::do_finish_work_(AnyMap& params)
+  StateResult ActionEat::doFinishWorkNVI(AnyMap& params)
   {
-    auto object = get_object();
+    auto object = getObject();
 
-    print_message_finish_();
+    printMessageFinish();
 
     if (m_last_eat_result == ActionResult::SuccessDestroyed)
     {
@@ -90,9 +90,9 @@ namespace Actions
     return StateResult::Success();
   }
 
-  StateResult ActionEat::do_abort_work_(AnyMap& params)
+  StateResult ActionEat::doAbortWorkNVI(AnyMap& params)
   {
-    print_message_stop_();
+    printMessageStop();
     return StateResult::Success();
   }
 } // end namespace

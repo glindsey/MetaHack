@@ -24,17 +24,17 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionMix::do_prebegin_work_(AnyMap& params)
+  StateResult ActionMix::doPreBeginWorkNVI(AnyMap& params)
   {
     std::string message;
-    auto subject = get_subject();
-    auto object1 = get_object();
-    auto object2 = get_second_object();
+    auto subject = getSubject();
+    auto object1 = getObject();
+    auto object2 = getSecondObject();
 
     // Check that they aren't both the same entity.
     if (object1 == object2)
     {
-      print_message_try_();
+      printMessageTry();
 
       message = "Those are both the same container!";
       Service<IMessageLog>::get().add(message);
@@ -45,7 +45,7 @@ namespace Actions
     // Check that neither of them is us.
     if (object1 == subject || object2 == subject)
     {
-      print_message_try_();
+      printMessageTry();
 
       message = "But that makes absolutely no sense.";
       Service<IMessageLog>::get().add(message);
@@ -56,9 +56,9 @@ namespace Actions
     // Check that both are within reach.
     if (!subject->can_reach(object1) || !subject->can_reach(object2))
     {
-      print_message_try_();
+      printMessageTry();
 
-      message = make_string("But at least one of them is out of $your(reach).");
+      message = makeString("But at least one of them is out of $your(reach).");
       Service<IMessageLog>::get().add(message);
 
       return StateResult::Failure();
@@ -68,7 +68,7 @@ namespace Actions
     if (!object1->get_intrinsic("liquid_carrier").as<bool>() || 
         !object2->get_intrinsic("liquid_carrier").as<bool>())
     {
-      print_message_try_();
+      printMessageTry();
 
       message = "But at least one of them doesn't hold liquid!";
       Service<IMessageLog>::get().add(message);
@@ -81,7 +81,7 @@ namespace Actions
     Inventory& inv2 = object2->get_inventory();
     if (inv1.count() == 0 || inv2.count() == 0)
     {
-      print_message_try_();
+      printMessageTry();
 
       message = "But at least one of them is empty!";
       Service<IMessageLog>::get().add(message);
@@ -95,7 +95,7 @@ namespace Actions
     return StateResult::Success();
   }
 
-  StateResult ActionMix::do_begin_work_(AnyMap& params)
+  StateResult ActionMix::doBeginWorkNVI(AnyMap& params)
   {
     /// @todo IMPLEMENT ME
     //message = YOU + CV(" mix ", " mixes ") + LIQUID1 + " with " + LIQUID2 + ".";
@@ -108,12 +108,12 @@ namespace Actions
     return StateResult::Failure();
   }
 
-  StateResult ActionMix::do_finish_work_(AnyMap& params)
+  StateResult ActionMix::doFinishWorkNVI(AnyMap& params)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionMix::do_abort_work_(AnyMap& params)
+  StateResult ActionMix::doAbortWorkNVI(AnyMap& params)
   {
     return StateResult::Success();
   }

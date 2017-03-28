@@ -106,7 +106,7 @@ void MapTileStandard2DView::add_memory_vertices_to(sf::VertexArray& vertices,
   RealVec2 vNW(location.x - ts2, location.y - ts2);
   RealVec2 vNE(location.x + ts2, location.y - ts2);
 
-  std::string tile_type = viewer->get_memory_at(coords).get_type();
+  std::string tile_type = viewer->get_memory_at(coords).getType();
   if (tile_type == "") { tile_type = "MTUnknown"; }
   Metadata* tile_metadata = &(GAME.get_metadata_collection("maptile").get(tile_type));
 
@@ -512,7 +512,7 @@ void MapTileStandard2DView::add_wall_vertices_to(sf::VertexArray& vertices,
   }
 }
 
-EventResult MapTileStandard2DView::onEvent_(Event const & event)
+EventResult MapTileStandard2DView::onEvent_NVI(Event const & event)
 {
   return{ EventHandled::Yes, ContinueBroadcasting::Yes };
 }

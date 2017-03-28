@@ -30,18 +30,18 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionDrop::do_prebegin_work_(AnyMap& params)
+  StateResult ActionDrop::doPreBeginWorkNVI(AnyMap& params)
   {
     // All checks handled in Action class via traits.
     return StateResult::Success();
   }
 
-  StateResult ActionDrop::do_begin_work_(AnyMap& params)
+  StateResult ActionDrop::doBeginWorkNVI(AnyMap& params)
   {
     StateResult result = StateResult::Failure();
     std::string message;
-    auto subject = get_subject();
-    auto object = get_objects().front();
+    auto subject = getSubject();
+    auto object = getObjects().front();
     EntityId location = subject->getLocation();
 
     /// @todo Handle dropping a certain quantity of an item.
@@ -62,7 +62,7 @@ namespace Actions
       {
         if (object->be_object_of(*this, subject) == ActionResult::Success)
         {
-          print_message_do_();
+          printMessageDo();
 
           if (object->move_into(location))
           {
@@ -87,7 +87,7 @@ namespace Actions
       {
         // This is mighty strange, but I suppose there might be MapTiles in
         // the future that can't contain certain Entities.
-        print_message_try_();
+        printMessageTry();
 
         message = maketr("LOCATION_CANT_HOLD_FOO", { location->get_identifying_string() });
         Service<IMessageLog>::get().add(message);
@@ -97,12 +97,12 @@ namespace Actions
     return result;
   }
 
-  StateResult ActionDrop::do_finish_work_(AnyMap& params)
+  StateResult ActionDrop::doFinishWorkNVI(AnyMap& params)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionDrop::do_abort_work_(AnyMap& params)
+  StateResult ActionDrop::doAbortWorkNVI(AnyMap& params)
   {
     return StateResult::Success();
   }

@@ -25,12 +25,12 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionUnlock::do_prebegin_work_(AnyMap& params)
+  StateResult ActionUnlock::doPreBeginWorkNVI(AnyMap& params)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionUnlock::do_begin_work_(AnyMap& params)
+  StateResult ActionUnlock::doBeginWorkNVI(AnyMap& params)
   {
     bool success = false;
     unsigned int action_time = 0;
@@ -41,12 +41,12 @@ namespace Actions
     return{ success, action_time };
   }
 
-  StateResult ActionUnlock::do_finish_work_(AnyMap& params)
+  StateResult ActionUnlock::doFinishWorkNVI(AnyMap& params)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionUnlock::do_abort_work_(AnyMap& params)
+  StateResult ActionUnlock::doAbortWorkNVI(AnyMap& params)
   {
     return StateResult::Success();
   }

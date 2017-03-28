@@ -5,11 +5,14 @@
 
 #include "GUIObject.h"
 
+// Forward declarations
+class Subject;
+
 namespace metagui
 {
   class Desktop :
-    public Object,
-    public ObjectVisitable<Desktop>
+    public GUIObject,
+    public GUIObjectVisitable<Desktop>
   {
   public:
     struct MouseButtonInfo
@@ -27,11 +30,16 @@ namespace metagui
       sf::Clock elapsed;
     };
 
-    explicit Desktop(std::string name, UintVec2 size);
+    explicit Desktop(Subject& event_parent,
+                     std::string name, 
+                     UintVec2 size);
+
     virtual ~Desktop();
 
     /// Handles an SFML event and translates it into a GUI event if necessary.
     SFMLEventResult handle_sfml_event(sf::Event& sfml_event);
+
+    virtual std::unordered_set<EventID> registeredEvents() const;
 
   protected:
     virtual GUIEvent::Result handleGUIEventPreChildren_(GUIEventResized& event) final;
@@ -39,6 +47,9 @@ namespace metagui
     virtual void drawPreChildren_(sf::RenderTexture& texture, int frame) override final;
 
   private:
+    /// The subject from which to receive input events.
+    Subject& m_event_parent;
+
     /// An array of data for each possible mouse button.
     std::array< MouseButtonInfo, sf::Mouse::ButtonCount > m_button_info;
 

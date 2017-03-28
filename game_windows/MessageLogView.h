@@ -38,7 +38,7 @@ protected:
   /// @param  frame   Current frame counter.
   virtual void drawContents_(sf::RenderTexture& texture, int frame) override;
 
-  virtual EventResult onEvent_(Event const& event) override;
+  virtual bool onEvent_NVI_PreChildren(Event const& event) override;
 
 private:
 

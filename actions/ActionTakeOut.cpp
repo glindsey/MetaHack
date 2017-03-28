@@ -26,17 +26,17 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionTakeOut::do_prebegin_work_(AnyMap& params)
+  StateResult ActionTakeOut::doPreBeginWorkNVI(AnyMap& params)
   {
     std::string message;
-    auto subject = get_subject();
-    auto object = get_object();
+    auto subject = getSubject();
+    auto object = getObject();
     auto container = object->getLocation();
 
     // Check that the container is not a MapTile or DynamicEntity.
     if (!object->is_inside_another_thing())
     {
-      print_message_try_();
+      printMessageTry();
 
       //message = YOU_TRY + " to remove " + THE_FOO +
       //  " from its container.";
@@ -61,7 +61,7 @@ namespace Actions
     // Check that the container is within reach.
     if (!subject->can_reach(container))
     {
-      print_message_try_();
+      printMessageTry();
 
       message = YOU + " cannot reach " + THE_FOO + ".";
       Service<IMessageLog>::get().add(message);
@@ -72,31 +72,31 @@ namespace Actions
     return StateResult::Success();
   }
 
-  StateResult ActionTakeOut::do_begin_work_(AnyMap& params)
+  StateResult ActionTakeOut::doBeginWorkNVI(AnyMap& params)
   {
     /// @todo Handle taking out a certain quantity of an item.
     StateResult result = StateResult::Failure();
     std::string message;
-    auto subject = get_subject();
-    auto object = get_object();
+    auto subject = getSubject();
+    auto object = getObject();
     auto container = object->getLocation();
     auto new_location = container->getLocation();
 
     // Set the target to be the container as a kludge for message printing.
-    set_target(container);
+    setTarget(container);
 
     if (object->be_object_of(*this, subject) == ActionResult::Success)
     {
       if (object->move_into(new_location))
       {
-        print_message_do_();
+        printMessageDo();
 
         /// @todo Figure out action time.
         result = StateResult::Success();
       }
       else
       {
-        message = YOU + " could not take " + get_object_string_() + " out of " + get_target_string_() + " for some inexplicable reason.";
+        message = YOU + " could not take " + getObjectString() + " out of " + getTargetString() + " for some inexplicable reason.";
         Service<IMessageLog>::get().add(message);
 
         CLOG(ERROR, "Action") << "Could not move Entity out of Container even though be_object_of returned Success";
@@ -106,25 +106,25 @@ namespace Actions
     return result;
   }
 
-  StateResult ActionTakeOut::do_finish_work_(AnyMap& params)
+  StateResult ActionTakeOut::doFinishWorkNVI(AnyMap& params)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionTakeOut::do_abort_work_(AnyMap& params)
+  StateResult ActionTakeOut::doAbortWorkNVI(AnyMap& params)
   {
     return StateResult::Success();
   }
 
-  void ActionTakeOut::print_message_try_() const
+  void ActionTakeOut::printMessageTry() const
   {
-    std::string message = YOU_TRY + " to " + VERB + " " + get_object_string_() + " from " + get_target_string_() + ".";
+    std::string message = YOU_TRY + " to " + VERB + " " + getObjectString() + " from " + getTargetString() + ".";
     Service<IMessageLog>::get().add(message);
   }
 
-  void ActionTakeOut::print_message_do_() const
+  void ActionTakeOut::printMessageDo() const
   {
-    std::string message = YOU + " " + CV(VERB, VERB3) + " " + get_object_string_() + " from " + get_target_string_() + ".";
+    std::string message = YOU + " " + CV(VERB, VERB3) + " " + getObjectString() + " from " + getTargetString() + ".";
     Service<IMessageLog>::get().add(message);
   }
 }

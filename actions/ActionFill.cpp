@@ -24,12 +24,12 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionFill::do_prebegin_work_(AnyMap& params)
+  StateResult ActionFill::doPreBeginWorkNVI(AnyMap& params)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionFill::do_begin_work_(AnyMap& params)
+  StateResult ActionFill::doBeginWorkNVI(AnyMap& params)
   {
     auto& dict = Service<IStringDictionary>::get();
     Service<IMessageLog>::get().add(dict.get("ACTN_NOT_IMPLEMENTED"));
@@ -37,12 +37,12 @@ namespace Actions
     return StateResult::Failure();
   }
 
-  StateResult ActionFill::do_finish_work_(AnyMap& params)
+  StateResult ActionFill::doFinishWorkNVI(AnyMap& params)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionFill::do_abort_work_(AnyMap& params)
+  StateResult ActionFill::doAbortWorkNVI(AnyMap& params)
   {
     return StateResult::Success();
   }

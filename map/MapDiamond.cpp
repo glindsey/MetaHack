@@ -64,8 +64,8 @@ MapDiamond::MapDiamond(Map& m, PropertyDictionary const& s, GeoVector vec)
       throw MapFeatureException("Invalid direction passed to MapDiamond constructor");
     }
 
-    if ((get_map().is_in_bounds({ xCenter - (diamondHalfSize + 1), yCenter - (diamondHalfSize + 1) })) &&
-        (get_map().is_in_bounds({ xCenter + (diamondHalfSize + 1), yCenter + (diamondHalfSize + 1) })))
+    if ((getMap().is_in_bounds({ xCenter - (diamondHalfSize + 1), yCenter - (diamondHalfSize + 1) })) &&
+        (getMap().is_in_bounds({ xCenter + (diamondHalfSize + 1), yCenter + (diamondHalfSize + 1) })))
     {
       bool okay = true;
 
@@ -90,7 +90,7 @@ MapDiamond::MapDiamond(Map& m, PropertyDictionary const& s, GeoVector vec)
           {
             int xCoord = xCenter + xCounter;
             int yCoord = yCenter + yCounter;
-            auto& tile = get_map().get_tile({ xCoord, yCoord });
+            auto& tile = getMap().get_tile({ xCoord, yCoord });
             tile.set_tile_type(floor_type);
           }
         }
@@ -112,7 +112,7 @@ MapDiamond::MapDiamond(Map& m, PropertyDictionary const& s, GeoVector vec)
 
         /// @todo Put either a door or an open area at the starting coords.
         ///       Right now we just make it an open area.
-        auto& startTile = get_map().get_tile(startingCoords);
+        auto& startTile = getMap().get_tile(startingCoords);
         startTile.set_tile_type(floor_type);
 
         return;

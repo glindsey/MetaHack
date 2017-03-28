@@ -74,8 +74,8 @@ MapCorridor::MapCorridor(Map& m, PropertyDictionary const& s, GeoVector vec)
       throw MapFeatureException("Invalid direction passed to MapCorridor constructor");
     }
 
-    if ((get_map().is_in_bounds({ xMin - 1, yMin - 1 })) &&
-      (get_map().is_in_bounds({ xMax + 1, yMax + 1 })))
+    if ((getMap().is_in_bounds({ xMin - 1, yMin - 1 })) &&
+      (getMap().is_in_bounds({ xMax + 1, yMax + 1 })))
     {
       bool okay = true;
 
@@ -112,7 +112,7 @@ MapCorridor::MapCorridor(Map& m, PropertyDictionary const& s, GeoVector vec)
 
         /// @todo: Put either a door or an open area at the starting coords.
         ///        Right now we just make it an open area.
-        auto& startTile = get_map().get_tile(startingCoords);
+        auto& startTile = getMap().get_tile(startingCoords);
         startTile.set_tile_type(floor_type);
 
         /// Check the tile two past the ending tile.
@@ -146,13 +146,13 @@ MapCorridor::MapCorridor(Map& m, PropertyDictionary const& s, GeoVector vec)
           throw MapFeatureException("Invalid direction passed to MapCorridor constructor");
         }
 
-        if (get_map().is_in_bounds(checkCoords))
+        if (getMap().is_in_bounds(checkCoords))
         {
-          auto& checkTile = get_map().get_tile(checkCoords);
+          auto& checkTile = getMap().get_tile(checkCoords);
           if (checkTile.is_empty_space())
           {
             /// @todo Do a throw to see if it opens up. Right now it always does.
-            auto& endTile = get_map().get_tile(pImpl->endingCoords);
+            auto& endTile = getMap().get_tile(pImpl->endingCoords);
             endTile.set_tile_type(floor_type);
           }
         }

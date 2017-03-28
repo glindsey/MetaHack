@@ -8,7 +8,7 @@
 namespace metagui
 {
   class ShrinkHandle :
-    public Object, public ObjectVisitable<ShrinkHandle>
+    public GUIObject, public GUIObjectVisitable<ShrinkHandle>
   {
     friend class Window;
 

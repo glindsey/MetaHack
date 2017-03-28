@@ -10,9 +10,9 @@ MapNullView::MapNullView(std::string name, Map& map, UintVec2 size)
 {
 }
 
-EventResult MapNullView::onEvent_(Event const & event)
+bool MapNullView::onEvent_NVI_PreChildren(Event const& event)
 {
-  return{ EventHandled::Yes, ContinueBroadcasting::Yes };
+  return true;
 }
 
 void MapNullView::update_tiles(EntityId viewer)

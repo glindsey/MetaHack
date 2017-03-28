@@ -14,7 +14,7 @@ EntityStandard2DView::EntityStandard2DView(Entity& entity, TileSheet& tile_sheet
 {
 }
 
-EventResult EntityStandard2DView::onEvent_(Event const & event)
+EventResult EntityStandard2DView::onEvent_NVI(Event const & event)
 {
   return{ EventHandled::Yes, ContinueBroadcasting::Yes };
 }

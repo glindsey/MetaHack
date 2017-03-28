@@ -51,7 +51,7 @@ public:
   virtual ~MapFeature();
 
   sf::IntRect const& get_coords() const;
-  Map& get_map() const;
+  Map& getMap() const;
   PropertyDictionary const& get_settings() const;
 
   size_t get_num_growth_vectors() const;

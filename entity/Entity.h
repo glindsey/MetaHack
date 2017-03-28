@@ -110,7 +110,7 @@ public:
   /// By default, returns false. Overridden by DynamicEntity class.
   virtual bool is_player() const;
 
-  std::string const& get_type() const;
+  std::string const& getType() const;
   std::string get_parent_type() const;
 
   bool is_subtype_of(std::string that_type) const;
@@ -213,10 +213,10 @@ public:
   size_t remove_modifier(std::string key, EntityId id);
 
   /// Get the quantity this entity represents.
-  unsigned int get_quantity() const;
+  unsigned int getQuantity() const;
 
   /// Set the quantity this entity represents.
-  void set_quantity(unsigned int quantity);
+  void setQuantity(unsigned int quantity);
 
   /// Return a reference to this entity.
   EntityId get_id() const;

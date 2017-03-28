@@ -29,22 +29,22 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionMove::do_prebegin_work_(AnyMap& params)
+  StateResult ActionMove::doPreBeginWorkNVI(AnyMap& params)
   {
     // All checks handled in Action by traits.
     return StateResult::Success();
   }
 
-  StateResult ActionMove::do_begin_work_(AnyMap& params)
+  StateResult ActionMove::doBeginWorkNVI(AnyMap& params)
   {
     StateResult result = StateResult::Failure();
 
     std::string message;
 
-    auto subject = get_subject();
+    auto subject = getSubject();
     EntityId location = subject->getLocation();
     MapTile* current_tile = subject->get_maptile();
-    Direction new_direction = get_target_direction();
+    Direction new_direction = getTargetDirection();
 
     if (new_direction == Direction::Up)
     {
@@ -87,7 +87,7 @@ namespace Actions
           /// @todo Setting choosing whether auto-attack is on.
           /// @todo Only attack hostiles.
           std::unique_ptr<ActionAttack> action_attack{ new ActionAttack(subject) };
-          action_attack->set_target(new_direction);
+          action_attack->setTarget(new_direction);
 
           subject->queue_action(std::move(action_attack));
 
@@ -119,12 +119,12 @@ namespace Actions
     return result;
   }
 
-  StateResult ActionMove::do_finish_work_(AnyMap& params)
+  StateResult ActionMove::doFinishWorkNVI(AnyMap& params)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionMove::do_abort_work_(AnyMap& params)
+  StateResult ActionMove::doAbortWorkNVI(AnyMap& params)
   {
     return StateResult::Success();
   }

@@ -45,8 +45,7 @@ protected:
   /// Reinitialize cached map render data.
   void reset_cached_render_data();
 
-  virtual EventResult onEvent_(Event const& event) override;
-
+  virtual bool onEvent_NVI_PreChildren(Event const& event) override;
 private:
 
   /// "Seen" map vertex array.

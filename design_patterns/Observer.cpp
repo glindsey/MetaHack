@@ -54,7 +54,7 @@ bool Observer::onEvent(Event const& event)
     return true;
   }
 
-  auto eventResults = onEvent_(event);
+  auto eventResults = onEvent_NVI(event);
 
   if (eventResults.event_handled == EventHandled::No)
   {
@@ -67,4 +67,5 @@ bool Observer::onEvent(Event const& event)
 
   return{ eventResults.continue_broadcasting == ContinueBroadcasting::Yes };
 }
+
   

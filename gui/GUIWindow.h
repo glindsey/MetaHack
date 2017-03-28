@@ -7,7 +7,7 @@
 namespace metagui
 {
   class Window :
-    public Object, public ObjectVisitable<Window>
+    public GUIObject, public GUIObjectVisitable<Window>
   {
   public:
     Window(std::string name, IntVec2 location, UintVec2 size = UintVec2(0, 0));

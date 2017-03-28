@@ -11,7 +11,7 @@ class EntityId;
 /// Abstract class representing a view of a Map object.
 class MapView 
   : 
-  public metagui::Object
+  public metagui::GUIObject
 {
 public:
   /// Constructor.
@@ -32,7 +32,7 @@ public:
                 float zoom_level);
 
   /// Render the map to a texture.
-  /// @todo Get rid of this in favor of the metagui::Object render methods.
+  /// @todo Get rid of this in favor of the metagui::GUIObject render methods.
   virtual bool render_map(sf::RenderTexture& texture, int frame) = 0;
 
   /// Update any cached render data associated with map tiles.
@@ -55,7 +55,7 @@ public:
 
 protected:
   /// Get reference to Map associated with this view.
-  Map& get_map();
+  Map& getMap();
 
 private:
   /// Map associated with this view.

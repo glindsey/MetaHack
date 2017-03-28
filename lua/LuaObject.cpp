@@ -435,7 +435,7 @@ Property Lua::call_thing_function(std::string function_name,
 {
   Property return_value = default_result;
   Property::Type return_type;
-  std::string group = caller->get_type();
+  std::string group = caller->getType();
 
   int start_stack = lua_gettop(L_);
 

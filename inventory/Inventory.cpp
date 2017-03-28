@@ -100,9 +100,9 @@ void Inventory::consolidate_items()
 
       if (first_thing->can_merge_with(second_thing))
       {
-        auto first_quantity = first_thing->get_quantity();
-        auto second_quantity = second_thing->get_quantity();
-        first_thing->set_quantity(first_quantity + second_quantity);
+        auto first_quantity = first_thing->getQuantity();
+        auto second_quantity = second_thing->getQuantity();
+        first_thing->setQuantity(first_quantity + second_quantity);
 
         auto second_iter_copy = second_iter;
         --second_iter;
@@ -156,12 +156,12 @@ EntityId Inventory::split(EntityId entity, unsigned int target_quantity)
     if (iter != things_.cend())
     {
       EntityId source_thing = iter->second;
-      unsigned int source_quantity = source_thing->get_quantity();
+      unsigned int source_quantity = source_thing->getQuantity();
       if (target_quantity < source_quantity)
       {
         target_thing = GAME.get_entities().clone(source_thing);
-        source_thing->set_quantity(source_quantity - target_quantity);
-        target_thing->set_quantity(target_quantity);
+        source_thing->setQuantity(source_quantity - target_quantity);
+        target_thing->setQuantity(target_quantity);
       }
     }
   }

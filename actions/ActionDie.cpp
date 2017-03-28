@@ -26,16 +26,16 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionDie::do_prebegin_work_(AnyMap& params)
+  StateResult ActionDie::doPreBeginWorkNVI(AnyMap& params)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionDie::do_begin_work_(AnyMap& params)
+  StateResult ActionDie::doBeginWorkNVI(AnyMap& params)
   {
     bool success = false;
     unsigned int action_time = 0;
-    auto& subject = get_subject();
+    auto& subject = getSubject();
 
     /// @todo Handle stuff like auto-activating life-saving items here.
     /// @todo Pass in the cause of death somehow.
@@ -67,12 +67,12 @@ namespace Actions
     }
   }
 
-  StateResult ActionDie::do_finish_work_(AnyMap& params)
+  StateResult ActionDie::doFinishWorkNVI(AnyMap& params)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionDie::do_abort_work_(AnyMap& params)
+  StateResult ActionDie::doAbortWorkNVI(AnyMap& params)
   {
     return StateResult::Success();
   }

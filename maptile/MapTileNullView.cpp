@@ -13,7 +13,7 @@ MapTileNullView::MapTileNullView(MapTile& map_tile)
 {
 }
 
-EventResult MapTileNullView::onEvent_(Event const & event)
+EventResult MapTileNullView::onEvent_NVI(Event const & event)
 {
   return{ EventHandled::Yes, ContinueBroadcasting::Yes };
 }

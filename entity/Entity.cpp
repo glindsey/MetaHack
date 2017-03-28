@@ -112,8 +112,8 @@ void Entity::queue_action(std::unique_ptr<Actions::Action> action)
 {
   CLOG(TRACE, "Entity") << "Entity " <<
     get_id() << " (" <<
-    get_type() << "): Queuing Action " <<
-    action->get_type();
+    getType() << "): Queuing Action " <<
+    action->getType();
 
   m_pending_voluntary_actions.push_back(std::move(action));
 }
@@ -128,8 +128,8 @@ void Entity::queue_involuntary_action(std::unique_ptr<Actions::Action> action)
 {
   CLOG(TRACE, "Entity") << "Entity " <<
     get_id() << " (" <<
-    get_type() << "): Queuing Involuntary Action " <<
-    action->get_type();
+    getType() << "): Queuing Involuntary Action " <<
+    action->getType();
 
   m_pending_involuntary_actions.push_front(std::move(action));
 }
@@ -378,7 +378,7 @@ Gender Entity::get_gender_or_you() const
   }
   else
   {
-    if (get_quantity() > 1)
+    if (getQuantity() > 1)
     {
       return Gender::Plural;
     }
@@ -516,9 +516,9 @@ bool Entity::is_player() const
   return (GAME.get_player() == m_id);
 }
 
-std::string const& Entity::get_type() const
+std::string const& Entity::getType() const
 {
-  return m_metadata.get_type();
+  return m_metadata.getType();
 }
 
 std::string Entity::get_parent_type() const
@@ -528,7 +528,7 @@ std::string Entity::get_parent_type() const
 
 bool Entity::is_subtype_of(std::string that_type) const
 {
-  std::string this_type = get_type();
+  std::string this_type = getType();
   return GAME.get_entities().first_is_subtype_of_second(this_type, that_type);
 }
 
@@ -612,12 +612,12 @@ size_t Entity::remove_modifier(std::string key, EntityId id)
   return m_properties.remove_modifier(key, id);
 }
 
-unsigned int Entity::get_quantity() const
+unsigned int Entity::getQuantity() const
 {
   return get_base_property("quantity", Property::from(1)).as<uint32_t>();
 }
 
-void Entity::set_quantity(unsigned int quantity)
+void Entity::setQuantity(unsigned int quantity)
 {
   set_base_property("quantity", Property::from(quantity));
 }
@@ -982,7 +982,7 @@ std::string Entity::get_identifying_string(ArticleChoice articles,
   auto& config = Service<IConfigSettings>::get();
 
   EntityId location = this->getLocation();
-  unsigned int quantity = this->get_quantity();
+  unsigned int quantity = this->getQuantity();
 
   std::string name;
 
@@ -1029,7 +1029,7 @@ std::string Entity::get_identifying_string(ArticleChoice articles,
   }
   else
   {
-    noun = std::to_string(get_quantity()) + " " + get_display_plural();
+    noun = std::to_string(getQuantity()) + " " + get_display_plural();
 
     if (owned && (possessives == UsePossessives::Yes))
     {
@@ -1148,8 +1148,8 @@ void Entity::light_up_surroundings()
     bool opaque = location->is_opaque();
     bool is_entity = this->is_subtype_of("DynamicEntity");
 
-    /*CLOG(DEBUG, "Entity") << "light_up_surroundings - this->type = " << this->get_type() <<
-      ", location->type = " << location->get_type() <<
+    /*CLOG(DEBUG, "Entity") << "light_up_surroundings - this->type = " << this->getType() <<
+      ", location->type = " << location->getType() <<
       ", location->opaque = " << opaque <<
       ", this->is_subtype_of(\"DynamicEntity\") = " << is_entity;*/
 
@@ -1450,7 +1450,7 @@ std::string Entity::get_bodypart_description(BodyLocation location)
 /// @todo Have the script return an optional reason if an action can't be done.
 bool Entity::can_have_action_done_by(EntityId entity, Actions::Action& action)
 {
-  return call_lua_function("can_have_action_" + action.get_type() + "_done_by", { Property::from(entity) },
+  return call_lua_function("can_have_action_" + action.getType() + "_done_by", { Property::from(entity) },
                            Property::from(false)).as<bool>();
 }
 
@@ -1529,28 +1529,28 @@ void Entity::perform_action_collided_with_wall(Direction d, std::string tile_typ
 
 ActionResult Entity::perform_intransitive_action(Actions::Action& action)
 {
-  ActionResult result = call_lua_function("perform_intransitive_action_" + action.get_type(), {},
+  ActionResult result = call_lua_function("perform_intransitive_action_" + action.getType(), {},
                                           Property::from(ActionResult::Success)).as<ActionResult>();
   return result;
 }
 
 ActionResult Entity::be_object_of(Actions::Action& action, EntityId subject)
 {
-  ActionResult result = call_lua_function("be_object_of_action_" + action.get_type(), { Property::from(subject) },
+  ActionResult result = call_lua_function("be_object_of_action_" + action.getType(), { Property::from(subject) },
                                           Property::from(ActionResult::Success)).as<ActionResult>();
   return result;
 }
 
 ActionResult Entity::be_object_of(Actions::Action& action, EntityId subject, EntityId target)
 {
-  ActionResult result = call_lua_function("be_object_of_action_" + action.get_type(), { Property::from(subject), Property::from(target) },
+  ActionResult result = call_lua_function("be_object_of_action_" + action.getType(), { Property::from(subject), Property::from(target) },
                                           Property::from(ActionResult::Success)).as<ActionResult>();
   return result;
 }
 
 ActionResult Entity::be_object_of(Actions::Action& action, EntityId subject, Direction direction)
 {
-  ActionResult result = call_lua_function("be_object_of_action_" + action.get_type(), { Property::from(subject), Property::from(direction) },
+  ActionResult result = call_lua_function("be_object_of_action_" + action.getType(), { Property::from(subject), Property::from(direction) },
                                           Property::from(ActionResult::Success)).as<ActionResult>();
   return result;
 }
@@ -1601,7 +1601,7 @@ bool Entity::perform_action_equipped_by(EntityId actor, BodyLocation& location)
 bool Entity::can_merge_with(EntityId other) const
 {
   // Entities with different types can't merge (obviously).
-  if (other->get_type() != get_type())
+  if (other->getType() != getType())
   {
     return false;
   }
@@ -1717,8 +1717,8 @@ bool Entity::_process_own_involuntary_actions()
     {
       CLOG(TRACE, "Entity") << "Entity " <<
         get_id() << " (" <<
-        get_type() << "): Involuntary Action " <<
-        action->get_type() << " is done, popping";
+        getType() << "): Involuntary Action " <<
+        action->getType() << " is done, popping";
 
       m_pending_involuntary_actions.pop_front();
     }
@@ -1779,8 +1779,8 @@ bool Entity::_process_own_voluntary_actions()
       {
         CLOG(TRACE, "Entity") << "Entity " <<
           get_id() << " (" <<
-          get_type() << "): Action " <<
-          action->get_type() << " is done, popping";
+          getType() << "): Action " <<
+          action->getType() << " is done, popping";
 
         m_pending_voluntary_actions.pop_front();
       }

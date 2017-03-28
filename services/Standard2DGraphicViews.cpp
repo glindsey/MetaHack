@@ -49,7 +49,7 @@ TileSheet& Standard2DGraphicViews::getTileSheet()
 void Standard2DGraphicViews::loadViewResourcesFor(Metadata& metadata)
 {
   auto category = metadata.get_metadata_collection().get_category();
-  auto type = metadata.get_type();
+  auto type = metadata.getType();
   FileName resource_string = "resources/" + category + "/" + type;
   FileName pngfile_string = resource_string + ".png";
   fs::path pngfile_path = fs::path(pngfile_string);

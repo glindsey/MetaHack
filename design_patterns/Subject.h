@@ -15,7 +15,7 @@ using PrioritizedObservers = std::map<ObserverPriority, ObserversSet>;
 using PrioritizedObserversPair = std::pair<ObserverPriority, ObserversSet>;
 using EventObservers = std::unordered_map<EventID, PrioritizedObservers>;
 using EventObserversPair = std::pair<EventID, PrioritizedObservers>;
-using EventQueue = std::queue<std::function<void()>>;
+using EventQueue = std::queue<std::function<bool()>>;
 
 /// Subject declaration for observer pattern.
 /// Adapted from http://0xfede.io/2015/12/13/T-C++-ObserverPattern.html
@@ -55,10 +55,10 @@ public:
   virtual std::unordered_set<EventID> registeredEvents() const;
 
 protected:
-  using BroadcastDelegate = std::function<void(Event& event, bool shouldSend)>;
+  using BroadcastDelegate = std::function<bool(Event& event, bool shouldSend)>;
   using UnicastDelegate = std::function<void(Event& event, Observer& observer, bool shouldSend)>;
 
-  void broadcast(Event& event);
+  bool broadcast(Event& event);
   void unicast(Event & event, Observer & observer);
 
   size_t getObserverCount(EventID eventID) const;
@@ -66,7 +66,7 @@ protected:
   PrioritizedObservers const& getObservers(EventID eventID) const;
   bool Subject::observerIsObservingEvent(Observer& observer, EventID eventID) const;
 
-  virtual void broadcast_(Event& event, BroadcastDelegate do_broadcast);
+  virtual bool broadcast_(Event& event, BroadcastDelegate do_broadcast);
   virtual void unicast_(Event& event, Observer& observer, UnicastDelegate do_unicast);
 
 private:

@@ -56,7 +56,7 @@ void AppStateSplashScreen::render_splash(sf::RenderTexture& texture, int frame)
   texture.display();
 }
 
-EventResult AppStateSplashScreen::onEvent_(Event const& event)
+EventResult AppStateSplashScreen::onEvent_NVI(Event const& event)
 {
   /// @todo WRITE ME
   return{ EventHandled::Yes, ContinueBroadcasting::Yes };

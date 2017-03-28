@@ -25,18 +25,18 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionTakeOff::do_prebegin_work_(AnyMap& params)
+  StateResult ActionTakeOff::doPreBeginWorkNVI(AnyMap& params)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionTakeOff::do_begin_work_(AnyMap& params)
+  StateResult ActionTakeOff::doBeginWorkNVI(AnyMap& params)
   {
     StateResult result = StateResult::Failure();
     std::string message;
 
-    auto subject = get_subject();
-    auto object = get_object();
+    auto subject = getSubject();
+    auto object = getObject();
 
     BodyLocation wear_location;
     subject->is_wearing(object, wear_location);
@@ -47,7 +47,7 @@ namespace Actions
     if (object->get_modified_property("bound").as<bool>())
     {
       std::string message;
-      message = make_string("$you cannot take off $foo; it is magically bound to $0!", { subject->get_possessive_of(bodypart_desc) });
+      message = makeString("$you cannot take off $foo; it is magically bound to $0!", { subject->get_possessive_of(bodypart_desc) });
       Service<IMessageLog>::get().add(message);
 
       // Premature exit.
@@ -60,19 +60,19 @@ namespace Actions
     if (object->be_object_of(*this, subject) == ActionResult::Success)
     {
       std::string message;
-      message = make_string("$you take off $foo. $you are now wearing nothing on $0.", { subject->get_possessive_of(bodypart_desc) });
+      message = makeString("$you take off $foo. $you are now wearing nothing on $0.", { subject->get_possessive_of(bodypart_desc) });
       subject->set_wielded(EntityId::Mu(), wear_location);
     }
 
     return result;
   }
 
-  StateResult ActionTakeOff::do_finish_work_(AnyMap& params)
+  StateResult ActionTakeOff::doFinishWorkNVI(AnyMap& params)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionTakeOff::do_abort_work_(AnyMap& params)
+  StateResult ActionTakeOff::doAbortWorkNVI(AnyMap& params)
   {
     return StateResult::Success();
   }

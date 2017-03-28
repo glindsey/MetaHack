@@ -72,8 +72,8 @@ MapDonutRoom::MapDonutRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
       throw MapFeatureException("Invalid direction passed to MapDonutRoom constructor");
     }
 
-    if ((get_map().is_in_bounds({ rect.left - 1, rect.top - 1 })) &&
-      (get_map().is_in_bounds({ rect.left + rect.width, rect.top + rect.height })))
+    if ((getMap().is_in_bounds({ rect.left - 1, rect.top - 1 })) &&
+      (getMap().is_in_bounds({ rect.left + rect.width, rect.top + rect.height })))
     {
       bool okay = true;
 
@@ -116,7 +116,7 @@ MapDonutRoom::MapDonutRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
             if (!((x_coord >= x_hole_left) && (x_coord <= x_hole_right) &&
               (y_coord >= y_hole_top) && (y_coord <= y_hole_bottom)))
             {
-              auto& tile = get_map().get_tile({ x_coord, y_coord });
+              auto& tile = getMap().get_tile({ x_coord, y_coord });
               tile.set_tile_type(floor_type);
             }
           }
@@ -159,7 +159,7 @@ MapDonutRoom::MapDonutRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
 
         /// @todo Put either a door or an open area at the starting coords.
         ///       Right now we just make it an open area.
-        auto& startTile = get_map().get_tile(starting_coords);
+        auto& startTile = getMap().get_tile(starting_coords);
         startTile.set_tile_type(floor_type);
 
         return;

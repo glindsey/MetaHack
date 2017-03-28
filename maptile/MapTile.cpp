@@ -35,7 +35,7 @@ void MapTile::set_tile_type(std::string type)
 
 std::string MapTile::get_tile_type() const
 {
-  return m_p_metadata->get_type();
+  return m_p_metadata->getType();
 }
 
 bool MapTile::is_empty_space() const

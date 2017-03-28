@@ -48,7 +48,7 @@ MetadataCollection& Metadata::get_metadata_collection()
   return m_collection;
 }
 
-std::string const& Metadata::get_type() const
+std::string const& Metadata::getType() const
 {
   return m_type;
 }
@@ -65,7 +65,7 @@ UintVec2 Metadata::get_tile_coords() const
 
 Property Metadata::get_intrinsic(std::string name, Property default_value) const
 {
-  std::string group = this->get_type();
+  std::string group = this->getType();
   return the_lua_instance.get_group_intrinsic(group, name, default_value);
 }
 
@@ -76,6 +76,6 @@ Property Metadata::get_intrinsic(std::string name) const
 
 void Metadata::set_intrinsic(std::string name, Property value)
 {
-  std::string group = this->get_type();
+  std::string group = this->getType();
   the_lua_instance.set_group_intrinsic(group, name, value);
 }

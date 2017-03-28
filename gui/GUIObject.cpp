@@ -11,7 +11,7 @@
 
 namespace metagui
 {
-  Object::Object(std::string name, IntVec2 location, UintVec2 size)
+  GUIObject::GUIObject(std::string name, IntVec2 location, UintVec2 size)
   {
     m_name = name;
     m_parent = nullptr;
@@ -19,24 +19,24 @@ namespace metagui
     setSize(size);
   }
 
-  Object::Object(std::string name, sf::IntRect dimensions)
+  GUIObject::GUIObject(std::string name, sf::IntRect dimensions)
   {
     m_name = name;
     m_parent = nullptr;
     setRelativeDimensions(dimensions);
   }
 
-  Object::~Object()
+  GUIObject::~GUIObject()
   {
     //dtor
   }
 
-  std::string Object::getName()
+  std::string GUIObject::getName()
   {
     return m_name;
   }
 
-  void Object::setFocus(bool focus)
+  void GUIObject::setFocus(bool focus)
   {
     if ((m_cached_flags.disabled == false) || (m_cached_flags.hidden == false))
     {
@@ -49,12 +49,12 @@ namespace metagui
     }
   }
 
-  bool Object::getFocus()
+  bool GUIObject::getFocus()
   {
     return m_focus;
   }
 
-  bool Object::getGlobalFocus()
+  bool GUIObject::getGlobalFocus()
   {
     bool global_focus = m_focus;
 
@@ -66,7 +66,7 @@ namespace metagui
     return global_focus;
   }
 
-  void Object::setGlobalFocus(bool focus)
+  void GUIObject::setGlobalFocus(bool focus)
   {
     if ((m_cached_flags.disabled == false) || (m_cached_flags.hidden == false))
     {
@@ -79,23 +79,23 @@ namespace metagui
     }
   }
 
-  void Object::setText(std::string text)
+  void GUIObject::setText(std::string text)
   {
     if (m_text != text) flagForRedraw();
     m_text = text;
   }
 
-  std::string Object::getText()
+  std::string GUIObject::getText()
   {
     return m_text;
   }
 
-  IntVec2 Object::getRelativeLocation()
+  IntVec2 GUIObject::getRelativeLocation()
   {
     return m_location;
   }
 
-  void Object::setRelativeLocation(IntVec2 location)
+  void GUIObject::setRelativeLocation(IntVec2 location)
   {
     m_location = location;
     if (m_parent != nullptr)
@@ -104,13 +104,13 @@ namespace metagui
     }
   }
 
-  UintVec2 Object::getSize()
+  UintVec2 GUIObject::getSize()
   {
     return m_size;
   }
 
   /// @todo Minimum texture size, configurable by subclass.
-  void Object::setSize(UintVec2 size)
+  void GUIObject::setSize(UintVec2 size)
   {
     // Do nothing if requested size is same as current size.
     if (m_size == size) return;
@@ -156,7 +156,7 @@ namespace metagui
     }
   }
 
-  sf::IntRect Object::getRelativeDimensions()
+  sf::IntRect GUIObject::getRelativeDimensions()
   {
     sf::IntRect dimensions;
     IntVec2 location = getRelativeLocation();
@@ -168,14 +168,14 @@ namespace metagui
     return dimensions;
   }
 
-  void Object::setRelativeDimensions(sf::IntRect dimensions)
+  void GUIObject::setRelativeDimensions(sf::IntRect dimensions)
   {
     setRelativeLocation({ dimensions.left, dimensions.top });
     setSize({ static_cast<unsigned int>(dimensions.width),
                static_cast<unsigned int>(dimensions.height) });
   }
 
-  IntVec2 Object::getAbsoluteLocation()
+  IntVec2 GUIObject::getAbsoluteLocation()
   {
     IntVec2 absolute_location = getRelativeLocation();
 
@@ -195,7 +195,7 @@ namespace metagui
     return absolute_location;
   }
 
-  void Object::setAbsoluteLocation(IntVec2 location)
+  void GUIObject::setAbsoluteLocation(IntVec2 location)
   {
     IntVec2 relative_location = location;
 
@@ -215,7 +215,7 @@ namespace metagui
     setRelativeLocation(relative_location);
   }
 
-  sf::IntRect Object::getAbsoluteDimensions()
+  sf::IntRect GUIObject::getAbsoluteDimensions()
   {
     sf::IntRect dimensions;
     IntVec2 location = getAbsoluteLocation();
@@ -227,7 +227,7 @@ namespace metagui
     return dimensions;
   }
 
-  Object* Object::addChild(std::unique_ptr<Object> child, uint32_t z_order)
+  GUIObject* GUIObject::addChild(std::unique_ptr<GUIObject> child, uint32_t z_order)
   {
     Assert("GUI", child, "tried to add null child to a GUI object");
 
@@ -235,6 +235,8 @@ namespace metagui
 
     Assert("GUI", !childExists(name), "Tried to add already-present child \"" + name + "\" of GUI object \"" + getName() + "\"");
     
+    // This sets the child's parent pointer and registers it with the
+    // parent's events.
     child->setParent(this);
     auto child_ptr = child.get();
 
@@ -253,24 +255,24 @@ namespace metagui
     return child_ptr;
   }
 
-  Object* Object::addChild(std::unique_ptr<Object> child)
+  GUIObject* GUIObject::addChild(std::unique_ptr<GUIObject> child)
   {
     uint32_t z_order = getHighestChildZOrder() + 1;
     return addChild(std::move(child), z_order);
   }
 
-  Object* Object::addChildTop(std::unique_ptr<Object> child)
+  GUIObject* GUIObject::addChildTop(std::unique_ptr<GUIObject> child)
   {
     uint32_t z_order = getLowestChildZOrder() - 1;
     return addChild(std::move(child), z_order);
   }
 
-  bool Object::childExists(std::string name)
+  bool GUIObject::childExists(std::string name)
   {
     return (m_children.count(name) > 0);
   }
 
-  Object& Object::getChild(std::string name)
+  GUIObject& GUIObject::getChild(std::string name)
   {
     if (childExists(name))
     {
@@ -280,12 +282,12 @@ namespace metagui
     throw std::runtime_error("Tried to get non-existent child \"" + name + "\" of GUI object \"" + getName() + "\"");
   }
 
-  std::unique_ptr<Object> Object::removeChild(std::string name)
+  std::unique_ptr<GUIObject> GUIObject::removeChild(std::string name)
   {
     if (childExists(name))
     {
       // This moves the object out of the stored unique_ptr.
-      std::unique_ptr<Object> moved_object = std::move(m_children.at(name));
+      std::unique_ptr<GUIObject> moved_object = std::move(m_children.at(name));
       // This erases the (now empty) unique_ptr from the map.
       m_children.erase(name);
 
@@ -299,9 +301,8 @@ namespace metagui
         }
       }
 
-      removeObserver(*this, EventID::All);
-
-      // This clears the child's parent pointer.
+      // This clears the child's parent pointer and deregisters it from the
+      // parent's events.
       moved_object->setParent(nullptr);
 
       CLOG(TRACE, "GUI") << "Removed child \"" << name <<
@@ -312,10 +313,10 @@ namespace metagui
     }
 
     // Didn't find the object, so return an empty unique_ptr.
-    return std::unique_ptr<Object>();
+    return std::unique_ptr<GUIObject>();
   }
 
-  uint32_t Object::getLowestChildZOrder()
+  uint32_t GUIObject::getLowestChildZOrder()
   {
     if (m_zorder_map.size() > 0)
     {
@@ -325,7 +326,7 @@ namespace metagui
     return 0;
   }
 
-  uint32_t Object::getHighestChildZOrder()
+  uint32_t GUIObject::getHighestChildZOrder()
   {
     if (m_zorder_map.size() > 0)
     {
@@ -336,23 +337,23 @@ namespace metagui
     return 0;
   }
 
-  void Object::clearChildren()
+  void GUIObject::clearChildren()
   {
     m_children.clear();
     m_zorder_map.clear();
   }
 
-  IntVec2 Object::getChildAreaLocation()
+  IntVec2 GUIObject::getChildAreaLocation()
   {
     return{ 0, 0 };
   }
 
-  UintVec2 Object::getChildAreaSize()
+  UintVec2 GUIObject::getChildAreaSize()
   {
     return getSize();
   }
 
-  bool Object::render(sf::RenderTexture& parent_texture, int frame)
+  bool GUIObject::render(sf::RenderTexture& parent_texture, int frame)
   {
     sf::RenderTexture& our_texture = *m_bg_texture;
 
@@ -388,7 +389,7 @@ namespace metagui
     }
   }
 
-  void Object::draw(int frame)
+  void GUIObject::draw(int frame)
   {
     sf::RenderTexture& our_texture = *m_bg_texture;
 
@@ -407,7 +408,7 @@ namespace metagui
     our_texture.display();
   }
 
-  void Object::flagForRedraw()
+  void GUIObject::flagForRedraw()
   {
     m_flag_for_redraw = true;
     if (m_parent)
@@ -416,7 +417,7 @@ namespace metagui
     }
   }
 
-  void Object::setFlag(std::string name, bool value)
+  void GUIObject::setFlag(std::string name, bool value)
   {
     if ((m_flags.count(name) == 0) || (m_flags[name] != value))
     {
@@ -425,7 +426,7 @@ namespace metagui
     }
   }
 
-  bool Object::getFlag(std::string name, bool default_value)
+  bool GUIObject::getFlag(std::string name, bool default_value)
   {
     if (m_flags.count(name) == 0)
     {
@@ -434,7 +435,7 @@ namespace metagui
     return m_flags[name];
   }
 
-  void Object::handleSetFlag(std::string name, bool value)
+  void GUIObject::handleSetFlag(std::string name, bool value)
   {
     if (name == "hidden")
     {
@@ -468,7 +469,7 @@ namespace metagui
     handleSetFlag_(name, value);
   }
 
-  bool Object::containsPoint(IntVec2 point)
+  bool GUIObject::containsPoint(IntVec2 point)
   {
     auto left = getAbsoluteLocation().x;
     auto top = getAbsoluteLocation().y;
@@ -479,14 +480,14 @@ namespace metagui
       (point.y >= top) && (point.y <= bottom));
   }
 
-  GUIEvent::Result Object::handleGUIEventPreChildren(GUIEventDragFinished& event)
+  GUIEvent::Result GUIObject::handleGUIEventPreChildren(GUIEventDragFinished& event)
   {
     GUIEvent::Result result = handleGUIEventPreChildren_(event);
 
     return result;
   }
 
-  GUIEvent::Result Object::handleGUIEventPostChildren(GUIEventDragFinished& event)
+  GUIEvent::Result GUIObject::handleGUIEventPostChildren(GUIEventDragFinished& event)
   {
     m_being_dragged = false;
 
@@ -495,7 +496,7 @@ namespace metagui
     return result;
   }
 
-  GUIEvent::Result Object::handleGUIEventPreChildren(GUIEventDragStarted& event)
+  GUIEvent::Result GUIObject::handleGUIEventPreChildren(GUIEventDragStarted& event)
   {
     GUIEvent::Result result;
 
@@ -512,7 +513,7 @@ namespace metagui
     return result;
   }
 
-  GUIEvent::Result Object::handleGUIEventPostChildren(GUIEventDragStarted& event)
+  GUIEvent::Result GUIObject::handleGUIEventPostChildren(GUIEventDragStarted& event)
   {
     GUIEvent::Result result;
 
@@ -533,13 +534,13 @@ namespace metagui
     return result;
   }
 
-  GUIEvent::Result Object::handleGUIEventPreChildren(GUIEventDragging& event)
+  GUIEvent::Result GUIObject::handleGUIEventPreChildren(GUIEventDragging& event)
   {
     // We "Acknowledge" the event so it is passed to children.
     return handleGUIEventPreChildren_(event);
   }
 
-  GUIEvent::Result Object::handleGUIEventPostChildren(GUIEventDragging& event)
+  GUIEvent::Result GUIObject::handleGUIEventPostChildren(GUIEventDragging& event)
   {
     GUIEvent::Result result = handleGUIEventPostChildren_(event);
 
@@ -565,49 +566,49 @@ namespace metagui
     return result;
   }
 
-  GUIEvent::Result Object::handleGUIEventPreChildren(GUIEventKeyPressed& event)
+  GUIEvent::Result GUIObject::handleGUIEventPreChildren(GUIEventKeyPressed& event)
   {
     return handleGUIEventPreChildren_(event);
   }
 
-  GUIEvent::Result Object::handleGUIEventPostChildren(GUIEventKeyPressed& event)
+  GUIEvent::Result GUIObject::handleGUIEventPostChildren(GUIEventKeyPressed& event)
   {
     return handleGUIEventPostChildren_(event);
   }
 
-  GUIEvent::Result Object::handleGUIEventPreChildren(GUIEventMouseDown& event)
+  GUIEvent::Result GUIObject::handleGUIEventPreChildren(GUIEventMouseDown& event)
   {
     return handleGUIEventPreChildren_(event);
   }
 
-  GUIEvent::Result Object::handleGUIEventPostChildren(GUIEventMouseDown& event)
+  GUIEvent::Result GUIObject::handleGUIEventPostChildren(GUIEventMouseDown& event)
   {
     return handleGUIEventPostChildren_(event);
   }
 
-  GUIEvent::Result Object::handleGUIEventPreChildren(GUIEventResized& event)
+  GUIEvent::Result GUIObject::handleGUIEventPreChildren(GUIEventResized& event)
   {
     return handleGUIEventPreChildren_(event);
   }
 
-  GUIEvent::Result Object::handleGUIEventPostChildren(GUIEventResized& event)
+  GUIEvent::Result GUIObject::handleGUIEventPostChildren(GUIEventResized& event)
   {
     return handleGUIEventPostChildren_(event);
   }
 
-  std::unordered_set<EventID> Object::registeredEvents() const
+  std::unordered_set<EventID> GUIObject::registeredEvents() const
   {
     auto events = Subject::registeredEvents();
     /// @todo Add our own events here
     return events;
   }
 
-  Object * Object::getParent()
+  GUIObject * GUIObject::getParent()
   {
     return m_parent;
   }
 
-  void Object::setParent(Object* parent)
+  void GUIObject::setParent(GUIObject* parent)
   {
     if (m_parent != nullptr)
     {
@@ -625,7 +626,7 @@ namespace metagui
     if (m_parent) m_parent->flagForRedraw();
   }
 
-  void Object::clearChildFocuses()
+  void GUIObject::clearChildFocuses()
   {
     for (auto& child_pair : m_children)
     {
@@ -633,105 +634,131 @@ namespace metagui
     }
   }
 
-  void Object::setFocusOnly(bool focus)
+  void GUIObject::setFocusOnly(bool focus)
   {
     if (m_focus != focus) flagForRedraw();
     m_focus = focus;
   }
 
-  bool Object::isBeingDragged()
+  bool GUIObject::isBeingDragged()
   {
     return m_being_dragged;
   }
 
-  IntVec2 Object::getDragStartLocation()
+  IntVec2 GUIObject::getDragStartLocation()
   {
     return m_drag_start_location;
   }
 
-  void Object::drawPreChildren_(sf::RenderTexture& texture, int frame)
+  void GUIObject::drawPreChildren_(sf::RenderTexture& texture, int frame)
   {
     // Default behavior is to do nothing.
   }
 
-  void Object::drawPostChildren_(sf::RenderTexture& texture, int frame)
+  void GUIObject::drawPostChildren_(sf::RenderTexture& texture, int frame)
   {
     // Default behavior is to do nothing.
   }
 
-  GUIEvent::Result Object::handleGUIEventPreChildren_(GUIEventDragFinished& event)
+  GUIEvent::Result GUIObject::handleGUIEventPreChildren_(GUIEventDragFinished& event)
   {
     return GUIEvent::Result::Acknowledged;
   }
 
-  GUIEvent::Result Object::handleGUIEventPostChildren_(GUIEventDragFinished& event)
+  GUIEvent::Result GUIObject::handleGUIEventPostChildren_(GUIEventDragFinished& event)
   {
     return GUIEvent::Result::Acknowledged;
   }
 
-  GUIEvent::Result Object::handleGUIEventPreChildren_(GUIEventDragStarted& event)
+  GUIEvent::Result GUIObject::handleGUIEventPreChildren_(GUIEventDragStarted& event)
   {
     return GUIEvent::Result::Acknowledged;
   }
 
-  GUIEvent::Result Object::handleGUIEventPostChildren_(GUIEventDragStarted& event)
+  GUIEvent::Result GUIObject::handleGUIEventPostChildren_(GUIEventDragStarted& event)
   {
     return GUIEvent::Result::Acknowledged;
   }
 
-  GUIEvent::Result Object::handleGUIEventPreChildren_(GUIEventDragging& event)
+  GUIEvent::Result GUIObject::handleGUIEventPreChildren_(GUIEventDragging& event)
   {
     return GUIEvent::Result::Acknowledged;
   }
 
-  GUIEvent::Result Object::handleGUIEventPostChildren_(GUIEventDragging& event)
+  GUIEvent::Result GUIObject::handleGUIEventPostChildren_(GUIEventDragging& event)
   {
     return GUIEvent::Result::Acknowledged;
   }
 
-  GUIEvent::Result Object::handleGUIEventPreChildren_(GUIEventKeyPressed& event)
+  GUIEvent::Result GUIObject::handleGUIEventPreChildren_(GUIEventKeyPressed& event)
   {
     return GUIEvent::Result::Acknowledged;
   }
 
-  GUIEvent::Result Object::handleGUIEventPostChildren_(GUIEventKeyPressed& event)
+  GUIEvent::Result GUIObject::handleGUIEventPostChildren_(GUIEventKeyPressed& event)
   {
     return GUIEvent::Result::Acknowledged;
   }
 
-  GUIEvent::Result Object::handleGUIEventPreChildren_(GUIEventMouseDown& event)
+  GUIEvent::Result GUIObject::handleGUIEventPreChildren_(GUIEventMouseDown& event)
   {
     return GUIEvent::Result::Acknowledged;
   }
 
-  GUIEvent::Result Object::handleGUIEventPostChildren_(GUIEventMouseDown& event)
+  GUIEvent::Result GUIObject::handleGUIEventPostChildren_(GUIEventMouseDown& event)
   {
     return GUIEvent::Result::Acknowledged;
   }
 
-  GUIEvent::Result Object::handleGUIEventPreChildren_(GUIEventResized& event)
+  GUIEvent::Result GUIObject::handleGUIEventPreChildren_(GUIEventResized& event)
   {
     return GUIEvent::Result::Acknowledged;
   }
 
-  GUIEvent::Result Object::handleGUIEventPostChildren_(GUIEventResized& event)
+  GUIEvent::Result GUIObject::handleGUIEventPostChildren_(GUIEventResized& event)
   {
     return GUIEvent::Result::Acknowledged;
   }
 
-  void Object::handleSetFlag_(std::string name, bool enabled)
+  void GUIObject::handleSetFlag_(std::string name, bool enabled)
   {}
 
-  void Object::handleParentSizeChanged_(UintVec2 parent_size)
+  void GUIObject::handleParentSizeChanged_(UintVec2 parent_size)
   {
   }
 
-  EventResult Object::onEvent_(Event const& event)
+  EventResult GUIObject::onEvent_NVI(Event const& event)
   {
-    return{ EventHandled::Yes, ContinueBroadcasting::Yes };
+    EventResult result{ EventHandled::Yes, ContinueBroadcasting::Yes };
+
+    // Pre-child handling.
+    result.continue_broadcasting = (onEvent_NVI_PreChildren(event) ? ContinueBroadcasting::Yes : ContinueBroadcasting::No);
+    if (result.continue_broadcasting == ContinueBroadcasting::Yes)
+    {
+      // Forward to children.
+      result.continue_broadcasting = (forward(event) ? ContinueBroadcasting::Yes : ContinueBroadcasting::No);
+
+      if (result.continue_broadcasting == ContinueBroadcasting::Yes)
+      {
+        // Post-child handling.
+        result.continue_broadcasting = (onEvent_NVI_PostChildren(event) ? ContinueBroadcasting::Yes : ContinueBroadcasting::No);
+      }
+    }
+
+    return result;
   }
 
-  void Object::subscribeToParentEvents(Subject const& parent, int priority)
+  bool GUIObject::onEvent_NVI_PreChildren(Event const & event)
+  {
+    return true;
+  }
+
+  bool GUIObject::onEvent_NVI_PostChildren(Event const & event)
+  {
+    return true;
+  }
+
+  void GUIObject::subscribeToParentEvents(Subject const& parent, int priority)
   {
     /// @todo Subscribe to standard parent events here.
 
@@ -739,7 +766,7 @@ namespace metagui
     subscribeToParentEvents_(parent, priority);
   }
 
-  void Object::subscribeToParentEvents_(Subject const& parent, int priority)
+  void GUIObject::subscribeToParentEvents_(Subject const& parent, int priority)
   {}
 
 

@@ -92,58 +92,58 @@ namespace Actions
 
     bool hasTrait(Trait trait) const;
 
-    EntityId get_subject() const;
+    EntityId getSubject() const;
 
-    void set_object(EntityId object);
-    void set_objects(std::vector<EntityId> objects);
+    void setObject(EntityId object);
+    void setObjects(std::vector<EntityId> objects);
 
-    std::vector<EntityId> const& get_objects() const;
-    EntityId get_object() const;
-    EntityId get_second_object() const;
+    std::vector<EntityId> const& getObjects() const;
+    EntityId getObject() const;
+    EntityId getSecondObject() const;
 
     bool process(AnyMap params);
 
-    void set_state(State state);
-    State get_state();
+    void setState(State state);
+    State getState();
 
-    void set_target(EntityId entity) const;
-    void set_target(Direction direction) const;
-    void set_quantity(unsigned int quantity) const;
+    void setTarget(EntityId entity) const;
+    void setTarget(Direction direction) const;
+    void setQuantity(unsigned int quantity) const;
 
-    EntityId get_target_thing() const;
-    Direction get_target_direction() const;
-    unsigned int get_quantity() const;
+    EntityId getTargetThing() const;
+    Direction getTargetDirection() const;
+    unsigned int getQuantity() const;
 
-    std::string get_type() const;
+    std::string getType() const;
 
     /// Return the first-/second-person singular form of the verb to be performed.
     /// @todo English doesn't generally distinguish between 1st/2nd person
     ///       for past tense, but some other languages do. Assuming, of course,
     ///       we even NEED the 1st person conjugation.
-    std::string get_verb() const;
+    std::string getVerb2() const;
 
     /// Return the third-person singular form of the verb to be performed.
-    std::string get_verb3() const;
+    std::string getVerb3() const;
 
     /// Return the present participle form of the verb to be performed.
-    std::string get_verbing() const;
+    std::string getVerbing() const;
 
     /// Return the past form of the verb to be performed.
     /// @todo English doesn't generally distinguish between 2nd/3rd person
     ///       for past tense, but some other languages do.
-    std::string get_verbed() const;
+    std::string getVerbed() const;
 
     /// Return the past participle form of the verb to be performed.
-    std::string get_verb_pp() const;
+    std::string getVerbPP() const;
 
     /// Return the adjective form of the verb to be performed.
     /// (Obviously, some verbs don't make sense when conjugated in this way, 
     /// but the option is there nonetheless.)
-    std::string get_verbable() const;
+    std::string getVerbable() const;
 
     /// A static method that registers an action subclass in a database.
     /// Required so that Lua scripts can instantiate Actions on Entities.
-    static void register_action_as(std::string key, ActionCreator creator);
+    static void registerActionAs(std::string key, ActionCreator creator);
 
     /// A static method that checks if a key exists.
     static bool exists(std::string key);
@@ -156,11 +156,11 @@ namespace Actions
     std::string maketr(std::string key, std::vector<std::string> optional_strings) const;
 
     /// A method for composing a string from a pattern for an action.
-    std::string make_string(std::string pattern, std::vector<std::string> optional_strings) const;
-    std::string make_string(std::string pattern) const;
+    std::string makeString(std::string pattern, std::vector<std::string> optional_strings) const;
+    std::string makeString(std::string pattern) const;
 
     /// Get a const reference to the action map.
-    static ActionMap const& get_map();
+    static ActionMap const& getMap();
 
   protected:
     /// An Action without a subject; used for prototype registration only.
@@ -171,24 +171,24 @@ namespace Actions
     /// If StateResult::success is false, the action was not possible and is cancelled.
     /// If StateResult::success is true, the action is possible, and the target actor
     /// is busy for StateResult::elapsed_time before moving to the InProgress state.
-    /// @note do_prebegin_work usually has multiple returns in order to avoid
+    /// @note doPreBeginWork usually has multiple returns in order to avoid
     ///       the Dreaded Pyramid of Doom. It's just easier that way.
     /// @param params Map of parameters for the Action.
     /// @return StateResult indicating whether the Action continues.
-    StateResult do_prebegin_work(AnyMap& params);
+    StateResult doPreBeginWork(AnyMap& params);
 
     /// Perform work to be done at the start of the InProgress state.
     /// This is where the action begins.
     /// If StateResult::success is false, the action could not begin and is cancelled.
     /// (However, the PreBegin reaction time has already elapsed, so this is more
     ///  like a critical failure when attempting the action, unlike a failure in
-    ///   do_prebegin_work which just means the action couldn't be started at all.)
+    ///   doPreBeginWork which just means the action couldn't be started at all.)
     /// If StateResult::success is true, the action began, and the target actor is
     /// busy for StateResult::elapsed_time while the action is performed. It then
     /// moves to the PostFinish state.
     /// @param params Map of parameters for the Action.
     /// @return StateResult indicating whether the Action continues.
-    StateResult do_begin_work(AnyMap& params);
+    StateResult doBeginWork(AnyMap& params);
 
     /// Perform work to be done at the end of the InProgress state and the start
     /// of the PostFinish state.
@@ -199,7 +199,7 @@ namespace Actions
     /// period.
     /// @param params Map of parameters for the Action.
     /// @return StateResult indicating the post-Action wait time.
-    StateResult do_finish_work(AnyMap& params);
+    StateResult doFinishWork(AnyMap& params);
 
     /// Perform work to be done when an action in the InProgress state is aborted.
     /// This is called when an action is aborted.
@@ -208,27 +208,27 @@ namespace Actions
     /// period.
     /// @param params Map of parameters for the Action.
     /// @return StateResult indicating the post-Action wait time.
-    StateResult do_abort_work(AnyMap& params);
+    StateResult doAbortWork(AnyMap& params);
 
-    /// Overridable portion of do_prebegin_work().
+    /// Overridable portion of doPreBeginWork().
     /// @param params Map of parameters for the Action.
     /// @return StateResult indicating whether the Action continues.
-    virtual StateResult do_prebegin_work_(AnyMap& params);
+    virtual StateResult doPreBeginWorkNVI(AnyMap& params);
 
-    /// Overridable portion of do_begin_work().
+    /// Overridable portion of doBeginWork().
     /// @param params Map of parameters for the Action.
     /// @return StateResult indicating whether the Action continues.
-    virtual StateResult do_begin_work_(AnyMap& params);
+    virtual StateResult doBeginWorkNVI(AnyMap& params);
 
-    /// Overridable portion of do_finish_work().
+    /// Overridable portion of doFinishWork().
     /// @param params Map of parameters for the Action.
     /// @return StateResult indicating the post-Action wait time.
-    virtual StateResult do_finish_work_(AnyMap& params);
+    virtual StateResult doFinishWorkNVI(AnyMap& params);
 
-    /// Overridable portion of do_abort_work().
+    /// Overridable portion of doAbortWork().
     /// @param params Map of parameters for the Action.
     /// @return StateResult indicating the post-Action wait time.
-    virtual StateResult do_abort_work_(AnyMap& params);
+    virtual StateResult doAbortWorkNVI(AnyMap& params);
 
     /// Describes the object(s) or direction in terms of the subject.
     /// This string will vary based on the presence of objects or a direction
@@ -244,7 +244,7 @@ namespace Actions
     ///
     /// This method can be overridden if necessary to customize the description for a
     /// particular action.
-    virtual std::string get_object_string_() const;
+    virtual std::string getObjectString() const;
 
     /// Describes the target in terms of the subject or object.
     /// This string will vary based on the presence of objects or a direction
@@ -255,7 +255,7 @@ namespace Actions
     ///
     /// This method can be overridden if necessary to customize the description for a
     /// particular action.
-    virtual std::string get_target_string_() const;
+    virtual std::string getTargetString() const;
 
     /// Print a "[SUBJECT] try to [VERB]" message.
     /// The message will vary based on the presence of objects or a direction
@@ -264,7 +264,7 @@ namespace Actions
     ///
     /// This method can be overridden if necessary to customize the message for a
     /// particular action.
-    virtual void print_message_try_() const;
+    virtual void printMessageTry() const;
 
     /// Print a "[SUBJECT] [VERB]" message.
     /// The message will vary based on the presence of objects or a direction
@@ -273,7 +273,7 @@ namespace Actions
     ///
     /// This method can be overridden if necessary to customize the message for a
     /// particular action.
-    virtual void print_message_do_() const;
+    virtual void printMessageDo() const;
 
     /// Print a "[SUBJECT] begin to [VERB]" message.
     /// The message will vary based on the presence of objects or a direction
@@ -282,7 +282,7 @@ namespace Actions
     ///
     /// This method can be overridden if necessary to customize the message for a
     /// particular action.
-    virtual void print_message_begin_() const;
+    virtual void printMessageBegin() const;
 
     /// Print a "[SUBJECT] stop [VERBING]" message.
     /// The message will vary based on the presence of objects or a direction
@@ -291,7 +291,7 @@ namespace Actions
     ///
     /// This method can be overridden if necessary to customize the message for a
     /// particular action.
-    virtual void print_message_stop_() const;
+    virtual void printMessageStop() const;
 
     /// Print a "[SUBJECT] finish [VERBING]" message.
     /// The message will vary based on the presence of objects or a direction
@@ -300,7 +300,7 @@ namespace Actions
     ///
     /// This method can be overridden if necessary to customize the message for a
     /// particular action.
-    virtual void print_message_finish_() const;
+    virtual void printMessageFinish() const;
 
     /// Print a "[SUBJECT] can't [VERB] that!" message.
     /// The message will vary based on the presence of objects or a direction
@@ -310,7 +310,7 @@ namespace Actions
     /// @todo Finish implementing me, right now the default implementation is too simple.
     /// This method can be overridden if necessary to customize the message for a
     /// particular action.
-    virtual void print_message_cant_() const;
+    virtual void printMessageCant() const;
 
   private:
     struct Impl;
@@ -337,37 +337,37 @@ namespace Actions
 } // end namespace
 
   // === MESSAGE HELPER MACROS ==================================================
-#define YOU       (get_subject()->get_subject_you_or_identifying_string())  // "you" or descriptive noun like "the goblin"
-#define YOU_SUBJ  (get_subject()->get_subject_pronoun())     // "you/he/she/it/etc."
-#define YOU_OBJ   (get_subject()->get_object_pronoun())      // "you/him/her/it/etc."
-#define YOUR      (get_subject()->get_possessive())          // "your/his/her/its/etc."
-#define YOURSELF  (get_subject()->get_reflexive_pronoun())   // "yourself/himself/herself/itself/etc."
+#define YOU       (getSubject()->get_subject_you_or_identifying_string())  // "you" or descriptive noun like "the goblin"
+#define YOU_SUBJ  (getSubject()->get_subject_pronoun())     // "you/he/she/it/etc."
+#define YOU_OBJ   (getSubject()->get_object_pronoun())      // "you/him/her/it/etc."
+#define YOUR      (getSubject()->get_possessive())          // "your/his/her/its/etc."
+#define YOURSELF  (getSubject()->get_reflexive_pronoun())   // "yourself/himself/herself/itself/etc."
 
-#define CV(p12, p3)  (get_subject()->choose_verb(p12, p3))   // shortcut for "Subject - Choose Verb"
-#define OBJCV(p12, p3)  (get_object()->choose_verb(p12, p3)) // shortcut for "Object - Choose Verb"
+#define CV(p12, p3)  (getSubject()->choose_verb(p12, p3))   // shortcut for "Subject - Choose Verb"
+#define OBJCV(p12, p3)  (getObject()->choose_verb(p12, p3)) // shortcut for "Object - Choose Verb"
 
-#define ARE   (get_subject()->choose_verb(" are", " is"))
-#define WERE  (get_subject()->choose_verb(" were", " was"))
-#define DO    (get_subject()->choose_verb(" do", " does"))
-#define GET   (get_subject()->choose_verb(" get", " gets"))
-#define HAVE  (get_subject()->choose_verb(" have", " has"))
-#define SEEM  (get_subject()->choose_verb(" seem", " seems"))
-#define TRY   (get_subject()->choose_verb(" try", " tries"))
+#define ARE   (getSubject()->choose_verb(" are", " is"))
+#define WERE  (getSubject()->choose_verb(" were", " was"))
+#define DO    (getSubject()->choose_verb(" do", " does"))
+#define GET   (getSubject()->choose_verb(" get", " gets"))
+#define HAVE  (getSubject()->choose_verb(" have", " has"))
+#define SEEM  (getSubject()->choose_verb(" seem", " seems"))
+#define TRY   (getSubject()->choose_verb(" try", " tries"))
 
 #define FOO_IS    OBJCV(" are", " is")
 #define FOO_HAS   OBJCV(" have", " has")
 
-#define IS_PLAYER (get_subject()->is_player())
+#define IS_PLAYER (getSubject()->is_player())
 
-#define THE_FOO   (get_object_string_())
+#define THE_FOO   (getObjectString())
 
-#define THE_FOOS_LOCATION  (get_object()->getLocation()->get_identifying_string(ArticleChoice::Definite))
-#define THE_TARGET_THING   (get_target_thing()->get_identifying_string(ArticleChoice::Definite))
+#define THE_FOOS_LOCATION  (getObject()->getLocation()->get_identifying_string(ArticleChoice::Definite))
+#define THE_TARGET_THING   (getTargetThing()->get_identifying_string(ArticleChoice::Definite))
 
-#define FOOSELF (get_object()->get_self_or_identifying_string(get_subject(), ArticleChoice::Definite))
+#define FOOSELF (getObject()->get_self_or_identifying_string(getSubject(), ArticleChoice::Definite))
 
-#define SUBJ_PRO_FOO  (get_object()->get_subject_pronoun())     // "you/he/she/it/etc."
-#define OBJ_PRO_FOO   (get_object()->get_object_pronoun())      // "you/him/her/it/etc."
+#define SUBJ_PRO_FOO  (getObject()->get_subject_pronoun())     // "you/he/she/it/etc."
+#define OBJ_PRO_FOO   (getObject()->get_object_pronoun())      // "you/him/her/it/etc."
 
   //#define LIQUID1      (liquid1->get_identifying_string())
   //#define LIQUID2      (liquid2->get_identifying_string())
@@ -381,11 +381,11 @@ namespace Actions
 #define YOU_SEEM      (YOU + SEEM)
 #define YOU_TRY       (YOU + TRY)
 
-#define VERB          get_verb()
-#define VERB3         get_verb3()
-#define VERBING       get_verbing()
-#define VERBED        get_verbed()
-#define VERBPP        get_verb_pp()
+#define VERB          getVerb2()
+#define VERB3         getVerb3()
+#define VERBING       getVerbing()
+#define VERBED        getVerbed()
+#define VERBPP        getVerbPP()
 
 /* Header template for subclasses: 
 
@@ -405,10 +405,10 @@ namespace Actions
     virtual std::unordered_set<Trait> const& getTraits() const override;
 
   protected:
-    virtual StateResult do_prebegin_work_(AnyMap& params) override;
-    virtual StateResult do_begin_work_(AnyMap& params) override;
-    virtual StateResult do_finish_work_(AnyMap& params) override;
-    virtual StateResult do_abort_work_(AnyMap& params) override;
+    virtual StateResult doPreBeginWorkNVI(AnyMap& params) override;
+    virtual StateResult doBeginWorkNVI(AnyMap& params) override;
+    virtual StateResult doFinishWorkNVI(AnyMap& params) override;
+    virtual StateResult doAbortWorkNVI(AnyMap& params) override;
   };
 
 } // end namespace

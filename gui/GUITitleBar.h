@@ -8,7 +8,7 @@
 namespace metagui
 {
   class TitleBar :
-    public Object, public ObjectVisitable<TitleBar>
+    public GUIObject, public GUIObjectVisitable<TitleBar>
   {
     friend class Window;
 

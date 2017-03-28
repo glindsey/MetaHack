@@ -10,7 +10,7 @@ namespace metagui
 {
   CloseHandle::CloseHandle(std::string name)
     :
-    Object(name, IntVec2(0, 0))
+    GUIObject(name, IntVec2(0, 0))
   {}
 
   void CloseHandle::handleParentSizeChanged_(UintVec2 parent_size)

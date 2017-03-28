@@ -24,34 +24,34 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionUse::do_prebegin_work_(AnyMap& params)
+  StateResult ActionUse::doPreBeginWorkNVI(AnyMap& params)
   {
     // All checks done in Action class via traits.
     return StateResult::Success();
   }
 
-  StateResult ActionUse::do_begin_work_(AnyMap& params)
+  StateResult ActionUse::doBeginWorkNVI(AnyMap& params)
   {
     StateResult result = StateResult::Failure();
     std::string message;
-    auto subject = get_subject();
-    auto object = get_object();
+    auto subject = getSubject();
+    auto object = getObject();
 
     /// @todo Figure out use time.
-    print_message_begin_();
+    printMessageBegin();
     result = StateResult::Success(1);
 
     return result;
   }
 
-  StateResult ActionUse::do_finish_work_(AnyMap& params)
+  StateResult ActionUse::doFinishWorkNVI(AnyMap& params)
   {
     StateResult result = StateResult::Failure();
     std::string message;
-    auto subject = get_subject();
-    auto object = get_object();
+    auto subject = getSubject();
+    auto object = getObject();
 
-    print_message_finish_();
+    printMessageFinish();
 
     /// @todo Split read time into start/finish actions.
     switch (object->be_object_of(*this, subject))
@@ -79,12 +79,12 @@ namespace Actions
     return StateResult::Success();
   }
 
-  StateResult ActionUse::do_abort_work_(AnyMap& params)
+  StateResult ActionUse::doAbortWorkNVI(AnyMap& params)
   {
-    auto subject = get_subject();
-    auto object = get_object();
+    auto subject = getSubject();
+    auto object = getObject();
 
-    print_message_stop_();
+    printMessageStop();
 
     return StateResult::Success();
   }

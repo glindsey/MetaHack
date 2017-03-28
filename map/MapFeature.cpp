@@ -43,7 +43,7 @@ sf::IntRect const& MapFeature::get_coords() const
   return pImpl->coords;
 }
 
-Map& MapFeature::get_map() const
+Map& MapFeature::getMap() const
 {
   return pImpl->gameMap;
 }
@@ -174,7 +174,7 @@ bool MapFeature::does_box_pass_criterion(IntVec2 upper_left,
   {
     for (int yCheck = upper_left.y; yCheck <= lower_right.y; ++yCheck)
     {
-      auto& tile = get_map().get_tile({ xCheck, yCheck });
+      auto& tile = getMap().get_tile({ xCheck, yCheck });
       if (!criterion(tile))
       {
         return false;
@@ -186,7 +186,7 @@ bool MapFeature::does_box_pass_criterion(IntVec2 upper_left,
 
 void MapFeature::set_box(IntVec2 upper_left, IntVec2 lower_right, std::string tile_type)
 {
-  Map& map = get_map();
+  Map& map = getMap();
 
   for (int xCheck = upper_left.x; xCheck <= lower_right.x; ++xCheck)
   {
@@ -194,7 +194,7 @@ void MapFeature::set_box(IntVec2 upper_left, IntVec2 lower_right, std::string ti
     {
       if (map.is_in_bounds({ xCheck, yCheck }))
       {
-        auto& tile = get_map().get_tile({ xCheck, yCheck });
+        auto& tile = getMap().get_tile({ xCheck, yCheck });
         tile.set_tile_type(tile_type);
       }
     }

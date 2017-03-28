@@ -25,15 +25,15 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionRead::do_prebegin_work_(AnyMap& params)
+  StateResult ActionRead::doPreBeginWorkNVI(AnyMap& params)
   {
     std::string message;
-    auto subject = get_subject();
-    auto object = get_object();
+    auto subject = getSubject();
+    auto object = getObject();
 
     if (false) ///< @todo Intelligence tests for reading.
     {
-      print_message_try_();
+      printMessageTry();
 
       message = maketr("READ_TOO_STUPID");
       Service<IMessageLog>::get().add(message);
@@ -44,28 +44,28 @@ namespace Actions
     return StateResult::Success();
   }
 
-  StateResult ActionRead::do_begin_work_(AnyMap& params)
+  StateResult ActionRead::doBeginWorkNVI(AnyMap& params)
   {
     StateResult result = StateResult::Failure();
     std::string message;
-    auto subject = get_subject();
-    auto object = get_object();
+    auto subject = getSubject();
+    auto object = getObject();
 
     /// @todo Figure out read time.
-    print_message_begin_();
+    printMessageBegin();
     result = StateResult::Success(1);
 
     return result;
   }
 
-  StateResult ActionRead::do_finish_work_(AnyMap& params)
+  StateResult ActionRead::doFinishWorkNVI(AnyMap& params)
   {
     StateResult result = StateResult::Failure();
     std::string message;
-    auto subject = get_subject();
-    auto object = get_object();
+    auto subject = getSubject();
+    auto object = getObject();
 
-    print_message_finish_();
+    printMessageFinish();
 
     /// @todo Split read time into start/finish actions.
     switch (object->be_object_of(*this, subject))
@@ -91,16 +91,16 @@ namespace Actions
     return result;
   }
 
-  StateResult ActionRead::do_abort_work_(AnyMap& params)
+  StateResult ActionRead::doAbortWorkNVI(AnyMap& params)
   {
-    auto subject = get_subject();
-    auto object = get_object();
+    auto subject = getSubject();
+    auto object = getObject();
 
-    print_message_stop_();
+    printMessageStop();
     return StateResult::Success();
   }
 
-  void ActionRead::print_message_cant_() const
+  void ActionRead::printMessageCant() const
   {
     std::string message = maketr("THE_FOO_HAS_NO_NOUN_TO_VERB", { "writing" });
     Service<IMessageLog>::get().add(message);

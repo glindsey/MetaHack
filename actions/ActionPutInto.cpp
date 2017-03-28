@@ -27,12 +27,12 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionPutInto::do_prebegin_work_(AnyMap& params)
+  StateResult ActionPutInto::doPreBeginWorkNVI(AnyMap& params)
   {
     std::string message;
-    auto subject = get_subject();
-    auto object = get_object();
-    auto container = get_target_thing();
+    auto subject = getSubject();
+    auto object = getObject();
+    auto container = getTargetThing();
 
     // Verify that the Action has an object.
     if (object == EntityId::Mu())
@@ -59,7 +59,7 @@ namespace Actions
     // Check that the container actually IS a container.
     if (container->get_intrinsic("inventory_size").as<int32_t>() == 0)
     {
-      print_message_try_();
+      printMessageTry();
 
       message = maketr("THE_TARGET_IS_NOT_A_CONTAINER");
       Service<IMessageLog>::get().add(message);
@@ -70,7 +70,7 @@ namespace Actions
     // Check that the entity's location isn't already the container.
     if (object->getLocation() == container)
     {
-      print_message_try_();
+      printMessageTry();
 
       message = maketr("THE_FOO_IS_ALREADY_IN_THE_TARGET");
       Service<IMessageLog>::get().add(message);
@@ -81,7 +81,7 @@ namespace Actions
     // Check that the container is within reach.
     if (!subject->can_reach(container))
     {
-      print_message_try_();
+      printMessageTry();
 
       message = maketr("THE_TARGET_IS_OUT_OF_REACH");
       Service<IMessageLog>::get().add(message);
@@ -92,18 +92,18 @@ namespace Actions
     return StateResult::Success();
   }
 
-  StateResult ActionPutInto::do_begin_work_(AnyMap& params)
+  StateResult ActionPutInto::doBeginWorkNVI(AnyMap& params)
   {
     /// @todo Handle putting a certain quantity of an item.
     StateResult result = StateResult::Failure();
     std::string message;
-    auto subject = get_subject();
-    auto object = get_object();
-    auto container = get_target_thing();
+    auto subject = getSubject();
+    auto object = getObject();
+    auto container = getTargetThing();
 
     if (object->be_object_of(*this, subject, container) == ActionResult::Success)
     {
-      print_message_do_();
+      printMessageDo();
 
       if (object->move_into(container))
       {
@@ -122,23 +122,23 @@ namespace Actions
     return result;
   }
 
-  StateResult ActionPutInto::do_finish_work_(AnyMap& params)
+  StateResult ActionPutInto::doFinishWorkNVI(AnyMap& params)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionPutInto::do_abort_work_(AnyMap& params)
+  StateResult ActionPutInto::doAbortWorkNVI(AnyMap& params)
   {
     return StateResult::Success();
   }
 
-  void ActionPutInto::print_message_try_() const
+  void ActionPutInto::printMessageTry() const
   {
     std::string message = maketr("YOU_TRY_TO_VERB_THE_FOO_PREPOSITION_TARGET", { "into" });
     Service<IMessageLog>::get().add(message);
   }
 
-  void ActionPutInto::print_message_do_() const
+  void ActionPutInto::printMessageDo() const
   {
     std::string message = maketr("YOU_VERB_THE_FOO_PREPOSITION_TARGET", { "into" });
     Service<IMessageLog>::get().add(message);

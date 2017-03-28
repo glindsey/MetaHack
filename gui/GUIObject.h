@@ -6,14 +6,13 @@
 #include "GUIEvent.h"
 #include "types/ISFMLEventHandler.h"
 
-#include "Observer.h"
-#include "Subject.h"
+#include "Object.h"
 #include "Visitor.h"
 
 namespace metagui
 {
   // Forward declaration of Object class
-  class Object;
+  class GUIObject;
 
   // Forward declaration of any class that can be visited
   class CloseHandle;
@@ -25,13 +24,13 @@ namespace metagui
   class Window;
 
   /// Using declarations
-  using ChildMap = std::map< std::string, std::unique_ptr<Object> >;
+  using ChildMap = std::map< std::string, std::unique_ptr<GUIObject> >;
   using ZOrderMap = std::multimap< uint32_t, std::string >;
   using RenderFunctor = std::function< void(sf::RenderTexture&, int) >;
 
   // The following declaration should include every possible GUIObject that
   // we want to be able to accept visitors.
-  using ObjectVisitor = Visitor<
+  using GUIObjectVisitor = Visitor<
     CloseHandle,
     Desktop,
     Label,
@@ -43,7 +42,7 @@ namespace metagui
 
   // The following declaration should have the same class list as above.
   template<class T>
-  using ObjectVisitable = VisitableImpl<T,
+  using GUIObjectVisitable = VisitableImpl<T,
     CloseHandle,
     Desktop,
     Label,
@@ -55,12 +54,12 @@ namespace metagui
 
   /// Virtual superclass of all GUI objects on screen.
   /// @todo Should child objects store Z-order?
-  class Object : public Subject, public Observer
+  class GUIObject : public Object
   {
   public:
-    explicit Object(std::string name, IntVec2 location = IntVec2(0, 0), UintVec2 size = UintVec2(0, 0));
-    Object(std::string name, sf::IntRect dimensions);
-    virtual ~Object();
+    explicit GUIObject(std::string name, IntVec2 location = IntVec2(0, 0), UintVec2 size = UintVec2(0, 0));
+    GUIObject(std::string name, sf::IntRect dimensions);
+    virtual ~GUIObject();
 
     std::string getName();
 
@@ -111,7 +110,7 @@ namespace metagui
     /// @param z_order  Z-order to put this child at. If omitted, uses the
     ///                 highest Z-order currently in the map, plus one.
     /// @return A pointer to the child added.
-    Object* addChild(std::unique_ptr<Object> child,
+    GUIObject* addChild(std::unique_ptr<GUIObject> child,
                      uint32_t z_order);
 
     /// Add a child GUIObject underneath this one.
@@ -121,7 +120,7 @@ namespace metagui
     /// @param child    std::unique_ptr to child to add.
     ///
     /// @return A pointer to the child added.
-    Object* addChild(std::unique_ptr<Object> child);
+    GUIObject* addChild(std::unique_ptr<GUIObject> child);
 
     /// Add a child GUIObject underneath this one.
     /// *This GUIObject assumes ownership of the child.*
@@ -132,7 +131,7 @@ namespace metagui
     template< typename T >
     T* addChild(T* child, uint32_t z_order)
     {
-      std::unique_ptr<Object> child_ptr(child);
+      std::unique_ptr<GUIObject> child_ptr(child);
       return dynamic_cast<T*>(addChild(std::move(child_ptr), z_order));
     }
 
@@ -146,7 +145,7 @@ namespace metagui
     template< typename T >
     T* addChild(T* child)
     {
-      std::unique_ptr<Object> child_ptr(child);
+      std::unique_ptr<GUIObject> child_ptr(child);
       return dynamic_cast<T*>(addChild(std::move(child_ptr)));
     }
 
@@ -157,7 +156,7 @@ namespace metagui
     /// @param child    std::unique_ptr to child to add.
     ///
     /// @return A pointer to the child added.
-    Object* addChildTop(std::unique_ptr<Object> child);
+    GUIObject* addChildTop(std::unique_ptr<GUIObject> child);
 
     /// Add a child GUIObject underneath this one.
     /// *This GUIObject assumes ownership of the child.*
@@ -169,7 +168,7 @@ namespace metagui
     template< typename T >
     T* addChildTop(T* child)
     {
-      std::unique_ptr<Object> child_ptr(child);
+      std::unique_ptr<GUIObject> child_ptr(child);
       return dynamic_cast<T*>(addChildTop(std::move(child_ptr)));
     }
 
@@ -226,13 +225,13 @@ namespace metagui
 
     bool childExists(std::string name);
 
-    Object& getChild(std::string name);
+    GUIObject& getChild(std::string name);
 
     /// Remove the child object with the given name, if it exists.
     /// @param name   Name of the child object to remove.
     /// @return Pointer to the removed object if it existed,
     ///         empty unique_ptr otherwise.
-    std::unique_ptr<Object> removeChild(std::string name);
+    std::unique_ptr<GUIObject> removeChild(std::string name);
 
     /// Get lowest Z-order of all this object's children.
     /// If no children are present, returns zero.
@@ -243,7 +242,7 @@ namespace metagui
     uint32_t getHighestChildZOrder();
 
     template< typename ...args >
-    void visitChildren(std::function<void(Object&, args...)> functor)
+    void visitChildren(std::function<void(GUIObject&, args...)> functor)
     {
       for (auto& child_pair : children)
       {
@@ -313,9 +312,9 @@ namespace metagui
     virtual std::unordered_set<EventID> registeredEvents() const override;
 
   protected:
-    Object* getParent();
+    GUIObject* getParent();
 
-    void setParent(Object* parent);
+    void setParent(GUIObject* parent);
 
     /// Redraw this object on its own background texture.
     void draw(int frame);
@@ -367,7 +366,11 @@ namespace metagui
     /// The default behavior is to do nothing.
     virtual void handleParentSizeChanged_(UintVec2 parent_size);
 
-    virtual EventResult onEvent_(Event const& event);
+    virtual EventResult onEvent_NVI(Event const& event) override final;
+
+    virtual bool onEvent_NVI_PreChildren(Event const& event);
+
+    virtual bool onEvent_NVI_PostChildren(Event const& event);
 
     /// Subscribe to parent events that all objects care about.
     void subscribeToParentEvents(Subject const& parent, int priority);
@@ -383,7 +386,7 @@ namespace metagui
     std::string m_name;
 
     /// The parent of this object. Set to nullptr if the object has no parent.
-    Object* m_parent;
+    GUIObject* m_parent;
 
     /// Boolean indicating whether this object has the focus.
     /// Focus is handled differently and NOT put into m_flags because of
@@ -441,7 +444,7 @@ namespace metagui
     BoolMap m_flags;
 
     /// Map that owns the child elements.
-    std::unordered_map< std::string, std::unique_ptr<Object> > m_children;
+    std::unordered_map< std::string, std::unique_ptr<GUIObject> > m_children;
 
     /// Multimap that associates child elements with Z-orders.
     std::multimap< uint32_t, std::string > m_zorder_map;

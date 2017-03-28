@@ -8,7 +8,7 @@
 namespace metagui
 {
   class ResizeHandle :
-    public Object, public ObjectVisitable<ResizeHandle>
+    public GUIObject, public GUIObjectVisitable<ResizeHandle>
   {
     friend class Window;
 

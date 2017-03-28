@@ -25,10 +25,10 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionWear::do_prebegin_work_(AnyMap& params)
+  StateResult ActionWear::doPreBeginWorkNVI(AnyMap& params)
   {
-    auto subject = get_subject();
-    auto object = get_object();
+    auto subject = getSubject();
+    auto object = getObject();
 
     auto bodypart = object->is_equippable_on();
 
@@ -47,10 +47,10 @@ namespace Actions
     return StateResult::Success();
   }
 
-  StateResult ActionWear::do_begin_work_(AnyMap& params)
+  StateResult ActionWear::doBeginWorkNVI(AnyMap& params)
   {
-    auto subject = get_subject();
-    auto object = get_object();
+    auto subject = getSubject();
+    auto object = getObject();
 
     // Do the action here.
     if (object->be_object_of(*this, subject) == ActionResult::Success)
@@ -62,10 +62,10 @@ namespace Actions
     return StateResult::Failure();
   }
 
-  StateResult ActionWear::do_finish_work_(AnyMap& params)
+  StateResult ActionWear::doFinishWorkNVI(AnyMap& params)
   {
-    auto subject = get_subject();
-    auto object = get_object();
+    auto subject = getSubject();
+    auto object = getObject();
 
     std::string bodypart_desc =
       subject->get_bodypart_description(m_body_location);
@@ -76,7 +76,7 @@ namespace Actions
     return StateResult::Success();
   }
 
-  StateResult ActionWear::do_abort_work_(AnyMap& params)
+  StateResult ActionWear::doAbortWorkNVI(AnyMap& params)
   {
     return StateResult::Success();
   }

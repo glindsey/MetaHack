@@ -24,13 +24,13 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionWait::do_prebegin_work_(AnyMap& params)
+  StateResult ActionWait::doPreBeginWorkNVI(AnyMap& params)
   {
     // We can always wait.
     return StateResult::Success();
   }
 
-  StateResult ActionWait::do_begin_work_(AnyMap& params)
+  StateResult ActionWait::doBeginWorkNVI(AnyMap& params)
   {
     /// @todo Handle a variable amount of time.
     std::string message = maketr("YOU_VERB_FOR_X_TIME", { std::to_string(1) });
@@ -39,12 +39,12 @@ namespace Actions
     return{ true, 1 };
   }
 
-  StateResult ActionWait::do_finish_work_(AnyMap& params)
+  StateResult ActionWait::doFinishWorkNVI(AnyMap& params)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionWait::do_abort_work_(AnyMap& params)
+  StateResult ActionWait::doAbortWorkNVI(AnyMap& params)
   {
     return StateResult::Success();
   }

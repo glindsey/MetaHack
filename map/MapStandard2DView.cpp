@@ -26,7 +26,7 @@ MapStandard2DView::MapStandard2DView(std::string name, Map& map, UintVec2 size, 
 
 void MapStandard2DView::update_tiles(EntityId viewer)
 {
-  auto& map = get_map();
+  auto& map = getMap();
   auto& map_size = map.getSize();
 
   static RealVec2 position;
@@ -46,7 +46,7 @@ void MapStandard2DView::update_tiles(EntityId viewer)
 
 void MapStandard2DView::update_things(EntityId viewer, int frame)
 {
-  auto& map = get_map();
+  auto& map = getMap();
   auto& map_size = map.getSize();
 
   // Loop through and draw entities.
@@ -123,7 +123,7 @@ void MapStandard2DView::drawPreChildren_(sf::RenderTexture & texture, int frame)
 
 void MapStandard2DView::reset_cached_render_data()
 {
-  auto& map = get_map();
+  auto& map = getMap();
   auto map_size = map.getSize();
 
   // Create vertices:
@@ -142,7 +142,7 @@ void MapStandard2DView::reset_cached_render_data()
   m_thing_vertices.setPrimitiveType(sf::PrimitiveType::Quads);
 }
 
-EventResult MapStandard2DView::onEvent_(Event const & event)
+bool MapStandard2DView::onEvent_NVI_PreChildren(Event const & event)
 {
-  return{ EventHandled::Yes, ContinueBroadcasting::Yes };
+  return true;
 }

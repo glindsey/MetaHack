@@ -9,7 +9,7 @@
 
 MapView::MapView(std::string name, Map& map, UintVec2 size)
   :
-  metagui::Object(name, { 0, 0 }, size),
+  metagui::GUIObject(name, { 0, 0 }, size),
   m_map(map)
 {
   //startObserving(map);
@@ -37,7 +37,7 @@ void MapView::set_view(sf::RenderTarget & target, RealVec2 center, float zoom_le
   target.setView(sf::View(rect));
 }
 
-Map& MapView::get_map()
+Map& MapView::getMap()
 {
   return m_map;
 }

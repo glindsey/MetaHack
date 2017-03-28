@@ -29,23 +29,23 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionTurn::do_prebegin_work_(AnyMap& params)
+  StateResult ActionTurn::doPreBeginWorkNVI(AnyMap& params)
   {
     // All checks handled in Action class via traits.
     return StateResult::Success();
   }
 
   /// @todo Implement me.
-  StateResult ActionTurn::do_begin_work_(AnyMap& params)
+  StateResult ActionTurn::doBeginWorkNVI(AnyMap& params)
   {
     StateResult result = StateResult::Failure();
 
     std::string message;
 
-    auto subject = get_subject();
+    auto subject = getSubject();
     EntityId location = subject->getLocation();
     MapTile* current_tile = subject->get_maptile();
-    Direction new_direction = get_target_direction();
+    Direction new_direction = getTargetDirection();
 
     if ((new_direction != Direction::Up) &&
       (new_direction != Direction::Down))
@@ -57,12 +57,12 @@ namespace Actions
     return result;
   }
 
-  StateResult ActionTurn::do_finish_work_(AnyMap& params)
+  StateResult ActionTurn::doFinishWorkNVI(AnyMap& params)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionTurn::do_abort_work_(AnyMap& params)
+  StateResult ActionTurn::doAbortWorkNVI(AnyMap& params)
   {
     return StateResult::Success();
   }

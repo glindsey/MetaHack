@@ -2,19 +2,27 @@
 
 #include "GUIDesktop.h"
 
+#include "design_patterns/Subject.h"
 #include "game/App.h"
 #include "services/IConfigSettings.h"
 #include "Service.h"
 
 namespace metagui
 {
-  Desktop::Desktop(std::string name, UintVec2 size)
+  Desktop::Desktop(Subject& event_parent,
+                   std::string name, 
+                   UintVec2 size)
     :
-    Object(name, IntVec2(0, 0), size)
-  {}
+    GUIObject{ name, IntVec2(0, 0), size },
+    m_event_parent{ event_parent }
+  {
+    m_event_parent.addObserver(*this, EventID::All);
+  }
 
   Desktop::~Desktop()
-  {}
+  {
+    m_event_parent.removeObserver(*this, EventID::All);
+  }
 
   SFMLEventResult Desktop::handle_sfml_event(sf::Event & sfml_event)
   {
@@ -136,6 +144,13 @@ namespace metagui
     }
 
     return sfml_result;
+  }
+
+  std::unordered_set<EventID> Desktop::registeredEvents() const
+  {
+    auto events = Object::registeredEvents();
+    /// @todo Add generated and propogated events here.
+    return events;
   }
 
   // === PROTECTED METHODS ======================================================

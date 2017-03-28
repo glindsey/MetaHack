@@ -42,7 +42,7 @@ namespace LuaEntityFunctions
       if (success && (num_args > 2))
       {
         unsigned int quantity = static_cast<unsigned int>(lua_tointeger(L, 3));
-        new_thing->set_quantity(quantity);
+        new_thing->setQuantity(quantity);
       }
     }
 
@@ -148,7 +148,7 @@ namespace LuaEntityFunctions
     }
 
     EntityId entity = EntityId(lua_tointeger(L, 1));
-    std::string result = entity->get_type();
+    std::string result = entity->getType();
     lua_pushstring(L, result.c_str());
 
     return 1;
@@ -238,7 +238,7 @@ namespace LuaEntityFunctions
       }
     }
 
-    new_action->set_objects(objects);
+    new_action->setObjects(objects);
     entity->queue_action(std::move(new_action));
 
     return 1;
@@ -275,8 +275,8 @@ namespace LuaEntityFunctions
       }
     }
 
-    new_action->set_target(target);
-    new_action->set_objects(objects);
+    new_action->setTarget(target);
+    new_action->setObjects(objects);
     entity->queue_action(std::move(new_action));
 
     return 1;
@@ -316,8 +316,8 @@ namespace LuaEntityFunctions
       }
     }
 
-    new_action->set_target(direction);
-    new_action->set_objects(objects);
+    new_action->setTarget(direction);
+    new_action->setObjects(objects);
     entity->queue_action(std::move(new_action));
 
     return 1;

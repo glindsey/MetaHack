@@ -150,7 +150,7 @@ void InventoryArea::drawContents_(sf::RenderTexture& texture, int frame)
     std::stringstream item_name;
     if (selection_order == 1)
     {
-      unsigned int max_quantity = entity->get_quantity();
+      unsigned int max_quantity = entity->getQuantity();
       unsigned int selected_quantity = m_inventory_selection.get_selected_quantity();
       if ((max_quantity > 1) && (selected_quantity < max_quantity))
       {
@@ -200,10 +200,10 @@ void InventoryArea::drawContents_(sf::RenderTexture& texture, int frame)
   return;
 }
 
-EventResult InventoryArea::onEvent_(Event const & event)
+bool InventoryArea::onEvent_NVI_PreChildren(Event const & event)
 {
   /// @todo Flesh this out a bit more.
   ///       Right now we just set the "dirty" flag for the view so it is redrawn.
   flagForRedraw();
-  return{ EventHandled::Yes, ContinueBroadcasting::Yes };
+  return true;
 }

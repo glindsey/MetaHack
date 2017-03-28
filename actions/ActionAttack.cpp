@@ -29,13 +29,13 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionAttack::do_prebegin_work_(AnyMap& params)
+  StateResult ActionAttack::doPreBeginWorkNVI(AnyMap& params)
   {
     std::string message;
 
-    auto subject = get_subject();
+    auto subject = getSubject();
     auto location = subject->getLocation();
-    auto new_direction = get_target_direction();
+    auto new_direction = getTargetDirection();
 
     // Check if we're attacking ourself.
     if (new_direction == Direction::Self)
@@ -65,14 +65,14 @@ namespace Actions
     return StateResult::Success();
   }
 
-  StateResult ActionAttack::do_begin_work_(AnyMap& params)
+  StateResult ActionAttack::doBeginWorkNVI(AnyMap& params)
   {
     std::string message;
 
-    auto subject = get_subject();
+    auto subject = getSubject();
     auto location = subject->getLocation();
     MapTile* current_tile = subject->get_maptile();
-    auto new_direction = get_target_direction();
+    auto new_direction = getTargetDirection();
 
     bool success = false;
     unsigned int action_time = 0;
@@ -99,7 +99,7 @@ namespace Actions
 
     // See if the tile to move into contains another creature.
     auto object = new_floor->get_inventory().getEntity();
-    set_object(object);
+    setObject(object);
     if (object == EntityId::Mu())
     {
       /// @todo Deal with attacking other stuff, MapTiles, etc.
@@ -121,12 +121,12 @@ namespace Actions
     return{ success, action_time };
   }
 
-  StateResult ActionAttack::do_finish_work_(AnyMap& params)
+  StateResult ActionAttack::doFinishWorkNVI(AnyMap& params)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionAttack::do_abort_work_(AnyMap& params)
+  StateResult ActionAttack::doAbortWorkNVI(AnyMap& params)
   {
     return StateResult::Success();
   }

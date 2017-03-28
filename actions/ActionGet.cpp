@@ -27,11 +27,11 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionGet::do_prebegin_work_(AnyMap& params)
+  StateResult ActionGet::doPreBeginWorkNVI(AnyMap& params)
   {
     std::string message;
-    auto subject = get_subject();
-    auto object = get_object();
+    auto subject = getSubject();
+    auto object = getObject();
     EntityId location = subject->getLocation();
 
     // Verify that the Action has an object.
@@ -54,13 +54,13 @@ namespace Actions
     return StateResult::Success();
   }
 
-  StateResult ActionGet::do_begin_work_(AnyMap& params)
+  StateResult ActionGet::doBeginWorkNVI(AnyMap& params)
   {
     /// @todo Handle getting a certain quantity of an item.
     StateResult result = StateResult::Failure();
     std::string message;
-    auto subject = get_subject();
-    auto object = get_object();
+    auto subject = getSubject();
+    auto object = getObject();
 
     if (object->be_object_of(*this, subject) == ActionResult::Success)
     {
@@ -84,12 +84,12 @@ namespace Actions
     return result;
   }
 
-  StateResult ActionGet::do_finish_work_(AnyMap& params)
+  StateResult ActionGet::doFinishWorkNVI(AnyMap& params)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionGet::do_abort_work_(AnyMap& params)
+  StateResult ActionGet::doAbortWorkNVI(AnyMap& params)
   {
     return StateResult::Success();
   }

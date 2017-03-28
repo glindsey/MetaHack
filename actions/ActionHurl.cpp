@@ -26,30 +26,30 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionHurl::do_prebegin_work_(AnyMap& params)
+  StateResult ActionHurl::doPreBeginWorkNVI(AnyMap& params)
   {
     std::string message;
-    auto subject = get_subject();
-    auto object = get_object();
-    auto new_direction = get_target_direction();
+    auto subject = getSubject();
+    auto object = getObject();
+    auto new_direction = getTargetDirection();
 
     return StateResult::Success();
   }
 
-  StateResult ActionHurl::do_begin_work_(AnyMap& params)
+  StateResult ActionHurl::doBeginWorkNVI(AnyMap& params)
   {
     auto result = StateResult::Failure();
     std::string message;
-    auto subject = get_subject();
-    auto object = get_object();
-    auto direction = get_target_direction();
+    auto subject = getSubject();
+    auto object = getObject();
+    auto direction = getTargetDirection();
     EntityId new_location = subject->getLocation();
 
     if (object->be_object_of(*this, subject, direction) == ActionResult::Success)
     {
       if (object->move_into(new_location))
       {
-        print_message_do_();
+        printMessageDo();
 
         /// @todo When throwing, set Entity's direction and velocity
         /// @todo Figure out action time.
@@ -68,12 +68,12 @@ namespace Actions
     return result;
   }
 
-  StateResult ActionHurl::do_finish_work_(AnyMap& params)
+  StateResult ActionHurl::doFinishWorkNVI(AnyMap& params)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionHurl::do_abort_work_(AnyMap& params)
+  StateResult ActionHurl::doAbortWorkNVI(AnyMap& params)
   {
     return StateResult::Success();
   }

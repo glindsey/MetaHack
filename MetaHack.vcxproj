@@ -99,11 +99,15 @@
     <LibraryPath>C:\Personal\projects\MetaHack\lib\win32;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
+    <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>$(SolutionDir);$(SolutionDir)third_party;$(SolutionDir)design_patterns;$(SolutionDir)include;$(SolutionDir)gui;C:\personal\libraries\x64\SFML-2.3.2\include;C:\personal\libraries\x64\luajit-2.0\src;C:\personal\libraries\boost64-1.61.0-vs2015\include\boost-1_61;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
     <LibraryPath>C:\Personal\projects\MetaHack\lib\x64;$(LibraryPath)</LibraryPath>
+    <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -111,25 +115,31 @@
     <LibraryPath>C:\Personal\projects\MetaHack\lib\win32;$(LibraryPath)</LibraryPath>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>C:\Personal\projects\MetaHack\include;C:\Personal\projects\MetaHack\gui;C:\Personal\projects\MetaHack\src\impl;C:\personal\libraries\x64\SFML-2.3.2\include;C:\personal\libraries\x64\luajit-2.0\src;C:\personal\libraries\boost64-1.61.0-vs2015\include\boost-1_61;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
     <LibraryPath>C:\Personal\projects\MetaHack\lib\x64;$(LibraryPath)</LibraryPath>
+    <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>$(SolutionDir);$(SolutionDir)third_party;$(SolutionDir)design_patterns;$(SolutionDir)include;$(SolutionDir)gui;C:\personal\libraries\win32\SFML-2.3.2\include;C:\personal\libraries\win32\luajit-2.0\src;C:\personal\libraries\boost-1.61.0-vs2015\include\boost-1_61;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
     <LibraryPath>C:\Personal\projects\MetaHack\lib\win32;$(LibraryPath)</LibraryPath>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>$(SolutionDir);$(SolutionDir)third_party;$(SolutionDir)design_patterns;$(SolutionDir)include;$(SolutionDir)gui;C:\personal\libraries\x64\SFML-2.3.2\include;C:\personal\libraries\x64\luajit-2.0\src;C:\personal\libraries\boost64-1.61.0-vs2015\include\boost-1_61;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
     <LibraryPath>C:\Personal\projects\MetaHack\lib\x64;$(LibraryPath)</LibraryPath>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -144,6 +154,8 @@
       <MinimalRebuild>false</MinimalRebuild>
       <DisableSpecificWarnings>4065</DisableSpecificWarnings>
       <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
+      <EnablePREfast>false</EnablePREfast>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -165,6 +177,8 @@
       <MinimalRebuild>false</MinimalRebuild>
       <DisableSpecificWarnings>4065</DisableSpecificWarnings>
       <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
+      <EnablePREfast>false</EnablePREfast>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -185,6 +199,8 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <MinimalRebuild>false</MinimalRebuild>
       <DisableSpecificWarnings>4065</DisableSpecificWarnings>
+      <EnablePREfast>false</EnablePREfast>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -205,6 +221,8 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <MinimalRebuild>false</MinimalRebuild>
       <DisableSpecificWarnings>4065</DisableSpecificWarnings>
+      <EnablePREfast>false</EnablePREfast>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -233,6 +251,7 @@
       <DisableSpecificWarnings>4065</DisableSpecificWarnings>
       <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
       <CallingConvention>FastCall</CallingConvention>
+      <EnablePREfast>false</EnablePREfast>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -240,7 +259,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>sfml-graphics.lib;sfml-system.lib;sfml-window.lib;lua51.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+      <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -263,6 +282,7 @@
       <DisableSpecificWarnings>4065</DisableSpecificWarnings>
       <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
       <CallingConvention>FastCall</CallingConvention>
+      <EnablePREfast>false</EnablePREfast>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -270,7 +290,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>sfml-graphics.lib;sfml-system.lib;sfml-window.lib;lua51.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+      <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -305,6 +325,7 @@
     <ClInclude Include="actions\ActionWield.h" />
     <ClInclude Include="design_patterns\AssertHelper.h" />
     <ClInclude Include="design_patterns\Event.h" />
+    <ClInclude Include="design_patterns\Object.h" />
     <ClInclude Include="design_patterns\Observer.h" />
     <ClInclude Include="design_patterns\Serializable.h" />
     <ClInclude Include="design_patterns\Service.h" />

@@ -152,7 +152,7 @@ unsigned int InventorySelection::get_max_quantity() const
     }
     else
     {
-      result = entity->get_quantity();
+      result = entity->getQuantity();
     }
   }
 

@@ -23,10 +23,10 @@ namespace Actions
     virtual std::unordered_set<Trait> const& getTraits() const override;
 
   protected:
-    virtual StateResult do_prebegin_work_(AnyMap& params) override;
-    virtual StateResult do_begin_work_(AnyMap& params) override;
-    virtual StateResult do_finish_work_(AnyMap& params) override;
-    virtual StateResult do_abort_work_(AnyMap& params) override;
+    virtual StateResult doPreBeginWorkNVI(AnyMap& params) override;
+    virtual StateResult doBeginWorkNVI(AnyMap& params) override;
+    virtual StateResult doFinishWorkNVI(AnyMap& params) override;
+    virtual StateResult doAbortWorkNVI(AnyMap& params) override;
   };
 
 } // end namespace

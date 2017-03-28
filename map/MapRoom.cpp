@@ -78,8 +78,8 @@ MapRoom::MapRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
       throw MapFeatureException("Invalid direction passed to MapRoom constructor");
     }
 
-    if ((get_map().is_in_bounds({ rect.left - 1, rect.top - 1 })) &&
-        (get_map().is_in_bounds({ rect.left + rect.width, rect.top + rect.height })))
+    if ((getMap().is_in_bounds({ rect.left - 1, rect.top - 1 })) &&
+        (getMap().is_in_bounds({ rect.left + rect.width, rect.top + rect.height })))
     {
       bool okay = true;
 
@@ -115,7 +115,7 @@ MapRoom::MapRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
 
         /// @todo Put either a door or an open area at the starting coords.
         ///       Right now we just make it an open area.
-        auto& startTile = get_map().get_tile(starting_coords);
+        auto& startTile = getMap().get_tile(starting_coords);
         startTile.set_tile_type(floor_type);
 
         return;

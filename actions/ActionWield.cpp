@@ -29,11 +29,11 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionWield::do_prebegin_work_(AnyMap& params)
+  StateResult ActionWield::doPreBeginWorkNVI(AnyMap& params)
   {
     std::string message;
-    auto subject = get_subject();
-    auto object = get_object();
+    auto subject = getSubject();
+    auto object = getObject();
 
     /// @todo Support wielding in other hand(s). This will also include
     ///       shifting an already-wielded weapon to another hand.
@@ -63,7 +63,7 @@ namespace Actions
     // Check that we have hands capable of wielding anything.
     if (subject->get_bodypart_number(BodyPart::Hand).as<uint32_t>() == 0)
     {
-      print_message_try_();
+      printMessageTry();
 
       message = maketr("YOU_HAVE_NO_GRASPING_LIMBS");
       Service<IMessageLog>::get().add(message);
@@ -74,13 +74,13 @@ namespace Actions
     return StateResult::Success();
   }
 
-  StateResult ActionWield::do_begin_work_(AnyMap& params)
+  StateResult ActionWield::doBeginWorkNVI(AnyMap& params)
   {
     /// @todo Wielding should take time -- should not be instantaneously done here.
-    auto subject = get_subject();
-    auto object = get_object();
+    auto subject = getSubject();
+    auto object = getObject();
 
-    print_message_begin_();
+    printMessageBegin();
 
     // If we HAVE a new item, try to wield it.
     if (object->be_object_of(*this, subject) == ActionResult::Success)
@@ -92,10 +92,10 @@ namespace Actions
     return StateResult::Failure();
   }
 
-  StateResult ActionWield::do_finish_work_(AnyMap& params)
+  StateResult ActionWield::doFinishWorkNVI(AnyMap& params)
   {
-    auto subject = get_subject();
-    auto object = get_object();
+    auto subject = getSubject();
+    auto object = getObject();
     std::string bodypart_desc =
       subject->get_bodypart_description(m_body_location);
 
@@ -105,7 +105,7 @@ namespace Actions
     return StateResult::Success();
   }
 
-  StateResult ActionWield::do_abort_work_(AnyMap& params)
+  StateResult ActionWield::doAbortWorkNVI(AnyMap& params)
   {
     return StateResult::Success();
   }

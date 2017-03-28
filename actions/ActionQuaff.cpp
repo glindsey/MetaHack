@@ -28,19 +28,19 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionQuaff::do_prebegin_work_(AnyMap& params)
+  StateResult ActionQuaff::doPreBeginWorkNVI(AnyMap& params)
   {
     // All checks handled by Action class via traits.
     return StateResult::Success();
   }
 
-  StateResult ActionQuaff::do_begin_work_(AnyMap& params)
+  StateResult ActionQuaff::doBeginWorkNVI(AnyMap& params)
   {
-    auto subject = get_subject();
-    auto object = get_object();
+    auto subject = getSubject();
+    auto object = getObject();
     auto contents = object->get_inventory()[INVSLOT_ZERO];
 
-    print_message_begin_();
+    printMessageBegin();
 
     // Do the drinking action here.
     /// @todo We drink from the object, but it's what is inside that is
@@ -62,7 +62,7 @@ namespace Actions
         return StateResult::Success();
 
       case ActionResult::Failure:
-        print_message_stop_();
+        printMessageStop();
         return StateResult::Failure();
 
       default:
@@ -71,17 +71,17 @@ namespace Actions
     }
   }
 
-  StateResult ActionQuaff::do_finish_work_(AnyMap& params)
+  StateResult ActionQuaff::doFinishWorkNVI(AnyMap& params)
   {
-    auto object = get_object();
+    auto object = getObject();
 
-    print_message_finish_();
+    printMessageFinish();
     return StateResult::Success();
   }
 
-  StateResult ActionQuaff::do_abort_work_(AnyMap& params)
+  StateResult ActionQuaff::doAbortWorkNVI(AnyMap& params)
   {
-    print_message_stop_();
+    printMessageStop();
     return StateResult::Success();
   }
 } // end namespace

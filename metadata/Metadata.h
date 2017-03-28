@@ -19,7 +19,7 @@ public:
 
   MetadataCollection& get_metadata_collection();
 
-  std::string const& get_type() const;
+  std::string const& getType() const;
 
   UintVec2 get_tile_coords() const;
 

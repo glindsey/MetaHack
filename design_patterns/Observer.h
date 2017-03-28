@@ -11,7 +11,7 @@ class Event;
 enum class EventHandled { No, Yes };
 enum class ContinueBroadcasting { No, Yes };
 
-/// Return status struct for onEvent_().
+/// Return status struct for onEvent_NVI().
 struct EventResult
 {
   EventHandled event_handled;
@@ -31,7 +31,7 @@ public:
 protected:
   bool onEvent(Event const& event);
 
-  virtual EventResult onEvent_(Event const& event) = 0;
+  virtual EventResult onEvent_NVI(Event const& event) = 0;
 
 private:
   class Impl;

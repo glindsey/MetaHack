@@ -28,7 +28,7 @@ namespace StringTransforms
     return os;
   }
 
-  std::string make_string(EntityId subject, EntityId object, std::string pattern, std::vector<std::string> optional_strings)
+  std::string makeString(EntityId subject, EntityId object, std::string pattern, std::vector<std::string> optional_strings)
   {
     std::string new_string = replace_tokens(pattern,
                                             [&](std::string token) -> std::string
@@ -177,9 +177,9 @@ namespace StringTransforms
     return new_string;
   }
 
-  std::string make_string(EntityId subject, EntityId object, std::string pattern)
+  std::string makeString(EntityId subject, EntityId object, std::string pattern)
   {
-    return make_string(subject, object, pattern, {});
+    return makeString(subject, object, pattern, {});
   }
 
   std::string make_string_numerical_tokens_only(std::string pattern, std::vector<std::string> optional_strings)
@@ -235,12 +235,12 @@ namespace StringTransforms
 
   std::string maketr(EntityId subject, EntityId object, std::string key)
   {
-    return make_string(subject, object, tr(key), {});
+    return makeString(subject, object, tr(key), {});
   }
 
   std::string maketr(EntityId subject, EntityId object, std::string key, std::vector<std::string> optional_strings)
   {
-    return make_string(subject, object, tr(key), optional_strings);
+    return makeString(subject, object, tr(key), optional_strings);
   }
 
   /// Find all occurrence of tokens, e.g. `$xxx` or `$(xxx?yyy:zzz)`.

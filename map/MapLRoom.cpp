@@ -98,10 +98,10 @@ MapLRoom::MapLRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
       throw MapFeatureException("Invalid direction passed to MapLRoom constructor");
     }
 
-    if ((get_map().is_in_bounds({ vert_rect.left - 1, vert_rect.top - 1 })) &&
-        (get_map().is_in_bounds({ vert_rect.left + vert_rect.width, vert_rect.top + vert_rect.height })) &&
-        (get_map().is_in_bounds({ horiz_rect.left - 1,horiz_rect.top - 1 })) &&
-        (get_map().is_in_bounds({ horiz_rect.left + horiz_rect.width, horiz_rect.top + horiz_rect.height })))
+    if ((getMap().is_in_bounds({ vert_rect.left - 1, vert_rect.top - 1 })) &&
+        (getMap().is_in_bounds({ vert_rect.left + vert_rect.width, vert_rect.top + vert_rect.height })) &&
+        (getMap().is_in_bounds({ horiz_rect.left - 1,horiz_rect.top - 1 })) &&
+        (getMap().is_in_bounds({ horiz_rect.left + horiz_rect.width, horiz_rect.top + horiz_rect.height })))
     {
       bool okay = true;
 
@@ -169,7 +169,7 @@ MapLRoom::MapLRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
 
         /// @todo Put either a door or an open area at the starting coords.
         ///       Right now we just make it an open area.
-        auto& startTile = get_map().get_tile(starting_coords);
+        auto& startTile = getMap().get_tile(starting_coords);
         startTile.set_tile_type(floor_type);
 
         return;
