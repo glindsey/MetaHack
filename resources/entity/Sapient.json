@@ -1,0 +1,24 @@
+{
+  "parent": "Animal",
+
+  "intrinsics": {
+    "name": "[Sapient]",
+    "plural": "[Sapients]",
+    "brief_description": "An animal that is capable of free will and independent thought.",
+
+    "can": {
+      "close": true,
+      "disrobe": true,
+      "lock": true,
+      "mix": true,
+      "open": true,
+      "shoot": true,
+      "talk": true,
+      "unlock": true,
+      "unwield": true,
+      "use": true,
+      "wear": true,
+      "wield": true
+    }
+  }
+}

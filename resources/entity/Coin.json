@@ -1,0 +1,13 @@
+{
+  "parent": "Entity",
+
+  "intrinsics": {
+    "name": "[Coin]",
+    "plural": "[Coins]",
+    "brief_description": "A flat, typically round piece of metal with an official stamp, used as money.",
+
+    "physical": {
+      "mass": 1
+    }
+  }
+}

@@ -80,7 +80,7 @@ function inheritsFrom(baseClass, className)
     -- Add the default intrinsics table if it doesn't exist.
     new_class.intrinsics = new_class.intrinsics or {}
     
-    if nil ~= baseClass then	
+    if nil ~= baseClass then
         -- Do a deep copy of the base class, for starters.
         new_class = table.deepcopy(baseClass)
     

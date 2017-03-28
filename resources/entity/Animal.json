@@ -1,0 +1,24 @@
+{
+  "parent": "DynamicEntity",
+
+  "intrinsics": {
+    "name": "[Animal]",
+    "plural": "[Animal]",
+    "brief_description": "A living organism that feeds on organic matter, typically having specialized sense organs and nervous system and able to respond rapidly to stimuli.",
+
+    "can": {
+      "attack": true,
+      "drink": true,
+      "drop": true,
+      "eat": true,
+      "get": true,
+      "hear": true,
+      "move": true,
+      "remove": true,
+      "see": true,
+      "smell": true,
+      "store": true,
+      "turn": true
+    }
+  }
+}

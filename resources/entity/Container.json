@@ -1,0 +1,16 @@
+{
+  "parent": "Entity",
+
+  "intrinsics": {
+    "name": "[Container]",
+    "plural": "[Containers]",
+    "brief_description": "An object that can be used to hold or transport something.",
+
+    "inventory_size": -1,
+
+    "can_be_object_of": {
+      "close": true,
+      "open": true
+    }
+  }
+}

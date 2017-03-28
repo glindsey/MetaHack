@@ -1,0 +1,30 @@
+{
+  "parent": "",
+
+  "intrinsics": {
+    "name": "[GameObject]",
+    "plural": "[GameObjects]",
+    "brief_description": "function",
+    "inventory_size": 0,
+    "living": false,
+    "passable": false,
+    "opacity": {
+      "r": 255,
+      "g": 255,
+      "b": 255
+    },
+    "tile": {
+      "character": "?",
+      "bg_color": {
+        "r": 255,
+        "g": 255,
+        "b": 255
+      },
+      "fg_color": {
+        "r": 32,
+        "g": 32,
+        "b": 32
+      }
+    } 
+  }
+}

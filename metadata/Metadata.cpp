@@ -19,10 +19,33 @@ Metadata::Metadata(MetadataCollection& collection, std::string type)
 
   // Look for the various files containing this metadata.
   FileName resource_string = "resources/" + category + "/" + type;
+  FileName jsonfile_string = resource_string + ".json";
   FileName luafile_string = resource_string + ".lua";
   fs::path luafile_path = fs::path(luafile_string);
+  fs::path jsonfile_path = fs::path(jsonfile_string);
 
   std::string qualified_name = category + "!" + type;
+
+  /// Try to load this Entity's JSON metadata.
+  if (fs::exists(jsonfile_path))
+  {
+    CLOG(INFO, "Metadata") << "Loading JSON metadata for " <<
+      qualified_name;
+    
+    try
+    {
+      std::ifstream ifs(jsonfile_string);
+      m_metadata << ifs;
+    }
+    catch (std::exception& e)
+    {
+      CLOG(WARNING, "Metadata") << "Error reading " << jsonfile_string << ": " << e.what();
+    }
+  }
+  else
+  {
+    CLOG(WARNING, "Metadata") << "Can't find " << jsonfile_string;
+  }
 
   /// Try to load and run this Entity's Lua script.
   if (fs::exists(luafile_path))
@@ -34,7 +57,7 @@ Metadata::Metadata(MetadataCollection& collection, std::string type)
   }
   else
   {
-    LOG(FATAL) << "Can't find " << luafile_string;
+    CLOG(WARNING, "Metadata") << "Can't find " << luafile_string;
   }
 
   Service<IGraphicViews>::get().loadViewResourcesFor(*this);

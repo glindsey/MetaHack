@@ -14,6 +14,9 @@ public:
 
   std::string get_category();
 
+  /// Preload the collection with all metadata files contained in it.
+  void preload();
+
   Metadata& get(std::string type);
 
 protected:

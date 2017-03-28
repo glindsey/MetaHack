@@ -3,6 +3,9 @@
 
 #include "stdafx.h"
 
+#include "json.hpp"
+using json = ::nlohmann::json;
+
 // Forward declarations
 class MetadataCollection;
 class Property;
@@ -35,6 +38,9 @@ private:
 
   /// The type associated with this metadata.
   std::string m_type;
+
+  /// Property dictionary containing the metadata.
+  json m_metadata;
 };
 
 #endif // METADATA_H
