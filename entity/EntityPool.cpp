@@ -32,7 +32,7 @@ bool EntityPool::firstIsSubtypeOfSecond(std::string first, std::string second)
 {
   //CLOG(TRACE, "Entity") << "Checking if " << first << " is a subtype of " << second << "...";
 
-  std::string first_parent = m_game.getMetadataCollection("entity").get(first).get("parent");
+  std::string first_parent = m_game.getMetadataCollection("entity").get(first).get("parent", std::string());
 
   if (first_parent.empty())
   {

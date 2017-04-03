@@ -145,7 +145,7 @@ bool AppStateGameMode::initialize()
 
   // Create the player.
   EntityId player = get_game_state().getEntities().create("Human");
-  player->setProperName(config.get("player_name"));
+  player->setProperName(config.get("player-name"));
   get_game_state().setPlayer(player);
 
   // Create the game map.
@@ -250,8 +250,8 @@ void AppStateGameMode::render_map(sf::RenderTexture& texture, int frame)
         m_map_view->set_view(texture, cursor_pixel_coords, m_map_zoom_level);
         m_map_view->render_map(texture, frame);
 
-        json border_color = config.get("cursor_border_color");
-        json bg_color = config.get("cursor_bg_color");
+        json border_color = config.get("cursor-border-color");
+        json bg_color = config.get("cursor-bg-color");
         m_map_view->draw_highlight(texture,
                                    cursor_pixel_coords,
                                    Color(border_color["r"], border_color["g"], border_color["b"], 255),
@@ -432,13 +432,13 @@ bool AppStateGameMode::handle_key_press(App::EventKeyPressed const& key)
             if (slot_count > 0)
             {
               EntityId entity = m_inventory_selection->get_selected_things().at(0);
-              if (static_cast<int>(entity->getIntrinsic("inventory_size")) != 0)
+              if (static_cast<int>(entity->getIntrinsic("inventory-size", 0)) != 0)
               {
                 if (!entity->canHaveActionDoneBy(EntityId::Mu(), Actions::ActionOpen::prototype) ||
-                    entity->getModifiedProperty("open"))
+                    entity->getModifiedProperty("open", true))
                 {
                   if (!entity->canHaveActionDoneBy(EntityId::Mu(), Actions::ActionLock::prototype) ||
-                      !entity->getModifiedProperty("locked"))
+                      !entity->getModifiedProperty("locked", false))
                   {
                     m_inventory_selection->set_viewed(entity);
                   }
@@ -1013,8 +1013,8 @@ sf::IntRect AppStateGameMode::calcMessageLogDims()
   sf::IntRect messageLogDims;
   auto& config = Service<IConfigSettings>::get();
 
-  int inventory_area_width = config.get("inventory_area_width");
-  int messagelog_area_height = config.get("messagelog_area_height");
+  int inventory_area_width = config.get("inventory-area-width");
+  int messagelog_area_height = config.get("messagelog-area-height");
   messageLogDims.width = m_app_window.getSize().x - (inventory_area_width + 24);
   messageLogDims.height = messagelog_area_height - 10;
   //messageLogDims.height = static_cast<int>(m_app_window.getSize().y * 0.25f) - 10;
@@ -1054,8 +1054,8 @@ sf::IntRect AppStateGameMode::calcStatusAreaDims()
 
   statusAreaDims.width = m_app_window.getSize().x -
     (invAreaDims.width + 24);
-  statusAreaDims.height = config.get("status_area_height");
-  statusAreaDims.top = m_app_window.getSize().y - (config.get("status_area_height") + 5);
+  statusAreaDims.height = config.get("status-area-height");
+  statusAreaDims.top = m_app_window.getSize().y - (config.get("status-area-height") + 5);
   statusAreaDims.left = 12;
   return statusAreaDims;
 }
@@ -1066,7 +1066,7 @@ sf::IntRect AppStateGameMode::calcInventoryDims()
   sf::IntRect inventoryAreaDims;
   auto& config = Service<IConfigSettings>::get();
 
-  inventoryAreaDims.width = config.get("inventory_area_width");
+  inventoryAreaDims.width = config.get("inventory-area-width");
   inventoryAreaDims.height = m_app_window.getSize().y - 10;
   inventoryAreaDims.left = m_app_window.getSize().x - (inventoryAreaDims.width + 3);
   inventoryAreaDims.top = 5;

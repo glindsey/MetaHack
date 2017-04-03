@@ -26,7 +26,7 @@ EntityId MapTile::getTileContents() const
 
 std::string MapTile::getDisplayName() const
 {
-  return m_p_metadata->get("name");
+  return m_p_metadata->get("name", "MTUnknown");
 }
 
 void MapTile::setTileType(std::string type)
@@ -41,7 +41,7 @@ std::string MapTile::getTileType() const
 
 bool MapTile::isEmptySpace() const
 {
-  return m_p_metadata->get("passable");
+  return m_p_metadata->get("passable", false);
 }
 
 /// @todo: Implement this to cover different entity types.
@@ -154,7 +154,7 @@ Color MapTile::getWallLightLevel(Direction direction) const
 
 Color MapTile::getOpacity() const
 {
-  return m_p_metadata->get("opacity");
+  return m_p_metadata->get("opacity", Color::White);
 }
 
 bool MapTile::isOpaque() const
@@ -167,7 +167,7 @@ bool MapTile::isOpaque() const
 RealVec2 MapTile::getPixelCoords(IntVec2 tile)
 {
   auto& config = Service<IConfigSettings>::get();
-  float map_tile_size = config.get("map_tile_size");
+  float map_tile_size = config.get("map-tile-size");
 
   return RealVec2(static_cast<float>(tile.x) * map_tile_size,
                   static_cast<float>(tile.y) * map_tile_size);

@@ -3,21 +3,11 @@
 
   "name": "[LightSource]",
   "plural": "[LightSources]",
-  "brief_description": "A source of illumination.",
+  "description-brief": "A source of illumination.",
 
   "lit": true,
-  "light": {
-    "color": {
-      "type": "color",
-      "r": 64,
-      "g": 64,
-      "b": 64
-    },
-    "strength": 64
-  },
+  "light-color": [ "color", 64, 64, 64 ],
+  "light-strength": 64,
 
-  "can_be_object_of": {
-    "use": true
-  }
-
+  "can-be-object-of-use": true
 }

@@ -33,8 +33,8 @@ namespace metagui
     /// @todo FINISH ME. Right now this is just a dead-stupid square.
     sf::RectangleShape rect;
 
-    auto focused_color = config.get("window_focused_border_color").get<Color>();
-    auto unfocused_color = config.get("window_border_color").get<Color>();
+    auto focused_color = config.get("window-focused-border-color").get<Color>();
+    auto unfocused_color = config.get("window-border-color").get<Color>();
 
     rect.setFillColor(getParent()->getFocus() ? focused_color : unfocused_color);
     rect.setOutlineThickness(0);

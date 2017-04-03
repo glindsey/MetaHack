@@ -3,22 +3,20 @@
 
   "name": "human",
   "plural": "humans",
-  "brief_description": "A human being.",
+  "description-brief": "A human being.",
   "creatable": true,
 
-  "proper_name": "John Doe",
-  "maxhp_range": [ 6, 10 ],
+  "proper-name": "John Doe",
+  "maxhp": [ "range", 6, 10 ],
 
-  "attributes": {
-    "strength_range": [ 13, 17 ],
-    "endurance_range": [ 13, 17 ],
-    "vitality_range": [ 13, 17 ],
-    "agility_range": [ 13, 17 ],
-    "precision_range": [ 13, 17 ],
-    "intelligence_range": [ 13, 17 ],
-    "aura_range": [ 13, 17 ],
-    "charisma_range": [ 13, 17 ],
-    "vigilance_range": [ 13, 17 ],
-    "luck_range": [ 13, 17 ]
-  }
+  "attributes-strength": [ "range", 13, 17 ],
+  "attributes-endurance": [ "range", 13, 17 ],
+  "attributes-vitality": [ "range", 13, 17 ],
+  "attributes-agility": [ "range", 13, 17 ],
+  "attributes-precision": [ "range", 13, 17 ],
+  "attributes-intelligence": [ "range", 13, 17 ],
+  "attributes-aura": [ "range", 13, 17 ],
+  "attributes-charisma": [ "range", 13, 17 ],
+  "attributes-vigilance": [ "range", 13, 17 ],
+  "attributes-luck": [ "range", 13, 17 ]
 }

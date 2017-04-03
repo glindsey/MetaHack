@@ -44,7 +44,7 @@ namespace Actions
     std::string bodypart_desc = subject->getBodypartDescription(wear_location);
 
     // Check if the worn item is bound.
-    if (object->getModifiedProperty("bound"))
+    if (object->getModifiedProperty("bound", false))
     {
       std::string message;
       putMsg(makeTr("YOU_CANT_VERB_FOO_MAGICALLY_BOUND", 

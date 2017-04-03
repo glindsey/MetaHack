@@ -3,20 +3,11 @@
 
   "name": "magical lighting orb",
   "plural": "magical lighting orbs",
-  "brief_description": "A glowing orb, used for testing.",
+  "description-brief": "A glowing orb, used for testing.",
   "creatable": true,
 
-  "light": {
-    "color": {
-      "type": "color",
-      "r": 128,
-      "g": 128,
-      "b": 255
-    },
-    "strength": 128
-  },
+  "light-color": [ "color", 128, 128, 255],
+  "light-strength": 128,
 
-  "physical": {
-    "mass": 2
-  }
+  "physical-mass": 2
 }

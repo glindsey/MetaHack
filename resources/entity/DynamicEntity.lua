@@ -9,7 +9,7 @@ DynamicEntity.intrinsics.plural = "[DynamicEntities]"
 DynamicEntity.intrinsics.bodypart_body_count = 1
 DynamicEntity.intrinsics.opacity = { type = "color", r = 255, g = 255, b = 255 }
 DynamicEntity.intrinsics.living = true
-DynamicEntity.intrinsics.inventory_size = -1
+DynamicEntity.intrinsics.inventory-size = -1
 
 DynamicEntity.intrinsics.can_die = true
 

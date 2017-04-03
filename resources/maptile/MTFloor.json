@@ -3,12 +3,7 @@
 
   "name": "floor",
   "plural": "floors",
-  "brief_description": "A floor.",
+  "description-brief": "A floor.",
   "passable": true,
-  "opacity": {
-    "type": "color",
-    "r": 0,
-    "g": 0,
-    "b": 0
-  }
+  "opacity": [ "color", 0, 0, 0 ]
 }

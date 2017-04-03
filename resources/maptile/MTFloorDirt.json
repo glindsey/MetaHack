@@ -3,20 +3,8 @@
 
   "name": "dirt floor",
   "plural": "dirt floors",
-  "brief_description": "A dirt floor.",
-  "tile": {
-    "character": "?",
-    "bg_color": {
-      "type": "color",
-      "r": 0,
-      "g": 0,
-      "b": 0
-    },
-    "fg_color": {
-      "type": "color",
-      "r": 128,
-      "g": 64,
-      "b": 0
-    }
-  }
+  "description-brief": "A dirt floor.",
+  "tile-character": "?",
+  "tile-bg-color": [ "color", 0, 0, 0 ],
+  "tile-fg-color": [ "color", 128, 64, 0 ]
 }

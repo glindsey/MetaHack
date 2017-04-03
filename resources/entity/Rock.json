@@ -3,10 +3,8 @@
 
   "name": "rock",
   "plural": "rocks",
-  "brief_description": "A stone small enough to be picked up and used as a projectile.",
+  "description-brief": "A stone small enough to be picked up and used as a projectile.",
   "creatable": true,
 
-  "physical": {
-    "mass": 3
-  }
+  "physical-mass": 3
 }

@@ -17,7 +17,7 @@ protected:
 private:
   void render_attribute(sf::RenderTarget& target, 
                         std::string abbrev, 
-                        json::json_pointer name, 
+                        std::string key, 
                         RealVec2 location);
 
   std::string get_test_label();

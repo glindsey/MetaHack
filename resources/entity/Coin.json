@@ -3,9 +3,7 @@
 
   "name": "[Coin]",
   "plural": "[Coins]",
-  "brief_description": "A flat, typically round piece of metal with an official stamp, used as money.",
+  "description-brief": "A flat, typically round piece of metal with an official stamp, used as money.",
 
-  "physical": {
-    "mass": 1
-  }
+  "physical-mass": 1
 }

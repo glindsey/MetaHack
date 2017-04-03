@@ -53,7 +53,7 @@ Metadata::Metadata(MetadataCollection& collection, std::string type)
   /// Check the parent key.
   if (m_metadata.count("parent") != 0)
   {
-    std::string parentName = m_metadata["parent"].get<std::string>();
+    std::string parentName = m_metadata["parent"];
     if (parentName == type)
     {
       CLOG(FATAL, "Metadata") << qualified_name << " is defined as its own parent. What do you think this is, a Heinlein story?";
@@ -103,7 +103,7 @@ std::string const& Metadata::getType() const
 
 UintVec2 Metadata::getTileCoords() const
 {
-   auto tile_location = get("tile_location");
+  auto tile_location = get("tile-location", UintVec2(0, 0));
   return{ tile_location["x"], tile_location["y"] };
 }
 
@@ -111,34 +111,19 @@ json Metadata::get(std::string name, json default_value) const
 {
   json result = m_metadata.value(name, default_value);
 
-  if (StringTransforms::hasEnding(name, "_range") && result.is_array())
+  if (result.is_array())
   {
-    result = pick_uniform(static_cast<int>(result[0]), 
-                          static_cast<int>(result[1]));
-  }
-
-  return result;
-}
-
-json Metadata::get(json::json_pointer name, json default_value) const
-{
-  json result = m_metadata.value(name, default_value);
-
-  if (StringTransforms::hasEnding(name, "_range") && result.is_array())
-  {
-    result = pick_uniform(static_cast<int>(result[0]),
-                          static_cast<int>(result[1]));
+    if (result[0] == "range")
+    {
+      result = pick_uniform(static_cast<int>(result[0]),
+                            static_cast<int>(result[1]));
+    }
   }
 
   return result;
 }
 
 void Metadata::set(std::string name, json value)
-{
-  m_metadata[name] = value;
-}
-
-void Metadata::set(json::json_pointer name, json value)
 {
   m_metadata[name] = value;
 }

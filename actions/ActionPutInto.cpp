@@ -57,7 +57,7 @@ namespace Actions
     }
 
     // Check that the container actually IS a container.
-    if (static_cast<int>(container->getIntrinsic("inventory_size")) == 0)
+    if (static_cast<int>(container->getIntrinsic("inventory-size", 0)) == 0)
     {
       printMessageTry();
       putTr("THE_TARGET_IS_NOT_A_CONTAINER");

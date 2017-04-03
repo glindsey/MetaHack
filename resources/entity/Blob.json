@@ -3,5 +3,5 @@
 
   "name": "[Blob]",
   "plural": "[Blobs]",
-  "brief_description": "An amorphous entity with no distinguishable limbs, head, or other extremities."
+  "description-brief": "An amorphous entity with no distinguishable limbs, head, or other extremities."
 }

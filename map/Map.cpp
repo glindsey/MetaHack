@@ -337,8 +337,8 @@ void Map::addLight(EntityId source)
 
   IntVec2 coords = maptile->getCoords();
 
-  Color light_color = source->getModifiedProperty("/light/color"_json_pointer, Color::Transparent);
-  int max_depth_squared = source->getModifiedProperty("/light/strength"_json_pointer, 0);
+  Color light_color = source->getModifiedProperty("light-color", Color::Transparent);
+  int max_depth_squared = source->getModifiedProperty("light-strength", 0);
 
   /// @todo Re-implement direction.
   Direction light_direction = Direction::Up;

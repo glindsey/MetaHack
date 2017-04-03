@@ -68,16 +68,16 @@ namespace metagui
     auto& config = Service<IConfigSettings>::get();
     UintVec2 size = getSize();
 
-    float line_spacing_y = the_default_font.getLineSpacing(config.get("text_default_size"));
+    float line_spacing_y = the_default_font.getLineSpacing(config.get("text-default-size"));
 
     // Text offsets relative to the background rectangle.
-    float text_offset_x = config.get("window_text_offset_x");
-    float text_offset_y = config.get("window_text_offset_y");
+    float text_offset_x = config.get("window-text-offset_x");
+    float text_offset_y = config.get("window-text-offset_y");
 
     // Clear the target.
-    auto bg_color = config.get("window_bg_color").get<Color>();
-    auto focused_color = config.get("window_focused_border_color").get<Color>();
-    auto unfocused_color = config.get("window_border_color").get<Color>();
+    auto bg_color = config.get("window-bg-color").get<Color>();
+    auto focused_color = config.get("window-focused-border-color").get<Color>();
+    auto unfocused_color = config.get("window-border-color").get<Color>();
 
     texture.clear(bg_color);
 
@@ -85,7 +85,7 @@ namespace metagui
     drawContents_(texture, frame);
 
     // Draw the border.
-    float border_width = config.get("window_border_width");
+    float border_width = config.get("window-border-width");
     m_border_shape.setPosition(RealVec2(border_width, border_width));
     m_border_shape.setSize(RealVec2(static_cast<float>(size.x - (2 * border_width)), static_cast<float>(size.y - (2 * border_width))));
     m_border_shape.setFillColor(Color::Transparent);

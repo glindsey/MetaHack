@@ -44,7 +44,7 @@ void EntityStandard2DView::draw(sf::RenderTarget& target,
 
   auto target_coords = getLocation();
   auto target_size = getSize();
-  unsigned int tile_size = config.get("map_tile_size");
+  unsigned int tile_size = config.get("map-tile-size");
   if (target_size == RealVec2(0, 0))
   {
     target_size = { 

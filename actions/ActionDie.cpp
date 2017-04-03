@@ -47,7 +47,7 @@ namespace Actions
       }
       else
       {
-        bool living = subject->getModifiedProperty("living");
+        bool living = subject->getModifiedProperty("living", true);
         putMsg(makeTr(living ? "YOU_ARE_KILLED" : "YOU_ARE_DESTROYED"));
       }
 

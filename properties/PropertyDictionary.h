@@ -22,7 +22,6 @@ public:
 
   /// Check if a particular key exists.
   bool contains(std::string key) const;
-  bool contains(json::json_pointer key) const;
 
   /// Get a base entry from the dictionary.
   /// @param key            Key of the setting to retrieve.

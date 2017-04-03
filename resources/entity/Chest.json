@@ -3,15 +3,11 @@
 
   "name": "[Chest]",
   "plural": "[Chests]",
-  "brief_description": "A large strong box, used for storage or shipping.",
+  "description-brief": "A large strong box, used for storage or shipping.",
 
-  "inventory_size": 20,
-  "physical": {
-    "mass": 20
-  },
+  "inventory-size": 20,
+  "physical-mass": 20,
 
-  "can_be_object_of": {
-    "lock": true,
-    "unlock": true
-  }
+  "can-be-object-of-lock": true,
+  "can-be-object-of-unlock": true
 }

@@ -118,10 +118,10 @@ namespace Actions
     auto subject = getSubject();
 
     // If entity is currently busy, decrement by one and return.
-    int counter_busy = subject->getBaseProperty("counter_busy");
+    int counter_busy = subject->getBaseProperty("counter-busy", 0);
     if (counter_busy > 0)
     {
-      subject->addToBaseProperty("counter_busy", -1);
+      subject->addToBaseProperty("counter-busy", -1);
       return false;
     }
 
@@ -129,7 +129,7 @@ namespace Actions
     // target actor is busy.
     while ((pImpl->state != State::Processed) && (counter_busy == 0))
     {
-      counter_busy = subject->getBaseProperty("counter_busy");
+      counter_busy = subject->getBaseProperty("counter-busy", 0);
       StateResult result{ false, 0 };
 
       CLOG(TRACE, "Action") << "Entity #" <<
@@ -146,13 +146,13 @@ namespace Actions
           if (result.success)
           {
             // Update the busy counter.
-            pImpl->subject->setBaseProperty("counter_busy", result.elapsed_time);
+            pImpl->subject->setBaseProperty("counter-busy", result.elapsed_time);
             setState(State::PreBegin);
           }
           else
           {
             // Clear the busy counter.
-            pImpl->subject->setBaseProperty("counter_busy", 0);
+            pImpl->subject->setBaseProperty("counter-busy", 0);
             setState(State::PostFinish);
           }
           break;
@@ -165,13 +165,13 @@ namespace Actions
           if (result.success)
           {
             // Update the busy counter.
-            pImpl->subject->setBaseProperty("counter_busy", result.elapsed_time);
+            pImpl->subject->setBaseProperty("counter-busy", result.elapsed_time);
             setState(State::InProgress);
           }
           else
           {
             // Clear the busy counter.
-            pImpl->subject->setBaseProperty("counter_busy", 0);
+            pImpl->subject->setBaseProperty("counter-busy", 0);
             setState(State::PostFinish);
           }
           break;
@@ -179,14 +179,14 @@ namespace Actions
         case State::InProgress:
           result = doFinishWork(params);
 
-          pImpl->subject->setBaseProperty("counter_busy", result.elapsed_time);
+          pImpl->subject->setBaseProperty("counter-busy", result.elapsed_time);
           setState(State::PostFinish);
           break;
 
         case State::Interrupted:
           result = doAbortWork(params);
 
-          pImpl->subject->addToBaseProperty("counter_busy", result.elapsed_time);
+          pImpl->subject->addToBaseProperty("counter-busy", result.elapsed_time);
           setState(State::PostFinish);
           break;
 
@@ -301,7 +301,7 @@ namespace Actions
     auto new_direction = getTargetDirection();
 
     // Check that we're capable of eating at all.
-    json::json_pointer canVerb{ "/can/" + getType() };
+    std::string canVerb{ "can-" + getType() };
     if (!subject->getIntrinsic(canVerb, false))
     {
       printMessageTry();
@@ -383,7 +383,7 @@ namespace Actions
         {
           // Check that both are liquid containers.
           /// @todo Do something better here.
-          if (!object->getIntrinsic("liquid_carrier"))
+          if (!object->getIntrinsic("liquid_carrier", false))
           {
             printMessageTry();
             putTr("THE_FOO_IS_NOT_A_LIQUID_CARRIER");

@@ -3,8 +3,8 @@
 
   "name": "rock lichen",
   "plural": "rock lichens",
-  "brief_description": "A lichen that normally grows on a rock.",
+  "brief": "A lichen that normally grows on a rock.",
   "creatable": true,
 
-  "maxhp_range": [ 1, 1 ]
+  "maxhp": [ "range", 1, 1 ]
 }

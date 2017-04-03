@@ -48,32 +48,24 @@ Color::Color(sf::Color color)
 
 void to_json(json& j, Color const& color)
 {
-  j = { 
-    {"type", "color"},
-    {"r", color.m_r},
-    {"g", color.m_g},
-    {"b", color.m_b},
-    {"a", color.m_a}
-  };
+  j = json::array({ "color", color.m_r, color.m_g, color.m_b, color.m_a });
 }
 
 void from_json(json const& j, Color& color)
 {
-  if ((j.count("r") == 0) || (j.count("g") == 0) || (j.count("b") == 0))
-  {
-    CLOG(FATAL, "Color") << "JSON missing r, g, or b value";
-  }
-  color.m_r = j["r"];
-  color.m_g = j["g"];
-  color.m_b = j["b"];
+  Assert("Types", j.is_array() && j[0] == "color", "Attempted to create a Color out of an invalid JSON object");
+  
+  color.m_r = j[1];
+  color.m_g = j[2];
+  color.m_b = j[3];
 
-  if (j.count("a") == 0)
+  if (j.size() < 5)
   {
     color.m_a = 255;
   }
   else
   {
-    color.m_a = j["a"];
+    color.m_a = j[4];
   }
 }
 

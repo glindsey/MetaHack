@@ -3,12 +3,7 @@
 
   "name": "area",
   "plural": "areas",
-  "brief_description": "The entities that are held or included in this tile.",
-  "inventory_size": -1,
-  "opacity": {
-    "type": "color",
-    "r": 0,
-    "g": 0,
-    "b": 0
-  }
+  "description-brief": "The entities that are held or included in this tile.",
+  "inventory-size": -1,
+  "opacity": [ "color", 0, 0, 0 ]
 }

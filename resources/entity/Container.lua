@@ -6,7 +6,7 @@ Container = inheritsFrom(Entity, "Container")
 Container.intrinsics.name = "[Container]"
 Container.intrinsics.plural = "[Containers]"
 
-Container.intrinsics.inventory_size = -1
+Container.intrinsics.inventory-size = -1
 
 function Container.can_have_action_open_done_by(id)
     return true, LuaType.Boolean

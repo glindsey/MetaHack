@@ -30,8 +30,8 @@ sf::IntRect calc_message_log_dimensions(sf::RenderWindow& window)
   sf::IntRect messageLogDims;
   auto& config = Service<IConfigSettings>::get();
 
-  int inventory_area_width = config.get("inventory_area_width");
-  int messagelog_area_height = config.get("messagelog_area_height");
+  int inventory_area_width = config.get("inventory-area-width");
+  int messagelog_area_height = config.get("messagelog-area-height");
   messageLogDims.width = window.getSize().x - (inventory_area_width + 24);
   messageLogDims.height = messagelog_area_height - 10;
   messageLogDims.left = 12;
@@ -59,7 +59,6 @@ App::App(sf::RenderWindow& app_window)
   // Register loggers.
   SET_UP_LOGGER("App", true);
   SET_UP_LOGGER("Action", false);
-  SET_UP_LOGGER("Color", true);
   SET_UP_LOGGER("ConfigSettings", true);
   SET_UP_LOGGER("Entity", true);
   SET_UP_LOGGER("EntityPool", true);
@@ -82,6 +81,7 @@ App::App(sf::RenderWindow& app_window)
   SET_UP_LOGGER("StringDictionary", false);
   SET_UP_LOGGER("StringTransforms", false);
   SET_UP_LOGGER("TileSheet", true);
+  SET_UP_LOGGER("Types", true);
 
 
   // First entity's first: load config settings.
@@ -106,7 +106,7 @@ App::App(sf::RenderWindow& app_window)
 
   // Create the default fonts.
   m_default_font.reset(NEW sf::Font());
-  std::string defaultFont = config.get("font_name_default");
+  std::string defaultFont = config.get("font-name-default");
   FileName font_name = "resources/font/" + defaultFont + ".ttf";
   if (m_default_font->loadFromFile(font_name) == false)
   {
@@ -114,7 +114,7 @@ App::App(sf::RenderWindow& app_window)
   }
 
   m_default_bold_font.reset(NEW sf::Font());
-  std::string defaultBoldFont = config.get("font_name_bold");
+  std::string defaultBoldFont = config.get("font-name-bold");
   font_name = "resources/font/" + defaultBoldFont + ".ttf";
   if (m_default_bold_font->loadFromFile(font_name) == false)
   {
@@ -122,7 +122,7 @@ App::App(sf::RenderWindow& app_window)
   }
 
   m_default_mono_font.reset(NEW sf::Font());
-  std::string defaultMonoFont = config.get("font_name_mono");
+  std::string defaultMonoFont = config.get("font-name-mono");
   font_name = "resources/font/" + defaultMonoFont + ".ttf";
   if (m_default_mono_font->loadFromFile(font_name) == false)
   {
@@ -130,7 +130,7 @@ App::App(sf::RenderWindow& app_window)
   }
 
   m_default_unicode_font.reset(NEW sf::Font());
-  std::string defaultUnicodeFont = config.get("font_name_unicode");
+  std::string defaultUnicodeFont = config.get("font-name-unicode");
   font_name = "resources/font/" + defaultUnicodeFont + ".ttf";
   if (m_default_unicode_font->loadFromFile(font_name) == false)
   {

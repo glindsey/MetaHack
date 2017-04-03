@@ -46,7 +46,7 @@ namespace Actions
     std::string bodypart_desc = subject->getBodypartDescription(wield_location);
 
     // Check if the wielded item is bound.
-    if (object->getModifiedProperty("bound"))
+    if (object->getModifiedProperty("bound", false))
     {
       putMsg(makeTr("YOU_CANT_VERB_FOO_MAGICALLY_BOUND",
                     { subject->getPossessiveString(bodypart_desc) }));

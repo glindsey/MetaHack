@@ -57,8 +57,8 @@ namespace Actions
     }
 
     // Check that both are liquid containers.
-    if (!(object1->getIntrinsic("liquid_carrier").get<bool>()) || 
-        !(object2->getIntrinsic("liquid_carrier").get<bool>()))
+    if (!(object1->getIntrinsic("liquid_carrier", false).get<bool>()) || 
+        !(object2->getIntrinsic("liquid_carrier", false).get<bool>()))
     {
       printMessageTry();
 

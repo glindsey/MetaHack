@@ -3,10 +3,8 @@
 
   "name": "wooden chest",
   "plural": "wooden chests",
-  "brief_description": "A wooden chest.",
+  "description-brief": "A wooden chest.",
   "creatable": true,
 
-  "can_be_object_of": {
-    "burn": true
-  }
+  "can-be-object-of-burn": true
 }

@@ -26,11 +26,7 @@ public:
   UintVec2 getTileCoords() const;
 
   json get(std::string name, json default_value) const;
-  json get(json::json_pointer name, json default_value) const;
-
-
   void set(std::string name, json value);
-  void set(json::json_pointer name, json value);
 
   void add(Metadata const& metadata);
   

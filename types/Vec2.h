@@ -74,30 +74,31 @@ public:
 
   friend void to_json(json& j, Vec2 const& obj)
   {
-    j = json{
-      { "x", obj.x },
-      { "y", obj.y }
-    };
+    j = json::array({ "", obj.x, obj.y });
 
     /// @todo Ewwwww, RTI. Fixable?
     if (typeid(obj) == typeid(float))
     {
-      j["type"] = "realvec2";
+      j[0] = "realvec2";
     }
     else if (typeid(obj) == typeid(unsigned int))
     {
-      j["type"] = "uintvec2";
+      j[0] = "uintvec2";
     }
     else if (typeid(obj) == typeid(int))
     {
-      j["type"] == "intvec2";
+      j[0] == "intvec2";
     }
   }
 
   friend void from_json(json const& j, Vec2& obj)
   {
-    obj.x = j["x"];
-    obj.y = j["y"];
+    Assert("Types", 
+           j.is_array() && (j[0] == "realvec2" || j[0] == "uintvec2" || j[0] == "intvec2"), 
+           "Attempted to create a Vec2<> out of an invalid JSON object");
+
+    obj.x = j[1];
+    obj.y = j[2];
   }
 
   T r()

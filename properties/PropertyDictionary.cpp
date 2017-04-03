@@ -23,17 +23,6 @@ bool PropertyDictionary::contains(std::string key) const
   return (m_dictionary.count(key) != 0);
 }
 
-bool PropertyDictionary::contains(json::json_pointer key) const
-{
-  try
-  {
-    return true;
-  }
-  catch (std::out_of_range&)
-  {
-    return false;
-  }
-}
 json const& PropertyDictionary::get(std::string key, json const& default_value) const
 {
   if (m_dictionary.count(key) == 0)

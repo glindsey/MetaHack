@@ -215,7 +215,7 @@ EntityId Inventory::getEntity()
   {
     EntityId ref = thing_pair.second;
     return ((ref->isSubtypeOf("DynamicEntity")) && 
-      (static_cast<int>(ref->getModifiedProperty("hp")) > 0));
+      (static_cast<int>(ref->getModifiedProperty("hp", 0)) > 0));
   });
 
   if (iter != things_.cend())

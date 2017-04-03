@@ -3,12 +3,7 @@
 
   "name": "wall",
   "plural": "walls",
-  "brief_description": "A wall.",
+  "description-brief": "A wall.",
   "passable": false,
-  "opacity": {
-    "type": "color",
-    "r": 255,
-    "g": 255,
-    "b": 255
-  }
+  "opacity": [ "color", 255, 255, 255 ]
 }

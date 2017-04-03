@@ -3,29 +3,12 @@
 
   "name": "[GameObject]",
   "plural": "[GameObjects]",
-  "brief_description": "function",
-  "inventory_size": 0,
+  "description-brief": "function",
+  "inventory-size": 0,
   "living": false,
   "passable": false,
-  "opacity": {
-    "type": "color",
-    "r": 255,
-    "g": 255,
-    "b": 255
-  },
-  "tile": {
-    "character": "?",
-    "bg_color": {
-      "type": "color",
-      "r": 255,
-      "g": 255,
-      "b": 255
-    },
-    "fg_color": {
-      "type": "color",
-      "r": 32,
-      "g": 32,
-      "b": 32
-    }
-  }
+  "opacity": [ "color", 255, 255, 255 ],
+  "tile-character": "?",
+  "tile-bg-color": [ "color", 255, 255, 255 ],
+  "tile-fg-color": [ "color", 32, 32, 32 ]
 }

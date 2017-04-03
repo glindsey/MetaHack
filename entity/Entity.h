@@ -155,24 +155,19 @@ public:
   /// Get an intrinsic of this Entity.
   /// If the intrinsic is not found, returns the default value.
   /// @param key            Name of the intrinsic to get.
-  /// @param default_value  Default value to use, if any.
+  /// @param default_value  Default value to use.
   /// @return The intrinsic (or default) value for that key.
   json getIntrinsic(std::string key, json default_value) const;
-  json getIntrinsic(std::string key) const;
-  json getIntrinsic(json::json_pointer key, json default_value) const;
-  json getIntrinsic(json::json_pointer key) const;
-
+  
   /// Get a base property of this Entity.
   /// If the base property is not found, the method falls back upon the
-  /// intrinsic for that property (if any).
+  /// intrinsic for that property. If IT is missing, it falls back to the
+  /// default value.
   /// @param key            Name of the property to get.
-  /// @param default_value  Default value to use, if any.
+  /// @param default_value  Default value to use.
   /// @return The property (or default) value for that key.
   json getBaseProperty(std::string key, json default_value) const;
-  json getBaseProperty(std::string key) const;
-  json getBaseProperty(json::json_pointer key, json default_value) const;
-  json getBaseProperty(json::json_pointer key) const;
-
+  
   /// Sets a base property of this Entity.
   /// If the base property is not found, it is created.
   ///
@@ -180,15 +175,13 @@ public:
   /// @param value  Value to set the property to.
   /// @return Boolean indicating whether the property previously existed.
   bool setBaseProperty(std::string key, json value);
-  bool setBaseProperty(json::json_pointer key, json value);
-
+  
   /// Adds to a base property of this Entity.
   /// If the base property is not found, it is created.
   /// @param key    Key of the property to set.
   /// @param value  Value to add to the property.
   void addToBaseProperty(std::string key, json add_value);
-  void addToBaseProperty(json::json_pointer key, json add_value);
-
+  
   /// Get a modified property of this Entity.
   /// If the modified property is not found, the method falls back upon the
   /// base value for that property (if any).
@@ -197,10 +190,7 @@ public:
   /// @param default_value  Default value to use, if any.
   /// @return The modified (or base) property value for that key.
   json getModifiedProperty(std::string key, json default_value) const;
-  json getModifiedProperty(std::string key) const;
-  json getModifiedProperty(json::json_pointer key, json default_value) const;
-  json getModifiedProperty(json::json_pointer key) const;
-
+  
   /// Add a property modifier to this Entity.
   /// @param  key   Name of property to modify.
   /// @param  id    ID of Entity that is responsible for modifying it.
@@ -210,16 +200,14 @@ public:
   ///
   /// @return True if the function was added; false if it already existed.
   bool addModifier(std::string key, EntityId id, PropertyModifierInfo const& info);
-  bool addModifier(json::json_pointer key, EntityId id, PropertyModifierInfo const& info);
-
+  
   /// Remove all modifier functions for a given key and entity ID.
   /// @param  key               Name of property to modify.
   /// @param  id                ID of Entity that is responsible for modifying it.
   ///
   /// @return The number of modifiers erased.
   size_t removeModifier(std::string key, EntityId id);
-  size_t removeModifier(json::json_pointer key, EntityId id);
-
+  
   /// Get the quantity this entity represents.
   unsigned int getQuantity() const;
 

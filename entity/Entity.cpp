@@ -158,7 +158,7 @@ bool Entity::involuntaryActionIsPending() const
 
 bool Entity::actionIsInProgress()
 {
-  return (getBaseProperty("counter_busy", 0).get<int>() > 0);
+  return (getBaseProperty("counter-busy", 0).get<int>() > 0);
 }
 
 void Entity::clearAllPendingActions()
@@ -314,12 +314,12 @@ void Entity::setWorn(EntityId entity, BodyLocation location)
 
 bool Entity::canCurrentlySee()
 {
-  return getModifiedProperty("/can/see"_json_pointer, false);
+  return getModifiedProperty("can-see", false);
 }
 
 bool Entity::canCurrentlyMove()
 {
-  return getModifiedProperty("/can/move"_json_pointer, false);
+  return getModifiedProperty("can-move", false);
 }
 
 void Entity::setGender(Gender gender)
@@ -357,35 +357,35 @@ unsigned int Entity::getBodypartNumber(BodyPart part) const
   switch (part)
   {
     case BodyPart::Body:
-      return getIntrinsic("/bodypart/body/count"_json_pointer);
+      return getIntrinsic("bodypart-body-count", 0);
     case BodyPart::Skin:
-      return getIntrinsic("/bodypart/skin/count"_json_pointer);
+      return getIntrinsic("bodypart-skin-count", 0);
     case BodyPart::Head:
-      return getIntrinsic("/bodypart/head/count"_json_pointer);
+      return getIntrinsic("bodypart-head-count", 0);
     case BodyPart::Ear:
-      return getIntrinsic("/bodypart/ear/count"_json_pointer);
+      return getIntrinsic("bodypart-ear-count", 0);
     case BodyPart::Eye:
-      return getIntrinsic("/bodypart/eye/count"_json_pointer);
+      return getIntrinsic("bodypart-eye-count", 0);
     case BodyPart::Nose:
-      return getIntrinsic("/bodypart/nose/count"_json_pointer);
+      return getIntrinsic("bodypart-nose-count", 0);
     case BodyPart::Mouth:
-      return getIntrinsic("/bodypart/mouth/count"_json_pointer);
+      return getIntrinsic("bodypart-mouth-count", 0);
     case BodyPart::Neck:
-      return getIntrinsic("/bodypart/neck/count"_json_pointer);
+      return getIntrinsic("bodypart-neck-count", 0);
     case BodyPart::Chest:
-      return getIntrinsic("/bodypart/chest/count"_json_pointer);
+      return getIntrinsic("bodypart-chest-count", 0);
     case BodyPart::Arm:
-      return getIntrinsic("/bodypart/arm/count"_json_pointer);
+      return getIntrinsic("bodypart-arm-count", 0);
     case BodyPart::Hand:
-      return getIntrinsic("/bodypart/hand/count"_json_pointer);
+      return getIntrinsic("bodypart-hand-count", 0);
     case BodyPart::Leg:
-      return getIntrinsic("/bodypart/leg/count"_json_pointer);
+      return getIntrinsic("bodypart-leg-count", 0);
     case BodyPart::Foot:
-      return getIntrinsic("/bodypart/foot/count"_json_pointer);
+      return getIntrinsic("bodypart-foot-count", 0);
     case BodyPart::Wing:
-      return getIntrinsic("/bodypart/wing/count"_json_pointer);
+      return getIntrinsic("bodypart-wing-count", 0);
     case BodyPart::Tail:
-      return getIntrinsic("/bodypart/tail/count"_json_pointer);
+      return getIntrinsic("bodypart-tail-count", 0);
     default:
       return 0;
   }
@@ -398,35 +398,35 @@ std::string Entity::getBodypartName(BodyPart part) const
   switch (part)
   {
     case BodyPart::Body:
-      return getIntrinsic("/bodypart/body/name"_json_pointer);
+      return getIntrinsic("bodypart-body-name", "[body]");
     case BodyPart::Skin:
-      return getIntrinsic("/bodypart/skin/name"_json_pointer);
+      return getIntrinsic("bodypart-skin-name", "[skin]");
     case BodyPart::Head:
-      return getIntrinsic("/bodypart/head/name"_json_pointer);
+      return getIntrinsic("bodypart-head-name", "[head]");
     case BodyPart::Ear:
-      return getIntrinsic("/bodypart/ear/name"_json_pointer);
+      return getIntrinsic("bodypart-ear-name", "[ear]");
     case BodyPart::Eye:
-      return getIntrinsic("/bodypart/eye/name"_json_pointer);
+      return getIntrinsic("bodypart-eye-name", "[eye]");
     case BodyPart::Nose:
-      return getIntrinsic("/bodypart/nose/name"_json_pointer);
+      return getIntrinsic("bodypart-nose-name", "[nose]");
     case BodyPart::Mouth:
-      return getIntrinsic("/bodypart/mouth/name"_json_pointer);
+      return getIntrinsic("bodypart-mouth-name", "[mouth]");
     case BodyPart::Neck:
-      return getIntrinsic("/bodypart/neck/name"_json_pointer);
+      return getIntrinsic("bodypart-neck-name", "[neck]");
     case BodyPart::Chest:
-      return getIntrinsic("/bodypart/chest/name"_json_pointer);
+      return getIntrinsic("bodypart-chest-name", "[chest]");
     case BodyPart::Arm:
-      return getIntrinsic("/bodypart/arm/name"_json_pointer);
+      return getIntrinsic("bodypart-arm-name", "[arm]");
     case BodyPart::Hand:
-      return getIntrinsic("/bodypart/hand/name"_json_pointer);
+      return getIntrinsic("bodypart-hand-name", "[hand]");
     case BodyPart::Leg:
-      return getIntrinsic("/bodypart/leg/name"_json_pointer);
+      return getIntrinsic("bodypart-leg-name", "[leg]");
     case BodyPart::Foot:
-      return getIntrinsic("/bodypart/foot/name"_json_pointer);
+      return getIntrinsic("bodypart-foot-name", "[foot]");
     case BodyPart::Wing:
-      return getIntrinsic("/bodypart/wing/name"_json_pointer);
+      return getIntrinsic("bodypart-wing-name", "[wing]");
     case BodyPart::Tail:
-      return getIntrinsic("/bodypart/tail/name"_json_pointer);
+      return getIntrinsic("bodypart-tail-name", "[tail]");
     default:
       return "squeedlyspooch (unknown BodyPart)";
   }
@@ -439,35 +439,35 @@ std::string Entity::getBodypartPlural(BodyPart part) const
   switch (part)
   {
     case BodyPart::Body:
-      return getIntrinsic("/bodypart/body/plural"_json_pointer);
+      return getIntrinsic("bodypart-body-plural", "[bodies]");
     case BodyPart::Skin:
-      return getIntrinsic("/bodypart/skin/plural"_json_pointer);
+      return getIntrinsic("bodypart-skin-plural", "[skins]");
     case BodyPart::Head:
-      return getIntrinsic("/bodypart/head/plural"_json_pointer);
+      return getIntrinsic("bodypart-head-plural", "[hands]");
     case BodyPart::Ear:
-      return getIntrinsic("/bodypart/ear/plural"_json_pointer);
+      return getIntrinsic("bodypart-ear-plural", "[ears]");
     case BodyPart::Eye:
-      return getIntrinsic("/bodypart/eye/plural"_json_pointer);
+      return getIntrinsic("bodypart-eye-plural", "[eyes]");
     case BodyPart::Nose:
-      return getIntrinsic("/bodypart/nose/plural"_json_pointer);
+      return getIntrinsic("bodypart-nose-plural", "[noses]");
     case BodyPart::Mouth:
-      return getIntrinsic("/bodypart/mouth/plural"_json_pointer);
+      return getIntrinsic("bodypart-mouth-plural", "[mouths]");
     case BodyPart::Neck:
-      return getIntrinsic("/bodypart/neck/plural"_json_pointer);
+      return getIntrinsic("bodypart-neck-plural", "[necks]");
     case BodyPart::Chest:
-      return getIntrinsic("/bodypart/chest/plural"_json_pointer);
+      return getIntrinsic("bodypart-chest-plural", "[chests]");
     case BodyPart::Arm:
-      return getIntrinsic("/bodypart/arm/plural"_json_pointer);
+      return getIntrinsic("bodypart-arm-plural", "[arms]");
     case BodyPart::Hand:
-      return getIntrinsic("/bodypart/hand/plural"_json_pointer);
+      return getIntrinsic("bodypart-hand-plural", "[hands]");
     case BodyPart::Leg:
-      return getIntrinsic("/bodypart/leg/plural"_json_pointer);
+      return getIntrinsic("bodypart-leg-plural", "[legs]");
     case BodyPart::Foot:
-      return getIntrinsic("/bodypart/foot/plural"_json_pointer);
+      return getIntrinsic("bodypart-foot-plural", "[feet]");
     case BodyPart::Wing:
-      return getIntrinsic("/bodypart/wing/plural"_json_pointer);
+      return getIntrinsic("bodypart-wing-plural", "[wings]");
     case BodyPart::Tail:
-      return getIntrinsic("/bodypart/tail/plural"_json_pointer);
+      return getIntrinsic("bodypart-tail-plural", "[tails]");
     default:
       return "squeedlyspooches (unknown BodyParts)";
   }
@@ -499,21 +499,6 @@ json Entity::getIntrinsic(std::string key, json default_value) const
   return m_metadata.get(key, default_value);
 }
 
-json Entity::getIntrinsic(json::json_pointer key, json default_value) const
-{
-  return m_metadata.get(key, default_value);
-}
-
-json Entity::getIntrinsic(std::string key) const
-{
-  return getIntrinsic(key, json());
-}
-
-json Entity::getIntrinsic(json::json_pointer key) const
-{
-  return getIntrinsic(key, json());
-}
-
 json Entity::getBaseProperty(std::string key, json default_value) const
 {
   if (m_properties.contains(key))
@@ -528,38 +513,7 @@ json Entity::getBaseProperty(std::string key, json default_value) const
   }
 }
 
-json Entity::getBaseProperty(json::json_pointer key, json default_value) const
-{
-  if (m_properties.contains(key))
-  {
-    return m_properties.get(key);
-  }
-  else
-  {
-    auto value = m_metadata.get(key, default_value);
-    m_properties.set(key, value);
-    return value;
-  }
-}
-json Entity::getBaseProperty(std::string key) const
-{
-  return getBaseProperty(key, json());
-}
-
-json Entity::getBaseProperty(json::json_pointer key) const
-{
-  return getBaseProperty(key, json());
-}
-
 bool Entity::setBaseProperty(std::string key, json value)
-{
-  bool existed = m_properties.contains(key);
-  m_properties.set(key, value);
-
-  return existed;
-}
-
-bool Entity::setBaseProperty(json::json_pointer key, json value)
 {
   bool existed = m_properties.contains(key);
   m_properties.set(key, value);
@@ -595,34 +549,6 @@ void Entity::addToBaseProperty(std::string key, json add_value)
   }
 }
 
-void Entity::addToBaseProperty(json::json_pointer key, json add_value)
-{
-  json existing_value = m_properties.get(key);
-  if (existing_value.is_number_float())
-  {
-    m_properties.set(key, existing_value.get<double>() + add_value.get<double>());
-  }
-  else if (existing_value.is_number_integer())
-  {
-    if (existing_value.is_number_unsigned())
-    {
-      m_properties.set(key, existing_value.get<unsigned int>() + add_value.get<unsigned int>());
-    }
-    else
-    {
-      m_properties.set(key, existing_value.get<int>() + add_value.get<int>());
-    }
-  }
-  else if (existing_value.is_string())
-  {
-    m_properties.set(key, existing_value.get<std::string>() + add_value.get<std::string>());
-  }
-  else
-  {
-    Assert("Entity", false, "Attempted to add to non-addable property \"" << key.to_string() << "\"");
-  }
-}
-
 json Entity::getModifiedProperty(std::string key, json default_value) const
 {
   if (!m_properties.contains(key))
@@ -634,55 +560,12 @@ json Entity::getModifiedProperty(std::string key, json default_value) const
   return m_properties.get_modified(key);
 }
 
-json Entity::getModifiedProperty(json::json_pointer key, json default_value) const
-{
-  if (!m_properties.contains(key))
-  {
-    json value = m_metadata.get(key, default_value);
-    m_properties.set(key, value);
-  }
-
-  return m_properties.get_modified(key);
-}
-
-json Entity::getModifiedProperty(std::string key) const
-{
-  if (!m_properties.contains(key))
-  {
-    json value = m_metadata.get(key);
-    m_properties.set(key, value);
-  }
-
-  return m_properties.get_modified(key);
-}
-
-json Entity::getModifiedProperty(json::json_pointer key) const
-{
-  if (!m_properties.contains(key))
-  {
-    json value = m_metadata.get(key);
-    m_properties.set(key, value);
-  }
-
-  return m_properties.get_modified(key);
-}
-
 bool Entity::addModifier(std::string key, EntityId id, PropertyModifierInfo const& info)
 {
   return m_properties.addModifier(key, id, info);
 }
 
-bool Entity::addModifier(json::json_pointer key, EntityId id, PropertyModifierInfo const& info)
-{
-  return m_properties.addModifier(key, id, info);
-}
-
 size_t Entity::removeModifier(std::string key, EntityId id)
-{
-  return m_properties.removeModifier(key, id);
-}
-
-size_t Entity::removeModifier(json::json_pointer key, EntityId id)
 {
   return m_properties.removeModifier(key, id);
 }
@@ -956,7 +839,7 @@ std::string Entity::getDisplayAdjectives() const
 {
   std::string adjectives;
 
-  if (isSubtypeOf("DynamicEntity") && (static_cast<int>(getModifiedProperty("hp")) <= 0))
+  if (isSubtypeOf("DynamicEntity") && (static_cast<int>(getModifiedProperty("hp", 0)) <= 0))
   {
     adjectives += tr("ADJECTIVE_DEAD");
   }
@@ -969,23 +852,23 @@ std::string Entity::getDisplayAdjectives() const
 /// @todo Figure out how to cleanly localize this.
 std::string Entity::getDisplayName() const
 {
-  return m_metadata.get("name");
+  return m_metadata.get("name", std::string());
 }
 
 /// @todo Figure out how to cleanly localize this.
 std::string Entity::getDisplayPlural() const
 {
-  return m_metadata.get("plural");
+  return m_metadata.get("plural", std::string());
 }
 
 std::string Entity::getProperName() const
 {
-  return getModifiedProperty("proper_name", std::string());
+  return getModifiedProperty("proper-name", std::string());
 }
 
 void Entity::setProperName(std::string name)
 {
-  setBaseProperty("proper_name", name);
+  setBaseProperty("proper-name", name);
 }
 
 std::string Entity::getSubjectiveString(ArticleChoice articles) const
@@ -994,7 +877,7 @@ std::string Entity::getSubjectiveString(ArticleChoice articles) const
 
   if (isPlayer())
   {
-    if (static_cast<int>(getModifiedProperty("hp")) > 0)
+    if (static_cast<int>(getModifiedProperty("hp", 0)) > 0)
     {
       str = tr("PRONOUN_SUBJECT_YOU");
     }
@@ -1017,7 +900,7 @@ std::string Entity::getObjectiveString(ArticleChoice articles) const
 
   if (isPlayer())
   {
-    if (static_cast<int>(getModifiedProperty("hp")) > 0)
+    if (static_cast<int>(getModifiedProperty("hp", 0)) > 0)
     {
       str = tr("PRONOUN_OBJECT_YOU");
     }
@@ -1057,7 +940,7 @@ std::string Entity::getDescriptiveString(ArticleChoice articles,
   bool owned;
 
   std::string debug_prefix;
-  if (config.get("debug_show_thing_ids") == true)
+  if (config.get("debug-show-thing-ids") == true)
   {
     debug_prefix = "(#" + static_cast<std::string>(getId()) + ") ";
   }
@@ -1127,13 +1010,13 @@ std::string Entity::getDescriptiveString(ArticleChoice articles,
 
 bool Entity::isThirdPerson()
 {
-  return (GAME.getPlayer() == m_id) || (static_cast<unsigned int>(getBaseProperty("quantity")) > 1);
+  return (GAME.getPlayer() == m_id) || (static_cast<unsigned int>(getBaseProperty("quantity", 1)) > 1);
 }
 
 std::string const& Entity::chooseVerb(std::string const& verb12,
                                         std::string const& verb3)
 {
-  if ((GAME.getPlayer() == m_id) || (static_cast<unsigned int>(getBaseProperty("quantity")) > 1))
+  if ((GAME.getPlayer() == m_id) || (static_cast<unsigned int>(getBaseProperty("quantity", 1)) > 1))
   {
     return verb12;
   }
@@ -1145,8 +1028,8 @@ std::string const& Entity::chooseVerb(std::string const& verb12,
 
 unsigned int Entity::getMass()
 {
-  return static_cast<unsigned int>(getModifiedProperty("/physical/mass"_json_pointer)) * 
-    static_cast<unsigned int>(getBaseProperty("quantity"));
+  return static_cast<unsigned int>(getModifiedProperty("physical-mass", 0)) * 
+    static_cast<unsigned int>(getBaseProperty("quantity", 1));
 }
 
 std::string const& Entity::getSubjectPronoun() const
@@ -1204,7 +1087,7 @@ void Entity::light_up_surroundings()
 {
   EntityId location = getLocation();
 
-  if (static_cast<int>(getIntrinsic("inventory_size")) != 0)
+  if (static_cast<int>(getIntrinsic("inventory-size", 0)) != 0)
   {
     /// @todo Figure out how we want to handle light sources.
     ///       If we want to be more accurate, the light should only
@@ -1325,7 +1208,7 @@ void Entity::destroy()
 {
   auto old_location = m_location;
 
-  if (static_cast<int>(getIntrinsic("inventory_size")) != 0)
+  if (static_cast<int>(getIntrinsic("inventory-size", 0)) != 0)
   {
     // Spill the contents of this Entity into the Entity's location.
     spill();
@@ -1606,7 +1489,7 @@ bool Entity::perform_action_attacked_by(EntityId subject, EntityId target)
 
 bool Entity::perform_action_deequipped_by(EntityId actor, BodyLocation& location)
 {
-  if (this->getModifiedProperty("bound"))
+  if (this->getModifiedProperty("bound", false))
   {
     std::string message;
     message = actor->getDescriptiveString() + " cannot take off " + this->getDescriptiveString() +
@@ -1637,8 +1520,8 @@ bool Entity::can_merge_with(EntityId other) const
   }
 
   // Entities with inventories can never merge.
-  if ((static_cast<int>(getIntrinsic("inventory_size")) != 0) ||
-      (static_cast<int>(other->getIntrinsic("inventory_size")) != 0))
+  if ((static_cast<int>(getIntrinsic("inventory-size", 0)) != 0) ||
+      (static_cast<int>(other->getIntrinsic("inventory-size", 0)) != 0))
   {
     return false;
   }
@@ -1661,7 +1544,7 @@ bool Entity::can_merge_with(EntityId other) const
 
 bool Entity::can_contain(EntityId entity)
 {
-  int inventory_size = getIntrinsic("inventory_size");
+  int inventory_size = getIntrinsic("inventory-size", 0);
   if (inventory_size == 0)
   {
     return false;
@@ -1718,14 +1601,14 @@ std::unordered_set<EventID> Entity::registeredEvents() const
 
 bool Entity::_process_own_involuntary_actions()
 {
-  int counter_busy = getBaseProperty("counter_busy", 0);
+  int counter_busy = getBaseProperty("counter-busy", 0);
   bool entity_updated = false;
 
   // Is this an entity that is now dead?
-  if (isSubtypeOf("DynamicEntity") && (static_cast<int>(getModifiedProperty("hp")) <= 0))
+  if (isSubtypeOf("DynamicEntity") && (static_cast<int>(getModifiedProperty("hp", 0)) <= 0))
   {
     // Did the entity JUST die?
-    if (!getModifiedProperty("dead"))
+    if (!getModifiedProperty("dead", false))
     {
       // Perform the "die" action.
       // (This sets the "dead" property and clears out any pending actions.)
@@ -1770,13 +1653,13 @@ bool Entity::_process_own_involuntary_actions()
 
 bool Entity::_process_own_voluntary_actions()
 {
-  int counter_busy = getBaseProperty("counter_busy", 0);
+  int counter_busy = getBaseProperty("counter-busy", 0);
 
   // Is this an entity that is now dead?
-  if (isSubtypeOf("DynamicEntity") && (static_cast<int>(getModifiedProperty("hp")) <= 0))
+  if (isSubtypeOf("DynamicEntity") && (static_cast<int>(getModifiedProperty("hp", 0)) <= 0))
   {
     // Did the entity JUST die?
-    if (!getModifiedProperty("dead"))
+    if (!getModifiedProperty("dead", false))
     {
       // Perform the "die" action.
       // (This sets the "dead" property and clears out any pending actions.)
@@ -1789,7 +1672,7 @@ bool Entity::_process_own_voluntary_actions()
   if (counter_busy > 0)
   {
     // Decrement busy counter.
-    addToBaseProperty("counter_busy", -1);
+    addToBaseProperty("counter-busy", -1);
   }
   // Otherwise if there are pending actions...
   else if (!m_pending_voluntary_actions.empty())
