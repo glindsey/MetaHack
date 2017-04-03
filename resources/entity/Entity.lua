@@ -22,7 +22,7 @@ Entity.intrinsics.bodypart_foot_plural = "feet"
 Entity.intrinsics.bodypart_wing_name = "wing"
 Entity.intrinsics.bodypart_tail_name = "tail"
 
-Entity.intrinsics.inventory-size = 0
+Entity.intrinsics.inventory_size = 0
 Entity.intrinsics.living = false
 Entity.intrinsics.opacity = { type = "color", r = 255, g = 255, b = 255 }
 Entity.intrinsics.physical_mass = 0

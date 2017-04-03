@@ -1448,7 +1448,7 @@ bool Entity::perform_action_died()
 
 void Entity::perform_action_collided_with(EntityId actor)
 {
-  (void)call_lua_function("perform_action_collided_with", actor);
+  (void)call_lua_function("perform_action_collided_with", actor, true);
 }
 
 void Entity::perform_action_collided_with_wall(Direction d, std::string tile_type)
@@ -1567,22 +1567,10 @@ json Entity::call_lua_function(std::string function_name,
 }
 
 json Entity::call_lua_function(std::string function_name,
-                               json const& args)
-{
-  return call_lua_function(function_name, args, json());
-}
-
-json Entity::call_lua_function(std::string function_name,
                                json const& args,
                                json const& default_result) const
 {
   return the_lua_instance.call_thing_function(function_name, getId(), args, default_result);
-}
-
-json Entity::call_lua_function(std::string function_name,
-                               json const& args) const
-{
-  return call_lua_function(function_name, args, json());
 }
 
 void Entity::setLocation(EntityId target)
@@ -1719,7 +1707,7 @@ bool Entity::_process_own_voluntary_actions()
     if (!isPlayer())
     {
       /// @todo Re-implement me
-      (void)call_lua_function("process", {});
+      (void)call_lua_function("process", {}, true);
     }
   }
 

@@ -336,10 +336,13 @@ int Lua::push_value(Color value)
 int Lua::push_array(json value)
 {
   int stack_slots = 0;
+  size_t array_size = value.size();
 
-  for (auto& member : value)
+  std::string type = value[0];
+
+  for (int index = 1; index < array_size; ++index)
   {
-    stack_slots += push_value(member);
+    stack_slots += push_value(value[index]);
   }
 
   return stack_slots;
@@ -347,54 +350,9 @@ int Lua::push_array(json value)
 
 int Lua::push_object(json value)
 {
-  if (value.count("type") == 0)
-  {
-    CLOG(ERROR, "Lua") << "Attempted to push object with no type tag to Lua";
-    lua_pushnil(L_);
-    return 1;
-  }
-  else
-  {
-    auto type = value["type"];
-    if (type == "intvec2")
-    {
-      return push_value(IntVec2(value["x"].get<int>(), 
-                                value["y"].get<int>()));
-    }
-    else if (type == "uintvec2")
-    {
-      return push_value(UintVec2(value["x"].get<unsigned int>(),
-                                 value["y"].get<unsigned int>()));
-    }
-    else if (type == "realvec2")
-    {
-      return push_value(RealVec2(value["x"].get<float>(),
-                                 value["y"].get<float>()));
-    }
-    else if (type == "direction")
-    {
-      return push_value(Direction(value["x"].get<int>(),
-                                  value["y"].get<int>(),
-                                  value["z"].get<int>()));
-    }
-    else if (type == "color")
-    {
-      return push_value(Color(value["r"].get<unsigned int>(),
-                              value["g"].get<unsigned int>(),
-                              value["b"].get<unsigned int>(),
-                              value["a"].get<unsigned int>()));
-    }
-    else if (type == "luatype")
-    {
-      CLOG(FATAL, "Lua") << "Tried to push a Lua Type onto the stack -- not implemented";
-      return 0;
-    }
-    else
-    {
-      CLOG(FATAL, "Lua") << "Tried to push unknown type " << type << " onto the Lua stack";
-      return 0;
-    }
-  }
+  CLOG(ERROR, "Lua") << "No support for pushing JSON objects to Lua";
+  lua_pushnil(L_);
+  return 1;
 }
 
 Lua::Type Lua::pop_type()
@@ -448,51 +406,40 @@ json Lua::pop_value(Lua::Type type)
       break;
 
     case Type::IntVec2:
-      value = json();
-      value["type"] = "intvec2";
-      value["x"] = static_cast<int>(lua_tointeger(L_, -2));
-      value["y"] = static_cast<int>(lua_tointeger(L_, -1));
+      value = IntVec2(static_cast<int32_t>(lua_tointeger(L_, -2)), 
+                      static_cast<int32_t>(lua_tointeger(L_, -1)));
       lua_pop(L_, 2);
       break;
 
     case Type::UintVec2:
-      value = json();
-      value["type"] = "uintvec2";
-      value["x"] = static_cast<unsigned int>(lua_tointeger(L_, -2));
-      value["y"] = static_cast<unsigned int>(lua_tointeger(L_, -1));
+      value = UintVec2(static_cast<uint32_t>(lua_tointeger(L_, -2)), 
+                       static_cast<uint32_t>(lua_tointeger(L_, -1)));
       lua_pop(L_, 2);
       break;
 
     case Type::RealVec2:
-      value = json();
-      value["type"] = "realvec2";
-      value["x"] = static_cast<float>(lua_tonumber(L_, -2));
-      value["y"] = static_cast<float>(lua_tonumber(L_, -1));
+      value = RealVec2(static_cast<float>(lua_tonumber(L_, -2)), 
+                       static_cast<float>(lua_tonumber(L_, -1)));
       lua_pop(L_, 2);
       break;
 
     case Type::Direction:
-      value = json();
-      value["type"] = "direction";
-      value["x"] = static_cast<int>(lua_tointeger(L_, -3));
-      value["y"] = static_cast<int>(lua_tointeger(L_, -2));
-      value["z"] = static_cast<int>(lua_tointeger(L_, -1));
+      value = Direction(static_cast<int>(lua_tointeger(L_, -3)), 
+                        static_cast<int>(lua_tointeger(L_, -2)),
+                        static_cast<int>(lua_tointeger(L_, -1)));
       lua_pop(L_, 3);
       break;
 
     case Type::Color: 
-      value = json();
-      value["type"] = "color";
-      value["r"] = static_cast<unsigned int>(lua_tointeger(L_, -4));
-      value["g"] = static_cast<unsigned int>(lua_tointeger(L_, -3));
-      value["b"] = static_cast<unsigned int>(lua_tointeger(L_, -2));
-      value["a"] = static_cast<unsigned int>(lua_tointeger(L_, -1));
+      value = Color(static_cast<uint8_t>(lua_tointeger(L_, -4)), 
+                    static_cast<uint8_t>(lua_tointeger(L_, -3)),
+                    static_cast<uint8_t>(lua_tointeger(L_, -2)),
+                    static_cast<uint8_t>(lua_tointeger(L_, -1)));
       lua_pop(L_, 4);
       break;
 
     case Type::Type:
-      value["type"] = "luatype";
-      value["value"] = static_cast<int>(pop_type());
+      value = static_cast<int>(pop_type());
       // pop_type() did the popping, none needed here
       break;
 
@@ -606,13 +553,6 @@ json Lua::call_thing_function(std::string function_name,
   }
 
   return return_value;
-}
-
-json Lua::call_thing_function(std::string function_name, 
-                              EntityId caller,
-                              json const& args)
-{
-  return call_thing_function(function_name, caller, args, json());
 }
 
 json Lua::call_modifier_function(std::string property_name,

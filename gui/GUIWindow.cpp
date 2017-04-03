@@ -70,10 +70,6 @@ namespace metagui
 
     float line_spacing_y = the_default_font.getLineSpacing(config.get("text-default-size"));
 
-    // Text offsets relative to the background rectangle.
-    float text_offset_x = config.get("window-text-offset_x");
-    float text_offset_y = config.get("window-text-offset_y");
-
     // Clear the target.
     auto bg_color = config.get("window-bg-color").get<Color>();
     auto focused_color = config.get("window-focused-border-color").get<Color>();
@@ -91,8 +87,6 @@ namespace metagui
     m_border_shape.setFillColor(Color::Transparent);
     m_border_shape.setOutlineColor(getFocus() ? focused_color : unfocused_color);
     m_border_shape.setOutlineThickness(border_width);
-
-    //texture.setView(sf::View(sf::FloatRect(0.0f, 0.0f, static_cast<float>(target.getSize().x), static_cast<float>(target.getSize().y))));
 
     texture.draw(m_border_shape);
   }

@@ -5,7 +5,7 @@ GameObject.intrinsics = {}
 GameObject.intrinsics.name = "[GameObject]"
 GameObject.intrinsics.plural = "[GameObjects]"
 
-GameObject.intrinsics.inventory-size = 0
+GameObject.intrinsics.inventory_size = 0
 GameObject.intrinsics.living = false
 GameObject.intrinsics.passable = false
 GameObject.intrinsics.opacity = { type = "color", r = 255, g = 255, b = 255 }

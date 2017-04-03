@@ -35,14 +35,13 @@ namespace metagui
     float line_spacing_y = the_default_font.getLineSpacing(config.get("text-default-size"));
 
     // Text offsets relative to the background rectangle.
-    float text_offset_x = config.get("window-text-offset_x");
-    float text_offset_y = config.get("window-text-offset_y");
+    RealVec2 text_offset = config.get("window-text-offset");
     float border_width = config.get("window-border-width");
 
     RealVec2 rect_position{ border_width, border_width };
     RealVec2 rect_size{ static_cast<float>(parent_size.x - (border_width * 2)),
-      static_cast<float>(line_spacing_y + (text_offset_y * 2) - (border_width * 2)) };
-    RealVec2 text_position{ text_offset_x + line_spacing_y, text_offset_y };
+      static_cast<float>(line_spacing_y + (text_offset.y * 2) - (border_width * 2)) };
+    RealVec2 text_position{ text_offset.x + line_spacing_y, text_offset.y };
 
     // Draw the title in the upper-left corner.
     sf::RectangleShape title_rect;
@@ -82,9 +81,9 @@ namespace metagui
     float line_spacing_y = the_default_font.getLineSpacing(config.get("text-default-size"));
 
     // Text offsets relative to the background rectangle.
-    float text_offset_y = config.get("window-text-offset_y");
+    RealVec2 text_offset = config.get("window-text-offset");
 
-    UintVec2 our_size{ parent_size.x, static_cast<unsigned int>(line_spacing_y + (text_offset_y * 2)) };
+    UintVec2 our_size{ parent_size.x, static_cast<unsigned int>(line_spacing_y + (text_offset.y * 2)) };
 
     setSize(our_size);
   }

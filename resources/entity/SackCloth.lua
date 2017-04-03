@@ -7,7 +7,7 @@ SackCloth.intrinsics.name = "cloth sack"
 SackCloth.intrinsics.plural = "cloth sacks"
 SackCloth.intrinsics.creatable = true
 
-SackCloth.intrinsics.inventory-size = 10
+SackCloth.intrinsics.inventory_size = 10
 
 SackCloth.intrinsics.open = true
 

@@ -531,14 +531,8 @@ public:
                          json const& default_result);
 
   json call_lua_function(std::string function_name,
-                         json const& args);
-
-  json call_lua_function(std::string function_name,
                          json const& args,
                          json const& default_result) const;
-
-  json call_lua_function(std::string function_name,
-                         json const& args) const;
 
   /// Get a const reference to this tile's metadata.
   Metadata const & getMetadata() const;

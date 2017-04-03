@@ -250,12 +250,12 @@ void AppStateGameMode::render_map(sf::RenderTexture& texture, int frame)
         m_map_view->set_view(texture, cursor_pixel_coords, m_map_zoom_level);
         m_map_view->render_map(texture, frame);
 
-        json border_color = config.get("cursor-border-color");
-        json bg_color = config.get("cursor-bg-color");
+        Color border_color = config.get("cursor-border-color");
+        Color bg_color = config.get("cursor-bg-color");
         m_map_view->draw_highlight(texture,
                                    cursor_pixel_coords,
-                                   Color(border_color["r"], border_color["g"], border_color["b"], 255),
-                                   Color(bg_color["r"], bg_color["g"], bg_color["b"], 255),
+                                   border_color,
+                                   bg_color,
                                    frame);
       }
       else

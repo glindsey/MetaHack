@@ -103,8 +103,8 @@ std::string const& Metadata::getType() const
 
 UintVec2 Metadata::getTileCoords() const
 {
-  auto tile_location = get("tile-location", UintVec2(0, 0));
-  return{ tile_location["x"], tile_location["y"] };
+  UintVec2 tile_location = get("tile-location", UintVec2(0, 0));
+  return tile_location;
 }
 
 json Metadata::get(std::string name, json default_value) const

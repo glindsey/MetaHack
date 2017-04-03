@@ -181,7 +181,6 @@ public:
   /// Return the number of Lua stack slots associated with a particular value.
   unsigned int stack_slots(Type type) const;
 
-
   /// Try to call a Lua function that takes the caller and a vector of
   /// arguments and returns a result.
   ///
@@ -194,18 +193,12 @@ public:
   /// @param args           Arguments to pass to the function
   /// @param default_result The default result if function is not found
   ///                       after traversing the entire parent tree.
-  ///                       Defaults to the default constructor of the
-  ///                       return type.
   ///
   /// @return The result of the call.
   json call_thing_function(std::string function_name,
                            EntityId caller,
                            json const& args,
                            json default_result);
-
-  json call_thing_function(std::string function_name,
-                           EntityId caller,
-                           json const& args);
 
   /// Call a Lua property modifier function.
   /// Calls the Lua function `GROUP:modify_property_PROP[_SFX]()` where:

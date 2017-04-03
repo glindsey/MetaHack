@@ -53,7 +53,9 @@ void to_json(json& j, Color const& color)
 
 void from_json(json const& j, Color& color)
 {
-  Assert("Types", j.is_array() && j[0] == "color", "Attempted to create a Color out of an invalid JSON object");
+  Assert("Types", 
+         j.is_array() && (j[0] == "color") && (j.size() >= 4),
+         "Attempted to create a Color out of an invalid JSON object");
   
   color.m_r = j[1];
   color.m_g = j[2];

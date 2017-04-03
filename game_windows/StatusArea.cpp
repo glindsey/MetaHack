@@ -36,8 +36,7 @@ void StatusArea::drawContents_(sf::RenderTexture& texture, int frame)
 
   sf::IntRect pane_dims = getRelativeDimensions();
   EntityId player = GAME.getPlayer();
-  RealVec2 origin(config.get("window-text-offset_x"),
-               config.get("window-text-offset_y"));
+  RealVec2 origin = config.get("window-text-offset");
 
   Color text_color = config.get("text-color");
   Color text_dim_color = config.get("text-dim-color");

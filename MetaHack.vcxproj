@@ -527,6 +527,14 @@
     <ClCompile Include="entity\EntityPool.cpp" />
     <ClCompile Include="entity\EntityStandard2DView.cpp" />
     <ClCompile Include="entity\EntityView.cpp" />
+    <ClCompile Include="types\Vec2.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="utilities\StringTransforms.cpp" />
     <ClCompile Include="tilesheet\TileSheet.cpp" />
   </ItemGroup>

@@ -6,7 +6,7 @@ Chest = inheritsFrom(Container, "Chest")
 Chest.intrinsics.name = "[Chest]"
 Chest.intrinsics.plural = "[Chests]"
 
-Chest.intrinsics.inventory-size = 20
+Chest.intrinsics.inventory_size = 20
 Chest.intrinsics.physical_mass = 10
 
 function Chest.can_have_action_lock_done_by(id)

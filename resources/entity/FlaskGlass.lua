@@ -6,7 +6,7 @@ FlaskGlass = inheritsFrom(Container, "FlaskGlass")
 FlaskGlass.intrinsics.name = "glass flask"
 FlaskGlass.intrinsics.plural = "glass flasks"
 
-FlaskGlass.intrinsics.inventory-size = 1
+FlaskGlass.intrinsics.inventory_size = 1
 FlaskGlass.intrinsics.opacity = { type = "color", r = 0, g = 0, b = 0 }
 
 

@@ -36,7 +36,7 @@ UintVec2 MapTileStandard2DView::get_entity_tile_sheet_coords(Entity& entity, int
   UintVec2 start_coords = entity.getMetadata().getTileCoords();
 
   /// Call the Lua function to get the offset (tile to choose).
-  UintVec2 offset = entity.call_lua_function("get_tile_offset", frame);
+  UintVec2 offset = entity.call_lua_function("get_tile_offset", frame, UintVec2(0, 0));
 
   /// Add them to get the resulting coordinates.
   UintVec2 tile_coords = start_coords + offset;
