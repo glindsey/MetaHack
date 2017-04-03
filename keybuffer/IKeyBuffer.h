@@ -5,6 +5,9 @@
 #include "GUIEvent.h"
 #include "Subject.h"
 
+// Forward declarations
+class Color;
+
 /// Interface for an input buffer.
 class IKeyBuffer : public Subject
 {
@@ -77,7 +80,7 @@ public:
                       unsigned int frame,
                       sf::Font const& font,
                       unsigned int font_size,
-                      sf::Color const& fg_color) = 0;
+                      Color const& fg_color) = 0;
 
   virtual std::unordered_set<EventID> registeredEvents() const override final;
 

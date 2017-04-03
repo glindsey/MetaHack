@@ -39,4 +39,5 @@ namespace StringTransforms
 
   std::string remove_extra_whitespace_from(std::string input);
 
+  bool hasEnding(std::string const& fullString, std::string const& ending);
 } // end namespace

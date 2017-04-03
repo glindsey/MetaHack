@@ -8,6 +8,7 @@
   "lit": true,
   "light": {
     "color": {
+      "type": "color",
       "r": 64,
       "g": 64,
       "b": 64

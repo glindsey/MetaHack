@@ -57,7 +57,7 @@ namespace std
   template <typename T>
   ostream& operator<<(ostream& out, sf::Vector2<T> const& vec)
   {
-    out << "(" << vec.x << ", " << vec.y << ")";
+    out << "sf::Vector2(" << vec.x << ", " << vec.y << ")";
     return out;
   }
 
@@ -65,14 +65,14 @@ namespace std
   template <typename T>
   ostream& operator<<(ostream& out, sf::Vector3<T> const& vec)
   {
-    out << "(" << vec.x << ", " << vec.y << ", " << vec.z << ")";
+    out << "sf::Vector3(" << vec.x << ", " << vec.y << ", " << vec.z << ")";
     return out;
   }
 
   /// Stream operator override for sf::Color.
   inline ostream& operator<<(ostream& out, sf::Color const& vec)
   {
-    out << "(" << vec.r << ", " << vec.g << ", " << vec.b << ", " << vec.a << ")";
+    out << "sf::Color(" << vec.r << ", " << vec.g << ", " << vec.b << ", " << vec.a << ")";
     return out;
   }
 

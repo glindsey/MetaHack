@@ -30,7 +30,7 @@ namespace Actions
   private:
     /// The status of the be_object_of() call, which needs to be saved
     /// for the "finish" portion of the action.
-    ActionResult m_last_eat_result;
+    bool m_last_eat_result;
   };
 
 } // end namespace

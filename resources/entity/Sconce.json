@@ -1,5 +1,5 @@
 {
-  "parent": "Sconce",
+  "parent": "LightSource",
 
   "name": "torch sconce",
   "plural": "torch sconces",
@@ -8,6 +8,7 @@
 
   "light": {
     "color": {
+      "type": "color",
       "r": 160,
       "g": 128,
       "b": 112

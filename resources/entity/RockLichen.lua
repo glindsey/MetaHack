@@ -10,5 +10,5 @@ RockLichen.intrinsics.creatable = true
 RockLichen.intrinsics.maxhp = range(1, 1)
 
 function RockLichen.get_brief_description()
-	return "A lichen that normally grows on a rock.", PropertyType.String
+	return "A lichen that normally grows on a rock.", LuaType.String
 end

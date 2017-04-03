@@ -8,6 +8,7 @@
   "living": false,
   "passable": false,
   "opacity": {
+    "type": "color",
     "r": 255,
     "g": 255,
     "b": 255
@@ -15,11 +16,13 @@
   "tile": {
     "character": "?",
     "bg_color": {
+      "type": "color",
       "r": 255,
       "g": 255,
       "b": 255
     },
     "fg_color": {
+      "type": "color",
       "r": 32,
       "g": 32,
       "b": 32

@@ -314,7 +314,6 @@
     <ClInclude Include="actions\ActionPutInto.h" />
     <ClInclude Include="actions\ActionQuaff.h" />
     <ClInclude Include="actions\ActionRead.h" />
-    <ClInclude Include="actions\ActionResult.h" />
     <ClInclude Include="actions\ActionShoot.h" />
     <ClInclude Include="actions\ActionTakeOut.h" />
     <ClInclude Include="actions\ActionTurn.h" />
@@ -347,6 +346,7 @@
     <ClInclude Include="game\AppStateSplashScreen.h" />
     <ClInclude Include="types\Beatitude.h" />
     <ClInclude Include="types\BodyPart.h" />
+    <ClInclude Include="types\Color.h" />
     <ClInclude Include="types\SFMLEventResult.h" />
     <ClInclude Include="utilities\CommonFunctions.h" />
     <ClInclude Include="types\common.h" />
@@ -372,7 +372,6 @@
     <ClInclude Include="keybuffer\NullKeyBuffer.h" />
     <ClInclude Include="services\NullMessageLog.h" />
     <ClInclude Include="services\NullStringDictionary.h" />
-    <ClInclude Include="properties\Property.h" />
     <ClInclude Include="types\Rect.h" />
     <ClInclude Include="utilities\RNGUtils.h" />
     <ClInclude Include="types\ISFMLEventHandler.h" />
@@ -474,6 +473,7 @@
     <ClCompile Include="game\AppStateSplashScreen.cpp" />
     <ClCompile Include="entity\EntityNullView.cpp" />
     <ClCompile Include="services\FallbackConfigSettings.cpp" />
+    <ClCompile Include="types\Color.cpp" />
     <ClCompile Include="types\Direction.cpp" />
     <ClCompile Include="game\GameState.cpp" />
     <ClCompile Include="types\Gender.cpp" />
@@ -508,7 +508,6 @@
     <ClCompile Include="metadata\Metadata.cpp" />
     <ClCompile Include="metadata\MetadataCollection.cpp" />
     <ClCompile Include="properties\ModifiablePropertyDictionary.cpp" />
-    <ClCompile Include="properties\Property.cpp" />
     <ClCompile Include="properties\PropertyDictionary.cpp" />
     <ClCompile Include="services\Standard2DGraphicViews.cpp" />
     <ClCompile Include="state_machine\State.cpp" />

@@ -8,6 +8,8 @@
 #include "game/App.h"
 #include "services/IConfigSettings.h"
 #include "Service.h"
+#include "types/Color.h"
+#include "utilities/MathUtils.h"
 
 namespace metagui
 {
@@ -361,7 +363,7 @@ namespace metagui
     {
       if ((m_flag_for_redraw == true) || (m_cached_flags.animated == true))
       {
-        our_texture.clear(sf::Color::Transparent);
+        our_texture.clear(Color::Transparent);
         draw(frame);
 
         if (m_cached_flags.animated == false)

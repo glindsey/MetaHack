@@ -118,10 +118,10 @@ namespace Actions
     auto subject = getSubject();
 
     // If entity is currently busy, decrement by one and return.
-    int counter_busy = subject->getBaseProperty("counter_busy").as<int32_t>();
+    int counter_busy = subject->getBaseProperty("counter_busy");
     if (counter_busy > 0)
     {
-      subject->addToBaseProperty("counter_busy", Property::from(-1));
+      subject->addToBaseProperty("counter_busy", -1);
       return false;
     }
 
@@ -129,7 +129,7 @@ namespace Actions
     // target actor is busy.
     while ((pImpl->state != State::Processed) && (counter_busy == 0))
     {
-      counter_busy = subject->getBaseProperty("counter_busy").as<int32_t>();
+      counter_busy = subject->getBaseProperty("counter_busy");
       StateResult result{ false, 0 };
 
       CLOG(TRACE, "Action") << "Entity #" <<
@@ -146,13 +146,13 @@ namespace Actions
           if (result.success)
           {
             // Update the busy counter.
-            pImpl->subject->setBaseProperty("counter_busy", Property::from(result.elapsed_time));
+            pImpl->subject->setBaseProperty("counter_busy", result.elapsed_time);
             setState(State::PreBegin);
           }
           else
           {
             // Clear the busy counter.
-            pImpl->subject->setBaseProperty("counter_busy", Property::from(0));
+            pImpl->subject->setBaseProperty("counter_busy", 0);
             setState(State::PostFinish);
           }
           break;
@@ -165,13 +165,13 @@ namespace Actions
           if (result.success)
           {
             // Update the busy counter.
-            pImpl->subject->setBaseProperty("counter_busy", Property::from(result.elapsed_time));
+            pImpl->subject->setBaseProperty("counter_busy", result.elapsed_time);
             setState(State::InProgress);
           }
           else
           {
             // Clear the busy counter.
-            pImpl->subject->setBaseProperty("counter_busy", Property::from(0));
+            pImpl->subject->setBaseProperty("counter_busy", 0);
             setState(State::PostFinish);
           }
           break;
@@ -179,14 +179,14 @@ namespace Actions
         case State::InProgress:
           result = doFinishWork(params);
 
-          pImpl->subject->setBaseProperty("counter_busy", Property::from(result.elapsed_time));
+          pImpl->subject->setBaseProperty("counter_busy", result.elapsed_time);
           setState(State::PostFinish);
           break;
 
         case State::Interrupted:
           result = doAbortWork(params);
 
-          pImpl->subject->addToBaseProperty("counter_busy", Property::from(result.elapsed_time));
+          pImpl->subject->addToBaseProperty("counter_busy", result.elapsed_time);
           setState(State::PostFinish);
           break;
 
@@ -301,7 +301,8 @@ namespace Actions
     auto new_direction = getTargetDirection();
 
     // Check that we're capable of eating at all.
-    if (!subject->getIntrinsic("can_" + getType()).as<bool>())
+    json::json_pointer canVerb{ "/can/" + getType() };
+    if (!subject->getIntrinsic(canVerb, false))
     {
       printMessageTry();
       putMsg(makeTr("YOU_ARE_NOT_CAPABLE_OF_VERBING", { getIndefArt(subject->getDisplayName()), subject->getDisplayName() }));
@@ -309,7 +310,7 @@ namespace Actions
     }
 
     // Check that we're capable of eating right now.
-    if (!subject->getModifiedProperty("can_" + getType()).as<bool>())
+    if (!subject->getModifiedProperty(canVerb, false))
     {
       printMessageTry();
       putMsg(makeTr("YOU_CANT_VERB_NOW", { getIndefArt(subject->getDisplayName()), subject->getDisplayName() }));
@@ -381,7 +382,8 @@ namespace Actions
         if (hasTrait(Trait::ObjectMustBeLiquidCarrier))
         {
           // Check that both are liquid containers.
-          if (!object->getIntrinsic("liquid_carrier").as<bool>())
+          /// @todo Do something better here.
+          if (!object->getIntrinsic("liquid_carrier"))
           {
             printMessageTry();
             putTr("THE_FOO_IS_NOT_A_LIQUID_CARRIER");

@@ -44,7 +44,7 @@ namespace Actions
     std::string bodypart_desc = subject->getBodypartDescription(wear_location);
 
     // Check if the worn item is bound.
-    if (object->getModifiedProperty("bound").as<bool>())
+    if (object->getModifiedProperty("bound"))
     {
       std::string message;
       putMsg(makeTr("YOU_CANT_VERB_FOO_MAGICALLY_BOUND", 
@@ -57,7 +57,7 @@ namespace Actions
     // Try to take off the item.
     /// @todo Disrobing shouldn't be instantaneous.
     auto lua_result = object->be_object_of(*this, subject);
-    if (object->be_object_of(*this, subject) == ActionResult::Success)
+    if (object->be_object_of(*this, subject))
     {
       std::string message;
       putMsg(makeTr("YOU_CVERB_THE_FOO") + " " + 

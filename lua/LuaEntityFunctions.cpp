@@ -32,7 +32,7 @@ namespace LuaEntityFunctions
     // Check to make sure the Entity is actually creatable.
     /// @todo Might want the ability to disable this check for debugging purposes?
     Metadata& thing_metadata = GAME.getMetadataCollection("entity").get(new_thing_type);
-    bool is_creatable = thing_metadata.getIntrinsic("creatable", Property::from(false)).as<bool>();
+    bool is_creatable = thing_metadata.get("creatable", false);
 
     if (is_creatable)
     {

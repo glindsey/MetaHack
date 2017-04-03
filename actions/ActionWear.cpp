@@ -53,7 +53,7 @@ namespace Actions
     auto object = getObject();
 
     // Do the action here.
-    if (object->be_object_of(*this, subject) == ActionResult::Success)
+    if (object->be_object_of(*this, subject))
     {
       /// @todo Figure out action time.
       return StateResult::Success();

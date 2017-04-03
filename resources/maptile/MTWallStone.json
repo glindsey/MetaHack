@@ -7,11 +7,13 @@
   "tile": {
     "character": "?",
     "bg_color": {
+      "type": "color",
       "r": 0,
       "g": 0,
       "b": 0
     },
     "fg_color": {
+      "type": "color",
       "r": 128,
       "g": 64,
       "b": 0

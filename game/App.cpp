@@ -12,6 +12,7 @@
 #include "services/StringDictionary.h"
 #include "state_machine/StateMachine.h"
 #include "tilesheet/TileSheet.h"
+#include "types/Color.h"
 #include "types/SFMLEventResult.h"
 #include "game_windows/MessageLogView.h"
 
@@ -29,8 +30,8 @@ sf::IntRect calc_message_log_dimensions(sf::RenderWindow& window)
   sf::IntRect messageLogDims;
   auto& config = Service<IConfigSettings>::get();
 
-  auto inventory_area_width = config.get("inventory_area_width").as<int32_t>();
-  auto messagelog_area_height = config.get("messagelog_area_height").as<int32_t>();
+  int inventory_area_width = config.get("inventory_area_width");
+  int messagelog_area_height = config.get("messagelog_area_height");
   messageLogDims.width = window.getSize().x - (inventory_area_width + 24);
   messageLogDims.height = messagelog_area_height - 10;
   messageLogDims.left = 12;
@@ -58,6 +59,7 @@ App::App(sf::RenderWindow& app_window)
   // Register loggers.
   SET_UP_LOGGER("App", true);
   SET_UP_LOGGER("Action", false);
+  SET_UP_LOGGER("Color", true);
   SET_UP_LOGGER("ConfigSettings", true);
   SET_UP_LOGGER("Entity", true);
   SET_UP_LOGGER("EntityPool", true);
@@ -104,30 +106,32 @@ App::App(sf::RenderWindow& app_window)
 
   // Create the default fonts.
   m_default_font.reset(NEW sf::Font());
-  auto defaultFont = config.get("font_name_default");
-  auto defaultFontString = defaultFont.as<std::string>();
-  FileName font_name = "resources/font/" + defaultFontString + ".ttf";
+  std::string defaultFont = config.get("font_name_default");
+  FileName font_name = "resources/font/" + defaultFont + ".ttf";
   if (m_default_font->loadFromFile(font_name) == false)
   {
     CLOG(FATAL, "App") << "Could not load the default font";
   }
 
   m_default_bold_font.reset(NEW sf::Font());
-  font_name = "resources/font/" + config.get("font_name_bold").as<std::string>() + ".ttf";
+  std::string defaultBoldFont = config.get("font_name_bold");
+  font_name = "resources/font/" + defaultBoldFont + ".ttf";
   if (m_default_bold_font->loadFromFile(font_name) == false)
   {
     CLOG(FATAL, "App") << "Could not load the default bold font";
   }
 
   m_default_mono_font.reset(NEW sf::Font());
-  font_name = "resources/font/" + config.get("font_name_mono").as<std::string>() + ".ttf";
+  std::string defaultMonoFont = config.get("font_name_mono");
+  font_name = "resources/font/" + defaultMonoFont + ".ttf";
   if (m_default_mono_font->loadFromFile(font_name) == false)
   {
     CLOG(FATAL, "App") << "Could not load the default monospace font";
   }
 
   m_default_unicode_font.reset(NEW sf::Font());
-  font_name = "resources/font/" + config.get("font_name_unicode").as<std::string>() + ".ttf";
+  std::string defaultUnicodeFont = config.get("font_name_unicode");
+  font_name = "resources/font/" + defaultUnicodeFont + ".ttf";
   if (m_default_unicode_font->loadFromFile(font_name) == false)
   {
     CLOG(FATAL, "App") << "Could not load the default Unicode font";
@@ -387,7 +391,7 @@ void App::run()
     {
       frame_clock.restart();
       m_app_window.clear();
-      m_app_texture->clear(sf::Color::Red);
+      m_app_texture->clear(Color::Red);
 
       m_state_machine->render(*m_app_texture, s_frame_counter);
 
@@ -466,15 +470,16 @@ int App::LUA_get_config(lua_State* L)
 
   const char* key = lua_tostring(L, 1);
 
-  if (!config.contains(key))
-  {
+  /// @todo Re-implement me
+  //if (!config.contains(key))
+  //{
     lua_pushnil(L);
     return 1;
-  }
-  else
-  {
-    auto result = config.get(key);
-    int args = instance().m_lua->push_value(result);
-    return args;
-  }
+  //}
+  //else
+  //{
+  //  auto result = config.get(key);
+  //  int args = instance().m_lua->push_value(result);
+  //  return args;
+  //}
 }

@@ -50,24 +50,15 @@ namespace Actions
     ///       are what will affect the drinker.
     /// @todo Figure out drinking time. This will vary based on the contents
     ///       being consumed.
-    ActionResult result = contents->be_object_of(*this, subject);
-
-    switch (result)
+    if (contents->be_object_of(*this, subject))
     {
-      case ActionResult::Success:
-        return StateResult::Success();
-
-      case ActionResult::SuccessDestroyed:
-        contents->destroy();
-        return StateResult::Success();
-
-      case ActionResult::Failure:
-        printMessageStop();
-        return StateResult::Failure();
-
-      default:
-        CLOG(WARNING, "Action") << "Unknown ActionResult " << result;
-        return StateResult::Failure();
+      contents->destroy();
+      return StateResult::Success();
+    }
+    else
+    {
+      printMessageStop();
+      return StateResult::Failure();
     }
   }
 

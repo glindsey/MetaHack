@@ -5,8 +5,8 @@
 #include "game/App.h"
 #include "map/MapFeature.h"
 #include "maptile/MapTile.h"
-#include "utilities/MathUtils.h"
 #include "properties/PropertyDictionary.h"
+#include "utilities/MathUtils.h"
 
 typedef boost::random::uniform_int_distribution<> uniform_int_dist;
 

@@ -4,8 +4,11 @@
 #include "properties/ModifiablePropertyDictionary.h"
 
 ModifiablePropertyDictionary::ModifiablePropertyDictionary(EntityId owner)
-  : PropertyDictionary(owner)
-{}
+  : 
+  PropertyDictionary(owner)
+{
+  m_modified_dictionary = json::object();
+}
 
 ModifiablePropertyDictionary::~ModifiablePropertyDictionary()
 {}
@@ -17,7 +20,7 @@ ModifiablePropertyDictionary::~ModifiablePropertyDictionary()
 ///             If the entry does not exist, it is recalculated via the
 ///             property modifiers associated with it.
 
-Property ModifiablePropertyDictionary::get_modified(std::string name)
+json ModifiablePropertyDictionary::get_modified(std::string name)
 {
   // Recalculate if the setting doesn't exist.
   if (m_modified_dictionary.count(name) == 0)
@@ -25,7 +28,7 @@ Property ModifiablePropertyDictionary::get_modified(std::string name)
     run_modifiers_for(name);
   }
 
-  return m_modified_dictionary.at(name);
+  return m_modified_dictionary[name];
 }
 
 void ModifiablePropertyDictionary::after_set_(std::string name)
@@ -141,8 +144,8 @@ void ModifiablePropertyDictionary::run_modifiers_for(std::string name)
     m_modified_dictionary.erase(name);
   }
 
-  Property unmodified_value = get(name);
-  Property modified_value = unmodified_value;
+  auto unmodified_value = get(name);
+  auto modified_value = unmodified_value;
   /// @todo Call the appropriate modifier functions.
   auto& modifiers = m_modifiers[name];
 

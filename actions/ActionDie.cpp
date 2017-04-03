@@ -39,7 +39,7 @@ namespace Actions
 
     /// @todo Handle stuff like auto-activating life-saving items here.
     /// @todo Pass in the cause of death somehow.
-    if (subject->perform_intransitive_action(*this) == ActionResult::Success)
+    if (subject->perform_intransitive_action(*this))
     {
       if (subject->isPlayer())
       {
@@ -47,12 +47,12 @@ namespace Actions
       }
       else
       {
-        bool living = subject->getModifiedProperty("living").as<bool>();
+        bool living = subject->getModifiedProperty("living");
         putMsg(makeTr(living ? "YOU_ARE_KILLED" : "YOU_ARE_DESTROYED"));
       }
 
       // Set the property saying the entity is dead.
-      subject->setBaseProperty("dead", Property::from(true));
+      subject->setBaseProperty("dead", true);
 
       // Clear any pending actions.
       subject->clearAllPendingActions();

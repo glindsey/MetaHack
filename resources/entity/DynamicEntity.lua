@@ -17,27 +17,27 @@ DynamicEntity.intrinsics.can_die = true
 DynamicEntity.intrinsics.xp = 0
 
 function DynamicEntity.can_have_action_attack_done_by(id)
-    return true, PropertyType.Boolean
+    return true, LuaType.Boolean
 end
 
 function DynamicEntity.can_have_action_die_done_by(id)
-    return true, PropertyType.Boolean
+    return true, LuaType.Boolean
 end
 
 function DynamicEntity.can_have_action_hurt_done_by(id)
-    return true, PropertyType.Boolean
+    return true, LuaType.Boolean
 end
 
 function DynamicEntity.can_have_action_burn_done_by(id)
-    return true, PropertyType.Boolean
+    return true, LuaType.Boolean
 end
 
 function DynamicEntity.get_tile_offset(id, frame)
     -- If entity's hit points are <= 0, show the "dead" tile.
     local hp = thing_get_modified_property(id, "hp")
     if (hp > 0) then
-        return 0, 0, PropertyType.IntVec2
+        return 0, 0, LuaType.IntVec2
     else
-        return 1, 0, PropertyType.IntVec2
+        return 1, 0, LuaType.IntVec2
     end
 end

@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include "keybuffer/KeyBuffer.h"
+#include "types/Color.h"
 
 KeyBuffer::KeyBuffer()
 {
@@ -168,7 +169,7 @@ void KeyBuffer::render(sf::RenderTexture& texture,
                        unsigned int frame,
                        sf::Font const& font,
                        unsigned int font_size,
-                       sf::Color const& fg_color)
+                       Color const& fg_color)
 {
   sf::Text render_text;
   auto x_position = coords.x;
@@ -194,18 +195,15 @@ void KeyBuffer::render(sf::RenderTexture& texture,
   // *** CURSOR ***************************************************************
   RealVec2 cursor_coords;
   RealVec2 cursor_size;
-  sf::Color cursor_color = fg_color;
+  Color cursor_color = fg_color;
 
   if (m_replacing)
   {
-    cursor_color.r >>= 1;
-    cursor_color.g >>= 1;
-    cursor_color.b >>= 1;
-    cursor_color.a >>= 1;
+    cursor_color >>= 1;
   }
 
   // Nice flashy cursor
-  cursor_color.a *= static_cast<sf::Uint8>((21 - (frame % 21)) * 0.05f);
+  cursor_color.setA(cursor_color.a() * static_cast<sf::Uint8>((21 - (frame % 21)) * 0.05f));
 
   // This little hack ensures that trailing spaces in the string are considered
   // when figuring out the cursor location.

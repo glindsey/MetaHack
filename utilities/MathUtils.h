@@ -62,51 +62,22 @@ inline RealVec2 to_v2f(IntVec2 vec)
   return RealVec2{ static_cast<float>(vec.x), static_cast<float>(vec.y) };
 }
 
-inline unsigned char saturation_add(unsigned char const& a,
-                                    unsigned char const& b)
-{
-  unsigned int temp;
-  temp = (static_cast<unsigned int>(a) + static_cast<unsigned int>(b));
-  return static_cast<unsigned char>((temp <= 255U) ? temp : 255U);
-}
-
-inline sf::Color saturation_add(sf::Color const& a,
-                                sf::Color const& b)
-{
-  sf::Color temp;
-  temp.r = saturation_add(a.r, b.r);
-  temp.g = saturation_add(a.g, b.g);
-  temp.b = saturation_add(a.b, b.b);
-  temp.a = saturation_add(a.a, b.a);
-  return temp;
-}
-
 /// Divide and round up.
 inline unsigned int divide_and_round_up(unsigned int value, unsigned int multiple)
 {
   return ((value / multiple) + ((value % multiple == 0) ? 0 : 1));
 }
 
-/// Average two colors together.
-inline sf::Color average(sf::Color first, sf::Color second)
+template <typename T>
+T max(T a, T b)
 {
-  sf::Color result;
-  result.r = (first.r + second.r) >> 1;
-  result.g = (first.g + second.g) >> 1;
-  result.b = (first.b + second.b) >> 1;
-  result.a = (first.a + second.a) >> 1;
-  return result;
+  return (a > b) ? a : b;
 }
 
-/// Average four colors together.
-inline sf::Color average(sf::Color first, sf::Color second, sf::Color third, sf::Color fourth)
+template <typename T>
+T min(T a, T b)
 {
-  sf::Color result;
-  result.r = (first.r + second.r + third.r + fourth.r) >> 2;
-  result.g = (first.g + second.g + third.g + fourth.g) >> 2;
-  result.b = (first.b + second.b + third.b + fourth.b) >> 2;
-  result.a = (first.a + second.a + third.a + fourth.a) >> 2;
-  return result;
+  return (a < b) ? a : b;
 }
 
 /// Return whether two sets of coordinates are adjacent to each other.

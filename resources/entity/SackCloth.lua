@@ -12,17 +12,17 @@ SackCloth.intrinsics.inventory_size = 10
 SackCloth.intrinsics.open = true
 
 function SackCloth.can_have_action_open_done_by(id)
-    return false, PropertyType.Boolean
+    return false, LuaType.Boolean
 end
 
 function SackCloth.can_have_action_close_done_by(id)
-    return false, PropertyType.Boolean
+    return false, LuaType.Boolean
 end
 
 function SackCloth.can_have_action_burn_done_by(id)
-    return true, PropertyType.Boolean
+    return true, LuaType.Boolean
 end
 
 function SackCloth.get_brief_description()
-    return "A sack made out of cloth.", PropertyType.String
+    return "A sack made out of cloth.", LuaType.String
 end

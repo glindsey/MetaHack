@@ -9,5 +9,5 @@ MTWall.intrinsics.passable = false
 MTWall.intrinsics.opacity = { type = "color", r = 255, g = 255, b = 255 }
 
 function MTWall.get_brief_description()
-	return "A wall.", PropertyType.String
+	return "A wall.", LuaType.String
 end

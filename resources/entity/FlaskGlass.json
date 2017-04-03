@@ -8,6 +8,7 @@
   "inventory_size": 1,
 
   "opacity": {
+    "type": "color",
     "r": 0,
     "g": 0,
     "b": 0

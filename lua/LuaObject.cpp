@@ -2,12 +2,11 @@
 
 #include "lua/LuaObject.h"
 
-#include "actions/ActionResult.h"
-#include "types/Direction.h"
 #include "entity/Entity.h"
 #include "entity/EntityId.h"
+#include "types/Direction.h"
+#include "types/Color.h"
 #include "types/Gender.h"
-#include "properties/Property.h"
 
 Lua::Lua()
 {
@@ -18,9 +17,8 @@ Lua::Lua()
   luaL_openlibs(L_);
 
   // Register enums.
-  addActionResultEnumToLua();
   addGenderEnumToLua();
-  addPropertyTypeEnumToLua();
+  addLuaTypeEnumToLua();
 
   // Register the trace function.
   register_function("print_trace", Lua::LUA_trace);
@@ -199,41 +197,52 @@ int Lua::get_enum_value(int index)
   return value;
 }
 
-/// Pushes a property onto the Lua stack.
-///
-/// Currently supported types are:
-///  * Boolean
-///  * String
-///  * Number
-///  * IntVec2
-///  * Direction
-///  * Color
-///
-/// @param    value   Value to deduce the type of.
-/// @return           The number of arguments pushed to the stack.
-///                   If the type could not be deduced, it will push
-///                   nil and return 1.
-
-int Lua::push_value(Property property)
+int Lua::push_value(json value)
 {
-  switch (property.type())
+  if (value.is_null())
   {
-    case Property::Type::Null:         lua_pushnil(L_); return 1;
-    case Property::Type::Boolean:      return push_value(property.as<bool>());
-    case Property::Type::String:       return push_value(property.as<std::string>());
-    case Property::Type::Integer:      return push_value(property.as<int64_t>());
-    case Property::Type::Number:       return push_value(property.as<double>());
-    case Property::Type::IntVec2:      return push_value(property.as<IntVec2>());
-    case Property::Type::Direction:    return push_value(property.as<Direction>());
-    case Property::Type::Color:        return push_value(property.as<Color>());
-    default:
+    lua_pushnil(L_); 
+    return 1;
+  }
+  else if (value.is_boolean())
+  {
+    return push_value(value.get<bool>());
+  }
+  else if (value.is_string())
+  {
+    return push_value(value.get<std::string>());
+  }
+  else if (value.is_number())
+  {
+    if (value.is_number_integer())
     {
-      std::stringstream ss;
-      ss << property.type();
-      CLOG(ERROR, "Lua") << "Attempted to push Property of type " << ss.str() << " to Lua";
-      lua_pushnil(L_);
-      return 1;
+      if (value.is_number_unsigned())
+      {
+        return push_value(value.get<unsigned int>());
+      }
+      else
+      {
+        return push_value(value.get<int>());
+      }
     }
+    else
+    {
+      return push_value(value.get<float>());
+    }
+  }
+  else if (value.is_array())
+  {
+    return push_array(value);
+  }
+  else if (value.is_object())
+  {
+    return push_object(value);
+  }
+  else
+  {
+    CLOG(ERROR, "Lua") << "Attempted to push data of type " << value.type_name() << " to Lua";
+    lua_pushnil(L_);
+    return 1;
   }
 }
 
@@ -299,6 +308,13 @@ int Lua::push_value(IntVec2 value)
   return 2;
 }
 
+int Lua::push_value(RealVec2 value)
+{
+  lua_pushnumber(L_, static_cast<lua_Number>(value.x));
+  lua_pushnumber(L_, static_cast<lua_Number>(value.y));
+  return 2;
+}
+
 int Lua::push_value(Direction value)
 {
   IntVec3 vec = static_cast<IntVec3>(value);
@@ -308,133 +324,213 @@ int Lua::push_value(Direction value)
   return 3;
 }
 
-int Lua::push_value(sf::Color value)
+int Lua::push_value(Color value)
 {
-  lua_pushinteger(L_, static_cast<lua_Integer>(value.r));
-  lua_pushinteger(L_, static_cast<lua_Integer>(value.g));
-  lua_pushinteger(L_, static_cast<lua_Integer>(value.b));
-  lua_pushinteger(L_, static_cast<lua_Integer>(value.a));
+  lua_pushinteger(L_, static_cast<lua_Integer>(value.r()));
+  lua_pushinteger(L_, static_cast<lua_Integer>(value.g()));
+  lua_pushinteger(L_, static_cast<lua_Integer>(value.b()));
+  lua_pushinteger(L_, static_cast<lua_Integer>(value.a()));
   return 4;
 }
 
-Property::Type Lua::pop_type()
+int Lua::push_array(json value)
 {
-  Property::Type return_value;
-  if (!check_enum_type("PropertyType", -1))
+  int stack_slots = 0;
+
+  for (auto& member : value)
   {
-    stackDump();
-    CLOG(FATAL, "Lua") << "Expected PropertyType on the Lua stack, not found";
+    stack_slots += push_value(member);
+  }
+
+  return stack_slots;
+}
+
+int Lua::push_object(json value)
+{
+  if (value.count("type") == 0)
+  {
+    CLOG(ERROR, "Lua") << "Attempted to push object with no type tag to Lua";
+    lua_pushnil(L_);
+    return 1;
   }
   else
   {
-    return_value = static_cast<Property::Type>(get_enum_value(-1));
-    //CLOG(TRACE, "Lua") << "Saw PropertyType " << return_value;
+    auto type = value["type"];
+    if (type == "intvec2")
+    {
+      return push_value(IntVec2(value["x"].get<int>(), 
+                                value["y"].get<int>()));
+    }
+    else if (type == "uintvec2")
+    {
+      return push_value(UintVec2(value["x"].get<unsigned int>(),
+                                 value["y"].get<unsigned int>()));
+    }
+    else if (type == "realvec2")
+    {
+      return push_value(RealVec2(value["x"].get<float>(),
+                                 value["y"].get<float>()));
+    }
+    else if (type == "direction")
+    {
+      return push_value(Direction(value["x"].get<int>(),
+                                  value["y"].get<int>(),
+                                  value["z"].get<int>()));
+    }
+    else if (type == "color")
+    {
+      return push_value(Color(value["r"].get<unsigned int>(),
+                              value["g"].get<unsigned int>(),
+                              value["b"].get<unsigned int>(),
+                              value["a"].get<unsigned int>()));
+    }
+    else if (type == "luatype")
+    {
+      CLOG(FATAL, "Lua") << "Tried to push a Lua Type onto the stack -- not implemented";
+      return 0;
+    }
+    else
+    {
+      CLOG(FATAL, "Lua") << "Tried to push unknown type " << type << " onto the Lua stack";
+      return 0;
+    }
+  }
+}
+
+Lua::Type Lua::pop_type()
+{
+  Lua::Type return_value;
+  if (!check_enum_type("LuaType", -1))
+  {
+    stackDump();
+    CLOG(FATAL, "Lua") << "Expected LuaType on the Lua stack, not found";
+  }
+  else
+  {
+    return_value = static_cast<Lua::Type>(get_enum_value(-1));
   }
   lua_pop(L_, 1);
   return return_value;
 }
 
-Property Lua::pop_value(Property::Type type)
+json Lua::pop_value(Lua::Type type)
 {
-  Property property;
+  json value;
   switch (type)
   {
-    case Property::Type::Null:
+    case Type::Null:
       lua_pop(L_, 1);
       break;
 
-    case Property::Type::Boolean:
-      property = Property::from(lua_toboolean(L_, -1) != 0);
+    case Type::Boolean:
+      value = (lua_toboolean(L_, -1) != 0);
       lua_pop(L_, 1);
       break;
 
-    case Property::Type::String: 
-      property = Property::from(lua_tostring(L_, -1));
+    case Type::String: 
+      value = std::string(lua_tostring(L_, -1));
       lua_pop(L_, 1);
       break;
 
-    case Property::Type::Integer:
-      property = Property::from(static_cast<int64_t>(lua_tointeger(L_, -1)));
+    case Type::Integer:
+      value = static_cast<int>(lua_tointeger(L_, -1));
       lua_pop(L_, 1);
       break;
 
-    case Property::Type::Number:
-      property = Property::from(static_cast<double>(lua_tonumber(L_, -1)));
+    case Type::Unsigned:
+      value = static_cast<unsigned int>(lua_tointeger(L_, -1));
       lua_pop(L_, 1);
       break;
 
-    case Property::Type::ActionResult:
-      if (!check_enum_type("ActionResult", -1))
-      {
-        stackDump();
-        CLOG(ERROR, "Lua") << "Expected ActionResult on the Lua stack, not found";
-      }
-      else
-      {
-        property = Property::from(static_cast<ActionResult>(get_enum_value(-1)));
-      }
+    case Type::Number:
+      value = static_cast<double>(lua_tonumber(L_, -1));
       lua_pop(L_, 1);
       break;
 
-    case Property::Type::IntVec2:
-      property = Property::from(IntVec2(static_cast<int>(lua_tointeger(L_, -2)),
-                                        static_cast<int>(lua_tointeger(L_, -1))));
+    case Type::IntVec2:
+      value = json();
+      value["type"] = "intvec2";
+      value["x"] = static_cast<int>(lua_tointeger(L_, -2));
+      value["y"] = static_cast<int>(lua_tointeger(L_, -1));
       lua_pop(L_, 2);
       break;
 
-    case Property::Type::Direction: 
-      property = Property::from(Direction(static_cast<int>(lua_tointeger(L_, -3)),
-                                          static_cast<int>(lua_tointeger(L_, -2)),
-                                          static_cast<int>(lua_tointeger(L_, -1))));
+    case Type::UintVec2:
+      value = json();
+      value["type"] = "uintvec2";
+      value["x"] = static_cast<unsigned int>(lua_tointeger(L_, -2));
+      value["y"] = static_cast<unsigned int>(lua_tointeger(L_, -1));
+      lua_pop(L_, 2);
+      break;
+
+    case Type::RealVec2:
+      value = json();
+      value["type"] = "realvec2";
+      value["x"] = static_cast<float>(lua_tonumber(L_, -2));
+      value["y"] = static_cast<float>(lua_tonumber(L_, -1));
+      lua_pop(L_, 2);
+      break;
+
+    case Type::Direction:
+      value = json();
+      value["type"] = "direction";
+      value["x"] = static_cast<int>(lua_tointeger(L_, -3));
+      value["y"] = static_cast<int>(lua_tointeger(L_, -2));
+      value["z"] = static_cast<int>(lua_tointeger(L_, -1));
       lua_pop(L_, 3);
       break;
 
-    case Property::Type::Color: 
-      property = Property::from(Color(static_cast<int>(lua_tointeger(L_, -4)),
-                                      static_cast<int>(lua_tointeger(L_, -3)),
-                                      static_cast<int>(lua_tointeger(L_, -2)),
-                                      static_cast<int>(lua_tointeger(L_, -1))));
+    case Type::Color: 
+      value = json();
+      value["type"] = "color";
+      value["r"] = static_cast<unsigned int>(lua_tointeger(L_, -4));
+      value["g"] = static_cast<unsigned int>(lua_tointeger(L_, -3));
+      value["b"] = static_cast<unsigned int>(lua_tointeger(L_, -2));
+      value["a"] = static_cast<unsigned int>(lua_tointeger(L_, -1));
       lua_pop(L_, 4);
       break;
 
-    case Property::Type::PropertyType:
-      property = Property::from(pop_type());
+    case Type::Type:
+      value["type"] = "luatype";
+      value["value"] = static_cast<int>(pop_type());
       // pop_type() did the popping, none needed here
       break;
 
     default:
-      CLOG(ERROR, "Lua") << "Unsupported Property::Type " << type;
+      CLOG(ERROR, "Lua") << "Unsupported Lua Type " << type;
       break;
   }
 
-  return property;
+  return value;
 }
 
-unsigned int Lua::stack_slots(Property::Type type) const
+unsigned int Lua::stack_slots(Lua::Type type) const
 {
   switch (type)
   {
-    case Property::Type::Null: return 1;     // 1, because nil is still a Lua value
-    case Property::Type::Boolean: return 1;
-    case Property::Type::String: return 1;
-    case Property::Type::Integer: return 1;
-    case Property::Type::Number: return 1;
-    case Property::Type::ActionResult: return 1;
-    case Property::Type::IntVec2: return 2;
-    case Property::Type::Direction: return 3;
-    case Property::Type::Color: return 4;
-    case Property::Type::PropertyType: return 1;
-    default: CLOG(ERROR, "Lua") << "Unsupported Property::Type " << type; return 0;
+    case Type::Null: return 1;     // 1, because nil is still a Lua value
+    case Type::Boolean: return 1;
+    case Type::String: return 1;
+    case Type::Integer: return 1;
+    case Type::Unsigned: return 1;
+    case Type::Number: return 1;
+    case Type::IntVec2: return 2;
+    case Type::UintVec2: return 2;
+    case Type::RealVec2: return 2;
+    case Type::Direction: return 3;
+    case Type::Color: return 4;
+    case Type::Type: return 1;
+    default: CLOG(ERROR, "Lua") << "Unsupported Lua Type " << type; return 0;
   }
 }
 
-Property Lua::call_thing_function(std::string function_name, 
-                                  EntityId caller, 
-                                  std::vector<Property> const & args, 
-                                  Property default_result)
+json Lua::call_thing_function(std::string function_name, 
+                              EntityId caller,
+                              json const& args,
+                              json default_result)
 {
-  Property return_value = default_result;
-  Property::Type return_type;
+  json return_value = default_result;
+  Lua::Type return_type;
   std::string group = caller->getType();
 
   int start_stack = lua_gettop(L_);
@@ -473,8 +569,7 @@ Property Lua::call_thing_function(std::string function_name,
       unsigned int lua_args = 0;
       for (auto& arg : args)
       {
-        lua_args += stack_slots(arg.type());
-        push_value(arg);
+        lua_args += push_value(arg);
       }
 
       // Call the function with N+1 arguments and R+1 results. (-(N+2), +(R+1)) = R-(N+1)
@@ -488,6 +583,7 @@ Property Lua::call_thing_function(std::string function_name,
         return_type = pop_type();
         // Pop the return value off of the stack. (-R)
         return_value = pop_value(return_type);
+        /// @todo Handle multiple return values.
       }
       else
       {
@@ -512,154 +608,22 @@ Property Lua::call_thing_function(std::string function_name,
   return return_value;
 }
 
-Property Lua::call_thing_function(std::string function_name, 
-                                  EntityId caller, 
-                                  std::vector<Property> const & args)
+json Lua::call_thing_function(std::string function_name, 
+                              EntityId caller,
+                              json const& args)
 {
-  return call_thing_function(function_name, caller, args, Property());
+  return call_thing_function(function_name, caller, args, json());
 }
 
-Property Lua::get_group_intrinsic(std::string group,
-                                 std::string name,
-                                 Property default_value)
+json Lua::call_modifier_function(std::string property_name,
+                                 json unmodified_value,
+                                 EntityId affected_id,
+                                 std::string responsible_group,
+                                 EntityId responsible_id,
+                                 std::string suffix)
 {
-  Property return_value = default_value;
-  Property::Type return_type = default_value.type();
-  //CLOG(TRACE, "Lua") << "Looking for " << group << " intrinsic \"" << name << "\"";
-
-  int start_stack = lua_gettop(L_);
-
-  // Push group onto the stack. (+1)
-  lua_getglobal(L_, group.c_str());           // group <
-
-  if (lua_isnoneornil(L_, -1))
-  {
-    // Category not found -- pop the name back off. (-1)
-    lua_pop(L_, 1);
-    CLOG(ERROR, "Lua") << "Lua class " << group << " was not found";
-  }
-  else
-  {
-    // Push name of function onto the stack. (+1)
-    lua_getfield(L_, -1, "get_intrinsic");             // group get <
-
-    if (lua_isnoneornil(L_, -1))
-    {
-      // Function not found -- pop the function and group names back off. (-2)
-      lua_pop(L_, 2);
-      CLOG(ERROR, "Lua") << "Lua function " << group << ":get_intrinsic() was not found";
-    }
-    else
-    {
-      // Push the class name up to the front of the stack.
-      lua_pushvalue(L_, -2);                 // group get group <
-      lua_remove(L_, -3);                    // get group <
-      lua_pushstring(L_, name.c_str());      // get group name <
-
-      //stackDump();
-      // auto number_of_results = stack_slots(result_type) + 1
-      int result = lua_pcall(L_, 2, LUA_MULTRET, 0);   // (result|nil|err) <
-      //stackDump();
-      if (result == 0)
-      {
-        return_type = pop_type();
-        return_value = pop_value(return_type);
-      }
-      else
-      {
-        // Get the error message.
-        char const* error_message = lua_tostring(L_, -1);
-        CLOG(ERROR, "Lua") << "Error calling " << group <<
-          ":get_intrinsic(" << name << "): " << error_message;
-
-        // Pop the error message off the stack. (-1)
-        lua_pop(L_, 1);
-      }
-    }
-  }
-
-  int end_stack = lua_gettop(L_);
-
-  if (start_stack != end_stack)
-  {
-    CLOG(FATAL, "Lua") << "*** LUA STACK MISMATCH (" << group <<
-      ":get_intrinsic): Started at " << start_stack << ", ended at " << end_stack;
-  }
-
-  return return_value;
-}
-
-Property Lua::get_group_intrinsic(std::string group,
-                                 std::string name)
-{
-  return get_group_intrinsic(group, name, Property());
-}
-
-void Lua::set_group_intrinsic(std::string group, std::string name, Property value)
-{
-  int start_stack = lua_gettop(L_);
-
-  // Push type of group onto the stack. (+1)
-  lua_getglobal(L_, group.c_str());           // group <
-
-  if (lua_isnoneornil(L_, -1))
-  {
-    // Category not found -- pop the name back off. (-1)
-    lua_pop(L_, 1);
-    CLOG(ERROR, "Lua") << "Lua class " << group << " was not found";
-  }
-  else
-  {
-    // Push name of function onto the stack. (+1)
-    lua_getfield(L_, -1, "set_intrinsic");             // group get <
-
-    if (lua_isnoneornil(L_, -1))
-    {
-      // Function not found -- pop the function and group names back off. (-2)
-      lua_pop(L_, 2);
-      CLOG(ERROR, "Lua") << "Lua function " << group << ":set_intrinsic() was not found";
-    }
-    else
-    {
-      // Push the group name up to the front of the stack.
-      lua_pushvalue(L_, -2);                         // group set group <
-      lua_remove(L_, -3);                            // set group <
-      lua_pushstring(L_, name.c_str());              // set group name <
-      push_value(value);                             // set group name value <
-      int num_args = 2 + stack_slots(value.type());
-      //stackDump();
-      int result = lua_pcall(L_, num_args, 0, 0);    // (nil|err) <
-      //stackDump();
-      if (result != 0)
-      {
-        // Get the error message.
-        char const* error_message = lua_tostring(L_, -1);
-        CLOG(ERROR, "Lua") << "Error calling " << group << ":set_intrinsic(" << name << "): " << error_message;
-
-        // Pop the error message off the stack. (-1)
-        lua_pop(L_, 1);
-      }
-    }
-  }
-
-  int end_stack = lua_gettop(L_);
-
-  if (start_stack != end_stack)
-  {
-    CLOG(FATAL, "Lua") << "*** LUA STACK MISMATCH (" << name << 
-      ":set_intrinsic): Started at " << start_stack << ", ended at " << end_stack;
-  }
-}
-
-Property Lua::call_modifier_function(std::string property_name,
-                                     Property unmodified_value,
-                                     EntityId affected_id,
-                                     std::string responsible_group,
-                                     EntityId responsible_id,
-                                     std::string suffix)
-{
-  Property return_value = unmodified_value;
-  Property::Type return_type;
+  json return_value = unmodified_value;
+  Lua::Type return_type;
   std::string function_name = "modify_property_" + property_name;
   if (!suffix.empty())
   {
@@ -702,8 +666,7 @@ Property Lua::call_modifier_function(std::string property_name,
       lua_pushinteger(L_, affected_id);
 
       // Push the "before" value onto the stack. (+N)
-      unsigned int lua_args = stack_slots(unmodified_value.type());
-      push_value(unmodified_value);
+      unsigned int lua_args = push_value(unmodified_value);
 
       // Call the function with N+2 arguments and R+1 results. (-(N+2), +(R+1)) = R-(N+1)
       //stackDump();
@@ -753,39 +716,6 @@ int Lua::LUA_trace(lua_State* L)
   return 0;
 }
 
-void Lua::addActionResultEnumToLua()
-{
-  add_enum("ActionResult",
-           "FailureActorCantPerform", ActionResult::FailureActorCantPerform,
-           "FailureContainerIsEmpty", ActionResult::FailureContainerIsEmpty,
-           "FailureContainerCantBeSelf", ActionResult::FailureContainerCantBeSelf,
-           "FailureCircularReference", ActionResult::FailureCircularReference,
-           "FailureItemNotEquippable", ActionResult::FailureItemNotEquippable,
-           "FailureItemNotEquipped", ActionResult::FailureItemNotEquipped,
-           "FailureItemWielded", ActionResult::FailureItemWielded,
-           "FailureItemEquipped", ActionResult::FailureItemEquipped,
-           "FailureNotEnoughHands", ActionResult::FailureNotEnoughHands,
-           "FailureTooStupid", ActionResult::FailureTooStupid,
-           "FailureNotLiquidCarrier", ActionResult::FailureNotLiquidCarrier,
-           "FailureSelfReference", ActionResult::FailureSelfReference,
-           "FailureTargetNotAContainer", ActionResult::FailureTargetNotAContainer,
-           "FailureNotInsideContainer", ActionResult::FailureNotInsideContainer,
-           "FailureContainerOutOfReach", ActionResult::FailureContainerOutOfReach,
-           "FailureEntityOutOfReach", ActionResult::FailureEntityOutOfReach,
-           "FailureAlreadyPresent", ActionResult::FailureAlreadyPresent,
-           "FailureInventoryCantContain", ActionResult::FailureInventoryCantContain,
-           "FailureInventoryFull", ActionResult::FailureInventoryFull,
-           "FailureNotPresent", ActionResult::FailureNotPresent,
-           "Failure", ActionResult::Failure,
-           "Pending", ActionResult::Pending,
-           "Success", ActionResult::Success,
-           "SuccessDestroyed", ActionResult::SuccessDestroyed,
-           "SuccessSelfReference", ActionResult::SuccessSelfReference,
-           "SuccessSwapHands", ActionResult::SuccessSwapHands,
-           0
-  );
-}
-
 void Lua::addGenderEnumToLua()
 {
   add_enum("Gender",
@@ -805,19 +735,21 @@ void Lua::addGenderEnumToLua()
   );
 }
 
-void Lua::addPropertyTypeEnumToLua()
+void Lua::addLuaTypeEnumToLua()
 {
-  add_enum("PropertyType",
-           "Null", Property::Type::Null,
-           "Boolean", Property::Type::Boolean,
-           "String", Property::Type::String,
-           "Integer", Property::Type::Integer,
-           "Number", Property::Type::Number,
-           "IntVec2", Property::Type::IntVec2,
-           "ActionResult", Property::Type::ActionResult,
-           "Direction", Property::Type::Direction,
-           "Color", Property::Type::Color,
-           "PropertyType", Property::Type::PropertyType,
-           "Unknown", Property::Type::Unknown,
+  add_enum("LuaType",
+           "Null", Lua::Type::Null,
+           "Boolean", Lua::Type::Boolean,
+           "String", Lua::Type::String,
+           "Integer", Lua::Type::Integer,
+           "Unsigned", Lua::Type::Unsigned,
+           "Number", Lua::Type::Number,
+           "IntVec2", Lua::Type::IntVec2,
+           "UintVec2", Lua::Type::UintVec2,
+           "RealVec2", Lua::Type::RealVec2,
+           "Direction", Lua::Type::Direction,
+           "Color", Lua::Type::Color,
+           "Type", Lua::Type::Type,
+           "Unknown", Lua::Type::Unknown,
            0);
 }

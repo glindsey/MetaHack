@@ -45,86 +45,86 @@ Entity.intrinsics.quantity_is_integer = true
 function Entity.get_display_name(id)
     local quantity = thing_get_modified_property(id, "quantity")
     if quantity > 1 then
-        return intrinsics.plural, PropertyType.String
+        return intrinsics.plural, LuaType.String
     else
-        return intrinsics.name, PropertyType.String
+        return intrinsics.name, LuaType.String
     end
 end
 
 function Entity.get_brief_description(id)
-    return "Entity #" .. id .. ", which has no description associated with it.", PropertyType.String
+    return "Entity #" .. id .. ", which has no description associated with it.", LuaType.String
 end
 
 function Entity.can_contain(id)
     -- By default a Entity can only contain solid objects.
     if thing_get_intrinsic(id, "liquid") == true then
-        return ActionResult.Failure, PropertyType.ActionResult
+        return false, LuaType.Boolean
     end
 
-    return ActionResult.Success, PropertyType.ActionResult
+    return true, LuaType.Boolean
 end
 
 function Entity.can_have_action_drop_done_by(id)
-    return true, PropertyType.Boolean
+    return true, LuaType.Boolean
 end
 
 function Entity.can_have_action_get_done_by(id)
-    return true, PropertyType.Boolean
+    return true, LuaType.Boolean
 end
 
 function Entity.can_have_action_hurl_done_by(id)
-    return true, PropertyType.Boolean
+    return true, LuaType.Boolean
 end
 
 function Entity.can_have_action_move_done_by(id)
-    return true, PropertyType.Boolean
+    return true, LuaType.Boolean
 end
 
 function Entity.can_have_action_putinto_done_by(id)
-    return true, PropertyType.Boolean
+    return true, LuaType.Boolean
 end
 
 function Entity.can_have_action_quaff_done_by(id)
-    return false, PropertyType.Boolean
+    return false, LuaType.Boolean
 end
 
 function Entity.can_have_action_takeout_done_by(id)
-    return true, PropertyType.Boolean
+    return true, LuaType.Boolean
 end
 
 function Entity.can_have_action_unwield_done_by(id)
-    return true, PropertyType.Boolean
+    return true, LuaType.Boolean
 end
 
 function Entity.can_have_action_wield_done_by(id)
-    return true, PropertyType.Boolean
+    return true, LuaType.Boolean
 end
 
 function Entity.get_tile_offset(id, frame)
-    return 0, 0, PropertyType.IntVec2
+    return 0, 0, LuaType.IntVec2
 end
 
 function Entity.get_tile_character_code(id, frame)
-    return 0x003f, ActionResult.Integer           -- question mark
+    return 0x003f, LuaType.Integer           -- question mark
 end
 
 function Entity.get_tile_bg_color(id, frame)
-    return 0, 0, 0, 255, ActionResult.Color     -- black
+    return 0, 0, 0, 255, LuaType.Color     -- black
 end
 
 function Entity.get_tile_fg_color(id, frame)
-    return 255, 255, 0, 255, ActionResult.Color -- yellow
+    return 255, 255, 0, 255, LuaType.Color -- yellow
 end
 
 function Entity.on_create(id)
     --messageLog_add("Entity.on_create() called, new ID = " .. id)
-    return ActionResult.Success, PropertyType.ActionResult
+    return true, LuaType.Boolean
 end
 
 function Entity.on_lit_by(id)
-    return ActionResult.Success, PropertyType.ActionResult
+    return true, LuaType.Boolean
 end
 
 function Entity.process()
-    return ActionResult.Success, PropertyType.ActionResult
+    return true, LuaType.Boolean
 end

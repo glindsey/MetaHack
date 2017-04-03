@@ -1,9 +1,7 @@
 {
   "parent": "Entity",
 
-  "intrinsics": {
-    "name": "[Weapon]",
-    "plural": "[Weapons]",
-    "brief_description": "A thing designed or used for inflicting bodily harm or physical damage.",
-  }
+  "name": "[Weapon]",
+  "plural": "[Weapons]",
+  "brief_description": "A thing designed or used for inflicting bodily harm or physical damage."
 }

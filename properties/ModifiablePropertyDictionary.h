@@ -59,7 +59,7 @@ public:
   /// @return     The entry requested.
   ///             If the entry does not exist, it is recalculated via the
   ///             property modifiers associated with it.
-  Property get_modified(std::string name);
+  json get_modified(std::string name);
 
   /// Overridden function to be called after a set() is performed.
   /// Erases the equivalent key in the modified dictionary.
@@ -126,7 +126,7 @@ protected:
 
 private:
   /// The modified property dictionary.
-  PropertyMap m_modified_dictionary;
+  json m_modified_dictionary;
 
   /// The map of property modifier functions.
   ModifierMap m_modifiers;

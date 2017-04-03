@@ -10,10 +10,10 @@ Marcher.intrinsics.creatable = true
 Marcher.intrinsics.maxhp = range(1, 1)
 
 function Marcher.get_brief_description()
-    return "A testing DynamicEntity that endlessly marches left and right.", PropertyType.String
+    return "A testing DynamicEntity that endlessly marches left and right.", LuaType.String
 end
 
 function Marcher.process(id)
     print("DEBUG: Marcher.process() called for object " .. id .. ".")
-    return ActionResult.Success, PropertyType.ActionResult
+    return true, LuaType.Boolean
 end

@@ -57,7 +57,7 @@ namespace Actions
     }
 
     // Check that the container actually IS a container.
-    if (container->getIntrinsic("inventory_size").as<int32_t>() == 0)
+    if (static_cast<int>(container->getIntrinsic("inventory_size")) == 0)
     {
       printMessageTry();
       putTr("THE_TARGET_IS_NOT_A_CONTAINER");
@@ -92,7 +92,7 @@ namespace Actions
     auto object = getObject();
     auto container = getTargetThing();
 
-    if (object->be_object_of(*this, subject, container) == ActionResult::Success)
+    if (object->be_object_of(*this, subject, container))
     {
       printMessageDo();
 

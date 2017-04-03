@@ -5,6 +5,9 @@
 
 #include "keybuffer/IKeyBuffer.h"
 
+// Forward declarations
+class Color;
+
 /// This class encapsulates the idea of an input buffer which is added to or
 /// removed from using SFML KeyPressed events.
 class KeyBuffer : public IKeyBuffer
@@ -25,7 +28,7 @@ public:
                       unsigned int frame,
                       sf::Font const& font,
                       unsigned int font_size,
-                      sf::Color const& fg_color) override;
+                      Color const& fg_color) override;
 
 protected:
   /// Helper function to insert a character depending on shift.

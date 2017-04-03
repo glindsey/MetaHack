@@ -65,22 +65,17 @@ namespace Actions
     printMessageFinish();
 
     /// @todo Split read time into start/finish actions.
-    switch (object->be_object_of(*this, subject))
+    if (object->be_object_of(*this, subject))
     {
-      case ActionResult::SuccessDestroyed:
-        putTr("THE_FOO_DISINTEGRATES_AFTER_YOU_VERB");
-        object->destroy();
-        result = StateResult::Success();
-        break;
+      /// @todo Handle destruction on read. (Technically the Lua script should be able to do this.)
+      //putTr("THE_FOO_DISINTEGRATES_AFTER_YOU_VERB");
+      //object->destroy();
 
-      case ActionResult::Success:
-        result = StateResult::Success();
-        break;
-
-      case ActionResult::Failure:
-      default:
-        result = StateResult::Failure();
-        break;
+      result = StateResult::Success();
+    }
+    else
+    {
+      result = StateResult::Failure();
     }
 
     return result;

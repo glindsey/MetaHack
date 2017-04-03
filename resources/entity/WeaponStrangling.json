@@ -1,9 +1,7 @@
 {
   "parent": "Weapon",
 
-  "intrinsics": {
-    "name": "[WeaponStrangling]",
-    "plural": "[WeaponStrangling]",
-    "brief_description": "A weapon that is designed to inflict strangling damage."
-  }
+  "name": "[WeaponStrangling]",
+  "plural": "[WeaponStrangling]",
+  "brief_description": "A weapon that is designed to inflict strangling damage."
 }

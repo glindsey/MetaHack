@@ -48,6 +48,11 @@ void MetadataCollection::preload()
   return;
 }
 
+bool MetadataCollection::contains(std::string type)
+{
+  return (m_collection.count(type) != 0);
+}
+
 Metadata& MetadataCollection::get(std::string type)
 {
   if (type.empty())

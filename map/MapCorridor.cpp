@@ -19,10 +19,10 @@ MapCorridor::MapCorridor(Map& m, PropertyDictionary const& s, GeoVector vec)
   pImpl(NEW Impl())
 {
   unsigned int numTries = 0;
-  uniform_int_dist lenDist(s.get("min_length").as<int32_t>(3), 
-                           s.get("max_length").as<int32_t>(48));
-  unsigned int max_retries = s.get("max_retries").as<int32_t>(100);
-  std::string floor_type = s.get("floor_type").as<std::string>("MTFloorDirt");
+  uniform_int_dist lenDist(s.get("min_length", 3), 
+                           s.get("max_length", 48));
+  unsigned int max_retries = s.get("max_retries", 100);
+  std::string floor_type = s.get("floor_type", "MTFloorDirt");
 
   IntVec2& startingCoords = vec.start_point;
   Direction& direction = vec.direction;

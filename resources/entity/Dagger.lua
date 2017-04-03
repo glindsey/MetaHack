@@ -10,9 +10,9 @@ Dagger.intrinsics.creatable = true
 Dagger.intrinsics.physical_mass = 1
 
 function Dagger.can_have_action_rust_done_by(id)
-    return true, PropertyType.Boolean
+    return true, LuaType.Boolean
 end
 
 function Dagger.get_brief_description()
-    return "A small blade with a hilt.", PropertyType.String
+    return "A small blade with a hilt.", LuaType.String
 end

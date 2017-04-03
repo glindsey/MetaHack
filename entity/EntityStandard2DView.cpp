@@ -44,10 +44,13 @@ void EntityStandard2DView::draw(sf::RenderTarget& target,
 
   auto target_coords = getLocation();
   auto target_size = getSize();
-  auto tile_size = config.get("map_tile_size").as<int32_t>();
+  unsigned int tile_size = config.get("map_tile_size");
   if (target_size == RealVec2(0, 0))
   {
-    target_size = { static_cast<float>(tile_size), static_cast<float>(tile_size) };
+    target_size = { 
+      static_cast<float>(tile_size), 
+      static_cast<float>(tile_size)
+    };
   }
 
   UintVec2 tile_coords = get_tile_sheet_coords(frame);
@@ -56,14 +59,14 @@ void EntityStandard2DView::draw(sf::RenderTarget& target,
   texture_coords.width = tile_size;
   texture_coords.height = tile_size;
 
-  sf::Color thing_color;
+  Color thing_color;
   if (use_lighting)
   {
     thing_color = root_tile->getLightLevel();
   }
   else
   {
-    thing_color = sf::Color::White;
+    thing_color = Color::White;
   }
 
   if (use_smoothing)
@@ -75,7 +78,7 @@ void EntityStandard2DView::draw(sf::RenderTarget& target,
   rectangle.setSize(target_size);
   rectangle.setTexture(&texture);
   rectangle.setTextureRect(texture_coords);
-  rectangle.setFillColor(thing_color);
+  rectangle.setFillColor(sf::Color(thing_color));
 
   target.draw(rectangle);
 
@@ -95,10 +98,12 @@ UintVec2 EntityStandard2DView::get_tile_sheet_coords(int frame) const
   auto& entity = getEntity();
 
   /// Get tile coordinates on the sheet.
-  UintVec2 start_coords = entity.getMetadata().get_tile_coords();
+  UintVec2 start_coords = entity.getMetadata().getTileCoords();
 
   /// Call the Lua function to get the offset (tile to choose).
-  UintVec2 offset = entity.call_lua_function("get_tile_offset", { Property::from(frame) }).as<UintVec2>();
+  /// @todo Re-implement me
+  //UintVec2 offset = entity.call_lua_function("get_tile_offset", { Property::from(frame) }).as<UintVec2>();
+  UintVec2 offset{ 0, 0 };
 
   /// Add them to get the resulting coordinates.
   UintVec2 tile_coords = start_coords + offset;

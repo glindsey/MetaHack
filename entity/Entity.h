@@ -2,8 +2,10 @@
 
 #include "stdafx.h"
 
+#include "json.hpp"
+using json = ::nlohmann::json;
+
 #include "actions/Action.h"
-#include "actions/ActionResult.h"
 #include "types/BodyPart.h"
 #include "types/Direction.h"
 #include "types/GameObject.h"
@@ -155,8 +157,10 @@ public:
   /// @param key            Name of the intrinsic to get.
   /// @param default_value  Default value to use, if any.
   /// @return The intrinsic (or default) value for that key.
-  Property getIntrinsic(std::string key, Property default_value) const;
-  Property getIntrinsic(std::string key) const;
+  json getIntrinsic(std::string key, json default_value) const;
+  json getIntrinsic(std::string key) const;
+  json getIntrinsic(json::json_pointer key, json default_value) const;
+  json getIntrinsic(json::json_pointer key) const;
 
   /// Get a base property of this Entity.
   /// If the base property is not found, the method falls back upon the
@@ -164,8 +168,10 @@ public:
   /// @param key            Name of the property to get.
   /// @param default_value  Default value to use, if any.
   /// @return The property (or default) value for that key.
-  Property getBaseProperty(std::string key, Property default_value) const;
-  Property getBaseProperty(std::string key) const;
+  json getBaseProperty(std::string key, json default_value) const;
+  json getBaseProperty(std::string key) const;
+  json getBaseProperty(json::json_pointer key, json default_value) const;
+  json getBaseProperty(json::json_pointer key) const;
 
   /// Sets a base property of this Entity.
   /// If the base property is not found, it is created.
@@ -173,13 +179,15 @@ public:
   /// @param key    Key of the property to set.
   /// @param value  Value to set the property to.
   /// @return Boolean indicating whether the property previously existed.
-  bool setBaseProperty(std::string key, Property value);
+  bool setBaseProperty(std::string key, json value);
+  bool setBaseProperty(json::json_pointer key, json value);
 
   /// Adds to a base property of this Entity.
   /// If the base property is not found, it is created.
   /// @param key    Key of the property to set.
   /// @param value  Value to add to the property.
-  void addToBaseProperty(std::string key, Property add_value);
+  void addToBaseProperty(std::string key, json add_value);
+  void addToBaseProperty(json::json_pointer key, json add_value);
 
   /// Get a modified property of this Entity.
   /// If the modified property is not found, the method falls back upon the
@@ -188,8 +196,10 @@ public:
  
   /// @param default_value  Default value to use, if any.
   /// @return The modified (or base) property value for that key.
-  Property getModifiedProperty(std::string key, Property default_value) const;
-  Property getModifiedProperty(std::string key) const;
+  json getModifiedProperty(std::string key, json default_value) const;
+  json getModifiedProperty(std::string key) const;
+  json getModifiedProperty(json::json_pointer key, json default_value) const;
+  json getModifiedProperty(json::json_pointer key) const;
 
   /// Add a property modifier to this Entity.
   /// @param  key   Name of property to modify.
@@ -200,6 +210,7 @@ public:
   ///
   /// @return True if the function was added; false if it already existed.
   bool addModifier(std::string key, EntityId id, PropertyModifierInfo const& info);
+  bool addModifier(json::json_pointer key, EntityId id, PropertyModifierInfo const& info);
 
   /// Remove all modifier functions for a given key and entity ID.
   /// @param  key               Name of property to modify.
@@ -207,6 +218,7 @@ public:
   ///
   /// @return The number of modifiers erased.
   size_t removeModifier(std::string key, EntityId id);
+  size_t removeModifier(json::json_pointer key, EntityId id);
 
   /// Get the quantity this entity represents.
   unsigned int getQuantity() const;
@@ -259,13 +271,13 @@ public:
   Gender getGenderOrYou() const;
 
   /// Get the number of a particular body part the DynamicEntity has.
-  Property getBodypartNumber(BodyPart part) const;
+  unsigned int getBodypartNumber(BodyPart part) const;
 
   /// Get the appropriate body part name for the DynamicEntity.
-  Property getBodypartName(BodyPart part) const;
+  std::string getBodypartName(BodyPart part) const;
 
   /// Get the appropriate body part plural for the DynamicEntity.
-  Property getBodypartPlural(BodyPart part) const;
+  std::string getBodypartPlural(BodyPart part) const;
 
   /// Get the appropriate description for a body part.
   /// This takes the body part name and the number referencing the particular
@@ -370,7 +382,7 @@ public:
   /// getPossessiveAdjective().
   std::string getPossessiveString(std::string owned, std::string adjectives = "");
 
-  sf::Color getOpacity() const;
+  Color getOpacity() const;
 
   /// Return true if a third-person verb form should be used.
   /// This function checks to see if this Entity is currently designated as
@@ -391,7 +403,7 @@ public:
                                 std::string const& verb3);
 
   /// Return this entity's mass.
-  int getMass();
+  unsigned int getMass();
 
   /// @addtogroup Pronouns
   /// @todo Make localizable. (How? Use Lua scripts maybe?)
@@ -452,11 +464,11 @@ public:
   bool process_voluntary_actions();
 
   /// Perform an action when this entity dies.
-  /// @return If this function returns Failure, the death is avoided.
+  /// @return If this function returns false, the death is avoided.
   /// @warning The function must reset whatever caused the death in the
   ///          first place, or the Entity will just immediately die again
   ///          on the next call to process()!
-  ActionResult perform_action_died();
+  bool perform_action_died();
 
   /// Perform an action when this entity collides with another entity.
   void perform_action_collided_with(EntityId entity);
@@ -471,35 +483,31 @@ public:
   /// an appropriate method to call.
   /// 
   /// @param action   The action to be the target of.
-  /// @return Result of the action. If Failure, the action is aborted
-  ///         (if possible).
-  ActionResult perform_intransitive_action(Actions::Action& action);
+  /// @return Bool indicating whether the action succeeded.
+  bool perform_intransitive_action(Actions::Action& action);
 
   /// Perform the effects of being a object of a particular action.
   /// @param action   The action to be the target of.
   /// @param subject  The subject performing the action.
-  /// @return Result of the action. If Failure, the action is aborted
-  ///         (if possible).
-  ActionResult be_object_of(Actions::Action& action, EntityId subject);
+  /// @return Bool indicating whether the action succeeded.
+  bool be_object_of(Actions::Action& action, EntityId subject);
 
   /// Perform the effects of being a object of an action with a target.
   /// @param action   The action to be the target of.
   /// @param subject  The subject performing the action.
   /// @param target   The target of the action.
-  /// @return Result of the action. If Failure, the action is aborted
-  ///         (if possible).
-  ActionResult be_object_of(Actions::Action& action, EntityId subject, EntityId target);
+  /// @return Bool indicating whether the action succeeded.
+  bool be_object_of(Actions::Action& action, EntityId subject, EntityId target);
 
   /// Perform the effects of being a object of an action with a direction.
   /// @param action     The action to be the target of.
   /// @param subject    The subject performing the action.
   /// @param direction  The direction of the action.
-  /// @return Result of the action. If Failure, the action is aborted
-  ///         (if possible).
-  ActionResult be_object_of(Actions::Action& action, EntityId subject, Direction direction);
+  /// @return Bool indicating whether the action succeeded.
+  bool be_object_of(Actions::Action& action, EntityId subject, Direction direction);
 
   /// Perform an action when this entity is hit by an attack.
-  ActionResult perform_action_hurt_by(EntityId subject);
+  bool perform_action_hurt_by(EntityId subject);
 
   /// Perform an action when this entity is used to hit a target.
   /// This action executes when the entity is wielded by an entity, and an
@@ -508,7 +516,7 @@ public:
   /// @see DynamicEntity::attack
   /// @note Is there a better name for this? Current name sounds like the
   ///       object is the target, instead of the implement.
-  ActionResult perform_action_attacked_by(EntityId subject, EntityId target);
+  bool perform_action_attacked_by(EntityId subject, EntityId target);
 
   /// Perform an action when this entity is de-equipped (taken off).
   /// If this function returns false, the action is aborted.
@@ -523,27 +531,26 @@ public:
   bool can_merge_with(EntityId other) const;
 
   /// Returns whether the Entity can hold a certain entity.
-  /// If Entity's inventory size is 0, returns
-  /// ActionResult::FailureTargetNotAContainer.
+  /// If Entity's inventory size is 0, returns false.
   /// Otherwise, calls Lua function "can_contain()" for the Entity's type.
   /// @param entity Entity to check.
-  /// @return ActionResult specifying whether the entity can be held here.
-  ActionResult can_contain(EntityId entity);
+  /// @return Bool specifying whether the entity can be held here.
+  bool can_contain(EntityId entity);
 
   /// Syntactic sugar for calling call_lua_function().
-  Property call_lua_function(std::string function_name,
-                             std::vector<Property> const& args,
-                             Property default_result);
+  json call_lua_function(std::string function_name,
+                         json const& args,
+                         json const& default_result);
 
-  Property call_lua_function(std::string function_name,
-                             std::vector<Property> const& args);
+  json call_lua_function(std::string function_name,
+                         json const& args);
 
-  Property call_lua_function(std::string function_name,
-                             std::vector<Property> const& args,
-                             Property default_result) const;
+  json call_lua_function(std::string function_name,
+                         json const& args,
+                         json const& default_result) const;
 
-  Property call_lua_function(std::string function_name,
-                             std::vector<Property> const& args) const;
+  json call_lua_function(std::string function_name,
+                         json const& args) const;
 
   /// Get a const reference to this tile's metadata.
   Metadata const & getMetadata() const;
@@ -649,5 +656,5 @@ private:
   BodyLocationMap m_equipped_items;
 
   /// Outline color for walls when drawing on-screen.
-  static sf::Color const wall_outline_color_;
+  static Color const wall_outline_color_;
 };

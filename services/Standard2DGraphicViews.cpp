@@ -16,8 +16,8 @@ namespace fs = boost::filesystem;
 Standard2DGraphicViews::Standard2DGraphicViews()
 {
   auto& config = Service<IConfigSettings>::get();
-  auto tileSize = config.get("map_tile_size").as<int32_t>();
-  auto textureSize = config.get("tilesheet_texture_size").as<int32_t>();
+  auto tileSize = config.get("map_tile_size");
+  auto textureSize = config.get("tilesheet_texture_size");
 
   m_tile_sheet.reset(NEW TileSheet(tileSize, textureSize));
 }
@@ -64,9 +64,8 @@ void Standard2DGraphicViews::loadViewResourcesFor(Metadata& metadata)
     CLOG(TRACE, "Metadata") << "Tiles for " << qualified_name <<
       " were placed on the TileSheet at " << tile_location;
 
-    metadata.set_intrinsic("has_tiles", Property::from(true));
-    metadata.set_intrinsic("tile_location_x", Property::from(tile_location.x));
-    metadata.set_intrinsic("tile_location_y", Property::from(tile_location.y));
+    metadata.set("has_tiles", true);
+    metadata.set("tile_location", tile_location);
   }
   else
   {

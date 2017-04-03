@@ -2,11 +2,11 @@
 
 #include "map/MapLRoom.h"
 
+#include "entity/EntityPool.h"
 #include "game/App.h"
 #include "maptile/MapTile.h"
 #include "utilities/MathUtils.h"
 #include "utilities/RNGUtils.h"
-#include "entity/EntityPool.h"
 
 // Local typedefs
 typedef boost::random::uniform_int_distribution<> uniform_int_dist;
@@ -17,16 +17,16 @@ MapLRoom::MapLRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
 {
   unsigned int num_tries = 0;
 
-  uniform_int_dist horiz_width_dist(s.get("horiz_leg_min_width").as<int32_t>(10),
-                                    s.get("horiz_leg_max_width").as<int32_t>(20));
-  uniform_int_dist horiz_height_dist(s.get("horiz_leg_min_height").as<int32_t>(3),
-                                     s.get("horiz_leg_max_height").as<int32_t>(7));
-  uniform_int_dist vert_width_dist(s.get("vert_leg_min_width").as<int32_t>(10),
-                                   s.get("vert_leg_max_width").as<int32_t>(20));
-  uniform_int_dist vert_height_dist(s.get("vert_leg_min_height").as<int32_t>(3),
-                                    s.get("vert_leg_max_height").as<int32_t>(7));
-  unsigned int max_retries = s.get("max_retries").as<int32_t>(500);
-  std::string floor_type = s.get("floor_type").as<std::string>("MTFloorDirt");
+  uniform_int_dist horiz_width_dist(s.get("horiz_leg_min_width", 10),
+                                    s.get("horiz_leg_max_width", 20));
+  uniform_int_dist horiz_height_dist(s.get("horiz_leg_min_height", 3),
+                                     s.get("horiz_leg_max_height", 7));
+  uniform_int_dist vert_width_dist(s.get("vert_leg_min_width", 10),
+                                   s.get("vert_leg_max_width", 20));
+  uniform_int_dist vert_height_dist(s.get("vert_leg_min_height", 3),
+                                    s.get("vert_leg_max_height", 7));
+  unsigned int max_retries = s.get("max_retries", 500);
+  std::string floor_type = s.get("floor_type", "MTFloorDirt");
 
   IntVec2& starting_coords = vec.start_point;
   Direction& direction = vec.direction;

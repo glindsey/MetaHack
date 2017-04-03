@@ -5,6 +5,7 @@
   "plural": "[Mu]",
   "brief_description": "A completely empty space; the absence of all entities.",
   "opacity": {
+    "type": "color",
     "r": 0,
     "g": 0,
     "b": 0
@@ -12,11 +13,13 @@
   "tile": {
     "character": "?",
     "bg_color": {
+      "type": "color",
       "r": 255,
       "g": 255,
       "b": 255
     },
     "fg_color": {
+      "type": "color",
       "r": 32,
       "g": 32,
       "b": 32

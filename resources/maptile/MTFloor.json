@@ -6,6 +6,7 @@
   "brief_description": "A floor.",
   "passable": true,
   "opacity": {
+    "type": "color",
     "r": 0,
     "g": 0,
     "b": 0

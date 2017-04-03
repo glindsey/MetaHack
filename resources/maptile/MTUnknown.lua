@@ -13,5 +13,5 @@ MTUnknown.intrinsics.tile_bg_color = { type = "color", r = 0, g = 0, b = 0 } -- 
 MTUnknown.intrinsics.tile_fg_color = { type = "color", r = 128, g = 64, b = 0 } -- brown
 
 function MTUnknown.get_brief_description()
-	return "Unexplored space.", PropertyType.String
+	return "Unexplored space.", LuaType.String
 end

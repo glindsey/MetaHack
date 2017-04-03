@@ -2,6 +2,9 @@
 
 #include "SFML/Graphics.hpp"
 
+#include "json.hpp"
+using json = ::nlohmann::json;
+
 /// Definition of a two-dimensional vector.
 template <typename T>
 class Vec2
@@ -67,6 +70,34 @@ public:
   {
     os << "(" << obj.x << ", " << obj.y << ")";
     return os;
+  }
+
+  friend void to_json(json& j, Vec2 const& obj)
+  {
+    j = json{
+      { "x", obj.x },
+      { "y", obj.y }
+    };
+
+    /// @todo Ewwwww, RTI. Fixable?
+    if (typeid(obj) == typeid(float))
+    {
+      j["type"] = "realvec2";
+    }
+    else if (typeid(obj) == typeid(unsigned int))
+    {
+      j["type"] = "uintvec2";
+    }
+    else if (typeid(obj) == typeid(int))
+    {
+      j["type"] == "intvec2";
+    }
+  }
+
+  friend void from_json(json const& j, Vec2& obj)
+  {
+    obj.x = j["x"];
+    obj.y = j["y"];
   }
 
   T r()

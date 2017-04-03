@@ -223,3 +223,20 @@ float Direction::calculate_light_factor(IntVec2 source, IntVec2 target, Directio
   throw std::runtime_error("Invalid direction " + str(direction) +
                            " passed to calculate_light_factor");
 }
+
+void to_json(json& j, Direction const& direction)
+{
+  j = json{
+    { "type", "direction" },
+    { "x", direction.m_x },
+    { "y", direction.m_y },
+    { "z", direction.m_z }
+  };
+}
+
+void from_json(json const& j, Direction& direction)
+{
+  direction.m_x = j["x"];
+  direction.m_y = j["y"];
+  direction.m_z = j["z"];
+}

@@ -10,6 +10,7 @@
 #include "game/App.h"
 #include "services/IConfigSettings.h"
 #include "Service.h"
+#include "types/Color.h"
 
 namespace metagui
 {
@@ -67,27 +68,28 @@ namespace metagui
     auto& config = Service<IConfigSettings>::get();
     UintVec2 size = getSize();
 
-    float line_spacing_y = the_default_font.getLineSpacing(config.get("text_default_size").as<uint32_t>());
+    float line_spacing_y = the_default_font.getLineSpacing(config.get("text_default_size"));
 
     // Text offsets relative to the background rectangle.
-    float text_offset_x = config.get("window_text_offset_x").as<float>();
-    float text_offset_y = config.get("window_text_offset_y").as<float>();
+    float text_offset_x = config.get("window_text_offset_x");
+    float text_offset_y = config.get("window_text_offset_y");
 
     // Clear the target.
-    texture.clear(config.get("window_bg_color").as<Color>());
+    auto bg_color = config.get("window_bg_color").get<Color>();
+    auto focused_color = config.get("window_focused_border_color").get<Color>();
+    auto unfocused_color = config.get("window_border_color").get<Color>();
+
+    texture.clear(bg_color);
 
     // Render subclass contents, if any.
     drawContents_(texture, frame);
 
     // Draw the border.
-    float border_width = config.get("window_border_width").as<float>();
+    float border_width = config.get("window_border_width");
     m_border_shape.setPosition(RealVec2(border_width, border_width));
     m_border_shape.setSize(RealVec2(static_cast<float>(size.x - (2 * border_width)), static_cast<float>(size.y - (2 * border_width))));
-    m_border_shape.setFillColor(sf::Color::Transparent);
-    m_border_shape.setOutlineColor(
-      getFocus() ?
-      config.get("window_focused_border_color").as<Color>() :
-      config.get("window_border_color").as<Color>());
+    m_border_shape.setFillColor(Color::Transparent);
+    m_border_shape.setOutlineColor(getFocus() ? focused_color : unfocused_color);
     m_border_shape.setOutlineThickness(border_width);
 
     //texture.setView(sf::View(sf::FloatRect(0.0f, 0.0f, static_cast<float>(target.getSize().x), static_cast<float>(target.getSize().y))));

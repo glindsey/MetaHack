@@ -79,7 +79,7 @@ namespace Actions
     // Set the target to be the container as a kludge for message printing.
     setTarget(container);
 
-    if (object->be_object_of(*this, subject) == ActionResult::Success)
+    if (object->be_object_of(*this, subject))
     {
       if (object->move_into(new_location))
       {

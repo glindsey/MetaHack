@@ -8,6 +8,7 @@
 
   "light": {
     "color": {
+      "type": "color",
       "r": 128,
       "g": 128,
       "b": 255

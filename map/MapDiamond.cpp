@@ -2,9 +2,9 @@
 
 #include "map/MapDiamond.h"
 
+#include "entity/EntityPool.h"
 #include "game/App.h"
 #include "maptile/MapTile.h"
-#include "entity/EntityPool.h"
 
 // Local typedefs
 typedef boost::random::uniform_int_distribution<> uniform_int_dist;
@@ -20,10 +20,10 @@ MapDiamond::MapDiamond(Map& m, PropertyDictionary const& s, GeoVector vec)
   pImpl(NEW Impl())
 {
   unsigned int numTries = 0;
-  uniform_int_dist hsDist(s.get("min_half_size").as<int32_t>(2),
-                          s.get("max_half_size").as<int32_t>(4));
-  unsigned int max_retries = s.get("max_retries").as<int32_t>(100);
-  std::string floor_type = s.get("floor_type").as<std::string>("MTFloorDirt");
+  uniform_int_dist hsDist(s.get("min_half_size", 2),
+                          s.get("max_half_size", 4));
+  unsigned int max_retries = s.get("max_retries", 100);
+  std::string floor_type = s.get("floor_type", "MTFloorDirt");
 
   IntVec2& startingCoords = vec.start_point;
   Direction& direction = vec.direction;

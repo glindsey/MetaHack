@@ -2,10 +2,10 @@
 
 #include "stdafx.h"
 
-#include "properties/Property.h"
+#include "json.hpp"
+using json = ::nlohmann::json;
 
-// Forward declarations
-class EntityId;
+#include "entity/EntityId.h"
 
 /// Class that handles a dictionary that associates data of various types
 /// with keys.
@@ -22,12 +22,20 @@ public:
 
   /// Check if a particular key exists.
   bool contains(std::string key) const;
+  bool contains(json::json_pointer key) const;
+
+  /// Get a base entry from the dictionary.
+  /// @param key            Key of the setting to retrieve.
+  /// @param default_value  Default to use if the key doesn't exist.
+  /// @return               The entry requested.
+  ///                       If the entry does not exist, returns the default provided..
+  json const& get(std::string key, json const& default_value) const;
 
   /// Get a base entry from the dictionary.
   /// @param key  Key of the setting to retrieve.
   /// @return     The entry requested.
-  ///             If the entry does not exist, returns a null Property.
-  Property const& get(std::string key) const;
+  ///             If the entry does not exist, returns a null object.
+  json const& get(std::string key) const;
 
   /// Add/alter an entry in the base dictionary.
   /// Erases any entry in the modified dictionary, if one exists.
@@ -37,13 +45,7 @@ public:
   /// @param value  Value to set it to.
   /// @return       True if the entry already existed and has been changed.
   ///               False if a new entry was added. 
-  bool set(std::string key, Property const& value);
-
-  template <typename T> bool set(std::string key, T value) 
-  { 
-    Property property = Property::from(value);
-    return set(key, property); 
-  }
+  bool set(std::string key, json const& value);
 
   /// Overridable function to be called after a set() is performed.
   /// Default behavior is to do nothing.
@@ -64,11 +66,11 @@ public:
 
 protected:
   /// Get a reference to the dictionary map itself.
-  PropertyMap& get_dictionary();
+  json& get_dictionary();
 
 private:
   /// The base property dictionary.
-  PropertyMap m_dictionary;
+  json m_dictionary;
 
   /// The owner of this dictionary, if any.
   EntityId m_owner;

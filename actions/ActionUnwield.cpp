@@ -46,7 +46,7 @@ namespace Actions
     std::string bodypart_desc = subject->getBodypartDescription(wield_location);
 
     // Check if the wielded item is bound.
-    if (object->getModifiedProperty("bound").as<bool>())
+    if (object->getModifiedProperty("bound"))
     {
       putMsg(makeTr("YOU_CANT_VERB_FOO_MAGICALLY_BOUND",
                     { subject->getPossessiveString(bodypart_desc) }));
@@ -58,7 +58,7 @@ namespace Actions
     // Try to unwield the item.
     /// @todo Unwielding shouldn't be instantaneous...?
     auto lua_result = object->be_object_of(*this, subject);
-    if (object->be_object_of(*this, subject) == ActionResult::Success)
+    if (object->be_object_of(*this, subject))
     {
       std::string message;
       message = makeString("$you unwield $foo. $you are now wielding nothing in $0.", { subject->getPossessiveString(bodypart_desc) });
