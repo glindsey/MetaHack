@@ -40,21 +40,26 @@ public:
   uint8_t a() const;
 
   // Setters
-  uint8_t setR(uint8_t value);
-  uint8_t setG(uint8_t value);
-  uint8_t setB(uint8_t value);
-  uint8_t setA(uint8_t value);
+  template<typename T> uint8_t setR(T value) { m_r = static_cast<uint8_t>(bounds(static_cast<T>(0), value, static_cast<T>(255))); return m_r; }
+  template<typename T> uint8_t setG(T value) { m_g = static_cast<uint8_t>(bounds(static_cast<T>(0), value, static_cast<T>(255))); return m_g; }
+  template<typename T> uint8_t setB(T value) { m_b = static_cast<uint8_t>(bounds(static_cast<T>(0), value, static_cast<T>(255))); return m_b; }
+  template<typename T> uint8_t setA(T value) { m_a = static_cast<uint8_t>(bounds(static_cast<T>(0), value, static_cast<T>(255))); return m_a; }
+
+  template<> uint8_t setR(uint8_t value) { m_r = value; return m_r; }
+  template<> uint8_t setG(uint8_t value) { m_g = value; return m_g; }
+  template<> uint8_t setB(uint8_t value) { m_b = value; return m_b; }
+  template<> uint8_t setA(uint8_t value) { m_a = value; return m_a; }
 
   // Mutator operators
   Color& operator+=(Color const& rhs);
   Color& operator-=(Color const& rhs);
-  Color& operator*=(float const& rhs);
+  //Color& operator*=(float const& rhs);
   Color& operator<<=(unsigned int const& rhs);
   Color& operator>>=(unsigned int const& rhs);
 
   friend Color operator+(Color lhs, Color const& rhs);
   friend Color operator-(Color lhs, Color const& rhs);
-  friend Color operator*(Color lhs, float const& rhs);
+  //friend Color operator*(Color lhs, float const& rhs);
   friend Color operator>>(Color lhs, unsigned int const& rhs);
   friend Color operator<<(Color lhs, unsigned int const& rhs);
 

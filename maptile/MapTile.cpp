@@ -91,10 +91,13 @@ void MapTile::addLightInfluence(EntityId source,
 
     float dist_squared = static_cast<float>(calc_vis_distance(getCoords().x, getCoords().y, influence.coords.x, influence.coords.y));
 
-    Color light_color = influence.color;
-    int light_intensity = influence.intensity;
+    //Color const& light_color = influence.color;
+    //int light_intensity = influence.intensity;
 
-    Color addColor;
+    Color const& light_color = Color::Gray;
+    int light_intensity = 4;
+
+    Color addColor{ 0, 0, 0, 255 };
 
     float dist_factor;
 
@@ -115,14 +118,14 @@ void MapTile::addLightInfluence(EntityId source,
       {
         float light_factor = (1.0f - dist_factor);
         float wall_factor = Direction::calculate_light_factor(influence.coords, getCoords(), d);
+        float factor = wall_factor * light_factor;
 
-        addColor.setR(static_cast<uint8_t>(static_cast<float>(light_color.r()) * wall_factor * light_factor));
-        addColor.setG(static_cast<uint8_t>(static_cast<float>(light_color.g()) * wall_factor * light_factor));
-        addColor.setB(static_cast<uint8_t>(static_cast<float>(light_color.b()) * wall_factor * light_factor));
-        addColor.setA(255);
+        addColor.setR(static_cast<float>(light_color.r()) * factor);
+        addColor.setG(static_cast<float>(light_color.g()) * factor);
+        addColor.setB(static_cast<float>(light_color.b()) * factor);
 
         unsigned int index = d.get_map_index();
-        m_calculated_light_colors[index] = m_calculated_light_colors[index] + addColor;
+        m_calculated_light_colors[index] += addColor;
       }
     }
   }
@@ -130,14 +133,7 @@ void MapTile::addLightInfluence(EntityId source,
 
 Color MapTile::getLightLevel() const
 {
-  if (m_calculated_light_colors.count(Direction::Self.get_map_index()) == 0)
-  {
-    return m_ambient_light_color;
-  }
-  else
-  {
-    return m_ambient_light_color + m_calculated_light_colors.at(Direction::Self.get_map_index());
-  }
+  return getWallLightLevel(Direction::Self);
 }
 
 Color MapTile::getWallLightLevel(Direction direction) const

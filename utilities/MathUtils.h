@@ -80,6 +80,12 @@ T min(T a, T b)
   return (a < b) ? a : b;
 }
 
+template <typename T>
+T bounds(T min, T value, T max)
+{
+  return (value < min) ? min : (value > max) ? max : value;
+}
+
 /// Return whether two sets of coordinates are adjacent to each other.
 /// In this context, adjacent includes corners as well as edges.
 /// (e.g. A tile at (4, 4) and a tile at (5, 5) are considered adjacent.)

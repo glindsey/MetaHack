@@ -90,40 +90,35 @@ uint8_t Color::g() const { return m_g; }
 uint8_t Color::b() const { return m_b; }
 uint8_t Color::a() const { return m_a; }
 
-uint8_t Color::setR(uint8_t value) { m_r = value; return m_r; }
-uint8_t Color::setG(uint8_t value) { m_g = value; return m_g; }
-uint8_t Color::setB(uint8_t value) { m_b = value; return m_b; }
-uint8_t Color::setA(uint8_t value) { m_a = value; return m_a; }
-
-Color & Color::operator+=(Color const& rhs)
+Color& Color::operator+=(Color const& rhs)
 {
-  m_r = ((m_r + rhs.m_r) < m_r) ? 255 : (m_r + rhs.m_r);
-  m_g = ((m_g + rhs.m_g) < m_g) ? 255 : (m_g + rhs.m_g);
-  m_b = ((m_b + rhs.m_b) < m_b) ? 255 : (m_b + rhs.m_b);
-  m_a = ((m_a + rhs.m_a) < m_a) ? 255 : (m_a + rhs.m_a);
+  m_r = (m_r > (255 - rhs.m_r)) ? 255 : (m_r + rhs.m_r);
+  m_g = (m_g > (255 - rhs.m_g)) ? 255 : (m_g + rhs.m_g);
+  m_b = (m_b > (255 - rhs.m_b)) ? 255 : (m_b + rhs.m_b);
+  m_a = (m_a > (255 - rhs.m_a)) ? 255 : (m_a + rhs.m_a);
   return *this;
 }
 
-Color & Color::operator-=(Color const& rhs)
+Color& Color::operator-=(Color const& rhs)
 {
-  m_r = ((m_r - rhs.m_r) > m_r) ? 0 : (m_r - rhs.m_r);
-  m_g = ((m_g - rhs.m_g) > m_g) ? 0 : (m_g - rhs.m_g);
-  m_b = ((m_b - rhs.m_b) > m_b) ? 0 : (m_b - rhs.m_b);
-  m_a = ((m_a - rhs.m_a) > m_a) ? 0 : (m_a - rhs.m_a);
+  m_r = (m_r < rhs.m_r) ? 0 : (m_r - rhs.m_r);
+  m_g = (m_g < rhs.m_g) ? 0 : (m_g - rhs.m_g);
+  m_b = (m_b < rhs.m_b) ? 0 : (m_b - rhs.m_b);
+  m_a = (m_a < rhs.m_a) ? 0 : (m_a - rhs.m_a);
   return *this;
 }
 
-Color & Color::operator*=(float const& rhs)
-{
-  m_r = ((static_cast<float>(m_r) * rhs) > 255.0) ? 255 : static_cast<unsigned char>(static_cast<float>(m_r) * rhs);
-  m_g = ((static_cast<float>(m_g) * rhs) > 255.0) ? 255 : static_cast<unsigned char>(static_cast<float>(m_g) * rhs);
-  m_b = ((static_cast<float>(m_b) * rhs) > 255.0) ? 255 : static_cast<unsigned char>(static_cast<float>(m_b) * rhs);
-  m_a = ((static_cast<float>(m_a) * rhs) > 255.0) ? 255 : static_cast<unsigned char>(static_cast<float>(m_a) * rhs);
-  return *this;
-}
+//Color& Color::operator*=(float const& rhs)
+//{
+//  m_r = ((static_cast<float>(m_r) * rhs) > 255.0f) ? 255 : static_cast<unsigned char>(static_cast<float>(m_r) * rhs);
+//  m_g = ((static_cast<float>(m_g) * rhs) > 255.0f) ? 255 : static_cast<unsigned char>(static_cast<float>(m_g) * rhs);
+//  m_b = ((static_cast<float>(m_b) * rhs) > 255.0f) ? 255 : static_cast<unsigned char>(static_cast<float>(m_b) * rhs);
+//  m_a = ((static_cast<float>(m_a) * rhs) > 255.0f) ? 255 : static_cast<unsigned char>(static_cast<float>(m_a) * rhs);
+//  return *this;
+//}
 
 
-Color & Color::operator<<=(unsigned int const& rhs)
+Color& Color::operator<<=(unsigned int const& rhs)
 {
   m_r <<= rhs;
   m_g <<= rhs;
@@ -132,7 +127,7 @@ Color & Color::operator<<=(unsigned int const& rhs)
   return *this;
 }
 
-Color & Color::operator>>=(unsigned int const& rhs)
+Color& Color::operator>>=(unsigned int const& rhs)
 {
   m_r >>= rhs;
   m_g >>= rhs;
@@ -165,11 +160,11 @@ Color operator-(Color lhs, Color const& rhs)
   return lhs;
 }
 
-Color operator*(Color lhs, float const& rhs)
-{
-  lhs *= rhs;
-  return lhs;
-}
+//Color operator*(Color lhs, float const& rhs)
+//{
+//  lhs *= rhs;
+//  return lhs;
+//}
 
 Color operator>>(Color lhs, unsigned int const & rhs)
 {
@@ -191,19 +186,19 @@ Color average(Color first, Color second)
   result.m_r =
     static_cast<unsigned char>(
     (static_cast<unsigned int>(first.m_r) +
-     static_cast<unsigned int>(second.m_r)) >> 2);
+     static_cast<unsigned int>(second.m_r)) >> 1);
   result.m_g =
     static_cast<unsigned char>(
     (static_cast<unsigned int>(first.m_g) +
-     static_cast<unsigned int>(second.m_g)) >> 2);
+     static_cast<unsigned int>(second.m_g)) >> 1);
   result.m_b =
     static_cast<unsigned char>(
     (static_cast<unsigned int>(first.m_b) +
-     static_cast<unsigned int>(second.m_b)) >> 2);
+     static_cast<unsigned int>(second.m_b)) >> 1);
   result.m_a =
     static_cast<unsigned char>(
     (static_cast<unsigned int>(first.m_a) +
-     static_cast<unsigned int>(second.m_a)) >> 2);
+     static_cast<unsigned int>(second.m_a)) >> 1);
   return result;
 }
 
