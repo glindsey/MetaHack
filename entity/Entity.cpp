@@ -96,10 +96,9 @@ Entity::Entity(Entity const& original, EntityId ref)
 void Entity::initialize()
 {
   /// Get our maximum HP. (The method will automatically pick it from a range.)
-  auto max_hp = m_metadata.get("maxhp_range", 0);
-  setBaseProperty("maxhp", max_hp);
+  auto max_hp = m_metadata.get("maxhp", 1);
 
-  /// Also set our HP to that value.
+  /// Set our starting HP to that value.
   setBaseProperty("hp", max_hp);
 
   //notifyObservers(Event::Updated);

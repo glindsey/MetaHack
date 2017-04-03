@@ -115,8 +115,8 @@ json Metadata::get(std::string name, json default_value) const
   {
     if (result[0] == "range")
     {
-      result = pick_uniform(static_cast<int>(result[0]),
-                            static_cast<int>(result[1]));
+      result = pick_uniform(static_cast<int>(result[1]),
+                            static_cast<int>(result[2]));
     }
   }
 

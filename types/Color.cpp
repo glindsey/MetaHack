@@ -95,35 +95,35 @@ uint8_t Color::setG(uint8_t value) { m_g = value; return m_g; }
 uint8_t Color::setB(uint8_t value) { m_b = value; return m_b; }
 uint8_t Color::setA(uint8_t value) { m_a = value; return m_a; }
 
-Color & Color::operator+=(Color const & rhs)
+Color & Color::operator+=(Color const& rhs)
 {
-  m_r = (m_r + rhs.m_r < m_r) ? 255 : (m_r + rhs.m_r);
-  m_g = (m_g + rhs.m_g < m_g) ? 255 : (m_g + rhs.m_g);
-  m_b = (m_b + rhs.m_b < m_b) ? 255 : (m_b + rhs.m_b);
-  m_a = (m_a + rhs.m_a < m_a) ? 255 : (m_a + rhs.m_a);
+  m_r = ((m_r + rhs.m_r) < m_r) ? 255 : (m_r + rhs.m_r);
+  m_g = ((m_g + rhs.m_g) < m_g) ? 255 : (m_g + rhs.m_g);
+  m_b = ((m_b + rhs.m_b) < m_b) ? 255 : (m_b + rhs.m_b);
+  m_a = ((m_a + rhs.m_a) < m_a) ? 255 : (m_a + rhs.m_a);
   return *this;
 }
 
-Color & Color::operator-=(Color const & rhs)
+Color & Color::operator-=(Color const& rhs)
 {
-  m_r = (m_r - rhs.m_r > m_r) ? 0 : (m_r + rhs.m_r);
-  m_g = (m_g - rhs.m_g > m_g) ? 0 : (m_g + rhs.m_g);
-  m_b = (m_b - rhs.m_b > m_b) ? 0 : (m_b + rhs.m_b);
-  m_a = (m_a - rhs.m_a > m_a) ? 0 : (m_a + rhs.m_a);
+  m_r = ((m_r - rhs.m_r) > m_r) ? 0 : (m_r - rhs.m_r);
+  m_g = ((m_g - rhs.m_g) > m_g) ? 0 : (m_g - rhs.m_g);
+  m_b = ((m_b - rhs.m_b) > m_b) ? 0 : (m_b - rhs.m_b);
+  m_a = ((m_a - rhs.m_a) > m_a) ? 0 : (m_a - rhs.m_a);
   return *this;
 }
 
-Color & Color::operator*=(float const & rhs)
+Color & Color::operator*=(float const& rhs)
 {
-  m_r = (static_cast<float>(m_r) * rhs > 255.0) ? 255 : static_cast<unsigned char>(static_cast<float>(m_r) * rhs);
-  m_g = (static_cast<float>(m_g) * rhs > 255.0) ? 255 : static_cast<unsigned char>(static_cast<float>(m_g) * rhs);
-  m_b = (static_cast<float>(m_b) * rhs > 255.0) ? 255 : static_cast<unsigned char>(static_cast<float>(m_b) * rhs);
-  m_a = (static_cast<float>(m_a) * rhs > 255.0) ? 255 : static_cast<unsigned char>(static_cast<float>(m_a) * rhs);
+  m_r = ((static_cast<float>(m_r) * rhs) > 255.0) ? 255 : static_cast<unsigned char>(static_cast<float>(m_r) * rhs);
+  m_g = ((static_cast<float>(m_g) * rhs) > 255.0) ? 255 : static_cast<unsigned char>(static_cast<float>(m_g) * rhs);
+  m_b = ((static_cast<float>(m_b) * rhs) > 255.0) ? 255 : static_cast<unsigned char>(static_cast<float>(m_b) * rhs);
+  m_a = ((static_cast<float>(m_a) * rhs) > 255.0) ? 255 : static_cast<unsigned char>(static_cast<float>(m_a) * rhs);
   return *this;
 }
 
 
-Color & Color::operator<<=(unsigned int const & rhs)
+Color & Color::operator<<=(unsigned int const& rhs)
 {
   m_r <<= rhs;
   m_g <<= rhs;
@@ -132,7 +132,7 @@ Color & Color::operator<<=(unsigned int const & rhs)
   return *this;
 }
 
-Color & Color::operator>>=(unsigned int const & rhs)
+Color & Color::operator>>=(unsigned int const& rhs)
 {
   m_r >>= rhs;
   m_g >>= rhs;
