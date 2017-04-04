@@ -1,6 +1,6 @@
 -- Default Lua script read when EntityPool is first initialized.
 
-require "resources/deepcopy"
+--require "resources/deepcopy"
 
 -- Seed the RNG.
 -- (TODO: Probably should improve upon this in the future.)
@@ -77,18 +77,9 @@ function inheritsFrom(baseClass, className)
     --  return newinst
     --end
 
-    -- Add the default intrinsics table if it doesn't exist.
-    new_class.intrinsics = new_class.intrinsics or {}
-    
     if nil ~= baseClass then
-        -- Do a deep copy of the base class, for starters.
-        new_class = table.deepcopy(baseClass)
-    
         -- Inherit from the base class.
         setmetatable(new_class, { __index = baseClass })
-
-        -- Reset the type name of this class. (It will have been overwritten by the deep copy.)
-        new_class.typeName = className
 
         -- Add the other class as this class' parent.
         if baseClass.typeName ~= nil then
@@ -123,11 +114,9 @@ function inheritsFrom(baseClass, className)
         end
         return b_isa
     end
-
     
     -- @todo Register class name with the EntityPool
     --thingManager_register(className)
-    new_class.intrinsics.type = className  
     return new_class
 end
 

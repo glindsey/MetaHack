@@ -3,34 +3,6 @@
 require "resources/entity/Entity"
 
 DynamicEntity = inheritsFrom(Entity, "DynamicEntity")
-DynamicEntity.intrinsics.name = "[DynamicEntity]"
-DynamicEntity.intrinsics.plural = "[DynamicEntities]"
-
-DynamicEntity.intrinsics.bodypart_body_count = 1
-DynamicEntity.intrinsics.opacity = { type = "color", r = 255, g = 255, b = 255 }
-DynamicEntity.intrinsics.living = true
-DynamicEntity.intrinsics.inventory_size = -1
-
-DynamicEntity.intrinsics.can_die = true
-
-
-DynamicEntity.intrinsics.xp = 0
-
-function DynamicEntity.can_have_action_attack_done_by(id)
-    return true, LuaType.Boolean
-end
-
-function DynamicEntity.can_have_action_die_done_by(id)
-    return true, LuaType.Boolean
-end
-
-function DynamicEntity.can_have_action_hurt_done_by(id)
-    return true, LuaType.Boolean
-end
-
-function DynamicEntity.can_have_action_burn_done_by(id)
-    return true, LuaType.Boolean
-end
 
 function DynamicEntity.get_tile_offset(id, frame)
     -- If entity's hit points are <= 0, show the "dead" tile.

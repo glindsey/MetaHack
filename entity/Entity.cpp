@@ -1382,10 +1382,27 @@ std::string Entity::getBodypartDescription(BodyLocation location)
   return result;
 }
 
+bool Entity::canBeObjectOfAction(Actions::Action & action)
+{
+  return canBeObjectOfAction(action.getType());
+}
+
+bool Entity::canBeObjectOfAction(std::string action)
+{
+  return getIntrinsic("can-be-object-of-" + action, false);
+}
+
+
 /// @todo Have the script return an optional reason if an action can't be done.
+bool Entity::canHaveActionDoneBy(EntityId entity, std::string action)
+{
+  return canBeObjectOfAction(action) &&
+    call_lua_function("can_have_action_" + action + "_done_by", entity, false);
+}
+
 bool Entity::canHaveActionDoneBy(EntityId entity, Actions::Action& action)
 {
-  return call_lua_function("can_have_action_" + action.getType() + "_done_by", entity, false);
+  return canHaveActionDoneBy(entity, action.getType());
 }
 
 bool Entity::is_miscible_with(EntityId entity)

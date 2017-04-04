@@ -277,12 +277,21 @@ public:
   /// overridden.
   std::string getBodypartDescription(BodyLocation location);
 
+  /// Returns true if this Entity can be the object of a particular Action.
+  /// @param action Reference to the Action to perform.
+  /// @return true if the Action can be performed, false otherwise.
+  bool canBeObjectOfAction(Actions::Action& action);
+  bool canBeObjectOfAction(std::string action);
+
   /// Returns true if a particular Action can be performed on this Entity by
   /// the specified Entity.
+  /// Calls canBeObjectOfAction first to see if the action can be performed
+  /// on this Entity at all.
   /// @param entity  The Entity doing the Action.
   /// @param action Reference to the Action to perform.
   /// @return true if the Action can be performed, false otherwise.
   bool canHaveActionDoneBy(EntityId entity, Actions::Action& action);
+  bool canHaveActionDoneBy(EntityId entity, std::string action);
 
   /// Returns a reference to the inventory.
   Inventory& getInventory();
