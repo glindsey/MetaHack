@@ -199,7 +199,9 @@ void KeyBuffer::render(sf::RenderTexture& texture,
 
   if (m_replacing)
   {
-    cursor_color >>= 1;
+    cursor_color.setR(cursor_color.r() >> 1);
+    cursor_color.setG(cursor_color.g() >> 1);
+    cursor_color.setB(cursor_color.b() >> 1);
   }
 
   // Nice flashy cursor

@@ -24,6 +24,7 @@ Color const Color::Fuschia{ 0xFF00FFFF };
 Color const Color::Purple{ 0x800080FF };
 
 Color::Color()
+  : m_r{ 0 }, m_g{ 0 }, m_b{ 0 }, m_a{ 0 }
 {}
 
 Color::Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
@@ -92,19 +93,19 @@ uint8_t Color::a() const { return m_a; }
 
 Color& Color::operator+=(Color const& rhs)
 {
-  m_r = (m_r > (255 - rhs.m_r)) ? 255 : (m_r + rhs.m_r);
-  m_g = (m_g > (255 - rhs.m_g)) ? 255 : (m_g + rhs.m_g);
-  m_b = (m_b > (255 - rhs.m_b)) ? 255 : (m_b + rhs.m_b);
-  m_a = (m_a > (255 - rhs.m_a)) ? 255 : (m_a + rhs.m_a);
+  m_r = saturation_add(m_r, rhs.m_r);
+  m_g = saturation_add(m_g, rhs.m_g);
+  m_b = saturation_add(m_b, rhs.m_b);
+  m_a = saturation_add(m_a, rhs.m_a);
   return *this;
 }
 
 Color& Color::operator-=(Color const& rhs)
 {
-  m_r = (m_r < rhs.m_r) ? 0 : (m_r - rhs.m_r);
-  m_g = (m_g < rhs.m_g) ? 0 : (m_g - rhs.m_g);
-  m_b = (m_b < rhs.m_b) ? 0 : (m_b - rhs.m_b);
-  m_a = (m_a < rhs.m_a) ? 0 : (m_a - rhs.m_a);
+  m_r = saturation_sub(m_r, rhs.m_r);
+  m_g = saturation_sub(m_g, rhs.m_g);
+  m_b = saturation_sub(m_b, rhs.m_b);
+  m_a = saturation_sub(m_a, rhs.m_a);
   return *this;
 }
 
@@ -118,23 +119,23 @@ Color& Color::operator-=(Color const& rhs)
 //}
 
 
-Color& Color::operator<<=(unsigned int const& rhs)
-{
-  m_r <<= rhs;
-  m_g <<= rhs;
-  m_b <<= rhs;
-  m_a <<= rhs;
-  return *this;
-}
+//Color& Color::operator<<=(unsigned int const& rhs)
+//{
+//  m_r <<= rhs;
+//  m_g <<= rhs;
+//  m_b <<= rhs;
+//  m_a <<= rhs;
+//  return *this;
+//}
 
-Color& Color::operator>>=(unsigned int const& rhs)
-{
-  m_r >>= rhs;
-  m_g >>= rhs;
-  m_b >>= rhs;
-  m_a >>= rhs;
-  return *this;
-}
+//Color& Color::operator>>=(unsigned int const& rhs)
+//{
+//  m_r >>= rhs;
+//  m_g >>= rhs;
+//  m_b >>= rhs;
+//  m_a >>= rhs;
+//  return *this;
+//}
 
 Color::operator sf::Color() const
 {
@@ -166,17 +167,17 @@ Color operator-(Color lhs, Color const& rhs)
 //  return lhs;
 //}
 
-Color operator>>(Color lhs, unsigned int const & rhs)
-{
-  lhs <<= rhs;
-  return lhs;
-}
+//Color operator>>(Color lhs, unsigned int const & rhs)
+//{
+//  lhs <<= rhs;
+//  return lhs;
+//}
 
-Color operator<<(Color lhs, unsigned int const & rhs)
-{
-  lhs >>= rhs;
-  return rhs;
-}
+//Color operator<<(Color lhs, unsigned int const & rhs)
+//{
+//  lhs >>= rhs;
+//  return rhs;
+//}
 
 
 /// Average two colors together.
@@ -184,21 +185,21 @@ Color average(Color first, Color second)
 {
   Color result;
   result.m_r =
-    static_cast<unsigned char>(
-    (static_cast<unsigned int>(first.m_r) +
-     static_cast<unsigned int>(second.m_r)) >> 1);
+    static_cast<uint8_t>(
+    (static_cast<uint32_t>(first.m_r) +
+     static_cast<uint32_t>(second.m_r)) >> 1);
   result.m_g =
-    static_cast<unsigned char>(
-    (static_cast<unsigned int>(first.m_g) +
-     static_cast<unsigned int>(second.m_g)) >> 1);
+    static_cast<uint8_t>(
+    (static_cast<uint32_t>(first.m_g) +
+     static_cast<uint32_t>(second.m_g)) >> 1);
   result.m_b =
-    static_cast<unsigned char>(
-    (static_cast<unsigned int>(first.m_b) +
-     static_cast<unsigned int>(second.m_b)) >> 1);
+    static_cast<uint8_t>(
+    (static_cast<uint32_t>(first.m_b) +
+     static_cast<uint32_t>(second.m_b)) >> 1);
   result.m_a =
-    static_cast<unsigned char>(
-    (static_cast<unsigned int>(first.m_a) +
-     static_cast<unsigned int>(second.m_a)) >> 1);
+    static_cast<uint8_t>(
+    (static_cast<uint32_t>(first.m_a) +
+     static_cast<uint32_t>(second.m_a)) >> 1);
   return result;
 }
 
@@ -207,29 +208,29 @@ Color average(Color first, Color second, Color third, Color fourth)
 {
   Color result;
   result.m_r = 
-    static_cast<unsigned char>(
-    (static_cast<unsigned int>(first.m_r) + 
-     static_cast<unsigned int>(second.m_r) + 
-     static_cast<unsigned int>(third.m_r) + 
-     static_cast<unsigned int>(fourth.m_r)) >> 2);
+    static_cast<uint8_t>(
+    (static_cast<uint32_t>(first.m_r) +
+     static_cast<uint32_t>(second.m_r) +
+     static_cast<uint32_t>(third.m_r) +
+     static_cast<uint32_t>(fourth.m_r)) >> 2);
   result.m_g =
-    static_cast<unsigned char>(
-    (static_cast<unsigned int>(first.m_g) +
-     static_cast<unsigned int>(second.m_g) +
-     static_cast<unsigned int>(third.m_g) +
-     static_cast<unsigned int>(fourth.m_g)) >> 2);
+    static_cast<uint8_t>(
+    (static_cast<uint32_t>(first.m_g) +
+     static_cast<uint32_t>(second.m_g) +
+     static_cast<uint32_t>(third.m_g) +
+     static_cast<uint32_t>(fourth.m_g)) >> 2);
   result.m_b =
-    static_cast<unsigned char>(
-    (static_cast<unsigned int>(first.m_b) +
-     static_cast<unsigned int>(second.m_b) +
-     static_cast<unsigned int>(third.m_b) +
-     static_cast<unsigned int>(fourth.m_b)) >> 2);
+    static_cast<uint8_t>(
+    (static_cast<uint32_t>(first.m_b) +
+     static_cast<uint32_t>(second.m_b) +
+     static_cast<uint32_t>(third.m_b) +
+     static_cast<uint32_t>(fourth.m_b)) >> 2);
   result.m_a =
-    static_cast<unsigned char>(
-    (static_cast<unsigned int>(first.m_a) +
-     static_cast<unsigned int>(second.m_a) +
-     static_cast<unsigned int>(third.m_a) +
-     static_cast<unsigned int>(fourth.m_a)) >> 2);
+    static_cast<uint8_t>(
+    (static_cast<uint32_t>(first.m_a) +
+     static_cast<uint32_t>(second.m_a) +
+     static_cast<uint32_t>(third.m_a) +
+     static_cast<uint32_t>(fourth.m_a)) >> 2);
   return result;
 }
 

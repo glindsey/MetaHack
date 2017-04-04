@@ -153,7 +153,7 @@ bool AppStateGameMode::initialize()
 #ifdef NDEBUG
   MapId current_map_id = GAME.getMaps().create(64, 64);
 #else
-  MapId current_map_id = GAME.getMaps().create(16, 16);
+  MapId current_map_id = GAME.getMaps().create(20, 20);
 #endif
 
   Map& game_map = GAME.getMaps().get(current_map_id);

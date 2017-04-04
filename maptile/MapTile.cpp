@@ -91,11 +91,8 @@ void MapTile::addLightInfluence(EntityId source,
 
     float dist_squared = static_cast<float>(calc_vis_distance(getCoords().x, getCoords().y, influence.coords.x, influence.coords.y));
 
-    //Color const& light_color = influence.color;
-    //int light_intensity = influence.intensity;
-
-    Color const& light_color = Color::Gray;
-    int light_intensity = 4;
+    Color const& light_color = influence.color;
+    int light_intensity = influence.intensity;
 
     Color addColor{ 0, 0, 0, 255 };
 
@@ -110,7 +107,14 @@ void MapTile::addLightInfluence(EntityId source,
       dist_factor = dist_squared / static_cast<float>(light_intensity);
     }
 
-    std::vector<Direction> const directions{ Direction::Self, Direction::North, Direction::East, Direction::South, Direction::West };
+    std::vector<Direction> const directions
+    { 
+      Direction::Self, 
+      Direction::North, 
+      Direction::East, 
+      Direction::South, 
+      Direction::West 
+    };
 
     for (Direction d : directions)
     {
@@ -120,12 +124,18 @@ void MapTile::addLightInfluence(EntityId source,
         float wall_factor = Direction::calculate_light_factor(influence.coords, getCoords(), d);
         float factor = wall_factor * light_factor;
 
-        addColor.setR(static_cast<float>(light_color.r()) * factor);
-        addColor.setG(static_cast<float>(light_color.g()) * factor);
-        addColor.setB(static_cast<float>(light_color.b()) * factor);
+        float newR = static_cast<float>(light_color.r()) * factor;
+        float newG = static_cast<float>(light_color.g()) * factor;
+        float newB = static_cast<float>(light_color.b()) * factor;
+
+        addColor.setR(bounds8(newR));
+        addColor.setG(bounds8(newG));
+        addColor.setB(bounds8(newB));
 
         unsigned int index = d.get_map_index();
-        m_calculated_light_colors[index] += addColor;
+        auto prevColor = m_calculated_light_colors[index];
+
+        m_calculated_light_colors[index] = prevColor + addColor;
       }
     }
   }

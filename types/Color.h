@@ -54,14 +54,14 @@ public:
   Color& operator+=(Color const& rhs);
   Color& operator-=(Color const& rhs);
   //Color& operator*=(float const& rhs);
-  Color& operator<<=(unsigned int const& rhs);
-  Color& operator>>=(unsigned int const& rhs);
+  //Color& operator<<=(unsigned int const& rhs);
+  //Color& operator>>=(unsigned int const& rhs);
 
   friend Color operator+(Color lhs, Color const& rhs);
   friend Color operator-(Color lhs, Color const& rhs);
   //friend Color operator*(Color lhs, float const& rhs);
-  friend Color operator>>(Color lhs, unsigned int const& rhs);
-  friend Color operator<<(Color lhs, unsigned int const& rhs);
+  //friend Color operator>>(Color lhs, unsigned int const& rhs);
+  //friend Color operator<<(Color lhs, unsigned int const& rhs);
 
   // Casts
   operator sf::Color() const;

@@ -1,8 +1,6 @@
 #ifndef _MATHUTILS_H_
 #define _MATHUTILS_H_
 
-#include "stdafx.h"
-
 constexpr double PI = 3.14159265359;
 constexpr double PI_HALF = PI / 2.0;
 constexpr double PI_QUARTER = PI / 4.0;
@@ -86,6 +84,23 @@ T bounds(T min, T value, T max)
   return (value < min) ? min : (value > max) ? max : value;
 }
 
+template <typename T>
+uint8_t bounds8(T value)
+{
+  if (value < static_cast<T>(0))
+  {
+    return uint8_t(0);
+  }
+  else if (value > static_cast<T>(255))
+  {
+    return uint8_t(255);
+  }
+  else
+  {
+    return static_cast<uint8_t>(value);
+  }
+}
+
 /// Return whether two sets of coordinates are adjacent to each other.
 /// In this context, adjacent includes corners as well as edges.
 /// (e.g. A tile at (4, 4) and a tile at (5, 5) are considered adjacent.)
@@ -95,4 +110,19 @@ inline bool adjacent(IntVec2 first, IntVec2 second)
   return ((abs(first.x - second.x) <= 1) && (abs(first.y - second.y) <= 1));
 }
 
+inline uint8_t saturation_add(uint8_t first, uint8_t second)
+{
+  uint8_t result = first + second;
+  result |= -(result < first);
+
+  return result;
+}
+
+inline uint8_t saturation_sub(uint8_t first, uint8_t second)
+{
+  uint8_t result = first - second;
+  result &= -(result <= first);
+
+  return result;
+}
 #endif // _MATHUTILS_H_
