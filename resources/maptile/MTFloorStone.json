@@ -1,0 +1,10 @@
+{
+  "parent": "MTFloor",
+
+  "name": "stone floor",
+  "plural": "stone floors",
+  "description-brief": "A stone floor.",
+  "tile-character": "?",
+  "tile-bg-color": [ "color", 0, 0, 0 ],
+  "tile-fg-color": [ "color", 128, 64, 0 ]
+}

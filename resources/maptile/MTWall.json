@@ -1,0 +1,9 @@
+{
+  "parent": "MTUnknown",
+
+  "name": "wall",
+  "plural": "walls",
+  "description-brief": "A wall.",
+  "passable": false,
+  "opacity": [ "color", 255, 255, 255 ]
+}

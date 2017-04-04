@@ -5,13 +5,14 @@
 #include "AssertHelper.h"
 #include "game/App.h"
 #include "game/GameState.h"
-#include "types/Grid2D.h"
-#include "inventory/Inventory.h"
-#include "types/LightInfluence.h"
-#include "maptile/MapTile.h"
-#include "utilities/MathUtils.h"
-#include "types/ShaderEffect.h"
 #include "entity/EntityPool.h"
+#include "inventory/Inventory.h"
+#include "maptile/MapTile.h"
+#include "types/Color.h"
+#include "types/Grid2D.h"
+#include "types/LightInfluence.h"
+#include "types/ShaderEffect.h"
+#include "utilities/MathUtils.h"
 
 #include "map/MapFeature.h"
 #include "map/MapGenerator.h"
@@ -22,7 +23,7 @@
 // Local typedefs
 typedef boost::random::uniform_int_distribution<> uniform_int_dist;
 
-const sf::Color Map::ambient_light_level = sf::Color(48, 48, 48, 255);
+const Color Map::ambient_light_level{ 48, 48, 48 };
 
 struct Map::Impl
 {
@@ -186,7 +187,7 @@ void Map::updateLighting()
 
 void Map::doRecursiveLighting(EntityId source,
                                 IntVec2 const& origin,
-                                sf::Color const& light_color,
+                                Color const& light_color,
                                 int const max_depth_squared,
                                 int octant,
                                 int depth,
@@ -196,7 +197,7 @@ void Map::doRecursiveLighting(EntityId source,
   Assert("Entity", octant >= 1 && octant <= 8, "Octant" << octant << "passed in is not between 1 and 8 inclusively");
   IntVec2 new_coords;
 
-  sf::Color addColor;
+  Color addColor;
 
   std::function< bool(RealVec2, RealVec2, float) > loop_condition;
   Direction dir;
@@ -336,8 +337,8 @@ void Map::addLight(EntityId source)
 
   IntVec2 coords = maptile->getCoords();
 
-  auto light_color = source->getModifiedProperty("light_color").as<Color>();
-  int max_depth_squared = source->getModifiedProperty("light_strength").as<int>();
+  Color light_color = source->getModifiedProperty("light-color", Color::Transparent);
+  int max_depth_squared = source->getModifiedProperty("light-strength", 0);
 
   /// @todo Re-implement direction.
   Direction light_direction = Direction::Up;

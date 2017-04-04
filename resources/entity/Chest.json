@@ -1,0 +1,13 @@
+{
+  "parent": "Container",
+
+  "name": "[Chest]",
+  "plural": "[Chests]",
+  "description-brief": "A large strong box, used for storage or shipping.",
+
+  "inventory-size": 20,
+  "physical-mass": 20,
+
+  "can-be-object-of-lock": true,
+  "can-be-object-of-unlock": true
+}

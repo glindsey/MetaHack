@@ -59,7 +59,7 @@ namespace Actions
     auto subject = getSubject();
     auto object = getObject();
 
-    if (object->be_object_of(*this, subject) == ActionResult::Success)
+    if (object->be_object_of(*this, subject))
     {
       putTr("YOU_CVERB_THE_FOO");
       if (object->move_into(subject))

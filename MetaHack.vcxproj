@@ -95,7 +95,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(SolutionDir);$(SolutionDir)third_party;$(SolutionDir)design_patterns;$(SolutionDir)include;$(SolutionDir)gui;C:\personal\libraries\win32\SFML-2.3.2\include;C:\personal\libraries\win32\luajit-2.0\src;C:\personal\libraries\boost-1.61.0-vs2015\include\boost-1_61;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir);$(SolutionDir)third_party;$(SolutionDir)design_patterns;$(SolutionDir)include;$(SolutionDir)gui;C:\personal\libraries\win32\SFML-2.3.2\include;C:\personal\libraries\json\src;C:\personal\libraries\win32\luajit-2.0\src;C:\personal\libraries\boost-1.61.0-vs2015\include\boost-1_61;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
     <LibraryPath>C:\Personal\projects\MetaHack\lib\win32;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
@@ -104,14 +104,14 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(SolutionDir);$(SolutionDir)third_party;$(SolutionDir)design_patterns;$(SolutionDir)include;$(SolutionDir)gui;C:\personal\libraries\x64\SFML-2.3.2\include;C:\personal\libraries\x64\luajit-2.0\src;C:\personal\libraries\boost64-1.61.0-vs2015\include\boost-1_61;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir);$(SolutionDir)third_party;$(SolutionDir)design_patterns;$(SolutionDir)include;$(SolutionDir)gui;C:\personal\libraries\x64\SFML-2.3.2\include;C:\personal\libraries\json\src;C:\personal\libraries\x64\luajit-2.0\src;C:\personal\libraries\boost64-1.61.0-vs2015\include\boost-1_61;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
     <LibraryPath>C:\Personal\projects\MetaHack\lib\x64;$(LibraryPath)</LibraryPath>
     <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>false</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\Personal\projects\MetaHack\include;C:\Personal\projects\MetaHack\gui;C:\Personal\projects\MetaHack\src\impl;C:\personal\libraries\win32\SFML-2.3.2\include;C:\personal\libraries\win32\luajit-2.0\src;C:\personal\libraries\boost-1.61.0-vs2015\include\boost-1_61;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir);$(SolutionDir)third_party;$(SolutionDir)design_patterns;$(SolutionDir)include;$(SolutionDir)gui;C:\personal\libraries\win32\SFML-2.3.2\include;C:\personal\libraries\json\src;C:\personal\libraries\win32\luajit-2.0\src;C:\personal\libraries\boost-1.61.0-vs2015\include\boost-1_61;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
     <LibraryPath>C:\Personal\projects\MetaHack\lib\win32;$(LibraryPath)</LibraryPath>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
@@ -120,14 +120,14 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\Personal\projects\MetaHack\include;C:\Personal\projects\MetaHack\gui;C:\Personal\projects\MetaHack\src\impl;C:\personal\libraries\x64\SFML-2.3.2\include;C:\personal\libraries\x64\luajit-2.0\src;C:\personal\libraries\boost64-1.61.0-vs2015\include\boost-1_61;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir);$(SolutionDir)third_party;$(SolutionDir)design_patterns;$(SolutionDir)include;$(SolutionDir)gui;C:\personal\libraries\x64\SFML-2.3.2\include;C:\personal\libraries\json\src;C:\personal\libraries\x64\luajit-2.0\src;C:\personal\libraries\boost64-1.61.0-vs2015\include\boost-1_61;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
     <LibraryPath>C:\Personal\projects\MetaHack\lib\x64;$(LibraryPath)</LibraryPath>
     <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>false</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(SolutionDir);$(SolutionDir)third_party;$(SolutionDir)design_patterns;$(SolutionDir)include;$(SolutionDir)gui;C:\personal\libraries\win32\SFML-2.3.2\include;C:\personal\libraries\win32\luajit-2.0\src;C:\personal\libraries\boost-1.61.0-vs2015\include\boost-1_61;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir);$(SolutionDir)third_party;$(SolutionDir)design_patterns;$(SolutionDir)include;$(SolutionDir)gui;C:\personal\libraries\win32\SFML-2.3.2\include;C:\personal\libraries\json\src;C:\personal\libraries\win32\luajit-2.0\src;C:\personal\libraries\boost-1.61.0-vs2015\include\boost-1_61;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
     <LibraryPath>C:\Personal\projects\MetaHack\lib\win32;$(LibraryPath)</LibraryPath>
     <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
@@ -136,7 +136,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(SolutionDir);$(SolutionDir)third_party;$(SolutionDir)design_patterns;$(SolutionDir)include;$(SolutionDir)gui;C:\personal\libraries\x64\SFML-2.3.2\include;C:\personal\libraries\x64\luajit-2.0\src;C:\personal\libraries\boost64-1.61.0-vs2015\include\boost-1_61;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir);$(SolutionDir)third_party;$(SolutionDir)design_patterns;$(SolutionDir)include;$(SolutionDir)gui;C:\personal\libraries\x64\SFML-2.3.2\include;C:\personal\libraries\json\src;C:\personal\libraries\x64\luajit-2.0\src;C:\personal\libraries\boost64-1.61.0-vs2015\include\boost-1_61;$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
     <LibraryPath>C:\Personal\projects\MetaHack\lib\x64;$(LibraryPath)</LibraryPath>
     <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>false</RunCodeAnalysis>
@@ -314,7 +314,6 @@
     <ClInclude Include="actions\ActionPutInto.h" />
     <ClInclude Include="actions\ActionQuaff.h" />
     <ClInclude Include="actions\ActionRead.h" />
-    <ClInclude Include="actions\ActionResult.h" />
     <ClInclude Include="actions\ActionShoot.h" />
     <ClInclude Include="actions\ActionTakeOut.h" />
     <ClInclude Include="actions\ActionTurn.h" />
@@ -347,6 +346,7 @@
     <ClInclude Include="game\AppStateSplashScreen.h" />
     <ClInclude Include="types\Beatitude.h" />
     <ClInclude Include="types\BodyPart.h" />
+    <ClInclude Include="types\Color.h" />
     <ClInclude Include="types\SFMLEventResult.h" />
     <ClInclude Include="utilities\CommonFunctions.h" />
     <ClInclude Include="types\common.h" />
@@ -372,7 +372,6 @@
     <ClInclude Include="keybuffer\NullKeyBuffer.h" />
     <ClInclude Include="services\NullMessageLog.h" />
     <ClInclude Include="services\NullStringDictionary.h" />
-    <ClInclude Include="properties\Property.h" />
     <ClInclude Include="types\Rect.h" />
     <ClInclude Include="utilities\RNGUtils.h" />
     <ClInclude Include="types\ISFMLEventHandler.h" />
@@ -474,6 +473,7 @@
     <ClCompile Include="game\AppStateSplashScreen.cpp" />
     <ClCompile Include="entity\EntityNullView.cpp" />
     <ClCompile Include="services\FallbackConfigSettings.cpp" />
+    <ClCompile Include="types\Color.cpp" />
     <ClCompile Include="types\Direction.cpp" />
     <ClCompile Include="game\GameState.cpp" />
     <ClCompile Include="types\Gender.cpp" />
@@ -508,7 +508,6 @@
     <ClCompile Include="metadata\Metadata.cpp" />
     <ClCompile Include="metadata\MetadataCollection.cpp" />
     <ClCompile Include="properties\ModifiablePropertyDictionary.cpp" />
-    <ClCompile Include="properties\Property.cpp" />
     <ClCompile Include="properties\PropertyDictionary.cpp" />
     <ClCompile Include="services\Standard2DGraphicViews.cpp" />
     <ClCompile Include="state_machine\State.cpp" />
@@ -528,46 +527,90 @@
     <ClCompile Include="entity\EntityPool.cpp" />
     <ClCompile Include="entity\EntityStandard2DView.cpp" />
     <ClCompile Include="entity\EntityView.cpp" />
+    <ClCompile Include="types\Vec2.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="utilities\StringTransforms.cpp" />
     <ClCompile Include="tilesheet\TileSheet.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\deepcopy.lua" />
     <None Include="resources\default.lua" />
+    <None Include="resources\entity\Animal.json" />
     <None Include="resources\entity\Animal.lua" />
+    <None Include="resources\entity\Biped.json" />
     <None Include="resources\entity\Biped.lua" />
+    <None Include="resources\entity\Blob.json" />
     <None Include="resources\entity\Blob.lua" />
+    <None Include="resources\entity\Chest.json" />
     <None Include="resources\entity\Chest.lua" />
+    <None Include="resources\entity\ChestWooden.json" />
     <None Include="resources\entity\ChestWooden.lua" />
+    <None Include="resources\entity\Coin.json" />
     <None Include="resources\entity\Coin.lua" />
+    <None Include="resources\entity\CoinGold.json" />
     <None Include="resources\entity\CoinGold.lua" />
+    <None Include="resources\entity\Container.json" />
     <None Include="resources\entity\Container.lua" />
+    <None Include="resources\entity\Dagger.json" />
     <None Include="resources\entity\Dagger.lua" />
+    <None Include="resources\entity\DynamicEntity.json" />
     <None Include="resources\entity\DynamicEntity.lua" />
+    <None Include="resources\entity\Entity.json" />
     <None Include="resources\entity\Entity.lua" />
+    <None Include="resources\entity\FlaskGlass.json" />
     <None Include="resources\entity\FlaskGlass.lua" />
+    <None Include="resources\entity\GameObject.json" />
     <None Include="resources\entity\GameObject.lua" />
+    <None Include="resources\entity\Human.json" />
     <None Include="resources\entity\Human.lua" />
+    <None Include="resources\entity\LightOrb.json" />
     <None Include="resources\entity\LightOrb.lua" />
+    <None Include="resources\entity\LightSource.json" />
     <None Include="resources\entity\LightSource.lua" />
+    <None Include="resources\entity\Marcher.json" />
     <None Include="resources\entity\Marcher.lua" />
+    <None Include="resources\entity\Mu.json" />
     <None Include="resources\entity\Mu.lua" />
+    <None Include="resources\entity\Rock.json" />
     <None Include="resources\entity\Rock.lua" />
+    <None Include="resources\entity\RockLichen.json" />
     <None Include="resources\entity\RockLichen.lua" />
+    <None Include="resources\entity\SackCloth.json" />
     <None Include="resources\entity\SackCloth.lua" />
+    <None Include="resources\entity\Sapient.json" />
     <None Include="resources\entity\Sapient.lua" />
+    <None Include="resources\entity\Sconce.json" />
     <None Include="resources\entity\Sconce.lua" />
+    <None Include="resources\entity\TileContents.json" />
     <None Include="resources\entity\TileContents.lua" />
+    <None Include="resources\entity\Weapon.json" />
     <None Include="resources\entity\Weapon.lua" />
+    <None Include="resources\entity\WeaponCutting.json" />
     <None Include="resources\entity\WeaponCutting.lua" />
+    <None Include="resources\entity\WeaponStabbing.json" />
     <None Include="resources\entity\WeaponStabbing.lua" />
+    <None Include="resources\entity\WeaponStrangling.json" />
     <None Include="resources\entity\WeaponStrangling.lua" />
+    <None Include="resources\entity\WeaponStriking.json" />
     <None Include="resources\entity\WeaponStriking.lua" />
+    <None Include="resources\intrinsic_types.json" />
+    <None Include="resources\maptile\MTFloor.json" />
     <None Include="resources\maptile\MTFloor.lua" />
+    <None Include="resources\maptile\MTFloorDirt.json" />
     <None Include="resources\maptile\MTFloorDirt.lua" />
+    <None Include="resources\maptile\MTFloorStone.json" />
     <None Include="resources\maptile\MTFloorStone.lua" />
+    <None Include="resources\maptile\MTUnknown.json" />
     <None Include="resources\maptile\MTUnknown.lua" />
+    <None Include="resources\maptile\MTWall.json" />
     <None Include="resources\maptile\MTWall.lua" />
+    <None Include="resources\maptile\MTWallStone.json" />
     <None Include="resources\maptile\MTWallStone.lua" />
     <None Include="resources\script\map.lua" />
     <None Include="resources\shader\default.frag" />

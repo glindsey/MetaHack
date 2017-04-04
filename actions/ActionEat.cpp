@@ -58,19 +58,14 @@ namespace Actions
     ///       object being eaten.
     m_last_eat_result = object->be_object_of(*this, subject);
 
-    switch (m_last_eat_result)
+    if (m_last_eat_result)
     {
-      case ActionResult::Success:
-      case ActionResult::SuccessDestroyed:
-        return StateResult::Success();
-
-      case ActionResult::Failure:
-        printMessageStop();
-        return StateResult::Failure();
-
-      default:
-        CLOG(WARNING, "Action") << "Unknown ActionResult " << m_last_eat_result;
-        return StateResult::Failure();
+      return StateResult::Success();
+    }
+    else
+    {
+      printMessageStop();
+      return StateResult::Failure();
     }
   }
 
@@ -80,7 +75,7 @@ namespace Actions
 
     printMessageFinish();
 
-    if (m_last_eat_result == ActionResult::SuccessDestroyed)
+    if (m_last_eat_result)
     {
       object->destroy();
     }

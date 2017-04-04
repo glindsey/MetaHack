@@ -3,6 +3,9 @@
 
 #include "stdafx.h"
 
+// Forward declarations
+class Color;
+
 /// Sheet that contains a group of tiles on one texture.
 class TileSheet
 {
@@ -35,7 +38,7 @@ public:
   /// @param ll_coord Lower-left coordinates.
   /// @param lr_coord Lower-right coordinates.
   void add_quad(sf::VertexArray& vertices,
-                UintVec2 tile_coords, sf::Color bg_color,
+                UintVec2 tile_coords, Color bg_color,
                 RealVec2 ul_coord, RealVec2 ur_coord,
                 RealVec2 ll_coord, RealVec2 lr_coord);
 
@@ -44,9 +47,9 @@ public:
                          UintVec2 tile_coords,
                          RealVec2 coordNW, RealVec2 coordNE,
                          RealVec2 coordSW, RealVec2 coordSE,
-                         sf::Color colorNW, sf::Color colorN, sf::Color colorNE,
-                         sf::Color colorW, sf::Color colorC, sf::Color colorE,
-                         sf::Color colorSW, sf::Color colorS, sf::Color colorSE);
+                         Color colorNW, Color colorN, Color colorNE,
+                         Color colorW, Color colorC, Color colorE,
+                         Color colorSW, Color colorS, Color colorSE);
 
   /// Add outline vertices to the requested vertex array.
   /// This method draws a hollow quadrilateral in the color specified by
@@ -58,7 +61,7 @@ public:
   /// @param lr_coord Lower-right coordinates.
   /// @param ll_coord Lower-left coordinates.
   void add_outline_vertices(sf::VertexArray& vertices,
-                            sf::Color bg_color,
+                            Color bg_color,
                             RealVec2 ul_coord,
                             RealVec2 ur_coord,
                             RealVec2 lr_coord,

@@ -21,5 +21,5 @@ Sapient.intrinsics.can_wield = true
 
 
 function Sapient.get_brief_description()
-	return "An animal that is capable of free will and independent thought.", PropertyType.String
+	return "An animal that is capable of free will and independent thought.", LuaType.String
 end

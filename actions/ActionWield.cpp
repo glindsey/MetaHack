@@ -58,7 +58,7 @@ namespace Actions
     }
 
     // Check that we have hands capable of wielding anything.
-    if (subject->getBodypartNumber(BodyPart::Hand).as<uint32_t>() == 0)
+    if (subject->getBodypartNumber(BodyPart::Hand) == 0)
     {
       printMessageTry();
       putTr("YOU_HAVE_NO_GRASPING_LIMBS");
@@ -77,7 +77,7 @@ namespace Actions
     printMessageBegin();
 
     // If we HAVE a new item, try to wield it.
-    if (object->be_object_of(*this, subject) == ActionResult::Success)
+    if (object->be_object_of(*this, subject))
     {
       /// @todo Figure out action time.
       return StateResult::Success();

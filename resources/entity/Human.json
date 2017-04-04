@@ -1,0 +1,22 @@
+{
+  "parent": "Biped",
+
+  "name": "human",
+  "plural": "humans",
+  "description-brief": "A human being.",
+  "creatable": true,
+
+  "proper-name": "John Doe",
+  "maxhp": [ "range", 6, 10 ],
+
+  "attributes-strength": [ "range", 13, 17 ],
+  "attributes-endurance": [ "range", 13, 17 ],
+  "attributes-vitality": [ "range", 13, 17 ],
+  "attributes-agility": [ "range", 13, 17 ],
+  "attributes-precision": [ "range", 13, 17 ],
+  "attributes-intelligence": [ "range", 13, 17 ],
+  "attributes-aura": [ "range", 13, 17 ],
+  "attributes-charisma": [ "range", 13, 17 ],
+  "attributes-vigilance": [ "range", 13, 17 ],
+  "attributes-luck": [ "range", 13, 17 ]
+}

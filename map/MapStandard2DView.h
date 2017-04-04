@@ -23,8 +23,8 @@ public:
 
   virtual void draw_highlight(sf::RenderTarget& target,
                               RealVec2 location,
-                              sf::Color fgColor,
-                              sf::Color bgColor,
+                              Color fgColor,
+                              Color bgColor,
                               int frame) override;
 
   virtual std::string getViewName() override;

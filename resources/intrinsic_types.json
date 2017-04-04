@@ -1,0 +1,7 @@
+{
+
+  "inventory-size": "integer",
+  "opacity": "color",
+  "tile-bg-color": "color",
+  "tile-fg-color": "color"
+}

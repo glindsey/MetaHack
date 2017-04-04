@@ -145,7 +145,7 @@ bool AppStateGameMode::initialize()
 
   // Create the player.
   EntityId player = get_game_state().getEntities().create("Human");
-  player->setProperName(config.get("player_name").as<std::string>());
+  player->setProperName(config.get("player-name"));
   get_game_state().setPlayer(player);
 
   // Create the game map.
@@ -153,7 +153,7 @@ bool AppStateGameMode::initialize()
 #ifdef NDEBUG
   MapId current_map_id = GAME.getMaps().create(64, 64);
 #else
-  MapId current_map_id = GAME.getMaps().create(16, 16);
+  MapId current_map_id = GAME.getMaps().create(20, 20);
 #endif
 
   Map& game_map = GAME.getMaps().get(current_map_id);
@@ -250,10 +250,12 @@ void AppStateGameMode::render_map(sf::RenderTexture& texture, int frame)
         m_map_view->set_view(texture, cursor_pixel_coords, m_map_zoom_level);
         m_map_view->render_map(texture, frame);
 
+        Color border_color = config.get("cursor-border-color");
+        Color bg_color = config.get("cursor-bg-color");
         m_map_view->draw_highlight(texture,
                                    cursor_pixel_coords,
-                                   config.get("cursor_border_color").as<Color>(),
-                                   config.get("cursor_bg_color").as<Color>(),
+                                   border_color,
+                                   bg_color,
                                    frame);
       }
       else
@@ -430,13 +432,13 @@ bool AppStateGameMode::handle_key_press(App::EventKeyPressed const& key)
             if (slot_count > 0)
             {
               EntityId entity = m_inventory_selection->get_selected_things().at(0);
-              if (entity->getIntrinsic("inventory_size").as<unsigned int>() != 0)
+              if (static_cast<int>(entity->getIntrinsic("inventory-size", 0)) != 0)
               {
                 if (!entity->canHaveActionDoneBy(EntityId::Mu(), Actions::ActionOpen::prototype) ||
-                    entity->getModifiedProperty("open").as<bool>())
+                    entity->getModifiedProperty("open", true))
                 {
                   if (!entity->canHaveActionDoneBy(EntityId::Mu(), Actions::ActionLock::prototype) ||
-                      !entity->getModifiedProperty("locked").as<bool>())
+                      !entity->getModifiedProperty("locked", false))
                   {
                     m_inventory_selection->set_viewed(entity);
                   }
@@ -1011,8 +1013,8 @@ sf::IntRect AppStateGameMode::calcMessageLogDims()
   sf::IntRect messageLogDims;
   auto& config = Service<IConfigSettings>::get();
 
-  auto inventory_area_width = config.get("inventory_area_width").as<uint32_t>();
-  auto messagelog_area_height = config.get("messagelog_area_height").as<uint32_t>();
+  int inventory_area_width = config.get("inventory-area-width");
+  int messagelog_area_height = config.get("messagelog-area-height");
   messageLogDims.width = m_app_window.getSize().x - (inventory_area_width + 24);
   messageLogDims.height = messagelog_area_height - 10;
   //messageLogDims.height = static_cast<int>(m_app_window.getSize().y * 0.25f) - 10;
@@ -1052,8 +1054,8 @@ sf::IntRect AppStateGameMode::calcStatusAreaDims()
 
   statusAreaDims.width = m_app_window.getSize().x -
     (invAreaDims.width + 24);
-  statusAreaDims.height = config.get("status_area_height").as<int32_t>();
-  statusAreaDims.top = m_app_window.getSize().y - (config.get("status_area_height").as<int32_t>() + 5);
+  statusAreaDims.height = config.get("status-area-height");
+  statusAreaDims.top = m_app_window.getSize().y - (config.get("status-area-height") + 5);
   statusAreaDims.left = 12;
   return statusAreaDims;
 }
@@ -1064,7 +1066,7 @@ sf::IntRect AppStateGameMode::calcInventoryDims()
   sf::IntRect inventoryAreaDims;
   auto& config = Service<IConfigSettings>::get();
 
-  inventoryAreaDims.width = config.get("inventory_area_width").as<int32_t>();
+  inventoryAreaDims.width = config.get("inventory-area-width");
   inventoryAreaDims.height = m_app_window.getSize().y - 10;
   inventoryAreaDims.left = m_app_window.getSize().x - (inventoryAreaDims.width + 3);
   inventoryAreaDims.top = 5;

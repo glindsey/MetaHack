@@ -61,7 +61,7 @@ public:
   MapId getMapId() const;
 
   /// Set the current tile's light level.
-  void setAmbientLightLevel(sf::Color level);
+  void setAmbientLightLevel(Color level);
 
   /// Receive light from the specified LightSource.
   /// Gets the Map this tile belongs to and does a recursive
@@ -77,13 +77,13 @@ public:
 
   /// Get the light shining on a tile.
   /// Syntactic sugar for getWallLightLevel(Direction::Self).
-  sf::Color getLightLevel() const;
+  Color getLightLevel() const;
 
   /// Get the light shining on a tile wall.
-  sf::Color getWallLightLevel(Direction direction) const;
+  Color getWallLightLevel(Direction direction) const;
 
   /// Get the opacity of this tile.
-  sf::Color getOpacity() const;
+  Color getOpacity() const;
 
   /// Get whether the tile is opaque or not.
   bool isOpaque() const;
@@ -123,12 +123,12 @@ private:
   /// 0 <= value <= 128: result = (original * (value / 128))
   /// 128 < value <= 255: result = max(original + (value - 128), 255)
   /// The alpha channel is ignored.
-  sf::Color m_ambient_light_color;
+  Color m_ambient_light_color;
 
   /// The calculated light levels of this tile and all of its walls.
   /// Mapping to an int is horribly hacky but I see no other alternative
   /// right now.
-  std::map<unsigned int, sf::Color> m_calculated_light_colors;
+  std::map<unsigned int, Color> m_calculated_light_colors;
 
   /// A map of LightInfluences, representing the amount of light that
   /// each entity is contributing to this map tile.

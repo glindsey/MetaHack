@@ -2,8 +2,9 @@
 
 #include "MapCrossCorridor.h"
 
-#include "App.h"
-#include "MapTile.h"
+#include "game/App.h"
+#include "map/MapTile.h"
+#include "utilities/JSONHelpers.h"
 
 // Static declarations
 /// @todo These should be passed in as arguments

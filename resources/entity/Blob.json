@@ -1,0 +1,7 @@
+{
+  "parent": "DynamicEntity",
+
+  "name": "[Blob]",
+  "plural": "[Blobs]",
+  "description-brief": "An amorphous entity with no distinguishable limbs, head, or other extremities."
+}

@@ -7,6 +7,7 @@
 #include "services/IConfigSettings.h"
 #include "services/IMessageLog.h"
 #include "Service.h"
+#include "types/Color.h"
 
 MessageLogView::MessageLogView(std::string name,
                                IMessageLog& model,
@@ -47,7 +48,7 @@ metagui::GUIEvent::Result MessageLogView::handleGUIEventPreChildren_(metagui::GU
 void MessageLogView::drawContents_(sf::RenderTexture& texture, int frame)
 {
   auto& config = Service<IConfigSettings>::get();
-  auto text_default_size = config.get("text_default_size").as<int32_t>();
+  unsigned int text_default_size = config.get("text-default-size");
 
   // Dimensions of the pane.
   sf::IntRect pane_dims = getRelativeDimensions();
@@ -55,12 +56,11 @@ void MessageLogView::drawContents_(sf::RenderTexture& texture, int frame)
   float lineSpacing = the_default_font.getLineSpacing(text_default_size);
 
   // Text offsets relative to the background rectangle.
-  auto text_offset_x = config.get("window_text_offset_x").as<float>();
-  auto text_offset_y = config.get("window_text_offset_y").as<float>();
+  RealVec2 text_offset = config.get("window-text-offset");
 
   // Start at the bottom, most recent text and work upwards.
-  float text_coord_x = text_offset_x;
-  float text_coord_y = pane_dims.height - (lineSpacing + text_offset_y);
+  float text_coord_x = text_offset.x;
+  float text_coord_y = pane_dims.height - (lineSpacing + text_offset.y);
 
   sf::Text render_text;
 
@@ -70,13 +70,14 @@ void MessageLogView::drawContents_(sf::RenderTexture& texture, int frame)
   // If we have the focus, put the current command at the bottom of the log.
   if (getFocus() == true)
   {
+    json highlight_color = config.get("text-highlight-color");
     m_key_buffer.render(
       texture,
       RealVec2(text_coord_x, text_coord_y),
       frame,
       the_default_font,
       text_default_size,
-      config.get("text_highlight_color").as<Color>());
+      highlight_color);
 
     text_coord_y -= lineSpacing;
   }
@@ -87,11 +88,12 @@ void MessageLogView::drawContents_(sf::RenderTexture& texture, int frame)
 
   for (auto iter = message_queue.begin(); iter != message_queue.end(); ++iter)
   {
+    auto text_color = config.get("text-color").get<Color>();
     render_text.setString(*iter);
     render_text.setPosition(text_coord_x, text_coord_y);
-    render_text.setColor(config.get("text_color").as<Color>());
+    render_text.setColor(text_color);
     texture.draw(render_text);
-    if (text_coord_y < text_offset_y) break;
+    if (text_coord_y < text_offset.y) break;
     text_coord_y -= lineSpacing;
   }
 

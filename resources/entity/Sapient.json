@@ -1,0 +1,20 @@
+{
+  "parent": "Animal",
+
+  "name": "[Sapient]",
+  "plural": "[Sapients]",
+  "description-brief": "An animal that is capable of free will and independent thought.",
+
+  "can-close": true,
+  "can-disrobe": true,
+  "can-lock": true,
+  "can-mix": true,
+  "can-open": true,
+  "can-shoot": true,
+  "can-talk": true,
+  "can-unlock": true,
+  "can-unwield": true,
+  "can-use": true,
+  "can-wear": true,
+  "can-wield": true
+}

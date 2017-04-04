@@ -39,7 +39,7 @@ public:
                       unsigned int frame,
                       sf::Font const& font,
                       unsigned int font_size,
-                      sf::Color const& fg_color) override
+                      Color const& fg_color) override
   {}
 
 private:

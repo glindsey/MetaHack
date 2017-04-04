@@ -10,13 +10,13 @@ Chest.intrinsics.inventory_size = 20
 Chest.intrinsics.physical_mass = 10
 
 function Chest.can_have_action_lock_done_by(id)
-    return true, PropertyType.Boolean
+    return true, LuaType.Boolean
 end
 
 function Chest.can_have_action_unlock_done_by(id)
-    return true, PropertyType.Boolean
+    return true, LuaType.Boolean
 end
 
 function Chest.get_brief_description()
-    return "A large strong box, typically made of wood and used for storage or shipping.", PropertyType.String
+    return "A large strong box, typically made of wood and used for storage or shipping.", LuaType.String
 end

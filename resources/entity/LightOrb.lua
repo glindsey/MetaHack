@@ -13,5 +13,5 @@ LightOrb.intrinsics.light_strength = 128
 LightOrb.intrinsics.physical_mass = 2
 
 function LightOrb.get_brief_description()
-	return "A glowing orb, used for testing.", PropertyType.String
+	return "A glowing orb, used for testing.", LuaType.String
 end

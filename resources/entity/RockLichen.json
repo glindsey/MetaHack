@@ -1,0 +1,10 @@
+{
+  "parent": "Blob",
+
+  "name": "rock lichen",
+  "plural": "rock lichens",
+  "brief": "A lichen that normally grows on a rock.",
+  "creatable": true,
+
+  "maxhp": [ "range", 1, 1 ]
+}

@@ -3,13 +3,12 @@
 
 #include "stdafx.h"
 
-#include "properties/Property.h"
-
-/// @todo Following should be removable after legacy template methods are gone
-#include "actions/ActionResult.h"
-#include "types/Direction.h"
+#include "json.hpp"
+using json = ::nlohmann::json;
 
 // Forward declarations
+class Color;
+class Direction;
 class EntityId;
 class Property;
 
@@ -17,6 +16,47 @@ class Property;
 class Lua : public boost::noncopyable
 {
 public:
+  /// The type of objects passed back and forth to Lua.
+  enum class Type
+  {
+    Null = 0,
+    Boolean,
+    String,
+    Integer,        
+    Unsigned,
+    Number,         
+    IntVec2,
+    UintVec2,
+    RealVec2,
+    Direction,
+    Color,
+    Type,           ///< Type representing a Type. How meta.
+    Unknown,        ///< Internally represented by a string, but only to contain the unknown Lua type
+    Count           ///< Just for bookkeeping, doesn't need to be in LuaObject
+  };
+
+  friend std::ostream& operator<<(std::ostream& os, Type const& type)
+  {
+    switch (type)
+    {
+      case Type::Null:         os << "Null"; break;
+      case Type::Boolean:      os << "Boolean"; break;
+      case Type::String:       os << "String"; break;
+      case Type::Integer:      os << "Integer"; break;
+      case Type::Unsigned:     os << "Unsigned"; break;
+      case Type::Number:       os << "Number"; break;
+      case Type::IntVec2:      os << "IntVec2"; break;
+      case Type::UintVec2:     os << "UintVec2"; break;
+      case Type::RealVec2:     os << "RealVec2"; break;
+      case Type::Direction:    os << "Direction"; break;
+      case Type::Color:        os << "Color"; break;
+      case Type::Type:         os << "Type"; break;
+      case Type::Unknown:      os << "Unknown"; break;
+      default:                 os << "??? (" << static_cast<int>(type) << ")"; break;
+    }
+    return os;
+  }
+
   Lua();
 
   virtual ~Lua();
@@ -105,22 +145,14 @@ public:
   ///
   int get_enum_value(int index);
 
-  /// Pushes a property onto the Lua stack.
+  /// Pushes a JSON value onto the Lua stack.
   ///
-  /// Currently supported types are:
-  ///  * Boolean
-  ///  * String
-  ///  * Number
-  ///  * IntVec2
-  ///  * Direction
-  ///  * Color
-  ///  * Property::Type
-  ///
-  /// @param    value   Value to deduce the type of.
+  /// @param    value   Value to push.
   /// @return           The number of arguments pushed to the stack.
   ///                   If the type could not be deduced, it will push
   ///                   nil and return 1.
-  int push_value(Property property);
+  int push_value(json value);
+
   int push_value(unsigned int value);
   int push_value(int value);
   int push_value(int64_t value);
@@ -131,21 +163,23 @@ public:
   int push_value(std::string value);
   int push_value(UintVec2 value);
   int push_value(IntVec2 value);
+  int push_value(RealVec2 value);
   int push_value(Direction value);
-  int push_value(sf::Color value);
-  int push_value(Property::Type value);
+  int push_value(Color value);
 
-  /// Pop a type from a Lua function, if possible.
-  /// @return The popped type, as a Property::Type.
-  Property::Type pop_type();
+  int push_array(json value);
+  int push_object(json value);
+
+  /// Pop a type from a Lua function.
+  /// @return The popped type.
+  Type pop_type();
 
   /// Pop a value from a Lua function, if possible.
   /// @return The popped value.
-  Property pop_value(Property::Type type);
+  json pop_value(Type type);
 
   /// Return the number of Lua stack slots associated with a particular value.
-  unsigned int stack_slots(Property::Type type) const;
-
+  unsigned int stack_slots(Type type) const;
 
   /// Try to call a Lua function that takes the caller and a vector of
   /// arguments and returns a result.
@@ -156,39 +190,15 @@ public:
   ///
   /// @param function_name  Name of the function to call
   /// @param caller         EntityId to the entity calling the function
-  /// @param args           Vector of arguments to pass to the function
+  /// @param args           Arguments to pass to the function
   /// @param default_result The default result if function is not found
   ///                       after traversing the entire parent tree.
-  ///                       Defaults to the default constructor of the
-  ///                       return type.
   ///
   /// @return The result of the call.
-  Property call_thing_function(std::string function_name,
-                               EntityId caller,
-                               std::vector<Property> const& args,
-                               Property default_result);
-
-  Property call_thing_function(std::string function_name,
-                               EntityId caller,
-                               std::vector<Property> const& args);
-
-  /// Get a Entity group intrinsic.
-  /// @param group          Name of group to get intrinsic of.
-  /// @param name           Name of intrinsic to get.
-  /// @param default_value  Default value if intrinsic does not exist.
-  /// @return       The value of the intrinsic. 
-  Property get_group_intrinsic(std::string group,
-                              std::string name,
-                              Property default_value);
-
-  Property get_group_intrinsic(std::string group, 
-                              std::string name);
-
-  /// Set a Entity group intrinsic.
-  /// @param group    Name of group to set intrinsic of.
-  /// @param name     Name of intrinsic to set.
-  /// @param value    Value to set intrinsic to.
-  void set_group_intrinsic(std::string group, std::string name, Property value);
+  json call_thing_function(std::string function_name,
+                           EntityId caller,
+                           json const& args,
+                           json default_result);
 
   /// Call a Lua property modifier function.
   /// Calls the Lua function `GROUP:modify_property_PROP[_SFX]()` where:
@@ -202,12 +212,12 @@ public:
   ///   * The value of the property before being modified.
   ///
   /// It returns the modified value of the property.
-  Property call_modifier_function(std::string property_name,
-                                  Property unmodified_value,
-                                  EntityId affected_id,
-                                  std::string responsible_group, 
-                                  EntityId responsible_id,
-                                  std::string suffix = "");
+  json call_modifier_function(std::string property_name,
+                              json unmodified_value,
+                              EntityId affected_id,
+                              std::string responsible_group,
+                              EntityId responsible_id,
+                              std::string suffix = "");
 
   /// Return the Lua state.
   /// @todo For cleanliness, this should not be exposed; all Lua interaction
@@ -216,17 +226,13 @@ public:
 
   static int LUA_trace(lua_State* L);
 
-  /// Add the "ActionResult" enum to the Lua instance.
-  /// @see ActionResult
-  void addActionResultEnumToLua();
-
   /// Add the "Gender" enum to the Lua instance.
   /// @see Gender
   void addGenderEnumToLua();
 
-  /// Add the "Property::Type" enum to the Lua instance.
-  /// @see Property::Type
-  void addPropertyTypeEnumToLua();
+  /// Add the "Type" enum to the Lua instance.
+  /// @see Type
+  void addLuaTypeEnumToLua();
 
 private:
   /// Private Lua state.

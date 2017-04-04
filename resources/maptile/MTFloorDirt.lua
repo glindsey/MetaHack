@@ -6,5 +6,5 @@ MTFloorDirt = inheritsFrom(MTFloor, "MTFloorDirt")
 MTFloorDirt.intrinsics.name = "dirt floor"
 
 function MTFloorDirt.get_brief_description()
-	return "A dirt floor.", PropertyType.String
+	return "A dirt floor.", LuaType.String
 end

@@ -1,0 +1,10 @@
+{
+  "parent": "Chest",
+
+  "name": "wooden chest",
+  "plural": "wooden chests",
+  "description-brief": "A wooden chest.",
+  "creatable": true,
+
+  "can-be-object-of-burn": true
+}

@@ -8,9 +8,9 @@ ChestWooden.intrinsics.plural = "wooden chests"
 ChestWooden.intrinsics.creatable = true
 
 function ChestWooden.can_have_action_burn_done_by(id)
-    return true, PropertyType.Boolean
+    return true, LuaType.Boolean
 end
 
 function ChestWooden.get_brief_description()
-    return "A wooden chest.", PropertyType.String
+    return "A wooden chest.", LuaType.String
 end

@@ -1,0 +1,21 @@
+{
+  "parent": "Entity",
+
+  "name": "[DynamicEntity]",
+  "plural": "[DynamicEntities]",
+  "description-brief": "function",
+
+  "bodypart-body-count":  1,
+
+  "inventory-size": -1,
+  "xp": 0,
+
+  "living": true,
+
+  "can-attack": true,
+  "can-die": true,
+
+  "can-be-object-of-attack": true,
+  "can-be-object-of-burn": true,
+  "can-be-object-of-hurt": true
+}

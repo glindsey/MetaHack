@@ -1,0 +1,7 @@
+{
+  "parent": "Entity",
+
+  "name": "[Weapon]",
+  "plural": "[Weapons]",
+  "description-brief": "A thing designed or used for inflicting bodily harm or physical damage."
+}

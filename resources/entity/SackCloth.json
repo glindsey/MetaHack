@@ -1,0 +1,15 @@
+{
+  "parent": "Container",
+
+  "name": "cloth sack",
+  "plural": "cloth sacks",
+  "description-brief": "A sack made out of cloth.",
+  "creatable": true,
+
+  "inventory-size": 10,
+  "open": true,
+
+  "can-be-object-of-burn": true,
+  "can-be-object-of-close": false,
+  "can-be-object-of-open": false
+}

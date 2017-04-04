@@ -45,7 +45,7 @@ namespace Actions
     auto direction = getTargetDirection();
     EntityId new_location = subject->getLocation();
 
-    if (object->be_object_of(*this, subject, direction) == ActionResult::Success)
+    if (object->be_object_of(*this, subject, direction))
     {
       if (object->move_into(new_location))
       {

@@ -15,7 +15,10 @@ protected:
   virtual void drawContents_(sf::RenderTexture& texture, int frame) override;
 
 private:
-  void render_attribute(sf::RenderTarget& target, std::string abbrev, std::string name, RealVec2 location);
+  void render_attribute(sf::RenderTarget& target, 
+                        std::string abbrev, 
+                        std::string key, 
+                        RealVec2 location);
 
   std::string get_test_label();
 

@@ -1,0 +1,11 @@
+{
+  "parent": "Entity",
+
+  "name": "[Mu]",
+  "plural": "[Mu]",
+  "description-brief": "A completely empty space; the absence of all entities.",
+  "opacity": [ "color", 0, 0, 0 ],
+  "tile-character": "?",
+  "tile-bg-color": [ "color", 255, 255, 255 ],
+  "tile-fg-color": [ "color", 32, 32, 32 ]
+}

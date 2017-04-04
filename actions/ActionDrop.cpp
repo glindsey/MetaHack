@@ -55,9 +55,9 @@ namespace Actions
     }
     else if (object != EntityId::Mu())
     {
-      if (location->can_contain(object) == ActionResult::Success)
+      if (location->can_contain(object))
       {
-        if (object->be_object_of(*this, subject) == ActionResult::Success)
+        if (object->be_object_of(*this, subject))
         {
           printMessageDo();
 

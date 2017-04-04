@@ -1,0 +1,9 @@
+{
+  "parent": "Entity",
+
+  "name": "area",
+  "plural": "areas",
+  "description-brief": "The entities that are held or included in this tile.",
+  "inventory-size": -1,
+  "opacity": [ "color", 0, 0, 0 ]
+}

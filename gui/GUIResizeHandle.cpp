@@ -5,6 +5,7 @@
 #include "game/App.h"
 #include "services/IConfigSettings.h"
 #include "Service.h"
+#include "types/Color.h"
 
 namespace metagui
 {
@@ -32,9 +33,10 @@ namespace metagui
     /// @todo FINISH ME. Right now this is just a dead-stupid square.
     sf::RectangleShape rect;
 
-    rect.setFillColor(getParent()->getFocus() ?
-                      config.get("window_focused_border_color").as<Color>() :
-                      config.get("window_border_color").as<Color>());
+    auto focused_color = config.get("window-focused-border-color").get<Color>();
+    auto unfocused_color = config.get("window-border-color").get<Color>();
+
+    rect.setFillColor(getParent()->getFocus() ? focused_color : unfocused_color);
     rect.setOutlineThickness(0);
     rect.setPosition({ 0, 0 });
     rect.setSize({ static_cast<unsigned int>(s_handle_size), static_cast<unsigned int>(s_handle_size) });

@@ -1,0 +1,9 @@
+{
+  "parent": "Entity",
+
+  "name": "[Coin]",
+  "plural": "[Coins]",
+  "description-brief": "A flat, typically round piece of metal with an official stamp, used as money.",
+
+  "physical-mass": 1
+}

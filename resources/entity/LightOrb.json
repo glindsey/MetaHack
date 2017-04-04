@@ -1,0 +1,13 @@
+{
+  "parent": "LightSource",
+
+  "name": "magical lighting orb",
+  "plural": "magical lighting orbs",
+  "description-brief": "A glowing orb, used for testing.",
+  "creatable": true,
+
+  "light-color": [ "color", 128, 128, 255 ],
+  "light-strength": 128,
+
+  "physical-mass": 2
+}

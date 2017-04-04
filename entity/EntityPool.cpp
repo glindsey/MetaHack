@@ -32,7 +32,7 @@ bool EntityPool::firstIsSubtypeOfSecond(std::string first, std::string second)
 {
   //CLOG(TRACE, "Entity") << "Checking if " << first << " is a subtype of " << second << "...";
 
-  std::string first_parent = m_game.getMetadataCollection("entity").get(first).getIntrinsic("parent").as<std::string>();
+  std::string first_parent = m_game.getMetadataCollection("entity").get(first).get("parent", std::string());
 
   if (first_parent.empty())
   {
@@ -61,8 +61,8 @@ EntityId EntityPool::create(std::string type)
 
   if (m_initialized)
   {
-    m_thing_map[new_id]->call_lua_function("on_create", {},
-                                           Property::from(ActionResult::Success));
+    /// @todo Re-implement me
+    m_thing_map[new_id]->call_lua_function("on_create", {}, true);
   }
 
   return EntityId(new_id);

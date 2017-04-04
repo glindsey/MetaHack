@@ -6,5 +6,5 @@ MTWallStone = inheritsFrom(MTWall, "MTWallStone")
 MTWallStone.intrinsics.name = "stone wall"
 
 function MTWallStone.get_brief_description()
-	return "A stone wall.", PropertyType.String
+	return "A stone wall.", LuaType.String
 end

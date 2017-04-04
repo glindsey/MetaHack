@@ -1,8 +1,6 @@
 #ifndef _MATHUTILS_H_
 #define _MATHUTILS_H_
 
-#include "stdafx.h"
-
 constexpr double PI = 3.14159265359;
 constexpr double PI_HALF = PI / 2.0;
 constexpr double PI_QUARTER = PI / 4.0;
@@ -62,51 +60,45 @@ inline RealVec2 to_v2f(IntVec2 vec)
   return RealVec2{ static_cast<float>(vec.x), static_cast<float>(vec.y) };
 }
 
-inline unsigned char saturation_add(unsigned char const& a,
-                                    unsigned char const& b)
-{
-  unsigned int temp;
-  temp = (static_cast<unsigned int>(a) + static_cast<unsigned int>(b));
-  return static_cast<unsigned char>((temp <= 255U) ? temp : 255U);
-}
-
-inline sf::Color saturation_add(sf::Color const& a,
-                                sf::Color const& b)
-{
-  sf::Color temp;
-  temp.r = saturation_add(a.r, b.r);
-  temp.g = saturation_add(a.g, b.g);
-  temp.b = saturation_add(a.b, b.b);
-  temp.a = saturation_add(a.a, b.a);
-  return temp;
-}
-
 /// Divide and round up.
 inline unsigned int divide_and_round_up(unsigned int value, unsigned int multiple)
 {
   return ((value / multiple) + ((value % multiple == 0) ? 0 : 1));
 }
 
-/// Average two colors together.
-inline sf::Color average(sf::Color first, sf::Color second)
+template <typename T>
+T max(T a, T b)
 {
-  sf::Color result;
-  result.r = (first.r + second.r) >> 1;
-  result.g = (first.g + second.g) >> 1;
-  result.b = (first.b + second.b) >> 1;
-  result.a = (first.a + second.a) >> 1;
-  return result;
+  return (a > b) ? a : b;
 }
 
-/// Average four colors together.
-inline sf::Color average(sf::Color first, sf::Color second, sf::Color third, sf::Color fourth)
+template <typename T>
+T min(T a, T b)
 {
-  sf::Color result;
-  result.r = (first.r + second.r + third.r + fourth.r) >> 2;
-  result.g = (first.g + second.g + third.g + fourth.g) >> 2;
-  result.b = (first.b + second.b + third.b + fourth.b) >> 2;
-  result.a = (first.a + second.a + third.a + fourth.a) >> 2;
-  return result;
+  return (a < b) ? a : b;
+}
+
+template <typename T>
+T bounds(T min, T value, T max)
+{
+  return (value < min) ? min : (value > max) ? max : value;
+}
+
+template <typename T>
+uint8_t bounds8(T value)
+{
+  if (value < static_cast<T>(0))
+  {
+    return uint8_t(0);
+  }
+  else if (value > static_cast<T>(255))
+  {
+    return uint8_t(255);
+  }
+  else
+  {
+    return static_cast<uint8_t>(value);
+  }
 }
 
 /// Return whether two sets of coordinates are adjacent to each other.
@@ -118,4 +110,19 @@ inline bool adjacent(IntVec2 first, IntVec2 second)
   return ((abs(first.x - second.x) <= 1) && (abs(first.y - second.y) <= 1));
 }
 
+inline uint8_t saturation_add(uint8_t first, uint8_t second)
+{
+  uint8_t result = first + second;
+  result |= -(result < first);
+
+  return result;
+}
+
+inline uint8_t saturation_sub(uint8_t first, uint8_t second)
+{
+  uint8_t result = first - second;
+  result &= -(result <= first);
+
+  return result;
+}
 #endif // _MATHUTILS_H_

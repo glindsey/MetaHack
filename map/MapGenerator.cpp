@@ -5,8 +5,8 @@
 #include "game/App.h"
 #include "map/MapFeature.h"
 #include "maptile/MapTile.h"
-#include "utilities/MathUtils.h"
 #include "properties/PropertyDictionary.h"
+#include "utilities/MathUtils.h"
 
 typedef boost::random::uniform_int_distribution<> uniform_int_dist;
 
@@ -161,14 +161,16 @@ void MapGenerator::generate()
 
   GeoVector startingVector{ pImpl->getRandomFilledSquare(), Direction::Self };
   feature_settings.set("type", "room");
-  feature_settings.set("min_width", 5);
-  feature_settings.set("min_height", 5);
+  feature_settings.set("min_width", 12 /*5*/);
+  feature_settings.set("max_width", 12 /*5*/);
+  feature_settings.set("min_height", 12 /*5*/);
+  feature_settings.set("max_height", 12 /*5*/);
   feature_settings.set("max_retries", 100);
   std::unique_ptr<MapFeature> startRoom = MapFeature::construct(pImpl->game_map, feature_settings, startingVector);
 
   if (!startRoom)
   {
-    throw std::exception("Could not make starting room for player!");
+    CLOG(FATAL, "MapGenerator") << "Could not make starting room for player!";
   }
 
   MapFeature& startingRoom = pImpl->game_map.addMapFeature(startRoom.get());

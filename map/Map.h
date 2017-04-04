@@ -9,6 +9,7 @@
 #include "entity/Entity.h"
 
 // Forward declarations
+class Color;
 class GameState;
 class MapFeature;
 class MapGenerator;
@@ -38,7 +39,7 @@ public:
   static constexpr int max_area = max_dimension * max_dimension;
 
   /// The default ambient light level.
-  static const sf::Color ambient_light_level;
+  static const Color ambient_light_level;
 
   /// Serialization function.
   template<class Archive>
@@ -122,7 +123,7 @@ protected:
 
   void doRecursiveLighting(EntityId source,
                            IntVec2 const& origin,
-                           sf::Color const& light_color,
+                           Color const& light_color,
                            int const max_depth_squared,
                            int octant,
                            int depth = 1,

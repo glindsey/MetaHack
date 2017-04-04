@@ -56,10 +56,11 @@ Direction::Direction(IntVec3 vec)
 // Equality operators
 bool Direction::operator==(Direction const& other) const
 {
-  return ((this->m_exists == other.m_exists) &&
+  return 
+    (this->m_exists == other.m_exists) &&
     (this->m_x == other.m_x) &&
-          (this->m_y == other.m_y) &&
-          (this->m_z == other.m_z));
+    (this->m_y == other.m_y) &&
+    (this->m_z == other.m_z);
 }
 
 bool Direction::operator!=(Direction const& other) const
@@ -222,4 +223,24 @@ float Direction::calculate_light_factor(IntVec2 source, IntVec2 target, Directio
 
   throw std::runtime_error("Invalid direction " + str(direction) +
                            " passed to calculate_light_factor");
+}
+
+void to_json(json& j, Direction const& direction)
+{
+  j = json::array({ "direction", direction.m_x, direction.m_y, direction.m_z });
+}
+
+void from_json(json const& j, Direction& direction)
+{
+  Assert("Types",
+         j.is_array() && (j[0] == "direction") && (j.size() >= 4),
+         "Attempted to create a Color out of an invalid JSON object");
+
+  direction.m_exists = true;
+  direction.m_x = boost::math::sign(j[1].get<int>());
+  direction.m_y = boost::math::sign(j[2].get<int>());
+  direction.m_z = boost::math::sign(j[3].get<int>());
+  direction.m_halfx = j[1].get<float>() / 2.0f;
+  direction.m_halfy = j[2].get<float>() / 2.0f;
+  direction.m_halfz = j[3].get<float>() / 2.0f;
 }

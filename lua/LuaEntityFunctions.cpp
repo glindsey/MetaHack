@@ -32,7 +32,7 @@ namespace LuaEntityFunctions
     // Check to make sure the Entity is actually creatable.
     /// @todo Might want the ability to disable this check for debugging purposes?
     Metadata& thing_metadata = GAME.getMetadataCollection("entity").get(new_thing_type);
-    bool is_creatable = thing_metadata.getIntrinsic("creatable", Property::from(false)).as<bool>();
+    bool is_creatable = thing_metadata.get("creatable", false);
 
     if (is_creatable)
     {
@@ -166,7 +166,7 @@ namespace LuaEntityFunctions
 
     EntityId entity = EntityId(lua_tointeger(L, 1));
     const char* key = lua_tostring(L, 2);
-    auto result = entity->getBaseProperty(key);
+    auto result = entity->getBaseProperty(key, json());
     auto slot_count = the_lua_instance.push_value(result);
 
     return slot_count;
@@ -184,7 +184,7 @@ namespace LuaEntityFunctions
 
     EntityId entity = EntityId(lua_tointeger(L, 1));
     const char* key = lua_tostring(L, 2);
-    auto result = entity->getModifiedProperty(key);
+    auto result = entity->getModifiedProperty(key, json());
     auto slot_count = the_lua_instance.push_value(result);
 
     return slot_count;
@@ -202,7 +202,7 @@ namespace LuaEntityFunctions
 
     EntityId entity = EntityId(lua_tointeger(L, 1));
     const char* key = lua_tostring(L, 2);
-    auto result = entity->getIntrinsic(key);
+    auto result = entity->getIntrinsic(key, json());
     auto slot_count = the_lua_instance.push_value(result);
 
     return slot_count;

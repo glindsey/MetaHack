@@ -1,0 +1,13 @@
+{
+  "parent": "GameObject",
+
+  "name": "unknown",
+  "plural": "unknown",
+  "description-brief": "Unexplored space.",
+  "passable": false,
+  "opacity": [ "color", 255, 255, 255 ],
+  "tile-character": "?",
+  "tile-bg-color": [ "color", 0, 0, 0 ],
+  "tile-fg-color": [ "color", 128, 64, 0 ]
+
+}

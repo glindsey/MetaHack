@@ -82,12 +82,12 @@ bool MapStandard2DView::render_map(sf::RenderTexture& texture, int frame)
 
 void MapStandard2DView::draw_highlight(sf::RenderTarget& target,
                                        RealVec2 location,
-                                       sf::Color fgColor,
-                                       sf::Color bgColor,
+                                       Color fgColor,
+                                       Color bgColor,
                                        int frame)
 {
   auto& config = Service<IConfigSettings>::get();
-  auto map_tile_size = config.get("map_tile_size").as<float>();
+  float map_tile_size = config.get("map-tile-size");
 
   float half_ts(map_tile_size * 0.5f);
   RealVec2 vSW(location.x - half_ts, location.y + half_ts);
@@ -104,7 +104,7 @@ void MapStandard2DView::draw_highlight(sf::RenderTarget& target,
   box_shape.setPosition(box_position);
   box_shape.setSize(box_size);
   box_shape.setOutlineColor(fgColor);
-  box_shape.setOutlineThickness(config.get("tile_highlight_border_width").as<float>());
+  box_shape.setOutlineThickness(config.get("tile-highlight-border-width"));
   box_shape.setFillColor(bgColor);
 
   target.draw(box_shape);

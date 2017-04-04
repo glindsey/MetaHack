@@ -1,9 +1,11 @@
-#ifndef DIRECTION_H
-#define DIRECTION_H
+#pragma once
 
 #include "stdafx.h"
 
 #include "utilities/MathUtils.h"
+
+#include "json.hpp"
+using json = ::nlohmann::json;
 
 /// Directional vector in 3-D space.
 /// A std::vector or IntVec3 could be used here, but I'd like to keep
@@ -25,6 +27,9 @@ public:
   Direction& operator=(Direction const&) = default;
   Direction& operator=(Direction&&) = default;
   virtual ~Direction() = default;
+
+  friend void to_json(json& j, Direction const& direction);
+  friend void from_json(json const& j, Direction& direction);
 
   // Equality operators
   bool Direction::operator==(Direction const& other) const;
@@ -116,5 +121,3 @@ inline std::wostream& operator<<(std::wostream& os, Direction const& d)
 
   return os;
 }
-
-#endif // DIRECTION_H

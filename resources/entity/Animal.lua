@@ -20,5 +20,5 @@ Animal.intrinsics.can_store = true
 Animal.intrinsics.can_turn = true
 
 function Animal.get_brief_description()
-	return "A living organism that feeds on organic matter, typically having specialized sense organs and nervous system and able to respond rapidly to stimuli.", PropertyType.String
+	return "A living organism that feeds on organic matter, typically having specialized sense organs and nervous system and able to respond rapidly to stimuli.", LuaType.String
 end

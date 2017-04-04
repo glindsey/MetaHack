@@ -54,28 +54,19 @@ namespace Actions
     printMessageFinish();
 
     /// @todo Split read time into start/finish actions.
-    switch (object->be_object_of(*this, subject))
+    if (object->be_object_of(*this, subject))
     {
-      case ActionResult::SuccessDestroyed:
-        putTr("THE_FOO_DISINTEGRATES_AFTER_YOU_VERB");
-
-        object->destroy();
-        result = StateResult::Success();
-        break;
-
-      case ActionResult::Success:
-        result = StateResult::Success();
-        break;
-
-      case ActionResult::Failure:
-      default:
-        result = StateResult::Failure();
-        break;
+      /// @todo Handle object destruction on use. (Lua script can do this.)
+      //putTr("THE_FOO_DISINTEGRATES_AFTER_YOU_VERB");
+      //object->destroy();
+      result = StateResult::Success();
+    }
+    else
+    {
+      result = StateResult::Failure();
     }
 
     return result;
-
-    return StateResult::Success();
   }
 
   StateResult ActionUse::doAbortWorkNVI(AnyMap& params)

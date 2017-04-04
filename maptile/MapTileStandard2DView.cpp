@@ -4,6 +4,7 @@
 #include "Service.h"
 #include "services/IConfigSettings.h"
 #include "tilesheet/TileSheet.h"
+#include "types/Color.h"
 #include "types/ShaderEffect.h"
 #include "utilities/RNGUtils.h"
 
@@ -23,7 +24,7 @@ MapTileStandard2DView::MapTileStandard2DView(MapTile& map_tile, TileSheet& tile_
 UintVec2 MapTileStandard2DView::get_tile_sheet_coords() const
 {
   /// @todo Deal with selecting one of the other tiles.
-  UintVec2 start_coords = get_map_tile().getMetadata().get_tile_coords();
+  UintVec2 start_coords = get_map_tile().getMetadata().getTileCoords();
   UintVec2 tile_coords(start_coords.x + m_tile_offset, start_coords.y);
   return tile_coords;
 }
@@ -32,10 +33,10 @@ UintVec2 MapTileStandard2DView::get_tile_sheet_coords() const
 UintVec2 MapTileStandard2DView::get_entity_tile_sheet_coords(Entity& entity, int frame) const
 {
   /// Get tile coordinates on the sheet.
-  UintVec2 start_coords = entity.getMetadata().get_tile_coords();
+  UintVec2 start_coords = entity.getMetadata().getTileCoords();
 
   /// Call the Lua function to get the offset (tile to choose).
-  UintVec2 offset = entity.call_lua_function("get_tile_offset", { Property::from(frame) }).as<UintVec2>();
+  UintVec2 offset = entity.call_lua_function("get_tile_offset", frame, UintVec2(0, 0));
 
   /// Add them to get the resulting coordinates.
   UintVec2 tile_coords = start_coords + offset;
@@ -97,7 +98,7 @@ void MapTileStandard2DView::add_memory_vertices_to(sf::VertexArray& vertices,
   Map& game_map = GAME.getMaps().get(map_id);
 
   static sf::Vertex new_vertex;
-  float ts = config.get("map_tile_size").as<float>();
+  float ts = config.get("map-tile-size");
   float ts2 = ts * 0.5f;
 
   RealVec2 location(coords.x * ts, coords.y * ts);
@@ -112,10 +113,10 @@ void MapTileStandard2DView::add_memory_vertices_to(sf::VertexArray& vertices,
 
   /// @todo Call a script to handle selecting a tile other than the one
   ///       in the upper-left corner.
-  UintVec2 tile_coords = tile_metadata->get_tile_coords();
+  UintVec2 tile_coords = tile_metadata->getTileCoords();
 
   m_tile_sheet.add_quad(vertices,
-                        tile_coords, sf::Color::White,
+                        tile_coords, Color::White,
                         vNW, vNE,
                         vSW, vSE);
 }
@@ -136,28 +137,28 @@ void MapTileStandard2DView::add_tile_floor_vertices(sf::VertexArray& vertices)
   auto& tileNW = tile.getAdjacentTile(Direction::Northwest);
 
   sf::Vertex new_vertex;
-  float ts = config.get("map_tile_size").as<float>();
+  float ts = config.get("map-tile-size");
   float half_ts = ts * 0.5f;
 
-  sf::Color colorN{ tileN.getLightLevel() };
-  sf::Color colorNE{ tileNE.getLightLevel() };
-  sf::Color colorE{ tileE.getLightLevel() };
-  sf::Color colorSE{ tileSE.getLightLevel() };
-  sf::Color colorS{ tileS.getLightLevel() };
-  sf::Color colorSW{ tileSW.getLightLevel() };
-  sf::Color colorW{ tileW.getLightLevel() };
-  sf::Color colorNW{ tileNW.getLightLevel() };
+  Color colorN{ tileN.getLightLevel() };
+  Color colorNE{ tileNE.getLightLevel() };
+  Color colorE{ tileE.getLightLevel() };
+  Color colorSE{ tileSE.getLightLevel() };
+  Color colorS{ tileS.getLightLevel() };
+  Color colorSW{ tileSW.getLightLevel() };
+  Color colorW{ tileW.getLightLevel() };
+  Color colorNW{ tileNW.getLightLevel() };
 
-  sf::Color light = tile.getLightLevel();
-  sf::Color lightN = average(light, colorN);
-  sf::Color lightNE = average(light, colorN, colorNE, colorE);
-  sf::Color lightE = average(light, colorE);
-  sf::Color lightSE = average(light, colorE, colorSE, colorS);
-  sf::Color lightS = average(light, colorS);
-  sf::Color lightSW = average(light, colorS, colorSW, colorW);
-  sf::Color lightW = average(light, colorW);
-  sf::Color lightNW = average(light, colorW, colorNW, colorN);
-
+  Color light = tile.getLightLevel();
+  Color lightN = average(light, colorN);
+  Color lightNE = average(light, colorN, colorNE, colorE);
+  Color lightE = average(light, colorE);
+  Color lightSE = average(light, colorE, colorSE, colorS);
+  Color lightS = average(light, colorS);
+  Color lightSW = average(light, colorS, colorSW, colorW);
+  Color lightW = average(light, colorW);
+  Color lightNW = average(light, colorW, colorNW, colorN);
+  
   RealVec2 location{ coords.x * ts, coords.y * ts };
   RealVec2 vNE{ location.x + half_ts, location.y - half_ts };
   RealVec2 vSE{ location.x + half_ts, location.y + half_ts };
@@ -208,7 +209,7 @@ void MapTileStandard2DView::add_thing_floor_vertices(EntityId entityId, sf::Vert
   auto& entity = GAME.getEntities().get(entityId);
   auto& config = Service<IConfigSettings>::get();
   sf::Vertex new_vertex;
-  float ts = config.get("map_tile_size").as<float>();
+  float ts = config.get("map-tile-size");
   float ts2 = ts * 0.5f;
 
   MapTile* root_tile = entityId->getMapTile();
@@ -220,14 +221,14 @@ void MapTileStandard2DView::add_thing_floor_vertices(EntityId entityId, sf::Vert
 
   IntVec2 const& coords = root_tile->getCoords();
 
-  sf::Color thing_color;
+  Color thing_color;
   if (use_lighting)
   {
     thing_color = root_tile->getLightLevel();
   }
   else
   {
-    thing_color = sf::Color::White;
+    thing_color = Color::White;
   }
 
   RealVec2 location(coords.x * ts, coords.y * ts);
@@ -252,7 +253,7 @@ void MapTileStandard2DView::add_wall_vertices_to(sf::VertexArray& vertices,
                                                  bool sw_is_empty, bool w_is_empty)
 {
   auto& config = Service<IConfigSettings>::get();
-  auto map_tile_size = config.get("map_tile_size").as<float>();
+  float map_tile_size = config.get("map-tile-size");
 
   // This tile.
   MapTile& tile = get_map_tile();
@@ -281,24 +282,24 @@ void MapTileStandard2DView::add_wall_vertices_to(sf::VertexArray& vertices,
   }
 
   // Tile color.
-  sf::Color tile_color{ sf::Color::White };
+  Color tile_color{ Color::White };
 
   // Wall colors.
-  sf::Color wall_n_color_w{ sf::Color::White };
-  sf::Color wall_n_color{ sf::Color::White };
-  sf::Color wall_n_color_e{ sf::Color::White };
+  Color wall_n_color_w{ Color::White };
+  Color wall_n_color{ Color::White };
+  Color wall_n_color_e{ Color::White };
 
-  sf::Color wall_e_color_n{ sf::Color::White };
-  sf::Color wall_e_color{ sf::Color::White };
-  sf::Color wall_e_color_s{ sf::Color::White };
+  Color wall_e_color_n{ Color::White };
+  Color wall_e_color{ Color::White };
+  Color wall_e_color_s{ Color::White };
 
-  sf::Color wall_s_color_w{ sf::Color::White };
-  sf::Color wall_s_color{ sf::Color::White };
-  sf::Color wall_s_color_e{ sf::Color::White };
+  Color wall_s_color_w{ Color::White };
+  Color wall_s_color{ Color::White };
+  Color wall_s_color_e{ Color::White };
 
-  sf::Color wall_w_color_n{ sf::Color::White };
-  sf::Color wall_w_color{ sf::Color::White };
-  sf::Color wall_w_color_s{ sf::Color::White };
+  Color wall_w_color_n{ Color::White };
+  Color wall_w_color{ Color::White };
+  Color wall_w_color_s{ Color::White };
 
   // Full tile size.
   float ts(map_tile_size);
@@ -342,9 +343,9 @@ void MapTileStandard2DView::add_wall_vertices_to(sf::VertexArray& vertices,
     }
     else
     {
-      wall_n_color = sf::Color::Black;
-      wall_n_color_w = sf::Color::Black;
-      wall_n_color_e = sf::Color::Black;
+      wall_n_color = Color::Black;
+      wall_n_color_w = Color::Black;
+      wall_n_color_e = Color::Black;
     }
 
     if (player_sees_e_wall)
@@ -355,9 +356,9 @@ void MapTileStandard2DView::add_wall_vertices_to(sf::VertexArray& vertices,
     }
     else
     {
-      wall_e_color = sf::Color::Black;
-      wall_e_color_n = sf::Color::Black;
-      wall_e_color_s = sf::Color::Black;
+      wall_e_color = Color::Black;
+      wall_e_color_n = Color::Black;
+      wall_e_color_s = Color::Black;
     }
 
     if (player_sees_s_wall)
@@ -368,9 +369,9 @@ void MapTileStandard2DView::add_wall_vertices_to(sf::VertexArray& vertices,
     }
     else
     {
-      wall_s_color = sf::Color::Black;
-      wall_s_color_w = sf::Color::Black;
-      wall_s_color_e = sf::Color::Black;
+      wall_s_color = Color::Black;
+      wall_s_color_w = Color::Black;
+      wall_s_color_e = Color::Black;
     }
 
     if (player_sees_w_wall)
@@ -381,9 +382,9 @@ void MapTileStandard2DView::add_wall_vertices_to(sf::VertexArray& vertices,
     }
     else
     {
-      wall_w_color = sf::Color::Black;
-      wall_w_color_n = sf::Color::Black;
-      wall_w_color_s = sf::Color::Black;
+      wall_w_color = Color::Black;
+      wall_w_color_n = Color::Black;
+      wall_w_color_s = Color::Black;
     }
   }
 

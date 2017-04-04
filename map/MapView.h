@@ -47,8 +47,8 @@ public:
 
   virtual void draw_highlight(sf::RenderTarget& target,
                               RealVec2 location,
-                              sf::Color fgColor,
-                              sf::Color bgColor,
+                              Color fgColor,
+                              Color bgColor,
                               int frame) = 0;
 
   virtual std::string getViewName() = 0;
