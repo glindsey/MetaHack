@@ -3,9 +3,9 @@
 function Entity_get_display_name(id)
     local quantity = thing_get_modified_property(id, "quantity")
     if quantity > 1 then
-        return intrinsics.plural, LuaType.String
+        return thing_get_intrinsic(id, "plural"), LuaType.String
     else
-        return intrinsics.name, LuaType.String
+        return thing_get_intrinsic(id, "name"), LuaType.String
     end
 end
 

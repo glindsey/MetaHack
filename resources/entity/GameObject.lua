@@ -3,11 +3,11 @@
 GameObject = inheritsFrom(nil, "GameObject")
 
 function GameObject_get_display_name(id)
-    return intrinsics.name
+    return thing_get_intrinsic(id, "name"), LuaType.String
 end
 
 function GameObject_get_brief_description(id)
-    return "GameObject #" .. id .. ", which has no description associated with it."
+    return "GameObject #" .. id .. ", which has no description associated with it.", LuaType.String
 end
 
 function GameObject_get_tile_offset(id, frame)
