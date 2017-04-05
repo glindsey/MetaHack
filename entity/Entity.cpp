@@ -1457,74 +1457,50 @@ bool Entity::process_voluntary_actions()
   return _process_own_voluntary_actions();
 }
 
-bool Entity::perform_action_died()
+bool Entity::perform_action_die()
 {
-  return call_lua_function("perform_action_died", {}, true);
+  return call_lua_function("do_die", {}, true);
 }
 
-void Entity::perform_action_collided_with(EntityId actor)
+void Entity::perform_action_collide_with(EntityId actor)
 {
-  (void)call_lua_function("perform_action_collided_with", actor, true);
+  (void)call_lua_function("do_collide_with", actor, true);
 }
 
-void Entity::perform_action_collided_with_wall(Direction d, std::string tile_type)
+void Entity::perform_action_collide_with_wall(Direction d, std::string tile_type)
 {
   /// @todo Implement me; right now there's no way to pass one enum and one string to a Lua function.
   return;
 }
 
-bool Entity::perform_intransitive_action(Actions::Action& action)
+bool Entity::do_(Actions::Action& action)
 {
-  return call_lua_function("perform_intransitive_action_" + action.getType(), {}, true);
+  return call_lua_function("do_" + action.getType(), {}, true);
 }
 
 bool Entity::be_object_of(Actions::Action& action, EntityId subject)
 {
-  return call_lua_function("be_object_of_action_" + action.getType(), subject, true);
+  return call_lua_function("on_object_of_" + action.getType(), subject, true);
 }
 
 bool Entity::be_object_of(Actions::Action& action, EntityId subject, EntityId target)
 {
-  return call_lua_function("be_object_of_action_" + action.getType(), { subject, target }, true);
+  return call_lua_function("on_object_of_" + action.getType(), { subject, target }, true);
 }
 
 bool Entity::be_object_of(Actions::Action& action, EntityId subject, Direction direction)
 {
-  return call_lua_function("be_object_of_action_" + action.getType(), { subject, direction }, true);
+  return call_lua_function("on_object_of_" + action.getType(), { subject, direction }, true);
 }
 
-bool Entity::perform_action_hurt_by(EntityId subject)
+bool Entity::be_hurt_by(EntityId subject)
 {
-  return call_lua_function("be_object_of_action_hurt", subject, true);
+  return call_lua_function("on_object_of_hurt", subject, true);
 }
 
-bool Entity::perform_action_attacked_by(EntityId subject, EntityId target)
+bool Entity::be_attacked_by(EntityId subject, EntityId target)
 {
-  return call_lua_function("be_object_of_action_attack", { subject, target }, true);
-}
-
-bool Entity::perform_action_deequipped_by(EntityId actor, BodyLocation& location)
-{
-  if (this->getModifiedProperty("bound", false))
-  {
-    std::string message;
-    message = actor->getDescriptiveString() + " cannot take off " + this->getDescriptiveString() +
-      "; it is magically bound to " +
-      actor->getPossessiveAdjective() + " " +
-      actor->getBodypartDescription(location) + "!";
-    Service<IMessageLog>::get().add(message);
-    return false;
-  }
-  else
-  {
-    return call_lua_function("perform_action_deequipped_by", actor, true);
-  }
-}
-
-bool Entity::perform_action_equipped_by(EntityId actor, BodyLocation& location)
-{
-  /// @todo handle location
-  return call_lua_function("perform_action_equipped_by", actor, true);
+  return call_lua_function("on_object_of_attack", { subject, target }, true);
 }
 
 bool Entity::can_merge_with(EntityId other) const

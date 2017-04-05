@@ -39,7 +39,7 @@ namespace Actions
 
     /// @todo Handle stuff like auto-activating life-saving items here.
     /// @todo Pass in the cause of death somehow.
-    if (subject->perform_intransitive_action(*this))
+    if (subject->do_(*this))
     {
       if (subject->isPlayer())
       {

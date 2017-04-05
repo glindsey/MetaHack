@@ -5,7 +5,7 @@ function LightSource_modify_property_attribute_strength(id, old_value)
     return new_value, LuaType.Integer
 end
 
-function LightSource_be_object_of_action_use(object, subject)
+function LightSource_on_object_of_use(object, subject)
     local name = thing_get_intrinsic(object, "name")
     local is_lit = thing_get_modified_property(object, "lit")
     is_lit = not is_lit

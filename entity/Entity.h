@@ -465,13 +465,13 @@ public:
   /// @warning The function must reset whatever caused the death in the
   ///          first place, or the Entity will just immediately die again
   ///          on the next call to process()!
-  bool perform_action_died();
+  bool perform_action_die();
 
   /// Perform an action when this entity collides with another entity.
-  void perform_action_collided_with(EntityId entity);
+  void perform_action_collide_with(EntityId entity);
 
   /// Perform an action when this entity collides with a wall.
-  void perform_action_collided_with_wall(Direction d, std::string tile_type);
+  void perform_action_collide_with_wall(Direction d, std::string tile_type);
 
   /// Perform the effects of being the subject of a particular action.
   /// This is typically called on intransitive verbs (ones that do not take
@@ -481,7 +481,7 @@ public:
   /// 
   /// @param action   The action to be the target of.
   /// @return Bool indicating whether the action succeeded.
-  bool perform_intransitive_action(Actions::Action& action);
+  bool do_(Actions::Action& action);
 
   /// Perform the effects of being a object of a particular action.
   /// @param action   The action to be the target of.
@@ -504,7 +504,7 @@ public:
   bool be_object_of(Actions::Action& action, EntityId subject, Direction direction);
 
   /// Perform an action when this entity is hit by an attack.
-  bool perform_action_hurt_by(EntityId subject);
+  bool be_hurt_by(EntityId subject);
 
   /// Perform an action when this entity is used to hit a target.
   /// This action executes when the entity is wielded by an entity, and an
@@ -513,15 +513,7 @@ public:
   /// @see DynamicEntity::attack
   /// @note Is there a better name for this? Current name sounds like the
   ///       object is the target, instead of the implement.
-  bool perform_action_attacked_by(EntityId subject, EntityId target);
-
-  /// Perform an action when this entity is de-equipped (taken off).
-  /// If this function returns false, the action is aborted.
-  bool perform_action_deequipped_by(EntityId actor, BodyLocation& location);
-
-  /// Perform an action when this entity is equipped.
-  /// If this function returns false, the action is aborted.
-  bool perform_action_equipped_by(EntityId actor, BodyLocation& location);
+  bool be_attacked_by(EntityId subject, EntityId target);
   
   /// Returns whether the Entity can merge with another Entity.
   /// Calls an overridden subclass function.
