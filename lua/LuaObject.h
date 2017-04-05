@@ -181,6 +181,14 @@ public:
   /// Return the number of Lua stack slots associated with a particular value.
   unsigned int stack_slots(Type type) const;
 
+  /// Given an entity type and a suffix, look for a Lua function name equal to
+  /// "EntityType_suffix". If it doesn't exist, step up to the parent type and
+  /// repeat. Do so until "parent" is null or a matching name is found.
+  /// @param type     Entity type to look for
+  /// @param suffix   Suffix of the function to call
+  /// @return A matching function name, or a blank string if none was found.
+  std::string find_lua_function(std::string type, std::string suffix);
+
   /// Try to call a Lua function that takes the caller and a vector of
   /// arguments and returns a result.
   ///
@@ -189,7 +197,7 @@ public:
   /// there.
   ///
   /// @param function_name  Name of the function to call
-  /// @param caller         EntityId to the entity calling the function
+  /// @param caller         EntityId of the entity calling the function
   /// @param args           Arguments to pass to the function
   /// @param default_result The default result if function is not found
   ///                       after traversing the entire parent tree.

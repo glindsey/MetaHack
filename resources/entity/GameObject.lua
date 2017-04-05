@@ -2,19 +2,19 @@
 
 GameObject = inheritsFrom(nil, "GameObject")
 
-function GameObject.get_display_name(id)
+function GameObject_get_display_name(id)
     return intrinsics.name
 end
 
-function GameObject.get_brief_description(id)
+function GameObject_get_brief_description(id)
     return "GameObject #" .. id .. ", which has no description associated with it."
 end
 
-function GameObject.get_tile_offset(id, frame)
+function GameObject_get_tile_offset(id, frame)
     return 0, 0, LuaType.IntVec2
 end
 
-function GameObject.on_create(id)
+function GameObject_on_create(id)
     --messageLog_add("GameObject.on_create() called, new ID = " .. id)
     return true, LuaType.Boolean
 end

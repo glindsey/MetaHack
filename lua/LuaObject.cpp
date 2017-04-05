@@ -471,6 +471,40 @@ unsigned int Lua::stack_slots(Lua::Type type) const
   }
 }
 
+std::string Lua::find_lua_function(std::string type, std::string suffix)
+{
+  std::string function_name = type + "_" + suffix;
+
+  // Push function onto the stack. (+1)
+  lua_getglobal(L_, function_name.c_str());
+
+  if (lua_isnoneornil(L_, -1))
+  {
+    // Function not found; pop the result off. (-1)
+    lua_pop(L_, 1);
+
+    // Get this entity type's parent.
+    auto parent = GAME.getMetadataCollection("entity").get(type).get("parent", std::string());
+
+    if (parent.empty())
+    {
+      // No parent, return empty string.
+      return std::string();
+    }
+    else
+    {
+      // Call find_lua_function with parent type.
+      return find_lua_function(parent, suffix);
+    }
+  }
+  else
+  {
+    // Function found; pop the result off. (-1)
+    lua_pop(L_, 1);
+    return function_name;
+  }
+}
+
 json Lua::call_thing_function(std::string function_name, 
                               EntityId caller,
                               json const& args,
@@ -478,78 +512,71 @@ json Lua::call_thing_function(std::string function_name,
 {
   json return_value = default_result;
   Lua::Type return_type;
-  std::string group = caller->getType();
+  std::string caller_type = caller->getType();
 
   int start_stack = lua_gettop(L_);
 
-  // Push name of group onto the stack. (+1)
-  lua_getglobal(L_, group.c_str());
+  auto original_function_name = caller_type + "_" + function_name;
 
-  if (lua_isnoneornil(L_, -1))
+  // Get full function name (with type prefixed).
+  auto full_function_name = find_lua_function(caller_type, function_name);
+
+  // If it doesn't exist after going all the way up the family tree, return 
+  // the default result.
+  if (full_function_name.empty())
   {
-    // Category not found -- pop the group back off. (-1)
-    lua_pop(L_, 1);
+    /// @todo Probably don't need a warning here, that's what the default result is for
+    CLOG(WARNING, "Lua") << "Could not find Lua function "
+      << original_function_name << " after traversing family tree";
+
+    return default_result;
+  }
+
+  // Push name of function onto the stack. (+1)
+  // (Shouldn't fail here; if it does, find_lua_function() is borked.)
+  lua_getglobal(L_, full_function_name.c_str());
+
+  // Push the caller's ID onto the stack. (+1)
+  lua_pushinteger(L_, caller);
+
+  // Push the arguments onto the stack. (+N)
+  unsigned int lua_args = 0;
+  for (auto& arg : args)
+  {
+    lua_args += push_value(arg);
+  }
+
+  // Call the function with N+1 arguments and R+1 results. (-(N+2), +(R+1)) = R-(N+1)
+  //stackDump();
+  // auto number_of_results = stack_slots(result_type) + 1
+  int result = lua_pcall(L_, lua_args + 1, LUA_MULTRET, 0);
+  //stackDump();
+  if (result == 0)
+  {
+    // Pop the return type off of the stack. (-1)
+    return_type = pop_type();
+    // Pop the return value off of the stack. (-R)
+    return_value = pop_value(return_type);
+    /// @todo Handle multiple return values.
   }
   else
   {
-    // Push name of function onto the stack. (+1)
-    lua_getfield(L_, -1, function_name.c_str());
+    // Get the error message.
+    char const* error_message = lua_tostring(L_, -1);
+    CLOG(ERROR, "Lua") << "Error calling " << full_function_name << 
+      " (" << original_function_name << "): " << error_message;
 
-    if (lua_isnoneornil(L_, -1))
-    {
-      // Function not found -- pop the function and group names back off. (-2)
-      lua_pop(L_, 2);
-
-      CLOG(WARNING, "Lua") << "Could not find Lua function "
-        << group << ":"
-        << function_name;
-    }
-    else
-    {
-      // Remove the group name from the stack. (-1)
-      lua_remove(L_, -2);
-
-      // Push the caller's ID onto the stack. (+1)
-      lua_pushinteger(L_, caller);
-
-      // Push the arguments onto the stack. (+N)
-      unsigned int lua_args = 0;
-      for (auto& arg : args)
-      {
-        lua_args += push_value(arg);
-      }
-
-      // Call the function with N+1 arguments and R+1 results. (-(N+2), +(R+1)) = R-(N+1)
-      //stackDump();
-      // auto number_of_results = stack_slots(result_type) + 1
-      int result = lua_pcall(L_, lua_args + 1, LUA_MULTRET, 0);
-      //stackDump();
-      if (result == 0)
-      {
-        // Pop the return type off of the stack. (-1)
-        return_type = pop_type();
-        // Pop the return value off of the stack. (-R)
-        return_value = pop_value(return_type);
-        /// @todo Handle multiple return values.
-      }
-      else
-      {
-        // Get the error message.
-        char const* error_message = lua_tostring(L_, -1);
-        CLOG(ERROR, "Lua") << "Error calling " << group << "." << function_name << ": " << error_message;
-
-        // Pop the error message off the stack. (-1)
-        lua_pop(L_, 1);
-      }
-    }
+    // Pop the error message off the stack. (-1)
+    lua_pop(L_, 1);
   }
 
   int end_stack = lua_gettop(L_);
 
   if (start_stack != end_stack)
   {
-    CLOG(FATAL, "Lua") << "*** LUA STACK MISMATCH (" << group <<
-      ":" << function_name << "): Started at " << start_stack << ", ended at " << end_stack;
+    CLOG(FATAL, "Lua") << "*** LUA STACK MISMATCH (" << full_function_name <<
+      " (" << original_function_name << "): Started at " << start_stack << 
+      ", ended at " << end_stack;
   }
 
   return return_value;
@@ -572,63 +599,55 @@ json Lua::call_modifier_function(std::string property_name,
 
   int start_stack = lua_gettop(L_);
 
-  // Push name of group onto the stack. (+1)
-  lua_getglobal(L_, responsible_group.c_str());
+  auto original_function_name = responsible_group + "_" + function_name;
 
-  if (lua_isnoneornil(L_, -1))
+  // Get full function name (with type prefixed).
+  auto full_function_name = find_lua_function(responsible_group, function_name);
+
+  // If it doesn't exist after going all the way up the family tree, return 
+  // the default result.
+  if (full_function_name.empty())
   {
-    // Category not found -- pop the group back off. (-1)
-    lua_pop(L_, 1);
+    /// @todo Probably don't need a warning here, that's what the default result is for
+    CLOG(WARNING, "Lua") << "Could not find Lua function "
+      << original_function_name << " after traversing family tree";
+
+    return return_value;
+  }
+
+  // Push name of function onto the stack. (+1)
+  // (Shouldn't fail here; if it does, find_lua_function() is borked.)
+  lua_getglobal(L_, full_function_name.c_str());
+
+  // Push the affected entity's ID onto the stack. (+1)
+  lua_pushinteger(L_, affected_id);
+
+  // Push the responsible entity's ID onto the stack. (+1)
+  lua_pushinteger(L_, affected_id);
+
+  // Push the "before" value onto the stack. (+N)
+  unsigned int lua_args = push_value(unmodified_value);
+
+  // Call the function with N+2 arguments and R+1 results. (-(N+2), +(R+1)) = R-(N+1)
+  //stackDump();
+  int result = lua_pcall(L_, lua_args + 1, LUA_MULTRET, 0);
+  //stackDump();
+  if (result == 0)
+  {
+    // Pop the return type off of the stack. (-1)
+    return_type = pop_type();
+    // Pop the return value off of the stack. (-R)
+    return_value = pop_value(return_type);
   }
   else
   {
-    // Push name of function onto the stack. (+1)
-    lua_getfield(L_, -1, function_name.c_str());
+    // Get the error message.
+    char const* error_message = lua_tostring(L_, -1);
+    CLOG(ERROR, "Lua") << "Error calling " << full_function_name <<
+      " (" << original_function_name << "): " << error_message;
 
-    if (lua_isnoneornil(L_, -1))
-    {
-      // Function not found -- pop the function and group names back off. (-2)
-      lua_pop(L_, 2);
-
-      CLOG(WARNING, "Lua") << "Could not find Lua function "
-        << responsible_group << ":"
-        << function_name;
-    }
-    else
-    {
-      // Remove the group name from the stack. (-1)
-      lua_remove(L_, -2);
-
-      // Push the affected entity's ID onto the stack. (+1)
-      lua_pushinteger(L_, affected_id);
-
-      // Push the responsible entity's ID onto the stack. (+1)
-      lua_pushinteger(L_, affected_id);
-
-      // Push the "before" value onto the stack. (+N)
-      unsigned int lua_args = push_value(unmodified_value);
-
-      // Call the function with N+2 arguments and R+1 results. (-(N+2), +(R+1)) = R-(N+1)
-      //stackDump();
-      int result = lua_pcall(L_, lua_args + 1, LUA_MULTRET, 0);
-      //stackDump();
-      if (result == 0)
-      {
-        // Pop the return type off of the stack. (-1)
-        return_type = pop_type();
-        // Pop the return value off of the stack. (-R)
-        return_value = pop_value(return_type);
-      }
-      else
-      {
-        // Get the error message.
-        char const* error_message = lua_tostring(L_, -1);
-        CLOG(ERROR, "Lua") << "Error calling " << responsible_group << "." << function_name << ": " << error_message;
-
-        // Pop the error message off the stack. (-1)
-        lua_pop(L_, 1);
-      }
-    }
+    // Pop the error message off the stack. (-1)
+    lua_pop(L_, 1);
   }
 
   return return_value;

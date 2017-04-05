@@ -1,10 +1,6 @@
 -- Definition of special functions for the Coin object type.
 
-require "resources/entity/Entity"
-
-Coin = inheritsFrom(Entity, "Coin")
-
-function Coin.get_tile_offset(id, frame)
+function Coin_get_tile_offset(id, frame)
     local quantity = thing_get_base_property(id, "quantity")
     if (quantity < 10) then
         return 0, 0, LuaType.IntVec2
