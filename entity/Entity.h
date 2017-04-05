@@ -509,11 +509,8 @@ public:
   /// Perform an action when this entity is used to hit a target.
   /// This action executes when the entity is wielded by an entity, and an
   /// attack successfully hits its target.  It is a side-effect in addition
-  /// to the damage done by DynamicEntity::attack(entity).
-  /// @see DynamicEntity::attack
-  /// @note Is there a better name for this? Current name sounds like the
-  ///       object is the target, instead of the implement.
-  bool be_attacked_by(EntityId subject, EntityId target);
+  /// to the damage done by the attack action.
+  bool be_used_to_attack(EntityId subject, EntityId target);
   
   /// Returns whether the Entity can merge with another Entity.
   /// Calls an overridden subclass function.

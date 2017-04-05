@@ -1498,9 +1498,9 @@ bool Entity::be_hurt_by(EntityId subject)
   return call_lua_function("on_object_of_hurt", subject, true);
 }
 
-bool Entity::be_attacked_by(EntityId subject, EntityId target)
+bool Entity::be_used_to_attack(EntityId subject, EntityId target)
 {
-  return call_lua_function("on_object_of_attack", { subject, target }, true);
+  return call_lua_function("on_used_to_attack", { subject, target }, true);
 }
 
 bool Entity::can_merge_with(EntityId other) const
