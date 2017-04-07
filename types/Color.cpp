@@ -49,7 +49,14 @@ Color::Color(sf::Color color)
 
 void to_json(json& j, Color const& color)
 {
-  j = json::array({ "color", color.m_r, color.m_g, color.m_b, color.m_a });
+  j = json::array(
+  { 
+    "color", 
+    static_cast<uint8_t>(color.m_r), 
+    static_cast<uint8_t>(color.m_g), 
+    static_cast<uint8_t>(color.m_b), 
+    static_cast<uint8_t>(color.m_a)
+  });
 }
 
 void from_json(json const& j, Color& color)
@@ -93,49 +100,21 @@ uint8_t Color::a() const { return m_a; }
 
 Color& Color::operator+=(Color const& rhs)
 {
-  m_r = saturation_add(m_r, rhs.m_r);
-  m_g = saturation_add(m_g, rhs.m_g);
-  m_b = saturation_add(m_b, rhs.m_b);
-  m_a = saturation_add(m_a, rhs.m_a);
+  m_r += rhs.m_r;
+  m_g += rhs.m_g;
+  m_b += rhs.m_b;
+  m_a += rhs.m_a;
   return *this;
 }
 
 Color& Color::operator-=(Color const& rhs)
 {
-  m_r = saturation_sub(m_r, rhs.m_r);
-  m_g = saturation_sub(m_g, rhs.m_g);
-  m_b = saturation_sub(m_b, rhs.m_b);
-  m_a = saturation_sub(m_a, rhs.m_a);
+  m_r -= rhs.m_r;
+  m_g -= rhs.m_g;
+  m_b -= rhs.m_b;
+  m_a -= rhs.m_a;
   return *this;
 }
-
-//Color& Color::operator*=(float const& rhs)
-//{
-//  m_r = ((static_cast<float>(m_r) * rhs) > 255.0f) ? 255 : static_cast<unsigned char>(static_cast<float>(m_r) * rhs);
-//  m_g = ((static_cast<float>(m_g) * rhs) > 255.0f) ? 255 : static_cast<unsigned char>(static_cast<float>(m_g) * rhs);
-//  m_b = ((static_cast<float>(m_b) * rhs) > 255.0f) ? 255 : static_cast<unsigned char>(static_cast<float>(m_b) * rhs);
-//  m_a = ((static_cast<float>(m_a) * rhs) > 255.0f) ? 255 : static_cast<unsigned char>(static_cast<float>(m_a) * rhs);
-//  return *this;
-//}
-
-
-//Color& Color::operator<<=(unsigned int const& rhs)
-//{
-//  m_r <<= rhs;
-//  m_g <<= rhs;
-//  m_b <<= rhs;
-//  m_a <<= rhs;
-//  return *this;
-//}
-
-//Color& Color::operator>>=(unsigned int const& rhs)
-//{
-//  m_r >>= rhs;
-//  m_g >>= rhs;
-//  m_b >>= rhs;
-//  m_a >>= rhs;
-//  return *this;
-//}
 
 Color::operator sf::Color() const
 {
@@ -160,25 +139,6 @@ Color operator-(Color lhs, Color const& rhs)
   lhs -= rhs;
   return lhs;
 }
-
-//Color operator*(Color lhs, float const& rhs)
-//{
-//  lhs *= rhs;
-//  return lhs;
-//}
-
-//Color operator>>(Color lhs, unsigned int const & rhs)
-//{
-//  lhs <<= rhs;
-//  return lhs;
-//}
-
-//Color operator<<(Color lhs, unsigned int const & rhs)
-//{
-//  lhs >>= rhs;
-//  return rhs;
-//}
-
 
 /// Average two colors together.
 Color average(Color first, Color second)

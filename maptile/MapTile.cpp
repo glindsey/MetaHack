@@ -128,9 +128,9 @@ void MapTile::addLightInfluence(EntityId source,
         float newG = static_cast<float>(light_color.g()) * factor;
         float newB = static_cast<float>(light_color.b()) * factor;
 
-        addColor.setR(bounds8(newR));
-        addColor.setG(bounds8(newG));
-        addColor.setB(bounds8(newB));
+        addColor.setR(newR);
+        addColor.setG(newG);
+        addColor.setB(newB);
 
         unsigned int index = d.get_map_index();
         auto prevColor = m_calculated_light_colors[index];

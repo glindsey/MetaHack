@@ -346,6 +346,7 @@
     <ClInclude Include="game\AppStateSplashScreen.h" />
     <ClInclude Include="types\Beatitude.h" />
     <ClInclude Include="types\BodyPart.h" />
+    <ClInclude Include="types\Clamped.h" />
     <ClInclude Include="types\Color.h" />
     <ClInclude Include="types\SFMLEventResult.h" />
     <ClInclude Include="utilities\CommonFunctions.h" />
