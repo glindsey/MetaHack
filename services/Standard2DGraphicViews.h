@@ -25,7 +25,7 @@ public:
 
   virtual MapView* createMapView(std::string name, Map& map, UintVec2 size) override;
 
-  virtual void loadViewResourcesFor(Metadata& metadata) override;
+  virtual void loadViewResourcesFor(std::string category, json& data) override;
 
 protected:
   TileSheet& getTileSheet();

@@ -10,7 +10,6 @@ using json = ::nlohmann::json;
 
 // Forward declarations
 class MapFactory;
-class MetadataCollection;
 class EntityPool;
 
 /// Class that encapsulates the entire state of the game data.
@@ -36,7 +35,6 @@ public:
 
   MapFactory& getMaps();
   EntityPool& getEntities();
-  MetadataCollection& getMetadataCollection(std::string category);
 
   ElapsedTime getGameClock() const;
   void setGameClock(ElapsedTime game_clock);
@@ -59,6 +57,14 @@ public:
   /// @return True if a tick elapsed, false if it did not.
   bool processGameClockTick();
 
+  /// Get data for a specific Entity category.
+  /// If it doesn't exist, attempt to load it.
+  json& category(std::string name);
+
+  /// Add data in second JSON object to first JSON object.
+  /// @todo Belongs in a "JSON utilities" module or something, not here
+  void addTo(json& first, json& second);
+
   /// Get reference to game state data.
   inline json& data()
   {
@@ -74,6 +80,9 @@ public:
   static GameState& instance();
 
 protected:
+  /// Attempt to load JSON data for an entity category.
+  /// Also runs any associated Lua script.
+  void GameState::loadCategory(std::string name);
 
 private:
   /// Pointer to the Map Factory object.
@@ -81,9 +90,6 @@ private:
 
   /// Pointer to the Entity Manager object.
   std::unique_ptr<EntityPool> m_entity_pool;
-
-  /// A collection of collections -- a metacollection!
-  boost::ptr_unordered_map<std::string, MetadataCollection> m_metacollection;
 
   /// Game state data, as stored in a JSON object.
   json m_data;

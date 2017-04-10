@@ -35,8 +35,8 @@ public:
     return NEW MapNullView(name, map, size);
   }
 
-  /// Load any required view resources associated with the specified metadata.
-  virtual void loadViewResourcesFor(Metadata& metadata) override
+  /// Load any required view resources associated with the specified JSON data.
+  virtual void loadViewResourcesFor(std::string category, json& data) override
   {
   }
 

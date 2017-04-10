@@ -402,8 +402,6 @@
     <ClInclude Include="utilities\MathUtils.h" />
     <ClInclude Include="services\MessageLog.h" />
     <ClInclude Include="game_windows\MessageLogView.h" />
-    <ClInclude Include="metadata\Metadata.h" />
-    <ClInclude Include="metadata\MetadataCollection.h" />
     <ClInclude Include="utilities\New.h" />
     <ClInclude Include="utilities\Ordinal.h" />
     <ClInclude Include="properties\PropertyDictionary.h" />
@@ -506,8 +504,6 @@
     <ClCompile Include="map\MapView.cpp" />
     <ClCompile Include="services\MessageLog.cpp" />
     <ClCompile Include="game_windows\MessageLogView.cpp" />
-    <ClCompile Include="metadata\Metadata.cpp" />
-    <ClCompile Include="metadata\MetadataCollection.cpp" />
     <ClCompile Include="properties\ModifiablePropertyDictionary.cpp" />
     <ClCompile Include="properties\PropertyDictionary.cpp" />
     <ClCompile Include="services\Standard2DGraphicViews.cpp" />
@@ -581,12 +577,12 @@
     <None Include="resources\entity\WeaponStrangling.json" />
     <None Include="resources\entity\WeaponStriking.json" />
     <None Include="resources\intrinsic_types.json" />
-    <None Include="resources\maptile\MTFloor.json" />
-    <None Include="resources\maptile\MTFloorDirt.json" />
-    <None Include="resources\maptile\MTFloorStone.json" />
-    <None Include="resources\maptile\MTUnknown.json" />
-    <None Include="resources\maptile\MTWall.json" />
-    <None Include="resources\maptile\MTWallStone.json" />
+    <None Include="resources\entity\MTFloor.json" />
+    <None Include="resources\entity\MTFloorDirt.json" />
+    <None Include="resources\entity\MTFloorStone.json" />
+    <None Include="resources\entity\MTUnknown.json" />
+    <None Include="resources\entity\MTWall.json" />
+    <None Include="resources\entity\MTWallStone.json" />
     <None Include="resources\script\map.lua" />
     <None Include="resources\shader\default.frag" />
     <None Include="resources\shader\default.vert" />
@@ -616,13 +612,13 @@
     <Image Include="resources\entity\Sink.png" />
     <Image Include="resources\entity\Thing.png" />
     <Image Include="resources\entity\WallStone.png" />
-    <Image Include="resources\maptile\MTFloorDirt.png" />
-    <Image Include="resources\maptile\MTFloorGrass.png" />
-    <Image Include="resources\maptile\MTFloorStone.png" />
-    <Image Include="resources\maptile\MTStairsDown.png" />
-    <Image Include="resources\maptile\MTStairsUp.png" />
-    <Image Include="resources\maptile\MTUnknown.png" />
-    <Image Include="resources\maptile\MTWallStone.png" />
+    <Image Include="resources\entity\MTFloorDirt.png" />
+    <Image Include="resources\entity\MTFloorGrass.png" />
+    <Image Include="resources\entity\MTFloorStone.png" />
+    <Image Include="resources\entity\MTStairsDown.png" />
+    <Image Include="resources\entity\MTStairsUp.png" />
+    <Image Include="resources\entity\MTUnknown.png" />
+    <Image Include="resources\entity\MTWallStone.png" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="resources\font\angltrr.ttf" />

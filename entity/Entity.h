@@ -13,7 +13,6 @@ using json = ::nlohmann::json;
 #include "lua/LuaObject.h"
 #include "types/MapMemoryChunk.h"
 #include "maptile/MapTile.h"
-#include "metadata/Metadata.h"
 #include "properties/ModifiablePropertyDictionary.h"
 #include "Subject.h"
 #include "entity/EntityId.h"
@@ -532,17 +531,17 @@ public:
                          json const& args,
                          json const& default_result) const;
 
-  /// Get a const reference to this tile's metadata.
-  Metadata const & getMetadata() const;
+  /// Get a const reference to this tile's type data.
+  json const& getTypeData() const;
 
   virtual std::unordered_set<EventID> registeredEvents() const override;
 
 protected:
   /// Named Constructor
-  Entity(GameState& game, Metadata& metadata, EntityId ref);
+  Entity(GameState& game, std::string type, json& type_data, EntityId ref);
 
   /// Floor Constructor
-  Entity(GameState& game, MapTile* map_tile, Metadata& metadata, EntityId ref);
+  Entity(GameState& game, MapTile* map_tile, std::string type, json& type_data, EntityId ref);
 
   /// Clone Constructor
   Entity(Entity const& original, EntityId ref);
@@ -588,8 +587,11 @@ private:
   /// Reference to game state.
   GameState& m_game;
 
-  /// Reference to this Entity's metadata.
-  Metadata& m_metadata;
+  /// Name of this Entity's category, as a string.
+  std::string m_type;
+
+  /// Reference to this Entity's category's JSON data.
+  json& m_type_data;
 
   /// Property dictionary.
   /// Defined as mutable, because a "get" method can cache a default value

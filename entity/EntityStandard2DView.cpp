@@ -98,7 +98,7 @@ UintVec2 EntityStandard2DView::get_tile_sheet_coords(int frame) const
   auto& entity = getEntity();
 
   /// Get tile coordinates on the sheet.
-  UintVec2 start_coords = entity.getMetadata().getTileCoords();
+  UintVec2 start_coords = entity.getTypeData().value("tile-location", UintVec2(0, 0));
 
   /// Call the Lua function to get the offset (tile to choose).
   /// @todo Re-implement me

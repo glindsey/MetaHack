@@ -46,29 +46,26 @@ TileSheet& Standard2DGraphicViews::getTileSheet()
   return *(m_tile_sheet.get());
 }
 
-void Standard2DGraphicViews::loadViewResourcesFor(Metadata& metadata)
+void Standard2DGraphicViews::loadViewResourcesFor(std::string category, json& data)
 {
-  auto category = metadata.getMetadataCollection().get_category();
-  auto type = metadata.getType();
-  FileName resource_string = "resources/" + category + "/" + type;
+  FileName resource_string = "resources/entity/" + category;
   FileName pngfile_string = resource_string + ".png";
   fs::path pngfile_path = fs::path(pngfile_string);
-  std::string qualified_name = category + "!" + type;
 
   if (fs::exists(pngfile_path))
   {
     UintVec2 tile_location;
-    CLOG(TRACE, "Metadata") << "Tiles were found for " << qualified_name;
+    CLOG(TRACE, "GameState") << "Tiles were found for " << category << " category";
 
     tile_location = m_tile_sheet->load_collection(pngfile_string);
-    CLOG(TRACE, "Metadata") << "Tiles for " << qualified_name <<
+    CLOG(TRACE, "GameState") << "Tiles for " << category <<
       " were placed on the TileSheet at " << tile_location;
 
-    metadata.set("has-tiles", true);
-    metadata.set("tile-location", tile_location);
+    data["has-tiles"] = true;
+    data["tile-location"] = tile_location;
   }
   else
   {
-    CLOG(TRACE, "Metadata") << "No tiles found for " << qualified_name;
+    CLOG(TRACE, "GameState") << "No tiles found for " << category;
   }
 }

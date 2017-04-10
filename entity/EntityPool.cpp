@@ -8,7 +8,6 @@
 #include "game/GameState.h"
 #include "lua/LuaObject.h"
 #include "lua/LuaEntityFunctions.h"
-#include "metadata/Metadata.h"
 
 EntityPool::EntityPool(GameState& game)
   :
@@ -32,7 +31,7 @@ bool EntityPool::firstIsSubtypeOfSecond(std::string first, std::string second)
 {
   //CLOG(TRACE, "Entity") << "Checking if " << first << " is a subtype of " << second << "...";
 
-  std::string first_parent = m_game.getMetadataCollection("entity").get(first).get("parent", std::string());
+  std::string first_parent = m_game.category(first).value("parent", std::string());
 
   if (first_parent.empty())
   {
@@ -54,9 +53,9 @@ EntityId EntityPool::create(std::string type)
 {
   EntityId new_id = EntityId(m_nextEntityId);
   ++m_nextEntityId;
-  Metadata& metadata = m_game.getMetadataCollection("entity").get(type);
+  json& data = m_game.category(type);
 
-  std::unique_ptr<Entity> new_thing{ new Entity{ m_game, metadata, new_id } };
+  std::unique_ptr<Entity> new_thing{ new Entity{ m_game, type, data, new_id } };
   m_thing_map[new_id] = std::move(new_thing);
 
   if (m_initialized)
@@ -72,9 +71,9 @@ EntityId EntityPool::createTileContents(MapTile* map_tile)
 {
   EntityId new_id = EntityId(m_nextEntityId);
   ++m_nextEntityId;
-  Metadata& metadata = m_game.getMetadataCollection("entity").get("TileContents");
+  json& data = m_game.category("TileContents");
 
-  std::unique_ptr<Entity> new_thing{ new Entity { m_game, map_tile, metadata, new_id } };
+  std::unique_ptr<Entity> new_thing{ new Entity { m_game, map_tile, "TileContents", data, new_id } };
   m_thing_map[new_id] = std::move(new_thing);
 
   return EntityId(new_id);

@@ -26,22 +26,23 @@ EntityId MapTile::getTileContents() const
 
 std::string MapTile::getDisplayName() const
 {
-  return m_p_metadata->get("name", "MTUnknown");
+  return m_p_type_data->value("name", "MTUnknown");
 }
 
 void MapTile::setTileType(std::string type)
 {
-  m_p_metadata = &(m_p_metadata->getMetadataCollection().get(type));
+  m_type = type;
+  m_p_type_data = &(GAME.category(type));
 }
 
 std::string MapTile::getTileType() const
 {
-  return m_p_metadata->getType();
+  return m_type;
 }
 
 bool MapTile::isEmptySpace() const
 {
-  return m_p_metadata->get("passable", false);
+  return m_p_type_data->value("passable", false);
 }
 
 /// @todo: Implement this to cover different entity types.
@@ -160,7 +161,7 @@ Color MapTile::getWallLightLevel(Direction direction) const
 
 Color MapTile::getOpacity() const
 {
-  return m_p_metadata->get("opacity", Color::White);
+  return m_p_type_data->value("opacity", Color::White);
 }
 
 bool MapTile::isOpaque() const
@@ -181,11 +182,11 @@ RealVec2 MapTile::getPixelCoords(IntVec2 tile)
 
 // === PROTECTED METHODS ======================================================
 
-MapTile::MapTile(IntVec2 coords, Metadata& metadata, MapId map_id)
+MapTile::MapTile(IntVec2 coords, json& data, MapId map_id)
   :
   m_map_id{ map_id },
   m_coords{ coords },
-  m_p_metadata{ &metadata },
+  m_p_type_data{ &data },
   m_ambient_light_color{ Color(192, 192, 192, 255) }
 {
   if (!initialized)
@@ -211,7 +212,7 @@ MapTile const& MapTile::getAdjacentTile(Direction direction) const
   return map.getTile(adjacent_coords);
 }
 
-Metadata const & MapTile::getMetadata() const
+json const& MapTile::getTypeData() const
 {
-  return *m_p_metadata;
+  return *m_p_type_data;
 }

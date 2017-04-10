@@ -11,7 +11,6 @@
 #include "inventory/Inventory.h"
 #include "map/Map.h"
 #include "maptile/MapTile.h"
-#include "metadata/Metadata.h"
 #include "Service.h"
 #include "services/IConfigSettings.h"
 #include "services/IStringDictionary.h"
@@ -28,15 +27,16 @@
 // Static member initialization.
 Color const Entity::wall_outline_color_{ 255, 255, 255, 64 };
 
-Metadata const & Entity::getMetadata() const
+json const& Entity::getTypeData() const
 {
-  return m_metadata;
+  return m_type_data;
 }
 
-Entity::Entity(GameState& game, Metadata& metadata, EntityId id)
+Entity::Entity(GameState& game, std::string type, json& type_data, EntityId id)
   :
   m_game{ game },
-  m_metadata{ metadata },
+  m_type{ type },
+  m_type_data{ type_data },
   m_properties{ id },
   m_id{ id },
   m_location{ EntityId::Mu() },
@@ -53,10 +53,11 @@ Entity::Entity(GameState& game, Metadata& metadata, EntityId id)
   initialize();
 }
 
-Entity::Entity(GameState& game, MapTile* map_tile, Metadata& metadata, EntityId id)
+Entity::Entity(GameState& game, MapTile* map_tile, std::string type, json& type_data, EntityId id)
   :
   m_game{ game },
-  m_metadata{ metadata },
+  m_type{ type },
+  m_type_data{ type_data },
   m_properties{ id },
   m_id{ id },
   m_location{ EntityId::Mu() },
@@ -76,7 +77,8 @@ Entity::Entity(GameState& game, MapTile* map_tile, Metadata& metadata, EntityId 
 Entity::Entity(Entity const& original, EntityId ref)
   :
   m_game{ original.m_game },
-  m_metadata{ original.m_metadata },
+  m_type{ original.m_type },
+  m_type_data{ original.m_type_data },
   m_properties{ original.m_properties },
   m_id{ ref },
   m_location{ original.m_location },
@@ -96,7 +98,10 @@ Entity::Entity(Entity const& original, EntityId ref)
 void Entity::initialize()
 {
   /// Get our maximum HP. (The method will automatically pick it from a range.)
-  auto max_hp = m_metadata.get("maxhp", 1);
+  /// @todo Create an "Integer" type that contains a from_json that handles
+  ///       ranges.
+  //auto max_hp = m_type_data.value("maxhp", 1);
+  int max_hp = 10;
 
   /// Set our starting HP to that value.
   setBaseProperty("hp", max_hp);
@@ -479,12 +484,12 @@ bool Entity::isPlayer() const
 
 std::string const& Entity::getType() const
 {
-  return m_metadata.getType();
+  return m_type;
 }
 
 std::string Entity::getParentType() const
 {
-  return m_metadata.get("parent", "");
+  return m_type_data.value("parent", "");
 }
 
 bool Entity::isSubtypeOf(std::string that_type) const
@@ -495,7 +500,7 @@ bool Entity::isSubtypeOf(std::string that_type) const
 
 json Entity::getIntrinsic(std::string key, json default_value) const
 {
-  return m_metadata.get(key, default_value);
+  return m_type_data.value(key, default_value);
 }
 
 json Entity::getBaseProperty(std::string key, json default_value) const
@@ -506,7 +511,7 @@ json Entity::getBaseProperty(std::string key, json default_value) const
   }
   else
   {
-    auto value = m_metadata.get(key, default_value);
+    auto value = m_type_data.value(key, default_value);
     m_properties.set(key, value);
     return value;
   }
@@ -552,7 +557,7 @@ json Entity::getModifiedProperty(std::string key, json default_value) const
 {
   if (!m_properties.contains(key))
   {
-    json value = m_metadata.get(key, default_value);
+    json value = m_type_data.value(key, default_value);
     m_properties.set(key, value);
   }
 
@@ -851,13 +856,13 @@ std::string Entity::getDisplayAdjectives() const
 /// @todo Figure out how to cleanly localize this.
 std::string Entity::getDisplayName() const
 {
-  return m_metadata.get("name", std::string());
+  return m_type_data.value("name", std::string());
 }
 
 /// @todo Figure out how to cleanly localize this.
 std::string Entity::getDisplayPlural() const
 {
-  return m_metadata.get("plural", std::string());
+  return m_type_data.value("plural", std::string());
 }
 
 std::string Entity::getProperName() const

@@ -73,7 +73,8 @@ void StatusArea::drawContents_(sf::RenderTexture& texture, int frame)
     texture.draw(render_text);
 
     int hp = player->getModifiedProperty("hp", 0);
-    int max_hp = std::min(player->getModifiedProperty("maxhp", 1).get<int>(), 1);
+    //int max_hp = std::min(player->getModifiedProperty("maxhp", 1).get<int>(), 1);
+    int max_hp = 10;
 
     float hp_percentage = static_cast<float>(hp) / static_cast<float>(max_hp);
 

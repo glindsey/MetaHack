@@ -3,8 +3,6 @@
 
 #include "stdafx.h"
 
-#include "metadata/MetadataCollection.h"
-
 // Forward declarations
 class GameState;
 class Map;

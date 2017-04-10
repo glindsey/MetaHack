@@ -15,7 +15,6 @@
 // Forward declarations
 class DynamicEntity;
 class Floor;
-class Metadata;
 
 /// Class representing one tile of the map.
 /// @todo Add notifyObservers calls where needed
@@ -92,14 +91,14 @@ public:
   static RealVec2 getPixelCoords(IntVec2 tile);
 
   /// Get a reference to an adjacent tile.
-  MapTile const & getAdjacentTile(Direction direction) const;
+  MapTile const& getAdjacentTile(Direction direction) const;
 
   /// Get a const reference to this tile's metadata.
-  Metadata const & getMetadata() const;
+  json const& getTypeData() const;
 
 protected:
   /// Constructor, callable only by Map class.
-  MapTile(IntVec2 coords, Metadata& metadata, MapId map_id);
+  MapTile(IntVec2 coords, json& data, MapId map_id);
 
 private:
   static bool initialized;
@@ -110,10 +109,13 @@ private:
   /// This MapTile's coordinates on the map.
   IntVec2 m_coords;
 
-  /// Pointer to this MapTile's metadata.
+  /// Type of this MapTile, as a string.
+  std::string m_type;
+
+  /// JSON data associated with this MapTile.
   /// This has to be a pointer rather than a reference because it can be
   /// modified after MapTile construction.
-  Metadata* m_p_metadata;
+  json* m_p_type_data;
 
   /// Reference to the Entity that represents this tile's contents.
   EntityId m_tile_contents;

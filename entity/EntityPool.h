@@ -2,7 +2,6 @@
 
 #include "stdafx.h"
 
-#include "metadata/MetadataCollection.h"
 #include "entity/EntityId.h"
 
 // Forward declarations

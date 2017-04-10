@@ -484,7 +484,7 @@ std::string Lua::find_lua_function(std::string type, std::string suffix)
     lua_pop(L_, 1);
 
     // Get this entity type's parent.
-    auto parent = GAME.getMetadataCollection("entity").get(type).get("parent", std::string());
+    auto parent = GAME.category(type).value("parent", std::string());
 
     if (parent.empty())
     {
