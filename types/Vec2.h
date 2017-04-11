@@ -1,9 +1,9 @@
 #pragma once
 
-#include "SFML/Graphics.hpp"
-
 #include "json.hpp"
 using json = ::nlohmann::json;
+
+#include "SFML/Graphics.hpp"
 
 /// Definition of a two-dimensional vector.
 template <typename T>

@@ -1,9 +1,8 @@
 #pragma once
 
-#include "stdint.h"
+#include "stdafx.h"
 
-#include "json.hpp"
-using json = ::nlohmann::json;
+#include "stdint.h"
 
 #include "utilities/MathUtils.h"
 

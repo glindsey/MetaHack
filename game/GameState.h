@@ -3,20 +3,18 @@
 
 #include "stdafx.h"
 
-#include "json.hpp"
-using json = ::nlohmann::json;
-
-#include "entity/EntityId.h"
-
 // Forward declarations
 class MapFactory;
+class EntityId;
 class EntityPool;
 
 /// Class that encapsulates the entire state of the game data.
 /// This class can be instantiated only once at a time. Attempting to create
 /// a second instance when one is already present will cause an exception to
 /// be thrown.
-class GameState : public boost::noncopyable
+///
+/// In order to keep overhead costs down, this class is purely concrete.
+class GameState final
 {
 public:
   GameState();
@@ -24,9 +22,8 @@ public:
   /// Constructor that loads a game state from disk.
   /// Throws an exception if the game could not be loaded.
   /// @todo WRITE ME
-  GameState(FileName filename);
-
-  virtual ~GameState();
+  GameState(FileName filename);  
+  ~GameState();
 
   /// Save the game state to disk.
   /// Throws an exception if the game could not be saved.
@@ -57,14 +54,6 @@ public:
   /// @return True if a tick elapsed, false if it did not.
   bool processGameClockTick();
 
-  /// Get data for a specific Entity category.
-  /// If it doesn't exist, attempt to load it.
-  json& category(std::string name);
-
-  /// Add data in second JSON object to first JSON object.
-  /// @todo Belongs in a "JSON utilities" module or something, not here
-  void addTo(json& first, json& second);
-
   /// Get reference to game state data.
   inline json& data()
   {
@@ -80,9 +69,6 @@ public:
   static GameState& instance();
 
 protected:
-  /// Attempt to load JSON data for an entity category.
-  /// Also runs any associated Lua script.
-  void GameState::loadCategory(std::string name);
 
 private:
   /// Pointer to the Map Factory object.

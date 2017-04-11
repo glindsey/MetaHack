@@ -6,6 +6,10 @@
 // EasyLogging++ includes
 #include "third_party/easyloggingpp/easylogging++.h"
 
+// JSON includes
+#include "json.hpp"
+using json = ::nlohmann::json;
+
 // Standard library includes
 #include <algorithm>
 #include <cctype>

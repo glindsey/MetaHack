@@ -3,6 +3,7 @@
 #include "maptile/MapTileStandard2DView.h"
 #include "Service.h"
 #include "services/IConfigSettings.h"
+#include "services/IGameRules.h"
 #include "tilesheet/TileSheet.h"
 #include "types/Color.h"
 #include "types/ShaderEffect.h"
@@ -24,7 +25,7 @@ MapTileStandard2DView::MapTileStandard2DView(MapTile& map_tile, TileSheet& tile_
 UintVec2 MapTileStandard2DView::get_tile_sheet_coords() const
 {
   /// @todo Deal with selecting one of the other tiles.
-  UintVec2 start_coords = get_map_tile().getTypeData().value("tile-location", UintVec2(0, 0));
+  UintVec2 start_coords = get_map_tile().getCategoryData().value("tile-location", UintVec2(0, 0));
   UintVec2 tile_coords(start_coords.x + m_tile_offset, start_coords.y);
   return tile_coords;
 }
@@ -33,7 +34,7 @@ UintVec2 MapTileStandard2DView::get_tile_sheet_coords() const
 UintVec2 MapTileStandard2DView::get_entity_tile_sheet_coords(Entity& entity, int frame) const
 {
   /// Get tile coordinates on the sheet.
-  UintVec2 start_coords = entity.getTypeData().value("tile-location", UintVec2(0, 0));
+  UintVec2 start_coords = entity.getCategoryData().value("tile-location", UintVec2(0, 0));
 
   /// Call the Lua function to get the offset (tile to choose).
   UintVec2 offset = entity.call_lua_function("get_tile_offset", frame, UintVec2(0, 0));
@@ -109,7 +110,7 @@ void MapTileStandard2DView::add_memory_vertices_to(sf::VertexArray& vertices,
 
   std::string tile_type = viewer->getMemoryAt(coords).getType();
   if (tile_type == "") { tile_type = "MTUnknown"; }
-  json& tile_data = GAME.category(tile_type);
+  json& tile_data = Service<IGameRules>::get().category(tile_type);
 
   /// @todo Call a script to handle selecting a tile other than the one
   ///       in the upper-left corner.

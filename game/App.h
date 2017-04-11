@@ -209,6 +209,7 @@ private:
   std::unique_ptr<sf::Shader> m_shader;
 
   /// The message log.
+  /// @todo remove this, it's no longer needed
   std::unique_ptr<MessageLog> m_message_log;
 
   /// The tilesheet.

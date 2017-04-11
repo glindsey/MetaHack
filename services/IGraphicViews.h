@@ -1,8 +1,5 @@
 #include "stdafx.h"
 
-#include "json.hpp"
-using json = ::nlohmann::json;
-
 /// Forward declarations
 class Entity;
 class EntityView;

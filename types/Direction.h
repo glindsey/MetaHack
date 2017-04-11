@@ -4,9 +4,6 @@
 
 #include "utilities/MathUtils.h"
 
-#include "json.hpp"
-using json = ::nlohmann::json;
-
 /// Directional vector in 3-D space.
 /// A std::vector or IntVec3 could be used here, but I'd like to keep
 /// game directional information separated by class for code legibility.

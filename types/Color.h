@@ -6,9 +6,6 @@
 
 #include "SFML/Graphics.hpp"
 
-#include "json.hpp"
-using json = ::nlohmann::json;
-
 /// Representation of a color in the game, with variable opacity.
 class Color final
 {

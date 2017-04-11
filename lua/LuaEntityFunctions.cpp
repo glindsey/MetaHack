@@ -5,6 +5,8 @@
 #include "game/GameState.h"
 #include "entity/Entity.h"
 #include "entity/EntityId.h"
+#include "Service.h"
+#include "services/IGameRules.h"
 
 // === MACROS =================================================================
 #define STRINGIFY(x) #x
@@ -31,7 +33,7 @@ namespace LuaEntityFunctions
 
     // Check to make sure the Entity is actually creatable.
     /// @todo Might want the ability to disable this check for debugging purposes?
-    json& thing_data = GAME.category(new_thing_type);
+    json& thing_data = Service<IGameRules>::get().category(new_thing_type);
     bool is_creatable = thing_data.value("creatable", false);
 
     if (is_creatable)
@@ -148,7 +150,7 @@ namespace LuaEntityFunctions
     }
 
     EntityId entity = EntityId(lua_tointeger(L, 1));
-    std::string result = entity->getType();
+    std::string result = entity->getCategory();
     lua_pushstring(L, result.c_str());
 
     return 1;

@@ -7,6 +7,8 @@
 #include "types/Direction.h"
 #include "types/Color.h"
 #include "types/Gender.h"
+#include "Service.h"
+#include "services/IGameRules.h"
 
 Lua::Lua()
 {
@@ -484,7 +486,7 @@ std::string Lua::find_lua_function(std::string type, std::string suffix)
     lua_pop(L_, 1);
 
     // Get this entity type's parent.
-    auto parent = GAME.category(type).value("parent", std::string());
+    auto parent = Service<IGameRules>::get().category(type).value("parent", std::string());
 
     if (parent.empty())
     {
@@ -512,7 +514,7 @@ json Lua::call_thing_function(std::string function_name,
 {
   json return_value = default_result;
   Lua::Type return_type;
-  std::string caller_type = caller->getType();
+  std::string caller_type = caller->getCategory();
 
   int start_stack = lua_gettop(L_);
 

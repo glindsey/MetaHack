@@ -8,6 +8,7 @@
 #include "map/Map.h"
 #include "Service.h"
 #include "services/IConfigSettings.h"
+#include "services/IGameRules.h"
 #include "types/Color.h"
 #include "utilities/MathUtils.h"
 #include "utilities/RNGUtils.h"
@@ -26,23 +27,22 @@ EntityId MapTile::getTileContents() const
 
 std::string MapTile::getDisplayName() const
 {
-  return m_p_type_data->value("name", "MTUnknown");
+  return getCategoryData().value("name", "MTUnknown");
 }
 
-void MapTile::setTileType(std::string type)
+void MapTile::setTileType(std::string category)
 {
-  m_type = type;
-  m_p_type_data = &(GAME.category(type));
+  m_category = category;
 }
 
 std::string MapTile::getTileType() const
 {
-  return m_type;
+  return m_category;
 }
 
 bool MapTile::isEmptySpace() const
 {
-  return m_p_type_data->value("passable", false);
+  return getCategoryData().value("passable", false);
 }
 
 /// @todo: Implement this to cover different entity types.
@@ -161,7 +161,7 @@ Color MapTile::getWallLightLevel(Direction direction) const
 
 Color MapTile::getOpacity() const
 {
-  return m_p_type_data->value("opacity", Color::White);
+  return getCategoryData().value("opacity", Color::White);
 }
 
 bool MapTile::isOpaque() const
@@ -182,11 +182,11 @@ RealVec2 MapTile::getPixelCoords(IntVec2 tile)
 
 // === PROTECTED METHODS ======================================================
 
-MapTile::MapTile(IntVec2 coords, json& data, MapId map_id)
+MapTile::MapTile(IntVec2 coords, std::string category, MapId map_id)
   :
   m_map_id{ map_id },
   m_coords{ coords },
-  m_p_type_data{ &data },
+  m_category{ category },
   m_ambient_light_color{ Color(192, 192, 192, 255) }
 {
   if (!initialized)
@@ -212,7 +212,7 @@ MapTile const& MapTile::getAdjacentTile(Direction direction) const
   return map.getTile(adjacent_coords);
 }
 
-json const& MapTile::getTypeData() const
+json const& MapTile::getCategoryData() const
 {
-  return *m_p_type_data;
+  return Service<IGameRules>::get().category(m_category);
 }

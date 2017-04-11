@@ -8,6 +8,8 @@
 #include "entity/EntityPool.h"
 #include "inventory/Inventory.h"
 #include "maptile/MapTile.h"
+#include "Service.h"
+#include "services/IGameRules.h"
 #include "types/Color.h"
 #include "types/Grid2D.h"
 #include "types/LightInfluence.h"
@@ -48,13 +50,10 @@ Map::Map(GameState& game, MapId map_id, int width, int height)
 {
   CLOG(TRACE, "Map") << "Creating map of size " << width << " x " << height;
 
-  // Create the tiles themselves.
-  json& unknown_data = m_game.category("MTUnknown");
-
   pImpl->tiles.reset(NEW Grid2D<MapTile>({ width, height }, 
                                          [&](IntVec2 coords) -> MapTile* 
   {
-    MapTile* new_tile = NEW MapTile(coords, unknown_data, map_id);
+    MapTile* new_tile = NEW MapTile(coords, "MTUnknown", map_id);
     new_tile->setCoords(coords);
     new_tile->setAmbientLightLevel(ambient_light_level);
     return new_tile;

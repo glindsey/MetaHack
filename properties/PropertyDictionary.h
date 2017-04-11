@@ -2,9 +2,6 @@
 
 #include "stdafx.h"
 
-#include "json.hpp"
-using json = ::nlohmann::json;
-
 #include "entity/EntityId.h"
 
 /// Class that handles a dictionary that associates data of various types

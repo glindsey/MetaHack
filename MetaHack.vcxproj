@@ -330,6 +330,7 @@
     <ClInclude Include="design_patterns\Service.h" />
     <ClInclude Include="design_patterns\Subject.h" />
     <ClInclude Include="design_patterns\Visitor.h" />
+    <ClInclude Include="services\FileSystemGameRules.h" />
     <ClInclude Include="gui\GUICloseHandle.h" />
     <ClInclude Include="gui\GUIDesktop.h" />
     <ClInclude Include="gui\GUIEvent.h" />
@@ -344,6 +345,8 @@
     <ClInclude Include="game\AppStateGameMode.h" />
     <ClInclude Include="game\AppStateMainMenu.h" />
     <ClInclude Include="game\AppStateSplashScreen.h" />
+    <ClInclude Include="services\IGameRules.h" />
+    <ClInclude Include="services\NullGameRules.h" />
     <ClInclude Include="types\Beatitude.h" />
     <ClInclude Include="types\BodyPart.h" />
     <ClInclude Include="types\Clamped.h" />
@@ -374,6 +377,7 @@
     <ClInclude Include="services\NullMessageLog.h" />
     <ClInclude Include="services\NullStringDictionary.h" />
     <ClInclude Include="types\Rect.h" />
+    <ClInclude Include="utilities\JSONUtils.h" />
     <ClInclude Include="utilities\RNGUtils.h" />
     <ClInclude Include="types\ISFMLEventHandler.h" />
     <ClInclude Include="types\GameObject.h" />
@@ -455,6 +459,7 @@
     <ClCompile Include="design_patterns\Event.cpp" />
     <ClCompile Include="design_patterns\Observer.cpp" />
     <ClCompile Include="design_patterns\Subject.cpp" />
+    <ClCompile Include="services\FileSystemGameRules.cpp" />
     <ClCompile Include="gui\GUICloseHandle.cpp" />
     <ClCompile Include="gui\GUIDesktop.cpp" />
     <ClCompile Include="gui\GUILabel.cpp" />
@@ -472,6 +477,7 @@
     <ClCompile Include="game\AppStateSplashScreen.cpp" />
     <ClCompile Include="entity\EntityNullView.cpp" />
     <ClCompile Include="services\FallbackConfigSettings.cpp" />
+    <ClCompile Include="services\IGameRules.cpp" />
     <ClCompile Include="types\Color.cpp" />
     <ClCompile Include="types\Direction.cpp" />
     <ClCompile Include="game\GameState.cpp" />

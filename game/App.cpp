@@ -7,6 +7,7 @@
 #include "game/AppStateSplashScreen.h"
 #include "Service.h"
 #include "services/FallbackConfigSettings.h"
+#include "services/FileSystemGameRules.h"
 #include "services/MessageLog.h"
 #include "services/Standard2DGraphicViews.h"
 #include "services/StringDictionary.h"
@@ -63,6 +64,7 @@ App::App(sf::RenderWindow& app_window)
   SET_UP_LOGGER("Entity", true);
   SET_UP_LOGGER("EntityPool", true);
   SET_UP_LOGGER("Game", true);
+  SET_UP_LOGGER("GameRules", true);
   SET_UP_LOGGER("GameState", true);
   SET_UP_LOGGER("GUI", true);
   SET_UP_LOGGER("Inventory", true);
@@ -83,15 +85,15 @@ App::App(sf::RenderWindow& app_window)
   SET_UP_LOGGER("Types", true);
 
 
-  // First entity's first: load config settings.
+  // Load config settings.
   Service<IConfigSettings>::provide(NEW FallbackConfigSettings());
 
   auto& config = Service<IConfigSettings>::get();
 
-  // Second: create the Lua state.
+  // Create the Lua state.
   m_lua.reset(NEW Lua());
 
-  // Next, create the app state machine.
+  // Create the app state machine.
   m_state_machine.reset(NEW StateMachine("app_state_machine", this)),
 
   // Create the app texture for off-screen composition.
@@ -143,6 +145,9 @@ App::App(sf::RenderWindow& app_window)
   {
     CLOG(FATAL, "App") << "Could not load the default shaders";
   }
+
+  // Create the game rules provider.
+  Service<IGameRules>::provide(NEW FileSystemGameRules());
 
   // Create the message log.
   Service<IMessageLog>::provide(NEW MessageLog());

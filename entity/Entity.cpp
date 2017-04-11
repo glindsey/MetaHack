@@ -13,8 +13,9 @@
 #include "maptile/MapTile.h"
 #include "Service.h"
 #include "services/IConfigSettings.h"
+#include "services/IGameRules.h"
+#include "services/IMessageLog.h"
 #include "services/IStringDictionary.h"
-#include "services/MessageLog.h"
 #include "types/Color.h"
 #include "types/Direction.h"
 #include "types/Gender.h"
@@ -27,16 +28,15 @@
 // Static member initialization.
 Color const Entity::wall_outline_color_{ 255, 255, 255, 64 };
 
-json const& Entity::getTypeData() const
+json const& Entity::getCategoryData() const
 {
-  return m_type_data;
+  return Service<IGameRules>::get().category(m_category);
 }
 
-Entity::Entity(GameState& game, std::string type, json& type_data, EntityId id)
+Entity::Entity(GameState& state, std::string category, EntityId id)
   :
-  m_game{ game },
-  m_type{ type },
-  m_type_data{ type_data },
+  m_state{ state },
+  m_category{ category },
   m_properties{ id },
   m_id{ id },
   m_location{ EntityId::Mu() },
@@ -53,11 +53,10 @@ Entity::Entity(GameState& game, std::string type, json& type_data, EntityId id)
   initialize();
 }
 
-Entity::Entity(GameState& game, MapTile* map_tile, std::string type, json& type_data, EntityId id)
+Entity::Entity(GameState& state, MapTile* map_tile, std::string category, EntityId id)
   :
-  m_game{ game },
-  m_type{ type },
-  m_type_data{ type_data },
+  m_state{ state },
+  m_category{ category },
   m_properties{ id },
   m_id{ id },
   m_location{ EntityId::Mu() },
@@ -76,9 +75,8 @@ Entity::Entity(GameState& game, MapTile* map_tile, std::string type, json& type_
 
 Entity::Entity(Entity const& original, EntityId ref)
   :
-  m_game{ original.m_game },
-  m_type{ original.m_type },
-  m_type_data{ original.m_type_data },
+  m_state{ original.m_state },
+  m_category{ original.m_category },
   m_properties{ original.m_properties },
   m_id{ ref },
   m_location{ original.m_location },
@@ -117,7 +115,7 @@ void Entity::queueAction(std::unique_ptr<Actions::Action> action)
 {
   CLOG(TRACE, "Entity") << "Entity " <<
     getId() << " (" <<
-    getType() << "): Queuing Action " <<
+    getCategory() << "): Queuing Action " <<
     action->getType();
 
   m_pending_voluntary_actions.push_back(std::move(action));
@@ -133,7 +131,7 @@ void Entity::queueInvoluntaryAction(std::unique_ptr<Actions::Action> action)
 {
   CLOG(TRACE, "Entity") << "Entity " <<
     getId() << " (" <<
-    getType() << "): Queuing Involuntary Action " <<
+    getCategory() << "): Queuing Involuntary Action " <<
     action->getType();
 
   m_pending_involuntary_actions.push_front(std::move(action));
@@ -482,25 +480,25 @@ bool Entity::isPlayer() const
   return (GAME.getPlayer() == m_id);
 }
 
-std::string const& Entity::getType() const
+std::string const& Entity::getCategory() const
 {
-  return m_type;
+  return m_category;
 }
 
-std::string Entity::getParentType() const
+std::string Entity::getParentCategory() const
 {
-  return m_type_data.value("parent", "");
+  return getCategoryData().value("parent", "");
 }
 
 bool Entity::isSubtypeOf(std::string that_type) const
 {
-  std::string this_type = getType();
+  std::string this_type = getCategory();
   return GAME.getEntities().firstIsSubtypeOfSecond(this_type, that_type);
 }
 
 json Entity::getIntrinsic(std::string key, json default_value) const
 {
-  return m_type_data.value(key, default_value);
+  return getCategoryData().value(key, default_value);
 }
 
 json Entity::getBaseProperty(std::string key, json default_value) const
@@ -511,7 +509,7 @@ json Entity::getBaseProperty(std::string key, json default_value) const
   }
   else
   {
-    auto value = m_type_data.value(key, default_value);
+    auto value = getCategoryData().value(key, default_value);
     m_properties.set(key, value);
     return value;
   }
@@ -557,7 +555,7 @@ json Entity::getModifiedProperty(std::string key, json default_value) const
 {
   if (!m_properties.contains(key))
   {
-    json value = m_type_data.value(key, default_value);
+    json value = getCategoryData().value(key, default_value);
     m_properties.set(key, value);
   }
 
@@ -856,13 +854,13 @@ std::string Entity::getDisplayAdjectives() const
 /// @todo Figure out how to cleanly localize this.
 std::string Entity::getDisplayName() const
 {
-  return m_type_data.value("name", std::string());
+  return getCategoryData().value("name", std::string());
 }
 
 /// @todo Figure out how to cleanly localize this.
 std::string Entity::getDisplayPlural() const
 {
-  return m_type_data.value("plural", std::string());
+  return getCategoryData().value("plural", std::string());
 }
 
 std::string Entity::getProperName() const
@@ -1102,8 +1100,8 @@ void Entity::light_up_surroundings()
     bool opaque = location->isOpaque();
     bool is_entity = this->isSubtypeOf("DynamicEntity");
 
-    /*CLOG(DEBUG, "Entity") << "light_up_surroundings - this->type = " << this->getType() <<
-      ", location->type = " << location->getType() <<
+    /*CLOG(DEBUG, "Entity") << "light_up_surroundings - this->type = " << this->getCategory() <<
+      ", location->type = " << location->getCategory() <<
       ", location->opaque = " << opaque <<
       ", this->isSubtypeOf(\"DynamicEntity\") = " << is_entity;*/
 
@@ -1511,7 +1509,7 @@ bool Entity::be_used_to_attack(EntityId subject, EntityId target)
 bool Entity::can_merge_with(EntityId other) const
 {
   // Entities with different types can't merge (obviously).
-  if (other->getType() != getType())
+  if (other->getCategory() != getCategory())
   {
     return false;
   }
@@ -1613,7 +1611,7 @@ bool Entity::_process_own_involuntary_actions()
     {
       CLOG(TRACE, "Entity") << "Entity " <<
         getId() << " (" <<
-        getType() << "): Involuntary Action " <<
+        getCategory() << "): Involuntary Action " <<
         action->getType() << " is done, popping";
 
       m_pending_involuntary_actions.pop_front();
@@ -1675,7 +1673,7 @@ bool Entity::_process_own_voluntary_actions()
       {
         CLOG(TRACE, "Entity") << "Entity " <<
           getId() << " (" <<
-          getType() << "): Action " <<
+          getCategory() << "): Action " <<
           action->getType() << " is done, popping";
 
         m_pending_voluntary_actions.pop_front();

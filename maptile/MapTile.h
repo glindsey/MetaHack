@@ -94,11 +94,11 @@ public:
   MapTile const& getAdjacentTile(Direction direction) const;
 
   /// Get a const reference to this tile's metadata.
-  json const& getTypeData() const;
+  json const& getCategoryData() const;
 
 protected:
   /// Constructor, callable only by Map class.
-  MapTile(IntVec2 coords, json& data, MapId map_id);
+  MapTile(IntVec2 coords, std::string category, MapId map_id);
 
 private:
   static bool initialized;
@@ -110,12 +110,7 @@ private:
   IntVec2 m_coords;
 
   /// Type of this MapTile, as a string.
-  std::string m_type;
-
-  /// JSON data associated with this MapTile.
-  /// This has to be a pointer rather than a reference because it can be
-  /// modified after MapTile construction.
-  json* m_p_type_data;
+  std::string m_category;
 
   /// Reference to the Entity that represents this tile's contents.
   EntityId m_tile_contents;

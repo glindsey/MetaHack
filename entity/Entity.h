@@ -2,9 +2,6 @@
 
 #include "stdafx.h"
 
-#include "json.hpp"
-using json = ::nlohmann::json;
-
 #include "actions/Action.h"
 #include "types/BodyPart.h"
 #include "types/Direction.h"
@@ -111,8 +108,8 @@ public:
   /// By default, returns false. Overridden by DynamicEntity class.
   virtual bool isPlayer() const;
 
-  std::string const& getType() const;
-  std::string getParentType() const;
+  std::string const& getCategory() const;
+  std::string getParentCategory() const;
 
   bool isSubtypeOf(std::string that_type) const;
 
@@ -531,17 +528,17 @@ public:
                          json const& args,
                          json const& default_result) const;
 
-  /// Get a const reference to this tile's type data.
-  json const& getTypeData() const;
+  /// Get a const reference to this entity's category data.
+  json const& getCategoryData() const;
 
   virtual std::unordered_set<EventID> registeredEvents() const override;
 
 protected:
   /// Named Constructor
-  Entity(GameState& game, std::string type, json& type_data, EntityId ref);
+  Entity(GameState& state, std::string category, EntityId ref);
 
   /// Floor Constructor
-  Entity(GameState& game, MapTile* map_tile, std::string type, json& type_data, EntityId ref);
+  Entity(GameState& state, MapTile* map_tile, std::string category, EntityId ref);
 
   /// Clone Constructor
   Entity(Entity const& original, EntityId ref);
@@ -585,13 +582,10 @@ protected:
 
 private:
   /// Reference to game state.
-  GameState& m_game;
+  GameState& m_state;
 
   /// Name of this Entity's category, as a string.
-  std::string m_type;
-
-  /// Reference to this Entity's category's JSON data.
-  json& m_type_data;
+  std::string m_category;
 
   /// Property dictionary.
   /// Defined as mutable, because a "get" method can cache a default value

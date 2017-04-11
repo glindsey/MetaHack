@@ -134,7 +134,7 @@ namespace Actions
 
       CLOG(TRACE, "Action") << "Entity #" <<
         subject << " (" <<
-        subject->getType().c_str() << "): Action " <<
+        subject->getCategory().c_str() << "): Action " <<
         getType().c_str() << " is in state " <<
         str(getState());
 
@@ -207,7 +207,7 @@ namespace Actions
     auto subject = getSubject();
     CLOG(TRACE, "Action") << "Entity #" <<
       subject << " (" <<
-      subject->getType().c_str() << "): Action " <<
+      subject->getCategory().c_str() << "): Action " <<
       getType().c_str() << " switching to state " <<
       str(getState());
 

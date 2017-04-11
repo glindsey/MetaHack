@@ -17,7 +17,7 @@ class EntityPool
 
 public:
   /// Constructor.
-  EntityPool(GameState& game);
+  EntityPool(GameState& state);
   ~EntityPool();
 
   /// Serialization function.
@@ -27,13 +27,12 @@ public:
     /// @todo GSL -- KEEP GOING HERE
     //archive(m_thing_map);
   }
-
   bool firstIsSubtypeOfSecond(std::string first, std::string second);
 
   /// Create a particular object given the type name.
-  /// @param type The type name of the object to create.
+  /// @param category The category name of the object to create.
   /// @return EntityId of the new object created.
-  EntityId create(std::string type);
+  EntityId create(std::string category);
 
   /// Create a floor object.
   /// @param map_tile Pointer to the map tile associated.
@@ -72,7 +71,7 @@ protected:
 
 private:
   /// Reference to the game state.
-  GameState& m_game;
+  GameState& m_state;
 
   /// Boolean indicating whether EntityPool is initialized.
   bool m_initialized = false;
