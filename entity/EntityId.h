@@ -3,6 +3,9 @@
 
 #include "stdafx.h"
 
+#include "json.hpp"
+using json = ::nlohmann::json;
+
 #include "types/common.h"
 
 // Forward declaration
@@ -34,6 +37,9 @@ public:
   {
     archive(m_id);
   }
+
+  friend void to_json(json& j, EntityId const& id);
+  friend void from_json(json const& j, EntityId& id);
 
   /// Static method to return the EntityId::Mu() (nothingness) ID.
   static EntityId Mu()

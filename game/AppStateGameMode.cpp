@@ -87,6 +87,9 @@ AppStateGameMode::~AppStateGameMode()
 
 void AppStateGameMode::execute()
 {
+  auto& game = getGameState();
+  auto& game_data = game.data();
+
   // First, check for debug commands ready to be run.
   if (m_debug_buffer->get_enter())
   {
@@ -102,13 +105,13 @@ void AppStateGameMode::execute()
     m_debug_buffer->clear_buffer();
   }
 
-  bool ticked = GAME.processGameClockTick();
+  bool ticked = game.processGameClockTick();
 
   // If the game clock ticked (player action started or is in progress)...
   if (ticked)
   {
-    auto player = GAME.getPlayer();
-    
+    EntityId player = game.getPlayer();
+
     // Update view's cached tile data.
     m_map_view->update_tiles(player);
 
@@ -142,21 +145,23 @@ std::string const& AppStateGameMode::getName()
 bool AppStateGameMode::initialize()
 {
   auto& config = Service<IConfigSettings>::get();
+  auto& game = getGameState();
+  auto& game_data = game.data();
 
   // Create the player.
-  EntityId player = get_game_state().getEntities().create("Human");
+  EntityId player = getGameState().getEntities().create("Human");
   player->setProperName(config.get("player-name"));
-  get_game_state().setPlayer(player);
+  game.setPlayer(player);
 
   // Create the game map.
   /// @todo This shouldn't be hardcoded here
 #ifdef NDEBUG
-  MapId current_map_id = GAME.getMaps().create(64, 64);
+  MapId current_map_id = game.getMaps().create(64, 64);
 #else
-  MapId current_map_id = GAME.getMaps().create(20, 20);
+  MapId current_map_id = game.getMaps().create(20, 20);
 #endif
 
-  Map& game_map = GAME.getMaps().get(current_map_id);
+  Map& game_map = game.getMaps().get(current_map_id);
 
   // Move player to start position on the map.
   auto& start_coords = game_map.getStartCoords();
@@ -196,7 +201,7 @@ bool AppStateGameMode::terminate()
   return true;
 }
 
-GameState& AppStateGameMode::get_game_state()
+GameState& AppStateGameMode::getGameState()
 {
   return *m_game_state;
 }
@@ -216,13 +221,15 @@ std::unordered_set<EventID> AppStateGameMode::registeredEvents() const
 void AppStateGameMode::render_map(sf::RenderTexture& texture, int frame)
 {
   auto& config = Service<IConfigSettings>::get();
+  auto& game = getGameState();
+  auto& game_data = game.data();
 
   texture.clear();
 
-  EntityId player = get_game_state().getPlayer();
+  EntityId player = game.getPlayer();
   EntityId location = player->getLocation();
 
-  if (location == get_game_state().getEntities().get_mu())
+  if (location == game.getEntities().get_mu())
   {
     throw std::runtime_error("Uh oh, the player's location appears to have been deleted!");
   }
@@ -237,7 +244,7 @@ void AppStateGameMode::render_map(sf::RenderTexture& texture, int frame)
     MapTile* tile = player->getMapTile();
     if (tile != nullptr)
     {
-      Map& game_map = GAME.getMaps().get(tile->getMapId());
+      Map& game_map = game.getMaps().get(tile->getMapId());
       IntVec2 tile_coords = tile->getCoords();
       RealVec2 player_pixel_coords = MapTile::getPixelCoords(tile_coords);
       RealVec2 cursor_pixel_coords = MapTile::getPixelCoords(m_cursor_coords);
@@ -270,7 +277,9 @@ void AppStateGameMode::render_map(sf::RenderTexture& texture, int frame)
 
 bool AppStateGameMode::handle_key_press(App::EventKeyPressed const& key)
 {
-  EntityId player = get_game_state().getPlayer();
+  auto& game = getGameState();
+  auto& game_data = game.data();
+  EntityId player = game.getPlayer();
 
   // *** Handle keys processed in any mode.
   if (!key.alt && !key.control)
@@ -414,7 +423,7 @@ bool AppStateGameMode::handle_key_press(App::EventKeyPressed const& key)
           {
             EntityId entity = m_inventory_selection->get_viewed();
             EntityId location = entity->getLocation();
-            if (location != get_game_state().getEntities().get_mu())
+            if (location != getGameState().getEntities().get_mu())
             {
               m_inventory_selection->set_viewed(location);
             }
@@ -1025,8 +1034,10 @@ sf::IntRect AppStateGameMode::calcMessageLogDims()
 
 void AppStateGameMode::resetInventorySelection()
 {
-  EntityId player = m_game_state->getPlayer();
-  Map& game_map = GAME.getMaps().get(player->getMapId());
+  auto& game = getGameState();
+  auto& game_data = game.data();
+  EntityId player = game.getPlayer();
+  Map& game_map = game.getMaps().get(player->getMapId());
 
   if (m_inventory_area_shows_player == true)
   {
@@ -1076,8 +1087,10 @@ sf::IntRect AppStateGameMode::calcInventoryDims()
 
 bool AppStateGameMode::moveCursor(Direction direction)
 {
-  EntityId player = m_game_state->getPlayer();
-  Map& game_map = GAME.getMaps().get(player->getMapId());
+  auto& game = getGameState();
+  auto& game_data = game.data();
+  EntityId player = game.getPlayer();
+  Map& game_map = game.getMaps().get(player->getMapId());
   bool result;
 
   result = game_map.calcCoords(m_cursor_coords, direction, m_cursor_coords);

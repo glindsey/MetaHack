@@ -3,6 +3,9 @@
 
 #include "stdafx.h"
 
+#include "json.hpp"
+using json = ::nlohmann::json;
+
 #include "entity/EntityId.h"
 
 // Forward declarations
@@ -35,7 +38,7 @@ public:
   EntityPool& getEntities();
   MetadataCollection& getMetadataCollection(std::string category);
 
-  ElapsedTime const& getGameClock() const;
+  ElapsedTime getGameClock() const;
   void setGameClock(ElapsedTime game_clock);
   void incrementGameClock(ElapsedTime added_time);
 
@@ -56,6 +59,18 @@ public:
   /// @return True if a tick elapsed, false if it did not.
   bool processGameClockTick();
 
+  /// Get reference to game state data.
+  inline json& data()
+  {
+    return m_data;
+  }
+
+  /// Get const reference to game state data.
+  inline json const& data() const
+  {
+    return m_data;
+  }
+
   static GameState& instance();
 
 protected:
@@ -70,11 +85,8 @@ private:
   /// A collection of collections -- a metacollection!
   boost::ptr_unordered_map<std::string, MetadataCollection> m_metacollection;
 
-  /// Reference to the Entity that is serving as the player.
-  EntityId m_player;
-
-  /// Current game clock, in ticks. Ticks represent tens of milliseconds.
-  ElapsedTime m_game_clock;
+  /// Game state data, as stored in a JSON object.
+  json m_data;
 
   /// Static pointer to the singleton instance of the GameState.
   static GameState* p_instance;

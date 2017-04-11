@@ -93,7 +93,7 @@ void StatusArea::drawContents_(sf::RenderTexture& texture, int frame)
     std::string hp_string = boost::lexical_cast<std::string>(hp) + "/" + boost::lexical_cast<std::string>(max_hp);
 
     render_text.setPosition(origin.x + 200, origin.y);
-    render_text.setString(std::to_string(GAME.getGameClock().count()));
+    render_text.setString(std::to_string(GAME.getGameClock()));
     texture.draw(render_text);
 
     // Render game time

@@ -18,6 +18,10 @@ GameState::GameState()
 
   m_entity_pool.reset(NEW EntityPool(*this));
   m_map_factory.reset(NEW MapFactory(*this));
+
+  m_data["types"] = json::object({});
+  m_data["entities"] = json::object({});
+  m_data["global"] = json::object({});
 }
 
 GameState::GameState(FileName filename)
@@ -73,33 +77,33 @@ MetadataCollection & GameState::getMetadataCollection(std::string category)
   return m_metacollection.at(category);
 }
 
-ElapsedTime const & GameState::getGameClock() const
+ElapsedTime GameState::getGameClock() const
 {
-  return m_game_clock;
+  return m_data["global"].value("clock", 0ULL);
 }
 
 void GameState::setGameClock(ElapsedTime game_clock)
 {
-  m_game_clock = game_clock;
+  m_data["global"]["clock"] = game_clock;
 }
 
 void GameState::incrementGameClock(ElapsedTime added_time)
 {
   /// @todo Check for the unlikely, but not impossible, chance of rollover.
-  m_game_clock += added_time;
+  setGameClock(getGameClock() + added_time);
 }
 
 bool GameState::setPlayer(EntityId ref)
 {
   Assert("GameState", ref != getEntities().get_mu(), "tried to make nothingness the player");
 
-  m_player = ref;
+  m_data["global"]["player"] = ref;
   return true;
 }
 
 EntityId GameState::getPlayer() const
 {
-  return m_player;
+  return m_data["global"].value("player", EntityId());
 }
 
 bool GameState::processGameClockTick()

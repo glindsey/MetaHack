@@ -17,7 +17,7 @@
 //       there won't be many times we NEED a sorted list.
 
 /// Elapsed time in the game, in milliseconds.
-using ElapsedTime = std::chrono::duration<uint64_t, std::milli>;
+using ElapsedTime = uint64_t;
 
 /// FileName is, well, a filename.
 using FileName = std::string;

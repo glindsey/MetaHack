@@ -34,16 +34,12 @@ public:
   
   friend void to_json(json& j, Clamped8 const& clamped)
   {
-    j = json({ "clamped8", clamped.m_value });
+    j = clamped.m_value;
   }
 
   friend void from_json(json const& j, Clamped8& clamped)
   {
-    Assert("Types",
-           j.is_array() && (j[0] == "clamped8") && (j.size() == 2),
-           "Attempted to create a Clamped8 out of an invalid JSON object");
-
-    clamped.m_value = j[1];
+    clamped.m_value = j;
   }
 
   // Conversion operators

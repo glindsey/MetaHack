@@ -1,0 +1,16 @@
+New ideas for laying out data in the system
+
+/
+/types	- Default (intrinsic) values for all entity types in the system
+/types/COMPONENTNAME - Data for each individual component
+/types/COMPONENTNAME/TYPENAME
+/types/COMPONENTNAME/TYPENAME/* - Values related to that component
+
+/entities - Values for individual entities in the system
+/entities/COMPONENTNAME
+/entities/COMPONENTNAME/ENTITYID
+/entities/COMPONENTNAME/ENTITYID/*
+
+/global - Global game state information
+/global/clock - Game clock, in milliseconds
+/global/player - ID of the player

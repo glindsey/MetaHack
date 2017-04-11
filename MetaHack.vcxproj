@@ -668,6 +668,9 @@
     <Font Include="resources\font\Servus_text_display_italic.ttf" />
     <Font Include="resources\font\unifont-8.0.01.ttf" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="text\Data Layout Brainstorming.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

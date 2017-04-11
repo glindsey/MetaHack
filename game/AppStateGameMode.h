@@ -47,7 +47,7 @@ public:
   virtual void execute() override;
   virtual bool terminate() override;
 
-  GameState& get_game_state();
+  GameState& getGameState();
 
   std::unordered_set<EventID> registeredEvents() const override;
 
