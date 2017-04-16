@@ -1,19 +1,41 @@
 #include "components/ComponentPosition.h"
 
-#include "components/ComponentsManager.h"
+#include "components/ComponentManager.h"
 #include "game/GameState.h"
 
 void from_json(json const& j, ComponentPosition& obj)
 {
-  obj.m_parent = j["parent"];
-  obj.m_coords = j["coords"];
+  if (!j.is_object() || j.size() == 0)
+  {
+    obj = ComponentPosition();
+  }
+  else
+  {
+    obj.m_parent = j["parent"];
+    obj.m_coords = j["coords"];
+  }
 }
 
 void to_json(json& j, ComponentPosition const& obj)
 {
+  j = json::object();
   j["parent"] = obj.m_parent;
   j["coords"] = obj.m_coords;
 }
+
+ComponentPosition::ComponentPosition()
+{}
+
+ComponentPosition::ComponentPosition(EntityId id)
+  : m_parent{ id }
+{}
+
+ComponentPosition::ComponentPosition(IntVec2 coords)
+  : m_coords{ coords }
+{}
+
+ComponentPosition::~ComponentPosition()
+{}
 
 void ComponentPosition::set(EntityId id)
 {

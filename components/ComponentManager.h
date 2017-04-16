@@ -9,14 +9,14 @@
 // Forward declarations
 class GameState;
 
-class ComponentsManager final
+class ComponentManager final
 {
 public:
-  ComponentsManager();
-  ~ComponentsManager();
+  ComponentManager();
+  ~ComponentManager();
 
-  friend void from_json(json const& j, ComponentsManager& obj);
-  friend void to_json(json& j, ComponentsManager const& obj);
+  friend void from_json(json const& j, ComponentManager& obj);
+  friend void to_json(json& j, ComponentManager const& obj);
 
   /// Positions map
   ComponentMap<ComponentPosition> position;

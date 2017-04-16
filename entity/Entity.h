@@ -213,10 +213,6 @@ public:
   /// Return a reference to this entity.
   EntityId getId() const;
 
-  /// Return the root location of this Entity, traversing up the location
-  /// chain until EntityId::Mu() is reached.
-  EntityId getRootLocation() const;
-
   /// Return the location of this entity.
   EntityId getLocation() const;
 

@@ -2,7 +2,7 @@
 
 #include "game/GameState.h"
 
-#include "components/ComponentsManager.h"
+#include "components/ComponentManager.h"
 #include "entity/Entity.h"
 #include "entity/EntityId.h"
 #include "entity/EntityPool.h"
@@ -24,7 +24,7 @@ GameState::GameState()
 
   p_instance = this;
 
-  m_componentsManager.reset(NEW ComponentsManager());
+  m_componentsManager.reset(NEW ComponentManager());
   m_entityPool.reset(NEW EntityPool(*this));
   m_mapFactory.reset(NEW MapFactory(*this));
 
@@ -71,7 +71,7 @@ EntityPool& GameState::entities()
   return *m_entityPool;
 }
 
-ComponentsManager & GameState::components()
+ComponentManager & GameState::components()
 {
   return *m_componentsManager;
 }

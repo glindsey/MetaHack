@@ -8,9 +8,13 @@ using json = ::nlohmann::json;
 #include "types/Vec2.h"
 
 /// Template to use for making new components.
-class ComponentPosition
+class ComponentPosition final
 {
 public:
+  ComponentPosition();
+  ComponentPosition(EntityId id);
+  ComponentPosition(IntVec2 coords);
+  ~ComponentPosition();
 
   friend void from_json(json const& j, ComponentPosition& obj);
   friend void to_json(json& j, ComponentPosition const& obj);

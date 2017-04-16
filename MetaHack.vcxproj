@@ -324,7 +324,7 @@
     <ClInclude Include="actions\ActionWield.h" />
     <ClInclude Include="components\ComponentMap.h" />
     <ClInclude Include="components\ComponentPosition.h" />
-    <ClInclude Include="components\ComponentsManager.h" />
+    <ClInclude Include="components\ComponentManager.h" />
     <ClInclude Include="design_patterns\AssertHelper.h" />
     <ClInclude Include="design_patterns\Event.h" />
     <ClInclude Include="design_patterns\Object.h" />
@@ -467,7 +467,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="components\ComponentsManager.cpp" />
+    <ClCompile Include="components\ComponentManager.cpp" />
     <ClCompile Include="design_patterns\AssertHelper.cpp" />
     <ClCompile Include="design_patterns\Event.cpp" />
     <ClCompile Include="design_patterns\Observer.cpp" />

@@ -5,6 +5,9 @@
 #include "actions/Action.h"
 #include "actions/ActionDie.h"
 #include "AssertHelper.h"
+#include "components/ComponentManager.h"
+#include "components/ComponentMap.h"
+#include "components/ComponentPosition.h"
 #include "entity/EntityPool.h"
 #include "game/App.h"
 #include "game/GameState.h"
@@ -50,6 +53,9 @@ Entity::Entity(GameState& state, std::string category, EntityId id)
   m_wielded_items{ BodyLocationMap() },
   m_equipped_items{ BodyLocationMap() }
 {
+  /// @todo This should really be done by the EntityPool, based on the
+  ///       components present in the category XML file.
+  COMPONENTS.position.add(id);
   initialize();
 }
 
@@ -70,6 +76,8 @@ Entity::Entity(GameState& state, MapTile* map_tile, std::string category, Entity
   m_wielded_items{ BodyLocationMap() },
   m_equipped_items{ BodyLocationMap() }
 {
+  IntVec2 position = map_tile->getCoords();
+  COMPONENTS.position[id] = position;
   initialize();
 }
 
@@ -585,19 +593,6 @@ void Entity::setQuantity(unsigned int quantity)
 EntityId Entity::getId() const
 {
   return m_id;
-}
-
-EntityId Entity::getRootLocation() const
-{
-  if (m_location == EntityId::Mu())
-  {
-    return m_id;
-  }
-  else
-  {
-    auto location = m_location;
-    return location->getRootLocation();
-  }
 }
 
 EntityId Entity::getLocation() const

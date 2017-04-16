@@ -4,7 +4,7 @@
 #include "stdafx.h"
 
 // Forward declarations
-class ComponentsManager;
+class ComponentManager;
 class EntityId;
 class EntityPool;
 class MapFactory;
@@ -33,7 +33,7 @@ public:
 
   MapFactory& maps();
   EntityPool& entities();
-  ComponentsManager& components();
+  ComponentManager& components();
 
   ElapsedTime getGameClock() const;
   void setGameClock(ElapsedTime game_clock);
@@ -80,7 +80,7 @@ private:
   std::unique_ptr<EntityPool> m_entityPool;
 
   /// Pointer to the Components Manager object.
-  std::unique_ptr<ComponentsManager> m_componentsManager;
+  std::unique_ptr<ComponentManager> m_componentsManager;
 
   /// Game state data, as stored in a JSON object.
   json m_data;
@@ -90,5 +90,8 @@ private:
 };
 
 #define GAME  GameState::instance()
+#define MAPS  GAME.maps()
+#define ENTITIES GAME.entities()
+#define COMPONENTS GAME.components()
 
 #endif // GAMESTATE_H
