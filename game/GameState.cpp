@@ -61,17 +61,17 @@ void GameState::saveState(FileName filename)
 #endif
 }
 
-MapFactory& GameState::getMaps()
+MapFactory& GameState::maps()
 {
   return *m_mapFactory;
 }
 
-EntityPool& GameState::getEntities()
+EntityPool& GameState::entities()
 {
   return *m_entityPool;
 }
 
-ComponentsManager & GameState::getComponents()
+ComponentsManager & GameState::components()
 {
   return *m_componentsManager;
 }
@@ -94,7 +94,7 @@ void GameState::incrementGameClock(ElapsedTime added_time)
 
 bool GameState::setPlayer(EntityId ref)
 {
-  Assert("GameState", ref != getEntities().get_mu(), "tried to make nothingness the player");
+  Assert("GameState", ref != entities().get_mu(), "tried to make nothingness the player");
 
   m_data["global"]["player"] = ref;
   return true;
@@ -120,7 +120,7 @@ bool GameState::processGameClockTick()
 
     // Get the map the player is on.
     MapId current_map_id = player->getMapId();
-    Map& current_map = GAME.getMaps().get(current_map_id);
+    Map& current_map = GAME.maps().get(current_map_id);
 
     // Process everything on the map, and increment game clock.
     current_map.processEntities();

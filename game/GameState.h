@@ -31,9 +31,9 @@ public:
   /// @todo WRITE ME
   void saveState(FileName filename);
 
-  MapFactory& getMaps();
-  EntityPool& getEntities();
-  ComponentsManager& getComponents();
+  MapFactory& maps();
+  EntityPool& entities();
+  ComponentsManager& components();
 
   ElapsedTime getGameClock() const;
   void setGameClock(ElapsedTime game_clock);

@@ -96,7 +96,7 @@ void MapTileStandard2DView::add_memory_vertices_to(sf::VertexArray& vertices,
   {
     return;
   }
-  Map& game_map = GAME.getMaps().get(map_id);
+  Map& game_map = GAME.maps().get(map_id);
 
   static sf::Vertex new_vertex;
   float ts = config.get("map-tile-size");
@@ -207,7 +207,7 @@ void MapTileStandard2DView::add_things_floor_vertices(EntityId viewer,
 
 void MapTileStandard2DView::add_thing_floor_vertices(EntityId entityId, sf::VertexArray & vertices, bool use_lighting, int frame)
 {
-  auto& entity = GAME.getEntities().get(entityId);
+  auto& entity = GAME.entities().get(entityId);
   auto& config = Service<IConfigSettings>::get();
   sf::Vertex new_vertex;
   float ts = config.get("map-tile-size");

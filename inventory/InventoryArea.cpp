@@ -32,7 +32,7 @@ void InventoryArea::drawContents_(sf::RenderTexture& texture, int frame)
 {
   auto& config = Service<IConfigSettings>::get();
   auto& views = Service<IGraphicViews>::get();
-  auto& entity_pool = GAME.getEntities();
+  auto& entity_pool = GAME.entities();
 
   // Dimensions of the pane.
   sf::IntRect pane_dims = getRelativeDimensions();

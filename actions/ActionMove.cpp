@@ -63,7 +63,7 @@ namespace Actions
       IntVec2 offset = (IntVec2)new_direction;
       int x_new = coords.x + offset.x;
       int y_new = coords.y + offset.y;
-      Map& current_map = GAME.getMaps().get(subject->getMapId());
+      Map& current_map = GAME.maps().get(subject->getMapId());
       IntVec2 map_size = current_map.getSize();
 
       // Check boundaries.

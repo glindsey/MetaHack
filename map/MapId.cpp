@@ -8,12 +8,12 @@
 
 Map* MapId::operator->()
 {
-  return &(GAME.getMaps().get(m_id));
+  return &(GAME.maps().get(m_id));
 }
 
 Map const* MapId::operator->() const
 {
-  return &(GAME.getMaps().get(m_id));
+  return &(GAME.maps().get(m_id));
 }
 
 void to_json(json& j, MapId const& id)

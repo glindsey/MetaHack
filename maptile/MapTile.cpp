@@ -74,7 +74,7 @@ void MapTile::setAmbientLightLevel(Color level)
 
 void MapTile::beLitBy(EntityId light)
 {
-  GAME.getMaps().get(getMapId()).addLight(light);
+  GAME.maps().get(getMapId()).addLight(light);
 }
 
 void MapTile::clearLightInfluences()
@@ -199,13 +199,13 @@ MapTile::MapTile(IntVec2 coords, std::string category, MapId map_id)
   // "this" pointer passed in.
   /// @todo The type of this floor should eventually be specified as
   ///       part of the constructor.
-  m_tile_contents = GAME.getEntities().createTileContents(this);
+  m_tile_contents = GAME.entities().createTileContents(this);
 }
 
 MapTile const& MapTile::getAdjacentTile(Direction direction) const
 {
   IntVec2 coords = getCoords();
-  Map const& map = GAME.getMaps().get(getMapId());
+  Map const& map = GAME.maps().get(getMapId());
   MapTile const& tile = *this;
 
   IntVec2 adjacent_coords = coords + (IntVec2)direction;

@@ -152,19 +152,19 @@ bool AppStateGameMode::initialize()
   auto& game_data = game.data();
 
   // Create the player.
-  EntityId player = getGameState().getEntities().create("Human");
+  EntityId player = getGameState().entities().create("Human");
   player->setProperName(config.get("player-name"));
   game.setPlayer(player);
 
   // Create the game map.
   /// @todo This shouldn't be hardcoded here
 #ifdef NDEBUG
-  MapId current_map_id = game.getMaps().create(64, 64);
+  MapId current_map_id = game.maps().create(64, 64);
 #else
-  MapId current_map_id = game.getMaps().create(20, 20);
+  MapId current_map_id = game.maps().create(20, 20);
 #endif
 
-  Map& game_map = game.getMaps().get(current_map_id);
+  Map& game_map = game.maps().get(current_map_id);
 
   // Move player to start position on the map.
   auto& start_coords = game_map.getStartCoords();
@@ -232,7 +232,7 @@ void AppStateGameMode::render_map(sf::RenderTexture& texture, int frame)
   EntityId player = game.getPlayer();
   EntityId location = player->getLocation();
 
-  if (location == game.getEntities().get_mu())
+  if (location == game.entities().get_mu())
   {
     throw std::runtime_error("Uh oh, the player's location appears to have been deleted!");
   }
@@ -247,7 +247,7 @@ void AppStateGameMode::render_map(sf::RenderTexture& texture, int frame)
     MapTile* tile = player->getMapTile();
     if (tile != nullptr)
     {
-      Map& game_map = game.getMaps().get(tile->getMapId());
+      Map& game_map = game.maps().get(tile->getMapId());
       IntVec2 tile_coords = tile->getCoords();
       RealVec2 player_pixel_coords = MapTile::getPixelCoords(tile_coords);
       RealVec2 cursor_pixel_coords = MapTile::getPixelCoords(m_cursor_coords);
@@ -426,7 +426,7 @@ bool AppStateGameMode::handle_key_press(App::EventKeyPressed const& key)
           {
             EntityId entity = m_inventory_selection->get_viewed();
             EntityId location = entity->getLocation();
-            if (location != getGameState().getEntities().get_mu())
+            if (location != getGameState().entities().get_mu())
             {
               m_inventory_selection->set_viewed(location);
             }
@@ -1040,7 +1040,7 @@ void AppStateGameMode::resetInventorySelection()
   auto& game = getGameState();
   auto& game_data = game.data();
   EntityId player = game.getPlayer();
-  Map& game_map = game.getMaps().get(player->getMapId());
+  Map& game_map = game.maps().get(player->getMapId());
 
   if (m_inventory_area_shows_player == true)
   {
@@ -1093,7 +1093,7 @@ bool AppStateGameMode::moveCursor(Direction direction)
   auto& game = getGameState();
   auto& game_data = game.data();
   EntityId player = game.getPlayer();
-  Map& game_map = game.getMaps().get(player->getMapId());
+  Map& game_map = game.maps().get(player->getMapId());
   bool result;
 
   result = game_map.calcCoords(m_cursor_coords, direction, m_cursor_coords);

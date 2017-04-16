@@ -493,7 +493,7 @@ std::string Entity::getParentCategory() const
 bool Entity::isSubtypeOf(std::string that_type) const
 {
   std::string this_type = getCategory();
-  return GAME.getEntities().firstIsSubtypeOfSecond(this_type, that_type);
+  return GAME.entities().firstIsSubtypeOfSecond(this_type, that_type);
 }
 
 json Entity::getIntrinsic(std::string key, json default_value) const
@@ -666,7 +666,7 @@ bool Entity::canSee(IntVec2 coords)
     return true;
   }
 
-  Map& game_map = GAME.getMaps().get(map_id);
+  Map& game_map = GAME.maps().get(map_id);
   auto map_size = game_map.getSize();
 
   // Check for coords out of bounds. If they're out of bounds, we can't see it.
@@ -723,7 +723,7 @@ MapMemoryChunk const& Entity::getMemoryAt(IntVec2 coords) const
     return null_memory_chunk;
   }
 
-  Map& game_map = GAME.getMaps().get(this->getMapId());
+  Map& game_map = GAME.maps().get(this->getMapId());
   return m_map_memory[game_map.getIndex(coords)];
 }
 
@@ -762,7 +762,7 @@ bool Entity::move_into(EntityId new_location)
         m_tiles_currently_seen.clear();
         if (new_map_id != MapFactory::null_map_id)
         {
-          Map& new_map = GAME.getMaps().get(new_map_id);
+          Map& new_map = GAME.maps().get(new_map_id);
           IntVec2 new_map_size = new_map.getSize();
           m_map_memory.resize(new_map_size.x * new_map_size.y);
           m_tiles_currently_seen.resize(new_map_size.x * new_map_size.y);
@@ -1138,7 +1138,7 @@ void Entity::beLitBy(EntityId light)
 
   if (getLocation() == EntityId::Mu())
   {
-    GAME.getMaps().get(getMapId()).addLight(light);
+    GAME.maps().get(getMapId()).addLight(light);
   }
   else
   {
@@ -1732,7 +1732,7 @@ void Entity::do_recursive_visibility(int octant,
 
   MapTile* tile = getMapTile();
   IntVec2 tile_coords = tile->getCoords();
-  Map& game_map = GAME.getMaps().get(getMapId());
+  Map& game_map = GAME.maps().get(getMapId());
 
   static const int mv = 128;
   static constexpr int mw = (mv * mv);

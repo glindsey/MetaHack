@@ -8,12 +8,12 @@
 
 Entity* EntityId::operator->()
 {
-  return &(GAME.getEntities().get(m_id));
+  return &(GAME.entities().get(m_id));
 }
 
 Entity const* EntityId::operator->() const
 {
-  return &(GAME.getEntities().get(m_id));
+  return &(GAME.entities().get(m_id));
 }
 
 void to_json(json& j, EntityId const& id)
