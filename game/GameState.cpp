@@ -26,8 +26,7 @@ GameState::GameState()
   m_entity_pool.reset(NEW EntityPool(*this));
   m_map_factory.reset(NEW MapFactory(*this));
 
-  m_data["types"] = json::object({});
-  m_data["entities"] = json::object({});
+  m_data["components"] = json::object({});
   m_data["global"] = json::object({});
 }
 

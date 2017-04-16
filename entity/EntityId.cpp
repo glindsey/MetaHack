@@ -1,9 +1,10 @@
 #include "stdafx.h"
 
-#include "game/GameState.h"
 #include "entity/EntityId.h"
+
 #include "entity/Entity.h"
 #include "entity/EntityPool.h"
+#include "game/GameState.h"
 
 Entity* EntityId::operator->()
 {

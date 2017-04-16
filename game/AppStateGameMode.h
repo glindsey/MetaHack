@@ -13,7 +13,6 @@ namespace Actions
 }
 class Direction;
 class EntityId;
-class GameRules;
 class GameState;
 class InventorySelection;
 class KeyBuffer;

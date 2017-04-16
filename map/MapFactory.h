@@ -3,12 +3,11 @@
 
 #include "stdafx.h"
 
+#include "map/MapId.h"
+
 // Forward declarations
 class GameState;
 class Map;
-
-// Using declarations
-using MapId = unsigned int;
 
 // MapFactory is both a Factory for Maps and a store containing all of
 // the Maps currently in use.

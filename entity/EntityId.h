@@ -1,5 +1,4 @@
-#ifndef THINGREF_H
-#define THINGREF_H
+#pragma once
 
 #include "stdafx.h"
 
@@ -9,7 +8,11 @@
 class Entity;
 class EntityPool;
 
-/// Definition of a ID/version pair.
+/// Definition of an Entity ID.
+/// While this COULD just be an integer, the json class requires map keys to
+/// be strings. I'm hoping this doesn't slow things down too much during
+/// serialization/deserialization.
+///
 /// Although internally this is a 64-bit integer, LuaJIT stores all numbers
 /// as doubles, which means we are limited to 2^53 valid IDs. That's still
 /// an enormous number, though (9 quadrillion IDs), so I THINK we'll be okay.
@@ -26,6 +29,11 @@ public:
   EntityId(uint64_t id)
     :
     m_id{ id }
+  {}
+
+  EntityId(std::string id)
+    :
+    m_id{ std::stoull(id) }
   {}
 
   /// Serialization function.
@@ -63,20 +71,14 @@ public:
     return static_cast<lua_Integer>(m_id);
   }
 
-  operator uint64_t() const
+  explicit operator uint64_t() const
   {
     return m_id;
   }
 
   operator std::string() const
   {
-    return str(m_id);
-  }
-
-  friend std::ostream& operator<<(std::ostream& os, EntityId& id)
-  {
-    os << str(id);
-    return os;
+    return std::to_string(m_id);
   }
 
   bool operator<(EntityId const& other) const
@@ -119,6 +121,19 @@ public:
     return !operator==(other);
   }
 
+  EntityId& operator++()
+  {
+    ++m_id;
+    return *this;
+  }
+
+  EntityId operator++(int)
+  {
+    EntityId tmp(*this);
+    operator++();
+    return tmp;
+  }
+
   friend std::ostream& operator<< (std::ostream& stream, EntityId const& entity)
   {
     stream << entity.m_id;
@@ -152,5 +167,3 @@ namespace std
     }
   };
 }
-
-#endif // THINGREF_H
