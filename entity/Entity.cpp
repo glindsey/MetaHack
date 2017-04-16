@@ -786,11 +786,6 @@ bool Entity::isInsideAnotherEntity() const
   return true;
 }
 
-MapId Entity::getMapId() const
-{
-  return COMPONENTS.position[m_id].map();
-}
-
 std::string Entity::getDisplayAdjectives() const
 {
   std::string adjectives;

@@ -294,9 +294,6 @@ public:
   /// Returns true if this entity is inside another Entity.
   bool isInsideAnotherEntity() const;
 
-  /// Return the MapId this Entity is currently on, or 0 if not on a map.
-  MapId getMapId() const;
-
   /// Return this object's adjective qualifiers (such as "fireproof", "waterproof", etc.)
   std::string getDisplayAdjectives() const;
 
