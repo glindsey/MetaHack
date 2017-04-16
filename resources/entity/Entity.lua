@@ -1,7 +1,7 @@
 -- Definition of the Entity object type, which all others inherit from.
 
 function Entity_get_display_name(id)
-    local quantity = thing_get_modified_property(id, "quantity")
+    local quantity = get_quantity(id)
     if quantity > 1 then
         return thing_get_intrinsic(id, "plural"), LuaType.String
     else

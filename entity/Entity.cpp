@@ -584,12 +584,21 @@ size_t Entity::removeModifier(std::string key, EntityId id)
 
 unsigned int Entity::getQuantity() const
 {
-  return getBaseProperty("quantity", 1);
+  return COMPONENTS.quantity.value(m_id, 1);
 }
 
-void Entity::setQuantity(unsigned int quantity)
+bool Entity::setQuantity(unsigned int quantity)
 {
-  setBaseProperty("quantity", quantity);
+  if (COMPONENTS.quantity.exists(m_id))
+  {
+    COMPONENTS.quantity[m_id] = quantity;
+    return true;
+  }
+  else
+  {
+    CLOG(WARNING, "Entity") << "Attempted to set quantity of entity #" << m_id << ", which lacks that component";
+    return false;
+  }
 }
 
 EntityId Entity::getId() const
@@ -958,26 +967,19 @@ std::string Entity::getDescriptiveString(ArticleChoice articles,
 
 bool Entity::isThirdPerson()
 {
-  return (GAME.getPlayer() == m_id) || (static_cast<unsigned int>(getBaseProperty("quantity", 1)) > 1);
+  return !((GAME.getPlayer() == m_id) || (COMPONENTS.quantity.value(m_id, 1) > 1));
 }
 
 std::string const& Entity::chooseVerb(std::string const& verb12,
                                         std::string const& verb3)
 {
-  if ((GAME.getPlayer() == m_id) || (static_cast<unsigned int>(getBaseProperty("quantity", 1)) > 1))
-  {
-    return verb12;
-  }
-  else
-  {
-    return verb3;
-  }
+  return isThirdPerson() ? verb3 : verb12;
 }
 
 unsigned int Entity::getMass()
 {
   return static_cast<unsigned int>(getModifiedProperty("physical-mass", 0)) * 
-    static_cast<unsigned int>(getBaseProperty("quantity", 1));
+    COMPONENTS.quantity.value(m_id, 1);
 }
 
 std::string const& Entity::getSubjectPronoun() const

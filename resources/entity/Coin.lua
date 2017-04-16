@@ -1,7 +1,7 @@
 -- Definition of special functions for the Coin object type.
 
 function Coin_get_tile_offset(id, frame)
-    local quantity = thing_get_base_property(id, "quantity")
+    local quantity = get_quantity(id)
     if (quantity < 10) then
         return 0, 0, LuaType.IntVec2
     elseif (quantity < 100) then

@@ -2,6 +2,7 @@
 
 #include "entity/EntityPool.h"
 
+#include "components/ComponentManager.h"
 #include "entity/Entity.h"
 #include "entity/EntityId.h"
 #include "game/App.h"
@@ -59,6 +60,9 @@ EntityId EntityPool::create(std::string category)
 
   std::unique_ptr<Entity> new_thing{ new Entity{ m_state, category, new_id } };
   m_thing_map[new_id] = std::move(new_thing);
+
+  auto& jsonComponents = data["components"];
+  COMPONENTS.populate(new_id, jsonComponents);
 
   if (m_initialized)
   {

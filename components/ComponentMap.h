@@ -56,6 +56,16 @@ public:
     return m_componentMap[id];
   }
 
+  T value(EntityId id, T defaultValue)
+  {
+    if (!exists(id))
+    {
+      return defaultValue;
+    }
+
+    return m_componentMap[id];
+  }
+
   /// Get the map itself for iterating through.
   std::unordered_map<EntityId, T>& data()
   {

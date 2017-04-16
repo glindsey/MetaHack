@@ -887,11 +887,11 @@ namespace Actions
       }
       if (token == "cverb")
       {
-        return (getSubject()->isThirdPerson() ? getVerb2() : getVerb3());
+        return (getSubject()->isThirdPerson() ? getVerb3() : getVerb2());
       }
       if (token == "objcverb")
       {
-        return (getObject()->isThirdPerson() ? getVerb2() : getVerb3());
+        return (getObject()->isThirdPerson() ? getVerb3() : getVerb2());
       }
 
       if (token == "you")

@@ -208,8 +208,8 @@ public:
   /// Get the quantity this entity represents.
   unsigned int getQuantity() const;
 
-  /// Set the quantity this entity represents.
-  void setQuantity(unsigned int quantity);
+  /// Set the quantity this entity represents, if allowed.
+  bool setQuantity(unsigned int quantity);
 
   /// Return a reference to this entity.
   EntityId getId() const;
