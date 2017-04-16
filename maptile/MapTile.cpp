@@ -205,11 +205,8 @@ MapTile::MapTile(IntVec2 coords, std::string category, MapId map_id)
 MapTile const& MapTile::getAdjacentTile(Direction direction) const
 {
   IntVec2 coords = getCoords();
-  Map const& map = GAME.maps().get(m_mapId);
-  MapTile const& tile = *this;
-
   IntVec2 adjacent_coords = coords + (IntVec2)direction;
-  return map.getTile(adjacent_coords);
+  return m_mapId->getTile(adjacent_coords);
 }
 
 json const& MapTile::getCategoryData() const

@@ -549,14 +549,6 @@ protected:
                                float slope_A = 1,
                                float slope_B = 0);
 
-  /// Set the location of this entity.
-  /// Does no checks, nor does it update the source/target inventories.
-  /// Those are the responsibility of the caller.
-  void setLocation(EntityId target);
-
-  /// Gets this location's maptile.
-  virtual MapTile* _get_maptile() const;
-
   /// Process this Entity's involuntary actions for a single tick.
   /// Voluntary actions are only processed when the Entity is not busy.
   /// The function returns false to indicate to its parent that it no longer
@@ -587,9 +579,6 @@ private:
 
   /// Reference to this Entity.
   EntityId m_id;
-
-  /// If this Entity is a Floor, pointer to the MapTile it is on.
-  MapTile* m_map_tile;
 
   /// This Entity's inventory.
   Inventory m_inventory;

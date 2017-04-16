@@ -42,7 +42,6 @@ Entity::Entity(GameState& state, std::string category, EntityId id)
   m_category{ category },
   m_properties{ id },
   m_id{ id },
-  m_map_tile{ nullptr },
   m_inventory{ Inventory() },
   m_gender{ Gender::None },
   m_mapMemory{ MapMemory() },
@@ -64,7 +63,6 @@ Entity::Entity(GameState& state, MapTile* map_tile, std::string category, Entity
   m_category{ category },
   m_properties{ id },
   m_id{ id },
-  m_map_tile{ map_tile },
   m_inventory{ Inventory() },
   m_gender{ Gender::None },
   m_mapMemory{ MapMemory() },
@@ -86,7 +84,6 @@ Entity::Entity(Entity const& original, EntityId ref)
   m_category{ original.m_category },
   m_properties{ original.m_properties },
   m_id{ ref },
-  m_map_tile{ original.m_map_tile },
   m_inventory{ Inventory() },             // don't copy
   m_gender{ original.m_gender },
   m_mapMemory{ original.m_mapMemory },
@@ -1527,11 +1524,6 @@ json Entity::call_lua_function(std::string function_name,
   return the_lua_instance.call_thing_function(function_name, getId(), args, default_result);
 }
 
-void Entity::setLocation(EntityId target)
-{
-  COMPONENTS.position[m_id] = target;
-}
-
 std::unordered_set<EventID> Entity::registeredEvents() const
 {
   auto events = Subject::registeredEvents();
@@ -1812,9 +1804,4 @@ void Entity::do_recursive_visibility(int octant,
   {
     do_recursive_visibility(octant, depth + 1, slope_A, slope_B);
   }
-}
-
-MapTile* Entity::_get_maptile() const
-{
-  return m_map_tile;
 }
