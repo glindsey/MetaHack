@@ -74,8 +74,9 @@ Entity::Entity(GameState& state, MapTile* map_tile, std::string category, Entity
   m_wielded_items{ BodyLocationMap() },
   m_equipped_items{ BodyLocationMap() }
 {
+  MapId map = map_tile->getMapId();
   IntVec2 position = map_tile->getCoords();
-  COMPONENTS.position[id] = position;
+  COMPONENTS.position[id].set(map, position);
   initialize();
 }
 
@@ -283,18 +284,23 @@ bool Entity::canReach(EntityId entity)
 
 bool Entity::isAdjacentTo(EntityId entity)
 {
-  // Get the coordinates we are at.
-  MapTile* our_maptile = getMapTile();
-  MapTile* thing_maptile = entity->getMapTile();
-  if ((our_maptile == nullptr) || (thing_maptile == nullptr))
+  // If either doesn't have a position component, bail.
+  if (!COMPONENTS.position.exists(m_id) ||
+      !COMPONENTS.position.exists(entity))
   {
     return false;
   }
 
-  IntVec2 const& our_coords = our_maptile->getCoords();
-  IntVec2 const& thing_coords = thing_maptile->getCoords();
+  auto ourPosition = COMPONENTS.position[m_id];
+  auto otherPosition = COMPONENTS.position[entity];
 
-  return adjacent(our_coords, thing_coords);
+  // If the two are not on the same map, bail.
+  if (ourPosition.map() != otherPosition.map())
+  {
+    return false;
+  }
+  
+  return adjacent(ourPosition.coords(), otherPosition.coords());
 }
 
 void Entity::setWielded(EntityId entity, BodyLocation location)
@@ -601,66 +607,43 @@ EntityId Entity::getLocation() const
 
 bool Entity::canSee(EntityId entity)
 {
-  // Make sure we are able to see at all.
-  if (!canCurrentlySee())
+  // Bail if either doesn't have a Position component.
+  if (!COMPONENTS.position.exists(m_id) ||
+      !COMPONENTS.position.exists(entity))
   {
     return false;
   }
 
-  // Are we on a map?  Bail out if we aren't.
-  MapId entity_map_id = this->getMapId();
-  MapId thing_map_id = entity->getMapId();
-
-  if ((entity_map_id == MapFactory::null_map_id) ||
-    (thing_map_id == MapFactory::null_map_id) ||
-      (entity_map_id != thing_map_id))
+  // Bail if the two aren't on the same map.
+  auto& thisPosition = COMPONENTS.position[m_id];
+  auto& entityPosition = COMPONENTS.position[entity];
+  if (thisPosition.map() != entityPosition.map())
   {
     return false;
   }
 
-  auto thing_location = entity->getMapTile();
-  if (thing_location == nullptr)
-  {
-    return false;
-  }
-
-  IntVec2 thing_coords = thing_location->getCoords();
-
-  return canSee(thing_coords);
+  return canSee(entityPosition.coords());
 }
 
 bool Entity::canSee(IntVec2 coords)
 {
+  auto& thisPosition = COMPONENTS.position[m_id];
+  MapId thisMap = thisPosition.map();
+  IntVec2 thisCoords = thisPosition.coords();
+
   // Make sure we are able to see at all.
   if (!canCurrentlySee())
-  {
-    return false;
-  }
-
-  MapId map_id = getMapId();
-
-  // Are we on a map?  Bail out if we aren't.
-  if (map_id == MapFactory::null_map_id)
-  {
-    return false;
-  }
-
-  // If we aren't on a valid maptile, we can't see anything.
-  auto tile = getMapTile();
-  if (tile == nullptr)
   {
     return false;
   }
 
   // If the coordinates are where we are, then yes, we can indeed see the tile, regardless.
-  IntVec2 tile_coords = tile->getCoords();
-
-  if ((tile_coords.x == coords.x) && (tile_coords.y == coords.y))
+  if ((thisCoords.x == coords.x) && (thisCoords.y == coords.y))
   {
     return true;
   }
 
-  Map& game_map = GAME.maps().get(map_id);
+  Map& game_map = GAME.maps().get(thisMap);
   auto map_size = game_map.getSize();
 
   // Check for coords out of bounds. If they're out of bounds, we can't see it.
@@ -795,40 +778,9 @@ bool Entity::isInsideAnotherEntity() const
   return true;
 }
 
-MapTile* Entity::getMapTile() const
-{
-  auto& parent = COMPONENTS.position[m_id].parent();
-
-  if (parent == EntityId::Mu())
-  {
-    return _get_maptile();
-  }
-  else
-  {
-    return parent->getMapTile();
-  }
-}
-
 MapId Entity::getMapId() const
 {
-  auto parent = COMPONENTS.position[m_id].parent();
-
-  if (parent == EntityId::Mu())
-  {
-    MapTile* maptile = _get_maptile();
-    if (maptile != nullptr)
-    {
-      return maptile->getMapId();
-    }
-    else
-    {
-      return static_cast<MapId>(0);
-    }
-  }
-  else
-  {
-    return parent->getMapId();
-  }
+  return COMPONENTS.position[m_id].map();
 }
 
 std::string Entity::getDisplayAdjectives() const
@@ -1395,7 +1347,7 @@ bool Entity::canBeObjectOfAction(std::string action)
 bool Entity::canHaveActionDoneBy(EntityId entity, std::string action)
 {
   return canBeObjectOfAction(action) &&
-    call_lua_function("can_have_action_" + action + "_done_by", entity, false);
+    call_lua_function("can_have_action_" + action + "_done_by", entity, true);
 }
 
 bool Entity::canHaveActionDoneBy(EntityId entity, Actions::Action& action)
@@ -1715,7 +1667,7 @@ void Entity::do_recursive_visibility(int octant,
                                     float slope_B)
 {
   Assert("Entity", octant >= 1 && octant <= 8, "Octant" << octant << "passed in is not between 1 and 8 inclusively");
-  IntVec2 new_coords;
+  IntVec2 newCoords;
   //int x = 0;
   //int y = 0;
 
@@ -1725,9 +1677,9 @@ void Entity::do_recursive_visibility(int octant,
     return;
   }
 
-  MapTile* tile = getMapTile();
-  IntVec2 tile_coords = tile->getCoords();
-  Map& game_map = GAME.maps().get(getMapId());
+  auto thisPosition = COMPONENTS.position[m_id];
+  IntVec2 thisCoords = thisPosition.coords();
+  Map& thisMap = GAME.maps().get(thisPosition.map());
 
   static const int mv = 128;
   static constexpr int mw = (mv * mv);
@@ -1740,8 +1692,8 @@ void Entity::do_recursive_visibility(int octant,
   switch (octant)
   {
     case 1:
-      new_coords.x = static_cast<int>(rint(static_cast<float>(tile_coords.x) - (slope_A * static_cast<float>(depth))));
-      new_coords.y = tile_coords.y - depth;
+      newCoords.x = static_cast<int>(rint(static_cast<float>(thisCoords.x) - (slope_A * static_cast<float>(depth))));
+      newCoords.y = thisCoords.y - depth;
       loop_condition = [](RealVec2 a, RealVec2 b, float c) { return calc_slope(a, b) >= c; };
       dir = Direction::West;
       recurse_slope = [](RealVec2 a, RealVec2 b) { return calc_slope(a + Direction::Southwest.half(), b); };
@@ -1749,8 +1701,8 @@ void Entity::do_recursive_visibility(int octant,
       break;
 
     case 2:
-      new_coords.x = static_cast<int>(rint(static_cast<float>(tile_coords.x) + (slope_A * static_cast<float>(depth))));
-      new_coords.y = tile_coords.y - depth;
+      newCoords.x = static_cast<int>(rint(static_cast<float>(thisCoords.x) + (slope_A * static_cast<float>(depth))));
+      newCoords.y = thisCoords.y - depth;
       loop_condition = [](RealVec2 a, RealVec2 b, float c) { return calc_slope(a, b) <= c; };
       dir = Direction::East;
       recurse_slope = [](RealVec2 a, RealVec2 b) { return calc_slope(a + Direction::Southeast.half(), b); };
@@ -1758,8 +1710,8 @@ void Entity::do_recursive_visibility(int octant,
       break;
 
     case 3:
-      new_coords.x = tile_coords.x + depth;
-      new_coords.y = static_cast<int>(rint(static_cast<float>(tile_coords.y) - (slope_A * static_cast<float>(depth))));
+      newCoords.x = thisCoords.x + depth;
+      newCoords.y = static_cast<int>(rint(static_cast<float>(thisCoords.y) - (slope_A * static_cast<float>(depth))));
       loop_condition = [](RealVec2 a, RealVec2 b, float c) { return calc_inv_slope(a, b) <= c; };
       dir = Direction::North;
       recurse_slope = [](RealVec2 a, RealVec2 b) { return calc_inv_slope(a + Direction::Northwest.half(), b); };
@@ -1767,8 +1719,8 @@ void Entity::do_recursive_visibility(int octant,
       break;
 
     case 4:
-      new_coords.x = tile_coords.x + depth;
-      new_coords.y = static_cast<int>(rint(static_cast<float>(tile_coords.y) + (slope_A * static_cast<float>(depth))));
+      newCoords.x = thisCoords.x + depth;
+      newCoords.y = static_cast<int>(rint(static_cast<float>(thisCoords.y) + (slope_A * static_cast<float>(depth))));
       loop_condition = [](RealVec2 a, RealVec2 b, float c) { return calc_inv_slope(a, b) >= c; };
       dir = Direction::South;
       recurse_slope = [](RealVec2 a, RealVec2 b) { return calc_inv_slope(a + Direction::Southwest.half(), b); };
@@ -1776,8 +1728,8 @@ void Entity::do_recursive_visibility(int octant,
       break;
 
     case 5:
-      new_coords.x = static_cast<int>(rint(static_cast<float>(tile_coords.x) + (slope_A * static_cast<float>(depth))));
-      new_coords.y = tile_coords.y + depth;
+      newCoords.x = static_cast<int>(rint(static_cast<float>(thisCoords.x) + (slope_A * static_cast<float>(depth))));
+      newCoords.y = thisCoords.y + depth;
       loop_condition = [](RealVec2 a, RealVec2 b, float c) { return calc_slope(a, b) >= c; };
       dir = Direction::East;
       recurse_slope = [](RealVec2 a, RealVec2 b) { return calc_slope(a + Direction::Northeast.half(), b); };
@@ -1785,8 +1737,8 @@ void Entity::do_recursive_visibility(int octant,
       break;
 
     case 6:
-      new_coords.x = static_cast<int>(rint(static_cast<float>(tile_coords.x) - (slope_A * static_cast<float>(depth))));
-      new_coords.y = tile_coords.y + depth;
+      newCoords.x = static_cast<int>(rint(static_cast<float>(thisCoords.x) - (slope_A * static_cast<float>(depth))));
+      newCoords.y = thisCoords.y + depth;
       loop_condition = [](RealVec2 a, RealVec2 b, float c) { return calc_slope(a, b) <= c; };
       dir = Direction::West;
       recurse_slope = [](RealVec2 a, RealVec2 b) { return calc_slope(a + Direction::Northwest.half(), b); };
@@ -1794,8 +1746,8 @@ void Entity::do_recursive_visibility(int octant,
       break;
 
     case 7:
-      new_coords.x = tile_coords.x - depth;
-      new_coords.y = static_cast<int>(rint(static_cast<float>(tile_coords.y) + (slope_A * static_cast<float>(depth))));
+      newCoords.x = thisCoords.x - depth;
+      newCoords.y = static_cast<int>(rint(static_cast<float>(thisCoords.y) + (slope_A * static_cast<float>(depth))));
       loop_condition = [](RealVec2 a, RealVec2 b, float c) { return calc_inv_slope(a, b) <= c; };
       dir = Direction::South;
       recurse_slope = [](RealVec2 a, RealVec2 b) { return calc_inv_slope(a + Direction::Southeast.half(), b); };
@@ -1803,8 +1755,8 @@ void Entity::do_recursive_visibility(int octant,
       break;
 
     case 8:
-      new_coords.x = tile_coords.x - depth;
-      new_coords.y = static_cast<int>(rint(static_cast<float>(tile_coords.y) - (slope_A * static_cast<float>(depth))));
+      newCoords.x = thisCoords.x - depth;
+      newCoords.y = static_cast<int>(rint(static_cast<float>(thisCoords.y) - (slope_A * static_cast<float>(depth))));
 
       loop_condition = [](RealVec2 a, RealVec2 b, float c) { return calc_inv_slope(a, b) >= c; };
       dir = Direction::North;
@@ -1816,35 +1768,35 @@ void Entity::do_recursive_visibility(int octant,
       break;
   }
 
-  while (loop_condition(to_v2f(new_coords), to_v2f(tile_coords), slope_B))
+  while (loop_condition(to_v2f(newCoords), to_v2f(thisCoords), slope_B))
   {
-    if (calc_vis_distance(new_coords, tile_coords) <= mw)
+    if (calc_vis_distance(newCoords, thisCoords) <= mw)
     {
-      if (game_map.tileIsOpaque(new_coords))
+      if (thisMap.tileIsOpaque(newCoords))
       {
-        if (!game_map.tileIsOpaque(new_coords + (IntVec2)dir))
+        if (!thisMap.tileIsOpaque(newCoords + (IntVec2)dir))
         {
-          do_recursive_visibility(octant, depth + 1, slope_A, recurse_slope(to_v2f(new_coords), to_v2f(tile_coords)));
+          do_recursive_visibility(octant, depth + 1, slope_A, recurse_slope(to_v2f(newCoords), to_v2f(thisCoords)));
         }
       }
       else
       {
-        if (game_map.tileIsOpaque(new_coords + (IntVec2)dir))
+        if (thisMap.tileIsOpaque(newCoords + (IntVec2)dir))
         {
-          slope_A = loop_slope(to_v2f(new_coords), to_v2f(tile_coords));
+          slope_A = loop_slope(to_v2f(newCoords), to_v2f(thisCoords));
         }
       }
-      m_tiles_currently_seen[game_map.getIndex(new_coords)] = true;
+      m_tiles_currently_seen[thisMap.getIndex(newCoords)] = true;
 
-      MapMemoryChunk new_memory{ game_map.getTile(new_coords).getTileType(),
+      MapMemoryChunk new_memory{ thisMap.getTile(newCoords).getTileType(),
                                  GAME.getGameClock() };
-      m_map_memory[game_map.getIndex(new_coords)] = new_memory;
+      m_map_memory[thisMap.getIndex(newCoords)] = new_memory;
     }
-    new_coords -= (IntVec2)dir;
+    newCoords -= (IntVec2)dir;
   }
-  new_coords += (IntVec2)dir;
+  newCoords += (IntVec2)dir;
 
-  if ((depth < mv) && (!game_map.getTile(new_coords).isOpaque()))
+  if ((depth < mv) && (!thisMap.getTile(newCoords).isOpaque()))
   {
     do_recursive_visibility(octant, depth + 1, slope_A, slope_B);
   }

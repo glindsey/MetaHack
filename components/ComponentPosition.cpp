@@ -30,8 +30,8 @@ ComponentPosition::ComponentPosition(EntityId id)
   : m_parent{ id }
 {}
 
-ComponentPosition::ComponentPosition(IntVec2 coords)
-  : m_coords{ coords }
+ComponentPosition::ComponentPosition(MapId map, IntVec2 coords)
+  : m_map{ map }, m_coords{ coords }
 {}
 
 ComponentPosition::~ComponentPosition()
@@ -42,6 +42,7 @@ void ComponentPosition::set(EntityId id)
   if (m_parent != id)
   {
     m_parent = id;
+    m_map = MapId::Null();
     m_coords = { 0, 0 };
   }
 }
@@ -55,9 +56,31 @@ void ComponentPosition::set(IntVec2 coords)
   }
 }
 
+void ComponentPosition::set(MapId map, IntVec2 coords)
+{
+  if (m_map != map || m_coords != coords)
+  {
+    m_parent = EntityId::Mu();
+    m_map = map;
+    m_coords = coords;
+  }
+}
+
 EntityId ComponentPosition::parent()
 {
   return m_parent;
+}
+
+MapId ComponentPosition::map()
+{
+  if (m_parent != EntityId::Mu())
+  {
+    return GAME.components().position[m_parent].map();
+  }
+  else
+  {
+    return m_map;
+  }
 }
 
 IntVec2 ComponentPosition::coords()

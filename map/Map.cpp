@@ -3,6 +3,7 @@
 #include "map/Map.h"
 
 #include "AssertHelper.h"
+#include "Components/ComponentManager.h"
 #include "game/App.h"
 #include "game/GameState.h"
 #include "entity/EntityPool.h"
@@ -324,16 +325,15 @@ void Map::doRecursiveLighting(EntityId source,
 
 void Map::addLight(EntityId source)
 {
-  // Get the map tile the light source is on.
-  auto maptile = source->getMapTile();
-  if (maptile == nullptr)
-  {
-    return;
-  }
+  // If the source doesn't have a Position component, bail.
+  if (!COMPONENTS.position.exists(source)) return;
+
+  // Get the location of the light source.
+  auto& position = COMPONENTS.position[source];
 
   /// @todo Check if any opaque containers are between the light source and the map.
 
-  IntVec2 coords = maptile->getCoords();
+  IntVec2 coords = position.coords();
 
   Color light_color = source->getModifiedProperty("light-color", Color::Transparent);
   int max_depth_squared = source->getModifiedProperty("light-strength", 0);

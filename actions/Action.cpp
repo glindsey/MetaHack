@@ -5,13 +5,15 @@
 #include "Action.h"
 #include "ActionMove.h"
 
+#include "components/ComponentManager.h"
+#include "entity/Entity.h"
+#include "entity/EntityPool.h"
+#include "entity/EntityId.h"
+#include "game/GameState.h"
 #include "services/IStringDictionary.h"
 #include "services/MessageLog.h"
 #include "Service.h"
 #include "utilities/StringTransforms.h"
-#include "entity/Entity.h"
-#include "entity/EntityPool.h"
-#include "entity/EntityId.h"
 
 namespace Actions
 {
@@ -296,8 +298,7 @@ namespace Actions
   {
     auto subject = getSubject();
     auto& objects = getObjects();
-    auto location = subject->getLocation();
-    MapTile* current_tile = subject->getMapTile();
+    bool hasPosition = COMPONENTS.position.exists(subject);
     auto new_direction = getTargetDirection();
 
     // Check that we're capable of eating at all.
@@ -330,12 +331,15 @@ namespace Actions
     if (!hasTrait(Trait::SubjectCanBeInLimbo))
     {
       // Make sure we're not in limbo!
-      if ((location == EntityId::Mu()) || (current_tile == nullptr))
+      if (!hasPosition)
       {
         putTr("DONT_EXIST_PHYSICALLY");
         return StateResult::Failure();
       }
     }
+
+    auto& position = COMPONENTS.position.at(subject);
+    auto parent = position.parent();
 
     if (hasTrait(Trait::SubjectCanNotBeInsideAnotherObject))
     {
@@ -345,7 +349,7 @@ namespace Actions
       {
         printMessageTry();
         putMsg(makeTr("YOU_ARE_INSIDE_OBJECT",
-        { location->getDescriptiveString(ArticleChoice::Indefinite) }));
+        { parent->getDescriptiveString(ArticleChoice::Indefinite) }));
         return StateResult::Failure();
       }
     }

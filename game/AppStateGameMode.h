@@ -78,8 +78,8 @@ private:
   std::unique_ptr<GameState> m_game_state;
 
   /// Reference to the current MapView.
-  MapView* m_map_view;
-  //std::unique_ptr<MapView> m_map_view;
+  MapView* m_mapView;
+  //std::unique_ptr<MapView> m_mapView;
 
   /// The current InventorySelection.
   std::unique_ptr<InventorySelection> m_inventory_selection;
@@ -97,7 +97,7 @@ private:
   GameInputState m_current_input_state;
 
   /// Current location of the cursor on the map.
-  IntVec2 m_cursor_coords;
+  IntVec2 m_cursorCoords;
 
   /// Action in progress (if any).
   /// Used for an action that needs a "target".

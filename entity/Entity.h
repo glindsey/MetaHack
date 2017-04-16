@@ -17,6 +17,7 @@
 
 // Forward declarations
 class AIStrategy;
+class ComponentPosition;
 class DynamicEntity;
 class MapTile;
 class Inventory;
@@ -216,10 +217,12 @@ public:
   /// Return the location of this entity.
   EntityId getLocation() const;
 
-  /// Return whether the DynamicEntity can see the requested Entity.
+  /// Return whether this Entity can see the requested Entity.
   bool canSee(EntityId entity);
 
-  /// Return whether the DynamicEntity can see the requested tile.
+  /// Return whether this Entity can see the requested coordinates.
+  /// Assumes this Entity exists on a map, and the coordinates are on the 
+  /// same map as it is.
   bool canSee(IntVec2 coords);
 
   /// Find out which tiles on the map can be seen by this DynamicEntity.
@@ -290,9 +293,6 @@ public:
 
   /// Returns true if this entity is inside another Entity.
   bool isInsideAnotherEntity() const;
-
-  /// Get the MapTile this entity is on, or nullptr if not on a map.
-  MapTile* getMapTile() const;
 
   /// Return the MapId this Entity is currently on, or 0 if not on a map.
   MapId getMapId() const;

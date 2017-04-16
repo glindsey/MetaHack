@@ -13,6 +13,12 @@ public:
   ComponentMap() {}
   ~ComponentMap() {}
 
+  /// Add an entity to this component map, with the default component value.
+  void add(EntityId id)
+  {
+    m_componentMap[id] = T();
+  }
+
   T& at(EntityId id)
   {
     return m_componentMap.at(id);
@@ -23,14 +29,21 @@ public:
     return m_componentMap.at(id);
   }
 
-  unsigned int count(EntityId id)
+  size_t count(EntityId id)
   {
     return m_componentMap.count(id);
   }
 
   bool exists(EntityId id)
   {
-    return count(id) != 0;
+    return count(id) != 0ULL;
+  }
+
+  /// Remove an entity from this component map.
+  /// If the entity isn't already present, just returns without doing anything.
+  void remove(EntityId id)
+  {
+    m_componentMap.erase(id);
   }
 
   T& operator[](EntityId id)
@@ -43,7 +56,18 @@ public:
     return m_componentMap[id];
   }
 
-  friend void from_json(json& j, ComponentMap const& obj)
+  /// Get the map itself for iterating through.
+  std::unordered_map<EntityId, T>& data()
+  {
+    return m_componentMap;
+  }
+
+  std::unordered_map<EntityId, T> const& data() const
+  {
+    return m_componentMap;
+  }
+
+  friend void from_json(json const& j, ComponentMap& obj)
   {
     obj.m_componentMap.clear();
     for (auto citer = j.cbegin(); citer != j.cend(); ++citer)
@@ -52,7 +76,7 @@ public:
     }
   }
 
-  friend void to_json(json const& j, ComponentMap& obj)
+  friend void to_json(json& j, ComponentMap const& obj)
   {
     j = json::object();
     for (auto& pair : obj.m_componentMap)

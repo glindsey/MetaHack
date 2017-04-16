@@ -3,6 +3,7 @@
 #include "ActionTurn.h"
 
 #include "ActionAttack.h"
+#include "components/ComponentManager.h"
 #include "game/GameState.h"
 #include "services/IMessageLog.h"
 #include "services/IStringDictionary.h"
@@ -43,8 +44,7 @@ namespace Actions
     std::string message;
 
     auto subject = getSubject();
-    EntityId location = subject->getLocation();
-    MapTile* current_tile = subject->getMapTile();
+    auto position = COMPONENTS.position[subject];
     Direction new_direction = getTargetDirection();
 
     if ((new_direction != Direction::Up) &&

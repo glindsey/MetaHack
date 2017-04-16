@@ -1,6 +1,9 @@
 #include "stdafx.h"
 
+#include "components/ComponentManager.h"
 #include "entity/EntityStandard2DView.h"
+#include "game/GameState.h"
+#include "map/Map.h"
 #include "Service.h"
 #include "services/IConfigSettings.h"
 #include "tilesheet/TileSheet.h"
@@ -30,14 +33,17 @@ void EntityStandard2DView::draw(sf::RenderTarget& target,
 {
   auto& config = Service<IConfigSettings>::get();
   auto& entity = getEntity();
-  MapTile* root_tile = getEntity().getMapTile();
   auto& texture = m_tile_sheet.getTexture();
 
-  if (!root_tile)
-  {
-    // Item's root location isn't a MapTile, so it can't be rendered.
-    return;
-  }
+  // Can't render if it doesn't have a Position component.
+  if (!COMPONENTS.position.exists(entity.getId())) return;
+
+  auto& position = COMPONENTS.position[entity.getId()];
+
+  // Can't render if it's in another object.
+  if (position.parent() != EntityId::Mu()) return;
+
+  MapTile& tile = position.map()->getTile(position.coords());
 
   sf::RectangleShape rectangle;
   sf::IntRect texture_coords;
@@ -62,7 +68,7 @@ void EntityStandard2DView::draw(sf::RenderTarget& target,
   Color thing_color;
   if (use_lighting)
   {
-    thing_color = root_tile->getLightLevel();
+    thing_color = tile.getLightLevel();
   }
   else
   {

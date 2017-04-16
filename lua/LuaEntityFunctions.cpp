@@ -2,6 +2,7 @@
 
 #include "lua/LuaEntityFunctions.h"
 
+#include "components/ComponentManager.h"
 #include "game/GameState.h"
 #include "entity/Entity.h"
 #include "entity/EntityId.h"
@@ -92,6 +93,7 @@ namespace LuaEntityFunctions
     return 1;
   }
 
+  /// @todo This function and thing_get_location should be merged into one.
   int thing_get_coords(lua_State* L)
   {
     int num_args = lua_gettop(L);
@@ -104,19 +106,17 @@ namespace LuaEntityFunctions
 
     EntityId entity = EntityId(lua_tointeger(L, 1));
 
-    MapId map_id = GAME.getPlayer()->getMapId();
-    auto maptile = entity->getMapTile();
-
-    if (maptile != nullptr)
+    if (!COMPONENTS.position.exists(entity))
     {
-      auto coords = maptile->getCoords();
-      lua_pushinteger(L, coords.x);
-      lua_pushinteger(L, coords.y);
+      lua_pushnil(L);
+      lua_pushnil(L);
     }
     else
     {
-      lua_pushnil(L);
-      lua_pushnil(L);
+      auto& entityPosition = COMPONENTS.position[entity];
+      auto coords = entityPosition.coords();
+      lua_pushinteger(L, coords.x);
+      lua_pushinteger(L, coords.y);
     }
 
     return 2;
@@ -133,8 +133,17 @@ namespace LuaEntityFunctions
     }
 
     EntityId entity = EntityId(lua_tointeger(L, 1));
-    EntityId location = entity->getLocation();
-    lua_pushinteger(L, static_cast<lua_Integer>(location));
+
+    if (!COMPONENTS.position.exists(entity))
+    {
+      lua_pushnil(L);
+    }
+    else
+    {
+      auto& entityPosition = COMPONENTS.position[entity];
+      auto parent = entityPosition.parent();
+      lua_pushinteger(L, static_cast<lua_Integer>(parent));
+    }
 
     return 1;
   }

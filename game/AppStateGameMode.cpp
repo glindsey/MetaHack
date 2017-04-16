@@ -4,6 +4,7 @@
 
 #include "actions/Action.h"
 #include "AssertHelper.h"
+#include "components/ComponentManager.h"
 #include "design_patterns/Event.h"
 #include "entity/Entity.h"
 #include "entity/EntityPool.h"
@@ -69,7 +70,7 @@ AppStateGameMode::AppStateGameMode(StateMachine& state_machine, sf::RenderWindow
   m_inventory_area_shows_player{ false },
   m_map_zoom_level{ 1.0f },
   m_current_input_state{ GameInputState::Map },
-  m_cursor_coords{ 0, 0 }
+  m_cursorCoords{ 0, 0 }
 {
   getStateMachine().addObserver(*this, App::EventAppWindowResized::id());
   getStateMachine().addObserver(*this, App::EventKeyPressed::id());
@@ -116,7 +117,7 @@ void AppStateGameMode::execute()
     EntityId player = game.getPlayer();
 
     // Update view's cached tile data.
-    m_map_view->update_tiles(player);
+    m_mapView->update_tiles(player);
 
     // If the action completed, reset the inventory selection.
     if (!player->voluntaryActionIsPending() && !player->actionIsInProgress())
@@ -176,21 +177,21 @@ bool AppStateGameMode::initialize()
   Assert("Game", player_moved, "player could not be moved into starting tile");
 
   // Set cursor to starting location.
-  m_cursor_coords = start_coords;
+  m_cursorCoords = start_coords;
 
   // Set the viewed inventory location to the player's location.
   m_inventory_area_shows_player = false;
   resetInventorySelection();
 
   // Set the map view.
-  m_map_view = the_desktop.addChild(Service<IGraphicViews>::get().createMapView("MainMapView", game_map, the_desktop.getSize()));
+  m_mapView = the_desktop.addChild(Service<IGraphicViews>::get().createMapView("MainMapView", game_map, the_desktop.getSize()));
 
   // Get the map ready.
   game_map.updateLighting();
 
   // Get the map view ready.
-  m_map_view->update_tiles(player);
-  m_map_view->update_things(player, 0);
+  m_mapView->update_tiles(player);
+  m_mapView->update_things(player, 0);
 
   putMsg(tr("WELCOME_MSG"));
 
@@ -244,37 +245,33 @@ void AppStateGameMode::render_map(sf::RenderTexture& texture, int frame)
 
   if (!player->isInsideAnotherEntity())
   {
-    MapTile* tile = player->getMapTile();
-    if (tile != nullptr)
+    auto& position = COMPONENTS.position[player];
+    RealVec2 player_pixel_coords = MapTile::getPixelCoords(position.coords());
+    RealVec2 cursor_pixel_coords = MapTile::getPixelCoords(m_cursorCoords);
+
+    // Update entity vertex array.
+    m_mapView->update_things(player, frame);
+
+    if (m_current_input_state == GameInputState::CursorLook)
     {
-      Map& game_map = game.maps().get(tile->getMapId());
-      IntVec2 tile_coords = tile->getCoords();
-      RealVec2 player_pixel_coords = MapTile::getPixelCoords(tile_coords);
-      RealVec2 cursor_pixel_coords = MapTile::getPixelCoords(m_cursor_coords);
+      m_mapView->set_view(texture, cursor_pixel_coords, m_map_zoom_level);
+      m_mapView->render_map(texture, frame);
 
-      // Update entity vertex array.
-      m_map_view->update_things(player, frame);
-
-      if (m_current_input_state == GameInputState::CursorLook)
-      {
-        m_map_view->set_view(texture, cursor_pixel_coords, m_map_zoom_level);
-        m_map_view->render_map(texture, frame);
-
-        Color border_color = config.get("cursor-border-color");
-        Color bg_color = config.get("cursor-bg-color");
-        m_map_view->draw_highlight(texture,
-                                   cursor_pixel_coords,
-                                   border_color,
-                                   bg_color,
-                                   frame);
-      }
-      else
-      {
-        m_map_view->set_view(texture, player_pixel_coords, m_map_zoom_level);
-        m_map_view->render_map(texture, frame);
-      }
+      Color border_color = config.get("cursor-border-color");
+      Color bg_color = config.get("cursor-bg-color");
+      m_mapView->draw_highlight(texture,
+                                cursor_pixel_coords,
+                                border_color,
+                                bg_color,
+                                frame);
+    }
+    else
+    {
+      m_mapView->set_view(texture, player_pixel_coords, m_map_zoom_level);
+      m_mapView->render_map(texture, frame);
     }
   }
+
   texture.display();
 }
 
@@ -1050,7 +1047,7 @@ void AppStateGameMode::resetInventorySelection()
   {
     if (m_current_input_state == GameInputState::CursorLook)
     {
-      EntityId floor_id = game_map.getTile(m_cursor_coords).getTileContents();
+      EntityId floor_id = game_map.getTile(m_cursorCoords).getTileContents();
       m_inventory_selection->set_viewed(floor_id);
     }
     else
@@ -1096,7 +1093,7 @@ bool AppStateGameMode::moveCursor(Direction direction)
   Map& game_map = game.maps().get(player->getMapId());
   bool result;
 
-  result = game_map.calcCoords(m_cursor_coords, direction, m_cursor_coords);
+  result = game_map.calcCoords(m_cursorCoords, direction, m_cursorCoords);
 
   return result;
 }

@@ -1,6 +1,10 @@
 #include "stdafx.h"
 
 #include "maptile/MapTileStandard2DView.h"
+
+#include "Components/ComponentManager.h"
+#include "map/Map.h"
+#include "map/MapId.h"
 #include "Service.h"
 #include "services/IConfigSettings.h"
 #include "services/IGameRules.h"
@@ -213,19 +217,17 @@ void MapTileStandard2DView::add_thing_floor_vertices(EntityId entityId, sf::Vert
   float ts = config.get("map-tile-size");
   float ts2 = ts * 0.5f;
 
-  MapTile* root_tile = entityId->getMapTile();
-  if (!root_tile)
-  {
-    // Item's root location isn't a MapTile, so it can't be rendered.
-    return;
-  }
+  // If this entity doesn't have a Position component, bail.
+  if (!COMPONENTS.position.exists(entityId)) return;
 
-  IntVec2 const& coords = root_tile->getCoords();
+  auto& position = COMPONENTS.position[entityId];
+  IntVec2 const& coords = position.coords();
+  MapTile& tile = position.map()->getTile(coords);
 
   Color thing_color;
   if (use_lighting)
   {
-    thing_color = root_tile->getLightLevel();
+    thing_color = tile.getLightLevel();
   }
   else
   {
@@ -260,25 +262,28 @@ void MapTileStandard2DView::add_wall_vertices_to(sf::VertexArray& vertices,
   MapTile& tile = get_map_tile();
 
   // Checks to see N/S/E/W walls.
-  bool player_sees_n_wall{ false };
-  bool player_sees_s_wall{ false };
-  bool player_sees_e_wall{ false };
-  bool player_sees_w_wall{ false };
+  bool playerSeesNWall{ false };
+  bool playerSeesSWall{ false };
+  bool playerSeesEWall{ false };
+  bool playerSeesWWall{ false };
 
   // Player.
   EntityId player = GAME.getPlayer();
+  bool playerHasLocation = COMPONENTS.position.exists(player);
 
-  if (player != EntityId::Mu())
+  if (player != EntityId::Mu() && playerHasLocation)
   {
-    auto player_tile = player->getMapTile();
-    auto player_coords = player_tile->getCoords();
-    auto tile_coords = tile.getCoords();
-    if (player_tile != nullptr)
+    auto& playerLocation = COMPONENTS.position[player];
+
+    if (playerLocation.map() == tile.getMapId())
     {
-      player_sees_n_wall = (player_coords.y <= tile_coords.y);
-      player_sees_s_wall = (player_coords.y >= tile_coords.y);
-      player_sees_e_wall = (player_coords.x >= tile_coords.x);
-      player_sees_w_wall = (player_coords.x <= tile_coords.x);
+      IntVec2 playerCoords = playerLocation.coords();
+      IntVec2 tileCoords = tile.getCoords();
+
+      playerSeesNWall = (playerCoords.y <= tileCoords.y);
+      playerSeesSWall = (playerCoords.y >= tileCoords.y);
+      playerSeesEWall = (playerCoords.x >= tileCoords.x);
+      playerSeesWWall = (playerCoords.x <= tileCoords.x);
     }
   }
 
@@ -336,7 +341,7 @@ void MapTileStandard2DView::add_wall_vertices_to(sf::VertexArray& vertices,
   {
     tile_color = tile.getLightLevel();
 
-    if (player_sees_n_wall)
+    if (playerSeesNWall)
     {
       wall_n_color = tile.getWallLightLevel(Direction::North);
       wall_n_color_w = average(wall_n_color, adjacent_tile_w.getWallLightLevel(Direction::North));
@@ -349,7 +354,7 @@ void MapTileStandard2DView::add_wall_vertices_to(sf::VertexArray& vertices,
       wall_n_color_e = Color::Black;
     }
 
-    if (player_sees_e_wall)
+    if (playerSeesEWall)
     {
       wall_e_color = tile.getWallLightLevel(Direction::East);
       wall_e_color_n = average(wall_e_color, adjacent_tile_n.getWallLightLevel(Direction::East));
@@ -362,7 +367,7 @@ void MapTileStandard2DView::add_wall_vertices_to(sf::VertexArray& vertices,
       wall_e_color_s = Color::Black;
     }
 
-    if (player_sees_s_wall)
+    if (playerSeesSWall)
     {
       wall_s_color = tile.getWallLightLevel(Direction::South);
       wall_s_color_w = average(wall_s_color, adjacent_tile_w.getWallLightLevel(Direction::South));
@@ -375,7 +380,7 @@ void MapTileStandard2DView::add_wall_vertices_to(sf::VertexArray& vertices,
       wall_s_color_e = Color::Black;
     }
 
-    if (player_sees_w_wall)
+    if (playerSeesWWall)
     {
       wall_w_color = tile.getWallLightLevel(Direction::West);
       wall_w_color_n = average(wall_w_color, adjacent_tile_n.getWallLightLevel(Direction::West));

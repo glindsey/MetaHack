@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include "ActionAttack.h"
+#include "components/ComponentManager.h"
 #include "game/GameState.h"
 #include "services/IMessageLog.h"
 #include "services/IStringDictionary.h"
@@ -63,15 +64,14 @@ namespace Actions
   StateResult ActionAttack::doBeginWorkNVI(AnyMap& params)
   {
     auto subject = getSubject();
-    auto location = subject->getLocation();
-    MapTile* current_tile = subject->getMapTile();
+    auto& position = COMPONENTS.position[subject];
     auto new_direction = getTargetDirection();
 
     bool success = false;
     unsigned int action_time = 0;
 
     // Figure out our target location.
-    IntVec2 coords = current_tile->getCoords();
+    IntVec2 coords = position.coords();
     IntVec2 offset = (IntVec2)new_direction;
     int x_new = coords.x + offset.x;
     int y_new = coords.y + offset.y;
