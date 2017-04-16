@@ -57,6 +57,10 @@
   "can-be-object-of-wield": true,
 
   "components": {
-    "quantity": 1
+    "physical": {
+      "mass": 1000,
+      "quantity": 1,
+      "volume": 1000
+    }
   }
 }

@@ -78,7 +78,7 @@ protected:
   EntityMap::iterator find(EntityId target);
   EntityMap::iterator find_if(std::function<bool(EntityPair const&)> functor);
 
-  static bool is_smaller_than(EntityId a, EntityId b);
+  static bool isSmallerThan(EntityId a, EntityId b);
 
 private:
   /// Entities contained in this Inventory, using slot number as key.

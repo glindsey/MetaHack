@@ -388,9 +388,6 @@ public:
   std::string const& chooseVerb(std::string const& verb2,
                                 std::string const& verb3);
 
-  /// Return this entity's mass.
-  unsigned int getMass();
-
   /// @addtogroup Pronouns
   /// @todo Make localizable. (How? Use Lua scripts maybe?)
   /// @{

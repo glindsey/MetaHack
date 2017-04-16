@@ -2,6 +2,8 @@
 
 #include "inventory/Inventory.h"
 
+#include "components/ComponentManager.h"
+#include "components/ComponentPhysical.h"
 #include "game/GameState.h"
 #include "entity/Entity.h"
 #include "entity/EntityPool.h"
@@ -200,7 +202,7 @@ EntityId Inventory::get_largest_thing()
   for (EntityMap::const_iterator iter = things_.cbegin();
        iter != things_.cend(); ++iter)
   {
-    if (is_smaller_than(iter_largest->second, iter->second))
+    if (isSmallerThan(iter_largest->second, iter->second))
     {
       iter_largest = iter;
     }
@@ -249,9 +251,10 @@ EntityMap::iterator Inventory::find(EntityId target_id)
   return iter;
 }
 
-bool Inventory::is_smaller_than(EntityId a, EntityId b)
+bool Inventory::isSmallerThan(EntityId a, EntityId b)
 {
   if ((a == EntityId::Mu()) || (b == EntityId::Mu())) return false;
+  if (!COMPONENTS.physical.exists(a) || !COMPONENTS.physical.exists(b)) return false;
 
-  return (a->getMass() < b->getMass());
+  return (COMPONENTS.physical[a].totalVolume() < COMPONENTS.physical[b].totalVolume());
 }

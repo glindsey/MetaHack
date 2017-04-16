@@ -8,7 +8,8 @@ using json = ::nlohmann::json;
 #include "map/MapId.h"
 #include "types/Vec2.h"
 
-/// Template to use for making new components.
+/// Component that describes an entity's position -- either straight on a
+/// map, or inside another entity.
 class ComponentPosition final
 {
 public:

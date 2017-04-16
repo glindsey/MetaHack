@@ -7,6 +7,7 @@
 #include "AssertHelper.h"
 #include "components/ComponentManager.h"
 #include "components/ComponentMap.h"
+#include "components/ComponentPhysical.h"
 #include "components/ComponentPosition.h"
 #include "entity/EntityPool.h"
 #include "game/App.h"
@@ -584,14 +585,14 @@ size_t Entity::removeModifier(std::string key, EntityId id)
 
 unsigned int Entity::getQuantity() const
 {
-  return COMPONENTS.quantity.value(m_id, 1);
+  return COMPONENTS.physical.exists(m_id) ? COMPONENTS.physical[m_id].quantity() : 1;
 }
 
 bool Entity::setQuantity(unsigned int quantity)
 {
-  if (COMPONENTS.quantity.exists(m_id))
+  if (COMPONENTS.physical.exists(m_id))
   {
-    COMPONENTS.quantity[m_id] = quantity;
+    COMPONENTS.physical[m_id].setQuantity(quantity);
     return true;
   }
   else
@@ -967,19 +968,13 @@ std::string Entity::getDescriptiveString(ArticleChoice articles,
 
 bool Entity::isThirdPerson()
 {
-  return !((GAME.getPlayer() == m_id) || (COMPONENTS.quantity.value(m_id, 1) > 1));
+  return !((GAME.getPlayer() == m_id) || (getQuantity() > 1));
 }
 
 std::string const& Entity::chooseVerb(std::string const& verb12,
                                         std::string const& verb3)
 {
   return isThirdPerson() ? verb3 : verb12;
-}
-
-unsigned int Entity::getMass()
-{
-  return static_cast<unsigned int>(getModifiedProperty("physical-mass", 0)) * 
-    COMPONENTS.quantity.value(m_id, 1);
 }
 
 std::string const& Entity::getSubjectPronoun() const

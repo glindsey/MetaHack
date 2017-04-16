@@ -4,6 +4,7 @@
 
 #include "components/ComponentMap.h"
 
+#include "components/ComponentPhysical.h"
 #include "components/ComponentPosition.h"
 
 // Forward declarations
@@ -21,6 +22,6 @@ public:
   friend void from_json(json const& j, ComponentManager& obj);
   friend void to_json(json& j, ComponentManager const& obj);
 
+  ComponentMap<ComponentPhysical> physical;
   ComponentMap<ComponentPosition> position;
-  ComponentMap<unsigned int> quantity;
 };
