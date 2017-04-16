@@ -55,13 +55,13 @@ namespace Actions
     }
     else if (object != EntityId::Mu())
     {
-      if (location->can_contain(object))
+      if (location->canContain(object))
       {
         if (object->be_object_of(*this, subject))
         {
           printMessageDo();
 
-          if (object->move_into(location))
+          if (object->moveInto(location))
           {
             /// @todo Figure out action time.
             result = StateResult::Success();

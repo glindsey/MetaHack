@@ -91,16 +91,18 @@ void MapTileStandard2DView::add_tile_vertices(EntityId viewer,
 void MapTileStandard2DView::add_memory_vertices_to(sf::VertexArray& vertices,
                                                    EntityId viewer)
 {
+  if (!COMPONENTS.position.exists(viewer)) return;
+
   auto& config = Service<IConfigSettings>::get();
   auto& tile = get_map_tile();
   auto coords = tile.getCoords();
+  auto& viewerPosition = COMPONENTS.position[viewer];
+  MapId map = viewerPosition.map();
 
-  MapId map_id = viewer->getMapId();
-  if (map_id == MapFactory::null_map_id)
+  if (map == MapFactory::null_map_id)
   {
     return;
   }
-  Map& game_map = GAME.maps().get(map_id);
 
   static sf::Vertex new_vertex;
   float ts = config.get("map-tile-size");

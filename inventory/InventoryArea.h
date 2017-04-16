@@ -27,5 +27,5 @@ protected:
   virtual bool onEvent_NVI_PreChildren(Event const& event) override;
 private:
   /// Inventory selection we are bound to.
-  InventorySelection& m_inventory_selection;
+  InventorySelection& m_inventorySelection;
 };

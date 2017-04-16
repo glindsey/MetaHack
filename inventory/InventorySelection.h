@@ -58,7 +58,7 @@ public:
   virtual ~InventorySelection();
 
   EntityId get_viewed() const;
-  void set_viewed(EntityId entity);
+  void setViewed(EntityId entity);
 
   void toggle_selection(InventorySlot selection);
   size_t get_selected_slot_count() const;

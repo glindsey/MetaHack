@@ -32,7 +32,7 @@ InventorySelection::InventorySelection(EntityId entity)
   :
   InventorySelection()
 {
-  set_viewed(entity);
+  setViewed(entity);
 }
 
 InventorySelection::~InventorySelection()
@@ -45,7 +45,7 @@ EntityId InventorySelection::get_viewed() const
   return pImpl->viewed;
 }
 
-void InventorySelection::set_viewed(EntityId entity)
+void InventorySelection::setViewed(EntityId entity)
 {
   pImpl->viewed = entity;
   pImpl->selected_slots.clear();

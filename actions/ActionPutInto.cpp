@@ -96,7 +96,7 @@ namespace Actions
     {
       printMessageDo();
 
-      if (object->move_into(container))
+      if (object->moveInto(container))
       {
         /// @todo Figure out action time.
         result = StateResult::Success();

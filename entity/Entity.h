@@ -436,7 +436,7 @@ public:
   void destroy();
 
   /// Attempt to move this Entity into a location.
-  bool move_into(EntityId new_location);
+  bool moveInto(EntityId new_location);
 
   /// Return whether or not this entity can be mixed with another Entity.
   /// The default behavior for this is to return false.
@@ -510,10 +510,10 @@ public:
 
   /// Returns whether the Entity can hold a certain entity.
   /// If Entity's inventory size is 0, returns false.
-  /// Otherwise, calls Lua function "can_contain()" for the Entity's type.
+  /// Otherwise, calls Lua function "canContain()" for the Entity's type.
   /// @param entity Entity to check.
   /// @return Bool specifying whether the entity can be held here.
-  bool can_contain(EntityId entity);
+  bool canContain(EntityId entity);
 
   /// Syntactic sugar for calling call_lua_function().
   json call_lua_function(std::string function_name,
@@ -606,11 +606,11 @@ private:
   ///       reset the memory counter to 0, or possibly just add a large
   ///       amount to the counter so that places you see more frequently
   ///       stay in your mind longer.
-  MapMemory m_map_memory;
+  MapMemory m_mapMemory;
 
   /// Bitset for tiles currently seen.
   /// This deals with tiles observed at this particular instant.
-  TilesSeen m_tiles_currently_seen;
+  TilesSeen m_tilesCurrentlySeen;
 
   /// Queue of pending involuntary actions to be performed.
   ActionQueue m_pending_involuntary_actions;

@@ -60,11 +60,11 @@ namespace Actions
     {
       // Figure out our target location.
       IntVec2 coords = position.coords();
+      MapId map = position.map();
       IntVec2 offset = (IntVec2)new_direction;
       int x_new = coords.x + offset.x;
       int y_new = coords.y + offset.y;
-      Map& current_map = GAME.maps().get(subject->getMapId());
-      IntVec2 map_size = current_map.getSize();
+      IntVec2 map_size = map->getSize();
 
       // Check boundaries.
       if ((x_new < 0) || (y_new < 0) ||
@@ -74,7 +74,7 @@ namespace Actions
      }
       else
       {
-        auto& new_tile = current_map.getTile({ x_new, y_new });
+        auto& new_tile = map->getTile({ x_new, y_new });
         EntityId new_floor = new_tile.getTileContents();
 
         // See if the tile to move into contains another creature.
@@ -95,7 +95,7 @@ namespace Actions
           if (new_tile.canBeTraversedBy(subject))
           {
             /// @todo Figure out elapsed movement time.
-            result.success = subject->move_into(new_floor);
+            result.success = subject->moveInto(new_floor);
             result.elapsed_time = 1;
           }
           else

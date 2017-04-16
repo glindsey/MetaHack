@@ -47,7 +47,7 @@ namespace Actions
 
     if (object->be_object_of(*this, subject, direction))
     {
-      if (object->move_into(new_location))
+      if (object->moveInto(new_location))
       {
         printMessageDo();
 

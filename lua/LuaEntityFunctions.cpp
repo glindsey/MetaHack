@@ -40,7 +40,7 @@ namespace LuaEntityFunctions
     if (is_creatable)
     {
       new_thing = GAME.entities().create(new_thing_type);
-      success = new_thing->move_into(entity);
+      success = new_thing->moveInto(entity);
 
       if (success && (num_args > 2))
       {
@@ -369,7 +369,7 @@ namespace LuaEntityFunctions
     EntityId thing_to_move = EntityId(lua_tointeger(L, 1));
     EntityId thing_destination = EntityId(lua_tointeger(L, 2));
 
-    bool result = thing_to_move->move_into(thing_destination);
+    bool result = thing_to_move->moveInto(thing_destination);
 
     lua_pushboolean(L, static_cast<int>(result));
 

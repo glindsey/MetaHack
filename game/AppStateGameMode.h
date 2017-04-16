@@ -82,19 +82,19 @@ private:
   //std::unique_ptr<MapView> m_mapView;
 
   /// The current InventorySelection.
-  std::unique_ptr<InventorySelection> m_inventory_selection;
+  std::unique_ptr<InventorySelection> m_inventorySelection;
 
   /// True if the application window is in focus, false otherwise.
   bool m_window_in_focus;
 
   /// True if inventory window shows player inventory, false otherwise.
-  bool m_inventory_area_shows_player;
+  bool m_inventoryAreaShowsPlayer;
 
   /// Map zoom level.  1.0 equals 100 percent zoom.
   float m_map_zoom_level;
 
   /// Current screen area that has keyboard focus.
-  GameInputState m_current_input_state;
+  GameInputState m_currentInputState;
 
   /// Current location of the cursor on the map.
   IntVec2 m_cursorCoords;

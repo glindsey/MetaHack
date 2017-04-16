@@ -119,11 +119,10 @@ bool GameState::processGameClockTick()
     //           lag would quickly grow intolerable.
 
     // Get the map the player is on.
-    MapId current_map_id = player->getMapId();
-    Map& current_map = GAME.maps().get(current_map_id);
+    MapId map = COMPONENTS.position[player].map();
 
     // Process everything on the map, and increment game clock.
-    current_map.processEntities();
+    map->processEntities();
     incrementGameClock(ElapsedTime(1));
 
     // If player can see the map...
@@ -133,7 +132,7 @@ bool GameState::processGameClockTick()
     if (true /* player is directly on a map */)
     {
       // Update map lighting.
-      current_map.updateLighting();
+      map->updateLighting();
     }
     return true;
   }

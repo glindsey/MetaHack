@@ -18,14 +18,14 @@ InventoryArea::InventoryArea(std::string name,
                              sf::IntRect dimensions)
   : 
   metagui::Window(name, dimensions),
-  m_inventory_selection(inventory_selection)
+  m_inventorySelection(inventory_selection)
 {
-  m_inventory_selection.addObserver(*this, EventID::All);
+  m_inventorySelection.addObserver(*this, EventID::All);
 }
 
 InventoryArea::~InventoryArea()
 {
-  m_inventory_selection.removeObserver(*this);
+  m_inventorySelection.removeObserver(*this);
 }
 
 void InventoryArea::drawContents_(sf::RenderTexture& texture, int frame)
@@ -44,7 +44,7 @@ void InventoryArea::drawContents_(sf::RenderTexture& texture, int frame)
   RealVec2 text_offset = config.get("window-text-offset");
 
   // Get a reference to the location we're referring to.
-  auto& viewed_thing = m_inventory_selection.get_viewed();
+  auto& viewed_thing = m_inventorySelection.get_viewed();
   if (viewed_thing == EntityId::Mu())
   {
     setText("Invalid Viewed Object!");
@@ -56,7 +56,7 @@ void InventoryArea::drawContents_(sf::RenderTexture& texture, int frame)
   float text_coord_y = text_offset.y + (line_spacing_y * 1.5f);
 
   Inventory& inventory = viewed_thing->getInventory();
-  auto& selected_slots = m_inventory_selection.get_selected_slots();
+  auto& selected_slots = m_inventorySelection.get_selected_slots();
 
   /// @todo At the moment this does not split lines that are too long, instead
   ///       truncating them at the edge of the box.  This must be fixed.
@@ -150,7 +150,7 @@ void InventoryArea::drawContents_(sf::RenderTexture& texture, int frame)
     if (selection_order == 1)
     {
       unsigned int max_quantity = entity->getQuantity();
-      unsigned int selected_quantity = m_inventory_selection.get_selected_quantity();
+      unsigned int selected_quantity = m_inventorySelection.get_selected_quantity();
       if ((max_quantity > 1) && (selected_quantity < max_quantity))
       {
         item_name << "(Sel: " << selected_quantity << ") ";

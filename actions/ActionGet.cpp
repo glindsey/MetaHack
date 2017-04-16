@@ -62,7 +62,7 @@ namespace Actions
     if (object->be_object_of(*this, subject))
     {
       putTr("YOU_CVERB_THE_FOO");
-      if (object->move_into(subject))
+      if (object->moveInto(subject))
       {
         /// @todo Figure out action time.
         result = StateResult::Success();

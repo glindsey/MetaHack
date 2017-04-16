@@ -45,8 +45,8 @@ Entity::Entity(GameState& state, std::string category, EntityId id)
   m_map_tile{ nullptr },
   m_inventory{ Inventory() },
   m_gender{ Gender::None },
-  m_map_memory{ MapMemory() },
-  m_tiles_currently_seen{ TilesSeen() },
+  m_mapMemory{ MapMemory() },
+  m_tilesCurrentlySeen{ TilesSeen() },
   m_pending_involuntary_actions{ ActionQueue() },
   m_pending_voluntary_actions{ ActionQueue() },
   m_wielded_items{ BodyLocationMap() },
@@ -67,8 +67,8 @@ Entity::Entity(GameState& state, MapTile* map_tile, std::string category, Entity
   m_map_tile{ map_tile },
   m_inventory{ Inventory() },
   m_gender{ Gender::None },
-  m_map_memory{ MapMemory() },
-  m_tiles_currently_seen{ TilesSeen() },
+  m_mapMemory{ MapMemory() },
+  m_tilesCurrentlySeen{ TilesSeen() },
   m_pending_involuntary_actions{ ActionQueue() },
   m_pending_voluntary_actions{ ActionQueue() },
   m_wielded_items{ BodyLocationMap() },
@@ -89,8 +89,8 @@ Entity::Entity(Entity const& original, EntityId ref)
   m_map_tile{ original.m_map_tile },
   m_inventory{ Inventory() },             // don't copy
   m_gender{ original.m_gender },
-  m_map_memory{ original.m_map_memory },
-  m_tiles_currently_seen{ TilesSeen() },  // don't copy
+  m_mapMemory{ original.m_mapMemory },
+  m_tilesCurrentlySeen{ TilesSeen() },  // don't copy
   m_pending_involuntary_actions{ ActionQueue() },     // don't copy
   m_pending_voluntary_actions{ ActionQueue() },     // don't copy
   m_wielded_items{ BodyLocationMap() },       // don't copy
@@ -653,7 +653,7 @@ bool Entity::canSee(IntVec2 coords)
   }
 
   // Return seen data.
-  return m_tiles_currently_seen[game_map.getIndex(coords)];
+  return m_tilesCurrentlySeen[game_map.getIndex(coords)];
 }
 
 void Entity::findSeenTiles()
@@ -670,7 +670,7 @@ void Entity::findSeenTiles()
   }
 
   // Clear the "tile seen" bitset.
-  m_tiles_currently_seen.reset();
+  m_tilesCurrentlySeen.reset();
 
   // Hang on, can we actually see?
   // If not, bail out.
@@ -695,54 +695,62 @@ MapMemoryChunk const& Entity::getMemoryAt(IntVec2 coords) const
 {
   static MapMemoryChunk null_memory_chunk{ "???", GAME.getGameClock() };
 
-  if (this->getMapId() == MapFactory::null_map_id)
+  auto map = COMPONENTS.position[m_id].map();
+
+  if (map == MapFactory::null_map_id)
   {
     return null_memory_chunk;
   }
 
-  Map& game_map = GAME.maps().get(this->getMapId());
-  return m_map_memory[game_map.getIndex(coords)];
+  return m_mapMemory[map->getIndex(coords)];
 }
 
-bool Entity::move_into(EntityId new_location)
+bool Entity::moveInto(EntityId newLocation)
 {
-  MapId old_map_id = this->getMapId();
-  EntityId old_location = COMPONENTS.position[m_id].parent();
+  // If Entity doesn't have a Position component, bail.
+  if (!COMPONENTS.position.exists(m_id))
+  {
+    return false;
+  }
 
-  if (new_location == old_location)
+  auto& position = COMPONENTS.position[m_id];
+  MapId oldMapId = position.map();
+  EntityId oldLocation = position.parent();
+
+  if (newLocation == oldLocation)
   {
     // We're already there!
     return true;
   }
 
-  if (new_location->can_contain(m_id))
+  if (newLocation->canContain(m_id))
   {
-    if (new_location->getInventory().add(m_id))
+    if (newLocation->getInventory().add(m_id))
     {
       // Try to lock our old location.
-      if (old_location != EntityId::Mu())
+      if (oldLocation != EntityId::Mu())
       {
-        old_location->getInventory().remove(m_id);
+        oldLocation->getInventory().remove(m_id);
       }
 
       // Set the location to the new location.
-      COMPONENTS.position[m_id] = new_location;
+      COMPONENTS.position[m_id] = newLocation;
 
-      MapId new_map_id = this->getMapId();
-      if (old_map_id != new_map_id)
+      MapId newMapId = position.map();
+      if (oldMapId != newMapId)
       {
-        if (old_map_id != MapFactory::null_map_id)
+        if (oldMapId != MapFactory::null_map_id)
         {
           /// @todo Save old map memory.
         }
-        m_map_memory.clear();
-        m_tiles_currently_seen.clear();
-        if (new_map_id != MapFactory::null_map_id)
+        m_mapMemory.clear();
+        m_tilesCurrentlySeen.clear();
+        if (newMapId != MapFactory::null_map_id)
         {
-          Map& new_map = GAME.maps().get(new_map_id);
+          Map& new_map = GAME.maps().get(newMapId);
           IntVec2 new_map_size = new_map.getSize();
-          m_map_memory.resize(new_map_size.x * new_map_size.y);
-          m_tiles_currently_seen.resize(new_map_size.x * new_map_size.y);
+          m_mapMemory.resize(new_map_size.x * new_map_size.y);
+          m_tilesCurrentlySeen.resize(new_map_size.x * new_map_size.y);
           /// @todo Load new map memory if it exists somewhere.
         }
       }
@@ -750,7 +758,7 @@ bool Entity::move_into(EntityId new_location)
       //notifyObservers(Event::Updated);
       return true;
     } // end if (add to new inventory was successful)
-  } // end if (can_contain is true)
+  } // end if (canContain is true)
 
   return false;
 }
@@ -1074,17 +1082,26 @@ void Entity::light_up_surroundings()
 
 void Entity::beLitBy(EntityId light)
 {
+  // If either this or the light has no Position component, bail.
+  if (!COMPONENTS.position.exists(m_id) || !COMPONENTS.position.exists(light)) return;
+
+  auto& thisPosition = COMPONENTS.position[m_id];
+  auto& lightPosition = COMPONENTS.position[light];
+
+  // If this and the light aren't on the same map, bail.
+  if (thisPosition.map() != lightPosition.map()) return;
+
   bool result = call_lua_function("on_lit_by", light, true);
   if (result)
   {
     //notifyObservers(Event::Updated);
   }
 
-  EntityId location = getLocation();
+  EntityId location = thisPosition.parent();
 
   if (getLocation() == EntityId::Mu())
   {
-    GAME.maps().get(getMapId()).addLight(light);
+    thisPosition.map()->addLight(light);
   }
   else
   {
@@ -1121,10 +1138,10 @@ void Entity::spill()
     auto parent = COMPONENTS.position[m_id].parent();
     if (parent != EntityId::Mu())
     {
-      if (parent->can_contain(entity))
+      if (parent->canContain(entity))
       {
         // Try to move this into the Entity's location.
-        success = entity->move_into(parent);
+        success = entity->moveInto(parent);
         if (success)
         {
           auto container_string = this->getDescriptiveString();
@@ -1143,7 +1160,7 @@ void Entity::spill()
         }
         //notifyObservers(Event::Updated);
 
-      } // end if (can_contain)
+      } // end if (canContain)
     } // end if (container location is not Mu)
     else
     {
@@ -1484,7 +1501,7 @@ bool Entity::can_merge_with(EntityId other) const
   return false;
 }
 
-bool Entity::can_contain(EntityId entity)
+bool Entity::canContain(EntityId entity)
 {
   int inventory_size = getIntrinsic("inventory-size", 0);
   if (inventory_size == 0)
@@ -1658,7 +1675,7 @@ bool Entity::_process_own_voluntary_actions()
 
 MapMemory& Entity::get_map_memory()
 {
-  return m_map_memory;
+  return m_mapMemory;
 }
 
 void Entity::do_recursive_visibility(int octant,
@@ -1786,11 +1803,11 @@ void Entity::do_recursive_visibility(int octant,
           slope_A = loop_slope(to_v2f(newCoords), to_v2f(thisCoords));
         }
       }
-      m_tiles_currently_seen[thisMap.getIndex(newCoords)] = true;
+      m_tilesCurrentlySeen[thisMap.getIndex(newCoords)] = true;
 
       MapMemoryChunk new_memory{ thisMap.getTile(newCoords).getTileType(),
                                  GAME.getGameClock() };
-      m_map_memory[thisMap.getIndex(newCoords)] = new_memory;
+      m_mapMemory[thisMap.getIndex(newCoords)] = new_memory;
     }
     newCoords -= (IntVec2)dir;
   }

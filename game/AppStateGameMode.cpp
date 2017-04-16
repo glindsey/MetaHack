@@ -65,18 +65,18 @@ AppStateGameMode::AppStateGameMode(StateMachine& state_machine, sf::RenderWindow
   m_app_window{ m_app_window },
   m_debug_buffer{ NEW KeyBuffer() },
   m_game_state{ NEW GameState() },
-  m_inventory_selection{ NEW InventorySelection() },
+  m_inventorySelection{ NEW InventorySelection() },
   m_window_in_focus{ true },
-  m_inventory_area_shows_player{ false },
+  m_inventoryAreaShowsPlayer{ false },
   m_map_zoom_level{ 1.0f },
-  m_current_input_state{ GameInputState::Map },
+  m_currentInputState{ GameInputState::Map },
   m_cursorCoords{ 0, 0 }
 {
   getStateMachine().addObserver(*this, App::EventAppWindowResized::id());
   getStateMachine().addObserver(*this, App::EventKeyPressed::id());
 
   the_desktop.addChild(NEW MessageLogView("MessageLogView", Service<IMessageLog>::get(), *(m_debug_buffer.get()), calcMessageLogDims()))->setFlag("titlebar", true);
-  the_desktop.addChild(NEW InventoryArea("InventoryArea", *(m_inventory_selection.get()), calcInventoryDims()))->setFlag("titlebar", true);
+  the_desktop.addChild(NEW InventoryArea("InventoryArea", *(m_inventorySelection.get()), calcInventoryDims()))->setFlag("titlebar", true);
   the_desktop.addChild(NEW StatusArea("StatusArea", calcStatusAreaDims()))->setGlobalFocus(true);
 }
 
@@ -173,14 +173,14 @@ bool AppStateGameMode::initialize()
   auto start_floor = game_map.getTile(start_coords).getTileContents();
   Assert("Game", start_floor, "starting tile floor doesn't exist");
 
-  bool player_moved = player->move_into(start_floor);
+  bool player_moved = player->moveInto(start_floor);
   Assert("Game", player_moved, "player could not be moved into starting tile");
 
   // Set cursor to starting location.
   m_cursorCoords = start_coords;
 
   // Set the viewed inventory location to the player's location.
-  m_inventory_area_shows_player = false;
+  m_inventoryAreaShowsPlayer = false;
   resetInventorySelection();
 
   // Set the map view.
@@ -252,7 +252,7 @@ void AppStateGameMode::render_map(sf::RenderTexture& texture, int frame)
     // Update entity vertex array.
     m_mapView->update_things(player, frame);
 
-    if (m_current_input_state == GameInputState::CursorLook)
+    if (m_currentInputState == GameInputState::CursorLook)
     {
       m_mapView->set_view(texture, cursor_pixel_coords, m_map_zoom_level);
       m_mapView->render_map(texture, frame);
@@ -286,15 +286,15 @@ bool AppStateGameMode::handle_key_press(App::EventKeyPressed const& key)
   {
     if (key.code == sf::Keyboard::Key::Tilde)
     {
-      switch (m_current_input_state)
+      switch (m_currentInputState)
       {
         case GameInputState::Map:
-          m_current_input_state = GameInputState::MessageLog;
+          m_currentInputState = GameInputState::MessageLog;
           the_desktop.getChild("MessageLogView").setGlobalFocus(true);
           return false;
 
         case GameInputState::MessageLog:
-          m_current_input_state = GameInputState::Map;
+          m_currentInputState = GameInputState::Map;
           the_desktop.getChild("StatusArea").setGlobalFocus(true);
           return false;
 
@@ -305,7 +305,7 @@ bool AppStateGameMode::handle_key_press(App::EventKeyPressed const& key)
   }
 
   // *** Handle keys unique to a particular focus.
-  switch (m_current_input_state)
+  switch (m_currentInputState)
   {
     case GameInputState::TargetSelection:
       return handleKeyPressTargetSelection(player, key);
@@ -317,7 +317,7 @@ bool AppStateGameMode::handle_key_press(App::EventKeyPressed const& key)
     {
       std::unique_ptr<Actions::Action> p_action;
 
-      std::vector<EntityId>& entities = m_inventory_selection->get_selected_things();
+      std::vector<EntityId>& entities = m_inventorySelection->get_selected_things();
       int key_number = get_letter_key(key);
       Direction key_direction = get_direction_key(key);
 
@@ -326,12 +326,12 @@ bool AppStateGameMode::handle_key_press(App::EventKeyPressed const& key)
       {
         if (key_number != -1)
         {
-          m_inventory_selection->toggle_selection(static_cast<InventorySlot>(key_number));
+          m_inventorySelection->toggle_selection(static_cast<InventorySlot>(key_number));
           return false;
         }
         else if (key.code == sf::Keyboard::Key::Tab)
         {
-          m_inventory_area_shows_player = !m_inventory_area_shows_player;
+          m_inventoryAreaShowsPlayer = !m_inventoryAreaShowsPlayer;
           resetInventorySelection();
           return false;
         }
@@ -373,8 +373,8 @@ bool AppStateGameMode::handle_key_press(App::EventKeyPressed const& key)
 
             // "/" - go to cursor look mode.
           case sf::Keyboard::Key::Slash:
-            m_current_input_state = GameInputState::CursorLook;
-            m_inventory_area_shows_player = false;
+            m_currentInputState = GameInputState::CursorLook;
+            m_inventoryAreaShowsPlayer = false;
             resetInventorySelection();
             return false;
 
@@ -383,7 +383,7 @@ bool AppStateGameMode::handle_key_press(App::EventKeyPressed const& key)
           case sf::Keyboard::Key::Subtract:
           {
             /// @todo Need a way to choose which inventory we're affecting.
-            auto slot_count = m_inventory_selection->get_selected_slot_count();
+            auto slot_count = m_inventorySelection->get_selected_slot_count();
             if (slot_count < 1)
             {
               putMsg(tr("QUANTITY_NEED_SOMETHING_SELECTED"));
@@ -394,7 +394,7 @@ bool AppStateGameMode::handle_key_press(App::EventKeyPressed const& key)
             }
             else
             {
-              m_inventory_selection->dec_selected_quantity();
+              m_inventorySelection->dec_selected_quantity();
             }
           }
           return false;
@@ -403,7 +403,7 @@ bool AppStateGameMode::handle_key_press(App::EventKeyPressed const& key)
           case sf::Keyboard::Key::Equal:
           case sf::Keyboard::Key::Add:
           {
-            auto slot_count = m_inventory_selection->get_selected_slot_count();
+            auto slot_count = m_inventorySelection->get_selected_slot_count();
             if (slot_count < 1)
             {
               putMsg(tr("QUANTITY_NEED_SOMETHING_SELECTED"));
@@ -414,18 +414,18 @@ bool AppStateGameMode::handle_key_press(App::EventKeyPressed const& key)
             }
             else
             {
-              m_inventory_selection->inc_selected_quantity();
+              m_inventorySelection->inc_selected_quantity();
             }
           }
           return false;
 
           case sf::Keyboard::Key::LBracket:
           {
-            EntityId entity = m_inventory_selection->get_viewed();
+            EntityId entity = m_inventorySelection->get_viewed();
             EntityId location = entity->getLocation();
             if (location != getGameState().entities().get_mu())
             {
-              m_inventory_selection->set_viewed(location);
+              m_inventorySelection->setViewed(location);
             }
             else
             {
@@ -436,11 +436,11 @@ bool AppStateGameMode::handle_key_press(App::EventKeyPressed const& key)
 
           case sf::Keyboard::Key::RBracket:
           {
-            auto slot_count = m_inventory_selection->get_selected_slot_count();
+            auto slot_count = m_inventorySelection->get_selected_slot_count();
 
             if (slot_count > 0)
             {
-              EntityId entity = m_inventory_selection->get_selected_things().at(0);
+              EntityId entity = m_inventorySelection->get_selected_things().at(0);
               if (static_cast<int>(entity->getIntrinsic("inventory-size", 0)) != 0)
               {
                 if (!entity->canHaveActionDoneBy(EntityId::Mu(), Actions::ActionOpen::prototype) ||
@@ -449,7 +449,7 @@ bool AppStateGameMode::handle_key_press(App::EventKeyPressed const& key)
                   if (!entity->canHaveActionDoneBy(EntityId::Mu(), Actions::ActionLock::prototype) ||
                       !entity->getModifiedProperty("locked", false))
                   {
-                    m_inventory_selection->set_viewed(entity);
+                    m_inventorySelection->setViewed(entity);
                   }
                   else // if (container.is_locked())
                   {
@@ -492,7 +492,7 @@ bool AppStateGameMode::handle_key_press(App::EventKeyPressed const& key)
                 p_action->setObject(entity);
                 player->queueAction(std::move(p_action));
               }
-              m_inventory_area_shows_player = false;
+              m_inventoryAreaShowsPlayer = false;
               resetInventorySelection();
             }
             return false;
@@ -554,7 +554,7 @@ bool AppStateGameMode::handle_key_press(App::EventKeyPressed const& key)
                 p_action->setObject(entity);
                 player->queueAction(std::move(p_action));
               }
-              m_inventory_area_shows_player = false;
+              m_inventoryAreaShowsPlayer = false;
               resetInventorySelection();
             }
             return false;
@@ -566,8 +566,8 @@ bool AppStateGameMode::handle_key_press(App::EventKeyPressed const& key)
               // No item specified, so ask for a direction.
               m_action_in_progress.reset(new Actions::ActionClose(player));
               putMsg(StringTransforms::makeString(player, EntityId::Mu(), tr("CHOOSE_DIRECTION"), { tr("VERB_CLOSE_2") }));
-              m_current_input_state = GameInputState::TargetSelection;
-              m_inventory_selection->clear_selected_slots();
+              m_currentInputState = GameInputState::TargetSelection;
+              m_inventorySelection->clear_selected_slots();
             }
             else
             {
@@ -578,7 +578,7 @@ bool AppStateGameMode::handle_key_press(App::EventKeyPressed const& key)
                 p_action->setObject(entity);
                 player->queueAction(std::move(p_action));
               }
-              m_inventory_area_shows_player = false;
+              m_inventoryAreaShowsPlayer = false;
               resetInventorySelection();
             }
             return false;
@@ -597,7 +597,7 @@ bool AppStateGameMode::handle_key_press(App::EventKeyPressed const& key)
                 p_action->setObject(entity);
                 player->queueAction(std::move(p_action));
               }
-              m_inventory_area_shows_player = false;
+              m_inventoryAreaShowsPlayer = false;
               resetInventorySelection();
             }
             return false;
@@ -616,7 +616,7 @@ bool AppStateGameMode::handle_key_press(App::EventKeyPressed const& key)
                 p_action->setObject(entity);
                 player->queueAction(std::move(p_action));
               }
-              m_inventory_area_shows_player = false;
+              m_inventoryAreaShowsPlayer = false;
               resetInventorySelection();
             }
             return false;
@@ -636,8 +636,8 @@ bool AppStateGameMode::handle_key_press(App::EventKeyPressed const& key)
               m_action_in_progress.reset(new Actions::ActionFill(player));
               m_action_in_progress->setObject(entities.front());
               putMsg(StringTransforms::makeString(player, EntityId::Mu(), tr("CHOOSE_ITEM_OR_DIRECTION"), { tr("VERB_FILL_GER") }));
-              m_current_input_state = GameInputState::TargetSelection;
-              m_inventory_selection->clear_selected_slots();
+              m_currentInputState = GameInputState::TargetSelection;
+              m_inventorySelection->clear_selected_slots();
             }
             return false;
 
@@ -655,7 +655,7 @@ bool AppStateGameMode::handle_key_press(App::EventKeyPressed const& key)
                 p_action->setObject(entity);
                 player->queueAction(std::move(p_action));
               }
-              m_inventory_area_shows_player = false;
+              m_inventoryAreaShowsPlayer = false;
               resetInventorySelection();
             }
             return false;
@@ -675,8 +675,8 @@ bool AppStateGameMode::handle_key_press(App::EventKeyPressed const& key)
               m_action_in_progress.reset(new Actions::ActionHurl(player));
               m_action_in_progress->setObject(entities.front());
               putMsg(StringTransforms::makeString(player, EntityId::Mu(), tr("CHOOSE_DIRECTION"), { tr("VERB_THROW_2") }));
-              m_current_input_state = GameInputState::TargetSelection;
-              m_inventory_selection->clear_selected_slots();
+              m_currentInputState = GameInputState::TargetSelection;
+              m_inventorySelection->clear_selected_slots();
             }
             return false;
 
@@ -695,8 +695,8 @@ bool AppStateGameMode::handle_key_press(App::EventKeyPressed const& key)
               }
 
               putMsg(StringTransforms::makeString(player, EntityId::Mu(), tr("CHOOSE_ITEM_OR_DIRECTION"), { tr("VERB_WRITE_GER") }));
-              m_current_input_state = GameInputState::TargetSelection;
-              m_inventory_selection->clear_selected_slots();
+              m_currentInputState = GameInputState::TargetSelection;
+              m_inventorySelection->clear_selected_slots();
             }
             return false;
 
@@ -715,7 +715,7 @@ bool AppStateGameMode::handle_key_press(App::EventKeyPressed const& key)
               p_action.reset(new Actions::ActionMix(player));
               p_action->setObjects(entities);
               player->queueAction(std::move(p_action));
-              m_inventory_area_shows_player = false;
+              m_inventoryAreaShowsPlayer = false;
               resetInventorySelection();
             }
             return false;
@@ -726,8 +726,8 @@ bool AppStateGameMode::handle_key_press(App::EventKeyPressed const& key)
               // No item specified, so ask for a direction.
               m_action_in_progress.reset(new Actions::ActionOpen(player));
               putMsg(StringTransforms::makeString(player, EntityId::Mu(), tr("CHOOSE_DIRECTION"), { tr("VERB_OPEN_2") }));
-              m_current_input_state = GameInputState::TargetSelection;
-              m_inventory_selection->clear_selected_slots();
+              m_currentInputState = GameInputState::TargetSelection;
+              m_inventorySelection->clear_selected_slots();
             }
             else
             {
@@ -738,7 +738,7 @@ bool AppStateGameMode::handle_key_press(App::EventKeyPressed const& key)
                 p_action->setObject(entity);
                 player->queueAction(std::move(p_action));
               }
-              m_inventory_area_shows_player = false;
+              m_inventoryAreaShowsPlayer = false;
               resetInventorySelection();
             }
             return false;
@@ -754,8 +754,8 @@ bool AppStateGameMode::handle_key_press(App::EventKeyPressed const& key)
               m_action_in_progress.reset(new Actions::ActionPutInto(player));
               m_action_in_progress->setObjects(entities);
               putMsg(StringTransforms::makeString(player, EntityId::Mu(), tr("CHOOSE_CONTAINER"), { tr("VERB_STORE_DESC") }));
-              m_current_input_state = GameInputState::TargetSelection;
-              m_inventory_selection->clear_selected_slots();
+              m_currentInputState = GameInputState::TargetSelection;
+              m_inventorySelection->clear_selected_slots();
             }
             return false;
 
@@ -773,7 +773,7 @@ bool AppStateGameMode::handle_key_press(App::EventKeyPressed const& key)
                 p_action->setObject(entity);
                 player->queueAction(std::move(p_action));
               }
-              m_inventory_area_shows_player = false;
+              m_inventoryAreaShowsPlayer = false;
               resetInventorySelection();
             }
             return false;
@@ -793,7 +793,7 @@ bool AppStateGameMode::handle_key_press(App::EventKeyPressed const& key)
                 p_action->setObject(entity);
                 player->queueAction(std::move(p_action));
               }
-              m_inventory_area_shows_player = false;
+              m_inventoryAreaShowsPlayer = false;
               resetInventorySelection();
             }
             return false;
@@ -817,8 +817,8 @@ bool AppStateGameMode::handle_key_press(App::EventKeyPressed const& key)
               m_action_in_progress.reset(new Actions::ActionShoot(player));
               m_action_in_progress->setObject(entities.front());
               putMsg(StringTransforms::makeString(player, EntityId::Mu(), tr("CHOOSE_DIRECTION"), { tr("VERB_SHOOT_2") }));
-              m_current_input_state = GameInputState::TargetSelection;
-              m_inventory_selection->clear_selected_slots();
+              m_currentInputState = GameInputState::TargetSelection;
+              m_inventorySelection->clear_selected_slots();
             }
             return false;
 
@@ -833,7 +833,7 @@ bool AppStateGameMode::handle_key_press(App::EventKeyPressed const& key)
               p_action.reset(new Actions::ActionTakeOut(player));
               p_action->setObjects(entities);
               player->queueAction(std::move(p_action));
-              m_inventory_area_shows_player = false;
+              m_inventoryAreaShowsPlayer = false;
               resetInventorySelection();
             }
             return false;
@@ -852,7 +852,7 @@ bool AppStateGameMode::handle_key_press(App::EventKeyPressed const& key)
                 p_action->setObject(entity);
                 player->queueAction(std::move(p_action));
               }
-              m_inventory_area_shows_player = false;
+              m_inventoryAreaShowsPlayer = false;
               resetInventorySelection();
             }
             return false;
@@ -872,7 +872,7 @@ bool AppStateGameMode::handle_key_press(App::EventKeyPressed const& key)
               p_action.reset(new Actions::ActionWield(player));
               p_action->setObject(entities.front());
               player->queueAction(std::move(p_action));
-              m_inventory_area_shows_player = false;
+              m_inventoryAreaShowsPlayer = false;
               resetInventorySelection();
             }
             return false;
@@ -884,8 +884,8 @@ bool AppStateGameMode::handle_key_press(App::EventKeyPressed const& key)
               // No item specified, so ask for a direction.
               m_action_in_progress.reset(new Actions::ActionAttack(player));
               putMsg(StringTransforms::makeString(player, EntityId::Mu(), tr("CHOOSE_DIRECTION"), { tr("VERB_ATTACK_2") }));
-              m_current_input_state = GameInputState::TargetSelection;
-              m_inventory_selection->clear_selected_slots();
+              m_currentInputState = GameInputState::TargetSelection;
+              m_inventorySelection->clear_selected_slots();
             }
             else if (entities.size() > 1)
             {
@@ -897,7 +897,7 @@ bool AppStateGameMode::handle_key_press(App::EventKeyPressed const& key)
               p_action.reset(new Actions::ActionAttack(player));
               p_action->setObject(entities.front());
               player->queueAction(std::move(p_action));
-              m_inventory_area_shows_player = false;
+              m_inventoryAreaShowsPlayer = false;
               resetInventorySelection();
             }
             return false;
@@ -953,7 +953,7 @@ bool AppStateGameMode::handle_key_press(App::EventKeyPressed const& key)
 
     default:
       break;
-  } // end switch (m_current_input_state)
+  } // end switch (m_currentInputState)
 
   return true;
 }
@@ -1035,24 +1035,27 @@ sf::IntRect AppStateGameMode::calcMessageLogDims()
 void AppStateGameMode::resetInventorySelection()
 {
   auto& game = getGameState();
-  auto& game_data = game.data();
+  auto& gameData = game.data();
   EntityId player = game.getPlayer();
-  Map& game_map = game.maps().get(player->getMapId());
 
-  if (m_inventory_area_shows_player == true)
+  if (m_inventoryAreaShowsPlayer == true)
   {
-    m_inventory_selection->set_viewed(player);
+    m_inventorySelection->setViewed(player);
   }
   else
   {
-    if (m_current_input_state == GameInputState::CursorLook)
+    if (m_currentInputState == GameInputState::CursorLook)
     {
-      EntityId floor_id = game_map.getTile(m_cursorCoords).getTileContents();
-      m_inventory_selection->set_viewed(floor_id);
+      if (COMPONENTS.position.exists(player))
+      {
+        MapId gameMap = COMPONENTS.position[player].map();
+        EntityId floorId = gameMap->getTile(m_cursorCoords).getTileContents();
+        m_inventorySelection->setViewed(floorId);
+      }
     }
     else
     {
-      m_inventory_selection->set_viewed(player->getLocation());
+      m_inventorySelection->setViewed(player->getLocation());
     }
   }
 }
@@ -1090,10 +1093,14 @@ bool AppStateGameMode::moveCursor(Direction direction)
   auto& game = getGameState();
   auto& game_data = game.data();
   EntityId player = game.getPlayer();
-  Map& game_map = game.maps().get(player->getMapId());
-  bool result;
+  
+  bool result = false;
 
-  result = game_map.calcCoords(m_cursorCoords, direction, m_cursorCoords);
+  if (COMPONENTS.position.exists(player))
+  {
+    MapId map = COMPONENTS.position[player].map();
+    result = map->calcCoords(m_cursorCoords, direction, m_cursorCoords);
+  }
 
   return result;
 }
@@ -1105,7 +1112,7 @@ bool AppStateGameMode::handleKeyPressTargetSelection(EntityId player, App::Event
 
   if (!key.alt && !key.control && key.code == sf::Keyboard::Key::Tab)
   {
-    m_inventory_area_shows_player = !m_inventory_area_shows_player;
+    m_inventoryAreaShowsPlayer = !m_inventoryAreaShowsPlayer;
     resetInventorySelection();
     return false;
   }
@@ -1113,9 +1120,9 @@ bool AppStateGameMode::handleKeyPressTargetSelection(EntityId player, App::Event
   if (!key.alt && !key.control && key.code == sf::Keyboard::Key::Escape)
   {
     putMsg(tr("ABORTED"));
-    m_inventory_area_shows_player = false;
+    m_inventoryAreaShowsPlayer = false;
     resetInventorySelection();
-    m_current_input_state = GameInputState::Map;
+    m_currentInputState = GameInputState::Map;
     return false;
   }
 
@@ -1123,11 +1130,11 @@ bool AppStateGameMode::handleKeyPressTargetSelection(EntityId player, App::Event
   {
     if (!key.alt && !key.control && key_number != -1)
     {
-      m_action_in_progress->setTarget(m_inventory_selection->getEntity(static_cast<InventorySlot>(key_number)));
+      m_action_in_progress->setTarget(m_inventorySelection->getEntity(static_cast<InventorySlot>(key_number)));
       player->queueAction(std::move(m_action_in_progress));
-      m_inventory_area_shows_player = false;
+      m_inventoryAreaShowsPlayer = false;
       resetInventorySelection();
-      m_current_input_state = GameInputState::Map;
+      m_currentInputState = GameInputState::Map;
       return false;
     }
   } // end if (action_in_progress.target_can_be_thing)
@@ -1139,9 +1146,9 @@ bool AppStateGameMode::handleKeyPressTargetSelection(EntityId player, App::Event
     {
       m_action_in_progress->setTarget(key_direction);
       player->queueAction(std::move(m_action_in_progress));
-      m_inventory_area_shows_player = false;
+      m_inventoryAreaShowsPlayer = false;
       resetInventorySelection();
-      m_current_input_state = GameInputState::Map;
+      m_currentInputState = GameInputState::Map;
       return false;
     }
   }
@@ -1158,56 +1165,56 @@ bool AppStateGameMode::handleKeyPressCursorLook(EntityId player, App::EventKeyPr
     {
       case sf::Keyboard::Key::Up:
         moveCursor(Direction::North);
-        m_inventory_area_shows_player = false;
+        m_inventoryAreaShowsPlayer = false;
         resetInventorySelection();
         return false;
 
       case sf::Keyboard::Key::PageUp:
         moveCursor(Direction::Northeast);
-        m_inventory_area_shows_player = false;
+        m_inventoryAreaShowsPlayer = false;
         resetInventorySelection();
         return false;
 
       case sf::Keyboard::Key::Right:
         moveCursor(Direction::East);
-        m_inventory_area_shows_player = false;
+        m_inventoryAreaShowsPlayer = false;
         resetInventorySelection();
         return false;
 
       case sf::Keyboard::Key::PageDown:
         moveCursor(Direction::Southeast);
-        m_inventory_area_shows_player = false;
+        m_inventoryAreaShowsPlayer = false;
         resetInventorySelection();
         return false;
 
       case sf::Keyboard::Key::Down:
         moveCursor(Direction::South);
-        m_inventory_area_shows_player = false;
+        m_inventoryAreaShowsPlayer = false;
         resetInventorySelection();
         return false;
 
       case sf::Keyboard::Key::End:
         moveCursor(Direction::Southwest);
-        m_inventory_area_shows_player = false;
+        m_inventoryAreaShowsPlayer = false;
         resetInventorySelection();
         return false;
 
       case sf::Keyboard::Key::Left:
         moveCursor(Direction::West);
-        m_inventory_area_shows_player = false;
+        m_inventoryAreaShowsPlayer = false;
         resetInventorySelection();
         return false;
 
       case sf::Keyboard::Key::Home:
         moveCursor(Direction::Northwest);
-        m_inventory_area_shows_player = false;
+        m_inventoryAreaShowsPlayer = false;
         resetInventorySelection();
         return false;
 
         // "/" - go back to Map focus.
       case sf::Keyboard::Key::Slash:
-        m_current_input_state = GameInputState::Map;
-        m_inventory_area_shows_player = false;
+        m_currentInputState = GameInputState::Map;
+        m_inventoryAreaShowsPlayer = false;
         resetInventorySelection();
         return false;
 
