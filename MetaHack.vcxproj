@@ -322,6 +322,8 @@
     <ClInclude Include="actions\ActionUse.h" />
     <ClInclude Include="actions\ActionWait.h" />
     <ClInclude Include="actions\ActionWield.h" />
+    <ClInclude Include="components\ComponentMap.h" />
+    <ClInclude Include="components\ComponentsManager.h" />
     <ClInclude Include="design_patterns\AssertHelper.h" />
     <ClInclude Include="design_patterns\Event.h" />
     <ClInclude Include="design_patterns\Object.h" />
@@ -456,6 +458,7 @@
     <ClCompile Include="actions\ActionUse.cpp" />
     <ClCompile Include="actions\ActionWait.cpp" />
     <ClCompile Include="actions\ActionWield.cpp" />
+    <ClCompile Include="components\ComponentsManager.cpp" />
     <ClCompile Include="design_patterns\AssertHelper.cpp" />
     <ClCompile Include="design_patterns\Event.cpp" />
     <ClCompile Include="design_patterns\Observer.cpp" />

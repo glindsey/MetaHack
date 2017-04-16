@@ -4,9 +4,10 @@
 #include "stdafx.h"
 
 // Forward declarations
-class MapFactory;
+class ComponentsManager;
 class EntityId;
 class EntityPool;
+class MapFactory;
 
 /// Class that encapsulates the entire state of the game data.
 /// This class can be instantiated only once at a time. Attempting to create
@@ -32,6 +33,7 @@ public:
 
   MapFactory& getMaps();
   EntityPool& getEntities();
+  ComponentsManager& getComponents();
 
   ElapsedTime getGameClock() const;
   void setGameClock(ElapsedTime game_clock);
@@ -72,10 +74,13 @@ protected:
 
 private:
   /// Pointer to the Map Factory object.
-  std::unique_ptr<MapFactory> m_map_factory;
+  std::unique_ptr<MapFactory> m_mapFactory;
 
   /// Pointer to the Entity Manager object.
-  std::unique_ptr<EntityPool> m_entity_pool;
+  std::unique_ptr<EntityPool> m_entityPool;
+
+  /// Pointer to the Components Manager object.
+  std::unique_ptr<ComponentsManager> m_componentsManager;
 
   /// Game state data, as stored in a JSON object.
   json m_data;

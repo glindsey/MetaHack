@@ -2,6 +2,7 @@
 
 #include "game/GameState.h"
 
+#include "components/ComponentsManager.h"
 #include "entity/Entity.h"
 #include "entity/EntityId.h"
 #include "entity/EntityPool.h"
@@ -23,8 +24,9 @@ GameState::GameState()
 
   p_instance = this;
 
-  m_entity_pool.reset(NEW EntityPool(*this));
-  m_map_factory.reset(NEW MapFactory(*this));
+  m_componentsManager.reset(NEW ComponentsManager());
+  m_entityPool.reset(NEW EntityPool(*this));
+  m_mapFactory.reset(NEW MapFactory(*this));
 
   m_data["components"] = json::object({});
   m_data["global"] = json::object({});
@@ -40,7 +42,7 @@ GameState::GameState(FileName filename)
   std::ifstream fs{ filename.c_str() };
   cereal::XMLInputArchive iarchive{ fs };
 
-  iarchive(m_map_factory, m_entity_pool, m_player);
+  iarchive(m_mapFactory, m_entityPool, m_player);
 #endif
 }
 
@@ -55,22 +57,23 @@ void GameState::saveState(FileName filename)
   std::ofstream fs{ filename.c_str() };
   cereal::XMLOutputArchive oarchive{ fs };
 
-  oarchive(m_map_factory, m_entity_pool, m_player);
+  oarchive(m_mapFactory, m_entityPool, m_player);
 #endif
 }
 
 MapFactory& GameState::getMaps()
 {
-  Assert("GameState", m_map_factory, "MapFactory does not exist");
-
-  return *m_map_factory;
+  return *m_mapFactory;
 }
 
 EntityPool& GameState::getEntities()
 {
-  Assert("GameState", m_entity_pool, "EntityPool does not exist");
+  return *m_entityPool;
+}
 
-  return *m_entity_pool;
+ComponentsManager & GameState::getComponents()
+{
+  return *m_componentsManager;
 }
 
 ElapsedTime GameState::getGameClock() const
