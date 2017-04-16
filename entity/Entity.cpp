@@ -74,7 +74,7 @@ Entity::Entity(GameState& state, MapTile* map_tile, std::string category, Entity
   m_wielded_items{ BodyLocationMap() },
   m_equipped_items{ BodyLocationMap() }
 {
-  MapId map = map_tile->getMapId();
+  MapId map = map_tile->map();
   IntVec2 position = map_tile->getCoords();
   COMPONENTS.position[id].set(map, position);
   initialize();

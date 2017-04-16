@@ -277,7 +277,7 @@ void MapTileStandard2DView::add_wall_vertices_to(sf::VertexArray& vertices,
   {
     auto& playerLocation = COMPONENTS.position[player];
 
-    if (playerLocation.map() == tile.getMapId())
+    if (playerLocation.map() == tile.map())
     {
       IntVec2 playerCoords = playerLocation.coords();
       IntVec2 tileCoords = tile.getCoords();

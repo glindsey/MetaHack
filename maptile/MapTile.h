@@ -57,7 +57,7 @@ public:
   IntVec2 const& getCoords() const;
 
   /// Get a reference to the map this tile belongs to.
-  MapId getMapId() const;
+  MapId map() const;
 
   /// Set the current tile's light level.
   void setAmbientLightLevel(Color level);
@@ -104,7 +104,7 @@ private:
   static bool initialized;
 
   /// The ID of the Map this MapTile belongs to.
-  MapId m_map_id;
+  MapId m_mapId;
 
   /// This MapTile's coordinates on the map.
   IntVec2 m_coords;

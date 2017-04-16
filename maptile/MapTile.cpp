@@ -62,9 +62,9 @@ IntVec2 const& MapTile::getCoords() const
   return m_coords;
 }
 
-MapId MapTile::getMapId() const
+MapId MapTile::map() const
 {
-  return m_map_id;
+  return m_mapId;
 }
 
 void MapTile::setAmbientLightLevel(Color level)
@@ -74,7 +74,7 @@ void MapTile::setAmbientLightLevel(Color level)
 
 void MapTile::beLitBy(EntityId light)
 {
-  GAME.maps().get(getMapId()).addLight(light);
+  GAME.maps().get(map()).addLight(light);
 }
 
 void MapTile::clearLightInfluences()
@@ -184,7 +184,7 @@ RealVec2 MapTile::getPixelCoords(IntVec2 tile)
 
 MapTile::MapTile(IntVec2 coords, std::string category, MapId map_id)
   :
-  m_map_id{ map_id },
+  m_mapId{ map_id },
   m_coords{ coords },
   m_category{ category },
   m_ambient_light_color{ Color(192, 192, 192, 255) }
@@ -205,7 +205,7 @@ MapTile::MapTile(IntVec2 coords, std::string category, MapId map_id)
 MapTile const& MapTile::getAdjacentTile(Direction direction) const
 {
   IntVec2 coords = getCoords();
-  Map const& map = GAME.maps().get(getMapId());
+  Map const& map = GAME.maps().get(m_mapId);
   MapTile const& tile = *this;
 
   IntVec2 adjacent_coords = coords + (IntVec2)direction;
