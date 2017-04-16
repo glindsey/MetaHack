@@ -39,14 +39,20 @@ ComponentPosition::~ComponentPosition()
 
 void ComponentPosition::set(EntityId id)
 {
-  m_parent = id;
-  m_coords = { 0, 0 };
+  if (m_parent != id)
+  {
+    m_parent = id;
+    m_coords = { 0, 0 };
+  }
 }
 
 void ComponentPosition::set(IntVec2 coords)
 {
-  m_parent = EntityId::Mu();
-  m_coords = coords;
+  if (m_coords != coords)
+  {
+    m_parent = EntityId::Mu();
+    m_coords = coords;
+  }
 }
 
 EntityId ComponentPosition::parent()

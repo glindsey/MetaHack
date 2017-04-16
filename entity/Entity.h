@@ -591,9 +591,6 @@ private:
   /// Reference to this Entity.
   EntityId m_id;
 
-  /// Reference to this Entity's location.
-  EntityId m_location;
-
   /// If this Entity is a Floor, pointer to the MapTile it is on.
   MapTile* m_map_tile;
 

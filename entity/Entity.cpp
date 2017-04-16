@@ -42,7 +42,6 @@ Entity::Entity(GameState& state, std::string category, EntityId id)
   m_category{ category },
   m_properties{ id },
   m_id{ id },
-  m_location{ EntityId::Mu() },
   m_map_tile{ nullptr },
   m_inventory{ Inventory() },
   m_gender{ Gender::None },
@@ -65,7 +64,6 @@ Entity::Entity(GameState& state, MapTile* map_tile, std::string category, Entity
   m_category{ category },
   m_properties{ id },
   m_id{ id },
-  m_location{ EntityId::Mu() },
   m_map_tile{ map_tile },
   m_inventory{ Inventory() },
   m_gender{ Gender::None },
@@ -87,7 +85,6 @@ Entity::Entity(Entity const& original, EntityId ref)
   m_category{ original.m_category },
   m_properties{ original.m_properties },
   m_id{ ref },
-  m_location{ original.m_location },
   m_map_tile{ original.m_map_tile },
   m_inventory{ Inventory() },             // don't copy
   m_gender{ original.m_gender },
@@ -98,6 +95,8 @@ Entity::Entity(Entity const& original, EntityId ref)
   m_wielded_items{ BodyLocationMap() },       // don't copy
   m_equipped_items{ BodyLocationMap() }        // don't copy
 {
+  /// @todo A ComponentManager method should do this copy.
+  COMPONENTS.position[ref] = COMPONENTS.position[original.m_id];
   initialize();
 }
 
@@ -597,7 +596,7 @@ EntityId Entity::getId() const
 
 EntityId Entity::getLocation() const
 {
-  return m_location;
+  return COMPONENTS.position[m_id].parent();
 }
 
 bool Entity::canSee(EntityId entity)
@@ -725,7 +724,7 @@ MapMemoryChunk const& Entity::getMemoryAt(IntVec2 coords) const
 bool Entity::move_into(EntityId new_location)
 {
   MapId old_map_id = this->getMapId();
-  EntityId old_location = m_location;
+  EntityId old_location = COMPONENTS.position[m_id].parent();
 
   if (new_location == old_location)
   {
@@ -738,13 +737,13 @@ bool Entity::move_into(EntityId new_location)
     if (new_location->getInventory().add(m_id))
     {
       // Try to lock our old location.
-      if (m_location != EntityId::Mu())
+      if (old_location != EntityId::Mu())
       {
-        m_location->getInventory().remove(m_id);
+        old_location->getInventory().remove(m_id);
       }
 
       // Set the location to the new location.
-      m_location = new_location;
+      COMPONENTS.position[m_id] = new_location;
 
       MapId new_map_id = this->getMapId();
       if (old_map_id != new_map_id)
@@ -780,15 +779,15 @@ Inventory& Entity::getInventory()
 
 bool Entity::isInsideAnotherEntity() const
 {
-  EntityId location = m_location;
-  if (location == EntityId::Mu())
+  auto& parent = COMPONENTS.position[m_id].parent();
+  if (parent == EntityId::Mu())
   {
     // Entity is a part of the MapTile such as the floor.
     return false;
   }
 
-  EntityId location2 = location->getLocation();
-  if (location2 == EntityId::Mu())
+  auto& grandparent = COMPONENTS.position[parent].parent();
+  if (grandparent == EntityId::Mu())
   {
     // Entity is directly on the floor.
     return false;
@@ -798,23 +797,23 @@ bool Entity::isInsideAnotherEntity() const
 
 MapTile* Entity::getMapTile() const
 {
-  EntityId location = m_location;
+  auto& parent = COMPONENTS.position[m_id].parent();
 
-  if (location == EntityId::Mu())
+  if (parent == EntityId::Mu())
   {
     return _get_maptile();
   }
   else
   {
-    return location->getMapTile();
+    return parent->getMapTile();
   }
 }
 
 MapId Entity::getMapId() const
 {
-  EntityId location = m_location;
+  auto parent = COMPONENTS.position[m_id].parent();
 
-  if (location == EntityId::Mu())
+  if (parent == EntityId::Mu())
   {
     MapTile* maptile = _get_maptile();
     if (maptile != nullptr)
@@ -828,7 +827,7 @@ MapId Entity::getMapId() const
   }
   else
   {
-    return location->getMapId();
+    return parent->getMapId();
   }
 }
 
@@ -1167,12 +1166,13 @@ void Entity::spill()
        ++iter)
   {
     EntityId entity = iter->second;
-    if (m_location != EntityId::Mu())
+    auto parent = COMPONENTS.position[m_id].parent();
+    if (parent != EntityId::Mu())
     {
-      if (m_location->can_contain(entity))
+      if (parent->can_contain(entity))
       {
         // Try to move this into the Entity's location.
-        success = entity->move_into(m_location);
+        success = entity->move_into(parent);
         if (success)
         {
           auto container_string = this->getDescriptiveString();
@@ -1203,7 +1203,7 @@ void Entity::spill()
 
 void Entity::destroy()
 {
-  auto old_location = m_location;
+  auto old_location = COMPONENTS.position[m_id].parent();
 
   if (static_cast<int>(getIntrinsic("inventory-size", 0)) != 0)
   {
@@ -1565,7 +1565,7 @@ json Entity::call_lua_function(std::string function_name,
 
 void Entity::setLocation(EntityId target)
 {
-  m_location = target;
+  COMPONENTS.position[m_id] = target;
 }
 
 std::unordered_set<EventID> Entity::registeredEvents() const
