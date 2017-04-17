@@ -29,12 +29,12 @@ public:
     return m_componentMap.at(id);
   }
 
-  size_t count(EntityId id)
+  size_t count(EntityId id) const
   {
     return m_componentMap.count(id);
   }
 
-  bool exists(EntityId id)
+  bool exists(EntityId id) const
   {
     return count(id) != 0ULL;
   }
@@ -56,7 +56,19 @@ public:
     return m_componentMap[id];
   }
 
-  T value(EntityId id, T defaultValue)
+  T const& value(EntityId id) const
+  {
+    static T defaultValue;
+
+    if (!exists(id))
+    {
+      return defaultValue;
+    }
+
+    return m_componentMap.at(id);
+  }
+
+  T const& value(EntityId id, T const& defaultValue) const
   {
     if (!exists(id))
     {

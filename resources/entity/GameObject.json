@@ -13,7 +13,9 @@
   "tile-fg-color": [ "color", 32, 32, 32 ],
 
   "components": {
-    "position": {}
+    "appearance": {
+      "opacity": [ "color", 255, 255, 255 ]
+    },
+    "position": []
   }
-
 }

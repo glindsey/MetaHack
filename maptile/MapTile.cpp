@@ -161,7 +161,7 @@ Color MapTile::getWallLightLevel(Direction direction) const
 
 Color MapTile::getOpacity() const
 {
-  return getCategoryData().value("opacity", Color::White);
+  return getCategoryData()["components"]["appearance"].value("opacity", Color::White);
 }
 
 bool MapTile::isOpaque() const

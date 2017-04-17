@@ -585,7 +585,7 @@ size_t Entity::removeModifier(std::string key, EntityId id)
 
 unsigned int Entity::getQuantity() const
 {
-  return COMPONENTS.physical.exists(m_id) ? COMPONENTS.physical[m_id].quantity() : 1;
+  return COMPONENTS.physical.value(m_id).quantity();
 }
 
 bool Entity::setQuantity(unsigned int quantity)
@@ -1020,7 +1020,7 @@ std::string Entity::getPossessiveString(std::string owned, std::string adjective
 
 Color Entity::getOpacity() const
 {
-  return getModifiedProperty("opacity", Color::White);
+  return COMPONENTS.appearance.value(m_id).opacity();
 }
 
 bool Entity::isOpaque()

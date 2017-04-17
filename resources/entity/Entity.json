@@ -40,7 +40,6 @@
 
   "living": false,
   "passable": false,
-  "opacity": [ "color", 255, 255, 255 ],
   "physical-mass": 0,
   "physical-size": 1,
   "tile-character": "?",
@@ -57,6 +56,9 @@
   "can-be-object-of-wield": true,
 
   "components": {
+    "appearance": {
+      "opacity": [ "color", 255, 255, 255 ]
+    },
     "physical": {
       "mass": 1000,
       "quantity": 1,
