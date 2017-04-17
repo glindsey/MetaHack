@@ -592,7 +592,7 @@ bool Entity::setQuantity(unsigned int quantity)
 {
   if (COMPONENTS.physical.exists(m_id))
   {
-    COMPONENTS.physical[m_id].setQuantity(quantity);
+    COMPONENTS.physical[m_id].quantity() = quantity;
     return true;
   }
   else

@@ -99,4 +99,6 @@ protected:
 
 private:
   std::unordered_map<EntityId, T> m_componentMap;
+
+  /// @todo Implement component modifiers.
 };

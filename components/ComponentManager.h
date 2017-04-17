@@ -4,6 +4,7 @@
 
 #include "components/ComponentMap.h"
 
+#include "components/ComponentAppearance.h"
 #include "components/ComponentPhysical.h"
 #include "components/ComponentPosition.h"
 
@@ -22,6 +23,7 @@ public:
   friend void from_json(json const& j, ComponentManager& obj);
   friend void to_json(json& j, ComponentManager const& obj);
 
+  ComponentMap<ComponentAppearance> appearance;
   ComponentMap<ComponentPhysical> physical;
   ComponentMap<ComponentPosition> position;
 };

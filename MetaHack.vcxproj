@@ -322,6 +322,7 @@
     <ClInclude Include="actions\ActionUse.h" />
     <ClInclude Include="actions\ActionWait.h" />
     <ClInclude Include="actions\ActionWield.h" />
+    <ClInclude Include="components\ComponentAppearance.h" />
     <ClInclude Include="components\ComponentMap.h" />
     <ClInclude Include="components\ComponentPhysical.h" />
     <ClInclude Include="components\ComponentPosition.h" />
@@ -460,6 +461,14 @@
     <ClCompile Include="actions\ActionUse.cpp" />
     <ClCompile Include="actions\ActionWait.cpp" />
     <ClCompile Include="actions\ActionWield.cpp" />
+    <ClCompile Include="components\ComponentAppearance.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="components\ComponentPhysical.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>

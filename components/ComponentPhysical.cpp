@@ -36,32 +36,32 @@ ComponentPhysical::ComponentPhysical(int mass, unsigned int quantity, unsigned i
 ComponentPhysical::~ComponentPhysical()
 {}
 
-void ComponentPhysical::setMass(int mass)
-{
-  m_mass = mass;
-}
-
-void ComponentPhysical::setQuantity(unsigned int quantity)
-{
-  m_quantity = quantity;
-}
-
-void ComponentPhysical::setVolume(unsigned int volume)
-{
-  m_volume = volume;
-}
-
-int ComponentPhysical::mass()
+int& ComponentPhysical::mass()
 {
   return m_mass;
 }
 
-unsigned int ComponentPhysical::quantity()
+int const& ComponentPhysical::mass() const
+{
+  return m_mass;
+}
+
+unsigned int& ComponentPhysical::quantity()
 {
   return m_quantity;
 }
 
-unsigned int ComponentPhysical::volume()
+unsigned int const& ComponentPhysical::quantity() const
+{
+  return m_quantity;
+}
+
+unsigned int& ComponentPhysical::volume()
+{
+  return m_volume;
+}
+
+unsigned int const& ComponentPhysical::volume() const
 {
   return m_volume;
 }
