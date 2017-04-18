@@ -398,7 +398,7 @@ namespace Actions
         if (hasTrait(Trait::ObjectMustNotBeEmpty))
         {
           // Check that it is not empty.
-          Inventory& inv = object->getInventory();
+          ComponentInventory& inv = object->getInventory();
           if (inv.count() == 0)
           {
             printMessageTry();
@@ -410,7 +410,7 @@ namespace Actions
         if (hasTrait(Trait::ObjectMustBeEmpty))
         {
           // Check that it is not empty.
-          Inventory& inv = object->getInventory();
+          ComponentInventory& inv = object->getInventory();
           if (inv.count() != 0)
           {
             printMessageTry();

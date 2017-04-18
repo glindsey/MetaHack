@@ -67,8 +67,8 @@ namespace Actions
     }
 
     // Check that neither is empty.
-    Inventory& inv1 = object1->getInventory();
-    Inventory& inv2 = object2->getInventory();
+    ComponentInventory& inv1 = object1->getInventory();
+    ComponentInventory& inv2 = object2->getInventory();
     if (inv1.count() == 0 || inv2.count() == 0)
     {
       printMessageTry();

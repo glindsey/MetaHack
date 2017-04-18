@@ -20,7 +20,7 @@ class AIStrategy;
 class ComponentPosition;
 class DynamicEntity;
 class MapTile;
-class Inventory;
+class ComponentInventory;
 class EntityId;
 class Entity;
 
@@ -280,7 +280,7 @@ public:
   bool canHaveActionDoneBy(EntityId entity, std::string action);
 
   /// Returns a reference to the inventory.
-  Inventory& getInventory();
+  ComponentInventory& getInventory();
 
   /// Returns true if this entity is inside another Entity.
   bool isInsideAnotherEntity() const;
@@ -569,7 +569,7 @@ private:
   EntityId m_id;
 
   /// This Entity's inventory.
-  Inventory m_inventory;
+  ComponentInventory m_inventory;
 
   /// Gender of this entity.
   Gender m_gender = Gender::None;

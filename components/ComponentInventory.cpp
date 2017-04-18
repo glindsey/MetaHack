@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include "inventory/Inventory.h"
+#include "components/ComponentInventory.h"
 
 #include "components/ComponentManager.h"
 #include "components/ComponentPhysical.h"
@@ -8,16 +8,16 @@
 #include "entity/Entity.h"
 #include "entity/EntityPool.h"
 
-Inventory::Inventory()
+ComponentInventory::ComponentInventory()
 {
 }
 
-Inventory::~Inventory()
+ComponentInventory::~ComponentInventory()
 {
   //dtor
 }
 
-void from_json(json const& j, Inventory& obj)
+void from_json(json const& j, ComponentInventory& obj)
 {
   obj.m_things.clear();
 
@@ -30,7 +30,7 @@ void from_json(json const& j, Inventory& obj)
   }
 }
 
-void to_json(json& j, Inventory const& obj)
+void to_json(json& j, ComponentInventory const& obj)
 {
   j = json::object();
 
@@ -40,7 +40,7 @@ void to_json(json& j, Inventory const& obj)
   }
 }
 
-bool Inventory::add(EntityId entity)
+bool ComponentInventory::add(EntityId entity)
 {
   // If entity is Mu, exit returning false.
   if (entity == EntityId::Mu())
@@ -79,37 +79,37 @@ bool Inventory::add(EntityId entity)
   return false;
 }
 
-void Inventory::clear()
+void ComponentInventory::clear()
 {
   m_things.clear();
 }
 
-size_t Inventory::count()
+size_t ComponentInventory::count()
 {
   return m_things.size();
 }
 
-EntityMap::iterator Inventory::begin()
+EntityMap::iterator ComponentInventory::begin()
 {
   return std::begin(m_things);
 }
 
-EntityMap::iterator Inventory::end()
+EntityMap::iterator ComponentInventory::end()
 {
   return std::end(m_things);
 }
 
-EntityMap::const_iterator Inventory::cbegin()
+EntityMap::const_iterator ComponentInventory::cbegin()
 {
   return m_things.cbegin();
 }
 
-EntityMap::const_iterator Inventory::cend()
+EntityMap::const_iterator ComponentInventory::cend()
 {
   return m_things.cend();
 }
 
-void Inventory::consolidateItems()
+void ComponentInventory::consolidateItems()
 {
   auto first_iter = std::begin(m_things);
   while (first_iter != std::end(m_things))
@@ -140,19 +140,19 @@ void Inventory::consolidateItems()
   }
 }
 
-bool Inventory::contains(EntityId entity)
+bool ComponentInventory::contains(EntityId entity)
 {
   if (GAME.entities().exists(entity) == false) return false;
 
   return (find(entity) != m_things.cend());
 }
 
-bool Inventory::contains(InventorySlot slot)
+bool ComponentInventory::contains(InventorySlot slot)
 {
   return (m_things.count(slot) != 0);
 }
 
-InventorySlot Inventory::operator[](EntityId entity)
+InventorySlot ComponentInventory::operator[](EntityId entity)
 {
   if (GAME.entities().exists(entity) == false) return InventorySlot::Invalid;
 
@@ -166,12 +166,12 @@ InventorySlot Inventory::operator[](EntityId entity)
   return InventorySlot::Invalid;
 }
 
-EntityId Inventory::operator[](InventorySlot slot)
+EntityId ComponentInventory::operator[](InventorySlot slot)
 {
   return (m_things.at(slot));
 }
 
-EntityId Inventory::split(EntityId entity, unsigned int target_quantity)
+EntityId ComponentInventory::split(EntityId entity, unsigned int target_quantity)
 {
   EntityId target_thing = EntityId::Mu();
 
@@ -195,7 +195,7 @@ EntityId Inventory::split(EntityId entity, unsigned int target_quantity)
   return target_thing;
 }
 
-EntityId Inventory::remove(InventorySlot slot)
+EntityId ComponentInventory::remove(InventorySlot slot)
 {
   EntityId removed_thing;
   if (m_things.count(slot) != 0)
@@ -206,7 +206,7 @@ EntityId Inventory::remove(InventorySlot slot)
   return removed_thing;
 }
 
-EntityId Inventory::remove(EntityId entity)
+EntityId ComponentInventory::remove(EntityId entity)
 {
   EntityId removed_thing;
 
@@ -219,7 +219,7 @@ EntityId Inventory::remove(EntityId entity)
   return removed_thing;
 }
 
-EntityId Inventory::get_largest_thing()
+EntityId ComponentInventory::get_largest_thing()
 {
   auto iter_largest = m_things.cbegin();
 
@@ -234,7 +234,7 @@ EntityId Inventory::get_largest_thing()
   return iter_largest->second;
 }
 
-EntityId Inventory::getEntity()
+EntityId ComponentInventory::getEntity()
 {
   auto iter =
     find_if([&](const EntityPair& thing_pair)
@@ -254,14 +254,14 @@ EntityId Inventory::getEntity()
   }
 }
 
-EntityMap::iterator Inventory::find_if(std::function<bool(EntityPair const&)> functor)
+EntityMap::iterator ComponentInventory::find_if(std::function<bool(EntityPair const&)> functor)
 {
   EntityMap::iterator iter =
     std::find_if(m_things.begin(), m_things.end(), functor);
   return iter;
 }
 
-EntityMap::iterator Inventory::find(EntityId target_id)
+EntityMap::iterator ComponentInventory::find(EntityId target_id)
 {
   EntityMap::iterator iter =
     std::find_if(
@@ -275,7 +275,7 @@ EntityMap::iterator Inventory::find(EntityId target_id)
   return iter;
 }
 
-bool Inventory::isSmallerThan(EntityId a, EntityId b)
+bool ComponentInventory::isSmallerThan(EntityId a, EntityId b)
 {
   if ((a == EntityId::Mu()) || (b == EntityId::Mu())) return false;
   if (!COMPONENTS.physical.exists(a) || !COMPONENTS.physical.exists(b)) return false;

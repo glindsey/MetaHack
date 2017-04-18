@@ -189,7 +189,7 @@ void MapTileStandard2DView::add_things_floor_vertices(EntityId viewer,
   auto& tile = get_map_tile();
   auto coords = tile.getCoords();
   EntityId contents = tile.getTileContents();
-  Inventory& inv = contents->getInventory();
+  ComponentInventory& inv = contents->getInventory();
 
   if (viewer->canSee(coords))
   {

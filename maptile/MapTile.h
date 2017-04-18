@@ -3,14 +3,14 @@
 
 #include "stdafx.h"
 
+#include "components/ComponentInventory.h"
+#include "entity/Entity.h"
+#include "entity/EntityId.h"
 #include "types/Direction.h"
 #include "types/GameObject.h"
-#include "inventory/Inventory.h"
 #include "types/LightInfluence.h"
 #include "map/MapFactory.h"
 #include "Subject.h"
-#include "entity/Entity.h"
-#include "entity/EntityId.h"
 
 // Forward declarations
 class DynamicEntity;

@@ -13,14 +13,14 @@ typedef std::map< InventorySlot, EntityId > EntityMap;
 typedef std::pair< InventorySlot, EntityId > EntityPair;
 
 /// An Inventory is a collection of Entities.  It has an unchangeable owner.
-class Inventory
+class ComponentInventory
 {
 public:
-  Inventory();
-  virtual ~Inventory();
+  ComponentInventory();
+  virtual ~ComponentInventory();
 
-  friend void from_json(json const& j, Inventory& obj);
-  friend void to_json(json& j, Inventory const& obj);
+  friend void from_json(json const& j, ComponentInventory& obj);
+  friend void to_json(json& j, ComponentInventory const& obj);
 
   /// Adds the passed Entity to the inventory.
   /// @param entity Entity to add to the inventory.

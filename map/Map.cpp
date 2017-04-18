@@ -3,11 +3,11 @@
 #include "map/Map.h"
 
 #include "AssertHelper.h"
+#include "components/ComponentInventory.h"
 #include "Components/ComponentManager.h"
 #include "game/App.h"
 #include "game/GameState.h"
 #include "entity/EntityPool.h"
-#include "inventory/Inventory.h"
 #include "maptile/MapTile.h"
 #include "Service.h"
 #include "services/IGameRules.h"

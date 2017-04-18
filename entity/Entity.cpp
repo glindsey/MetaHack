@@ -5,6 +5,7 @@
 #include "actions/Action.h"
 #include "actions/ActionDie.h"
 #include "AssertHelper.h"
+#include "components/ComponentInventory.h"
 #include "components/ComponentManager.h"
 #include "components/ComponentMap.h"
 #include "components/ComponentPhysical.h"
@@ -12,7 +13,6 @@
 #include "entity/EntityPool.h"
 #include "game/App.h"
 #include "game/GameState.h"
-#include "inventory/Inventory.h"
 #include "map/Map.h"
 #include "maptile/MapTile.h"
 #include "Service.h"
@@ -43,7 +43,7 @@ Entity::Entity(GameState& state, std::string category, EntityId id)
   m_category{ category },
   m_properties{ id },
   m_id{ id },
-  m_inventory{ Inventory() },
+  m_inventory{ ComponentInventory() },
   m_gender{ Gender::None },
   m_mapMemory{ MapMemory() },
   m_tilesCurrentlySeen{ TilesSeen() },
@@ -64,7 +64,7 @@ Entity::Entity(GameState& state, MapTile* map_tile, std::string category, Entity
   m_category{ category },
   m_properties{ id },
   m_id{ id },
-  m_inventory{ Inventory() },
+  m_inventory{ ComponentInventory() },
   m_gender{ Gender::None },
   m_mapMemory{ MapMemory() },
   m_tilesCurrentlySeen{ TilesSeen() },
@@ -85,7 +85,7 @@ Entity::Entity(Entity const& original, EntityId ref)
   m_category{ original.m_category },
   m_properties{ original.m_properties },
   m_id{ ref },
-  m_inventory{ Inventory() },             // don't copy
+  m_inventory{ ComponentInventory() },             // don't copy
   m_gender{ original.m_gender },
   m_mapMemory{ original.m_mapMemory },
   m_tilesCurrentlySeen{ TilesSeen() },  // don't copy
@@ -746,7 +746,7 @@ bool Entity::moveInto(EntityId newLocation)
   return false;
 }
 
-Inventory& Entity::getInventory()
+ComponentInventory& Entity::getInventory()
 {
   return m_inventory;
 }
@@ -1090,7 +1090,7 @@ void Entity::beLitBy(EntityId light)
 /// @todo Make this into an Action.
 void Entity::spill()
 {
-  Inventory& inventory = getInventory();
+  ComponentInventory& inventory = getInventory();
   std::string message;
   bool success = false;
 
@@ -1353,7 +1353,7 @@ bool Entity::process_involuntary_actions()
   // This is because entities can be deleted/removed from the inventory
   // over the course of processing them, and this could invalidate the
   // iterator.
-  Inventory temp_inventory{ m_inventory };
+  ComponentInventory temp_inventory{ m_inventory };
 
   // Process inventory.
   for (auto iter = temp_inventory.begin();
@@ -1374,7 +1374,7 @@ bool Entity::process_voluntary_actions()
   // This is because entities can be deleted/removed from the inventory
   // over the course of processing them, and this could invalidate the
   // iterator.
-  Inventory temp_inventory{ m_inventory };
+  ComponentInventory temp_inventory{ m_inventory };
 
   // Process inventory.
   for (auto iter = temp_inventory.begin();

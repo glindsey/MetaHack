@@ -393,7 +393,7 @@
     <ClInclude Include="types\GeoVector.h" />
     <ClInclude Include="utilities\GetLetterKey.h" />
     <ClInclude Include="types\IntegerRange.h" />
-    <ClInclude Include="inventory\Inventory.h" />
+    <ClInclude Include="components\ComponentInventory.h" />
     <ClInclude Include="inventory\InventoryArea.h" />
     <ClInclude Include="inventory\InventorySlot.h" />
     <ClInclude Include="keybuffer\KeyBuffer.h" />
@@ -520,7 +520,7 @@
     <ClCompile Include="services\IGraphicViews.cpp" />
     <ClCompile Include="services\IMessageLog.cpp" />
     <ClCompile Include="types\IntegerRange.cpp" />
-    <ClCompile Include="inventory\Inventory.cpp" />
+    <ClCompile Include="components\ComponentInventory.cpp" />
     <ClCompile Include="inventory\InventoryArea.cpp" />
     <ClCompile Include="inventory\InventorySelection.cpp" />
     <ClCompile Include="services\IStringDictionary.cpp" />

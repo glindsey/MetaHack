@@ -3,11 +3,11 @@
 #include "inventory/InventorySelection.h"
 
 #include "AssertHelper.h"
+#include "components/ComponentInventory.h"
 #include "components/ComponentManager.h"
 #include "components/ComponentPhysical.h"
 #include "game/App.h"
 #include "game/GameState.h"
-#include "inventory/Inventory.h"
 #include "entity/Entity.h"
 #include "entity/EntityId.h"
 
@@ -63,7 +63,7 @@ void InventorySelection::toggle_selection(InventorySlot selection)
     return;
   }
 
-  Inventory& inventory = pImpl->viewed->getInventory();
+  ComponentInventory& inventory = pImpl->viewed->getInventory();
 
   if (inventory.contains(selection))
   {
@@ -105,7 +105,7 @@ std::vector<EntityId> InventorySelection::get_selected_things()
 
   if (pImpl->viewed != EntityId::Mu())
   {
-    Inventory& inventory = pImpl->viewed->getInventory();
+    ComponentInventory& inventory = pImpl->viewed->getInventory();
 
     for (auto iter = std::begin(pImpl->selected_slots);
          iter != std::end(pImpl->selected_slots);
@@ -139,7 +139,7 @@ unsigned int InventorySelection::get_max_quantity() const
     return 0;
   }
 
-  Inventory& inventory = pImpl->viewed->getInventory();
+  ComponentInventory& inventory = pImpl->viewed->getInventory();
 
   if (pImpl->selected_slots.size() == 0)
   {
@@ -216,7 +216,7 @@ EntityId InventorySelection::getEntity(InventorySlot selection)
     return EntityId::Mu();
   }
 
-  Inventory& inventory = pImpl->viewed->getInventory();
+  ComponentInventory& inventory = pImpl->viewed->getInventory();
 
   if (inventory.contains(selection))
   {
