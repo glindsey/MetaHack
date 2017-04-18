@@ -335,6 +335,7 @@
     <ClInclude Include="design_patterns\Service.h" />
     <ClInclude Include="design_patterns\Subject.h" />
     <ClInclude Include="design_patterns\Visitor.h" />
+    <ClInclude Include="lua\LuaTemplates.h" />
     <ClInclude Include="map\MapId.h" />
     <ClInclude Include="services\FileSystemGameRules.h" />
     <ClInclude Include="gui\GUICloseHandle.h" />

@@ -6,79 +6,39 @@
 #include "game/App.h"
 #include "game/GameState.h"
 #include "lua/LuaObject.h"
+#include "lua/LuaTemplates.h"
 
 int LUA_get_mass(lua_State* L)
 {
-  int num_args = lua_gettop(L);
-
-  if (num_args != 1)
+  return LUA_getValue<int>(L, [&](EntityId entity) -> int
   {
-    CLOG(WARNING, "Lua") << "expected 1 arguments, got " << num_args;
-    return 0;
-  }
-
-  EntityId entity = EntityId(lua_tointeger(L, 1));
-
-  int result = COMPONENTS.physical.exists(entity) ? COMPONENTS.physical[entity].mass() : 0;
-  auto slot_count = the_lua_instance.push_value(result);
-
-  return slot_count;
+    return COMPONENTS.physical.exists(entity) ? COMPONENTS.physical[entity].mass() : 0;
+  });
 }
 
 int LUA_get_opacity(lua_State* L)
 {
-  int num_args = lua_gettop(L);
-
-  if (num_args != 1)
+  return LUA_getValue<Color>(L, [&](EntityId entity) -> Color
   {
-    CLOG(WARNING, "Lua") << "expected 1 arguments, got " << num_args;
-    return 0;
-  }
-
-  EntityId entity = EntityId(lua_tointeger(L, 1));
-
-  Color result = COMPONENTS.appearance.exists(entity) ? COMPONENTS.appearance[entity].opacity() : 0;
-  auto slot_count = the_lua_instance.push_value(result);
-
-  return slot_count;
+    return COMPONENTS.appearance.exists(entity) ? COMPONENTS.appearance[entity].opacity() : Color::White;
+  });
 }
 
 int LUA_get_quantity(lua_State* L)
 {
-  int num_args = lua_gettop(L);
-
-  if (num_args != 1)
+  return LUA_getValue<unsigned int>(L, [&](EntityId entity) -> unsigned int
   {
-    CLOG(WARNING, "Lua") << "expected 1 arguments, got " << num_args;
-    return 0;
-  }
-
-  EntityId entity = EntityId(lua_tointeger(L, 1));
-
-  unsigned int result = COMPONENTS.physical.exists(entity) ? COMPONENTS.physical[entity].quantity() : 0;
-  auto slot_count = the_lua_instance.push_value(result);
-
-  return slot_count;
+    return COMPONENTS.physical.exists(entity) ? COMPONENTS.physical[entity].quantity() : 1;
+  });
 }
 
 int LUA_get_volume(lua_State* L)
 {
-  int num_args = lua_gettop(L);
-
-  if (num_args != 1)
+  return LUA_getValue<int>(L, [&](EntityId entity) -> int
   {
-    CLOG(WARNING, "Lua") << "expected 1 arguments, got " << num_args;
-    return 0;
-  }
-
-  EntityId entity = EntityId(lua_tointeger(L, 1));
-
-  unsigned int result = COMPONENTS.physical.exists(entity) ? COMPONENTS.physical[entity].volume() : 0;
-  auto slot_count = the_lua_instance.push_value(result);
-
-  return slot_count;
+    return COMPONENTS.physical.exists(entity) ? COMPONENTS.physical[entity].volume() : 0;
+  });
 }
-
 
 ComponentManager::ComponentManager()
 {
