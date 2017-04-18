@@ -1,6 +1,8 @@
 #include "stdafx.h"
 
 #include "ActionHurl.h"
+#include "components/ComponentManager.h"
+#include "game/GameState.h"
 #include "services/IMessageLog.h"
 #include "Service.h"
 #include "entity/Entity.h"
@@ -43,9 +45,9 @@ namespace Actions
     auto subject = getSubject();
     auto object = getObject();
     auto direction = getTargetDirection();
-    EntityId new_location = subject->getLocation();
+    EntityId new_location = COMPONENTS.position[subject].parent();
 
-    if (object->be_object_of(*this, subject, direction))
+    if (object->beObjectOf(*this, subject, direction))
     {
       if (object->moveInto(new_location))
       {
@@ -60,7 +62,7 @@ namespace Actions
         putTr("YOU_CANT_VERB_FOO_UNKNOWN");
 
         CLOG(WARNING, "Action") << "Could not throw Entity " << object <<
-          " even though be_object_of returned Success";
+          " even though beObjectOf returned Success";
       }
     }
 

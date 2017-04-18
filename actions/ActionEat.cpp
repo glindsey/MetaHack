@@ -56,7 +56,7 @@ namespace Actions
     ///       but were interrupted.
     /// @todo Figure out eating time. This will obviously vary based on the
     ///       object being eaten.
-    m_last_eat_result = object->be_object_of(*this, subject);
+    m_last_eat_result = object->beObjectOf(*this, subject);
 
     if (m_last_eat_result)
     {

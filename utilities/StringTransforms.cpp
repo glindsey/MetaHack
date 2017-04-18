@@ -2,8 +2,10 @@
 
 #include "utilities/StringTransforms.h"
 
+#include "components/ComponentManager.h"
 #include "entity/Entity.h"
 #include "entity/EntityId.h"
+#include "game/GameState.h"
 #include "services/IStringDictionary.h"
 #include "Service.h"
 
@@ -78,7 +80,7 @@ namespace StringTransforms
 
       if ((token == "the_foos_location") || (token == "thefooslocation"))
       {
-        return object->getLocation()->getDescriptiveString(ArticleChoice::Definite);
+        return COMPONENTS.position[object].parent()->getDescriptiveString(ArticleChoice::Definite);
       }
 
       if (token == "fooself")

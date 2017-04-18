@@ -837,7 +837,7 @@ namespace Actions
 
       if ((token == "the_foos_location") || (token == "thefooslocation"))
       {
-        return getObject()->getLocation()->getDescriptiveString(ArticleChoice::Definite);
+        return COMPONENTS.position[getObject()].parent()->getDescriptiveString(ArticleChoice::Definite);
       }
 
       if ((token == "the_target_thing") || (token == "thetargetthing"))

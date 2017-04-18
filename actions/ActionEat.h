@@ -28,7 +28,7 @@ namespace Actions
     virtual StateResult doAbortWorkNVI(AnyMap& params) override;
 
   private:
-    /// The status of the be_object_of() call, which needs to be saved
+    /// The status of the beObjectOf() call, which needs to be saved
     /// for the "finish" portion of the action.
     bool m_last_eat_result;
   };

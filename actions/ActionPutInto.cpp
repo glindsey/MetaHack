@@ -1,6 +1,8 @@
 #include "stdafx.h"
 
 #include "ActionPutInto.h"
+#include "components/ComponentManager.h"
+#include "game/GameState.h"
 #include "services/IMessageLog.h"
 #include "services/IStringDictionary.h"
 #include "Service.h"
@@ -65,7 +67,7 @@ namespace Actions
     }
 
     // Check that the entity's location isn't already the container.
-    if (object->getLocation() == container)
+    if (COMPONENTS.position[object].parent() == container)
     {
       printMessageTry();
       putTr("THE_FOO_IS_ALREADY_IN_THE_TARGET");
@@ -92,7 +94,7 @@ namespace Actions
     auto object = getObject();
     auto container = getTargetThing();
 
-    if (object->be_object_of(*this, subject, container))
+    if (object->beObjectOf(*this, subject, container))
     {
       printMessageDo();
 
@@ -105,7 +107,7 @@ namespace Actions
       {
         putMsg(makeTr("YOU_CANT_VERB_FOO_PREPOSITION_TARGET_UNKNOWN", { "into" }));
 
-        CLOG(ERROR, "Action") << "Could not move Entity into Container even though be_object_of returned Success";
+        CLOG(ERROR, "Action") << "Could not move Entity into Container even though beObjectOf returned Success";
       }
     }
 

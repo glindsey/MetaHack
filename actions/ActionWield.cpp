@@ -77,7 +77,7 @@ namespace Actions
     printMessageBegin();
 
     // If we HAVE a new item, try to wield it.
-    if (object->be_object_of(*this, subject))
+    if (object->beObjectOf(*this, subject))
     {
       /// @todo Figure out action time.
       return StateResult::Success();

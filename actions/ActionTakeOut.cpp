@@ -1,6 +1,8 @@
 #include "stdafx.h"
 
 #include "ActionTakeOut.h"
+#include "components/ComponentManager.h"
+#include "game/GameState.h"
 #include "services/IMessageLog.h"
 #include "services/IStringDictionary.h"
 #include "Service.h"
@@ -31,7 +33,7 @@ namespace Actions
     std::string message;
     auto subject = getSubject();
     auto object = getObject();
-    auto container = object->getLocation();
+    auto container = COMPONENTS.position[object].parent();
 
     // Check that the container is not a MapTile or DynamicEntity.
     if (!object->isInsideAnotherEntity())
@@ -73,15 +75,15 @@ namespace Actions
     std::string message;
     auto subject = getSubject();
     auto object = getObject();
-    auto container = object->getLocation();
-    auto new_location = container->getLocation();
+    auto container = COMPONENTS.position[object].parent();
+    auto newLocation = COMPONENTS.position[container].parent();
 
     // Set the target to be the container as a kludge for message printing.
     setTarget(container);
 
-    if (object->be_object_of(*this, subject))
+    if (object->beObjectOf(*this, subject))
     {
-      if (object->moveInto(new_location))
+      if (object->moveInto(newLocation))
       {
         printMessageDo();
 
@@ -91,7 +93,7 @@ namespace Actions
       else
       {
         putMsg(makeTr("YOU_CANT_VERB_FOO_PREPOSITION_TARGET_UNKNOWN", { "from" }));
-        CLOG(ERROR, "Action") << "Could not move Entity out of Container even though be_object_of returned Success";
+        CLOG(ERROR, "Action") << "Could not move Entity out of Container even though beObjectOf returned Success";
       }
     }
 

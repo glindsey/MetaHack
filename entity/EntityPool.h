@@ -53,10 +53,6 @@ public:
   /// @param id EntityId of the object to find.
   bool exists(EntityId id);
 
-  /// Get the EntityId of Mu (nothingness).
-  /// @return The EntityId of Mu.
-  static EntityId get_mu();
-
   /// Get a reference to the Entity associated with a particular EntityId.
   /// If the ID does not exist, returns Mu.
   /// @note Should only be called by views.

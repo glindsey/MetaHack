@@ -57,8 +57,8 @@ namespace Actions
 
     // Try to unwield the item.
     /// @todo Unwielding shouldn't be instantaneous...?
-    auto lua_result = object->be_object_of(*this, subject);
-    if (object->be_object_of(*this, subject))
+    auto lua_result = object->beObjectOf(*this, subject);
+    if (object->beObjectOf(*this, subject))
     {
       std::string message;
       message = makeString("$you unwield $foo. $you are now wielding nothing in $0.", { subject->getPossessiveString(bodypart_desc) });

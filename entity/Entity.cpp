@@ -258,14 +258,14 @@ bool Entity::isWearing(EntityId entity, BodyLocation& location)
 bool Entity::canReach(EntityId entity)
 {
   // Check if it is our location.
-  auto our_location = getLocation();
+  auto our_location = COMPONENTS.position[m_id].parent();
   if (our_location == entity)
   {
     return true;
   }
 
   // Check if it's at our location.
-  auto thing_location = entity->getLocation();
+  auto thing_location = COMPONENTS.position[entity].parent();
   if (our_location == thing_location)
   {
     return true;
@@ -588,11 +588,6 @@ EntityId Entity::getId() const
   return m_id;
 }
 
-EntityId Entity::getLocation() const
-{
-  return COMPONENTS.position[m_id].parent();
-}
-
 bool Entity::canSee(EntityId entity)
 {
   // Bail if either doesn't have a Position component.
@@ -651,7 +646,7 @@ void Entity::findSeenTiles()
   //elapsed.restart();
 
   // Are we on a map?  Bail out if we aren't.
-  EntityId location = getLocation();
+  EntityId location = COMPONENTS.position[m_id].parent();
   if (location == EntityId::Mu())
   {
     return;
@@ -871,7 +866,7 @@ std::string Entity::getDescriptiveString(ArticleChoice articles,
 {
   auto& config = Service<IConfigSettings>::get();
 
-  EntityId location = this->getLocation();
+  EntityId location = COMPONENTS.position[m_id].parent();
   unsigned int quantity = COMPONENTS.physical.value(m_id).quantity();
 
   std::string name;
@@ -1011,7 +1006,7 @@ bool Entity::isOpaque()
 
 void Entity::light_up_surroundings()
 {
-  EntityId location = getLocation();
+  EntityId location = COMPONENTS.position[m_id].parent();
 
   if (static_cast<int>(getIntrinsic("inventory-size", 0)) != 0)
   {
@@ -1069,7 +1064,7 @@ void Entity::beLitBy(EntityId light)
 
   EntityId location = thisPosition.parent();
 
-  if (getLocation() == EntityId::Mu())
+  if (location == EntityId::Mu())
   {
     thisPosition.map()->addLight(light);
   }
@@ -1415,17 +1410,17 @@ bool Entity::do_(Actions::Action& action)
   return call_lua_function("do_" + action.getType(), {}, true);
 }
 
-bool Entity::be_object_of(Actions::Action& action, EntityId subject)
+bool Entity::beObjectOf(Actions::Action& action, EntityId subject)
 {
   return call_lua_function("on_object_of_" + action.getType(), subject, true);
 }
 
-bool Entity::be_object_of(Actions::Action& action, EntityId subject, EntityId target)
+bool Entity::beObjectOf(Actions::Action& action, EntityId subject, EntityId target)
 {
   return call_lua_function("on_object_of_" + action.getType(), { subject, target }, true);
 }
 
-bool Entity::be_object_of(Actions::Action& action, EntityId subject, Direction direction)
+bool Entity::beObjectOf(Actions::Action& action, EntityId subject, Direction direction)
 {
   return call_lua_function("on_object_of_" + action.getType(), { subject, direction }, true);
 }

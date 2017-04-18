@@ -56,8 +56,8 @@ namespace Actions
 
     // Try to take off the item.
     /// @todo Disrobing shouldn't be instantaneous.
-    auto lua_result = object->be_object_of(*this, subject);
-    if (object->be_object_of(*this, subject))
+    auto lua_result = object->beObjectOf(*this, subject);
+    if (object->beObjectOf(*this, subject))
     {
       std::string message;
       putMsg(makeTr("YOU_CVERB_THE_FOO") + " " + 

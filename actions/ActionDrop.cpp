@@ -2,6 +2,8 @@
 
 #include "ActionDrop.h"
 #include "ActionMove.h"
+#include "components/ComponentManager.h"
+#include "game/GameState.h"
 #include "services/IMessageLog.h"
 #include "services/IStringDictionary.h"
 #include "Service.h"
@@ -42,7 +44,7 @@ namespace Actions
     std::string message;
     auto subject = getSubject();
     auto object = getObjects().front();
-    EntityId location = subject->getLocation();
+    EntityId location = COMPONENTS.position[subject].parent();
 
     /// @todo Handle dropping a certain quantity of an item.
 
@@ -57,7 +59,7 @@ namespace Actions
     {
       if (location->canContain(object))
       {
-        if (object->be_object_of(*this, subject))
+        if (object->beObjectOf(*this, subject))
         {
           printMessageDo();
 
@@ -71,12 +73,12 @@ namespace Actions
             putTr("YOU_CANT_VERB_FOO_UNKNOWN");
 
             CLOG(WARNING, "Action") << "Could not drop Entity " << object <<
-              " even though be_object_of returned Success";
+              " even though beObjectOf returned Success";
           }
         }
         else // Drop failed
         {
-          // be_object_of() will print any relevant messages
+          // beObjectOf() will print any relevant messages
         }
       }
       else // can't contain the entity

@@ -54,7 +54,7 @@ namespace Actions
     printMessageFinish();
 
     /// @todo Split read time into start/finish actions.
-    if (object->be_object_of(*this, subject))
+    if (object->beObjectOf(*this, subject))
     {
       /// @todo Handle object destruction on use. (Lua script can do this.)
       //putTr("THE_FOO_DISINTEGRATES_AFTER_YOU_VERB");

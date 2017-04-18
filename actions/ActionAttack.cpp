@@ -33,7 +33,7 @@ namespace Actions
   StateResult ActionAttack::doPreBeginWorkNVI(AnyMap& params)
   {
     auto subject = getSubject();
-    auto location = subject->getLocation();
+    auto location = COMPONENTS.position[subject].parent();
     auto new_direction = getTargetDirection();
 
     // Check if we're attacking ourself.

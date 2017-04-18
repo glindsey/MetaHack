@@ -228,9 +228,9 @@ void AppStateGameMode::render_map(sf::RenderTexture& texture, int frame)
   texture.clear();
 
   EntityId player = game.getPlayer();
-  EntityId location = player->getLocation();
+  EntityId location = COMPONENTS.position[player].parent();
 
-  if (location == game.entities().get_mu())
+  if (location == EntityId::Mu())
   {
     throw std::runtime_error("Uh oh, the player's location appears to have been deleted!");
   }
@@ -418,8 +418,8 @@ bool AppStateGameMode::handle_key_press(App::EventKeyPressed const& key)
           case sf::Keyboard::Key::LBracket:
           {
             EntityId entity = m_inventorySelection->get_viewed();
-            EntityId location = entity->getLocation();
-            if (location != getGameState().entities().get_mu())
+            EntityId location = COMPONENTS.position[entity].parent();
+            if (location != EntityId::Mu())
             {
               m_inventorySelection->setViewed(location);
             }
@@ -1050,7 +1050,7 @@ void AppStateGameMode::resetInventorySelection()
     }
     else
     {
-      m_inventorySelection->setViewed(player->getLocation());
+      m_inventorySelection->setViewed(COMPONENTS.position[player].parent());
     }
   }
 }

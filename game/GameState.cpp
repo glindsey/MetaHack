@@ -90,7 +90,7 @@ void GameState::incrementGameClock(ElapsedTime added_time)
 
 bool GameState::setPlayer(EntityId ref)
 {
-  Assert("GameState", ref != entities().get_mu(), "tried to make nothingness the player");
+  Assert("GameState", ref != EntityId::Mu(), "tried to make nothingness the player");
 
   m_global["player"] = ref;
   return true;

@@ -208,9 +208,6 @@ public:
   /// Return a reference to this entity.
   EntityId getId() const;
 
-  /// Return the location of this entity.
-  EntityId getLocation() const;
-
   /// Return whether this Entity can see the requested Entity.
   bool canSee(EntityId entity);
 
@@ -467,21 +464,21 @@ public:
   /// @param action   The action to be the target of.
   /// @param subject  The subject performing the action.
   /// @return Bool indicating whether the action succeeded.
-  bool be_object_of(Actions::Action& action, EntityId subject);
+  bool beObjectOf(Actions::Action& action, EntityId subject);
 
   /// Perform the effects of being a object of an action with a target.
   /// @param action   The action to be the target of.
   /// @param subject  The subject performing the action.
   /// @param target   The target of the action.
   /// @return Bool indicating whether the action succeeded.
-  bool be_object_of(Actions::Action& action, EntityId subject, EntityId target);
+  bool beObjectOf(Actions::Action& action, EntityId subject, EntityId target);
 
   /// Perform the effects of being a object of an action with a direction.
   /// @param action     The action to be the target of.
   /// @param subject    The subject performing the action.
   /// @param direction  The direction of the action.
   /// @return Bool indicating whether the action succeeded.
-  bool be_object_of(Actions::Action& action, EntityId subject, Direction direction);
+  bool beObjectOf(Actions::Action& action, EntityId subject, Direction direction);
 
   /// Perform an action when this entity is hit by an attack.
   bool be_hurt_by(EntityId subject);

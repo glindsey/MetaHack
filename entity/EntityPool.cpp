@@ -87,7 +87,7 @@ EntityId EntityPool::createTileContents(MapTile* map_tile)
 
 EntityId EntityPool::clone(EntityId original)
 {
-  if (this->exists(original) == false) return get_mu();
+  if (this->exists(original) == false) return EntityId::Mu();
   Entity& original_thing = this->get(original);
 
   EntityId new_id = EntityId(m_nextEntityId);
@@ -101,7 +101,7 @@ EntityId EntityPool::clone(EntityId original)
 
 void EntityPool::destroy(EntityId id)
 {
-  if (id != get_mu())
+  if (id != EntityId::Mu())
   {
     if (m_thing_map.count(id) != 0)
     {
@@ -128,7 +128,7 @@ Entity& EntityPool::get(EntityId id)
   catch (std::out_of_range&)
   {
     CLOG(WARNING, "Entity") << "Tried to get entity " << id << " which does not exist";
-    return *(m_thing_map[get_mu()]);
+    return *(m_thing_map[EntityId::Mu()]);
   }
 }
 
@@ -141,11 +141,6 @@ Entity const& EntityPool::get(EntityId id) const
   catch (std::out_of_range&)
   {
     CLOG(WARNING, "Entity") << "Tried to get entity " << id << " which does not exist";
-    return *(m_thing_map.at(get_mu()));
+    return *(m_thing_map.at(EntityId::Mu()));
   }
-}
-
-EntityId EntityPool::get_mu()
-{
-  return EntityId();
 }

@@ -44,13 +44,13 @@ namespace Actions
 
     // Do the drinking action here.
     /// @todo We drink from the object, but it's what is inside that is
-    ///       actually being consumed. Do we call be_object_of() on the
+    ///       actually being consumed. Do we call beObjectOf() on the
     ///       object, or on the object's contents?
     ///       For now I am assuming we do it on the contents, since they
     ///       are what will affect the drinker.
     /// @todo Figure out drinking time. This will vary based on the contents
     ///       being consumed.
-    if (contents->be_object_of(*this, subject))
+    if (contents->beObjectOf(*this, subject))
     {
       contents->destroy();
       return StateResult::Success();
