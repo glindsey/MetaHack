@@ -169,7 +169,7 @@ void Map::updateLighting()
     for (int x = 0; x < m_map_size.x; ++x)
     {
       EntityId contents = TILE(x, y).getTileContents();
-      auto& inventory = contents->getInventory();
+      auto& inventory = COMPONENTS.inventory[contents];
       for (auto iter = inventory.begin();
            iter != inventory.end();
            ++iter)

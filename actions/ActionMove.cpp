@@ -78,7 +78,7 @@ namespace Actions
         EntityId new_floor = new_tile.getTileContents();
 
         // See if the tile to move into contains another creature.
-        EntityId creature = new_floor->getInventory().getEntity();
+        EntityId creature = COMPONENTS.inventory[new_floor].getEntity();
         if (creature != EntityId::Mu())
         {
           /// @todo Setting choosing whether auto-attack is on.

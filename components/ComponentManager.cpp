@@ -48,6 +48,7 @@ ComponentManager::ComponentManager()
 ComponentManager::ComponentManager(json const& j)
 {
   appearance = j["appearance"];
+  inventory = j["inventory"];
   physical = j["physical"];
   position = j["position"];
 
@@ -65,9 +66,19 @@ void ComponentManager::initialize()
   the_lua_instance.register_function("get_volume", LUA_get_volume);
 }
 
+void ComponentManager::clone(EntityId original, EntityId newId)
+{
+  appearance[newId] = appearance[original];
+  /// Do NOT clone inventory
+  physical[newId] = physical[original];
+  position[newId] = position[original];
+
+}
+
 void ComponentManager::populate(EntityId id, json const& j)
 {
   if (j.count("appearance") != 0) appearance[id] = j["appearance"];
+  if (j.count("inventory") != 0) inventory[id] = j["inventory"];
   if (j.count("physical") != 0) physical[id] = j["physical"];
   if (j.count("position") != 0) position[id] = j["position"];
 }
@@ -75,6 +86,7 @@ void ComponentManager::populate(EntityId id, json const& j)
 void from_json(json const& j, ComponentManager& obj)
 {
   obj.appearance = j.value("appearance", json::object());
+  obj.inventory = j.value("inventory", json::object());
   obj.physical = j.value("physical", json::object());
   obj.position = j.value("position", json::object());
 }
@@ -82,6 +94,7 @@ void from_json(json const& j, ComponentManager& obj)
 void to_json(json& j, ComponentManager const& obj)
 {
   j["appearance"] = obj.appearance;
+  j["inventory"] = obj.inventory;
   j["physical"] = obj.physical;
   j["position"] = obj.position;
 }

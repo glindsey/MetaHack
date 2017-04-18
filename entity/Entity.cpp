@@ -43,7 +43,6 @@ Entity::Entity(GameState& state, std::string category, EntityId id)
   m_category{ category },
   m_properties{ id },
   m_id{ id },
-  m_inventory{ ComponentInventory() },
   m_gender{ Gender::None },
   m_mapMemory{ MapMemory() },
   m_tilesCurrentlySeen{ TilesSeen() },
@@ -64,7 +63,6 @@ Entity::Entity(GameState& state, MapTile* map_tile, std::string category, Entity
   m_category{ category },
   m_properties{ id },
   m_id{ id },
-  m_inventory{ ComponentInventory() },
   m_gender{ Gender::None },
   m_mapMemory{ MapMemory() },
   m_tilesCurrentlySeen{ TilesSeen() },
@@ -85,7 +83,6 @@ Entity::Entity(Entity const& original, EntityId ref)
   m_category{ original.m_category },
   m_properties{ original.m_properties },
   m_id{ ref },
-  m_inventory{ ComponentInventory() },             // don't copy
   m_gender{ original.m_gender },
   m_mapMemory{ original.m_mapMemory },
   m_tilesCurrentlySeen{ TilesSeen() },  // don't copy
@@ -94,8 +91,7 @@ Entity::Entity(Entity const& original, EntityId ref)
   m_wielded_items{ BodyLocationMap() },       // don't copy
   m_equipped_items{ BodyLocationMap() }        // don't copy
 {
-  /// @todo A ComponentManager method should do this copy.
-  COMPONENTS.position[ref] = COMPONENTS.position[original.m_id];
+  COMPONENTS.clone(original.m_id, ref);
   initialize();
 }
 
@@ -272,7 +268,7 @@ bool Entity::canReach(EntityId entity)
   }
 
   // Check if it's in our inventory.
-  if (this->getInventory().contains(entity))
+  if (COMPONENTS.inventory[m_id].contains(entity))
   {
     return true;
   }
@@ -708,12 +704,12 @@ bool Entity::moveInto(EntityId newLocation)
 
   if (newLocation->canContain(m_id))
   {
-    if (newLocation->getInventory().add(m_id))
+    if (COMPONENTS.inventory[newLocation].add(m_id) == true)
     {
       // Try to lock our old location.
       if (oldLocation != EntityId::Mu())
       {
-        oldLocation->getInventory().remove(m_id);
+        COMPONENTS.inventory[oldLocation].remove(m_id);
       }
 
       // Set the location to the new location.
@@ -744,11 +740,6 @@ bool Entity::moveInto(EntityId newLocation)
   } // end if (canContain is true)
 
   return false;
-}
-
-ComponentInventory& Entity::getInventory()
-{
-  return m_inventory;
 }
 
 bool Entity::isInsideAnotherEntity() const
@@ -1027,7 +1018,7 @@ void Entity::light_up_surroundings()
     //if (!isOpaque() || isWielding(light) || isWearing(light))
     if (!opaque || is_entity)
     {
-      auto& inventory = getInventory();
+      auto& inventory = COMPONENTS.inventory[m_id];
       for (auto iter = inventory.begin();
            iter != inventory.end();
            ++iter)
@@ -1090,7 +1081,7 @@ void Entity::beLitBy(EntityId light)
 /// @todo Make this into an Action.
 void Entity::spill()
 {
-  ComponentInventory& inventory = getInventory();
+  ComponentInventory& inventory = COMPONENTS.inventory[m_id];
   std::string message;
   bool success = false;
 
@@ -1147,7 +1138,7 @@ void Entity::destroy()
 
   if (old_location != EntityId::Mu())
   {
-    old_location->getInventory().remove(m_id);
+    COMPONENTS.inventory[old_location].remove(m_id);
   }
 
   //notifyObservers(Event::Updated);
@@ -1353,7 +1344,7 @@ bool Entity::process_involuntary_actions()
   // This is because entities can be deleted/removed from the inventory
   // over the course of processing them, and this could invalidate the
   // iterator.
-  ComponentInventory temp_inventory{ m_inventory };
+  ComponentInventory temp_inventory{ COMPONENTS.inventory[m_id] };
 
   // Process inventory.
   for (auto iter = temp_inventory.begin();
@@ -1374,7 +1365,7 @@ bool Entity::process_voluntary_actions()
   // This is because entities can be deleted/removed from the inventory
   // over the course of processing them, and this could invalidate the
   // iterator.
-  ComponentInventory temp_inventory{ m_inventory };
+  ComponentInventory temp_inventory{ COMPONENTS.inventory[m_id] };
 
   // Process inventory.
   for (auto iter = temp_inventory.begin();
@@ -1468,12 +1459,12 @@ bool Entity::can_merge_with(EntityId other) const
 
 bool Entity::canContain(EntityId entity)
 {
-  int inventory_size = getIntrinsic("inventory-size", 0);
-  if (inventory_size == 0)
+  size_t maxSize = COMPONENTS.inventory[m_id].maxSize();
+  if (maxSize == 0)
   {
     return false;
   }
-  else if (getInventory().count() >= inventory_size)
+  else if (COMPONENTS.inventory[m_id].count() >= maxSize)
   {
     return false;
   }

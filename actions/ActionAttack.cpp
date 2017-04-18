@@ -90,7 +90,7 @@ namespace Actions
     EntityId new_floor = new_tile.getTileContents();
 
     // See if the tile to move into contains another creature.
-    auto object = new_floor->getInventory().getEntity();
+    auto object = COMPONENTS.inventory[new_floor].getEntity();
     setObject(object);
     if (object == EntityId::Mu())
     {

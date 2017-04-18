@@ -398,7 +398,7 @@ namespace Actions
         if (hasTrait(Trait::ObjectMustNotBeEmpty))
         {
           // Check that it is not empty.
-          ComponentInventory& inv = object->getInventory();
+          ComponentInventory& inv = COMPONENTS.inventory[object];
           if (inv.count() == 0)
           {
             printMessageTry();
@@ -410,7 +410,7 @@ namespace Actions
         if (hasTrait(Trait::ObjectMustBeEmpty))
         {
           // Check that it is not empty.
-          ComponentInventory& inv = object->getInventory();
+          ComponentInventory& inv = COMPONENTS.inventory[object];
           if (inv.count() != 0)
           {
             printMessageTry();
@@ -433,7 +433,7 @@ namespace Actions
         if (hasTrait(Trait::ObjectMustBeInInventory))
         {
           // Check that each object is in our inventory.
-          if (!subject->getInventory().contains(object))
+          if (!COMPONENTS.inventory[subject].contains(object))
           {
             printMessageTry();
             auto message = makeTr("CONJUNCTION_HOWEVER") + " " + makeTr("FOO_PRO_SUB_IS_NOT_IN_YOUR_INVENTORY");
@@ -450,7 +450,7 @@ namespace Actions
         if (hasTrait(Trait::ObjectMustNotBeInInventory))
         {
           // Check if it's already in our inventory.
-          if (subject->getInventory().contains(object))
+          if (COMPONENTS.inventory[subject].contains(object))
           {
             printMessageTry();
             putTr("THE_FOO_IS_ALREADY_IN_YOUR_INVENTORY");

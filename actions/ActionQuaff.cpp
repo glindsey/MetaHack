@@ -1,6 +1,8 @@
 #include "stdafx.h"
 
 #include "ActionQuaff.h"
+#include "components/ComponentManager.h"
+#include "game/GameState.h"
 #include "services/IMessageLog.h"
 #include "services/IStringDictionary.h"
 #include "Service.h"
@@ -38,7 +40,7 @@ namespace Actions
   {
     auto subject = getSubject();
     auto object = getObject();
-    auto contents = object->getInventory()[InventorySlot::Zero];
+    auto contents = COMPONENTS.inventory[object][InventorySlot::Zero];
 
     printMessageBegin();
 

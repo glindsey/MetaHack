@@ -1,6 +1,8 @@
 #include "stdafx.h"
 
 #include "ActionMix.h"
+#include "components/ComponentManager.h"
+#include "game/GameState.h"
 #include "entity/Entity.h"
 #include "entity/EntityId.h"
 #include "services/IMessageLog.h"
@@ -67,8 +69,8 @@ namespace Actions
     }
 
     // Check that neither is empty.
-    ComponentInventory& inv1 = object1->getInventory();
-    ComponentInventory& inv2 = object2->getInventory();
+    ComponentInventory& inv1 = COMPONENTS.inventory[object1];
+    ComponentInventory& inv2 = COMPONENTS.inventory[object2];
     if (inv1.count() == 0 || inv2.count() == 0)
     {
       printMessageTry();

@@ -58,7 +58,7 @@ void InventoryArea::drawContents_(sf::RenderTexture& texture, int frame)
   float text_coord_x = text_offset.x;
   float text_coord_y = text_offset.y + (line_spacing_y * 1.5f);
 
-  ComponentInventory& inventory = viewed_thing->getInventory();
+  ComponentInventory& inventory = COMPONENTS.inventory[viewed_thing];
   auto& selected_slots = m_inventorySelection.get_selected_slots();
 
   /// @todo At the moment this does not split lines that are too long, instead

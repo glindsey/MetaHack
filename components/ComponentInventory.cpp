@@ -23,9 +23,15 @@ void from_json(json const& j, ComponentInventory& obj)
 
   if (j.is_object() && j.size() != 0)
   {
-    for (auto& citer = j.cbegin(); citer != j.cend(); ++citer)
+    obj.m_maxSize = j["max-size"];
+
+    if (j.count("items") != 0)
     {
-      obj.m_things[citer.key()] = citer.value();
+      json const& items = j["items"];
+      for (auto& citer = items.cbegin(); citer != items.cend(); ++citer)
+      {
+        obj.m_things[citer.key()] = citer.value();
+      }
     }
   }
 }
@@ -34,12 +40,16 @@ void to_json(json& j, ComponentInventory const& obj)
 {
   j = json::object();
 
+  j["max-size"] = obj.m_maxSize;
+  json& items = j["items"];
+
   for (auto& citer = obj.m_things.cbegin(); citer != obj.m_things.cend(); ++citer)
   {
-    j[citer->first] = citer->second;
+    items[citer->first] = citer->second;
   }
 }
 
+/// @todo Handle max inventory size.
 bool ComponentInventory::add(EntityId entity)
 {
   // If entity is Mu, exit returning false.
@@ -82,6 +92,11 @@ bool ComponentInventory::add(EntityId entity)
 void ComponentInventory::clear()
 {
   m_things.clear();
+}
+
+size_t const& ComponentInventory::maxSize()
+{
+  return m_maxSize;
 }
 
 size_t ComponentInventory::count()

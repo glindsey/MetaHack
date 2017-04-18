@@ -30,6 +30,9 @@ public:
   /// Clears this inventory.
   void clear();
 
+  /// Gets the maximum allowed size of this inventory.
+  size_t const& maxSize();
+
   /// Gets the current count of this inventory.
   /// @return The number of items in the inventory.
   size_t count();
@@ -85,4 +88,7 @@ protected:
 private:
   /// Entities contained in this Inventory, using slot number as key.
   EntityMap m_things;
+
+  /// Maximum allowed size for this Inventory.
+  size_t m_maxSize;
 };

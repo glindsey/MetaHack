@@ -63,7 +63,7 @@ void InventorySelection::toggle_selection(InventorySlot selection)
     return;
   }
 
-  ComponentInventory& inventory = pImpl->viewed->getInventory();
+  ComponentInventory& inventory = COMPONENTS.inventory[pImpl->viewed];
 
   if (inventory.contains(selection))
   {
@@ -105,7 +105,7 @@ std::vector<EntityId> InventorySelection::get_selected_things()
 
   if (pImpl->viewed != EntityId::Mu())
   {
-    ComponentInventory& inventory = pImpl->viewed->getInventory();
+    ComponentInventory& inventory = COMPONENTS.inventory[pImpl->viewed];
 
     for (auto iter = std::begin(pImpl->selected_slots);
          iter != std::end(pImpl->selected_slots);
@@ -139,7 +139,7 @@ unsigned int InventorySelection::get_max_quantity() const
     return 0;
   }
 
-  ComponentInventory& inventory = pImpl->viewed->getInventory();
+  ComponentInventory& inventory = COMPONENTS.inventory[pImpl->viewed];
 
   if (pImpl->selected_slots.size() == 0)
   {
@@ -216,7 +216,7 @@ EntityId InventorySelection::getEntity(InventorySlot selection)
     return EntityId::Mu();
   }
 
-  ComponentInventory& inventory = pImpl->viewed->getInventory();
+  ComponentInventory& inventory = COMPONENTS.inventory[pImpl->viewed];
 
   if (inventory.contains(selection))
   {

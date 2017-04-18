@@ -279,9 +279,6 @@ public:
   bool canHaveActionDoneBy(EntityId entity, Actions::Action& action);
   bool canHaveActionDoneBy(EntityId entity, std::string action);
 
-  /// Returns a reference to the inventory.
-  ComponentInventory& getInventory();
-
   /// Returns true if this entity is inside another Entity.
   bool isInsideAnotherEntity() const;
 
@@ -567,9 +564,6 @@ private:
 
   /// Reference to this Entity.
   EntityId m_id;
-
-  /// This Entity's inventory.
-  ComponentInventory m_inventory;
 
   /// Gender of this entity.
   Gender m_gender = Gender::None;
