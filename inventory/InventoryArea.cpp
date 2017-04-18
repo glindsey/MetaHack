@@ -152,7 +152,7 @@ void InventoryArea::drawContents_(sf::RenderTexture& texture, int frame)
     std::stringstream item_name;
     if (selection_order == 1)
     {
-      unsigned int max_quantity = COMPONENTS.physical.value(entity).quantity();
+      unsigned int max_quantity = COMPONENTS.physical.valueOrDefault(entity).quantity();
       unsigned int selected_quantity = m_inventorySelection.get_selected_quantity();
       if ((max_quantity > 1) && (selected_quantity < max_quantity))
       {

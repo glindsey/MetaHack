@@ -140,8 +140,8 @@ void ComponentInventory::consolidateItems()
 
       if (first_thing->can_merge_with(second_thing))
       {
-        auto first_quantity = COMPONENTS.physical.value(first_thing).quantity();
-        auto second_quantity = COMPONENTS.physical.value(second_thing).quantity();
+        auto first_quantity = COMPONENTS.physical.valueOrDefault(first_thing).quantity();
+        auto second_quantity = COMPONENTS.physical.valueOrDefault(second_thing).quantity();
         COMPONENTS.physical[first_thing].quantity() = first_quantity + second_quantity;
         COMPONENTS.physical[second_thing].quantity() = 0;
 
@@ -197,7 +197,7 @@ EntityId ComponentInventory::split(EntityId entity, unsigned int target_quantity
     if (iter != m_things.cend())
     {
       EntityId source_thing = iter->second;
-      unsigned int source_quantity = COMPONENTS.physical.value(source_thing).quantity();
+      unsigned int source_quantity = COMPONENTS.physical.valueOrDefault(source_thing).quantity();
       if (target_quantity < source_quantity)
       {
         target_thing = GAME.entities().clone(source_thing);
@@ -293,7 +293,7 @@ EntityMap::iterator ComponentInventory::find(EntityId target_id)
 bool ComponentInventory::isSmallerThan(EntityId a, EntityId b)
 {
   if ((a == EntityId::Mu()) || (b == EntityId::Mu())) return false;
-  if (!COMPONENTS.physical.exists(a) || !COMPONENTS.physical.exists(b)) return false;
+  if (!COMPONENTS.physical.existsFor(a) || !COMPONENTS.physical.existsFor(b)) return false;
 
   return (COMPONENTS.physical[a].totalVolume() < COMPONENTS.physical[b].totalVolume());
 }

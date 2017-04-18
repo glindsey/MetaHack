@@ -326,7 +326,7 @@ void Map::doRecursiveLighting(EntityId source,
 void Map::addLight(EntityId source)
 {
   // If the source doesn't have a Position component, bail.
-  if (!COMPONENTS.position.exists(source)) return;
+  if (!COMPONENTS.position.existsFor(source)) return;
 
   // Get the location of the light source.
   auto& position = COMPONENTS.position[source];

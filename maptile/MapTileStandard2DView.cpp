@@ -91,7 +91,7 @@ void MapTileStandard2DView::add_tile_vertices(EntityId viewer,
 void MapTileStandard2DView::add_memory_vertices_to(sf::VertexArray& vertices,
                                                    EntityId viewer)
 {
-  if (!COMPONENTS.position.exists(viewer)) return;
+  if (!COMPONENTS.position.existsFor(viewer)) return;
 
   auto& config = Service<IConfigSettings>::get();
   auto& tile = get_map_tile();
@@ -220,7 +220,7 @@ void MapTileStandard2DView::add_thing_floor_vertices(EntityId entityId, sf::Vert
   float ts2 = ts * 0.5f;
 
   // If this entity doesn't have a Position component, bail.
-  if (!COMPONENTS.position.exists(entityId)) return;
+  if (!COMPONENTS.position.existsFor(entityId)) return;
 
   auto& position = COMPONENTS.position[entityId];
   IntVec2 const& coords = position.coords();
@@ -271,7 +271,7 @@ void MapTileStandard2DView::add_wall_vertices_to(sf::VertexArray& vertices,
 
   // Player.
   EntityId player = GAME.getPlayer();
-  bool playerHasLocation = COMPONENTS.position.exists(player);
+  bool playerHasLocation = COMPONENTS.position.existsFor(player);
 
   if (player != EntityId::Mu() && playerHasLocation)
   {

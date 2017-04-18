@@ -106,7 +106,7 @@ namespace LuaEntityFunctions
 
     EntityId entity = EntityId(lua_tointeger(L, 1));
 
-    if (!COMPONENTS.position.exists(entity))
+    if (!COMPONENTS.position.existsFor(entity))
     {
       lua_pushnil(L);
       lua_pushnil(L);
@@ -134,7 +134,7 @@ namespace LuaEntityFunctions
 
     EntityId entity = EntityId(lua_tointeger(L, 1));
 
-    if (!COMPONENTS.position.exists(entity))
+    if (!COMPONENTS.position.existsFor(entity))
     {
       lua_pushnil(L);
     }

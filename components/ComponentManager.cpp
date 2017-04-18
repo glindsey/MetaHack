@@ -12,7 +12,7 @@ int LUA_get_mass(lua_State* L)
 {
   return LUA_getValue<int>(L, [&](EntityId entity) -> int
   {
-    return COMPONENTS.physical.exists(entity) ? COMPONENTS.physical[entity].mass() : 0;
+    return COMPONENTS.physical.existsFor(entity) ? COMPONENTS.physical[entity].mass() : 0;
   });
 }
 
@@ -20,7 +20,7 @@ int LUA_get_opacity(lua_State* L)
 {
   return LUA_getValue<Color>(L, [&](EntityId entity) -> Color
   {
-    return COMPONENTS.appearance.exists(entity) ? COMPONENTS.appearance[entity].opacity() : Color::White;
+    return COMPONENTS.appearance.existsFor(entity) ? COMPONENTS.appearance[entity].opacity() : Color::White;
   });
 }
 
@@ -28,7 +28,7 @@ int LUA_get_quantity(lua_State* L)
 {
   return LUA_getValue<unsigned int>(L, [&](EntityId entity) -> unsigned int
   {
-    return COMPONENTS.physical.exists(entity) ? COMPONENTS.physical[entity].quantity() : 1;
+    return COMPONENTS.physical.existsFor(entity) ? COMPONENTS.physical[entity].quantity() : 1;
   });
 }
 
@@ -36,7 +36,7 @@ int LUA_get_volume(lua_State* L)
 {
   return LUA_getValue<int>(L, [&](EntityId entity) -> int
   {
-    return COMPONENTS.physical.exists(entity) ? COMPONENTS.physical[entity].volume() : 0;
+    return COMPONENTS.physical.existsFor(entity) ? COMPONENTS.physical[entity].volume() : 0;
   });
 }
 

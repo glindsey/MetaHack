@@ -1041,7 +1041,7 @@ void AppStateGameMode::resetInventorySelection()
   {
     if (m_currentInputState == GameInputState::CursorLook)
     {
-      if (COMPONENTS.position.exists(player))
+      if (COMPONENTS.position.existsFor(player))
       {
         MapId gameMap = COMPONENTS.position[player].map();
         EntityId floorId = gameMap->getTile(m_cursorCoords).getTileContents();
@@ -1090,7 +1090,7 @@ bool AppStateGameMode::moveCursor(Direction direction)
   
   bool result = false;
 
-  if (COMPONENTS.position.exists(player))
+  if (COMPONENTS.position.existsFor(player))
   {
     MapId map = COMPONENTS.position[player].map();
     result = map->calcCoords(m_cursorCoords, direction, m_cursorCoords);

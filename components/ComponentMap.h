@@ -2,6 +2,8 @@
 
 #include "entity/EntityId.h"
 
+#include <boost/optional.hpp>
+
 #include "json.hpp"
 using json = ::nlohmann::json;
 
@@ -14,29 +16,24 @@ public:
   ~ComponentMap() {}
 
   /// Add an entity to this component map, with the default component value.
-  void add(EntityId id)
+  void addDefault(EntityId id)
   {
     m_componentMap[id] = T();
   }
 
-  T& at(EntityId id)
+  bool existsFor(EntityId id) const
+  {
+    return m_componentMap.count(id) != 0ULL;
+  }
+
+  T& of(EntityId id)
   {
     return m_componentMap.at(id);
   }
 
-  T const& at(EntityId id) const
+  T const& of(EntityId id) const
   {
     return m_componentMap.at(id);
-  }
-
-  size_t count(EntityId id) const
-  {
-    return m_componentMap.count(id);
-  }
-
-  bool exists(EntityId id) const
-  {
-    return count(id) != 0ULL;
   }
 
   /// Remove an entity from this component map.
@@ -48,7 +45,7 @@ public:
 
   T& operator[](EntityId id)
   {
-    if (!exists(id))
+    if (!existsFor(id))
     {
       m_componentMap[id] = T();
     }
@@ -56,11 +53,11 @@ public:
     return m_componentMap[id];
   }
 
-  T const& value(EntityId id) const
+  T const& valueOrDefault(EntityId id) const
   {
     static T defaultValue;
 
-    if (!exists(id))
+    if (!existsFor(id))
     {
       return defaultValue;
     }
@@ -68,9 +65,9 @@ public:
     return m_componentMap.at(id);
   }
 
-  T const& value(EntityId id, T const& defaultValue) const
+  T const& valueOr(EntityId id, T const& defaultValue) const
   {
-    if (!exists(id))
+    if (!existsFor(id))
     {
       return defaultValue;
     }

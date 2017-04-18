@@ -155,7 +155,7 @@ unsigned int InventorySelection::get_max_quantity() const
     }
     else
     {
-      result = COMPONENTS.physical.value(entity).quantity();
+      result = COMPONENTS.physical.valueOrDefault(entity).quantity();
     }
   }
 

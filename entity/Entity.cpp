@@ -53,7 +53,7 @@ Entity::Entity(GameState& state, std::string category, EntityId id)
 {
   /// @todo This should really be done by the EntityPool, based on the
   ///       components present in the category XML file.
-  COMPONENTS.position.add(id);
+  COMPONENTS.position.addDefault(id);
   initialize();
 }
 
@@ -279,8 +279,8 @@ bool Entity::canReach(EntityId entity)
 bool Entity::isAdjacentTo(EntityId entity)
 {
   // If either doesn't have a position component, bail.
-  if (!COMPONENTS.position.exists(m_id) ||
-      !COMPONENTS.position.exists(entity))
+  if (!COMPONENTS.position.existsFor(m_id) ||
+      !COMPONENTS.position.existsFor(entity))
   {
     return false;
   }
@@ -349,7 +349,7 @@ Gender Entity::getGenderOrYou() const
   }
   else
   {
-    if (COMPONENTS.physical.value(m_id).quantity() > 1)
+    if (COMPONENTS.physical.valueOrDefault(m_id).quantity() > 1)
     {
       return Gender::Plural;
     }
@@ -587,8 +587,8 @@ EntityId Entity::getId() const
 bool Entity::canSee(EntityId entity)
 {
   // Bail if either doesn't have a Position component.
-  if (!COMPONENTS.position.exists(m_id) ||
-      !COMPONENTS.position.exists(entity))
+  if (!COMPONENTS.position.existsFor(m_id) ||
+      !COMPONENTS.position.existsFor(entity))
   {
     return false;
   }
@@ -687,7 +687,7 @@ MapMemoryChunk const& Entity::getMemoryAt(IntVec2 coords) const
 bool Entity::moveInto(EntityId newLocation)
 {
   // If Entity doesn't have a Position component, bail.
-  if (!COMPONENTS.position.exists(m_id))
+  if (!COMPONENTS.position.existsFor(m_id))
   {
     return false;
   }
@@ -858,7 +858,7 @@ std::string Entity::getDescriptiveString(ArticleChoice articles,
   auto& config = Service<IConfigSettings>::get();
 
   EntityId location = COMPONENTS.position[m_id].parent();
-  unsigned int quantity = COMPONENTS.physical.value(m_id).quantity();
+  unsigned int quantity = COMPONENTS.physical.valueOrDefault(m_id).quantity();
 
   std::string name;
 
@@ -905,7 +905,7 @@ std::string Entity::getDescriptiveString(ArticleChoice articles,
   }
   else
   {
-    noun = std::to_string(COMPONENTS.physical.value(m_id).quantity()) + " " + getDisplayPlural();
+    noun = std::to_string(COMPONENTS.physical.valueOrDefault(m_id).quantity()) + " " + getDisplayPlural();
 
     if (owned && (possessives == UsePossessives::Yes))
     {
@@ -935,7 +935,7 @@ std::string Entity::getDescriptiveString(ArticleChoice articles,
 
 bool Entity::isThirdPerson()
 {
-  return !((GAME.getPlayer() == m_id) || (COMPONENTS.physical.value(m_id).quantity() > 1));
+  return !((GAME.getPlayer() == m_id) || (COMPONENTS.physical.valueOrDefault(m_id).quantity() > 1));
 }
 
 std::string const& Entity::chooseVerb(std::string const& verb12,
@@ -987,7 +987,7 @@ std::string Entity::getPossessiveString(std::string owned, std::string adjective
 
 Color Entity::getOpacity() const
 {
-  return COMPONENTS.appearance.value(m_id).opacity();
+  return COMPONENTS.appearance.valueOrDefault(m_id).opacity();
 }
 
 bool Entity::isOpaque()
@@ -1039,7 +1039,7 @@ void Entity::light_up_surroundings()
 void Entity::beLitBy(EntityId light)
 {
   // If either this or the light has no Position component, bail.
-  if (!COMPONENTS.position.exists(m_id) || !COMPONENTS.position.exists(light)) return;
+  if (!COMPONENTS.position.existsFor(m_id) || !COMPONENTS.position.existsFor(light)) return;
 
   auto& thisPosition = COMPONENTS.position[m_id];
   auto& lightPosition = COMPONENTS.position[light];

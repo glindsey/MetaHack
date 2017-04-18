@@ -36,7 +36,7 @@ void EntityStandard2DView::draw(sf::RenderTarget& target,
   auto& texture = m_tile_sheet.getTexture();
 
   // Can't render if it doesn't have a Position component.
-  if (!COMPONENTS.position.exists(entity.getId())) return;
+  if (!COMPONENTS.position.existsFor(entity.getId())) return;
 
   auto& position = COMPONENTS.position[entity.getId()];
 

@@ -6,7 +6,7 @@ void from_json(json const& j, ComponentGender& obj)
 {
   if (!j.is_object() || j.size() == 0)
   {
-    obj = Component();
+    obj = ComponentGender();
   }
   else
   {
