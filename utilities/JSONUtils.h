@@ -7,7 +7,7 @@ namespace JSONUtils
 {
 
   /// Add data in second JSON object to first JSON object.
-  inline void addTo(json & first, json & second)
+  inline void addTo(json& first, json& second)
   {
     json flat_first = first.flatten();
 
@@ -22,6 +22,21 @@ namespace JSONUtils
     }
 
     first = flat_first.unflatten();
+  }
+
+  /// Populate a JSON key if it doesn't already exist.
+  /// Returns the contents of the key.
+  /// Similar to json::value() except it actually adds the key if it was not
+  /// found; value() just returns a default value if it wasn't found, and
+  /// does not touch the JSON.
+  inline json& addIfMissing(json& j, std::string const& key, json& value)
+  {
+    if (j.count(key) == 0)
+    {
+      j[key] = value;
+    }
+
+    return j[key];
   }
 
 } // end namespace JSONUtils

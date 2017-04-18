@@ -42,14 +42,28 @@ int LUA_get_volume(lua_State* L)
 
 ComponentManager::ComponentManager()
 {
+  initialize();
+}
+
+ComponentManager::ComponentManager(json const& j)
+{
+  appearance = j["appearance"];
+  physical = j["physical"];
+  position = j["position"];
+
+  initialize();
+}
+
+ComponentManager::~ComponentManager()
+{}
+
+void ComponentManager::initialize()
+{
   the_lua_instance.register_function("get_mass", LUA_get_mass);
   the_lua_instance.register_function("get_opacity", LUA_get_opacity);
   the_lua_instance.register_function("get_quantity", LUA_get_quantity);
   the_lua_instance.register_function("get_volume", LUA_get_volume);
 }
-
-ComponentManager::~ComponentManager()
-{}
 
 void ComponentManager::populate(EntityId id, json const& j)
 {

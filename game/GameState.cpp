@@ -11,6 +11,7 @@
 #include "map/MapFactory.h"
 #include "Service.h"
 #include "services/IGraphicViews.h"
+#include "utilities/JSONUtils.h"
 
 
 // Namespace aliases
@@ -20,30 +21,12 @@ GameState* GameState::p_instance = nullptr;
 
 GameState::GameState()
 {
-  Assert("GameState", p_instance == nullptr, "tried to create more than one GameState instance at a time");
-
-  p_instance = this;
-
-  m_componentsManager.reset(NEW ComponentManager());
-  m_entityPool.reset(NEW EntityPool(*this));
-  m_mapFactory.reset(NEW MapFactory(*this));
-
-  m_data["components"] = json::object({});
-  m_data["global"] = json::object({});
+  initialize({});
 }
 
-GameState::GameState(FileName filename)
+GameState::GameState(json const& j)
 {
-#if 0
-  Assert("GameState", p_instance == nullptr, "tried to create more than one GameState instance at a time");
-
-  p_instance = this;
-
-  std::ifstream fs{ filename.c_str() };
-  cereal::XMLInputArchive iarchive{ fs };
-
-  iarchive(m_mapFactory, m_entityPool, m_player);
-#endif
+  initialize(j);
 }
 
 GameState::~GameState()
@@ -51,14 +34,27 @@ GameState::~GameState()
   p_instance = nullptr;
 }
 
-void GameState::saveState(FileName filename)
+void GameState::initialize(json const& j)
 {
-#if 0
-  std::ofstream fs{ filename.c_str() };
-  cereal::XMLOutputArchive oarchive{ fs };
+  Assert("GameState", p_instance == nullptr, "tried to create more than one GameState instance at a time");
 
-  oarchive(m_mapFactory, m_entityPool, m_player);
-#endif
+  p_instance = this;
+
+  m_global = j["global"];
+  m_componentsManager.reset(NEW ComponentManager(j["components"]));
+  m_entityPool.reset(NEW EntityPool(*this));
+  m_mapFactory.reset(NEW MapFactory(*this));
+}
+
+void from_json(json const& j, GameState& obj)
+{
+  obj.initialize(j);
+}
+
+void to_json(json& j, GameState const& obj)
+{
+  j["global"] = obj.m_global;
+  j["components"] = *(obj.m_componentsManager);
 }
 
 MapFactory& GameState::maps()
@@ -78,12 +74,12 @@ ComponentManager & GameState::components()
 
 ElapsedTime GameState::getGameClock() const
 {
-  return m_data["global"].value("clock", 0ULL);
+  return m_global.value("clock", 0ULL);
 }
 
 void GameState::setGameClock(ElapsedTime game_clock)
 {
-  m_data["global"]["clock"] = game_clock;
+  m_global["clock"] = game_clock;
 }
 
 void GameState::incrementGameClock(ElapsedTime added_time)
@@ -96,13 +92,13 @@ bool GameState::setPlayer(EntityId ref)
 {
   Assert("GameState", ref != entities().get_mu(), "tried to make nothingness the player");
 
-  m_data["global"]["player"] = ref;
+  m_global["player"] = ref;
   return true;
 }
 
 EntityId GameState::getPlayer() const
 {
-  return m_data["global"].value("player", EntityId());
+  return m_global.value("player", EntityId());
 }
 
 bool GameState::processGameClockTick()

@@ -16,7 +16,10 @@ class ComponentManager final
 {
 public:
   ComponentManager();
+  ComponentManager(json const& j);
   ~ComponentManager();
+
+  void initialize();
 
   void populate(EntityId new_id, json const& jsonComponents);
 

@@ -20,16 +20,14 @@ class GameState final
 public:
   GameState();
 
-  /// Constructor that loads a game state from disk.
-  /// Throws an exception if the game could not be loaded.
-  /// @todo WRITE ME
-  GameState(FileName filename);  
+  /// Constructor that constructs the game state from the provided JSON.
+  GameState(json const& j);
   ~GameState();
 
-  /// Save the game state to disk.
-  /// Throws an exception if the game could not be saved.
-  /// @todo WRITE ME
-  void saveState(FileName filename);
+  void initialize(json const& j);
+
+  friend void from_json(json const& j, GameState& obj);
+  friend void to_json(json& j, GameState const& obj);
 
   MapFactory& maps();
   EntityPool& entities();
@@ -56,18 +54,6 @@ public:
   /// @return True if a tick elapsed, false if it did not.
   bool processGameClockTick();
 
-  /// Get reference to game state data.
-  inline json& data()
-  {
-    return m_data;
-  }
-
-  /// Get const reference to game state data.
-  inline json const& data() const
-  {
-    return m_data;
-  }
-
   static GameState& instance();
 
 protected:
@@ -82,8 +68,8 @@ private:
   /// Pointer to the Components Manager object.
   std::unique_ptr<ComponentManager> m_componentsManager;
 
-  /// Game state data, as stored in a JSON object.
-  json m_data;
+  /// Global game data, as stored in a JSON object.
+  json m_global;
 
   /// Static pointer to the singleton instance of the GameState.
   static GameState* p_instance;

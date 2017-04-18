@@ -92,7 +92,6 @@ AppStateGameMode::~AppStateGameMode()
 void AppStateGameMode::execute()
 {
   auto& game = getGameState();
-  auto& game_data = game.data();
 
   // First, check for debug commands ready to be run.
   if (m_debug_buffer->get_enter())
@@ -150,7 +149,6 @@ bool AppStateGameMode::initialize()
 {
   auto& config = Service<IConfigSettings>::get();
   auto& game = getGameState();
-  auto& game_data = game.data();
 
   // Create the player.
   EntityId player = getGameState().entities().create("Human");
@@ -226,7 +224,6 @@ void AppStateGameMode::render_map(sf::RenderTexture& texture, int frame)
 {
   auto& config = Service<IConfigSettings>::get();
   auto& game = getGameState();
-  auto& game_data = game.data();
 
   texture.clear();
 
@@ -278,7 +275,6 @@ void AppStateGameMode::render_map(sf::RenderTexture& texture, int frame)
 bool AppStateGameMode::handle_key_press(App::EventKeyPressed const& key)
 {
   auto& game = getGameState();
-  auto& game_data = game.data();
   EntityId player = game.getPlayer();
 
   // *** Handle keys processed in any mode.
@@ -1035,7 +1031,6 @@ sf::IntRect AppStateGameMode::calcMessageLogDims()
 void AppStateGameMode::resetInventorySelection()
 {
   auto& game = getGameState();
-  auto& gameData = game.data();
   EntityId player = game.getPlayer();
 
   if (m_inventoryAreaShowsPlayer == true)
@@ -1091,7 +1086,6 @@ sf::IntRect AppStateGameMode::calcInventoryDims()
 bool AppStateGameMode::moveCursor(Direction direction)
 {
   auto& game = getGameState();
-  auto& game_data = game.data();
   EntityId player = game.getPlayer();
   
   bool result = false;
