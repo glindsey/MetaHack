@@ -62,7 +62,7 @@ public:
 
   friend std::ostream& operator<<(std::ostream& os, InventorySlot const& obj)
   {
-    os << obj;
+    os << static_cast<std::string>(obj);
     return os;
   }
 

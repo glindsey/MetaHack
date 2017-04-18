@@ -1,5 +1,4 @@
-#ifndef INVENTORY_H
-#define INVENTORY_H
+#pragma once
 
 #include "stdafx.h"
 
@@ -49,7 +48,7 @@ public:
 
   /// Finds items with identical qualities and combines them into a single
   /// aggregate item.
-  void consolidate_items();
+  void consolidateItems();
 
   bool contains(EntityId entity);
   bool contains(InventorySlot slot);
@@ -85,7 +84,5 @@ protected:
 
 private:
   /// Entities contained in this Inventory, using slot number as key.
-  EntityMap things_;
+  EntityMap m_things;
 };
-
-#endif // INVENTORY_H
