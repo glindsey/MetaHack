@@ -353,7 +353,7 @@ Gender Entity::getGenderOrYou() const
   }
   else
   {
-    if (getQuantity() > 1)
+    if (COMPONENTS.physical.value(m_id).quantity() > 1)
     {
       return Gender::Plural;
     }
@@ -581,25 +581,6 @@ bool Entity::addModifier(std::string key, EntityId id, PropertyModifierInfo cons
 size_t Entity::removeModifier(std::string key, EntityId id)
 {
   return m_properties.removeModifier(key, id);
-}
-
-unsigned int Entity::getQuantity() const
-{
-  return COMPONENTS.physical.value(m_id).quantity();
-}
-
-bool Entity::setQuantity(unsigned int quantity)
-{
-  if (COMPONENTS.physical.exists(m_id))
-  {
-    COMPONENTS.physical[m_id].quantity() = quantity;
-    return true;
-  }
-  else
-  {
-    CLOG(WARNING, "Entity") << "Attempted to set quantity of entity #" << m_id << ", which lacks that component";
-    return false;
-  }
 }
 
 EntityId Entity::getId() const
@@ -891,7 +872,7 @@ std::string Entity::getDescriptiveString(ArticleChoice articles,
   auto& config = Service<IConfigSettings>::get();
 
   EntityId location = this->getLocation();
-  unsigned int quantity = this->getQuantity();
+  unsigned int quantity = COMPONENTS.physical.value(m_id).quantity();
 
   std::string name;
 
@@ -938,7 +919,7 @@ std::string Entity::getDescriptiveString(ArticleChoice articles,
   }
   else
   {
-    noun = std::to_string(getQuantity()) + " " + getDisplayPlural();
+    noun = std::to_string(COMPONENTS.physical.value(m_id).quantity()) + " " + getDisplayPlural();
 
     if (owned && (possessives == UsePossessives::Yes))
     {
@@ -968,7 +949,7 @@ std::string Entity::getDescriptiveString(ArticleChoice articles,
 
 bool Entity::isThirdPerson()
 {
-  return !((GAME.getPlayer() == m_id) || (getQuantity() > 1));
+  return !((GAME.getPlayer() == m_id) || (COMPONENTS.physical.value(m_id).quantity() > 1));
 }
 
 std::string const& Entity::chooseVerb(std::string const& verb12,

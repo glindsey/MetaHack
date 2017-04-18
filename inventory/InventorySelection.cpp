@@ -3,7 +3,10 @@
 #include "inventory/InventorySelection.h"
 
 #include "AssertHelper.h"
+#include "components/ComponentManager.h"
+#include "components/ComponentPhysical.h"
 #include "game/App.h"
+#include "game/GameState.h"
 #include "inventory/Inventory.h"
 #include "entity/Entity.h"
 #include "entity/EntityId.h"
@@ -152,7 +155,7 @@ unsigned int InventorySelection::get_max_quantity() const
     }
     else
     {
-      result = entity->getQuantity();
+      result = COMPONENTS.physical.value(entity).quantity();
     }
   }
 

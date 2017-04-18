@@ -2,8 +2,11 @@
 
 #include "inventory/InventoryArea.h"
 
-#include "game/App.h"
+#include "components/ComponentManager.h"
+#include "components/ComponentPhysical.h"
 #include "entity/EntityView.h"
+#include "game/App.h"
+#include "game/GameState.h"
 #include "services/IConfigSettings.h"
 #include "services/IGraphicViews.h"
 #include "inventory/Inventory.h"
@@ -149,7 +152,7 @@ void InventoryArea::drawContents_(sf::RenderTexture& texture, int frame)
     std::stringstream item_name;
     if (selection_order == 1)
     {
-      unsigned int max_quantity = entity->getQuantity();
+      unsigned int max_quantity = COMPONENTS.physical.value(entity).quantity();
       unsigned int selected_quantity = m_inventorySelection.get_selected_quantity();
       if ((max_quantity > 1) && (selected_quantity < max_quantity))
       {

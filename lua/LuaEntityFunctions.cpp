@@ -45,7 +45,7 @@ namespace LuaEntityFunctions
       if (success && (num_args > 2))
       {
         unsigned int quantity = static_cast<unsigned int>(lua_tointeger(L, 3));
-        new_thing->setQuantity(quantity);
+        COMPONENTS.physical[new_thing].quantity() = quantity;
       }
     }
 

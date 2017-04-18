@@ -205,12 +205,6 @@ public:
   /// @return The number of modifiers erased.
   size_t removeModifier(std::string key, EntityId id);
   
-  /// Get the quantity this entity represents.
-  unsigned int getQuantity() const;
-
-  /// Set the quantity this entity represents, if allowed.
-  bool setQuantity(unsigned int quantity);
-
   /// Return a reference to this entity.
   EntityId getId() const;
 

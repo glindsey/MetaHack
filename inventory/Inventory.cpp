@@ -102,9 +102,10 @@ void Inventory::consolidate_items()
 
       if (first_thing->can_merge_with(second_thing))
       {
-        auto first_quantity = first_thing->getQuantity();
-        auto second_quantity = second_thing->getQuantity();
-        first_thing->setQuantity(first_quantity + second_quantity);
+        auto first_quantity = COMPONENTS.physical.value(first_thing).quantity();
+        auto second_quantity = COMPONENTS.physical.value(second_thing).quantity();
+        COMPONENTS.physical[first_thing].quantity() = first_quantity + second_quantity;
+        COMPONENTS.physical[second_thing].quantity() = 0;
 
         auto second_iter_copy = second_iter;
         --second_iter;
@@ -158,12 +159,12 @@ EntityId Inventory::split(EntityId entity, unsigned int target_quantity)
     if (iter != things_.cend())
     {
       EntityId source_thing = iter->second;
-      unsigned int source_quantity = source_thing->getQuantity();
+      unsigned int source_quantity = COMPONENTS.physical.value(source_thing).quantity();
       if (target_quantity < source_quantity)
       {
         target_thing = GAME.entities().clone(source_thing);
-        source_thing->setQuantity(source_quantity - target_quantity);
-        target_thing->setQuantity(target_quantity);
+        COMPONENTS.physical[source_thing].quantity() = source_quantity - target_quantity;
+        COMPONENTS.physical[target_thing].quantity() = target_quantity;
       }
     }
   }
