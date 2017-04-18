@@ -17,6 +17,26 @@ Inventory::~Inventory()
   //dtor
 }
 
+void from_json(json const& j, Inventory& obj)
+{
+  if (!j.is_object() || j.size() == 0)
+  {
+    obj = Inventory();
+  }
+  else
+  {
+    // *** add Component-specific assignments here ***
+    //obj.m_member = j["member"];
+  }
+}
+
+void to_json(json& j, Inventory const& obj)
+{
+  j = json::object();
+  // *** add Component-specific assignments here ***
+  //j["member"] = obj.m_member;
+}
+
 bool Inventory::add(EntityId entity)
 {
   // If entity is Mu, exit returning false.
@@ -28,13 +48,13 @@ bool Inventory::add(EntityId entity)
   // If the entity is the player, it goes into slot 0.
   if (entity == GAME.getPlayer())
   {
-    if (things_.count(INVSLOT_ZERO) != 0)
+    if (things_.count(InventorySlot::Zero) != 0)
     {
       /// @todo Move anything in this slot to a new slot.  This will be required
       ///       if it's possible to change the ID of the player DynamicEntity.
       CLOG(ERROR, "Inventory") << "slot 0 of inventory already contains the player";
     }
-    things_[INVSLOT_ZERO] = entity;
+    things_[InventorySlot::Zero] = entity;
     return true;
   }
 
@@ -42,7 +62,7 @@ bool Inventory::add(EntityId entity)
 
   if (found_thing_id == things_.cend())
   {
-    for (InventorySlot slot = INVSLOT_MIN; slot < INVSLOT_MAX; ++slot)
+    for (InventorySlot slot = InventorySlot::Min; slot < InventorySlot::Max; ++slot)
     {
       if (things_.count(slot) == 0)
       {
@@ -131,7 +151,7 @@ bool Inventory::contains(InventorySlot slot)
 
 InventorySlot Inventory::operator[](EntityId entity)
 {
-  if (GAME.entities().exists(entity) == false) return INVSLOT_INVALID;
+  if (GAME.entities().exists(entity) == false) return InventorySlot::Invalid;
 
   auto iter = find(entity);
 
@@ -140,7 +160,7 @@ InventorySlot Inventory::operator[](EntityId entity)
     return iter->first;
   }
 
-  return INVSLOT_INVALID;
+  return InventorySlot::Invalid;
 }
 
 EntityId Inventory::operator[](InventorySlot slot)

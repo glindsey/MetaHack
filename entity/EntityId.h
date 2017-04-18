@@ -134,6 +134,19 @@ public:
     return tmp;
   }
 
+  EntityId& operator--()
+  {
+    --m_id;
+    return *this;
+  }
+
+  EntityId operator--(int)
+  {
+    EntityId tmp(*this);
+    operator--();
+    return tmp;
+  }
+
   friend std::ostream& operator<< (std::ostream& stream, EntityId const& entity)
   {
     stream << entity.m_id;

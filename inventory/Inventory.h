@@ -20,6 +20,9 @@ public:
   Inventory();
   virtual ~Inventory();
 
+  friend void from_json(json const& j, Inventory& obj);
+  friend void to_json(json& j, Inventory const& obj);
+
   /// Adds the passed Entity to the inventory.
   /// @param entity Entity to add to the inventory.
   /// @return True if the add succeeded; false otherwise.
