@@ -11,6 +11,10 @@ public:
   friend void from_json(json const& j, ComponentSpacialMemory& obj);
   friend void to_json(json& j, ComponentSpacialMemory const& obj);
 
+  bool containsMap(MapId map);
+  MapMemory& ofMap(MapId map);
+  MapMemory const& ofMap(MapId map) const;
+
 protected:
 
 private:

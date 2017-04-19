@@ -44,7 +44,6 @@ Entity::Entity(GameState& state, std::string category, EntityId id)
   m_properties{ id },
   m_id{ id },
   m_gender{ Gender::None },
-  m_mapMemory{ MapMemory() },
   m_tilesCurrentlySeen{ TilesSeen() },
   m_pending_involuntary_actions{ ActionQueue() },
   m_pending_voluntary_actions{ ActionQueue() },
@@ -64,7 +63,6 @@ Entity::Entity(GameState& state, MapTile* map_tile, std::string category, Entity
   m_properties{ id },
   m_id{ id },
   m_gender{ Gender::None },
-  m_mapMemory{ MapMemory() },
   m_tilesCurrentlySeen{ TilesSeen() },
   m_pending_involuntary_actions{ ActionQueue() },
   m_pending_voluntary_actions{ ActionQueue() },
@@ -84,7 +82,6 @@ Entity::Entity(Entity const& original, EntityId ref)
   m_properties{ original.m_properties },
   m_id{ ref },
   m_gender{ original.m_gender },
-  m_mapMemory{ original.m_mapMemory },
   m_tilesCurrentlySeen{ TilesSeen() },  // don't copy
   m_pending_involuntary_actions{ ActionQueue() },     // don't copy
   m_pending_voluntary_actions{ ActionQueue() },     // don't copy
@@ -664,9 +661,13 @@ void Entity::findSeenTiles()
   ///		   * WIDE (180 degrees in facing direction)
   ///          * FRONTBACK (90 degrees ahead/90 degrees back)
   ///          * FULL (all 360 degrees)
+  ComponentPosition const& position = COMPONENTS.position[m_id];
+  MapMemory& memory = COMPONENTS.spacialMemory[m_id].ofMap(position.map());
+
   for (int n = 1; n <= 8; ++n)
   {
-    do_recursive_visibility(n);
+
+    do_recursive_visibility(position, memory, n);
   }
 }
 
@@ -681,7 +682,19 @@ MapMemoryChunk const& Entity::getMemoryAt(IntVec2 coords) const
     return null_memory_chunk;
   }
 
-  return m_mapMemory.valueOr(coords, null_memory_chunk);
+  if (!COMPONENTS.spacialMemory.existsFor(m_id))
+  {
+    return null_memory_chunk;
+  }
+
+  auto& memory = COMPONENTS.spacialMemory[m_id];
+
+  if (!memory.containsMap(map))
+  {
+    return null_memory_chunk;
+  }
+
+  return memory.ofMap(map).valueOr(coords, null_memory_chunk);
 }
 
 bool Entity::moveInto(EntityId newLocation)
@@ -722,13 +735,14 @@ bool Entity::moveInto(EntityId newLocation)
         {
           /// @todo Save old map memory.
         }
-        m_mapMemory.clear();
         m_tilesCurrentlySeen.clear();
         if (newMapId != MapFactory::null_map_id)
         {
-          Map& new_map = GAME.maps().get(newMapId);
-          IntVec2 new_map_size = new_map.getSize();
-          m_mapMemory.resize({ new_map_size.x, new_map_size.y });
+          IntVec2 new_map_size = newMapId->getSize();
+          if (COMPONENTS.spacialMemory.existsFor(m_id))
+          {
+            COMPONENTS.spacialMemory[m_id].ofMap(newMapId).resize({ new_map_size.x, new_map_size.y });
+          }
           m_tilesCurrentlySeen.resize(new_map_size.x * new_map_size.y);
           /// @todo Load new map memory if it exists somewhere.
         }
@@ -1626,13 +1640,16 @@ bool Entity::_process_own_voluntary_actions()
 
 MapMemory& Entity::get_map_memory()
 {
-  return m_mapMemory;
+  auto map = COMPONENTS.position[m_id].map();
+  return COMPONENTS.spacialMemory[m_id].ofMap(map);
 }
 
-void Entity::do_recursive_visibility(int octant,
-                                    int depth,
-                                    float slope_A,
-                                    float slope_B)
+void Entity::do_recursive_visibility(ComponentPosition const& thisPosition,
+                                     MapMemory& thisMemory,
+                                     int octant,
+                                     int depth,
+                                     float slope_A,
+                                     float slope_B)
 {
   Assert("Entity", octant >= 1 && octant <= 8, "Octant" << octant << "passed in is not between 1 and 8 inclusively");
   IntVec2 newCoords;
@@ -1645,7 +1662,6 @@ void Entity::do_recursive_visibility(int octant,
     return;
   }
 
-  auto thisPosition = COMPONENTS.position[m_id];
   IntVec2 thisCoords = thisPosition.coords();
   Map& thisMap = GAME.maps().get(thisPosition.map());
 
@@ -1744,7 +1760,9 @@ void Entity::do_recursive_visibility(int octant,
       {
         if (!thisMap.tileIsOpaque(newCoords + (IntVec2)dir))
         {
-          do_recursive_visibility(octant, depth + 1, slope_A, recurse_slope(to_v2f(newCoords), to_v2f(thisCoords)));
+          do_recursive_visibility(thisPosition, thisMemory,
+                                  octant, depth + 1, 
+                                  slope_A, recurse_slope(to_v2f(newCoords), to_v2f(thisCoords)));
         }
       }
       else
@@ -1758,7 +1776,8 @@ void Entity::do_recursive_visibility(int octant,
 
       MapMemoryChunk new_memory{ thisMap.getTile(newCoords).getTileType(),
                                  GAME.getGameClock() };
-      m_mapMemory[newCoords] = new_memory;
+
+      thisMemory[newCoords] = new_memory;
     }
     newCoords -= (IntVec2)dir;
   }
@@ -1766,6 +1785,8 @@ void Entity::do_recursive_visibility(int octant,
 
   if ((depth < mv) && (!thisMap.getTile(newCoords).isOpaque()))
   {
-    do_recursive_visibility(octant, depth + 1, slope_A, slope_B);
+    do_recursive_visibility(thisPosition, thisMemory,
+                            octant, depth + 1, 
+                            slope_A, slope_B);
   }
 }

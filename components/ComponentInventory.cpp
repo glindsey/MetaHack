@@ -23,7 +23,15 @@ void from_json(json const& j, ComponentInventory& obj)
 
   if (j.is_object() && j.size() != 0)
   {
-    obj.m_maxSize = j["max-size"];
+    int maxSize = j["max-size"].get<int>();
+    if (maxSize == -1)
+    {
+      obj.m_maxSize = SIZE_MAX;
+    }
+    else
+    {
+      obj.m_maxSize = static_cast<unsigned int>(maxSize);
+    }
 
     if (j.count("items") != 0)
     {

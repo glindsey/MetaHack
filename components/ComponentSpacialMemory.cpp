@@ -2,6 +2,12 @@
 
 #include "game/GameState.h"
 
+/// @todo Regarding memory, it would be AWESOME if it could fade out
+///       VERY gradually, over a long period of time. Seeing it would
+///       reset the memory counter to 0, or possibly just add a large
+///       amount to the counter so that places you see more frequently
+///       stay in your mind longer.
+
 void from_json(json const& j, ComponentSpacialMemory& obj)
 {
   obj.m_memory.clear();
@@ -23,4 +29,19 @@ void to_json(json& j, ComponentSpacialMemory const& obj)
   {
     j[static_cast<std::string>(citer->first)] = citer->second;
   }
+}
+
+bool ComponentSpacialMemory::containsMap(MapId map)
+{
+  return (m_memory.count(map) != 0);
+}
+
+MapMemory& ComponentSpacialMemory::ofMap(MapId map)
+{
+  return m_memory.at(map);
+}
+
+MapMemory const& ComponentSpacialMemory::ofMap(MapId map) const
+{
+  return m_memory.at(map);
 }

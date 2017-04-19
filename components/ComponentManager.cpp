@@ -69,12 +69,11 @@ void ComponentManager::initialize()
 
 void ComponentManager::clone(EntityId original, EntityId newId)
 {
-  appearance[newId] = appearance[original];
+  appearance.cloneIfExists(original, newId);
   /// Do NOT clone inventory
-  physical[newId] = physical[original];
-  position[newId] = position[original];
-  /// Do NOT clone spacial memory
-
+  physical.cloneIfExists(original, newId);
+  position.cloneIfExists(original, newId);
+  spacialMemory.cloneIfExists(original, newId);
 }
 
 void ComponentManager::populate(EntityId id, json const& j)

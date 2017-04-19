@@ -21,6 +21,15 @@ public:
     m_componentMap[id] = T();
   }
 
+  /// Clone a value from one key to another, if the first key exists.
+  void cloneIfExists(EntityId first, EntityId second)
+  {
+    if (existsFor(first))
+    {
+      m_componentMap[second] = m_componentMap[first];
+    }
+  }
+
   bool existsFor(EntityId id) const
   {
     return m_componentMap.count(id) != 0ULL;

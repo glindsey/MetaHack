@@ -66,12 +66,12 @@ void ComponentPosition::set(MapId map, IntVec2 coords)
   }
 }
 
-EntityId ComponentPosition::parent()
+EntityId ComponentPosition::parent() const
 {
   return m_parent;
 }
 
-MapId ComponentPosition::map()
+MapId ComponentPosition::map() const
 {
   if (m_parent != EntityId::Mu())
   {
@@ -83,7 +83,7 @@ MapId ComponentPosition::map()
   }
 }
 
-IntVec2 ComponentPosition::coords()
+IntVec2 ComponentPosition::coords() const
 {
   if (m_parent != EntityId::Mu())
   {

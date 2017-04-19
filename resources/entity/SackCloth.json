@@ -11,5 +11,11 @@
 
   "can-be-object-of-burn": true,
   "can-be-object-of-close": false,
-  "can-be-object-of-open": false
+  "can-be-object-of-open": false,
+
+  "components": {
+	"inventory": {
+	  "max-size": 10
+	}
+  }
 }

@@ -59,6 +59,9 @@
     "appearance": {
       "opacity": [ "color", 255, 255, 255 ]
     },
+    "inventory": {
+      "max-size": -1
+    },
     "physical": {
       "mass": 1000,
       "quantity": 1,

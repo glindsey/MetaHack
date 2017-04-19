@@ -36,16 +36,16 @@ public:
 
   /// Get surrounding entity, if any.
   /// If there's no surrounding entity, returns Mu.
-  EntityId parent();
+  EntityId parent() const;
 
   /// Get map.
   /// If this entity is inside another, returns the ID of the parent's map.
-  MapId map();
+  MapId map() const;
 
   /// Get coordinates.
   /// If this entity is inside another, returns the coordinates of the
   /// parent.
-  IntVec2 coords();
+  IntVec2 coords() const;
 
 protected:
 

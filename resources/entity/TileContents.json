@@ -9,6 +9,9 @@
   "components": {
     "appearance": {
       "opacity": [ "color", 0, 0, 0 ]
+    },
+    "inventory": {
+      "max-size": -1
     }
   }
 }

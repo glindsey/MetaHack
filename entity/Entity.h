@@ -529,7 +529,9 @@ protected:
 
   /// Perform the recursive visibility scan for an octant.
   /// Used by findSeenTiles.
-  void do_recursive_visibility(int octant,
+  void do_recursive_visibility(ComponentPosition const& thisPosition,
+                               MapMemory& thisMemory,
+                               int octant,
                                int depth = 1,
                                float slope_A = 1,
                                float slope_B = 0);
@@ -567,14 +569,6 @@ private:
 
   /// Gender of this entity.
   Gender m_gender = Gender::None;
-
-  /// DynamicEntity's spacial memory of map tiles.
-  /// @todo Regarding memory, it would be AWESOME if it could fade out
-  ///       VERY gradually, over a long period of time. Seeing it would
-  ///       reset the memory counter to 0, or possibly just add a large
-  ///       amount to the counter so that places you see more frequently
-  ///       stay in your mind longer.
-  MapMemory m_mapMemory;
 
   /// Bitset for tiles currently seen.
   /// This deals with tiles observed at this particular instant.

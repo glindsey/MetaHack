@@ -9,5 +9,11 @@
   "physical-mass": 20,
 
   "can-be-object-of-lock": true,
-  "can-be-object-of-unlock": true
+  "can-be-object-of-unlock": true,
+
+  "components": {
+    "inventory": {
+      "max-size": 20
+    }
+  }
 }
