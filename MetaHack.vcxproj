@@ -339,6 +339,7 @@
     <ClInclude Include="design_patterns\Visitor.h" />
     <ClInclude Include="lua\LuaTemplates.h" />
     <ClInclude Include="map\MapId.h" />
+    <ClInclude Include="map\MapMemory.h" />
     <ClInclude Include="services\FileSystemGameRules.h" />
     <ClInclude Include="gui\GUICloseHandle.h" />
     <ClInclude Include="gui\GUIDesktop.h" />
@@ -511,6 +512,7 @@
     <ClCompile Include="design_patterns\Subject.cpp" />
     <ClCompile Include="inventory\InventorySlot.cpp" />
     <ClCompile Include="map\MapId.cpp" />
+    <ClCompile Include="map\MapMemory.cpp" />
     <ClCompile Include="services\FileSystemGameRules.cpp" />
     <ClCompile Include="gui\GUICloseHandle.cpp" />
     <ClCompile Include="gui\GUIDesktop.cpp" />
@@ -582,6 +584,7 @@
     <ClCompile Include="entity\EntityPool.cpp" />
     <ClCompile Include="entity\EntityStandard2DView.cpp" />
     <ClCompile Include="entity\EntityView.cpp" />
+    <ClCompile Include="types\MapMemoryChunk.cpp" />
     <ClCompile Include="types\Vec2.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>

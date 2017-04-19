@@ -298,7 +298,7 @@ namespace Actions
   {
     auto subject = getSubject();
     auto& objects = getObjects();
-    bool hasPosition = COMPONENTS.position.exists(subject);
+    bool hasPosition = COMPONENTS.position.existsFor(subject);
     auto new_direction = getTargetDirection();
 
     // Check that we're capable of eating at all.
@@ -338,7 +338,7 @@ namespace Actions
       }
     }
 
-    auto& position = COMPONENTS.position.at(subject);
+    auto& position = COMPONENTS.position.of(subject);
     auto parent = position.parent();
 
     if (hasTrait(Trait::SubjectCanNotBeInsideAnotherObject))

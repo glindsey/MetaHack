@@ -8,6 +8,7 @@
 #include "components/ComponentInventory.h"
 #include "components/ComponentPhysical.h"
 #include "components/ComponentPosition.h"
+#include "components/ComponentSpacialMemory.h"
 
 // Forward declarations
 class EntityId;
@@ -33,4 +34,5 @@ public:
   ComponentMap<ComponentInventory> inventory;
   ComponentMap<ComponentPhysical> physical;
   ComponentMap<ComponentPosition> position;
+  ComponentMap<ComponentSpacialMemory> spacialMemory;
 };

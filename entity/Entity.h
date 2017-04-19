@@ -9,6 +9,7 @@
 #include "types/Gender.h"
 #include "lua/LuaObject.h"
 #include "types/MapMemoryChunk.h"
+#include "map/MapMemory.h"
 #include "maptile/MapTile.h"
 #include "properties/ModifiablePropertyDictionary.h"
 #include "Subject.h"
@@ -17,18 +18,17 @@
 
 // Forward declarations
 class AIStrategy;
+class ComponentInventory;
 class ComponentPosition;
 class DynamicEntity;
-class MapTile;
-class ComponentInventory;
-class EntityId;
 class Entity;
+class EntityId;
+class MapTile;
 
 // Using declarations.
 using BodyLocationMap = std::unordered_map<BodyLocation, EntityId>;
 using BodyLocationPair = std::pair<BodyLocation, EntityId>;
 
-using MapMemory = std::vector<MapMemoryChunk>;
 using TilesSeen = boost::dynamic_bitset<size_t>; // size_t gets rid of 64-bit compile warning
 using ActionQueue = std::deque< std::unique_ptr<Actions::Action> >;
 

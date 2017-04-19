@@ -8,14 +8,19 @@ void from_json(json const& j, ComponentSpacialMemory& obj)
 
   if (j.is_object() && j.size() != 0)
   {
-    // *** add ComponentSpacialMemory-specific assignments here ***
-    //obj.m_member = j["member"];
+    for (auto citer = j.cbegin(); citer != j.cend(); ++citer)
+    {
+      obj.m_memory[citer.key()] = citer.value();
+    }
   }
 }
 
 void to_json(json& j, ComponentSpacialMemory const& obj)
 {
   j = json::object();
-  // *** add ComponentSpacialMemory-specific assignments here ***
-  //j["member"] = obj.m_member;
+
+  for (auto citer = obj.m_memory.cbegin(); citer != obj.m_memory.cend(); ++citer)
+  {
+    j[static_cast<std::string>(citer->first)] = citer->second;
+  }
 }

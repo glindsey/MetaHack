@@ -10,14 +10,17 @@ public:
   MapMemoryChunk()
     :
     m_type{},
-    m_memory_time{}
+    m_when{}
   {}
 
   MapMemoryChunk(std::string type, ElapsedTime memory_type)
     :
     m_type{ type },
-    m_memory_time{ memory_type }
+    m_when{ memory_type }
   {}
+
+  friend void from_json(json const& j, MapMemoryChunk& obj);
+  friend void to_json(json& j, MapMemoryChunk const& obj);
 
   virtual ~MapMemoryChunk()
   {}
@@ -29,7 +32,7 @@ public:
 
   ElapsedTime get_memory_time()
   {
-    return m_memory_time;
+    return m_when;
   }
 
 private:
@@ -37,5 +40,5 @@ private:
   std::string m_type;
 
   /// Elapsed game time when the tile was remembered.
-  ElapsedTime m_memory_time;
+  ElapsedTime m_when;
 };

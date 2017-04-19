@@ -1,20 +1,9 @@
 #pragma once
 
 #include "map/MapId.h"
-#include "types/MapMemoryChunk.h"
-#include "types/Vec2.h"
+#include "map/MapMemory.h"
 
-#include "json.hpp"
-using json = ::nlohmann::json;
-
-// Map memory struct.
-struct MapMemory
-{
-  IntVec2 size;
-  std::vector<MapMemoryChunk> chunks;
-};
-
-/// Template to use for making new components.
+/// Component that represents the entity's memory of maps.
 class ComponentSpacialMemory
 {
 public:

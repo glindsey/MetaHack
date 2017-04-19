@@ -672,7 +672,7 @@ void Entity::findSeenTiles()
 
 MapMemoryChunk const& Entity::getMemoryAt(IntVec2 coords) const
 {
-  static MapMemoryChunk null_memory_chunk{ "???", GAME.getGameClock() };
+  static MapMemoryChunk null_memory_chunk{ "MTUnknown", 0 };
 
   auto map = COMPONENTS.position[m_id].map();
 
@@ -681,7 +681,7 @@ MapMemoryChunk const& Entity::getMemoryAt(IntVec2 coords) const
     return null_memory_chunk;
   }
 
-  return m_mapMemory[map->getIndex(coords)];
+  return m_mapMemory.valueOr(coords, null_memory_chunk);
 }
 
 bool Entity::moveInto(EntityId newLocation)
@@ -728,7 +728,7 @@ bool Entity::moveInto(EntityId newLocation)
         {
           Map& new_map = GAME.maps().get(newMapId);
           IntVec2 new_map_size = new_map.getSize();
-          m_mapMemory.resize(new_map_size.x * new_map_size.y);
+          m_mapMemory.resize({ new_map_size.x, new_map_size.y });
           m_tilesCurrentlySeen.resize(new_map_size.x * new_map_size.y);
           /// @todo Load new map memory if it exists somewhere.
         }
@@ -1758,7 +1758,7 @@ void Entity::do_recursive_visibility(int octant,
 
       MapMemoryChunk new_memory{ thisMap.getTile(newCoords).getTileType(),
                                  GAME.getGameClock() };
-      m_mapMemory[thisMap.getIndex(newCoords)] = new_memory;
+      m_mapMemory[newCoords] = new_memory;
     }
     newCoords -= (IntVec2)dir;
   }

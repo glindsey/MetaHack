@@ -51,6 +51,7 @@ ComponentManager::ComponentManager(json const& j)
   inventory = j["inventory"];
   physical = j["physical"];
   position = j["position"];
+  spacialMemory = j["spacial-memory"];
 
   initialize();
 }
@@ -72,6 +73,7 @@ void ComponentManager::clone(EntityId original, EntityId newId)
   /// Do NOT clone inventory
   physical[newId] = physical[original];
   position[newId] = position[original];
+  /// Do NOT clone spacial memory
 
 }
 
@@ -81,6 +83,7 @@ void ComponentManager::populate(EntityId id, json const& j)
   if (j.count("inventory") != 0) inventory[id] = j["inventory"];
   if (j.count("physical") != 0) physical[id] = j["physical"];
   if (j.count("position") != 0) position[id] = j["position"];
+  if (j.count("spacial-memory") != 0) spacialMemory[id] = j["spacial-memory"];
 }
 
 void from_json(json const& j, ComponentManager& obj)
@@ -89,6 +92,7 @@ void from_json(json const& j, ComponentManager& obj)
   obj.inventory = j.value("inventory", json::object());
   obj.physical = j.value("physical", json::object());
   obj.position = j.value("position", json::object());
+  obj.spacialMemory = j.value("spacial-memory", json::object());
 }
 
 void to_json(json& j, ComponentManager const& obj)
@@ -97,5 +101,6 @@ void to_json(json& j, ComponentManager const& obj)
   j["inventory"] = obj.inventory;
   j["physical"] = obj.physical;
   j["position"] = obj.position;
+  j["spacial-memory"] = obj.spacialMemory;
 }
 
