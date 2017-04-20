@@ -40,10 +40,20 @@ void GameState::initialize(json const& j)
 
   p_instance = this;
 
-  m_global = j["global"];
-  m_componentsManager.reset(NEW ComponentManager(j["components"]));
-  m_entityPool.reset(NEW EntityPool(*this));
-  m_mapFactory.reset(NEW MapFactory(*this));
+  if (j.is_object() && j.size() != 0)
+  {
+    m_global = j.value("global", json::object());
+    m_componentsManager.reset(NEW ComponentManager(j.value("components", json::object())));
+    m_entityPool.reset(NEW EntityPool(*this));
+    m_mapFactory.reset(NEW MapFactory(*this));
+  }
+  else
+  {
+    m_global = json::object();
+    m_componentsManager.reset(NEW ComponentManager(json::object()));
+    m_entityPool.reset(NEW EntityPool(*this));
+    m_mapFactory.reset(NEW MapFactory(*this));
+  }
 }
 
 void from_json(json const& j, GameState& obj)

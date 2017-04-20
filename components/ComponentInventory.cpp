@@ -102,7 +102,7 @@ void ComponentInventory::clear()
   m_things.clear();
 }
 
-size_t const& ComponentInventory::maxSize()
+size_t const& ComponentInventory::maxSize() const
 {
   return m_maxSize;
 }

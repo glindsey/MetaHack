@@ -98,9 +98,13 @@ public:
   friend void from_json(json const& j, ComponentMap& obj)
   {
     obj.m_componentMap.clear();
-    for (auto citer = j.cbegin(); citer != j.cend(); ++citer)
+
+    if (j.is_object() && j.size() != 0)
     {
-      obj.m_componentMap[citer.key()] = citer.value();
+      for (auto citer = j.cbegin(); citer != j.cend(); ++citer)
+      {
+        obj.m_componentMap[citer.key()] = citer.value();
+      }
     }
   }
 

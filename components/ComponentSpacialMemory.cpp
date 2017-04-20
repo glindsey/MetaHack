@@ -45,3 +45,8 @@ MapMemory const& ComponentSpacialMemory::ofMap(MapId map) const
 {
   return m_memory.at(map);
 }
+
+MapMemory & ComponentSpacialMemory::operator[](MapId map)
+{
+  return m_memory[map];
+}

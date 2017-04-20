@@ -31,7 +31,7 @@ public:
   void clear();
 
   /// Gets the maximum allowed size of this inventory.
-  size_t const& maxSize();
+  size_t const& maxSize() const;
 
   /// Gets the current count of this inventory.
   /// @return The number of items in the inventory.

@@ -437,7 +437,7 @@ bool AppStateGameMode::handle_key_press(App::EventKeyPressed const& key)
             if (slot_count > 0)
             {
               EntityId entity = m_inventorySelection->get_selected_things().at(0);
-              if (static_cast<int>(entity->getIntrinsic("inventory-size", 0)) != 0)
+              if (COMPONENTS.inventory.existsFor(entity))
               {
                 if (!entity->canHaveActionDoneBy(EntityId::Mu(), Actions::ActionOpen::prototype) ||
                     entity->getModifiedProperty("open", true))

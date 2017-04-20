@@ -2,18 +2,17 @@
 
 #include "components/ComponentManager.h"
 #include "game/GameState.h"
+#include "utilities/JSONUtils.h"
 
 void from_json(json const& j, ComponentPhysical& obj)
 {
-  if (!j.is_object() || j.size() == 0)
+  obj = ComponentPhysical();
+
+  if (j.is_object() && j.size() != 0)
   {
-    obj = ComponentPhysical();
-  }
-  else
-  {
-    obj.m_mass = j["mass"];
-    obj.m_quantity = j["quantity"];
-    obj.m_volume = j["volume"];
+    JSONUtils::setIfPresent(obj.m_mass, j, "mass");
+    JSONUtils::setIfPresent(obj.m_quantity, j, "quantity");
+    JSONUtils::setIfPresent(obj.m_volume, j, "volume");
   }
 }
 

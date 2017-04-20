@@ -4,11 +4,9 @@
 
 void from_json(json const& j, Component& obj)
 {
-  if (!j.is_object() || j.size() == 0)
-  {
-    obj = Component();
-  }
-  else
+  obj = Component();
+
+  if (j.is_object() && j.size() != 0)
   {
     // *** add Component-specific assignments here ***
     //obj.m_member = j["member"];

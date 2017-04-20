@@ -2,16 +2,15 @@
 
 #include "components/ComponentManager.h"
 #include "game/GameState.h"
+#include "utilities/JSONUtils.h"
 
 void from_json(json const& j, ComponentAppearance& obj)
 {
-  if (!j.is_object() || j.size() == 0)
+  obj = ComponentAppearance();
+
+  if (j.is_object() && j.size() != 0)
   {
-    obj = ComponentAppearance();
-  }
-  else
-  {
-    obj.m_opacity = j["opacity"];
+    JSONUtils::setIfPresent(obj.m_opacity, j, "opacity");
   }
 }
 

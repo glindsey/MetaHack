@@ -12,8 +12,10 @@ public:
   friend void to_json(json& j, ComponentSpacialMemory const& obj);
 
   bool containsMap(MapId map);
+
   MapMemory& ofMap(MapId map);
   MapMemory const& ofMap(MapId map) const;
+  MapMemory& operator[](MapId map);
 
 protected:
 

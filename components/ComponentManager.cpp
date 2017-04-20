@@ -7,6 +7,7 @@
 #include "game/GameState.h"
 #include "lua/LuaObject.h"
 #include "lua/LuaTemplates.h"
+#include "utilities/JSONUtils.h"
 
 int LUA_get_mass(lua_State* L)
 {
@@ -47,13 +48,17 @@ ComponentManager::ComponentManager()
 
 ComponentManager::ComponentManager(json const& j)
 {
-  appearance = j["appearance"];
-  inventory = j["inventory"];
-  physical = j["physical"];
-  position = j["position"];
-  spacialMemory = j["spacial-memory"];
-
   initialize();
+
+  if (j.is_object() && j.size() != 0)
+  {
+    JSONUtils::setIfPresent(appearance, j, "appearance");
+    JSONUtils::setIfPresent(inventory, j, "inventory");
+    JSONUtils::setIfPresent(physical, j, "physical");
+    JSONUtils::setIfPresent(position, j, "position");
+    JSONUtils::setIfPresent(spacialMemory, j, "spacial-memory");
+  }
+
 }
 
 ComponentManager::~ComponentManager()
@@ -70,7 +75,7 @@ void ComponentManager::initialize()
 void ComponentManager::clone(EntityId original, EntityId newId)
 {
   appearance.cloneIfExists(original, newId);
-  /// Do NOT clone inventory
+  // Do NOT clone inventory
   physical.cloneIfExists(original, newId);
   position.cloneIfExists(original, newId);
   spacialMemory.cloneIfExists(original, newId);
@@ -78,20 +83,26 @@ void ComponentManager::clone(EntityId original, EntityId newId)
 
 void ComponentManager::populate(EntityId id, json const& j)
 {
-  if (j.count("appearance") != 0) appearance[id] = j["appearance"];
-  if (j.count("inventory") != 0) inventory[id] = j["inventory"];
-  if (j.count("physical") != 0) physical[id] = j["physical"];
-  if (j.count("position") != 0) position[id] = j["position"];
-  if (j.count("spacial-memory") != 0) spacialMemory[id] = j["spacial-memory"];
+  if (j.is_object() && j.size() != 0)
+  {
+    JSONUtils::setIfPresent(appearance[id], j, "appearance");
+    JSONUtils::setIfPresent(inventory[id], j, "inventory");
+    JSONUtils::setIfPresent(physical[id], j, "physical");
+    JSONUtils::setIfPresent(position[id], j, "position");
+    JSONUtils::setIfPresent(spacialMemory[id], j, "spacial-memory");
+  }
 }
 
 void from_json(json const& j, ComponentManager& obj)
 {
-  obj.appearance = j.value("appearance", json::object());
-  obj.inventory = j.value("inventory", json::object());
-  obj.physical = j.value("physical", json::object());
-  obj.position = j.value("position", json::object());
-  obj.spacialMemory = j.value("spacial-memory", json::object());
+  if (j.is_object() && j.size() != 0)
+  {
+    JSONUtils::setIfPresent(obj.appearance, j, "appearance");
+    JSONUtils::setIfPresent(obj.inventory, j, "inventory");
+    JSONUtils::setIfPresent(obj.physical, j, "physical");
+    JSONUtils::setIfPresent(obj.position, j, "position");
+    JSONUtils::setIfPresent(obj.spacialMemory, j, "spacial-memory");
+  }
 }
 
 void to_json(json& j, ComponentManager const& obj)

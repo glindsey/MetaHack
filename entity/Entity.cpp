@@ -741,7 +741,8 @@ bool Entity::moveInto(EntityId newLocation)
           IntVec2 new_map_size = newMapId->getSize();
           if (COMPONENTS.spacialMemory.existsFor(m_id))
           {
-            COMPONENTS.spacialMemory[m_id].ofMap(newMapId).resize({ new_map_size.x, new_map_size.y });
+            auto& spacialMemory = COMPONENTS.spacialMemory[m_id];
+            spacialMemory[newMapId].resize({ new_map_size.x, new_map_size.y });
           }
           m_tilesCurrentlySeen.resize(new_map_size.x * new_map_size.y);
           /// @todo Load new map memory if it exists somewhere.
@@ -1013,7 +1014,7 @@ void Entity::light_up_surroundings()
 {
   EntityId location = COMPONENTS.position[m_id].parent();
 
-  if (static_cast<int>(getIntrinsic("inventory-size", 0)) != 0)
+  if (COMPONENTS.inventory.existsFor(m_id))
   {
     /// @todo Figure out how we want to handle light sources.
     ///       If we want to be more accurate, the light should only
@@ -1144,7 +1145,7 @@ void Entity::destroy()
 {
   auto old_location = COMPONENTS.position[m_id].parent();
 
-  if (static_cast<int>(getIntrinsic("inventory-size", 0)) != 0)
+  if (COMPONENTS.inventory.existsFor(m_id))
   {
     // Spill the contents of this Entity into the Entity's location.
     spill();
@@ -1449,8 +1450,8 @@ bool Entity::can_merge_with(EntityId other) const
   }
 
   // Entities with inventories can never merge.
-  if ((static_cast<int>(getIntrinsic("inventory-size", 0)) != 0) ||
-      (static_cast<int>(other->getIntrinsic("inventory-size", 0)) != 0))
+  if ((COMPONENTS.inventory.valueOrDefault(m_id).maxSize() != 0) ||
+      (COMPONENTS.inventory.valueOrDefault(other).maxSize() != 0))
   {
     return false;
   }

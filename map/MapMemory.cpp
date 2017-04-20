@@ -1,16 +1,23 @@
 #include "stdafx.h"
 
 #include "map/MapMemory.h"
+#include "utilities/JSONUtils.h"
 
 void from_json(json const& j, MapMemory& obj)
 {
-  obj.m_size = j["size"];
+  obj.m_size = IntVec2(0, 0);
   obj.m_chunks.clear();
-  if (j.count("chunks") != 0)
+
+  if (j.is_object() && j.size() != 0)
   {
-    for (auto citer = j["chunks"].cbegin(); citer != j["chunks"].cend(); ++citer)
+    JSONUtils::setIfPresent(obj.m_size, j, "size");
+
+    if (j.count("chunks") != 0)
     {
-      obj.m_chunks[std::stoul(citer.key())] = citer.value();
+      for (auto citer = j["chunks"].cbegin(); citer != j["chunks"].cend(); ++citer)
+      {
+        obj.m_chunks[std::stoul(citer.key())] = citer.value();
+      }
     }
   }
 }

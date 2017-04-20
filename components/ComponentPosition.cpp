@@ -2,25 +2,26 @@
 
 #include "components/ComponentManager.h"
 #include "game/GameState.h"
+#include "utilities/JSONUtils.h"
 
 void from_json(json const& j, ComponentPosition& obj)
 {
-  if (!j.is_object() || j.size() == 0)
+  obj = ComponentPosition();
+
+  if (j.is_object() && j.size() != 0)
   {
-    obj = ComponentPosition();
-  }
-  else
-  {
-    obj.m_parent = j["parent"];
-    obj.m_coords = j["coords"];
+    JSONUtils::setIfPresent(obj.m_coords, j, "coords");
+    JSONUtils::setIfPresent(obj.m_map, j, "map");
+    JSONUtils::setIfPresent(obj.m_parent, j, "parent");
   }
 }
 
 void to_json(json& j, ComponentPosition const& obj)
 {
   j = json::object();
-  j["parent"] = obj.m_parent;
   j["coords"] = obj.m_coords;
+  j["map"] = obj.m_map;
+  j["parent"] = obj.m_parent;
 }
 
 ComponentPosition::ComponentPosition()
@@ -41,9 +42,9 @@ void ComponentPosition::set(EntityId id)
 {
   if (m_parent != id)
   {
-    m_parent = id;
-    m_map = MapId::Null();
     m_coords = { 0, 0 };
+    m_map = MapId::Null();
+    m_parent = id;
   }
 }
 
@@ -51,8 +52,8 @@ void ComponentPosition::set(IntVec2 coords)
 {
   if (m_coords != coords)
   {
-    m_parent = EntityId::Mu();
     m_coords = coords;
+    m_parent = EntityId::Mu();
   }
 }
 
@@ -60,9 +61,9 @@ void ComponentPosition::set(MapId map, IntVec2 coords)
 {
   if (m_map != map || m_coords != coords)
   {
-    m_parent = EntityId::Mu();
-    m_map = map;
     m_coords = coords;
+    m_map = map;
+    m_parent = EntityId::Mu();
   }
 }
 

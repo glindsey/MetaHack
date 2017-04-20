@@ -1,17 +1,18 @@
 #include "components/ComponentGender.h"
 
 #include "game/GameState.h"
+#include "utilities/JSONUtils.h"
 
 void from_json(json const& j, ComponentGender& obj)
 {
-  if (!j.is_object() || j.size() == 0)
+  if (j.is_object() && j.size() != 0)
   {
-    obj = ComponentGender();
+    // *** add Component-specific assignments here ***
+    // JSONUtils::setIfPresent(obj.m_member, j, "member");
   }
   else
   {
-    // *** add Component-specific assignments here ***
-    //obj.m_member = j["member"];
+    obj = ComponentGender();
   }
 }
 
