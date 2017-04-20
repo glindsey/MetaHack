@@ -662,12 +662,14 @@ void Entity::findSeenTiles()
   ///          * FRONTBACK (90 degrees ahead/90 degrees back)
   ///          * FULL (all 360 degrees)
   ComponentPosition const& position = COMPONENTS.position[m_id];
-  MapMemory& memory = COMPONENTS.spacialMemory[m_id].ofMap(position.map());
-
-  for (int n = 1; n <= 8; ++n)
+  if (COMPONENTS.spacialMemory.existsFor(m_id))
   {
+    MapMemory& memory = COMPONENTS.spacialMemory[m_id].ofMap(position.map());
 
-    do_recursive_visibility(position, memory, n);
+    for (int n = 1; n <= 8; ++n)
+    {
+      do_recursive_visibility(position, memory, n);
+    }
   }
 }
 
@@ -1637,12 +1639,6 @@ bool Entity::_process_own_voluntary_actions()
   }
 
   return true;
-}
-
-MapMemory& Entity::get_map_memory()
-{
-  auto map = COMPONENTS.position[m_id].map();
-  return COMPONENTS.spacialMemory[m_id].ofMap(map);
 }
 
 void Entity::do_recursive_visibility(ComponentPosition const& thisPosition,

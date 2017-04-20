@@ -623,11 +623,12 @@
     <None Include="resources\entity\LightSource.lua" />
     <None Include="resources\entity\Marcher.json" />
     <None Include="resources\entity\Marcher.lua" />
+    <None Include="resources\entity\MemoryEntity.json" />
     <None Include="resources\entity\Mu.json" />
     <None Include="resources\entity\Rock.json" />
     <None Include="resources\entity\RockLichen.json" />
     <None Include="resources\entity\SackCloth.json" />
-    <None Include="resources\entity\Sapient.json" />
+    <None Include="resources\entity\SapientEntity.json" />
     <None Include="resources\entity\Sconce.json" />
     <None Include="resources\entity\Sconce.lua" />
     <None Include="resources\entity\TileContents.json" />

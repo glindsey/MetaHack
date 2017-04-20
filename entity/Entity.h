@@ -524,9 +524,6 @@ protected:
   /// Initializer; called by all constructors.
   void initialize();
 
-  /// Get a reference to this DynamicEntity's map memory.
-  MapMemory& get_map_memory();
-
   /// Perform the recursive visibility scan for an octant.
   /// Used by findSeenTiles.
   void do_recursive_visibility(ComponentPosition const& thisPosition,

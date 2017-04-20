@@ -60,6 +60,7 @@ App::App(sf::RenderWindow& app_window)
   // Register loggers.
   SET_UP_LOGGER("App", true);
   SET_UP_LOGGER("Action", false);
+  SET_UP_LOGGER("Component", false);
   SET_UP_LOGGER("ConfigSettings", true);
   SET_UP_LOGGER("Entity", true);
   SET_UP_LOGGER("EntityPool", true);

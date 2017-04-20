@@ -49,16 +49,11 @@ ComponentManager::ComponentManager()
 ComponentManager::ComponentManager(json const& j)
 {
   initialize();
-
-  if (j.is_object() && j.size() != 0)
-  {
-    JSONUtils::setIfPresent(appearance, j, "appearance");
-    JSONUtils::setIfPresent(inventory, j, "inventory");
-    JSONUtils::setIfPresent(physical, j, "physical");
-    JSONUtils::setIfPresent(position, j, "position");
-    JSONUtils::setIfPresent(spacialMemory, j, "spacial-memory");
-  }
-
+  JSONUtils::doIfPresent(j, "appearance", [&](auto const& value) { appearance = value; });
+  JSONUtils::doIfPresent(j, "inventory", [&](auto& value) { inventory = value; });
+  JSONUtils::doIfPresent(j, "physical", [&](auto& value) { physical = value; });
+  JSONUtils::doIfPresent(j, "position", [&](auto& value) { position = value; });
+  JSONUtils::doIfPresent(j, "spacial-memory", [&](auto& value) { spacialMemory = value; });
 }
 
 ComponentManager::~ComponentManager()
@@ -83,26 +78,20 @@ void ComponentManager::clone(EntityId original, EntityId newId)
 
 void ComponentManager::populate(EntityId id, json const& j)
 {
-  if (j.is_object() && j.size() != 0)
-  {
-    JSONUtils::setIfPresent(appearance[id], j, "appearance");
-    JSONUtils::setIfPresent(inventory[id], j, "inventory");
-    JSONUtils::setIfPresent(physical[id], j, "physical");
-    JSONUtils::setIfPresent(position[id], j, "position");
-    JSONUtils::setIfPresent(spacialMemory[id], j, "spacial-memory");
-  }
+  JSONUtils::doIfPresent(j, "appearance", [&](auto& value) { appearance[id] = value; });
+  JSONUtils::doIfPresent(j, "inventory", [&](auto& value) { inventory[id] = value; });
+  JSONUtils::doIfPresent(j, "physical", [&](auto& value) { physical[id] = value; });
+  JSONUtils::doIfPresent(j, "position", [&](auto& value) { position[id] = value; });
+  JSONUtils::doIfPresent(j, "spacial-memory", [&](auto& value) { spacialMemory[id] = value; });
 }
 
 void from_json(json const& j, ComponentManager& obj)
 {
-  if (j.is_object() && j.size() != 0)
-  {
-    JSONUtils::setIfPresent(obj.appearance, j, "appearance");
-    JSONUtils::setIfPresent(obj.inventory, j, "inventory");
-    JSONUtils::setIfPresent(obj.physical, j, "physical");
-    JSONUtils::setIfPresent(obj.position, j, "position");
-    JSONUtils::setIfPresent(obj.spacialMemory, j, "spacial-memory");
-  }
+  JSONUtils::doIfPresent(j, "appearance", [&](auto& value) { obj.appearance = value; });
+  JSONUtils::doIfPresent(j, "inventory", [&](auto& value) { obj.inventory = value; });
+  JSONUtils::doIfPresent(j, "physical", [&](auto& value) { obj.physical = value; });
+  JSONUtils::doIfPresent(j, "position", [&](auto& value) { obj.position = value; });
+  JSONUtils::doIfPresent(j, "spacial-memory", [&](auto& value) { obj.spacialMemory = value; });
 }
 
 void to_json(json& j, ComponentManager const& obj)
@@ -113,4 +102,3 @@ void to_json(json& j, ComponentManager const& obj)
   j["position"] = obj.position;
   j["spacial-memory"] = obj.spacialMemory;
 }
-

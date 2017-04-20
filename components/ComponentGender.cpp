@@ -5,15 +5,9 @@
 
 void from_json(json const& j, ComponentGender& obj)
 {
-  if (j.is_object() && j.size() != 0)
-  {
-    // *** add Component-specific assignments here ***
-    // JSONUtils::setIfPresent(obj.m_member, j, "member");
-  }
-  else
-  {
-    obj = ComponentGender();
-  }
+  obj = ComponentGender();
+  // *** add Component-specific assignments here ***
+  // JSONUtils::doIfPresent(j, "member", [&](auto& value) { obj.m_member = value; });
 }
 
 void to_json(json& j, ComponentGender const& obj)

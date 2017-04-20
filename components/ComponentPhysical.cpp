@@ -7,13 +7,9 @@
 void from_json(json const& j, ComponentPhysical& obj)
 {
   obj = ComponentPhysical();
-
-  if (j.is_object() && j.size() != 0)
-  {
-    JSONUtils::setIfPresent(obj.m_mass, j, "mass");
-    JSONUtils::setIfPresent(obj.m_quantity, j, "quantity");
-    JSONUtils::setIfPresent(obj.m_volume, j, "volume");
-  }
+  JSONUtils::doIfPresent(j, "mass", [&](auto& value) { obj.m_mass = value; });
+  JSONUtils::doIfPresent(j, "quantity", [&](auto& value) { obj.m_quantity = value; });
+  JSONUtils::doIfPresent(j, "volume", [&](auto& value) { obj.m_volume = value; });
 }
 
 void to_json(json& j, ComponentPhysical const& obj)

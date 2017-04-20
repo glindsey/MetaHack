@@ -8,18 +8,14 @@ void from_json(json const& j, MapMemory& obj)
   obj.m_size = IntVec2(0, 0);
   obj.m_chunks.clear();
 
-  if (j.is_object() && j.size() != 0)
-  {
-    JSONUtils::setIfPresent(obj.m_size, j, "size");
-
-    if (j.count("chunks") != 0)
+  JSONUtils::doIfPresent(j, "size", [&](auto& value) { obj.m_size = value; });
+  JSONUtils::doIfPresent(j, "chunks", [&](auto& value) 
+  { 
+    for (auto citer = value.cbegin(); citer != value.cend(); ++citer)
     {
-      for (auto citer = j["chunks"].cbegin(); citer != j["chunks"].cend(); ++citer)
-      {
-        obj.m_chunks[std::stoul(citer.key())] = citer.value();
-      }
+      obj.m_chunks[std::stoul(citer.key())] = citer.value();
     }
-  }
+  });
 }
 
 void to_json(json& j, MapMemory const& obj)

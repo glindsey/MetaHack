@@ -39,18 +39,15 @@ namespace JSONUtils
     return j[key];
   }
 
-  /// Set a variable to a value if its key is present in the JSON.
-  /// The variable type must have an associated from_json() function or
-  /// compilation will fail.
-  template <typename T>
-  bool setIfPresent(T& variable, json const& j, std::string key)
+  /// Perform an action with a key/value pair if the key is present in the JSON.
+  inline void doIfPresent(json const& j,
+                          std::string key,
+                          std::function<void(json const& value)> function)
   {
-    if (j.count(key) != 0)
+    if (j.is_object() && j.count(key) != 0)
     {
-      variable = j[key];
-      return true;
+      json const& value = j[key];
+      function(value);
     }
-    return false;
   }
-
 } // end namespace JSONUtils

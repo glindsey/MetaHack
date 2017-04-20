@@ -7,11 +7,7 @@
 void from_json(json const& j, ComponentAppearance& obj)
 {
   obj = ComponentAppearance();
-
-  if (j.is_object() && j.size() != 0)
-  {
-    JSONUtils::setIfPresent(obj.m_opacity, j, "opacity");
-  }
+  JSONUtils::doIfPresent(j, "opacity", [&](auto& value) { obj.m_opacity = value; });
 }
 
 void to_json(json& j, ComponentAppearance const& obj)

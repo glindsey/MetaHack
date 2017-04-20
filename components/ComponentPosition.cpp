@@ -7,13 +7,9 @@
 void from_json(json const& j, ComponentPosition& obj)
 {
   obj = ComponentPosition();
-
-  if (j.is_object() && j.size() != 0)
-  {
-    JSONUtils::setIfPresent(obj.m_coords, j, "coords");
-    JSONUtils::setIfPresent(obj.m_map, j, "map");
-    JSONUtils::setIfPresent(obj.m_parent, j, "parent");
-  }
+  JSONUtils::doIfPresent(j, "coords", [&](auto& value) { obj.m_coords = value; });
+  JSONUtils::doIfPresent(j, "map", [&](auto& value) { obj.m_map = value; });
+  JSONUtils::doIfPresent(j, "parent", [&](auto& value) { obj.m_parent = value; });
 }
 
 void to_json(json& j, ComponentPosition const& obj)

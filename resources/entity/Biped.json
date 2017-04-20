@@ -1,5 +1,5 @@
 {
-  "parent": "Sapient",
+  "parent": "SapientEntity",
 
   "name": "[Biped]",
   "plural": "[Bipeds]",

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "AssertHelper.h"
 #include "entity/EntityId.h"
 
 #include <boost/optional.hpp>
@@ -18,6 +19,8 @@ public:
   /// Add an entity to this component map, with the default component value.
   void addDefault(EntityId id)
   {
+    std::string className = typeid(T).name();
+    CLOG(TRACE, "Component") << "Creating new " << typeid(T).name() << " for ID " << id;
     m_componentMap[id] = T();
   }
 
@@ -56,6 +59,8 @@ public:
   {
     if (!existsFor(id))
     {
+      std::string className = typeid(T).name();
+      CLOG(TRACE, "Component") << "Creating new " << typeid(T).name() << " for ID " << id;
       m_componentMap[id] = T();
     }
 
@@ -81,7 +86,7 @@ public:
       return defaultValue;
     }
 
-    return m_componentMap[id];
+    return m_componentMap.at(id);
   }
 
   /// Get the map itself for iterating through.
@@ -99,7 +104,7 @@ public:
   {
     obj.m_componentMap.clear();
 
-    if (j.is_object() && j.size() != 0)
+    if (j.is_object())
     {
       for (auto citer = j.cbegin(); citer != j.cend(); ++citer)
       {
