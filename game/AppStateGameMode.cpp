@@ -99,10 +99,25 @@ void AppStateGameMode::execute()
     /// Call the Lua interpreter with the command.
     std::string luaCommand = m_debug_buffer->get_buffer();
     Service<IMessageLog>::get().add("> " + luaCommand);
-    if (luaL_dostring(the_lua_state, luaCommand.c_str()))
+
+    /// DEBUG: If the command is "dump", write out gamestate JSON to a file.
+    /// @todo Remove this, or make it a Lua function instead.
+    std::string command = boost::to_lower_copy(luaCommand);
+    if (command == "dump")
     {
-      std::string result = lua_tostring(the_lua_state, -1);
-      Service<IMessageLog>::get().add(result);
+      Service<IMessageLog>::get().add("Dumping game state to dump.json...");
+      json gameStateJSON = game;
+      std::ofstream of("dump.json");
+      of << gameStateJSON.dump(2);
+      Service<IMessageLog>::get().add("...Dump complete.");
+    }
+    else
+    {
+      if (luaL_dostring(the_lua_state, luaCommand.c_str()))
+      {
+        std::string result = lua_tostring(the_lua_state, -1);
+        Service<IMessageLog>::get().add(result);
+      }
     }
 
     m_debug_buffer->clear_buffer();
