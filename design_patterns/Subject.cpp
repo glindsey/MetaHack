@@ -12,36 +12,12 @@
 #include "Event.h"
 #include "Observer.h"
 
-class Subject::Impl
-{
-
-public:
-  bool eventsAlreadyRegistered;
-  EventQueue eventQueue;
-  EventObservers eventObservers;
-  void registerEventsIfNeeded(Subject const& subject);
-};
-
-void Subject::Impl::registerEventsIfNeeded(Subject const& subject)
-{
-  if (!eventsAlreadyRegistered)
-  {
-    eventsAlreadyRegistered = true;
-    std::unordered_set<EventID> events = subject.registeredEvents();
-    for (EventID const registeredEvent : events)
-    {
-      eventObservers.emplace(registeredEvent, PrioritizedObservers());
-    }
-  }
-}
-
-Subject::Subject() :
-  pImpl(new Impl())
+Subject::Subject()
 {}
 
 Subject::~Subject()
 {
-  for (auto& prioritizedObservers : pImpl->eventObservers)
+  for (auto& prioritizedObservers : m_eventObservers)
   {
     auto eventID = prioritizedObservers.first;
     auto observerCount = getObserverCount(eventID);
@@ -55,7 +31,7 @@ Subject::~Subject()
 
 void Subject::addObserver(Observer& observer, EventID eventID, ObserverPriority priority)
 {
-  pImpl->registerEventsIfNeeded(*this);
+  registerEventsIfNeeded(*this);
 
   if (eventID == EventID::All)
   {
@@ -91,12 +67,12 @@ void Subject::addObserver(Observer& observer, EventID eventID, ObserverPriority 
 
 void Subject::removeObserver(Observer& observer, EventID eventID)
 {
-  pImpl->registerEventsIfNeeded(*this);
+  registerEventsIfNeeded(*this);
 
   size_t removalCount = 0;
   if (eventID == EventID::All)
   {
-    for (auto& eventObservers : pImpl->eventObservers)
+    for (auto& eventObservers : m_eventObservers)
     {
       auto& prioritizedObservers = eventObservers.second;
 
@@ -159,7 +135,7 @@ bool Subject::broadcast(Event& event)
 {
   bool result = true;
 
-  pImpl->registerEventsIfNeeded(*this);
+  registerEventsIfNeeded(*this);
 
   event.subject = this;
 
@@ -197,19 +173,19 @@ bool Subject::broadcast(Event& event)
         }
         delete finalEvent;
 
-        pImpl->eventQueue.pop();
-        if (!pImpl->eventQueue.empty())
+        m_eventQueue.pop();
+        if (!m_eventQueue.empty())
         {
-          pImpl->eventQueue.front()();
+          m_eventQueue.front()();
         }
 
         return keep_going;
       };
 
-      pImpl->eventQueue.push(dispatchBlock);
-      if (pImpl->eventQueue.size() == 1)
+      m_eventQueue.push(dispatchBlock);
+      if (m_eventQueue.size() == 1)
       {
-        result = pImpl->eventQueue.front()();
+        result = m_eventQueue.front()();
       }
     }
 
@@ -219,7 +195,7 @@ bool Subject::broadcast(Event& event)
 
 void Subject::unicast(Event& event, Observer& observer)
 {
-  pImpl->registerEventsIfNeeded(*this);
+  registerEventsIfNeeded(*this);
 
   event.subject = this;
 
@@ -241,19 +217,19 @@ void Subject::unicast(Event& event, Observer& observer)
 
         delete finalEvent;
 
-        pImpl->eventQueue.pop();
-        if (!pImpl->eventQueue.empty())
+        m_eventQueue.pop();
+        if (!m_eventQueue.empty())
         {
-          pImpl->eventQueue.front()();
+          m_eventQueue.front()();
         }
 
         return result;
       };
 
-      pImpl->eventQueue.push(dispatchBlock);
-      if (pImpl->eventQueue.size() == 1)
+      m_eventQueue.push(dispatchBlock);
+      if (m_eventQueue.size() == 1)
       {
-        pImpl->eventQueue.front()();
+        m_eventQueue.front()();
       }
     }
   });
@@ -263,9 +239,9 @@ size_t Subject::getObserverCount(EventID eventID) const
 {
   size_t count = 0;
 
-  auto& eventObserverIter = pImpl->eventObservers.find(eventID);
+  auto& eventObserverIter = m_eventObservers.find(eventID);
 
-  if (eventObserverIter != pImpl->eventObservers.end())
+  if (eventObserverIter != m_eventObservers.end())
   {
     auto& prioritizedObservers = eventObserverIter->second;
     for (auto& observers : prioritizedObservers)
@@ -279,9 +255,9 @@ size_t Subject::getObserverCount(EventID eventID) const
 
 PrioritizedObservers& Subject::getObservers(EventID eventID)
 {
-  auto& eventObserversIter = pImpl->eventObservers.find(eventID);
+  auto& eventObserversIter = m_eventObservers.find(eventID);
 
-  Assert("ObserverPattern", (eventObserversIter != pImpl->eventObservers.end()),
+  Assert("ObserverPattern", (eventObserversIter != m_eventObservers.end()),
          "\nReason:\tattempted to get observers for an unregistered event." <<
          "\nSubject:\t" << *this <<
          "\nEventID:\t" << eventID);
@@ -291,9 +267,9 @@ PrioritizedObservers& Subject::getObservers(EventID eventID)
 
 PrioritizedObservers const& Subject::getObservers(EventID eventID) const
 {
-  auto const& eventObserversIter = pImpl->eventObservers.find(eventID);
+  auto const& eventObserversIter = m_eventObservers.find(eventID);
 
-  Assert("ObserverPattern", (eventObserversIter != pImpl->eventObservers.end()),
+  Assert("ObserverPattern", (eventObserversIter != m_eventObservers.end()),
          "\nReason:\tattempted to get observers for an unregistered event." <<
          "\nSubject:\t" << *this <<
          "\nEventID:\t" << eventID);
@@ -328,4 +304,17 @@ void Subject::Registration::serialize(std::ostream& o) const
   Event::serialize(o);
   o << " | registration state: " <<
     (state == State::Registered ? "Registered" : "Unregistered");
+}
+
+void Subject::registerEventsIfNeeded(Subject const& subject)
+{
+  if (!m_eventsAlreadyRegistered)
+  {
+    m_eventsAlreadyRegistered = true;
+    std::unordered_set<EventID> events = subject.registeredEvents();
+    for (EventID const registeredEvent : events)
+    {
+      m_eventObservers.emplace(registeredEvent, PrioritizedObservers());
+    }
+  }
 }

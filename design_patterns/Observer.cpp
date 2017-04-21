@@ -12,20 +12,12 @@
 #include "Event.h"
 #include "Subject.h"
 
-class Observer::Impl
-{
-
-public:
-  std::unordered_map<Subject*, int> observations;
-};
-
-Observer::Observer() :
-  pImpl(new Impl())
+Observer::Observer()
 {}
 
 Observer::~Observer()
 {
-  for (auto& observation : pImpl->observations)
+  for (auto& observation : m_observations)
   {
     Assert("ObserverPattern", !observation.second,
            "\nReason:\tobserver went out of scope while registered with at least one subject." <<
@@ -41,13 +33,13 @@ bool Observer::onEvent(Event const& event)
     auto e = static_cast<const Subject::Registration&>(event);
     if (e.state == Subject::Registration::State::Registered)
     {
-      ++(pImpl->observations[e.subject]);
+      ++(m_observations[e.subject]);
     }
     else if (e.state == Subject::Registration::State::Unregistered)
     {
-      if (!--pImpl->observations[e.subject])
+      if (!--m_observations[e.subject])
       {
-        pImpl->observations.erase(e.subject);
+        m_observations.erase(e.subject);
       }
     }
 

@@ -34,6 +34,5 @@ protected:
   virtual EventResult onEvent_NVI(Event const& event) = 0;
 
 private:
-  class Impl;
-  const std::unique_ptr<Impl> pImpl;
+  std::unordered_map<Subject*, int> m_observations;
 };

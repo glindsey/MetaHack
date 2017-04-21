@@ -69,7 +69,11 @@ protected:
   virtual bool broadcast_(Event& event, BroadcastDelegate do_broadcast);
   virtual void unicast_(Event& event, Observer& observer, UnicastDelegate do_unicast);
 
+protected:
+  void registerEventsIfNeeded(Subject const& subject);
+
 private:
-  class Impl;
-  const std::unique_ptr<Impl> pImpl;
+  bool m_eventsAlreadyRegistered;
+  EventQueue m_eventQueue;
+  EventObservers m_eventObservers;
 };
