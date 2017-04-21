@@ -12,7 +12,6 @@
 #include "Service.h"
 #include "services/IGameRules.h"
 #include "types/Color.h"
-#include "types/Grid2D.h"
 #include "types/LightInfluence.h"
 #include "types/ShaderEffect.h"
 #include "utilities/MathUtils.h"
@@ -20,25 +19,13 @@
 #include "map/MapFeature.h"
 #include "map/MapGenerator.h"
 
-#define VERTEX(x, y) (20 * (pImpl->map_size.x * y) + x)
-#define TILE(x, y) (pImpl->tiles->get({ x, y }))
+#define VERTEX(x, y) (20 * (m_map_size.x * y) + x)
+#define TILE(x, y) (m_tiles->get({ x, y }))
 
 // Local typedefs
 typedef boost::random::uniform_int_distribution<> uniform_int_dist;
 
 const Color Map::ambient_light_level{ 48, 48, 48 };
-
-struct Map::Impl
-{
-  /// Grid of tiles.
-  std::unique_ptr< Grid2D< MapTile > > tiles;
-
-  /// Player starting location.
-  IntVec2 start_coords;
-
-  /// Pointer deque of map features.
-  boost::ptr_deque<MapFeature> features;
-};
 
 /// @todo Have this take an IntVec2 instead of width x height
 Map::Map(GameState& game, MapId map_id, int width, int height)
@@ -46,13 +33,12 @@ Map::Map(GameState& game, MapId map_id, int width, int height)
   m_game{ game },
   m_map_id{ map_id },
   m_map_size{ width, height },
-  m_generator{ NEW MapGenerator(*this) },
-  pImpl{ NEW Impl{} }
+  m_generator{ NEW MapGenerator(*this) }
 {
   CLOG(TRACE, "Map") << "Creating map of size " << width << " x " << height;
 
-  pImpl->tiles.reset(NEW Grid2D<MapTile>({ width, height }, 
-                                         [&](IntVec2 coords) -> MapTile* 
+  m_tiles.reset(NEW Grid2D<MapTile>({ width, height }, 
+                                    [&](IntVec2 coords) -> MapTile*
   {
     MapTile* new_tile = NEW MapTile(coords, "MTUnknown", map_id);
     new_tile->setCoords(coords);
@@ -125,14 +111,14 @@ IntVec2 const& Map::getSize() const
 
 IntVec2 const& Map::getStartCoords() const
 {
-  return pImpl->start_coords;
+  return m_start_coords;
 }
 
 bool Map::setStartCoords(IntVec2 start_coords)
 {
   if (isInBounds(start_coords))
   {
-    pImpl->start_coords = start_coords;
+    m_start_coords = start_coords;
     return true;
   }
   return false;
@@ -478,28 +464,28 @@ bool Map::tileIsOpaque(IntVec2 tile)
 
 void Map::clearMapFeatures()
 {
-  pImpl->features.clear();
+  m_features.clear();
 }
 
 MapFeature& Map::getRandomMapFeature()
 {
-  Assert("MapGenerator", pImpl->features.size() >= 1, "getRandomMapFeature() called but map doesn't contain any features yet!");
+  Assert("MapGenerator", m_features.size() >= 1, "getRandomMapFeature() called but map doesn't contain any features yet!");
   
-  uniform_int_dist featureDist(0, static_cast<int>(pImpl->features.size() - 1));
+  uniform_int_dist featureDist(0, static_cast<int>(m_features.size() - 1));
   int featureIndex = featureDist(the_RNG);
-  return pImpl->features[featureIndex];
+  return m_features[featureIndex];
 }
 
 boost::ptr_deque<MapFeature> const& Map::getMapFeatures() const
 {
-  return pImpl->features;
+  return m_features;
 }
 
 MapFeature& Map::addMapFeature(MapFeature* feature)
 {
   if (feature != nullptr)
   {
-    pImpl->features.push_back(feature);
+    m_features.push_back(feature);
   }
   return *feature;
 }

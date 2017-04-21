@@ -10,14 +10,8 @@
 #include "entity/Entity.h"
 #include "entity/EntityPool.h"
 
-struct StatusArea::Impl
-{
-  bool dummy;
-};
-
 StatusArea::StatusArea(std::string name, sf::IntRect dimensions)
-  : metagui::Window(name, dimensions),
-  pImpl(NEW Impl())
+  : metagui::Window(name, dimensions)
 {
   //ctor
   //std::function<std::string()> label_function = std::bind(&StatusArea::get_test_label, this);

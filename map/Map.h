@@ -5,6 +5,7 @@
 
 #include "Subject.h"
 #include "map/MapFactory.h"
+#include "types/Grid2D.h"
 #include "types/IRenderable.h"
 #include "entity/Entity.h"
 
@@ -40,13 +41,6 @@ public:
 
   /// The default ambient light level.
   static const Color ambient_light_level;
-
-  /// Serialization function.
-  template<class Archive>
-  void serialize(Archive& archive)
-  {
-    archive(pImpl);
-  }
 
   /// Process all Entities on this map.
   void processEntities();
@@ -142,8 +136,14 @@ private:
 
   std::unique_ptr<MapGenerator> m_generator;
 
-  struct Impl;
-  std::unique_ptr<Impl> pImpl;
+  /// Grid of tiles.
+  std::unique_ptr< Grid2D< MapTile > > m_tiles;
+
+  /// Player starting location.
+  IntVec2 m_start_coords;
+
+  /// Pointer deque of map features.
+  boost::ptr_deque<MapFeature> m_features;
 
   /// Lua function to get the tile contents Entity at a specific location.
   /// Takes three parameters:

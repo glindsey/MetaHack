@@ -94,8 +94,12 @@ protected:
 
 private:
 
-  struct Impl;
-  std::unique_ptr<Impl> pImpl;
+  Map& m_gameMap;
+  PropertyDictionary m_settings;
+  sf::IntRect m_coords;
+  GeoVector m_start_vec;
+  std::deque<GeoVector> m_highPriorityVecs;
+  std::deque<GeoVector> m_lowPriorityVecs;
 };
 
 #endif // MAPFEATURE_H

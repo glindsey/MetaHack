@@ -13,26 +13,11 @@
 // Local typedefs
 typedef boost::random::uniform_int_distribution<> uniform_int_dist;
 
-struct MapFeature::Impl
-{
-  Impl(Map& m, PropertyDictionary const& s, GeoVector vec)
-    :
-    gameMap{ m },
-    settings{ s },
-    start_vec{ vec }
-  {}
-
-  Map& gameMap;
-  PropertyDictionary settings;
-  sf::IntRect coords;
-  GeoVector start_vec;
-  std::deque<GeoVector> highPriorityVecs;
-  std::deque<GeoVector> lowPriorityVecs;
-};
-
 MapFeature::MapFeature(Map& m, PropertyDictionary const& s, GeoVector vec)
   :
-  pImpl(NEW Impl(m, s, vec))
+  m_gameMap{ m },
+  m_settings{ s },
+  m_start_vec{ vec }
 {}
 
 MapFeature::~MapFeature()
@@ -40,37 +25,37 @@ MapFeature::~MapFeature()
 
 sf::IntRect const& MapFeature::getCoords() const
 {
-  return pImpl->coords;
+  return m_coords;
 }
 
 Map& MapFeature::getMap() const
 {
-  return pImpl->gameMap;
+  return m_gameMap;
 }
 
 PropertyDictionary const& MapFeature::get_settings() const
 {
-  return pImpl->settings;
+  return m_settings;
 }
 
 size_t MapFeature::get_num_growth_vectors() const
 {
-  return pImpl->highPriorityVecs.size() + pImpl->lowPriorityVecs.size();
+  return m_highPriorityVecs.size() + m_lowPriorityVecs.size();
 }
 
 GeoVector const& MapFeature::get_random_growth_vector() const
 {
-  if (pImpl->highPriorityVecs.size() > 0)
+  if (m_highPriorityVecs.size() > 0)
   {
-    uniform_int_dist vecDist(0, static_cast<int>(pImpl->highPriorityVecs.size() - 1));
+    uniform_int_dist vecDist(0, static_cast<int>(m_highPriorityVecs.size() - 1));
     int randomVector = vecDist(the_RNG);
-    return pImpl->highPriorityVecs[randomVector];
+    return m_highPriorityVecs[randomVector];
   }
-  else if (pImpl->lowPriorityVecs.size() > 0)
+  else if (m_lowPriorityVecs.size() > 0)
   {
-    uniform_int_dist vecDist(0, static_cast<int>(pImpl->lowPriorityVecs.size() - 1));
+    uniform_int_dist vecDist(0, static_cast<int>(m_lowPriorityVecs.size() - 1));
     int randomVector = vecDist(the_RNG);
-    return pImpl->lowPriorityVecs[randomVector];
+    return m_lowPriorityVecs[randomVector];
   }
   else
   {
@@ -81,19 +66,19 @@ GeoVector const& MapFeature::get_random_growth_vector() const
 bool MapFeature::erase_growth_vector(GeoVector vec)
 {
   std::deque<GeoVector>::iterator iter;
-  iter = std::find(pImpl->highPriorityVecs.begin(), pImpl->highPriorityVecs.end(), vec);
+  iter = std::find(m_highPriorityVecs.begin(), m_highPriorityVecs.end(), vec);
 
-  if (iter != pImpl->highPriorityVecs.end())
+  if (iter != m_highPriorityVecs.end())
   {
-    pImpl->highPriorityVecs.erase(iter);
+    m_highPriorityVecs.erase(iter);
     return true;
   }
 
-  iter = std::find(pImpl->lowPriorityVecs.begin(), pImpl->lowPriorityVecs.end(), vec);
+  iter = std::find(m_lowPriorityVecs.begin(), m_lowPriorityVecs.end(), vec);
 
-  if (iter != pImpl->lowPriorityVecs.end())
+  if (iter != m_lowPriorityVecs.end())
   {
-    pImpl->lowPriorityVecs.erase(iter);
+    m_lowPriorityVecs.erase(iter);
     return true;
   }
 
@@ -150,20 +135,20 @@ std::unique_ptr<MapFeature> MapFeature::construct(Map& game_map, PropertyDiction
 
 void MapFeature::setCoords(sf::IntRect coords)
 {
-  pImpl->coords = coords;
+  m_coords = coords;
 }
 
 void MapFeature::clear_growth_vectors()
 {
-  pImpl->highPriorityVecs.clear();
-  pImpl->lowPriorityVecs.clear();
+  m_highPriorityVecs.clear();
+  m_lowPriorityVecs.clear();
 }
 
 void MapFeature::add_growth_vector(GeoVector vec, bool highPriority)
 {
   (highPriority == true ? 
-   pImpl->highPriorityVecs : 
-   pImpl->lowPriorityVecs).push_back(vec);
+   m_highPriorityVecs :
+   m_lowPriorityVecs).push_back(vec);
 }
 
 bool MapFeature::does_box_pass_criterion(IntVec2 upper_left,

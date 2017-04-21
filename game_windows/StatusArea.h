@@ -21,9 +21,6 @@ private:
                         RealVec2 location);
 
   std::string get_test_label();
-
-  struct Impl;
-  std::unique_ptr<Impl> pImpl;
 };
 
 #endif // STATUSAREA_H

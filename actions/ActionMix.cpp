@@ -89,7 +89,7 @@ namespace Actions
   {
     /// @todo IMPLEMENT ME
     //putMsg(makeTr("YOU_MIX_1_WITH_2", { liquid1, liquid2 }));
-    //thing1->perform_action_mixed_with_by(thing2, pImpl->ref);
+    //thing1->perform_action_mixed_with_by(thing2, ref);
 
     putTr("ACTN_NOT_IMPLEMENTED");
     return StateResult::Failure();
