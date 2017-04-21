@@ -50,6 +50,7 @@ ComponentManager::ComponentManager(json const& j)
 {
   initialize();
   JSONUtils::doIfPresent(j, "appearance", [&](auto const& value) { appearance = value; });
+  JSONUtils::doIfPresent(j, "gender", [&](auto const& value) { gender = value; });
   JSONUtils::doIfPresent(j, "inventory", [&](auto& value) { inventory = value; });
   JSONUtils::doIfPresent(j, "physical", [&](auto& value) { physical = value; });
   JSONUtils::doIfPresent(j, "position", [&](auto& value) { position = value; });
@@ -70,6 +71,7 @@ void ComponentManager::initialize()
 void ComponentManager::clone(EntityId original, EntityId newId)
 {
   appearance.cloneIfExists(original, newId);
+  gender.cloneIfExists(original, newId);
   // Do NOT clone inventory
   physical.cloneIfExists(original, newId);
   position.cloneIfExists(original, newId);
@@ -79,6 +81,7 @@ void ComponentManager::clone(EntityId original, EntityId newId)
 void ComponentManager::populate(EntityId id, json const& j)
 {
   JSONUtils::doIfPresent(j, "appearance", [&](auto& value) { appearance[id] = value; });
+  JSONUtils::doIfPresent(j, "gender", [&](auto& value) { gender[id] = value; });
   JSONUtils::doIfPresent(j, "inventory", [&](auto& value) { inventory[id] = value; });
   JSONUtils::doIfPresent(j, "physical", [&](auto& value) { physical[id] = value; });
   JSONUtils::doIfPresent(j, "position", [&](auto& value) { position[id] = value; });
@@ -88,6 +91,7 @@ void ComponentManager::populate(EntityId id, json const& j)
 void from_json(json const& j, ComponentManager& obj)
 {
   JSONUtils::doIfPresent(j, "appearance", [&](auto& value) { obj.appearance = value; });
+  JSONUtils::doIfPresent(j, "gender", [&](auto& value) { obj.gender = value; });
   JSONUtils::doIfPresent(j, "inventory", [&](auto& value) { obj.inventory = value; });
   JSONUtils::doIfPresent(j, "physical", [&](auto& value) { obj.physical = value; });
   JSONUtils::doIfPresent(j, "position", [&](auto& value) { obj.position = value; });
@@ -97,6 +101,7 @@ void from_json(json const& j, ComponentManager& obj)
 void to_json(json& j, ComponentManager const& obj)
 {
   j["appearance"] = obj.appearance;
+  j["gender"] = obj.gender;
   j["inventory"] = obj.inventory;
   j["physical"] = obj.physical;
   j["position"] = obj.position;

@@ -43,7 +43,6 @@ Entity::Entity(GameState& state, std::string category, EntityId id)
   m_category{ category },
   m_properties{ id },
   m_id{ id },
-  m_gender{ Gender::None },
   m_tilesCurrentlySeen{ TilesSeen() },
   m_pending_involuntary_actions{ ActionQueue() },
   m_pending_voluntary_actions{ ActionQueue() },
@@ -62,7 +61,6 @@ Entity::Entity(GameState& state, MapTile* map_tile, std::string category, Entity
   m_category{ category },
   m_properties{ id },
   m_id{ id },
-  m_gender{ Gender::None },
   m_tilesCurrentlySeen{ TilesSeen() },
   m_pending_involuntary_actions{ ActionQueue() },
   m_pending_voluntary_actions{ ActionQueue() },
@@ -81,7 +79,6 @@ Entity::Entity(Entity const& original, EntityId ref)
   m_category{ original.m_category },
   m_properties{ original.m_properties },
   m_id{ ref },
-  m_gender{ original.m_gender },
   m_tilesCurrentlySeen{ TilesSeen() },  // don't copy
   m_pending_involuntary_actions{ ActionQueue() },     // don't copy
   m_pending_voluntary_actions{ ActionQueue() },     // don't copy
@@ -330,12 +327,12 @@ bool Entity::canCurrentlyMove()
 
 void Entity::setGender(Gender gender)
 {
-  m_gender = gender;
+  COMPONENTS.gender[m_id].gender() = gender;
 }
 
 Gender Entity::getGender() const
 {
-  return m_gender;
+  return COMPONENTS.gender.valueOrDefault(m_id).gender();
 }
 
 Gender Entity::getGenderOrYou() const

@@ -6,13 +6,21 @@
 void from_json(json const& j, ComponentGender& obj)
 {
   obj = ComponentGender();
-  // *** add Component-specific assignments here ***
-  // JSONUtils::doIfPresent(j, "member", [&](auto& value) { obj.m_member = value; });
+  JSONUtils::doIfPresent(j, "gender", [&](auto& value) { obj.m_gender = value; });
 }
 
 void to_json(json& j, ComponentGender const& obj)
 {
   j = json::object();
-  // *** add Component-specific assignments here ***
-  //j["member"] = obj.m_member;
+  j["gender"] = obj.m_gender;
+}
+
+Gender & ComponentGender::gender()
+{
+  return m_gender;
+}
+
+Gender const & ComponentGender::gender() const
+{
+  return m_gender;
 }

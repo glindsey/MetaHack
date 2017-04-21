@@ -564,9 +564,6 @@ private:
   /// Reference to this Entity.
   EntityId m_id;
 
-  /// Gender of this entity.
-  Gender m_gender = Gender::None;
-
   /// Bitset for tiles currently seen.
   /// This deals with tiles observed at this particular instant.
   TilesSeen m_tilesCurrentlySeen;
