@@ -349,7 +349,7 @@ Gender Entity::getGenderOrYou() const
     }
     else
     {
-      return m_gender;
+      return COMPONENTS.gender.valueOrDefault(m_id).gender();
     }
   }
 }

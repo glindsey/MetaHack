@@ -77,6 +77,16 @@ std::string const possessivePronounArray[] =
   "his/hers"
 };
 
+void from_json(json const& j, Gender& obj)
+{
+  obj = static_cast<Gender>(j.get<unsigned int>());
+}
+
+void to_json(json& j, Gender const& obj)
+{
+  j = static_cast<unsigned int>(obj);
+}
+
 std::string const& getSubjPro(Gender gender)
 {
   if ((int)gender < (int)Gender::Count)
@@ -166,3 +176,4 @@ std::string const& getDefArt(std::string const& desc)
   static std::string const articleThe = "the";
   return articleThe;
 }
+

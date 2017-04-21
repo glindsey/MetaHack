@@ -46,6 +46,9 @@ inline std::ostream& operator<<(std::ostream& os, Gender gender)
   return os;
 }
 
+void from_json(json const& j, Gender& obj);
+void to_json(json& j, Gender const& obj);
+
 std::string const& getSubjPro(Gender gender);
 std::string const& getObjPro(Gender gender);
 std::string const& getRefPro(Gender gender);

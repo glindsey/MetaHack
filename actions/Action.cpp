@@ -17,57 +17,32 @@
 
 namespace Actions
 {
-  std::unordered_map<std::string, ActionCreator> Action::action_map;
-
-  struct Action::Impl
-  {
-    Impl(EntityId subject_, std::string type_, std::string verb_)
-      :
-      state{ State::Pending },
-      subject{ subject_ },
-      objects{},
-      target_thing{ EntityId::Mu() },
-      target_direction{ Direction::None },
-      quantity{ 1 },
-      type{ type_ },
-      verb{ verb_ }
-    {}
-
-    /// State of this action.
-    State state;
-
-    /// The subject performing the action.
-    EntityId subject;
-
-    /// The objects of the action.
-    std::vector<EntityId> objects;
-
-    /// Target Entity for the action (if any).
-    EntityId target_thing;
-
-    /// Direction for the action (if any).
-    Direction target_direction;
-
-    /// Quantity for the action (only used in drop/pickup).
-    unsigned int quantity;
-
-    /// This action's type name.
-    std::string const type;
-
-    /// This action's verb.
-    std::string const verb;
-  };
+  std::unordered_map<std::string, ActionCreator> Action::s_actionMap;
 
   Action::Action(std::string type, std::string verb, ActionCreator creator)
     :
-    pImpl{ new Impl(EntityId::Mu(), type, verb) }
+    m_state{ State::Pending },
+    m_subject{ EntityId::Mu() },
+    m_objects{},
+    m_targetThing{ EntityId::Mu() },
+    m_targetDirection{ Direction::None },
+    m_quantity{ 1 },
+    m_type{ type },
+    m_verb{ verb }
   {
     registerActionAs(type, creator);
   }
 
   Action::Action(EntityId subject, std::string type, std::string verb)
     :
-    pImpl{ new Impl(subject, type, verb) }
+    m_state{ State::Pending },
+    m_subject{ subject },
+    m_objects{},
+    m_targetThing{ EntityId::Mu() },
+    m_targetDirection{ Direction::None },
+    m_quantity{ 1 },
+    m_type{ type },
+    m_verb{ verb }
   {}
 
   Action::~Action()
@@ -86,33 +61,33 @@ namespace Actions
 
   EntityId Action::getSubject() const
   {
-    return pImpl->subject;
+    return m_subject;
   }
 
   void Action::setObject(EntityId object)
   {
-    pImpl->objects.clear();
-    pImpl->objects.push_back(object);
+    m_objects.clear();
+    m_objects.push_back(object);
   }
 
   void Action::setObjects(std::vector<EntityId> objects)
   {
-    pImpl->objects = objects;
+    m_objects = objects;
   }
 
   std::vector<EntityId> const& Action::getObjects() const
   {
-    return pImpl->objects;
+    return m_objects;
   }
 
   EntityId Action::getObject() const
   {
-    return pImpl->objects[0];
+    return m_objects[0];
   }
 
   EntityId Action::getSecondObject() const
   {
-    return pImpl->objects[1];
+    return m_objects[1];
   }
 
   bool Action::process(AnyMap params)
@@ -129,7 +104,7 @@ namespace Actions
 
     // Continue running through states until the event is processed, or the
     // target actor is busy.
-    while ((pImpl->state != State::Processed) && (counter_busy == 0))
+    while ((m_state != State::Processed) && (counter_busy == 0))
     {
       counter_busy = subject->getBaseProperty("counter-busy", 0);
       StateResult result{ false, 0 };
@@ -140,7 +115,7 @@ namespace Actions
         getType().c_str() << " is in state " <<
         str(getState());
 
-      switch (pImpl->state)
+      switch (m_state)
       {
         case State::Pending:
           result = doPreBeginWork(params);
@@ -148,13 +123,13 @@ namespace Actions
           if (result.success)
           {
             // Update the busy counter.
-            pImpl->subject->setBaseProperty("counter-busy", result.elapsed_time);
+            m_subject->setBaseProperty("counter-busy", result.elapsed_time);
             setState(State::PreBegin);
           }
           else
           {
             // Clear the busy counter.
-            pImpl->subject->setBaseProperty("counter-busy", 0);
+            m_subject->setBaseProperty("counter-busy", 0);
             setState(State::PostFinish);
           }
           break;
@@ -167,13 +142,13 @@ namespace Actions
           if (result.success)
           {
             // Update the busy counter.
-            pImpl->subject->setBaseProperty("counter-busy", result.elapsed_time);
+            m_subject->setBaseProperty("counter-busy", result.elapsed_time);
             setState(State::InProgress);
           }
           else
           {
             // Clear the busy counter.
-            pImpl->subject->setBaseProperty("counter-busy", 0);
+            m_subject->setBaseProperty("counter-busy", 0);
             setState(State::PostFinish);
           }
           break;
@@ -181,14 +156,14 @@ namespace Actions
         case State::InProgress:
           result = doFinishWork(params);
 
-          pImpl->subject->setBaseProperty("counter-busy", result.elapsed_time);
+          m_subject->setBaseProperty("counter-busy", result.elapsed_time);
           setState(State::PostFinish);
           break;
 
         case State::Interrupted:
           result = doAbortWork(params);
 
-          pImpl->subject->addToBaseProperty("counter-busy", result.elapsed_time);
+          m_subject->addToBaseProperty("counter-busy", result.elapsed_time);
           setState(State::PostFinish);
           break;
 
@@ -213,85 +188,85 @@ namespace Actions
       getType().c_str() << " switching to state " <<
       str(getState());
 
-    pImpl->state = state;
+    m_state = state;
   }
 
   State Action::getState()
   {
-    return pImpl->state;
+    return m_state;
   }
 
-  void Action::setTarget(EntityId entity) const
+  void Action::setTarget(EntityId entity)
   {
-    pImpl->target_thing = entity;
-    pImpl->target_direction = Direction::None;
+    m_targetThing = entity;
+    m_targetDirection = Direction::None;
   }
 
-  void Action::setTarget(Direction direction) const
+  void Action::setTarget(Direction direction)
   {
-    pImpl->target_thing = EntityId::Mu();
-    pImpl->target_direction = direction;
+    m_targetThing = EntityId::Mu();
+    m_targetDirection = direction;
   }
 
-  void Action::setQuantity(unsigned int quantity) const
+  void Action::setQuantity(unsigned int quantity)
   {
-    pImpl->quantity = quantity;
+    m_quantity = quantity;
   }
 
   EntityId Action::getTargetThing() const
   {
-    return pImpl->target_thing;
+    return m_targetThing;
   }
 
   Direction Action::getTargetDirection() const
   {
-    return pImpl->target_direction;
+    return m_targetDirection;
   }
 
   unsigned int Action::getQuantity() const
   {
-    return pImpl->quantity;
+    return m_quantity;
   }
 
   std::string Action::getType() const
   {
-    return pImpl->type;
+    return m_type;
   }
 
   std::string Action::getVerb2() const
   {
     auto& dict = Service<IStringDictionary>::get();
-    return dict.get("VERB_" + pImpl->verb + "_2");
+    return dict.get("VERB_" + m_verb + "_2");
   }
 
   std::string Action::getVerb3() const
   {
     auto& dict = Service<IStringDictionary>::get();
-    return dict.get("VERB_" + pImpl->verb + "_3");
+    return dict.get("VERB_" + m_verb + "_3");
   }
 
   std::string Action::getVerbing() const
   {
     auto& dict = Service<IStringDictionary>::get();
-    return dict.get("VERB_" + pImpl->verb + "_GER");
+    return dict.get("VERB_" + m_verb + "_GER");
   }
 
   std::string Action::getVerbed() const
   {
     auto& dict = Service<IStringDictionary>::get();
-    return dict.get("VERB_" + pImpl->verb + "_P2");
+    return dict.get("VERB_" + m_verb + "_P2");
   }
 
   std::string Action::getVerbPP() const
   {
     auto& dict = Service<IStringDictionary>::get();
-    return dict.get("VERB_" + pImpl->verb + "_PP");
+    return dict.get("VERB_" + m_verb + "_PP");
   }
 
   std::string Action::getVerbable() const
   {
     auto& dict = Service<IStringDictionary>::get();
-    return dict.get("VERB_" + pImpl->verb + "_ABLE");
+    return dict.get("VERB_" + m_verb + "_ABLE");
   }
 
   StateResult Action::doPreBeginWork(AnyMap& params)
@@ -751,19 +726,19 @@ namespace Actions
 
   void Action::registerActionAs(std::string key, ActionCreator creator)
   {
-    Action::action_map.insert({ key, creator });
+    Action::s_actionMap.insert({ key, creator });
   }
 
   bool Action::exists(std::string key)
   {
-    return Action::action_map.count(key) != 0;
+    return Action::s_actionMap.count(key) != 0;
   }
 
   std::unique_ptr<Action> Action::create(std::string key, EntityId subject)
   {
-    if (Action::action_map.count(key) != 0)
+    if (Action::s_actionMap.count(key) != 0)
     {
-      std::unique_ptr<Action> action = (Action::action_map.at(key))(subject);
+      std::unique_ptr<Action> action = (Action::s_actionMap.at(key))(subject);
       return std::move(action);
     }
     else
@@ -988,7 +963,7 @@ namespace Actions
 
   ActionMap const & Action::getMap()
   {
-    return Action::action_map;
+    return Action::s_actionMap;
   }
 
 } // end namespace

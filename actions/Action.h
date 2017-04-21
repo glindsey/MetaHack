@@ -106,9 +106,9 @@ namespace Actions
     void setState(State state);
     State getState();
 
-    void setTarget(EntityId entity) const;
-    void setTarget(Direction direction) const;
-    void setQuantity(unsigned int quantity) const;
+    void setTarget(EntityId entity);
+    void setTarget(Direction direction);
+    void setQuantity(unsigned int quantity);
 
     EntityId getTargetThing() const;
     Direction getTargetDirection() const;
@@ -313,10 +313,31 @@ namespace Actions
     virtual void printMessageCant() const;
 
   private:
-    struct Impl;
-    std::unique_ptr<Impl> pImpl;
+    /// State of this action.
+    State m_state;
 
-    static ActionMap action_map;
+    /// The subject performing the action.
+    EntityId m_subject;
+
+    /// The objects of the action.
+    std::vector<EntityId> m_objects;
+
+    /// Target Entity for the action (if any).
+    EntityId m_targetThing;
+
+    /// Direction for the action (if any).
+    Direction m_targetDirection;
+
+    /// Quantity for the action (only used in drop/pickup).
+    unsigned int m_quantity;
+
+    /// This action's type name.
+    std::string const m_type;
+
+    /// This action's verb.
+    std::string const m_verb;
+
+    static ActionMap s_actionMap;
   };
 
   inline std::ostream& operator<<(std::ostream& os, State const& s)
