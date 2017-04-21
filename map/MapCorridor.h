@@ -27,8 +27,7 @@ protected:
   MapCorridor(Map& m, PropertyDictionary const& settings, GeoVector vec);
 
 private:
-  struct Impl;
-  std::unique_ptr<Impl> pImpl;
+  IntVec2 m_endingCoords;
 };
 
 #endif // MAPCORRIDOR_H

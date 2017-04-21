@@ -6,6 +6,9 @@
 #include "lua/LuaObject.h"
 #include "map/Map.h"
 
+// Forward declarations
+struct GeoVector;
+
 /// The MapGenerator fills a map with dungeon features.
 class MapGenerator
 {
@@ -40,9 +43,28 @@ public:
   };
 
 protected:
+  /// Fill map with stone.
+  void clearMap();
+
+  /// Choose a random map feature and find a random place to tack on a new one.
+  bool getGrowthVector(GeoVector& growthVector);
+
+  /// Get a random square on the map, regardless of usage, excluding the map
+  /// boundaries.
+  IntVec2 getRandomSquare();
+
+  /// Get a random filled square on the map, excluding the map boundaries.
+  /// @warning Assumes there's at least one non-empty space on the map,
+  ///          or function will loop indefinitely!
+  IntVec2 getRandomFilledSquare();
+
+
 private:
-  struct Impl;
-  std::unique_ptr<Impl> pImpl;
+  /// Reference to game map.
+  Map& m_game_map;
+
+  /// Map feature variables.
+  FeatureLimits m_limits;
 };
 
 #endif // MAPGENERATOR_H

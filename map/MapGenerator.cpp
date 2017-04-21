@@ -10,138 +10,9 @@
 
 typedef boost::random::uniform_int_distribution<> uniform_int_dist;
 
-struct MapGenerator::Impl
-{
-  explicit Impl(Map& m) : game_map(m) {}
-
-  /// Fill map with stone.
-  void clearMap()
-  {
-    for (int y = 0; y < game_map.getSize().y; ++y)
-    {
-      for (int x = 0; x < game_map.getSize().x; ++x)
-      {
-        auto& tile = game_map.getTile({ x, y });
-        tile.setTileType("MTWallStone");
-      }
-    }
-  }
-
-  /// Choose a random map feature and find a random place to tack on a new one.
-  bool getGrowthVector(GeoVector& growthVector)
-  {
-    unsigned int numRetries = 0;
-    IntVec2 const& mapSize = game_map.getSize();
-
-    while (numRetries < limits.maxAdjacentRetries)
-    {
-      ++numRetries;
-
-      MapFeature& feature = game_map.getRandomMapFeature();
-      if (feature.get_num_growth_vectors() > 0)
-      {
-        GeoVector vec = feature.get_random_growth_vector();
-
-        // Check the validity of the vector by looking at adjacent tiles.
-        // It is valid if the adjacent tile is NOT empty.
-        bool vecOkay = false;
-
-        if (vec.direction == Direction::North)
-        {
-          if (vec.start_point.y > 0)
-          {
-            auto& checkTile = game_map.getTile({ vec.start_point.x, vec.start_point.y - 1 });
-            vecOkay = !checkTile.isEmptySpace();
-          }
-        }
-        else if (vec.direction == Direction::East)
-        {
-          if (vec.start_point.x < mapSize.x - 1)
-          {
-            auto& checkTile = game_map.getTile({ vec.start_point.x + 1, vec.start_point.y });
-            vecOkay = !checkTile.isEmptySpace();
-          }
-        }
-        else if (vec.direction == Direction::South)
-        {
-          if (vec.start_point.y < mapSize.y - 1)
-          {
-            auto& checkTile = game_map.getTile({ vec.start_point.x, vec.start_point.y + 1 });
-            vecOkay = !checkTile.isEmptySpace();
-          }
-        }
-        else if (vec.direction == Direction::West)
-        {
-          if (vec.start_point.x > 0)
-          {
-            auto& checkTile = game_map.getTile({ vec.start_point.x - 1, vec.start_point.y });
-            vecOkay = !checkTile.isEmptySpace();
-          }
-        }
-
-        if (vecOkay)
-        {
-          // Use this growth point.
-          growthVector.start_point = vec.start_point;
-          growthVector.direction = vec.direction;
-          return true;
-        }
-        else
-        {
-          // This is no longer a viable growth point, so erase it.
-          feature.erase_growth_vector(vec);
-        }
-      }
-    }
-
-    return false;
-  }
-
-  /// Get a random square on the map, regardless of usage, excluding the map
-  /// boundaries.
-  IntVec2 getRandomSquare()
-  {
-    IntVec2 mapSize = game_map.getSize();
-    uniform_int_dist xDist(1, mapSize.x - 2);
-    uniform_int_dist yDist(1, mapSize.y - 2);
-
-    IntVec2 coords;
-    coords.x = xDist(the_RNG);
-    coords.y = yDist(the_RNG);
-    return coords;
-  }
-
-  /// Get a random filled square on the map, excluding the map boundaries.
-  /// @warning Assumes there's at least one non-empty space on the map,
-  ///          or function will loop indefinitely!
-  IntVec2 getRandomFilledSquare()
-  {
-    IntVec2 mapSize = game_map.getSize();
-    uniform_int_dist xDist(1, mapSize.x - 2);
-    uniform_int_dist yDist(1, mapSize.y - 2);
-
-    IntVec2 coords;
-
-    do
-    {
-      coords.x = xDist(the_RNG);
-      coords.y = yDist(the_RNG);
-    } while (game_map.getTile(coords).isEmptySpace());
-
-    return coords;
-  }
-
-  /// Reference to game map.
-  Map& game_map;
-
-  /// Map feature variables.
-  FeatureLimits limits;
-};
-
 MapGenerator::MapGenerator(Map& m)
-  : pImpl(NEW Impl(m))
-{
-}
+  : m_game_map{ m }
+{}
 
 MapGenerator::~MapGenerator()
 {
@@ -154,26 +25,26 @@ void MapGenerator::generate()
 
   CLOG(TRACE, "MapGenerator") << "Filling map...";
   // Fill the map with stone.
-  pImpl->clearMap();
+  clearMap();
 
   // Create the initial room.
   CLOG(TRACE, "MapGenerator") << "Making starting room...";
 
-  GeoVector startingVector{ pImpl->getRandomFilledSquare(), Direction::Self };
+  GeoVector startingVector{ getRandomFilledSquare(), Direction::Self };
   feature_settings.set("type", "room");
   feature_settings.set("min_width", 12 /*5*/);
   feature_settings.set("max_width", 12 /*5*/);
   feature_settings.set("min_height", 12 /*5*/);
   feature_settings.set("max_height", 12 /*5*/);
   feature_settings.set("max_retries", 100);
-  std::unique_ptr<MapFeature> startRoom = MapFeature::construct(pImpl->game_map, feature_settings, startingVector);
+  std::unique_ptr<MapFeature> startRoom = MapFeature::construct(m_game_map, feature_settings, startingVector);
 
   if (!startRoom)
   {
     CLOG(FATAL, "MapGenerator") << "Could not make starting room for player!";
   }
 
-  MapFeature& startingRoom = pImpl->game_map.addMapFeature(startRoom.get());
+  MapFeature& startingRoom = m_game_map.addMapFeature(startRoom.get());
   startRoom.release();
 
   sf::IntRect startBox = startingRoom.getCoords();
@@ -184,14 +55,14 @@ void MapGenerator::generate()
 
   CLOG(TRACE, "MapGenerator") << "Setting start coords to " << startCoords;
 
-  pImpl->game_map.setStartCoords(startCoords);
+  m_game_map.setStartCoords(startCoords);
 
   // Continue with additional map features.
   CLOG(TRACE, "MapGenerator") << "Making additional map features...";
 
   unsigned int mapFeatures = 0;
 
-  while (mapFeatures < pImpl->limits.maxFeatures)
+  while (mapFeatures < m_limits.maxFeatures)
   {
     GeoVector nextGrowthVector;
 
@@ -259,17 +130,134 @@ bool MapGenerator::add_feature(PropertyDictionary const& feature_settings)
   GeoVector nextGrowthVector;
   std::unique_ptr<MapFeature> feature;
 
-  if (pImpl->getGrowthVector(nextGrowthVector))
+  if (getGrowthVector(nextGrowthVector))
   {
-    feature = MapFeature::construct(pImpl->game_map, feature_settings, nextGrowthVector);
+    feature = MapFeature::construct(m_game_map, feature_settings, nextGrowthVector);
   }
 
   if (feature)
   {
-    pImpl->game_map.addMapFeature(feature.get());
+    m_game_map.addMapFeature(feature.get());
     feature.release();
     return true;
   }
 
   return false;
+}
+
+/// Fill map with stone.
+void MapGenerator::clearMap()
+{
+  for (int y = 0; y < m_game_map.getSize().y; ++y)
+  {
+    for (int x = 0; x < m_game_map.getSize().x; ++x)
+    {
+      auto& tile = m_game_map.getTile({ x, y });
+      tile.setTileType("MTWallStone");
+    }
+  }
+}
+
+/// Choose a random map feature and find a random place to tack on a new one.
+bool MapGenerator::getGrowthVector(GeoVector& growthVector)
+{
+  unsigned int numRetries = 0;
+  IntVec2 const& mapSize = m_game_map.getSize();
+
+  while (numRetries < m_limits.maxAdjacentRetries)
+  {
+    ++numRetries;
+
+    MapFeature& feature = m_game_map.getRandomMapFeature();
+    if (feature.get_num_growth_vectors() > 0)
+    {
+      GeoVector vec = feature.get_random_growth_vector();
+
+      // Check the validity of the vector by looking at adjacent tiles.
+      // It is valid if the adjacent tile is NOT empty.
+      bool vecOkay = false;
+
+      if (vec.direction == Direction::North)
+      {
+        if (vec.start_point.y > 0)
+        {
+          auto& checkTile = m_game_map.getTile({ vec.start_point.x, vec.start_point.y - 1 });
+          vecOkay = !checkTile.isEmptySpace();
+        }
+      }
+      else if (vec.direction == Direction::East)
+      {
+        if (vec.start_point.x < mapSize.x - 1)
+        {
+          auto& checkTile = m_game_map.getTile({ vec.start_point.x + 1, vec.start_point.y });
+          vecOkay = !checkTile.isEmptySpace();
+        }
+      }
+      else if (vec.direction == Direction::South)
+      {
+        if (vec.start_point.y < mapSize.y - 1)
+        {
+          auto& checkTile = m_game_map.getTile({ vec.start_point.x, vec.start_point.y + 1 });
+          vecOkay = !checkTile.isEmptySpace();
+        }
+      }
+      else if (vec.direction == Direction::West)
+      {
+        if (vec.start_point.x > 0)
+        {
+          auto& checkTile = m_game_map.getTile({ vec.start_point.x - 1, vec.start_point.y });
+          vecOkay = !checkTile.isEmptySpace();
+        }
+      }
+
+      if (vecOkay)
+      {
+        // Use this growth point.
+        growthVector.start_point = vec.start_point;
+        growthVector.direction = vec.direction;
+        return true;
+      }
+      else
+      {
+        // This is no longer a viable growth point, so erase it.
+        feature.erase_growth_vector(vec);
+      }
+    }
+  }
+
+  return false;
+}
+
+/// Get a random square on the map, regardless of usage, excluding the map
+/// boundaries.
+IntVec2 MapGenerator::getRandomSquare()
+{
+  IntVec2 mapSize = m_game_map.getSize();
+  uniform_int_dist xDist(1, mapSize.x - 2);
+  uniform_int_dist yDist(1, mapSize.y - 2);
+
+  IntVec2 coords;
+  coords.x = xDist(the_RNG);
+  coords.y = yDist(the_RNG);
+  return coords;
+}
+
+/// Get a random filled square on the map, excluding the map boundaries.
+/// @warning Assumes there's at least one non-empty space on the map,
+///          or function will loop indefinitely!
+IntVec2 MapGenerator::getRandomFilledSquare()
+{
+  IntVec2 mapSize = m_game_map.getSize();
+  uniform_int_dist xDist(1, mapSize.x - 2);
+  uniform_int_dist yDist(1, mapSize.y - 2);
+
+  IntVec2 coords;
+
+  do
+  {
+    coords.x = xDist(the_RNG);
+    coords.y = yDist(the_RNG);
+  } while (m_game_map.getTile(coords).isEmptySpace());
+
+  return coords;
 }

@@ -8,15 +8,8 @@
 // Local typedefs
 typedef boost::random::uniform_int_distribution<> uniform_int_dist;
 
-struct MapCorridor::Impl
-{
-  IntVec2 endingCoords;
-};
-
 MapCorridor::MapCorridor(Map& m, PropertyDictionary const& s, GeoVector vec)
-  :
-  MapFeature{ m, s, vec },
-  pImpl(NEW Impl())
+  : MapFeature{ m, s, vec }
 {
   unsigned int numTries = 0;
   uniform_int_dist lenDist(s.get("min_length", 3), 
@@ -39,8 +32,8 @@ MapCorridor::MapCorridor(Map& m, PropertyDictionary const& s, GeoVector vec)
       yMin = yMax - (corridorLen - 1);
       xMin = startingCoords.x;
       xMax = startingCoords.x;
-      pImpl->endingCoords.x = startingCoords.x;
-      pImpl->endingCoords.y = yMin - 1;
+      m_endingCoords.x = startingCoords.x;
+      m_endingCoords.y = yMin - 1;
     }
     else if (direction == Direction::South)
     {
@@ -48,8 +41,8 @@ MapCorridor::MapCorridor(Map& m, PropertyDictionary const& s, GeoVector vec)
       yMax = yMin + (corridorLen - 1);
       xMin = startingCoords.x;
       xMax = startingCoords.x;
-      pImpl->endingCoords.x = startingCoords.x;
-      pImpl->endingCoords.y = yMax + 1;
+      m_endingCoords.x = startingCoords.x;
+      m_endingCoords.y = yMax + 1;
     }
     else if (direction == Direction::West)
     {
@@ -57,8 +50,8 @@ MapCorridor::MapCorridor(Map& m, PropertyDictionary const& s, GeoVector vec)
       xMin = xMax - (corridorLen - 1);
       yMin = startingCoords.y;
       yMax = startingCoords.y;
-      pImpl->endingCoords.x = xMin - 1;
-      pImpl->endingCoords.y = startingCoords.y;
+      m_endingCoords.x = xMin - 1;
+      m_endingCoords.y = startingCoords.y;
     }
     else if (direction == Direction::East)
     {
@@ -66,8 +59,8 @@ MapCorridor::MapCorridor(Map& m, PropertyDictionary const& s, GeoVector vec)
       xMax = xMin + (corridorLen - 1);
       yMin = startingCoords.y;
       yMax = startingCoords.y;
-      pImpl->endingCoords.x = xMax + 1;
-      pImpl->endingCoords.y = startingCoords.y;
+      m_endingCoords.x = xMax + 1;
+      m_endingCoords.y = startingCoords.y;
     }
     else
     {
@@ -124,21 +117,21 @@ MapCorridor::MapCorridor(Map& m, PropertyDictionary const& s, GeoVector vec)
         if (direction == Direction::North)
         {
           checkCoords.x = startingCoords.x;
-          checkCoords.y = pImpl->endingCoords.y - 1;
+          checkCoords.y = m_endingCoords.y - 1;
         }
         else if (direction == Direction::South)
         {
           checkCoords.x = startingCoords.x;
-          checkCoords.y = pImpl->endingCoords.y + 1;
+          checkCoords.y = m_endingCoords.y + 1;
         }
         else if (direction == Direction::West)
         {
-          checkCoords.x = pImpl->endingCoords.x - 1;
+          checkCoords.x = m_endingCoords.x - 1;
           checkCoords.y = startingCoords.y;
         }
         else if (direction == Direction::East)
         {
-          checkCoords.x = pImpl->endingCoords.x + 1;
+          checkCoords.x = m_endingCoords.x + 1;
           checkCoords.y = startingCoords.y;
         }
         else
@@ -152,7 +145,7 @@ MapCorridor::MapCorridor(Map& m, PropertyDictionary const& s, GeoVector vec)
           if (checkTile.isEmptySpace())
           {
             /// @todo Do a throw to see if it opens up. Right now it always does.
-            auto& endTile = getMap().getTile(pImpl->endingCoords);
+            auto& endTile = getMap().getTile(m_endingCoords);
             endTile.setTileType(floor_type);
           }
         }
@@ -169,5 +162,5 @@ MapCorridor::MapCorridor(Map& m, PropertyDictionary const& s, GeoVector vec)
 
 IntVec2 const& MapCorridor::getEndingCoords() const
 {
-  return pImpl->endingCoords;
+  return m_endingCoords;
 }

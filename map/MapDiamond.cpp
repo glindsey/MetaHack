@@ -9,15 +9,8 @@
 // Local typedefs
 typedef boost::random::uniform_int_distribution<> uniform_int_dist;
 
-struct MapDiamond::Impl
-{
-  bool dummy;
-};
-
 MapDiamond::MapDiamond(Map& m, PropertyDictionary const& s, GeoVector vec)
-  :
-  MapFeature{ m, s, vec },
-  pImpl(NEW Impl())
+  : MapFeature{ m, s, vec }
 {
   unsigned int numTries = 0;
   uniform_int_dist hsDist(s.get("min_half_size", 2),

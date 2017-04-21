@@ -22,8 +22,6 @@ protected:
   MapDiamond(Map& m, PropertyDictionary const& settings, GeoVector vec);
 
 private:
-  struct Impl;
-  std::unique_ptr<Impl> pImpl;
 };
 
 #endif // MAPDIAMOND_H
