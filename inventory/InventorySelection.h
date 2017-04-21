@@ -57,34 +57,40 @@ public:
   explicit InventorySelection(EntityId entity);
   virtual ~InventorySelection();
 
-  EntityId get_viewed() const;
+  EntityId getViewed() const;
   void setViewed(EntityId entity);
 
-  void toggle_selection(InventorySlot selection);
-  size_t get_selected_slot_count() const;
-  std::vector<InventorySlot> const& get_selected_slots();
-  std::vector<EntityId> get_selected_things();
-  void clear_selected_slots();
+  void toggleSelection(InventorySlot selection);
+  size_t getSelectedSlotCount() const;
+  std::vector<InventorySlot> const& getSelectedSlots();
+  std::vector<EntityId> getSelectedThings();
+  void clearSelectedSlots();
 
-  unsigned int get_selected_quantity() const;
-  unsigned int get_max_quantity() const;
-  unsigned int reset_selected_quantity();
-  bool set_selected_quantity(unsigned int amount);
-  bool inc_selected_quantity();
-  bool dec_selected_quantity();
+  unsigned int getSelectedQuantity() const;
+  unsigned int getMaxQuantity() const;
+  unsigned int resetSelectedQuantity();
+  bool setSelectedQuantity(unsigned int amount);
+  bool incSelectedQuantity();
+  bool decSelectedQuantity();
 
   EntityId getEntity(InventorySlot selection);
 
   /// @todo Not sure if these actually belong here, or somewhere else.
-  static char get_character(InventorySlot slot);
-  static char get_character(unsigned int slot_number);
-  static InventorySlot get_slot(char character);
+  static char getCharacter(InventorySlot slot);
+  static char getCharacter(unsigned int slot_number);
+  static InventorySlot getSlot(char character);
 
   virtual std::unordered_set<EventID> registeredEvents() const override;
 
 protected:
 
 private:
-  struct Impl;
-  std::unique_ptr<Impl> pImpl;
+  /// Entity whose contents (or surroundings) are currently being viewed.
+  EntityId m_viewed;
+
+  /// Vector of selected inventory slots.
+  std::vector< InventorySlot > m_selectedSlots;
+
+  /// Reference to quantity of topmost selected item.
+  unsigned int m_selectedQuantity;
 };

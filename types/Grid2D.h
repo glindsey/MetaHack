@@ -1,3 +1,5 @@
+#pragma once
+
 #include "stdafx.h"
 
 #include "types/Vec2.h"

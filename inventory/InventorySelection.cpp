@@ -11,25 +11,8 @@
 #include "entity/Entity.h"
 #include "entity/EntityId.h"
 
-struct InventorySelection::Impl
-{
-  /// Entity whose contents (or surroundings) are currently being viewed.
-  EntityId viewed;
-
-  /// Vector of selected inventory slots.
-  std::vector< InventorySlot > selected_slots;
-
-  /// Reference to quantity of topmost selected item.
-  unsigned int selected_quantity;
-
-
-};
-
 InventorySelection::InventorySelection()
-  :
-  pImpl(NEW Impl())
-{
-}
+{}
 
 InventorySelection::InventorySelection(EntityId entity)
   :
@@ -43,72 +26,72 @@ InventorySelection::~InventorySelection()
   //dtor
 }
 
-EntityId InventorySelection::get_viewed() const
+EntityId InventorySelection::getViewed() const
 {
-  return pImpl->viewed;
+  return m_viewed;
 }
 
 void InventorySelection::setViewed(EntityId entity)
 {
-  pImpl->viewed = entity;
-  pImpl->selected_slots.clear();
+  m_viewed = entity;
+  m_selectedSlots.clear();
 
   broadcast(EventEntityChanged(entity));
 }
 
-void InventorySelection::toggle_selection(InventorySlot selection)
+void InventorySelection::toggleSelection(InventorySlot selection)
 {
-  if (pImpl->viewed == EntityId::Mu())
+  if (m_viewed == EntityId::Mu())
   {
     return;
   }
 
-  ComponentInventory& inventory = COMPONENTS.inventory[pImpl->viewed];
+  ComponentInventory& inventory = COMPONENTS.inventory[m_viewed];
 
   if (inventory.contains(selection))
   {
-    auto iter = std::find(std::begin(pImpl->selected_slots),
-                          std::end(pImpl->selected_slots),
+    auto iter = std::find(std::begin(m_selectedSlots),
+                          std::end(m_selectedSlots),
                           selection);
-    if (iter == std::end(pImpl->selected_slots))
+    if (iter == std::end(m_selectedSlots))
     {
       CLOG(TRACE, "InventorySelection") <<
         "Adding slot " << static_cast<unsigned int>(selection) <<
         "to selected entities";
-      pImpl->selected_slots.push_back(selection);
+      m_selectedSlots.push_back(selection);
     }
     else
     {
       CLOG(TRACE, "InventorySelection") <<
         "Removing slot " << static_cast<unsigned int>(selection) <<
         "from selected entities";
-      pImpl->selected_slots.erase(iter);
+      m_selectedSlots.erase(iter);
     }
 
-    reset_selected_quantity(); // will notify observers
+    resetSelectedQuantity(); // will notify observers
   }
 }
 
-size_t InventorySelection::get_selected_slot_count() const
+size_t InventorySelection::getSelectedSlotCount() const
 {
-  return pImpl->selected_slots.size();
+  return m_selectedSlots.size();
 }
 
-std::vector<InventorySlot> const& InventorySelection::get_selected_slots()
+std::vector<InventorySlot> const& InventorySelection::getSelectedSlots()
 {
-  return pImpl->selected_slots;
+  return m_selectedSlots;
 }
 
-std::vector<EntityId> InventorySelection::get_selected_things()
+std::vector<EntityId> InventorySelection::getSelectedThings()
 {
   std::vector<EntityId> entities;
 
-  if (pImpl->viewed != EntityId::Mu())
+  if (m_viewed != EntityId::Mu())
   {
-    ComponentInventory& inventory = COMPONENTS.inventory[pImpl->viewed];
+    ComponentInventory& inventory = COMPONENTS.inventory[m_viewed];
 
-    for (auto iter = std::begin(pImpl->selected_slots);
-         iter != std::end(pImpl->selected_slots);
+    for (auto iter = std::begin(m_selectedSlots);
+         iter != std::end(m_selectedSlots);
          ++iter)
     {
       EntityId entity = inventory[*iter];
@@ -119,35 +102,35 @@ std::vector<EntityId> InventorySelection::get_selected_things()
   return entities;
 }
 
-void InventorySelection::clear_selected_slots()
+void InventorySelection::clearSelectedSlots()
 {
-  pImpl->selected_slots.clear();
-  broadcast(EventSelectionChanged(pImpl->selected_slots, pImpl->selected_quantity));
+  m_selectedSlots.clear();
+  broadcast(EventSelectionChanged(m_selectedSlots, m_selectedQuantity));
 }
 
-unsigned int InventorySelection::get_selected_quantity() const
+unsigned int InventorySelection::getSelectedQuantity() const
 {
-  return pImpl->selected_quantity;
+  return m_selectedQuantity;
 }
 
-unsigned int InventorySelection::get_max_quantity() const
+unsigned int InventorySelection::getMaxQuantity() const
 {
   unsigned int result;
 
-  if (pImpl->viewed == EntityId::Mu())
+  if (m_viewed == EntityId::Mu())
   {
     return 0;
   }
 
-  ComponentInventory& inventory = COMPONENTS.inventory[pImpl->viewed];
+  ComponentInventory& inventory = COMPONENTS.inventory[m_viewed];
 
-  if (pImpl->selected_slots.size() == 0)
+  if (m_selectedSlots.size() == 0)
   {
     result = 0;
   }
   else
   {
-    EntityId entity = inventory[pImpl->selected_slots[0]];
+    EntityId entity = inventory[m_selectedSlots[0]];
 
     if (entity == EntityId::Mu())
     {
@@ -162,46 +145,46 @@ unsigned int InventorySelection::get_max_quantity() const
   return result;
 }
 
-unsigned int InventorySelection::reset_selected_quantity()
+unsigned int InventorySelection::resetSelectedQuantity()
 {
-  pImpl->selected_quantity = get_max_quantity();
-  broadcast(EventSelectionChanged(pImpl->selected_slots, pImpl->selected_quantity));
-  return pImpl->selected_quantity;
+  m_selectedQuantity = getMaxQuantity();
+  broadcast(EventSelectionChanged(m_selectedSlots, m_selectedQuantity));
+  return m_selectedQuantity;
 }
 
-bool InventorySelection::set_selected_quantity(unsigned int amount)
+bool InventorySelection::setSelectedQuantity(unsigned int amount)
 {
   if (amount > 0)
   {
-    unsigned int maximum = get_max_quantity();
+    unsigned int maximum = getMaxQuantity();
     if (amount <= maximum)
     {
-      pImpl->selected_quantity = amount;
-      broadcast(EventSelectionChanged(pImpl->selected_slots, pImpl->selected_quantity));
+      m_selectedQuantity = amount;
+      broadcast(EventSelectionChanged(m_selectedSlots, m_selectedQuantity));
       return true;
     }
   }
   return false;
 }
 
-bool InventorySelection::inc_selected_quantity()
+bool InventorySelection::incSelectedQuantity()
 {
-  unsigned int maximum = get_max_quantity();
-  if (pImpl->selected_quantity < maximum)
+  unsigned int maximum = getMaxQuantity();
+  if (m_selectedQuantity < maximum)
   {
-    ++(pImpl->selected_quantity);
-    broadcast(EventSelectionChanged(pImpl->selected_slots, pImpl->selected_quantity));
+    ++(m_selectedQuantity);
+    broadcast(EventSelectionChanged(m_selectedSlots, m_selectedQuantity));
     return true;
   }
   return false;
 }
 
-bool InventorySelection::dec_selected_quantity()
+bool InventorySelection::decSelectedQuantity()
 {
-  if (pImpl->selected_quantity > 1)
+  if (m_selectedQuantity > 1)
   {
-    --(pImpl->selected_quantity);
-    broadcast(EventSelectionChanged(pImpl->selected_slots, pImpl->selected_quantity));
+    --(m_selectedQuantity);
+    broadcast(EventSelectionChanged(m_selectedSlots, m_selectedQuantity));
     return true;
   }
   return false;
@@ -209,14 +192,14 @@ bool InventorySelection::dec_selected_quantity()
 
 EntityId InventorySelection::getEntity(InventorySlot selection)
 {
-  EntityId viewed = pImpl->viewed;
+  EntityId viewed = m_viewed;
 
   if (viewed == EntityId::Mu())
   {
     return EntityId::Mu();
   }
 
-  ComponentInventory& inventory = COMPONENTS.inventory[pImpl->viewed];
+  ComponentInventory& inventory = COMPONENTS.inventory[m_viewed];
 
   if (inventory.contains(selection))
   {
@@ -232,12 +215,12 @@ EntityId InventorySelection::getEntity(InventorySlot selection)
   }
 }
 
-char InventorySelection::get_character(InventorySlot slot)
+char InventorySelection::getCharacter(InventorySlot slot)
 {
-  return get_character(static_cast<unsigned int>(slot));
+  return getCharacter(static_cast<unsigned int>(slot));
 }
 
-char InventorySelection::get_character(unsigned int slot_number)
+char InventorySelection::getCharacter(unsigned int slot_number)
 {
   char character;
 
@@ -261,7 +244,7 @@ char InventorySelection::get_character(unsigned int slot_number)
   return character;
 }
 
-InventorySlot InventorySelection::get_slot(char character)
+InventorySlot InventorySelection::getSlot(char character)
 {
   unsigned int slot_number;
   unsigned int char_number = static_cast<unsigned int>(character);

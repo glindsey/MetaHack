@@ -47,7 +47,7 @@ void InventoryArea::drawContents_(sf::RenderTexture& texture, int frame)
   RealVec2 text_offset = config.get("window-text-offset");
 
   // Get a reference to the location we're referring to.
-  auto& viewed_thing = m_inventorySelection.get_viewed();
+  auto& viewed_thing = m_inventorySelection.getViewed();
   if (viewed_thing == EntityId::Mu())
   {
     setText("Invalid Viewed Object!");
@@ -59,7 +59,7 @@ void InventoryArea::drawContents_(sf::RenderTexture& texture, int frame)
   float text_coord_y = text_offset.y + (line_spacing_y * 1.5f);
 
   ComponentInventory& inventory = COMPONENTS.inventory[viewed_thing];
-  auto& selected_slots = m_inventorySelection.get_selected_slots();
+  auto& selected_slots = m_inventorySelection.getSelectedSlots();
 
   /// @todo At the moment this does not split lines that are too long, instead
   ///       truncating them at the edge of the box.  This must be fixed.
@@ -106,7 +106,7 @@ void InventoryArea::drawContents_(sf::RenderTexture& texture, int frame)
       std::stringstream slot_id;
       char item_char;
 
-      item_char = InventorySelection::get_character(slot_number);
+      item_char = InventorySelection::getCharacter(slot_number);
 
       slot_id << item_char << ":";
       render_text.setFont(the_default_mono_font);
@@ -153,7 +153,7 @@ void InventoryArea::drawContents_(sf::RenderTexture& texture, int frame)
     if (selection_order == 1)
     {
       unsigned int max_quantity = COMPONENTS.physical.valueOrDefault(entity).quantity();
-      unsigned int selected_quantity = m_inventorySelection.get_selected_quantity();
+      unsigned int selected_quantity = m_inventorySelection.getSelectedQuantity();
       if ((max_quantity > 1) && (selected_quantity < max_quantity))
       {
         item_name << "(Sel: " << selected_quantity << ") ";
