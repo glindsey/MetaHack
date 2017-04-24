@@ -78,6 +78,7 @@ ComponentManager::ComponentManager(json const& j)
   JSONUtils::doIfPresent(j, "gender", [&](auto const& value) { gender = value; });
   JSONUtils::doIfPresent(j, "health", [&](auto const& value) { health = value; });
   JSONUtils::doIfPresent(j, "inventory", [&](auto& value) { inventory = value; });
+  JSONUtils::doIfPresent(j, "light-source", [&](auto& value) { lightSource = value; });
   JSONUtils::doIfPresent(j, "physical", [&](auto& value) { physical = value; });
   JSONUtils::doIfPresent(j, "position", [&](auto& value) { position = value; });
   JSONUtils::doIfPresent(j, "sense-sight", [&](auto& value) { senseSight = value; });
@@ -105,6 +106,7 @@ void ComponentManager::clone(EntityId original, EntityId newId)
   gender.cloneIfExists(original, newId);
   health.cloneIfExists(original, newId);
   // Do NOT clone inventory
+  lightSource.cloneIfExists(original, newId);
   physical.cloneIfExists(original, newId);
   position.cloneIfExists(original, newId);
   senseSight.cloneIfExists(original, newId);
@@ -118,6 +120,7 @@ void ComponentManager::populate(EntityId id, json const& j)
   JSONUtils::doIfPresent(j, "gender", [&](auto& value) { gender[id] = value; });
   JSONUtils::doIfPresent(j, "health", [&](auto& value) { health[id] = value; });
   JSONUtils::doIfPresent(j, "inventory", [&](auto& value) { inventory[id] = value; });
+  JSONUtils::doIfPresent(j, "light-source", [&](auto& value) { lightSource[id] = value; });
   JSONUtils::doIfPresent(j, "physical", [&](auto& value) { physical[id] = value; });
   JSONUtils::doIfPresent(j, "position", [&](auto& value) { position[id] = value; });
   JSONUtils::doIfPresent(j, "sense-sight", [&](auto& value) { senseSight[id] = value; });
@@ -131,6 +134,7 @@ void from_json(json const& j, ComponentManager& obj)
   JSONUtils::doIfPresent(j, "gender", [&](auto& value) { obj.gender = value; });
   JSONUtils::doIfPresent(j, "health", [&](auto& value) { obj.health = value; });
   JSONUtils::doIfPresent(j, "inventory", [&](auto& value) { obj.inventory = value; });
+  JSONUtils::doIfPresent(j, "light-source", [&](auto& value) { obj.lightSource = value; });
   JSONUtils::doIfPresent(j, "physical", [&](auto& value) { obj.physical = value; });
   JSONUtils::doIfPresent(j, "position", [&](auto& value) { obj.position = value; });
   JSONUtils::doIfPresent(j, "sense-sight", [&](auto& value) { obj.senseSight = value; });
@@ -144,6 +148,7 @@ void to_json(json& j, ComponentManager const& obj)
   j["gender"] = obj.gender;
   j["health"] = obj.health;
   j["inventory"] = obj.inventory;
+  j["light-source"] = obj.lightSource;
   j["physical"] = obj.physical;
   j["position"] = obj.position;
   j["sense-sight"] = obj.senseSight;

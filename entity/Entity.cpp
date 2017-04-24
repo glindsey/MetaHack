@@ -964,6 +964,9 @@ void Entity::light_up_surroundings()
 {
   EntityId location = COMPONENTS.position[m_id].parent();
 
+  // If Entity is not a light source, bail.
+  if (!COMPONENTS.lightSource.existsFor(m_id)) return;
+
   if (COMPONENTS.inventory.existsFor(m_id))
   {
     /// @todo Figure out how we want to handle light sources.
@@ -990,7 +993,8 @@ void Entity::light_up_surroundings()
   }
 
   // Use visitor pattern.
-  if ((location != EntityId::Mu()) && this->getModifiedProperty("lit", false))
+  if ((location != EntityId::Mu()) && 
+      COMPONENTS.lightSource[m_id].lit())
   {
     location->beLitBy(this->getId());
   }
@@ -999,7 +1003,8 @@ void Entity::light_up_surroundings()
 void Entity::beLitBy(EntityId light)
 {
   // If either this or the light has no Position component, bail.
-  if (!COMPONENTS.position.existsFor(m_id) || !COMPONENTS.position.existsFor(light)) return;
+  if (!COMPONENTS.position.existsFor(m_id) || 
+      !COMPONENTS.position.existsFor(light)) return;
 
   auto& thisPosition = COMPONENTS.position[m_id];
   auto& lightPosition = COMPONENTS.position[light];
