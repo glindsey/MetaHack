@@ -480,7 +480,7 @@ std::string Lua::find_lua_function(std::string category, std::string suffix)
   {
     // Get this entity category's templates.
     json const& templates = Service<IGameRules>::get().category(category).value("templates", json::array());
-    for (auto citer = templates.crbegin(); citer != templates.crend(); --citer)
+    for (auto citer = templates.crbegin(); citer != templates.crend(); ++citer)
     {
       result = find_lua_function(citer.value().get<std::string>(), suffix);
       if (result != "") return result;

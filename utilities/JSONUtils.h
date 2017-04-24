@@ -35,12 +35,12 @@ namespace JSONUtils
   {
     if (!first.is_array() || !second.is_array()) return;
 
-    for (auto citer2 = second.cbegin(); citer2 != second.cend(); ++citer2)
+    for (auto index2 = 0; index2 < second.size(); ++index2)
     {
       bool alreadyExists = false;
-      for (auto citer1 = first.cbegin(); citer1 != first.cend(); ++citer1)
+      for (auto index1 = 0; index1 < first.size(); ++index1)
       {
-        if (citer1.value() == citer2.value())
+        if (first[index1] == second[index2])
         {
           alreadyExists = true;
           break;
@@ -48,7 +48,7 @@ namespace JSONUtils
       }
       if (!alreadyExists)
       {
-        first.push_back(citer2.value());
+        first.push_back(second[index2]);
       }
     }
   }

@@ -3,9 +3,10 @@
 #include "services/FileSystemGameRules.h"
 
 #include "game/App.h" // needed for the_lua_instance
-#include "utilities/JSONUtils.h"
 #include "Service.h"
 #include "services/IGraphicViews.h"
+#include "utilities/JSONUtils.h"
+#include "utilities/StringTransforms.h"
 
 // Namespace aliases
 namespace fs = boost::filesystem;
@@ -67,13 +68,17 @@ void FileSystemGameRules::loadCategory(std::string name)
   if (categoryData.count("templates") != 0)
   {
     json& templatesJson = categoryData["templates"];
+
     if (templatesJson.is_array())
     {
-      for (auto citer = templatesJson.cbegin(); citer != templatesJson.cend(); ++citer)
+      for (auto index = 0; index < templatesJson.size(); ++index)
       {
-        CLOG(INFO, "GameState") << " -- Adding " << citer.value() << " template";
+        // Sanitize first.
+        templatesJson[index] = StringTransforms::remove_extra_whitespace_from(templatesJson[index]);
+
+        CLOG(INFO, "GameState") << " -- Adding " << templatesJson[index] << " template";
         json templateData = json::object();
-        loadTemplateInto(templateData, citer.value());
+        loadTemplateInto(templateData, templatesJson[index]);
         /// @todo Concatenate template arrays.
         JSONUtils::mergeArrays(categoryData["templates"], templateData["templates"]);
         JSONUtils::addTo(categoryData["components"], templateData["components"]);
@@ -146,11 +151,15 @@ void FileSystemGameRules::loadTemplateInto(json& templateData, std::string name)
     json& templatesJson = templateData["templates"];
     if (templatesJson.is_array())
     {
-      for (auto citer = templatesJson.cbegin(); citer != templatesJson.cend(); ++citer)
+      for (auto index = 0; index < templatesJson.size(); ++index)
       {
+        // Sanitize first.
+        templatesJson[index] = StringTransforms::remove_extra_whitespace_from(templatesJson[index]);
+
         json templateData2 = json::object();
-        CLOG(INFO, "GameState") << " -- Adding " << citer.value() << " template";
-        loadTemplateInto(templateData2, citer.value());
+
+        CLOG(INFO, "GameState") << " -- Adding " << templatesJson[index] << " template";
+        loadTemplateInto(templateData2, templatesJson[index]);
 
         JSONUtils::mergeArrays(templateData["templates"], templateData2["templates"]);
         JSONUtils::addTo(templateData["components"], templateData2["components"]);
