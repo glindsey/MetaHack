@@ -33,9 +33,7 @@ namespace Actions
 
   StateResult ActionDie::doBeginWorkNVI(AnyMap& params)
   {
-    bool success = false;
-    unsigned int action_time = 0;
-    auto& subject = getSubject();
+    EntityId subject = getSubject();
 
     /// @todo Handle stuff like auto-activating life-saving items here.
     /// @todo Pass in the cause of death somehow.

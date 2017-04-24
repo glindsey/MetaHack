@@ -39,6 +39,7 @@ json const& Entity::getCategoryData() const
 
 Entity::Entity(GameState& state, std::string category, EntityId id)
   :
+  Subject(),
   m_state{ state },
   m_category{ category },
   m_properties{ id },
@@ -57,6 +58,7 @@ Entity::Entity(GameState& state, std::string category, EntityId id)
 
 Entity::Entity(GameState& state, MapTile* map_tile, std::string category, EntityId id)
   :
+  Subject(),
   m_state{ state },
   m_category{ category },
   m_properties{ id },
@@ -75,6 +77,7 @@ Entity::Entity(GameState& state, MapTile* map_tile, std::string category, Entity
 
 Entity::Entity(Entity const& original, EntityId ref)
   :
+  Subject(),
   m_state{ original.m_state },
   m_category{ original.m_category },
   m_properties{ original.m_properties },

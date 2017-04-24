@@ -19,7 +19,12 @@ struct StateMachine::Impl
 
 StateMachine::StateMachine(std::string const& machine_name,
                            Subject* parent)
-  : pImpl(NEW Impl(parent))
+  : 
+  RenderableToTexture(),
+  ISFMLEventHandler(),
+  Observer(),
+  Subject(),
+  pImpl(NEW Impl(parent))
 {
   pImpl->current_state = nullptr;
   pImpl->machine_name = machine_name;

@@ -33,7 +33,6 @@ namespace Actions
   StateResult ActionTakeOff::doBeginWorkNVI(AnyMap& params)
   {
     StateResult result = StateResult::Failure();
-    std::string message;
 
     auto subject = getSubject();
     auto object = getObject();
@@ -46,7 +45,6 @@ namespace Actions
     // Check if the worn item is bound.
     if (object->getModifiedProperty("bound", false))
     {
-      std::string message;
       putMsg(makeTr("YOU_CANT_VERB_FOO_MAGICALLY_BOUND", 
       { subject->getPossessiveString(bodypart_desc) }));
 
@@ -56,10 +54,8 @@ namespace Actions
 
     // Try to take off the item.
     /// @todo Disrobing shouldn't be instantaneous.
-    auto lua_result = object->beObjectOf(*this, subject);
     if (object->beObjectOf(*this, subject))
     {
-      std::string message;
       putMsg(makeTr("YOU_CVERB_THE_FOO") + " " + 
              makeTr("YOU_ARE_NOW_WEARING_NOTHING", 
              { subject->getPossessiveString(bodypart_desc) }));

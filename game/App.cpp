@@ -42,6 +42,8 @@ sf::IntRect calc_message_log_dimensions(sf::RenderWindow& window)
 
 App::App(sf::RenderWindow& app_window)
   :
+  ISFMLEventHandler(), 
+  Subject(),
   m_app_window{ app_window },
   m_app_texture{ NEW sf::RenderTexture() },
   m_is_running{ false },

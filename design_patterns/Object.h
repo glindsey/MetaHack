@@ -6,7 +6,7 @@
 class Object : public Observer, public Subject
 {
 public:
-  Object() {}
+  Object() : Observer(), Subject() {}
   virtual ~Object() {}
 
   /// Forward an event on to observers.
