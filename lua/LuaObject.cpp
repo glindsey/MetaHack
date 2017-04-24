@@ -489,7 +489,7 @@ std::string Lua::find_lua_function(std::string category, std::string suffix)
   }
 
   // Nothing found, return empty string.
-  return std::string();
+  return result;
 }
 
 std::string Lua::find_lua_function_(std::string category, std::string suffix)
