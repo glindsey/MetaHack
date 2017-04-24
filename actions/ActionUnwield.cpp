@@ -35,7 +35,6 @@ namespace Actions
   StateResult ActionUnwield::doBeginWorkNVI(AnyMap& params)
   {
     StateResult result = StateResult::Failure();
-    std::string message;
 
     auto subject = getSubject();
     auto object = getObject();
@@ -57,7 +56,6 @@ namespace Actions
 
     // Try to unwield the item.
     /// @todo Unwielding shouldn't be instantaneous...?
-    auto lua_result = object->beObjectOf(*this, subject);
     if (object->beObjectOf(*this, subject))
     {
       std::string message;

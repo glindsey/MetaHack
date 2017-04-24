@@ -13,6 +13,10 @@
 #include "Observer.h"
 
 Subject::Subject()
+  :
+  m_eventsAlreadyRegistered{ false },
+  m_eventQueue{},
+  m_eventObservers{}
 {}
 
 Subject::~Subject()

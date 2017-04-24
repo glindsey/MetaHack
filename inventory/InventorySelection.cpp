@@ -12,6 +12,8 @@
 #include "entity/EntityId.h"
 
 InventorySelection::InventorySelection()
+  :
+  Subject()
 {}
 
 InventorySelection::InventorySelection(EntityId entity)

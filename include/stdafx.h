@@ -1,5 +1,9 @@
 #pragma once
 
+#pragma warning(disable: 4100 4503 4714)
+
+#pragma warning(push, 0)
+
 // Preprocessor constants
 #define NOMINMAX
 
@@ -70,14 +74,6 @@ using json = ::nlohmann::json;
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 
-// Our convenience includes
-#include "AssertHelper.h"
-#include "types/common.h"
-#include "utilities/CommonFunctions.h"
-
-// The special debugging "NEW" function.
-#include "utilities/New.h"
-
 // Lua includes
 extern "C"
 {
@@ -85,6 +81,16 @@ extern "C"
 #include <lualib.h>
 #include <lauxlib.h>
 }
+
+#pragma warning(pop)
+
+// Our convenience includes
+#include "AssertHelper.h"
+#include "types/common.h"
+#include "utilities/CommonFunctions.h"
+
+// The special debugging "NEW" function.
+#include "utilities/New.h"
 
 // Namespace directives
 namespace bl = boost::locale;
