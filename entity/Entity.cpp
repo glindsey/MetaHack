@@ -43,7 +43,6 @@ Entity::Entity(GameState& state, std::string category, EntityId id)
   m_state{ state },
   m_properties{ id },
   m_id{ id },
-  m_tilesCurrentlySeen{ TilesSeen() },
   m_pending_involuntary_actions{ ActionQueue() },
   m_pending_voluntary_actions{ ActionQueue() },
   m_wielded_items{ BodyLocationMap() },
@@ -58,7 +57,6 @@ Entity::Entity(Entity const& original, EntityId ref)
   m_state{ original.m_state },
   m_properties{ original.m_properties },
   m_id{ ref },
-  m_tilesCurrentlySeen{ TilesSeen() },  // don't copy
   m_pending_involuntary_actions{ ActionQueue() },     // don't copy
   m_pending_voluntary_actions{ ActionQueue() },     // don't copy
   m_wielded_items{ BodyLocationMap() },       // don't copy
@@ -575,7 +573,7 @@ bool Entity::canSee(IntVec2 coords)
   }
 
   // Return seen data.
-  return m_tilesCurrentlySeen[game_map.getIndex(coords)];
+  return COMPONENTS.senseSight[m_id].canSee(coords);
 }
 
 void Entity::findSeenTiles()
@@ -583,6 +581,13 @@ void Entity::findSeenTiles()
   //sf::Clock elapsed;
 
   //elapsed.restart();
+
+  // Hang on, can we actually see?
+  // If not, bail out.
+  if (canCurrentlySee() == false)
+  {
+    return;
+  }
 
   // Are we on a map?  Bail out if we aren't.
   EntityId location = COMPONENTS.position[m_id].parent();
@@ -592,14 +597,7 @@ void Entity::findSeenTiles()
   }
 
   // Clear the "tile seen" bitset.
-  m_tilesCurrentlySeen.reset();
-
-  // Hang on, can we actually see?
-  // If not, bail out.
-  if (canCurrentlySee() == false)
-  {
-    return;
-  }
+  COMPONENTS.senseSight[m_id].resetSeen();
 
   /// @todo Handle field-of-view here.
   ///       Field of view for an DynamicEntity can be:
@@ -608,14 +606,10 @@ void Entity::findSeenTiles()
   ///          * FRONTBACK (90 degrees ahead/90 degrees back)
   ///          * FULL (all 360 degrees)
   ComponentPosition const& position = COMPONENTS.position[m_id];
-  if (COMPONENTS.spacialMemory.existsFor(m_id))
-  {
-    MapMemory& memory = COMPONENTS.spacialMemory[m_id].ofMap(position.map());
 
-    for (int n = 1; n <= 8; ++n)
-    {
-      do_recursive_visibility(position, memory, n);
-    }
+  for (int n = 1; n <= 8; ++n)
+  {
+    do_recursive_visibility(position, n);
   }
 }
 
@@ -683,18 +677,23 @@ bool Entity::moveInto(EntityId newLocation)
         {
           /// @todo Save old map memory.
         }
-        m_tilesCurrentlySeen.clear();
-        if (newMapId != MapFactory::null_map_id)
+
+        IntVec2 new_map_size = newMapId->getSize();
+
+        if (COMPONENTS.senseSight.existsFor(m_id))
         {
-          IntVec2 new_map_size = newMapId->getSize();
-          if (COMPONENTS.spacialMemory.existsFor(m_id))
-          {
-            auto& spacialMemory = COMPONENTS.spacialMemory[m_id];
-            spacialMemory[newMapId].resize({ new_map_size.x, new_map_size.y });
-          }
-          m_tilesCurrentlySeen.resize(new_map_size.x * new_map_size.y);
-          /// @todo Load new map memory if it exists somewhere.
+          COMPONENTS.senseSight[m_id].resizeSeen(new_map_size);
         }
+        
+        if (COMPONENTS.spacialMemory.existsFor(m_id))
+        {
+          auto& spacialMemory = COMPONENTS.spacialMemory[m_id];
+          if (!spacialMemory.containsMap(newMapId))
+          {
+            COMPONENTS.spacialMemory[m_id].ofMap(newMapId).resize(new_map_size);
+          }
+        }
+
       }
       this->findSeenTiles();
       //notifyObservers(Event::Updated);
@@ -1588,7 +1587,6 @@ bool Entity::_process_own_voluntary_actions()
 }
 
 void Entity::do_recursive_visibility(ComponentPosition const& thisPosition,
-                                     MapMemory& thisMemory,
                                      int octant,
                                      int depth,
                                      float slope_A,
@@ -1606,7 +1604,7 @@ void Entity::do_recursive_visibility(ComponentPosition const& thisPosition,
   }
 
   IntVec2 thisCoords = thisPosition.coords();
-  Map& thisMap = GAME.maps().get(thisPosition.map());
+  MapId thisMap = thisPosition.map();
 
   static const int mv = 128;
   static constexpr int mw = (mv * mv);
@@ -1699,36 +1697,43 @@ void Entity::do_recursive_visibility(ComponentPosition const& thisPosition,
   {
     if (calc_vis_distance(newCoords, thisCoords) <= mw)
     {
-      if (thisMap.tileIsOpaque(newCoords))
+      if (thisMap->tileIsOpaque(newCoords))
       {
-        if (!thisMap.tileIsOpaque(newCoords + (IntVec2)dir))
+        if (!thisMap->tileIsOpaque(newCoords + (IntVec2)dir))
         {
-          do_recursive_visibility(thisPosition, thisMemory,
+          do_recursive_visibility(thisPosition, 
                                   octant, depth + 1, 
                                   slope_A, recurse_slope(to_v2f(newCoords), to_v2f(thisCoords)));
         }
       }
       else
       {
-        if (thisMap.tileIsOpaque(newCoords + (IntVec2)dir))
+        if (thisMap->tileIsOpaque(newCoords + (IntVec2)dir))
         {
           slope_A = loop_slope(to_v2f(newCoords), to_v2f(thisCoords));
         }
       }
-      m_tilesCurrentlySeen[thisMap.getIndex(newCoords)] = true;
 
-      MapMemoryChunk new_memory{ thisMap.getTile(newCoords).getTileType(),
-                                 GAME.getGameClock() };
+      if (COMPONENTS.senseSight.existsFor(m_id))
+      {
+        COMPONENTS.senseSight[m_id].setSeen(newCoords);
+      }
 
-      thisMemory[newCoords] = new_memory;
+      if (COMPONENTS.spacialMemory.existsFor(m_id))
+      {
+        MapMemoryChunk new_memory{ thisMap->getTile(newCoords).getTileType(),
+          GAME.getGameClock() };
+
+        COMPONENTS.spacialMemory[m_id].ofMap(thisMap)[newCoords] = new_memory;
+      }
     }
     newCoords -= (IntVec2)dir;
   }
   newCoords += (IntVec2)dir;
 
-  if ((depth < mv) && (!thisMap.getTile(newCoords).isOpaque()))
+  if ((depth < mv) && (!thisMap->getTile(newCoords).isOpaque()))
   {
-    do_recursive_visibility(thisPosition, thisMemory,
+    do_recursive_visibility(thisPosition,
                             octant, depth + 1, 
                             slope_A, slope_B);
   }

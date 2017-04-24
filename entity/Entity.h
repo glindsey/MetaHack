@@ -29,7 +29,6 @@ class MapTile;
 using BodyLocationMap = std::unordered_map<BodyLocation, EntityId>;
 using BodyLocationPair = std::pair<BodyLocation, EntityId>;
 
-using TilesSeen = boost::dynamic_bitset<size_t>; // size_t gets rid of 64-bit compile warning
 using ActionQueue = std::deque< std::unique_ptr<Actions::Action> >;
 
 // Associated enum classes to aid in parameter legibility.
@@ -511,7 +510,6 @@ protected:
   /// Perform the recursive visibility scan for an octant.
   /// Used by findSeenTiles.
   void do_recursive_visibility(ComponentPosition const& thisPosition,
-                               MapMemory& thisMemory,
                                int octant,
                                int depth = 1,
                                float slope_A = 1,
@@ -544,10 +542,6 @@ private:
 
   /// Reference to this Entity.
   EntityId m_id;
-
-  /// Bitset for tiles currently seen.
-  /// This deals with tiles observed at this particular instant.
-  TilesSeen m_tilesCurrentlySeen;
 
   /// Queue of pending involuntary actions to be performed.
   ActionQueue m_pending_involuntary_actions;
