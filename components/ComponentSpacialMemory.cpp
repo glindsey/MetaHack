@@ -38,7 +38,7 @@ bool ComponentSpacialMemory::containsMap(MapId map)
 
 MapMemory& ComponentSpacialMemory::ofMap(MapId map)
 {
-  return m_memory.at(map);
+  return m_memory[map];
 }
 
 MapMemory const& ComponentSpacialMemory::ofMap(MapId map) const

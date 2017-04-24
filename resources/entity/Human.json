@@ -3,7 +3,7 @@
   "plural": "humans",
   "description-brief": "A human being.",
 
-  "templates": [ "Biped" ],
+  "templates": [ "Biped", "Sighted" ],
 
   "proper-name": "John Doe",
 

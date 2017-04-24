@@ -14,7 +14,7 @@ class ComponentPosition final
 {
 public:
   ComponentPosition();
-  ComponentPosition(EntityId id);
+  explicit ComponentPosition(EntityId id);
   ComponentPosition(MapId map, IntVec2 coords);
   ~ComponentPosition();
 

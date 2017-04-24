@@ -5,9 +5,11 @@
 
   "templates": [ "MTFloor" ],
 
-  "tile-character": "?",
-  "tile-bg-color": [ "color", 0, 0, 0 ],
-  "tile-fg-color": [ "color", 128, 64, 0 ],
-
-  "components": {}
+  "components": {
+    "appearance": {
+      "tile-character": "?",
+      "tile-bg-color": [ "color", 0, 0, 0 ],
+      "tile-fg-color": [ "color", 128, 64, 0 ]
+    }
+  }
 }

@@ -330,6 +330,7 @@
     <ClInclude Include="components\ComponentPhysical.h" />
     <ClInclude Include="components\ComponentPosition.h" />
     <ClInclude Include="components\ComponentManager.h" />
+    <ClInclude Include="components\ComponentSenseSight.h" />
     <ClInclude Include="components\ComponentSpacialMemory.h" />
     <ClInclude Include="design_patterns\AssertHelper.h" />
     <ClInclude Include="design_patterns\Event.h" />
@@ -508,6 +509,10 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="components\ComponentManager.cpp" />
+    <ClCompile Include="components\ComponentSenseSight.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="components\ComponentSpacialMemory.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>

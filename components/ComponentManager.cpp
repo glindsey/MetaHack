@@ -80,6 +80,7 @@ ComponentManager::ComponentManager(json const& j)
   JSONUtils::doIfPresent(j, "inventory", [&](auto& value) { inventory = value; });
   JSONUtils::doIfPresent(j, "physical", [&](auto& value) { physical = value; });
   JSONUtils::doIfPresent(j, "position", [&](auto& value) { position = value; });
+  JSONUtils::doIfPresent(j, "sense-sight", [&](auto& value) { senseSight = value; });
   JSONUtils::doIfPresent(j, "spacial-memory", [&](auto& value) { spacialMemory = value; });
 }
 
@@ -106,6 +107,7 @@ void ComponentManager::clone(EntityId original, EntityId newId)
   // Do NOT clone inventory
   physical.cloneIfExists(original, newId);
   position.cloneIfExists(original, newId);
+  senseSight.cloneIfExists(original, newId);
   spacialMemory.cloneIfExists(original, newId);
 }
 
@@ -118,6 +120,7 @@ void ComponentManager::populate(EntityId id, json const& j)
   JSONUtils::doIfPresent(j, "inventory", [&](auto& value) { inventory[id] = value; });
   JSONUtils::doIfPresent(j, "physical", [&](auto& value) { physical[id] = value; });
   JSONUtils::doIfPresent(j, "position", [&](auto& value) { position[id] = value; });
+  JSONUtils::doIfPresent(j, "sense-sight", [&](auto& value) { senseSight[id] = value; });
   JSONUtils::doIfPresent(j, "spacial-memory", [&](auto& value) { spacialMemory[id] = value; });
 }
 
@@ -130,6 +133,7 @@ void from_json(json const& j, ComponentManager& obj)
   JSONUtils::doIfPresent(j, "inventory", [&](auto& value) { obj.inventory = value; });
   JSONUtils::doIfPresent(j, "physical", [&](auto& value) { obj.physical = value; });
   JSONUtils::doIfPresent(j, "position", [&](auto& value) { obj.position = value; });
+  JSONUtils::doIfPresent(j, "sense-sight", [&](auto& value) { obj.senseSight = value; });
   JSONUtils::doIfPresent(j, "spacial-memory", [&](auto& value) { obj.spacialMemory = value; });
 }
 
@@ -142,5 +146,6 @@ void to_json(json& j, ComponentManager const& obj)
   j["inventory"] = obj.inventory;
   j["physical"] = obj.physical;
   j["position"] = obj.position;
+  j["sense-sight"] = obj.senseSight;
   j["spacial-memory"] = obj.spacialMemory;
 }

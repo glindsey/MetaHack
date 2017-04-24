@@ -37,10 +37,7 @@
 
   "living": false,
   "passable": false,
-  "tile-character": "?",
-  "tile-bg-color": [ "color", 255, 255, 255 ],
-  "tile-fg-color": [ "color", 32, 32, 32 ],
-
+  
   "can-be-object-of-drop": true,
   "can-be-object-of-get": true,
   "can-be-object-of-hurl": true,
@@ -52,6 +49,9 @@
 
   "components": {
     "appearance": {
+      "tile-character": "?",
+      "tile-bg-color": [ "color", 255, 255, 255 ],
+      "tile-fg-color": [ "color", 32, 32, 32 ],
       "opacity": [ "color", 255, 255, 255 ]
     },
     "physical": {

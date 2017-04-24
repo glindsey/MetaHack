@@ -3,7 +3,7 @@
   "plural": "torch sconces",
   "description-brief": "A flaming torch secured in a holder that is attached to a wall.",
 
-  "templates": [ "LightSource" ],
+  "templates": [ "Entity", "LightSource" ],
 
   "light-color": [ "color", 160, 128, 112 ],
   "light-strength": 48,

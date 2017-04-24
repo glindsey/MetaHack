@@ -4,11 +4,10 @@
 
   "templates": [ "Entity" ],
 
-  "tile-character": "?",
-  "tile-fg-color": [ "color", 32, 32, 32 ],
-
   "components": {
     "appearance": {
+      "tile-character": "?",
+      "tile-fg-color": [ "color", 32, 32, 32 ],
       "opacity": [ "color", 0, 0, 0 ]
     }
   }

@@ -24,11 +24,11 @@ ComponentPosition::ComponentPosition()
 {}
 
 ComponentPosition::ComponentPosition(EntityId id)
-  : m_parent{ id }
+  : m_map{ MapId::Null() }, m_coords{ 0, 0 }, m_parent{ id }
 {}
 
 ComponentPosition::ComponentPosition(MapId map, IntVec2 coords)
-  : m_map{ map }, m_coords{ coords }
+  : m_map{ map }, m_coords{ coords }, m_parent{ EntityId::Mu() }
 {}
 
 ComponentPosition::~ComponentPosition()

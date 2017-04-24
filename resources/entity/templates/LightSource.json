@@ -1,9 +1,4 @@
 {
-  "name": "[LightSource]",
-  "plural": "[LightSources]",
-
-  "templates": [ "Entity" ],
-
   "lit": true,
   "light-color": [ "color", 64, 64, 64 ],
   "light-strength": 64,

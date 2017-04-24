@@ -4,13 +4,12 @@
 
   "living": false,
   "passable": false,
-  "opacity": [ "color", 255, 255, 255 ],
-  "tile-character": "?",
-  "tile-bg-color": [ "color", 255, 255, 255 ],
-  "tile-fg-color": [ "color", 32, 32, 32 ],
 
   "components": {
     "appearance": {
+      "tile-character": "?",
+      "tile-bg-color": [ "color", 255, 255, 255 ],
+      "tile-fg-color": [ "color", 32, 32, 32 ],
       "opacity": [ "color", 255, 255, 255 ]
     },
     "position": {}

@@ -37,9 +37,9 @@ EntityId EntityPool::create(std::string category)
   json& data = Service<IGameRules>::get().category(category);
 
   std::unique_ptr<Entity> new_thing{ new Entity{ m_state, category, new_id } };
-  m_thing_map[new_id] = std::move(new_thing);
 
   auto& jsonComponents = data["components"];
+  m_thing_map[new_id] = std::move(new_thing);
   COMPONENTS.populate(new_id, jsonComponents);
 
   if (m_initialized)
@@ -53,15 +53,11 @@ EntityId EntityPool::create(std::string category)
 
 EntityId EntityPool::createTileContents(MapTile* map_tile)
 {
-  EntityId new_id = EntityId(m_nextEntityId);
-  ++m_nextEntityId;
-  json& data = Service<IGameRules>::get().category("TileContents");
+  EntityId new_id = create("TileContents");
 
-  std::unique_ptr<Entity> new_thing{ new Entity { m_state, map_tile, new_id } };
-  m_thing_map[new_id] = std::move(new_thing);
-
-  auto& jsonComponents = data["components"];
-  COMPONENTS.populate(new_id, jsonComponents);
+  MapId map = map_tile->map();
+  IntVec2 position = map_tile->getCoords();
+  COMPONENTS.position[new_id].set(map, position);
 
   return EntityId(new_id);
 }

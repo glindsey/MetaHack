@@ -213,7 +213,7 @@ namespace LuaEntityFunctions
 
     EntityId entity = EntityId(lua_tointeger(L, 1));
     const char* key = lua_tostring(L, 2);
-    auto result = entity->getIntrinsic(key, json());
+    auto result = entity->getBaseProperty(key, json());
     auto slot_count = the_lua_instance.push_value(result);
 
     return slot_count;

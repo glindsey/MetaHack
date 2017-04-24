@@ -10,6 +10,7 @@
 #include "components/ComponentInventory.h"
 #include "components/ComponentPhysical.h"
 #include "components/ComponentPosition.h"
+#include "components/ComponentSenseSight.h"
 #include "components/ComponentSpacialMemory.h"
 
 // Forward declarations
@@ -39,5 +40,6 @@ public:
   ComponentMap<ComponentInventory> inventory;
   ComponentMap<ComponentPhysical> physical;
   ComponentMap<ComponentPosition> position;
+  ComponentMap<ComponentSenseSight> senseSight;
   ComponentMap<ComponentSpacialMemory> spacialMemory;
 };

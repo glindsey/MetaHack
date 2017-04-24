@@ -6,12 +6,11 @@
 
   "templates": [ "GameObject" ],
 
-  "tile-character": "?",
-  "tile-bg-color": [ "color", 0, 0, 0 ],
-  "tile-fg-color": [ "color", 128, 64, 0 ],
-
   "components": {
     "appearance": {
+      "tile-character": "?",
+      "tile-bg-color": [ "color", 0, 0, 0 ],
+      "tile-fg-color": [ "color", 128, 64, 0 ],
       "opacity": [ "color", 255, 255, 255 ]
     }
   }

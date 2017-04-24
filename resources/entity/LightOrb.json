@@ -3,7 +3,7 @@
   "plural": "magical lighting orbs",
   "description-brief": "A glowing orb, used for testing.",
 
-  "templates": [ "LightSource" ],
+  "templates": [ "Entity", "LightSource" ],
 
   "light-color": [ "color", 128, 128, 255 ],
   "light-strength": 128,

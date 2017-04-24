@@ -49,27 +49,6 @@ Entity::Entity(GameState& state, std::string category, EntityId id)
   m_wielded_items{ BodyLocationMap() },
   m_equipped_items{ BodyLocationMap() }
 {
-  /// @todo This should really be done by the EntityPool, based on the
-  ///       components present in the category XML file.
-  COMPONENTS.position.addDefault(id);
-  initialize();
-}
-
-Entity::Entity(GameState& state, MapTile* map_tile, EntityId id)
-  :
-  Subject(),
-  m_state{ state },
-  m_properties{ id },
-  m_id{ id },
-  m_tilesCurrentlySeen{ TilesSeen() },
-  m_pending_involuntary_actions{ ActionQueue() },
-  m_pending_voluntary_actions{ ActionQueue() },
-  m_wielded_items{ BodyLocationMap() },
-  m_equipped_items{ BodyLocationMap() }
-{
-  MapId map = map_tile->map();
-  IntVec2 position = map_tile->getCoords();
-  COMPONENTS.position[id].set(map, position);
   initialize();
 }
 
@@ -308,7 +287,7 @@ void Entity::setWorn(EntityId entity, BodyLocation location)
 
 bool Entity::canCurrentlySee()
 {
-  return getModifiedProperty("can-see", false);
+  return COMPONENTS.senseSight.existsFor(m_id);
 }
 
 bool Entity::canCurrentlyMove()
@@ -351,35 +330,35 @@ unsigned int Entity::getBodypartNumber(BodyPart part) const
   switch (part)
   {
     case BodyPart::Body:
-      return getIntrinsic("bodypart-body-count", 0);
+      return getBaseProperty("bodypart-body-count", 0);
     case BodyPart::Skin:
-      return getIntrinsic("bodypart-skin-count", 0);
+      return getBaseProperty("bodypart-skin-count", 0);
     case BodyPart::Head:
-      return getIntrinsic("bodypart-head-count", 0);
+      return getBaseProperty("bodypart-head-count", 0);
     case BodyPart::Ear:
-      return getIntrinsic("bodypart-ear-count", 0);
+      return getBaseProperty("bodypart-ear-count", 0);
     case BodyPart::Eye:
-      return getIntrinsic("bodypart-eye-count", 0);
+      return getBaseProperty("bodypart-eye-count", 0);
     case BodyPart::Nose:
-      return getIntrinsic("bodypart-nose-count", 0);
+      return getBaseProperty("bodypart-nose-count", 0);
     case BodyPart::Mouth:
-      return getIntrinsic("bodypart-mouth-count", 0);
+      return getBaseProperty("bodypart-mouth-count", 0);
     case BodyPart::Neck:
-      return getIntrinsic("bodypart-neck-count", 0);
+      return getBaseProperty("bodypart-neck-count", 0);
     case BodyPart::Chest:
-      return getIntrinsic("bodypart-chest-count", 0);
+      return getBaseProperty("bodypart-chest-count", 0);
     case BodyPart::Arm:
-      return getIntrinsic("bodypart-arm-count", 0);
+      return getBaseProperty("bodypart-arm-count", 0);
     case BodyPart::Hand:
-      return getIntrinsic("bodypart-hand-count", 0);
+      return getBaseProperty("bodypart-hand-count", 0);
     case BodyPart::Leg:
-      return getIntrinsic("bodypart-leg-count", 0);
+      return getBaseProperty("bodypart-leg-count", 0);
     case BodyPart::Foot:
-      return getIntrinsic("bodypart-foot-count", 0);
+      return getBaseProperty("bodypart-foot-count", 0);
     case BodyPart::Wing:
-      return getIntrinsic("bodypart-wing-count", 0);
+      return getBaseProperty("bodypart-wing-count", 0);
     case BodyPart::Tail:
-      return getIntrinsic("bodypart-tail-count", 0);
+      return getBaseProperty("bodypart-tail-count", 0);
     default:
       return 0;
   }
@@ -392,35 +371,35 @@ std::string Entity::getBodypartName(BodyPart part) const
   switch (part)
   {
     case BodyPart::Body:
-      return getIntrinsic("bodypart-body-name", "[body]");
+      return getBaseProperty("bodypart-body-name", "[body]");
     case BodyPart::Skin:
-      return getIntrinsic("bodypart-skin-name", "[skin]");
+      return getBaseProperty("bodypart-skin-name", "[skin]");
     case BodyPart::Head:
-      return getIntrinsic("bodypart-head-name", "[head]");
+      return getBaseProperty("bodypart-head-name", "[head]");
     case BodyPart::Ear:
-      return getIntrinsic("bodypart-ear-name", "[ear]");
+      return getBaseProperty("bodypart-ear-name", "[ear]");
     case BodyPart::Eye:
-      return getIntrinsic("bodypart-eye-name", "[eye]");
+      return getBaseProperty("bodypart-eye-name", "[eye]");
     case BodyPart::Nose:
-      return getIntrinsic("bodypart-nose-name", "[nose]");
+      return getBaseProperty("bodypart-nose-name", "[nose]");
     case BodyPart::Mouth:
-      return getIntrinsic("bodypart-mouth-name", "[mouth]");
+      return getBaseProperty("bodypart-mouth-name", "[mouth]");
     case BodyPart::Neck:
-      return getIntrinsic("bodypart-neck-name", "[neck]");
+      return getBaseProperty("bodypart-neck-name", "[neck]");
     case BodyPart::Chest:
-      return getIntrinsic("bodypart-chest-name", "[chest]");
+      return getBaseProperty("bodypart-chest-name", "[chest]");
     case BodyPart::Arm:
-      return getIntrinsic("bodypart-arm-name", "[arm]");
+      return getBaseProperty("bodypart-arm-name", "[arm]");
     case BodyPart::Hand:
-      return getIntrinsic("bodypart-hand-name", "[hand]");
+      return getBaseProperty("bodypart-hand-name", "[hand]");
     case BodyPart::Leg:
-      return getIntrinsic("bodypart-leg-name", "[leg]");
+      return getBaseProperty("bodypart-leg-name", "[leg]");
     case BodyPart::Foot:
-      return getIntrinsic("bodypart-foot-name", "[foot]");
+      return getBaseProperty("bodypart-foot-name", "[foot]");
     case BodyPart::Wing:
-      return getIntrinsic("bodypart-wing-name", "[wing]");
+      return getBaseProperty("bodypart-wing-name", "[wing]");
     case BodyPart::Tail:
-      return getIntrinsic("bodypart-tail-name", "[tail]");
+      return getBaseProperty("bodypart-tail-name", "[tail]");
     default:
       return "squeedlyspooch (unknown BodyPart)";
   }
@@ -433,35 +412,35 @@ std::string Entity::getBodypartPlural(BodyPart part) const
   switch (part)
   {
     case BodyPart::Body:
-      return getIntrinsic("bodypart-body-plural", "[bodies]");
+      return getBaseProperty("bodypart-body-plural", "[bodies]");
     case BodyPart::Skin:
-      return getIntrinsic("bodypart-skin-plural", "[skins]");
+      return getBaseProperty("bodypart-skin-plural", "[skins]");
     case BodyPart::Head:
-      return getIntrinsic("bodypart-head-plural", "[hands]");
+      return getBaseProperty("bodypart-head-plural", "[hands]");
     case BodyPart::Ear:
-      return getIntrinsic("bodypart-ear-plural", "[ears]");
+      return getBaseProperty("bodypart-ear-plural", "[ears]");
     case BodyPart::Eye:
-      return getIntrinsic("bodypart-eye-plural", "[eyes]");
+      return getBaseProperty("bodypart-eye-plural", "[eyes]");
     case BodyPart::Nose:
-      return getIntrinsic("bodypart-nose-plural", "[noses]");
+      return getBaseProperty("bodypart-nose-plural", "[noses]");
     case BodyPart::Mouth:
-      return getIntrinsic("bodypart-mouth-plural", "[mouths]");
+      return getBaseProperty("bodypart-mouth-plural", "[mouths]");
     case BodyPart::Neck:
-      return getIntrinsic("bodypart-neck-plural", "[necks]");
+      return getBaseProperty("bodypart-neck-plural", "[necks]");
     case BodyPart::Chest:
-      return getIntrinsic("bodypart-chest-plural", "[chests]");
+      return getBaseProperty("bodypart-chest-plural", "[chests]");
     case BodyPart::Arm:
-      return getIntrinsic("bodypart-arm-plural", "[arms]");
+      return getBaseProperty("bodypart-arm-plural", "[arms]");
     case BodyPart::Hand:
-      return getIntrinsic("bodypart-hand-plural", "[hands]");
+      return getBaseProperty("bodypart-hand-plural", "[hands]");
     case BodyPart::Leg:
-      return getIntrinsic("bodypart-leg-plural", "[legs]");
+      return getBaseProperty("bodypart-leg-plural", "[legs]");
     case BodyPart::Foot:
-      return getIntrinsic("bodypart-foot-plural", "[feet]");
+      return getBaseProperty("bodypart-foot-plural", "[feet]");
     case BodyPart::Wing:
-      return getIntrinsic("bodypart-wing-plural", "[wings]");
+      return getBaseProperty("bodypart-wing-plural", "[wings]");
     case BodyPart::Tail:
-      return getIntrinsic("bodypart-tail-plural", "[tails]");
+      return getBaseProperty("bodypart-tail-plural", "[tails]");
     default:
       return "squeedlyspooches (unknown BodyParts)";
   }
@@ -470,11 +449,6 @@ std::string Entity::getBodypartPlural(BodyPart part) const
 bool Entity::isPlayer() const
 {
   return (GAME.getPlayer() == m_id);
-}
-
-json Entity::getIntrinsic(std::string key, json default_value) const
-{
-  return getCategoryData().value(key, default_value);
 }
 
 json Entity::getBaseProperty(std::string key, json default_value) const
@@ -700,7 +674,7 @@ bool Entity::moveInto(EntityId newLocation)
       }
 
       // Set the location to the new location.
-      COMPONENTS.position[m_id] = newLocation;
+      COMPONENTS.position[m_id].set(newLocation);
 
       MapId newMapId = position.map();
       if (oldMapId != newMapId)
@@ -1299,7 +1273,7 @@ bool Entity::canBeObjectOfAction(Actions::Action & action)
 
 bool Entity::canBeObjectOfAction(std::string action)
 {
-  return getIntrinsic("can-be-object-of-" + action, false);
+  return getBaseProperty("can-be-object-of-" + action, false);
 }
 
 

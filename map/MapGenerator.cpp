@@ -32,10 +32,10 @@ void MapGenerator::generate()
 
   GeoVector startingVector{ getRandomFilledSquare(), Direction::Self };
   feature_settings.set("type", "room");
-  feature_settings.set("min_width", 12 /*5*/);
-  feature_settings.set("max_width", 12 /*5*/);
-  feature_settings.set("min_height", 12 /*5*/);
-  feature_settings.set("max_height", 12 /*5*/);
+  feature_settings.set("min_width", 5);
+  feature_settings.set("max_width", 5);
+  feature_settings.set("min_height", 5);
+  feature_settings.set("max_height", 5);
   feature_settings.set("max_retries", 100);
   std::unique_ptr<MapFeature> startRoom = MapFeature::construct(m_game_map, feature_settings, startingVector);
 

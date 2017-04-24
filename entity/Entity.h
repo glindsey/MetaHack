@@ -143,13 +143,6 @@ public:
   /// @return true if the Entity is at the same place or adjacent to this DynamicEntity, false otherwise.
   bool isAdjacentTo(EntityId entity);
 
-  /// Get an intrinsic of this Entity.
-  /// If the intrinsic is not found, returns the default value.
-  /// @param key            Name of the intrinsic to get.
-  /// @param default_value  Default value to use.
-  /// @return The intrinsic (or default) value for that key.
-  json getIntrinsic(std::string key, json default_value) const;
-  
   /// Get a base property of this Entity.
   /// If the base property is not found, the method falls back upon the
   /// intrinsic for that property. If IT is missing, it falls back to the
@@ -508,9 +501,6 @@ public:
 protected:
   /// Named Constructor
   Entity(GameState& state, std::string category, EntityId ref);
-
-  /// Floor Constructor
-  Entity(GameState& state, MapTile* map_tile, EntityId ref);
 
   /// Clone Constructor
   Entity(Entity const& original, EntityId ref);

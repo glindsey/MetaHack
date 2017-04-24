@@ -278,7 +278,7 @@ namespace Actions
 
     // Check that we're capable of eating at all.
     std::string canVerb{ "can-" + getType() };
-    if (!subject->getIntrinsic(canVerb, false))
+    if (!subject->getBaseProperty(canVerb, false))
     {
       printMessageTry();
       putMsg(makeTr("YOU_ARE_NOT_CAPABLE_OF_VERBING", { getIndefArt(subject->getDisplayName()), subject->getDisplayName() }));
@@ -362,7 +362,7 @@ namespace Actions
         {
           // Check that both are liquid containers.
           /// @todo Do something better here.
-          if (!object->getIntrinsic("liquid_carrier", false))
+          if (!object->getBaseProperty("liquid_carrier", false))
           {
             printMessageTry();
             putTr("THE_FOO_IS_NOT_A_LIQUID_CARRIER");
