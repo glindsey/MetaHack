@@ -1,0 +1,8 @@
+{
+  "name": "[Blob]",
+  "plural": "[Blobs]",
+
+  "templates": [ "DynamicEntity" ],
+
+  "components": {}
+}

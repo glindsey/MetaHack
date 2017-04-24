@@ -34,8 +34,8 @@ namespace LuaEntityFunctions
 
     // Check to make sure the Entity is actually creatable.
     /// @todo Might want the ability to disable this check for debugging purposes?
-    json& thing_data = Service<IGameRules>::get().category(new_thing_type);
-    bool is_creatable = thing_data.value("creatable", false);
+    //json& thing_data = Service<IGameRules>::get().category(new_thing_type);
+    bool is_creatable = true; // thing_data.value("creatable", false);
 
     if (is_creatable)
     {

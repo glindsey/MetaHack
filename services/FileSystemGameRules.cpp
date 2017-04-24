@@ -28,24 +28,24 @@ json & FileSystemGameRules::category(std::string name)
 
 void FileSystemGameRules::loadCategory(std::string name)
 {
-  json& category_data = m_data["categories"][name];
+  json& categoryData = m_data["categories"][name];
 
   // Look for the various files containing this metadata.
   FileName resource_string = "resources/entity/" + name;
   FileName jsonfile_string = resource_string + ".json";
+  fs::path jsonfile_path = fs::path(jsonfile_string);
   FileName luafile_string = resource_string + ".lua";
   fs::path luafile_path = fs::path(luafile_string);
-  fs::path jsonfile_path = fs::path(jsonfile_string);
 
   /// Try to load this Entity's JSON metadata.
   if (fs::exists(jsonfile_path))
   {
-    CLOG(INFO, "GameState") << "Loading JSON data for " << name << " category";
+    CLOG(INFO, "GameState") << "Loading data for " << name << " category";
 
     try
     {
       std::ifstream ifs(jsonfile_string);
-      category_data << ifs;
+      categoryData << ifs;
     }
     catch (std::exception& e)
     {
@@ -58,25 +58,43 @@ void FileSystemGameRules::loadCategory(std::string name)
     CLOG(WARNING, "GameState") << "Can't find " << jsonfile_string;
   }
 
-  /// Check the parent key.
-  if (category_data.count("parent") != 0)
-  {
-    std::string parent_name = category_data["parent"];
-    if (parent_name == name)
-    {
-      CLOG(FATAL, "GameState") << name << " is defined as its own parent. What do you think this is, a Heinlein story?";
-    }
-    json& parent_data = category(parent_name);
+  // If there's no "components" key, create one. 
+  // (There should be, but do it just to be sure.)
+  JSONUtils::addIfMissing(categoryData, "components", json::object());
+  json& componentsJson = categoryData["components"];
 
-    JSONUtils::addTo(category_data, parent_data);
+  // *** Get templates ***
+  if (categoryData.count("templates") != 0)
+  {
+    json& templatesJson = categoryData["templates"];
+    if (templatesJson.is_array())
+    {
+      for (auto citer = templatesJson.cbegin(); citer != templatesJson.cend(); ++citer)
+      {
+        CLOG(INFO, "GameState") << " -- Adding " << citer.value() << " template";
+        json templateData = json::object();
+        loadTemplateInto(templateData, citer.value());
+        /// @todo Concatenate template arrays.
+        JSONUtils::mergeArrays(categoryData["templates"], templateData["templates"]);
+        JSONUtils::addTo(categoryData["components"], templateData["components"]);
+      }
+    }
+    else
+    {
+      CLOG(WARNING, "GameState") << " -- " << name << " has a \"templates\" key, but the value is not an array. Skipping.";
+    }
   }
+
+  // Populate the "category" component.
+  // (If one was present already in the file, it will be overwritten.)
+  componentsJson["category"] = name;
 
   // DEBUG: Check for "Human".
   if (name == "Human")
   {
     CLOG(TRACE, "GameState") << "================================";
     CLOG(TRACE, "GameState") << "DEBUG: Human JSON contents are:";
-    CLOG(TRACE, "GameState") << category_data.dump(2);
+    CLOG(TRACE, "GameState") << categoryData.dump(2);
     CLOG(TRACE, "GameState") << "================================";
   }
 
@@ -91,5 +109,67 @@ void FileSystemGameRules::loadCategory(std::string name)
     CLOG(WARNING, "GameState") << "Can't find " << luafile_string;
   }
 
-  Service<IGraphicViews>::get().loadViewResourcesFor(name, category_data);
+  Service<IGraphicViews>::get().loadViewResourcesFor(name, categoryData);
+}
+
+void FileSystemGameRules::loadTemplateInto(json& templateData, std::string name)
+{
+  // Look for the various files containing this metadata.
+  FileName resource_string = "resources/entity/templates/" + name;
+  FileName jsonfile_string = resource_string + ".json";
+  fs::path jsonfile_path = fs::path(jsonfile_string);
+  FileName luafile_string = resource_string + ".lua";
+  fs::path luafile_path = fs::path(luafile_string);
+
+  /// Try to load this Entity's JSON metadata.
+  if (fs::exists(jsonfile_path))
+  {
+    try
+    {
+      std::ifstream ifs(jsonfile_string);
+      templateData << ifs;
+    }
+    catch (std::exception& e)
+    {
+      CLOG(FATAL, "GameState") << "  ---- Error reading " <<
+        jsonfile_string << ": " << e.what();
+    }
+  }
+  else
+  {
+    CLOG(WARNING, "GameState") << "  ---- Can't find " << jsonfile_string << ". Skipping.";
+  }
+
+  // *** See if this template refers to its OWN templates ***
+  if (templateData.count("templates") != 0)
+  {
+    json& templatesJson = templateData["templates"];
+    if (templatesJson.is_array())
+    {
+      for (auto citer = templatesJson.cbegin(); citer != templatesJson.cend(); ++citer)
+      {
+        json templateData2 = json::object();
+        CLOG(INFO, "GameState") << " -- Adding " << citer.value() << " template";
+        loadTemplateInto(templateData2, citer.value());
+
+        JSONUtils::mergeArrays(templateData["templates"], templateData2["templates"]);
+        JSONUtils::addTo(templateData["components"], templateData2["components"]);
+      }
+    }
+    else
+    {
+      CLOG(WARNING, "GameState") << " -- " << name << " has a \"templates\" key, but the value is not an array. Skipping.";
+    }
+  }
+
+  /// Try to load and run this template's Lua script.
+  if (fs::exists(luafile_path))
+  {
+    CLOG(INFO, "GameState") << " -- Loading Lua script for " << name;
+    the_lua_instance.require(resource_string, true);
+  }
+  else
+  {
+    CLOG(WARNING, "GameState") << " -- Can't find " << luafile_string << ". Skipping.";
+  }
 }

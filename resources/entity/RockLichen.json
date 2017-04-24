@@ -1,10 +1,13 @@
 {
-  "parent": "Blob",
-
   "name": "rock lichen",
   "plural": "rock lichens",
-  "brief": "A lichen that normally grows on a rock.",
-  "creatable": true,
+  "description-brief": "A lichen that normally grows on a rock.",
 
-  "maxhp": [ "range", 1, 1 ]
+  "templates": [ "Blob" ],
+
+  "components": {
+    "health": {
+      "max-hp": [1, 1]    
+    }
+  }
 }

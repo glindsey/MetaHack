@@ -262,9 +262,8 @@ EntityId ComponentInventory::getEntity()
   auto iter =
     find_if([&](const EntityPair& thing_pair)
   {
-    EntityId ref = thing_pair.second;
-    return ((ref->isSubtypeOf("DynamicEntity")) && 
-      (static_cast<int>(ref->getModifiedProperty("hp", 0)) > 0));
+    EntityId entity = thing_pair.second;
+    return (COMPONENTS.health.existsFor(entity) && COMPONENTS.health[entity].hp() > 0);
   });
 
   if (iter != m_things.cend())

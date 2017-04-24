@@ -1,10 +1,9 @@
 {
-  "parent": "MTUnknown",
-
-  "name": "wall",
-  "plural": "walls",
-  "description-brief": "A wall.",
+  "name": "[MTWall]",
+  "plural": "[MTWalls]",
   "passable": false,
+
+  "templates": [ "GameObject" ],
 
   "components": {
     "appearance": {

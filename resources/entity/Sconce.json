@@ -1,13 +1,14 @@
 {
-  "parent": "LightSource",
-
   "name": "torch sconce",
   "plural": "torch sconces",
   "description-brief": "A flaming torch secured in a holder that is attached to a wall.",
-  "creatable": true,
+
+  "templates": [ "LightSource" ],
 
   "light-color": [ "color", 160, 128, 112 ],
   "light-strength": 48,
 
-  "can-be-object-of-burn": true
+  "can-be-object-of-burn": true,
+
+  "components": {}
 }

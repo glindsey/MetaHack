@@ -1,0 +1,13 @@
+{
+  "name": "[MTFloor]",
+  "plural": "[MTFloors]",
+  "passable": true,
+
+  "templates": [ "GameObject" ],
+
+  "components": {
+    "appearance": {
+      "opacity": [ "color", 0, 0, 0 ]
+    }
+  }
+}

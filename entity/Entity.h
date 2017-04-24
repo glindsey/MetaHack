@@ -106,13 +106,9 @@ public:
   EntityId getWieldingIn(BodyLocation& location);
 
   /// Returns true if this entity is the current player.
-  /// By default, returns false. Overridden by DynamicEntity class.
-  virtual bool isPlayer() const;
+  bool isPlayer() const;
 
   std::string const& getCategory() const;
-  std::string getParentCategory() const;
-
-  bool isSubtypeOf(std::string that_type) const;
 
   /// Return whether a Entity is wielded by this DynamicEntity.
   /// This is used by InventoryArea to show wielded status.

@@ -1,9 +1,8 @@
 {
-  "parent": "DynamicEntity",
-
   "name": "[Animal]",
   "plural": "[Animal]",
-  "description-brief": "A living organism that feeds on organic matter, typically having specialized sense organs and nervous system and able to respond rapidly to stimuli.",
+
+  "templates": [ "DynamicEntity" ],
 
   "can-attack": true,
   "can-drink": true,
@@ -16,5 +15,7 @@
   "can-see": true,
   "can-smell": true,
   "can-store": true,
-  "can-turn": true
+  "can-turn": true,
+
+  "components": {}
 }

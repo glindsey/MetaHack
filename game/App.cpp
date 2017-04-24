@@ -84,6 +84,7 @@ App::App(sf::RenderWindow& app_window)
   SET_UP_LOGGER("StringTransforms", false);
   SET_UP_LOGGER("TileSheet", true);
   SET_UP_LOGGER("Types", true);
+  SET_UP_LOGGER("Utilities", true);
 
 
   // Load config settings.

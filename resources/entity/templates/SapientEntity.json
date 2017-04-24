@@ -1,9 +1,8 @@
 {
-  "parent": "MemoryEntity",
-
   "name": "[SapientEntity]",
   "plural": "[SapientEntities]",
-  "description-brief": "An animal that is capable of free will and independent thought.",
+
+  "templates": [ "MemoryEntity" ],
 
   "can-close": true,
   "can-disrobe": true,
@@ -16,5 +15,7 @@
   "can-unwield": true,
   "can-use": true,
   "can-wear": true,
-  "can-wield": true
+  "can-wield": true,
+
+  "components": {}
 }

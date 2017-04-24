@@ -1,7 +1,0 @@
-{
-  "parent": "Weapon",
-
-  "name": "[WeaponCutting]",
-  "plural": "[WeaponCutting]",
-  "description-brief": "A weapon that is designed to inflict cutting damage."
-}

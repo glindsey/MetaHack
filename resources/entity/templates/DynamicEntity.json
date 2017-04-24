@@ -1,13 +1,11 @@
 {
-  "parent": "Entity",
-
   "name": "[DynamicEntity]",
   "plural": "[DynamicEntities]",
-  "description-brief": "function",
 
-  "bodypart-body-count":  1,
+  "templates": [ "Entity" ],
 
-  "inventory-size": -1,
+  "bodypart-body-count": 1,
+
   "xp": 0,
 
   "living": true,
@@ -17,5 +15,11 @@
 
   "can-be-object-of-attack": true,
   "can-be-object-of-burn": true,
-  "can-be-object-of-hurt": true
+  "can-be-object-of-hurt": true,
+
+  "components": {
+    "inventory": {
+      "max-size": -1
+    }
+  }
 }

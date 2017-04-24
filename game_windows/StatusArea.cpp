@@ -2,9 +2,10 @@
 
 #include "game_windows/StatusArea.h"
 
-#include "GUILabel.h"
+#include "components/ComponentManager.h"
 #include "game/App.h"
 #include "game/GameState.h"
+#include "gui/GUILabel.h"
 #include "services/IConfigSettings.h"
 #include "Service.h"
 #include "entity/Entity.h"
@@ -66,9 +67,9 @@ void StatusArea::drawContents_(sf::RenderTexture& texture, int frame)
     render_text.setString("HP");
     texture.draw(render_text);
 
-    int hp = player->getModifiedProperty("hp", 0);
-    //int max_hp = std::min(player->getModifiedProperty("maxhp", 1).get<int>(), 1);
-    int max_hp = 10;
+    bool playerHasHP = COMPONENTS.health.existsFor(player); // If this is false something is DEFINITELY hosed
+    int hp = (playerHasHP ? COMPONENTS.health[player].hp() : 1);
+    int max_hp = (playerHasHP ? COMPONENTS.health[player].maxHp() : 1);
 
     float hp_percentage = static_cast<float>(hp) / static_cast<float>(max_hp);
 

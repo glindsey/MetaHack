@@ -1,11 +1,15 @@
 {
-  "parent": "Biped",
-
   "name": "marcher robot",
   "plural": "marcher robots",
   "description-brief": "A testing biped that endlessly marches left and right.",
-  "creatable": true,
+
+  "templates": [ "Biped" ],
 
   "proper-name": "Steve",
-  "maxhp": [ "range", 1, 1 ]
+
+  "components": {
+    "health": {
+      "max-hp": [1, 1]
+    }
+  }
 }

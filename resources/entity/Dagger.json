@@ -1,12 +1,16 @@
 {
-  "parent": "WeaponStabbing",
-
   "name": "dagger",
   "plural": "daggers",
   "description-brief": "A small blade with a hilt.",
-  "creatable": true,
 
-  "physical-mass": 1,
+  "templates": [ "Weapon" ],
 
-  "can-be-object-of-rust": true
+  "can-be-object-of-rust": true,
+
+  "components": {
+    "physical": {
+      "mass": 1
+    }
+  }
+  
 }

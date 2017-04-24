@@ -27,7 +27,6 @@ public:
     /// @todo GSL -- KEEP GOING HERE
     //archive(m_thing_map);
   }
-  bool firstIsSubtypeOfSecond(std::string first, std::string second);
 
   /// Create a particular object given the type name.
   /// @param category The category name of the object to create.

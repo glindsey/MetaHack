@@ -1,10 +1,7 @@
 {
-  "parent": "",
-
   "name": "[GameObject]",
   "plural": "[GameObjects]",
-  "description-brief": "function",
-  "inventory-size": 0,
+
   "living": false,
   "passable": false,
   "opacity": [ "color", 255, 255, 255 ],
@@ -16,6 +13,6 @@
     "appearance": {
       "opacity": [ "color", 255, 255, 255 ]
     },
-    "position": []
+    "position": {}
   }
 }

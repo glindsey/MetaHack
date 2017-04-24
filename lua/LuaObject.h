@@ -179,8 +179,8 @@ public:
   unsigned int stack_slots(Type type) const;
 
   /// Given an entity type and a suffix, look for a Lua function name equal to
-  /// "EntityType_suffix". If it doesn't exist, step up to the parent type and
-  /// repeat. Do so until "parent" is null or a matching name is found.
+  /// "EntityType_suffix". If it doesn't exist, search the entity's templates
+  /// and repeat. Do so until a matching name is found.
   /// @param type     Entity type to look for
   /// @param suffix   Suffix of the function to call
   /// @return A matching function name, or a blank string if none was found.
@@ -238,6 +238,10 @@ public:
   /// Add the "Type" enum to the Lua instance.
   /// @see Type
   void addLuaTypeEnumToLua();
+
+protected:
+  /// Helper method for `find_lua_function`.
+  std::string find_lua_function_(std::string category, std::string suffix);
 
 private:
   /// Private Lua state.

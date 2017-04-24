@@ -91,16 +91,7 @@ Entity::Entity(Entity const& original, EntityId ref)
 
 void Entity::initialize()
 {
-  /// Get our maximum HP. (The method will automatically pick it from a range.)
-  /// @todo Create an "Integer" type that contains a from_json that handles
-  ///       ranges.
-  //auto max_hp = m_type_data.value("maxhp", 1);
-  int max_hp = 10;
-
-  /// Set our starting HP to that value.
-  setBaseProperty("hp", max_hp);
-
-  //notifyObservers(Event::Updated);
+  /// @todo Nothing to do here? HP/MaxHP are created at component copy time now.
 }
 
 Entity::~Entity()
@@ -486,17 +477,6 @@ std::string const& Entity::getCategory() const
   return m_category;
 }
 
-std::string Entity::getParentCategory() const
-{
-  return getCategoryData().value("parent", "");
-}
-
-bool Entity::isSubtypeOf(std::string that_type) const
-{
-  std::string this_type = getCategory();
-  return GAME.entities().firstIsSubtypeOfSecond(this_type, that_type);
-}
-
 json Entity::getIntrinsic(std::string key, json default_value) const
 {
   return getCategoryData().value(key, default_value);
@@ -778,7 +758,8 @@ std::string Entity::getDisplayAdjectives() const
 {
   std::string adjectives;
 
-  if (isSubtypeOf("DynamicEntity") && (static_cast<int>(getModifiedProperty("hp", 0)) <= 0))
+  if (COMPONENTS.health.existsFor(m_id) && 
+      COMPONENTS.health[m_id].isDead())
   {
     adjectives += tr("ADJECTIVE_DEAD");
   }
@@ -816,7 +797,8 @@ std::string Entity::getSubjectiveString(ArticleChoice articles) const
 
   if (isPlayer())
   {
-    if (static_cast<int>(getModifiedProperty("hp", 0)) > 0)
+    if (COMPONENTS.health.existsFor(m_id) && 
+        !COMPONENTS.health[m_id].isDead())
     {
       str = tr("PRONOUN_SUBJECT_YOU");
     }
@@ -839,7 +821,8 @@ std::string Entity::getObjectiveString(ArticleChoice articles) const
 
   if (isPlayer())
   {
-    if (static_cast<int>(getModifiedProperty("hp", 0)) > 0)
+    if (COMPONENTS.health.existsFor(m_id) &&
+        !COMPONENTS.health[m_id].isDead())
     {
       str = tr("PRONOUN_OBJECT_YOU");
     }
@@ -889,7 +872,7 @@ std::string Entity::getDescriptiveString(ArticleChoice articles,
   std::string description;
   std::string suffix;
 
-  owned = location->isSubtypeOf("DynamicEntity");
+  owned = COMPONENTS.health.existsFor(location);
   adjectives = getDisplayAdjectives();
 
   if (quantity == 1)
@@ -1022,12 +1005,7 @@ void Entity::light_up_surroundings()
     ///       shine simply if it's in an entity's inventory.
 
     bool opaque = location->isOpaque();
-    bool is_entity = this->isSubtypeOf("DynamicEntity");
-
-    /*CLOG(DEBUG, "Entity") << "light_up_surroundings - this->type = " << this->getCategory() <<
-      ", location->type = " << location->getCategory() <<
-      ", location->opaque = " << opaque <<
-      ", this->isSubtypeOf(\"DynamicEntity\") = " << is_entity;*/
+    bool is_entity = COMPONENTS.health.existsFor(m_id);
 
     //if (!isOpaque() || isWielding(light) || isWearing(light))
     if (!opaque || is_entity)
@@ -1082,7 +1060,7 @@ void Entity::beLitBy(EntityId light)
     ///       shine simply if it's in the player's inventory.
 
     bool opaque = this->isOpaque();
-    bool is_entity = this->isSubtypeOf("DynamicEntity");
+    bool is_entity = COMPONENTS.health.existsFor(m_id);
 
     //if (!isOpaque() || isWielding(light) || isWearing(light))
     if (!opaque || is_entity)
@@ -1517,10 +1495,11 @@ bool Entity::_process_own_involuntary_actions()
   bool entity_updated = false;
 
   // Is this an entity that is now dead?
-  if (isSubtypeOf("DynamicEntity") && (static_cast<int>(getModifiedProperty("hp", 0)) <= 0))
+  if (COMPONENTS.health.existsFor(m_id) && 
+      COMPONENTS.health[m_id].isDead())
   {
     // Did the entity JUST die?
-    if (!getModifiedProperty("dead", false))
+    if (!COMPONENTS.health[m_id].dead())
     {
       // Perform the "die" action.
       // (This sets the "dead" property and clears out any pending actions.)
@@ -1568,10 +1547,11 @@ bool Entity::_process_own_voluntary_actions()
   int counter_busy = getBaseProperty("counter-busy", 0);
 
   // Is this an entity that is now dead?
-  if (isSubtypeOf("DynamicEntity") && (static_cast<int>(getModifiedProperty("hp", 0)) <= 0))
+  if (COMPONENTS.health.existsFor(m_id) &&
+      COMPONENTS.health[m_id].isDead())
   {
     // Did the entity JUST die?
-    if (!getModifiedProperty("dead", false))
+    if (!COMPONENTS.health[m_id].dead())
     {
       // Perform the "die" action.
       // (This sets the "dead" property and clears out any pending actions.)

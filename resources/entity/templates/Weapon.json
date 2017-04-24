@@ -1,0 +1,8 @@
+{
+  "name": "[Weapon]",
+  "plural": "[Weapons]",
+
+  "templates": [ "Entity" ],
+
+  "components": {}
+}

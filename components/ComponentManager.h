@@ -6,6 +6,7 @@
 
 #include "components/ComponentAppearance.h"
 #include "components/ComponentGender.h"
+#include "components/ComponentHealth.h"
 #include "components/ComponentInventory.h"
 #include "components/ComponentPhysical.h"
 #include "components/ComponentPosition.h"
@@ -32,7 +33,9 @@ public:
   friend void to_json(json& j, ComponentManager const& obj);
 
   ComponentMap<ComponentAppearance> appearance;
+  ComponentMap<std::string> category;
   ComponentMap<ComponentGender> gender;
+  ComponentMap<ComponentHealth> health;
   ComponentMap<ComponentInventory> inventory;
   ComponentMap<ComponentPhysical> physical;
   ComponentMap<ComponentPosition> position;

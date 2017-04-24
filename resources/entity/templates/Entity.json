@@ -1,9 +1,8 @@
 {
-  "parent": "GameObject",
-
   "name": "[Entity]",
   "plural": "[Entities]",
-  "description-brief": "function",
+
+  "templates": [ "GameObject" ],
 
   "bodypart-body-name": "body",
   "bodypart-body-plural": "bodies",
@@ -36,12 +35,8 @@
   "bodypart-tail-name": "tail",
   "bodypart-tail-plural": "tails",
 
-  "inventory-size": 0,
-
   "living": false,
   "passable": false,
-  "physical-mass": 0,
-  "physical-size": 1,
   "tile-character": "?",
   "tile-bg-color": [ "color", 255, 255, 255 ],
   "tile-fg-color": [ "color", 32, 32, 32 ],
@@ -58,9 +53,6 @@
   "components": {
     "appearance": {
       "opacity": [ "color", 255, 255, 255 ]
-    },
-    "inventory": {
-      "max-size": -1
     },
     "physical": {
       "mass": 1000,

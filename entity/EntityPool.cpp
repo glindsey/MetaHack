@@ -30,28 +30,6 @@ EntityPool::~EntityPool()
 {
 }
 
-bool EntityPool::firstIsSubtypeOfSecond(std::string first, std::string second)
-{
-  //CLOG(TRACE, "Entity") << "Checking if " << first << " is a subtype of " << second << "...";
-
-  std::string first_parent = Service<IGameRules>::get().category(first).value("parent", std::string());
-
-  if (first_parent.empty())
-  {
-    //CLOG(TRACE, "Entity") << first << " parent is empty, returning false";
-    return false;
-  }
-
-  if (first_parent == second)
-  {
-    //CLOG(TRACE, "Entity") << first << " parent = " << second << ", returning true";
-    return true;
-  }
-
-  //CLOG(TRACE, "Entity") << first << " parent = " << first_parent << ", recursing...";
-  return firstIsSubtypeOfSecond(first_parent, second);
-}
-
 EntityId EntityPool::create(std::string category)
 {
   EntityId new_id = EntityId(m_nextEntityId);

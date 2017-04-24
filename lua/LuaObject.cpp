@@ -473,31 +473,36 @@ unsigned int Lua::stack_slots(Lua::Type type) const
   }
 }
 
-std::string Lua::find_lua_function(std::string type, std::string suffix)
+std::string Lua::find_lua_function(std::string category, std::string suffix)
 {
-  std::string function_name = type + "_" + suffix;
+  std::string result = find_lua_function_(category, suffix);
+  if (result.empty())
+  {
+    // Get this entity category's templates.
+    json const& templates = Service<IGameRules>::get().category(category).value("templates", json::array());
+    for (auto citer = templates.crbegin(); citer != templates.crend(); --citer)
+    {
+      result = find_lua_function(citer.value().get<std::string>(), suffix);
+      if (result != "") return result;
+    }
+  }
+
+  // Nothing found, return empty string.
+  return std::string();
+}
+
+std::string Lua::find_lua_function_(std::string category, std::string suffix)
+{
+  std::string function_name = category + "_" + suffix;
 
   // Push function onto the stack. (+1)
   lua_getglobal(L_, function_name.c_str());
 
   if (lua_isnoneornil(L_, -1))
   {
-    // Function not found; pop the result off. (-1)
+    // Function not found; pop the result off and return an empty string. (-1)
     lua_pop(L_, 1);
-
-    // Get this entity type's parent.
-    auto parent = Service<IGameRules>::get().category(type).value("parent", std::string());
-
-    if (parent.empty())
-    {
-      // No parent, return empty string.
-      return std::string();
-    }
-    else
-    {
-      // Call find_lua_function with parent type.
-      return find_lua_function(parent, suffix);
-    }
+    return std::string();
   }
   else
   {

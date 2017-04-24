@@ -1,10 +1,13 @@
 {
-  "parent": "MTWall",
-
   "name": "stone wall",
   "plural": "stone walls",
   "description-brief": "A stone wall.",
+
+  "templates": [ "MTWall" ],
+
   "tile-character": "?",
   "tile-bg-color": [ "color", 0, 0, 0 ],
-  "tile-fg-color": [ "color", 128, 64, 0 ]
+  "tile-fg-color": [ "color", 128, 64, 0 ],
+
+  "components": {}
 }

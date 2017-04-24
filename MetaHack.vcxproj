@@ -324,6 +324,7 @@
     <ClInclude Include="actions\ActionWield.h" />
     <ClInclude Include="components\ComponentAppearance.h" />
     <ClInclude Include="components\ComponentGender.h" />
+    <ClInclude Include="components\ComponentHealth.h" />
     <ClInclude Include="components\ComponentMap.h" />
     <ClInclude Include="components\ComponentPhysical.h" />
     <ClInclude Include="components\ComponentPosition.h" />
@@ -481,6 +482,14 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="components\ComponentHealth.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="components\ComponentPhysical.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
@@ -599,51 +608,47 @@
   <ItemGroup>
     <None Include="resources\deepcopy.lua" />
     <None Include="resources\default.lua" />
-    <None Include="resources\entity\Animal.json" />
-    <None Include="resources\entity\Biped.json" />
-    <None Include="resources\entity\Blob.json" />
-    <None Include="resources\entity\Chest.json" />
+    <None Include="resources\entity\templates\Animal.json" />
+    <None Include="resources\entity\templates\Biped.json" />
+    <None Include="resources\entity\templates\Blob.json" />
+    <None Include="resources\entity\templates\Chest.json" />
     <None Include="resources\entity\ChestWooden.json" />
-    <None Include="resources\entity\Coin.json" />
-    <None Include="resources\entity\Coin.lua" />
+    <None Include="resources\entity\templates\Coin.json" />
+    <None Include="resources\entity\templates\Coin.lua" />
     <None Include="resources\entity\CoinGold.json" />
-    <None Include="resources\entity\Container.json" />
+    <None Include="resources\entity\templates\Container.json" />
     <None Include="resources\entity\Dagger.json" />
-    <None Include="resources\entity\DynamicEntity.json" />
-    <None Include="resources\entity\DynamicEntity.lua" />
-    <None Include="resources\entity\Entity.json" />
-    <None Include="resources\entity\Entity.lua" />
+    <None Include="resources\entity\templates\DynamicEntity.json" />
+    <None Include="resources\entity\templates\DynamicEntity.lua" />
+    <None Include="resources\entity\templates\Entity.json" />
+    <None Include="resources\entity\templates\Entity.lua" />
     <None Include="resources\entity\FlaskGlass.json" />
     <None Include="resources\entity\FlaskGlass.lua" />
-    <None Include="resources\entity\GameObject.json" />
-    <None Include="resources\entity\GameObject.lua" />
+    <None Include="resources\entity\templates\GameObject.json" />
+    <None Include="resources\entity\templates\GameObject.lua" />
     <None Include="resources\entity\Human.json" />
     <None Include="resources\entity\LightOrb.json" />
-    <None Include="resources\entity\LightSource.json" />
-    <None Include="resources\entity\LightSource.lua" />
+    <None Include="resources\entity\templates\LightSource.json" />
+    <None Include="resources\entity\templates\LightSource.lua" />
     <None Include="resources\entity\Marcher.json" />
     <None Include="resources\entity\Marcher.lua" />
-    <None Include="resources\entity\MemoryEntity.json" />
-    <None Include="resources\entity\Mu.json" />
+    <None Include="resources\entity\templates\MemoryEntity.json" />
+    <None Include="resources\entity\templates\Mu.json" />
     <None Include="resources\entity\Rock.json" />
     <None Include="resources\entity\RockLichen.json" />
     <None Include="resources\entity\SackCloth.json" />
-    <None Include="resources\entity\SapientEntity.json" />
+    <None Include="resources\entity\templates\SapientEntity.json" />
     <None Include="resources\entity\Sconce.json" />
     <None Include="resources\entity\Sconce.lua" />
     <None Include="resources\entity\TileContents.json" />
-    <None Include="resources\entity\Weapon.json" />
-    <None Include="resources\entity\Weapon.lua" />
-    <None Include="resources\entity\WeaponCutting.json" />
-    <None Include="resources\entity\WeaponStabbing.json" />
-    <None Include="resources\entity\WeaponStrangling.json" />
-    <None Include="resources\entity\WeaponStriking.json" />
+    <None Include="resources\entity\templates\Weapon.json" />
+    <None Include="resources\entity\templates\Weapon.lua" />
     <None Include="resources\intrinsic_types.json" />
-    <None Include="resources\entity\MTFloor.json" />
+    <None Include="resources\entity\templates\MTFloor.json" />
     <None Include="resources\entity\MTFloorDirt.json" />
     <None Include="resources\entity\MTFloorStone.json" />
     <None Include="resources\entity\MTUnknown.json" />
-    <None Include="resources\entity\MTWall.json" />
+    <None Include="resources\entity\templates\MTWall.json" />
     <None Include="resources\entity\MTWallStone.json" />
     <None Include="resources\script\map.lua" />
     <None Include="resources\shader\default.frag" />

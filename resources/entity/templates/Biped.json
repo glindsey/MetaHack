@@ -1,9 +1,8 @@
 {
-  "parent": "SapientEntity",
-
   "name": "[Biped]",
   "plural": "[Bipeds]",
-  "description-brief": "An animal that uses two legs for walking.",
+
+  "templates": [ "SapientEntity "],
 
   "bodypart-body-count": 1,
   "bodypart-skin-count": 1,
@@ -19,5 +18,7 @@
   "bodypart-leg-count": 2,
   "bodypart-foot-count": 2,
 
-  "can-throw": true
+  "can-throw": true,
+
+  "components": {}
 }
