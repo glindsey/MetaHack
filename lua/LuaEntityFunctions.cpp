@@ -159,7 +159,7 @@ namespace LuaEntityFunctions
     }
 
     EntityId entity = EntityId(lua_tointeger(L, 1));
-    std::string result = entity->getCategory();
+    std::string result = COMPONENTS.category[entity];
     lua_pushstring(L, result.c_str());
 
     return 1;

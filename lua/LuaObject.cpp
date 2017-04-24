@@ -2,6 +2,7 @@
 
 #include "lua/LuaObject.h"
 
+#include "components/ComponentManager.h"
 #include "entity/Entity.h"
 #include "entity/EntityId.h"
 #include "types/Direction.h"
@@ -480,9 +481,9 @@ std::string Lua::find_lua_function(std::string category, std::string suffix)
   {
     // Get this entity category's templates.
     json const& templates = Service<IGameRules>::get().category(category).value("templates", json::array());
-    for (auto citer = templates.crbegin(); citer != templates.crend(); ++citer)
+    for (auto index = 0; index < templates.size(); ++index)
     {
-      result = find_lua_function(citer.value().get<std::string>(), suffix);
+      result = find_lua_function_(templates[index].get<std::string>(), suffix);
       if (result != "") return result;
     }
   }
@@ -519,7 +520,7 @@ json Lua::call_thing_function(std::string function_name,
 {
   json return_value = default_result;
   Lua::Type return_type;
-  std::string caller_type = caller->getCategory();
+  std::string caller_type = COMPONENTS.category[caller];
 
   int start_stack = lua_gettop(L_);
 

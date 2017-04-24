@@ -31,11 +31,7 @@ public:
 protected:
   /// Attempt to load JSON data for an entity category.
   /// Also runs any associated Lua script.
-  void loadCategory(std::string name);
-
-  /// Attempt to get JSON data for an entity template.
-  /// Also runs any associated Lua script.
-  void loadTemplateInto(json& templateJson, std::string name);
+  void loadCategoryIfNecessary(std::string name, bool isTemplate = false);
 
 private:
   /// Game rules data, as stored in a JSON object.

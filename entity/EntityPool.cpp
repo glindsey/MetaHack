@@ -57,8 +57,11 @@ EntityId EntityPool::createTileContents(MapTile* map_tile)
   ++m_nextEntityId;
   json& data = Service<IGameRules>::get().category("TileContents");
 
-  std::unique_ptr<Entity> new_thing{ new Entity { m_state, map_tile, "TileContents", new_id } };
+  std::unique_ptr<Entity> new_thing{ new Entity { m_state, map_tile, new_id } };
   m_thing_map[new_id] = std::move(new_thing);
+
+  auto& jsonComponents = data["components"];
+  COMPONENTS.populate(new_id, jsonComponents);
 
   return EntityId(new_id);
 }

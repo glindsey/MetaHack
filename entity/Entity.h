@@ -108,8 +108,6 @@ public:
   /// Returns true if this entity is the current player.
   bool isPlayer() const;
 
-  std::string const& getCategory() const;
-
   /// Return whether a Entity is wielded by this DynamicEntity.
   /// This is used by InventoryArea to show wielded status.
   /// @param[in] entity Entity to check
@@ -512,7 +510,7 @@ protected:
   Entity(GameState& state, std::string category, EntityId ref);
 
   /// Floor Constructor
-  Entity(GameState& state, MapTile* map_tile, std::string category, EntityId ref);
+  Entity(GameState& state, MapTile* map_tile, EntityId ref);
 
   /// Clone Constructor
   Entity(Entity const& original, EntityId ref);
@@ -548,9 +546,6 @@ protected:
 private:
   /// Reference to game state.
   GameState& m_state;
-
-  /// Name of this Entity's category, as a string.
-  std::string m_category;
 
   /// Property dictionary.
   /// Defined as mutable, because a "get" method can cache a default value

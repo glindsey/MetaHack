@@ -34,14 +34,13 @@ Color const Entity::wall_outline_color_{ 255, 255, 255, 64 };
 
 json const& Entity::getCategoryData() const
 {
-  return Service<IGameRules>::get().category(m_category);
+  return Service<IGameRules>::get().category(COMPONENTS.category[m_id]);
 }
 
 Entity::Entity(GameState& state, std::string category, EntityId id)
   :
   Subject(),
   m_state{ state },
-  m_category{ category },
   m_properties{ id },
   m_id{ id },
   m_tilesCurrentlySeen{ TilesSeen() },
@@ -56,11 +55,10 @@ Entity::Entity(GameState& state, std::string category, EntityId id)
   initialize();
 }
 
-Entity::Entity(GameState& state, MapTile* map_tile, std::string category, EntityId id)
+Entity::Entity(GameState& state, MapTile* map_tile, EntityId id)
   :
   Subject(),
   m_state{ state },
-  m_category{ category },
   m_properties{ id },
   m_id{ id },
   m_tilesCurrentlySeen{ TilesSeen() },
@@ -79,7 +77,6 @@ Entity::Entity(Entity const& original, EntityId ref)
   :
   Subject(),
   m_state{ original.m_state },
-  m_category{ original.m_category },
   m_properties{ original.m_properties },
   m_id{ ref },
   m_tilesCurrentlySeen{ TilesSeen() },  // don't copy
@@ -105,7 +102,7 @@ void Entity::queueAction(std::unique_ptr<Actions::Action> action)
 {
   CLOG(TRACE, "Entity") << "Entity " <<
     getId() << " (" <<
-    getCategory() << "): Queuing Action " <<
+    COMPONENTS.category[m_id] << "): Queuing Action " <<
     action->getType();
 
   m_pending_voluntary_actions.push_back(std::move(action));
@@ -121,7 +118,7 @@ void Entity::queueInvoluntaryAction(std::unique_ptr<Actions::Action> action)
 {
   CLOG(TRACE, "Entity") << "Entity " <<
     getId() << " (" <<
-    getCategory() << "): Queuing Involuntary Action " <<
+    COMPONENTS.category[m_id] << "): Queuing Involuntary Action " <<
     action->getType();
 
   m_pending_involuntary_actions.push_front(std::move(action));
@@ -473,11 +470,6 @@ std::string Entity::getBodypartPlural(BodyPart part) const
 bool Entity::isPlayer() const
 {
   return (GAME.getPlayer() == m_id);
-}
-
-std::string const& Entity::getCategory() const
-{
-  return m_category;
 }
 
 json Entity::getIntrinsic(std::string key, json default_value) const
@@ -1424,7 +1416,7 @@ bool Entity::be_used_to_attack(EntityId subject, EntityId target)
 bool Entity::can_merge_with(EntityId other) const
 {
   // Entities with different types can't merge (obviously).
-  if (other->getCategory() != getCategory())
+  if (COMPONENTS.category[other] != COMPONENTS.category[m_id])
   {
     return false;
   }
@@ -1522,7 +1514,7 @@ bool Entity::_process_own_involuntary_actions()
     {
       CLOG(TRACE, "Entity") << "Entity " <<
         getId() << " (" <<
-        getCategory() << "): Involuntary Action " <<
+        COMPONENTS.category[m_id] << "): Involuntary Action " <<
         action->getType() << " is done, popping";
 
       m_pending_involuntary_actions.pop_front();
@@ -1585,7 +1577,7 @@ bool Entity::_process_own_voluntary_actions()
       {
         CLOG(TRACE, "Entity") << "Entity " <<
           getId() << " (" <<
-          getCategory() << "): Action " <<
+          COMPONENTS.category[m_id] << "): Action " <<
           action->getType() << " is done, popping";
 
         m_pending_voluntary_actions.pop_front();

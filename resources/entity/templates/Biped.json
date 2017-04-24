@@ -2,7 +2,7 @@
   "name": "[Biped]",
   "plural": "[Bipeds]",
 
-  "templates": [ "SapientEntity "],
+  "templates": [ "SapientEntity" ],
 
   "bodypart-body-count": 1,
   "bodypart-skin-count": 1,
