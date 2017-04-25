@@ -21,6 +21,7 @@
     "animated": {},
     "inventory": {
       "max-size": -1
-    }
+    },
+    "mobility": {}
   }
 }

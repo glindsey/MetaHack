@@ -330,6 +330,7 @@
     <ClInclude Include="components\ComponentLightSource.h" />
     <ClInclude Include="components\ComponentMap.h" />
     <ClInclude Include="components\ComponentBodyparts.h" />
+    <ClInclude Include="components\ComponentMobility.h" />
     <ClInclude Include="components\ComponentPhysical.h" />
     <ClInclude Include="components\ComponentPosition.h" />
     <ClInclude Include="components\ComponentManager.h" />
@@ -505,6 +506,9 @@
     <ClCompile Include="components\ComponentBodyparts.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="components\ComponentMobility.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="components\ComponentPhysical.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
@@ -656,9 +660,10 @@
     <None Include="resources\entity\Rock.json" />
     <None Include="resources\entity\RockLichen.json" />
     <None Include="resources\entity\SackCloth.json" />
-    <None Include="resources\entity\templates\SapientEntity.json" />
+    <None Include="resources\entity\templates\Sapient.json" />
     <None Include="resources\entity\Sconce.json" />
     <None Include="resources\entity\Sconce.lua" />
+    <None Include="resources\entity\templates\Sighted.json" />
     <None Include="resources\entity\TileContents.json" />
     <None Include="resources\entity\templates\Weapon.json" />
     <None Include="resources\entity\templates\Weapon.lua" />

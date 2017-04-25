@@ -3,9 +3,7 @@
   "plural": "wooden chests",
   "description-brief": "A wooden chest.",
 
-  "templates": [ "Chest" ],
-
-  "can-be-object-of-burn": true,
+  "templates": [ "Chest", "Combustible" ],
 
   "components": {}
 }

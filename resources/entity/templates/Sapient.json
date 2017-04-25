@@ -1,8 +1,8 @@
 {
-  "name": "[SapientEntity]",
-  "plural": "[SapientEntities]",
+  "name": "[Sapient]",
+  "plural": "[Sapients]",
 
-  "templates": [ "MemoryEntity" ],
+  "templates": [ "HasMemory" ],
 
   "can-close": true,
   "can-disrobe": true,

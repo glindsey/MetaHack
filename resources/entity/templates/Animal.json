@@ -1,8 +1,5 @@
 {
-  "name": "[Animal]",
-  "plural": "[Animal]",
-
-  "templates": [ "DynamicEntity" ],
+  "templates": [ "Mobile", "Killable" ],
 
   "can-attack": true,
   "can-drink": true,

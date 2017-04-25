@@ -2,10 +2,7 @@
   "name": "[Chest]",
   "plural": "[Chests]",
 
-  "templates": [ "Container" ],
-
-  "can-be-object-of-lock": true,
-  "can-be-object-of-unlock": true,
+  "templates": [ "Container", "Lockable" ],
 
   "components": {
     "inventory": {

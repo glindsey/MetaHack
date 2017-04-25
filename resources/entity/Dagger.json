@@ -3,7 +3,7 @@
   "plural": "daggers",
   "description-brief": "A small blade with a hilt.",
 
-  "templates": [ "Weapon" ],
+  "templates": [ "Weapon", "Corrodable" ],
 
   "can-be-object-of-rust": true,
 

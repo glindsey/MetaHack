@@ -1,9 +1,4 @@
 {
-  "name": "[Biped]",
-  "plural": "[Bipeds]",
-
-  "templates": [ "SapientEntity" ],
-
   "can-throw": true,
 
   "components": {

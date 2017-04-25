@@ -10,6 +10,7 @@
 #include "components/ComponentHealth.h"
 #include "components/ComponentInventory.h"
 #include "components/ComponentLightSource.h"
+#include "components/ComponentMobility.h"
 #include "components/ComponentPhysical.h"
 #include "components/ComponentPosition.h"
 #include "components/ComponentSenseSight.h"
@@ -42,6 +43,7 @@ public:
   ComponentMap<ComponentHealth> health;
   ComponentMap<ComponentInventory> inventory;
   ComponentMap<ComponentLightSource> lightSource;
+  ComponentMap<ComponentMobility> mobility;
   ComponentMap<ComponentPhysical> physical;
   ComponentMap<ComponentPosition> position;
   ComponentMap<ComponentSenseSight> senseSight;

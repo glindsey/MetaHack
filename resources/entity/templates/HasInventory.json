@@ -1,0 +1,7 @@
+{
+  "components": {
+    "inventory": {
+      "max-size": -1
+    }
+  }
+}

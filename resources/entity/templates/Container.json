@@ -2,15 +2,11 @@
   "name": "[Container]",
   "plural": "[Containers]",
 
-  "templates": [ "Entity" ],
+  "templates": [ "Entity", "HasInventory" ],
 
   "can-be-object-of-close": true,
   "can-be-object-of-drink": true,
   "can-be-object-of-open": true,
 
-  "components": {
-    "inventory": {
-      "max-size": -1
-    }
-  }
+  "components": {}
 }
