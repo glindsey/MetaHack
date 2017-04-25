@@ -37,8 +37,7 @@ json const& Entity::getCategoryData() const
   return Service<IGameRules>::get().category(COMPONENTS.category[m_id]);
 }
 
-Entity::Entity(GameState& state, std::string category, EntityId id)
-  :
+Entity::Entity(GameState& state, std::string category, EntityId id) :
   Subject(),
   m_state{ state },
   m_properties{ id },
@@ -51,8 +50,7 @@ Entity::Entity(GameState& state, std::string category, EntityId id)
   initialize();
 }
 
-Entity::Entity(Entity const& original, EntityId ref)
-  :
+Entity::Entity(Entity const& original, EntityId ref) :
   Subject(),
   m_state{ original.m_state },
   m_properties{ original.m_properties },
@@ -72,15 +70,14 @@ void Entity::initialize()
 }
 
 Entity::~Entity()
-{
-}
+{}
 
 void Entity::queueAction(std::unique_ptr<Actions::Action> action)
 {
   CLOG(TRACE, "Entity") << "Entity " <<
-    getId() << " (" <<
-    COMPONENTS.category[m_id] << "): Queuing Action " <<
-    action->getType();
+	getId() << " (" <<
+	COMPONENTS.category[m_id] << "): Queuing Action " <<
+	action->getType();
 
   m_pending_voluntary_actions.push_back(std::move(action));
 }
@@ -94,9 +91,9 @@ void Entity::queueAction(Actions::Action * p_action)
 void Entity::queueInvoluntaryAction(std::unique_ptr<Actions::Action> action)
 {
   CLOG(TRACE, "Entity") << "Entity " <<
-    getId() << " (" <<
-    COMPONENTS.category[m_id] << "): Queuing Involuntary Action " <<
-    action->getType();
+	getId() << " (" <<
+	COMPONENTS.category[m_id] << "): Queuing Involuntary Action " <<
+	action->getType();
 
   m_pending_involuntary_actions.push_front(std::move(action));
 }
@@ -147,11 +144,11 @@ EntityId Entity::getWieldingIn(BodyLocation& location)
 {
   if (m_wielded_items.count(location) == 0)
   {
-    return EntityId::Mu();
+	return EntityId::Mu();
   }
   else
   {
-    return m_wielded_items[location];
+	return m_wielded_items[location];
   }
 }
 
@@ -165,22 +162,24 @@ bool Entity::isWielding(EntityId entity, BodyLocation& location)
 {
   if (entity == EntityId::Mu())
   {
-    return false;
+	return false;
   }
   auto found_item =
-    std::find_if(m_wielded_items.cbegin(),
-                 m_wielded_items.cend(),
-                 [&](BodyLocationPair const& p)
-  { return p.second == entity; });
+	std::find_if(m_wielded_items.cbegin(),
+				 m_wielded_items.cend(),
+				 [&](BodyLocationPair const& p)
+  {
+	return p.second == entity;
+  });
 
   if (found_item == m_wielded_items.cend())
   {
-    return false;
+	return false;
   }
   else
   {
-    location = found_item->first;
-    return true;
+	location = found_item->first;
+	return true;
   }
 }
 
@@ -194,22 +193,24 @@ bool Entity::isWearing(EntityId entity, BodyLocation& location)
 {
   if (entity == EntityId::Mu())
   {
-    return false;
+	return false;
   }
   auto found_item =
-    std::find_if(m_equipped_items.cbegin(),
-                 m_equipped_items.cend(),
-                 [&](BodyLocationPair const& p)
-  { return p.second == entity; });
+	std::find_if(m_equipped_items.cbegin(),
+				 m_equipped_items.cend(),
+				 [&](BodyLocationPair const& p)
+  {
+	return p.second == entity;
+  });
 
   if (found_item == m_equipped_items.cend())
   {
-    return false;
+	return false;
   }
   else
   {
-    location = found_item->first;
-    return true;
+	location = found_item->first;
+	return true;
   }
 }
 
@@ -219,20 +220,20 @@ bool Entity::canReach(EntityId entity)
   auto our_location = COMPONENTS.position[m_id].parent();
   if (our_location == entity)
   {
-    return true;
+	return true;
   }
 
   // Check if it's at our location.
   auto thing_location = COMPONENTS.position[entity].parent();
   if (our_location == thing_location)
   {
-    return true;
+	return true;
   }
 
   // Check if it's in our inventory.
   if (COMPONENTS.inventory[m_id].contains(entity))
   {
-    return true;
+	return true;
   }
 
   return false;
@@ -242,9 +243,9 @@ bool Entity::isAdjacentTo(EntityId entity)
 {
   // If either doesn't have a position component, bail.
   if (!COMPONENTS.position.existsFor(m_id) ||
-      !COMPONENTS.position.existsFor(entity))
+	  !COMPONENTS.position.existsFor(entity))
   {
-    return false;
+	return false;
   }
 
   auto ourPosition = COMPONENTS.position[m_id];
@@ -253,9 +254,9 @@ bool Entity::isAdjacentTo(EntityId entity)
   // If the two are not on the same map, bail.
   if (ourPosition.map() != otherPosition.map())
   {
-    return false;
+	return false;
   }
-  
+
   return adjacent(ourPosition.coords(), otherPosition.coords());
 }
 
@@ -263,11 +264,11 @@ void Entity::setWielded(EntityId entity, BodyLocation location)
 {
   if (entity == EntityId::Mu())
   {
-    m_wielded_items.erase(location);
+	m_wielded_items.erase(location);
   }
   else
   {
-    m_wielded_items[location] = entity;
+	m_wielded_items[location] = entity;
   }
 }
 
@@ -275,11 +276,11 @@ void Entity::setWorn(EntityId entity, BodyLocation location)
 {
   if (entity == EntityId::Mu())
   {
-    m_equipped_items.erase(location);
+	m_equipped_items.erase(location);
   }
   else
   {
-    m_equipped_items[location] = entity;
+	m_equipped_items[location] = entity;
   }
 }
 
@@ -307,18 +308,18 @@ Gender Entity::getGenderOrYou() const
 {
   if (isPlayer())
   {
-    return Gender::SecondPerson;
+	return Gender::SecondPerson;
   }
   else
   {
-    if (COMPONENTS.physical.valueOrDefault(m_id).quantity() > 1)
-    {
-      return Gender::Plural;
-    }
-    else
-    {
-      return COMPONENTS.gender.valueOrDefault(m_id).gender();
-    }
+	if (COMPONENTS.physical.valueOrDefault(m_id).quantity() > 1)
+	{
+	  return Gender::Plural;
+	}
+	else
+	{
+	  return COMPONENTS.gender.valueOrDefault(m_id).gender();
+	}
   }
 }
 
@@ -327,38 +328,38 @@ unsigned int Entity::getBodypartNumber(BodyPart part) const
 {
   switch (part)
   {
-    case BodyPart::Body:
-      return getBaseProperty("bodypart-body-count", 0);
-    case BodyPart::Skin:
-      return getBaseProperty("bodypart-skin-count", 0);
-    case BodyPart::Head:
-      return getBaseProperty("bodypart-head-count", 0);
-    case BodyPart::Ear:
-      return getBaseProperty("bodypart-ear-count", 0);
-    case BodyPart::Eye:
-      return getBaseProperty("bodypart-eye-count", 0);
-    case BodyPart::Nose:
-      return getBaseProperty("bodypart-nose-count", 0);
-    case BodyPart::Mouth:
-      return getBaseProperty("bodypart-mouth-count", 0);
-    case BodyPart::Neck:
-      return getBaseProperty("bodypart-neck-count", 0);
-    case BodyPart::Chest:
-      return getBaseProperty("bodypart-chest-count", 0);
-    case BodyPart::Arm:
-      return getBaseProperty("bodypart-arm-count", 0);
-    case BodyPart::Hand:
-      return getBaseProperty("bodypart-hand-count", 0);
-    case BodyPart::Leg:
-      return getBaseProperty("bodypart-leg-count", 0);
-    case BodyPart::Foot:
-      return getBaseProperty("bodypart-foot-count", 0);
-    case BodyPart::Wing:
-      return getBaseProperty("bodypart-wing-count", 0);
-    case BodyPart::Tail:
-      return getBaseProperty("bodypart-tail-count", 0);
-    default:
-      return 0;
+  case BodyPart::Body:
+	return getBaseProperty("bodypart-body-count", 0);
+  case BodyPart::Skin:
+	return getBaseProperty("bodypart-skin-count", 0);
+  case BodyPart::Head:
+	return getBaseProperty("bodypart-head-count", 0);
+  case BodyPart::Ear:
+	return getBaseProperty("bodypart-ear-count", 0);
+  case BodyPart::Eye:
+	return getBaseProperty("bodypart-eye-count", 0);
+  case BodyPart::Nose:
+	return getBaseProperty("bodypart-nose-count", 0);
+  case BodyPart::Mouth:
+	return getBaseProperty("bodypart-mouth-count", 0);
+  case BodyPart::Neck:
+	return getBaseProperty("bodypart-neck-count", 0);
+  case BodyPart::Chest:
+	return getBaseProperty("bodypart-chest-count", 0);
+  case BodyPart::Arm:
+	return getBaseProperty("bodypart-arm-count", 0);
+  case BodyPart::Hand:
+	return getBaseProperty("bodypart-hand-count", 0);
+  case BodyPart::Leg:
+	return getBaseProperty("bodypart-leg-count", 0);
+  case BodyPart::Foot:
+	return getBaseProperty("bodypart-foot-count", 0);
+  case BodyPart::Wing:
+	return getBaseProperty("bodypart-wing-count", 0);
+  case BodyPart::Tail:
+	return getBaseProperty("bodypart-tail-count", 0);
+  default:
+	return 0;
   }
 }
 
@@ -368,38 +369,38 @@ std::string Entity::getBodypartName(BodyPart part) const
 {
   switch (part)
   {
-    case BodyPart::Body:
-      return getBaseProperty("bodypart-body-name", "[body]");
-    case BodyPart::Skin:
-      return getBaseProperty("bodypart-skin-name", "[skin]");
-    case BodyPart::Head:
-      return getBaseProperty("bodypart-head-name", "[head]");
-    case BodyPart::Ear:
-      return getBaseProperty("bodypart-ear-name", "[ear]");
-    case BodyPart::Eye:
-      return getBaseProperty("bodypart-eye-name", "[eye]");
-    case BodyPart::Nose:
-      return getBaseProperty("bodypart-nose-name", "[nose]");
-    case BodyPart::Mouth:
-      return getBaseProperty("bodypart-mouth-name", "[mouth]");
-    case BodyPart::Neck:
-      return getBaseProperty("bodypart-neck-name", "[neck]");
-    case BodyPart::Chest:
-      return getBaseProperty("bodypart-chest-name", "[chest]");
-    case BodyPart::Arm:
-      return getBaseProperty("bodypart-arm-name", "[arm]");
-    case BodyPart::Hand:
-      return getBaseProperty("bodypart-hand-name", "[hand]");
-    case BodyPart::Leg:
-      return getBaseProperty("bodypart-leg-name", "[leg]");
-    case BodyPart::Foot:
-      return getBaseProperty("bodypart-foot-name", "[foot]");
-    case BodyPart::Wing:
-      return getBaseProperty("bodypart-wing-name", "[wing]");
-    case BodyPart::Tail:
-      return getBaseProperty("bodypart-tail-name", "[tail]");
-    default:
-      return "squeedlyspooch (unknown BodyPart)";
+  case BodyPart::Body:
+	return getBaseProperty("bodypart-body-name", "[body]");
+  case BodyPart::Skin:
+	return getBaseProperty("bodypart-skin-name", "[skin]");
+  case BodyPart::Head:
+	return getBaseProperty("bodypart-head-name", "[head]");
+  case BodyPart::Ear:
+	return getBaseProperty("bodypart-ear-name", "[ear]");
+  case BodyPart::Eye:
+	return getBaseProperty("bodypart-eye-name", "[eye]");
+  case BodyPart::Nose:
+	return getBaseProperty("bodypart-nose-name", "[nose]");
+  case BodyPart::Mouth:
+	return getBaseProperty("bodypart-mouth-name", "[mouth]");
+  case BodyPart::Neck:
+	return getBaseProperty("bodypart-neck-name", "[neck]");
+  case BodyPart::Chest:
+	return getBaseProperty("bodypart-chest-name", "[chest]");
+  case BodyPart::Arm:
+	return getBaseProperty("bodypart-arm-name", "[arm]");
+  case BodyPart::Hand:
+	return getBaseProperty("bodypart-hand-name", "[hand]");
+  case BodyPart::Leg:
+	return getBaseProperty("bodypart-leg-name", "[leg]");
+  case BodyPart::Foot:
+	return getBaseProperty("bodypart-foot-name", "[foot]");
+  case BodyPart::Wing:
+	return getBaseProperty("bodypart-wing-name", "[wing]");
+  case BodyPart::Tail:
+	return getBaseProperty("bodypart-tail-name", "[tail]");
+  default:
+	return "squeedlyspooch (unknown BodyPart)";
   }
 }
 
@@ -409,38 +410,38 @@ std::string Entity::getBodypartPlural(BodyPart part) const
 {
   switch (part)
   {
-    case BodyPart::Body:
-      return getBaseProperty("bodypart-body-plural", "[bodies]");
-    case BodyPart::Skin:
-      return getBaseProperty("bodypart-skin-plural", "[skins]");
-    case BodyPart::Head:
-      return getBaseProperty("bodypart-head-plural", "[hands]");
-    case BodyPart::Ear:
-      return getBaseProperty("bodypart-ear-plural", "[ears]");
-    case BodyPart::Eye:
-      return getBaseProperty("bodypart-eye-plural", "[eyes]");
-    case BodyPart::Nose:
-      return getBaseProperty("bodypart-nose-plural", "[noses]");
-    case BodyPart::Mouth:
-      return getBaseProperty("bodypart-mouth-plural", "[mouths]");
-    case BodyPart::Neck:
-      return getBaseProperty("bodypart-neck-plural", "[necks]");
-    case BodyPart::Chest:
-      return getBaseProperty("bodypart-chest-plural", "[chests]");
-    case BodyPart::Arm:
-      return getBaseProperty("bodypart-arm-plural", "[arms]");
-    case BodyPart::Hand:
-      return getBaseProperty("bodypart-hand-plural", "[hands]");
-    case BodyPart::Leg:
-      return getBaseProperty("bodypart-leg-plural", "[legs]");
-    case BodyPart::Foot:
-      return getBaseProperty("bodypart-foot-plural", "[feet]");
-    case BodyPart::Wing:
-      return getBaseProperty("bodypart-wing-plural", "[wings]");
-    case BodyPart::Tail:
-      return getBaseProperty("bodypart-tail-plural", "[tails]");
-    default:
-      return "squeedlyspooches (unknown BodyParts)";
+  case BodyPart::Body:
+	return getBaseProperty("bodypart-body-plural", "[bodies]");
+  case BodyPart::Skin:
+	return getBaseProperty("bodypart-skin-plural", "[skins]");
+  case BodyPart::Head:
+	return getBaseProperty("bodypart-head-plural", "[hands]");
+  case BodyPart::Ear:
+	return getBaseProperty("bodypart-ear-plural", "[ears]");
+  case BodyPart::Eye:
+	return getBaseProperty("bodypart-eye-plural", "[eyes]");
+  case BodyPart::Nose:
+	return getBaseProperty("bodypart-nose-plural", "[noses]");
+  case BodyPart::Mouth:
+	return getBaseProperty("bodypart-mouth-plural", "[mouths]");
+  case BodyPart::Neck:
+	return getBaseProperty("bodypart-neck-plural", "[necks]");
+  case BodyPart::Chest:
+	return getBaseProperty("bodypart-chest-plural", "[chests]");
+  case BodyPart::Arm:
+	return getBaseProperty("bodypart-arm-plural", "[arms]");
+  case BodyPart::Hand:
+	return getBaseProperty("bodypart-hand-plural", "[hands]");
+  case BodyPart::Leg:
+	return getBaseProperty("bodypart-leg-plural", "[legs]");
+  case BodyPart::Foot:
+	return getBaseProperty("bodypart-foot-plural", "[feet]");
+  case BodyPart::Wing:
+	return getBaseProperty("bodypart-wing-plural", "[wings]");
+  case BodyPart::Tail:
+	return getBaseProperty("bodypart-tail-plural", "[tails]");
+  default:
+	return "squeedlyspooches (unknown BodyParts)";
   }
 }
 
@@ -453,13 +454,13 @@ json Entity::getBaseProperty(std::string key, json default_value) const
 {
   if (m_properties.contains(key))
   {
-    return m_properties.get(key);
+	return m_properties.get(key);
   }
   else
   {
-    auto value = getCategoryData().value(key, default_value);
-    m_properties.set(key, value);
-    return value;
+	auto value = getCategoryData().value(key, default_value);
+	m_properties.set(key, value);
+	return value;
   }
 }
 
@@ -476,26 +477,26 @@ void Entity::addToBaseProperty(std::string key, json add_value)
   json existing_value = m_properties.get(key);
   if (existing_value.is_number_float())
   {
-    m_properties.set(key, existing_value.get<double>() + add_value.get<double>());
+	m_properties.set(key, existing_value.get<double>() + add_value.get<double>());
   }
   else if (existing_value.is_number_integer())
   {
-    if (existing_value.is_number_unsigned())
-    {
-      m_properties.set(key, existing_value.get<unsigned int>() + add_value.get<unsigned int>());
-    }
-    else
-    {
-      m_properties.set(key, existing_value.get<int>() + add_value.get<int>());
-    }
+	if (existing_value.is_number_unsigned())
+	{
+	  m_properties.set(key, existing_value.get<unsigned int>() + add_value.get<unsigned int>());
+	}
+	else
+	{
+	  m_properties.set(key, existing_value.get<int>() + add_value.get<int>());
+	}
   }
   else if (existing_value.is_string())
   {
-    m_properties.set(key, existing_value.get<std::string>() + add_value.get<std::string>());
+	m_properties.set(key, existing_value.get<std::string>() + add_value.get<std::string>());
   }
   else
   {
-    Assert("Entity", false, "Attempted to add to non-addable property \"" << key << "\"");
+	Assert("Entity", false, "Attempted to add to non-addable property \"" << key << "\"");
   }
 }
 
@@ -503,8 +504,8 @@ json Entity::getModifiedProperty(std::string key, json default_value) const
 {
   if (!m_properties.contains(key))
   {
-    json value = getCategoryData().value(key, default_value);
-    m_properties.set(key, value);
+	json value = getCategoryData().value(key, default_value);
+	m_properties.set(key, value);
   }
 
   return m_properties.get_modified(key);
@@ -529,9 +530,9 @@ bool Entity::canSee(EntityId entity)
 {
   // Bail if either doesn't have a Position component.
   if (!COMPONENTS.position.existsFor(m_id) ||
-      !COMPONENTS.position.existsFor(entity))
+	  !COMPONENTS.position.existsFor(entity))
   {
-    return false;
+	return false;
   }
 
   // Bail if the two aren't on the same map.
@@ -539,7 +540,7 @@ bool Entity::canSee(EntityId entity)
   auto& entityPosition = COMPONENTS.position[entity];
   if (thisPosition.map() != entityPosition.map())
   {
-    return false;
+	return false;
   }
 
   return canSee(entityPosition.coords());
@@ -554,13 +555,13 @@ bool Entity::canSee(IntVec2 coords)
   // Make sure we are able to see at all.
   if (!canCurrentlySee())
   {
-    return false;
+	return false;
   }
 
   // If the coordinates are where we are, then yes, we can indeed see the tile, regardless.
   if ((thisCoords.x == coords.x) && (thisCoords.y == coords.y))
   {
-    return true;
+	return true;
   }
 
   Map& game_map = GAME.maps().get(thisMap);
@@ -569,7 +570,7 @@ bool Entity::canSee(IntVec2 coords)
   // Check for coords out of bounds. If they're out of bounds, we can't see it.
   if ((coords.x < 0) || (coords.y < 0) || (coords.x >= map_size.x) || (coords.y >= map_size.y))
   {
-    return false;
+	return false;
   }
 
   // Return seen data.
@@ -586,14 +587,14 @@ void Entity::findSeenTiles()
   // If not, bail out.
   if (canCurrentlySee() == false)
   {
-    return;
+	return;
   }
 
   // Are we on a map?  Bail out if we aren't.
   EntityId location = COMPONENTS.position[m_id].parent();
   if (location == EntityId::Mu())
   {
-    return;
+	return;
   }
 
   // Clear the "tile seen" bitset.
@@ -609,7 +610,7 @@ void Entity::findSeenTiles()
 
   for (int n = 1; n <= 8; ++n)
   {
-    do_recursive_visibility(position, n);
+	do_recursive_visibility(position, n);
   }
 }
 
@@ -621,19 +622,19 @@ MapMemoryChunk const& Entity::getMemoryAt(IntVec2 coords) const
 
   if (map == MapFactory::null_map_id)
   {
-    return null_memory_chunk;
+	return null_memory_chunk;
   }
 
   if (!COMPONENTS.spacialMemory.existsFor(m_id))
   {
-    return null_memory_chunk;
+	return null_memory_chunk;
   }
 
   auto& memory = COMPONENTS.spacialMemory[m_id];
 
   if (!memory.containsMap(map))
   {
-    return null_memory_chunk;
+	return null_memory_chunk;
   }
 
   return memory.ofMap(map).valueOr(coords, null_memory_chunk);
@@ -644,7 +645,7 @@ bool Entity::moveInto(EntityId newLocation)
   // If Entity doesn't have a Position component, bail.
   if (!COMPONENTS.position.existsFor(m_id))
   {
-    return false;
+	return false;
   }
 
   auto& position = COMPONENTS.position[m_id];
@@ -653,52 +654,52 @@ bool Entity::moveInto(EntityId newLocation)
 
   if (newLocation == oldLocation)
   {
-    // We're already there!
-    return true;
+	// We're already there!
+	return true;
   }
 
   if (newLocation->canContain(m_id))
   {
-    if (COMPONENTS.inventory[newLocation].add(m_id) == true)
-    {
-      // Try to lock our old location.
-      if (oldLocation != EntityId::Mu())
-      {
-        COMPONENTS.inventory[oldLocation].remove(m_id);
-      }
+	if (COMPONENTS.inventory[newLocation].add(m_id) == true)
+	{
+	  // Try to lock our old location.
+	  if (oldLocation != EntityId::Mu())
+	  {
+		COMPONENTS.inventory[oldLocation].remove(m_id);
+	  }
 
-      // Set the location to the new location.
-      COMPONENTS.position[m_id].set(newLocation);
+	  // Set the location to the new location.
+	  COMPONENTS.position[m_id].set(newLocation);
 
-      MapId newMapId = position.map();
-      if (oldMapId != newMapId)
-      {
-        if (oldMapId != MapFactory::null_map_id)
-        {
-          /// @todo Save old map memory.
-        }
+	  MapId newMapId = position.map();
+	  if (oldMapId != newMapId)
+	  {
+		if (oldMapId != MapFactory::null_map_id)
+		{
+		  /// @todo Save old map memory.
+		}
 
-        IntVec2 new_map_size = newMapId->getSize();
+		IntVec2 new_map_size = newMapId->getSize();
 
-        if (COMPONENTS.senseSight.existsFor(m_id))
-        {
-          COMPONENTS.senseSight[m_id].resizeSeen(new_map_size);
-        }
-        
-        if (COMPONENTS.spacialMemory.existsFor(m_id))
-        {
-          auto& spacialMemory = COMPONENTS.spacialMemory[m_id];
-          if (!spacialMemory.containsMap(newMapId))
-          {
-            COMPONENTS.spacialMemory[m_id].ofMap(newMapId).resize(new_map_size);
-          }
-        }
+		if (COMPONENTS.senseSight.existsFor(m_id))
+		{
+		  COMPONENTS.senseSight[m_id].resizeSeen(new_map_size);
+		}
 
-      }
-      this->findSeenTiles();
-      //notifyObservers(Event::Updated);
-      return true;
-    } // end if (add to new inventory was successful)
+		if (COMPONENTS.spacialMemory.existsFor(m_id))
+		{
+		  auto& spacialMemory = COMPONENTS.spacialMemory[m_id];
+		  if (!spacialMemory.containsMap(newMapId))
+		  {
+			COMPONENTS.spacialMemory[m_id].ofMap(newMapId).resize(new_map_size);
+		  }
+		}
+
+	  }
+	  this->findSeenTiles();
+	  //notifyObservers(Event::Updated);
+	  return true;
+	} // end if (add to new inventory was successful)
   } // end if (canContain is true)
 
   return false;
@@ -709,15 +710,15 @@ bool Entity::isInsideAnotherEntity() const
   auto& parent = COMPONENTS.position[m_id].parent();
   if (parent == EntityId::Mu())
   {
-    // Entity is a part of the MapTile such as the floor.
-    return false;
+	// Entity is a part of the MapTile such as the floor.
+	return false;
   }
 
   auto& grandparent = COMPONENTS.position[parent].parent();
   if (grandparent == EntityId::Mu())
   {
-    // Entity is directly on the floor.
-    return false;
+	// Entity is directly on the floor.
+	return false;
   }
   return true;
 }
@@ -726,10 +727,10 @@ std::string Entity::getDisplayAdjectives() const
 {
   std::string adjectives;
 
-  if (COMPONENTS.health.existsFor(m_id) && 
-      COMPONENTS.health[m_id].isDead())
+  if (COMPONENTS.health.existsFor(m_id) &&
+	  COMPONENTS.health[m_id].isDead())
   {
-    adjectives += tr("ADJECTIVE_DEAD");
+	adjectives += tr("ADJECTIVE_DEAD");
   }
 
   /// @todo Implement more adjectives.
@@ -765,19 +766,19 @@ std::string Entity::getSubjectiveString(ArticleChoice articles) const
 
   if (isPlayer())
   {
-    if (COMPONENTS.health.existsFor(m_id) && 
-        !COMPONENTS.health[m_id].isDead())
-    {
-      str = tr("PRONOUN_SUBJECT_YOU");
-    }
-    else
-    {
-      str = StringTransforms::make_string_numerical_tokens_only(tr("PRONOUN_POSSESSIVE_YOU"), { tr("NOUN_CORPSE") });
-    }
+	if (COMPONENTS.health.existsFor(m_id) &&
+		!COMPONENTS.health[m_id].isDead())
+	{
+	  str = tr("PRONOUN_SUBJECT_YOU");
+	}
+	else
+	{
+	  str = StringTransforms::make_string_numerical_tokens_only(tr("PRONOUN_POSSESSIVE_YOU"), { tr("NOUN_CORPSE") });
+	}
   }
   else
   {
-    str = getDescriptiveString(articles);
+	str = getDescriptiveString(articles);
   }
 
   return str;
@@ -789,19 +790,19 @@ std::string Entity::getObjectiveString(ArticleChoice articles) const
 
   if (isPlayer())
   {
-    if (COMPONENTS.health.existsFor(m_id) &&
-        !COMPONENTS.health[m_id].isDead())
-    {
-      str = tr("PRONOUN_OBJECT_YOU");
-    }
-    else
-    {
-      str = StringTransforms::make_string_numerical_tokens_only(tr("PRONOUN_POSSESSIVE_YOU"), { tr("NOUN_CORPSE") });
-    }
+	if (COMPONENTS.health.existsFor(m_id) &&
+		!COMPONENTS.health[m_id].isDead())
+	{
+	  str = tr("PRONOUN_OBJECT_YOU");
+	}
+	else
+	{
+	  str = StringTransforms::make_string_numerical_tokens_only(tr("PRONOUN_POSSESSIVE_YOU"), { tr("NOUN_CORPSE") });
+	}
   }
   else
   {
-    str = getDescriptiveString(articles);
+	str = getDescriptiveString(articles);
   }
 
   return str;
@@ -811,14 +812,14 @@ std::string Entity::getReflexiveString(EntityId other, ArticleChoice articles) c
 {
   if (other == getId())
   {
-    return getReflexivePronoun();
+	return getReflexivePronoun();
   }
 
   return getDescriptiveString(articles);
 }
 
 std::string Entity::getDescriptiveString(ArticleChoice articles,
-                                            UsePossessives possessives) const
+										 UsePossessives possessives) const
 {
   auto& config = Service<IConfigSettings>::get();
 
@@ -832,9 +833,9 @@ std::string Entity::getDescriptiveString(ArticleChoice articles,
   std::string debug_prefix;
   if (config.get("debug-show-thing-ids") == true)
   {
-    debug_prefix = "(#" + static_cast<std::string>(getId()) + ") ";
+	debug_prefix = "(#" + static_cast<std::string>(getId()) + ") ";
   }
-  
+
   std::string adjectives;
   std::string noun;
   std::string description;
@@ -845,54 +846,54 @@ std::string Entity::getDescriptiveString(ArticleChoice articles,
 
   if (quantity == 1)
   {
-    noun = getDisplayName();
+	noun = getDisplayName();
 
-    if (owned && (possessives == UsePossessives::Yes))
-    {
-      description = location->getPossessiveString(noun, adjectives);
-    }
-    else
-    {
-      if (articles == ArticleChoice::Definite)
-      {
-        description = tr("ARTICLE_DEFINITE") + " " + adjectives + " " + noun;
-      }
-      else
-      {
-        description = getIndefArt(noun) + " " + adjectives + " " + noun;
-      }
-    }
+	if (owned && (possessives == UsePossessives::Yes))
+	{
+	  description = location->getPossessiveString(noun, adjectives);
+	}
+	else
+	{
+	  if (articles == ArticleChoice::Definite)
+	  {
+		description = tr("ARTICLE_DEFINITE") + " " + adjectives + " " + noun;
+	  }
+	  else
+	  {
+		description = getIndefArt(noun) + " " + adjectives + " " + noun;
+	  }
+	}
 
-    if (getProperName().empty() == false)
-    {
-      suffix = tr("VERB_NAME_PP") + " " + getProperName();
-    }
+	if (getProperName().empty() == false)
+	{
+	  suffix = tr("VERB_NAME_PP") + " " + getProperName();
+	}
   }
   else
   {
-    noun = std::to_string(COMPONENTS.physical.valueOrDefault(m_id).quantity()) + " " + getDisplayPlural();
+	noun = std::to_string(COMPONENTS.physical.valueOrDefault(m_id).quantity()) + " " + getDisplayPlural();
 
-    if (owned && (possessives == UsePossessives::Yes))
-    {
-      description = location->getPossessiveString(noun, adjectives);
-    }
-    else
-    {
-      if (articles == ArticleChoice::Definite)
-      {
-        description = tr("ARTICLE_DEFINITE") + " " + adjectives + " " + noun;
-      }
-      else
-      {
-        description = adjectives + " " + noun;
-      }
-    }
+	if (owned && (possessives == UsePossessives::Yes))
+	{
+	  description = location->getPossessiveString(noun, adjectives);
+	}
+	else
+	{
+	  if (articles == ArticleChoice::Definite)
+	  {
+		description = tr("ARTICLE_DEFINITE") + " " + adjectives + " " + noun;
+	  }
+	  else
+	  {
+		description = adjectives + " " + noun;
+	  }
+	}
   }
 
   name = StringTransforms::make_string_numerical_tokens_only(tr("PATTERN_DISPLAY_NAME"), {
-    debug_prefix,
-    description,
-    suffix
+	debug_prefix,
+	description,
+	suffix
   });
 
   return name;
@@ -904,7 +905,7 @@ bool Entity::isThirdPerson()
 }
 
 std::string const& Entity::chooseVerb(std::string const& verb12,
-                                        std::string const& verb3)
+									  std::string const& verb3)
 {
   return isThirdPerson() ? verb3 : verb12;
 }
@@ -938,15 +939,15 @@ std::string Entity::getPossessiveString(std::string owned, std::string adjective
 {
   if (GAME.getPlayer() == m_id)
   {
-    return StringTransforms::make_string_numerical_tokens_only(tr("PRONOUN_POSSESSIVE_YOU"), { adjectives, owned });
+	return StringTransforms::make_string_numerical_tokens_only(tr("PRONOUN_POSSESSIVE_YOU"), { adjectives, owned });
   }
   else
   {
-    return StringTransforms::make_string_numerical_tokens_only(tr("PATTERN_POSSESSIVE"), {
-      getDescriptiveString(ArticleChoice::Definite, UsePossessives::No),
-      adjectives,
-      owned
-    });
+	return StringTransforms::make_string_numerical_tokens_only(tr("PATTERN_POSSESSIVE"), {
+	  getDescriptiveString(ArticleChoice::Definite, UsePossessives::No),
+	  adjectives,
+	  owned
+	});
   }
 }
 
@@ -969,42 +970,42 @@ void Entity::light_up_surroundings()
 
   if (COMPONENTS.inventory.existsFor(m_id))
   {
-    /// @todo Figure out how we want to handle light sources.
-    ///       If we want to be more accurate, the light should only
-    ///       be able to be seen when a character is wielding or has
-    ///       equipped it. If we want to be easier, the light should
-    ///       shine simply if it's in an entity's inventory.
+	/// @todo Figure out how we want to handle light sources.
+	///       If we want to be more accurate, the light should only
+	///       be able to be seen when a character is wielding or has
+	///       equipped it. If we want to be easier, the light should
+	///       shine simply if it's in an entity's inventory.
 
-    bool opaque = location->isOpaque();
-    bool is_entity = COMPONENTS.health.existsFor(m_id);
+	bool opaque = location->isOpaque();
+	bool is_entity = COMPONENTS.health.existsFor(m_id);
 
-    //if (!isOpaque() || isWielding(light) || isWearing(light))
-    if (!opaque || is_entity)
-    {
-      auto& inventory = COMPONENTS.inventory[m_id];
-      for (auto iter = inventory.begin();
-           iter != inventory.end();
-           ++iter)
-      {
-        EntityId entity = iter->second;
-        entity->light_up_surroundings();
-      }
-    }
+	//if (!isOpaque() || isWielding(light) || isWearing(light))
+	if (!opaque || is_entity)
+	{
+	  auto& inventory = COMPONENTS.inventory[m_id];
+	  for (auto iter = inventory.begin();
+		   iter != inventory.end();
+		   ++iter)
+	  {
+		EntityId entity = iter->second;
+		entity->light_up_surroundings();
+	  }
+	}
   }
 
   // Use visitor pattern.
-  if ((location != EntityId::Mu()) && 
-      COMPONENTS.lightSource[m_id].lit())
+  if ((location != EntityId::Mu()) &&
+	  COMPONENTS.lightSource[m_id].lit())
   {
-    location->beLitBy(this->getId());
+	location->beLitBy(this->getId());
   }
 }
 
 void Entity::beLitBy(EntityId light)
 {
   // If either this or the light has no Position component, bail.
-  if (!COMPONENTS.position.existsFor(m_id) || 
-      !COMPONENTS.position.existsFor(light)) return;
+  if (!COMPONENTS.position.existsFor(m_id) ||
+	  !COMPONENTS.position.existsFor(light)) return;
 
   auto& thisPosition = COMPONENTS.position[m_id];
   auto& lightPosition = COMPONENTS.position[light];
@@ -1015,31 +1016,31 @@ void Entity::beLitBy(EntityId light)
   bool result = call_lua_function("on_lit_by", light, true);
   if (result)
   {
-    //notifyObservers(Event::Updated);
+	//notifyObservers(Event::Updated);
   }
 
   EntityId location = thisPosition.parent();
 
   if (location == EntityId::Mu())
   {
-    thisPosition.map()->addLight(light);
+	thisPosition.map()->addLight(light);
   }
   else
   {
-    /// @todo Figure out how we want to handle light sources.
-    ///       If we want to be more accurate, the light should only
-    ///       be able to be seen when a character is wielding or has
-    ///       equipped it. If we want to be easier, the light should
-    ///       shine simply if it's in the player's inventory.
+	/// @todo Figure out how we want to handle light sources.
+	///       If we want to be more accurate, the light should only
+	///       be able to be seen when a character is wielding or has
+	///       equipped it. If we want to be easier, the light should
+	///       shine simply if it's in the player's inventory.
 
-    bool opaque = this->isOpaque();
-    bool is_entity = COMPONENTS.health.existsFor(m_id);
+	bool opaque = this->isOpaque();
+	bool is_entity = COMPONENTS.health.existsFor(m_id);
 
-    //if (!isOpaque() || isWielding(light) || isWearing(light))
-    if (!opaque || is_entity)
-    {
-      location->beLitBy(light);
-    }
+	//if (!isOpaque() || isWielding(light) || isWearing(light))
+	if (!opaque || is_entity)
+	{
+	  location->beLitBy(light);
+	}
   }
 }
 
@@ -1052,42 +1053,42 @@ void Entity::spill()
 
   // Step through all contents of this Entity.
   for (auto iter = inventory.begin();
-       iter != inventory.end();
-       ++iter)
+	   iter != inventory.end();
+	   ++iter)
   {
-    EntityId entity = iter->second;
-    auto parent = COMPONENTS.position[m_id].parent();
-    if (parent != EntityId::Mu())
-    {
-      if (parent->canContain(entity))
-      {
-        // Try to move this into the Entity's location.
-        success = entity->moveInto(parent);
-        if (success)
-        {
-          auto container_string = this->getDescriptiveString();
-          auto thing_string = entity->getDescriptiveString();
-          message = thing_string + this->chooseVerb(" tumble", " tumbles") + " out of " + container_string + ".";
-          Service<IMessageLog>::get().add(message);
-        }
-        else
-        {
-          // We couldn't move it, so just destroy it.
-          auto container_string = this->getDescriptiveString();
-          auto thing_string = entity->getDescriptiveString();
-          message = thing_string + this->chooseVerb(" vanish", " vanishes") + " in a puff of logic.";
-          Service<IMessageLog>::get().add(message);
-          entity->destroy();
-        }
-        //notifyObservers(Event::Updated);
+	EntityId entity = iter->second;
+	auto parent = COMPONENTS.position[m_id].parent();
+	if (parent != EntityId::Mu())
+	{
+	  if (parent->canContain(entity))
+	  {
+		// Try to move this into the Entity's location.
+		success = entity->moveInto(parent);
+		if (success)
+		{
+		  auto container_string = this->getDescriptiveString();
+		  auto thing_string = entity->getDescriptiveString();
+		  message = thing_string + this->chooseVerb(" tumble", " tumbles") + " out of " + container_string + ".";
+		  Service<IMessageLog>::get().add(message);
+		}
+		else
+		{
+		  // We couldn't move it, so just destroy it.
+		  auto container_string = this->getDescriptiveString();
+		  auto thing_string = entity->getDescriptiveString();
+		  message = thing_string + this->chooseVerb(" vanish", " vanishes") + " in a puff of logic.";
+		  Service<IMessageLog>::get().add(message);
+		  entity->destroy();
+		}
+		//notifyObservers(Event::Updated);
 
-      } // end if (canContain)
-    } // end if (container location is not Mu)
-    else
-    {
-      // Container's location is Mu, so just destroy it without a message.
-      entity->destroy();
-    }
+	  } // end if (canContain)
+	} // end if (container location is not Mu)
+	else
+	{
+	  // Container's location is Mu, so just destroy it without a message.
+	  entity->destroy();
+	}
   } // end for (contents of Entity)
 }
 
@@ -1097,13 +1098,13 @@ void Entity::destroy()
 
   if (COMPONENTS.inventory.existsFor(m_id))
   {
-    // Spill the contents of this Entity into the Entity's location.
-    spill();
+	// Spill the contents of this Entity into the Entity's location.
+	spill();
   }
 
   if (old_location != EntityId::Mu())
   {
-    COMPONENTS.inventory[old_location].remove(m_id);
+	COMPONENTS.inventory[old_location].remove(m_id);
   }
 
   //notifyObservers(Event::Updated);
@@ -1119,152 +1120,152 @@ std::string Entity::getBodypartDescription(BodyLocation location)
   Assert("Entity", location.number < total_number, "asked for bodypart " << location.number << " of " << total_number);
   switch (total_number)
   {
-    case 0: // none of them!?  shouldn't occur!
-      result = "non-existent " + part_name;
-      CLOG(WARNING, "Entity") << "Request for description of " << result << "!?";
-      break;
+  case 0: // none of them!?  shouldn't occur!
+	result = "non-existent " + part_name;
+	CLOG(WARNING, "Entity") << "Request for description of " << result << "!?";
+	break;
 
-    case 1: // only one of them
-      result = part_name;
-      break;
+  case 1: // only one of them
+	result = part_name;
+	break;
 
-    case 2: // assume a right and left one.
-      switch (location.number)
-      {
-        case 0:
-          result = "right " + part_name;
-          break;
-        case 1:
-          result = "left " + part_name;
-          break;
-        default:
-          break;
-      }
-      break;
+  case 2: // assume a right and left one.
+	switch (location.number)
+	{
+	case 0:
+	  result = "right " + part_name;
+	  break;
+	case 1:
+	  result = "left " + part_name;
+	  break;
+	default:
+	  break;
+	}
+	break;
 
-    case 3: // assume right, center, and left.
-      switch (location.number)
-      {
-        case 0:
-          result = "right " + part_name;
-          break;
-        case 1:
-          result = "center " + part_name;
-          break;
-        case 2:
-          result = "left " + part_name;
-          break;
-        default:
-          break;
-      }
-      break;
+  case 3: // assume right, center, and left.
+	switch (location.number)
+	{
+	case 0:
+	  result = "right " + part_name;
+	  break;
+	case 1:
+	  result = "center " + part_name;
+	  break;
+	case 2:
+	  result = "left " + part_name;
+	  break;
+	default:
+	  break;
+	}
+	break;
 
-    case 4: // Legs/feet assume front/rear, others assume upper/lower.
-      if ((location.part == BodyPart::Leg) || (location.part == BodyPart::Foot))
-      {
-        switch (location.number)
-        {
-          case 0:
-            result = "front right " + part_name;
-            break;
-          case 1:
-            result = "front left " + part_name;
-            break;
-          case 2:
-            result = "rear right " + part_name;
-            break;
-          case 3:
-            result = "rear left " + part_name;
-            break;
-          default:
-            break;
-        }
-      }
-      else
-      {
-        switch (location.number)
-        {
-          case 0:
-            result = "upper right " + part_name;
-            break;
-          case 1:
-            result = "upper left " + part_name;
-            break;
-          case 2:
-            result = "lower right " + part_name;
-            break;
-          case 3:
-            result = "lower left " + part_name;
-            break;
-          default:
-            break;
-        }
-      }
-      break;
+  case 4: // Legs/feet assume front/rear, others assume upper/lower.
+	if ((location.part == BodyPart::Leg) || (location.part == BodyPart::Foot))
+	{
+	  switch (location.number)
+	  {
+	  case 0:
+		result = "front right " + part_name;
+		break;
+	  case 1:
+		result = "front left " + part_name;
+		break;
+	  case 2:
+		result = "rear right " + part_name;
+		break;
+	  case 3:
+		result = "rear left " + part_name;
+		break;
+	  default:
+		break;
+	  }
+	}
+	else
+	{
+	  switch (location.number)
+	  {
+	  case 0:
+		result = "upper right " + part_name;
+		break;
+	  case 1:
+		result = "upper left " + part_name;
+		break;
+	  case 2:
+		result = "lower right " + part_name;
+		break;
+	  case 3:
+		result = "lower left " + part_name;
+		break;
+	  default:
+		break;
+	  }
+	}
+	break;
 
-    case 6: // Legs/feet assume front/middle/rear, others upper/middle/lower.
-      if ((location.part == BodyPart::Leg) || (location.part == BodyPart::Foot))
-      {
-        switch (location.number)
-        {
-          case 0:
-            result = "front right " + part_name;
-            break;
-          case 1:
-            result = "front left " + part_name;
-            break;
-          case 2:
-            result = "middle right " + part_name;
-            break;
-          case 3:
-            result = "middle left " + part_name;
-            break;
-          case 4:
-            result = "rear right " + part_name;
-            break;
-          case 5:
-            result = "rear left " + part_name;
-            break;
-          default:
-            break;
-        }
-      }
-      else
-      {
-        switch (location.number)
-        {
-          case 0:
-            result = "upper right " + part_name;
-            break;
-          case 1:
-            result = "upper left " + part_name;
-            break;
-          case 2:
-            result = "middle right " + part_name;
-            break;
-          case 3:
-            result = "middle left " + part_name;
-            break;
-          case 4:
-            result = "lower right " + part_name;
-            break;
-          case 5:
-            result = "lower left " + part_name;
-            break;
-          default:
-            break;
-        }
-      }
-      break;
+  case 6: // Legs/feet assume front/middle/rear, others upper/middle/lower.
+	if ((location.part == BodyPart::Leg) || (location.part == BodyPart::Foot))
+	{
+	  switch (location.number)
+	  {
+	  case 0:
+		result = "front right " + part_name;
+		break;
+	  case 1:
+		result = "front left " + part_name;
+		break;
+	  case 2:
+		result = "middle right " + part_name;
+		break;
+	  case 3:
+		result = "middle left " + part_name;
+		break;
+	  case 4:
+		result = "rear right " + part_name;
+		break;
+	  case 5:
+		result = "rear left " + part_name;
+		break;
+	  default:
+		break;
+	  }
+	}
+	else
+	{
+	  switch (location.number)
+	  {
+	  case 0:
+		result = "upper right " + part_name;
+		break;
+	  case 1:
+		result = "upper left " + part_name;
+		break;
+	  case 2:
+		result = "middle right " + part_name;
+		break;
+	  case 3:
+		result = "middle left " + part_name;
+		break;
+	  case 4:
+		result = "lower right " + part_name;
+		break;
+	  case 5:
+		result = "lower left " + part_name;
+		break;
+	  default:
+		break;
+	  }
+	}
+	break;
 
-    default:
-      break;
+  default:
+	break;
   }
 
   // Anything else and we just return the ordinal name.
   if (result.empty())
   {
-    result = Ordinal::get(location.number) + " " + part_name;
+	result = Ordinal::get(location.number) + " " + part_name;
   }
 
   return result;
@@ -1285,7 +1286,7 @@ bool Entity::canBeObjectOfAction(std::string action)
 bool Entity::canHaveActionDoneBy(EntityId entity, std::string action)
 {
   return canBeObjectOfAction(action) &&
-    call_lua_function("can_have_action_" + action + "_done_by", entity, true);
+	call_lua_function("can_have_action_" + action + "_done_by", entity, true);
 }
 
 bool Entity::canHaveActionDoneBy(EntityId entity, Actions::Action& action)
@@ -1313,11 +1314,11 @@ bool Entity::process_involuntary_actions()
 
   // Process inventory.
   for (auto iter = temp_inventory.begin();
-       iter != temp_inventory.end();
-       ++iter)
+	   iter != temp_inventory.end();
+	   ++iter)
   {
-    EntityId entity = iter->second;
-    /* bool dead = */ entity->process_involuntary_actions();
+	EntityId entity = iter->second;
+	/* bool dead = */ entity->process_involuntary_actions();
   }
 
   // Process self last.
@@ -1334,11 +1335,11 @@ bool Entity::process_voluntary_actions()
 
   // Process inventory.
   for (auto iter = temp_inventory.begin();
-       iter != temp_inventory.end();
-       ++iter)
+	   iter != temp_inventory.end();
+	   ++iter)
   {
-    EntityId entity = iter->second;
-    /* bool dead = */ entity->process_voluntary_actions();
+	EntityId entity = iter->second;
+	/* bool dead = */ entity->process_voluntary_actions();
   }
 
   // Process self last.
@@ -1396,14 +1397,14 @@ bool Entity::can_merge_with(EntityId other) const
   // Entities with different types can't merge (obviously).
   if (COMPONENTS.category[other] != COMPONENTS.category[m_id])
   {
-    return false;
+	return false;
   }
 
   // Entities with inventories can never merge.
   if ((COMPONENTS.inventory.valueOrDefault(m_id).maxSize() != 0) ||
-      (COMPONENTS.inventory.valueOrDefault(other).maxSize() != 0))
+	(COMPONENTS.inventory.valueOrDefault(other).maxSize() != 0))
   {
-    return false;
+	return false;
   }
 
   // If the entities have the exact same properties, merge is okay.
@@ -1416,7 +1417,7 @@ bool Entity::can_merge_with(EntityId other) const
 
   if ((this->m_properties) == (other->m_properties))
   {
-    return true;
+	return true;
   }
 
   return false;
@@ -1427,28 +1428,28 @@ bool Entity::canContain(EntityId entity)
   size_t maxSize = COMPONENTS.inventory[m_id].maxSize();
   if (maxSize == 0)
   {
-    return false;
+	return false;
   }
   else if (COMPONENTS.inventory[m_id].count() >= maxSize)
   {
-    return false;
+	return false;
   }
   else
   {
-    return call_lua_function("can_contain", entity, true);
+	return call_lua_function("can_contain", entity, true);
   }
 }
 
 json Entity::call_lua_function(std::string function_name,
-                               json const& args,
-                               json const& default_result)
+							   json const& args,
+							   json const& default_result)
 {
   return the_lua_instance.call_thing_function(function_name, getId(), args, default_result);
 }
 
 json Entity::call_lua_function(std::string function_name,
-                               json const& args,
-                               json const& default_result) const
+							   json const& args,
+							   json const& default_result) const
 {
   return the_lua_instance.call_thing_function(function_name, getId(), args, default_result);
 }
@@ -1468,48 +1469,48 @@ bool Entity::_process_own_involuntary_actions()
   bool entity_updated = false;
 
   // Is this an entity that is now dead?
-  if (COMPONENTS.health.existsFor(m_id) && 
-      COMPONENTS.health[m_id].isDead())
+  if (COMPONENTS.health.existsFor(m_id) &&
+	  COMPONENTS.health[m_id].isDead())
   {
-    // Did the entity JUST die?
-    if (!COMPONENTS.health[m_id].dead())
-    {
-      // Perform the "die" action.
-      // (This sets the "dead" property and clears out any pending actions.)
-      std::unique_ptr<Actions::Action> dieAction(NEW Actions::ActionDie(getId()));
-      this->queueInvoluntaryAction(std::move(dieAction));
-    }
+	// Did the entity JUST die?
+	if (!COMPONENTS.health[m_id].dead())
+	{
+	  // Perform the "die" action.
+	  // (This sets the "dead" property and clears out any pending actions.)
+	  std::unique_ptr<Actions::Action> dieAction(NEW Actions::ActionDie(getId()));
+	  this->queueInvoluntaryAction(std::move(dieAction));
+	}
   }
 
   // While actions are pending...
   while (!m_pending_involuntary_actions.empty())
   {
-    // Process the front action.
-    // @todo Find a way to update the entity_updated variable.
-    std::unique_ptr<Actions::Action>& action = m_pending_involuntary_actions.front();
-    bool action_done = action->process({});
-    if (action_done)
-    {
-      CLOG(TRACE, "Entity") << "Entity " <<
-        getId() << " (" <<
-        COMPONENTS.category[m_id] << "): Involuntary Action " <<
-        action->getType() << " is done, popping";
+	// Process the front action.
+	// @todo Find a way to update the entity_updated variable.
+	std::unique_ptr<Actions::Action>& action = m_pending_involuntary_actions.front();
+	bool action_done = action->process({});
+	if (action_done)
+	{
+	  CLOG(TRACE, "Entity") << "Entity " <<
+		getId() << " (" <<
+		COMPONENTS.category[m_id] << "): Involuntary Action " <<
+		action->getType() << " is done, popping";
 
-      m_pending_involuntary_actions.pop_front();
-    }
+	  m_pending_involuntary_actions.pop_front();
+	}
   } // end while (actions pending)
 
   if (entity_updated)
   {
-    /// @todo This needs to be changed so it only is called if the Action
-    ///       materially affected the entity in some way. Two ways to do this
-    ///       that I can see:
-    ///         1) The Action calls notifyObservers. Requires the Action
-    ///            to have access to that method; right now it doesn't.
-    ///         2) The Action returns some sort of indication that the Entity
-    ///            was modified as a result. This could be done by changing
-    ///            the return type from a bool to a struct of some sort.
-    //notifyObservers(Event::Updated);
+	/// @todo This needs to be changed so it only is called if the Action
+	///       materially affected the entity in some way. Two ways to do this
+	///       that I can see:
+	///         1) The Action calls notifyObservers. Requires the Action
+	///            to have access to that method; right now it doesn't.
+	///         2) The Action returns some sort of indication that the Entity
+	///            was modified as a result. This could be done by changing
+	///            the return type from a bool to a struct of some sort.
+	//notifyObservers(Event::Updated);
   }
 
   return true;
@@ -1521,81 +1522,81 @@ bool Entity::_process_own_voluntary_actions()
 
   // Is this an entity that is now dead?
   if (COMPONENTS.health.existsFor(m_id) &&
-      COMPONENTS.health[m_id].isDead())
+	  COMPONENTS.health[m_id].isDead())
   {
-    // Did the entity JUST die?
-    if (!COMPONENTS.health[m_id].dead())
-    {
-      // Perform the "die" action.
-      // (This sets the "dead" property and clears out any pending actions.)
-      std::unique_ptr<Actions::Action> dieAction(NEW Actions::ActionDie(getId()));
-      this->queueInvoluntaryAction(std::move(dieAction));
-    }
+	// Did the entity JUST die?
+	if (!COMPONENTS.health[m_id].dead())
+	{
+	  // Perform the "die" action.
+	  // (This sets the "dead" property and clears out any pending actions.)
+	  std::unique_ptr<Actions::Action> dieAction(NEW Actions::ActionDie(getId()));
+	  this->queueInvoluntaryAction(std::move(dieAction));
+	}
   }
 
   // If this entity is busy...
   if (counter_busy > 0)
   {
-    // Decrement busy counter.
-    addToBaseProperty("counter-busy", -1);
+	// Decrement busy counter.
+	addToBaseProperty("counter-busy", -1);
   }
   // Otherwise if there are pending actions...
   else if (!m_pending_voluntary_actions.empty())
   {
-    bool entity_updated = false;
+	bool entity_updated = false;
 
-    // While actions are pending and we're not busy...
-    while (!m_pending_voluntary_actions.empty() && counter_busy == 0)
-    {
-      // Process the front action.
-      // @todo Find a way to update the entity_updated variable.
-      std::unique_ptr<Actions::Action>& action = m_pending_voluntary_actions.front();
-      bool action_done = action->process({});
-      if (action_done)
-      {
-        CLOG(TRACE, "Entity") << "Entity " <<
-          getId() << " (" <<
-          COMPONENTS.category[m_id] << "): Action " <<
-          action->getType() << " is done, popping";
+	// While actions are pending and we're not busy...
+	while (!m_pending_voluntary_actions.empty() && counter_busy == 0)
+	{
+	  // Process the front action.
+	  // @todo Find a way to update the entity_updated variable.
+	  std::unique_ptr<Actions::Action>& action = m_pending_voluntary_actions.front();
+	  bool action_done = action->process({});
+	  if (action_done)
+	  {
+		CLOG(TRACE, "Entity") << "Entity " <<
+		  getId() << " (" <<
+		  COMPONENTS.category[m_id] << "): Action " <<
+		  action->getType() << " is done, popping";
 
-        m_pending_voluntary_actions.pop_front();
-      }
-    } // end while (actions pending and not busy)
+		m_pending_voluntary_actions.pop_front();
+	  }
+	} // end while (actions pending and not busy)
 
-    if (entity_updated)
-    {
-      /// @todo This needs to be changed so it only is called if the Action
-      ///       materially affected the entity in some way. Two ways to do this
-      ///       that I can see:
-      ///         1) The Action calls notifyObservers. Requires the Action
-      ///            to have access to that method; right now it doesn't.
-      ///         2) The Action returns some sort of indication that the Entity
-      ///            was modified as a result. This could be done by changing
-      ///            the return type from a bool to a struct of some sort.
-      //notifyObservers(Event::Updated);
-    }
+	if (entity_updated)
+	{
+	  /// @todo This needs to be changed so it only is called if the Action
+	  ///       materially affected the entity in some way. Two ways to do this
+	  ///       that I can see:
+	  ///         1) The Action calls notifyObservers. Requires the Action
+	  ///            to have access to that method; right now it doesn't.
+	  ///         2) The Action returns some sort of indication that the Entity
+	  ///            was modified as a result. This could be done by changing
+	  ///            the return type from a bool to a struct of some sort.
+	  //notifyObservers(Event::Updated);
+	}
 
   } // end if (actions pending)
   // Otherwise if there are no pending actions...
   else
   {
-    // If entity is not the player, call the Lua process function on this 
-    // Entity, which runs the AI and may queue new actions.
-    if (!isPlayer())
-    {
-      /// @todo Re-implement me
-      (void)call_lua_function("process", {}, true);
-    }
+	// If entity is not the player, call the Lua process function on this 
+	// Entity, which runs the AI and may queue new actions.
+	if (!isPlayer())
+	{
+	  /// @todo Re-implement me
+	  (void)call_lua_function("process", {}, true);
+	}
   }
 
   return true;
 }
 
 void Entity::do_recursive_visibility(ComponentPosition const& thisPosition,
-                                     int octant,
-                                     int depth,
-                                     float slope_A,
-                                     float slope_B)
+									 int octant,
+									 int depth,
+									 float slope_A,
+									 float slope_B)
 {
   Assert("Entity", octant >= 1 && octant <= 8, "Octant" << octant << "passed in is not between 1 and 8 inclusively");
   IntVec2 newCoords;
@@ -1605,7 +1606,7 @@ void Entity::do_recursive_visibility(ComponentPosition const& thisPosition,
   // Are we on a map?  Bail out if we aren't.
   if (isInsideAnotherEntity())
   {
-    return;
+	return;
   }
 
   IntVec2 thisCoords = thisPosition.coords();
@@ -1621,125 +1622,125 @@ void Entity::do_recursive_visibility(ComponentPosition const& thisPosition,
 
   switch (octant)
   {
-    case 1:
-      newCoords.x = static_cast<int>(rint(static_cast<float>(thisCoords.x) - (slope_A * static_cast<float>(depth))));
-      newCoords.y = thisCoords.y - depth;
-      loop_condition = [](RealVec2 a, RealVec2 b, float c) { return calc_slope(a, b) >= c; };
-      dir = Direction::West;
-      recurse_slope = [](RealVec2 a, RealVec2 b) { return calc_slope(a + Direction::Southwest.half(), b); };
-      loop_slope = [](RealVec2 a, RealVec2 b) { return calc_slope(a + Direction::Northwest.half(), b); };
-      break;
+  case 1:
+	newCoords.x = static_cast<int>(rint(static_cast<float>(thisCoords.x) - (slope_A * static_cast<float>(depth))));
+	newCoords.y = thisCoords.y - depth;
+	loop_condition = [](RealVec2 a, RealVec2 b, float c) { return calc_slope(a, b) >= c; };
+	dir = Direction::West;
+	recurse_slope = [](RealVec2 a, RealVec2 b) { return calc_slope(a + Direction::Southwest.half(), b); };
+	loop_slope = [](RealVec2 a, RealVec2 b) { return calc_slope(a + Direction::Northwest.half(), b); };
+	break;
 
-    case 2:
-      newCoords.x = static_cast<int>(rint(static_cast<float>(thisCoords.x) + (slope_A * static_cast<float>(depth))));
-      newCoords.y = thisCoords.y - depth;
-      loop_condition = [](RealVec2 a, RealVec2 b, float c) { return calc_slope(a, b) <= c; };
-      dir = Direction::East;
-      recurse_slope = [](RealVec2 a, RealVec2 b) { return calc_slope(a + Direction::Southeast.half(), b); };
-      loop_slope = [](RealVec2 a, RealVec2 b) { return -calc_slope(a + Direction::Northeast.half(), b); };
-      break;
+  case 2:
+	newCoords.x = static_cast<int>(rint(static_cast<float>(thisCoords.x) + (slope_A * static_cast<float>(depth))));
+	newCoords.y = thisCoords.y - depth;
+	loop_condition = [](RealVec2 a, RealVec2 b, float c) { return calc_slope(a, b) <= c; };
+	dir = Direction::East;
+	recurse_slope = [](RealVec2 a, RealVec2 b) { return calc_slope(a + Direction::Southeast.half(), b); };
+	loop_slope = [](RealVec2 a, RealVec2 b) { return -calc_slope(a + Direction::Northeast.half(), b); };
+	break;
 
-    case 3:
-      newCoords.x = thisCoords.x + depth;
-      newCoords.y = static_cast<int>(rint(static_cast<float>(thisCoords.y) - (slope_A * static_cast<float>(depth))));
-      loop_condition = [](RealVec2 a, RealVec2 b, float c) { return calc_inv_slope(a, b) <= c; };
-      dir = Direction::North;
-      recurse_slope = [](RealVec2 a, RealVec2 b) { return calc_inv_slope(a + Direction::Northwest.half(), b); };
-      loop_slope = [](RealVec2 a, RealVec2 b) { return -calc_inv_slope(a + Direction::Northeast.half(), b); };
-      break;
+  case 3:
+	newCoords.x = thisCoords.x + depth;
+	newCoords.y = static_cast<int>(rint(static_cast<float>(thisCoords.y) - (slope_A * static_cast<float>(depth))));
+	loop_condition = [](RealVec2 a, RealVec2 b, float c) { return calc_inv_slope(a, b) <= c; };
+	dir = Direction::North;
+	recurse_slope = [](RealVec2 a, RealVec2 b) { return calc_inv_slope(a + Direction::Northwest.half(), b); };
+	loop_slope = [](RealVec2 a, RealVec2 b) { return -calc_inv_slope(a + Direction::Northeast.half(), b); };
+	break;
 
-    case 4:
-      newCoords.x = thisCoords.x + depth;
-      newCoords.y = static_cast<int>(rint(static_cast<float>(thisCoords.y) + (slope_A * static_cast<float>(depth))));
-      loop_condition = [](RealVec2 a, RealVec2 b, float c) { return calc_inv_slope(a, b) >= c; };
-      dir = Direction::South;
-      recurse_slope = [](RealVec2 a, RealVec2 b) { return calc_inv_slope(a + Direction::Southwest.half(), b); };
-      loop_slope = [](RealVec2 a, RealVec2 b) { return calc_inv_slope(a + Direction::Southeast.half(), b); };
-      break;
+  case 4:
+	newCoords.x = thisCoords.x + depth;
+	newCoords.y = static_cast<int>(rint(static_cast<float>(thisCoords.y) + (slope_A * static_cast<float>(depth))));
+	loop_condition = [](RealVec2 a, RealVec2 b, float c) { return calc_inv_slope(a, b) >= c; };
+	dir = Direction::South;
+	recurse_slope = [](RealVec2 a, RealVec2 b) { return calc_inv_slope(a + Direction::Southwest.half(), b); };
+	loop_slope = [](RealVec2 a, RealVec2 b) { return calc_inv_slope(a + Direction::Southeast.half(), b); };
+	break;
 
-    case 5:
-      newCoords.x = static_cast<int>(rint(static_cast<float>(thisCoords.x) + (slope_A * static_cast<float>(depth))));
-      newCoords.y = thisCoords.y + depth;
-      loop_condition = [](RealVec2 a, RealVec2 b, float c) { return calc_slope(a, b) >= c; };
-      dir = Direction::East;
-      recurse_slope = [](RealVec2 a, RealVec2 b) { return calc_slope(a + Direction::Northeast.half(), b); };
-      loop_slope = [](RealVec2 a, RealVec2 b) { return calc_slope(a + Direction::Southeast.half(), b); };
-      break;
+  case 5:
+	newCoords.x = static_cast<int>(rint(static_cast<float>(thisCoords.x) + (slope_A * static_cast<float>(depth))));
+	newCoords.y = thisCoords.y + depth;
+	loop_condition = [](RealVec2 a, RealVec2 b, float c) { return calc_slope(a, b) >= c; };
+	dir = Direction::East;
+	recurse_slope = [](RealVec2 a, RealVec2 b) { return calc_slope(a + Direction::Northeast.half(), b); };
+	loop_slope = [](RealVec2 a, RealVec2 b) { return calc_slope(a + Direction::Southeast.half(), b); };
+	break;
 
-    case 6:
-      newCoords.x = static_cast<int>(rint(static_cast<float>(thisCoords.x) - (slope_A * static_cast<float>(depth))));
-      newCoords.y = thisCoords.y + depth;
-      loop_condition = [](RealVec2 a, RealVec2 b, float c) { return calc_slope(a, b) <= c; };
-      dir = Direction::West;
-      recurse_slope = [](RealVec2 a, RealVec2 b) { return calc_slope(a + Direction::Northwest.half(), b); };
-      loop_slope = [](RealVec2 a, RealVec2 b) { return -calc_slope(a + Direction::Southwest.half(), b); };
-      break;
+  case 6:
+	newCoords.x = static_cast<int>(rint(static_cast<float>(thisCoords.x) - (slope_A * static_cast<float>(depth))));
+	newCoords.y = thisCoords.y + depth;
+	loop_condition = [](RealVec2 a, RealVec2 b, float c) { return calc_slope(a, b) <= c; };
+	dir = Direction::West;
+	recurse_slope = [](RealVec2 a, RealVec2 b) { return calc_slope(a + Direction::Northwest.half(), b); };
+	loop_slope = [](RealVec2 a, RealVec2 b) { return -calc_slope(a + Direction::Southwest.half(), b); };
+	break;
 
-    case 7:
-      newCoords.x = thisCoords.x - depth;
-      newCoords.y = static_cast<int>(rint(static_cast<float>(thisCoords.y) + (slope_A * static_cast<float>(depth))));
-      loop_condition = [](RealVec2 a, RealVec2 b, float c) { return calc_inv_slope(a, b) <= c; };
-      dir = Direction::South;
-      recurse_slope = [](RealVec2 a, RealVec2 b) { return calc_inv_slope(a + Direction::Southeast.half(), b); };
-      loop_slope = [](RealVec2 a, RealVec2 b) { return -calc_inv_slope(a + Direction::Southwest.half(), b); };
-      break;
+  case 7:
+	newCoords.x = thisCoords.x - depth;
+	newCoords.y = static_cast<int>(rint(static_cast<float>(thisCoords.y) + (slope_A * static_cast<float>(depth))));
+	loop_condition = [](RealVec2 a, RealVec2 b, float c) { return calc_inv_slope(a, b) <= c; };
+	dir = Direction::South;
+	recurse_slope = [](RealVec2 a, RealVec2 b) { return calc_inv_slope(a + Direction::Southeast.half(), b); };
+	loop_slope = [](RealVec2 a, RealVec2 b) { return -calc_inv_slope(a + Direction::Southwest.half(), b); };
+	break;
 
-    case 8:
-      newCoords.x = thisCoords.x - depth;
-      newCoords.y = static_cast<int>(rint(static_cast<float>(thisCoords.y) - (slope_A * static_cast<float>(depth))));
+  case 8:
+	newCoords.x = thisCoords.x - depth;
+	newCoords.y = static_cast<int>(rint(static_cast<float>(thisCoords.y) - (slope_A * static_cast<float>(depth))));
 
-      loop_condition = [](RealVec2 a, RealVec2 b, float c) { return calc_inv_slope(a, b) >= c; };
-      dir = Direction::North;
-      recurse_slope = [](RealVec2 a, RealVec2 b) { return calc_inv_slope(a + Direction::Northeast.half(), b); };
-      loop_slope = [](RealVec2 a, RealVec2 b) { return calc_inv_slope(a + Direction::Northwest.half(), b); };
-      break;
+	loop_condition = [](RealVec2 a, RealVec2 b, float c) { return calc_inv_slope(a, b) >= c; };
+	dir = Direction::North;
+	recurse_slope = [](RealVec2 a, RealVec2 b) { return calc_inv_slope(a + Direction::Northeast.half(), b); };
+	loop_slope = [](RealVec2 a, RealVec2 b) { return calc_inv_slope(a + Direction::Northwest.half(), b); };
+	break;
 
-    default:
-      break;
+  default:
+	break;
   }
 
   while (loop_condition(to_v2f(newCoords), to_v2f(thisCoords), slope_B))
   {
-    if (calc_vis_distance(newCoords, thisCoords) <= mw)
-    {
-      if (thisMap->tileIsOpaque(newCoords))
-      {
-        if (!thisMap->tileIsOpaque(newCoords + (IntVec2)dir))
-        {
-          do_recursive_visibility(thisPosition, 
-                                  octant, depth + 1, 
-                                  slope_A, recurse_slope(to_v2f(newCoords), to_v2f(thisCoords)));
-        }
-      }
-      else
-      {
-        if (thisMap->tileIsOpaque(newCoords + (IntVec2)dir))
-        {
-          slope_A = loop_slope(to_v2f(newCoords), to_v2f(thisCoords));
-        }
-      }
+	if (calc_vis_distance(newCoords, thisCoords) <= mw)
+	{
+	  if (thisMap->tileIsOpaque(newCoords))
+	  {
+		if (!thisMap->tileIsOpaque(newCoords + (IntVec2)dir))
+		{
+		  do_recursive_visibility(thisPosition,
+								  octant, depth + 1,
+								  slope_A, recurse_slope(to_v2f(newCoords), to_v2f(thisCoords)));
+		}
+	  }
+	  else
+	  {
+		if (thisMap->tileIsOpaque(newCoords + (IntVec2)dir))
+		{
+		  slope_A = loop_slope(to_v2f(newCoords), to_v2f(thisCoords));
+		}
+	  }
 
-      if (COMPONENTS.senseSight.existsFor(m_id))
-      {
-        COMPONENTS.senseSight[m_id].setSeen(newCoords);
-      }
+	  if (COMPONENTS.senseSight.existsFor(m_id))
+	  {
+		COMPONENTS.senseSight[m_id].setSeen(newCoords);
+	  }
 
-      if (COMPONENTS.spacialMemory.existsFor(m_id))
-      {
-        MapMemoryChunk new_memory{ thisMap->getTile(newCoords).getTileType(),
-          GAME.getGameClock() };
+	  if (COMPONENTS.spacialMemory.existsFor(m_id))
+	  {
+		MapMemoryChunk new_memory{ thisMap->getTile(newCoords).getTileType(),
+		  GAME.getGameClock() };
 
-        COMPONENTS.spacialMemory[m_id].ofMap(thisMap)[newCoords] = new_memory;
-      }
-    }
-    newCoords -= (IntVec2)dir;
+		COMPONENTS.spacialMemory[m_id].ofMap(thisMap)[newCoords] = new_memory;
+	  }
+	}
+	newCoords -= (IntVec2)dir;
   }
   newCoords += (IntVec2)dir;
 
   if ((depth < mv) && (!thisMap->getTile(newCoords).isOpaque()))
   {
-    do_recursive_visibility(thisPosition,
-                            octant, depth + 1, 
-                            slope_A, slope_B);
+	do_recursive_visibility(thisPosition,
+							octant, depth + 1,
+							slope_A, slope_B);
   }
 }

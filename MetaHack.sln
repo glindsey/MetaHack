@@ -1,11 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26403.7
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MetaHack", "MetaHack.vcxproj", "{47CB10E6-60E3-49D0-8201-F525FABB8844}"
-EndProject
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Installer", "Installer\Installer.vdproj", "{F16B0389-5758-432A-B9B3-2D5CB9A90E45}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +21,6 @@ Global
 		{47CB10E6-60E3-49D0-8201-F525FABB8844}.Release|Win32.Build.0 = Release|Win32
 		{47CB10E6-60E3-49D0-8201-F525FABB8844}.Release|x64.ActiveCfg = Release|x64
 		{47CB10E6-60E3-49D0-8201-F525FABB8844}.Release|x64.Build.0 = Release|x64
-		{F16B0389-5758-432A-B9B3-2D5CB9A90E45}.Debug|Win32.ActiveCfg = Debug
-		{F16B0389-5758-432A-B9B3-2D5CB9A90E45}.Debug|x64.ActiveCfg = Debug
-		{F16B0389-5758-432A-B9B3-2D5CB9A90E45}.Release|Win32.ActiveCfg = Release
-		{F16B0389-5758-432A-B9B3-2D5CB9A90E45}.Release|x64.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

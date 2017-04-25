@@ -2,6 +2,8 @@
 
 #include "maptile/MapTile.h"
 
+#include "AssertHelper.h"
+#include "components/ComponentPhysical.h"
 #include "entity/EntityPool.h"
 #include "game/App.h"
 #include "game/GameState.h"
@@ -42,7 +44,13 @@ std::string MapTile::getTileType() const
 
 bool MapTile::isEmptySpace() const
 {
-  return getCategoryData().value("passable", false);
+  auto& category = getCategoryData();
+  Assert("Map",
+         category.count("components") > 0 && category["components"].is_object() &&
+         category["components"].count("physical") > 0 && category["components"]["physical"].is_object(),
+         "MapTile is missing \"physical\" component");
+
+  return (category["components"]["physical"].value("volume", 0) < ComponentPhysical::VOLUME_MAX_CC);  
 }
 
 /// @todo: Implement this to cover different entity types.
@@ -161,6 +169,12 @@ Color MapTile::getWallLightLevel(Direction direction) const
 
 Color MapTile::getOpacity() const
 {
+  auto& category = getCategoryData();
+  Assert("Map",
+         category.count("components") > 0 && category["components"].is_object() &&
+         category["components"].count("appearance") > 0 && category["components"]["appearance"].is_object(),
+         "MapTile is missing \"appearance\" component");
+
   return getCategoryData()["components"]["appearance"].value("opacity", Color::White);
 }
 

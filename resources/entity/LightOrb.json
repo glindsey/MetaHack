@@ -5,10 +5,11 @@
 
   "templates": [ "Entity", "LightSource" ],
 
-  "light-color": [ "color", 128, 128, 255 ],
-  "light-strength": 128,
-
   "components": {
+    "light-source": {
+      "color": [ "color", 128, 128, 255 ],
+      "strength": 128
+    },
     "physical": {
       "mass": 2
     }

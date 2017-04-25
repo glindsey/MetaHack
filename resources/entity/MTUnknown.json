@@ -12,6 +12,10 @@
       "tile-bg-color": [ "color", 0, 0, 0 ],
       "tile-fg-color": [ "color", 128, 64, 0 ],
       "opacity": [ "color", 255, 255, 255 ]
+    },
+    "physical": {
+      "mass": 0,
+      "volume": 0
     }
   }
 }

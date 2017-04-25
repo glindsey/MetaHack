@@ -150,7 +150,7 @@ public:
   /// @param default_value  Default value to use.
   /// @return The property (or default) value for that key.
   json getBaseProperty(std::string key, json default_value) const;
-  
+
   /// Sets a base property of this Entity.
   /// If the base property is not found, it is created.
   ///
@@ -158,22 +158,22 @@ public:
   /// @param value  Value to set the property to.
   /// @return Boolean indicating whether the property previously existed.
   bool setBaseProperty(std::string key, json value);
-  
+
   /// Adds to a base property of this Entity.
   /// If the base property is not found, it is created.
   /// @param key    Key of the property to set.
   /// @param value  Value to add to the property.
   void addToBaseProperty(std::string key, json add_value);
-  
+
   /// Get a modified property of this Entity.
   /// If the modified property is not found, the method falls back upon the
   /// base value for that property (if any).
   /// @param key            Name of the property to get.
- 
+
   /// @param default_value  Default value to use, if any.
   /// @return The modified (or base) property value for that key.
   json getModifiedProperty(std::string key, json default_value) const;
-  
+
   /// Add a property modifier to this Entity.
   /// @param  key   Name of property to modify.
   /// @param  id    ID of Entity that is responsible for modifying it.
@@ -183,14 +183,14 @@ public:
   ///
   /// @return True if the function was added; false if it already existed.
   bool addModifier(std::string key, EntityId id, PropertyModifierInfo const& info);
-  
+
   /// Remove all modifier functions for a given key and entity ID.
   /// @param  key               Name of property to modify.
   /// @param  id                ID of Entity that is responsible for modifying it.
   ///
   /// @return The number of modifiers erased.
   size_t removeModifier(std::string key, EntityId id);
-  
+
   /// Return a reference to this entity.
   EntityId getId() const;
 
@@ -210,7 +210,7 @@ public:
 
   /// Get the remembered tile type at the specified coordinates.
   MapMemoryChunk const& getMemoryAt(IntVec2 coords) const;
-   
+
   void setWielded(EntityId entity, BodyLocation location);
 
   void setWorn(EntityId entity, BodyLocation location);
@@ -327,7 +327,7 @@ public:
   /// @param possessives  Choose whether to use possessive articles when appropriate.
   ///                     Defaults to using them.
   std::string getDescriptiveString(ArticleChoice articles = ArticleChoice::Definite,
-                                   UsePossessives possessives = UsePossessives::Yes) const;
+								   UsePossessives possessives = UsePossessives::Yes) const;
 
   /// Choose the proper possessive form for a string passed in.
   /// For a Entity, this is simply "the foo", as Entities cannot own entities.
@@ -360,7 +360,7 @@ public:
   /// @param verb2 The second person or plural verb form, such as "shake"
   /// @param verb3 The third person verb form, such as "shakes"
   std::string const& chooseVerb(std::string const& verb2,
-                                std::string const& verb3);
+								std::string const& verb3);
 
   /// @addtogroup Pronouns
   /// @todo Make localizable. (How? Use Lua scripts maybe?)
@@ -471,7 +471,7 @@ public:
   /// attack successfully hits its target.  It is a side-effect in addition
   /// to the damage done by the attack action.
   bool be_used_to_attack(EntityId subject, EntityId target);
-  
+
   /// Returns whether the Entity can merge with another Entity.
   /// Calls an overridden subclass function.
   bool can_merge_with(EntityId other) const;
@@ -485,12 +485,12 @@ public:
 
   /// Syntactic sugar for calling call_lua_function().
   json call_lua_function(std::string function_name,
-                         json const& args,
-                         json const& default_result);
+						 json const& args,
+						 json const& default_result);
 
   json call_lua_function(std::string function_name,
-                         json const& args,
-                         json const& default_result) const;
+						 json const& args,
+						 json const& default_result) const;
 
   /// Get a const reference to this entity's category data.
   json const& getCategoryData() const;
@@ -510,10 +510,10 @@ protected:
   /// Perform the recursive visibility scan for an octant.
   /// Used by findSeenTiles.
   void do_recursive_visibility(ComponentPosition const& thisPosition,
-                               int octant,
-                               int depth = 1,
-                               float slope_A = 1,
-                               float slope_B = 0);
+							   int octant,
+							   int depth = 1,
+							   float slope_A = 1,
+							   float slope_B = 0);
 
   /// Process this Entity's involuntary actions for a single tick.
   /// Voluntary actions are only processed when the Entity is not busy.

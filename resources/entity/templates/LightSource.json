@@ -1,9 +1,11 @@
 {
-  "lit": true,
-  "light-color": [ "color", 64, 64, 64 ],
-  "light-strength": 64,
-
   "can-be-object-of-use": true,
 
-  "components": {}
+  "components": {
+    "light-source": {
+      "lit": true,
+      "color": [ "color", 64, 64, 64 ],
+      "strength": 64
+    }
+  }
 }

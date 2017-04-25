@@ -8,6 +8,10 @@
   "components": {
     "appearance": {
       "opacity": [ "color", 0, 0, 0 ]
+    },
+    "physical": {
+      "mass": 0,
+      "volume": 0
     }
   }
 }

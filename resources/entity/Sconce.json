@@ -5,10 +5,13 @@
 
   "templates": [ "Entity", "LightSource" ],
 
-  "light-color": [ "color", 160, 128, 112 ],
-  "light-strength": 48,
-
   "can-be-object-of-burn": true,
 
-  "components": {}
+  "components": {
+    "light-source": {
+      "lit": true,
+      "color": [ "color", 160, 128, 112 ],
+      "strength": 48
+    }
+  }
 }
