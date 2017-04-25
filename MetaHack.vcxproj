@@ -323,6 +323,7 @@
     <ClInclude Include="actions\ActionUse.h" />
     <ClInclude Include="actions\ActionWait.h" />
     <ClInclude Include="actions\ActionWield.h" />
+    <ClInclude Include="components\ComponentAnimated.h" />
     <ClInclude Include="components\ComponentAppearance.h" />
     <ClInclude Include="components\ComponentGender.h" />
     <ClInclude Include="components\ComponentHealth.h" />
@@ -469,6 +470,9 @@
     <ClCompile Include="actions\ActionUse.cpp" />
     <ClCompile Include="actions\ActionWait.cpp" />
     <ClCompile Include="actions\ActionWield.cpp" />
+    <ClCompile Include="components\ComponentAnimated.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="components\ComponentAppearance.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>

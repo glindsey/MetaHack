@@ -5,6 +5,7 @@
   "templates": [ "Entity" ],
 
   "components": {
+    "animated": {},
     "physical": {
       "mass": 1
     }

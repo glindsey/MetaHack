@@ -18,6 +18,7 @@
   "can-be-object-of-hurt": true,
 
   "components": {
+    "animated": {},
     "inventory": {
       "max-size": -1
     }

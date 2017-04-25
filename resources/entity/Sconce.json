@@ -8,6 +8,7 @@
   "can-be-object-of-burn": true,
 
   "components": {
+    "animated": {},
     "light-source": {
       "lit": true,
       "color": [ "color", 160, 128, 112 ],
