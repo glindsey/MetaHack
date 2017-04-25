@@ -82,6 +82,7 @@ ComponentManager::ComponentManager(json const& j)
 {
   initialize();
   JSONUtils::doIfPresent(j, "appearance", [&](auto const& value) { appearance = value; });
+  JSONUtils::doIfPresent(j, "bodyparts", [&](auto const& value) { bodyparts = value; });
   JSONUtils::doIfPresent(j, "category", [&](auto const& value) { category = value; });
   JSONUtils::doIfPresent(j, "gender", [&](auto const& value) { gender = value; });
   JSONUtils::doIfPresent(j, "health", [&](auto const& value) { health = value; });
@@ -111,6 +112,7 @@ void ComponentManager::initialize()
 void ComponentManager::clone(EntityId original, EntityId newId)
 {
   appearance.cloneIfExists(original, newId);
+  bodyparts.cloneIfExists(original, newId);
   category.cloneIfExists(original, newId);
   gender.cloneIfExists(original, newId);
   health.cloneIfExists(original, newId);
@@ -125,6 +127,7 @@ void ComponentManager::clone(EntityId original, EntityId newId)
 void ComponentManager::populate(EntityId id, json const& j)
 {
   JSONUtils::doIfPresent(j, "appearance", [&](auto& value) { appearance[id] = value; });
+  JSONUtils::doIfPresent(j, "bodyparts", [&](auto& value) { bodyparts[id] = value; });
   JSONUtils::doIfPresent(j, "category", [&](auto& value) { category[id] = value; });
   JSONUtils::doIfPresent(j, "gender", [&](auto& value) { gender[id] = value; });
   JSONUtils::doIfPresent(j, "health", [&](auto& value) { health[id] = value; });
@@ -139,6 +142,7 @@ void ComponentManager::populate(EntityId id, json const& j)
 void from_json(json const& j, ComponentManager& obj)
 {
   JSONUtils::doIfPresent(j, "appearance", [&](auto& value) { obj.appearance = value; });
+  JSONUtils::doIfPresent(j, "bodyparts", [&](auto& value) { obj.bodyparts = value; });
   JSONUtils::doIfPresent(j, "category", [&](auto& value) { obj.category = value; });
   JSONUtils::doIfPresent(j, "gender", [&](auto& value) { obj.gender = value; });
   JSONUtils::doIfPresent(j, "health", [&](auto& value) { obj.health = value; });
@@ -153,6 +157,7 @@ void from_json(json const& j, ComponentManager& obj)
 void to_json(json& j, ComponentManager const& obj)
 {
   j["appearance"] = obj.appearance;
+  j["bodyparts"] = obj.bodyparts;
   j["category"] = obj.category;
   j["gender"] = obj.gender;
   j["health"] = obj.health;

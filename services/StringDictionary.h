@@ -18,6 +18,7 @@ public:
   virtual bool loadFile(std::string filename_) override;
   virtual bool add(std::string id_, std::string str_) override;
   virtual void clear() override;
+  virtual bool contains(std::string id_) const override;
   virtual std::string get(std::string id_) const override;
 
 private:

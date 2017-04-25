@@ -25,6 +25,8 @@ public:
   /// @return True if the string was added, false otherwise.
   virtual bool add(std::string id_, std::string str_) = 0;
 
+  virtual bool contains(std::string id_) const = 0;
+
   /// Get the string corresponding with an ID.
   /// If the ID doesn't exist in the database, it will be returned as the
   /// translated string. (This helps identify missing strings in the

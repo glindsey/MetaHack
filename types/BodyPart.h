@@ -7,7 +7,6 @@
 enum class BodyPart
 {
   Nowhere = 0,
-  Body,
   Skin,
   Head,
   Ear,
@@ -18,10 +17,12 @@ enum class BodyPart
   Chest,
   Arm,
   Hand,
+  Torso,
   Leg,
   Foot,
   Wing,
   Tail,
+  PTail,
   Count
 };
 
@@ -30,7 +31,6 @@ inline std::ostream& operator<<(std::ostream& os, BodyPart const& part)
   switch (part)
   {
     case BodyPart::Nowhere: os << "Nowhere"; break;
-    case BodyPart::Body: os << "Body"; break;
     case BodyPart::Skin: os << "Skin"; break;
     case BodyPart::Head: os << "Head"; break;
     case BodyPart::Ear: os << "Ear"; break;
@@ -41,10 +41,12 @@ inline std::ostream& operator<<(std::ostream& os, BodyPart const& part)
     case BodyPart::Chest: os << "Chest"; break;
     case BodyPart::Arm: os << "Arm"; break;
     case BodyPart::Hand: os << "Hand"; break;
+    case BodyPart::Torso: os << "Torso"; break;
     case BodyPart::Leg: os << "Leg"; break;
     case BodyPart::Foot: os << "Foot"; break;
     case BodyPart::Wing: os << "Wing"; break;
     case BodyPart::Tail: os << "Tail"; break;
+    case BodyPart::PTail: os << "PTail"; break;
     case BodyPart::Count: os << "Count"; break;
     default: os << "???"; break;
   }

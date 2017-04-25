@@ -18,6 +18,11 @@ public:
     return true;
   }
 
+  virtual bool contains(std::string id_) const override
+  {
+    return false;
+  }
+
   virtual std::string get(std::string id_) const override
   {
     return id_;
