@@ -3,7 +3,7 @@
   "plural": "glass flasks",
   "description-brief": "A glass container with a narrow mouth and flat bottom, suitable for holding liquids.",
 
-  "templates": [ "Container" ],
+  "templates": [ "Container", "Fragile" ],
 
   "can-be-object-of-close": true,
   "can-be-object-of-open": true,
