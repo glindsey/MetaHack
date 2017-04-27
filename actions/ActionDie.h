@@ -19,7 +19,7 @@ namespace Actions
     virtual ~ActionDie();
     static ActionDie prototype;
 
-    //virtual bool subjectIsCapable() const override;
+    virtual bool subjectIsCapable() const override;
     virtual std::unordered_set<Trait> const& getTraits() const override;
 
   protected:

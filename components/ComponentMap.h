@@ -127,5 +127,6 @@ protected:
 private:
   std::unordered_map<EntityId, T> m_componentMap;
 
-  /// @todo Implement component modifiers.
+  /// @todo Implement component modifiers, possibly with some sort of
+  ///       "snapshot" mechanism for specific components.
 };

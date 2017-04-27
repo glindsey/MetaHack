@@ -12,6 +12,7 @@ void from_json(json const& j, ComponentHealth& obj)
   obj.m_hp = obj.m_maxHp;
   JSONUtils::doIfPresent(j, "hp", [&](auto& value) { obj.m_hp = JSONUtils::getFancyInteger(value); });
   JSONUtils::doIfPresent(j, "dead", [&](auto& value) { obj.m_dead = value; });
+  JSONUtils::doIfPresent(j, "living-creature", [&](auto& value) { obj.m_livingCreature = value; });
 }
 
 void to_json(json& j, ComponentHealth const& obj)
@@ -20,39 +21,45 @@ void to_json(json& j, ComponentHealth const& obj)
   j["max-hp"] = obj.m_maxHp;
   j["hp"] = obj.m_hp;
   j["dead"] = obj.m_dead;
+  j["living-creature"] = obj.m_livingCreature;
 }
 
-int & ComponentHealth::hp()
+int ComponentHealth::hp() const
 {
   return m_hp;
 }
 
-int const & ComponentHealth::hp() const
+void ComponentHealth::setHp(int hp)
 {
-  return m_hp;
+  m_hp = hp;
 }
 
-int & ComponentHealth::maxHp()
-{
-  return m_maxHp;
-}
-
-int const & ComponentHealth::maxHp() const
+int ComponentHealth::maxHp() const
 {
   return m_maxHp;
 }
 
-bool ComponentHealth::isDead() const
+void ComponentHealth::setMaxHp(int maxHp)
+{
+  m_maxHp = maxHp;
+}
+
+bool ComponentHealth::hasHpBelowZero() const
 {
   return (m_hp <= 0);
 }
 
-bool & ComponentHealth::dead()
+bool ComponentHealth::isDead() const
 {
   return m_dead;
 }
 
-bool const & ComponentHealth::dead() const
+void ComponentHealth::setDead(bool dead)
 {
-  return m_dead;
+  m_dead = dead;
+}
+
+bool ComponentHealth::isLivingCreature() const
+{
+  return m_livingCreature;
 }

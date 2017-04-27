@@ -13,20 +13,25 @@ public:
   friend void from_json(json const& j, ComponentHealth& obj);
   friend void to_json(json& j, ComponentHealth const& obj);
 
-  int& hp();
-  int const& hp() const;
+  int hp() const;
+  void setHp(int hp);
 
-  int& maxHp();
-  int const& maxHp() const;
+  int maxHp() const;
+  void setMaxHp(int maxHp);
 
   /// Returns whether HP is below zero.
-  bool isDead() const;
+  bool hasHpBelowZero() const;
 
   /// Returns the "dead" flag.
   /// (This is different from `isDead` so that "just died" actions can be 
   /// performed.)
-  bool& dead();
-  bool const& dead() const;
+  bool isDead() const;
+  void setDead(bool dead);
+
+  /// Returns whether this creature is considered a "living creature".
+  /// Golems/undead creatures/etc. can have a "health" component but still
+  /// not be considered "alive".
+  bool isLivingCreature() const;
 
 protected:
 
@@ -34,5 +39,6 @@ private:
   int m_hp = 1;
   int m_maxHp = 1;
   bool m_dead = false;
+  bool m_livingCreature = true;
 
 };

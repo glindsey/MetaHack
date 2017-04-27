@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include "ActionDie.h"
+#include "components/ComponentManager.h"
 #include "entity/Entity.h"
 #include "entity/EntityId.h"
 #include "Service.h"
@@ -14,6 +15,11 @@ namespace Actions
   ActionDie::ActionDie() : Action("die", "DIE", ActionDie::create_) {}
   ActionDie::ActionDie(EntityId subject) : Action(subject, "die", "DIE") {}
   ActionDie::~ActionDie() {}
+
+  bool ActionDie::subjectIsCapable() const
+  {
+    return COMPONENTS.health.existsFor(getSubject());
+  }
 
   std::unordered_set<Trait> const & ActionDie::getTraits() const
   {
@@ -45,12 +51,12 @@ namespace Actions
       }
       else
       {
-        bool living = subject->getModifiedProperty("living", true);
+        bool living = COMPONENTS.health[subject].isLivingCreature();
         putMsg(makeTr(living ? "YOU_ARE_KILLED" : "YOU_ARE_DESTROYED"));
       }
 
       // Set the property saying the entity is dead.
-      subject->setBaseProperty("dead", true);
+      COMPONENTS.health[subject].setDead(true);
 
       // Clear any pending actions.
       subject->clearAllPendingActions();

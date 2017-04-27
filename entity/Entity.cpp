@@ -1380,10 +1380,10 @@ bool Entity::_process_own_involuntary_actions()
 
   // Is this an entity that is now dead?
   if (COMPONENTS.health.existsFor(m_id) &&
-      COMPONENTS.health[m_id].isDead())
+      COMPONENTS.health[m_id].hasHpBelowZero())
   {
     // Did the entity JUST die?
-    if (!COMPONENTS.health[m_id].dead())
+    if (!COMPONENTS.health[m_id].isDead())
     {
       // Perform the "die" action.
       // (This sets the "dead" property and clears out any pending actions.)
@@ -1432,10 +1432,10 @@ bool Entity::_process_own_voluntary_actions()
 
   // Is this an entity that is now dead?
   if (COMPONENTS.health.existsFor(m_id) &&
-      COMPONENTS.health[m_id].isDead())
+      COMPONENTS.health[m_id].hasHpBelowZero())
   {
     // Did the entity JUST die?
-    if (!COMPONENTS.health[m_id].dead())
+    if (!COMPONENTS.health[m_id].isDead())
     {
       // Perform the "die" action.
       // (This sets the "dead" property and clears out any pending actions.)
