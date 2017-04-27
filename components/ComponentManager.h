@@ -10,8 +10,10 @@
 #include "components/ComponentHealth.h"
 #include "components/ComponentInventory.h"
 #include "components/ComponentLightSource.h"
+#include "components/ComponentLockable.h"
 #include "components/ComponentMagicalBinding.h"
 #include "components/ComponentMobility.h"
+#include "components/ComponentOpenable.h"
 #include "components/ComponentPhysical.h"
 #include "components/ComponentPosition.h"
 #include "components/ComponentSenseSight.h"
@@ -44,8 +46,10 @@ public:
   ComponentMap<ComponentHealth> health;
   ComponentMap<ComponentInventory> inventory;
   ComponentMap<ComponentLightSource> lightSource;
+  ComponentMap<ComponentLockable> lockable;
   ComponentMap<ComponentMagicalBinding> magicalBinding;
   ComponentMap<ComponentMobility> mobility;
+  ComponentMap<ComponentOpenable> openable;
   ComponentMap<ComponentPhysical> physical;
   ComponentMap<ComponentPosition> position;
   ComponentMap<ComponentSenseSight> senseSight;

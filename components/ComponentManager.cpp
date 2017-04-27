@@ -88,8 +88,10 @@ ComponentManager::ComponentManager(json const& j)
   JSONUtils::doIfPresent(j, "health", [&](auto const& value) { health = value; });
   JSONUtils::doIfPresent(j, "inventory", [&](auto& value) { inventory = value; });
   JSONUtils::doIfPresent(j, "light-source", [&](auto& value) { lightSource = value; });
+  JSONUtils::doIfPresent(j, "lockable", [&](auto& value) { lockable = value; });
   JSONUtils::doIfPresent(j, "magical-binding", [&](auto& value) { magicalBinding = value; });
   JSONUtils::doIfPresent(j, "mobility", [&](auto& value) { mobility = value; });
+  JSONUtils::doIfPresent(j, "openable", [&](auto& value) { openable = value; });
   JSONUtils::doIfPresent(j, "physical", [&](auto& value) { physical = value; });
   JSONUtils::doIfPresent(j, "position", [&](auto& value) { position = value; });
   JSONUtils::doIfPresent(j, "sense-sight", [&](auto& value) { senseSight = value; });
@@ -120,8 +122,10 @@ void ComponentManager::clone(EntityId original, EntityId newId)
   health.cloneIfExists(original, newId);
   // Do NOT clone inventory
   lightSource.cloneIfExists(original, newId);
+  lockable.cloneIfExists(original, newId);
   magicalBinding.cloneIfExists(original, newId);
   mobility.cloneIfExists(original, newId);
+  openable.cloneIfExists(original, newId);
   physical.cloneIfExists(original, newId);
   position.cloneIfExists(original, newId);
   senseSight.cloneIfExists(original, newId);
@@ -137,8 +141,10 @@ void ComponentManager::populate(EntityId id, json const& j)
   JSONUtils::doIfPresent(j, "health", [&](auto& value) { health[id] = value; });
   JSONUtils::doIfPresent(j, "inventory", [&](auto& value) { inventory[id] = value; });
   JSONUtils::doIfPresent(j, "light-source", [&](auto& value) { lightSource[id] = value; });
+  JSONUtils::doIfPresent(j, "lockable", [&](auto& value) { lockable[id] = value; });
   JSONUtils::doIfPresent(j, "magical-binding", [&](auto& value) { magicalBinding[id] = value; });
   JSONUtils::doIfPresent(j, "mobility", [&](auto& value) { mobility[id] = value; });
+  JSONUtils::doIfPresent(j, "openable", [&](auto& value) { openable[id] = value; });
   JSONUtils::doIfPresent(j, "physical", [&](auto& value) { physical[id] = value; });
   JSONUtils::doIfPresent(j, "position", [&](auto& value) { position[id] = value; });
   JSONUtils::doIfPresent(j, "sense-sight", [&](auto& value) { senseSight[id] = value; });
@@ -154,8 +160,10 @@ void from_json(json const& j, ComponentManager& obj)
   JSONUtils::doIfPresent(j, "health", [&](auto& value) { obj.health = value; });
   JSONUtils::doIfPresent(j, "inventory", [&](auto& value) { obj.inventory = value; });
   JSONUtils::doIfPresent(j, "light-source", [&](auto& value) { obj.lightSource = value; });
+  JSONUtils::doIfPresent(j, "lockable", [&](auto& value) { obj.lockable = value; });
   JSONUtils::doIfPresent(j, "magical-binding", [&](auto& value) { obj.magicalBinding = value; });
   JSONUtils::doIfPresent(j, "mobility", [&](auto& value) { obj.mobility = value; });
+  JSONUtils::doIfPresent(j, "openable", [&](auto& value) { obj.openable = value; });
   JSONUtils::doIfPresent(j, "physical", [&](auto& value) { obj.physical = value; });
   JSONUtils::doIfPresent(j, "position", [&](auto& value) { obj.position = value; });
   JSONUtils::doIfPresent(j, "sense-sight", [&](auto& value) { obj.senseSight = value; });
@@ -171,8 +179,10 @@ void to_json(json& j, ComponentManager const& obj)
   j["health"] = obj.health;
   j["inventory"] = obj.inventory;
   j["light-source"] = obj.lightSource;
+  j["lockable"] = obj.lockable;
   j["magical-binding"] = obj.magicalBinding;
   j["mobility"] = obj.mobility;
+  j["openable"] = obj.openable;
   j["physical"] = obj.physical;
   j["position"] = obj.position;
   j["sense-sight"] = obj.senseSight;
