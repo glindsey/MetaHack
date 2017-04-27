@@ -16,6 +16,9 @@
 //       that obtaining a sorted list will be a bit more difficult. However,
 //       there won't be many times we NEED a sorted list.
 
+/// Bits32 is a 32-bit bitfield.
+using Bits32 = uint32_t;
+
 /// Elapsed time in the game, in milliseconds.
 using ElapsedTime = uint64_t;
 

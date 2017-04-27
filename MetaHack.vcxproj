@@ -328,6 +328,7 @@
     <ClInclude Include="components\ComponentGender.h" />
     <ClInclude Include="components\ComponentHealth.h" />
     <ClInclude Include="components\ComponentLightSource.h" />
+    <ClInclude Include="components\ComponentMagicalBinding.h" />
     <ClInclude Include="components\ComponentMap.h" />
     <ClInclude Include="components\ComponentBodyparts.h" />
     <ClInclude Include="components\ComponentMobility.h" />
@@ -504,6 +505,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="components\ComponentBodyparts.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="components\ComponentMagicalBinding.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="components\ComponentMobility.cpp">
