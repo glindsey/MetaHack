@@ -53,6 +53,11 @@ ComponentMagicalBinding::Against const& ComponentMagicalBinding::against() const
   return m_against;
 }
 
+bool ComponentMagicalBinding::isAgainst(Bits32 value) const
+{
+  return against().action(value);
+}
+
 bool ComponentMagicalBinding::isActive() const
 {
   return m_active;

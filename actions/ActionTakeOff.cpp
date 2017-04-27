@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include "ActionTakeOff.h"
+#include "components/ComponentManager.h"
 #include "services/IMessageLog.h"
 #include "services/IStringDictionary.h"
 #include "Service.h"
@@ -43,7 +44,9 @@ namespace Actions
     std::string bodypart_desc = subject->getBodypartDescription(wear_location);
 
     // Check if the worn item is bound.
-    if (object->getModifiedProperty("bound", false))
+    if (COMPONENTS.magicalBinding.existsFor(object) &&
+        COMPONENTS.magicalBinding[object].isAgainst(ComponentMagicalBinding::Against::Disrobing) &&
+        COMPONENTS.magicalBinding[object].isActive())
     {
       putMsg(makeTr("YOU_CANT_VERB_FOO_MAGICALLY_BOUND", 
       { subject->getPossessiveString(bodypart_desc) }));

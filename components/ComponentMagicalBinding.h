@@ -11,7 +11,7 @@ using json = ::nlohmann::json;
 /// But if I want to, this could easily be expanded to a vector of bindings.
 class ComponentMagicalBinding
 {
-
+public:
   /// Bit values for types of magical binding supported.
   class Against final
   {
@@ -22,7 +22,7 @@ class ComponentMagicalBinding
       return m_bits;
     }
 
-    bool action(Bits32 value)
+    bool action(Bits32 value) const
     {
       return (m_bits & value) != 0;
     }
@@ -37,25 +37,29 @@ class ComponentMagicalBinding
       m_bits &= ~value;
     }
 
+    static Bits32 const    Nothing = 0x00000000;
     static Bits32 const   Dropping = 0x00000001;
     static Bits32 const Unwielding = 0x00000002;
     static Bits32 const  Disrobing = 0x00000004;
     static Bits32 const      Using = 0x00000008;
     static Bits32 const     Moving = 0x00000010;
+    static Bits32 const   Anything = 0xffffffff;
+    static Bits32 const Everything = 0xffffffff;
   
     friend std::ostream& operator<<(std::ostream& os, Against against)
     {
       os << "Against( ";
       Bits32 bits = against.m_bits;
 
-      if (bits == 0) os << "nothing ";
+      if (bits == Against::Nothing) os << "Nothing ";
+      if (bits == Against::Everything) os << "Everything ";
       else
       {
-        if (bits & Against::Dropping) os << "Dropping ";
-        if (bits & Against::Unwielding) os << "Unwielding ";
-        if (bits & Against::Disrobing) os << "Disrobing ";
-        if (bits & Against::Using) os << "Using ";
-        if (bits & Against::Moving) os << "Moving ";
+        if (bits & Against::Dropping) os << "Drop ";
+        if (bits & Against::Unwielding) os << "Unwield ";
+        if (bits & Against::Disrobing) os << "Disrobe ";
+        if (bits & Against::Using) os << "Use ";
+        if (bits & Against::Moving) os << "Move ";
       }
 
       os << ")";
@@ -69,8 +73,6 @@ class ComponentMagicalBinding
 
   };
 
-
-public:
   ComponentMagicalBinding();
 
   friend void from_json(json const& j, ComponentMagicalBinding& obj);
@@ -81,6 +83,7 @@ public:
 
   Against& against();
   Against const& against() const;
+  bool isAgainst(Bits32 value) const;
 
   bool isActive() const;
   void activate();
