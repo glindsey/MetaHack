@@ -276,17 +276,17 @@ namespace Actions
     bool hasPosition = COMPONENTS.position.existsFor(subject);
     auto new_direction = getTargetDirection();
 
-    // Check that we're capable of eating at all.
+    // Check that we're capable of performing this action at all.
     std::string canVerb{ "can-" + getType() };
-    if (!subject->getBaseProperty(canVerb, false))
+    if (!subjectIsCapable())
     {
       printMessageTry();
       putMsg(makeTr("YOU_ARE_NOT_CAPABLE_OF_VERBING", { getIndefArt(subject->getDisplayName()), subject->getDisplayName() }));
       return StateResult::Failure();
     }
 
-    // Check that we're capable of eating right now.
-    if (!subject->getModifiedProperty(canVerb, false))
+    // Check that we're capable of performing this action right now.
+    if (!subjectIsCapableNow())
     {
       printMessageTry();
       putMsg(makeTr("YOU_CANT_VERB_NOW", { getIndefArt(subject->getDisplayName()), subject->getDisplayName() }));
@@ -296,7 +296,7 @@ namespace Actions
     if (hasTrait(Trait::SubjectMustBeAbleToMove))
     {
       // Make sure we can move RIGHT NOW.
-      if (!subject->canCurrentlyMove())
+      if (!COMPONENTS.mobility.existsFor(subject))
       {
         putTr("YOU_CANT_MOVE_NOW");
         return StateResult::Failure();
@@ -521,6 +521,17 @@ namespace Actions
   {
     auto result = doAbortWorkNVI(params);
     return result;
+  }
+
+  bool Action::subjectIsCapable() const
+  {
+    CLOG(ERROR, "Action") << "Missing subjectIsCapable() implementation for action \"" << m_verb << "\"";
+    return false;
+  }
+
+  bool Action::subjectIsCapableNow() const
+  {
+    return subjectIsCapable();
   }
 
   StateResult Action::doPreBeginWorkNVI(AnyMap& params)

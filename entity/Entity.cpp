@@ -284,16 +284,6 @@ void Entity::setWorn(EntityId entity, BodyLocation location)
   }
 }
 
-bool Entity::canCurrentlySee()
-{
-  return COMPONENTS.senseSight.existsFor(m_id);
-}
-
-bool Entity::canCurrentlyMove()
-{
-  return getModifiedProperty("can-move", false);
-}
-
 void Entity::setGender(Gender gender)
 {
   COMPONENTS.gender[m_id].gender() = gender;
@@ -473,7 +463,7 @@ bool Entity::canSee(IntVec2 coords)
   IntVec2 thisCoords = thisPosition.coords();
 
   // Make sure we are able to see at all.
-  if (!canCurrentlySee())
+  if (!COMPONENTS.senseSight.existsFor(m_id))
   {
     return false;
   }
@@ -505,7 +495,7 @@ void Entity::findSeenTiles()
 
   // Hang on, can we actually see?
   // If not, bail out.
-  if (canCurrentlySee() == false)
+  if (!COMPONENTS.senseSight.existsFor(m_id))
   {
     return;
   }

@@ -20,6 +20,7 @@ namespace Actions
     virtual ~ActionWear();
     static ActionWear prototype;
 
+    //virtual bool subjectIsCapable() const override;
     virtual std::unordered_set<Trait> const& getTraits() const override;
 
   protected:

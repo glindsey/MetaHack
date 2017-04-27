@@ -12,7 +12,6 @@ void from_json(json const& j, ComponentHealth& obj)
   obj.m_hp = obj.m_maxHp;
   JSONUtils::doIfPresent(j, "hp", [&](auto& value) { obj.m_hp = JSONUtils::getFancyInteger(value); });
   JSONUtils::doIfPresent(j, "dead", [&](auto& value) { obj.m_dead = value; });
-
 }
 
 void to_json(json& j, ComponentHealth const& obj)

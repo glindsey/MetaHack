@@ -1,5 +1,10 @@
 {
   "components": {
-    "mobility": {}
+    "mobility": {
+      "_": "Default values given for mobility are those for an average human.",
+      "move-speed": 138,
+      "max-move-speed": 447,
+      "turn-speed": 360
+    }
   }
 }

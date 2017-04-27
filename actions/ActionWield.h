@@ -20,6 +20,7 @@ namespace Actions
     virtual ~ActionWield();
     static ActionWield prototype;
 
+    //virtual bool subjectIsCapable() const override;
     virtual std::unordered_set<Trait> const& getTraits() const override;
 
   protected:

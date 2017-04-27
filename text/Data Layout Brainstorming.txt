@@ -29,6 +29,7 @@ smell       sense-smell                           | [emits smell]               
 taste       sense-taste                           | [has taste]                         |
                                                   
 Involuntary/reflexive actions                     
+bleed       
 boil        temperature(hot)                      | physical(liquid)                    | result is vapor, possible explosions
 burn        temperature(hot)                      | physical(solid/liquid), oxidizable  | result is ash/smoke/char?
 collide     physical(solid)                       | physical(solid)                     | adjacent/same locations

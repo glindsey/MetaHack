@@ -6,8 +6,6 @@
   "templates": [
     "Biped",
     "HasInventory",
-    "Killable",
-    "Mobile",
     "Sapient",
     "Sighted"
   ],
@@ -27,7 +25,12 @@
 
   "components": {
     "health": {
-      "max-hp": [6, 10]
+      "max-hp": [ 6, 10 ]
+    },
+    "mobility": {
+      "move-speed": 138,
+      "max-move-speed": 447,
+      "turn-speed": 360
     }
   }
 }

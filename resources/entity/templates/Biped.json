@@ -1,4 +1,6 @@
 {
+  "templates": [ "Mobile", "Killable" ],
+
   "can-throw": true,
 
   "components": {

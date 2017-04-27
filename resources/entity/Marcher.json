@@ -3,7 +3,12 @@
   "plural": "marcher robots",
   "description-brief": "A testing biped that endlessly marches left and right.",
 
-  "templates": [ "Biped" ],
+  "templates": [
+    "Biped",
+    "HasInventory",
+    "Sapient",
+    "Sighted"
+  ],
 
   "proper-name": "Steve",
 

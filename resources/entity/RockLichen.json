@@ -3,7 +3,7 @@
   "plural": "rock lichens",
   "description-brief": "A lichen that normally grows on a rock.",
 
-  "templates": [ "Blob" ],
+  "templates": [ "Killable" ],
 
   "components": {
     "health": {

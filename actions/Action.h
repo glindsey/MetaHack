@@ -210,6 +210,17 @@ namespace Actions
     /// @return StateResult indicating the post-Action wait time.
     StateResult doAbortWork(AnyMap& params);
 
+    /// Check if this action can be performed at all by the subject.
+    /// Called as part of doPreBeginWork, before the overridable portion is called.
+    /// Default implementation returns false and logs a warning about a missing
+    /// override of the function.
+    virtual bool subjectIsCapable() const;
+
+    /// Check if this action can be performed right now by the subject.
+    /// Called as part of doPreBeginWork, before the overridable portion is called.
+    /// Default implementation just calls `subjectIsCapable()`.
+    virtual bool subjectIsCapableNow() const;
+
     /// Overridable portion of doPreBeginWork().
     /// @param params Map of parameters for the Action.
     /// @return StateResult indicating whether the Action continues.

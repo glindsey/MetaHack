@@ -215,15 +215,6 @@ public:
 
   void setWorn(EntityId entity, BodyLocation location);
 
-  /// Return whether this DynamicEntity can currently see.
-  /// @todo Implement blindness counter, blindness due to wearing blindfold,
-  ///       et cetera.
-  bool canCurrentlySee();
-
-  /// Return whether this DynamicEntity can currently move.
-  /// @todo Implement paralysis counter, and/or other reasons to be immobile.
-  bool canCurrentlyMove();
-
   void setGender(Gender gender);
 
   Gender getGender() const;
