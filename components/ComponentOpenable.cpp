@@ -6,14 +6,21 @@
 void from_json(json const& j, ComponentOpenable& obj)
 {
   obj = ComponentOpenable();
-
-  // *** add Component-specific assignments here ***
-  //JSONUtils::doIfPresent(j, "member", [&](auto& value) { obj.m_member = value; });
+  JSONUtils::doIfPresent(j, "open", [&](auto& value) { obj.m_open = value; });
 }
 
 void to_json(json& j, ComponentOpenable const& obj)
 {
   j = json::object();
-  // *** add Component-specific assignments here ***
-  //j["member"] = obj.m_member;
+  j["open"] = obj.m_open;
+}
+
+bool ComponentOpenable::isOpen() const
+{
+  return m_open;
+}
+
+void ComponentOpenable::setOpen(bool value)
+{
+  m_open = value;
 }

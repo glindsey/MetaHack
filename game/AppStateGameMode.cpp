@@ -454,11 +454,11 @@ bool AppStateGameMode::handle_key_press(App::EventKeyPressed const& key)
               EntityId entity = m_inventorySelection->getSelectedThings().at(0);
               if (COMPONENTS.inventory.existsFor(entity))
               {
-                if (!entity->canHaveActionDoneBy(EntityId::Mu(), Actions::ActionOpen::prototype) ||
-                    entity->getModifiedProperty("open", true))
+                if (!COMPONENTS.openable.existsFor(entity) ||
+                    COMPONENTS.openable[entity].isOpen())
                 {
-                  if (!entity->canHaveActionDoneBy(EntityId::Mu(), Actions::ActionLock::prototype) ||
-                      !entity->getModifiedProperty("locked", false))
+                  if (!COMPONENTS.lockable.existsFor(entity) ||
+                      !COMPONENTS.lockable[entity].isLocked())
                   {
                     m_inventorySelection->setViewed(entity);
                   }

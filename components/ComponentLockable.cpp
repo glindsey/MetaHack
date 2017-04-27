@@ -6,14 +6,21 @@
 void from_json(json const& j, ComponentLockable& obj)
 {
   obj = ComponentLockable();
-
-  // *** add Component-specific assignments here ***
-  //JSONUtils::doIfPresent(j, "member", [&](auto& value) { obj.m_member = value; });
+  JSONUtils::doIfPresent(j, "locked", [&](auto& value) { obj.m_locked = value; });
 }
 
 void to_json(json& j, ComponentLockable const& obj)
 {
   j = json::object();
-  // *** add Component-specific assignments here ***
-  //j["member"] = obj.m_member;
+  j["locked"] = obj.m_locked;
+}
+
+bool ComponentLockable::isLocked() const
+{
+  return m_locked;
+}
+
+void ComponentLockable::setLocked(bool value)
+{
+  m_locked = value;
 }
