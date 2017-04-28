@@ -52,6 +52,7 @@ public:
   ComponentMap<ComponentOpenable> openable;
   ComponentMap<ComponentPhysical> physical;
   ComponentMap<ComponentPosition> position;
+  ComponentMap<std::string> properName;
   ComponentMap<ComponentSenseSight> senseSight;
   ComponentMap<ComponentSpacialMemory> spacialMemory;
 };

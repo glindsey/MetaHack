@@ -51,7 +51,7 @@ void StatusArea::drawContents_(sf::RenderTexture& texture, int frame)
   if (player != EntityId::Mu())
   {
     // Render player name
-    std::string name = player->getProperName();
+    std::string name = COMPONENTS.properName.valueOr(player, "Player");
     name[0] = std::toupper(name[0], std::locale());
 
     std::string type = player->getDisplayName();

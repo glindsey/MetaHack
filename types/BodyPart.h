@@ -1,5 +1,4 @@
-#ifndef BODYPART_H_INCLUDED
-#define BODYPART_H_INCLUDED
+#pragma once
 
 #include "stdafx.h"
 
@@ -23,7 +22,7 @@ enum class BodyPart
   Wing,
   Tail,
   PTail,
-  Count
+  MemberCount
 };
 
 inline std::ostream& operator<<(std::ostream& os, BodyPart const& part)
@@ -47,7 +46,7 @@ inline std::ostream& operator<<(std::ostream& os, BodyPart const& part)
     case BodyPart::Wing: os << "Wing"; break;
     case BodyPart::Tail: os << "Tail"; break;
     case BodyPart::PTail: os << "PTail"; break;
-    case BodyPart::Count: os << "Count"; break;
+    case BodyPart::MemberCount: os << "MemberCount"; break;
     default: os << "???"; break;
   }
 
@@ -59,7 +58,7 @@ struct BodyLocation
 {
   BodyLocation()
     :
-    part{ BodyPart::Count }, number{ 0 }
+    part{ BodyPart::Nowhere }, number{ 0 }
   {}
 
   BodyLocation(BodyPart part_, unsigned int number_)
@@ -72,7 +71,7 @@ struct BodyLocation
 
   inline unsigned int index() const
   {
-    return (number * static_cast<unsigned int>(BodyPart::Count)) +
+    return (number * static_cast<unsigned int>(BodyPart::MemberCount)) +
       static_cast<unsigned int>(part);
   }
 };
@@ -124,5 +123,3 @@ inline bool operator>=(const BodyLocation& lhs, const BodyLocation& rhs)
 {
   return !operator<(lhs, rhs);
 }
-
-#endif // BODYPART_H_INCLUDED

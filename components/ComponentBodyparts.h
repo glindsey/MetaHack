@@ -31,9 +31,9 @@ protected:
   void setUpBodyparts(BodyPart part, unsigned int count);
 
 private:
-  /// Vector of typical bodypart counts.
-  std::vector<unsigned int> m_bodypartCount;
+  /// Array of typical bodypart counts.
+  std::array<unsigned int, static_cast<size_t>(BodyPart::MemberCount)> m_bodypartCount;
 
-  /// Vector of bitsets for bodypart counts.
-  std::vector<boost::dynamic_bitset<size_t>> m_bodypartExistence;
+  /// Array of bitsets for bodypart counts.
+  std::array<boost::dynamic_bitset<size_t>, static_cast<size_t>(BodyPart::MemberCount)> m_bodypartExistence;
 };

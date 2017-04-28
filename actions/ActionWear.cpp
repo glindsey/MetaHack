@@ -32,7 +32,7 @@ namespace Actions
 
     auto bodypart = object->is_equippable_on();
 
-    if (bodypart == BodyPart::Count)
+    if (bodypart == BodyPart::MemberCount)
     {
       putTr("THE_FOO_IS_NOT_VERBABLE");
       return StateResult::Failure();

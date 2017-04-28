@@ -268,12 +268,6 @@ public:
   /// Return this object's plural.
   std::string getDisplayPlural() const;
 
-  /// Get the entity's proper name (if any).
-  std::string getProperName() const;
-
-  /// Set this entity's proper name.
-  void setProperName(std::string name);
-
   /// Return a string that identifies this entity, in the subjective case.
   /// If it IS the player, it'll return "you".
   /// Otherwise it calls getDescriptiveString().

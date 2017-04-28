@@ -167,7 +167,7 @@ bool AppStateGameMode::initialize()
 
   // Create the player.
   EntityId player = getGameState().entities().create("Human");
-  player->setProperName(config.get("player-name"));
+  COMPONENTS.properName[player] = config.get("player-name").get<std::string>();
   game.setPlayer(player);
 
   // Create the game map.

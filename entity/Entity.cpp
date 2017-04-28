@@ -660,16 +660,6 @@ std::string Entity::getDisplayPlural() const
   return getCategoryData().value("plural", std::string());
 }
 
-std::string Entity::getProperName() const
-{
-  return getModifiedProperty("proper-name", std::string());
-}
-
-void Entity::setProperName(std::string name)
-{
-  setBaseProperty("proper-name", name);
-}
-
 std::string Entity::getSubjectiveString(ArticleChoice articles) const
 {
   std::string str;
@@ -774,9 +764,13 @@ std::string Entity::getDescriptiveString(ArticleChoice articles,
       }
     }
 
-    if (getProperName().empty() == false)
+    if (COMPONENTS.properName.existsFor(m_id))
     {
-      suffix = tr("VERB_NAME_PP") + " " + getProperName();
+      auto properName = COMPONENTS.properName[m_id];
+      if (!properName.empty())
+      {
+        suffix = tr("VERB_NAME_PP") + " " + properName;
+      }
     }
   }
   else
@@ -1211,7 +1205,7 @@ bool Entity::is_miscible_with(EntityId entity)
 
 BodyPart Entity::is_equippable_on() const
 {
-  return BodyPart::Count;
+  return BodyPart::MemberCount;
 }
 
 bool Entity::process_involuntary_actions()

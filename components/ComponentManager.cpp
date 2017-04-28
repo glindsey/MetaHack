@@ -49,6 +49,15 @@ int LUA_get_opacity(lua_State* L)
   });
 }
 
+int LUA_get_proper_name(lua_State* L)
+{
+  return LUA_getValue<std::string>(L, [&](EntityId entity) -> std::string
+  {
+    return COMPONENTS.properName.existsFor(entity) ? COMPONENTS.properName[entity] : "";
+  });
+}
+
+
 int LUA_get_quantity(lua_State* L)
 {
   return LUA_getValue<unsigned int>(L, [&](EntityId entity) -> unsigned int
@@ -94,6 +103,7 @@ ComponentManager::ComponentManager(json const& j)
   JSONUtils::doIfPresent(j, "openable", [&](auto& value) { openable = value; });
   JSONUtils::doIfPresent(j, "physical", [&](auto& value) { physical = value; });
   JSONUtils::doIfPresent(j, "position", [&](auto& value) { position = value; });
+  JSONUtils::doIfPresent(j, "proper-name", [&](auto& value) { properName = value; });
   JSONUtils::doIfPresent(j, "sense-sight", [&](auto& value) { senseSight = value; });
   JSONUtils::doIfPresent(j, "spacial-memory", [&](auto& value) { spacialMemory = value; });
 }
@@ -108,6 +118,7 @@ void ComponentManager::initialize()
   the_lua_instance.register_function("get_mass", LUA_get_mass);
   the_lua_instance.register_function("get_maxhp", LUA_get_maxhp);
   the_lua_instance.register_function("get_opacity", LUA_get_opacity);
+  the_lua_instance.register_function("get_proper_name", LUA_get_proper_name);
   the_lua_instance.register_function("get_quantity", LUA_get_quantity);
   the_lua_instance.register_function("get_volume", LUA_get_volume);
   the_lua_instance.register_function("is_lit", LUA_is_lit);
@@ -128,6 +139,7 @@ void ComponentManager::clone(EntityId original, EntityId newId)
   openable.cloneIfExists(original, newId);
   physical.cloneIfExists(original, newId);
   position.cloneIfExists(original, newId);
+  properName.cloneIfExists(original, newId);
   senseSight.cloneIfExists(original, newId);
   spacialMemory.cloneIfExists(original, newId);
 }
@@ -147,6 +159,7 @@ void ComponentManager::populate(EntityId id, json const& j)
   JSONUtils::doIfPresent(j, "openable", [&](auto& value) { openable[id] = value; });
   JSONUtils::doIfPresent(j, "physical", [&](auto& value) { physical[id] = value; });
   JSONUtils::doIfPresent(j, "position", [&](auto& value) { position[id] = value; });
+  JSONUtils::doIfPresent(j, "proper-name", [&](auto& value) { properName[id] = value.get<std::string>(); });
   JSONUtils::doIfPresent(j, "sense-sight", [&](auto& value) { senseSight[id] = value; });
   JSONUtils::doIfPresent(j, "spacial-memory", [&](auto& value) { spacialMemory[id] = value; });
 }
@@ -166,6 +179,7 @@ void from_json(json const& j, ComponentManager& obj)
   JSONUtils::doIfPresent(j, "openable", [&](auto& value) { obj.openable = value; });
   JSONUtils::doIfPresent(j, "physical", [&](auto& value) { obj.physical = value; });
   JSONUtils::doIfPresent(j, "position", [&](auto& value) { obj.position = value; });
+  JSONUtils::doIfPresent(j, "proper-name", [&](auto& value) { obj.properName = value; });
   JSONUtils::doIfPresent(j, "sense-sight", [&](auto& value) { obj.senseSight = value; });
   JSONUtils::doIfPresent(j, "spacial-memory", [&](auto& value) { obj.spacialMemory = value; });
 }
@@ -185,6 +199,7 @@ void to_json(json& j, ComponentManager const& obj)
   j["openable"] = obj.openable;
   j["physical"] = obj.physical;
   j["position"] = obj.position;
+  j["proper-name"] = obj.properName;
   j["sense-sight"] = obj.senseSight;
   j["spacial-memory"] = obj.spacialMemory;
 }

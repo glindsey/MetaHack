@@ -10,8 +10,6 @@
     "Sighted"
   ],
 
-  "proper-name": "John Doe",
-
   "attributes-strength": [ "range", 13, 17 ],
   "attributes-endurance": [ "range", 13, 17 ],
   "attributes-vitality": [ "range", 13, 17 ],
@@ -31,6 +29,7 @@
       "move-speed": 138,
       "max-move-speed": 447,
       "turn-speed": 360
-    }
+    },
+    "properName": "John Doe"
   }
 }
