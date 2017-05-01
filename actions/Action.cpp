@@ -282,13 +282,24 @@ namespace Actions
     if (!capable.value)
     {
       printMessageTry();
-      /// @todo Add translation key
-      putMsg(makeTr("YOU_ARE_NOT_CAPABLE_OF_VERBING_BECAUSE", 
-      { 
-        getIndefArt(subject->getDisplayName()), 
-        subject->getDisplayName(),
-        capable.reason
-      }));
+      if (!capable.reason.empty())
+      {
+        /// @todo Add translation key
+        putMsg(makeTr("YOU_ARE_NOT_CAPABLE_OF_VERBING_BECAUSE",
+        {
+          getIndefArt(subject->getDisplayName()),
+          subject->getDisplayName(),
+          capable.reason
+        }));
+      }
+      else
+      {
+        putMsg(makeTr("YOU_ARE_NOT_CAPABLE_OF_VERBING",
+        {
+          getIndefArt(subject->getDisplayName()),
+          subject->getDisplayName()
+        }));
+      }
 
       return StateResult::Failure();
     }
