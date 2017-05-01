@@ -32,12 +32,12 @@ void to_json(json& j, ComponentBodyparts const& obj)
   //j["member"] = obj.m_member;
 }
 
-unsigned int ComponentBodyparts::typicalCount(BodyPart part)
+unsigned int ComponentBodyparts::typicalCount(BodyPart part) const
 {
   return m_bodypartCount[static_cast<unsigned int>(part)];
 }
 
-size_t ComponentBodyparts::actualCount(BodyPart part)
+size_t ComponentBodyparts::actualCount(BodyPart part) const
 {
   return m_bodypartExistence[static_cast<unsigned int>(part)].count();
 }
@@ -50,6 +50,11 @@ boost::dynamic_bitset<size_t>::reference ComponentBodyparts::exists(BodyPart par
 bool ComponentBodyparts::exists(BodyPart part, unsigned int which) const
 {
   return m_bodypartExistence[static_cast<unsigned int>(part)][which];
+}
+
+bool ComponentBodyparts::hasPrehensileBodyPart() const
+{
+  return (actualCount(BodyPart::Hand) > 0) || (actualCount(BodyPart::PTail) > 0);
 }
 
 void ComponentBodyparts::setUpBodyparts(BodyPart part, unsigned int count)

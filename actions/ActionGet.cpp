@@ -16,6 +16,12 @@ namespace Actions
   ActionGet::ActionGet(EntityId subject) : Action(subject, "get", "GET") {}
   ActionGet::~ActionGet() {}
 
+  bool ActionGet::subjectIsCapable() const
+  {
+    auto subject = getSubject();
+    return COMPONENTS.bodyparts.existsFor(subject) && COMPONENTS.bodyparts[subject].hasPrehensileBodyPart();
+  }
+
   std::unordered_set<Trait> const & ActionGet::getTraits() const
   {
     static std::unordered_set<Trait> traits =

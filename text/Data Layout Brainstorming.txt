@@ -33,7 +33,7 @@ bleed
 boil        temperature(hot)                      | physical(liquid)                    | result is vapor, possible explosions
 burn        temperature(hot)                      | physical(solid/liquid), oxidizable  | result is ash/smoke/char?
 collide     physical(solid)                       | physical(solid)                     | adjacent/same locations
-die         health                                | n/a                                 |
+*die        health                                | n/a                                 |
 dry                                               | physical(solid), wet                |
 freeze      temperature(cold)                     | physical(liquid)                    | result is a solid
 melt        temperature(hot)                      | physical(solid)                     | result is a liquid
@@ -45,14 +45,14 @@ Instinctual actions:
 attack      instinct                              | health                              | (attack with a weapon)
 bite        instinct, bodyparts[teeth]            | health                              |
 drink       instinct, bodyparts[mouth]            | physical(liquid)                    |
-drop        instinct                              | physical(solid)                     |
+*drop       instinct                              | physical(solid)                     |
 eat         instinct, digestive-system            | physical(solid)                     | target must be something the entity can eat
 emit        instinct, bodyparts[emitting]         | (any)                               | (spit, expel gas, etc, for attacks)
-get         instinct, bodyparts[prehensile/mouth] | physical(solid)                     |
+*get        instinct, bodyparts[prehensile/mouth] | physical(solid)                     |
 kick        instinct, bodyparts[legs/feet]        | (any)                               |
-move        instinct, mobility                    | n/a                                 |
+*move       instinct, mobility                    | n/a                                 |
 swipe       instinct, bodyparts[arms/hands]       | (any)                               | (slap, claw, punch, etc.)
-turn        instinct, mobility                    | n/a                                 |
+*turn       instinct, mobility                    | n/a                                 |
 throw       instinct, bodyparts[prehensile]       | physical(solid)                     |
 
 Sapient (requiring thought) actions:

@@ -18,14 +18,17 @@ public:
   friend void to_json(json& j, ComponentBodyparts const& obj);
 
   /// Get typical count of a particular bodypart.
-  unsigned int typicalCount(BodyPart part);
+  unsigned int typicalCount(BodyPart part) const;
 
   /// Get actual count of a particular bodypart.
-  size_t actualCount(BodyPart part);
+  size_t actualCount(BodyPart part) const;
 
-  // Select whether a particular bodypart exists.
+  /// Select whether a particular bodypart exists.
   boost::dynamic_bitset<size_t>::reference exists(BodyPart part, unsigned int which);
   bool exists(BodyPart part, unsigned int which) const;
+
+  /// Return whether the entity has any prehensile (grasping) bodyparts.
+  bool hasPrehensileBodyPart() const;
 
 protected:
   void setUpBodyparts(BodyPart part, unsigned int count);

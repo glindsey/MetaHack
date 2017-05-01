@@ -17,6 +17,12 @@ namespace Actions
   ActionDrop::ActionDrop(EntityId subject) : Action(subject, "drop", "DROP") {}
   ActionDrop::~ActionDrop() {}
 
+  bool ActionDrop::subjectIsCapable() const
+  {
+    // An entity can always drop an item.
+    return true;
+  }
+
   std::unordered_set<Trait> const & ActionDrop::getTraits() const
   {
     static std::unordered_set<Trait> traits =
