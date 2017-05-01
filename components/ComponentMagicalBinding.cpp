@@ -8,7 +8,7 @@ void from_json(json const& j, ComponentMagicalBinding& obj)
   obj = ComponentMagicalBinding();
 
   JSONUtils::doIfPresent(j, "binder", [&](auto& value) { obj.m_binder = EntityId(value.get<unsigned int>()); });
-  JSONUtils::doIfPresent(j, "against", [&](auto& value) { obj.m_against = ComponentMagicalBinding::Against(value.get<Bits32>()); });
+  JSONUtils::doIfPresent(j, "against", [&](auto& value) { obj.m_against = value; }); // ComponentMagicalBinding::Against(value.get<Bits32>());
   JSONUtils::doIfPresent(j, "active", [&](auto& value) { obj.m_active = value; });
   JSONUtils::doIfPresent(j, "auto-expiration-time", [&](auto& value) { obj.m_autoExpirationTime = value; });
   JSONUtils::doIfPresent(j, "active-time-remaining", [&](auto& value) { obj.m_activeTimeRemaining = value; });
@@ -19,7 +19,7 @@ void to_json(json& j, ComponentMagicalBinding const& obj)
 {
   j = json::object();
   j["binder"] = obj.m_binder;
-  j["against"] = obj.m_against();
+  j["against"] = obj.m_against;
   j["active"] = obj.m_active;
   j["auto-expiration-time"] = obj.m_autoExpirationTime;
   j["active-time-remaining"] = obj.m_activeTimeRemaining;

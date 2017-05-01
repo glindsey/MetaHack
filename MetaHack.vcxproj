@@ -333,6 +333,7 @@
     <ClInclude Include="components\ComponentMagicalBinding.h" />
     <ClInclude Include="components\ComponentMap.h" />
     <ClInclude Include="components\ComponentBodyparts.h" />
+    <ClInclude Include="components\ComponentMaterialFlags.h" />
     <ClInclude Include="components\ComponentMobility.h" />
     <ClInclude Include="components\ComponentOpenable.h" />
     <ClInclude Include="components\ComponentPhysical.h" />
@@ -517,6 +518,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="components\ComponentMagicalBinding.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="components\ComponentMaterialFlags.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="components\ComponentMobility.cpp">

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "entity/EntityId.h"
+#include "utilities/StringTransforms.h"
 
 #include "json.hpp"
 using json = ::nlohmann::json;
@@ -16,7 +17,9 @@ public:
   class Against final
   {
   public:
-    Against(Bits32 bits) : m_bits(bits) {}
+    Against() : m_bits{ 0 } {}
+    Against(Bits32 bits) : m_bits{ bits } {}
+
     Bits32 operator()() const
     {
       return m_bits;
@@ -46,24 +49,61 @@ public:
     static Bits32 const   Anything = 0xffffffff;
     static Bits32 const Everything = 0xffffffff;
   
-    friend std::ostream& operator<<(std::ostream& os, Against against)
+    std::string toString() const
     {
-      os << "Against( ";
-      Bits32 bits = against.m_bits;
+      std::string output;
 
-      if (bits == Against::Nothing) os << "Nothing ";
-      if (bits == Against::Everything) os << "Everything ";
+      if (m_bits == Against::Nothing) output += "nothing ";
+      else if (m_bits == Against::Everything) output += "everything ";
       else
       {
-        if (bits & Against::Dropping) os << "Drop ";
-        if (bits & Against::Unwielding) os << "Unwield ";
-        if (bits & Against::Disrobing) os << "Disrobe ";
-        if (bits & Against::Using) os << "Use ";
-        if (bits & Against::Moving) os << "Move ";
+        if (m_bits & Against::Dropping) output += "drop ";
+        if (m_bits & Against::Unwielding) output += "unwield ";
+        if (m_bits & Against::Disrobing) output += "disrobe ";
+        if (m_bits & Against::Using) output += "use ";
+        if (m_bits & Against::Moving) output += "move ";
       }
 
-      os << ")";
+      return StringTransforms::remove_extra_whitespace_from(output);
+    }
+
+    void setFromString(std::string input)
+    {
+      m_bits = 0;
+      input = StringTransforms::remove_extra_whitespace_from(input);
+      boost::to_lower(input);
+
+      if (input.find("nothing") != std::string::npos)
+      {
+        return;
+      }
+      if (input.find("everything") != std::string::npos)
+      {
+        m_bits = Against::Everything;
+        return;
+      }
+
+      m_bits |= (input.find("drop") != std::string::npos) ? Dropping : 0;
+      m_bits |= (input.find("unwield") != std::string::npos) ? Unwielding : 0;
+      m_bits |= (input.find("disrobe") != std::string::npos) ? Disrobing : 0;
+      m_bits |= (input.find("use") != std::string::npos) ? Using : 0;
+      m_bits |= (input.find("move") != std::string::npos) ? Moving : 0;
+    }
+
+    friend std::ostream& operator<<(std::ostream& os, Against against)
+    {
+      os << "Against( " << against.toString() << ")";
       return os;
+    }
+
+    friend void from_json(json const& j, Against& obj)
+    {
+      obj.setFromString(j.get<std::string>());
+    }
+
+    friend void to_json(json& j, Against const& obj)
+    {
+      j = obj.toString();
     }
 
   protected:
