@@ -93,6 +93,7 @@ ComponentManager::ComponentManager(json const& j)
   JSONUtils::doIfPresent(j, "appearance", [&](auto const& value) { appearance = value; });
   JSONUtils::doIfPresent(j, "bodyparts", [&](auto const& value) { bodyparts = value; });
   JSONUtils::doIfPresent(j, "category", [&](auto const& value) { category = value; });
+  JSONUtils::doIfPresent(j, "digestive-system", [&](auto const& value) { digestiveSystem = value; });
   JSONUtils::doIfPresent(j, "gender", [&](auto const& value) { gender = value; });
   JSONUtils::doIfPresent(j, "health", [&](auto const& value) { health = value; });
   JSONUtils::doIfPresent(j, "inventory", [&](auto& value) { inventory = value; });
@@ -129,6 +130,7 @@ void ComponentManager::clone(EntityId original, EntityId newId)
   appearance.cloneIfExists(original, newId);
   bodyparts.cloneIfExists(original, newId);
   category.cloneIfExists(original, newId);
+  digestiveSystem.cloneIfExists(original, newId);
   gender.cloneIfExists(original, newId);
   health.cloneIfExists(original, newId);
   // Do NOT clone inventory
@@ -149,6 +151,7 @@ void ComponentManager::populate(EntityId id, json const& j)
   JSONUtils::doIfPresent(j, "appearance", [&](auto& value) { appearance[id] = value; });
   JSONUtils::doIfPresent(j, "bodyparts", [&](auto& value) { bodyparts[id] = value; });
   JSONUtils::doIfPresent(j, "category", [&](auto& value) { category[id] = value; });
+  JSONUtils::doIfPresent(j, "digestive-system", [&](auto const& value) { digestiveSystem[id] = value; });
   JSONUtils::doIfPresent(j, "gender", [&](auto& value) { gender[id] = value; });
   JSONUtils::doIfPresent(j, "health", [&](auto& value) { health[id] = value; });
   JSONUtils::doIfPresent(j, "inventory", [&](auto& value) { inventory[id] = value; });
@@ -169,6 +172,7 @@ void from_json(json const& j, ComponentManager& obj)
   JSONUtils::doIfPresent(j, "appearance", [&](auto& value) { obj.appearance = value; });
   JSONUtils::doIfPresent(j, "bodyparts", [&](auto& value) { obj.bodyparts = value; });
   JSONUtils::doIfPresent(j, "category", [&](auto& value) { obj.category = value; });
+  JSONUtils::doIfPresent(j, "digestive-system", [&](auto const& value) { obj.digestiveSystem = value; });
   JSONUtils::doIfPresent(j, "gender", [&](auto& value) { obj.gender = value; });
   JSONUtils::doIfPresent(j, "health", [&](auto& value) { obj.health = value; });
   JSONUtils::doIfPresent(j, "inventory", [&](auto& value) { obj.inventory = value; });
@@ -189,6 +193,7 @@ void to_json(json& j, ComponentManager const& obj)
   j["appearance"] = obj.appearance;
   j["bodyparts"] = obj.bodyparts;
   j["category"] = obj.category;
+  j["digestive-system"] = obj.digestiveSystem;
   j["gender"] = obj.gender;
   j["health"] = obj.health;
   j["inventory"] = obj.inventory;

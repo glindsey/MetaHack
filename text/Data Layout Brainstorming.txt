@@ -46,7 +46,7 @@ attack      instinct                              | health                      
 bite        instinct, bodyparts[teeth]            | health                              |
 drink       instinct, bodyparts[mouth]            | physical(liquid)                    |
 drop        instinct                              | physical(solid)                     |
-eat         instinct, bodyparts[mouth]            | physical(solid)                     |
+eat         instinct, digestive-system            | physical(solid)                     | target must be something the entity can eat
 emit        instinct, bodyparts[emitting]         | (any)                               | (spit, expel gas, etc, for attacks)
 get         instinct, bodyparts[prehensile/mouth] | physical(solid)                     |
 kick        instinct, bodyparts[legs/feet]        | (any)                               |
@@ -98,3 +98,6 @@ unwield     physical
 use         physical
 wield       physical
 
+Components to add:
+DigestiveSystem
+Material, maybe?

@@ -6,6 +6,7 @@
 
 #include "components/ComponentAppearance.h"
 #include "components/ComponentBodyparts.h"
+#include "components/ComponentDigestiveSystem.h"
 #include "components/ComponentGender.h"
 #include "components/ComponentHealth.h"
 #include "components/ComponentInventory.h"
@@ -42,6 +43,7 @@ public:
   ComponentMap<ComponentAppearance> appearance;
   ComponentMap<ComponentBodyparts> bodyparts;
   ComponentMap<std::string> category;
+  ComponentMap<ComponentDigestiveSystem> digestiveSystem;
   ComponentMap<ComponentGender> gender;
   ComponentMap<ComponentHealth> health;
   ComponentMap<ComponentInventory> inventory;
