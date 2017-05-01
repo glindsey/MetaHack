@@ -3,6 +3,7 @@
 #include "ActionWield.h"
 
 #include "ActionUnwield.h"
+#include "components/ComponentManager.h"
 #include "services/IMessageLog.h"
 #include "services/IStringDictionary.h"
 #include "Service.h"
@@ -15,6 +16,18 @@ namespace Actions
   ActionWield::ActionWield() : Action("wield", "WIELD", ActionWield::create_) {}
   ActionWield::ActionWield(EntityId subject) : Action(subject, "wield", "WIELD") {}
   ActionWield::~ActionWield() {}
+
+  ReasonBool ActionWield::subjectIsCapable() const
+  {
+    auto subject = getSubject();
+    bool isSapient = COMPONENTS.sapience.existsFor(subject);
+    bool canGrasp = COMPONENTS.bodyparts.existsFor(subject) && COMPONENTS.bodyparts[subject].hasPrehensileBodyPart();
+
+    if (!isSapient) return { false, "YOU_ARE_NOT_SAPIENT" }; ///< @todo Add translation key
+    if (!canGrasp) return { false, "YOU_HAVE_NO_GRASPING_BODYPARTS" }; ///< @todo Add translation key
+
+    return { true, "" };
+  }
 
   std::unordered_set<Trait> const & ActionWield::getTraits() const
   {

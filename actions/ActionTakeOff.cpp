@@ -15,6 +15,12 @@ namespace Actions
   ActionTakeOff::ActionTakeOff(EntityId subject) : Action(subject, "disrobe", "DISROBE") {}
   ActionTakeOff::~ActionTakeOff() {}
 
+  ReasonBool ActionTakeOff::subjectIsCapable() const
+  {
+    // You can always take off anything.
+    return { true, "" };
+  }
+
   std::unordered_set<Trait> const & ActionTakeOff::getTraits() const
   {
     static std::unordered_set<Trait> traits =

@@ -17,5 +17,8 @@
   "can-wear": true,
   "can-wield": true,
 
-  "components": {}
+  "components": {
+    "sapience": {}
+  }
+
 }

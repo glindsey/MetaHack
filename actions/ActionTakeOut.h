@@ -24,7 +24,7 @@ namespace Actions
     virtual ~ActionTakeOut();
     static ActionTakeOut prototype;
 
-    //virtual ReasonBool subjectIsCapable() const override;
+    virtual ReasonBool subjectIsCapable() const override;
     virtual std::unordered_set<Trait> const& getTraits() const override;
 
   protected:

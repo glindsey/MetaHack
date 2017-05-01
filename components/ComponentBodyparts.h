@@ -17,6 +17,10 @@ public:
   friend void from_json(json const& j, ComponentBodyparts& obj);
   friend void to_json(json& j, ComponentBodyparts const& obj);
 
+  json bodyPartToJSON(BodyPart part) const;
+
+  void populateUsingJSON(BodyPart part, json const & j);
+
   /// Get typical count of a particular bodypart.
   unsigned int typicalCount(BodyPart part) const;
 

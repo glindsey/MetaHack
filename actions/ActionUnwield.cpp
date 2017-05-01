@@ -15,6 +15,12 @@ namespace Actions
   ActionUnwield::ActionUnwield(EntityId subject) : Action(subject, "unwield", "UNWIELD") {}
   ActionUnwield::~ActionUnwield() {}
 
+  ReasonBool ActionUnwield::subjectIsCapable() const
+  {
+    // You can always unwield anything.
+    return { true, "" };
+  }
+
   std::unordered_set<Trait> const & ActionUnwield::getTraits() const
   {
     static std::unordered_set<Trait> traits =

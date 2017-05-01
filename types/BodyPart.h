@@ -16,9 +16,11 @@ enum class BodyPart
   Chest,
   Arm,
   Hand,
+  Finger,
   Torso,
   Leg,
   Foot,
+  Toe,
   Wing,
   Tail,
   PTail,
@@ -40,9 +42,11 @@ inline std::ostream& operator<<(std::ostream& os, BodyPart const& part)
     case BodyPart::Chest: os << "Chest"; break;
     case BodyPart::Arm: os << "Arm"; break;
     case BodyPart::Hand: os << "Hand"; break;
+    case BodyPart::Finger: os << "Finger"; break;
     case BodyPart::Torso: os << "Torso"; break;
     case BodyPart::Leg: os << "Leg"; break;
     case BodyPart::Foot: os << "Foot"; break;
+    case BodyPart::Toe: os << "Toe"; break;
     case BodyPart::Wing: os << "Wing"; break;
     case BodyPart::Tail: os << "Tail"; break;
     case BodyPart::PTail: os << "PTail"; break;
