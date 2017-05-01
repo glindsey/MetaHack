@@ -16,10 +16,12 @@ namespace Actions
   ActionGet::ActionGet(EntityId subject) : Action(subject, "get", "GET") {}
   ActionGet::~ActionGet() {}
 
-  bool ActionGet::subjectIsCapable() const
+  ReasonBool ActionGet::subjectIsCapable() const
   {
     auto subject = getSubject();
-    return COMPONENTS.bodyparts.existsFor(subject) && COMPONENTS.bodyparts[subject].hasPrehensileBodyPart();
+    bool canGrasp = COMPONENTS.bodyparts.existsFor(subject) && COMPONENTS.bodyparts[subject].hasPrehensileBodyPart();
+    std::string reason = canGrasp ? "" : "YOU_HAVE_NO_GRASPING_BODYPARTS"; ///< @todo Add translation key
+    return { canGrasp, reason };
   }
 
   std::unordered_set<Trait> const & ActionGet::getTraits() const

@@ -99,25 +99,26 @@ ComponentManager::ComponentManager()
 ComponentManager::ComponentManager(json const& j)
 {
   initialize();
-  JSONUtils::doIfPresent(j, "appearance", [this](auto const& value) { appearance = value; });
-  JSONUtils::doIfPresent(j, "bodyparts", [this](auto const& value) { bodyparts = value; });
-  JSONUtils::doIfPresent(j, "busy-counter", [this](auto const& value) { busyCounter = value; });
-  JSONUtils::doIfPresent(j, "category", [this](auto const& value) { category = value; });
+  JSONUtils::doIfPresent(j, "appearance",       [this](auto const& value) { appearance = value; });
+  JSONUtils::doIfPresent(j, "bodyparts",        [this](auto const& value) { bodyparts = value; });
+  JSONUtils::doIfPresent(j, "busy-counter",     [this](auto const& value) { busyCounter = value; });
+  JSONUtils::doIfPresent(j, "category",         [this](auto const& value) { category = value; });
   JSONUtils::doIfPresent(j, "digestive-system", [this](auto const& value) { digestiveSystem = value; });
-  JSONUtils::doIfPresent(j, "gender", [this](auto const& value) { gender = value; });
-  JSONUtils::doIfPresent(j, "health", [this](auto const& value) { health = value; });
-  JSONUtils::doIfPresent(j, "inventory", [this](auto const& value) { inventory = value; });
-  JSONUtils::doIfPresent(j, "light-source", [this](auto const& value) { lightSource = value; });
-  JSONUtils::doIfPresent(j, "lockable", [this](auto const& value) { lockable = value; });
-  JSONUtils::doIfPresent(j, "magical-binding", [this](auto const& value) { magicalBinding = value; });
-  JSONUtils::doIfPresent(j, "material-flags", [this](auto const& value) { materialFlags = value; });
-  JSONUtils::doIfPresent(j, "mobility", [this](auto const& value) { mobility = value; });
-  JSONUtils::doIfPresent(j, "openable", [this](auto const& value) { openable = value; });
-  JSONUtils::doIfPresent(j, "physical", [this](auto const& value) { physical = value; });
-  JSONUtils::doIfPresent(j, "position", [this](auto const& value) { position = value; });
-  JSONUtils::doIfPresent(j, "proper-name", [this](auto const& value) { properName = value; });
-  JSONUtils::doIfPresent(j, "sense-sight", [this](auto const& value) { senseSight = value; });
-  JSONUtils::doIfPresent(j, "spacial-memory", [this](auto const& value) { spacialMemory = value; });
+  JSONUtils::doIfPresent(j, "gender",           [this](auto const& value) { gender = value; });
+  JSONUtils::doIfPresent(j, "health",           [this](auto const& value) { health = value; });
+  JSONUtils::doIfPresent(j, "inventory",        [this](auto const& value) { inventory = value; });
+  JSONUtils::doIfPresent(j, "light-source",     [this](auto const& value) { lightSource = value; });
+  JSONUtils::doIfPresent(j, "lockable",         [this](auto const& value) { lockable = value; });
+  JSONUtils::doIfPresent(j, "magical-binding",  [this](auto const& value) { magicalBinding = value; });
+  JSONUtils::doIfPresent(j, "material-flags",   [this](auto const& value) { materialFlags = value; });
+  JSONUtils::doIfPresent(j, "mobility",         [this](auto const& value) { mobility = value; });
+  JSONUtils::doIfPresent(j, "openable",         [this](auto const& value) { openable = value; });
+  JSONUtils::doIfPresent(j, "physical",         [this](auto const& value) { physical = value; });
+  JSONUtils::doIfPresent(j, "position",         [this](auto const& value) { position = value; });
+  JSONUtils::doIfPresent(j, "proper-name",      [this](auto const& value) { properName = value; });
+  JSONUtils::doIfPresent(j, "sapience",         [this](auto const& value) { sapience = value; });
+  JSONUtils::doIfPresent(j, "sense-sight",      [this](auto const& value) { senseSight = value; });
+  JSONUtils::doIfPresent(j, "spacial-memory",   [this](auto const& value) { spacialMemory = value; });
 }
 
 ComponentManager::~ComponentManager()
@@ -156,6 +157,7 @@ void ComponentManager::clone(EntityId original, EntityId newId)
   physical       .cloneIfExists(original, newId);
   position       .cloneIfExists(original, newId);
   properName     .cloneIfExists(original, newId);
+  sapience       .cloneIfExists(original, newId);
   senseSight     .cloneIfExists(original, newId);
   spacialMemory  .cloneIfExists(original, newId);
 }
@@ -179,6 +181,7 @@ void ComponentManager::populate(EntityId id, json const& j)
   JSONUtils::doIfPresent(j, "physical",         [this, &id](auto const& value) { physical[id] = value; });
   JSONUtils::doIfPresent(j, "position",         [this, &id](auto const& value) { position[id] = value; });
   JSONUtils::doIfPresent(j, "proper-name",      [this, &id](auto const& value) { properName[id] = value.get<std::string>(); });
+  JSONUtils::doIfPresent(j, "sapience",         [this, &id](auto const& value) { sapience[id] = value; });
   JSONUtils::doIfPresent(j, "sense-sight",      [this, &id](auto const& value) { senseSight[id] = value; });
   JSONUtils::doIfPresent(j, "spacial-memory",   [this, &id](auto const& value) { spacialMemory[id] = value; });
 }
@@ -202,6 +205,7 @@ void from_json(json const& j, ComponentManager& obj)
   JSONUtils::doIfPresent(j, "physical",         [&obj](auto const& value) { obj.physical = value; });
   JSONUtils::doIfPresent(j, "position",         [&obj](auto const& value) { obj.position = value; });
   JSONUtils::doIfPresent(j, "proper-name",      [&obj](auto const& value) { obj.properName = value; });
+  JSONUtils::doIfPresent(j, "sapience",         [&obj](auto const& value) { obj.sapience = value; });
   JSONUtils::doIfPresent(j, "sense-sight",      [&obj](auto const& value) { obj.senseSight = value; });
   JSONUtils::doIfPresent(j, "spacial-memory",   [&obj](auto const& value) { obj.spacialMemory = value; });
 }
@@ -224,6 +228,7 @@ void to_json(json& j, ComponentManager const& obj)
   j["physical"]         = obj.physical;
   j["position"]         = obj.position;
   j["proper-name"]      = obj.properName;
+  j["sapience"]         = obj.sapience;
   j["sense-sight"]      = obj.senseSight;
   j["spacial-memory"]   = obj.spacialMemory;
 }

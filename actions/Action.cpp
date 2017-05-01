@@ -278,7 +278,8 @@ namespace Actions
 
     // Check that we're capable of performing this action at all.
     std::string canVerb{ "can-" + getType() };
-    if (!subjectIsCapable())
+    ReasonBool capable = subjectIsCapable();   
+    if (!capable.value)
     {
       printMessageTry();
       putMsg(makeTr("YOU_ARE_NOT_CAPABLE_OF_VERBING", { getIndefArt(subject->getDisplayName()), subject->getDisplayName() }));
@@ -286,7 +287,8 @@ namespace Actions
     }
 
     // Check that we're capable of performing this action right now.
-    if (!subjectIsCapableNow())
+    ReasonBool capableNow = subjectIsCapableNow();
+    if (!capableNow.value)
     {
       printMessageTry();
       putMsg(makeTr("YOU_CANT_VERB_NOW", { getIndefArt(subject->getDisplayName()), subject->getDisplayName() }));
@@ -523,13 +525,14 @@ namespace Actions
     return result;
   }
 
-  bool Action::subjectIsCapable() const
+  ReasonBool Action::subjectIsCapable() const
   {
-    CLOG(ERROR, "Action") << "Missing subjectIsCapable() implementation for action \"" << m_verb << "\"";
-    return false;
+    std::string reason = "Missing subjectIsCapable() implementation for action \"" + m_verb + "\"";
+    CLOG(ERROR, "Action") << reason;
+    return { false, reason };
   }
 
-  bool Action::subjectIsCapableNow() const
+  ReasonBool Action::subjectIsCapableNow() const
   {
     return subjectIsCapable();
   }

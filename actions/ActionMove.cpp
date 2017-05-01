@@ -19,12 +19,12 @@ namespace Actions
   ActionMove::ActionMove(EntityId subject) : Action(subject, "move", "MOVE") {}
   ActionMove::~ActionMove() {}
 
-  bool ActionMove::subjectIsCapable() const
+  ReasonBool ActionMove::subjectIsCapable() const
   {
     auto subject = getSubject();
-    return
-      (COMPONENTS.mobility.existsFor(subject) &&
-       COMPONENTS.mobility[subject].moveSpeed() > 0);
+    bool isMobile = (COMPONENTS.mobility.existsFor(subject) && COMPONENTS.mobility[subject].moveSpeed() > 0);
+    std::string reason = isMobile ? "" : "YOU_HAVE_NO_WAY_OF_MOVING"; /// @todo Add translation key
+    return { isMobile, reason };      
   }
 
   std::unordered_set<Trait> const & ActionMove::getTraits() const

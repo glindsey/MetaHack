@@ -19,7 +19,7 @@ namespace Actions
     virtual ~ActionWait();
     static ActionWait prototype;
 
-    virtual bool subjectIsCapable() const override;
+    virtual ReasonBool subjectIsCapable() const override;
     virtual std::unordered_set<Trait> const& getTraits() const override;
 
   protected:

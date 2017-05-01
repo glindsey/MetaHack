@@ -77,6 +77,14 @@ namespace Actions
     MemberCount
   };
 
+  /// Struct that contains a true/false value and a reason string.
+  /// If the value is false, the string should contain the reason why.
+  struct ReasonBool
+  {
+    bool value;
+    std::string reason;
+  };
+
   /// Class describing an action to execute.
   class Action
   {
@@ -214,12 +222,12 @@ namespace Actions
     /// Called as part of doPreBeginWork, before the overridable portion is called.
     /// Default implementation returns false and logs a warning about a missing
     /// override of the function.
-    virtual bool subjectIsCapable() const;
+    virtual ReasonBool subjectIsCapable() const;
 
     /// Check if this action can be performed right now by the subject.
     /// Called as part of doPreBeginWork, before the overridable portion is called.
     /// Default implementation just calls `subjectIsCapable()`.
-    virtual bool subjectIsCapableNow() const;
+    virtual ReasonBool subjectIsCapableNow() const;
 
     /// Overridable portion of doPreBeginWork().
     /// @param params Map of parameters for the Action.

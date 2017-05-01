@@ -339,6 +339,7 @@
     <ClInclude Include="components\ComponentPhysical.h" />
     <ClInclude Include="components\ComponentPosition.h" />
     <ClInclude Include="components\ComponentManager.h" />
+    <ClInclude Include="components\ComponentSapience.h" />
     <ClInclude Include="components\ComponentSenseSight.h" />
     <ClInclude Include="components\ComponentSpacialMemory.h" />
     <ClInclude Include="design_patterns\AssertHelper.h" />
@@ -548,6 +549,9 @@
     <ClCompile Include="components\ComponentManager.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">/bigobj %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <ClCompile Include="components\ComponentSapience.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="components\ComponentSenseSight.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>

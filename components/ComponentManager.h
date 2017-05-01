@@ -18,6 +18,7 @@
 #include "components/ComponentOpenable.h"
 #include "components/ComponentPhysical.h"
 #include "components/ComponentPosition.h"
+#include "components/ComponentSapience.h"
 #include "components/ComponentSenseSight.h"
 #include "components/ComponentSpacialMemory.h"
 
@@ -58,6 +59,7 @@ public:
   ComponentMap<ComponentPhysical> physical;
   ComponentMap<ComponentPosition> position;
   ComponentMap<std::string> properName;
+  ComponentMap<ComponentSapience> sapience;
   ComponentMap<ComponentSenseSight> senseSight;
   ComponentMap<ComponentSpacialMemory> spacialMemory;
 };

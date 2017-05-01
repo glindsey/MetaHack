@@ -19,12 +19,12 @@ namespace Actions
   ActionTurn::ActionTurn(EntityId subject) : Action(subject, "turn", "TURN") {}
   ActionTurn::~ActionTurn() {}
 
-  bool ActionTurn::subjectIsCapable() const
+  ReasonBool ActionTurn::subjectIsCapable() const
   {
     auto subject = getSubject();
-    return 
-      (COMPONENTS.mobility.existsFor(subject) &&
-       COMPONENTS.mobility[subject].turnSpeed() > 0);
+    bool isTurnable = (COMPONENTS.mobility.existsFor(subject) && COMPONENTS.mobility[subject].turnSpeed() > 0);
+    std::string reason = isTurnable ? "" : "YOU_HAVE_NO_WAY_OF_TURNING"; ///< @todo Add translation key
+    return { isTurnable, reason };      
   }
 
   std::unordered_set<Trait> const & ActionTurn::getTraits() const

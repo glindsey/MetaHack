@@ -16,9 +16,11 @@ namespace Actions
   ActionDie::ActionDie(EntityId subject) : Action(subject, "die", "DIE") {}
   ActionDie::~ActionDie() {}
 
-  bool ActionDie::subjectIsCapable() const
+  ReasonBool ActionDie::subjectIsCapable() const
   {
-    return COMPONENTS.health.existsFor(getSubject());
+    bool hasHealth = COMPONENTS.health.existsFor(getSubject());
+    std::string reason = hasHealth ? "" : "YOU_ARE_NOT_MORTAL"; ///< @todo Add translation key
+    return { hasHealth, reason };
   }
 
   std::unordered_set<Trait> const & ActionDie::getTraits() const
