@@ -12,9 +12,9 @@ public:
   FileSystemGameRules();
   virtual ~FileSystemGameRules();
 
-  /// Get data for a specific Entity category.
+  /// Get data for a specific Entity category or template.
   /// If it doesn't exist, attempt to load it.
-  json& category(std::string name);
+  json& category(std::string name, bool isTemplate = false);
 
   /// Get reference to game rules data.
   inline json& data()

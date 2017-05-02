@@ -16,7 +16,7 @@ public:
 
   /// Get data for a specific Entity category.
   /// If it doesn't exist, attempt to load it.
-  virtual json& category(std::string name) = 0;
+  virtual json& category(std::string name, bool isTemplate = false) = 0;
 
   /// Get reference to game rules data.
   virtual json& data() = 0;

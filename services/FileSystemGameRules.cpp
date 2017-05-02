@@ -17,9 +17,9 @@ FileSystemGameRules::FileSystemGameRules()
 FileSystemGameRules::~FileSystemGameRules()
 {}
 
-json & FileSystemGameRules::category(std::string name)
+json & FileSystemGameRules::category(std::string name, bool isTemplate)
 {
-  loadCategoryIfNecessary(name);
+  loadCategoryIfNecessary(name, isTemplate);
   return m_data["categories"][name];
 }
 

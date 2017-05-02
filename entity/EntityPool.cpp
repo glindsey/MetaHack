@@ -76,6 +76,35 @@ EntityId EntityPool::clone(EntityId original)
   return EntityId(new_id);
 }
 
+void EntityPool::applyTemplate(EntityId id, std::string categoryTemplate)
+{
+  if (id != EntityId::Mu())
+  {
+    json& data = Service<IGameRules>::get().category(categoryTemplate, true);
+    auto& jsonComponents = data["components"];
+    COMPONENTS.populate(id, jsonComponents);
+  }
+  else
+  {
+    throw std::exception("Attempted to apply a template to Mu object!");
+  }
+}
+
+void EntityPool::morph(EntityId id, std::string category)
+{
+  if (id != EntityId::Mu())
+  {
+    json& data = Service<IGameRules>::get().category(category);
+    auto& jsonComponents = data["components"];
+    COMPONENTS.erase(id);
+    COMPONENTS.populate(id, jsonComponents);
+  }
+  else
+  {
+    throw std::exception("Attempted to morph Mu object!");
+  }
+}
+
 void EntityPool::destroy(EntityId id)
 {
   if (id != EntityId::Mu())
@@ -83,6 +112,7 @@ void EntityPool::destroy(EntityId id)
     if (m_thing_map.count(id) != 0)
     {
       m_thing_map.erase(id);
+      COMPONENTS.erase(id);
     }
   }
   else
