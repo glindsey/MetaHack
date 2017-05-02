@@ -7,9 +7,25 @@
 #include "json.hpp"
 using json = ::nlohmann::json;
 
+#include "entity/EntityId.h"
 #include "types/BodyPart.h"
 
+// Struct that pairs a bodypart with the number of the bodypart that it is.
+struct BodyPartPair
+{
+  BodyPart part;
+  size_t number;
+
+  friend bool operator<(BodyPartPair const& first, BodyPartPair const& second)
+  {
+    return (first.part != second.part) ? 
+      (static_cast<unsigned int>(first.part) < static_cast<unsigned int>(second.part)) :
+      (first.number < second.number);
+  }
+};
+
 /// Component that indicates that an entity has multiple bodyparts.
+/// Also deals with assigning wielded/worn items to bodyparts.
 class ComponentBodyparts
 {
 public:
@@ -43,4 +59,11 @@ private:
 
   /// Array of bitsets for bodypart counts.
   std::array<boost::dynamic_bitset<size_t>, static_cast<size_t>(BodyPart::MemberCount)> m_bodypartExistence;
+
+  /// Map of items worn on bodyparts.
+  std::map<BodyPartPair, EntityId> m_wornItems;
+
+  /// Map of items wielded by bodyparts.
+  std::map<BodyPartPair, EntityId> m_wieldedItems;
+
 };
