@@ -38,6 +38,8 @@ public:
 
   void clone(EntityId original, EntityId newId);
 
+  void erase(EntityId id);
+
   void populate(EntityId newId, json const& jsonComponents);
 
   friend void from_json(json const& j, ComponentManager& obj);

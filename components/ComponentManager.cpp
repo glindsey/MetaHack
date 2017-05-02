@@ -164,6 +164,31 @@ void ComponentManager::clone(EntityId original, EntityId newId)
   spacialMemory  .cloneIfExists(original, newId);
 }
 
+void ComponentManager::erase(EntityId id)
+{
+  appearance     .remove(id);
+  bodyparts      .remove(id);
+  busyCounter    .remove(id);
+  category       .remove(id);
+  digestiveSystem.remove(id);
+  gender         .remove(id);
+  health         .remove(id);
+  inventory      .remove(id);
+  lightSource    .remove(id);
+  lockable       .remove(id);
+  magicalBinding .remove(id);
+  materialFlags  .remove(id);
+  matterState    .remove(id);
+  mobility       .remove(id);
+  openable       .remove(id);
+  physical       .remove(id);
+  position       .remove(id);
+  properName     .remove(id);
+  sapience       .remove(id);
+  senseSight     .remove(id);
+  spacialMemory  .remove(id);
+}
+
 void ComponentManager::populate(EntityId id, json const& j)
 {
   JSONUtils::doIfPresent(j, "appearance",       [this, &id](auto const& value) { appearance[id] = value; });
