@@ -45,7 +45,7 @@ public:
   std::string getTileType() const;
 
   /// Returns whether a tile is empty space, e.g. no wall in the way.
-  bool isEmptySpace() const;
+  bool isPassable() const;
 
   /// Returns whether a tile can be traversed by a certain DynamicEntity.
   bool canBeTraversedBy(EntityId entity) const;

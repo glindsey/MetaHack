@@ -34,6 +34,7 @@ bleed
 boil        temperature(hot)                      | physical(liquid)                    | result is vapor, possible explosions
 burn        temperature(hot)                      | physical(solid/liquid), oxidizable  | result is ash/smoke/char?
 collide     physical(solid)                       | physical(solid)                     | adjacent/same locations
+condense    temperature(cold)                     | physical(gaseous)                   | result is a liquid
 die         *health                               | n/a                                 |
 dry                                               | physical(solid), wet                |
 freeze      temperature(cold)                     | physical(liquid)                    | result is a solid

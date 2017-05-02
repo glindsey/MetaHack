@@ -76,7 +76,7 @@ MapCorridor::MapCorridor(Map& m, PropertyDictionary const& s, GeoVector vec)
       okay = does_box_pass_criterion(
       { xMin - 1, yMin - 1 },
       { xMax + 1, yMax + 1 },
-                                     [&](MapTile& tile) { return !tile.isEmptySpace(); });
+                                     [&](MapTile& tile) { return !tile.isPassable(); });
 
       if (okay)
       {
@@ -142,7 +142,7 @@ MapCorridor::MapCorridor(Map& m, PropertyDictionary const& s, GeoVector vec)
         if (getMap().isInBounds(checkCoords))
         {
           auto& checkTile = getMap().getTile(checkCoords);
-          if (checkTile.isEmptySpace())
+          if (checkTile.isPassable())
           {
             /// @todo Do a throw to see if it opens up. Right now it always does.
             auto& endTile = getMap().getTile(m_endingCoords);

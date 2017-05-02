@@ -79,7 +79,7 @@ MapDonutRoom::MapDonutRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
 
       okay = does_box_pass_criterion({ rect.left - 1, rect.top - 1 },
       { rect.left + rect.width, rect.top + rect.height },
-                                     [&](MapTile& tile) { return !tile.isEmptySpace(); });
+                                     [&](MapTile& tile) { return !tile.isPassable(); });
 
       // Create the hole location.
       sf::IntRect hole;

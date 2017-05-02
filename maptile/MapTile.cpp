@@ -42,22 +42,36 @@ std::string MapTile::getTileType() const
   return m_category;
 }
 
-bool MapTile::isEmptySpace() const
+bool MapTile::isPassable() const
 {
   auto& category = getCategoryData();
   Assert("Map",
-         category.count("components") > 0 && category["components"].is_object() &&
-         category["components"].count("physical") > 0 && category["components"]["physical"].is_object(),
+         category.count("components") > 0 && category["components"].is_object(),
+         "MapTile is missing components");
+
+  auto& components = category["components"];
+  Assert("Map",
+         components.count("physical") > 0 && components["physical"].is_object(),
          "MapTile is missing \"physical\" component");
 
-  return (category["components"]["physical"].value("volume", 0) < ComponentPhysical::VOLUME_MAX_CC);  
+  // If the tile has a MatterState component and is non-solid, return true.
+  // A tile containing a liquid/gas/plasma/etc. is passable. It may kill you,
+  // but technically it's passable. ;)
+  if (components.count("matter-state") > 0 && 
+    components["matter-state"].get<std::string>().find("solid") == std::string::npos)
+  {
+    return true;
+  }
+
+  // Return whether the volume of the tile fills the entire tile.
+  return (components["physical"].value("volume", 0) < ComponentPhysical::VOLUME_MAX_CC);
 }
 
 /// @todo: Implement this to cover different entity types.
 ///        For example, a non-corporeal DynamicEntity can move through solid matter.
 bool MapTile::canBeTraversedBy(EntityId entity) const
 {
-  return isEmptySpace();
+  return isPassable();
 }
 
 void MapTile::setCoords(IntVec2 coords)

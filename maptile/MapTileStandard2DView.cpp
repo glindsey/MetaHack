@@ -57,15 +57,15 @@ void MapTileStandard2DView::add_tile_vertices(EntityId viewer,
   auto& x = coords.x;
   auto& y = coords.y;
 
-  bool this_is_empty = tile.isEmptySpace();
-  bool nw_is_empty = (viewer->canSee({ x - 1, y - 1 }) && tile.getAdjacentTile(Direction::Northwest).isEmptySpace());
-  bool n_is_empty = (viewer->canSee({ x, y - 1 }) && tile.getAdjacentTile(Direction::North).isEmptySpace());
-  bool ne_is_empty = (viewer->canSee({ x + 1, y - 1 }) && tile.getAdjacentTile(Direction::Northeast).isEmptySpace());
-  bool e_is_empty = (viewer->canSee({ x + 1, y }) && tile.getAdjacentTile(Direction::East).isEmptySpace());
-  bool se_is_empty = (viewer->canSee({ x + 1, y + 1 }) && tile.getAdjacentTile(Direction::Southeast).isEmptySpace());
-  bool s_is_empty = (viewer->canSee({ x, y + 1 }) && tile.getAdjacentTile(Direction::South).isEmptySpace());
-  bool sw_is_empty = (viewer->canSee({ x - 1, y + 1 }) && tile.getAdjacentTile(Direction::Southwest).isEmptySpace());
-  bool w_is_empty = (viewer->canSee({ x - 1, y }) && tile.getAdjacentTile(Direction::West).isEmptySpace());
+  bool this_is_empty = tile.isPassable();
+  bool nw_is_empty = (viewer->canSee({ x - 1, y - 1 }) && tile.getAdjacentTile(Direction::Northwest).isPassable());
+  bool n_is_empty = (viewer->canSee({ x, y - 1 }) && tile.getAdjacentTile(Direction::North).isPassable());
+  bool ne_is_empty = (viewer->canSee({ x + 1, y - 1 }) && tile.getAdjacentTile(Direction::Northeast).isPassable());
+  bool e_is_empty = (viewer->canSee({ x + 1, y }) && tile.getAdjacentTile(Direction::East).isPassable());
+  bool se_is_empty = (viewer->canSee({ x + 1, y + 1 }) && tile.getAdjacentTile(Direction::Southeast).isPassable());
+  bool s_is_empty = (viewer->canSee({ x, y + 1 }) && tile.getAdjacentTile(Direction::South).isPassable());
+  bool sw_is_empty = (viewer->canSee({ x - 1, y + 1 }) && tile.getAdjacentTile(Direction::Southwest).isPassable());
+  bool w_is_empty = (viewer->canSee({ x - 1, y }) && tile.getAdjacentTile(Direction::West).isPassable());
 
   if (viewer->canSee(coords))
   {

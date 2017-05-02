@@ -108,11 +108,11 @@ MapLRoom::MapLRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
       // Verify that both boxes and surrounding area are solid walls.
       okay = does_box_pass_criterion({ vert_rect.left - 1, vert_rect.top - 1 },
       { vert_rect.left + vert_rect.width, vert_rect.top + vert_rect.height },
-                                     [&](MapTile& tile) { return !tile.isEmptySpace(); });
+                                     [&](MapTile& tile) { return !tile.isPassable(); });
 
       okay &= does_box_pass_criterion({ horiz_rect.left - 1, horiz_rect.top - 1 },
       { horiz_rect.left + horiz_rect.width, horiz_rect.top + horiz_rect.height },
-                                      [&](MapTile& tile) { return !tile.isEmptySpace(); });
+                                      [&](MapTile& tile) { return !tile.isPassable(); });
 
       if (okay)
       {
