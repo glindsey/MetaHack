@@ -30,7 +30,6 @@ namespace Actions
     {
       Trait::CanBeSubjectVerbObject,
       Trait::CanTakeAQuantity,
-      Trait::ObjectMustBeMovableBySubject,
       Trait::ObjectMustNotBeInInventory
     };
 

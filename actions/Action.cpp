@@ -499,23 +499,12 @@ namespace Actions
           }
         }
 
-        if (hasTrait(Trait::ObjectMustBeMovableBySubject))
-        {
-          // Check to see if we can move the object.
-          if (!object->canHaveActionDoneBy(subject, ActionMove::prototype))
-          {
-            printMessageTry();
-
-            putTr("YOU_CANT_MOVE_THE_FOO");
-            return StateResult::Failure();
-          }
-        }
-
         // Check that we can perform this Action on this object.
-        if (!object->canHaveActionDoneBy(subject, *this))
+        ReasonBool allowedNow = objectIsAllowedNow();
+        if (!allowedNow.value)
         {
           printMessageTry();
-          printMessageCant();
+          printMessageCant(); ///< @todo Add the reason why here
           return StateResult::Failure();
         }
       }
@@ -553,6 +542,18 @@ namespace Actions
   ReasonBool Action::subjectIsCapableNow() const
   {
     return subjectIsCapable();
+  }
+
+  ReasonBool Action::objectIsAllowed() const
+  {
+    std::string reason = "Missing objectIsAllowed() implementation for action \"" + m_verb + "\"";
+    CLOG(ERROR, "Action") << reason;
+    return { false, reason };
+  }
+
+  ReasonBool Action::objectIsAllowedNow() const
+  {
+    return objectIsAllowed();
   }
 
   StateResult Action::doPreBeginWorkNVI(AnyMap& params)

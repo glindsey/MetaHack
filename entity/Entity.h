@@ -240,22 +240,6 @@ public:
   /// overridden.
   std::string getBodypartDescription(BodyLocation location);
 
-  /// Returns true if this Entity can be the object of a particular Action.
-  /// @param action Reference to the Action to perform.
-  /// @return true if the Action can be performed, false otherwise.
-  bool canBeObjectOfAction(Actions::Action& action);
-  bool canBeObjectOfAction(std::string action);
-
-  /// Returns true if a particular Action can be performed on this Entity by
-  /// the specified Entity.
-  /// Calls canBeObjectOfAction first to see if the action can be performed
-  /// on this Entity at all.
-  /// @param entity  The Entity doing the Action.
-  /// @param action Reference to the Action to perform.
-  /// @return true if the Action can be performed, false otherwise.
-  bool canHaveActionDoneBy(EntityId entity, Actions::Action& action);
-  bool canHaveActionDoneBy(EntityId entity, std::string action);
-
   /// Returns true if this entity is inside another Entity.
   bool isInsideAnotherEntity() const;
 
@@ -390,10 +374,6 @@ public:
 
   /// Attempt to move this Entity into a location.
   bool moveInto(EntityId new_location);
-
-  /// Return whether or not this entity can be mixed with another Entity.
-  /// The default behavior for this is to return false.
-  bool is_miscible_with(EntityId entity);
 
   /// Return the body part this entity is equippable on.
   /// If entity is not equippable, return BodyPart::Count.

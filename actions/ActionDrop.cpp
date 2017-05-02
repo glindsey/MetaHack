@@ -31,8 +31,7 @@ namespace Actions
       Trait::CanTakeAQuantity,
       Trait::ObjectMustNotBeWielded,
       Trait::ObjectMustNotBeWorn,
-      Trait::ObjectMustBeInInventory,
-      Trait::ObjectMustBeMovableBySubject
+      Trait::ObjectMustBeInInventory
     };
 
     return traits;

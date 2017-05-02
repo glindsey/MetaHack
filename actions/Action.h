@@ -69,7 +69,6 @@ namespace Actions
     ObjectCanBeOutOfReach,
     ObjectCanBeSelf,
     ObjectMustBeEmpty,
-    ObjectMustBeMovableBySubject,
     ObjectMustBeInInventory,
     ObjectMustNotBeEmpty,
     ObjectMustNotBeInInventory,
@@ -228,6 +227,17 @@ namespace Actions
     /// Called as part of doPreBeginWork, before the overridable portion is called.
     /// Default implementation just calls `subjectIsCapable()`.
     virtual ReasonBool subjectIsCapableNow() const;
+
+    /// Check if this action can be performed at all on the object.
+    /// Called as part of doPreBeginWork, before the overridable portion is called.
+    /// Default implementation returns false and logs a warning about a missing
+    /// override of the function.
+    virtual ReasonBool objectIsAllowed() const;
+
+    /// Check if this action can be performed right now on the object.
+    /// Called as part of doPreBeginWork, before the overridable portion is called.
+    /// Default implementation just calls `objectIsAllowed()`.
+    virtual ReasonBool objectIsAllowedNow() const;
 
     /// Overridable portion of doPreBeginWork().
     /// @param params Map of parameters for the Action.
