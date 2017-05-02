@@ -5,6 +5,7 @@
 
 #include "lua/LuaObject.h"
 #include "map/Map.h"
+#include "properties/PropertyDictionary.h"
 
 // Forward declarations
 struct GeoVector;

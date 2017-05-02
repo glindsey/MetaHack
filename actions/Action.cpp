@@ -93,20 +93,19 @@ namespace Actions
   bool Action::process(AnyMap params)
   {
     auto subject = getSubject();
+    auto& busyCounter = COMPONENTS.busyCounter[subject];
 
     // If entity is currently busy, decrement by one and return.
-    int counter_busy = subject->getBaseProperty("counter-busy", 0);
-    if (counter_busy > 0)
+    if (busyCounter > 0)
     {
-      subject->addToBaseProperty("counter-busy", -1);
+      --busyCounter;
       return false;
     }
 
     // Continue running through states until the event is processed, or the
     // target actor is busy.
-    while ((m_state != State::Processed) && (counter_busy == 0))
+    while ((m_state != State::Processed) && (busyCounter == 0))
     {
-      counter_busy = subject->getBaseProperty("counter-busy", 0);
       StateResult result{ false, 0 };
 
       CLOG(TRACE, "Action") << "Entity #" <<
@@ -123,13 +122,13 @@ namespace Actions
           if (result.success)
           {
             // Update the busy counter.
-            m_subject->setBaseProperty("counter-busy", result.elapsed_time);
+            busyCounter += result.elapsed_time;
             setState(State::PreBegin);
           }
           else
           {
             // Clear the busy counter.
-            m_subject->setBaseProperty("counter-busy", 0);
+            busyCounter = 0;
             setState(State::PostFinish);
           }
           break;
@@ -142,13 +141,13 @@ namespace Actions
           if (result.success)
           {
             // Update the busy counter.
-            m_subject->setBaseProperty("counter-busy", result.elapsed_time);
+            busyCounter += result.elapsed_time;
             setState(State::InProgress);
           }
           else
           {
             // Clear the busy counter.
-            m_subject->setBaseProperty("counter-busy", 0);
+            busyCounter = 0;
             setState(State::PostFinish);
           }
           break;
@@ -156,14 +155,14 @@ namespace Actions
         case State::InProgress:
           result = doFinishWork(params);
 
-          m_subject->setBaseProperty("counter-busy", result.elapsed_time);
+          busyCounter += result.elapsed_time;
           setState(State::PostFinish);
           break;
 
         case State::Interrupted:
           result = doAbortWork(params);
 
-          m_subject->addToBaseProperty("counter-busy", result.elapsed_time);
+          busyCounter += result.elapsed_time;
           setState(State::PostFinish);
           break;
 
@@ -381,13 +380,13 @@ namespace Actions
         if (hasTrait(Trait::ObjectMustBeLiquidCarrier))
         {
           // Check that both are liquid containers.
-          /// @todo Do something better here.
-          if (!object->getBaseProperty("liquid_carrier", false))
-          {
-            printMessageTry();
-            putTr("THE_FOO_IS_NOT_A_LIQUID_CARRIER");
-            return StateResult::Failure();
-          }
+          /// @todo Re-implement me. Do something better here.
+          //if (!object->getBaseProperty("liquid_carrier", false))
+          //{
+          //  printMessageTry();
+          //  putTr("THE_FOO_IS_NOT_A_LIQUID_CARRIER");
+          //  return StateResult::Failure();
+          //}
         }
 
         if (hasTrait(Trait::ObjectMustNotBeEmpty))

@@ -11,7 +11,6 @@
 #include "types/MapMemoryChunk.h"
 #include "map/MapMemory.h"
 #include "maptile/MapTile.h"
-#include "properties/ModifiablePropertyDictionary.h"
 #include "Subject.h"
 #include "entity/EntityId.h"
 #include "entity/EntityPool.h"
@@ -141,55 +140,6 @@ public:
   /// @param[in] entity Entity to check
   /// @return true if the Entity is at the same place or adjacent to this DynamicEntity, false otherwise.
   bool isAdjacentTo(EntityId entity);
-
-  /// Get a base property of this Entity.
-  /// If the base property is not found, the method falls back upon the
-  /// intrinsic for that property. If IT is missing, it falls back to the
-  /// default value.
-  /// @param key            Name of the property to get.
-  /// @param default_value  Default value to use.
-  /// @return The property (or default) value for that key.
-  json getBaseProperty(std::string key, json default_value) const;
-
-  /// Sets a base property of this Entity.
-  /// If the base property is not found, it is created.
-  ///
-  /// @param key    Key of the property to set.
-  /// @param value  Value to set the property to.
-  /// @return Boolean indicating whether the property previously existed.
-  bool setBaseProperty(std::string key, json value);
-
-  /// Adds to a base property of this Entity.
-  /// If the base property is not found, it is created.
-  /// @param key    Key of the property to set.
-  /// @param value  Value to add to the property.
-  void addToBaseProperty(std::string key, json add_value);
-
-  /// Get a modified property of this Entity.
-  /// If the modified property is not found, the method falls back upon the
-  /// base value for that property (if any).
-  /// @param key            Name of the property to get.
-
-  /// @param default_value  Default value to use, if any.
-  /// @return The modified (or base) property value for that key.
-  json getModifiedProperty(std::string key, json default_value) const;
-
-  /// Add a property modifier to this Entity.
-  /// @param  key   Name of property to modify.
-  /// @param  id    ID of Entity that is responsible for modifying it.
-  /// @param  info  Info for this modifier, as a PropertyModifierInfo struct.
-  ///
-  /// @see ModifiablePropertyDictionary::addModifier
-  ///
-  /// @return True if the function was added; false if it already existed.
-  bool addModifier(std::string key, EntityId id, PropertyModifierInfo const& info);
-
-  /// Remove all modifier functions for a given key and entity ID.
-  /// @param  key               Name of property to modify.
-  /// @param  id                ID of Entity that is responsible for modifying it.
-  ///
-  /// @return The number of modifiers erased.
-  size_t removeModifier(std::string key, EntityId id);
 
   /// Return a reference to this entity.
   EntityId getId() const;
@@ -499,11 +449,6 @@ protected:
 private:
   /// Reference to game state.
   GameState& m_state;
-
-  /// Property dictionary.
-  /// Defined as mutable, because a "get" method can cache a default value
-  /// for a key if one doesn't already exist.
-  ModifiablePropertyDictionary mutable m_properties;
 
   /// Reference to this Entity.
   EntityId m_id;

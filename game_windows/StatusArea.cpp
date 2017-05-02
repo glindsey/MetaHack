@@ -133,8 +133,8 @@ void StatusArea::render_attribute(sf::RenderTarget& target,
   render_text.setString(abbrev + ":");
   target.draw(render_text);
 
-  /// @todo handle other types
-  std::string attr_string = std::to_string((player->getModifiedProperty(key, 0)).get<int>());
+  /// @todo reimplement me
+  std::string attr_string = "TODO"; // std::to_string((player->getModifiedProperty(key, 0)).get<int>());
 
   render_text.setColor(text_color);
   render_text.setPosition(location.x + 40, location.y);

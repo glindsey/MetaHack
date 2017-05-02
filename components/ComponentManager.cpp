@@ -91,6 +91,14 @@ int LUA_is_lit(lua_State* L)
   });
 }
 
+int LUA_set_lit(lua_State* L)
+{
+  return LUA_setBool(L, [&](EntityId entity, bool value) -> void
+  {
+    if (COMPONENTS.lightSource.existsFor(entity)) COMPONENTS.lightSource[entity].lit() = value;
+  });
+}
+
 ComponentManager::ComponentManager()
 {
   initialize();
@@ -137,6 +145,7 @@ void ComponentManager::initialize()
   the_lua_instance.register_function("get_quantity", LUA_get_quantity);
   the_lua_instance.register_function("get_volume", LUA_get_volume);
   the_lua_instance.register_function("is_lit", LUA_is_lit);
+  the_lua_instance.register_function("set_lit", LUA_set_lit);
 }
 
 void ComponentManager::clone(EntityId original, EntityId newId)

@@ -41,7 +41,6 @@
 #include "actions/ActionHurl.h"
 #include "actions/ActionInscribe.h"
 #include "actions/ActionLock.h"
-#include "actions/ActionMix.h"
 #include "actions/ActionMove.h"
 #include "actions/ActionOpen.h"
 #include "actions/ActionPutInto.h"
@@ -712,24 +711,24 @@ bool AppStateGameMode::handle_key_press(App::EventKeyPressed const& key)
             return false;
 
             // CTRL-M -- mix items
-          case sf::Keyboard::Key::M:
-            if (entities.size() == 0)
-            {
-              putMsg(StringTransforms::makeString(player, EntityId::Mu(), tr("CHOOSE_TWO_ITEMS_FIRST"), { tr("VERB_MIX_2") }));
-            }
-            else if (entities.size() != 2)
-            {
-              putMsg(StringTransforms::makeString(player, EntityId::Mu(), tr("CHOOSE_EXACTLY_TWO_AT_A_TIME"), { tr("VERB_MIX_2") }));
-            }
-            else
-            {
-              p_action.reset(new Actions::ActionMix(player));
-              p_action->setObjects(entities);
-              player->queueAction(std::move(p_action));
-              m_inventoryAreaShowsPlayer = false;
-              resetInventorySelection();
-            }
-            return false;
+          //case sf::Keyboard::Key::M:
+          //  if (entities.size() == 0)
+          //  {
+          //    putMsg(StringTransforms::makeString(player, EntityId::Mu(), tr("CHOOSE_TWO_ITEMS_FIRST"), { tr("VERB_MIX_2") }));
+          //  }
+          //  else if (entities.size() != 2)
+          //  {
+          //    putMsg(StringTransforms::makeString(player, EntityId::Mu(), tr("CHOOSE_EXACTLY_TWO_AT_A_TIME"), { tr("VERB_MIX_2") }));
+          //  }
+          //  else
+          //  {
+          //    p_action.reset(new Actions::ActionMix(player));
+          //    p_action->setObjects(entities);
+          //    player->queueAction(std::move(p_action));
+          //    m_inventoryAreaShowsPlayer = false;
+          //    resetInventorySelection();
+          //  }
+          //  return false;
 
           case sf::Keyboard::Key::O:    // Open
             if (entities.size() == 0)

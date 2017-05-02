@@ -7,15 +7,8 @@ end
 
 function LightSource_on_object_of_use(object, subject)
     local name = thing_get_intrinsic(object, "name")
-    local is_lit = thing_get_modified_property(object, "lit")
+    local lit = is_lit(id)
     is_lit = not is_lit
-    if is_lit then
-        messageLog_add("You light the " .. name .. ".")
-        thing_add_property_modifier(subject, "attribute_strength", object)
-    else
-        messageLog_add("You extinguish the " .. name .. ".")
-        thing_remove_property_modifier(subject, "attribute_strength", object)
-    end
-    thing_set_base_property(object, "lit", is_lit, LuaType.Boolean)
+    set_lit(object, is_lit)
     return true, LuaType.Boolean
 end

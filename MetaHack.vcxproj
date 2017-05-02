@@ -309,7 +309,6 @@
     <ClInclude Include="actions\ActionHurl.h" />
     <ClInclude Include="actions\ActionInscribe.h" />
     <ClInclude Include="actions\ActionLock.h" />
-    <ClInclude Include="actions\ActionMix.h" />
     <ClInclude Include="actions\ActionMove.h" />
     <ClInclude Include="actions\ActionOpen.h" />
     <ClInclude Include="actions\ActionPutInto.h" />
@@ -398,7 +397,6 @@
     <ClInclude Include="maptile\MapTileStandard2DView.h" />
     <ClInclude Include="maptile\MapTileView.h" />
     <ClInclude Include="map\MapView.h" />
-    <ClInclude Include="properties\ModifiablePropertyDictionary.h" />
     <ClInclude Include="services\NullGraphicViews.h" />
     <ClInclude Include="keybuffer\NullKeyBuffer.h" />
     <ClInclude Include="services\NullMessageLog.h" />
@@ -468,7 +466,6 @@
     <ClCompile Include="actions\ActionHurl.cpp" />
     <ClCompile Include="actions\ActionInscribe.cpp" />
     <ClCompile Include="actions\ActionLock.cpp" />
-    <ClCompile Include="actions\ActionMix.cpp" />
     <ClCompile Include="actions\ActionMove.cpp" />
     <ClCompile Include="actions\ActionOpen.cpp" />
     <ClCompile Include="actions\ActionPutInto.cpp" />
@@ -630,7 +627,6 @@
     <ClCompile Include="map\MapView.cpp" />
     <ClCompile Include="services\MessageLog.cpp" />
     <ClCompile Include="game_windows\MessageLogView.cpp" />
-    <ClCompile Include="properties\ModifiablePropertyDictionary.cpp" />
     <ClCompile Include="properties\PropertyDictionary.cpp" />
     <ClCompile Include="services\Standard2DGraphicViews.cpp" />
     <ClCompile Include="state_machine\State.cpp" />

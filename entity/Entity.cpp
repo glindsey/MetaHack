@@ -40,7 +40,6 @@ json const& Entity::getCategoryData() const
 Entity::Entity(GameState& state, std::string category, EntityId id) :
   Subject(),
   m_state{ state },
-  m_properties{ id },
   m_id{ id },
   m_pending_involuntary_actions{ ActionQueue() },
   m_pending_voluntary_actions{ ActionQueue() },
@@ -53,7 +52,6 @@ Entity::Entity(GameState& state, std::string category, EntityId id) :
 Entity::Entity(Entity const& original, EntityId ref) :
   Subject(),
   m_state{ original.m_state },
-  m_properties{ original.m_properties },
   m_id{ ref },
   m_pending_involuntary_actions{ ActionQueue() },     // don't copy
   m_pending_voluntary_actions{ ActionQueue() },     // don't copy
@@ -121,7 +119,7 @@ bool Entity::involuntaryActionIsPending() const
 
 bool Entity::actionIsInProgress()
 {
-  return (getBaseProperty("counter-busy", 0).get<int>() > 0);
+  return (COMPONENTS.busyCounter[m_id] > 0);
 }
 
 void Entity::clearAllPendingActions()
@@ -358,77 +356,6 @@ std::string Entity::getBodypartPlural(BodyPart part) const
 bool Entity::isPlayer() const
 {
   return (GAME.getPlayer() == m_id);
-}
-
-json Entity::getBaseProperty(std::string key, json default_value) const
-{
-  if (m_properties.contains(key))
-  {
-    return m_properties.get(key);
-  }
-  else
-  {
-    auto value = getCategoryData().value(key, default_value);
-    m_properties.set(key, value);
-    return value;
-  }
-}
-
-bool Entity::setBaseProperty(std::string key, json value)
-{
-  bool existed = m_properties.contains(key);
-  m_properties.set(key, value);
-
-  return existed;
-}
-
-void Entity::addToBaseProperty(std::string key, json add_value)
-{
-  json existing_value = m_properties.get(key);
-  if (existing_value.is_number_float())
-  {
-    m_properties.set(key, existing_value.get<double>() + add_value.get<double>());
-  }
-  else if (existing_value.is_number_integer())
-  {
-    if (existing_value.is_number_unsigned())
-    {
-      m_properties.set(key, existing_value.get<unsigned int>() + add_value.get<unsigned int>());
-    }
-    else
-    {
-      m_properties.set(key, existing_value.get<int>() + add_value.get<int>());
-    }
-  }
-  else if (existing_value.is_string())
-  {
-    m_properties.set(key, existing_value.get<std::string>() + add_value.get<std::string>());
-  }
-  else
-  {
-    Assert("Entity", false, "Attempted to add to non-addable property \"" << key << "\"");
-  }
-}
-
-json Entity::getModifiedProperty(std::string key, json default_value) const
-{
-  if (!m_properties.contains(key))
-  {
-    json value = getCategoryData().value(key, default_value);
-    m_properties.set(key, value);
-  }
-
-  return m_properties.get_modified(key);
-}
-
-bool Entity::addModifier(std::string key, EntityId id, PropertyModifierInfo const& info)
-{
-  return m_properties.addModifier(key, id, info);
-}
-
-size_t Entity::removeModifier(std::string key, EntityId id)
-{
-  return m_properties.removeModifier(key, id);
 }
 
 EntityId Entity::getId() const
@@ -1284,17 +1211,11 @@ bool Entity::can_merge_with(EntityId other) const
   }
 
   // If the entities have the exact same properties, merge is okay.
-  /// @todo Handle default properties. Right now, if a property was
-  ///       queried on a Entity and pulls the default, but it was NOT queried
-  ///       on the second entity, the property dictionaries will NOT match.
-  ///       I have not yet found a good solution to this problem.
-  auto& our_properties = this->m_properties;
-  auto& other_properties = other->m_properties;
-
-  if ((this->m_properties) == (other->m_properties))
-  {
-    return true;
-  }
+  /// @todo Re-implement this to check entity components.
+  //if (this and other components match)
+  //{
+  //  return true;
+  //}
 
   return false;
 }
@@ -1341,7 +1262,6 @@ std::unordered_set<EventID> Entity::registeredEvents() const
 
 bool Entity::_process_own_involuntary_actions()
 {
-  int counter_busy = getBaseProperty("counter-busy", 0);
   bool entity_updated = false;
 
   // Is this an entity that is now dead?
@@ -1394,7 +1314,7 @@ bool Entity::_process_own_involuntary_actions()
 
 bool Entity::_process_own_voluntary_actions()
 {
-  int counter_busy = getBaseProperty("counter-busy", 0);
+  auto& busyCounter = COMPONENTS.busyCounter[m_id];
 
   // Is this an entity that is now dead?
   if (COMPONENTS.health.existsFor(m_id) &&
@@ -1411,10 +1331,10 @@ bool Entity::_process_own_voluntary_actions()
   }
 
   // If this entity is busy...
-  if (counter_busy > 0)
+  if (busyCounter > 0)
   {
     // Decrement busy counter.
-    addToBaseProperty("counter-busy", -1);
+    --busyCounter;
   }
   // Otherwise if there are pending actions...
   else if (!m_pending_voluntary_actions.empty())
@@ -1422,7 +1342,7 @@ bool Entity::_process_own_voluntary_actions()
     bool entity_updated = false;
 
     // While actions are pending and we're not busy...
-    while (!m_pending_voluntary_actions.empty() && counter_busy == 0)
+    while (!m_pending_voluntary_actions.empty() && busyCounter == 0)
     {
       // Process the front action.
       // @todo Find a way to update the entity_updated variable.

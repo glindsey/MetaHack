@@ -165,42 +165,6 @@ namespace LuaEntityFunctions
     return 1;
   }
 
-  int thing_get_base_property(lua_State* L)
-  {
-    int num_args = lua_gettop(L);
-
-    if (num_args != 2)
-    {
-      CLOG(WARNING, "Lua") << "expected 2 arguments, got " << num_args;
-      return 0;
-    }
-
-    EntityId entity = EntityId(lua_tointeger(L, 1));
-    const char* key = lua_tostring(L, 2);
-    auto result = entity->getBaseProperty(key, json());
-    auto slot_count = the_lua_instance.push_value(result);
-
-    return slot_count;
-  }
-
-  int thing_get_modified_property(lua_State* L)
-  {
-    int num_args = lua_gettop(L);
-
-    if (num_args != 2)
-    {
-      CLOG(WARNING, "Lua") << "expected 2 arguments, got " << num_args;
-      return 0;
-    }
-
-    EntityId entity = EntityId(lua_tointeger(L, 1));
-    const char* key = lua_tostring(L, 2);
-    auto result = entity->getModifiedProperty(key, json());
-    auto slot_count = the_lua_instance.push_value(result);
-
-    return slot_count;
-  }
-
   int thing_get_intrinsic(lua_State* L)
   {
     int num_args = lua_gettop(L);
@@ -213,7 +177,7 @@ namespace LuaEntityFunctions
 
     EntityId entity = EntityId(lua_tointeger(L, 1));
     const char* key = lua_tostring(L, 2);
-    auto result = entity->getBaseProperty(key, json());
+    auto result = Service<IGameRules>::get().category(COMPONENTS.category[entity]).value(key, json());
     auto slot_count = the_lua_instance.push_value(result);
 
     return slot_count;
@@ -333,29 +297,7 @@ namespace LuaEntityFunctions
 
     return 1;
   }
-
-  int thing_set_base_property(lua_State* L)
-  {
-    int num_args = lua_gettop(L);
-
-    if (num_args < 4)
-    {
-      CLOG(WARNING, "Lua") << "expected >= 4 arguments, got %d" << num_args;
-      return 0;
-    }
-
-    auto entity = EntityId(lua_tointeger(L, 1));
-    auto key = std::string(lua_tostring(L, 2));
-    auto type = the_lua_instance.pop_type();
-    auto value = the_lua_instance.pop_value(type);
-
-    CLOG(TRACE, "Lua") << "Setting property " << key << 
-      " of entity " << entity << " to " << value;
-    entity->setBaseProperty(key, value);
-
-    return 0;
-  }
-    
+   
   int thing_move_into(lua_State* L)
   {
     int num_args = lua_gettop(L);
@@ -376,51 +318,6 @@ namespace LuaEntityFunctions
     return 1;
   }
 
-  int thing_add_property_modifier(lua_State* L)
-  {
-    int num_args = lua_gettop(L);
-    bool result = false;
-
-    if ((num_args < 3) || (num_args > 4))
-    {
-      CLOG(WARNING, "Lua") << "expected 3 or 4 arguments, got " << num_args;
-      return 0;
-    }
-
-    EntityId thing_being_modified = EntityId(lua_tointeger(L, 1));
-    std::string key = lua_tostring(L, 2);
-    EntityId thing_doing_the_modifying = EntityId(lua_tointeger(L, 3));
-    unsigned int expires_at = (num_args == 4) ? static_cast<unsigned int>(lua_tointeger(L, 4)) : 0;
-
-    /// @todo FIX ME
-    //result = thing_being_modified->addModifier(key, thing_doing_the_modifying, ElapsedTime(expires_at));
-
-    lua_pushboolean(L, static_cast<int>(result));
-
-    return 1;
-  }
-
-  int thing_remove_property_modifier(lua_State* L)
-  {
-    int num_args = lua_gettop(L);
-
-    if (num_args != 3)
-    {
-      CLOG(WARNING, "Lua") << "expected 3 arguments, got " << num_args;
-      return 0;
-    }
-
-    EntityId thing_being_modified = EntityId(lua_tointeger(L, 1));
-    std::string key = lua_tostring(L, 2);
-    EntityId thing_doing_the_modifying = EntityId(lua_tointeger(L, 3));
-
-    size_t result = thing_being_modified->removeModifier(key, thing_doing_the_modifying);
-
-    lua_pushinteger(L, static_cast<lua_Integer>(result));
-
-    return 1;
-  }
-
   void registerFunctions()
   {
     LUA_REGISTER(thing_create);
@@ -429,15 +326,10 @@ namespace LuaEntityFunctions
     LUA_REGISTER(thing_get_location);
     LUA_REGISTER(thing_get_coords);
     LUA_REGISTER(thing_get_type);
-    LUA_REGISTER(thing_get_base_property);
-    LUA_REGISTER(thing_get_modified_property);
     LUA_REGISTER(thing_get_intrinsic);
     LUA_REGISTER(thing_queue_action);
     LUA_REGISTER(thing_queue_targeted_action);
     LUA_REGISTER(thing_queue_directional_action);
-    LUA_REGISTER(thing_set_base_property);
     LUA_REGISTER(thing_move_into);
-    LUA_REGISTER(thing_add_property_modifier);
-    LUA_REGISTER(thing_remove_property_modifier);
   }
 } // end namespace LuaEntityFunctions

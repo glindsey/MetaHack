@@ -8,6 +8,7 @@
 #include "types/Direction.h"
 #include "types/GeoVector.h"
 #include "map/Map.h"
+#include "properties/PropertyDictionary.h"
 
 /// Exception class for map features.
 class MapFeatureException : std::exception
