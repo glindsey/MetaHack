@@ -14,6 +14,7 @@
 #include "components/ComponentLockable.h"
 #include "components/ComponentMagicalBinding.h"
 #include "components/ComponentMaterialFlags.h"
+#include "components/ComponentMatterState.h"
 #include "components/ComponentMobility.h"
 #include "components/ComponentOpenable.h"
 #include "components/ComponentPhysical.h"
@@ -54,6 +55,7 @@ public:
   ComponentMap<ComponentLockable> lockable;
   ComponentMap<ComponentMagicalBinding> magicalBinding;
   ComponentMap<ComponentMaterialFlags> materialFlags;
+  ComponentMap<ComponentMatterState> matterState;
   ComponentMap<ComponentMobility> mobility;
   ComponentMap<ComponentOpenable> openable;
   ComponentMap<ComponentPhysical> physical;

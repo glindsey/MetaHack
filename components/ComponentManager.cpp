@@ -111,6 +111,7 @@ ComponentManager::ComponentManager(json const& j)
   JSONUtils::doIfPresent(j, "lockable",         [this](auto const& value) { lockable = value; });
   JSONUtils::doIfPresent(j, "magical-binding",  [this](auto const& value) { magicalBinding = value; });
   JSONUtils::doIfPresent(j, "material-flags",   [this](auto const& value) { materialFlags = value; });
+  JSONUtils::doIfPresent(j, "matter-state",     [this](auto const& value) { matterState = value; });
   JSONUtils::doIfPresent(j, "mobility",         [this](auto const& value) { mobility = value; });
   JSONUtils::doIfPresent(j, "openable",         [this](auto const& value) { openable = value; });
   JSONUtils::doIfPresent(j, "physical",         [this](auto const& value) { physical = value; });
@@ -152,6 +153,7 @@ void ComponentManager::clone(EntityId original, EntityId newId)
   lockable       .cloneIfExists(original, newId);
   magicalBinding .cloneIfExists(original, newId);
   materialFlags  .cloneIfExists(original, newId);
+  matterState    .cloneIfExists(original, newId);
   mobility       .cloneIfExists(original, newId);
   openable       .cloneIfExists(original, newId);
   physical       .cloneIfExists(original, newId);
@@ -176,6 +178,7 @@ void ComponentManager::populate(EntityId id, json const& j)
   JSONUtils::doIfPresent(j, "lockable",         [this, &id](auto const& value) { lockable[id] = value; });
   JSONUtils::doIfPresent(j, "magical-binding",  [this, &id](auto const& value) { magicalBinding[id] = value; });
   JSONUtils::doIfPresent(j, "material-flags",   [this, &id](auto const& value) { materialFlags[id] = value; });
+  JSONUtils::doIfPresent(j, "matter-state",     [this, &id](auto const& value) { matterState[id] = value; });
   JSONUtils::doIfPresent(j, "mobility",         [this, &id](auto const& value) { mobility[id] = value; });
   JSONUtils::doIfPresent(j, "openable",         [this, &id](auto const& value) { openable[id] = value; });
   JSONUtils::doIfPresent(j, "physical",         [this, &id](auto const& value) { physical[id] = value; });
@@ -200,6 +203,7 @@ void from_json(json const& j, ComponentManager& obj)
   JSONUtils::doIfPresent(j, "lockable",         [&obj](auto const& value) { obj.lockable = value; });
   JSONUtils::doIfPresent(j, "magical-binding",  [&obj](auto const& value) { obj.magicalBinding = value; });
   JSONUtils::doIfPresent(j, "material-flags",   [&obj](auto const& value) { obj.materialFlags = value; });
+  JSONUtils::doIfPresent(j, "matter-state",     [&obj](auto const& value) { obj.matterState = value; });
   JSONUtils::doIfPresent(j, "mobility",         [&obj](auto const& value) { obj.mobility = value; });
   JSONUtils::doIfPresent(j, "openable",         [&obj](auto const& value) { obj.openable = value; });
   JSONUtils::doIfPresent(j, "physical",         [&obj](auto const& value) { obj.physical = value; });
@@ -223,6 +227,7 @@ void to_json(json& j, ComponentManager const& obj)
   j["lockable"]         = obj.lockable;
   j["magical-binding"]  = obj.magicalBinding;
   j["material-flags"]   = obj.materialFlags;
+  j["matter-state"]     = obj.matterState;
   j["mobility"]         = obj.mobility;
   j["openable"]         = obj.openable;
   j["physical"]         = obj.physical;
