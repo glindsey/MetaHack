@@ -23,6 +23,13 @@ namespace Actions
     return { true, "" };
   }
 
+  ReasonBool ActionDrop::objectIsAllowed() const
+  {
+    // For now, you can always drop an object.
+    /// @todo Handle state of matter, movability
+    return { true, "" };
+  }
+
   std::unordered_set<Trait> const & ActionDrop::getTraits() const
   {
     static std::unordered_set<Trait> traits =

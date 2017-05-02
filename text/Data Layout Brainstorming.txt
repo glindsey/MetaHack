@@ -18,7 +18,7 @@ New ideas for laying out data in the system
 
 Refactoring "can-" flags
 ========================
-* = implemented
+* = implemented, / = partially implemented
 
             Subject Needs                         | Object Needs                        | Notes
             ======================================| =================================== | =============================================
@@ -46,32 +46,32 @@ Instinctual actions:
 attack      instinct                              | health                              | (attack with a weapon)
 bite        instinct, bodyparts[teeth]            | health                              |
 disrobe     *instinct                             | wearable(worn)                      |
-drink       instinct, bodyparts[mouth]            | physical(liquid)                    |
-drop        *instinct                             | physical(solid)                     |
+drink       instinct, bodyparts[mouth]            | physical(liquid)                    | or maybe physical(solid), contains(liquid)
+drop        *instinct                             | movable, physical(solid)            |
 eat         instinct, digestive-system            | physical(solid)                     | target must be something the entity can eat
 emit        instinct, bodyparts[emitting]         | (any)                               | (spit, expel gas, etc, for attacks)
-get         *instinct, bodyparts[prehensile/mouth]| physical(solid)                     |
+get         *instinct, bodyparts[prehensile/mouth]| movable, physical(solid)            |
 kick        instinct, bodyparts[legs/feet]        | (any)                               |
 move        *instinct, mobility                   | n/a                                 |
 swipe       instinct, bodyparts[arms/hands]       | (any)                               | (slap, claw, punch, etc.)
 turn        *instinct, mobility                   | n/a                                 |
-throw       instinct, bodyparts[prehensile]       | physical(solid)                     |
+throw       instinct, bodyparts[prehensile]       | movable, physical(solid)            |
 unwield     *instinct                             | physical(solid), wielded            |
 
 Sapient (requiring thought) actions:
-close       *sapience, bodyparts[prehensile]      | openable                            |
-lock        *sapience, bodyparts[prehensile]      | lockable                            |
-open        *sapience, bodyparts[prehensile]      | openable                            |
+close       *sapience, bodyparts[prehensile]      | physical(solid), openable, open     |
+lock        *sapience, bodyparts[prehensile]      | physical(solid), lockable, unlocked |
+open        *sapience, bodyparts[prehensile]      | physical(solid), openable, closed   |
 pour        sapience, bodyparts[prehensile]       | inventory, contains(fluid)          | target: inventory; target = '.' --> spill
 remove      *sapience, bodyparts[prehensile]      | physical(solid)                     | 
-shoot       *sapience, bodyparts[prehensile]      | fireable                            |
+shoot       *sapience, bodyparts[prehensile]      | physical(solid), fireable           |
 spill       sapience                              | inventory                           | (referring to the conscious act here)
 store       *sapience, bodyparts[prehensile]      | (any)                               | target: inventory, contains(object.state)
 talk        sapience, bodyparts[sound-emitting]   | n/a                                 |
-unlock      *sapience, bodyparts[prehensile]      | lockable                            |
-use         *sapience, bodyparts[prehensile]      | usable                              |
-wear        *sapience, bodyparts[prehensile]      | physical(solid), wearable           | subject must have bodypart it is worn on; maybe liquid allowed for makeup?
-wield       *sapience, bodyparts[prehensile]      | physical(solid)                     |
+unlock      *sapience, bodyparts[prehensile]      | physical(solid), lockable, locked   |
+use         *sapience, bodyparts[prehensile]      | usable                              | maybe physical(solid)?
+wear        *sapience, bodyparts[prehensile]      | physical(solid), wearable, not worn | subject must have bodypart it is worn on; maybe liquid allowed for makeup?
+wield       *sapience, bodyparts[prehensile]      | physical(solid)                     | if already wielded, can change wielding limb
 
 Notes on "mix": A liquid system might automatically take care of mixing ingredients when both are on the same square. 
                 Will have to investigate further.

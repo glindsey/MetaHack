@@ -24,6 +24,13 @@ namespace Actions
     return { canGrasp, reason };
   }
 
+  ReasonBool ActionGet::objectIsAllowed() const
+  {
+    // For now, you can always get an object.
+    /// @todo Handle state of matter, movability
+    return { true, "" };
+  }
+
   std::unordered_set<Trait> const & ActionGet::getTraits() const
   {
     static std::unordered_set<Trait> traits =

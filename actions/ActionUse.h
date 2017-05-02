@@ -20,6 +20,7 @@ namespace Actions
     static ActionUse prototype;
 
     virtual ReasonBool subjectIsCapable() const override;
+    //virtual ReasonBool objectIsAllowed() const override;
     virtual std::unordered_set<Trait> const& getTraits() const override;
 
   protected:
