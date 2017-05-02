@@ -374,7 +374,9 @@
     <ClInclude Include="types\BodyPart.h" />
     <ClInclude Include="types\Clamped.h" />
     <ClInclude Include="types\Color.h" />
+    <ClInclude Include="types\ModifiableBool.h" />
     <ClInclude Include="types\ModifiableInt.h" />
+    <ClInclude Include="types\Modifier.h" />
     <ClInclude Include="types\SFMLEventResult.h" />
     <ClInclude Include="utilities\CommonFunctions.h" />
     <ClInclude Include="types\common.h" />
@@ -645,6 +647,7 @@
     <ClCompile Include="entity\EntityStandard2DView.cpp" />
     <ClCompile Include="entity\EntityView.cpp" />
     <ClCompile Include="types\MapMemoryChunk.cpp" />
+    <ClCompile Include="types\ModifiableBool.cpp" />
     <ClCompile Include="types\ModifiableInt.cpp" />
     <ClCompile Include="types\Vec2.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "types/ModifiableInt.h"
+
 #include "json.hpp"
 using json = ::nlohmann::json;
 
@@ -37,7 +39,7 @@ protected:
 
 private:
   int m_hp = 1;
-  int m_maxHp = 1;
+  ModifiableInt m_maxHp = ModifiableInt(1);
   bool m_dead = false;
   bool m_livingCreature = true;
 

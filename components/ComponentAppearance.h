@@ -27,6 +27,7 @@ public:
 protected:
 
 private:
+  /// @todo Make this modifiable?
   Color m_opacity;
 };
 

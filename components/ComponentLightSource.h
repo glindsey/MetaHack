@@ -6,6 +6,7 @@ using json = ::nlohmann::json;
 #include "types/Color.h"
 
 /// Component that defines a light-emitting source.
+/// @todo Should there be more than one of these allowed for a single Entity?
 class ComponentLightSource
 {
 public:

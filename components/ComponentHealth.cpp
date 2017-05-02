@@ -8,8 +8,8 @@ void from_json(json const& j, ComponentHealth& obj)
   obj = ComponentHealth();
 
   // Max HP: If it's an array, pick from a uniform range. Otherwise, set it.
-  JSONUtils::doIfPresent(j, "max-hp", [&](auto& value) { obj.m_maxHp = JSONUtils::getFancyInteger(value); });
-  obj.m_hp = obj.m_maxHp;
+  JSONUtils::doIfPresent(j, "max-hp", [&](auto& value) { obj.m_maxHp = ModifiableInt(JSONUtils::getFancyInteger(value)); });
+  obj.m_hp = obj.m_maxHp.value();
   JSONUtils::doIfPresent(j, "hp", [&](auto& value) { obj.m_hp = JSONUtils::getFancyInteger(value); });
   JSONUtils::doIfPresent(j, "dead", [&](auto& value) { obj.m_dead = value; });
   JSONUtils::doIfPresent(j, "living-creature", [&](auto& value) { obj.m_livingCreature = value; });
@@ -36,12 +36,12 @@ void ComponentHealth::setHp(int hp)
 
 int ComponentHealth::maxHp() const
 {
-  return m_maxHp;
+  return m_maxHp.value();
 }
 
 void ComponentHealth::setMaxHp(int maxHp)
 {
-  m_maxHp = maxHp;
+  m_maxHp.setBaseValue(maxHp);
 }
 
 bool ComponentHealth::hasHpBelowZero() const
