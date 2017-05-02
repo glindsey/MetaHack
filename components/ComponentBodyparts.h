@@ -50,6 +50,19 @@ public:
   /// Return whether the entity has any prehensile (grasping) bodyparts.
   bool hasPrehensileBodyPart() const;
 
+  /// Return whether the specified entity is being worn, and if so, where.
+  BodyPartPair getWornLocation(EntityId id) const;
+
+  /// Return whether the specified entity is being wielded, and if so, where.
+  BodyPartPair getWieldedLocation(EntityId id) const;
+
+  /// Return what is being worn on the specified bodypart, if anything.
+  EntityId getWornEntity(BodyPartPair part) const;
+
+  /// Return what is being wielded by the specified bodypart, if anything.
+  EntityId getWieldedEntity(BodyPartPair part) const;
+
+
 protected:
   void setUpBodyparts(BodyPart part, unsigned int count);
 

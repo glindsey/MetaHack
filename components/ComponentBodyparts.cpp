@@ -106,6 +106,36 @@ bool ComponentBodyparts::hasPrehensileBodyPart() const
   return (actualCount(BodyPart::Finger) > 0) || (actualCount(BodyPart::PTail) > 0);
 }
 
+BodyPartPair ComponentBodyparts::getWornLocation(EntityId id) const
+{
+  /// @todo Improve upon this, this is O(1) right now.
+  for (auto& itemPair : m_wornItems)
+  {
+    if (itemPair.second == id) return itemPair.first;
+  }
+  return { BodyPart::Nowhere, 0 };
+}
+
+BodyPartPair ComponentBodyparts::getWieldedLocation(EntityId id) const
+{
+  /// @todo Improve upon this, this is O(1) right now.
+  for (auto& itemPair : m_wieldedItems)
+  {
+    if (itemPair.second == id) return itemPair.first;
+  }
+  return { BodyPart::Nowhere, 0 };
+}
+
+EntityId ComponentBodyparts::getWornEntity(BodyPartPair part) const
+{
+  return (m_wornItems.count(part) != 0) ? m_wornItems.at(part) : EntityId::Mu();
+}
+
+EntityId ComponentBodyparts::getWieldedEntity(BodyPartPair part) const
+{
+  return (m_wieldedItems.count(part) != 0) ? m_wieldedItems.at(part) : EntityId::Mu();
+}
+
 void ComponentBodyparts::setUpBodyparts(BodyPart part, unsigned int count)
 {
   m_bodypartCount[static_cast<unsigned int>(part)] = count;
