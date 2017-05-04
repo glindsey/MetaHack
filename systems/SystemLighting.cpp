@@ -87,8 +87,6 @@ Color SystemLighting::getWallLightLevel(IntVec2 coords, Direction direction) con
   {
     return m_ambientLightColor + calculatedLightColors.at(direction.get_map_index());
   }
-
-  return Color();
 }
 
 void SystemLighting::clearLightingData(IntVec2 coords)
