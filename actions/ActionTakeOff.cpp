@@ -44,10 +44,8 @@ namespace Actions
     auto subject = getSubject();
     auto object = getObject();
 
-    BodyLocation wear_location;
-    subject->isWearing(object, wear_location);
-
-    std::string bodypart_desc = subject->getBodypartDescription(wear_location);
+    BodyLocation wearLocation = COMPONENTS.bodyparts[subject].getWornLocation(object);
+    std::string bodypart_desc = subject->getBodypartDescription(wearLocation);
 
     // Check if the worn item is bound.
     if (COMPONENTS.magicalBinding.existsFor(object) &&
@@ -68,7 +66,7 @@ namespace Actions
       putMsg(makeTr("YOU_CVERB_THE_FOO") + " " + 
              makeTr("YOU_ARE_NOW_WEARING_NOTHING", 
              { subject->getPossessiveString(bodypart_desc) }));
-      subject->setWielded(EntityId::Mu(), wear_location);
+      COMPONENTS.bodyparts[subject].removeWornLocation(wearLocation);
     }
 
     return result;

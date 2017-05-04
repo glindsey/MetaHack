@@ -134,41 +134,6 @@ void Entity::clearPendingInvoluntaryActions()
   m_pending_involuntary_actions.clear();
 }
 
-EntityId Entity::getWieldingIn(BodyLocation& location)
-{
-  return COMPONENTS.bodyparts.existsFor(m_id) ? COMPONENTS.bodyparts[m_id].getWieldedEntity(location) : EntityId::Mu();
-}
-
-bool Entity::isWielding(EntityId entity)
-{
-  BodyLocation dummy;
-  return isWielding(entity, dummy);
-}
-
-bool Entity::isWielding(EntityId entity, BodyLocation& location)
-{
-  if (!COMPONENTS.bodyparts.existsFor(m_id)) return false;
-  auto& bodyparts = COMPONENTS.bodyparts[m_id];
-
-  location = bodyparts.getWieldedLocation(entity);
-  return (location.part != BodyPart::Nowhere);
-}
-
-bool Entity::isWearing(EntityId entity)
-{
-  BodyLocation dummy;
-  return isWearing(entity, dummy);
-}
-
-bool Entity::isWearing(EntityId entity, BodyLocation& location)
-{
-  if (!COMPONENTS.bodyparts.existsFor(m_id)) return false;
-  auto& bodyparts = COMPONENTS.bodyparts[m_id];
-
-  location = bodyparts.getWornLocation(entity);
-  return (location.part != BodyPart::Nowhere);
-}
-
 bool Entity::canReach(EntityId entity)
 {
   // Check if it is our location.
@@ -213,24 +178,6 @@ bool Entity::isAdjacentTo(EntityId entity)
   }
 
   return adjacent(ourPosition.coords(), otherPosition.coords());
-}
-
-void Entity::setWielded(EntityId entity, BodyLocation location)
-{
-  if (COMPONENTS.bodyparts.existsFor(entity))
-  {
-    auto& bodyparts = COMPONENTS.bodyparts[entity];
-    bodyparts.wieldEntity(entity, location);
-  }
-}
-
-void Entity::setWorn(EntityId entity, BodyLocation location)
-{
-  if (COMPONENTS.bodyparts.existsFor(entity))
-  {
-    auto& bodyparts = COMPONENTS.bodyparts[entity];
-    bodyparts.wearEntity(entity, location);
-  }
 }
 
 void Entity::setGender(Gender gender)
@@ -761,7 +708,7 @@ void Entity::light_up_surroundings()
     bool opaque = location->isOpaque();
     bool is_entity = COMPONENTS.health.existsFor(m_id);
 
-    //if (!isOpaque() || isWielding(light) || isWearing(light))
+    //if (!isOpaque() || is wielding(light) || is wearing(light))
     if (!opaque || is_entity)
     {
       auto& inventory = COMPONENTS.inventory[m_id];
@@ -818,7 +765,7 @@ void Entity::beLitBy(EntityId light)
     bool opaque = this->isOpaque();
     bool is_entity = COMPONENTS.health.existsFor(m_id);
 
-    //if (!isOpaque() || isWielding(light) || isWearing(light))
+    //if (!isOpaque() || is wielding(light) || is wearing(light))
     if (!opaque || is_entity)
     {
       location->beLitBy(light);

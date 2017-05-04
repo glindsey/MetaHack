@@ -31,7 +31,7 @@ namespace Actions
     virtual StateResult doAbortWorkNVI(AnyMap& params) override;
 
   private:
-    BodyLocation m_body_location;
+    BodyLocation m_bodyLocation;
   };
 
 } // end namespace

@@ -46,10 +46,8 @@ namespace Actions
     auto subject = getSubject();
     auto object = getObject();
 
-    BodyLocation wield_location;
-    subject->isWielding(object, wield_location);
-
-    std::string bodypart_desc = subject->getBodypartDescription(wield_location);
+    BodyLocation wieldLocation = COMPONENTS.bodyparts[subject].getWieldedLocation(object);
+    std::string bodypart_desc = subject->getBodypartDescription(wieldLocation);
 
     // Check if the wielded item is bound.
     if (COMPONENTS.magicalBinding.existsFor(object) &&
@@ -69,7 +67,7 @@ namespace Actions
     {
       std::string message;
       message = makeString("$you unwield $foo. $you are now wielding nothing in $0.", { subject->getPossessiveString(bodypart_desc) });
-      subject->setWielded(EntityId::Mu(), wield_location);
+      COMPONENTS.bodyparts[subject].removeWieldedLocation(wieldLocation);
     }
 
     return result;

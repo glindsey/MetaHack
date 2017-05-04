@@ -99,36 +99,9 @@ public:
 
   /// Clear all pending involuntary actions in this Entity's queue.
   void clearPendingInvoluntaryActions();
-
-  /// Get the entity being wielded with the specified bodypart, if any.
-  EntityId getWieldingIn(BodyLocation& location);
-
+  
   /// Returns true if this entity is the current player.
   bool isPlayer() const;
-
-  /// Return whether a Entity is wielded by this DynamicEntity.
-  /// This is used by InventoryArea to show wielded status.
-  /// @param[in] entity Entity to check
-  /// @return true if the Entity is wielded by the DynamicEntity.
-  bool isWielding(EntityId entity);
-
-  /// Return whether a Entity is wielded by this DynamicEntity.
-  /// This is used by InventoryArea to show wielded status.
-  /// @param[in] entity Entity to check
-  /// @param[out] number Body part it is wielded with.
-  /// @return true if the Entity is wielded by the DynamicEntity.
-  bool isWielding(EntityId entity, BodyLocation& location);
-
-  /// Return whether a Entity is equipped (worn) by this DynamicEntity.
-  /// @param[in] entity Entity to check
-  /// @return true if the Entity is being worn.
-  bool isWearing(EntityId entity);
-
-  /// Return whether a Entity is being worn by this DynamicEntity.
-  /// @param[in] entity Entity to check
-  /// @param[out] location of the worn Entity, if worn
-  /// @return true if the Entity is being worn.
-  bool isWearing(EntityId entity, BodyLocation& location);
 
   /// Return whether a Entity is within reach of the DynamicEntity.
   /// @param[in] entity Entity to check
@@ -160,10 +133,6 @@ public:
 
   /// Get the remembered tile type at the specified coordinates.
   MapMemoryChunk const& getMemoryAt(IntVec2 coords) const;
-
-  void setWielded(EntityId entity, BodyLocation location);
-
-  void setWorn(EntityId entity, BodyLocation location);
 
   void setGender(Gender gender);
 

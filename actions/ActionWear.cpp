@@ -53,8 +53,8 @@ namespace Actions
     else
     {
       /// @todo Check that entity has free body part(s) to equip item on.
-      m_body_location.part = bodypart;
-      m_body_location.number = 0;
+      m_bodyLocation.part = bodypart;
+      m_bodyLocation.number = 0;
     }
 
     return StateResult::Success();
@@ -80,10 +80,9 @@ namespace Actions
     auto subject = getSubject();
     auto object = getObject();
 
-    std::string bodypart_desc =
-      subject->getBodypartDescription(m_body_location);
+    std::string bodypart_desc = subject->getBodypartDescription(m_bodyLocation);
 
-    subject->setWorn(object, m_body_location);
+    COMPONENTS.bodyparts[subject].wearEntity(object, m_bodyLocation);
     putMsg(makeTr("YOU_ARE_NOW_WEARING_THE_FOO", { subject->getPossessiveString(bodypart_desc) }));
 
     return StateResult::Success();

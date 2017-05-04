@@ -455,7 +455,8 @@ namespace Actions
         if (hasTrait(Trait::ObjectMustBeWielded))
         {
           // Check to see if the object is being wielded.
-          if (!subject->isWielding(object))
+          if (COMPONENTS.bodyparts.existsFor(subject) &&
+              COMPONENTS.bodyparts[subject].getWieldedLocation(object).part == BodyPart::Nowhere)
           {
             printMessageTry();
             putTr("THE_FOO_MUST_BE_WIELDED");
@@ -466,7 +467,8 @@ namespace Actions
         if (hasTrait(Trait::ObjectMustBeWorn))
         {
           // Check to see if the object is being worn.
-          if (!subject->isWearing(object))
+          if (COMPONENTS.bodyparts.existsFor(subject) &&
+              COMPONENTS.bodyparts[subject].getWornLocation(object).part == BodyPart::Nowhere)
           {
             printMessageTry();
             putTr("THE_FOO_MUST_BE_WORN");
@@ -477,7 +479,8 @@ namespace Actions
         if (hasTrait(Trait::ObjectMustNotBeWielded))
         {
           // Check to see if the object is being wielded.
-          if (subject->isWielding(object))
+          if (COMPONENTS.bodyparts.existsFor(subject) &&
+              COMPONENTS.bodyparts[subject].getWieldedLocation(object).part != BodyPart::Nowhere)
           {
             printMessageTry();
 
@@ -490,7 +493,8 @@ namespace Actions
         if (hasTrait(Trait::ObjectMustNotBeWorn))
         {
           // Check to see if the object is being worn.
-          if (subject->isWearing(object))
+          if (COMPONENTS.bodyparts.existsFor(subject) &&
+              COMPONENTS.bodyparts[subject].getWornLocation(object).part != BodyPart::Nowhere)
           {
             printMessageTry();
             putTr("YOU_CANT_VERB_WORN");
