@@ -17,6 +17,7 @@ class GameState;
 class InventorySelection;
 class KeyBuffer;
 class MapView;
+class SystemManager;
 
 
 /// Object that represents the game mode state.
@@ -69,13 +70,16 @@ protected:
 
 private:
   /// Application window.
-  sf::RenderWindow& m_app_window;
+  sf::RenderWindow& m_appWindow;
 
   /// The debug key buffer.
-  std::unique_ptr<KeyBuffer> m_debug_buffer;
+  std::unique_ptr<KeyBuffer> m_debugBuffer;
 
   /// The current game state.
-  std::unique_ptr<GameState> m_game_state;
+  std::unique_ptr<GameState> m_gameState;
+
+  /// The manager of all game systems.
+  std::unique_ptr<SystemManager> m_systemManager;
 
   /// Reference to the current MapView.
   MapView* m_mapView;
@@ -85,13 +89,13 @@ private:
   std::unique_ptr<InventorySelection> m_inventorySelection;
 
   /// True if the application window is in focus, false otherwise.
-  bool m_window_in_focus;
+  bool m_windowInFocus;
 
   /// True if inventory window shows player inventory, false otherwise.
   bool m_inventoryAreaShowsPlayer;
 
   /// Map zoom level.  1.0 equals 100 percent zoom.
-  float m_map_zoom_level;
+  float m_mapZoomLevel;
 
   /// Current screen area that has keyboard focus.
   GameInputState m_currentInputState;
@@ -101,7 +105,7 @@ private:
 
   /// Action in progress (if any).
   /// Used for an action that needs a "target".
-  std::unique_ptr<Actions::Action> m_action_in_progress;
+  std::unique_ptr<Actions::Action> m_actionInProgress;
 };
 
 #endif // APPSTATEGAMEMODE_H

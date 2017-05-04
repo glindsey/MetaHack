@@ -27,6 +27,7 @@
 #include "services/IStringDictionary.h"
 #include "services/MessageLog.h"
 #include "state_machine/StateMachine.h"
+#include "systems/SystemManager.h"
 #include "utilities/GetLetterKey.h"
 #include "utilities/StringTransforms.h"
 
@@ -57,24 +58,25 @@
 #include "GUIObject.h"
 #include "GUIWindow.h"
 
-AppStateGameMode::AppStateGameMode(StateMachine& state_machine, sf::RenderWindow& m_app_window)
+AppStateGameMode::AppStateGameMode(StateMachine& state_machine, sf::RenderWindow& m_appWindow)
   :
   AppState(state_machine,
            std::bind(&AppStateGameMode::render_map, this, std::placeholders::_1, std::placeholders::_2)),
-  m_app_window{ m_app_window },
-  m_debug_buffer{ NEW KeyBuffer() },
-  m_game_state{ NEW GameState() },
+  m_appWindow{ m_appWindow },
+  m_debugBuffer{ NEW KeyBuffer() },
+  m_gameState{ NEW GameState() },
+  m_systemManager{ NEW SystemManager(m_gameState->components()) },
   m_inventorySelection{ NEW InventorySelection() },
-  m_window_in_focus{ true },
+  m_windowInFocus{ true },
   m_inventoryAreaShowsPlayer{ false },
-  m_map_zoom_level{ 1.0f },
+  m_mapZoomLevel{ 1.0f },
   m_currentInputState{ GameInputState::Map },
   m_cursorCoords{ 0, 0 }
 {
   getStateMachine().addObserver(*this, App::EventAppWindowResized::id());
   getStateMachine().addObserver(*this, App::EventKeyPressed::id());
 
-  the_desktop.addChild(NEW MessageLogView("MessageLogView", Service<IMessageLog>::get(), *(m_debug_buffer.get()), calcMessageLogDims()))->setFlag("titlebar", true);
+  the_desktop.addChild(NEW MessageLogView("MessageLogView", Service<IMessageLog>::get(), *(m_debugBuffer.get()), calcMessageLogDims()))->setFlag("titlebar", true);
   the_desktop.addChild(NEW InventoryArea("InventoryArea", *(m_inventorySelection.get()), calcInventoryDims()))->setFlag("titlebar", true);
   the_desktop.addChild(NEW StatusArea("StatusArea", calcStatusAreaDims()))->setGlobalFocus(true);
 }
@@ -93,10 +95,10 @@ void AppStateGameMode::execute()
   auto& game = getGameState();
 
   // First, check for debug commands ready to be run.
-  if (m_debug_buffer->get_enter())
+  if (m_debugBuffer->get_enter())
   {
     /// Call the Lua interpreter with the command.
-    std::string luaCommand = m_debug_buffer->get_buffer();
+    std::string luaCommand = m_debugBuffer->get_buffer();
     Service<IMessageLog>::get().add("> " + luaCommand);
 
     /// DEBUG: If the command is "dump", write out gamestate JSON to a file.
@@ -119,7 +121,7 @@ void AppStateGameMode::execute()
       }
     }
 
-    m_debug_buffer->clear_buffer();
+    m_debugBuffer->clear_buffer();
   }
 
   bool ticked = game.processGameClockTick();
@@ -219,7 +221,7 @@ bool AppStateGameMode::terminate()
 
 GameState& AppStateGameMode::getGameState()
 {
-  return *m_game_state;
+  return *m_gameState;
 }
 
 std::unordered_set<EventID> AppStateGameMode::registeredEvents() const
@@ -265,7 +267,7 @@ void AppStateGameMode::render_map(sf::RenderTexture& texture, int frame)
 
     if (m_currentInputState == GameInputState::CursorLook)
     {
-      m_mapView->set_view(texture, cursor_pixel_coords, m_map_zoom_level);
+      m_mapView->set_view(texture, cursor_pixel_coords, m_mapZoomLevel);
       m_mapView->render_map(texture, frame);
 
       Color border_color = config.get("cursor-border-color");
@@ -278,7 +280,7 @@ void AppStateGameMode::render_map(sf::RenderTexture& texture, int frame)
     }
     else
     {
-      m_mapView->set_view(texture, player_pixel_coords, m_map_zoom_level);
+      m_mapView->set_view(texture, player_pixel_coords, m_mapZoomLevel);
       m_mapView->render_map(texture, frame);
     }
   }
@@ -547,7 +549,7 @@ bool AppStateGameMode::handle_key_press(App::EventKeyPressed const& key)
             break;
 
           case sf::Keyboard::Key::Num0:
-            m_map_zoom_level = 1.0f;
+            m_mapZoomLevel = 1.0f;
             break;
 
             // CTRL-A -- attire/adorn
@@ -574,7 +576,7 @@ bool AppStateGameMode::handle_key_press(App::EventKeyPressed const& key)
             if (entities.size() == 0)
             {
               // No item specified, so ask for a direction.
-              m_action_in_progress.reset(new Actions::ActionClose(player));
+              m_actionInProgress.reset(new Actions::ActionClose(player));
               putMsg(StringTransforms::makeString(player, EntityId::Mu(), tr("CHOOSE_DIRECTION"), { tr("VERB_CLOSE_2") }));
               m_currentInputState = GameInputState::TargetSelection;
               m_inventorySelection->clearSelectedSlots();
@@ -643,8 +645,8 @@ bool AppStateGameMode::handle_key_press(App::EventKeyPressed const& key)
             }
             else
             {
-              m_action_in_progress.reset(new Actions::ActionFill(player));
-              m_action_in_progress->setObject(entities.front());
+              m_actionInProgress.reset(new Actions::ActionFill(player));
+              m_actionInProgress->setObject(entities.front());
               putMsg(StringTransforms::makeString(player, EntityId::Mu(), tr("CHOOSE_ITEM_OR_DIRECTION"), { tr("VERB_FILL_GER") }));
               m_currentInputState = GameInputState::TargetSelection;
               m_inventorySelection->clearSelectedSlots();
@@ -682,8 +684,8 @@ bool AppStateGameMode::handle_key_press(App::EventKeyPressed const& key)
             }
             else
             {
-              m_action_in_progress.reset(new Actions::ActionHurl(player));
-              m_action_in_progress->setObject(entities.front());
+              m_actionInProgress.reset(new Actions::ActionHurl(player));
+              m_actionInProgress->setObject(entities.front());
               putMsg(StringTransforms::makeString(player, EntityId::Mu(), tr("CHOOSE_DIRECTION"), { tr("VERB_THROW_2") }));
               m_currentInputState = GameInputState::TargetSelection;
               m_inventorySelection->clearSelectedSlots();
@@ -698,10 +700,10 @@ bool AppStateGameMode::handle_key_press(App::EventKeyPressed const& key)
             }
             else
             {
-              m_action_in_progress.reset(new Actions::ActionInscribe(player));
+              m_actionInProgress.reset(new Actions::ActionInscribe(player));
               if (entities.size() != 0)
               {
-                m_action_in_progress->setObject(entities.front());
+                m_actionInProgress->setObject(entities.front());
               }
 
               putMsg(StringTransforms::makeString(player, EntityId::Mu(), tr("CHOOSE_ITEM_OR_DIRECTION"), { tr("VERB_WRITE_GER") }));
@@ -734,7 +736,7 @@ bool AppStateGameMode::handle_key_press(App::EventKeyPressed const& key)
             if (entities.size() == 0)
             {
               // No item specified, so ask for a direction.
-              m_action_in_progress.reset(new Actions::ActionOpen(player));
+              m_actionInProgress.reset(new Actions::ActionOpen(player));
               putMsg(StringTransforms::makeString(player, EntityId::Mu(), tr("CHOOSE_DIRECTION"), { tr("VERB_OPEN_2") }));
               m_currentInputState = GameInputState::TargetSelection;
               m_inventorySelection->clearSelectedSlots();
@@ -761,8 +763,8 @@ bool AppStateGameMode::handle_key_press(App::EventKeyPressed const& key)
             }
             else
             {
-              m_action_in_progress.reset(new Actions::ActionPutInto(player));
-              m_action_in_progress->setObjects(entities);
+              m_actionInProgress.reset(new Actions::ActionPutInto(player));
+              m_actionInProgress->setObjects(entities);
               putMsg(StringTransforms::makeString(player, EntityId::Mu(), tr("CHOOSE_CONTAINER"), { tr("VERB_STORE_DESC") }));
               m_currentInputState = GameInputState::TargetSelection;
               m_inventorySelection->clearSelectedSlots();
@@ -824,8 +826,8 @@ bool AppStateGameMode::handle_key_press(App::EventKeyPressed const& key)
             {
               /// @todo If no items are selected, fire your wielded item.
               ///       Otherwise, wield the selected item and fire it.
-              m_action_in_progress.reset(new Actions::ActionShoot(player));
-              m_action_in_progress->setObject(entities.front());
+              m_actionInProgress.reset(new Actions::ActionShoot(player));
+              m_actionInProgress->setObject(entities.front());
               putMsg(StringTransforms::makeString(player, EntityId::Mu(), tr("CHOOSE_DIRECTION"), { tr("VERB_SHOOT_2") }));
               m_currentInputState = GameInputState::TargetSelection;
               m_inventorySelection->clearSelectedSlots();
@@ -892,7 +894,7 @@ bool AppStateGameMode::handle_key_press(App::EventKeyPressed const& key)
             if (entities.size() == 0)
             {
               // No item specified, so ask for a direction.
-              m_action_in_progress.reset(new Actions::ActionAttack(player));
+              m_actionInProgress.reset(new Actions::ActionAttack(player));
               putMsg(StringTransforms::makeString(player, EntityId::Mu(), tr("CHOOSE_DIRECTION"), { tr("VERB_ATTACK_2") }));
               m_currentInputState = GameInputState::TargetSelection;
               m_inventorySelection->clearSelectedSlots();
@@ -976,7 +978,7 @@ bool AppStateGameMode::handle_mouse_wheel(App::EventMouseWheelMoved const& wheel
 
 void AppStateGameMode::add_zoom(float zoom_amount)
 {
-  float current_zoom_level = m_map_zoom_level;
+  float current_zoom_level = m_mapZoomLevel;
 
   current_zoom_level += zoom_amount;
 
@@ -990,7 +992,7 @@ void AppStateGameMode::add_zoom(float zoom_amount)
     current_zoom_level = 3.0f;
   }
 
-  m_map_zoom_level = current_zoom_level;
+  m_mapZoomLevel = current_zoom_level;
 }
 
 EventResult AppStateGameMode::onEvent_NVI(Event const& event)
@@ -1034,9 +1036,9 @@ sf::IntRect AppStateGameMode::calcMessageLogDims()
 
   int inventory_area_width = config.get("inventory-area-width");
   int messagelog_area_height = config.get("messagelog-area-height");
-  messageLogDims.width = m_app_window.getSize().x - (inventory_area_width + 24);
+  messageLogDims.width = m_appWindow.getSize().x - (inventory_area_width + 24);
   messageLogDims.height = messagelog_area_height - 10;
-  //messageLogDims.height = static_cast<int>(m_app_window.getSize().y * 0.25f) - 10;
+  //messageLogDims.height = static_cast<int>(m_appWindow.getSize().y * 0.25f) - 10;
   messageLogDims.left = 12;
   messageLogDims.top = 5;
   return messageLogDims;
@@ -1075,10 +1077,10 @@ sf::IntRect AppStateGameMode::calcStatusAreaDims()
   sf::IntRect invAreaDims = the_desktop.getChild("InventoryArea").getRelativeDimensions();
   auto& config = Service<IConfigSettings>::get();
 
-  statusAreaDims.width = m_app_window.getSize().x -
+  statusAreaDims.width = m_appWindow.getSize().x -
     (invAreaDims.width + 24);
   statusAreaDims.height = config.get("status-area-height");
-  statusAreaDims.top = m_app_window.getSize().y - (config.get("status-area-height") + 5);
+  statusAreaDims.top = m_appWindow.getSize().y - (config.get("status-area-height") + 5);
   statusAreaDims.left = 12;
   return statusAreaDims;
 }
@@ -1090,8 +1092,8 @@ sf::IntRect AppStateGameMode::calcInventoryDims()
   auto& config = Service<IConfigSettings>::get();
 
   inventoryAreaDims.width = config.get("inventory-area-width");
-  inventoryAreaDims.height = m_app_window.getSize().y - 10;
-  inventoryAreaDims.left = m_app_window.getSize().x - (inventoryAreaDims.width + 3);
+  inventoryAreaDims.height = m_appWindow.getSize().y - 10;
+  inventoryAreaDims.left = m_appWindow.getSize().x - (inventoryAreaDims.width + 3);
   inventoryAreaDims.top = 5;
 
   return inventoryAreaDims;
@@ -1134,12 +1136,12 @@ bool AppStateGameMode::handleKeyPressTargetSelection(EntityId player, App::Event
     return false;
   }
 
-  if (m_action_in_progress && m_action_in_progress->hasTrait(Actions::Trait::CanBeSubjectVerbObjectPrepositionTarget))
+  if (m_actionInProgress && m_actionInProgress->hasTrait(Actions::Trait::CanBeSubjectVerbObjectPrepositionTarget))
   {
     if (!key.alt && !key.control && key_number != -1)
     {
-      m_action_in_progress->setTarget(m_inventorySelection->getEntity(static_cast<InventorySlot>(key_number)));
-      player->queueAction(std::move(m_action_in_progress));
+      m_actionInProgress->setTarget(m_inventorySelection->getEntity(static_cast<InventorySlot>(key_number)));
+      player->queueAction(std::move(m_actionInProgress));
       m_inventoryAreaShowsPlayer = false;
       resetInventorySelection();
       m_currentInputState = GameInputState::Map;
@@ -1147,13 +1149,13 @@ bool AppStateGameMode::handleKeyPressTargetSelection(EntityId player, App::Event
     }
   } // end if (action_in_progress.target_can_be_thing)
 
-  if (m_action_in_progress && (m_action_in_progress->hasTrait(Actions::Trait::CanBeSubjectVerbDirection) ||
-                               m_action_in_progress->hasTrait(Actions::Trait::CanBeSubjectVerbObjectPrepositionDirection)))
+  if (m_actionInProgress && (m_actionInProgress->hasTrait(Actions::Trait::CanBeSubjectVerbDirection) ||
+                               m_actionInProgress->hasTrait(Actions::Trait::CanBeSubjectVerbObjectPrepositionDirection)))
   {
     if (!key.alt && !key.control && key_direction != Direction::None)
     {
-      m_action_in_progress->setTarget(key_direction);
-      player->queueAction(std::move(m_action_in_progress));
+      m_actionInProgress->setTarget(key_direction);
+      player->queueAction(std::move(m_actionInProgress));
       m_inventoryAreaShowsPlayer = false;
       resetInventorySelection();
       m_currentInputState = GameInputState::Map;

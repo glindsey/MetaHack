@@ -174,7 +174,7 @@ public:
 protected:
 
 private:
-  sf::RenderWindow& m_app_window;
+  sf::RenderWindow& m_appWindow;
 
   /// Pointer to off-screen buffer for drawing composition.
   std::unique_ptr<sf::RenderTexture> m_app_texture;

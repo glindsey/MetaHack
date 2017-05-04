@@ -44,7 +44,7 @@ App::App(sf::RenderWindow& app_window)
   :
   ISFMLEventHandler(), 
   Subject(),
-  m_app_window{ app_window },
+  m_appWindow{ app_window },
   m_app_texture{ NEW sf::RenderTexture() },
   m_is_running{ false },
   m_has_window_focus{ false }
@@ -100,10 +100,10 @@ App::App(sf::RenderWindow& app_window)
   m_state_machine.reset(NEW StateMachine("app_state_machine", this)),
 
   // Create the app texture for off-screen composition.
-  m_app_texture->create(m_app_window.getSize().x, m_app_window.getSize().y);
+  m_app_texture->create(m_appWindow.getSize().x, m_appWindow.getSize().y);
 
   // Create the GUI desktop.
-  m_gui_desktop.reset(NEW metagui::Desktop(*this, "Desktop", m_app_window.getSize()));
+  m_gui_desktop.reset(NEW metagui::Desktop(*this, "Desktop", m_appWindow.getSize()));
 
   // Create the random number generator and seed it with the current time.
   m_rng.reset(NEW boost::random::mt19937(static_cast<unsigned int>(std::time(0))));
@@ -191,7 +191,7 @@ App::~App()
 {
   m_state_machine.reset();
   m_gui_desktop.reset();
-  m_app_window.close();
+  m_appWindow.close();
   s_p_instance = nullptr;
 }
 
@@ -221,7 +221,7 @@ SFMLEventResult App::handle_sfml_event(sf::Event& event)
     {
       m_app_texture.reset(NEW sf::RenderTexture());
       m_app_texture->create(event.size.width, event.size.height);
-      m_app_window.setView(sf::View(
+      m_appWindow.setView(sf::View(
         sf::FloatRect(0, 0, static_cast<float>(event.size.width), static_cast<float>(event.size.height))));
 
       result = SFMLEventResult::Acknowledged;
@@ -291,7 +291,7 @@ SFMLEventResult App::handle_sfml_event(sf::Event& event)
 
 sf::RenderWindow& App::get_window()
 {
-  return m_app_window;
+  return m_appWindow;
 }
 
 bool App::has_window_focus()
@@ -386,7 +386,7 @@ void App::run()
   {
     // Process events
     sf::Event event;
-    while (m_app_window.pollEvent(event))
+    while (m_appWindow.pollEvent(event))
     {
       handle_sfml_event(event);
     }
@@ -397,16 +397,16 @@ void App::run()
     if (frame_clock.getElapsedTime().asMicroseconds() > 16667)
     {
       frame_clock.restart();
-      m_app_window.clear();
+      m_appWindow.clear();
       m_app_texture->clear(Color::Red);
 
       m_state_machine->render(*m_app_texture, s_frame_counter);
 
       m_app_texture->display();
       sf::Sprite sprite(m_app_texture->getTexture());
-      m_app_window.draw(sprite);
+      m_appWindow.draw(sprite);
 
-      m_app_window.display();
+      m_appWindow.display();
       ++s_frame_counter;
     }
   }
