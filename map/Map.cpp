@@ -273,9 +273,9 @@ void Map::doRecursiveLighting(EntityId source,
   {
 	if (calc_vis_distance(new_coords, origin) <= max_depth_squared)
 	{
-	  if (getTile(new_coords).isOpaque())
+	  if (getTile(new_coords).isTotallyOpaque())
 	  {
-		if (!getTile(new_coords + (IntVec2)dir).isOpaque())
+		if (!getTile(new_coords + (IntVec2)dir).isTotallyOpaque())
 		{
 		  doRecursiveLighting(source, origin, light_color,
 							  max_depth_squared,
@@ -285,7 +285,7 @@ void Map::doRecursiveLighting(EntityId source,
 	  }
 	  else
 	  {
-		if (getTile(new_coords + (IntVec2)dir).isOpaque())
+		if (getTile(new_coords + (IntVec2)dir).isTotallyOpaque())
 		{
 		  slope_A = loop_slope(to_v2f(new_coords), to_v2f(origin));
 		}
@@ -301,7 +301,7 @@ void Map::doRecursiveLighting(EntityId source,
   }
   new_coords += (IntVec2)dir;
 
-  if ((depth*depth < max_depth_squared) && (!getTile(new_coords).isOpaque()))
+  if ((depth*depth < max_depth_squared) && (!getTile(new_coords).isTotallyOpaque()))
   {
 	doRecursiveLighting(source, origin, light_color,
 						max_depth_squared,
@@ -461,7 +461,7 @@ bool Map::tileIsOpaque(IntVec2 tile)
 	return true;
   }
 
-  return TILE(tile.x, tile.y).isOpaque();
+  return TILE(tile.x, tile.y).isTotallyOpaque();
 }
 
 void Map::clearMapFeatures()

@@ -657,11 +657,6 @@ Color Entity::getOpacity() const
   return COMPONENTS.appearance.valueOrDefault(m_id).opacity();
 }
 
-bool Entity::isOpaque()
-{
-  return (getOpacity() == Color::White);
-}
-
 void Entity::light_up_surroundings()
 {
   EntityId location = COMPONENTS.position[m_id].parent();
@@ -677,11 +672,11 @@ void Entity::light_up_surroundings()
     ///       equipped it. If we want to be easier, the light should
     ///       shine simply if it's in an entity's inventory.
 
-    bool opaque = location->isOpaque();
-    bool is_entity = COMPONENTS.health.existsFor(m_id);
+    bool locationIsOpaque = COMPONENTS.appearance.existsFor(location) && COMPONENTS.appearance[location].isTotallyOpaque();
+    bool hasHealth = COMPONENTS.health.existsFor(m_id);
 
-    //if (!isOpaque() || is wielding(light) || is wearing(light))
-    if (!opaque || is_entity)
+    //if (!is opaque() || is wielding(light) || is wearing(light))
+    if (!locationIsOpaque || hasHealth)
     {
       auto& inventory = COMPONENTS.inventory[m_id];
       for (auto iter = inventory.begin();
@@ -734,11 +729,11 @@ void Entity::beLitBy(EntityId light)
     ///       equipped it. If we want to be easier, the light should
     ///       shine simply if it's in the player's inventory.
 
-    bool opaque = this->isOpaque();
-    bool is_entity = COMPONENTS.health.existsFor(m_id);
+    bool entityIsOpaque = COMPONENTS.appearance.existsFor(m_id) && COMPONENTS.appearance[m_id].isTotallyOpaque();
+    bool hasHealth = COMPONENTS.health.existsFor(m_id);
 
     //if (!isOpaque() || is wielding(light) || is wearing(light))
-    if (!opaque || is_entity)
+    if (!entityIsOpaque || hasHealth)
     {
       location->beLitBy(light);
     }
@@ -1403,7 +1398,7 @@ void Entity::do_recursive_visibility(ComponentPosition const& thisPosition,
   }
   newCoords += (IntVec2)dir;
 
-  if ((depth < mv) && (!thisMap->getTile(newCoords).isOpaque()))
+  if ((depth < mv) && (!thisMap->getTile(newCoords).isTotallyOpaque()))
   {
     do_recursive_visibility(thisPosition,
                             octant, depth + 1,

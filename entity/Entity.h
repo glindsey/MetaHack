@@ -265,9 +265,6 @@ public:
   /// @}
 
 
-  /// Simple check to see if a Entity is opaque.
-  bool isOpaque();
-
   /// Provide light to this Entity's surroundings.
   /// If Entity is not opaque, calls light_up_surroundings() for each Entity
   /// in its inventory.

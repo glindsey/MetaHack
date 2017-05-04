@@ -192,7 +192,7 @@ Color MapTile::getOpacity() const
   return getCategoryData()["components"]["appearance"].value("opacity", Color::White);
 }
 
-bool MapTile::isOpaque() const
+bool MapTile::isTotallyOpaque() const
 {
   /// @todo Check the tile's inventory to see if there's anything huge enough
   ///       to block the view of stuff behind it.
