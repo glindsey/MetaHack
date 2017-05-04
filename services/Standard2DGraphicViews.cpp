@@ -13,13 +13,14 @@
 // Namespace aliases
 namespace fs = boost::filesystem;
 
-Standard2DGraphicViews::Standard2DGraphicViews()
+Standard2DGraphicViews::Standard2DGraphicViews(SystemLighting& lighting) :
+  m_lighting{ lighting }
 {
   auto& config = Service<IConfigSettings>::get();
   auto tileSize = config.get("map-tile-size");
   auto textureSize = config.get("tilesheet-texture-size");
 
-  m_tile_sheet.reset(NEW TileSheet(tileSize, textureSize));
+  m_tileSheet.reset(NEW TileSheet(tileSize, textureSize));
 }
 
 Standard2DGraphicViews::~Standard2DGraphicViews()
@@ -28,22 +29,22 @@ Standard2DGraphicViews::~Standard2DGraphicViews()
 
 EntityView* Standard2DGraphicViews::createEntityView(Entity& entity)
 {
-  return NEW EntityStandard2DView(entity, getTileSheet());
+  return NEW EntityStandard2DView(entity, getTileSheet(), m_lighting);
 }
 
 MapTileView* Standard2DGraphicViews::createMapTileView(MapTile& map_tile)
 {
-  return NEW MapTileStandard2DView(map_tile, getTileSheet());
+  return NEW MapTileStandard2DView(map_tile, getTileSheet(), m_lighting);
 }
 
 MapView* Standard2DGraphicViews::createMapView(std::string name, Map& map, UintVec2 size)
 {
-  return NEW MapStandard2DView(name, map, size, getTileSheet());
+  return NEW MapStandard2DView(name, map, size, getTileSheet(), m_lighting);
 }
 
 TileSheet& Standard2DGraphicViews::getTileSheet()
 {
-  return *(m_tile_sheet.get());
+  return *(m_tileSheet.get());
 }
 
 void Standard2DGraphicViews::loadViewResourcesFor(std::string category, json& data)
@@ -57,7 +58,7 @@ void Standard2DGraphicViews::loadViewResourcesFor(std::string category, json& da
     UintVec2 tile_location;
     CLOG(TRACE, "GameState") << "Tiles were found for " << category << " category";
 
-    tile_location = m_tile_sheet->load_collection(pngfile_string);
+    tile_location = m_tileSheet->load_collection(pngfile_string);
     CLOG(TRACE, "GameState") << "Tiles for " << category <<
       " were placed on the TileSheet at " << tile_location;
 

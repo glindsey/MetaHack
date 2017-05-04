@@ -3,6 +3,7 @@
 #include <deque>
 
 #include "services/IGraphicViews.h"
+#include "systems/SystemLighting.h"
 
 /// Forward declarations
 class TileSheet;
@@ -15,7 +16,7 @@ class Standard2DGraphicViews : public IGraphicViews
   friend class MapStandard2DView;
 
 public:
-  Standard2DGraphicViews();
+  Standard2DGraphicViews(SystemLighting& lighting);
 
   virtual ~Standard2DGraphicViews();
 
@@ -32,5 +33,8 @@ protected:
 
 private:
   /// The tilesheet that these views are drawn from.
-  std::unique_ptr<TileSheet> m_tile_sheet;
+  std::unique_ptr<TileSheet> m_tileSheet;
+
+  /// Reference to the lighting system.
+  SystemLighting& m_lighting;
 };

@@ -9,7 +9,6 @@
 #include "services/FallbackConfigSettings.h"
 #include "services/FileSystemGameRules.h"
 #include "services/MessageLog.h"
-#include "services/Standard2DGraphicViews.h"
 #include "services/StringDictionary.h"
 #include "state_machine/StateMachine.h"
 #include "tilesheet/TileSheet.h"
@@ -167,9 +166,7 @@ App::App(sf::RenderWindow& app_window)
   /// @todo Change this so language can be specified.
   Service<IStringDictionary>::provide(NEW StringDictionary("resources/strings.en"));
 
-  // Create the standard map views provider.
-  /// @todo Make this configurable.
-  Service<IGraphicViews>::provide(NEW Standard2DGraphicViews());
+  /// @note Standard map views provider creation has been moved to AppStateGameMode.
 
   // Get the state machine.
   StateMachine& sm = *m_state_machine;
@@ -347,7 +344,7 @@ metagui::Desktop & App::get_gui_desktop()
 
 TileSheet & App::get_tilesheet()
 {
-  return *m_tile_sheet;
+  return *m_tileSheet;
 }
 
 App & App::instance()

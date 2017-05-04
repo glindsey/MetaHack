@@ -23,7 +23,7 @@
 #include "Service.h"
 #include "services/IConfigSettings.h"
 #include "services/IGameRules.h"
-#include "services/IGraphicViews.h"
+#include "services/Standard2DGraphicViews.h"
 #include "services/IStringDictionary.h"
 #include "services/MessageLog.h"
 #include "state_machine/StateMachine.h"
@@ -211,6 +211,10 @@ bool AppStateGameMode::initialize()
   // Initialize systems that need initializing.
   m_systemManager->lighting().setMap(current_map_id);
   m_systemManager->lighting().recalculate();
+
+  // Create the standard map views provider.
+  /// @todo Make this configurable.
+  Service<IGraphicViews>::provide(NEW Standard2DGraphicViews(m_systemManager->lighting()));
 
   // Get the map view ready.
   m_mapView->update_tiles(player);

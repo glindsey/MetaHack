@@ -17,7 +17,8 @@ SystemLighting::SystemLighting(ComponentMap<ComponentAppearance>& appearance,
   m_health{ health },
   m_lightSource{ lightSource },
   m_position{ position },
-  m_lightingData{ NEW Grid2D<TileLightingData>({1, 1}) }
+  m_lightingData{ NEW Grid2D<TileLightingData>({1, 1}) },
+  m_ambientLightColor{ 48, 48, 48 } ///< @todo Make this configurable
 {
 }
 
@@ -48,7 +49,7 @@ void SystemLighting::recalculate()
     EntityId lightSource = lightSourcePair.first;
     auto& lightSourceData = lightSourcePair.second;
     bool onMap = m_position.existsFor(lightSource) && (m_position[lightSource].map() == m_map);
-    if (onMap) lightSource->light_up_surroundings();
+    if (onMap) applyLightFrom(lightSource);
   }
 
   //notifyObservers(Event::Updated);
@@ -70,6 +71,26 @@ void SystemLighting::clearAllLightingData()
   }
 }
 
+Color SystemLighting::getLightLevel(IntVec2 coords) const
+{
+  return getWallLightLevel(coords, Direction::Self);
+}
+
+Color SystemLighting::getWallLightLevel(IntVec2 coords, Direction direction) const
+{
+  auto& calculatedLightColors = m_lightingData->get(coords).calculatedLightColors;
+  if (calculatedLightColors.count(direction.get_map_index()) == 0)
+  {
+    return m_ambientLightColor;
+  }
+  else
+  {
+    return m_ambientLightColor + calculatedLightColors.at(direction.get_map_index());
+  }
+
+  return Color();
+}
+
 void SystemLighting::clearLightingData(IntVec2 coords)
 {
   auto& lightingData = m_lightingData->get(coords);
@@ -77,7 +98,7 @@ void SystemLighting::clearLightingData(IntVec2 coords)
   lightingData.calculatedLightColors.clear();
 }
 
-void SystemLighting::applyLightFrom(EntityId light, EntityId location = EntityId::Mu())
+void SystemLighting::applyLightFrom(EntityId light, EntityId location)
 {
   if (location == EntityId::Mu())
   {
@@ -111,7 +132,6 @@ void SystemLighting::applyLightFrom(EntityId light, EntityId location = EntityId
     {
       // Add influence to tile.
       addLightToMap(light);
-      m_position[location].map()->addLight(light);
     }
   }
 }

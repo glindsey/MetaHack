@@ -5,6 +5,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "entity/EntityView.h"
+#include "systems/SystemLighting.h"
 
 /// Class representing the standard 2D (pseudo-3D) view of a Entity object.
 class EntityStandard2DView : public EntityView
@@ -27,11 +28,16 @@ public:
   
 protected:
   /// Constructor.
-  explicit EntityStandard2DView(Entity& entity, TileSheet& tile_sheet);
+  explicit EntityStandard2DView(Entity& entity, 
+                                TileSheet& tileSheet,
+                                SystemLighting& lighting);
 
   virtual EventResult onEvent_NVI(Event const& event) override;
 
 private:
   /// Reference to tilesheet storing entity graphics.
-  TileSheet& m_tile_sheet;
+  TileSheet& m_tileSheet;
+
+  /// Reference to lighting system.
+  SystemLighting& m_lighting;
 };

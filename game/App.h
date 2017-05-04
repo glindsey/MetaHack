@@ -213,7 +213,7 @@ private:
   std::unique_ptr<MessageLog> m_message_log;
 
   /// The tilesheet.
-  std::unique_ptr<TileSheet> m_tile_sheet;
+  std::unique_ptr<TileSheet> m_tileSheet;
 
   static int s_frame_counter;
 

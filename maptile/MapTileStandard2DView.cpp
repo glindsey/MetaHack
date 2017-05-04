@@ -18,11 +18,14 @@ std::string MapTileStandard2DView::getViewName()
   return "standard2D";
 }
 
-MapTileStandard2DView::MapTileStandard2DView(MapTile& map_tile, TileSheet& tile_sheet)
+MapTileStandard2DView::MapTileStandard2DView(MapTile& map_tile, 
+                                             TileSheet& tile_sheet,
+                                             SystemLighting& lighting)
   :
   MapTileView(map_tile),
-  m_tile_offset{ pick_uniform(0, 4) },
-  m_tile_sheet{ tile_sheet }
+  m_tileOffset{ pick_uniform(0, 4) },
+  m_tileSheet{ tile_sheet },
+  m_lighting{ lighting }
 {
 }
 
@@ -30,7 +33,7 @@ UintVec2 MapTileStandard2DView::get_tile_sheet_coords() const
 {
   /// @todo Deal with selecting one of the other tiles.
   UintVec2 start_coords = get_map_tile().getCategoryData().value("tile-location", UintVec2(0, 0));
-  UintVec2 tile_coords(start_coords.x + m_tile_offset, start_coords.y);
+  UintVec2 tile_coords(start_coords.x + m_tileOffset, start_coords.y);
   return tile_coords;
 }
 
@@ -123,7 +126,7 @@ void MapTileStandard2DView::add_memory_vertices_to(sf::VertexArray& vertices,
   ///       in the upper-left corner.
   UintVec2 tile_coords = tile_data.value("tile-location", UintVec2(0, 0));
 
-  m_tile_sheet.add_quad(vertices,
+  m_tileSheet.add_quad(vertices,
                         tile_coords, Color::White,
                         vNW, vNE,
                         vSW, vSE);
@@ -135,29 +138,29 @@ void MapTileStandard2DView::add_tile_floor_vertices(sf::VertexArray& vertices)
 
   auto& tile = get_map_tile();
   auto& coords = tile.getCoords();
-  auto& tileN = tile.getAdjacentTile(Direction::North);
-  auto& tileNE = tile.getAdjacentTile(Direction::Northeast);
-  auto& tileE = tile.getAdjacentTile(Direction::East);
-  auto& tileSE = tile.getAdjacentTile(Direction::Southeast);
-  auto& tileS = tile.getAdjacentTile(Direction::South);
-  auto& tileSW = tile.getAdjacentTile(Direction::Southwest);
-  auto& tileW = tile.getAdjacentTile(Direction::West);
-  auto& tileNW = tile.getAdjacentTile(Direction::Northwest);
+  //auto& tileN = tile.getAdjacentTile(Direction::North);
+  //auto& tileNE = tile.getAdjacentTile(Direction::Northeast);
+  //auto& tileE = tile.getAdjacentTile(Direction::East);
+  //auto& tileSE = tile.getAdjacentTile(Direction::Southeast);
+  //auto& tileS = tile.getAdjacentTile(Direction::South);
+  //auto& tileSW = tile.getAdjacentTile(Direction::Southwest);
+  //auto& tileW = tile.getAdjacentTile(Direction::West);
+  //auto& tileNW = tile.getAdjacentTile(Direction::Northwest);
 
   sf::Vertex new_vertex;
   float ts = config.get("map-tile-size");
   float half_ts = ts * 0.5f;
 
-  Color colorN{ tileN.getLightLevel() };
-  Color colorNE{ tileNE.getLightLevel() };
-  Color colorE{ tileE.getLightLevel() };
-  Color colorSE{ tileSE.getLightLevel() };
-  Color colorS{ tileS.getLightLevel() };
-  Color colorSW{ tileSW.getLightLevel() };
-  Color colorW{ tileW.getLightLevel() };
-  Color colorNW{ tileNW.getLightLevel() };
+  Color colorN{ m_lighting.getLightLevel(coords + static_cast<IntVec2>(Direction::North)) };
+  Color colorNE{ m_lighting.getLightLevel(coords + static_cast<IntVec2>(Direction::Northeast)) };
+  Color colorE{ m_lighting.getLightLevel(coords + static_cast<IntVec2>(Direction::East)) };
+  Color colorSE{ m_lighting.getLightLevel(coords + static_cast<IntVec2>(Direction::Southeast)) };
+  Color colorS{ m_lighting.getLightLevel(coords + static_cast<IntVec2>(Direction::South)) };
+  Color colorSW{ m_lighting.getLightLevel(coords + static_cast<IntVec2>(Direction::Southwest)) };
+  Color colorW{ m_lighting.getLightLevel(coords + static_cast<IntVec2>(Direction::West)) };
+  Color colorNW{ m_lighting.getLightLevel(coords + static_cast<IntVec2>(Direction::Northwest)) };
 
-  Color light = tile.getLightLevel();
+  Color light = m_lighting.getLightLevel(coords);
   Color lightN = average(light, colorN);
   Color lightNE = average(light, colorN, colorNE, colorE);
   Color lightE = average(light, colorE);
@@ -175,7 +178,7 @@ void MapTileStandard2DView::add_tile_floor_vertices(sf::VertexArray& vertices)
 
   UintVec2 tile_coords = get_tile_sheet_coords();
 
-  m_tile_sheet.add_gradient_quad(vertices, tile_coords,
+  m_tileSheet.add_gradient_quad(vertices, tile_coords,
                                  vNW, vNE,
                                  vSW, vSE,
                                  lightNW, lightN, lightNE,
@@ -225,12 +228,12 @@ void MapTileStandard2DView::add_thing_floor_vertices(EntityId entityId, sf::Vert
 
   auto& position = COMPONENTS.position[entityId];
   IntVec2 const& coords = position.coords();
-  MapTile& tile = position.map()->getTile(coords);
+//  MapTile& tile = position.map()->getTile(coords);
 
   Color thing_color;
   if (use_lighting)
   {
-    thing_color = tile.getLightLevel();
+    thing_color = m_lighting.getLightLevel(coords);
   }
   else
   {
@@ -244,7 +247,7 @@ void MapTileStandard2DView::add_thing_floor_vertices(EntityId entityId, sf::Vert
   RealVec2 vNE(location.x + ts2, location.y - ts2);
   UintVec2 tile_coords = get_entity_tile_sheet_coords(entity, frame);
 
-  m_tile_sheet.add_quad(vertices,
+  m_tileSheet.add_quad(vertices,
                         tile_coords, thing_color,
                         vNW, vNE,
                         vSW, vSE);
@@ -319,16 +322,15 @@ void MapTileStandard2DView::add_wall_vertices_to(sf::VertexArray& vertices,
   // Wall size (configurable).
   float ws(map_tile_size * 0.4f);
 
-  // Adjacent tiles
-  MapTile const& adjacent_tile_n = tile.getAdjacentTile(Direction::North);
-  MapTile const& adjacent_tile_e = tile.getAdjacentTile(Direction::East);
-  MapTile const& adjacent_tile_s = tile.getAdjacentTile(Direction::South);
-  MapTile const& adjacent_tile_w = tile.getAdjacentTile(Direction::West);
+  // Adjacent tile coordinates
+  IntVec2 coords = tile.getCoords();
+  IntVec2 coordsN = coords + static_cast<IntVec2>(Direction::North);
+  IntVec2 coordsE = coords + static_cast<IntVec2>(Direction::East);
+  IntVec2 coordsS = coords + static_cast<IntVec2>(Direction::South);
+  IntVec2 coordsW = coords + static_cast<IntVec2>(Direction::West);
 
   // Tile vertices.
-  auto tile_coords = tile.getCoords();
-  RealVec2 location(tile_coords.x * ts,
-                 tile_coords.y * ts);
+  RealVec2 location(coords.x * ts, coords.y * ts);
   RealVec2 vTileN(location.x, location.y - half_ts);
   RealVec2 vTileNE(location.x + half_ts, location.y - half_ts);
   RealVec2 vTileE(location.x + half_ts, location.y);
@@ -342,13 +344,13 @@ void MapTileStandard2DView::add_wall_vertices_to(sf::VertexArray& vertices,
 
   if (use_lighting)
   {
-    tile_color = tile.getLightLevel();
+    tile_color = m_lighting.getLightLevel(coords);
 
     if (playerSeesNWall)
     {
-      wall_n_color = tile.getWallLightLevel(Direction::North);
-      wall_n_color_w = average(wall_n_color, adjacent_tile_w.getWallLightLevel(Direction::North));
-      wall_n_color_e = average(wall_n_color, adjacent_tile_e.getWallLightLevel(Direction::North));
+      wall_n_color = m_lighting.getWallLightLevel(coords, Direction::North);
+      wall_n_color_w = average(wall_n_color, m_lighting.getWallLightLevel(coordsW, Direction::North));
+      wall_n_color_e = average(wall_n_color, m_lighting.getWallLightLevel(coordsE, Direction::North));
     }
     else
     {
@@ -359,9 +361,9 @@ void MapTileStandard2DView::add_wall_vertices_to(sf::VertexArray& vertices,
 
     if (playerSeesEWall)
     {
-      wall_e_color = tile.getWallLightLevel(Direction::East);
-      wall_e_color_n = average(wall_e_color, adjacent_tile_n.getWallLightLevel(Direction::East));
-      wall_e_color_s = average(wall_e_color, adjacent_tile_s.getWallLightLevel(Direction::East));
+      wall_e_color = m_lighting.getWallLightLevel(coords, Direction::East);
+      wall_e_color_n = average(wall_e_color, m_lighting.getWallLightLevel(coordsN, Direction::East));
+      wall_e_color_s = average(wall_e_color, m_lighting.getWallLightLevel(coordsS, Direction::East));
     }
     else
     {
@@ -372,9 +374,9 @@ void MapTileStandard2DView::add_wall_vertices_to(sf::VertexArray& vertices,
 
     if (playerSeesSWall)
     {
-      wall_s_color = tile.getWallLightLevel(Direction::South);
-      wall_s_color_w = average(wall_s_color, adjacent_tile_w.getWallLightLevel(Direction::South));
-      wall_s_color_e = average(wall_s_color, adjacent_tile_e.getWallLightLevel(Direction::South));
+      wall_s_color = m_lighting.getWallLightLevel(coords, Direction::South);
+      wall_s_color_w = average(wall_s_color, m_lighting.getWallLightLevel(coordsW, Direction::South));
+      wall_s_color_e = average(wall_s_color, m_lighting.getWallLightLevel(coordsE, Direction::South));
     }
     else
     {
@@ -385,9 +387,9 @@ void MapTileStandard2DView::add_wall_vertices_to(sf::VertexArray& vertices,
 
     if (playerSeesWWall)
     {
-      wall_w_color = tile.getWallLightLevel(Direction::West);
-      wall_w_color_n = average(wall_w_color, adjacent_tile_n.getWallLightLevel(Direction::West));
-      wall_w_color_s = average(wall_w_color, adjacent_tile_s.getWallLightLevel(Direction::West));
+      wall_w_color = m_lighting.getWallLightLevel(coords, Direction::West);
+      wall_w_color_n = average(wall_w_color, m_lighting.getWallLightLevel(coordsN, Direction::West));
+      wall_w_color_s = average(wall_w_color, m_lighting.getWallLightLevel(coordsS, Direction::West));
     }
     else
     {
@@ -420,7 +422,7 @@ void MapTileStandard2DView::add_wall_vertices_to(sf::VertexArray& vertices,
       vSE.x += ws;
     }
 
-    m_tile_sheet.add_gradient_quad(vertices, tile_sheet_coords,
+    m_tileSheet.add_gradient_quad(vertices, tile_sheet_coords,
                                    vTileNW, vTileNE,
                                    vSW, vSE,
                                    wall_n_color_w, wall_n_color, wall_n_color_e,
@@ -451,7 +453,7 @@ void MapTileStandard2DView::add_wall_vertices_to(sf::VertexArray& vertices,
       vSW.y += ws;
     }
 
-    m_tile_sheet.add_gradient_quad(vertices, tile_sheet_coords,
+    m_tileSheet.add_gradient_quad(vertices, tile_sheet_coords,
                                    vNW, vTileNE,
                                    vSW, vTileSE,
                                    wall_e_color_n, wall_e_color_n, wall_e_color_n,
@@ -482,7 +484,7 @@ void MapTileStandard2DView::add_wall_vertices_to(sf::VertexArray& vertices,
       vNE.x += ws;
     }
 
-    m_tile_sheet.add_gradient_quad(vertices, tile_sheet_coords,
+    m_tileSheet.add_gradient_quad(vertices, tile_sheet_coords,
                                    vNW, vNE,
                                    vTileSW, vTileSE,
                                    wall_s_color_w, wall_s_color, wall_s_color_e,
@@ -513,7 +515,7 @@ void MapTileStandard2DView::add_wall_vertices_to(sf::VertexArray& vertices,
       vSE.y += ws;
     }
 
-    m_tile_sheet.add_gradient_quad(vertices, tile_sheet_coords,
+    m_tileSheet.add_gradient_quad(vertices, tile_sheet_coords,
                                    vTileNW, vNE,
                                    vTileSW, vSE,
                                    wall_w_color_n, wall_w_color_n, wall_w_color_n,

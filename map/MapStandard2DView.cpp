@@ -8,10 +8,14 @@
 #include "types/ShaderEffect.h"
 #include "utilities/New.h"
 
-MapStandard2DView::MapStandard2DView(std::string name, Map& map, UintVec2 size, TileSheet& tile_sheet)
+MapStandard2DView::MapStandard2DView(std::string name, 
+                                     Map& map, 
+                                     UintVec2 size, 
+                                     TileSheet& tileSheet,
+                                     SystemLighting& lighting)
   :
   MapView(name, map, size),
-  m_tile_sheet(tile_sheet)
+  m_tileSheet(tileSheet)
 {
   reset_cached_render_data();
 
@@ -19,7 +23,7 @@ MapStandard2DView::MapStandard2DView(std::string name, Map& map, UintVec2 size, 
   m_map_tile_views.reset(new Grid2D<MapTileStandard2DView>(map.getSize(), 
                                                            [&](IntVec2 coords) -> MapTileStandard2DView*
   {
-    return NEW MapTileStandard2DView(map.getTile(coords), m_tile_sheet);
+    return NEW MapTileStandard2DView(map.getTile(coords), m_tileSheet, lighting);
   }));
 
 }
@@ -66,7 +70,7 @@ bool MapStandard2DView::render_map(sf::RenderTexture& texture, int frame)
 
   sf::RenderStates render_states = sf::RenderStates::Default;
   render_states.shader = &the_shader;
-  render_states.texture = &(m_tile_sheet.getTexture());
+  render_states.texture = &(m_tileSheet.getTexture());
 
   the_shader.setParameter("effect", ShaderEffect::Lighting);
   //the_shader.setParameter("effect", ShaderEffect::Default);

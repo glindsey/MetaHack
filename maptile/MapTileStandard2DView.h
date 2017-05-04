@@ -7,6 +7,7 @@
 #include "maptile/MapTileView.h"
 
 #include "entity/EntityStandard2DView.h"
+#include "systems/SystemLighting.h"
 
 // Forward declarations
 
@@ -24,7 +25,9 @@ public:
 
 protected:
   /// Constructor.
-  MapTileStandard2DView(MapTile& map_tile, TileSheet& tile_sheet);
+  MapTileStandard2DView(MapTile& mapTile, 
+                        TileSheet& tileSheet,
+                        SystemLighting& lighting);
 
   /// Return the coordinates of the tile on the tilesheet.
   UintVec2 get_tile_sheet_coords() const;
@@ -84,8 +87,11 @@ protected:
 
 private:
   /// Random tile offset.
-  int m_tile_offset;
+  int m_tileOffset;
 
   /// Reference to tilesheet containing MapTile graphics.
-  TileSheet& m_tile_sheet;
+  TileSheet& m_tileSheet;
+
+  /// Reference to lighting system.
+  SystemLighting& m_lighting;
 };

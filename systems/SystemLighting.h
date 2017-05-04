@@ -4,6 +4,7 @@
 #include "entity/EntityId.h"
 #include "map/MapId.h"
 #include "types/Color.h"
+#include "types/Direction.h"
 #include "types/Grid2D.h"
 #include "types/LightInfluence.h"
 
@@ -50,12 +51,19 @@ public:
 
   void clearAllLightingData();
 
+  /// Get the light shining on a tile.
+  /// Syntactic sugar for getWallLightLevel(coords, Direction::Self).
+  Color getLightLevel(IntVec2 coords) const;
+
+  /// Get the light shining on a tile wall.
+  Color getWallLightLevel(IntVec2 coords, Direction direction) const;
+
 protected:
   /// Clear lighting data for a tile.
   void clearLightingData(IntVec2 coords);
 
   /// Apply a light source to a location.
-  void applyLightFrom(EntityId lightSource, EntityId location);
+  void applyLightFrom(EntityId lightSource, EntityId location = EntityId::Mu());
 
   void addLightInfluenceToTile(IntVec2 coords, EntityId source, LightInfluence influence);
 
@@ -82,4 +90,7 @@ private:
 
   /// Grid of tile lighting data for all map tiles.
   std::unique_ptr<Grid2D<TileLightingData>> m_lightingData;
+
+  /// Color of ambient lighting.
+  Color m_ambientLightColor;
 };

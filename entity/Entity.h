@@ -256,17 +256,6 @@ public:
 
   /// @}
 
-
-  /// Provide light to this Entity's surroundings.
-  /// If Entity is not opaque, calls light_up_surroundings() for each Entity
-  /// in its inventory.
-  void light_up_surroundings();
-
-  /// Receive light from the specified light source.
-  /// The default behavior is to pass the light source to the location if
-  /// this Entity is opaque.
-  void beLitBy(EntityId light);
-
   /// Spill the contents of this Entity out into the location of the Entity.
   void spill();
 

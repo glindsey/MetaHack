@@ -10,10 +10,13 @@
 #include "types/ShaderEffect.h"
 #include "utilities/RNGUtils.h"
 
-EntityStandard2DView::EntityStandard2DView(Entity& entity, TileSheet& tile_sheet)
+EntityStandard2DView::EntityStandard2DView(Entity& entity, 
+                                           TileSheet& tileSheet,
+                                           SystemLighting& lighting)
   :
   EntityView(entity),
-  m_tile_sheet(tile_sheet)
+  m_tileSheet{ tileSheet },
+  m_lighting{ lighting }
 {
 }
 
@@ -33,7 +36,7 @@ void EntityStandard2DView::draw(sf::RenderTarget& target,
 {
   auto& config = Service<IConfigSettings>::get();
   auto& entity = getEntity();
-  auto& texture = m_tile_sheet.getTexture();
+  auto& texture = m_tileSheet.getTexture();
 
   // Can't render if it doesn't have a Position component.
   if (!COMPONENTS.position.existsFor(entity.getId())) return;
@@ -68,7 +71,7 @@ void EntityStandard2DView::draw(sf::RenderTarget& target,
   Color thing_color;
   if (use_lighting)
   {
-    thing_color = tile.getLightLevel();
+    thing_color = m_lighting.getLightLevel(position.coords());
   }
   else
   {
