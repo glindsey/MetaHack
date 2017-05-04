@@ -15,6 +15,9 @@ using json = ::nlohmann::json;
 class ComponentBodyparts
 {
 public:
+  ComponentBodyparts();
+  ComponentBodyparts(ComponentBodyparts const& other);
+  ComponentBodyparts& operator=(ComponentBodyparts const& other);
 
   friend void from_json(json const& j, ComponentBodyparts& obj);
   friend void to_json(json& j, ComponentBodyparts const& obj);

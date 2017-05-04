@@ -459,12 +459,6 @@ private:
   /// Queue of pending voluntary actions to be performed.
   ActionQueue m_pending_voluntary_actions;
 
-  /// Map of items wielded.
-  BodyLocationMap m_wielded_items;
-
-  /// Map of entities worn.
-  BodyLocationMap m_equipped_items;
-
   /// Outline color for walls when drawing on-screen.
   static Color const wall_outline_color_;
 };

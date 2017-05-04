@@ -42,9 +42,7 @@ Entity::Entity(GameState& state, std::string category, EntityId id) :
   m_state{ state },
   m_id{ id },
   m_pending_involuntary_actions{ ActionQueue() },
-  m_pending_voluntary_actions{ ActionQueue() },
-  m_wielded_items{ BodyLocationMap() },
-  m_equipped_items{ BodyLocationMap() }
+  m_pending_voluntary_actions{ ActionQueue() }
 {
   initialize();
 }
@@ -54,9 +52,7 @@ Entity::Entity(Entity const& original, EntityId ref) :
   m_state{ original.m_state },
   m_id{ ref },
   m_pending_involuntary_actions{ ActionQueue() },     // don't copy
-  m_pending_voluntary_actions{ ActionQueue() },     // don't copy
-  m_wielded_items{ BodyLocationMap() },       // don't copy
-  m_equipped_items{ BodyLocationMap() }        // don't copy
+  m_pending_voluntary_actions{ ActionQueue() }
 {
   COMPONENTS.clone(original.m_id, ref);
   initialize();
@@ -140,14 +136,7 @@ void Entity::clearPendingInvoluntaryActions()
 
 EntityId Entity::getWieldingIn(BodyLocation& location)
 {
-  if (m_wielded_items.count(location) == 0)
-  {
-    return EntityId::Mu();
-  }
-  else
-  {
-    return m_wielded_items[location];
-  }
+  return COMPONENTS.bodyparts.existsFor(m_id) ? COMPONENTS.bodyparts[m_id].getWieldedEntity(location) : EntityId::Mu();
 }
 
 bool Entity::isWielding(EntityId entity)
@@ -158,27 +147,11 @@ bool Entity::isWielding(EntityId entity)
 
 bool Entity::isWielding(EntityId entity, BodyLocation& location)
 {
-  if (entity == EntityId::Mu())
-  {
-    return false;
-  }
-  auto found_item =
-    std::find_if(m_wielded_items.cbegin(),
-                 m_wielded_items.cend(),
-                 [&](BodyLocationPair const& p)
-  {
-    return p.second == entity;
-  });
+  if (!COMPONENTS.bodyparts.existsFor(m_id)) return false;
+  auto& bodyparts = COMPONENTS.bodyparts[m_id];
 
-  if (found_item == m_wielded_items.cend())
-  {
-    return false;
-  }
-  else
-  {
-    location = found_item->first;
-    return true;
-  }
+  location = bodyparts.getWieldedLocation(entity);
+  return (location.part != BodyPart::Nowhere);
 }
 
 bool Entity::isWearing(EntityId entity)
@@ -189,27 +162,11 @@ bool Entity::isWearing(EntityId entity)
 
 bool Entity::isWearing(EntityId entity, BodyLocation& location)
 {
-  if (entity == EntityId::Mu())
-  {
-    return false;
-  }
-  auto found_item =
-    std::find_if(m_equipped_items.cbegin(),
-                 m_equipped_items.cend(),
-                 [&](BodyLocationPair const& p)
-  {
-    return p.second == entity;
-  });
+  if (!COMPONENTS.bodyparts.existsFor(m_id)) return false;
+  auto& bodyparts = COMPONENTS.bodyparts[m_id];
 
-  if (found_item == m_equipped_items.cend())
-  {
-    return false;
-  }
-  else
-  {
-    location = found_item->first;
-    return true;
-  }
+  location = bodyparts.getWornLocation(entity);
+  return (location.part != BodyPart::Nowhere);
 }
 
 bool Entity::canReach(EntityId entity)
@@ -260,25 +217,19 @@ bool Entity::isAdjacentTo(EntityId entity)
 
 void Entity::setWielded(EntityId entity, BodyLocation location)
 {
-  if (entity == EntityId::Mu())
+  if (COMPONENTS.bodyparts.existsFor(entity))
   {
-    m_wielded_items.erase(location);
-  }
-  else
-  {
-    m_wielded_items[location] = entity;
+    auto& bodyparts = COMPONENTS.bodyparts[entity];
+    bodyparts.wieldEntity(entity, location);
   }
 }
 
 void Entity::setWorn(EntityId entity, BodyLocation location)
 {
-  if (entity == EntityId::Mu())
+  if (COMPONENTS.bodyparts.existsFor(entity))
   {
-    m_equipped_items.erase(location);
-  }
-  else
-  {
-    m_equipped_items[location] = entity;
+    auto& bodyparts = COMPONENTS.bodyparts[entity];
+    bodyparts.wearEntity(entity, location);
   }
 }
 

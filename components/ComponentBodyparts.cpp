@@ -50,6 +50,27 @@ void to_json(json& j, ComponentBodyparts const& obj)
   //j["member"] = obj.m_member;
 }
 
+ComponentBodyparts::ComponentBodyparts()
+{}
+
+ComponentBodyparts::ComponentBodyparts(ComponentBodyparts const & other) :
+  m_bodypartCount{ other.m_bodypartCount },
+  m_bodypartExistence{ other.m_bodypartExistence },
+  m_wieldedItems{}, // do NOT copy
+  m_wornItems{} // do NOT copy
+{}
+
+ComponentBodyparts & ComponentBodyparts::operator=(ComponentBodyparts const & other)
+{
+  if (this != &other)
+  {
+    // Copy all EXCEPT wielded/worn items.
+    m_bodypartCount = other.m_bodypartCount;
+    m_bodypartExistence = other.m_bodypartExistence;
+  }
+  return *this;
+}
+
 json ComponentBodyparts::bodyPartToJSON(BodyPart part) const
 {
   json result = json::object();
