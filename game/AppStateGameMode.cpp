@@ -205,9 +205,6 @@ bool AppStateGameMode::initialize()
   m_inventoryAreaShowsPlayer = false;
   resetInventorySelection();
 
-  // Set the map view.
-  m_mapView = the_desktop.addChild(Service<IGraphicViews>::get().createMapView("MainMapView", game_map, the_desktop.getSize()));
-
   // Initialize systems that need initializing.
   m_systemManager->lighting().setMap(current_map_id);
   m_systemManager->lighting().recalculate();
@@ -215,6 +212,9 @@ bool AppStateGameMode::initialize()
   // Create the standard map views provider.
   /// @todo Make this configurable.
   Service<IGraphicViews>::provide(NEW Standard2DGraphicViews(m_systemManager->lighting()));
+
+  // Set the map view.
+  m_mapView = the_desktop.addChild(Service<IGraphicViews>::get().createMapView("MainMapView", game_map, the_desktop.getSize()));
 
   // Get the map view ready.
   m_mapView->update_tiles(player);

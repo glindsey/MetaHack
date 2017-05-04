@@ -49,7 +49,7 @@ void SystemLighting::recalculate()
     EntityId lightSource = lightSourcePair.first;
     auto& lightSourceData = lightSourcePair.second;
     bool onMap = m_position.existsFor(lightSource) && (m_position[lightSource].map() == m_map);    
-    if (onMap) applyLightFrom(lightSource, lightSource);
+    if (onMap) applyLightFrom(lightSource, m_position[lightSource].parent());
   }
 
   //notifyObservers(Event::Updated);
