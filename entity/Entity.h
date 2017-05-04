@@ -117,9 +117,6 @@ public:
   /// Return a reference to this entity.
   EntityId getId() const;
 
-  /// Return whether this Entity can see the requested Entity.
-  bool canSee(EntityId entity);
-
   /// Return whether this Entity can see the requested coordinates.
   /// Assumes this Entity exists on a map, and the coordinates are on the 
   /// same map as it is.
@@ -130,9 +127,6 @@ public:
   /// This method uses a recursive raycasting algorithm to figure out what
   /// can be seen at a particular position.
   void findSeenTiles();
-
-  /// Get the remembered tile type at the specified coordinates.
-  MapMemoryChunk const& getMemoryAt(IntVec2 coords) const;
 
   Gender getGenderOrYou() const;
 
@@ -222,8 +216,6 @@ public:
   /// @note If you want a possessive pronoun like his/her/its/etc., use
   /// getPossessiveAdjective().
   std::string getPossessiveString(std::string owned, std::string adjectives = "");
-
-  Color getOpacity() const;
 
   /// Return true if a third-person verb form should be used.
   /// This function checks to see if this Entity is currently designated as

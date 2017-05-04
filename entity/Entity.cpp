@@ -251,26 +251,6 @@ EntityId Entity::getId() const
   return m_id;
 }
 
-bool Entity::canSee(EntityId entity)
-{
-  // Bail if either doesn't have a Position component.
-  if (!COMPONENTS.position.existsFor(m_id) ||
-      !COMPONENTS.position.existsFor(entity))
-  {
-    return false;
-  }
-
-  // Bail if the two aren't on the same map.
-  auto& thisPosition = COMPONENTS.position[m_id];
-  auto& entityPosition = COMPONENTS.position[entity];
-  if (thisPosition.map() != entityPosition.map())
-  {
-    return false;
-  }
-
-  return canSee(entityPosition.coords());
-}
-
 bool Entity::canSee(IntVec2 coords)
 {
   auto& thisPosition = COMPONENTS.position[m_id];
@@ -337,32 +317,6 @@ void Entity::findSeenTiles()
   {
     do_recursive_visibility(position, n);
   }
-}
-
-MapMemoryChunk const& Entity::getMemoryAt(IntVec2 coords) const
-{
-  static MapMemoryChunk null_memory_chunk{ "MTUnknown", 0 };
-
-  auto map = COMPONENTS.position[m_id].map();
-
-  if (map == MapFactory::null_map_id)
-  {
-    return null_memory_chunk;
-  }
-
-  if (!COMPONENTS.spacialMemory.existsFor(m_id))
-  {
-    return null_memory_chunk;
-  }
-
-  auto& memory = COMPONENTS.spacialMemory[m_id];
-
-  if (!memory.containsMap(map))
-  {
-    return null_memory_chunk;
-  }
-
-  return memory.ofMap(map).valueOr(coords, null_memory_chunk);
 }
 
 bool Entity::moveInto(EntityId newLocation)
@@ -650,11 +604,6 @@ std::string Entity::getPossessiveString(std::string owned, std::string adjective
       owned
     });
   }
-}
-
-Color Entity::getOpacity() const
-{
-  return COMPONENTS.appearance.valueOrDefault(m_id).opacity();
 }
 
 void Entity::light_up_surroundings()

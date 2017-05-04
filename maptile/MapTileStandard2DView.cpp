@@ -91,7 +91,7 @@ void MapTileStandard2DView::add_tile_vertices(EntityId viewer,
 void MapTileStandard2DView::add_memory_vertices_to(sf::VertexArray& vertices,
                                                    EntityId viewer)
 {
-  if (!COMPONENTS.position.existsFor(viewer)) return;
+  if (!COMPONENTS.position.existsFor(viewer) || !COMPONENTS.spacialMemory.existsFor(viewer)) return;
 
   auto& config = Service<IConfigSettings>::get();
   auto& tile = get_map_tile();
@@ -104,6 +104,7 @@ void MapTileStandard2DView::add_memory_vertices_to(sf::VertexArray& vertices,
     return;
   }
 
+  auto& spacialMemory = COMPONENTS.spacialMemory[viewer].ofMap(map);
   static sf::Vertex new_vertex;
   float ts = config.get("map-tile-size");
   float ts2 = ts * 0.5f;
@@ -114,7 +115,7 @@ void MapTileStandard2DView::add_memory_vertices_to(sf::VertexArray& vertices,
   RealVec2 vNW(location.x - ts2, location.y - ts2);
   RealVec2 vNE(location.x + ts2, location.y - ts2);
 
-  std::string tile_type = viewer->getMemoryAt(coords).getType();
+  std::string tile_type = spacialMemory[coords].getType();
   if (tile_type == "") { tile_type = "MTUnknown"; }
   json& tile_data = Service<IGameRules>::get().category(tile_type);
 
