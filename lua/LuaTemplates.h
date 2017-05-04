@@ -53,7 +53,7 @@ int LUA_setBool(lua_State* L, std::function<void(EntityId, bool)> setValue)
   }
 
   EntityId entity = EntityId(lua_tointeger(L, 1));
-  bool param = static_cast<bool>(lua_toboolean(L, 2));
+  bool param = (lua_toboolean(L, 2) == 0 ? false : true);
 
   setValue(entity, param);
   return 0;
@@ -70,7 +70,7 @@ int LUA_setInt(lua_State* L, std::function<void(EntityId, int)> setValue)
   }
 
   EntityId entity = EntityId(lua_tointeger(L, 1));
-  int param = lua_tointeger(L, 2);
+  int param = static_cast<int>(lua_tointeger(L, 2));
 
   setValue(entity, param);
   return 0;
@@ -87,7 +87,7 @@ int LUA_setFloat(lua_State* L, std::function<void(EntityId, float)> setValue)
   }
 
   EntityId entity = EntityId(lua_tointeger(L, 1));
-  float param = lua_tonumber(L, 2);
+  float param = static_cast<float>(lua_tonumber(L, 2));
 
   setValue(entity, param);
   return 0;
