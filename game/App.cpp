@@ -73,6 +73,7 @@ App::App(sf::RenderWindow& app_window)
   SET_UP_LOGGER("Inventory",                    false);
   SET_UP_LOGGER("InventoryArea",                false);
   SET_UP_LOGGER("InventorySelection",           false);
+  SET_UP_LOGGER("Lighting",                     false);
   SET_UP_LOGGER("Lua",                          false);
   SET_UP_LOGGER("Map",                          false);
   SET_UP_LOGGER("MapFactory",                   false);

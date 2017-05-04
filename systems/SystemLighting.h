@@ -1,18 +1,43 @@
 #pragma once
 
 #include "components/ComponentMap.h"
+#include "entity/EntityId.h"
 #include "map/MapId.h"
+#include "types/Color.h"
+#include "types/Grid2D.h"
+#include "types/LightInfluence.h"
 
 // Forward declarations
+class ComponentAppearance;
+class ComponentHealth;
 class ComponentLightSource;
 class ComponentPosition;
+
+/// Lighting data for a single maptile.
+struct TileLightingData
+{
+  /// The calculated light levels of this tile and all of its walls.
+  /// Mapping to an int is horribly hacky but I see no other alternative
+  /// right now.
+  std::map<unsigned int, Color> calculatedLightColors;
+
+  /// A map of LightInfluences, representing the amount of light that
+  /// each entity is contributing to this map tile.
+  /// Levels for the various color channels are interpreted as such:
+  /// 0 <= value <= 128: result = (original * (value / 128))
+  /// 128 < value <= 255: result = max(original + (value - 128), 255)
+  /// The alpha channel is ignored.
+  std::map<EntityId, LightInfluence> lights;
+};
 
 /// System that handles lighting the map and all entities on it.
 class SystemLighting
 {
 public:
-  SystemLighting(ComponentMap<ComponentLightSource>& lightSources,
-                 ComponentMap<ComponentPosition>& positions);
+  SystemLighting(ComponentMap<ComponentAppearance>& appearance,
+                 ComponentMap<ComponentHealth>& health,
+                 ComponentMap<ComponentLightSource>& lightSource,
+                 ComponentMap<ComponentPosition>& position);
 
   /// Get the map the system is operating on.
   MapId map() const;
@@ -23,16 +48,38 @@ public:
   /// Recalculate map lighting.
   void recalculate();
 
+  void clearAllLightingData();
+
 protected:
+  /// Clear lighting data for a tile.
+  void clearLightingData(IntVec2 coords);
+
+  /// Apply a light source to a location.
+  void applyLightFrom(EntityId lightSource, EntityId location);
+
+  void addLightInfluenceToTile(IntVec2 coords, EntityId source, LightInfluence influence);
+
+  void addLightToMap(EntityId source);
+
+  void doRecursiveLighting(EntityId source,
+                           IntVec2 const& origin,
+                           Color const& light_color,
+                           int const max_depth_squared,
+                           int octant,
+                           int depth = 1,
+                           float slope_A = 1,
+                           float slope_B = 0);
 
 private:
-  /// Reference to light source components.
-  ComponentMap<ComponentLightSource>& m_lightSources;
-
-  /// Reference to position components.
-  ComponentMap<ComponentPosition>& m_positions;
+  // Components used by this system.
+  ComponentMap<ComponentAppearance>& m_appearance;
+  ComponentMap<ComponentHealth>& m_health;
+  ComponentMap<ComponentLightSource>& m_lightSource;
+  ComponentMap<ComponentPosition>& m_position;
 
   /// ID of map the system is operating on.
   MapId m_map;
 
+  /// Grid of tile lighting data for all map tiles.
+  std::unique_ptr<Grid2D<TileLightingData>> m_lightingData;
 };

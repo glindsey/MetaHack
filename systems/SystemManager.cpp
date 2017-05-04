@@ -8,7 +8,10 @@
 SystemManager::SystemManager(ComponentManager& components) :
   m_components{ components }
 {
-  m_lighting.reset(NEW SystemLighting(m_components.lightSource, m_components.position));
+  m_lighting.reset(NEW SystemLighting(m_components.appearance,
+                                      m_components.health,
+                                      m_components.lightSource, 
+                                      m_components.position));
 }
 
 SystemManager::~SystemManager()
