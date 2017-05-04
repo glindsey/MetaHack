@@ -27,6 +27,7 @@
 #include "services/IStringDictionary.h"
 #include "services/MessageLog.h"
 #include "state_machine/StateMachine.h"
+#include "systems/SystemLighting.h"
 #include "systems/SystemManager.h"
 #include "utilities/GetLetterKey.h"
 #include "utilities/StringTransforms.h"
@@ -131,6 +132,13 @@ void AppStateGameMode::execute()
   {
     EntityId player = game.getPlayer();
 
+    // Update map used for systems that care about it.
+    auto map = COMPONENTS.position.existsFor(player) ? COMPONENTS.position[player].map() : MapId::Null();
+    m_systemManager->lighting().setMap(map);
+
+    // Run systems.
+    m_systemManager->runOneCycle();
+
     // Update view's cached tile data.
     m_mapView->update_tiles(player);
 
@@ -200,8 +208,9 @@ bool AppStateGameMode::initialize()
   // Set the map view.
   m_mapView = the_desktop.addChild(Service<IGraphicViews>::get().createMapView("MainMapView", game_map, the_desktop.getSize()));
 
-  // Get the map ready.
-  game_map.updateLighting();
+  // Initialize systems that need initializing.
+  m_systemManager->lighting().setMap(current_map_id);
+  m_systemManager->lighting().recalculate();
 
   // Get the map view ready.
   m_mapView->update_tiles(player);

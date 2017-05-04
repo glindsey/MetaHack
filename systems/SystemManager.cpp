@@ -14,7 +14,7 @@ SystemManager::SystemManager(ComponentManager& components) :
 SystemManager::~SystemManager()
 {}
 
-void SystemManager::run()
+void SystemManager::runOneCycle()
 {
   m_lighting->recalculate();
 }

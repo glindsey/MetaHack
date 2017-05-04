@@ -14,7 +14,7 @@ public:
   ~SystemManager();
 
   /// Run one cycle of all systems.
-  void run();
+  void runOneCycle();
 
   // Get references to systems.
   SystemLighting& lighting();

@@ -45,8 +45,6 @@ public:
   /// Process all Entities on this map.
   void processEntities();
 
-  void updateLighting();
-
   void addLight(EntityId source);
 
   MapTile const & getTile(IntVec2 tile) const;

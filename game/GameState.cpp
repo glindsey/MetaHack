@@ -130,16 +130,6 @@ bool GameState::processGameClockTick()
     // Process everything on the map, and increment game clock.
     map->processEntities();
     incrementGameClock(ElapsedTime(1));
-
-    // If player can see the map...
-    /// @todo IMPLEMENT THIS CHECK
-    // (can be done by checking if the location chain for the player is
-    //  entirely transparent)
-    if (true /* player is directly on a map */)
-    {
-      // Update map lighting.
-      map->updateLighting();
-    }
     return true;
   }
   return false;

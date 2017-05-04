@@ -140,37 +140,6 @@ void Map::processEntities()
   //notifyObservers(Event::Updated);
 }
 
-void Map::updateLighting()
-{
-  // Clear it first.
-  for (int y = 0; y < m_map_size.y; ++y)
-  {
-	for (int x = 0; x < m_map_size.x; ++x)
-	{
-	  TILE(x, y).clearLightInfluences();
-	}
-  }
-
-  for (int y = 0; y < m_map_size.y; ++y)
-  {
-	for (int x = 0; x < m_map_size.x; ++x)
-	{
-	  EntityId contents = TILE(x, y).getTileContents();
-	  auto& inventory = COMPONENTS.inventory[contents];
-	  for (auto iter = inventory.begin();
-		   iter != inventory.end();
-		   ++iter)
-	  {
-		EntityId entity = iter->second;
-		entity->light_up_surroundings();
-		//addLight(entity);
-	  }
-	}
-  }
-
-  //notifyObservers(Event::Updated);
-}
-
 void Map::doRecursiveLighting(EntityId source,
 							  IntVec2 const& origin,
 							  Color const& light_color,
