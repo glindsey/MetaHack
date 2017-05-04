@@ -180,16 +180,6 @@ bool Entity::isAdjacentTo(EntityId entity)
   return adjacent(ourPosition.coords(), otherPosition.coords());
 }
 
-void Entity::setGender(Gender gender)
-{
-  COMPONENTS.gender[m_id].gender() = gender;
-}
-
-Gender Entity::getGender() const
-{
-  return COMPONENTS.gender.valueOrDefault(m_id).gender();
-}
-
 Gender Entity::getGenderOrYou() const
 {
   if (isPlayer())
@@ -438,24 +428,6 @@ bool Entity::moveInto(EntityId newLocation)
   } // end if (canContain is true)
 
   return false;
-}
-
-bool Entity::isInsideAnotherEntity() const
-{
-  auto& parent = COMPONENTS.position[m_id].parent();
-  if (parent == EntityId::Mu())
-  {
-    // Entity is a part of the MapTile such as the floor.
-    return false;
-  }
-
-  auto& grandparent = COMPONENTS.position[parent].parent();
-  if (grandparent == EntityId::Mu())
-  {
-    // Entity is directly on the floor.
-    return false;
-  }
-  return true;
 }
 
 std::string Entity::getDisplayAdjectives() const
@@ -1298,7 +1270,7 @@ void Entity::do_recursive_visibility(ComponentPosition const& thisPosition,
   //int y = 0;
 
   // Are we on a map?  Bail out if we aren't.
-  if (isInsideAnotherEntity())
+  if (!COMPONENTS.position.existsFor(m_id) || COMPONENTS.position[m_id].isInsideAnotherEntity())
   {
     return;
   }

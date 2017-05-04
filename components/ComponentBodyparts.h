@@ -79,7 +79,6 @@ public:
   /// Returns true if successful, false if the bodypart is not valid.
   bool wieldEntity(EntityId id, BodyLocation location);
 
-
 protected:
   void setUpBodyparts(BodyPart part, unsigned int count);
 

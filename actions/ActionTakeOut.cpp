@@ -45,10 +45,10 @@ namespace Actions
     std::string message;
     auto subject = getSubject();
     auto object = getObject();
-    auto container = COMPONENTS.position[object].parent();
 
     // Check that the container is not a MapTile or DynamicEntity.
-    if (!object->isInsideAnotherEntity())
+    auto& objectPosition = COMPONENTS.position.of(object);
+    if (!objectPosition.isInsideAnotherEntity())
     {
       printMessageTry();
 
@@ -69,7 +69,8 @@ namespace Actions
     }
 
     // Check that the container is within reach.
-    if (!subject->canReach(container))
+    auto objectContainer = objectPosition.parent();
+    if (!subject->canReach(objectContainer))
     {
       printMessageTry();
 

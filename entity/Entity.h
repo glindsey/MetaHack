@@ -134,10 +134,6 @@ public:
   /// Get the remembered tile type at the specified coordinates.
   MapMemoryChunk const& getMemoryAt(IntVec2 coords) const;
 
-  void setGender(Gender gender);
-
-  Gender getGender() const;
-
   Gender getGenderOrYou() const;
 
   /// Get the number of a particular body part the DynamicEntity has.
@@ -158,9 +154,6 @@ public:
   /// creature has (for example) a strange configuration of limbs this can be
   /// overridden.
   std::string getBodypartDescription(BodyLocation location);
-
-  /// Returns true if this entity is inside another Entity.
-  bool isInsideAnotherEntity() const;
 
   /// Return this object's adjective qualifiers (such as "fireproof", "waterproof", etc.)
   std::string getDisplayAdjectives() const;

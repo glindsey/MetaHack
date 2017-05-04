@@ -254,7 +254,7 @@ void AppStateGameMode::render_map(sf::RenderTexture& texture, int frame)
   ///       Should probably use an overridden "render_surroundings" method
   ///       for Entities.
 
-  if (!player->isInsideAnotherEntity())
+  if (COMPONENTS.position.existsFor(player) && !COMPONENTS.position[player].isInsideAnotherEntity())
   {
     auto& position = COMPONENTS.position[player];
     RealVec2 player_pixel_coords = MapTile::getPixelCoords(position.coords());

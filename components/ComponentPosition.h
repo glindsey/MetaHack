@@ -47,6 +47,9 @@ public:
   /// parent.
   IntVec2 coords() const;
 
+  /// Return whether this entity is inside another entity or not.
+  bool isInsideAnotherEntity() const;
+
 protected:
 
 private:

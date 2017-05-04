@@ -332,18 +332,17 @@ namespace Actions
       }
     }
 
-    auto& position = COMPONENTS.position.of(subject);
-    auto parent = position.parent();
-
     if (hasTrait(Trait::SubjectCanNotBeInsideAnotherObject))
     {
       // Make sure we're not confined inside another entity.
       /// @todo Allow for attacking when swallowed!
-      if (subject->isInsideAnotherEntity())
+      auto& subjectPosition = COMPONENTS.position.of(subject);
+      if (subjectPosition.isInsideAnotherEntity())
       {
+        auto subjectParent = subjectPosition.parent();
         printMessageTry();
         putMsg(makeTr("YOU_ARE_INSIDE_OBJECT",
-        { parent->getDescriptiveString(ArticleChoice::Indefinite) }));
+        { subjectParent->getDescriptiveString(ArticleChoice::Indefinite) }));
         return StateResult::Failure();
       }
     }

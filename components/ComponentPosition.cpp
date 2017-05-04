@@ -91,3 +91,20 @@ IntVec2 ComponentPosition::coords() const
     return m_coords;
   }
 }
+
+bool ComponentPosition::isInsideAnotherEntity() const
+{
+  if (m_parent == EntityId::Mu())
+  {
+    // Entity is a part of the MapTile such as the floor.
+    return false;
+  }
+
+  auto& grandparent = COMPONENTS.position[m_parent].parent();
+  if (grandparent == EntityId::Mu())
+  {
+    // Entity is directly on the floor.
+    return false;
+  }
+  return true;
+}
