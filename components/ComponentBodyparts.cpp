@@ -91,14 +91,24 @@ size_t ComponentBodyparts::actualCount(BodyPart part) const
   return m_bodypartExistence[static_cast<unsigned int>(part)].count();
 }
 
-boost::dynamic_bitset<size_t>::reference ComponentBodyparts::exists(BodyPart part, unsigned int which)
+boost::dynamic_bitset<size_t>::reference ComponentBodyparts::exists(BodyPart part, size_t which)
 {
   return m_bodypartExistence[static_cast<unsigned int>(part)][which];
 }
 
-bool ComponentBodyparts::exists(BodyPart part, unsigned int which) const
+bool ComponentBodyparts::exists(BodyPart part, size_t which) const
 {
   return m_bodypartExistence[static_cast<unsigned int>(part)][which];
+}
+
+boost::dynamic_bitset<size_t>::reference ComponentBodyparts::exists(BodyLocation location)
+{
+  return exists(location.part, location.number);
+}
+
+bool ComponentBodyparts::exists(BodyLocation location) const
+{
+  return exists(location.part, location.number);
 }
 
 bool ComponentBodyparts::hasPrehensileBodyPart() const
@@ -106,7 +116,7 @@ bool ComponentBodyparts::hasPrehensileBodyPart() const
   return (actualCount(BodyPart::Finger) > 0) || (actualCount(BodyPart::PTail) > 0);
 }
 
-BodyPartPair ComponentBodyparts::getWornLocation(EntityId id) const
+BodyLocation ComponentBodyparts::getWornLocation(EntityId id) const
 {
   /// @todo Improve upon this, this is O(1) right now.
   for (auto& itemPair : m_wornItems)
@@ -116,7 +126,7 @@ BodyPartPair ComponentBodyparts::getWornLocation(EntityId id) const
   return { BodyPart::Nowhere, 0 };
 }
 
-BodyPartPair ComponentBodyparts::getWieldedLocation(EntityId id) const
+BodyLocation ComponentBodyparts::getWieldedLocation(EntityId id) const
 {
   /// @todo Improve upon this, this is O(1) right now.
   for (auto& itemPair : m_wieldedItems)
@@ -126,14 +136,64 @@ BodyPartPair ComponentBodyparts::getWieldedLocation(EntityId id) const
   return { BodyPart::Nowhere, 0 };
 }
 
-EntityId ComponentBodyparts::getWornEntity(BodyPartPair part) const
+EntityId ComponentBodyparts::getWornEntity(BodyLocation location) const
 {
-  return (m_wornItems.count(part) != 0) ? m_wornItems.at(part) : EntityId::Mu();
+  return (m_wornItems.count(location) != 0) ? m_wornItems.at(location) : EntityId::Mu();
 }
 
-EntityId ComponentBodyparts::getWieldedEntity(BodyPartPair part) const
+EntityId ComponentBodyparts::getWieldedEntity(BodyLocation location) const
 {
-  return (m_wieldedItems.count(part) != 0) ? m_wieldedItems.at(part) : EntityId::Mu();
+  return (m_wieldedItems.count(location) != 0) ? m_wieldedItems.at(location) : EntityId::Mu();
+}
+
+void ComponentBodyparts::removeWornEntity(EntityId id)
+{
+  auto currentWornLocation = getWornLocation(id);
+  if (currentWornLocation.part != BodyPart::Nowhere)
+  {
+    m_wornItems.erase(currentWornLocation);
+  }
+}
+
+void ComponentBodyparts::removeWieldedEntity(EntityId id)
+{
+  auto currentWieldedLocation = getWieldedLocation(id);
+  if (currentWieldedLocation.part != BodyPart::Nowhere)
+  {
+    m_wieldedItems.erase(currentWieldedLocation);
+  }
+}
+
+void ComponentBodyparts::removeWornLocation(BodyLocation location)
+{
+  m_wornItems.erase(location);
+}
+
+void ComponentBodyparts::removeWieldedLocation(BodyLocation location)
+{
+  m_wieldedItems.erase(location);
+}
+
+bool ComponentBodyparts::wearEntity(EntityId id, BodyLocation location)
+{
+  removeWornEntity(id);
+  if (exists(location))
+  {
+    m_wornItems[location] = id;
+    return true;
+  }
+  return false;
+}
+
+bool ComponentBodyparts::wieldEntity(EntityId id, BodyLocation location)
+{
+  removeWieldedEntity(id);
+  if (exists(location))
+  {
+    m_wieldedItems[location] = id;
+    return true;
+  }
+  return false;
 }
 
 void ComponentBodyparts::setUpBodyparts(BodyPart part, unsigned int count)

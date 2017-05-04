@@ -71,13 +71,14 @@ struct BodyLocation
   {}
 
   BodyPart part;
-  unsigned int number;
+  size_t number;
 
-  inline unsigned int index() const
+  inline size_t index() const
   {
-    return (number * static_cast<unsigned int>(BodyPart::MemberCount)) +
-      static_cast<unsigned int>(part);
+    return (number * static_cast<size_t>(BodyPart::MemberCount)) +
+      static_cast<size_t>(part);
   }
+
 };
 
 namespace std

@@ -3,7 +3,7 @@
 
 namespace Ordinal
 {
-  inline std::string get_abbrev(unsigned int number)
+  inline std::string get_abbrev(size_t number)
   {
     switch (number % 10)
     {
@@ -14,7 +14,7 @@ namespace Ordinal
     }
   }
 
-  inline std::string get(unsigned int number)
+  inline std::string get(size_t number)
   {
     switch (number)
     {
