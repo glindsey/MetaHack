@@ -63,7 +63,7 @@ protected:
   void clearLightingData(IntVec2 coords);
 
   /// Apply a light source to a location.
-  void applyLightFrom(EntityId lightSource, EntityId location = EntityId::Mu());
+  void applyLightFrom(EntityId lightSource, EntityId location);
 
   void addLightInfluenceToTile(IntVec2 coords, EntityId source, LightInfluence influence);
 

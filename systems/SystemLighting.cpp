@@ -48,8 +48,8 @@ void SystemLighting::recalculate()
   {
     EntityId lightSource = lightSourcePair.first;
     auto& lightSourceData = lightSourcePair.second;
-    bool onMap = m_position.existsFor(lightSource) && (m_position[lightSource].map() == m_map);
-    if (onMap) applyLightFrom(lightSource);
+    bool onMap = m_position.existsFor(lightSource) && (m_position[lightSource].map() == m_map);    
+    if (onMap) applyLightFrom(lightSource, lightSource);
   }
 
   //notifyObservers(Event::Updated);
@@ -100,11 +100,6 @@ void SystemLighting::clearLightingData(IntVec2 coords)
 
 void SystemLighting::applyLightFrom(EntityId light, EntityId location)
 {
-  if (location == EntityId::Mu())
-  {
-    location = m_position[light].parent();
-  }
-
   // Use visitor pattern.
   if (m_lightSource[light].lit())
   {
@@ -113,7 +108,7 @@ void SystemLighting::applyLightFrom(EntityId light, EntityId location)
       bool locationIsOpaque =
         m_appearance.existsFor(location) &&
         m_appearance[location].isTotallyOpaque();
-      bool locationHasHealth = m_health.existsFor(light);
+      bool locationHasHealth = m_health.existsFor(location);
 
 
       bool result = the_lua_instance.call_thing_function("on_lit_by", location, light, true);
@@ -125,7 +120,8 @@ void SystemLighting::applyLightFrom(EntityId light, EntityId location)
       //if (!isOpaque() || is wielding(light) || is wearing(light))
       if (!locationIsOpaque || locationHasHealth)
       {
-        applyLightFrom(light, m_position[location].parent());
+        auto locationParent = m_position[location].parent();
+        applyLightFrom(light, locationParent);
       }
     }
     else // (lightSourceLocation == EntityId::Mu())

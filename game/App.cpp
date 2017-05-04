@@ -67,7 +67,7 @@ App::App(sf::RenderWindow& app_window)
   SET_UP_LOGGER("EntityPool",                   false);
   SET_UP_LOGGER("Game",                         false);
   SET_UP_LOGGER("GameRules",                    false);
-  SET_UP_LOGGER("GameState",                    false);
+  SET_UP_LOGGER("GameState",                     true);
   SET_UP_LOGGER("GUI",                          false);
   SET_UP_LOGGER("Inventory",                    false);
   SET_UP_LOGGER("InventoryArea",                false);
