@@ -16,8 +16,56 @@ SystemSpacialRelationships::SystemSpacialRelationships(ComponentMap<ComponentInv
 SystemSpacialRelationships::~SystemSpacialRelationships()
 {}
 
-void SystemSpacialRelationships::recalculate()
+void SystemSpacialRelationships::doCycleUpdate()
 {}
+
+bool SystemSpacialRelationships::moveEntityInto(EntityId entity, EntityId newLocation)
+{
+  // If Entity doesn't have a Position component, bail.
+  if (!m_position.existsFor(entity)) return false;
+
+  // If new location doesn't have an Inventory component, bail.
+  if (!m_inventory.existsFor(newLocation)) return false;
+
+  auto& position = m_position[entity];
+  auto& newInventory = m_inventory[newLocation];
+  MapId oldMapId = position.map();
+  EntityId oldLocation = position.parent();
+
+  if (newLocation == oldLocation)
+  {
+    // We're already there!
+    return true;
+  }
+
+  if (newInventory.canContain(entity))
+  {
+    if (newInventory.add(entity) == true)
+    {
+      // Try to lock our old location.
+      if (oldLocation != EntityId::Mu())
+      {
+        m_inventory[oldLocation].remove(entity);
+      }
+
+      // Set the location to the new location.
+      m_position[entity].set(newLocation);
+
+      MapId newMapId = position.map();
+      if (oldMapId != newMapId)
+      {
+        broadcast(EventEntityChangedMaps(entity));
+      }
+      else
+      {
+        broadcast(EventEntityMoved(entity));
+      }
+      return true;
+    } // end if (add to new inventory was successful)
+  } // end if (canContain is true)
+
+  return false;
+}
 
 bool SystemSpacialRelationships::firstCanReachSecond(EntityId first, EntityId second) const
 {
@@ -118,3 +166,16 @@ bool SystemSpacialRelationships::areAdjacent(EntityId first, EntityId second) co
 
 void SystemSpacialRelationships::setMapNVO(MapId newMap)
 {}
+
+std::unordered_set<EventID> SystemSpacialRelationships::registeredEvents() const
+{
+  auto events = Subject::registeredEvents();
+  events.insert(EventEntityMoved::id());
+  events.insert(EventEntityChangedMaps::id());
+  return events;
+}
+
+EventResult SystemSpacialRelationships::onEvent_NVI(Event const& event)
+{
+  return { EventHandled::Yes, ContinueBroadcasting::Yes };
+}

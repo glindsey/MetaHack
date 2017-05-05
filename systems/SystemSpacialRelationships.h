@@ -14,13 +14,50 @@ class ComponentPosition;
 class SystemSpacialRelationships : public SystemCRTP<SystemSpacialRelationships>
 {
 public:
+  /// Event indicating an entity moved, but stayed on the same map.
+  struct EventEntityMoved : public ConcreteEvent<EventEntityMoved>
+  {
+    EventEntityMoved(EntityId entity_) :
+      entity{ entity_ }
+    {
+    }
+
+    EntityId entity;
+
+    void serialize(std::ostream& os) const
+    {
+      Event::serialize(os);
+      os << "| entity = " << entity;
+    }
+  };
+
+  /// Event indicating an entity moved to a new map.
+  struct EventEntityChangedMaps : public ConcreteEvent<EventEntityChangedMaps>
+  {
+    EventEntityChangedMaps(EntityId entity_) :
+      entity{ entity_ }
+    {
+    }
+
+    EntityId entity;
+
+    void serialize(std::ostream& os) const
+    {
+      Event::serialize(os);
+      os << "| entity = " << entity;
+    }
+  };
+
   SystemSpacialRelationships(ComponentMap<ComponentInventory>& inventory,
                              ComponentMap<ComponentPosition>& position);
 
   virtual ~SystemSpacialRelationships();
 
   /// Recalculate whatever needs recalculating.
-  void recalculate();
+  void doCycleUpdate();
+
+  /// Move an entity into a location, if possible.
+  bool moveEntityInto(EntityId entity, EntityId newLocation);
 
   /// Return whether the first entity can reach the second.
   /// "Can reach" means they are:
@@ -42,8 +79,12 @@ public:
   /// Return whether these two entities are adjacent to each other.
   bool areAdjacent(EntityId first, EntityId second) const;
 
+  virtual std::unordered_set<EventID> registeredEvents() const override;
+
 protected:
   void setMapNVO(MapId newMap);
+
+  virtual EventResult onEvent_NVI(Event const & event) override;
 
 private:
   // Components used by this system.

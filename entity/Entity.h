@@ -11,7 +11,7 @@
 #include "types/MapMemoryChunk.h"
 #include "map/MapMemory.h"
 #include "maptile/MapTile.h"
-#include "Subject.h"
+#include "Object.h"
 #include "entity/EntityId.h"
 #include "entity/EntityPool.h"
 
@@ -48,13 +48,13 @@ enum class UsePossessives
 ///       e.g. the wearing/wielding stuff.
 class Entity
   :
-  public GameObject,
-  public Subject
+  public GameObject
 {
   friend class AIStrategy;
   friend class EntityPool;
 
 public:
+
   virtual ~Entity();
 
   /// Queue an action for this DynamicEntity to perform.
@@ -197,7 +197,7 @@ public:
   /// @param possessives  Choose whether to use possessive articles when appropriate.
   ///                     Defaults to using them.
   std::string getDescriptiveString(ArticleChoice articles = ArticleChoice::Definite,
-								   UsePossessives possessives = UsePossessives::Yes) const;
+                                   UsePossessives possessives = UsePossessives::Yes) const;
 
   /// Choose the proper possessive form for a string passed in.
   /// For a Entity, this is simply "the foo", as Entities cannot own entities.
@@ -228,7 +228,7 @@ public:
   /// @param verb2 The second person or plural verb form, such as "shake"
   /// @param verb3 The third person verb form, such as "shakes"
   std::string const& chooseVerb(std::string const& verb2,
-								std::string const& verb3);
+                                std::string const& verb3);
 
   /// @addtogroup Pronouns
   /// @todo Make localizable. (How? Use Lua scripts maybe?)
@@ -252,13 +252,10 @@ public:
   /// @}
 
   /// Spill the contents of this Entity out into the location of the Entity.
-  void spill();
+  //void spill();
 
   /// Attempt to destroy this Entity.
   void destroy();
-
-  /// Attempt to move this Entity into a location.
-  bool moveInto(EntityId new_location);
 
   /// Return the body part this entity is equippable on.
   /// If entity is not equippable, return BodyPart::Count.
@@ -326,26 +323,17 @@ public:
   /// Calls an overridden subclass function.
   bool can_merge_with(EntityId other) const;
 
-  /// Returns whether the Entity can hold a certain entity.
-  /// If Entity's inventory size is 0, returns false.
-  /// Otherwise, calls Lua function "canContain()" for the Entity's type.
-  /// @param entity Entity to check.
-  /// @return Bool specifying whether the entity can be held here.
-  bool canContain(EntityId entity);
-
   /// Syntactic sugar for calling call_lua_function().
   json call_lua_function(std::string function_name,
-						 json const& args,
-						 json const& default_result);
+                         json const& args,
+                         json const& default_result);
 
   json call_lua_function(std::string function_name,
-						 json const& args,
-						 json const& default_result) const;
+                         json const& args,
+                         json const& default_result) const;
 
   /// Get a const reference to this entity's category data.
   json const& getCategoryData() const;
-
-  virtual std::unordered_set<EventID> registeredEvents() const override;
 
 protected:
   /// Named Constructor
@@ -360,10 +348,10 @@ protected:
   /// Perform the recursive visibility scan for an octant.
   /// Used by findSeenTiles.
   void do_recursive_visibility(ComponentPosition const& thisPosition,
-							   int octant,
-							   int depth = 1,
-							   float slope_A = 1,
-							   float slope_B = 0);
+                               int octant,
+                               int depth = 1,
+                               float slope_A = 1,
+                               float slope_B = 0);
 
   /// Process this Entity's involuntary actions for a single tick.
   /// Voluntary actions are only processed when the Entity is not busy.

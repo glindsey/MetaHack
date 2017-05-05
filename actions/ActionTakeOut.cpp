@@ -3,9 +3,12 @@
 #include "ActionTakeOut.h"
 #include "components/ComponentManager.h"
 #include "game/GameState.h"
+#include "Service.h"
 #include "services/IMessageLog.h"
 #include "services/IStringDictionary.h"
-#include "Service.h"
+#include "systems/SystemManager.h"
+#include "systems/SystemSpacialRelationships.h"
+
 #include "entity/Entity.h"
 #include "entity/EntityId.h"
 
@@ -96,7 +99,7 @@ namespace Actions
 
     if (object->beObjectOf(*this, subject))
     {
-      if (object->moveInto(newLocation))
+      if (SYSTEMS.spacial().moveEntityInto(object, newLocation))
       {
         printMessageDo();
 

@@ -44,7 +44,7 @@ public:
   virtual ~SystemLighting();
 
   /// Recalculate map lighting.
-  virtual void recalculate() override;
+  virtual void doCycleUpdate() override;
 
   void clearAllLightingData();
 
@@ -54,6 +54,8 @@ public:
 
   /// Get the light shining on a tile wall.
   Color getWallLightLevel(IntVec2 coords, Direction direction) const;
+
+  virtual std::unordered_set<EventID> registeredEvents() const override;
 
 protected:
   /// Virtual override called after the map is changed.
@@ -77,6 +79,8 @@ protected:
                            int depth = 1,
                            float slope_A = 1,
                            float slope_B = 0);
+
+  virtual EventResult onEvent_NVI(Event const & event) override;
 
 private:
   // Components used by this system.

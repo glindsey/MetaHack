@@ -29,6 +29,7 @@
 #include "state_machine/StateMachine.h"
 #include "systems/SystemLighting.h"
 #include "systems/SystemManager.h"
+#include "systems/SystemSpacialRelationships.h"
 #include "utilities/GetLetterKey.h"
 #include "utilities/StringTransforms.h"
 
@@ -97,7 +98,7 @@ AppStateGameMode::~AppStateGameMode()
 
 void AppStateGameMode::execute()
 {
-  auto& game = getGameState();
+  auto& game = gameState();
 
   // First, check for debug commands ready to be run.
   if (m_debugBuffer->get_enter())
@@ -176,10 +177,10 @@ std::string const& AppStateGameMode::getName()
 bool AppStateGameMode::initialize()
 {
   auto& config = Service<IConfigSettings>::get();
-  auto& game = getGameState();
+  auto& game = gameState();
 
   // Create the player.
-  EntityId player = getGameState().entities().create("Human");
+  EntityId player = gameState().entities().create("Human");
   COMPONENTS.properName[player] = config.get("player-name").get<std::string>();
   game.setPlayer(player);
 
@@ -193,13 +194,17 @@ bool AppStateGameMode::initialize()
 
   Map& game_map = game.maps().get(current_map_id);
 
+  // Initialize systems that need initializing.
+  m_systemManager->lighting().setMap(current_map_id);
+  m_systemManager->lighting().doCycleUpdate();
+
   // Move player to start position on the map.
   auto& start_coords = game_map.getStartCoords();
 
   auto start_floor = game_map.getTile(start_coords).getTileContents();
   Assert("Game", start_floor, "starting tile floor doesn't exist");
 
-  bool player_moved = player->moveInto(start_floor);
+  bool player_moved = m_systemManager->spacial().moveEntityInto(player, start_floor);
   Assert("Game", player_moved, "player could not be moved into starting tile");
 
   // Set cursor to starting location.
@@ -208,10 +213,6 @@ bool AppStateGameMode::initialize()
   // Set the viewed inventory location to the player's location.
   m_inventoryAreaShowsPlayer = false;
   resetInventorySelection();
-
-  // Initialize systems that need initializing.
-  m_systemManager->lighting().setMap(current_map_id);
-  m_systemManager->lighting().recalculate();
 
   // Set the map view.
   m_mapView = the_desktop.addChild(Service<IGraphicViews>::get().createMapView("MainMapView", game_map, the_desktop.getSize()));
@@ -232,9 +233,14 @@ bool AppStateGameMode::terminate()
   return true;
 }
 
-GameState& AppStateGameMode::getGameState()
+GameState& AppStateGameMode::gameState()
 {
   return *m_gameState;
+}
+
+SystemManager & AppStateGameMode::systems()
+{
+  return *m_systemManager;
 }
 
 std::unordered_set<EventID> AppStateGameMode::registeredEvents() const
@@ -252,7 +258,7 @@ std::unordered_set<EventID> AppStateGameMode::registeredEvents() const
 void AppStateGameMode::render_map(sf::RenderTexture& texture, int frame)
 {
   auto& config = Service<IConfigSettings>::get();
-  auto& game = getGameState();
+  auto& game = gameState();
 
   texture.clear();
 
@@ -303,7 +309,7 @@ void AppStateGameMode::render_map(sf::RenderTexture& texture, int frame)
 
 bool AppStateGameMode::handle_key_press(App::EventKeyPressed const& key)
 {
-  auto& game = getGameState();
+  auto& game = gameState();
   EntityId player = game.getPlayer();
 
   // *** Handle keys processed in any mode.
@@ -1059,7 +1065,7 @@ sf::IntRect AppStateGameMode::calcMessageLogDims()
 
 void AppStateGameMode::resetInventorySelection()
 {
-  auto& game = getGameState();
+  auto& game = gameState();
   EntityId player = game.getPlayer();
 
   if (m_inventoryAreaShowsPlayer == true)
@@ -1114,7 +1120,7 @@ sf::IntRect AppStateGameMode::calcInventoryDims()
 
 bool AppStateGameMode::moveCursor(Direction direction)
 {
-  auto& game = getGameState();
+  auto& game = gameState();
   EntityId player = game.getPlayer();
   
   bool result = false;

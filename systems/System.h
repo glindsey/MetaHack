@@ -1,12 +1,13 @@
 #pragma once
 
 #include "map/MapId.h"
+#include "Object.h"
 
 /// Superclass for all systems in the game.
-class System
+class System : public Object
 {
 public:
-  System() {}
+  System() : Object() {}
   virtual ~System() {}
 
   /// Get the map the system is operating on.
@@ -23,7 +24,7 @@ public:
   }
 
   /// Recalculate whatever needs recalculating.
-  virtual void recalculate() = 0;
+  virtual void doCycleUpdate() = 0;
 
 protected:
   /// Virtual override called after the map is changed.

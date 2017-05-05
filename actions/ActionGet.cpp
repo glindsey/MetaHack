@@ -6,6 +6,9 @@
 #include "game/GameState.h"
 #include "services/IMessageLog.h"
 #include "Service.h"
+#include "systems/SystemManager.h"
+#include "systems/SystemSpacialRelationships.h"
+
 #include "entity/Entity.h"
 #include "entity/EntityId.h"
 
@@ -78,7 +81,7 @@ namespace Actions
     if (object->beObjectOf(*this, subject))
     {
       putTr("YOU_CVERB_THE_FOO");
-      if (object->moveInto(subject))
+      if (SYSTEMS.spacial().moveEntityInto(object, subject))
       {
         /// @todo Figure out action time.
         result = StateResult::Success();

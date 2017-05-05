@@ -8,6 +8,8 @@
 #include "entity/EntityId.h"
 #include "Service.h"
 #include "services/IGameRules.h"
+#include "systems/SystemManager.h"
+#include "systems/SystemSpacialRelationships.h"
 
 // === MACROS =================================================================
 #define STRINGIFY(x) #x
@@ -40,7 +42,7 @@ namespace LuaEntityFunctions
     if (is_creatable)
     {
       new_thing = GAME.entities().create(new_thing_type);
-      success = new_thing->moveInto(entity);
+      success = SYSTEMS.spacial().moveEntityInto(new_thing, entity);
 
       if (success && (num_args > 2))
       {
@@ -311,7 +313,7 @@ namespace LuaEntityFunctions
     EntityId thing_to_move = EntityId(lua_tointeger(L, 1));
     EntityId thing_destination = EntityId(lua_tointeger(L, 2));
 
-    bool result = thing_to_move->moveInto(thing_destination);
+    bool result = SYSTEMS.spacial().moveEntityInto(thing_to_move, thing_destination);
 
     lua_pushboolean(L, static_cast<int>(result));
 

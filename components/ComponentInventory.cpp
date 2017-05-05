@@ -276,6 +276,20 @@ EntityId ComponentInventory::getEntity()
   }
 }
 
+bool ComponentInventory::canContain(EntityId entity)
+{
+  if ((m_maxSize == 0) || (m_things.size() > m_maxSize))
+  {
+    return false;
+  }
+  else
+  {
+    /// @todo Reimplement me
+    //return call_lua_function("can_contain", entity, true);
+  }
+  return true;
+}
+
 EntityMap::iterator ComponentInventory::find_if(std::function<bool(EntityPair const&)> functor)
 {
   EntityMap::iterator iter =

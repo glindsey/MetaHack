@@ -39,7 +39,6 @@ json const& Entity::getCategoryData() const
 }
 
 Entity::Entity(GameState& state, std::string category, EntityId id) :
-  Subject(),
   m_state{ state },
   m_id{ id },
   m_pending_involuntary_actions{ ActionQueue() },
@@ -49,7 +48,6 @@ Entity::Entity(GameState& state, std::string category, EntityId id) :
 }
 
 Entity::Entity(Entity const& original, EntityId ref) :
-  Subject(),
   m_state{ original.m_state },
   m_id{ ref },
   m_pending_involuntary_actions{ ActionQueue() },     // don't copy
@@ -299,71 +297,6 @@ void Entity::findSeenTiles()
   }
 }
 
-bool Entity::moveInto(EntityId newLocation)
-{
-  // If Entity doesn't have a Position component, bail.
-  if (!COMPONENTS.position.existsFor(m_id))
-  {
-    return false;
-  }
-
-  auto& position = COMPONENTS.position[m_id];
-  MapId oldMapId = position.map();
-  EntityId oldLocation = position.parent();
-
-  if (newLocation == oldLocation)
-  {
-    // We're already there!
-    return true;
-  }
-
-  if (newLocation->canContain(m_id))
-  {
-    if (COMPONENTS.inventory[newLocation].add(m_id) == true)
-    {
-      // Try to lock our old location.
-      if (oldLocation != EntityId::Mu())
-      {
-        COMPONENTS.inventory[oldLocation].remove(m_id);
-      }
-
-      // Set the location to the new location.
-      COMPONENTS.position[m_id].set(newLocation);
-
-      MapId newMapId = position.map();
-      if (oldMapId != newMapId)
-      {
-        if (oldMapId != MapFactory::null_map_id)
-        {
-          /// @todo Save old map memory.
-        }
-
-        IntVec2 new_map_size = newMapId->getSize();
-
-        if (COMPONENTS.senseSight.existsFor(m_id))
-        {
-          COMPONENTS.senseSight[m_id].resizeSeen(new_map_size);
-        }
-
-        if (COMPONENTS.spacialMemory.existsFor(m_id))
-        {
-          auto& spacialMemory = COMPONENTS.spacialMemory[m_id];
-          if (!spacialMemory.containsMap(newMapId))
-          {
-            COMPONENTS.spacialMemory[m_id].ofMap(newMapId).resize(new_map_size);
-          }
-        }
-
-      }
-      this->findSeenTiles();
-      //notifyObservers(Event::Updated);
-      return true;
-    } // end if (add to new inventory was successful)
-  } // end if (canContain is true)
-
-  return false;
-}
-
 std::string Entity::getDisplayAdjectives() const
 {
   std::string adjectives;
@@ -587,52 +520,52 @@ std::string Entity::getPossessiveString(std::string owned, std::string adjective
 }
 
 /// @todo Make this into an Action.
-void Entity::spill()
-{
-  ComponentInventory& inventory = COMPONENTS.inventory[m_id];
-  std::string message;
-  bool success = false;
-
-  // Step through all contents of this Entity.
-  for (auto iter = inventory.begin();
-       iter != inventory.end();
-       ++iter)
-  {
-    EntityId entity = iter->second;
-    auto parent = COMPONENTS.position[m_id].parent();
-    if (parent != EntityId::Mu())
-    {
-      if (parent->canContain(entity))
-      {
-        // Try to move this into the Entity's location.
-        success = entity->moveInto(parent);
-        if (success)
-        {
-          auto container_string = this->getDescriptiveString();
-          auto thing_string = entity->getDescriptiveString();
-          message = thing_string + this->chooseVerb(" tumble", " tumbles") + " out of " + container_string + ".";
-          Service<IMessageLog>::get().add(message);
-        }
-        else
-        {
-          // We couldn't move it, so just destroy it.
-          auto container_string = this->getDescriptiveString();
-          auto thing_string = entity->getDescriptiveString();
-          message = thing_string + this->chooseVerb(" vanish", " vanishes") + " in a puff of logic.";
-          Service<IMessageLog>::get().add(message);
-          entity->destroy();
-        }
-        //notifyObservers(Event::Updated);
-
-      } // end if (canContain)
-    } // end if (container location is not Mu)
-    else
-    {
-      // Container's location is Mu, so just destroy it without a message.
-      entity->destroy();
-    }
-  } // end for (contents of Entity)
-}
+//void Entity::spill()
+//{
+//  ComponentInventory& inventory = COMPONENTS.inventory[m_id];
+//  std::string message;
+//  bool success = false;
+//
+//  // Step through all contents of this Entity.
+//  for (auto iter = inventory.begin();
+//       iter != inventory.end();
+//       ++iter)
+//  {
+//    EntityId entity = iter->second;
+//    auto parent = COMPONENTS.position[m_id].parent();
+//    if (parent != EntityId::Mu())
+//    {
+//      if (parent->canContain(entity))
+//      {
+//        // Try to move this into the Entity's location.
+//        success = entity->moveInto(parent);
+//        if (success)
+//        {
+//          auto container_string = this->getDescriptiveString();
+//          auto thing_string = entity->getDescriptiveString();
+//          message = thing_string + this->chooseVerb(" tumble", " tumbles") + " out of " + container_string + ".";
+//          Service<IMessageLog>::get().add(message);
+//        }
+//        else
+//        {
+//          // We couldn't move it, so just destroy it.
+//          auto container_string = this->getDescriptiveString();
+//          auto thing_string = entity->getDescriptiveString();
+//          message = thing_string + this->chooseVerb(" vanish", " vanishes") + " in a puff of logic.";
+//          Service<IMessageLog>::get().add(message);
+//          entity->destroy();
+//        }
+//        //notifyObservers(Event::Updated);
+//
+//      } // end if (canContain)
+//    } // end if (container location is not Mu)
+//    else
+//    {
+//      // Container's location is Mu, so just destroy it without a message.
+//      entity->destroy();
+//    }
+//  } // end for (contents of Entity)
+//}
 
 void Entity::destroy()
 {
@@ -641,13 +574,16 @@ void Entity::destroy()
   if (COMPONENTS.inventory.existsFor(m_id))
   {
     // Spill the contents of this Entity into the Entity's location.
-    spill();
+    /// @todo Reimplement me
+    //spill();
   }
 
   if (old_location != EntityId::Mu())
   {
     COMPONENTS.inventory[old_location].remove(m_id);
   }
+
+  COMPONENTS.erase(m_id);
 
   //notifyObservers(Event::Updated);
 }
@@ -931,23 +867,6 @@ bool Entity::can_merge_with(EntityId other) const
   return false;
 }
 
-bool Entity::canContain(EntityId entity)
-{
-  size_t maxSize = COMPONENTS.inventory[m_id].maxSize();
-  if (maxSize == 0)
-  {
-    return false;
-  }
-  else if (COMPONENTS.inventory[m_id].count() >= maxSize)
-  {
-    return false;
-  }
-  else
-  {
-    return call_lua_function("can_contain", entity, true);
-  }
-}
-
 json Entity::call_lua_function(std::string function_name,
                                json const& args,
                                json const& default_result)
@@ -960,13 +879,6 @@ json Entity::call_lua_function(std::string function_name,
                                json const& default_result) const
 {
   return the_lua_instance.call_thing_function(function_name, getId(), args, default_result);
-}
-
-std::unordered_set<EventID> Entity::registeredEvents() const
-{
-  auto events = Subject::registeredEvents();
-  /// @todo Add our own events here
-  return events;
 }
 
 // *** PROTECTED METHODS ******************************************************

@@ -5,10 +5,13 @@
 #include "ActionAttack.h"
 #include "components/ComponentManager.h"
 #include "game/GameState.h"
-#include "services/IMessageLog.h"
-#include "services/IStringDictionary.h"
 #include "map/Map.h"
 #include "Service.h"
+#include "services/IMessageLog.h"
+#include "services/IStringDictionary.h"
+#include "systems/SystemManager.h"
+#include "systems/SystemSpacialRelationships.h"
+
 #include "entity/Entity.h"
 #include "entity/EntityId.h"
 
@@ -103,7 +106,7 @@ namespace Actions
           if (new_tile.canBeTraversedBy(subject))
           {
             /// @todo Figure out elapsed movement time.
-            result.success = subject->moveInto(new_floor);
+            result.success = SYSTEMS.spacial().moveEntityInto(subject, new_floor);
             result.elapsed_time = 1;
           }
           else

@@ -26,7 +26,7 @@ SystemLighting::SystemLighting(ComponentMap<ComponentAppearance> const& appearan
 SystemLighting::~SystemLighting()
 {}
 
-void SystemLighting::recalculate()
+void SystemLighting::doCycleUpdate()
 {
   MapId currentMap = map();
   if (currentMap == MapId::Null()) return;
@@ -442,4 +442,16 @@ void SystemLighting::doRecursiveLighting(EntityId source,
                         octant, depth + 1,
                         slope_A, slope_B);
   }
+}
+
+std::unordered_set<EventID> SystemLighting::registeredEvents() const
+{
+  auto events = Subject::registeredEvents();
+  /// @todo Add registered events here
+  return events;
+}
+
+EventResult SystemLighting::onEvent_NVI(Event const& event)
+{
+  return { EventHandled::Yes, ContinueBroadcasting::Yes };
 }

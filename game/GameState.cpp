@@ -17,7 +17,7 @@
 // Namespace aliases
 namespace fs = boost::filesystem;
 
-GameState* GameState::p_instance = nullptr;
+GameState* GameState::s_instance = nullptr;
 
 GameState::GameState()
 {
@@ -31,14 +31,13 @@ GameState::GameState(json const& j)
 
 GameState::~GameState()
 {
-  p_instance = nullptr;
+  s_instance = nullptr;
 }
 
 void GameState::initialize(json const& j)
 {
-  Assert("GameState", p_instance == nullptr, "tried to create more than one GameState instance at a time");
-
-  p_instance = this;
+  Assert("GameState", s_instance == nullptr, "tried to create more than one GameState instance at a time");
+  s_instance = this;
 
   if (j.is_object() && j.size() != 0)
   {
@@ -137,7 +136,7 @@ bool GameState::processGameClockTick()
 
 GameState& GameState::instance()
 {
-  Assert("GameState", p_instance != nullptr, "tried to get non-existent GameState instance");
+  Assert("GameState", s_instance != nullptr, "tried to get non-existent GameState instance");
 
-  return *(p_instance);
+  return *(s_instance);
 }

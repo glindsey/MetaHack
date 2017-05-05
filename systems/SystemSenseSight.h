@@ -23,7 +23,9 @@ public:
   virtual ~SystemSenseSight();
 
   /// Recalculate whatever needs recalculating.
-  void recalculate();
+  void doCycleUpdate();
+
+  virtual std::unordered_set<EventID> registeredEvents() const override;
 
 protected:
   void setMapNVO(MapId newMap);
@@ -37,10 +39,15 @@ protected:
                                     float slope_A = 1,
                                     float slope_B = 0);
 
+  virtual EventResult onEvent_NVI(Event const & event) override;
+
 private:
   // Components used by this system.
   ComponentMap<ComponentInventory> const& m_inventory;
   ComponentMap<ComponentPosition> const& m_position;
   ComponentMap<ComponentSenseSight>& m_senseSight;
   ComponentMap<ComponentSpacialMemory>& m_spacialMemory;
+
+  /// Set of entities to update on the next cycle.
+  std::set<EntityId> m_needsUpdate;
 };

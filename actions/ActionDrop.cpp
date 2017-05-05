@@ -7,6 +7,9 @@
 #include "services/IMessageLog.h"
 #include "services/IStringDictionary.h"
 #include "Service.h"
+#include "systems/SystemManager.h"
+#include "systems/SystemSpacialRelationships.h"
+
 #include "entity/Entity.h"
 #include "entity/EntityId.h"
 
@@ -69,13 +72,14 @@ namespace Actions
     }
     else if (object != EntityId::Mu())
     {
-      if (location->canContain(object))
+      if (COMPONENTS.inventory.existsFor(location) &&
+          COMPONENTS.inventory[location].canContain(object))
       {
         if (object->beObjectOf(*this, subject))
         {
           printMessageDo();
 
-          if (object->moveInto(location))
+          if (SYSTEMS.spacial().moveEntityInto(object, location))
           {
             /// @todo Figure out action time.
             result = StateResult::Success();

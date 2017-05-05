@@ -7,6 +7,7 @@
 #include "components/ComponentSenseSight.h"
 #include "components/ComponentSpacialMemory.h"
 #include "map/Map.h"
+#include "systems/SystemSpacialRelationships.h"
 #include "types/Direction.h"
 #include "utilities/MathUtils.h"
 
@@ -24,13 +25,14 @@ SystemSenseSight::SystemSenseSight(ComponentMap<ComponentInventory> const& inven
 SystemSenseSight::~SystemSenseSight()
 {}
 
-void SystemSenseSight::recalculate()
+void SystemSenseSight::doCycleUpdate()
 {
   for (auto& pair : m_senseSight.data())
   {
     EntityId entity = pair.first;
     findSeenTiles(entity);
   }
+  m_needsUpdate.clear();
 }
 
 void SystemSenseSight::setMapNVO(MapId newMap)
@@ -214,5 +216,38 @@ void SystemSenseSight::calculateRecursiveVisibility(EntityId id,
   }
 }
 
+std::unordered_set<EventID> SystemSenseSight::registeredEvents() const
+{
+  auto events = Subject::registeredEvents();
+  /// @todo Add registered events here
+  return events;
+}
 
+EventResult SystemSenseSight::onEvent_NVI(Event const& event)
+{
+  if (event.id == SystemSpacialRelationships::EventEntityMoved::id())
+  {
+    auto& castEvent = static_cast<SystemSpacialRelationships::EventEntityMoved const&>(event);
+    m_needsUpdate.insert(castEvent.entity);
+  }
+  else if (event.id == SystemSpacialRelationships::EventEntityChangedMaps::id())
+  {
+    auto& castEvent = static_cast<SystemSpacialRelationships::EventEntityChangedMaps const&>(event);
+    MapId newMap = m_position.of(castEvent.entity).map();
+    IntVec2 newMapSize = newMap->getSize();
+    m_senseSight[castEvent.entity].resizeSeen(newMapSize);
 
+    if (m_spacialMemory.existsFor(castEvent.entity))
+    {
+      auto& spacialMemory = m_spacialMemory[castEvent.entity];
+      if (!spacialMemory.containsMap(newMap))
+      {
+        m_spacialMemory[castEvent.entity].ofMap(newMap).resize(newMapSize);
+      }
+    }
+
+    m_needsUpdate.insert(castEvent.entity);
+  }
+
+  return { EventHandled::Yes, ContinueBroadcasting::Yes };
+}

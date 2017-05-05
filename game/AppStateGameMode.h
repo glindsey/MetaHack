@@ -1,5 +1,4 @@
-#ifndef APPSTATEGAMEMODE_H
-#define APPSTATEGAMEMODE_H
+#pragma once
 
 #include "stdafx.h"
 
@@ -48,7 +47,8 @@ public:
   virtual void execute() override;
   virtual bool terminate() override;
 
-  GameState& getGameState();
+  GameState& gameState();
+  SystemManager& systems();
 
   std::unordered_set<EventID> registeredEvents() const override;
 
@@ -107,5 +107,3 @@ private:
   /// Used for an action that needs a "target".
   std::unique_ptr<Actions::Action> m_actionInProgress;
 };
-
-#endif // APPSTATEGAMEMODE_H

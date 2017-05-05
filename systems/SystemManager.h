@@ -23,6 +23,8 @@ public:
   SystemSenseSight& senseSight() { return *m_senseSight; }
   SystemSpacialRelationships& spacial() { return *m_spacial; }
 
+  static SystemManager& instance();
+
 private:
   // System instances.
   std::unique_ptr<SystemLighting> m_lighting;
@@ -31,4 +33,9 @@ private:
 
   /// Reference to the component manager.
   ComponentManager& m_components;
+
+  /// Static pointer to the singleton instance of the SystemManager.
+  static SystemManager* s_instance;
 };
+
+#define SYSTEMS SystemManager::instance()
