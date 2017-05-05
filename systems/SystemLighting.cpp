@@ -13,6 +13,7 @@ SystemLighting::SystemLighting(ComponentMap<ComponentAppearance>& appearance,
                                ComponentMap<ComponentHealth>& health,
                                ComponentMap<ComponentLightSource>& lightSource,
                                ComponentMap<ComponentPosition>& position) :
+  SystemCRTP<SystemLighting>(),
   m_appearance{ appearance },
   m_health{ health },
   m_lightSource{ lightSource },
@@ -22,25 +23,13 @@ SystemLighting::SystemLighting(ComponentMap<ComponentAppearance>& appearance,
 {
 }
 
-MapId SystemLighting::map() const
-{
-  return m_map;
-}
-
-void SystemLighting::setMap(MapId map)
-{
-  if (m_map != map)
-  {
-    auto mapSize = map->getSize();
-    // Reset light influence grid.
-    m_lightingData.reset(NEW Grid2D<TileLightingData>(mapSize));
-  }
-  m_map = map;
-}
+SystemLighting::~SystemLighting()
+{}
 
 void SystemLighting::recalculate()
 {
-  if (m_map == MapId::Null()) return;
+  MapId currentMap = map();
+  if (currentMap == MapId::Null()) return;
 
   clearAllLightingData();
 
@@ -48,7 +37,7 @@ void SystemLighting::recalculate()
   {
     EntityId lightSource = lightSourcePair.first;
     auto& lightSourceData = lightSourcePair.second;
-    bool onMap = m_position.existsFor(lightSource) && (m_position[lightSource].map() == m_map);    
+    bool onMap = m_position.existsFor(lightSource) && (m_position[lightSource].map() == currentMap);
     if (onMap) applyLightFrom(lightSource, m_position[lightSource].parent());
   }
 
@@ -56,11 +45,12 @@ void SystemLighting::recalculate()
 }
 
 void SystemLighting::clearAllLightingData()
-{
-  if (m_map == MapId::Null()) return;
+{  
+  MapId currentMap = map();
+  if (currentMap == MapId::Null()) return;
 
   // Clear it first.
-  auto mapSize = m_map->getSize();
+  auto mapSize = currentMap->getSize();
 
   for (int y = 0; y < mapSize.y; ++y)
   {
@@ -87,6 +77,13 @@ Color SystemLighting::getWallLightLevel(IntVec2 coords, Direction direction) con
   {
     return m_ambientLightColor + calculatedLightColors.at(direction.get_map_index());
   }
+}
+
+void SystemLighting::setMapNVO(MapId newMap)
+{
+  auto mapSize = newMap->getSize();
+  // Reset light influence grid.
+  m_lightingData.reset(NEW Grid2D<TileLightingData>(mapSize));
 }
 
 void SystemLighting::clearLightingData(IntVec2 coords)
@@ -316,6 +313,7 @@ void SystemLighting::doRecursiveLighting(EntityId source,
                                          float slope_A,
                                          float slope_B)
 {
+  MapId currentMap = map();
   Assert("Lighting", octant >= 1 && octant <= 8, "Octant" << octant << "passed in is not between 1 and 8 inclusively");
   IntVec2 new_coords;
 
@@ -409,9 +407,9 @@ void SystemLighting::doRecursiveLighting(EntityId source,
   {
     if (calc_vis_distance(new_coords, origin) <= max_depth_squared)
     {
-      if (m_map->getTile(new_coords).isTotallyOpaque())
+      if (currentMap->getTile(new_coords).isTotallyOpaque())
       {
-        if (!m_map->getTile(new_coords + (IntVec2)dir).isTotallyOpaque())
+        if (!currentMap->getTile(new_coords + (IntVec2)dir).isTotallyOpaque())
         {
           doRecursiveLighting(source, origin, light_color,
                               max_depth_squared,
@@ -421,7 +419,7 @@ void SystemLighting::doRecursiveLighting(EntityId source,
       }
       else
       {
-        if (m_map->getTile(new_coords + (IntVec2)dir).isTotallyOpaque())
+        if (currentMap->getTile(new_coords + (IntVec2)dir).isTotallyOpaque())
         {
           slope_A = loop_slope(to_v2f(new_coords), to_v2f(origin));
         }
@@ -437,7 +435,7 @@ void SystemLighting::doRecursiveLighting(EntityId source,
   }
   new_coords += (IntVec2)dir;
 
-  if ((depth*depth < max_depth_squared) && (!m_map->getTile(new_coords).isTotallyOpaque()))
+  if ((depth*depth < max_depth_squared) && (!currentMap->getTile(new_coords).isTotallyOpaque()))
   {
     doRecursiveLighting(source, origin, light_color,
                         max_depth_squared,

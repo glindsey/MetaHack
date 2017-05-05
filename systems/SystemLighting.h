@@ -3,6 +3,7 @@
 #include "components/ComponentMap.h"
 #include "entity/EntityId.h"
 #include "map/MapId.h"
+#include "systems/SystemCRTP.h"
 #include "types/Color.h"
 #include "types/Direction.h"
 #include "types/Grid2D.h"
@@ -32,7 +33,7 @@ struct TileLightingData
 };
 
 /// System that handles lighting the map and all entities on it.
-class SystemLighting
+class SystemLighting : public SystemCRTP<SystemLighting>
 {
 public:
   SystemLighting(ComponentMap<ComponentAppearance>& appearance,
@@ -40,14 +41,10 @@ public:
                  ComponentMap<ComponentLightSource>& lightSource,
                  ComponentMap<ComponentPosition>& position);
 
-  /// Get the map the system is operating on.
-  MapId map() const;
-
-  /// Set the map the system is operating on.
-  void setMap(MapId map);
+  virtual ~SystemLighting();
 
   /// Recalculate map lighting.
-  void recalculate();
+  virtual void recalculate() override;
 
   void clearAllLightingData();
 
@@ -59,6 +56,9 @@ public:
   Color getWallLightLevel(IntVec2 coords, Direction direction) const;
 
 protected:
+  /// Virtual override called after the map is changed.
+  virtual void setMapNVO(MapId newMap) override;
+
   /// Clear lighting data for a tile.
   void clearLightingData(IntVec2 coords);
 
@@ -84,9 +84,6 @@ private:
   ComponentMap<ComponentHealth>& m_health;
   ComponentMap<ComponentLightSource>& m_lightSource;
   ComponentMap<ComponentPosition>& m_position;
-
-  /// ID of map the system is operating on.
-  MapId m_map;
 
   /// Grid of tile lighting data for all map tiles.
   std::unique_ptr<Grid2D<TileLightingData>> m_lightingData;

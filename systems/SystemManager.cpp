@@ -3,6 +3,7 @@
 #include "SystemManager.h"
 
 #include "systems/SystemLighting.h"
+#include "systems/SystemSpacialRelationships.h"
 #include "utilities/New.h"
 
 SystemManager::SystemManager(ComponentManager& components) :
@@ -12,6 +13,9 @@ SystemManager::SystemManager(ComponentManager& components) :
                                       m_components.health,
                                       m_components.lightSource, 
                                       m_components.position));
+
+  m_spacial.reset(NEW SystemSpacialRelationships(m_components.inventory,
+                                                 m_components.position));
 }
 
 SystemManager::~SystemManager()
@@ -20,9 +24,5 @@ SystemManager::~SystemManager()
 void SystemManager::runOneCycle()
 {
   m_lighting->recalculate();
-}
-
-SystemLighting & SystemManager::lighting()
-{
-  return *m_lighting;
+  m_spacial->recalculate();
 }

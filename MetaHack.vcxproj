@@ -370,8 +370,11 @@
     <ClInclude Include="game\AppStateSplashScreen.h" />
     <ClInclude Include="services\IGameRules.h" />
     <ClInclude Include="services\NullGameRules.h" />
+    <ClInclude Include="systems\System.h" />
+    <ClInclude Include="systems\SystemCRTP.h" />
     <ClInclude Include="systems\SystemLighting.h" />
     <ClInclude Include="systems\SystemManager.h" />
+    <ClInclude Include="systems\SystemSpacialRelationships.h" />
     <ClInclude Include="types\Beatitude.h" />
     <ClInclude Include="types\BodyPart.h" />
     <ClInclude Include="types\Clamped.h" />
@@ -599,6 +602,7 @@
     <ClCompile Include="services\IGameRules.cpp" />
     <ClCompile Include="systems\SystemLighting.cpp" />
     <ClCompile Include="systems\SystemManager.cpp" />
+    <ClCompile Include="systems\SystemSpacialRelationships.cpp" />
     <ClCompile Include="types\Color.cpp" />
     <ClCompile Include="types\Direction.cpp" />
     <ClCompile Include="game\GameState.cpp" />
