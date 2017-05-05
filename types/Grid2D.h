@@ -48,8 +48,8 @@ public:
   /// Get a reference to an object in the grid.
   Object& get(IntVec2 coords)
   {
-    coords.x = bounds(0, coords.x, m_size.x);
-    coords.y = bounds(0, coords.y, m_size.y);
+    coords.x = bounds(0, coords.x, m_size.x - 1);
+    coords.y = bounds(0, coords.y, m_size.y - 1);
     return m_objects[index(coords)];
   }
 

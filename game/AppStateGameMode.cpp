@@ -80,6 +80,10 @@ AppStateGameMode::AppStateGameMode(StateMachine& state_machine, sf::RenderWindow
   the_desktop.addChild(NEW MessageLogView("MessageLogView", Service<IMessageLog>::get(), *(m_debugBuffer.get()), calcMessageLogDims()))->setFlag("titlebar", true);
   the_desktop.addChild(NEW InventoryArea("InventoryArea", *(m_inventorySelection.get()), calcInventoryDims()))->setFlag("titlebar", true);
   the_desktop.addChild(NEW StatusArea("StatusArea", calcStatusAreaDims()))->setGlobalFocus(true);
+
+  // Create the standard map views provider.
+  /// @todo Make this configurable.
+  Service<IGraphicViews>::provide(NEW Standard2DGraphicViews(m_systemManager->lighting()));
 }
 
 AppStateGameMode::~AppStateGameMode()
@@ -208,10 +212,6 @@ bool AppStateGameMode::initialize()
   // Initialize systems that need initializing.
   m_systemManager->lighting().setMap(current_map_id);
   m_systemManager->lighting().recalculate();
-
-  // Create the standard map views provider.
-  /// @todo Make this configurable.
-  Service<IGraphicViews>::provide(NEW Standard2DGraphicViews(m_systemManager->lighting()));
 
   // Set the map view.
   m_mapView = the_desktop.addChild(Service<IGraphicViews>::get().createMapView("MainMapView", game_map, the_desktop.getSize()));
