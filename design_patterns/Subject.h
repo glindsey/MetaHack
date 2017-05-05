@@ -42,6 +42,10 @@ public:
   ///                   provided, 0 is assumed.
   void addObserver(Observer& observer, EventID eventID, ObserverPriority priority = 0);
 
+  /// Remove all observers of this subject.
+  /// Typically used before the subject is destroyed.
+  void removeAllObservers();
+
   /// Removes an observer of an event emitted by this subject.
   /// @param observer   Reference to observer to remove.
   /// @param eventID    ID of event to remove from, or EventID::All to

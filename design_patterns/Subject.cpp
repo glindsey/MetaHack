@@ -69,6 +69,34 @@ void Subject::addObserver(Observer& observer, EventID eventID, ObserverPriority 
   }
 }
 
+void Subject::removeAllObservers()
+{
+  registerEventsIfNeeded(*this);
+
+  Registration e;
+  e.state = Registration::State::Unregistered;
+  e.subject = this;
+
+  for (auto& eventObservers : m_eventObservers)
+  {
+    auto& prioritizedObservers = eventObservers.second;
+
+    for (auto& pair : prioritizedObservers)
+    {
+      auto& observersSet = pair.second;
+
+      for (auto& observer : observersSet)
+      {
+        observer->onEvent(e);
+      }
+    }
+
+    prioritizedObservers.clear();
+  }
+
+  CLOG(TRACE, "ObserverPattern") << "Deregistered all Observers for all Events";
+}
+
 void Subject::removeObserver(Observer& observer, EventID eventID)
 {
   registerEventsIfNeeded(*this);

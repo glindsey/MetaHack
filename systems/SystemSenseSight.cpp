@@ -40,6 +40,9 @@ void SystemSenseSight::setMapNVO(MapId newMap)
 
 void SystemSenseSight::findSeenTiles(EntityId id)
 {
+  // If we don't have a position component, bail.
+  if (!m_position.existsFor(id)) return;
+
   // Are we on a map (i.e. not inside another entity)?  Bail out if we aren't.
   /// @todo Might want to deal with mapping the "inside of an entity" at some point.
   EntityId location = m_position.of(id).parent();
@@ -225,12 +228,14 @@ std::unordered_set<EventID> SystemSenseSight::registeredEvents() const
 
 EventResult SystemSenseSight::onEvent_NVI(Event const& event)
 {
-  if (event.id == SystemSpacialRelationships::EventEntityMoved::id())
+  auto id = event.getId();
+
+  if (id == SystemSpacialRelationships::EventEntityMoved::id())
   {
     auto& castEvent = static_cast<SystemSpacialRelationships::EventEntityMoved const&>(event);
     m_needsUpdate.insert(castEvent.entity);
   }
-  else if (event.id == SystemSpacialRelationships::EventEntityChangedMaps::id())
+  else if (id == SystemSpacialRelationships::EventEntityChangedMaps::id())
   {
     auto& castEvent = static_cast<SystemSpacialRelationships::EventEntityChangedMaps const&>(event);
     MapId newMap = m_position.of(castEvent.entity).map();

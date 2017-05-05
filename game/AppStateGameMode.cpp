@@ -1016,7 +1016,9 @@ void AppStateGameMode::add_zoom(float zoom_amount)
 
 EventResult AppStateGameMode::onEvent_NVI(Event const& event)
 {
-  if (event.getId() == App::EventAppWindowResized::id())
+  auto id = event.getId();
+
+  if (id == App::EventAppWindowResized::id())
   {
     auto info = static_cast<App::EventAppWindowResized const&>(event);
     the_desktop.setSize({ info.new_size.x, info.new_size.y });
@@ -1025,7 +1027,7 @@ EventResult AppStateGameMode::onEvent_NVI(Event const& event)
     the_desktop.getChild("StatusArea").setRelativeDimensions(calcStatusAreaDims());
     return{ EventHandled::Yes, ContinueBroadcasting::Yes };
   }
-  else if (event.getId() == App::EventKeyPressed::id())
+  else if (id == App::EventKeyPressed::id())
   {
     auto info = static_cast<App::EventKeyPressed const&>(event);
     bool keep_broadcasting = handle_key_press(info);
@@ -1034,7 +1036,7 @@ EventResult AppStateGameMode::onEvent_NVI(Event const& event)
       (keep_broadcasting ? ContinueBroadcasting::Yes : ContinueBroadcasting::No)
     };
   }
-  else if (event.getId() == App::EventMouseWheelMoved::id())
+  else if (id == App::EventMouseWheelMoved::id())
   {
     auto info = static_cast<App::EventMouseWheelMoved const&>(event);
     bool keep_broadcasting = handle_mouse_wheel(info);

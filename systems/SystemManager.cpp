@@ -42,6 +42,9 @@ SystemManager::SystemManager(ComponentManager& components) :
 
 SystemManager::~SystemManager()
 {
+  // Dissolve links.
+  m_spacial->removeAllObservers();
+
   s_instance = nullptr;
 }
 
