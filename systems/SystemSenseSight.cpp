@@ -5,22 +5,214 @@
 #include "components/ComponentInventory.h"
 #include "components/ComponentPosition.h"
 #include "components/ComponentSenseSight.h"
+#include "components/ComponentSpacialMemory.h"
+#include "map/Map.h"
+#include "types/Direction.h"
 #include "utilities/MathUtils.h"
 
-SystemSenseSight::SystemSenseSight(ComponentMap<ComponentInventory>& inventory,
-                                   ComponentMap<ComponentPosition>& position,
-                                   ComponentMap<ComponentSenseSight>& senseSight) :
+SystemSenseSight::SystemSenseSight(ComponentMap<ComponentInventory> const& inventory,
+                                   ComponentMap<ComponentPosition> const& position,
+                                   ComponentMap<ComponentSenseSight>& senseSight,
+                                   ComponentMap<ComponentSpacialMemory>& spacialMemory) :
   SystemCRTP<SystemSenseSight>(),
   m_inventory{ inventory },
   m_position{ position },
-  m_senseSight{ senseSight }
+  m_senseSight{ senseSight },
+  m_spacialMemory{ spacialMemory }
 {}
 
 SystemSenseSight::~SystemSenseSight()
 {}
 
 void SystemSenseSight::recalculate()
-{}
+{
+  for (auto& pair : m_senseSight.data())
+  {
+    EntityId entity = pair.first;
+    findSeenTiles(entity);
+  }
+}
 
 void SystemSenseSight::setMapNVO(MapId newMap)
 {}
+
+void SystemSenseSight::findSeenTiles(EntityId id)
+{
+  // Are we on a map (i.e. not inside another entity)?  Bail out if we aren't.
+  /// @todo Might want to deal with mapping the "inside of an entity" at some point.
+  EntityId location = m_position.of(id).parent();
+  if (location == EntityId::Mu())
+  {
+    return;
+  }
+
+  // Clear the "tiles seen" bitset.
+  m_senseSight[id].resetSeen();
+
+  /// @todo Handle field-of-view here.
+  ///       Field of view for an DynamicEntity can be:
+  ///          * NARROW (90 degrees straight ahead)
+  ///		   * WIDE (180 degrees in facing direction)
+  ///          * FRONTBACK (90 degrees ahead/90 degrees back)
+  ///          * FULL (all 360 degrees)
+  ComponentPosition const& position = m_position.of(id);
+
+  for (int n = 1; n <= 8; ++n)
+  {
+    calculateRecursiveVisibility(id, position, n);
+  }
+}
+
+void SystemSenseSight::calculateRecursiveVisibility(EntityId id, 
+                                                    ComponentPosition const& thisPosition, 
+                                                    int octant, 
+                                                    int depth, 
+                                                    float slope_A, 
+                                                    float slope_B)
+{
+  Assert("SenseSight", octant >= 1 && octant <= 8, "Octant" << octant << "passed in is not between 1 and 8 inclusively");
+  IntVec2 newCoords;
+  //int x = 0;
+  //int y = 0;
+
+  // Are we on a map?  Bail out if we aren't.
+  if (!m_position.existsFor(id) || m_position.of(id).isInsideAnotherEntity())
+  {
+    return;
+  }
+
+  IntVec2 thisCoords = thisPosition.coords();
+  MapId thisMap = thisPosition.map();
+
+  static const int mv = 128;
+  static constexpr int mw = (mv * mv);
+
+  std::function< bool(RealVec2, RealVec2, float) > loop_condition;
+  Direction dir;
+  std::function< float(RealVec2, RealVec2) > recurse_slope;
+  std::function< float(RealVec2, RealVec2) > loop_slope;
+
+  switch (octant)
+  {
+  case 1:
+    newCoords.x = static_cast<int>(rint(static_cast<float>(thisCoords.x) - (slope_A * static_cast<float>(depth))));
+    newCoords.y = thisCoords.y - depth;
+    loop_condition = [](RealVec2 a, RealVec2 b, float c) { return calc_slope(a, b) >= c; };
+    dir = Direction::West;
+    recurse_slope = [](RealVec2 a, RealVec2 b) { return calc_slope(a + Direction::Southwest.half(), b); };
+    loop_slope = [](RealVec2 a, RealVec2 b) { return calc_slope(a + Direction::Northwest.half(), b); };
+    break;
+
+  case 2:
+    newCoords.x = static_cast<int>(rint(static_cast<float>(thisCoords.x) + (slope_A * static_cast<float>(depth))));
+    newCoords.y = thisCoords.y - depth;
+    loop_condition = [](RealVec2 a, RealVec2 b, float c) { return calc_slope(a, b) <= c; };
+    dir = Direction::East;
+    recurse_slope = [](RealVec2 a, RealVec2 b) { return calc_slope(a + Direction::Southeast.half(), b); };
+    loop_slope = [](RealVec2 a, RealVec2 b) { return -calc_slope(a + Direction::Northeast.half(), b); };
+    break;
+
+  case 3:
+    newCoords.x = thisCoords.x + depth;
+    newCoords.y = static_cast<int>(rint(static_cast<float>(thisCoords.y) - (slope_A * static_cast<float>(depth))));
+    loop_condition = [](RealVec2 a, RealVec2 b, float c) { return calc_inv_slope(a, b) <= c; };
+    dir = Direction::North;
+    recurse_slope = [](RealVec2 a, RealVec2 b) { return calc_inv_slope(a + Direction::Northwest.half(), b); };
+    loop_slope = [](RealVec2 a, RealVec2 b) { return -calc_inv_slope(a + Direction::Northeast.half(), b); };
+    break;
+
+  case 4:
+    newCoords.x = thisCoords.x + depth;
+    newCoords.y = static_cast<int>(rint(static_cast<float>(thisCoords.y) + (slope_A * static_cast<float>(depth))));
+    loop_condition = [](RealVec2 a, RealVec2 b, float c) { return calc_inv_slope(a, b) >= c; };
+    dir = Direction::South;
+    recurse_slope = [](RealVec2 a, RealVec2 b) { return calc_inv_slope(a + Direction::Southwest.half(), b); };
+    loop_slope = [](RealVec2 a, RealVec2 b) { return calc_inv_slope(a + Direction::Southeast.half(), b); };
+    break;
+
+  case 5:
+    newCoords.x = static_cast<int>(rint(static_cast<float>(thisCoords.x) + (slope_A * static_cast<float>(depth))));
+    newCoords.y = thisCoords.y + depth;
+    loop_condition = [](RealVec2 a, RealVec2 b, float c) { return calc_slope(a, b) >= c; };
+    dir = Direction::East;
+    recurse_slope = [](RealVec2 a, RealVec2 b) { return calc_slope(a + Direction::Northeast.half(), b); };
+    loop_slope = [](RealVec2 a, RealVec2 b) { return calc_slope(a + Direction::Southeast.half(), b); };
+    break;
+
+  case 6:
+    newCoords.x = static_cast<int>(rint(static_cast<float>(thisCoords.x) - (slope_A * static_cast<float>(depth))));
+    newCoords.y = thisCoords.y + depth;
+    loop_condition = [](RealVec2 a, RealVec2 b, float c) { return calc_slope(a, b) <= c; };
+    dir = Direction::West;
+    recurse_slope = [](RealVec2 a, RealVec2 b) { return calc_slope(a + Direction::Northwest.half(), b); };
+    loop_slope = [](RealVec2 a, RealVec2 b) { return -calc_slope(a + Direction::Southwest.half(), b); };
+    break;
+
+  case 7:
+    newCoords.x = thisCoords.x - depth;
+    newCoords.y = static_cast<int>(rint(static_cast<float>(thisCoords.y) + (slope_A * static_cast<float>(depth))));
+    loop_condition = [](RealVec2 a, RealVec2 b, float c) { return calc_inv_slope(a, b) <= c; };
+    dir = Direction::South;
+    recurse_slope = [](RealVec2 a, RealVec2 b) { return calc_inv_slope(a + Direction::Southeast.half(), b); };
+    loop_slope = [](RealVec2 a, RealVec2 b) { return -calc_inv_slope(a + Direction::Southwest.half(), b); };
+    break;
+
+  case 8:
+    newCoords.x = thisCoords.x - depth;
+    newCoords.y = static_cast<int>(rint(static_cast<float>(thisCoords.y) - (slope_A * static_cast<float>(depth))));
+
+    loop_condition = [](RealVec2 a, RealVec2 b, float c) { return calc_inv_slope(a, b) >= c; };
+    dir = Direction::North;
+    recurse_slope = [](RealVec2 a, RealVec2 b) { return calc_inv_slope(a + Direction::Northeast.half(), b); };
+    loop_slope = [](RealVec2 a, RealVec2 b) { return calc_inv_slope(a + Direction::Northwest.half(), b); };
+    break;
+
+  default:
+    break;
+  }
+
+  while (loop_condition(to_v2f(newCoords), to_v2f(thisCoords), slope_B))
+  {
+    if (calc_vis_distance(newCoords, thisCoords) <= mw)
+    {
+      if (thisMap->tileIsOpaque(newCoords))
+      {
+        if (!thisMap->tileIsOpaque(newCoords + (IntVec2)dir))
+        {
+          calculateRecursiveVisibility(id, thisPosition,
+                                       octant, depth + 1,
+                                       slope_A, recurse_slope(to_v2f(newCoords), to_v2f(thisCoords)));
+        }
+      }
+      else
+      {
+        if (thisMap->tileIsOpaque(newCoords + (IntVec2)dir))
+        {
+          slope_A = loop_slope(to_v2f(newCoords), to_v2f(thisCoords));
+        }
+      }
+
+      m_senseSight[id].setSeen(newCoords);
+
+      if (m_spacialMemory.existsFor(id))
+      {
+        MapMemoryChunk new_memory{ thisMap->getTile(newCoords).getTileType(),
+          GAME.getGameClock() };
+
+        m_spacialMemory[id].ofMap(thisMap)[newCoords] = new_memory;
+      }
+    }
+    newCoords -= (IntVec2)dir;
+  }
+  newCoords += (IntVec2)dir;
+
+  if ((depth < mv) && (!thisMap->getTile(newCoords).isTotallyOpaque()))
+  {
+    calculateRecursiveVisibility(id, thisPosition,
+                                 octant, depth + 1,
+                                 slope_A, slope_B);
+  }
+}
+
+
+

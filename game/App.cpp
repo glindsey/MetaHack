@@ -80,6 +80,7 @@ App::App(sf::RenderWindow& app_window)
   SET_UP_LOGGER("ObserverPattern",              false);
   SET_UP_LOGGER("Property",                     false);
   SET_UP_LOGGER("PropertyDictionary",           false);
+  SET_UP_LOGGER("SenseSight",                   false);
   SET_UP_LOGGER("StateMachine",                 false);
   SET_UP_LOGGER("StringDictionary",             false);
   SET_UP_LOGGER("StringTransforms",             false);

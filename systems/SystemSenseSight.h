@@ -9,14 +9,16 @@
 class ComponentInventory;
 class ComponentPosition;
 class ComponentSenseSight;
+class ComponentSpacialMemory;
 
-/// System that handles entity sight.
+/// System that handles entity sight, and the memory of that sight.
 class SystemSenseSight : public SystemCRTP<SystemSenseSight>
 {
 public:
-  SystemSenseSight(ComponentMap<ComponentInventory>& inventory,
-                   ComponentMap<ComponentPosition>& position,
-                   ComponentMap<ComponentSenseSight>& senseSight);
+  SystemSenseSight(ComponentMap<ComponentInventory> const& inventory,
+                   ComponentMap<ComponentPosition> const& position,
+                   ComponentMap<ComponentSenseSight>& senseSight,
+                   ComponentMap<ComponentSpacialMemory>& spacialMemory);
 
   virtual ~SystemSenseSight();
 
@@ -26,9 +28,19 @@ public:
 protected:
   void setMapNVO(MapId newMap);
 
+  void findSeenTiles(EntityId id);
+
+  void calculateRecursiveVisibility(EntityId id,
+                                    ComponentPosition const& thisPosition,
+                                    int octant,
+                                    int depth = 1,
+                                    float slope_A = 1,
+                                    float slope_B = 0);
+
 private:
   // Components used by this system.
-  ComponentMap<ComponentInventory>& m_inventory;
-  ComponentMap<ComponentPosition>& m_position;
+  ComponentMap<ComponentInventory> const& m_inventory;
+  ComponentMap<ComponentPosition> const& m_position;
   ComponentMap<ComponentSenseSight>& m_senseSight;
+  ComponentMap<ComponentSpacialMemory>& m_spacialMemory;
 };

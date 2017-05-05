@@ -17,7 +17,8 @@ SystemManager::SystemManager(ComponentManager& components) :
 
   m_senseSight.reset(NEW SystemSenseSight(m_components.inventory,
                                           m_components.position,
-                                          m_components.senseSight));
+                                          m_components.senseSight,
+                                          m_components.spacialMemory));
 
   m_spacial.reset(NEW SystemSpacialRelationships(m_components.inventory,
                                                  m_components.position));
