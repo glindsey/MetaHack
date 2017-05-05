@@ -20,6 +20,7 @@
 #include "services/IGameRules.h"
 #include "services/IMessageLog.h"
 #include "services/IStringDictionary.h"
+#include "systems/SystemSpacialRelationships.h"
 #include "types/Color.h"
 #include "types/Direction.h"
 #include "types/Gender.h"
