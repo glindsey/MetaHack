@@ -49,7 +49,4 @@ private:
   // Components used by this system.
   ComponentMap<ComponentInventory>& m_inventory;
   ComponentMap<ComponentPosition>& m_position;
-
-  /// ID of map the system is operating on.
-  MapId m_map;
 };
