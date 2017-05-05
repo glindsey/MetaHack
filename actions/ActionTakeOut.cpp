@@ -73,7 +73,7 @@ namespace Actions
 
     // Check that the container is within reach.
     auto objectContainer = objectPosition.parent();
-    if (!subject->canReach(objectContainer))
+    if (!SYSTEMS.spacial()->firstCanReachSecond(subject, objectContainer))
     {
       printMessageTry();
 

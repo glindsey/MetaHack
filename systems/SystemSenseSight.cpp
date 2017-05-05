@@ -219,6 +219,30 @@ void SystemSenseSight::calculateRecursiveVisibility(EntityId id,
   }
 }
 
+bool SystemSenseSight::subjectCanSeeCoords(EntityId subject, IntVec2 coords) const
+{
+  // Make sure we are able to see at all.
+  if (!m_senseSight.existsFor(subject)) return false;
+
+  auto& subjectPosition = m_position.of(subject);
+  MapId subjectMap = subjectPosition.map();
+  IntVec2 subjectCoords = subjectPosition.coords();
+
+  // If the coordinates match, then yes, we can indeed see the target.
+  if (subjectCoords == coords) return true;
+
+  auto subjectMapSize = subjectMap->getSize();
+
+  // Check for target coords out of bounds. If they're out of bounds, we can't see it.
+  if ((coords.x < 0) || (coords.y < 0) || (coords.x >= subjectMapSize.x) || (coords.y >= subjectMapSize.y))
+  {
+    return false;
+  }
+
+  // Return seen data.
+  return m_senseSight[subject].canSee(coords);
+}
+
 std::unordered_set<EventID> SystemSenseSight::registeredEvents() const
 {
   auto events = Subject::registeredEvents();

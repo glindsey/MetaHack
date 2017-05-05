@@ -13,6 +13,8 @@
 #include "services/IStringDictionary.h"
 #include "services/MessageLog.h"
 #include "Service.h"
+#include "systems/SystemManager.h"
+#include "systems/SystemSpacialRelationships.h"
 #include "utilities/StringTransforms.h"
 
 namespace Actions
@@ -415,7 +417,7 @@ namespace Actions
         if (!hasTrait(Trait::ObjectCanBeOutOfReach))
         {
           // Check that each object is within reach.
-          if (!subject->canReach(object))
+          if (!SYSTEMS.spacial()->firstCanReachSecond(subject, object))
           {
             printMessageTry();
             putMsg(makeTr("CONJUNCTION_HOWEVER") + " " + makeTr("FOO_PRO_SUB_IS_OUT_OF_REACH"));
@@ -430,7 +432,7 @@ namespace Actions
           {
             printMessageTry();
             auto message = makeTr("CONJUNCTION_HOWEVER") + " " + makeTr("FOO_PRO_SUB_IS_NOT_IN_YOUR_INVENTORY");
-            if (subject->canReach(object))
+            if (SYSTEMS.spacial()->firstCanReachSecond(subject, object))
             {
               message += makeTr("PICK_UP_OBJECT_FIRST");
             }

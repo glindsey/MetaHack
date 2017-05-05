@@ -103,25 +103,8 @@ public:
   /// Returns true if this entity is the current player.
   bool isPlayer() const;
 
-  /// Return whether a Entity is within reach of the DynamicEntity.
-  /// @param[in] entity Entity to check
-  /// @return true if the Entity is in the DynamicEntity's inventory or is at the
-  ///         same location as the DynamicEntity, false otherwise.
-  bool canReach(EntityId entity);
-
   /// Return a reference to this entity.
   EntityId getId() const;
-
-  /// Return whether this Entity can see the requested coordinates.
-  /// Assumes this Entity exists on a map, and the coordinates are on the 
-  /// same map as it is.
-  bool canSee(IntVec2 coords);
-
-  /// Find out which tiles on the map can be seen by this DynamicEntity.
-  /// In the process, tiles in the DynamicEntity's visual memory are updated.
-  /// This method uses a recursive raycasting algorithm to figure out what
-  /// can be seen at a particular position.
-  void findSeenTiles();
 
   Gender getGenderOrYou() const;
 
@@ -344,14 +327,6 @@ protected:
 
   /// Initializer; called by all constructors.
   void initialize();
-
-  /// Perform the recursive visibility scan for an octant.
-  /// Used by findSeenTiles.
-  void do_recursive_visibility(ComponentPosition const& thisPosition,
-                               int octant,
-                               int depth = 1,
-                               float slope_A = 1,
-                               float slope_B = 0);
 
   /// Process this Entity's involuntary actions for a single tick.
   /// Voluntary actions are only processed when the Entity is not busy.

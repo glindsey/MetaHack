@@ -8,6 +8,8 @@
 #include "Service.h"
 #include "services/IConfigSettings.h"
 #include "services/IGameRules.h"
+#include "systems/SystemManager.h"
+#include "systems/SystemSenseSight.h"
 #include "tilesheet/TileSheet.h"
 #include "types/Color.h"
 #include "types/ShaderEffect.h"
@@ -60,17 +62,22 @@ void MapTileStandard2DView::add_tile_vertices(EntityId viewer,
   auto& x = coords.x;
   auto& y = coords.y;
 
-  bool this_is_empty = tile.isPassable();
-  bool nw_is_empty = (viewer->canSee({ x - 1, y - 1 }) && tile.getAdjacentTile(Direction::Northwest).isPassable());
-  bool n_is_empty = (viewer->canSee({ x, y - 1 }) && tile.getAdjacentTile(Direction::North).isPassable());
-  bool ne_is_empty = (viewer->canSee({ x + 1, y - 1 }) && tile.getAdjacentTile(Direction::Northeast).isPassable());
-  bool e_is_empty = (viewer->canSee({ x + 1, y }) && tile.getAdjacentTile(Direction::East).isPassable());
-  bool se_is_empty = (viewer->canSee({ x + 1, y + 1 }) && tile.getAdjacentTile(Direction::Southeast).isPassable());
-  bool s_is_empty = (viewer->canSee({ x, y + 1 }) && tile.getAdjacentTile(Direction::South).isPassable());
-  bool sw_is_empty = (viewer->canSee({ x - 1, y + 1 }) && tile.getAdjacentTile(Direction::Southwest).isPassable());
-  bool w_is_empty = (viewer->canSee({ x - 1, y }) && tile.getAdjacentTile(Direction::West).isPassable());
+  auto canSee = [viewer](IntVec2 coords) -> bool
+  {
+    return SYSTEMS.senseSight()->subjectCanSeeCoords(viewer, coords);
+  };
 
-  if (viewer->canSee(coords))
+  bool this_is_empty = tile.isPassable();
+  bool nw_is_empty = (canSee({ x - 1, y - 1 }) && tile.getAdjacentTile(Direction::Northwest).isPassable());
+  bool n_is_empty = (canSee({ x, y - 1 }) && tile.getAdjacentTile(Direction::North).isPassable());
+  bool ne_is_empty = (canSee({ x + 1, y - 1 }) && tile.getAdjacentTile(Direction::Northeast).isPassable());
+  bool e_is_empty = (canSee({ x + 1, y }) && tile.getAdjacentTile(Direction::East).isPassable());
+  bool se_is_empty = (canSee({ x + 1, y + 1 }) && tile.getAdjacentTile(Direction::Southeast).isPassable());
+  bool s_is_empty = (canSee({ x, y + 1 }) && tile.getAdjacentTile(Direction::South).isPassable());
+  bool sw_is_empty = (canSee({ x - 1, y + 1 }) && tile.getAdjacentTile(Direction::Southwest).isPassable());
+  bool w_is_empty = (canSee({ x - 1, y }) && tile.getAdjacentTile(Direction::West).isPassable());
+
+  if (canSee(coords))
   {
     if (this_is_empty)
     {
@@ -195,7 +202,7 @@ void MapTileStandard2DView::add_things_floor_vertices(EntityId viewer,
   EntityId contents = tile.getTileContents();
   ComponentInventory& inv = COMPONENTS.inventory[contents];
 
-  if (viewer->canSee(coords))
+  if (SYSTEMS.senseSight()->subjectCanSeeCoords(viewer, coords))
   {
     if (inv.count() > 0)
     {

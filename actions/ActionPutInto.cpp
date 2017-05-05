@@ -90,7 +90,7 @@ namespace Actions
     }
 
     // Check that the container is within reach.
-    if (!subject->canReach(container))
+    if (!SYSTEMS.spacial()->firstCanReachSecond(subject, container))
     {
       printMessageTry();
       putTr("THE_TARGET_IS_OUT_OF_REACH");
