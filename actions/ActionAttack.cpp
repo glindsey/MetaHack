@@ -99,7 +99,7 @@ namespace Actions
       return StateResult::Failure();
     }
 
-    bool reachable = subject->isAdjacentTo(object);
+    bool reachable = COMPONENTS.position[subject].isAdjacentTo(object);
     /// @todo deal with DynamicEntities in your Inventory -- WTF do you do THEN?
 
     if (reachable)

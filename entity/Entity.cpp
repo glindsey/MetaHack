@@ -159,27 +159,6 @@ bool Entity::canReach(EntityId entity)
   return false;
 }
 
-bool Entity::isAdjacentTo(EntityId entity)
-{
-  // If either doesn't have a position component, bail.
-  if (!COMPONENTS.position.existsFor(m_id) ||
-      !COMPONENTS.position.existsFor(entity))
-  {
-    return false;
-  }
-
-  auto ourPosition = COMPONENTS.position[m_id];
-  auto otherPosition = COMPONENTS.position[entity];
-
-  // If the two are not on the same map, bail.
-  if (ourPosition.map() != otherPosition.map())
-  {
-    return false;
-  }
-
-  return adjacent(ourPosition.coords(), otherPosition.coords());
-}
-
 Gender Entity::getGenderOrYou() const
 {
   if (isPlayer())

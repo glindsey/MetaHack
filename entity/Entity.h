@@ -109,11 +109,6 @@ public:
   ///         same location as the DynamicEntity, false otherwise.
   bool canReach(EntityId entity);
 
-  /// Return whether a Entity is adjacent to this DynamicEntity.
-  /// @param[in] entity Entity to check
-  /// @return true if the Entity is at the same place or adjacent to this DynamicEntity, false otherwise.
-  bool isAdjacentTo(EntityId entity);
-
   /// Return a reference to this entity.
   EntityId getId() const;
 

@@ -50,6 +50,12 @@ public:
   /// Return whether this entity is inside another entity or not.
   bool isInsideAnotherEntity() const;
 
+  /// Return whether this entity is inside the specified entity.
+  bool isInside(EntityId id) const;
+
+  /// Return whether this entity is adjacent to the specified entity.
+  bool isAdjacentTo(EntityId id) const;
+
 protected:
 
 private:
