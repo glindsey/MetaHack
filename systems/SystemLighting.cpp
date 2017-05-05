@@ -9,10 +9,10 @@
 #include "map/Map.h"
 #include "types/LightInfluence.h"
 
-SystemLighting::SystemLighting(ComponentMap<ComponentAppearance>& appearance,
-                               ComponentMap<ComponentHealth>& health,
+SystemLighting::SystemLighting(ComponentMap<ComponentAppearance> const& appearance,
+                               ComponentMap<ComponentHealth> const& health,
                                ComponentMap<ComponentLightSource>& lightSource,
-                               ComponentMap<ComponentPosition>& position) :
+                               ComponentMap<ComponentPosition> const& position) :
   SystemCRTP<SystemLighting>(),
   m_appearance{ appearance },
   m_health{ health },
@@ -37,8 +37,8 @@ void SystemLighting::recalculate()
   {
     EntityId lightSource = lightSourcePair.first;
     auto& lightSourceData = lightSourcePair.second;
-    bool onMap = m_position.existsFor(lightSource) && (m_position[lightSource].map() == currentMap);
-    if (onMap) applyLightFrom(lightSource, m_position[lightSource].parent());
+    bool onMap = m_position.existsFor(lightSource) && (m_position.of(lightSource).map() == currentMap);
+    if (onMap) applyLightFrom(lightSource, m_position.of(lightSource).parent());
   }
 
   //notifyObservers(Event::Updated);
@@ -102,7 +102,7 @@ void SystemLighting::applyLightFrom(EntityId light, EntityId location)
     {
       bool locationIsOpaque =
         m_appearance.existsFor(location) &&
-        m_appearance[location].isTotallyOpaque();
+        m_appearance.of(location).isTotallyOpaque();
       bool locationHasHealth = m_health.existsFor(location);
 
 
@@ -115,7 +115,7 @@ void SystemLighting::applyLightFrom(EntityId light, EntityId location)
       //if (!isOpaque() || is wielding(light) || is wearing(light))
       if (!locationIsOpaque || locationHasHealth)
       {
-        auto locationParent = m_position[location].parent();
+        auto locationParent = m_position.of(location).parent();
         applyLightFrom(light, locationParent);
       }
     }
@@ -190,7 +190,7 @@ void SystemLighting::addLightInfluenceToTile(IntVec2 coords, EntityId source, Li
 void SystemLighting::addLightToMap(EntityId source)
 {
   // Get the location of the light source.
-  auto& position = m_position[source];
+  auto& position = m_position.of(source);
   IntVec2 coords = position.coords();
 
   Color light_color = m_lightSource[source].color();

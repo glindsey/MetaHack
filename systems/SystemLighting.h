@@ -36,10 +36,10 @@ struct TileLightingData
 class SystemLighting : public SystemCRTP<SystemLighting>
 {
 public:
-  SystemLighting(ComponentMap<ComponentAppearance>& appearance,
-                 ComponentMap<ComponentHealth>& health,
+  SystemLighting(ComponentMap<ComponentAppearance> const& appearance,
+                 ComponentMap<ComponentHealth> const& health,
                  ComponentMap<ComponentLightSource>& lightSource,
-                 ComponentMap<ComponentPosition>& position);
+                 ComponentMap<ComponentPosition> const& position);
 
   virtual ~SystemLighting();
 
@@ -80,10 +80,10 @@ protected:
 
 private:
   // Components used by this system.
-  ComponentMap<ComponentAppearance>& m_appearance;
-  ComponentMap<ComponentHealth>& m_health;
+  ComponentMap<ComponentAppearance> const& m_appearance;
+  ComponentMap<ComponentHealth> const& m_health;
   ComponentMap<ComponentLightSource>& m_lightSource;
-  ComponentMap<ComponentPosition>& m_position;
+  ComponentMap<ComponentPosition> const& m_position;
 
   /// Grid of tile lighting data for all map tiles.
   std::unique_ptr<Grid2D<TileLightingData>> m_lightingData;
