@@ -17,3 +17,13 @@ void to_json(json& j, ComponentSapience const& obj)
   // *** add Component-specific assignments here ***
   //j["member"] = obj.m_member;
 }
+
+ActionQueue& ComponentSapience::pendingActions()
+{
+  return m_pendingActions;
+}
+
+ActionQueue const& ComponentSapience::pendingActions() const
+{
+  return m_pendingActions;
+}
