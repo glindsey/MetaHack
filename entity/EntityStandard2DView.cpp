@@ -10,6 +10,8 @@
 #include "types/ShaderEffect.h"
 #include "utilities/RNGUtils.h"
 
+/// @todo Lighting system should not be a constructor argument, but should be passed into draw() instead.
+
 EntityStandard2DView::EntityStandard2DView(Entity& entity, 
                                            TileSheet& tileSheet,
                                            SystemLighting& lighting)

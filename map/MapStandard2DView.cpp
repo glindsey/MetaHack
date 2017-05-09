@@ -8,6 +8,8 @@
 #include "types/ShaderEffect.h"
 #include "utilities/New.h"
 
+/// @todo Lighting system should not be a constructor argument, but should be passed into methods that need it instead.
+
 MapStandard2DView::MapStandard2DView(std::string name, 
                                      Map& map, 
                                      UintVec2 size, 

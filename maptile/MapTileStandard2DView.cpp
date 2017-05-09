@@ -20,6 +20,8 @@ std::string MapTileStandard2DView::getViewName()
   return "standard2D";
 }
 
+/// @todo Lighting system should not be a constructor argument, but should be passed into methods that need it instead.
+
 MapTileStandard2DView::MapTileStandard2DView(MapTile& map_tile, 
                                              TileSheet& tile_sheet,
                                              SystemLighting& lighting)
