@@ -10,15 +10,11 @@
 #include "types/ShaderEffect.h"
 #include "utilities/RNGUtils.h"
 
-/// @todo Lighting system should not be a constructor argument, but should be passed into draw() instead.
-
 EntityStandard2DView::EntityStandard2DView(Entity& entity, 
-                                           TileSheet& tileSheet,
-                                           SystemLighting& lighting)
+                                           TileSheet& tileSheet)
   :
   EntityView(entity),
-  m_tileSheet{ tileSheet },
-  m_lighting{ lighting }
+  m_tileSheet{ tileSheet }
 {
 }
 
@@ -32,7 +28,7 @@ EntityStandard2DView::~EntityStandard2DView()
 }
 
 void EntityStandard2DView::draw(sf::RenderTarget& target,
-                                bool use_lighting,
+                                SystemLighting* lighting,
                                 bool use_smoothing,
                                 int frame)
 {
@@ -71,9 +67,9 @@ void EntityStandard2DView::draw(sf::RenderTarget& target,
   texture_coords.height = tile_size;
 
   Color thing_color;
-  if (use_lighting)
+  if (lighting != nullptr)
   {
-    thing_color = m_lighting.getLightLevel(position.coords());
+    thing_color = lighting->getLightLevel(position.coords());
   }
   else
   {

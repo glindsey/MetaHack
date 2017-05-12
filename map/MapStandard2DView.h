@@ -19,8 +19,8 @@ class MapStandard2DView : public MapView
 public:
   virtual bool render_map(sf::RenderTexture& texture, int frame) override;
 
-  virtual void update_tiles(EntityId viewer) override;
-  virtual void update_things(EntityId viewer, int frame) override;
+  virtual void update_tiles(EntityId viewer, SystemLighting& lighting) override;
+  virtual void update_things(EntityId viewer, SystemLighting& lighting, int frame) override;
 
   virtual void draw_highlight(sf::RenderTarget& target,
                               RealVec2 location,
@@ -40,8 +40,7 @@ protected:
   MapStandard2DView(std::string name, 
                     Map& map, 
                     UintVec2 size, 
-                    TileSheet& tile_sheet,
-                    SystemLighting& lighting);
+                    TileSheet& tile_sheet);
 
   /// Called before rendering the object's children.
   /// Default behavior is to do nothing.

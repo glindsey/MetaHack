@@ -20,16 +20,12 @@ std::string MapTileStandard2DView::getViewName()
   return "standard2D";
 }
 
-/// @todo Lighting system should not be a constructor argument, but should be passed into methods that need it instead.
-
 MapTileStandard2DView::MapTileStandard2DView(MapTile& map_tile, 
-                                             TileSheet& tile_sheet,
-                                             SystemLighting& lighting)
+                                             TileSheet& tile_sheet)
   :
   MapTileView(map_tile),
   m_tileOffset{ pick_uniform(0, 4) },
-  m_tileSheet{ tile_sheet },
-  m_lighting{ lighting }
+  m_tileSheet{ tile_sheet }
 {
 }
 
@@ -57,7 +53,8 @@ UintVec2 MapTileStandard2DView::get_entity_tile_sheet_coords(Entity& entity, int
 }
 void MapTileStandard2DView::add_tile_vertices(EntityId viewer,
                                               sf::VertexArray& seen_vertices,
-                                              sf::VertexArray& memory_vertices)
+                                              sf::VertexArray& memory_vertices,
+                                              SystemLighting& lighting)
 {
   auto& tile = get_map_tile();
   auto coords = tile.getCoords();
@@ -83,11 +80,11 @@ void MapTileStandard2DView::add_tile_vertices(EntityId viewer,
   {
     if (this_is_empty)
     {
-      add_tile_floor_vertices(seen_vertices);
+      add_tile_floor_vertices(seen_vertices, lighting);
     }
     else
     {
-      add_wall_vertices_to(seen_vertices, true,
+      add_wall_vertices_to(seen_vertices, &lighting,
                            nw_is_empty, n_is_empty,
                            ne_is_empty, e_is_empty,
                            se_is_empty, s_is_empty,
@@ -141,35 +138,28 @@ void MapTileStandard2DView::add_memory_vertices_to(sf::VertexArray& vertices,
                         vSW, vSE);
 }
 
-void MapTileStandard2DView::add_tile_floor_vertices(sf::VertexArray& vertices)
+void MapTileStandard2DView::add_tile_floor_vertices(sf::VertexArray& vertices,
+                                                    SystemLighting& lighting)
 {
   auto& config = Service<IConfigSettings>::get();
 
   auto& tile = get_map_tile();
   auto& coords = tile.getCoords();
-  //auto& tileN = tile.getAdjacentTile(Direction::North);
-  //auto& tileNE = tile.getAdjacentTile(Direction::Northeast);
-  //auto& tileE = tile.getAdjacentTile(Direction::East);
-  //auto& tileSE = tile.getAdjacentTile(Direction::Southeast);
-  //auto& tileS = tile.getAdjacentTile(Direction::South);
-  //auto& tileSW = tile.getAdjacentTile(Direction::Southwest);
-  //auto& tileW = tile.getAdjacentTile(Direction::West);
-  //auto& tileNW = tile.getAdjacentTile(Direction::Northwest);
 
   sf::Vertex new_vertex;
   float ts = config.get("map-tile-size");
   float half_ts = ts * 0.5f;
 
-  Color colorN{ m_lighting.getLightLevel(coords + static_cast<IntVec2>(Direction::North)) };
-  Color colorNE{ m_lighting.getLightLevel(coords + static_cast<IntVec2>(Direction::Northeast)) };
-  Color colorE{ m_lighting.getLightLevel(coords + static_cast<IntVec2>(Direction::East)) };
-  Color colorSE{ m_lighting.getLightLevel(coords + static_cast<IntVec2>(Direction::Southeast)) };
-  Color colorS{ m_lighting.getLightLevel(coords + static_cast<IntVec2>(Direction::South)) };
-  Color colorSW{ m_lighting.getLightLevel(coords + static_cast<IntVec2>(Direction::Southwest)) };
-  Color colorW{ m_lighting.getLightLevel(coords + static_cast<IntVec2>(Direction::West)) };
-  Color colorNW{ m_lighting.getLightLevel(coords + static_cast<IntVec2>(Direction::Northwest)) };
+  Color colorN{ lighting.getLightLevel(coords + static_cast<IntVec2>(Direction::North)) };
+  Color colorNE{ lighting.getLightLevel(coords + static_cast<IntVec2>(Direction::Northeast)) };
+  Color colorE{ lighting.getLightLevel(coords + static_cast<IntVec2>(Direction::East)) };
+  Color colorSE{ lighting.getLightLevel(coords + static_cast<IntVec2>(Direction::Southeast)) };
+  Color colorS{ lighting.getLightLevel(coords + static_cast<IntVec2>(Direction::South)) };
+  Color colorSW{ lighting.getLightLevel(coords + static_cast<IntVec2>(Direction::Southwest)) };
+  Color colorW{ lighting.getLightLevel(coords + static_cast<IntVec2>(Direction::West)) };
+  Color colorNW{ lighting.getLightLevel(coords + static_cast<IntVec2>(Direction::Northwest)) };
 
-  Color light = m_lighting.getLightLevel(coords);
+  Color light = lighting.getLightLevel(coords);
   Color lightN = average(light, colorN);
   Color lightNE = average(light, colorN, colorNE, colorE);
   Color lightE = average(light, colorE);
@@ -197,7 +187,8 @@ void MapTileStandard2DView::add_tile_floor_vertices(sf::VertexArray& vertices)
 
 void MapTileStandard2DView::add_things_floor_vertices(EntityId viewer,
                                                       sf::VertexArray & vertices,
-                                                      bool use_lighting, int frame)
+                                                      SystemLighting* lighting,
+                                                      int frame)
 {
   auto& tile = get_map_tile();
   auto coords = tile.getCoords();
@@ -212,7 +203,7 @@ void MapTileStandard2DView::add_things_floor_vertices(EntityId viewer,
       EntityId biggest_thing = inv.get_largest_thing();
       if (biggest_thing != EntityId::Mu())
       {
-        add_thing_floor_vertices(biggest_thing, vertices, use_lighting, frame);
+        add_thing_floor_vertices(biggest_thing, vertices, lighting, frame);
       }
     }
   }
@@ -220,11 +211,14 @@ void MapTileStandard2DView::add_things_floor_vertices(EntityId viewer,
   // Always draw the viewer itself last, if it is present at that tile.
   if (inv.contains(viewer))
   {
-    add_thing_floor_vertices(viewer, vertices, use_lighting, frame);
+    add_thing_floor_vertices(viewer, vertices, lighting, frame);
   }
 }
 
-void MapTileStandard2DView::add_thing_floor_vertices(EntityId entityId, sf::VertexArray & vertices, bool use_lighting, int frame)
+void MapTileStandard2DView::add_thing_floor_vertices(EntityId entityId, 
+                                                     sf::VertexArray& vertices,
+                                                     SystemLighting* lighting,
+                                                     int frame)
 {
   auto& entity = GAME.entities().get(entityId);
   auto& config = Service<IConfigSettings>::get();
@@ -240,9 +234,9 @@ void MapTileStandard2DView::add_thing_floor_vertices(EntityId entityId, sf::Vert
 //  MapTile& tile = position.map()->getTile(coords);
 
   Color thing_color;
-  if (use_lighting)
+  if (lighting != nullptr)
   {
-    thing_color = m_lighting.getLightLevel(coords);
+    thing_color = lighting->getLightLevel(coords);
   }
   else
   {
@@ -264,7 +258,7 @@ void MapTileStandard2DView::add_thing_floor_vertices(EntityId entityId, sf::Vert
 
 
 void MapTileStandard2DView::add_wall_vertices_to(sf::VertexArray& vertices,
-                                                 bool use_lighting,
+                                                 SystemLighting* lighting,
                                                  bool nw_is_empty, bool n_is_empty,
                                                  bool ne_is_empty, bool e_is_empty,
                                                  bool se_is_empty, bool s_is_empty,
@@ -351,15 +345,15 @@ void MapTileStandard2DView::add_wall_vertices_to(sf::VertexArray& vertices,
 
   UintVec2 tile_sheet_coords = this->get_tile_sheet_coords();
 
-  if (use_lighting)
+  if (lighting != nullptr)
   {
-    tile_color = m_lighting.getLightLevel(coords);
+    tile_color = lighting->getLightLevel(coords);
 
     if (playerSeesNWall)
     {
-      wall_n_color = m_lighting.getWallLightLevel(coords, Direction::North);
-      wall_n_color_w = average(wall_n_color, m_lighting.getWallLightLevel(coordsW, Direction::North));
-      wall_n_color_e = average(wall_n_color, m_lighting.getWallLightLevel(coordsE, Direction::North));
+      wall_n_color = lighting->getWallLightLevel(coords, Direction::North);
+      wall_n_color_w = average(wall_n_color, lighting->getWallLightLevel(coordsW, Direction::North));
+      wall_n_color_e = average(wall_n_color, lighting->getWallLightLevel(coordsE, Direction::North));
     }
     else
     {
@@ -370,9 +364,9 @@ void MapTileStandard2DView::add_wall_vertices_to(sf::VertexArray& vertices,
 
     if (playerSeesEWall)
     {
-      wall_e_color = m_lighting.getWallLightLevel(coords, Direction::East);
-      wall_e_color_n = average(wall_e_color, m_lighting.getWallLightLevel(coordsN, Direction::East));
-      wall_e_color_s = average(wall_e_color, m_lighting.getWallLightLevel(coordsS, Direction::East));
+      wall_e_color = lighting->getWallLightLevel(coords, Direction::East);
+      wall_e_color_n = average(wall_e_color, lighting->getWallLightLevel(coordsN, Direction::East));
+      wall_e_color_s = average(wall_e_color, lighting->getWallLightLevel(coordsS, Direction::East));
     }
     else
     {
@@ -383,9 +377,9 @@ void MapTileStandard2DView::add_wall_vertices_to(sf::VertexArray& vertices,
 
     if (playerSeesSWall)
     {
-      wall_s_color = m_lighting.getWallLightLevel(coords, Direction::South);
-      wall_s_color_w = average(wall_s_color, m_lighting.getWallLightLevel(coordsW, Direction::South));
-      wall_s_color_e = average(wall_s_color, m_lighting.getWallLightLevel(coordsE, Direction::South));
+      wall_s_color = lighting->getWallLightLevel(coords, Direction::South);
+      wall_s_color_w = average(wall_s_color, lighting->getWallLightLevel(coordsW, Direction::South));
+      wall_s_color_e = average(wall_s_color, lighting->getWallLightLevel(coordsE, Direction::South));
     }
     else
     {
@@ -396,9 +390,9 @@ void MapTileStandard2DView::add_wall_vertices_to(sf::VertexArray& vertices,
 
     if (playerSeesWWall)
     {
-      wall_w_color = m_lighting.getWallLightLevel(coords, Direction::West);
-      wall_w_color_n = average(wall_w_color, m_lighting.getWallLightLevel(coordsN, Direction::West));
-      wall_w_color_s = average(wall_w_color, m_lighting.getWallLightLevel(coordsS, Direction::West));
+      wall_w_color = lighting->getWallLightLevel(coords, Direction::West);
+      wall_w_color_n = average(wall_w_color, lighting->getWallLightLevel(coordsN, Direction::West));
+      wall_w_color_s = average(wall_w_color, lighting->getWallLightLevel(coordsS, Direction::West));
     }
     else
     {

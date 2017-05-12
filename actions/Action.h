@@ -88,11 +88,7 @@ namespace Actions
   class Action
   {
   public:
-    explicit Action(EntityId subject, std::string type, std::string verb);
-    Action(Action const&) = delete;
-    Action(Action&&) = delete;
-    Action& operator=(Action const&) = delete;
-    Action& operator=(Action&&) = delete;
+    Action(EntityId subject, std::string type, std::string verb);
     virtual ~Action();
 
     virtual std::unordered_set<Trait> const& getTraits() const;

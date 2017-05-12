@@ -13,8 +13,7 @@
 MapStandard2DView::MapStandard2DView(std::string name, 
                                      Map& map, 
                                      UintVec2 size, 
-                                     TileSheet& tileSheet,
-                                     SystemLighting& lighting)
+                                     TileSheet& tileSheet)
   :
   MapView(name, map, size),
   m_tileSheet(tileSheet)
@@ -25,12 +24,12 @@ MapStandard2DView::MapStandard2DView(std::string name,
   m_map_tile_views.reset(new Grid2D<MapTileStandard2DView>(map.getSize(), 
                                                            [&](IntVec2 coords) -> MapTileStandard2DView*
   {
-    return NEW MapTileStandard2DView(map.getTile(coords), m_tileSheet, lighting);
+    return NEW MapTileStandard2DView(map.getTile(coords), m_tileSheet);
   }));
 
 }
 
-void MapStandard2DView::update_tiles(EntityId viewer)
+void MapStandard2DView::update_tiles(EntityId viewer, SystemLighting& lighting)
 {
   auto& map = getMap();
   auto& map_size = map.getSize();
@@ -45,12 +44,17 @@ void MapStandard2DView::update_tiles(EntityId viewer)
   {
     for (int x = 0; x < map_size.x; ++x)
     {
-      m_map_tile_views->get({ x, y }).add_tile_vertices(viewer, m_map_seen_vertices, m_map_memory_vertices);
+      m_map_tile_views->get({ x, y }).add_tile_vertices(viewer, 
+                                                        m_map_seen_vertices, 
+                                                        m_map_memory_vertices,
+                                                        lighting);
     }
   }
 }
 
-void MapStandard2DView::update_things(EntityId viewer, int frame)
+void MapStandard2DView::update_things(EntityId viewer, 
+                                      SystemLighting& lighting,
+                                      int frame)
 {
   auto& map = getMap();
   auto& map_size = map.getSize();
@@ -61,7 +65,10 @@ void MapStandard2DView::update_things(EntityId viewer, int frame)
   {
     for (int x = 0; x < map_size.x; ++x)
     {
-      m_map_tile_views->get({ x, y }).add_things_floor_vertices(viewer, m_thing_vertices, true, frame);
+      m_map_tile_views->get({ x, y }).add_things_floor_vertices(viewer, 
+                                                                m_thing_vertices, 
+                                                                &lighting, 
+                                                                frame);
     }
   }
 }

@@ -26,8 +26,7 @@ public:
 protected:
   /// Constructor.
   MapTileStandard2DView(MapTile& mapTile, 
-                        TileSheet& tileSheet,
-                        SystemLighting& lighting);
+                        TileSheet& tileSheet);
 
   /// Return the coordinates of the tile on the tilesheet.
   UintVec2 get_tile_sheet_coords() const;
@@ -41,7 +40,8 @@ protected:
   /// @param memory_vertices Array to add memory vertices to.
   void add_tile_vertices(EntityId viewer, 
                          sf::VertexArray& seen_vertices,
-                         sf::VertexArray& memory_vertices);
+                         sf::VertexArray& memory_vertices,
+                         SystemLighting& lighting);
 
   /// Add the vertices from the viewer's memory.
   /// @param vertices Array to add vertices to.
@@ -51,23 +51,26 @@ protected:
 
   /// Add the floor vertices for the maptile to a VertexArray to be drawn.
   /// @param vertices Array to add vertices to.
-  void add_tile_floor_vertices(sf::VertexArray& vertices);
+  void add_tile_floor_vertices(sf::VertexArray& vertices,
+                               SystemLighting& lighting);
 
   /// Add the floor vertices for the entities on this tile to a VertexArray to be drawn.
   void add_things_floor_vertices(EntityId viewer,
-                                 sf::VertexArray& vertices, 
-                                 bool use_lighting, int frame);
+                                 sf::VertexArray& vertices,
+                                 SystemLighting* lighting,
+                                 int frame);
 
   /// Add the floor vertices for the entity specified.
   /// @todo Move into a Entity view.
   void add_thing_floor_vertices(EntityId entity, 
                                 sf::VertexArray& vertices, 
-                                bool use_lighting, int frame);
+                                SystemLighting* lighting,
+                                int frame);
 
   /// Add this MapTile's walls to a VertexArray to be drawn.
   /// @param vertices Array to add vertices to.
-  /// @param use_lighting If true, calculate lighting when adding.
-  ///                     If false, store directly w/white bg color.
+  /// @param lighting     Pointer to lighting system, or nullptr if
+  ///                     no lighting is to be used.
   /// @param nw_is_empty  Whether tile to the northwest is empty.
   /// @param n_is_empty   Whether tile to the north is empty.
   /// @param ne_is_empty  Whether tile to the northeast is empty.
@@ -77,7 +80,7 @@ protected:
   /// @param sw_is_empty  Whether tile to the southwest is empty.
   /// @param w_is_empty   Whether tile to the west is empty.
   void add_wall_vertices_to(sf::VertexArray& vertices,
-                            bool use_lighting,
+                            SystemLighting* lighting,
                             bool nw_is_empty, bool n_is_empty,
                             bool ne_is_empty, bool e_is_empty,
                             bool se_is_empty, bool s_is_empty,
@@ -91,7 +94,4 @@ private:
 
   /// Reference to tilesheet containing MapTile graphics.
   TileSheet& m_tileSheet;
-
-  /// Reference to lighting system.
-  SystemLighting& m_lighting;
 };

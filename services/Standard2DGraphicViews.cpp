@@ -13,8 +13,7 @@
 // Namespace aliases
 namespace fs = boost::filesystem;
 
-Standard2DGraphicViews::Standard2DGraphicViews(SystemLighting& lighting) :
-  m_lighting{ lighting }
+Standard2DGraphicViews::Standard2DGraphicViews()
 {
   auto& config = Service<IConfigSettings>::get();
   auto tileSize = config.get("map-tile-size");
@@ -29,17 +28,17 @@ Standard2DGraphicViews::~Standard2DGraphicViews()
 
 EntityView* Standard2DGraphicViews::createEntityView(Entity& entity)
 {
-  return NEW EntityStandard2DView(entity, getTileSheet(), m_lighting);
+  return NEW EntityStandard2DView(entity, getTileSheet());
 }
 
 MapTileView* Standard2DGraphicViews::createMapTileView(MapTile& map_tile)
 {
-  return NEW MapTileStandard2DView(map_tile, getTileSheet(), m_lighting);
+  return NEW MapTileStandard2DView(map_tile, getTileSheet());
 }
 
 MapView* Standard2DGraphicViews::createMapView(std::string name, Map& map, UintVec2 size)
 {
-  return NEW MapStandard2DView(name, map, size, getTileSheet(), m_lighting);
+  return NEW MapStandard2DView(name, map, size, getTileSheet());
 }
 
 TileSheet& Standard2DGraphicViews::getTileSheet()

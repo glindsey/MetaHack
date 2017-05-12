@@ -17,7 +17,7 @@ public:
   virtual ~EntityStandard2DView();
 
   virtual void draw(sf::RenderTarget& target,
-                    bool use_lighting,
+                    SystemLighting* lighting,
                     bool use_smoothing,
                     int frame) override;
 
@@ -29,15 +29,11 @@ public:
 protected:
   /// Constructor.
   explicit EntityStandard2DView(Entity& entity, 
-                                TileSheet& tileSheet,
-                                SystemLighting& lighting);
+                                TileSheet& tileSheet);
 
   virtual EventResult onEvent_NVI(Event const& event) override;
 
 private:
   /// Reference to tilesheet storing entity graphics.
   TileSheet& m_tileSheet;
-
-  /// Reference to lighting system.
-  SystemLighting& m_lighting;
 };

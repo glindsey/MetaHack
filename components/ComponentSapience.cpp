@@ -18,12 +18,12 @@ void to_json(json& j, ComponentSapience const& obj)
   //j["member"] = obj.m_member;
 }
 
-ActionQueue& ComponentSapience::pendingActions()
+ActionDeque& ComponentSapience::pendingActions()
 {
   return m_pendingActions;
 }
 
-ActionQueue const& ComponentSapience::pendingActions() const
+ActionDeque const& ComponentSapience::pendingActions() const
 {
   return m_pendingActions;
 }

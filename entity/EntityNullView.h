@@ -16,7 +16,7 @@ public:
   virtual ~EntityNullView();
 
   virtual void draw(sf::RenderTarget& target,
-                    bool use_lighting,
+                    SystemLighting* lighting,
                     bool use_smoothing,
                     int frame) override;
 

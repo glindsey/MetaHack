@@ -84,7 +84,7 @@ AppStateGameMode::AppStateGameMode(StateMachine& state_machine, sf::RenderWindow
 
   // Create the standard map views provider.
   /// @todo Make this configurable.
-  Service<IGraphicViews>::provide(NEW Standard2DGraphicViews(m_systemManager->lighting()));
+  Service<IGraphicViews>::provide(NEW Standard2DGraphicViews());
 }
 
 AppStateGameMode::~AppStateGameMode()
@@ -145,7 +145,7 @@ void AppStateGameMode::execute()
     m_systemManager->runOneCycle();
 
     // Update view's cached tile data.
-    m_mapView->update_tiles(player);
+    m_mapView->update_tiles(player, m_systemManager->lighting());
 
     // If the action completed, reset the inventory selection.
     if (!player->voluntaryActionIsPending() && !player->actionIsInProgress())
@@ -218,8 +218,8 @@ bool AppStateGameMode::initialize()
   m_mapView = the_desktop.addChild(Service<IGraphicViews>::get().createMapView("MainMapView", game_map, the_desktop.getSize()));
 
   // Get the map view ready.
-  m_mapView->update_tiles(player);
-  m_mapView->update_things(player, 0);
+  m_mapView->update_tiles(player, m_systemManager->lighting());
+  m_mapView->update_things(player, m_systemManager->lighting(), 0);
 
   putMsg(tr("WELCOME_MSG"));
 
@@ -282,7 +282,7 @@ void AppStateGameMode::render_map(sf::RenderTexture& texture, int frame)
     RealVec2 cursor_pixel_coords = MapTile::getPixelCoords(m_cursorCoords);
 
     // Update entity vertex array.
-    m_mapView->update_things(player, frame);
+    m_mapView->update_things(player, m_systemManager->lighting(), frame);
 
     if (m_currentInputState == GameInputState::CursorLook)
     {
