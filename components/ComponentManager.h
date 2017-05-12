@@ -4,6 +4,7 @@
 
 #include "components/ComponentMap.h"
 
+#include "components/ComponentActivity.h"
 #include "components/ComponentAppearance.h"
 #include "components/ComponentBodyparts.h"
 #include "components/ComponentDigestiveSystem.h"
@@ -45,6 +46,7 @@ public:
   friend void from_json(json const& j, ComponentManager& obj);
   friend void to_json(json& j, ComponentManager const& obj);
 
+  ComponentMap<ComponentActivity> activity;
   ComponentMap<ComponentAppearance> appearance;
   ComponentMap<ComponentBodyparts> bodyparts;
   ComponentMap<unsigned int> busyCounter;

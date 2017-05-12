@@ -107,6 +107,7 @@ ComponentManager::ComponentManager()
 ComponentManager::ComponentManager(json const& j)
 {
   initialize();
+  JSONUtils::doIfPresent(j, "activity",         [this](auto const& value) { activity = value; });
   JSONUtils::doIfPresent(j, "appearance",       [this](auto const& value) { appearance = value; });
   JSONUtils::doIfPresent(j, "bodyparts",        [this](auto const& value) { bodyparts = value; });
   JSONUtils::doIfPresent(j, "busy-counter",     [this](auto const& value) { busyCounter = value; });
@@ -150,6 +151,7 @@ void ComponentManager::initialize()
 
 void ComponentManager::clone(EntityId original, EntityId newId)
 {
+  activity       .cloneIfExists(original, newId);
   appearance     .cloneIfExists(original, newId);
   bodyparts      .cloneIfExists(original, newId);
   busyCounter    .cloneIfExists(original, newId);
@@ -175,6 +177,7 @@ void ComponentManager::clone(EntityId original, EntityId newId)
 
 void ComponentManager::erase(EntityId id)
 {
+  activity       .remove(id);
   appearance     .remove(id);
   bodyparts      .remove(id);
   busyCounter    .remove(id);
@@ -200,6 +203,7 @@ void ComponentManager::erase(EntityId id)
 
 void ComponentManager::populate(EntityId id, json const& j)
 {
+  JSONUtils::doIfPresent(j, "activity",         [this, &id](auto const& value) { activity[id] = value; });
   JSONUtils::doIfPresent(j, "appearance",       [this, &id](auto const& value) { appearance[id] = value; });
   JSONUtils::doIfPresent(j, "bodyparts",        [this, &id](auto const& value) { bodyparts[id] = value; });
   JSONUtils::doIfPresent(j, "busy-counter",     [this, &id](auto const& value) { busyCounter[id] = value; });
@@ -225,6 +229,7 @@ void ComponentManager::populate(EntityId id, json const& j)
 
 void from_json(json const& j, ComponentManager& obj)
 {
+  JSONUtils::doIfPresent(j, "activity",         [&obj](auto const& value) { obj.activity = value; });
   JSONUtils::doIfPresent(j, "appearance",       [&obj](auto const& value) { obj.appearance = value; });
   JSONUtils::doIfPresent(j, "bodyparts",        [&obj](auto const& value) { obj.bodyparts = value; });
   JSONUtils::doIfPresent(j, "busy-counter",     [&obj](auto const& value) { obj.busyCounter = value; });
@@ -250,6 +255,7 @@ void from_json(json const& j, ComponentManager& obj)
 
 void to_json(json& j, ComponentManager const& obj)
 {
+  j["activity"]         = obj.activity;
   j["appearance"]       = obj.appearance;
   j["bodyparts"]        = obj.bodyparts;
   j["category"]         = obj.category;

@@ -17,13 +17,8 @@ public:
   friend void from_json(json const& j, ComponentSapience& obj);
   friend void to_json(json& j, ComponentSapience const& obj);
 
-  Actions::ActionQueue& pendingActions();
-  Actions::ActionQueue const& pendingActions() const;
-
 protected:
 
 private:
-  /// Queue of pending voluntary actions to be performed.
-  Actions::ActionQueue m_pendingActions;
 
 };

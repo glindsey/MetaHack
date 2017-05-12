@@ -323,6 +323,7 @@
     <ClInclude Include="actions\ActionUse.h" />
     <ClInclude Include="actions\ActionWait.h" />
     <ClInclude Include="actions\ActionWield.h" />
+    <ClInclude Include="components\ComponentActivity.h" />
     <ClInclude Include="components\ComponentAnimated.h" />
     <ClInclude Include="components\ComponentAppearance.h" />
     <ClInclude Include="components\ComponentDigestiveSystem.h" />
@@ -487,6 +488,9 @@
     <ClCompile Include="actions\ActionUse.cpp" />
     <ClCompile Include="actions\ActionWait.cpp" />
     <ClCompile Include="actions\ActionWield.cpp" />
+    <ClCompile Include="components\ComponentActivity.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="components\ComponentAnimated.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
