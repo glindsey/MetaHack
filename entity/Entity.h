@@ -354,9 +354,6 @@ private:
   /// Queue of pending involuntary actions to be performed.
   ActionCollection m_pending_involuntary_actions;
 
-  /// Queue of pending voluntary actions to be performed.
-  ActionCollection m_pending_voluntary_actions;
-
   /// Outline color for walls when drawing on-screen.
   static Color const wall_outline_color_;
 };

@@ -1,5 +1,5 @@
 {
-  "templates": [ "Mobile", "Killable" ],
+  "templates": [ "Active", "Mobile", "Killable" ],
 
   "can-attack": true,
   "can-drink": true,

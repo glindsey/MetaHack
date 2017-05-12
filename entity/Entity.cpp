@@ -41,8 +41,7 @@ json const& Entity::getCategoryData() const
 Entity::Entity(GameState& state, std::string category, EntityId id) :
   m_state{ state },
   m_id{ id },
-  m_pending_involuntary_actions{ ActionCollection() },
-  m_pending_voluntary_actions{ ActionCollection() }
+  m_pending_involuntary_actions{ ActionCollection() }
 {
   initialize();
 }
@@ -50,8 +49,7 @@ Entity::Entity(GameState& state, std::string category, EntityId id) :
 Entity::Entity(Entity const& original, EntityId ref) :
   m_state{ original.m_state },
   m_id{ ref },
-  m_pending_involuntary_actions{ ActionCollection() },     // don't copy
-  m_pending_voluntary_actions{ ActionCollection() }
+  m_pending_involuntary_actions{ ActionCollection() }
 {
   COMPONENTS.clone(original.m_id, ref);
   initialize();
@@ -67,12 +65,22 @@ Entity::~Entity()
 
 void Entity::queueAction(std::unique_ptr<Actions::Action> action)
 {
-  CLOG(TRACE, "Entity") << "Entity " <<
-    getId() << " (" <<
-    COMPONENTS.category[m_id] << "): Queuing Action " <<
-    action->getType();
+  if (COMPONENTS.activity.existsFor(m_id))
+  {
+    CLOG(TRACE, "Entity") << "Entity " <<
+      getId() << " (" <<
+      COMPONENTS.category[m_id] << "): Queuing Action " <<
+      action->getType();
 
-  m_pending_voluntary_actions.push_back(std::move(action));
+    COMPONENTS.activity[m_id].pendingActions().push(std::move(action));
+  }
+  else
+  {
+    CLOG(WARNING, "Entity") << "Entity " <<
+      getId() << " (" <<
+      COMPONENTS.category[m_id] << "): Tried to queue Action " <<
+      action->getType() << ", but entity does not have Activity component";
+  }
 }
 
 void Entity::queueAction(Actions::Action * p_action)
@@ -104,7 +112,8 @@ bool Entity::anyActionIsPending() const
 
 bool Entity::voluntaryActionIsPending() const
 {
-  return !(m_pending_voluntary_actions.empty());
+  return (COMPONENTS.activity.existsFor(m_id) &&
+          !COMPONENTS.activity[m_id].pendingActions().empty());
 }
 
 bool Entity::involuntaryActionIsPending() const
@@ -114,7 +123,8 @@ bool Entity::involuntaryActionIsPending() const
 
 bool Entity::actionIsInProgress()
 {
-  return (COMPONENTS.busyCounter[m_id] > 0);
+  return (COMPONENTS.activity.existsFor(m_id) &&
+          COMPONENTS.activity[m_id].busyTicks() > 0);
 }
 
 void Entity::clearAllPendingActions()
@@ -125,7 +135,10 @@ void Entity::clearAllPendingActions()
 
 void Entity::clearPendingVoluntaryActions()
 {
-  m_pending_voluntary_actions.clear();
+  if (COMPONENTS.activity.existsFor(m_id))
+  {
+    COMPONENTS.activity[m_id].pendingActions().clear();
+  }
 }
 
 void Entity::clearPendingInvoluntaryActions()
@@ -845,7 +858,9 @@ bool Entity::_process_own_involuntary_actions()
 
 bool Entity::_process_own_voluntary_actions()
 {
-  auto& busyCounter = COMPONENTS.busyCounter[m_id];
+  if (!COMPONENTS.activity.existsFor(m_id)) return false;
+
+  auto& activity = COMPONENTS.activity[m_id];
 
   // Is this an entity that is now dead?
   if (COMPONENTS.health.existsFor(m_id) &&
@@ -862,31 +877,31 @@ bool Entity::_process_own_voluntary_actions()
   }
 
   // If this entity is busy...
-  if (busyCounter > 0)
+  if (activity.busyTicks() > 0)
   {
     // Decrement busy counter.
-    --busyCounter;
+    activity.decBusyTicks(1);
   }
   // Otherwise if there are pending actions...
-  else if (!m_pending_voluntary_actions.empty())
+  else if (!activity.pendingActions().empty())
   {
     bool entity_updated = false;
 
     // While actions are pending and we're not busy...
-    while (!m_pending_voluntary_actions.empty() && busyCounter == 0)
+    while (!activity.pendingActions().empty() && activity.busyTicks() == 0)
     {
       // Process the front action.
       // @todo Find a way to update the entity_updated variable.
-      std::unique_ptr<Actions::Action>& action = m_pending_voluntary_actions.front();
-      bool action_done = action->process({});
+      Actions::Action& action = activity.pendingActions().front();
+      bool action_done = action.process({});
       if (action_done)
       {
         CLOG(TRACE, "Entity") << "Entity " <<
           getId() << " (" <<
           COMPONENTS.category[m_id] << "): Action " <<
-          action->getType() << " is done, popping";
+          action.getType() << " is done, popping";
 
-        m_pending_voluntary_actions.pop_front();
+        activity.pendingActions().pop();
       }
     } // end while (actions pending and not busy)
 

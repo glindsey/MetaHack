@@ -49,7 +49,6 @@ public:
   ComponentMap<ComponentActivity> activity;
   ComponentMap<ComponentAppearance> appearance;
   ComponentMap<ComponentBodyparts> bodyparts;
-  ComponentMap<unsigned int> busyCounter;
   ComponentMap<std::string> category;
   ComponentMap<ComponentDigestiveSystem> digestiveSystem;
   ComponentMap<ComponentGender> gender;

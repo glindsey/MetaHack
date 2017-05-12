@@ -95,18 +95,20 @@ namespace Actions
   bool Action::process(AnyMap params)
   {
     auto subject = getSubject();
-    auto& busyCounter = COMPONENTS.busyCounter[subject];
+    if (!COMPONENTS.activity.existsFor(subject)) return false;
+
+    auto& activity = COMPONENTS.activity[subject];
 
     // If entity is currently busy, decrement by one and return.
-    if (busyCounter > 0)
+    if (activity.busyTicks() > 0)
     {
-      --busyCounter;
+      activity.decBusyTicks(1);
       return false;
     }
 
     // Continue running through states until the event is processed, or the
     // target actor is busy.
-    while ((m_state != State::Processed) && (busyCounter == 0))
+    while ((m_state != State::Processed) && (activity.busyTicks() == 0))
     {
       StateResult result{ false, 0 };
 
@@ -124,13 +126,13 @@ namespace Actions
           if (result.success)
           {
             // Update the busy counter.
-            busyCounter += result.elapsed_time;
+            activity.incBusyTicks(result.elapsed_time);
             setState(State::PreBegin);
           }
           else
           {
             // Clear the busy counter.
-            busyCounter = 0;
+            activity.clearBusyTicks();
             setState(State::PostFinish);
           }
           break;
@@ -143,13 +145,13 @@ namespace Actions
           if (result.success)
           {
             // Update the busy counter.
-            busyCounter += result.elapsed_time;
+            activity.incBusyTicks(result.elapsed_time);
             setState(State::InProgress);
           }
           else
           {
             // Clear the busy counter.
-            busyCounter = 0;
+            activity.clearBusyTicks();
             setState(State::PostFinish);
           }
           break;
@@ -157,14 +159,14 @@ namespace Actions
         case State::InProgress:
           result = doFinishWork(params);
 
-          busyCounter += result.elapsed_time;
+          activity.incBusyTicks(result.elapsed_time);
           setState(State::PostFinish);
           break;
 
         case State::Interrupted:
           result = doAbortWork(params);
 
-          busyCounter += result.elapsed_time;
+          activity.incBusyTicks(result.elapsed_time);
           setState(State::PostFinish);
           break;
 

@@ -20,10 +20,18 @@ public:
   Actions::ActionQueue& pendingActions();
   Actions::ActionQueue const& pendingActions() const;
 
+  int busyTicks() const;
+  void clearBusyTicks();
+  void setBusyTicks(int value);
+  void incBusyTicks(int value);
+  void decBusyTicks(int value);
+
 protected:
 
 private:
   /// Queue of pending voluntary actions to be performed.
   Actions::ActionQueue m_pendingActions;
 
+  /// Busy counter for this entity.
+  int m_busyTicks = 0;
 };

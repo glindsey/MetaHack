@@ -9,11 +9,11 @@
 #include "lua/LuaTemplates.h"
 #include "utilities/JSONUtils.h"
 
-int LUA_get_busy_counter(lua_State* L)
+int LUA_get_busy_ticks(lua_State* L)
 {
   return LUA_getValue<unsigned int>(L, [&](EntityId entity) -> unsigned int
   {
-    return COMPONENTS.busyCounter.existsFor(entity) ? COMPONENTS.busyCounter[entity] : 0;
+    return COMPONENTS.activity.existsFor(entity) ? COMPONENTS.activity[entity].busyTicks() : 0;
   });
 }
 
@@ -110,7 +110,6 @@ ComponentManager::ComponentManager(json const& j)
   JSONUtils::doIfPresent(j, "activity",         [this](auto const& value) { activity = value; });
   JSONUtils::doIfPresent(j, "appearance",       [this](auto const& value) { appearance = value; });
   JSONUtils::doIfPresent(j, "bodyparts",        [this](auto const& value) { bodyparts = value; });
-  JSONUtils::doIfPresent(j, "busy-counter",     [this](auto const& value) { busyCounter = value; });
   JSONUtils::doIfPresent(j, "category",         [this](auto const& value) { category = value; });
   JSONUtils::doIfPresent(j, "digestive-system", [this](auto const& value) { digestiveSystem = value; });
   JSONUtils::doIfPresent(j, "gender",           [this](auto const& value) { gender = value; });
@@ -136,7 +135,7 @@ ComponentManager::~ComponentManager()
 
 void ComponentManager::initialize()
 {
-  the_lua_instance.register_function("get_busy_counter", LUA_get_busy_counter);
+  the_lua_instance.register_function("get_busy_ticks", LUA_get_busy_ticks);
   the_lua_instance.register_function("get_category", LUA_get_category);
   the_lua_instance.register_function("get_hp", LUA_get_hp);
   the_lua_instance.register_function("get_mass", LUA_get_mass);
@@ -154,7 +153,6 @@ void ComponentManager::clone(EntityId original, EntityId newId)
   activity       .cloneIfExists(original, newId);
   appearance     .cloneIfExists(original, newId);
   bodyparts      .cloneIfExists(original, newId);
-  busyCounter    .cloneIfExists(original, newId);
   category       .cloneIfExists(original, newId);
   digestiveSystem.cloneIfExists(original, newId);
   gender         .cloneIfExists(original, newId);
@@ -180,7 +178,6 @@ void ComponentManager::erase(EntityId id)
   activity       .remove(id);
   appearance     .remove(id);
   bodyparts      .remove(id);
-  busyCounter    .remove(id);
   category       .remove(id);
   digestiveSystem.remove(id);
   gender         .remove(id);
@@ -206,7 +203,6 @@ void ComponentManager::populate(EntityId id, json const& j)
   JSONUtils::doIfPresent(j, "activity",         [this, &id](auto const& value) { activity[id] = value; });
   JSONUtils::doIfPresent(j, "appearance",       [this, &id](auto const& value) { appearance[id] = value; });
   JSONUtils::doIfPresent(j, "bodyparts",        [this, &id](auto const& value) { bodyparts[id] = value; });
-  JSONUtils::doIfPresent(j, "busy-counter",     [this, &id](auto const& value) { busyCounter[id] = value; });
   JSONUtils::doIfPresent(j, "category",         [this, &id](auto const& value) { category[id] = value; });
   JSONUtils::doIfPresent(j, "digestive-system", [this, &id](auto const& value) { digestiveSystem[id] = value; });
   JSONUtils::doIfPresent(j, "gender",           [this, &id](auto const& value) { gender[id] = value; });
@@ -232,7 +228,6 @@ void from_json(json const& j, ComponentManager& obj)
   JSONUtils::doIfPresent(j, "activity",         [&obj](auto const& value) { obj.activity = value; });
   JSONUtils::doIfPresent(j, "appearance",       [&obj](auto const& value) { obj.appearance = value; });
   JSONUtils::doIfPresent(j, "bodyparts",        [&obj](auto const& value) { obj.bodyparts = value; });
-  JSONUtils::doIfPresent(j, "busy-counter",     [&obj](auto const& value) { obj.busyCounter = value; });
   JSONUtils::doIfPresent(j, "category",         [&obj](auto const& value) { obj.category = value; });
   JSONUtils::doIfPresent(j, "digestive-system", [&obj](auto const& value) { obj.digestiveSystem = value; });
   JSONUtils::doIfPresent(j, "gender",           [&obj](auto const& value) { obj.gender = value; });
