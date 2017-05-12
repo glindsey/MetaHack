@@ -6,24 +6,21 @@
 void from_json(json const& j, ComponentSapience& obj)
 {
   obj = ComponentSapience();
-
-  // *** add Component-specific assignments here ***
-  //JSONUtils::doIfPresent(j, "member", [&](auto& value) { obj.m_member = value; });
+  JSONUtils::doIfPresent(j, "pending-actions", [&](json const& value) { obj.m_pendingActions = value; });
 }
 
 void to_json(json& j, ComponentSapience const& obj)
 {
   j = json::object();
-  // *** add Component-specific assignments here ***
-  //j["member"] = obj.m_member;
+  j["pending-actions"] = obj.m_pendingActions;
 }
 
-ActionDeque& ComponentSapience::pendingActions()
+Actions::ActionQueue& ComponentSapience::pendingActions()
 {
   return m_pendingActions;
 }
 
-ActionDeque const& ComponentSapience::pendingActions() const
+Actions::ActionQueue const& ComponentSapience::pendingActions() const
 {
   return m_pendingActions;
 }

@@ -28,7 +28,7 @@ class MapTile;
 using BodyLocationMap = std::unordered_map<BodyLocation, EntityId>;
 using BodyLocationPair = std::pair<BodyLocation, EntityId>;
 
-using ActionQueue = std::deque< std::unique_ptr<Actions::Action> >;
+using ActionCollection = std::deque< std::unique_ptr<Actions::Action> >;
 
 // Associated enum classes to aid in parameter legibility.
 enum class ArticleChoice
@@ -352,10 +352,10 @@ private:
   EntityId m_id;
 
   /// Queue of pending involuntary actions to be performed.
-  ActionQueue m_pending_involuntary_actions;
+  ActionCollection m_pending_involuntary_actions;
 
   /// Queue of pending voluntary actions to be performed.
-  ActionQueue m_pending_voluntary_actions;
+  ActionCollection m_pending_voluntary_actions;
 
   /// Outline color for walls when drawing on-screen.
   static Color const wall_outline_color_;

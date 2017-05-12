@@ -297,6 +297,7 @@
   <ItemGroup>
     <ClInclude Include="actions\Action.h" />
     <ClInclude Include="actions\ActionAttack.h" />
+    <ClInclude Include="actions\ActionQueue.h" />
     <ClInclude Include="actions\ActionTakeOff.h" />
     <ClInclude Include="actions\ActionWear.h" />
     <ClInclude Include="actions\ActionClose.h" />
@@ -461,6 +462,7 @@
   <ItemGroup>
     <ClCompile Include="actions\Action.cpp" />
     <ClCompile Include="actions\ActionAttack.cpp" />
+    <ClCompile Include="actions\ActionQueue.cpp" />
     <ClCompile Include="actions\ActionTakeOff.cpp" />
     <ClCompile Include="actions\ActionWear.cpp" />
     <ClCompile Include="actions\ActionClose.cpp" />

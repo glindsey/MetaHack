@@ -41,8 +41,8 @@ json const& Entity::getCategoryData() const
 Entity::Entity(GameState& state, std::string category, EntityId id) :
   m_state{ state },
   m_id{ id },
-  m_pending_involuntary_actions{ ActionQueue() },
-  m_pending_voluntary_actions{ ActionQueue() }
+  m_pending_involuntary_actions{ ActionCollection() },
+  m_pending_voluntary_actions{ ActionCollection() }
 {
   initialize();
 }
@@ -50,8 +50,8 @@ Entity::Entity(GameState& state, std::string category, EntityId id) :
 Entity::Entity(Entity const& original, EntityId ref) :
   m_state{ original.m_state },
   m_id{ ref },
-  m_pending_involuntary_actions{ ActionQueue() },     // don't copy
-  m_pending_voluntary_actions{ ActionQueue() }
+  m_pending_involuntary_actions{ ActionCollection() },     // don't copy
+  m_pending_voluntary_actions{ ActionCollection() }
 {
   COMPONENTS.clone(original.m_id, ref);
   initialize();

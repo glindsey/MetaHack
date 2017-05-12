@@ -91,6 +91,8 @@ namespace Actions
     Action(EntityId subject, std::string type, std::string verb);
     virtual ~Action();
 
+    json toJson();
+
     virtual std::unordered_set<Trait> const& getTraits() const;
 
     bool hasTrait(Trait trait) const;
@@ -153,7 +155,12 @@ namespace Actions
 
     /// A static method that returns an Action associated with a key.
     /// If the requested key does not exist, throws an exception.
-    static std::unique_ptr<Action> create(std::string key, EntityId subject);
+    static std::unique_ptr<Action> create(std::string key, 
+                                          EntityId subject,
+                                          std::vector<EntityId> objects = std::vector<EntityId>(),
+                                          EntityId targetThing = EntityId::Mu(),
+                                          Direction targetDirection = Direction::None,
+                                          unsigned int quantity = 0);
 
     std::string makeTr(std::string key) const;
     std::string makeTr(std::string key, std::vector<std::string> optional_strings) const;

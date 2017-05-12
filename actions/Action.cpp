@@ -771,11 +771,21 @@ namespace Actions
     return Action::s_actionMap.count(key) != 0;
   }
 
-  std::unique_ptr<Action> Action::create(std::string key, EntityId subject)
+  std::unique_ptr<Action> Action::create(std::string key, 
+                                         EntityId subject,
+                                         std::vector<EntityId> objects,
+                                         EntityId targetThing,
+                                         Direction targetDirection,
+                                         unsigned int quantity)
   {
     if (Action::s_actionMap.count(key) != 0)
     {
       std::unique_ptr<Action> action = (Action::s_actionMap.at(key))(subject);
+      if (objects.size() != 0) action->setObjects(objects);
+      if (targetThing != EntityId::Mu()) action->setTarget(targetThing);
+      if (targetDirection != Direction::None) action->setTarget(targetDirection);
+      if (quantity != 0) action->setQuantity(quantity);
+
       return std::move(action);
     }
     else
