@@ -451,7 +451,7 @@ std::unordered_set<EventID> SystemLighting::registeredEvents() const
   return events;
 }
 
-EventResult SystemLighting::onEvent_NVI(Event const& event)
+bool SystemLighting::onEvent_NVI(Event const& event)
 {
-  return { EventHandled::Yes, ContinueBroadcasting::Yes };
+  return false;
 }

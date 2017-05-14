@@ -29,6 +29,7 @@
 #include "state_machine/StateMachine.h"
 #include "systems/SystemLighting.h"
 #include "systems/SystemManager.h"
+#include "systems/SystemSenseSight.h"
 #include "systems/SystemSpacialRelationships.h"
 #include "utilities/GetLetterKey.h"
 #include "utilities/StringTransforms.h"
@@ -140,6 +141,7 @@ void AppStateGameMode::execute()
     // Update map used for systems that care about it.
     auto map = COMPONENTS.position.existsFor(player) ? COMPONENTS.position[player].map() : MapId::Null();
     m_systemManager->lighting().setMap(map);
+    m_systemManager->senseSight().setMap(map);
 
     // Run systems.
     m_systemManager->runOneCycle();
@@ -197,6 +199,8 @@ bool AppStateGameMode::initialize()
   // Initialize systems that need initializing.
   m_systemManager->lighting().setMap(current_map_id);
   m_systemManager->lighting().doCycleUpdate();
+  m_systemManager->senseSight().setMap(current_map_id);
+  m_systemManager->senseSight().doCycleUpdate();
 
   // Move player to start position on the map.
   auto& start_coords = game_map.getStartCoords();
@@ -228,7 +232,8 @@ bool AppStateGameMode::initialize()
 
 bool AppStateGameMode::terminate()
 {
-  the_desktop.removeChild("MainMapView");
+  auto mapView = the_desktop.removeChild("MainMapView");
+  mapView->removeObserver(the_desktop, EventID::All);
 
   return true;
 }
@@ -1014,7 +1019,7 @@ void AppStateGameMode::add_zoom(float zoom_amount)
   m_mapZoomLevel = current_zoom_level;
 }
 
-EventResult AppStateGameMode::onEvent_NVI(Event const& event)
+bool AppStateGameMode::onEvent_NVI(Event const& event)
 {
   auto id = event.getId();
 
@@ -1025,29 +1030,23 @@ EventResult AppStateGameMode::onEvent_NVI(Event const& event)
     the_desktop.getChild("MessageLogView").setRelativeDimensions(calcMessageLogDims());
     the_desktop.getChild("InventoryArea").setRelativeDimensions(calcInventoryDims());
     the_desktop.getChild("StatusArea").setRelativeDimensions(calcStatusAreaDims());
-    return{ EventHandled::Yes, ContinueBroadcasting::Yes };
+    return false;
   }
   else if (id == App::EventKeyPressed::id())
   {
     auto info = static_cast<App::EventKeyPressed const&>(event);
     bool keep_broadcasting = handle_key_press(info);
-    return{ 
-      EventHandled::Yes, 
-      (keep_broadcasting ? ContinueBroadcasting::Yes : ContinueBroadcasting::No)
-    };
+    return !keep_broadcasting;
   }
   else if (id == App::EventMouseWheelMoved::id())
   {
     auto info = static_cast<App::EventMouseWheelMoved const&>(event);
     bool keep_broadcasting = handle_mouse_wheel(info);
-    return{
-      EventHandled::Yes,
-      (keep_broadcasting ? ContinueBroadcasting::Yes : ContinueBroadcasting::No)
-    };
+    return !keep_broadcasting;
   }
 
   /// @todo WRITE ME
-  return{ EventHandled::No, ContinueBroadcasting::Yes };
+  return false;
 }
 
 sf::IntRect AppStateGameMode::calcMessageLogDims()

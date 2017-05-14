@@ -3,7 +3,6 @@
 
 #include "stdafx.h"
 
-#include "GUIEvent.h"
 #include "types/ISFMLEventHandler.h"
 
 #include "Object.h"
@@ -57,6 +56,135 @@ namespace metagui
   class GUIObject : public Object
   {
   public:
+
+    struct EventMoved : public ConcreteEvent<EventMoved>
+    {
+      EventMoved(IntVec2 old_position_, IntVec2 new_position_)
+        :
+        old_position{ old_position_ },
+        new_position{ new_position_ }
+      {}
+
+      IntVec2 const old_position;
+      IntVec2 const new_position;
+
+      void serialize(std::ostream& os) const
+      {
+        Event::serialize(os);
+        os << " | old: " << old_position << " | new: " << new_position;
+      }
+    };
+
+
+    struct EventResized : public ConcreteEvent<EventResized>
+    {
+      EventResized(UintVec2 old_size_, UintVec2 new_size_)
+        :
+        old_size{ old_size_ },
+        new_size{ new_size_ }
+      {}
+
+      UintVec2 const old_size;
+      UintVec2 const new_size;
+
+      void serialize(std::ostream& os) const
+      {
+        Event::serialize(os);
+        os << " | old: " << old_size << " | new: " << new_size;
+      }
+    };
+
+    struct EventKeyPressed : public ConcreteEvent<EventKeyPressed>
+    {
+      EventKeyPressed(sf::Event::KeyEvent& event)
+        :
+        code(event.code),
+        alt(event.alt),
+        control(event.control),
+        shift(event.shift),
+        system(event.system)
+      {}
+
+      sf::Keyboard::Key const code;
+      bool const alt;
+      bool const control;
+      bool const shift;
+      bool const system;
+
+      /// @todo write serialize()
+    };
+
+    struct EventMouseDown : public ConcreteEvent<EventMouseDown>
+    {
+      EventMouseDown(sf::Mouse::Button button_, IntVec2 location_)
+        :
+        button(button_),
+        location(location_)
+      {}
+
+      sf::Mouse::Button const button;
+      IntVec2 const location;
+
+      /// @todo write serialize()
+    };
+
+    struct EventDragFinished : public ConcreteEvent<EventDragFinished>
+    {
+      EventDragFinished(sf::Mouse::Button button_, IntVec2 current_location_)
+        :
+        button(button_),
+        current_location(current_location_)
+      {}
+
+      sf::Mouse::Button const button;
+      IntVec2 const current_location;
+
+      void serialize(std::ostream& os) const
+      {
+        Event::serialize(os);
+        os << " | button: " << button << " | end: " << current_location;
+      }
+    };
+
+    struct EventDragStarted : public ConcreteEvent<EventDragStarted>
+    {
+      EventDragStarted(sf::Mouse::Button button_, IntVec2 start_location_)
+        :
+        button(button_),
+        start_location(start_location_)
+      {}
+
+      sf::Mouse::Button const button;
+      IntVec2 const start_location;
+
+      void serialize(std::ostream& os) const
+      {
+        Event::serialize(os);
+        os << " | button: " << button << " | start: " << start_location;
+      }
+    };
+
+    struct EventDragging : public ConcreteEvent<EventDragging>
+    {
+      EventDragging(sf::Mouse::Button button_, IntVec2 current_location_)
+        :
+        button(button_),
+        current_location(current_location_)
+      {}
+
+      sf::Mouse::Button const button;
+      IntVec2 const current_location;
+
+      void serialize(std::ostream& os) const
+      {
+        Event::serialize(os);
+        os << " | button: " << button << " | loc: " << current_location;
+      }
+
+      /// Number of pixels you have to move before it is considered "dragging" the object.
+      static unsigned int const drag_threshold = 16;
+    };
+
     explicit GUIObject(std::string name, IntVec2 location = IntVec2(0, 0), UintVec2 size = UintVec2(0, 0));
     GUIObject(std::string name, sf::IntRect dimensions);
     virtual ~GUIObject();
@@ -111,7 +239,7 @@ namespace metagui
     ///                 highest Z-order currently in the map, plus one.
     /// @return A pointer to the child added.
     GUIObject* addChild(std::unique_ptr<GUIObject> child,
-                     uint32_t z_order);
+                        uint32_t z_order);
 
     /// Add a child GUIObject underneath this one.
     /// *This GUIObject assumes ownership of the child.*
@@ -170,57 +298,6 @@ namespace metagui
     {
       std::unique_ptr<GUIObject> child_ptr(child);
       return dynamic_cast<T*>(addChildTop(std::move(child_ptr)));
-    }
-
-    /// Handle an incoming event.
-    /// Calls the method handleGUIEventPreChildren() first.
-    /// If it returns anything other than Handled, it then passes the
-    /// event down to each child in sequence, stopping only if one of them
-    /// returns Handled. If the event still isn't Handled after all children
-    /// have seen it, handle_event_after_children_ is called.
-    template< typename T >
-    GUIEvent::Result handleGUIEvent(T& event)
-    {
-      GUIEvent::Result result = GUIEvent::Result::Pending;
-
-      if (m_cached_flags.disabled == false)
-      {
-        // Check the event for us first.
-        result = handleGUIEventPreChildren(event);
-
-        // Possible results here:
-        //   * The event doesn't apply to us at all. (Ignored)
-        //        Do not pass to children, and do not call handle_event_after_children.
-        //   * The event may apply to us or to our children (Acknowledged)
-        //        Pass to children.
-        //        As long as no child responded "Handled", call handle_event_after_children.
-        //   * The event applies to us, and we handled it. (Handled)
-        //        Do not pass to children, and do not call handle_event_after_children.
-
-        if ((result != GUIEvent::Result::Ignored) &&
-          (result != GUIEvent::Result::Handled))
-        {
-          for (auto& z_pair : m_zorder_map)
-          {
-            GUIEvent::Result child_result = GUIEvent::Result::Acknowledged;
-            auto& child = m_children.at(z_pair.second);
-            child_result = child->handleGUIEvent(event);
-            if (child_result == GUIEvent::Result::Handled)
-            {
-              result = GUIEvent::Result::Handled;
-              break;
-            }
-          }
-        }
-
-        if ((result != GUIEvent::Result::Ignored) &&
-          (result != GUIEvent::Result::Handled))
-        {
-          result = handleGUIEventPostChildren(event);
-        }
-      }
-
-      return result;
     }
 
     bool childExists(std::string name);
@@ -291,24 +368,6 @@ namespace metagui
     /// Flag this object, and its parents, to be redrawn.
     void flagForRedraw();
 
-    GUIEvent::Result handleGUIEventPreChildren(GUIEventDragFinished& event);
-    GUIEvent::Result handleGUIEventPostChildren(GUIEventDragFinished& event);
-
-    GUIEvent::Result handleGUIEventPreChildren(GUIEventDragStarted& event);
-    GUIEvent::Result handleGUIEventPostChildren(GUIEventDragStarted& event);
-
-    GUIEvent::Result handleGUIEventPreChildren(GUIEventDragging& event);
-    GUIEvent::Result handleGUIEventPostChildren(GUIEventDragging& event);
-
-    GUIEvent::Result handleGUIEventPreChildren(GUIEventKeyPressed& event);
-    GUIEvent::Result handleGUIEventPostChildren(GUIEventKeyPressed& event);
-
-    GUIEvent::Result handleGUIEventPreChildren(GUIEventMouseDown& event);
-    GUIEvent::Result handleGUIEventPostChildren(GUIEventMouseDown& event);
-
-    GUIEvent::Result handleGUIEventPreChildren(GUIEventResized& event);
-    GUIEvent::Result handleGUIEventPostChildren(GUIEventResized& event);
-
     virtual std::unordered_set<EventID> registeredEvents() const override;
 
   protected:
@@ -339,47 +398,41 @@ namespace metagui
     /// Default behavior is to do nothing.
     virtual void drawPostChildren_(sf::RenderTexture& texture, int frame);
 
-    virtual GUIEvent::Result handleGUIEventPreChildren_(GUIEventDragFinished& event);
-    virtual GUIEvent::Result handleGUIEventPostChildren_(GUIEventDragFinished& event);
-
-    virtual GUIEvent::Result handleGUIEventPreChildren_(GUIEventDragStarted& event);
-    virtual GUIEvent::Result handleGUIEventPostChildren_(GUIEventDragStarted& event);
-
-    virtual GUIEvent::Result handleGUIEventPreChildren_(GUIEventDragging& event);
-    virtual GUIEvent::Result handleGUIEventPostChildren_(GUIEventDragging& event);
-
-    virtual GUIEvent::Result handleGUIEventPreChildren_(GUIEventKeyPressed& event);
-    virtual GUIEvent::Result handleGUIEventPostChildren_(GUIEventKeyPressed& event);
-
-    virtual GUIEvent::Result handleGUIEventPreChildren_(GUIEventMouseDown& event);
-    virtual GUIEvent::Result handleGUIEventPostChildren_(GUIEventMouseDown& event);
-
-    virtual GUIEvent::Result handleGUIEventPreChildren_(GUIEventResized& event);
-    virtual GUIEvent::Result handleGUIEventPostChildren_(GUIEventResized& event);
-
     /// Handles a flag being set/cleared.
     /// This method is called by setFlag() if the value was changed.
     /// The default behavior is to do nothing.
     virtual void handleSetFlag_(std::string name, bool enabled);
 
-    /// Handles the parent's size being changed.
-    /// The default behavior is to do nothing.
-    virtual void handleParentSizeChanged_(UintVec2 parent_size);
+    virtual bool onEvent_NVI(Event const& event) override final;
 
-    virtual EventResult onEvent_NVI(Event const& event) override final;
+    bool onEvent_PreChildren(Event const& event);
+    bool onEvent_PreChildren(EventMoved const& event);
+    bool onEvent_PreChildren(EventResized const& event);
+    bool onEvent_PreChildren(EventKeyPressed const& event);
+    bool onEvent_PreChildren(EventMouseDown const& event);
+    bool onEvent_PreChildren(EventDragStarted const& event);
+    bool onEvent_PreChildren(EventDragging const& event);
+    bool onEvent_PreChildren(EventDragFinished const& event);
 
-    virtual bool onEvent_NVI_PreChildren(Event const& event);
+    bool onEvent_PostChildren(Event const& event);
+    bool onEvent_PostChildren(EventMoved const& event);
+    bool onEvent_PostChildren(EventResized const& event);
+    bool onEvent_PostChildren(EventKeyPressed const& event);
+    bool onEvent_PostChildren(EventMouseDown const& event);
+    bool onEvent_PostChildren(EventDragStarted const& event);
+    bool onEvent_PostChildren(EventDragging const& event);
+    bool onEvent_PostChildren(EventDragFinished const& event);
 
-    virtual bool onEvent_NVI_PostChildren(Event const& event);
+    virtual bool onEvent_PreChildren_NVI(Event const& event) { return true; }
+    virtual bool onEvent_PostChildren_NVI(Event const& event) { return true; }
 
     /// Subscribe to parent events that all objects care about.
-    void subscribeToParentEvents(Subject const& parent, int priority);
+    void subscribeToParentEvents(Subject& parent, int priority);
 
     /// Subscribe to any additional events that we care about which are 
     /// emitted by a parent.
     /// The default behavior is to do nothing.
-    virtual void subscribeToParentEvents_(Subject const& parent, int priority);
-
+    virtual void subscribeToParentEvents_NVI(Subject& parent, int priority);
 
   private:
     /// The name of this object.

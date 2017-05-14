@@ -2,7 +2,6 @@
 
 #include "stdafx.h"
 
-#include "GUIEvent.h"
 #include "keybuffer/IKeyBuffer.h"
 
 /// Implementation of a null key buffer.

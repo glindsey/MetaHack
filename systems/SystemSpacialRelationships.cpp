@@ -175,7 +175,7 @@ std::unordered_set<EventID> SystemSpacialRelationships::registeredEvents() const
   return events;
 }
 
-EventResult SystemSpacialRelationships::onEvent_NVI(Event const& event)
+bool SystemSpacialRelationships::onEvent_NVI(Event const& event)
 {
-  return { EventHandled::Yes, ContinueBroadcasting::Yes };
+  return false;
 }

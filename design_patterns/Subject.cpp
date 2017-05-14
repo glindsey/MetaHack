@@ -21,15 +21,23 @@ Subject::Subject()
 
 Subject::~Subject()
 {
+  bool observersRemain = false;
   for (auto& prioritizedObservers : m_eventObservers)
   {
     auto eventID = prioritizedObservers.first;
     auto observerCount = getObserverCount(eventID);
 
-    Assert("ObserverPattern", (observerCount == 0),
-            "\nReason:\tsubject went out of scope while at least one observer is still registered for one of its events" <<
-            "\nSubject:\t" << this <<
-            "\nEvent:\t" << eventID);
+    if (observerCount != 0)
+    {
+      CLOG(WARNING, "ObserverPattern") << "Subject was deleted while " << observerCount << " objects were still observing event " << eventID;
+      observersRemain = true;
+    }
+  }
+
+  if (observersRemain)
+  {
+    CLOG(WARNING, "ObserverPattern") << "Clearing all observers of this subject";
+    removeAllObservers();
   }
 }
 
@@ -188,18 +196,18 @@ bool Subject::broadcast(Event& event)
 
         CLOG(TRACE, "ObserverPattern") << "Broadcasting: " << *finalEvent;
 
-        bool keep_going = true;
+        bool handled = false;
         for (auto& priorityPair : prioritizedObservers)
         {
           for (auto& observer : priorityPair.second)
           {
-            keep_going = observer->onEvent(*finalEvent);
-            if (!keep_going) break;
+            handled = observer->onEvent(*finalEvent);
+            if (handled) break;
           }
-          if (!keep_going) break;
+          if (handled) break;
         }
 
-        if (!keep_going)
+        if (handled)
         {
           CLOG(TRACE, "ObserverPattern") << "Broadcast Halted: " << *finalEvent;
         }
@@ -211,7 +219,7 @@ bool Subject::broadcast(Event& event)
           m_eventQueue.front()();
         }
 
-        return keep_going;
+        return handled;
       };
 
       m_eventQueue.push(dispatchBlock);

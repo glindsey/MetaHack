@@ -60,7 +60,7 @@ App::App(sf::RenderWindow& app_window)
 
   // Register loggers.
   SET_UP_LOGGER("App",                          false);
-  SET_UP_LOGGER("Action",                        true);
+  SET_UP_LOGGER("Action",                       false);
   SET_UP_LOGGER("Component",                    false);
   SET_UP_LOGGER("ConfigSettings",               false);
   SET_UP_LOGGER("Entity",                       false);
@@ -84,7 +84,7 @@ App::App(sf::RenderWindow& app_window)
   SET_UP_LOGGER("StateMachine",                 false);
   SET_UP_LOGGER("StringDictionary",             false);
   SET_UP_LOGGER("StringTransforms",             false);
-  SET_UP_LOGGER("TileSheet",                     true);
+  SET_UP_LOGGER("TileSheet",                    false);
   SET_UP_LOGGER("Types",                        false);
   SET_UP_LOGGER("Utilities",                    false);
 

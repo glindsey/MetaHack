@@ -32,6 +32,4 @@ protected:
   /// @param map	Reference to Map object to associate with this view.
   MapNullView(std::string name, Map& map, UintVec2 size);
 
-  virtual bool onEvent_NVI_PreChildren(Event const& event) override;
-
 };

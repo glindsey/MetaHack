@@ -358,7 +358,6 @@
     <ClInclude Include="services\FileSystemGameRules.h" />
     <ClInclude Include="gui\GUICloseHandle.h" />
     <ClInclude Include="gui\GUIDesktop.h" />
-    <ClInclude Include="gui\GUIEvent.h" />
     <ClInclude Include="gui\GUILabel.h" />
     <ClInclude Include="gui\GUIObject.h" />
     <ClInclude Include="gui\GUIResizeHandle.h" />

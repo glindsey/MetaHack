@@ -36,7 +36,8 @@ void SystemSenseSight::doCycleUpdate()
 }
 
 void SystemSenseSight::setMapNVO(MapId newMap)
-{}
+{
+}
 
 void SystemSenseSight::findSeenTiles(EntityId id)
 {
@@ -250,7 +251,7 @@ std::unordered_set<EventID> SystemSenseSight::registeredEvents() const
   return events;
 }
 
-EventResult SystemSenseSight::onEvent_NVI(Event const& event)
+bool SystemSenseSight::onEvent_NVI(Event const& event)
 {
   auto id = event.getId();
 
@@ -278,5 +279,5 @@ EventResult SystemSenseSight::onEvent_NVI(Event const& event)
     m_needsUpdate.insert(castEvent.entity);
   }
 
-  return { EventHandled::Yes, ContinueBroadcasting::Yes };
+  return false;
 }

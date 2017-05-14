@@ -46,18 +46,9 @@ bool Observer::onEvent(Event const& event)
     return true;
   }
 
-  auto eventResults = onEvent_NVI(event);
+  bool result = onEvent_NVI(event);
 
-  if (eventResults.event_handled == EventHandled::No)
-  {
-    Assert("ObserverPattern", false,
-           "\nReason:\tobserver did not handle event it is subscribed to." <<
-           "\nSubject:\t" << *event.subject <<
-           "\nObserver:\t" << *this <<
-           "\nEvent:\t" << event);
-  }
-
-  return{ eventResults.continue_broadcasting == ContinueBroadcasting::Yes };
+  return result;
 }
 
   

@@ -203,10 +203,10 @@ void InventoryArea::drawContents_(sf::RenderTexture& texture, int frame)
   return;
 }
 
-bool InventoryArea::onEvent_NVI_PreChildren(Event const & event)
-{
+bool InventoryArea::onEvent_PreChildren_NVI(Event const& event) 
+{ 
   /// @todo Flesh this out a bit more.
   ///       Right now we just set the "dirty" flag for the view so it is redrawn.
   flagForRedraw();
-  return true;
+  return true; 
 }

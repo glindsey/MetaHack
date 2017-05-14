@@ -8,9 +8,9 @@ EntityNullView::EntityNullView(Entity& entity)
 {
 }
 
-EventResult EntityNullView::onEvent_NVI(Event const & event)
+bool EntityNullView::onEvent_NVI(Event const& event)
 {
-  return{ EventHandled::Yes, ContinueBroadcasting::Yes };
+  return false;
 }
 
 EntityNullView::~EntityNullView()

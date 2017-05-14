@@ -18,9 +18,10 @@ EntityStandard2DView::EntityStandard2DView(Entity& entity,
 {
 }
 
-EventResult EntityStandard2DView::onEvent_NVI(Event const & event)
+bool EntityStandard2DView::onEvent_NVI(Event const& event)
 {
-  return{ EventHandled::Yes, ContinueBroadcasting::Yes };
+  /// @todo WRITE ME
+  return false;
 }
 
 EntityStandard2DView::~EntityStandard2DView()

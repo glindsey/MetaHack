@@ -14,9 +14,9 @@ KeyBuffer::~KeyBuffer()
   //dtor
 }
 
-metagui::GUIEvent::Result KeyBuffer::handle_key_press(metagui::GUIEventKeyPressed& event)
+bool KeyBuffer::handle_key_press(metagui::GUIObject::EventKeyPressed const& event)
 {
-  metagui::GUIEvent::Result result = metagui::GUIEvent::Result::Acknowledged;
+  bool handled = false;
 
   if (!event.control && !event.alt)
   {
@@ -72,34 +72,34 @@ metagui::GUIEvent::Result KeyBuffer::handle_key_press(metagui::GUIEventKeyPresse
       case sf::Keyboard::Key::Space:      return insertCharacter(event, ' ', ' ');
       case sf::Keyboard::Key::Left:
         left_cursor();
-        result = metagui::GUIEvent::Result::Handled;
+        handled = true;
         break;
       case sf::Keyboard::Key::Right:
         right_cursor();
-        result = metagui::GUIEvent::Result::Handled;
+        handled = true;
         break;
       case sf::Keyboard::Key::BackSpace:
         if (left_cursor())
         {
           del_character();
         }
-        result = metagui::GUIEvent::Result::Handled;
+        handled = true;
         break;
       case sf::Keyboard::Key::Insert:
         m_replacing = !(m_replacing);
-        result = metagui::GUIEvent::Result::Handled;
+        handled = true;
         break;
       case sf::Keyboard::Key::Delete:
         del_character();
-        result = metagui::GUIEvent::Result::Handled;
+        handled = true;
         break;
       case sf::Keyboard::Key::Home:
         m_cursorPosition = 0;
-        result = metagui::GUIEvent::Result::Handled;
+        handled = true;
         break;
       case sf::Keyboard::Key::End:
         m_cursorPosition = m_buffer.length();
-        result = metagui::GUIEvent::Result::Handled;
+        handled = true;
         break;
       case sf::Keyboard::Key::Divide:     return insertCharacter(event, '/', '/');
       case sf::Keyboard::Key::Multiply:   return insertCharacter(event, '*', '*');
@@ -117,13 +117,13 @@ metagui::GUIEvent::Result KeyBuffer::handle_key_press(metagui::GUIEventKeyPresse
       case sf::Keyboard::Key::Numpad9:    return insertCharacter(event, '9', '9');
       case sf::Keyboard::Key::Return:
         m_enter = true;
-        result = metagui::GUIEvent::Result::Handled;
+        handled = true;
         break;
       default: break;
     }
   }
 
-  return result;
+  return handled;
 }
 
 size_t KeyBuffer::get_cursor_position() const
@@ -235,10 +235,10 @@ void KeyBuffer::render(sf::RenderTexture& texture,
   texture.display();
 }
 
-metagui::GUIEvent::Result KeyBuffer::insertCharacter(metagui::GUIEventKeyPressed& event, char shifted, char unshifted)
+bool KeyBuffer::insertCharacter(metagui::GUIObject::EventKeyPressed const& event, char shifted, char unshifted)
 {                                                                  
   set_character((event.shift ? shifted : unshifted));                     
-  return metagui::GUIEvent::Result::Handled;
+  return true;
 }
 
 

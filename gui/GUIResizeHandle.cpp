@@ -45,48 +45,45 @@ namespace metagui
 
   }
 
-  void ResizeHandle::handleParentSizeChanged_(UintVec2 parent_size)
+  bool ResizeHandle::onEvent_PreChildren_NVI(Event const& event)
   {
-    setRelativeLocation({ static_cast<int>(parent_size.x - s_handle_size),
-                          static_cast<int>(parent_size.y - s_handle_size) });
-  }
-
-  GUIEvent::Result ResizeHandle::handleGUIEventPostChildren_(GUIEventDragStarted & event)
-  {
-    auto parent = getParent();
-    if (parent)
+    auto id = event.getId();
+    if (id == EventResized::id())
     {
-      m_parent_size_start = parent->getSize();
-
-      return GUIEvent::Result::Acknowledged;
-    }
-
-    return GUIEvent::Result::Ignored;
-  }
-
-  GUIEvent::Result ResizeHandle::handleGUIEventPostChildren_(GUIEventDragging & event)
-  {
-    GUIEvent::Result result = GUIEvent::Result::Ignored;
-
-    auto parent = getParent();
-    if (parent)
-    {
-      if (isBeingDragged() == true)
+      if (event.subject == getParent())
       {
-        auto move_amount = event.current_location - getDragStartLocation();
-
-        IntVec2 old_size{ static_cast<int>(m_parent_size_start.x), static_cast<int>(m_parent_size_start.y) };
-        UintVec2 new_size;
-        
-        new_size.x = (move_amount.x > -(old_size.x)) ? (old_size.x + move_amount.x) : 0;
-        new_size.y = (move_amount.y > -(old_size.y)) ? (old_size.y + move_amount.y) : 0;
-
-        parent->setSize(new_size);
-        result = GUIEvent::Result::Handled;
+        auto& castEvent = static_cast<EventResized const&>(event);
+        setRelativeLocation({ static_cast<int>(castEvent.new_size.x - s_handle_size),
+                              static_cast<int>(castEvent.new_size.y - s_handle_size) });
       }
     }
 
-    return result;
+    return false;
+  }
+
+  bool ResizeHandle::onEvent_PostChildren_NVI(Event const& event)
+  {
+    auto id = event.getId();
+    auto parent = getParent();
+    if (id == EventDragStarted::id() && parent)
+    {
+      m_parent_size_start = parent->getSize();
+    }
+    else if (id == EventDragging::id() && parent && isBeingDragged())
+    {
+      auto& castEvent = static_cast<EventDragging const&>(event);
+      auto move_amount = castEvent.current_location - getDragStartLocation();
+
+      IntVec2 old_size{ static_cast<int>(m_parent_size_start.x), static_cast<int>(m_parent_size_start.y) };
+      UintVec2 new_size;
+
+      new_size.x = (move_amount.x > -(old_size.x)) ? (old_size.x + move_amount.x) : 0;
+      new_size.y = (move_amount.y > -(old_size.y)) ? (old_size.y + move_amount.y) : 0;
+
+      parent->setSize(new_size);
+    }
+
+    return false;
   }
 
 }; // end namespace metagui

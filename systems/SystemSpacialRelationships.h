@@ -84,7 +84,7 @@ public:
 protected:
   void setMapNVO(MapId newMap);
 
-  virtual EventResult onEvent_NVI(Event const & event) override;
+  virtual bool onEvent_NVI(Event const& event) override;
 
 private:
   // Components used by this system.

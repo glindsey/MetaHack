@@ -31,7 +31,7 @@ protected:
   explicit EntityStandard2DView(Entity& entity, 
                                 TileSheet& tileSheet);
 
-  virtual EventResult onEvent_NVI(Event const& event) override;
+  virtual bool onEvent_NVI(Event const& event) override;
 
 private:
   /// Reference to tilesheet storing entity graphics.

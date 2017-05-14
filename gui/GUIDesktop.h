@@ -42,7 +42,7 @@ namespace metagui
     virtual std::unordered_set<EventID> registeredEvents() const;
 
   protected:
-    virtual GUIEvent::Result handleGUIEventPreChildren_(GUIEventResized& event) final;
+    virtual bool onEvent_PreChildren_NVI(Event const& event) override final;
 
     virtual void drawPreChildren_(sf::RenderTexture& texture, int frame) override final;
 

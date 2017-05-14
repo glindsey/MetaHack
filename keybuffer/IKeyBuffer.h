@@ -2,7 +2,7 @@
 
 #include "stdafx.h"
 
-#include "GUIEvent.h"
+#include "gui/GUIObject.h"
 #include "Subject.h"
 
 // Forward declarations
@@ -47,7 +47,7 @@ public:
   virtual ~IKeyBuffer() {}
 
   /// Process a key event.
-  virtual metagui::GUIEvent::Result handle_key_press(metagui::GUIEventKeyPressed& event) = 0;
+  virtual bool handle_key_press(metagui::GUIObject::EventKeyPressed const& event) = 0;
 
   /// Get the current cursor position.
   virtual size_t get_cursor_position() const = 0;

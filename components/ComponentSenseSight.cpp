@@ -62,7 +62,15 @@ void ComponentSenseSight::resizeSeen(IntVec2 size)
 
 bool ComponentSenseSight::canSee(IntVec2 coords) const
 {
-  return m_transientTilesSeen[index(coords)];
+  if (index(coords) < m_transientTilesSeen.size())
+  {
+    return m_transientTilesSeen[index(coords)];
+  }
+  else
+  {
+    CLOG(WARNING, "SenseSight") << "Requested coordinates were out-of-bounds";
+    return false;
+  }
 }
 
 void ComponentSenseSight::setSeen(IntVec2 coords)

@@ -13,10 +13,6 @@ namespace metagui
     GUIObject(name, IntVec2(0, 0))
   {}
 
-  void CloseHandle::handleParentSizeChanged_(UintVec2 parent_size)
-  {
-  }
-
   CloseHandle::~CloseHandle()
   {
     //dtor
@@ -26,4 +22,10 @@ namespace metagui
   void CloseHandle::drawPreChildren_(sf::RenderTexture& texture, int frame)
   {
   }
+
+  bool CloseHandle::onEvent_PreChildren_NVI(Event const& event)
+  {
+    return false;
+  }
+
 }; // end namespace metagui

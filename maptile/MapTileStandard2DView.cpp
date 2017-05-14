@@ -527,8 +527,8 @@ void MapTileStandard2DView::add_wall_vertices_to(sf::VertexArray& vertices,
   }
 }
 
-EventResult MapTileStandard2DView::onEvent_NVI(Event const & event)
+bool MapTileStandard2DView::onEvent_NVI(Event const & event)
 {
-  return{ EventHandled::Yes, ContinueBroadcasting::Yes };
+  return false;
 }
 

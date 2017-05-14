@@ -66,7 +66,7 @@ protected:
 
   void add_zoom(float zoom_amount);
 
-  virtual EventResult onEvent_NVI(Event const& event) override;
+  virtual bool onEvent_NVI(Event const& event) override;
 
 private:
   /// Application window.
