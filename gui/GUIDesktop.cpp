@@ -147,6 +147,12 @@ namespace metagui
   std::unordered_set<EventID> Desktop::registeredEvents() const
   {
     auto events = Object::registeredEvents();
+    events.insert(EventKeyPressed::id());
+    events.insert(EventMouseDown::id());
+    events.insert(EventDragStarted::id());
+    events.insert(EventDragging::id());
+    events.insert(EventDragFinished::id());
+
     /// @todo Add generated and propogated events here.
     return events;
   }
