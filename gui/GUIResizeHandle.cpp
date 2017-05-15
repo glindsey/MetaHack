@@ -45,27 +45,20 @@ namespace metagui
 
   }
 
-  bool ResizeHandle::onEvent_PreChildren_NVI(Event const& event)
+  bool ResizeHandle::onEvent_V2(Event const& event)
   {
     auto id = event.getId();
+    auto parent = getParent();
     if (id == EventResized::id())
     {
       if (event.subject == getParent())
       {
         auto& castEvent = static_cast<EventResized const&>(event);
         setRelativeLocation({ static_cast<int>(castEvent.new_size.x - s_handle_size),
-                              static_cast<int>(castEvent.new_size.y - s_handle_size) });
+                            static_cast<int>(castEvent.new_size.y - s_handle_size) });
       }
     }
-
-    return false;
-  }
-
-  bool ResizeHandle::onEvent_PostChildren_NVI(Event const& event)
-  {
-    auto id = event.getId();
-    auto parent = getParent();
-    if (id == EventDragStarted::id() && parent)
+    else if (id == EventDragStarted::id() && parent)
     {
       m_parent_size_start = parent->getSize();
     }

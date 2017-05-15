@@ -2,6 +2,7 @@
 
 #include "game/App.h"
 
+#include "events/UIEvents.h"
 #include "game/AppStateGameMode.h"
 #include "game/AppStateMainMenu.h"
 #include "game/AppStateSplashScreen.h"
@@ -13,7 +14,6 @@
 #include "state_machine/StateMachine.h"
 #include "tilesheet/TileSheet.h"
 #include "types/Color.h"
-#include "types/SFMLEventResult.h"
 #include "game_windows/MessageLogView.h"
 
 // Global declarations
@@ -41,7 +41,6 @@ sf::IntRect calc_message_log_dimensions(sf::RenderWindow& window)
 
 App::App(sf::RenderWindow& app_window)
   :
-  ISFMLEventHandler(), 
   Subject(),
   m_appWindow{ app_window },
   m_app_texture{ NEW sf::RenderTexture() },
@@ -194,16 +193,13 @@ App::~App()
   s_p_instance = nullptr;
 }
 
-SFMLEventResult App::handle_sfml_event(sf::Event& event)
+void App::handle_sfml_event(sf::Event& sfmlEvent)
 {
-  SFMLEventResult result = SFMLEventResult::Ignored;
-
-  switch (event.type)
+  switch (sfmlEvent.type)
   {
     case sf::Event::EventType::GainedFocus:
     {
       m_has_window_focus = true;
-      result = SFMLEventResult::Handled;
       broadcast(EventAppWindowFocusChanged({ true }));
       break;
     }
@@ -211,7 +207,6 @@ SFMLEventResult App::handle_sfml_event(sf::Event& event)
     case sf::Event::EventType::LostFocus:
     {
       m_has_window_focus = false;
-      result = SFMLEventResult::Handled;
       broadcast(EventAppWindowFocusChanged({ false }));
       break;
     }
@@ -219,19 +214,19 @@ SFMLEventResult App::handle_sfml_event(sf::Event& event)
     case sf::Event::EventType::Resized:
     {
       m_app_texture.reset(NEW sf::RenderTexture());
-      m_app_texture->create(event.size.width, event.size.height);
+      m_app_texture->create(sfmlEvent.size.width, sfmlEvent.size.height);
       m_appWindow.setView(sf::View(
-        sf::FloatRect(0, 0, static_cast<float>(event.size.width), static_cast<float>(event.size.height))));
+        sf::FloatRect(0, 0, 
+                      static_cast<float>(sfmlEvent.size.width), 
+                      static_cast<float>(sfmlEvent.size.height))));
 
-      result = SFMLEventResult::Acknowledged;
-      broadcast(EventAppWindowResized({ event.size.width, event.size.height }));
+      broadcast(EventAppWindowResized({ sfmlEvent.size.width, sfmlEvent.size.height }));
       break;
     }
 
     case sf::Event::EventType::Closed:
     {
       m_is_running = false;
-      result = SFMLEventResult::Handled;
       broadcast(EventAppWindowClosed());
       break;
     }
@@ -240,13 +235,12 @@ SFMLEventResult App::handle_sfml_event(sf::Event& event)
     {
       bool do_key_broadcast = true;
 
-      switch (event.key.code)
+      switch (sfmlEvent.key.code)
       {
         case sf::Keyboard::Key::Q:
-          if (event.key.alt && event.key.control)
+          if (sfmlEvent.key.alt && sfmlEvent.key.control)
           {
             m_is_running = false;
-            result = SFMLEventResult::Handled;
             broadcast(EventAppQuitRequested());
             do_key_broadcast = false;
           }
@@ -258,34 +252,58 @@ SFMLEventResult App::handle_sfml_event(sf::Event& event)
 
       if (do_key_broadcast)
       {
-        broadcast(EventKeyPressed(event.key.code, 
-                                  event.key.alt, 
-                                  event.key.control, 
-                                  event.key.shift, 
-                                  event.key.system));
+        broadcast(UIEvents::EventKeyPressed(sfmlEvent.key.code,
+                                            sfmlEvent.key.alt,
+                                            sfmlEvent.key.control,
+                                            sfmlEvent.key.shift,
+                                            sfmlEvent.key.system));
       }
 
       break;
     }
 
+    case sf::Event::EventType::MouseButtonPressed:
+    {
+      IntVec2 point{ sfmlEvent.mouseButton.x, sfmlEvent.mouseButton.y };
+      UIEvents::EventMouseDown event{ sfmlEvent.mouseButton.button, point };
+      broadcast(event);
+    }
+    break;
+
+    case sf::Event::EventType::MouseButtonReleased:
+    {
+      IntVec2 point{ sfmlEvent.mouseButton.x, sfmlEvent.mouseButton.y };
+      UIEvents::EventMouseUp event{ sfmlEvent.mouseButton.button, point };
+      broadcast(event);
+    }
+    break;
+
+    case sf::Event::EventType::MouseMoved:
+    {
+      IntVec2 point{ sfmlEvent.mouseMove.x, sfmlEvent.mouseMove.y };
+      UIEvents::EventMouseMoved event{ point };
+      broadcast(event);
+    }
+    break;
+
+    case sf::Event::EventType::MouseLeft:
+    {
+      UIEvents::EventMouseLeft event{};
+      broadcast(event);
+    }
+    break;
+
     case sf::Event::EventType::MouseWheelMoved:
     {
-      broadcast(EventMouseWheelMoved(event.mouseWheel.delta,
-                                     event.mouseWheel.x,
-                                     event.mouseWheel.y));
+      broadcast(UIEvents::EventMouseWheelMoved(sfmlEvent.mouseWheel.delta,
+                                               sfmlEvent.mouseWheel.x,
+                                               sfmlEvent.mouseWheel.y));
       break;
     }
 
     default:
       break;
   }
-
-  if (result != SFMLEventResult::Handled)
-  {
-    result = m_state_machine->handle_sfml_event(event);
-  }
-
-  return result;
 }
 
 sf::RenderWindow& App::get_window()
@@ -363,11 +381,19 @@ App & App::instance()
 std::unordered_set<EventID> App::registeredEvents() const
 {
   auto events = Subject::registeredEvents();
-  events.insert(EventAppQuitRequested::id());
-  events.insert(EventAppWindowClosed::id());
-  events.insert(EventAppWindowFocusChanged::id());
-  events.insert(EventAppWindowResized::id());
-  events.insert(EventKeyPressed::id());
+  events.insert({
+    EventAppQuitRequested::id(),
+    EventAppWindowClosed::id(),
+    EventAppWindowFocusChanged::id(),
+    EventAppWindowResized::id(),
+    UIEvents::EventKeyPressed::id(),
+    UIEvents::EventMouseDown::id(),
+    UIEvents::EventMouseUp::id(),
+    UIEvents::EventMouseMoved::id(),
+    UIEvents::EventMouseLeft::id(),
+    UIEvents::EventMouseWheelMoved::id()
+  });
+
   return events;
 }
 

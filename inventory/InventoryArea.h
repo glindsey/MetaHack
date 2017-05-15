@@ -24,7 +24,7 @@ public:
 protected:
   virtual void drawContents_(sf::RenderTexture& texture, int frame) override;
 
-  virtual bool onEvent_PreChildren_NVI(Event const& event) override;
+  virtual bool onEvent_V2(Event const& event) override;
 
 private:
   /// Inventory selection we are bound to.

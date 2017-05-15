@@ -21,7 +21,6 @@ StateMachine::StateMachine(std::string const& machine_name,
                            Subject* parent)
   : 
   RenderableToTexture(),
-  ISFMLEventHandler(),
   Observer(),
   Subject(),
   pImpl(NEW Impl(parent))
@@ -108,18 +107,6 @@ bool StateMachine::render(sf::RenderTexture& texture, int frame)
   }
 }
 
-SFMLEventResult StateMachine::handle_sfml_event(sf::Event& event)
-{
-  if (pImpl->current_state == nullptr)
-  {
-    return SFMLEventResult::Ignored;
-  }
-  else
-  {
-    return pImpl->current_state->handle_sfml_event(event);
-  }
-}
-
 bool StateMachine::change_to(State* state)
 {
   bool terminator_result = true;
@@ -190,20 +177,11 @@ std::string const& StateMachine::get_current_state_name()
 std::unordered_set<EventID> StateMachine::registeredEvents() const
 {
   auto events = Subject::registeredEvents();
-  if (pImpl->parent)
-  {
-    auto& forwarder_events = pImpl->parent->registeredEvents();
-    events.insert(forwarder_events.begin(), forwarder_events.end());
-  }
-  
+
   return events;
 }
 
-bool StateMachine::onEvent_NVI(Event const& event)
+bool StateMachine::onEvent_V(Event const& event)
 {
-  std::unique_ptr<Event> event_copy{ event.heapClone() };
-  /// @todo Flesh this out to handle the events we care about.
-  ///       For now, just forward it on to the current state.
-  unicast(*event_copy, *get_current_state());
   return false;
 }

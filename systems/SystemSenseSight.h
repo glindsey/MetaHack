@@ -42,7 +42,7 @@ protected:
                                     float slope_A = 1,
                                     float slope_B = 0);
 
-  virtual bool onEvent_NVI(Event const & event) override;
+  virtual bool onEvent_V(Event const & event) override;
 
 private:
   // Components used by this system.

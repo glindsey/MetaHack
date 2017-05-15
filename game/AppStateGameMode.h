@@ -2,6 +2,7 @@
 
 #include "stdafx.h"
 
+#include "events/UIEvents.h"
 #include "game/App.h"
 #include "game/AppState.h"
 
@@ -40,8 +41,6 @@ public:
   AppStateGameMode(StateMachine& state_machine, sf::RenderWindow& app_window);
   virtual ~AppStateGameMode();
 
-  virtual SFMLEventResult handle_sfml_event(sf::Event& event) override;
-
   virtual std::string const& getName() override;
   virtual bool initialize() override;
   virtual void execute() override;
@@ -54,19 +53,19 @@ public:
 
 protected:
   void render_map(sf::RenderTexture& texture, int frame);
-  bool handle_key_press(App::EventKeyPressed const& key);
-  bool handle_mouse_wheel(App::EventMouseWheelMoved const& wheel);
+  bool handle_key_press(UIEvents::EventKeyPressed const& key);
+  bool handle_mouse_wheel(UIEvents::EventMouseWheelMoved const& wheel);
   sf::IntRect calcMessageLogDims();
   void resetInventorySelection();
   sf::IntRect calcStatusAreaDims();
   sf::IntRect calcInventoryDims();
   bool moveCursor(Direction direction);
-  bool handleKeyPressTargetSelection(EntityId player, App::EventKeyPressed const& key);
-  bool handleKeyPressCursorLook(EntityId player, App::EventKeyPressed const& key);
+  bool handleKeyPressTargetSelection(EntityId player, UIEvents::EventKeyPressed const& key);
+  bool handleKeyPressCursorLook(EntityId player, UIEvents::EventKeyPressed const& key);
 
   void add_zoom(float zoom_amount);
 
-  virtual bool onEvent_NVI(Event const& event) override;
+  virtual bool onEvent_V(Event const& event) override;
 
 private:
   /// Application window.

@@ -14,7 +14,7 @@ KeyBuffer::~KeyBuffer()
   //dtor
 }
 
-bool KeyBuffer::handle_key_press(metagui::GUIObject::EventKeyPressed const& event)
+bool KeyBuffer::handle_key_press(UIEvents::EventKeyPressed const& event)
 {
   bool handled = false;
 
@@ -235,7 +235,7 @@ void KeyBuffer::render(sf::RenderTexture& texture,
   texture.display();
 }
 
-bool KeyBuffer::insertCharacter(metagui::GUIObject::EventKeyPressed const& event, char shifted, char unshifted)
+bool KeyBuffer::insertCharacter(UIEvents::EventKeyPressed const& event, char shifted, char unshifted)
 {                                                                  
   set_character((event.shift ? shifted : unshifted));                     
   return true;

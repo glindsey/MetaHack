@@ -36,13 +36,10 @@ namespace metagui
 
     virtual ~Desktop();
 
-    /// Handles an SFML event and translates it into a GUI event if necessary.
-    SFMLEventResult handle_sfml_event(sf::Event& sfml_event);
-
     virtual std::unordered_set<EventID> registeredEvents() const;
 
   protected:
-    virtual bool onEvent_PreChildren_NVI(Event const& event) override final;
+    virtual bool onEvent_V2(Event const& event) override;
 
     virtual void drawPreChildren_(sf::RenderTexture& texture, int frame) override final;
 
@@ -54,7 +51,7 @@ namespace metagui
     std::array< MouseButtonInfo, sf::Mouse::ButtonCount > m_button_info;
 
     /// Constantly updated mouse location.
-    IntVec2 m_mouse_location;
+    IntVec2 m_mouseLocation;
   };
 }; // end namespace metagui
 

@@ -75,7 +75,7 @@ namespace metagui
     texture.display();
   }
 
-  bool TitleBar::onEvent_PreChildren_NVI(Event const& event)
+  bool TitleBar::onEvent_V2(Event const& event)
   {
     auto id = event.getId();
 

@@ -175,7 +175,7 @@ std::unordered_set<EventID> SystemSpacialRelationships::registeredEvents() const
   return events;
 }
 
-bool SystemSpacialRelationships::onEvent_NVI(Event const& event)
+bool SystemSpacialRelationships::onEvent_V(Event const& event)
 {
   return false;
 }

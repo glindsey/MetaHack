@@ -32,11 +32,6 @@ bool AppState::render(sf::RenderTexture& texture, int frame)
   return true;
 }
 
-SFMLEventResult AppState::handle_sfml_event(sf::Event & event)
-{
-  return SFMLEventResult::Ignored;
-}
-
 std::unordered_set<EventID> AppState::registeredEvents() const
 {
   auto events = State::registeredEvents();

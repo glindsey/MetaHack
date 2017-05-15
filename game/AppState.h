@@ -4,7 +4,6 @@
 #include "stdafx.h"
 
 #include "types/IRenderable.h"
-#include "types/ISFMLEventHandler.h"
 #include "state_machine/State.h"
 
 #include "GUIDesktop.h"
@@ -23,7 +22,6 @@ public:
   virtual ~AppState();
 
   virtual bool render(sf::RenderTexture& texture, int frame) override final;
-  virtual SFMLEventResult handle_sfml_event(sf::Event& event) override;
 
   virtual std::unordered_set<EventID> registeredEvents() const override;
 

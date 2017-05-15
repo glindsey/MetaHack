@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 
-#include "types/ISFMLEventHandler.h"
+#include "events/UIEvents.h"
 
 #include "Object.h"
 #include "Visitor.h"
@@ -92,40 +92,6 @@ namespace metagui
         Event::serialize(os);
         os << " | old: " << old_size << " | new: " << new_size;
       }
-    };
-
-    struct EventKeyPressed : public ConcreteEvent<EventKeyPressed>
-    {
-      EventKeyPressed(sf::Event::KeyEvent& event)
-        :
-        code(event.code),
-        alt(event.alt),
-        control(event.control),
-        shift(event.shift),
-        system(event.system)
-      {}
-
-      sf::Keyboard::Key const code;
-      bool const alt;
-      bool const control;
-      bool const shift;
-      bool const system;
-
-      /// @todo write serialize()
-    };
-
-    struct EventMouseDown : public ConcreteEvent<EventMouseDown>
-    {
-      EventMouseDown(sf::Mouse::Button button_, IntVec2 location_)
-        :
-        button(button_),
-        location(location_)
-      {}
-
-      sf::Mouse::Button const button;
-      IntVec2 const location;
-
-      /// @todo write serialize()
     };
 
     struct EventDragFinished : public ConcreteEvent<EventDragFinished>
@@ -403,28 +369,14 @@ namespace metagui
     /// The default behavior is to do nothing.
     virtual void handleSetFlag_(std::string name, bool enabled);
 
-    virtual bool onEvent_NVI(Event const& event) override final;
+    virtual bool onEvent_V(Event const& event) override final;
 
-    bool onEvent_PreChildren(Event const& event);
-    bool onEvent_PreChildren(EventMoved const& event);
-    bool onEvent_PreChildren(EventResized const& event);
-    bool onEvent_PreChildren(EventKeyPressed const& event);
-    bool onEvent_PreChildren(EventMouseDown const& event);
-    bool onEvent_PreChildren(EventDragStarted const& event);
-    bool onEvent_PreChildren(EventDragging const& event);
-    bool onEvent_PreChildren(EventDragFinished const& event);
+    bool onEventResized(EventResized const& event);
+    bool onEventDragStarted(EventDragStarted const& event);
+    bool onEventDragging(EventDragging const& event);
+    bool onEventDragFinished(EventDragFinished const& event);
 
-    bool onEvent_PostChildren(Event const& event);
-    bool onEvent_PostChildren(EventMoved const& event);
-    bool onEvent_PostChildren(EventResized const& event);
-    bool onEvent_PostChildren(EventKeyPressed const& event);
-    bool onEvent_PostChildren(EventMouseDown const& event);
-    bool onEvent_PostChildren(EventDragStarted const& event);
-    bool onEvent_PostChildren(EventDragging const& event);
-    bool onEvent_PostChildren(EventDragFinished const& event);
-
-    virtual bool onEvent_PreChildren_NVI(Event const& event) { return true; }
-    virtual bool onEvent_PostChildren_NVI(Event const& event) { return true; }
+    virtual bool onEvent_V2(Event const& event) { return false; }
 
     /// Subscribe to parent events that all objects care about.
     void subscribeToParentEvents(Subject& parent, int priority);
@@ -432,7 +384,7 @@ namespace metagui
     /// Subscribe to any additional events that we care about which are 
     /// emitted by a parent.
     /// The default behavior is to do nothing.
-    virtual void subscribeToParentEvents_NVI(Subject& parent, int priority);
+    virtual void subscribeToParentEvents_V(Subject& parent, int priority);
 
   private:
     /// The name of this object.

@@ -451,7 +451,7 @@ std::unordered_set<EventID> SystemLighting::registeredEvents() const
   return events;
 }
 
-bool SystemLighting::onEvent_NVI(Event const& event)
+bool SystemLighting::onEvent_V(Event const& event)
 {
   return false;
 }

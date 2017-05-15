@@ -6,14 +6,12 @@
 #include "Observer.h"
 #include "Subject.h"
 #include "types/IRenderable.h"
-#include "types/ISFMLEventHandler.h"
 
 // Forward declarations
 class StateMachine;
 
 class State :
   public RenderableToTexture,
-  public ISFMLEventHandler,
   public Observer,
   public Subject
 {

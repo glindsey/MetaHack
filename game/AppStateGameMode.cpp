@@ -76,8 +76,7 @@ AppStateGameMode::AppStateGameMode(StateMachine& state_machine, sf::RenderWindow
   m_currentInputState{ GameInputState::Map },
   m_cursorCoords{ 0, 0 }
 {
-  getStateMachine().addObserver(*this, App::EventAppWindowResized::id());
-  getStateMachine().addObserver(*this, App::EventKeyPressed::id());
+  App::instance().addObserver(*this, EventID::All);
 
   the_desktop.addChild(NEW MessageLogView("MessageLogView", Service<IMessageLog>::get(), *(m_debugBuffer.get()), calcMessageLogDims()))->setFlag("titlebar", true);
   the_desktop.addChild(NEW InventoryArea("InventoryArea", *(m_inventorySelection.get()), calcInventoryDims()))->setFlag("titlebar", true);
@@ -94,7 +93,7 @@ AppStateGameMode::~AppStateGameMode()
   the_desktop.removeChild("InventoryArea");
   the_desktop.removeChild("MessageLogView");
 
-  getStateMachine().removeObserver(*this, EventID::All);
+  App::instance().removeObserver(*this, EventID::All);
 }
 
 void AppStateGameMode::execute()
@@ -155,19 +154,6 @@ void AppStateGameMode::execute()
       resetInventorySelection();
     }
   }
-}
-
-SFMLEventResult AppStateGameMode::handle_sfml_event(sf::Event& event)
-{
-  SFMLEventResult result = SFMLEventResult::Ignored;
-
-  // Let the GUI handle events.
-  if (result != SFMLEventResult::Handled)
-  {
-    result = the_desktop.handle_sfml_event(event);
-  }
-
-  return result;
 }
 
 std::string const& AppStateGameMode::getName()
@@ -253,7 +239,7 @@ std::unordered_set<EventID> AppStateGameMode::registeredEvents() const
   auto events = AppState::registeredEvents();
   events.insert({
     App::EventAppWindowResized::id(),
-    App::EventKeyPressed::id()
+    UIEvents::EventKeyPressed::id()
   });
   return events;
 }
@@ -312,7 +298,7 @@ void AppStateGameMode::render_map(sf::RenderTexture& texture, int frame)
   texture.display();
 }
 
-bool AppStateGameMode::handle_key_press(App::EventKeyPressed const& key)
+bool AppStateGameMode::handle_key_press(UIEvents::EventKeyPressed const& key)
 {
   auto& game = gameState();
   EntityId player = game.getPlayer();
@@ -994,7 +980,7 @@ bool AppStateGameMode::handle_key_press(App::EventKeyPressed const& key)
   return true;
 }
 
-bool AppStateGameMode::handle_mouse_wheel(App::EventMouseWheelMoved const& wheel)
+bool AppStateGameMode::handle_mouse_wheel(UIEvents::EventMouseWheelMoved const& wheel)
 {
   add_zoom(wheel.delta * 0.05f);
   return false;
@@ -1019,7 +1005,7 @@ void AppStateGameMode::add_zoom(float zoom_amount)
   m_mapZoomLevel = current_zoom_level;
 }
 
-bool AppStateGameMode::onEvent_NVI(Event const& event)
+bool AppStateGameMode::onEvent_V(Event const& event)
 {
   auto id = event.getId();
 
@@ -1032,15 +1018,15 @@ bool AppStateGameMode::onEvent_NVI(Event const& event)
     the_desktop.getChild("StatusArea").setRelativeDimensions(calcStatusAreaDims());
     return false;
   }
-  else if (id == App::EventKeyPressed::id())
+  else if (id == UIEvents::EventKeyPressed::id())
   {
-    auto info = static_cast<App::EventKeyPressed const&>(event);
+    auto info = static_cast<UIEvents::EventKeyPressed const&>(event);
     bool keep_broadcasting = handle_key_press(info);
     return !keep_broadcasting;
   }
-  else if (id == App::EventMouseWheelMoved::id())
+  else if (id == UIEvents::EventMouseWheelMoved::id())
   {
-    auto info = static_cast<App::EventMouseWheelMoved const&>(event);
+    auto info = static_cast<UIEvents::EventMouseWheelMoved const&>(event);
     bool keep_broadcasting = handle_mouse_wheel(info);
     return !keep_broadcasting;
   }
@@ -1135,7 +1121,7 @@ bool AppStateGameMode::moveCursor(Direction direction)
   return result;
 }
 
-bool AppStateGameMode::handleKeyPressTargetSelection(EntityId player, App::EventKeyPressed const& key)
+bool AppStateGameMode::handleKeyPressTargetSelection(EntityId player, UIEvents::EventKeyPressed const& key)
 {
   int key_number = get_letter_key(key);
   Direction key_direction = get_direction_key(key);
@@ -1186,7 +1172,7 @@ bool AppStateGameMode::handleKeyPressTargetSelection(EntityId player, App::Event
   return true;
 }
 
-bool AppStateGameMode::handleKeyPressCursorLook(EntityId player, App::EventKeyPressed const& key)
+bool AppStateGameMode::handleKeyPressCursorLook(EntityId player, UIEvents::EventKeyPressed const& key)
 {
   // *** NON-MODIFIED KEYS ***********************************************
   if (!key.alt && !key.control && !key.shift)

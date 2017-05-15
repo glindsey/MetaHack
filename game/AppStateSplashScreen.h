@@ -13,8 +13,6 @@ public:
   AppStateSplashScreen(StateMachine& state_machine, sf::RenderWindow& app_window);
   virtual ~AppStateSplashScreen();
 
-  virtual SFMLEventResult handle_sfml_event(sf::Event& event) override;
-
   virtual std::string const& getName() override;
   virtual bool initialize() override;
   virtual void execute() override;
@@ -23,7 +21,7 @@ public:
 protected:
   void render_splash(sf::RenderTexture& texture, int frame);
 
-  virtual bool onEvent_NVI(Event const& event) override;
+  virtual bool onEvent_V(Event const& event) override;
 
 private:
   sf::Texture m_splash_graphic;

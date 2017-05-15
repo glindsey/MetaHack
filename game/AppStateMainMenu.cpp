@@ -18,36 +18,36 @@ AppStateMainMenu::~AppStateMainMenu()
 void AppStateMainMenu::execute()
 {}
 
-SFMLEventResult AppStateMainMenu::handle_sfml_event(sf::Event& event)
-{
-  SFMLEventResult result = the_desktop.handle_sfml_event(event);
-
-  if (result != SFMLEventResult::Handled)
-  {
-    switch (event.type)
-    {
-      case sf::Event::EventType::KeyPressed:
-        switch (event.key.code)
-        {
-          case sf::Keyboard::Key::Space:
-            // Switch to game state.
-            this->change_to("AppStateGameMode");
-
-            result = SFMLEventResult::Handled;
-            break;
-
-          default:
-            break;
-        }
-        break;
-
-      default:
-        break;
-    }
-  }
-
-  return result;
-}
+//SFMLEventResult AppStateMainMenu::handle_sfml_event(sf::Event& event)
+//{
+//  SFMLEventResult result = the_desktop.handle_sfml_event(event);
+//
+//  if (result != SFMLEventResult::Handled)
+//  {
+//    switch (event.type)
+//    {
+//      case sf::Event::EventType::KeyPressed:
+//        switch (event.key.code)
+//        {
+//          case sf::Keyboard::Key::Space:
+//            // Switch to game state.
+//            this->change_to("AppStateGameMode");
+//
+//            result = SFMLEventResult::Handled;
+//            break;
+//
+//          default:
+//            break;
+//        }
+//        break;
+//
+//      default:
+//        break;
+//    }
+//  }
+//
+//  return result;
+//}
 
 std::string const& AppStateMainMenu::getName()
 {
@@ -81,7 +81,7 @@ void AppStateMainMenu::render_title(sf::RenderTexture & texture, int frame)
   texture.display();
 }
 
-bool AppStateMainMenu::onEvent_NVI(Event const& event)
+bool AppStateMainMenu::onEvent_V(Event const& event)
 {
   /// @todo WRITE ME
   return false;

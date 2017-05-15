@@ -161,7 +161,7 @@ namespace metagui
   void Window::drawContents_(sf::RenderTexture& texture, int frame)
   {}
 
-  bool Window::onEvent_PostChildren_NVI(Event const& event)
+  bool Window::onEvent_V2(Event const& event)
   {
     auto id = event.getId();
     if (id == EventDragStarted::id())

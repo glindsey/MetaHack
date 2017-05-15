@@ -46,7 +46,7 @@ bool Observer::onEvent(Event const& event)
     return true;
   }
 
-  bool result = onEvent_NVI(event);
+  bool result = onEvent_V(event);
 
   return result;
 }

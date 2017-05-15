@@ -570,85 +570,37 @@ namespace metagui
   void GUIObject::handleSetFlag_(std::string name, bool enabled)
   {}
 
-  bool GUIObject::onEvent_NVI(Event const& event)
+  bool GUIObject::onEvent_V(Event const& event)
   {
     bool handled = false;
 
-    // Do pre-children work.
-    if (event.getId() == EventMoved::id())
+    // Do our own work.
+    if (event.getId() == EventResized::id())
     {
-      handled = onEvent_PreChildren(static_cast<EventMoved const&>(event));
-    }
-    else if (event.getId() == EventResized::id())
-    {
-      handled = onEvent_PreChildren(static_cast<EventResized const&>(event));
+      handled = onEventResized(static_cast<EventResized const&>(event));
     }
     else if (event.getId() == EventDragStarted::id())
     {
-      handled = onEvent_PreChildren(static_cast<EventDragStarted const&>(event));
+      handled = onEventDragStarted(static_cast<EventDragStarted const&>(event));
     }
     else if (event.getId() == EventDragging::id())
     {
-      handled = onEvent_PreChildren(static_cast<EventDragging const&>(event));
+      handled = onEventDragging(static_cast<EventDragging const&>(event));
     }
     else if (event.getId() == EventDragFinished::id())
     {
-      handled = onEvent_PreChildren(static_cast<EventDragFinished const&>(event));
+      handled = onEventDragFinished(static_cast<EventDragFinished const&>(event));
     }
-    else
-    {
-      handled = onEvent_PreChildren(event);
-    }
-
-    // Forward to children if requested.
+    
     if (!handled)
     {
-      handled = forward(event);
-    }
-
-    if (!handled)
-    {
-      // If a child didn't handle it, do post-children work.
-      if (event.getId() == EventMoved::id())
-      {
-        handled = onEvent_PostChildren(static_cast<EventMoved const&>(event));
-      }
-      else if (event.getId() == EventResized::id())
-      {
-        handled = onEvent_PostChildren(static_cast<EventResized const&>(event));
-      }
-      else if (event.getId() == EventDragStarted::id())
-      {
-        handled = onEvent_PostChildren(static_cast<EventDragStarted const&>(event));
-      }
-      else if (event.getId() == EventDragging::id())
-      {
-        handled = onEvent_PostChildren(static_cast<EventDragging const&>(event));
-      }
-      else if (event.getId() == EventDragFinished::id())
-      {
-        handled = onEvent_PostChildren(static_cast<EventDragFinished const&>(event));
-      }
-      else
-      {
-        handled = onEvent_PostChildren(event);
-      }
+      handled = onEvent_V2(event);
     }
 
     return handled;
   }
 
-  bool GUIObject::onEvent_PreChildren(Event const & event)
-  {
-    return onEvent_PreChildren_NVI(event);
-  }
-
-  bool GUIObject::onEvent_PreChildren(EventMoved const& event)
-  {
-    return onEvent_PreChildren_NVI(event);
-  }
-
-  bool GUIObject::onEvent_PreChildren(EventResized const& event)
+  bool GUIObject::onEventResized(EventResized const& event)
   {
     if (event.subject == m_parent)
     {
@@ -657,112 +609,47 @@ namespace metagui
       setSize(m_size);
     }
 
-    return onEvent_PreChildren_NVI(event);
-  }
-
-  bool GUIObject::onEvent_PreChildren(EventKeyPressed const& event)
-  {
-    return onEvent_PreChildren_NVI(event);
-  }
-
-  bool GUIObject::onEvent_PreChildren(EventMouseDown const& event)
-  {
-    return onEvent_PreChildren_NVI(event);
-  }
-
-  bool GUIObject::onEvent_PreChildren(EventDragStarted const & event)
-  {
-    if (containsPoint(event.start_location))
-    {
-      return onEvent_PreChildren_NVI(event);
-    }
-
-    // We "Ignore" the event so it is not passed to children.
     return false;
   }
 
-  bool GUIObject::onEvent_PreChildren(EventDragging const & event)
-  {
-    return onEvent_PreChildren_NVI(event);
-  }
-
-  bool GUIObject::onEvent_PreChildren(EventDragFinished const & event)
-  {
-    return onEvent_PreChildren_NVI(event);
-  }
-
-  bool GUIObject::onEvent_PostChildren(Event const & event)
-  {
-    return onEvent_PostChildren_NVI(event);
-  }
-
-  bool GUIObject::onEvent_PostChildren(EventMoved const & event)
-  {
-    return onEvent_PostChildren_NVI(event);
-  }
-
-  bool GUIObject::onEvent_PostChildren(EventResized const & event)
-  {
-    return onEvent_PostChildren_NVI(event);
-  }
-
-  bool GUIObject::onEvent_PostChildren(EventKeyPressed const& event)
-  {
-    return onEvent_PostChildren_NVI(event);
-  }
-
-  bool GUIObject::onEvent_PostChildren(EventMouseDown const& event)
-  {
-    return onEvent_PostChildren_NVI(event);
-  }
-
-  bool GUIObject::onEvent_PostChildren(EventDragStarted const & event)
+  bool GUIObject::onEventDragStarted(EventDragStarted const & event)
   {
     if (containsPoint(event.start_location))
     {
+      /// @todo Make sure the point isn't inside one of our children.
       m_being_dragged = true;
       m_drag_start_location = event.start_location;
       m_absolute_location_drag_start = getAbsoluteLocation();
 
-      return onEvent_PostChildren_NVI(event);
+      return false;
     }
 
-    // We "Ignore" the event so it is not passed to children.
-    return false;
+    // Mark as handled so it is not passed to virtual handler.
+    return true;
   }
 
-  bool GUIObject::onEvent_PostChildren(EventDragging const & event)
+  bool GUIObject::onEventDragging(EventDragging const & event)
   {
-    bool result = onEvent_PostChildren_NVI(event);
-
-    if (result == true)
+    if ((m_being_dragged == true) && (m_cached_flags.movable == true))
     {
-      // If we got here, all children ignored the event (or there are no
-      // children), and there's no subclass override -- so we want to 
-      // process it if we are movable.
-      if ((m_being_dragged == true) && (m_cached_flags.movable == true))
-      {
-        auto move_amount = event.current_location - m_drag_start_location;
-        auto new_coords = m_absolute_location_drag_start + move_amount;
+      auto move_amount = event.current_location - m_drag_start_location;
+      auto new_coords = m_absolute_location_drag_start + move_amount;
 
-        setAbsoluteLocation(new_coords);
-        return false;
-      }
-      else
-      {
-        return true;
-      }
+      setAbsoluteLocation(new_coords);
+
+      return false;
     }
-
-    return result;
-
-    return onEvent_PostChildren_NVI(event);
+    else
+    {
+      // Mark as handled so it is not passed to virtual handler.
+      return true;
+    }
   }
 
-  bool GUIObject::onEvent_PostChildren(EventDragFinished const & event)
+  bool GUIObject::onEventDragFinished(EventDragFinished const & event)
   {
     m_being_dragged = false;
-    return onEvent_PostChildren_NVI(event);
+    return false;
   }
 
   void GUIObject::subscribeToParentEvents(Subject& parent, int priority)
@@ -772,10 +659,10 @@ namespace metagui
     parent.addObserver(*this, GUIObject::EventResized::id(), priority);
 
     // Subscribe to any additional events.
-    subscribeToParentEvents_NVI(parent, priority);
+    subscribeToParentEvents_V(parent, priority);
   }
 
-  void GUIObject::subscribeToParentEvents_NVI(Subject& parent, int priority)
+  void GUIObject::subscribeToParentEvents_V(Subject& parent, int priority)
   {}
 
 

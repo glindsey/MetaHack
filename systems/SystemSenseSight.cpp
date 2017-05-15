@@ -251,7 +251,7 @@ std::unordered_set<EventID> SystemSenseSight::registeredEvents() const
   return events;
 }
 
-bool SystemSenseSight::onEvent_NVI(Event const& event)
+bool SystemSenseSight::onEvent_V(Event const& event)
 {
   auto id = event.getId();
 

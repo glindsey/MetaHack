@@ -352,6 +352,7 @@
     <ClInclude Include="design_patterns\Service.h" />
     <ClInclude Include="design_patterns\Subject.h" />
     <ClInclude Include="design_patterns\Visitor.h" />
+    <ClInclude Include="events\UIEvents.h" />
     <ClInclude Include="lua\LuaTemplates.h" />
     <ClInclude Include="map\MapId.h" />
     <ClInclude Include="map\MapMemory.h" />
@@ -384,7 +385,7 @@
     <ClInclude Include="types\ModifiableBool.h" />
     <ClInclude Include="types\ModifiableInt.h" />
     <ClInclude Include="types\Modifier.h" />
-    <ClInclude Include="types\SFMLEventResult.h" />
+    <ClInclude Include="types\MouseButtonInfo.h" />
     <ClInclude Include="utilities\CommonFunctions.h" />
     <ClInclude Include="types\common.h" />
     <ClInclude Include="entity\EntityNullView.h" />
@@ -411,7 +412,6 @@
     <ClInclude Include="types\Rect.h" />
     <ClInclude Include="utilities\JSONUtils.h" />
     <ClInclude Include="utilities\RNGUtils.h" />
-    <ClInclude Include="types\ISFMLEventHandler.h" />
     <ClInclude Include="types\GameObject.h" />
     <ClInclude Include="game\GameState.h" />
     <ClInclude Include="types\Gender.h" />

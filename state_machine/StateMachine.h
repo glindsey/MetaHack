@@ -6,7 +6,6 @@
 #include "Observer.h"
 #include "Subject.h"
 #include "types/IRenderable.h"
-#include "types/ISFMLEventHandler.h"
 
 // Forward declarations
 class State;
@@ -14,8 +13,7 @@ class State;
 // Implementation of a state machine that can change between states derived
 // from the State abstract class.
 class StateMachine :
-  virtual public RenderableToTexture,
-  virtual public ISFMLEventHandler,
+  public RenderableToTexture,
   public Observer,
   public Subject
 {
@@ -63,10 +61,6 @@ public:
   /// @return True if we could render, false otherwise.
   bool render(sf::RenderTexture& texture, int frame) override;
 
-  /// Pass an event on to the current state.
-  /// If no state is active, does nothing and returns SFMLEventResult::Ignored.
-  SFMLEventResult handle_sfml_event(sf::Event& event) override;
-
   /// Try to change to a new state.
   /// If nullptr is passed, attempts to terminate existing state only; this is
   /// used by the state machine destructor.
@@ -90,7 +84,7 @@ public:
   virtual std::unordered_set<EventID> registeredEvents() const override;
 
 protected:
-  virtual bool onEvent_NVI(Event const& event) override;
+  virtual bool onEvent_V(Event const& event) override;
 
 private:
   struct Impl;

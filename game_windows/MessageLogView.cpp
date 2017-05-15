@@ -84,7 +84,7 @@ void MessageLogView::drawContents_(sf::RenderTexture& texture, int frame)
   return;
 }
 
-bool MessageLogView::onEvent_PreChildren_NVI(Event const& event) 
+bool MessageLogView::onEvent_V2(Event const& event) 
 { 
   auto id = event.getId();
 
@@ -92,17 +92,17 @@ bool MessageLogView::onEvent_PreChildren_NVI(Event const& event)
   ///       Right now we just always set the "dirty" flag for the view so it is redrawn.
   flagForRedraw();
 
-  if (id == EventKeyPressed::id())
+  if (id == UIEvents::EventKeyPressed::id())
   {
-    return handleKeyPress(static_cast<EventKeyPressed const&>(event));
+    return handleKeyPress(static_cast<UIEvents::EventKeyPressed const&>(event));
   }
 
   return true; 
 }
 
-bool MessageLogView::handleKeyPress(EventKeyPressed const& event)
+bool MessageLogView::handleKeyPress(UIEvents::EventKeyPressed const& event)
 {
-  CLOG(TRACE, "GUI") << "MessageLogView::handleKeyPress(EventKeyPressed const&) called";
+  CLOG(TRACE, "GUI") << "MessageLogView::handleKeyPress(UIEvents::EventKeyPressed const&) called";
 
   /// @todo This is ugly, fix later
   if (getGlobalFocus() == true)

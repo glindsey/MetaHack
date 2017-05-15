@@ -23,7 +23,7 @@ namespace metagui
   {
   }
 
-  bool CloseHandle::onEvent_PreChildren_NVI(Event const& event)
+  bool CloseHandle::onEvent_V2(Event const& event)
   {
     return false;
   }

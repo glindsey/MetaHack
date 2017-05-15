@@ -183,36 +183,44 @@ bool Subject::broadcast(Event& event)
   {
     if (shouldSend)
     {
-      auto finalEvent = event.heapClone();
+      Event* copiedEvent = event.heapClone();
 
       auto dispatchBlock = [=]() mutable -> bool
       {
-        auto observerCount = getObserverCount(finalEvent->getId());
+        bool handled = false;
+
+        // Dispatch block now owns copiedEvent.
+        CLOG(TRACE, "ObserverPattern") << "Broadcasting: " << *copiedEvent;
+
+        auto observerCount = getObserverCount(copiedEvent->getId());
 
         // Return if no observers for this event.
-        if (observerCount == 0) return true;
-
-        auto& prioritizedObservers = getObservers(finalEvent->getId());
-
-        CLOG(TRACE, "ObserverPattern") << "Broadcasting: " << *finalEvent;
-
-        bool handled = false;
-        for (auto& priorityPair : prioritizedObservers)
+        if (observerCount == 0)
         {
-          for (auto& observer : priorityPair.second)
+          CLOG(TRACE, "ObserverPattern") << "No observers registered for event";
+          handled = true;
+        }
+        else
+        {
+          auto& prioritizedObservers = getObservers(copiedEvent->getId());
+
+          for (auto& priorityPair : prioritizedObservers)
           {
-            handled = observer->onEvent(*finalEvent);
+            for (auto& observer : priorityPair.second)
+            {
+              handled = observer->onEvent(*copiedEvent);
+              if (handled) break;
+            }
             if (handled) break;
           }
-          if (handled) break;
+
+          if (handled)
+          {
+            CLOG(TRACE, "ObserverPattern") << "Broadcast Halted: " << *copiedEvent;
+          }
         }
 
-        if (handled)
-        {
-          CLOG(TRACE, "ObserverPattern") << "Broadcast Halted: " << *finalEvent;
-        }
-        delete finalEvent;
-
+        delete copiedEvent;
         m_eventQueue.pop();
         if (!m_eventQueue.empty())
         {
@@ -220,10 +228,10 @@ bool Subject::broadcast(Event& event)
         }
 
         return handled;
-      };
+      }; // end of dispatchBlock
 
       m_eventQueue.push(dispatchBlock);
-      if (m_eventQueue.size() == 1)
+      if (!m_eventQueue.empty())
       {
         result = m_eventQueue.front()();
       }

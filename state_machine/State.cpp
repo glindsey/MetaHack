@@ -8,7 +8,6 @@
 State::State(StateMachine& state_machine)
   :
   RenderableToTexture(),
-  ISFMLEventHandler(),
   Observer(),
   Subject(),
   m_state_machine{ state_machine }

@@ -3,6 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "events/UIEvents.h"
 #include "types/Direction.h"
 
 /// Return a number associated with the letter key pressed, or -1 if the key
@@ -12,7 +13,7 @@
 /// a letter key is pressed.  In addition, in order to screen for "@" meaning
 /// the player, it returns 0 if the 2/@ key was pressed with shift held down.
 /// If the key pressed was none of these, it returns -1.
-int get_letter_key(App::EventKeyPressed const& key)
+int get_letter_key(UIEvents::EventKeyPressed const& key)
 {
   switch (key.code)
   {
@@ -58,7 +59,7 @@ int get_letter_key(App::EventKeyPressed const& key)
 
 /// Return the direction associated with a keypress, or None if the key does
 /// not correspond to a direction.
-Direction get_direction_key(App::EventKeyPressed const& key)
+Direction get_direction_key(UIEvents::EventKeyPressed const& key)
 {
   switch (key.code)
   {

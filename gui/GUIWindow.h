@@ -32,7 +32,7 @@ namespace metagui
     /// GUIWindow until they can be properly replaced with child controls.
     virtual void drawContents_(sf::RenderTexture& texture, int frame);
 
-    virtual bool onEvent_PostChildren_NVI(Event const& event) override;
+    virtual bool onEvent_V2(Event const& event) override;
 
   private:
     /// Border shape.

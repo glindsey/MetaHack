@@ -23,11 +23,6 @@ void AppStateSplashScreen::execute()
   }
 }
 
-SFMLEventResult AppStateSplashScreen::handle_sfml_event(sf::Event& event)
-{
-  return SFMLEventResult::Ignored;
-}
-
 std::string const& AppStateSplashScreen::getName()
 {
   static std::string name = "AppStateSplashScreen";
@@ -56,7 +51,7 @@ void AppStateSplashScreen::render_splash(sf::RenderTexture& texture, int frame)
   texture.display();
 }
 
-bool AppStateSplashScreen::onEvent_NVI(Event const& event)
+bool AppStateSplashScreen::onEvent_V(Event const& event)
 {
   /// @todo WRITE ME
   return false;
