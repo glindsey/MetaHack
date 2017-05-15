@@ -124,8 +124,6 @@ public:
   /// If no App instance currently exists, throws an exception.
   static App& instance();
 
-  virtual std::unordered_set<EventID> registeredEvents() const override;
-
 protected:
 
 private:

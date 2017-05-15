@@ -8,8 +8,8 @@ template <class Subclass>
 class SystemCRTP : public System
 {
 public:
-  SystemCRTP() : 
-    System() 
+  SystemCRTP(std::unordered_set<EventID> const events) :
+    System(events) 
   {}
 
   virtual ~SystemCRTP() {}

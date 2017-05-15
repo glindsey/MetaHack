@@ -28,8 +28,6 @@ public:
   /// Returns true if first entity can see second.
   bool subjectCanSeeCoords(EntityId subject, IntVec2 coords) const;
 
-  virtual std::unordered_set<EventID> registeredEvents() const override;
-
 protected:
   void setMapNVO(MapId newMap);
 

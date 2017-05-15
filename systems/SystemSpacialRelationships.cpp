@@ -8,7 +8,7 @@
 
 SystemSpacialRelationships::SystemSpacialRelationships(ComponentMap<ComponentInventory>& inventory, 
                                                        ComponentMap<ComponentPosition>& position) :
-  SystemCRTP<SystemSpacialRelationships>(),
+  SystemCRTP<SystemSpacialRelationships>({ EventEntityMoved::id, EventEntityChangedMaps::id }),
   m_inventory{ inventory },
   m_position{ position }
 {}
@@ -166,14 +166,6 @@ bool SystemSpacialRelationships::areAdjacent(EntityId first, EntityId second) co
 
 void SystemSpacialRelationships::setMapNVO(MapId newMap)
 {}
-
-std::unordered_set<EventID> SystemSpacialRelationships::registeredEvents() const
-{
-  auto events = Subject::registeredEvents();
-  events.insert(EventEntityMoved::id);
-  events.insert(EventEntityChangedMaps::id);
-  return events;
-}
 
 bool SystemSpacialRelationships::onEvent_V(Event const& event)
 {

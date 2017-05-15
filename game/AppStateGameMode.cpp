@@ -64,6 +64,8 @@
 AppStateGameMode::AppStateGameMode(StateMachine& state_machine, sf::RenderWindow& m_appWindow)
   :
   AppState(state_machine,
+           { App::EventAppWindowResized::id,
+             UIEvents::EventKeyPressed::id },
            std::bind(&AppStateGameMode::render_map, this, std::placeholders::_1, std::placeholders::_2)),
   m_appWindow{ m_appWindow },
   m_debugBuffer{ NEW KeyBuffer() },
@@ -233,17 +235,6 @@ SystemManager & AppStateGameMode::systems()
 {
   return *m_systemManager;
 }
-
-std::unordered_set<EventID> AppStateGameMode::registeredEvents() const
-{
-  auto events = AppState::registeredEvents();
-  events.insert({
-    App::EventAppWindowResized::id,
-    UIEvents::EventKeyPressed::id
-  });
-  return events;
-}
-
 
 // === PROTECTED METHODS ======================================================
 void AppStateGameMode::render_map(sf::RenderTexture& texture, int frame)

@@ -7,7 +7,7 @@
 class System : public Object
 {
 public:
-  System() : Object() {}
+  System(std::unordered_set<EventID> const events) : Object(events) {}
   virtual ~System() {}
 
   /// Get the map the system is operating on.

@@ -10,7 +10,7 @@ namespace metagui
 {
   CloseHandle::CloseHandle(std::string name)
     :
-    GUIObject(name, IntVec2(0, 0))
+    GUIObject(name, {})
   {}
 
   CloseHandle::~CloseHandle()

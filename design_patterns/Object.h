@@ -6,7 +6,7 @@
 class Object : public Observer, public Subject
 {
 public:
-  Object() : Observer(), Subject() {}
+  Object(std::unordered_set<EventID> const events) : Observer(), Subject(events) {}
   virtual ~Object() {}
 
   /// Forward an event on to observers.

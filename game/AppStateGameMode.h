@@ -49,8 +49,6 @@ public:
   GameState& gameState();
   SystemManager& systems();
 
-  std::unordered_set<EventID> registeredEvents() const override;
-
 protected:
   void render_map(sf::RenderTexture& texture, int frame);
   bool handle_key_press(UIEvents::EventKeyPressed const& key);

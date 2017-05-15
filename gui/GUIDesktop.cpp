@@ -13,7 +13,15 @@ namespace metagui
                    std::string name, 
                    UintVec2 size)
     :
-    GUIObject{ name, IntVec2(0, 0), size },
+    GUIObject{ 
+    name, 
+    {
+      EventDragStarted::id,
+      EventDragging::id,
+      EventDragFinished::id
+    },
+    IntVec2(0, 0), 
+    size },
     m_event_parent{ event_parent }
   {
     App::instance().addObserver(*this, EventID::All);
@@ -22,19 +30,6 @@ namespace metagui
   Desktop::~Desktop()
   {
     App::instance().removeObserver(*this, EventID::All);
-  }
-
-  std::unordered_set<EventID> Desktop::registeredEvents() const
-  {
-    auto events = Object::registeredEvents();
-    events.insert({
-      EventDragStarted::id,
-      EventDragging::id,
-      EventDragFinished::id
-    });
-
-    /// @todo Add generated and propogated events here.
-    return events;
   }
 
   // === PROTECTED METHODS ======================================================

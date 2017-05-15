@@ -79,8 +79,6 @@ public:
   /// Return whether these two entities are adjacent to each other.
   bool areAdjacent(EntityId first, EntityId second) const;
 
-  virtual std::unordered_set<EventID> registeredEvents() const override;
-
 protected:
   void setMapNVO(MapId newMap);
 

@@ -15,7 +15,7 @@ SystemSenseSight::SystemSenseSight(ComponentMap<ComponentInventory> const& inven
                                    ComponentMap<ComponentPosition> const& position,
                                    ComponentMap<ComponentSenseSight>& senseSight,
                                    ComponentMap<ComponentSpacialMemory>& spacialMemory) :
-  SystemCRTP<SystemSenseSight>(),
+  SystemCRTP<SystemSenseSight>({}),
   m_inventory{ inventory },
   m_position{ position },
   m_senseSight{ senseSight },
@@ -242,13 +242,6 @@ bool SystemSenseSight::subjectCanSeeCoords(EntityId subject, IntVec2 coords) con
 
   // Return seen data.
   return m_senseSight[subject].canSee(coords);
-}
-
-std::unordered_set<EventID> SystemSenseSight::registeredEvents() const
-{
-  auto events = Subject::registeredEvents();
-  /// @todo Add registered events here
-  return events;
 }
 
 bool SystemSenseSight::onEvent_V(Event const& event)

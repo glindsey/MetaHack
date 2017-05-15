@@ -80,8 +80,6 @@ public:
   static char getCharacter(unsigned int slot_number);
   static InventorySlot getSlot(char character);
 
-  virtual std::unordered_set<EventID> registeredEvents() const override;
-
 protected:
 
 private:

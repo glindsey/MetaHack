@@ -41,7 +41,17 @@ sf::IntRect calc_message_log_dimensions(sf::RenderWindow& window)
 
 App::App(sf::RenderWindow& app_window)
   :
-  Subject(),
+  Subject({
+  EventAppQuitRequested::id,
+  EventAppWindowClosed::id,
+  EventAppWindowFocusChanged::id,
+  EventAppWindowResized::id,
+  UIEvents::EventKeyPressed::id,
+  UIEvents::EventMouseDown::id,
+  UIEvents::EventMouseUp::id,
+  UIEvents::EventMouseMoved::id,
+  UIEvents::EventMouseLeft::id,
+  UIEvents::EventMouseWheelMoved::id }),
   m_appWindow{ app_window },
   m_app_texture{ NEW sf::RenderTexture() },
   m_is_running{ false },
@@ -376,25 +386,6 @@ App & App::instance()
   {
     throw std::runtime_error("App instance was requested, but it does not exist");
   }
-}
-
-std::unordered_set<EventID> App::registeredEvents() const
-{
-  auto events = Subject::registeredEvents();
-  events.insert({
-    EventAppQuitRequested::id,
-    EventAppWindowClosed::id,
-    EventAppWindowFocusChanged::id,
-    EventAppWindowResized::id,
-    UIEvents::EventKeyPressed::id,
-    UIEvents::EventMouseDown::id,
-    UIEvents::EventMouseUp::id,
-    UIEvents::EventMouseMoved::id,
-    UIEvents::EventMouseLeft::id,
-    UIEvents::EventMouseWheelMoved::id
-  });
-
-  return events;
 }
 
 void App::run()

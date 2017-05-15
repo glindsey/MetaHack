@@ -55,8 +55,6 @@ public:
   /// Get the light shining on a tile wall.
   Color getWallLightLevel(IntVec2 coords, Direction direction) const;
 
-  virtual std::unordered_set<EventID> registeredEvents() const override;
-
 protected:
   /// Virtual override called after the map is changed.
   virtual void setMapNVO(MapId newMap) override;

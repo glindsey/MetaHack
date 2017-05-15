@@ -13,7 +13,7 @@ SystemLighting::SystemLighting(ComponentMap<ComponentAppearance> const& appearan
                                ComponentMap<ComponentHealth> const& health,
                                ComponentMap<ComponentLightSource>& lightSource,
                                ComponentMap<ComponentPosition> const& position) :
-  SystemCRTP<SystemLighting>(),
+  SystemCRTP<SystemLighting>({}),
   m_appearance{ appearance },
   m_health{ health },
   m_lightSource{ lightSource },
@@ -442,13 +442,6 @@ void SystemLighting::doRecursiveLighting(EntityId source,
                         octant, depth + 1,
                         slope_A, slope_B);
   }
-}
-
-std::unordered_set<EventID> SystemLighting::registeredEvents() const
-{
-  auto events = Subject::registeredEvents();
-  /// @todo Add registered events here
-  return events;
 }
 
 bool SystemLighting::onEvent_V(Event const& event)

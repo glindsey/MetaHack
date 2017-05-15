@@ -596,7 +596,6 @@
     <ClCompile Include="gui\GUIShrinkHandle.cpp" />
     <ClCompile Include="gui\GUITitleBar.cpp" />
     <ClCompile Include="gui\GUIWindow.cpp" />
-    <ClCompile Include="keybuffer\IKeyBuffer.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="game\App.cpp" />
     <ClCompile Include="game\AppState.cpp" />

@@ -151,8 +151,9 @@ namespace metagui
       static unsigned int const drag_threshold = 16;
     };
 
-    explicit GUIObject(std::string name, IntVec2 location = IntVec2(0, 0), UintVec2 size = UintVec2(0, 0));
-    GUIObject(std::string name, sf::IntRect dimensions);
+    explicit GUIObject(std::string name, std::unordered_set<EventID> const events);
+    GUIObject(std::string name, std::unordered_set<EventID> const events, IntVec2 location, UintVec2 size);
+    GUIObject(std::string name, std::unordered_set<EventID> const events, sf::IntRect dimensions);
     virtual ~GUIObject();
 
     std::string getName();
@@ -334,8 +335,6 @@ namespace metagui
     /// Flag this object, and its parents, to be redrawn.
     void flagForRedraw();
 
-    virtual std::unordered_set<EventID> registeredEvents() const override;
-
   protected:
     GUIObject* getParent();
 
@@ -453,6 +452,10 @@ namespace metagui
 
     /// Multimap that associates child elements with Z-orders.
     std::multimap< uint32_t, std::string > m_zorder_map;
+
+    /// Static set of events provided by GUIObject.
+    static std::unordered_set<EventID> const s_events;
+
   };
 
   /// Convenience function for calculating the distance between two

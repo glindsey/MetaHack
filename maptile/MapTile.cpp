@@ -120,7 +120,7 @@ RealVec2 MapTile::getPixelCoords(IntVec2 tile)
 
 MapTile::MapTile(IntVec2 coords, std::string category, MapId map_id)
   :
-  Subject(),
+  Subject({}),
   m_mapId{ map_id },
   m_coords{ coords },
   m_category{ category }

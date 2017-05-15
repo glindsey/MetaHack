@@ -6,7 +6,7 @@
 
 AppStateSplashScreen::AppStateSplashScreen(StateMachine& state_machine, sf::RenderWindow& app_window)
   :
-  AppState(state_machine,
+  AppState(state_machine, {},
            std::bind(&AppStateSplashScreen::render_splash, this, std::placeholders::_1, std::placeholders::_2))
 {
 }

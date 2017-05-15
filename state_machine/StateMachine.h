@@ -81,8 +81,6 @@ public:
   /// @return Name of current state, or "(none)" if no state is current.
   std::string const& get_current_state_name();
 
-  virtual std::unordered_set<EventID> registeredEvents() const override;
-
 protected:
   virtual bool onEvent_V(Event const& event) override;
 

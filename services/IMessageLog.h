@@ -24,6 +24,7 @@ public:
     }
   };
 
+  IMessageLog();
   virtual ~IMessageLog() = 0;
 
   /// Return a Null Object that implements this interface.
@@ -38,8 +39,6 @@ public:
 
   /// Get a reference to the message queue.
   virtual std::deque<std::string>& getMessageQueue() = 0;
-
-  virtual std::unordered_set<EventID> registeredEvents() const override final;
 
 protected:
 private:

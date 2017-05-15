@@ -22,7 +22,7 @@ StateMachine::StateMachine(std::string const& machine_name,
   : 
   RenderableToTexture(),
   Observer(),
-  Subject(),
+  Subject({}),
   pImpl(NEW Impl(parent))
 {
   pImpl->current_state = nullptr;
@@ -172,13 +172,6 @@ std::string const& StateMachine::get_current_state_name()
   {
     return pImpl->current_state->getName();
   }
-}
-
-std::unordered_set<EventID> StateMachine::registeredEvents() const
-{
-  auto events = Subject::registeredEvents();
-
-  return events;
 }
 
 bool StateMachine::onEvent_V(Event const& event)

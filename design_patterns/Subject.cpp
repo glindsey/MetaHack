@@ -12,12 +12,19 @@
 #include "Event.h"
 #include "Observer.h"
 
-Subject::Subject()
+Subject::Subject(std::unordered_set<EventID> const events)
   :
-  m_eventsAlreadyRegistered{ false },
   m_eventQueue{},
   m_eventObservers{}
-{}
+{
+  for (EventID const event : events)
+  {
+    CLOG(TRACE, "ObserverPattern") << "Registering Event 0x" <<
+      std::setbase(16) << std::setfill('0') << std::setw(8) << event <<
+      " for Subject " << *this;
+    m_eventObservers.emplace(event, ObserversSet());
+  }
+}
 
 Subject::~Subject()
 {
@@ -43,13 +50,11 @@ Subject::~Subject()
 
 void Subject::addObserver(Observer& observer, EventID eventID)
 {
-  registerEventsIfNeeded(*this);
-
   if (eventID == EventID::All)
   {
-    for (auto& id : registeredEvents())
+    for (auto& pair : m_eventObservers)
     {
-      addObserver(observer, id);
+      addObserver(observer, pair.first);
     }
   }
   else
@@ -77,8 +82,6 @@ void Subject::addObserver(Observer& observer, EventID eventID)
 
 void Subject::removeAllObservers()
 {
-  registerEventsIfNeeded(*this);
-
   Registration e;
   e.state = Registration::State::Unregistered;
   e.subject = this;
@@ -99,8 +102,6 @@ void Subject::removeAllObservers()
 
 void Subject::removeObserver(Observer& observer, EventID eventID)
 {
-  registerEventsIfNeeded(*this);
-
   size_t removalCount = 0;
   if (eventID == EventID::All)
   {
@@ -148,16 +149,9 @@ void Subject::removeObserver(Observer& observer, EventID eventID)
   }
 }
 
-std::unordered_set<EventID> Subject::registeredEvents() const
-{
-  return std::unordered_set<EventID>();
-}
-
 bool Subject::broadcast(Event& event)
 {
   bool result = true;
-
-  registerEventsIfNeeded(*this);
 
   event.subject = this;
 
@@ -220,8 +214,6 @@ bool Subject::broadcast(Event& event)
 
 void Subject::unicast(Event& event, Observer& observer)
 {
-  registerEventsIfNeeded(*this);
-
   event.subject = this;
 
   unicast_(event, observer, [&](Event& event, Observer& observer, bool shouldSend)
@@ -307,20 +299,4 @@ void Subject::Registration::serialize(std::ostream& o) const
   Event::serialize(o);
   o << " | registration state: " <<
     (state == State::Registered ? "Registered" : "Unregistered");
-}
-
-void Subject::registerEventsIfNeeded(Subject const& subject)
-{
-  if (!m_eventsAlreadyRegistered)
-  {
-    m_eventsAlreadyRegistered = true;
-    std::unordered_set<EventID> events = subject.registeredEvents();
-    for (EventID const registeredEvent : events)
-    {
-      CLOG(TRACE, "ObserverPattern") << "Registering Event 0x" <<
-        std::setbase(16) << std::setfill('0') << std::setw(8) << registeredEvent <<
-        " for Subject " << *this;
-      m_eventObservers.emplace(registeredEvent, ObserversSet());
-    }
-  }
 }

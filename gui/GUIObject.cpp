@@ -9,22 +9,44 @@
 #include "services/IConfigSettings.h"
 #include "Service.h"
 #include "types/Color.h"
+#include "utilities/CommonFunctions.h"
 #include "utilities/MathUtils.h"
 
 namespace metagui
 {
-  GUIObject::GUIObject(std::string name, IntVec2 location, UintVec2 size)
+  std::unordered_set<EventID> const GUIObject::s_events =
+  {
+    EventMoved::id, 
+    EventResized::id, 
+    EventDragStarted::id, 
+    EventDragging::id, 
+    EventDragFinished::id
+  };
+
+  GUIObject::GUIObject(std::string name, 
+                       std::unordered_set<EventID> const events) :
+    Object(combine(s_events, events))
   {
     m_name = name;
     m_parent = nullptr;
+    setRelativeLocation({ 0, 0 });
+    setSize({ 0, 0 });
+  }
+
+  GUIObject::GUIObject(std::string name, 
+                       std::unordered_set<EventID> const events, 
+                       IntVec2 location, UintVec2 size) :
+    GUIObject(name, events)
+  {
     setRelativeLocation(location);
     setSize(size);
   }
 
-  GUIObject::GUIObject(std::string name, sf::IntRect dimensions)
+  GUIObject::GUIObject(std::string name, 
+                       std::unordered_set<EventID> const events, 
+                       sf::IntRect dimensions) :
+    GUIObject(name, events)
   {
-    m_name = name;
-    m_parent = nullptr;
     setRelativeDimensions(dimensions);
   }
 
@@ -498,16 +520,6 @@ namespace metagui
 
     return ((point.x >= left) && (point.x <= right) &&
       (point.y >= top) && (point.y <= bottom));
-  }
-
-  std::unordered_set<EventID> GUIObject::registeredEvents() const
-  {
-    auto events = Subject::registeredEvents();
-    /// @todo Add our own events here
-    events.insert(EventMoved::id);
-    events.insert(EventResized::id);
-
-    return events;
   }
 
   GUIObject * GUIObject::getParent()

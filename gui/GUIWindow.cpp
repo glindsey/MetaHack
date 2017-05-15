@@ -16,7 +16,7 @@ namespace metagui
 {
   Window::Window(std::string name, IntVec2 location, UintVec2 size)
     :
-    GUIObject(name, location, size)
+    GUIObject(name, {}, location, size)
   {
     // *** TESTING CODE ***
     // Set this object to be movable and resizable.
@@ -26,7 +26,7 @@ namespace metagui
 
   Window::Window(std::string name, sf::IntRect dimensions)
     :
-    GUIObject(name, dimensions)
+    GUIObject(name, {}, dimensions)
   {
     // *** TESTING CODE ***
     // Set this object to be movable and resizable.

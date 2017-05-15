@@ -44,6 +44,11 @@ public:
     }
   };
 
+  IKeyBuffer() : Subject({
+    EventBufferChanged::id,
+    EventCursorMoved::id })
+  {}
+
   virtual ~IKeyBuffer() {}
 
   /// Process a key event.
@@ -81,7 +86,5 @@ public:
                       sf::Font const& font,
                       unsigned int font_size,
                       Color const& fg_color) = 0;
-
-  virtual std::unordered_set<EventID> registeredEvents() const override final;
-
+  
 };

@@ -36,8 +36,6 @@ namespace metagui
 
     virtual ~Desktop();
 
-    virtual std::unordered_set<EventID> registeredEvents() const override;
-
   protected:
     virtual bool onEvent_V2(Event const& event) override;
 

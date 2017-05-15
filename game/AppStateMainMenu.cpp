@@ -6,7 +6,7 @@
 
 AppStateMainMenu::AppStateMainMenu(StateMachine& state_machine, sf::RenderWindow& app_window)
   :
-  AppState(state_machine,
+  AppState(state_machine, {},
            std::bind(&AppStateMainMenu::render_title, this, std::placeholders::_1, std::placeholders::_2))
 {
 }

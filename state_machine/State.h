@@ -16,7 +16,8 @@ class State :
   public Subject
 {
 public:
-  explicit State(StateMachine& state_machine);
+  explicit State(StateMachine& state_machine,
+                 std::unordered_set<EventID> const events);
   State(State const&) = delete;
   State(State&&) = delete;
   State& operator=(State const&) = delete;
@@ -38,8 +39,6 @@ public:
 
   // Tell state machine to change to a new state.
   bool change_to(std::string const& new_state);
-
-  virtual std::unordered_set<EventID> registeredEvents() const override;
 
 protected:
   // Get a reference to the state machine this state belongs to.

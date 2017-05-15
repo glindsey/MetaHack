@@ -26,7 +26,7 @@ public:
     void serialize(std::ostream& o) const;
   };
 
-  Subject();
+  Subject(std::unordered_set<EventID> const events);
   virtual ~Subject();
 
   /// Adds an observer of an event emitted by this subject.
@@ -45,12 +45,6 @@ public:
   ///                   unsubscribe from all events.
   void removeObserver(Observer& observer, EventID eventID = EventID::All);
 
-  /// Return the set of events this Subject provides.
-  /// By default, returns nothing. Must be overridden with the events
-  /// declared in the Subject subclass.
-  using RegisteredEventsDelegate = std::function<std::unordered_set<EventID>()>;
-  virtual std::unordered_set<EventID> registeredEvents() const;
-
 protected:
   using BroadcastDelegate = std::function<bool(Event& event, bool shouldSend)>;
   using UnicastDelegate = std::function<void(Event& event, Observer& observer, bool shouldSend)>;
@@ -66,10 +60,8 @@ protected:
   virtual void unicast_(Event& event, Observer& observer, UnicastDelegate do_unicast);
 
 protected:
-  void registerEventsIfNeeded(Subject const& subject);
 
 private:
-  bool m_eventsAlreadyRegistered;
   EventQueue m_eventQueue;
   EventObservers m_eventObservers;
 };

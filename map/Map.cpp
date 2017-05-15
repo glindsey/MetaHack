@@ -28,7 +28,7 @@ typedef boost::random::uniform_int_distribution<> uniform_int_dist;
 /// @todo Have this take an IntVec2 instead of width x height
 Map::Map(GameState& game, MapId map_id, int width, int height)
   :
-  Subject(),
+  Subject({}),
   m_game{ game },
   m_map_id{ map_id },
   m_map_size{ width, height },

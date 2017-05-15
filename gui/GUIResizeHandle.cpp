@@ -11,7 +11,7 @@ namespace metagui
 {
   ResizeHandle::ResizeHandle(std::string name)
     :
-    GUIObject(name, { 0, 0 }, { s_handle_size - 2, s_handle_size - 2 })
+    GUIObject(name, {}, { 0, 0 }, { s_handle_size - 2, s_handle_size - 2 })
   {}
 
   ResizeHandle::~ResizeHandle()
