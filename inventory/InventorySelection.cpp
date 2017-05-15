@@ -277,8 +277,8 @@ std::unordered_set<EventID> InventorySelection::registeredEvents() const
   auto events = Subject::registeredEvents();
   events.insert(
   {
-    EventEntityChanged::id(),
-    EventSelectionChanged::id()
+    EventEntityChanged::id,
+    EventSelectionChanged::id
   });
   return events;
 }

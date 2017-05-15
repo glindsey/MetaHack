@@ -164,7 +164,7 @@ namespace metagui
   bool Window::onEvent_V2(Event const& event)
   {
     auto id = event.getId();
-    if (id == EventDragStarted::id())
+    if (id == EventDragStarted::id)
     {
       // If the window has a titlebar, only allow window dragging via the titlebar.
       if (childExists(getName() + "_titlebar"))

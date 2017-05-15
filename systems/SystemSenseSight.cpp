@@ -255,12 +255,12 @@ bool SystemSenseSight::onEvent_V(Event const& event)
 {
   auto id = event.getId();
 
-  if (id == SystemSpacialRelationships::EventEntityMoved::id())
+  if (id == SystemSpacialRelationships::EventEntityMoved::id)
   {
     auto& castEvent = static_cast<SystemSpacialRelationships::EventEntityMoved const&>(event);
     m_needsUpdate.insert(castEvent.entity);
   }
-  else if (id == SystemSpacialRelationships::EventEntityChangedMaps::id())
+  else if (id == SystemSpacialRelationships::EventEntityChangedMaps::id)
   {
     auto& castEvent = static_cast<SystemSpacialRelationships::EventEntityChangedMaps const&>(event);
     MapId newMap = m_position.of(castEvent.entity).map();

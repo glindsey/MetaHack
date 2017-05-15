@@ -16,7 +16,7 @@ std::unordered_set<EventID> IMessageLog::registeredEvents() const
   auto events = Subject::registeredEvents();
   events.insert(
   {
-    EventMessageAdded::id()
+    EventMessageAdded::id
   });
   return events;
 }

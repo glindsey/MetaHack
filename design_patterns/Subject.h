@@ -9,12 +9,9 @@
 
 // Forward declarations
 class Observer;
-using ObserverPriority = int32_t;
 using ObserversSet = std::unordered_set<Observer*>;
-using PrioritizedObservers = std::map<ObserverPriority, ObserversSet>;
-using PrioritizedObserversPair = std::pair<ObserverPriority, ObserversSet>;
-using EventObservers = std::unordered_map<EventID, PrioritizedObservers>;
-using EventObserversPair = std::pair<EventID, PrioritizedObservers>;
+using EventObservers = std::unordered_map<EventID, ObserversSet>;
+using EventObserversPair = std::pair<EventID, ObserversSet>;
 using EventQueue = std::queue<std::function<bool()>>;
 
 /// Subject declaration for observer pattern.
@@ -36,11 +33,7 @@ public:
   /// @param observer   Reference to observer to add.
   /// @param eventID    ID of event to observe, or EventID::All to
   ///                   subscribe to all events.
-  /// @param priority   Optional priority of the observer. Priorities are
-  ///                   evaluated from lowest number to highest; e.g. -10
-  ///                   is a higher priority than +10. If no priority is
-  ///                   provided, 0 is assumed.
-  void addObserver(Observer& observer, EventID eventID, ObserverPriority priority = 0);
+  void addObserver(Observer& observer, EventID eventID);
 
   /// Remove all observers of this subject.
   /// Typically used before the subject is destroyed.
@@ -65,9 +58,8 @@ protected:
   bool broadcast(Event& event);
   void unicast(Event & event, Observer & observer);
 
-  size_t getObserverCount(EventID eventID) const;
-  PrioritizedObservers& getObservers(EventID eventID);
-  PrioritizedObservers const& getObservers(EventID eventID) const;
+  ObserversSet& getObservers(EventID eventID);
+  ObserversSet const& getObservers(EventID eventID) const;
   bool Subject::observerIsObservingEvent(Observer& observer, EventID eventID) const;
 
   virtual bool broadcast_(Event& event, BroadcastDelegate do_broadcast);

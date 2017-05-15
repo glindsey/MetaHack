@@ -49,7 +49,7 @@ namespace metagui
   {
     auto id = event.getId();
     auto parent = getParent();
-    if (id == EventResized::id())
+    if (id == EventResized::id)
     {
       if (event.subject == getParent())
       {
@@ -58,11 +58,11 @@ namespace metagui
                             static_cast<int>(castEvent.new_size.y - s_handle_size) });
       }
     }
-    else if (id == EventDragStarted::id() && parent)
+    else if (id == EventDragStarted::id && parent)
     {
       m_parent_size_start = parent->getSize();
     }
-    else if (id == EventDragging::id() && parent && isBeingDragged())
+    else if (id == EventDragging::id && parent && isBeingDragged())
     {
       auto& castEvent = static_cast<EventDragging const&>(event);
       auto move_amount = castEvent.current_location - getDragStartLocation();

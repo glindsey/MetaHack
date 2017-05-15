@@ -379,12 +379,12 @@ namespace metagui
     virtual bool onEvent_V2(Event const& event) { return false; }
 
     /// Subscribe to parent events that all objects care about.
-    void subscribeToParentEvents(Subject& parent, int priority);
+    void subscribeToParentEvents(Subject& parent);
 
     /// Subscribe to any additional events that we care about which are 
     /// emitted by a parent.
     /// The default behavior is to do nothing.
-    virtual void subscribeToParentEvents_V(Subject& parent, int priority);
+    virtual void subscribeToParentEvents_V(Subject& parent);
 
   private:
     /// The name of this object.

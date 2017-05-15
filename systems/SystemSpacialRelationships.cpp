@@ -170,8 +170,8 @@ void SystemSpacialRelationships::setMapNVO(MapId newMap)
 std::unordered_set<EventID> SystemSpacialRelationships::registeredEvents() const
 {
   auto events = Subject::registeredEvents();
-  events.insert(EventEntityMoved::id());
-  events.insert(EventEntityChangedMaps::id());
+  events.insert(EventEntityMoved::id);
+  events.insert(EventEntityChangedMaps::id);
   return events;
 }
 

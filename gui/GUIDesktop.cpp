@@ -27,9 +27,11 @@ namespace metagui
   std::unordered_set<EventID> Desktop::registeredEvents() const
   {
     auto events = Object::registeredEvents();
-    events.insert(EventDragStarted::id());
-    events.insert(EventDragging::id());
-    events.insert(EventDragFinished::id());
+    events.insert({
+      EventDragStarted::id,
+      EventDragging::id,
+      EventDragFinished::id
+    });
 
     /// @todo Add generated and propogated events here.
     return events;
@@ -40,7 +42,7 @@ namespace metagui
   bool Desktop::onEvent_V2(Event const& event)
   {
     auto id = event.getId();
-    if (id == EventResized::id())
+    if (id == EventResized::id)
     {
       if (event.subject == getParent())
       {
@@ -48,7 +50,7 @@ namespace metagui
         setSize(castEvent.new_size);
       }
     }
-    else if (id == UIEvents::EventMouseDown::id())
+    else if (id == UIEvents::EventMouseDown::id)
     {
       auto& castEvent = static_cast<UIEvents::EventMouseDown const&>(event);
       auto& button{ m_button_info[static_cast<unsigned int>(castEvent.button)] };
@@ -56,7 +58,7 @@ namespace metagui
       button.location = castEvent.location;
       button.elapsed.restart();
     }
-    else if (id == UIEvents::EventMouseUp::id())
+    else if (id == UIEvents::EventMouseUp::id)
     {
       auto& castEvent = static_cast<UIEvents::EventMouseUp const&>(event);
       auto& button{ m_button_info[static_cast<unsigned int>(castEvent.button)] };
@@ -71,7 +73,7 @@ namespace metagui
         broadcast(event);
       }
     }
-    else if (id == UIEvents::EventMouseMoved::id())
+    else if (id == UIEvents::EventMouseMoved::id)
     {
       auto& castEvent = static_cast<UIEvents::EventMouseMoved const&>(event);
       m_mouseLocation = castEvent.location;
@@ -97,7 +99,7 @@ namespace metagui
         }
       }
     }
-    else if (id == UIEvents::EventMouseLeft::id())
+    else if (id == UIEvents::EventMouseLeft::id)
     {
       for (unsigned int index = 0; index < sf::Mouse::ButtonCount; ++index)
       {

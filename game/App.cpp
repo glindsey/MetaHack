@@ -66,7 +66,7 @@ App::App(sf::RenderWindow& app_window)
   SET_UP_LOGGER("EntityPool",                   false);
   SET_UP_LOGGER("Game",                         false);
   SET_UP_LOGGER("GameRules",                    false);
-  SET_UP_LOGGER("GameState",                     true);
+  SET_UP_LOGGER("GameState",                    false);
   SET_UP_LOGGER("GUI",                          false);
   SET_UP_LOGGER("Inventory",                    false);
   SET_UP_LOGGER("InventoryArea",                false);
@@ -382,16 +382,16 @@ std::unordered_set<EventID> App::registeredEvents() const
 {
   auto events = Subject::registeredEvents();
   events.insert({
-    EventAppQuitRequested::id(),
-    EventAppWindowClosed::id(),
-    EventAppWindowFocusChanged::id(),
-    EventAppWindowResized::id(),
-    UIEvents::EventKeyPressed::id(),
-    UIEvents::EventMouseDown::id(),
-    UIEvents::EventMouseUp::id(),
-    UIEvents::EventMouseMoved::id(),
-    UIEvents::EventMouseLeft::id(),
-    UIEvents::EventMouseWheelMoved::id()
+    EventAppQuitRequested::id,
+    EventAppWindowClosed::id,
+    EventAppWindowFocusChanged::id,
+    EventAppWindowResized::id,
+    UIEvents::EventKeyPressed::id,
+    UIEvents::EventMouseDown::id,
+    UIEvents::EventMouseUp::id,
+    UIEvents::EventMouseMoved::id,
+    UIEvents::EventMouseLeft::id,
+    UIEvents::EventMouseWheelMoved::id
   });
 
   return events;

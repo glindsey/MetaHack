@@ -504,8 +504,8 @@ namespace metagui
   {
     auto events = Subject::registeredEvents();
     /// @todo Add our own events here
-    events.insert(EventMoved::id());
-    events.insert(EventResized::id());
+    events.insert(EventMoved::id);
+    events.insert(EventResized::id);
 
     return events;
   }
@@ -526,8 +526,7 @@ namespace metagui
 
     if (parent != nullptr)
     {
-      /// @todo Handle setting event priorities
-      parent->subscribeToParentEvents(*this, 0 /*parent->getChildZOrder(this)*/);
+      parent->subscribeToParentEvents(*this);
     }
 
     if (m_parent) m_parent->flagForRedraw();
@@ -575,19 +574,19 @@ namespace metagui
     bool handled = false;
 
     // Do our own work.
-    if (event.getId() == EventResized::id())
+    if (event.getId() == EventResized::id)
     {
       handled = onEventResized(static_cast<EventResized const&>(event));
     }
-    else if (event.getId() == EventDragStarted::id())
+    else if (event.getId() == EventDragStarted::id)
     {
       handled = onEventDragStarted(static_cast<EventDragStarted const&>(event));
     }
-    else if (event.getId() == EventDragging::id())
+    else if (event.getId() == EventDragging::id)
     {
       handled = onEventDragging(static_cast<EventDragging const&>(event));
     }
-    else if (event.getId() == EventDragFinished::id())
+    else if (event.getId() == EventDragFinished::id)
     {
       handled = onEventDragFinished(static_cast<EventDragFinished const&>(event));
     }
@@ -652,17 +651,17 @@ namespace metagui
     return false;
   }
 
-  void GUIObject::subscribeToParentEvents(Subject& parent, int priority)
+  void GUIObject::subscribeToParentEvents(Subject& parent)
   {
     // Subscribe to standard parent events here.
-    parent.addObserver(*this, GUIObject::EventMoved::id(), priority);
-    parent.addObserver(*this, GUIObject::EventResized::id(), priority);
+    parent.addObserver(*this, GUIObject::EventMoved::id);
+    parent.addObserver(*this, GUIObject::EventResized::id);
 
     // Subscribe to any additional events.
-    subscribeToParentEvents_V(parent, priority);
+    subscribeToParentEvents_V(parent);
   }
 
-  void GUIObject::subscribeToParentEvents_V(Subject& parent, int priority)
+  void GUIObject::subscribeToParentEvents_V(Subject& parent)
   {}
 
 

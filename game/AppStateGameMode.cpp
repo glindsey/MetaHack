@@ -238,8 +238,8 @@ std::unordered_set<EventID> AppStateGameMode::registeredEvents() const
 {
   auto events = AppState::registeredEvents();
   events.insert({
-    App::EventAppWindowResized::id(),
-    UIEvents::EventKeyPressed::id()
+    App::EventAppWindowResized::id,
+    UIEvents::EventKeyPressed::id
   });
   return events;
 }
@@ -1009,7 +1009,7 @@ bool AppStateGameMode::onEvent_V(Event const& event)
 {
   auto id = event.getId();
 
-  if (id == App::EventAppWindowResized::id())
+  if (id == App::EventAppWindowResized::id)
   {
     auto info = static_cast<App::EventAppWindowResized const&>(event);
     the_desktop.setSize({ info.new_size.x, info.new_size.y });
@@ -1018,13 +1018,13 @@ bool AppStateGameMode::onEvent_V(Event const& event)
     the_desktop.getChild("StatusArea").setRelativeDimensions(calcStatusAreaDims());
     return false;
   }
-  else if (id == UIEvents::EventKeyPressed::id())
+  else if (id == UIEvents::EventKeyPressed::id)
   {
     auto info = static_cast<UIEvents::EventKeyPressed const&>(event);
     bool keep_broadcasting = handle_key_press(info);
     return !keep_broadcasting;
   }
-  else if (id == UIEvents::EventMouseWheelMoved::id())
+  else if (id == UIEvents::EventMouseWheelMoved::id)
   {
     auto info = static_cast<UIEvents::EventMouseWheelMoved const&>(event);
     bool keep_broadcasting = handle_mouse_wheel(info);

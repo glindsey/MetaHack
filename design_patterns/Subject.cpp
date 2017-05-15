@@ -25,11 +25,11 @@ Subject::~Subject()
   for (auto& prioritizedObservers : m_eventObservers)
   {
     auto eventID = prioritizedObservers.first;
-    auto observerCount = getObserverCount(eventID);
+    auto observersSet = getObservers(eventID);
 
-    if (observerCount != 0)
+    if (observersSet.size() != 0)
     {
-      CLOG(WARNING, "ObserverPattern") << "Subject was deleted while " << observerCount << " objects were still observing event " << eventID;
+      CLOG(WARNING, "ObserverPattern") << "Subject was deleted while " << observersSet.size() << " objects were still observing event " << eventID;
       observersRemain = true;
     }
   }
@@ -41,7 +41,7 @@ Subject::~Subject()
   }
 }
 
-void Subject::addObserver(Observer& observer, EventID eventID, ObserverPriority priority)
+void Subject::addObserver(Observer& observer, EventID eventID)
 {
   registerEventsIfNeeded(*this);
 
@@ -49,7 +49,7 @@ void Subject::addObserver(Observer& observer, EventID eventID, ObserverPriority 
   {
     for (auto& id : registeredEvents())
     {
-      addObserver(observer, id, priority);
+      addObserver(observer, id);
     }
   }
   else
@@ -60,9 +60,7 @@ void Subject::addObserver(Observer& observer, EventID eventID, ObserverPriority 
            "\nObserver:\t" << observer <<
            "\nEvent:\t" << eventID);
 
-    auto& prioritizedObservers = getObservers(eventID);
-    auto insertResult = prioritizedObservers.insert({ priority, ObserversSet() });
-    auto& observersSet = (insertResult.first)->second;
+    auto& observersSet = getObservers(eventID);
     observersSet.insert(&observer);
 
     Registration e;
@@ -70,8 +68,8 @@ void Subject::addObserver(Observer& observer, EventID eventID, ObserverPriority 
     e.subject = this;
 
     CLOG(TRACE, "ObserverPattern") << "Registered Observer " << observer 
-      << " for EventID " << eventID 
-      << " with priority " << priority;
+      << " for EventID 0x" 
+      << std::setbase(16) << std::setfill('0') << std::setw(8) << eventID;
 
     observer.onEvent(e);
   }
@@ -87,19 +85,13 @@ void Subject::removeAllObservers()
 
   for (auto& eventObservers : m_eventObservers)
   {
-    auto& prioritizedObservers = eventObservers.second;
-
-    for (auto& pair : prioritizedObservers)
+    auto& observersSet = eventObservers.second;
+    for (auto& observer : observersSet)
     {
-      auto& observersSet = pair.second;
-
-      for (auto& observer : observersSet)
-      {
-        observer->onEvent(e);
-      }
+      observer->onEvent(e);
     }
 
-    prioritizedObservers.clear();
+    observersSet.clear();
   }
 
   CLOG(TRACE, "ObserverPattern") << "Deregistered all Observers for all Events";
@@ -114,37 +106,27 @@ void Subject::removeObserver(Observer& observer, EventID eventID)
   {
     for (auto& eventObservers : m_eventObservers)
     {
-      auto& prioritizedObservers = eventObservers.second;
-
-      for (auto& pair : prioritizedObservers)
-      {
-        auto& observersSet = pair.second;
-        removalCount += observersSet.erase(&observer);
-      }
+      auto& observersSet = eventObservers.second;
+      removalCount += observersSet.erase(&observer);
     }
 
     CLOG(TRACE, "ObserverPattern") << "Deregistered Observer " << observer << " for all Events";
   }
   else
   {
-    auto observerCount = getObserverCount(eventID);
+    auto& observersSet = getObservers(eventID);
 
-    auto& prioritizedObservers = getObservers(eventID);
-
-    Assert("ObserverPattern", (observerCount > 0),
+    Assert("ObserverPattern", (observersSet.size() > 0),
            "\nReason:\tattempted to remove an observer on event with no observers." <<
            "\nSubject:\t" << *this <<
            "\nObserver:\t" << observer <<
            "\nEvent:\t" << eventID);
 
-    for (auto& pair : prioritizedObservers)
-    {
-      auto& observersSet = pair.second;
-      removalCount += observersSet.erase(&observer);
-    }
+    removalCount = observersSet.erase(&observer);
 
     CLOG(TRACE, "ObserverPattern") << "Deregistered Observer " << observer 
-      << "for EventID " << eventID;
+      << " for EventID 0x"
+      << std::setbase(16) << std::setfill('0') << std::setw(8) << eventID;
   }
 
   if (removalCount == 0)
@@ -192,25 +174,20 @@ bool Subject::broadcast(Event& event)
         // Dispatch block now owns copiedEvent.
         CLOG(TRACE, "ObserverPattern") << "Broadcasting: " << *copiedEvent;
 
-        auto observerCount = getObserverCount(copiedEvent->getId());
+        auto id = copiedEvent->getId();
+        auto& observersSet = getObservers(id);
 
         // Return if no observers for this event.
-        if (observerCount == 0)
+        if (observersSet.size() == 0)
         {
           CLOG(TRACE, "ObserverPattern") << "No observers registered for event";
           handled = true;
         }
         else
         {
-          auto& prioritizedObservers = getObservers(copiedEvent->getId());
-
-          for (auto& priorityPair : prioritizedObservers)
+          for (auto& observer : observersSet)
           {
-            for (auto& observer : priorityPair.second)
-            {
-              handled = observer->onEvent(*copiedEvent);
-              if (handled) break;
-            }
+            handled = observer->onEvent(*copiedEvent);
             if (handled) break;
           }
 
@@ -283,58 +260,36 @@ void Subject::unicast(Event& event, Observer& observer)
   });
 }
 
-size_t Subject::getObserverCount(EventID eventID) const
-{
-  size_t count = 0;
-
-  auto& eventObserverIter = m_eventObservers.find(eventID);
-
-  if (eventObserverIter != m_eventObservers.end())
-  {
-    auto& prioritizedObservers = eventObserverIter->second;
-    for (auto& observers : prioritizedObservers)
-    {
-      count += observers.second.size();
-    }
-    return count;
-  }
-  return 0;
-}
-
-PrioritizedObservers& Subject::getObservers(EventID eventID)
+ObserversSet& Subject::getObservers(EventID eventID)
 {
   auto& eventObserversIter = m_eventObservers.find(eventID);
 
-  Assert("ObserverPattern", (eventObserversIter != m_eventObservers.end()),
+  Assert("ObserverPattern", (m_eventObservers.count(eventID) != 0),
          "\nReason:\tattempted to get observers for an unregistered event." <<
          "\nSubject:\t" << *this <<
-         "\nEventID:\t" << eventID);
+         "\nEventID:\t0x" << 
+         std::setbase(16) << std::setfill('0') << std::setw(8) << eventID);
 
-  return eventObserversIter->second;
+  return m_eventObservers.at(eventID);
 }
 
-PrioritizedObservers const& Subject::getObservers(EventID eventID) const
+ObserversSet const& Subject::getObservers(EventID eventID) const
 {
-  auto const& eventObserversIter = m_eventObservers.find(eventID);
+  auto& eventObserversIter = m_eventObservers.find(eventID);
 
-  Assert("ObserverPattern", (eventObserversIter != m_eventObservers.end()),
+  Assert("ObserverPattern", (m_eventObservers.count(eventID) != 0),
          "\nReason:\tattempted to get observers for an unregistered event." <<
          "\nSubject:\t" << *this <<
-         "\nEventID:\t" << eventID);
+         "\nEventID:\t0x" <<
+         std::setbase(16) << std::setfill('0') << std::setw(8) << eventID);
 
-  return eventObserversIter->second;
+  return m_eventObservers.at(eventID);
 }
 
 bool Subject::observerIsObservingEvent(Observer& observer, EventID eventID) const
 {
-  auto& prioritizedObservers = getObservers(eventID);
-
-  for (auto& prioritiesPair : prioritizedObservers)
-  {
-    if (prioritiesPair.second.count(&observer) != 0) return true;
-  }
-
-  return false;
+  auto& observersSet = getObservers(eventID);
+  return observersSet.find(&observer) != observersSet.cend();
 }
 
 bool Subject::broadcast_(Event& event, BroadcastDelegate do_broadcast)
@@ -362,7 +317,10 @@ void Subject::registerEventsIfNeeded(Subject const& subject)
     std::unordered_set<EventID> events = subject.registeredEvents();
     for (EventID const registeredEvent : events)
     {
-      m_eventObservers.emplace(registeredEvent, PrioritizedObservers());
+      CLOG(TRACE, "ObserverPattern") << "Registering Event 0x" <<
+        std::setbase(16) << std::setfill('0') << std::setw(8) << registeredEvent <<
+        " for Subject " << *this;
+      m_eventObservers.emplace(registeredEvent, ObserversSet());
     }
   }
 }

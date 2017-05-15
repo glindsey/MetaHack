@@ -32,11 +32,11 @@ SystemManager::SystemManager(ComponentManager& components) :
                                                  m_components.position));
 
   // Link system events.
-  m_spacial->addObserver(*m_lighting, SystemSpacialRelationships::EventEntityChangedMaps::id());
-  m_spacial->addObserver(*m_lighting, SystemSpacialRelationships::EventEntityMoved::id());
+  m_spacial->addObserver(*m_lighting, SystemSpacialRelationships::EventEntityChangedMaps::id);
+  m_spacial->addObserver(*m_lighting, SystemSpacialRelationships::EventEntityMoved::id);
 
-  m_spacial->addObserver(*m_senseSight, SystemSpacialRelationships::EventEntityChangedMaps::id());
-  m_spacial->addObserver(*m_senseSight, SystemSpacialRelationships::EventEntityMoved::id());
+  m_spacial->addObserver(*m_senseSight, SystemSpacialRelationships::EventEntityChangedMaps::id);
+  m_spacial->addObserver(*m_senseSight, SystemSpacialRelationships::EventEntityMoved::id);
 
 }
 

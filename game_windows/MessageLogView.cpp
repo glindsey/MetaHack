@@ -92,7 +92,7 @@ bool MessageLogView::onEvent_V2(Event const& event)
   ///       Right now we just always set the "dirty" flag for the view so it is redrawn.
   flagForRedraw();
 
-  if (id == UIEvents::EventKeyPressed::id())
+  if (id == UIEvents::EventKeyPressed::id)
   {
     return handleKeyPress(static_cast<UIEvents::EventKeyPressed const&>(event));
   }

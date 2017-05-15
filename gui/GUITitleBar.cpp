@@ -79,7 +79,7 @@ namespace metagui
   {
     auto id = event.getId();
 
-    if (id == EventResized::id())
+    if (id == EventResized::id)
     {
       if (event.subject == getParent())
       {

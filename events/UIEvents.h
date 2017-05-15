@@ -4,7 +4,7 @@
 
 namespace UIEvents
 {
-  struct EventKeyPressed : public ConcreteEvent<EventKeyPressed>
+  struct EventKeyPressed : public ConcreteEvent<EventKeyPressed, EventID(0x80000000)>
   {
     EventKeyPressed(sf::Keyboard::Key code_, bool alt_, bool control_, bool shift_, bool system_)
       :
@@ -32,7 +32,7 @@ namespace UIEvents
     }
   };
 
-  struct EventMouseDown : public ConcreteEvent<EventMouseDown>
+  struct EventMouseDown : public ConcreteEvent<EventMouseDown, EventID(0x80000001)>
   {
     EventMouseDown(sf::Mouse::Button button_, IntVec2 location_)
       :
@@ -46,7 +46,7 @@ namespace UIEvents
     /// @todo write serialize()
   };
 
-  struct EventMouseUp : public ConcreteEvent<EventMouseUp>
+  struct EventMouseUp : public ConcreteEvent<EventMouseUp, EventID(0x80000002)>
   {
     EventMouseUp(sf::Mouse::Button button_, IntVec2 location_)
       :
@@ -60,7 +60,7 @@ namespace UIEvents
     /// @todo write serialize()
   };
 
-  struct EventMouseMoved : public ConcreteEvent<EventMouseMoved>
+  struct EventMouseMoved : public ConcreteEvent<EventMouseMoved, EventID(0x80000003)>
   {
     EventMouseMoved(IntVec2 location_)
       :
@@ -72,7 +72,7 @@ namespace UIEvents
     /// @todo write serialize()
   };
 
-  struct EventMouseLeft : public ConcreteEvent<EventMouseLeft>
+  struct EventMouseLeft : public ConcreteEvent<EventMouseLeft, EventID(0x80000004)>
   {
     EventMouseLeft()
     {}
@@ -80,7 +80,7 @@ namespace UIEvents
     /// @todo write serialize()
   };
 
-  struct EventMouseWheelMoved : public ConcreteEvent<EventMouseWheelMoved>
+  struct EventMouseWheelMoved : public ConcreteEvent<EventMouseWheelMoved, EventID(0x80000005)>
   {
     EventMouseWheelMoved(int delta_, int x_, int y_)
       : delta{ delta_ }, x{ x_ }, y{ y_ }
