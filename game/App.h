@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 
-#include "Subject.h"
+#include "Object.h"
 #include "lua/LuaObject.h"
 #include "types/MouseButtonInfo.h"
 
@@ -18,7 +18,7 @@ class StateMachine;
 class StringDictionary;
 class TileSheet;
 
-class App : public Subject
+class App : public Object
 {
 public:
   struct EventAppQuitRequested : public ConcreteEvent<EventAppQuitRequested>

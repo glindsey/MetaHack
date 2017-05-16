@@ -2,10 +2,10 @@
 
 #include <deque>
 
-#include "Subject.h"
+#include "Object.h"
 
 /// Interface for a game message log.
-class IMessageLog : public Subject
+class IMessageLog : public Object
 {
 public:
   struct EventMessageAdded : public ConcreteEvent<EventMessageAdded>

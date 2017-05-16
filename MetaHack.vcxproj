@@ -346,11 +346,9 @@
     <ClInclude Include="components\ComponentSpacialMemory.h" />
     <ClInclude Include="design_patterns\AssertHelper.h" />
     <ClInclude Include="design_patterns\Event.h" />
-    <ClInclude Include="design_patterns\Object.h" />
-    <ClInclude Include="design_patterns\Observer.h" />
     <ClInclude Include="design_patterns\Serializable.h" />
     <ClInclude Include="design_patterns\Service.h" />
-    <ClInclude Include="design_patterns\Subject.h" />
+    <ClInclude Include="design_patterns\Object.h" />
     <ClInclude Include="design_patterns\Visitor.h" />
     <ClInclude Include="events\UIEvents.h" />
     <ClInclude Include="lua\LuaTemplates.h" />
@@ -582,8 +580,7 @@
     </ClCompile>
     <ClCompile Include="design_patterns\AssertHelper.cpp" />
     <ClCompile Include="design_patterns\Event.cpp" />
-    <ClCompile Include="design_patterns\Observer.cpp" />
-    <ClCompile Include="design_patterns\Subject.cpp" />
+    <ClCompile Include="design_patterns\Object.cpp" />
     <ClCompile Include="inventory\InventorySlot.cpp" />
     <ClCompile Include="map\MapId.cpp" />
     <ClCompile Include="map\MapMemory.cpp" />

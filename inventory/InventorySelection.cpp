@@ -13,7 +13,7 @@
 
 InventorySelection::InventorySelection()
   :
-  Subject({
+  Object({
   EventEntityChanged::id,
   EventSelectionChanged::id })
 {}

@@ -3,7 +3,6 @@
 #include "stdafx.h"
 
 #include "map/Map.h"
-#include "Observer.h"
 
 // Forward declarations
 class EntityId;

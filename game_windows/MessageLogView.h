@@ -5,8 +5,6 @@
 
 #include "events/UIEvents.h"
 #include "gui/GUIWindow.h"
-#include "Observer.h"
-
 
 /// Forward declarations
 class IKeyBuffer;

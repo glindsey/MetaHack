@@ -4,7 +4,7 @@
 
 #include "entity/EntityId.h"
 #include "inventory/InventorySlot.h"
-#include "Subject.h"
+#include "Object.h"
 
 // Forward declarations
 class Container;
@@ -12,7 +12,7 @@ class Entity;
 
 /// InventorySelection is sort of the controller that binds an InventoryView
 /// to a Entity to be displayed.
-class InventorySelection : public Subject
+class InventorySelection : public Object
 {
   struct EventEntityChanged : public ConcreteEvent<EventEntityChanged>
   {

@@ -10,7 +10,7 @@
 #include "types/GameObject.h"
 #include "types/LightInfluence.h"
 #include "map/MapFactory.h"
-#include "Subject.h"
+#include "Object.h"
 
 // Forward declarations
 class DynamicEntity;
@@ -21,7 +21,7 @@ class Floor;
 class MapTile
   :
   public GameObject,
-  public Subject
+  public Object
 {
   friend class Map;
 

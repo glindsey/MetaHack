@@ -8,6 +8,7 @@
 
 EntityView::EntityView(Entity& entity)
   :
+  Object({}),
   m_entity(entity)
 {
   //startObserving(entity);

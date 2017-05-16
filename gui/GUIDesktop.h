@@ -6,7 +6,7 @@
 #include "GUIObject.h"
 
 // Forward declarations
-class Subject;
+class Object;
 
 namespace metagui
 {
@@ -30,7 +30,7 @@ namespace metagui
       sf::Clock elapsed;
     };
 
-    explicit Desktop(Subject& event_parent,
+    explicit Desktop(Object& event_parent,
                      std::string name, 
                      UintVec2 size);
 
@@ -43,7 +43,7 @@ namespace metagui
 
   private:
     /// The subject from which to receive input events.
-    Subject& m_event_parent;
+    Object& m_event_parent;
 
     /// An array of data for each possible mouse button.
     std::array< MouseButtonInfo, sf::Mouse::ButtonCount > m_button_info;

@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 
-#include "Subject.h"
+#include "Object.h"
 #include "map/MapFactory.h"
 #include "types/Grid2D.h"
 #include "types/IRenderable.h"
@@ -25,7 +25,7 @@ class EntityId;
 /// Class representing a map, which is a grid of locations for Entities.
 class Map
   :
-  public Subject
+  public Object
 {
   friend class MapFactory;
   friend class MapView;

@@ -4,7 +4,6 @@
 
 #include "GUIWindow.h"
 #include "inventory/InventorySlot.h"
-#include "Observer.h"
 
 // Forward declarations
 class Container;

@@ -685,7 +685,7 @@ namespace metagui
     return false;
   }
 
-  void GUIObject::doEventSubscriptions(Subject& parent)
+  void GUIObject::doEventSubscriptions(Object& parent)
   {
     // Subscribe to standard App events here.
     /// @todo Limit this to specific events and have subclasses add others
@@ -700,7 +700,7 @@ namespace metagui
     doEventSubscriptions_V(parent);
   }
 
-  void GUIObject::doEventSubscriptions_V(Subject& parent)
+  void GUIObject::doEventSubscriptions_V(Object& parent)
   {
   }
 

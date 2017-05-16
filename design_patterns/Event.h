@@ -4,7 +4,7 @@
 #include "utilities/New.h"
 
 // Forward declarations
-class Subject;
+class Object;
 
 enum EventID : size_t
 {
@@ -25,7 +25,7 @@ public:
   virtual Event* heapClone() const = 0;
   virtual EventID getId() const;
 
-  Subject* subject;
+  Object* subject;
 
   void serialize(std::ostream& os) const;
 };

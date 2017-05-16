@@ -3,7 +3,7 @@
 #include "stdafx.h"
 
 #include "entity/Entity.h"
-#include "Observer.h"
+#include "Object.h"
 
 // Forward declarations
 class SystemLighting;
@@ -11,13 +11,12 @@ class SystemLighting;
 /// Abstract class representing a view of a single Entity object.
 class EntityView 
   : 
-  public Observer
+  public Object
 {
   friend class NullGraphicViews;
   friend class Standard2DGraphicViews;
 
 public:
-  /// Destructor.
   virtual ~EntityView();
 
   /// Sets the location of this Entity on the target texture.

@@ -3,8 +3,7 @@
 
 #include "stdafx.h"
 
-#include "Observer.h"
-#include "Subject.h"
+#include "Object.h"
 #include "types/IRenderable.h"
 
 // Forward declarations
@@ -14,12 +13,11 @@ class State;
 // from the State abstract class.
 class StateMachine :
   public RenderableToTexture,
-  public Observer,
-  public Subject
+  public Object
 {
 public:
   explicit StateMachine(std::string const& machine_name,
-                        Subject* parent);
+                        Object* parent);
   StateMachine(StateMachine const&) = delete;
   StateMachine(StateMachine&&) = delete;
   StateMachine& operator=(StateMachine const&) = delete;

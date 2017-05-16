@@ -1,33 +1,34 @@
-/// @file Subject.cpp Subject implementation for observer pattern.
-/// Adapted from http://0xfede.io/2015/12/13/T-C++-ObserverPattern.html
-
 #include "stdafx.h"
 
-#include "Subject.h"
-
-#include <queue>
-#include <unordered_set>
+#include "Object.h"
 
 #include "AssertHelper.h"
 #include "Event.h"
-#include "Observer.h"
 
-Subject::Subject(std::unordered_set<EventID> const events)
+Object::Object(std::unordered_set<EventID> const events)
   :
   m_eventQueue{},
   m_eventObservers{}
 {
   for (EventID const event : events)
   {
-    CLOG(TRACE, "ObserverPattern") << "Registering Event 0x" <<
+    CLOG(TRACE, "EventSystem") << "Registering Event 0x" <<
       std::setbase(16) << std::setfill('0') << std::setw(8) << event <<
-      " for Subject " << *this;
+      " for Object " << *this;
     m_eventObservers.emplace(event, ObserversSet());
   }
 }
 
-Subject::~Subject()
+Object::~Object()
 {
+  for (auto& observation : m_observations)
+  {
+    Assert("EventSystem", !observation.second,
+           "\nReason:\tobserver went out of scope while registered with at least one Object." <<
+           "\nSubject:\t" << observation.first <<
+           "\nObserver:\t" << *this);
+  }
+
   bool observersRemain = false;
   for (auto& prioritizedObservers : m_eventObservers)
   {
@@ -36,19 +37,19 @@ Subject::~Subject()
 
     if (observersSet.size() != 0)
     {
-      CLOG(WARNING, "ObserverPattern") << "Subject was deleted while " << observersSet.size() << " objects were still observing event " << eventID;
+      CLOG(WARNING, "EventSystem") << "Subject was deleted while " << observersSet.size() << " objects were still observing event " << eventID;
       observersRemain = true;
     }
   }
 
   if (observersRemain)
   {
-    CLOG(WARNING, "ObserverPattern") << "Clearing all observers of this subject";
+    CLOG(WARNING, "EventSystem") << "Clearing all observers of this subject";
     removeAllObservers();
   }
 }
 
-void Subject::addObserver(Observer& observer, EventID eventID)
+void Object::addObserver(Object& observer, EventID eventID)
 {
   if (eventID == EventID::All)
   {
@@ -59,7 +60,7 @@ void Subject::addObserver(Observer& observer, EventID eventID)
   }
   else
   {
-    Assert("ObserverPattern", !observerIsObservingEvent(observer, eventID),
+    Assert("EventSystem", !observerIsObservingEvent(observer, eventID),
            "\nReason:\tattempted to add an observer for an event it is already observing." <<
            "\nSubject:\t" << *this <<
            "\nObserver:\t" << observer <<
@@ -72,7 +73,7 @@ void Subject::addObserver(Observer& observer, EventID eventID)
     e.state = Registration::State::Registered;
     e.subject = this;
 
-    CLOG(TRACE, "ObserverPattern") << "Registered Observer " << observer 
+    CLOG(TRACE, "EventSystem") << "Registered Observer " << observer 
       << " for EventID 0x" 
       << std::setbase(16) << std::setfill('0') << std::setw(8) << eventID;
 
@@ -80,7 +81,7 @@ void Subject::addObserver(Observer& observer, EventID eventID)
   }
 }
 
-void Subject::removeAllObservers()
+void Object::removeAllObservers()
 {
   Registration e;
   e.state = Registration::State::Unregistered;
@@ -97,10 +98,10 @@ void Subject::removeAllObservers()
     observersSet.clear();
   }
 
-  CLOG(TRACE, "ObserverPattern") << "Deregistered all Observers for all Events";
+  CLOG(TRACE, "EventSystem") << "Deregistered all Observers for all Events";
 }
 
-void Subject::removeObserver(Observer& observer, EventID eventID)
+void Object::removeObserver(Object& observer, EventID eventID)
 {
   size_t removalCount = 0;
   if (eventID == EventID::All)
@@ -111,13 +112,13 @@ void Subject::removeObserver(Observer& observer, EventID eventID)
       removalCount += observersSet.erase(&observer);
     }
 
-    CLOG(TRACE, "ObserverPattern") << "Deregistered Observer " << observer << " for all Events";
+    CLOG(TRACE, "EventSystem") << "Deregistered Observer " << observer << " for all Events";
   }
   else
   {
     auto& observersSet = getObservers(eventID);
 
-    Assert("ObserverPattern", (observersSet.size() > 0),
+    Assert("EventSystem", (observersSet.size() > 0),
            "\nReason:\tattempted to remove an observer on event with no observers." <<
            "\nSubject:\t" << *this <<
            "\nObserver:\t" << observer <<
@@ -125,14 +126,14 @@ void Subject::removeObserver(Observer& observer, EventID eventID)
 
     removalCount = observersSet.erase(&observer);
 
-    CLOG(TRACE, "ObserverPattern") << "Deregistered Observer " << observer 
+    CLOG(TRACE, "EventSystem") << "Deregistered Observer " << observer 
       << " for EventID 0x"
       << std::setbase(16) << std::setfill('0') << std::setw(8) << eventID;
   }
 
   if (removalCount == 0)
   {
-    CLOG(WARNING, "ObserverPattern") 
+    CLOG(WARNING, "EventSystem") 
       << "Observer " << observer 
       << " was not registered for " 
       << ((eventID == EventID::All) ? "any Events" : ("Event " + eventID))
@@ -149,7 +150,37 @@ void Subject::removeObserver(Observer& observer, EventID eventID)
   }
 }
 
-bool Subject::broadcast(Event& event)
+bool Object::onEvent_NV(Event const& event)
+{
+  if (event.getId() == Object::Registration::id)
+  {
+    auto e = static_cast<const Object::Registration&>(event);
+    if (e.state == Object::Registration::State::Registered)
+    {
+      ++(m_observations[e.subject]);
+    }
+    else if (e.state == Object::Registration::State::Unregistered)
+    {
+      if (!--m_observations[e.subject])
+      {
+        m_observations.erase(e.subject);
+      }
+    }
+
+    return true;
+  }
+
+  bool result = onEvent(event);
+
+  return result;
+}
+
+bool Object::onEvent(Event const& event)
+{
+  return false;
+}
+
+bool Object::broadcast(Event& event)
 {
   bool result = true;
 
@@ -166,7 +197,7 @@ bool Subject::broadcast(Event& event)
         bool handled = false;
 
         // Dispatch block now owns copiedEvent.
-        CLOG(TRACE, "ObserverPattern") << "Broadcasting: " << *copiedEvent;
+        CLOG(TRACE, "EventSystem") << "Broadcasting: " << *copiedEvent;
 
         auto id = copiedEvent->getId();
         auto& observersSet = getObservers(id);
@@ -174,7 +205,7 @@ bool Subject::broadcast(Event& event)
         // Return if no observers for this event.
         if (observersSet.size() == 0)
         {
-          CLOG(TRACE, "ObserverPattern") << "No observers registered for event";
+          CLOG(TRACE, "EventSystem") << "No observers registered for event";
           handled = true;
         }
         else
@@ -187,7 +218,7 @@ bool Subject::broadcast(Event& event)
 
           if (handled)
           {
-            CLOG(TRACE, "ObserverPattern") << "Broadcast Halted: " << *copiedEvent;
+            CLOG(TRACE, "EventSystem") << "Broadcast Halted: " << *copiedEvent;
           }
         }
 
@@ -212,11 +243,11 @@ bool Subject::broadcast(Event& event)
   });
 }
 
-void Subject::unicast(Event& event, Observer& observer)
+void Object::unicast(Event& event, Object& observer)
 {
   event.subject = this;
 
-  unicast_(event, observer, [&](Event& event, Observer& observer, bool shouldSend)
+  unicast_(event, observer, [&](Event& event, Object& observer, bool shouldSend)
   {
     if (shouldSend)
     {
@@ -228,7 +259,7 @@ void Subject::unicast(Event& event, Observer& observer)
 
         if (observerIsObservingEvent(observer, finalEvent->getId()))
         {
-          CLOG(TRACE, "ObserverPattern") << "Unicasting " << *finalEvent << " to " << observer;
+          CLOG(TRACE, "EventSystem") << "Unicasting " << *finalEvent << " to " << observer;
           result = observer.onEvent_NV(*finalEvent);
         }
 
@@ -252,11 +283,11 @@ void Subject::unicast(Event& event, Observer& observer)
   });
 }
 
-ObserversSet& Subject::getObservers(EventID eventID)
+ObserversSet& Object::getObservers(EventID eventID)
 {
   auto& eventObserversIter = m_eventObservers.find(eventID);
 
-  Assert("ObserverPattern", (m_eventObservers.count(eventID) != 0),
+  Assert("EventSystem", (m_eventObservers.count(eventID) != 0),
          "\nReason:\tattempted to get observers for an unregistered event." <<
          "\nSubject:\t" << *this <<
          "\nEventID:\t0x" << 
@@ -265,11 +296,11 @@ ObserversSet& Subject::getObservers(EventID eventID)
   return m_eventObservers.at(eventID);
 }
 
-ObserversSet const& Subject::getObservers(EventID eventID) const
+ObserversSet const& Object::getObservers(EventID eventID) const
 {
   auto& eventObserversIter = m_eventObservers.find(eventID);
 
-  Assert("ObserverPattern", (m_eventObservers.count(eventID) != 0),
+  Assert("EventSystem", (m_eventObservers.count(eventID) != 0),
          "\nReason:\tattempted to get observers for an unregistered event." <<
          "\nSubject:\t" << *this <<
          "\nEventID:\t0x" <<
@@ -278,23 +309,23 @@ ObserversSet const& Subject::getObservers(EventID eventID) const
   return m_eventObservers.at(eventID);
 }
 
-bool Subject::observerIsObservingEvent(Observer& observer, EventID eventID) const
+bool Object::observerIsObservingEvent(Object& observer, EventID eventID) const
 {
   auto& observersSet = getObservers(eventID);
   return observersSet.find(&observer) != observersSet.cend();
 }
 
-bool Subject::broadcast_(Event& event, BroadcastDelegate do_broadcast)
+bool Object::broadcast_(Event& event, BroadcastDelegate do_broadcast)
 {
   return do_broadcast(event, true);
 }
 
-void Subject::unicast_(Event& event, Observer& observer, UnicastDelegate do_unicast)
+void Object::unicast_(Event& event, Object& observer, UnicastDelegate do_unicast)
 {
   do_unicast(event, observer, true);
 }
 
-void Subject::Registration::serialize(std::ostream& o) const
+void Object::Registration::serialize(std::ostream& o) const
 {
   Event::serialize(o);
   o << " | registration state: " <<

@@ -2,14 +2,14 @@
 
 #include "GUIDesktop.h"
 
-#include "design_patterns/Subject.h"
+#include "design_patterns/Object.h"
 #include "game/App.h"
 #include "services/IConfigSettings.h"
 #include "Service.h"
 
 namespace metagui
 {
-  Desktop::Desktop(Subject& event_parent,
+  Desktop::Desktop(Object& event_parent,
                    std::string name, 
                    UintVec2 size)
     :

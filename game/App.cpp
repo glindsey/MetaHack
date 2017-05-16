@@ -41,7 +41,7 @@ sf::IntRect calc_message_log_dimensions(sf::RenderWindow& window)
 
 App::App(sf::RenderWindow& app_window)
   :
-  Subject({
+  Object({
   EventAppQuitRequested::id,
   EventAppWindowClosed::id,
   EventAppWindowFocusChanged::id,
@@ -74,6 +74,7 @@ App::App(sf::RenderWindow& app_window)
   SET_UP_LOGGER("ConfigSettings",               false);
   SET_UP_LOGGER("Entity",                       false);
   SET_UP_LOGGER("EntityPool",                   false);
+  SET_UP_LOGGER("EventSystem",                   true);
   SET_UP_LOGGER("Game",                         false);
   SET_UP_LOGGER("GameRules",                    false);
   SET_UP_LOGGER("GameState",                    false);
@@ -86,7 +87,6 @@ App::App(sf::RenderWindow& app_window)
   SET_UP_LOGGER("Map",                          false);
   SET_UP_LOGGER("MapFactory",                   false);
   SET_UP_LOGGER("MapGenerator",                 false);
-  SET_UP_LOGGER("ObserverPattern",               true);
   SET_UP_LOGGER("Property",                     false);
   SET_UP_LOGGER("PropertyDictionary",           false);
   SET_UP_LOGGER("SenseSight",                   false);

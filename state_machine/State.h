@@ -3,8 +3,7 @@
 
 #include "stdafx.h"
 
-#include "Observer.h"
-#include "Subject.h"
+#include "Object.h"
 #include "types/IRenderable.h"
 
 // Forward declarations
@@ -12,8 +11,7 @@ class StateMachine;
 
 class State :
   public RenderableToTexture,
-  public Observer,
-  public Subject
+  public Object
 {
 public:
   explicit State(StateMachine& state_machine,

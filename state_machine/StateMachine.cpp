@@ -6,23 +6,22 @@
 
 struct StateMachine::Impl
 {
-  Impl(Subject* parent_) 
+  Impl(Object* parent_)
     : 
     parent{ parent_ } 
   {}
 
-  Subject* const parent;
+  Object* const parent;
   boost::ptr_map<std::string, State> state_map;
   State* current_state;
   std::string machine_name;
 };
 
 StateMachine::StateMachine(std::string const& machine_name,
-                           Subject* parent)
+                           Object* parent)
   : 
   RenderableToTexture(),
-  Observer(),
-  Subject({}),
+  Object({}),
   pImpl(NEW Impl(parent))
 {
   pImpl->current_state = nullptr;

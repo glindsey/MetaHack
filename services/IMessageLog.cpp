@@ -4,7 +4,7 @@
 #include "services/NullMessageLog.h"
 
 IMessageLog::IMessageLog() :
-  Subject({
+  Object({
   EventMessageAdded::id })
 {}
 

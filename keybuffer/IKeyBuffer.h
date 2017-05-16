@@ -3,13 +3,13 @@
 #include "stdafx.h"
 
 #include "gui/GUIObject.h"
-#include "Subject.h"
+#include "Object.h"
 
 // Forward declarations
 class Color;
 
 /// Interface for an input buffer.
-class IKeyBuffer : public Subject
+class IKeyBuffer : public Object
 {
 public:
   struct EventBufferChanged : public ConcreteEvent<EventBufferChanged>
@@ -44,7 +44,8 @@ public:
     }
   };
 
-  IKeyBuffer() : Subject({
+  IKeyBuffer() : 
+    Object({
     EventBufferChanged::id,
     EventCursorMoved::id })
   {}

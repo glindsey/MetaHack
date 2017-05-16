@@ -9,8 +9,7 @@ State::State(StateMachine& state_machine,
              std::unordered_set<EventID> const events)
   :
   RenderableToTexture(),
-  Observer(),
-  Subject(events),
+  Object(events),
   m_state_machine{ state_machine }
 {
 }
