@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include "components/ComponentManager.h"
+#include "game/GameState.h"
 
 // Forward declarations
 class SystemLighting;
@@ -12,7 +12,7 @@ class SystemSpacialRelationships;
 class SystemManager final
 {
 public:
-  SystemManager(ComponentManager& components);
+  SystemManager(GameState& gameState);
   ~SystemManager();
 
   /// Run one cycle of all systems.
@@ -31,8 +31,8 @@ private:
   std::unique_ptr<SystemSenseSight> m_senseSight;
   std::unique_ptr<SystemSpacialRelationships> m_spacial;
 
-  /// Reference to the component manager.
-  ComponentManager& m_components;
+  /// Reference to the game state.
+  GameState& m_gameState;
 
   /// Static pointer to the singleton instance of the SystemManager.
   static SystemManager* s_instance;

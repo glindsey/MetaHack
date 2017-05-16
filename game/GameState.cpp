@@ -19,12 +19,8 @@ namespace fs = boost::filesystem;
 
 GameState* GameState::s_instance = nullptr;
 
-GameState::GameState()
-{
-  initialize({});
-}
-
-GameState::GameState(json const& j)
+GameState::GameState(json const& j) :
+  Object({})
 {
   initialize(j);
 }

@@ -2,6 +2,7 @@
 
 #include "SystemManager.h"
 
+#include "components/ComponentManager.h"
 #include "systems/SystemLighting.h"
 #include "systems/SystemSenseSight.h"
 #include "systems/SystemSpacialRelationships.h"
@@ -9,27 +10,29 @@
 
 SystemManager* SystemManager::s_instance = nullptr;
 
-SystemManager::SystemManager(ComponentManager& components) :
-  m_components{ components }
+SystemManager::SystemManager(GameState& gameState) :
+  m_gameState{ gameState }
 {
+  auto& components = m_gameState.components();
+
   // Set instance pointer.
   Assert("Systems", s_instance == nullptr, "tried to create more than one SystemManager instance at a time");
   s_instance = this;
 
 
   // Initialize systems.
-  m_lighting.reset(NEW SystemLighting(m_components.appearance,
-                                      m_components.health,
-                                      m_components.lightSource, 
-                                      m_components.position));
+  m_lighting.reset(NEW SystemLighting(components.appearance,
+                                      components.health,
+                                      components.lightSource, 
+                                      components.position));
 
-  m_senseSight.reset(NEW SystemSenseSight(m_components.inventory,
-                                          m_components.position,
-                                          m_components.senseSight,
-                                          m_components.spacialMemory));
+  m_senseSight.reset(NEW SystemSenseSight(components.inventory,
+                                          components.position,
+                                          components.senseSight,
+                                          components.spacialMemory));
 
-  m_spacial.reset(NEW SystemSpacialRelationships(m_components.inventory,
-                                                 m_components.position));
+  m_spacial.reset(NEW SystemSpacialRelationships(components.inventory,
+                                                 components.position));
 
   // Link system events.
   m_spacial->addObserver(*m_lighting, SystemSpacialRelationships::EventEntityChangedMaps::id);

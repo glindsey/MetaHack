@@ -3,6 +3,8 @@
 
 #include "stdafx.h"
 
+#include "Object.h"
+
 // Forward declarations
 class ComponentManager;
 class EntityId;
@@ -13,16 +15,19 @@ class MapFactory;
 /// This class can be instantiated only once at a time. Attempting to create
 /// a second instance when one is already present will cause an exception to
 /// be thrown.
-///
-/// In order to keep overhead costs down, this class is purely concrete.
-class GameState final
+class GameState : public Object
 {
 public:
-  GameState();
-
   /// Constructor that constructs the game state from the provided JSON.
+  /// Pass an empty object to construct the state from scratch.
   GameState(json const& j);
-  ~GameState();
+
+  virtual ~GameState();
+
+  GameState(GameState const&) = delete;
+  GameState(GameState&&) = delete;
+  GameState operator==(GameState const&) = delete;
+  GameState operator==(GameState&&) = delete;
 
   void initialize(json const& j);
 
