@@ -31,6 +31,8 @@ public:
   Object(std::unordered_set<EventID> const events, std::string name);
   virtual ~Object();
 
+  std::string getName();
+
   /// Adds an observer of an event emitted by this object.
   /// @param observer   Reference to observing object to add.
   /// @param eventID    ID of event to observe, or EventID::All to

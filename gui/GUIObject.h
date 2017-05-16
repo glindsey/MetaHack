@@ -156,8 +156,6 @@ namespace metagui
     GUIObject(std::string name, std::unordered_set<EventID> const events, sf::IntRect dimensions);
     virtual ~GUIObject();
 
-    std::string getName();
-
     /// Set whether this object has focus.
     /// When set to "true", will also unfocus any sibling controls.
     /// If the object is hidden or disabled, this method will do nothing.
@@ -403,9 +401,6 @@ namespace metagui
     virtual void doEventSubscriptions_V(Object& parent);
 
   private:
-    /// The name of this object.
-    std::string m_name = "";
-
     /// The parent of this object. Set to nullptr if the object has no parent.
     GUIObject* m_parent = nullptr;
 

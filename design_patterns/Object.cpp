@@ -55,6 +55,11 @@ Object::~Object()
   }
 }
 
+std::string Object::getName()
+{
+  return m_name;
+}
+
 void Object::addObserver(Object& observer, EventID eventID)
 {
   if (eventID == EventID::All)

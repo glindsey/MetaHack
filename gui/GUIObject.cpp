@@ -25,7 +25,7 @@ namespace metagui
 
   GUIObject::GUIObject(std::string name,
                        std::unordered_set<EventID> const events) :
-    Object(combine(s_events, events))
+    Object(combine(s_events, events), name)
   {
   }
 
@@ -66,11 +66,6 @@ namespace metagui
 
     // Unsubscribe from app events, if any.
     App::instance().removeObserver(*this);
-  }
-
-  std::string GUIObject::getName()
-  {
-    return m_name;
   }
 
   void GUIObject::setFocus(bool focus)
