@@ -6,17 +6,16 @@
 #include "state_machine/StateMachine.h"
 
 State::State(StateMachine& state_machine,
-             std::unordered_set<EventID> const events)
+             std::unordered_set<EventID> const events,
+             std::string name)
   :
   RenderableToTexture(),
-  Object(events),
+  Object(events, name),
   m_state_machine{ state_machine }
-{
-}
+{}
 
 State::~State()
-{
-}
+{}
 
 bool State::change_to(std::string const& new_state)
 {

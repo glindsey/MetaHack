@@ -7,6 +7,7 @@
 AppStateMainMenu::AppStateMainMenu(StateMachine& state_machine, sf::RenderWindow& app_window)
   :
   AppState(state_machine, {},
+           "AppStateMainMenu",
            std::bind(&AppStateMainMenu::render_title, this, std::placeholders::_1, std::placeholders::_2))
 {
 }
@@ -48,12 +49,6 @@ void AppStateMainMenu::execute()
 //
 //  return result;
 //}
-
-std::string const& AppStateMainMenu::getName()
-{
-  static std::string name = "AppStateMainMenu";
-  return name;
-}
 
 bool AppStateMainMenu::initialize()
 {

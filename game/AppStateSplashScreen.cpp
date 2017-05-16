@@ -7,6 +7,7 @@
 AppStateSplashScreen::AppStateSplashScreen(StateMachine& state_machine, sf::RenderWindow& app_window)
   :
   AppState(state_machine, {},
+           "AppStateSplashScreen",
            std::bind(&AppStateSplashScreen::render_splash, this, std::placeholders::_1, std::placeholders::_2))
 {
 }
@@ -21,12 +22,6 @@ void AppStateSplashScreen::execute()
   {
     this->change_to("AppStateMainMenu");
   }
-}
-
-std::string const& AppStateSplashScreen::getName()
-{
-  static std::string name = "AppStateSplashScreen";
-  return name;
 }
 
 bool AppStateSplashScreen::initialize()

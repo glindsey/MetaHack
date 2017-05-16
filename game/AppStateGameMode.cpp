@@ -66,6 +66,7 @@ AppStateGameMode::AppStateGameMode(StateMachine& state_machine, sf::RenderWindow
   AppState(state_machine,
            { App::EventAppWindowResized::id,
              UIEvents::EventKeyPressed::id },
+           "AppStateGameMode",
            std::bind(&AppStateGameMode::render_map, this, std::placeholders::_1, std::placeholders::_2)),
   m_appWindow{ m_appWindow },
   m_debugBuffer{ NEW KeyBuffer() },
@@ -156,12 +157,6 @@ void AppStateGameMode::execute()
       resetInventorySelection();
     }
   }
-}
-
-std::string const& AppStateGameMode::getName()
-{
-  static std::string name = "AppStateGameMode";
-  return name;
 }
 
 bool AppStateGameMode::initialize()

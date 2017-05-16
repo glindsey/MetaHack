@@ -7,10 +7,11 @@
 
 AppState::AppState(StateMachine& state_machine,
                    std::unordered_set<EventID> const events,
+                   std::string name,
                    metagui::RenderFunctor preDesktopRenderFunctor,
                    metagui::RenderFunctor postDesktopRenderFunctor)
   :
-  State{ state_machine, events },
+  State{ state_machine, events, name },
   m_preDesktopRenderFunctor{ preDesktopRenderFunctor },
   m_postDesktopRenderFunctor{ postDesktopRenderFunctor }
 {

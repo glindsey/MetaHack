@@ -17,6 +17,7 @@ class AppState :
 public:
   AppState(StateMachine& state_machine,
            std::unordered_set<EventID> const events,
+           std::string name,
            metagui::RenderFunctor preDesktopRenderFunctor = metagui::RenderFunctor(),
            metagui::RenderFunctor postDesktopRenderFunctor = metagui::RenderFunctor());
 

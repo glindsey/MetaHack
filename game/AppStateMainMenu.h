@@ -13,7 +13,6 @@ public:
   AppStateMainMenu(StateMachine& state_machine, sf::RenderWindow& app_window);
   virtual ~AppStateMainMenu();
 
-  virtual std::string const& getName() override;
   virtual bool initialize() override;
   virtual void execute() override;
   virtual bool terminate() override;

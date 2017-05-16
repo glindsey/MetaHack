@@ -14,17 +14,15 @@ class State :
   public Object
 {
 public:
-  explicit State(StateMachine& state_machine,
-                 std::unordered_set<EventID> const events);
+  State(StateMachine& state_machine,
+        std::unordered_set<EventID> const events,
+        std::string name);
   State(State const&) = delete;
   State(State&&) = delete;
   State& operator=(State const&) = delete;
   State& operator=(State&&) = delete;
 
   virtual ~State();
-
-  // Get the name of this state.
-  virtual std::string const& getName() = 0;
 
   // Initialize the state upon entering it.
   virtual bool initialize() = 0;
