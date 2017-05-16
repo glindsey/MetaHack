@@ -181,9 +181,7 @@ bool AppStateGameMode::initialize()
 
   // Initialize systems that need initializing.
   m_systemManager->lighting().setMap(current_map_id);
-  m_systemManager->lighting().doCycleUpdate();
   m_systemManager->senseSight().setMap(current_map_id);
-  m_systemManager->senseSight().doCycleUpdate();
 
   // Move player to start position on the map.
   auto& start_coords = game_map.getStartCoords();
@@ -207,6 +205,9 @@ bool AppStateGameMode::initialize()
   // Get the map view ready.
   m_mapView->update_tiles(player, m_systemManager->lighting());
   m_mapView->update_things(player, m_systemManager->lighting(), 0);
+
+  // Run all systems once.
+  m_systemManager->runOneCycle();
 
   putMsg(tr("WELCOME_MSG"));
 

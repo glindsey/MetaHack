@@ -8,7 +8,7 @@ end
 function LightSource_on_object_of_use(object, subject)
     local name = thing_get_intrinsic(object, "name")
     local lit = is_lit(object)
-    is_lit = not is_lit
-    set_lit(object, is_lit)
+    lit = not lit
+    set_lit(object, lit)
     return true, LuaType.Boolean
 end
