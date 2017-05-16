@@ -102,6 +102,10 @@ namespace Actions
     // If entity is currently busy, decrement by one and return.
     if (activity.busyTicks() > 0)
     {
+      CLOG(TRACE, "Action") << "Entity #" <<
+        subject << " (" <<
+        COMPONENTS.category[subject] << "): is busy, busyTicks = " << activity.busyTicks();
+
       activity.decBusyTicks(1);
       return false;
     }
@@ -179,7 +183,7 @@ namespace Actions
       }
     }
 
-    return true;
+    return (m_state == State::Processed);
   }
 
   void Action::setState(State state)
@@ -980,11 +984,11 @@ namespace Actions
     {
       if ((token == "cv") || (token == "subjcv") || (token == "subj_cv"))
       {
-        return getSubject()->isThirdPerson();
+        return !(getSubject()->isThirdPerson());
       }
       if ((token == "objcv") || (token == "obj_cv") || (token == "foocv") || (token == "foo_cv"))
       {
-        return getObject()->isThirdPerson();
+        return !(getObject()->isThirdPerson());
       }
       if ((token == "isPlayer") || (token == "isplayer"))
       {
@@ -992,7 +996,7 @@ namespace Actions
       }
       if ((token == "targcv") || (token == "targ_cv"))
       {
-        return getTargetThing()->isThirdPerson();
+        return !(getTargetThing()->isThirdPerson());
       }
 
       if (token == "true")

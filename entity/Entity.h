@@ -67,38 +67,14 @@ public:
   ///                 pointer.
   void queueAction(Actions::Action* p_action);
 
-  /// Queue an involuntary action for this DynamicEntity to perform.
-  /// @param action The Action to queue. The Action is MOVED when queued,
-  ///               e.g. pAction will be `nullptr` after queuing.
-  void queueInvoluntaryAction(std::unique_ptr<Actions::Action> action);
-
-  /// Queue an involuntary action for this DynamicEntity to perform.
-  /// The action is pushed to the FRONT of the queue, so it is next to be
-  /// popped.
-  /// @param p_action The Action to queue. The queue takes ownership of the
-  ///                 pointer.
-  void queueInvoluntaryAction(Actions::Action* p_action);
-
-  /// Return whether there is any action pending for this DynamicEntity.
-  bool anyActionIsPending() const;
-
-  /// Return whether there is a voluntary action pending for this DynamicEntity.
-  bool voluntaryActionIsPending() const;
-
-  /// Return whether there is an involuntary action pending for this DynamicEntity.
-  bool involuntaryActionIsPending() const;
+  /// Return whether there is an action pending for this DynamicEntity.
+  bool actionIsPending() const;
 
   /// Return whether there is an action currently in progress for this DynamicEntity.
   bool actionIsInProgress();
 
-  /// Clear all pending actions in this Entity's queues.
+  /// Clear all pending actions in this Entity's queue.
   void clearAllPendingActions();
-
-  /// Clear all pending voluntary actions in this Entity's queue.
-  void clearPendingVoluntaryActions();
-
-  /// Clear all pending involuntary actions in this Entity's queue.
-  void clearPendingInvoluntaryActions();
   
   /// Returns true if this entity is the current player.
   bool isPlayer() const;
@@ -244,11 +220,8 @@ public:
   /// If entity is not equippable, return BodyPart::Count.
   BodyPart is_equippable_on() const;
 
-  /// Process involuntary actions of this Entity and its inventory for a single tick.
-  bool process_involuntary_actions();
-
   /// Process voluntary actions of this Entity and its inventory for a single tick.
-  bool process_voluntary_actions();
+  bool processActions();
 
   /// Perform an action when this entity dies.
   /// @return If this function returns false, the death is avoided.
@@ -328,21 +301,12 @@ protected:
   /// Initializer; called by all constructors.
   void initialize();
 
-  /// Process this Entity's involuntary actions for a single tick.
-  /// Voluntary actions are only processed when the Entity is not busy.
-  /// The function returns false to indicate to its parent that it no longer
-  /// exists and should be deleted.
-  /// @return true if the Entity continues to exist after the tick;
-  ///         false if the Entity ceases to exist.
-  virtual bool _process_own_involuntary_actions();
-
   /// Process this Entity's voluntary actions for a single tick.
-  /// Involuntary actions are processed even if the Entity is busy.
   /// The function returns false to indicate to its parent that it no longer
   /// exists and should be deleted.
   /// @return true if the Entity continues to exist after the tick;
   ///         false if the Entity ceases to exist.
-  virtual bool _process_own_voluntary_actions();
+  virtual bool processOwnActions_();
 
 private:
   /// Reference to game state.
@@ -350,9 +314,6 @@ private:
 
   /// Reference to this Entity.
   EntityId m_id;
-
-  /// Queue of pending involuntary actions to be performed.
-  ActionCollection m_pending_involuntary_actions;
 
   /// Outline color for walls when drawing on-screen.
   static Color const wall_outline_color_;

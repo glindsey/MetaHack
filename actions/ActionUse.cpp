@@ -27,6 +27,13 @@ namespace Actions
     return { true, "" };
   }
 
+  ReasonBool ActionUse::objectIsAllowed() const
+  {
+    auto& object = getObject();
+    auto useFunctionExists = !(the_lua_instance.find_lua_function(COMPONENTS.category[object], "on_object_of_" + getType())).empty();
+    return { useFunctionExists, "" };
+  }
+
 
   std::unordered_set<Trait> const & ActionUse::getTraits() const
   {

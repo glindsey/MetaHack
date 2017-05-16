@@ -7,15 +7,6 @@
   "living": false,
   "passable": false,
   
-  "can-be-object-of-drop": true,
-  "can-be-object-of-get": true,
-  "can-be-object-of-hurl": true,
-  "can-be-object-of-move": true,
-  "can-be-object-of-putinto": true,
-  "can-be-object-of-remove": true,
-  "can-be-object-of-unwield": true,
-  "can-be-object-of-wield": true,
-
   "components": {
     "appearance": {
       "tile-character": "?",

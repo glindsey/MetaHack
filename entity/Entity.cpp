@@ -40,16 +40,14 @@ json const& Entity::getCategoryData() const
 
 Entity::Entity(GameState& state, std::string category, EntityId id) :
   m_state{ state },
-  m_id{ id },
-  m_pending_involuntary_actions{ ActionCollection() }
+  m_id{ id }
 {
   initialize();
 }
 
 Entity::Entity(Entity const& original, EntityId ref) :
   m_state{ original.m_state },
-  m_id{ ref },
-  m_pending_involuntary_actions{ ActionCollection() }
+  m_id{ ref }
 {
   COMPONENTS.clone(original.m_id, ref);
   initialize();
@@ -89,36 +87,10 @@ void Entity::queueAction(Actions::Action * p_action)
   queueAction(std::move(action));
 }
 
-void Entity::queueInvoluntaryAction(std::unique_ptr<Actions::Action> action)
-{
-  CLOG(TRACE, "Entity") << "Entity " <<
-    getId() << " (" <<
-    COMPONENTS.category[m_id] << "): Queuing Involuntary Action " <<
-    action->getType();
-
-  m_pending_involuntary_actions.push_front(std::move(action));
-}
-
-void Entity::queueInvoluntaryAction(Actions::Action * p_action)
-{
-  std::unique_ptr<Actions::Action> action(p_action);
-  queueInvoluntaryAction(std::move(action));
-}
-
-bool Entity::anyActionIsPending() const
-{
-  return voluntaryActionIsPending() || involuntaryActionIsPending();
-}
-
-bool Entity::voluntaryActionIsPending() const
+bool Entity::actionIsPending() const
 {
   return (COMPONENTS.activity.existsFor(m_id) &&
           !COMPONENTS.activity[m_id].pendingActions().empty());
-}
-
-bool Entity::involuntaryActionIsPending() const
-{
-  return !(m_pending_involuntary_actions.empty());
 }
 
 bool Entity::actionIsInProgress()
@@ -129,21 +101,10 @@ bool Entity::actionIsInProgress()
 
 void Entity::clearAllPendingActions()
 {
-  clearPendingVoluntaryActions();
-  clearPendingInvoluntaryActions();
-}
-
-void Entity::clearPendingVoluntaryActions()
-{
   if (COMPONENTS.activity.existsFor(m_id))
   {
     COMPONENTS.activity[m_id].pendingActions().clear();
   }
-}
-
-void Entity::clearPendingInvoluntaryActions()
-{
-  m_pending_involuntary_actions.clear();
 }
 
 Gender Entity::getGenderOrYou() const
@@ -675,7 +636,7 @@ BodyPart Entity::is_equippable_on() const
   return BodyPart::MemberCount;
 }
 
-bool Entity::process_involuntary_actions()
+bool Entity::processActions()
 {
   // Get a copy of the Entity's inventory.
   // This is because entities can be deleted/removed from the inventory
@@ -689,32 +650,11 @@ bool Entity::process_involuntary_actions()
        ++iter)
   {
     EntityId entity = iter->second;
-    /* bool dead = */ entity->process_involuntary_actions();
+    /* bool dead = */ entity->processActions();
   }
 
   // Process self last.
-  return _process_own_involuntary_actions();
-}
-
-bool Entity::process_voluntary_actions()
-{
-  // Get a copy of the Entity's inventory.
-  // This is because entities can be deleted/removed from the inventory
-  // over the course of processing them, and this could invalidate the
-  // iterator.
-  ComponentInventory temp_inventory{ COMPONENTS.inventory[m_id] };
-
-  // Process inventory.
-  for (auto iter = temp_inventory.begin();
-       iter != temp_inventory.end();
-       ++iter)
-  {
-    EntityId entity = iter->second;
-    /* bool dead = */ entity->process_voluntary_actions();
-  }
-
-  // Process self last.
-  return _process_own_voluntary_actions();
+  return processOwnActions_();
 }
 
 bool Entity::perform_action_die()
@@ -804,94 +744,37 @@ json Entity::call_lua_function(std::string function_name,
 
 // *** PROTECTED METHODS ******************************************************
 
-bool Entity::_process_own_involuntary_actions()
-{
-  bool entity_updated = false;
-
-  // Is this an entity that is now dead?
-  if (COMPONENTS.health.existsFor(m_id) &&
-      COMPONENTS.health[m_id].hasHpBelowZero())
-  {
-    // Did the entity JUST die?
-    if (!COMPONENTS.health[m_id].isDead())
-    {
-      // Perform the "die" action.
-      // (This sets the "dead" property and clears out any pending actions.)
-      std::unique_ptr<Actions::Action> dieAction(NEW Actions::ActionDie(getId()));
-      this->queueInvoluntaryAction(std::move(dieAction));
-    }
-  }
-
-  // While actions are pending...
-  while (!m_pending_involuntary_actions.empty())
-  {
-    // Process the front action.
-    // @todo Find a way to update the entity_updated variable.
-    std::unique_ptr<Actions::Action>& action = m_pending_involuntary_actions.front();
-    bool action_done = action->process({});
-    if (action_done)
-    {
-      CLOG(TRACE, "Entity") << "Entity " <<
-        getId() << " (" <<
-        COMPONENTS.category[m_id] << "): Involuntary Action " <<
-        action->getType() << " is done, popping";
-
-      m_pending_involuntary_actions.pop_front();
-    }
-  } // end while (actions pending)
-
-  if (entity_updated)
-  {
-    /// @todo This needs to be changed so it only is called if the Action
-    ///       materially affected the entity in some way. Two ways to do this
-    ///       that I can see:
-    ///         1) The Action calls notifyObservers. Requires the Action
-    ///            to have access to that method; right now it doesn't.
-    ///         2) The Action returns some sort of indication that the Entity
-    ///            was modified as a result. This could be done by changing
-    ///            the return type from a bool to a struct of some sort.
-    //notifyObservers(Event::Updated);
-  }
-
-  return true;
-}
-
-bool Entity::_process_own_voluntary_actions()
+bool Entity::processOwnActions_()
 {
   if (!COMPONENTS.activity.existsFor(m_id)) return false;
 
   auto& activity = COMPONENTS.activity[m_id];
 
-  // Is this an entity that is now dead?
-  if (COMPONENTS.health.existsFor(m_id) &&
-      COMPONENTS.health[m_id].hasHpBelowZero())
-  {
-    // Did the entity JUST die?
-    if (!COMPONENTS.health[m_id].isDead())
-    {
-      // Perform the "die" action.
-      // (This sets the "dead" property and clears out any pending actions.)
-      std::unique_ptr<Actions::Action> dieAction(NEW Actions::ActionDie(getId()));
-      this->queueInvoluntaryAction(std::move(dieAction));
-    }
-  }
+  /// @todo This all gets moved into the "GrimReaper" system.
+  //// Is this an entity that is now dead?
+  //if (COMPONENTS.health.existsFor(m_id) &&
+  //    COMPONENTS.health[m_id].hasHpBelowZero())
+  //{
+  //  // Did the entity JUST die?
+  //  if (!COMPONENTS.health[m_id].isDead())
+  //  {
+  //    // Perform the "die" action.
+  //    // (This sets the "dead" property and clears out any pending actions.)
+  //    std::unique_ptr<Actions::Action> dieAction(NEW Actions::ActionDie(getId()));
+  //    this->queueInvoluntaryAction(std::move(dieAction));
+  //  }
+  //}
 
-  // If this entity is busy...
-  if (activity.busyTicks() > 0)
-  {
-    // Decrement busy counter.
-    activity.decBusyTicks(1);
-  }
-  // Otherwise if there are pending actions...
-  else if (!activity.pendingActions().empty())
+  // If there are pending actions...
+  if (!activity.pendingActions().empty())
   {
     bool entity_updated = false;
 
-    // While actions are pending and we're not busy...
-    while (!activity.pendingActions().empty() && activity.busyTicks() == 0)
+    do 
     {
-      // Process the front action.
-      // @todo Find a way to update the entity_updated variable.
+      /// Process the front action until we are marked as busy, 
+      /// or the action is done.
+      /// @todo Find a way to update the entity_updated variable.
       Actions::Action& action = activity.pendingActions().front();
       bool action_done = action.process({});
       if (action_done)
@@ -903,7 +786,7 @@ bool Entity::_process_own_voluntary_actions()
 
         activity.pendingActions().pop();
       }
-    } // end while (actions pending and not busy)
+    } while (!activity.pendingActions().empty() && activity.busyTicks() == 0); // loop while (actions pending and not busy)
 
     if (entity_updated)
     {

@@ -3,9 +3,8 @@
   "plural": "torch sconces",
   "description-brief": "A flaming torch secured in a holder that is attached to a wall.",
 
+  "materials": [ "Wood" ],
   "templates": [ "Entity", "LightSource" ],
-
-  "can-be-object-of-burn": true,
 
   "components": {
     "animated": {},

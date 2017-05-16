@@ -152,7 +152,7 @@ void AppStateGameMode::execute()
     m_mapView->update_tiles(player, m_systemManager->lighting());
 
     // If the action completed, reset the inventory selection.
-    if (!player->voluntaryActionIsPending() && !player->actionIsInProgress())
+    if (!player->actionIsPending() && !player->actionIsInProgress())
     {
       resetInventorySelection();
     }

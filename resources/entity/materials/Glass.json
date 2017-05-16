@@ -1,7 +1,9 @@
 {
+  "templates": [ "Fragile" ],
+
   "components": {
     "appearance": {
-      "color": [ "color", 0, 0, 0, 0],
+      "color": [ "color", 0, 0, 0, 0 ],
       "opacity": [ "color", 0, 0, 0 ]
     }
   }

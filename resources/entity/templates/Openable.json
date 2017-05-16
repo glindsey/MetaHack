@@ -1,6 +1,7 @@
 {
-  "can-be-object-of-close": true,
-  "can-be-object-of-open": true,
-
-  "components": {}
+  "components": {
+    "openable": {
+      "open": false
+    }
+  }
 }

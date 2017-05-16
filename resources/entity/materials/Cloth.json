@@ -1,0 +1,9 @@
+{
+  "templates": [ "Combustible" ],
+  "components": {
+    "appearance": {
+      "color": [ "color", 250, 240, 230, 255 ],
+      "opacity": [ "color", 255, 255, 255 ]
+    }
+  }
+}

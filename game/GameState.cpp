@@ -114,9 +114,7 @@ bool GameState::processGameClockTick()
 {
   EntityId player = getPlayer();
 
-  auto player_action_pending = player->anyActionIsPending();
-  auto player_action_in_progress = player->actionIsInProgress();
-  if (player_action_pending || player_action_in_progress)
+  if (player->actionIsPending() || player->actionIsInProgress()) ///< @todo check -- second half of this shouldn't be necessary
   {
     // QUESTION: Do we want to update all Entities, PERIOD?  In other words, should
     //           other maps keep playing themselves if the player is not on them?

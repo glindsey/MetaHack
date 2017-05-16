@@ -129,8 +129,7 @@ void Map::processEntities()
 	for (int x = 0; x < m_map_size.x; ++x)
 	{
 	  EntityId contents = TILE(x, y).getTileContents();
-	  contents->process_voluntary_actions();
-	  contents->process_involuntary_actions();
+	  contents->processActions();
 	}
   }
 

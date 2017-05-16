@@ -5,8 +5,6 @@
 
   "templates": [ "Weapon", "Corrodable" ],
 
-  "can-be-object-of-rust": true,
-
   "components": {
     "physical": {
       "mass": 1
