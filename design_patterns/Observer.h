@@ -18,7 +18,7 @@ public:
   virtual ~Observer() = 0;
 
 protected:
-  bool onEvent(Event const& event);
+  bool onEvent_NV(Event const& event);
 
   /// Virtual method call to handle events.
   /// Returns true if the event was handled and should STOP being passed
@@ -26,7 +26,7 @@ protected:
   /// @note If the event was handled BUT you still want it to keep being
   ///       broadcast, return false!
 
-  virtual bool onEvent_V(Event const& event) = 0;
+  virtual bool onEvent(Event const& event) = 0;
 
 private:
   std::unordered_map<Subject*, int> m_observations;

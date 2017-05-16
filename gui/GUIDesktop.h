@@ -37,7 +37,7 @@ namespace metagui
     virtual ~Desktop();
 
   protected:
-    virtual bool onEvent_V2(Event const& event) override;
+    virtual bool onEvent_V(Event const& event) override;
 
     virtual void drawPreChildren_(sf::RenderTexture& texture, int frame) override final;
 

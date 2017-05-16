@@ -26,7 +26,7 @@ Observer::~Observer()
   }
 }
 
-bool Observer::onEvent(Event const& event)
+bool Observer::onEvent_NV(Event const& event)
 {
   if (event.getId() == Subject::Registration::id)
   {
@@ -46,7 +46,7 @@ bool Observer::onEvent(Event const& event)
     return true;
   }
 
-  bool result = onEvent_V(event);
+  bool result = onEvent(event);
 
   return result;
 }

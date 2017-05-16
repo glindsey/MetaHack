@@ -21,7 +21,7 @@ public:
 protected:
   void render_splash(sf::RenderTexture& texture, int frame);
 
-  virtual bool onEvent_V(Event const& event) override;
+  virtual bool onEvent(Event const& event) override;
 
 private:
   sf::Texture m_splash_graphic;

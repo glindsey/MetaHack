@@ -19,7 +19,7 @@ namespace metagui
     explicit ResizeHandle(std::string name);
     virtual void drawPreChildren_(sf::RenderTexture& texture, int frame) override final;
 
-    virtual bool onEvent_V2(Event const& event) override;
+    virtual bool onEvent_V(Event const& event) override;
 
   private:
     /// Size of the resize handle.

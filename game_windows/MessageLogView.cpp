@@ -84,7 +84,7 @@ void MessageLogView::drawContents_(sf::RenderTexture& texture, int frame)
   return;
 }
 
-bool MessageLogView::onEvent_V2(Event const& event) 
+bool MessageLogView::onEvent_V(Event const& event) 
 { 
   auto id = event.getId();
 

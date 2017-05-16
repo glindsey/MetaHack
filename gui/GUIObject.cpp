@@ -16,25 +16,21 @@ namespace metagui
 {
   std::unordered_set<EventID> const GUIObject::s_events =
   {
-    EventMoved::id, 
-    EventResized::id, 
-    EventDragStarted::id, 
-    EventDragging::id, 
+    EventMoved::id,
+    EventResized::id,
+    EventDragStarted::id,
+    EventDragging::id,
     EventDragFinished::id
   };
 
-  GUIObject::GUIObject(std::string name, 
+  GUIObject::GUIObject(std::string name,
                        std::unordered_set<EventID> const events) :
     Object(combine(s_events, events))
   {
-    m_name = name;
-    m_parent = nullptr;
-    setRelativeLocation({ 0, 0 });
-    setSize({ 0, 0 });
   }
 
-  GUIObject::GUIObject(std::string name, 
-                       std::unordered_set<EventID> const events, 
+  GUIObject::GUIObject(std::string name,
+                       std::unordered_set<EventID> const events,
                        IntVec2 location, UintVec2 size) :
     GUIObject(name, events)
   {
@@ -42,8 +38,8 @@ namespace metagui
     setSize(size);
   }
 
-  GUIObject::GUIObject(std::string name, 
-                       std::unordered_set<EventID> const events, 
+  GUIObject::GUIObject(std::string name,
+                       std::unordered_set<EventID> const events,
                        sf::IntRect dimensions) :
     GUIObject(name, events)
   {
@@ -55,8 +51,8 @@ namespace metagui
     // Remove child subject/observer relationships, if any.
     for (auto& childPair : m_children)
     {
-      childPair.second->removeObserver(*this, EventID::All);
-      removeObserver(*(childPair.second), EventID::All);
+      childPair.second->removeObserver(*this);
+      removeObserver(*(childPair.second));
     }
 
     m_children.clear();
@@ -64,9 +60,12 @@ namespace metagui
     // Remove parent subject/observer relationships, if any.
     if (m_parent != nullptr)
     {
-      m_parent->removeObserver(*this, EventID::All);
-      removeObserver(*m_parent, EventID::All);
+      m_parent->removeObserver(*this);
+      removeObserver(*m_parent);
     }
+
+    // Unsubscribe from app events, if any.
+    App::instance().removeObserver(*this);
   }
 
   std::string GUIObject::getName()
@@ -76,7 +75,7 @@ namespace metagui
 
   void GUIObject::setFocus(bool focus)
   {
-    if ((m_cached_flags.disabled == false) || (m_cached_flags.hidden == false))
+    if ((m_cachedFlags.disabled == false) || (m_cachedFlags.hidden == false))
     {
       if (m_parent != nullptr)
       {
@@ -106,7 +105,7 @@ namespace metagui
 
   void GUIObject::setGlobalFocus(bool focus)
   {
-    if ((m_cached_flags.disabled == false) || (m_cached_flags.hidden == false))
+    if ((m_cachedFlags.disabled == false) || (m_cachedFlags.hidden == false))
     {
       if (m_parent != nullptr)
       {
@@ -169,31 +168,25 @@ namespace metagui
 
     if (m_parent != nullptr)
     {
-      auto max_size = ((m_cached_flags.decor == true) ?
-                       m_parent->getSize() :
-                       m_parent->getChildAreaSize());
+      auto maxSize = ((m_cachedFlags.decor == true) ?
+                      m_parent->getSize() :
+                      m_parent->getChildAreaSize());
 
-      if (size.x > max_size.x) size.x = max_size.x;
-      if (size.y > max_size.y) size.y = max_size.y;
+      if (size.x > maxSize.x) size.x = maxSize.x;
+      if (size.y > maxSize.y) size.y = maxSize.y;
     }
 
     // Texture size should be the nearest power-of-2, for speed.
-    UintVec2 new_texture_size{ next_power_of_two(size.x), next_power_of_two(size.y) };
-    if (new_texture_size != m_bg_texture_size)
+    UintVec2 newTextureSize{ nextPowerOfTwo(size.x), nextPowerOfTwo(size.y) };
+    if (newTextureSize != m_bgTextureSize)
     {
-      m_bg_texture_size = new_texture_size;
-      m_bg_texture.reset(NEW sf::RenderTexture());
-      m_bg_texture->create(m_bg_texture_size.x, m_bg_texture_size.y);
+      m_bgTextureSize = newTextureSize;
+      m_bgTexture.reset(NEW sf::RenderTexture());
+      m_bgTexture->create(m_bgTextureSize.x, m_bgTextureSize.y);
     }
-    
-    // Set "dirty" for both this object and its parent.
-    // (Right now flagForRedraw() will automatically set the flag on the 
-    //  parent chain, but I'll leave the other line commented out just in
-    //  case I change the behavior later.)
-    flagForRedraw();
-    //if (m_parent != nullptr) m_parent->flagForRedraw();
 
-    // Broadcast a resize event.
+    // Set "dirty" for both this object and its parent chain.
+    flagForRedraw();
     broadcast(GUIObject::EventResized(oldSize, size));
   }
 
@@ -218,42 +211,42 @@ namespace metagui
 
   IntVec2 GUIObject::getAbsoluteLocation()
   {
-    IntVec2 absolute_location = getRelativeLocation();
+    IntVec2 absoluteLocation = getRelativeLocation();
 
     if (m_parent != nullptr)
     {
-      IntVec2 child_area_absolute_location =
+      IntVec2 childAreaAbsoluteLocation =
         m_parent->getAbsoluteLocation();
 
-      if (m_cached_flags.decor != true)
+      if (m_cachedFlags.decor != true)
       {
-        child_area_absolute_location += m_parent->getChildAreaLocation();
+        childAreaAbsoluteLocation += m_parent->getChildAreaLocation();
       }
 
-      absolute_location += child_area_absolute_location;
+      absoluteLocation += childAreaAbsoluteLocation;
     }
 
-    return absolute_location;
+    return absoluteLocation;
   }
 
   void GUIObject::setAbsoluteLocation(IntVec2 location)
   {
-    IntVec2 relative_location = location;
+    IntVec2 relativeLocation = location;
 
     if (m_parent != nullptr)
     {
-      IntVec2 child_area_absolute_location =
+      IntVec2 childAreaAbsoluteLocation =
         m_parent->getAbsoluteLocation();
 
-      if (m_cached_flags.decor != true)
+      if (m_cachedFlags.decor != true)
       {
-        child_area_absolute_location += m_parent->getChildAreaLocation();
+        childAreaAbsoluteLocation += m_parent->getChildAreaLocation();
       }
 
-      relative_location -= child_area_absolute_location;
+      relativeLocation -= childAreaAbsoluteLocation;
     }
 
-    setRelativeLocation(relative_location);
+    setRelativeLocation(relativeLocation);
   }
 
   sf::IntRect GUIObject::getAbsoluteDimensions()
@@ -275,7 +268,7 @@ namespace metagui
     std::string name = child->getName();
 
     Assert("GUI", !childExists(name), "Tried to add already-present child \"" + name + "\" of GUI object \"" + getName() + "\"");
-    
+
     // This sets the child's parent pointer and registers it with the
     // parent's events.
     child->setParent(this);
@@ -285,7 +278,7 @@ namespace metagui
     // a unique_ptr as a map value. See:
     // https://stackoverflow.com/questions/21056872/c-stdunique-ptr-wont-compile-in-map
     m_children.insert<ChildMap::value_type>(ChildMap::value_type(name, std::move(child)));
-    m_zorder_map.insert({ z_order, name });
+    m_zOrderMap.insert({ z_order, name });
 
     /// @todo Make this cleaner; this is a kludge to create a Resized event.
     setSize(m_size);
@@ -329,29 +322,29 @@ namespace metagui
     if (childExists(name))
     {
       // This moves the object out of the stored unique_ptr.
-      std::unique_ptr<GUIObject> moved_object = std::move(m_children.at(name));
+      std::unique_ptr<GUIObject> movedObject = std::move(m_children.at(name));
       // This erases the (now empty) unique_ptr from the map.
       m_children.erase(name);
 
       // This finds the child name in the Z-order map and gets rid of it.
-      for (auto& iter = m_zorder_map.begin(); iter != m_zorder_map.end(); ++iter)
+      for (auto& iter = m_zOrderMap.begin(); iter != m_zOrderMap.end(); ++iter)
       {
         if (iter->second == name)
         {
-          m_zorder_map.erase(iter);
+          m_zOrderMap.erase(iter);
           break;
         }
       }
 
       // This clears the child's parent pointer and deregisters it from the
       // parent's events.
-      moved_object->setParent(nullptr);
+      movedObject->setParent(nullptr);
 
       CLOG(TRACE, "GUI") << "Removed child \"" << name <<
         "\" from parent \"" << getName() << "\"";
 
       // This returns the object we removed.
-      return std::move(moved_object);
+      return std::move(movedObject);
     }
 
     // Didn't find the object, so return an empty unique_ptr.
@@ -360,9 +353,9 @@ namespace metagui
 
   uint32_t GUIObject::getLowestChildZOrder()
   {
-    if (m_zorder_map.size() > 0)
+    if (m_zOrderMap.size() > 0)
     {
-      auto iter = m_zorder_map.cbegin();
+      auto iter = m_zOrderMap.cbegin();
       return iter->first;
     }
     return 0;
@@ -370,9 +363,9 @@ namespace metagui
 
   uint32_t GUIObject::getHighestChildZOrder()
   {
-    if (m_zorder_map.size() > 0)
+    if (m_zOrderMap.size() > 0)
     {
-      auto iter = m_zorder_map.cend();
+      auto iter = m_zOrderMap.cend();
       --iter;
       return iter->first;
     }
@@ -382,7 +375,7 @@ namespace metagui
   void GUIObject::clearChildren()
   {
     m_children.clear();
-    m_zorder_map.clear();
+    m_zOrderMap.clear();
   }
 
   IntVec2 GUIObject::getChildAreaLocation()
@@ -395,34 +388,34 @@ namespace metagui
     return getSize();
   }
 
-  bool GUIObject::render(sf::RenderTexture& parent_texture, int frame)
+  bool GUIObject::render(sf::RenderTexture& parentTexture, int frame)
   {
-    sf::RenderTexture& our_texture = *m_bg_texture;
+    sf::RenderTexture& texture = *m_bgTexture;
 
-    if (m_cached_flags.hidden == false)
+    if (m_cachedFlags.hidden == false)
     {
-      if ((m_flag_for_redraw == true) || (m_cached_flags.animated == true))
+      if ((m_needsRedraw == true) || (m_cachedFlags.animated == true))
       {
-        our_texture.clear(Color::Transparent);
+        texture.clear(Color::Transparent);
         draw(frame);
 
-        if (m_cached_flags.animated == false)
+        if (m_cachedFlags.animated == false)
         {
-          m_flag_for_redraw = false;
+          m_needsRedraw = false;
         }
       }
 
       // Create the RectangleShape that will be drawn onto the target.
-      m_bg_shape.setPosition(RealVec2(static_cast<float>(m_location.x), static_cast<float>(m_location.y)));
-      m_bg_shape.setSize(RealVec2(static_cast<float>(m_size.x), static_cast<float>(m_size.y)));
-      m_bg_shape.setTexture(&(m_bg_texture->getTexture()));
-      m_bg_shape.setTextureRect(sf::IntRect(0, 0, m_size.x, m_size.y));
+      m_bgShape.setPosition(RealVec2(static_cast<float>(m_location.x), static_cast<float>(m_location.y)));
+      m_bgShape.setSize(RealVec2(static_cast<float>(m_size.x), static_cast<float>(m_size.y)));
+      m_bgShape.setTexture(&(m_bgTexture->getTexture()));
+      m_bgShape.setTextureRect(sf::IntRect(0, 0, m_size.x, m_size.y));
 
       // Draw onto the parent.
-      parent_texture.setView(sf::View(sf::FloatRect(0.0f, 0.0f, static_cast<float>(parent_texture.getSize().x), static_cast<float>(parent_texture.getSize().y))));
-      parent_texture.draw(m_bg_shape);
+      parentTexture.setView(sf::View(sf::FloatRect(0.0f, 0.0f, static_cast<float>(parentTexture.getSize().x), static_cast<float>(parentTexture.getSize().y))));
+      parentTexture.draw(m_bgShape);
 
-      parent_texture.display();
+      parentTexture.display();
       return true;
     }
     else
@@ -433,26 +426,26 @@ namespace metagui
 
   void GUIObject::draw(int frame)
   {
-    sf::RenderTexture& our_texture = *m_bg_texture;
+    sf::RenderTexture& texture = *m_bgTexture;
 
     /// Render self to our bg texture.
-    drawPreChildren_(our_texture, frame);
+    drawPreChildren_(texture, frame);
 
     /// Render all child objects to our bg texture.
-    for (auto& z_pair : m_zorder_map)
+    for (auto& z_pair : m_zOrderMap)
     {
-      m_children.at(z_pair.second)->render(our_texture, frame);
+      m_children.at(z_pair.second)->render(texture, frame);
     }
 
     /// Render self after children are done.
-    drawPostChildren_(our_texture, frame);
+    drawPostChildren_(texture, frame);
 
-    our_texture.display();
+    texture.display();
   }
 
   void GUIObject::flagForRedraw()
   {
-    m_flag_for_redraw = true;
+    m_needsRedraw = true;
     if (m_parent)
     {
       m_parent->flagForRedraw();
@@ -468,13 +461,23 @@ namespace metagui
     }
   }
 
-  bool GUIObject::getFlag(std::string name, bool default_value)
+  bool GUIObject::getFlag(std::string name, bool defaultValue)
   {
     if (m_flags.count(name) == 0)
     {
-      setFlag(name, default_value);
+      setFlag(name, defaultValue);
     }
     return m_flags[name];
+  }
+
+  bool GUIObject::isHidden()
+  {
+    return m_cachedFlags.hidden;
+  }
+
+  bool GUIObject::isDisabled()
+  {
+    return m_cachedFlags.disabled;
   }
 
   void GUIObject::handleSetFlag(std::string name, bool value)
@@ -485,7 +488,7 @@ namespace metagui
       {
         setFocus(false);
       }
-      m_cached_flags.hidden = value;
+      m_cachedFlags.hidden = value;
     }
     else if (name == "disabled")
     {
@@ -493,22 +496,27 @@ namespace metagui
       {
         setFocus(false);
       }
-      m_cached_flags.disabled = value;
+      m_cachedFlags.disabled = value;
     }
     else if (name == "animated")
     {
-      m_cached_flags.animated = value;
+      m_cachedFlags.animated = value;
     }
     else if (name == "movable")
     {
-      m_cached_flags.movable = value;
+      m_cachedFlags.movable = value;
     }
     else if (name == "decor")
     {
-      m_cached_flags.decor = value;
+      m_cachedFlags.decor = value;
     }
 
     handleSetFlag_(name, value);
+  }
+
+  bool GUIObject::handlesPoint(IntVec2 point)
+  {
+    return containsPoint(point) && !childContainsPoint(point);
   }
 
   bool GUIObject::containsPoint(IntVec2 point)
@@ -522,6 +530,19 @@ namespace metagui
       (point.y >= top) && (point.y <= bottom));
   }
 
+  bool GUIObject::childContainsPoint(IntVec2 point)
+  {
+    for (auto& childPair : m_children)
+    {
+      auto& child = childPair.second;
+      if (!child->isHidden() && child->containsPoint(point))
+      {
+        return true;
+      }
+    }
+    return false;
+  }
+
   GUIObject * GUIObject::getParent()
   {
     return m_parent;
@@ -531,14 +552,15 @@ namespace metagui
   {
     if (m_parent != nullptr)
     {
-      m_parent->removeObserver(*this, EventID::All);
+      m_parent->removeObserver(*this);
+      App::instance().removeObserver(*this);
     }
 
     m_parent = parent;
 
     if (parent != nullptr)
     {
-      parent->subscribeToParentEvents(*this);
+      doEventSubscriptions(*parent);
     }
 
     if (m_parent) m_parent->flagForRedraw();
@@ -560,12 +582,12 @@ namespace metagui
 
   bool GUIObject::isBeingDragged()
   {
-    return m_being_dragged;
+    return m_beingDragged;
   }
 
   IntVec2 GUIObject::getDragStartLocation()
   {
-    return m_drag_start_location;
+    return m_dragStartLocation;
   }
 
   void GUIObject::drawPreChildren_(sf::RenderTexture& texture, int frame)
@@ -579,9 +601,10 @@ namespace metagui
   }
 
   void GUIObject::handleSetFlag_(std::string name, bool enabled)
-  {}
+  {
+  }
 
-  bool GUIObject::onEvent_V(Event const& event)
+  bool GUIObject::onEvent(Event const& event)
   {
     bool handled = false;
 
@@ -602,10 +625,10 @@ namespace metagui
     {
       handled = onEventDragFinished(static_cast<EventDragFinished const&>(event));
     }
-    
+
     if (!handled)
     {
-      handled = onEvent_V2(event);
+      handled = onEvent_V(event);
     }
 
     return handled;
@@ -623,14 +646,13 @@ namespace metagui
     return false;
   }
 
-  bool GUIObject::onEventDragStarted(EventDragStarted const & event)
+  bool GUIObject::onEventDragStarted(EventDragStarted const& event)
   {
-    if (containsPoint(event.start_location))
+    if (handlesPoint(event.startLocation))
     {
-      /// @todo Make sure the point isn't inside one of our children.
-      m_being_dragged = true;
-      m_drag_start_location = event.start_location;
-      m_absolute_location_drag_start = getAbsoluteLocation();
+      m_beingDragged = true;
+      m_dragStartLocation = event.startLocation;
+      m_dragStartAbsoluteLocation = getAbsoluteLocation();
 
       return false;
     }
@@ -639,14 +661,14 @@ namespace metagui
     return true;
   }
 
-  bool GUIObject::onEventDragging(EventDragging const & event)
+  bool GUIObject::onEventDragging(EventDragging const& event)
   {
-    if ((m_being_dragged == true) && (m_cached_flags.movable == true))
+    if ((m_beingDragged == true) && (m_cachedFlags.movable == true))
     {
-      auto move_amount = event.current_location - m_drag_start_location;
-      auto new_coords = m_absolute_location_drag_start + move_amount;
+      auto moveAmount = event.currentLocation - m_dragStartLocation;
+      auto newCoords = m_dragStartAbsoluteLocation + moveAmount;
 
-      setAbsoluteLocation(new_coords);
+      setAbsoluteLocation(newCoords);
 
       return false;
     }
@@ -659,22 +681,28 @@ namespace metagui
 
   bool GUIObject::onEventDragFinished(EventDragFinished const & event)
   {
-    m_being_dragged = false;
+    m_beingDragged = false;
     return false;
   }
 
-  void GUIObject::subscribeToParentEvents(Subject& parent)
+  void GUIObject::doEventSubscriptions(Subject& parent)
   {
+    // Subscribe to standard App events here.
+    /// @todo Limit this to specific events and have subclasses add others
+    ///       that they want.
+    App::instance().addObserver(*this, EventID::All);
+
     // Subscribe to standard parent events here.
     parent.addObserver(*this, GUIObject::EventMoved::id);
     parent.addObserver(*this, GUIObject::EventResized::id);
 
     // Subscribe to any additional events.
-    subscribeToParentEvents_V(parent);
+    doEventSubscriptions_V(parent);
   }
 
-  void GUIObject::subscribeToParentEvents_V(Subject& parent)
-  {}
+  void GUIObject::doEventSubscriptions_V(Subject& parent)
+  {
+  }
 
 
 }; // end namespace metagui

@@ -35,7 +35,8 @@ namespace metagui
   }
 
   Window::~Window()
-  {}
+  {
+  }
 
   // === PROTECTED METHODS ======================================================
 
@@ -161,7 +162,7 @@ namespace metagui
   void Window::drawContents_(sf::RenderTexture& texture, int frame)
   {}
 
-  bool Window::onEvent_V2(Event const& event)
+  bool Window::onEvent_V(Event const& event)
   {
     auto id = event.getId();
     if (id == EventDragStarted::id)
@@ -171,7 +172,7 @@ namespace metagui
       {
         auto& castEvent = static_cast<EventDragStarted const&>(event);
         auto& child = getChild(getName() + "_titlebar");
-        if (!child.containsPoint(castEvent.start_location))
+        if (!child.containsPoint(castEvent.startLocation))
         {
           return true;  /// "true" swallows the event here
         }

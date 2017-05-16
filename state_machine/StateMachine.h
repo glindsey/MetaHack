@@ -82,7 +82,7 @@ public:
   std::string const& get_current_state_name();
 
 protected:
-  virtual bool onEvent_V(Event const& event) override;
+  virtual bool onEvent(Event const& event) override;
 
 private:
   struct Impl;

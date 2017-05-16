@@ -34,7 +34,7 @@ namespace metagui
 
   // === PROTECTED METHODS ======================================================
 
-  bool Desktop::onEvent_V2(Event const& event)
+  bool Desktop::onEvent_V(Event const& event)
   {
     auto id = event.getId();
     if (id == EventResized::id)

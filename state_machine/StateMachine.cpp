@@ -174,7 +174,7 @@ std::string const& StateMachine::get_current_state_name()
   }
 }
 
-bool StateMachine::onEvent_V(Event const& event)
+bool StateMachine::onEvent(Event const& event)
 {
   return false;
 }

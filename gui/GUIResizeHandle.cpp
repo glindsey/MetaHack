@@ -45,7 +45,7 @@ namespace metagui
 
   }
 
-  bool ResizeHandle::onEvent_V2(Event const& event)
+  bool ResizeHandle::onEvent_V(Event const& event)
   {
     auto id = event.getId();
     auto parent = getParent();
@@ -65,7 +65,7 @@ namespace metagui
     else if (id == EventDragging::id && parent && isBeingDragged())
     {
       auto& castEvent = static_cast<EventDragging const&>(event);
-      auto move_amount = castEvent.current_location - getDragStartLocation();
+      auto move_amount = castEvent.currentLocation - getDragStartLocation();
 
       IntVec2 old_size{ static_cast<int>(m_parent_size_start.x), static_cast<int>(m_parent_size_start.y) };
       UintVec2 new_size;

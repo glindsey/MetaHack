@@ -31,7 +31,7 @@ protected:
   explicit EntityStandard2DView(Entity& entity, 
                                 TileSheet& tileSheet);
 
-  virtual bool onEvent_V(Event const& event) override;
+  virtual bool onEvent(Event const& event) override;
 
 private:
   /// Reference to tilesheet storing entity graphics.

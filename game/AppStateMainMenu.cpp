@@ -81,7 +81,7 @@ void AppStateMainMenu::render_title(sf::RenderTexture & texture, int frame)
   texture.display();
 }
 
-bool AppStateMainMenu::onEvent_V(Event const& event)
+bool AppStateMainMenu::onEvent(Event const& event)
 {
   /// @todo WRITE ME
   return false;

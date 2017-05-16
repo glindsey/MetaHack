@@ -12,7 +12,8 @@ namespace metagui
   TitleBar::TitleBar(std::string name)
     :
     GUIObject(name, {})
-  {}
+  {
+  }
 
   TitleBar::~TitleBar()
   {
@@ -75,7 +76,7 @@ namespace metagui
     texture.display();
   }
 
-  bool TitleBar::onEvent_V2(Event const& event)
+  bool TitleBar::onEvent_V(Event const& event)
   {
     auto id = event.getId();
 

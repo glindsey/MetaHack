@@ -22,7 +22,7 @@ namespace metagui
   void ShrinkHandle::drawPreChildren_(sf::RenderTexture& texture, int frame)
   {}
 
-  bool ShrinkHandle::onEvent_V2(Event const & event)
+  bool ShrinkHandle::onEvent_V(Event const & event)
   {
     return false;
   }

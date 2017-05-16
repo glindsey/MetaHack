@@ -23,7 +23,7 @@ namespace metagui
   {
   }
 
-  bool CloseHandle::onEvent_V2(Event const& event)
+  bool CloseHandle::onEvent_V(Event const& event)
   {
     return false;
   }

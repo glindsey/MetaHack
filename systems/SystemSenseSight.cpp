@@ -244,7 +244,7 @@ bool SystemSenseSight::subjectCanSeeCoords(EntityId subject, IntVec2 coords) con
   return m_senseSight[subject].canSee(coords);
 }
 
-bool SystemSenseSight::onEvent_V(Event const& event)
+bool SystemSenseSight::onEvent(Event const& event)
 {
   auto id = event.getId();
 

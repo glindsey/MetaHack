@@ -26,7 +26,7 @@ protected:
   /// Constructor.
   explicit EntityNullView(Entity& entity);
 
-  virtual bool onEvent_V(Event const& event) override;
+  virtual bool onEvent(Event const& event) override;
 
 private:
 };

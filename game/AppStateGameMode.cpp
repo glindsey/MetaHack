@@ -996,7 +996,7 @@ void AppStateGameMode::add_zoom(float zoom_amount)
   m_mapZoomLevel = current_zoom_level;
 }
 
-bool AppStateGameMode::onEvent_V(Event const& event)
+bool AppStateGameMode::onEvent(Event const& event)
 {
   auto id = event.getId();
 

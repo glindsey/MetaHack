@@ -99,16 +99,16 @@ namespace metagui
       EventDragFinished(sf::Mouse::Button button_, IntVec2 current_location_)
         :
         button(button_),
-        current_location(current_location_)
+        currentLocation(current_location_)
       {}
 
       sf::Mouse::Button const button;
-      IntVec2 const current_location;
+      IntVec2 const currentLocation;
 
       void serialize(std::ostream& os) const
       {
         Event::serialize(os);
-        os << " | button: " << button << " | end: " << current_location;
+        os << " | button: " << button << " | end: " << currentLocation;
       }
     };
 
@@ -117,16 +117,16 @@ namespace metagui
       EventDragStarted(sf::Mouse::Button button_, IntVec2 start_location_)
         :
         button(button_),
-        start_location(start_location_)
+        startLocation(start_location_)
       {}
 
       sf::Mouse::Button const button;
-      IntVec2 const start_location;
+      IntVec2 const startLocation;
 
       void serialize(std::ostream& os) const
       {
         Event::serialize(os);
-        os << " | button: " << button << " | start: " << start_location;
+        os << " | button: " << button << " | start: " << startLocation;
       }
     };
 
@@ -135,16 +135,16 @@ namespace metagui
       EventDragging(sf::Mouse::Button button_, IntVec2 current_location_)
         :
         button(button_),
-        current_location(current_location_)
+        currentLocation(current_location_)
       {}
 
       sf::Mouse::Button const button;
-      IntVec2 const current_location;
+      IntVec2 const currentLocation;
 
       void serialize(std::ostream& os) const
       {
         Event::serialize(os);
-        os << " | button: " << button << " | loc: " << current_location;
+        os << " | button: " << button << " | loc: " << currentLocation;
       }
 
       /// Number of pixels you have to move before it is considered "dragging" the object.
@@ -320,17 +320,34 @@ namespace metagui
     /// Get an object flag.
     /// A flag that does not exist will be initialized and set to false or
     /// the default value given.
-    bool getFlag(std::string name, bool default_value = false);
+    bool getFlag(std::string name, bool defaultValue = false);
+
+    bool isHidden();
+
+    bool isDisabled();
 
     /// Handles a flag being set/cleared.
     /// If this function does not handle a particular flag, calls the
     /// virtual function handleSetFlag_().
     void handleSetFlag(std::string name, bool enabled);
 
+    /// Returns whether the specified point falls within this object's bounds
+    /// but NOT within one of its children's bounds.
+    /// @param  point   Point to check.
+    /// @return True or false.
+    bool handlesPoint(IntVec2 point);
+
     /// Returns whether the specified point falls within this object's bounds.
     /// @param  point   Point to check.
     /// @return True if the point is within the object, false otherwise.
     bool containsPoint(IntVec2 point);
+
+    /// Returns whether the specified point falls within the bounds of one
+    /// or more of this object's children.
+    /// @param  point   Point to check.
+    /// @return True if the point is within one or more of this object's 
+    ///         children, false otherwise.
+    bool childContainsPoint(IntVec2 point);
 
     /// Flag this object, and its parents, to be redrawn.
     void flagForRedraw();
@@ -368,29 +385,29 @@ namespace metagui
     /// The default behavior is to do nothing.
     virtual void handleSetFlag_(std::string name, bool enabled);
 
-    virtual bool onEvent_V(Event const& event) override final;
+    virtual bool onEvent(Event const& event) override final;
 
     bool onEventResized(EventResized const& event);
     bool onEventDragStarted(EventDragStarted const& event);
     bool onEventDragging(EventDragging const& event);
     bool onEventDragFinished(EventDragFinished const& event);
 
-    virtual bool onEvent_V2(Event const& event) { return false; }
+    virtual bool onEvent_V(Event const& event) { return false; }
 
     /// Subscribe to parent events that all objects care about.
-    void subscribeToParentEvents(Subject& parent);
+    void doEventSubscriptions(Subject& parent);
 
     /// Subscribe to any additional events that we care about which are 
     /// emitted by a parent.
     /// The default behavior is to do nothing.
-    virtual void subscribeToParentEvents_V(Subject& parent);
+    virtual void doEventSubscriptions_V(Subject& parent);
 
   private:
     /// The name of this object.
-    std::string m_name;
+    std::string m_name = "";
 
     /// The parent of this object. Set to nullptr if the object has no parent.
-    GUIObject* m_parent;
+    GUIObject* m_parent = nullptr;
 
     /// Boolean indicating whether this object has the focus.
     /// Focus is handled differently and NOT put into m_flags because of
@@ -398,7 +415,7 @@ namespace metagui
     bool m_focus = false;
 
     /// Flag indicating whether this object needs to be redrawn.
-    bool m_flag_for_redraw = true;
+    bool m_needsRedraw = true;
 
     /// Definition of struct of cached flag values.
     struct CachedFlags
@@ -411,38 +428,38 @@ namespace metagui
     };
 
     /// Struct of cached flag values.
-    CachedFlags m_cached_flags;
+    CachedFlags m_cachedFlags;
 
     /// Boolean indicating whether a drag is currently in progress.
-    bool m_being_dragged = false;
+    bool m_beingDragged = false;
 
     /// The location that the last drag started.
-    IntVec2 m_drag_start_location;
+    IntVec2 m_dragStartLocation{ 0, 0 };
 
     /// The text for this object. The way this text is used is dependent on the
     /// sort of control it is; e.g. for a Pane this is the pane title, for a
     /// Button it is the button caption, for a TextBox it is the box contents,
     /// etc.
-    std::string m_text;
+    std::string m_text = "";
 
     /// Object location, relative to parent.
-    IntVec2 m_location;
+    IntVec2 m_location{ 0, 0 };
 
     /// Location as captured at last mousedown.
-    IntVec2 m_absolute_location_drag_start;
+    IntVec2 m_dragStartAbsoluteLocation{ 0, 0 };
 
     /// Object size.
-    UintVec2 m_size;
+    UintVec2 m_size{ 0, 0 };
 
     /// Background texture.
-    std::unique_ptr<sf::RenderTexture> m_bg_texture;
+    std::unique_ptr<sf::RenderTexture> m_bgTexture;
 
     /// Size of the background texture.
     /// Should be equal to the next largest power of 2 after m_size.
-    UintVec2 m_bg_texture_size;
+    UintVec2 m_bgTextureSize{ 0, 0 };
 
     /// Background shape.
-    sf::RectangleShape m_bg_shape;
+    sf::RectangleShape m_bgShape;
 
     /// Map of flags that can be set/cleared for this object.
     BoolMap m_flags;
@@ -451,7 +468,7 @@ namespace metagui
     std::unordered_map< std::string, std::unique_ptr<GUIObject> > m_children;
 
     /// Multimap that associates child elements with Z-orders.
-    std::multimap< uint32_t, std::string > m_zorder_map;
+    std::multimap< uint32_t, std::string > m_zOrderMap;
 
     /// Static set of events provided by GUIObject.
     static std::unordered_set<EventID> const s_events;

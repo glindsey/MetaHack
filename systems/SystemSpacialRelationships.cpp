@@ -167,7 +167,7 @@ bool SystemSpacialRelationships::areAdjacent(EntityId first, EntityId second) co
 void SystemSpacialRelationships::setMapNVO(MapId newMap)
 {}
 
-bool SystemSpacialRelationships::onEvent_V(Event const& event)
+bool SystemSpacialRelationships::onEvent(Event const& event)
 {
   return false;
 }

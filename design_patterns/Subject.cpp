@@ -76,7 +76,7 @@ void Subject::addObserver(Observer& observer, EventID eventID)
       << " for EventID 0x" 
       << std::setbase(16) << std::setfill('0') << std::setw(8) << eventID;
 
-    observer.onEvent(e);
+    observer.onEvent_NV(e);
   }
 }
 
@@ -91,7 +91,7 @@ void Subject::removeAllObservers()
     auto& observersSet = eventObservers.second;
     for (auto& observer : observersSet)
     {
-      observer->onEvent(e);
+      observer->onEvent_NV(e);
     }
 
     observersSet.clear();
@@ -145,7 +145,7 @@ void Subject::removeObserver(Observer& observer, EventID eventID)
 
   for (int i = 0; i < removalCount; i++)
   {
-    observer.onEvent(e);
+    observer.onEvent_NV(e);
   }
 }
 
@@ -181,7 +181,7 @@ bool Subject::broadcast(Event& event)
         {
           for (auto& observer : observersSet)
           {
-            handled = observer->onEvent(*copiedEvent);
+            handled = observer->onEvent_NV(*copiedEvent);
             if (handled) break;
           }
 
@@ -229,7 +229,7 @@ void Subject::unicast(Event& event, Observer& observer)
         if (observerIsObservingEvent(observer, finalEvent->getId()))
         {
           CLOG(TRACE, "ObserverPattern") << "Unicasting " << *finalEvent << " to " << observer;
-          result = observer.onEvent(*finalEvent);
+          result = observer.onEvent_NV(*finalEvent);
         }
 
         delete finalEvent;

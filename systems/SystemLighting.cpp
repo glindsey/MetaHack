@@ -444,7 +444,7 @@ void SystemLighting::doRecursiveLighting(EntityId source,
   }
 }
 
-bool SystemLighting::onEvent_V(Event const& event)
+bool SystemLighting::onEvent(Event const& event)
 {
   return false;
 }

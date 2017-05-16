@@ -37,7 +37,7 @@ protected:
   /// @param  frame   Current frame counter.
   virtual void drawContents_(sf::RenderTexture& texture, int frame) override;
 
-  virtual bool onEvent_V2(Event const& event) override;
+  virtual bool onEvent_V(Event const& event) override;
 
   /// Handle a KeyPressed event.
   bool handleKeyPress(UIEvents::EventKeyPressed const& event);

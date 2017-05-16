@@ -18,7 +18,7 @@ EntityStandard2DView::EntityStandard2DView(Entity& entity,
 {
 }
 
-bool EntityStandard2DView::onEvent_V(Event const& event)
+bool EntityStandard2DView::onEvent(Event const& event)
 {
   /// @todo WRITE ME
   return false;
