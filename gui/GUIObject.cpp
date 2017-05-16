@@ -648,12 +648,9 @@ namespace metagui
       m_beingDragged = true;
       m_dragStartLocation = event.startLocation;
       m_dragStartAbsoluteLocation = getAbsoluteLocation();
-
-      return false;
     }
 
-    // Mark as handled so it is not passed to virtual handler.
-    return true;
+    return false;
   }
 
   bool GUIObject::onEventDragging(EventDragging const& event)
@@ -664,14 +661,9 @@ namespace metagui
       auto newCoords = m_dragStartAbsoluteLocation + moveAmount;
 
       setAbsoluteLocation(newCoords);
+    }
 
-      return false;
-    }
-    else
-    {
-      // Mark as handled so it is not passed to virtual handler.
-      return true;
-    }
+    return false;
   }
 
   bool GUIObject::onEventDragFinished(EventDragFinished const & event)

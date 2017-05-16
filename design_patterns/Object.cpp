@@ -237,12 +237,11 @@ bool Object::broadcast(Event& event)
           for (auto& observer : observersSet)
           {
             handled = observer->onEvent_NV(*copiedEvent);
-            if (handled) break;
-          }
-
-          if (handled)
-          {
-            CLOG(TRACE, "EventSystem") << "Broadcast Halted: " << *copiedEvent;
+            if (handled)
+            {
+              CLOG(TRACE, "EventSystem") << "Broadcast Halted: " << *copiedEvent << " by " << *observer;
+              break;
+            }
           }
         }
 

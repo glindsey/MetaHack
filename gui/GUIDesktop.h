@@ -18,15 +18,16 @@ namespace metagui
     struct MouseButtonInfo
     {
       /// Whether this button is pressed.
-      bool pressed;
+      bool pressed = false;
 
       /// Whether a drag is currently in process with this button.
-      bool dragging;
+      bool dragging = false;
 
       /// Absolute location of the press or release.
-      IntVec2 location;
+      IntVec2 location{ 0, 0 };
 
       /// Time elapsed since the last button state change.
+      /// @todo decouple from SFML
       sf::Clock elapsed;
     };
 

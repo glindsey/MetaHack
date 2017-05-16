@@ -97,7 +97,7 @@ bool MessageLogView::onEvent_V(Event const& event)
     return handleKeyPress(static_cast<UIEvents::EventKeyPressed const&>(event));
   }
 
-  return true; 
+  return false; 
 }
 
 bool MessageLogView::handleKeyPress(UIEvents::EventKeyPressed const& event)
