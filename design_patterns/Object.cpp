@@ -27,12 +27,11 @@ Object::Object(std::unordered_set<EventID> const events, std::string name) :
 
 Object::~Object()
 {
-  for (auto& observation : m_observations)
+  while (!m_observations.empty())
   {
-    Assert("EventSystem", !observation.second,
-           "\nReason:\tobserver went out of scope while registered with at least one Object." <<
-           "\nSubject:\t" << observation.first <<
-           "\nObserver:\t" << *this);
+    auto iter = m_observations.begin();
+    CLOG(WARNING, "EventSystem") << "Deregistering Observer " << *this << " from Subject " << *(iter->first);
+    iter->first->removeObserver(*this);
   }
 
   bool observersRemain = false;
@@ -41,9 +40,9 @@ Object::~Object()
     auto eventID = prioritizedObservers.first;
     auto observersSet = getObservers(eventID);
 
-    if (observersSet.size() != 0)
+    if (!observersSet.empty())
     {
-      CLOG(WARNING, "EventSystem") << "Subject was deleted while " << observersSet.size() << " objects were still observing event " << eventID;
+      CLOG(WARNING, "EventSystem") << "Subject " << *this << " was deleted while " << observersSet.size() << " objects were still observing event " << eventID;
       observersRemain = true;
     }
   }

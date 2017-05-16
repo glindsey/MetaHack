@@ -13,6 +13,8 @@ public:
 
 protected:
   virtual void drawContents_(sf::RenderTexture& texture, int frame) override;
+  virtual void doEventSubscriptions_V(Object& parent) override;
+  virtual bool onEvent_V(Event const& event) override;
 
 private:
   void render_attribute(sf::RenderTarget& target, 

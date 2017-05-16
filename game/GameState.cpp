@@ -20,7 +20,7 @@ namespace fs = boost::filesystem;
 GameState* GameState::s_instance = nullptr;
 
 GameState::GameState(json const& j) :
-  Object({})
+  Object({ GameState::EventClockChanged::id, GameState::EventPlayerChanged::id })
 {
   initialize(j);
 }

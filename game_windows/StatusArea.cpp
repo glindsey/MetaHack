@@ -113,6 +113,24 @@ void StatusArea::drawContents_(sf::RenderTexture& texture, int frame)
   return;
 }
 
+void StatusArea::doEventSubscriptions_V(Object & parent)
+{
+  GAME.addObserver(*this, GameState::EventClockChanged::id);
+  GAME.addObserver(*this, GameState::EventPlayerChanged::id);
+}
+
+bool StatusArea::onEvent_V(Event const & event)
+{
+  auto id = event.getId();
+  if ((id == GameState::EventClockChanged::id) ||
+      (id == GameState::EventPlayerChanged::id))
+  {
+    flagForRedraw();
+  }
+
+  return false;
+}
+
 void StatusArea::render_attribute(sf::RenderTarget& target, 
                                   std::string abbrev, 
                                   std::string key,
@@ -146,3 +164,4 @@ std::string StatusArea::get_test_label()
 {
   return "Testing GUILabel";
 }
+
