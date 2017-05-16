@@ -3,6 +3,7 @@
   "plural": "gold coins",
   "description-brief": "A coin made out of gold.",
 
+  "materials": [ "Gold" ],
   "templates": [ "Coin" ],
 
   "components": {}
