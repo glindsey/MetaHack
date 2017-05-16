@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include "ActionClose.h"
+#include "components/ComponentManager.h"
 #include "services/IMessageLog.h"
 #include "services/IStringDictionary.h"
 #include "Service.h"
@@ -13,6 +14,18 @@ namespace Actions
   ActionClose::ActionClose() : Action("close", "CLOSE", ActionClose::create_) {}
   ActionClose::ActionClose(EntityId subject) : Action(subject, "close", "CLOSE") {}
   ActionClose::~ActionClose() {}
+
+  ReasonBool ActionClose::subjectIsCapable() const
+  {
+    auto subject = getSubject();
+    bool isSapient = COMPONENTS.sapience.existsFor(subject);
+    bool canGrasp = COMPONENTS.bodyparts.existsFor(subject) && COMPONENTS.bodyparts[subject].hasPrehensileBodyPart();
+
+    if (!isSapient) return { false, "YOU_ARE_NOT_SAPIENT" }; ///< @todo Add translation key
+    if (!canGrasp) return { false, "YOU_HAVE_NO_GRASPING_BODYPARTS" }; ///< @todo Add translation key
+
+    return { true, "" };
+  }
 
   std::unordered_set<Trait> const & ActionClose::getTraits() const
   {

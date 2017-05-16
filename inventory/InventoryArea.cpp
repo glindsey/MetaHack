@@ -123,10 +123,10 @@ void InventoryArea::drawContents_(sf::RenderTexture& texture, int frame)
     entity_view->setSize({ line_spacing_y - 1, line_spacing_y - 1 } );
     entity_view->draw(texture, false, true, frame);
 
-    BodyLocation wield_location;
-    BodyLocation wear_location;
-    bool wielding = viewed_thing->isWielding(entity, wield_location);
-    bool wearing = viewed_thing->isWearing(entity, wear_location);
+    BodyLocation wieldLocation;
+    BodyLocation wearLocation;
+    bool wielding = COMPONENTS.bodyparts.existsFor(entity) && (COMPONENTS.bodyparts[entity].getWieldedEntity(wieldLocation) != EntityId::Mu());
+    bool wearing = COMPONENTS.bodyparts.existsFor(entity) && (COMPONENTS.bodyparts[entity].getWornEntity(wearLocation) != EntityId::Mu());
 
     // 5. TODO: Display "worn" or "equipped" icon if necessary.
     if (wielding)
@@ -164,11 +164,11 @@ void InventoryArea::drawContents_(sf::RenderTexture& texture, int frame)
 
     if (wielding)
     {
-      item_name << " (" << viewed_thing->getBodypartDescription(wield_location) << ")";
+      item_name << " (" << viewed_thing->getBodypartDescription(wieldLocation) << ")";
     }
     else if (wearing)
     {
-      item_name << " (" << viewed_thing->getBodypartDescription(wear_location) << ")";
+      item_name << " (" << viewed_thing->getBodypartDescription(wearLocation) << ")";
     }
 
     render_text.setFont(the_default_font);
@@ -203,10 +203,10 @@ void InventoryArea::drawContents_(sf::RenderTexture& texture, int frame)
   return;
 }
 
-bool InventoryArea::onEvent_NVI_PreChildren(Event const & event)
-{
+bool InventoryArea::onEvent_V(Event const& event) 
+{ 
   /// @todo Flesh this out a bit more.
   ///       Right now we just set the "dirty" flag for the view so it is redrawn.
   flagForRedraw();
-  return true;
+  return false; 
 }

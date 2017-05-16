@@ -1,0 +1,28 @@
+{
+  "templates": [ "Active", "Mobile", "Killable" ],
+
+  "can-throw": true,
+
+  "components": {
+    "bodyparts": {
+      "skin": { "count": 1 },
+      "head": { "count": 1 },
+      "ear": { "count": 2 },
+      "eye": { "count": 2 },
+      "nose": { "count": 1 },
+      "mouth": { "count": 1 },
+      "neck": { "count": 1 },
+      "chest": { "count": 1 },
+      "arm": { "count": 2 },
+      "hand": { "count": 2 },
+      "finger": { "count": 10 },
+      "torso": { "count": 1 },
+      "leg": { "count": 2 },
+      "foot": { "count": 2 },
+      "toe": { "count": 10 },
+      "wing": { "count": 0 },
+      "tail": { "count": 0 },
+      "prehensile-tail": { "count": 0 }
+    }
+  }
+}

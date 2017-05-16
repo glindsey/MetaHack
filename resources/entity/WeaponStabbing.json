@@ -1,7 +1,0 @@
-{
-  "parent": "Weapon",
-
-  "name": "[WeaponStabbing]",
-  "plural": "[WeaponStabbing]",
-  "description-brief": "A weapon that is designed to inflict stabbing damage."
-}

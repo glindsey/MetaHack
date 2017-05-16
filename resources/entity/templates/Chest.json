@@ -1,0 +1,15 @@
+{
+  "name": "[Chest]",
+  "plural": "[Chests]",
+
+  "templates": [ "Container", "Lockable" ],
+
+  "components": {
+    "inventory": {
+      "max-size": 20
+    },
+    "physical": {
+      "mass": 20
+    }
+  }
+}

@@ -9,7 +9,7 @@
 
 MapView::MapView(std::string name, Map& map, UintVec2 size)
   :
-  metagui::GUIObject(name, { 0, 0 }, size),
+  metagui::GUIObject(name, {}, { 0, 0 }, size),
   m_map(map)
 {
   //startObserving(map);

@@ -68,7 +68,7 @@ MapDiamond::MapDiamond(Map& m, PropertyDictionary const& s, GeoVector vec)
 
       okay = does_box_pass_criterion({ xCenter - (diamondHalfSize + 1), yCenter - (diamondHalfSize + 1) },
       { xCenter + (diamondHalfSize + 1), yCenter + (diamondHalfSize + 1) },
-                                     [&](MapTile& tile) { return !tile.isEmptySpace(); });
+                                     [&](MapTile& tile) { return !tile.isPassable(); });
 
       if (okay)
       {

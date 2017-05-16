@@ -5,6 +5,9 @@
 #include "game/GameState.h"
 #include "services/IMessageLog.h"
 #include "Service.h"
+#include "systems/SystemManager.h"
+#include "systems/SystemSpacialRelationships.h"
+
 #include "entity/Entity.h"
 #include "entity/EntityId.h"
 
@@ -49,7 +52,7 @@ namespace Actions
 
     if (object->beObjectOf(*this, subject, direction))
     {
-      if (object->moveInto(new_location))
+      if (SYSTEMS.spacial().moveEntityInto(object, new_location))
       {
         printMessageDo();
 

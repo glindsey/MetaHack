@@ -78,6 +78,11 @@ void StringDictionary::clear()
   strings.clear();
 }
 
+bool StringDictionary::contains(std::string id_) const
+{
+  return (strings.count(id_) != 0);
+}
+
 std::string StringDictionary::get(std::string id_) const
 {
   if (strings.count(id_) != 0)

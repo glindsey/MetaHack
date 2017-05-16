@@ -6,7 +6,7 @@
 #include "GUIObject.h"
 
 // Forward declarations
-class Subject;
+class Object;
 
 namespace metagui
 {
@@ -18,43 +18,39 @@ namespace metagui
     struct MouseButtonInfo
     {
       /// Whether this button is pressed.
-      bool pressed;
+      bool pressed = false;
 
       /// Whether a drag is currently in process with this button.
-      bool dragging;
+      bool dragging = false;
 
       /// Absolute location of the press or release.
-      IntVec2 location;
+      IntVec2 location{ 0, 0 };
 
       /// Time elapsed since the last button state change.
+      /// @todo decouple from SFML
       sf::Clock elapsed;
     };
 
-    explicit Desktop(Subject& event_parent,
+    explicit Desktop(Object& event_parent,
                      std::string name, 
                      UintVec2 size);
 
     virtual ~Desktop();
 
-    /// Handles an SFML event and translates it into a GUI event if necessary.
-    SFMLEventResult handle_sfml_event(sf::Event& sfml_event);
-
-    virtual std::unordered_set<EventID> registeredEvents() const;
-
   protected:
-    virtual GUIEvent::Result handleGUIEventPreChildren_(GUIEventResized& event) final;
+    virtual bool onEvent_V(Event const& event) override;
 
     virtual void drawPreChildren_(sf::RenderTexture& texture, int frame) override final;
 
   private:
     /// The subject from which to receive input events.
-    Subject& m_event_parent;
+    Object& m_event_parent;
 
     /// An array of data for each possible mouse button.
     std::array< MouseButtonInfo, sf::Mouse::ButtonCount > m_button_info;
 
     /// Constantly updated mouse location.
-    IntVec2 m_mouse_location;
+    IntVec2 m_mouseLocation;
   };
 }; // end namespace metagui
 

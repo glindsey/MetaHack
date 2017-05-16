@@ -1,0 +1,16 @@
+{
+  "name": "[MTWall]",
+  "plural": "[MTWalls]",
+  "passable": false,
+
+  "templates": [ "GameObject" ],
+
+  "components": {
+    "appearance": {
+      "opacity": [ "color", 255, 255, 255 ]
+    },
+    "physical": {
+      "volume": 8000000
+    }
+  }
+}

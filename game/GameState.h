@@ -72,7 +72,7 @@ private:
   json m_global;
 
   /// Static pointer to the singleton instance of the GameState.
-  static GameState* p_instance;
+  static GameState* s_instance;
 };
 
 #define GAME  GameState::instance()

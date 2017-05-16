@@ -3,9 +3,12 @@
 #include "ActionPutInto.h"
 #include "components/ComponentManager.h"
 #include "game/GameState.h"
+#include "Service.h"
 #include "services/IMessageLog.h"
 #include "services/IStringDictionary.h"
-#include "Service.h"
+#include "systems/SystemManager.h"
+#include "systems/SystemSpacialRelationships.h"
+
 #include "entity/Entity.h"
 #include "entity/EntityId.h"
 
@@ -15,6 +18,18 @@ namespace Actions
   ActionPutInto::ActionPutInto() : Action("putinto", "STORE", ActionPutInto::create_) {}
   ActionPutInto::ActionPutInto(EntityId subject) : Action(subject, "putinto", "STORE") {}
   ActionPutInto::~ActionPutInto() {}
+
+  ReasonBool ActionPutInto::subjectIsCapable() const
+  {
+    auto subject = getSubject();
+    bool isSapient = COMPONENTS.sapience.existsFor(subject);
+    bool canGrasp = COMPONENTS.bodyparts.existsFor(subject) && COMPONENTS.bodyparts[subject].hasPrehensileBodyPart();
+
+    if (!isSapient) return { false, "YOU_ARE_NOT_SAPIENT" }; ///< @todo Add translation key
+    if (!canGrasp) return { false, "YOU_HAVE_NO_GRASPING_BODYPARTS" }; ///< @todo Add translation key
+
+    return { true, "" };
+  }
 
   std::unordered_set<Trait> const & ActionPutInto::getTraits() const
   {
@@ -75,7 +90,7 @@ namespace Actions
     }
 
     // Check that the container is within reach.
-    if (!subject->canReach(container))
+    if (!SYSTEMS.spacial()->firstCanReachSecond(subject, container))
     {
       printMessageTry();
       putTr("THE_TARGET_IS_OUT_OF_REACH");
@@ -98,7 +113,7 @@ namespace Actions
     {
       printMessageDo();
 
-      if (object->moveInto(container))
+      if (SYSTEMS.spacial().moveEntityInto(object, container))
       {
         /// @todo Figure out action time.
         result = StateResult::Success();

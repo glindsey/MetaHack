@@ -2,9 +2,10 @@
 
 #include "game_windows/StatusArea.h"
 
-#include "GUILabel.h"
+#include "components/ComponentManager.h"
 #include "game/App.h"
 #include "game/GameState.h"
+#include "gui/GUILabel.h"
 #include "services/IConfigSettings.h"
 #include "Service.h"
 #include "entity/Entity.h"
@@ -50,7 +51,7 @@ void StatusArea::drawContents_(sf::RenderTexture& texture, int frame)
   if (player != EntityId::Mu())
   {
     // Render player name
-    std::string name = player->getProperName();
+    std::string name = COMPONENTS.properName.valueOr(player, "Player");
     name[0] = std::toupper(name[0], std::locale());
 
     std::string type = player->getDisplayName();
@@ -66,9 +67,9 @@ void StatusArea::drawContents_(sf::RenderTexture& texture, int frame)
     render_text.setString("HP");
     texture.draw(render_text);
 
-    int hp = player->getModifiedProperty("hp", 0);
-    //int max_hp = std::min(player->getModifiedProperty("maxhp", 1).get<int>(), 1);
-    int max_hp = 10;
+    bool playerHasHP = COMPONENTS.health.existsFor(player); // If this is false something is DEFINITELY hosed
+    int hp = (playerHasHP ? COMPONENTS.health[player].hp() : 1);
+    int max_hp = (playerHasHP ? COMPONENTS.health[player].maxHp() : 1);
 
     float hp_percentage = static_cast<float>(hp) / static_cast<float>(max_hp);
 
@@ -132,8 +133,8 @@ void StatusArea::render_attribute(sf::RenderTarget& target,
   render_text.setString(abbrev + ":");
   target.draw(render_text);
 
-  /// @todo handle other types
-  std::string attr_string = std::to_string((player->getModifiedProperty(key, 0)).get<int>());
+  /// @todo reimplement me
+  std::string attr_string = "TODO"; // std::to_string((player->getModifiedProperty(key, 0)).get<int>());
 
   render_text.setColor(text_color);
   render_text.setPosition(location.x + 40, location.y);

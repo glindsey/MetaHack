@@ -2,6 +2,7 @@
 
 #include "game/App.h"
 
+#include "events/UIEvents.h"
 #include "game/AppStateGameMode.h"
 #include "game/AppStateMainMenu.h"
 #include "game/AppStateSplashScreen.h"
@@ -9,12 +10,10 @@
 #include "services/FallbackConfigSettings.h"
 #include "services/FileSystemGameRules.h"
 #include "services/MessageLog.h"
-#include "services/Standard2DGraphicViews.h"
 #include "services/StringDictionary.h"
 #include "state_machine/StateMachine.h"
 #include "tilesheet/TileSheet.h"
 #include "types/Color.h"
-#include "types/SFMLEventResult.h"
 #include "game_windows/MessageLogView.h"
 
 // Global declarations
@@ -42,9 +41,18 @@ sf::IntRect calc_message_log_dimensions(sf::RenderWindow& window)
 
 App::App(sf::RenderWindow& app_window)
   :
-  ISFMLEventHandler(), 
-  Subject(),
-  m_app_window{ app_window },
+  Object({
+  EventAppQuitRequested::id,
+  EventAppWindowClosed::id,
+  EventAppWindowFocusChanged::id,
+  EventAppWindowResized::id,
+  UIEvents::EventKeyPressed::id,
+  UIEvents::EventMouseDown::id,
+  UIEvents::EventMouseUp::id,
+  UIEvents::EventMouseMoved::id,
+  UIEvents::EventMouseLeft::id,
+  UIEvents::EventMouseWheelMoved::id }),
+  m_appWindow{ app_window },
   m_app_texture{ NEW sf::RenderTexture() },
   m_is_running{ false },
   m_has_window_focus{ false }
@@ -60,32 +68,34 @@ App::App(sf::RenderWindow& app_window)
   }
 
   // Register loggers.
-  SET_UP_LOGGER("App", true);
-  SET_UP_LOGGER("Action", false);
-  SET_UP_LOGGER("Component", false);
-  SET_UP_LOGGER("ConfigSettings", true);
-  SET_UP_LOGGER("Entity", true);
-  SET_UP_LOGGER("EntityPool", true);
-  SET_UP_LOGGER("Game", true);
-  SET_UP_LOGGER("GameRules", true);
-  SET_UP_LOGGER("GameState", true);
-  SET_UP_LOGGER("GUI", true);
-  SET_UP_LOGGER("Inventory", true);
-  SET_UP_LOGGER("InventoryArea", true);
-  SET_UP_LOGGER("InventorySelection", true);
-  SET_UP_LOGGER("Lua", true);
-  SET_UP_LOGGER("Map", true);
-  SET_UP_LOGGER("MapFactory", true);
-  SET_UP_LOGGER("MapGenerator", true);
-  SET_UP_LOGGER("ModifiablePropertyDictionary", false);
-  SET_UP_LOGGER("ObserverPattern", true);
-  SET_UP_LOGGER("Property", false);
-  SET_UP_LOGGER("PropertyDictionary", false);
-  SET_UP_LOGGER("StateMachine", false);
-  SET_UP_LOGGER("StringDictionary", false);
-  SET_UP_LOGGER("StringTransforms", false);
-  SET_UP_LOGGER("TileSheet", true);
-  SET_UP_LOGGER("Types", true);
+  SET_UP_LOGGER("App",                          false);
+  SET_UP_LOGGER("Action",                       false);
+  SET_UP_LOGGER("Component",                    false);
+  SET_UP_LOGGER("ConfigSettings",               false);
+  SET_UP_LOGGER("Entity",                       false);
+  SET_UP_LOGGER("EntityPool",                   false);
+  SET_UP_LOGGER("EventSystem",                   true);
+  SET_UP_LOGGER("Game",                         false);
+  SET_UP_LOGGER("GameRules",                    false);
+  SET_UP_LOGGER("GameState",                    false);
+  SET_UP_LOGGER("GUI",                          false);
+  SET_UP_LOGGER("Inventory",                    false);
+  SET_UP_LOGGER("InventoryArea",                false);
+  SET_UP_LOGGER("InventorySelection",           false);
+  SET_UP_LOGGER("Lighting",                     false);
+  SET_UP_LOGGER("Lua",                          false);
+  SET_UP_LOGGER("Map",                          false);
+  SET_UP_LOGGER("MapFactory",                   false);
+  SET_UP_LOGGER("MapGenerator",                 false);
+  SET_UP_LOGGER("Property",                     false);
+  SET_UP_LOGGER("PropertyDictionary",           false);
+  SET_UP_LOGGER("SenseSight",                   false);
+  SET_UP_LOGGER("StateMachine",                 false);
+  SET_UP_LOGGER("StringDictionary",             false);
+  SET_UP_LOGGER("StringTransforms",             false);
+  SET_UP_LOGGER("TileSheet",                    false);
+  SET_UP_LOGGER("Types",                        false);
+  SET_UP_LOGGER("Utilities",                    false);
 
 
   // Load config settings.
@@ -100,10 +110,10 @@ App::App(sf::RenderWindow& app_window)
   m_state_machine.reset(NEW StateMachine("app_state_machine", this)),
 
   // Create the app texture for off-screen composition.
-  m_app_texture->create(m_app_window.getSize().x, m_app_window.getSize().y);
+  m_app_texture->create(m_appWindow.getSize().x, m_appWindow.getSize().y);
 
   // Create the GUI desktop.
-  m_gui_desktop.reset(NEW metagui::Desktop(*this, "Desktop", m_app_window.getSize()));
+  m_gui_desktop.reset(NEW metagui::Desktop(*this, "Desktop", m_appWindow.getSize()));
 
   // Create the random number generator and seed it with the current time.
   m_rng.reset(NEW boost::random::mt19937(static_cast<unsigned int>(std::time(0))));
@@ -166,9 +176,7 @@ App::App(sf::RenderWindow& app_window)
   /// @todo Change this so language can be specified.
   Service<IStringDictionary>::provide(NEW StringDictionary("resources/strings.en"));
 
-  // Create the standard map views provider.
-  /// @todo Make this configurable.
-  Service<IGraphicViews>::provide(NEW Standard2DGraphicViews());
+  /// @note Standard map views provider creation has been moved to AppStateGameMode.
 
   // Get the state machine.
   StateMachine& sm = *m_state_machine;
@@ -191,20 +199,17 @@ App::~App()
 {
   m_state_machine.reset();
   m_gui_desktop.reset();
-  m_app_window.close();
+  m_appWindow.close();
   s_p_instance = nullptr;
 }
 
-SFMLEventResult App::handle_sfml_event(sf::Event& event)
+void App::handle_sfml_event(sf::Event& sfmlEvent)
 {
-  SFMLEventResult result = SFMLEventResult::Ignored;
-
-  switch (event.type)
+  switch (sfmlEvent.type)
   {
     case sf::Event::EventType::GainedFocus:
     {
       m_has_window_focus = true;
-      result = SFMLEventResult::Handled;
       broadcast(EventAppWindowFocusChanged({ true }));
       break;
     }
@@ -212,7 +217,6 @@ SFMLEventResult App::handle_sfml_event(sf::Event& event)
     case sf::Event::EventType::LostFocus:
     {
       m_has_window_focus = false;
-      result = SFMLEventResult::Handled;
       broadcast(EventAppWindowFocusChanged({ false }));
       break;
     }
@@ -220,19 +224,19 @@ SFMLEventResult App::handle_sfml_event(sf::Event& event)
     case sf::Event::EventType::Resized:
     {
       m_app_texture.reset(NEW sf::RenderTexture());
-      m_app_texture->create(event.size.width, event.size.height);
-      m_app_window.setView(sf::View(
-        sf::FloatRect(0, 0, static_cast<float>(event.size.width), static_cast<float>(event.size.height))));
+      m_app_texture->create(sfmlEvent.size.width, sfmlEvent.size.height);
+      m_appWindow.setView(sf::View(
+        sf::FloatRect(0, 0, 
+                      static_cast<float>(sfmlEvent.size.width), 
+                      static_cast<float>(sfmlEvent.size.height))));
 
-      result = SFMLEventResult::Acknowledged;
-      broadcast(EventAppWindowResized({ event.size.width, event.size.height }));
+      broadcast(EventAppWindowResized({ sfmlEvent.size.width, sfmlEvent.size.height }));
       break;
     }
 
     case sf::Event::EventType::Closed:
     {
       m_is_running = false;
-      result = SFMLEventResult::Handled;
       broadcast(EventAppWindowClosed());
       break;
     }
@@ -241,13 +245,12 @@ SFMLEventResult App::handle_sfml_event(sf::Event& event)
     {
       bool do_key_broadcast = true;
 
-      switch (event.key.code)
+      switch (sfmlEvent.key.code)
       {
         case sf::Keyboard::Key::Q:
-          if (event.key.alt && event.key.control)
+          if (sfmlEvent.key.alt && sfmlEvent.key.control)
           {
             m_is_running = false;
-            result = SFMLEventResult::Handled;
             broadcast(EventAppQuitRequested());
             do_key_broadcast = false;
           }
@@ -259,39 +262,63 @@ SFMLEventResult App::handle_sfml_event(sf::Event& event)
 
       if (do_key_broadcast)
       {
-        broadcast(EventKeyPressed(event.key.code, 
-                                  event.key.alt, 
-                                  event.key.control, 
-                                  event.key.shift, 
-                                  event.key.system));
+        broadcast(UIEvents::EventKeyPressed(sfmlEvent.key.code,
+                                            sfmlEvent.key.alt,
+                                            sfmlEvent.key.control,
+                                            sfmlEvent.key.shift,
+                                            sfmlEvent.key.system));
       }
 
       break;
     }
 
+    case sf::Event::EventType::MouseButtonPressed:
+    {
+      IntVec2 point{ sfmlEvent.mouseButton.x, sfmlEvent.mouseButton.y };
+      UIEvents::EventMouseDown event{ sfmlEvent.mouseButton.button, point };
+      broadcast(event);
+    }
+    break;
+
+    case sf::Event::EventType::MouseButtonReleased:
+    {
+      IntVec2 point{ sfmlEvent.mouseButton.x, sfmlEvent.mouseButton.y };
+      UIEvents::EventMouseUp event{ sfmlEvent.mouseButton.button, point };
+      broadcast(event);
+    }
+    break;
+
+    case sf::Event::EventType::MouseMoved:
+    {
+      IntVec2 point{ sfmlEvent.mouseMove.x, sfmlEvent.mouseMove.y };
+      UIEvents::EventMouseMoved event{ point };
+      broadcast(event);
+    }
+    break;
+
+    case sf::Event::EventType::MouseLeft:
+    {
+      UIEvents::EventMouseLeft event{};
+      broadcast(event);
+    }
+    break;
+
     case sf::Event::EventType::MouseWheelMoved:
     {
-      broadcast(EventMouseWheelMoved(event.mouseWheel.delta,
-                                     event.mouseWheel.x,
-                                     event.mouseWheel.y));
+      broadcast(UIEvents::EventMouseWheelMoved(sfmlEvent.mouseWheel.delta,
+                                               sfmlEvent.mouseWheel.x,
+                                               sfmlEvent.mouseWheel.y));
       break;
     }
 
     default:
       break;
   }
-
-  if (result != SFMLEventResult::Handled)
-  {
-    result = m_state_machine->handle_sfml_event(event);
-  }
-
-  return result;
 }
 
 sf::RenderWindow& App::get_window()
 {
-  return m_app_window;
+  return m_appWindow;
 }
 
 bool App::has_window_focus()
@@ -346,7 +373,7 @@ metagui::Desktop & App::get_gui_desktop()
 
 TileSheet & App::get_tilesheet()
 {
-  return *m_tile_sheet;
+  return *m_tileSheet;
 }
 
 App & App::instance()
@@ -359,17 +386,6 @@ App & App::instance()
   {
     throw std::runtime_error("App instance was requested, but it does not exist");
   }
-}
-
-std::unordered_set<EventID> App::registeredEvents() const
-{
-  auto events = Subject::registeredEvents();
-  events.insert(EventAppQuitRequested::id());
-  events.insert(EventAppWindowClosed::id());
-  events.insert(EventAppWindowFocusChanged::id());
-  events.insert(EventAppWindowResized::id());
-  events.insert(EventKeyPressed::id());
-  return events;
 }
 
 void App::run()
@@ -386,7 +402,7 @@ void App::run()
   {
     // Process events
     sf::Event event;
-    while (m_app_window.pollEvent(event))
+    while (m_appWindow.pollEvent(event))
     {
       handle_sfml_event(event);
     }
@@ -397,16 +413,16 @@ void App::run()
     if (frame_clock.getElapsedTime().asMicroseconds() > 16667)
     {
       frame_clock.restart();
-      m_app_window.clear();
+      m_appWindow.clear();
       m_app_texture->clear(Color::Red);
 
       m_state_machine->render(*m_app_texture, s_frame_counter);
 
       m_app_texture->display();
       sf::Sprite sprite(m_app_texture->getTexture());
-      m_app_window.draw(sprite);
+      m_appWindow.draw(sprite);
 
-      m_app_window.display();
+      m_appWindow.display();
       ++s_frame_counter;
     }
   }

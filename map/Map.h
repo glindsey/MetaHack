@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 
-#include "Subject.h"
+#include "Object.h"
 #include "map/MapFactory.h"
 #include "types/Grid2D.h"
 #include "types/IRenderable.h"
@@ -25,7 +25,7 @@ class EntityId;
 /// Class representing a map, which is a grid of locations for Entities.
 class Map
   :
-  public Subject
+  public Object
 {
   friend class MapFactory;
   friend class MapView;
@@ -39,15 +39,8 @@ public:
   /// The maximum area of a map.
   static constexpr int max_area = max_dimension * max_dimension;
 
-  /// The default ambient light level.
-  static const Color ambient_light_level;
-
   /// Process all Entities on this map.
   void processEntities();
-
-  void updateLighting();
-
-  void addLight(EntityId source);
 
   MapTile const & getTile(IntVec2 tile) const;
 
@@ -104,25 +97,6 @@ protected:
   /// must be inserted into the container of Maps before any Lua scripts
   /// can refer to it.
   void initialize();
-
-  /// Recursively calculates lighting from the origin.
-  /// Octant is an integer representing the following:
-  /// \ 1|2 /  |
-  ///  \ | /   |
-  /// 8 \|/ 3  |
-  /// ---+---  |
-  /// 7 /|\ 4  |
-  ///  / | \   |
-  /// / 6|5 \  |
-
-  void doRecursiveLighting(EntityId source,
-                           IntVec2 const& origin,
-                           Color const& light_color,
-                           int const max_depth_squared,
-                           int octant,
-                           int depth = 1,
-                           float slope_A = 1,
-                           float slope_B = 0);
 
 private:
   /// Reference to game state.

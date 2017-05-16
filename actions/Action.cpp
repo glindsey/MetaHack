@@ -13,6 +13,8 @@
 #include "services/IStringDictionary.h"
 #include "services/MessageLog.h"
 #include "Service.h"
+#include "systems/SystemManager.h"
+#include "systems/SystemSpacialRelationships.h"
 #include "utilities/StringTransforms.h"
 
 namespace Actions
@@ -93,25 +95,26 @@ namespace Actions
   bool Action::process(AnyMap params)
   {
     auto subject = getSubject();
+    if (!COMPONENTS.activity.existsFor(subject)) return false;
+
+    auto& activity = COMPONENTS.activity[subject];
 
     // If entity is currently busy, decrement by one and return.
-    int counter_busy = subject->getBaseProperty("counter-busy", 0);
-    if (counter_busy > 0)
+    if (activity.busyTicks() > 0)
     {
-      subject->addToBaseProperty("counter-busy", -1);
+      activity.decBusyTicks(1);
       return false;
     }
 
     // Continue running through states until the event is processed, or the
     // target actor is busy.
-    while ((m_state != State::Processed) && (counter_busy == 0))
+    while ((m_state != State::Processed) && (activity.busyTicks() == 0))
     {
-      counter_busy = subject->getBaseProperty("counter-busy", 0);
       StateResult result{ false, 0 };
 
       CLOG(TRACE, "Action") << "Entity #" <<
         subject << " (" <<
-        subject->getCategory().c_str() << "): Action " <<
+        COMPONENTS.category[subject] << "): Action " <<
         getType().c_str() << " is in state " <<
         str(getState());
 
@@ -123,13 +126,13 @@ namespace Actions
           if (result.success)
           {
             // Update the busy counter.
-            m_subject->setBaseProperty("counter-busy", result.elapsed_time);
+            activity.incBusyTicks(result.elapsed_time);
             setState(State::PreBegin);
           }
           else
           {
             // Clear the busy counter.
-            m_subject->setBaseProperty("counter-busy", 0);
+            activity.clearBusyTicks();
             setState(State::PostFinish);
           }
           break;
@@ -142,13 +145,13 @@ namespace Actions
           if (result.success)
           {
             // Update the busy counter.
-            m_subject->setBaseProperty("counter-busy", result.elapsed_time);
+            activity.incBusyTicks(result.elapsed_time);
             setState(State::InProgress);
           }
           else
           {
             // Clear the busy counter.
-            m_subject->setBaseProperty("counter-busy", 0);
+            activity.clearBusyTicks();
             setState(State::PostFinish);
           }
           break;
@@ -156,14 +159,14 @@ namespace Actions
         case State::InProgress:
           result = doFinishWork(params);
 
-          m_subject->setBaseProperty("counter-busy", result.elapsed_time);
+          activity.incBusyTicks(result.elapsed_time);
           setState(State::PostFinish);
           break;
 
         case State::Interrupted:
           result = doAbortWork(params);
 
-          m_subject->addToBaseProperty("counter-busy", result.elapsed_time);
+          activity.incBusyTicks(result.elapsed_time);
           setState(State::PostFinish);
           break;
 
@@ -184,7 +187,7 @@ namespace Actions
     auto subject = getSubject();
     CLOG(TRACE, "Action") << "Entity #" <<
       subject << " (" <<
-      subject->getCategory().c_str() << "): Action " <<
+      COMPONENTS.category[subject] << "): Action " <<
       getType().c_str() << " switching to state " <<
       str(getState());
 
@@ -276,17 +279,37 @@ namespace Actions
     bool hasPosition = COMPONENTS.position.existsFor(subject);
     auto new_direction = getTargetDirection();
 
-    // Check that we're capable of eating at all.
+    // Check that we're capable of performing this action at all.
     std::string canVerb{ "can-" + getType() };
-    if (!subject->getIntrinsic(canVerb, false))
+    ReasonBool capable = subjectIsCapable();   
+    if (!capable.value)
     {
       printMessageTry();
-      putMsg(makeTr("YOU_ARE_NOT_CAPABLE_OF_VERBING", { getIndefArt(subject->getDisplayName()), subject->getDisplayName() }));
+      if (!capable.reason.empty())
+      {
+        /// @todo Add translation key
+        putMsg(makeTr("YOU_ARE_NOT_CAPABLE_OF_VERBING_BECAUSE",
+        {
+          getIndefArt(subject->getDisplayName()),
+          subject->getDisplayName(),
+          capable.reason
+        }));
+      }
+      else
+      {
+        putMsg(makeTr("YOU_ARE_NOT_CAPABLE_OF_VERBING",
+        {
+          getIndefArt(subject->getDisplayName()),
+          subject->getDisplayName()
+        }));
+      }
+
       return StateResult::Failure();
     }
 
-    // Check that we're capable of eating right now.
-    if (!subject->getModifiedProperty(canVerb, false))
+    // Check that we're capable of performing this action right now.
+    ReasonBool capableNow = subjectIsCapableNow();
+    if (!capableNow.value)
     {
       printMessageTry();
       putMsg(makeTr("YOU_CANT_VERB_NOW", { getIndefArt(subject->getDisplayName()), subject->getDisplayName() }));
@@ -296,7 +319,7 @@ namespace Actions
     if (hasTrait(Trait::SubjectMustBeAbleToMove))
     {
       // Make sure we can move RIGHT NOW.
-      if (!subject->canCurrentlyMove())
+      if (!COMPONENTS.mobility.existsFor(subject))
       {
         putTr("YOU_CANT_MOVE_NOW");
         return StateResult::Failure();
@@ -313,18 +336,17 @@ namespace Actions
       }
     }
 
-    auto& position = COMPONENTS.position.of(subject);
-    auto parent = position.parent();
-
     if (hasTrait(Trait::SubjectCanNotBeInsideAnotherObject))
     {
       // Make sure we're not confined inside another entity.
       /// @todo Allow for attacking when swallowed!
-      if (subject->isInsideAnotherEntity())
+      auto& subjectPosition = COMPONENTS.position.of(subject);
+      if (subjectPosition.isInsideAnotherEntity())
       {
+        auto subjectParent = subjectPosition.parent();
         printMessageTry();
         putMsg(makeTr("YOU_ARE_INSIDE_OBJECT",
-        { parent->getDescriptiveString(ArticleChoice::Indefinite) }));
+        { subjectParent->getDescriptiveString(ArticleChoice::Indefinite) }));
         return StateResult::Failure();
       }
     }
@@ -361,13 +383,13 @@ namespace Actions
         if (hasTrait(Trait::ObjectMustBeLiquidCarrier))
         {
           // Check that both are liquid containers.
-          /// @todo Do something better here.
-          if (!object->getIntrinsic("liquid_carrier", false))
-          {
-            printMessageTry();
-            putTr("THE_FOO_IS_NOT_A_LIQUID_CARRIER");
-            return StateResult::Failure();
-          }
+          /// @todo Re-implement me. Do something better here.
+          //if (!object->getBaseProperty("liquid_carrier", false))
+          //{
+          //  printMessageTry();
+          //  putTr("THE_FOO_IS_NOT_A_LIQUID_CARRIER");
+          //  return StateResult::Failure();
+          //}
         }
 
         if (hasTrait(Trait::ObjectMustNotBeEmpty))
@@ -397,7 +419,7 @@ namespace Actions
         if (!hasTrait(Trait::ObjectCanBeOutOfReach))
         {
           // Check that each object is within reach.
-          if (!subject->canReach(object))
+          if (!SYSTEMS.spacial()->firstCanReachSecond(subject, object))
           {
             printMessageTry();
             putMsg(makeTr("CONJUNCTION_HOWEVER") + " " + makeTr("FOO_PRO_SUB_IS_OUT_OF_REACH"));
@@ -412,7 +434,7 @@ namespace Actions
           {
             printMessageTry();
             auto message = makeTr("CONJUNCTION_HOWEVER") + " " + makeTr("FOO_PRO_SUB_IS_NOT_IN_YOUR_INVENTORY");
-            if (subject->canReach(object))
+            if (SYSTEMS.spacial()->firstCanReachSecond(subject, object))
             {
               message += makeTr("PICK_UP_OBJECT_FIRST");
             }
@@ -436,7 +458,8 @@ namespace Actions
         if (hasTrait(Trait::ObjectMustBeWielded))
         {
           // Check to see if the object is being wielded.
-          if (!subject->isWielding(object))
+          if (COMPONENTS.bodyparts.existsFor(subject) &&
+              COMPONENTS.bodyparts[subject].getWieldedLocation(object).part == BodyPart::Nowhere)
           {
             printMessageTry();
             putTr("THE_FOO_MUST_BE_WIELDED");
@@ -447,7 +470,8 @@ namespace Actions
         if (hasTrait(Trait::ObjectMustBeWorn))
         {
           // Check to see if the object is being worn.
-          if (!subject->isWearing(object))
+          if (COMPONENTS.bodyparts.existsFor(subject) &&
+              COMPONENTS.bodyparts[subject].getWornLocation(object).part == BodyPart::Nowhere)
           {
             printMessageTry();
             putTr("THE_FOO_MUST_BE_WORN");
@@ -458,7 +482,8 @@ namespace Actions
         if (hasTrait(Trait::ObjectMustNotBeWielded))
         {
           // Check to see if the object is being wielded.
-          if (subject->isWielding(object))
+          if (COMPONENTS.bodyparts.existsFor(subject) &&
+              COMPONENTS.bodyparts[subject].getWieldedLocation(object).part != BodyPart::Nowhere)
           {
             printMessageTry();
 
@@ -471,7 +496,8 @@ namespace Actions
         if (hasTrait(Trait::ObjectMustNotBeWorn))
         {
           // Check to see if the object is being worn.
-          if (subject->isWearing(object))
+          if (COMPONENTS.bodyparts.existsFor(subject) &&
+              COMPONENTS.bodyparts[subject].getWornLocation(object).part != BodyPart::Nowhere)
           {
             printMessageTry();
             putTr("YOU_CANT_VERB_WORN");
@@ -479,23 +505,12 @@ namespace Actions
           }
         }
 
-        if (hasTrait(Trait::ObjectMustBeMovableBySubject))
-        {
-          // Check to see if we can move the object.
-          if (!object->canHaveActionDoneBy(subject, ActionMove::prototype))
-          {
-            printMessageTry();
-
-            putTr("YOU_CANT_MOVE_THE_FOO");
-            return StateResult::Failure();
-          }
-        }
-
         // Check that we can perform this Action on this object.
-        if (!object->canHaveActionDoneBy(subject, *this))
+        ReasonBool allowedNow = objectIsAllowedNow();
+        if (!allowedNow.value)
         {
           printMessageTry();
-          printMessageCant();
+          printMessageCant(); ///< @todo Add the reason why here
           return StateResult::Failure();
         }
       }
@@ -521,6 +536,30 @@ namespace Actions
   {
     auto result = doAbortWorkNVI(params);
     return result;
+  }
+
+  ReasonBool Action::subjectIsCapable() const
+  {
+    std::string reason = "Missing subjectIsCapable() implementation for action \"" + m_verb + "\"";
+    CLOG(ERROR, "Action") << reason;
+    return { false, reason };
+  }
+
+  ReasonBool Action::subjectIsCapableNow() const
+  {
+    return subjectIsCapable();
+  }
+
+  ReasonBool Action::objectIsAllowed() const
+  {
+    std::string reason = "Missing objectIsAllowed() implementation for action \"" + m_verb + "\"";
+    CLOG(ERROR, "Action") << reason;
+    return { false, reason };
+  }
+
+  ReasonBool Action::objectIsAllowedNow() const
+  {
+    return objectIsAllowed();
   }
 
   StateResult Action::doPreBeginWorkNVI(AnyMap& params)
@@ -734,11 +773,21 @@ namespace Actions
     return Action::s_actionMap.count(key) != 0;
   }
 
-  std::unique_ptr<Action> Action::create(std::string key, EntityId subject)
+  std::unique_ptr<Action> Action::create(std::string key, 
+                                         EntityId subject,
+                                         std::vector<EntityId> objects,
+                                         EntityId targetThing,
+                                         Direction targetDirection,
+                                         unsigned int quantity)
   {
     if (Action::s_actionMap.count(key) != 0)
     {
       std::unique_ptr<Action> action = (Action::s_actionMap.at(key))(subject);
+      if (objects.size() != 0) action->setObjects(objects);
+      if (targetThing != EntityId::Mu()) action->setTarget(targetThing);
+      if (targetDirection != Direction::None) action->setTarget(targetDirection);
+      if (quantity != 0) action->setQuantity(quantity);
+
       return std::move(action);
     }
     else

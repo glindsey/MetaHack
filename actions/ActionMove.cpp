@@ -5,10 +5,13 @@
 #include "ActionAttack.h"
 #include "components/ComponentManager.h"
 #include "game/GameState.h"
-#include "services/IMessageLog.h"
-#include "services/IStringDictionary.h"
 #include "map/Map.h"
 #include "Service.h"
+#include "services/IMessageLog.h"
+#include "services/IStringDictionary.h"
+#include "systems/SystemManager.h"
+#include "systems/SystemSpacialRelationships.h"
+
 #include "entity/Entity.h"
 #include "entity/EntityId.h"
 
@@ -18,6 +21,14 @@ namespace Actions
   ActionMove::ActionMove() : Action("move", "MOVE", ActionMove::create_) {}
   ActionMove::ActionMove(EntityId subject) : Action(subject, "move", "MOVE") {}
   ActionMove::~ActionMove() {}
+
+  ReasonBool ActionMove::subjectIsCapable() const
+  {
+    auto subject = getSubject();
+    bool isMobile = (COMPONENTS.mobility.existsFor(subject) && COMPONENTS.mobility[subject].moveSpeed() > 0);
+    std::string reason = isMobile ? "" : "YOU_HAVE_NO_WAY_OF_MOVING"; /// @todo Add translation key
+    return { isMobile, reason };      
+  }
 
   std::unordered_set<Trait> const & ActionMove::getTraits() const
   {
@@ -95,7 +106,7 @@ namespace Actions
           if (new_tile.canBeTraversedBy(subject))
           {
             /// @todo Figure out elapsed movement time.
-            result.success = subject->moveInto(new_floor);
+            result.success = SYSTEMS.spacial().moveEntityInto(subject, new_floor);
             result.elapsed_time = 1;
           }
           else

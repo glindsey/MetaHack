@@ -1,0 +1,18 @@
+{
+  "templates": [ "Active", "Mobile", "Killable" ],
+
+  "can-attack": true,
+  "can-drink": true,
+  "can-drop": true,
+  "can-eat": true,
+  "can-get": true,
+  "can-hear": true,
+  "can-move": true,
+  "can-remove": true,
+  "can-see": true,
+  "can-smell": true,
+  "can-store": true,
+  "can-turn": true,
+
+  "components": {}
+}

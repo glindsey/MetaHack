@@ -13,13 +13,26 @@ class Grid2D
   /// Using declaration for a ctor function for objects.
   using ObjectCtor = std::function<Object*(IntVec2)>;
 public:
-  /// Constructor for the grid.
+  /// Constructor for a grid of objects that are not passed coordinates.
+  /// @param size   The size of the grid to construct.
+  Grid2D(IntVec2 size) :
+    m_size(size)
+  {
+    for (int y = 0; y < size.y; ++y)
+    {
+      for (int x = 0; x < size.x; ++x)
+      {
+        m_objects.push_back(new Object());
+      }
+    }
+  }
+  
+  /// Constructor for a grid of objects that are passed coordinates.
   /// @param size   The size of the grid to construct.
   /// @param ctor   A function that takes a IntVec2 as an input and
   ///               returns a pointer to a new object of type Object.
   ///               The Grid2D class will take ownership of this object.
-  Grid2D(IntVec2 size, ObjectCtor ctor)
-    :
+  Grid2D(IntVec2 size, ObjectCtor ctor) :
     m_size(size)
   {
     for (int y = 0; y < size.y; ++y)
@@ -35,6 +48,8 @@ public:
   /// Get a reference to an object in the grid.
   Object& get(IntVec2 coords)
   {
+    coords.x = bounds(0, coords.x, m_size.x - 1);
+    coords.y = bounds(0, coords.y, m_size.y - 1);
     return m_objects[index(coords)];
   }
 

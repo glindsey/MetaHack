@@ -11,8 +11,9 @@ namespace metagui
 {
   TitleBar::TitleBar(std::string name)
     :
-    GUIObject(name, IntVec2(0, 0))
-  {}
+    GUIObject(name, {})
+  {
+  }
 
   TitleBar::~TitleBar()
   {
@@ -75,16 +76,32 @@ namespace metagui
     texture.display();
   }
 
-  void TitleBar::handleParentSizeChanged_(UintVec2 parent_size)
+  bool TitleBar::onEvent_V(Event const& event)
   {
-    auto& config = Service<IConfigSettings>::get();
-    float line_spacing_y = the_default_font.getLineSpacing(config.get("text-default-size"));
+    auto id = event.getId();
 
-    // Text offsets relative to the background rectangle.
-    RealVec2 text_offset = config.get("window-text-offset");
+    if (id == EventResized::id)
+    {
+      if (event.subject == getParent())
+      {
+        auto& castEvent = static_cast<EventResized const&>(event);
+        auto& config = Service<IConfigSettings>::get();
+        float line_spacing_y = the_default_font.getLineSpacing(config.get("text-default-size"));
 
-    UintVec2 our_size{ parent_size.x, static_cast<unsigned int>(line_spacing_y + (text_offset.y * 2)) };
+        // Text offsets relative to the background rectangle.
+        RealVec2 text_offset = config.get("window-text-offset");
 
-    setSize(our_size);
+        UintVec2 our_size
+        { 
+          castEvent.new_size.x, 
+          static_cast<unsigned int>(line_spacing_y + (text_offset.y * 2)) 
+        };
+
+        setSize(our_size);
+      }
+    }
+
+    return false;
   }
+
 }; // end namespace metagui

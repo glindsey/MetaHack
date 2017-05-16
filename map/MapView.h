@@ -3,10 +3,10 @@
 #include "stdafx.h"
 
 #include "map/Map.h"
-#include "Observer.h"
 
 // Forward declarations
 class EntityId;
+class SystemLighting;
 
 /// Abstract class representing a view of a Map object.
 class MapView 
@@ -37,12 +37,12 @@ public:
 
   /// Update any cached render data associated with map tiles.
   /// @param entity	ID of the entity that is percieving the map.
-  virtual void update_tiles(EntityId entity) = 0;
+  virtual void update_tiles(EntityId entity, SystemLighting& lighting) = 0;
 
   /// Update any cached render data associated with map entities.
   /// @param entity	ID of the entity that is percieving the map.
   /// @param frame	Current animation frame number.
-  virtual void update_things(EntityId entity, int frame) = 0;
+  virtual void update_things(EntityId entity, SystemLighting& lighting, int frame) = 0;
 
 
   virtual void draw_highlight(sf::RenderTarget& target,

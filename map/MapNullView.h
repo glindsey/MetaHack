@@ -12,8 +12,8 @@ class MapNullView : public MapView
   friend class NullGraphicViews;
 
 public:
-  virtual void update_tiles(EntityId viewer) override;
-  virtual void update_things(EntityId viewer, int frame) override;
+  virtual void update_tiles(EntityId viewer, SystemLighting& lighting) override;
+  virtual void update_things(EntityId viewer, SystemLighting& lighting, int frame) override;
 
   virtual bool render_map(sf::RenderTexture& texture, int frame) override;
 
@@ -31,7 +31,5 @@ protected:
   /// @param name   The name of this view.
   /// @param map	Reference to Map object to associate with this view.
   MapNullView(std::string name, Map& map, UintVec2 size);
-
-  virtual bool onEvent_NVI_PreChildren(Event const& event) override;
 
 };

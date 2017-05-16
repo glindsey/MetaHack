@@ -32,5 +32,5 @@ protected:
 
 private:
   /// The tilesheet that these views are drawn from.
-  std::unique_ptr<TileSheet> m_tile_sheet;
+  std::unique_ptr<TileSheet> m_tileSheet;
 };

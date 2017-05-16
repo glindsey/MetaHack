@@ -13,7 +13,7 @@ public:
 
   /// Get data for a specific Entity category.
   /// If it doesn't exist, attempt to load it.
-  virtual json& category(std::string name)
+  virtual json& category(std::string name, bool isTemplate = false)
   {
     if (m_data.count(name) == 0)
     {

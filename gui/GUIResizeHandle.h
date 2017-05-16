@@ -18,10 +18,8 @@ namespace metagui
   protected:
     explicit ResizeHandle(std::string name);
     virtual void drawPreChildren_(sf::RenderTexture& texture, int frame) override final;
-    virtual void handleParentSizeChanged_(UintVec2 parent_size) override final;
 
-    virtual GUIEvent::Result handleGUIEventPostChildren_(GUIEventDragStarted& event) override;
-    virtual GUIEvent::Result handleGUIEventPostChildren_(GUIEventDragging& event) override;
+    virtual bool onEvent_V(Event const& event) override;
 
   private:
     /// Size of the resize handle.

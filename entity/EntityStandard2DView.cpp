@@ -10,16 +10,18 @@
 #include "types/ShaderEffect.h"
 #include "utilities/RNGUtils.h"
 
-EntityStandard2DView::EntityStandard2DView(Entity& entity, TileSheet& tile_sheet)
+EntityStandard2DView::EntityStandard2DView(Entity& entity, 
+                                           TileSheet& tileSheet)
   :
   EntityView(entity),
-  m_tile_sheet(tile_sheet)
+  m_tileSheet{ tileSheet }
 {
 }
 
-EventResult EntityStandard2DView::onEvent_NVI(Event const & event)
+bool EntityStandard2DView::onEvent(Event const& event)
 {
-  return{ EventHandled::Yes, ContinueBroadcasting::Yes };
+  /// @todo WRITE ME
+  return false;
 }
 
 EntityStandard2DView::~EntityStandard2DView()
@@ -27,13 +29,13 @@ EntityStandard2DView::~EntityStandard2DView()
 }
 
 void EntityStandard2DView::draw(sf::RenderTarget& target,
-                                bool use_lighting,
+                                SystemLighting* lighting,
                                 bool use_smoothing,
                                 int frame)
 {
   auto& config = Service<IConfigSettings>::get();
   auto& entity = getEntity();
-  auto& texture = m_tile_sheet.getTexture();
+  auto& texture = m_tileSheet.getTexture();
 
   // Can't render if it doesn't have a Position component.
   if (!COMPONENTS.position.existsFor(entity.getId())) return;
@@ -66,9 +68,9 @@ void EntityStandard2DView::draw(sf::RenderTarget& target,
   texture_coords.height = tile_size;
 
   Color thing_color;
-  if (use_lighting)
+  if (lighting != nullptr)
   {
-    thing_color = tile.getLightLevel();
+    thing_color = lighting->getLightLevel(position.coords());
   }
   else
   {
@@ -102,16 +104,19 @@ std::string EntityStandard2DView::getViewName()
 UintVec2 EntityStandard2DView::get_tile_sheet_coords(int frame) const
 {
   auto& entity = getEntity();
+  auto& category = entity.getCategoryData();
+  UintVec2 offset;
 
-  /// Get tile coordinates on the sheet.
-  UintVec2 start_coords = entity.getCategoryData().value("tile-location", UintVec2(0, 0));
+  // Get tile coordinates on the sheet.
+  UintVec2 start_coords = category.value("tile-location", UintVec2(0, 0));
 
-  /// Call the Lua function to get the offset (tile to choose).
-  /// @todo Re-implement me
-  //UintVec2 offset = entity.call_lua_function("get_tile_offset", { Property::from(frame) }).as<UintVec2>();
-  UintVec2 offset{ 0, 0 };
+  // If the entity has the "animated" component, call the Lua function to get the offset (tile to choose).
+  if (category["components"].count("animated") > 0)
+  {
+    offset = entity.call_lua_function("get_tile_offset", frame, UintVec2(0, 0));
+  }
 
-  /// Add them to get the resulting coordinates.
+  // Add them to get the resulting coordinates.
   UintVec2 tile_coords = start_coords + offset;
 
   return tile_coords;

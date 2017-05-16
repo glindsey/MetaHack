@@ -1,16 +1,14 @@
 #include "components/ComponentTemplate.h"
 
 #include "game/GameState.h"
+#include "utilities/JSONUtils.h"
 
 void from_json(json const& j, Component& obj)
 {
   obj = Component();
 
-  if (j.is_object() && j.size() != 0)
-  {
-    // *** add Component-specific assignments here ***
-    //obj.m_member = j["member"];
-  }
+  // *** add Component-specific assignments here ***
+  //JSONUtils::doIfPresent(j, "member", [&](auto& value) { obj.m_member = value; });
 }
 
 void to_json(json& j, Component const& obj)

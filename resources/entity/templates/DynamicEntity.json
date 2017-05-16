@@ -1,0 +1,27 @@
+{
+  "name": "[DynamicEntity]",
+  "plural": "[DynamicEntities]",
+
+  "templates": [ "Entity" ],
+
+  "bodypart-body-count": 1,
+
+  "xp": 0,
+
+  "living": true,
+
+  "can-attack": true,
+  "can-die": true,
+
+  "can-be-object-of-attack": true,
+  "can-be-object-of-burn": true,
+  "can-be-object-of-hurt": true,
+
+  "components": {
+    "animated": {},
+    "inventory": {
+      "max-size": -1
+    },
+    "mobility": {}
+  }
+}

@@ -16,7 +16,7 @@ public:
   virtual ~EntityNullView();
 
   virtual void draw(sf::RenderTarget& target,
-                    bool use_lighting,
+                    SystemLighting* lighting,
                     bool use_smoothing,
                     int frame) override;
 
@@ -26,7 +26,7 @@ protected:
   /// Constructor.
   explicit EntityNullView(Entity& entity);
 
-  virtual EventResult onEvent_NVI(Event const& event) override;
+  virtual bool onEvent(Event const& event) override;
 
 private:
 };

@@ -32,10 +32,10 @@ void MapGenerator::generate()
 
   GeoVector startingVector{ getRandomFilledSquare(), Direction::Self };
   feature_settings.set("type", "room");
-  feature_settings.set("min_width", 12 /*5*/);
-  feature_settings.set("max_width", 12 /*5*/);
-  feature_settings.set("min_height", 12 /*5*/);
-  feature_settings.set("max_height", 12 /*5*/);
+  feature_settings.set("min_width", 5);
+  feature_settings.set("max_width", 5);
+  feature_settings.set("min_height", 5);
+  feature_settings.set("max_height", 5);
   feature_settings.set("max_retries", 100);
   std::unique_ptr<MapFeature> startRoom = MapFeature::construct(m_game_map, feature_settings, startingVector);
 
@@ -182,7 +182,7 @@ bool MapGenerator::getGrowthVector(GeoVector& growthVector)
         if (vec.start_point.y > 0)
         {
           auto& checkTile = m_game_map.getTile({ vec.start_point.x, vec.start_point.y - 1 });
-          vecOkay = !checkTile.isEmptySpace();
+          vecOkay = !checkTile.isPassable();
         }
       }
       else if (vec.direction == Direction::East)
@@ -190,7 +190,7 @@ bool MapGenerator::getGrowthVector(GeoVector& growthVector)
         if (vec.start_point.x < mapSize.x - 1)
         {
           auto& checkTile = m_game_map.getTile({ vec.start_point.x + 1, vec.start_point.y });
-          vecOkay = !checkTile.isEmptySpace();
+          vecOkay = !checkTile.isPassable();
         }
       }
       else if (vec.direction == Direction::South)
@@ -198,7 +198,7 @@ bool MapGenerator::getGrowthVector(GeoVector& growthVector)
         if (vec.start_point.y < mapSize.y - 1)
         {
           auto& checkTile = m_game_map.getTile({ vec.start_point.x, vec.start_point.y + 1 });
-          vecOkay = !checkTile.isEmptySpace();
+          vecOkay = !checkTile.isPassable();
         }
       }
       else if (vec.direction == Direction::West)
@@ -206,7 +206,7 @@ bool MapGenerator::getGrowthVector(GeoVector& growthVector)
         if (vec.start_point.x > 0)
         {
           auto& checkTile = m_game_map.getTile({ vec.start_point.x - 1, vec.start_point.y });
-          vecOkay = !checkTile.isEmptySpace();
+          vecOkay = !checkTile.isPassable();
         }
       }
 
@@ -257,7 +257,7 @@ IntVec2 MapGenerator::getRandomFilledSquare()
   {
     coords.x = xDist(the_RNG);
     coords.y = yDist(the_RNG);
-  } while (m_game_map.getTile(coords).isEmptySpace());
+  } while (m_game_map.getTile(coords).isPassable());
 
   return coords;
 }

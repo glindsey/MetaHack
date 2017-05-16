@@ -29,22 +29,6 @@ MessageLogView::~MessageLogView()
   m_model.removeObserver(*this);
 }
 
-metagui::GUIEvent::Result MessageLogView::handleGUIEventPreChildren_(metagui::GUIEventKeyPressed& event)
-{
-  CLOG(TRACE, "GUI") << "MessageLogView::handleGUIEventPreChildren_(GUIEventKeyPressed&) called";
-
-  /// @todo This is ugly, fix later
-  if (getGlobalFocus() == true)
-  {
-    flagForRedraw();
-    return static_cast<metagui::GUIEvent::Result>(m_key_buffer.handle_key_press(event));
-  }
-  else
-  {
-    return metagui::GUIEvent::Result::Acknowledged;
-  }
-}
-
 void MessageLogView::drawContents_(sf::RenderTexture& texture, int frame)
 {
   auto& config = Service<IConfigSettings>::get();
@@ -100,10 +84,34 @@ void MessageLogView::drawContents_(sf::RenderTexture& texture, int frame)
   return;
 }
 
-bool MessageLogView::onEvent_NVI_PreChildren(Event const & event)
-{
+bool MessageLogView::onEvent_V(Event const& event) 
+{ 
+  auto id = event.getId();
+
   /// @todo Flesh this out a bit more.
-  ///       Right now we just set the "dirty" flag for the view so it is redrawn.
+  ///       Right now we just always set the "dirty" flag for the view so it is redrawn.
   flagForRedraw();
-  return true;
+
+  if (id == UIEvents::EventKeyPressed::id)
+  {
+    return handleKeyPress(static_cast<UIEvents::EventKeyPressed const&>(event));
+  }
+
+  return false; 
+}
+
+bool MessageLogView::handleKeyPress(UIEvents::EventKeyPressed const& event)
+{
+  CLOG(TRACE, "GUI") << "MessageLogView::handleKeyPress(UIEvents::EventKeyPressed const&) called";
+
+  /// @todo This is ugly, fix later
+  if (getGlobalFocus() == true)
+  {
+    flagForRedraw();
+    return m_key_buffer.handle_key_press(event);
+  }
+  else
+  {
+    return false;
+  }
 }

@@ -2,6 +2,8 @@
 
 #include "maptile/MapTile.h"
 
+#include "AssertHelper.h"
+#include "components/ComponentPhysical.h"
 #include "entity/EntityPool.h"
 #include "game/App.h"
 #include "game/GameState.h"
@@ -40,16 +42,36 @@ std::string MapTile::getTileType() const
   return m_category;
 }
 
-bool MapTile::isEmptySpace() const
+bool MapTile::isPassable() const
 {
-  return getCategoryData().value("passable", false);
+  auto& category = getCategoryData();
+  Assert("Map",
+         category.count("components") > 0 && category["components"].is_object(),
+         "MapTile is missing components");
+
+  auto& components = category["components"];
+  Assert("Map",
+         components.count("physical") > 0 && components["physical"].is_object(),
+         "MapTile is missing \"physical\" component");
+
+  // If the tile has a MatterState component and is non-solid, return true.
+  // A tile containing a liquid/gas/plasma/etc. is passable. It may kill you,
+  // but technically it's passable. ;)
+  if (components.count("matter-state") > 0 && 
+    components["matter-state"].get<std::string>().find("solid") == std::string::npos)
+  {
+    return true;
+  }
+
+  // Return whether the volume of the tile fills the entire tile.
+  return (components["physical"].value("volume", 0) < ComponentPhysical::VOLUME_MAX_CC);
 }
 
 /// @todo: Implement this to cover different entity types.
 ///        For example, a non-corporeal DynamicEntity can move through solid matter.
 bool MapTile::canBeTraversedBy(EntityId entity) const
 {
-  return isEmptySpace();
+  return isPassable();
 }
 
 void MapTile::setCoords(IntVec2 coords)
@@ -67,104 +89,18 @@ MapId MapTile::map() const
   return m_mapId;
 }
 
-void MapTile::setAmbientLightLevel(Color level)
-{
-  m_ambient_light_color = level;
-}
-
-void MapTile::beLitBy(EntityId light)
-{
-  GAME.maps().get(map()).addLight(light);
-}
-
-void MapTile::clearLightInfluences()
-{
-  m_lights.clear();
-  m_calculated_light_colors.clear();
-}
-
-void MapTile::addLightInfluence(EntityId source,
-                                  LightInfluence influence)
-{
-  if (m_lights.count(source) == 0)
-  {
-    m_lights[source] = influence;
-
-    float dist_squared = static_cast<float>(calc_vis_distance(getCoords().x, getCoords().y, influence.coords.x, influence.coords.y));
-
-    Color const& light_color = influence.color;
-    int light_intensity = influence.intensity;
-
-    Color addColor{ 0, 0, 0, 255 };
-
-    float dist_factor;
-
-    if (light_intensity == 0)
-    {
-      dist_factor = 1.0f;
-    }
-    else
-    {
-      dist_factor = dist_squared / static_cast<float>(light_intensity);
-    }
-
-    std::vector<Direction> const directions
-    { 
-      Direction::Self, 
-      Direction::North, 
-      Direction::East, 
-      Direction::South, 
-      Direction::West 
-    };
-
-    for (Direction d : directions)
-    {
-      //if (!isOpaque() || (d != Direction::Self))
-      {
-        float light_factor = (1.0f - dist_factor);
-        float wall_factor = Direction::calculate_light_factor(influence.coords, getCoords(), d);
-        float factor = wall_factor * light_factor;
-
-        float newR = static_cast<float>(light_color.r()) * factor;
-        float newG = static_cast<float>(light_color.g()) * factor;
-        float newB = static_cast<float>(light_color.b()) * factor;
-
-        addColor.setR(newR);
-        addColor.setG(newG);
-        addColor.setB(newB);
-
-        unsigned int index = d.get_map_index();
-        auto prevColor = m_calculated_light_colors[index];
-
-        m_calculated_light_colors[index] = prevColor + addColor;
-      }
-    }
-  }
-}
-
-Color MapTile::getLightLevel() const
-{
-  return getWallLightLevel(Direction::Self);
-}
-
-Color MapTile::getWallLightLevel(Direction direction) const
-{
-  if (m_calculated_light_colors.count(direction.get_map_index()) == 0)
-  {
-    return m_ambient_light_color;
-  }
-  else
-  {
-    return m_ambient_light_color + m_calculated_light_colors.at(direction.get_map_index());
-  }
-}
-
 Color MapTile::getOpacity() const
 {
+  auto& category = getCategoryData();
+  Assert("Map",
+         category.count("components") > 0 && category["components"].is_object() &&
+         category["components"].count("appearance") > 0 && category["components"]["appearance"].is_object(),
+         "MapTile is missing \"appearance\" component");
+
   return getCategoryData()["components"]["appearance"].value("opacity", Color::White);
 }
 
-bool MapTile::isOpaque() const
+bool MapTile::isTotallyOpaque() const
 {
   /// @todo Check the tile's inventory to see if there's anything huge enough
   ///       to block the view of stuff behind it.
@@ -184,11 +120,10 @@ RealVec2 MapTile::getPixelCoords(IntVec2 tile)
 
 MapTile::MapTile(IntVec2 coords, std::string category, MapId map_id)
   :
-  Subject(),
+  Object({}),
   m_mapId{ map_id },
   m_coords{ coords },
-  m_category{ category },
-  m_ambient_light_color{ Color(192, 192, 192, 255) }
+  m_category{ category }
 {
   if (!initialized)
   {

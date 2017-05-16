@@ -1,0 +1,12 @@
+{
+  "name": "[Container]",
+  "plural": "[Containers]",
+
+  "templates": [ "Entity", "HasInventory" ],
+
+  "can-be-object-of-close": true,
+  "can-be-object-of-drink": true,
+  "can-be-object-of-open": true,
+
+  "components": {}
+}

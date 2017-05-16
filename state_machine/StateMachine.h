@@ -3,10 +3,8 @@
 
 #include "stdafx.h"
 
-#include "Observer.h"
-#include "Subject.h"
+#include "Object.h"
 #include "types/IRenderable.h"
-#include "types/ISFMLEventHandler.h"
 
 // Forward declarations
 class State;
@@ -14,14 +12,12 @@ class State;
 // Implementation of a state machine that can change between states derived
 // from the State abstract class.
 class StateMachine :
-  virtual public RenderableToTexture,
-  virtual public ISFMLEventHandler,
-  public Observer,
-  public Subject
+  public RenderableToTexture,
+  public Object
 {
 public:
   explicit StateMachine(std::string const& machine_name,
-                        Subject* parent);
+                        Object* parent);
   StateMachine(StateMachine const&) = delete;
   StateMachine(StateMachine&&) = delete;
   StateMachine& operator=(StateMachine const&) = delete;
@@ -63,10 +59,6 @@ public:
   /// @return True if we could render, false otherwise.
   bool render(sf::RenderTexture& texture, int frame) override;
 
-  /// Pass an event on to the current state.
-  /// If no state is active, does nothing and returns SFMLEventResult::Ignored.
-  SFMLEventResult handle_sfml_event(sf::Event& event) override;
-
   /// Try to change to a new state.
   /// If nullptr is passed, attempts to terminate existing state only; this is
   /// used by the state machine destructor.
@@ -87,10 +79,8 @@ public:
   /// @return Name of current state, or "(none)" if no state is current.
   std::string const& get_current_state_name();
 
-  virtual std::unordered_set<EventID> registeredEvents() const override;
-
 protected:
-  virtual EventResult onEvent_NVI(Event const& event) override;
+  virtual bool onEvent(Event const& event) override;
 
 private:
   struct Impl;

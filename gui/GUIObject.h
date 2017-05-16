@@ -3,8 +3,7 @@
 
 #include "stdafx.h"
 
-#include "GUIEvent.h"
-#include "types/ISFMLEventHandler.h"
+#include "events/UIEvents.h"
 
 #include "Object.h"
 #include "Visitor.h"
@@ -57,11 +56,105 @@ namespace metagui
   class GUIObject : public Object
   {
   public:
-    explicit GUIObject(std::string name, IntVec2 location = IntVec2(0, 0), UintVec2 size = UintVec2(0, 0));
-    GUIObject(std::string name, sf::IntRect dimensions);
-    virtual ~GUIObject();
 
-    std::string getName();
+    struct EventMoved : public ConcreteEvent<EventMoved>
+    {
+      EventMoved(IntVec2 old_position_, IntVec2 new_position_)
+        :
+        old_position{ old_position_ },
+        new_position{ new_position_ }
+      {}
+
+      IntVec2 const old_position;
+      IntVec2 const new_position;
+
+      void serialize(std::ostream& os) const
+      {
+        Event::serialize(os);
+        os << " | old: " << old_position << " | new: " << new_position;
+      }
+    };
+
+
+    struct EventResized : public ConcreteEvent<EventResized>
+    {
+      EventResized(UintVec2 old_size_, UintVec2 new_size_)
+        :
+        old_size{ old_size_ },
+        new_size{ new_size_ }
+      {}
+
+      UintVec2 const old_size;
+      UintVec2 const new_size;
+
+      void serialize(std::ostream& os) const
+      {
+        Event::serialize(os);
+        os << " | old: " << old_size << " | new: " << new_size;
+      }
+    };
+
+    struct EventDragFinished : public ConcreteEvent<EventDragFinished>
+    {
+      EventDragFinished(sf::Mouse::Button button_, IntVec2 current_location_)
+        :
+        button(button_),
+        currentLocation(current_location_)
+      {}
+
+      sf::Mouse::Button const button;
+      IntVec2 const currentLocation;
+
+      void serialize(std::ostream& os) const
+      {
+        Event::serialize(os);
+        os << " | button: " << button << " | end: " << currentLocation;
+      }
+    };
+
+    struct EventDragStarted : public ConcreteEvent<EventDragStarted>
+    {
+      EventDragStarted(sf::Mouse::Button button_, IntVec2 start_location_)
+        :
+        button(button_),
+        startLocation(start_location_)
+      {}
+
+      sf::Mouse::Button const button;
+      IntVec2 const startLocation;
+
+      void serialize(std::ostream& os) const
+      {
+        Event::serialize(os);
+        os << " | button: " << button << " | start: " << startLocation;
+      }
+    };
+
+    struct EventDragging : public ConcreteEvent<EventDragging>
+    {
+      EventDragging(sf::Mouse::Button button_, IntVec2 current_location_)
+        :
+        button(button_),
+        currentLocation(current_location_)
+      {}
+
+      sf::Mouse::Button const button;
+      IntVec2 const currentLocation;
+
+      void serialize(std::ostream& os) const
+      {
+        Event::serialize(os);
+        os << " | button: " << button << " | loc: " << currentLocation;
+      }
+
+      /// Number of pixels you have to move before it is considered "dragging" the object.
+      static unsigned int const drag_threshold = 16;
+    };
+
+    explicit GUIObject(std::string name, std::unordered_set<EventID> const events);
+    GUIObject(std::string name, std::unordered_set<EventID> const events, IntVec2 location, UintVec2 size);
+    GUIObject(std::string name, std::unordered_set<EventID> const events, sf::IntRect dimensions);
+    virtual ~GUIObject();
 
     /// Set whether this object has focus.
     /// When set to "true", will also unfocus any sibling controls.
@@ -111,7 +204,7 @@ namespace metagui
     ///                 highest Z-order currently in the map, plus one.
     /// @return A pointer to the child added.
     GUIObject* addChild(std::unique_ptr<GUIObject> child,
-                     uint32_t z_order);
+                        uint32_t z_order);
 
     /// Add a child GUIObject underneath this one.
     /// *This GUIObject assumes ownership of the child.*
@@ -172,57 +265,6 @@ namespace metagui
       return dynamic_cast<T*>(addChildTop(std::move(child_ptr)));
     }
 
-    /// Handle an incoming event.
-    /// Calls the method handleGUIEventPreChildren() first.
-    /// If it returns anything other than Handled, it then passes the
-    /// event down to each child in sequence, stopping only if one of them
-    /// returns Handled. If the event still isn't Handled after all children
-    /// have seen it, handle_event_after_children_ is called.
-    template< typename T >
-    GUIEvent::Result handleGUIEvent(T& event)
-    {
-      GUIEvent::Result result = GUIEvent::Result::Pending;
-
-      if (m_cached_flags.disabled == false)
-      {
-        // Check the event for us first.
-        result = handleGUIEventPreChildren(event);
-
-        // Possible results here:
-        //   * The event doesn't apply to us at all. (Ignored)
-        //        Do not pass to children, and do not call handle_event_after_children.
-        //   * The event may apply to us or to our children (Acknowledged)
-        //        Pass to children.
-        //        As long as no child responded "Handled", call handle_event_after_children.
-        //   * The event applies to us, and we handled it. (Handled)
-        //        Do not pass to children, and do not call handle_event_after_children.
-
-        if ((result != GUIEvent::Result::Ignored) &&
-          (result != GUIEvent::Result::Handled))
-        {
-          for (auto& z_pair : m_zorder_map)
-          {
-            GUIEvent::Result child_result = GUIEvent::Result::Acknowledged;
-            auto& child = m_children.at(z_pair.second);
-            child_result = child->handleGUIEvent(event);
-            if (child_result == GUIEvent::Result::Handled)
-            {
-              result = GUIEvent::Result::Handled;
-              break;
-            }
-          }
-        }
-
-        if ((result != GUIEvent::Result::Ignored) &&
-          (result != GUIEvent::Result::Handled))
-        {
-          result = handleGUIEventPostChildren(event);
-        }
-      }
-
-      return result;
-    }
-
     bool childExists(std::string name);
 
     GUIObject& getChild(std::string name);
@@ -276,40 +318,37 @@ namespace metagui
     /// Get an object flag.
     /// A flag that does not exist will be initialized and set to false or
     /// the default value given.
-    bool getFlag(std::string name, bool default_value = false);
+    bool getFlag(std::string name, bool defaultValue = false);
+
+    bool isHidden();
+
+    bool isDisabled();
 
     /// Handles a flag being set/cleared.
     /// If this function does not handle a particular flag, calls the
     /// virtual function handleSetFlag_().
     void handleSetFlag(std::string name, bool enabled);
 
+    /// Returns whether the specified point falls within this object's bounds
+    /// but NOT within one of its children's bounds.
+    /// @param  point   Point to check.
+    /// @return True or false.
+    bool handlesPoint(IntVec2 point);
+
     /// Returns whether the specified point falls within this object's bounds.
     /// @param  point   Point to check.
     /// @return True if the point is within the object, false otherwise.
     bool containsPoint(IntVec2 point);
 
+    /// Returns whether the specified point falls within the bounds of one
+    /// or more of this object's children.
+    /// @param  point   Point to check.
+    /// @return True if the point is within one or more of this object's 
+    ///         children, false otherwise.
+    bool childContainsPoint(IntVec2 point);
+
     /// Flag this object, and its parents, to be redrawn.
     void flagForRedraw();
-
-    GUIEvent::Result handleGUIEventPreChildren(GUIEventDragFinished& event);
-    GUIEvent::Result handleGUIEventPostChildren(GUIEventDragFinished& event);
-
-    GUIEvent::Result handleGUIEventPreChildren(GUIEventDragStarted& event);
-    GUIEvent::Result handleGUIEventPostChildren(GUIEventDragStarted& event);
-
-    GUIEvent::Result handleGUIEventPreChildren(GUIEventDragging& event);
-    GUIEvent::Result handleGUIEventPostChildren(GUIEventDragging& event);
-
-    GUIEvent::Result handleGUIEventPreChildren(GUIEventKeyPressed& event);
-    GUIEvent::Result handleGUIEventPostChildren(GUIEventKeyPressed& event);
-
-    GUIEvent::Result handleGUIEventPreChildren(GUIEventMouseDown& event);
-    GUIEvent::Result handleGUIEventPostChildren(GUIEventMouseDown& event);
-
-    GUIEvent::Result handleGUIEventPreChildren(GUIEventResized& event);
-    GUIEvent::Result handleGUIEventPostChildren(GUIEventResized& event);
-
-    virtual std::unordered_set<EventID> registeredEvents() const override;
 
   protected:
     GUIObject* getParent();
@@ -339,54 +378,31 @@ namespace metagui
     /// Default behavior is to do nothing.
     virtual void drawPostChildren_(sf::RenderTexture& texture, int frame);
 
-    virtual GUIEvent::Result handleGUIEventPreChildren_(GUIEventDragFinished& event);
-    virtual GUIEvent::Result handleGUIEventPostChildren_(GUIEventDragFinished& event);
-
-    virtual GUIEvent::Result handleGUIEventPreChildren_(GUIEventDragStarted& event);
-    virtual GUIEvent::Result handleGUIEventPostChildren_(GUIEventDragStarted& event);
-
-    virtual GUIEvent::Result handleGUIEventPreChildren_(GUIEventDragging& event);
-    virtual GUIEvent::Result handleGUIEventPostChildren_(GUIEventDragging& event);
-
-    virtual GUIEvent::Result handleGUIEventPreChildren_(GUIEventKeyPressed& event);
-    virtual GUIEvent::Result handleGUIEventPostChildren_(GUIEventKeyPressed& event);
-
-    virtual GUIEvent::Result handleGUIEventPreChildren_(GUIEventMouseDown& event);
-    virtual GUIEvent::Result handleGUIEventPostChildren_(GUIEventMouseDown& event);
-
-    virtual GUIEvent::Result handleGUIEventPreChildren_(GUIEventResized& event);
-    virtual GUIEvent::Result handleGUIEventPostChildren_(GUIEventResized& event);
-
     /// Handles a flag being set/cleared.
     /// This method is called by setFlag() if the value was changed.
     /// The default behavior is to do nothing.
     virtual void handleSetFlag_(std::string name, bool enabled);
 
-    /// Handles the parent's size being changed.
-    /// The default behavior is to do nothing.
-    virtual void handleParentSizeChanged_(UintVec2 parent_size);
+    virtual bool onEvent(Event const& event) override final;
 
-    virtual EventResult onEvent_NVI(Event const& event) override final;
+    bool onEventResized(EventResized const& event);
+    bool onEventDragStarted(EventDragStarted const& event);
+    bool onEventDragging(EventDragging const& event);
+    bool onEventDragFinished(EventDragFinished const& event);
 
-    virtual bool onEvent_NVI_PreChildren(Event const& event);
-
-    virtual bool onEvent_NVI_PostChildren(Event const& event);
+    virtual bool onEvent_V(Event const& event) { return false; }
 
     /// Subscribe to parent events that all objects care about.
-    void subscribeToParentEvents(Subject const& parent, int priority);
+    void doEventSubscriptions(Object& parent);
 
     /// Subscribe to any additional events that we care about which are 
     /// emitted by a parent.
     /// The default behavior is to do nothing.
-    virtual void subscribeToParentEvents_(Subject const& parent, int priority);
-
+    virtual void doEventSubscriptions_V(Object& parent);
 
   private:
-    /// The name of this object.
-    std::string m_name;
-
     /// The parent of this object. Set to nullptr if the object has no parent.
-    GUIObject* m_parent;
+    GUIObject* m_parent = nullptr;
 
     /// Boolean indicating whether this object has the focus.
     /// Focus is handled differently and NOT put into m_flags because of
@@ -394,7 +410,7 @@ namespace metagui
     bool m_focus = false;
 
     /// Flag indicating whether this object needs to be redrawn.
-    bool m_flag_for_redraw = true;
+    bool m_needsRedraw = true;
 
     /// Definition of struct of cached flag values.
     struct CachedFlags
@@ -407,38 +423,38 @@ namespace metagui
     };
 
     /// Struct of cached flag values.
-    CachedFlags m_cached_flags;
+    CachedFlags m_cachedFlags;
 
     /// Boolean indicating whether a drag is currently in progress.
-    bool m_being_dragged = false;
+    bool m_beingDragged = false;
 
     /// The location that the last drag started.
-    IntVec2 m_drag_start_location;
+    IntVec2 m_dragStartLocation{ 0, 0 };
 
     /// The text for this object. The way this text is used is dependent on the
     /// sort of control it is; e.g. for a Pane this is the pane title, for a
     /// Button it is the button caption, for a TextBox it is the box contents,
     /// etc.
-    std::string m_text;
+    std::string m_text = "";
 
     /// Object location, relative to parent.
-    IntVec2 m_location;
+    IntVec2 m_location{ 0, 0 };
 
     /// Location as captured at last mousedown.
-    IntVec2 m_absolute_location_drag_start;
+    IntVec2 m_dragStartAbsoluteLocation{ 0, 0 };
 
     /// Object size.
-    UintVec2 m_size;
+    UintVec2 m_size{ 0, 0 };
 
     /// Background texture.
-    std::unique_ptr<sf::RenderTexture> m_bg_texture;
+    std::unique_ptr<sf::RenderTexture> m_bgTexture;
 
     /// Size of the background texture.
     /// Should be equal to the next largest power of 2 after m_size.
-    UintVec2 m_bg_texture_size;
+    UintVec2 m_bgTextureSize{ 0, 0 };
 
     /// Background shape.
-    sf::RectangleShape m_bg_shape;
+    sf::RectangleShape m_bgShape;
 
     /// Map of flags that can be set/cleared for this object.
     BoolMap m_flags;
@@ -447,7 +463,11 @@ namespace metagui
     std::unordered_map< std::string, std::unique_ptr<GUIObject> > m_children;
 
     /// Multimap that associates child elements with Z-orders.
-    std::multimap< uint32_t, std::string > m_zorder_map;
+    std::multimap< uint32_t, std::string > m_zOrderMap;
+
+    /// Static set of events provided by GUIObject.
+    static std::unordered_set<EventID> const s_events;
+
   };
 
   /// Convenience function for calculating the distance between two

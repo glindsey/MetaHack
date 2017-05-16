@@ -30,28 +30,6 @@ EntityPool::~EntityPool()
 {
 }
 
-bool EntityPool::firstIsSubtypeOfSecond(std::string first, std::string second)
-{
-  //CLOG(TRACE, "Entity") << "Checking if " << first << " is a subtype of " << second << "...";
-
-  std::string first_parent = Service<IGameRules>::get().category(first).value("parent", std::string());
-
-  if (first_parent.empty())
-  {
-    //CLOG(TRACE, "Entity") << first << " parent is empty, returning false";
-    return false;
-  }
-
-  if (first_parent == second)
-  {
-    //CLOG(TRACE, "Entity") << first << " parent = " << second << ", returning true";
-    return true;
-  }
-
-  //CLOG(TRACE, "Entity") << first << " parent = " << first_parent << ", recursing...";
-  return firstIsSubtypeOfSecond(first_parent, second);
-}
-
 EntityId EntityPool::create(std::string category)
 {
   EntityId new_id = EntityId(m_nextEntityId);
@@ -59,9 +37,9 @@ EntityId EntityPool::create(std::string category)
   json& data = Service<IGameRules>::get().category(category);
 
   std::unique_ptr<Entity> new_thing{ new Entity{ m_state, category, new_id } };
-  m_thing_map[new_id] = std::move(new_thing);
 
   auto& jsonComponents = data["components"];
+  m_thing_map[new_id] = std::move(new_thing);
   COMPONENTS.populate(new_id, jsonComponents);
 
   if (m_initialized)
@@ -75,12 +53,11 @@ EntityId EntityPool::create(std::string category)
 
 EntityId EntityPool::createTileContents(MapTile* map_tile)
 {
-  EntityId new_id = EntityId(m_nextEntityId);
-  ++m_nextEntityId;
-  json& data = Service<IGameRules>::get().category("TileContents");
+  EntityId new_id = create("TileContents");
 
-  std::unique_ptr<Entity> new_thing{ new Entity { m_state, map_tile, "TileContents", new_id } };
-  m_thing_map[new_id] = std::move(new_thing);
+  MapId map = map_tile->map();
+  IntVec2 position = map_tile->getCoords();
+  COMPONENTS.position[new_id].set(map, position);
 
   return EntityId(new_id);
 }
@@ -99,6 +76,35 @@ EntityId EntityPool::clone(EntityId original)
   return EntityId(new_id);
 }
 
+void EntityPool::applyTemplate(EntityId id, std::string categoryTemplate)
+{
+  if (id != EntityId::Mu())
+  {
+    json& data = Service<IGameRules>::get().category(categoryTemplate, true);
+    auto& jsonComponents = data["components"];
+    COMPONENTS.populate(id, jsonComponents);
+  }
+  else
+  {
+    throw std::exception("Attempted to apply a template to Mu object!");
+  }
+}
+
+void EntityPool::morph(EntityId id, std::string category)
+{
+  if (id != EntityId::Mu())
+  {
+    json& data = Service<IGameRules>::get().category(category);
+    auto& jsonComponents = data["components"];
+    COMPONENTS.erase(id);
+    COMPONENTS.populate(id, jsonComponents);
+  }
+  else
+  {
+    throw std::exception("Attempted to morph Mu object!");
+  }
+}
+
 void EntityPool::destroy(EntityId id)
 {
   if (id != EntityId::Mu())
@@ -106,6 +112,7 @@ void EntityPool::destroy(EntityId id)
     if (m_thing_map.count(id) != 0)
     {
       m_thing_map.erase(id);
+      COMPONENTS.erase(id);
     }
   }
   else

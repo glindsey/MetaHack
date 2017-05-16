@@ -10,7 +10,7 @@ namespace metagui
 {
   ShrinkHandle::ShrinkHandle(std::string name)
     :
-    GUIObject(name, IntVec2(0, 0))
+    GUIObject(name, {})
   {}
 
   ShrinkHandle::~ShrinkHandle()
@@ -20,9 +20,11 @@ namespace metagui
 
   // === PROTECTED METHODS ======================================================
   void ShrinkHandle::drawPreChildren_(sf::RenderTexture& texture, int frame)
+  {}
+
+  bool ShrinkHandle::onEvent_V(Event const & event)
   {
+    return false;
   }
-  void ShrinkHandle::handleParentSizeChanged_(UintVec2 parent_size)
-  {
-  }
+
 }; // end namespace metagui

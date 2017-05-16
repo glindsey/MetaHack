@@ -12,9 +12,9 @@ public:
   FileSystemGameRules();
   virtual ~FileSystemGameRules();
 
-  /// Get data for a specific Entity category.
+  /// Get data for a specific Entity category or template.
   /// If it doesn't exist, attempt to load it.
-  json& category(std::string name);
+  json& category(std::string name, bool isTemplate = false);
 
   /// Get reference to game rules data.
   inline json& data()
@@ -31,7 +31,7 @@ public:
 protected:
   /// Attempt to load JSON data for an entity category.
   /// Also runs any associated Lua script.
-  void loadCategory(std::string name);
+  void loadCategoryIfNecessary(std::string name, bool isTemplate = false);
 
 private:
   /// Game rules data, as stored in a JSON object.

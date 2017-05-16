@@ -19,7 +19,7 @@ Standard2DGraphicViews::Standard2DGraphicViews()
   auto tileSize = config.get("map-tile-size");
   auto textureSize = config.get("tilesheet-texture-size");
 
-  m_tile_sheet.reset(NEW TileSheet(tileSize, textureSize));
+  m_tileSheet.reset(NEW TileSheet(tileSize, textureSize));
 }
 
 Standard2DGraphicViews::~Standard2DGraphicViews()
@@ -43,7 +43,7 @@ MapView* Standard2DGraphicViews::createMapView(std::string name, Map& map, UintV
 
 TileSheet& Standard2DGraphicViews::getTileSheet()
 {
-  return *(m_tile_sheet.get());
+  return *(m_tileSheet.get());
 }
 
 void Standard2DGraphicViews::loadViewResourcesFor(std::string category, json& data)
@@ -57,7 +57,7 @@ void Standard2DGraphicViews::loadViewResourcesFor(std::string category, json& da
     UintVec2 tile_location;
     CLOG(TRACE, "GameState") << "Tiles were found for " << category << " category";
 
-    tile_location = m_tile_sheet->load_collection(pngfile_string);
+    tile_location = m_tileSheet->load_collection(pngfile_string);
     CLOG(TRACE, "GameState") << "Tiles for " << category <<
       " were placed on the TileSheet at " << tile_location;
 

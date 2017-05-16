@@ -79,6 +79,9 @@ public:
   EntityId get_largest_thing();
   EntityId getEntity();
 
+  /// Returns whether this inventory can hold the specified entity.
+  bool canContain(EntityId entity);
+
 protected:
   EntityMap::iterator find(EntityId target);
   EntityMap::iterator find_if(std::function<bool(EntityPair const&)> functor);

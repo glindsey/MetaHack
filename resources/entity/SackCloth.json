@@ -1,12 +1,10 @@
 {
-  "parent": "Container",
-
   "name": "cloth sack",
   "plural": "cloth sacks",
   "description-brief": "A sack made out of cloth.",
-  "creatable": true,
 
-  "inventory-size": 10,
+  "templates": [ "Container" ],
+
   "open": true,
 
   "can-be-object-of-burn": true,
@@ -14,8 +12,8 @@
   "can-be-object-of-open": false,
 
   "components": {
-	"inventory": {
-	  "max-size": 10
-	}
+    "inventory": {
+      "max-size": 10
+    }
   }
 }

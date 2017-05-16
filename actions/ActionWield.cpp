@@ -3,6 +3,7 @@
 #include "ActionWield.h"
 
 #include "ActionUnwield.h"
+#include "components/ComponentManager.h"
 #include "services/IMessageLog.h"
 #include "services/IStringDictionary.h"
 #include "Service.h"
@@ -15,6 +16,18 @@ namespace Actions
   ActionWield::ActionWield() : Action("wield", "WIELD", ActionWield::create_) {}
   ActionWield::ActionWield(EntityId subject) : Action(subject, "wield", "WIELD") {}
   ActionWield::~ActionWield() {}
+
+  ReasonBool ActionWield::subjectIsCapable() const
+  {
+    auto subject = getSubject();
+    bool isSapient = COMPONENTS.sapience.existsFor(subject);
+    bool canGrasp = COMPONENTS.bodyparts.existsFor(subject) && COMPONENTS.bodyparts[subject].hasPrehensileBodyPart();
+
+    if (!isSapient) return { false, "YOU_ARE_NOT_SAPIENT" }; ///< @todo Add translation key
+    if (!canGrasp) return { false, "YOU_HAVE_NO_GRASPING_BODYPARTS" }; ///< @todo Add translation key
+
+    return { true, "" };
+  }
 
   std::unordered_set<Trait> const & ActionWield::getTraits() const
   {
@@ -35,33 +48,24 @@ namespace Actions
     auto subject = getSubject();
     auto object = getObject();
 
-    /// @todo Support wielding in other hand(s). This will also include
+    /// @todo Support wielding in other prehensile limb(s). This will also include
     ///       shifting an already-wielded weapon to another hand.
-    /// @todo Support wielding in ANY prehensile limb (e.g. a tail).
-    m_body_location = { BodyPart::Hand, 0 };
-    EntityId currently_wielded = subject->getWieldingIn(m_body_location);
+    m_bodyLocation = { BodyPart::Hand, 0 };
+    EntityId currentlyWielded = COMPONENTS.bodyparts[subject].getWieldedEntity(m_bodyLocation);
 
-    std::string bodypart_desc = subject->getBodypartDescription(m_body_location);
+    std::string bodypartDesc = subject->getBodypartDescription(m_bodyLocation);
 
     // If it is us, or it is what is already being wielded, it means to unwield whatever is wielded.
-    if ((object == subject) || (object == currently_wielded) || (object == EntityId::Mu()))
+    if ((object == subject) || (object == currentlyWielded) || (object == EntityId::Mu()))
     {
       std::unique_ptr<Action> unwieldAction(NEW ActionUnwield(subject));
       subject->queueAction(std::move(unwieldAction));
 
       return StateResult::Failure();
     }
-    else if (currently_wielded != EntityId::Mu())
+    else if (currentlyWielded != EntityId::Mu())
     {
-      putMsg(makeTr("YOU_MUST_UNWIELD_FIRST", { bodypart_desc }));
-      return StateResult::Failure();
-    }
-
-    // Check that we have hands capable of wielding anything.
-    if (subject->getBodypartNumber(BodyPart::Hand) == 0)
-    {
-      printMessageTry();
-      putTr("YOU_HAVE_NO_GRASPING_LIMBS");
+      putMsg(makeTr("YOU_MUST_UNWIELD_FIRST", { bodypartDesc }));
       return StateResult::Failure();
     }
 
@@ -90,10 +94,9 @@ namespace Actions
   {
     auto subject = getSubject();
     auto object = getObject();
-    std::string bodypart_desc =
-      subject->getBodypartDescription(m_body_location);
+    std::string bodypart_desc = subject->getBodypartDescription(m_bodyLocation);
 
-    subject->setWielded(object, m_body_location);
+    COMPONENTS.bodyparts[subject].wieldEntity(object, m_bodyLocation);
     putMsg(makeTr("YOU_ARE_NOW_WIELDING_THE_FOO",
                   { subject->getPossessiveString(bodypart_desc) }));
 

@@ -1,9 +1,9 @@
 {
-  "parent": "Coin",
-
   "name": "gold coin",
   "plural": "gold coins",
   "description-brief": "A coin made out of gold.",
 
-  "creatable": true
+  "templates": [ "Coin" ],
+
+  "components": {}
 }

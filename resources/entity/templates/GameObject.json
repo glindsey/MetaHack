@@ -1,0 +1,17 @@
+{
+  "name": "[GameObject]",
+  "plural": "[GameObjects]",
+
+  "living": false,
+  "passable": false,
+
+  "components": {
+    "appearance": {
+      "tile-character": "?",
+      "tile-bg-color": [ "color", 255, 255, 255 ],
+      "tile-fg-color": [ "color", 32, 32, 32 ],
+      "opacity": [ "color", 255, 255, 255 ]
+    },
+    "position": {}
+  }
+}

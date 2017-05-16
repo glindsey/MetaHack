@@ -3,9 +3,9 @@
 
 #include "stdafx.h"
 
-#include "Subject.h"
+#include "Object.h"
 #include "lua/LuaObject.h"
-#include "types/ISFMLEventHandler.h"
+#include "types/MouseButtonInfo.h"
 
 #include "GUIDesktop.h"
 
@@ -18,7 +18,7 @@ class StateMachine;
 class StringDictionary;
 class TileSheet;
 
-class App : public ISFMLEventHandler, public Subject
+class App : public Object
 {
 public:
   struct EventAppQuitRequested : public ConcreteEvent<EventAppQuitRequested>
@@ -75,51 +75,6 @@ public:
     }
   };
 
-  struct EventKeyPressed : public ConcreteEvent<EventKeyPressed>
-  {
-    EventKeyPressed(sf::Keyboard::Key code_, bool alt_, bool control_, bool shift_, bool system_)
-      :
-      code{ code_ },
-      alt{ alt_ },
-      control{ control_ },
-      shift{ shift_ },
-      system{ system_ }
-    {}
-
-    sf::Keyboard::Key const code;
-    bool const alt;
-    bool const control;
-    bool const shift;
-    bool const system;
-
-    void serialize(std::ostream& os) const
-    {
-      Event::serialize(os);
-      os << " | code: " << code <<
-        " | alt: " << (alt ? "true" : "false") <<
-        " | control: " << (control ? "true" : "false") <<
-        " | shift: " << (shift ? "true" : "false") <<
-        " | system: " << (system ? "true" : "false");
-    }
-  };
-
-  struct EventMouseWheelMoved : public ConcreteEvent<EventMouseWheelMoved>  
-  {
-    EventMouseWheelMoved(int delta_, int x_, int y_)
-      : delta{ delta_ }, x{ x_ }, y{ y_ }
-    {}
-
-    int const delta;
-    int const x, y;
-
-    void serialize(std::ostream& os) const
-    {
-      os << " | delta: " << delta <<
-        " | x: " << x <<
-        " | y: " << y;
-    }
-  };
-
   explicit App(sf::RenderWindow& app_window);
   App(App const&) = delete;
   App(App&&) = delete;
@@ -129,7 +84,7 @@ public:
 
   void run();
 
-  SFMLEventResult handle_sfml_event(sf::Event& event);
+  void handle_sfml_event(sf::Event& sfmlEvent);
 
   sf::RenderWindow& get_window();
 
@@ -169,12 +124,10 @@ public:
   /// If no App instance currently exists, throws an exception.
   static App& instance();
 
-  virtual std::unordered_set<EventID> registeredEvents() const override;
-
 protected:
 
 private:
-  sf::RenderWindow& m_app_window;
+  sf::RenderWindow& m_appWindow;
 
   /// Pointer to off-screen buffer for drawing composition.
   std::unique_ptr<sf::RenderTexture> m_app_texture;
@@ -213,7 +166,7 @@ private:
   std::unique_ptr<MessageLog> m_message_log;
 
   /// The tilesheet.
-  std::unique_ptr<TileSheet> m_tile_sheet;
+  std::unique_ptr<TileSheet> m_tileSheet;
 
   static int s_frame_counter;
 

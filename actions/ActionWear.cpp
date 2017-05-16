@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include "ActionWear.h"
+#include "components/ComponentManager.h"
 #include "services/IMessageLog.h"
 #include "services/IStringDictionary.h"
 #include "Service.h"
@@ -13,6 +14,18 @@ namespace Actions
   ActionWear::ActionWear() : Action("wear", "WEAR", ActionWear::create_) {}
   ActionWear::ActionWear(EntityId subject) : Action(subject, "wear", "WEAR") {}
   ActionWear::~ActionWear() {}
+
+  ReasonBool ActionWear::subjectIsCapable() const
+  {
+    auto subject = getSubject();
+    bool isSapient = COMPONENTS.sapience.existsFor(subject);
+    bool canGrasp = COMPONENTS.bodyparts.existsFor(subject) && COMPONENTS.bodyparts[subject].hasPrehensileBodyPart();
+
+    if (!isSapient) return { false, "YOU_ARE_NOT_SAPIENT" }; ///< @todo Add translation key
+    if (!canGrasp) return { false, "YOU_HAVE_NO_GRASPING_BODYPARTS" }; ///< @todo Add translation key
+
+    return { true, "" };
+  }
 
   std::unordered_set<Trait> const & ActionWear::getTraits() const
   {
@@ -32,7 +45,7 @@ namespace Actions
 
     auto bodypart = object->is_equippable_on();
 
-    if (bodypart == BodyPart::Count)
+    if (bodypart == BodyPart::MemberCount)
     {
       putTr("THE_FOO_IS_NOT_VERBABLE");
       return StateResult::Failure();
@@ -40,8 +53,8 @@ namespace Actions
     else
     {
       /// @todo Check that entity has free body part(s) to equip item on.
-      m_body_location.part = bodypart;
-      m_body_location.number = 0;
+      m_bodyLocation.part = bodypart;
+      m_bodyLocation.number = 0;
     }
 
     return StateResult::Success();
@@ -67,10 +80,9 @@ namespace Actions
     auto subject = getSubject();
     auto object = getObject();
 
-    std::string bodypart_desc =
-      subject->getBodypartDescription(m_body_location);
+    std::string bodypart_desc = subject->getBodypartDescription(m_bodyLocation);
 
-    subject->setWorn(object, m_body_location);
+    COMPONENTS.bodyparts[subject].wearEntity(object, m_bodyLocation);
     putMsg(makeTr("YOU_ARE_NOW_WEARING_THE_FOO", { subject->getPossessiveString(bodypart_desc) }));
 
     return StateResult::Success();

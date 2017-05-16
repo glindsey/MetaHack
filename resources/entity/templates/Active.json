@@ -1,0 +1,11 @@
+{
+  "name": "[Active]",
+  "plural": "[Actives]",
+
+  "templates": [],
+
+  "components": {
+    "activity": {}
+  }
+
+}

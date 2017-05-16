@@ -2,14 +2,14 @@
 
 #include "stdafx.h"
 
-#include "GUIEvent.h"
-#include "Subject.h"
+#include "gui/GUIObject.h"
+#include "Object.h"
 
 // Forward declarations
 class Color;
 
 /// Interface for an input buffer.
-class IKeyBuffer : public Subject
+class IKeyBuffer : public Object
 {
 public:
   struct EventBufferChanged : public ConcreteEvent<EventBufferChanged>
@@ -44,10 +44,16 @@ public:
     }
   };
 
+  IKeyBuffer() : 
+    Object({
+    EventBufferChanged::id,
+    EventCursorMoved::id })
+  {}
+
   virtual ~IKeyBuffer() {}
 
   /// Process a key event.
-  virtual metagui::GUIEvent::Result handle_key_press(metagui::GUIEventKeyPressed& event) = 0;
+  virtual bool handle_key_press(UIEvents::EventKeyPressed const& event) = 0;
 
   /// Get the current cursor position.
   virtual size_t get_cursor_position() const = 0;
@@ -81,7 +87,5 @@ public:
                       sf::Font const& font,
                       unsigned int font_size,
                       Color const& fg_color) = 0;
-
-  virtual std::unordered_set<EventID> registeredEvents() const override final;
-
+  
 };

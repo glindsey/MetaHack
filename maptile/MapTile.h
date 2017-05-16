@@ -10,7 +10,7 @@
 #include "types/GameObject.h"
 #include "types/LightInfluence.h"
 #include "map/MapFactory.h"
-#include "Subject.h"
+#include "Object.h"
 
 // Forward declarations
 class DynamicEntity;
@@ -21,7 +21,7 @@ class Floor;
 class MapTile
   :
   public GameObject,
-  public Subject
+  public Object
 {
   friend class Map;
 
@@ -45,7 +45,7 @@ public:
   std::string getTileType() const;
 
   /// Returns whether a tile is empty space, e.g. no wall in the way.
-  bool isEmptySpace() const;
+  bool isPassable() const;
 
   /// Returns whether a tile can be traversed by a certain DynamicEntity.
   bool canBeTraversedBy(EntityId entity) const;
@@ -59,33 +59,11 @@ public:
   /// Get a reference to the map this tile belongs to.
   MapId map() const;
 
-  /// Set the current tile's light level.
-  void setAmbientLightLevel(Color level);
-
-  /// Receive light from the specified LightSource.
-  /// Gets the Map this tile belongs to and does a recursive
-  /// raycasting algorithm on it.
-  virtual void beLitBy(EntityId light);
-
-  /// Clear light influences.
-  void clearLightInfluences();
-
-  /// Add a light influence to the tile.
-  void addLightInfluence(EntityId source,
-                         LightInfluence influence);
-
-  /// Get the light shining on a tile.
-  /// Syntactic sugar for getWallLightLevel(Direction::Self).
-  Color getLightLevel() const;
-
-  /// Get the light shining on a tile wall.
-  Color getWallLightLevel(Direction direction) const;
-
   /// Get the opacity of this tile.
   Color getOpacity() const;
 
   /// Get whether the tile is opaque or not.
-  bool isOpaque() const;
+  bool isTotallyOpaque() const;
 
   /// Get the coordinates associated with a tile.
   static RealVec2 getPixelCoords(IntVec2 tile);
@@ -115,25 +93,6 @@ private:
   /// Reference to the Entity that represents this tile's contents.
   EntityId m_tile_contents;
 
-  /// Tile's light level.
-  /// Levels for the various color channels are interpreted as such:
-  /// 0 <= value <= 128: result = (original * (value / 128))
-  /// 128 < value <= 255: result = max(original + (value - 128), 255)
-  /// The alpha channel is ignored.
-  Color m_ambient_light_color;
-
-  /// The calculated light levels of this tile and all of its walls.
-  /// Mapping to an int is horribly hacky but I see no other alternative
-  /// right now.
-  std::map<unsigned int, Color> m_calculated_light_colors;
-
-  /// A map of LightInfluences, representing the amount of light that
-  /// each entity is contributing to this map tile.
-  /// Levels for the various color channels are interpreted as such:
-  /// 0 <= value <= 128: result = (original * (value / 128))
-  /// 128 < value <= 255: result = max(original + (value - 128), 255)
-  /// The alpha channel is ignored.
-  std::map<EntityId, LightInfluence> m_lights;
 };
 
 #endif // MAPTILE_H

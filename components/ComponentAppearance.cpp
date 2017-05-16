@@ -36,3 +36,13 @@ Color const& ComponentAppearance::opacity() const
 {
   return m_opacity;
 }
+
+bool ComponentAppearance::isTotallyOpaque() const
+{
+  return (m_opacity == Color::White);
+}
+
+bool ComponentAppearance::isTotallyTransparent() const
+{
+  return (m_opacity == Color::Black);
+}

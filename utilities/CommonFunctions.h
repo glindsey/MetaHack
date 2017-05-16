@@ -4,6 +4,13 @@
 #include "stdafx.h"
 
 template<typename T>
+std::unordered_set<T> combine(std::unordered_set<T> first, std::unordered_set<T> second)
+{
+  first.insert(second.begin(), second.end());
+  return first;
+}
+
+template<typename T>
 std::string str(T const& t)
 {
   std::stringstream stream;

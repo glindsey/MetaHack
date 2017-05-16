@@ -3,31 +3,26 @@
 
 #include "stdafx.h"
 
-#include "Observer.h"
-#include "Subject.h"
+#include "Object.h"
 #include "types/IRenderable.h"
-#include "types/ISFMLEventHandler.h"
 
 // Forward declarations
 class StateMachine;
 
 class State :
   public RenderableToTexture,
-  public ISFMLEventHandler,
-  public Observer,
-  public Subject
+  public Object
 {
 public:
-  explicit State(StateMachine& state_machine);
+  State(StateMachine& state_machine,
+        std::unordered_set<EventID> const events,
+        std::string name);
   State(State const&) = delete;
   State(State&&) = delete;
   State& operator=(State const&) = delete;
   State& operator=(State&&) = delete;
 
   virtual ~State();
-
-  // Get the name of this state.
-  virtual std::string const& getName() = 0;
 
   // Initialize the state upon entering it.
   virtual bool initialize() = 0;
@@ -40,8 +35,6 @@ public:
 
   // Tell state machine to change to a new state.
   bool change_to(std::string const& new_state);
-
-  virtual std::unordered_set<EventID> registeredEvents() const override;
 
 protected:
   // Get a reference to the state machine this state belongs to.

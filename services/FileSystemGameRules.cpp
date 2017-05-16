@@ -3,9 +3,10 @@
 #include "services/FileSystemGameRules.h"
 
 #include "game/App.h" // needed for the_lua_instance
-#include "utilities/JSONUtils.h"
 #include "Service.h"
 #include "services/IGraphicViews.h"
+#include "utilities/JSONUtils.h"
+#include "utilities/StringTransforms.h"
 
 // Namespace aliases
 namespace fs = boost::filesystem;
@@ -16,80 +17,103 @@ FileSystemGameRules::FileSystemGameRules()
 FileSystemGameRules::~FileSystemGameRules()
 {}
 
-json & FileSystemGameRules::category(std::string name)
+json & FileSystemGameRules::category(std::string name, bool isTemplate)
 {
-  if (m_data["categories"].count(name) == 0)
-  {
-    loadCategory(name);
-  }
-
+  loadCategoryIfNecessary(name, isTemplate);
   return m_data["categories"][name];
 }
 
-void FileSystemGameRules::loadCategory(std::string name)
+void FileSystemGameRules::loadCategoryIfNecessary(std::string name, bool isTemplate)
 {
-  json& category_data = m_data["categories"][name];
+  json& categories = m_data["categories"];
 
-  // Look for the various files containing this metadata.
-  FileName resource_string = "resources/entity/" + name;
-  FileName jsonfile_string = resource_string + ".json";
-  FileName luafile_string = resource_string + ".lua";
-  fs::path luafile_path = fs::path(luafile_string);
-  fs::path jsonfile_path = fs::path(jsonfile_string);
-
-  /// Try to load this Entity's JSON metadata.
-  if (fs::exists(jsonfile_path))
+  if (categories.count(name) == 0)
   {
-    CLOG(INFO, "GameState") << "Loading JSON data for " << name << " category";
+    CLOG(TRACE, "GameState") << "Loading data for " << name << " category...";
 
-    try
+    json& categoryData = categories[name];
+
+    // Look for the various files containing this metadata.
+    FileName resource_string = (isTemplate ?
+                                "resources/entity/templates/" :
+                                "resources/entity/") + name;
+    FileName jsonfile_string = resource_string + ".json";
+    fs::path jsonfile_path = fs::path(jsonfile_string);
+    FileName luafile_string = resource_string + ".lua";
+    fs::path luafile_path = fs::path(luafile_string);
+
+    /// Try to load this Entity's JSON metadata.
+    if (fs::exists(jsonfile_path))
     {
-      std::ifstream ifs(jsonfile_string);
-      category_data << ifs;
+      try
+      {
+        std::ifstream ifs(jsonfile_string);
+        categoryData << ifs;
+      }
+      catch (std::exception& e)
+      {
+        CLOG(FATAL, "GameState") << "Error reading " <<
+          jsonfile_string << ": " << e.what();
+      }
     }
-    catch (std::exception& e)
+    else
     {
-      CLOG(FATAL, "GameState") << "Error reading " <<
-        jsonfile_string << ": " << e.what();
+      CLOG(WARNING, "GameState") << "Can't find " << jsonfile_string;
     }
-  }
-  else
-  {
-    CLOG(WARNING, "GameState") << "Can't find " << jsonfile_string;
-  }
 
-  /// Check the parent key.
-  if (category_data.count("parent") != 0)
-  {
-    std::string parent_name = category_data["parent"];
-    if (parent_name == name)
+    // If there's no "components" key, create one. 
+    // (There should be, but do it just to be sure.)
+    JSONUtils::addIfMissing(categoryData, "components", json::object());
+    json& componentsJson = categoryData["components"];
+
+    // *** Load templates ***
+    JSONUtils::addIfMissing(categoryData, "templates", json::array());
+    json& templatesJson = categoryData["templates"];
+
+    if (templatesJson.is_array())
     {
-      CLOG(FATAL, "GameState") << name << " is defined as its own parent. What do you think this is, a Heinlein story?";
+      for (auto index = 0; index < templatesJson.size(); ++index)
+      {
+        // Sanitize first.
+        std::string tempName = templatesJson[index].get<std::string>();
+        tempName = StringTransforms::remove_extra_whitespace_from(tempName);
+        templatesJson[index] = tempName;
+
+        if (name == tempName)
+        {
+          CLOG(FATAL, "GameState") << name << " has itself as a template -- this isn't allowed!";
+        }
+
+        loadCategoryIfNecessary(tempName, true);
+        json& subcategoryData = categories[tempName];
+        JSONUtils::mergeArrays(categoryData["templates"], subcategoryData["templates"]);
+        JSONUtils::addTo(categoryData["components"], subcategoryData["components"]);
+      }
     }
-    json& parent_data = category(parent_name);
+    else
+    {
+      CLOG(WARNING, "GameState") << " -- " << name << " has a \"templates\" key, but the value is not an array. Skipping.";
+    }
 
-    JSONUtils::addTo(category_data, parent_data);
-  }
+    // Populate the "category" component.
+    // (If one was present already in the file, it will be overwritten.)
+    componentsJson["category"] = name;
 
-  // DEBUG: Check for "Human".
-  if (name == "Human")
-  {
-    CLOG(TRACE, "GameState") << "================================";
-    CLOG(TRACE, "GameState") << "DEBUG: Human JSON contents are:";
-    CLOG(TRACE, "GameState") << category_data.dump(2);
-    CLOG(TRACE, "GameState") << "================================";
-  }
+    // DEBUG: Check for "Human".
+    //if (name == "Human")
+    {
+      CLOG(TRACE, "GameState") << "================================";
+      CLOG(TRACE, "GameState") << "DEBUG: " << name << " JSON contents are:";
+      CLOG(TRACE, "GameState") << categoryData.dump(2);
+      CLOG(TRACE, "GameState") << "================================";
+    }
 
-  /// Try to load and run this Entity's Lua script.
-  if (fs::exists(luafile_path))
-  {
-    CLOG(INFO, "GameState") << "Loading Lua script for " << name;
-    the_lua_instance.require(resource_string, true);
-  }
-  else
-  {
-    CLOG(WARNING, "GameState") << "Can't find " << luafile_string;
-  }
+    /// Try to load and run this Entity's Lua script.
+    if (fs::exists(luafile_path))
+    {
+      the_lua_instance.require(resource_string, true);
+    }
 
-  Service<IGraphicViews>::get().loadViewResourcesFor(name, category_data);
+    Service<IGraphicViews>::get().loadViewResourcesFor(name, categoryData);
+  }
 }

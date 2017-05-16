@@ -69,7 +69,6 @@ namespace Actions
     ObjectCanBeOutOfReach,
     ObjectCanBeSelf,
     ObjectMustBeEmpty,
-    ObjectMustBeMovableBySubject,
     ObjectMustBeInInventory,
     ObjectMustNotBeEmpty,
     ObjectMustNotBeInInventory,
@@ -77,16 +76,22 @@ namespace Actions
     MemberCount
   };
 
+  /// Struct that contains a true/false value and a reason string.
+  /// If the value is false, the string should contain the reason why.
+  struct ReasonBool
+  {
+    bool value;
+    std::string reason;
+  };
+
   /// Class describing an action to execute.
   class Action
   {
   public:
-    explicit Action(EntityId subject, std::string type, std::string verb);
-    Action(Action const&) = delete;
-    Action(Action&&) = delete;
-    Action& operator=(Action const&) = delete;
-    Action& operator=(Action&&) = delete;
+    Action(EntityId subject, std::string type, std::string verb);
     virtual ~Action();
+
+    json toJson();
 
     virtual std::unordered_set<Trait> const& getTraits() const;
 
@@ -150,7 +155,12 @@ namespace Actions
 
     /// A static method that returns an Action associated with a key.
     /// If the requested key does not exist, throws an exception.
-    static std::unique_ptr<Action> create(std::string key, EntityId subject);
+    static std::unique_ptr<Action> create(std::string key, 
+                                          EntityId subject,
+                                          std::vector<EntityId> objects = std::vector<EntityId>(),
+                                          EntityId targetThing = EntityId::Mu(),
+                                          Direction targetDirection = Direction::None,
+                                          unsigned int quantity = 0);
 
     std::string makeTr(std::string key) const;
     std::string makeTr(std::string key, std::vector<std::string> optional_strings) const;
@@ -209,6 +219,28 @@ namespace Actions
     /// @param params Map of parameters for the Action.
     /// @return StateResult indicating the post-Action wait time.
     StateResult doAbortWork(AnyMap& params);
+
+    /// Check if this action can be performed at all by the subject.
+    /// Called as part of doPreBeginWork, before the overridable portion is called.
+    /// Default implementation returns false and logs a warning about a missing
+    /// override of the function.
+    virtual ReasonBool subjectIsCapable() const;
+
+    /// Check if this action can be performed right now by the subject.
+    /// Called as part of doPreBeginWork, before the overridable portion is called.
+    /// Default implementation just calls `subjectIsCapable()`.
+    virtual ReasonBool subjectIsCapableNow() const;
+
+    /// Check if this action can be performed at all on the object.
+    /// Called as part of doPreBeginWork, before the overridable portion is called.
+    /// Default implementation returns false and logs a warning about a missing
+    /// override of the function.
+    virtual ReasonBool objectIsAllowed() const;
+
+    /// Check if this action can be performed right now on the object.
+    /// Called as part of doPreBeginWork, before the overridable portion is called.
+    /// Default implementation just calls `objectIsAllowed()`.
+    virtual ReasonBool objectIsAllowedNow() const;
 
     /// Overridable portion of doPreBeginWork().
     /// @param params Map of parameters for the Action.

@@ -1,0 +1,13 @@
+{
+  "name": "[Coin]",
+  "plural": "[Coins]",
+
+  "templates": [ "Entity" ],
+
+  "components": {
+    "animated": {},
+    "physical": {
+      "mass": 1
+    }
+  }
+}

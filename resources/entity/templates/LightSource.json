@@ -1,0 +1,11 @@
+{
+  "can-be-object-of-use": true,
+
+  "components": {
+    "light-source": {
+      "lit": true,
+      "color": [ "color", 64, 64, 64 ],
+      "strength": 64
+    }
+  }
+}

@@ -3,8 +3,8 @@
 
 #include "stdafx.h"
 
-#include "GUIWindow.h"
-#include "Observer.h"
+#include "events/UIEvents.h"
+#include "gui/GUIWindow.h"
 
 /// Forward declarations
 class IKeyBuffer;
@@ -29,16 +29,16 @@ public:
 
   virtual ~MessageLogView();
 
-  /// Handle a KeyPressed event.
-  virtual metagui::GUIEvent::Result MessageLogView::handleGUIEventPreChildren_(metagui::GUIEventKeyPressed& event);
-
 protected:
   /// Render the contents of this view to the specified target.
   /// @param  target  RenderTarget to render onto.
   /// @param  frame   Current frame counter.
   virtual void drawContents_(sf::RenderTexture& texture, int frame) override;
 
-  virtual bool onEvent_NVI_PreChildren(Event const& event) override;
+  virtual bool onEvent_V(Event const& event) override;
+
+  /// Handle a KeyPressed event.
+  bool handleKeyPress(UIEvents::EventKeyPressed const& event);
 
 private:
 

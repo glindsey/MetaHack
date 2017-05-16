@@ -1,10 +1,13 @@
 {
-  "parent": "Entity",
-
   "name": "rock",
   "plural": "rocks",
   "description-brief": "A stone small enough to be picked up and used as a projectile.",
-  "creatable": true,
 
-  "physical-mass": 3
+  "templates": [ "Entity" ],
+
+  "components": {
+    "physical": {
+      "mass": 3
+    }
+  }
 }

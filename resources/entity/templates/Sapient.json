@@ -1,0 +1,24 @@
+{
+  "name": "[Sapient]",
+  "plural": "[Sapients]",
+
+  "templates": [ "HasMemory" ],
+
+  "can-close": true,
+  "can-disrobe": true,
+  "can-lock": true,
+  "can-mix": true,
+  "can-open": true,
+  "can-shoot": true,
+  "can-talk": true,
+  "can-unlock": true,
+  "can-unwield": true,
+  "can-use": true,
+  "can-wear": true,
+  "can-wield": true,
+
+  "components": {
+    "sapience": {}
+  }
+
+}

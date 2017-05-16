@@ -14,3 +14,92 @@ New ideas for laying out data in the system
 /global - Global game state information
 /global/clock - Game clock, in milliseconds
 /global/player - ID of the player
+
+
+Refactoring "can-" flags
+========================
+* = implemented, / = partially implemented
+
+            Subject Needs                         | Object Needs                        | Notes
+            ======================================| =================================== | =============================================
+Senses                                              
+feel        sense-touch                           | physical(solid)                     |
+hear        sense-hearing                         | [emits sound]                       |
+see         sense-sight                           | appearance(not transparent)         |
+smell       sense-smell                           | [emits smell]                       |
+taste       sense-taste                           | [has taste]                         |
+                                                  
+Involuntary/reflexive actions                     
+bleed       
+boil        temperature(hot)                      | physical(liquid)                    | result is vapor, possible explosions
+burn        temperature(hot)                      | physical(solid/liquid), oxidizable  | result is ash/smoke/char?
+collide     physical(solid)                       | physical(solid)                     | adjacent/same locations
+condense    temperature(cold)                     | physical(gaseous)                   | result is a liquid
+die         *health                               | n/a                                 |
+dry                                               | physical(solid), wet                |
+freeze      temperature(cold)                     | physical(liquid)                    | result is a solid
+melt        temperature(hot)                      | physical(solid)                     | result is a liquid
+mix         physical(liquid)                      | physical(liquid)                    | takes two targets; see below
+rust        physical(liquid), oxidizer            | physical(solid), oxidizable         |
+wet         physical(liquid)                      | physical(solid)                     |
+
+Instinctual actions:
+attack      instinct                              | health                              | (attack with a weapon)
+bite        instinct, bodyparts[teeth]            | health                              |
+disrobe     *instinct                             | wearable(worn)                      |
+drink       instinct, bodyparts[mouth]            | physical(liquid)                    | or maybe physical(solid), contains(liquid)
+drop        *instinct                             | movable, physical(solid)            |
+eat         instinct, digestive-system            | physical(solid)                     | target must be something the entity can eat
+emit        instinct, bodyparts[emitting]         | (any)                               | (spit, expel gas, etc, for attacks)
+get         *instinct, bodyparts[prehensile/mouth]| movable, physical(solid)            |
+kick        instinct, bodyparts[legs/feet]        | (any)                               |
+move        *instinct, mobility                   | n/a                                 |
+swipe       instinct, bodyparts[arms/hands]       | (any)                               | (slap, claw, punch, etc.)
+turn        *instinct, mobility                   | n/a                                 |
+throw       instinct, bodyparts[prehensile]       | movable, physical(solid)            |
+unwield     *instinct                             | physical(solid), wielded            |
+
+Sapient (requiring thought) actions:
+close       *sapience, bodyparts[prehensile]      | physical(solid), openable, open     |
+lock        *sapience, bodyparts[prehensile]      | physical(solid), lockable, unlocked |
+open        *sapience, bodyparts[prehensile]      | physical(solid), openable, closed   |
+pour        sapience, bodyparts[prehensile]       | inventory, contains(fluid)          | target: inventory; target = '.' --> spill
+remove      *sapience, bodyparts[prehensile]      | physical(solid)                     | 
+shoot       *sapience, bodyparts[prehensile]      | physical(solid), fireable           |
+spill       sapience                              | inventory                           | (referring to the conscious act here)
+store       *sapience, bodyparts[prehensile]      | (any)                               | target: inventory, contains(object.state)
+talk        sapience, bodyparts[sound-emitting]   | n/a                                 |
+unlock      *sapience, bodyparts[prehensile]      | physical(solid), lockable, locked   |
+use         *sapience, bodyparts[prehensile]      | usable                              | maybe physical(solid)?
+wear        *sapience, bodyparts[prehensile]      | physical(solid), wearable, not worn | subject must have bodypart it is worn on; maybe liquid allowed for makeup?
+wield       *sapience, bodyparts[prehensile]      | physical(solid)                     | if already wielded, can change wielding limb
+
+Notes on "mix": A liquid system might automatically take care of mixing ingredients when both are on the same square. 
+                Will have to investigate further.
+
+
+
+Refactoring can-be-object-of-* flags
+====================================
+attack      
+burn        physical
+close       physical
+drink       physical
+drop        physical
+get         physical(volume)
+hurl        physical
+hurt        physical
+lock        physical
+move        physical
+open        physical
+putinto     physical
+remove      physical
+rust        physical
+unlock      physical
+unwield     physical
+use         physical
+wield       physical
+
+Components to add:
+DigestiveSystem
+Material, maybe?

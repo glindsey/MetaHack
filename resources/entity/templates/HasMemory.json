@@ -1,0 +1,11 @@
+{
+  "name": "[MemoryEntity]",
+  "plural": "[MemoryEntities]",
+  "description-brief": "An entity that is capable of remembering the past.",
+
+  "templates": [ "Animal" ],
+
+  "components": {
+    "spacial-memory": {}
+  }
+}

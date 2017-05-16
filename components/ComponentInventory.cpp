@@ -262,9 +262,8 @@ EntityId ComponentInventory::getEntity()
   auto iter =
     find_if([&](const EntityPair& thing_pair)
   {
-    EntityId ref = thing_pair.second;
-    return ((ref->isSubtypeOf("DynamicEntity")) && 
-      (static_cast<int>(ref->getModifiedProperty("hp", 0)) > 0));
+    EntityId entity = thing_pair.second;
+    return (COMPONENTS.health.existsFor(entity) && COMPONENTS.health[entity].hp() > 0);
   });
 
   if (iter != m_things.cend())
@@ -275,6 +274,20 @@ EntityId ComponentInventory::getEntity()
   {
     return EntityId::Mu();
   }
+}
+
+bool ComponentInventory::canContain(EntityId entity)
+{
+  if ((m_maxSize == 0) || (m_things.size() > m_maxSize))
+  {
+    return false;
+  }
+  else
+  {
+    /// @todo Reimplement me
+    //return call_lua_function("can_contain", entity, true);
+  }
+  return true;
 }
 
 EntityMap::iterator ComponentInventory::find_if(std::function<bool(EntityPair const&)> functor)

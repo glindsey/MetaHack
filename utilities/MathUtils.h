@@ -5,7 +5,7 @@ constexpr double PI = 3.14159265359;
 constexpr double PI_HALF = PI / 2.0;
 constexpr double PI_QUARTER = PI / 4.0;
 
-inline unsigned int next_power_of_two(unsigned int n)
+inline unsigned int nextPowerOfTwo(unsigned int n)
 {
   n--;
   n |= n >> 1;   // Divide by 2^k for consecutive doublings of k up to 32,

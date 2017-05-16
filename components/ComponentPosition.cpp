@@ -24,11 +24,11 @@ ComponentPosition::ComponentPosition()
 {}
 
 ComponentPosition::ComponentPosition(EntityId id)
-  : m_parent{ id }
+  : m_map{ MapId::Null() }, m_coords{ 0, 0 }, m_parent{ id }
 {}
 
 ComponentPosition::ComponentPosition(MapId map, IntVec2 coords)
-  : m_map{ map }, m_coords{ coords }
+  : m_map{ map }, m_coords{ coords }, m_parent{ EntityId::Mu() }
 {}
 
 ComponentPosition::~ComponentPosition()
@@ -90,4 +90,64 @@ IntVec2 ComponentPosition::coords() const
   {
     return m_coords;
   }
+}
+
+bool ComponentPosition::isInsideAnotherEntity() const
+{
+  if (m_parent == EntityId::Mu())
+  {
+    // Entity is a part of the MapTile such as the floor.
+    return false;
+  }
+
+  auto& grandparent = COMPONENTS.position[m_parent].parent();
+  if (grandparent == EntityId::Mu())
+  {
+    // Entity is directly on the floor.
+    return false;
+  }
+  return true;
+}
+
+bool ComponentPosition::isInside(EntityId id) const
+{
+  // If other entity doesn't have a position component, bail.
+  if (!COMPONENTS.position.existsFor(id))
+  {
+    return false;
+  }
+
+  auto otherPosition = COMPONENTS.position[id];
+
+  // If we have a parent...
+  if (m_parent != EntityId::Mu())
+  {
+    // If the other entity is our parent, return true.
+    if (m_parent == id) return true;
+
+    // Otherwise, return whether our parent is inside the other entity.
+    return COMPONENTS.position[m_parent].isInside(id);
+  }
+
+  // If we have no parent, return false.
+  return false;  
+}
+
+bool ComponentPosition::isAdjacentTo(EntityId id) const
+{
+  // If other entity doesn't have a position component, bail.
+  if (!COMPONENTS.position.existsFor(id))
+  {
+    return false;
+  }
+
+  auto otherPosition = COMPONENTS.position[id];
+
+  // If the two are not on the same map, bail.
+  if (m_map != otherPosition.m_map)
+  {
+    return false;
+  }
+
+  return adjacent(m_coords, otherPosition.m_coords);
 }

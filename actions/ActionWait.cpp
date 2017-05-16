@@ -14,6 +14,12 @@ namespace Actions
   ActionWait::ActionWait(EntityId subject) : Action(subject, "wait", "WAIT") {}
   ActionWait::~ActionWait() {}
 
+  ReasonBool ActionWait::subjectIsCapable() const
+  {
+    // Any entity can wait, whenever.
+    return { true, "" };
+  }
+
   std::unordered_set<Trait> const & ActionWait::getTraits() const
   {
     static std::unordered_set<Trait> traits =

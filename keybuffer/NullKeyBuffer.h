@@ -2,7 +2,6 @@
 
 #include "stdafx.h"
 
-#include "GUIEvent.h"
 #include "keybuffer/IKeyBuffer.h"
 
 /// Implementation of a null key buffer.
@@ -11,9 +10,9 @@ class NullKeyBuffer : public IKeyBuffer
 public:
   virtual ~NullKeyBuffer() {}
 
-  virtual metagui::Event::Result handle_key_press(metagui::EventKeyPressed& event) override
+  virtual bool handle_key_press(UIEvents::EventKeyPressed const& event) override
   {
-    return metagui::Event::Result::Ignored;
+    return false;
   }
 
   virtual size_t get_cursor_position() const override

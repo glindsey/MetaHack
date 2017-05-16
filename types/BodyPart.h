@@ -1,5 +1,4 @@
-#ifndef BODYPART_H_INCLUDED
-#define BODYPART_H_INCLUDED
+#pragma once
 
 #include "stdafx.h"
 
@@ -7,7 +6,6 @@
 enum class BodyPart
 {
   Nowhere = 0,
-  Body,
   Skin,
   Head,
   Ear,
@@ -18,11 +16,15 @@ enum class BodyPart
   Chest,
   Arm,
   Hand,
+  Finger,
+  Torso,
   Leg,
   Foot,
+  Toe,
   Wing,
   Tail,
-  Count
+  PTail,
+  MemberCount
 };
 
 inline std::ostream& operator<<(std::ostream& os, BodyPart const& part)
@@ -30,7 +32,6 @@ inline std::ostream& operator<<(std::ostream& os, BodyPart const& part)
   switch (part)
   {
     case BodyPart::Nowhere: os << "Nowhere"; break;
-    case BodyPart::Body: os << "Body"; break;
     case BodyPart::Skin: os << "Skin"; break;
     case BodyPart::Head: os << "Head"; break;
     case BodyPart::Ear: os << "Ear"; break;
@@ -41,11 +42,15 @@ inline std::ostream& operator<<(std::ostream& os, BodyPart const& part)
     case BodyPart::Chest: os << "Chest"; break;
     case BodyPart::Arm: os << "Arm"; break;
     case BodyPart::Hand: os << "Hand"; break;
+    case BodyPart::Finger: os << "Finger"; break;
+    case BodyPart::Torso: os << "Torso"; break;
     case BodyPart::Leg: os << "Leg"; break;
     case BodyPart::Foot: os << "Foot"; break;
+    case BodyPart::Toe: os << "Toe"; break;
     case BodyPart::Wing: os << "Wing"; break;
     case BodyPart::Tail: os << "Tail"; break;
-    case BodyPart::Count: os << "Count"; break;
+    case BodyPart::PTail: os << "PTail"; break;
+    case BodyPart::MemberCount: os << "MemberCount"; break;
     default: os << "???"; break;
   }
 
@@ -57,7 +62,7 @@ struct BodyLocation
 {
   BodyLocation()
     :
-    part{ BodyPart::Count }, number{ 0 }
+    part{ BodyPart::Nowhere }, number{ 0 }
   {}
 
   BodyLocation(BodyPart part_, unsigned int number_)
@@ -66,13 +71,14 @@ struct BodyLocation
   {}
 
   BodyPart part;
-  unsigned int number;
+  size_t number;
 
-  inline unsigned int index() const
+  inline size_t index() const
   {
-    return (number * static_cast<unsigned int>(BodyPart::Count)) +
-      static_cast<unsigned int>(part);
+    return (number * static_cast<size_t>(BodyPart::MemberCount)) +
+      static_cast<size_t>(part);
   }
+
 };
 
 namespace std
@@ -122,5 +128,3 @@ inline bool operator>=(const BodyLocation& lhs, const BodyLocation& rhs)
 {
   return !operator<(lhs, rhs);
 }
-
-#endif // BODYPART_H_INCLUDED

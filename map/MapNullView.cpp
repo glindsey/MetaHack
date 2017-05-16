@@ -10,16 +10,11 @@ MapNullView::MapNullView(std::string name, Map& map, UintVec2 size)
 {
 }
 
-bool MapNullView::onEvent_NVI_PreChildren(Event const& event)
-{
-  return true;
-}
-
-void MapNullView::update_tiles(EntityId viewer)
+void MapNullView::update_tiles(EntityId viewer, SystemLighting& lighting)
 {
 }
 
-void MapNullView::update_things(EntityId viewer, int frame)
+void MapNullView::update_things(EntityId viewer, SystemLighting& lighting, int frame)
 {
 }
 

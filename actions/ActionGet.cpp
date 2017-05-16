@@ -6,6 +6,9 @@
 #include "game/GameState.h"
 #include "services/IMessageLog.h"
 #include "Service.h"
+#include "systems/SystemManager.h"
+#include "systems/SystemSpacialRelationships.h"
+
 #include "entity/Entity.h"
 #include "entity/EntityId.h"
 
@@ -16,13 +19,27 @@ namespace Actions
   ActionGet::ActionGet(EntityId subject) : Action(subject, "get", "GET") {}
   ActionGet::~ActionGet() {}
 
+  ReasonBool ActionGet::subjectIsCapable() const
+  {
+    auto subject = getSubject();
+    bool canGrasp = COMPONENTS.bodyparts.existsFor(subject) && COMPONENTS.bodyparts[subject].hasPrehensileBodyPart();
+    std::string reason = canGrasp ? "" : "YOU_HAVE_NO_GRASPING_BODYPARTS"; ///< @todo Add translation key
+    return { canGrasp, reason };
+  }
+
+  ReasonBool ActionGet::objectIsAllowed() const
+  {
+    // For now, you can always get an object.
+    /// @todo Handle state of matter, movability
+    return { true, "" };
+  }
+
   std::unordered_set<Trait> const & ActionGet::getTraits() const
   {
     static std::unordered_set<Trait> traits =
     {
       Trait::CanBeSubjectVerbObject,
       Trait::CanTakeAQuantity,
-      Trait::ObjectMustBeMovableBySubject,
       Trait::ObjectMustNotBeInInventory
     };
 
@@ -64,7 +81,7 @@ namespace Actions
     if (object->beObjectOf(*this, subject))
     {
       putTr("YOU_CVERB_THE_FOO");
-      if (object->moveInto(subject))
+      if (SYSTEMS.spacial().moveEntityInto(object, subject))
       {
         /// @todo Figure out action time.
         result = StateResult::Success();

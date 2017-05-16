@@ -4,7 +4,6 @@
 
 #include "GUIWindow.h"
 #include "inventory/InventorySlot.h"
-#include "Observer.h"
 
 // Forward declarations
 class Container;
@@ -24,7 +23,8 @@ public:
 protected:
   virtual void drawContents_(sf::RenderTexture& texture, int frame) override;
 
-  virtual bool onEvent_NVI_PreChildren(Event const& event) override;
+  virtual bool onEvent_V(Event const& event) override;
+
 private:
   /// Inventory selection we are bound to.
   InventorySelection& m_inventorySelection;

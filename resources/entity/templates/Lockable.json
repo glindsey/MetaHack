@@ -1,0 +1,6 @@
+{
+  "can-be-object-of-lock": true,
+  "can-be-object-of-unlock": true,
+
+  "components": {}
+}

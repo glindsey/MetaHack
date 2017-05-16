@@ -11,7 +11,7 @@ namespace metagui
 {
   Label::Label(std::string name, IntVec2 location)
     :
-    GUIObject(name, location)
+    GUIObject(name, {}, location, { 0, 0 })
   {}
 
   Label::~Label()

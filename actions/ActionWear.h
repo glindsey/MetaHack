@@ -20,6 +20,8 @@ namespace Actions
     virtual ~ActionWear();
     static ActionWear prototype;
 
+    virtual ReasonBool subjectIsCapable() const override;
+    //virtual ReasonBool objectIsAllowed() const override;
     virtual std::unordered_set<Trait> const& getTraits() const override;
 
   protected:
@@ -29,7 +31,7 @@ namespace Actions
     virtual StateResult doAbortWorkNVI(AnyMap& params) override;
 
   private:
-    BodyLocation m_body_location;
+    BodyLocation m_bodyLocation;
   };
 
 } // end namespace

@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include "ActionUnwield.h"
+#include "components/ComponentManager.h"
 #include "services/IMessageLog.h"
 #include "services/IStringDictionary.h"
 #include "Service.h"
@@ -13,6 +14,12 @@ namespace Actions
   ActionUnwield::ActionUnwield() : Action("unwield", "UNWIELD", ActionUnwield::create_) {}
   ActionUnwield::ActionUnwield(EntityId subject) : Action(subject, "unwield", "UNWIELD") {}
   ActionUnwield::~ActionUnwield() {}
+
+  ReasonBool ActionUnwield::subjectIsCapable() const
+  {
+    // You can always unwield anything.
+    return { true, "" };
+  }
 
   std::unordered_set<Trait> const & ActionUnwield::getTraits() const
   {
@@ -39,13 +46,13 @@ namespace Actions
     auto subject = getSubject();
     auto object = getObject();
 
-    BodyLocation wield_location;
-    subject->isWielding(object, wield_location);
-
-    std::string bodypart_desc = subject->getBodypartDescription(wield_location);
+    BodyLocation wieldLocation = COMPONENTS.bodyparts[subject].getWieldedLocation(object);
+    std::string bodypart_desc = subject->getBodypartDescription(wieldLocation);
 
     // Check if the wielded item is bound.
-    if (object->getModifiedProperty("bound", false))
+    if (COMPONENTS.magicalBinding.existsFor(object) &&
+        COMPONENTS.magicalBinding[object].isAgainst(ComponentMagicalBinding::Against::Unwielding) &&
+        COMPONENTS.magicalBinding[object].isActive())
     {
       putMsg(makeTr("YOU_CANT_VERB_FOO_MAGICALLY_BOUND",
                     { subject->getPossessiveString(bodypart_desc) }));
@@ -60,7 +67,7 @@ namespace Actions
     {
       std::string message;
       message = makeString("$you unwield $foo. $you are now wielding nothing in $0.", { subject->getPossessiveString(bodypart_desc) });
-      subject->setWielded(EntityId::Mu(), wield_location);
+      COMPONENTS.bodyparts[subject].removeWieldedLocation(wieldLocation);
     }
 
     return result;

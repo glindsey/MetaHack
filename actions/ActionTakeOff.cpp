@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include "ActionTakeOff.h"
+#include "components/ComponentManager.h"
 #include "services/IMessageLog.h"
 #include "services/IStringDictionary.h"
 #include "Service.h"
@@ -13,6 +14,12 @@ namespace Actions
   ActionTakeOff::ActionTakeOff() : Action("disrobe", "DISROBE", ActionTakeOff::create_) {}
   ActionTakeOff::ActionTakeOff(EntityId subject) : Action(subject, "disrobe", "DISROBE") {}
   ActionTakeOff::~ActionTakeOff() {}
+
+  ReasonBool ActionTakeOff::subjectIsCapable() const
+  {
+    // You can always take off anything.
+    return { true, "" };
+  }
 
   std::unordered_set<Trait> const & ActionTakeOff::getTraits() const
   {
@@ -37,13 +44,13 @@ namespace Actions
     auto subject = getSubject();
     auto object = getObject();
 
-    BodyLocation wear_location;
-    subject->isWearing(object, wear_location);
-
-    std::string bodypart_desc = subject->getBodypartDescription(wear_location);
+    BodyLocation wearLocation = COMPONENTS.bodyparts[subject].getWornLocation(object);
+    std::string bodypart_desc = subject->getBodypartDescription(wearLocation);
 
     // Check if the worn item is bound.
-    if (object->getModifiedProperty("bound", false))
+    if (COMPONENTS.magicalBinding.existsFor(object) &&
+        COMPONENTS.magicalBinding[object].isAgainst(ComponentMagicalBinding::Against::Disrobing) &&
+        COMPONENTS.magicalBinding[object].isActive())
     {
       putMsg(makeTr("YOU_CANT_VERB_FOO_MAGICALLY_BOUND", 
       { subject->getPossessiveString(bodypart_desc) }));
@@ -59,7 +66,7 @@ namespace Actions
       putMsg(makeTr("YOU_CVERB_THE_FOO") + " " + 
              makeTr("YOU_ARE_NOW_WEARING_NOTHING", 
              { subject->getPossessiveString(bodypart_desc) }));
-      subject->setWielded(EntityId::Mu(), wear_location);
+      COMPONENTS.bodyparts[subject].removeWornLocation(wearLocation);
     }
 
     return result;

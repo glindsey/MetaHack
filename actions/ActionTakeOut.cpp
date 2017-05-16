@@ -3,9 +3,12 @@
 #include "ActionTakeOut.h"
 #include "components/ComponentManager.h"
 #include "game/GameState.h"
+#include "Service.h"
 #include "services/IMessageLog.h"
 #include "services/IStringDictionary.h"
-#include "Service.h"
+#include "systems/SystemManager.h"
+#include "systems/SystemSpacialRelationships.h"
+
 #include "entity/Entity.h"
 #include "entity/EntityId.h"
 
@@ -15,6 +18,18 @@ namespace Actions
   ActionTakeOut::ActionTakeOut() : Action("remove", "REMOVE", ActionTakeOut::create_) {}
   ActionTakeOut::ActionTakeOut(EntityId subject) : Action(subject, "remove", "REMOVE") {}
   ActionTakeOut::~ActionTakeOut() {}
+
+  ReasonBool ActionTakeOut::subjectIsCapable() const
+  {
+    auto subject = getSubject();
+    bool isSapient = COMPONENTS.sapience.existsFor(subject);
+    bool canGrasp = COMPONENTS.bodyparts.existsFor(subject) && COMPONENTS.bodyparts[subject].hasPrehensileBodyPart();
+
+    if (!isSapient) return { false, "YOU_ARE_NOT_SAPIENT" }; ///< @todo Add translation key
+    if (!canGrasp) return { false, "YOU_HAVE_NO_GRASPING_BODYPARTS" }; ///< @todo Add translation key
+
+    return { true, "" };
+  }
 
   std::unordered_set<Trait> const & ActionTakeOut::getTraits() const
   {
@@ -33,10 +48,10 @@ namespace Actions
     std::string message;
     auto subject = getSubject();
     auto object = getObject();
-    auto container = COMPONENTS.position[object].parent();
 
     // Check that the container is not a MapTile or DynamicEntity.
-    if (!object->isInsideAnotherEntity())
+    auto& objectPosition = COMPONENTS.position.of(object);
+    if (!objectPosition.isInsideAnotherEntity())
     {
       printMessageTry();
 
@@ -57,7 +72,8 @@ namespace Actions
     }
 
     // Check that the container is within reach.
-    if (!subject->canReach(container))
+    auto objectContainer = objectPosition.parent();
+    if (!SYSTEMS.spacial()->firstCanReachSecond(subject, objectContainer))
     {
       printMessageTry();
 
@@ -83,7 +99,7 @@ namespace Actions
 
     if (object->beObjectOf(*this, subject))
     {
-      if (object->moveInto(newLocation))
+      if (SYSTEMS.spacial().moveEntityInto(object, newLocation))
       {
         printMessageDo();
 
