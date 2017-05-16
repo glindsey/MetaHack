@@ -3,11 +3,12 @@
 
 #include "stdafx.h"
 
+#include "Event.h"
 #include "Object.h"
+#include "entity/EntityId.h"
 
 // Forward declarations
 class ComponentManager;
-class EntityId;
 class EntityPool;
 class MapFactory;
 
@@ -18,6 +19,37 @@ class MapFactory;
 class GameState : public Object
 {
 public:
+
+  struct EventClockChanged : public ConcreteEvent<EventClockChanged>
+  {
+    EventClockChanged(ElapsedTime ticks_) :
+      ticks{ ticks_ }
+    {}
+
+    ElapsedTime const ticks;
+
+    void serialize(std::ostream& os) const
+    {
+      Event::serialize(os);
+      os << " | current time: " << ticks;
+    }
+  };
+
+  struct EventPlayerChanged : public ConcreteEvent<EventPlayerChanged>
+  {
+    EventPlayerChanged(EntityId player_) :
+      player{ player_ }
+    {}
+
+    EntityId const player;
+
+    void serialize(std::ostream& os) const
+    {
+      Event::serialize(os);
+      os << " | current player: " << player;
+    }
+  };
+
   /// Constructor that constructs the game state from the provided JSON.
   /// Pass an empty object to construct the state from scratch.
   GameState(json const& j);

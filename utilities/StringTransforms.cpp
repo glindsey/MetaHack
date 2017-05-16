@@ -488,13 +488,13 @@ namespace StringTransforms
     //boost::regex expr("\\w+");
     //std::string fmt(" ");
     //out_str = boost::regex_replace(out_str, expr, fmt, boost::match_default | boost::regex_constants::format_literal);
-    out_str = remove_extra_whitespace_from(out_str);
+    out_str = squishWhitespace(out_str);
     boost::trim(out_str);
 
     return out_str;
   }
 
-  std::string remove_extra_whitespace_from(std::string input)
+  std::string squishWhitespace(std::string input)
   {
     std::string output;
     std::unique_copy(input.begin(), input.end(),

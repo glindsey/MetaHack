@@ -85,6 +85,7 @@ ElapsedTime GameState::getGameClock() const
 void GameState::setGameClock(ElapsedTime game_clock)
 {
   m_global["clock"] = game_clock;
+  broadcast(EventClockChanged(game_clock));
 }
 
 void GameState::incrementGameClock(ElapsedTime added_time)
@@ -98,6 +99,7 @@ bool GameState::setPlayer(EntityId ref)
   Assert("GameState", ref != EntityId::Mu(), "tried to make nothingness the player");
 
   m_global["player"] = ref;
+  broadcast(EventPlayerChanged(ref));
   return true;
 }
 

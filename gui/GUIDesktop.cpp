@@ -42,7 +42,7 @@ namespace metagui
       if (event.subject == getParent())
       {
         auto& castEvent = static_cast<EventResized const&>(event);
-        setSize(castEvent.new_size);
+        setSize(castEvent.newSize);
       }
     }
     else if (id == UIEvents::EventMouseDown::id)
@@ -80,7 +80,7 @@ namespace metagui
 
         if ((button_info.dragging == true) ||
           (button_info.pressed &&
-           distance(castEvent.location, button_info.location) > EventDragging::drag_threshold))
+           distance(castEvent.location, button_info.location) > EventDragging::dragThreshold))
         {
           if (button_info.dragging != true)
           {

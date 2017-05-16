@@ -34,17 +34,17 @@ public:
 
   struct EventAppWindowResized : public ConcreteEvent<EventAppWindowResized>
   {
-    EventAppWindowResized(UintVec2 new_size_)
+    EventAppWindowResized(UintVec2 newSize_)
       :
-      new_size(new_size_)
+      newSize(newSize_)
     {}
 
-    UintVec2 const new_size;
+    UintVec2 const newSize;
 
     void serialize(std::ostream& os) const
     {
       Event::serialize(os);
-      os << " | new size:" << new_size;
+      os << " | new size: " << newSize;
     }
   };
 

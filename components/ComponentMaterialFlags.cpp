@@ -55,13 +55,13 @@ std::string ComponentMaterialFlags::toString() const
     if (m_bits & Sapient) output += "sapient ";
   }
 
-  return StringTransforms::remove_extra_whitespace_from(output);
+  return StringTransforms::squishWhitespace(output);
 }
 
 void ComponentMaterialFlags::setFromString(std::string input)
 {
   m_bits = 0;
-  input = StringTransforms::remove_extra_whitespace_from(input);
+  input = StringTransforms::squishWhitespace(input);
   boost::to_lower(input);
 
   if (input.empty()) return;

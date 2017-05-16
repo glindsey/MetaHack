@@ -999,7 +999,7 @@ bool AppStateGameMode::onEvent(Event const& event)
   if (id == App::EventAppWindowResized::id)
   {
     auto info = static_cast<App::EventAppWindowResized const&>(event);
-    the_desktop.setSize({ info.new_size.x, info.new_size.y });
+    the_desktop.setSize({ info.newSize.x, info.newSize.y });
     the_desktop.getChild("MessageLogView").setRelativeDimensions(calcMessageLogDims());
     the_desktop.getChild("InventoryArea").setRelativeDimensions(calcInventoryDims());
     the_desktop.getChild("StatusArea").setRelativeDimensions(calcStatusAreaDims());

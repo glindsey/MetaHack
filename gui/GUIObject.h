@@ -59,38 +59,38 @@ namespace metagui
 
     struct EventMoved : public ConcreteEvent<EventMoved>
     {
-      EventMoved(IntVec2 old_position_, IntVec2 new_position_)
+      EventMoved(IntVec2 oldPosition_, IntVec2 newPosition_)
         :
-        old_position{ old_position_ },
-        new_position{ new_position_ }
+        oldPosition{ oldPosition_ },
+        newPosition{ newPosition_ }
       {}
 
-      IntVec2 const old_position;
-      IntVec2 const new_position;
+      IntVec2 const oldPosition;
+      IntVec2 const newPosition;
 
       void serialize(std::ostream& os) const
       {
         Event::serialize(os);
-        os << " | old: " << old_position << " | new: " << new_position;
+        os << " | old: " << oldPosition << " | new: " << newPosition;
       }
     };
 
 
     struct EventResized : public ConcreteEvent<EventResized>
     {
-      EventResized(UintVec2 old_size_, UintVec2 new_size_)
+      EventResized(UintVec2 oldSize_, UintVec2 newSize_)
         :
-        old_size{ old_size_ },
-        new_size{ new_size_ }
+        oldSize{ oldSize_ },
+        newSize{ newSize_ }
       {}
 
-      UintVec2 const old_size;
-      UintVec2 const new_size;
+      UintVec2 const oldSize;
+      UintVec2 const newSize;
 
       void serialize(std::ostream& os) const
       {
         Event::serialize(os);
-        os << " | old: " << old_size << " | new: " << new_size;
+        os << " | old: " << oldSize << " | new: " << newSize;
       }
     };
 
@@ -148,7 +148,7 @@ namespace metagui
       }
 
       /// Number of pixels you have to move before it is considered "dragging" the object.
-      static unsigned int const drag_threshold = 16;
+      static unsigned int const dragThreshold = 16;
     };
 
     explicit GUIObject(std::string name, std::unordered_set<EventID> const events);

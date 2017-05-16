@@ -112,7 +112,7 @@ void FileSystemGameRules::loadTemplateComponents(json& templates, json& componen
     {
       // Sanitize first.
       std::string tempName = templates[index].get<std::string>();
-      tempName = StringTransforms::remove_extra_whitespace_from(tempName);
+      tempName = StringTransforms::squishWhitespace(tempName);
       templates[index] = tempName;
 
       if (name == tempName)

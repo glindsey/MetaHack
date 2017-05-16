@@ -50,7 +50,7 @@ EntityId EntityPool::create(std::string category)
     {
       /// @todo Choose one material randomly and apply it.
       ///       Right now, we just use the first one.
-      std::string material = StringTransforms::remove_extra_whitespace_from(jsonMaterials[0].get<std::string>());
+      std::string material = StringTransforms::squishWhitespace(jsonMaterials[0].get<std::string>());
       json& materialData = Service<IGameRules>::get().category(material, "materials");
       COMPONENTS.populate(new_id, materialData["components"]);
     }

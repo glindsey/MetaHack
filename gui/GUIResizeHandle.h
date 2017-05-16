@@ -24,10 +24,10 @@ namespace metagui
   private:
     /// Size of the resize handle.
     /// @todo This should be moved into a central config file.
-    static unsigned int const s_handle_size = 10;
+    static unsigned int const s_handleSize = 10;
 
     /// The starting parent size before the resize drag began.
-    UintVec2 m_parent_size_start;
+    UintVec2 m_parentSizeStart;
 
   };
 }; // end namespace metagui

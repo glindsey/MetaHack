@@ -64,13 +64,13 @@ public:
         if (m_bits & Against::Moving) output += "move ";
       }
 
-      return StringTransforms::remove_extra_whitespace_from(output);
+      return StringTransforms::squishWhitespace(output);
     }
 
     void setFromString(std::string input)
     {
       m_bits = 0;
-      input = StringTransforms::remove_extra_whitespace_from(input);
+      input = StringTransforms::squishWhitespace(input);
       boost::to_lower(input);
 
       if (input.find("nothing") != std::string::npos)

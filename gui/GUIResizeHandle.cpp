@@ -11,7 +11,7 @@ namespace metagui
 {
   ResizeHandle::ResizeHandle(std::string name)
     :
-    GUIObject(name, {}, { 0, 0 }, { s_handle_size - 2, s_handle_size - 2 })
+    GUIObject(name, {}, { 0, 0 }, { s_handleSize - 2, s_handleSize - 2 })
   {}
 
   ResizeHandle::~ResizeHandle()
@@ -33,13 +33,13 @@ namespace metagui
     /// @todo FINISH ME. Right now this is just a dead-stupid square.
     sf::RectangleShape rect;
 
-    auto focused_color = config.get("window-focused-border-color").get<Color>();
-    auto unfocused_color = config.get("window-border-color").get<Color>();
+    auto focusedColor = config.get("window-focused-border-color").get<Color>();
+    auto unfocusedColor = config.get("window-border-color").get<Color>();
 
-    rect.setFillColor(getParent()->getFocus() ? focused_color : unfocused_color);
+    rect.setFillColor(getParent()->getFocus() ? focusedColor : unfocusedColor);
     rect.setOutlineThickness(0);
     rect.setPosition({ 0, 0 });
-    rect.setSize({ static_cast<unsigned int>(s_handle_size), static_cast<unsigned int>(s_handle_size) });
+    rect.setSize({ static_cast<unsigned int>(s_handleSize), static_cast<unsigned int>(s_handleSize) });
 
     texture.draw(rect);
 
@@ -54,26 +54,26 @@ namespace metagui
       if (event.subject == getParent())
       {
         auto& castEvent = static_cast<EventResized const&>(event);
-        setRelativeLocation({ static_cast<int>(castEvent.new_size.x - s_handle_size),
-                            static_cast<int>(castEvent.new_size.y - s_handle_size) });
+        setRelativeLocation({ static_cast<int>(castEvent.newSize.x - s_handleSize),
+                              static_cast<int>(castEvent.newSize.y - s_handleSize) });
       }
     }
     else if (id == EventDragStarted::id && parent)
     {
-      m_parent_size_start = parent->getSize();
+      m_parentSizeStart = parent->getSize();
     }
     else if (id == EventDragging::id && parent && isBeingDragged())
     {
       auto& castEvent = static_cast<EventDragging const&>(event);
-      auto move_amount = castEvent.currentLocation - getDragStartLocation();
+      auto moveAmount = castEvent.currentLocation - getDragStartLocation();
 
-      IntVec2 old_size{ static_cast<int>(m_parent_size_start.x), static_cast<int>(m_parent_size_start.y) };
-      UintVec2 new_size;
+      IntVec2 oldSize{ static_cast<int>(m_parentSizeStart.x), static_cast<int>(m_parentSizeStart.y) };
+      UintVec2 newSize;
 
-      new_size.x = (move_amount.x > -(old_size.x)) ? (old_size.x + move_amount.x) : 0;
-      new_size.y = (move_amount.y > -(old_size.y)) ? (old_size.y + move_amount.y) : 0;
+      newSize.x = (moveAmount.x > -(oldSize.x)) ? (oldSize.x + moveAmount.x) : 0;
+      newSize.y = (moveAmount.y > -(oldSize.y)) ? (oldSize.y + moveAmount.y) : 0;
 
-      parent->setSize(new_size);
+      parent->setSize(newSize);
     }
 
     return false;

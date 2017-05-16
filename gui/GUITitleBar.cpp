@@ -93,7 +93,7 @@ namespace metagui
 
         UintVec2 our_size
         { 
-          castEvent.new_size.x, 
+          castEvent.newSize.x, 
           static_cast<unsigned int>(line_spacing_y + (text_offset.y * 2)) 
         };
 

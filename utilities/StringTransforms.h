@@ -37,7 +37,7 @@ namespace StringTransforms
                              std::function<std::string(std::string, std::string)> token_argument_functor,
                              std::function<bool(std::string)> choose_functor);
 
-  std::string remove_extra_whitespace_from(std::string input);
+  std::string squishWhitespace(std::string input);
 
   bool hasEnding(std::string const& fullString, std::string const& ending);
 } // end namespace
