@@ -13,13 +13,14 @@ public:
 
   /// Get data for a specific Entity category.
   /// If it doesn't exist, attempt to load it.
-  virtual json& category(std::string name, bool isTemplate = false)
+  virtual json& category(std::string name, std::string subType = "")
   {
-    if (m_data.count(name) == 0)
+    std::string fullName = subType + "." + name;
+    if (m_data.count(fullName) == 0)
     {
-      m_data[name] = json::object();
+      m_data[fullName] = json::object();
     }
-    return m_data[name];
+    return m_data[fullName];
   }
 
   /// Get reference to game rules data.

@@ -17,26 +17,28 @@ FileSystemGameRules::FileSystemGameRules()
 FileSystemGameRules::~FileSystemGameRules()
 {}
 
-json & FileSystemGameRules::category(std::string name, bool isTemplate)
+json & FileSystemGameRules::category(std::string name, std::string subType)
 {
-  loadCategoryIfNecessary(name, isTemplate);
-  return m_data["categories"][name];
+  std::string fullName = subType.empty() ? name : subType + "." + name;
+  loadCategoryIfNecessary(name, subType);
+  return m_data["categories"][fullName];
 }
 
-void FileSystemGameRules::loadCategoryIfNecessary(std::string name, bool isTemplate)
+void FileSystemGameRules::loadCategoryIfNecessary(std::string name, std::string subType)
 {
   json& categories = m_data["categories"];
+  std::string fullName = subType.empty() ? name : subType + "." + name;
 
-  if (categories.count(name) == 0)
+  if (categories.count(fullName) == 0)
   {
-    CLOG(TRACE, "GameState") << "Loading data for " << name << " category...";
+    CLOG(TRACE, "GameRules") << "Loading data for " << fullName << " category...";
 
-    json& categoryData = categories[name];
+    json& categoryData = categories[fullName];
 
     // Look for the various files containing this metadata.
-    FileName resource_string = (isTemplate ?
-                                "resources/entity/templates/" :
-                                "resources/entity/") + name;
+    FileName resource_string = "resources/entity/" +
+                               (subType.empty() ? "" : subType + "/") + name;
+
     FileName jsonfile_string = resource_string + ".json";
     fs::path jsonfile_path = fs::path(jsonfile_string);
     FileName luafile_string = resource_string + ".lua";
@@ -52,13 +54,13 @@ void FileSystemGameRules::loadCategoryIfNecessary(std::string name, bool isTempl
       }
       catch (std::exception& e)
       {
-        CLOG(FATAL, "GameState") << "Error reading " <<
+        CLOG(FATAL, "GameRules") << "Error reading " <<
           jsonfile_string << ": " << e.what();
       }
     }
     else
     {
-      CLOG(WARNING, "GameState") << "Can't find " << jsonfile_string;
+      CLOG(FATAL, "GameRules") << "Can't find " << jsonfile_string;
     }
 
     // If there's no "components" key, create one. 
@@ -66,47 +68,27 @@ void FileSystemGameRules::loadCategoryIfNecessary(std::string name, bool isTempl
     JSONUtils::addIfMissing(categoryData, "components", json::object());
     json& componentsJson = categoryData["components"];
 
-    // *** Load templates ***
-    JSONUtils::addIfMissing(categoryData, "templates", json::array());
-    json& templatesJson = categoryData["templates"];
-
-    if (templatesJson.is_array())
-    {
-      for (auto index = 0; index < templatesJson.size(); ++index)
-      {
-        // Sanitize first.
-        std::string tempName = templatesJson[index].get<std::string>();
-        tempName = StringTransforms::remove_extra_whitespace_from(tempName);
-        templatesJson[index] = tempName;
-
-        if (name == tempName)
-        {
-          CLOG(FATAL, "GameState") << name << " has itself as a template -- this isn't allowed!";
-        }
-
-        loadCategoryIfNecessary(tempName, true);
-        json& subcategoryData = categories[tempName];
-        JSONUtils::mergeArrays(categoryData["templates"], subcategoryData["templates"]);
-        JSONUtils::addTo(categoryData["components"], subcategoryData["components"]);
-      }
-    }
-    else
-    {
-      CLOG(WARNING, "GameState") << " -- " << name << " has a \"templates\" key, but the value is not an array. Skipping.";
-    }
-
     // Populate the "category" component.
     // (If one was present already in the file, it will be overwritten.)
     componentsJson["category"] = name;
 
+    // *** Load templates ***
+    if (categoryData.count("templates") != 0)
+    {
+      loadTemplateComponents(categoryData["templates"], componentsJson);
+    }
+
+    // Material is only populated when an Entity is actually created, since
+    // it may change on a per-Entity basis.
+
     // DEBUG: Check for "Human".
     //if (name == "Human")
-    {
-      CLOG(TRACE, "GameState") << "================================";
-      CLOG(TRACE, "GameState") << "DEBUG: " << name << " JSON contents are:";
-      CLOG(TRACE, "GameState") << categoryData.dump(2);
-      CLOG(TRACE, "GameState") << "================================";
-    }
+    //{
+    //  CLOG(TRACE, "GameRules") << "================================";
+    //  CLOG(TRACE, "GameRules") << "DEBUG: " << fullName << " JSON contents are:";
+    //  CLOG(TRACE, "GameRules") << categoryData.dump(2);
+    //  CLOG(TRACE, "GameRules") << "================================";
+    //}
 
     /// Try to load and run this Entity's Lua script.
     if (fs::exists(luafile_path))
@@ -115,5 +97,37 @@ void FileSystemGameRules::loadCategoryIfNecessary(std::string name, bool isTempl
     }
 
     Service<IGraphicViews>::get().loadViewResourcesFor(name, categoryData);
+  }
+}
+
+void FileSystemGameRules::loadTemplateComponents(json& templates, json& components)
+{
+  json& categories = m_data["categories"];
+
+  std::string name = components["category"].get<std::string>();
+
+  if (templates.is_array())
+  {
+    for (auto index = 0; index < templates.size(); ++index)
+    {
+      // Sanitize first.
+      std::string tempName = templates[index].get<std::string>();
+      tempName = StringTransforms::remove_extra_whitespace_from(tempName);
+      templates[index] = tempName;
+
+      if (name == tempName)
+      {
+        CLOG(FATAL, "GameRules") << name << " has itself as a template -- this isn't allowed!";
+      }
+
+      loadCategoryIfNecessary(tempName, "templates");
+      json& subcategoryData = categories["templates." + tempName];
+      JSONUtils::mergeArrays(templates, subcategoryData["templates"]);
+      JSONUtils::addMissingKeys(components, subcategoryData["components"]);
+    }
+  }
+  else
+  {
+    CLOG(WARNING, "GameRules") << " -- " << name << " has a \"templates\" key, but the value is not an array. Skipping.";
   }
 }

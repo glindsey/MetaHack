@@ -42,6 +42,20 @@ EntityId EntityPool::create(std::string category)
   m_thing_map[new_id] = std::move(new_thing);
   COMPONENTS.populate(new_id, jsonComponents);
 
+  if (jsonComponents.count("materials") != 0)
+  {
+    auto& jsonMaterials = jsonComponents["materials"];
+
+    if (jsonMaterials.is_array() && jsonMaterials.size() > 0)
+    {
+      /// @todo Choose one material randomly and apply it.
+      ///       Right now, we just use the first one.
+      std::string material = StringTransforms::remove_extra_whitespace_from(jsonMaterials[0].get<std::string>());
+      json& materialData = Service<IGameRules>::get().category(material, "materials");
+      COMPONENTS.populate(new_id, materialData["components"]);
+    }
+  }
+
   if (m_initialized)
   {
     /// @todo Re-implement me
@@ -76,17 +90,18 @@ EntityId EntityPool::clone(EntityId original)
   return EntityId(new_id);
 }
 
-void EntityPool::applyTemplate(EntityId id, std::string categoryTemplate)
+
+void EntityPool::applyCategoryData(EntityId id, std::string subType, std::string name)
 {
   if (id != EntityId::Mu())
   {
-    json& data = Service<IGameRules>::get().category(categoryTemplate, true);
+    json& data = Service<IGameRules>::get().category(name, subType);
     auto& jsonComponents = data["components"];
     COMPONENTS.populate(id, jsonComponents);
   }
   else
   {
-    throw std::exception("Attempted to apply a template to Mu object!");
+    throw std::exception("Attempted to apply category data to Mu object!");
   }
 }
 

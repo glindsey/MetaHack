@@ -706,7 +706,7 @@
     <None Include="resources\entity\templates\HasMemory.json" />
     <None Include="resources\entity\templates\Lockable.json" />
     <None Include="resources\entity\templates\Mobile.json" />
-    <None Include="resources\entity\templates\Mu.json" />
+    <None Include="resources\entity\Mu.json" />
     <None Include="resources\entity\Rock.json" />
     <None Include="resources\entity\RockLichen.json" />
     <None Include="resources\entity\SackCloth.json" />

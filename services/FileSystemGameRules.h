@@ -14,7 +14,7 @@ public:
 
   /// Get data for a specific Entity category or template.
   /// If it doesn't exist, attempt to load it.
-  json& category(std::string name, bool isTemplate = false);
+  json& category(std::string name, std::string subType = "");
 
   /// Get reference to game rules data.
   inline json& data()
@@ -31,7 +31,9 @@ public:
 protected:
   /// Attempt to load JSON data for an entity category.
   /// Also runs any associated Lua script.
-  void loadCategoryIfNecessary(std::string name, bool isTemplate = false);
+  void loadCategoryIfNecessary(std::string name, std::string subType = "");
+
+  void loadTemplateComponents(json& templates, json & components);
 
 private:
   /// Game rules data, as stored in a JSON object.

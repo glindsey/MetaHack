@@ -9,8 +9,26 @@ using json = ::nlohmann::json;
 namespace JSONUtils
 {
 
+  /// Copy data in second JSON object into first JSON object.
+  /// If any key exists already in the first JSON object, it will be
+  /// *overwritten* with the second's value.
+  inline void overwriteKeys(json& first, json& second)
+  {
+    json flat_first = first.flatten();
+
+    json flat_second = second.flatten();
+
+    for (auto iter = flat_second.cbegin(); iter != flat_second.cend(); ++iter)
+    {
+      flat_first[iter.key()] = iter.value();
+    }
+
+    first = flat_first.unflatten();
+  }
+
   /// Add data in second JSON object to first JSON object.
-  inline void addTo(json& first, json& second)
+  /// If any key exists already in the first JSON object, it will be skipped.
+  inline void addMissingKeys(json& first, json& second)
   {
     json flat_first = first.flatten();
 

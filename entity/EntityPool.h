@@ -43,12 +43,12 @@ public:
   /// @return EntityId of the new cloned object.
   EntityId clone(EntityId original);
 
-  /// Apply a template to an object.
-  /// Replaces components in the object with the ones from the template
+  /// Apply a material/template to an object.
+  /// Replaces components in the object with the ones from the data
   /// provided.
   /// @todo Handle inventory properly -- right now, if it is deleted,
   ///       it will put any contained entities into a bad state.
-  void applyTemplate(EntityId id, std::string categoryTemplate);
+  void applyCategoryData(EntityId id, std::string subType, std::string name);
 
   /// Morph an object into a new category.
   /// Deletes the existing object components, and creates new ones based on

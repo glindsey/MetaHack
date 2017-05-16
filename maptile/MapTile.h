@@ -87,12 +87,14 @@ private:
   /// This MapTile's coordinates on the map.
   IntVec2 m_coords;
 
-  /// Type of this MapTile, as a string.
-  std::string m_category;
+  /// Entity representing the tile's floor.
+  EntityId m_floor;
 
-  /// Reference to the Entity that represents this tile's contents.
+  /// Entity representing the tile's contents.
   EntityId m_tile_contents;
 
+  /// Type of the MapTile contents, as a string.
+  std::string m_category;
 };
 
 #endif // MAPTILE_H
