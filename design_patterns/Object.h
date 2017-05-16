@@ -17,7 +17,7 @@ using EventQueue = std::queue<std::function<bool()>>;
 
 /// An object which can broadcast and/or listen to events.
 /// Observer pattern code adapted from http://0xfede.io/2015/12/13/T-C++-ObserverPattern.html
-class Object : public virtual Serializable
+class Object : public Serializable
 {
 
 public:
@@ -28,6 +28,7 @@ public:
   };
 
   Object(std::unordered_set<EventID> const events);
+  Object(std::unordered_set<EventID> const events, std::string name);
   virtual ~Object();
 
   /// Adds an observer of an event emitted by this object.
@@ -56,6 +57,8 @@ protected:
   ///       broadcast, return false!
   virtual bool onEvent(Event const& event);
 
+  virtual void serialize(std::ostream& o) const override;
+
   using BroadcastDelegate = std::function<bool(Event& event, bool shouldSend)>;
   using UnicastDelegate = std::function<void(Event& event, Object& observer, bool shouldSend)>;
 
@@ -72,6 +75,9 @@ protected:
 protected:
 
 private:
+  /// Optional name of this object. Aids in debugging.
+  std::string m_name;
+
   /// Queue of onEvent calls to be made during a `broadcast()` call.
   EventQueue m_eventQueue;
 

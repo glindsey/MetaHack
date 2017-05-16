@@ -19,6 +19,12 @@ Object::Object(std::unordered_set<EventID> const events)
   }
 }
 
+Object::Object(std::unordered_set<EventID> const events, std::string name) : 
+  Object(events)
+{
+  m_name = name;
+}
+
 Object::~Object()
 {
   for (auto& observation : m_observations)
@@ -178,6 +184,19 @@ bool Object::onEvent_NV(Event const& event)
 bool Object::onEvent(Event const& event)
 {
   return false;
+}
+
+void Object::serialize(std::ostream & o) const
+{
+  o << typeid(*this).name() << ": ";
+  if (m_name.empty())
+  {
+    o << this;
+  }
+  else
+  {
+    o << m_name << "(" << this << ")";
+  }
 }
 
 bool Object::broadcast(Event& event)
