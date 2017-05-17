@@ -54,7 +54,7 @@ Object::~Object()
   }
 }
 
-std::string Object::getName()
+std::string const& Object::getName()
 {
   return m_name;
 }
