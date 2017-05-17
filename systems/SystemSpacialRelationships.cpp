@@ -42,6 +42,8 @@ bool SystemSpacialRelationships::moveEntityInto(EntityId entity, EntityId newLoc
   {
     if (newInventory.add(entity) == true)
     {
+      auto oldPosition = position; // copy for event broadcast
+
       // Try to lock our old location.
       if (oldLocation != EntityId::Mu())
       {
@@ -58,7 +60,7 @@ bool SystemSpacialRelationships::moveEntityInto(EntityId entity, EntityId newLoc
       }
       else
       {
-        broadcast(EventEntityMoved(entity));
+        broadcast(EventEntityMoved(entity, oldPosition));
       }
       return true;
     } // end if (add to new inventory was successful)

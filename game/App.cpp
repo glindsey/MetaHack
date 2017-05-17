@@ -68,34 +68,34 @@ App::App(sf::RenderWindow& app_window)
   }
 
   // Register loggers.
-  SET_UP_LOGGER("App",                          false);
-  SET_UP_LOGGER("Action",                        true);
-  SET_UP_LOGGER("Component",                    false);
-  SET_UP_LOGGER("ConfigSettings",               false);
-  SET_UP_LOGGER("Entity",                        true);
-  SET_UP_LOGGER("EntityPool",                   false);
-  SET_UP_LOGGER("EventSystem",                  false);
-  SET_UP_LOGGER("Game",                         false);
-  SET_UP_LOGGER("GameRules",                     true);
-  SET_UP_LOGGER("GameState",                    false);
-  SET_UP_LOGGER("GUI",                          false);
-  SET_UP_LOGGER("Inventory",                    false);
-  SET_UP_LOGGER("InventoryArea",                false);
-  SET_UP_LOGGER("InventorySelection",           false);
-  SET_UP_LOGGER("Lighting",                     false);
-  SET_UP_LOGGER("Lua",                          false);
-  SET_UP_LOGGER("Map",                          false);
-  SET_UP_LOGGER("MapFactory",                   false);
-  SET_UP_LOGGER("MapGenerator",                 false);
-  SET_UP_LOGGER("Property",                     false);
-  SET_UP_LOGGER("PropertyDictionary",           false);
-  SET_UP_LOGGER("SenseSight",                   false);
-  SET_UP_LOGGER("StateMachine",                 false);
-  SET_UP_LOGGER("StringDictionary",             false);
-  SET_UP_LOGGER("StringTransforms",             false);
-  SET_UP_LOGGER("TileSheet",                    false);
-  SET_UP_LOGGER("Types",                        false);
-  SET_UP_LOGGER("Utilities",                    false);
+  SET_UP_LOGGER("App",                false);
+  SET_UP_LOGGER("Action",              true);
+  SET_UP_LOGGER("Component",          false);
+  SET_UP_LOGGER("ConfigSettings",     false);
+  SET_UP_LOGGER("Entity",              true);
+  SET_UP_LOGGER("EntityPool",         false);
+  SET_UP_LOGGER("EventSystem",        false);
+  SET_UP_LOGGER("Game",               false);
+  SET_UP_LOGGER("GameRules",           true);
+  SET_UP_LOGGER("GameState",          false);
+  SET_UP_LOGGER("GUI",                false);
+  SET_UP_LOGGER("Inventory",          false);
+  SET_UP_LOGGER("InventoryArea",      false);
+  SET_UP_LOGGER("InventorySelection", false);
+  SET_UP_LOGGER("Lighting",           false);
+  SET_UP_LOGGER("Lua",                false);
+  SET_UP_LOGGER("Map",                false);
+  SET_UP_LOGGER("MapFactory",         false);
+  SET_UP_LOGGER("MapGenerator",       false);
+  SET_UP_LOGGER("Property",           false);
+  SET_UP_LOGGER("PropertyDictionary", false);
+  SET_UP_LOGGER("SenseSight",         false);
+  SET_UP_LOGGER("StateMachine",       false);
+  SET_UP_LOGGER("StringDictionary",   false);
+  SET_UP_LOGGER("StringTransforms",   false);
+  SET_UP_LOGGER("TileSheet",          false);
+  SET_UP_LOGGER("Types",              false);
+  SET_UP_LOGGER("Utilities",          false);
 
 
   // Load config settings.

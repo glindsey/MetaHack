@@ -21,6 +21,8 @@ public:
   friend void from_json(json const& j, ComponentPosition& obj);
   friend void to_json(json& j, ComponentPosition const& obj);
 
+  friend std::ostream& operator<<(std::ostream& os, ComponentPosition const& obj);
+
   /// Sets this entity's position to be inside the specified entity.
   /// Its coordinates/MapId are set to (0, 0) because they are retrieved
   /// from the surrounding entity.

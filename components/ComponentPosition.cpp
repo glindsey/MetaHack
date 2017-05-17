@@ -20,6 +20,14 @@ void to_json(json& j, ComponentPosition const& obj)
   j["parent"] = obj.m_parent;
 }
 
+std::ostream & operator<<(std::ostream & os, ComponentPosition const & obj)
+{
+  os << "[Map: " << obj.m_map << 
+    ", Coords: " << obj.m_coords << 
+    ", Parent: " << obj.m_parent << "]";
+  return os;
+}
+
 ComponentPosition::ComponentPosition()
 {}
 

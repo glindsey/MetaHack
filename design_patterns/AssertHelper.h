@@ -2,27 +2,34 @@
 
 #include "third_party/easyloggingpp/easylogging++.h"
 
-/// Assertion function.
-/// Adapted from http://0xfede.io/2015/12/13/T-C++-ObserverPattern.html
-/// Not exactly a "design pattern" I know, but goes well here.
-
 #include <iostream>
 #include <sstream>
 
 #define STR(x) #x
-/// @todo Change this to choose the logging level instead of just enabled/disabled
+
+/// Set up an individual logger.
+/// @param name     Name of the logger.
+/// @param enabled  True if trace/debug logs should be printed, false if
+///                 only standard logs should be printed.
 #define SET_UP_LOGGER(name, enabled)                                      \
 {                                                                         \
   el::Loggers::getLogger(name);                                           \
   el::Configurations conf;                                                \
   conf.setToDefault();                                                    \
   conf.set(el::Level::Global,                                             \
+           el::ConfigurationType::Enabled, "true");                       \
+  conf.set(el::Level::Trace,                                              \
+           el::ConfigurationType::Enabled, STR(enabled));                 \
+  conf.set(el::Level::Debug,                                              \
            el::ConfigurationType::Enabled, STR(enabled));                 \
   conf.set(el::Level::Global,                                             \
            el::ConfigurationType::Format,                                 \
            "[%logger] %loc %level: %msg");                                \
   el::Loggers::reconfigureLogger(name, conf);                             \
 }
+
+/// Assert function adapted from http://0xfede.io/2015/12/13/T-C++-ObserverPattern.html
+/// Not exactly a "design pattern" I know, but goes well here.
 
 #ifndef NDEBUG
 #define Assert(logger, condition, message)                                     \

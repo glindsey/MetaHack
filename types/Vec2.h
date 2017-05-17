@@ -117,6 +117,23 @@ public:
   T x, y;
 };
 
+
+namespace std
+{
+  template<typename T> struct hash<Vec2<T>>
+  {
+    typedef Vec2<T> argument_type;
+    typedef std::size_t result_type;
+    result_type operator()(argument_type const& obj) const
+    {
+      result_type const h1(std::hash<T>{}(obj.x));
+      result_type const h2(std::hash<T>{}(obj.y));
+      return h1 ^ (h2 << 1);
+    }
+  };
+}
+
+
 template<typename T>
 void to_json(json& j, Vec2<T> const& obj);
 
