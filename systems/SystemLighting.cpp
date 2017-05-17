@@ -20,7 +20,6 @@ SystemLighting::SystemLighting(ComponentMap<ComponentAppearance> const& appearan
   m_health{ health },
   m_lightSource{ lightSource },
   m_position{ position },
-  m_tileCalculationValid{ NEW TileCalculationValidFlags({1, 1}) },
   m_tileCalculatedLightColors{ NEW TileCalculatedLightColors({1, 1}) },
   m_tileLightSet{ NEW TileLightData({1, 1}) },
   m_ambientLightColor{ 48, 48, 48 } ///< @todo Make this configurable
@@ -59,38 +58,43 @@ void SystemLighting::doCycleUpdate()
   }
 
   // Step 2. Update light level calculations for affected tiles.
-  auto mapSize = currentMap->getSize();
-  for (int y = 0; y < mapSize.y; ++y)
+  if (m_recalculateAllTiles == true)
   {
-    for (int x = 0; x < mapSize.x; ++x)
+    auto mapSize = currentMap->getSize();
+    for (int y = 0; y < mapSize.y; ++y)
     {
-      if (!m_tileCalculationValid->get({ x, y }))
+      for (int x = 0; x < mapSize.x; ++x)
       {
         calculateTileLightLevels({ x, y });
       }
     }
+    m_recalculateAllTiles = false;
   }
-
+  else
+  {
+    for (auto& tile : m_tilesToRecalculate)
+    {
+      calculateTileLightLevels(tile);
+    }
+    m_tilesToRecalculate.clear();
+  }
 }
 
 void SystemLighting::resetAllMapLightingData(MapId map)
 {  
   auto mapSize = map->getSize();
-  m_tileCalculationValid.reset(NEW TileCalculationValidFlags(mapSize));
   m_tileCalculatedLightColors.reset(NEW TileCalculatedLightColors(mapSize));
   m_tileLightSet.reset(NEW TileLightData(mapSize));
   m_lightTileSet.clear();
   m_recalculateAllLights = true;
+  m_recalculateAllTiles = true;
 }
 
-void SystemLighting::clearMapLightingCalculations()
+void SystemLighting::clearMapLightingCalculations(MapId map)
 {
-  MapId currentMap = map();
-  if (currentMap == MapId::Null()) return;
-
-  auto mapSize = currentMap->getSize();
-  m_tileCalculationValid.reset(NEW TileCalculationValidFlags(mapSize));
+  auto mapSize = map->getSize();
   m_tileCalculatedLightColors.reset(NEW TileCalculatedLightColors(mapSize));
+  m_recalculateAllTiles = true;
 }
 
 Color SystemLighting::getLightLevel(IntVec2 coords) const
@@ -161,7 +165,7 @@ void SystemLighting::calculateTileLightLevels(IntVec2 coords)
     addLightToTileLightLevels(coords, light);
   }
 
-  m_tileCalculationValid->get(coords) = true;
+  m_tilesToRecalculate.erase(coords);
 }
 
 void SystemLighting::addLightToTileLightLevels(IntVec2 tileCoords, EntityId source)
@@ -370,14 +374,14 @@ void SystemLighting::addLightToTile(IntVec2 coords, EntityId source)
 {
   m_tileLightSet->get(coords).insert(source);
   m_lightTileSet[source].insert(coords);
-  m_tileCalculationValid->get(coords) = false;
+  m_tilesToRecalculate.insert(coords);
 }
 
 void SystemLighting::removeLightFromTile(IntVec2 coords, EntityId source)
 {
   m_tileLightSet->get(coords).erase(source);
   m_lightTileSet[source].erase(coords);
-  m_tileCalculationValid->get(coords) = false;
+  m_tilesToRecalculate.insert(coords);
 }
 
 void SystemLighting::doRecursiveLighting(EntityId source,

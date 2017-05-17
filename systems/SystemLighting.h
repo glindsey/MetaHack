@@ -31,7 +31,7 @@ public:
 
   void resetAllMapLightingData(MapId map);
 
-  void clearMapLightingCalculations();
+  void clearMapLightingCalculations(MapId map);
 
   /// Get the light shining on a tile.
   /// Syntactic sugar for getWallLightLevel(coords, Direction::Self).
@@ -92,10 +92,11 @@ private:
   ComponentMap<ComponentLightSource>& m_lightSource;
   ComponentMap<ComponentPosition> const& m_position;
 
-  /// Flags indicating whether tile light are valid.
-  /// Clear flag to indicate a tile needs recalculation.
-  using TileCalculationValidFlags = Grid2D<bool>;
-  std::unique_ptr<TileCalculationValidFlags> m_tileCalculationValid;
+  /// Boolean indicating if all tiles should be recalculated.
+  bool m_recalculateAllTiles = true;
+
+  /// Set of tiles that need their lighting recalculated.
+  std::unordered_set<IntVec2> m_tilesToRecalculate;
 
   /// Calculated light colors for map tile floors and walls.
   using TileCalculatedLightColors = Grid2D<std::map<unsigned int, Color>>;
