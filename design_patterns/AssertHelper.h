@@ -50,6 +50,6 @@ void _Assert_Print(char const* logger,
                    std::stringstream const& message);
 
 #else
-#define Assert(condition, message)
+#define Assert(logger, condition, message)
 #endif
 
