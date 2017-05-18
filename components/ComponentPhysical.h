@@ -3,39 +3,27 @@
 #include "json.hpp"
 using json = ::nlohmann::json;
 
-#include "entity/EntityId.h"
-#include "game/GameState.h"
-#include "map/MapId.h"
+#include "types/ModifiableInt.h"
 
 /// Component that describes physical dimensions of the entity:
 /// mass, quantity (for aggregate entities), volume, etc.
 class ComponentPhysical final
 {
 public:
-  ComponentPhysical();
-  ComponentPhysical(int mass, unsigned int quantity, unsigned int volume);
-  ~ComponentPhysical();
-
   friend void from_json(json const& j, ComponentPhysical& obj);
   friend void to_json(json& j, ComponentPhysical const& obj);
 
   /// Get this entity's mass in grams.
-  int& mass();
-  int const& mass() const;
-
-  /// Get this entity's quantity.
-  unsigned int& quantity();
-  unsigned int const& quantity() const;
+  /// If the entity also has a Quantity component, this is the mass of a
+  /// *single* piece of the aggregate, not the whole.
+  ModifiableInt& mass();
+  ModifiableInt const& mass() const;
 
   /// Get this entity's volume in cubic centimeters.
-  unsigned int& volume();
-  unsigned int const& volume() const;
-
-  /// Get this entity's total mass, which is mass * quantity.
-  int totalMass();
-
-  /// Get this entity's total volume, which is volume * quantity.
-  int totalVolume();
+  /// If the entity also has a Quantity component, this is the volume of a
+  /// *single* piece of the aggregate, not the whole.
+  ModifiableInt& volume();
+  ModifiableInt const& volume() const;
 
   /// Upper limit of volume that can fit in a single map tile.
   /// Each tile on the map is roughly 8 m^3 (e.g. a cube with 2m sides).
@@ -46,8 +34,7 @@ public:
 protected:
 
 private:
-  int m_mass;
-  unsigned int m_quantity;
-  unsigned int m_volume;
+  ModifiableInt m_mass = ModifiableInt(1000);
+  ModifiableInt m_volume = ModifiableInt(1000);
 };
 

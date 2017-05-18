@@ -115,7 +115,7 @@ Gender Entity::getGenderOrYou() const
   }
   else
   {
-    if (COMPONENTS.physical.valueOrDefault(m_id).quantity() > 1)
+    if (COMPONENTS.quantity.valueOr(m_id, 1) > 1)
     {
       return Gender::Plural;
     }
@@ -269,7 +269,7 @@ std::string Entity::getDescriptiveString(ArticleChoice articles,
   auto& config = Service<IConfigSettings>::get();
 
   EntityId location = COMPONENTS.position[m_id].parent();
-  unsigned int quantity = COMPONENTS.physical.valueOrDefault(m_id).quantity();
+  unsigned int quantity = COMPONENTS.quantity.valueOr(m_id, 1);
 
   std::string name;
 
@@ -320,7 +320,7 @@ std::string Entity::getDescriptiveString(ArticleChoice articles,
   }
   else
   {
-    noun = std::to_string(COMPONENTS.physical.valueOrDefault(m_id).quantity()) + " " + getDisplayPlural();
+    noun = std::to_string(COMPONENTS.quantity.valueOr(m_id, 1)) + " " + getDisplayPlural();
 
     if (owned && (possessives == UsePossessives::Yes))
     {
@@ -350,7 +350,7 @@ std::string Entity::getDescriptiveString(ArticleChoice articles,
 
 bool Entity::isThirdPerson()
 {
-  return !((GAME.getPlayer() == m_id) || (COMPONENTS.physical.valueOrDefault(m_id).quantity() > 1));
+  return !((GAME.getPlayer() == m_id) || (COMPONENTS.quantity.valueOr(m_id, 1) > 1));
 }
 
 std::string const& Entity::chooseVerb(std::string const& verb12,

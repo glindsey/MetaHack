@@ -67,6 +67,7 @@ public:
   ComponentMap<ComponentOpenable> openable;
   ComponentMap<ComponentPhysical> physical;
   ComponentMap<ComponentPosition> position;
+  ComponentMap<unsigned int> quantity;
   ComponentMap<std::string> properName;
   ComponentMap<ComponentSapience> sapience;
   ComponentMap<ComponentSenseSight> senseSight;

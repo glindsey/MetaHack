@@ -90,7 +90,7 @@ protected:
 
 private:
   /// Entities contained in this Inventory, using slot number as key.
-  EntityMap m_things;
+  EntityMap m_entities;
 
   /// Maximum allowed size for this Inventory.
   size_t m_maxSize;

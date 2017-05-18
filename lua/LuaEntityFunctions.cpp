@@ -46,8 +46,13 @@ namespace LuaEntityFunctions
 
       if (success && (num_args > 2))
       {
+        /// @todo Possibly disallow adding Quantity component if category 
+        ///       doesn't already have it.
         unsigned int quantity = static_cast<unsigned int>(lua_tointeger(L, 3));
-        COMPONENTS.physical[new_thing].quantity() = quantity;
+        if (quantity > 1)
+        {
+          COMPONENTS.quantity[new_thing] = quantity;
+        }
       }
     }
 

@@ -38,7 +38,7 @@ int LUA_get_mass(lua_State* L)
 {
   return LUA_getValue<int>(L, [&](EntityId entity) -> int
   {
-    return COMPONENTS.physical.existsFor(entity) ? COMPONENTS.physical[entity].mass() : 0;
+    return COMPONENTS.physical.existsFor(entity) ? COMPONENTS.physical[entity].mass().value() : 0;
   });
 }
 
@@ -71,7 +71,7 @@ int LUA_get_quantity(lua_State* L)
 {
   return LUA_getValue<unsigned int>(L, [&](EntityId entity) -> unsigned int
   {
-    return COMPONENTS.physical.existsFor(entity) ? COMPONENTS.physical[entity].quantity() : 1;
+    return COMPONENTS.quantity.existsFor(entity) ? COMPONENTS.quantity[entity] : 1;
   });
 }
 
@@ -79,7 +79,7 @@ int LUA_get_volume(lua_State* L)
 {
   return LUA_getValue<int>(L, [&](EntityId entity) -> int
   {
-    return COMPONENTS.physical.existsFor(entity) ? COMPONENTS.physical[entity].volume() : 0;
+    return COMPONENTS.physical.existsFor(entity) ? COMPONENTS.physical[entity].volume().value() : 0;
   });
 }
 
@@ -127,6 +127,7 @@ ComponentManager::ComponentManager(json const& j)
   JSONUtils::doIfPresent(j, "physical",         [this](auto const& value) { physical = value; });
   JSONUtils::doIfPresent(j, "position",         [this](auto const& value) { position = value; });
   JSONUtils::doIfPresent(j, "proper-name",      [this](auto const& value) { properName = value; });
+  JSONUtils::doIfPresent(j, "quantity",         [this](auto const& value) { quantity = value; });
   JSONUtils::doIfPresent(j, "sapience",         [this](auto const& value) { sapience = value; });
   JSONUtils::doIfPresent(j, "sense-sight",      [this](auto const& value) { senseSight = value; });
   JSONUtils::doIfPresent(j, "spacial-memory",   [this](auto const& value) { spacialMemory = value; });
@@ -157,7 +158,7 @@ void ComponentManager::clone(EntityId original, EntityId newId)
   bodyparts      .cloneIfExists(original, newId);
   category       .cloneIfExists(original, newId);
   combustible    .cloneIfExists(original, newId);
-  corrodible      .cloneIfExists(original, newId);
+  corrodible     .cloneIfExists(original, newId);
   digestiveSystem.cloneIfExists(original, newId);
   gender         .cloneIfExists(original, newId);
   health         .cloneIfExists(original, newId);
@@ -172,6 +173,7 @@ void ComponentManager::clone(EntityId original, EntityId newId)
   physical       .cloneIfExists(original, newId);
   position       .cloneIfExists(original, newId);
   properName     .cloneIfExists(original, newId);
+  quantity       .cloneIfExists(original, newId);
   sapience       .cloneIfExists(original, newId);
   senseSight     .cloneIfExists(original, newId);
   spacialMemory  .cloneIfExists(original, newId);
@@ -199,6 +201,7 @@ void ComponentManager::erase(EntityId id)
   physical       .remove(id);
   position       .remove(id);
   properName     .remove(id);
+  quantity       .remove(id);
   sapience       .remove(id);
   senseSight     .remove(id);
   spacialMemory  .remove(id);
@@ -226,6 +229,7 @@ void ComponentManager::populate(EntityId id, json const& j)
   JSONUtils::doIfPresent(j, "physical",         [this, &id](auto const& value) { physical[id] = value; });
   JSONUtils::doIfPresent(j, "position",         [this, &id](auto const& value) { position[id] = value; });
   JSONUtils::doIfPresent(j, "proper-name",      [this, &id](auto const& value) { properName[id] = value.get<std::string>(); });
+  JSONUtils::doIfPresent(j, "quantity",         [this, &id](auto const& value) { quantity[id] = value; });
   JSONUtils::doIfPresent(j, "sapience",         [this, &id](auto const& value) { sapience[id] = value; });
   JSONUtils::doIfPresent(j, "sense-sight",      [this, &id](auto const& value) { senseSight[id] = value; });
   JSONUtils::doIfPresent(j, "spacial-memory",   [this, &id](auto const& value) { spacialMemory[id] = value; });
@@ -253,6 +257,7 @@ void from_json(json const& j, ComponentManager& obj)
   JSONUtils::doIfPresent(j, "physical",         [&obj](auto const& value) { obj.physical = value; });
   JSONUtils::doIfPresent(j, "position",         [&obj](auto const& value) { obj.position = value; });
   JSONUtils::doIfPresent(j, "proper-name",      [&obj](auto const& value) { obj.properName = value; });
+  JSONUtils::doIfPresent(j, "quantity",         [&obj](auto const& value) { obj.quantity = value; });
   JSONUtils::doIfPresent(j, "sapience",         [&obj](auto const& value) { obj.sapience = value; });
   JSONUtils::doIfPresent(j, "sense-sight",      [&obj](auto const& value) { obj.senseSight = value; });
   JSONUtils::doIfPresent(j, "spacial-memory",   [&obj](auto const& value) { obj.spacialMemory = value; });
@@ -279,6 +284,7 @@ void to_json(json& j, ComponentManager const& obj)
   j["physical"]         = obj.physical;
   j["position"]         = obj.position;
   j["proper-name"]      = obj.properName;
+  j["quantity"]         = obj.quantity;
   j["sapience"]         = obj.sapience;
   j["sense-sight"]      = obj.senseSight;
   j["spacial-memory"]   = obj.spacialMemory;

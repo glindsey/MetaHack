@@ -19,7 +19,7 @@ ComponentInventory::~ComponentInventory()
 
 void from_json(json const& j, ComponentInventory& obj)
 {
-  obj.m_things.clear();
+  obj.m_entities.clear();
 
   if (j.is_object() && j.size() != 0)
   {
@@ -38,7 +38,7 @@ void from_json(json const& j, ComponentInventory& obj)
       json const& items = j["items"];
       for (auto citer = items.cbegin(); citer != items.cend(); ++citer)
       {
-        obj.m_things[citer.key()] = citer.value();
+        obj.m_entities[citer.key()] = citer.value();
       }
     }
   }
@@ -51,7 +51,7 @@ void to_json(json& j, ComponentInventory const& obj)
   j["max-size"] = obj.m_maxSize;
   json& items = j["items"];
 
-  for (auto citer = obj.m_things.cbegin(); citer != obj.m_things.cend(); ++citer)
+  for (auto citer = obj.m_entities.cbegin(); citer != obj.m_entities.cend(); ++citer)
   {
     items[citer->first] = citer->second;
   }
@@ -69,25 +69,25 @@ bool ComponentInventory::add(EntityId entity)
   // If the entity is the player, it goes into slot 0.
   if (entity == GAME.getPlayer())
   {
-    if (m_things.count(InventorySlot::Zero) != 0)
+    if (m_entities.count(InventorySlot::Zero) != 0)
     {
       /// @todo Move anything in this slot to a new slot.  This will be required
       ///       if it's possible to change the ID of the player.
       CLOG(ERROR, "Inventory") << "slot 0 of inventory already contains the player";
     }
-    m_things[InventorySlot::Zero] = entity;
+    m_entities[InventorySlot::Zero] = entity;
     return true;
   }
 
   auto found_thing_id = find(entity);
 
-  if (found_thing_id == m_things.cend())
+  if (found_thing_id == m_entities.cend())
   {
     for (InventorySlot slot = InventorySlot::Min; slot < InventorySlot::Max; ++slot)
     {
-      if (m_things.count(slot) == 0)
+      if (m_entities.count(slot) == 0)
       {
-        m_things[slot] = entity;
+        m_entities[slot] = entity;
         consolidateItems();
         return true;
       }
@@ -99,7 +99,7 @@ bool ComponentInventory::add(EntityId entity)
 
 void ComponentInventory::clear()
 {
-  m_things.clear();
+  m_entities.clear();
 }
 
 size_t const& ComponentInventory::maxSize() const
@@ -109,57 +109,59 @@ size_t const& ComponentInventory::maxSize() const
 
 size_t ComponentInventory::count()
 {
-  return m_things.size();
+  return m_entities.size();
 }
 
 EntityMap::iterator ComponentInventory::begin()
 {
-  return std::begin(m_things);
+  return std::begin(m_entities);
 }
 
 EntityMap::iterator ComponentInventory::end()
 {
-  return std::end(m_things);
+  return std::end(m_entities);
 }
 
 EntityMap::const_iterator ComponentInventory::cbegin()
 {
-  return m_things.cbegin();
+  return m_entities.cbegin();
 }
 
 EntityMap::const_iterator ComponentInventory::cend()
 {
-  return m_things.cend();
+  return m_entities.cend();
 }
 
 void ComponentInventory::consolidateItems()
 {
-  auto first_iter = std::begin(m_things);
-  while (first_iter != std::end(m_things))
+  auto firstIter = std::begin(m_entities);
+  while (firstIter != std::end(m_entities))
   {
-    ++first_iter;
-    auto second_iter = first_iter;
-    --first_iter;
+    ++firstIter;
+    auto secondIter = firstIter;
+    --firstIter;
 
-    while (second_iter != std::end(m_things))
+    while (secondIter != std::end(m_entities))
     {
-      EntityId first_thing = first_iter->second;
-      EntityId second_thing = second_iter->second;
+      EntityId firstEntity = firstIter->second;
+      EntityId secondEntity = secondIter->second;
 
-      if (first_thing->can_merge_with(second_thing))
+      if (!COMPONENTS.quantity.existsFor(firstEntity) || !COMPONENTS.quantity.existsFor(secondEntity)) return;
+
+      if (firstEntity->can_merge_with(secondEntity))
       {
-        auto first_quantity = COMPONENTS.physical.valueOrDefault(first_thing).quantity();
-        auto second_quantity = COMPONENTS.physical.valueOrDefault(second_thing).quantity();
-        COMPONENTS.physical[first_thing].quantity() = first_quantity + second_quantity;
-        COMPONENTS.physical[second_thing].quantity() = 0;
+        auto firstQuantity = COMPONENTS.quantity[firstEntity];
+        auto secondQuantity = COMPONENTS.quantity[secondEntity];
+        COMPONENTS.quantity[firstEntity] = firstQuantity + secondQuantity;
+        COMPONENTS.quantity[secondEntity] = 0;
 
-        auto second_iter_copy = second_iter;
-        --second_iter;
-        m_things.erase(second_iter_copy);
+        auto secondIterCopy = secondIter;
+        --secondIter;
+        m_entities.erase(secondIterCopy);
       }
-      ++second_iter;
+      ++secondIter;
     }
-    ++first_iter;
+    ++firstIter;
   }
 }
 
@@ -167,12 +169,12 @@ bool ComponentInventory::contains(EntityId entity)
 {
   if (GAME.entities().exists(entity) == false) return false;
 
-  return (find(entity) != m_things.cend());
+  return (find(entity) != m_entities.cend());
 }
 
 bool ComponentInventory::contains(InventorySlot slot)
 {
-  return (m_things.count(slot) != 0);
+  return (m_entities.count(slot) != 0);
 }
 
 InventorySlot ComponentInventory::operator[](EntityId entity)
@@ -181,7 +183,7 @@ InventorySlot ComponentInventory::operator[](EntityId entity)
 
   auto iter = find(entity);
 
-  if (iter != m_things.cend())
+  if (iter != m_entities.cend())
   {
     return iter->first;
   }
@@ -191,40 +193,40 @@ InventorySlot ComponentInventory::operator[](EntityId entity)
 
 EntityId ComponentInventory::operator[](InventorySlot slot)
 {
-  return (m_things.at(slot));
+  return (m_entities.at(slot));
 }
 
-EntityId ComponentInventory::split(EntityId entity, unsigned int target_quantity)
+EntityId ComponentInventory::split(EntityId entity, unsigned int targetQuantity)
 {
-  EntityId target_thing = EntityId::Mu();
+  EntityId targetEntity = EntityId::Mu();
 
-  if (target_quantity > 0)
+  if (targetQuantity > 0 && COMPONENTS.quantity.existsFor(entity))
   {
     auto iter = find(entity);
 
-    if (iter != m_things.cend())
+    if (iter != m_entities.cend())
     {
-      EntityId source_thing = iter->second;
-      unsigned int source_quantity = COMPONENTS.physical.valueOrDefault(source_thing).quantity();
-      if (target_quantity < source_quantity)
+      EntityId sourceEntity = iter->second;
+      unsigned int sourceQuantity = COMPONENTS.quantity[sourceEntity];
+      if (targetQuantity < sourceQuantity)
       {
-        target_thing = GAME.entities().clone(source_thing);
-        COMPONENTS.physical[source_thing].quantity() = source_quantity - target_quantity;
-        COMPONENTS.physical[target_thing].quantity() = target_quantity;
+        targetEntity = GAME.entities().clone(sourceEntity);
+        COMPONENTS.quantity[sourceEntity] = sourceQuantity - targetQuantity;
+        COMPONENTS.quantity[targetEntity] = targetQuantity;
       }
     }
   }
 
-  return target_thing;
+  return targetEntity;
 }
 
 EntityId ComponentInventory::remove(InventorySlot slot)
 {
   EntityId removed_thing;
-  if (m_things.count(slot) != 0)
+  if (m_entities.count(slot) != 0)
   {
-    removed_thing = m_things[slot];
-    m_things.erase(slot);
+    removed_thing = m_entities[slot];
+    m_entities.erase(slot);
   }
   return removed_thing;
 }
@@ -234,20 +236,20 @@ EntityId ComponentInventory::remove(EntityId entity)
   EntityId removed_thing;
 
   auto iter = find(entity);
-  if (iter != m_things.cend())
+  if (iter != m_entities.cend())
   {
     removed_thing = iter->second;
-    m_things.erase(iter);
+    m_entities.erase(iter);
   }
   return removed_thing;
 }
 
 EntityId ComponentInventory::get_largest_thing()
 {
-  auto iter_largest = m_things.cbegin();
+  auto iter_largest = m_entities.cbegin();
 
-  for (EntityMap::const_iterator iter = m_things.cbegin();
-       iter != m_things.cend(); ++iter)
+  for (EntityMap::const_iterator iter = m_entities.cbegin();
+       iter != m_entities.cend(); ++iter)
   {
     if (isSmallerThan(iter_largest->second, iter->second))
     {
@@ -266,7 +268,7 @@ EntityId ComponentInventory::getEntity()
     return (COMPONENTS.health.existsFor(entity) && COMPONENTS.health[entity].hp() > 0);
   });
 
-  if (iter != m_things.cend())
+  if (iter != m_entities.cend())
   {
     return iter->second;
   }
@@ -278,7 +280,7 @@ EntityId ComponentInventory::getEntity()
 
 bool ComponentInventory::canContain(EntityId entity)
 {
-  if ((m_maxSize == 0) || (m_things.size() > m_maxSize))
+  if ((m_maxSize == 0) || (m_entities.size() > m_maxSize))
   {
     return false;
   }
@@ -293,7 +295,7 @@ bool ComponentInventory::canContain(EntityId entity)
 EntityMap::iterator ComponentInventory::find_if(std::function<bool(EntityPair const&)> functor)
 {
   EntityMap::iterator iter =
-    std::find_if(m_things.begin(), m_things.end(), functor);
+    std::find_if(m_entities.begin(), m_entities.end(), functor);
   return iter;
 }
 
@@ -301,8 +303,8 @@ EntityMap::iterator ComponentInventory::find(EntityId target_id)
 {
   EntityMap::iterator iter =
     std::find_if(
-      m_things.begin(),
-      m_things.end(),
+      m_entities.begin(),
+      m_entities.end(),
       [&](EntityPair const& thing_pair)
   {
     return thing_pair.second == target_id;
@@ -315,6 +317,11 @@ bool ComponentInventory::isSmallerThan(EntityId a, EntityId b)
 {
   if ((a == EntityId::Mu()) || (b == EntityId::Mu())) return false;
   if (!COMPONENTS.physical.existsFor(a) || !COMPONENTS.physical.existsFor(b)) return false;
+  auto firstQuantity = COMPONENTS.quantity.valueOr(a, 1);
+  auto secondQuantity = COMPONENTS.quantity.valueOr(b, 1);
 
-  return (COMPONENTS.physical[a].totalVolume() < COMPONENTS.physical[b].totalVolume());
+  auto firstVolume = COMPONENTS.physical[a].volume().value() * firstQuantity;
+  auto secondVolume = COMPONENTS.physical[b].volume().value() * secondQuantity;
+
+  return (firstVolume < secondVolume);
 }
