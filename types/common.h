@@ -19,8 +19,8 @@
 /// Bits32 is a 32-bit bitfield.
 using Bits32 = uint32_t;
 
-/// Elapsed time in the game, in milliseconds.
-using ElapsedTime = uint64_t;
+/// Elapsed time in the game, in hundredths of a second.
+using ElapsedTicks = uint64_t;
 
 /// FileName is, well, a filename.
 using FileName = std::string;

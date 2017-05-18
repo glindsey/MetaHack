@@ -36,7 +36,12 @@ void to_json(json& j, ComponentCombustible const& obj)
   j["burn-results"] = results;
 }
 
-bool ComponentCombustible::burnsForever() const
+ModifiableBool& ComponentCombustible::burnsForever()
+{
+  return m_burnsForever;
+}
+
+ModifiableBool const& ComponentCombustible::burnsForever() const
 {
   return m_burnsForever;
 }
@@ -44,21 +49,6 @@ bool ComponentCombustible::burnsForever() const
 int ComponentCombustible::burnAmount() const
 {
   return m_burnAmount;
-}
-
-int ComponentCombustible::burnSpeed() const
-{
-  return m_burnSpeed;
-}
-
-std::vector<std::string> const& ComponentCombustible::burnResults() const
-{
-  return m_burnResults;
-}
-
-void ComponentCombustible::setBurnsForever(bool burnsForever)
-{
-  m_burnsForever = burnsForever;
 }
 
 void ComponentCombustible::setBurnAmount(int burnAmount)
@@ -69,8 +59,9 @@ void ComponentCombustible::setBurnAmount(int burnAmount)
 void ComponentCombustible::incBurnAmount(int incAmount)
 {
   m_burnAmount += incAmount;
-  int limit = (m_burnsForever) ? 5000 : 10000;
-  if (m_burnAmount > limit) m_burnAmount = limit;
+  // Disabled because this component doesn't know about the entity's mass.
+  //int limit = (m_burnsForever) ? 5000 : 10000;
+  //if (m_burnAmount > limit) m_burnAmount = limit;
 }
 
 void ComponentCombustible::decBurnAmount(int decAmount)
@@ -78,7 +69,18 @@ void ComponentCombustible::decBurnAmount(int decAmount)
   incBurnAmount(-decAmount);
 }
 
-void ComponentCombustible::setBurnSpeed(int burnSpeed)
+
+ModifiableInt& ComponentCombustible::burnSpeed()
 {
-  m_burnSpeed = burnSpeed;
+  return m_burnSpeed;
+}
+
+ModifiableInt const& ComponentCombustible::burnSpeed() const
+{
+  return m_burnSpeed;
+}
+
+std::vector<std::string> const& ComponentCombustible::burnResults() const
+{
+  return m_burnResults;
 }

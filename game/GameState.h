@@ -22,11 +22,11 @@ public:
 
   struct EventClockChanged : public ConcreteEvent<EventClockChanged>
   {
-    EventClockChanged(ElapsedTime ticks_) :
+    EventClockChanged(ElapsedTicks ticks_) :
       ticks{ ticks_ }
     {}
 
-    ElapsedTime const ticks;
+    ElapsedTicks const ticks;
 
     void serialize(std::ostream& os) const
     {
@@ -70,9 +70,9 @@ public:
   EntityPool& entities();
   ComponentManager& components();
 
-  ElapsedTime getGameClock() const;
-  void setGameClock(ElapsedTime game_clock);
-  void incrementGameClock(ElapsedTime added_time);
+  ElapsedTicks getGameClock() const;
+  void setGameClock(ElapsedTicks game_clock);
+  void incrementGameClock(ElapsedTicks added_time);
 
   /// Set the game player.
   /// If the caller attempts to set a EntityId of a Entity that does not exist,
