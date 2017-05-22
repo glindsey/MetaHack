@@ -18,7 +18,7 @@ namespace Actions
   ActionShoot::ActionShoot(EntityId subject) : Action(subject, "shoot", "SHOOT") {}
   ActionShoot::~ActionShoot() {}
 
-  ReasonBool ActionShoot::subjectIsCapable() const
+  ReasonBool ActionShoot::subjectIsCapable(GameState& gameState) const
   {
     auto subject = getSubject();
     bool isSapient = COMPONENTS.sapience.existsFor(subject);
@@ -41,23 +41,23 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionShoot::doPreBeginWorkNVI(AnyMap& params)
+  StateResult ActionShoot::doPreBeginWorkNVI(GameState& gameState, AnyMap& params)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionShoot::doBeginWorkNVI(AnyMap& params)
+  StateResult ActionShoot::doBeginWorkNVI(GameState& gameState, AnyMap& params)
   {
     putTr("ACTN_NOT_IMPLEMENTED");
     return StateResult::Failure();
   }
 
-  StateResult ActionShoot::doFinishWorkNVI(AnyMap& params)
+  StateResult ActionShoot::doFinishWorkNVI(GameState& gameState, AnyMap& params)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionShoot::doAbortWorkNVI(AnyMap& params)
+  StateResult ActionShoot::doAbortWorkNVI(GameState& gameState, AnyMap& params)
   {
     return StateResult::Success();
   }

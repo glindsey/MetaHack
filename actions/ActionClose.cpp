@@ -15,7 +15,7 @@ namespace Actions
   ActionClose::ActionClose(EntityId subject) : Action(subject, "close", "CLOSE") {}
   ActionClose::~ActionClose() {}
 
-  ReasonBool ActionClose::subjectIsCapable() const
+  ReasonBool ActionClose::subjectIsCapable(GameState& gameState) const
   {
     auto subject = getSubject();
     bool isSapient = COMPONENTS.sapience.existsFor(subject);
@@ -38,12 +38,12 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionClose::doPreBeginWorkNVI(AnyMap& params)
+  StateResult ActionClose::doPreBeginWorkNVI(GameState& gameState, AnyMap& params)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionClose::doBeginWorkNVI(AnyMap& params)
+  StateResult ActionClose::doBeginWorkNVI(GameState& gameState, AnyMap& params)
   {
     bool success = false;
     unsigned int action_time = 0;
@@ -60,12 +60,12 @@ namespace Actions
     return{ success, action_time };
   }
 
-  StateResult ActionClose::doFinishWorkNVI(AnyMap& params)
+  StateResult ActionClose::doFinishWorkNVI(GameState& gameState, AnyMap& params)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionClose::doAbortWorkNVI(AnyMap& params)
+  StateResult ActionClose::doAbortWorkNVI(GameState& gameState, AnyMap& params)
   {
     return StateResult::Success();
   }

@@ -15,7 +15,7 @@ namespace Actions
   ActionTakeOff::ActionTakeOff(EntityId subject) : Action(subject, "disrobe", "DISROBE") {}
   ActionTakeOff::~ActionTakeOff() {}
 
-  ReasonBool ActionTakeOff::subjectIsCapable() const
+  ReasonBool ActionTakeOff::subjectIsCapable(GameState& gameState) const
   {
     // You can always take off anything.
     return { true, "" };
@@ -32,12 +32,12 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionTakeOff::doPreBeginWorkNVI(AnyMap& params)
+  StateResult ActionTakeOff::doPreBeginWorkNVI(GameState& gameState, AnyMap& params)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionTakeOff::doBeginWorkNVI(AnyMap& params)
+  StateResult ActionTakeOff::doBeginWorkNVI(GameState& gameState, AnyMap& params)
   {
     StateResult result = StateResult::Failure();
 
@@ -72,12 +72,12 @@ namespace Actions
     return result;
   }
 
-  StateResult ActionTakeOff::doFinishWorkNVI(AnyMap& params)
+  StateResult ActionTakeOff::doFinishWorkNVI(GameState& gameState, AnyMap& params)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionTakeOff::doAbortWorkNVI(AnyMap& params)
+  StateResult ActionTakeOff::doAbortWorkNVI(GameState& gameState, AnyMap& params)
   {
     return StateResult::Success();
   }

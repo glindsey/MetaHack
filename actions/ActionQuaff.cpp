@@ -30,13 +30,13 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionQuaff::doPreBeginWorkNVI(AnyMap& params)
+  StateResult ActionQuaff::doPreBeginWorkNVI(GameState& gameState, AnyMap& params)
   {
     // All checks handled by Action class via traits.
     return StateResult::Success();
   }
 
-  StateResult ActionQuaff::doBeginWorkNVI(AnyMap& params)
+  StateResult ActionQuaff::doBeginWorkNVI(GameState& gameState, AnyMap& params)
   {
     auto subject = getSubject();
     auto object = getObject();
@@ -64,7 +64,7 @@ namespace Actions
     }
   }
 
-  StateResult ActionQuaff::doFinishWorkNVI(AnyMap& params)
+  StateResult ActionQuaff::doFinishWorkNVI(GameState& gameState, AnyMap& params)
   {
     auto object = getObject();
 
@@ -72,7 +72,7 @@ namespace Actions
     return StateResult::Success();
   }
 
-  StateResult ActionQuaff::doAbortWorkNVI(AnyMap& params)
+  StateResult ActionQuaff::doAbortWorkNVI(GameState& gameState, AnyMap& params)
   {
     printMessageStop();
     return StateResult::Success();

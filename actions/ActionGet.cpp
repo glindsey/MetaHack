@@ -19,7 +19,7 @@ namespace Actions
   ActionGet::ActionGet(EntityId subject) : Action(subject, "get", "GET") {}
   ActionGet::~ActionGet() {}
 
-  ReasonBool ActionGet::subjectIsCapable() const
+  ReasonBool ActionGet::subjectIsCapable(GameState& gameState) const
   {
     auto subject = getSubject();
     bool canGrasp = COMPONENTS.bodyparts.existsFor(subject) && COMPONENTS.bodyparts[subject].hasPrehensileBodyPart();
@@ -27,7 +27,7 @@ namespace Actions
     return { canGrasp, reason };
   }
 
-  ReasonBool ActionGet::objectIsAllowed() const
+  ReasonBool ActionGet::objectIsAllowed(GameState& gameState) const
   {
     // For now, you can always get an object.
     /// @todo Handle state of matter, movability
@@ -46,7 +46,7 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionGet::doPreBeginWorkNVI(AnyMap& params)
+  StateResult ActionGet::doPreBeginWorkNVI(GameState& gameState, AnyMap& params)
   {
     std::string message;
     auto subject = getSubject();
@@ -70,7 +70,7 @@ namespace Actions
     return StateResult::Success();
   }
 
-  StateResult ActionGet::doBeginWorkNVI(AnyMap& params)
+  StateResult ActionGet::doBeginWorkNVI(GameState& gameState, AnyMap& params)
   {
     /// @todo Handle getting a certain quantity of an item.
     StateResult result = StateResult::Failure();
@@ -98,12 +98,12 @@ namespace Actions
     return result;
   }
 
-  StateResult ActionGet::doFinishWorkNVI(AnyMap& params)
+  StateResult ActionGet::doFinishWorkNVI(GameState& gameState, AnyMap& params)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionGet::doAbortWorkNVI(AnyMap& params)
+  StateResult ActionGet::doAbortWorkNVI(GameState& gameState, AnyMap& params)
   {
     return StateResult::Success();
   }

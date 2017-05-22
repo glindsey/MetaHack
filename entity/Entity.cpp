@@ -776,7 +776,7 @@ bool Entity::processOwnActions_()
       /// or the action is done.
       /// @todo Find a way to update the entity_updated variable.
       Actions::Action& action = activity.pendingActions().front();
-      bool action_done = action.process({});
+      bool action_done = action.process(GAME, {});
       if (action_done)
       {
         CLOG(TRACE, "Entity") << "Entity " <<

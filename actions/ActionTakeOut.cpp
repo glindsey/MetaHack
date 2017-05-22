@@ -19,7 +19,7 @@ namespace Actions
   ActionTakeOut::ActionTakeOut(EntityId subject) : Action(subject, "remove", "REMOVE") {}
   ActionTakeOut::~ActionTakeOut() {}
 
-  ReasonBool ActionTakeOut::subjectIsCapable() const
+  ReasonBool ActionTakeOut::subjectIsCapable(GameState& gameState) const
   {
     auto subject = getSubject();
     bool isSapient = COMPONENTS.sapience.existsFor(subject);
@@ -43,7 +43,7 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionTakeOut::doPreBeginWorkNVI(AnyMap& params)
+  StateResult ActionTakeOut::doPreBeginWorkNVI(GameState& gameState, AnyMap& params)
   {
     std::string message;
     auto subject = getSubject();
@@ -84,7 +84,7 @@ namespace Actions
     return StateResult::Success();
   }
 
-  StateResult ActionTakeOut::doBeginWorkNVI(AnyMap& params)
+  StateResult ActionTakeOut::doBeginWorkNVI(GameState& gameState, AnyMap& params)
   {
     /// @todo Handle taking out a certain quantity of an item.
     StateResult result = StateResult::Failure();
@@ -116,12 +116,12 @@ namespace Actions
     return result;
   }
 
-  StateResult ActionTakeOut::doFinishWorkNVI(AnyMap& params)
+  StateResult ActionTakeOut::doFinishWorkNVI(GameState& gameState, AnyMap& params)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionTakeOut::doAbortWorkNVI(AnyMap& params)
+  StateResult ActionTakeOut::doAbortWorkNVI(GameState& gameState, AnyMap& params)
   {
     return StateResult::Success();
   }

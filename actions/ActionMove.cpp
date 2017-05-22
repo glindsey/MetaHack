@@ -22,7 +22,7 @@ namespace Actions
   ActionMove::ActionMove(EntityId subject) : Action(subject, "move", "MOVE") {}
   ActionMove::~ActionMove() {}
 
-  ReasonBool ActionMove::subjectIsCapable() const
+  ReasonBool ActionMove::subjectIsCapable(GameState& gameState) const
   {
     auto subject = getSubject();
     bool isMobile = (COMPONENTS.mobility.existsFor(subject) && COMPONENTS.mobility[subject].moveSpeed() > 0);
@@ -41,13 +41,13 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionMove::doPreBeginWorkNVI(AnyMap& params)
+  StateResult ActionMove::doPreBeginWorkNVI(GameState& gameState, AnyMap& params)
   {
     // All checks handled in Action by traits.
     return StateResult::Success();
   }
 
-  StateResult ActionMove::doBeginWorkNVI(AnyMap& params)
+  StateResult ActionMove::doBeginWorkNVI(GameState& gameState, AnyMap& params)
   {
     StateResult result = StateResult::Failure();
 
@@ -125,12 +125,12 @@ namespace Actions
     return result;
   }
 
-  StateResult ActionMove::doFinishWorkNVI(AnyMap& params)
+  StateResult ActionMove::doFinishWorkNVI(GameState& gameState, AnyMap& params)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionMove::doAbortWorkNVI(AnyMap& params)
+  StateResult ActionMove::doAbortWorkNVI(GameState& gameState, AnyMap& params)
   {
     return StateResult::Success();
   }

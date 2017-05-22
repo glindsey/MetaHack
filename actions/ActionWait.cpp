@@ -14,7 +14,7 @@ namespace Actions
   ActionWait::ActionWait(EntityId subject) : Action(subject, "wait", "WAIT") {}
   ActionWait::~ActionWait() {}
 
-  ReasonBool ActionWait::subjectIsCapable() const
+  ReasonBool ActionWait::subjectIsCapable(GameState& gameState) const
   {
     // Any entity can wait, whenever.
     return { true, "" };
@@ -30,13 +30,13 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionWait::doPreBeginWorkNVI(AnyMap& params)
+  StateResult ActionWait::doPreBeginWorkNVI(GameState& gameState, AnyMap& params)
   {
     // We can always wait.
     return StateResult::Success();
   }
 
-  StateResult ActionWait::doBeginWorkNVI(AnyMap& params)
+  StateResult ActionWait::doBeginWorkNVI(GameState& gameState, AnyMap& params)
   {
     /// @todo Handle a variable amount of time.
     putMsg(makeTr("YOU_VERB_FOR_X_TIME", 
@@ -45,12 +45,12 @@ namespace Actions
     return{ true, 1 };
   }
 
-  StateResult ActionWait::doFinishWorkNVI(AnyMap& params)
+  StateResult ActionWait::doFinishWorkNVI(GameState& gameState, AnyMap& params)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionWait::doAbortWorkNVI(AnyMap& params)
+  StateResult ActionWait::doAbortWorkNVI(GameState& gameState, AnyMap& params)
   {
     return StateResult::Success();
   }

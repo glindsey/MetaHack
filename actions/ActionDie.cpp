@@ -16,7 +16,7 @@ namespace Actions
   ActionDie::ActionDie(EntityId subject) : Action(subject, "die", "DIE") {}
   ActionDie::~ActionDie() {}
 
-  ReasonBool ActionDie::subjectIsCapable() const
+  ReasonBool ActionDie::subjectIsCapable(GameState& gameState) const
   {
     bool hasHealth = COMPONENTS.health.existsFor(getSubject());
     std::string reason = hasHealth ? "" : "YOU_ARE_NOT_MORTAL"; ///< @todo Add translation key
@@ -34,12 +34,12 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionDie::doPreBeginWorkNVI(AnyMap& params)
+  StateResult ActionDie::doPreBeginWorkNVI(GameState& gameState, AnyMap& params)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionDie::doBeginWorkNVI(AnyMap& params)
+  StateResult ActionDie::doBeginWorkNVI(GameState& gameState, AnyMap& params)
   {
     EntityId subject = getSubject();
 
@@ -73,12 +73,12 @@ namespace Actions
     }
   }
 
-  StateResult ActionDie::doFinishWorkNVI(AnyMap& params)
+  StateResult ActionDie::doFinishWorkNVI(GameState& gameState, AnyMap& params)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionDie::doAbortWorkNVI(AnyMap& params)
+  StateResult ActionDie::doAbortWorkNVI(GameState& gameState, AnyMap& params)
   {
     return StateResult::Success();
   }

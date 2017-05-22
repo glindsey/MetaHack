@@ -15,7 +15,7 @@ namespace Actions
   ActionWear::ActionWear(EntityId subject) : Action(subject, "wear", "WEAR") {}
   ActionWear::~ActionWear() {}
 
-  ReasonBool ActionWear::subjectIsCapable() const
+  ReasonBool ActionWear::subjectIsCapable(GameState& gameState) const
   {
     auto subject = getSubject();
     bool isSapient = COMPONENTS.sapience.existsFor(subject);
@@ -38,7 +38,7 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionWear::doPreBeginWorkNVI(AnyMap& params)
+  StateResult ActionWear::doPreBeginWorkNVI(GameState& gameState, AnyMap& params)
   {
     auto subject = getSubject();
     auto object = getObject();
@@ -60,7 +60,7 @@ namespace Actions
     return StateResult::Success();
   }
 
-  StateResult ActionWear::doBeginWorkNVI(AnyMap& params)
+  StateResult ActionWear::doBeginWorkNVI(GameState& gameState, AnyMap& params)
   {
     auto subject = getSubject();
     auto object = getObject();
@@ -75,7 +75,7 @@ namespace Actions
     return StateResult::Failure();
   }
 
-  StateResult ActionWear::doFinishWorkNVI(AnyMap& params)
+  StateResult ActionWear::doFinishWorkNVI(GameState& gameState, AnyMap& params)
   {
     auto subject = getSubject();
     auto object = getObject();
@@ -88,7 +88,7 @@ namespace Actions
     return StateResult::Success();
   }
 
-  StateResult ActionWear::doAbortWorkNVI(AnyMap& params)
+  StateResult ActionWear::doAbortWorkNVI(GameState& gameState, AnyMap& params)
   {
     return StateResult::Success();
   }

@@ -19,15 +19,15 @@ namespace Actions
     virtual ~ActionUse();
     static ActionUse prototype;
 
-    virtual ReasonBool subjectIsCapable() const override;
-    virtual ReasonBool objectIsAllowed() const override;
+    virtual ReasonBool subjectIsCapable(GameState& gameState) const override;
+    virtual ReasonBool objectIsAllowed(GameState& gameState) const override;
     virtual std::unordered_set<Trait> const& getTraits() const override;
 
   protected:
-    virtual StateResult doPreBeginWorkNVI(AnyMap& params) override;
-    virtual StateResult doBeginWorkNVI(AnyMap& params) override;
-    virtual StateResult doFinishWorkNVI(AnyMap& params) override;
-    virtual StateResult doAbortWorkNVI(AnyMap& params) override;
+    virtual StateResult doPreBeginWorkNVI(GameState& gameState, AnyMap& params) override;
+    virtual StateResult doBeginWorkNVI(GameState& gameState, AnyMap& params) override;
+    virtual StateResult doFinishWorkNVI(GameState& gameState, AnyMap& params) override;
+    virtual StateResult doAbortWorkNVI(GameState& gameState, AnyMap& params) override;
   };
 
 } // end namespace

@@ -20,13 +20,13 @@ namespace Actions
   ActionDrop::ActionDrop(EntityId subject) : Action(subject, "drop", "DROP") {}
   ActionDrop::~ActionDrop() {}
 
-  ReasonBool ActionDrop::subjectIsCapable() const
+  ReasonBool ActionDrop::subjectIsCapable(GameState& gameState) const
   {
     // An entity can always drop an item.
     return { true, "" };
   }
 
-  ReasonBool ActionDrop::objectIsAllowed() const
+  ReasonBool ActionDrop::objectIsAllowed(GameState& gameState) const
   {
     // For now, you can always drop an object.
     /// @todo Handle state of matter, movability
@@ -47,13 +47,13 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionDrop::doPreBeginWorkNVI(AnyMap& params)
+  StateResult ActionDrop::doPreBeginWorkNVI(GameState& gameState, AnyMap& params)
   {
     // All checks handled in Action class via traits.
     return StateResult::Success();
   }
 
-  StateResult ActionDrop::doBeginWorkNVI(AnyMap& params)
+  StateResult ActionDrop::doBeginWorkNVI(GameState& gameState, AnyMap& params)
   {
     StateResult result = StateResult::Failure();
     std::string message;
@@ -110,12 +110,12 @@ namespace Actions
     return result;
   }
 
-  StateResult ActionDrop::doFinishWorkNVI(AnyMap& params)
+  StateResult ActionDrop::doFinishWorkNVI(GameState& gameState, AnyMap& params)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionDrop::doAbortWorkNVI(AnyMap& params)
+  StateResult ActionDrop::doAbortWorkNVI(GameState& gameState, AnyMap& params)
   {
     return StateResult::Success();
   }

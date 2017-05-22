@@ -15,7 +15,7 @@ namespace Actions
   ActionUnwield::ActionUnwield(EntityId subject) : Action(subject, "unwield", "UNWIELD") {}
   ActionUnwield::~ActionUnwield() {}
 
-  ReasonBool ActionUnwield::subjectIsCapable() const
+  ReasonBool ActionUnwield::subjectIsCapable(GameState& gameState) const
   {
     // You can always unwield anything.
     return { true, "" };
@@ -33,13 +33,13 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionUnwield::doPreBeginWorkNVI(AnyMap& params)
+  StateResult ActionUnwield::doPreBeginWorkNVI(GameState& gameState, AnyMap& params)
   {
     // All checks done by Action class via traits.
     return StateResult::Success();
   }
 
-  StateResult ActionUnwield::doBeginWorkNVI(AnyMap& params)
+  StateResult ActionUnwield::doBeginWorkNVI(GameState& gameState, AnyMap& params)
   {
     StateResult result = StateResult::Failure();
 
@@ -73,12 +73,12 @@ namespace Actions
     return result;
   }
 
-  StateResult ActionUnwield::doFinishWorkNVI(AnyMap& params)
+  StateResult ActionUnwield::doFinishWorkNVI(GameState& gameState, AnyMap& params)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionUnwield::doAbortWorkNVI(AnyMap& params)
+  StateResult ActionUnwield::doAbortWorkNVI(GameState& gameState, AnyMap& params)
   {
     return StateResult::Success();
   }

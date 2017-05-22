@@ -19,7 +19,7 @@ namespace Actions
   ActionPutInto::ActionPutInto(EntityId subject) : Action(subject, "putinto", "STORE") {}
   ActionPutInto::~ActionPutInto() {}
 
-  ReasonBool ActionPutInto::subjectIsCapable() const
+  ReasonBool ActionPutInto::subjectIsCapable(GameState& gameState) const
   {
     auto subject = getSubject();
     bool isSapient = COMPONENTS.sapience.existsFor(subject);
@@ -44,7 +44,7 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionPutInto::doPreBeginWorkNVI(AnyMap& params)
+  StateResult ActionPutInto::doPreBeginWorkNVI(GameState& gameState, AnyMap& params)
   {
     std::string message;
     auto subject = getSubject();
@@ -100,7 +100,7 @@ namespace Actions
     return StateResult::Success();
   }
 
-  StateResult ActionPutInto::doBeginWorkNVI(AnyMap& params)
+  StateResult ActionPutInto::doBeginWorkNVI(GameState& gameState, AnyMap& params)
   {
     /// @todo Handle putting a certain quantity of an item.
     StateResult result = StateResult::Failure();
@@ -129,12 +129,12 @@ namespace Actions
     return result;
   }
 
-  StateResult ActionPutInto::doFinishWorkNVI(AnyMap& params)
+  StateResult ActionPutInto::doFinishWorkNVI(GameState& gameState, AnyMap& params)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionPutInto::doAbortWorkNVI(AnyMap& params)
+  StateResult ActionPutInto::doAbortWorkNVI(GameState& gameState, AnyMap& params)
   {
     return StateResult::Success();
   }

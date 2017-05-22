@@ -19,7 +19,7 @@ namespace Actions
   ActionTurn::ActionTurn(EntityId subject) : Action(subject, "turn", "TURN") {}
   ActionTurn::~ActionTurn() {}
 
-  ReasonBool ActionTurn::subjectIsCapable() const
+  ReasonBool ActionTurn::subjectIsCapable(GameState& gameState) const
   {
     auto subject = getSubject();
     bool isTurnable = (COMPONENTS.mobility.existsFor(subject) && COMPONENTS.mobility[subject].turnSpeed() > 0);
@@ -38,14 +38,14 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionTurn::doPreBeginWorkNVI(AnyMap& params)
+  StateResult ActionTurn::doPreBeginWorkNVI(GameState& gameState, AnyMap& params)
   {
     // All checks handled in Action class via traits.
     return StateResult::Success();
   }
 
   /// @todo Implement me.
-  StateResult ActionTurn::doBeginWorkNVI(AnyMap& params)
+  StateResult ActionTurn::doBeginWorkNVI(GameState& gameState, AnyMap& params)
   {
     StateResult result = StateResult::Failure();
 
@@ -65,12 +65,12 @@ namespace Actions
     return result;
   }
 
-  StateResult ActionTurn::doFinishWorkNVI(AnyMap& params)
+  StateResult ActionTurn::doFinishWorkNVI(GameState& gameState, AnyMap& params)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionTurn::doAbortWorkNVI(AnyMap& params)
+  StateResult ActionTurn::doAbortWorkNVI(GameState& gameState, AnyMap& params)
   {
     return StateResult::Success();
   }

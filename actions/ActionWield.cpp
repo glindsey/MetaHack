@@ -17,7 +17,7 @@ namespace Actions
   ActionWield::ActionWield(EntityId subject) : Action(subject, "wield", "WIELD") {}
   ActionWield::~ActionWield() {}
 
-  ReasonBool ActionWield::subjectIsCapable() const
+  ReasonBool ActionWield::subjectIsCapable(GameState& gameState) const
   {
     auto subject = getSubject();
     bool isSapient = COMPONENTS.sapience.existsFor(subject);
@@ -42,7 +42,7 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionWield::doPreBeginWorkNVI(AnyMap& params)
+  StateResult ActionWield::doPreBeginWorkNVI(GameState& gameState, AnyMap& params)
   {
     std::string message;
     auto subject = getSubject();
@@ -72,7 +72,7 @@ namespace Actions
     return StateResult::Success();
   }
 
-  StateResult ActionWield::doBeginWorkNVI(AnyMap& params)
+  StateResult ActionWield::doBeginWorkNVI(GameState& gameState, AnyMap& params)
   {
     /// @todo Wielding should take time -- should not be instantaneously done here.
     auto subject = getSubject();
@@ -90,7 +90,7 @@ namespace Actions
     return StateResult::Failure();
   }
 
-  StateResult ActionWield::doFinishWorkNVI(AnyMap& params)
+  StateResult ActionWield::doFinishWorkNVI(GameState& gameState, AnyMap& params)
   {
     auto subject = getSubject();
     auto object = getObject();
@@ -103,7 +103,7 @@ namespace Actions
     return StateResult::Success();
   }
 
-  StateResult ActionWield::doAbortWorkNVI(AnyMap& params)
+  StateResult ActionWield::doAbortWorkNVI(GameState& gameState, AnyMap& params)
   {
     return StateResult::Success();
   }

@@ -15,7 +15,7 @@ namespace Actions
   ActionUnlock::ActionUnlock(EntityId subject) : Action(subject, "unlock", "UNLOCK") {}
   ActionUnlock::~ActionUnlock() {}
 
-  ReasonBool ActionUnlock::subjectIsCapable() const
+  ReasonBool ActionUnlock::subjectIsCapable(GameState& gameState) const
   {
     auto subject = getSubject();
     bool isSapient = COMPONENTS.sapience.existsFor(subject);
@@ -38,12 +38,12 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionUnlock::doPreBeginWorkNVI(AnyMap& params)
+  StateResult ActionUnlock::doPreBeginWorkNVI(GameState& gameState, AnyMap& params)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionUnlock::doBeginWorkNVI(AnyMap& params)
+  StateResult ActionUnlock::doBeginWorkNVI(GameState& gameState, AnyMap& params)
   {
     bool success = false;
     unsigned int action_time = 0;
@@ -52,12 +52,12 @@ namespace Actions
     return{ success, action_time };
   }
 
-  StateResult ActionUnlock::doFinishWorkNVI(AnyMap& params)
+  StateResult ActionUnlock::doFinishWorkNVI(GameState& gameState, AnyMap& params)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionUnlock::doAbortWorkNVI(AnyMap& params)
+  StateResult ActionUnlock::doAbortWorkNVI(GameState& gameState, AnyMap& params)
   {
     return StateResult::Success();
   }

@@ -15,7 +15,7 @@ namespace Actions
   ActionOpen::ActionOpen(EntityId subject) : Action(subject, "open", "OPEN") {}
   ActionOpen::~ActionOpen() {}
 
-  ReasonBool ActionOpen::subjectIsCapable() const
+  ReasonBool ActionOpen::subjectIsCapable(GameState& gameState) const
   {
     auto subject = getSubject();
     bool isSapient = COMPONENTS.sapience.existsFor(subject);
@@ -38,12 +38,12 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionOpen::doPreBeginWorkNVI(AnyMap& params)
+  StateResult ActionOpen::doPreBeginWorkNVI(GameState& gameState, AnyMap& params)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionOpen::doBeginWorkNVI(AnyMap& params)
+  StateResult ActionOpen::doBeginWorkNVI(GameState& gameState, AnyMap& params)
   {
     bool success = false;
     unsigned int action_time = 0;
@@ -59,12 +59,12 @@ namespace Actions
     return{ success, action_time };
   }
 
-  StateResult ActionOpen::doFinishWorkNVI(AnyMap& params)
+  StateResult ActionOpen::doFinishWorkNVI(GameState& gameState, AnyMap& params)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionOpen::doAbortWorkNVI(AnyMap& params)
+  StateResult ActionOpen::doAbortWorkNVI(GameState& gameState, AnyMap& params)
   {
     return StateResult::Success();
   }

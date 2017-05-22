@@ -15,7 +15,7 @@ namespace Actions
   ActionLock::ActionLock(EntityId subject) : Action(subject, "lock", "LOCK") {}
   ActionLock::~ActionLock() {}
 
-  ReasonBool ActionLock::subjectIsCapable() const
+  ReasonBool ActionLock::subjectIsCapable(GameState& gameState) const
   {
     auto subject = getSubject();
     bool isSapient = COMPONENTS.sapience.existsFor(subject);
@@ -38,12 +38,12 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionLock::doPreBeginWorkNVI(AnyMap& params)
+  StateResult ActionLock::doPreBeginWorkNVI(GameState& gameState, AnyMap& params)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionLock::doBeginWorkNVI(AnyMap& params)
+  StateResult ActionLock::doBeginWorkNVI(GameState& gameState, AnyMap& params)
   {
     bool success = false;
     unsigned int action_time = 0;
@@ -52,12 +52,12 @@ namespace Actions
     return{ success, action_time };
   }
 
-  StateResult ActionLock::doFinishWorkNVI(AnyMap& params)
+  StateResult ActionLock::doFinishWorkNVI(GameState& gameState, AnyMap& params)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionLock::doAbortWorkNVI(AnyMap& params)
+  StateResult ActionLock::doAbortWorkNVI(GameState& gameState, AnyMap& params)
   {
     return StateResult::Success();
   }

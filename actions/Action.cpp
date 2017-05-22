@@ -92,7 +92,7 @@ namespace Actions
     return m_objects[1];
   }
 
-  bool Action::process(AnyMap params)
+  bool Action::process(GameState& gameState, AnyMap params)
   {
     auto subject = getSubject();
     if (!COMPONENTS.activity.existsFor(subject)) return false;
@@ -125,7 +125,7 @@ namespace Actions
       switch (m_state)
       {
         case State::Pending:
-          result = doPreBeginWork(params);
+          result = doPreBeginWork(gameState, params);
 
           if (result.success)
           {
@@ -142,7 +142,7 @@ namespace Actions
           break;
 
         case State::PreBegin:
-          result = doBeginWork(params);
+          result = doBeginWork(gameState, params);
 
           // If starting the action succeeded, move to the in-progress state.
           // Otherwise, just go right to post-finish.
@@ -161,14 +161,14 @@ namespace Actions
           break;
 
         case State::InProgress:
-          result = doFinishWork(params);
+          result = doFinishWork(gameState, params);
 
           activity.incBusyTicks(result.elapsed_time);
           setState(State::PostFinish);
           break;
 
         case State::Interrupted:
-          result = doAbortWork(params);
+          result = doAbortWork(gameState, params);
 
           activity.incBusyTicks(result.elapsed_time);
           setState(State::PostFinish);
@@ -276,7 +276,7 @@ namespace Actions
     return dict.get("VERB_" + m_verb + "_ABLE");
   }
 
-  StateResult Action::doPreBeginWork(AnyMap& params)
+  StateResult Action::doPreBeginWork(GameState& gameState, AnyMap& params)
   {
     auto subject = getSubject();
     auto& objects = getObjects();
@@ -285,7 +285,7 @@ namespace Actions
 
     // Check that we're capable of performing this action at all.
     std::string canVerb{ "can-" + getType() };
-    ReasonBool capable = subjectIsCapable();   
+    ReasonBool capable = subjectIsCapable(gameState);   
     if (!capable.value)
     {
       printMessageTry();
@@ -312,7 +312,7 @@ namespace Actions
     }
 
     // Check that we're capable of performing this action right now.
-    ReasonBool capableNow = subjectIsCapableNow();
+    ReasonBool capableNow = subjectIsCapableNow(gameState);
     if (!capableNow.value)
     {
       printMessageTry();
@@ -366,7 +366,7 @@ namespace Actions
             // If object can be self, we bypass other checks and let the action
             // subclass handle it.
             /// @todo Not sure this is the best option... think more about this later.
-            return doPreBeginWorkNVI(params);
+            return doPreBeginWorkNVI(gameState, params);
           }
         }
         else
@@ -510,7 +510,7 @@ namespace Actions
         }
 
         // Check that we can perform this Action on this object.
-        ReasonBool allowedNow = objectIsAllowedNow();
+        ReasonBool allowedNow = objectIsAllowedNow(gameState);
         if (!allowedNow.value)
         {
           printMessageTry();
@@ -520,72 +520,72 @@ namespace Actions
       }
     }
 
-    auto result = doPreBeginWorkNVI(params);
+    auto result = doPreBeginWorkNVI(gameState, params);
     return result;
   }
 
-  StateResult Action::doBeginWork(AnyMap& params)
+  StateResult Action::doBeginWork(GameState& gameState, AnyMap& params)
   {
-    auto result = doBeginWorkNVI(params);
+    auto result = doBeginWorkNVI(gameState, params);
     return result;
   }
 
-  StateResult Action::doFinishWork(AnyMap& params)
+  StateResult Action::doFinishWork(GameState& gameState, AnyMap& params)
   {
-    auto result = doFinishWorkNVI(params);
+    auto result = doFinishWorkNVI(gameState, params);
     return result;
   }
 
-  StateResult Action::doAbortWork(AnyMap& params)
+  StateResult Action::doAbortWork(GameState& gameState, AnyMap& params)
   {
-    auto result = doAbortWorkNVI(params);
+    auto result = doAbortWorkNVI(gameState, params);
     return result;
   }
 
-  ReasonBool Action::subjectIsCapable() const
+  ReasonBool Action::subjectIsCapable(GameState& gameState) const
   {
     std::string reason = "Missing subjectIsCapable() implementation for action \"" + m_verb + "\"";
     CLOG(ERROR, "Action") << reason;
     return { false, reason };
   }
 
-  ReasonBool Action::subjectIsCapableNow() const
+  ReasonBool Action::subjectIsCapableNow(GameState& gameState) const
   {
-    return subjectIsCapable();
+    return subjectIsCapable(gameState);
   }
 
-  ReasonBool Action::objectIsAllowed() const
+  ReasonBool Action::objectIsAllowed(GameState& gameState) const
   {
     std::string reason = "Missing objectIsAllowed() implementation for action \"" + m_verb + "\"";
     CLOG(ERROR, "Action") << reason;
     return { false, reason };
   }
 
-  ReasonBool Action::objectIsAllowedNow() const
+  ReasonBool Action::objectIsAllowedNow(GameState& gameState) const
   {
-    return objectIsAllowed();
+    return objectIsAllowed(gameState);
   }
 
-  StateResult Action::doPreBeginWorkNVI(AnyMap& params)
+  StateResult Action::doPreBeginWorkNVI(GameState& gameState, AnyMap& params)
   {
     /// @todo Set counter_busy based on the action being taken and
     ///       the entity's reflexes.
     return StateResult::Success();
   }
 
-  StateResult Action::doBeginWorkNVI(AnyMap& params)
+  StateResult Action::doBeginWorkNVI(GameState& gameState, AnyMap& params)
   {
     putTr("ACTN_NOT_IMPLEMENTED");
     return StateResult::Failure();
   }
 
-  StateResult Action::doFinishWorkNVI(AnyMap& params)
+  StateResult Action::doFinishWorkNVI(GameState& gameState, AnyMap& params)
   {
     /// @todo Complete the action here
     return StateResult::Success();
   }
 
-  StateResult Action::doAbortWorkNVI(AnyMap& params)
+  StateResult Action::doAbortWorkNVI(GameState& gameState, AnyMap& params)
   {
     /// @todo Handle aborting the action here.
     return StateResult::Success();

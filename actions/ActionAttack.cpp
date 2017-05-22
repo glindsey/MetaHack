@@ -30,7 +30,7 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionAttack::doPreBeginWorkNVI(AnyMap& params)
+  StateResult ActionAttack::doPreBeginWorkNVI(GameState& gameState, AnyMap& params)
   {
     auto subject = getSubject();
     auto location = COMPONENTS.position[subject].parent();
@@ -61,7 +61,7 @@ namespace Actions
     return StateResult::Success();
   }
 
-  StateResult ActionAttack::doBeginWorkNVI(AnyMap& params)
+  StateResult ActionAttack::doBeginWorkNVI(GameState& gameState, AnyMap& params)
   {
     auto subject = getSubject();
     auto& position = COMPONENTS.position[subject];
@@ -111,12 +111,12 @@ namespace Actions
     return{ success, action_time };
   }
 
-  StateResult ActionAttack::doFinishWorkNVI(AnyMap& params)
+  StateResult ActionAttack::doFinishWorkNVI(GameState& gameState, AnyMap& params)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionAttack::doAbortWorkNVI(AnyMap& params)
+  StateResult ActionAttack::doAbortWorkNVI(GameState& gameState, AnyMap& params)
   {
     return StateResult::Success();
   }

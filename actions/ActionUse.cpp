@@ -15,7 +15,7 @@ namespace Actions
   ActionUse::ActionUse(EntityId subject) : Action(subject, "use", "USE") {}
   ActionUse::~ActionUse() {}
 
-  ReasonBool ActionUse::subjectIsCapable() const
+  ReasonBool ActionUse::subjectIsCapable(GameState& gameState) const
   {
     auto subject = getSubject();
     bool isSapient = COMPONENTS.sapience.existsFor(subject);
@@ -27,7 +27,7 @@ namespace Actions
     return { true, "" };
   }
 
-  ReasonBool ActionUse::objectIsAllowed() const
+  ReasonBool ActionUse::objectIsAllowed(GameState& gameState) const
   {
     auto& object = getObject();
     auto useFunctionExists = !(GAME.lua().find_lua_function(COMPONENTS.category[object], "on_object_of_" + getType())).empty();
@@ -45,13 +45,13 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionUse::doPreBeginWorkNVI(AnyMap& params)
+  StateResult ActionUse::doPreBeginWorkNVI(GameState& gameState, AnyMap& params)
   {
     // All checks done in Action class via traits.
     return StateResult::Success();
   }
 
-  StateResult ActionUse::doBeginWorkNVI(AnyMap& params)
+  StateResult ActionUse::doBeginWorkNVI(GameState& gameState, AnyMap& params)
   {
     StateResult result = StateResult::Failure();
     std::string message;
@@ -65,7 +65,7 @@ namespace Actions
     return result;
   }
 
-  StateResult ActionUse::doFinishWorkNVI(AnyMap& params)
+  StateResult ActionUse::doFinishWorkNVI(GameState& gameState, AnyMap& params)
   {
     StateResult result = StateResult::Failure();
     std::string message;
@@ -90,7 +90,7 @@ namespace Actions
     return result;
   }
 
-  StateResult ActionUse::doAbortWorkNVI(AnyMap& params)
+  StateResult ActionUse::doAbortWorkNVI(GameState& gameState, AnyMap& params)
   {
     auto subject = getSubject();
     auto object = getObject();
