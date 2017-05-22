@@ -2,7 +2,8 @@
 
 #include "services/FileSystemGameRules.h"
 
-#include "game/App.h" // needed for the_lua_instance
+#include "game/GameState.h" // needed for LUA
+#include "lua/LuaObject.h"
 #include "Service.h"
 #include "services/IGraphicViews.h"
 #include "utilities/JSONUtils.h"
@@ -93,7 +94,7 @@ void FileSystemGameRules::loadCategoryIfNecessary(std::string name, std::string 
     /// Try to load and run this Entity's Lua script.
     if (fs::exists(luafile_path))
     {
-      the_lua_instance.require(resource_string, true);
+      GAME.lua().require(resource_string, true);
     }
 
     Service<IGraphicViews>::get().loadViewResourcesFor(name, categoryData);

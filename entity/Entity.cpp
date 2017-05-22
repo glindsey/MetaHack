@@ -732,14 +732,14 @@ json Entity::call_lua_function(std::string function_name,
                                json const& args,
                                json const& default_result)
 {
-  return the_lua_instance.call_thing_function(function_name, getId(), args, default_result);
+  return GAME.lua().call_thing_function(function_name, getId(), args, default_result);
 }
 
 json Entity::call_lua_function(std::string function_name,
                                json const& args,
                                json const& default_result) const
 {
-  return the_lua_instance.call_thing_function(function_name, getId(), args, default_result);
+  return GAME.lua().call_thing_function(function_name, getId(), args, default_result);
 }
 
 // *** PROTECTED METHODS ******************************************************

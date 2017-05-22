@@ -19,29 +19,29 @@
 #include "map/MapFeature.h"
 #include "map/MapGenerator.h"
 
-#define VERTEX(x, y) (20 * (m_map_size.x * y) + x)
+#define VERTEX(x, y) (20 * (m_size.x * y) + x)
 #define TILE(x, y) (m_tiles->get({ x, y }))
 
 // Local typedefs
 typedef boost::random::uniform_int_distribution<> uniform_int_dist;
 
 /// @todo Have this take an IntVec2 instead of width x height
-Map::Map(GameState& game, MapId map_id, int width, int height)
+Map::Map(GameState& gameState, MapId id, int width, int height)
   :
   Object({}),
-  m_game{ game },
-  m_map_id{ map_id },
-  m_map_size{ width, height },
+  m_gameState{ gameState },
+  m_id{ id },
+  m_size{ width, height },
   m_generator{ NEW MapGenerator(*this) }
 {
   CLOG(TRACE, "Map") << "Creating map of size " << width << " x " << height;
 
   m_tiles.reset(NEW Grid2D<MapTile>({ width, height },
-									[&](IntVec2 coords) -> MapTile*
+                                    [&](IntVec2 coords) -> MapTile*
   {
-	MapTile* new_tile = NEW MapTile(coords, "MTUnknown", map_id);
-	new_tile->setCoords(coords);
-	return new_tile;
+    MapTile* new_tile = NEW MapTile(coords, "MTUnknown", id);
+    new_tile->setCoords(coords);
+    return new_tile;
   }));
 
   CLOG(TRACE, "Map") << "Map created.";
@@ -52,19 +52,19 @@ Map::Map(GameState& game, MapId map_id, int width, int height)
 void Map::initialize()
 {
   // If the map isn't the 1x1 "limbo" map...
-  if ((m_map_size.x != 1) && (m_map_size.y != 1))
+  if ((m_size.x != 1) && (m_size.y != 1))
   {
-	// Generate the map.
-	m_generator->generate();
+    // Generate the map.
+    m_generator->generate();
 
-	// Run Lua script associated with this map.
-	/// @todo Different scripts for different maps.
-	///       And for that matter, ALL of map generation
-	///       should be done via scripting. But for now
-	///       this will do.
-	CLOG(TRACE, "Map") << "Executing Map Lua script.";
-	the_lua_instance.set_global("current_map_id", m_map_id);
-	the_lua_instance.require("resources/script/map");
+    // Run Lua script associated with this map.
+    /// @todo Different scripts for different maps.
+    ///       And for that matter, ALL of map generation
+    ///       should be done via scripting. But for now
+    ///       this will do.
+    CLOG(TRACE, "Map") << "Executing Map Lua script.";
+    m_gameState.lua().set_global("current_map_id", m_id);
+    m_gameState.lua().require("resources/script/map");
   }
 
   CLOG(TRACE, "Map") << "Map initialized.";
@@ -79,18 +79,18 @@ Map::~Map()
 
 int Map::getIndex(IntVec2 coords) const
 {
-  return (coords.y * m_map_size.x) + coords.x;
+  return (coords.y * m_size.x) + coords.x;
 }
 
 bool Map::isInBounds(IntVec2 coords) const
 {
   return ((coords.x >= 0) && (coords.y >= 0) &&
-	(coords.x < m_map_size.x) && (coords.y < m_map_size.y));
+    (coords.x < m_size.x) && (coords.y < m_size.y));
 }
 
 bool Map::calcCoords(IntVec2 origin,
-					 Direction direction,
-					 IntVec2& result)
+                     Direction direction,
+                     IntVec2& result)
 {
   result = origin + (IntVec2)direction;
 
@@ -99,12 +99,12 @@ bool Map::calcCoords(IntVec2 origin,
 
 MapId Map::getMapId() const
 {
-  return m_map_id;
+  return m_id;
 }
 
 IntVec2 const& Map::getSize() const
 {
-  return m_map_size;
+  return m_size;
 }
 
 IntVec2 const& Map::getStartCoords() const
@@ -116,21 +116,21 @@ bool Map::setStartCoords(IntVec2 start_coords)
 {
   if (isInBounds(start_coords))
   {
-	m_start_coords = start_coords;
-	return true;
+    m_start_coords = start_coords;
+    return true;
   }
   return false;
 }
 
 void Map::processEntities()
 {
-  for (int y = 0; y < m_map_size.y; ++y)
+  for (int y = 0; y < m_size.y; ++y)
   {
-	for (int x = 0; x < m_map_size.x; ++x)
-	{
-	  EntityId contents = TILE(x, y).getTileContents();
-	  contents->processActions();
-	}
+    for (int x = 0; x < m_size.x; ++x)
+    {
+      EntityId contents = TILE(x, y).getTileContents();
+      contents->processActions();
+    }
   }
 
   //notifyObservers(Event::Updated);
@@ -139,9 +139,9 @@ void Map::processEntities()
 MapTile const& Map::getTile(IntVec2 tile) const
 {
   if (tile.x < 0) tile.x = 0;
-  if (tile.x >= m_map_size.x) tile.x = m_map_size.x - 1;
+  if (tile.x >= m_size.x) tile.x = m_size.x - 1;
   if (tile.y < 0) tile.y = 0;
-  if (tile.y >= m_map_size.y) tile.y = m_map_size.y - 1;
+  if (tile.y >= m_size.y) tile.y = m_size.y - 1;
 
   return TILE(tile.x, tile.y);
 }
@@ -149,18 +149,18 @@ MapTile const& Map::getTile(IntVec2 tile) const
 MapTile& Map::getTile(IntVec2 tile)
 {
   if (tile.x < 0) tile.x = 0;
-  if (tile.x >= m_map_size.x) tile.x = m_map_size.x - 1;
+  if (tile.x >= m_size.x) tile.x = m_size.x - 1;
   if (tile.y < 0) tile.y = 0;
-  if (tile.y >= m_map_size.y) tile.y = m_map_size.y - 1;
+  if (tile.y >= m_size.y) tile.y = m_size.y - 1;
 
   return TILE(tile.x, tile.y);
 }
 
 bool Map::tileIsOpaque(IntVec2 tile)
 {
-  if ((tile.x < 0) || (tile.x >= m_map_size.x) || (tile.y < 0) || (tile.y >= m_map_size.y))
+  if ((tile.x < 0) || (tile.x >= m_size.x) || (tile.y < 0) || (tile.y >= m_size.y))
   {
-	return true;
+    return true;
   }
 
   return TILE(tile.x, tile.y).isTotallyOpaque();
@@ -189,7 +189,7 @@ MapFeature& Map::addMapFeature(MapFeature* feature)
 {
   if (feature != nullptr)
   {
-	m_features.push_back(feature);
+    m_features.push_back(feature);
   }
   return *feature;
 }
@@ -200,8 +200,8 @@ int Map::LUA_getTileContents(lua_State* L)
 
   if (num_args != 3)
   {
-	CLOG(WARNING, "Lua") << "expected 3 arguments, got " << num_args;
-	return 0;
+    CLOG(WARNING, "Lua") << "expected 3 arguments, got " << num_args;
+    return 0;
   }
 
   MapId map_id = static_cast<MapId>(static_cast<unsigned int>(lua_tointeger(L, 1)));
@@ -221,8 +221,8 @@ int Map::LUA_getStartCoords(lua_State* L)
 
   if (num_args != 1)
   {
-	CLOG(WARNING, "Lua") << "expected 1 arguments, got %d" << num_args;
-	return 0;
+    CLOG(WARNING, "Lua") << "expected 1 arguments, got %d" << num_args;
+    return 0;
   }
 
   MapId map_id = static_cast<MapId>(static_cast<unsigned int>(lua_tointeger(L, 1)));
@@ -244,8 +244,8 @@ int Map::LUA_mapAddFeature(lua_State* L)
 
   if (num_args != 2)
   {
-	CLOG(WARNING, "Lua") << "expected 2 arguments, got " << num_args;
-	return 0;
+    CLOG(WARNING, "Lua") << "expected 2 arguments, got " << num_args;
+    return 0;
   }
 
   MapId map_id = static_cast<MapId>(static_cast<unsigned int>(lua_tointeger(L, 1)));

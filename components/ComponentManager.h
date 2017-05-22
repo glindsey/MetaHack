@@ -32,8 +32,8 @@ class GameState;
 class ComponentManager final
 {
 public:
-  ComponentManager();
-  ComponentManager(json const& j);
+  ComponentManager(GameState& gameState);
+  ComponentManager(GameState& gameState, json const& j);
   ~ComponentManager();
 
   void initialize();
@@ -44,8 +44,7 @@ public:
 
   void populate(EntityId newId, json const& jsonComponents);
 
-  friend void from_json(json const& j, ComponentManager& obj);
-  friend void to_json(json& j, ComponentManager const& obj);
+  json toJSON();
 
   ComponentMap<ComponentActivity> activity;
   ComponentMap<ComponentAppearance> appearance;
@@ -69,4 +68,8 @@ public:
   ComponentMap<ComponentSapience> sapience;
   ComponentMap<ComponentSenseSight> senseSight;
   ComponentMap<ComponentSpacialMemory> spacialMemory;
+
+private:
+  /// Reference to parent GameState instance.
+  GameState& m_gameState;
 };

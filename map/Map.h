@@ -100,13 +100,13 @@ protected:
 
 private:
   /// Reference to game state.
-  GameState& m_game;
+  GameState& m_gameState;
 
   /// Map ID.
-  MapId m_map_id;
+  MapId m_id;
 
   /// Map size.
-  IntVec2 m_map_size;
+  IntVec2 m_size;
 
   std::unique_ptr<MapGenerator> m_generator;
 

@@ -133,7 +133,7 @@ void SystemLighting::applyLightFrom(EntityId light, EntityId location)
       bool locationHasHealth = m_health.existsFor(location);
 
 
-      bool result = the_lua_instance.call_thing_function("on_lit_by", location, light, true);
+      bool result = GAME.lua().call_thing_function("on_lit_by", location, light, true);
       if (result)
       {
         //notifyObservers(Event::Updated);

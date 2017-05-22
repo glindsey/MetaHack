@@ -99,14 +99,15 @@ int LUA_set_lit(lua_State* L)
   });
 }
 
-ComponentManager::ComponentManager()
+ComponentManager::ComponentManager(GameState& gameState) :
+  m_gameState{ gameState }
 {
   initialize();
 }
 
-ComponentManager::ComponentManager(json const& j)
+ComponentManager::ComponentManager(GameState& gameState, json const& j) :
+  ComponentManager(gameState)
 {
-  initialize();
   JSONUtils::doIfPresent(j, "activity",         [this](auto const& value) { activity = value; });
   JSONUtils::doIfPresent(j, "appearance",       [this](auto const& value) { appearance = value; });
   JSONUtils::doIfPresent(j, "bodyparts",        [this](auto const& value) { bodyparts = value; });
@@ -136,17 +137,17 @@ ComponentManager::~ComponentManager()
 
 void ComponentManager::initialize()
 {
-  the_lua_instance.register_function("get_busy_ticks", LUA_get_busy_ticks);
-  the_lua_instance.register_function("get_category", LUA_get_category);
-  the_lua_instance.register_function("get_hp", LUA_get_hp);
-  the_lua_instance.register_function("get_mass", LUA_get_mass);
-  the_lua_instance.register_function("get_maxhp", LUA_get_maxhp);
-  the_lua_instance.register_function("get_opacity", LUA_get_opacity);
-  the_lua_instance.register_function("get_proper_name", LUA_get_proper_name);
-  the_lua_instance.register_function("get_quantity", LUA_get_quantity);
-  the_lua_instance.register_function("get_volume", LUA_get_volume);
-  the_lua_instance.register_function("is_lit", LUA_is_lit);
-  the_lua_instance.register_function("set_lit", LUA_set_lit);
+  m_gameState.lua().register_function("get_busy_ticks", LUA_get_busy_ticks);
+  m_gameState.lua().register_function("get_category", LUA_get_category);
+  m_gameState.lua().register_function("get_hp", LUA_get_hp);
+  m_gameState.lua().register_function("get_mass", LUA_get_mass);
+  m_gameState.lua().register_function("get_maxhp", LUA_get_maxhp);
+  m_gameState.lua().register_function("get_opacity", LUA_get_opacity);
+  m_gameState.lua().register_function("get_proper_name", LUA_get_proper_name);
+  m_gameState.lua().register_function("get_quantity", LUA_get_quantity);
+  m_gameState.lua().register_function("get_volume", LUA_get_volume);
+  m_gameState.lua().register_function("is_lit", LUA_is_lit);
+  m_gameState.lua().register_function("set_lit", LUA_set_lit);
 }
 
 void ComponentManager::clone(EntityId original, EntityId newId)
@@ -227,53 +228,31 @@ void ComponentManager::populate(EntityId id, json const& j)
   JSONUtils::doIfPresent(j, "spacial-memory",   [this, &id](auto const& value) { spacialMemory[id] = value; });
 }
 
-void from_json(json const& j, ComponentManager& obj)
+json ComponentManager::toJSON()
 {
-  JSONUtils::doIfPresent(j, "activity",         [&obj](auto const& value) { obj.activity = value; });
-  JSONUtils::doIfPresent(j, "appearance",       [&obj](auto const& value) { obj.appearance = value; });
-  JSONUtils::doIfPresent(j, "bodyparts",        [&obj](auto const& value) { obj.bodyparts = value; });
-  JSONUtils::doIfPresent(j, "category",         [&obj](auto const& value) { obj.category = value; });
-  JSONUtils::doIfPresent(j, "combustible",      [&obj](auto const& value) { obj.combustible = value; });
-  JSONUtils::doIfPresent(j, "digestive-system", [&obj](auto const& value) { obj.digestiveSystem = value; });
-  JSONUtils::doIfPresent(j, "gender",           [&obj](auto const& value) { obj.gender = value; });
-  JSONUtils::doIfPresent(j, "health",           [&obj](auto const& value) { obj.health = value; });
-  JSONUtils::doIfPresent(j, "inventory",        [&obj](auto const& value) { obj.inventory = value; });
-  JSONUtils::doIfPresent(j, "light-source",     [&obj](auto const& value) { obj.lightSource = value; });
-  JSONUtils::doIfPresent(j, "lockable",         [&obj](auto const& value) { obj.lockable = value; });
-  JSONUtils::doIfPresent(j, "magical-binding",  [&obj](auto const& value) { obj.magicalBinding = value; });
-  JSONUtils::doIfPresent(j, "material-flags",   [&obj](auto const& value) { obj.materialFlags = value; });
-  JSONUtils::doIfPresent(j, "matter-state",     [&obj](auto const& value) { obj.matterState = value; });
-  JSONUtils::doIfPresent(j, "mobility",         [&obj](auto const& value) { obj.mobility = value; });
-  JSONUtils::doIfPresent(j, "openable",         [&obj](auto const& value) { obj.openable = value; });
-  JSONUtils::doIfPresent(j, "physical",         [&obj](auto const& value) { obj.physical = value; });
-  JSONUtils::doIfPresent(j, "position",         [&obj](auto const& value) { obj.position = value; });
-  JSONUtils::doIfPresent(j, "proper-name",      [&obj](auto const& value) { obj.properName = value; });
-  JSONUtils::doIfPresent(j, "sapience",         [&obj](auto const& value) { obj.sapience = value; });
-  JSONUtils::doIfPresent(j, "sense-sight",      [&obj](auto const& value) { obj.senseSight = value; });
-  JSONUtils::doIfPresent(j, "spacial-memory",   [&obj](auto const& value) { obj.spacialMemory = value; });
-}
+  json j = json::object();
 
-void to_json(json& j, ComponentManager const& obj)
-{
-  j["activity"]         = obj.activity;
-  j["appearance"]       = obj.appearance;
-  j["bodyparts"]        = obj.bodyparts;
-  j["category"]         = obj.category;
-  j["combustible"]      = obj.combustible;
-  j["gender"]           = obj.gender;
-  j["health"]           = obj.health;
-  j["inventory"]        = obj.inventory;
-  j["light-source"]     = obj.lightSource;
-  j["lockable"]         = obj.lockable;
-  j["magical-binding"]  = obj.magicalBinding;
-  j["material-flags"]   = obj.materialFlags;
-  j["matter-state"]     = obj.matterState;
-  j["mobility"]         = obj.mobility;
-  j["openable"]         = obj.openable;
-  j["physical"]         = obj.physical;
-  j["position"]         = obj.position;
-  j["proper-name"]      = obj.properName;
-  j["sapience"]         = obj.sapience;
-  j["sense-sight"]      = obj.senseSight;
-  j["spacial-memory"]   = obj.spacialMemory;
+  j["activity"]        = activity;
+  j["appearance"]      = appearance;
+  j["bodyparts"]       = bodyparts;
+  j["category"]        = category;
+  j["combustible"]     = combustible;
+  j["gender"]          = gender;
+  j["health"]          = health;
+  j["inventory"]       = inventory;
+  j["light-source"]    = lightSource;
+  j["lockable"]        = lockable;
+  j["magical-binding"] = magicalBinding;
+  j["material-flags"]  = materialFlags;
+  j["matter-state"]    = matterState;
+  j["mobility"]        = mobility;
+  j["openable"]        = openable;
+  j["physical"]        = physical;
+  j["position"]        = position;
+  j["proper-name"]     = properName;
+  j["sapience"]        = sapience;
+  j["sense-sight"]     = senseSight;
+  j["spacial-memory"]  = spacialMemory;
+
+  return j;
 }

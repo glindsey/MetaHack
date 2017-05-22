@@ -123,9 +123,9 @@ void AppStateGameMode::execute()
     }
     else
     {
-      if (luaL_dostring(the_lua_state, luaCommand.c_str()))
+      if (luaL_dostring(GAME.lua().state(), luaCommand.c_str()))
       {
-        std::string result = lua_tostring(the_lua_state, -1);
+        std::string result = lua_tostring(GAME.lua().state(), -1);
         Service<IMessageLog>::get().add(result);
       }
     }
@@ -172,16 +172,16 @@ bool AppStateGameMode::initialize()
   // Create the game map.
   /// @todo This shouldn't be hardcoded here
 #ifdef NDEBUG
-  MapId current_map_id = game.maps().create(64, 64);
+  MapId currentMapId = game.maps().create(64, 64);
 #else
-  MapId current_map_id = game.maps().create(20, 20);
+  MapId currentMapId = game.maps().create(20, 20);
 #endif
 
-  Map& game_map = game.maps().get(current_map_id);
+  Map& game_map = game.maps().get(currentMapId);
 
   // Initialize systems that need initializing.
-  m_systemManager->lighting().setMap(current_map_id);
-  m_systemManager->senseSight().setMap(current_map_id);
+  m_systemManager->lighting().setMap(currentMapId);
+  m_systemManager->senseSight().setMap(currentMapId);
 
   // Move player to start position on the map.
   auto& start_coords = game_map.getStartCoords();

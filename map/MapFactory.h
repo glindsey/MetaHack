@@ -23,7 +23,7 @@ public:
   void serialize(Archive& archive)
   {
     /// @todo WRITE ME
-    //archive(m_maps, current_map_id);
+    //archive(m_maps, m_currentMapId);
   }
 
   /// Returns whether a specified MapId exists in the map.
@@ -39,17 +39,17 @@ public:
 
   bool destroy(MapId map_id);
 
-  static const MapId null_map_id;
+  static const MapId nullMapId;
 
 protected:
 private:
   /// Reference to current game state.
-  GameState& m_game;
+  GameState& m_gameState;
 
   /// Collection of maps.
   std::unordered_map<MapId, std::unique_ptr<Map>> m_maps;
 
-  MapId current_map_id;
+  MapId m_currentMapId;
 };
 
 #endif // MAPFACTORY_H

@@ -10,6 +10,7 @@
 // Forward declarations
 class ComponentManager;
 class EntityPool;
+class Lua;
 class MapFactory;
 
 /// Class that encapsulates the entire state of the game data.
@@ -91,11 +92,17 @@ public:
   /// @return True if a tick elapsed, false if it did not.
   bool processGameClockTick();
 
+  /// Get the Lua state object.
+  Lua& lua();
+
   static GameState& instance();
 
 protected:
 
 private:
+  /// Pointer to the Lua state object.
+  std::unique_ptr<Lua> m_lua;
+
   /// Pointer to the Map Factory object.
   std::unique_ptr<MapFactory> m_mapFactory;
 
@@ -103,7 +110,7 @@ private:
   std::unique_ptr<EntityPool> m_entityPool;
 
   /// Pointer to the Components Manager object.
-  std::unique_ptr<ComponentManager> m_componentsManager;
+  std::unique_ptr<ComponentManager> m_components;
 
   /// Global game data, as stored in a JSON object.
   json m_global;
@@ -112,9 +119,9 @@ private:
   static GameState* s_instance;
 };
 
-#define GAME  GameState::instance()
-#define MAPS  GAME.maps()
-#define ENTITIES GAME.entities()
-#define COMPONENTS GAME.components()
+#define GAME              GameState::instance()
+#define MAPS              (GAME.maps())
+#define ENTITIES          (GAME.entities())
+#define COMPONENTS        (GAME.components())
 
 #endif // GAMESTATE_H

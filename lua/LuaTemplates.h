@@ -19,7 +19,7 @@ int LUA_getValue(lua_State* L, std::function<ReturnType(EntityId)> getValue)
   EntityId entity = EntityId(lua_tointeger(L, 1));
 
   ReturnType result = getValue(entity);
-  auto slot_count = the_lua_instance.push_value(result);
+  auto slot_count = GAME.lua().push_value(result);
   return slot_count;
 }
 
@@ -38,7 +38,7 @@ int LUA_getValueOfString(lua_State* L, std::function<ReturnType(EntityId, std::s
   std::string str = lua_tostring(L, 2);
 
   ReturnType result = getValue(entity, str);
-  auto slot_count = the_lua_instance.push_value(result);
+  auto slot_count = GAME.lua().push_value(result);
   return slot_count;
 }
 

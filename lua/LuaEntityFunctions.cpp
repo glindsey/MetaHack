@@ -13,7 +13,7 @@
 
 // === MACROS =================================================================
 #define STRINGIFY(x) #x
-#define LUA_REGISTER(x) do { the_lua_instance.register_function(STRINGIFY(x), x); } while(0)
+#define LUA_REGISTER(x) do { GAME.lua().register_function(STRINGIFY(x), x); } while(0)
 
 // === FUNCTIONS ==============================================================
 
@@ -180,7 +180,7 @@ namespace LuaEntityFunctions
     EntityId entity = EntityId(lua_tointeger(L, 1));
     const char* key = lua_tostring(L, 2);
     auto result = Service<IGameRules>::get().category(COMPONENTS.category[entity]).value(key, json());
-    auto slot_count = the_lua_instance.push_value(result);
+    auto slot_count = GAME.lua().push_value(result);
 
     return slot_count;
   }

@@ -108,7 +108,7 @@ void MapTileStandard2DView::add_memory_vertices_to(sf::VertexArray& vertices,
   auto& viewerPosition = COMPONENTS.position[viewer];
   MapId map = viewerPosition.map();
 
-  if (map == MapFactory::null_map_id)
+  if (map == MapFactory::nullMapId)
   {
     return;
   }

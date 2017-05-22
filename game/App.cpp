@@ -103,9 +103,6 @@ App::App(sf::RenderWindow& app_window)
 
   auto& config = Service<IConfigSettings>::get();
 
-  // Create the Lua state.
-  m_lua.reset(NEW Lua());
-
   // Create the app state machine.
   m_state_machine.reset(NEW StateMachine("app_state_machine", this)),
 
@@ -165,12 +162,6 @@ App::App(sf::RenderWindow& app_window)
   // Create the message log.
   Service<IMessageLog>::provide(NEW MessageLog());
   m_message_log.reset(NEW MessageLog());
-
-  // Register Lua functions.
-  m_lua->register_function("app_get_frame_counter", App::LUA_get_frame_counter);
-  //m_lua->register_function("print", App::LUA_redirect_print);
-  m_lua->register_function("messageLog_add", App::LUA_add);
-  m_lua->register_function("get_config", App::LUA_get_config);
 
   // Create the string dictionary, and try to load the default translation file.
   /// @todo Change this so language can be specified.
@@ -324,11 +315,6 @@ sf::RenderWindow& App::get_window()
 bool App::has_window_focus()
 {
   return m_has_window_focus;
-}
-
-Lua & App::get_lua()
-{
-  return *m_lua;
 }
 
 boost::random::mt19937 & App::get_rng()
