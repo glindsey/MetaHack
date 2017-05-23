@@ -15,7 +15,7 @@ namespace Actions
   ActionUse::ActionUse(EntityId subject) : Action(subject, "use", "USE") {}
   ActionUse::~ActionUse() {}
 
-  ReasonBool ActionUse::subjectIsCapable(GameState& gameState) const
+  ReasonBool ActionUse::subjectIsCapable(GameState const& gameState) const
   {
     auto subject = getSubject();
     bool isSapient = COMPONENTS.sapience.existsFor(subject);
@@ -27,7 +27,7 @@ namespace Actions
     return { true, "" };
   }
 
-  ReasonBool ActionUse::objectIsAllowed(GameState& gameState) const
+  ReasonBool ActionUse::objectIsAllowed(GameState const& gameState) const
   {
     auto& object = getObject();
     auto useFunctionExists = !(GAME.lua().find_lua_function(COMPONENTS.category[object], "on_object_of_" + getType())).empty();

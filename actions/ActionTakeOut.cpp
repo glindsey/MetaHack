@@ -19,7 +19,7 @@ namespace Actions
   ActionTakeOut::ActionTakeOut(EntityId subject) : Action(subject, "remove", "REMOVE") {}
   ActionTakeOut::~ActionTakeOut() {}
 
-  ReasonBool ActionTakeOut::subjectIsCapable(GameState& gameState) const
+  ReasonBool ActionTakeOut::subjectIsCapable(GameState const& gameState) const
   {
     auto subject = getSubject();
     bool isSapient = COMPONENTS.sapience.existsFor(subject);

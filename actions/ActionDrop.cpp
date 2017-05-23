@@ -20,13 +20,13 @@ namespace Actions
   ActionDrop::ActionDrop(EntityId subject) : Action(subject, "drop", "DROP") {}
   ActionDrop::~ActionDrop() {}
 
-  ReasonBool ActionDrop::subjectIsCapable(GameState& gameState) const
+  ReasonBool ActionDrop::subjectIsCapable(GameState const& gameState) const
   {
     // An entity can always drop an item.
     return { true, "" };
   }
 
-  ReasonBool ActionDrop::objectIsAllowed(GameState& gameState) const
+  ReasonBool ActionDrop::objectIsAllowed(GameState const& gameState) const
   {
     // For now, you can always drop an object.
     /// @todo Handle state of matter, movability

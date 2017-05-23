@@ -542,26 +542,26 @@ namespace Actions
     return result;
   }
 
-  ReasonBool Action::subjectIsCapable(GameState& gameState) const
+  ReasonBool Action::subjectIsCapable(GameState const& gameState) const
   {
     std::string reason = "Missing subjectIsCapable() implementation for action \"" + m_verb + "\"";
     CLOG(ERROR, "Action") << reason;
     return { false, reason };
   }
 
-  ReasonBool Action::subjectIsCapableNow(GameState& gameState) const
+  ReasonBool Action::subjectIsCapableNow(GameState const& gameState) const
   {
     return subjectIsCapable(gameState);
   }
 
-  ReasonBool Action::objectIsAllowed(GameState& gameState) const
+  ReasonBool Action::objectIsAllowed(GameState const& gameState) const
   {
     std::string reason = "Missing objectIsAllowed() implementation for action \"" + m_verb + "\"";
     CLOG(ERROR, "Action") << reason;
     return { false, reason };
   }
 
-  ReasonBool Action::objectIsAllowedNow(GameState& gameState) const
+  ReasonBool Action::objectIsAllowedNow(GameState const& gameState) const
   {
     return objectIsAllowed(gameState);
   }

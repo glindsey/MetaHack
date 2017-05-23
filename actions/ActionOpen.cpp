@@ -15,7 +15,7 @@ namespace Actions
   ActionOpen::ActionOpen(EntityId subject) : Action(subject, "open", "OPEN") {}
   ActionOpen::~ActionOpen() {}
 
-  ReasonBool ActionOpen::subjectIsCapable(GameState& gameState) const
+  ReasonBool ActionOpen::subjectIsCapable(GameState const& gameState) const
   {
     auto subject = getSubject();
     bool isSapient = COMPONENTS.sapience.existsFor(subject);

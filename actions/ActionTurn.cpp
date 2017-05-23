@@ -19,7 +19,7 @@ namespace Actions
   ActionTurn::ActionTurn(EntityId subject) : Action(subject, "turn", "TURN") {}
   ActionTurn::~ActionTurn() {}
 
-  ReasonBool ActionTurn::subjectIsCapable(GameState& gameState) const
+  ReasonBool ActionTurn::subjectIsCapable(GameState const& gameState) const
   {
     auto subject = getSubject();
     bool isTurnable = (COMPONENTS.mobility.existsFor(subject) && COMPONENTS.mobility[subject].turnSpeed() > 0);

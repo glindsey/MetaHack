@@ -15,7 +15,7 @@ namespace Actions
   ActionUnlock::ActionUnlock(EntityId subject) : Action(subject, "unlock", "UNLOCK") {}
   ActionUnlock::~ActionUnlock() {}
 
-  ReasonBool ActionUnlock::subjectIsCapable(GameState& gameState) const
+  ReasonBool ActionUnlock::subjectIsCapable(GameState const& gameState) const
   {
     auto subject = getSubject();
     bool isSapient = COMPONENTS.sapience.existsFor(subject);

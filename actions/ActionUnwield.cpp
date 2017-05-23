@@ -15,7 +15,7 @@ namespace Actions
   ActionUnwield::ActionUnwield(EntityId subject) : Action(subject, "unwield", "UNWIELD") {}
   ActionUnwield::~ActionUnwield() {}
 
-  ReasonBool ActionUnwield::subjectIsCapable(GameState& gameState) const
+  ReasonBool ActionUnwield::subjectIsCapable(GameState const& gameState) const
   {
     // You can always unwield anything.
     return { true, "" };

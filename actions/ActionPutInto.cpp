@@ -19,7 +19,7 @@ namespace Actions
   ActionPutInto::ActionPutInto(EntityId subject) : Action(subject, "putinto", "STORE") {}
   ActionPutInto::~ActionPutInto() {}
 
-  ReasonBool ActionPutInto::subjectIsCapable(GameState& gameState) const
+  ReasonBool ActionPutInto::subjectIsCapable(GameState const& gameState) const
   {
     auto subject = getSubject();
     bool isSapient = COMPONENTS.sapience.existsFor(subject);

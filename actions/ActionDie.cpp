@@ -16,7 +16,7 @@ namespace Actions
   ActionDie::ActionDie(EntityId subject) : Action(subject, "die", "DIE") {}
   ActionDie::~ActionDie() {}
 
-  ReasonBool ActionDie::subjectIsCapable(GameState& gameState) const
+  ReasonBool ActionDie::subjectIsCapable(GameState const& gameState) const
   {
     bool hasHealth = COMPONENTS.health.existsFor(getSubject());
     std::string reason = hasHealth ? "" : "YOU_ARE_NOT_MORTAL"; ///< @todo Add translation key

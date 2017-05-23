@@ -17,7 +17,7 @@ namespace Actions
   ActionWield::ActionWield(EntityId subject) : Action(subject, "wield", "WIELD") {}
   ActionWield::~ActionWield() {}
 
-  ReasonBool ActionWield::subjectIsCapable(GameState& gameState) const
+  ReasonBool ActionWield::subjectIsCapable(GameState const& gameState) const
   {
     auto subject = getSubject();
     bool isSapient = COMPONENTS.sapience.existsFor(subject);

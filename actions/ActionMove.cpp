@@ -22,7 +22,7 @@ namespace Actions
   ActionMove::ActionMove(EntityId subject) : Action(subject, "move", "MOVE") {}
   ActionMove::~ActionMove() {}
 
-  ReasonBool ActionMove::subjectIsCapable(GameState& gameState) const
+  ReasonBool ActionMove::subjectIsCapable(GameState const& gameState) const
   {
     auto subject = getSubject();
     bool isMobile = (COMPONENTS.mobility.existsFor(subject) && COMPONENTS.mobility[subject].moveSpeed() > 0);

@@ -15,7 +15,7 @@ namespace Actions
   ActionTakeOff::ActionTakeOff(EntityId subject) : Action(subject, "disrobe", "DISROBE") {}
   ActionTakeOff::~ActionTakeOff() {}
 
-  ReasonBool ActionTakeOff::subjectIsCapable(GameState& gameState) const
+  ReasonBool ActionTakeOff::subjectIsCapable(GameState const& gameState) const
   {
     // You can always take off anything.
     return { true, "" };

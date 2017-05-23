@@ -224,23 +224,23 @@ namespace Actions
     /// Called as part of doPreBeginWork, before the overridable portion is called.
     /// Default implementation returns false and logs a warning about a missing
     /// override of the function.
-    virtual ReasonBool subjectIsCapable(GameState& gameState) const;
+    virtual ReasonBool subjectIsCapable(GameState const& gameState) const;
 
     /// Check if this action can be performed right now by the subject.
     /// Called as part of doPreBeginWork, before the overridable portion is called.
     /// Default implementation just calls `subjectIsCapable()`.
-    virtual ReasonBool subjectIsCapableNow(GameState& gameState) const;
+    virtual ReasonBool subjectIsCapableNow(GameState const& gameState) const;
 
     /// Check if this action can be performed at all on the object.
     /// Called as part of doPreBeginWork, before the overridable portion is called.
     /// Default implementation returns false and logs a warning about a missing
     /// override of the function.
-    virtual ReasonBool objectIsAllowed(GameState& gameState) const;
+    virtual ReasonBool objectIsAllowed(GameState const& gameState) const;
 
     /// Check if this action can be performed right now on the object.
     /// Called as part of doPreBeginWork, before the overridable portion is called.
     /// Default implementation just calls `objectIsAllowed()`.
-    virtual ReasonBool objectIsAllowedNow(GameState& gameState) const;
+    virtual ReasonBool objectIsAllowedNow(GameState const& gameState) const;
 
     /// Overridable portion of doPreBeginWork().
     /// @param params Map of parameters for the Action.

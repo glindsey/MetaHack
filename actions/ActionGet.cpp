@@ -19,7 +19,7 @@ namespace Actions
   ActionGet::ActionGet(EntityId subject) : Action(subject, "get", "GET") {}
   ActionGet::~ActionGet() {}
 
-  ReasonBool ActionGet::subjectIsCapable(GameState& gameState) const
+  ReasonBool ActionGet::subjectIsCapable(GameState const& gameState) const
   {
     auto subject = getSubject();
     bool canGrasp = COMPONENTS.bodyparts.existsFor(subject) && COMPONENTS.bodyparts[subject].hasPrehensileBodyPart();
@@ -27,7 +27,7 @@ namespace Actions
     return { canGrasp, reason };
   }
 
-  ReasonBool ActionGet::objectIsAllowed(GameState& gameState) const
+  ReasonBool ActionGet::objectIsAllowed(GameState const& gameState) const
   {
     // For now, you can always get an object.
     /// @todo Handle state of matter, movability

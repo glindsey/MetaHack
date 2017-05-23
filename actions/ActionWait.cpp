@@ -14,7 +14,7 @@ namespace Actions
   ActionWait::ActionWait(EntityId subject) : Action(subject, "wait", "WAIT") {}
   ActionWait::~ActionWait() {}
 
-  ReasonBool ActionWait::subjectIsCapable(GameState& gameState) const
+  ReasonBool ActionWait::subjectIsCapable(GameState const& gameState) const
   {
     // Any entity can wait, whenever.
     return { true, "" };

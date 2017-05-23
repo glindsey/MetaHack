@@ -18,7 +18,7 @@ namespace Actions
   ActionShoot::ActionShoot(EntityId subject) : Action(subject, "shoot", "SHOOT") {}
   ActionShoot::~ActionShoot() {}
 
-  ReasonBool ActionShoot::subjectIsCapable(GameState& gameState) const
+  ReasonBool ActionShoot::subjectIsCapable(GameState const& gameState) const
   {
     auto subject = getSubject();
     bool isSapient = COMPONENTS.sapience.existsFor(subject);

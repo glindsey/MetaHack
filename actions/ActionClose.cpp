@@ -15,7 +15,7 @@ namespace Actions
   ActionClose::ActionClose(EntityId subject) : Action(subject, "close", "CLOSE") {}
   ActionClose::~ActionClose() {}
 
-  ReasonBool ActionClose::subjectIsCapable(GameState& gameState) const
+  ReasonBool ActionClose::subjectIsCapable(GameState const& gameState) const
   {
     auto subject = getSubject();
     bool isSapient = COMPONENTS.sapience.existsFor(subject);

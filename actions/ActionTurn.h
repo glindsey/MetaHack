@@ -21,8 +21,8 @@ namespace Actions
     virtual ~ActionTurn();
     static ActionTurn prototype;
 
-    virtual ReasonBool subjectIsCapable(GameState& gameState) const override;
-    //virtual ReasonBool objectIsAllowed(GameState& gameState) const override;
+    virtual ReasonBool subjectIsCapable(GameState const& gameState) const override;
+    //virtual ReasonBool objectIsAllowed(GameState const& gameState) const override;
     virtual std::unordered_set<Trait> const& getTraits() const override;
 
   protected:

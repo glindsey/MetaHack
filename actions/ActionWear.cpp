@@ -15,7 +15,7 @@ namespace Actions
   ActionWear::ActionWear(EntityId subject) : Action(subject, "wear", "WEAR") {}
   ActionWear::~ActionWear() {}
 
-  ReasonBool ActionWear::subjectIsCapable(GameState& gameState) const
+  ReasonBool ActionWear::subjectIsCapable(GameState const& gameState) const
   {
     auto subject = getSubject();
     bool isSapient = COMPONENTS.sapience.existsFor(subject);
