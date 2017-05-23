@@ -242,43 +242,7 @@ namespace Actions
     return m_type;
   }
 
-  std::string Action::getVerb2() const
-  {
-    auto& dict = Service<IStringDictionary>::get();
-    return dict.get("VERB_" + m_verb + "_2");
-  }
-
-  std::string Action::getVerb3() const
-  {
-    auto& dict = Service<IStringDictionary>::get();
-    return dict.get("VERB_" + m_verb + "_3");
-  }
-
-  std::string Action::getVerbing() const
-  {
-    auto& dict = Service<IStringDictionary>::get();
-    return dict.get("VERB_" + m_verb + "_GER");
-  }
-
-  std::string Action::getVerbed() const
-  {
-    auto& dict = Service<IStringDictionary>::get();
-    return dict.get("VERB_" + m_verb + "_P2");
-  }
-
-  std::string Action::getVerbPP() const
-  {
-    auto& dict = Service<IStringDictionary>::get();
-    return dict.get("VERB_" + m_verb + "_PP");
-  }
-
-  std::string Action::getVerbable() const
-  {
-    auto& dict = Service<IStringDictionary>::get();
-    return dict.get("VERB_" + m_verb + "_ABLE");
-  }
-
-  StateResult Action::doPreBeginWork(GameState& gameState, SystemManager& systems)
+    StateResult Action::doPreBeginWork(GameState& gameState, SystemManager& systems)
   {
     auto& components = gameState.components();
     auto subject = getSubject();
@@ -594,7 +558,7 @@ namespace Actions
     return StateResult::Success();
   }
 
-  std::string Action::getObjectString() const
+  std::string Action::getObjectString(SystemManager& systems) const
   {
     std::string description;
 
@@ -648,7 +612,7 @@ namespace Actions
     return description;
   }
 
-  std::string Action::getTargetString() const
+  std::string Action::getTargetString(SystemManager& systems) const
   {
     auto subject = getSubject();
     auto& objects = getObjects();
@@ -803,219 +767,219 @@ namespace Actions
     }
   }
 
-  std::string Action::makeTr(std::string key) const
-  {
-    return makeString(Service<IStringDictionary>::get().get(key), {});
-  }
+  //std::string Action::makeTr(std::string key) const
+  //{
+  //  return makeString(Service<IStringDictionary>::get().get(key), {});
+  //}
 
-  std::string Action::makeTr(std::string key, std::vector<std::string> optional_strings) const
-  {
-    return makeString(Service<IStringDictionary>::get().get(key), optional_strings);
-  }
+  //std::string Action::makeTr(std::string key, std::vector<std::string> optional_strings) const
+  //{
+  //  return makeString(Service<IStringDictionary>::get().get(key), optional_strings);
+  //}
 
-  std::string Action::makeString(std::string pattern) const
-  {
-    return makeString(pattern, {});
-  }
+  //std::string Action::makeString(std::string pattern) const
+  //{
+  //  return makeString(pattern, {});
+  //}
 
-  std::string Action::makeString(std::string pattern, std::vector<std::string> optional_strings) const
-  {
-    std::string new_string = StringTransforms::replace_tokens(pattern,
-                                                              [&](std::string token) -> std::string
-    {
-      if (token == "are")
-      {
-        return getSubject()->chooseVerb(tr("VERB_BE_2"), tr("VERB_BE_3"));
-      }
-      if (token == "were")
-      {
-        return getSubject()->chooseVerb(tr("VERB_BE_P2"), tr("VERB_BE_P3"));
-      }
-      if (token == "do")
-      {
-        return getSubject()->chooseVerb(tr("VERB_DO_2"), tr("VERB_DO_3"));
-      }
-      if (token == "get")
-      {
-        return getSubject()->chooseVerb(tr("VERB_GET_2"), tr("VERB_GET_3"));
-      }
-      if (token == "have")
-      {
-        return getSubject()->chooseVerb(tr("VERB_HAVE_2"), tr("VERB_HAVE_3"));
-      }
-      if (token == "seem")
-      {
-        return getSubject()->chooseVerb(tr("VERB_SEEM_2"), tr("VERB_SEEM_3"));
-      }
-      if (token == "try")
-      {
-        return getSubject()->chooseVerb(tr("VERB_TRY_2"), tr("VERB_TRY_3"));
-      }
+  //std::string Action::makeString(std::string pattern, std::vector<std::string> optional_strings) const
+  //{
+  //  std::string new_string = StringTransforms::replace_tokens(pattern,
+  //                                                            [&](std::string token) -> std::string
+  //  {
+  //    if (token == "are")
+  //    {
+  //      return getSubject()->chooseVerb(tr("VERB_BE_2"), tr("VERB_BE_3"));
+  //    }
+  //    if (token == "were")
+  //    {
+  //      return getSubject()->chooseVerb(tr("VERB_BE_P2"), tr("VERB_BE_P3"));
+  //    }
+  //    if (token == "do")
+  //    {
+  //      return getSubject()->chooseVerb(tr("VERB_DO_2"), tr("VERB_DO_3"));
+  //    }
+  //    if (token == "get")
+  //    {
+  //      return getSubject()->chooseVerb(tr("VERB_GET_2"), tr("VERB_GET_3"));
+  //    }
+  //    if (token == "have")
+  //    {
+  //      return getSubject()->chooseVerb(tr("VERB_HAVE_2"), tr("VERB_HAVE_3"));
+  //    }
+  //    if (token == "seem")
+  //    {
+  //      return getSubject()->chooseVerb(tr("VERB_SEEM_2"), tr("VERB_SEEM_3"));
+  //    }
+  //    if (token == "try")
+  //    {
+  //      return getSubject()->chooseVerb(tr("VERB_TRY_2"), tr("VERB_TRY_3"));
+  //    }
 
-      if ((token == "foo_is") || (token == "foois"))
-      {
-        return getObject()->chooseVerb(tr("VERB_BE_2"), tr("VERB_BE_3"));
-      }
-      if ((token == "foo_has") || (token == "foohas"))
-      {
-        return getObject()->chooseVerb(tr("VERB_HAVE_2"), tr("VERB_HAVE_3"));
-      }
+  //    if ((token == "foo_is") || (token == "foois"))
+  //    {
+  //      return getObject()->chooseVerb(tr("VERB_BE_2"), tr("VERB_BE_3"));
+  //    }
+  //    if ((token == "foo_has") || (token == "foohas"))
+  //    {
+  //      return getObject()->chooseVerb(tr("VERB_HAVE_2"), tr("VERB_HAVE_3"));
+  //    }
 
-      if ((token == "the_foo") || (token == "thefoo"))
-      {
-        return getObjectString();
-      }
+  //    if ((token == "the_foo") || (token == "thefoo"))
+  //    {
+  //      return getObjectString();
+  //    }
 
-      if ((token == "the_foos_location") || (token == "thefooslocation"))
-      {
-        return COMPONENTS.position[getObject()].parent()->getDescriptiveString(ArticleChoice::Definite);
-      }
+  //    if ((token == "the_foos_location") || (token == "thefooslocation"))
+  //    {
+  //      return COMPONENTS.position[getObject()].parent()->getDescriptiveString(ArticleChoice::Definite);
+  //    }
 
-      if ((token == "the_target_thing") || (token == "thetargetthing"))
-      {
-        return getTargetString();
-      }
+  //    if ((token == "the_target_thing") || (token == "thetargetthing"))
+  //    {
+  //      return getTargetString();
+  //    }
 
-      if (token == "fooself")
-      {
-        return getObject()->getReflexiveString(getSubject(), ArticleChoice::Definite);
-      }
+  //    if (token == "fooself")
+  //    {
+  //      return getObject()->getReflexiveString(getSubject(), ArticleChoice::Definite);
+  //    }
 
-      if ((token == "foo_pro_sub") || (token == "fooprosub"))
-      {
-        return getObject()->getSubjectPronoun();
-      }
+  //    if ((token == "foo_pro_sub") || (token == "fooprosub"))
+  //    {
+  //      return getObject()->getSubjectPronoun();
+  //    }
 
-      if ((token == "foo_pro_obj") || (token == "fooproobj"))
-      {
-        return getObject()->getObjectPronoun();
-      }
+  //    if ((token == "foo_pro_obj") || (token == "fooproobj"))
+  //    {
+  //      return getObject()->getObjectPronoun();
+  //    }
 
-      if ((token == "foo_pro_ref") || (token == "fooproref"))
-      {
-        return getObject()->getReflexivePronoun();
-      }
+  //    if ((token == "foo_pro_ref") || (token == "fooproref"))
+  //    {
+  //      return getObject()->getReflexivePronoun();
+  //    }
 
-      if (token == "verb")
-      {
-        return getVerb2();
-      }
-      if (token == "verb3")
-      {
-        return getVerb3();
-      }
-      if (token == "verbed")
-      {
-        return getVerbed();
-      }
-      if (token == "verbing")
-      {
-        return getVerbing();
-      }
-      if ((token == "verb_pp") || (token == "verbpp"))
-      {
-        return getVerbPP();
-      }
-      if (token == "cverb")
-      {
-        return (getSubject()->isThirdPerson() ? getVerb3() : getVerb2());
-      }
-      if (token == "objcverb")
-      {
-        return (getObject()->isThirdPerson() ? getVerb3() : getVerb2());
-      }
+  //    if (token == "verb")
+  //    {
+  //      return getVerb2();
+  //    }
+  //    if (token == "verb3")
+  //    {
+  //      return getVerb3();
+  //    }
+  //    if (token == "verbed")
+  //    {
+  //      return getVerbed();
+  //    }
+  //    if (token == "verbing")
+  //    {
+  //      return getVerbing();
+  //    }
+  //    if ((token == "verb_pp") || (token == "verbpp"))
+  //    {
+  //      return getVerbPP();
+  //    }
+  //    if (token == "cverb")
+  //    {
+  //      return (getSubject()->isThirdPerson() ? getVerb3() : getVerb2());
+  //    }
+  //    if (token == "objcverb")
+  //    {
+  //      return (getObject()->isThirdPerson() ? getVerb3() : getVerb2());
+  //    }
 
-      if (token == "you")
-      {
-        return getSubject()->getSubjectiveString();
-      }
-      if ((token == "you_pro_sub") || (token == "youprosub"))
-      {
-        return getSubject()->getSubjectPronoun();
-      }
-      if ((token == "you_pro_obj") || (token == "youproobj"))
-      {
-        return getSubject()->getObjectPronoun();
-      }
-      if (token == "yourself")
-      {
-        return getSubject()->getReflexivePronoun();
-      }
+  //    if (token == "you")
+  //    {
+  //      return getSubject()->getSubjectiveString();
+  //    }
+  //    if ((token == "you_pro_sub") || (token == "youprosub"))
+  //    {
+  //      return getSubject()->getSubjectPronoun();
+  //    }
+  //    if ((token == "you_pro_obj") || (token == "youproobj"))
+  //    {
+  //      return getSubject()->getObjectPronoun();
+  //    }
+  //    if (token == "yourself")
+  //    {
+  //      return getSubject()->getReflexivePronoun();
+  //    }
 
-      if (token == "targdir")
-      {
-        std::stringstream ss;
-        ss << getTargetDirection();
-        return ss.str();
-      }
+  //    if (token == "targdir")
+  //    {
+  //      std::stringstream ss;
+  //      ss << getTargetDirection();
+  //      return ss.str();
+  //    }
 
-      // Check for a numerical token.
-      try
-      {
-        unsigned int converted = static_cast<unsigned int>(std::stoi(token));
+  //    // Check for a numerical token.
+  //    try
+  //    {
+  //      unsigned int converted = static_cast<unsigned int>(std::stoi(token));
 
-        // Check that the optional arguments are at least this size.
-        if (converted < optional_strings.size())
-        {
-          // Return the string passed in.
-          return optional_strings.at(converted);
-        }
-      }
-      catch (std::invalid_argument&)
-      {
-        // Not a number, so bail.
-      }
-      catch (...)
-      {
-        // Throw anything else.
-        throw;
-      }
+  //      // Check that the optional arguments are at least this size.
+  //      if (converted < optional_strings.size())
+  //      {
+  //        // Return the string passed in.
+  //        return optional_strings.at(converted);
+  //      }
+  //    }
+  //    catch (std::invalid_argument&)
+  //    {
+  //      // Not a number, so bail.
+  //    }
+  //    catch (...)
+  //    {
+  //      // Throw anything else.
+  //      throw;
+  //    }
 
-      // Nothing else matched, return default.
-      return "[" + token + "]";
-    },
-    [&](std::string token, std::string arg) -> std::string
-    {
-      if (token == "your")
-      {
-        return getSubject()->getPossessiveString(arg);
-      }
+  //    // Nothing else matched, return default.
+  //    return "[" + token + "]";
+  //  },
+  //  [&](std::string token, std::string arg) -> std::string
+  //  {
+  //    if (token == "your")
+  //    {
+  //      return getSubject()->getPossessiveString(arg);
+  //    }
 
-      return "[" + token + "(" + arg + ")]";
-    },
-                                            [&](std::string token) -> bool
-    {
-      if ((token == "cv") || (token == "subjcv") || (token == "subj_cv"))
-      {
-        return !(getSubject()->isThirdPerson());
-      }
-      if ((token == "objcv") || (token == "obj_cv") || (token == "foocv") || (token == "foo_cv"))
-      {
-        return !(getObject()->isThirdPerson());
-      }
-      if ((token == "isPlayer") || (token == "isplayer"))
-      {
-        return getSubject()->isPlayer();
-      }
-      if ((token == "targcv") || (token == "targ_cv"))
-      {
-        return !(getTargetThing()->isThirdPerson());
-      }
+  //    return "[" + token + "(" + arg + ")]";
+  //  },
+  //                                          [&](std::string token) -> bool
+  //  {
+  //    if ((token == "cv") || (token == "subjcv") || (token == "subj_cv"))
+  //    {
+  //      return !(getSubject()->isThirdPerson());
+  //    }
+  //    if ((token == "objcv") || (token == "obj_cv") || (token == "foocv") || (token == "foo_cv"))
+  //    {
+  //      return !(getObject()->isThirdPerson());
+  //    }
+  //    if ((token == "isPlayer") || (token == "isplayer"))
+  //    {
+  //      return getSubject()->isPlayer();
+  //    }
+  //    if ((token == "targcv") || (token == "targ_cv"))
+  //    {
+  //      return !(getTargetThing()->isThirdPerson());
+  //    }
 
-      if (token == "true")
-      {
-        return true;
-      }
-      if (token == "false")
-      {
-        return false;
-      }
+  //    if (token == "true")
+  //    {
+  //      return true;
+  //    }
+  //    if (token == "false")
+  //    {
+  //      return false;
+  //    }
 
-      return true;
-    });
+  //    return true;
+  //  });
 
-    return new_string;
-  }
+  //  return new_string;
+  //}
 
   ActionMap const & Action::getMap()
   {

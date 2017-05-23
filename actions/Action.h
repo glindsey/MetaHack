@@ -124,31 +124,6 @@ namespace Actions
 
     std::string getType() const;
 
-    /// Return the first-/second-person singular form of the verb to be performed.
-    /// @todo English doesn't generally distinguish between 1st/2nd person
-    ///       for past tense, but some other languages do. Assuming, of course,
-    ///       we even NEED the 1st person conjugation.
-    std::string getVerb2() const;
-
-    /// Return the third-person singular form of the verb to be performed.
-    std::string getVerb3() const;
-
-    /// Return the present participle form of the verb to be performed.
-    std::string getVerbing() const;
-
-    /// Return the past form of the verb to be performed.
-    /// @todo English doesn't generally distinguish between 2nd/3rd person
-    ///       for past tense, but some other languages do.
-    std::string getVerbed() const;
-
-    /// Return the past participle form of the verb to be performed.
-    std::string getVerbPP() const;
-
-    /// Return the adjective form of the verb to be performed.
-    /// (Obviously, some verbs don't make sense when conjugated in this way, 
-    /// but the option is there nonetheless.)
-    std::string getVerbable() const;
-
     /// A static method that registers an action subclass in a database.
     /// Required so that Lua scripts can instantiate Actions on Entities.
     static void registerActionAs(std::string key, ActionCreator creator);
@@ -165,12 +140,12 @@ namespace Actions
                                           Direction targetDirection = Direction::None,
                                           unsigned int quantity = 0);
 
-    std::string makeTr(std::string key) const;
-    std::string makeTr(std::string key, std::vector<std::string> optional_strings) const;
+    //std::string makeTr(std::string key) const;
+    //std::string makeTr(std::string key, std::vector<std::string> optional_strings) const;
 
-    /// A method for composing a string from a pattern for an action.
-    std::string makeString(std::string pattern, std::vector<std::string> optional_strings) const;
-    std::string makeString(std::string pattern) const;
+    ///// A method for composing a string from a pattern for an action.
+    //std::string makeString(std::string pattern, std::vector<std::string> optional_strings) const;
+    //std::string makeString(std::string pattern) const;
 
     /// Get a const reference to the action map.
     static ActionMap const& getMap();
@@ -279,7 +254,7 @@ namespace Actions
     ///
     /// This method can be overridden if necessary to customize the description for a
     /// particular action.
-    virtual std::string getObjectString() const;
+    virtual std::string getObjectString(SystemManager& systems) const;
 
     /// Describes the target in terms of the subject or object.
     /// This string will vary based on the presence of objects or a direction
@@ -290,7 +265,7 @@ namespace Actions
     ///
     /// This method can be overridden if necessary to customize the description for a
     /// particular action.
-    virtual std::string getTargetString() const;
+    virtual std::string getTargetString(SystemManager& systems) const;
 
     /// Print a "[SUBJECT] try to [VERB]" message.
     /// The message will vary based on the presence of objects or a direction

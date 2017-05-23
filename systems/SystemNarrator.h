@@ -185,6 +185,31 @@ public:
                             std::function<std::string(std::string, std::string)> tokenArgumentFunctor,
                             std::function<bool(std::string)> chooseFunctor) const;
 
+  /// Return the first-/second-person singular form of a verb.
+  /// @todo English doesn't generally distinguish between 1st/2nd person
+  ///       for past tense, but some other languages do. Assuming, of course,
+  ///       we even NEED the 1st person conjugation.
+  std::string getVerb2(std::string verb) const;
+
+  /// Return the third-person singular form of a verb.
+  std::string getVerb3(std::string verb) const;
+
+  /// Return the present participle form of a verb.
+  std::string getVerbing(std::string verb) const;
+
+  /// Return the past form of a verb.
+  /// @todo English doesn't generally distinguish between 2nd/3rd person
+  ///       for past tense, but some other languages do.
+  std::string getVerbed(std::string verb) const;
+
+  /// Return the past participle form of a verb.
+  std::string getVerbPP(std::string verb) const;
+
+  /// Return the adjective form of the verb to be performed.
+  /// (Obviously, some verbs don't make sense when conjugated in this way, 
+  /// but the option is there nonetheless.)
+  std::string getVerbable(std::string verb) const;
+
   /// Recalculate whatever needs recalculating.
   void doCycleUpdate();
 

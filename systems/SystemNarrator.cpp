@@ -753,6 +753,43 @@ std::string SystemNarrator::replaceTokens(std::string str,
 
   return outString;
 }
+
+std::string SystemNarrator::getVerb2(std::string verb) const
+{
+  auto& dict = Service<IStringDictionary>::get();
+  return dict.get("VERB_" + verb + "_2");
+}
+
+std::string SystemNarrator::getVerb3(std::string verb) const
+{
+  auto& dict = Service<IStringDictionary>::get();
+  return dict.get("VERB_" + verb + "_3");
+}
+
+std::string SystemNarrator::getVerbing(std::string verb) const
+{
+  auto& dict = Service<IStringDictionary>::get();
+  return dict.get("VERB_" + verb + "_GER");
+}
+
+std::string SystemNarrator::getVerbed(std::string verb) const
+{
+  auto& dict = Service<IStringDictionary>::get();
+  return dict.get("VERB_" + verb + "_P2");
+}
+
+std::string SystemNarrator::getVerbPP(std::string verb) const
+{
+  auto& dict = Service<IStringDictionary>::get();
+  return dict.get("VERB_" + verb + "_PP");
+}
+
+std::string SystemNarrator::getVerbable(std::string verb) const
+{
+  auto& dict = Service<IStringDictionary>::get();
+  return dict.get("VERB_" + verb + "_ABLE");
+}
+
 void SystemNarrator::doCycleUpdate()
 {}
 
