@@ -4,6 +4,7 @@
 
 #include "components/ComponentManager.h"
 #include "systems/SystemLighting.h"
+#include "systems/SystemNarrator.h"
 #include "systems/SystemPlayerHandler.h"
 #include "systems/SystemSenseSight.h"
 #include "systems/SystemSpacialRelationships.h"
@@ -28,6 +29,14 @@ SystemManager::SystemManager(GameState& gameState) :
                                       components.health,
                                       components.lightSource, 
                                       components.position));
+
+  m_narrator.reset(NEW SystemNarrator(components.globals,
+                                      components.category,
+                                      components.gender,
+                                      components.health,
+                                      components.position,
+                                      components.properName,
+                                      components.quantity));
 
   m_playerHandler.reset(NEW SystemPlayerHandler(components.globals));
 

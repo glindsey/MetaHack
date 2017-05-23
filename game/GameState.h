@@ -67,6 +67,8 @@ public:
   Lua& lua();
   Lua const& lua() const;
 
+  /// Get the current GameState instance. This should only be used by functions
+  /// exported to Lua, since there's no other simple way to provide it.
   static GameState& instance();
 
 protected:

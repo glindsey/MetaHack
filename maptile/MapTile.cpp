@@ -118,7 +118,7 @@ RealVec2 MapTile::getPixelCoords(IntVec2 tile)
 
 // === PROTECTED METHODS ======================================================
 
-MapTile::MapTile(IntVec2 coords, std::string category, MapID mapID)
+MapTile::MapTile(IntVec2 coords, std::string category, MapID mapID, EntityPool& entities)
   :
   Object({}),
   m_mapID{ mapID },
@@ -131,11 +131,10 @@ MapTile::MapTile(IntVec2 coords, std::string category, MapID mapID)
     initialized = true;
   }
 
-  // Tile contents entity is created here, or else the pImpl would need the
-  // "this" pointer passed in.
+  // Tile contents entity is created here.
   /// @todo The type of this floor should eventually be specified as
   ///       part of the constructor.
-  m_tile_contents = GAME.entities().createTileContents(this);
+  m_tile_contents = entities.createTileContents(this);
 }
 
 MapTile const& MapTile::getAdjacentTile(Direction direction) const

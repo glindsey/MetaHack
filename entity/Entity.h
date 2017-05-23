@@ -30,19 +30,6 @@ using BodyLocationPair = std::pair<BodyLocation, EntityId>;
 
 using ActionCollection = std::deque< std::unique_ptr<Actions::Action> >;
 
-// Associated enum classes to aid in parameter legibility.
-enum class ArticleChoice
-{
-  Indefinite,
-  Definite
-};
-
-enum class UsePossessives
-{
-  No,
-  Yes
-};
-
 /// Entity is any object in the game, animate or not.
 /// @todo Still a LOT of cruft in this class that should be refactored out,
 ///       e.g. the wearing/wielding stuff.

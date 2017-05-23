@@ -6,6 +6,7 @@
 
 // Forward declarations
 class SystemLighting;
+class SystemNarrator;
 class SystemPlayerHandler;
 class SystemSenseSight;
 class SystemSpacialRelationships;
@@ -22,6 +23,7 @@ public:
 
   // Get references to systems.
   SystemLighting& lighting() { return *m_lighting; }
+  SystemNarrator& narrator() { return *m_narrator; }
   SystemPlayerHandler& playerHandler() { return *m_playerHandler; }
   SystemSenseSight& senseSight() { return *m_senseSight; }
   SystemSpacialRelationships& spacial() { return *m_spacial; }
@@ -32,6 +34,7 @@ public:
 private:
   // System instances.
   std::unique_ptr<SystemLighting> m_lighting;
+  std::unique_ptr<SystemNarrator> m_narrator;
   std::unique_ptr<SystemPlayerHandler> m_playerHandler;
   std::unique_ptr<SystemSenseSight> m_senseSight;
   std::unique_ptr<SystemSpacialRelationships> m_spacial;

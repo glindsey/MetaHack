@@ -206,7 +206,7 @@ EntityId ComponentInventory::split(EntityPool& entities, EntityId entity, unsign
       unsigned int sourceQuantity = COMPONENTS.quantity[sourceEntity];
       if (targetQuantity < sourceQuantity)
       {
-        targetEntity = GAME.entities().clone(sourceEntity);
+        targetEntity = entities.clone(sourceEntity);
         COMPONENTS.quantity[sourceEntity] = sourceQuantity - targetQuantity;
         COMPONENTS.quantity[targetEntity] = targetQuantity;
       }

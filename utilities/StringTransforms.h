@@ -11,7 +11,7 @@ class EntityId;
 
 namespace StringTransforms
 {
-  /// Enum used for the replace_tokens state machine.
+  /// Enum used for the replaceTokens state machine.
   enum class TokenizerState
   {
     Text,                 ///< Just copying text as normal.
