@@ -34,12 +34,12 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionDie::doPreBeginWorkNVI(GameState& gameState, AnyMap& params)
+  StateResult ActionDie::doPreBeginWorkNVI(GameState& gameState)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionDie::doBeginWorkNVI(GameState& gameState, AnyMap& params)
+  StateResult ActionDie::doBeginWorkNVI(GameState& gameState)
   {
     EntityId subject = getSubject();
 
@@ -73,12 +73,12 @@ namespace Actions
     }
   }
 
-  StateResult ActionDie::doFinishWorkNVI(GameState& gameState, AnyMap& params)
+  StateResult ActionDie::doFinishWorkNVI(GameState& gameState)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionDie::doAbortWorkNVI(GameState& gameState, AnyMap& params)
+  StateResult ActionDie::doAbortWorkNVI(GameState& gameState)
   {
     return StateResult::Success();
   }

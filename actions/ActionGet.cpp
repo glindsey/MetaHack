@@ -46,7 +46,7 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionGet::doPreBeginWorkNVI(GameState& gameState, AnyMap& params)
+  StateResult ActionGet::doPreBeginWorkNVI(GameState& gameState)
   {
     std::string message;
     auto subject = getSubject();
@@ -70,7 +70,7 @@ namespace Actions
     return StateResult::Success();
   }
 
-  StateResult ActionGet::doBeginWorkNVI(GameState& gameState, AnyMap& params)
+  StateResult ActionGet::doBeginWorkNVI(GameState& gameState)
   {
     /// @todo Handle getting a certain quantity of an item.
     StateResult result = StateResult::Failure();
@@ -98,12 +98,12 @@ namespace Actions
     return result;
   }
 
-  StateResult ActionGet::doFinishWorkNVI(GameState& gameState, AnyMap& params)
+  StateResult ActionGet::doFinishWorkNVI(GameState& gameState)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionGet::doAbortWorkNVI(GameState& gameState, AnyMap& params)
+  StateResult ActionGet::doAbortWorkNVI(GameState& gameState)
   {
     return StateResult::Success();
   }

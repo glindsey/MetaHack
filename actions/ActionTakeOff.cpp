@@ -32,12 +32,12 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionTakeOff::doPreBeginWorkNVI(GameState& gameState, AnyMap& params)
+  StateResult ActionTakeOff::doPreBeginWorkNVI(GameState& gameState)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionTakeOff::doBeginWorkNVI(GameState& gameState, AnyMap& params)
+  StateResult ActionTakeOff::doBeginWorkNVI(GameState& gameState)
   {
     StateResult result = StateResult::Failure();
 
@@ -72,12 +72,12 @@ namespace Actions
     return result;
   }
 
-  StateResult ActionTakeOff::doFinishWorkNVI(GameState& gameState, AnyMap& params)
+  StateResult ActionTakeOff::doFinishWorkNVI(GameState& gameState)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionTakeOff::doAbortWorkNVI(GameState& gameState, AnyMap& params)
+  StateResult ActionTakeOff::doAbortWorkNVI(GameState& gameState)
   {
     return StateResult::Success();
   }

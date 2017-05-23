@@ -92,7 +92,7 @@ namespace Actions
     return m_objects[1];
   }
 
-  bool Action::process(GameState& gameState, AnyMap params)
+  bool Action::process(GameState& gameState)
   {
     auto subject = getSubject();
     if (!COMPONENTS.activity.existsFor(subject)) return false;
@@ -125,7 +125,7 @@ namespace Actions
       switch (m_state)
       {
         case State::Pending:
-          result = doPreBeginWork(gameState, params);
+          result = doPreBeginWork(gameState);
 
           if (result.success)
           {
@@ -142,7 +142,7 @@ namespace Actions
           break;
 
         case State::PreBegin:
-          result = doBeginWork(gameState, params);
+          result = doBeginWork(gameState);
 
           // If starting the action succeeded, move to the in-progress state.
           // Otherwise, just go right to post-finish.
@@ -161,14 +161,14 @@ namespace Actions
           break;
 
         case State::InProgress:
-          result = doFinishWork(gameState, params);
+          result = doFinishWork(gameState);
 
           activity.incBusyTicks(result.elapsed_time);
           setState(State::PostFinish);
           break;
 
         case State::Interrupted:
-          result = doAbortWork(gameState, params);
+          result = doAbortWork(gameState);
 
           activity.incBusyTicks(result.elapsed_time);
           setState(State::PostFinish);
@@ -276,7 +276,7 @@ namespace Actions
     return dict.get("VERB_" + m_verb + "_ABLE");
   }
 
-  StateResult Action::doPreBeginWork(GameState& gameState, AnyMap& params)
+  StateResult Action::doPreBeginWork(GameState& gameState)
   {
     auto subject = getSubject();
     auto& objects = getObjects();
@@ -366,7 +366,7 @@ namespace Actions
             // If object can be self, we bypass other checks and let the action
             // subclass handle it.
             /// @todo Not sure this is the best option... think more about this later.
-            return doPreBeginWorkNVI(gameState, params);
+            return doPreBeginWorkNVI(gameState);
           }
         }
         else
@@ -520,25 +520,25 @@ namespace Actions
       }
     }
 
-    auto result = doPreBeginWorkNVI(gameState, params);
+    auto result = doPreBeginWorkNVI(gameState);
     return result;
   }
 
-  StateResult Action::doBeginWork(GameState& gameState, AnyMap& params)
+  StateResult Action::doBeginWork(GameState& gameState)
   {
-    auto result = doBeginWorkNVI(gameState, params);
+    auto result = doBeginWorkNVI(gameState);
     return result;
   }
 
-  StateResult Action::doFinishWork(GameState& gameState, AnyMap& params)
+  StateResult Action::doFinishWork(GameState& gameState)
   {
-    auto result = doFinishWorkNVI(gameState, params);
+    auto result = doFinishWorkNVI(gameState);
     return result;
   }
 
-  StateResult Action::doAbortWork(GameState& gameState, AnyMap& params)
+  StateResult Action::doAbortWork(GameState& gameState)
   {
-    auto result = doAbortWorkNVI(gameState, params);
+    auto result = doAbortWorkNVI(gameState);
     return result;
   }
 
@@ -566,26 +566,26 @@ namespace Actions
     return objectIsAllowed(gameState);
   }
 
-  StateResult Action::doPreBeginWorkNVI(GameState& gameState, AnyMap& params)
+  StateResult Action::doPreBeginWorkNVI(GameState& gameState)
   {
     /// @todo Set counter_busy based on the action being taken and
     ///       the entity's reflexes.
     return StateResult::Success();
   }
 
-  StateResult Action::doBeginWorkNVI(GameState& gameState, AnyMap& params)
+  StateResult Action::doBeginWorkNVI(GameState& gameState)
   {
     putTr("ACTN_NOT_IMPLEMENTED");
     return StateResult::Failure();
   }
 
-  StateResult Action::doFinishWorkNVI(GameState& gameState, AnyMap& params)
+  StateResult Action::doFinishWorkNVI(GameState& gameState)
   {
     /// @todo Complete the action here
     return StateResult::Success();
   }
 
-  StateResult Action::doAbortWorkNVI(GameState& gameState, AnyMap& params)
+  StateResult Action::doAbortWorkNVI(GameState& gameState)
   {
     /// @todo Handle aborting the action here.
     return StateResult::Success();

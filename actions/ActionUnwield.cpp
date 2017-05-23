@@ -33,13 +33,13 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionUnwield::doPreBeginWorkNVI(GameState& gameState, AnyMap& params)
+  StateResult ActionUnwield::doPreBeginWorkNVI(GameState& gameState)
   {
     // All checks done by Action class via traits.
     return StateResult::Success();
   }
 
-  StateResult ActionUnwield::doBeginWorkNVI(GameState& gameState, AnyMap& params)
+  StateResult ActionUnwield::doBeginWorkNVI(GameState& gameState)
   {
     StateResult result = StateResult::Failure();
 
@@ -73,12 +73,12 @@ namespace Actions
     return result;
   }
 
-  StateResult ActionUnwield::doFinishWorkNVI(GameState& gameState, AnyMap& params)
+  StateResult ActionUnwield::doFinishWorkNVI(GameState& gameState)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionUnwield::doAbortWorkNVI(GameState& gameState, AnyMap& params)
+  StateResult ActionUnwield::doAbortWorkNVI(GameState& gameState)
   {
     return StateResult::Success();
   }

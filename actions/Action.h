@@ -106,7 +106,7 @@ namespace Actions
     EntityId getObject() const;
     EntityId getSecondObject() const;
 
-    bool process(GameState& gameState, AnyMap params);
+    bool process(GameState& gameState);
 
     void setState(State state);
     State getState();
@@ -185,7 +185,7 @@ namespace Actions
     ///       the Dreaded Pyramid of Doom. It's just easier that way.
     /// @param params Map of parameters for the Action.
     /// @return StateResult indicating whether the Action continues.
-    StateResult doPreBeginWork(GameState& gameState, AnyMap& params);
+    StateResult doPreBeginWork(GameState& gameState);
 
     /// Perform work to be done at the start of the InProgress state.
     /// This is where the action begins.
@@ -198,7 +198,7 @@ namespace Actions
     /// moves to the PostFinish state.
     /// @param params Map of parameters for the Action.
     /// @return StateResult indicating whether the Action continues.
-    StateResult doBeginWork(GameState& gameState, AnyMap& params);
+    StateResult doBeginWork(GameState& gameState);
 
     /// Perform work to be done at the end of the InProgress state and the start
     /// of the PostFinish state.
@@ -209,7 +209,7 @@ namespace Actions
     /// period.
     /// @param params Map of parameters for the Action.
     /// @return StateResult indicating the post-Action wait time.
-    StateResult doFinishWork(GameState& gameState, AnyMap& params);
+    StateResult doFinishWork(GameState& gameState);
 
     /// Perform work to be done when an action in the InProgress state is aborted.
     /// This is called when an action is aborted.
@@ -218,7 +218,7 @@ namespace Actions
     /// period.
     /// @param params Map of parameters for the Action.
     /// @return StateResult indicating the post-Action wait time.
-    StateResult doAbortWork(GameState& gameState, AnyMap& params);
+    StateResult doAbortWork(GameState& gameState);
 
     /// Check if this action can be performed at all by the subject.
     /// Called as part of doPreBeginWork, before the overridable portion is called.
@@ -245,22 +245,22 @@ namespace Actions
     /// Overridable portion of doPreBeginWork().
     /// @param params Map of parameters for the Action.
     /// @return StateResult indicating whether the Action continues.
-    virtual StateResult doPreBeginWorkNVI(GameState& gameState, AnyMap& params);
+    virtual StateResult doPreBeginWorkNVI(GameState& gameState);
 
     /// Overridable portion of doBeginWork().
     /// @param params Map of parameters for the Action.
     /// @return StateResult indicating whether the Action continues.
-    virtual StateResult doBeginWorkNVI(GameState& gameState, AnyMap& params);
+    virtual StateResult doBeginWorkNVI(GameState& gameState);
 
     /// Overridable portion of doFinishWork().
     /// @param params Map of parameters for the Action.
     /// @return StateResult indicating the post-Action wait time.
-    virtual StateResult doFinishWorkNVI(GameState& gameState, AnyMap& params);
+    virtual StateResult doFinishWorkNVI(GameState& gameState);
 
     /// Overridable portion of doAbortWork().
     /// @param params Map of parameters for the Action.
     /// @return StateResult indicating the post-Action wait time.
-    virtual StateResult doAbortWorkNVI(GameState& gameState, AnyMap& params);
+    virtual StateResult doAbortWorkNVI(GameState& gameState);
 
     /// Describes the object(s) or direction in terms of the subject.
     /// This string will vary based on the presence of objects or a direction
@@ -407,10 +407,10 @@ namespace Actions
     virtual std::unordered_set<Trait> const& getTraits() const override;
 
   protected:
-    virtual StateResult doPreBeginWorkNVI(GameState& gameState, AnyMap& params) override;
-    virtual StateResult doBeginWorkNVI(GameState& gameState, AnyMap& params) override;
-    virtual StateResult doFinishWorkNVI(GameState& gameState, AnyMap& params) override;
-    virtual StateResult doAbortWorkNVI(GameState& gameState, AnyMap& params) override;
+    virtual StateResult doPreBeginWorkNVI(GameState& gameState) override;
+    virtual StateResult doBeginWorkNVI(GameState& gameState) override;
+    virtual StateResult doFinishWorkNVI(GameState& gameState) override;
+    virtual StateResult doAbortWorkNVI(GameState& gameState) override;
   };
 
 } // end namespace

@@ -25,7 +25,7 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionEat::doPreBeginWorkNVI(GameState& gameState, AnyMap& params)
+  StateResult ActionEat::doPreBeginWorkNVI(GameState& gameState)
   {
     std::string message;
     auto subject = getSubject();
@@ -44,7 +44,7 @@ namespace Actions
     return StateResult::Success();
   }
 
-  StateResult ActionEat::doBeginWorkNVI(GameState& gameState, AnyMap& params)
+  StateResult ActionEat::doBeginWorkNVI(GameState& gameState)
   {
     auto subject = getSubject();
     auto object = getObject();
@@ -69,7 +69,7 @@ namespace Actions
     }
   }
 
-  StateResult ActionEat::doFinishWorkNVI(GameState& gameState, AnyMap& params)
+  StateResult ActionEat::doFinishWorkNVI(GameState& gameState)
   {
     auto object = getObject();
 
@@ -83,7 +83,7 @@ namespace Actions
     return StateResult::Success();
   }
 
-  StateResult ActionEat::doAbortWorkNVI(GameState& gameState, AnyMap& params)
+  StateResult ActionEat::doAbortWorkNVI(GameState& gameState)
   {
     printMessageStop();
     return StateResult::Success();

@@ -38,7 +38,7 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionWear::doPreBeginWorkNVI(GameState& gameState, AnyMap& params)
+  StateResult ActionWear::doPreBeginWorkNVI(GameState& gameState)
   {
     auto subject = getSubject();
     auto object = getObject();
@@ -60,7 +60,7 @@ namespace Actions
     return StateResult::Success();
   }
 
-  StateResult ActionWear::doBeginWorkNVI(GameState& gameState, AnyMap& params)
+  StateResult ActionWear::doBeginWorkNVI(GameState& gameState)
   {
     auto subject = getSubject();
     auto object = getObject();
@@ -75,7 +75,7 @@ namespace Actions
     return StateResult::Failure();
   }
 
-  StateResult ActionWear::doFinishWorkNVI(GameState& gameState, AnyMap& params)
+  StateResult ActionWear::doFinishWorkNVI(GameState& gameState)
   {
     auto subject = getSubject();
     auto object = getObject();
@@ -88,7 +88,7 @@ namespace Actions
     return StateResult::Success();
   }
 
-  StateResult ActionWear::doAbortWorkNVI(GameState& gameState, AnyMap& params)
+  StateResult ActionWear::doAbortWorkNVI(GameState& gameState)
   {
     return StateResult::Success();
   }

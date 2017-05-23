@@ -25,13 +25,7 @@ using ElapsedTicks = uint64_t;
 /// FileName is, well, a filename.
 using FileName = std::string;
 
-using BoolMap = std::unordered_map < std::string, bool >;
-using IntMap = std::unordered_map < std::string, int >;
-using DoubleMap = std::unordered_map < std::string, double >;
-using StringMap = std::unordered_map < std::string, std::string >;
-using Vec2Map = std::unordered_map < std::string, IntVec2 >;
-using AnyMap = std::unordered_map < std::string, boost::any >;
-using TypeMap = std::unordered_map < std::string, std::type_index >;
-using CharMap = std::unordered_map < std::string, char >;
-
 using String = std::string;
+
+using BoolMap = std::unordered_map < std::string, bool >;
+using StringMap = std::unordered_map < std::string, std::string >;

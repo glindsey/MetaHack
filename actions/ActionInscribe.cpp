@@ -26,23 +26,23 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionInscribe::doPreBeginWorkNVI(GameState& gameState, AnyMap& params)
+  StateResult ActionInscribe::doPreBeginWorkNVI(GameState& gameState)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionInscribe::doBeginWorkNVI(GameState& gameState, AnyMap& params)
+  StateResult ActionInscribe::doBeginWorkNVI(GameState& gameState)
   {
     putTr("ACTN_NOT_IMPLEMENTED");
     return StateResult::Failure();
   }
 
-  StateResult ActionInscribe::doFinishWorkNVI(GameState& gameState, AnyMap& params)
+  StateResult ActionInscribe::doFinishWorkNVI(GameState& gameState)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionInscribe::doAbortWorkNVI(GameState& gameState, AnyMap& params)
+  StateResult ActionInscribe::doAbortWorkNVI(GameState& gameState)
   {
     return StateResult::Success();
   }

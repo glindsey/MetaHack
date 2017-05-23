@@ -38,12 +38,12 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionClose::doPreBeginWorkNVI(GameState& gameState, AnyMap& params)
+  StateResult ActionClose::doPreBeginWorkNVI(GameState& gameState)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionClose::doBeginWorkNVI(GameState& gameState, AnyMap& params)
+  StateResult ActionClose::doBeginWorkNVI(GameState& gameState)
   {
     bool success = false;
     unsigned int action_time = 0;
@@ -60,12 +60,12 @@ namespace Actions
     return{ success, action_time };
   }
 
-  StateResult ActionClose::doFinishWorkNVI(GameState& gameState, AnyMap& params)
+  StateResult ActionClose::doFinishWorkNVI(GameState& gameState)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionClose::doAbortWorkNVI(GameState& gameState, AnyMap& params)
+  StateResult ActionClose::doAbortWorkNVI(GameState& gameState)
   {
     return StateResult::Success();
   }
