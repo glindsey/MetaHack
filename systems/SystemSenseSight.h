@@ -10,12 +10,14 @@ class ComponentInventory;
 class ComponentPosition;
 class ComponentSenseSight;
 class ComponentSpacialMemory;
+class GameState;
 
 /// System that handles entity sight, and the memory of that sight.
 class SystemSenseSight : public SystemCRTP<SystemSenseSight>
 {
 public:
-  SystemSenseSight(ComponentMap<ComponentInventory> const& inventory,
+  SystemSenseSight(GameState const& gameState,
+                   ComponentMap<ComponentInventory> const& inventory,
                    ComponentMap<ComponentPosition> const& position,
                    ComponentMap<ComponentSenseSight>& senseSight,
                    ComponentMap<ComponentSpacialMemory>& spacialMemory);
@@ -43,6 +45,8 @@ protected:
   virtual bool onEvent(Event const & event) override;
 
 private:
+  GameState const& m_gameState;
+
   // Components used by this system.
   ComponentMap<ComponentInventory> const& m_inventory;
   ComponentMap<ComponentPosition> const& m_position;

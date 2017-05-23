@@ -21,12 +21,14 @@ SystemManager::SystemManager(GameState& gameState) :
 
 
   // Initialize systems.
-  m_lighting.reset(NEW SystemLighting(components.appearance,
+  m_lighting.reset(NEW SystemLighting(m_gameState,
+                                      components.appearance,
                                       components.health,
                                       components.lightSource, 
                                       components.position));
 
-  m_senseSight.reset(NEW SystemSenseSight(components.inventory,
+  m_senseSight.reset(NEW SystemSenseSight(m_gameState,
+                                          components.inventory,
                                           components.position,
                                           components.senseSight,
                                           components.spacialMemory));

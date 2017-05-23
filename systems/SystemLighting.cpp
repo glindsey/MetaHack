@@ -11,11 +11,13 @@
 #include "systems/SystemSpacialRelationships.h"
 #include "types/LightInfluence.h"
 
-SystemLighting::SystemLighting(ComponentMap<ComponentAppearance> const& appearance,
+SystemLighting::SystemLighting(GameState& gameState,
+                               ComponentMap<ComponentAppearance> const& appearance,
                                ComponentMap<ComponentHealth> const& health,
                                ComponentMap<ComponentLightSource>& lightSource,
                                ComponentMap<ComponentPosition> const& position) :
   SystemCRTP<SystemLighting>({}),
+  m_gameState{ gameState },
   m_appearance{ appearance },
   m_health{ health },
   m_lightSource{ lightSource },
@@ -133,7 +135,7 @@ void SystemLighting::applyLightFrom(EntityId light, EntityId location)
       bool locationHasHealth = m_health.existsFor(location);
 
 
-      bool result = GAME.lua().call_thing_function("on_lit_by", location, light, true);
+      bool result = m_gameState.lua().call_thing_function("on_lit_by", location, light, true);
       if (result)
       {
         //notifyObservers(Event::Updated);

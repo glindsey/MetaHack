@@ -7,9 +7,10 @@
 
 // Forward declarations
 class Container;
-class InventorySelection;
 class Entity;
 class EntityId;
+class GameState;
+class InventorySelection;
 
 class InventoryArea :
   public metagui::Window
@@ -17,7 +18,8 @@ class InventoryArea :
 public:
   explicit InventoryArea(std::string name, 
                          InventorySelection& inventory_selection,
-                         sf::IntRect dimensions);
+                         sf::IntRect dimensions,
+                         GameState& gameState);
   virtual ~InventoryArea();
 
 protected:
@@ -26,6 +28,8 @@ protected:
   virtual bool onEvent_V(Event const& event) override;
 
 private:
+  GameState& m_gameState;
+
   /// Inventory selection we are bound to.
   InventorySelection& m_inventorySelection;
 };

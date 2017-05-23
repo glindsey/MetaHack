@@ -18,10 +18,11 @@
 
 InventoryArea::InventoryArea(std::string name,
                              InventorySelection& inventory_selection,
-                             sf::IntRect dimensions)
-  : 
+                             sf::IntRect dimensions,
+                             GameState& gameState) :
   metagui::Window(name, dimensions),
-  m_inventorySelection(inventory_selection)
+  m_gameState{ gameState },
+  m_inventorySelection{ inventory_selection }
 {
   m_inventorySelection.addObserver(*this, EventID::All);
 }
@@ -35,7 +36,7 @@ void InventoryArea::drawContents_(sf::RenderTexture& texture, int frame)
 {
   auto& config = Service<IConfigSettings>::get();
   auto& views = Service<IGraphicViews>::get();
-  auto& entity_pool = GAME.entities();
+  auto& entity_pool = m_gameState.entities();
 
   // Dimensions of the pane.
   sf::IntRect pane_dims = getRelativeDimensions();

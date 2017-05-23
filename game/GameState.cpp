@@ -79,7 +79,17 @@ MapFactory& GameState::maps()
   return *m_mapFactory;
 }
 
+MapFactory const& GameState::maps() const
+{
+  return *m_mapFactory;
+}
+
 EntityPool& GameState::entities()
+{
+  return *m_entityPool;
+}
+
+EntityPool const& GameState::entities() const
 {
   return *m_entityPool;
 }
@@ -88,6 +98,12 @@ ComponentManager & GameState::components()
 {
   return *m_components;
 }
+
+ComponentManager const& GameState::components() const
+{
+  return *m_components;
+}
+
 
 ElapsedTicks GameState::getGameClock() const
 {

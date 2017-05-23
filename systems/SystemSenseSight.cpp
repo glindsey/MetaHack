@@ -6,16 +6,19 @@
 #include "components/ComponentPosition.h"
 #include "components/ComponentSenseSight.h"
 #include "components/ComponentSpacialMemory.h"
+#include "game/GameState.h"
 #include "map/Map.h"
 #include "systems/SystemSpacialRelationships.h"
 #include "types/Direction.h"
 #include "utilities/MathUtils.h"
 
-SystemSenseSight::SystemSenseSight(ComponentMap<ComponentInventory> const& inventory,
+SystemSenseSight::SystemSenseSight(GameState const& gameState,
+                                   ComponentMap<ComponentInventory> const& inventory,
                                    ComponentMap<ComponentPosition> const& position,
                                    ComponentMap<ComponentSenseSight>& senseSight,
                                    ComponentMap<ComponentSpacialMemory>& spacialMemory) :
   SystemCRTP<SystemSenseSight>({}),
+  m_gameState{ gameState },
   m_inventory{ inventory },
   m_position{ position },
   m_senseSight{ senseSight },
@@ -202,9 +205,7 @@ void SystemSenseSight::calculateRecursiveVisibility(EntityId id,
 
       if (m_spacialMemory.existsFor(id))
       {
-        MapMemoryChunk new_memory{ thisMap->getTile(newCoords).getTileType(),
-          GAME.getGameClock() };
-
+        MapMemoryChunk new_memory{ thisMap->getTile(newCoords).getTileType(), m_gameState.getGameClock() };
         m_spacialMemory[id].ofMap(thisMap)[newCoords] = new_memory;
       }
     }

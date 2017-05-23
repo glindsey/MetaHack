@@ -14,12 +14,14 @@ class ComponentAppearance;
 class ComponentHealth;
 class ComponentLightSource;
 class ComponentPosition;
+class GameState;
 
 /// System that handles lighting the map and all entities on it.
 class SystemLighting : public SystemCRTP<SystemLighting>
 {
 public:
-  SystemLighting(ComponentMap<ComponentAppearance> const& appearance,
+  SystemLighting(GameState& gameState,
+                 ComponentMap<ComponentAppearance> const& appearance,
                  ComponentMap<ComponentHealth> const& health,
                  ComponentMap<ComponentLightSource>& lightSource,
                  ComponentMap<ComponentPosition> const& position);
@@ -86,6 +88,8 @@ protected:
   virtual bool onEvent(Event const & event) override;
 
 private:
+  GameState& m_gameState;
+
   // Components used by this system.
   ComponentMap<ComponentAppearance> const& m_appearance;
   ComponentMap<ComponentHealth> const& m_health;

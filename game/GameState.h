@@ -68,8 +68,11 @@ public:
   friend void to_json(json& j, GameState const& obj);
 
   MapFactory& maps();
+  MapFactory const& maps() const;
   EntityPool& entities();
+  EntityPool const& entities() const;
   ComponentManager& components();
+  ComponentManager const& components() const;
 
   ElapsedTicks getGameClock() const;
   void setGameClock(ElapsedTicks game_clock);

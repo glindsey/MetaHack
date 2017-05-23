@@ -81,9 +81,9 @@ AppStateGameMode::AppStateGameMode(StateMachine& state_machine, sf::RenderWindow
 {
   App::instance().addObserver(*this, EventID::All);
 
-  the_desktop.addChild(NEW MessageLogView("MessageLogView", Service<IMessageLog>::get(), *(m_debugBuffer.get()), calcMessageLogDims()))->setFlag("titlebar", true);
-  the_desktop.addChild(NEW InventoryArea("InventoryArea", *(m_inventorySelection.get()), calcInventoryDims()))->setFlag("titlebar", true);
-  the_desktop.addChild(NEW StatusArea("StatusArea", calcStatusAreaDims()))->setGlobalFocus(true);
+  the_desktop.addChild(NEW MessageLogView("MessageLogView", Service<IMessageLog>::get(), *m_debugBuffer, calcMessageLogDims()))->setFlag("titlebar", true);
+  the_desktop.addChild(NEW InventoryArea("InventoryArea", *m_inventorySelection, calcInventoryDims(), *m_gameState))->setFlag("titlebar", true);
+  the_desktop.addChild(NEW StatusArea("StatusArea", calcStatusAreaDims(), *m_gameState))->setGlobalFocus(true);
 
   // Create the standard map views provider.
   /// @todo Make this configurable.
@@ -123,9 +123,9 @@ void AppStateGameMode::execute()
     }
     else
     {
-      if (luaL_dostring(GAME.lua().state(), luaCommand.c_str()))
+      if (luaL_dostring(m_gameState->lua().state(), luaCommand.c_str()))
       {
-        std::string result = lua_tostring(GAME.lua().state(), -1);
+        std::string result = lua_tostring(m_gameState->lua().state(), -1);
         Service<IMessageLog>::get().add(result);
       }
     }

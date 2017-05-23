@@ -11,8 +11,9 @@
 #include "entity/Entity.h"
 #include "entity/EntityPool.h"
 
-StatusArea::StatusArea(std::string name, sf::IntRect dimensions)
-  : metagui::Window(name, dimensions)
+StatusArea::StatusArea(std::string name, sf::IntRect dimensions, GameState& gameState) : 
+  metagui::Window(name, dimensions),
+  m_gameState{ gameState }
 {
   //ctor
   //std::function<std::string()> label_function = std::bind(&StatusArea::get_test_label, this);
@@ -28,9 +29,10 @@ StatusArea::~StatusArea()
 void StatusArea::drawContents_(sf::RenderTexture& texture, int frame)
 {
   auto& config = Service<IConfigSettings>::get();
+  auto& components = m_gameState.components();
 
   sf::IntRect pane_dims = getRelativeDimensions();
-  EntityId player = GAME.getPlayer();
+  EntityId player = m_gameState.getPlayer();
   RealVec2 origin = config.get("window-text-offset");
 
   Color text_color = config.get("text-color");
@@ -51,7 +53,7 @@ void StatusArea::drawContents_(sf::RenderTexture& texture, int frame)
   if (player != EntityId::Mu())
   {
     // Render player name
-    std::string name = COMPONENTS.properName.valueOr(player, "Player");
+    std::string name = components.properName.valueOr(player, "Player");
     name[0] = std::toupper(name[0], std::locale());
 
     std::string type = player->getDisplayName();
@@ -67,9 +69,9 @@ void StatusArea::drawContents_(sf::RenderTexture& texture, int frame)
     render_text.setString("HP");
     texture.draw(render_text);
 
-    bool playerHasHP = COMPONENTS.health.existsFor(player); // If this is false something is DEFINITELY hosed
-    int hp = (playerHasHP ? COMPONENTS.health[player].hp() : 1);
-    int max_hp = (playerHasHP ? COMPONENTS.health[player].maxHp() : 1);
+    bool playerHasHP = components.health.existsFor(player); // If this is false something is DEFINITELY hosed
+    int hp = (playerHasHP ? components.health.of(player).hp() : 1);
+    int max_hp = (playerHasHP ? components.health.of(player).maxHp() : 1);
 
     float hp_percentage = static_cast<float>(hp) / static_cast<float>(max_hp);
 
@@ -89,7 +91,7 @@ void StatusArea::drawContents_(sf::RenderTexture& texture, int frame)
     std::string hp_string = boost::lexical_cast<std::string>(hp) + "/" + boost::lexical_cast<std::string>(max_hp);
 
     render_text.setPosition(origin.x + 200, origin.y);
-    render_text.setString(std::to_string(GAME.getGameClock()));
+    render_text.setString(std::to_string(m_gameState.getGameClock()));
     texture.draw(render_text);
 
     // Render game time
@@ -115,8 +117,8 @@ void StatusArea::drawContents_(sf::RenderTexture& texture, int frame)
 
 void StatusArea::doEventSubscriptions_V(Object & parent)
 {
-  GAME.addObserver(*this, GameState::EventClockChanged::id);
-  GAME.addObserver(*this, GameState::EventPlayerChanged::id);
+  m_gameState.addObserver(*this, GameState::EventClockChanged::id);
+  m_gameState.addObserver(*this, GameState::EventPlayerChanged::id);
 }
 
 bool StatusArea::onEvent_V(Event const & event)
@@ -141,7 +143,7 @@ void StatusArea::render_attribute(sf::RenderTarget& target,
   sf::Text render_text;
   Color text_color = config.get("text-color");
   Color text_dim_color = config.get("text-dim-color");
-  EntityId player = GAME.getPlayer();
+  EntityId player = m_gameState.getPlayer();
 
   // Render attribute
   render_text.setFont(the_default_mono_font);
