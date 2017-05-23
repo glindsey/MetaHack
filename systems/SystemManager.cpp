@@ -4,8 +4,10 @@
 
 #include "components/ComponentManager.h"
 #include "systems/SystemLighting.h"
+#include "systems/SystemPlayerHandler.h"
 #include "systems/SystemSenseSight.h"
 #include "systems/SystemSpacialRelationships.h"
+#include "systems/SystemTimekeeper.h"
 #include "utilities/New.h"
 
 SystemManager* SystemManager::s_instance = nullptr;
@@ -27,14 +29,19 @@ SystemManager::SystemManager(GameState& gameState) :
                                       components.lightSource, 
                                       components.position));
 
+  m_playerHandler.reset(NEW SystemPlayerHandler(components.globals));
+
   m_senseSight.reset(NEW SystemSenseSight(m_gameState,
                                           components.inventory,
                                           components.position,
                                           components.senseSight,
                                           components.spacialMemory));
 
-  m_spacial.reset(NEW SystemSpacialRelationships(components.inventory,
+  m_spacial.reset(NEW SystemSpacialRelationships(components.globals,
+                                                 components.inventory,
                                                  components.position));
+
+  m_timekeeper.reset(NEW SystemTimekeeper(components.globals));
 
   // Link system events.
   m_spacial->addObserver(*m_lighting, SystemSpacialRelationships::EventEntityChangedMaps::id);
@@ -55,9 +62,13 @@ SystemManager::~SystemManager()
 
 void SystemManager::runOneCycle()
 {
+  m_playerHandler->doCycleUpdate();
+
   m_lighting->doCycleUpdate();
   m_senseSight->doCycleUpdate();
   m_spacial->doCycleUpdate();
+
+  m_timekeeper->doCycleUpdate();
 }
 
 SystemManager & SystemManager::instance()

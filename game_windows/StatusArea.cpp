@@ -3,13 +3,16 @@
 #include "game_windows/StatusArea.h"
 
 #include "components/ComponentManager.h"
+#include "entity/Entity.h"
+#include "entity/EntityPool.h"
 #include "game/App.h"
 #include "game/GameState.h"
 #include "gui/GUILabel.h"
 #include "services/IConfigSettings.h"
 #include "Service.h"
-#include "entity/Entity.h"
-#include "entity/EntityPool.h"
+#include "systems/SystemManager.h"
+#include "systems/SystemPlayerHandler.h"
+#include "systems/SystemTimekeeper.h"
 
 StatusArea::StatusArea(std::string name, sf::IntRect dimensions, GameState& gameState) : 
   metagui::Window(name, dimensions),
@@ -32,7 +35,7 @@ void StatusArea::drawContents_(sf::RenderTexture& texture, int frame)
   auto& components = m_gameState.components();
 
   sf::IntRect pane_dims = getRelativeDimensions();
-  EntityId player = m_gameState.getPlayer();
+  EntityId player = components.globals.player();
   RealVec2 origin = config.get("window-text-offset");
 
   Color text_color = config.get("text-color");
@@ -91,7 +94,7 @@ void StatusArea::drawContents_(sf::RenderTexture& texture, int frame)
     std::string hp_string = boost::lexical_cast<std::string>(hp) + "/" + boost::lexical_cast<std::string>(max_hp);
 
     render_text.setPosition(origin.x + 200, origin.y);
-    render_text.setString(std::to_string(m_gameState.getGameClock()));
+    render_text.setString(std::to_string(SYSTEMS.timekeeper().clock()));
     texture.draw(render_text);
 
     // Render game time
@@ -117,15 +120,15 @@ void StatusArea::drawContents_(sf::RenderTexture& texture, int frame)
 
 void StatusArea::doEventSubscriptions_V(Object & parent)
 {
-  m_gameState.addObserver(*this, GameState::EventClockChanged::id);
-  m_gameState.addObserver(*this, GameState::EventPlayerChanged::id);
+  SYSTEMS.timekeeper().addObserver(*this, SystemTimekeeper::EventClockChanged::id);
+  SYSTEMS.playerHandler().addObserver(*this, SystemPlayerHandler::EventPlayerChanged::id);
 }
 
 bool StatusArea::onEvent_V(Event const & event)
 {
   auto id = event.getId();
   if ((id == GameState::EventClockChanged::id) ||
-      (id == GameState::EventPlayerChanged::id))
+      (id == SystemPlayerHandler::EventPlayerChanged::id))
   {
     flagForRedraw();
   }
@@ -143,7 +146,7 @@ void StatusArea::render_attribute(sf::RenderTarget& target,
   sf::Text render_text;
   Color text_color = config.get("text-color");
   Color text_dim_color = config.get("text-dim-color");
-  EntityId player = m_gameState.getPlayer();
+  EntityId player = m_gameState.components().globals.player();
 
   // Render attribute
   render_text.setFont(the_default_mono_font);

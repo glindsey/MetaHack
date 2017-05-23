@@ -60,7 +60,7 @@ namespace Actions
     // Check that the entity and container aren't the same entity.
     if (object == container)
     {
-      if (subject->isPlayer())
+      if (gameState.components().globals.player() == subject)
       {
         message = makeTr("YOU_TRY_TO_STORE_THE_FOO_INSIDE_ITSELF_HUMOROUS");
       }

@@ -4,6 +4,7 @@
 
 #include "components/ComponentMap.h"
 
+#include "components/ComponentGlobals.h"
 #include "components/ComponentActivity.h"
 #include "components/ComponentAppearance.h"
 #include "components/ComponentBodyparts.h"
@@ -47,6 +48,7 @@ public:
 
   json toJSON();
 
+  ComponentGlobals globals;
   ComponentMap<ComponentActivity> activity;
   ComponentMap<ComponentAppearance> appearance;
   ComponentMap<ComponentBodyparts> bodyparts;

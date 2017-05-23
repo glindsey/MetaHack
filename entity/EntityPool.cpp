@@ -8,17 +8,13 @@
 #include "game/App.h"
 #include "game/GameState.h"
 #include "lua/LuaObject.h"
-#include "lua/LuaEntityFunctions.h"
 #include "Service.h"
 #include "services/IGameRules.h"
 
-EntityPool::EntityPool(GameState& state)
-  :
-  m_state{ state }
+EntityPool::EntityPool(GameState& gameState) :
+  m_luaEntityFunctions(gameState),
+  m_gameState{ gameState }
 {
-  // Register the Entity Lua functions.
-  LuaEntityFunctions::registerFunctions();
-
   // Create the "nothingness" object.
   EntityId mu = create("Mu");
   Assert("EntityPool", (mu == 0ULL), "Mu's ID is " << mu << " instead of zero!");
@@ -36,11 +32,11 @@ EntityId EntityPool::create(std::string category)
   ++m_nextEntityId;
   json& data = Service<IGameRules>::get().category(category);
 
-  std::unique_ptr<Entity> new_thing{ new Entity{ m_state, category, new_id } };
+  std::unique_ptr<Entity> new_thing{ new Entity{ m_gameState, category, new_id } };
 
   auto& jsonComponents = data["components"];
   m_thing_map[new_id] = std::move(new_thing);
-  COMPONENTS.populate(new_id, jsonComponents);
+  m_gameState.components().populate(new_id, jsonComponents);
 
   if (jsonComponents.count("materials") != 0)
   {
@@ -52,7 +48,7 @@ EntityId EntityPool::create(std::string category)
       ///       Right now, we just use the first one.
       std::string material = StringTransforms::squishWhitespace(jsonMaterials[0].get<std::string>());
       json& materialData = Service<IGameRules>::get().category(material, "materials");
-      COMPONENTS.populate(new_id, materialData["components"]);
+      m_gameState.components().populate(new_id, materialData["components"]);
     }
   }
 
@@ -71,7 +67,7 @@ EntityId EntityPool::createTileContents(MapTile* map_tile)
 
   MapID map = map_tile->map();
   IntVec2 position = map_tile->getCoords();
-  COMPONENTS.position[new_id].set(map, position);
+  m_gameState.components().position[new_id].set(map, position);
 
   return EntityId(new_id);
 }
@@ -97,7 +93,7 @@ void EntityPool::applyCategoryData(EntityId id, std::string subType, std::string
   {
     json& data = Service<IGameRules>::get().category(name, subType);
     auto& jsonComponents = data["components"];
-    COMPONENTS.populate(id, jsonComponents);
+    m_gameState.components().populate(id, jsonComponents);
   }
   else
   {
@@ -111,8 +107,8 @@ void EntityPool::morph(EntityId id, std::string category)
   {
     json& data = Service<IGameRules>::get().category(category);
     auto& jsonComponents = data["components"];
-    COMPONENTS.erase(id);
-    COMPONENTS.populate(id, jsonComponents);
+    m_gameState.components().erase(id);
+    m_gameState.components().populate(id, jsonComponents);
   }
   else
   {
@@ -127,7 +123,7 @@ void EntityPool::destroy(EntityId id)
     if (m_thing_map.count(id) != 0)
     {
       m_thing_map.erase(id);
-      COMPONENTS.erase(id);
+      m_gameState.components().erase(id);
     }
   }
   else

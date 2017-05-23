@@ -170,7 +170,7 @@ std::string Entity::getBodypartPlural(BodyPart part) const
 
 bool Entity::isPlayer() const
 {
-  return (GAME.getPlayer() == m_id);
+  return (GAME.components().globals.player() == m_id);
 }
 
 EntityId Entity::getId() const
@@ -350,7 +350,7 @@ std::string Entity::getDescriptiveString(ArticleChoice articles,
 
 bool Entity::isThirdPerson()
 {
-  return !((GAME.getPlayer() == m_id) || (COMPONENTS.quantity.valueOr(m_id, 1) > 1));
+  return !((GAME.components().globals.player() == m_id) || (COMPONENTS.quantity.valueOr(m_id, 1) > 1));
 }
 
 std::string const& Entity::chooseVerb(std::string const& verb12,
@@ -386,7 +386,7 @@ std::string const& Entity::getPossessivePronoun() const
 
 std::string Entity::getPossessiveString(std::string owned, std::string adjectives)
 {
-  if (GAME.getPlayer() == m_id)
+  if (GAME.components().globals.player() == m_id)
   {
     return StringTransforms::make_string_numerical_tokens_only(tr("PRONOUN_POSSESSIVE_YOU"), { adjectives, owned });
   }

@@ -30,7 +30,10 @@ namespace StringTransforms
     return os;
   }
 
-  std::string makeString(EntityId subject, EntityId object, std::string pattern, std::vector<std::string> optional_strings)
+  std::string makeString(EntityId subject, 
+                         EntityId object, 
+                         std::string pattern, 
+                         std::vector<std::string> optional_strings)
   {
     std::string new_string = replace_tokens(pattern,
                                             [&](std::string token) -> std::string

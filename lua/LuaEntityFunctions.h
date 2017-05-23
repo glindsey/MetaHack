@@ -2,7 +2,19 @@
 
 #include "lua/LuaObject.h"
 
-namespace LuaEntityFunctions
+// Forward declarations
+class GameState;
+
+class LuaEntityFunctions
 {
-  void registerFunctions();
-} // end namespace LuaEntityFunctions
+public:
+  LuaEntityFunctions(GameState& gameState);
+  ~LuaEntityFunctions();
+
+  static GameState* gameState();
+
+protected:
+private:
+  static GameState* s_gameState;
+
+};

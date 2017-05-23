@@ -2,13 +2,16 @@
 
 #include "systems/SystemSpacialRelationships.h"
 
+#include "components/ComponentGlobals.h"
 #include "components/ComponentInventory.h"
 #include "components/ComponentPosition.h"
 #include "utilities/MathUtils.h"
 
-SystemSpacialRelationships::SystemSpacialRelationships(ComponentMap<ComponentInventory>& inventory, 
+SystemSpacialRelationships::SystemSpacialRelationships(ComponentGlobals const& globals,
+                                                       ComponentMap<ComponentInventory>& inventory, 
                                                        ComponentMap<ComponentPosition>& position) :
   SystemCRTP<SystemSpacialRelationships>({ EventEntityMoved::id, EventEntityChangedMaps::id }),
+  m_globals{ globals },
   m_inventory{ inventory },
   m_position{ position }
 {}
@@ -40,7 +43,7 @@ bool SystemSpacialRelationships::moveEntityInto(EntityId entity, EntityId newLoc
 
   if (newInventory.canContain(entity))
   {
-    if (newInventory.add(entity) == true)
+    if (newInventory.add(entity, (m_globals.player() == entity)) == true)
     {
       auto oldPosition = position; // copy for event broadcast
 

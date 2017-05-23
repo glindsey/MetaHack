@@ -55,7 +55,7 @@ namespace Actions
     {
       printMessageTry();
 
-      if (subject->isPlayer())
+      if (gameState.components().globals.player() == subject)
       {
         message = makeTr("CONJUNCTION_BUT") + " ";
       }

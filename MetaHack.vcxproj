@@ -330,6 +330,7 @@
     <ClInclude Include="components\ComponentCorrodible.h" />
     <ClInclude Include="components\ComponentDigestiveSystem.h" />
     <ClInclude Include="components\ComponentGender.h" />
+    <ClInclude Include="components\ComponentGlobals.h" />
     <ClInclude Include="components\ComponentHealth.h" />
     <ClInclude Include="components\ComponentLightSource.h" />
     <ClInclude Include="components\ComponentLockable.h" />
@@ -375,8 +376,10 @@
     <ClInclude Include="systems\SystemCRTP.h" />
     <ClInclude Include="systems\SystemLighting.h" />
     <ClInclude Include="systems\SystemManager.h" />
+    <ClInclude Include="systems\SystemPlayerHandler.h" />
     <ClInclude Include="systems\SystemSenseSight.h" />
     <ClInclude Include="systems\SystemSpacialRelationships.h" />
+    <ClInclude Include="systems\SystemTimekeeper.h" />
     <ClInclude Include="types\Beatitude.h" />
     <ClInclude Include="types\BodyPart.h" />
     <ClInclude Include="types\Clamped.h" />
@@ -527,6 +530,11 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="components\ComponentGlobals.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="components\ComponentHealth.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
@@ -640,8 +648,18 @@
     <ClCompile Include="services\IGameRules.cpp" />
     <ClCompile Include="systems\SystemLighting.cpp" />
     <ClCompile Include="systems\SystemManager.cpp" />
+    <ClCompile Include="systems\SystemPlayerHandler.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="systems\SystemSenseSight.cpp" />
     <ClCompile Include="systems\SystemSpacialRelationships.cpp" />
+    <ClCompile Include="systems\SystemTimekeeper.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="types\Color.cpp" />
     <ClCompile Include="types\Direction.cpp" />
     <ClCompile Include="game\GameState.cpp" />

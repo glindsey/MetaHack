@@ -58,7 +58,7 @@ void to_json(json& j, ComponentInventory const& obj)
 }
 
 /// @todo Handle max inventory size.
-bool ComponentInventory::add(EntityId entity)
+bool ComponentInventory::add(EntityId entity, bool isPlayer)
 {
   // If entity is Mu, exit returning false.
   if (entity == EntityId::Mu())
@@ -67,7 +67,7 @@ bool ComponentInventory::add(EntityId entity)
   }
 
   // If the entity is the player, it goes into slot 0.
-  if (entity == GAME.getPlayer())
+  if (isPlayer)
   {
     if (m_entities.count(InventorySlot::Zero) != 0)
     {
@@ -167,8 +167,6 @@ void ComponentInventory::consolidateItems()
 
 bool ComponentInventory::contains(EntityId entity)
 {
-  if (GAME.entities().exists(entity) == false) return false;
-
   return (find(entity) != m_entities.cend());
 }
 
@@ -179,8 +177,6 @@ bool ComponentInventory::contains(InventorySlot slot)
 
 InventorySlot ComponentInventory::operator[](EntityId entity)
 {
-  if (GAME.entities().exists(entity) == false) return InventorySlot::Invalid;
-
   auto iter = find(entity);
 
   if (iter != m_entities.cend())
@@ -196,7 +192,7 @@ EntityId ComponentInventory::operator[](InventorySlot slot)
   return (m_entities.at(slot));
 }
 
-EntityId ComponentInventory::split(EntityId entity, unsigned int targetQuantity)
+EntityId ComponentInventory::split(EntityPool& entities, EntityId entity, unsigned int targetQuantity)
 {
   EntityId targetEntity = EntityId::Mu();
 

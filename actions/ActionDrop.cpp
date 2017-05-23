@@ -67,7 +67,7 @@ namespace Actions
     {
       putMsg(makeTr("YOU_THROW_SELF_TO_GROUND", { location->getDisplayName() }));
       /// @todo Possible damage from hurling yourself to the ground!
-      putMsg(makeTr("YOU_SEEM_UNHARMED", { subject->isPlayer() ? tr("PREFIX_FORTUNATELY") : "" }));
+      putMsg(makeTr("YOU_SEEM_UNHARMED", { (gameState.components().globals.player() == subject) ? tr("PREFIX_FORTUNATELY") : "" }));
       putTr("YOU_GET_UP");
     }
     else if (object != EntityId::Mu())

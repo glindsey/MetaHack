@@ -6,6 +6,7 @@
 #include "systems/SystemCRTP.h"
 
 // Forward declarations
+class ComponentGlobals;
 class ComponentInventory;
 
 /// System that handles spacial relationships between entities -- what's inside
@@ -49,7 +50,8 @@ public:
     }
   };
 
-  SystemSpacialRelationships(ComponentMap<ComponentInventory>& inventory,
+  SystemSpacialRelationships(ComponentGlobals const& globals, 
+                             ComponentMap<ComponentInventory>& inventory,
                              ComponentMap<ComponentPosition>& position);
 
   virtual ~SystemSpacialRelationships();
@@ -87,6 +89,7 @@ protected:
 
 private:
   // Components used by this system.
+  ComponentGlobals const& m_globals;
   ComponentMap<ComponentInventory>& m_inventory;
   ComponentMap<ComponentPosition>& m_position;
 };

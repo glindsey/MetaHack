@@ -20,7 +20,7 @@ namespace fs = boost::filesystem;
 GameState* GameState::s_instance = nullptr;
 
 GameState::GameState(json const& j) :
-  Object({ GameState::EventClockChanged::id, GameState::EventPlayerChanged::id })
+  Object({ GameState::EventClockChanged::id })
 {
   initialize(j);
 }
@@ -49,14 +49,12 @@ void GameState::initialize(json const& j)
 
   if (j.is_object() && j.size() != 0)
   {
-    m_global = j.value("global", json::object());
     m_components.reset(NEW ComponentManager(*this, j.value("components", json::object())));
     m_entityPool.reset(NEW EntityPool(*this));
     m_mapFactory.reset(NEW MapFactory(*this));
   }
   else
   {
-    m_global = json::object();
     m_components.reset(NEW ComponentManager(*this, json::object()));
     m_entityPool.reset(NEW EntityPool(*this));
     m_mapFactory.reset(NEW MapFactory(*this));
@@ -70,7 +68,6 @@ void from_json(json const& j, GameState& obj)
 
 void to_json(json& j, GameState const& obj)
 {
-  j["global"] = obj.m_global;
   j["components"] = obj.m_components->toJSON();
 }
 
@@ -104,41 +101,9 @@ ComponentManager const& GameState::components() const
   return *m_components;
 }
 
-
-ElapsedTicks GameState::getGameClock() const
-{
-  return m_global.value("clock", 0ULL);
-}
-
-void GameState::setGameClock(ElapsedTicks game_clock)
-{
-  m_global["clock"] = game_clock;
-  broadcast(EventClockChanged(game_clock));
-}
-
-void GameState::incrementGameClock(ElapsedTicks added_time)
-{
-  /// @todo Check for the unlikely, but not impossible, chance of rollover.
-  setGameClock(getGameClock() + added_time);
-}
-
-bool GameState::setPlayer(EntityId ref)
-{
-  Assert("GameState", ref != EntityId::Mu(), "tried to make nothingness the player");
-
-  m_global["player"] = ref;
-  broadcast(EventPlayerChanged(ref));
-  return true;
-}
-
-EntityId GameState::getPlayer() const
-{
-  return m_global.value("player", EntityId());
-}
-
 bool GameState::processGameClockTick()
 {
-  EntityId player = getPlayer();
+  EntityId player = components().globals.player();
 
   if (player->actionIsPending() || player->actionIsInProgress()) ///< @todo check -- second half of this shouldn't be necessary
   {
@@ -150,9 +115,8 @@ bool GameState::processGameClockTick()
     // Get the map the player is on.
     MapID map = COMPONENTS.position[player].map();
 
-    // Process everything on the map, and increment game clock.
+    // Process everything on the map.
     MAPS.get(map).processEntities();
-    incrementGameClock(ElapsedTicks(1));
     return true;
   }
   return false;

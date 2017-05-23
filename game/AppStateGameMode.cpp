@@ -138,9 +138,10 @@ void AppStateGameMode::execute()
   // If the game clock ticked (player action started or is in progress)...
   if (ticked)
   {
-    EntityId player = game.getPlayer();
+    EntityId player = game.components().globals.player();
 
     // Update map used for systems that care about it.
+    /// @todo This should no longer be required thanks to events, try removing it
     auto map = COMPONENTS.position.existsFor(player) ? COMPONENTS.position[player].map() : "";
     m_systemManager->lighting().setMap(map);
     m_systemManager->senseSight().setMap(map);
@@ -167,7 +168,7 @@ bool AppStateGameMode::initialize()
   // Create the player.
   EntityId player = gameState().entities().create("Human");
   COMPONENTS.properName[player] = config.get("player-name").get<std::string>();
-  game.setPlayer(player);
+  COMPONENTS.globals.setPlayer(player);
 
   // Create the game map.
   /// @todo This shouldn't be hardcoded here
@@ -240,8 +241,8 @@ void AppStateGameMode::render_map(sf::RenderTexture& texture, int frame)
 
   texture.clear();
 
-  EntityId player = game.getPlayer();
-  EntityId location = COMPONENTS.position[player].parent();
+  EntityId player = game.components().globals.player();
+  EntityId location = game.components().position[player].parent();
 
   if (location == EntityId::Mu())
   {
@@ -288,7 +289,7 @@ void AppStateGameMode::render_map(sf::RenderTexture& texture, int frame)
 bool AppStateGameMode::handle_key_press(UIEvents::EventKeyPressed const& key)
 {
   auto& game = gameState();
-  EntityId player = game.getPlayer();
+  EntityId player = game.components().globals.player();
 
   // *** Handle keys processed in any mode.
   if (!key.alt && !key.control)
@@ -1040,7 +1041,7 @@ sf::IntRect AppStateGameMode::calcMessageLogDims()
 void AppStateGameMode::resetInventorySelection()
 {
   auto& game = gameState();
-  EntityId player = game.getPlayer();
+  EntityId player = game.components().globals.player();
 
   if (m_inventoryAreaShowsPlayer == true)
   {
@@ -1095,7 +1096,7 @@ sf::IntRect AppStateGameMode::calcInventoryDims()
 bool AppStateGameMode::moveCursor(Direction direction)
 {
   auto& game = gameState();
-  EntityId player = game.getPlayer();
+  EntityId player = game.components().globals.player();
   
   bool result = false;
 

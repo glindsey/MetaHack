@@ -373,7 +373,7 @@ namespace Actions
         {
           if (subject == object)
           {
-            if (!subject->isPlayer())
+            if (!(gameState.components().globals.player() == subject))
             {
               putTr("YOU_TRY_TO_VERB_YOURSELF_INVALID");
               CLOG(WARNING, "Action") << "NPC tried to " << getType() << " self!?";

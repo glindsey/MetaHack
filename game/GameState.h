@@ -36,21 +36,6 @@ public:
     }
   };
 
-  struct EventPlayerChanged : public ConcreteEvent<EventPlayerChanged>
-  {
-    EventPlayerChanged(EntityId player_) :
-      player{ player_ }
-    {}
-
-    EntityId const player;
-
-    void serialize(std::ostream& os) const
-    {
-      Event::serialize(os);
-      os << " | current player: " << player;
-    }
-  };
-
   /// Constructor that constructs the game state from the provided JSON.
   /// Pass an empty object to construct the state from scratch.
   GameState(json const& j);
@@ -73,23 +58,6 @@ public:
   EntityPool const& entities() const;
   ComponentManager& components();
   ComponentManager const& components() const;
-
-  ElapsedTicks getGameClock() const;
-  void setGameClock(ElapsedTicks game_clock);
-  void incrementGameClock(ElapsedTicks added_time);
-
-  /// Set the game player.
-  /// If the caller attempts to set a EntityId of a Entity that does not exist,
-  /// the program will abort with a FATAL log.
-  /// @note Changing the player ID has not been testing as of this writing,
-  ///       and unpredictable results may occur!
-  /// @param ref EntityId of the Entity to set as the player.
-  /// @return True if the set was successful, false otherwise.
-  bool setPlayer(EntityId ref);
-
-  /// Get the EntityId of the game player Entity.
-  /// @return The player EntityId.
-  EntityId getPlayer() const;
 
   /// Process a single tick in the game, if one needs to be processed.
   /// @return True if a tick elapsed, false if it did not.
@@ -115,9 +83,6 @@ private:
 
   /// Pointer to the Components Manager object.
   std::unique_ptr<ComponentManager> m_components;
-
-  /// Global game data, as stored in a JSON object.
-  json m_global;
 
   /// Static pointer to the singleton instance of the GameState.
   static GameState* s_instance;

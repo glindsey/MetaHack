@@ -108,6 +108,7 @@ ComponentManager::ComponentManager(GameState& gameState) :
 ComponentManager::ComponentManager(GameState& gameState, json const& j) :
   ComponentManager(gameState)
 {
+  JSONUtils::doIfPresent(j, "globals",          [this](auto const& value) { globals = value; });
   JSONUtils::doIfPresent(j, "activity",         [this](auto const& value) { activity = value; });
   JSONUtils::doIfPresent(j, "appearance",       [this](auto const& value) { appearance = value; });
   JSONUtils::doIfPresent(j, "bodyparts",        [this](auto const& value) { bodyparts = value; });
@@ -240,6 +241,7 @@ json ComponentManager::toJSON()
 {
   json j = json::object();
 
+  j["globals"]         = globals;
   j["activity"]        = activity;
   j["appearance"]      = appearance;
   j["bodyparts"]       = bodyparts;

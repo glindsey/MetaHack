@@ -3,6 +3,7 @@
 #include "stdafx.h"
 
 #include "entity/EntityId.h"
+#include "lua/LuaEntityFunctions.h"
 
 // Forward declarations
 class GameState;
@@ -79,8 +80,11 @@ public:
 protected:
 
 private:
+  /// Class containing Lua functions that manipulate entities.
+  LuaEntityFunctions m_luaEntityFunctions;
+
   /// Reference to the game state.
-  GameState& m_state;
+  GameState& m_gameState;
 
   /// Boolean indicating whether EntityPool is initialized.
   bool m_initialized = false;

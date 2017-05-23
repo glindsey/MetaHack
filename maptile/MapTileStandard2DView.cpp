@@ -276,7 +276,7 @@ void MapTileStandard2DView::addWallVerticesTo(sf::VertexArray& vertices,
   bool playerSeesWWall{ false };
 
   // Player.
-  EntityId player = GAME.getPlayer();
+  EntityId player = COMPONENTS.globals.player();
   bool playerHasLocation = COMPONENTS.position.existsFor(player);
 
   if (player != EntityId::Mu() && playerHasLocation)

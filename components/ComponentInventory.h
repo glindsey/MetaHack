@@ -25,7 +25,7 @@ public:
   /// Adds the passed Entity to the inventory.
   /// @param entity Entity to add to the inventory.
   /// @return True if the add succeeded; false otherwise.
-  bool add(EntityId entity);
+  bool add(EntityId entity, bool isPlayer);
 
   /// Clears this inventory.
   void clear();
@@ -70,7 +70,8 @@ public:
   /// @param entity Reference to the entity to split.
   /// @param target_quantity Target quantity to split out.
   /// @return The UUID of the new Entity.
-  EntityId split(EntityId entity, unsigned int target_quantity);
+  /// @todo This doesn't really belong here, should be in its own System.
+  EntityId split(EntityPool& entities, EntityId entity, unsigned int target_quantity);
 
   EntityId remove(EntityId entity);
 

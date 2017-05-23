@@ -47,7 +47,7 @@ namespace Actions
     /// @todo Pass in the cause of death somehow.
     if (subject->do_(*this))
     {
-      if (subject->isPlayer())
+      if (gameState.components().globals.player() == subject)
       {
         putTr("YOU_DIE");
       }
