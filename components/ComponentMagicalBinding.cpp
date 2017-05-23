@@ -74,22 +74,22 @@ void ComponentMagicalBinding::deactivate()
   m_active = false;
 }
 
-ElapsedTime ComponentMagicalBinding::autoExpirationTime() const
+ElapsedTicks ComponentMagicalBinding::autoExpirationTime() const
 {
   return m_autoExpirationTime;
 }
 
-void ComponentMagicalBinding::setAutoExpirationTime(ElapsedTime time)
+void ComponentMagicalBinding::setAutoExpirationTime(ElapsedTicks time)
 {
   m_autoExpirationTime = time;
 }
 
-ElapsedTime ComponentMagicalBinding::activeTimeRemaining() const
+ElapsedTicks ComponentMagicalBinding::activeTimeRemaining() const
 {
   return m_activeTimeRemaining;
 }
 
-void ComponentMagicalBinding::setActiveTime(ElapsedTime time)
+void ComponentMagicalBinding::setActiveTime(ElapsedTicks time)
 {
   m_activeTimeRemaining = time;
 }

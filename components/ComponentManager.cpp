@@ -38,7 +38,7 @@ int LUA_get_mass(lua_State* L)
 {
   return LUA_getValue<int>(L, [&](EntityId entity) -> int
   {
-    return COMPONENTS.physical.existsFor(entity) ? COMPONENTS.physical[entity].mass() : 0;
+    return COMPONENTS.physical.existsFor(entity) ? COMPONENTS.physical[entity].mass().value() : 0;
   });
 }
 
@@ -71,7 +71,7 @@ int LUA_get_quantity(lua_State* L)
 {
   return LUA_getValue<unsigned int>(L, [&](EntityId entity) -> unsigned int
   {
-    return COMPONENTS.physical.existsFor(entity) ? COMPONENTS.physical[entity].quantity() : 1;
+    return COMPONENTS.quantity.existsFor(entity) ? COMPONENTS.quantity[entity] : 1;
   });
 }
 
@@ -79,7 +79,7 @@ int LUA_get_volume(lua_State* L)
 {
   return LUA_getValue<int>(L, [&](EntityId entity) -> int
   {
-    return COMPONENTS.physical.existsFor(entity) ? COMPONENTS.physical[entity].volume() : 0;
+    return COMPONENTS.physical.existsFor(entity) ? COMPONENTS.physical[entity].volume().value() : 0;
   });
 }
 
@@ -113,6 +113,7 @@ ComponentManager::ComponentManager(GameState& gameState, json const& j) :
   JSONUtils::doIfPresent(j, "bodyparts",        [this](auto const& value) { bodyparts = value; });
   JSONUtils::doIfPresent(j, "category",         [this](auto const& value) { category = value; });
   JSONUtils::doIfPresent(j, "combustible",      [this](auto const& value) { combustible = value; });
+  JSONUtils::doIfPresent(j, "corrodible",       [this](auto const& value) { corrodible = value; });
   JSONUtils::doIfPresent(j, "digestive-system", [this](auto const& value) { digestiveSystem = value; });
   JSONUtils::doIfPresent(j, "gender",           [this](auto const& value) { gender = value; });
   JSONUtils::doIfPresent(j, "health",           [this](auto const& value) { health = value; });
@@ -127,6 +128,7 @@ ComponentManager::ComponentManager(GameState& gameState, json const& j) :
   JSONUtils::doIfPresent(j, "physical",         [this](auto const& value) { physical = value; });
   JSONUtils::doIfPresent(j, "position",         [this](auto const& value) { position = value; });
   JSONUtils::doIfPresent(j, "proper-name",      [this](auto const& value) { properName = value; });
+  JSONUtils::doIfPresent(j, "quantity",         [this](auto const& value) { quantity = value; });
   JSONUtils::doIfPresent(j, "sapience",         [this](auto const& value) { sapience = value; });
   JSONUtils::doIfPresent(j, "sense-sight",      [this](auto const& value) { senseSight = value; });
   JSONUtils::doIfPresent(j, "spacial-memory",   [this](auto const& value) { spacialMemory = value; });
@@ -157,6 +159,7 @@ void ComponentManager::clone(EntityId original, EntityId newId)
   bodyparts      .cloneIfExists(original, newId);
   category       .cloneIfExists(original, newId);
   combustible    .cloneIfExists(original, newId);
+  corrodible     .cloneIfExists(original, newId);
   digestiveSystem.cloneIfExists(original, newId);
   gender         .cloneIfExists(original, newId);
   health         .cloneIfExists(original, newId);
@@ -171,6 +174,7 @@ void ComponentManager::clone(EntityId original, EntityId newId)
   physical       .cloneIfExists(original, newId);
   position       .cloneIfExists(original, newId);
   properName     .cloneIfExists(original, newId);
+  quantity       .cloneIfExists(original, newId);
   sapience       .cloneIfExists(original, newId);
   senseSight     .cloneIfExists(original, newId);
   spacialMemory  .cloneIfExists(original, newId);
@@ -183,6 +187,7 @@ void ComponentManager::erase(EntityId id)
   bodyparts      .remove(id);
   category       .remove(id);
   combustible    .remove(id);
+  corrodible     .remove(id);
   digestiveSystem.remove(id);
   gender         .remove(id);
   health         .remove(id);
@@ -197,6 +202,7 @@ void ComponentManager::erase(EntityId id)
   physical       .remove(id);
   position       .remove(id);
   properName     .remove(id);
+  quantity       .remove(id);
   sapience       .remove(id);
   senseSight     .remove(id);
   spacialMemory  .remove(id);
@@ -209,6 +215,7 @@ void ComponentManager::populate(EntityId id, json const& j)
   JSONUtils::doIfPresent(j, "bodyparts",        [this, &id](auto const& value) { bodyparts[id] = value; });
   JSONUtils::doIfPresent(j, "category",         [this, &id](auto const& value) { category[id] = value; });
   JSONUtils::doIfPresent(j, "combustible",      [this, &id](auto const& value) { combustible[id] = value; });
+  JSONUtils::doIfPresent(j, "corrodible",       [this, &id](auto const& value) { corrodible[id] = value; });
   JSONUtils::doIfPresent(j, "digestive-system", [this, &id](auto const& value) { digestiveSystem[id] = value; });
   JSONUtils::doIfPresent(j, "gender",           [this, &id](auto const& value) { gender[id] = value; });
   JSONUtils::doIfPresent(j, "health",           [this, &id](auto const& value) { health[id] = value; });
@@ -223,6 +230,7 @@ void ComponentManager::populate(EntityId id, json const& j)
   JSONUtils::doIfPresent(j, "physical",         [this, &id](auto const& value) { physical[id] = value; });
   JSONUtils::doIfPresent(j, "position",         [this, &id](auto const& value) { position[id] = value; });
   JSONUtils::doIfPresent(j, "proper-name",      [this, &id](auto const& value) { properName[id] = value.get<std::string>(); });
+  JSONUtils::doIfPresent(j, "quantity",         [this, &id](auto const& value) { quantity[id] = value; });
   JSONUtils::doIfPresent(j, "sapience",         [this, &id](auto const& value) { sapience[id] = value; });
   JSONUtils::doIfPresent(j, "sense-sight",      [this, &id](auto const& value) { senseSight[id] = value; });
   JSONUtils::doIfPresent(j, "spacial-memory",   [this, &id](auto const& value) { spacialMemory[id] = value; });

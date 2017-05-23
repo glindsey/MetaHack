@@ -13,7 +13,7 @@ public:
     m_when{}
   {}
 
-  MapMemoryChunk(std::string type, ElapsedTime memory_type)
+  MapMemoryChunk(std::string type, ElapsedTicks memory_type)
     :
     m_type{ type },
     m_when{ memory_type }
@@ -30,7 +30,7 @@ public:
     return m_type;
   }
 
-  ElapsedTime get_memory_time()
+  ElapsedTicks get_memory_time()
   {
     return m_when;
   }
@@ -40,5 +40,5 @@ private:
   std::string m_type;
 
   /// Elapsed game time when the tile was remembered.
-  ElapsedTime m_when;
+  ElapsedTicks m_when;
 };

@@ -76,7 +76,7 @@ void InventoryArea::drawContents_(sf::RenderTexture& texture, int frame)
 
     // 1. Figure out whether this is selected or not, and set FG color.
     Color fg_color = config.get("text-color");
-    size_t selection_order = 0;
+    size_t selectionOrder = 0;
     auto slot_iter = std::find(selected_slots.begin(),
                                selected_slots.end(),
                                slot);
@@ -84,14 +84,14 @@ void InventoryArea::drawContents_(sf::RenderTexture& texture, int frame)
     if (slot_iter != selected_slots.end())
     {
       fg_color = config.get("text-highlight-color");
-      selection_order = (slot_iter - selected_slots.begin()) + 1;
+      selectionOrder = (slot_iter - selected_slots.begin()) + 1;
     }
 
     // 2. Display the selection order.
-    if (selection_order != 0)
+    if (selectionOrder != 0)
     {
       std::stringstream selection_number;
-      selection_number << "[" << selection_order << "]" << std::endl;
+      selection_number << "[" << selectionOrder << "]" << std::endl;
       render_text.setFont(the_default_mono_font);
       render_text.setCharacterSize(config.get("text-mono-default-size"));
       render_text.setString(selection_number.str());
@@ -150,13 +150,13 @@ void InventoryArea::drawContents_(sf::RenderTexture& texture, int frame)
 
     // 6. Display the item name.
     std::stringstream item_name;
-    if (selection_order == 1)
+    if (selectionOrder == 1)
     {
-      unsigned int max_quantity = COMPONENTS.physical.valueOrDefault(entity).quantity();
-      unsigned int selected_quantity = m_inventorySelection.getSelectedQuantity();
-      if ((max_quantity > 1) && (selected_quantity < max_quantity))
+      unsigned int maxQuantity = COMPONENTS.quantity.valueOr(entity, 1);
+      unsigned int selectedQuantity = m_inventorySelection.getSelectedQuantity();
+      if ((maxQuantity > 1) && (selectedQuantity < maxQuantity))
       {
-        item_name << "(Sel: " << selected_quantity << ") ";
+        item_name << "(Sel: " << selectedQuantity << ") ";
       }
     }
 

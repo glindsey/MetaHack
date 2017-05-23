@@ -327,6 +327,7 @@
     <ClInclude Include="components\ComponentAnimated.h" />
     <ClInclude Include="components\ComponentAppearance.h" />
     <ClInclude Include="components\ComponentCombustible.h" />
+    <ClInclude Include="components\ComponentCorrodible.h" />
     <ClInclude Include="components\ComponentDigestiveSystem.h" />
     <ClInclude Include="components\ComponentGender.h" />
     <ClInclude Include="components\ComponentHealth.h" />
@@ -505,6 +506,11 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="components\ComponentCombustible.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="components\ComponentCorrodible.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">NotUsing</PrecompiledHeader>

@@ -129,11 +129,11 @@ public:
   void activate();
   void deactivate();
 
-  ElapsedTime autoExpirationTime() const;
-  void setAutoExpirationTime(ElapsedTime time);
+  ElapsedTicks autoExpirationTime() const;
+  void setAutoExpirationTime(ElapsedTicks time);
 
-  ElapsedTime activeTimeRemaining() const;
-  void setActiveTime(ElapsedTime time);
+  ElapsedTicks activeTimeRemaining() const;
+  void setActiveTime(ElapsedTicks time);
 
 protected:
 
@@ -148,8 +148,8 @@ private:
   bool m_active;
 
   /// When binding is activated, number of milliseconds it will be activated for, or 0 if it is indefinite.
-  ElapsedTime m_autoExpirationTime;
+  ElapsedTicks m_autoExpirationTime;
 
   /// If active, milliseconds remaining in active time, or 0 if it never expires on its own.
-  ElapsedTime m_activeTimeRemaining;
+  ElapsedTicks m_activeTimeRemaining;
 };

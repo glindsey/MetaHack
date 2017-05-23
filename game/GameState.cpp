@@ -89,18 +89,18 @@ ComponentManager & GameState::components()
   return *m_components;
 }
 
-ElapsedTime GameState::getGameClock() const
+ElapsedTicks GameState::getGameClock() const
 {
   return m_global.value("clock", 0ULL);
 }
 
-void GameState::setGameClock(ElapsedTime game_clock)
+void GameState::setGameClock(ElapsedTicks game_clock)
 {
   m_global["clock"] = game_clock;
   broadcast(EventClockChanged(game_clock));
 }
 
-void GameState::incrementGameClock(ElapsedTime added_time)
+void GameState::incrementGameClock(ElapsedTicks added_time)
 {
   /// @todo Check for the unlikely, but not impossible, chance of rollover.
   setGameClock(getGameClock() + added_time);
@@ -136,7 +136,7 @@ bool GameState::processGameClockTick()
 
     // Process everything on the map, and increment game clock.
     map->processEntities();
-    incrementGameClock(ElapsedTime(1));
+    incrementGameClock(ElapsedTicks(1));
     return true;
   }
   return false;

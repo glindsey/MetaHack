@@ -13,7 +13,7 @@ struct Modifier
   ModifierType value = ModifierType();
 
   /// Game time this modifier expires, or 0 if it never expires.
-  ElapsedTime expirationTime = 0;
+  ElapsedTicks expirationTime = 0;
 
   /// Reason string for this modifier, if any.
   std::string reason = "";

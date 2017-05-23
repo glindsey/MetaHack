@@ -413,6 +413,6 @@
   "YOU_TRY_TO_VERB_THE_ITEMS": "$you $try to $verb the items.",
   "YOU_TRY_TO_VERB_YOURSELF_INVALID": "$you $try to $verb $yourself, which seriously shouldn't happen.",
   "YOU_VERB_THE_FOO_PREPOSITION_TARGET": "$you $cverb $fooself $0 $the_target_thing.",
-  "YOU_VERB_FOR_X_TIME": "$you $verb for $0 milliseconds.",
+  "YOU_VERB_FOR_X_TIME": "$you $verb for $0 hundredths of a second.",
   "YOUR_INVENTORY_CANT_HOLD_THE_FOO": "$your(inventory) cannot accommodate $the_foo."
 }
