@@ -92,19 +92,21 @@ namespace Actions
     return m_objects[1];
   }
 
-  bool Action::process(GameState& gameState)
+  bool Action::process(GameState& gameState, SystemManager& systems)
   {
     auto subject = getSubject();
-    if (!COMPONENTS.activity.existsFor(subject)) return false;
+    auto& components = gameState.components();
 
-    auto& activity = COMPONENTS.activity[subject];
+    if (!components.activity.existsFor(subject)) return false;
+
+    auto& activity = components.activity[subject];
 
     // If entity is currently busy, decrement by one and return.
     if (activity.busyTicks() > 0)
     {
       CLOG(TRACE, "Action") << "Entity #" <<
         subject << " (" <<
-        COMPONENTS.category[subject] << "): is busy, busyTicks = " << activity.busyTicks();
+        components.category[subject] << "): is busy, busyTicks = " << activity.busyTicks();
 
       activity.decBusyTicks(1);
       return false;
@@ -118,14 +120,14 @@ namespace Actions
 
       CLOG(TRACE, "Action") << "Entity #" <<
         subject << " (" <<
-        COMPONENTS.category[subject] << "): Action " <<
+        components.category[subject] << "): Action " <<
         getType().c_str() << " is in state " <<
         str(getState());
 
       switch (m_state)
       {
         case State::Pending:
-          result = doPreBeginWork(gameState);
+          result = doPreBeginWork(gameState, systems);
 
           if (result.success)
           {
@@ -142,7 +144,7 @@ namespace Actions
           break;
 
         case State::PreBegin:
-          result = doBeginWork(gameState);
+          result = doBeginWork(gameState, systems);
 
           // If starting the action succeeded, move to the in-progress state.
           // Otherwise, just go right to post-finish.
@@ -161,14 +163,14 @@ namespace Actions
           break;
 
         case State::InProgress:
-          result = doFinishWork(gameState);
+          result = doFinishWork(gameState, systems);
 
           activity.incBusyTicks(result.elapsed_time);
           setState(State::PostFinish);
           break;
 
         case State::Interrupted:
-          result = doAbortWork(gameState);
+          result = doAbortWork(gameState, systems);
 
           activity.incBusyTicks(result.elapsed_time);
           setState(State::PostFinish);
@@ -276,16 +278,17 @@ namespace Actions
     return dict.get("VERB_" + m_verb + "_ABLE");
   }
 
-  StateResult Action::doPreBeginWork(GameState& gameState)
+  StateResult Action::doPreBeginWork(GameState& gameState, SystemManager& systems)
   {
+    auto& components = gameState.components();
     auto subject = getSubject();
     auto& objects = getObjects();
-    bool hasPosition = COMPONENTS.position.existsFor(subject);
+    bool hasPosition = components.position.existsFor(subject);
     auto new_direction = getTargetDirection();
 
     // Check that we're capable of performing this action at all.
     std::string canVerb{ "can-" + getType() };
-    ReasonBool capable = subjectIsCapable(gameState);   
+    ReasonBool capable = subjectIsCapable(gameState);
     if (!capable.value)
     {
       printMessageTry();
@@ -323,7 +326,7 @@ namespace Actions
     if (hasTrait(Trait::SubjectMustBeAbleToMove))
     {
       // Make sure we can move RIGHT NOW.
-      if (!COMPONENTS.mobility.existsFor(subject))
+      if (!components.mobility.existsFor(subject))
       {
         putTr("YOU_CANT_MOVE_NOW");
         return StateResult::Failure();
@@ -344,7 +347,7 @@ namespace Actions
     {
       // Make sure we're not confined inside another entity.
       /// @todo Allow for attacking when swallowed!
-      auto& subjectPosition = COMPONENTS.position.of(subject);
+      auto& subjectPosition = components.position.of(subject);
       if (subjectPosition.isInsideAnotherEntity())
       {
         auto subjectParent = subjectPosition.parent();
@@ -366,14 +369,14 @@ namespace Actions
             // If object can be self, we bypass other checks and let the action
             // subclass handle it.
             /// @todo Not sure this is the best option... think more about this later.
-            return doPreBeginWorkNVI(gameState);
+            return doPreBeginWorkNVI(gameState, systems);
           }
         }
         else
         {
           if (subject == object)
           {
-            if (!(gameState.components().globals.player() == subject))
+            if (!(components.globals.player() == subject))
             {
               putTr("YOU_TRY_TO_VERB_YOURSELF_INVALID");
               CLOG(WARNING, "Action") << "NPC tried to " << getType() << " self!?";
@@ -399,7 +402,7 @@ namespace Actions
         if (hasTrait(Trait::ObjectMustNotBeEmpty))
         {
           // Check that it is not empty.
-          ComponentInventory& inv = COMPONENTS.inventory[object];
+          ComponentInventory& inv = components.inventory[object];
           if (inv.count() == 0)
           {
             printMessageTry();
@@ -411,7 +414,7 @@ namespace Actions
         if (hasTrait(Trait::ObjectMustBeEmpty))
         {
           // Check that it is not empty.
-          ComponentInventory& inv = COMPONENTS.inventory[object];
+          ComponentInventory& inv = components.inventory[object];
           if (inv.count() != 0)
           {
             printMessageTry();
@@ -423,7 +426,7 @@ namespace Actions
         if (!hasTrait(Trait::ObjectCanBeOutOfReach))
         {
           // Check that each object is within reach.
-          if (!SYSTEMS.spacial()->firstCanReachSecond(subject, object))
+          if (!systems.spacial()->firstCanReachSecond(subject, object))
           {
             printMessageTry();
             putMsg(makeTr("CONJUNCTION_HOWEVER") + " " + makeTr("FOO_PRO_SUB_IS_OUT_OF_REACH"));
@@ -434,11 +437,11 @@ namespace Actions
         if (hasTrait(Trait::ObjectMustBeInInventory))
         {
           // Check that each object is in our inventory.
-          if (!COMPONENTS.inventory[subject].contains(object))
+          if (!components.inventory[subject].contains(object))
           {
             printMessageTry();
             auto message = makeTr("CONJUNCTION_HOWEVER") + " " + makeTr("FOO_PRO_SUB_IS_NOT_IN_YOUR_INVENTORY");
-            if (SYSTEMS.spacial()->firstCanReachSecond(subject, object))
+            if (systems.spacial()->firstCanReachSecond(subject, object))
             {
               message += makeTr("PICK_UP_OBJECT_FIRST");
             }
@@ -451,7 +454,7 @@ namespace Actions
         if (hasTrait(Trait::ObjectMustNotBeInInventory))
         {
           // Check if it's already in our inventory.
-          if (COMPONENTS.inventory[subject].contains(object))
+          if (components.inventory[subject].contains(object))
           {
             printMessageTry();
             putTr("THE_FOO_IS_ALREADY_IN_YOUR_INVENTORY");
@@ -462,8 +465,8 @@ namespace Actions
         if (hasTrait(Trait::ObjectMustBeWielded))
         {
           // Check to see if the object is being wielded.
-          if (COMPONENTS.bodyparts.existsFor(subject) &&
-              COMPONENTS.bodyparts[subject].getWieldedLocation(object).part == BodyPart::Nowhere)
+          if (components.bodyparts.existsFor(subject) &&
+              components.bodyparts[subject].getWieldedLocation(object).part == BodyPart::Nowhere)
           {
             printMessageTry();
             putTr("THE_FOO_MUST_BE_WIELDED");
@@ -474,8 +477,8 @@ namespace Actions
         if (hasTrait(Trait::ObjectMustBeWorn))
         {
           // Check to see if the object is being worn.
-          if (COMPONENTS.bodyparts.existsFor(subject) &&
-              COMPONENTS.bodyparts[subject].getWornLocation(object).part == BodyPart::Nowhere)
+          if (components.bodyparts.existsFor(subject) &&
+              components.bodyparts[subject].getWornLocation(object).part == BodyPart::Nowhere)
           {
             printMessageTry();
             putTr("THE_FOO_MUST_BE_WORN");
@@ -486,8 +489,8 @@ namespace Actions
         if (hasTrait(Trait::ObjectMustNotBeWielded))
         {
           // Check to see if the object is being wielded.
-          if (COMPONENTS.bodyparts.existsFor(subject) &&
-              COMPONENTS.bodyparts[subject].getWieldedLocation(object).part != BodyPart::Nowhere)
+          if (components.bodyparts.existsFor(subject) &&
+              components.bodyparts[subject].getWieldedLocation(object).part != BodyPart::Nowhere)
           {
             printMessageTry();
 
@@ -500,8 +503,8 @@ namespace Actions
         if (hasTrait(Trait::ObjectMustNotBeWorn))
         {
           // Check to see if the object is being worn.
-          if (COMPONENTS.bodyparts.existsFor(subject) &&
-              COMPONENTS.bodyparts[subject].getWornLocation(object).part != BodyPart::Nowhere)
+          if (components.bodyparts.existsFor(subject) &&
+              components.bodyparts[subject].getWornLocation(object).part != BodyPart::Nowhere)
           {
             printMessageTry();
             putTr("YOU_CANT_VERB_WORN");
@@ -520,25 +523,25 @@ namespace Actions
       }
     }
 
-    auto result = doPreBeginWorkNVI(gameState);
+    auto result = doPreBeginWorkNVI(gameState, systems);
     return result;
   }
 
-  StateResult Action::doBeginWork(GameState& gameState)
+  StateResult Action::doBeginWork(GameState& gameState, SystemManager& systems)
   {
-    auto result = doBeginWorkNVI(gameState);
+    auto result = doBeginWorkNVI(gameState, systems);
     return result;
   }
 
-  StateResult Action::doFinishWork(GameState& gameState)
+  StateResult Action::doFinishWork(GameState& gameState, SystemManager& systems)
   {
-    auto result = doFinishWorkNVI(gameState);
+    auto result = doFinishWorkNVI(gameState, systems);
     return result;
   }
 
-  StateResult Action::doAbortWork(GameState& gameState)
+  StateResult Action::doAbortWork(GameState& gameState, SystemManager& systems)
   {
-    auto result = doAbortWorkNVI(gameState);
+    auto result = doAbortWorkNVI(gameState, systems);
     return result;
   }
 
@@ -566,26 +569,26 @@ namespace Actions
     return objectIsAllowed(gameState);
   }
 
-  StateResult Action::doPreBeginWorkNVI(GameState& gameState)
+  StateResult Action::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems)
   {
     /// @todo Set counter_busy based on the action being taken and
     ///       the entity's reflexes.
     return StateResult::Success();
   }
 
-  StateResult Action::doBeginWorkNVI(GameState& gameState)
+  StateResult Action::doBeginWorkNVI(GameState& gameState, SystemManager& systems)
   {
     putTr("ACTN_NOT_IMPLEMENTED");
     return StateResult::Failure();
   }
 
-  StateResult Action::doFinishWorkNVI(GameState& gameState)
+  StateResult Action::doFinishWorkNVI(GameState& gameState, SystemManager& systems)
   {
     /// @todo Complete the action here
     return StateResult::Success();
   }
 
-  StateResult Action::doAbortWorkNVI(GameState& gameState)
+  StateResult Action::doAbortWorkNVI(GameState& gameState, SystemManager& systems)
   {
     /// @todo Handle aborting the action here.
     return StateResult::Success();

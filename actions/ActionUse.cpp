@@ -45,13 +45,13 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionUse::doPreBeginWorkNVI(GameState& gameState)
+  StateResult ActionUse::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems)
   {
     // All checks done in Action class via traits.
     return StateResult::Success();
   }
 
-  StateResult ActionUse::doBeginWorkNVI(GameState& gameState)
+  StateResult ActionUse::doBeginWorkNVI(GameState& gameState, SystemManager& systems)
   {
     StateResult result = StateResult::Failure();
     std::string message;
@@ -65,7 +65,7 @@ namespace Actions
     return result;
   }
 
-  StateResult ActionUse::doFinishWorkNVI(GameState& gameState)
+  StateResult ActionUse::doFinishWorkNVI(GameState& gameState, SystemManager& systems)
   {
     StateResult result = StateResult::Failure();
     std::string message;
@@ -90,7 +90,7 @@ namespace Actions
     return result;
   }
 
-  StateResult ActionUse::doAbortWorkNVI(GameState& gameState)
+  StateResult ActionUse::doAbortWorkNVI(GameState& gameState, SystemManager& systems)
   {
     auto subject = getSubject();
     auto object = getObject();

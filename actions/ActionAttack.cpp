@@ -30,7 +30,7 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionAttack::doPreBeginWorkNVI(GameState& gameState)
+  StateResult ActionAttack::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems)
   {
     auto subject = getSubject();
     auto location = COMPONENTS.position[subject].parent();
@@ -61,7 +61,7 @@ namespace Actions
     return StateResult::Success();
   }
 
-  StateResult ActionAttack::doBeginWorkNVI(GameState& gameState)
+  StateResult ActionAttack::doBeginWorkNVI(GameState& gameState, SystemManager& systems)
   {
     auto subject = getSubject();
     auto& position = COMPONENTS.position[subject];
@@ -111,12 +111,12 @@ namespace Actions
     return{ success, action_time };
   }
 
-  StateResult ActionAttack::doFinishWorkNVI(GameState& gameState)
+  StateResult ActionAttack::doFinishWorkNVI(GameState& gameState, SystemManager& systems)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionAttack::doAbortWorkNVI(GameState& gameState)
+  StateResult ActionAttack::doAbortWorkNVI(GameState& gameState, SystemManager& systems)
   {
     return StateResult::Success();
   }

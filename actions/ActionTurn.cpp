@@ -38,14 +38,14 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionTurn::doPreBeginWorkNVI(GameState& gameState)
+  StateResult ActionTurn::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems)
   {
     // All checks handled in Action class via traits.
     return StateResult::Success();
   }
 
   /// @todo Implement me.
-  StateResult ActionTurn::doBeginWorkNVI(GameState& gameState)
+  StateResult ActionTurn::doBeginWorkNVI(GameState& gameState, SystemManager& systems)
   {
     StateResult result = StateResult::Failure();
 
@@ -65,12 +65,12 @@ namespace Actions
     return result;
   }
 
-  StateResult ActionTurn::doFinishWorkNVI(GameState& gameState)
+  StateResult ActionTurn::doFinishWorkNVI(GameState& gameState, SystemManager& systems)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionTurn::doAbortWorkNVI(GameState& gameState)
+  StateResult ActionTurn::doAbortWorkNVI(GameState& gameState, SystemManager& systems)
   {
     return StateResult::Success();
   }

@@ -43,7 +43,7 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionTakeOut::doPreBeginWorkNVI(GameState& gameState)
+  StateResult ActionTakeOut::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems)
   {
     std::string message;
     auto subject = getSubject();
@@ -84,7 +84,7 @@ namespace Actions
     return StateResult::Success();
   }
 
-  StateResult ActionTakeOut::doBeginWorkNVI(GameState& gameState)
+  StateResult ActionTakeOut::doBeginWorkNVI(GameState& gameState, SystemManager& systems)
   {
     /// @todo Handle taking out a certain quantity of an item.
     StateResult result = StateResult::Failure();
@@ -116,12 +116,12 @@ namespace Actions
     return result;
   }
 
-  StateResult ActionTakeOut::doFinishWorkNVI(GameState& gameState)
+  StateResult ActionTakeOut::doFinishWorkNVI(GameState& gameState, SystemManager& systems)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionTakeOut::doAbortWorkNVI(GameState& gameState)
+  StateResult ActionTakeOut::doAbortWorkNVI(GameState& gameState, SystemManager& systems)
   {
     return StateResult::Success();
   }

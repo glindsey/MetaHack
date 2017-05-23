@@ -47,13 +47,13 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionDrop::doPreBeginWorkNVI(GameState& gameState)
+  StateResult ActionDrop::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems)
   {
     // All checks handled in Action class via traits.
     return StateResult::Success();
   }
 
-  StateResult ActionDrop::doBeginWorkNVI(GameState& gameState)
+  StateResult ActionDrop::doBeginWorkNVI(GameState& gameState, SystemManager& systems)
   {
     StateResult result = StateResult::Failure();
     std::string message;
@@ -110,12 +110,12 @@ namespace Actions
     return result;
   }
 
-  StateResult ActionDrop::doFinishWorkNVI(GameState& gameState)
+  StateResult ActionDrop::doFinishWorkNVI(GameState& gameState, SystemManager& systems)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionDrop::doAbortWorkNVI(GameState& gameState)
+  StateResult ActionDrop::doAbortWorkNVI(GameState& gameState, SystemManager& systems)
   {
     return StateResult::Success();
   }

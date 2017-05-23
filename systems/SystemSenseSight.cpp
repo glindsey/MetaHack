@@ -8,7 +8,9 @@
 #include "components/ComponentSpacialMemory.h"
 #include "game/GameState.h"
 #include "map/Map.h"
+#include "systems/SystemManager.h"
 #include "systems/SystemSpacialRelationships.h"
+#include "systems/SystemTimekeeper.h"
 #include "types/Direction.h"
 #include "utilities/MathUtils.h"
 
@@ -207,7 +209,7 @@ void SystemSenseSight::calculateRecursiveVisibility(EntityId id,
 
       if (m_spacialMemory.existsFor(id))
       {
-        MapMemoryChunk new_memory{ map.getTile(newCoords).getTileType(), m_gameState.getGameClock() };
+        MapMemoryChunk new_memory{ map.getTile(newCoords).getTileType(), SYSTEMS.timekeeper().clock() };
         m_spacialMemory[id].ofMap(thisMap)[newCoords] = new_memory;
       }
     }

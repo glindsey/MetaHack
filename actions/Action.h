@@ -3,10 +3,13 @@
 #include "stdafx.h"
 
 #include "game/App.h"
-#include "types/Direction.h"
-#include "game/GameState.h"
-#include "services/MessageLog.h"
 #include "entity/EntityId.h"
+#include "types/Direction.h"
+#include "services/MessageLog.h"
+
+// Forward declarations
+class GameState;
+class SystemManager;
 
 namespace Actions
 {
@@ -106,7 +109,7 @@ namespace Actions
     EntityId getObject() const;
     EntityId getSecondObject() const;
 
-    bool process(GameState& gameState);
+    bool process(GameState& gameState, SystemManager& systems);
 
     void setState(State state);
     State getState();
@@ -185,7 +188,7 @@ namespace Actions
     ///       the Dreaded Pyramid of Doom. It's just easier that way.
     /// @param params Map of parameters for the Action.
     /// @return StateResult indicating whether the Action continues.
-    StateResult doPreBeginWork(GameState& gameState);
+    StateResult doPreBeginWork(GameState& gameState, SystemManager& systems);
 
     /// Perform work to be done at the start of the InProgress state.
     /// This is where the action begins.
@@ -198,7 +201,7 @@ namespace Actions
     /// moves to the PostFinish state.
     /// @param params Map of parameters for the Action.
     /// @return StateResult indicating whether the Action continues.
-    StateResult doBeginWork(GameState& gameState);
+    StateResult doBeginWork(GameState& gameState, SystemManager& systems);
 
     /// Perform work to be done at the end of the InProgress state and the start
     /// of the PostFinish state.
@@ -209,7 +212,7 @@ namespace Actions
     /// period.
     /// @param params Map of parameters for the Action.
     /// @return StateResult indicating the post-Action wait time.
-    StateResult doFinishWork(GameState& gameState);
+    StateResult doFinishWork(GameState& gameState, SystemManager& systems);
 
     /// Perform work to be done when an action in the InProgress state is aborted.
     /// This is called when an action is aborted.
@@ -218,7 +221,7 @@ namespace Actions
     /// period.
     /// @param params Map of parameters for the Action.
     /// @return StateResult indicating the post-Action wait time.
-    StateResult doAbortWork(GameState& gameState);
+    StateResult doAbortWork(GameState& gameState, SystemManager& systems);
 
     /// Check if this action can be performed at all by the subject.
     /// Called as part of doPreBeginWork, before the overridable portion is called.
@@ -245,22 +248,22 @@ namespace Actions
     /// Overridable portion of doPreBeginWork().
     /// @param params Map of parameters for the Action.
     /// @return StateResult indicating whether the Action continues.
-    virtual StateResult doPreBeginWorkNVI(GameState& gameState);
+    virtual StateResult doPreBeginWorkNVI(GameState& gameState, SystemManager& systems);
 
     /// Overridable portion of doBeginWork().
     /// @param params Map of parameters for the Action.
     /// @return StateResult indicating whether the Action continues.
-    virtual StateResult doBeginWorkNVI(GameState& gameState);
+    virtual StateResult doBeginWorkNVI(GameState& gameState, SystemManager& systems);
 
     /// Overridable portion of doFinishWork().
     /// @param params Map of parameters for the Action.
     /// @return StateResult indicating the post-Action wait time.
-    virtual StateResult doFinishWorkNVI(GameState& gameState);
+    virtual StateResult doFinishWorkNVI(GameState& gameState, SystemManager& systems);
 
     /// Overridable portion of doAbortWork().
     /// @param params Map of parameters for the Action.
     /// @return StateResult indicating the post-Action wait time.
-    virtual StateResult doAbortWorkNVI(GameState& gameState);
+    virtual StateResult doAbortWorkNVI(GameState& gameState, SystemManager& systems);
 
     /// Describes the object(s) or direction in terms of the subject.
     /// This string will vary based on the presence of objects or a direction
@@ -407,10 +410,10 @@ namespace Actions
     virtual std::unordered_set<Trait> const& getTraits() const override;
 
   protected:
-    virtual StateResult doPreBeginWorkNVI(GameState& gameState) override;
-    virtual StateResult doBeginWorkNVI(GameState& gameState) override;
-    virtual StateResult doFinishWorkNVI(GameState& gameState) override;
-    virtual StateResult doAbortWorkNVI(GameState& gameState) override;
+    virtual StateResult doPreBeginWorkNVI(GameState& gameState, SystemManager& systems) override;
+    virtual StateResult doBeginWorkNVI(GameState& gameState, SystemManager& systems) override;
+    virtual StateResult doFinishWorkNVI(GameState& gameState, SystemManager& systems) override;
+    virtual StateResult doAbortWorkNVI(GameState& gameState, SystemManager& systems) override;
   };
 
 } // end namespace

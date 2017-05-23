@@ -25,7 +25,7 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionRead::doPreBeginWorkNVI(GameState& gameState)
+  StateResult ActionRead::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems)
   {
     std::string message;
     auto subject = getSubject();
@@ -41,7 +41,7 @@ namespace Actions
     return StateResult::Success();
   }
 
-  StateResult ActionRead::doBeginWorkNVI(GameState& gameState)
+  StateResult ActionRead::doBeginWorkNVI(GameState& gameState, SystemManager& systems)
   {
     StateResult result = StateResult::Failure();
     std::string message;
@@ -55,7 +55,7 @@ namespace Actions
     return result;
   }
 
-  StateResult ActionRead::doFinishWorkNVI(GameState& gameState)
+  StateResult ActionRead::doFinishWorkNVI(GameState& gameState, SystemManager& systems)
   {
     StateResult result = StateResult::Failure();
     std::string message;
@@ -81,7 +81,7 @@ namespace Actions
     return result;
   }
 
-  StateResult ActionRead::doAbortWorkNVI(GameState& gameState)
+  StateResult ActionRead::doAbortWorkNVI(GameState& gameState, SystemManager& systems)
   {
     auto subject = getSubject();
     auto object = getObject();

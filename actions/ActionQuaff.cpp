@@ -30,13 +30,13 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionQuaff::doPreBeginWorkNVI(GameState& gameState)
+  StateResult ActionQuaff::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems)
   {
     // All checks handled by Action class via traits.
     return StateResult::Success();
   }
 
-  StateResult ActionQuaff::doBeginWorkNVI(GameState& gameState)
+  StateResult ActionQuaff::doBeginWorkNVI(GameState& gameState, SystemManager& systems)
   {
     auto subject = getSubject();
     auto object = getObject();
@@ -64,7 +64,7 @@ namespace Actions
     }
   }
 
-  StateResult ActionQuaff::doFinishWorkNVI(GameState& gameState)
+  StateResult ActionQuaff::doFinishWorkNVI(GameState& gameState, SystemManager& systems)
   {
     auto object = getObject();
 
@@ -72,7 +72,7 @@ namespace Actions
     return StateResult::Success();
   }
 
-  StateResult ActionQuaff::doAbortWorkNVI(GameState& gameState)
+  StateResult ActionQuaff::doAbortWorkNVI(GameState& gameState, SystemManager& systems)
   {
     printMessageStop();
     return StateResult::Success();

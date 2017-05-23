@@ -29,10 +29,10 @@ namespace Actions
     virtual std::unordered_set<Trait> const& getTraits() const override;
 
   protected:
-    virtual StateResult doPreBeginWorkNVI(GameState& gameState) override;
-    virtual StateResult doBeginWorkNVI(GameState& gameState) override;
-    virtual StateResult doFinishWorkNVI(GameState& gameState) override;
-    virtual StateResult doAbortWorkNVI(GameState& gameState) override;
+    virtual StateResult doPreBeginWorkNVI(GameState& gameState, SystemManager& systems) override;
+    virtual StateResult doBeginWorkNVI(GameState& gameState, SystemManager& systems) override;
+    virtual StateResult doFinishWorkNVI(GameState& gameState, SystemManager& systems) override;
+    virtual StateResult doAbortWorkNVI(GameState& gameState, SystemManager& systems) override;
 
     virtual void printMessageTry() const override;
     virtual void printMessageDo() const override;

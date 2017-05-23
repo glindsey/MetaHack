@@ -30,13 +30,13 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionWait::doPreBeginWorkNVI(GameState& gameState)
+  StateResult ActionWait::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems)
   {
     // We can always wait.
     return StateResult::Success();
   }
 
-  StateResult ActionWait::doBeginWorkNVI(GameState& gameState)
+  StateResult ActionWait::doBeginWorkNVI(GameState& gameState, SystemManager& systems)
   {
     /// @todo Handle a variable amount of time.
     putMsg(makeTr("YOU_VERB_FOR_X_TIME", 
@@ -45,12 +45,12 @@ namespace Actions
     return{ true, 1 };
   }
 
-  StateResult ActionWait::doFinishWorkNVI(GameState& gameState)
+  StateResult ActionWait::doFinishWorkNVI(GameState& gameState, SystemManager& systems)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionWait::doAbortWorkNVI(GameState& gameState)
+  StateResult ActionWait::doAbortWorkNVI(GameState& gameState, SystemManager& systems)
   {
     return StateResult::Success();
   }

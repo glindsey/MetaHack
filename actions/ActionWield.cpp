@@ -42,7 +42,7 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionWield::doPreBeginWorkNVI(GameState& gameState)
+  StateResult ActionWield::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems)
   {
     std::string message;
     auto subject = getSubject();
@@ -72,7 +72,7 @@ namespace Actions
     return StateResult::Success();
   }
 
-  StateResult ActionWield::doBeginWorkNVI(GameState& gameState)
+  StateResult ActionWield::doBeginWorkNVI(GameState& gameState, SystemManager& systems)
   {
     /// @todo Wielding should take time -- should not be instantaneously done here.
     auto subject = getSubject();
@@ -90,7 +90,7 @@ namespace Actions
     return StateResult::Failure();
   }
 
-  StateResult ActionWield::doFinishWorkNVI(GameState& gameState)
+  StateResult ActionWield::doFinishWorkNVI(GameState& gameState, SystemManager& systems)
   {
     auto subject = getSubject();
     auto object = getObject();
@@ -103,7 +103,7 @@ namespace Actions
     return StateResult::Success();
   }
 
-  StateResult ActionWield::doAbortWorkNVI(GameState& gameState)
+  StateResult ActionWield::doAbortWorkNVI(GameState& gameState, SystemManager& systems)
   {
     return StateResult::Success();
   }
