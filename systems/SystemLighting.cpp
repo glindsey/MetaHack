@@ -33,8 +33,8 @@ SystemLighting::~SystemLighting()
 
 void SystemLighting::doCycleUpdate()
 {
-  MapId currentMap = map();
-  if (currentMap == MapId::Null()) return;
+  MapID currentMap = map();
+  if (currentMap.empty()) return;
 
   // Step 1: Handle light propogation for lights on the map.
   if (m_recalculateAllLights == true)
@@ -62,7 +62,7 @@ void SystemLighting::doCycleUpdate()
   // Step 2. Update light level calculations for affected tiles.
   if (m_recalculateAllTiles == true)
   {
-    auto mapSize = currentMap->getSize();
+    auto mapSize = m_gameState.maps().get(currentMap).getSize();
     for (int y = 0; y < mapSize.y; ++y)
     {
       for (int x = 0; x < mapSize.x; ++x)
@@ -82,9 +82,9 @@ void SystemLighting::doCycleUpdate()
   }
 }
 
-void SystemLighting::resetAllMapLightingData(MapId map)
+void SystemLighting::resetAllMapLightingData(MapID map)
 {  
-  auto mapSize = map->getSize();
+  auto mapSize = m_gameState.maps().get(map).getSize();
   m_tileCalculatedLightColors.reset(NEW TileCalculatedLightColors(mapSize));
   m_tileLightSet.reset(NEW TileLightData(mapSize));
   m_lightTileSet.clear();
@@ -92,9 +92,9 @@ void SystemLighting::resetAllMapLightingData(MapId map)
   m_recalculateAllTiles = true;
 }
 
-void SystemLighting::clearMapLightingCalculations(MapId map)
+void SystemLighting::clearMapLightingCalculations(MapID map)
 {
-  auto mapSize = map->getSize();
+  auto mapSize = m_gameState.maps().get(map).getSize();
   m_tileCalculatedLightColors.reset(NEW TileCalculatedLightColors(mapSize));
   m_recalculateAllTiles = true;
 }
@@ -117,7 +117,7 @@ Color SystemLighting::getWallLightLevel(IntVec2 coords, Direction direction) con
   }
 }
 
-void SystemLighting::setMapNVO(MapId newMap)
+void SystemLighting::setMapNVO(MapID newMap)
 {
   resetAllMapLightingData(newMap);
 }
@@ -394,7 +394,7 @@ void SystemLighting::doRecursiveLighting(EntityId source,
                                          float slope_A,
                                          float slope_B)
 {
-  MapId currentMap = map();
+  MapID currentMap = map();
   Assert("Lighting", octant >= 1 && octant <= 8, "Octant" << octant << "passed in is not between 1 and 8 inclusively");
   IntVec2 new_coords;
 
@@ -484,13 +484,14 @@ void SystemLighting::doRecursiveLighting(EntityId source,
     break;
   }
 
+  auto& map = m_gameState.maps().get(currentMap);
   while (loop_condition(to_v2f(new_coords), to_v2f(origin), slope_B))
   {
     if (calc_vis_distance(new_coords, origin) <= max_depth_squared)
     {
-      if (currentMap->getTile(new_coords).isTotallyOpaque())
+      if (map.getTile(new_coords).isTotallyOpaque())
       {
-        if (!currentMap->getTile(new_coords + (IntVec2)dir).isTotallyOpaque())
+        if (!map.getTile(new_coords + (IntVec2)dir).isTotallyOpaque())
         {
           doRecursiveLighting(source, origin, 
                               max_depth_squared,
@@ -500,7 +501,7 @@ void SystemLighting::doRecursiveLighting(EntityId source,
       }
       else
       {
-        if (currentMap->getTile(new_coords + (IntVec2)dir).isTotallyOpaque())
+        if (map.getTile(new_coords + (IntVec2)dir).isTotallyOpaque())
         {
           slope_A = loop_slope(to_v2f(new_coords), to_v2f(origin));
         }
@@ -512,7 +513,7 @@ void SystemLighting::doRecursiveLighting(EntityId source,
   }
   new_coords += (IntVec2)dir;
 
-  if ((depth*depth < max_depth_squared) && (!currentMap->getTile(new_coords).isTotallyOpaque()))
+  if ((depth*depth < max_depth_squared) && (!map.getTile(new_coords).isTotallyOpaque()))
   {
     doRecursiveLighting(source, origin, 
                         max_depth_squared,

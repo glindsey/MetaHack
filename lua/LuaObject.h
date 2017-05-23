@@ -71,6 +71,10 @@ public:
   /// If the global currently exists it will be overwritten.
   void set_global(std::string name, lua_Integer value);
 
+  /// Sets a global to a particular string value.
+  /// If the global currently exists it will be overwritten.
+  void set_global(std::string name, std::string value);
+
   void stackDump() const;
 
 

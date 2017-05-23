@@ -148,10 +148,10 @@ bool GameState::processGameClockTick()
     //           lag would quickly grow intolerable.
 
     // Get the map the player is on.
-    MapId map = COMPONENTS.position[player].map();
+    MapID map = COMPONENTS.position[player].map();
 
     // Process everything on the map, and increment game clock.
-    map->processEntities();
+    MAPS.get(map).processEntities();
     incrementGameClock(ElapsedTicks(1));
     return true;
   }

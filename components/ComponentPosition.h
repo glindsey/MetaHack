@@ -5,7 +5,6 @@ using json = ::nlohmann::json;
 
 #include "entity/EntityId.h"
 #include "game/GameState.h"
-#include "map/MapId.h"
 #include "types/Vec2.h"
 
 /// Component that describes an entity's position -- either straight on a
@@ -15,7 +14,7 @@ class ComponentPosition final
 public:
   ComponentPosition();
   explicit ComponentPosition(EntityId id);
-  ComponentPosition(MapId map, IntVec2 coords);
+  ComponentPosition(MapID map, IntVec2 coords);
   ~ComponentPosition();
 
   friend void from_json(json const& j, ComponentPosition& obj);
@@ -24,7 +23,7 @@ public:
   friend std::ostream& operator<<(std::ostream& os, ComponentPosition const& obj);
 
   /// Sets this entity's position to be inside the specified entity.
-  /// Its coordinates/MapId are set to (0, 0) because they are retrieved
+  /// Its coordinates/MapID are set to (0, 0) because they are retrieved
   /// from the surrounding entity.
   void set(EntityId id);
 
@@ -34,7 +33,7 @@ public:
 
   /// Sets this entity's position to be outside, on a map.
   /// Its entity location is set to Mu accordingly.
-  void set(MapId map, IntVec2 coords);
+  void set(MapID map, IntVec2 coords);
 
   /// Get surrounding entity, if any.
   /// If there's no surrounding entity, returns Mu.
@@ -42,7 +41,7 @@ public:
 
   /// Get map.
   /// If this entity is inside another, returns the ID of the parent's map.
-  MapId map() const;
+  MapID map() const;
 
   /// Get coordinates.
   /// If this entity is inside another, returns the coordinates of the
@@ -62,7 +61,7 @@ protected:
 
 private:
   EntityId m_parent;
-  MapId m_map;
+  MapID m_map;
   IntVec2 m_coords;
 };
 

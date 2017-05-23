@@ -38,7 +38,7 @@ void SystemSenseSight::doCycleUpdate()
   m_needsUpdate.clear();
 }
 
-void SystemSenseSight::setMapNVO(MapId newMap)
+void SystemSenseSight::setMapNVO(MapID newMap)
 {
 }
 
@@ -91,7 +91,7 @@ void SystemSenseSight::calculateRecursiveVisibility(EntityId id,
   }
 
   IntVec2 thisCoords = thisPosition.coords();
-  MapId thisMap = thisPosition.map();
+  MapID thisMap = thisPosition.map();
 
   static const int mv = 128;
   static constexpr int mw = (mv * mv);
@@ -180,13 +180,15 @@ void SystemSenseSight::calculateRecursiveVisibility(EntityId id,
     break;
   }
 
+  auto& map = m_gameState.maps().get(thisMap);
+
   while (loop_condition(to_v2f(newCoords), to_v2f(thisCoords), slope_B))
   {
     if (calc_vis_distance(newCoords, thisCoords) <= mw)
     {
-      if (thisMap->tileIsOpaque(newCoords))
+      if (map.tileIsOpaque(newCoords))
       {
-        if (!thisMap->tileIsOpaque(newCoords + (IntVec2)dir))
+        if (!map.tileIsOpaque(newCoords + (IntVec2)dir))
         {
           calculateRecursiveVisibility(id, thisPosition,
                                        octant, depth + 1,
@@ -195,7 +197,7 @@ void SystemSenseSight::calculateRecursiveVisibility(EntityId id,
       }
       else
       {
-        if (thisMap->tileIsOpaque(newCoords + (IntVec2)dir))
+        if (map.tileIsOpaque(newCoords + (IntVec2)dir))
         {
           slope_A = loop_slope(to_v2f(newCoords), to_v2f(thisCoords));
         }
@@ -205,7 +207,7 @@ void SystemSenseSight::calculateRecursiveVisibility(EntityId id,
 
       if (m_spacialMemory.existsFor(id))
       {
-        MapMemoryChunk new_memory{ thisMap->getTile(newCoords).getTileType(), m_gameState.getGameClock() };
+        MapMemoryChunk new_memory{ map.getTile(newCoords).getTileType(), m_gameState.getGameClock() };
         m_spacialMemory[id].ofMap(thisMap)[newCoords] = new_memory;
       }
     }
@@ -213,7 +215,7 @@ void SystemSenseSight::calculateRecursiveVisibility(EntityId id,
   }
   newCoords += (IntVec2)dir;
 
-  if ((depth < mv) && (!thisMap->getTile(newCoords).isTotallyOpaque()))
+  if ((depth < mv) && (!map.getTile(newCoords).isTotallyOpaque()))
   {
     calculateRecursiveVisibility(id, thisPosition,
                                  octant, depth + 1,
@@ -227,13 +229,13 @@ bool SystemSenseSight::subjectCanSeeCoords(EntityId subject, IntVec2 coords) con
   if (!m_senseSight.existsFor(subject)) return false;
 
   auto& subjectPosition = m_position.of(subject);
-  MapId subjectMap = subjectPosition.map();
+  MapID subjectMap = subjectPosition.map();
   IntVec2 subjectCoords = subjectPosition.coords();
 
   // If the coordinates match, then yes, we can indeed see the target.
   if (subjectCoords == coords) return true;
 
-  auto subjectMapSize = subjectMap->getSize();
+  auto subjectMapSize = m_gameState.maps().get(subjectMap).getSize();
 
   // Check for target coords out of bounds. If they're out of bounds, we can't see it.
   if ((coords.x < 0) || (coords.y < 0) || (coords.x >= subjectMapSize.x) || (coords.y >= subjectMapSize.y))
@@ -257,8 +259,8 @@ bool SystemSenseSight::onEvent(Event const& event)
   else if (id == SystemSpacialRelationships::EventEntityChangedMaps::id)
   {
     auto& castEvent = static_cast<SystemSpacialRelationships::EventEntityChangedMaps const&>(event);
-    MapId newMap = m_position.of(castEvent.entity).map();
-    IntVec2 newMapSize = newMap->getSize();
+    MapID newMap = m_position.of(castEvent.entity).map();
+    IntVec2 newMapSize = m_gameState.maps().get(newMap).getSize();
     m_senseSight[castEvent.entity].resizeSeen(newMapSize);
 
     if (m_spacialMemory.existsFor(castEvent.entity))

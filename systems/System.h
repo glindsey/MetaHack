@@ -1,6 +1,5 @@
 #pragma once
 
-#include "map/MapId.h"
 #include "Object.h"
 
 /// Superclass for all systems in the game.
@@ -11,10 +10,10 @@ public:
   virtual ~System() {}
 
   /// Get the map the system is operating on.
-  virtual MapId map() const { return m_map; }
+  virtual MapID map() const { return m_map; }
 
   /// Set the map the system is operating on.
-  virtual void setMap(MapId map) 
+  virtual void setMap(MapID map) 
   {
     if (m_map != map)
     {
@@ -28,9 +27,9 @@ public:
 
 protected:
   /// Virtual override called after the map is changed.
-  virtual void setMapNVO(MapId newMap) = 0;
+  virtual void setMapNVO(MapID newMap) = 0;
 
 private:
   /// ID of map the system is operating on.
-  MapId m_map;
+  MapID m_map;
 };

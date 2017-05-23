@@ -83,6 +83,12 @@ void Lua::set_global(std::string name, lua_Integer value)
   lua_setglobal(L_, name.c_str());
 }
 
+void Lua::set_global(std::string name, std::string value)
+{
+  lua_pushstring(L_, value.c_str());
+  lua_setglobal(L_, name.c_str());
+}
+
 void Lua::stackDump() const
 {
   printf("Lua Stack Dump: ");

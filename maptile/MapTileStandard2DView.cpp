@@ -4,7 +4,6 @@
 
 #include "Components/ComponentManager.h"
 #include "map/Map.h"
-#include "map/MapId.h"
 #include "Service.h"
 #include "services/IConfigSettings.h"
 #include "services/IGameRules.h"
@@ -106,9 +105,9 @@ void MapTileStandard2DView::add_memory_vertices_to(sf::VertexArray& vertices,
   auto& tile = get_map_tile();
   auto coords = tile.getCoords();
   auto& viewerPosition = COMPONENTS.position[viewer];
-  MapId map = viewerPosition.map();
+  MapID map = viewerPosition.map();
 
-  if (map == MapFactory::nullMapId)
+  if (map.empty())
   {
     return;
   }

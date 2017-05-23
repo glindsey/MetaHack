@@ -354,7 +354,6 @@
     <ClInclude Include="design_patterns\Visitor.h" />
     <ClInclude Include="events\UIEvents.h" />
     <ClInclude Include="lua\LuaTemplates.h" />
-    <ClInclude Include="map\MapId.h" />
     <ClInclude Include="map\MapMemory.h" />
     <ClInclude Include="services\FileSystemGameRules.h" />
     <ClInclude Include="gui\GUICloseHandle.h" />
@@ -620,7 +619,6 @@
     <ClCompile Include="design_patterns\Event.cpp" />
     <ClCompile Include="design_patterns\Object.cpp" />
     <ClCompile Include="inventory\InventorySlot.cpp" />
-    <ClCompile Include="map\MapId.cpp" />
     <ClCompile Include="map\MapMemory.cpp" />
     <ClCompile Include="services\FileSystemGameRules.cpp" />
     <ClCompile Include="gui\GUICloseHandle.cpp" />

@@ -6,16 +6,14 @@
 #include "game/GameState.h"
 #include "map/Map.h"
 
-const MapId MapFactory::nullMapId = static_cast<MapId>(0);
-
 MapFactory::MapFactory(GameState& gameState)
   :
   m_gameState{ gameState }
 {
   // Create and add the "null map" to the list.
-  m_currentMapId = 0;
-  std::unique_ptr<Map> new_map{ NEW Map { m_gameState, m_currentMapId, 1, 1 } };
-  m_maps[m_currentMapId] = std::move(new_map);
+  m_currentMapID = "";
+  std::unique_ptr<Map> new_map{ NEW Map { m_gameState, m_currentMapID, 1, 1 } };
+  m_maps[m_currentMapID] = std::move(new_map);
 
   // Register the Map Lua functions.
   m_gameState.lua().register_function("map_get_tile_contents", Map::LUA_getTileContents);
@@ -28,16 +26,16 @@ MapFactory::~MapFactory()
   //dtor
 }
 
-bool MapFactory::exists(MapId id) const
+bool MapFactory::exists(MapID id) const
 {
   return (m_maps.count(id) != 0);
 }
 
-Map const& MapFactory::get(MapId id) const
+Map const& MapFactory::get(MapID id) const
 {
   if (m_maps.count(id) == 0)
   {
-    return *m_maps.at(nullMapId);
+    return *m_maps.at("");
   }
   else
   {
@@ -45,11 +43,11 @@ Map const& MapFactory::get(MapId id) const
   }
 }
 
-Map& MapFactory::get(MapId id)
+Map& MapFactory::get(MapID id)
 {
   if (m_maps.count(id) == 0)
   {
-    return *m_maps.at(nullMapId);
+    return *m_maps.at("");
   }
   else
   {
@@ -57,28 +55,31 @@ Map& MapFactory::get(MapId id)
   }
 }
 
-MapId MapFactory::create(int x, int y)
+MapID MapFactory::create(int x, int y)
 {
-  ++m_currentMapId;
+  // Right now, just convert current map ID to number, add one, and convert
+  // back to string. This will need updating later.
+  auto numberMapID = std::stol(m_currentMapID);
+  m_currentMapID = std::to_string(++numberMapID);
 
-  std::unique_ptr<Map> new_map{ NEW Map{ m_gameState, m_currentMapId, x, y } };
-  m_maps[m_currentMapId] = std::move(new_map);
-  m_maps[m_currentMapId]->initialize();
+  std::unique_ptr<Map> new_map{ NEW Map{ m_gameState, m_currentMapID, x, y } };
+  m_maps[m_currentMapID] = std::move(new_map);
+  m_maps[m_currentMapID]->initialize();
 
-  return m_currentMapId;
+  return m_currentMapID;
 }
 
-bool MapFactory::destroy(MapId id)
+bool MapFactory::destroy(MapID id)
 {
   // Can't destroy current map.
-  if (id == m_currentMapId)
+  if (id == m_currentMapID)
   {
     CLOG(ERROR, "MapFactory") << "attempted to destroy the current map";
     return false;
   }
 
   // Can't destroy current map.
-  if (id == nullMapId)
+  if (id.empty())
   {
     CLOG(ERROR, "MapFactory") << "attempted to destroy the null map";
     return false;

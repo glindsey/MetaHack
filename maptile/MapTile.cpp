@@ -84,9 +84,9 @@ IntVec2 const& MapTile::getCoords() const
   return m_coords;
 }
 
-MapId MapTile::map() const
+MapID MapTile::map() const
 {
-  return m_mapId;
+  return m_mapID;
 }
 
 Color MapTile::getOpacity() const
@@ -118,10 +118,10 @@ RealVec2 MapTile::getPixelCoords(IntVec2 tile)
 
 // === PROTECTED METHODS ======================================================
 
-MapTile::MapTile(IntVec2 coords, std::string category, MapId map_id)
+MapTile::MapTile(IntVec2 coords, std::string category, MapID mapID)
   :
   Object({}),
-  m_mapId{ map_id },
+  m_mapID{ mapID },
   m_coords{ coords },
   m_category{ category }
 {
@@ -142,7 +142,7 @@ MapTile const& MapTile::getAdjacentTile(Direction direction) const
 {
   IntVec2 coords = getCoords();
   IntVec2 adjacent_coords = coords + (IntVec2)direction;
-  return m_mapId->getTile(adjacent_coords);
+  return MAPS.get(m_mapID).getTile(adjacent_coords);
 }
 
 json const& MapTile::getCategoryData() const

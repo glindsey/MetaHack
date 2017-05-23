@@ -45,7 +45,7 @@ void EntityStandard2DView::draw(sf::RenderTarget& target,
   // Can't render if it's in another object.
   if (position.parent() != EntityId::Mu()) return;
 
-  MapTile& tile = position.map()->getTile(position.coords());
+  MapTile& tile = MAPS.get(position.map()).getTile(position.coords());
 
   sf::RectangleShape rectangle;
   sf::IntRect texture_coords;

@@ -29,7 +29,7 @@ bool SystemSpacialRelationships::moveEntityInto(EntityId entity, EntityId newLoc
 
   auto& position = m_position[entity];
   auto& newInventory = m_inventory[newLocation];
-  MapId oldMapId = position.map();
+  MapID oldMapID = position.map();
   EntityId oldLocation = position.parent();
 
   if (newLocation == oldLocation)
@@ -53,8 +53,8 @@ bool SystemSpacialRelationships::moveEntityInto(EntityId entity, EntityId newLoc
       // Set the location to the new location.
       m_position[entity].set(newLocation);
 
-      MapId newMapId = position.map();
-      if (oldMapId != newMapId)
+      MapID newMapID = position.map();
+      if (oldMapID != newMapID)
       {
         broadcast(EventEntityChangedMaps(entity));
       }
@@ -166,7 +166,7 @@ bool SystemSpacialRelationships::areAdjacent(EntityId first, EntityId second) co
   return adjacent(firstPosition.coords(), secondPosition.coords());
 }
 
-void SystemSpacialRelationships::setMapNVO(MapId newMap)
+void SystemSpacialRelationships::setMapNVO(MapID newMap)
 {}
 
 bool SystemSpacialRelationships::onEvent(Event const& event)

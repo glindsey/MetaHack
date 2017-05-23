@@ -57,7 +57,7 @@ public:
   IntVec2 const& getCoords() const;
 
   /// Get a reference to the map this tile belongs to.
-  MapId map() const;
+  MapID map() const;
 
   /// Get the opacity of this tile.
   Color getOpacity() const;
@@ -76,13 +76,13 @@ public:
 
 protected:
   /// Constructor, callable only by Map class.
-  MapTile(IntVec2 coords, std::string category, MapId map_id);
+  MapTile(IntVec2 coords, std::string category, MapID mapID);
 
 private:
   static bool initialized;
 
   /// The ID of the Map this MapTile belongs to.
-  MapId m_mapId;
+  MapID m_mapID;
 
   /// This MapTile's coordinates on the map.
   IntVec2 m_coords;

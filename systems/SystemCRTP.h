@@ -1,6 +1,5 @@
 #pragma once
 
-#include "map/MapId.h"
 #include "systems/System.h"
 
 /// CRTP class for all systems in the game.

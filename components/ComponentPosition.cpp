@@ -32,10 +32,10 @@ ComponentPosition::ComponentPosition()
 {}
 
 ComponentPosition::ComponentPosition(EntityId id)
-  : m_map{ MapId::Null() }, m_coords{ 0, 0 }, m_parent{ id }
+  : m_map{ "" }, m_coords{ 0, 0 }, m_parent{ id }
 {}
 
-ComponentPosition::ComponentPosition(MapId map, IntVec2 coords)
+ComponentPosition::ComponentPosition(MapID map, IntVec2 coords)
   : m_map{ map }, m_coords{ coords }, m_parent{ EntityId::Mu() }
 {}
 
@@ -47,7 +47,7 @@ void ComponentPosition::set(EntityId id)
   if (m_parent != id)
   {
     m_coords = { 0, 0 };
-    m_map = MapId::Null();
+    m_map = "";
     m_parent = id;
   }
 }
@@ -61,7 +61,7 @@ void ComponentPosition::set(IntVec2 coords)
   }
 }
 
-void ComponentPosition::set(MapId map, IntVec2 coords)
+void ComponentPosition::set(MapID map, IntVec2 coords)
 {
   if (m_map != map || m_coords != coords)
   {
@@ -76,7 +76,7 @@ EntityId ComponentPosition::parent() const
   return m_parent;
 }
 
-MapId ComponentPosition::map() const
+MapID ComponentPosition::map() const
 {
   if (m_parent != EntityId::Mu())
   {

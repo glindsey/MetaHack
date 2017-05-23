@@ -2,7 +2,6 @@
 
 #include "components/ComponentMap.h"
 #include "entity/EntityId.h"
-#include "map/MapId.h"
 #include "systems/SystemCRTP.h"
 
 // Forward declarations
@@ -31,7 +30,7 @@ public:
   bool subjectCanSeeCoords(EntityId subject, IntVec2 coords) const;
 
 protected:
-  void setMapNVO(MapId newMap);
+  void setMapNVO(MapID newMap);
 
   void findSeenTiles(EntityId id);
 

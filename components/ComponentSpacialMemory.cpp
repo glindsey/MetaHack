@@ -31,22 +31,22 @@ void to_json(json& j, ComponentSpacialMemory const& obj)
   }
 }
 
-bool ComponentSpacialMemory::containsMap(MapId map)
+bool ComponentSpacialMemory::containsMap(MapID map)
 {
   return (m_memory.count(map) != 0);
 }
 
-MapMemory& ComponentSpacialMemory::ofMap(MapId map)
+MapMemory& ComponentSpacialMemory::ofMap(MapID map)
 {
   return m_memory[map];
 }
 
-MapMemory const& ComponentSpacialMemory::ofMap(MapId map) const
+MapMemory const& ComponentSpacialMemory::ofMap(MapID map) const
 {
   return m_memory.at(map);
 }
 
-MapMemory & ComponentSpacialMemory::operator[](MapId map)
+MapMemory & ComponentSpacialMemory::operator[](MapID map)
 {
   return m_memory[map];
 }

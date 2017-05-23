@@ -69,7 +69,7 @@ EntityId EntityPool::createTileContents(MapTile* map_tile)
 {
   EntityId new_id = create("TileContents");
 
-  MapId map = map_tile->map();
+  MapID map = map_tile->map();
   IntVec2 position = map_tile->getCoords();
   COMPONENTS.position[new_id].set(map, position);
 

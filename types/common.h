@@ -25,6 +25,12 @@ using ElapsedTicks = uint64_t;
 /// FileName is, well, a filename.
 using FileName = std::string;
 
+/// Each Map ID is a string.
+/// It used to be a 32-bit integer, but I've realized I'll probably want to
+/// support branching maps in the future, for which strings will be easier to
+/// manage.
+using MapID = std::string;
+
 using String = std::string;
 
 using BoolMap = std::unordered_map < std::string, bool >;

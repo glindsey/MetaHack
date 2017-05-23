@@ -26,7 +26,7 @@
 typedef boost::random::uniform_int_distribution<> uniform_int_dist;
 
 /// @todo Have this take an IntVec2 instead of width x height
-Map::Map(GameState& gameState, MapId id, int width, int height)
+Map::Map(GameState& gameState, MapID id, int width, int height)
   :
   Object({}),
   m_gameState{ gameState },
@@ -97,7 +97,7 @@ bool Map::calcCoords(IntVec2 origin,
   return isInBounds(result);
 }
 
-MapId Map::getMapId() const
+MapID Map::getMapID() const
 {
   return m_id;
 }
@@ -156,7 +156,7 @@ MapTile& Map::getTile(IntVec2 tile)
   return TILE(tile.x, tile.y);
 }
 
-bool Map::tileIsOpaque(IntVec2 tile)
+bool Map::tileIsOpaque(IntVec2 tile) const
 {
   if ((tile.x < 0) || (tile.x >= m_size.x) || (tile.y < 0) || (tile.y >= m_size.y))
   {
@@ -204,7 +204,7 @@ int Map::LUA_getTileContents(lua_State* L)
     return 0;
   }
 
-  MapId map_id = static_cast<MapId>(static_cast<unsigned int>(lua_tointeger(L, 1)));
+  MapID map_id = MapID(lua_tostring(L, 1));
   IntVec2 coords = IntVec2(static_cast<int>(lua_tointeger(L, 2)), static_cast<int>(lua_tointeger(L, 3)));
 
   auto& map_tile = GAME.maps().get(map_id).getTile(coords);
@@ -225,7 +225,7 @@ int Map::LUA_getStartCoords(lua_State* L)
     return 0;
   }
 
-  MapId map_id = static_cast<MapId>(static_cast<unsigned int>(lua_tointeger(L, 1)));
+  MapID map_id = MapID(lua_tostring(L, 1));
 
   auto& map = GAME.maps().get(map_id);
   auto coords = map.getStartCoords();
@@ -248,7 +248,7 @@ int Map::LUA_mapAddFeature(lua_State* L)
     return 0;
   }
 
-  MapId map_id = static_cast<MapId>(static_cast<unsigned int>(lua_tointeger(L, 1)));
+  MapID map_id = MapID(lua_tostring(L, 1));
 
   auto& map = GAME.maps().get(map_id);
 

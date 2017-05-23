@@ -5,7 +5,6 @@ using json = ::nlohmann::json;
 
 #include "entity/EntityId.h"
 #include "game/GameState.h"
-#include "map/MapId.h"
 #include "types/Color.h"
 
 /// Component that describes physical appearance of the entity:

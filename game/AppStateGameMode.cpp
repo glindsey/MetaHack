@@ -141,7 +141,7 @@ void AppStateGameMode::execute()
     EntityId player = game.getPlayer();
 
     // Update map used for systems that care about it.
-    auto map = COMPONENTS.position.existsFor(player) ? COMPONENTS.position[player].map() : MapId::Null();
+    auto map = COMPONENTS.position.existsFor(player) ? COMPONENTS.position[player].map() : "";
     m_systemManager->lighting().setMap(map);
     m_systemManager->senseSight().setMap(map);
 
@@ -172,9 +172,9 @@ bool AppStateGameMode::initialize()
   // Create the game map.
   /// @todo This shouldn't be hardcoded here
 #ifdef NDEBUG
-  MapId currentMapId = game.maps().create(64, 64);
+  MapID currentMapId = game.maps().create(64, 64);
 #else
-  MapId currentMapId = game.maps().create(20, 20);
+  MapID currentMapId = game.maps().create(20, 20);
 #endif
 
   Map& game_map = game.maps().get(currentMapId);
@@ -1052,8 +1052,8 @@ void AppStateGameMode::resetInventorySelection()
     {
       if (COMPONENTS.position.existsFor(player))
       {
-        MapId gameMap = COMPONENTS.position[player].map();
-        EntityId floorId = gameMap->getTile(m_cursorCoords).getTileContents();
+        MapID gameMap = COMPONENTS.position[player].map();
+        EntityId floorId = MAPS.get(gameMap).getTile(m_cursorCoords).getTileContents();
         m_inventorySelection->setViewed(floorId);
       }
     }
@@ -1101,8 +1101,8 @@ bool AppStateGameMode::moveCursor(Direction direction)
 
   if (COMPONENTS.position.existsFor(player))
   {
-    MapId map = COMPONENTS.position[player].map();
-    result = map->calcCoords(m_cursorCoords, direction, m_cursorCoords);
+    MapID map = COMPONENTS.position[player].map();
+    result = MAPS.get(map).calcCoords(m_cursorCoords, direction, m_cursorCoords);
   }
 
   return result;

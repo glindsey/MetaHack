@@ -2,7 +2,6 @@
 
 #include "components/ComponentMap.h"
 #include "entity/EntityId.h"
-#include "map/MapId.h"
 #include "systems/SystemCRTP.h"
 #include "types/Color.h"
 #include "types/Direction.h"
@@ -31,9 +30,9 @@ public:
   /// Recalculate map lighting.
   virtual void doCycleUpdate() override;
 
-  void resetAllMapLightingData(MapId map);
+  void resetAllMapLightingData(MapID map);
 
-  void clearMapLightingCalculations(MapId map);
+  void clearMapLightingCalculations(MapID map);
 
   /// Get the light shining on a tile.
   /// Syntactic sugar for getWallLightLevel(coords, Direction::Self).
@@ -44,7 +43,7 @@ public:
 
 protected:
   /// Virtual override called after the map is changed.
-  virtual void setMapNVO(MapId newMap) override;
+  virtual void setMapNVO(MapID newMap) override;
 
   /// Apply a light source to a location.
   /// Traverses up the location chain until it finds either a map tile or an

@@ -3,8 +3,6 @@
 
 #include "stdafx.h"
 
-#include "map/MapId.h"
-
 // Forward declarations
 class GameState;
 class Map;
@@ -23,23 +21,25 @@ public:
   void serialize(Archive& archive)
   {
     /// @todo WRITE ME
-    //archive(m_maps, m_currentMapId);
+    //archive(m_maps, m_currentMapID);
   }
 
-  /// Returns whether a specified MapId exists in the map.
-  bool exists(MapId map_id) const;
+  /// Returns whether a specified Map exists.
+  bool exists(MapID map_id) const;
 
   /// Gets a reference to a Map by ID.
-  Map const& get(MapId map_id) const;
+  Map const& get(MapID map_id) const;
 
   /// Gets a reference to a Map by ID.
-  Map& get(MapId map_id);
+  Map& get(MapID map_id);
 
-  MapId create(int x, int y);
+  /// @todo Update so we pass in the MapID we want, and the function will
+  ///       either use that ID, or create a similar one (e.g. if "main" is
+  ///       passed in, and already exists, it will make a map named "main2"
+  ///       or something to that effect.)
+  MapID create(int x, int y);
 
-  bool destroy(MapId map_id);
-
-  static const MapId nullMapId;
+  bool destroy(MapID map_id);
 
 protected:
 private:
@@ -47,9 +47,9 @@ private:
   GameState& m_gameState;
 
   /// Collection of maps.
-  std::unordered_map<MapId, std::unique_ptr<Map>> m_maps;
+  std::unordered_map<MapID, std::unique_ptr<Map>> m_maps;
 
-  MapId m_currentMapId;
+  MapID m_currentMapID;
 };
 
 #endif // MAPFACTORY_H

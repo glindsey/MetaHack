@@ -46,7 +46,7 @@ public:
 
   MapTile& getTile(IntVec2 tile);
 
-  bool tileIsOpaque(IntVec2 tile);
+  bool tileIsOpaque(IntVec2 tile) const;
 
   /// Get the map's size.
   IntVec2 const& getSize() const;
@@ -69,7 +69,7 @@ public:
                   IntVec2& result);
 
   /// Get Map ID.
-  MapId getMapId() const;
+  MapID getMapID() const;
 
   /// @todo Not sure all the "feature" stuff should be public.
   ///       But not sure how to scope it better either.
@@ -89,7 +89,7 @@ public:
   MapFeature& addMapFeature(MapFeature* feature);
 
 protected:
-  Map(GameState& game, MapId mapId, int width, int height);
+  Map(GameState& game, MapID mapId, int width, int height);
 
   /// Initialize a new Map.
   /// This unfortunately has to be separated from the constructor due to
@@ -103,7 +103,7 @@ private:
   GameState& m_gameState;
 
   /// Map ID.
-  MapId m_id;
+  MapID m_id;
 
   /// Map size.
   IntVec2 m_size;

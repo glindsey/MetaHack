@@ -3,7 +3,6 @@
 #include "components/ComponentMap.h"
 #include "components/ComponentPosition.h"
 #include "entity/EntityId.h"
-#include "map/MapId.h"
 #include "systems/SystemCRTP.h"
 
 // Forward declarations
@@ -82,7 +81,7 @@ public:
   bool areAdjacent(EntityId first, EntityId second) const;
 
 protected:
-  void setMapNVO(MapId newMap);
+  void setMapNVO(MapID newMap);
 
   virtual bool onEvent(Event const& event) override;
 
