@@ -480,7 +480,7 @@ unsigned int Lua::stack_slots(Lua::Type type) const
   }
 }
 
-std::string Lua::find_lua_function(std::string category, std::string suffix)
+std::string Lua::find_lua_function(std::string category, std::string suffix) const
 {
   std::string result = find_lua_function_(category, suffix);
   if (result.empty())
@@ -498,7 +498,7 @@ std::string Lua::find_lua_function(std::string category, std::string suffix)
   return result;
 }
 
-std::string Lua::find_lua_function_(std::string category, std::string suffix)
+std::string Lua::find_lua_function_(std::string category, std::string suffix) const
 {
   std::string function_name = category + "_" + suffix;
 

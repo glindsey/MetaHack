@@ -37,13 +37,13 @@ public:
   /// @param ur_coord Upper-right coordinates.
   /// @param ll_coord Lower-left coordinates.
   /// @param lr_coord Lower-right coordinates.
-  void add_quad(sf::VertexArray& vertices,
+  void addQuad(sf::VertexArray& vertices,
                 UintVec2 tile_coords, Color bg_color,
                 RealVec2 ul_coord, RealVec2 ur_coord,
                 RealVec2 ll_coord, RealVec2 lr_coord);
 
   /// Add a quad with colors specified in a 3x3 grid.
-  void add_gradient_quad(sf::VertexArray& vertices,
+  void addGradientQuadTo(sf::VertexArray& vertices,
                          UintVec2 tile_coords,
                          RealVec2 coordNW, RealVec2 coordNE,
                          RealVec2 coordSW, RealVec2 coordSE,

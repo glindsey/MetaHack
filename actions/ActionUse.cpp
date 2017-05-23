@@ -30,7 +30,7 @@ namespace Actions
   ReasonBool ActionUse::objectIsAllowed(GameState const& gameState) const
   {
     auto& object = getObject();
-    auto useFunctionExists = !(GAME.lua().find_lua_function(COMPONENTS.category[object], "on_object_of_" + getType())).empty();
+    auto useFunctionExists = !(gameState.lua().find_lua_function(COMPONENTS.category[object], "on_object_of_" + getType())).empty();
     return { useFunctionExists, "" };
   }
 

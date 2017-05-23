@@ -29,16 +29,16 @@ protected:
                         TileSheet& tileSheet);
 
   /// Return the coordinates of the tile on the tilesheet.
-  UintVec2 get_tile_sheet_coords() const;
+  UintVec2 getTileSheetCoords() const;
 
 
-  UintVec2 get_entity_tile_sheet_coords(Entity & entity, int frame) const;
+  UintVec2 getEntityTileSheetCoords(Entity & entity, int frame) const;
 
   /// Add the vertices for the maptile to the seen and memory vertices.
   /// @param viewer Entity that is viewing this tile.
   /// @param seen_vertices Array to add seen vertices to.
   /// @param memory_vertices Array to add memory vertices to.
-  void add_tile_vertices(EntityId viewer, 
+  void addTileVertices(EntityId viewer, 
                          sf::VertexArray& seen_vertices,
                          sf::VertexArray& memory_vertices,
                          SystemLighting& lighting);
@@ -46,23 +46,23 @@ protected:
   /// Add the vertices from the viewer's memory.
   /// @param vertices Array to add vertices to.
   /// @param viewer Entity that is remembering this tile.
-  void add_memory_vertices_to(sf::VertexArray & vertices,
+  void addMemoryVerticesTo(sf::VertexArray & vertices,
                               EntityId viewer);
 
   /// Add the floor vertices for the maptile to a VertexArray to be drawn.
   /// @param vertices Array to add vertices to.
-  void add_tile_floor_vertices(sf::VertexArray& vertices,
+  void addTileFloorVerticesTo(sf::VertexArray& vertices,
                                SystemLighting& lighting);
 
   /// Add the floor vertices for the entities on this tile to a VertexArray to be drawn.
-  void add_things_floor_vertices(EntityId viewer,
+  void addEntitiesFloorVertices(EntityId viewer,
                                  sf::VertexArray& vertices,
                                  SystemLighting* lighting,
                                  int frame);
 
   /// Add the floor vertices for the entity specified.
   /// @todo Move into a Entity view.
-  void add_thing_floor_vertices(EntityId entity, 
+  void addEntityFloorVertices(EntityId entity, 
                                 sf::VertexArray& vertices, 
                                 SystemLighting* lighting,
                                 int frame);
@@ -79,7 +79,7 @@ protected:
   /// @param s_is_empty   Whether tile to the south is empty.
   /// @param sw_is_empty  Whether tile to the southwest is empty.
   /// @param w_is_empty   Whether tile to the west is empty.
-  void add_wall_vertices_to(sf::VertexArray& vertices,
+  void addWallVerticesTo(sf::VertexArray& vertices,
                             SystemLighting* lighting,
                             bool nw_is_empty, bool n_is_empty,
                             bool ne_is_empty, bool e_is_empty,

@@ -44,7 +44,7 @@ void MapStandard2DView::update_tiles(EntityId viewer, SystemLighting& lighting)
   {
     for (int x = 0; x < map_size.x; ++x)
     {
-      m_map_tile_views->get({ x, y }).add_tile_vertices(viewer, 
+      m_map_tile_views->get({ x, y }).addTileVertices(viewer, 
                                                         m_map_seen_vertices, 
                                                         m_map_memory_vertices,
                                                         lighting);
@@ -65,7 +65,7 @@ void MapStandard2DView::update_things(EntityId viewer,
   {
     for (int x = 0; x < map_size.x; ++x)
     {
-      m_map_tile_views->get({ x, y }).add_things_floor_vertices(viewer, 
+      m_map_tile_views->get({ x, y }).addEntitiesFloorVertices(viewer, 
                                                                 m_thing_vertices, 
                                                                 &lighting, 
                                                                 frame);

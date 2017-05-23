@@ -244,7 +244,7 @@ EntityId ComponentInventory::remove(EntityId entity)
   return removed_thing;
 }
 
-EntityId ComponentInventory::get_largest_thing()
+EntityId ComponentInventory::getLargestEntity()
 {
   auto iter_largest = m_entities.cbegin();
 

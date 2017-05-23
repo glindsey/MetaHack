@@ -188,7 +188,7 @@ public:
   /// @param type     Entity type to look for
   /// @param suffix   Suffix of the function to call
   /// @return A matching function name, or a blank string if none was found.
-  std::string find_lua_function(std::string type, std::string suffix);
+  std::string find_lua_function(std::string type, std::string suffix) const;
 
   /// Try to call a Lua function that takes the caller and a vector of
   /// arguments and returns a result.
@@ -245,7 +245,7 @@ public:
 
 protected:
   /// Helper method for `find_lua_function`.
-  std::string find_lua_function_(std::string category, std::string suffix);
+  std::string find_lua_function_(std::string category, std::string suffix) const;
 
 private:
   /// Private Lua state.

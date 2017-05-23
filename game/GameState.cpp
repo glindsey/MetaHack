@@ -163,6 +163,12 @@ Lua& GameState::lua()
   return *m_lua;
 }
 
+Lua const& GameState::lua() const
+{
+  return *m_lua;
+}
+
+
 GameState& GameState::instance()
 {
   Assert("GameState", s_instance != nullptr, "tried to get non-existent GameState instance");

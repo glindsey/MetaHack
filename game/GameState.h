@@ -97,6 +97,7 @@ public:
 
   /// Get the Lua state object.
   Lua& lua();
+  Lua const& lua() const;
 
   static GameState& instance();
 

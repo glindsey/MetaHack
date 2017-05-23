@@ -76,7 +76,7 @@ public:
 
   EntityId remove(InventorySlot slot);
 
-  EntityId get_largest_thing();
+  EntityId getLargestEntity();
   EntityId getEntity();
 
   /// Returns whether this inventory can hold the specified entity.

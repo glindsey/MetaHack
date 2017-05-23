@@ -82,7 +82,7 @@ sf::Texture& TileSheet::getTexture(void)
   return m_texture;
 }
 
-void TileSheet::add_quad(sf::VertexArray& vertices,
+void TileSheet::addQuad(sf::VertexArray& vertices,
                          UintVec2 tile_coords, Color bg_color,
                          RealVec2 ul_coord, RealVec2 ur_coord,
                          RealVec2 ll_coord, RealVec2 lr_coord)
@@ -110,7 +110,7 @@ void TileSheet::add_quad(sf::VertexArray& vertices,
   vertices.append(new_vertex);
 }
 
-void TileSheet::add_gradient_quad(sf::VertexArray& vertices,
+void TileSheet::addGradientQuadTo(sf::VertexArray& vertices,
                                   UintVec2 tile_coords,
                                   RealVec2 coordNW, RealVec2 coordNE,
                                   RealVec2 coordSW, RealVec2 coordSE,

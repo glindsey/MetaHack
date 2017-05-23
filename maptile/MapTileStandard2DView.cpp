@@ -28,16 +28,16 @@ MapTileStandard2DView::MapTileStandard2DView(MapTile& map_tile,
 {
 }
 
-UintVec2 MapTileStandard2DView::get_tile_sheet_coords() const
+UintVec2 MapTileStandard2DView::getTileSheetCoords() const
 {
   /// @todo Deal with selecting one of the other tiles.
-  UintVec2 start_coords = get_map_tile().getCategoryData().value("tile-location", UintVec2(0, 0));
+  UintVec2 start_coords = getMapTile().getCategoryData().value("tile-location", UintVec2(0, 0));
   UintVec2 tile_coords(start_coords.x + m_tileOffset, start_coords.y);
   return tile_coords;
 }
 
 /// @todo Instead of repeating this method in EntityStandard2DView, call the view from here.
-UintVec2 MapTileStandard2DView::get_entity_tile_sheet_coords(Entity& entity, int frame) const
+UintVec2 MapTileStandard2DView::getEntityTileSheetCoords(Entity& entity, int frame) const
 {
   /// Get tile coordinates on the sheet.
   UintVec2 start_coords = entity.getCategoryData().value("tile-location", UintVec2(0, 0));
@@ -50,12 +50,12 @@ UintVec2 MapTileStandard2DView::get_entity_tile_sheet_coords(Entity& entity, int
 
   return tile_coords;
 }
-void MapTileStandard2DView::add_tile_vertices(EntityId viewer,
-                                              sf::VertexArray& seen_vertices,
-                                              sf::VertexArray& memory_vertices,
-                                              SystemLighting& lighting)
+void MapTileStandard2DView::addTileVertices(EntityId viewer,
+                                            sf::VertexArray& seenVertices,
+                                            sf::VertexArray& memoryVertices,
+                                            SystemLighting& lighting)
 {
-  auto& tile = get_map_tile();
+  auto& tile = getMapTile();
   auto coords = tile.getCoords();
   auto& x = coords.x;
   auto& y = coords.y;
@@ -79,30 +79,30 @@ void MapTileStandard2DView::add_tile_vertices(EntityId viewer,
   {
     if (this_is_empty)
     {
-      add_tile_floor_vertices(seen_vertices, lighting);
+      addTileFloorVerticesTo(seenVertices, lighting);
     }
     else
     {
-      add_wall_vertices_to(seen_vertices, &lighting,
-                           nw_is_empty, n_is_empty,
-                           ne_is_empty, e_is_empty,
-                           se_is_empty, s_is_empty,
-                           sw_is_empty, w_is_empty);
+      addWallVerticesTo(seenVertices, &lighting,
+                        nw_is_empty, n_is_empty,
+                        ne_is_empty, e_is_empty,
+                        se_is_empty, s_is_empty,
+                        sw_is_empty, w_is_empty);
     }
   }
   else
   {
-    add_memory_vertices_to(memory_vertices, viewer);
+    addMemoryVerticesTo(memoryVertices, viewer);
   }
 }
 
-void MapTileStandard2DView::add_memory_vertices_to(sf::VertexArray& vertices,
-                                                   EntityId viewer)
+void MapTileStandard2DView::addMemoryVerticesTo(sf::VertexArray& vertices,
+                                                EntityId viewer)
 {
   if (!COMPONENTS.position.existsFor(viewer) || !COMPONENTS.spacialMemory.existsFor(viewer)) return;
 
   auto& config = Service<IConfigSettings>::get();
-  auto& tile = get_map_tile();
+  auto& tile = getMapTile();
   auto coords = tile.getCoords();
   auto& viewerPosition = COMPONENTS.position[viewer];
   MapID map = viewerPosition.map();
@@ -131,18 +131,18 @@ void MapTileStandard2DView::add_memory_vertices_to(sf::VertexArray& vertices,
   ///       in the upper-left corner.
   UintVec2 tile_coords = tile_data.value("tile-location", UintVec2(0, 0));
 
-  m_tileSheet.add_quad(vertices,
+  m_tileSheet.addQuad(vertices,
                         tile_coords, Color::White,
                         vNW, vNE,
                         vSW, vSE);
 }
 
-void MapTileStandard2DView::add_tile_floor_vertices(sf::VertexArray& vertices,
-                                                    SystemLighting& lighting)
+void MapTileStandard2DView::addTileFloorVerticesTo(sf::VertexArray& vertices,
+                                                   SystemLighting& lighting)
 {
   auto& config = Service<IConfigSettings>::get();
 
-  auto& tile = get_map_tile();
+  auto& tile = getMapTile();
   auto& coords = tile.getCoords();
 
   sf::Vertex new_vertex;
@@ -174,22 +174,22 @@ void MapTileStandard2DView::add_tile_floor_vertices(sf::VertexArray& vertices,
   RealVec2 vSW{ location.x - half_ts, location.y + half_ts };
   RealVec2 vNW{ location.x - half_ts, location.y - half_ts };
 
-  UintVec2 tile_coords = get_tile_sheet_coords();
+  UintVec2 tile_coords = getTileSheetCoords();
 
-  m_tileSheet.add_gradient_quad(vertices, tile_coords,
-                                 vNW, vNE,
-                                 vSW, vSE,
-                                 lightNW, lightN, lightNE,
-                                 lightW, light, lightE,
-                                 lightSW, lightS, lightSE);
+  m_tileSheet.addGradientQuadTo(vertices, tile_coords,
+                                vNW, vNE,
+                                vSW, vSE,
+                                lightNW, lightN, lightNE,
+                                lightW, light, lightE,
+                                lightSW, lightS, lightSE);
 }
 
-void MapTileStandard2DView::add_things_floor_vertices(EntityId viewer,
-                                                      sf::VertexArray & vertices,
-                                                      SystemLighting* lighting,
-                                                      int frame)
+void MapTileStandard2DView::addEntitiesFloorVertices(EntityId viewer,
+                                                     sf::VertexArray & vertices,
+                                                     SystemLighting* lighting,
+                                                     int frame)
 {
-  auto& tile = get_map_tile();
+  auto& tile = getMapTile();
   auto coords = tile.getCoords();
   EntityId contents = tile.getTileContents();
   ComponentInventory& inv = COMPONENTS.inventory[contents];
@@ -199,10 +199,10 @@ void MapTileStandard2DView::add_things_floor_vertices(EntityId viewer,
     if (inv.count() > 0)
     {
       // Only draw the largest entity on that tile.
-      EntityId biggest_thing = inv.get_largest_thing();
-      if (biggest_thing != EntityId::Mu())
+      EntityId biggestEntity = inv.getLargestEntity();
+      if (biggestEntity != EntityId::Mu())
       {
-        add_thing_floor_vertices(biggest_thing, vertices, lighting, frame);
+        addEntityFloorVertices(biggestEntity, vertices, lighting, frame);
       }
     }
   }
@@ -210,14 +210,14 @@ void MapTileStandard2DView::add_things_floor_vertices(EntityId viewer,
   // Always draw the viewer itself last, if it is present at that tile.
   if (inv.contains(viewer))
   {
-    add_thing_floor_vertices(viewer, vertices, lighting, frame);
+    addEntityFloorVertices(viewer, vertices, lighting, frame);
   }
 }
 
-void MapTileStandard2DView::add_thing_floor_vertices(EntityId entityId, 
-                                                     sf::VertexArray& vertices,
-                                                     SystemLighting* lighting,
-                                                     int frame)
+void MapTileStandard2DView::addEntityFloorVertices(EntityId entityId, 
+                                                   sf::VertexArray& vertices,
+                                                   SystemLighting* lighting,
+                                                   int frame)
 {
   auto& entity = GAME.entities().get(entityId);
   auto& config = Service<IConfigSettings>::get();
@@ -232,14 +232,14 @@ void MapTileStandard2DView::add_thing_floor_vertices(EntityId entityId,
   IntVec2 const& coords = position.coords();
 //  MapTile& tile = position.map()->getTile(coords);
 
-  Color thing_color;
+  Color thingColor;
   if (lighting != nullptr)
   {
-    thing_color = lighting->getLightLevel(coords);
+    thingColor = lighting->getLightLevel(coords);
   }
   else
   {
-    thing_color = Color::White;
+    thingColor = Color::White;
   }
 
   RealVec2 location(coords.x * ts, coords.y * ts);
@@ -247,27 +247,27 @@ void MapTileStandard2DView::add_thing_floor_vertices(EntityId entityId,
   RealVec2 vSE(location.x + ts2, location.y + ts2);
   RealVec2 vNW(location.x - ts2, location.y - ts2);
   RealVec2 vNE(location.x + ts2, location.y - ts2);
-  UintVec2 tile_coords = get_entity_tile_sheet_coords(entity, frame);
+  UintVec2 tileCoords = getEntityTileSheetCoords(entity, frame);
 
-  m_tileSheet.add_quad(vertices,
-                        tile_coords, thing_color,
-                        vNW, vNE,
-                        vSW, vSE);
+  m_tileSheet.addQuad(vertices,
+                      tileCoords, thingColor,
+                      vNW, vNE,
+                      vSW, vSE);
 }
 
 
-void MapTileStandard2DView::add_wall_vertices_to(sf::VertexArray& vertices,
-                                                 SystemLighting* lighting,
-                                                 bool nw_is_empty, bool n_is_empty,
-                                                 bool ne_is_empty, bool e_is_empty,
-                                                 bool se_is_empty, bool s_is_empty,
-                                                 bool sw_is_empty, bool w_is_empty)
+void MapTileStandard2DView::addWallVerticesTo(sf::VertexArray& vertices,
+                                              SystemLighting* lighting,
+                                              bool nwEmpty, bool nEmpty,
+                                              bool neEmpty, bool eEmpty,
+                                              bool seEmpty, bool sEmpty,
+                                              bool swEmpty, bool wEmpty)
 {
   auto& config = Service<IConfigSettings>::get();
-  float map_tile_size = config.get("map-tile-size");
+  float mapTileSize = config.get("map-tile-size");
 
   // This tile.
-  MapTile& tile = get_map_tile();
+  MapTile& tile = getMapTile();
 
   // Checks to see N/S/E/W walls.
   bool playerSeesNWall{ false };
@@ -296,33 +296,33 @@ void MapTileStandard2DView::add_wall_vertices_to(sf::VertexArray& vertices,
   }
 
   // Tile color.
-  Color tile_color{ Color::White };
+  Color tileColor{ Color::White };
 
   // Wall colors.
-  Color wall_n_color_w{ Color::White };
-  Color wall_n_color{ Color::White };
-  Color wall_n_color_e{ Color::White };
+  Color wallNColorW{ Color::White };
+  Color wallNColorC{ Color::White };
+  Color wallNColorE{ Color::White };
 
-  Color wall_e_color_n{ Color::White };
-  Color wall_e_color{ Color::White };
-  Color wall_e_color_s{ Color::White };
+  Color wallEColorN{ Color::White };
+  Color wallEColorC{ Color::White };
+  Color wallEColorS{ Color::White };
 
-  Color wall_s_color_w{ Color::White };
-  Color wall_s_color{ Color::White };
-  Color wall_s_color_e{ Color::White };
+  Color wallSColorW{ Color::White };
+  Color wallSColorC{ Color::White };
+  Color wallSColorE{ Color::White };
 
-  Color wall_w_color_n{ Color::White };
-  Color wall_w_color{ Color::White };
-  Color wall_w_color_s{ Color::White };
+  Color wallWColorN{ Color::White };
+  Color wallWColorC{ Color::White };
+  Color wallWColorS{ Color::White };
 
   // Full tile size.
-  float ts(map_tile_size);
+  float ts(mapTileSize);
 
   // Half of the tile size.
-  float half_ts(map_tile_size * 0.5f);
+  float halfTs(mapTileSize * 0.5f);
 
   // Wall size (configurable).
-  float ws(map_tile_size * 0.4f);
+  float ws(mapTileSize * 0.4f);
 
   // Adjacent tile coordinates
   IntVec2 coords = tile.getCoords();
@@ -333,200 +333,200 @@ void MapTileStandard2DView::add_wall_vertices_to(sf::VertexArray& vertices,
 
   // Tile vertices.
   RealVec2 location(coords.x * ts, coords.y * ts);
-  RealVec2 vTileN(location.x, location.y - half_ts);
-  RealVec2 vTileNE(location.x + half_ts, location.y - half_ts);
-  RealVec2 vTileE(location.x + half_ts, location.y);
-  RealVec2 vTileSE(location.x + half_ts, location.y + half_ts);
-  RealVec2 vTileS(location.x, location.y + half_ts);
-  RealVec2 vTileSW(location.x - half_ts, location.y + half_ts);
-  RealVec2 vTileW(location.x - half_ts, location.y);
-  RealVec2 vTileNW(location.x - half_ts, location.y - half_ts);
+  RealVec2 vTileN(location.x, location.y - halfTs);
+  RealVec2 vTileNE(location.x + halfTs, location.y - halfTs);
+  RealVec2 vTileE(location.x + halfTs, location.y);
+  RealVec2 vTileSE(location.x + halfTs, location.y + halfTs);
+  RealVec2 vTileS(location.x, location.y + halfTs);
+  RealVec2 vTileSW(location.x - halfTs, location.y + halfTs);
+  RealVec2 vTileW(location.x - halfTs, location.y);
+  RealVec2 vTileNW(location.x - halfTs, location.y - halfTs);
 
-  UintVec2 tile_sheet_coords = this->get_tile_sheet_coords();
+  UintVec2 tileSheetCoords = this->getTileSheetCoords();
 
   if (lighting != nullptr)
   {
-    tile_color = lighting->getLightLevel(coords);
+    tileColor = lighting->getLightLevel(coords);
 
     if (playerSeesNWall)
     {
-      wall_n_color = lighting->getWallLightLevel(coords, Direction::North);
-      wall_n_color_w = average(wall_n_color, lighting->getWallLightLevel(coordsW, Direction::North));
-      wall_n_color_e = average(wall_n_color, lighting->getWallLightLevel(coordsE, Direction::North));
+      wallNColorC = lighting->getWallLightLevel(coords, Direction::North);
+      wallNColorW = average(wallNColorC, lighting->getWallLightLevel(coordsW, Direction::North));
+      wallNColorE = average(wallNColorC, lighting->getWallLightLevel(coordsE, Direction::North));
     }
     else
     {
-      wall_n_color = Color::Black;
-      wall_n_color_w = Color::Black;
-      wall_n_color_e = Color::Black;
+      wallNColorC = Color::Black;
+      wallNColorW = Color::Black;
+      wallNColorE = Color::Black;
     }
 
     if (playerSeesEWall)
     {
-      wall_e_color = lighting->getWallLightLevel(coords, Direction::East);
-      wall_e_color_n = average(wall_e_color, lighting->getWallLightLevel(coordsN, Direction::East));
-      wall_e_color_s = average(wall_e_color, lighting->getWallLightLevel(coordsS, Direction::East));
+      wallEColorC = lighting->getWallLightLevel(coords, Direction::East);
+      wallEColorN = average(wallEColorC, lighting->getWallLightLevel(coordsN, Direction::East));
+      wallEColorS = average(wallEColorC, lighting->getWallLightLevel(coordsS, Direction::East));
     }
     else
     {
-      wall_e_color = Color::Black;
-      wall_e_color_n = Color::Black;
-      wall_e_color_s = Color::Black;
+      wallEColorC = Color::Black;
+      wallEColorN = Color::Black;
+      wallEColorS = Color::Black;
     }
 
     if (playerSeesSWall)
     {
-      wall_s_color = lighting->getWallLightLevel(coords, Direction::South);
-      wall_s_color_w = average(wall_s_color, lighting->getWallLightLevel(coordsW, Direction::South));
-      wall_s_color_e = average(wall_s_color, lighting->getWallLightLevel(coordsE, Direction::South));
+      wallSColorC = lighting->getWallLightLevel(coords, Direction::South);
+      wallSColorW = average(wallSColorC, lighting->getWallLightLevel(coordsW, Direction::South));
+      wallSColorE = average(wallSColorC, lighting->getWallLightLevel(coordsE, Direction::South));
     }
     else
     {
-      wall_s_color = Color::Black;
-      wall_s_color_w = Color::Black;
-      wall_s_color_e = Color::Black;
+      wallSColorC = Color::Black;
+      wallSColorW = Color::Black;
+      wallSColorE = Color::Black;
     }
 
     if (playerSeesWWall)
     {
-      wall_w_color = lighting->getWallLightLevel(coords, Direction::West);
-      wall_w_color_n = average(wall_w_color, lighting->getWallLightLevel(coordsN, Direction::West));
-      wall_w_color_s = average(wall_w_color, lighting->getWallLightLevel(coordsS, Direction::West));
+      wallWColorC = lighting->getWallLightLevel(coords, Direction::West);
+      wallWColorN = average(wallWColorC, lighting->getWallLightLevel(coordsN, Direction::West));
+      wallWColorS = average(wallWColorC, lighting->getWallLightLevel(coordsS, Direction::West));
     }
     else
     {
-      wall_w_color = Color::Black;
-      wall_w_color_n = Color::Black;
-      wall_w_color_s = Color::Black;
+      wallWColorC = Color::Black;
+      wallWColorN = Color::Black;
+      wallWColorS = Color::Black;
     }
   }
 
   // NORTH WALL
-  if (n_is_empty)
+  if (nEmpty)
   {
     RealVec2 vS(vTileN.x, vTileN.y + ws);
     RealVec2 vSW(vTileNW.x, vTileNW.y + ws);
-    if (w_is_empty)
+    if (wEmpty)
     {
       vSW.x += ws;
     }
-    else if (!nw_is_empty)
+    else if (!nwEmpty)
     {
       vSW.x -= ws;
     }
     RealVec2 vSE(vTileNE.x, vTileNE.y + ws);
-    if (e_is_empty)
+    if (eEmpty)
     {
       vSE.x -= ws;
     }
-    else if (!ne_is_empty)
+    else if (!neEmpty)
     {
       vSE.x += ws;
     }
 
-    m_tileSheet.add_gradient_quad(vertices, tile_sheet_coords,
-                                   vTileNW, vTileNE,
-                                   vSW, vSE,
-                                   wall_n_color_w, wall_n_color, wall_n_color_e,
-                                   wall_n_color_w, wall_n_color, wall_n_color_e,
-                                   wall_n_color_w, wall_n_color, wall_n_color_e);
+    m_tileSheet.addGradientQuadTo(vertices, tileSheetCoords,
+                                  vTileNW, vTileNE,
+                                  vSW, vSE,
+                                  wallNColorW, wallNColorC, wallNColorE,
+                                  wallNColorW, wallNColorC, wallNColorE,
+                                  wallNColorW, wallNColorC, wallNColorE);
   }
 
   // EAST WALL
-  if (e_is_empty)
+  if (eEmpty)
   {
     RealVec2 vW(vTileE.x - ws, vTileE.y);
     RealVec2 vNW(vTileNE.x - ws, vTileNE.y);
-    if (n_is_empty)
+    if (nEmpty)
     {
       vNW.y += ws;
     }
-    else if (!ne_is_empty)
+    else if (!neEmpty)
     {
       vNW.y -= ws;
     }
     RealVec2 vSW(vTileSE.x - ws, vTileSE.y);
-    if (s_is_empty)
+    if (sEmpty)
     {
       vSW.y -= ws;
     }
-    else if (!se_is_empty)
+    else if (!seEmpty)
     {
       vSW.y += ws;
     }
 
-    m_tileSheet.add_gradient_quad(vertices, tile_sheet_coords,
-                                   vNW, vTileNE,
-                                   vSW, vTileSE,
-                                   wall_e_color_n, wall_e_color_n, wall_e_color_n,
-                                   wall_e_color, wall_e_color, wall_e_color,
-                                   wall_e_color_s, wall_e_color_s, wall_e_color_s);
+    m_tileSheet.addGradientQuadTo(vertices, tileSheetCoords,
+                                  vNW, vTileNE,
+                                  vSW, vTileSE,
+                                  wallEColorN, wallEColorN, wallEColorN,
+                                  wallEColorC, wallEColorC, wallEColorC,
+                                  wallEColorS, wallEColorS, wallEColorS);
   }
 
   // SOUTH WALL
-  if (s_is_empty)
+  if (sEmpty)
   {
     RealVec2 vN(vTileS.x, vTileS.y - ws);
     RealVec2 vNW(vTileSW.x, vTileSW.y - ws);
-    if (w_is_empty)
+    if (wEmpty)
     {
       vNW.x += ws;
     }
-    else if (!sw_is_empty)
+    else if (!swEmpty)
     {
       vNW.x -= ws;
     }
     RealVec2 vNE(vTileSE.x, vTileSE.y - ws);
-    if (e_is_empty)
+    if (eEmpty)
     {
       vNE.x -= ws;
     }
-    else if (!se_is_empty)
+    else if (!seEmpty)
     {
       vNE.x += ws;
     }
 
-    m_tileSheet.add_gradient_quad(vertices, tile_sheet_coords,
-                                   vNW, vNE,
-                                   vTileSW, vTileSE,
-                                   wall_s_color_w, wall_s_color, wall_s_color_e,
-                                   wall_s_color_w, wall_s_color, wall_s_color_e,
-                                   wall_s_color_w, wall_s_color, wall_s_color_e);
+    m_tileSheet.addGradientQuadTo(vertices, tileSheetCoords,
+                                  vNW, vNE,
+                                  vTileSW, vTileSE,
+                                  wallSColorW, wallSColorC, wallSColorE,
+                                  wallSColorW, wallSColorC, wallSColorE,
+                                  wallSColorW, wallSColorC, wallSColorE);
   }
 
   // WEST WALL
-  if (w_is_empty)
+  if (wEmpty)
   {
     RealVec2 vE(vTileW.x + ws, vTileW.y);
     RealVec2 vNE(vTileNW.x + ws, vTileNW.y);
-    if (n_is_empty)
+    if (nEmpty)
     {
       vNE.y += ws;
     }
-    else if (!nw_is_empty)
+    else if (!nwEmpty)
     {
       vNE.y -= ws;
     }
     RealVec2 vSE(vTileSW.x + ws, vTileSW.y);
-    if (s_is_empty)
+    if (sEmpty)
     {
       vSE.y -= ws;
     }
-    else if (!sw_is_empty)
+    else if (!swEmpty)
     {
       vSE.y += ws;
     }
 
-    m_tileSheet.add_gradient_quad(vertices, tile_sheet_coords,
-                                   vTileNW, vNE,
-                                   vTileSW, vSE,
-                                   wall_w_color_n, wall_w_color_n, wall_w_color_n,
-                                   wall_w_color, wall_w_color, wall_w_color,
-                                   wall_w_color_s, wall_w_color_s, wall_w_color_s);
+    m_tileSheet.addGradientQuadTo(vertices, tileSheetCoords,
+                                  vTileNW, vNE,
+                                  vTileSW, vSE,
+                                  wallWColorN, wallWColorN, wallWColorN,
+                                  wallWColorC, wallWColorC, wallWColorC,
+                                  wallWColorS, wallWColorS, wallWColorS);
   }
 }
 
-bool MapTileStandard2DView::onEvent(Event const & event)
+bool MapTileStandard2DView::onEvent(Event const& event)
 {
   return false;
 }

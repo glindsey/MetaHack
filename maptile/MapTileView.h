@@ -34,12 +34,12 @@ protected:
   }
 
   /// Get reference to MapTile associated with this view.
-  MapTile& get_map_tile()
+  MapTile& getMapTile()
   {
     return m_map_tile;
   }
 
-  MapTile const& get_map_tile() const
+  MapTile const& getMapTile() const
   {
     return m_map_tile;
   }

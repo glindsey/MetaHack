@@ -61,7 +61,7 @@ void EntityStandard2DView::draw(sf::RenderTarget& target,
     };
   }
 
-  UintVec2 tile_coords = get_tile_sheet_coords(frame);
+  UintVec2 tile_coords = getTileSheetCoords(frame);
   texture_coords.left = tile_coords.x * tile_size;
   texture_coords.top = tile_coords.y * tile_size;
   texture_coords.width = tile_size;
@@ -101,7 +101,7 @@ std::string EntityStandard2DView::getViewName()
   return "standard2D";
 }
 
-UintVec2 EntityStandard2DView::get_tile_sheet_coords(int frame) const
+UintVec2 EntityStandard2DView::getTileSheetCoords(int frame) const
 {
   auto& entity = getEntity();
   auto& category = entity.getCategoryData();
