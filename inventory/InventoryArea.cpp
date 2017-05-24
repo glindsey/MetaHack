@@ -8,11 +8,14 @@
 #include "entity/EntityView.h"
 #include "game/App.h"
 #include "game/GameState.h"
-#include "services/IConfigSettings.h"
-#include "services/IGraphicViews.h"
 #include "inventory/InventorySelection.h"
 #include "maptile/MapTile.h"
 #include "Service.h"
+#include "services/IConfigSettings.h"
+#include "services/IGraphicViews.h"
+#include "systems/SystemManager.h"
+#include "systems/SystemNarrator.h"
+
 #include "entity/Entity.h"
 #include "entity/EntityPool.h"
 
@@ -161,15 +164,15 @@ void InventoryArea::drawContents_(sf::RenderTexture& texture, int frame)
       }
     }
 
-    item_name << entity->getDescriptiveString(ArticleChoice::Indefinite, UsePossessives::No);
+    item_name << SYSTEMS.narrator().getDescriptiveString(entity, ArticleChoice::Indefinite, UsePossessives::No);
 
     if (wielding)
     {
-      item_name << " (" << viewed_thing->getBodypartDescription(wieldLocation) << ")";
+      item_name << " (" << SYSTEMS.narrator().getBodypartDescription(viewed_thing, wieldLocation) << ")";
     }
     else if (wearing)
     {
-      item_name << " (" << viewed_thing->getBodypartDescription(wearLocation) << ")";
+      item_name << " (" << SYSTEMS.narrator().getBodypartDescription(viewed_thing, wearLocation) << ")";
     }
 
     render_text.setFont(the_default_font);
@@ -198,7 +201,7 @@ void InventoryArea::drawContents_(sf::RenderTexture& texture, int frame)
   // TODO: Might want to define a specific "get_inventory_name()" method
   //       for Entity that defaults to "XXXX's inventory" but can be
   //       overridden to say stuff like "Entities on the floor".
-  sf::String title_string = viewed_thing->getPossessiveString("inventory");
+  sf::String title_string = SYSTEMS.narrator().getPossessiveString(viewed_thing, "inventory");
   title_string[0] = toupper(title_string[0]);
   setText(title_string);
   return;
