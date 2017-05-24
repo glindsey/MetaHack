@@ -5,14 +5,17 @@
 #include "services/IMessageLog.h"
 #include "services/IStringDictionary.h"
 #include "Service.h"
-#include "entity/Entity.h"
-#include "entity/EntityId.h"
+#include "systems/SystemManager.h"
+#include "systems/SystemNarrator.h"
+#include "utilities/Shortcuts.h"
+
+#include "entity/Entity.h" // needed for beObjectOf()
 
 namespace Actions
 {
   ActionUnwield ActionUnwield::prototype;
-  ActionUnwield::ActionUnwield() : Action("unwield", "UNWIELD", ActionUnwield::create_) {}
-  ActionUnwield::ActionUnwield(EntityId subject) : Action(subject, "unwield", "UNWIELD") {}
+  ActionUnwield::ActionUnwield() : Action("UNWIELD", ActionUnwield::create_) {}
+  ActionUnwield::ActionUnwield(EntityId subject) : Action(subject, "UNWIELD") {}
   ActionUnwield::~ActionUnwield() {}
 
   ReasonBool ActionUnwield::subjectIsCapable(GameState const& gameState) const
@@ -33,29 +36,31 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionUnwield::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionUnwield::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     // All checks done by Action class via traits.
     return StateResult::Success();
   }
 
-  StateResult ActionUnwield::doBeginWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionUnwield::doBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     StateResult result = StateResult::Failure();
 
     auto subject = getSubject();
     auto object = getObject();
+    auto& components = gameState.components();
+    auto& narrator = systems.narrator();
 
-    BodyLocation wieldLocation = COMPONENTS.bodyparts[subject].getWieldedLocation(object);
-    std::string bodypart_desc = subject->getBodypartDescription(wieldLocation);
+    BodyLocation wieldLocation = components.bodyparts.of(subject).getWieldedLocation(object);
+    std::string bodypart_desc = narrator.getBodypartDescription(subject, wieldLocation);
+    arguments["your_bodypart"] = narrator.getPossessiveString(subject, bodypart_desc);
 
     // Check if the wielded item is bound.
-    if (COMPONENTS.magicalBinding.existsFor(object) &&
-        COMPONENTS.magicalBinding[object].isAgainst(ComponentMagicalBinding::Against::Unwielding) &&
-        COMPONENTS.magicalBinding[object].isActive())
+    if (components.magicalBinding.existsFor(object) &&
+        components.magicalBinding.of(object).isAgainst(ComponentMagicalBinding::Against::Unwielding) &&
+        components.magicalBinding.of(object).isActive())
     {
-      putMsg(makeTr("YOU_CANT_VERB_FOO_MAGICALLY_BOUND",
-                    { subject->getPossessiveString(bodypart_desc) }));
+      putMsg(narrator.makeTr("YOU_CANT_VERB_FOO_MAGICALLY_BOUND", arguments));
 
       // Premature exit.
       return result;
@@ -65,20 +70,19 @@ namespace Actions
     /// @todo Unwielding shouldn't be instantaneous...?
     if (object->beObjectOf(*this, subject))
     {
-      std::string message;
-      message = makeString("$you unwield $foo. $you are now wielding nothing in $0.", { subject->getPossessiveString(bodypart_desc) });
-      COMPONENTS.bodyparts[subject].removeWieldedLocation(wieldLocation);
+      components.bodyparts.of(subject).removeWieldedLocation(wieldLocation);
+      putMsg(narrator.makeTr("YOU_ARE_NOW_WIELDING_NOTHING", arguments));
     }
 
     return result;
   }
 
-  StateResult ActionUnwield::doFinishWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionUnwield::doFinishWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionUnwield::doAbortWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionUnwield::doAbortWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     return StateResult::Success();
   }

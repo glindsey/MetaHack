@@ -1,14 +1,18 @@
 #include "systems/SystemNarrator.h"
 
-#include "entity/Entity.h"
+//#include "entity/Entity.h"
 #include "entity/EntityId.h"
 #include "Service.h"
 #include "services/IConfigSettings.h"
 #include "services/IGameRules.h"
 #include "services/IStringDictionary.h"
+#include "utilities/JSONUtils.h"
+#include "utilities/Ordinal.h"
+#include "utilities/Shortcuts.h"
 #include "utilities/StringTransforms.h"
 
 SystemNarrator::SystemNarrator(ComponentGlobals const& globals,
+                               ComponentMap<ComponentBodyparts> const& bodyparts,
                                ComponentMap<std::string> const& category,
                                ComponentMap<ComponentGender> const& gender,
                                ComponentMap<ComponentHealth> const& health,
@@ -16,6 +20,7 @@ SystemNarrator::SystemNarrator(ComponentGlobals const& globals,
                                ComponentMap<std::string> const& properName,
                                ComponentMap<unsigned int> const& quantity) :
   SystemCRTP<SystemNarrator>({}),
+  m_bodyparts{ bodyparts },
   m_category{ category },
   m_gender{ gender },
   m_globals{ globals },
@@ -44,64 +49,70 @@ std::ostream& operator<<(std::ostream& os, SystemNarrator::TokenizerState state)
   return os;
 }
 
-bool SystemNarrator::isThirdPerson(EntityId id) const
+bool SystemNarrator::isThirdPerson(EntitySet entities) const
 {
-  return !((m_globals.player() == id) || (m_quantity.valueOr(id, 1) > 1));
+  if (entities.size() != 1) return true;
+  EntityId entity = *(entities.cbegin());
+  return !((m_globals.player() == entity) || (m_quantity.valueOr(entity, 1) > 1));
 }
 
-std::string const& SystemNarrator::chooseVerb(EntityId id,
+std::string const& SystemNarrator::chooseVerb(EntitySet entities,
                                               std::string const& verb12,
                                               std::string const& verb3) const
 {
-  return isThirdPerson(id) ? verb3 : verb12;
+  return isThirdPerson(entities) ? verb3 : verb12;
 }
 
-std::string const& SystemNarrator::getSubjectPronoun(EntityId id) const
+std::string const& SystemNarrator::getSubjectPronoun(EntitySet entities) const
 {
-  return getSubjPro(getGenderOrYou(id));
+  return getSubjPro(getGenderOrYou(entities));
 }
 
-std::string const& SystemNarrator::getObjectPronoun(EntityId id) const
+std::string const& SystemNarrator::getObjectPronoun(EntitySet entities) const
 {
-  return getObjPro(getGenderOrYou(id));
+  return getObjPro(getGenderOrYou(entities));
 }
 
-std::string const& SystemNarrator::getReflexivePronoun(EntityId id) const
+std::string const& SystemNarrator::getReflexivePronoun(EntitySet entities) const
 {
-  return getRefPro(getGenderOrYou(id));
+  return getRefPro(getGenderOrYou(entities));
 }
 
-std::string const& SystemNarrator::getPossessiveAdjective(EntityId id) const
+std::string const& SystemNarrator::getPossessiveAdjective(EntitySet entities) const
 {
-  return getPossAdj(getGenderOrYou(id));
+  return getPossAdj(getGenderOrYou(entities));
 }
 
-std::string const& SystemNarrator::getPossessivePronoun(EntityId id) const
+std::string const& SystemNarrator::getPossessivePronoun(EntitySet entities) const
 {
-  return getPossPro(getGenderOrYou(id));
+  return getPossPro(getGenderOrYou(entities));
 }
 
-Gender SystemNarrator::getGenderOrYou(EntityId id) const
+Gender SystemNarrator::getGenderOrYou(EntitySet entities) const
 {
-  if (m_globals.player() == id)
+  if (entities.size() != 1) return Gender::Plural;
+  EntityId entity = *(entities.cbegin());
+
+  if (m_globals.player() == entity)
   {
     return Gender::SecondPerson;
   }
   else
   {
-    if (m_quantity.valueOr(id, 1) > 1)
+    if (m_quantity.valueOr(entity, 1) > 1)
     {
       return Gender::Plural;
     }
     else
     {
-      return m_gender.valueOrDefault(id).gender();
+      return m_gender.valueOrDefault(entity).gender();
     }
   }
 }
 
 std::string SystemNarrator::getSubjectiveString(EntityId id,
-                                                ArticleChoice articles) const
+                                                ArticleChoice articles,
+                                                UsePossessives possessives) const
 {
   std::string str;
 
@@ -114,19 +125,20 @@ std::string SystemNarrator::getSubjectiveString(EntityId id,
     }
     else
     {
-      str = makeStringNumsOnly(tr("PRONOUN_POSSESSIVE_YOU"), { tr("NOUN_CORPSE") });
+      str = makeStringTokensOnly(tr("PATTERN_POSSESSIVE_YOU"), { {"adjectives", ""}, {"noun", tr("NOUN_CORPSE")} });
     }
   }
   else
   {
-    str = getDescriptiveString(id, articles);
+    str = getDescriptiveString(id, articles, possessives);
   }
 
   return str;
 }
 
 std::string SystemNarrator::getObjectiveString(EntityId id, 
-                                               ArticleChoice articles) const
+                                               ArticleChoice articles,
+                                               UsePossessives possessives) const
 {
   std::string str;
 
@@ -139,27 +151,55 @@ std::string SystemNarrator::getObjectiveString(EntityId id,
     }
     else
     {
-      str = makeStringNumsOnly(tr("PRONOUN_POSSESSIVE_YOU"), { tr("NOUN_CORPSE") });
+      str = str = makeStringTokensOnly(tr("PATTERN_POSSESSIVE_YOU"), { { "adjectives", "" },{ "noun", tr("NOUN_CORPSE") } });
     }
   }
   else
   {
-    str = getDescriptiveString(id, articles);
+    str = getDescriptiveString(id, articles, possessives);
   }
 
   return str;
 }
 
-std::string SystemNarrator::getReflexiveString(EntityId id, 
-                                               EntityId other, 
-                                               ArticleChoice articles) const
+std::string SystemNarrator::getReflexiveString(EntityId id,
+                                               EntityId other,
+                                               ArticleChoice articles,
+                                               UsePossessives possessives) const
 {
-  if (other == id)
+  if (id == other)
   {
-    return getReflexivePronoun(id);
+    return getReflexivePronoun({ id });
   }
 
-  return getDescriptiveString(id, articles);
+  return getDescriptiveString(id, articles, possessives);
+}
+
+std::string SystemNarrator::getDescription(EntitySet entities, 
+                                           std::function<std::string(EntityId)> descriptionFunctor) const
+{
+  size_t counter = 0;
+  size_t numEntities = entities.size();
+  std::string result;
+  if (numEntities == 0)
+  {
+    result = tr("NOUN_NOTHING");
+  }
+  else
+  {
+    for (EntityId entity : entities)
+    {
+      result += descriptionFunctor(entity);
+      ++counter;
+      if (counter != numEntities)
+      {
+        result += (numEntities == 2) ? " " : ", ";
+      }
+      if (numEntities > 2 && counter == numEntities - 1) result = "and ";
+    }
+  }
+
+  return result;
 }
 
 std::string SystemNarrator::getDescriptiveString(EntityId id,
@@ -195,7 +235,7 @@ std::string SystemNarrator::getDescriptiveString(EntityId id,
 
     if (owned && (possessives == UsePossessives::Yes))
     {
-      description = location->getPossessiveString(noun, adjectives);
+      description = getPossessiveString(location, noun, adjectives);
     }
     else
     {
@@ -224,7 +264,7 @@ std::string SystemNarrator::getDescriptiveString(EntityId id,
 
     if (owned && (possessives == UsePossessives::Yes))
     {
-      description = location->getPossessiveString(noun, adjectives);
+      description = getPossessiveString(location, noun, adjectives);
     }
     else
     {
@@ -239,7 +279,12 @@ std::string SystemNarrator::getDescriptiveString(EntityId id,
     }
   }
 
-  name = makeStringNumsOnly(tr("PATTERN_DISPLAY_NAME"), { debug_prefix,description,suffix });
+  name = makeStringTokensOnly(tr("PATTERN_DISPLAY_NAME"), 
+  { 
+    { "debug", debug_prefix }, 
+    { "description", description }, 
+    { "suffix", suffix } 
+  });
 
   return name;
 }
@@ -248,16 +293,26 @@ std::string SystemNarrator::getPossessiveString(EntityId id, std::string owned, 
 {
   if (m_globals.player() == id)
   {
-    return makeStringNumsOnly(tr("PRONOUN_POSSESSIVE_YOU"), { adjectives, owned });
+    return makeStringTokensOnly(tr("PATTERN_POSSESSIVE_YOU"), 
+    { 
+      { "adjectives", adjectives }, 
+      { "noun", owned } 
+    });
   }
   else
   {
-    return makeStringNumsOnly(tr("PATTERN_POSSESSIVE"), {
-      getDescriptiveString(id, ArticleChoice::Definite, UsePossessives::No),
-      adjectives,
-      owned
+    return makeStringTokensOnly(tr("PATTERN_POSSESSIVE"), 
+    {
+      { "subject", getDescriptiveString(id, ArticleChoice::Definite, UsePossessives::No) },
+      { "adjectives", adjectives },
+      { "noun", owned }
     });
   }
+}
+
+json const& SystemNarrator::getCategoryData(EntityId id) const
+{
+  return Service<IGameRules>::get().category(m_category.valueOr(id, ""));
 }
 
 std::string SystemNarrator::getDisplayAdjectives(EntityId id) const
@@ -274,11 +329,6 @@ std::string SystemNarrator::getDisplayAdjectives(EntityId id) const
   return adjectives;
 }
 
-json const& SystemNarrator::getCategoryData(EntityId id) const
-{
-  return Service<IGameRules>::get().category(m_category.valueOr(id, ""));
-}
-
 /// @todo Figure out how to cleanly localize this.
 std::string SystemNarrator::getDisplayName(EntityId id) const
 {
@@ -291,70 +341,121 @@ std::string SystemNarrator::getDisplayPlural(EntityId id) const
   return getCategoryData(id).value("plural", std::string());
 }
 
-std::string SystemNarrator::makeString(EntityId subject,
-                                       EntityId object,
-                                       std::string pattern,
-                                       std::vector<std::string> optionalStrings) const
+std::string SystemNarrator::makeString(std::string pattern, json arguments) const
 {
+  EntityId subject = arguments.value("subject", EntityId::Mu());
+  EntitySet objects = JSONUtils::getSet<EntityId>(arguments["object"]);
+  EntityId target = arguments.value("target", EntityId::Mu());
+  std::string verb = arguments.value("verb", "");
+  Direction targetDir = arguments.value("target-direction", Direction::None);
+  
   std::string new_string = replaceTokens(pattern,
                                          [&](std::string token) -> std::string
   {
     if (token == "are")
     {
-      return chooseVerb(subject, tr("VERB_BE_2"), tr("VERB_BE_3"));
+      return chooseVerb({ subject }, tr("VERB_BE_2"), tr("VERB_BE_3"));
     }
     if (token == "were")
     {
-      return chooseVerb(subject, tr("VERB_BE_P2"), tr("VERB_BE_P3"));
+      return chooseVerb({ subject }, tr("VERB_BE_P2"), tr("VERB_BE_P3"));
     }
     if (token == "do")
     {
-      return chooseVerb(subject, tr("VERB_DO_2"), tr("VERB_DO_3"));
+      return chooseVerb({ subject }, tr("VERB_DO_2"), tr("VERB_DO_3"));
     }
     if (token == "get")
     {
-      return chooseVerb(subject, tr("VERB_GET_2"), tr("VERB_GET_3"));
+      return chooseVerb({ subject }, tr("VERB_GET_2"), tr("VERB_GET_3"));
     }
     if (token == "have")
     {
-      return chooseVerb(subject, tr("VERB_HAVE_2"), tr("VERB_HAVE_3"));
+      return chooseVerb({ subject }, tr("VERB_HAVE_2"), tr("VERB_HAVE_3"));
     }
     if (token == "seem")
     {
-      return chooseVerb(subject, tr("VERB_SEEM_2"), tr("VERB_SEEM_3"));
+      return chooseVerb({ subject }, tr("VERB_SEEM_2"), tr("VERB_SEEM_3"));
     }
     if (token == "try")
     {
-      return chooseVerb(subject, tr("VERB_TRY_2"), tr("VERB_TRY_3"));
+      return chooseVerb({ subject }, tr("VERB_TRY_2"), tr("VERB_TRY_3"));
     }
     if ((token == "foo_is") || (token == "foois"))
     {
-      return chooseVerb(subject, tr("VERB_BE_2"), tr("VERB_BE_3"));
+      return chooseVerb(objects, tr("VERB_BE_2"), tr("VERB_BE_3"));
     }
     if ((token == "foo_has") || (token == "foohas"))
     {
-      return chooseVerb(subject, tr("VERB_HAVE_2"), tr("VERB_HAVE_3"));
+      return chooseVerb(objects, tr("VERB_HAVE_2"), tr("VERB_HAVE_3"));
     }
     if ((token == "the_foo") || (token == "thefoo"))
     {
-      return getDescriptiveString(object, ArticleChoice::Definite);
+      return getDescription(objects, 
+                            [&](EntityId entity) -> std::string
+      {
+        return getDescriptiveString(entity);
+      });
     }
     if ((token == "the_foos_location") || (token == "thefooslocation"))
     {
-      auto parent = (m_position.existsFor(object) ? m_position.of(object).parent : EntityId::Mu());
+      if (objects.size() < 1) return "";
+      auto object = *(objects.cbegin());
+      auto parent = (m_position.existsFor(object) ? m_position.of(object).parent() : EntityId::Mu());
       return getDescriptiveString(parent, ArticleChoice::Definite);
+    }
+    if ((token == "the_target_thing") || (token == "thetargetthing"))
+    {
+      return getDescriptiveString(target);
     }
     if (token == "fooself")
     {
+      if (objects.size() < 1) return "";
+      auto object = *(objects.cbegin());
       return getReflexiveString(object, subject, ArticleChoice::Definite);
     }
     if ((token == "foo_pro_sub") || (token == "fooprosub"))
     {
-      return getSubjectPronoun(object);
+      return getSubjectPronoun(objects);
     }
     if ((token == "foo_pro_obj") || (token == "fooproobj"))
     {
-      return getObjectPronoun(object);
+      return getObjectPronoun(objects);
+    }
+    if ((token == "foo_pro_ref") || (token == "fooproref"))
+    {
+      return getReflexivePronoun(objects);
+    }
+    if (token == "verb")
+    {
+      return getVerb2(verb);
+    }
+    if (token == "verb3")
+    {
+      return getVerb3(verb);
+    }
+    if (token == "verbed")
+    {
+      return getVerbed(verb);
+    }
+    if (token == "verbing")
+    {
+      return getVerbing(verb);
+    }
+    if ((token == "verb_pp") || (token == "verbpp"))
+    {
+      return getVerbPP(verb);
+    }
+    if (token == "cverb")
+    {
+      return (isThirdPerson({ subject }) ? getVerb3(verb) : getVerb2(verb));
+    }
+    if (token == "objcverb")
+    {
+      return (isThirdPerson(objects) ? getVerb3(verb) : getVerb2(verb));
+    }
+    if ((token == "a_subject_type") || (token == "asubjecttype"))
+    {
+      return getIndefArt(subject) + " " + getDisplayName(subject);
     }
     if (token == "you")
     {
@@ -362,41 +463,37 @@ std::string SystemNarrator::makeString(EntityId subject,
     }
     if ((token == "you_pro_sub") || (token == "youprosub"))
     {
-      return getSubjectPronoun(subject);
+      return getSubjectPronoun({ subject });
     }
     if ((token == "you_pro_obj") || (token == "youproobj"))
     {
-      return getObjectPronoun(subject);
+      return getObjectPronoun({ subject });
+    }
+    if ((token == "your_location") || (token == "yourlocation"))
+    {
+      auto parent = (m_position.existsFor(subject) ? m_position.of(subject).parent() : EntityId::Mu());
+      return getDescriptiveString(parent, ArticleChoice::Indefinite);
     }
     if (token == "yourself")
     {
-      return getReflexivePronoun(subject);
+      return getReflexivePronoun({ subject });
+    }
+    if (token == "targdir")
+    {
+      std::stringstream ss;
+      ss << targetDir;
+      return ss.str();
     }
 
-    // Check for a numerical token.
-    try
+    // Check for another token. Substitute if it exists, return "[token]" if not.
+    if (arguments.count(token) != 0)
     {
-      unsigned int converted = static_cast<unsigned int>(std::stoi(token));
-
-      // Check that the optional arguments are at least this size.
-      if (converted < optionalStrings.size())
-      {
-        // Return the string passed in.
-        return optionalStrings.at(converted);
-      }
+      return arguments["token"];
     }
-    catch (std::invalid_argument&)
+    else
     {
-      // Not a number, so bail.
+      return "[" + token + "]";
     }
-    catch (...)
-    {
-      // Throw anything else.
-      throw;
-    }
-
-    // Nothing else matched, return default.
-    return "[" + token + "]";
   },
                                          [&](std::string token, std::string arg) -> std::string
   {
@@ -411,11 +508,11 @@ std::string SystemNarrator::makeString(EntityId subject,
   {
     if ((token == "cv") || (token == "subjcv") || (token == "subj_cv"))
     {
-      return isThirdPerson(subject);
+      return isThirdPerson({ subject });
     }
     if ((token == "objcv") || (token == "obj_cv") || (token == "foocv") || (token == "foo_cv"))
     {
-      return isThirdPerson(object);
+      return isThirdPerson(objects);
     }
     if ((token == "isPlayer") || (token == "isplayer"))
     {
@@ -437,40 +534,20 @@ std::string SystemNarrator::makeString(EntityId subject,
   return new_string;
 }
 
-std::string SystemNarrator::makeString(EntityId subject, EntityId object, std::string pattern) const
-{
-  return makeString(subject, object, pattern, {});
-}
-
-std::string SystemNarrator::makeStringNumsOnly(std::string pattern, std::vector<std::string> optionalStrings) const
+std::string SystemNarrator::makeStringTokensOnly(std::string pattern, json arguments) const
 {
   std::string new_string = replaceTokens(pattern,
                                          [&](std::string token) -> std::string
   {
-    // Check for a numerical token.
-    try
+    // Check for token. Substitute if it exists, return "[token]" if not.
+    if (arguments.count(token) != 0)
     {
-      unsigned int converted = static_cast<unsigned int>(std::stoi(token));
-
-      // Check that the optional arguments are at least this size.
-      if (converted < optionalStrings.size())
-      {
-        // Return the string passed in.
-        return optionalStrings.at(converted);
-      }
+      return arguments["token"];
     }
-    catch (std::invalid_argument&)
+    else
     {
-      // Not a number, so bail.
+      return "[" + token + "]";
     }
-    catch (...)
-    {
-      // Throw anything else.
-      throw;
-    }
-
-    // Nothing else matched, return default.
-    return "[" + token + "]";
   },
                                          [&](std::string token, std::string arg) -> std::string
   {
@@ -493,50 +570,11 @@ std::string SystemNarrator::makeStringNumsOnly(std::string pattern, std::vector<
   return new_string;
 }
 
-std::string SystemNarrator::makeTr(EntityId subject, 
-                                   EntityId object, 
-                                   std::string key) const
+std::string SystemNarrator::makeTr(std::string key, json arguments) const
 {
-  return makeString(subject, object, tr(key), {});
+  return makeString(tr(key), arguments);
 }
 
-std::string SystemNarrator::makeTr(EntityId subject, 
-                                   EntityId object, 
-                                   std::string key, 
-                                   std::vector<std::string> optionalStrings) const
-{
-  return makeString(subject, object, tr(key), optionalStrings);
-}
-
-/// Find all occurrence of tokens, e.g. `$xxx` or `$(xxx?yyy:zzz)`.
-///
-/// For tokens of form `$xxx`:
-///   The passed-in functor `tokenFunctor` is called with the string `xxx` as
-/// an argument, and returns another string to replace it with.
-///
-/// For token of form `$xxx(yyy)`:
-///   The passed-in functor `tokenArgumentFunctor` is called with the strings
-/// `xxx` and `yyy` as arguments, and returns another string to replace the whole
-/// thing with.
-///
-/// For tokens of form `$(xxx?yyy:zzz)`:
-///   The passed-in functor `chooseFunctor` is called with the string `xxx` as
-/// an argument. If the functor returns true, the token will be replaced by the
-/// string `yyy`; otherwise, it will be replaced by the string `zzz`.
-///
-/// String `xxx` must not be blank, and must consist of alphanumeric characters
-/// and underscores only.
-/// Strings `yyy` or `zzz` can be blank, and can consist of any characters
-/// other than ":" for string `yyy` or ")" for string `zzz`.
-///
-/// The string `$$` is recognized as a single `$` instead of being parsed as a
-/// token.
-///
-/// In all cases, a backslash can be used to escape any character and prevent
-/// it from being recognized as a token delimiter.
-/// 
-/// The final string has all whitespace sequences reduced to a single space
-/// each, and has excess whitespace trimmed from the head and tail.
 std::string SystemNarrator::replaceTokens(std::string str,
                                           std::function<std::string(std::string)> tokenFunctor,
                                           std::function<std::string(std::string, std::string)> tokenArgumentFunctor,
@@ -752,6 +790,207 @@ std::string SystemNarrator::replaceTokens(std::string str,
   boost::trim(outString);
 
   return outString;
+}
+
+unsigned int SystemNarrator::getBodypartNumber(EntityId id, BodyPart part) const
+{
+  if (!m_bodyparts.existsFor(id)) return 0;
+  auto& bodyparts = m_bodyparts.of(id);
+  return bodyparts.typicalCount(part);
+}
+
+std::string SystemNarrator::getBodypartName(EntityId id, BodyPart part) const
+{
+  std::stringstream ss;
+  ss << part;
+
+  std::string fancyPartName = "NOUN_" + m_category.of(id) + "_" + ss.str();
+  std::string partName = "NOUN_" + ss.str();
+
+  boost::to_upper(fancyPartName);
+  boost::to_upper(partName);
+
+  bool fancyNameExists = Service<IStringDictionary>::get().contains(fancyPartName);
+
+  return (fancyNameExists ? tr(fancyPartName) : tr(partName));
+}
+
+std::string SystemNarrator::getBodypartPlural(EntityId id, BodyPart part) const
+{
+  std::stringstream ss;
+  ss << part;
+
+  std::string fancyPartName = "NOUN_" + m_category.of(id) + "_" + ss.str() + "_PLURAL";
+  std::string partName = "NOUN_" + ss.str() + "_PLURAL";
+
+  boost::to_upper(fancyPartName);
+  boost::to_upper(partName);
+
+  bool fancyNameExists = Service<IStringDictionary>::get().contains(fancyPartName);
+
+  return (fancyNameExists ? tr(fancyPartName) : tr(partName));
+}
+
+/// @todo Figure out how to localize this.
+std::string SystemNarrator::getBodypartDescription(EntityId id, BodyLocation location)
+{
+  uint32_t total_number = getBodypartNumber(id, location.part);
+  std::string part_name = getBodypartName(id, location.part);
+  std::string result;
+
+  Assert("Narrator", location.number < total_number, "asked for bodypart " << location.number << " of " << total_number);
+  switch (total_number)
+  {
+  case 0: // none of them!?  shouldn't occur!
+    result = "non-existent " + part_name;
+    CLOG(WARNING, "Narrator") << "Request for description of " << result << "!?";
+    break;
+
+  case 1: // only one of them
+    result = part_name;
+    break;
+
+  case 2: // assume a right and left one.
+    switch (location.number)
+    {
+    case 0:
+      result = "right " + part_name;
+      break;
+    case 1:
+      result = "left " + part_name;
+      break;
+    default:
+      break;
+    }
+    break;
+
+  case 3: // assume right, center, and left.
+    switch (location.number)
+    {
+    case 0:
+      result = "right " + part_name;
+      break;
+    case 1:
+      result = "center " + part_name;
+      break;
+    case 2:
+      result = "left " + part_name;
+      break;
+    default:
+      break;
+    }
+    break;
+
+  case 4: // Legs/feet assume front/rear, others assume upper/lower.
+    if ((location.part == BodyPart::Leg) || (location.part == BodyPart::Foot))
+    {
+      switch (location.number)
+      {
+      case 0:
+        result = "front right " + part_name;
+        break;
+      case 1:
+        result = "front left " + part_name;
+        break;
+      case 2:
+        result = "rear right " + part_name;
+        break;
+      case 3:
+        result = "rear left " + part_name;
+        break;
+      default:
+        break;
+      }
+    }
+    else
+    {
+      switch (location.number)
+      {
+      case 0:
+        result = "upper right " + part_name;
+        break;
+      case 1:
+        result = "upper left " + part_name;
+        break;
+      case 2:
+        result = "lower right " + part_name;
+        break;
+      case 3:
+        result = "lower left " + part_name;
+        break;
+      default:
+        break;
+      }
+    }
+    break;
+
+  case 6: // Legs/feet assume front/middle/rear, others upper/middle/lower.
+    if ((location.part == BodyPart::Leg) || (location.part == BodyPart::Foot))
+    {
+      switch (location.number)
+      {
+      case 0:
+        result = "front right " + part_name;
+        break;
+      case 1:
+        result = "front left " + part_name;
+        break;
+      case 2:
+        result = "middle right " + part_name;
+        break;
+      case 3:
+        result = "middle left " + part_name;
+        break;
+      case 4:
+        result = "rear right " + part_name;
+        break;
+      case 5:
+        result = "rear left " + part_name;
+        break;
+      default:
+        break;
+      }
+    }
+    else
+    {
+      switch (location.number)
+      {
+      case 0:
+        result = "upper right " + part_name;
+        break;
+      case 1:
+        result = "upper left " + part_name;
+        break;
+      case 2:
+        result = "middle right " + part_name;
+        break;
+      case 3:
+        result = "middle left " + part_name;
+        break;
+      case 4:
+        result = "lower right " + part_name;
+        break;
+      case 5:
+        result = "lower left " + part_name;
+        break;
+      default:
+        break;
+      }
+    }
+    break;
+
+  default:
+    break;
+  }
+
+  // Anything else and we just return the ordinal name.
+  /// @todo Deal with fingers/toes.
+  if (result.empty())
+  {
+    result = Ordinal::get(location.number) + " " + part_name;
+  }
+
+  return result;
 }
 
 std::string SystemNarrator::getVerb2(std::string verb) const

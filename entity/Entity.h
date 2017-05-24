@@ -24,12 +24,6 @@ class Entity;
 class EntityId;
 class MapTile;
 
-// Using declarations.
-using BodyLocationMap = std::unordered_map<BodyLocation, EntityId>;
-using BodyLocationPair = std::pair<BodyLocation, EntityId>;
-
-using ActionCollection = std::deque< std::unique_ptr<Actions::Action> >;
-
 /// Entity is any object in the game, animate or not.
 /// @todo Still a LOT of cruft in this class that should be refactored out,
 ///       e.g. the wearing/wielding stuff.
@@ -43,6 +37,8 @@ class Entity
 public:
 
   virtual ~Entity();
+
+  virtual std::string getDisplayName() const override;
 
   /// Queue an action for this DynamicEntity to perform.
   /// @param action The Action to queue. The Action is MOVED when queued,
@@ -63,139 +59,8 @@ public:
   /// Clear all pending actions in this Entity's queue.
   void clearAllPendingActions();
   
-  /// Returns true if this entity is the current player.
-  bool isPlayer() const;
-
   /// Return a reference to this entity.
   EntityId getId() const;
-
-  Gender getGenderOrYou() const;
-
-  /// Get the number of a particular body part the DynamicEntity has.
-  unsigned int getBodypartNumber(BodyPart part) const;
-
-  /// Get the appropriate body part name for the DynamicEntity.
-  std::string getBodypartName(BodyPart part) const;
-
-  /// Get the appropriate body part plural for the DynamicEntity.
-  std::string getBodypartPlural(BodyPart part) const;
-
-  /// Get the appropriate description for a body part.
-  /// This takes the body part name and the number referencing the particular
-  /// part and comes up with a description.
-  /// For example, for most creatures with two hands, hand #0 will be the
-  /// "right hand" and hand #1 will be the "left hand".
-  /// In most cases the default implementation here will work, but if a
-  /// creature has (for example) a strange configuration of limbs this can be
-  /// overridden.
-  std::string getBodypartDescription(BodyLocation location);
-
-  /// Return this object's adjective qualifiers (such as "fireproof", "waterproof", etc.)
-  std::string getDisplayAdjectives() const;
-
-  /// Return this object's name.
-  std::string getDisplayName() const;
-
-  /// Return this object's plural.
-  std::string getDisplayPlural() const;
-
-  /// Return a string that identifies this entity, in the subjective case.
-  /// If it IS the player, it'll return "you".
-  /// Otherwise it calls getDescriptiveString().
-  ///
-  /// @param articles Choose whether to use definite or indefinite articles.
-  ///                 Defaults to definite articles.
-  std::string getSubjectiveString(ArticleChoice articles = ArticleChoice::Definite) const;
-
-  /// Return a string that identifies this entity, in the objective case.
-  /// If it IS the player, it'll return "you".
-  /// Otherwise it calls getDescriptiveString().
-  ///
-  /// @param articles Choose whether to use definite or indefinite articles.
-  ///                 Defaults to definite articles.
-  ///
-  /// @note In English this has the same results as 
-  /// getSubjectiveString(), but _this will not be the case
-  /// in all languages_.
-  std::string getObjectiveString(ArticleChoice articles = ArticleChoice::Definite) const;
-
-  /// Return a string that identifies this entity, 
-  /// If it matches the object passed in as "other", it'll return
-  /// the appropriate reflexive pronoun ("yourself", "itself", etc.).
-  /// Otherwise it calls getDescriptiveString().
-  ///
-  /// @param other      The "other" to compare to.
-  /// @param articles Choose whether to use definite or indefinite articles.
-  ///                 Defaults to definite articles.
-  std::string getReflexiveString(EntityId other, ArticleChoice articles = ArticleChoice::Definite) const;
-
-  /// Return a string that identifies this entity.
-  /// Returns "the/a/an" and a description of the entity, such as
-  /// "the chair".
-  /// If it is carried by the player, and possessives = true, it'll
-  /// return "your (entity)".
-  /// Likewise, if it is carried by another DynamicEntity it'll return
-  /// "(DynamicEntity)'s (entity)".
-  /// @todo Make localizable. (How? Use Lua scripts maybe?)
-  ///
-  /// @param articles Choose whether to use definite or indefinite articles.
-  ///                 Defaults to definite articles.
-  /// @param possessives  Choose whether to use possessive articles when appropriate.
-  ///                     Defaults to using them.
-  std::string getDescriptiveString(ArticleChoice articles = ArticleChoice::Definite,
-                                   UsePossessives possessives = UsePossessives::Yes) const;
-
-  /// Choose the proper possessive form for a string passed in.
-  /// For a Entity, this is simply "the foo", as Entities cannot own entities.
-  /// This function checks to see if this Entity is currently designated as
-  /// the player.  If so, it returns "your foo".  If not, it returns getName() + "'s foo".
-  /// @todo Make localizable. (How? Use Lua scripts maybe?)
-  ///
-  /// @param owned      String name of the thing that is possessed.
-  /// @param adjectives Optional adjectives to add.
-  ///
-  /// @note If you want a possessive pronoun like his/her/its/etc., use
-  /// getPossessiveAdjective().
-  std::string getPossessiveString(std::string owned, std::string adjectives = "");
-
-  /// Return true if a third-person verb form should be used.
-  /// This function checks to see if this Entity is currently designated as
-  /// the player, or has a quantity greater than zero.
-  /// If so, it returns true; otherwise, it returns false.
-  /// @todo See if this is different for languages other than English.
-  ///       I'm guessing the answer is "yes, yes it is".
-  bool isThirdPerson();
-
-  /// Choose which verb form to use based on first/second/third person.
-  /// This function checks to see if this Entity is currently designated as
-  /// the player, or has a quantity greater than zero.
-  /// If so, it returns the string passed as verb2; otherwise, it returns the
-  /// string passed as verb3.
-  /// @param verb2 The second person or plural verb form, such as "shake"
-  /// @param verb3 The third person verb form, such as "shakes"
-  std::string const& chooseVerb(std::string const& verb2,
-                                std::string const& verb3);
-
-  /// @addtogroup Pronouns
-  /// @todo Make localizable. (How? Use Lua scripts maybe?)
-  /// @{
-
-  /// Get the appropriate subject pronoun for the Entity.
-  std::string const& getSubjectPronoun() const;
-
-  /// Get the appropriate object pronoun for the Entity.
-  std::string const& getObjectPronoun() const;
-
-  /// Get the appropriate reflexive pronoun for the Entity.
-  std::string const& getReflexivePronoun() const;
-
-  /// Get the appropriate possessive adjective for the Entity.
-  std::string const& getPossessiveAdjective() const;
-
-  /// Get the appropriate possessive pronoun for the Entity.
-  std::string const& getPossessivePronoun() const;
-
-  /// @}
 
   /// Spill the contents of this Entity out into the location of the Entity.
   //void spill();

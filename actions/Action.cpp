@@ -6,22 +6,22 @@
 #include "ActionMove.h"
 
 #include "components/ComponentManager.h"
-#include "entity/Entity.h"
-#include "entity/EntityPool.h"
 #include "entity/EntityId.h"
 #include "game/GameState.h"
 #include "services/IStringDictionary.h"
 #include "services/MessageLog.h"
 #include "Service.h"
 #include "systems/SystemManager.h"
+#include "systems/SystemNarrator.h"
 #include "systems/SystemSpacialRelationships.h"
+#include "utilities/Shortcuts.h"
 #include "utilities/StringTransforms.h"
 
 namespace Actions
 {
   std::unordered_map<std::string, ActionCreator> Action::s_actionMap;
 
-  Action::Action(std::string type, std::string verb, ActionCreator creator)
+  Action::Action(std::string type, ActionCreator creator)
     :
     m_state{ State::Pending },
     m_subject{ EntityId::Mu() },
@@ -29,13 +29,31 @@ namespace Actions
     m_targetThing{ EntityId::Mu() },
     m_targetDirection{ Direction::None },
     m_quantity{ 1 },
-    m_type{ type },
-    m_verb{ verb }
+    m_type{ type }
   {
     registerActionAs(type, creator);
   }
 
-  Action::Action(EntityId subject, std::string type, std::string verb)
+  json Action::makeJSONArgumentsObject() const
+  {
+    auto subject = getSubject();
+    auto& objects = getObjects();
+    auto target = getTargetThing();
+    auto verb = getType();
+    auto targetDirection = getTargetDirection();
+
+    json result{};
+
+    result["subject"] = subject;
+    if (objects.size() > 0) result["object"] = objects;
+    if (target != EntityId::Mu()) result["target"] = target;
+    if (!verb.empty()) result["verb"] = verb;
+    if (targetDirection != Direction::None) result["target-direction"] = targetDirection;
+
+    return result;
+  }
+
+  Action::Action(EntityId subject, std::string type)
     :
     m_state{ State::Pending },
     m_subject{ subject },
@@ -43,8 +61,7 @@ namespace Actions
     m_targetThing{ EntityId::Mu() },
     m_targetDirection{ Direction::None },
     m_quantity{ 1 },
-    m_type{ type },
-    m_verb{ verb }
+    m_type{ type }
   {}
 
   Action::~Action()
@@ -96,6 +113,7 @@ namespace Actions
   {
     auto subject = getSubject();
     auto& components = gameState.components();
+    auto& arguments = makeJSONArgumentsObject();
 
     if (!components.activity.existsFor(subject)) return false;
 
@@ -127,7 +145,7 @@ namespace Actions
       switch (m_state)
       {
         case State::Pending:
-          result = doPreBeginWork(gameState, systems);
+          result = doPreBeginWork(gameState, systems, arguments);
 
           if (result.success)
           {
@@ -144,7 +162,7 @@ namespace Actions
           break;
 
         case State::PreBegin:
-          result = doBeginWork(gameState, systems);
+          result = doBeginWork(gameState, systems, arguments);
 
           // If starting the action succeeded, move to the in-progress state.
           // Otherwise, just go right to post-finish.
@@ -163,14 +181,14 @@ namespace Actions
           break;
 
         case State::InProgress:
-          result = doFinishWork(gameState, systems);
+          result = doFinishWork(gameState, systems, arguments);
 
           activity.incBusyTicks(result.elapsed_time);
           setState(State::PostFinish);
           break;
 
         case State::Interrupted:
-          result = doAbortWork(gameState, systems);
+          result = doAbortWork(gameState, systems, arguments);
 
           activity.incBusyTicks(result.elapsed_time);
           setState(State::PostFinish);
@@ -242,11 +260,12 @@ namespace Actions
     return m_type;
   }
 
-    StateResult Action::doPreBeginWork(GameState& gameState, SystemManager& systems)
+    StateResult Action::doPreBeginWork(GameState& gameState, SystemManager& systems, json& arguments)
   {
     auto& components = gameState.components();
     auto subject = getSubject();
     auto& objects = getObjects();
+    auto& narrator = systems.narrator();
     bool hasPosition = components.position.existsFor(subject);
     auto new_direction = getTargetDirection();
 
@@ -255,24 +274,16 @@ namespace Actions
     ReasonBool capable = subjectIsCapable(gameState);
     if (!capable.value)
     {
-      printMessageTry();
+      printMessageTry(systems, arguments);
+
       if (!capable.reason.empty())
       {
-        /// @todo Add translation key
-        putMsg(makeTr("YOU_ARE_NOT_CAPABLE_OF_VERBING_BECAUSE",
-        {
-          getIndefArt(subject->getDisplayName()),
-          subject->getDisplayName(),
-          capable.reason
-        }));
+        arguments["reason"] = capable.reason;
+        putMsg(narrator.makeTr("YOU_ARE_NOT_CAPABLE_OF_VERBING_BECAUSE", arguments));
       }
       else
       {
-        putMsg(makeTr("YOU_ARE_NOT_CAPABLE_OF_VERBING",
-        {
-          getIndefArt(subject->getDisplayName()),
-          subject->getDisplayName()
-        }));
+        putMsg(narrator.makeTr("YOU_ARE_NOT_CAPABLE_OF_VERBING", arguments));
       }
 
       return StateResult::Failure();
@@ -282,8 +293,8 @@ namespace Actions
     ReasonBool capableNow = subjectIsCapableNow(gameState);
     if (!capableNow.value)
     {
-      printMessageTry();
-      putMsg(makeTr("YOU_CANT_VERB_NOW", { getIndefArt(subject->getDisplayName()), subject->getDisplayName() }));
+      printMessageTry(systems, arguments);
+      putMsg(narrator.makeTr("YOU_CANT_VERB_NOW", arguments));
       return StateResult::Failure();
     }
 
@@ -292,7 +303,7 @@ namespace Actions
       // Make sure we can move RIGHT NOW.
       if (!components.mobility.existsFor(subject))
       {
-        putTr("YOU_CANT_MOVE_NOW");
+        putMsg(narrator.makeTr("YOU_CANT_MOVE_NOW", arguments));
         return StateResult::Failure();
       }
     }
@@ -302,7 +313,7 @@ namespace Actions
       // Make sure we're not in limbo!
       if (!hasPosition)
       {
-        putTr("DONT_EXIST_PHYSICALLY");
+        putMsg(narrator.makeTr("DONT_EXIST_PHYSICALLY", arguments));
         return StateResult::Failure();
       }
     }
@@ -314,10 +325,8 @@ namespace Actions
       auto& subjectPosition = components.position.of(subject);
       if (subjectPosition.isInsideAnotherEntity())
       {
-        auto subjectParent = subjectPosition.parent();
-        printMessageTry();
-        putMsg(makeTr("YOU_ARE_INSIDE_OBJECT",
-        { subjectParent->getDescriptiveString(ArticleChoice::Indefinite) }));
+        printMessageTry(systems, arguments);
+        putMsg(narrator.makeTr("YOU_ARE_INSIDE_OBJECT", arguments));
         return StateResult::Failure();
       }
     }
@@ -333,7 +342,7 @@ namespace Actions
             // If object can be self, we bypass other checks and let the action
             // subclass handle it.
             /// @todo Not sure this is the best option... think more about this later.
-            return doPreBeginWorkNVI(gameState, systems);
+            return doPreBeginWorkNVI(gameState, systems, arguments);
           }
         }
         else
@@ -342,11 +351,11 @@ namespace Actions
           {
             if (!(components.globals.player() == subject))
             {
-              putTr("YOU_TRY_TO_VERB_YOURSELF_INVALID");
+              putMsg(narrator.makeTr("YOU_TRY_TO_VERB_YOURSELF_INVALID", arguments));
               CLOG(WARNING, "Action") << "NPC tried to " << getType() << " self!?";
             }
 
-            putTr("YOU_CANT_VERB_YOURSELF");
+            putMsg(narrator.makeTr("YOU_CANT_VERB_YOURSELF", arguments));
             return StateResult::Failure();
           }
         }
@@ -369,8 +378,8 @@ namespace Actions
           ComponentInventory& inv = components.inventory[object];
           if (inv.count() == 0)
           {
-            printMessageTry();
-            putTr("THE_FOO_IS_EMPTY");
+            printMessageTry(systems, arguments);
+            putMsg(narrator.makeTr("THE_FOO_IS_EMPTY", arguments));
             return StateResult::Failure();
           }
         }
@@ -381,8 +390,8 @@ namespace Actions
           ComponentInventory& inv = components.inventory[object];
           if (inv.count() != 0)
           {
-            printMessageTry();
-            putTr("THE_FOO_IS_NOT_EMPTY");
+            printMessageTry(systems, arguments);
+            putMsg(narrator.makeTr("THE_FOO_IS_NOT_EMPTY", arguments));
             return StateResult::Failure();
           }
         }
@@ -392,8 +401,9 @@ namespace Actions
           // Check that each object is within reach.
           if (!systems.spacial()->firstCanReachSecond(subject, object))
           {
-            printMessageTry();
-            putMsg(makeTr("CONJUNCTION_HOWEVER") + " " + makeTr("FOO_PRO_SUB_IS_OUT_OF_REACH"));
+            printMessageTry(systems, arguments);
+            putMsg(narrator.makeTr("CONJUNCTION_HOWEVER", arguments) + " " + 
+                   narrator.makeTr("FOO_PRO_SUB_IS_OUT_OF_REACH", arguments));
             return StateResult::Failure();
           }
         }
@@ -403,11 +413,13 @@ namespace Actions
           // Check that each object is in our inventory.
           if (!components.inventory[subject].contains(object))
           {
-            printMessageTry();
-            auto message = makeTr("CONJUNCTION_HOWEVER") + " " + makeTr("FOO_PRO_SUB_IS_NOT_IN_YOUR_INVENTORY");
+            printMessageTry(systems, arguments);
+            auto message = 
+              narrator.makeTr("CONJUNCTION_HOWEVER", arguments) + " " + 
+              narrator.makeTr("FOO_PRO_SUB_IS_NOT_IN_YOUR_INVENTORY", arguments);
             if (systems.spacial()->firstCanReachSecond(subject, object))
             {
-              message += makeTr("PICK_UP_OBJECT_FIRST");
+              message += narrator.makeTr("PICK_UP_OBJECT_FIRST", arguments);
             }
             message += ".";
             putMsg(message);
@@ -420,8 +432,8 @@ namespace Actions
           // Check if it's already in our inventory.
           if (components.inventory[subject].contains(object))
           {
-            printMessageTry();
-            putTr("THE_FOO_IS_ALREADY_IN_YOUR_INVENTORY");
+            printMessageTry(systems, arguments);
+            putMsg(narrator.makeTr("THE_FOO_IS_ALREADY_IN_YOUR_INVENTORY", arguments));
             return StateResult::Failure();
           }
         }
@@ -432,8 +444,8 @@ namespace Actions
           if (components.bodyparts.existsFor(subject) &&
               components.bodyparts[subject].getWieldedLocation(object).part == BodyPart::Nowhere)
           {
-            printMessageTry();
-            putTr("THE_FOO_MUST_BE_WIELDED");
+            printMessageTry(systems, arguments);
+            putMsg(narrator.makeTr("THE_FOO_MUST_BE_WIELDED", arguments));
             return StateResult::Failure();
           }
         }
@@ -444,8 +456,8 @@ namespace Actions
           if (components.bodyparts.existsFor(subject) &&
               components.bodyparts[subject].getWornLocation(object).part == BodyPart::Nowhere)
           {
-            printMessageTry();
-            putTr("THE_FOO_MUST_BE_WORN");
+            printMessageTry(systems, arguments);
+            putMsg(narrator.makeTr("THE_FOO_MUST_BE_WORN", arguments));
             return StateResult::Failure();
           }
         }
@@ -456,10 +468,10 @@ namespace Actions
           if (components.bodyparts.existsFor(subject) &&
               components.bodyparts[subject].getWieldedLocation(object).part != BodyPart::Nowhere)
           {
-            printMessageTry();
+            printMessageTry(systems, arguments);
 
             /// @todo Perhaps automatically try to unwield the item before dropping?
-            putTr("YOU_CANT_VERB_WIELDED");
+            putMsg(narrator.makeTr("YOU_CANT_VERB_WIELDED", arguments));
             return StateResult::Failure();
           }
         }
@@ -470,8 +482,8 @@ namespace Actions
           if (components.bodyparts.existsFor(subject) &&
               components.bodyparts[subject].getWornLocation(object).part != BodyPart::Nowhere)
           {
-            printMessageTry();
-            putTr("YOU_CANT_VERB_WORN");
+            printMessageTry(systems, arguments);
+            putMsg(narrator.makeTr("YOU_CANT_VERB_WORN", arguments));
             return StateResult::Failure();
           }
         }
@@ -480,38 +492,38 @@ namespace Actions
         ReasonBool allowedNow = objectIsAllowedNow(gameState);
         if (!allowedNow.value)
         {
-          printMessageTry();
-          printMessageCant(); ///< @todo Add the reason why here
+          printMessageTry(systems, arguments);
+          printMessageCant(systems, arguments); ///< @todo Add the reason why here
           return StateResult::Failure();
         }
       }
     }
 
-    auto result = doPreBeginWorkNVI(gameState, systems);
+    auto result = doPreBeginWorkNVI(gameState, systems, arguments);
     return result;
   }
 
-  StateResult Action::doBeginWork(GameState& gameState, SystemManager& systems)
+  StateResult Action::doBeginWork(GameState& gameState, SystemManager& systems, json& arguments)
   {
-    auto result = doBeginWorkNVI(gameState, systems);
+    auto result = doBeginWorkNVI(gameState, systems, arguments);
     return result;
   }
 
-  StateResult Action::doFinishWork(GameState& gameState, SystemManager& systems)
+  StateResult Action::doFinishWork(GameState& gameState, SystemManager& systems, json& arguments)
   {
-    auto result = doFinishWorkNVI(gameState, systems);
+    auto result = doFinishWorkNVI(gameState, systems, arguments);
     return result;
   }
 
-  StateResult Action::doAbortWork(GameState& gameState, SystemManager& systems)
+  StateResult Action::doAbortWork(GameState& gameState, SystemManager& systems, json& arguments)
   {
-    auto result = doAbortWorkNVI(gameState, systems);
+    auto result = doAbortWorkNVI(gameState, systems, arguments);
     return result;
   }
 
   ReasonBool Action::subjectIsCapable(GameState const& gameState) const
   {
-    std::string reason = "Missing subjectIsCapable() implementation for action \"" + m_verb + "\"";
+    std::string reason = "Missing subjectIsCapable() implementation for action \"" + m_type + "\"";
     CLOG(ERROR, "Action") << reason;
     return { false, reason };
   }
@@ -523,7 +535,7 @@ namespace Actions
 
   ReasonBool Action::objectIsAllowed(GameState const& gameState) const
   {
-    std::string reason = "Missing objectIsAllowed() implementation for action \"" + m_verb + "\"";
+    std::string reason = "Missing objectIsAllowed() implementation for action \"" + m_type + "\"";
     CLOG(ERROR, "Action") << reason;
     return { false, reason };
   }
@@ -533,115 +545,43 @@ namespace Actions
     return objectIsAllowed(gameState);
   }
 
-  StateResult Action::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult Action::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     /// @todo Set counter_busy based on the action being taken and
     ///       the entity's reflexes.
     return StateResult::Success();
   }
 
-  StateResult Action::doBeginWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult Action::doBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
-    putTr("ACTN_NOT_IMPLEMENTED");
+    putMsg(tr("ACTN_NOT_IMPLEMENTED"));
     return StateResult::Failure();
   }
 
-  StateResult Action::doFinishWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult Action::doFinishWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     /// @todo Complete the action here
     return StateResult::Success();
   }
 
-  StateResult Action::doAbortWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult Action::doAbortWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     /// @todo Handle aborting the action here.
     return StateResult::Success();
   }
 
-  std::string Action::getObjectString(SystemManager& systems) const
-  {
-    std::string description;
-
-    if (getObjects().size() == 0)
-    {
-      description += makeTr("NOUN_NOTHING");
-    }
-    else if (getObjects().size() == 1)
-    {
-      if (getObject() == getSubject())
-      {
-        description += getSubject()->getReflexivePronoun();
-      }
-      else
-      {
-        if (getObject() == EntityId::Mu())
-        {
-          description += makeTr("NOUN_NOTHING");
-        }
-        else
-        {
-          if (getQuantity() > 1)
-          {
-            description += getQuantity() + " " + makeTr("PREPOSITION_OF");
-          }
-          description += getObject()->getDescriptiveString(ArticleChoice::Definite);
-        }
-      }
-    }
-    else if (getObjects().size() == 2)
-    {
-      description += getObject()->getDescriptiveString(ArticleChoice::Definite) + " " + makeTr("CONJUNCTION_AND") + " " +
-        getSecondObject()->getDescriptiveString(ArticleChoice::Definite);
-    }
-    else if (getObjects().size() > 1)
-    {
-      /// @todo May want to change this depending on whether subject is the player.
-      ///       If not, we should print "several items" or something to that effect.
-      auto string_items = makeTr("NOUN_ITEMS");
-      description += getDefArt(string_items) + " " + string_items;
-    }
-    else
-    {
-      auto new_direction = getTargetDirection();
-      if (new_direction != Direction::None)
-      {
-        description += str(new_direction);
-      }
-    }
-
-    return description;
-  }
-
-  std::string Action::getTargetString(SystemManager& systems) const
-  {
-    auto subject = getSubject();
-    auto& objects = getObjects();
-    auto target = getTargetThing();
-
-    if (target == subject)
-    {
-      return subject->getReflexivePronoun();
-    }
-    else if ((objects.size() == 1) && (target == getObject()))
-    {
-      return getObject()->getReflexivePronoun();
-    }
-    else
-    {
-      return target->getDescriptiveString(ArticleChoice::Definite);
-    }
-  }
-
-  void Action::printMessageTry() const
+  void Action::printMessageTry(SystemManager& systems, json& arguments) const
   {
     auto& objects = getObjects();
+    auto& narrator = systems.narrator();
+
     if (objects.size() == 0)
     {
-      putTr("YOU_TRY_TO_VERB");
+      putMsg(narrator.makeTr("YOU_TRY_TO_VERB", arguments));
     }
     else if (objects.size() == 1)
     {
-      putTr("YOU_TRY_TO_VERB_THE_FOO");
+      putMsg(narrator.makeTr("YOU_TRY_TO_VERB_THE_FOO", arguments));
     }
     else
     {
@@ -649,88 +589,98 @@ namespace Actions
     }
   }
 
-  void Action::printMessageDo() const
+  void Action::printMessageDo(SystemManager& systems, json& arguments) const
   {
     auto& objects = getObjects();
+    auto& narrator = systems.narrator();
+
     if (objects.size() == 0)
     {
-      putTr("YOU_CVERB");
+      putMsg(narrator.makeTr("YOU_CVERB", arguments));
     }
     else if (objects.size() == 1)
     {
-      putTr("YOU_CVERB_THE_FOO");
+      putMsg(narrator.makeTr("YOU_CVERB_THE_FOO", arguments));
     }
     else
     {
-      putTr("YOU_CVERB_THE_ITEMS");
+      putMsg(narrator.makeTr("YOU_CVERB_THE_ITEMS", arguments));
     }
   }
 
-  void Action::printMessageBegin() const
+  void Action::printMessageBegin(SystemManager& systems, json& arguments) const
   {
     auto& objects = getObjects();
+    auto& narrator = systems.narrator();
+
     if (objects.size() == 0)
     {
-      putTr("YOU_BEGIN_TO_VERB");
+      putMsg(narrator.makeTr("YOU_BEGIN_TO_VERB", arguments));
     }
     else if (objects.size() == 1)
     {
-      putTr("YOU_BEGIN_TO_VERB_THE_FOO");
+      putMsg(narrator.makeTr("YOU_BEGIN_TO_VERB_THE_FOO", arguments));
     }
     else
     {
-      putTr("YOU_BEGIN_TO_VERB_THE_ITEMS");
+      putMsg(narrator.makeTr("YOU_BEGIN_TO_VERB_THE_ITEMS", arguments));
     }
   }
 
-  void Action::printMessageStop() const
+  void Action::printMessageStop(SystemManager& systems, json& arguments) const
   {
     auto& objects = getObjects();
+    auto& narrator = systems.narrator();
+
     if (objects.size() == 0)
     {
-      putTr("YOU_STOP_VERBING");
+      putMsg(narrator.makeTr("YOU_STOP_VERBING", arguments));
     }
     else if (objects.size() == 1)
     {
-      putTr("YOU_STOP_VERBING_THE_FOO");
+      putMsg(narrator.makeTr("YOU_STOP_VERBING_THE_FOO", arguments));
     }
     else
     {
-      putTr("YOU_STOP_VERBING_THE_ITEMS");
+      putMsg(narrator.makeTr("YOU_STOP_VERBING_THE_ITEMS", arguments));
     }
   }
 
-  void Action::printMessageFinish() const
+  void Action::printMessageFinish(SystemManager& systems, json& arguments) const
   {
     auto& objects = getObjects();
+    auto& narrator = systems.narrator();
+
     if (objects.size() == 0)
     {
-      putTr("YOU_FINISH_VERBING");
+      putMsg(narrator.makeTr("YOU_FINISH_VERBING", arguments));
     }
     else if (objects.size() == 1)
     {
-      putTr("YOU_FINISH_VERBING_THE_FOO");
+      putMsg(narrator.makeTr("YOU_FINISH_VERBING_THE_FOO", arguments));
     }
     else
     {
-      putTr("YOU_FINISH_VERBING_THE_ITEMS");
+      putMsg(narrator.makeTr("YOU_FINISH_VERBING_THE_ITEMS", arguments));
     }
   }
 
-  void Action::printMessageCant() const
+  void Action::printMessageCant(SystemManager& systems, json& arguments) const
   {
     auto& objects = getObjects();
+    auto& narrator = systems.narrator();
+
     if (objects.size() == 0)
     {
-      putTr("YOU_CANT_VERB");
+      putMsg(narrator.makeTr("YOU_CANT_VERB", arguments));
     }
     else if (objects.size() == 1)
     {
-      putTr("YOU_CANT_VERB_THAT");
+      putMsg(narrator.makeTr("YOU_CANT_VERB_THAT", arguments));
     }
     else
     {
-      putTr("YOU_CANT_VERB_THOSE");
+      putMsg(narrator.makeTr("YOU_CANT_VERB_THOSE", arguments));
     }
   }
 
@@ -766,220 +716,6 @@ namespace Actions
       throw std::runtime_error("Requested non-existent action " + key);
     }
   }
-
-  //std::string Action::makeTr(std::string key) const
-  //{
-  //  return makeString(Service<IStringDictionary>::get().get(key), {});
-  //}
-
-  //std::string Action::makeTr(std::string key, std::vector<std::string> optional_strings) const
-  //{
-  //  return makeString(Service<IStringDictionary>::get().get(key), optional_strings);
-  //}
-
-  //std::string Action::makeString(std::string pattern) const
-  //{
-  //  return makeString(pattern, {});
-  //}
-
-  //std::string Action::makeString(std::string pattern, std::vector<std::string> optional_strings) const
-  //{
-  //  std::string new_string = StringTransforms::replace_tokens(pattern,
-  //                                                            [&](std::string token) -> std::string
-  //  {
-  //    if (token == "are")
-  //    {
-  //      return getSubject()->chooseVerb(tr("VERB_BE_2"), tr("VERB_BE_3"));
-  //    }
-  //    if (token == "were")
-  //    {
-  //      return getSubject()->chooseVerb(tr("VERB_BE_P2"), tr("VERB_BE_P3"));
-  //    }
-  //    if (token == "do")
-  //    {
-  //      return getSubject()->chooseVerb(tr("VERB_DO_2"), tr("VERB_DO_3"));
-  //    }
-  //    if (token == "get")
-  //    {
-  //      return getSubject()->chooseVerb(tr("VERB_GET_2"), tr("VERB_GET_3"));
-  //    }
-  //    if (token == "have")
-  //    {
-  //      return getSubject()->chooseVerb(tr("VERB_HAVE_2"), tr("VERB_HAVE_3"));
-  //    }
-  //    if (token == "seem")
-  //    {
-  //      return getSubject()->chooseVerb(tr("VERB_SEEM_2"), tr("VERB_SEEM_3"));
-  //    }
-  //    if (token == "try")
-  //    {
-  //      return getSubject()->chooseVerb(tr("VERB_TRY_2"), tr("VERB_TRY_3"));
-  //    }
-
-  //    if ((token == "foo_is") || (token == "foois"))
-  //    {
-  //      return getObject()->chooseVerb(tr("VERB_BE_2"), tr("VERB_BE_3"));
-  //    }
-  //    if ((token == "foo_has") || (token == "foohas"))
-  //    {
-  //      return getObject()->chooseVerb(tr("VERB_HAVE_2"), tr("VERB_HAVE_3"));
-  //    }
-
-  //    if ((token == "the_foo") || (token == "thefoo"))
-  //    {
-  //      return getObjectString();
-  //    }
-
-  //    if ((token == "the_foos_location") || (token == "thefooslocation"))
-  //    {
-  //      return COMPONENTS.position[getObject()].parent()->getDescriptiveString(ArticleChoice::Definite);
-  //    }
-
-  //    if ((token == "the_target_thing") || (token == "thetargetthing"))
-  //    {
-  //      return getTargetString();
-  //    }
-
-  //    if (token == "fooself")
-  //    {
-  //      return getObject()->getReflexiveString(getSubject(), ArticleChoice::Definite);
-  //    }
-
-  //    if ((token == "foo_pro_sub") || (token == "fooprosub"))
-  //    {
-  //      return getObject()->getSubjectPronoun();
-  //    }
-
-  //    if ((token == "foo_pro_obj") || (token == "fooproobj"))
-  //    {
-  //      return getObject()->getObjectPronoun();
-  //    }
-
-  //    if ((token == "foo_pro_ref") || (token == "fooproref"))
-  //    {
-  //      return getObject()->getReflexivePronoun();
-  //    }
-
-  //    if (token == "verb")
-  //    {
-  //      return getVerb2();
-  //    }
-  //    if (token == "verb3")
-  //    {
-  //      return getVerb3();
-  //    }
-  //    if (token == "verbed")
-  //    {
-  //      return getVerbed();
-  //    }
-  //    if (token == "verbing")
-  //    {
-  //      return getVerbing();
-  //    }
-  //    if ((token == "verb_pp") || (token == "verbpp"))
-  //    {
-  //      return getVerbPP();
-  //    }
-  //    if (token == "cverb")
-  //    {
-  //      return (getSubject()->isThirdPerson() ? getVerb3() : getVerb2());
-  //    }
-  //    if (token == "objcverb")
-  //    {
-  //      return (getObject()->isThirdPerson() ? getVerb3() : getVerb2());
-  //    }
-
-  //    if (token == "you")
-  //    {
-  //      return getSubject()->getSubjectiveString();
-  //    }
-  //    if ((token == "you_pro_sub") || (token == "youprosub"))
-  //    {
-  //      return getSubject()->getSubjectPronoun();
-  //    }
-  //    if ((token == "you_pro_obj") || (token == "youproobj"))
-  //    {
-  //      return getSubject()->getObjectPronoun();
-  //    }
-  //    if (token == "yourself")
-  //    {
-  //      return getSubject()->getReflexivePronoun();
-  //    }
-
-  //    if (token == "targdir")
-  //    {
-  //      std::stringstream ss;
-  //      ss << getTargetDirection();
-  //      return ss.str();
-  //    }
-
-  //    // Check for a numerical token.
-  //    try
-  //    {
-  //      unsigned int converted = static_cast<unsigned int>(std::stoi(token));
-
-  //      // Check that the optional arguments are at least this size.
-  //      if (converted < optional_strings.size())
-  //      {
-  //        // Return the string passed in.
-  //        return optional_strings.at(converted);
-  //      }
-  //    }
-  //    catch (std::invalid_argument&)
-  //    {
-  //      // Not a number, so bail.
-  //    }
-  //    catch (...)
-  //    {
-  //      // Throw anything else.
-  //      throw;
-  //    }
-
-  //    // Nothing else matched, return default.
-  //    return "[" + token + "]";
-  //  },
-  //  [&](std::string token, std::string arg) -> std::string
-  //  {
-  //    if (token == "your")
-  //    {
-  //      return getSubject()->getPossessiveString(arg);
-  //    }
-
-  //    return "[" + token + "(" + arg + ")]";
-  //  },
-  //                                          [&](std::string token) -> bool
-  //  {
-  //    if ((token == "cv") || (token == "subjcv") || (token == "subj_cv"))
-  //    {
-  //      return !(getSubject()->isThirdPerson());
-  //    }
-  //    if ((token == "objcv") || (token == "obj_cv") || (token == "foocv") || (token == "foo_cv"))
-  //    {
-  //      return !(getObject()->isThirdPerson());
-  //    }
-  //    if ((token == "isPlayer") || (token == "isplayer"))
-  //    {
-  //      return getSubject()->isPlayer();
-  //    }
-  //    if ((token == "targcv") || (token == "targ_cv"))
-  //    {
-  //      return !(getTargetThing()->isThirdPerson());
-  //    }
-
-  //    if (token == "true")
-  //    {
-  //      return true;
-  //    }
-  //    if (token == "false")
-  //    {
-  //      return false;
-  //    }
-
-  //    return true;
-  //  });
-
-  //  return new_string;
-  //}
 
   ActionMap const & Action::getMap()
   {

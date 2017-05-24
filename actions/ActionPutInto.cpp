@@ -7,16 +7,17 @@
 #include "services/IMessageLog.h"
 #include "services/IStringDictionary.h"
 #include "systems/SystemManager.h"
+#include "systems/SystemNarrator.h"
 #include "systems/SystemSpacialRelationships.h"
+#include "utilities/Shortcuts.h"
 
-#include "entity/Entity.h"
-#include "entity/EntityId.h"
+#include "entity/Entity.h" /// still needed for do_() and beObjectOf()
 
 namespace Actions
 {
   ActionPutInto ActionPutInto::prototype;
-  ActionPutInto::ActionPutInto() : Action("putinto", "STORE", ActionPutInto::create_) {}
-  ActionPutInto::ActionPutInto(EntityId subject) : Action(subject, "putinto", "STORE") {}
+  ActionPutInto::ActionPutInto() : Action("STORE", ActionPutInto::create_) {}
+  ActionPutInto::ActionPutInto(EntityId subject) : Action(subject, "STORE") {}
   ActionPutInto::~ActionPutInto() {}
 
   ReasonBool ActionPutInto::subjectIsCapable(GameState const& gameState) const
@@ -44,12 +45,13 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionPutInto::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionPutInto::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     std::string message;
     auto subject = getSubject();
     auto object = getObject();
     auto container = getTargetThing();
+    auto& narrator = systems.narrator();
 
     // Verify that the Action has an object.
     if (object == EntityId::Mu())
@@ -62,11 +64,11 @@ namespace Actions
     {
       if (gameState.components().globals.player() == subject)
       {
-        message = makeTr("YOU_TRY_TO_STORE_THE_FOO_INSIDE_ITSELF_HUMOROUS");
+        message = narrator.makeTr("YOU_TRY_TO_STORE_THE_FOO_INSIDE_ITSELF_HUMOROUS", arguments);
       }
       else
       {
-        message = makeTr("YOU_TRY_TO_STORE_THE_FOO_INSIDE_ITSELF_INVALID");
+        message = narrator.makeTr("YOU_TRY_TO_STORE_THE_FOO_INSIDE_ITSELF_INVALID", arguments);
         CLOG(WARNING, "Action") << "NPC tried to store a container in itself!?";
       }
 
@@ -76,31 +78,31 @@ namespace Actions
     // Check that the container actually IS a container.
     if (COMPONENTS.inventory.valueOrDefault(container).maxSize() == 0)
     {
-      printMessageTry();
-      putTr("THE_TARGET_IS_NOT_A_CONTAINER");
+      printMessageTry(systems, arguments);
+      putMsg(narrator.makeTr("THE_TARGET_IS_NOT_A_CONTAINER", arguments));
       return StateResult::Failure();
     }
 
     // Check that the entity's location isn't already the container.
     if (COMPONENTS.position[object].parent() == container)
     {
-      printMessageTry();
-      putTr("THE_FOO_IS_ALREADY_IN_THE_TARGET");
+      printMessageTry(systems, arguments);
+      putMsg(narrator.makeTr("THE_FOO_IS_ALREADY_IN_THE_TARGET", arguments));
       return StateResult::Failure();
     }
 
     // Check that the container is within reach.
     if (!SYSTEMS.spacial()->firstCanReachSecond(subject, container))
     {
-      printMessageTry();
-      putTr("THE_TARGET_IS_OUT_OF_REACH");
+      printMessageTry(systems, arguments);
+      putMsg(narrator.makeTr("THE_TARGET_IS_OUT_OF_REACH", arguments));
       return StateResult::Failure();
     }
 
     return StateResult::Success();
   }
 
-  StateResult ActionPutInto::doBeginWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionPutInto::doBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     /// @todo Handle putting a certain quantity of an item.
     StateResult result = StateResult::Failure();
@@ -108,10 +110,11 @@ namespace Actions
     auto subject = getSubject();
     auto object = getObject();
     auto container = getTargetThing();
+    auto& narrator = systems.narrator();
 
     if (object->beObjectOf(*this, subject, container))
     {
-      printMessageDo();
+      printMessageDo(systems, arguments);
 
       if (SYSTEMS.spacial().moveEntityInto(object, container))
       {
@@ -120,7 +123,8 @@ namespace Actions
       }
       else
       {
-        putMsg(makeTr("YOU_CANT_VERB_FOO_PREPOSITION_TARGET_UNKNOWN", { "into" }));
+        arguments["preposition"] = tr("PREPOSITION_INTO");
+        putMsg(narrator.makeTr("YOU_CANT_VERB_FOO_PREPOSITION_TARGET_UNKNOWN", arguments));
 
         CLOG(ERROR, "Action") << "Could not move Entity into Container even though beObjectOf returned Success";
       }
@@ -129,23 +133,27 @@ namespace Actions
     return result;
   }
 
-  StateResult ActionPutInto::doFinishWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionPutInto::doFinishWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionPutInto::doAbortWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionPutInto::doAbortWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     return StateResult::Success();
   }
 
-  void ActionPutInto::printMessageTry() const
+  void ActionPutInto::printMessageTry(SystemManager& systems, json& arguments) const
   {
-    putMsg(makeTr("YOU_TRY_TO_VERB_THE_FOO_PREPOSITION_TARGET", { "into" }));
+    auto& narrator = systems.narrator();
+    arguments["preposition"] = tr("PREPOSITION_INTO");
+    putMsg(narrator.makeTr("YOU_TRY_TO_VERB_THE_FOO_PREPOSITION_TARGET", arguments));
   }
 
-  void ActionPutInto::printMessageDo() const
+  void ActionPutInto::printMessageDo(SystemManager& systems, json& arguments) const
   {
-    putMsg(makeTr("YOU_VERB_THE_FOO_PREPOSITION_TARGET", { "into" }));
+    auto& narrator = systems.narrator();
+    arguments["preposition"] = tr("PREPOSITION_INTO");
+    putMsg(narrator.makeTr("YOU_VERB_THE_FOO_PREPOSITION_TARGET", arguments));
   }
 } // end namespace

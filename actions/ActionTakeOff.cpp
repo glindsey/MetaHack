@@ -5,14 +5,17 @@
 #include "services/IMessageLog.h"
 #include "services/IStringDictionary.h"
 #include "Service.h"
-#include "entity/Entity.h"
-#include "entity/EntityId.h"
+#include "systems/SystemManager.h"
+#include "systems/SystemNarrator.h"
+#include "utilities/Shortcuts.h"
+
+#include "entity/Entity.h" // needed for beObjectOf()
 
 namespace Actions
 {
   ActionTakeOff ActionTakeOff::prototype;
-  ActionTakeOff::ActionTakeOff() : Action("disrobe", "DISROBE", ActionTakeOff::create_) {}
-  ActionTakeOff::ActionTakeOff(EntityId subject) : Action(subject, "disrobe", "DISROBE") {}
+  ActionTakeOff::ActionTakeOff() : Action("DISROBE", ActionTakeOff::create_) {}
+  ActionTakeOff::ActionTakeOff(EntityId subject) : Action(subject, "DISROBE") {}
   ActionTakeOff::~ActionTakeOff() {}
 
   ReasonBool ActionTakeOff::subjectIsCapable(GameState const& gameState) const
@@ -32,28 +35,30 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionTakeOff::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionTakeOff::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionTakeOff::doBeginWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionTakeOff::doBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
+    auto& components = gameState.components();
+    auto& narrator = systems.narrator();
     StateResult result = StateResult::Failure();
 
     auto subject = getSubject();
     auto object = getObject();
 
-    BodyLocation wearLocation = COMPONENTS.bodyparts[subject].getWornLocation(object);
-    std::string bodypart_desc = subject->getBodypartDescription(wearLocation);
+    BodyLocation wearLocation = components.bodyparts.of(subject).getWornLocation(object);
+    std::string bodypart_desc = narrator.getBodypartDescription(subject, wearLocation);
+    arguments["your_bodypart"] = narrator.getPossessiveString(subject, bodypart_desc);
 
     // Check if the worn item is bound.
-    if (COMPONENTS.magicalBinding.existsFor(object) &&
-        COMPONENTS.magicalBinding[object].isAgainst(ComponentMagicalBinding::Against::Disrobing) &&
-        COMPONENTS.magicalBinding[object].isActive())
+    if (components.magicalBinding.existsFor(object) &&
+        components.magicalBinding.of(object).isAgainst(ComponentMagicalBinding::Against::Disrobing) &&
+        components.magicalBinding.of(object).isActive())
     {
-      putMsg(makeTr("YOU_CANT_VERB_FOO_MAGICALLY_BOUND", 
-      { subject->getPossessiveString(bodypart_desc) }));
+      putMsg(narrator.makeTr("YOU_CANT_VERB_FOO_MAGICALLY_BOUND", arguments));
 
       // Premature exit.
       return result;
@@ -63,21 +68,20 @@ namespace Actions
     /// @todo Disrobing shouldn't be instantaneous.
     if (object->beObjectOf(*this, subject))
     {
-      putMsg(makeTr("YOU_CVERB_THE_FOO") + " " + 
-             makeTr("YOU_ARE_NOW_WEARING_NOTHING", 
-             { subject->getPossessiveString(bodypart_desc) }));
-      COMPONENTS.bodyparts[subject].removeWornLocation(wearLocation);
+      components.bodyparts.of(subject).removeWornLocation(wearLocation);
+      putMsg(narrator.makeTr("YOU_CVERB_THE_FOO", arguments));
+      putMsg(narrator.makeTr("YOU_ARE_NOW_WEARING_NOTHING", arguments));
     }
 
     return result;
   }
 
-  StateResult ActionTakeOff::doFinishWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionTakeOff::doFinishWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionTakeOff::doAbortWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionTakeOff::doAbortWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     return StateResult::Success();
   }

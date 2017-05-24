@@ -2,24 +2,29 @@
 
 #include "ActionUse.h"
 #include "components/ComponentManager.h"
+#include "game/GameState.h"
+#include "lua/LuaObject.h"
 #include "services/IMessageLog.h"
 #include "services/IStringDictionary.h"
 #include "Service.h"
-#include "entity/Entity.h"
-#include "entity/EntityId.h"
+#include "systems/SystemManager.h"
+#include "systems/SystemNarrator.h"
+#include "utilities/Shortcuts.h"
 
+#include "entity/Entity.h" // needed for beObjectOf()
 namespace Actions
 {
   ActionUse ActionUse::prototype;
-  ActionUse::ActionUse() : Action("use", "USE", ActionUse::create_) {}
-  ActionUse::ActionUse(EntityId subject) : Action(subject, "use", "USE") {}
+  ActionUse::ActionUse() : Action("USE", ActionUse::create_) {}
+  ActionUse::ActionUse(EntityId subject) : Action(subject, "USE") {}
   ActionUse::~ActionUse() {}
 
   ReasonBool ActionUse::subjectIsCapable(GameState const& gameState) const
   {
     auto subject = getSubject();
-    bool isSapient = COMPONENTS.sapience.existsFor(subject);
-    bool canGrasp = COMPONENTS.bodyparts.existsFor(subject) && COMPONENTS.bodyparts[subject].hasPrehensileBodyPart();
+    auto& components = gameState.components();
+    bool isSapient = components.sapience.existsFor(subject);
+    bool canGrasp = components.bodyparts.existsFor(subject) && components.bodyparts.of(subject).hasPrehensileBodyPart();
 
     if (!isSapient) return { false, "YOU_ARE_NOT_SAPIENT" }; ///< @todo Add translation key
     if (!canGrasp) return { false, "YOU_HAVE_NO_GRASPING_BODYPARTS" }; ///< @todo Add translation key
@@ -45,34 +50,30 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionUse::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionUse::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     // All checks done in Action class via traits.
     return StateResult::Success();
   }
 
-  StateResult ActionUse::doBeginWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionUse::doBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     StateResult result = StateResult::Failure();
-    std::string message;
-    auto subject = getSubject();
-    auto object = getObject();
 
     /// @todo Figure out use time.
-    printMessageBegin();
+    printMessageBegin(systems, arguments);
     result = StateResult::Success(1);
 
     return result;
   }
 
-  StateResult ActionUse::doFinishWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionUse::doFinishWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     StateResult result = StateResult::Failure();
-    std::string message;
     auto subject = getSubject();
     auto object = getObject();
 
-    printMessageFinish();
+    printMessageFinish(systems, arguments);
 
     /// @todo Split read time into start/finish actions.
     if (object->beObjectOf(*this, subject))
@@ -90,13 +91,9 @@ namespace Actions
     return result;
   }
 
-  StateResult ActionUse::doAbortWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionUse::doAbortWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
-    auto subject = getSubject();
-    auto object = getObject();
-
-    printMessageStop();
-
+    printMessageStop(systems, arguments);
     return StateResult::Success();
   }
 } // end namespace

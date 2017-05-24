@@ -2,18 +2,21 @@
 
 #include "ActionDie.h"
 #include "components/ComponentManager.h"
-#include "entity/Entity.h"
-#include "entity/EntityId.h"
 #include "Service.h"
 #include "services/IMessageLog.h"
 #include "services/IStringDictionary.h"
+#include "systems/SystemManager.h"
+#include "systems/SystemNarrator.h"
+#include "utilities/Shortcuts.h"
 #include "utilities/StringTransforms.h"
+
+#include "entity/Entity.h" /// still needed for do_() and beObjectOf()
 
 namespace Actions
 {
   ActionDie ActionDie::prototype;
-  ActionDie::ActionDie() : Action("die", "DIE", ActionDie::create_) {}
-  ActionDie::ActionDie(EntityId subject) : Action(subject, "die", "DIE") {}
+  ActionDie::ActionDie() : Action("DIE", ActionDie::create_) {}
+  ActionDie::ActionDie(EntityId subject) : Action(subject, "DIE") {}
   ActionDie::~ActionDie() {}
 
   ReasonBool ActionDie::subjectIsCapable(GameState const& gameState) const
@@ -34,27 +37,29 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionDie::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionDie::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionDie::doBeginWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionDie::doBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     EntityId subject = getSubject();
+    auto& components = gameState.components();
+    auto& narrator = systems.narrator();
 
     /// @todo Handle stuff like auto-activating life-saving items here.
     /// @todo Pass in the cause of death somehow.
     if (subject->do_(*this))
     {
-      if (gameState.components().globals.player() == subject)
+      if (components.globals.player() == subject)
       {
-        putTr("YOU_DIE");
+        putMsg(narrator.makeTr("YOU_DIE", arguments));
       }
       else
       {
-        bool living = COMPONENTS.health[subject].isLivingCreature();
-        putMsg(makeTr(living ? "YOU_ARE_KILLED" : "YOU_ARE_DESTROYED"));
+        bool living = components.health.of(subject).isLivingCreature();
+        putMsg(narrator.makeTr(living ? "YOU_ARE_KILLED" : "YOU_ARE_DESTROYED", arguments));
       }
 
       // Set the property saying the entity is dead.
@@ -68,17 +73,17 @@ namespace Actions
     }
     else
     {
-      putTr("YOU_MANAGE_TO_AVOID_DYING");
+      putMsg(narrator.makeTr("YOU_MANAGE_TO_AVOID_DYING", arguments));
       return StateResult::Failure();
     }
   }
 
-  StateResult ActionDie::doFinishWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionDie::doFinishWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionDie::doAbortWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionDie::doAbortWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     return StateResult::Success();
   }

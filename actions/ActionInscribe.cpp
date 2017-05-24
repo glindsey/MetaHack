@@ -4,14 +4,15 @@
 #include "services/IMessageLog.h"
 #include "services/IStringDictionary.h"
 #include "Service.h"
-#include "entity/Entity.h"
-#include "entity/EntityId.h"
+#include "systems/SystemManager.h"
+#include "systems/SystemNarrator.h"
+#include "utilities/Shortcuts.h"
 
 namespace Actions
 {
   ActionInscribe ActionInscribe::prototype;
-  ActionInscribe::ActionInscribe() : Action("inscribe", "WRITE", ActionInscribe::create_) {}
-  ActionInscribe::ActionInscribe(EntityId subject) : Action(subject, "inscribe", "WRITE") {}
+  ActionInscribe::ActionInscribe() : Action("WRITE", ActionInscribe::create_) {}
+  ActionInscribe::ActionInscribe(EntityId subject) : Action(subject, "WRITE") {}
   ActionInscribe::~ActionInscribe() {}
 
   std::unordered_set<Trait> const & ActionInscribe::getTraits() const
@@ -26,23 +27,23 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionInscribe::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionInscribe::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionInscribe::doBeginWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionInscribe::doBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
-    putTr("ACTN_NOT_IMPLEMENTED");
+    putMsg(tr("ACTN_NOT_IMPLEMENTED"));
     return StateResult::Failure();
   }
 
-  StateResult ActionInscribe::doFinishWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionInscribe::doFinishWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionInscribe::doAbortWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionInscribe::doAbortWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     return StateResult::Success();
   }

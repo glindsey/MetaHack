@@ -4,14 +4,15 @@
 #include "services/IMessageLog.h"
 #include "services/IStringDictionary.h"
 #include "Service.h"
-#include "entity/Entity.h"
-#include "entity/EntityId.h"
+#include "systems/SystemManager.h"
+#include "systems/SystemNarrator.h"
+#include "utilities/Shortcuts.h"
 
 namespace Actions
 {
   ActionWait ActionWait::prototype;
-  ActionWait::ActionWait() : Action("wait", "WAIT", ActionWait::create_) {}
-  ActionWait::ActionWait(EntityId subject) : Action(subject, "wait", "WAIT") {}
+  ActionWait::ActionWait() : Action("WAIT", ActionWait::create_) {}
+  ActionWait::ActionWait(EntityId subject) : Action(subject, "WAIT") {}
   ActionWait::~ActionWait() {}
 
   ReasonBool ActionWait::subjectIsCapable(GameState const& gameState) const
@@ -30,27 +31,29 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionWait::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionWait::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     // We can always wait.
     return StateResult::Success();
   }
 
-  StateResult ActionWait::doBeginWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionWait::doBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
+    auto& narrator = systems.narrator();
+
     /// @todo Handle a variable amount of time.
-    putMsg(makeTr("YOU_VERB_FOR_X_TIME", 
-                  { std::to_string(1) }));
+    arguments["time"] = std::to_string(1);
+    putMsg(narrator.makeTr("YOU_VERB_FOR_X_TIME", arguments));
 
     return{ true, 1 };
   }
 
-  StateResult ActionWait::doFinishWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionWait::doFinishWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionWait::doAbortWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionWait::doAbortWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     return StateResult::Success();
   }

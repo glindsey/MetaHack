@@ -29,9 +29,11 @@
 #include "state_machine/StateMachine.h"
 #include "systems/SystemLighting.h"
 #include "systems/SystemManager.h"
+#include "systems/SystemNarrator.h"
 #include "systems/SystemSenseSight.h"
 #include "systems/SystemSpacialRelationships.h"
 #include "utilities/GetLetterKey.h"
+#include "utilities/Shortcuts.h"
 #include "utilities/StringTransforms.h"
 
 /// Actions that can be performed.
@@ -289,6 +291,9 @@ void AppStateGameMode::render_map(sf::RenderTexture& texture, int frame)
 bool AppStateGameMode::handle_key_press(UIEvents::EventKeyPressed const& key)
 {
   auto& game = gameState();
+  auto& components = game.components();
+  auto& narrator = systems().narrator();
+
   EntityId player = game.components().globals.player();
 
   // *** Handle keys processed in any mode.
@@ -432,7 +437,7 @@ bool AppStateGameMode::handle_key_press(UIEvents::EventKeyPressed const& key)
           case sf::Keyboard::Key::LBracket:
           {
             EntityId entity = m_inventorySelection->getViewed();
-            EntityId location = COMPONENTS.position[entity].parent();
+            EntityId location = components.position[entity].parent();
             if (location != EntityId::Mu())
             {
               m_inventorySelection->setViewed(location);
@@ -451,34 +456,29 @@ bool AppStateGameMode::handle_key_press(UIEvents::EventKeyPressed const& key)
             if (slot_count > 0)
             {
               EntityId entity = m_inventorySelection->getSelectedThings().at(0);
-              if (COMPONENTS.inventory.existsFor(entity))
+              if (components.inventory.existsFor(entity))
               {
-                if (!COMPONENTS.openable.existsFor(entity) ||
-                    COMPONENTS.openable[entity].isOpen())
+                if (!components.openable.existsFor(entity) ||
+                    components.openable[entity].isOpen())
                 {
-                  if (!COMPONENTS.lockable.existsFor(entity) ||
-                      !COMPONENTS.lockable[entity].isLocked())
+                  if (!components.lockable.existsFor(entity) ||
+                      !components.lockable[entity].isLocked())
                   {
                     m_inventorySelection->setViewed(entity);
                   }
                   else // if (container.is_locked())
                   {
-                    std::string message = StringTransforms::makeString(player, entity, "THE_FOO_IS_LOCKED");
-                    putMsg(message);
+                    putMsg(narrator.makeTr("THE_FOO_IS_LOCKED", { { "object", entity } }));
                   }
                 }
                 else // if (!container.is_open())
                 {
-                  /// @todo Need a way to make this cleaner.
-                  std::string message = StringTransforms::makeString(player, entity, "THE_FOO_IS_CLOSED");
-                  putMsg(message);
+                  putMsg(narrator.makeTr("THE_FOO_IS_CLOSED", { { "object", entity } }));
                 }
               }
               else // if (!entity.is_container())
               {
-                /// @todo This probably doesn't belong here.
-                std::string message = StringTransforms::makeString(player, entity, "THE_FOO_IS_NOT_A_CONTAINER");
-                putMsg(message);
+                putMsg(narrator.makeTr("THE_FOO_IS_NOT_A_CONTAINER", { { "object", entity } }));
               }
             }
             else
@@ -492,7 +492,7 @@ bool AppStateGameMode::handle_key_press(UIEvents::EventKeyPressed const& key)
             /// @todo This is a copy of CTRL-G; split out into separate method.
             if (entities.size() == 0)
             {
-              putMsg(StringTransforms::makeString(player, EntityId::Mu(), tr("CHOOSE_ITEMS_FIRST"), { tr("VERB_PICKUP_2") }));
+              putMsg(narrator.makeTr("CHOOSE_ITEMS_FIRST", { { "verb", tr("VERB_PICKUP_2") } });
             }
             else
             {

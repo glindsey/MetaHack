@@ -5,11 +5,13 @@
 #include "game/App.h"
 #include "entity/EntityId.h"
 #include "types/Direction.h"
-#include "services/MessageLog.h"
 
 // Forward declarations
 class GameState;
 class SystemManager;
+
+#include "json.hpp"
+using json = ::nlohmann::json;
 
 namespace Actions
 {
@@ -91,7 +93,7 @@ namespace Actions
   class Action
   {
   public:
-    Action(EntityId subject, std::string type, std::string verb);
+    Action(EntityId subject, std::string type);
     virtual ~Action();
 
     json toJson();
@@ -140,19 +142,15 @@ namespace Actions
                                           Direction targetDirection = Direction::None,
                                           unsigned int quantity = 0);
 
-    //std::string makeTr(std::string key) const;
-    //std::string makeTr(std::string key, std::vector<std::string> optional_strings) const;
-
-    ///// A method for composing a string from a pattern for an action.
-    //std::string makeString(std::string pattern, std::vector<std::string> optional_strings) const;
-    //std::string makeString(std::string pattern) const;
-
     /// Get a const reference to the action map.
     static ActionMap const& getMap();
 
   protected:
     /// An Action without a subject; used for prototype registration only.
-    Action(std::string type, std::string verb, ActionCreator creator);
+    Action(std::string type, ActionCreator creator);
+
+    /// Create the JSON object used for constructing messages.
+    json makeJSONArgumentsObject() const;
 
     /// Perform work to be done at the start of the PreBegin state.
     /// This work typically consists of checking whether the action is possible.
@@ -163,7 +161,7 @@ namespace Actions
     ///       the Dreaded Pyramid of Doom. It's just easier that way.
     /// @param params Map of parameters for the Action.
     /// @return StateResult indicating whether the Action continues.
-    StateResult doPreBeginWork(GameState& gameState, SystemManager& systems);
+    StateResult doPreBeginWork(GameState& gameState, SystemManager& systems, json& arguments);
 
     /// Perform work to be done at the start of the InProgress state.
     /// This is where the action begins.
@@ -176,7 +174,7 @@ namespace Actions
     /// moves to the PostFinish state.
     /// @param params Map of parameters for the Action.
     /// @return StateResult indicating whether the Action continues.
-    StateResult doBeginWork(GameState& gameState, SystemManager& systems);
+    StateResult doBeginWork(GameState& gameState, SystemManager& systems, json& arguments);
 
     /// Perform work to be done at the end of the InProgress state and the start
     /// of the PostFinish state.
@@ -187,7 +185,7 @@ namespace Actions
     /// period.
     /// @param params Map of parameters for the Action.
     /// @return StateResult indicating the post-Action wait time.
-    StateResult doFinishWork(GameState& gameState, SystemManager& systems);
+    StateResult doFinishWork(GameState& gameState, SystemManager& systems, json& arguments);
 
     /// Perform work to be done when an action in the InProgress state is aborted.
     /// This is called when an action is aborted.
@@ -196,7 +194,7 @@ namespace Actions
     /// period.
     /// @param params Map of parameters for the Action.
     /// @return StateResult indicating the post-Action wait time.
-    StateResult doAbortWork(GameState& gameState, SystemManager& systems);
+    StateResult doAbortWork(GameState& gameState, SystemManager& systems, json& arguments);
 
     /// Check if this action can be performed at all by the subject.
     /// Called as part of doPreBeginWork, before the overridable portion is called.
@@ -223,49 +221,22 @@ namespace Actions
     /// Overridable portion of doPreBeginWork().
     /// @param params Map of parameters for the Action.
     /// @return StateResult indicating whether the Action continues.
-    virtual StateResult doPreBeginWorkNVI(GameState& gameState, SystemManager& systems);
+    virtual StateResult doPreBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments);
 
     /// Overridable portion of doBeginWork().
     /// @param params Map of parameters for the Action.
     /// @return StateResult indicating whether the Action continues.
-    virtual StateResult doBeginWorkNVI(GameState& gameState, SystemManager& systems);
+    virtual StateResult doBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments);
 
     /// Overridable portion of doFinishWork().
     /// @param params Map of parameters for the Action.
     /// @return StateResult indicating the post-Action wait time.
-    virtual StateResult doFinishWorkNVI(GameState& gameState, SystemManager& systems);
+    virtual StateResult doFinishWorkNVI(GameState& gameState, SystemManager& systems, json& arguments);
 
     /// Overridable portion of doAbortWork().
     /// @param params Map of parameters for the Action.
     /// @return StateResult indicating the post-Action wait time.
-    virtual StateResult doAbortWorkNVI(GameState& gameState, SystemManager& systems);
-
-    /// Describes the object(s) or direction in terms of the subject.
-    /// This string will vary based on the presence of objects or a direction
-    /// for the action, following this order:
-    ///   * If only one object is seen, returns " [OBJECT]."
-    ///     - If object = subject, returns " [SUBJECT-REFLEXIVE-PRONOUN]."
-    ///     - If the quantity is greater than 1, returns "[QUANTITY] of the [OBJECTS]".
-    ///   * If more than one object, returns " the items."
-    ///   * If a direction is present, returns " [DIRECTION]."
-    ///   * If none of these are present, returns an empty string.
-    /// @note The string returned has a leading space on it unless no objects or
-    ///       direction are found, in order to make message composition cleaner.
-    ///
-    /// This method can be overridden if necessary to customize the description for a
-    /// particular action.
-    virtual std::string getObjectString(SystemManager& systems) const;
-
-    /// Describes the target in terms of the subject or object.
-    /// This string will vary based on the presence of objects or a direction
-    /// for the action, following this order:
-    ///   * If the target equals the subject, returns "[SUBJECT-REFLEXIVE-PRONOUN]".
-    ///   * If the target equals the object, returns "[OBJECT-REFLEXIVE-PRONOUN]".
-    ///   * Otherwise returns the target description.
-    ///
-    /// This method can be overridden if necessary to customize the description for a
-    /// particular action.
-    virtual std::string getTargetString(SystemManager& systems) const;
+    virtual StateResult doAbortWorkNVI(GameState& gameState, SystemManager& systems, json& arguments);
 
     /// Print a "[SUBJECT] try to [VERB]" message.
     /// The message will vary based on the presence of objects or a direction
@@ -274,7 +245,7 @@ namespace Actions
     ///
     /// This method can be overridden if necessary to customize the message for a
     /// particular action.
-    virtual void printMessageTry() const;
+    virtual void printMessageTry(SystemManager& systems, json& arguments) const;
 
     /// Print a "[SUBJECT] [VERB]" message.
     /// The message will vary based on the presence of objects or a direction
@@ -283,7 +254,7 @@ namespace Actions
     ///
     /// This method can be overridden if necessary to customize the message for a
     /// particular action.
-    virtual void printMessageDo() const;
+    virtual void printMessageDo(SystemManager& systems, json& arguments) const;
 
     /// Print a "[SUBJECT] begin to [VERB]" message.
     /// The message will vary based on the presence of objects or a direction
@@ -292,7 +263,7 @@ namespace Actions
     ///
     /// This method can be overridden if necessary to customize the message for a
     /// particular action.
-    virtual void printMessageBegin() const;
+    virtual void printMessageBegin(SystemManager& systems, json& arguments) const;
 
     /// Print a "[SUBJECT] stop [VERBING]" message.
     /// The message will vary based on the presence of objects or a direction
@@ -301,7 +272,7 @@ namespace Actions
     ///
     /// This method can be overridden if necessary to customize the message for a
     /// particular action.
-    virtual void printMessageStop() const;
+    virtual void printMessageStop(SystemManager& systems, json& arguments) const;
 
     /// Print a "[SUBJECT] finish [VERBING]" message.
     /// The message will vary based on the presence of objects or a direction
@@ -310,7 +281,7 @@ namespace Actions
     ///
     /// This method can be overridden if necessary to customize the message for a
     /// particular action.
-    virtual void printMessageFinish() const;
+    virtual void printMessageFinish(SystemManager& systems, json& arguments) const;
 
     /// Print a "[SUBJECT] can't [VERB] that!" message.
     /// The message will vary based on the presence of objects or a direction
@@ -320,7 +291,7 @@ namespace Actions
     /// @todo Finish implementing me, right now the default implementation is too simple.
     /// This method can be overridden if necessary to customize the message for a
     /// particular action.
-    virtual void printMessageCant() const;
+    virtual void printMessageCant(SystemManager& systems, json& arguments) const;
 
   private:
     /// State of this action.
@@ -343,9 +314,6 @@ namespace Actions
 
     /// This action's type name.
     std::string const m_type;
-
-    /// This action's verb.
-    std::string const m_verb;
 
     static ActionMap s_actionMap;
   };
@@ -385,10 +353,10 @@ namespace Actions
     virtual std::unordered_set<Trait> const& getTraits() const override;
 
   protected:
-    virtual StateResult doPreBeginWorkNVI(GameState& gameState, SystemManager& systems) override;
-    virtual StateResult doBeginWorkNVI(GameState& gameState, SystemManager& systems) override;
-    virtual StateResult doFinishWorkNVI(GameState& gameState, SystemManager& systems) override;
-    virtual StateResult doAbortWorkNVI(GameState& gameState, SystemManager& systems) override;
+    virtual StateResult doPreBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments) override;
+    virtual StateResult doBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments) override;
+    virtual StateResult doFinishWorkNVI(GameState& gameState, SystemManager& systems, json& arguments) override;
+    virtual StateResult doAbortWorkNVI(GameState& gameState, SystemManager& systems, json& arguments) override;
   };
 
 } // end namespace

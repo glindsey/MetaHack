@@ -7,22 +7,24 @@
 #include "services/IMessageLog.h"
 #include "Service.h"
 #include "systems/SystemManager.h"
+#include "systems/SystemNarrator.h"
 #include "systems/SystemSpacialRelationships.h"
+#include "utilities/Shortcuts.h"
 
-#include "entity/Entity.h"
-#include "entity/EntityId.h"
+#include "entity/Entity.h" // needed for beObjectOf()
 
 namespace Actions
 {
   ActionGet ActionGet::prototype;
-  ActionGet::ActionGet() : Action("get", "GET", ActionGet::create_) {}
-  ActionGet::ActionGet(EntityId subject) : Action(subject, "get", "GET") {}
+  ActionGet::ActionGet() : Action("GET", ActionGet::create_) {}
+  ActionGet::ActionGet(EntityId subject) : Action(subject, "GET") {}
   ActionGet::~ActionGet() {}
 
   ReasonBool ActionGet::subjectIsCapable(GameState const& gameState) const
   {
+    auto& components = gameState.components();
     auto subject = getSubject();
-    bool canGrasp = COMPONENTS.bodyparts.existsFor(subject) && COMPONENTS.bodyparts[subject].hasPrehensileBodyPart();
+    bool canGrasp = components.bodyparts.existsFor(subject) && components.bodyparts.of(subject).hasPrehensileBodyPart();
     std::string reason = canGrasp ? "" : "YOU_HAVE_NO_GRASPING_BODYPARTS"; ///< @todo Add translation key
     return { canGrasp, reason };
   }
@@ -46,12 +48,14 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionGet::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionGet::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
+    auto& components = gameState.components();
+    auto& narrator = systems.narrator();
     std::string message;
     auto subject = getSubject();
     auto object = getObject();
-    EntityId location = COMPONENTS.position[subject].parent();
+    EntityId location = components.position.existsFor(subject) ? components.position.of(subject).parent() : EntityId::Mu();
 
     // Verify that the Action has an object.
     if (object == EntityId::Mu())
@@ -62,16 +66,18 @@ namespace Actions
     /// @todo When picking up, check if our inventory is full-up.
     if (false)
     {
-      putTr("YOU_TRY_TO_VERB_THE_FOO");
-      putTr("YOUR_INVENTORY_CANT_HOLD_THE_FOO");
+      putMsg(narrator.makeTr("YOU_TRY_TO_VERB_THE_FOO", arguments));
+      putMsg(narrator.makeTr("YOUR_INVENTORY_CANT_HOLD_THE_FOO", arguments));
       return StateResult::Failure();
     }
 
     return StateResult::Success();
   }
 
-  StateResult ActionGet::doBeginWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionGet::doBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
+    auto& narrator = systems.narrator();
+
     /// @todo Handle getting a certain quantity of an item.
     StateResult result = StateResult::Failure();
     std::string message;
@@ -80,15 +86,15 @@ namespace Actions
 
     if (object->beObjectOf(*this, subject))
     {
-      putTr("YOU_CVERB_THE_FOO");
-      if (SYSTEMS.spacial().moveEntityInto(object, subject))
+      putMsg(narrator.makeTr("YOU_CVERB_THE_FOO", arguments));
+      if (systems.spacial().moveEntityInto(object, subject))
       {
         /// @todo Figure out action time.
         result = StateResult::Success();
       }
       else // could not add to inventory
       {
-        putTr("YOU_CANT_VERB_FOO_UNKNOWN");
+        putMsg(narrator.makeTr("YOU_CANT_VERB_FOO_UNKNOWN", arguments));
 
         CLOG(WARNING, "Action") << "Could not move Entity " << object <<
           " even though beObjectOf returned Success";
@@ -98,12 +104,12 @@ namespace Actions
     return result;
   }
 
-  StateResult ActionGet::doFinishWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionGet::doFinishWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionGet::doAbortWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionGet::doAbortWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     return StateResult::Success();
   }

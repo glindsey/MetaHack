@@ -5,14 +5,17 @@
 #include "services/IMessageLog.h"
 #include "services/IStringDictionary.h"
 #include "Service.h"
-#include "entity/Entity.h"
-#include "entity/EntityId.h"
+#include "systems/SystemManager.h"
+#include "systems/SystemNarrator.h"
+#include "utilities/Shortcuts.h"
+
+#include "entity/Entity.h" // still needed for queueAction(), beObjectOf(), is_equippable_on()
 
 namespace Actions
 {
   ActionWear ActionWear::prototype;
-  ActionWear::ActionWear() : Action("wear", "WEAR", ActionWear::create_) {}
-  ActionWear::ActionWear(EntityId subject) : Action(subject, "wear", "WEAR") {}
+  ActionWear::ActionWear() : Action("WEAR", ActionWear::create_) {}
+  ActionWear::ActionWear(EntityId subject) : Action(subject, "WEAR") {}
   ActionWear::~ActionWear() {}
 
   ReasonBool ActionWear::subjectIsCapable(GameState const& gameState) const
@@ -38,16 +41,17 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionWear::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionWear::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     auto subject = getSubject();
     auto object = getObject();
+    auto& narrator = systems.narrator();
 
     auto bodypart = object->is_equippable_on();
 
     if (bodypart == BodyPart::MemberCount)
     {
-      putTr("THE_FOO_IS_NOT_VERBABLE");
+      putMsg(narrator.makeTr("THE_FOO_IS_NOT_VERBABLE", arguments));
       return StateResult::Failure();
     }
     else
@@ -60,7 +64,7 @@ namespace Actions
     return StateResult::Success();
   }
 
-  StateResult ActionWear::doBeginWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionWear::doBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     auto subject = getSubject();
     auto object = getObject();
@@ -75,20 +79,22 @@ namespace Actions
     return StateResult::Failure();
   }
 
-  StateResult ActionWear::doFinishWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionWear::doFinishWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     auto subject = getSubject();
     auto object = getObject();
+    auto& narrator = systems.narrator();
 
-    std::string bodypart_desc = subject->getBodypartDescription(m_bodyLocation);
+    std::string bodypart_desc = narrator.getBodypartDescription(subject, m_bodyLocation);
 
     COMPONENTS.bodyparts[subject].wearEntity(object, m_bodyLocation);
-    putMsg(makeTr("YOU_ARE_NOW_WEARING_THE_FOO", { subject->getPossessiveString(bodypart_desc) }));
+    arguments["your_bodypart"] = narrator.getPossessiveString(subject, bodypart_desc);
+    putMsg(narrator.makeTr("YOU_ARE_NOW_WEARING_THE_FOO", arguments));
 
     return StateResult::Success();
   }
 
-  StateResult ActionWear::doAbortWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionWear::doAbortWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     return StateResult::Success();
   }

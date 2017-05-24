@@ -7,23 +7,25 @@
 #include "services/IMessageLog.h"
 #include "services/IStringDictionary.h"
 #include "systems/SystemManager.h"
+#include "systems/SystemNarrator.h"
 #include "systems/SystemSpacialRelationships.h"
+#include "utilities/Shortcuts.h"
 
-#include "entity/Entity.h"
-#include "entity/EntityId.h"
+#include "entity/Entity.h" // needed for beObjectOf()
 
 namespace Actions
 {
   ActionTakeOut ActionTakeOut::prototype;
-  ActionTakeOut::ActionTakeOut() : Action("remove", "REMOVE", ActionTakeOut::create_) {}
-  ActionTakeOut::ActionTakeOut(EntityId subject) : Action(subject, "remove", "REMOVE") {}
+  ActionTakeOut::ActionTakeOut() : Action("REMOVE", ActionTakeOut::create_) {}
+  ActionTakeOut::ActionTakeOut(EntityId subject) : Action(subject, "REMOVE") {}
   ActionTakeOut::~ActionTakeOut() {}
 
   ReasonBool ActionTakeOut::subjectIsCapable(GameState const& gameState) const
   {
+    auto& components = gameState.components();
     auto subject = getSubject();
-    bool isSapient = COMPONENTS.sapience.existsFor(subject);
-    bool canGrasp = COMPONENTS.bodyparts.existsFor(subject) && COMPONENTS.bodyparts[subject].hasPrehensileBodyPart();
+    bool isSapient = components.sapience.existsFor(subject);
+    bool canGrasp = components.bodyparts.existsFor(subject) && components.bodyparts.of(subject).hasPrehensileBodyPart();
 
     if (!isSapient) return { false, "YOU_ARE_NOT_SAPIENT" }; ///< @todo Add translation key
     if (!canGrasp) return { false, "YOU_HAVE_NO_GRASPING_BODYPARTS" }; ///< @todo Add translation key
@@ -43,28 +45,28 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionTakeOut::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionTakeOut::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
+    auto& components = gameState.components();
+    auto& narrator = systems.narrator();
     std::string message;
     auto subject = getSubject();
     auto object = getObject();
 
     // Check that the container is not a MapTile or DynamicEntity.
-    auto& objectPosition = COMPONENTS.position.of(object);
+    auto& objectPosition = components.position.of(object);
     if (!objectPosition.isInsideAnotherEntity())
     {
-      printMessageTry();
+      printMessageTry(systems, arguments);
 
-      if (gameState.components().globals.player() == subject)
+      if (components.globals.player() == subject)
       {
-        message = makeTr("CONJUNCTION_BUT") + " ";
+        message = narrator.makeTr("CONJUNCTION_BUT", arguments) + " ";
       }
 
-      message += makeTr("THE_FOO_IS_NOT_PREPOSITION_NOUN", 
-      { 
-        makeTr("PREPOSITION_INSIDE"), 
-        getIndefArt(makeTr("NOUN_CONTAINER"))
-      });
+      arguments["preposition"] = tr("PREPOSITION_INSIDE");
+      arguments["noun"] = tr("NOUN_CONTAINER");
+      message += narrator.makeTr("THE_FOO_IS_NOT_PREPOSITION_NOUN", arguments);
 
       putMsg(message);
 
@@ -73,42 +75,46 @@ namespace Actions
 
     // Check that the container is within reach.
     auto objectContainer = objectPosition.parent();
-    if (!SYSTEMS.spacial()->firstCanReachSecond(subject, objectContainer))
+    if (!systems.spacial()->firstCanReachSecond(subject, objectContainer))
     {
-      printMessageTry();
+      printMessageTry(systems, arguments);
 
-      putTr("THE_FOO_IS_OUT_OF_REACH");
+      putMsg(narrator.makeTr("THE_FOO_IS_OUT_OF_REACH", arguments));
       return StateResult::Failure();
     }
 
     return StateResult::Success();
   }
 
-  StateResult ActionTakeOut::doBeginWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionTakeOut::doBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
+    auto& components = gameState.components();
+    auto& narrator = systems.narrator();
+
     /// @todo Handle taking out a certain quantity of an item.
     StateResult result = StateResult::Failure();
     std::string message;
     auto subject = getSubject();
     auto object = getObject();
-    auto container = COMPONENTS.position[object].parent();
-    auto newLocation = COMPONENTS.position[container].parent();
+    auto container = components.position.of(object).parent();
+    auto newLocation = components.position.of(container).parent();
 
     // Set the target to be the container as a kludge for message printing.
     setTarget(container);
 
     if (object->beObjectOf(*this, subject))
     {
-      if (SYSTEMS.spacial().moveEntityInto(object, newLocation))
+      if (systems.spacial().moveEntityInto(object, newLocation))
       {
-        printMessageDo();
+        printMessageDo(systems, arguments);
 
         /// @todo Figure out action time.
         result = StateResult::Success();
       }
       else
       {
-        putMsg(makeTr("YOU_CANT_VERB_FOO_PREPOSITION_TARGET_UNKNOWN", { "from" }));
+        arguments["preposition"] = tr("PREPOSITION_FROM");
+        putMsg(narrator.makeTr("YOU_CANT_VERB_FOO_PREPOSITION_TARGET_UNKNOWN", arguments));
         CLOG(ERROR, "Action") << "Could not move Entity out of Container even though beObjectOf returned Success";
       }
     }
@@ -116,23 +122,27 @@ namespace Actions
     return result;
   }
 
-  StateResult ActionTakeOut::doFinishWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionTakeOut::doFinishWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionTakeOut::doAbortWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionTakeOut::doAbortWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     return StateResult::Success();
   }
 
-  void ActionTakeOut::printMessageTry() const
+  void ActionTakeOut::printMessageTry(SystemManager& systems, json& arguments) const
   {
-    putMsg(makeTr("YOU_TRY_TO_VERB_THE_FOO_PREPOSITION_TARGET", { "from" }));
+    auto& narrator = systems.narrator();
+    arguments["preposition"] = tr("PREPOSITION_FROM");
+    putMsg(narrator.makeTr("YOU_TRY_TO_VERB_THE_FOO_PREPOSITION_TARGET", arguments));
   }
 
-  void ActionTakeOut::printMessageDo() const
+  void ActionTakeOut::printMessageDo(SystemManager& systems, json& arguments) const
   {
-    putMsg(makeTr("YOU_VERB_THE_FOO_PREPOSITION_TARGET", { "from" }));
+    auto& narrator = systems.narrator();
+    arguments["preposition"] = tr("PREPOSITION_FROM");
+    putMsg(narrator.makeTr("YOU_VERB_THE_FOO_PREPOSITION_TARGET", arguments));
   }
 }

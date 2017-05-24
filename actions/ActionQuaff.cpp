@@ -6,14 +6,17 @@
 #include "services/IMessageLog.h"
 #include "services/IStringDictionary.h"
 #include "Service.h"
-#include "entity/Entity.h"
-#include "entity/EntityId.h"
+#include "systems/SystemManager.h"
+#include "systems/SystemNarrator.h"
+#include "utilities/Shortcuts.h"
+
+#include "entity/Entity.h" // needed for beObjectOf()
 
 namespace Actions
 {
   ActionQuaff ActionQuaff::prototype;
-  ActionQuaff::ActionQuaff() : Action("drink", "DRINK", ActionQuaff::create_) {}
-  ActionQuaff::ActionQuaff(EntityId subject) : Action(subject, "drink", "DRINK") {}
+  ActionQuaff::ActionQuaff() : Action("DRINK", ActionQuaff::create_) {}
+  ActionQuaff::ActionQuaff(EntityId subject) : Action(subject, "DRINK") {}
   ActionQuaff::~ActionQuaff() {}
 
   std::unordered_set<Trait> const & ActionQuaff::getTraits() const
@@ -30,19 +33,20 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionQuaff::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionQuaff::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     // All checks handled by Action class via traits.
     return StateResult::Success();
   }
 
-  StateResult ActionQuaff::doBeginWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionQuaff::doBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
+    auto& components = gameState.components();
     auto subject = getSubject();
     auto object = getObject();
-    auto contents = COMPONENTS.inventory[object][InventorySlot::Zero];
+    auto contents = components.inventory.of(object)[InventorySlot::Zero];
 
-    printMessageBegin();
+    printMessageBegin(systems, arguments);
 
     // Do the drinking action here.
     /// @todo We drink from the object, but it's what is inside that is
@@ -59,22 +63,22 @@ namespace Actions
     }
     else
     {
-      printMessageStop();
+      printMessageStop(systems, arguments);
       return StateResult::Failure();
     }
   }
 
-  StateResult ActionQuaff::doFinishWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionQuaff::doFinishWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     auto object = getObject();
 
-    printMessageFinish();
+    printMessageFinish(systems, arguments);
     return StateResult::Success();
   }
 
-  StateResult ActionQuaff::doAbortWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionQuaff::doAbortWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
-    printMessageStop();
+    printMessageStop(systems, arguments);
     return StateResult::Success();
   }
 } // end namespace

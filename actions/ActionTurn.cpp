@@ -5,24 +5,26 @@
 #include "ActionAttack.h"
 #include "components/ComponentManager.h"
 #include "game/GameState.h"
+#include "map/Map.h"
 #include "services/IMessageLog.h"
 #include "services/IStringDictionary.h"
-#include "map/Map.h"
 #include "Service.h"
-#include "entity/Entity.h"
-#include "entity/EntityId.h"
+#include "systems/SystemManager.h"
+#include "systems/SystemNarrator.h"
+#include "utilities/Shortcuts.h"
 
 namespace Actions
 {
   ActionTurn ActionTurn::prototype;
-  ActionTurn::ActionTurn() : Action("turn", "TURN", ActionTurn::create_) {}
-  ActionTurn::ActionTurn(EntityId subject) : Action(subject, "turn", "TURN") {}
+  ActionTurn::ActionTurn() : Action("TURN", ActionTurn::create_) {}
+  ActionTurn::ActionTurn(EntityId subject) : Action(subject, "TURN") {}
   ActionTurn::~ActionTurn() {}
 
   ReasonBool ActionTurn::subjectIsCapable(GameState const& gameState) const
   {
+    auto& components = gameState.components();
     auto subject = getSubject();
-    bool isTurnable = (COMPONENTS.mobility.existsFor(subject) && COMPONENTS.mobility[subject].turnSpeed() > 0);
+    bool isTurnable = (components.mobility.existsFor(subject) && components.mobility.of(subject).turnSpeed() > 0);
     std::string reason = isTurnable ? "" : "YOU_HAVE_NO_WAY_OF_TURNING"; ///< @todo Add translation key
     return { isTurnable, reason };      
   }
@@ -38,21 +40,22 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionTurn::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionTurn::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     // All checks handled in Action class via traits.
     return StateResult::Success();
   }
 
   /// @todo Implement me.
-  StateResult ActionTurn::doBeginWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionTurn::doBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
+    auto& components = gameState.components();
     StateResult result = StateResult::Failure();
 
     std::string message;
 
     auto subject = getSubject();
-    auto position = COMPONENTS.position[subject];
+    auto position = components.position.of(subject);
     Direction new_direction = getTargetDirection();
 
     if ((new_direction != Direction::Up) &&
@@ -65,12 +68,12 @@ namespace Actions
     return result;
   }
 
-  StateResult ActionTurn::doFinishWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionTurn::doFinishWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionTurn::doAbortWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionTurn::doAbortWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     return StateResult::Success();
   }

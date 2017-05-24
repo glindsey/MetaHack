@@ -191,8 +191,4 @@ private:
 #define the_shader                (App::instance().get_shader())
 #define the_RNG                   (App::instance().get_rng())
 
-#define tr(x)                     (Service<IStringDictionary>::get().get(x))
-#define putMsg(x)                 do { Service<IMessageLog>::get().add(x); } while(0)
-#define putTr(x)                  do { putMsg(makeTr(x)); } while(0)
-
 #endif // APP_H

@@ -3,19 +3,20 @@
 #include "ActionAttack.h"
 #include "components/ComponentManager.h"
 #include "game/GameState.h"
-#include "services/IMessageLog.h"
-#include "services/IStringDictionary.h"
 #include "map/Map.h"
 #include "map/MapFactory.h"
+#include "services/IMessageLog.h"
+#include "services/IStringDictionary.h"
 #include "Service.h"
-#include "entity/Entity.h"
-#include "entity/EntityId.h"
+#include "systems/SystemManager.h"
+#include "systems/SystemNarrator.h"
+#include "utilities/Shortcuts.h"
 
 namespace Actions
 {
   ActionAttack ActionAttack::prototype;
-  ActionAttack::ActionAttack() : Action("attack", "ATTACK", ActionAttack::create_) {}
-  ActionAttack::ActionAttack(EntityId subject) : Action(subject, "attack", "ATTACK") {}
+  ActionAttack::ActionAttack() : Action("ATTACK", ActionAttack::create_) {}
+  ActionAttack::ActionAttack(EntityId subject) : Action(subject, "ATTACK") {}
   ActionAttack::~ActionAttack() {}
 
   std::unordered_set<Trait> const & ActionAttack::getTraits() const
@@ -30,42 +31,44 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionAttack::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionAttack::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     auto subject = getSubject();
     auto location = COMPONENTS.position[subject].parent();
     auto new_direction = getTargetDirection();
+    auto& narrator = systems.narrator();
 
     // Check if we're attacking ourself.
     if (new_direction == Direction::Self)
     {
       /// @todo Allow attacking yourself!
-      putTr("YOU_TRY_TO_ATTACK_YOURSELF_HUMOROUS");
+      putMsg(narrator.makeTr("YOU_TRY_TO_ATTACK_YOURSELF_HUMOROUS", arguments));
       return StateResult::Failure();
     }
 
     if (new_direction == Direction::Up)
     {
       /// @todo Write up/down attack code
-      putTr("YOU_CANT_ATTACK_CEILING");
+      putMsg(narrator.makeTr("YOU_CANT_ATTACK_CEILING", arguments));
       return StateResult::Failure();
     }
 
     if (new_direction == Direction::Down)
     {
       /// @todo Write up/down attack code
-      putTr("YOU_CANT_ATTACK_FLOOR");
+      putMsg(narrator.makeTr("YOU_CANT_ATTACK_FLOOR", arguments));
       return StateResult::Failure();
     }
 
     return StateResult::Success();
   }
 
-  StateResult ActionAttack::doBeginWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionAttack::doBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     auto subject = getSubject();
     auto& position = COMPONENTS.position[subject];
     auto new_direction = getTargetDirection();
+    auto& narrator = systems.narrator();
 
     bool success = false;
     unsigned int action_time = 0;
@@ -82,7 +85,7 @@ namespace Actions
     if ((x_new < 0) || (y_new < 0) ||
       (x_new >= map_size.x) || (y_new >= map_size.y))
     {
-      putTr("YOU_CANT_VERB_THERE");
+      putMsg(narrator.makeTr("YOU_CANT_VERB_THERE", arguments));
       return StateResult::Failure();
     }
 
@@ -95,7 +98,7 @@ namespace Actions
     if (object == EntityId::Mu())
     {
       /// @todo Deal with attacking other stuff, MapTiles, etc.
-      putTr("YOU_CANT_VERB_NOTHING");
+      putMsg(narrator.makeTr("YOU_CANT_VERB_NOTHING", arguments));
       return StateResult::Failure();
     }
 
@@ -105,18 +108,18 @@ namespace Actions
     if (reachable)
     {
       /// @todo Write actual attack code here.
-      putTr("ACTN_ATTACK_UNFINISHED");
+      putMsg(narrator.makeTr("ACTN_ATTACK_UNFINISHED", arguments));
     }
 
     return{ success, action_time };
   }
 
-  StateResult ActionAttack::doFinishWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionAttack::doFinishWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionAttack::doAbortWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionAttack::doAbortWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     return StateResult::Success();
   }

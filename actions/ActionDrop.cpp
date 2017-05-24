@@ -1,23 +1,23 @@
 #include "stdafx.h"
 
 #include "ActionDrop.h"
-#include "ActionMove.h"
 #include "components/ComponentManager.h"
 #include "game/GameState.h"
 #include "services/IMessageLog.h"
 #include "services/IStringDictionary.h"
 #include "Service.h"
 #include "systems/SystemManager.h"
+#include "systems/SystemNarrator.h"
 #include "systems/SystemSpacialRelationships.h"
+#include "utilities/Shortcuts.h"
 
-#include "entity/Entity.h"
-#include "entity/EntityId.h"
+#include "entity/Entity.h" // needed for beObjectOf()
 
 namespace Actions
 {
   ActionDrop ActionDrop::prototype;
-  ActionDrop::ActionDrop() : Action("drop", "DROP", ActionDrop::create_) {}
-  ActionDrop::ActionDrop(EntityId subject) : Action(subject, "drop", "DROP") {}
+  ActionDrop::ActionDrop() : Action("DROP", ActionDrop::create_) {}
+  ActionDrop::ActionDrop(EntityId subject) : Action(subject, "DROP") {}
   ActionDrop::~ActionDrop() {}
 
   ReasonBool ActionDrop::subjectIsCapable(GameState const& gameState) const
@@ -47,46 +47,51 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionDrop::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionDrop::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     // All checks handled in Action class via traits.
     return StateResult::Success();
   }
 
-  StateResult ActionDrop::doBeginWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionDrop::doBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
+    auto& components = gameState.components();
+    auto& narrator = systems.narrator();
     StateResult result = StateResult::Failure();
     std::string message;
     auto subject = getSubject();
     auto object = getObjects().front();
-    EntityId location = COMPONENTS.position[subject].parent();
+    EntityId location = components.position.existsFor(subject) ? components.position.of(subject).parent() : EntityId::Mu();
+    arguments["the_location"] = narrator.getDescriptiveString(location);
 
     /// @todo Handle dropping a certain quantity of an item.
 
     if (object == subject)
     {
-      putMsg(makeTr("YOU_THROW_SELF_TO_GROUND", { location->getDisplayName() }));
+      putMsg(narrator.makeTr("YOU_THROW_SELF_TO_GROUND", arguments));
+
       /// @todo Possible damage from hurling yourself to the ground!
-      putMsg(makeTr("YOU_SEEM_UNHARMED", { (gameState.components().globals.player() == subject) ? tr("PREFIX_FORTUNATELY") : "" }));
-      putTr("YOU_GET_UP");
+      arguments["prefix"] = (components.globals.player() == subject) ? tr("PREFIX_FORTUNATELY") : "";
+      putMsg(narrator.makeTr("YOU_SEEM_UNHARMED", arguments));
+      putMsg(narrator.makeTr("YOU_GET_UP", arguments));
     }
     else if (object != EntityId::Mu())
     {
-      if (COMPONENTS.inventory.existsFor(location) &&
-          COMPONENTS.inventory[location].canContain(object))
+      if (components.inventory.existsFor(location) &&
+          components.inventory.of(location).canContain(object))
       {
         if (object->beObjectOf(*this, subject))
         {
-          printMessageDo();
+          printMessageDo(systems, arguments);
 
-          if (SYSTEMS.spacial().moveEntityInto(object, location))
+          if (systems.spacial().moveEntityInto(object, location))
           {
             /// @todo Figure out action time.
             result = StateResult::Success();
           }
           else
           {
-            putTr("YOU_CANT_VERB_FOO_UNKNOWN");
+            putMsg(narrator.makeTr("YOU_CANT_VERB_FOO_UNKNOWN", arguments));
 
             CLOG(WARNING, "Action") << "Could not drop Entity " << object <<
               " even though beObjectOf returned Success";
@@ -99,23 +104,23 @@ namespace Actions
       }
       else // can't contain the entity
       {
-        // This is mighty strange, but I suppose there might be MapTiles in
+        // This is mighty strange, but I suppose there might be MapTile spaces in
         // the future that can't contain certain Entities.
-        printMessageTry();
+        printMessageTry(systems, arguments);
 
-        putMsg(makeTr("LOCATION_CANT_HOLD_FOO", { location->getDescriptiveString() }));
+        putMsg(narrator.makeTr("LOCATION_CANT_HOLD_FOO", arguments));
       }
     }
 
     return result;
   }
 
-  StateResult ActionDrop::doFinishWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionDrop::doFinishWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionDrop::doAbortWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionDrop::doAbortWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     return StateResult::Success();
   }

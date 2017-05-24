@@ -452,6 +452,7 @@
     <ClInclude Include="game_windows\StatusArea.h" />
     <ClInclude Include="include\stdafx.h" />
     <ClInclude Include="services\StringDictionary.h" />
+    <ClInclude Include="utilities\Shortcuts.h" />
     <ClInclude Include="utilities\StringTransforms.h" />
     <ClInclude Include="entity\Entity.h" />
     <ClInclude Include="entity\EntityId.h" />

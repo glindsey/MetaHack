@@ -31,6 +31,7 @@ SystemManager::SystemManager(GameState& gameState) :
                                       components.position));
 
   m_narrator.reset(NEW SystemNarrator(components.globals,
+                                      components.bodyparts,
                                       components.category,
                                       components.gender,
                                       components.health,

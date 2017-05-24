@@ -24,12 +24,12 @@ namespace Actions
     virtual std::unordered_set<Trait> const& getTraits() const override;
 
   protected:
-    virtual StateResult doPreBeginWorkNVI(GameState& gameState, SystemManager& systems) override;
-    virtual StateResult doBeginWorkNVI(GameState& gameState, SystemManager& systems) override;
-    virtual StateResult doFinishWorkNVI(GameState& gameState, SystemManager& systems) override;
-    virtual StateResult doAbortWorkNVI(GameState& gameState, SystemManager& systems) override;
+    virtual StateResult doPreBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments) override;
+    virtual StateResult doBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments) override;
+    virtual StateResult doFinishWorkNVI(GameState& gameState, SystemManager& systems, json& arguments) override;
+    virtual StateResult doAbortWorkNVI(GameState& gameState, SystemManager& systems, json& arguments) override;
 
-    virtual void printMessageCant() const override;
+    virtual void printMessageCant(SystemManager& systems, json& arguments) const override;
   };
 
 } // end namespace

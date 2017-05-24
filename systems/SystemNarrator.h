@@ -1,15 +1,23 @@
 #pragma once
 
+#include "components/ComponentBodyparts.h"
 #include "components/ComponentGender.h"
 #include "components/ComponentGlobals.h"
 #include "components/ComponentHealth.h"
 #include "components/ComponentMap.h"
 #include "components/ComponentPosition.h"
 #include "systems/SystemCRTP.h"
+#include "types/Bodypart.h"
+#include "types/Direction.h"
 #include "types/Gender.h"
+
+#include "json.hpp"
+using json = ::nlohmann::json;
 
 // Forward declarations
 class EntityId;
+
+using EntitySet = std::set<EntityId>;
 
 // Associated enum classes to aid in parameter legibility.
 enum class ArticleChoice
@@ -44,6 +52,7 @@ public:
   friend std::ostream& operator<<(std::ostream& os, TokenizerState state);
 
   SystemNarrator(ComponentGlobals const& globals,
+                 ComponentMap<ComponentBodyparts> const& bodyparts,
                  ComponentMap<std::string> const& category,
                  ComponentMap<ComponentGender> const& gender,
                  ComponentMap<ComponentHealth> const& health,
@@ -58,7 +67,7 @@ public:
   /// If so, it returns true; otherwise, it returns false.
   /// @todo See if this is different for languages other than English.
   ///       I'm guessing the answer is "yes, yes it is".
-  bool isThirdPerson(EntityId id) const;
+  bool isThirdPerson(EntitySet entities) const;
 
   /// Choose which verb form to use based on first/second/third person.
   /// This function checks to see if this Entity is currently designated as
@@ -67,7 +76,7 @@ public:
   /// string passed as verb3.
   /// @param verb2 The second person or plural verb form, such as "shake"
   /// @param verb3 The third person verb form, such as "shakes"
-  std::string const & chooseVerb(EntityId id, 
+  std::string const & chooseVerb(EntitySet entities,
                                  std::string const & verb12, 
                                  std::string const & verb3) const;
 
@@ -75,27 +84,27 @@ public:
   /// @todo Make localizable. (How? Use Lua scripts maybe?)
   /// @{
 
-  /// Get the appropriate subject pronoun for an Entity.
-  std::string const& getSubjectPronoun(EntityId id) const;
+  /// Get the appropriate subject pronoun for one or more Entities.
+  std::string const& getSubjectPronoun(EntitySet entities) const;
 
-  /// Get the appropriate object pronoun for an Entity.
-  std::string const& getObjectPronoun(EntityId id) const;
+  /// Get the appropriate object pronoun for one or more Entities.
+  std::string const& getObjectPronoun(EntitySet entities) const;
 
-  /// Get the appropriate reflexive pronoun for an Entity.
-  std::string const& getReflexivePronoun(EntityId id) const;
+  /// Get the appropriate reflexive pronoun for one or more Entities.
+  std::string const& getReflexivePronoun(EntitySet entities) const;
 
-  /// Get the appropriate possessive adjective for an Entity.
-  std::string const& getPossessiveAdjective(EntityId id) const;
+  /// Get the appropriate possessive adjective for one or more Entities.
+  std::string const& getPossessiveAdjective(EntitySet entities) const;
 
-  /// Get the appropriate possessive pronoun for an Entity.
-  std::string const& getPossessivePronoun(EntityId id) const;
+  /// Get the appropriate possessive pronoun for one or more Entities.
+  std::string const& getPossessivePronoun(EntitySet entities) const;
 
   /// @}
 
   /// Return either the gender of an Entity, Gender::You if the Entity 
   /// is the player, or Gender::Plural if there's more than one in an
   /// aggregate Entity.
-  Gender getGenderOrYou(EntityId) const;
+  Gender getGenderOrYou(EntitySet entities) const;
 
   /// Return a string that identifies an object, in the subjective case.
   /// If it IS the player, it'll return "you".
@@ -104,7 +113,8 @@ public:
   /// @param articles Choose whether to use definite or indefinite articles.
   ///                 Defaults to definite articles.
   std::string getSubjectiveString(EntityId id,
-                                  ArticleChoice articles = ArticleChoice::Definite) const;
+                                  ArticleChoice articles = ArticleChoice::Definite,
+                                  UsePossessives possessives = UsePossessives::Yes) const;
 
   /// Return a string that identifies an entity, in the objective case.
   /// If it IS the player, it'll return "you".
@@ -117,7 +127,8 @@ public:
   /// getSubjectiveString(), but _this will not be the case
   /// in all languages_.
   std::string getObjectiveString(EntityId id,
-                                 ArticleChoice articles = ArticleChoice::Definite) const;
+                                 ArticleChoice articles = ArticleChoice::Definite,
+                                 UsePossessives possessives = UsePossessives::Yes) const;
 
   /// Return a string that identifies an entity, in the reflexive case.
   /// If it matches the object passed in as "other", it'll return
@@ -128,8 +139,12 @@ public:
   /// @param articles Choose whether to use definite or indefinite articles.
   ///                 Defaults to definite articles.
   std::string getReflexiveString(EntityId id,
-                                 EntityId other, 
-                                 ArticleChoice articles = ArticleChoice::Definite) const;
+                                 EntityId other,
+                                 ArticleChoice articles = ArticleChoice::Definite,
+                                 UsePossessives possessives = UsePossessives::Yes) const;
+
+  std::string getDescription(EntitySet entities, 
+                             std::function<std::string(EntityId)> descriptionFunctor) const;
 
   /// Return a string that identifies an entity.
   /// Returns "the/a/an" and a description of the entity, such as
@@ -159,13 +174,15 @@ public:
   ///
   /// @note If you want a possessive pronoun like his/her/its/etc., use
   /// getPossessiveAdjective().
-  std::string getPossessiveString(EntityId id, std::string owned, std::string adjectives = "") const;
-
-  /// Return an entity's adjective qualifiers (such as "fireproof", "waterproof", etc.)
-  std::string getDisplayAdjectives(EntityId id) const;
+  std::string getPossessiveString(EntityId id, 
+                                  std::string owned, 
+                                  std::string adjectives = "") const;
 
   /// Get a const reference to an entity's category data.
   json const& getCategoryData(EntityId id) const;
+
+  /// Return an entity's adjective qualifiers (such as "fireproof", "waterproof", etc.)
+  std::string getDisplayAdjectives(EntityId id) const;
 
   /// Return an entity's name.
   std::string getDisplayName(EntityId id) const;
@@ -174,16 +191,67 @@ public:
   std::string getDisplayPlural(EntityId id) const;
 
   // String composition functions
-  std::string makeString(EntityId subject, EntityId object, std::string pattern, std::vector<std::string> optionalStrings) const;
-  std::string makeString(EntityId subject, EntityId object, std::string pattern) const;
-  std::string makeStringNumsOnly(std::string pattern, std::vector<std::string> optionalStrings) const;
-  std::string makeTr(EntityId subject, EntityId object, std::string key) const;
-  std::string makeTr(EntityId subject, EntityId object, std::string key, std::vector<std::string> optionalStrings) const;
+  std::string makeString(std::string pattern,
+                         json arguments = json::object()) const;
 
+  std::string makeStringTokensOnly(std::string pattern, 
+                                   json arguments = json::object()) const;
+  
+  std::string makeTr(std::string key,
+                     json arguments = json::object()) const;
+
+  /// Find all occurrence of tokens, e.g. `$xxx` or `$(xxx?yyy:zzz)`.
+  ///
+  /// For tokens of form `$xxx`:
+  ///   The passed-in functor `tokenFunctor` is called with the string `xxx` as
+  /// an argument, and returns another string to replace it with.
+  ///
+  /// For token of form `$xxx(yyy)`:
+  ///   The passed-in functor `tokenArgumentFunctor` is called with the strings
+  /// `xxx` and `yyy` as arguments, and returns another string to replace the whole
+  /// thing with.
+  ///
+  /// For tokens of form `$(xxx?yyy:zzz)`:
+  ///   The passed-in functor `chooseFunctor` is called with the string `xxx` as
+  /// an argument. If the functor returns true, the token will be replaced by the
+  /// string `yyy`; otherwise, it will be replaced by the string `zzz`.
+  ///
+  /// String `xxx` must not be blank, and must consist of alphanumeric characters
+  /// and underscores only.
+  /// Strings `yyy` or `zzz` can be blank, and can consist of any characters
+  /// other than ":" for string `yyy` or ")" for string `zzz`.
+  ///
+  /// The string `$$` is recognized as a single `$` instead of being parsed as a
+  /// token.
+  ///
+  /// In all cases, a backslash can be used to escape any character and prevent
+  /// it from being recognized as a token delimiter.
+  /// 
+  /// The final string has all whitespace sequences reduced to a single space
+  /// each, and has excess whitespace trimmed from the head and tail.
   std::string replaceTokens(std::string str,
                             std::function<std::string(std::string)> tokenFunctor,
                             std::function<std::string(std::string, std::string)> tokenArgumentFunctor,
                             std::function<bool(std::string)> chooseFunctor) const;
+
+  /// Get the number of a particular body part an Entity has.
+  unsigned int getBodypartNumber(EntityId id, BodyPart part) const;
+
+  /// Get the appropriate body part name for an Entity.
+  std::string getBodypartName(EntityId id, BodyPart part) const;
+
+  /// Get the appropriate body part plural for an Entity.
+  std::string getBodypartPlural(EntityId id, BodyPart part) const;
+
+  /// Get the appropriate description for an Entity's body part.
+  /// This takes the body part name and the number referencing the particular
+  /// part and comes up with a description.
+  /// For example, for most creatures with two hands, hand #0 will be the
+  /// "right hand" and hand #1 will be the "left hand".
+  /// In most cases the default implementation here will work, but if a
+  /// creature has (for example) a strange configuration of limbs this can be
+  /// overridden.
+  std::string getBodypartDescription(EntityId id, BodyLocation location);
 
   /// Return the first-/second-person singular form of a verb.
   /// @todo English doesn't generally distinguish between 1st/2nd person
@@ -221,6 +289,7 @@ protected:
 private:
   // Components used by this system.
   ComponentGlobals const& m_globals;
+  ComponentMap<ComponentBodyparts> const& m_bodyparts;
   ComponentMap<std::string> const& m_category;
   ComponentMap<ComponentGender> const& m_gender;
   ComponentMap<ComponentHealth> const& m_health;

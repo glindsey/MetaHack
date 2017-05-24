@@ -98,6 +98,52 @@ namespace JSONUtils
     }
   }
 
+  /// Given a JSON value, get either a value or an array of values into a vector.
+  /// If the JSON value is an object, do nothing -- we can't handle that.
+  /// If the value is an array, iterate over it and push the values into the vector.
+  /// Otherwise, just push the single value into the vector.
+  template <typename T>
+  std::vector<T> getVector(json const& j)
+  {
+    std::vector<T> result;
+    if (j.is_array())
+    {
+      for (auto value : j)
+      {
+        result.push_back(value.get<T>());
+      }
+    }
+    else if (!j.is_object())
+    {
+      result.push_back(j.get<T>());
+    }
+
+    return result;
+  }
+
+  /// Given a JSON value, get either a value or an array of values into a set.
+  /// If the JSON value is an object, do nothing -- we can't handle that.
+  /// If the value is an array, iterate over it and push the values into the vector.
+  /// Otherwise, just push the single value into the vector.
+  template <typename T>
+  std::set<T> getSet(json const& j)
+  {
+    std::set<T> result;
+    if (j.is_array())
+    {
+      for (auto value : j)
+      {
+        result.insert(value.get<T>());
+      }
+    }
+    else if (!j.is_object())
+    {
+      result.insert(j.get<T>());
+    }
+
+    return result;
+  }
+
   /// Do a fancypants read of a value to get an integer.
   /// If the value is a number, just set it directly.
   /// If the value is an array, set the integer to a random number between the two.

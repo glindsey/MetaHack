@@ -4,14 +4,17 @@
 #include "services/IMessageLog.h"
 #include "services/IStringDictionary.h"
 #include "Service.h"
-#include "entity/Entity.h"
-#include "entity/EntityId.h"
+#include "systems/SystemManager.h"
+#include "systems/SystemNarrator.h"
+#include "utilities/Shortcuts.h"
+
+#include "entity/Entity.h" // needed for beObjectOf()
 
 namespace Actions
 {
   ActionEat ActionEat::prototype;
-  ActionEat::ActionEat() : Action("eat", "EAT", ActionEat::create_) {}
-  ActionEat::ActionEat(EntityId subject) : Action(subject, "eat", "EAT") {}
+  ActionEat::ActionEat() : Action("EAT", ActionEat::create_) {}
+  ActionEat::ActionEat(EntityId subject) : Action(subject, "EAT") {}
   ActionEat::~ActionEat() {}
 
   std::unordered_set<Trait> const & ActionEat::getTraits() const
@@ -25,8 +28,9 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionEat::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionEat::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
+    auto& narrator = systems.narrator();
     std::string message;
     auto subject = getSubject();
     auto object = getObject();
@@ -34,22 +38,22 @@ namespace Actions
     // Check that it isn't US!
     if (subject == object)
     {
-      printMessageTry();
+      printMessageTry(systems, arguments);
 
       /// @todo Handle "unusual" cases (e.g. zombies?)
-      putTr("YOU_TRY_TO_EAT_YOURSELF_HUMOROUS");
+      putMsg(narrator.makeTr("YOU_TRY_TO_EAT_YOURSELF_HUMOROUS", arguments));
       return StateResult::Failure();
     }
 
     return StateResult::Success();
   }
 
-  StateResult ActionEat::doBeginWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionEat::doBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     auto subject = getSubject();
     auto object = getObject();
 
-    printMessageBegin();
+    printMessageBegin(systems, arguments);
 
     // Do the eating action here.
     /// @todo "Partially eaten" status for entities that were started to be eaten
@@ -64,16 +68,16 @@ namespace Actions
     }
     else
     {
-      printMessageStop();
+      printMessageStop(systems, arguments);
       return StateResult::Failure();
     }
   }
 
-  StateResult ActionEat::doFinishWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionEat::doFinishWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     auto object = getObject();
 
-    printMessageFinish();
+    printMessageFinish(systems, arguments);
 
     if (m_last_eat_result)
     {
@@ -83,9 +87,9 @@ namespace Actions
     return StateResult::Success();
   }
 
-  StateResult ActionEat::doAbortWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionEat::doAbortWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
-    printMessageStop();
+    printMessageStop(systems, arguments);
     return StateResult::Success();
   }
 } // end namespace

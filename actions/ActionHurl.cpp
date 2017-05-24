@@ -6,17 +6,17 @@
 #include "services/IMessageLog.h"
 #include "Service.h"
 #include "systems/SystemManager.h"
+#include "systems/SystemNarrator.h"
 #include "systems/SystemSpacialRelationships.h"
+#include "utilities/Shortcuts.h"
 
-#include "entity/Entity.h"
-#include "entity/EntityId.h"
-
+#include "entity/Entity.h" // needed for beObjectOf()
 
 namespace Actions
 {
   ActionHurl ActionHurl::prototype;
-  ActionHurl::ActionHurl() : Action("hurl", "THROW", ActionHurl::create_) {}
-  ActionHurl::ActionHurl(EntityId subject) : Action(subject, "hurl", "THROW") {}
+  ActionHurl::ActionHurl() : Action("THROW", ActionHurl::create_) {}
+  ActionHurl::ActionHurl(EntityId subject) : Action(subject, "THROW") {}
   ActionHurl::~ActionHurl() {}
 
   std::unordered_set<Trait> const & ActionHurl::getTraits() const
@@ -31,7 +31,7 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionHurl::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionHurl::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     std::string message;
     auto subject = getSubject();
@@ -41,20 +41,22 @@ namespace Actions
     return StateResult::Success();
   }
 
-  StateResult ActionHurl::doBeginWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionHurl::doBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
+    auto& components = gameState.components();
+    auto& narrator = systems.narrator();
     auto result = StateResult::Failure();
     std::string message;
     auto subject = getSubject();
     auto object = getObject();
     auto direction = getTargetDirection();
-    EntityId new_location = COMPONENTS.position[subject].parent();
+    EntityId new_location = components.position.existsFor(subject) ? components.position.of(subject).parent() : EntityId::Mu();
 
     if (object->beObjectOf(*this, subject, direction))
     {
-      if (SYSTEMS.spacial().moveEntityInto(object, new_location))
+      if (systems.spacial().moveEntityInto(object, new_location))
       {
-        printMessageDo();
+        printMessageDo(systems, arguments);
 
         /// @todo When throwing, set Entity's direction and velocity
         /// @todo Figure out action time.
@@ -62,7 +64,7 @@ namespace Actions
       }
       else
       {
-        putTr("YOU_CANT_VERB_FOO_UNKNOWN");
+        putMsg(narrator.makeTr("YOU_CANT_VERB_FOO_UNKNOWN", arguments));
 
         CLOG(WARNING, "Action") << "Could not throw Entity " << object <<
           " even though beObjectOf returned Success";
@@ -72,12 +74,12 @@ namespace Actions
     return result;
   }
 
-  StateResult ActionHurl::doFinishWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionHurl::doFinishWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionHurl::doAbortWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionHurl::doAbortWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     return StateResult::Success();
   }

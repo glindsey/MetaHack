@@ -5,14 +5,13 @@
 #include "services/IMessageLog.h"
 #include "services/IStringDictionary.h"
 #include "Service.h"
-#include "entity/Entity.h"
-#include "entity/EntityId.h"
+#include "utilities/Shortcuts.h"
 
 namespace Actions
 {
   ActionClose ActionClose::prototype;
-  ActionClose::ActionClose() : Action("close", "CLOSE", ActionClose::create_) {}
-  ActionClose::ActionClose(EntityId subject) : Action(subject, "close", "CLOSE") {}
+  ActionClose::ActionClose() : Action("CLOSE", ActionClose::create_) {}
+  ActionClose::ActionClose(EntityId subject) : Action(subject, "CLOSE") {}
   ActionClose::~ActionClose() {}
 
   ReasonBool ActionClose::subjectIsCapable(GameState const& gameState) const
@@ -38,17 +37,17 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionClose::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionClose::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionClose::doBeginWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionClose::doBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     bool success = false;
     unsigned int action_time = 0;
 
-    putTr("ACTN_NOT_IMPLEMENTED");
+    putMsg(tr("ACTN_NOT_IMPLEMENTED"));
 
 #if 0
     if (entity != EntityId::Mu())
@@ -60,12 +59,12 @@ namespace Actions
     return{ success, action_time };
   }
 
-  StateResult ActionClose::doFinishWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionClose::doFinishWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionClose::doAbortWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionClose::doAbortWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     return StateResult::Success();
   }

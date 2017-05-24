@@ -4,14 +4,17 @@
 #include "services/IMessageLog.h"
 #include "services/IStringDictionary.h"
 #include "Service.h"
-#include "entity/Entity.h"
-#include "entity/EntityId.h"
+#include "systems/SystemManager.h"
+#include "systems/SystemNarrator.h"
+#include "utilities/Shortcuts.h"
+
+#include "entity/Entity.h" // needed for beObjectOf()
 
 namespace Actions
 {
   ActionRead ActionRead::prototype;
-  ActionRead::ActionRead() : Action("read", "READ", ActionRead::create_) {}
-  ActionRead::ActionRead(EntityId subject) : Action(subject, "read", "READ") {}
+  ActionRead::ActionRead() : Action("READ", ActionRead::create_) {}
+  ActionRead::ActionRead(EntityId subject) : Action(subject, "READ") {}
   ActionRead::~ActionRead() {}
 
   std::unordered_set<Trait> const & ActionRead::getTraits() const
@@ -25,44 +28,42 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionRead::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionRead::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
-    std::string message;
+    auto& narrator = systems.narrator();
     auto subject = getSubject();
     auto object = getObject();
 
     if (false) ///< @todo Intelligence tests for reading.
     {
-      printMessageTry();
-      putTr("READ_TOO_STUPID");
+      printMessageTry(systems, arguments);
+      putMsg(narrator.makeTr("READ_TOO_STUPID", arguments));
       return StateResult::Failure();
     }
 
     return StateResult::Success();
   }
 
-  StateResult ActionRead::doBeginWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionRead::doBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     StateResult result = StateResult::Failure();
-    std::string message;
     auto subject = getSubject();
     auto object = getObject();
 
     /// @todo Figure out read time.
-    printMessageBegin();
+    printMessageBegin(systems, arguments);
     result = StateResult::Success(1);
 
     return result;
   }
 
-  StateResult ActionRead::doFinishWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionRead::doFinishWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     StateResult result = StateResult::Failure();
-    std::string message;
     auto subject = getSubject();
     auto object = getObject();
 
-    printMessageFinish();
+    printMessageFinish(systems, arguments);
 
     /// @todo Split read time into start/finish actions.
     if (object->beObjectOf(*this, subject))
@@ -81,17 +82,19 @@ namespace Actions
     return result;
   }
 
-  StateResult ActionRead::doAbortWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionRead::doAbortWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     auto subject = getSubject();
     auto object = getObject();
 
-    printMessageStop();
+    printMessageStop(systems, arguments);
     return StateResult::Success();
   }
 
-  void ActionRead::printMessageCant() const
+  void ActionRead::printMessageCant(SystemManager& systems, json& arguments) const
   {
-    putMsg(makeTr("THE_FOO_HAS_NO_NOUN_TO_VERB", { "writing" }));
+    auto& narrator = systems.narrator();
+    arguments["item"] = tr("NOUN_WRITING");
+    putMsg(narrator.makeTr("THE_FOO_HAS_NO_NOUN_TO_VERB", arguments));
   }
 } // end namespace

@@ -33,5 +33,5 @@ using MapID = std::string;
 
 using String = std::string;
 
-using BoolMap = std::unordered_map < std::string, bool >;
-using StringMap = std::unordered_map < std::string, std::string >;
+using BoolMap = std::unordered_map<std::string, bool>;
+using StringMap = std::unordered_map<std::string, std::string>;

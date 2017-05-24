@@ -1,4 +1,6 @@
-#include "stdafx.h"
+#pragma once
+
+#include <string>
 
 /// Interface for a localized string provider.
 class IStringDictionary

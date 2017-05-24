@@ -7,14 +7,17 @@
 #include "services/IMessageLog.h"
 #include "services/IStringDictionary.h"
 #include "Service.h"
-#include "entity/Entity.h"
-#include "entity/EntityId.h"
+#include "systems/SystemManager.h"
+#include "systems/SystemNarrator.h"
+#include "utilities/Shortcuts.h"
+
+#include "entity/Entity.h" // still needed for queueAction(), beObjectOf()
 
 namespace Actions
 {
   ActionWield ActionWield::prototype;
-  ActionWield::ActionWield() : Action("wield", "WIELD", ActionWield::create_) {}
-  ActionWield::ActionWield(EntityId subject) : Action(subject, "wield", "WIELD") {}
+  ActionWield::ActionWield() : Action("WIELD", ActionWield::create_) {}
+  ActionWield::ActionWield(EntityId subject) : Action(subject, "WIELD") {}
   ActionWield::~ActionWield() {}
 
   ReasonBool ActionWield::subjectIsCapable(GameState const& gameState) const
@@ -42,18 +45,20 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionWield::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionWield::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     std::string message;
     auto subject = getSubject();
     auto object = getObject();
+    auto& components = gameState.components();
+    auto& narrator = systems.narrator();
 
     /// @todo Support wielding in other prehensile limb(s). This will also include
     ///       shifting an already-wielded weapon to another hand.
     m_bodyLocation = { BodyPart::Hand, 0 };
-    EntityId currentlyWielded = COMPONENTS.bodyparts[subject].getWieldedEntity(m_bodyLocation);
+    EntityId currentlyWielded = components.bodyparts[subject].getWieldedEntity(m_bodyLocation);
 
-    std::string bodypartDesc = subject->getBodypartDescription(m_bodyLocation);
+    std::string bodypartDesc = narrator.getBodypartDescription(subject, m_bodyLocation);
 
     // If it is us, or it is what is already being wielded, it means to unwield whatever is wielded.
     if ((object == subject) || (object == currentlyWielded) || (object == EntityId::Mu()))
@@ -65,20 +70,21 @@ namespace Actions
     }
     else if (currentlyWielded != EntityId::Mu())
     {
-      putMsg(makeTr("YOU_MUST_UNWIELD_FIRST", { bodypartDesc }));
+      arguments["bodypart"] = bodypartDesc;
+      putMsg(narrator.makeTr("YOU_MUST_UNWIELD_FIRST", arguments));
       return StateResult::Failure();
     }
 
     return StateResult::Success();
   }
 
-  StateResult ActionWield::doBeginWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionWield::doBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     /// @todo Wielding should take time -- should not be instantaneously done here.
     auto subject = getSubject();
     auto object = getObject();
 
-    printMessageBegin();
+    printMessageBegin(systems, arguments);
 
     // If we HAVE a new item, try to wield it.
     if (object->beObjectOf(*this, subject))
@@ -90,20 +96,23 @@ namespace Actions
     return StateResult::Failure();
   }
 
-  StateResult ActionWield::doFinishWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionWield::doFinishWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     auto subject = getSubject();
     auto object = getObject();
-    std::string bodypart_desc = subject->getBodypartDescription(m_bodyLocation);
+    auto& components = gameState.components();
+    auto& narrator = systems.narrator();
+
+    std::string bodypart_desc = narrator.getBodypartDescription(subject, m_bodyLocation);
 
     COMPONENTS.bodyparts[subject].wieldEntity(object, m_bodyLocation);
-    putMsg(makeTr("YOU_ARE_NOW_WIELDING_THE_FOO",
-                  { subject->getPossessiveString(bodypart_desc) }));
+    arguments["your_bodypart"] = narrator.getPossessiveString(subject, bodypart_desc);
+    putMsg(narrator.makeTr("YOU_ARE_NOW_WIELDING_THE_FOO", arguments));
 
     return StateResult::Success();
   }
 
-  StateResult ActionWield::doAbortWorkNVI(GameState& gameState, SystemManager& systems)
+  StateResult ActionWield::doAbortWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
   {
     return StateResult::Success();
   }
