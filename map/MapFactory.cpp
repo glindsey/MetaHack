@@ -57,10 +57,20 @@ Map& MapFactory::get(MapID id)
 
 MapID MapFactory::create(int x, int y)
 {
-  // Right now, just convert current map ID to number, add one, and convert
-  // back to string. This will need updating later.
-  auto numberMapID = std::stol(m_currentMapID);
-  m_currentMapID = std::to_string(++numberMapID);
+  if (m_maps.count(m_currentMapID) != 0)
+  {
+    // Right now, just convert current map ID to number, add one, and convert
+    // back to string. This will need updating later.
+    if (m_currentMapID.empty())
+    {
+      m_currentMapID = "0";
+    }
+    else
+    {
+      auto numberMapID = std::stol(m_currentMapID);
+      m_currentMapID = std::to_string(++numberMapID);
+    }
+  }
 
   std::unique_ptr<Map> new_map{ NEW Map{ m_gameState, m_currentMapID, x, y } };
   m_maps[m_currentMapID] = std::move(new_map);
