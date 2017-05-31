@@ -72,8 +72,7 @@ MapID MapFactory::create(int x, int y)
     }
   }
 
-  std::unique_ptr<Map> new_map{ NEW Map{ m_gameState, m_currentMapID, x, y } };
-  m_maps[m_currentMapID] = std::move(new_map);
+  m_maps.emplace(m_currentMapID, NEW Map{ m_gameState, m_currentMapID, x, y });
   m_maps[m_currentMapID]->initialize();
 
   return m_currentMapID;
