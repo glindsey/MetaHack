@@ -87,6 +87,7 @@ App::App(sf::RenderWindow& app_window)
   SET_UP_LOGGER("Map",                false);
   SET_UP_LOGGER("MapFactory",         false);
   SET_UP_LOGGER("MapGenerator",       false);
+  SET_UP_LOGGER("Narrator",           false);
   SET_UP_LOGGER("PlayerHandler",      false);
   SET_UP_LOGGER("Property",           false);
   SET_UP_LOGGER("PropertyDictionary", false);

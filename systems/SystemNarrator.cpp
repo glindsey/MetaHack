@@ -542,7 +542,7 @@ std::string SystemNarrator::makeStringTokensOnly(std::string pattern, json argum
     // Check for token. Substitute if it exists, return "[token]" if not.
     if (arguments.count(token) != 0)
     {
-      return arguments["token"];
+      return arguments[token];
     }
     else
     {
