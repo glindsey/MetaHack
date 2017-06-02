@@ -1,10 +1,61 @@
 Calendar Thoughts
 =================
 
-- Ten months, 36 days each
-    - 6 weeks of 6 days each
+- The world is one in which the moon is physically smaller but much closer to the planet, completing a revolution approximately once every 18.2 days. Originally the 20 months were irregular and matched the moon phases; however, in (some date), Empress (some lady) decreed that the month lengths would be standardized, and the remaining days collected at the start of the year as a grand holiday celebration period.
 
-- One 5 or 6 day period at the end of the year as an extended holiday
+- 20 months of 18 days each = 360 days
+    - Each month is composed of 3 hexidia of 6 days each
+
+- One 5 or 6 day period at the start of the year as an extended holiday ("feriatum magnam", grand holiday)
 
 - 1st day of Year 1000 is equivalent to May 3rd, 1979, because why not, I built the damned world
 
+- Dates are represented as "Year: Month H.D" in long form 
+    + For example, "1022: Ignis 2.3" is the 3rd day of the 2nd hexidium of the month of Ignis, in the year 1022
+- In short form, dates are "Year:MM.H.D"
+    + The date above would be "1022:06.2.3"
+    + The leading zero is customary when month numbers are used
+- The grand festival has a special representation:
+    + The long form is "Year: Festival D" where D is the festival day
+    + The short form is "Year:F.D" where D is the festival day
+
+1  1  1  1  1  1  2  2  2  2  2  2  3  3  3  3  3  3
+1  2  3  4  5  6  1  2  3  4  5  6  1  2  3  4  5  6
+01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18
+
+Months:
+
+Month       Corresponding non-leap-year Gregorian days
+=======     ===================================================
+00 (none)   May 3rd to May 7th (Grand Festival)
+01 Flora    May 8th to May 25th
+02 Fauna    May 26th to June 12th
+03 Lumen    June 13th to June 30th (Lumen 2.2 = Summer Solstice)
+04 Ampli    July 1st to July 18th
+05 Calor    July 19th to August 5th
+06 Ignis    August 6th to August 23rd
+07 Terra    August 24th to September 10th
+08 Gally    September 11th to September 28th (2.6 Gally = Fall Equinox)
+09 Caeli    September 29th to October 16th
+10 Capio    October 17th to November 3rd
+11 Morti    November 4th to November 21st
+12 Demin    November 22nd to December 9th
+13 Scuro    December 10th to December 27th (2.6 Scuro = Winter Solstice)
+14 Frigi    December 28th to January 14th
+15 Scind    January 15th to February 1st
+16 Khaos    February 2nd to February 19th
+17 Aquis    February 20th to March 9th
+18 Dicio    March 10th to March 27th (2.5 Dicio = Spring Equinox)
+19 Cogni    March 28th to April 14th
+20 Vitae    April 15th to May 2nd
+
+TERRA*  Earth / Matter          CAELI*  Air
+IGNIS*  Fire                    AQUIS*  Water
+CALOR*  Heat                    FRIGI*  Cold
+FLORA*  Flora                   FAUNA*  Fauna
+LUMEN*  Light                   SCURO*  Darkness
+VITAE*  Life                    MORTI*  Death
+DICIO*  Control / Order         KHAOS*  Chaos
+COGNI*  Mind / Knowledge        GALLY*  Space / Time
+CAPIO*  Web / Fabric / Binding  SCIND*  Edge / Cut / Slice
+AMPLI*  Amplify / Endanger      DEMIN*  Diminish / Shield  
