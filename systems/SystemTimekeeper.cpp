@@ -2,7 +2,7 @@
 
 SystemTimekeeper::SystemTimekeeper(ComponentGlobals & globals) :
   SystemCRTP<SystemTimekeeper>({ EventClockChanged::id }),
-  m_globals{ globals }  
+  m_globals{ globals }
 {}
 
 SystemTimekeeper::~SystemTimekeeper()

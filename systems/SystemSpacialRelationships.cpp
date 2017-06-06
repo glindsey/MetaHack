@@ -5,6 +5,7 @@
 #include "components/ComponentGlobals.h"
 #include "components/ComponentInventory.h"
 #include "components/ComponentPosition.h"
+#include "systems/SystemJanitor.h"
 #include "utilities/MathUtils.h"
 
 SystemSpacialRelationships::SystemSpacialRelationships(ComponentGlobals const& globals,
@@ -174,5 +175,26 @@ void SystemSpacialRelationships::setMap_V(MapID newMap)
 
 bool SystemSpacialRelationships::onEvent(Event const& event)
 {
+  auto id = event.getId();
+
+  if (id == SystemJanitor::EventEntityMarkedForDeletion::id)
+  {
+    auto& castEvent = static_cast<SystemJanitor::EventEntityMarkedForDeletion const&>(event);
+    auto entity = castEvent.m_entity;
+    auto old_location = m_position[entity].parent();
+
+    if (m_inventory.existsFor(entity))
+    {
+      // Spill the contents of this Entity into the Entity's location.
+      /// @todo Reimplement me
+      //spill();
+    }
+
+    if (old_location != EntityId::Mu())
+    {
+      m_inventory[old_location].remove(entity);
+    }
+  }
+
   return false;
 }

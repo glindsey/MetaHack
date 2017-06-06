@@ -6,6 +6,7 @@
 #include "services/IMessageLog.h"
 #include "services/IStringDictionary.h"
 #include "Service.h"
+#include "systems/SystemJanitor.h"
 #include "systems/SystemManager.h"
 #include "systems/SystemNarrator.h"
 #include "utilities/Shortcuts.h"
@@ -58,7 +59,7 @@ namespace Actions
     ///       being consumed.
     if (contents->beObjectOf(*this, subject))
     {
-      contents->destroy();
+      systems.janitor().markForDeletion(contents);
       return StateResult::Success();
     }
     else

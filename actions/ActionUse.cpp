@@ -75,12 +75,12 @@ namespace Actions
 
     printMessageFinish(systems, arguments);
 
-    /// @todo Split read time into start/finish actions.
+    /// @todo Split use time into start/finish actions.
     if (object->beObjectOf(*this, subject))
     {
       /// @todo Handle object destruction on use. (Lua script can do this.)
       //putTr("THE_FOO_DISINTEGRATES_AFTER_YOU_VERB");
-      //object->destroy();
+      //systems.janitor().markForDeletion(object);
       result = StateResult::Success();
     }
     else

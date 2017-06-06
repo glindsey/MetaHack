@@ -9,6 +9,7 @@
 #include "entity/EntityId.h"
 #include "Service.h"
 #include "services/IGameRules.h"
+#include "systems/SystemJanitor.h"
 #include "systems/SystemManager.h"
 #include "systems/SystemSpacialRelationships.h"
 
@@ -87,7 +88,7 @@ int thing_destroy(lua_State* L)
   }
 
   EntityId entity = EntityId(lua_tointeger(L, 1));
-  entity->destroy();
+  SYSTEMS.janitor().markForDeletion(entity);
 
   return 0;
 }

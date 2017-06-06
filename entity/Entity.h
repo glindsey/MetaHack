@@ -56,9 +56,6 @@ public:
   /// Spill the contents of this Entity out into the location of the Entity.
   //void spill();
 
-  /// Attempt to destroy this Entity.
-  void destroy();
-
   /// Return the body part this entity is equippable on.
   /// If entity is not equippable, return BodyPart::Count.
   BodyPart is_equippable_on() const;

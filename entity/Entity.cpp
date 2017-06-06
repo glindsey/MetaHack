@@ -140,27 +140,6 @@ EntityId Entity::getId() const
 //  } // end for (contents of Entity)
 //}
 
-void Entity::destroy()
-{
-  auto old_location = COMPONENTS.position[m_id].parent();
-
-  if (COMPONENTS.inventory.existsFor(m_id))
-  {
-    // Spill the contents of this Entity into the Entity's location.
-    /// @todo Reimplement me
-    //spill();
-  }
-
-  if (old_location != EntityId::Mu())
-  {
-    COMPONENTS.inventory[old_location].remove(m_id);
-  }
-
-  COMPONENTS.erase(m_id);
-
-  //notifyObservers(Event::Updated);
-}
-
 BodyPart Entity::is_equippable_on() const
 {
   return BodyPart::MemberCount;

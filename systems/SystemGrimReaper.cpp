@@ -1,7 +1,8 @@
 #include "systems/SystemGrimReaper.h"
 
 SystemGrimReaper::SystemGrimReaper(ComponentGlobals & globals) :
-  SystemCRTP<SystemGrimReaper>({}),
+  SystemCRTP<SystemGrimReaper>({ EventEntityDied::id,
+                                 EventEntityMarkedForDeath::id }),
   m_globals{ globals }  
 {}
 

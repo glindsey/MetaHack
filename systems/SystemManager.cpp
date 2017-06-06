@@ -4,6 +4,7 @@
 
 #include "components/ComponentManager.h"
 #include "systems/SystemGrimReaper.h"
+#include "systems/SystemJanitor.h"
 #include "systems/SystemLighting.h"
 #include "systems/SystemNarrator.h"
 #include "systems/SystemPlayerHandler.h"
@@ -26,6 +27,8 @@ SystemManager::SystemManager(GameState& gameState) :
 
   // Initialize systems.
   m_grimReaper.reset(NEW SystemGrimReaper(components.globals));
+
+  m_janitor.reset(NEW SystemJanitor(components));
 
   m_lighting.reset(NEW SystemLighting(m_gameState,
                                       components.appearance,
@@ -57,6 +60,8 @@ SystemManager::SystemManager(GameState& gameState) :
   m_timekeeper.reset(NEW SystemTimekeeper(components.globals));
 
   // Link system events.
+  m_janitor->addObserver(*m_spacial, SystemJanitor::EventEntityMarkedForDeletion::id);
+
   m_spacial->addObserver(*m_lighting, SystemSpacialRelationships::EventEntityChangedMaps::id);
   m_spacial->addObserver(*m_lighting, SystemSpacialRelationships::EventEntityMoved::id);
 
@@ -82,6 +87,7 @@ void SystemManager::runOneCycle()
   m_spacial->doCycleUpdate();
 
   m_grimReaper->doCycleUpdate();
+  m_janitor->doCycleUpdate();
   m_timekeeper->doCycleUpdate();  
 }
 

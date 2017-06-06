@@ -4,6 +4,7 @@
 #include "services/IMessageLog.h"
 #include "services/IStringDictionary.h"
 #include "Service.h"
+#include "systems/SystemJanitor.h"
 #include "systems/SystemManager.h"
 #include "systems/SystemNarrator.h"
 #include "utilities/Shortcuts.h"
@@ -81,7 +82,7 @@ namespace Actions
 
     if (m_last_eat_result)
     {
-      object->destroy();
+      systems.janitor().markForDeletion(object);
     }
 
     return StateResult::Success();

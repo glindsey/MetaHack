@@ -70,7 +70,7 @@ namespace Actions
     {
       /// @todo Handle destruction on read. (Technically the Lua script should be able to do this.)
       //putTr("THE_FOO_DISINTEGRATES_AFTER_YOU_VERB");
-      //object->destroy();
+      //systems.janitor().markForDeletion(object);
 
       result = StateResult::Success();
     }
