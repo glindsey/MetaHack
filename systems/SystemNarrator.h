@@ -282,7 +282,7 @@ public:
   void doCycleUpdate();
 
 protected:
-  void setMapNVO(MapID newMap);
+  virtual void setMap_V(MapID newMap) override;
 
   virtual bool onEvent(Event const& event) override;
 

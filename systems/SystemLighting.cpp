@@ -117,7 +117,7 @@ Color SystemLighting::getWallLightLevel(IntVec2 coords, Direction direction) con
   }
 }
 
-void SystemLighting::setMapNVO(MapID newMap)
+void SystemLighting::setMap_V(MapID newMap)
 {
   resetAllMapLightingData(newMap);
 }

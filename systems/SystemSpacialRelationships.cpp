@@ -169,7 +169,7 @@ bool SystemSpacialRelationships::areAdjacent(EntityId first, EntityId second) co
   return adjacent(firstPosition.coords(), secondPosition.coords());
 }
 
-void SystemSpacialRelationships::setMapNVO(MapID newMap)
+void SystemSpacialRelationships::setMap_V(MapID newMap)
 {}
 
 bool SystemSpacialRelationships::onEvent(Event const& event)

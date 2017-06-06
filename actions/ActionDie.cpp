@@ -66,7 +66,10 @@ namespace Actions
       COMPONENTS.health[subject].setDead(true);
 
       // Clear any pending actions.
-      subject->clearAllPendingActions();
+      if (components.activity.existsFor(subject))
+      {
+        components.activity.of(subject).pendingActions().clear();
+      }
 
       /// @todo If Entity is the player, perform graceful shutdown of the game.
       return StateResult::Success();

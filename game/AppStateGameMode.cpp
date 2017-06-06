@@ -155,7 +155,9 @@ void AppStateGameMode::execute()
     m_mapView->update_tiles(player, m_systemManager->lighting());
 
     // If the action completed, reset the inventory selection.
-    if (!player->actionIsPending() && !player->actionIsInProgress())
+    if (!COMPONENTS.activity.existsFor(player) || 
+        (COMPONENTS.activity[player].pendingActions().empty() &&
+         COMPONENTS.activity[player].busyTicks() == 0))
     {
       resetInventorySelection();
     }

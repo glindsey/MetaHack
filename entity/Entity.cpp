@@ -44,7 +44,6 @@ Entity::Entity(GameState& state, std::string category, EntityId id) :
   m_state{ state },
   m_id{ id }
 {
-  initialize();
 }
 
 Entity::Entity(Entity const& original, EntityId ref) :
@@ -52,12 +51,6 @@ Entity::Entity(Entity const& original, EntityId ref) :
   m_id{ ref }
 {
   COMPONENTS.clone(original.m_id, ref);
-  initialize();
-}
-
-void Entity::initialize()
-{
-  /// @todo Nothing to do here? HP/MaxHP are created at component copy time now.
 }
 
 Entity::~Entity()
@@ -92,26 +85,6 @@ void Entity::queueAction(Actions::Action * p_action)
 {
   std::unique_ptr<Actions::Action> action(p_action);
   queueAction(std::move(action));
-}
-
-bool Entity::actionIsPending() const
-{
-  return (COMPONENTS.activity.existsFor(m_id) &&
-          !COMPONENTS.activity[m_id].pendingActions().empty());
-}
-
-bool Entity::actionIsInProgress()
-{
-  return (COMPONENTS.activity.existsFor(m_id) &&
-          COMPONENTS.activity[m_id].busyTicks() > 0);
-}
-
-void Entity::clearAllPendingActions()
-{
-  if (COMPONENTS.activity.existsFor(m_id))
-  {
-    COMPONENTS.activity[m_id].pendingActions().clear();
-  }
 }
 
 EntityId Entity::getId() const

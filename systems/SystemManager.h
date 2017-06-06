@@ -5,6 +5,7 @@
 #include "game/GameState.h"
 
 // Forward declarations
+class SystemGrimReaper;
 class SystemLighting;
 class SystemNarrator;
 class SystemPlayerHandler;
@@ -22,6 +23,7 @@ public:
   void runOneCycle();
 
   // Get references to systems.
+  SystemGrimReaper& grimReaper() { return *m_grimReaper; }
   SystemLighting& lighting() { return *m_lighting; }
   SystemNarrator& narrator() { return *m_narrator; }
   SystemPlayerHandler& playerHandler() { return *m_playerHandler; }
@@ -33,6 +35,7 @@ public:
 
 private:
   // System instances.
+  std::unique_ptr<SystemGrimReaper> m_grimReaper;
   std::unique_ptr<SystemLighting> m_lighting;
   std::unique_ptr<SystemNarrator> m_narrator;
   std::unique_ptr<SystemPlayerHandler> m_playerHandler;

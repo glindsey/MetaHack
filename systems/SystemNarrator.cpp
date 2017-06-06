@@ -1032,7 +1032,7 @@ std::string SystemNarrator::getVerbable(std::string verb) const
 void SystemNarrator::doCycleUpdate()
 {}
 
-void SystemNarrator::setMapNVO(MapID newMap)
+void SystemNarrator::setMap_V(MapID newMap)
 {}
 
 bool SystemNarrator::onEvent(Event const & event)

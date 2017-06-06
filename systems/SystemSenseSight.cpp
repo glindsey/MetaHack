@@ -40,10 +40,6 @@ void SystemSenseSight::doCycleUpdate()
   m_needsUpdate.clear();
 }
 
-void SystemSenseSight::setMapNVO(MapID newMap)
-{
-}
-
 void SystemSenseSight::findSeenTiles(EntityId id)
 {
   // If we don't have a position component, bail.
@@ -247,6 +243,10 @@ bool SystemSenseSight::subjectCanSeeCoords(EntityId subject, IntVec2 coords) con
 
   // Return seen data.
   return m_senseSight[subject].canSee(coords);
+}
+
+void SystemSenseSight::setMap_V(MapID newMap)
+{
 }
 
 bool SystemSenseSight::onEvent(Event const& event)

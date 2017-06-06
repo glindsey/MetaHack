@@ -3,6 +3,7 @@
 #include "SystemManager.h"
 
 #include "components/ComponentManager.h"
+#include "systems/SystemGrimReaper.h"
 #include "systems/SystemLighting.h"
 #include "systems/SystemNarrator.h"
 #include "systems/SystemPlayerHandler.h"
@@ -24,6 +25,8 @@ SystemManager::SystemManager(GameState& gameState) :
 
 
   // Initialize systems.
+  m_grimReaper.reset(NEW SystemGrimReaper(components.globals));
+
   m_lighting.reset(NEW SystemLighting(m_gameState,
                                       components.appearance,
                                       components.health,
@@ -78,7 +81,8 @@ void SystemManager::runOneCycle()
   m_senseSight->doCycleUpdate();
   m_spacial->doCycleUpdate();
 
-  m_timekeeper->doCycleUpdate();
+  m_grimReaper->doCycleUpdate();
+  m_timekeeper->doCycleUpdate();  
 }
 
 SystemManager & SystemManager::instance()

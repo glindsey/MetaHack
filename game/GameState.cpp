@@ -105,7 +105,9 @@ bool GameState::processGameClockTick()
 {
   EntityId player = components().globals.player();
 
-  if (player->actionIsPending() || player->actionIsInProgress()) ///< @todo check -- second half of this shouldn't be necessary
+  if (COMPONENTS.activity.existsFor(player) && 
+      (!COMPONENTS.activity[player].pendingActions().empty() ||
+       COMPONENTS.activity[player].busyTicks() > 0))
   {
     // QUESTION: Do we want to update all Entities, PERIOD?  In other words, should
     //           other maps keep playing themselves if the player is not on them?

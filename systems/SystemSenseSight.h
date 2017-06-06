@@ -30,8 +30,6 @@ public:
   bool subjectCanSeeCoords(EntityId subject, IntVec2 coords) const;
 
 protected:
-  void setMapNVO(MapID newMap);
-
   void findSeenTiles(EntityId id);
 
   void calculateRecursiveVisibility(EntityId id,
@@ -40,6 +38,8 @@ protected:
                                     int depth = 1,
                                     float slope_A = 1,
                                     float slope_B = 0);
+
+  virtual void setMap_V(MapID newMap) override;
 
   virtual bool onEvent(Event const & event) override;
 

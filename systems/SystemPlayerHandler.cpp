@@ -28,7 +28,7 @@ void SystemPlayerHandler::setPlayer(EntityId entity)
   }
 }
 
-void SystemPlayerHandler::setMapNVO(MapID newMap)
+void SystemPlayerHandler::setMap_V(MapID newMap)
 {}
 
 bool SystemPlayerHandler::onEvent(Event const & event)

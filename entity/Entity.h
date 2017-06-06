@@ -50,15 +50,6 @@ public:
   ///                 pointer.
   void queueAction(Actions::Action* p_action);
 
-  /// Return whether there is an action pending for this DynamicEntity.
-  bool actionIsPending() const;
-
-  /// Return whether there is an action currently in progress for this DynamicEntity.
-  bool actionIsInProgress();
-
-  /// Clear all pending actions in this Entity's queue.
-  void clearAllPendingActions();
-  
   /// Return a reference to this entity.
   EntityId getId() const;
 
@@ -149,9 +140,6 @@ protected:
 
   /// Clone Constructor
   Entity(Entity const& original, EntityId ref);
-
-  /// Initializer; called by all constructors.
-  void initialize();
 
   /// Process this Entity's voluntary actions for a single tick.
   /// The function returns false to indicate to its parent that it no longer

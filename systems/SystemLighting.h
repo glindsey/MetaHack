@@ -43,7 +43,7 @@ public:
 
 protected:
   /// Virtual override called after the map is changed.
-  virtual void setMapNVO(MapID newMap) override;
+  virtual void setMap_V(MapID newMap) override;
 
   /// Apply a light source to a location.
   /// Traverses up the location chain until it finds either a map tile or an

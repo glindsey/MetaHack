@@ -17,7 +17,7 @@ public:
   {
     if (m_map != map)
     {
-      setMapNVO(map);
+      setMap_V(map);
     }
     m_map = map;
   }
@@ -27,7 +27,7 @@ public:
 
 protected:
   /// Virtual override called after the map is changed.
-  virtual void setMapNVO(MapID newMap) = 0;
+  virtual void setMap_V(MapID newMap) = 0;
 
 private:
   /// ID of map the system is operating on.

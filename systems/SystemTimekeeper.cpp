@@ -30,7 +30,7 @@ void SystemTimekeeper::incrementClock(ElapsedTicks addedTime)
   setClock(clock() + addedTime);
 }
 
-void SystemTimekeeper::setMapNVO(MapID newMap)
+void SystemTimekeeper::setMap_V(MapID newMap)
 {}
 
 bool SystemTimekeeper::onEvent(Event const & event)
