@@ -8,46 +8,51 @@ using json = ::nlohmann::json;
 
 #include <vector>
 
-/// Component that indicates an entity can rust, corrode, etc.
-class ComponentCorrodible
+namespace Components
 {
-public:
 
-  friend void from_json(json const& j, ComponentCorrodible& obj);
-  friend void to_json(json& j, ComponentCorrodible const& obj);
+  /// Component that indicates an entity can rust, corrode, etc.
+  class ComponentCorrodible
+  {
+  public:
 
-  ModifiableBool& corrodesForever();
-  ModifiableBool const& corrodesForever() const;
+    friend void from_json(json const& j, ComponentCorrodible& obj);
+    friend void to_json(json& j, ComponentCorrodible const& obj);
 
-  int corrosionAmount() const;
-  void setCorrosionAmount(int burnAmount);
-  void incCorrosionAmount(int incAmount);
-  void decCorrosionAmount(int decAmount);
+    ModifiableBool& corrodesForever();
+    ModifiableBool const& corrodesForever() const;
 
-  ModifiableInt& corrosionSpeed();
-  ModifiableInt const& corrosionSpeed() const;
+    int corrosionAmount() const;
+    void setCorrosionAmount(int burnAmount);
+    void incCorrosionAmount(int incAmount);
+    void decCorrosionAmount(int decAmount);
 
-  std::vector<std::string> const & corrosionResults() const;
+    ModifiableInt& corrosionSpeed();
+    ModifiableInt const& corrosionSpeed() const;
 
-protected:
+    std::vector<std::string> const & corrosionResults() const;
 
-private:
-  /// Flag indicating whether the entity corrodes forever, e.g. it can get
-  /// rusty/patinated/etc. but doesn't fall apart completely.
-  ModifiableBool m_corrodesForever;
+  protected:
 
-  /// Value indicating how corroded the entity is.
-  /// 0 indicates a pristine entity.
-  /// When the value hits 100 * mass, it is destroyed and replaced by the contents
-  /// of `m_corrosionResults`, unless `m_corrodesForever` is true, in which case the 
-  /// value will stop increasing at 50 * mass.
-  int m_corrosionAmount;
+  private:
+    /// Flag indicating whether the entity corrodes forever, e.g. it can get
+    /// rusty/patinated/etc. but doesn't fall apart completely.
+    ModifiableBool m_corrodesForever;
 
-  /// Value indicating how fast the entity corrodes.
-  /// This value, multiplied by the corroder's corrosion speed, is added to 
-  /// `m_corrosionAmount` on each clock tick.
-  ModifiableInt m_corrosionSpeed;
+    /// Value indicating how corroded the entity is.
+    /// 0 indicates a pristine entity.
+    /// When the value hits 100 * mass, it is destroyed and replaced by the contents
+    /// of `m_corrosionResults`, unless `m_corrodesForever` is true, in which case the 
+    /// value will stop increasing at 50 * mass.
+    int m_corrosionAmount;
 
-  /// Vector of entity types created when this entity is fully corroded.
-  std::vector<std::string> m_corrosionResults;
-};
+    /// Value indicating how fast the entity corrodes.
+    /// This value, multiplied by the corroder's corrosion speed, is added to 
+    /// `m_corrosionAmount` on each clock tick.
+    ModifiableInt m_corrosionSpeed;
+
+    /// Vector of entity types created when this entity is fully corroded.
+    std::vector<std::string> m_corrosionResults;
+  };
+
+} // end namespace Components

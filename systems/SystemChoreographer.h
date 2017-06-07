@@ -26,7 +26,7 @@ namespace Systems
       }
     };
 
-    Choreographer(ComponentGlobals& globals);
+    Choreographer(Components::ComponentGlobals& globals);
 
     virtual ~Choreographer();
 
@@ -46,7 +46,7 @@ namespace Systems
 
   private:
     // Components used by this system.
-    ComponentGlobals& m_globals;
+    Components::ComponentGlobals& m_globals;
   };
 
 } // end namespace Systems

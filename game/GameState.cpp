@@ -49,13 +49,13 @@ void GameState::initialize(json const& j)
 
   if (j.is_object() && j.size() != 0)
   {
-    m_components.reset(NEW ComponentManager(*this, j.value("components", json::object())));
+    m_components.reset(NEW Components::ComponentManager(*this, j.value("components", json::object())));
     m_entityPool.reset(NEW EntityPool(*this));
     m_mapFactory.reset(NEW MapFactory(*this));
   }
   else
   {
-    m_components.reset(NEW ComponentManager(*this, json::object()));
+    m_components.reset(NEW Components::ComponentManager(*this, json::object()));
     m_entityPool.reset(NEW EntityPool(*this));
     m_mapFactory.reset(NEW MapFactory(*this));
   }
@@ -91,12 +91,12 @@ EntityPool const& GameState::entities() const
   return *m_entityPool;
 }
 
-ComponentManager & GameState::components()
+Components::ComponentManager& GameState::components()
 {
   return *m_components;
 }
 
-ComponentManager const& GameState::components() const
+Components::ComponentManager const& GameState::components() const
 {
   return *m_components;
 }

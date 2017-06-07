@@ -3,7 +3,7 @@
 namespace Systems
 {
 
-  Timekeeper::Timekeeper(ComponentGlobals & globals) :
+  Timekeeper::Timekeeper(Components::ComponentGlobals& globals) :
     CRTP<Timekeeper>({ EventClockChanged::id }),
     m_globals{ globals }
   {}

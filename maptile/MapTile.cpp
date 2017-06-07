@@ -64,7 +64,7 @@ bool MapTile::isPassable() const
   }
 
   // Return whether the volume of the tile fills the entire tile.
-  return (components["physical"].value("volume", 0) < ComponentPhysical::VOLUME_MAX_CC);
+  return (components["physical"].value("volume", 0) < Components::ComponentPhysical::VOLUME_MAX_CC);
 }
 
 /// @todo: Implement this to cover different entity types.

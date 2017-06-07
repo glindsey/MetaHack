@@ -41,7 +41,7 @@ namespace Systems
       }
     };
 
-    GrimReaper(ComponentGlobals& globals);
+    GrimReaper(Components::ComponentGlobals& globals);
 
     virtual ~GrimReaper();
 
@@ -55,7 +55,7 @@ namespace Systems
 
   private:
     // Components used by this system.
-    ComponentGlobals& m_globals;
+    Components::ComponentGlobals& m_globals;
   };
 
 } // end namespace Systems

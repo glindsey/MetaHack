@@ -3,63 +3,68 @@
 #include "game/GameState.h"
 #include "utilities/JSONUtils.h"
 
-void from_json(json const& j, ComponentHealth& obj)
+namespace Components
 {
-  obj = ComponentHealth();
 
-  // Max HP: If it's an array, pick from a uniform range. Otherwise, set it.
-  JSONUtils::doIfPresent(j, "max-hp", [&](auto& value) { obj.m_maxHp = ModifiableInt(JSONUtils::getFancyInteger(value)); });
-  obj.m_hp = obj.m_maxHp.value();
-  JSONUtils::doIfPresent(j, "hp", [&](auto& value) { obj.m_hp = JSONUtils::getFancyInteger(value); });
-  JSONUtils::doIfPresent(j, "dead", [&](auto& value) { obj.m_dead = value; });
-  JSONUtils::doIfPresent(j, "living-creature", [&](auto& value) { obj.m_livingCreature = value; });
-}
+  void from_json(json const& j, ComponentHealth& obj)
+  {
+    obj = ComponentHealth();
 
-void to_json(json& j, ComponentHealth const& obj)
-{
-  j = json::object();
-  j["max-hp"] = obj.m_maxHp;
-  j["hp"] = obj.m_hp;
-  j["dead"] = obj.m_dead;
-  j["living-creature"] = obj.m_livingCreature;
-}
+    // Max HP: If it's an array, pick from a uniform range. Otherwise, set it.
+    JSONUtils::doIfPresent(j, "max-hp", [&](auto& value) { obj.m_maxHp = ModifiableInt(JSONUtils::getFancyInteger(value)); });
+    obj.m_hp = obj.m_maxHp.value();
+    JSONUtils::doIfPresent(j, "hp", [&](auto& value) { obj.m_hp = JSONUtils::getFancyInteger(value); });
+    JSONUtils::doIfPresent(j, "dead", [&](auto& value) { obj.m_dead = value; });
+    JSONUtils::doIfPresent(j, "living-creature", [&](auto& value) { obj.m_livingCreature = value; });
+  }
 
-int ComponentHealth::hp() const
-{
-  return m_hp;
-}
+  void to_json(json& j, ComponentHealth const& obj)
+  {
+    j = json::object();
+    j["max-hp"] = obj.m_maxHp;
+    j["hp"] = obj.m_hp;
+    j["dead"] = obj.m_dead;
+    j["living-creature"] = obj.m_livingCreature;
+  }
 
-void ComponentHealth::setHp(int hp)
-{
-  m_hp = hp;
-}
+  int ComponentHealth::hp() const
+  {
+    return m_hp;
+  }
 
-int ComponentHealth::maxHp() const
-{
-  return m_maxHp.value();
-}
+  void ComponentHealth::setHp(int hp)
+  {
+    m_hp = hp;
+  }
 
-void ComponentHealth::setMaxHp(int maxHp)
-{
-  m_maxHp.setBaseValue(maxHp);
-}
+  int ComponentHealth::maxHp() const
+  {
+    return m_maxHp.value();
+  }
 
-bool ComponentHealth::hasHpBelowZero() const
-{
-  return (m_hp <= 0);
-}
+  void ComponentHealth::setMaxHp(int maxHp)
+  {
+    m_maxHp.setBaseValue(maxHp);
+  }
 
-bool ComponentHealth::isDead() const
-{
-  return m_dead;
-}
+  bool ComponentHealth::hasHpBelowZero() const
+  {
+    return (m_hp <= 0);
+  }
 
-void ComponentHealth::setDead(bool dead)
-{
-  m_dead = dead;
-}
+  bool ComponentHealth::isDead() const
+  {
+    return m_dead;
+  }
 
-bool ComponentHealth::isLivingCreature() const
-{
-  return m_livingCreature;
-}
+  void ComponentHealth::setDead(bool dead)
+  {
+    m_dead = dead;
+  }
+
+  bool ComponentHealth::isLivingCreature() const
+  {
+    return m_livingCreature;
+  }
+
+} // end namespace

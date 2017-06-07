@@ -3,84 +3,57 @@
 #include "game/GameState.h"
 #include "utilities/JSONUtils.h"
 
-std::ostream & operator<<(std::ostream & os, MatterState const & state)
+namespace Components
 {
-  switch (state)
+  void from_json(json const& j, ComponentMatterState& obj)
   {
-  case MatterState::Void: os << "void"; break;
-  case MatterState::Solid: os << "solid"; break;
-  case MatterState::Liquid: os << "liquid"; break;
-  case MatterState::Gaseous: os << "gaseous"; break;
-  case MatterState::Plasma: os << "plasma"; break;
-  case MatterState::Spectral: os << "spectral"; break;
-  default: break;
+    obj = ComponentMatterState();
+    std::string state = j.get<std::string>();
+    boost::to_lower(state);
+
+    if (state.find("void") != std::string::npos) obj.m_state = ComponentMatterState::State::Void;
+    else if (state.find("solid") != std::string::npos) obj.m_state = ComponentMatterState::State::Solid;
+    else if (state.find("liquid") != std::string::npos) obj.m_state = ComponentMatterState::State::Liquid;
+    else if (state.find("gas") != std::string::npos) obj.m_state = ComponentMatterState::State::Gaseous;
+    else if (state.find("spectral") != std::string::npos) obj.m_state = ComponentMatterState::State::Spectral;
+
+    if (state.find("granular") != std::string::npos) obj.m_substate = ComponentMatterState::Substate::Granular;
+    else if (state.find("slurry") != std::string::npos) obj.m_substate = ComponentMatterState::Substate::Slurry;
+    else if (state.find("viscous") != std::string::npos) obj.m_substate = ComponentMatterState::Substate::Viscous;
+    else if (state.find("fizzy") != std::string::npos) obj.m_substate = ComponentMatterState::Substate::Fizzy;
   }
 
-  return os;
-}
-
-std::ostream & operator<<(std::ostream & os, MatterSubstate const & state)
-{
-  switch (state)
+  void to_json(json& j, ComponentMatterState const& obj)
   {
-  case MatterSubstate::Granular: os << "granular"; break;
-  case MatterSubstate::Slurry: os << "slurry"; break;
-  case MatterSubstate::Viscous: os << "viscous"; break;
-  case MatterSubstate::Fizzy: os << "fizzy"; break;
-  default: break;
+    std::stringstream state;
+    std::stringstream substate;
+    state << obj.m_substate << obj.m_state;
+    j = state.str();
   }
-  
-  return os;
-}
 
-void from_json(json const& j, ComponentMatterState& obj)
-{
-  obj = ComponentMatterState();
-  std::string state = j.get<std::string>();
-  boost::to_lower(state);
+  ComponentMatterState::State ComponentMatterState::state() const
+  {
+    return m_state;
+  }
 
-  if (state.find("void") != std::string::npos) obj.m_state = MatterState::Void;
-  else if (state.find("solid") != std::string::npos) obj.m_state = MatterState::Solid;
-  else if (state.find("liquid") != std::string::npos) obj.m_state = MatterState::Liquid;
-  else if (state.find("gas") != std::string::npos) obj.m_state = MatterState::Gaseous;
-  else if (state.find("spectral") != std::string::npos) obj.m_state = MatterState::Spectral;
+  void ComponentMatterState::setState(ComponentMatterState::State state)
+  {
+    m_state = state;
+  }
 
-  if (state.find("granular") != std::string::npos) obj.m_substate = MatterSubstate::Granular;
-  else if (state.find("slurry") != std::string::npos) obj.m_substate = MatterSubstate::Slurry;
-  else if (state.find("viscous") != std::string::npos) obj.m_substate = MatterSubstate::Viscous;
-  else if (state.find("fizzy") != std::string::npos) obj.m_substate = MatterSubstate::Fizzy;
-}
+  ComponentMatterState::Substate ComponentMatterState::substate() const
+  {
+    return m_substate;
+  }
 
-void to_json(json& j, ComponentMatterState const& obj)
-{
-  std::stringstream state;
-  std::stringstream substate;
-  state << obj.m_substate << obj.m_state;
-  j = state.str();
-}
+  void ComponentMatterState::setSubstate(ComponentMatterState::Substate substate)
+  {
+    m_substate = substate;
+  }
 
-MatterState ComponentMatterState::state() const
-{
-  return m_state;
-}
+  bool ComponentMatterState::isFluid()
+  {
+    return m_state == State::Liquid || (m_state == State::Solid && m_substate == Substate::Granular);
+  }
 
-void ComponentMatterState::setState(MatterState state)
-{
-  m_state = state;
-}
-
-MatterSubstate ComponentMatterState::substate() const
-{
-  return m_substate;
-}
-
-void ComponentMatterState::setSubstate(MatterSubstate substate)
-{
-  m_substate = substate;
-}
-
-bool ComponentMatterState::isFluid()
-{
-  return m_state == MatterState::Liquid || 
-    (m_state == MatterState::Solid && m_substate == MatterSubstate::Granular);
-}
+} // end namespace

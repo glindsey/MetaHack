@@ -1,9 +1,9 @@
-#include "systems/SystemPlayerHandler.h"
+#include "systems/SystemChoreographer.h"
 
 namespace Systems
 {
 
-  Choreographer::Choreographer(ComponentGlobals & globals) :
+  Choreographer::Choreographer(Components::ComponentGlobals & globals) :
     CRTP<Choreographer>({ EventPlayerChanged::id }),
     m_globals{ globals }
   {}

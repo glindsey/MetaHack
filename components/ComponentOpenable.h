@@ -3,21 +3,26 @@
 #include "json.hpp"
 using json = ::nlohmann::json;
 
-/// Component that indicates an entity can be opened/closed.
-class ComponentOpenable
+namespace Components
 {
-public:
 
-  friend void from_json(json const& j, ComponentOpenable& obj);
-  friend void to_json(json& j, ComponentOpenable const& obj);
+  /// Component that indicates an entity can be opened/closed.
+  class ComponentOpenable
+  {
+  public:
 
-  bool isOpen() const;
-  void setOpen(bool value);
+    friend void from_json(json const& j, ComponentOpenable& obj);
+    friend void to_json(json& j, ComponentOpenable const& obj);
 
-protected:
+    bool isOpen() const;
+    void setOpen(bool value);
 
-private:
-  /// Boolean indicating whether this entity is open.
-  bool m_open = true;
+  protected:
 
-};
+  private:
+    /// Boolean indicating whether this entity is open.
+    bool m_open = true;
+
+  };
+
+} // end namespace Components

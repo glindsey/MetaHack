@@ -8,45 +8,50 @@
 ///       amount to the counter so that places you see more frequently
 ///       stay in your mind longer.
 
-void from_json(json const& j, ComponentSpacialMemory& obj)
+namespace Components
 {
-  obj.m_memory.clear();
 
-  if (j.is_object() && j.size() != 0)
+  void from_json(json const& j, ComponentSpacialMemory& obj)
   {
-    for (auto citer = j.cbegin(); citer != j.cend(); ++citer)
+    obj.m_memory.clear();
+
+    if (j.is_object() && j.size() != 0)
     {
-      obj.m_memory[citer.key()] = citer.value();
+      for (auto citer = j.cbegin(); citer != j.cend(); ++citer)
+      {
+        obj.m_memory[citer.key()] = citer.value();
+      }
     }
   }
-}
 
-void to_json(json& j, ComponentSpacialMemory const& obj)
-{
-  j = json::object();
-
-  for (auto citer = obj.m_memory.cbegin(); citer != obj.m_memory.cend(); ++citer)
+  void to_json(json& j, ComponentSpacialMemory const& obj)
   {
-    j[static_cast<std::string>(citer->first)] = citer->second;
+    j = json::object();
+
+    for (auto citer = obj.m_memory.cbegin(); citer != obj.m_memory.cend(); ++citer)
+    {
+      j[static_cast<std::string>(citer->first)] = citer->second;
+    }
   }
-}
 
-bool ComponentSpacialMemory::containsMap(MapID map)
-{
-  return (m_memory.count(map) != 0);
-}
+  bool ComponentSpacialMemory::containsMap(MapID map)
+  {
+    return (m_memory.count(map) != 0);
+  }
 
-MapMemory& ComponentSpacialMemory::ofMap(MapID map)
-{
-  return m_memory[map];
-}
+  MapMemory& ComponentSpacialMemory::ofMap(MapID map)
+  {
+    return m_memory[map];
+  }
 
-MapMemory const& ComponentSpacialMemory::ofMap(MapID map) const
-{
-  return m_memory.at(map);
-}
+  MapMemory const& ComponentSpacialMemory::ofMap(MapID map) const
+  {
+    return m_memory.at(map);
+  }
 
-MapMemory & ComponentSpacialMemory::operator[](MapID map)
-{
-  return m_memory[map];
-}
+  MapMemory & ComponentSpacialMemory::operator[](MapID map)
+  {
+    return m_memory[map];
+  }
+
+} // end namespace Components

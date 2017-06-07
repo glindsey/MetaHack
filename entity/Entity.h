@@ -16,10 +16,14 @@
 #include "entity/EntityPool.h"
 
 // Forward declarations
-class AIStrategy;
+namespace Components
+{
+  class Inventory;
+  class Position;
+}
+
 class ComponentInventory;
 class ComponentPosition;
-class DynamicEntity;
 class Entity;
 class EntityId;
 class MapTile;
@@ -31,7 +35,6 @@ class Entity
   :
   public GameObject
 {
-  friend class AIStrategy;
   friend class EntityPool;
 
 public:

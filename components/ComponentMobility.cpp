@@ -3,49 +3,54 @@
 #include "game/GameState.h"
 #include "utilities/JSONUtils.h"
 
-void from_json(json const& j, ComponentMobility& obj)
+namespace Components
 {
-  obj = ComponentMobility();
-  JSONUtils::doIfPresent(j, "move-speed", [&](auto& value) { obj.m_moveSpeedInCMPS = value; });
-  JSONUtils::doIfPresent(j, "turn-speed", [&](auto& value) { obj.m_turnSpeedInDPS = value; });
-  JSONUtils::doIfPresent(j, "max-move-speed", [&](auto& value) { obj.m_maxMoveSpeedInCMPS = value; });
-}
 
-void to_json(json& j, ComponentMobility const& obj)
-{
-  j = json::object();
-  j["move-speed"] = obj.m_moveSpeedInCMPS;
-  j["turn-speed"] = obj.m_turnSpeedInDPS;
-  j["max-move-speed"] = obj.m_maxMoveSpeedInCMPS;
-}
+  void from_json(json const& j, ComponentMobility& obj)
+  {
+    obj = ComponentMobility();
+    JSONUtils::doIfPresent(j, "move-speed", [&](auto& value) { obj.m_moveSpeedInCMPS = value; });
+    JSONUtils::doIfPresent(j, "turn-speed", [&](auto& value) { obj.m_turnSpeedInDPS = value; });
+    JSONUtils::doIfPresent(j, "max-move-speed", [&](auto& value) { obj.m_maxMoveSpeedInCMPS = value; });
+  }
 
-unsigned int ComponentMobility::moveSpeed() const 
-{ 
-  return m_moveSpeedInCMPS; 
-}
+  void to_json(json& j, ComponentMobility const& obj)
+  {
+    j = json::object();
+    j["move-speed"] = obj.m_moveSpeedInCMPS;
+    j["turn-speed"] = obj.m_turnSpeedInDPS;
+    j["max-move-speed"] = obj.m_maxMoveSpeedInCMPS;
+  }
 
-void ComponentMobility::setMoveSpeed(unsigned int moveSpeed) 
-{ 
-  m_moveSpeedInCMPS = moveSpeed;
-  m_maxMoveSpeedInCMPS = std::max(m_maxMoveSpeedInCMPS, moveSpeed);
-}
+  unsigned int ComponentMobility::moveSpeed() const
+  {
+    return m_moveSpeedInCMPS;
+  }
 
-unsigned int ComponentMobility::turnSpeed() const 
-{ 
-  return m_turnSpeedInDPS; 
-}
+  void ComponentMobility::setMoveSpeed(unsigned int moveSpeed)
+  {
+    m_moveSpeedInCMPS = moveSpeed;
+    m_maxMoveSpeedInCMPS = std::max(m_maxMoveSpeedInCMPS, moveSpeed);
+  }
 
-void ComponentMobility::setTurnSpeed(unsigned int turnSpeed) 
-{ 
-  m_turnSpeedInDPS = turnSpeed; 
-}
+  unsigned int ComponentMobility::turnSpeed() const
+  {
+    return m_turnSpeedInDPS;
+  }
 
-unsigned int ComponentMobility::maxMoveSpeed() const 
-{ 
-  return m_maxMoveSpeedInCMPS; 
-}
+  void ComponentMobility::setTurnSpeed(unsigned int turnSpeed)
+  {
+    m_turnSpeedInDPS = turnSpeed;
+  }
 
-void ComponentMobility::setMaxMoveSpeed(unsigned int maxMoveSpeed) 
-{ 
-  m_maxMoveSpeedInCMPS = std::max(m_moveSpeedInCMPS, maxMoveSpeed); 
-}
+  unsigned int ComponentMobility::maxMoveSpeed() const
+  {
+    return m_maxMoveSpeedInCMPS;
+  }
+
+  void ComponentMobility::setMaxMoveSpeed(unsigned int maxMoveSpeed)
+  {
+    m_maxMoveSpeedInCMPS = std::max(m_moveSpeedInCMPS, maxMoveSpeed);
+  }
+
+} // end namespace

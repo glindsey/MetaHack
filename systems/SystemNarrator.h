@@ -54,14 +54,14 @@ namespace Systems
 
     friend std::ostream& operator<<(std::ostream& os, TokenizerState state);
 
-    Narrator(ComponentGlobals const& globals,
-                   ComponentMap<ComponentBodyparts> const& bodyparts,
-                   ComponentMap<std::string> const& category,
-                   ComponentMap<ComponentGender> const& gender,
-                   ComponentMap<ComponentHealth> const& health,
-                   ComponentMap<ComponentPosition> const& position,
-                   ComponentMap<std::string> const& properName,
-                   ComponentMap<unsigned int> const& quantity);
+    Narrator(Components::ComponentGlobals const& globals,
+             Components::ComponentMap<Components::ComponentBodyparts> const& bodyparts,
+             Components::ComponentMap<std::string> const& category,
+             Components::ComponentMap<Components::ComponentGender> const& gender,
+             Components::ComponentMap<Components::ComponentHealth> const& health,
+             Components::ComponentMap<Components::ComponentPosition> const& position,
+             Components::ComponentMap<std::string> const& properName,
+             Components::ComponentMap<unsigned int> const& quantity);
     virtual ~Narrator();
 
     /// Return true if a third-person verb form should be used.
@@ -291,14 +291,14 @@ namespace Systems
 
   private:
     // Components used by this system.
-    ComponentGlobals const& m_globals;
-    ComponentMap<ComponentBodyparts> const& m_bodyparts;
-    ComponentMap<std::string> const& m_category;
-    ComponentMap<ComponentGender> const& m_gender;
-    ComponentMap<ComponentHealth> const& m_health;
-    ComponentMap<ComponentPosition> const& m_position;
-    ComponentMap<std::string> const& m_properName;
-    ComponentMap<unsigned int> const& m_quantity;
+    Components::ComponentGlobals const& m_globals;
+    Components::ComponentMap<Components::ComponentBodyparts> const& m_bodyparts;
+    Components::ComponentMap<std::string> const& m_category;
+    Components::ComponentMap<Components::ComponentGender> const& m_gender;
+    Components::ComponentMap<Components::ComponentHealth> const& m_health;
+    Components::ComponentMap<Components::ComponentPosition> const& m_position;
+    Components::ComponentMap<std::string> const& m_properName;
+    Components::ComponentMap<unsigned int> const& m_quantity;
   };
 
 } // end namespace Systems

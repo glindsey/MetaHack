@@ -3,7 +3,7 @@
 namespace Systems
 {
 
-  GrimReaper::GrimReaper(ComponentGlobals & globals) :
+  GrimReaper::GrimReaper(Components::ComponentGlobals & globals) :
     CRTP<GrimReaper>({ EventEntityDied::id,
                                    EventEntityMarkedForDeath::id }),
     m_globals{ globals }

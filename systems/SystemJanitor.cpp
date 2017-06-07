@@ -3,7 +3,7 @@
 namespace Systems
 {
 
-  Janitor::Janitor(ComponentManager & components) :
+  Janitor::Janitor(Components::ComponentManager& components) :
     CRTP<Janitor>({ EventEntityDestroyed::id,
                                 EventEntityMarkedForDeletion::id }),
     m_components{ components }

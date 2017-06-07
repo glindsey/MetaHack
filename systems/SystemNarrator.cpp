@@ -14,14 +14,14 @@
 namespace Systems
 {
 
-  Narrator::Narrator(ComponentGlobals const& globals,
-                     ComponentMap<ComponentBodyparts> const& bodyparts,
-                     ComponentMap<std::string> const& category,
-                     ComponentMap<ComponentGender> const& gender,
-                     ComponentMap<ComponentHealth> const& health,
-                     ComponentMap<ComponentPosition> const& position,
-                     ComponentMap<std::string> const& properName,
-                     ComponentMap<unsigned int> const& quantity) :
+  Narrator::Narrator(Components::ComponentGlobals const& globals,
+                     Components::ComponentMap<Components::ComponentBodyparts> const& bodyparts,
+                     Components::ComponentMap<std::string> const& category,
+                     Components::ComponentMap<Components::ComponentGender> const& gender,
+                     Components::ComponentMap<Components::ComponentHealth> const& health,
+                     Components::ComponentMap<Components::ComponentPosition> const& position,
+                     Components::ComponentMap<std::string> const& properName,
+                     Components::ComponentMap<unsigned int> const& quantity) :
     CRTP<Narrator>({}),
     m_bodyparts{ bodyparts },
     m_category{ category },

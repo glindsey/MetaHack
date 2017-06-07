@@ -26,7 +26,7 @@ namespace Systems
       }
     };
 
-    Timekeeper(ComponentGlobals& globals);
+    Timekeeper(Components::ComponentGlobals& globals);
 
     virtual ~Timekeeper();
 
@@ -46,7 +46,7 @@ namespace Systems
 
   private:
     // Components used by this system.
-    ComponentGlobals& m_globals;
+    Components::ComponentGlobals& m_globals;
 
     ElapsedTicks m_clock;
   };

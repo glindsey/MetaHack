@@ -3,24 +3,29 @@
 #include "game/GameState.h"
 #include "utilities/JSONUtils.h"
 
-void from_json(json const& j, ComponentOpenable& obj)
+namespace Components
 {
-  obj = ComponentOpenable();
-  JSONUtils::doIfPresent(j, "open", [&](auto& value) { obj.m_open = value; });
-}
 
-void to_json(json& j, ComponentOpenable const& obj)
-{
-  j = json::object();
-  j["open"] = obj.m_open;
-}
+  void from_json(json const& j, ComponentOpenable& obj)
+  {
+    obj = ComponentOpenable();
+    JSONUtils::doIfPresent(j, "open", [&](auto& value) { obj.m_open = value; });
+  }
 
-bool ComponentOpenable::isOpen() const
-{
-  return m_open;
-}
+  void to_json(json& j, ComponentOpenable const& obj)
+  {
+    j = json::object();
+    j["open"] = obj.m_open;
+  }
 
-void ComponentOpenable::setOpen(bool value)
-{
-  m_open = value;
-}
+  bool ComponentOpenable::isOpen() const
+  {
+    return m_open;
+  }
+
+  void ComponentOpenable::setOpen(bool value)
+  {
+    m_open = value;
+  }
+
+} // end namespace

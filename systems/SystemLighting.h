@@ -9,10 +9,13 @@
 #include "types/LightInfluence.h"
 
 // Forward declarations
-class ComponentAppearance;
-class ComponentHealth;
-class ComponentLightSource;
-class ComponentPosition;
+namespace Components
+{
+  class ComponentAppearance;
+  class ComponentHealth;
+  class ComponentLightSource;
+  class ComponentPosition;
+}
 class GameState;
 
 namespace Systems
@@ -23,10 +26,10 @@ namespace Systems
   {
   public:
     Lighting(GameState& gameState,
-                   ComponentMap<ComponentAppearance> const& appearance,
-                   ComponentMap<ComponentHealth> const& health,
-                   ComponentMap<ComponentLightSource>& lightSource,
-                   ComponentMap<ComponentPosition> const& position);
+             Components::ComponentMap<Components::ComponentAppearance> const& appearance,
+             Components::ComponentMap<Components::ComponentHealth> const& health,
+             Components::ComponentMap<Components::ComponentLightSource>& lightSource,
+             Components::ComponentMap<Components::ComponentPosition> const& position);
 
     virtual ~Lighting();
 
@@ -93,10 +96,10 @@ namespace Systems
     GameState& m_gameState;
 
     // Components used by this system.
-    ComponentMap<ComponentAppearance> const& m_appearance;
-    ComponentMap<ComponentHealth> const& m_health;
-    ComponentMap<ComponentLightSource>& m_lightSource;
-    ComponentMap<ComponentPosition> const& m_position;
+    Components::ComponentMap<Components::ComponentAppearance> const& m_appearance;
+    Components::ComponentMap<Components::ComponentHealth> const& m_health;
+    Components::ComponentMap<Components::ComponentLightSource>& m_lightSource;
+    Components::ComponentMap<Components::ComponentPosition> const& m_position;
 
     /// Boolean indicating if all tiles should be recalculated.
     bool m_recalculateAllTiles = true;

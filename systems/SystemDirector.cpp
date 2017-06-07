@@ -11,7 +11,7 @@ namespace Systems
 {
 
   Director::Director(GameState& gameState,
-                                 Manager& systems) :
+                     Manager& systems) :
     CRTP<Director>({}),
     m_gameState{ gameState },
     m_systems{ systems }
@@ -48,7 +48,7 @@ namespace Systems
     // This is because entities can be deleted/removed from the inventory
     // over the course of processing them, and this could invalidate the
     // iterator.
-    ComponentInventory tempInventoryCopy{ m_gameState.components().inventory.of(entityID) };
+    Components::ComponentInventory tempInventoryCopy{ m_gameState.components().inventory.of(entityID) };
 
     // Process inventory.
     for (auto& inventoryPair : tempInventoryCopy)

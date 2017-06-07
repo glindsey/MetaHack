@@ -9,16 +9,21 @@
 #include "json.hpp"
 using json = ::nlohmann::json;
 
-/// Component that represents an entity's ability to reason.
-class ComponentSapience
+namespace Components
 {
-public:
 
-  friend void from_json(json const& j, ComponentSapience& obj);
-  friend void to_json(json& j, ComponentSapience const& obj);
+  /// Component that represents an entity's ability to reason.
+  class ComponentSapience
+  {
+  public:
 
-protected:
+    friend void from_json(json const& j, ComponentSapience& obj);
+    friend void to_json(json& j, ComponentSapience const& obj);
 
-private:
+  protected:
 
-};
+  private:
+
+  };
+
+} // end namespace Components

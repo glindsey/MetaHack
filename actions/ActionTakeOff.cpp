@@ -55,7 +55,7 @@ namespace Actions
 
     // Check if the worn item is bound.
     if (components.magicalBinding.existsFor(object) &&
-        components.magicalBinding.of(object).isAgainst(ComponentMagicalBinding::Against::Disrobing) &&
+        components.magicalBinding.of(object).isAgainst(Components::ComponentMagicalBinding::Against::Disrobing) &&
         components.magicalBinding.of(object).isActive())
     {
       putMsg(narrator.makeTr("YOU_CANT_VERB_FOO_MAGICALLY_BOUND", arguments));

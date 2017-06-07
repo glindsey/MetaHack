@@ -2,24 +2,28 @@
 
 #include "map/MapMemory.h"
 
-/// Component that represents the entity's memory of maps.
-class ComponentSpacialMemory
+namespace Components
 {
-public:
 
-  friend void from_json(json const& j, ComponentSpacialMemory& obj);
-  friend void to_json(json& j, ComponentSpacialMemory const& obj);
+  /// Component that represents the entity's memory of maps.
+  class ComponentSpacialMemory
+  {
+  public:
 
-  bool containsMap(MapID map);
+    friend void from_json(json const& j, ComponentSpacialMemory& obj);
+    friend void to_json(json& j, ComponentSpacialMemory const& obj);
 
-  MapMemory& ofMap(MapID map);
-  MapMemory const& ofMap(MapID map) const;
-  MapMemory& operator[](MapID map);
+    bool containsMap(MapID map);
 
-protected:
+    MapMemory& ofMap(MapID map);
+    MapMemory const& ofMap(MapID map) const;
+    MapMemory& operator[](MapID map);
 
-private:
-  /// Spacial memory of each map.
-  std::unordered_map<MapID, MapMemory> m_memory;
-};
+  protected:
 
+  private:
+    /// Spacial memory of each map.
+    std::unordered_map<MapID, MapMemory> m_memory;
+  };
+
+} // end namespace Components

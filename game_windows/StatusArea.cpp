@@ -11,7 +11,7 @@
 #include "services/IConfigSettings.h"
 #include "Service.h"
 #include "systems/Manager.h"
-#include "systems/SystemPlayerHandler.h"
+#include "systems/SystemChoreographer.h"
 #include "systems/SystemTimekeeper.h"
 
 StatusArea::StatusArea(std::string name, sf::IntRect dimensions, GameState& gameState) : 

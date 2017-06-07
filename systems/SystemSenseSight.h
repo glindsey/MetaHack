@@ -5,10 +5,13 @@
 #include "systems/CRTP.h"
 
 // Forward declarations
-class ComponentInventory;
-class ComponentPosition;
-class ComponentSenseSight;
-class ComponentSpacialMemory;
+namespace Components
+{
+  class ComponentInventory;
+  class ComponentPosition;
+  class ComponentSenseSight;
+  class ComponentSpacialMemory;
+}
 class GameState;
 
 namespace Systems
@@ -19,10 +22,10 @@ namespace Systems
   {
   public:
     SenseSight(GameState const& gameState,
-                     ComponentMap<ComponentInventory> const& inventory,
-                     ComponentMap<ComponentPosition> const& position,
-                     ComponentMap<ComponentSenseSight>& senseSight,
-                     ComponentMap<ComponentSpacialMemory>& spacialMemory);
+               Components::ComponentMap<Components::ComponentInventory> const& inventory,
+               Components::ComponentMap<Components::ComponentPosition> const& position,
+               Components::ComponentMap<Components::ComponentSenseSight>& senseSight,
+               Components::ComponentMap<Components::ComponentSpacialMemory>& spacialMemory);
 
     virtual ~SenseSight();
 
@@ -36,7 +39,7 @@ namespace Systems
     void findSeenTiles(EntityId id);
 
     void calculateRecursiveVisibility(EntityId id,
-                                      ComponentPosition const& thisPosition,
+                                      Components::ComponentPosition const& thisPosition,
                                       int octant,
                                       int depth = 1,
                                       float slope_A = 1,
@@ -50,10 +53,10 @@ namespace Systems
     GameState const& m_gameState;
 
     // Components used by this system.
-    ComponentMap<ComponentInventory> const& m_inventory;
-    ComponentMap<ComponentPosition> const& m_position;
-    ComponentMap<ComponentSenseSight>& m_senseSight;
-    ComponentMap<ComponentSpacialMemory>& m_spacialMemory;
+    Components::ComponentMap<Components::ComponentInventory> const& m_inventory;
+    Components::ComponentMap<Components::ComponentPosition> const& m_position;
+    Components::ComponentMap<Components::ComponentSenseSight>& m_senseSight;
+    Components::ComponentMap<Components::ComponentSpacialMemory>& m_spacialMemory;
 
     /// Set of entities to update on the next cycle.
     std::set<EntityId> m_needsUpdate;

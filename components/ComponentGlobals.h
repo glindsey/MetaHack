@@ -5,20 +5,25 @@ using json = ::nlohmann::json;
 
 #include "entity/EntityId.h"
 
-/// Component containing global data.
-class ComponentGlobals
+namespace Components
 {
-public:
 
-  friend void from_json(json const& j, ComponentGlobals& obj);
-  friend void to_json(json& j, ComponentGlobals const& obj);
+  /// Component containing global data.
+  class ComponentGlobals
+  {
+  public:
 
-  EntityId player() const;
-  void setPlayer(EntityId player);
+    friend void from_json(json const& j, Components::ComponentGlobals& obj);
+    friend void to_json(json& j, Components::ComponentGlobals const& obj);
 
-protected:
+    EntityId player() const;
+    void setPlayer(EntityId player);
 
-private:
-  EntityId m_player;
+  protected:
 
-};
+  private:
+    EntityId m_player;
+
+  };
+
+} // end namespace Components

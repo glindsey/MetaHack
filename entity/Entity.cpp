@@ -151,7 +151,7 @@ bool Entity::processActions()
   // This is because entities can be deleted/removed from the inventory
   // over the course of processing them, and this could invalidate the
   // iterator.
-  ComponentInventory temp_inventory{ COMPONENTS.inventory[m_id] };
+  Components::ComponentInventory temp_inventory{ COMPONENTS.inventory[m_id] };
 
   // Process inventory.
   for (auto iter = temp_inventory.begin();

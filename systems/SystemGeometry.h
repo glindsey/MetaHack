@@ -6,8 +6,11 @@
 #include "systems/CRTP.h"
 
 // Forward declarations
-class ComponentGlobals;
-class ComponentInventory;
+namespace Components
+{
+  class ComponentGlobals;
+  class ComponentInventory;
+}
 
 namespace Systems
 {
@@ -21,13 +24,13 @@ namespace Systems
     /// 
     struct EventEntityMoved : public ConcreteEvent<EventEntityMoved>
     {
-      EventEntityMoved(EntityId entity_, ComponentPosition const& oldPosition_) :
+      EventEntityMoved(EntityId entity_, Components::ComponentPosition const& oldPosition_) :
         entity{ entity_ }, oldPosition{ oldPosition_ }
       {
       }
 
       EntityId const entity;
-      ComponentPosition const oldPosition;
+      Components::ComponentPosition const oldPosition;
 
       void serialize(std::ostream& os) const
       {
@@ -53,9 +56,9 @@ namespace Systems
       }
     };
 
-    Geometry(ComponentGlobals const& globals,
-                               ComponentMap<ComponentInventory>& inventory,
-                               ComponentMap<ComponentPosition>& position);
+    Geometry(Components::ComponentGlobals const& globals,
+             Components::ComponentMap<Components::ComponentInventory>& inventory,
+             Components::ComponentMap<Components::ComponentPosition>& position);
 
     virtual ~Geometry();
 
@@ -92,9 +95,9 @@ namespace Systems
 
   private:
     // Components used by this system.
-    ComponentGlobals const& m_globals;
-    ComponentMap<ComponentInventory>& m_inventory;
-    ComponentMap<ComponentPosition>& m_position;
+    Components::ComponentGlobals const& m_globals;
+    Components::ComponentMap<Components::ComponentInventory>& m_inventory;
+    Components::ComponentMap<Components::ComponentPosition>& m_position;
   };
 
 } // end namespace Systems

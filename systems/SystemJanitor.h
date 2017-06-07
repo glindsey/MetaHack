@@ -41,7 +41,7 @@ namespace Systems
       }
     };
 
-    Janitor(ComponentManager& components);
+    Janitor(Components::ComponentManager& components);
 
     virtual ~Janitor();
 
@@ -58,7 +58,7 @@ namespace Systems
 
   private:
     /// Reference to all components.
-    ComponentManager& m_components;
+    Components::ComponentManager& m_components;
 
     /// Collection of entities that have been marked for deletion.
     std::deque<EntityId> m_entitiesPendingDeletion;

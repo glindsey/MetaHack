@@ -5,29 +5,34 @@ using json = ::nlohmann::json;
 
 #include "types/Color.h"
 
-/// Component that defines a light-emitting source.
-/// @todo Should there be more than one of these allowed for a single Entity?
-class ComponentLightSource
+namespace Components
 {
-public:
 
-  friend void from_json(json const& j, ComponentLightSource& obj);
-  friend void to_json(json& j, ComponentLightSource const& obj);
+  /// Component that defines a light-emitting source.
+  /// @todo Should there be more than one of these allowed for a single Entity?
+  class ComponentLightSource
+  {
+  public:
 
-  bool& lit();
-  bool const& lit() const;
+    friend void from_json(json const& j, ComponentLightSource& obj);
+    friend void to_json(json& j, ComponentLightSource const& obj);
 
-  Color& color();
-  Color const& color() const;
+    bool& lit();
+    bool const& lit() const;
 
-  int& strength();
-  int const& strength() const;
+    Color& color();
+    Color const& color() const;
 
-protected:
+    int& strength();
+    int const& strength() const;
 
-private:
-  bool m_lit = false;
-  Color m_lightColor = Color(64, 64, 64);
-  int m_lightStrength = 64;
+  protected:
 
-};
+  private:
+    bool m_lit = false;
+    Color m_lightColor = Color(64, 64, 64);
+    int m_lightStrength = 64;
+
+  };
+
+} // end namespace Components

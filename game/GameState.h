@@ -8,7 +8,10 @@
 #include "entity/EntityId.h"
 
 // Forward declarations
-class ComponentManager;
+namespace Components
+{
+  class ComponentManager;
+}
 class EntityPool;
 class Lua;
 class MapFactory;
@@ -56,8 +59,8 @@ public:
   MapFactory const& maps() const;
   EntityPool& entities();
   EntityPool const& entities() const;
-  ComponentManager& components();
-  ComponentManager const& components() const;
+  Components::ComponentManager& components();
+  Components::ComponentManager const& components() const;
 
   /// Process a single tick in the game, if one needs to be processed.
   /// @return True if a tick elapsed, false if it did not.
@@ -84,7 +87,7 @@ private:
   std::unique_ptr<EntityPool> m_entityPool;
 
   /// Pointer to the Components Manager object.
-  std::unique_ptr<ComponentManager> m_components;
+  std::unique_ptr<Components::ComponentManager> m_components;
 
   /// Static pointer to the singleton instance of the GameState.
   static GameState* s_instance;

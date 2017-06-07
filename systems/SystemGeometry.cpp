@@ -11,9 +11,9 @@
 namespace Systems
 {
 
-  Geometry::Geometry(ComponentGlobals const& globals,
-                                                         ComponentMap<ComponentInventory>& inventory,
-                                                         ComponentMap<ComponentPosition>& position) :
+  Geometry::Geometry(Components::ComponentGlobals const& globals,
+                     Components::ComponentMap<Components::ComponentInventory>& inventory,
+                     Components::ComponentMap<Components::ComponentPosition>& position) :
     CRTP<Geometry>({ EventEntityMoved::id, EventEntityChangedMaps::id }),
     m_globals{ globals },
     m_inventory{ inventory },

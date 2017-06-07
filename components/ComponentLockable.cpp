@@ -3,24 +3,29 @@
 #include "game/GameState.h"
 #include "utilities/JSONUtils.h"
 
-void from_json(json const& j, ComponentLockable& obj)
+namespace Components
 {
-  obj = ComponentLockable();
-  JSONUtils::doIfPresent(j, "locked", [&](auto& value) { obj.m_locked = value; });
-}
 
-void to_json(json& j, ComponentLockable const& obj)
-{
-  j = json::object();
-  j["locked"] = obj.m_locked;
-}
+  void from_json(json const& j, ComponentLockable& obj)
+  {
+    obj = ComponentLockable();
+    JSONUtils::doIfPresent(j, "locked", [&](auto& value) { obj.m_locked = value; });
+  }
 
-bool ComponentLockable::isLocked() const
-{
-  return m_locked;
-}
+  void to_json(json& j, ComponentLockable const& obj)
+  {
+    j = json::object();
+    j["locked"] = obj.m_locked;
+  }
 
-void ComponentLockable::setLocked(bool value)
-{
-  m_locked = value;
-}
+  bool ComponentLockable::isLocked() const
+  {
+    return m_locked;
+  }
+
+  void ComponentLockable::setLocked(bool value)
+  {
+    m_locked = value;
+  }
+
+} // end namespace

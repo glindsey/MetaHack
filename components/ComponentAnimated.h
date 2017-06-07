@@ -3,19 +3,24 @@
 #include "json.hpp"
 using json = ::nlohmann::json;
 
-/// Component that indicates this entity has multiple tiles to choose from.
-/// Although it is called "ComponentAnimated", it doesn't necessarily mean the
-/// entity animates per frame, just that its appearance varies based on a
-/// function of something.
-class ComponentAnimated
+namespace Components
 {
-public:
 
-  friend void from_json(json const& j, ComponentAnimated& obj);
-  friend void to_json(json& j, ComponentAnimated const& obj);
+  /// Component that indicates this entity has multiple tiles to choose from.
+  /// Although it is called "ComponentAnimated", it doesn't necessarily mean the
+  /// entity animates per frame, just that its appearance varies based on a
+  /// function of something.
+  class ComponentAnimated
+  {
+  public:
 
-protected:
+    friend void from_json(json const& j, ComponentAnimated& obj);
+    friend void to_json(json& j, ComponentAnimated const& obj);
 
-private:
+  protected:
 
-};
+  private:
+
+  };
+
+} // end namespace Components

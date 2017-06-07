@@ -3,21 +3,26 @@
 #include "json.hpp"
 using json = ::nlohmann::json;
 
-/// Component that indicates an entity can be locked/unlocked.
-class ComponentLockable
+namespace Components
 {
-public:
 
-  friend void from_json(json const& j, ComponentLockable& obj);
-  friend void to_json(json& j, ComponentLockable const& obj);
+  /// Component that indicates an entity can be locked/unlocked.
+  class ComponentLockable
+  {
+  public:
 
-  bool isLocked() const;
-  void setLocked(bool value);
+    friend void from_json(json const& j, ComponentLockable& obj);
+    friend void to_json(json& j, ComponentLockable const& obj);
 
-protected:
+    bool isLocked() const;
+    void setLocked(bool value);
 
-private:
-  /// Boolean indicating whether component is locked.
-  bool m_locked = false;
+  protected:
 
-};
+  private:
+    /// Boolean indicating whether component is locked.
+    bool m_locked = false;
+
+  };
+
+} // end namespace Components

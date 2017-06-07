@@ -5,23 +5,27 @@
 #include "json.hpp"
 using json = ::nlohmann::json;
 
-/// Gender and sex of an entity. Maybe also sexual preferences.
-class ComponentGender
+namespace Components
 {
-public:
 
-  friend void from_json(json const& j, ComponentGender& obj);
-  friend void to_json(json& j, ComponentGender const& obj);
+  /// Gender and sex of an entity. Maybe also sexual preferences.
+  class ComponentGender
+  {
+  public:
 
-  /// Get this entity's gender.
-  Gender& gender();
-  Gender const& gender() const;
+    friend void from_json(json const& j, ComponentGender& obj);
+    friend void to_json(json& j, ComponentGender const& obj);
 
-protected:
+    /// Get this entity's gender.
+    Gender& gender();
+    Gender const& gender() const;
 
-private:
-  /// @todo Make this more flexible.
-  Gender m_gender;
+  protected:
 
-};
+  private:
+    /// @todo Make this more flexible.
+    Gender m_gender;
 
+  };
+
+} // end namespace Components

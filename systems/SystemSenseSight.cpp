@@ -18,10 +18,10 @@ namespace Systems
 {
 
   SenseSight::SenseSight(GameState const& gameState,
-                                     ComponentMap<ComponentInventory> const& inventory,
-                                     ComponentMap<ComponentPosition> const& position,
-                                     ComponentMap<ComponentSenseSight>& senseSight,
-                                     ComponentMap<ComponentSpacialMemory>& spacialMemory) :
+                         Components::ComponentMap<Components::ComponentInventory> const& inventory,
+                         Components::ComponentMap<Components::ComponentPosition> const& position,
+                         Components::ComponentMap<Components::ComponentSenseSight>& senseSight,
+                         Components::ComponentMap<Components::ComponentSpacialMemory>& spacialMemory) :
     CRTP<SenseSight>({}),
     m_gameState{ gameState },
     m_inventory{ inventory },
@@ -65,7 +65,7 @@ namespace Systems
     ///		   * WIDE (180 degrees in facing direction)
     ///          * FRONTBACK (90 degrees ahead/90 degrees back)
     ///          * FULL (all 360 degrees)
-    ComponentPosition const& position = m_position.of(id);
+    Components::ComponentPosition const& position = m_position.of(id);
 
     for (int n = 1; n <= 8; ++n)
     {
@@ -74,7 +74,7 @@ namespace Systems
   }
 
   void SenseSight::calculateRecursiveVisibility(EntityId id,
-                                                ComponentPosition const& thisPosition,
+                                                Components::ComponentPosition const& thisPosition,
                                                 int octant,
                                                 int depth,
                                                 float slope_A,

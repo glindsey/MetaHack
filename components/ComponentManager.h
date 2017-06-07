@@ -31,50 +31,55 @@
 class EntityId;
 class GameState;
 
-class ComponentManager final
+namespace Components
 {
-public:
-  ComponentManager(GameState& gameState);
-  ComponentManager(GameState& gameState, json const& j);
-  ~ComponentManager();
 
-  void initialize();
+  class ComponentManager final
+  {
+  public:
+    ComponentManager(GameState& gameState);
+    ComponentManager(GameState& gameState, json const& j);
+    ~ComponentManager();
 
-  void clone(EntityId original, EntityId newId);
+    void initialize();
 
-  void erase(EntityId id);
+    void clone(EntityId original, EntityId newId);
 
-  void populate(EntityId newId, json const& jsonComponents);
+    void erase(EntityId id);
 
-  json toJSON();
+    void populate(EntityId newId, json const& jsonComponents);
 
-  ComponentGlobals globals;
-  ComponentMap<ComponentActivity> activity;
-  ComponentMap<ComponentAppearance> appearance;
-  ComponentMap<ComponentBodyparts> bodyparts;
-  ComponentMap<std::string> category;
-  ComponentMap<ComponentCombustible> combustible;
-  ComponentMap<ComponentCorrodible> corrodible;
-  ComponentMap<ComponentDigestiveSystem> digestiveSystem;
-  ComponentMap<ComponentGender> gender;
-  ComponentMap<ComponentHealth> health;
-  ComponentMap<ComponentInventory> inventory;
-  ComponentMap<ComponentLightSource> lightSource;
-  ComponentMap<ComponentLockable> lockable;
-  ComponentMap<ComponentMagicalBinding> magicalBinding;
-  ComponentMap<ComponentMaterialFlags> materialFlags;
-  ComponentMap<ComponentMatterState> matterState;
-  ComponentMap<ComponentMobility> mobility;
-  ComponentMap<ComponentOpenable> openable;
-  ComponentMap<ComponentPhysical> physical;
-  ComponentMap<ComponentPosition> position;
-  ComponentMap<unsigned int> quantity;
-  ComponentMap<std::string> properName;
-  ComponentMap<ComponentSapience> sapience;
-  ComponentMap<ComponentSenseSight> senseSight;
-  ComponentMap<ComponentSpacialMemory> spacialMemory;
+    json toJSON();
 
-private:
-  /// Reference to parent GameState instance.
-  GameState& m_gameState;
-};
+    ComponentGlobals globals;
+    ComponentMap<ComponentActivity> activity;
+    ComponentMap<ComponentAppearance> appearance;
+    ComponentMap<ComponentBodyparts> bodyparts;
+    ComponentMap<std::string> category;
+    ComponentMap<ComponentCombustible> combustible;
+    ComponentMap<ComponentCorrodible> corrodible;
+    ComponentMap<ComponentDigestiveSystem> digestiveSystem;
+    ComponentMap<ComponentGender> gender;
+    ComponentMap<ComponentHealth> health;
+    ComponentMap<ComponentInventory> inventory;
+    ComponentMap<ComponentLightSource> lightSource;
+    ComponentMap<ComponentLockable> lockable;
+    ComponentMap<ComponentMagicalBinding> magicalBinding;
+    ComponentMap<ComponentMaterialFlags> materialFlags;
+    ComponentMap<ComponentMatterState> matterState;
+    ComponentMap<ComponentMobility> mobility;
+    ComponentMap<ComponentOpenable> openable;
+    ComponentMap<ComponentPhysical> physical;
+    ComponentMap<ComponentPosition> position;
+    ComponentMap<unsigned int> quantity;
+    ComponentMap<std::string> properName;
+    ComponentMap<ComponentSapience> sapience;
+    ComponentMap<ComponentSenseSight> senseSight;
+    ComponentMap<ComponentSpacialMemory> spacialMemory;
+
+  private:
+    /// Reference to parent GameState instance.
+    GameState& m_gameState;
+  };
+
+} // end namespace Components

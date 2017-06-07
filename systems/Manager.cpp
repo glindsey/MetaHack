@@ -8,7 +8,7 @@
 #include "systems/SystemJanitor.h"
 #include "systems/SystemLighting.h"
 #include "systems/SystemNarrator.h"
-#include "systems/SystemPlayerHandler.h"
+#include "systems/SystemChoreographer.h"
 #include "systems/SystemSenseSight.h"
 #include "systems/SystemGeometry.h"
 #include "systems/SystemTimekeeper.h"

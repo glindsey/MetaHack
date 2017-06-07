@@ -15,10 +15,10 @@ namespace Systems
 {
 
   Lighting::Lighting(GameState& gameState,
-                                 ComponentMap<ComponentAppearance> const& appearance,
-                                 ComponentMap<ComponentHealth> const& health,
-                                 ComponentMap<ComponentLightSource>& lightSource,
-                                 ComponentMap<ComponentPosition> const& position) :
+                     Components::ComponentMap<Components::ComponentAppearance> const& appearance,
+                     Components::ComponentMap<Components::ComponentHealth> const& health,
+                     Components::ComponentMap<Components::ComponentLightSource>& lightSource,
+                     Components::ComponentMap<Components::ComponentPosition> const& position) :
     CRTP<Lighting>({}),
     m_gameState{ gameState },
     m_appearance{ appearance },
