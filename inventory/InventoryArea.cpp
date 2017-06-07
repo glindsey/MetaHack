@@ -13,7 +13,7 @@
 #include "Service.h"
 #include "services/IConfigSettings.h"
 #include "services/IGraphicViews.h"
-#include "systems/SystemManager.h"
+#include "systems/Manager.h"
 #include "systems/SystemNarrator.h"
 
 #include "entity/Entity.h"

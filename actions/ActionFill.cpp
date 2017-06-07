@@ -4,7 +4,7 @@
 #include "services/IMessageLog.h"
 #include "services/IStringDictionary.h"
 #include "Service.h"
-#include "systems/SystemManager.h"
+#include "systems/Manager.h"
 #include "systems/SystemNarrator.h"
 #include "utilities/Shortcuts.h"
 
@@ -25,23 +25,23 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionFill::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
+  StateResult ActionFill::doPreBeginWorkNVI(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionFill::doBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
+  StateResult ActionFill::doBeginWorkNVI(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     putMsg(tr("ACTN_NOT_IMPLEMENTED"));
     return StateResult::Failure();
   }
 
-  StateResult ActionFill::doFinishWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
+  StateResult ActionFill::doFinishWorkNVI(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionFill::doAbortWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
+  StateResult ActionFill::doAbortWorkNVI(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     return StateResult::Success();
   }

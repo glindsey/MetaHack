@@ -2,46 +2,51 @@
 
 #include "components/ComponentGlobals.h"
 #include "entity/EntityId.h"
-#include "systems/SystemCRTP.h"
+#include "systems/CRTP.h"
 
-/// System that handles which entity is the player.
-class SystemPlayerHandler : public SystemCRTP<SystemPlayerHandler>
+namespace Systems
 {
-public:
-  struct EventPlayerChanged : public ConcreteEvent<EventPlayerChanged>
+
+  /// System that handles which entity is the player.
+  class SystemPlayerHandler : public CRTP<SystemPlayerHandler>
   {
-    EventPlayerChanged(EntityId player_) :
-      player{ player_ }
-    {}
-
-    EntityId const player;
-
-    void serialize(std::ostream& os) const
+  public:
+    struct EventPlayerChanged : public ConcreteEvent<EventPlayerChanged>
     {
-      Event::serialize(os);
-      os << " | current player: " << player;
-    }
+      EventPlayerChanged(EntityId player_) :
+        player{ player_ }
+      {}
+
+      EntityId const player;
+
+      void serialize(std::ostream& os) const
+      {
+        Event::serialize(os);
+        os << " | current player: " << player;
+      }
+    };
+
+    SystemPlayerHandler(ComponentGlobals& globals);
+
+    virtual ~SystemPlayerHandler();
+
+    /// Recalculate whatever needs recalculating.
+    void doCycleUpdate();
+
+    /// Get current player.
+    EntityId player() const;
+
+    /// Set current player.
+    void setPlayer(EntityId entity);
+
+  protected:
+    virtual void setMap_V(MapID newMap) override;
+
+    virtual bool onEvent(Event const& event) override;
+
+  private:
+    // Components used by this system.
+    ComponentGlobals& m_globals;
   };
 
-  SystemPlayerHandler(ComponentGlobals& globals);
-
-  virtual ~SystemPlayerHandler();
-
-  /// Recalculate whatever needs recalculating.
-  void doCycleUpdate();
-
-  /// Get current player.
-  EntityId player() const;
-
-  /// Set current player.
-  void setPlayer(EntityId entity);
-
-protected:
-  virtual void setMap_V(MapID newMap) override;
-
-  virtual bool onEvent(Event const& event) override;
-
-private:
-  // Components used by this system.
-  ComponentGlobals& m_globals;
-};
+} // end namespace Systems

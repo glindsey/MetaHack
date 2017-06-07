@@ -7,7 +7,7 @@
 #include "services/IMessageLog.h"
 #include "services/IStringDictionary.h"
 #include "Service.h"
-#include "systems/SystemManager.h"
+#include "systems/Manager.h"
 #include "systems/SystemNarrator.h"
 #include "utilities/Shortcuts.h"
 
@@ -50,13 +50,13 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionUse::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
+  StateResult ActionUse::doPreBeginWorkNVI(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     // All checks done in Action class via traits.
     return StateResult::Success();
   }
 
-  StateResult ActionUse::doBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
+  StateResult ActionUse::doBeginWorkNVI(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     StateResult result = StateResult::Failure();
 
@@ -67,7 +67,7 @@ namespace Actions
     return result;
   }
 
-  StateResult ActionUse::doFinishWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
+  StateResult ActionUse::doFinishWorkNVI(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     StateResult result = StateResult::Failure();
     auto subject = getSubject();
@@ -91,7 +91,7 @@ namespace Actions
     return result;
   }
 
-  StateResult ActionUse::doAbortWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
+  StateResult ActionUse::doAbortWorkNVI(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     printMessageStop(systems, arguments);
     return StateResult::Success();

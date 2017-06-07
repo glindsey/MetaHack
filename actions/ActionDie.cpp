@@ -5,7 +5,7 @@
 #include "Service.h"
 #include "services/IMessageLog.h"
 #include "services/IStringDictionary.h"
-#include "systems/SystemManager.h"
+#include "systems/Manager.h"
 #include "systems/SystemNarrator.h"
 #include "utilities/Shortcuts.h"
 #include "utilities/StringTransforms.h"
@@ -37,12 +37,12 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionDie::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
+  StateResult ActionDie::doPreBeginWorkNVI(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionDie::doBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
+  StateResult ActionDie::doBeginWorkNVI(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     EntityId subject = getSubject();
     auto& components = gameState.components();
@@ -81,12 +81,12 @@ namespace Actions
     }
   }
 
-  StateResult ActionDie::doFinishWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
+  StateResult ActionDie::doFinishWorkNVI(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionDie::doAbortWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
+  StateResult ActionDie::doAbortWorkNVI(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     return StateResult::Success();
   }

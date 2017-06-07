@@ -4,7 +4,7 @@
 #include "services/IMessageLog.h"
 #include "services/IStringDictionary.h"
 #include "Service.h"
-#include "systems/SystemManager.h"
+#include "systems/Manager.h"
 #include "systems/SystemNarrator.h"
 #include "utilities/Shortcuts.h"
 
@@ -28,7 +28,7 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionRead::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
+  StateResult ActionRead::doPreBeginWorkNVI(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     auto& narrator = systems.narrator();
     auto subject = getSubject();
@@ -44,7 +44,7 @@ namespace Actions
     return StateResult::Success();
   }
 
-  StateResult ActionRead::doBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
+  StateResult ActionRead::doBeginWorkNVI(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     StateResult result = StateResult::Failure();
     auto subject = getSubject();
@@ -57,7 +57,7 @@ namespace Actions
     return result;
   }
 
-  StateResult ActionRead::doFinishWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
+  StateResult ActionRead::doFinishWorkNVI(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     StateResult result = StateResult::Failure();
     auto subject = getSubject();
@@ -82,7 +82,7 @@ namespace Actions
     return result;
   }
 
-  StateResult ActionRead::doAbortWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
+  StateResult ActionRead::doAbortWorkNVI(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     auto subject = getSubject();
     auto object = getObject();
@@ -91,7 +91,7 @@ namespace Actions
     return StateResult::Success();
   }
 
-  void ActionRead::printMessageCant(SystemManager& systems, json& arguments) const
+  void ActionRead::printMessageCant(Systems::Manager& systems, json& arguments) const
   {
     auto& narrator = systems.narrator();
     arguments["item"] = tr("NOUN_WRITING");

@@ -10,7 +10,7 @@
 #include "gui/GUILabel.h"
 #include "services/IConfigSettings.h"
 #include "Service.h"
-#include "systems/SystemManager.h"
+#include "systems/Manager.h"
 #include "systems/SystemPlayerHandler.h"
 #include "systems/SystemTimekeeper.h"
 
@@ -120,15 +120,15 @@ void StatusArea::drawContents_(sf::RenderTexture& texture, int frame)
 
 void StatusArea::doEventSubscriptions_V(Object & parent)
 {
-  SYSTEMS.timekeeper().addObserver(*this, SystemTimekeeper::EventClockChanged::id);
-  SYSTEMS.playerHandler().addObserver(*this, SystemPlayerHandler::EventPlayerChanged::id);
+  SYSTEMS.timekeeper().addObserver(*this, Systems::SystemTimekeeper::EventClockChanged::id);
+  SYSTEMS.playerHandler().addObserver(*this, Systems::SystemPlayerHandler::EventPlayerChanged::id);
 }
 
 bool StatusArea::onEvent_V(Event const & event)
 {
   auto id = event.getId();
   if ((id == GameState::EventClockChanged::id) ||
-      (id == SystemPlayerHandler::EventPlayerChanged::id))
+      (id == Systems::SystemPlayerHandler::EventPlayerChanged::id))
   {
     flagForRedraw();
   }

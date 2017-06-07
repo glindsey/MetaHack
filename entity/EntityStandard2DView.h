@@ -5,7 +5,8 @@
 #include <SFML/Graphics.hpp>
 
 #include "entity/EntityView.h"
-#include "systems/SystemLighting.h"
+
+/// Forward declarations
 
 /// Class representing the standard 2D (pseudo-3D) view of a Entity object.
 class EntityStandard2DView : public EntityView
@@ -17,7 +18,7 @@ public:
   virtual ~EntityStandard2DView();
 
   virtual void draw(sf::RenderTarget& target,
-                    SystemLighting* lighting,
+                    Systems::SystemLighting* lighting,
                     bool use_smoothing,
                     int frame) override;
 

@@ -6,7 +6,7 @@
 #include "Service.h"
 #include "services/IMessageLog.h"
 #include "services/IStringDictionary.h"
-#include "systems/SystemManager.h"
+#include "systems/Manager.h"
 #include "systems/SystemNarrator.h"
 #include "systems/SystemSpacialRelationships.h"
 #include "utilities/Shortcuts.h"
@@ -45,7 +45,7 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionTakeOut::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
+  StateResult ActionTakeOut::doPreBeginWorkNVI(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     auto& components = gameState.components();
     auto& narrator = systems.narrator();
@@ -86,7 +86,7 @@ namespace Actions
     return StateResult::Success();
   }
 
-  StateResult ActionTakeOut::doBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
+  StateResult ActionTakeOut::doBeginWorkNVI(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     auto& components = gameState.components();
     auto& narrator = systems.narrator();
@@ -122,24 +122,24 @@ namespace Actions
     return result;
   }
 
-  StateResult ActionTakeOut::doFinishWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
+  StateResult ActionTakeOut::doFinishWorkNVI(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionTakeOut::doAbortWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
+  StateResult ActionTakeOut::doAbortWorkNVI(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     return StateResult::Success();
   }
 
-  void ActionTakeOut::printMessageTry(SystemManager& systems, json& arguments) const
+  void ActionTakeOut::printMessageTry(Systems::Manager& systems, json& arguments) const
   {
     auto& narrator = systems.narrator();
     arguments["preposition"] = tr("PREPOSITION_FROM");
     putMsg(narrator.makeTr("YOU_TRY_TO_VERB_THE_FOO_PREPOSITION_TARGET", arguments));
   }
 
-  void ActionTakeOut::printMessageDo(SystemManager& systems, json& arguments) const
+  void ActionTakeOut::printMessageDo(Systems::Manager& systems, json& arguments) const
   {
     auto& narrator = systems.narrator();
     arguments["preposition"] = tr("PREPOSITION_FROM");

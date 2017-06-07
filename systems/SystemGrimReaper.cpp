@@ -1,23 +1,27 @@
 #include "systems/SystemGrimReaper.h"
 
-SystemGrimReaper::SystemGrimReaper(ComponentGlobals & globals) :
-  SystemCRTP<SystemGrimReaper>({ EventEntityDied::id,
-                                 EventEntityMarkedForDeath::id }),
-  m_globals{ globals }  
-{}
-
-SystemGrimReaper::~SystemGrimReaper()
-{}
-
-void SystemGrimReaper::doCycleUpdate()
+namespace Systems
 {
-}
 
-void SystemGrimReaper::setMap_V(MapID newMap)
-{}
+  SystemGrimReaper::SystemGrimReaper(ComponentGlobals & globals) :
+    CRTP<SystemGrimReaper>({ EventEntityDied::id,
+                                   EventEntityMarkedForDeath::id }),
+    m_globals{ globals }
+  {}
 
-bool SystemGrimReaper::onEvent(Event const & event)
-{
-  return false;
-}
+  SystemGrimReaper::~SystemGrimReaper()
+  {}
 
+  void SystemGrimReaper::doCycleUpdate()
+  {
+  }
+
+  void SystemGrimReaper::setMap_V(MapID newMap)
+  {}
+
+  bool SystemGrimReaper::onEvent(Event const & event)
+  {
+    return false;
+  }
+
+} // end namespace Systems

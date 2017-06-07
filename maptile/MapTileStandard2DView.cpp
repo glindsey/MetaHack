@@ -7,7 +7,8 @@
 #include "Service.h"
 #include "services/IConfigSettings.h"
 #include "services/IGameRules.h"
-#include "systems/SystemManager.h"
+#include "systems/Manager.h"
+#include "systems/SystemLighting.h"
 #include "systems/SystemSenseSight.h"
 #include "tilesheet/TileSheet.h"
 #include "types/Color.h"
@@ -53,7 +54,7 @@ UintVec2 MapTileStandard2DView::getEntityTileSheetCoords(Entity& entity, int fra
 void MapTileStandard2DView::addTileVertices(EntityId viewer,
                                             sf::VertexArray& seenVertices,
                                             sf::VertexArray& memoryVertices,
-                                            SystemLighting& lighting)
+                                            Systems::SystemLighting& lighting)
 {
   auto& tile = getMapTile();
   auto coords = tile.getCoords();
@@ -138,7 +139,7 @@ void MapTileStandard2DView::addMemoryVerticesTo(sf::VertexArray& vertices,
 }
 
 void MapTileStandard2DView::addTileFloorVerticesTo(sf::VertexArray& vertices,
-                                                   SystemLighting& lighting)
+                                                   Systems::SystemLighting& lighting)
 {
   auto& config = Service<IConfigSettings>::get();
 
@@ -186,7 +187,7 @@ void MapTileStandard2DView::addTileFloorVerticesTo(sf::VertexArray& vertices,
 
 void MapTileStandard2DView::addEntitiesFloorVertices(EntityId viewer,
                                                      sf::VertexArray & vertices,
-                                                     SystemLighting* lighting,
+                                                     Systems::SystemLighting* lighting,
                                                      int frame)
 {
   auto& tile = getMapTile();
@@ -216,7 +217,7 @@ void MapTileStandard2DView::addEntitiesFloorVertices(EntityId viewer,
 
 void MapTileStandard2DView::addEntityFloorVertices(EntityId entityId, 
                                                    sf::VertexArray& vertices,
-                                                   SystemLighting* lighting,
+                                                   Systems::SystemLighting* lighting,
                                                    int frame)
 {
   auto& entity = GAME.entities().get(entityId);
@@ -257,7 +258,7 @@ void MapTileStandard2DView::addEntityFloorVertices(EntityId entityId,
 
 
 void MapTileStandard2DView::addWallVerticesTo(sf::VertexArray& vertices,
-                                              SystemLighting* lighting,
+                                              Systems::SystemLighting* lighting,
                                               bool nwEmpty, bool nEmpty,
                                               bool neEmpty, bool eEmpty,
                                               bool seEmpty, bool sEmpty,

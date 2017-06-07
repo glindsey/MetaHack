@@ -11,13 +11,18 @@ namespace Actions
 {
   class Action;
 }
+
 class Direction;
 class EntityId;
 class GameState;
 class InventorySelection;
 class KeyBuffer;
 class MapView;
-class SystemManager;
+
+namespace Systems
+{
+  class Manager;
+}
 
 
 /// Object that represents the game mode state.
@@ -46,7 +51,7 @@ public:
   virtual bool terminate() override;
 
   GameState& gameState();
-  SystemManager& systems();
+  Systems::Manager& systems();
 
 protected:
   void render_map(sf::RenderTexture& texture, int frame);
@@ -75,7 +80,7 @@ private:
   std::unique_ptr<GameState> m_gameState;
 
   /// The manager of all game systems.
-  std::unique_ptr<SystemManager> m_systemManager;
+  std::unique_ptr<Systems::Manager> m_systemManager;
 
   /// Reference to the current MapView.
   MapView* m_mapView;

@@ -11,7 +11,7 @@
 #include "services/IStringDictionary.h"
 #include "services/MessageLog.h"
 #include "Service.h"
-#include "systems/SystemManager.h"
+#include "systems/Manager.h"
 #include "systems/SystemNarrator.h"
 #include "systems/SystemSpacialRelationships.h"
 #include "utilities/Shortcuts.h"
@@ -109,7 +109,7 @@ namespace Actions
     return m_objects[1];
   }
 
-  bool Action::process(GameState& gameState, SystemManager& systems)
+  bool Action::process(GameState& gameState, Systems::Manager& systems)
   {
     auto subject = getSubject();
     auto& components = gameState.components();
@@ -260,7 +260,7 @@ namespace Actions
     return m_type;
   }
 
-    StateResult Action::doPreBeginWork(GameState& gameState, SystemManager& systems, json& arguments)
+  StateResult Action::doPreBeginWork(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     auto& components = gameState.components();
     auto subject = getSubject();
@@ -503,19 +503,19 @@ namespace Actions
     return result;
   }
 
-  StateResult Action::doBeginWork(GameState& gameState, SystemManager& systems, json& arguments)
+  StateResult Action::doBeginWork(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     auto result = doBeginWorkNVI(gameState, systems, arguments);
     return result;
   }
 
-  StateResult Action::doFinishWork(GameState& gameState, SystemManager& systems, json& arguments)
+  StateResult Action::doFinishWork(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     auto result = doFinishWorkNVI(gameState, systems, arguments);
     return result;
   }
 
-  StateResult Action::doAbortWork(GameState& gameState, SystemManager& systems, json& arguments)
+  StateResult Action::doAbortWork(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     auto result = doAbortWorkNVI(gameState, systems, arguments);
     return result;
@@ -545,32 +545,32 @@ namespace Actions
     return objectIsAllowed(gameState);
   }
 
-  StateResult Action::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
+  StateResult Action::doPreBeginWorkNVI(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     /// @todo Set counter_busy based on the action being taken and
     ///       the entity's reflexes.
     return StateResult::Success();
   }
 
-  StateResult Action::doBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
+  StateResult Action::doBeginWorkNVI(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     putMsg(tr("ACTN_NOT_IMPLEMENTED"));
     return StateResult::Failure();
   }
 
-  StateResult Action::doFinishWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
+  StateResult Action::doFinishWorkNVI(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     /// @todo Complete the action here
     return StateResult::Success();
   }
 
-  StateResult Action::doAbortWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
+  StateResult Action::doAbortWorkNVI(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     /// @todo Handle aborting the action here.
     return StateResult::Success();
   }
 
-  void Action::printMessageTry(SystemManager& systems, json& arguments) const
+  void Action::printMessageTry(Systems::Manager& systems, json& arguments) const
   {
     auto& objects = getObjects();
     auto& narrator = systems.narrator();
@@ -589,7 +589,7 @@ namespace Actions
     }
   }
 
-  void Action::printMessageDo(SystemManager& systems, json& arguments) const
+  void Action::printMessageDo(Systems::Manager& systems, json& arguments) const
   {
     auto& objects = getObjects();
     auto& narrator = systems.narrator();
@@ -608,7 +608,7 @@ namespace Actions
     }
   }
 
-  void Action::printMessageBegin(SystemManager& systems, json& arguments) const
+  void Action::printMessageBegin(Systems::Manager& systems, json& arguments) const
   {
     auto& objects = getObjects();
     auto& narrator = systems.narrator();
@@ -627,7 +627,7 @@ namespace Actions
     }
   }
 
-  void Action::printMessageStop(SystemManager& systems, json& arguments) const
+  void Action::printMessageStop(Systems::Manager& systems, json& arguments) const
   {
     auto& objects = getObjects();
     auto& narrator = systems.narrator();
@@ -646,7 +646,7 @@ namespace Actions
     }
   }
 
-  void Action::printMessageFinish(SystemManager& systems, json& arguments) const
+  void Action::printMessageFinish(Systems::Manager& systems, json& arguments) const
   {
     auto& objects = getObjects();
     auto& narrator = systems.narrator();
@@ -665,7 +665,7 @@ namespace Actions
     }
   }
 
-  void Action::printMessageCant(SystemManager& systems, json& arguments) const
+  void Action::printMessageCant(Systems::Manager& systems, json& arguments) const
   {
     auto& objects = getObjects();
     auto& narrator = systems.narrator();

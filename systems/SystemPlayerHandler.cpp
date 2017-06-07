@@ -1,37 +1,42 @@
 #include "systems/SystemPlayerHandler.h"
 
-SystemPlayerHandler::SystemPlayerHandler(ComponentGlobals & globals) :
-  SystemCRTP<SystemPlayerHandler>({ EventPlayerChanged::id }),
-  m_globals{ globals }  
-{}
-
-SystemPlayerHandler::~SystemPlayerHandler()
-{}
-
-void SystemPlayerHandler::doCycleUpdate()
-{}
-
-EntityId SystemPlayerHandler::player() const
+namespace Systems
 {
-  return m_globals.player();
-}
 
-void SystemPlayerHandler::setPlayer(EntityId entity)
-{
-  Assert("PlayerHandler", entity != EntityId::Mu(), "tried to make nothingness the player");
+  SystemPlayerHandler::SystemPlayerHandler(ComponentGlobals & globals) :
+    CRTP<SystemPlayerHandler>({ EventPlayerChanged::id }),
+    m_globals{ globals }
+  {}
 
-  auto oldPlayer = m_globals.player();
-  m_globals.setPlayer(entity);
-  if (oldPlayer != entity)
+  SystemPlayerHandler::~SystemPlayerHandler()
+  {}
+
+  void SystemPlayerHandler::doCycleUpdate()
+  {}
+
+  EntityId SystemPlayerHandler::player() const
   {
-    broadcast(EventPlayerChanged(entity));
+    return m_globals.player();
   }
-}
 
-void SystemPlayerHandler::setMap_V(MapID newMap)
-{}
+  void SystemPlayerHandler::setPlayer(EntityId entity)
+  {
+    Assert("PlayerHandler", entity != EntityId::Mu(), "tried to make nothingness the player");
 
-bool SystemPlayerHandler::onEvent(Event const & event)
-{
-  return false;
-}
+    auto oldPlayer = m_globals.player();
+    m_globals.setPlayer(entity);
+    if (oldPlayer != entity)
+    {
+      broadcast(EventPlayerChanged(entity));
+    }
+  }
+
+  void SystemPlayerHandler::setMap_V(MapID newMap)
+  {}
+
+  bool SystemPlayerHandler::onEvent(Event const & event)
+  {
+    return false;
+  }
+
+} // end namespace Systems

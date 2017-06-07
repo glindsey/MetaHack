@@ -1,40 +1,44 @@
 #include "systems/SystemTimekeeper.h"
 
-SystemTimekeeper::SystemTimekeeper(ComponentGlobals & globals) :
-  SystemCRTP<SystemTimekeeper>({ EventClockChanged::id }),
-  m_globals{ globals }
-{}
-
-SystemTimekeeper::~SystemTimekeeper()
-{}
-
-void SystemTimekeeper::doCycleUpdate()
+namespace Systems
 {
-  incrementClock(ElapsedTicks(1));
-}
 
-ElapsedTicks SystemTimekeeper::clock() const
-{
-  return m_clock;
-}
+  SystemTimekeeper::SystemTimekeeper(ComponentGlobals & globals) :
+    CRTP<SystemTimekeeper>({ EventClockChanged::id }),
+    m_globals{ globals }
+  {}
 
-void SystemTimekeeper::setClock(ElapsedTicks clock)
-{
-  m_clock = clock;
-  broadcast(EventClockChanged(clock));
-}
+  SystemTimekeeper::~SystemTimekeeper()
+  {}
 
-void SystemTimekeeper::incrementClock(ElapsedTicks addedTime)
-{
-  /// @todo Check for the unlikely, but not impossible, chance of rollover.
-  setClock(clock() + addedTime);
-}
+  void SystemTimekeeper::doCycleUpdate()
+  {
+    incrementClock(ElapsedTicks(1));
+  }
 
-void SystemTimekeeper::setMap_V(MapID newMap)
-{}
+  ElapsedTicks SystemTimekeeper::clock() const
+  {
+    return m_clock;
+  }
 
-bool SystemTimekeeper::onEvent(Event const & event)
-{
-  return false;
-}
+  void SystemTimekeeper::setClock(ElapsedTicks clock)
+  {
+    m_clock = clock;
+    broadcast(EventClockChanged(clock));
+  }
 
+  void SystemTimekeeper::incrementClock(ElapsedTicks addedTime)
+  {
+    /// @todo Check for the unlikely, but not impossible, chance of rollover.
+    setClock(clock() + addedTime);
+  }
+
+  void SystemTimekeeper::setMap_V(MapID newMap)
+  {}
+
+  bool SystemTimekeeper::onEvent(Event const & event)
+  {
+    return false;
+  }
+
+} // end namespace Systems

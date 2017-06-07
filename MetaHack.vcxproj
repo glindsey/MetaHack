@@ -372,13 +372,13 @@
     <ClInclude Include="game\AppStateSplashScreen.h" />
     <ClInclude Include="services\IGameRules.h" />
     <ClInclude Include="services\NullGameRules.h" />
-    <ClInclude Include="systems\System.h" />
-    <ClInclude Include="systems\SystemCRTP.h" />
+    <ClInclude Include="systems\Base.h" />
+    <ClInclude Include="systems\CRTP.h" />
     <ClInclude Include="systems\SystemDirector.h" />
     <ClInclude Include="systems\SystemGrimReaper.h" />
     <ClInclude Include="systems\SystemJanitor.h" />
     <ClInclude Include="systems\SystemLighting.h" />
-    <ClInclude Include="systems\SystemManager.h" />
+    <ClInclude Include="systems\Manager.h" />
     <ClInclude Include="systems\SystemNarrator.h" />
     <ClInclude Include="systems\SystemPlayerHandler.h" />
     <ClInclude Include="systems\SystemSenseSight.h" />
@@ -667,7 +667,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="systems\SystemLighting.cpp" />
-    <ClCompile Include="systems\SystemManager.cpp" />
+    <ClCompile Include="systems\Manager.cpp" />
     <ClCompile Include="systems\SystemNarrator.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>

@@ -10,11 +10,11 @@ MapNullView::MapNullView(std::string name, Map& map, UintVec2 size)
 {
 }
 
-void MapNullView::update_tiles(EntityId viewer, SystemLighting& lighting)
+void MapNullView::update_tiles(EntityId viewer, Systems::SystemLighting& lighting)
 {
 }
 
-void MapNullView::update_things(EntityId viewer, SystemLighting& lighting, int frame)
+void MapNullView::update_things(EntityId viewer, Systems::SystemLighting& lighting, int frame)
 {
 }
 

@@ -27,8 +27,8 @@
 #include "services/IStringDictionary.h"
 #include "services/MessageLog.h"
 #include "state_machine/StateMachine.h"
+#include "systems/Manager.h"
 #include "systems/SystemLighting.h"
-#include "systems/SystemManager.h"
 #include "systems/SystemNarrator.h"
 #include "systems/SystemSenseSight.h"
 #include "systems/SystemSpacialRelationships.h"
@@ -73,7 +73,7 @@ AppStateGameMode::AppStateGameMode(StateMachine& state_machine, sf::RenderWindow
   m_appWindow{ m_appWindow },
   m_debugBuffer{ NEW KeyBuffer() },
   m_gameState{ NEW GameState({}) },
-  m_systemManager{ NEW SystemManager(*m_gameState) },
+  m_systemManager{ NEW Systems::Manager(*m_gameState) },
   m_inventorySelection{ NEW InventorySelection() },
   m_windowInFocus{ true },
   m_inventoryAreaShowsPlayer{ false },
@@ -232,7 +232,7 @@ GameState& AppStateGameMode::gameState()
   return *m_gameState;
 }
 
-SystemManager & AppStateGameMode::systems()
+Systems::Manager& AppStateGameMode::systems()
 {
   return *m_systemManager;
 }

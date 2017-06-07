@@ -5,7 +5,7 @@
 #include "services/IMessageLog.h"
 #include "services/IStringDictionary.h"
 #include "Service.h"
-#include "systems/SystemManager.h"
+#include "systems/Manager.h"
 #include "systems/SystemNarrator.h"
 #include "utilities/Shortcuts.h"
 
@@ -35,12 +35,12 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionTakeOff::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
+  StateResult ActionTakeOff::doPreBeginWorkNVI(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionTakeOff::doBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
+  StateResult ActionTakeOff::doBeginWorkNVI(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     auto& components = gameState.components();
     auto& narrator = systems.narrator();
@@ -76,12 +76,12 @@ namespace Actions
     return result;
   }
 
-  StateResult ActionTakeOff::doFinishWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
+  StateResult ActionTakeOff::doFinishWorkNVI(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionTakeOff::doAbortWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
+  StateResult ActionTakeOff::doAbortWorkNVI(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     return StateResult::Success();
   }

@@ -5,7 +5,7 @@
 #include "services/IMessageLog.h"
 #include "services/IStringDictionary.h"
 #include "Service.h"
-#include "systems/SystemManager.h"
+#include "systems/Manager.h"
 #include "systems/SystemNarrator.h"
 #include "utilities/Shortcuts.h"
 
@@ -41,7 +41,7 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionWear::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
+  StateResult ActionWear::doPreBeginWorkNVI(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     auto subject = getSubject();
     auto object = getObject();
@@ -64,7 +64,7 @@ namespace Actions
     return StateResult::Success();
   }
 
-  StateResult ActionWear::doBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
+  StateResult ActionWear::doBeginWorkNVI(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     auto subject = getSubject();
     auto object = getObject();
@@ -79,7 +79,7 @@ namespace Actions
     return StateResult::Failure();
   }
 
-  StateResult ActionWear::doFinishWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
+  StateResult ActionWear::doFinishWorkNVI(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     auto subject = getSubject();
     auto object = getObject();
@@ -94,7 +94,7 @@ namespace Actions
     return StateResult::Success();
   }
 
-  StateResult ActionWear::doAbortWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
+  StateResult ActionWear::doAbortWorkNVI(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     return StateResult::Success();
   }

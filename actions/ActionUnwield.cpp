@@ -5,7 +5,7 @@
 #include "services/IMessageLog.h"
 #include "services/IStringDictionary.h"
 #include "Service.h"
-#include "systems/SystemManager.h"
+#include "systems/Manager.h"
 #include "systems/SystemNarrator.h"
 #include "utilities/Shortcuts.h"
 
@@ -36,13 +36,13 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionUnwield::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
+  StateResult ActionUnwield::doPreBeginWorkNVI(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     // All checks done by Action class via traits.
     return StateResult::Success();
   }
 
-  StateResult ActionUnwield::doBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
+  StateResult ActionUnwield::doBeginWorkNVI(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     StateResult result = StateResult::Failure();
 
@@ -77,12 +77,12 @@ namespace Actions
     return result;
   }
 
-  StateResult ActionUnwield::doFinishWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
+  StateResult ActionUnwield::doFinishWorkNVI(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionUnwield::doAbortWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
+  StateResult ActionUnwield::doAbortWorkNVI(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     return StateResult::Success();
   }

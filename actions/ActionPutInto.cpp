@@ -6,7 +6,7 @@
 #include "Service.h"
 #include "services/IMessageLog.h"
 #include "services/IStringDictionary.h"
-#include "systems/SystemManager.h"
+#include "systems/Manager.h"
 #include "systems/SystemNarrator.h"
 #include "systems/SystemSpacialRelationships.h"
 #include "utilities/Shortcuts.h"
@@ -45,7 +45,7 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionPutInto::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
+  StateResult ActionPutInto::doPreBeginWorkNVI(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     std::string message;
     auto subject = getSubject();
@@ -102,7 +102,7 @@ namespace Actions
     return StateResult::Success();
   }
 
-  StateResult ActionPutInto::doBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
+  StateResult ActionPutInto::doBeginWorkNVI(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     /// @todo Handle putting a certain quantity of an item.
     StateResult result = StateResult::Failure();
@@ -133,24 +133,24 @@ namespace Actions
     return result;
   }
 
-  StateResult ActionPutInto::doFinishWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
+  StateResult ActionPutInto::doFinishWorkNVI(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionPutInto::doAbortWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
+  StateResult ActionPutInto::doAbortWorkNVI(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     return StateResult::Success();
   }
 
-  void ActionPutInto::printMessageTry(SystemManager& systems, json& arguments) const
+  void ActionPutInto::printMessageTry(Systems::Manager& systems, json& arguments) const
   {
     auto& narrator = systems.narrator();
     arguments["preposition"] = tr("PREPOSITION_INTO");
     putMsg(narrator.makeTr("YOU_TRY_TO_VERB_THE_FOO_PREPOSITION_TARGET", arguments));
   }
 
-  void ActionPutInto::printMessageDo(SystemManager& systems, json& arguments) const
+  void ActionPutInto::printMessageDo(Systems::Manager& systems, json& arguments) const
   {
     auto& narrator = systems.narrator();
     arguments["preposition"] = tr("PREPOSITION_INTO");

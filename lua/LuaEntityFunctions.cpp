@@ -10,7 +10,7 @@
 #include "Service.h"
 #include "services/IGameRules.h"
 #include "systems/SystemJanitor.h"
-#include "systems/SystemManager.h"
+#include "systems/Manager.h"
 #include "systems/SystemSpacialRelationships.h"
 
 GameState* LuaEntityFunctions::s_gameState = nullptr;

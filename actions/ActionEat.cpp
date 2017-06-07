@@ -5,7 +5,7 @@
 #include "services/IStringDictionary.h"
 #include "Service.h"
 #include "systems/SystemJanitor.h"
-#include "systems/SystemManager.h"
+#include "systems/Manager.h"
 #include "systems/SystemNarrator.h"
 #include "utilities/Shortcuts.h"
 
@@ -29,7 +29,7 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionEat::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
+  StateResult ActionEat::doPreBeginWorkNVI(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     auto& narrator = systems.narrator();
     std::string message;
@@ -49,7 +49,7 @@ namespace Actions
     return StateResult::Success();
   }
 
-  StateResult ActionEat::doBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
+  StateResult ActionEat::doBeginWorkNVI(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     auto subject = getSubject();
     auto object = getObject();
@@ -74,7 +74,7 @@ namespace Actions
     }
   }
 
-  StateResult ActionEat::doFinishWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
+  StateResult ActionEat::doFinishWorkNVI(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     auto object = getObject();
 
@@ -88,7 +88,7 @@ namespace Actions
     return StateResult::Success();
   }
 
-  StateResult ActionEat::doAbortWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
+  StateResult ActionEat::doAbortWorkNVI(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     printMessageStop(systems, arguments);
     return StateResult::Success();

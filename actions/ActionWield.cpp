@@ -7,7 +7,7 @@
 #include "services/IMessageLog.h"
 #include "services/IStringDictionary.h"
 #include "Service.h"
-#include "systems/SystemManager.h"
+#include "systems/Manager.h"
 #include "systems/SystemNarrator.h"
 #include "utilities/Shortcuts.h"
 
@@ -45,7 +45,7 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionWield::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
+  StateResult ActionWield::doPreBeginWorkNVI(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     std::string message;
     auto subject = getSubject();
@@ -78,7 +78,7 @@ namespace Actions
     return StateResult::Success();
   }
 
-  StateResult ActionWield::doBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
+  StateResult ActionWield::doBeginWorkNVI(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     /// @todo Wielding should take time -- should not be instantaneously done here.
     auto subject = getSubject();
@@ -96,7 +96,7 @@ namespace Actions
     return StateResult::Failure();
   }
 
-  StateResult ActionWield::doFinishWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
+  StateResult ActionWield::doFinishWorkNVI(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     auto subject = getSubject();
     auto object = getObject();
@@ -112,7 +112,7 @@ namespace Actions
     return StateResult::Success();
   }
 
-  StateResult ActionWield::doAbortWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
+  StateResult ActionWield::doAbortWorkNVI(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     return StateResult::Success();
   }

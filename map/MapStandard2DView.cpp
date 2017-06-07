@@ -29,7 +29,7 @@ MapStandard2DView::MapStandard2DView(std::string name,
 
 }
 
-void MapStandard2DView::update_tiles(EntityId viewer, SystemLighting& lighting)
+void MapStandard2DView::update_tiles(EntityId viewer, Systems::SystemLighting& lighting)
 {
   auto& map = getMap();
   auto& map_size = map.getSize();
@@ -45,15 +45,15 @@ void MapStandard2DView::update_tiles(EntityId viewer, SystemLighting& lighting)
     for (int x = 0; x < map_size.x; ++x)
     {
       m_map_tile_views->get({ x, y }).addTileVertices(viewer, 
-                                                        m_map_seen_vertices, 
-                                                        m_map_memory_vertices,
-                                                        lighting);
+                                                      m_map_seen_vertices, 
+                                                      m_map_memory_vertices,
+                                                      lighting);
     }
   }
 }
 
 void MapStandard2DView::update_things(EntityId viewer, 
-                                      SystemLighting& lighting,
+                                      Systems::SystemLighting& lighting,
                                       int frame)
 {
   auto& map = getMap();

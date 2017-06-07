@@ -6,6 +6,7 @@
 #include "map/Map.h"
 #include "Service.h"
 #include "services/IConfigSettings.h"
+#include "systems/SystemLighting.h"
 #include "tilesheet/TileSheet.h"
 #include "types/ShaderEffect.h"
 #include "utilities/RNGUtils.h"
@@ -29,7 +30,7 @@ EntityStandard2DView::~EntityStandard2DView()
 }
 
 void EntityStandard2DView::draw(sf::RenderTarget& target,
-                                SystemLighting* lighting,
+                                Systems::SystemLighting* lighting,
                                 bool use_smoothing,
                                 int frame)
 {

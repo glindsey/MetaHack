@@ -6,7 +6,10 @@
 #include "Object.h"
 
 // Forward declarations
-class SystemLighting;
+namespace Systems
+{
+  class SystemLighting;
+}
 
 /// Abstract class representing a view of a single Entity object.
 class EntityView 
@@ -40,7 +43,7 @@ public:
   RealVec2 getSize();
 
   virtual void draw(sf::RenderTarget& target,
-                    SystemLighting* lighting,
+                    Systems::SystemLighting* lighting,
                     bool use_smoothing,
                     int frame) = 0;
 

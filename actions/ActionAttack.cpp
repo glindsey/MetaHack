@@ -8,7 +8,7 @@
 #include "services/IMessageLog.h"
 #include "services/IStringDictionary.h"
 #include "Service.h"
-#include "systems/SystemManager.h"
+#include "systems/Manager.h"
 #include "systems/SystemNarrator.h"
 #include "utilities/Shortcuts.h"
 
@@ -31,7 +31,7 @@ namespace Actions
     return traits;
   }
 
-  StateResult ActionAttack::doPreBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
+  StateResult ActionAttack::doPreBeginWorkNVI(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     auto subject = getSubject();
     auto location = COMPONENTS.position[subject].parent();
@@ -63,7 +63,7 @@ namespace Actions
     return StateResult::Success();
   }
 
-  StateResult ActionAttack::doBeginWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
+  StateResult ActionAttack::doBeginWorkNVI(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     auto subject = getSubject();
     auto& position = COMPONENTS.position[subject];
@@ -114,12 +114,12 @@ namespace Actions
     return{ success, action_time };
   }
 
-  StateResult ActionAttack::doFinishWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
+  StateResult ActionAttack::doFinishWorkNVI(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     return StateResult::Success();
   }
 
-  StateResult ActionAttack::doAbortWorkNVI(GameState& gameState, SystemManager& systems, json& arguments)
+  StateResult ActionAttack::doAbortWorkNVI(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     return StateResult::Success();
   }
