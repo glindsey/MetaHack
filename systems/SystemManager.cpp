@@ -3,6 +3,7 @@
 #include "SystemManager.h"
 
 #include "components/ComponentManager.h"
+#include "systems/SystemDirector.h"
 #include "systems/SystemGrimReaper.h"
 #include "systems/SystemJanitor.h"
 #include "systems/SystemLighting.h"
@@ -26,6 +27,8 @@ SystemManager::SystemManager(GameState& gameState) :
 
 
   // Initialize systems.
+  m_director.reset(NEW SystemDirector(m_gameState, *this));
+
   m_grimReaper.reset(NEW SystemGrimReaper(components.globals));
 
   m_janitor.reset(NEW SystemJanitor(components));

@@ -374,6 +374,7 @@
     <ClInclude Include="services\NullGameRules.h" />
     <ClInclude Include="systems\System.h" />
     <ClInclude Include="systems\SystemCRTP.h" />
+    <ClInclude Include="systems\SystemDirector.h" />
     <ClInclude Include="systems\SystemGrimReaper.h" />
     <ClInclude Include="systems\SystemJanitor.h" />
     <ClInclude Include="systems\SystemLighting.h" />
@@ -650,6 +651,11 @@
     <ClCompile Include="entity\EntityNullView.cpp" />
     <ClCompile Include="services\FallbackConfigSettings.cpp" />
     <ClCompile Include="services\IGameRules.cpp" />
+    <ClCompile Include="systems\SystemDirector.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="systems\SystemGrimReaper.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
