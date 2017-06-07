@@ -8,7 +8,7 @@ namespace Systems
 {
 
   /// System that handles entity cleanup (i.e. deletion).
-  class SystemJanitor : public CRTP<SystemJanitor>
+  class Janitor : public CRTP<Janitor>
   {
   public:
     struct EventEntityDestroyed : public ConcreteEvent<EventEntityDestroyed>
@@ -41,9 +41,9 @@ namespace Systems
       }
     };
 
-    SystemJanitor(ComponentManager& components);
+    Janitor(ComponentManager& components);
 
-    virtual ~SystemJanitor();
+    virtual ~Janitor();
 
     /// Recalculate whatever needs recalculating.
     void doCycleUpdate();

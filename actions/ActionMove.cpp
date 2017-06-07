@@ -11,7 +11,7 @@
 #include "services/IStringDictionary.h"
 #include "systems/Manager.h"
 #include "systems/SystemNarrator.h"
-#include "systems/SystemSpacialRelationships.h"
+#include "systems/SystemGeometry.h"
 #include "utilities/Shortcuts.h"
 
 #include "entity/Entity.h" // needed for beObjectOf()
@@ -110,7 +110,7 @@ namespace Actions
           if (new_tile.canBeTraversedBy(subject))
           {
             /// @todo Figure out elapsed movement time.
-            result.success = systems.spacial().moveEntityInto(subject, new_floor);
+            result.success = systems.geometry().moveEntityInto(subject, new_floor);
             result.elapsed_time = 1;
           }
           else

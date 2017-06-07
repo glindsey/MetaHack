@@ -3,40 +3,40 @@
 namespace Systems
 {
 
-  SystemTimekeeper::SystemTimekeeper(ComponentGlobals & globals) :
-    CRTP<SystemTimekeeper>({ EventClockChanged::id }),
+  Timekeeper::Timekeeper(ComponentGlobals & globals) :
+    CRTP<Timekeeper>({ EventClockChanged::id }),
     m_globals{ globals }
   {}
 
-  SystemTimekeeper::~SystemTimekeeper()
+  Timekeeper::~Timekeeper()
   {}
 
-  void SystemTimekeeper::doCycleUpdate()
+  void Timekeeper::doCycleUpdate()
   {
     incrementClock(ElapsedTicks(1));
   }
 
-  ElapsedTicks SystemTimekeeper::clock() const
+  ElapsedTicks Timekeeper::clock() const
   {
     return m_clock;
   }
 
-  void SystemTimekeeper::setClock(ElapsedTicks clock)
+  void Timekeeper::setClock(ElapsedTicks clock)
   {
     m_clock = clock;
     broadcast(EventClockChanged(clock));
   }
 
-  void SystemTimekeeper::incrementClock(ElapsedTicks addedTime)
+  void Timekeeper::incrementClock(ElapsedTicks addedTime)
   {
     /// @todo Check for the unlikely, but not impossible, chance of rollover.
     setClock(clock() + addedTime);
   }
 
-  void SystemTimekeeper::setMap_V(MapID newMap)
+  void Timekeeper::setMap_V(MapID newMap)
   {}
 
-  bool SystemTimekeeper::onEvent(Event const & event)
+  bool Timekeeper::onEvent(Event const & event)
   {
     return false;
   }

@@ -11,7 +11,7 @@
 // Forward declarations
 namespace Systems
 {
-  class SystemLighting;
+  class Lighting;
 }
 
 /// Class representing the standard 2D (pseudo-3D) view of a MapTile object.
@@ -44,7 +44,7 @@ protected:
   void addTileVertices(EntityId viewer, 
                        sf::VertexArray& seen_vertices,
                        sf::VertexArray& memory_vertices,
-                       Systems::SystemLighting& lighting);
+                       Systems::Lighting& lighting);
 
   /// Add the vertices from the viewer's memory.
   /// @param vertices Array to add vertices to.
@@ -55,19 +55,19 @@ protected:
   /// Add the floor vertices for the maptile to a VertexArray to be drawn.
   /// @param vertices Array to add vertices to.
   void addTileFloorVerticesTo(sf::VertexArray& vertices,
-                              Systems::SystemLighting& lighting);
+                              Systems::Lighting& lighting);
 
   /// Add the floor vertices for the entities on this tile to a VertexArray to be drawn.
   void addEntitiesFloorVertices(EntityId viewer,
                                 sf::VertexArray& vertices,
-                                Systems::SystemLighting* lighting,
+                                Systems::Lighting* lighting,
                                 int frame);
 
   /// Add the floor vertices for the entity specified.
   /// @todo Move into a Entity view.
   void addEntityFloorVertices(EntityId entity, 
                                 sf::VertexArray& vertices, 
-                                Systems::SystemLighting* lighting,
+                                Systems::Lighting* lighting,
                                 int frame);
 
   /// Add this MapTile's walls to a VertexArray to be drawn.
@@ -83,7 +83,7 @@ protected:
   /// @param sw_is_empty  Whether tile to the southwest is empty.
   /// @param w_is_empty   Whether tile to the west is empty.
   void addWallVerticesTo(sf::VertexArray& vertices,
-                         Systems::SystemLighting* lighting,
+                         Systems::Lighting* lighting,
                          bool nw_is_empty, bool n_is_empty,
                          bool ne_is_empty, bool e_is_empty,
                          bool se_is_empty, bool s_is_empty,

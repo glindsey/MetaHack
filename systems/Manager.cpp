@@ -10,7 +10,7 @@
 #include "systems/SystemNarrator.h"
 #include "systems/SystemPlayerHandler.h"
 #include "systems/SystemSenseSight.h"
-#include "systems/SystemSpacialRelationships.h"
+#include "systems/SystemGeometry.h"
 #include "systems/SystemTimekeeper.h"
 #include "utilities/New.h"
 
@@ -30,67 +30,73 @@ namespace Systems
 
 
     // Initialize systems.
-    m_director.reset(NEW SystemDirector(m_gameState, *this));
+    m_choreographer.reset(NEW Choreographer(components.globals));
 
-    m_grimReaper.reset(NEW SystemGrimReaper(components.globals));
+    m_director.reset(NEW Director(m_gameState, *this));
 
-    m_janitor.reset(NEW SystemJanitor(components));
+    m_geometry.reset(NEW Geometry(components.globals,
+                                  components.inventory,
+                                  components.position));
 
-    m_lighting.reset(NEW SystemLighting(m_gameState,
-                                        components.appearance,
-                                        components.health,
-                                        components.lightSource,
-                                        components.position));
+    m_grimReaper.reset(NEW GrimReaper(components.globals));
 
-    m_narrator.reset(NEW SystemNarrator(components.globals,
-                                        components.bodyparts,
-                                        components.category,
-                                        components.gender,
-                                        components.health,
-                                        components.position,
-                                        components.properName,
-                                        components.quantity));
+    m_janitor.reset(NEW Janitor(components));
 
-    m_playerHandler.reset(NEW SystemPlayerHandler(components.globals));
+    m_lighting.reset(NEW Lighting(m_gameState,
+                                  components.appearance,
+                                  components.health,
+                                  components.lightSource,
+                                  components.position));
 
-    m_senseSight.reset(NEW SystemSenseSight(m_gameState,
-                                            components.inventory,
-                                            components.position,
-                                            components.senseSight,
-                                            components.spacialMemory));
+    m_narrator.reset(NEW Narrator(components.globals,
+                                  components.bodyparts,
+                                  components.category,
+                                  components.gender,
+                                  components.health,
+                                  components.position,
+                                  components.properName,
+                                  components.quantity));
 
-    m_spacial.reset(NEW SystemSpacialRelationships(components.globals,
-                                                   components.inventory,
-                                                   components.position));
+    m_senseSight.reset(NEW SenseSight(m_gameState,
+                                      components.inventory,
+                                      components.position,
+                                      components.senseSight,
+                                      components.spacialMemory));
 
-    m_timekeeper.reset(NEW SystemTimekeeper(components.globals));
+    m_timekeeper.reset(NEW Timekeeper(components.globals));
 
     // Link system events.
-    m_janitor->addObserver(*m_spacial, SystemJanitor::EventEntityMarkedForDeletion::id);
+    m_janitor->addObserver(*m_geometry, Janitor::EventEntityMarkedForDeletion::id);
 
-    m_spacial->addObserver(*m_lighting, SystemSpacialRelationships::EventEntityChangedMaps::id);
-    m_spacial->addObserver(*m_lighting, SystemSpacialRelationships::EventEntityMoved::id);
+    m_geometry->addObserver(*m_lighting, Geometry::EventEntityChangedMaps::id);
+    m_geometry->addObserver(*m_lighting, Geometry::EventEntityMoved::id);
 
-    m_spacial->addObserver(*m_senseSight, SystemSpacialRelationships::EventEntityChangedMaps::id);
-    m_spacial->addObserver(*m_senseSight, SystemSpacialRelationships::EventEntityMoved::id);
+    m_geometry->addObserver(*m_senseSight, Geometry::EventEntityChangedMaps::id);
+    m_geometry->addObserver(*m_senseSight, Geometry::EventEntityMoved::id);
 
   }
 
   Manager::~Manager()
   {
     // Dissolve links.
-    m_spacial->removeAllObservers();
+    m_geometry->removeAllObservers();
 
     s_instance = nullptr;
   }
 
   void Manager::runOneCycle()
   {
-    m_playerHandler->doCycleUpdate();
+    m_director->doCycleUpdate();
+    m_choreographer->doCycleUpdate();
 
     m_lighting->doCycleUpdate();
     m_senseSight->doCycleUpdate();
-    m_spacial->doCycleUpdate();
+    //m_senseHearing->doCycleUpdate();
+    //m_senseSmell->doCycleUpdate();
+    //m_senseTouch->doCycleUpdate();
+    m_geometry->doCycleUpdate();
+    //m_physics->doCycleUpdate();
+    //m_thermodynamics->doCycleUpdate();
 
     m_grimReaper->doCycleUpdate();
     m_janitor->doCycleUpdate();

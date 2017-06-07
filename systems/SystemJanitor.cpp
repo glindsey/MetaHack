@@ -3,16 +3,16 @@
 namespace Systems
 {
 
-  SystemJanitor::SystemJanitor(ComponentManager & components) :
-    CRTP<SystemJanitor>({ EventEntityDestroyed::id,
+  Janitor::Janitor(ComponentManager & components) :
+    CRTP<Janitor>({ EventEntityDestroyed::id,
                                 EventEntityMarkedForDeletion::id }),
     m_components{ components }
   {}
 
-  SystemJanitor::~SystemJanitor()
+  Janitor::~Janitor()
   {}
 
-  void SystemJanitor::doCycleUpdate()
+  void Janitor::doCycleUpdate()
   {
     while (!m_entitiesPendingDeletion.empty())
     {
@@ -23,7 +23,7 @@ namespace Systems
     }
   }
 
-  void SystemJanitor::markForDeletion(EntityId entity)
+  void Janitor::markForDeletion(EntityId entity)
   {
     if (std::find(std::cbegin(m_entitiesPendingDeletion),
                   std::cend(m_entitiesPendingDeletion),
@@ -36,10 +36,10 @@ namespace Systems
     }
   }
 
-  void SystemJanitor::setMap_V(MapID newMap)
+  void Janitor::setMap_V(MapID newMap)
   {}
 
-  bool SystemJanitor::onEvent(Event const & event)
+  bool Janitor::onEvent(Event const & event)
   {
     return false;
   }

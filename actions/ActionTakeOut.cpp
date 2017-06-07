@@ -8,7 +8,7 @@
 #include "services/IStringDictionary.h"
 #include "systems/Manager.h"
 #include "systems/SystemNarrator.h"
-#include "systems/SystemSpacialRelationships.h"
+#include "systems/SystemGeometry.h"
 #include "utilities/Shortcuts.h"
 
 #include "entity/Entity.h" // needed for beObjectOf()
@@ -75,7 +75,7 @@ namespace Actions
 
     // Check that the container is within reach.
     auto objectContainer = objectPosition.parent();
-    if (!systems.spacial()->firstCanReachSecond(subject, objectContainer))
+    if (!systems.geometry()->firstCanReachSecond(subject, objectContainer))
     {
       printMessageTry(systems, arguments);
 
@@ -104,7 +104,7 @@ namespace Actions
 
     if (object->beObjectOf(*this, subject))
     {
-      if (systems.spacial().moveEntityInto(object, newLocation))
+      if (systems.geometry().moveEntityInto(object, newLocation))
       {
         printMessageDo(systems, arguments);
 

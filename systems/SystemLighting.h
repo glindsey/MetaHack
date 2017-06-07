@@ -19,16 +19,16 @@ namespace Systems
 {
 
   /// System that handles lighting the map and all entities on it.
-  class SystemLighting : public CRTP<SystemLighting>
+  class Lighting : public CRTP<Lighting>
   {
   public:
-    SystemLighting(GameState& gameState,
+    Lighting(GameState& gameState,
                    ComponentMap<ComponentAppearance> const& appearance,
                    ComponentMap<ComponentHealth> const& health,
                    ComponentMap<ComponentLightSource>& lightSource,
                    ComponentMap<ComponentPosition> const& position);
 
-    virtual ~SystemLighting();
+    virtual ~Lighting();
 
     /// Recalculate map lighting.
     virtual void doCycleUpdate() override;

@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include "systems/SystemSpacialRelationships.h"
+#include "systems/SystemGeometry.h"
 
 #include "components/ComponentGlobals.h"
 #include "components/ComponentInventory.h"
@@ -11,22 +11,22 @@
 namespace Systems
 {
 
-  SystemSpacialRelationships::SystemSpacialRelationships(ComponentGlobals const& globals,
+  Geometry::Geometry(ComponentGlobals const& globals,
                                                          ComponentMap<ComponentInventory>& inventory,
                                                          ComponentMap<ComponentPosition>& position) :
-    CRTP<SystemSpacialRelationships>({ EventEntityMoved::id, EventEntityChangedMaps::id }),
+    CRTP<Geometry>({ EventEntityMoved::id, EventEntityChangedMaps::id }),
     m_globals{ globals },
     m_inventory{ inventory },
     m_position{ position }
   {}
 
-  SystemSpacialRelationships::~SystemSpacialRelationships()
+  Geometry::~Geometry()
   {}
 
-  void SystemSpacialRelationships::doCycleUpdate()
+  void Geometry::doCycleUpdate()
   {}
 
-  bool SystemSpacialRelationships::moveEntityInto(EntityId entity, EntityId newLocation)
+  bool Geometry::moveEntityInto(EntityId entity, EntityId newLocation)
   {
     // If Entity doesn't have a Position component, bail.
     if (!m_position.existsFor(entity)) return false;
@@ -76,13 +76,13 @@ namespace Systems
     return false;
   }
 
-  bool SystemSpacialRelationships::firstCanReachSecond(EntityId first, EntityId second) const
+  bool Geometry::firstCanReachSecond(EntityId first, EntityId second) const
   {
     return (areAdjacent(first, second) ||
             firstIsDirectlyInsideSecond(first, second));
   }
 
-  bool SystemSpacialRelationships::insideAnotherEntity(EntityId entity) const
+  bool Geometry::insideAnotherEntity(EntityId entity) const
   {
     // If entity is missing a position component, bail.
     if (!m_position.existsFor(entity)) return false;
@@ -104,7 +104,7 @@ namespace Systems
     return true;
   }
 
-  bool SystemSpacialRelationships::firstIsDirectlyInsideSecond(EntityId first, EntityId second) const
+  bool Geometry::firstIsDirectlyInsideSecond(EntityId first, EntityId second) const
   {
     // If either entity doesn't have a position component, bail.
     if (!m_position.existsFor(first) || !m_position.existsFor(second))
@@ -127,7 +127,7 @@ namespace Systems
     return false;
   }
 
-  bool SystemSpacialRelationships::firstIsInsideSecond(EntityId first, EntityId second) const
+  bool Geometry::firstIsInsideSecond(EntityId first, EntityId second) const
   {
     // If either entity doesn't have a position component, bail.
     if (!m_position.existsFor(first) || !m_position.existsFor(second))
@@ -153,7 +153,7 @@ namespace Systems
     return false;
   }
 
-  bool SystemSpacialRelationships::areAdjacent(EntityId first, EntityId second) const
+  bool Geometry::areAdjacent(EntityId first, EntityId second) const
   {
     // If either entity doesn't have a position component, bail.
     if (!m_position.existsFor(first) || !m_position.existsFor(second))
@@ -173,16 +173,16 @@ namespace Systems
     return adjacent(firstPosition.coords(), secondPosition.coords());
   }
 
-  void SystemSpacialRelationships::setMap_V(MapID newMap)
+  void Geometry::setMap_V(MapID newMap)
   {}
 
-  bool SystemSpacialRelationships::onEvent(Event const& event)
+  bool Geometry::onEvent(Event const& event)
   {
     auto id = event.getId();
 
-    if (id == SystemJanitor::EventEntityMarkedForDeletion::id)
+    if (id == Janitor::EventEntityMarkedForDeletion::id)
     {
-      auto& castEvent = static_cast<SystemJanitor::EventEntityMarkedForDeletion const&>(event);
+      auto& castEvent = static_cast<Janitor::EventEntityMarkedForDeletion const&>(event);
       auto entity = castEvent.m_entity;
       auto old_location = m_position[entity].parent();
 

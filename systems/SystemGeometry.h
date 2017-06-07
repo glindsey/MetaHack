@@ -14,7 +14,7 @@ namespace Systems
 
   /// System that handles spacial relationships between entities -- what's inside
   /// what, what's adjacent to what, moving entities, et cetera.
-  class SystemSpacialRelationships : public CRTP<SystemSpacialRelationships>
+  class Geometry : public CRTP<Geometry>
   {
   public:
     /// Event indicating an entity moved, but stayed on the same map.
@@ -53,11 +53,11 @@ namespace Systems
       }
     };
 
-    SystemSpacialRelationships(ComponentGlobals const& globals,
+    Geometry(ComponentGlobals const& globals,
                                ComponentMap<ComponentInventory>& inventory,
                                ComponentMap<ComponentPosition>& position);
 
-    virtual ~SystemSpacialRelationships();
+    virtual ~Geometry();
 
     /// Recalculate whatever needs recalculating.
     void doCycleUpdate();

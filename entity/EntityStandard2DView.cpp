@@ -30,7 +30,7 @@ EntityStandard2DView::~EntityStandard2DView()
 }
 
 void EntityStandard2DView::draw(sf::RenderTarget& target,
-                                Systems::SystemLighting* lighting,
+                                Systems::Lighting* lighting,
                                 bool use_smoothing,
                                 int frame)
 {

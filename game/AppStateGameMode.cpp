@@ -31,7 +31,7 @@
 #include "systems/SystemLighting.h"
 #include "systems/SystemNarrator.h"
 #include "systems/SystemSenseSight.h"
-#include "systems/SystemSpacialRelationships.h"
+#include "systems/SystemGeometry.h"
 #include "utilities/GetLetterKey.h"
 #include "utilities/Shortcuts.h"
 #include "utilities/StringTransforms.h"
@@ -194,7 +194,7 @@ bool AppStateGameMode::initialize()
   auto start_floor = game_map.getTile(start_coords).getTileContents();
   Assert("Game", start_floor, "starting tile floor doesn't exist");
 
-  bool player_moved = m_systemManager->spacial().moveEntityInto(player, start_floor);
+  bool player_moved = m_systemManager->geometry().moveEntityInto(player, start_floor);
   Assert("Game", player_moved, "player could not be moved into starting tile");
 
   // Set cursor to starting location.

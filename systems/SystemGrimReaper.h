@@ -8,7 +8,7 @@ namespace Systems
 {
 
   /// System that handles entity death.
-  class SystemGrimReaper : public CRTP<SystemGrimReaper>
+  class GrimReaper : public CRTP<GrimReaper>
   {
   public:
     struct EventEntityDied : public ConcreteEvent<EventEntityDied>
@@ -41,9 +41,9 @@ namespace Systems
       }
     };
 
-    SystemGrimReaper(ComponentGlobals& globals);
+    GrimReaper(ComponentGlobals& globals);
 
-    virtual ~SystemGrimReaper();
+    virtual ~GrimReaper();
 
     /// Recalculate whatever needs recalculating.
     void doCycleUpdate();

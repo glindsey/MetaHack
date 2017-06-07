@@ -8,7 +8,7 @@ namespace Systems
 {
 
   /// System that handles the game clock.
-  class SystemTimekeeper : public CRTP<SystemTimekeeper>
+  class Timekeeper : public CRTP<Timekeeper>
   {
   public:
     struct EventClockChanged : public ConcreteEvent<EventClockChanged>
@@ -26,9 +26,9 @@ namespace Systems
       }
     };
 
-    SystemTimekeeper(ComponentGlobals& globals);
+    Timekeeper(ComponentGlobals& globals);
 
-    virtual ~SystemTimekeeper();
+    virtual ~Timekeeper();
 
     /// Recalculate whatever needs recalculating.
     void doCycleUpdate();

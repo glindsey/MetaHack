@@ -9,7 +9,7 @@
 #include "game/GameState.h"
 #include "map/Map.h"
 #include "systems/Manager.h"
-#include "systems/SystemSpacialRelationships.h"
+#include "systems/SystemGeometry.h"
 #include "systems/SystemTimekeeper.h"
 #include "types/Direction.h"
 #include "utilities/MathUtils.h"
@@ -17,12 +17,12 @@
 namespace Systems
 {
 
-  SystemSenseSight::SystemSenseSight(GameState const& gameState,
+  SenseSight::SenseSight(GameState const& gameState,
                                      ComponentMap<ComponentInventory> const& inventory,
                                      ComponentMap<ComponentPosition> const& position,
                                      ComponentMap<ComponentSenseSight>& senseSight,
                                      ComponentMap<ComponentSpacialMemory>& spacialMemory) :
-    CRTP<SystemSenseSight>({}),
+    CRTP<SenseSight>({}),
     m_gameState{ gameState },
     m_inventory{ inventory },
     m_position{ position },
@@ -30,10 +30,10 @@ namespace Systems
     m_spacialMemory{ spacialMemory }
   {}
 
-  SystemSenseSight::~SystemSenseSight()
+  SenseSight::~SenseSight()
   {}
 
-  void SystemSenseSight::doCycleUpdate()
+  void SenseSight::doCycleUpdate()
   {
     for (auto& pair : m_senseSight.data())
     {
@@ -43,7 +43,7 @@ namespace Systems
     m_needsUpdate.clear();
   }
 
-  void SystemSenseSight::findSeenTiles(EntityId id)
+  void SenseSight::findSeenTiles(EntityId id)
   {
     // If we don't have a position component, bail.
     if (!m_position.existsFor(id)) return;
@@ -73,12 +73,12 @@ namespace Systems
     }
   }
 
-  void SystemSenseSight::calculateRecursiveVisibility(EntityId id,
-                                                      ComponentPosition const& thisPosition,
-                                                      int octant,
-                                                      int depth,
-                                                      float slope_A,
-                                                      float slope_B)
+  void SenseSight::calculateRecursiveVisibility(EntityId id,
+                                                ComponentPosition const& thisPosition,
+                                                int octant,
+                                                int depth,
+                                                float slope_A,
+                                                float slope_B)
   {
     Assert("SenseSight", octant >= 1 && octant <= 8, "Octant" << octant << "passed in is not between 1 and 8 inclusively");
     IntVec2 newCoords;
@@ -224,7 +224,7 @@ namespace Systems
     }
   }
 
-  bool SystemSenseSight::subjectCanSeeCoords(EntityId subject, IntVec2 coords) const
+  bool SenseSight::subjectCanSeeCoords(EntityId subject, IntVec2 coords) const
   {
     // Make sure we are able to see at all.
     if (!m_senseSight.existsFor(subject)) return false;
@@ -248,22 +248,22 @@ namespace Systems
     return m_senseSight[subject].canSee(coords);
   }
 
-  void SystemSenseSight::setMap_V(MapID newMap)
+  void SenseSight::setMap_V(MapID newMap)
   {
   }
 
-  bool SystemSenseSight::onEvent(Event const& event)
+  bool SenseSight::onEvent(Event const& event)
   {
     auto id = event.getId();
 
-    if (id == SystemSpacialRelationships::EventEntityMoved::id)
+    if (id == Geometry::EventEntityMoved::id)
     {
-      auto& castEvent = static_cast<SystemSpacialRelationships::EventEntityMoved const&>(event);
+      auto& castEvent = static_cast<Geometry::EventEntityMoved const&>(event);
       m_needsUpdate.insert(castEvent.entity);
     }
-    else if (id == SystemSpacialRelationships::EventEntityChangedMaps::id)
+    else if (id == Geometry::EventEntityChangedMaps::id)
     {
-      auto& castEvent = static_cast<SystemSpacialRelationships::EventEntityChangedMaps const&>(event);
+      auto& castEvent = static_cast<Geometry::EventEntityChangedMaps const&>(event);
       MapID newMap = m_position.of(castEvent.entity).map();
       IntVec2 newMapSize = m_gameState.maps().get(newMap).getSize();
       m_senseSight[castEvent.entity].resizeSeen(newMapSize);

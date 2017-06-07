@@ -14,15 +14,15 @@
 namespace Systems
 {
 
-  SystemNarrator::SystemNarrator(ComponentGlobals const& globals,
-                                 ComponentMap<ComponentBodyparts> const& bodyparts,
-                                 ComponentMap<std::string> const& category,
-                                 ComponentMap<ComponentGender> const& gender,
-                                 ComponentMap<ComponentHealth> const& health,
-                                 ComponentMap<ComponentPosition> const& position,
-                                 ComponentMap<std::string> const& properName,
-                                 ComponentMap<unsigned int> const& quantity) :
-    CRTP<SystemNarrator>({}),
+  Narrator::Narrator(ComponentGlobals const& globals,
+                     ComponentMap<ComponentBodyparts> const& bodyparts,
+                     ComponentMap<std::string> const& category,
+                     ComponentMap<ComponentGender> const& gender,
+                     ComponentMap<ComponentHealth> const& health,
+                     ComponentMap<ComponentPosition> const& position,
+                     ComponentMap<std::string> const& properName,
+                     ComponentMap<unsigned int> const& quantity) :
+    CRTP<Narrator>({}),
     m_bodyparts{ bodyparts },
     m_category{ category },
     m_gender{ gender },
@@ -33,65 +33,65 @@ namespace Systems
     m_quantity{ quantity }
   {}
 
-  SystemNarrator::~SystemNarrator()
+  Narrator::~Narrator()
   {}
 
-  std::ostream& operator<<(std::ostream& os, SystemNarrator::TokenizerState state)
+  std::ostream& operator<<(std::ostream& os, Narrator::TokenizerState state)
   {
     switch (state)
     {
-    case SystemNarrator::TokenizerState::Text: os << "Text"; break;
-    case SystemNarrator::TokenizerState::ParsingToken: os << "ParsingToken"; break;
-    case SystemNarrator::TokenizerState::ParsingChoice: os << "ParsingChoice"; break;
-    case SystemNarrator::TokenizerState::ParsingChoiceTrue: os << "ParsingChoiceTrue"; break;
-    case SystemNarrator::TokenizerState::ParsingChoiceFalse: os << "ParsingChoiceFalse"; break;
-    case SystemNarrator::TokenizerState::ParsingChoiceError: os << "ParsingChoiceError"; break;
+    case Narrator::TokenizerState::Text: os << "Text"; break;
+    case Narrator::TokenizerState::ParsingToken: os << "ParsingToken"; break;
+    case Narrator::TokenizerState::ParsingChoice: os << "ParsingChoice"; break;
+    case Narrator::TokenizerState::ParsingChoiceTrue: os << "ParsingChoiceTrue"; break;
+    case Narrator::TokenizerState::ParsingChoiceFalse: os << "ParsingChoiceFalse"; break;
+    case Narrator::TokenizerState::ParsingChoiceError: os << "ParsingChoiceError"; break;
     default: os << "??? (" << static_cast<int>(state) << ")";
     }
 
     return os;
   }
 
-  bool SystemNarrator::isThirdPerson(EntitySet entities) const
+  bool Narrator::isThirdPerson(EntitySet entities) const
   {
     if (entities.size() != 1) return true;
     EntityId entity = *(entities.cbegin());
     return !((m_globals.player() == entity) || (m_quantity.valueOr(entity, 1) > 1));
   }
 
-  std::string const& SystemNarrator::chooseVerb(EntitySet entities,
-                                                std::string const& verb12,
-                                                std::string const& verb3) const
+  std::string const& Narrator::chooseVerb(EntitySet entities,
+                                          std::string const& verb12,
+                                          std::string const& verb3) const
   {
     return isThirdPerson(entities) ? verb3 : verb12;
   }
 
-  std::string const& SystemNarrator::getSubjectPronoun(EntitySet entities) const
+  std::string const& Narrator::getSubjectPronoun(EntitySet entities) const
   {
     return getSubjPro(getGenderOrYou(entities));
   }
 
-  std::string const& SystemNarrator::getObjectPronoun(EntitySet entities) const
+  std::string const& Narrator::getObjectPronoun(EntitySet entities) const
   {
     return getObjPro(getGenderOrYou(entities));
   }
 
-  std::string const& SystemNarrator::getReflexivePronoun(EntitySet entities) const
+  std::string const& Narrator::getReflexivePronoun(EntitySet entities) const
   {
     return getRefPro(getGenderOrYou(entities));
   }
 
-  std::string const& SystemNarrator::getPossessiveAdjective(EntitySet entities) const
+  std::string const& Narrator::getPossessiveAdjective(EntitySet entities) const
   {
     return getPossAdj(getGenderOrYou(entities));
   }
 
-  std::string const& SystemNarrator::getPossessivePronoun(EntitySet entities) const
+  std::string const& Narrator::getPossessivePronoun(EntitySet entities) const
   {
     return getPossPro(getGenderOrYou(entities));
   }
 
-  Gender SystemNarrator::getGenderOrYou(EntitySet entities) const
+  Gender Narrator::getGenderOrYou(EntitySet entities) const
   {
     if (entities.size() != 1) return Gender::Plural;
     EntityId entity = *(entities.cbegin());
@@ -113,9 +113,9 @@ namespace Systems
     }
   }
 
-  std::string SystemNarrator::getSubjectiveString(EntityId id,
-                                                  ArticleChoice articles,
-                                                  UsePossessives possessives) const
+  std::string Narrator::getSubjectiveString(EntityId id,
+                                            ArticleChoice articles,
+                                            UsePossessives possessives) const
   {
     std::string str;
 
@@ -139,9 +139,9 @@ namespace Systems
     return str;
   }
 
-  std::string SystemNarrator::getObjectiveString(EntityId id,
-                                                 ArticleChoice articles,
-                                                 UsePossessives possessives) const
+  std::string Narrator::getObjectiveString(EntityId id,
+                                           ArticleChoice articles,
+                                           UsePossessives possessives) const
   {
     std::string str;
 
@@ -165,10 +165,10 @@ namespace Systems
     return str;
   }
 
-  std::string SystemNarrator::getReflexiveString(EntityId id,
-                                                 EntityId other,
-                                                 ArticleChoice articles,
-                                                 UsePossessives possessives) const
+  std::string Narrator::getReflexiveString(EntityId id,
+                                           EntityId other,
+                                           ArticleChoice articles,
+                                           UsePossessives possessives) const
   {
     if (id == other)
     {
@@ -178,8 +178,8 @@ namespace Systems
     return getDescriptiveString(id, articles, possessives);
   }
 
-  std::string SystemNarrator::getDescription(EntitySet entities,
-                                             std::function<std::string(EntityId)> descriptionFunctor) const
+  std::string Narrator::getDescription(EntitySet entities,
+                                       std::function<std::string(EntityId)> descriptionFunctor) const
   {
     size_t counter = 0;
     size_t numEntities = entities.size();
@@ -205,9 +205,9 @@ namespace Systems
     return result;
   }
 
-  std::string SystemNarrator::getDescriptiveString(EntityId id,
-                                                   ArticleChoice articles,
-                                                   UsePossessives possessives) const
+  std::string Narrator::getDescriptiveString(EntityId id,
+                                             ArticleChoice articles,
+                                             UsePossessives possessives) const
   {
     auto& config = Service<IConfigSettings>::get();
 
@@ -292,7 +292,7 @@ namespace Systems
     return name;
   }
 
-  std::string SystemNarrator::getPossessiveString(EntityId id, std::string owned, std::string adjectives) const
+  std::string Narrator::getPossessiveString(EntityId id, std::string owned, std::string adjectives) const
   {
     if (m_globals.player() == id)
     {
@@ -313,12 +313,12 @@ namespace Systems
     }
   }
 
-  json const& SystemNarrator::getCategoryData(EntityId id) const
+  json const& Narrator::getCategoryData(EntityId id) const
   {
     return Service<IGameRules>::get().category(m_category.valueOr(id, ""));
   }
 
-  std::string SystemNarrator::getDisplayAdjectives(EntityId id) const
+  std::string Narrator::getDisplayAdjectives(EntityId id) const
   {
     std::string adjectives;
 
@@ -333,18 +333,18 @@ namespace Systems
   }
 
   /// @todo Figure out how to cleanly localize this.
-  std::string SystemNarrator::getDisplayName(EntityId id) const
+  std::string Narrator::getDisplayName(EntityId id) const
   {
     return getCategoryData(id).value("name", std::string());
   }
 
   /// @todo Figure out how to cleanly localize this.
-  std::string SystemNarrator::getDisplayPlural(EntityId id) const
+  std::string Narrator::getDisplayPlural(EntityId id) const
   {
     return getCategoryData(id).value("plural", std::string());
   }
 
-  std::string SystemNarrator::makeString(std::string pattern, json arguments) const
+  std::string Narrator::makeString(std::string pattern, json arguments) const
   {
     EntityId subject = arguments.value("subject", EntityId::Mu());
     EntitySet objects = JSONUtils::getSet<EntityId>(arguments["object"]);
@@ -537,7 +537,7 @@ namespace Systems
     return new_string;
   }
 
-  std::string SystemNarrator::makeStringTokensOnly(std::string pattern, json arguments) const
+  std::string Narrator::makeStringTokensOnly(std::string pattern, json arguments) const
   {
     std::string new_string = replaceTokens(pattern,
                                            [&](std::string token) -> std::string
@@ -573,15 +573,15 @@ namespace Systems
     return new_string;
   }
 
-  std::string SystemNarrator::makeTr(std::string key, json arguments) const
+  std::string Narrator::makeTr(std::string key, json arguments) const
   {
     return makeString(tr(key), arguments);
   }
 
-  std::string SystemNarrator::replaceTokens(std::string str,
-                                            std::function<std::string(std::string)> tokenFunctor,
-                                            std::function<std::string(std::string, std::string)> tokenArgumentFunctor,
-                                            std::function<bool(std::string)> chooseFunctor) const
+  std::string Narrator::replaceTokens(std::string str,
+                                      std::function<std::string(std::string)> tokenFunctor,
+                                      std::function<std::string(std::string, std::string)> tokenArgumentFunctor,
+                                      std::function<bool(std::string)> chooseFunctor) const
   {
     TokenizerState state = TokenizerState::Text;
     std::string outString;
@@ -795,14 +795,14 @@ namespace Systems
     return outString;
   }
 
-  unsigned int SystemNarrator::getBodypartNumber(EntityId id, BodyPart part) const
+  unsigned int Narrator::getBodypartNumber(EntityId id, BodyPart part) const
   {
     if (!m_bodyparts.existsFor(id)) return 0;
     auto& bodyparts = m_bodyparts.of(id);
     return bodyparts.typicalCount(part);
   }
 
-  std::string SystemNarrator::getBodypartName(EntityId id, BodyPart part) const
+  std::string Narrator::getBodypartName(EntityId id, BodyPart part) const
   {
     std::stringstream ss;
     ss << part;
@@ -818,7 +818,7 @@ namespace Systems
     return (fancyNameExists ? tr(fancyPartName) : tr(partName));
   }
 
-  std::string SystemNarrator::getBodypartPlural(EntityId id, BodyPart part) const
+  std::string Narrator::getBodypartPlural(EntityId id, BodyPart part) const
   {
     std::stringstream ss;
     ss << part;
@@ -835,7 +835,7 @@ namespace Systems
   }
 
   /// @todo Figure out how to localize this.
-  std::string SystemNarrator::getBodypartDescription(EntityId id, BodyLocation location)
+  std::string Narrator::getBodypartDescription(EntityId id, BodyLocation location)
   {
     uint32_t total_number = getBodypartNumber(id, location.part);
     std::string part_name = getBodypartName(id, location.part);
@@ -996,49 +996,49 @@ namespace Systems
     return result;
   }
 
-  std::string SystemNarrator::getVerb2(std::string verb) const
+  std::string Narrator::getVerb2(std::string verb) const
   {
     auto& dict = Service<IStringDictionary>::get();
     return dict.get("VERB_" + verb + "_2");
   }
 
-  std::string SystemNarrator::getVerb3(std::string verb) const
+  std::string Narrator::getVerb3(std::string verb) const
   {
     auto& dict = Service<IStringDictionary>::get();
     return dict.get("VERB_" + verb + "_3");
   }
 
-  std::string SystemNarrator::getVerbing(std::string verb) const
+  std::string Narrator::getVerbing(std::string verb) const
   {
     auto& dict = Service<IStringDictionary>::get();
     return dict.get("VERB_" + verb + "_GER");
   }
 
-  std::string SystemNarrator::getVerbed(std::string verb) const
+  std::string Narrator::getVerbed(std::string verb) const
   {
     auto& dict = Service<IStringDictionary>::get();
     return dict.get("VERB_" + verb + "_P2");
   }
 
-  std::string SystemNarrator::getVerbPP(std::string verb) const
+  std::string Narrator::getVerbPP(std::string verb) const
   {
     auto& dict = Service<IStringDictionary>::get();
     return dict.get("VERB_" + verb + "_PP");
   }
 
-  std::string SystemNarrator::getVerbable(std::string verb) const
+  std::string Narrator::getVerbable(std::string verb) const
   {
     auto& dict = Service<IStringDictionary>::get();
     return dict.get("VERB_" + verb + "_ABLE");
   }
 
-  void SystemNarrator::doCycleUpdate()
+  void Narrator::doCycleUpdate()
   {}
 
-  void SystemNarrator::setMap_V(MapID newMap)
+  void Narrator::setMap_V(MapID newMap)
   {}
 
-  bool SystemNarrator::onEvent(Event const & event)
+  bool Narrator::onEvent(Event const & event)
   {
     return false;
   }

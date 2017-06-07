@@ -8,18 +8,18 @@
 #include "components/ComponentLightSource.h"
 #include "components/ComponentPosition.h"
 #include "map/Map.h"
-#include "systems/SystemSpacialRelationships.h"
+#include "systems/SystemGeometry.h"
 #include "types/LightInfluence.h"
 
 namespace Systems
 {
 
-  SystemLighting::SystemLighting(GameState& gameState,
+  Lighting::Lighting(GameState& gameState,
                                  ComponentMap<ComponentAppearance> const& appearance,
                                  ComponentMap<ComponentHealth> const& health,
                                  ComponentMap<ComponentLightSource>& lightSource,
                                  ComponentMap<ComponentPosition> const& position) :
-    CRTP<SystemLighting>({}),
+    CRTP<Lighting>({}),
     m_gameState{ gameState },
     m_appearance{ appearance },
     m_health{ health },
@@ -31,10 +31,10 @@ namespace Systems
   {
   }
 
-  SystemLighting::~SystemLighting()
+  Lighting::~Lighting()
   {}
 
-  void SystemLighting::doCycleUpdate()
+  void Lighting::doCycleUpdate()
   {
     MapID currentMap = map();
     if (currentMap.empty()) return;
@@ -85,7 +85,7 @@ namespace Systems
     }
   }
 
-  void SystemLighting::resetAllMapLightingData(MapID map)
+  void Lighting::resetAllMapLightingData(MapID map)
   {
     auto mapSize = m_gameState.maps().get(map).getSize();
     m_tileCalculatedLightColors.reset(NEW TileCalculatedLightColors(mapSize));
@@ -95,19 +95,19 @@ namespace Systems
     m_recalculateAllTiles = true;
   }
 
-  void SystemLighting::clearMapLightingCalculations(MapID map)
+  void Lighting::clearMapLightingCalculations(MapID map)
   {
     auto mapSize = m_gameState.maps().get(map).getSize();
     m_tileCalculatedLightColors.reset(NEW TileCalculatedLightColors(mapSize));
     m_recalculateAllTiles = true;
   }
 
-  Color SystemLighting::getLightLevel(IntVec2 coords) const
+  Color Lighting::getLightLevel(IntVec2 coords) const
   {
     return getWallLightLevel(coords, Direction::Self);
   }
 
-  Color SystemLighting::getWallLightLevel(IntVec2 coords, Direction direction) const
+  Color Lighting::getWallLightLevel(IntVec2 coords, Direction direction) const
   {
     auto& calculatedLightColors = m_tileCalculatedLightColors->get(coords);
     if (calculatedLightColors.count(direction.get_map_index()) == 0)
@@ -120,12 +120,12 @@ namespace Systems
     }
   }
 
-  void SystemLighting::setMap_V(MapID newMap)
+  void Lighting::setMap_V(MapID newMap)
   {
     resetAllMapLightingData(newMap);
   }
 
-  void SystemLighting::applyLightFrom(EntityId light, EntityId location)
+  void Lighting::applyLightFrom(EntityId light, EntityId location)
   {
     // Use visitor pattern.
     if (m_lightSource[light].lit())
@@ -159,7 +159,7 @@ namespace Systems
     }
   }
 
-  void SystemLighting::calculateTileLightLevels(IntVec2 coords)
+  void Lighting::calculateTileLightLevels(IntVec2 coords)
   {
     auto& lights = m_tileLightSet->get(coords);
     auto& lightLevels = m_tileCalculatedLightColors->get(coords);
@@ -173,7 +173,7 @@ namespace Systems
     m_tilesToRecalculate.erase(coords);
   }
 
-  void SystemLighting::addLightToTileLightLevels(IntVec2 tileCoords, EntityId source)
+  void Lighting::addLightToTileLightLevels(IntVec2 tileCoords, EntityId source)
   {
     auto& lights = m_tileLightSet->get(tileCoords);
     auto& lightLevels = m_tileCalculatedLightColors->get(tileCoords);
@@ -244,7 +244,7 @@ namespace Systems
     } // end if (lightData.lit)
   }
 
-  void SystemLighting::addLightToMap(EntityId source)
+  void Lighting::addLightToMap(EntityId source)
   {
     // First check if this light is already on the map. If so, remove it so it
     // isn't counted twice.
@@ -363,7 +363,7 @@ namespace Systems
     }
   }
 
-  void SystemLighting::removeLightFromMap(EntityId source)
+  void Lighting::removeLightFromMap(EntityId source)
   {
     if (m_lightTileSet.count(source) == 0 || m_lightTileSet[source].empty()) return;
 
@@ -375,21 +375,21 @@ namespace Systems
     m_lightTileSet.erase(source);
   }
 
-  void SystemLighting::addLightToTile(IntVec2 coords, EntityId source)
+  void Lighting::addLightToTile(IntVec2 coords, EntityId source)
   {
     m_tileLightSet->get(coords).insert(source);
     m_lightTileSet[source].insert(coords);
     m_tilesToRecalculate.insert(coords);
   }
 
-  void SystemLighting::removeLightFromTile(IntVec2 coords, EntityId source)
+  void Lighting::removeLightFromTile(IntVec2 coords, EntityId source)
   {
     m_tileLightSet->get(coords).erase(source);
     m_lightTileSet[source].erase(coords);
     m_tilesToRecalculate.insert(coords);
   }
 
-  void SystemLighting::doRecursiveLighting(EntityId source,
+  void Lighting::doRecursiveLighting(EntityId source,
                                            IntVec2 const& origin,
                                            int const max_depth_squared,
                                            int octant,
@@ -525,12 +525,12 @@ namespace Systems
     }
   }
 
-  bool SystemLighting::onEvent(Event const& event)
+  bool Lighting::onEvent(Event const& event)
   {
     auto id = event.getId();
-    if (id == SystemSpacialRelationships::EventEntityMoved::id)
+    if (id == Geometry::EventEntityMoved::id)
     {
-      auto& castEvent = static_cast<SystemSpacialRelationships::EventEntityMoved const&>(event);
+      auto& castEvent = static_cast<Geometry::EventEntityMoved const&>(event);
 
       // If entity is a light source, add it to the recalculate list.
       if (m_lightSource.existsFor(castEvent.entity))

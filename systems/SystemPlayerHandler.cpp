@@ -3,23 +3,23 @@
 namespace Systems
 {
 
-  SystemPlayerHandler::SystemPlayerHandler(ComponentGlobals & globals) :
-    CRTP<SystemPlayerHandler>({ EventPlayerChanged::id }),
+  Choreographer::Choreographer(ComponentGlobals & globals) :
+    CRTP<Choreographer>({ EventPlayerChanged::id }),
     m_globals{ globals }
   {}
 
-  SystemPlayerHandler::~SystemPlayerHandler()
+  Choreographer::~Choreographer()
   {}
 
-  void SystemPlayerHandler::doCycleUpdate()
+  void Choreographer::doCycleUpdate()
   {}
 
-  EntityId SystemPlayerHandler::player() const
+  EntityId Choreographer::player() const
   {
     return m_globals.player();
   }
 
-  void SystemPlayerHandler::setPlayer(EntityId entity)
+  void Choreographer::setPlayer(EntityId entity)
   {
     Assert("PlayerHandler", entity != EntityId::Mu(), "tried to make nothingness the player");
 
@@ -31,10 +31,10 @@ namespace Systems
     }
   }
 
-  void SystemPlayerHandler::setMap_V(MapID newMap)
+  void Choreographer::setMap_V(MapID newMap)
   {}
 
-  bool SystemPlayerHandler::onEvent(Event const & event)
+  bool Choreographer::onEvent(Event const & event)
   {
     return false;
   }

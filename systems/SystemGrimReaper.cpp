@@ -3,23 +3,23 @@
 namespace Systems
 {
 
-  SystemGrimReaper::SystemGrimReaper(ComponentGlobals & globals) :
-    CRTP<SystemGrimReaper>({ EventEntityDied::id,
+  GrimReaper::GrimReaper(ComponentGlobals & globals) :
+    CRTP<GrimReaper>({ EventEntityDied::id,
                                    EventEntityMarkedForDeath::id }),
     m_globals{ globals }
   {}
 
-  SystemGrimReaper::~SystemGrimReaper()
+  GrimReaper::~GrimReaper()
   {}
 
-  void SystemGrimReaper::doCycleUpdate()
+  void GrimReaper::doCycleUpdate()
   {
   }
 
-  void SystemGrimReaper::setMap_V(MapID newMap)
+  void GrimReaper::setMap_V(MapID newMap)
   {}
 
-  bool SystemGrimReaper::onEvent(Event const & event)
+  bool GrimReaper::onEvent(Event const & event)
   {
     return false;
   }

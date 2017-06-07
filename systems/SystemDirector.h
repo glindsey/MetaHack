@@ -12,7 +12,7 @@ namespace Systems
 {
 
   /// System that handles having entities perform actions.
-  class SystemDirector : public CRTP<SystemDirector>
+  class Director : public CRTP<Director>
   {
   public:
     struct EventDummy : public ConcreteEvent<EventDummy>
@@ -27,10 +27,10 @@ namespace Systems
       }
     };
 
-    SystemDirector(GameState& gameState,
+    Director(GameState& gameState,
                    Manager& systems);
 
-    virtual ~SystemDirector();
+    virtual ~Director();
 
     /// Recalculate whatever needs recalculating.
     void doCycleUpdate();

@@ -8,7 +8,7 @@ namespace Systems
 {
 
   /// System that handles which entity is the player.
-  class SystemPlayerHandler : public CRTP<SystemPlayerHandler>
+  class Choreographer : public CRTP<Choreographer>
   {
   public:
     struct EventPlayerChanged : public ConcreteEvent<EventPlayerChanged>
@@ -26,9 +26,9 @@ namespace Systems
       }
     };
 
-    SystemPlayerHandler(ComponentGlobals& globals);
+    Choreographer(ComponentGlobals& globals);
 
-    virtual ~SystemPlayerHandler();
+    virtual ~Choreographer();
 
     /// Recalculate whatever needs recalculating.
     void doCycleUpdate();

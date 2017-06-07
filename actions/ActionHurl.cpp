@@ -7,7 +7,7 @@
 #include "Service.h"
 #include "systems/Manager.h"
 #include "systems/SystemNarrator.h"
-#include "systems/SystemSpacialRelationships.h"
+#include "systems/SystemGeometry.h"
 #include "utilities/Shortcuts.h"
 
 #include "entity/Entity.h" // needed for beObjectOf()
@@ -54,7 +54,7 @@ namespace Actions
 
     if (object->beObjectOf(*this, subject, direction))
     {
-      if (systems.spacial().moveEntityInto(object, new_location))
+      if (systems.geometry().moveEntityInto(object, new_location))
       {
         printMessageDo(systems, arguments);
 

@@ -13,7 +13,7 @@
 #include "Service.h"
 #include "systems/Manager.h"
 #include "systems/SystemNarrator.h"
-#include "systems/SystemSpacialRelationships.h"
+#include "systems/SystemGeometry.h"
 #include "utilities/Shortcuts.h"
 #include "utilities/StringTransforms.h"
 
@@ -399,7 +399,7 @@ namespace Actions
         if (!hasTrait(Trait::ObjectCanBeOutOfReach))
         {
           // Check that each object is within reach.
-          if (!systems.spacial()->firstCanReachSecond(subject, object))
+          if (!systems.geometry()->firstCanReachSecond(subject, object))
           {
             printMessageTry(systems, arguments);
             putMsg(narrator.makeTr("CONJUNCTION_HOWEVER", arguments) + " " + 
@@ -417,7 +417,7 @@ namespace Actions
             auto message = 
               narrator.makeTr("CONJUNCTION_HOWEVER", arguments) + " " + 
               narrator.makeTr("FOO_PRO_SUB_IS_NOT_IN_YOUR_INVENTORY", arguments);
-            if (systems.spacial()->firstCanReachSecond(subject, object))
+            if (systems.geometry()->firstCanReachSecond(subject, object))
             {
               message += narrator.makeTr("PICK_UP_OBJECT_FIRST", arguments);
             }

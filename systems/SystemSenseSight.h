@@ -15,16 +15,16 @@ namespace Systems
 {
 
   /// System that handles entity sight, and the memory of that sight.
-  class SystemSenseSight : public CRTP<SystemSenseSight>
+  class SenseSight : public CRTP<SenseSight>
   {
   public:
-    SystemSenseSight(GameState const& gameState,
+    SenseSight(GameState const& gameState,
                      ComponentMap<ComponentInventory> const& inventory,
                      ComponentMap<ComponentPosition> const& position,
                      ComponentMap<ComponentSenseSight>& senseSight,
                      ComponentMap<ComponentSpacialMemory>& spacialMemory);
 
-    virtual ~SystemSenseSight();
+    virtual ~SenseSight();
 
     /// Recalculate whatever needs recalculating.
     void doCycleUpdate();

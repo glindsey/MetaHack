@@ -10,22 +10,22 @@
 namespace Systems
 {
 
-  SystemDirector::SystemDirector(GameState& gameState,
+  Director::Director(GameState& gameState,
                                  Manager& systems) :
-    CRTP<SystemDirector>({}),
+    CRTP<Director>({}),
     m_gameState{ gameState },
     m_systems{ systems }
   {}
 
-  SystemDirector::~SystemDirector()
+  Director::~Director()
   {}
 
-  void SystemDirector::doCycleUpdate()
+  void Director::doCycleUpdate()
   {
 
   }
 
-  void SystemDirector::processMap(MapID mapID)
+  void Director::processMap(MapID mapID)
   {
     auto& gameMap = m_gameState.maps().get(mapID);
     auto mapSize = gameMap.getSize();
@@ -42,7 +42,7 @@ namespace Systems
     //notifyObservers(Event::Updated);
   }
 
-  void SystemDirector::processEntityAndChildren(EntityId entityID)
+  void Director::processEntityAndChildren(EntityId entityID)
   {
     // Get a copy of the Entity's inventory.
     // This is because entities can be deleted/removed from the inventory
@@ -61,7 +61,7 @@ namespace Systems
     processEntity(entityID);
   }
 
-  void SystemDirector::processEntity(EntityId entityID)
+  void Director::processEntity(EntityId entityID)
   {
     if (!m_gameState.components().activity.existsFor(entityID)) return;
 
@@ -132,10 +132,10 @@ namespace Systems
     }
   }
 
-  void SystemDirector::setMap_V(MapID newMap)
+  void Director::setMap_V(MapID newMap)
   {}
 
-  bool SystemDirector::onEvent(Event const & event)
+  bool Director::onEvent(Event const & event)
   {
     return false;
   }

@@ -29,7 +29,7 @@ MapStandard2DView::MapStandard2DView(std::string name,
 
 }
 
-void MapStandard2DView::update_tiles(EntityId viewer, Systems::SystemLighting& lighting)
+void MapStandard2DView::update_tiles(EntityId viewer, Systems::Lighting& lighting)
 {
   auto& map = getMap();
   auto& map_size = map.getSize();
@@ -53,7 +53,7 @@ void MapStandard2DView::update_tiles(EntityId viewer, Systems::SystemLighting& l
 }
 
 void MapStandard2DView::update_things(EntityId viewer, 
-                                      Systems::SystemLighting& lighting,
+                                      Systems::Lighting& lighting,
                                       int frame)
 {
   auto& map = getMap();

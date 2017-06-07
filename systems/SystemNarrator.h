@@ -36,7 +36,7 @@ namespace Systems
 {
 
   /// System that deals with creating strings based on the game state.
-  class SystemNarrator : public CRTP<SystemNarrator>
+  class Narrator : public CRTP<Narrator>
   {
   public:
     /// Enum used for the replaceTokens state machine.
@@ -54,7 +54,7 @@ namespace Systems
 
     friend std::ostream& operator<<(std::ostream& os, TokenizerState state);
 
-    SystemNarrator(ComponentGlobals const& globals,
+    Narrator(ComponentGlobals const& globals,
                    ComponentMap<ComponentBodyparts> const& bodyparts,
                    ComponentMap<std::string> const& category,
                    ComponentMap<ComponentGender> const& gender,
@@ -62,7 +62,7 @@ namespace Systems
                    ComponentMap<ComponentPosition> const& position,
                    ComponentMap<std::string> const& properName,
                    ComponentMap<unsigned int> const& quantity);
-    virtual ~SystemNarrator();
+    virtual ~Narrator();
 
     /// Return true if a third-person verb form should be used.
     /// This function checks to see if this Entity is currently designated as

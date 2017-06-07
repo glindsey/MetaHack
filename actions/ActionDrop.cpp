@@ -8,7 +8,7 @@
 #include "Service.h"
 #include "systems/Manager.h"
 #include "systems/SystemNarrator.h"
-#include "systems/SystemSpacialRelationships.h"
+#include "systems/SystemGeometry.h"
 #include "utilities/Shortcuts.h"
 
 #include "entity/Entity.h" // needed for beObjectOf()
@@ -84,7 +84,7 @@ namespace Actions
         {
           printMessageDo(systems, arguments);
 
-          if (systems.spacial().moveEntityInto(object, location))
+          if (systems.geometry().moveEntityInto(object, location))
           {
             /// @todo Figure out action time.
             result = StateResult::Success();

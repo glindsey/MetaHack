@@ -120,15 +120,15 @@ void StatusArea::drawContents_(sf::RenderTexture& texture, int frame)
 
 void StatusArea::doEventSubscriptions_V(Object & parent)
 {
-  SYSTEMS.timekeeper().addObserver(*this, Systems::SystemTimekeeper::EventClockChanged::id);
-  SYSTEMS.playerHandler().addObserver(*this, Systems::SystemPlayerHandler::EventPlayerChanged::id);
+  SYSTEMS.timekeeper().addObserver(*this, Systems::Timekeeper::EventClockChanged::id);
+  SYSTEMS.choreographer().addObserver(*this, Systems::Choreographer::EventPlayerChanged::id);
 }
 
 bool StatusArea::onEvent_V(Event const & event)
 {
   auto id = event.getId();
   if ((id == GameState::EventClockChanged::id) ||
-      (id == Systems::SystemPlayerHandler::EventPlayerChanged::id))
+      (id == Systems::Choreographer::EventPlayerChanged::id))
   {
     flagForRedraw();
   }

@@ -11,7 +11,7 @@
 #include "services/IGameRules.h"
 #include "systems/SystemJanitor.h"
 #include "systems/Manager.h"
-#include "systems/SystemSpacialRelationships.h"
+#include "systems/SystemGeometry.h"
 
 GameState* LuaEntityFunctions::s_gameState = nullptr;
 
@@ -51,7 +51,7 @@ int thing_create(lua_State* L)
   if (is_creatable)
   {
     new_thing = gameState->entities().create(new_thing_type);
-    success = SYSTEMS.spacial().moveEntityInto(new_thing, entity);
+    success = SYSTEMS.geometry().moveEntityInto(new_thing, entity);
 
     if (success && (num_args > 2))
     {
@@ -354,7 +354,7 @@ int thing_move_into(lua_State* L)
   EntityId thing_to_move = EntityId(lua_tointeger(L, 1));
   EntityId thing_destination = EntityId(lua_tointeger(L, 2));
 
-  bool result = SYSTEMS.spacial().moveEntityInto(thing_to_move, thing_destination);
+  bool result = SYSTEMS.geometry().moveEntityInto(thing_to_move, thing_destination);
 
   lua_pushboolean(L, static_cast<int>(result));
 

@@ -8,7 +8,7 @@
 #include "Service.h"
 #include "systems/Manager.h"
 #include "systems/SystemNarrator.h"
-#include "systems/SystemSpacialRelationships.h"
+#include "systems/SystemGeometry.h"
 #include "utilities/Shortcuts.h"
 
 #include "entity/Entity.h" // needed for beObjectOf()
@@ -87,7 +87,7 @@ namespace Actions
     if (object->beObjectOf(*this, subject))
     {
       putMsg(narrator.makeTr("YOU_CVERB_THE_FOO", arguments));
-      if (systems.spacial().moveEntityInto(object, subject))
+      if (systems.geometry().moveEntityInto(object, subject))
       {
         /// @todo Figure out action time.
         result = StateResult::Success();

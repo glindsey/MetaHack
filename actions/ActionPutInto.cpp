@@ -8,7 +8,7 @@
 #include "services/IStringDictionary.h"
 #include "systems/Manager.h"
 #include "systems/SystemNarrator.h"
-#include "systems/SystemSpacialRelationships.h"
+#include "systems/SystemGeometry.h"
 #include "utilities/Shortcuts.h"
 
 #include "entity/Entity.h" /// still needed for do_() and beObjectOf()
@@ -92,7 +92,7 @@ namespace Actions
     }
 
     // Check that the container is within reach.
-    if (!SYSTEMS.spacial()->firstCanReachSecond(subject, container))
+    if (!systems.geometry()->firstCanReachSecond(subject, container))
     {
       printMessageTry(systems, arguments);
       putMsg(narrator.makeTr("THE_TARGET_IS_OUT_OF_REACH", arguments));
@@ -116,7 +116,7 @@ namespace Actions
     {
       printMessageDo(systems, arguments);
 
-      if (SYSTEMS.spacial().moveEntityInto(object, container))
+      if (systems.geometry().moveEntityInto(object, container))
       {
         /// @todo Figure out action time.
         result = StateResult::Success();
