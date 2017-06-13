@@ -15,7 +15,7 @@
 // Forward declarations
 class DynamicEntity;
 class Floor;
-class EntityPool;
+class EntityFactory;
 
 /// Class representing one tile of the map.
 /// @todo Add notifyObservers calls where needed
@@ -77,7 +77,7 @@ public:
 
 protected:
   /// Constructor, callable only by Map class.
-  MapTile(IntVec2 coords, std::string category, MapID mapID, EntityPool& entities);
+  MapTile(IntVec2 coords, std::string category, MapID mapID, EntityFactory& entities);
 
 private:
   static bool initialized;

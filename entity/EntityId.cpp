@@ -3,7 +3,7 @@
 #include "entity/EntityId.h"
 
 #include "entity/Entity.h"
-#include "entity/EntityPool.h"
+#include "entity/EntityFactory.h"
 #include "game/GameState.h"
 
 Entity* EntityId::operator->()

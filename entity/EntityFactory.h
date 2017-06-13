@@ -14,16 +14,16 @@ namespace Systems
   class Manager;
 }
 
-/// EntityPool is a factory to create and manage all the Entities in the game.
-class EntityPool
+/// EntityFactory is a factory to create and manage all the Entities in the game.
+class EntityFactory
 {
   friend class EntityId;
   friend class EntityView;
 
 public:
   /// Constructor.
-  EntityPool(GameState& state);
-  ~EntityPool();
+  EntityFactory(GameState& state);
+  ~EntityFactory();
 
   /// Serialization function.
   template<class Archive>

@@ -13,7 +13,7 @@
 #include "maptile/MapTile.h"
 #include "Object.h"
 #include "entity/EntityId.h"
-#include "entity/EntityPool.h"
+#include "entity/EntityFactory.h"
 
 // Forward declarations
 namespace Components
@@ -35,7 +35,7 @@ class Entity
   :
   public GameObject
 {
-  friend class EntityPool;
+  friend class EntityFactory;
 
 public:
 

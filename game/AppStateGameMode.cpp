@@ -7,7 +7,7 @@
 #include "components/ComponentManager.h"
 #include "design_patterns/Event.h"
 #include "entity/Entity.h"
-#include "entity/EntityPool.h"
+#include "entity/EntityFactory.h"
 #include "game/App.h"
 #include "game/AppState.h"
 #include "game/GameState.h"

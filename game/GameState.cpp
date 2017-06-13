@@ -5,7 +5,7 @@
 #include "components/ComponentManager.h"
 #include "entity/Entity.h"
 #include "entity/EntityId.h"
-#include "entity/EntityPool.h"
+#include "entity/EntityFactory.h"
 #include "lua/LuaObject.h"
 #include "map/Map.h"
 #include "map/MapFactory.h"
@@ -50,13 +50,13 @@ void GameState::initialize(json const& j)
   if (j.is_object() && j.size() != 0)
   {
     m_components.reset(NEW Components::ComponentManager(*this, j.value("components", json::object())));
-    m_entityPool.reset(NEW EntityPool(*this));
+    m_entityPool.reset(NEW EntityFactory(*this));
     m_mapFactory.reset(NEW MapFactory(*this));
   }
   else
   {
     m_components.reset(NEW Components::ComponentManager(*this, json::object()));
-    m_entityPool.reset(NEW EntityPool(*this));
+    m_entityPool.reset(NEW EntityFactory(*this));
     m_mapFactory.reset(NEW MapFactory(*this));
   }
 }
@@ -81,12 +81,12 @@ MapFactory const& GameState::maps() const
   return *m_mapFactory;
 }
 
-EntityPool& GameState::entities()
+EntityFactory& GameState::entities()
 {
   return *m_entityPool;
 }
 
-EntityPool const& GameState::entities() const
+EntityFactory const& GameState::entities() const
 {
   return *m_entityPool;
 }

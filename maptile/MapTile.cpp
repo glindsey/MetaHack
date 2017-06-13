@@ -4,7 +4,7 @@
 
 #include "AssertHelper.h"
 #include "components/ComponentPhysical.h"
-#include "entity/EntityPool.h"
+#include "entity/EntityFactory.h"
 #include "game/App.h"
 #include "game/GameState.h"
 #include "map/Map.h"
@@ -118,7 +118,7 @@ RealVec2 MapTile::getPixelCoords(IntVec2 tile)
 
 // === PROTECTED METHODS ======================================================
 
-MapTile::MapTile(IntVec2 coords, std::string category, MapID mapID, EntityPool& entities)
+MapTile::MapTile(IntVec2 coords, std::string category, MapID mapID, EntityFactory& entities)
   :
   Object({}),
   m_mapID{ mapID },

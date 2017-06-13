@@ -459,7 +459,7 @@
     <ClInclude Include="utilities\StringTransforms.h" />
     <ClInclude Include="entity\Entity.h" />
     <ClInclude Include="entity\EntityId.h" />
-    <ClInclude Include="entity\EntityPool.h" />
+    <ClInclude Include="entity\EntityFactory.h" />
     <ClInclude Include="entity\EntityStandard2DView.h" />
     <ClInclude Include="entity\EntityView.h" />
     <ClInclude Include="tilesheet\TileSheet.h" />
@@ -733,7 +733,7 @@
     <ClCompile Include="services\StringDictionary.cpp" />
     <ClCompile Include="entity\Entity.cpp" />
     <ClCompile Include="entity\EntityId.cpp" />
-    <ClCompile Include="entity\EntityPool.cpp" />
+    <ClCompile Include="entity\EntityFactory.cpp" />
     <ClCompile Include="entity\EntityStandard2DView.cpp" />
     <ClCompile Include="entity\EntityView.cpp" />
     <ClCompile Include="types\MapMemoryChunk.cpp" />

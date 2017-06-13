@@ -10,7 +10,7 @@
 #include "components/ComponentMap.h"
 #include "components/ComponentPhysical.h"
 #include "components/ComponentPosition.h"
-#include "entity/EntityPool.h"
+#include "entity/EntityFactory.h"
 #include "game/App.h"
 #include "game/GameState.h"
 #include "map/Map.h"

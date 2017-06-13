@@ -7,7 +7,7 @@
 #include "Components/ComponentManager.h"
 #include "game/App.h"
 #include "game/GameState.h"
-#include "entity/EntityPool.h"
+#include "entity/EntityFactory.h"
 #include "maptile/MapTile.h"
 #include "Service.h"
 #include "services/IGameRules.h"

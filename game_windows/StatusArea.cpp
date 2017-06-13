@@ -4,7 +4,7 @@
 
 #include "components/ComponentManager.h"
 #include "entity/Entity.h"
-#include "entity/EntityPool.h"
+#include "entity/EntityFactory.h"
 #include "game/App.h"
 #include "game/GameState.h"
 #include "gui/GUILabel.h"

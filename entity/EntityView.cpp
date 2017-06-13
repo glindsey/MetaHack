@@ -4,7 +4,7 @@
 
 #include "game/App.h"
 #include "game/GameState.h"
-#include "entity/EntityPool.h"
+#include "entity/EntityFactory.h"
 
 EntityView::EntityView(Entity& entity)
   :

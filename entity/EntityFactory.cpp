@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include "entity/EntityPool.h"
+#include "entity/EntityFactory.h"
 
 #include "components/ComponentManager.h"
 #include "entity/Entity.h"
@@ -11,21 +11,21 @@
 #include "Service.h"
 #include "services/IGameRules.h"
 
-EntityPool::EntityPool(GameState& gameState) :
+EntityFactory::EntityFactory(GameState& gameState) :
   m_gameState{ gameState }
 {
   // Create the "nothingness" object.
   EntityId mu = create("Mu");
-  Assert("EntityPool", (mu == 0ULL), "Mu's ID is " << mu << " instead of zero!");
+  Assert("EntityFactory", (mu == 0ULL), "Mu's ID is " << mu << " instead of zero!");
 
   m_initialized = true;
 }
 
-EntityPool::~EntityPool()
+EntityFactory::~EntityFactory()
 {
 }
 
-EntityId EntityPool::create(std::string category)
+EntityId EntityFactory::create(std::string category)
 {
   EntityId new_id = EntityId(m_nextEntityId);
   ++m_nextEntityId;
@@ -60,7 +60,7 @@ EntityId EntityPool::create(std::string category)
   return EntityId(new_id);
 }
 
-EntityId EntityPool::createTileContents(MapTile* map_tile)
+EntityId EntityFactory::createTileContents(MapTile* map_tile)
 {
   EntityId new_id = create("TileContents");
 
@@ -71,7 +71,7 @@ EntityId EntityPool::createTileContents(MapTile* map_tile)
   return EntityId(new_id);
 }
 
-EntityId EntityPool::clone(EntityId original)
+EntityId EntityFactory::clone(EntityId original)
 {
   if (this->exists(original) == false) return EntityId::Mu();
   Entity& original_thing = this->get(original);
@@ -86,7 +86,7 @@ EntityId EntityPool::clone(EntityId original)
 }
 
 
-void EntityPool::applyCategoryData(EntityId id, std::string subType, std::string name)
+void EntityFactory::applyCategoryData(EntityId id, std::string subType, std::string name)
 {
   if (id != EntityId::Mu())
   {
@@ -100,7 +100,7 @@ void EntityPool::applyCategoryData(EntityId id, std::string subType, std::string
   }
 }
 
-void EntityPool::morph(EntityId id, std::string category)
+void EntityFactory::morph(EntityId id, std::string category)
 {
   if (id != EntityId::Mu())
   {
@@ -115,7 +115,7 @@ void EntityPool::morph(EntityId id, std::string category)
   }
 }
 
-void EntityPool::destroy(EntityId id)
+void EntityFactory::destroy(EntityId id)
 {
   if (id != EntityId::Mu())
   {
@@ -131,12 +131,12 @@ void EntityPool::destroy(EntityId id)
   }
 }
 
-bool EntityPool::exists(EntityId id)
+bool EntityFactory::exists(EntityId id)
 {
   return (m_thing_map.count(id) != 0);
 }
 
-Entity& EntityPool::get(EntityId id)
+Entity& EntityFactory::get(EntityId id)
 {
   try
   {
@@ -149,7 +149,7 @@ Entity& EntityPool::get(EntityId id)
   }
 }
 
-Entity const& EntityPool::get(EntityId id) const
+Entity const& EntityFactory::get(EntityId id) const
 {
   try
   {

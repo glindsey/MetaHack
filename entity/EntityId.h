@@ -6,7 +6,7 @@
 
 // Forward declaration
 class Entity;
-class EntityPool;
+class EntityFactory;
 
 /// Definition of an Entity ID.
 /// While this COULD just be an integer, the json class requires map keys to

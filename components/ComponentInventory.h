@@ -74,7 +74,7 @@ namespace Components
     /// @param target_quantity Target quantity to split out.
     /// @return The UUID of the new Entity.
     /// @todo This doesn't really belong here, should be in its own System.
-    EntityId split(EntityPool& entities, EntityId entity, unsigned int target_quantity);
+    EntityId split(EntityFactory& entities, EntityId entity, unsigned int target_quantity);
 
     EntityId remove(EntityId entity);
 

@@ -2,7 +2,7 @@
 
 #include "map/MapRoom.h"
 
-#include "entity/EntityPool.h"
+#include "entity/EntityFactory.h"
 #include "game/App.h"
 #include "maptile/MapTile.h"
 #include "utilities/MathUtils.h"

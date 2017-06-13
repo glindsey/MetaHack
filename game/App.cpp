@@ -74,7 +74,7 @@ App::App(sf::RenderWindow& app_window)
   SET_UP_LOGGER("ConfigSettings",     false);
   SET_UP_LOGGER("Director",           false);
   SET_UP_LOGGER("Entity",             false);
-  SET_UP_LOGGER("EntityPool",         false);
+  SET_UP_LOGGER("EntityFactory",         false);
   SET_UP_LOGGER("EventSystem",        false);
   SET_UP_LOGGER("Game",               false);
   SET_UP_LOGGER("GameRules",          false);

@@ -6,7 +6,7 @@
 #include "components/ComponentPhysical.h"
 #include "game/GameState.h"
 #include "entity/Entity.h"
-#include "entity/EntityPool.h"
+#include "entity/EntityFactory.h"
 
 namespace Components
 {
@@ -195,7 +195,7 @@ namespace Components
     return (m_entities.at(slot));
   }
 
-  EntityId ComponentInventory::split(EntityPool& entities, EntityId entity, unsigned int targetQuantity)
+  EntityId ComponentInventory::split(EntityFactory& entities, EntityId entity, unsigned int targetQuantity)
   {
     EntityId targetEntity = EntityId::Mu();
 

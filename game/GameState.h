@@ -12,7 +12,7 @@ namespace Components
 {
   class ComponentManager;
 }
-class EntityPool;
+class EntityFactory;
 class Lua;
 class MapFactory;
 
@@ -57,8 +57,8 @@ public:
 
   MapFactory& maps();
   MapFactory const& maps() const;
-  EntityPool& entities();
-  EntityPool const& entities() const;
+  EntityFactory& entities();
+  EntityFactory const& entities() const;
   Components::ComponentManager& components();
   Components::ComponentManager const& components() const;
 
@@ -80,7 +80,7 @@ private:
   std::unique_ptr<MapFactory> m_mapFactory;
 
   /// Pointer to the Entity Manager object.
-  std::unique_ptr<EntityPool> m_entityPool;
+  std::unique_ptr<EntityFactory> m_entityPool;
 
   /// Pointer to the Components Manager object.
   std::unique_ptr<Components::ComponentManager> m_components;
