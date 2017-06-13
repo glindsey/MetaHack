@@ -1,10 +1,8 @@
 #ifndef GUIOBJECT_H
 #define GUIOBJECT_H
 
-#include "stdafx.h"
-
 #include "events/UIEvents.h"
-
+#include "types/common.h"
 #include "Object.h"
 #include "Visitor.h"
 

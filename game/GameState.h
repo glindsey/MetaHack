@@ -1,8 +1,6 @@
 #ifndef GAMESTATE_H
 #define GAMESTATE_H
 
-#include "stdafx.h"
-
 #include "Event.h"
 #include "Object.h"
 #include "entity/EntityId.h"

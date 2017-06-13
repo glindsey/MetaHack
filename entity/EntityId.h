@@ -1,8 +1,19 @@
 #pragma once
 
-#include "stdafx.h"
+#include <boost/functional/hash.hpp>
 
 #include "types/common.h"
+
+// Lua includes
+extern "C"
+{
+#include <lua.h>
+#include <lualib.h>
+#include <lauxlib.h>
+}
+
+#include "json.hpp"
+using json = ::nlohmann::json;
 
 // Forward declaration
 class Entity;
@@ -21,138 +32,35 @@ class EntityId
   friend struct std::hash<EntityId>;
 
 public:
-  EntityId()
-    :
-    m_id{ 0 }
-  {}
-
-  EntityId(uint64_t id)
-    :
-    m_id{ id }
-  {}
-
-  EntityId(std::string id)
-    :
-    m_id{ std::stoull(id) }
-  {}
-
-  /// Serialization function.
-  template<class Archive>
-  void serialize(Archive& archive)
-  {
-    archive(m_id);
-  }
+  EntityId();
+  EntityId(uint64_t id);
+  EntityId(std::string id);
 
   friend void to_json(json& j, EntityId const& id);
   friend void from_json(json const& j, EntityId& id);
 
   /// Static method to return the EntityId::Mu() (nothingness) ID.
-  static EntityId Mu()
-  {
-    return EntityId();
-  }
+  static EntityId Mu();
 
-  explicit operator bool() const
-  {
-    return m_id != 0;
-  }
+  explicit operator bool() const;
+  bool operator!() const;
+  operator lua_Integer() const;
+  explicit operator uint64_t() const;
+  operator std::string() const;
+  bool operator<(EntityId const& other) const;
+  bool operator<=(EntityId const& other) const;
+  bool operator>(EntityId const& other) const;
+  bool operator>=(EntityId const& other) const;
+  bool operator==(EntityId const& other) const;
+  bool operator==(uint64_t const& other) const;
+  bool operator!=(EntityId const& other) const;
+  bool operator!=(uint64_t const& other) const;
+  EntityId& operator++();
+  EntityId operator++(int);
+  EntityId& operator--();
+  EntityId operator--(int);
 
-  bool operator!() const
-  {
-    return !operator bool();
-  }
-
-  /// Convert to Lua integer.
-  /// @warning If for some crazy reason m_id is somehow larger than
-  ///          2^53, this will NOT WORK PROPERLY due to precision loss.
-  ///          This is because LuaJIT stores all numbers as doubles.
-  operator lua_Integer() const
-  {
-    return static_cast<lua_Integer>(m_id);
-  }
-
-  explicit operator uint64_t() const
-  {
-    return m_id;
-  }
-
-  operator std::string() const
-  {
-    return std::to_string(m_id);
-  }
-
-  bool operator<(EntityId const& other) const
-  {
-    return (this->m_id < other.m_id);
-  }
-
-  bool operator<=(EntityId const& other) const
-  {
-    return (this->m_id <= other.m_id);
-  }
-
-  bool operator>(EntityId const& other) const
-  {
-    return !operator<=(other);
-  }
-
-  bool operator>=(EntityId const& other) const
-  {
-    return !operator<(other);
-  }
-
-  bool operator==(EntityId const& other) const
-  {
-    return (this->m_id == other.m_id);
-  }
-
-  bool operator==(uint64_t const& other) const
-  {
-    return (this->m_id == other);
-  }
-
-  bool operator!=(EntityId const& other) const
-  {
-    return !operator==(other);
-  }
-
-  bool operator!=(uint64_t const& other) const
-  {
-    return !operator==(other);
-  }
-
-  EntityId& operator++()
-  {
-    ++m_id;
-    return *this;
-  }
-
-  EntityId operator++(int)
-  {
-    EntityId tmp(*this);
-    operator++();
-    return tmp;
-  }
-
-  EntityId& operator--()
-  {
-    --m_id;
-    return *this;
-  }
-
-  EntityId operator--(int)
-  {
-    EntityId tmp(*this);
-    operator--();
-    return tmp;
-  }
-
-  friend std::ostream& operator<< (std::ostream& stream, EntityId const& entity)
-  {
-    stream << entity.m_id;
-
-    return stream;
-  }
+  friend std::ostream& operator<<(std::ostream& stream, EntityId const& entity);
 
   /// Call to get the entity associated with this.
   Entity* operator->(void);

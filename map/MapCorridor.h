@@ -1,8 +1,6 @@
 #ifndef MAPCORRIDOR_H
 #define MAPCORRIDOR_H
 
-#include "stdafx.h"
-
 #include "map/MapFeature.h"
 
 // Forward declarations

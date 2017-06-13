@@ -1,7 +1,5 @@
 #pragma once
 
-#include "stdafx.h"
-
 #include "Action.h"
 #include "entity/EntityId.h"
 

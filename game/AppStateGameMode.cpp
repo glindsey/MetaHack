@@ -76,7 +76,7 @@ AppStateGameMode::AppStateGameMode(StateMachine& state_machine, sf::RenderWindow
   m_debugBuffer{ NEW KeyBuffer() },
   m_gameState{ NEW GameState({}) },
   m_systemManager{ NEW Systems::Manager(*m_gameState) },
-  m_luaEntityFunctions{ NEW LuaEntityFunctions(*m_gameState, *m_systemManager) }, ///< maybe should be in GameState?
+  m_luaEntityFunctions{ NEW LuaEntityFunctions(*m_gameState, *m_systemManager) }, ///< maybe should be in SystemManager?
   m_inventorySelection{ NEW InventorySelection() },
   m_windowInFocus{ true },
   m_inventoryAreaShowsPlayer{ false },

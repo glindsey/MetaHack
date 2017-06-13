@@ -1,8 +1,6 @@
 #ifndef MAPDIAMOND_H
 #define MAPDIAMOND_H
 
-#include "stdafx.h"
-
 #include "map/MapFeature.h"
 
 // Forward declarations

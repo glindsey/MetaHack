@@ -1,8 +1,6 @@
 #ifndef GUIDESKTOPPANE_H
 #define GUIDESKTOPPANE_H
 
-#include "stdafx.h"
-
 #include "GUIObject.h"
 
 // Forward declarations

@@ -1,7 +1,5 @@
 #pragma once
 
-#include "stdafx.h"
-
 #include "components/ComponentMap.h"
 
 #include "components/ComponentGlobals.h"

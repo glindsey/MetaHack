@@ -1,8 +1,6 @@
 #ifndef APPSTATEMAINMENU_H
 #define APPSTATEMAINMENU_H
 
-#include "stdafx.h"
-
 #include "game/AppState.h"
 
 class AppStateMainMenu

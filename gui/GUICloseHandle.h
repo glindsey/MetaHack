@@ -1,8 +1,6 @@
 #ifndef GUICLOSEHANDLE_H
 #define GUICLOSEHANDLE_H
 
-#include "stdafx.h"
-
 #include "GUIObject.h"
 
 namespace metagui

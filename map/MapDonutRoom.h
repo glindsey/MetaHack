@@ -1,8 +1,6 @@
 #ifndef MAPDONUTROOM_H
 #define MAPDONUTROOM_H
 
-#include "stdafx.h"
-
 #include "map/MapFeature.h"
 
 // Forward declarations

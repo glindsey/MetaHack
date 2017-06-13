@@ -1,8 +1,6 @@
 #ifndef GUITITLEBAR_H
 #define GUITITLEBAR_H
 
-#include "stdafx.h"
-
 #include "GUIObject.h"
 
 namespace metagui

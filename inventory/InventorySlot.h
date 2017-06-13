@@ -1,7 +1,5 @@
 #pragma once
 
-#include "stdafx.h"
-
 #include "types/common.h"
 
 #include <boost/serialization/strong_typedef.hpp>

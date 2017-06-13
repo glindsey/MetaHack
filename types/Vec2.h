@@ -1,5 +1,7 @@
 #pragma once
 
+#include "AssertHelper.h"
+
 #include "json.hpp"
 using json = ::nlohmann::json;
 

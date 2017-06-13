@@ -1,5 +1,7 @@
 #pragma once
 
+#include <set>
+
 #include "AssertHelper.h"
 #include "utilities/RNGUtils.h"
 

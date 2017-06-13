@@ -1,7 +1,17 @@
 #ifndef APP_H
 #define APP_H
 
-#include "stdafx.h"
+#include <boost/random/mersenne_twister.hpp>
+#include <boost/random/normal_distribution.hpp>
+#include <boost/random/uniform_int_distribution.hpp>
+
+// Lua includes
+extern "C"
+{
+#include <lua.h>
+#include <lualib.h>
+#include <lauxlib.h>
+}
 
 #include "Object.h"
 #include "types/MouseButtonInfo.h"

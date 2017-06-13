@@ -1,7 +1,7 @@
 #ifndef STATE_H
 #define STATE_H
 
-#include "stdafx.h"
+
 
 #include "Object.h"
 #include "types/IRenderable.h"

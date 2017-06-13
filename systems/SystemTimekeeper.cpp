@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "systems/SystemTimekeeper.h"
 
 namespace Systems

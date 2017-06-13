@@ -1,7 +1,7 @@
 #ifndef MAPTILE_H
 #define MAPTILE_H
 
-#include "stdafx.h"
+
 
 #include "components/ComponentInventory.h"
 #include "entity/Entity.h"

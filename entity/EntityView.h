@@ -1,7 +1,5 @@
 #pragma once
 
-#include "stdafx.h"
-
 #include "entity/Entity.h"
 #include "Object.h"
 

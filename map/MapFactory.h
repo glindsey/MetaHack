@@ -1,8 +1,6 @@
 #ifndef MAPFACTORY_H
 #define MAPFACTORY_H
 
-#include "stdafx.h"
-
 // Forward declarations
 class GameState;
 class Map;
@@ -16,16 +14,11 @@ public:
   MapFactory(GameState& game);
   virtual ~MapFactory();
 
-  /// Serialization function.
-  template<class Archive>
-  void serialize(Archive& archive)
-  {
-    /// @todo WRITE ME
-    //archive(m_maps, m_currentMapID);
-  }
-
   /// Returns whether a specified Map exists.
-  bool exists(MapID map_id) const;
+  bool exists(MapID id) const
+  {
+    return (m_maps.count(id) != 0);
+  }
 
   /// Gets a reference to a Map by ID.
   Map const& get(MapID map_id) const;

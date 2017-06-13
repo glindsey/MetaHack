@@ -1,7 +1,7 @@
 #ifndef GAMEOBJECT_H
 #define GAMEOBJECT_H
 
-#include "stdafx.h"
+
 
 /// Everything in the game inherits from GameObject.
 class GameObject

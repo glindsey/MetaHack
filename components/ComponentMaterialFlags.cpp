@@ -1,5 +1,7 @@
 #include "components/ComponentMaterialFlags.h"
 
+#include <boost/algorithm/string.hpp>
+
 #include "game/GameState.h"
 #include "utilities/JSONUtils.h"
 

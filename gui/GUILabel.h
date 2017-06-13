@@ -1,8 +1,6 @@
 #ifndef GUILABEL_H
 #define GUILABEL_H
 
-#include "stdafx.h"
-
 #include "GUIObject.h"
 
 namespace metagui

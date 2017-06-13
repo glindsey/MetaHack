@@ -1,7 +1,5 @@
 #pragma once
 
-#include "stdafx.h"
-
 #include "keybuffer/IKeyBuffer.h"
 
 /// Implementation of a null key buffer.

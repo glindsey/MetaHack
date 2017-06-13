@@ -1,7 +1,8 @@
 /// File containing common type declarations.
 #pragma once
 
-#include "stdafx.h"
+#include <string>
+#include <unordered_map>
 
 // Declarations of vector classes
 #include "types/Rect.h"
@@ -9,7 +10,6 @@
 #include "types/Vec3.h"
 
 // Common enums
-
 
 // Using declarations
 // Note: std::unordered_map is faster than std::map, but it obviously means

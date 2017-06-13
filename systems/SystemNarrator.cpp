@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "systems/SystemNarrator.h"
 
 //#include "entity/Entity.h"

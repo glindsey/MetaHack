@@ -1,8 +1,6 @@
 #ifndef GUIRESIZEHANDLE_H
 #define GUIRESIZEHANDLE_H
 
-#include "stdafx.h"
-
 #include "GUIObject.h"
 
 namespace metagui

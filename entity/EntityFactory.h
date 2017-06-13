@@ -1,7 +1,5 @@
 #pragma once
 
-#include "stdafx.h"
-
 #include "entity/EntityId.h"
 #include "lua/LuaEntityFunctions.h"
 
@@ -24,14 +22,6 @@ public:
   /// Constructor.
   EntityFactory(GameState& state);
   ~EntityFactory();
-
-  /// Serialization function.
-  template<class Archive>
-  void serialize(Archive& archive) const
-  {
-    /// @todo GSL -- KEEP GOING HERE
-    //archive(m_thing_map);
-  }
 
   /// Create a particular object given the type name.
   /// @param category The category name of the object to create.

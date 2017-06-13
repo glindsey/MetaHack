@@ -1,7 +1,7 @@
 #ifndef GEOVECTOR_H
 #define GEOVECTOR_H
 
-#include "stdafx.h"
+
 
 #include "types/Direction.h"
 

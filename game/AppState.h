@@ -1,8 +1,6 @@
 #ifndef APPSTATE_H
 #define APPSTATE_H
 
-#include "stdafx.h"
-
 #include "types/IRenderable.h"
 #include "state_machine/State.h"
 

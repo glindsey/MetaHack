@@ -1,8 +1,6 @@
 #ifndef MAPFEATURE_H
 #define MAPFEATURE_H
 
-#include "stdafx.h"
-
 #include <memory>
 
 #include "types/Direction.h"

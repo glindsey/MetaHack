@@ -1,7 +1,5 @@
 #pragma once
 
-#include "stdafx.h"
-
 #include "gui/GUIObject.h"
 #include "Object.h"
 

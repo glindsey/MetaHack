@@ -1,8 +1,6 @@
 #ifndef STATUSAREA_H
 #define STATUSAREA_H
 
-#include "stdafx.h"
-
 #include "GUIWindow.h"
 
 // Forward declarations

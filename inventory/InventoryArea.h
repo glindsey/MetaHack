@@ -1,7 +1,5 @@
 #pragma once
 
-#include "stdafx.h"
-
 #include "GUIWindow.h"
 #include "inventory/InventorySlot.h"
 

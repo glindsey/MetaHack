@@ -1,8 +1,6 @@
 #ifndef APPSTATESPLASHSCREEN_H
 #define APPSTATESPLASHSCREEN_H
 
-#include "stdafx.h"
-
 #include "game/AppState.h"
 
 class AppStateSplashScreen

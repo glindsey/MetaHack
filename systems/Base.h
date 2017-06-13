@@ -2,6 +2,8 @@
 
 #include "Object.h"
 
+#include "types/common.h"
+
 namespace Systems
 {
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "stdafx.h"
+
 
 /// Enum class representing body parts or their analogous equivalents.
 enum class BodyPart

@@ -1,4 +1,4 @@
-#include "stdafx.h"
+
 
 /// Forward declarations
 class Entity;

@@ -1,7 +1,7 @@
 #ifndef TILESHEET_H
 #define TILESHEET_H
 
-#include "stdafx.h"
+
 
 // Forward declarations
 class Color;

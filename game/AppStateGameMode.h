@@ -1,7 +1,5 @@
 #pragma once
 
-#include "stdafx.h"
-
 #include "events/UIEvents.h"
 #include "game/App.h"
 #include "game/AppState.h"

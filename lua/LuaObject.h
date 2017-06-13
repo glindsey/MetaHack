@@ -1,8 +1,6 @@
 #pragma once
 // Lua enum binding modified from code Copyright (c) 2010 Tom Distler.
 
-#include "stdafx.h"
-
 // Forward declarations
 class Color;
 class Direction;

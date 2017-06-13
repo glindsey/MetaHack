@@ -1,7 +1,5 @@
 #pragma once
 
-#include "stdafx.h"
-
 #include "game/App.h"
 #include "entity/EntityId.h"
 #include "types/Direction.h"

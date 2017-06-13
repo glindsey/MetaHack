@@ -1,8 +1,6 @@
 #ifndef KEYBUFFER_H
 #define KEYBUFFER_H
 
-#include "stdafx.h"
-
 #include "events/UIEvents.h"
 #include "keybuffer/IKeyBuffer.h"
 

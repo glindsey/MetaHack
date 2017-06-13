@@ -1,7 +1,7 @@
 #ifndef MESSAGELOG_H
 #define MESSAGELOG_H
 
-#include "stdafx.h"
+
 
 #include "services/IMessageLog.h"
 

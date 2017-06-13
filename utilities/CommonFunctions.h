@@ -1,7 +1,7 @@
 #ifndef COMMON_FUNCTIONS_H
 #define COMMON_FUNCTIONS_H
 
-#include "stdafx.h"
+
 
 template<typename T>
 std::unordered_set<T> combine(std::unordered_set<T> first, std::unordered_set<T> second)

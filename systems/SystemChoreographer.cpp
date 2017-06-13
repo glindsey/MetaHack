@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "systems/SystemChoreographer.h"
 
 namespace Systems

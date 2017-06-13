@@ -1,6 +1,9 @@
 #pragma once
 
-#include "stdafx.h"
+#include "types/common.h"
+
+#include "json.hpp"
+using json = ::nlohmann::json;
 
 /// Represents the memory of a map square.
 

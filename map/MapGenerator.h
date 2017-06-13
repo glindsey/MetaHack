@@ -1,8 +1,6 @@
 #ifndef MAPGENERATOR_H
 #define MAPGENERATOR_H
 
-#include "stdafx.h"
-
 #include "lua/LuaObject.h"
 #include "map/Map.h"
 #include "properties/PropertyDictionary.h"

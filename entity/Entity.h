@@ -1,7 +1,5 @@
 #pragma once
 
-#include "stdafx.h"
-
 #include "actions/Action.h"
 #include "types/BodyPart.h"
 #include "types/Direction.h"

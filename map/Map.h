@@ -1,8 +1,6 @@
 #ifndef MAP_H
 #define MAP_H
 
-#include "stdafx.h"
-
 #include "Object.h"
 #include "map/MapFactory.h"
 #include "types/Grid2D.h"

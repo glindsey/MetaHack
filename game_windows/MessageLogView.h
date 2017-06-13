@@ -1,8 +1,6 @@
 #ifndef MESSAGELOGVIEW_H
 #define MESSAGELOGVIEW_H
 
-#include "stdafx.h"
-
 #include "events/UIEvents.h"
 #include "gui/GUIWindow.h"
 

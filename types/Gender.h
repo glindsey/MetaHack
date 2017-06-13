@@ -2,7 +2,11 @@
 /// @file Gender.h Handles gender-specific language.
 /// @todo Make this localizable. (That's going to be a MAJOR pain.)
 
-#include "stdafx.h"
+#include <ostream>
+#include <string>
+
+#include "json.hpp"
+using json = ::nlohmann::json;
 
 /// Enumeration of not just genders, but also other modes of speech that might
 /// be required.

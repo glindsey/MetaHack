@@ -1,5 +1,7 @@
 #pragma once
 
+#include <boost/algorithm/string.hpp>
+
 #include "entity/EntityId.h"
 #include "utilities/StringTransforms.h"
 

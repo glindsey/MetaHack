@@ -1,8 +1,6 @@
 #ifndef MAPLROOM_H
 #define MAPLROOM_H
 
-#include "stdafx.h"
-
 #include "map/MapFeature.h"
 
 // Forward declarations

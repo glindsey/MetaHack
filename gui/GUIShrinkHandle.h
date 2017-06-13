@@ -1,8 +1,6 @@
 #ifndef GUISHRINKHANDLE_H
 #define GUISHRINKHANDLE_H
 
-#include "stdafx.h"
-
 #include "GUIObject.h"
 
 namespace metagui

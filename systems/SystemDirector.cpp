@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "systems/SystemDirector.h"
 
 #include "components/ComponentActivity.h"
