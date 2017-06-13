@@ -3,7 +3,7 @@
 GameObject = inheritsFrom(nil, "GameObject")
 
 function GameObject_get_display_name(id)
-    return thing_get_intrinsic(id, "name"), LuaType.String
+    return entity_get_intrinsic(id, "name"), LuaType.String
 end
 
 function GameObject_get_brief_description(id)

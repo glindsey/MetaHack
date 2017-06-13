@@ -1,7 +1,6 @@
 #pragma once
 
 #include "entity/EntityId.h"
-#include "lua/LuaEntityFunctions.h"
 
 // Forward declarations
 class GameState;

@@ -3,9 +3,9 @@
 function Entity_get_display_name(id)
     local quantity = get_quantity(id)
     if quantity > 1 then
-        return thing_get_intrinsic(id, "plural"), LuaType.String
+        return entity_get_intrinsic(id, "plural"), LuaType.String
     else
-        return thing_get_intrinsic(id, "name"), LuaType.String
+        return entity_get_intrinsic(id, "name"), LuaType.String
     end
 end
 
@@ -15,7 +15,7 @@ end
 
 function Entity_can_contain(id)
     -- By default a Entity can only contain solid objects.
-    if thing_get_intrinsic(id, "liquid") == true then
+    if entity_get_intrinsic(id, "liquid") == true then
         return false, LuaType.Boolean
     end
 

@@ -6,25 +6,42 @@
 #include "lua/LuaObject.h"
 #include "systems/Manager.h"
 
+#include "lua/LuaFunctions-Entity.h"
+
 namespace Systems
 {
+  GameState* LuaLiaison::s_gameState = nullptr;
+  Systems::Manager* LuaLiaison::s_systems = nullptr;
 
-  LuaLiaison::LuaLiaison(Lua& lua,
-                         GameState& gameState,
+  LuaLiaison::LuaLiaison(GameState& gameState,
                          Systems::Manager& systems) :
-    CRTP<LuaLiaison>({}),
-    m_lua{ lua },
-    m_gameState{ gameState },
-    m_systems{ systems }
+    CRTP<LuaLiaison>({})
   {
-
+    s_gameState = &gameState;
+    s_systems = &systems;
+    LuaFunctions::registerFunctionsEntity(gameState.lua());
   }
 
   LuaLiaison::~LuaLiaison()
-  {}
+  {
+    s_gameState = nullptr;
+    s_systems = nullptr;
+  }
 
   void LuaLiaison::doCycleUpdate()
   {}
+
+  GameState & LuaLiaison::gameState()
+  {
+    Assert("Lua", s_gameState != nullptr, "Attempted to retrieve null GameState reference");
+    return *s_gameState;
+  }
+
+  Manager & LuaLiaison::systems()
+  {
+    Assert("Lua", s_systems != nullptr, "Attempted to retrieve null GameState reference");
+    return *s_systems;
+  }
 
   void LuaLiaison::setMap_V(MapID newMap)
   {}

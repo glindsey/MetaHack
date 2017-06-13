@@ -4,6 +4,8 @@
 
 #include "game/GameState.h"
 
+// Forward declarations
+class Lua;
 namespace Systems
 {
 
@@ -12,12 +14,16 @@ namespace Systems
   class GrimReaper;
   class Janitor;
   class Lighting;
+  class LuaLiaison;
   class Narrator;
   class Choreographer;
   class SenseSight;
   class Geometry;
   class Timekeeper;
+}
 
+namespace Systems
+{
   class Manager final
   {
   public:
@@ -34,6 +40,7 @@ namespace Systems
     GrimReaper& grimReaper() { return *m_grimReaper; }
     Janitor& janitor() { return *m_janitor; }
     Lighting& lighting() { return *m_lighting; }
+    LuaLiaison& luaLiaison() { return *m_luaLiaison; }
     Narrator& narrator() { return *m_narrator; }
     SenseSight& senseSight() { return *m_senseSight; }
     Timekeeper& timekeeper() { return *m_timekeeper; }
@@ -48,6 +55,7 @@ namespace Systems
     std::unique_ptr<GrimReaper> m_grimReaper;
     std::unique_ptr<Janitor> m_janitor;
     std::unique_ptr<Lighting> m_lighting;
+    std::unique_ptr<LuaLiaison> m_luaLiaison;
     std::unique_ptr<Narrator> m_narrator;
     std::unique_ptr<SenseSight> m_senseSight;
     std::unique_ptr<Timekeeper> m_timekeeper;

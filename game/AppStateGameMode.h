@@ -15,7 +15,6 @@ class EntityId;
 class GameState;
 class InventorySelection;
 class KeyBuffer;
-class LuaEntityFunctions;
 class MapView;
 
 namespace Systems
@@ -80,9 +79,6 @@ private:
 
   /// The manager of all game systems.
   std::unique_ptr<Systems::Manager> m_systemManager;
-
-  /// Class containing Lua functions that manipulate entities.
-  std::unique_ptr<LuaEntityFunctions> m_luaEntityFunctions;
 
   /// Reference to the current MapView.
   MapView* m_mapView;

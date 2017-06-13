@@ -354,6 +354,7 @@
     <ClInclude Include="design_patterns\Object.h" />
     <ClInclude Include="design_patterns\Visitor.h" />
     <ClInclude Include="events\UIEvents.h" />
+    <ClInclude Include="lua\LuaFunctions-Entity.h" />
     <ClInclude Include="lua\LuaTemplates.h" />
     <ClInclude Include="map\MapMemory.h" />
     <ClInclude Include="services\FileSystemGameRules.h" />
@@ -431,7 +432,6 @@
     <ClInclude Include="keybuffer\KeyBuffer.h" />
     <ClInclude Include="types\LightInfluence.h" />
     <ClInclude Include="lua\LuaObject.h" />
-    <ClInclude Include="lua\LuaEntityFunctions.h" />
     <ClInclude Include="map\Map.h" />
     <ClInclude Include="map\MapCorridor.h" />
     <ClInclude Include="map\MapDiamond.h" />
@@ -705,7 +705,6 @@
     <ClCompile Include="services\IStringDictionary.cpp" />
     <ClCompile Include="keybuffer\KeyBuffer.cpp" />
     <ClCompile Include="lua\LuaObject.cpp" />
-    <ClCompile Include="lua\LuaEntityFunctions.cpp" />
     <ClCompile Include="map\Map.cpp" />
     <ClCompile Include="map\MapFactory.cpp" />
     <ClCompile Include="map\MapCorridor.cpp" />

@@ -6,7 +6,7 @@ function LightSource_modify_property_attribute_strength(id, old_value)
 end
 
 function LightSource_on_object_of_use(object, subject)
-    local name = thing_get_intrinsic(object, "name")
+    local name = entity_get_intrinsic(object, "name")
     local lit = is_lit(object)
     lit = not lit
     set_lit(object, lit)

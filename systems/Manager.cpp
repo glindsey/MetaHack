@@ -7,6 +7,7 @@
 #include "systems/SystemGrimReaper.h"
 #include "systems/SystemJanitor.h"
 #include "systems/SystemLighting.h"
+#include "systems/SystemLuaLiaison.h"
 #include "systems/SystemNarrator.h"
 #include "systems/SystemChoreographer.h"
 #include "systems/SystemSenseSight.h"
@@ -47,6 +48,8 @@ namespace Systems
                                   components.health,
                                   components.lightSource,
                                   components.position));
+
+    m_luaLiaison.reset(NEW LuaLiaison(m_gameState, *this));
 
     m_narrator.reset(NEW Narrator(components.globals,
                                   components.bodyparts,

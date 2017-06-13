@@ -19,8 +19,7 @@ namespace Systems
   {
   public:
 
-    LuaLiaison(Lua& lua,
-               GameState& gameState,
+    LuaLiaison(GameState& gameState,
                Systems::Manager& systems);
 
     virtual ~LuaLiaison();
@@ -28,23 +27,23 @@ namespace Systems
     /// Recalculate whatever needs recalculating.
     void doCycleUpdate();
 
+    /// Get the static GameState reference.
+    static GameState& gameState();
+
+    /// Get the static SystemManager reference.
+    static Manager& systems();
+
   protected:
     virtual void setMap_V(MapID newMap) override;
 
     virtual bool onEvent(Event const& event) override;
 
   private:
-    /// Reference to the Lua object.
-    Lua& m_lua;
+    /// Pointer to the GameState object.
+    static GameState* s_gameState;
 
-    /// Reference to the GameState object.
-    GameState& m_gameState;
-
-    /// Reference to the Systems manager.
-    /// @note Normally one system referencing another directly would be taboo,
-    ///       but LuaLiaison is a little different since it requires static
-    ///       pointers in place for the Lua functions to use.
-    Manager& m_systems;
+    /// Pointer to the Systems manager.
+    static Manager* s_systems;
   };
 
 } // end namespace Systems
