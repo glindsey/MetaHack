@@ -3,15 +3,17 @@
 #include "systems/Manager.h"
 
 #include "components/ComponentManager.h"
+#include "systems/SystemChoreographer.h"
 #include "systems/SystemDirector.h"
+#include "systems/SystemGeometry.h"
 #include "systems/SystemGrimReaper.h"
 #include "systems/SystemJanitor.h"
 #include "systems/SystemLighting.h"
 #include "systems/SystemLuaLiaison.h"
+#include "systems/SystemMechanics.h"
 #include "systems/SystemNarrator.h"
-#include "systems/SystemChoreographer.h"
 #include "systems/SystemSenseSight.h"
-#include "systems/SystemGeometry.h"
+#include "systems/SystemThermodynamics.h"
 #include "systems/SystemTimekeeper.h"
 #include "utilities/New.h"
 
@@ -51,6 +53,8 @@ namespace Systems
 
     m_luaLiaison.reset(NEW LuaLiaison(m_gameState, *this));
 
+    m_mechanics.reset(NEW Mechanics());
+
     m_narrator.reset(NEW Narrator(components.globals,
                                   components.bodyparts,
                                   components.category,
@@ -65,6 +69,8 @@ namespace Systems
                                       components.position,
                                       components.senseSight,
                                       components.spacialMemory));
+
+    m_thermodynamics.reset(NEW Thermodynamics());
 
     m_timekeeper.reset(NEW Timekeeper(components.globals));
 
@@ -100,8 +106,8 @@ namespace Systems
     //m_senseSmell->doCycleUpdate();
     //m_senseTouch->doCycleUpdate();
     m_geometry->doCycleUpdate();
-    //m_physics->doCycleUpdate();
-    //m_thermodynamics->doCycleUpdate();
+    m_mechanics->doCycleUpdate();
+    m_thermodynamics->doCycleUpdate();
 
     m_grimReaper->doCycleUpdate();
     m_janitor->doCycleUpdate();

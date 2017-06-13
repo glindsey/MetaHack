@@ -10,15 +10,17 @@ namespace Systems
 {
 
   // Forward declarations
+  class Choreographer;
   class Director;
+  class Geometry;
   class GrimReaper;
   class Janitor;
   class Lighting;
   class LuaLiaison;
+  class Mechanics;
   class Narrator;
-  class Choreographer;
   class SenseSight;
-  class Geometry;
+  class Thermodynamics;
   class Timekeeper;
 }
 
@@ -40,9 +42,11 @@ namespace Systems
     GrimReaper& grimReaper() { return *m_grimReaper; }
     Janitor& janitor() { return *m_janitor; }
     Lighting& lighting() { return *m_lighting; }
+    Mechanics& mechanics() { return *m_mechanics; }
     LuaLiaison& luaLiaison() { return *m_luaLiaison; }
     Narrator& narrator() { return *m_narrator; }
     SenseSight& senseSight() { return *m_senseSight; }
+    Thermodynamics& thermodynamics() { return *m_thermodynamics; }
     Timekeeper& timekeeper() { return *m_timekeeper; }
 
     static Manager& instance();
@@ -56,9 +60,11 @@ namespace Systems
     std::unique_ptr<Janitor> m_janitor;
     std::unique_ptr<Lighting> m_lighting;
     std::unique_ptr<LuaLiaison> m_luaLiaison;
+    std::unique_ptr<Mechanics> m_mechanics;
     std::unique_ptr<Narrator> m_narrator;
     std::unique_ptr<SenseSight> m_senseSight;
     std::unique_ptr<Timekeeper> m_timekeeper;
+    std::unique_ptr<Thermodynamics> m_thermodynamics;
 
     /// Reference to the game state.
     GameState& m_gameState;
