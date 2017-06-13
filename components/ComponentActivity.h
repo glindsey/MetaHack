@@ -23,6 +23,8 @@ namespace Components
     Actions::ActionQueue& pendingActions();
     Actions::ActionQueue const& pendingActions() const;
 
+    bool actionPendingOrInProgress() const;
+
     int busyTicks() const;
     void clearBusyTicks();
     void setBusyTicks(int value);

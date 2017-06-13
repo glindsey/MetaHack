@@ -265,6 +265,7 @@ namespace Systems
     {
       auto& castEvent = static_cast<Geometry::EventEntityChangedMaps const&>(event);
       MapID newMap = m_position.of(castEvent.entity).map();
+      setMap(newMap);
       IntVec2 newMapSize = m_gameState.maps().get(newMap).getSize();
       m_senseSight[castEvent.entity].resizeSeen(newMapSize);
 

@@ -43,11 +43,13 @@ namespace Components
 
     T& of(EntityId id)
     {
+      Assert("Component", existsFor(id), "Non-existent component of entity " << id << " requested");
       return m_componentMap.at(id);
     }
 
     T const& of(EntityId id) const
     {
+      Assert("Component", existsFor(id), "Non-existent component of entity " << id << " requested");
       return m_componentMap.at(id);
     }
 

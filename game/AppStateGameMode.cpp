@@ -28,6 +28,7 @@
 #include "services/MessageLog.h"
 #include "state_machine/StateMachine.h"
 #include "systems/Manager.h"
+#include "systems/SystemDirector.h"
 #include "systems/SystemLighting.h"
 #include "systems/SystemNarrator.h"
 #include "systems/SystemSenseSight.h"
@@ -104,6 +105,7 @@ AppStateGameMode::~AppStateGameMode()
 void AppStateGameMode::execute()
 {
   auto& game = gameState();
+  auto& components = game.components();
 
   // First, check for debug commands ready to be run.
   if (m_debugBuffer->get_enter())
@@ -135,16 +137,16 @@ void AppStateGameMode::execute()
     m_debugBuffer->clear_buffer();
   }
 
-  bool ticked = game.processGameClockTick();
+  EntityId player = components.globals.player();
 
-  // If the game clock ticked (player action started or is in progress)...
-  if (ticked)
+  // If there's a player action waiting or in progress...
+  if (components.activity.existsFor(player) && 
+      components.activity[player].actionPendingOrInProgress())
   {
-    EntityId player = game.components().globals.player();
-
     // Update map used for systems that care about it.
     /// @todo This should no longer be required thanks to events, try removing it
-    auto map = COMPONENTS.position.existsFor(player) ? COMPONENTS.position[player].map() : "";
+    auto map = components.position.existsFor(player) ? components.position[player].map() : "";
+    m_systemManager->director().setMap(map);
     m_systemManager->lighting().setMap(map);
     m_systemManager->senseSight().setMap(map);
 
@@ -155,9 +157,8 @@ void AppStateGameMode::execute()
     m_mapView->update_tiles(player, m_systemManager->lighting());
 
     // If the action completed, reset the inventory selection.
-    if (!COMPONENTS.activity.existsFor(player) || 
-        (COMPONENTS.activity[player].pendingActions().empty() &&
-         COMPONENTS.activity[player].busyTicks() == 0))
+    if (!components.activity.existsFor(player) || 
+        !components.activity[player].actionPendingOrInProgress())
     {
       resetInventorySelection();
     }

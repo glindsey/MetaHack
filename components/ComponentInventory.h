@@ -97,7 +97,7 @@ namespace Components
     EntityMap m_entities;
 
     /// Maximum allowed size for this Inventory.
-    size_t m_maxSize;
+    size_t m_maxSize = std::numeric_limits<size_t>::max();
   };
 
 } // end namespace Components

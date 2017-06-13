@@ -565,7 +565,15 @@ namespace Systems
         m_lightsToRecalculate.insert(influence);
       }
     }
+    else if (id == Geometry::EventEntityChangedMaps::id)
+    {
+      auto& castEvent = static_cast<Geometry::EventEntityChangedMaps const&>(event);
+      MapID newMap = m_position.of(castEvent.entity).map();
+      setMap(newMap);
+    }
+
     return false;
   }
+
 
 } // end namespace Systems

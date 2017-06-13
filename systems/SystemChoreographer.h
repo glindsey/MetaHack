@@ -8,6 +8,7 @@ namespace Systems
 {
 
   /// System that handles which entity is the player.
+  /// May also eventually be in charge of entity AI and/or spawning -- we'll see.
   class Choreographer : public CRTP<Choreographer>
   {
   public:

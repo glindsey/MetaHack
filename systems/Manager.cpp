@@ -68,6 +68,8 @@ namespace Systems
     // Link system events.
     m_janitor->addObserver(*m_geometry, Janitor::EventEntityMarkedForDeletion::id);
 
+    m_geometry->addObserver(*m_director, Geometry::EventEntityChangedMaps::id);
+
     m_geometry->addObserver(*m_lighting, Geometry::EventEntityChangedMaps::id);
     m_geometry->addObserver(*m_lighting, Geometry::EventEntityMoved::id);
 

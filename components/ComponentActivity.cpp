@@ -29,6 +29,11 @@ namespace Components
     return m_pendingActions;
   }
 
+  bool ComponentActivity::actionPendingOrInProgress() const
+  {
+    return (!pendingActions().empty() || busyTicks() > 0);
+  }
+
   int ComponentActivity::busyTicks() const
   {
     return m_busyTicks;

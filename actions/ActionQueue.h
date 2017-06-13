@@ -23,13 +23,19 @@ namespace Actions
     friend void from_json(json const& j, ActionQueue& obj);
     friend void to_json(json& j, ActionQueue const& obj);
 
+    /// Push an Action onto the queue.
     void push(std::unique_ptr<Action>&& action);
+
+    /// Push an Action onto the queue.
+    /// @note The queue *takes ownership* of the Action.
+    void push(Action* action);
+
     Action& front();
     Action const& front() const;
     void pop();
     void clear();
-    bool empty();
-    size_t size();
+    bool empty() const;
+    size_t size() const;
 
   protected:
 

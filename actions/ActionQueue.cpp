@@ -18,6 +18,11 @@ namespace Actions
     m_actions.push_back(action.release());
   }
 
+  void ActionQueue::push(Action* action)
+  {
+    m_actions.push_back(action);
+  }
+
   Action& ActionQueue::front()
   {
     return m_actions.front();
@@ -38,12 +43,12 @@ namespace Actions
     m_actions.clear();
   }
 
-  bool ActionQueue::empty()
+  bool ActionQueue::empty() const
   {
     return m_actions.empty();
   }
 
-  size_t ActionQueue::size()
+  size_t ActionQueue::size() const
   {
     return m_actions.size();
   }

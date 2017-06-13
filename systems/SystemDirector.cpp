@@ -3,9 +3,11 @@
 #include "components/ComponentActivity.h"
 #include "components/ComponentInventory.h"
 #include "components/ComponentManager.h"
+#include "components/ComponentPosition.h"
 #include "game/GameState.h"
 #include "map/Map.h"
 #include "systems/Manager.h"
+#include "systems/SystemGeometry.h"
 
 namespace Systems
 {
@@ -22,7 +24,7 @@ namespace Systems
 
   void Director::doCycleUpdate()
   {
-
+    processMap(map());
   }
 
   void Director::processMap(MapID mapID)
@@ -44,17 +46,21 @@ namespace Systems
 
   void Director::processEntityAndChildren(EntityId entityID)
   {
-    // Get a copy of the Entity's inventory.
-    // This is because entities can be deleted/removed from the inventory
-    // over the course of processing them, and this could invalidate the
-    // iterator.
-    Components::ComponentInventory tempInventoryCopy{ m_gameState.components().inventory.of(entityID) };
-
-    // Process inventory.
-    for (auto& inventoryPair : tempInventoryCopy)
+    auto& inventory = m_gameState.components().inventory;
+    if (inventory.existsFor(entityID))
     {
-      EntityId child = inventoryPair.second;
-      processEntityAndChildren(child);
+      // Get a copy of the Entity's inventory.
+      // This is because entities can be deleted/removed from the inventory
+      // over the course of processing them, and this could invalidate the
+      // iterator.
+      Components::ComponentInventory tempInventoryCopy{ inventory.of(entityID) };
+
+      // Process inventory.
+      for (auto& inventoryPair : tempInventoryCopy)
+      {
+        EntityId child = inventoryPair.second;
+        processEntityAndChildren(child);
+      }
     }
 
     // Process self last.
@@ -137,6 +143,14 @@ namespace Systems
 
   bool Director::onEvent(Event const & event)
   {
+    auto id = event.getId();
+    if (id == Geometry::EventEntityChangedMaps::id)
+    {
+      auto& castEvent = static_cast<Geometry::EventEntityChangedMaps const&>(event);
+      MapID newMap = m_gameState.components().position.of(castEvent.entity).map();
+      setMap(newMap);
+    }
+
     return false;
   }
 
