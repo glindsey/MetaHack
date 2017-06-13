@@ -8,10 +8,11 @@
 #include "services/IStringDictionary.h"
 #include "Service.h"
 #include "systems/Manager.h"
+#include "systems/SystemDirector.h"
 #include "systems/SystemNarrator.h"
 #include "utilities/Shortcuts.h"
 
-#include "entity/Entity.h" // still needed for queueAction(), beObjectOf()
+#include "entity/Entity.h" // still needed for beObjectOf()
 
 namespace Actions
 {
@@ -64,7 +65,7 @@ namespace Actions
     if ((object == subject) || (object == currentlyWielded) || (object == EntityId::Mu()))
     {
       std::unique_ptr<Action> unwieldAction(NEW ActionUnwield(subject));
-      subject->queueAction(std::move(unwieldAction));
+      systems.director().queueEntityAction(subject, std::move(unwieldAction));
 
       return StateResult::Failure();
     }

@@ -12,7 +12,6 @@
 #include "services/IGameRules.h"
 
 EntityPool::EntityPool(GameState& gameState) :
-  m_luaEntityFunctions(gameState),
   m_gameState{ gameState }
 {
   // Create the "nothingness" object.

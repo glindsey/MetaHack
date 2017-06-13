@@ -39,7 +39,7 @@ namespace Systems
     /// @param id     The ID of the entity performing the action.
     /// @param action The Action to queue. The Action is MOVED when queued,
     ///               e.g. pAction will be `nullptr` after queuing.
-    void queueEntityAction(EntityId id, std::unique_ptr<Actions::Action> action);
+    void queueEntityAction(EntityId id, std::unique_ptr<Actions::Action>&& action);
 
     /// Queue an action for an entity to perform.
     /// @param id      The ID of the entity performing the action.

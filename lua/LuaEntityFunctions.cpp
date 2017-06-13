@@ -9,26 +9,34 @@
 #include "entity/EntityId.h"
 #include "Service.h"
 #include "services/IGameRules.h"
-#include "systems/SystemJanitor.h"
 #include "systems/Manager.h"
+#include "systems/SystemDirector.h"
 #include "systems/SystemGeometry.h"
+#include "systems/SystemJanitor.h"
 
 GameState* LuaEntityFunctions::s_gameState = nullptr;
+Systems::Manager* LuaEntityFunctions::s_systemManager = nullptr;
 
 // === MACROS =================================================================
 #define STRINGIFY(x) #x
 #define LUA_REGISTER(x) do { GAME.lua().register_function(STRINGIFY(x), &x); } while(0)
 
 // === FUNCTIONS ==============================================================
-GameState* LuaEntityFunctions::gameState()
+GameState& LuaEntityFunctions::gameState()
 {
-  return s_gameState;
+  Assert("Lua", s_gameState, "GameState is not defined");
+  return *s_gameState;
+}
+
+Systems::Manager& LuaEntityFunctions::systems()
+{
+  Assert("Lua", s_systemManager, "SystemManager is not defined");
+  return *s_systemManager;
 }
 
 int thing_create(lua_State* L)
 {
-  auto gameState = LuaEntityFunctions::gameState();   
-  Assert("Lua", gameState, "GameState is not defined");
+  auto& gameState = LuaEntityFunctions::gameState();   
 
   bool success = false;
   EntityId new_thing;
@@ -50,7 +58,7 @@ int thing_create(lua_State* L)
 
   if (is_creatable)
   {
-    new_thing = gameState->entities().create(new_thing_type);
+    new_thing = gameState.entities().create(new_thing_type);
     success = SYSTEMS.geometry().moveEntityInto(new_thing, entity);
 
     if (success && (num_args > 2))
@@ -60,7 +68,7 @@ int thing_create(lua_State* L)
       unsigned int quantity = static_cast<unsigned int>(lua_tointeger(L, 3));
       if (quantity > 1)
       {
-        gameState->components().quantity[new_thing] = quantity;
+        gameState.components().quantity[new_thing] = quantity;
       }
     }
   }
@@ -79,6 +87,8 @@ int thing_create(lua_State* L)
 
 int thing_destroy(lua_State* L)
 {
+  auto& systems = LuaEntityFunctions::systems();
+
   int num_args = lua_gettop(L);
 
   if (num_args != 1)
@@ -88,15 +98,14 @@ int thing_destroy(lua_State* L)
   }
 
   EntityId entity = EntityId(lua_tointeger(L, 1));
-  SYSTEMS.janitor().markForDeletion(entity);
+  systems.janitor().markForDeletion(entity);
 
   return 0;
 }
 
 int thing_get_player(lua_State* L)
 {
-  auto gameState = LuaEntityFunctions::gameState();
-  Assert("Lua", gameState, "GameState is not defined");
+  auto& gameState = LuaEntityFunctions::gameState();
 
   int num_args = lua_gettop(L);
 
@@ -106,7 +115,7 @@ int thing_get_player(lua_State* L)
     return 0;
   }
 
-  EntityId player = gameState->components().globals.player();
+  EntityId player = gameState.components().globals.player();
   lua_pushinteger(L, player);
 
   return 1;
@@ -115,8 +124,7 @@ int thing_get_player(lua_State* L)
 /// @todo This function and thing_get_location should be merged into one.
 int thing_get_coords(lua_State* L)
 {
-  auto gameState = LuaEntityFunctions::gameState();
-  Assert("Lua", gameState, "GameState is not defined");
+  auto& gameState = LuaEntityFunctions::gameState();
 
   int num_args = lua_gettop(L);
 
@@ -128,14 +136,14 @@ int thing_get_coords(lua_State* L)
 
   EntityId entity = EntityId(lua_tointeger(L, 1));
 
-  if (!gameState->components().position.existsFor(entity))
+  if (!gameState.components().position.existsFor(entity))
   {
     lua_pushnil(L);
     lua_pushnil(L);
   }
   else
   {
-    auto& entityPosition = gameState->components().position[entity];
+    auto& entityPosition = gameState.components().position[entity];
     auto coords = entityPosition.coords();
     lua_pushinteger(L, coords.x);
     lua_pushinteger(L, coords.y);
@@ -146,8 +154,7 @@ int thing_get_coords(lua_State* L)
 
 int thing_get_location(lua_State* L)
 {
-  auto gameState = LuaEntityFunctions::gameState();
-  Assert("Lua", gameState, "GameState is not defined");
+  auto& gameState = LuaEntityFunctions::gameState();
 
   int num_args = lua_gettop(L);
 
@@ -159,13 +166,13 @@ int thing_get_location(lua_State* L)
 
   EntityId entity = EntityId(lua_tointeger(L, 1));
 
-  if (!gameState->components().position.existsFor(entity))
+  if (!gameState.components().position.existsFor(entity))
   {
     lua_pushnil(L);
   }
   else
   {
-    auto& entityPosition = gameState->components().position[entity];
+    auto& entityPosition = gameState.components().position[entity];
     auto parent = entityPosition.parent();
     lua_pushinteger(L, static_cast<lua_Integer>(parent));
   }
@@ -175,8 +182,7 @@ int thing_get_location(lua_State* L)
 
 int thing_get_type(lua_State* L)
 {
-  auto gameState = LuaEntityFunctions::gameState();
-  Assert("Lua", gameState, "GameState is not defined");
+  auto& gameState = LuaEntityFunctions::gameState();
 
   int num_args = lua_gettop(L);
 
@@ -187,7 +193,7 @@ int thing_get_type(lua_State* L)
   }
 
   EntityId entity = EntityId(lua_tointeger(L, 1));
-  std::string result = gameState->components().category[entity];
+  std::string result = gameState.components().category[entity];
   lua_pushstring(L, result.c_str());
 
   return 1;
@@ -195,8 +201,7 @@ int thing_get_type(lua_State* L)
 
 int thing_get_intrinsic(lua_State* L)
 {
-  auto gameState = LuaEntityFunctions::gameState();
-  Assert("Lua", gameState, "GameState is not defined");
+  auto& gameState = LuaEntityFunctions::gameState();
 
   int num_args = lua_gettop(L);
 
@@ -208,16 +213,16 @@ int thing_get_intrinsic(lua_State* L)
 
   EntityId entity = EntityId(lua_tointeger(L, 1));
   const char* key = lua_tostring(L, 2);
-  auto result = Service<IGameRules>::get().category(gameState->components().category[entity]).value(key, json());
-  auto slot_count = gameState->lua().push_value(result);
+  auto result = Service<IGameRules>::get().category(gameState.components().category[entity]).value(key, json());
+  auto slot_count = gameState.lua().push_value(result);
 
   return slot_count;
 }
 
 int thing_queue_action(lua_State* L)
 {
-  auto gameState = LuaEntityFunctions::gameState();
-  Assert("Lua", gameState, "GameState is not defined");
+  auto& gameState = LuaEntityFunctions::gameState();
+  auto& systems = LuaEntityFunctions::systems();
 
   int num_args = lua_gettop(L);
 
@@ -248,15 +253,15 @@ int thing_queue_action(lua_State* L)
   }
 
   new_action->setObjects(objects);
-  entity->queueAction(std::move(new_action));
+  systems.director().queueEntityAction(entity, std::move(new_action));
 
   return 1;
 }
 
 int thing_queue_targeted_action(lua_State* L)
 {
-  auto gameState = LuaEntityFunctions::gameState();
-  Assert("Lua", gameState, "GameState is not defined");
+  auto& gameState = LuaEntityFunctions::gameState();
+  auto& systems = LuaEntityFunctions::systems();
 
   int num_args = lua_gettop(L);
 
@@ -289,15 +294,15 @@ int thing_queue_targeted_action(lua_State* L)
 
   new_action->setTarget(target);
   new_action->setObjects(objects);
-  entity->queueAction(std::move(new_action));
+  systems.director().queueEntityAction(entity, std::move(new_action));
 
   return 1;
 }
 
 int thing_queue_directional_action(lua_State* L)
 {
-  auto gameState = LuaEntityFunctions::gameState();
-  Assert("Lua", gameState, "GameState is not defined");
+  auto& gameState = LuaEntityFunctions::gameState();
+  auto& systems = LuaEntityFunctions::systems();
 
   int num_args = lua_gettop(L);
 
@@ -333,15 +338,15 @@ int thing_queue_directional_action(lua_State* L)
 
   new_action->setTarget(direction);
   new_action->setObjects(objects);
-  entity->queueAction(std::move(new_action));
+  systems.director().queueEntityAction(entity, std::move(new_action));
 
   return 1;
 }
    
 int thing_move_into(lua_State* L)
 {
-  auto gameState = LuaEntityFunctions::gameState();
-  Assert("Lua", gameState, "GameState is not defined");
+  auto& gameState = LuaEntityFunctions::gameState();
+  auto& systems = LuaEntityFunctions::systems();
 
   int num_args = lua_gettop(L);
 
@@ -362,9 +367,11 @@ int thing_move_into(lua_State* L)
 }
 
 
-LuaEntityFunctions::LuaEntityFunctions(GameState & gameState)
+LuaEntityFunctions::LuaEntityFunctions(GameState& gameState, 
+                                       Systems::Manager& systems)
 {
   s_gameState = &gameState;
+  s_systemManager = &systems;
 
   LUA_REGISTER(thing_create);
   LUA_REGISTER(thing_destroy);
@@ -382,4 +389,5 @@ LuaEntityFunctions::LuaEntityFunctions(GameState & gameState)
 LuaEntityFunctions::~LuaEntityFunctions()
 {
   s_gameState = nullptr;
+  s_systemManager = nullptr;
 }

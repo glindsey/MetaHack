@@ -7,8 +7,12 @@
 
 // Forward declarations
 class GameState;
-class MapTile;
 class Entity;
+class MapTile;
+namespace Systems
+{
+  class Manager;
+}
 
 /// EntityPool is a factory to create and manage all the Entities in the game.
 class EntityPool
@@ -80,9 +84,6 @@ public:
 protected:
 
 private:
-  /// Class containing Lua functions that manipulate entities.
-  LuaEntityFunctions m_luaEntityFunctions;
-
   /// Reference to the game state.
   GameState& m_gameState;
 

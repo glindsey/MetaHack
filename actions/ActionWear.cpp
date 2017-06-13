@@ -9,7 +9,7 @@
 #include "systems/SystemNarrator.h"
 #include "utilities/Shortcuts.h"
 
-#include "entity/Entity.h" // still needed for queueAction(), beObjectOf(), is_equippable_on()
+#include "entity/Entity.h" // still needed for beObjectOf(), is_equippable_on()
 
 namespace Actions
 {

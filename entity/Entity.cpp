@@ -61,32 +61,6 @@ std::string Entity::getDisplayName() const
   return COMPONENTS.category[m_id];
 }
 
-void Entity::queueAction(std::unique_ptr<Actions::Action> action)
-{
-  if (COMPONENTS.activity.existsFor(m_id))
-  {
-    CLOG(TRACE, "Entity") << "Entity " <<
-      getId() << " (" <<
-      COMPONENTS.category[m_id] << "): Queuing Action " <<
-      action->getType();
-
-    COMPONENTS.activity[m_id].pendingActions().push(std::move(action));
-  }
-  else
-  {
-    CLOG(WARNING, "Entity") << "Entity " <<
-      getId() << " (" <<
-      COMPONENTS.category[m_id] << "): Tried to queue Action " <<
-      action->getType() << ", but entity does not have Activity component";
-  }
-}
-
-void Entity::queueAction(Actions::Action * p_action)
-{
-  std::unique_ptr<Actions::Action> action(p_action);
-  queueAction(std::move(action));
-}
-
 EntityId Entity::getId() const
 {
   return m_id;

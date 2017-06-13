@@ -43,16 +43,6 @@ public:
 
   virtual std::string getDisplayName() const override;
 
-  /// Queue an action for this DynamicEntity to perform.
-  /// @param action The Action to queue. The Action is MOVED when queued,
-  ///               e.g. pAction will be `nullptr` after queuing.
-  void queueAction(std::unique_ptr<Actions::Action> action);
-
-  /// Queue an action for this DynamicEntity to perform.
-  /// @param p_action The Action to queue. The queue takes ownership of the
-  ///                 pointer.
-  void queueAction(Actions::Action* p_action);
-
   /// Return a reference to this entity.
   EntityId getId() const;
 

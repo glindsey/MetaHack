@@ -27,7 +27,7 @@ namespace Systems
     processMap(map());
   }
 
-  void Director::queueEntityAction(EntityId id, std::unique_ptr<Actions::Action> action)
+  void Director::queueEntityAction(EntityId id, std::unique_ptr<Actions::Action>&& action)
   {
     auto& activity = m_gameState.components().activity;
     auto& category = m_gameState.components().category;

@@ -16,6 +16,7 @@
 #include "inventory/InventoryArea.h"
 #include "inventory/InventorySelection.h"
 #include "keybuffer/KeyBuffer.h"
+#include "lua/LuaEntityFunctions.h"
 #include "map/Map.h"
 #include "map/MapFactory.h"
 #include "map/MapStandard2DView.h"
@@ -75,6 +76,7 @@ AppStateGameMode::AppStateGameMode(StateMachine& state_machine, sf::RenderWindow
   m_debugBuffer{ NEW KeyBuffer() },
   m_gameState{ NEW GameState({}) },
   m_systemManager{ NEW Systems::Manager(*m_gameState) },
+  m_luaEntityFunctions{ NEW LuaEntityFunctions(*m_gameState, *m_systemManager) }, ///< maybe should be in GameState?
   m_inventorySelection{ NEW InventorySelection() },
   m_windowInFocus{ true },
   m_inventoryAreaShowsPlayer{ false },
@@ -295,6 +297,7 @@ bool AppStateGameMode::handle_key_press(UIEvents::EventKeyPressed const& key)
 {
   auto& game = gameState();
   auto& components = game.components();
+  auto& director = systems().director();
   auto& narrator = systems().narrator();
 
   EntityId player = game.components().globals.player();
@@ -368,18 +371,18 @@ bool AppStateGameMode::handle_key_press(UIEvents::EventKeyPressed const& key)
           if (key_direction == Direction::Self)
           {
             p_action.reset(new Actions::ActionWait(player));
-            player->queueAction(std::move(p_action));
+            director.queueEntityAction(player, std::move(p_action));
             return false;
           }
           else
           {
             p_action.reset(new Actions::ActionTurn(player));
             p_action->setTarget(key_direction);
-            player->queueAction(std::move(p_action));
+            director.queueEntityAction(player, std::move(p_action));
 
             p_action.reset(new Actions::ActionMove(player));
             p_action->setTarget(key_direction);
-            player->queueAction(std::move(p_action));
+            director.queueEntityAction(player, std::move(p_action));
             return false;
           }
         }
@@ -503,7 +506,7 @@ bool AppStateGameMode::handle_key_press(UIEvents::EventKeyPressed const& key)
               {
                 p_action.reset(new Actions::ActionGet(player));
                 p_action->setObject(entity);
-                player->queueAction(std::move(p_action));
+                director.queueEntityAction(player, std::move(p_action));
               }
               m_inventoryAreaShowsPlayer = false;
               resetInventorySelection();
@@ -523,7 +526,7 @@ bool AppStateGameMode::handle_key_press(UIEvents::EventKeyPressed const& key)
           if (key_direction == Direction::Self)
           {
             p_action.reset(new Actions::ActionWait(player));
-            player->queueAction(std::move(p_action));
+            director.queueEntityAction(player, std::move(p_action));
             return false;
           }
           else
@@ -531,7 +534,7 @@ bool AppStateGameMode::handle_key_press(UIEvents::EventKeyPressed const& key)
             // CTRL-arrow -- Turn without moving
             p_action.reset(new Actions::ActionTurn(player));
             p_action->setTarget(key_direction);
-            player->queueAction(std::move(p_action));
+            director.queueEntityAction(player, std::move(p_action));
             return false;
           }
         }
@@ -565,7 +568,7 @@ bool AppStateGameMode::handle_key_press(UIEvents::EventKeyPressed const& key)
               {
                 p_action.reset(new Actions::ActionWear(player));
                 p_action->setObject(entity);
-                player->queueAction(std::move(p_action));
+                director.queueEntityAction(player, std::move(p_action));
               }
               m_inventoryAreaShowsPlayer = false;
               resetInventorySelection();
@@ -589,7 +592,7 @@ bool AppStateGameMode::handle_key_press(UIEvents::EventKeyPressed const& key)
               {
                 p_action.reset(new Actions::ActionClose(player));
                 p_action->setObject(entity);
-                player->queueAction(std::move(p_action));
+                director.queueEntityAction(player, std::move(p_action));
               }
               m_inventoryAreaShowsPlayer = false;
               resetInventorySelection();
@@ -608,7 +611,7 @@ bool AppStateGameMode::handle_key_press(UIEvents::EventKeyPressed const& key)
               {
                 p_action.reset(new Actions::ActionDrop(player));
                 p_action->setObject(entity);
-                player->queueAction(std::move(p_action));
+                director.queueEntityAction(player, std::move(p_action));
               }
               m_inventoryAreaShowsPlayer = false;
               resetInventorySelection();
@@ -627,7 +630,7 @@ bool AppStateGameMode::handle_key_press(UIEvents::EventKeyPressed const& key)
               {
                 p_action.reset(new Actions::ActionEat(player));
                 p_action->setObject(entity);
-                player->queueAction(std::move(p_action));
+                director.queueEntityAction(player, std::move(p_action));
               }
               m_inventoryAreaShowsPlayer = false;
               resetInventorySelection();
@@ -666,7 +669,7 @@ bool AppStateGameMode::handle_key_press(UIEvents::EventKeyPressed const& key)
               {
                 p_action.reset(new Actions::ActionGet(player));
                 p_action->setObject(entity);
-                player->queueAction(std::move(p_action));
+                director.queueEntityAction(player, std::move(p_action));
               }
               m_inventoryAreaShowsPlayer = false;
               resetInventorySelection();
@@ -727,7 +730,7 @@ bool AppStateGameMode::handle_key_press(UIEvents::EventKeyPressed const& key)
           //  {
           //    p_action.reset(new Actions::ActionMix(player));
           //    p_action->setObjects(entities);
-          //    player->queueAction(std::move(p_action));
+          //    director.queueEntityAction(player, p_action));
           //    m_inventoryAreaShowsPlayer = false;
           //    resetInventorySelection();
           //  }
@@ -749,7 +752,7 @@ bool AppStateGameMode::handle_key_press(UIEvents::EventKeyPressed const& key)
               {
                 p_action.reset(new Actions::ActionOpen(player));
                 p_action->setObject(entity);
-                player->queueAction(std::move(p_action));
+                director.queueEntityAction(player, std::move(p_action));
               }
               m_inventoryAreaShowsPlayer = false;
               resetInventorySelection();
@@ -784,7 +787,7 @@ bool AppStateGameMode::handle_key_press(UIEvents::EventKeyPressed const& key)
               {
                 p_action.reset(new Actions::ActionQuaff(player));
                 p_action->setObject(entity);
-                player->queueAction(std::move(p_action));
+                director.queueEntityAction(player, std::move(p_action));
               }
               m_inventoryAreaShowsPlayer = false;
               resetInventorySelection();
@@ -804,7 +807,7 @@ bool AppStateGameMode::handle_key_press(UIEvents::EventKeyPressed const& key)
               {
                 p_action.reset(new Actions::ActionRead(player));
                 p_action->setObject(entity);
-                player->queueAction(std::move(p_action));
+                director.queueEntityAction(player, std::move(p_action));
               }
               m_inventoryAreaShowsPlayer = false;
               resetInventorySelection();
@@ -845,7 +848,7 @@ bool AppStateGameMode::handle_key_press(UIEvents::EventKeyPressed const& key)
             {
               p_action.reset(new Actions::ActionTakeOut(player));
               p_action->setObjects(entities);
-              player->queueAction(std::move(p_action));
+              director.queueEntityAction(player, std::move(p_action));
               m_inventoryAreaShowsPlayer = false;
               resetInventorySelection();
             }
@@ -863,7 +866,7 @@ bool AppStateGameMode::handle_key_press(UIEvents::EventKeyPressed const& key)
               {
                 p_action.reset(new Actions::ActionUse(player));
                 p_action->setObject(entity);
-                player->queueAction(std::move(p_action));
+                director.queueEntityAction(player, std::move(p_action));
               }
               m_inventoryAreaShowsPlayer = false;
               resetInventorySelection();
@@ -884,7 +887,7 @@ bool AppStateGameMode::handle_key_press(UIEvents::EventKeyPressed const& key)
             {
               p_action.reset(new Actions::ActionWield(player));
               p_action->setObject(entities.front());
-              player->queueAction(std::move(p_action));
+              director.queueEntityAction(player, std::move(p_action));
               m_inventoryAreaShowsPlayer = false;
               resetInventorySelection();
             }
@@ -909,7 +912,7 @@ bool AppStateGameMode::handle_key_press(UIEvents::EventKeyPressed const& key)
               // Item(s) specified, so proceed with items.
               p_action.reset(new Actions::ActionAttack(player));
               p_action->setObject(entities.front());
-              player->queueAction(std::move(p_action));
+              director.queueEntityAction(player, std::move(p_action));
               m_inventoryAreaShowsPlayer = false;
               resetInventorySelection();
             }
@@ -941,7 +944,7 @@ bool AppStateGameMode::handle_key_press(UIEvents::EventKeyPressed const& key)
           if (key_direction == Direction::Self)
           {
             p_action.reset(new Actions::ActionWait(player));
-            player->queueAction(std::move(p_action));
+            director.queueEntityAction(player, std::move(p_action));
             return false;
           }
           else
@@ -949,7 +952,7 @@ bool AppStateGameMode::handle_key_press(UIEvents::EventKeyPressed const& key)
             // CTRL-ALT-arrow -- Move without turning
             p_action.reset(new Actions::ActionMove(player));
             p_action->setTarget(key_direction);
-            player->queueAction(std::move(p_action));
+            director.queueEntityAction(player, std::move(p_action));
             return false;
           }
         }
@@ -1116,6 +1119,7 @@ bool AppStateGameMode::moveCursor(Direction direction)
 
 bool AppStateGameMode::handleKeyPressTargetSelection(EntityId player, UIEvents::EventKeyPressed const& key)
 {
+  auto& director = systems().director();
   int key_number = get_letter_key(key);
   Direction key_direction = get_direction_key(key);
 
@@ -1140,7 +1144,7 @@ bool AppStateGameMode::handleKeyPressTargetSelection(EntityId player, UIEvents::
     if (!key.alt && !key.control && key_number != -1)
     {
       m_actionInProgress->setTarget(m_inventorySelection->getEntity(static_cast<InventorySlot>(key_number)));
-      player->queueAction(std::move(m_actionInProgress));
+      director.queueEntityAction(player, std::move(m_actionInProgress));
       m_inventoryAreaShowsPlayer = false;
       resetInventorySelection();
       m_currentInputState = GameInputState::Map;
@@ -1154,7 +1158,7 @@ bool AppStateGameMode::handleKeyPressTargetSelection(EntityId player, UIEvents::
     if (!key.alt && !key.control && key_direction != Direction::None)
     {
       m_actionInProgress->setTarget(key_direction);
-      player->queueAction(std::move(m_actionInProgress));
+      director.queueEntityAction(player, std::move(m_actionInProgress));
       m_inventoryAreaShowsPlayer = false;
       resetInventorySelection();
       m_currentInputState = GameInputState::Map;

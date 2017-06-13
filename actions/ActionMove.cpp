@@ -10,6 +10,7 @@
 #include "services/IMessageLog.h"
 #include "services/IStringDictionary.h"
 #include "systems/Manager.h"
+#include "systems/SystemDirector.h"
 #include "systems/SystemNarrator.h"
 #include "systems/SystemGeometry.h"
 #include "utilities/Shortcuts.h"
@@ -101,7 +102,7 @@ namespace Actions
           std::unique_ptr<ActionAttack> action_attack{ new ActionAttack(subject) };
           action_attack->setTarget(new_direction);
 
-          subject->queueAction(std::move(action_attack));
+          systems.director().queueEntityAction(subject, std::move(action_attack));
 
           result = StateResult::Success();
         }
