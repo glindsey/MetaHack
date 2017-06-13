@@ -63,9 +63,6 @@ public:
   /// If entity is not equippable, return BodyPart::Count.
   BodyPart is_equippable_on() const;
 
-  /// Process voluntary actions of this Entity and its inventory for a single tick.
-  bool processActions();
-
   /// Perform an action when this entity dies.
   /// @return If this function returns false, the death is avoided.
   /// @warning The function must reset whatever caused the death in the
@@ -140,13 +137,6 @@ protected:
 
   /// Clone Constructor
   Entity(Entity const& original, EntityId ref);
-
-  /// Process this Entity's voluntary actions for a single tick.
-  /// The function returns false to indicate to its parent that it no longer
-  /// exists and should be deleted.
-  /// @return true if the Entity continues to exist after the tick;
-  ///         false if the Entity ceases to exist.
-  virtual bool processOwnActions_();
 
 private:
   /// Reference to game state.

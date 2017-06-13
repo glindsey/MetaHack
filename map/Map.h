@@ -39,9 +39,6 @@ public:
   /// The maximum area of a map.
   static constexpr int max_area = max_dimension * max_dimension;
 
-  /// Process all Entities on this map.
-  void processEntities();
-
   MapTile const & getTile(IntVec2 tile) const;
 
   MapTile& getTile(IntVec2 tile);

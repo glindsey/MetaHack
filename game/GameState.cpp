@@ -101,29 +101,6 @@ Components::ComponentManager const& GameState::components() const
   return *m_components;
 }
 
-bool GameState::processGameClockTick()
-{
-  EntityId player = components().globals.player();
-
-  if (COMPONENTS.activity.existsFor(player) && 
-      (!COMPONENTS.activity[player].pendingActions().empty() ||
-       COMPONENTS.activity[player].busyTicks() > 0))
-  {
-    // QUESTION: Do we want to update all Entities, PERIOD?  In other words, should
-    //           other maps keep playing themselves if the player is not on them?
-    //           While this would be awesome, I'd imagine the resulting per-turn
-    //           lag would quickly grow intolerable.
-
-    // Get the map the player is on.
-    MapID map = COMPONENTS.position[player].map();
-
-    // Process everything on the map.
-    MAPS.get(map).processEntities();
-    return true;
-  }
-  return false;
-}
-
 Lua& GameState::lua()
 {
   return *m_lua;

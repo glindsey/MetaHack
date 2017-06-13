@@ -28,12 +28,24 @@ namespace Systems
     };
 
     Director(GameState& gameState,
-                   Manager& systems);
+             Manager& systems);
 
     virtual ~Director();
 
     /// Recalculate whatever needs recalculating.
     void doCycleUpdate();
+
+    /// Queue an action for an entity to perform.
+    /// @param id     The ID of the entity performing the action.
+    /// @param action The Action to queue. The Action is MOVED when queued,
+    ///               e.g. pAction will be `nullptr` after queuing.
+    void queueEntityAction(EntityId id, std::unique_ptr<Actions::Action> action);
+
+    /// Queue an action for an entity to perform.
+    /// @param id      The ID of the entity performing the action.
+    /// @param pAction The Action to queue. The queue takes ownership of the
+    ///                pointer.
+    void queueEntityAction(EntityId id, Actions::Action* pAction);
 
   protected:
     void processMap(MapID mapID);

@@ -62,10 +62,6 @@ public:
   Components::ComponentManager& components();
   Components::ComponentManager const& components() const;
 
-  /// Process a single tick in the game, if one needs to be processed.
-  /// @return True if a tick elapsed, false if it did not.
-  bool processGameClockTick();
-
   /// Get the Lua state object.
   Lua& lua();
   Lua const& lua() const;

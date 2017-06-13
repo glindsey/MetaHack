@@ -122,20 +122,6 @@ bool Map::setStartCoords(IntVec2 start_coords)
   return false;
 }
 
-void Map::processEntities()
-{
-  for (int y = 0; y < m_size.y; ++y)
-  {
-    for (int x = 0; x < m_size.x; ++x)
-    {
-      EntityId contents = TILE(x, y).getTileContents();
-      contents->processActions();
-    }
-  }
-
-  //notifyObservers(Event::Updated);
-}
-
 MapTile const& Map::getTile(IntVec2 tile) const
 {
   if (tile.x < 0) tile.x = 0;

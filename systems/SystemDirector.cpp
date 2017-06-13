@@ -27,6 +27,31 @@ namespace Systems
     processMap(map());
   }
 
+  void Director::queueEntityAction(EntityId id, std::unique_ptr<Actions::Action> action)
+  {
+    auto& activity = m_gameState.components().activity;
+    auto& category = m_gameState.components().category;
+
+    if (activity.existsFor(id))
+    {
+      CLOG(TRACE, "Entity") << "Entity " << id << " (" << category[id] << 
+        "): Queuing Action " << action->getType();
+      activity[id].pendingActions().push(std::move(action));
+    }
+    else
+    {
+      CLOG(WARNING, "Entity") << "Entity " << id << " (" << category[id] << 
+        "): Tried to queue Action " << action->getType() << 
+        ", but entity does not have Activity component";
+    }
+  }
+
+  void Director::queueEntityAction(EntityId id, Actions::Action* pAction)
+  {
+    std::unique_ptr<Actions::Action> action(pAction);
+    queueEntityAction(id, std::move(action));
+  }
+
   void Director::processMap(MapID mapID)
   {
     auto& gameMap = m_gameState.maps().get(mapID);

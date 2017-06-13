@@ -72,6 +72,7 @@ App::App(sf::RenderWindow& app_window)
   SET_UP_LOGGER("Action",             false);
   SET_UP_LOGGER("Component",          false);
   SET_UP_LOGGER("ConfigSettings",     false);
+  SET_UP_LOGGER("Director",           false);
   SET_UP_LOGGER("Entity",             false);
   SET_UP_LOGGER("EntityPool",         false);
   SET_UP_LOGGER("EventSystem",        false);
