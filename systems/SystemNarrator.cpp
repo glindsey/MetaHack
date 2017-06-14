@@ -7,7 +7,7 @@
 #include "services/Service.h"
 #include "services/IConfigSettings.h"
 #include "services/IGameRules.h"
-#include "services/IStringDictionary.h"
+#include "services/IStrings.h"
 #include "utilities/JSONUtils.h"
 #include "utilities/Ordinal.h"
 #include "utilities/Shortcuts.h"
@@ -15,7 +15,6 @@
 
 namespace Systems
 {
-
   Narrator::Narrator(Components::ComponentGlobals const& globals,
                      Components::ComponentMap<Components::ComponentBodyparts> const& bodyparts,
                      Components::ComponentMap<std::string> const& category,
@@ -211,7 +210,7 @@ namespace Systems
                                              ArticleChoice articles,
                                              UsePossessives possessives) const
   {
-    auto& config = Service<IConfigSettings>::get();
+    auto& config = S<IConfigSettings>();
 
     EntityId location = (m_position.existsFor(id) ? m_position.of(id).parent() : EntityId::Mu());
     unsigned int quantity = m_quantity.valueOr(id, 1);
@@ -317,7 +316,7 @@ namespace Systems
 
   json const& Narrator::getCategoryData(EntityId id) const
   {
-    return Service<IGameRules>::get().category(m_category.valueOr(id, ""));
+    return S<IGameRules>().category(m_category.valueOr(id, ""));
   }
 
   std::string Narrator::getDisplayAdjectives(EntityId id) const
@@ -815,7 +814,7 @@ namespace Systems
     boost::to_upper(fancyPartName);
     boost::to_upper(partName);
 
-    bool fancyNameExists = Service<IStringDictionary>::get().contains(fancyPartName);
+    bool fancyNameExists = S<IStrings>().contains(fancyPartName);
 
     return (fancyNameExists ? tr(fancyPartName) : tr(partName));
   }
@@ -831,7 +830,7 @@ namespace Systems
     boost::to_upper(fancyPartName);
     boost::to_upper(partName);
 
-    bool fancyNameExists = Service<IStringDictionary>::get().contains(fancyPartName);
+    bool fancyNameExists = S<IStrings>().contains(fancyPartName);
 
     return (fancyNameExists ? tr(fancyPartName) : tr(partName));
   }
@@ -1000,37 +999,37 @@ namespace Systems
 
   std::string Narrator::getVerb2(std::string verb) const
   {
-    auto& dict = Service<IStringDictionary>::get();
+    auto& dict = S<IStrings>();
     return dict.get("VERB_" + verb + "_2");
   }
 
   std::string Narrator::getVerb3(std::string verb) const
   {
-    auto& dict = Service<IStringDictionary>::get();
+    auto& dict = S<IStrings>();
     return dict.get("VERB_" + verb + "_3");
   }
 
   std::string Narrator::getVerbing(std::string verb) const
   {
-    auto& dict = Service<IStringDictionary>::get();
+    auto& dict = S<IStrings>();
     return dict.get("VERB_" + verb + "_GER");
   }
 
   std::string Narrator::getVerbed(std::string verb) const
   {
-    auto& dict = Service<IStringDictionary>::get();
+    auto& dict = S<IStrings>();
     return dict.get("VERB_" + verb + "_P2");
   }
 
   std::string Narrator::getVerbPP(std::string verb) const
   {
-    auto& dict = Service<IStringDictionary>::get();
+    auto& dict = S<IStrings>();
     return dict.get("VERB_" + verb + "_PP");
   }
 
   std::string Narrator::getVerbable(std::string verb) const
   {
-    auto& dict = Service<IStringDictionary>::get();
+    auto& dict = S<IStrings>();
     return dict.get("VERB_" + verb + "_ABLE");
   }
 
@@ -1044,5 +1043,4 @@ namespace Systems
   {
     return false;
   }
-
 } // end namespace Systems
