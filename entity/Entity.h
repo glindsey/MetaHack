@@ -44,13 +44,6 @@ public:
   /// Return a reference to this entity.
   EntityId getId() const;
 
-  /// Perform an action when this entity dies.
-  /// @return If this function returns false, the death is avoided.
-  /// @warning The function must reset whatever caused the death in the
-  ///          first place, or the Entity will just immediately die again
-  ///          on the next call to process()!
-  bool perform_action_die();
-
   /// Perform an action when this entity collides with another entity.
   void perform_action_collide_with(EntityId entity);
 
@@ -99,18 +92,6 @@ public:
   /// Returns whether the Entity can merge with another Entity.
   /// Calls an overridden subclass function.
   bool can_merge_with(EntityId other) const;
-
-  /// Syntactic sugar for calling call_lua_function().
-  json call_lua_function(std::string function_name,
-                         json const& args,
-                         json const& default_result);
-
-  json call_lua_function(std::string function_name,
-                         json const& args,
-                         json const& default_result) const;
-
-  /// Get a const reference to this entity's category data.
-  json const& getCategoryData() const;
 
 protected:
   /// Named Constructor

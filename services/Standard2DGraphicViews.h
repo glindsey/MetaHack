@@ -19,7 +19,7 @@ public:
 
   virtual ~Standard2DGraphicViews();
 
-  virtual EntityView* createEntityView(Entity& entity) override;
+  virtual EntityView* createEntityView(EntityId entity) override;
 
   virtual MapTileView* createMapTileView(MapTile& map_tile) override;
 

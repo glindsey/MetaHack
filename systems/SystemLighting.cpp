@@ -138,7 +138,7 @@ namespace Systems
         bool locationHasHealth = m_health.existsFor(location);
 
 
-        bool result = m_gameState.lua().call_thing_function("on_lit_by", location, light, true);
+        bool result = m_gameState.lua().callEntityFunction("on_lit_by", location, light, true);
         if (result)
         {
           //notifyObservers(Event::Updated);

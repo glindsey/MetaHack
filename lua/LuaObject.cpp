@@ -519,7 +519,7 @@ std::string Lua::find_lua_function_(std::string category, std::string suffix) co
   }
 }
 
-json Lua::call_thing_function(std::string function_name, 
+json Lua::callEntityFunction(std::string function_name, 
                               EntityId caller,
                               json const& args,
                               json default_result)

@@ -27,7 +27,7 @@ public:
   
 protected:
   /// Constructor.
-  explicit EntityStandard2DView(Entity& entity, 
+  explicit EntityStandard2DView(EntityId entity, 
                                 TileSheet& tileSheet);
 
   virtual bool onEvent(Event const& event) override;

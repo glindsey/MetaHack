@@ -38,13 +38,13 @@ UintVec2 MapTileStandard2DView::getTileSheetCoords() const
 }
 
 /// @todo Instead of repeating this method in EntityStandard2DView, call the view from here.
-UintVec2 MapTileStandard2DView::getEntityTileSheetCoords(Entity& entity, int frame) const
+UintVec2 MapTileStandard2DView::getEntityTileSheetCoords(EntityId entity, int frame) const
 {
   /// Get tile coordinates on the sheet.
-  UintVec2 start_coords = entity.getCategoryData().value("tile-location", UintVec2(0, 0));
+  UintVec2 start_coords = S<IGameRules>().category(COMPONENTS.category[entity]).value("tile-location", UintVec2(0, 0));
 
   /// Call the Lua function to get the offset (tile to choose).
-  UintVec2 offset = entity.call_lua_function("get_tile_offset", frame, UintVec2(0, 0));
+  UintVec2 offset = GAME.lua().callEntityFunction("get_tile_offset", entity, frame, UintVec2(0, 0));
 
   /// Add them to get the resulting coordinates.
   UintVec2 tile_coords = start_coords + offset;
@@ -220,7 +220,6 @@ void MapTileStandard2DView::addEntityFloorVertices(EntityId entityId,
                                                    Systems::Lighting* lighting,
                                                    int frame)
 {
-  auto& entity = GAME.entities().get(entityId);
   auto& config = S<IConfigSettings>();
   sf::Vertex new_vertex;
   float ts = config.get("map-tile-size");
@@ -248,7 +247,7 @@ void MapTileStandard2DView::addEntityFloorVertices(EntityId entityId,
   RealVec2 vSE(location.x + ts2, location.y + ts2);
   RealVec2 vNW(location.x - ts2, location.y - ts2);
   RealVec2 vNE(location.x + ts2, location.y - ts2);
-  UintVec2 tileCoords = getEntityTileSheetCoords(entity, frame);
+  UintVec2 tileCoords = getEntityTileSheetCoords(entityId, frame);
 
   m_tileSheet.addQuad(vertices,
                       tileCoords, thingColor,

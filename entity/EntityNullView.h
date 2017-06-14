@@ -22,7 +22,7 @@ public:
 
 protected:
   /// Constructor.
-  explicit EntityNullView(Entity& entity);
+  explicit EntityNullView(EntityId entity);
 
   virtual bool onEvent(Event const& event) override;
 

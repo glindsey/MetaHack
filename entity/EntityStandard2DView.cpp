@@ -6,12 +6,13 @@
 #include "map/Map.h"
 #include "services/Service.h"
 #include "services/IConfigSettings.h"
+#include "services/IGameRules.h"
 #include "systems/SystemLighting.h"
 #include "tilesheet/TileSheet.h"
 #include "types/ShaderEffect.h"
 #include "utilities/RNGUtils.h"
 
-EntityStandard2DView::EntityStandard2DView(Entity& entity, 
+EntityStandard2DView::EntityStandard2DView(EntityId entity, 
                                            TileSheet& tileSheet)
   :
   EntityView(entity),
@@ -39,9 +40,9 @@ void EntityStandard2DView::draw(sf::RenderTarget& target,
   auto& texture = m_tileSheet.getTexture();
 
   // Can't render if it doesn't have a Position component.
-  if (!COMPONENTS.position.existsFor(entity.getId())) return;
+  if (!COMPONENTS.position.existsFor(entity)) return;
 
-  auto& position = COMPONENTS.position[entity.getId()];
+  auto& position = COMPONENTS.position[entity];
 
   // Can't render if it's in another object.
   if (position.parent() != EntityId::Mu()) return;
@@ -105,7 +106,7 @@ std::string EntityStandard2DView::getViewName()
 UintVec2 EntityStandard2DView::getTileSheetCoords(int frame) const
 {
   auto& entity = getEntity();
-  auto& category = entity.getCategoryData();
+  auto& category = S<IGameRules>().category(COMPONENTS.category[entity]);
   UintVec2 offset;
 
   // Get tile coordinates on the sheet.
@@ -114,7 +115,7 @@ UintVec2 EntityStandard2DView::getTileSheetCoords(int frame) const
   // If the entity has the "animated" component, call the Lua function to get the offset (tile to choose).
   if (category["components"].count("animated") > 0)
   {
-    offset = entity.call_lua_function("get_tile_offset", frame, UintVec2(0, 0));
+    offset = GAME.lua().callEntityFunction("get_tile_offset", entity, frame, UintVec2(0, 0));
   }
 
   // Add them to get the resulting coordinates.

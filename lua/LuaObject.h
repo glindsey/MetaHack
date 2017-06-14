@@ -202,7 +202,7 @@ public:
   ///                       after traversing the entire parent tree.
   ///
   /// @return The result of the call.
-  json call_thing_function(std::string function_name,
+  json callEntityFunction(std::string function_name,
                            EntityId caller,
                            json const& args,
                            json default_result);

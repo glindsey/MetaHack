@@ -33,7 +33,7 @@ protected:
   UintVec2 getTileSheetCoords() const;
 
 
-  UintVec2 getEntityTileSheetCoords(Entity & entity, int frame) const;
+  UintVec2 getEntityTileSheetCoords(EntityId entity, int frame) const;
 
   /// Add the vertices for the maptile to the seen and memory vertices.
   /// @param viewer Entity that is viewing this tile.

@@ -16,6 +16,7 @@ namespace Systems
 
   void GrimReaper::doCycleUpdate()
   {
+    // if (something_or_other) return GAME.lua().callEntityFunction("do_die", m_id, {}, true);
   }
 
   void GrimReaper::setMap_V(MapID newMap)

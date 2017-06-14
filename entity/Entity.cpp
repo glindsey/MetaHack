@@ -35,11 +35,6 @@
 // Static member initialization.
 Color const Entity::wall_outline_color_{ 255, 255, 255, 64 };
 
-json const& Entity::getCategoryData() const
-{
-  return S<IGameRules>().category(COMPONENTS.category[m_id]);
-}
-
 Entity::Entity(GameState& state, std::string category, EntityId id) :
   m_state{ state },
   m_id{ id }
@@ -66,14 +61,9 @@ EntityId Entity::getId() const
   return m_id;
 }
 
-bool Entity::perform_action_die()
-{
-  return call_lua_function("do_die", {}, true);
-}
-
 void Entity::perform_action_collide_with(EntityId actor)
 {
-  (void)call_lua_function("do_collide_with", actor, true);
+  (void)GAME.lua().callEntityFunction("do_collide_with", m_id, actor, true);
 }
 
 void Entity::perform_action_collide_with_wall(Direction d, std::string tile_type)
@@ -84,32 +74,32 @@ void Entity::perform_action_collide_with_wall(Direction d, std::string tile_type
 
 bool Entity::do_(Actions::Action& action)
 {
-  return call_lua_function("do_" + action.getType(), {}, true);
+  return GAME.lua().callEntityFunction("do_" + action.getType(), m_id, {}, true);
 }
 
 bool Entity::beObjectOf(Actions::Action& action, EntityId subject)
 {
-  return call_lua_function("on_object_of_" + action.getType(), subject, true);
+  return GAME.lua().callEntityFunction("on_object_of_" + action.getType(), m_id, subject, true);
 }
 
 bool Entity::beObjectOf(Actions::Action& action, EntityId subject, EntityId target)
 {
-  return call_lua_function("on_object_of_" + action.getType(), { subject, target }, true);
+  return GAME.lua().callEntityFunction("on_object_of_" + action.getType(), m_id, { subject, target }, true);
 }
 
 bool Entity::beObjectOf(Actions::Action& action, EntityId subject, Direction direction)
 {
-  return call_lua_function("on_object_of_" + action.getType(), { subject, direction }, true);
+  return GAME.lua().callEntityFunction("on_object_of_" + action.getType(), m_id, { subject, direction }, true);
 }
 
 bool Entity::be_hurt_by(EntityId subject)
 {
-  return call_lua_function("on_object_of_hurt", subject, true);
+  return GAME.lua().callEntityFunction("on_object_of_hurt", m_id, subject, true);
 }
 
 bool Entity::be_used_to_attack(EntityId subject, EntityId target)
 {
-  return call_lua_function("on_used_to_attack", { subject, target }, true);
+  return GAME.lua().callEntityFunction("on_used_to_attack", m_id, { subject, target }, true);
 }
 
 bool Entity::can_merge_with(EntityId other) const
@@ -135,20 +125,6 @@ bool Entity::can_merge_with(EntityId other) const
   //}
 
   return false;
-}
-
-json Entity::call_lua_function(std::string function_name,
-                               json const& args,
-                               json const& default_result)
-{
-  return GAME.lua().call_thing_function(function_name, getId(), args, default_result);
-}
-
-json Entity::call_lua_function(std::string function_name,
-                               json const& args,
-                               json const& default_result) const
-{
-  return GAME.lua().call_thing_function(function_name, getId(), args, default_result);
 }
 
 // *** PROTECTED METHODS ******************************************************

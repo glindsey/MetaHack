@@ -159,8 +159,7 @@ namespace Systems
       // Entity, which runs the AI and may queue new actions.
       if (m_gameState.components().globals.player() != entityID)
       {
-        /// @todo Re-implement me
-        //(void)call_lua_function("process", {}, true);
+        (void)m_gameState.lua().callEntityFunction("process", entityID, {}, true);
       }
     }
   }

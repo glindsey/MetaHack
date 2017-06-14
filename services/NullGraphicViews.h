@@ -18,7 +18,7 @@ public:
   virtual ~NullGraphicViews() {}
 
   /// Return an Entity view.
-  virtual EntityView* createEntityView(Entity& entity) override
+  virtual EntityView* createEntityView(EntityId entity) override
   {
     return NEW EntityNullView(entity);
   }

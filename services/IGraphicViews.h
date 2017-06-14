@@ -1,7 +1,7 @@
 
 
 /// Forward declarations
-class Entity;
+class EntityId;
 class EntityView;
 class Map;
 class MapView;
@@ -19,7 +19,7 @@ public:
 
   /// Return an Entity view.
   /// @warning The caller assumes ownership of the created view!
-  virtual EntityView* createEntityView(Entity& entity) = 0;
+  virtual EntityView* createEntityView(EntityId entity) = 0;
 
   /// Return a MapTile view.
   /// @warning The caller assumes ownership of the created view!

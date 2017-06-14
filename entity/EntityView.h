@@ -49,16 +49,16 @@ public:
 
 protected:
   /// Constructor.
-  explicit EntityView(Entity& entity);
+  explicit EntityView(EntityId entity);
 
-  /// Get reference to Entity associated with this view.
-  Entity& getEntity();
+  /// Get ID of Entity associated with this view.
+  EntityId getEntity();
 
-  Entity const& getEntity() const;
+  EntityId const& getEntity() const;
 
 private:
-  /// Reference to Entity associated with this view.
-  Entity& m_entity;
+  /// ID of Entity associated with this view.
+  EntityId const& m_entityId;
 
   /// Target coordinates for the Entity.
   RealVec2 m_target_coords;

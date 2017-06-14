@@ -53,8 +53,7 @@ EntityId EntityFactory::create(std::string category)
 
   if (m_initialized)
   {
-    /// @todo Re-implement me
-    m_thing_map[new_id]->call_lua_function("on_create", {}, true);
+    GAME.lua().callEntityFunction("on_create", new_id, {}, true);
   }
 
   return EntityId(new_id);

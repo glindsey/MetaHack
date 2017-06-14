@@ -2,7 +2,7 @@
 
 #include "entity/EntityNullView.h"
 
-EntityNullView::EntityNullView(Entity& entity)
+EntityNullView::EntityNullView(EntityId entity)
   :
   EntityView(entity)
 {

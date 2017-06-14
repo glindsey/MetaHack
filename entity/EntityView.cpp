@@ -6,12 +6,11 @@
 #include "game/GameState.h"
 #include "entity/EntityFactory.h"
 
-EntityView::EntityView(Entity& entity)
+EntityView::EntityView(EntityId entity)
   :
   Object({}),
-  m_entity(entity)
+  m_entityId(entity)
 {
-  //startObserving(entity);
 }
 
 EntityView::~EntityView()
@@ -43,12 +42,12 @@ RealVec2 EntityView::getSize()
   return m_target_size;
 }
 
-Entity& EntityView::getEntity()
+EntityId EntityView::getEntity()
 {
-  return m_entity;
+  return m_entityId;
 }
 
-Entity const& EntityView::getEntity() const
+EntityId const& EntityView::getEntity() const
 {
-  return m_entity;
+  return m_entityId;
 }
