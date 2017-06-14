@@ -2,6 +2,7 @@
 
 #include "ActionUnwield.h"
 #include "components/ComponentManager.h"
+#include "lua/LuaObject.h"
 #include "services/IMessageLog.h"
 #include "services/IStrings.h"
 #include "services/Service.h"
@@ -49,6 +50,7 @@ namespace Actions
     auto subject = getSubject();
     auto object = getObject();
     auto& components = gameState.components();
+    auto& lua = gameState.lua();
     auto& narrator = systems.narrator();
 
     BodyLocation wieldLocation = components.bodyparts.of(subject).getWieldedLocation(object);
@@ -68,7 +70,7 @@ namespace Actions
 
     // Try to unwield the item.
     /// @todo Unwielding shouldn't be instantaneous...?
-    if (object->beObjectOf(*this, subject))
+    if (lua.doSubjectActionObject(subject, *this, object))
     {
       components.bodyparts.of(subject).removeWieldedLocation(wieldLocation);
       putMsg(narrator.makeTr("YOU_ARE_NOW_WIELDING_NOTHING", arguments));

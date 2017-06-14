@@ -1,14 +1,13 @@
 #include "stdafx.h"
 
 #include "ActionRead.h"
+#include "lua/LuaObject.h"
 #include "services/IMessageLog.h"
 #include "services/IStrings.h"
 #include "services/Service.h"
 #include "systems/Manager.h"
 #include "systems/SystemNarrator.h"
 #include "utilities/Shortcuts.h"
-
-#include "entity/Entity.h" // needed for beObjectOf()
 
 namespace Actions
 {
@@ -60,13 +59,14 @@ namespace Actions
   StateResult ActionRead::doFinishWorkNVI(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     StateResult result = StateResult::Failure();
+    auto& lua = gameState.lua();
     auto subject = getSubject();
     auto object = getObject();
 
     printMessageFinish(systems, arguments);
 
     /// @todo Split read time into start/finish actions.
-    if (object->beObjectOf(*this, subject))
+    if (lua.doSubjectActionObject(subject, *this, object))
     {
       /// @todo Handle destruction on read. (Technically the Lua script should be able to do this.)
       //putTr("THE_FOO_DISINTEGRATES_AFTER_YOU_VERB");

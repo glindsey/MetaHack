@@ -2,6 +2,7 @@
 
 #include "lua/LuaObject.h"
 
+#include "actions/Action.h"
 #include "components/ComponentManager.h"
 #include "entity/Entity.h"
 #include "entity/EntityId.h"
@@ -520,9 +521,9 @@ std::string Lua::find_lua_function_(std::string category, std::string suffix) co
 }
 
 json Lua::callEntityFunction(std::string function_name, 
-                              EntityId caller,
-                              json const& args,
-                              json default_result)
+                             EntityId caller,
+                             json const& args,
+                             json default_result)
 {
   json return_value = default_result;
   Lua::Type return_type;
@@ -596,12 +597,32 @@ json Lua::callEntityFunction(std::string function_name,
   return return_value;
 }
 
-json Lua::call_modifier_function(std::string property_name,
-                                 json unmodified_value,
-                                 EntityId affected_id,
-                                 std::string responsible_group,
-                                 EntityId responsible_id,
-                                 std::string suffix)
+bool Lua::doReflexiveAction(EntityId subject, Actions::Action& action)
+{
+  return callEntityFunction("do_" + action.getType(), subject, {}, true);
+}
+
+bool Lua::doSubjectActionObject(EntityId subject, Actions::Action& action, EntityId object)
+{
+  return callEntityFunction("on_object_of_" + action.getType(), object, subject, true);
+}
+
+bool Lua::doSubjectActionObjectTarget(EntityId subject, Actions::Action& action, EntityId object, EntityId target)
+{
+  return callEntityFunction("on_object_of_" + action.getType(), object, { subject, target }, true);
+}
+
+bool Lua::doSubjectActionObjectDirection(EntityId subject, Actions::Action& action, EntityId object, Direction direction)
+{
+  return callEntityFunction("on_object_of_" + action.getType(), object, { subject, direction }, true);
+}
+
+json Lua::callModifierFunction(std::string property_name,
+                               json unmodified_value,
+                               EntityId affected_id,
+                               std::string responsible_group,
+                               EntityId responsible_id,
+                               std::string suffix)
 {
   json return_value = unmodified_value;
   Lua::Type return_type;

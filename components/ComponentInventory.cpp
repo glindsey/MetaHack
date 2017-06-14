@@ -135,6 +135,7 @@ namespace Components
     return m_entities.cend();
   }
 
+  /// @todo Move this into some sort of "EntityMerger" system.
   void ComponentInventory::consolidateItems()
   {
     auto firstIter = std::begin(m_entities);
@@ -151,7 +152,7 @@ namespace Components
 
         if (!COMPONENTS.quantity.existsFor(firstEntity) || !COMPONENTS.quantity.existsFor(secondEntity)) return;
 
-        if (firstEntity->can_merge_with(secondEntity))
+        if (can_merge(firstEntity, secondEntity))
         {
           auto firstQuantity = COMPONENTS.quantity[firstEntity];
           auto secondQuantity = COMPONENTS.quantity[secondEntity];
@@ -167,6 +168,33 @@ namespace Components
       ++firstIter;
     }
   }
+
+  /// @todo Move this into some sort of "EntityMerger" system.
+  bool ComponentInventory::can_merge(EntityId first, EntityId second) const
+  {
+    // Entities with different types can't merge (obviously).
+    if (COMPONENTS.category[first] != COMPONENTS.category[second])
+    {
+      return false;
+    }
+
+    // Entities with inventories can never merge.
+    if ((COMPONENTS.inventory.valueOrDefault(first).maxSize() != 0) ||
+      (COMPONENTS.inventory.valueOrDefault(second).maxSize() != 0))
+    {
+      return false;
+    }
+
+    // If the entities have the exact same properties, merge is okay.
+    /// @todo Re-implement this to check entity components.
+    //if (this and other components match)
+    //{
+    //  return true;
+    //}
+
+    return false;
+  }
+
 
   bool ComponentInventory::contains(EntityId entity)
   {

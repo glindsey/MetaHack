@@ -3,6 +3,7 @@
 #include "ActionTakeOut.h"
 #include "components/ComponentManager.h"
 #include "game/GameState.h"
+#include "lua/LuaObject.h"
 #include "services/Service.h"
 #include "services/IMessageLog.h"
 #include "services/IStrings.h"
@@ -10,8 +11,6 @@
 #include "systems/SystemNarrator.h"
 #include "systems/SystemGeometry.h"
 #include "utilities/Shortcuts.h"
-
-#include "entity/Entity.h" // needed for beObjectOf()
 
 namespace Actions
 {
@@ -89,6 +88,7 @@ namespace Actions
   StateResult ActionTakeOut::doBeginWorkNVI(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     auto& components = gameState.components();
+    auto& lua = gameState.lua();
     auto& narrator = systems.narrator();
 
     /// @todo Handle taking out a certain quantity of an item.
@@ -102,7 +102,7 @@ namespace Actions
     // Set the target to be the container as a kludge for message printing.
     setTarget(container);
 
-    if (object->beObjectOf(*this, subject))
+    if (lua.doSubjectActionObject(subject, *this, object))
     {
       if (systems.geometry().moveEntityInto(object, newLocation))
       {

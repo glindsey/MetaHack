@@ -2,6 +2,7 @@
 
 #include "ActionDie.h"
 #include "components/ComponentManager.h"
+#include "lua/LuaObject.h"
 #include "services/Service.h"
 #include "services/IMessageLog.h"
 #include "services/IStrings.h"
@@ -9,8 +10,6 @@
 #include "systems/SystemNarrator.h"
 #include "utilities/Shortcuts.h"
 #include "utilities/StringTransforms.h"
-
-#include "entity/Entity.h" /// still needed for do_() and beObjectOf()
 
 namespace Actions
 {
@@ -46,11 +45,12 @@ namespace Actions
   {
     EntityId subject = getSubject();
     auto& components = gameState.components();
+    auto& lua = gameState.lua();
     auto& narrator = systems.narrator();
 
     /// @todo Handle stuff like auto-activating life-saving items here.
     /// @todo Pass in the cause of death somehow.
-    if (subject->do_(*this))
+    if (lua.doReflexiveAction(subject, *this))
     {
       if (components.globals.player() == subject)
       {

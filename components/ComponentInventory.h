@@ -54,6 +54,8 @@ namespace Components
     /// aggregate item.
     void consolidateItems();
 
+    bool can_merge(EntityId first, EntityId second) const;
+
     bool contains(EntityId entity);
     bool contains(InventorySlot slot);
 

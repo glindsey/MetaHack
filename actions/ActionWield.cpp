@@ -4,6 +4,7 @@
 
 #include "ActionUnwield.h"
 #include "components/ComponentManager.h"
+#include "lua/LuaObject.h"
 #include "services/IMessageLog.h"
 #include "services/IStrings.h"
 #include "services/Service.h"
@@ -11,8 +12,6 @@
 #include "systems/SystemDirector.h"
 #include "systems/SystemNarrator.h"
 #include "utilities/Shortcuts.h"
-
-#include "entity/Entity.h" // still needed for beObjectOf()
 
 namespace Actions
 {
@@ -82,13 +81,14 @@ namespace Actions
   StateResult ActionWield::doBeginWorkNVI(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     /// @todo Wielding should take time -- should not be instantaneously done here.
+    auto& lua = gameState.lua();
     auto subject = getSubject();
     auto object = getObject();
 
     printMessageBegin(systems, arguments);
 
     // If we HAVE a new item, try to wield it.
-    if (object->beObjectOf(*this, subject))
+    if (lua.doSubjectActionObject(subject, *this, object))
     {
       /// @todo Figure out action time.
       return StateResult::Success();

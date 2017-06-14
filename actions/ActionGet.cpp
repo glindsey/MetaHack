@@ -4,14 +4,13 @@
 #include "ActionMove.h"
 #include "components/ComponentManager.h"
 #include "game/GameState.h"
+#include "lua/LuaObject.h"
 #include "services/IMessageLog.h"
 #include "services/Service.h"
 #include "systems/Manager.h"
 #include "systems/SystemNarrator.h"
 #include "systems/SystemGeometry.h"
 #include "utilities/Shortcuts.h"
-
-#include "entity/Entity.h" // needed for beObjectOf()
 
 namespace Actions
 {
@@ -76,6 +75,7 @@ namespace Actions
 
   StateResult ActionGet::doBeginWorkNVI(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
+    auto& lua = gameState.lua();
     auto& narrator = systems.narrator();
 
     /// @todo Handle getting a certain quantity of an item.
@@ -84,7 +84,7 @@ namespace Actions
     auto subject = getSubject();
     auto object = getObject();
 
-    if (object->beObjectOf(*this, subject))
+    if (lua.doSubjectActionObject(subject, *this, object))
     {
       putMsg(narrator.makeTr("YOU_CVERB_THE_FOO", arguments));
       if (systems.geometry().moveEntityInto(object, subject))

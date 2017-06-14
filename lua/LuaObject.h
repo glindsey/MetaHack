@@ -2,6 +2,10 @@
 // Lua enum binding modified from code Copyright (c) 2010 Tom Distler.
 
 // Forward declarations
+namespace Actions
+{
+  class Action;
+}
 class Color;
 class Direction;
 class EntityId;
@@ -207,6 +211,36 @@ public:
                            json const& args,
                            json default_result);
 
+  /// Call Lua function associated with a reflexive action.
+  /// 
+  /// @param subject  The subject of the action.
+  /// @param action   The action to be performed.
+  /// @return Bool indicating whether the action succeeded.
+  bool doReflexiveAction(EntityId subject, Actions::Action& action);
+
+  /// Call Lua action function given a subject and an object.
+  /// @param subject  The subject performing the action.
+  /// @param action   The action to be the target of.
+  /// @param object   The object of the action.
+  /// @return Bool indicating whether the action succeeded.
+  bool doSubjectActionObject(EntityId subject, Actions::Action& action, EntityId object);
+
+  /// Call Lua action function given a subject, object, and target.
+  /// @param subject  The subject performing the action.
+  /// @param action   The action to be the target of.
+  /// @param object   The object of the action.
+  /// @param target   The target of the action.
+  /// @return Bool indicating whether the action succeeded.
+  bool doSubjectActionObjectTarget(EntityId subject, Actions::Action& action, EntityId object, EntityId target);
+
+  /// Call Lua action function given a subject, object, and direction.
+  /// @param subject    The subject performing the action.
+  /// @param action     The action to be the target of.
+  /// @param object   The object of the action.
+  /// @param direction  The direction of the action.
+  /// @return Bool indicating whether the action succeeded.
+  bool doSubjectActionObjectDirection(EntityId subject, Actions::Action& action, EntityId object, Direction direction);
+
   /// Call a Lua property modifier function.
   /// Calls the Lua function `GROUP:modify_property_PROP[_SFX]()` where:
   ///   * GROUP is the Lua class responsible for the modifier
@@ -219,7 +253,7 @@ public:
   ///   * The value of the property before being modified.
   ///
   /// It returns the modified value of the property.
-  json call_modifier_function(std::string property_name,
+  json callModifierFunction(std::string property_name,
                               json unmodified_value,
                               EntityId affected_id,
                               std::string responsible_group,

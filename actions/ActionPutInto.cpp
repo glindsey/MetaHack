@@ -3,6 +3,7 @@
 #include "ActionPutInto.h"
 #include "components/ComponentManager.h"
 #include "game/GameState.h"
+#include "lua/LuaObject.h"
 #include "services/Service.h"
 #include "services/IMessageLog.h"
 #include "services/IStrings.h"
@@ -10,8 +11,6 @@
 #include "systems/SystemNarrator.h"
 #include "systems/SystemGeometry.h"
 #include "utilities/Shortcuts.h"
-
-#include "entity/Entity.h" /// still needed for do_() and beObjectOf()
 
 namespace Actions
 {
@@ -110,9 +109,10 @@ namespace Actions
     auto subject = getSubject();
     auto object = getObject();
     auto container = getTargetThing();
+    auto& lua = gameState.lua();
     auto& narrator = systems.narrator();
 
-    if (object->beObjectOf(*this, subject, container))
+    if (lua.doSubjectActionObject(subject, *this, container))
     {
       printMessageDo(systems, arguments);
 

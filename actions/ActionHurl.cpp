@@ -3,14 +3,13 @@
 #include "ActionHurl.h"
 #include "components/ComponentManager.h"
 #include "game/GameState.h"
+#include "lua/LuaObject.h"
 #include "services/IMessageLog.h"
 #include "services/Service.h"
 #include "systems/Manager.h"
 #include "systems/SystemNarrator.h"
 #include "systems/SystemGeometry.h"
 #include "utilities/Shortcuts.h"
-
-#include "entity/Entity.h" // needed for beObjectOf()
 
 namespace Actions
 {
@@ -44,6 +43,7 @@ namespace Actions
   StateResult ActionHurl::doBeginWorkNVI(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     auto& components = gameState.components();
+    auto& lua = gameState.lua();
     auto& narrator = systems.narrator();
     auto result = StateResult::Failure();
     std::string message;
@@ -52,7 +52,7 @@ namespace Actions
     auto direction = getTargetDirection();
     EntityId new_location = components.position.existsFor(subject) ? components.position.of(subject).parent() : EntityId::Mu();
 
-    if (object->beObjectOf(*this, subject, direction))
+    if (lua.doSubjectActionObjectDirection(subject, *this, object, direction))
     {
       if (systems.geometry().moveEntityInto(object, new_location))
       {

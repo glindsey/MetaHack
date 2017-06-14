@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include "ActionEat.h"
+#include "lua/LuaObject.h"
 #include "services/IMessageLog.h"
 #include "services/IStrings.h"
 #include "services/Service.h"
@@ -8,8 +9,6 @@
 #include "systems/Manager.h"
 #include "systems/SystemNarrator.h"
 #include "utilities/Shortcuts.h"
-
-#include "entity/Entity.h" // needed for beObjectOf()
 
 namespace Actions
 {
@@ -53,6 +52,7 @@ namespace Actions
   {
     auto subject = getSubject();
     auto object = getObject();
+    auto& lua = gameState.lua();
 
     printMessageBegin(systems, arguments);
 
@@ -61,7 +61,7 @@ namespace Actions
     ///       but were interrupted.
     /// @todo Figure out eating time. This will obviously vary based on the
     ///       object being eaten.
-    m_last_eat_result = object->beObjectOf(*this, subject);
+    m_last_eat_result = lua.doSubjectActionObject(subject, *this, object);
 
     if (m_last_eat_result)
     {

@@ -11,7 +11,6 @@
 #include "systems/SystemNarrator.h"
 #include "utilities/Shortcuts.h"
 
-#include "entity/Entity.h" // needed for beObjectOf()
 namespace Actions
 {
   ActionUse ActionUse::prototype;
@@ -70,13 +69,14 @@ namespace Actions
   StateResult ActionUse::doFinishWorkNVI(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     StateResult result = StateResult::Failure();
+    auto& lua = gameState.lua();
     auto subject = getSubject();
     auto object = getObject();
 
     printMessageFinish(systems, arguments);
 
     /// @todo Split use time into start/finish actions.
-    if (object->beObjectOf(*this, subject))
+    if (lua.doSubjectActionObject(subject, *this, object))
     {
       /// @todo Handle object destruction on use. (Lua script can do this.)
       //putTr("THE_FOO_DISINTEGRATES_AFTER_YOU_VERB");

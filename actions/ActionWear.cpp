@@ -2,14 +2,13 @@
 
 #include "ActionWear.h"
 #include "components/ComponentManager.h"
+#include "lua/LuaObject.h"
 #include "services/IMessageLog.h"
 #include "services/IStrings.h"
 #include "services/Service.h"
 #include "systems/Manager.h"
 #include "systems/SystemNarrator.h"
 #include "utilities/Shortcuts.h"
-
-#include "entity/Entity.h" // still needed for beObjectOf()
 
 namespace Actions
 {
@@ -77,11 +76,12 @@ namespace Actions
 
   StateResult ActionWear::doBeginWorkNVI(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
+    auto& lua = gameState.lua();
     auto subject = getSubject();
     auto object = getObject();
 
     // Do the action here.
-    if (object->beObjectOf(*this, subject))
+    if (lua.doSubjectActionObject(subject, *this, object))
     {
       /// @todo Figure out action time.
       return StateResult::Success();

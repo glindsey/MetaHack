@@ -5,6 +5,7 @@
 #include "ActionAttack.h"
 #include "components/ComponentManager.h"
 #include "game/GameState.h"
+#include "lua/LuaObject.h"
 #include "map/Map.h"
 #include "services/Service.h"
 #include "services/IMessageLog.h"
@@ -14,8 +15,6 @@
 #include "systems/SystemNarrator.h"
 #include "systems/SystemGeometry.h"
 #include "utilities/Shortcuts.h"
-
-#include "entity/Entity.h" // needed for beObjectOf()
 
 namespace Actions
 {
@@ -50,6 +49,7 @@ namespace Actions
     return StateResult::Success();
   }
 
+  /// @todo Should have a call to Lua::doReflexiveAction() in here somewhere.
   StateResult ActionMove::doBeginWorkNVI(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     auto& components = gameState.components();

@@ -3,6 +3,7 @@
 #include "ActionDrop.h"
 #include "components/ComponentManager.h"
 #include "game/GameState.h"
+#include "lua/LuaObject.h"
 #include "services/IMessageLog.h"
 #include "services/IStrings.h"
 #include "services/Service.h"
@@ -10,8 +11,6 @@
 #include "systems/SystemNarrator.h"
 #include "systems/SystemGeometry.h"
 #include "utilities/Shortcuts.h"
-
-#include "entity/Entity.h" // needed for beObjectOf()
 
 namespace Actions
 {
@@ -56,6 +55,7 @@ namespace Actions
   StateResult ActionDrop::doBeginWorkNVI(GameState& gameState, Systems::Manager& systems, json& arguments)
   {
     auto& components = gameState.components();
+    auto& lua = gameState.lua();
     auto& narrator = systems.narrator();
     StateResult result = StateResult::Failure();
     std::string message;
@@ -80,7 +80,7 @@ namespace Actions
       if (components.inventory.existsFor(location) &&
           components.inventory.of(location).canContain(object))
       {
-        if (object->beObjectOf(*this, subject))
+        if (lua.doSubjectActionObject(subject, *this, object))
         {
           printMessageDo(systems, arguments);
 
@@ -99,7 +99,7 @@ namespace Actions
         }
         else // Drop failed
         {
-          // beObjectOf() will print any relevant messages
+          // doSubjectActionObject() will print any relevant messages
         }
       }
       else // can't contain the entity

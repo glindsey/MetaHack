@@ -26,7 +26,7 @@ Standard2DGraphicViews::~Standard2DGraphicViews()
 {
 }
 
-EntityView* Standard2DGraphicViews::createEntityView(Entity& entity)
+EntityView* Standard2DGraphicViews::createEntityView(EntityId entity)
 {
   return NEW EntityStandard2DView(entity, getTileSheet());
 }

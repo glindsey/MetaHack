@@ -44,55 +44,6 @@ public:
   /// Return a reference to this entity.
   EntityId getId() const;
 
-  /// Perform an action when this entity collides with another entity.
-  void perform_action_collide_with(EntityId entity);
-
-  /// Perform an action when this entity collides with a wall.
-  void perform_action_collide_with_wall(Direction d, std::string tile_type);
-
-  /// Perform the effects of being the subject of a particular action.
-  /// This is typically called on intransitive verbs (ones that do not take
-  /// an object); "die" is a good example. You can't "die something" (though
-  /// you can "dye something" but that's beside the point), so this would be
-  /// an appropriate method to call.
-  /// 
-  /// @param action   The action to be the target of.
-  /// @return Bool indicating whether the action succeeded.
-  bool do_(Actions::Action& action);
-
-  /// Perform the effects of being a object of a particular action.
-  /// @param action   The action to be the target of.
-  /// @param subject  The subject performing the action.
-  /// @return Bool indicating whether the action succeeded.
-  bool beObjectOf(Actions::Action& action, EntityId subject);
-
-  /// Perform the effects of being a object of an action with a target.
-  /// @param action   The action to be the target of.
-  /// @param subject  The subject performing the action.
-  /// @param target   The target of the action.
-  /// @return Bool indicating whether the action succeeded.
-  bool beObjectOf(Actions::Action& action, EntityId subject, EntityId target);
-
-  /// Perform the effects of being a object of an action with a direction.
-  /// @param action     The action to be the target of.
-  /// @param subject    The subject performing the action.
-  /// @param direction  The direction of the action.
-  /// @return Bool indicating whether the action succeeded.
-  bool beObjectOf(Actions::Action& action, EntityId subject, Direction direction);
-
-  /// Perform an action when this entity is hit by an attack.
-  bool be_hurt_by(EntityId subject);
-
-  /// Perform an action when this entity is used to hit a target.
-  /// This action executes when the entity is wielded by an entity, and an
-  /// attack successfully hits its target.  It is a side-effect in addition
-  /// to the damage done by the attack action.
-  bool be_used_to_attack(EntityId subject, EntityId target);
-
-  /// Returns whether the Entity can merge with another Entity.
-  /// Calls an overridden subclass function.
-  bool can_merge_with(EntityId other) const;
-
 protected:
   /// Named Constructor
   Entity(GameState& state, std::string category, EntityId ref);
