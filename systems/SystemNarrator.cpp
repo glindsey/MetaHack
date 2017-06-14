@@ -4,7 +4,7 @@
 
 //#include "entity/Entity.h"
 #include "entity/EntityId.h"
-#include "Service.h"
+#include "services/Service.h"
 #include "services/IConfigSettings.h"
 #include "services/IGameRules.h"
 #include "services/IStringDictionary.h"

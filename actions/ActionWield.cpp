@@ -6,7 +6,7 @@
 #include "components/ComponentManager.h"
 #include "services/IMessageLog.h"
 #include "services/IStringDictionary.h"
-#include "Service.h"
+#include "services/Service.h"
 #include "systems/Manager.h"
 #include "systems/SystemDirector.h"
 #include "systems/SystemNarrator.h"

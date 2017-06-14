@@ -4,7 +4,7 @@
 
 #include <string>
 
-#include "Service.h"
+#include "services/Service.h"
 #include "services/IMessageLog.h"
 #include "services/IStringDictionary.h"
 

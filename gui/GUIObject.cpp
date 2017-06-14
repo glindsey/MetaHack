@@ -7,7 +7,7 @@
 #include "AssertHelper.h"
 #include "game/App.h"
 #include "services/IConfigSettings.h"
-#include "Service.h"
+#include "services/Service.h"
 #include "types/Color.h"
 #include "utilities/CommonFunctions.h"
 #include "utilities/MathUtils.h"
@@ -172,7 +172,7 @@ namespace metagui
     }
 
     // Texture size should be the nearest power-of-2, for speed.
-    UintVec2 newTextureSize{ nextPowerOfTwo(size.x), nextPowerOfTwo(size.y) };
+    UintVec2 newTextureSize{ Math::nextPowerOfTwo(size.x), Math::nextPowerOfTwo(size.y) };
     if (newTextureSize != m_bgTextureSize)
     {
       m_bgTextureSize = newTextureSize;

@@ -20,7 +20,7 @@
 #include "map/MapFactory.h"
 #include "map/MapStandard2DView.h"
 #include "maptile/MapTile.h"
-#include "Service.h"
+#include "services/Service.h"
 #include "services/IConfigSettings.h"
 #include "services/IGameRules.h"
 #include "services/Standard2DGraphicViews.h"

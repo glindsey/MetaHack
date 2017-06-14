@@ -18,12 +18,13 @@ extern "C"
 #include "entity/Entity.h"
 #include "entity/EntityId.h"
 #include "lua/LuaObject.h"
-#include "Service.h"
+#include "services/Service.h"
 #include "services/IGameRules.h"
 #include "systems/Manager.h"
 #include "systems/SystemDirector.h"
 #include "systems/SystemGeometry.h"
 #include "systems/SystemJanitor.h"
+#include "systems/SystemLuaLiaison.h"
 
 namespace LuaFunctions
 {
@@ -31,6 +32,7 @@ namespace LuaFunctions
   int entity_create(lua_State* L)
   {
     auto& gameState = Systems::LuaLiaison::gameState();
+    auto& systems = Systems::LuaLiaison::systems();
 
     bool success = false;
     EntityId newEntity;
@@ -53,7 +55,7 @@ namespace LuaFunctions
     if (is_creatable)
     {
       newEntity = gameState.entities().create(newEntityType);
-      success = SYSTEMS.geometry().moveEntityInto(newEntity, entity);
+      success = systems.geometry().moveEntityInto(newEntity, entity);
 
       if (success && (num_args > 2))
       {

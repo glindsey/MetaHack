@@ -22,8 +22,6 @@ class MapTileStandard2DView : public MapTileView
 
 public:
 
-  //virtual bool render(sf::RenderTexture& texture, int frame) override;
-
   virtual std::string getViewName() override;
 
 protected:

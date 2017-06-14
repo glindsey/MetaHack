@@ -8,7 +8,7 @@
 #include "game/App.h"
 #include "game/GameState.h"
 #include "map/Map.h"
-#include "Service.h"
+#include "services/Service.h"
 #include "services/IConfigSettings.h"
 #include "services/IGameRules.h"
 #include "types/Color.h"

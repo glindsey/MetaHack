@@ -4,7 +4,7 @@
 
 #include "game/GameState.h" // needed for LUA
 #include "lua/LuaObject.h"
-#include "Service.h"
+#include "services/Service.h"
 #include "services/IGraphicViews.h"
 #include "utilities/JSONUtils.h"
 #include "utilities/StringTransforms.h"

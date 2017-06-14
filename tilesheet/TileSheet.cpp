@@ -45,8 +45,8 @@ UintVec2 TileSheet::load_collection(FileName const& filename)
   UintVec2 image_size = image.getSize();
 
   UintVec2 image_size_in_tiles =
-    UintVec2(divide_and_round_up(image_size.x, m_tileSize),
-          divide_and_round_up(image_size.y, m_tileSize));
+    UintVec2(Math::divideAndRoundUp(image_size.x, m_tileSize),
+             Math::divideAndRoundUp(image_size.y, m_tileSize));
 
   UintVec2 free_coords = find_unused_area(image_size_in_tiles);
 
@@ -70,7 +70,7 @@ sf::IntRect TileSheet::getTile(UintVec2 tile) const
     (rect.left + rect.width >= static_cast<int>(m_texture.getSize().x)) ||
       (rect.top + rect.height >= static_cast<int>(m_texture.getSize().y)))
   {
-    CLOG(ERROR, "TileSheet") << "Request for tile (" << tile.x << ", " << tile.y << ") is out of bounds on the sprite sheet!";
+    CLOG(ERROR, "TileSheet") << "Request for tile (" << tile.x << ", " << tile.y << ") is out of bounded on the sprite sheet!";
   }
 #endif // DEBUG
 

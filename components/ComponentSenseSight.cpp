@@ -71,7 +71,7 @@ namespace Components
     }
     else
     {
-      CLOG(WARNING, "SenseSight") << "Requested coordinates were out-of-bounds";
+      CLOG(WARNING, "SenseSight") << "Requested coordinates were out-of-bounded";
       return false;
     }
   }

@@ -6,7 +6,7 @@
 #include "keybuffer/IKeyBuffer.h"
 #include "services/IConfigSettings.h"
 #include "services/IMessageLog.h"
-#include "Service.h"
+#include "services/Service.h"
 #include "types/Color.h"
 
 MessageLogView::MessageLogView(std::string name,

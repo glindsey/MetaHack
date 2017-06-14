@@ -170,7 +170,7 @@ namespace Systems
       return false;
     }
 
-    return adjacent(firstPosition.coords(), secondPosition.coords());
+    return Math::adjacent(firstPosition.coords(), secondPosition.coords());
   }
 
   void Geometry::setMap_V(MapID newMap)

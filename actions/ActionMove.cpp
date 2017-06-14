@@ -6,7 +6,7 @@
 #include "components/ComponentManager.h"
 #include "game/GameState.h"
 #include "map/Map.h"
-#include "Service.h"
+#include "services/Service.h"
 #include "services/IMessageLog.h"
 #include "services/IStringDictionary.h"
 #include "systems/Manager.h"

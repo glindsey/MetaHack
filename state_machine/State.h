@@ -42,7 +42,7 @@ protected:
 
 private:
   // State machine that this state belongs to.
-  StateMachine& m_state_machine;
+  StateMachine& m_stateMachine;
 };
 
 #endif // STATE_H

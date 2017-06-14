@@ -10,7 +10,7 @@
 #include "game/GameState.h"
 #include "services/IStringDictionary.h"
 #include "services/MessageLog.h"
-#include "Service.h"
+#include "services/Service.h"
 #include "systems/Manager.h"
 #include "systems/SystemNarrator.h"
 #include "systems/SystemGeometry.h"

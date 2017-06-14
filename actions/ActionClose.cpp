@@ -4,7 +4,7 @@
 #include "components/ComponentManager.h"
 #include "services/IMessageLog.h"
 #include "services/IStringDictionary.h"
-#include "Service.h"
+#include "services/Service.h"
 #include "utilities/Shortcuts.h"
 
 namespace Actions

@@ -9,7 +9,7 @@
 #include "game/GameState.h"
 #include "entity/EntityFactory.h"
 #include "maptile/MapTile.h"
-#include "Service.h"
+#include "services/Service.h"
 #include "services/IGameRules.h"
 #include "types/Color.h"
 #include "types/LightInfluence.h"

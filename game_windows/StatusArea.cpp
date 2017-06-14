@@ -9,7 +9,7 @@
 #include "game/GameState.h"
 #include "gui/GUILabel.h"
 #include "services/IConfigSettings.h"
-#include "Service.h"
+#include "services/Service.h"
 #include "systems/Manager.h"
 #include "systems/SystemChoreographer.h"
 #include "systems/SystemTimekeeper.h"

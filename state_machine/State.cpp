@@ -11,7 +11,7 @@ State::State(StateMachine& state_machine,
   :
   RenderableToTexture(),
   Object(events, name),
-  m_state_machine{ state_machine }
+  m_stateMachine{ state_machine }
 {}
 
 State::~State()
@@ -20,13 +20,13 @@ State::~State()
 bool State::change_to(std::string const& new_state)
 {
   // Ask the state machine to change to the requested state.
-  if (m_state_machine.change_to(new_state))
+  if (m_stateMachine.change_to(new_state))
   {
     return true;
   }
   else
   {
-    CLOG(ERROR, "StateMachine") << "State machine \"" << m_state_machine.getName() <<
+    CLOG(ERROR, "StateMachine") << "State machine \"" << m_stateMachine.getName() <<
       "\" could not change to new state \"" << getName() << "\"";
     return false;
   }
@@ -34,5 +34,5 @@ bool State::change_to(std::string const& new_state)
 
 StateMachine & State::getStateMachine()
 {
-  return m_state_machine;
+  return m_stateMachine;
 }

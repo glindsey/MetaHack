@@ -4,7 +4,7 @@
 #include "entity/EntityStandard2DView.h"
 #include "game/GameState.h"
 #include "map/Map.h"
-#include "Service.h"
+#include "services/Service.h"
 #include "services/IConfigSettings.h"
 #include "systems/SystemLighting.h"
 #include "tilesheet/TileSheet.h"

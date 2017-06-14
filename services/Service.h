@@ -31,8 +31,9 @@ protected:
 
 private:
   /// Get/set a static member.
-  /// Massive kludge, but allows for static data to be initialized in the
-  /// header file instead of a source file.
+  /// Using one method for both of these is a massive kludge, but allows for 
+  /// static data to be initialized in the header file instead of needing a 
+  /// separate source file.
   static ServiceInterface& serviceInstance(ServiceInterface* service_ = nullptr, bool setValue = false)
   {
     static std::unique_ptr<ServiceInterface> service;
@@ -51,3 +52,15 @@ private:
   }
   
 };
+
+/// Little template function so you don't have to type Service<IXXXXX>::get() 
+/// to get a service each time.
+/// This lets you type `S<IXXXX>()` instead, which is still clunky, but a bit
+/// shorter.
+template <typename ServiceInterface>
+ServiceInterface& S()
+{
+  return Service<ServiceInterface>::get();
+}
+
+

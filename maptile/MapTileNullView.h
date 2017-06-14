@@ -14,8 +14,6 @@ class MapTileNullView : public MapTileView
   friend class NullGraphicViews;
 
 public:
-  //virtual bool render(sf::RenderTexture& texture, int frame) override;
-
   virtual std::string getViewName() override;
 
 protected:

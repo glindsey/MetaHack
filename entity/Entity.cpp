@@ -15,7 +15,7 @@
 #include "game/GameState.h"
 #include "map/Map.h"
 #include "maptile/MapTile.h"
-#include "Service.h"
+#include "services/Service.h"
 #include "services/IConfigSettings.h"
 #include "services/IGameRules.h"
 #include "services/IMessageLog.h"

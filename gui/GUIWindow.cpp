@@ -9,7 +9,7 @@
 
 #include "game/App.h"
 #include "services/IConfigSettings.h"
-#include "Service.h"
+#include "services/Service.h"
 #include "types/Color.h"
 
 namespace metagui

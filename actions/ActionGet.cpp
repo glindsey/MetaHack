@@ -5,7 +5,7 @@
 #include "components/ComponentManager.h"
 #include "game/GameState.h"
 #include "services/IMessageLog.h"
-#include "Service.h"
+#include "services/Service.h"
 #include "systems/Manager.h"
 #include "systems/SystemNarrator.h"
 #include "systems/SystemGeometry.h"

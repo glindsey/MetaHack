@@ -15,6 +15,6 @@ function GameObject_get_tile_offset(id, frame)
 end
 
 function GameObject_on_create(id)
-    --messageLog_add("GameObject.on_create() called, new ID = " .. id)
+    --message("GameObject.on_create() called, new ID = " .. id)
     return true, LuaType.Boolean
 end

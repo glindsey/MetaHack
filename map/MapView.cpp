@@ -5,7 +5,7 @@
 #include "game/App.h"
 #include "game/GameState.h"
 #include "services/IConfigSettings.h"
-#include "Service.h"
+#include "services/Service.h"
 
 MapView::MapView(std::string name, Map& map, UintVec2 size)
   :

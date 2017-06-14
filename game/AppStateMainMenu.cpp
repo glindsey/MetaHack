@@ -19,9 +19,9 @@ AppStateMainMenu::~AppStateMainMenu()
 void AppStateMainMenu::execute()
 {}
 
-//SFMLEventResult AppStateMainMenu::handle_sfml_event(sf::Event& event)
+//SFMLEventResult AppStateMainMenu::handleSFMLEvent(sf::Event& event)
 //{
-//  SFMLEventResult result = the_desktop.handle_sfml_event(event);
+//  SFMLEventResult result = the_desktop.handleSFMLEvent(event);
 //
 //  if (result != SFMLEventResult::Handled)
 //  {

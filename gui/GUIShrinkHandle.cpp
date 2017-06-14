@@ -4,7 +4,7 @@
 
 #include "game/App.h"
 #include "services/IConfigSettings.h"
-#include "Service.h"
+#include "services/Service.h"
 
 namespace metagui
 {

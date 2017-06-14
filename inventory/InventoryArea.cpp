@@ -10,7 +10,7 @@
 #include "game/GameState.h"
 #include "inventory/InventorySelection.h"
 #include "maptile/MapTile.h"
-#include "Service.h"
+#include "services/Service.h"
 #include "services/IConfigSettings.h"
 #include "services/IGraphicViews.h"
 #include "systems/Manager.h"

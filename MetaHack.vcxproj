@@ -350,11 +350,12 @@
     <ClInclude Include="design_patterns\AssertHelper.h" />
     <ClInclude Include="design_patterns\Event.h" />
     <ClInclude Include="design_patterns\Serializable.h" />
-    <ClInclude Include="design_patterns\Service.h" />
+    <ClInclude Include="services\Service.h" />
     <ClInclude Include="design_patterns\Object.h" />
     <ClInclude Include="design_patterns\Visitor.h" />
     <ClInclude Include="events\UIEvents.h" />
     <ClInclude Include="lua\LuaFunctions-Entity.h" />
+    <ClInclude Include="lua\LuaFunctions-Global.h" />
     <ClInclude Include="lua\LuaTemplates.h" />
     <ClInclude Include="map\MapMemory.h" />
     <ClInclude Include="services\FileSystemGameRules.h" />
@@ -376,6 +377,7 @@
     <ClInclude Include="systems\Base.h" />
     <ClInclude Include="systems\CRTP.h" />
     <ClInclude Include="systems\SystemDirector.h" />
+    <ClInclude Include="systems\SystemFluidics.h" />
     <ClInclude Include="systems\SystemGrimReaper.h" />
     <ClInclude Include="systems\SystemJanitor.h" />
     <ClInclude Include="systems\SystemLighting.h" />
@@ -659,6 +661,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">Use</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="systems\SystemFluidics.cpp" />
     <ClCompile Include="systems\SystemGrimReaper.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
@@ -756,6 +759,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="utilities\MathUtils.cpp" />
     <ClCompile Include="utilities\StringTransforms.cpp" />
     <ClCompile Include="tilesheet\TileSheet.cpp" />
   </ItemGroup>
@@ -898,9 +902,6 @@
     <Font Include="resources\font\OptimusPrincepsSemiBold.ttf" />
     <Font Include="resources\font\Servus_text_display_italic.ttf" />
     <Font Include="resources\font\unifont-8.0.01.ttf" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="text\Data Layout Brainstorming.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

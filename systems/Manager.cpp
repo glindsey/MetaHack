@@ -5,6 +5,7 @@
 #include "components/ComponentManager.h"
 #include "systems/SystemChoreographer.h"
 #include "systems/SystemDirector.h"
+#include "systems/SystemFluidics.h"
 #include "systems/SystemGeometry.h"
 #include "systems/SystemGrimReaper.h"
 #include "systems/SystemJanitor.h"
@@ -36,6 +37,8 @@ namespace Systems
     m_choreographer.reset(NEW Choreographer(components.globals));
 
     m_director.reset(NEW Director(m_gameState, *this));
+
+    m_fluidics.reset(NEW Fluidics());
 
     m_geometry.reset(NEW Geometry(components.globals,
                                   components.inventory,
@@ -107,6 +110,7 @@ namespace Systems
     //m_senseTouch->doCycleUpdate();
     m_geometry->doCycleUpdate();
     m_mechanics->doCycleUpdate();
+    m_fluidics->doCycleUpdate();
     m_thermodynamics->doCycleUpdate();
 
     m_grimReaper->doCycleUpdate();

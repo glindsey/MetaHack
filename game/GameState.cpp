@@ -9,7 +9,7 @@
 #include "lua/LuaObject.h"
 #include "map/Map.h"
 #include "map/MapFactory.h"
-#include "Service.h"
+#include "services/Service.h"
 #include "services/IGraphicViews.h"
 #include "utilities/JSONUtils.h"
 
@@ -40,12 +40,6 @@ void GameState::initialize(json const& j)
 
   // Create the Lua state.
   m_lua.reset(NEW Lua());
-
-  // Register Lua functions.
-  m_lua->register_function("app_get_frame_counter", App::LUA_get_frame_counter);
-  //m_lua->register_function("print", App::LUA_redirect_print);
-  m_lua->register_function("messageLog_add", App::LUA_add);
-  m_lua->register_function("get_config", App::LUA_get_config);
 
   if (j.is_object() && j.size() != 0)
   {

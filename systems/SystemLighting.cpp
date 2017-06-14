@@ -195,7 +195,7 @@ namespace Systems
     auto& lightCoords = lightPosition.coords();
     if (lightData.lit())
     {
-      float dist_squared = static_cast<float>(calc_vis_distance(tileCoords, lightCoords));
+      float dist_squared = static_cast<float>(Math::distSquared(tileCoords, lightCoords));
 
       Color addColor{ 0, 0, 0, 255 };
 
@@ -413,74 +413,74 @@ namespace Systems
     case 1:
       new_coords.x = static_cast<int>(rint(static_cast<float>(origin.x) - (slope_A * static_cast<float>(depth))));
       new_coords.y = origin.y - depth;
-      loop_condition = [](RealVec2 a, RealVec2 b, float c) { return calc_slope(a, b) >= c; };
+      loop_condition = [](RealVec2 a, RealVec2 b, float c) { return Math::slope(a, b) >= c; };
       dir = Direction::West;
-      recurse_slope = [](RealVec2 a, RealVec2 b) { return calc_slope(a + Direction::Southwest.half(), b); };
-      loop_slope = [](RealVec2 a, RealVec2 b) { return calc_slope(a + Direction::Northwest.half(), b); };
+      recurse_slope = [](RealVec2 a, RealVec2 b) { return Math::slope(a + Direction::Southwest.half(), b); };
+      loop_slope = [](RealVec2 a, RealVec2 b) { return Math::slope(a + Direction::Northwest.half(), b); };
       break;
 
     case 2:
       new_coords.x = static_cast<int>(rint(static_cast<float>(origin.x) + (slope_A * static_cast<float>(depth))));
       new_coords.y = origin.y - depth;
-      loop_condition = [](RealVec2 a, RealVec2 b, float c) { return calc_slope(a, b) <= c; };
+      loop_condition = [](RealVec2 a, RealVec2 b, float c) { return Math::slope(a, b) <= c; };
       dir = Direction::East;
-      recurse_slope = [](RealVec2 a, RealVec2 b) { return calc_slope(a + Direction::Southeast.half(), b); };
-      loop_slope = [](RealVec2 a, RealVec2 b) { return -calc_slope(a + Direction::Northeast.half(), b); };
+      recurse_slope = [](RealVec2 a, RealVec2 b) { return Math::slope(a + Direction::Southeast.half(), b); };
+      loop_slope = [](RealVec2 a, RealVec2 b) { return -Math::slope(a + Direction::Northeast.half(), b); };
       break;
 
     case 3:
       new_coords.x = origin.x + depth;
       new_coords.y = static_cast<int>(rint(static_cast<float>(origin.y) - (slope_A * static_cast<float>(depth))));
-      loop_condition = [](RealVec2 a, RealVec2 b, float c) { return calc_inv_slope(a, b) <= c; };
+      loop_condition = [](RealVec2 a, RealVec2 b, float c) { return Math::invSlope(a, b) <= c; };
       dir = Direction::North;
-      recurse_slope = [](RealVec2 a, RealVec2 b) { return calc_inv_slope(a + Direction::Northwest.half(), b); };
-      loop_slope = [](RealVec2 a, RealVec2 b) { return -calc_inv_slope(a + Direction::Northeast.half(), b); };
+      recurse_slope = [](RealVec2 a, RealVec2 b) { return Math::invSlope(a + Direction::Northwest.half(), b); };
+      loop_slope = [](RealVec2 a, RealVec2 b) { return -Math::invSlope(a + Direction::Northeast.half(), b); };
       break;
 
     case 4:
       new_coords.x = origin.x + depth;
       new_coords.y = static_cast<int>(rint(static_cast<float>(origin.y) + (slope_A * static_cast<float>(depth))));
-      loop_condition = [](RealVec2 a, RealVec2 b, float c) { return calc_inv_slope(a, b) >= c; };
+      loop_condition = [](RealVec2 a, RealVec2 b, float c) { return Math::invSlope(a, b) >= c; };
       dir = Direction::South;
-      recurse_slope = [](RealVec2 a, RealVec2 b) { return calc_inv_slope(a + Direction::Southwest.half(), b); };
-      loop_slope = [](RealVec2 a, RealVec2 b) { return calc_inv_slope(a + Direction::Southeast.half(), b); };
+      recurse_slope = [](RealVec2 a, RealVec2 b) { return Math::invSlope(a + Direction::Southwest.half(), b); };
+      loop_slope = [](RealVec2 a, RealVec2 b) { return Math::invSlope(a + Direction::Southeast.half(), b); };
       break;
 
     case 5:
       new_coords.x = static_cast<int>(rint(static_cast<float>(origin.x) + (slope_A * static_cast<float>(depth))));
       new_coords.y = origin.y + depth;
-      loop_condition = [](RealVec2 a, RealVec2 b, float c) { return calc_slope(a, b) >= c; };
+      loop_condition = [](RealVec2 a, RealVec2 b, float c) { return Math::slope(a, b) >= c; };
       dir = Direction::East;
-      recurse_slope = [](RealVec2 a, RealVec2 b) { return calc_slope(a + Direction::Northeast.half(), b); };
-      loop_slope = [](RealVec2 a, RealVec2 b) { return calc_slope(a + Direction::Southeast.half(), b); };
+      recurse_slope = [](RealVec2 a, RealVec2 b) { return Math::slope(a + Direction::Northeast.half(), b); };
+      loop_slope = [](RealVec2 a, RealVec2 b) { return Math::slope(a + Direction::Southeast.half(), b); };
       break;
 
     case 6:
       new_coords.x = static_cast<int>(rint(static_cast<float>(origin.x) - (slope_A * static_cast<float>(depth))));
       new_coords.y = origin.y + depth;
-      loop_condition = [](RealVec2 a, RealVec2 b, float c) { return calc_slope(a, b) <= c; };
+      loop_condition = [](RealVec2 a, RealVec2 b, float c) { return Math::slope(a, b) <= c; };
       dir = Direction::West;
-      recurse_slope = [](RealVec2 a, RealVec2 b) { return calc_slope(a + Direction::Northwest.half(), b); };
-      loop_slope = [](RealVec2 a, RealVec2 b) { return -calc_slope(a + Direction::Southwest.half(), b); };
+      recurse_slope = [](RealVec2 a, RealVec2 b) { return Math::slope(a + Direction::Northwest.half(), b); };
+      loop_slope = [](RealVec2 a, RealVec2 b) { return -Math::slope(a + Direction::Southwest.half(), b); };
       break;
 
     case 7:
       new_coords.x = origin.x - depth;
       new_coords.y = static_cast<int>(rint(static_cast<float>(origin.y) + (slope_A * static_cast<float>(depth))));
-      loop_condition = [](RealVec2 a, RealVec2 b, float c) { return calc_inv_slope(a, b) <= c; };
+      loop_condition = [](RealVec2 a, RealVec2 b, float c) { return Math::invSlope(a, b) <= c; };
       dir = Direction::South;
-      recurse_slope = [](RealVec2 a, RealVec2 b) { return calc_inv_slope(a + Direction::Southeast.half(), b); };
-      loop_slope = [](RealVec2 a, RealVec2 b) { return -calc_inv_slope(a + Direction::Southwest.half(), b); };
+      recurse_slope = [](RealVec2 a, RealVec2 b) { return Math::invSlope(a + Direction::Southeast.half(), b); };
+      loop_slope = [](RealVec2 a, RealVec2 b) { return -Math::invSlope(a + Direction::Southwest.half(), b); };
       break;
 
     case 8:
       new_coords.x = origin.x - depth;
       new_coords.y = static_cast<int>(rint(static_cast<float>(origin.y) - (slope_A * static_cast<float>(depth))));
 
-      loop_condition = [](RealVec2 a, RealVec2 b, float c) { return calc_inv_slope(a, b) >= c; };
+      loop_condition = [](RealVec2 a, RealVec2 b, float c) { return Math::invSlope(a, b) >= c; };
       dir = Direction::North;
-      recurse_slope = [](RealVec2 a, RealVec2 b) { return calc_inv_slope(a + Direction::Northeast.half(), b); };
-      loop_slope = [](RealVec2 a, RealVec2 b) { return calc_inv_slope(a + Direction::Northwest.half(), b); };
+      recurse_slope = [](RealVec2 a, RealVec2 b) { return Math::invSlope(a + Direction::Northeast.half(), b); };
+      loop_slope = [](RealVec2 a, RealVec2 b) { return Math::invSlope(a + Direction::Northwest.half(), b); };
       break;
 
     default:
@@ -488,9 +488,9 @@ namespace Systems
     }
 
     auto& map = m_gameState.maps().get(currentMap);
-    while (loop_condition(to_v2f(new_coords), to_v2f(origin), slope_B))
+    while (loop_condition(Math::toRealVec2(new_coords), Math::toRealVec2(origin), slope_B))
     {
-      if (calc_vis_distance(new_coords, origin) <= max_depth_squared)
+      if (Math::distSquared(new_coords, origin) <= max_depth_squared)
       {
         if (map.getTile(new_coords).isTotallyOpaque())
         {
@@ -499,14 +499,14 @@ namespace Systems
             doRecursiveLighting(source, origin,
                                 max_depth_squared,
                                 octant, depth + 1,
-                                slope_A, recurse_slope(to_v2f(new_coords), to_v2f(origin)));
+                                slope_A, recurse_slope(Math::toRealVec2(new_coords), Math::toRealVec2(origin)));
           }
         }
         else
         {
           if (map.getTile(new_coords + (IntVec2)dir).isTotallyOpaque())
           {
-            slope_A = loop_slope(to_v2f(new_coords), to_v2f(origin));
+            slope_A = loop_slope(Math::toRealVec2(new_coords), Math::toRealVec2(origin));
           }
         }
 

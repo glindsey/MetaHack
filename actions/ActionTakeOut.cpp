@@ -3,7 +3,7 @@
 #include "ActionTakeOut.h"
 #include "components/ComponentManager.h"
 #include "game/GameState.h"
-#include "Service.h"
+#include "services/Service.h"
 #include "services/IMessageLog.h"
 #include "services/IStringDictionary.h"
 #include "systems/Manager.h"

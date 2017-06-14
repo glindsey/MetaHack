@@ -152,7 +152,7 @@ namespace Components
       return false;
     }
 
-    return adjacent(m_coords, otherPosition.m_coords);
+    return Math::adjacent(m_coords, otherPosition.m_coords);
   }
 
 } // end namespace

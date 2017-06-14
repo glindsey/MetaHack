@@ -8,7 +8,7 @@
 #include "types/Direction.h"
 #include "types/Color.h"
 #include "types/Gender.h"
-#include "Service.h"
+#include "services/Service.h"
 #include "services/IGameRules.h"
 
 Lua::Lua()

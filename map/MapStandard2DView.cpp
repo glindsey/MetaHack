@@ -2,7 +2,7 @@
 
 #include "map/MapStandard2DView.h"
 #include "maptile/MapTileStandard2DView.h"
-#include "Service.h"
+#include "services/Service.h"
 #include "services/IConfigSettings.h"
 #include "tilesheet/TileSheet.h"
 #include "types/ShaderEffect.h"

@@ -20,9 +20,9 @@ Refactoring "can-" flags
 ========================
 * = implemented, / = partially implemented
 
+Senses                                              
             Subject Needs                         | Object Needs                        | Notes
             ======================================| =================================== | =============================================
-Senses                                              
 feel        sense-touch                           | physical(solid)                     |
 hear        sense-hearing                         | [emits sound]                       |
 see         sense-sight                           | appearance(not transparent)         |
@@ -30,6 +30,8 @@ smell       sense-smell                           | [emits smell]               
 taste       sense-taste                           | [has taste]                         |
                                                   
 Involuntary/reflexive actions                     
+            Subject Needs                         | Object Needs                        | Notes
+            ======================================| =================================== | =============================================
 bleed       
 boil        temperature(hot)                      | physical(liquid)                    | result is vapor, possible explosions
 burn        temperature(hot)                      | physical(solid/liquid), oxidizable  | result is ash/smoke/char?
@@ -44,6 +46,8 @@ rust        physical(liquid), oxidizer            | physical(solid), oxidizable 
 wet         physical(liquid)                      | physical(solid)                     |
 
 Instinctual actions:
+            Subject Needs                         | Object Needs                        | Notes
+            ======================================| =================================== | =============================================
 attack      instinct                              | health                              | (attack with a weapon)
 bite        instinct, bodyparts[teeth]            | health                              |
 disrobe     *instinct                             | wearable(worn)                      |
@@ -60,6 +64,8 @@ throw       instinct, bodyparts[prehensile]       | movable, physical(solid)    
 unwield     *instinct                             | physical(solid), wielded            |
 
 Sapient (requiring thought) actions:
+            Subject Needs                         | Object Needs                        | Notes
+            ======================================| =================================== | =============================================
 close       *sapience, bodyparts[prehensile]      | physical(solid), openable, open     |
 lock        *sapience, bodyparts[prehensile]      | physical(solid), lockable, unlocked |
 open        *sapience, bodyparts[prehensile]      | physical(solid), openable, closed   |

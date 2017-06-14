@@ -7,6 +7,7 @@
 #include "systems/Manager.h"
 
 #include "lua/LuaFunctions-Entity.h"
+#include "lua/LuaFunctions-Global.h"
 
 namespace Systems
 {
@@ -19,6 +20,7 @@ namespace Systems
   {
     s_gameState = &gameState;
     s_systems = &systems;
+    LuaFunctions::registerFunctionsGlobal(gameState.lua());
     LuaFunctions::registerFunctionsEntity(gameState.lua());
   }
 

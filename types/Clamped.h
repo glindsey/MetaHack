@@ -19,10 +19,10 @@ public:
   Clamped8(uint8_t value) : m_value{ value } {}
   Clamped8(uint16_t value) : m_value{ static_cast<uint8_t>(std::min(value, uint16_t(255))) } {}
   Clamped8(uint32_t value) : m_value{ static_cast<uint8_t>(std::min(value, 255U)) } {}
-  Clamped8(int16_t value) : m_value{ static_cast<uint8_t>(bounds(int16_t(0), value, int16_t(255))) } {}
-  Clamped8(int32_t value) : m_value{ static_cast<uint8_t>(bounds(0, value, 255)) } {}
-  Clamped8(float value) : m_value{ static_cast<uint8_t>(bounds(0.0f, value, 255.0f)) } {}
-  Clamped8(double value) : m_value{ static_cast<uint8_t>(bounds(0.0, value, 255.0)) } {}
+  Clamped8(int16_t value) : m_value{ static_cast<uint8_t>(Math::bounded(int16_t(0), value, int16_t(255))) } {}
+  Clamped8(int32_t value) : m_value{ static_cast<uint8_t>(Math::bounded(0, value, 255)) } {}
+  Clamped8(float value) : m_value{ static_cast<uint8_t>(Math::bounded(0.0f, value, 255.0f)) } {}
+  Clamped8(double value) : m_value{ static_cast<uint8_t>(Math::bounded(0.0, value, 255.0)) } {}
 
   // Explicit defaults not specifically needed, but here for completeness
   Clamped8(Clamped8 const&) = default;

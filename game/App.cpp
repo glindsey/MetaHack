@@ -6,7 +6,7 @@
 #include "game/AppStateGameMode.h"
 #include "game/AppStateMainMenu.h"
 #include "game/AppStateSplashScreen.h"
-#include "Service.h"
+#include "services/Service.h"
 #include "services/FallbackConfigSettings.h"
 #include "services/FileSystemGameRules.h"
 #include "services/MessageLog.h"
@@ -17,10 +17,7 @@
 #include "game_windows/MessageLogView.h"
 
 // Global declarations
-std::unique_ptr<App> app_;
-int App::s_frame_counter = 0;
-
-App* App::s_p_instance;
+App* App::s_instance;
 
 // Local typedefs
 typedef boost::random::uniform_int_distribution<> uniform_int_dist;
@@ -53,14 +50,14 @@ App::App(sf::RenderWindow& app_window)
   UIEvents::EventMouseLeft::id,
   UIEvents::EventMouseWheelMoved::id }),
   m_appWindow{ app_window },
-  m_app_texture{ NEW sf::RenderTexture() },
-  m_is_running{ false },
-  m_has_window_focus{ false }
+  m_appTexture{ NEW sf::RenderTexture() },
+  m_isRunning{ false },
+  m_hasWindowFocus{ false }
 {
   // Set the static instance pointer.
-  if (!s_p_instance)
+  if (!s_instance)
   {
-    s_p_instance = this;
+    s_instance = this;
   }
   else
   {
@@ -107,46 +104,46 @@ App::App(sf::RenderWindow& app_window)
   auto& config = Service<IConfigSettings>::get();
 
   // Create the app state machine.
-  m_state_machine.reset(NEW StateMachine("app_state_machine", this)),
+  m_stateMachine.reset(NEW StateMachine("app_state_machine", this)),
 
   // Create the app texture for off-screen composition.
-  m_app_texture->create(m_appWindow.getSize().x, m_appWindow.getSize().y);
+  m_appTexture->create(m_appWindow.getSize().x, m_appWindow.getSize().y);
 
   // Create the GUI desktop.
-  m_gui_desktop.reset(NEW metagui::Desktop(*this, "Desktop", m_appWindow.getSize()));
+  m_guiDesktop.reset(NEW metagui::Desktop(*this, "Desktop", m_appWindow.getSize()));
 
   // Create the random number generator and seed it with the current time.
   m_rng.reset(NEW boost::random::mt19937(static_cast<unsigned int>(std::time(0))));
 
   // Create the default fonts.
-  m_default_font.reset(NEW sf::Font());
+  m_fontDefault.reset(NEW sf::Font());
   std::string defaultFont = config.get("font-name-default");
   FileName font_name = "resources/font/" + defaultFont + ".ttf";
-  if (m_default_font->loadFromFile(font_name) == false)
+  if (m_fontDefault->loadFromFile(font_name) == false)
   {
     CLOG(FATAL, "App") << "Could not load the default font";
   }
 
-  m_default_bold_font.reset(NEW sf::Font());
+  m_fontDefaultBold.reset(NEW sf::Font());
   std::string defaultBoldFont = config.get("font-name-bold");
   font_name = "resources/font/" + defaultBoldFont + ".ttf";
-  if (m_default_bold_font->loadFromFile(font_name) == false)
+  if (m_fontDefaultBold->loadFromFile(font_name) == false)
   {
     CLOG(FATAL, "App") << "Could not load the default bold font";
   }
 
-  m_default_mono_font.reset(NEW sf::Font());
+  m_fontDefaultMono.reset(NEW sf::Font());
   std::string defaultMonoFont = config.get("font-name-mono");
   font_name = "resources/font/" + defaultMonoFont + ".ttf";
-  if (m_default_mono_font->loadFromFile(font_name) == false)
+  if (m_fontDefaultMono->loadFromFile(font_name) == false)
   {
     CLOG(FATAL, "App") << "Could not load the default monospace font";
   }
 
-  m_default_unicode_font.reset(NEW sf::Font());
+  m_fontDefaultUnicode.reset(NEW sf::Font());
   std::string defaultUnicodeFont = config.get("font-name-unicode");
   font_name = "resources/font/" + defaultUnicodeFont + ".ttf";
-  if (m_default_unicode_font->loadFromFile(font_name) == false)
+  if (m_fontDefaultUnicode->loadFromFile(font_name) == false)
   {
     CLOG(FATAL, "App") << "Could not load the default Unicode font";
   }
@@ -164,7 +161,6 @@ App::App(sf::RenderWindow& app_window)
 
   // Create the message log.
   Service<IMessageLog>::provide(NEW MessageLog());
-  m_message_log.reset(NEW MessageLog());
 
   // Create the string dictionary, and try to load the default translation file.
   /// @todo Change this so language can be specified.
@@ -173,7 +169,7 @@ App::App(sf::RenderWindow& app_window)
   /// @note Standard map views provider creation has been moved to AppStateGameMode.
 
   // Get the state machine.
-  StateMachine& sm = *m_state_machine;
+  StateMachine& sm = *m_stateMachine;
 
   // Add states to the state machine.
   sm.add_state(NEW AppStateSplashScreen(sm, app_window));
@@ -186,39 +182,39 @@ App::App(sf::RenderWindow& app_window)
   sm.change_to("AppStateGameMode");
 
   // Set "window has focus" boolean to true.
-  m_has_window_focus = true;
+  m_hasWindowFocus = true;
 }
 
 App::~App()
 {
-  m_state_machine.reset();
-  m_gui_desktop.reset();
+  m_stateMachine.reset();
+  m_guiDesktop.reset();
   m_appWindow.close();
-  s_p_instance = nullptr;
+  s_instance = nullptr;
 }
 
-void App::handle_sfml_event(sf::Event& sfmlEvent)
+void App::handleSFMLEvent(sf::Event& sfmlEvent)
 {
   switch (sfmlEvent.type)
   {
     case sf::Event::EventType::GainedFocus:
     {
-      m_has_window_focus = true;
+      m_hasWindowFocus = true;
       broadcast(EventAppWindowFocusChanged({ true }));
       break;
     }
 
     case sf::Event::EventType::LostFocus:
     {
-      m_has_window_focus = false;
+      m_hasWindowFocus = false;
       broadcast(EventAppWindowFocusChanged({ false }));
       break;
     }
 
     case sf::Event::EventType::Resized:
     {
-      m_app_texture.reset(NEW sf::RenderTexture());
-      m_app_texture->create(sfmlEvent.size.width, sfmlEvent.size.height);
+      m_appTexture.reset(NEW sf::RenderTexture());
+      m_appTexture->create(sfmlEvent.size.width, sfmlEvent.size.height);
       m_appWindow.setView(sf::View(
         sf::FloatRect(0, 0, 
                       static_cast<float>(sfmlEvent.size.width), 
@@ -230,7 +226,7 @@ void App::handle_sfml_event(sf::Event& sfmlEvent)
 
     case sf::Event::EventType::Closed:
     {
-      m_is_running = false;
+      m_isRunning = false;
       broadcast(EventAppWindowClosed());
       break;
     }
@@ -244,7 +240,7 @@ void App::handle_sfml_event(sf::Event& sfmlEvent)
         case sf::Keyboard::Key::Q:
           if (sfmlEvent.key.alt && sfmlEvent.key.control)
           {
-            m_is_running = false;
+            m_isRunning = false;
             broadcast(EventAppQuitRequested());
             do_key_broadcast = false;
           }
@@ -310,66 +306,66 @@ void App::handle_sfml_event(sf::Event& sfmlEvent)
   }
 }
 
-sf::RenderWindow& App::get_window()
+sf::RenderWindow& App::renderWindow()
 {
   return m_appWindow;
 }
 
-bool App::has_window_focus()
+bool App::hasWindowFocus()
 {
-  return m_has_window_focus;
+  return m_hasWindowFocus;
 }
 
-boost::random::mt19937 & App::get_rng()
+boost::random::mt19937 & App::rng()
 {
   return *m_rng;
 }
 
-sf::Font & App::get_default_font()
+sf::Font & App::fontDefault()
 {
-  return *m_default_font;
+  return *m_fontDefault;
 }
 
-sf::Font & App::get_default_bold_font()
+sf::Font & App::fontDefaultBold()
 {
-  return *m_default_bold_font;
+  return *m_fontDefaultBold;
 }
 
-sf::Font & App::get_default_mono_font()
+sf::Font & App::fontDefaultMono()
 {
-  return *m_default_mono_font;
+  return *m_fontDefaultMono;
 }
 
-sf::Font & App::get_default_unicode_font()
+sf::Font & App::fontDefaultUnicode()
 {
-  return *m_default_unicode_font;
+  return *m_fontDefaultUnicode;
 }
 
-sf::Shader & App::get_shader()
+sf::Shader & App::shader()
 {
   return *m_shader;
 }
 
-MessageLog & App::get_message_log()
+metagui::Desktop & App::guiDesktop()
 {
-  return *m_message_log;
+  return *m_guiDesktop;
 }
 
-metagui::Desktop & App::get_gui_desktop()
-{
-  return *m_gui_desktop;
-}
-
-TileSheet & App::get_tilesheet()
+TileSheet & App::tileSheet()
 {
   return *m_tileSheet;
 }
 
+int App::frameCounter() const
+{
+  return m_frameCounter;
+}
+
 App & App::instance()
 {
-  if (s_p_instance)
+  if (s_instance)
   {
-    return *s_p_instance;
+    return *s_instance;
   }
   else
   {
@@ -382,116 +378,37 @@ void App::run()
   static sf::Clock frame_clock;
 
   // Set running boolean.
-  m_is_running = true;
+  m_isRunning = true;
 
   frame_clock.restart();
 
   // Start the loop
-  while (m_is_running)
+  while (m_isRunning)
   {
     // Process events
     sf::Event event;
     while (m_appWindow.pollEvent(event))
     {
-      handle_sfml_event(event);
+      handleSFMLEvent(event);
     }
 
-    m_state_machine->execute();
+    m_stateMachine->execute();
 
     // Limit frame rate to 60 fps.
     if (frame_clock.getElapsedTime().asMicroseconds() > 16667)
     {
       frame_clock.restart();
       m_appWindow.clear();
-      m_app_texture->clear(Color::Red);
+      m_appTexture->clear(Color::Red);
 
-      m_state_machine->render(*m_app_texture, s_frame_counter);
+      m_stateMachine->render(*m_appTexture, m_frameCounter);
 
-      m_app_texture->display();
-      sf::Sprite sprite(m_app_texture->getTexture());
+      m_appTexture->display();
+      sf::Sprite sprite(m_appTexture->getTexture());
       m_appWindow.draw(sprite);
 
       m_appWindow.display();
-      ++s_frame_counter;
+      ++m_frameCounter;
     }
   }
-}
-
-int App::LUA_get_frame_counter(lua_State* L)
-{
-  int num_args = lua_gettop(L);
-
-  if (num_args != 0)
-  {
-    CLOG(WARNING, "App") << "expected 0 arguments, got " << num_args;
-    return 0;
-  }
-
-  lua_pushinteger(L, s_frame_counter);
-
-  return 1;
-}
-
-int App::LUA_redirect_print(lua_State* L)
-{
-  int nargs = lua_gettop(L);
-
-  for (int i = 1; i <= nargs; i++)
-  {
-    if (lua_isstring(L, i))
-    {
-      std::string str = lua_tostring(L, i);
-      Service<IMessageLog>::get().add(str);
-    }
-    else
-    {
-      /* Do something with non-strings if you like */
-    }
-  }
-
-  return 0;
-}
-
-int App::LUA_add(lua_State* L)
-{
-  int num_args = lua_gettop(L);
-
-  if (num_args != 1)
-  {
-    CLOG(WARNING, "App") << "Expected 1 argument, got " << num_args;
-  }
-  else
-  {
-    std::string str = lua_tostring(L, 1);
-    Service<IMessageLog>::get().add(str);
-  }
-
-  return 0;
-}
-
-int App::LUA_get_config(lua_State* L)
-{
-  int num_args = lua_gettop(L);
-  auto& config = Service<IConfigSettings>::get();
-
-  if (num_args != 1)
-  {
-    CLOG(WARNING, "ConfigSettings") << "expected 1 arguments, got " << num_args;
-    return 0;
-  }
-
-  const char* key = lua_tostring(L, 1);
-
-  /// @todo Re-implement me
-  //if (!config.contains(key))
-  //{
-    lua_pushnil(L);
-    return 1;
-  //}
-  //else
-  //{
-  //  auto result = config.get(key);
-  //  int args = instance().m_lua->push_value(result);
-  //  return args;
-  //}
 }

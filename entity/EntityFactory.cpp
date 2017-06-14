@@ -8,7 +8,7 @@
 #include "game/App.h"
 #include "game/GameState.h"
 #include "lua/LuaObject.h"
-#include "Service.h"
+#include "services/Service.h"
 #include "services/IGameRules.h"
 
 EntityFactory::EntityFactory(GameState& gameState) :

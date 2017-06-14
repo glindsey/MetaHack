@@ -4,7 +4,7 @@
 
 #include "Components/ComponentManager.h"
 #include "map/Map.h"
-#include "Service.h"
+#include "services/Service.h"
 #include "services/IConfigSettings.h"
 #include "services/IGameRules.h"
 #include "systems/Manager.h"
