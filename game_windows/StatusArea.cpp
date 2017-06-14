@@ -31,7 +31,7 @@ StatusArea::~StatusArea()
 
 void StatusArea::drawContents_(sf::RenderTexture& texture, int frame)
 {
-  auto& config = Service<IConfigSettings>::get();
+  auto& config = S<IConfigSettings>();
   auto& components = m_gameState.components();
 
   sf::IntRect pane_dims = getRelativeDimensions();
@@ -141,7 +141,7 @@ void StatusArea::render_attribute(sf::RenderTarget& target,
                                   std::string key,
                                   RealVec2 location)
 {
-  auto& config = Service<IConfigSettings>::get();
+  auto& config = S<IConfigSettings>();
 
   sf::Text render_text;
   Color text_color = config.get("text-color");

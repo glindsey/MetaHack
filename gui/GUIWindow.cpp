@@ -66,7 +66,7 @@ namespace metagui
 
   void Window::drawPreChildren_(sf::RenderTexture& texture, int frame)
   {
-    auto& config = Service<IConfigSettings>::get();
+    auto& config = S<IConfigSettings>();
     UintVec2 size = getSize();
 
     float line_spacing_y = the_default_font.getLineSpacing(config.get("text-default-size"));

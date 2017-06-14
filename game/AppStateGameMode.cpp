@@ -24,7 +24,7 @@
 #include "services/IConfigSettings.h"
 #include "services/IGameRules.h"
 #include "services/Standard2DGraphicViews.h"
-#include "services/IStringDictionary.h"
+#include "services/IStrings.h"
 #include "services/MessageLog.h"
 #include "state_machine/StateMachine.h"
 #include "systems/Manager.h"
@@ -84,7 +84,7 @@ AppStateGameMode::AppStateGameMode(StateMachine& state_machine, sf::RenderWindow
 {
   App::instance().addObserver(*this, EventID::All);
 
-  the_desktop.addChild(NEW MessageLogView("MessageLogView", Service<IMessageLog>::get(), *m_debugBuffer, calcMessageLogDims()))->setFlag("titlebar", true);
+  the_desktop.addChild(NEW MessageLogView("MessageLogView", S<IMessageLog>(), *m_debugBuffer, calcMessageLogDims()))->setFlag("titlebar", true);
   the_desktop.addChild(NEW InventoryArea("InventoryArea", *m_inventorySelection, calcInventoryDims(), *m_gameState))->setFlag("titlebar", true);
   the_desktop.addChild(NEW StatusArea("StatusArea", calcStatusAreaDims(), *m_gameState))->setGlobalFocus(true);
 
@@ -112,25 +112,25 @@ void AppStateGameMode::execute()
   {
     /// Call the Lua interpreter with the command.
     std::string luaCommand = m_debugBuffer->get_buffer();
-    Service<IMessageLog>::get().add("> " + luaCommand);
+    S<IMessageLog>().add("> " + luaCommand);
 
     /// DEBUG: If the command is "dump", write out gamestate JSON to a file.
     /// @todo Remove this, or make it a Lua function instead.
     std::string command = boost::to_lower_copy(luaCommand);
     if (command == "dump")
     {
-      Service<IMessageLog>::get().add("Dumping game state to dump.json...");
+      S<IMessageLog>().add("Dumping game state to dump.json...");
       json gameStateJSON = game;
       std::ofstream of("dump.json");
       of << gameStateJSON.dump(2);
-      Service<IMessageLog>::get().add("...Dump complete.");
+      S<IMessageLog>().add("...Dump complete.");
     }
     else
     {
       if (luaL_dostring(m_gameState->lua().state(), luaCommand.c_str()))
       {
         std::string result = lua_tostring(m_gameState->lua().state(), -1);
-        Service<IMessageLog>::get().add(result);
+        S<IMessageLog>().add(result);
       }
     }
 
@@ -167,7 +167,7 @@ void AppStateGameMode::execute()
 
 bool AppStateGameMode::initialize()
 {
-  auto& config = Service<IConfigSettings>::get();
+  auto& config = S<IConfigSettings>();
   auto& game = gameState();
 
   // Create the player.
@@ -206,7 +206,7 @@ bool AppStateGameMode::initialize()
   resetInventorySelection();
 
   // Set the map view.
-  m_mapView = the_desktop.addChild(Service<IGraphicViews>::get().createMapView("MainMapView", game_map, the_desktop.getSize()));
+  m_mapView = the_desktop.addChild(S<IGraphicViews>().createMapView("MainMapView", game_map, the_desktop.getSize()));
 
   // Get the map view ready.
   m_mapView->update_tiles(player, m_systemManager->lighting());
@@ -241,7 +241,7 @@ Systems::Manager& AppStateGameMode::systems()
 // === PROTECTED METHODS ======================================================
 void AppStateGameMode::render_map(sf::RenderTexture& texture, int frame)
 {
-  auto& config = Service<IConfigSettings>::get();
+  auto& config = S<IConfigSettings>();
   auto& game = gameState();
 
   texture.clear();
@@ -1030,7 +1030,7 @@ bool AppStateGameMode::onEvent(Event const& event)
 sf::IntRect AppStateGameMode::calcMessageLogDims()
 {
   sf::IntRect messageLogDims;
-  auto& config = Service<IConfigSettings>::get();
+  auto& config = S<IConfigSettings>();
 
   int inventory_area_width = config.get("inventory-area-width");
   int messagelog_area_height = config.get("messagelog-area-height");
@@ -1074,7 +1074,7 @@ sf::IntRect AppStateGameMode::calcStatusAreaDims()
 {
   sf::IntRect statusAreaDims;
   sf::IntRect invAreaDims = the_desktop.getChild("InventoryArea").getRelativeDimensions();
-  auto& config = Service<IConfigSettings>::get();
+  auto& config = S<IConfigSettings>();
 
   statusAreaDims.width = m_appWindow.getSize().x -
     (invAreaDims.width + 24);
@@ -1088,7 +1088,7 @@ sf::IntRect AppStateGameMode::calcInventoryDims()
 {
   sf::IntRect messageLogDims = the_desktop.getChild("MessageLogView").getRelativeDimensions();
   sf::IntRect inventoryAreaDims;
-  auto& config = Service<IConfigSettings>::get();
+  auto& config = S<IConfigSettings>();
 
   inventoryAreaDims.width = config.get("inventory-area-width");
   inventoryAreaDims.height = m_appWindow.getSize().y - 10;

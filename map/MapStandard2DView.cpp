@@ -99,7 +99,7 @@ void MapStandard2DView::draw_highlight(sf::RenderTarget& target,
                                        Color bgColor,
                                        int frame)
 {
-  auto& config = Service<IConfigSettings>::get();
+  auto& config = S<IConfigSettings>();
   float map_tile_size = config.get("map-tile-size");
 
   float half_ts(map_tile_size * 0.5f);

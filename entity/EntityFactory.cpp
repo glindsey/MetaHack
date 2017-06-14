@@ -29,7 +29,7 @@ EntityId EntityFactory::create(std::string category)
 {
   EntityId new_id = EntityId(m_nextEntityId);
   ++m_nextEntityId;
-  json& data = Service<IGameRules>::get().category(category);
+  json& data = S<IGameRules>().category(category);
 
   std::unique_ptr<Entity> new_thing{ new Entity{ m_gameState, category, new_id } };
 
@@ -46,7 +46,7 @@ EntityId EntityFactory::create(std::string category)
       /// @todo Choose one material randomly and apply it.
       ///       Right now, we just use the first one.
       std::string material = StringTransforms::squishWhitespace(jsonMaterials[0].get<std::string>());
-      json& materialData = Service<IGameRules>::get().category(material, "materials");
+      json& materialData = S<IGameRules>().category(material, "materials");
       m_gameState.components().populate(new_id, materialData["components"]);
     }
   }
@@ -90,7 +90,7 @@ void EntityFactory::applyCategoryData(EntityId id, std::string subType, std::str
 {
   if (id != EntityId::Mu())
   {
-    json& data = Service<IGameRules>::get().category(name, subType);
+    json& data = S<IGameRules>().category(name, subType);
     auto& jsonComponents = data["components"];
     m_gameState.components().populate(id, jsonComponents);
   }
@@ -104,7 +104,7 @@ void EntityFactory::morph(EntityId id, std::string category)
 {
   if (id != EntityId::Mu())
   {
-    json& data = Service<IGameRules>::get().category(category);
+    json& data = S<IGameRules>().category(category);
     auto& jsonComponents = data["components"];
     m_gameState.components().erase(id);
     m_gameState.components().populate(id, jsonComponents);

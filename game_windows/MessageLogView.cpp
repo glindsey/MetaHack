@@ -31,7 +31,7 @@ MessageLogView::~MessageLogView()
 
 void MessageLogView::drawContents_(sf::RenderTexture& texture, int frame)
 {
-  auto& config = Service<IConfigSettings>::get();
+  auto& config = S<IConfigSettings>();
   unsigned int text_default_size = config.get("text-default-size");
 
   // Dimensions of the pane.

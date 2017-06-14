@@ -37,8 +37,8 @@ InventoryArea::~InventoryArea()
 
 void InventoryArea::drawContents_(sf::RenderTexture& texture, int frame)
 {
-  auto& config = Service<IConfigSettings>::get();
-  auto& views = Service<IGraphicViews>::get();
+  auto& config = S<IConfigSettings>();
+  auto& views = S<IGraphicViews>();
   auto& entity_pool = m_gameState.entities();
 
   // Dimensions of the pane.

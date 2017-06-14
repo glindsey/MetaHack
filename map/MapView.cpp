@@ -20,7 +20,7 @@ MapView::~MapView()
 
 void MapView::set_view(sf::RenderTarget & target, RealVec2 center, float zoom_level)
 {
-  auto& config = Service<IConfigSettings>::get();
+  auto& config = S<IConfigSettings>();
   UintVec2 screen_size = target.getSize();
   unsigned int inventory_area_width = config.get("inventory-area-width");
   unsigned int status_area_height = config.get("status-area-height");

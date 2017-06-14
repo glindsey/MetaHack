@@ -22,7 +22,7 @@ namespace metagui
   // === PROTECTED METHODS ======================================================
   void ResizeHandle::drawPreChildren_(sf::RenderTexture& texture, int frame)
   {
-    auto& config = Service<IConfigSettings>::get();
+    auto& config = S<IConfigSettings>();
 
     auto parent = getParent();
     if (parent == nullptr)

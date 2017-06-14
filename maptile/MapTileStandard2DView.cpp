@@ -102,7 +102,7 @@ void MapTileStandard2DView::addMemoryVerticesTo(sf::VertexArray& vertices,
 {
   if (!COMPONENTS.position.existsFor(viewer) || !COMPONENTS.spacialMemory.existsFor(viewer)) return;
 
-  auto& config = Service<IConfigSettings>::get();
+  auto& config = S<IConfigSettings>();
   auto& tile = getMapTile();
   auto coords = tile.getCoords();
   auto& viewerPosition = COMPONENTS.position[viewer];
@@ -126,7 +126,7 @@ void MapTileStandard2DView::addMemoryVerticesTo(sf::VertexArray& vertices,
 
   std::string tile_type = spacialMemory[coords].getType();
   if (tile_type == "") { tile_type = "MTUnknown"; }
-  json& tile_data = Service<IGameRules>::get().category(tile_type);
+  json& tile_data = S<IGameRules>().category(tile_type);
 
   /// @todo Call a script to handle selecting a tile other than the one
   ///       in the upper-left corner.
@@ -141,7 +141,7 @@ void MapTileStandard2DView::addMemoryVerticesTo(sf::VertexArray& vertices,
 void MapTileStandard2DView::addTileFloorVerticesTo(sf::VertexArray& vertices,
                                                    Systems::Lighting& lighting)
 {
-  auto& config = Service<IConfigSettings>::get();
+  auto& config = S<IConfigSettings>();
 
   auto& tile = getMapTile();
   auto& coords = tile.getCoords();
@@ -221,7 +221,7 @@ void MapTileStandard2DView::addEntityFloorVertices(EntityId entityId,
                                                    int frame)
 {
   auto& entity = GAME.entities().get(entityId);
-  auto& config = Service<IConfigSettings>::get();
+  auto& config = S<IConfigSettings>();
   sf::Vertex new_vertex;
   float ts = config.get("map-tile-size");
   float ts2 = ts * 0.5f;
@@ -264,7 +264,7 @@ void MapTileStandard2DView::addWallVerticesTo(sf::VertexArray& vertices,
                                               bool seEmpty, bool sEmpty,
                                               bool swEmpty, bool wEmpty)
 {
-  auto& config = Service<IConfigSettings>::get();
+  auto& config = S<IConfigSettings>();
   float mapTileSize = config.get("map-tile-size");
 
   // This tile.

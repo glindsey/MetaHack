@@ -23,7 +23,7 @@ class ConfigSettings;
 class MessageLog;
 class MessageLogView;
 class StateMachine;
-class StringDictionary;
+class Strings;
 class TileSheet;
 
 /// Class that defines the overall application.

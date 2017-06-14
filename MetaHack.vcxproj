@@ -409,7 +409,7 @@
     <ClInclude Include="keybuffer\IKeyBuffer.h" />
     <ClInclude Include="services\IMessageLog.h" />
     <ClInclude Include="inventory\InventorySelection.h" />
-    <ClInclude Include="services\IStringDictionary.h" />
+    <ClInclude Include="services\IStrings.h" />
     <ClInclude Include="types\MapMemoryChunk.h" />
     <ClInclude Include="map\MapNullView.h" />
     <ClInclude Include="map\MapStandard2DView.h" />
@@ -420,7 +420,7 @@
     <ClInclude Include="services\NullGraphicViews.h" />
     <ClInclude Include="keybuffer\NullKeyBuffer.h" />
     <ClInclude Include="services\NullMessageLog.h" />
-    <ClInclude Include="services\NullStringDictionary.h" />
+    <ClInclude Include="services\NullStrings.h" />
     <ClInclude Include="types\Rect.h" />
     <ClInclude Include="utilities\JSONUtils.h" />
     <ClInclude Include="utilities\RNGUtils.h" />
@@ -459,7 +459,7 @@
     <ClInclude Include="state_machine\StateMachine.h" />
     <ClInclude Include="game_windows\StatusArea.h" />
     <ClInclude Include="include\stdafx.h" />
-    <ClInclude Include="services\StringDictionary.h" />
+    <ClInclude Include="services\Strings.h" />
     <ClInclude Include="utilities\Shortcuts.h" />
     <ClInclude Include="utilities\StringTransforms.h" />
     <ClInclude Include="entity\Entity.h" />
@@ -709,7 +709,7 @@
     <ClCompile Include="components\ComponentInventory.cpp" />
     <ClCompile Include="inventory\InventoryArea.cpp" />
     <ClCompile Include="inventory\InventorySelection.cpp" />
-    <ClCompile Include="services\IStringDictionary.cpp" />
+    <ClCompile Include="services\IStrings.cpp" />
     <ClCompile Include="keybuffer\KeyBuffer.cpp" />
     <ClCompile Include="lua\LuaObject.cpp" />
     <ClCompile Include="map\Map.cpp" />
@@ -742,7 +742,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="services\StringDictionary.cpp" />
+    <ClCompile Include="services\Strings.cpp" />
     <ClCompile Include="entity\Entity.cpp" />
     <ClCompile Include="entity\EntityId.cpp" />
     <ClCompile Include="entity\EntityFactory.cpp" />

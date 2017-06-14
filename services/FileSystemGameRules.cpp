@@ -97,7 +97,7 @@ void FileSystemGameRules::loadCategoryIfNecessary(std::string name, std::string 
       GAME.lua().require(resource_string, true);
     }
 
-    Service<IGraphicViews>::get().loadViewResourcesFor(name, categoryData);
+    S<IGraphicViews>().loadViewResourcesFor(name, categoryData);
   }
 }
 

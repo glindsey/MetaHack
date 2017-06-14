@@ -19,7 +19,7 @@
 #include "services/IConfigSettings.h"
 #include "services/IGameRules.h"
 #include "services/IMessageLog.h"
-#include "services/IStringDictionary.h"
+#include "services/IStrings.h"
 #include "systems/Manager.h"
 #include "systems/SystemGeometry.h"
 #include "types/Color.h"
@@ -37,7 +37,7 @@ Color const Entity::wall_outline_color_{ 255, 255, 255, 64 };
 
 json const& Entity::getCategoryData() const
 {
-  return Service<IGameRules>::get().category(COMPONENTS.category[m_id]);
+  return S<IGameRules>().category(COMPONENTS.category[m_id]);
 }
 
 Entity::Entity(GameState& state, std::string category, EntityId id) :
@@ -91,7 +91,7 @@ EntityId Entity::getId() const
 //          auto container_string = this->getDescriptiveString();
 //          auto thing_string = entity->getDescriptiveString();
 //          message = thing_string + this->chooseVerb(" tumble", " tumbles") + " out of " + container_string + ".";
-//          Service<IMessageLog>::get().add(message);
+//          S<IMessageLog>().add(message);
 //        }
 //        else
 //        {
@@ -99,7 +99,7 @@ EntityId Entity::getId() const
 //          auto container_string = this->getDescriptiveString();
 //          auto thing_string = entity->getDescriptiveString();
 //          message = thing_string + this->chooseVerb(" vanish", " vanishes") + " in a puff of logic.";
-//          Service<IMessageLog>::get().add(message);
+//          S<IMessageLog>().add(message);
 //          entity->destroy();
 //        }
 //        //notifyObservers(Event::Updated);

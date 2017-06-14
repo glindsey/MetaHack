@@ -109,7 +109,7 @@ bool MapTile::isTotallyOpaque() const
 
 RealVec2 MapTile::getPixelCoords(IntVec2 tile)
 {
-  auto& config = Service<IConfigSettings>::get();
+  auto& config = S<IConfigSettings>();
   float map_tile_size = config.get("map-tile-size");
 
   return RealVec2(static_cast<float>(tile.x) * map_tile_size,
@@ -146,5 +146,5 @@ MapTile const& MapTile::getAdjacentTile(Direction direction) const
 
 json const& MapTile::getCategoryData() const
 {
-  return Service<IGameRules>::get().category(m_category);
+  return S<IGameRules>().category(m_category);
 }

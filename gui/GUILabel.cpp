@@ -22,7 +22,7 @@ namespace metagui
   // === PROTECTED METHODS ======================================================
   void Label::drawPreChildren_(sf::RenderTexture& texture, int frame)
   {
-    auto& config = Service<IConfigSettings>::get();
+    auto& config = S<IConfigSettings>();
     float line_spacing_y = the_default_font.getLineSpacing(config.get("text-default-size"));
 
     // Text offsets relative to the background rectangle.

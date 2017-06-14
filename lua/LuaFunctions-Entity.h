@@ -49,7 +49,7 @@ namespace LuaFunctions
 
     // Check to make sure the Entity is actually creatable.
     /// @todo Might want the ability to disable this check for debugging purposes?
-    //json& thing_data = Service<IGameRules>::get().category(newEntityType);
+    //json& thing_data = S<IGameRules>().category(newEntityType);
     bool is_creatable = true; // thing_data.value("creatable", false);
 
     if (is_creatable)
@@ -191,7 +191,7 @@ namespace LuaFunctions
 
     EntityId entity = EntityId(lua_tointeger(L, 1));
     const char* key = lua_tostring(L, 2);
-    auto result = Service<IGameRules>::get().category(gameState.components().category[entity]).value(key, json());
+    auto result = S<IGameRules>().category(gameState.components().category[entity]).value(key, json());
     auto slot_count = gameState.lua().push_value(result);
 
     return slot_count;

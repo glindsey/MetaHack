@@ -3,13 +3,13 @@
 #include <string>
 
 /// Interface for a localized string provider.
-class IStringDictionary
+class IStrings
 {
 public:
-  virtual ~IStringDictionary();
+  virtual ~IStrings();
 
   /// Return a Null Object that implements this interface.
-  static IStringDictionary* getDefault();
+  static IStrings* getDefault();
 
   /// Add the strings in the specified file to the dictionary.
   /// The extension ".json" will be appended to the filename.

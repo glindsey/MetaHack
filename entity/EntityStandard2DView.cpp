@@ -34,7 +34,7 @@ void EntityStandard2DView::draw(sf::RenderTarget& target,
                                 bool use_smoothing,
                                 int frame)
 {
-  auto& config = Service<IConfigSettings>::get();
+  auto& config = S<IConfigSettings>();
   auto& entity = getEntity();
   auto& texture = m_tileSheet.getTexture();
 

@@ -10,7 +10,7 @@
 #include "services/FallbackConfigSettings.h"
 #include "services/FileSystemGameRules.h"
 #include "services/MessageLog.h"
-#include "services/StringDictionary.h"
+#include "services/Strings.h"
 #include "state_machine/StateMachine.h"
 #include "tilesheet/TileSheet.h"
 #include "types/Color.h"
@@ -25,7 +25,7 @@ typedef boost::random::uniform_int_distribution<> uniform_int_dist;
 sf::IntRect calc_message_log_dimensions(sf::RenderWindow& window)
 {
   sf::IntRect messageLogDims;
-  auto& config = Service<IConfigSettings>::get();
+  auto& config = S<IConfigSettings>();
 
   int inventory_area_width = config.get("inventory-area-width");
   int messagelog_area_height = config.get("messagelog-area-height");
@@ -91,7 +91,7 @@ App::App(sf::RenderWindow& app_window)
   SET_UP_LOGGER("PropertyDictionary", false);
   SET_UP_LOGGER("SenseSight",         false);
   SET_UP_LOGGER("StateMachine",       false);
-  SET_UP_LOGGER("StringDictionary",   false);
+  SET_UP_LOGGER("Strings",   false);
   SET_UP_LOGGER("StringTransforms",   false);
   SET_UP_LOGGER("TileSheet",          false);
   SET_UP_LOGGER("Types",              false);
@@ -101,7 +101,7 @@ App::App(sf::RenderWindow& app_window)
   // Load config settings.
   Service<IConfigSettings>::provide(NEW FallbackConfigSettings());
 
-  auto& config = Service<IConfigSettings>::get();
+  auto& config = S<IConfigSettings>();
 
   // Create the app state machine.
   m_stateMachine.reset(NEW StateMachine("app_state_machine", this)),
@@ -164,7 +164,7 @@ App::App(sf::RenderWindow& app_window)
 
   // Create the string dictionary, and try to load the default translation file.
   /// @todo Change this so language can be specified.
-  Service<IStringDictionary>::provide(NEW StringDictionary("resources/strings.en"));
+  Service<IStrings>::provide(NEW Strings("resources/strings.en"));
 
   /// @note Standard map views provider creation has been moved to AppStateGameMode.
 

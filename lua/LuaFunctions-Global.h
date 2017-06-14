@@ -26,7 +26,7 @@ namespace LuaFunctions
   int get_config(lua_State* L)
   {
     int num_args = lua_gettop(L);
-    auto& config = Service<IConfigSettings>::get();
+    auto& config = S<IConfigSettings>();
 
     if (num_args != 1)
     {
@@ -78,7 +78,7 @@ namespace LuaFunctions
     else
     {
       std::string str = lua_tostring(L, 1);
-      Service<IMessageLog>::get().add(str);
+      S<IMessageLog>().add(str);
     }
 
     return 0;
@@ -93,7 +93,7 @@ namespace LuaFunctions
       if (lua_isstring(L, i))
       {
         std::string str = lua_tostring(L, i);
-        Service<IMessageLog>::get().add(str);
+        S<IMessageLog>().add(str);
       }
       else
       {

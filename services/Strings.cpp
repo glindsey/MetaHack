@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include "services/StringDictionary.h"
+#include "services/Strings.h"
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
@@ -11,7 +11,7 @@
 namespace fs = boost::filesystem;
 namespace pt = boost::property_tree;
 
-StringDictionary::StringDictionary(std::string filename_)
+Strings::Strings(std::string filename_)
 {
   if (!filename_.empty())
   {
@@ -19,10 +19,10 @@ StringDictionary::StringDictionary(std::string filename_)
   }
 }
 
-StringDictionary::~StringDictionary()
+Strings::~Strings()
 {}
 
-bool StringDictionary::loadFile(std::string filename_)
+bool Strings::loadFile(std::string filename_)
 {
   // Look for the file requested.
   FileName filename = filename_ + ".json";
@@ -30,7 +30,7 @@ bool StringDictionary::loadFile(std::string filename_)
   /// Try to load the requested file.
   if (fs::exists(filename))
   {
-    CLOG(INFO, "StringDictionary") << "Loading " << filename;
+    CLOG(INFO, "Strings") << "Loading " << filename;
 
     pt::ptree file_contents;
     try
@@ -44,23 +44,23 @@ bool StringDictionary::loadFile(std::string filename_)
     }
     catch (pt::json_parser_error&)
     {
-      CLOG(WARNING, "StringDictionary") << "Unable to parse JSON in " << filename << "; translations not loaded";
+      CLOG(WARNING, "Strings") << "Unable to parse JSON in " << filename << "; translations not loaded";
       return false;
     }
 
-    CLOG(TRACE, "StringDictionary") << "Loaded translations in " << filename;
+    CLOG(TRACE, "Strings") << "Loaded translations in " << filename;
     return true;
   }
   else
   {
-    CLOG(WARNING, "StringDictionary") << filename << " is missing; translations not loaded";
+    CLOG(WARNING, "Strings") << filename << " is missing; translations not loaded";
     return false;
   }
 }
 
-bool StringDictionary::add(std::string id_, std::string str_)
+bool Strings::add(std::string id_, std::string str_)
 {
-  CLOG(TRACE, "StringDictionary") << "Adding \"" << id_ << "\" = \"" << str_ << "\"";
+  CLOG(TRACE, "Strings") << "Adding \"" << id_ << "\" = \"" << str_ << "\"";
 
   if (strings.count(id_) == 0)
   {
@@ -73,17 +73,17 @@ bool StringDictionary::add(std::string id_, std::string str_)
   return true;
 }
 
-void StringDictionary::clear()
+void Strings::clear()
 {
   strings.clear();
 }
 
-bool StringDictionary::contains(std::string id_) const
+bool Strings::contains(std::string id_) const
 {
   return (strings.count(id_) != 0);
 }
 
-std::string StringDictionary::get(std::string id_) const
+std::string Strings::get(std::string id_) const
 {
   if (strings.count(id_) != 0)
   {

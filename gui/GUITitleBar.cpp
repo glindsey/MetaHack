@@ -23,7 +23,7 @@ namespace metagui
   // === PROTECTED METHODS ======================================================
   void TitleBar::drawPreChildren_(sf::RenderTexture& texture, int frame)
   {
-    auto& config = Service<IConfigSettings>::get();
+    auto& config = S<IConfigSettings>();
 
     if (getParent() == nullptr)
     {
@@ -85,7 +85,7 @@ namespace metagui
       if (event.subject == getParent())
       {
         auto& castEvent = static_cast<EventResized const&>(event);
-        auto& config = Service<IConfigSettings>::get();
+        auto& config = S<IConfigSettings>();
         float line_spacing_y = the_default_font.getLineSpacing(config.get("text-default-size"));
 
         // Text offsets relative to the background rectangle.

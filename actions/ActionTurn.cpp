@@ -7,7 +7,7 @@
 #include "game/GameState.h"
 #include "map/Map.h"
 #include "services/IMessageLog.h"
-#include "services/IStringDictionary.h"
+#include "services/IStrings.h"
 #include "services/Service.h"
 #include "systems/Manager.h"
 #include "systems/SystemNarrator.h"

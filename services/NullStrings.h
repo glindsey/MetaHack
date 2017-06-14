@@ -1,12 +1,12 @@
 #pragma once
 
-#include "services/IStringDictionary.h"
+#include "services/IStrings.h"
 
-class NullStringDictionary : public IStringDictionary
+class NullStrings : public IStrings
 {
 public:
   /// Create a null string dictionary.
-  NullStringDictionary() {}
+  NullStrings() {}
 
   virtual bool loadFile(std::string filename_) override
   {
