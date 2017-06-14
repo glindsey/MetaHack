@@ -1,20 +1,27 @@
 #include "stdafx.h"
 
-#include "systems/SystemGeometry.h"
-
 #include "components/ComponentGlobals.h"
 #include "components/ComponentInventory.h"
 #include "components/ComponentPosition.h"
+#include "services/Service.h"
+#include "services/IMessageLog.h"
+#include "systems/SystemGeometry.h"
 #include "systems/SystemJanitor.h"
+#include "systems/SystemNarrator.h"
 #include "utilities/MathUtils.h"
+#include "utilities/Shortcuts.h"
 
 namespace Systems
 {
 
-  Geometry::Geometry(Components::ComponentGlobals const& globals,
+  Geometry::Geometry(Systems::Janitor& janitor,
+                     Systems::Narrator& narrator,
+                     Components::ComponentGlobals const& globals,
                      Components::ComponentMap<Components::ComponentInventory>& inventory,
                      Components::ComponentMap<Components::ComponentPosition>& position) :
     CRTP<Geometry>({ EventEntityMoved::id, EventEntityChangedMaps::id }),
+    m_janitor{ janitor },
+    m_narrator{ narrator },
     m_globals{ globals },
     m_inventory{ inventory },
     m_position{ position }
@@ -74,6 +81,60 @@ namespace Systems
     } // end if (canContain is true)
 
     return false;
+  }
+
+  /// @todo Add collision events for Mechanics system to process.
+  void Geometry::spill(EntityId entity)
+  {
+    // If entity doesn't have an inventory or a position, bail.
+    if (!m_inventory.existsFor(entity) || !m_position.existsFor(entity)) return;
+
+    auto& entityInventory = m_inventory.of(entity);
+    auto& entityPosition = m_position.of(entity);
+    auto entityParent = entityPosition.parent();
+    std::string message;
+    bool success = false;
+  
+    // Create a copy of this entity's inventory, since we'll be modifying it
+    // as we go along.
+    auto tempInventoryCopy = entityInventory;
+    auto parent = entityPosition.parent();
+
+    // Step through all contents of this Entity.
+    for (auto itemPair : tempInventoryCopy)
+    {
+      EntityId item = itemPair.second;
+      if (m_inventory.existsFor(entityParent))
+      {
+        auto& parentInventory = m_inventory.of(entityParent);
+        if (parentInventory.canContain(item))
+        {
+          json arguments;
+          arguments["subject"] = m_narrator.getDescriptiveString(item);
+          arguments["the_location"] = m_narrator.getDescriptiveString(entity);
+
+          // Try to move this into the Entity's location.
+          success = moveEntityInto(item, entityParent);
+
+          if (success)
+          {
+            putMsg(m_narrator.makeTr("YOU_TUMBLE_OUT_OF_THE_LOCATION", arguments));
+          }
+          else
+          {
+            putMsg(m_narrator.makeTr("YOU_VANISH_IN_A_PUFF_OF_LOGIC", arguments));
+            m_janitor.markForDeletion(item);
+          }
+          //notifyObservers(Event::Updated);
+  
+        } // end if (canContain)
+      } // end if (container location is not Mu)
+      else
+      {
+        // Container's location is Mu, so just destroy it without a message.
+        m_janitor.markForDeletion(item);
+      }
+    } // end for (contents of Entity)
   }
 
   bool Geometry::firstCanReachSecond(EntityId first, EntityId second) const

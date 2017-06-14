@@ -44,9 +44,6 @@ public:
   /// Return a reference to this entity.
   EntityId getId() const;
 
-  /// Spill the contents of this Entity out into the location of the Entity.
-  //void spill();
-
   /// Return the body part this entity is equippable on.
   /// If entity is not equippable, return BodyPart::Count.
   BodyPart is_equippable_on() const;

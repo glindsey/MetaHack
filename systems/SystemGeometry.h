@@ -11,6 +11,11 @@ namespace Components
   class ComponentGlobals;
   class ComponentInventory;
 }
+namespace Systems
+{
+  class Janitor;
+  class Narrator;
+}
 
 namespace Systems
 {
@@ -56,7 +61,9 @@ namespace Systems
       }
     };
 
-    Geometry(Components::ComponentGlobals const& globals,
+    Geometry(Systems::Janitor& janitor,
+             Systems::Narrator& narrator,
+             Components::ComponentGlobals const& globals,
              Components::ComponentMap<Components::ComponentInventory>& inventory,
              Components::ComponentMap<Components::ComponentPosition>& position);
 
@@ -67,6 +74,9 @@ namespace Systems
 
     /// Move an entity into a location, if possible.
     bool moveEntityInto(EntityId entity, EntityId newLocation);
+
+    /// Spill the contents of an entity into its parent.
+    void spill(EntityId entity);
 
     /// Return whether the first entity can reach the second.
     /// "Can reach" means they are:
@@ -95,6 +105,8 @@ namespace Systems
 
   private:
     // Components used by this system.
+    Systems::Janitor& m_janitor;
+    Systems::Narrator& m_narrator;
     Components::ComponentGlobals const& m_globals;
     Components::ComponentMap<Components::ComponentInventory>& m_inventory;
     Components::ComponentMap<Components::ComponentPosition>& m_position;

@@ -66,54 +66,6 @@ EntityId Entity::getId() const
   return m_id;
 }
 
-// @todo Make this into an Action.
-//void Entity::spill()
-//{
-//  ComponentInventory& inventory = COMPONENTS.inventory[m_id];
-//  std::string message;
-//  bool success = false;
-//
-//  // Step through all contents of this Entity.
-//  for (auto iter = inventory.begin();
-//       iter != inventory.end();
-//       ++iter)
-//  {
-//    EntityId entity = iter->second;
-//    auto parent = COMPONENTS.position[m_id].parent();
-//    if (parent != EntityId::Mu())
-//    {
-//      if (parent->canContain(entity))
-//      {
-//        // Try to move this into the Entity's location.
-//        success = entity->moveInto(parent);
-//        if (success)
-//        {
-//          auto container_string = this->getDescriptiveString();
-//          auto thing_string = entity->getDescriptiveString();
-//          message = thing_string + this->chooseVerb(" tumble", " tumbles") + " out of " + container_string + ".";
-//          S<IMessageLog>().add(message);
-//        }
-//        else
-//        {
-//          // We couldn't move it, so just destroy it.
-//          auto container_string = this->getDescriptiveString();
-//          auto thing_string = entity->getDescriptiveString();
-//          message = thing_string + this->chooseVerb(" vanish", " vanishes") + " in a puff of logic.";
-//          S<IMessageLog>().add(message);
-//          entity->destroy();
-//        }
-//        //notifyObservers(Event::Updated);
-//
-//      } // end if (canContain)
-//    } // end if (container location is not Mu)
-//    else
-//    {
-//      // Container's location is Mu, so just destroy it without a message.
-//      entity->destroy();
-//    }
-//  } // end for (contents of Entity)
-//}
-
 BodyPart Entity::is_equippable_on() const
 {
   return BodyPart::MemberCount;

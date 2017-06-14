@@ -416,6 +416,8 @@
   "YOU_TRY_TO_VERB_THE_FOO_PREPOSITION_TARGET": "$you $try to $verb $fooself $preposition $the_target_thing.",
   "YOU_TRY_TO_VERB_THE_ITEMS": "$you $try to $verb the items.",
   "YOU_TRY_TO_VERB_YOURSELF_INVALID": "$you $try to $verb $yourself, which seriously shouldn't happen.",
+  "YOU_TUMBLE_OUT_OF_THE_LOCATION": "$you $(cv?tumble:tumbles) out of $the_location.",
+  "YOU_VANISH_IN_A_PUFF_OF_LOGIC": "$you $(cv?vanish:vanishes) in a puff of logic.",
   "YOU_VERB_THE_FOO_PREPOSITION_TARGET": "$you $cverb $fooself $preposition $the_target_thing.",
   "YOU_VERB_FOR_X_TIME": "$you $verb for $time hundredths of a second.",
   "YOUR_INVENTORY_CANT_HOLD_THE_FOO": "$your(inventory) cannot accommodate $the_foo."

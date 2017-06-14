@@ -3,6 +3,14 @@
 #include "systems/SystemNarrator.h"
 
 //#include "entity/Entity.h"
+
+#include "components/ComponentBodyparts.h"
+#include "components/ComponentGender.h"
+#include "components/ComponentGlobals.h"
+#include "components/ComponentHealth.h"
+#include "components/ComponentMap.h"
+#include "components/ComponentManager.h"
+#include "components/ComponentPosition.h"
 #include "entity/EntityId.h"
 #include "services/Service.h"
 #include "services/IConfigSettings.h"
@@ -15,23 +23,9 @@
 
 namespace Systems
 {
-  Narrator::Narrator(Components::ComponentGlobals const& globals,
-                     Components::ComponentMap<Components::ComponentBodyparts> const& bodyparts,
-                     Components::ComponentMap<std::string> const& category,
-                     Components::ComponentMap<Components::ComponentGender> const& gender,
-                     Components::ComponentMap<Components::ComponentHealth> const& health,
-                     Components::ComponentMap<Components::ComponentPosition> const& position,
-                     Components::ComponentMap<std::string> const& properName,
-                     Components::ComponentMap<unsigned int> const& quantity) :
+  Narrator::Narrator(Components::ComponentManager const& components) :
     CRTP<Narrator>({}),
-    m_bodyparts{ bodyparts },
-    m_category{ category },
-    m_gender{ gender },
-    m_globals{ globals },
-    m_health{ health },
-    m_position{ position },
-    m_properName{ properName },
-    m_quantity{ quantity }
+    m_components{ components }
   {}
 
   Narrator::~Narrator()
@@ -57,7 +51,7 @@ namespace Systems
   {
     if (entities.size() != 1) return true;
     EntityId entity = *(entities.cbegin());
-    return !((m_globals.player() == entity) || (m_quantity.valueOr(entity, 1) > 1));
+    return !((m_components.globals.player() == entity) || (m_components.quantity.valueOr(entity, 1) > 1));
   }
 
   std::string const& Narrator::chooseVerb(EntitySet entities,
@@ -97,19 +91,19 @@ namespace Systems
     if (entities.size() != 1) return Gender::Plural;
     EntityId entity = *(entities.cbegin());
 
-    if (m_globals.player() == entity)
+    if (m_components.globals.player() == entity)
     {
       return Gender::SecondPerson;
     }
     else
     {
-      if (m_quantity.valueOr(entity, 1) > 1)
+      if (m_components.quantity.valueOr(entity, 1) > 1)
       {
         return Gender::Plural;
       }
       else
       {
-        return m_gender.valueOrDefault(entity).gender();
+        return m_components.gender.valueOrDefault(entity).gender();
       }
     }
   }
@@ -120,10 +114,10 @@ namespace Systems
   {
     std::string str;
 
-    if (m_globals.player() == id)
+    if (m_components.globals.player() == id)
     {
-      if (m_health.existsFor(id) &&
-          !m_health.of(id).isDead())
+      if (m_components.health.existsFor(id) &&
+          !m_components.health.of(id).isDead())
       {
         str = tr("PRONOUN_SUBJECT_YOU");
       }
@@ -146,10 +140,10 @@ namespace Systems
   {
     std::string str;
 
-    if (m_globals.player() == id)
+    if (m_components.globals.player() == id)
     {
-      if (m_health.existsFor(id) &&
-          !m_health.of(id).isDead())
+      if (m_components.health.existsFor(id) &&
+          !m_components.health.of(id).isDead())
       {
         str = tr("PRONOUN_OBJECT_YOU");
       }
@@ -212,8 +206,8 @@ namespace Systems
   {
     auto& config = S<IConfigSettings>();
 
-    EntityId location = (m_position.existsFor(id) ? m_position.of(id).parent() : EntityId::Mu());
-    unsigned int quantity = m_quantity.valueOr(id, 1);
+    EntityId location = (m_components.position.existsFor(id) ? m_components.position.of(id).parent() : EntityId::Mu());
+    unsigned int quantity = m_components.quantity.valueOr(id, 1);
 
     std::string name;
 
@@ -230,7 +224,7 @@ namespace Systems
     std::string description;
     std::string suffix;
 
-    owned = m_health.existsFor(location);
+    owned = m_components.health.existsFor(location);
     adjectives = getDisplayAdjectives(id);
 
     if (quantity == 1)
@@ -253,9 +247,9 @@ namespace Systems
         }
       }
 
-      if (m_properName.existsFor(id))
+      if (m_components.properName.existsFor(id))
       {
-        auto properName = m_properName.of(id);
+        auto properName = m_components.properName.of(id);
         if (!properName.empty())
         {
           suffix = tr("VERB_NAME_PP") + " " + properName;
@@ -264,7 +258,7 @@ namespace Systems
     }
     else
     {
-      noun = std::to_string(m_quantity.valueOr(id, 1)) + " " + getDisplayPlural(id);
+      noun = std::to_string(m_components.quantity.valueOr(id, 1)) + " " + getDisplayPlural(id);
 
       if (owned && (possessives == UsePossessives::Yes))
       {
@@ -295,7 +289,7 @@ namespace Systems
 
   std::string Narrator::getPossessiveString(EntityId id, std::string owned, std::string adjectives) const
   {
-    if (m_globals.player() == id)
+    if (m_components.globals.player() == id)
     {
       return makeStringTokensOnly(tr("PATTERN_POSSESSIVE_YOU"),
       {
@@ -316,14 +310,14 @@ namespace Systems
 
   json const& Narrator::getCategoryData(EntityId id) const
   {
-    return S<IGameRules>().category(m_category.valueOr(id, ""));
+    return S<IGameRules>().category(m_components.category.valueOr(id, ""));
   }
 
   std::string Narrator::getDisplayAdjectives(EntityId id) const
   {
     std::string adjectives;
 
-    if (m_health.existsFor(id) && m_health.of(id).isDead())
+    if (m_components.health.existsFor(id) && m_components.health.of(id).isDead())
     {
       adjectives += tr("ADJECTIVE_DEAD");
     }
@@ -404,7 +398,7 @@ namespace Systems
       {
         if (objects.size() < 1) return "";
         auto object = *(objects.cbegin());
-        auto parent = (m_position.existsFor(object) ? m_position.of(object).parent() : EntityId::Mu());
+        auto parent = (m_components.position.existsFor(object) ? m_components.position.of(object).parent() : EntityId::Mu());
         return getDescriptiveString(parent, ArticleChoice::Definite);
       }
       if ((token == "the_target_thing") || (token == "thetargetthing"))
@@ -475,7 +469,7 @@ namespace Systems
       }
       if ((token == "your_location") || (token == "yourlocation"))
       {
-        auto parent = (m_position.existsFor(subject) ? m_position.of(subject).parent() : EntityId::Mu());
+        auto parent = (m_components.position.existsFor(subject) ? m_components.position.of(subject).parent() : EntityId::Mu());
         return getDescriptiveString(parent, ArticleChoice::Indefinite);
       }
       if (token == "yourself")
@@ -520,7 +514,7 @@ namespace Systems
       }
       if ((token == "isPlayer") || (token == "isplayer"))
       {
-        return (m_globals.player() == subject);
+        return (m_components.globals.player() == subject);
       }
 
       if (token == "true")
@@ -798,8 +792,8 @@ namespace Systems
 
   unsigned int Narrator::getBodypartNumber(EntityId id, BodyPart part) const
   {
-    if (!m_bodyparts.existsFor(id)) return 0;
-    auto& bodyparts = m_bodyparts.of(id);
+    if (!m_components.bodyparts.existsFor(id)) return 0;
+    auto& bodyparts = m_components.bodyparts.of(id);
     return bodyparts.typicalCount(part);
   }
 
@@ -808,7 +802,7 @@ namespace Systems
     std::stringstream ss;
     ss << part;
 
-    std::string fancyPartName = "NOUN_" + m_category.of(id) + "_" + ss.str();
+    std::string fancyPartName = "NOUN_" + m_components.category.of(id) + "_" + ss.str();
     std::string partName = "NOUN_" + ss.str();
 
     boost::to_upper(fancyPartName);
@@ -824,7 +818,7 @@ namespace Systems
     std::stringstream ss;
     ss << part;
 
-    std::string fancyPartName = "NOUN_" + m_category.of(id) + "_" + ss.str() + "_PLURAL";
+    std::string fancyPartName = "NOUN_" + m_components.category.of(id) + "_" + ss.str() + "_PLURAL";
     std::string partName = "NOUN_" + ss.str() + "_PLURAL";
 
     boost::to_upper(fancyPartName);

@@ -1,11 +1,5 @@
 #pragma once
 
-#include "components/ComponentBodyparts.h"
-#include "components/ComponentGender.h"
-#include "components/ComponentGlobals.h"
-#include "components/ComponentHealth.h"
-#include "components/ComponentMap.h"
-#include "components/ComponentPosition.h"
 #include "systems/CRTP.h"
 #include "types/Bodypart.h"
 #include "types/Direction.h"
@@ -16,6 +10,10 @@ using json = ::nlohmann::json;
 
 // Forward declarations
 class EntityId;
+namespace Components
+{
+  class ComponentManager;
+}
 
 using EntitySet = std::set<EntityId>;
 
@@ -54,14 +52,7 @@ namespace Systems
 
     friend std::ostream& operator<<(std::ostream& os, TokenizerState state);
 
-    Narrator(Components::ComponentGlobals const& globals,
-             Components::ComponentMap<Components::ComponentBodyparts> const& bodyparts,
-             Components::ComponentMap<std::string> const& category,
-             Components::ComponentMap<Components::ComponentGender> const& gender,
-             Components::ComponentMap<Components::ComponentHealth> const& health,
-             Components::ComponentMap<Components::ComponentPosition> const& position,
-             Components::ComponentMap<std::string> const& properName,
-             Components::ComponentMap<unsigned int> const& quantity);
+    Narrator(Components::ComponentManager const& components);
     virtual ~Narrator();
 
     /// Return true if a third-person verb form should be used.
@@ -290,15 +281,10 @@ namespace Systems
     virtual bool onEvent(Event const& event) override;
 
   private:
-    // Components used by this system.
-    Components::ComponentGlobals const& m_globals;
-    Components::ComponentMap<Components::ComponentBodyparts> const& m_bodyparts;
-    Components::ComponentMap<std::string> const& m_category;
-    Components::ComponentMap<Components::ComponentGender> const& m_gender;
-    Components::ComponentMap<Components::ComponentHealth> const& m_health;
-    Components::ComponentMap<Components::ComponentPosition> const& m_position;
-    Components::ComponentMap<std::string> const& m_properName;
-    Components::ComponentMap<unsigned int> const& m_quantity;
+    /// Components used by this system.
+    /// Narrator touches enough components that we just pass a reference to
+    /// the entire manager in, instead of individual component maps.
+    Components::ComponentManager const& m_components;
   };
 
 } // end namespace Systems

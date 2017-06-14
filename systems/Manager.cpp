@@ -33,20 +33,29 @@ namespace Systems
     s_instance = this;
 
 
-    // Initialize systems.
+    // Initialize primary systems.
+
+    // These systems come first since others may need to reference them.
+    /// @todo I don't like one System coupled to another, but I don't know how
+    ///       else to architect this nicely.
+    m_janitor.reset(NEW Janitor(components));
+    m_luaLiaison.reset(NEW LuaLiaison(m_gameState, *this));
+    m_narrator.reset(NEW Narrator(components));
+
+    // Initialize the remaining systems.
     m_choreographer.reset(NEW Choreographer(components.globals));
 
     m_director.reset(NEW Director(m_gameState, *this));
 
     m_fluidics.reset(NEW Fluidics());
 
-    m_geometry.reset(NEW Geometry(components.globals,
+    m_geometry.reset(NEW Geometry(*m_janitor,
+                                  *m_narrator,
+                                  components.globals,
                                   components.inventory,
                                   components.position));
 
     m_grimReaper.reset(NEW GrimReaper(components.globals));
-
-    m_janitor.reset(NEW Janitor(components));
 
     m_lighting.reset(NEW Lighting(m_gameState,
                                   components.appearance,
@@ -54,18 +63,7 @@ namespace Systems
                                   components.lightSource,
                                   components.position));
 
-    m_luaLiaison.reset(NEW LuaLiaison(m_gameState, *this));
-
     m_mechanics.reset(NEW Mechanics());
-
-    m_narrator.reset(NEW Narrator(components.globals,
-                                  components.bodyparts,
-                                  components.category,
-                                  components.gender,
-                                  components.health,
-                                  components.position,
-                                  components.properName,
-                                  components.quantity));
 
     m_senseSight.reset(NEW SenseSight(m_gameState,
                                       components.inventory,
