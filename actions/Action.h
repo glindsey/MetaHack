@@ -80,7 +80,8 @@ namespace Actions
     ObjectMustNotBeEmpty,
     ObjectMustNotBeInInventory,
     ObjectMustBeLiquidCarrier,
-    MemberCount
+    Last,
+    First = CanBeSubjectOnly
   };
 
   /// Struct that contains a true/false value and a reason string.

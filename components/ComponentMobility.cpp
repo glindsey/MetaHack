@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "components/ComponentMobility.h"
 
 #include "game/GameState.h"

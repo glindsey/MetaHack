@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "components/ComponentCorrodible.h"
 
 #include "game/GameState.h"

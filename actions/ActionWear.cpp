@@ -49,7 +49,7 @@ namespace Actions
 
     auto bodypart = object->is_equippable_on();
 
-    if (bodypart == BodyPart::MemberCount)
+    if (bodypart == BodyPart::Unknown)
     {
       putMsg(narrator.makeTr("THE_FOO_IS_NOT_VERBABLE", arguments));
       return StateResult::Failure();

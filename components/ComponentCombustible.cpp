@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "components/ComponentCombustible.h"
 
 #include "game/GameState.h"

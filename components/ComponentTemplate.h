@@ -3,16 +3,21 @@
 #include "json.hpp"
 using json = ::nlohmann::json;
 
-/// Template to use for making new components.
-class Component
+namespace Components
 {
-public:
 
-  friend void from_json(json const& j, Component& obj);
-  friend void to_json(json& j, Component const& obj);
+  /// Template to use for making new components.
+  class Component
+  {
+  public:
 
-protected:
+    friend void from_json(json const& j, Component& obj);
+    friend void to_json(json& j, Component const& obj);
 
-private:
+  protected:
 
-};
+  private:
+
+  };
+
+} // end namespace

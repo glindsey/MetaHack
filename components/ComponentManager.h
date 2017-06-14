@@ -9,6 +9,7 @@
 #include "components/ComponentCombustible.h"
 #include "components/ComponentCorrodible.h"
 #include "components/ComponentDigestiveSystem.h"
+#include "components/ComponentEquippable.h"
 #include "components/ComponentGender.h"
 #include "components/ComponentHealth.h"
 #include "components/ComponentInventory.h"
@@ -57,6 +58,7 @@ namespace Components
     ComponentMap<ComponentCombustible> combustible;
     ComponentMap<ComponentCorrodible> corrodible;
     ComponentMap<ComponentDigestiveSystem> digestiveSystem;
+    ComponentMap<ComponentEquippable> equippable;
     ComponentMap<ComponentGender> gender;
     ComponentMap<ComponentHealth> health;
     ComponentMap<ComponentInventory> inventory;

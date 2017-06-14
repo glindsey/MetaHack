@@ -1,13 +1,22 @@
 #pragma once
 
+#include <boost/algorithm/string.hpp>
+#include <boost/assign.hpp>
+#include <boost/bimap.hpp>
+#include <boost/bimap/list_of.hpp>
+#include <boost/bimap/unordered_set_of.hpp>
 
+#include "json.hpp"
+using json = ::nlohmann::json;
 
 /// Enum class representing body parts or their analogous equivalents.
 enum class BodyPart
 {
   Nowhere = 0,
+  Unknown,
   Skin,
   Head,
+  Face,
   Ear,
   Eye,
   Nose,
@@ -24,38 +33,25 @@ enum class BodyPart
   Wing,
   Tail,
   PTail,
-  MemberCount
+  Last,
+  First = Nowhere
 };
 
-inline std::ostream& operator<<(std::ostream& os, BodyPart const& part)
-{
-  switch (part)
-  {
-    case BodyPart::Nowhere: os << "Nowhere"; break;
-    case BodyPart::Skin: os << "Skin"; break;
-    case BodyPart::Head: os << "Head"; break;
-    case BodyPart::Ear: os << "Ear"; break;
-    case BodyPart::Eye: os << "Eye"; break;
-    case BodyPart::Nose: os << "Nose"; break;
-    case BodyPart::Mouth: os << "Mouth"; break;
-    case BodyPart::Neck: os << "Neck"; break;
-    case BodyPart::Chest: os << "Chest"; break;
-    case BodyPart::Arm: os << "Arm"; break;
-    case BodyPart::Hand: os << "Hand"; break;
-    case BodyPart::Finger: os << "Finger"; break;
-    case BodyPart::Torso: os << "Torso"; break;
-    case BodyPart::Leg: os << "Leg"; break;
-    case BodyPart::Foot: os << "Foot"; break;
-    case BodyPart::Toe: os << "Toe"; break;
-    case BodyPart::Wing: os << "Wing"; break;
-    case BodyPart::Tail: os << "Tail"; break;
-    case BodyPart::PTail: os << "PTail"; break;
-    case BodyPart::MemberCount: os << "MemberCount"; break;
-    default: os << "???"; break;
-  }
+/// Bidirectional map of body parts to string equivalents.
+using BodyPartBimap = boost::bimap<
+  boost::bimaps::unordered_set_of<std::string>,
+  boost::bimaps::unordered_set_of<BodyPart>
+>;
 
-  return os;
-}
+namespace BodyParts
+{
+  BodyPartBimap::left_map const& strsToParts();
+  BodyPartBimap::right_map const& partsToStrs();
+} // end namespace
+
+void from_json(json const& j, BodyPart& obj);
+void to_json(json& j, BodyPart const& obj);
+std::ostream& operator<<(std::ostream& os, BodyPart const& part);
 
 /// Struct identifying a place that an item is worn.
 struct BodyLocation
@@ -75,8 +71,7 @@ struct BodyLocation
 
   inline size_t index() const
   {
-    return (number * static_cast<size_t>(BodyPart::MemberCount)) +
-      static_cast<size_t>(part);
+    return (number * static_cast<size_t>(BodyPart::Last)) + static_cast<size_t>(part);
   }
 
 };

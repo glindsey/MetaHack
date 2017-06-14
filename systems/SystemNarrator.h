@@ -47,7 +47,8 @@ namespace Systems
       ParsingChoiceTrue,    ///< Parsing the "true" portion of a choice selector.
       ParsingChoiceFalse,   ///< Parsing the "false" portion of a choice selector.
       ParsingChoiceError,   ///< State when the selector contained an invalid character.
-      MemberCount
+      Last,
+      First = Text
     };
 
     friend std::ostream& operator<<(std::ostream& os, TokenizerState state);

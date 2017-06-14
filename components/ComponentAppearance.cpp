@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "components/ComponentAppearance.h"
 
 #include "components/ComponentManager.h"

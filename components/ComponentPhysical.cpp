@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "components/ComponentPhysical.h"
 
 #include "components/ComponentManager.h"

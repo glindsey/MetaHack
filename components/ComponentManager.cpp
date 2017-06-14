@@ -119,6 +119,7 @@ namespace Components
     JSONUtils::doIfPresent(j, "combustible", [this](auto const& value) { combustible = value; });
     JSONUtils::doIfPresent(j, "corrodible", [this](auto const& value) { corrodible = value; });
     JSONUtils::doIfPresent(j, "digestive-system", [this](auto const& value) { digestiveSystem = value; });
+    JSONUtils::doIfPresent(j, "equippable", [this](auto const& value) { equippable = value; });
     JSONUtils::doIfPresent(j, "gender", [this](auto const& value) { gender = value; });
     JSONUtils::doIfPresent(j, "health", [this](auto const& value) { health = value; });
     JSONUtils::doIfPresent(j, "inventory", [this](auto const& value) { inventory = value; });
@@ -165,6 +166,7 @@ namespace Components
     combustible.cloneIfExists(original, newId);
     corrodible.cloneIfExists(original, newId);
     digestiveSystem.cloneIfExists(original, newId);
+    equippable.cloneIfExists(original, newId);
     gender.cloneIfExists(original, newId);
     health.cloneIfExists(original, newId);
     // Do NOT clone inventory
@@ -193,6 +195,7 @@ namespace Components
     combustible.remove(id);
     corrodible.remove(id);
     digestiveSystem.remove(id);
+    equippable.remove(id);
     gender.remove(id);
     health.remove(id);
     inventory.remove(id);
@@ -221,6 +224,7 @@ namespace Components
     JSONUtils::doIfPresent(j, "combustible", [this, &id](auto const& value) { combustible[id] = value; });
     JSONUtils::doIfPresent(j, "corrodible", [this, &id](auto const& value) { corrodible[id] = value; });
     JSONUtils::doIfPresent(j, "digestive-system", [this, &id](auto const& value) { digestiveSystem[id] = value; });
+    JSONUtils::doIfPresent(j, "equippable", [this, &id](auto const& value) { equippable[id] = value; });
     JSONUtils::doIfPresent(j, "gender", [this, &id](auto const& value) { gender[id] = value; });
     JSONUtils::doIfPresent(j, "health", [this, &id](auto const& value) { health[id] = value; });
     JSONUtils::doIfPresent(j, "inventory", [this, &id](auto const& value) { inventory[id] = value; });
@@ -250,6 +254,7 @@ namespace Components
     j["bodyparts"] = bodyparts;
     j["category"] = category;
     j["combustible"] = combustible;
+    j["equippable"] = equippable;
     j["gender"] = gender;
     j["health"] = health;
     j["inventory"] = inventory;

@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "components/ComponentMagicalBinding.h"
 
 #include "game/GameState.h"

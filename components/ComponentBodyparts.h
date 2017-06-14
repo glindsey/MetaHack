@@ -87,10 +87,10 @@ namespace Components
 
   private:
     /// Array of typical bodypart counts.
-    std::array<unsigned int, static_cast<size_t>(BodyPart::MemberCount)> m_bodypartCount;
+    std::array<unsigned int, static_cast<size_t>(BodyPart::Last)> m_bodypartCount;
 
     /// Array of bitsets for bodypart counts.
-    std::array<boost::dynamic_bitset<size_t>, static_cast<size_t>(BodyPart::MemberCount)> m_bodypartExistence;
+    std::array<boost::dynamic_bitset<size_t>, static_cast<size_t>(BodyPart::Last)> m_bodypartExistence;
 
     /// Map of items worn on bodyparts.
     std::map<BodyLocation, EntityId> m_wornItems;

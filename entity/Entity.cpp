@@ -68,7 +68,7 @@ EntityId Entity::getId() const
 
 BodyPart Entity::is_equippable_on() const
 {
-  return BodyPart::MemberCount;
+  return BodyPart::Nowhere;
 }
 
 bool Entity::perform_action_die()

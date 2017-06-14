@@ -1,6 +1,9 @@
+#include "stdafx.h"
+
 #include "components/ComponentBodyparts.h"
 
 #include "game/GameState.h"
+#include "utilities/EnumIterator.h"
 #include "utilities/JSONUtils.h"
 
 namespace Components
@@ -9,49 +12,25 @@ namespace Components
   {
     obj = ComponentBodyparts();
 
-    // *** add Component-specific assignments here ***
-    JSONUtils::doIfPresent(j, "skin", [&](auto& value) { obj.populateUsingJSON(BodyPart::Skin, value); });
-    JSONUtils::doIfPresent(j, "head", [&](auto& value) { obj.populateUsingJSON(BodyPart::Head, value); });
-    JSONUtils::doIfPresent(j, "ear", [&](auto& value) { obj.populateUsingJSON(BodyPart::Ear, value); });
-    JSONUtils::doIfPresent(j, "eye", [&](auto& value) { obj.populateUsingJSON(BodyPart::Eye, value); });
-    JSONUtils::doIfPresent(j, "nose", [&](auto& value) { obj.populateUsingJSON(BodyPart::Nose, value); });
-    JSONUtils::doIfPresent(j, "neck", [&](auto& value) { obj.populateUsingJSON(BodyPart::Neck, value); });
-    JSONUtils::doIfPresent(j, "chest", [&](auto& value) { obj.populateUsingJSON(BodyPart::Chest, value); });
-    JSONUtils::doIfPresent(j, "arm", [&](auto& value) { obj.populateUsingJSON(BodyPart::Arm, value); });
-    JSONUtils::doIfPresent(j, "hand", [&](auto& value) { obj.populateUsingJSON(BodyPart::Hand, value); });
-    JSONUtils::doIfPresent(j, "finger", [&](auto& value) { obj.populateUsingJSON(BodyPart::Finger, value); });
-    JSONUtils::doIfPresent(j, "torso", [&](auto& value) { obj.populateUsingJSON(BodyPart::Torso, value); });
-    JSONUtils::doIfPresent(j, "leg", [&](auto& value) { obj.populateUsingJSON(BodyPart::Leg, value); });
-    JSONUtils::doIfPresent(j, "foot", [&](auto& value) { obj.populateUsingJSON(BodyPart::Foot, value); });
-    JSONUtils::doIfPresent(j, "toe", [&](auto& value) { obj.populateUsingJSON(BodyPart::Toe, value); });
-    JSONUtils::doIfPresent(j, "wing", [&](auto& value) { obj.populateUsingJSON(BodyPart::Wing, value); });
-    JSONUtils::doIfPresent(j, "tail", [&](auto& value) { obj.populateUsingJSON(BodyPart::Tail, value); });
-    JSONUtils::doIfPresent(j, "prehensile-tail", [&](auto& value) { obj.populateUsingJSON(BodyPart::PTail, value); });
+    for (auto bodyPart : getRange<BodyPart>())
+    {
+      auto bodyPartName = BodyParts::partsToStrs().at(bodyPart);
+      JSONUtils::doIfPresent(j, bodyPartName, [&](auto& value)
+      {
+        obj.populateUsingJSON(bodyPart, value);
+      });
+    }
   }
 
   void to_json(json& j, ComponentBodyparts const& obj)
   {
     j = json::object();
-    j["skin"] = obj.bodyPartToJSON(BodyPart::Skin);
-    j["head"] = obj.bodyPartToJSON(BodyPart::Head);
-    j["ear"] = obj.bodyPartToJSON(BodyPart::Ear);
-    j["eye"] = obj.bodyPartToJSON(BodyPart::Eye);
-    j["nose"] = obj.bodyPartToJSON(BodyPart::Nose);
-    j["neck"] = obj.bodyPartToJSON(BodyPart::Neck);
-    j["chest"] = obj.bodyPartToJSON(BodyPart::Chest);
-    j["arm"] = obj.bodyPartToJSON(BodyPart::Arm);
-    j["hand"] = obj.bodyPartToJSON(BodyPart::Hand);
-    j["finger"] = obj.bodyPartToJSON(BodyPart::Finger);
-    j["torso"] = obj.bodyPartToJSON(BodyPart::Torso);
-    j["leg"] = obj.bodyPartToJSON(BodyPart::Leg);
-    j["foot"] = obj.bodyPartToJSON(BodyPart::Foot);
-    j["toe"] = obj.bodyPartToJSON(BodyPart::Toe);
-    j["wing"] = obj.bodyPartToJSON(BodyPart::Wing);
-    j["tail"] = obj.bodyPartToJSON(BodyPart::Tail);
-    j["prehensile-tail"] = obj.bodyPartToJSON(BodyPart::PTail);  // *** add Component-specific assignments here ***
-                                                                 //j["member"] = obj.m_member;
+    for (auto bodyPart : getRange<BodyPart>())
+    {
+      auto bodyPartName = BodyParts::partsToStrs().at(bodyPart);
+      j[bodyPartName] = obj.bodyPartToJSON(bodyPart);
+    }
   }
-
 
   ComponentBodyparts::ComponentBodyparts()
   {}

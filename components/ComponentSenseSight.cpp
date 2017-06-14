@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "components/ComponentSenseSight.h"
 
 #include "game/GameState.h"

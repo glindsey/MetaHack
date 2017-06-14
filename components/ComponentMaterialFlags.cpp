@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "components/ComponentMaterialFlags.h"
 
 #include <boost/algorithm/string.hpp>
