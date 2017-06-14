@@ -44,10 +44,6 @@ public:
   /// Return a reference to this entity.
   EntityId getId() const;
 
-  /// Return the body part this entity is equippable on.
-  /// If entity is not equippable, return BodyPart::Count.
-  BodyPart is_equippable_on() const;
-
   /// Perform an action when this entity dies.
   /// @return If this function returns false, the death is avoided.
   /// @warning The function must reset whatever caused the death in the

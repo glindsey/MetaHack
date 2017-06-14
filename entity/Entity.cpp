@@ -66,11 +66,6 @@ EntityId Entity::getId() const
   return m_id;
 }
 
-BodyPart Entity::is_equippable_on() const
-{
-  return BodyPart::Nowhere;
-}
-
 bool Entity::perform_action_die()
 {
   return call_lua_function("do_die", {}, true);

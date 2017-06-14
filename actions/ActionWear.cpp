@@ -9,7 +9,7 @@
 #include "systems/SystemNarrator.h"
 #include "utilities/Shortcuts.h"
 
-#include "entity/Entity.h" // still needed for beObjectOf(), is_equippable_on()
+#include "entity/Entity.h" // still needed for beObjectOf()
 
 namespace Actions
 {
@@ -46,19 +46,30 @@ namespace Actions
     auto subject = getSubject();
     auto object = getObject();
     auto& narrator = systems.narrator();
+    auto& equippable = gameState.components().equippable;
 
-    auto bodypart = object->is_equippable_on();
+    bool isEquippable = equippable.existsFor(object);
 
-    if (bodypart == BodyPart::Unknown)
+    if (!equippable.existsFor(object))
     {
       putMsg(narrator.makeTr("THE_FOO_IS_NOT_VERBABLE", arguments));
       return StateResult::Failure();
     }
     else
     {
-      /// @todo Check that entity has free body part(s) to equip item on.
-      m_bodyLocation.part = bodypart;
-      m_bodyLocation.number = 0;
+      auto& bodyparts = equippable.of(object).equippableOn();
+      if (bodyparts.size() == 0)
+      {
+        putMsg(narrator.makeTr("THE_FOO_IS_NOT_VERBABLE", arguments));
+        return StateResult::Failure();
+      }
+      else
+      {
+        /// @todo Check that entity has free body part(s) to equip item on.
+        /// @todo Allow user to choose part to equip on, if any.
+        m_bodyLocation.part = *(bodyparts.begin());
+        m_bodyLocation.number = 0;
+      }
     }
 
     return StateResult::Success();
