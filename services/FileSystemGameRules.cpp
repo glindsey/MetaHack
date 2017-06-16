@@ -109,7 +109,7 @@ void FileSystemGameRules::loadTemplateComponents(json& templates, json& componen
 
   if (templates.is_array())
   {
-    for (auto index = 0; index < templates.size(); ++index)
+    for (size_t index = 0; index < templates.size(); ++index)
     {
       // Sanitize first.
       std::string tempName = templates[index].get<std::string>();

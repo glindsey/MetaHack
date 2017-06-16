@@ -55,10 +55,10 @@ namespace JSONUtils
   {
     if (!first.is_array() || !second.is_array()) return;
 
-    for (auto index2 = 0; index2 < second.size(); ++index2)
+    for (size_t index2 = 0; index2 < second.size(); ++index2)
     {
       bool alreadyExists = false;
-      for (auto index1 = 0; index1 < first.size(); ++index1)
+      for (size_t index1 = 0; index1 < first.size(); ++index1)
       {
         if (first[index1] == second[index2])
         {
