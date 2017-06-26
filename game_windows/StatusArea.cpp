@@ -59,7 +59,7 @@ void StatusArea::drawContents_(sf::RenderTexture& texture, int frame)
     std::string name = components.properName.valueOr(player, "Player");
     name[0] = std::toupper(name[0], std::locale());
 
-    std::string type = player->getDisplayName();
+    std::string type = components.category.of(player);
     type[0] = std::toupper(type[0], std::locale());
 
     render_text.setString(name + " the " + type);

@@ -135,13 +135,3 @@ std::ostream& operator<<(std::ostream& stream, EntityId const& entity)
   stream << entity.m_id;
   return stream;
 }
-
-Entity* EntityId::operator->()
-{
-  return &(GAME.entities().get(m_id));
-}
-
-Entity const* EntityId::operator->() const
-{
-  return &(GAME.entities().get(m_id));
-}

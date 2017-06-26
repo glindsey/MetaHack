@@ -62,12 +62,6 @@ public:
 
   friend std::ostream& operator<<(std::ostream& stream, EntityId const& entity);
 
-  /// Call to get the entity associated with this.
-  Entity* operator->(void);
-
-  /// Call to get the entity associated with this.
-  Entity const* operator->(void) const;
-
 private:
   uint64_t m_id;
 };
