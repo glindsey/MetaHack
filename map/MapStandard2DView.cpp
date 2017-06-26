@@ -1,5 +1,6 @@
 #include "stdafx.h"
 
+#include "game/App.h"
 #include "map/MapStandard2DView.h"
 #include "maptile/MapTileStandard2DView.h"
 #include "services/Service.h"

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "entity/Entity.h"
+#include "entity/EntityId.h"
 #include "Object.h"
 
 // Forward declarations

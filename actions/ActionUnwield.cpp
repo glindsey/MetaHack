@@ -10,8 +10,6 @@
 #include "systems/SystemNarrator.h"
 #include "utilities/Shortcuts.h"
 
-#include "entity/Entity.h" // needed for beObjectOf()
-
 namespace Actions
 {
   ActionUnwield ActionUnwield::prototype;

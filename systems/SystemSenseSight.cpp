@@ -8,6 +8,7 @@
 #include "components/ComponentSpacialMemory.h"
 #include "game/GameState.h"
 #include "map/Map.h"
+#include "maptile/MapTile.h"
 #include "systems/Manager.h"
 #include "systems/SystemGeometry.h"
 #include "systems/SystemTimekeeper.h"

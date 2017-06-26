@@ -7,6 +7,7 @@
 #include "maptile/MapTileView.h"
 
 #include "entity/EntityStandard2DView.h"
+#include "tilesheet/TileSheet.h"
 
 // Forward declarations
 namespace Systems

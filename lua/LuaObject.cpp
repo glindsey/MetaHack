@@ -4,7 +4,6 @@
 
 #include "actions/Action.h"
 #include "components/ComponentManager.h"
-#include "entity/Entity.h"
 #include "entity/EntityId.h"
 #include "types/Direction.h"
 #include "types/Color.h"

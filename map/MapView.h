@@ -1,5 +1,6 @@
 #pragma once
 
+#include "gui/GUIObject.h"
 #include "map/Map.h"
 
 // Forward declarations

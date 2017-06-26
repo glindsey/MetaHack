@@ -4,7 +4,6 @@
 
 
 #include "components/ComponentInventory.h"
-#include "entity/Entity.h"
 #include "entity/EntityId.h"
 #include "types/Direction.h"
 #include "types/GameObject.h"

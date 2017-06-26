@@ -3,9 +3,9 @@
 
 #include "Object.h"
 #include "map/MapFactory.h"
+#include "types/Direction.h"
 #include "types/Grid2D.h"
 #include "types/IRenderable.h"
-#include "entity/Entity.h"
 
 // Forward declarations
 class Color;

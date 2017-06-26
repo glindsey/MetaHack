@@ -8,6 +8,7 @@
 #include "map/MapDonutRoom.h"
 #include "map/MapLRoom.h"
 #include "map/MapRoom.h"
+#include "maptile/MapTile.h"
 #include "properties/PropertyDictionary.h"
 
 // Local typedefs

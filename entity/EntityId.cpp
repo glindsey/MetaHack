@@ -2,7 +2,6 @@
 
 #include "entity/EntityId.h"
 
-#include "entity/Entity.h"
 #include "entity/EntityFactory.h"
 #include "game/GameState.h"
 

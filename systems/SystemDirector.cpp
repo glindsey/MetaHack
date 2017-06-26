@@ -7,7 +7,9 @@
 #include "components/ComponentManager.h"
 #include "components/ComponentPosition.h"
 #include "game/GameState.h"
+#include "lua/LuaObject.h"
 #include "map/Map.h"
+#include "maptile/MapTile.h"
 #include "systems/Manager.h"
 #include "systems/SystemGeometry.h"
 

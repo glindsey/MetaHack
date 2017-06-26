@@ -3,6 +3,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "entity/EntityView.h"
+#include "tilesheet/TileSheet.h"
 
 /// Forward declarations
 

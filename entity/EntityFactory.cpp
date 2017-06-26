@@ -3,11 +3,12 @@
 #include "entity/EntityFactory.h"
 
 #include "components/ComponentManager.h"
-#include "entity/Entity.h"
 #include "entity/EntityId.h"
 #include "game/App.h"
 #include "game/GameState.h"
 #include "lua/LuaObject.h"
+#include "map/Map.h"
+#include "maptile/MapTile.h"
 #include "services/Service.h"
 #include "services/IGameRules.h"
 
@@ -31,10 +32,7 @@ EntityId EntityFactory::create(std::string category)
   ++m_nextEntityId;
   json& data = S<IGameRules>().category(category);
 
-  std::unique_ptr<Entity> new_thing{ new Entity{ m_gameState, category, new_id } };
-
   auto& jsonComponents = data["components"];
-  m_thing_map[new_id] = std::move(new_thing);
   m_gameState.components().populate(new_id, jsonComponents);
 
   if (jsonComponents.count("materials") != 0)
@@ -59,12 +57,12 @@ EntityId EntityFactory::create(std::string category)
   return EntityId(new_id);
 }
 
-EntityId EntityFactory::createTileContents(MapTile* map_tile)
+EntityId EntityFactory::createTileContents(MapTile* mapTile)
 {
   EntityId new_id = create("TileContents");
 
-  MapID map = map_tile->map();
-  IntVec2 position = map_tile->getCoords();
+  MapID map = mapTile->map();
+  IntVec2 position = mapTile->getCoords();
   m_gameState.components().position[new_id].set(map, position);
 
   return EntityId(new_id);
@@ -72,16 +70,15 @@ EntityId EntityFactory::createTileContents(MapTile* map_tile)
 
 EntityId EntityFactory::clone(EntityId original)
 {
-  if (this->exists(original) == false) return EntityId::Mu();
-  Entity& original_thing = this->get(original);
+  auto& components = m_gameState.components();
+  if (!components.category.existsFor(original))  return EntityId::Mu();
 
-  EntityId new_id = EntityId(m_nextEntityId);
+  EntityId newId = EntityId(m_nextEntityId);
   ++m_nextEntityId;
 
-  std::unique_ptr<Entity> new_thing{ new Entity { original_thing, new_id } };
-  m_thing_map[new_id] = std::move(new_thing);
+  components.clone(original, newId);
 
-  return EntityId(new_id);
+  return newId;
 }
 
 
@@ -116,47 +113,17 @@ void EntityFactory::morph(EntityId id, std::string category)
 
 void EntityFactory::destroy(EntityId id)
 {
+  auto& components = m_gameState.components();
+
   if (id != EntityId::Mu())
   {
-    if (m_thing_map.count(id) != 0)
+    if (components.category.existsFor(id))
     {
-      m_thing_map.erase(id);
-      m_gameState.components().erase(id);
+      components.erase(id);
     }
   }
   else
   {
     throw std::exception("Attempted to destroy Mu object!");
-  }
-}
-
-bool EntityFactory::exists(EntityId id)
-{
-  return (m_thing_map.count(id) != 0);
-}
-
-Entity& EntityFactory::get(EntityId id)
-{
-  try
-  {
-    return *(m_thing_map.at(id));
-  }
-  catch (std::out_of_range&)
-  {
-    CLOG(WARNING, "Entity") << "Tried to get entity " << id << " which does not exist";
-    return *(m_thing_map[EntityId::Mu()]);
-  }
-}
-
-Entity const& EntityFactory::get(EntityId id) const
-{
-  try
-  {
-    return *(m_thing_map.at(id));
-  }
-  catch (std::out_of_range&)
-  {
-    CLOG(WARNING, "Entity") << "Tried to get entity " << id << " which does not exist";
-    return *(m_thing_map.at(EntityId::Mu()));
   }
 }

@@ -2,7 +2,8 @@
 
 #include "maptile/MapTileStandard2DView.h"
 
-#include "Components/ComponentManager.h"
+#include "components/ComponentManager.h"
+#include "lua/LuaObject.h"
 #include "map/Map.h"
 #include "services/Service.h"
 #include "services/IConfigSettings.h"

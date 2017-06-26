@@ -16,7 +16,6 @@
 #include "systems/Manager.h"
 #include "systems/SystemNarrator.h"
 
-#include "entity/Entity.h"
 #include "entity/EntityFactory.h"
 
 InventoryArea::InventoryArea(std::string name,

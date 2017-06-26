@@ -5,7 +5,6 @@
 #include "components/ComponentManager.h"
 #include "components/ComponentPhysical.h"
 #include "game/GameState.h"
-#include "entity/Entity.h"
 #include "entity/EntityFactory.h"
 
 namespace Components

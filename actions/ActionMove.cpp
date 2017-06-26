@@ -7,6 +7,7 @@
 #include "game/GameState.h"
 #include "lua/LuaObject.h"
 #include "map/Map.h"
+#include "maptile/MapTile.h"
 #include "services/Service.h"
 #include "services/IMessageLog.h"
 #include "services/IStrings.h"

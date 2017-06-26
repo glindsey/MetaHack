@@ -464,7 +464,6 @@
     <ClInclude Include="services\Strings.h" />
     <ClInclude Include="utilities\Shortcuts.h" />
     <ClInclude Include="utilities\StringTransforms.h" />
-    <ClInclude Include="entity\Entity.h" />
     <ClInclude Include="entity\EntityId.h" />
     <ClInclude Include="entity\EntityFactory.h" />
     <ClInclude Include="entity\EntityStandard2DView.h" />
@@ -747,7 +746,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="services\Strings.cpp" />
-    <ClCompile Include="entity\Entity.cpp" />
     <ClCompile Include="entity\EntityId.cpp" />
     <ClCompile Include="entity\EntityFactory.cpp" />
     <ClCompile Include="entity\EntityStandard2DView.cpp" />

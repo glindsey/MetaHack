@@ -8,7 +8,6 @@
 #include "components/ComponentPhysical.h"
 #include "game/App.h"
 #include "game/GameState.h"
-#include "entity/Entity.h"
 #include "entity/EntityId.h"
 
 InventorySelection::InventorySelection()

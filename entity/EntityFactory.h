@@ -56,20 +56,6 @@ public:
   /// @param id EntityId of the object to destroy.
   void destroy(EntityId id);
 
-  /// Returns whether a Entity with a particular EntityId exists.
-  /// @param id EntityId of the object to find.
-  bool exists(EntityId id);
-
-  /// Get a reference to the Entity associated with a particular EntityId.
-  /// If the ID does not exist, returns Mu.
-  /// @note Should only be called by views.
-  Entity& get(EntityId data);
-
-  /// Get a reference to the Entity associated with a particular EntityId.
-  /// If the ID does not exist, returns Mu.
-  /// @note Should only be called by views.
-  Entity const& get(EntityId data) const;
-
 protected:
 
 private:
@@ -81,9 +67,4 @@ private:
 
   /// Counter indicating the next EntityId to be created.
   uint64_t m_nextEntityId = 0;
-
-  /// Map of EntityIds to Entities.
-  /// @todo Probably faster to use an unordered_map and use EntityId.id
-  ///       as the hash function.
-  std::unordered_map<EntityId, std::unique_ptr<Entity>> m_thing_map;
 };

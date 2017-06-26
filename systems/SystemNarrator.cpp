@@ -2,8 +2,6 @@
 
 #include "systems/SystemNarrator.h"
 
-//#include "entity/Entity.h"
-
 #include "components/ComponentBodyparts.h"
 #include "components/ComponentGender.h"
 #include "components/ComponentGlobals.h"

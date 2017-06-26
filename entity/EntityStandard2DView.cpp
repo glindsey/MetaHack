@@ -3,6 +3,7 @@
 #include "components/ComponentManager.h"
 #include "entity/EntityStandard2DView.h"
 #include "game/GameState.h"
+#include "lua/LuaObject.h"
 #include "map/Map.h"
 #include "services/Service.h"
 #include "services/IConfigSettings.h"

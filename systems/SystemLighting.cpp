@@ -7,7 +7,9 @@
 #include "components/ComponentHealth.h"
 #include "components/ComponentLightSource.h"
 #include "components/ComponentPosition.h"
+#include "lua/LuaObject.h"
 #include "map/Map.h"
+#include "maptile/MapTile.h"
 #include "systems/SystemGeometry.h"
 #include "types/LightInfluence.h"
 

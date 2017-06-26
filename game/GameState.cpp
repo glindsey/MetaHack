@@ -3,7 +3,6 @@
 #include "game/GameState.h"
 
 #include "components/ComponentManager.h"
-#include "entity/Entity.h"
 #include "entity/EntityId.h"
 #include "entity/EntityFactory.h"
 #include "lua/LuaObject.h"
