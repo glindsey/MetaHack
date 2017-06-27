@@ -44,12 +44,12 @@ std::string MapTile::getTileType() const
 
 bool MapTile::isPassable() const
 {
-  auto& category = getCategoryData();
+  auto& categoryData = getCategoryData();
   Assert("Map",
-         category.count("components") > 0 && category["components"].is_object(),
+         categoryData.count("components") > 0 && categoryData["components"].is_object(),
          "MapTile is missing components");
 
-  auto& components = category["components"];
+  auto& components = categoryData["components"];
   Assert("Map",
          components.count("physical") > 0 && components["physical"].is_object(),
          "MapTile is missing \"physical\" component");
@@ -91,10 +91,10 @@ MapID MapTile::map() const
 
 Color MapTile::getOpacity() const
 {
-  auto& category = getCategoryData();
+  auto& categoryData = getCategoryData();
   Assert("Map",
-         category.count("components") > 0 && category["components"].is_object() &&
-         category["components"].count("appearance") > 0 && category["components"]["appearance"].is_object(),
+         categoryData.count("components") > 0 && categoryData["components"].is_object() &&
+         categoryData["components"].count("appearance") > 0 && categoryData["components"]["appearance"].is_object(),
          "MapTile is missing \"appearance\" component");
 
   return getCategoryData()["components"]["appearance"].value("opacity", Color::White);
@@ -146,5 +146,5 @@ MapTile const& MapTile::getAdjacentTile(Direction direction) const
 
 json const& MapTile::getCategoryData() const
 {
-  return S<IGameRules>().category(m_category);
+  return S<IGameRules>().categoryData(m_category);
 }

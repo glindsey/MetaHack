@@ -349,7 +349,7 @@ int Lua::push_array(json value)
 
   std::string type = value[0];
 
-  for (int index = 1; index < array_size; ++index)
+  for (size_t index = 1; index < array_size; ++index)
   {
     stack_slots += push_value(value[index]);
   }
@@ -486,8 +486,8 @@ std::string Lua::find_lua_function(std::string category, std::string suffix) con
   if (result.empty())
   {
     // Get this entity category's templates.
-    json const& templates = S<IGameRules>().category(category).value("templates", json::array());
-    for (auto index = 0; index < templates.size(); ++index)
+    json const& templates = S<IGameRules>().categoryData(category).value("templates", json::array());
+    for (size_t index = 0; index < templates.size(); ++index)
     {
       result = find_lua_function_(templates[index].get<std::string>(), suffix);
       if (result != "") return result;

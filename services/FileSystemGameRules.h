@@ -14,7 +14,7 @@ public:
 
   /// Get data for a specific Entity category or template.
   /// If it doesn't exist, attempt to load it.
-  json& category(std::string name, std::string subType = "");
+  json& categoryData(std::string name, std::string subType = "");
 
   /// Get reference to game rules data.
   inline json& data()

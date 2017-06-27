@@ -308,7 +308,7 @@ namespace Systems
 
   json const& Narrator::getCategoryData(EntityId id) const
   {
-    return S<IGameRules>().category(m_components.category.valueOr(id, ""));
+    return S<IGameRules>().categoryData(m_components.category.valueOr(id, ""));
   }
 
   std::string Narrator::getDisplayAdjectives(EntityId id) const

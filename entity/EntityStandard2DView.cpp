@@ -107,14 +107,14 @@ std::string EntityStandard2DView::getViewName()
 UintVec2 EntityStandard2DView::getTileSheetCoords(int frame) const
 {
   auto& entity = getEntity();
-  auto& category = S<IGameRules>().category(COMPONENTS.category[entity]);
+  auto& categoryData = S<IGameRules>().categoryData(COMPONENTS.category[entity]);
   UintVec2 offset;
 
   // Get tile coordinates on the sheet.
-  UintVec2 start_coords = category.value("tile-location", UintVec2(0, 0));
+  UintVec2 start_coords = categoryData.value("tile-location", UintVec2(0, 0));
 
   // If the entity has the "animated" component, call the Lua function to get the offset (tile to choose).
-  if (category["components"].count("animated") > 0)
+  if (categoryData["components"].count("animated") > 0)
   {
     offset = GAME.lua().callEntityFunction("get_tile_offset", entity, frame, UintVec2(0, 0));
   }

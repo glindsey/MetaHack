@@ -42,7 +42,7 @@ UintVec2 MapTileStandard2DView::getTileSheetCoords() const
 UintVec2 MapTileStandard2DView::getEntityTileSheetCoords(EntityId entity, int frame) const
 {
   /// Get tile coordinates on the sheet.
-  UintVec2 start_coords = S<IGameRules>().category(COMPONENTS.category[entity]).value("tile-location", UintVec2(0, 0));
+  UintVec2 start_coords = S<IGameRules>().categoryData(COMPONENTS.category[entity]).value("tile-location", UintVec2(0, 0));
 
   /// Call the Lua function to get the offset (tile to choose).
   UintVec2 offset = GAME.lua().callEntityFunction("get_tile_offset", entity, frame, UintVec2(0, 0));
@@ -127,7 +127,7 @@ void MapTileStandard2DView::addMemoryVerticesTo(sf::VertexArray& vertices,
 
   std::string tile_type = spacialMemory[coords].getType();
   if (tile_type == "") { tile_type = "MTUnknown"; }
-  json& tile_data = S<IGameRules>().category(tile_type);
+  json& tile_data = S<IGameRules>().categoryData(tile_type);
 
   /// @todo Call a script to handle selecting a tile other than the one
   ///       in the upper-left corner.

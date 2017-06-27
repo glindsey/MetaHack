@@ -18,7 +18,7 @@ FileSystemGameRules::FileSystemGameRules()
 FileSystemGameRules::~FileSystemGameRules()
 {}
 
-json & FileSystemGameRules::category(std::string name, std::string subType)
+json & FileSystemGameRules::categoryData(std::string name, std::string subType)
 {
   std::string fullName = subType.empty() ? name : subType + "." + name;
   loadCategoryIfNecessary(name, subType);

@@ -13,7 +13,7 @@ public:
 
   /// Get data for a specific Entity category.
   /// If it doesn't exist, attempt to load it.
-  virtual json& category(std::string name, std::string subType = "")
+  virtual json& categoryData(std::string name, std::string subType = "")
   {
     std::string fullName = subType + "." + name;
     if (m_data.count(fullName) == 0)
