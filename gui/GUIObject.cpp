@@ -400,9 +400,24 @@ namespace metagui
         }
       }
 
+      // If object casts a "shadow", draw the shadow first.
+      if (m_cachedFlags.hasShadow == true)
+      {
+        // Create a "shadow" shape.
+        m_bgShape.setPosition(RealVec2(static_cast<float>(m_location.x - 4), static_cast<float>(m_location.y - 4)));
+        m_bgShape.setSize(RealVec2(static_cast<float>(m_size.x), static_cast<float>(m_size.y)));
+        m_bgShape.setFillColor(sf::Color(0, 0, 0, 64));
+        m_bgShape.setTexture(nullptr);
+
+        // Draw onto the parent.
+        parentTexture.setView(sf::View(sf::FloatRect(0.0f, 0.0f, static_cast<float>(parentTexture.getSize().x), static_cast<float>(parentTexture.getSize().y))));
+        parentTexture.draw(m_bgShape);
+      }
+
       // Create the RectangleShape that will be drawn onto the target.
       m_bgShape.setPosition(RealVec2(static_cast<float>(m_location.x), static_cast<float>(m_location.y)));
       m_bgShape.setSize(RealVec2(static_cast<float>(m_size.x), static_cast<float>(m_size.y)));
+      m_bgShape.setFillColor(sf::Color::White);
       m_bgShape.setTexture(&(m_bgTexture->getTexture()));
       m_bgShape.setTextureRect(sf::IntRect(0, 0, m_size.x, m_size.y));
 
@@ -505,8 +520,12 @@ namespace metagui
     {
       m_cachedFlags.decor = value;
     }
+    else if (name == "hasShadow")
+    {
+      m_cachedFlags.hasShadow = value;
+    }
 
-    handleSetFlag_(name, value);
+    handleSetFlag_V(name, value);
   }
 
   bool GUIObject::handlesPoint(IntVec2 point)
@@ -595,7 +614,7 @@ namespace metagui
     // Default behavior is to do nothing.
   }
 
-  void GUIObject::handleSetFlag_(std::string name, bool enabled)
+  void GUIObject::handleSetFlag_V(std::string name, bool enabled)
   {
   }
 

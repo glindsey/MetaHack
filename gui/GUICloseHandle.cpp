@@ -8,8 +8,7 @@
 
 namespace metagui
 {
-  CloseHandle::CloseHandle(std::string name)
-    :
+  CloseHandle::CloseHandle(std::string name) :
     GUIObject(name, {})
   {}
 
@@ -21,10 +20,12 @@ namespace metagui
   // === PROTECTED METHODS ======================================================
   void CloseHandle::drawPreChildren_(sf::RenderTexture& texture, int frame)
   {
+    /// @todo WRITE ME
   }
 
   bool CloseHandle::onEvent_V(Event const& event)
   {
+    /// @todo WRITE ME
     return false;
   }
 

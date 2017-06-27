@@ -14,14 +14,15 @@
 
 namespace metagui
 {
-  Window::Window(std::string name, IntVec2 location, UintVec2 size)
-    :
+  Window::Window(std::string name, IntVec2 location, UintVec2 size) :
     GUIObject(name, {}, location, size)
   {
     // *** TESTING CODE ***
     // Set this object to be movable and resizable.
     setFlag("movable", true);
     setFlag("resizable", true);
+
+    setFlag("hasShadow", true);
   }
 
   Window::Window(std::string name, sf::IntRect dimensions)
@@ -32,6 +33,8 @@ namespace metagui
     // Set this object to be movable and resizable.
     setFlag("movable", true);
     setFlag("resizable", true);
+
+    setFlag("hasShadow", true);
   }
 
   Window::~Window()
@@ -92,7 +95,7 @@ namespace metagui
     texture.draw(m_border_shape);
   }
 
-  void Window::handleSetFlag_(std::string name, bool enabled)
+  void Window::handleSetFlag_V(std::string name, bool enabled)
   {
     if (name == "titlebar")
     {

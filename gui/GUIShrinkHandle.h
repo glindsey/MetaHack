@@ -1,12 +1,10 @@
-#ifndef GUISHRINKHANDLE_H
-#define GUISHRINKHANDLE_H
+#pragma once
 
 #include "GUIObject.h"
 
 namespace metagui
 {
-  class ShrinkHandle :
-    public GUIObject, public GUIObjectVisitable<ShrinkHandle>
+  class ShrinkHandle : public GUIObject
   {
     friend class Window;
 
@@ -21,5 +19,3 @@ namespace metagui
   private:
   };
 }; // end namespace metagui
-
-#endif // GUICLOSEHANDLE_H

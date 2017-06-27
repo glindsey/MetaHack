@@ -1,12 +1,10 @@
-#ifndef GUIRESIZEHANDLE_H
-#define GUIRESIZEHANDLE_H
+#pragma once
 
 #include "GUIObject.h"
 
 namespace metagui
 {
-  class ResizeHandle :
-    public GUIObject, public GUIObjectVisitable<ResizeHandle>
+  class ResizeHandle : public GUIObject
   {
     friend class Window;
 
@@ -29,5 +27,3 @@ namespace metagui
 
   };
 }; // end namespace metagui
-
-#endif // GUICLOSEHANDLE_H

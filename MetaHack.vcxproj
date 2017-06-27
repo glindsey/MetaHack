@@ -351,6 +351,7 @@
     <ClInclude Include="design_patterns\AssertHelper.h" />
     <ClInclude Include="design_patterns\Event.h" />
     <ClInclude Include="design_patterns\Serializable.h" />
+    <ClInclude Include="gui\GUICollapseHandle.h" />
     <ClInclude Include="services\Service.h" />
     <ClInclude Include="design_patterns\Object.h" />
     <ClInclude Include="design_patterns\Visitor.h" />
@@ -638,6 +639,7 @@
     <ClCompile Include="design_patterns\AssertHelper.cpp" />
     <ClCompile Include="design_patterns\Event.cpp" />
     <ClCompile Include="design_patterns\Object.cpp" />
+    <ClCompile Include="gui\GUICollapseHandle.cpp" />
     <ClCompile Include="inventory\InventorySlot.cpp" />
     <ClCompile Include="map\MapMemory.cpp" />
     <ClCompile Include="services\FileSystemGameRules.cpp" />

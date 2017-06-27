@@ -9,8 +9,7 @@
 
 namespace metagui
 {
-  Label::Label(std::string name, IntVec2 location)
-    :
+  Label::Label(std::string name, IntVec2 location) :
     GUIObject(name, {}, location, { 0, 0 })
   {}
 

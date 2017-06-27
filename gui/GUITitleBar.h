@@ -1,12 +1,10 @@
-#ifndef GUITITLEBAR_H
-#define GUITITLEBAR_H
+#pragma once
 
 #include "GUIObject.h"
 
 namespace metagui
 {
-  class TitleBar :
-    public GUIObject, public GUIObjectVisitable<TitleBar>
+  class TitleBar : public GUIObject
   {
     friend class Window;
 
@@ -22,5 +20,3 @@ namespace metagui
   private:
   };
 }; // end namespace metagui
-
-#endif // GUITITLEBAR_H

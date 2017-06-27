@@ -4,8 +4,7 @@
 
 namespace metagui
 {
-  class Window :
-    public GUIObject, public GUIObjectVisitable<Window>
+  class Window : public GUIObject
   {
   public:
     Window(std::string name, IntVec2 location, UintVec2 size = UintVec2(0, 0));
@@ -24,7 +23,7 @@ namespace metagui
   protected:
     virtual void drawPreChildren_(sf::RenderTexture& texture, int frame) override final;
 
-    virtual void handleSetFlag_(std::string name, bool enabled) override;
+    virtual void handleSetFlag_V(std::string name, bool enabled) override;
 
     /// Temporary function used to render the contents of classes derived from
     /// GUIWindow until they can be properly replaced with child controls.

@@ -11,8 +11,7 @@ namespace metagui
 {
   Desktop::Desktop(Object& event_parent,
                    std::string name, 
-                   UintVec2 size)
-    :
+                   UintVec2 size) :
     GUIObject{ 
     name, 
     {
@@ -121,6 +120,7 @@ namespace metagui
 
   void Desktop::drawPreChildren_(sf::RenderTexture& texture, int frame)
   {
+    texture.clear(sf::Color::Blue);
   }
 
 }; // end namespace metagui

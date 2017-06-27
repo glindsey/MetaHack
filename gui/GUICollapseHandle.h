@@ -4,17 +4,18 @@
 
 namespace metagui
 {
-  class CloseHandle : public GUIObject
+  class CollapseHandle : public GUIObject
   {
     friend class Window;
 
   public:
-    virtual ~CloseHandle();
+    virtual ~CollapseHandle();
 
   protected:
-    explicit CloseHandle(std::string name);
+    explicit CollapseHandle(std::string name);
+
     virtual void drawPreChildren_(sf::RenderTexture& texture, int frame) override final;
-    virtual bool onEvent_V(Event const& event) override final;
+    virtual bool onEvent_V(Event const& event) override;
 
   private:
   };

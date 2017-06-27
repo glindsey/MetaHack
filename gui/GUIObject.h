@@ -1,10 +1,8 @@
-#ifndef GUIOBJECT_H
-#define GUIOBJECT_H
+#pragma once
 
 #include "events/UIEvents.h"
 #include "types/common.h"
 #include "Object.h"
-#include "Visitor.h"
 
 namespace metagui
 {
@@ -24,30 +22,6 @@ namespace metagui
   using ChildMap = std::map< std::string, std::unique_ptr<GUIObject> >;
   using ZOrderMap = std::multimap< uint32_t, std::string >;
   using RenderFunctor = std::function< void(sf::RenderTexture&, int) >;
-
-  // The following declaration should include every possible GUIObject that
-  // we want to be able to accept visitors.
-  using GUIObjectVisitor = Visitor<
-    CloseHandle,
-    Desktop,
-    Label,
-    ResizeHandle,
-    ShrinkHandle,
-    TitleBar,
-    Window
-  >;
-
-  // The following declaration should have the same class list as above.
-  template<class T>
-  using GUIObjectVisitable = VisitableImpl<T,
-    CloseHandle,
-    Desktop,
-    Label,
-    ResizeHandle,
-    ShrinkHandle,
-    TitleBar,
-    Window
-  >;
 
   /// Virtual superclass of all GUI objects on screen.
   /// @todo Should child objects store Z-order?
@@ -196,7 +170,7 @@ namespace metagui
     sf::IntRect getAbsoluteDimensions();
 
     /// Add a child GUIObject underneath this one.
-    /// *This GUIObject assumes ownership of the child.*
+    /// @warning This GUIObject assumes ownership of the child.
     /// @param child    std::unique_ptr to child to add.
     /// @param z_order  Z-order to put this child at. If omitted, uses the
     ///                 highest Z-order currently in the map, plus one.
@@ -205,7 +179,7 @@ namespace metagui
                         uint32_t z_order);
 
     /// Add a child GUIObject underneath this one.
-    /// *This GUIObject assumes ownership of the child.*
+    /// @warning This GUIObject assumes ownership of the child.
     /// The new child's Z-order will be set to the highest Z-order currently in
     /// the child map, plus one.
     /// @param child    std::unique_ptr to child to add.
@@ -214,7 +188,7 @@ namespace metagui
     GUIObject* addChild(std::unique_ptr<GUIObject> child);
 
     /// Add a child GUIObject underneath this one.
-    /// *This GUIObject assumes ownership of the child.*
+    /// @warning This GUIObject assumes ownership of the child.
     /// @param child    Pointer to child to add.
     /// @param z_order  Z-order to put this child at. If omitted, uses the
     ///                 highest Z-order currently in the map, plus one.
@@ -227,7 +201,7 @@ namespace metagui
     }
 
     /// Add a child GUIObject underneath this one.
-    /// *This GUIObject assumes ownership of the child.*
+    /// @warning This GUIObject assumes ownership of the child.
     /// The new child's Z-order will be set to the highest Z-order currently in
     /// the child map, plus one.
     /// @param child    Pointer to child to add.
@@ -241,7 +215,7 @@ namespace metagui
     }
 
     /// Add a child GUIObject underneath this one.
-    /// *This GUIObject assumes ownership of the child.*
+    /// @warning This GUIObject assumes ownership of the child.
     /// The new child's Z-order will be set to the lowest Z-order currently in
     /// the child map, minus one.
     /// @param child    std::unique_ptr to child to add.
@@ -250,7 +224,7 @@ namespace metagui
     GUIObject* addChildTop(std::unique_ptr<GUIObject> child);
 
     /// Add a child GUIObject underneath this one.
-    /// *This GUIObject assumes ownership of the child.*
+    /// @warning This GUIObject assumes ownership of the child.
     /// The new child's Z-order will be set to the lowest Z-order currently in
     /// the child map, minus one.
     /// @param child    Pointer to child to add.
@@ -308,8 +282,8 @@ namespace metagui
     bool render(sf::RenderTexture& texture, int frame);
 
     /// Set/clear an object flag.
-    /// Calls the virtual method handle_set_flag_ if the flag has been
-    /// changed; this allows subclasses to perform specific actions based on
+    /// Calls the `handleSetFlag` if the flag has been changed;
+    /// this allows subclasses to perform specific actions based on
     /// certain flags (such as setting/clearing "titlebar").
     void setFlag(std::string name, bool enabled);
 
@@ -324,7 +298,7 @@ namespace metagui
 
     /// Handles a flag being set/cleared.
     /// If this function does not handle a particular flag, calls the
-    /// virtual function handleSetFlag_().
+    /// virtual function handleSetFlag_V().
     void handleSetFlag(std::string name, bool enabled);
 
     /// Returns whether the specified point falls within this object's bounds
@@ -379,7 +353,7 @@ namespace metagui
     /// Handles a flag being set/cleared.
     /// This method is called by setFlag() if the value was changed.
     /// The default behavior is to do nothing.
-    virtual void handleSetFlag_(std::string name, bool enabled);
+    virtual void handleSetFlag_V(std::string name, bool enabled);
 
     virtual bool onEvent(Event const& event) override final;
 
@@ -418,6 +392,7 @@ namespace metagui
       bool animated = false;   ///< Means this object must be redrawn every frame.
       bool movable = false;    ///< Means this object can be moved via dragging.
       bool decor = false;      ///< Means this object is part of its parent's decor.
+      bool hasShadow = false;  ///< Means this object casts a translucent "shadow" on its parent.
     };
 
     /// Struct of cached flag values.
@@ -477,5 +452,3 @@ namespace metagui
     return static_cast<unsigned int>(sqrt((x_distance * x_distance) + (y_distance * y_distance)));
   }
 }; // end namespace metagui
-
-#endif // GUIOBJECT_H

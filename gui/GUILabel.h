@@ -1,12 +1,10 @@
-#ifndef GUILABEL_H
-#define GUILABEL_H
+#pragma once
 
 #include "GUIObject.h"
 
 namespace metagui
 {
-  class Label :
-    public GUIObject, public GUIObjectVisitable<Label>
+  class Label : public GUIObject
   {
   public:
     explicit Label(std::string name, IntVec2 location = IntVec2(0, 0));
@@ -18,5 +16,3 @@ namespace metagui
   private:
   };
 }; // end namespace metagui
-
-#endif // GUILABEL_H

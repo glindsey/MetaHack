@@ -8,8 +8,7 @@
 
 namespace metagui
 {
-  ShrinkHandle::ShrinkHandle(std::string name)
-    :
+  ShrinkHandle::ShrinkHandle(std::string name) :
     GUIObject(name, {})
   {}
 
@@ -20,10 +19,13 @@ namespace metagui
 
   // === PROTECTED METHODS ======================================================
   void ShrinkHandle::drawPreChildren_(sf::RenderTexture& texture, int frame)
-  {}
+  {
+    /// @todo WRITE ME
+  }
 
   bool ShrinkHandle::onEvent_V(Event const & event)
   {
+    /// @todo WRITE ME
     return false;
   }
 

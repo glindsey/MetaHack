@@ -1,5 +1,4 @@
-#ifndef GUIDESKTOPPANE_H
-#define GUIDESKTOPPANE_H
+#pragma once
 
 #include "GUIObject.h"
 
@@ -8,9 +7,7 @@ class Object;
 
 namespace metagui
 {
-  class Desktop :
-    public GUIObject,
-    public GUIObjectVisitable<Desktop>
+  class Desktop : public GUIObject
   {
   public:
     struct MouseButtonInfo
@@ -51,5 +48,3 @@ namespace metagui
     IntVec2 m_mouseLocation;
   };
 }; // end namespace metagui
-
-#endif // GUIDESKTOPPANE_H
