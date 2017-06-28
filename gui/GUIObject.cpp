@@ -404,9 +404,9 @@ namespace metagui
       if (m_cachedFlags.hasShadow == true)
       {
         // Create a "shadow" shape.
-        m_bgShape.setPosition(RealVec2(static_cast<float>(m_location.x - 4), static_cast<float>(m_location.y - 4)));
+        m_bgShape.setPosition(RealVec2(static_cast<float>(m_location.x - 8), static_cast<float>(m_location.y + 8)));
         m_bgShape.setSize(RealVec2(static_cast<float>(m_size.x), static_cast<float>(m_size.y)));
-        m_bgShape.setFillColor(sf::Color(0, 0, 0, 64));
+        m_bgShape.setFillColor(sf::Color(0, 0, 0, 128));
         m_bgShape.setTexture(nullptr);
 
         // Draw onto the parent.

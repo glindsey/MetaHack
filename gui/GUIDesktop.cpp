@@ -120,7 +120,6 @@ namespace metagui
 
   void Desktop::drawPreChildren_(sf::RenderTexture& texture, int frame)
   {
-    texture.clear(sf::Color::Blue);
   }
 
 }; // end namespace metagui
