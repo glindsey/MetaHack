@@ -192,7 +192,7 @@ bool AppStateGameMode::initialize()
   // Move player to start position on the map.
   auto& start_coords = game_map.getStartCoords();
 
-  auto start_floor = game_map.getTile(start_coords).getTileContents();
+  auto start_floor = game_map.getTile(start_coords).getTileSpace();
   Assert("Game", start_floor, "starting tile floor doesn't exist");
 
   bool player_moved = m_systemManager->geometry().moveEntityInto(player, start_floor);
@@ -1059,7 +1059,7 @@ void AppStateGameMode::resetInventorySelection()
       if (components.position.existsFor(player))
       {
         MapID gameMap = components.position[player].map();
-        EntityId floorId = MAPS.get(gameMap).getTile(m_cursorCoords).getTileContents();
+        EntityId floorId = MAPS.get(gameMap).getTile(m_cursorCoords).getTileSpace();
         m_inventorySelection->setViewed(floorId);
       }
     }

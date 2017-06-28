@@ -39,7 +39,11 @@ Map::Map(GameState& gameState, MapID id, int width, int height)
   m_tiles.reset(NEW Grid2D<MapTile>({ width, height },
                                     [&](IntVec2 coords) -> MapTile*
   {
-    MapTile* new_tile = NEW MapTile(coords, "MTUnknown", id, gameState.entities());
+    MapTile* new_tile = NEW MapTile(coords, 
+                                    "MTUnknown", 
+                                    id, 
+                                    gameState.entities(), 
+                                    gameState.components());
     new_tile->setCoords(coords);
     return new_tile;
   }));
@@ -194,7 +198,7 @@ int Map::LUA_getTileContents(lua_State* L)
   IntVec2 coords = IntVec2(static_cast<int>(lua_tointeger(L, 2)), static_cast<int>(lua_tointeger(L, 3)));
 
   auto& map_tile = GameState::instance().maps().get(map_id).getTile(coords);
-  EntityId contents = map_tile.getTileContents();
+  EntityId contents = map_tile.getTileSpace();
 
   lua_pushinteger(L, contents);
 

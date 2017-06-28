@@ -193,7 +193,7 @@ void MapTileStandard2DView::addEntitiesFloorVertices(EntityId viewer,
 {
   auto& tile = getMapTile();
   auto coords = tile.getCoords();
-  EntityId contents = tile.getTileContents();
+  EntityId contents = tile.getTileSpace();
   auto& inv = COMPONENTS.inventory[contents];
 
   if (SYSTEMS.senseSight()->subjectCanSeeCoords(viewer, coords))

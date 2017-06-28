@@ -3,6 +3,7 @@
 #include "maptile/MapTile.h"
 
 #include "AssertHelper.h"
+#include "components/ComponentManager.h"
 #include "components/ComponentPhysical.h"
 #include "entity/EntityFactory.h"
 #include "game/App.h"
@@ -22,14 +23,35 @@ bool MapTile::initialized = false;
 MapTile::~MapTile()
 {}
 
-EntityId MapTile::getTileContents() const
+EntityId MapTile::getTileSpace() const
 {
-  return m_tile_contents;
+  return m_tileSpace;
+}
+
+EntityId MapTile::getTileFloor() const
+{
+  return m_tileFloor;
 }
 
 std::string MapTile::getDisplayName() const
 {
   return getCategoryData().value("name", "MTUnknown");
+}
+
+EntityId MapTile::setTileSpace(std::string type, std::string material)
+{
+  auto newTileSpace = m_entities.createTileEntity(this, type, material);
+  m_entities.destroy(m_tileSpace);
+  m_tileSpace = newTileSpace;
+  return newTileSpace;
+}
+
+EntityId MapTile::setTileFloor(std::string type, std::string material)
+{
+  auto newTileFloor = m_entities.createTileEntity(this, type, material);
+  m_entities.destroy(m_tileFloor);
+  m_tileFloor = newTileFloor;
+  return newTileFloor;
 }
 
 void MapTile::setTileType(std::string category)
@@ -118,9 +140,15 @@ RealVec2 MapTile::getPixelCoords(IntVec2 tile)
 
 // === PROTECTED METHODS ======================================================
 
-MapTile::MapTile(IntVec2 coords, std::string category, MapID mapID, EntityFactory& entities)
+MapTile::MapTile(IntVec2 coords, 
+                 std::string category, 
+                 MapID mapID, 
+                 EntityFactory& entities,
+                 Components::ComponentManager& components)
   :
   Object({}),
+  m_entities{ entities },
+  m_components{ components },
   m_mapID{ mapID },
   m_coords{ coords },
   m_category{ category }
@@ -131,10 +159,9 @@ MapTile::MapTile(IntVec2 coords, std::string category, MapID mapID, EntityFactor
     initialized = true;
   }
 
-  // Tile contents entity is created here.
-  /// @todo The type of this floor should eventually be specified as
-  ///       part of the constructor.
-  m_tile_contents = entities.createTileContents(this);
+  // Tile entities are created here.
+  m_tileSpace = entities.createTileEntity(this, "TileContents" /*, material */);
+  m_tileFloor = entities.createTileEntity(this, "TileFloor" /*, material */);
 }
 
 MapTile const& MapTile::getAdjacentTile(Direction direction) const

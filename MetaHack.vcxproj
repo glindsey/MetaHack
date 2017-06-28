@@ -819,6 +819,7 @@
     <None Include="resources\entity\TileContents.json" />
     <None Include="resources\entity\templates\Weapon.json" />
     <None Include="resources\entity\templates\Weapon.lua" />
+    <None Include="resources\entity\TileFloor.json" />
     <None Include="resources\intrinsic_types.json" />
     <None Include="resources\entity\templates\MTFloor.json" />
     <None Include="resources\entity\MTFloorDirt.json" />

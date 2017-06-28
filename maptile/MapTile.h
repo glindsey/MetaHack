@@ -12,8 +12,10 @@
 #include "Object.h"
 
 // Forward declarations
-class DynamicEntity;
-class Floor;
+namespace Components
+{
+  class ComponentManager;
+}
 class EntityFactory;
 
 /// Class representing one tile of the map.
@@ -28,11 +30,29 @@ class MapTile
 public:
   virtual ~MapTile();
 
-  /// Get the tile's contents object.
-  EntityId getTileContents() const;
+  /// Get the tile's space object.
+  EntityId getTileSpace() const;
+
+  /// Get the tile's floor object.
+  EntityId getTileFloor() const;
 
   /// Return this tile's description.
   virtual std::string getDisplayName() const override final;
+
+  /// Sets the space entity for this tile (e.g. "TileSpace", "TileWall", etc.)
+  /// Optionally also sets the material to use.
+  /// @todo If the old entity contains any objects, moved them into the new entity.
+  /// @param type The entity type for this tile's space.
+  /// @param material If present, the material to use for the space.
+  /// @return The ID of the new entity.
+  EntityId setTileSpace(std::string type, std::string material = "");
+
+  /// Sets the floor entity for this tile (e.g. "TileFloor", "TilePit", etc.)
+  /// @todo If the old entity contains any objects, moved them into the new entity.
+  /// @param type The entity type for this tile's floor.
+  /// @param material If present, the material to use for the floor.
+  /// @return The ID of the new entity.
+  EntityId setTileFloor(std::string type, std::string material = "");
 
   /// Sets the tile type, without doing gameplay checks.
   /// Used to set up the map before gameplay begins.
@@ -47,7 +67,7 @@ public:
   /// Returns whether a tile is empty space, e.g. no wall in the way.
   bool isPassable() const;
 
-  /// Returns whether a tile can be traversed by a certain DynamicEntity.
+  /// Returns whether a tile can be traversed by a certain Entity.
   bool canBeTraversedBy(EntityId entity) const;
 
   /// Set the current tile's location.
@@ -76,10 +96,20 @@ public:
 
 protected:
   /// Constructor, callable only by Map class.
-  MapTile(IntVec2 coords, std::string category, MapID mapID, EntityFactory& entities);
+  MapTile(IntVec2 coords, 
+          std::string category,
+          MapID mapID,
+          EntityFactory& entities,
+          Components::ComponentManager& components);
 
 private:
   static bool initialized;
+
+  /// Reference to the EntityFactory.
+  EntityFactory& m_entities;
+
+  /// Reference to the ComponentManager.
+  Components::ComponentManager& m_components;
 
   /// The ID of the Map this MapTile belongs to.
   MapID m_mapID;
@@ -88,10 +118,10 @@ private:
   IntVec2 m_coords;
 
   /// Entity representing the tile's floor.
-  EntityId m_floor;
+  EntityId m_tileFloor;
 
   /// Entity representing the tile's contents.
-  EntityId m_tile_contents;
+  EntityId m_tileSpace;
 
   /// Type of the MapTile contents, as a string.
   std::string m_category;

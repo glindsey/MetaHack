@@ -27,10 +27,13 @@ public:
   /// @return EntityId of the new object created.
   EntityId create(std::string category);
 
-  /// Create a floor object.
-  /// @param map_tile Pointer to the map tile associated.
+  /// Create an entity bound to a tile (e.g. the floor, or the space above the floor).
+  /// @param mapTile Pointer to the map tile associated.
+  /// @param category Entity to use for the space (e.g. "TileSpace", "TileWall", "TileFloor", "TilePit", etc.)
+  /// @param material If present, the material to use for the space.
+  /// @todo Implement the use of the material parameter.
   /// @return EntityId of the new object created.
-  EntityId createTileContents(MapTile* map_tile);
+  EntityId createTileEntity(MapTile* mapTile, std::string category, std::string material = "");
 
   /// Clone a particular object.
   /// @param original ID of the object to clone.

@@ -1,0 +1,16 @@
+{
+  "name": "floor",
+  "plural": "floors",
+  "description-brief": "The floor of this tile.",
+
+  "templates": [ "Entity" ],
+
+  "components": {
+    "appearance": {
+      "opacity": [ "color", 0, 0, 0 ]
+    },
+    "inventory": {
+      "max-size": -1
+    }
+  }
+}

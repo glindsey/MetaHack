@@ -26,6 +26,7 @@ EntityFactory::~EntityFactory()
 {
 }
 
+/// @todo Add optional parameter specifying material to use
 EntityId EntityFactory::create(std::string category)
 {
   EntityId new_id = EntityId(m_nextEntityId);
@@ -57,9 +58,9 @@ EntityId EntityFactory::create(std::string category)
   return EntityId(new_id);
 }
 
-EntityId EntityFactory::createTileContents(MapTile* mapTile)
+EntityId EntityFactory::createTileEntity(MapTile* mapTile, std::string category, std::string material)
 {
-  EntityId new_id = create("TileContents");
+  EntityId new_id = create(category);
 
   MapID map = mapTile->map();
   IntVec2 position = mapTile->getCoords();

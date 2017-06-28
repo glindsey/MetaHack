@@ -92,7 +92,7 @@ namespace Actions
       else
       {
         auto& new_tile = gameState.maps().get(map).getTile({ x_new, y_new });
-        EntityId new_floor = new_tile.getTileContents();
+        EntityId new_floor = new_tile.getTileSpace();
 
         // See if the tile to move into contains another creature.
         EntityId creature = components.inventory.of(new_floor).getEntity();
