@@ -52,7 +52,7 @@ namespace Actions
     putMsg(tr("ACTN_NOT_IMPLEMENTED"));
 
 #if 0
-    if (entity != EntityId::Mu())
+    if (entity != EntityId::Void)
     {
       success = actor->do_open(entity, action_time);
     }

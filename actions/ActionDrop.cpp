@@ -61,7 +61,7 @@ namespace Actions
     std::string message;
     auto subject = getSubject();
     auto object = getObjects().front();
-    EntityId location = components.position.existsFor(subject) ? components.position.of(subject).parent() : EntityId::Mu();
+    EntityId location = components.position.existsFor(subject) ? components.position.of(subject).parent() : EntityId::Void;
     arguments["the_location"] = narrator.getDescriptiveString(location);
 
     /// @todo Handle dropping a certain quantity of an item.
@@ -75,7 +75,7 @@ namespace Actions
       putMsg(narrator.makeTr("YOU_SEEM_UNHARMED", arguments));
       putMsg(narrator.makeTr("YOU_GET_UP", arguments));
     }
-    else if (object != EntityId::Mu())
+    else if (object != EntityId::Void)
     {
       if (components.inventory.existsFor(location) &&
           components.inventory.of(location).canContain(object))

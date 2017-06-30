@@ -51,7 +51,7 @@ void InventoryArea::drawContents_(sf::RenderTexture& texture, int frame)
 
   // Get a reference to the location we're referring to.
   auto& viewed_thing = m_inventorySelection.getViewed();
-  if (viewed_thing == EntityId::Mu())
+  if (viewed_thing == EntityId::Void)
   {
     setText("Invalid Viewed Object!");
     return;
@@ -128,8 +128,8 @@ void InventoryArea::drawContents_(sf::RenderTexture& texture, int frame)
 
     BodyLocation wieldLocation;
     BodyLocation wearLocation;
-    bool wielding = COMPONENTS.bodyparts.existsFor(entity) && (COMPONENTS.bodyparts[entity].getWieldedEntity(wieldLocation) != EntityId::Mu());
-    bool wearing = COMPONENTS.bodyparts.existsFor(entity) && (COMPONENTS.bodyparts[entity].getWornEntity(wearLocation) != EntityId::Mu());
+    bool wielding = COMPONENTS.bodyparts.existsFor(entity) && (COMPONENTS.bodyparts[entity].getWieldedEntity(wieldLocation) != EntityId::Void);
+    bool wearing = COMPONENTS.bodyparts.existsFor(entity) && (COMPONENTS.bodyparts[entity].getWornEntity(wearLocation) != EntityId::Void);
 
     // 5. TODO: Display "worn" or "equipped" icon if necessary.
     if (wielding)

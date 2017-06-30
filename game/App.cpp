@@ -19,9 +19,6 @@
 // Global declarations
 App* App::s_instance;
 
-// Local typedefs
-typedef boost::random::uniform_int_distribution<> uniform_int_dist;
-
 sf::IntRect calc_message_log_dimensions(sf::RenderWindow& window)
 {
   sf::IntRect messageLogDims;

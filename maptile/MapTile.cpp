@@ -16,8 +16,6 @@
 #include "utilities/MathUtils.h"
 #include "utilities/RNGUtils.h"
 
-typedef boost::random::uniform_int_distribution<> uniform_int_dist;
-
 bool MapTile::initialized = false;
 
 MapTile::~MapTile()
@@ -35,7 +33,7 @@ EntityId MapTile::getTileFloor() const
 
 std::string MapTile::getDisplayName() const
 {
-  return getCategoryData().value("name", "MTUnknown");
+  return getCategoryData().value("name", "???");
 }
 
 void MapTile::setTileSpace(std::string type, std::string material)

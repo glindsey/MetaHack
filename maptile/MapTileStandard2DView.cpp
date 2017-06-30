@@ -125,18 +125,23 @@ void MapTileStandard2DView::addMemoryVerticesTo(sf::VertexArray& vertices,
   RealVec2 vNW(location.x - ts2, location.y - ts2);
   RealVec2 vNE(location.x + ts2, location.y - ts2);
 
-  std::string tile_type = spacialMemory[coords].getType();
-  if (tile_type == "") { tile_type = "MTUnknown"; }
-  json& tile_data = S<IGameRules>().categoryData(tile_type);
+  if (spacialMemory.contains(coords))
+  {
+    std::string tileCategory = spacialMemory[coords].getType();
+    if (!tileCategory.empty())
+    {
+      json& tile_data = S<IGameRules>().categoryData(tileCategory);
 
-  /// @todo Call a script to handle selecting a tile other than the one
-  ///       in the upper-left corner.
-  UintVec2 tile_coords = tile_data.value("tile-location", UintVec2(0, 0));
+      /// @todo Call a script to handle selecting a tile other than the one
+      ///       in the upper-left corner.
+      UintVec2 tileCoords = tile_data.value("tile-location", UintVec2(0, 0));
 
-  m_tileSheet.addQuad(vertices,
-                        tile_coords, Color::White,
-                        vNW, vNE,
-                        vSW, vSE);
+      m_tileSheet.addQuad(vertices,
+                          tileCoords, Color::White,
+                          vNW, vNE,
+                          vSW, vSE);
+    }
+  }
 }
 
 void MapTileStandard2DView::addTileFloorVerticesTo(sf::VertexArray& vertices,
@@ -176,9 +181,9 @@ void MapTileStandard2DView::addTileFloorVerticesTo(sf::VertexArray& vertices,
   RealVec2 vSW{ location.x - half_ts, location.y + half_ts };
   RealVec2 vNW{ location.x - half_ts, location.y - half_ts };
 
-  UintVec2 tile_coords = getTileSheetCoords();
+  UintVec2 tileCoords = getTileSheetCoords();
 
-  m_tileSheet.addGradientQuadTo(vertices, tile_coords,
+  m_tileSheet.addGradientQuadTo(vertices, tileCoords,
                                 vNW, vNE,
                                 vSW, vSE,
                                 lightNW, lightN, lightNE,
@@ -202,7 +207,7 @@ void MapTileStandard2DView::addEntitiesFloorVertices(EntityId viewer,
     {
       // Only draw the largest entity on that tile.
       EntityId biggestEntity = inv.getLargestEntity();
-      if (biggestEntity != EntityId::Mu())
+      if (biggestEntity != EntityId::Void)
       {
         addEntityFloorVertices(biggestEntity, vertices, lighting, frame);
       }
@@ -280,7 +285,7 @@ void MapTileStandard2DView::addWallVerticesTo(sf::VertexArray& vertices,
   EntityId player = COMPONENTS.globals.player();
   bool playerHasLocation = COMPONENTS.position.existsFor(player);
 
-  if (player != EntityId::Mu() && playerHasLocation)
+  if (player != EntityId::Void && playerHasLocation)
   {
     auto& playerLocation = COMPONENTS.position[player];
 

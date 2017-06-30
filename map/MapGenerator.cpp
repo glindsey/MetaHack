@@ -7,8 +7,7 @@
 #include "maptile/MapTile.h"
 #include "properties/PropertyDictionary.h"
 #include "utilities/MathUtils.h"
-
-typedef boost::random::uniform_int_distribution<> uniform_int_dist;
+#include "utilities/RNGUtils.h"
 
 MapGenerator::MapGenerator(Map& m)
   : m_game_map{ m }
@@ -66,7 +65,7 @@ void MapGenerator::generate()
   {
     GeoVector nextGrowthVector;
 
-    uniform_int_dist chooseAFeature(0, 8);
+    UniformIntDist chooseAFeature(0, 8);
     feature_settings.clear();
     int chosen_feature = chooseAFeature(the_RNG);
     switch (chosen_feature)
@@ -233,8 +232,8 @@ bool MapGenerator::getGrowthVector(GeoVector& growthVector)
 IntVec2 MapGenerator::getRandomSquare()
 {
   IntVec2 mapSize = m_game_map.getSize();
-  uniform_int_dist xDist(1, mapSize.x - 2);
-  uniform_int_dist yDist(1, mapSize.y - 2);
+  UniformIntDist xDist(1, mapSize.x - 2);
+  UniformIntDist yDist(1, mapSize.y - 2);
 
   IntVec2 coords;
   coords.x = xDist(the_RNG);
@@ -248,8 +247,8 @@ IntVec2 MapGenerator::getRandomSquare()
 IntVec2 MapGenerator::getRandomFilledSquare()
 {
   IntVec2 mapSize = m_game_map.getSize();
-  uniform_int_dist xDist(1, mapSize.x - 2);
-  uniform_int_dist yDist(1, mapSize.y - 2);
+  UniformIntDist xDist(1, mapSize.x - 2);
+  UniformIntDist yDist(1, mapSize.y - 2);
 
   IntVec2 coords;
 

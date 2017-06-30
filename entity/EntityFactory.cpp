@@ -16,8 +16,8 @@ EntityFactory::EntityFactory(GameState& gameState) :
   m_gameState{ gameState }
 {
   // Create the "nothingness" object.
-  EntityId mu = create("Mu");
-  Assert("EntityFactory", (mu == 0ULL), "Mu's ID is " << mu << " instead of zero!");
+  EntityId nothingness = create("Void");
+  Assert("EntityFactory", (nothingness == 0ULL), "Void's ID is " << nothingness << " instead of zero!");
 
   m_initialized = true;
 }
@@ -75,7 +75,7 @@ EntityId EntityFactory::createTileEntity(MapTile* mapTile, std::string category,
 EntityId EntityFactory::clone(EntityId original)
 {
   auto& components = m_gameState.components();
-  if (!components.category.existsFor(original))  return EntityId::Mu();
+  if (!components.category.existsFor(original))  return EntityId::Void;
 
   EntityId newId = EntityId(m_nextEntityId);
   ++m_nextEntityId;
@@ -87,7 +87,7 @@ EntityId EntityFactory::clone(EntityId original)
 
 void EntityFactory::applyCategoryData(EntityId id, std::string subType, std::string name)
 {
-  if (id != EntityId::Mu())
+  if (id != EntityId::Void)
   {
     json& data = S<IGameRules>().categoryData(name, subType);
     auto& jsonComponents = data["components"];
@@ -95,7 +95,7 @@ void EntityFactory::applyCategoryData(EntityId id, std::string subType, std::str
   }
   else
   {
-    throw std::exception("Attempted to apply category data to Mu object!");
+    throw std::exception("Attempted to apply category data to Void object!");
   }
 }
 
@@ -103,9 +103,9 @@ void EntityFactory::morph(EntityId id, std::string category, std::string materia
 {
   auto& components = m_gameState.components();
 
-  if (id == EntityId::Mu())
+  if (id == EntityId::Void)
   {
-    throw std::exception("Attempted to morph Mu object!");
+    throw std::exception("Attempted to morph Void object!");
   }
 
   // First, check if category is being changed.
@@ -134,7 +134,7 @@ void EntityFactory::destroy(EntityId id)
 {
   auto& components = m_gameState.components();
 
-  if (id != EntityId::Mu())
+  if (id != EntityId::Void)
   {
     // Check for existence.
     // This should work as every entity should have a "category" component.
@@ -145,6 +145,6 @@ void EntityFactory::destroy(EntityId id)
   }
   else
   {
-    throw std::exception("Attempted to destroy Mu object!");
+    throw std::exception("Attempted to destroy Void object!");
   }
 }

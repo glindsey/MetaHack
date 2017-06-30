@@ -96,7 +96,7 @@ namespace Actions
 
         // See if the tile to move into contains another creature.
         EntityId creature = components.inventory.of(new_floor).getEntity();
-        if (creature != EntityId::Mu())
+        if (creature != EntityId::Void)
         {
           /// @todo Setting choosing whether auto-attack is on.
           /// @todo Only attack hostiles.

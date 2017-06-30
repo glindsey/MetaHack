@@ -137,7 +137,7 @@ function vector2(xValue, yValue)
 end
 
 -- === USEFUL GLOBALS =========================================================
-Mu = 0
+Void = 0
 
 require('resources/entity/templates/GameObject')
 

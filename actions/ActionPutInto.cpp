@@ -53,7 +53,7 @@ namespace Actions
     auto& narrator = systems.narrator();
 
     // Verify that the Action has an object.
-    if (object == EntityId::Mu())
+    if (object == EntityId::Void)
     {
       return StateResult::Failure();
     }

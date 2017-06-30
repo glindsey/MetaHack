@@ -141,7 +141,7 @@ namespace Actions
     static std::unique_ptr<Action> create(std::string key, 
                                           EntityId subject,
                                           std::vector<EntityId> objects = std::vector<EntityId>(),
-                                          EntityId targetThing = EntityId::Mu(),
+                                          EntityId targetThing = EntityId::Void,
                                           Direction targetDirection = Direction::None,
                                           unsigned int quantity = 0);
 

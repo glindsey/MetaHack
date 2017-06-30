@@ -44,7 +44,7 @@ void InventorySelection::setViewed(EntityId entity)
 
 void InventorySelection::toggleSelection(InventorySlot selection)
 {
-  if (m_viewed == EntityId::Mu())
+  if (m_viewed == EntityId::Void)
   {
     return;
   }
@@ -89,7 +89,7 @@ std::vector<EntityId> InventorySelection::getSelectedThings()
 {
   std::vector<EntityId> entities;
 
-  if (m_viewed != EntityId::Mu())
+  if (m_viewed != EntityId::Void)
   {
     auto& inventory = COMPONENTS.inventory[m_viewed];
 
@@ -120,7 +120,7 @@ unsigned int InventorySelection::getMaxQuantity() const
 {
   unsigned int result;
 
-  if (m_viewed == EntityId::Mu())
+  if (m_viewed == EntityId::Void)
   {
     return 0;
   }
@@ -135,7 +135,7 @@ unsigned int InventorySelection::getMaxQuantity() const
   {
     EntityId entity = inventory[m_selectedSlots[0]];
 
-    if (entity == EntityId::Mu())
+    if (entity == EntityId::Void)
     {
       result = 0;
     }
@@ -197,9 +197,9 @@ EntityId InventorySelection::getEntity(InventorySlot selection)
 {
   EntityId viewed = m_viewed;
 
-  if (viewed == EntityId::Mu())
+  if (viewed == EntityId::Void)
   {
-    return EntityId::Mu();
+    return EntityId::Void;
   }
 
   auto& inventory = COMPONENTS.inventory[m_viewed];
@@ -213,8 +213,8 @@ EntityId InventorySelection::getEntity(InventorySlot selection)
     CLOG(WARNING, "InventorySelection") <<
       "Requested non-existent inventory slot " <<
       static_cast<unsigned int>(selection) <<
-      ", returning Mu!";
-    return EntityId::Mu();
+      ", returning Void!";
+    return EntityId::Void;
   }
 }
 

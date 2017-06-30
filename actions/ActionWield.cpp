@@ -61,14 +61,14 @@ namespace Actions
     std::string bodypartDesc = narrator.getBodypartDescription(subject, m_bodyLocation);
 
     // If it is us, or it is what is already being wielded, it means to unwield whatever is wielded.
-    if ((object == subject) || (object == currentlyWielded) || (object == EntityId::Mu()))
+    if ((object == subject) || (object == currentlyWielded) || (object == EntityId::Void))
     {
       std::unique_ptr<Action> unwieldAction(NEW ActionUnwield(subject));
       systems.director().queueEntityAction(subject, std::move(unwieldAction));
 
       return StateResult::Failure();
     }
-    else if (currentlyWielded != EntityId::Mu())
+    else if (currentlyWielded != EntityId::Void)
     {
       arguments["bodypart"] = bodypartDesc;
       putMsg(narrator.makeTr("YOU_MUST_UNWIELD_FIRST", arguments));

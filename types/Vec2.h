@@ -124,8 +124,8 @@ namespace std
 {
   template<typename T> struct hash<Vec2<T>>
   {
-    typedef Vec2<T> argument_type;
-    typedef std::size_t result_type;
+    using argument_type = Vec2<T>;
+    using result_type = std::size_t;
     result_type operator()(argument_type const& obj) const
     {
       result_type const h1(std::hash<T>{}(obj.x));

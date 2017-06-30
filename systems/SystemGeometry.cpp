@@ -59,7 +59,7 @@ namespace Systems
         auto oldPosition = position; // copy for event broadcast
 
         // Try to lock our old location.
-        if (oldLocation != EntityId::Mu())
+        if (oldLocation != EntityId::Void)
         {
           m_inventory[oldLocation].remove(entity);
         }
@@ -128,10 +128,10 @@ namespace Systems
           //notifyObservers(Event::Updated);
   
         } // end if (canContain)
-      } // end if (container location is not Mu)
+      } // end if (container location is not Void)
       else
       {
-        // Container's location is Mu, so just destroy it without a message.
+        // Container's location is Void, so just destroy it without a message.
         m_janitor.markForDeletion(item);
       }
     } // end for (contents of Entity)
@@ -150,14 +150,14 @@ namespace Systems
     auto& position = m_position.of(entity);
     auto& parent = position.parent();
 
-    if (parent == EntityId::Mu())
+    if (parent == EntityId::Void)
     {
       // Entity is a part of the MapTile such as the floor.
       return false;
     }
 
     auto& grandparent = m_position.of(parent).parent();
-    if (grandparent == EntityId::Mu())
+    if (grandparent == EntityId::Void)
     {
       // Entity is directly on the floor.
       return false;
@@ -178,7 +178,7 @@ namespace Systems
 
     // If first has a parent...
     auto& firstParent = firstPosition.parent();
-    if (firstParent != EntityId::Mu())
+    if (firstParent != EntityId::Void)
     {
       // If the other entity is our parent, return true.
       if (firstParent == second) return true;
@@ -201,7 +201,7 @@ namespace Systems
 
     // If first has a parent...
     auto& firstParent = firstPosition.parent();
-    if (firstParent != EntityId::Mu())
+    if (firstParent != EntityId::Void)
     {
       // If the other entity is our parent, return true.
       if (firstParent == second) return true;
@@ -254,7 +254,7 @@ namespace Systems
         //spill();
       }
 
-      if (old_location != EntityId::Mu())
+      if (old_location != EntityId::Void)
       {
         m_inventory[old_location].remove(entity);
       }

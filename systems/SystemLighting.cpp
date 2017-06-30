@@ -132,7 +132,7 @@ namespace Systems
     // Use visitor pattern.
     if (m_lightSource[light].lit())
     {
-      if (location != EntityId::Mu())
+      if (location != EntityId::Void)
       {
         bool locationIsOpaque =
           m_appearance.existsFor(location) &&
@@ -153,7 +153,7 @@ namespace Systems
           applyLightFrom(light, locationParent);
         }
       }
-      else // (lightSourceLocation == EntityId::Mu())
+      else // (lightSourceLocation == EntityId::Void)
       {
         // Add influence to tile.
         addLightToMap(light);

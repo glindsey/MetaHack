@@ -50,7 +50,7 @@ namespace Actions
     auto subject = getSubject();
     auto object = getObject();
     auto direction = getTargetDirection();
-    EntityId new_location = components.position.existsFor(subject) ? components.position.of(subject).parent() : EntityId::Mu();
+    EntityId new_location = components.position.existsFor(subject) ? components.position.of(subject).parent() : EntityId::Void;
 
     if (lua.doSubjectActionObjectDirection(subject, *this, object, direction))
     {

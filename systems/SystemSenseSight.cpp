@@ -52,7 +52,7 @@ namespace Systems
     // Are we on a map (i.e. not inside another entity)?  Bail out if we aren't.
     /// @todo Might want to deal with mapping the "inside of an entity" at some point.
     EntityId location = m_position.of(id).parent();
-    if (location == EntityId::Mu())
+    if (location == EntityId::Void)
     {
       return;
     }

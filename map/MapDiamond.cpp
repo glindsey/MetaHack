@@ -5,15 +5,13 @@
 #include "entity/EntityFactory.h"
 #include "game/App.h"
 #include "maptile/MapTile.h"
-
-// Local typedefs
-typedef boost::random::uniform_int_distribution<> uniform_int_dist;
+#include "utilities/RNGUtils.h"
 
 MapDiamond::MapDiamond(Map& m, PropertyDictionary const& s, GeoVector vec)
   : MapFeature{ m, s, vec }
 {
   unsigned int numTries = 0;
-  uniform_int_dist hsDist(s.get("min_half_size", 2),
+  UniformIntDist hsDist(s.get("min_half_size", 2),
                           s.get("max_half_size", 4));
   unsigned int max_retries = s.get("max_retries", 100);
   std::string floor_type = s.get("floor_type", "MTFloorDirt");

@@ -10,9 +10,7 @@
 #include "map/MapRoom.h"
 #include "maptile/MapTile.h"
 #include "properties/PropertyDictionary.h"
-
-// Local typedefs
-typedef boost::random::uniform_int_distribution<> uniform_int_dist;
+#include "utilities/RNGUtils.h"
 
 MapFeature::MapFeature(Map& m, PropertyDictionary const& s, GeoVector vec)
   :
@@ -48,13 +46,13 @@ GeoVector const& MapFeature::get_random_growth_vector() const
 {
   if (m_highPriorityVecs.size() > 0)
   {
-    uniform_int_dist vecDist(0, static_cast<int>(m_highPriorityVecs.size() - 1));
+    UniformIntDist vecDist(0, static_cast<int>(m_highPriorityVecs.size() - 1));
     int randomVector = vecDist(the_RNG);
     return m_highPriorityVecs[randomVector];
   }
   else if (m_lowPriorityVecs.size() > 0)
   {
-    uniform_int_dist vecDist(0, static_cast<int>(m_lowPriorityVecs.size() - 1));
+    UniformIntDist vecDist(0, static_cast<int>(m_lowPriorityVecs.size() - 1));
     int randomVector = vecDist(the_RNG);
     return m_lowPriorityVecs[randomVector];
   }

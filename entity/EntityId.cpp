@@ -5,6 +5,9 @@
 #include "entity/EntityFactory.h"
 #include "game/GameState.h"
 
+/// Static constant referring to the Void entity.
+EntityId const EntityId::Void = EntityId(0);
+
 EntityId::EntityId() :
   m_id{ 0 }
 {}
@@ -26,12 +29,6 @@ void to_json(json& j, EntityId const& id)
 void from_json(json const& j, EntityId& id)
 {
   id.m_id = j.get<uint64_t>();
-}
-
-/// Static method to return the EntityId::Mu() (nothingness) ID.
-EntityId EntityId::Mu()
-{
-  return EntityId();
 }
 
 EntityId::operator bool() const

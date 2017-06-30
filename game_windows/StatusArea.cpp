@@ -52,7 +52,7 @@ void StatusArea::drawContents_(sf::RenderTexture& texture, int frame)
   render_text.setCharacterSize(text_default_size);
   render_text.setPosition(origin);
 
-  if (player != EntityId::Mu())
+  if (player != EntityId::Void)
   {
     // Render player name
     std::string name = components.properName.valueOr(player, "Player");

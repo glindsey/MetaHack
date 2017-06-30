@@ -820,11 +820,12 @@
     <None Include="resources\entity\templates\Weapon.json" />
     <None Include="resources\entity\templates\Weapon.lua" />
     <None Include="resources\entity\TileFloor.json" />
+    <None Include="resources\entity\Void.json" />
     <None Include="resources\intrinsic_types.json" />
     <None Include="resources\entity\templates\MTFloor.json" />
     <None Include="resources\entity\MTFloorDirt.json" />
     <None Include="resources\entity\MTFloorStone.json" />
-    <None Include="resources\entity\MTUnknown.json" />
+    <None Include="resources\entity\Unknown.json" />
     <None Include="resources\entity\templates\MTWall.json" />
     <None Include="resources\entity\MTWallStone.json" />
     <None Include="resources\script\map.lua" />
@@ -855,13 +856,14 @@
     <Image Include="resources\entity\Scroll.png" />
     <Image Include="resources\entity\Sink.png" />
     <Image Include="resources\entity\Thing.png" />
+    <Image Include="resources\entity\Void.png" />
     <Image Include="resources\entity\WallStone.png" />
     <Image Include="resources\entity\MTFloorDirt.png" />
     <Image Include="resources\entity\MTFloorGrass.png" />
     <Image Include="resources\entity\MTFloorStone.png" />
     <Image Include="resources\entity\MTStairsDown.png" />
     <Image Include="resources\entity\MTStairsUp.png" />
-    <Image Include="resources\entity\MTUnknown.png" />
+    <Image Include="resources\entity\Unknown.png" />
     <Image Include="resources\entity\MTWallStone.png" />
   </ItemGroup>
   <ItemGroup>

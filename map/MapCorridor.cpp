@@ -4,15 +4,13 @@
 
 #include "game/App.h"
 #include "maptile/MapTile.h"
-
-// Local typedefs
-typedef boost::random::uniform_int_distribution<> uniform_int_dist;
+#include "utilities/RNGUtils.h"
 
 MapCorridor::MapCorridor(Map& m, PropertyDictionary const& s, GeoVector vec)
   : MapFeature{ m, s, vec }
 {
   unsigned int numTries = 0;
-  uniform_int_dist lenDist(s.get("min_length", 3), 
+  UniformIntDist lenDist(s.get("min_length", 3), 
                            s.get("max_length", 48));
   unsigned int max_retries = s.get("max_retries", 100);
   std::string floor_type = s.get("floor_type", "MTFloorDirt");

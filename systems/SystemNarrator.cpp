@@ -204,7 +204,7 @@ namespace Systems
   {
     auto& config = S<IConfigSettings>();
 
-    EntityId location = (m_components.position.existsFor(id) ? m_components.position.of(id).parent() : EntityId::Mu());
+    EntityId location = (m_components.position.existsFor(id) ? m_components.position.of(id).parent() : EntityId::Void);
     unsigned int quantity = m_components.quantity.valueOr(id, 1);
 
     std::string name;
@@ -339,9 +339,9 @@ namespace Systems
 
   std::string Narrator::makeString(std::string pattern, json arguments) const
   {
-    EntityId subject = arguments.value("subject", EntityId::Mu());
+    EntityId subject = arguments.value("subject", EntityId::Void);
     EntitySet objects = JSONUtils::getSet<EntityId>(arguments["object"]);
-    EntityId target = arguments.value("target", EntityId::Mu());
+    EntityId target = arguments.value("target", EntityId::Void);
     std::string verb = arguments.value("verb", "");
     Direction targetDir = arguments.value("target-direction", Direction::None);
 
@@ -396,7 +396,7 @@ namespace Systems
       {
         if (objects.size() < 1) return "";
         auto object = *(objects.cbegin());
-        auto parent = (m_components.position.existsFor(object) ? m_components.position.of(object).parent() : EntityId::Mu());
+        auto parent = (m_components.position.existsFor(object) ? m_components.position.of(object).parent() : EntityId::Void);
         return getDescriptiveString(parent, ArticleChoice::Definite);
       }
       if ((token == "the_target_thing") || (token == "thetargetthing"))
@@ -467,7 +467,7 @@ namespace Systems
       }
       if ((token == "your_location") || (token == "yourlocation"))
       {
-        auto parent = (m_components.position.existsFor(subject) ? m_components.position.of(subject).parent() : EntityId::Mu());
+        auto parent = (m_components.position.existsFor(subject) ? m_components.position.of(subject).parent() : EntityId::Void);
         return getDescriptiveString(parent, ArticleChoice::Indefinite);
       }
       if (token == "yourself")

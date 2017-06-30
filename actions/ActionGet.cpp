@@ -54,10 +54,10 @@ namespace Actions
     std::string message;
     auto subject = getSubject();
     auto object = getObject();
-    EntityId location = components.position.existsFor(subject) ? components.position.of(subject).parent() : EntityId::Mu();
+    EntityId location = components.position.existsFor(subject) ? components.position.of(subject).parent() : EntityId::Void;
 
     // Verify that the Action has an object.
-    if (object == EntityId::Mu())
+    if (object == EntityId::Void)
     {
       return StateResult::Failure();
     }

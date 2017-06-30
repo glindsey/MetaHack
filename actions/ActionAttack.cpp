@@ -96,7 +96,7 @@ namespace Actions
     // See if the tile to move into contains another creature.
     auto object = COMPONENTS.inventory[new_floor].getEntity();
     setObject(object);
-    if (object == EntityId::Mu())
+    if (object == EntityId::Void)
     {
       /// @todo Deal with attacking other stuff, MapTiles, etc.
       putMsg(narrator.makeTr("YOU_CANT_VERB_NOTHING", arguments));

@@ -31,7 +31,7 @@ namespace Components
   }
 
   ComponentMagicalBinding::ComponentMagicalBinding() :
-    m_binder{ EntityId::Mu() },
+    m_binder{ EntityId::Void },
     m_against{ 0 },
     m_active{ false },
     m_autoExpirationTime{ 0 },

@@ -6,9 +6,7 @@
 #include "game/App.h"
 #include "maptile/MapTile.h"
 #include "utilities/MathUtils.h"
-
-// Local typedefs
-typedef boost::random::uniform_int_distribution<> uniform_int_dist;
+#include "utilities/RNGUtils.h"
 
 MapDonutRoom::MapDonutRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
   :
@@ -16,9 +14,9 @@ MapDonutRoom::MapDonutRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
 {
   unsigned int num_tries = 0;
 
-  uniform_int_dist width_dist(s.get("min_width", 7),
+  UniformIntDist width_dist(s.get("min_width", 7),
                               s.get("max_width", 20));
-  uniform_int_dist height_dist(s.get("min_height", 7),
+  UniformIntDist height_dist(s.get("min_height", 7),
                                s.get("max_height", 20));
   unsigned int min_hole_size = s.get("min_hole_size", 5);
   unsigned int max_retries = s.get("max_retries", 500);
@@ -37,7 +35,7 @@ MapDonutRoom::MapDonutRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
 
     if (direction == Direction::North)
     {
-      uniform_int_dist offset_dist(0, rect.width - 1);
+      UniformIntDist offset_dist(0, rect.width - 1);
       int offset = offset_dist(the_RNG);
 
       rect.top = starting_coords.y - rect.height;
@@ -45,7 +43,7 @@ MapDonutRoom::MapDonutRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
     }
     else if (direction == Direction::South)
     {
-      uniform_int_dist offset_dist(0, rect.width - 1);
+      UniformIntDist offset_dist(0, rect.width - 1);
       int offset = offset_dist(the_RNG);
 
       rect.top = starting_coords.y + 1;
@@ -53,7 +51,7 @@ MapDonutRoom::MapDonutRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
     }
     else if (direction == Direction::West)
     {
-      uniform_int_dist offset_dist(0, rect.height - 1);
+      UniformIntDist offset_dist(0, rect.height - 1);
       int offset = offset_dist(the_RNG);
 
       rect.top = starting_coords.y - offset;
@@ -61,7 +59,7 @@ MapDonutRoom::MapDonutRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
     }
     else if (direction == Direction::East)
     {
-      uniform_int_dist offset_dist(0, rect.height - 1);
+      UniformIntDist offset_dist(0, rect.height - 1);
       int offset = offset_dist(the_RNG);
 
       rect.top = starting_coords.y - offset;
@@ -83,8 +81,8 @@ MapDonutRoom::MapDonutRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
 
       // Create the hole location.
       sf::IntRect hole;
-      uniform_int_dist hole_x_dist(rect.left + 1, rect.left + rect.width - 2);
-      uniform_int_dist hole_y_dist(rect.top + 1, rect.top + rect.height - 2);
+      UniformIntDist hole_x_dist(rect.left + 1, rect.left + rect.width - 2);
+      UniformIntDist hole_y_dist(rect.top + 1, rect.top + rect.height - 2);
 
       int x_hole_left = hole_x_dist(the_RNG);
       int x_hole_right = hole_x_dist(the_RNG);

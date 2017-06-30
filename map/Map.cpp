@@ -15,15 +15,13 @@
 #include "types/LightInfluence.h"
 #include "types/ShaderEffect.h"
 #include "utilities/MathUtils.h"
+#include "utilities/RNGUtils.h"
 
 #include "map/MapFeature.h"
 #include "map/MapGenerator.h"
 
 #define VERTEX(x, y) (20 * (m_size.x * y) + x)
 #define TILE(x, y) (m_tiles->get({ x, y }))
-
-// Local typedefs
-typedef boost::random::uniform_int_distribution<> uniform_int_dist;
 
 /// @todo Have this take an IntVec2 instead of width x height
 Map::Map(GameState& gameState, MapID id, int width, int height)
@@ -40,7 +38,7 @@ Map::Map(GameState& gameState, MapID id, int width, int height)
                                     [&](IntVec2 coords) -> MapTile*
   {
     MapTile* new_tile = NEW MapTile(coords, 
-                                    "MTUnknown", 
+                                    "Void", 
                                     id, 
                                     gameState.entities(), 
                                     gameState.components());
@@ -165,7 +163,7 @@ MapFeature& Map::getRandomMapFeature()
 {
   Assert("MapGenerator", m_features.size() >= 1, "getRandomMapFeature() called but map doesn't contain any features yet!");
 
-  uniform_int_dist featureDist(0, static_cast<int>(m_features.size() - 1));
+  UniformIntDist featureDist(0, static_cast<int>(m_features.size() - 1));
   int featureIndex = featureDist(the_RNG);
   return m_features[featureIndex];
 }

@@ -23,7 +23,7 @@ namespace Systems
 
   void Choreographer::setPlayer(EntityId entity)
   {
-    Assert("PlayerHandler", entity != EntityId::Mu(), "tried to make nothingness the player");
+    Assert("PlayerHandler", entity != EntityId::Void, "tried to make nothingness the player");
 
     auto oldPlayer = m_globals.player();
     m_globals.setPlayer(entity);

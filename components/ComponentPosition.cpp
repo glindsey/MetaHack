@@ -33,7 +33,7 @@ namespace Components
   {}
 
   ComponentPosition::ComponentPosition(MapID map, IntVec2 coords)
-    : m_map{ map }, m_coords{ coords }, m_parent{ EntityId::Mu() }
+    : m_map{ map }, m_coords{ coords }, m_parent{ EntityId::Void }
   {}
 
   ComponentPosition::~ComponentPosition()
@@ -54,7 +54,7 @@ namespace Components
     if (m_coords != coords)
     {
       m_coords = coords;
-      m_parent = EntityId::Mu();
+      m_parent = EntityId::Void;
     }
   }
 
@@ -64,7 +64,7 @@ namespace Components
     {
       m_coords = coords;
       m_map = map;
-      m_parent = EntityId::Mu();
+      m_parent = EntityId::Void;
     }
   }
 
@@ -75,7 +75,7 @@ namespace Components
 
   MapID ComponentPosition::map() const
   {
-    if (m_parent != EntityId::Mu())
+    if (m_parent != EntityId::Void)
     {
       return GAME.components().position[m_parent].map();
     }
@@ -87,7 +87,7 @@ namespace Components
 
   IntVec2 ComponentPosition::coords() const
   {
-    if (m_parent != EntityId::Mu())
+    if (m_parent != EntityId::Void)
     {
       return GAME.components().position[m_parent].coords();
     }
@@ -99,14 +99,14 @@ namespace Components
 
   bool ComponentPosition::isInsideAnotherEntity() const
   {
-    if (m_parent == EntityId::Mu())
+    if (m_parent == EntityId::Void)
     {
       // Entity is a part of the MapTile such as the floor.
       return false;
     }
 
     auto& grandparent = COMPONENTS.position[m_parent].parent();
-    if (grandparent == EntityId::Mu())
+    if (grandparent == EntityId::Void)
     {
       // Entity is directly on the floor.
       return false;
@@ -125,7 +125,7 @@ namespace Components
     auto otherPosition = COMPONENTS.position[id];
 
     // If we have a parent...
-    if (m_parent != EntityId::Mu())
+    if (m_parent != EntityId::Void)
     {
       // If the other entity is our parent, return true.
       if (m_parent == id) return true;

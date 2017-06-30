@@ -53,11 +53,11 @@ namespace Components
     BodyLocation getWieldedLocation(EntityId id) const;
 
     /// Return what is being worn on the specified bodypart, if anything.
-    /// If nothing is worn there, returns EntityId::Mu().
+    /// If nothing is worn there, returns EntityId::Void.
     EntityId getWornEntity(BodyLocation location) const;
 
     /// Return what is being wielded by the specified bodypart, if anything.
-    /// If nothing is wielded there, returns EntityId::Mu().
+    /// If nothing is wielded there, returns EntityId::Void.
     EntityId getWieldedEntity(BodyLocation location) const;
 
     /// Remove an entity from being worn on anything.

@@ -62,8 +62,8 @@ namespace Components
   /// @todo Handle max inventory size.
   bool ComponentInventory::add(EntityId entity, bool isPlayer)
   {
-    // If entity is Mu, exit returning false.
-    if (entity == EntityId::Mu())
+    // If entity is Void, exit returning false.
+    if (entity == EntityId::Void)
     {
       return false;
     }
@@ -224,7 +224,7 @@ namespace Components
 
   EntityId ComponentInventory::split(EntityFactory& entities, EntityId entity, unsigned int targetQuantity)
   {
-    EntityId targetEntity = EntityId::Mu();
+    EntityId targetEntity = EntityId::Void;
 
     if (targetQuantity > 0 && COMPONENTS.quantity.existsFor(entity))
     {
@@ -300,7 +300,7 @@ namespace Components
     }
     else
     {
-      return EntityId::Mu();
+      return EntityId::Void;
     }
   }
 
@@ -341,7 +341,7 @@ namespace Components
 
   bool ComponentInventory::isSmallerThan(EntityId a, EntityId b)
   {
-    if ((a == EntityId::Mu()) || (b == EntityId::Mu())) return false;
+    if ((a == EntityId::Void) || (b == EntityId::Void)) return false;
     if (!COMPONENTS.physical.existsFor(a) || !COMPONENTS.physical.existsFor(b)) return false;
     auto firstQuantity = COMPONENTS.quantity.valueOr(a, 1);
     auto secondQuantity = COMPONENTS.quantity.valueOr(b, 1);

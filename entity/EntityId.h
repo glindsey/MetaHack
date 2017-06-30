@@ -39,8 +39,8 @@ public:
   friend void to_json(json& j, EntityId const& id);
   friend void from_json(json const& j, EntityId& id);
 
-  /// Static method to return the EntityId::Mu() (nothingness) ID.
-  static EntityId Mu();
+  /// Static constant referring to the Void entity.
+  static EntityId const Void;
 
   explicit operator bool() const;
   bool operator!() const;

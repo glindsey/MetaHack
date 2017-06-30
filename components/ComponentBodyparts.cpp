@@ -141,12 +141,12 @@ namespace Components
 
   EntityId ComponentBodyparts::getWornEntity(BodyLocation location) const
   {
-    return (m_wornItems.count(location) != 0) ? m_wornItems.at(location) : EntityId::Mu();
+    return (m_wornItems.count(location) != 0) ? m_wornItems.at(location) : EntityId::Void;
   }
 
   EntityId ComponentBodyparts::getWieldedEntity(BodyLocation location) const
   {
-    return (m_wieldedItems.count(location) != 0) ? m_wieldedItems.at(location) : EntityId::Mu();
+    return (m_wieldedItems.count(location) != 0) ? m_wieldedItems.at(location) : EntityId::Void;
   }
 
   void ComponentBodyparts::removeWornEntity(EntityId id)

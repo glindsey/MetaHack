@@ -46,7 +46,7 @@ void EntityStandard2DView::draw(sf::RenderTarget& target,
   auto& position = COMPONENTS.position[entity];
 
   // Can't render if it's in another object.
-  if (position.parent() != EntityId::Mu()) return;
+  if (position.parent() != EntityId::Void) return;
 
   MapTile& tile = MAPS.get(position.map()).getTile(position.coords());
 

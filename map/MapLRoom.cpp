@@ -8,22 +8,19 @@
 #include "utilities/MathUtils.h"
 #include "utilities/RNGUtils.h"
 
-// Local typedefs
-typedef boost::random::uniform_int_distribution<> uniform_int_dist;
-
 MapLRoom::MapLRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
   :
   MapFeature{ m, s, vec }
 {
   unsigned int num_tries = 0;
 
-  uniform_int_dist horiz_width_dist(s.get("horiz_leg_min_width", 10),
+  UniformIntDist horiz_width_dist(s.get("horiz_leg_min_width", 10),
                                     s.get("horiz_leg_max_width", 20));
-  uniform_int_dist horiz_height_dist(s.get("horiz_leg_min_height", 3),
+  UniformIntDist horiz_height_dist(s.get("horiz_leg_min_height", 3),
                                      s.get("horiz_leg_max_height", 7));
-  uniform_int_dist vert_width_dist(s.get("vert_leg_min_width", 10),
+  UniformIntDist vert_width_dist(s.get("vert_leg_min_width", 10),
                                    s.get("vert_leg_max_width", 20));
-  uniform_int_dist vert_height_dist(s.get("vert_leg_min_height", 3),
+  UniformIntDist vert_height_dist(s.get("vert_leg_min_height", 3),
                                     s.get("vert_leg_max_height", 7));
   unsigned int max_retries = s.get("max_retries", 500);
   std::string floor_type = s.get("floor_type", "MTFloorDirt");
@@ -43,7 +40,7 @@ MapLRoom::MapLRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
 
     if (direction == Direction::North)
     {
-      uniform_int_dist offset_dist(0, horiz_rect.width - 1);
+      UniformIntDist offset_dist(0, horiz_rect.width - 1);
       int offset = offset_dist(the_RNG);
 
       horiz_rect.top = starting_coords.y - horiz_rect.height;
@@ -56,7 +53,7 @@ MapLRoom::MapLRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
     }
     else if (direction == Direction::South)
     {
-      uniform_int_dist offset_dist(0, horiz_rect.width - 1);
+      UniformIntDist offset_dist(0, horiz_rect.width - 1);
       int offset = offset_dist(the_RNG);
 
       horiz_rect.top = starting_coords.y + 1;
@@ -69,7 +66,7 @@ MapLRoom::MapLRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
     }
     else if (direction == Direction::West)
     {
-      uniform_int_dist offset_dist(0, vert_rect.height - 1);
+      UniformIntDist offset_dist(0, vert_rect.height - 1);
       int offset = offset_dist(the_RNG);
 
       vert_rect.top = starting_coords.y - offset;
@@ -82,7 +79,7 @@ MapLRoom::MapLRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
     }
     else if (direction == Direction::East)
     {
-      uniform_int_dist offset_dist(0, vert_rect.height - 1);
+      UniformIntDist offset_dist(0, vert_rect.height - 1);
       int offset = offset_dist(the_RNG);
 
       vert_rect.top = starting_coords.y - offset;

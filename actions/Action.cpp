@@ -24,9 +24,9 @@ namespace Actions
   Action::Action(std::string type, ActionCreator creator)
     :
     m_state{ State::Pending },
-    m_subject{ EntityId::Mu() },
+    m_subject{ EntityId::Void },
     m_objects{},
-    m_targetThing{ EntityId::Mu() },
+    m_targetThing{ EntityId::Void },
     m_targetDirection{ Direction::None },
     m_quantity{ 1 },
     m_type{ type }
@@ -46,7 +46,7 @@ namespace Actions
 
     result["subject"] = subject;
     if (objects.size() > 0) result["object"] = objects;
-    if (target != EntityId::Mu()) result["target"] = target;
+    if (target != EntityId::Void) result["target"] = target;
     if (!verb.empty()) result["verb"] = verb;
     if (targetDirection != Direction::None) result["target-direction"] = targetDirection;
 
@@ -58,7 +58,7 @@ namespace Actions
     m_state{ State::Pending },
     m_subject{ subject },
     m_objects{},
-    m_targetThing{ EntityId::Mu() },
+    m_targetThing{ EntityId::Void },
     m_targetDirection{ Direction::None },
     m_quantity{ 1 },
     m_type{ type }
@@ -231,7 +231,7 @@ namespace Actions
 
   void Action::setTarget(Direction direction)
   {
-    m_targetThing = EntityId::Mu();
+    m_targetThing = EntityId::Void;
     m_targetDirection = direction;
   }
 
@@ -705,7 +705,7 @@ namespace Actions
     {
       std::unique_ptr<Action> action = (Action::s_actionMap.at(key))(subject);
       if (objects.size() != 0) action->setObjects(objects);
-      if (targetThing != EntityId::Mu()) action->setTarget(targetThing);
+      if (targetThing != EntityId::Void) action->setTarget(targetThing);
       if (targetDirection != Direction::None) action->setTarget(targetDirection);
       if (quantity != 0) action->setQuantity(quantity);
 

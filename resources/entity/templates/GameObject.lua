@@ -1,4 +1,4 @@
--- Definition of the GameObject object type, Entity and MTUnknown inherit from.
+-- Definition of the GameObject object type, which everything else inherits from.
 
 GameObject = inheritsFrom(nil, "GameObject")
 

@@ -37,15 +37,15 @@ namespace Components
     void set(EntityId id);
 
     /// Sets this entity's position to be outside, on a map.
-    /// Its entity location is set to Mu accordingly.
+    /// Its entity location is set to Void accordingly.
     void set(IntVec2 coords);
 
     /// Sets this entity's position to be outside, on a map.
-    /// Its entity location is set to Mu accordingly.
+    /// Its entity location is set to Void accordingly.
     void set(MapID map, IntVec2 coords);
 
     /// Get surrounding entity, if any.
-    /// If there's no surrounding entity, returns Mu.
+    /// If there's no surrounding entity, returns Void.
     EntityId parent() const;
 
     /// Get map.

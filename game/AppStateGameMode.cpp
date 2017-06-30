@@ -249,7 +249,7 @@ void AppStateGameMode::render_map(sf::RenderTexture& texture, int frame)
   EntityId player = game.components().globals.player();
   EntityId location = game.components().position[player].parent();
 
-  if (location == EntityId::Mu())
+  if (location == EntityId::Void)
   {
     throw std::runtime_error("Uh oh, the player's location appears to have been deleted!");
   }
@@ -442,7 +442,7 @@ bool AppStateGameMode::handle_key_press(UIEvents::EventKeyPressed const& key)
           {
             EntityId entity = m_inventorySelection->getViewed();
             EntityId location = components.position[entity].parent();
-            if (location != EntityId::Mu())
+            if (location != EntityId::Void)
             {
               m_inventorySelection->setViewed(location);
             }
@@ -718,11 +718,11 @@ bool AppStateGameMode::handle_key_press(UIEvents::EventKeyPressed const& key)
           //case sf::Keyboard::Key::M:
           //  if (entities.size() == 0)
           //  {
-          //    putMsg(StringTransforms::makeString(player, EntityId::Mu(), tr("CHOOSE_TWO_ITEMS_FIRST"), { tr("VERB_MIX_2") }));
+          //    putMsg(StringTransforms::makeString(player, EntityId::Void, tr("CHOOSE_TWO_ITEMS_FIRST"), { tr("VERB_MIX_2") }));
           //  }
           //  else if (entities.size() != 2)
           //  {
-          //    putMsg(StringTransforms::makeString(player, EntityId::Mu(), tr("CHOOSE_EXACTLY_TWO_AT_A_TIME"), { tr("VERB_MIX_2") }));
+          //    putMsg(StringTransforms::makeString(player, EntityId::Void, tr("CHOOSE_EXACTLY_TWO_AT_A_TIME"), { tr("VERB_MIX_2") }));
           //  }
           //  else
           //  {
