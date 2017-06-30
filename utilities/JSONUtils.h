@@ -74,7 +74,7 @@ namespace JSONUtils
   }
 
   /// Populate a JSON key if it doesn't already exist.
-  /// Returns the contents of the key.
+  /// Returns the new contents of the key.
   /// Similar to json::value() except it actually adds the key if it was not
   /// found; value() just returns a default value if it wasn't found, and
   /// does not touch the JSON.
@@ -86,6 +86,29 @@ namespace JSONUtils
     }
 
     return j[key];
+  }
+
+  /// Given a source and a target JSON object, and a key, copy the key to the
+  /// target object if it exists in the source and is non-null. If the key
+  /// exists in the source and *is* null, delete the key in the target object.
+  /// If the key does not exist in the source, do nothing.
+  /// @warning NOT tested yet.
+  inline void update(json const& source, std::string const& key, json& target)
+  {
+    if (!source.is_object() || !target.is_object()) return;
+
+    if (source.count(key) != 0)
+    {
+      auto const& value = source.at(key);
+      if (!value.is_null())
+      {
+        target[key] = value;
+      }
+      else
+      {
+        target.erase(key);
+      }
+    }
   }
 
   /// Perform an action with a key/value pair if the key is present in the JSON.
