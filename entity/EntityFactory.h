@@ -1,6 +1,7 @@
 #pragma once
 
 #include "entity/EntityId.h"
+#include "types/EntitySpecs.h"
 
 // Forward declarations
 class GameState;
@@ -23,17 +24,15 @@ public:
   ~EntityFactory();
 
   /// Create a particular object given the type name.
-  /// @param category The category name of the object to create.
-  /// @param material If present, the material to use for the object.
+  /// @param specs The category and optional material of the object to create.
   /// @return EntityId of the new object created.
-  EntityId create(std::string category, std::string material = "");
+  EntityId create(EntitySpecs specs);
 
   /// Create an entity bound to a tile (e.g. the floor, or the space above the floor).
   /// @param mapTile Pointer to the map tile associated.
-  /// @param category Entity to use for the space (e.g. "TileSpace", "TileWall", "TileFloor", "TilePit", etc.)
-  /// @param material If present, the material to use for the space.
+  /// @param specs The category and optional material of the object to create.
   /// @return EntityId of the new object created.
-  EntityId createTileEntity(MapTile* mapTile, std::string category, std::string material = "");
+  EntityId createTileEntity(MapTile* mapTile, EntitySpecs specs);
 
   /// Clone a particular object.
   /// @param original ID of the object to clone.
@@ -60,7 +59,7 @@ public:
   /// the category provided.
   /// @todo Handle inventory properly -- right now it is summarily deleted,
   ///       which will put any contained entities into a bad state.
-  void morph(EntityId id, std::string category, std::string material = "");
+  void morph(EntityId id, EntitySpecs specs);
 
   /// Destroy an object given a EntityId.
   /// If the given EntityId does not correspond to an object, does nothing.

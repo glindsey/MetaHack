@@ -26,6 +26,7 @@ namespace Components
   }
 
   ComponentPosition::ComponentPosition()
+    : m_map{ "" }, m_coords{ 0, 0 }, m_parent{ EntityId::Void }
   {}
 
   ComponentPosition::ComponentPosition(EntityId id)

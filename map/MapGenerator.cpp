@@ -152,7 +152,7 @@ void MapGenerator::clearMap()
     for (int x = 0; x < m_game_map.getSize().x; ++x)
     {
       auto& tile = m_game_map.getTile({ x, y });
-      tile.setTileType("MTWallStone");
+      tile.setTileType({ "Floor", "Dirt" }, { "Wall", "Stone" });
     }
   }
 }
@@ -168,9 +168,9 @@ bool MapGenerator::getGrowthVector(GeoVector& growthVector)
     ++numRetries;
 
     MapFeature& feature = m_game_map.getRandomMapFeature();
-    if (feature.get_num_growth_vectors() > 0)
+    if (feature.getNumOfGrowthVectors() > 0)
     {
-      GeoVector vec = feature.get_random_growth_vector();
+      GeoVector vec = feature.getRandomGrowthVector();
 
       // Check the validity of the vector by looking at adjacent tiles.
       // It is valid if the adjacent tile is NOT empty.
@@ -219,7 +219,7 @@ bool MapGenerator::getGrowthVector(GeoVector& growthVector)
       else
       {
         // This is no longer a viable growth point, so erase it.
-        feature.erase_growth_vector(vec);
+        feature.eraseGrowthVector(vec);
       }
     }
   }

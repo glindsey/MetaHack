@@ -33,7 +33,13 @@ MapTileStandard2DView::MapTileStandard2DView(MapTile& map_tile,
 UintVec2 MapTileStandard2DView::getTileSheetCoords() const
 {
   /// @todo Deal with selecting one of the other tiles.
-  UintVec2 start_coords = getMapTile().getCategoryData().value("tile-location", UintVec2(0, 0));
+  auto& entity = getMapTile().getDisplayEntity();
+  auto& categoryData = S<IGameRules>().categoryData(COMPONENTS.category[entity]);
+  UintVec2 offset;
+
+  // Get tile coordinates on the sheet.
+  UintVec2 start_coords = categoryData.value("tile-location", UintVec2(0, 0));
+
   UintVec2 tile_coords(start_coords.x + m_tileOffset, start_coords.y);
   return tile_coords;
 }
@@ -127,10 +133,11 @@ void MapTileStandard2DView::addMemoryVerticesTo(sf::VertexArray& vertices,
 
   if (spacialMemory.contains(coords))
   {
-    std::string tileCategory = spacialMemory[coords].getType();
-    if (!tileCategory.empty())
-    {
-      json& tile_data = S<IGameRules>().categoryData(tileCategory);
+    auto& memories = spacialMemory[coords].getSpecs();
+
+    for (auto& memory : memories)
+    {    
+      json& tile_data = S<IGameRules>().categoryData(memory.category);
 
       /// @todo Call a script to handle selecting a tile other than the one
       ///       in the upper-left corner.
@@ -198,7 +205,7 @@ void MapTileStandard2DView::addEntitiesFloorVertices(EntityId viewer,
 {
   auto& tile = getMapTile();
   auto coords = tile.getCoords();
-  EntityId contents = tile.getTileSpace();
+  EntityId contents = tile.getSpaceEntity();
   auto& inv = COMPONENTS.inventory[contents];
 
   if (SYSTEMS.senseSight()->subjectCanSeeCoords(viewer, coords))

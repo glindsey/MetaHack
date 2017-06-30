@@ -4,6 +4,7 @@
 #include <memory>
 
 #include "types/Direction.h"
+#include "types/EntitySpecs.h"
 #include "types/GeoVector.h"
 #include "map/Map.h"
 #include "properties/PropertyDictionary.h"
@@ -51,52 +52,54 @@ public:
 
   sf::IntRect const& getCoords() const;
   Map& getMap() const;
-  PropertyDictionary const& get_settings() const;
+  PropertyDictionary const& getSettings() const;
 
-  size_t get_num_growth_vectors() const;
-  GeoVector const& get_random_growth_vector() const;
-  bool erase_growth_vector(GeoVector vec);
+  size_t getNumOfGrowthVectors() const;
+  GeoVector const& getRandomGrowthVector() const;
+  bool eraseGrowthVector(GeoVector vec);
 
-  static std::unique_ptr<MapFeature> construct(Map& game_map, PropertyDictionary const& settings, GeoVector vec);
+  static std::unique_ptr<MapFeature> construct(Map& gameMap, PropertyDictionary const& settings, GeoVector vec);
 
 protected:
   MapFeature(Map& m, PropertyDictionary const& settings, GeoVector vec);
 
   void setCoords(sf::IntRect coords);
-  void clear_growth_vectors();
-  void add_growth_vector(GeoVector vec, bool highPriority = false);
+  void clearGrowthVectors();
+  void addGrowthVector(GeoVector vec, bool highPriority = false);
 
-  /// Check that all tiles within the area bounded by (upper_left.x,
-  /// upper_left.y) to (lower_right.x, lower_right.y), inclusive,
+  /// Check that all tiles within the area bounded by (upperLeft.x,
+  /// upperLeft.y) to (lowerRight.x, lowerRight.y), inclusive,
   /// meet a specific criterion.
-  /// @param upper_left Coordinates of upper-left corner of box.
-  /// @param lower_right Coordinates of lower-right corner of box.
+  /// @param upperLeft Coordinates of upper-left corner of box.
+  /// @param lowerRight Coordinates of lower-right corner of box.
   /// @param criterion Functor that is passed a MapTile reference and should
   ///                  return true if the criterion is met and false if not.
   /// @return True if all tiles meet the criterion, false otherwise.
-  bool does_box_pass_criterion(IntVec2 upper_left,
-                               IntVec2 lower_right,
-                               std::function<bool(MapTile&)> criterion);
+  bool doesBoxPassCriterion(IntVec2 upperLeft,
+                            IntVec2 lowerRight,
+                            std::function<bool(MapTile&)> criterion);
 
-  /// Set all tiles within the area bounded by (upper_left.x, upper_left.y) to
+  /// Set all tiles within the area bounded by (upperLeft.x, upperLeft.y) to
   /// (lower_right.x, lower_right.y), inclusive, to the specified tile type.
   /// If any tiles are out of bounds for the map, they are ignored.
-  /// @param upper_left Coordinates of upper-left corner of box.
-  /// @param lower_right Coordinates of lower-right corner of box.
-  /// @param tile_type Type to set tiles to.
-  void set_box(IntVec2 upper_left, IntVec2 lower_right, std::string tile_type);
+  /// @param upperLeft Coordinates of upper-left corner of box.
+  /// @param lowerRight Coordinates of lower-right corner of box.
+  /// @param floor Category and optional material to set tile floor to.
+  /// @param space Category and optional material to set tile space to.
+  void setBox(IntVec2 upperLeft, IntVec2 lowerRight, EntitySpecs floor, EntitySpecs space);
 
   /// Set all tiles bounded by an IntRect (inclusive) to the specified tile type.
   /// @param rect IntRect specifying the rectangle to set.
-  /// @param tile_type Type to set tiles to.
-  void set_box(sf::IntRect rect, std::string tile_type);
+  /// @param floor Category and optional material to set tile floor to.
+  /// @param space Category and optional material to set tile space to.
+  void setBox(sf::IntRect rect, EntitySpecs floor, EntitySpecs space);
 
 private:
 
   Map& m_gameMap;
   PropertyDictionary m_settings;
   sf::IntRect m_coords;
-  GeoVector m_start_vec;
+  GeoVector m_startVec;
   std::deque<GeoVector> m_highPriorityVecs;
   std::deque<GeoVector> m_lowPriorityVecs;
 };

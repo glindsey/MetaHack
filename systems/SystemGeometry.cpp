@@ -35,11 +35,11 @@ namespace Systems
 
   bool Geometry::moveEntityInto(EntityId entity, EntityId newLocation)
   {
-    // If Entity doesn't have a Position component, bail.
-    if (!m_position.existsFor(entity)) return false;
+    Assert("Geometry", m_position.existsFor(entity),
+           "Asked to move entity " << entity << " into location " << newLocation << ", but the entity doesn't have a Position component!");
 
-    // If new location doesn't have an Inventory component, bail.
-    if (!m_inventory.existsFor(newLocation)) return false;
+    Assert("Geometry", m_inventory.existsFor(newLocation),
+           "Asked to move entity " << entity << " into location " << newLocation << ", but the location doesn't have an Inventory component!");
 
     auto& position = m_position[entity];
     auto& newInventory = m_inventory[newLocation];

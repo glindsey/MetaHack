@@ -114,6 +114,7 @@ namespace Components
     JSONUtils::doIfPresent(j, "globals",          [this](auto const& value) { globals         = value; });
     JSONUtils::doIfPresent(j, "category",         [this](auto const& value) { category        = value; });
     JSONUtils::doIfPresent(j, "material",         [this](auto const& value) { material        = value; });
+    JSONUtils::doIfPresent(j, "position",         [this](auto const& value) { position        = value; });
 
     JSONUtils::doIfPresent(j, "activity",         [this](auto const& value) { activity        = value; });
     JSONUtils::doIfPresent(j, "appearance",       [this](auto const& value) { appearance      = value; });
@@ -133,7 +134,6 @@ namespace Components
     JSONUtils::doIfPresent(j, "mobility",         [this](auto const& value) { mobility        = value; });
     JSONUtils::doIfPresent(j, "openable",         [this](auto const& value) { openable        = value; });
     JSONUtils::doIfPresent(j, "physical",         [this](auto const& value) { physical        = value; });
-    JSONUtils::doIfPresent(j, "position",         [this](auto const& value) { position        = value; });
     JSONUtils::doIfPresent(j, "proper-name",      [this](auto const& value) { properName      = value; });
     JSONUtils::doIfPresent(j, "quantity",         [this](auto const& value) { quantity        = value; });
     JSONUtils::doIfPresent(j, "sapience",         [this](auto const& value) { sapience        = value; });
@@ -163,6 +163,7 @@ namespace Components
   {
     category.cloneIfExists(original, newId);
     material.cloneIfExists(original, newId);
+    position.cloneIfExists(original, newId);
 
     activity.cloneIfExists(original, newId);
     appearance.cloneIfExists(original, newId);
@@ -182,7 +183,6 @@ namespace Components
     mobility.cloneIfExists(original, newId);
     openable.cloneIfExists(original, newId);
     physical.cloneIfExists(original, newId);
-    position.cloneIfExists(original, newId);
     properName.cloneIfExists(original, newId); ///< @todo May want to make this "clone of X" if it exists
     quantity.cloneIfExists(original, newId);
     sapience.cloneIfExists(original, newId);
@@ -198,7 +198,6 @@ namespace Components
     sapience.remove(id);
     quantity.remove(id);
     properName.remove(id);
-    position.remove(id);
     physical.remove(id);
     openable.remove(id);
     mobility.remove(id);
@@ -218,6 +217,7 @@ namespace Components
     appearance.remove(id);
     activity.remove(id);
 
+    position.remove(id);
     material.remove(id);
     category.remove(id);
   }
@@ -226,6 +226,7 @@ namespace Components
   {
     JSONUtils::doIfPresent(j, "category",         [this, &id](auto const& value) {        category.update(id, value); });
     JSONUtils::doIfPresent(j, "material",         [this, &id](auto const& value) {        material.update(id, value); });
+    JSONUtils::doIfPresent(j, "position",         [this, &id](auto const& value) {        position.update(id, value); });
 
     JSONUtils::doIfPresent(j, "activity",         [this, &id](auto const& value) {        activity.update(id, value); });
     JSONUtils::doIfPresent(j, "appearance",       [this, &id](auto const& value) {      appearance.update(id, value); });
@@ -245,7 +246,6 @@ namespace Components
     JSONUtils::doIfPresent(j, "mobility",         [this, &id](auto const& value) {        mobility.update(id, value); });
     JSONUtils::doIfPresent(j, "openable",         [this, &id](auto const& value) {        openable.update(id, value); });
     JSONUtils::doIfPresent(j, "physical",         [this, &id](auto const& value) {        physical.update(id, value); });
-    JSONUtils::doIfPresent(j, "position",         [this, &id](auto const& value) {        position.update(id, value); });
     JSONUtils::doIfPresent(j, "proper-name",      [this, &id](auto const& value) {      properName.update(id, value); });
     JSONUtils::doIfPresent(j, "quantity",         [this, &id](auto const& value) {        quantity.update(id, value); });
     JSONUtils::doIfPresent(j, "sapience",         [this, &id](auto const& value) {        sapience.update(id, value); });
@@ -260,6 +260,7 @@ namespace Components
     j["globals"]         = globals;
     j["category"]        = category;
     j["material"]        = material;
+    j["position"]        = position;
 
     j["activity"]        = activity;
     j["appearance"]      = appearance;
@@ -277,11 +278,42 @@ namespace Components
     j["mobility"]        = mobility;
     j["openable"]        = openable;
     j["physical"]        = physical;
-    j["position"]        = position;
     j["proper-name"]     = properName;
     j["sapience"]        = sapience;
     j["sense-sight"]     = senseSight;
     j["spacial-memory"]  = spacialMemory;
+
+    return j;
+  }
+
+  json ComponentManager::toJSON(EntityId id)
+  {
+    json j = json::object();
+
+    j["category"] = category[id];
+    if (material.existsFor(id)) j["material"] = material.of(id);
+    if (position.existsFor(id)) j["position"] = position.of(id);
+
+    if (activity.existsFor(id)) j["activity"] = activity.of(id);
+    if (appearance.existsFor(id)) j["appearance"] = appearance.of(id);
+    if (bodyparts.existsFor(id)) j["bodyparts"] = bodyparts.of(id);
+    if (combustible.existsFor(id)) j["combustible"] = combustible.of(id);
+    if (equippable.existsFor(id)) j["equippable"] = equippable.of(id);
+    if (gender.existsFor(id)) j["gender"] = gender.of(id);
+    if (health.existsFor(id)) j["health"] = health.of(id);
+    if (inventory.existsFor(id)) j["inventory"] = inventory.of(id);
+    if (lightSource.existsFor(id)) j["light-source"] = lightSource.of(id);
+    if (lockable.existsFor(id)) j["lockable"] = lockable.of(id);
+    if (magicalBinding.existsFor(id)) j["magical-binding"] = magicalBinding.of(id);
+    if (materialFlags.existsFor(id)) j["material-flags"] = materialFlags.of(id);
+    if (matterState.existsFor(id)) j["matter-state"] = matterState.of(id);
+    if (mobility.existsFor(id)) j["mobility"] = mobility.of(id);
+    if (openable.existsFor(id)) j["openable"] = openable.of(id);
+    if (physical.existsFor(id)) j["physical"] = physical.of(id);
+    if (properName.existsFor(id)) j["proper-name"] = properName.of(id);
+    if (sapience.existsFor(id)) j["sapience"] = sapience.of(id);
+    if (senseSight.existsFor(id)) j["sense-sight"] = senseSight.of(id);
+    if (spacialMemory.existsFor(id)) j["spacial-memory"] = spacialMemory.of(id);
 
     return j;
   }

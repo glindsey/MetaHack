@@ -44,11 +44,16 @@ namespace Components
 
     void clone(EntityId original, EntityId newId);
 
+    /// Erases an Entity completely from the component maps.
     void erase(EntityId id);
 
     void populate(EntityId newId, json const& jsonComponents);
 
+    /// Dump ALL component data.
     json toJSON();
+
+    /// Dump component data for a single ID.
+    json toJSON(EntityId id);
 
     ComponentGlobals                       globals;
     ComponentMap<std::string>              category;

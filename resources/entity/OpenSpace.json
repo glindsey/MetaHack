@@ -1,7 +1,7 @@
 {
-  "name": "void",
-  "plural": "voids",
-  "description-brief": "The complete absence of anything; a vacuum.",
+  "name": "open space",
+  "plural": "open spaces",
+  "description-brief": "An empty space.",
   "passable": false,
 
   "templates": [ "GameObject" ],
@@ -12,6 +12,9 @@
       "tile-bg-color": [ "color", 0, 0, 0 ],
       "tile-fg-color": [ "color", 0, 0, 0 ],
       "opacity": [ "color", 0, 0, 0 ]
+    },
+    "inventory": {
+      "max-size": -1
     },
     "physical": {
       "mass": 0,

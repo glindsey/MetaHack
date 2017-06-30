@@ -53,19 +53,35 @@ namespace Components
       return m_componentMap.at(id);
     }
 
-    /// If the provided JSON is non-null, add it to the map under the provided id.
-    /// If the provided JSON is null, remove the provided id from the map.
+    /// Update the component for a specific ID depending on the provided JSON.
+    ///   * If the JSON is empty (null):
+    ///     * If the component already exists, do nothing.
+    ///     * If the component doesn't exist, add it using default values.
+    ///   * If the JSON is the string "DELETE" (case sensitive), remove the existing component data for that ID.
+    ///   * Otherwise, replace the component data with the provided JSON.
     void update(EntityId id, json const& newData)
     {
       if (newData.is_null())
       {
-        remove(id);
+        if (!existsFor(id))
+        {
+          std::string className = typeid(T).name();
+          CLOG(TRACE, "Component") << "Creating new " << typeid(T).name() << " for ID " << id;
+          m_componentMap.emplace(std::make_pair(id, T()));
+        }
       }
       else
       {
-        // (This looks a little funky but makes sure new component is generated
-        //  if missing.)
-        operator[](id) = newData;
+        if (newData.is_string() && newData.get<std::string>() == "DELETE")
+        {
+          remove(id);
+        }
+        else
+        {
+          // (This looks a little funky but makes sure new component is generated
+          //  if missing.)
+          operator[](id) = newData;
+        }
       }
     }
 
@@ -82,7 +98,7 @@ namespace Components
       {
         std::string className = typeid(T).name();
         CLOG(TRACE, "Component") << "Creating new " << typeid(T).name() << " for ID " << id;
-        m_componentMap[id] = T();
+        m_componentMap.emplace(std::make_pair(id, T()));
       }
 
       return m_componentMap[id];

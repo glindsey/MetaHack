@@ -1,7 +1,7 @@
 {
-  "name": "void",
-  "plural": "voids",
-  "description-brief": "The complete absence of anything; a vacuum.",
+  "name": "pit",
+  "plural": "pits",
+  "description-brief": "A hole in the floor.",
   "passable": false,
 
   "templates": [ "GameObject" ],

@@ -16,7 +16,7 @@ MapFeature::MapFeature(Map& m, PropertyDictionary const& s, GeoVector vec)
   :
   m_gameMap{ m },
   m_settings{ s },
-  m_start_vec{ vec }
+  m_startVec{ vec }
 {}
 
 MapFeature::~MapFeature()
@@ -32,17 +32,17 @@ Map& MapFeature::getMap() const
   return m_gameMap;
 }
 
-PropertyDictionary const& MapFeature::get_settings() const
+PropertyDictionary const& MapFeature::getSettings() const
 {
   return m_settings;
 }
 
-size_t MapFeature::get_num_growth_vectors() const
+size_t MapFeature::getNumOfGrowthVectors() const
 {
   return m_highPriorityVecs.size() + m_lowPriorityVecs.size();
 }
 
-GeoVector const& MapFeature::get_random_growth_vector() const
+GeoVector const& MapFeature::getRandomGrowthVector() const
 {
   if (m_highPriorityVecs.size() > 0)
   {
@@ -62,7 +62,7 @@ GeoVector const& MapFeature::get_random_growth_vector() const
   }
 }
 
-bool MapFeature::erase_growth_vector(GeoVector vec)
+bool MapFeature::eraseGrowthVector(GeoVector vec)
 {
   std::deque<GeoVector>::iterator iter;
   iter = std::find(m_highPriorityVecs.begin(), m_highPriorityVecs.end(), vec);
@@ -84,7 +84,7 @@ bool MapFeature::erase_growth_vector(GeoVector vec)
   return false;
 }
 
-std::unique_ptr<MapFeature> MapFeature::construct(Map& game_map, PropertyDictionary const & settings, GeoVector vec)
+std::unique_ptr<MapFeature> MapFeature::construct(Map& gameMap, PropertyDictionary const & settings, GeoVector vec)
 {
   std::unique_ptr<MapFeature> feature;
   std::string feature_type = settings.get("type");
@@ -93,23 +93,23 @@ std::unique_ptr<MapFeature> MapFeature::construct(Map& game_map, PropertyDiction
   {
     if (feature_type == "room")
     {
-      feature.reset(NEW MapRoom(game_map, settings, vec));
+      feature.reset(NEW MapRoom(gameMap, settings, vec));
     }
     else if (feature_type == "corridor")
     {
-      feature.reset(NEW MapCorridor(game_map, settings, vec));
+      feature.reset(NEW MapCorridor(gameMap, settings, vec));
     }
     else if (feature_type == "room_l")
     {
-      feature.reset(NEW MapLRoom(game_map, settings, vec));
+      feature.reset(NEW MapLRoom(gameMap, settings, vec));
     }
     else if (feature_type == "room_diamond")
     {
-      feature.reset(NEW MapDiamond(game_map, settings, vec));
+      feature.reset(NEW MapDiamond(gameMap, settings, vec));
     }
     else if (feature_type == "room_torus")
     {
-      feature.reset(NEW MapDonutRoom(game_map, settings, vec));
+      feature.reset(NEW MapDonutRoom(gameMap, settings, vec));
     }
     else
     {
@@ -137,26 +137,26 @@ void MapFeature::setCoords(sf::IntRect coords)
   m_coords = coords;
 }
 
-void MapFeature::clear_growth_vectors()
+void MapFeature::clearGrowthVectors()
 {
   m_highPriorityVecs.clear();
   m_lowPriorityVecs.clear();
 }
 
-void MapFeature::add_growth_vector(GeoVector vec, bool highPriority)
+void MapFeature::addGrowthVector(GeoVector vec, bool highPriority)
 {
   (highPriority == true ? 
    m_highPriorityVecs :
    m_lowPriorityVecs).push_back(vec);
 }
 
-bool MapFeature::does_box_pass_criterion(IntVec2 upper_left,
-                                         IntVec2 lower_right,
-                                         std::function<bool(MapTile&)> criterion)
+bool MapFeature::doesBoxPassCriterion(IntVec2 upperLeft,
+                                      IntVec2 lowerRight,
+                                      std::function<bool(MapTile&)> criterion)
 {
-  for (int xCheck = upper_left.x; xCheck <= lower_right.x; ++xCheck)
+  for (int xCheck = upperLeft.x; xCheck <= lowerRight.x; ++xCheck)
   {
-    for (int yCheck = upper_left.y; yCheck <= lower_right.y; ++yCheck)
+    for (int yCheck = upperLeft.y; yCheck <= lowerRight.y; ++yCheck)
     {
       auto& tile = getMap().getTile({ xCheck, yCheck });
       if (!criterion(tile))
@@ -168,24 +168,24 @@ bool MapFeature::does_box_pass_criterion(IntVec2 upper_left,
   return true;
 }
 
-void MapFeature::set_box(IntVec2 upper_left, IntVec2 lower_right, std::string tile_type)
+void MapFeature::setBox(IntVec2 upperLeft, IntVec2 lowerRight, EntitySpecs floor, EntitySpecs space)
 {
   Map& map = getMap();
 
-  for (int xCheck = upper_left.x; xCheck <= lower_right.x; ++xCheck)
+  for (int xCheck = upperLeft.x; xCheck <= lowerRight.x; ++xCheck)
   {
-    for (int yCheck = upper_left.y; yCheck <= lower_right.y; ++yCheck)
+    for (int yCheck = upperLeft.y; yCheck <= lowerRight.y; ++yCheck)
     {
       if (map.isInBounds({ xCheck, yCheck }))
       {
         auto& tile = getMap().getTile({ xCheck, yCheck });
-        tile.setTileType(tile_type);
+        tile.setTileType(floor, space);
       }
     }
   }
 }
 
-void MapFeature::set_box(sf::IntRect rect, std::string tile_type)
+void MapFeature::setBox(sf::IntRect rect, EntitySpecs floor, EntitySpecs space)
 {
-  set_box({ rect.left, rect.top }, { rect.left + rect.width - 1, rect.top + rect.height - 1 }, tile_type);
+  setBox({ rect.left, rect.top }, { rect.left + rect.width - 1, rect.top + rect.height - 1 }, floor, space);
 }

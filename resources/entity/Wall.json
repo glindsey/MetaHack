@@ -1,6 +1,6 @@
 {
-  "name": "[MTWall]",
-  "plural": "[MTWalls]",
+  "name": "wall",
+  "plural": "walls",
   "passable": false,
 
   "templates": [ "GameObject" ],

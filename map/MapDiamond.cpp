@@ -14,7 +14,8 @@ MapDiamond::MapDiamond(Map& m, PropertyDictionary const& s, GeoVector vec)
   UniformIntDist hsDist(s.get("min_half_size", 2),
                           s.get("max_half_size", 4));
   unsigned int max_retries = s.get("max_retries", 100);
-  std::string floor_type = s.get("floor_type", "MTFloorDirt");
+  std::string floorMaterial = s.get("floor_type", "Dirt");
+  std::string wallMaterial = s.get("wall_type", "Stone");
 
   IntVec2& startingCoords = vec.start_point;
   Direction& direction = vec.direction;
@@ -64,7 +65,7 @@ MapDiamond::MapDiamond(Map& m, PropertyDictionary const& s, GeoVector vec)
       /// @todo: Constrain this to only check around the edges of the
       ///        diamond, instead of the entire enclosing box.
 
-      okay = does_box_pass_criterion({ xCenter - (diamondHalfSize + 1), yCenter - (diamondHalfSize + 1) },
+      okay = doesBoxPassCriterion({ xCenter - (diamondHalfSize + 1), yCenter - (diamondHalfSize + 1) },
       { xCenter + (diamondHalfSize + 1), yCenter + (diamondHalfSize + 1) },
                                      [&](MapTile& tile) { return !tile.isPassable(); });
 
@@ -82,7 +83,7 @@ MapDiamond::MapDiamond(Map& m, PropertyDictionary const& s, GeoVector vec)
             int xCoord = xCenter + xCounter;
             int yCoord = yCenter + yCounter;
             auto& tile = getMap().getTile({ xCoord, yCoord });
-            tile.setTileType(floor_type);
+            tile.setTileType({ "Floor", floorMaterial }, { "OpenSpace" });
           }
         }
 
@@ -92,19 +93,19 @@ MapDiamond::MapDiamond(Map& m, PropertyDictionary const& s, GeoVector vec)
                                (diamondHalfSize * 2) + 1));
 
         // Add the four points as potential connection points.
-        add_growth_vector(GeoVector(xCenter, yCenter - (diamondHalfSize + 1),
+        addGrowthVector(GeoVector(xCenter, yCenter - (diamondHalfSize + 1),
                                     Direction::North));
-        add_growth_vector(GeoVector(xCenter, yCenter + (diamondHalfSize + 1),
+        addGrowthVector(GeoVector(xCenter, yCenter + (diamondHalfSize + 1),
                                     Direction::South));
-        add_growth_vector(GeoVector(xCenter - (diamondHalfSize + 1), yCenter,
+        addGrowthVector(GeoVector(xCenter - (diamondHalfSize + 1), yCenter,
                                     Direction::West));
-        add_growth_vector(GeoVector(xCenter + (diamondHalfSize + 1), yCenter,
+        addGrowthVector(GeoVector(xCenter + (diamondHalfSize + 1), yCenter,
                                     Direction::East));
 
         /// @todo Put either a door or an open area at the starting coords.
         ///       Right now we just make it an open area.
         auto& startTile = getMap().getTile(startingCoords);
-        startTile.setTileType(floor_type);
+        startTile.setTileType({ "Floor", floorMaterial }, { "OpenSpace" });
 
         return;
       }

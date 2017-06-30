@@ -16,7 +16,7 @@ EntityFactory::EntityFactory(GameState& gameState) :
   m_gameState{ gameState }
 {
   // Create the "nothingness" object.
-  EntityId nothingness = create("Void");
+  EntityId nothingness = create({ "Void" });
   Assert("EntityFactory", (nothingness == 0ULL), "Void's ID is " << nothingness << " instead of zero!");
 
   m_initialized = true;
@@ -26,15 +26,16 @@ EntityFactory::~EntityFactory()
 {
 }
 
-EntityId EntityFactory::create(std::string category, std::string material)
+EntityId EntityFactory::create(EntitySpecs specs)
 {
   EntityId new_id = EntityId(m_nextEntityId);
   ++m_nextEntityId;
-  json& data = S<IGameRules>().categoryData(category);
+  json& data = S<IGameRules>().categoryData(specs.category);
 
   auto& jsonComponents = data["components"];
   m_gameState.components().populate(new_id, jsonComponents);
 
+  auto material = specs.material;
   if (material.empty() && jsonComponents.count("materials") != 0)
   {
     auto& jsonMaterials = jsonComponents["materials"];
@@ -47,9 +48,9 @@ EntityId EntityFactory::create(std::string category, std::string material)
     }
   }
 
-  if (material.empty())
+  if (!material.empty())
   {
-    json& materialData = S<IGameRules>().categoryData(material, "materials");
+    json& materialData = S<IGameRules>().categoryData(material, "material");
     m_gameState.components().populate(new_id, materialData["components"]);
   }
 
@@ -61,9 +62,9 @@ EntityId EntityFactory::create(std::string category, std::string material)
   return EntityId(new_id);
 }
 
-EntityId EntityFactory::createTileEntity(MapTile* mapTile, std::string category, std::string material)
+EntityId EntityFactory::createTileEntity(MapTile* mapTile, EntitySpecs specs)
 {
-  EntityId new_id = create(category, material);
+  EntityId new_id = create(specs);
 
   MapID map = mapTile->map();
   IntVec2 position = mapTile->getCoords();
@@ -99,9 +100,10 @@ void EntityFactory::applyCategoryData(EntityId id, std::string subType, std::str
   }
 }
 
-void EntityFactory::morph(EntityId id, std::string category, std::string material)
+void EntityFactory::morph(EntityId id, EntitySpecs specs)
 {
   auto& components = m_gameState.components();
+  CLOG(TRACE, "EntityFactory") << "Changing Entity " << id << " into " << specs.category << "." << specs.material;
 
   if (id == EntityId::Void)
   {
@@ -109,25 +111,29 @@ void EntityFactory::morph(EntityId id, std::string category, std::string materia
   }
 
   // First, check if category is being changed.
-  std::string oldCategory = components.category.existsFor(id) ? components.category.of(id) : "";
+  std::string oldCategory = components.category[id];
 
-  if (category != oldCategory)
+  if (specs.category != oldCategory)
   {
-    components.erase(id);
-    json& data = S<IGameRules>().categoryData(category);
-    auto& jsonComponents = data["components"];
+    json& data = S<IGameRules>().categoryData(specs.category);
     components.populate(id, data["components"]);
   }
 
   // Next, check if material is being changed.
   std::string oldMaterial = components.material.existsFor(id) ? components.material.of(id) : "";
 
-  if (material != oldMaterial)
+  if (!specs.material.empty() && (specs.material != oldMaterial))
   {
-    json& materialData = S<IGameRules>().categoryData(material, "materials");
+    json& materialData = S<IGameRules>().categoryData(specs.material, "material");
     components.populate(id, materialData["components"]);
   }
 
+  //CLOG(TRACE, "GameRules") << "================================";
+  //CLOG(TRACE, "GameRules") << "DEBUG: Entity " << id << " components are:";
+  //CLOG(TRACE, "GameRules") << components.toJSON(id).dump(2);
+  //CLOG(TRACE, "GameRules") << "================================";
+
+  //std::cerr << "BREAK" << std::endl;
 }
 
 void EntityFactory::destroy(EntityId id)

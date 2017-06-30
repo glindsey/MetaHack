@@ -2,8 +2,9 @@
   "name": "floor",
   "plural": "floors",
   "description-brief": "The floor of this tile.",
+  "passable": true,
 
-  "templates": [ "Entity" ],
+  "templates": [ "GameObject" ],
 
   "components": {
     "appearance": {
@@ -11,6 +12,10 @@
     },
     "inventory": {
       "max-size": -1
+    },
+    "physical": {
+      "mass": 0,
+      "volume": 0
     }
   }
 }

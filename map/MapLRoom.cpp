@@ -23,7 +23,8 @@ MapLRoom::MapLRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
   UniformIntDist vert_height_dist(s.get("vert_leg_min_height", 3),
                                     s.get("vert_leg_max_height", 7));
   unsigned int max_retries = s.get("max_retries", 500);
-  std::string floor_type = s.get("floor_type", "MTFloorDirt");
+  std::string floorMaterial = s.get("floor_type", "Dirt");
+  std::string wallMaterial = s.get("wall_type", "Stone");
 
   IntVec2& starting_coords = vec.start_point;
   Direction& direction = vec.direction;
@@ -103,19 +104,19 @@ MapLRoom::MapLRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
       bool okay = true;
 
       // Verify that both boxes and surrounding area are solid walls.
-      okay = does_box_pass_criterion({ vert_rect.left - 1, vert_rect.top - 1 },
+      okay = doesBoxPassCriterion({ vert_rect.left - 1, vert_rect.top - 1 },
       { vert_rect.left + vert_rect.width, vert_rect.top + vert_rect.height },
                                      [&](MapTile& tile) { return !tile.isPassable(); });
 
-      okay &= does_box_pass_criterion({ horiz_rect.left - 1, horiz_rect.top - 1 },
+      okay &= doesBoxPassCriterion({ horiz_rect.left - 1, horiz_rect.top - 1 },
       { horiz_rect.left + horiz_rect.width, horiz_rect.top + horiz_rect.height },
                                       [&](MapTile& tile) { return !tile.isPassable(); });
 
       if (okay)
       {
         // Clear out the boxes.
-        set_box(vert_rect, floor_type);
-        set_box(horiz_rect, floor_type);
+        setBox(vert_rect, { "Floor", floorMaterial }, { "OpenSpace" });
+        setBox(horiz_rect, { "Floor", floorMaterial }, { "OpenSpace" });
 
         unsigned int x_min = std::min(horiz_rect.left, vert_rect.left);
         unsigned int y_min = std::min(horiz_rect.top, vert_rect.top);
@@ -136,38 +137,38 @@ MapLRoom::MapLRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
              x_coord <= horiz_rect.left + horiz_rect.width - 1;
              ++x_coord)
         {
-          add_growth_vector(GeoVector(x_coord, horiz_rect.top - 1, Direction::North));
-          add_growth_vector(GeoVector(x_coord, horiz_rect.top + horiz_rect.height, Direction::South));
+          addGrowthVector(GeoVector(x_coord, horiz_rect.top - 1, Direction::North));
+          addGrowthVector(GeoVector(x_coord, horiz_rect.top + horiz_rect.height, Direction::South));
         }
         // Vertical rectangle, horizontal walls...
         for (int x_coord = vert_rect.left + 1;
              x_coord <= vert_rect.left + vert_rect.width - 1;
              ++x_coord)
         {
-          add_growth_vector(GeoVector(x_coord, vert_rect.top - 1, Direction::North));
-          add_growth_vector(GeoVector(x_coord, vert_rect.top + vert_rect.height, Direction::South));
+          addGrowthVector(GeoVector(x_coord, vert_rect.top - 1, Direction::North));
+          addGrowthVector(GeoVector(x_coord, vert_rect.top + vert_rect.height, Direction::South));
         }
         // Horizontal rectangle, vertical walls...
         for (int y_coord = horiz_rect.top + 1;
              y_coord <= horiz_rect.top + horiz_rect.height - 1;
              ++y_coord)
         {
-          add_growth_vector(GeoVector(horiz_rect.left - 1, y_coord, Direction::West));
-          add_growth_vector(GeoVector(horiz_rect.left + horiz_rect.width, y_coord, Direction::East));
+          addGrowthVector(GeoVector(horiz_rect.left - 1, y_coord, Direction::West));
+          addGrowthVector(GeoVector(horiz_rect.left + horiz_rect.width, y_coord, Direction::East));
         }
         // Vertical rectangle, vertical walls...
         for (int y_coord = vert_rect.top + 1;
              y_coord <= vert_rect.top + vert_rect.height - 1;
              ++y_coord)
         {
-          add_growth_vector(GeoVector(vert_rect.left - 1, y_coord, Direction::West));
-          add_growth_vector(GeoVector(vert_rect.left + vert_rect.width, y_coord, Direction::East));
+          addGrowthVector(GeoVector(vert_rect.left - 1, y_coord, Direction::West));
+          addGrowthVector(GeoVector(vert_rect.left + vert_rect.width, y_coord, Direction::East));
         }
 
         /// @todo Put either a door or an open area at the starting coords.
         ///       Right now we just make it an open area.
         auto& startTile = getMap().getTile(starting_coords);
-        startTile.setTileType(floor_type);
+        startTile.setTileType({ "Floor", floorMaterial }, { "OpenSpace" });
 
         return;
       }

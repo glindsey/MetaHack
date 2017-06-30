@@ -73,6 +73,8 @@ void FileSystemGameRules::loadCategoryIfNecessary(std::string name, std::string 
     // Populate the "type" component.
     componentsJson["type"] = type;
 
+    componentsJson["category"] = fullName;
+
     // Populate the "category" component, or if this is a subtype, the 
     // component of that name.
     // (If one was present already in the file, it will be overwritten.)
@@ -87,14 +89,14 @@ void FileSystemGameRules::loadCategoryIfNecessary(std::string name, std::string 
     // Material is only populated when an Entity is actually created, since
     // it may change on a per-Entity basis.
 
-    // DEBUG: Check for "Human".
-    //if (name == "Human")
-    //{
-    //  CLOG(TRACE, "GameRules") << "================================";
-    //  CLOG(TRACE, "GameRules") << "DEBUG: " << fullName << " JSON contents are:";
-    //  CLOG(TRACE, "GameRules") << categoryData.dump(2);
-    //  CLOG(TRACE, "GameRules") << "================================";
-    //}
+    // DEBUG: Check for a specific object type
+    if (name == "LightOrb")
+    {
+      CLOG(TRACE, "GameRules") << "================================";
+      CLOG(TRACE, "GameRules") << "DEBUG: " << fullName << " JSON contents are:";
+      CLOG(TRACE, "GameRules") << categoryData.dump(2);
+      CLOG(TRACE, "GameRules") << "================================";
+    }
 
     /// Try to load and run this Entity's Lua script.
     if (fs::exists(luafile_path))
@@ -126,8 +128,8 @@ void FileSystemGameRules::loadTemplateComponents(json& templates, json& componen
         CLOG(FATAL, "GameRules") << name << " has itself as a template -- this isn't allowed!";
       }
 
-      loadCategoryIfNecessary(tempName, "templates");
-      json& subcategoryData = categories["templates." + tempName];
+      loadCategoryIfNecessary(tempName, "template");
+      json& subcategoryData = categories["template." + tempName];
       JSONUtils::mergeArrays(templates, subcategoryData["templates"]);
       JSONUtils::addMissingKeys(components, subcategoryData["components"]);
     }

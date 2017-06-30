@@ -1,5 +1,5 @@
 {
-  "templates": [ "Active", "Mobile", "Killable" ],
+  "templates": [ "Entity", "Active", "Mobile", "Killable" ],
 
   "can-attack": true,
   "can-drink": true,

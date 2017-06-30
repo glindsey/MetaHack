@@ -20,8 +20,9 @@ MapDonutRoom::MapDonutRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
                                s.get("max_height", 20));
   unsigned int min_hole_size = s.get("min_hole_size", 5);
   unsigned int max_retries = s.get("max_retries", 500);
-  std::string floor_type = s.get("floor_type", "MTFloorDirt");
-  
+  std::string floorMaterial = s.get("floor_type", "Dirt");
+  std::string wallMaterial = s.get("wall_type", "Stone");
+
 
   IntVec2& starting_coords = vec.start_point;
   Direction& direction = vec.direction;
@@ -75,7 +76,7 @@ MapDonutRoom::MapDonutRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
     {
       bool okay = true;
 
-      okay = does_box_pass_criterion({ rect.left - 1, rect.top - 1 },
+      okay = doesBoxPassCriterion({ rect.left - 1, rect.top - 1 },
       { rect.left + rect.width, rect.top + rect.height },
                                      [&](MapTile& tile) { return !tile.isPassable(); });
 
@@ -115,7 +116,7 @@ MapDonutRoom::MapDonutRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
               (y_coord >= y_hole_top) && (y_coord <= y_hole_bottom)))
             {
               auto& tile = getMap().getTile({ x_coord, y_coord });
-              tile.setTileType(floor_type);
+              tile.setTileType({ "Floor", floorMaterial }, { "OpenSpace" });
             }
           }
         }
@@ -129,36 +130,36 @@ MapDonutRoom::MapDonutRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
              x_coord <= rect.left + rect.width - 1;
              ++x_coord)
         {
-          add_growth_vector(GeoVector(x_coord, rect.top - 1, Direction::North));
-          add_growth_vector(GeoVector(x_coord, rect.top + rect.height, Direction::South));
+          addGrowthVector(GeoVector(x_coord, rect.top - 1, Direction::North));
+          addGrowthVector(GeoVector(x_coord, rect.top + rect.height, Direction::South));
         }
         // Vertical walls...
         for (int y_coord = rect.top + 1;
              y_coord <= rect.top + rect.height - 1;
              ++y_coord)
         {
-          add_growth_vector(GeoVector(rect.left - 1, y_coord, Direction::West));
-          add_growth_vector(GeoVector(rect.left + rect.width, y_coord, Direction::East));
+          addGrowthVector(GeoVector(rect.left - 1, y_coord, Direction::West));
+          addGrowthVector(GeoVector(rect.left + rect.width, y_coord, Direction::East));
         }
 
         // Do the same for the hole walls.
         // Horizontal walls...
         for (int x_coord = x_hole_left + 1; x_coord < x_hole_right; ++x_coord)
         {
-          add_growth_vector(GeoVector(x_coord, y_hole_bottom, Direction::North));
-          add_growth_vector(GeoVector(x_coord, y_hole_top, Direction::South));
+          addGrowthVector(GeoVector(x_coord, y_hole_bottom, Direction::North));
+          addGrowthVector(GeoVector(x_coord, y_hole_top, Direction::South));
         }
         // Vertical walls...
         for (int y_coord = y_hole_top + 1; y_coord < y_hole_bottom; ++y_coord)
         {
-          add_growth_vector(GeoVector(x_hole_right, y_coord, Direction::West));
-          add_growth_vector(GeoVector(x_hole_left, y_coord, Direction::East));
+          addGrowthVector(GeoVector(x_hole_right, y_coord, Direction::West));
+          addGrowthVector(GeoVector(x_hole_left, y_coord, Direction::East));
         }
 
         /// @todo Put either a door or an open area at the starting coords.
         ///       Right now we just make it an open area.
         auto& startTile = getMap().getTile(starting_coords);
-        startTile.setTileType(floor_type);
+        startTile.setTileType({ "Floor", floorMaterial }, { "OpenSpace" });
 
         return;
       }

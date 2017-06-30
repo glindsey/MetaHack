@@ -1,6 +1,7 @@
 #pragma once
 
 #include "types/common.h"
+#include "types/EntitySpecs.h"
 
 #include "json.hpp"
 using json = ::nlohmann::json;
@@ -12,14 +13,14 @@ class MapMemoryChunk
 public:
   MapMemoryChunk()
     :
-    m_type{},
+    m_entitySpecs{},
     m_when{}
   {}
 
-  MapMemoryChunk(std::string type, ElapsedTicks memory_type)
+  MapMemoryChunk(std::vector<EntitySpecs> entitySpecs, ElapsedTicks when)
     :
-    m_type{ type },
-    m_when{ memory_type }
+    m_entitySpecs{ entitySpecs },
+    m_when{ when }
   {}
 
   friend void from_json(json const& j, MapMemoryChunk& obj);
@@ -28,19 +29,19 @@ public:
   virtual ~MapMemoryChunk()
   {}
 
-  std::string const& getType() const
+  std::vector<EntitySpecs> const& getSpecs() const
   {
-    return m_type;
+    return m_entitySpecs;
   }
 
-  ElapsedTicks get_memory_time()
+  ElapsedTicks getTimeOfMemory()
   {
     return m_when;
   }
 
 private:
-  /// std::string representing the type of tile remembered.
-  std::string m_type;
+  /// Collection of entity specs remembered. Map tile floor and space should be first in the collection.
+  std::vector<EntitySpecs> m_entitySpecs;
 
   /// Elapsed game time when the tile was remembered.
   ElapsedTicks m_when;

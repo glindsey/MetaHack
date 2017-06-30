@@ -83,8 +83,6 @@ namespace Systems
   {
     Assert("SenseSight", octant >= 1 && octant <= 8, "Octant" << octant << "passed in is not between 1 and 8 inclusively");
     IntVec2 newCoords;
-    //int x = 0;
-    //int y = 0;
 
     // Are we on a map?  Bail out if we aren't.
     if (!m_position.existsFor(id) || m_position.of(id).isInsideAnotherEntity())
@@ -184,7 +182,7 @@ namespace Systems
 
     auto& map = m_gameState.maps().get(thisMap);
 
-    while (loop_condition(Math::toRealVec2(newCoords), Math::toRealVec2(thisCoords), slope_B))
+    while (map.isInBounds(newCoords) && loop_condition(Math::toRealVec2(newCoords), Math::toRealVec2(thisCoords), slope_B))
     {
       if (Math::distSquared(newCoords, thisCoords) <= mw)
       {
@@ -209,7 +207,11 @@ namespace Systems
 
         if (m_spacialMemory.existsFor(id))
         {
-          MapMemoryChunk new_memory{ map.getTile(newCoords).getTileType(), SYSTEMS.timekeeper().clock() };
+          auto& newTile = map.getTile(newCoords);
+          std::vector<EntitySpecs> memories;           
+          memories.push_back(newTile.getTileFloorSpecs());
+          memories.push_back(newTile.getTileSpaceSpecs());
+          MapMemoryChunk new_memory{ memories, SYSTEMS.timekeeper().clock() };
           m_spacialMemory[id].ofMap(thisMap)[newCoords] = new_memory;
         }
       }

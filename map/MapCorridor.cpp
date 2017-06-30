@@ -12,13 +12,14 @@ MapCorridor::MapCorridor(Map& m, PropertyDictionary const& s, GeoVector vec)
   unsigned int numTries = 0;
   UniformIntDist lenDist(s.get("min_length", 3), 
                            s.get("max_length", 48));
-  unsigned int max_retries = s.get("max_retries", 100);
-  std::string floor_type = s.get("floor_type", "MTFloorDirt");
+  unsigned int maxRetries = s.get("max_retries", 100);
+  std::string floorMaterial = s.get("floor_type", "Dirt");
+  std::string wallMaterial = s.get("wall_type", "Stone");
 
   IntVec2& startingCoords = vec.start_point;
   Direction& direction = vec.direction;
 
-  while (numTries < max_retries)
+  while (numTries < maxRetries)
   {
     int corridorLen(lenDist(the_RNG));
 
@@ -71,15 +72,17 @@ MapCorridor::MapCorridor(Map& m, PropertyDictionary const& s, GeoVector vec)
       bool okay = true;
 
       // Verify that corridor and surrounding area are solid walls.
-      okay = does_box_pass_criterion(
+      okay = doesBoxPassCriterion(
       { xMin - 1, yMin - 1 },
       { xMax + 1, yMax + 1 },
                                      [&](MapTile& tile) { return !tile.isPassable(); });
 
       if (okay)
       {
+        /// @todo Deal with wall material if present
+
         // Clear out the box.
-        set_box({ xMin, yMin }, { xMax, yMax }, floor_type);
+        setBox({ xMin, yMin }, { xMax, yMax }, { "Floor", floorMaterial }, { "OpenSpace" });
 
         setCoords(sf::IntRect(xMin, yMin, (xMax - xMin) + 1, (yMax - yMin) + 1));
 
@@ -89,22 +92,22 @@ MapCorridor::MapCorridor(Map& m, PropertyDictionary const& s, GeoVector vec)
         {
           // If a vertical corridor, horizontal walls are high priority connections.
           bool priority = ((direction == Direction::North) || (direction == Direction::South));
-          add_growth_vector(GeoVector(xCoord, yMin - 1, Direction::North), priority);
-          add_growth_vector(GeoVector(xCoord, yMax + 1, Direction::South), priority);
+          addGrowthVector(GeoVector(xCoord, yMin - 1, Direction::North), priority);
+          addGrowthVector(GeoVector(xCoord, yMax + 1, Direction::South), priority);
         }
         // Now the vertical walls.
         for (int yCoord = yMin; yCoord <= yMax; ++yCoord)
         {
           // If a horizontal corridor, vertical walls are high priority connections.
           bool priority = ((direction == Direction::East) || (direction == Direction::West));
-          add_growth_vector(GeoVector(xMin - 1, yCoord, Direction::West), priority);
-          add_growth_vector(GeoVector(xMax + 1, yCoord, Direction::East), priority);
+          addGrowthVector(GeoVector(xMin - 1, yCoord, Direction::West), priority);
+          addGrowthVector(GeoVector(xMax + 1, yCoord, Direction::East), priority);
         }
 
         /// @todo: Put either a door or an open area at the starting coords.
         ///        Right now we just make it an open area.
         auto& startTile = getMap().getTile(startingCoords);
-        startTile.setTileType(floor_type);
+        startTile.setTileType({ "Floor", floorMaterial }, { "OpenSpace" });
 
         /// Check the tile two past the ending tile.
         /// If it is open space, there should be a small chance
@@ -144,7 +147,7 @@ MapCorridor::MapCorridor(Map& m, PropertyDictionary const& s, GeoVector vec)
           {
             /// @todo Do a throw to see if it opens up. Right now it always does.
             auto& endTile = getMap().getTile(m_endingCoords);
-            endTile.setTileType(floor_type);
+            endTile.setTileType({ "Floor", floorMaterial }, { "OpenSpace" });
           }
         }
 

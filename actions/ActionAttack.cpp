@@ -91,7 +91,7 @@ namespace Actions
     }
 
     auto& new_tile = MAPS.get(map).getTile({ x_new, y_new });
-    EntityId new_floor = new_tile.getTileSpace();
+    EntityId new_floor = new_tile.getSpaceEntity();
 
     // See if the tile to move into contains another creature.
     auto object = COMPONENTS.inventory[new_floor].getEntity();

@@ -139,6 +139,6 @@ end
 -- === USEFUL GLOBALS =========================================================
 Void = 0
 
-require('resources/entity/templates/GameObject')
+require('resources/entity/template/GameObject')
 
 print("*** Default Lua script executed.")

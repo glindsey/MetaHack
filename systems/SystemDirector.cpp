@@ -65,7 +65,7 @@ namespace Systems
     {
       for (int x = 0; x < mapSize.x; ++x)
       {
-        EntityId contents = gameMap.getTile({ x, y }).getTileSpace();
+        EntityId contents = gameMap.getTile({ x, y }).getSpaceEntity();
         processEntityAndChildren(contents);
       }
     }
