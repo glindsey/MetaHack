@@ -41,18 +41,16 @@ public:
 
   /// Sets the space entity for this tile (e.g. "TileSpace", "TileWall", etc.)
   /// Optionally also sets the material to use.
-  /// @todo If the old entity contains any objects, moved them into the new entity.
+  /// @todo If the old entity contains any objects, move them into the new entity.
   /// @param type The entity type for this tile's space.
   /// @param material If present, the material to use for the space.
-  /// @return The ID of the new entity.
-  EntityId setTileSpace(std::string type, std::string material = "");
+  void setTileSpace(std::string type, std::string material = "");
 
   /// Sets the floor entity for this tile (e.g. "TileFloor", "TilePit", etc.)
-  /// @todo If the old entity contains any objects, moved them into the new entity.
+  /// @todo If the old entity contains any objects, move them into the new entity.
   /// @param type The entity type for this tile's floor.
   /// @param material If present, the material to use for the floor.
-  /// @return The ID of the new entity.
-  EntityId setTileFloor(std::string type, std::string material = "");
+  void setTileFloor(std::string type, std::string material = "");
 
   /// Sets the tile type, without doing gameplay checks.
   /// Used to set up the map before gameplay begins.

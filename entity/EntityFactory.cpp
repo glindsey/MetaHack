@@ -26,8 +26,7 @@ EntityFactory::~EntityFactory()
 {
 }
 
-/// @todo Add optional parameter specifying material to use
-EntityId EntityFactory::create(std::string category)
+EntityId EntityFactory::create(std::string category, std::string material)
 {
   EntityId new_id = EntityId(m_nextEntityId);
   ++m_nextEntityId;
@@ -36,18 +35,22 @@ EntityId EntityFactory::create(std::string category)
   auto& jsonComponents = data["components"];
   m_gameState.components().populate(new_id, jsonComponents);
 
-  if (jsonComponents.count("materials") != 0)
+  if (material.empty() && jsonComponents.count("materials") != 0)
   {
     auto& jsonMaterials = jsonComponents["materials"];
 
     if (jsonMaterials.is_array() && jsonMaterials.size() > 0)
     {
-      /// @todo Choose one material randomly and apply it.
+      /// @todo Choose one material randomly.
       ///       Right now, we just use the first one.
-      std::string material = StringTransforms::squishWhitespace(jsonMaterials[0].get<std::string>());
-      json& materialData = S<IGameRules>().categoryData(material, "materials");
-      m_gameState.components().populate(new_id, materialData["components"]);
+      material = StringTransforms::squishWhitespace(jsonMaterials[0].get<std::string>());
     }
+  }
+
+  if (material.empty())
+  {
+    json& materialData = S<IGameRules>().categoryData(material, "materials");
+    m_gameState.components().populate(new_id, materialData["components"]);
   }
 
   if (m_initialized)
@@ -60,7 +63,7 @@ EntityId EntityFactory::create(std::string category)
 
 EntityId EntityFactory::createTileEntity(MapTile* mapTile, std::string category, std::string material)
 {
-  EntityId new_id = create(category);
+  EntityId new_id = create(category, material);
 
   MapID map = mapTile->map();
   IntVec2 position = mapTile->getCoords();
@@ -82,7 +85,6 @@ EntityId EntityFactory::clone(EntityId original)
   return newId;
 }
 
-
 void EntityFactory::applyCategoryData(EntityId id, std::string subType, std::string name)
 {
   if (id != EntityId::Mu())
@@ -97,19 +99,35 @@ void EntityFactory::applyCategoryData(EntityId id, std::string subType, std::str
   }
 }
 
-void EntityFactory::morph(EntityId id, std::string category)
+void EntityFactory::morph(EntityId id, std::string category, std::string material)
 {
-  if (id != EntityId::Mu())
-  {
-    json& data = S<IGameRules>().categoryData(category);
-    auto& jsonComponents = data["components"];
-    m_gameState.components().erase(id);
-    m_gameState.components().populate(id, jsonComponents);
-  }
-  else
+  auto& components = m_gameState.components();
+
+  if (id == EntityId::Mu())
   {
     throw std::exception("Attempted to morph Mu object!");
   }
+
+  // First, check if category is being changed.
+  std::string oldCategory = components.category.existsFor(id) ? components.category.of(id) : "";
+
+  if (category != oldCategory)
+  {
+    components.erase(id);
+    json& data = S<IGameRules>().categoryData(category);
+    auto& jsonComponents = data["components"];
+    components.populate(id, data["components"]);
+  }
+
+  // Next, check if material is being changed.
+  std::string oldMaterial = components.material.existsFor(id) ? components.material.of(id) : "";
+
+  if (material != oldMaterial)
+  {
+    json& materialData = S<IGameRules>().categoryData(material, "materials");
+    components.populate(id, materialData["components"]);
+  }
+
 }
 
 void EntityFactory::destroy(EntityId id)
@@ -118,6 +136,8 @@ void EntityFactory::destroy(EntityId id)
 
   if (id != EntityId::Mu())
   {
+    // Check for existence.
+    // This should work as every entity should have a "category" component.
     if (components.category.existsFor(id))
     {
       components.erase(id);

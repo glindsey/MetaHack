@@ -38,20 +38,14 @@ std::string MapTile::getDisplayName() const
   return getCategoryData().value("name", "MTUnknown");
 }
 
-EntityId MapTile::setTileSpace(std::string type, std::string material)
+void MapTile::setTileSpace(std::string type, std::string material)
 {
-  auto newTileSpace = m_entities.createTileEntity(this, type, material);
-  m_entities.destroy(m_tileSpace);
-  m_tileSpace = newTileSpace;
-  return newTileSpace;
+  m_entities.morph(m_tileSpace, type, material);
 }
 
-EntityId MapTile::setTileFloor(std::string type, std::string material)
+void MapTile::setTileFloor(std::string type, std::string material)
 {
-  auto newTileFloor = m_entities.createTileEntity(this, type, material);
-  m_entities.destroy(m_tileFloor);
-  m_tileFloor = newTileFloor;
-  return newTileFloor;
+  m_entities.morph(m_tileFloor, type, material);
 }
 
 void MapTile::setTileType(std::string category)

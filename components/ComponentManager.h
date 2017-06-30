@@ -50,32 +50,34 @@ namespace Components
 
     json toJSON();
 
-    ComponentGlobals globals;
-    ComponentMap<ComponentActivity> activity;
-    ComponentMap<ComponentAppearance> appearance;
-    ComponentMap<ComponentBodyparts> bodyparts;
-    ComponentMap<std::string> category;
-    ComponentMap<ComponentCombustible> combustible;
-    ComponentMap<ComponentCorrodible> corrodible;
+    ComponentGlobals                       globals;
+    ComponentMap<std::string>              category;
+    ComponentMap<std::string>              material;
+
+    ComponentMap<ComponentActivity>        activity;
+    ComponentMap<ComponentAppearance>      appearance;
+    ComponentMap<ComponentBodyparts>       bodyparts;
+    ComponentMap<ComponentCombustible>     combustible;
+    ComponentMap<ComponentCorrodible>      corrodible;
     ComponentMap<ComponentDigestiveSystem> digestiveSystem;
-    ComponentMap<ComponentEquippable> equippable;
-    ComponentMap<ComponentGender> gender;
-    ComponentMap<ComponentHealth> health;
-    ComponentMap<ComponentInventory> inventory;
-    ComponentMap<ComponentLightSource> lightSource;
-    ComponentMap<ComponentLockable> lockable;
-    ComponentMap<ComponentMagicalBinding> magicalBinding;
-    ComponentMap<ComponentMaterialFlags> materialFlags;
-    ComponentMap<ComponentMatterState> matterState;
-    ComponentMap<ComponentMobility> mobility;
-    ComponentMap<ComponentOpenable> openable;
-    ComponentMap<ComponentPhysical> physical;
-    ComponentMap<ComponentPosition> position;
-    ComponentMap<unsigned int> quantity;
-    ComponentMap<std::string> properName;
-    ComponentMap<ComponentSapience> sapience;
-    ComponentMap<ComponentSenseSight> senseSight;
-    ComponentMap<ComponentSpacialMemory> spacialMemory;
+    ComponentMap<ComponentEquippable>      equippable;
+    ComponentMap<ComponentGender>          gender;
+    ComponentMap<ComponentHealth>          health;
+    ComponentMap<ComponentInventory>       inventory;
+    ComponentMap<ComponentLightSource>     lightSource;
+    ComponentMap<ComponentLockable>        lockable;
+    ComponentMap<ComponentMagicalBinding>  magicalBinding;
+    ComponentMap<ComponentMaterialFlags>   materialFlags;
+    ComponentMap<ComponentMatterState>     matterState;
+    ComponentMap<ComponentMobility>        mobility;
+    ComponentMap<ComponentOpenable>        openable;
+    ComponentMap<ComponentPhysical>        physical;
+    ComponentMap<ComponentPosition>        position;
+    ComponentMap<unsigned int>             quantity;
+    ComponentMap<std::string>              properName;
+    ComponentMap<ComponentSapience>        sapience;
+    ComponentMap<ComponentSenseSight>      senseSight;
+    ComponentMap<ComponentSpacialMemory>   spacialMemory;
 
   private:
     /// Reference to parent GameState instance.

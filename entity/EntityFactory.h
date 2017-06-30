@@ -24,14 +24,14 @@ public:
 
   /// Create a particular object given the type name.
   /// @param category The category name of the object to create.
+  /// @param material If present, the material to use for the object.
   /// @return EntityId of the new object created.
-  EntityId create(std::string category);
+  EntityId create(std::string category, std::string material = "");
 
   /// Create an entity bound to a tile (e.g. the floor, or the space above the floor).
   /// @param mapTile Pointer to the map tile associated.
   /// @param category Entity to use for the space (e.g. "TileSpace", "TileWall", "TileFloor", "TilePit", etc.)
   /// @param material If present, the material to use for the space.
-  /// @todo Implement the use of the material parameter.
   /// @return EntityId of the new object created.
   EntityId createTileEntity(MapTile* mapTile, std::string category, std::string material = "");
 
@@ -60,7 +60,7 @@ public:
   /// the category provided.
   /// @todo Handle inventory properly -- right now it is summarily deleted,
   ///       which will put any contained entities into a bad state.
-  void morph(EntityId id, std::string category);
+  void morph(EntityId id, std::string category, std::string material = "");
 
   /// Destroy an object given a EntityId.
   /// If the given EntityId does not correspond to an object, does nothing.

@@ -69,9 +69,14 @@ void FileSystemGameRules::loadCategoryIfNecessary(std::string name, std::string 
     JSONUtils::addIfMissing(categoryData, "components", json::object());
     json& componentsJson = categoryData["components"];
 
-    // Populate the "category" component.
+    std::string type = (subType.empty() ? "category" : subType);
+    // Populate the "type" component.
+    componentsJson["type"] = type;
+
+    // Populate the "category" component, or if this is a subtype, the 
+    // component of that name.
     // (If one was present already in the file, it will be overwritten.)
-    componentsJson["category"] = name;
+    componentsJson[type] = name;
 
     // *** Load templates ***
     if (categoryData.count("templates") != 0)
