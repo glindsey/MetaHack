@@ -39,7 +39,7 @@ protected:
   MapStandard2DView(std::string name, 
                     Map& map, 
                     UintVec2 size, 
-                    TileSheet& tile_sheet);
+                    Standard2DGraphicViews& views);
 
   /// Called before rendering the object's children.
   /// Default behavior is to do nothing.
@@ -62,6 +62,6 @@ private:
   /// Grid of tile views.
   std::unique_ptr< Grid2D< MapTileStandard2DView > > m_map_tile_views;
 
-  /// Reference to tilesheet containing tiles/entities.
-  TileSheet& m_tileSheet;
+  /// Reference to parent views object.
+  Standard2DGraphicViews& m_views;
 };

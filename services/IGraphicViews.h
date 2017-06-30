@@ -29,7 +29,7 @@ public:
   /// @warning The caller assumes ownership of the created view!
   virtual MapView* createMapView(std::string name, Map& map, UintVec2 size) = 0;
   
-  /// Load any required view resources associated with the specified JSON data.
-  virtual void loadViewResourcesFor(std::string category, json& data) = 0;
+  /// Load any required view resources associated with the specified category.
+  virtual void loadViewResourcesFor(std::string category) = 0;
 
 };

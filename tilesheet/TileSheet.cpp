@@ -32,7 +32,7 @@ TileSheet::~TileSheet()
   //dtor
 }
 
-UintVec2 TileSheet::load_collection(FileName const& filename)
+UintVec2 TileSheet::loadCollection(FileName const& filename)
 {
   sf::Image image;
   if (!image.loadFromFile(filename))
@@ -48,11 +48,11 @@ UintVec2 TileSheet::load_collection(FileName const& filename)
     UintVec2(Math::divideAndRoundUp(image_size.x, m_tileSize),
              Math::divideAndRoundUp(image_size.y, m_tileSize));
 
-  UintVec2 free_coords = find_unused_area(image_size_in_tiles);
+  UintVec2 free_coords = findUnusedArea(image_size_in_tiles);
 
   m_texture.update(image, free_coords.x * m_tileSize, free_coords.y * m_tileSize);
 
-  mark_tiles_used(free_coords, image_size_in_tiles);
+  markTilesUsed(free_coords, image_size_in_tiles);
 
   return free_coords;
 }
@@ -162,12 +162,12 @@ void TileSheet::addGradientQuadTo(sf::VertexArray& vertices,
   vertices.append(sf::Vertex(coordSW, colorSW, texSW));
 }
 
-void TileSheet::add_outline_vertices(sf::VertexArray& vertices,
-                                     Color bg_color,
-                                     RealVec2 ul_coord,
-                                     RealVec2 ur_coord,
-                                     RealVec2 lr_coord,
-                                     RealVec2 ll_coord)
+void TileSheet::addOutlineVertices(sf::VertexArray& vertices,
+                                   Color bg_color,
+                                   RealVec2 ul_coord,
+                                   RealVec2 ur_coord,
+                                   RealVec2 lr_coord,
+                                   RealVec2 ll_coord)
 {
   sf::Vertex new_vertex;
 
@@ -196,16 +196,16 @@ void TileSheet::add_outline_vertices(sf::VertexArray& vertices,
 
 unsigned int TileSheet::getIndex(UintVec2 coords)
 {
-  uint32_t texture_size_in_tiles = m_textureSize / m_tileSize;
-  return (coords.y * texture_size_in_tiles) + coords.x;
+  uint32_t textureSizeInTiles = m_textureSize / m_tileSize;
+  return (coords.y * textureSizeInTiles) + coords.x;
 }
 
-bool TileSheet::area_is_unused(UintVec2 start, UintVec2 size)
+bool TileSheet::areaIsUnused(UintVec2 start, UintVec2 size)
 {
-  uint32_t texture_size_in_tiles = m_textureSize / m_tileSize;
+  uint32_t textureSizeInTiles = m_textureSize / m_tileSize;
 
-  if (((start.x + size.x) > texture_size_in_tiles) ||
-    ((start.y + size.y) > texture_size_in_tiles))
+  if (((start.x + size.x) > textureSizeInTiles) ||
+    ((start.y + size.y) > textureSizeInTiles))
   {
     return false;
   }
@@ -223,17 +223,17 @@ bool TileSheet::area_is_unused(UintVec2 start, UintVec2 size)
   return true;
 }
 
-UintVec2 TileSheet::find_unused_area(UintVec2 size)
+UintVec2 TileSheet::findUnusedArea(UintVec2 size)
 {
   UintVec2 start(0, 0);
 
-  uint32_t texture_size_in_tiles = m_textureSize / m_tileSize;
+  uint32_t textureSizeInTiles = m_textureSize / m_tileSize;
 
-  while (start.y < texture_size_in_tiles)
+  while (start.y < textureSizeInTiles)
   {
-    while (start.x < texture_size_in_tiles)
+    while (start.x < textureSizeInTiles)
     {
-      if (area_is_unused(start, size))
+      if (areaIsUnused(start, size))
       {
         return start;
       }
@@ -248,14 +248,14 @@ UintVec2 TileSheet::find_unused_area(UintVec2 size)
 }
 
 /// Mark a rectangle of tiles as being used.
-/// @param upper_left_corner  Upper-left corner of rectangle.
-/// @param size               Size of the rectangle to mark.
+/// @param upperLeft Upper-left corner of rectangle.
+/// @param size      Size of the rectangle to mark.
 /// @todo This is an extremely naive algorithm and can definitely be optimized.
-void TileSheet::mark_tiles_used(UintVec2 upper_left_corner, UintVec2 size)
+void TileSheet::markTilesUsed(UintVec2 upperLeft, UintVec2 size)
 {
-  for (uint32_t y = upper_left_corner.y; y < upper_left_corner.y + size.y; ++y)
+  for (uint32_t y = upperLeft.y; y < upperLeft.y + size.y; ++y)
   {
-    for (uint32_t x = upper_left_corner.x; x < upper_left_corner.x + size.x; ++x)
+    for (uint32_t x = upperLeft.x; x < upperLeft.x + size.x; ++x)
     {
       m_used[getIndex({ x, y })] = true;
     }

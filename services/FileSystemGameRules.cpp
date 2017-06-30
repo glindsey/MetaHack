@@ -70,10 +70,10 @@ void FileSystemGameRules::loadCategoryIfNecessary(std::string name, std::string 
     json& componentsJson = categoryData["components"];
 
     std::string type = (subType.empty() ? "category" : subType);
-    // Populate the "type" component.
-    componentsJson["type"] = type;
 
-    componentsJson["category"] = fullName;
+    // Populate the "type" and "full-name" components.
+    componentsJson["type"] = type;
+    componentsJson["full-name"] = fullName;
 
     // Populate the "category" component, or if this is a subtype, the 
     // component of that name.
@@ -90,7 +90,7 @@ void FileSystemGameRules::loadCategoryIfNecessary(std::string name, std::string 
     // it may change on a per-Entity basis.
 
     // DEBUG: Check for a specific object type
-    if (name == "LightOrb")
+    if (name == "OpenSpace")
     {
       CLOG(TRACE, "GameRules") << "================================";
       CLOG(TRACE, "GameRules") << "DEBUG: " << fullName << " JSON contents are:";
@@ -104,6 +104,11 @@ void FileSystemGameRules::loadCategoryIfNecessary(std::string name, std::string 
       GAME.lua().require(resource_string, true);
     }
 
+    if (name == "OpenSpace")
+    {
+      std::cerr << "BREAK" << std::endl;
+    }
+
     S<IGraphicViews>().loadViewResourcesFor(name, categoryData);
   }
 }
@@ -112,30 +117,31 @@ void FileSystemGameRules::loadTemplateComponents(json& templates, json& componen
 {
   json& categories = m_data["categories"];
 
-  std::string name = components["category"].get<std::string>();
+  std::string fullName = components["full-name"].get<std::string>();
 
   if (templates.is_array())
   {
     for (size_t index = 0; index < templates.size(); ++index)
     {
       // Sanitize first.
-      std::string tempName = templates[index].get<std::string>();
-      tempName = StringTransforms::squishWhitespace(tempName);
-      templates[index] = tempName;
+      std::string templateName = templates[index].get<std::string>();
+      templateName = StringTransforms::squishWhitespace(templateName);
+      std::string templateFullName = "template." + templateName;
+      templates[index] = templateName;
 
-      if (name == tempName)
+      if (fullName == templateFullName)
       {
-        CLOG(FATAL, "GameRules") << name << " has itself as a template -- this isn't allowed!";
+        CLOG(FATAL, "GameRules") << fullName << " has itself as a template -- this isn't allowed!";
       }
 
-      loadCategoryIfNecessary(tempName, "template");
-      json& subcategoryData = categories["template." + tempName];
+      loadCategoryIfNecessary(templateName, "template");
+      json& subcategoryData = categories[templateFullName];
       JSONUtils::mergeArrays(templates, subcategoryData["templates"]);
       JSONUtils::addMissingKeys(components, subcategoryData["components"]);
     }
   }
   else
   {
-    CLOG(WARNING, "GameRules") << " -- " << name << " has a \"templates\" key, but the value is not an array. Skipping.";
+    CLOG(WARNING, "GameRules") << " -- " << fullName << " has a \"templates\" key, but the value is not an array. Skipping.";
   }
 }

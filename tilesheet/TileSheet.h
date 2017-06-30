@@ -16,7 +16,7 @@ public:
 
   /// Load a tile collection from disk and find a place to put them.
   /// @return The location that the tiles were placed on the sheet.
-  UintVec2 load_collection(FileName const& filename);
+  UintVec2 loadCollection(FileName const& filename);
 
   /// Get a particular tile from the sheet.
   /// @warning Assumes tile is within the bounds of the loaded texture,
@@ -60,7 +60,7 @@ public:
   /// @param ur_coord Upper-right coordinates.
   /// @param lr_coord Lower-right coordinates.
   /// @param ll_coord Lower-left coordinates.
-  void add_outline_vertices(sf::VertexArray& vertices,
+  void addOutlineVertices(sf::VertexArray& vertices,
                             Color bg_color,
                             RealVec2 ul_coord,
                             RealVec2 ur_coord,
@@ -72,18 +72,18 @@ protected:
   unsigned int getIndex(UintVec2 coords);
 
   /// Return true if the requested area is totally unused.
-  bool area_is_unused(UintVec2 start, UintVec2 size);
+  bool areaIsUnused(UintVec2 start, UintVec2 size);
 
   /// Find the first free tile area.
   /// @param size Size of the area to search for, IN TILES.
   /// @todo This is an extremely naive algorithm and can definitely be optimized.
-  UintVec2 find_unused_area(UintVec2 size);
+  UintVec2 findUnusedArea(UintVec2 size);
 
   /// Mark a rectangle of tiles as being used.
   /// @param upper_left_corner  Upper-left corner of rectangle.
   /// @param size               Size of the rectangle to mark.
   /// @todo This is an extremely naive algorithm and can definitely be optimized.
-  void mark_tiles_used(UintVec2 upper_left_corner, UintVec2 size);
+  void markTilesUsed(UintVec2 upper_left_corner, UintVec2 size);
 
 
 private:

@@ -29,11 +29,11 @@ public:
 protected:
   /// Constructor.
   explicit EntityStandard2DView(EntityId entity, 
-                                TileSheet& tileSheet);
+                                Standard2DGraphicViews& views);
 
   virtual bool onEvent(Event const& event) override;
 
 private:
-  /// Reference to tilesheet storing entity graphics.
-  TileSheet& m_tileSheet;
+  /// Reference to parent views object.
+  Standard2DGraphicViews& m_views;
 };

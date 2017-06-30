@@ -28,7 +28,7 @@ public:
 protected:
   /// Constructor.
   MapTileStandard2DView(MapTile& mapTile, 
-                        TileSheet& tileSheet);
+                        Standard2DGraphicViews& views);
 
   /// Return the coordinates of the tile's floor entity on the tilesheet.
   UintVec2 getFloorTileSheetCoords() const;
@@ -96,6 +96,6 @@ private:
   /// Random tile offset.
   int m_tileOffset;
 
-  /// Reference to tilesheet containing MapTile graphics.
-  TileSheet& m_tileSheet;
+  /// Reference to parent views object.
+  Standard2DGraphicViews& m_views;
 };

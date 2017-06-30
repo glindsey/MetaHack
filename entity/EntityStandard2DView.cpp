@@ -8,16 +8,17 @@
 #include "services/Service.h"
 #include "services/IConfigSettings.h"
 #include "services/IGameRules.h"
+#include "services/Standard2DGraphicViews.h"
 #include "systems/SystemLighting.h"
 #include "tilesheet/TileSheet.h"
 #include "types/ShaderEffect.h"
 #include "utilities/RNGUtils.h"
 
-EntityStandard2DView::EntityStandard2DView(EntityId entity, 
-                                           TileSheet& tileSheet)
+EntityStandard2DView::EntityStandard2DView(EntityId entity,
+                                           Standard2DGraphicViews& views)
   :
   EntityView(entity),
-  m_tileSheet{ tileSheet }
+  m_views{ views }
 {
 }
 
@@ -38,7 +39,7 @@ void EntityStandard2DView::draw(sf::RenderTarget& target,
 {
   auto& config = S<IConfigSettings>();
   auto& entity = getEntity();
-  auto& texture = m_tileSheet.getTexture();
+  auto& texture = m_views.getTileSheet().getTexture();
 
   // Can't render if it doesn't have a Position component.
   if (!COMPONENTS.position.existsFor(entity)) return;
@@ -111,7 +112,7 @@ UintVec2 EntityStandard2DView::getTileSheetCoords(int frame) const
   UintVec2 offset;
 
   // Get tile coordinates on the sheet.
-  UintVec2 start_coords = categoryData.value("tile-location", UintVec2(0, 0));
+  UintVec2 start_coords = m_views.getTileSheetCoords(COMPONENTS.category[entity]);
 
   // If the entity has the "animated" component, call the Lua function to get the offset (tile to choose).
   if (categoryData["components"].count("animated") > 0)

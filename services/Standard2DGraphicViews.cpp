@@ -28,17 +28,17 @@ Standard2DGraphicViews::~Standard2DGraphicViews()
 
 EntityView* Standard2DGraphicViews::createEntityView(EntityId entity)
 {
-  return NEW EntityStandard2DView(entity, getTileSheet());
+  return NEW EntityStandard2DView(entity, *this);
 }
 
 MapTileView* Standard2DGraphicViews::createMapTileView(MapTile& map_tile)
 {
-  return NEW MapTileStandard2DView(map_tile, getTileSheet());
+  return NEW MapTileStandard2DView(map_tile, *this);
 }
 
 MapView* Standard2DGraphicViews::createMapView(std::string name, Map& map, UintVec2 size)
 {
-  return NEW MapStandard2DView(name, map, size, getTileSheet());
+  return NEW MapStandard2DView(name, map, size, *this);
 }
 
 TileSheet& Standard2DGraphicViews::getTileSheet()
@@ -46,26 +46,42 @@ TileSheet& Standard2DGraphicViews::getTileSheet()
   return *(m_tileSheet.get());
 }
 
-void Standard2DGraphicViews::loadViewResourcesFor(std::string category, json& data)
+bool Standard2DGraphicViews::needToLoadFilesFor(std::string category)
 {
-  FileName resource_string = "resources/entity/" + category;
-  FileName pngfile_string = resource_string + ".png";
-  fs::path pngfile_path = fs::path(pngfile_string);
+  return (m_noTilesAvailable.count(category) != 0) && (m_tileCoords.count(category) != 0);
+}
 
-  if (fs::exists(pngfile_path))
+UintVec2 const& Standard2DGraphicViews::getTileSheetCoords(std::string category)
+{
+  if (!needToLoadFilesFor(category))
   {
-    UintVec2 tile_location;
-    CLOG(TRACE, "GameState") << "Tiles were found for " << category << " category";
+    loadViewResourcesFor(category);
+  }
 
-    tile_location = m_tileSheet->load_collection(pngfile_string);
-    CLOG(TRACE, "GameState") << "Tiles for " << category <<
-      " were placed on the TileSheet at " << tile_location;
+  return m_tileCoords.at(category);
+}
 
-    data["has-tiles"] = true;
-    data["tile-location"] = tile_location;
+void Standard2DGraphicViews::loadViewResourcesFor(std::string category)
+{
+  FileName resourceString = "resources/entity/" + category;
+  FileName pngFileString = resourceString + ".png";
+  fs::path pngFilePath = fs::path(pngFileString);
+
+  if (fs::exists(pngFilePath))
+  {
+    UintVec2 tileLocation;
+    CLOG(TRACE, "TileSheet") << "Tiles were found for " << category << " category";
+
+    tileLocation = m_tileSheet->loadCollection(pngFileString);
+    CLOG(TRACE, "TileSheet") << "Tiles for " << category <<
+      " were placed on the TileSheet at " << tileLocation;
+
+    m_tileCoords[category] = tileLocation;
+    m_noTilesAvailable.erase(category);
   }
   else
   {
-    CLOG(TRACE, "GameState") << "No tiles found for " << category;
+    CLOG(TRACE, "TileSheet") << "No tiles found for " << category;
+    m_noTilesAvailable.insert(category);
   }
 }
