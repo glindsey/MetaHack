@@ -53,6 +53,22 @@ namespace Components
       return m_componentMap.at(id);
     }
 
+    /// If the provided JSON is non-null, add it to the map under the provided id.
+    /// If the provided JSON is null, remove the provided id from the map.
+    void update(EntityId id, json const& newData)
+    {
+      if (newData.is_null())
+      {
+        remove(id);
+      }
+      else
+      {
+        // (This looks a little funky but makes sure new component is generated
+        //  if missing.)
+        operator[](id) = newData;
+      }
+    }
+
     /// Remove an entity from this component map.
     /// If the entity isn't already present, just returns without doing anything.
     void remove(EntityId id)

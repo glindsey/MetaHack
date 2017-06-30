@@ -41,10 +41,18 @@ public:
   EntityId clone(EntityId original);
 
   /// Apply a material/template to an object.
-  /// Replaces components in the object with the ones from the data
-  /// provided.
+  /// Replaces components in the object with the ones from the subtype data
+  /// provided. If any component of the subtype data is null, deletes that
+  /// component from the object.
+  /// Does not touch components that are not present in the subtype data.
   /// @todo Handle inventory properly -- right now, if it is deleted,
   ///       it will put any contained entities into a bad state.
+  /// @todo It might be prudent to back up any data that has been replaced,
+  ///       so a material/template can be "unapplied" -- for example, if
+  ///       something were transmuted from lead to gold, and back to lead.
+  ///       I don't know how this could be done, though, without basically
+  ///       maintaining a journal of changes to the object, and that seems
+  ///       like some *massive* overkill.
   void applyCategoryData(EntityId id, std::string subType, std::string name);
 
   /// Morph an object into a new category.

@@ -217,31 +217,31 @@ namespace Components
 
   void ComponentManager::populate(EntityId id, json const& j)
   {
-    JSONUtils::doIfPresent(j, "activity", [this, &id](auto const& value) { activity[id] = value; });
-    JSONUtils::doIfPresent(j, "appearance", [this, &id](auto const& value) { appearance[id] = value; });
-    JSONUtils::doIfPresent(j, "bodyparts", [this, &id](auto const& value) { bodyparts[id] = value; });
-    JSONUtils::doIfPresent(j, "category", [this, &id](auto const& value) { category[id] = value; });
-    JSONUtils::doIfPresent(j, "combustible", [this, &id](auto const& value) { combustible[id] = value; });
-    JSONUtils::doIfPresent(j, "corrodible", [this, &id](auto const& value) { corrodible[id] = value; });
-    JSONUtils::doIfPresent(j, "digestive-system", [this, &id](auto const& value) { digestiveSystem[id] = value; });
-    JSONUtils::doIfPresent(j, "equippable", [this, &id](auto const& value) { equippable[id] = value; });
-    JSONUtils::doIfPresent(j, "gender", [this, &id](auto const& value) { gender[id] = value; });
-    JSONUtils::doIfPresent(j, "health", [this, &id](auto const& value) { health[id] = value; });
-    JSONUtils::doIfPresent(j, "inventory", [this, &id](auto const& value) { inventory[id] = value; });
-    JSONUtils::doIfPresent(j, "light-source", [this, &id](auto const& value) { lightSource[id] = value; });
-    JSONUtils::doIfPresent(j, "lockable", [this, &id](auto const& value) { lockable[id] = value; });
-    JSONUtils::doIfPresent(j, "magical-binding", [this, &id](auto const& value) { magicalBinding[id] = value; });
-    JSONUtils::doIfPresent(j, "material-flags", [this, &id](auto const& value) { materialFlags[id] = value; });
-    JSONUtils::doIfPresent(j, "matter-state", [this, &id](auto const& value) { matterState[id] = value; });
-    JSONUtils::doIfPresent(j, "mobility", [this, &id](auto const& value) { mobility[id] = value; });
-    JSONUtils::doIfPresent(j, "openable", [this, &id](auto const& value) { openable[id] = value; });
-    JSONUtils::doIfPresent(j, "physical", [this, &id](auto const& value) { physical[id] = value; });
-    JSONUtils::doIfPresent(j, "position", [this, &id](auto const& value) { position[id] = value; });
-    JSONUtils::doIfPresent(j, "proper-name", [this, &id](auto const& value) { properName[id] = value.get<std::string>(); });
-    JSONUtils::doIfPresent(j, "quantity", [this, &id](auto const& value) { quantity[id] = value; });
-    JSONUtils::doIfPresent(j, "sapience", [this, &id](auto const& value) { sapience[id] = value; });
-    JSONUtils::doIfPresent(j, "sense-sight", [this, &id](auto const& value) { senseSight[id] = value; });
-    JSONUtils::doIfPresent(j, "spacial-memory", [this, &id](auto const& value) { spacialMemory[id] = value; });
+    JSONUtils::doIfPresent(j, "activity",         [this, &id](auto const& value) {        activity.update(id, value); });
+    JSONUtils::doIfPresent(j, "appearance",       [this, &id](auto const& value) {      appearance.update(id, value); });
+    JSONUtils::doIfPresent(j, "bodyparts",        [this, &id](auto const& value) {       bodyparts.update(id, value); });
+    JSONUtils::doIfPresent(j, "category",         [this, &id](auto const& value) {        category.update(id, value); });
+    JSONUtils::doIfPresent(j, "combustible",      [this, &id](auto const& value) {     combustible.update(id, value); });
+    JSONUtils::doIfPresent(j, "corrodible",       [this, &id](auto const& value) {      corrodible.update(id, value); });
+    JSONUtils::doIfPresent(j, "digestive-system", [this, &id](auto const& value) { digestiveSystem.update(id, value); });
+    JSONUtils::doIfPresent(j, "equippable",       [this, &id](auto const& value) {      equippable.update(id, value); });
+    JSONUtils::doIfPresent(j, "gender",           [this, &id](auto const& value) {          gender.update(id, value); });
+    JSONUtils::doIfPresent(j, "health",           [this, &id](auto const& value) {          health.update(id, value); });
+    JSONUtils::doIfPresent(j, "inventory",        [this, &id](auto const& value) {       inventory.update(id, value); });
+    JSONUtils::doIfPresent(j, "light-source",     [this, &id](auto const& value) {     lightSource.update(id, value); });
+    JSONUtils::doIfPresent(j, "lockable",         [this, &id](auto const& value) {        lockable.update(id, value); });
+    JSONUtils::doIfPresent(j, "magical-binding",  [this, &id](auto const& value) {  magicalBinding.update(id, value); });
+    JSONUtils::doIfPresent(j, "material-flags",   [this, &id](auto const& value) {   materialFlags.update(id, value); });
+    JSONUtils::doIfPresent(j, "matter-state",     [this, &id](auto const& value) {     matterState.update(id, value); });
+    JSONUtils::doIfPresent(j, "mobility",         [this, &id](auto const& value) {        mobility.update(id, value); });
+    JSONUtils::doIfPresent(j, "openable",         [this, &id](auto const& value) {        openable.update(id, value); });
+    JSONUtils::doIfPresent(j, "physical",         [this, &id](auto const& value) {        physical.update(id, value); });
+    JSONUtils::doIfPresent(j, "position",         [this, &id](auto const& value) {        position.update(id, value); });
+    JSONUtils::doIfPresent(j, "proper-name",      [this, &id](auto const& value) {      properName.update(id, value); });
+    JSONUtils::doIfPresent(j, "quantity",         [this, &id](auto const& value) {        quantity.update(id, value); });
+    JSONUtils::doIfPresent(j, "sapience",         [this, &id](auto const& value) {        sapience.update(id, value); });
+    JSONUtils::doIfPresent(j, "sense-sight",      [this, &id](auto const& value) {      senseSight.update(id, value); });
+    JSONUtils::doIfPresent(j, "spacial-memory",   [this, &id](auto const& value) {   spacialMemory.update(id, value); });
   }
 
   json ComponentManager::toJSON()
