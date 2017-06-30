@@ -68,7 +68,7 @@ App::App(sf::RenderWindow& app_window)
   SET_UP_LOGGER("ConfigSettings",     false);
   SET_UP_LOGGER("Director",           false);
   SET_UP_LOGGER("Entity",             false);
-  SET_UP_LOGGER("EntityFactory",      true);
+  SET_UP_LOGGER("EntityFactory",      false);
   SET_UP_LOGGER("EventSystem",        false);
   SET_UP_LOGGER("Game",               false);
   SET_UP_LOGGER("GameRules",          true);
@@ -91,7 +91,7 @@ App::App(sf::RenderWindow& app_window)
   SET_UP_LOGGER("StateMachine",       false);
   SET_UP_LOGGER("Strings",            false);
   SET_UP_LOGGER("StringTransforms",   false);
-  SET_UP_LOGGER("TileSheet",          false);
+  SET_UP_LOGGER("TileSheet",          true);
   SET_UP_LOGGER("Types",              false);
   SET_UP_LOGGER("Utilities",          false);
 

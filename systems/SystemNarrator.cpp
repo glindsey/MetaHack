@@ -482,9 +482,9 @@ namespace Systems
       }
 
       // Check for another token. Substitute if it exists, return "[token]" if not.
-      if (arguments.count(token) != 0)
+      if (arguments.count(token) != 0 && !arguments[token].is_null())
       {
-        return arguments["token"];
+        return arguments[token];
       }
       else
       {
@@ -536,7 +536,7 @@ namespace Systems
                                            [&](std::string token) -> std::string
     {
       // Check for token. Substitute if it exists, return "[token]" if not.
-      if (arguments.count(token) != 0)
+      if (arguments.count(token) != 0 && !arguments[token].is_null())
       {
         return arguments[token];
       }

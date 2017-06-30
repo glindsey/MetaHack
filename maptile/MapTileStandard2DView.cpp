@@ -30,10 +30,24 @@ MapTileStandard2DView::MapTileStandard2DView(MapTile& map_tile,
 {
 }
 
-UintVec2 MapTileStandard2DView::getTileSheetCoords() const
+UintVec2 MapTileStandard2DView::getFloorTileSheetCoords() const
 {
   /// @todo Deal with selecting one of the other tiles.
-  auto& entity = getMapTile().getDisplayEntity();
+  auto& entity = getMapTile().getFloorEntity();
+  auto& categoryData = S<IGameRules>().categoryData(COMPONENTS.category[entity]);
+  UintVec2 offset;
+
+  // Get tile coordinates on the sheet.
+  UintVec2 start_coords = categoryData.value("tile-location", UintVec2(0, 0));
+
+  UintVec2 tile_coords(start_coords.x + m_tileOffset, start_coords.y);
+  return tile_coords;
+}
+
+UintVec2 MapTileStandard2DView::getSpaceTileSheetCoords() const
+{
+  /// @todo Deal with selecting one of the other tiles.
+  auto& entity = getMapTile().getSpaceEntity();
   auto& categoryData = S<IGameRules>().categoryData(COMPONENTS.category[entity]);
   UintVec2 offset;
 
@@ -87,11 +101,11 @@ void MapTileStandard2DView::addTileVertices(EntityId viewer,
   {
     if (this_is_empty)
     {
-      addTileFloorVerticesTo(seenVertices, lighting);
+      addHorizontalSurfaceVerticesTo(seenVertices, lighting);
     }
     else
     {
-      addWallVerticesTo(seenVertices, &lighting,
+      addVerticalSurfaceVerticesTo(seenVertices, &lighting,
                         nw_is_empty, n_is_empty,
                         ne_is_empty, e_is_empty,
                         se_is_empty, s_is_empty,
@@ -151,8 +165,8 @@ void MapTileStandard2DView::addMemoryVerticesTo(sf::VertexArray& vertices,
   }
 }
 
-void MapTileStandard2DView::addTileFloorVerticesTo(sf::VertexArray& vertices,
-                                                   Systems::Lighting& lighting)
+void MapTileStandard2DView::addHorizontalSurfaceVerticesTo(sf::VertexArray& vertices,
+                                                           Systems::Lighting& lighting)
 {
   auto& config = S<IConfigSettings>();
 
@@ -188,17 +202,30 @@ void MapTileStandard2DView::addTileFloorVerticesTo(sf::VertexArray& vertices,
   RealVec2 vSW{ location.x - half_ts, location.y + half_ts };
   RealVec2 vNW{ location.x - half_ts, location.y - half_ts };
 
-  UintVec2 tileCoords = getTileSheetCoords();
+  auto opaque = getMapTile().isTotallyOpaque();
 
-  m_tileSheet.addGradientQuadTo(vertices, tileCoords,
+  if (!opaque)
+  {
+    UintVec2 floorTileCoords = getFloorTileSheetCoords();
+    m_tileSheet.addGradientQuadTo(vertices, floorTileCoords,
+                                  vNW, vNE,
+                                  vSW, vSE,
+                                  lightNW, lightN, lightNE,
+                                  lightW, light, lightE,
+                                  lightSW, lightS, lightSE);
+  }
+
+  UintVec2 spaceTileCoords = getSpaceTileSheetCoords();
+  m_tileSheet.addGradientQuadTo(vertices, spaceTileCoords,
                                 vNW, vNE,
                                 vSW, vSE,
                                 lightNW, lightN, lightNE,
                                 lightW, light, lightE,
                                 lightSW, lightS, lightSE);
+
 }
 
-void MapTileStandard2DView::addEntitiesFloorVertices(EntityId viewer,
+void MapTileStandard2DView::addEntitiesVertices(EntityId viewer,
                                                      sf::VertexArray & vertices,
                                                      Systems::Lighting* lighting,
                                                      int frame)
@@ -216,7 +243,7 @@ void MapTileStandard2DView::addEntitiesFloorVertices(EntityId viewer,
       EntityId biggestEntity = inv.getLargestEntity();
       if (biggestEntity != EntityId::Void)
       {
-        addEntityFloorVertices(biggestEntity, vertices, lighting, frame);
+        addEntityVertices(biggestEntity, vertices, lighting, frame);
       }
     }
   }
@@ -224,11 +251,11 @@ void MapTileStandard2DView::addEntitiesFloorVertices(EntityId viewer,
   // Always draw the viewer itself last, if it is present at that tile.
   if (inv.contains(viewer))
   {
-    addEntityFloorVertices(viewer, vertices, lighting, frame);
+    addEntityVertices(viewer, vertices, lighting, frame);
   }
 }
 
-void MapTileStandard2DView::addEntityFloorVertices(EntityId entityId, 
+void MapTileStandard2DView::addEntityVertices(EntityId entityId, 
                                                    sf::VertexArray& vertices,
                                                    Systems::Lighting* lighting,
                                                    int frame)
@@ -269,18 +296,22 @@ void MapTileStandard2DView::addEntityFloorVertices(EntityId entityId,
 }
 
 
-void MapTileStandard2DView::addWallVerticesTo(sf::VertexArray& vertices,
-                                              Systems::Lighting* lighting,
-                                              bool nwEmpty, bool nEmpty,
-                                              bool neEmpty, bool eEmpty,
-                                              bool seEmpty, bool sEmpty,
-                                              bool swEmpty, bool wEmpty)
+void MapTileStandard2DView::addVerticalSurfaceVerticesTo(sf::VertexArray& vertices,
+                                                         Systems::Lighting* lighting,
+                                                         bool nwEmpty, bool nEmpty,
+                                                         bool neEmpty, bool eEmpty,
+                                                         bool seEmpty, bool sEmpty,
+                                                         bool swEmpty, bool wEmpty)
 {
   auto& config = S<IConfigSettings>();
   float mapTileSize = config.get("map-tile-size");
 
   // This tile.
   MapTile& tile = getMapTile();
+
+  // Let's first see if this tile is totally transparent. If it is, no vertical
+  // surfaces will be visible.
+  if (tile.isTotallyTransparent()) return;
 
   // Checks to see N/S/E/W walls.
   bool playerSeesNWall{ false };
@@ -355,7 +386,7 @@ void MapTileStandard2DView::addWallVerticesTo(sf::VertexArray& vertices,
   RealVec2 vTileW(location.x - halfTs, location.y);
   RealVec2 vTileNW(location.x - halfTs, location.y - halfTs);
 
-  UintVec2 tileSheetCoords = this->getTileSheetCoords();
+  UintVec2 tileSheetCoords = this->getSpaceTileSheetCoords();
 
   if (lighting != nullptr)
   {

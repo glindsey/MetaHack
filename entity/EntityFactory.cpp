@@ -128,10 +128,10 @@ void EntityFactory::morph(EntityId id, EntitySpecs specs)
     components.populate(id, materialData["components"]);
   }
 
-  //CLOG(TRACE, "GameRules") << "================================";
-  //CLOG(TRACE, "GameRules") << "DEBUG: Entity " << id << " components are:";
-  //CLOG(TRACE, "GameRules") << components.toJSON(id).dump(2);
-  //CLOG(TRACE, "GameRules") << "================================";
+  //CLOG(TRACE, "EntityFactory") << "================================";
+  //CLOG(TRACE, "EntityFactory") << "DEBUG: Entity " << id << " components are:";
+  //CLOG(TRACE, "EntityFactory") << components.toJSON(id).dump(2);
+  //CLOG(TRACE, "EntityFactory") << "================================";
 
   //std::cerr << "BREAK" << std::endl;
 }

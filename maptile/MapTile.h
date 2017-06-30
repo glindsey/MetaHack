@@ -89,8 +89,11 @@ public:
   /// Get the opacity of this tile.
   Color getOpacity() const;
 
-  /// Get whether the tile is opaque or not.
+  /// Get whether the tile is totally opaque or not.
   bool isTotallyOpaque() const;
+
+  /// Get whether this tile is totally transparent or not.
+  bool isTotallyTransparent() const;
 
   /// Get the coordinates associated with a tile.
   static RealVec2 getPixelCoords(IntVec2 tile);

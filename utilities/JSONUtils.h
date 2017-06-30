@@ -147,25 +147,27 @@ namespace JSONUtils
   }
 
   /// Given a JSON value, get either a value or an array of values into a set.
-  /// If the JSON value is an object, do nothing -- we can't handle that.
+  /// If the JSON value is null or an object, do nothing -- we can't handle that.
   /// If the value is an array, iterate over it and push the values into the vector.
   /// Otherwise, just push the single value into the vector.
   template <typename T>
   std::set<T> getSet(json const& j)
   {
     std::set<T> result;
-    if (j.is_array())
+    if (!j.is_null())
     {
-      for (auto value : j)
+      if (j.is_array())
       {
-        result.insert(value.get<T>());
+        for (auto value : j)
+        {
+          result.insert(value.get<T>());
+        }
+      }
+      else if (!j.is_object())
+      {
+        result.insert(j.get<T>());
       }
     }
-    else if (!j.is_object())
-    {
-      result.insert(j.get<T>());
-    }
-
     return result;
   }
 

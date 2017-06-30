@@ -30,9 +30,11 @@ protected:
   MapTileStandard2DView(MapTile& mapTile, 
                         TileSheet& tileSheet);
 
-  /// Return the coordinates of the tile on the tilesheet.
-  UintVec2 getTileSheetCoords() const;
+  /// Return the coordinates of the tile's floor entity on the tilesheet.
+  UintVec2 getFloorTileSheetCoords() const;
 
+  /// Return the coordinates of the tile's space entity on the tilesheet.
+  UintVec2 getSpaceTileSheetCoords() const;
 
   UintVec2 getEntityTileSheetCoords(EntityId entity, int frame) const;
 
@@ -51,25 +53,25 @@ protected:
   void addMemoryVerticesTo(sf::VertexArray & vertices,
                            EntityId viewer);
 
-  /// Add the floor vertices for the maptile to a VertexArray to be drawn.
+  /// Add the horizontal surface vertices for the MapTile to a VertexArray to be drawn.
   /// @param vertices Array to add vertices to.
-  void addTileFloorVerticesTo(sf::VertexArray& vertices,
-                              Systems::Lighting& lighting);
+  void addHorizontalSurfaceVerticesTo(sf::VertexArray& vertices,
+                                      Systems::Lighting& lighting);
 
-  /// Add the floor vertices for the entities on this tile to a VertexArray to be drawn.
-  void addEntitiesFloorVertices(EntityId viewer,
-                                sf::VertexArray& vertices,
-                                Systems::Lighting* lighting,
-                                int frame);
+  /// Add the vertices for the entities on this MapTile to a VertexArray to be drawn.
+  void addEntitiesVertices(EntityId viewer,
+                           sf::VertexArray& vertices,
+                           Systems::Lighting* lighting,
+                           int frame);
 
-  /// Add the floor vertices for the entity specified.
+  /// Add the vertices for the entity specified.
   /// @todo Move into a Entity view.
-  void addEntityFloorVertices(EntityId entity, 
-                                sf::VertexArray& vertices, 
-                                Systems::Lighting* lighting,
-                                int frame);
+  void addEntityVertices(EntityId entity, 
+                         sf::VertexArray& vertices,
+                         Systems::Lighting* lighting,
+                         int frame);
 
-  /// Add this MapTile's walls to a VertexArray to be drawn.
+  /// Add the vertical surface vertices for this MapTile to a VertexArray to be drawn.
   /// @param vertices Array to add vertices to.
   /// @param lighting     Pointer to lighting system, or nullptr if
   ///                     no lighting is to be used.
@@ -81,12 +83,12 @@ protected:
   /// @param s_is_empty   Whether tile to the south is empty.
   /// @param sw_is_empty  Whether tile to the southwest is empty.
   /// @param w_is_empty   Whether tile to the west is empty.
-  void addWallVerticesTo(sf::VertexArray& vertices,
-                         Systems::Lighting* lighting,
-                         bool nw_is_empty, bool n_is_empty,
-                         bool ne_is_empty, bool e_is_empty,
-                         bool se_is_empty, bool s_is_empty,
-                         bool sw_is_empty, bool w_is_empty);
+  void addVerticalSurfaceVerticesTo(sf::VertexArray& vertices,
+                                    Systems::Lighting* lighting,
+                                    bool nw_is_empty, bool n_is_empty,
+                                    bool ne_is_empty, bool e_is_empty,
+                                    bool se_is_empty, bool s_is_empty,
+                                    bool sw_is_empty, bool w_is_empty);
 
   virtual bool onEvent(Event const& event) override;
 

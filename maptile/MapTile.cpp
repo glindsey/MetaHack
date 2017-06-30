@@ -140,6 +140,13 @@ bool MapTile::isTotallyOpaque() const
   return (getOpacity() == Color::White);
 }
 
+bool MapTile::isTotallyTransparent() const
+{
+  /// @todo Check the tile's inventory to see if there's anything huge enough
+  ///       to block the view of stuff behind it.
+  return (getOpacity() == Color::Black);
+}
+
 RealVec2 MapTile::getPixelCoords(IntVec2 tile)
 {
   auto& config = S<IConfigSettings>();
