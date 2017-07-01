@@ -18,8 +18,8 @@ class MapStandard2DView : public MapView
 public:
   virtual bool render_map(sf::RenderTexture& texture, int frame) override;
 
-  virtual void update_tiles(EntityId viewer, Systems::Lighting& lighting) override;
-  virtual void update_things(EntityId viewer, Systems::Lighting& lighting, int frame) override;
+  virtual void updateTiles(EntityId viewer, Systems::Lighting& lighting) override;
+  virtual void updateEntities(EntityId viewer, Systems::Lighting& lighting, int frame) override;
 
   virtual void draw_highlight(sf::RenderTarget& target,
                               RealVec2 location,
@@ -46,18 +46,21 @@ protected:
   virtual void drawPreChildren_(sf::RenderTexture& texture, int frame) override;
 
   /// Reinitialize cached map render data.
-  void reset_cached_render_data();
+  void resetCachedRenderData();
 
 private:
 
-  /// "Seen" map vertex array.
-  sf::VertexArray m_map_seen_vertices;
+  /// "Horizontal" (floor/ceiling) map vertex array.
+  sf::VertexArray m_mapHorizVertices;
+
+  /// "Vertical" (wall) map vertex array.
+  sf::VertexArray m_mapVertVertices;
 
   /// "Memory" map vertex array.
-  sf::VertexArray m_map_memory_vertices;
+  sf::VertexArray m_mapMemoryVertices;
 
   /// Entity vertex array.
-  sf::VertexArray m_thing_vertices;
+  sf::VertexArray m_entityVertices;
 
   /// Grid of tile views.
   std::unique_ptr< Grid2D< MapTileStandard2DView > > m_map_tile_views;

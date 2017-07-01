@@ -40,12 +40,12 @@ public:
 
   /// Update any cached render data associated with map tiles.
   /// @param entity	ID of the entity that is percieving the map.
-  virtual void update_tiles(EntityId entity, Systems::Lighting& lighting) = 0;
+  virtual void updateTiles(EntityId entity, Systems::Lighting& lighting) = 0;
 
   /// Update any cached render data associated with map entities.
   /// @param entity	ID of the entity that is percieving the map.
   /// @param frame	Current animation frame number.
-  virtual void update_things(EntityId entity, Systems::Lighting& lighting, int frame) = 0;
+  virtual void updateEntities(EntityId entity, Systems::Lighting& lighting, int frame) = 0;
 
 
   virtual void draw_highlight(sf::RenderTarget& target,

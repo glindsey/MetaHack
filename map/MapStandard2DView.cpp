@@ -20,7 +20,7 @@ MapStandard2DView::MapStandard2DView(std::string name,
   MapView(name, map, size),
   m_views(views)
 {
-  reset_cached_render_data();
+  resetCachedRenderData();
 
   // Create a grid of tile views, each tied to a map tile.
   m_map_tile_views.reset(new Grid2D<MapTileStandard2DView>(map.getSize(), 
@@ -31,7 +31,7 @@ MapStandard2DView::MapStandard2DView(std::string name,
 
 }
 
-void MapStandard2DView::update_tiles(EntityId viewer, Systems::Lighting& lighting)
+void MapStandard2DView::updateTiles(EntityId viewer, Systems::Lighting& lighting)
 {
   auto& map = getMap();
   auto& map_size = map.getSize();
@@ -39,38 +39,40 @@ void MapStandard2DView::update_tiles(EntityId viewer, Systems::Lighting& lightin
   static RealVec2 position;
 
   // Loop through and draw tiles.
-  m_map_seen_vertices.clear();
-  m_map_memory_vertices.clear();
+  m_mapHorizVertices.clear();
+  m_mapVertVertices.clear();
+  m_mapMemoryVertices.clear();
 
   for (int y = 0; y < map_size.y; ++y)
   {
     for (int x = 0; x < map_size.x; ++x)
     {
       m_map_tile_views->get({ x, y }).addTileVertices(viewer, 
-                                                      m_map_seen_vertices, 
-                                                      m_map_memory_vertices,
+                                                      m_mapHorizVertices, 
+                                                      m_mapVertVertices,
+                                                      m_mapMemoryVertices,
                                                       lighting);
     }
   }
 }
 
-void MapStandard2DView::update_things(EntityId viewer, 
-                                      Systems::Lighting& lighting,
-                                      int frame)
+void MapStandard2DView::updateEntities(EntityId viewer, 
+                                       Systems::Lighting& lighting,
+                                       int frame)
 {
   auto& map = getMap();
   auto& map_size = map.getSize();
 
   // Loop through and draw entities.
-  m_thing_vertices.clear();
+  m_entityVertices.clear();
   for (int y = 0; y < map_size.y; ++y)
   {
     for (int x = 0; x < map_size.x; ++x)
     {
       m_map_tile_views->get({ x, y }).addEntitiesVertices(viewer, 
-                                                                m_thing_vertices, 
-                                                                &lighting, 
-                                                                frame);
+                                                          m_entityVertices,
+                                                          &lighting,
+                                                          frame);
     }
   }
 }
@@ -84,13 +86,13 @@ bool MapStandard2DView::render_map(sf::RenderTexture& texture, int frame)
   render_states.texture = &(m_views.getTileSheet().getTexture());
 
   the_shader.setParameter("effect", ShaderEffect::Lighting);
-  //the_shader.setParameter("effect", ShaderEffect::Default);
-  texture.draw(m_map_seen_vertices, render_states);
+  texture.draw(m_mapHorizVertices, render_states);
   the_shader.setParameter("effect", ShaderEffect::Sepia);
-  texture.draw(m_map_memory_vertices, render_states);
+  texture.draw(m_mapMemoryVertices, render_states);
   the_shader.setParameter("effect", ShaderEffect::Lighting);
-  //the_shader.setParameter("effect", ShaderEffect::Default);
-  texture.draw(m_thing_vertices, render_states);
+  texture.draw(m_entityVertices, render_states);
+  the_shader.setParameter("effect", ShaderEffect::Lighting);
+  texture.draw(m_mapVertVertices, render_states);
 
   return true;
 }
@@ -136,23 +138,28 @@ void MapStandard2DView::drawPreChildren_(sf::RenderTexture & texture, int frame)
   /// @todo WRITE ME
 }
 
-void MapStandard2DView::reset_cached_render_data()
+void MapStandard2DView::resetCachedRenderData()
 {
   auto& map = getMap();
   auto map_size = map.getSize();
 
-  // Create vertices:
-  // 4 vertices * 4 quads for the floor
-  // 4 vertices * 4 quads * 4 potential walls
-  // = 16 + 64 = 80 possible vertices per tile.
-  m_map_seen_vertices.resize(map_size.x * map_size.y * 80);
-  m_map_memory_vertices.resize(map_size.x * map_size.y * 80);
+  // Size vertex arrays:
+  // 4 vertices * 4 quads * 2 for the floor and ceiling = 32
+  // 4 vertices * 4 quads * 4 potential walls = 64
+  // Memory vertices could be even more than that, once we start showing
+  // remembered objects on tiles, but for now we stick with floor/ceiling.
+
+  m_mapHorizVertices.resize(map_size.x * map_size.y * 32);
+  m_mapVertVertices.resize(map_size.x * map_size.y * 64);
+  m_mapMemoryVertices.resize(map_size.x * map_size.y * 32);
 
   // Create the vertex arrays.
-  m_map_seen_vertices.clear();
-  m_map_seen_vertices.setPrimitiveType(sf::PrimitiveType::Quads);
-  m_map_memory_vertices.clear();
-  m_map_memory_vertices.setPrimitiveType(sf::PrimitiveType::Quads);
-  m_thing_vertices.clear();
-  m_thing_vertices.setPrimitiveType(sf::PrimitiveType::Quads);
+  m_mapHorizVertices.clear();
+  m_mapHorizVertices.setPrimitiveType(sf::PrimitiveType::Quads);
+  m_mapVertVertices.clear();
+  m_mapVertVertices.setPrimitiveType(sf::PrimitiveType::Quads);
+  m_mapMemoryVertices.clear();
+  m_mapMemoryVertices.setPrimitiveType(sf::PrimitiveType::Quads);
+  m_entityVertices.clear();
+  m_entityVertices.setPrimitiveType(sf::PrimitiveType::Quads);
 }

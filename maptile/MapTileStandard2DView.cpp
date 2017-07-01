@@ -74,7 +74,8 @@ UintVec2 MapTileStandard2DView::getEntityTileSheetCoords(EntityId entity, int fr
   return tile_coords;
 }
 void MapTileStandard2DView::addTileVertices(EntityId viewer,
-                                            sf::VertexArray& seenVertices,
+                                            sf::VertexArray& horizVertices,
+                                            sf::VertexArray& vertVertices,
                                             sf::VertexArray& memoryVertices,
                                             Systems::Lighting& lighting)
 {
@@ -88,30 +89,10 @@ void MapTileStandard2DView::addTileVertices(EntityId viewer,
     return SYSTEMS.senseSight()->subjectCanSeeCoords(viewer, coords);
   };
 
-  bool this_is_empty = tile.isPassable();
-  bool nw_is_empty = (canSee({ x - 1, y - 1 }) && tile.getAdjacentTile(Direction::Northwest).isPassable());
-  bool n_is_empty = (canSee({ x, y - 1 }) && tile.getAdjacentTile(Direction::North).isPassable());
-  bool ne_is_empty = (canSee({ x + 1, y - 1 }) && tile.getAdjacentTile(Direction::Northeast).isPassable());
-  bool e_is_empty = (canSee({ x + 1, y }) && tile.getAdjacentTile(Direction::East).isPassable());
-  bool se_is_empty = (canSee({ x + 1, y + 1 }) && tile.getAdjacentTile(Direction::Southeast).isPassable());
-  bool s_is_empty = (canSee({ x, y + 1 }) && tile.getAdjacentTile(Direction::South).isPassable());
-  bool sw_is_empty = (canSee({ x - 1, y + 1 }) && tile.getAdjacentTile(Direction::Southwest).isPassable());
-  bool w_is_empty = (canSee({ x - 1, y }) && tile.getAdjacentTile(Direction::West).isPassable());
-
   if (canSee(coords))
   {
-    //if (this_is_empty)
-    {
-      addHorizontalSurfaceVerticesTo(seenVertices, lighting);
-    }
-    //else
-    {
-      addVerticalSurfaceVerticesTo(seenVertices, &lighting,
-                                   nw_is_empty, n_is_empty,
-                                   ne_is_empty, e_is_empty,
-                                   se_is_empty, s_is_empty,
-                                   sw_is_empty, w_is_empty);
-    }
+    addHorizontalSurfaceVerticesTo(horizVertices, viewer, lighting);
+    addVerticalSurfaceVerticesTo(vertVertices, viewer, &lighting);
   }
   else
   {
@@ -189,12 +170,20 @@ void MapTileStandard2DView::addMemoryVerticesTo(sf::VertexArray& vertices,
 }
 
 void MapTileStandard2DView::addHorizontalSurfaceVerticesTo(sf::VertexArray& vertices,
+                                                           EntityId viewer,
                                                            Systems::Lighting& lighting)
 {
   auto& config = S<IConfigSettings>();
 
   auto& tile = getMapTile();
   auto& coords = tile.getCoords();
+
+  auto canSee = [viewer](IntVec2 coords) -> bool
+  {
+    return SYSTEMS.senseSight()->subjectCanSeeCoords(viewer, coords);
+  };
+
+  if (!canSee(coords)) return;
 
   sf::Vertex new_vertex;
   float ts = config.get("map-tile-size");
@@ -258,6 +247,7 @@ void MapTileStandard2DView::addEntitiesVertices(EntityId viewer,
 {
   auto& tile = getMapTile();
   auto coords = tile.getCoords();
+
   EntityId contents = tile.getSpaceEntity();
   auto& inv = COMPONENTS.inventory[contents];
 
@@ -327,17 +317,33 @@ void MapTileStandard2DView::addEntityVertices(EntityId entityId,
 
 
 void MapTileStandard2DView::addVerticalSurfaceVerticesTo(sf::VertexArray& vertices,
-                                                         Systems::Lighting* lighting,
-                                                         bool nwEmpty, bool nEmpty,
-                                                         bool neEmpty, bool eEmpty,
-                                                         bool seEmpty, bool sEmpty,
-                                                         bool swEmpty, bool wEmpty)
+                                                         EntityId viewer,
+                                                         Systems::Lighting* lighting)
 {
+  auto& tile = getMapTile();
+  auto coords = tile.getCoords();
+  auto& x = coords.x;
+  auto& y = coords.y;
+
   auto& config = S<IConfigSettings>();
   float mapTileSize = config.get("map-tile-size");
 
-  // This tile.
-  MapTile& tile = getMapTile();
+  auto canSee = [viewer](IntVec2 coords) -> bool
+  {
+    return SYSTEMS.senseSight()->subjectCanSeeCoords(viewer, coords);
+  };
+
+  if (!canSee(coords)) return;
+
+  bool this_is_empty = tile.isPassable();
+  bool nwEmpty = (canSee({ x - 1, y - 1 }) && tile.getAdjacentTile(Direction::Northwest).isPassable());
+  bool nEmpty = (canSee({ x, y - 1 }) && tile.getAdjacentTile(Direction::North).isPassable());
+  bool neEmpty = (canSee({ x + 1, y - 1 }) && tile.getAdjacentTile(Direction::Northeast).isPassable());
+  bool eEmpty = (canSee({ x + 1, y }) && tile.getAdjacentTile(Direction::East).isPassable());
+  bool seEmpty = (canSee({ x + 1, y + 1 }) && tile.getAdjacentTile(Direction::Southeast).isPassable());
+  bool sEmpty = (canSee({ x, y + 1 }) && tile.getAdjacentTile(Direction::South).isPassable());
+  bool swEmpty = (canSee({ x - 1, y + 1 }) && tile.getAdjacentTile(Direction::Southwest).isPassable());
+  bool wEmpty = (canSee({ x - 1, y }) && tile.getAdjacentTile(Direction::West).isPassable());
 
   // Let's first see if this tile is totally transparent. If it is, no vertical
   // surfaces will be visible.
@@ -399,7 +405,6 @@ void MapTileStandard2DView::addVerticalSurfaceVerticesTo(sf::VertexArray& vertic
   float ws(mapTileSize * 0.4f);
 
   // Adjacent tile coordinates
-  IntVec2 coords = tile.getCoords();
   IntVec2 coordsN = coords + static_cast<IntVec2>(Direction::North);
   IntVec2 coordsE = coords + static_cast<IntVec2>(Direction::East);
   IntVec2 coordsS = coords + static_cast<IntVec2>(Direction::South);

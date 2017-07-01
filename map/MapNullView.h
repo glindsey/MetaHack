@@ -10,8 +10,8 @@ class MapNullView : public MapView
   friend class NullGraphicViews;
 
 public:
-  virtual void update_tiles(EntityId viewer, Systems::Lighting& lighting) override;
-  virtual void update_things(EntityId viewer, Systems::Lighting& lighting, int frame) override;
+  virtual void updateTiles(EntityId viewer, Systems::Lighting& lighting) override;
+  virtual void updateEntities(EntityId viewer, Systems::Lighting& lighting, int frame) override;
 
   virtual bool render_map(sf::RenderTexture& texture, int frame) override;
 
