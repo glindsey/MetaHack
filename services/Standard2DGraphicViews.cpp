@@ -2,6 +2,7 @@
 
 #include "services/Standard2DGraphicViews.h"
 
+#include "AssertHelper.h"
 #include "entity/EntityStandard2DView.h"
 #include "maptile/MapTileStandard2DView.h"
 #include "map/MapStandard2DView.h"
@@ -46,17 +47,30 @@ TileSheet& Standard2DGraphicViews::getTileSheet()
   return *(m_tileSheet.get());
 }
 
+bool Standard2DGraphicViews::hasTilesFor(std::string category)
+{
+  if (needToLoadFilesFor(category))
+  {
+    loadViewResourcesFor(category);
+  }
+
+  return (m_tileCoords.count(category) != 0);
+}
+
 bool Standard2DGraphicViews::needToLoadFilesFor(std::string category)
 {
-  return (m_noTilesAvailable.count(category) != 0) && (m_tileCoords.count(category) != 0);
+  return (m_triedToLoad.count(category) == 0);
 }
 
 UintVec2 const& Standard2DGraphicViews::getTileSheetCoords(std::string category)
 {
-  if (!needToLoadFilesFor(category))
+  if (needToLoadFilesFor(category))
   {
     loadViewResourcesFor(category);
   }
+
+  Assert("TileSheet", m_tileCoords.count(category) != 0,
+         "getTileSheetCoords(\"" << category << "\") called, but requested category has no tiles");
 
   return m_tileCoords.at(category);
 }
@@ -66,6 +80,7 @@ void Standard2DGraphicViews::loadViewResourcesFor(std::string category)
   FileName resourceString = "resources/entity/" + category;
   FileName pngFileString = resourceString + ".png";
   fs::path pngFilePath = fs::path(pngFileString);
+  m_triedToLoad.insert(category);
 
   if (fs::exists(pngFilePath))
   {
@@ -77,11 +92,14 @@ void Standard2DGraphicViews::loadViewResourcesFor(std::string category)
       " were placed on the TileSheet at " << tileLocation;
 
     m_tileCoords[category] = tileLocation;
-    m_noTilesAvailable.erase(category);
   }
   else
   {
     CLOG(TRACE, "TileSheet") << "No tiles found for " << category;
-    m_noTilesAvailable.insert(category);
+    /// @note No way to actually "erase" a tile from a tilesheet right now, so
+    ///       this would end up leaving an unusable "gap" in the sheet. But
+    ///       the only way this code should be called is if the PNG file were
+    ///       erased *during* program run, and the views reset.
+    m_tileCoords.erase(category);
   }
 }

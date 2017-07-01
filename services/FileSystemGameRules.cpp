@@ -109,7 +109,7 @@ void FileSystemGameRules::loadCategoryIfNecessary(std::string name, std::string 
       std::cerr << "BREAK" << std::endl;
     }
 
-    S<IGraphicViews>().loadViewResourcesFor(name, categoryData);
+    S<IGraphicViews>().loadViewResourcesFor(name);
   }
 }
 

@@ -451,7 +451,8 @@ namespace Systems
       }
       if ((token == "a_subject_type") || (token == "asubjecttype"))
       {
-        return getIndefArt(subject) + " " + getDisplayName(subject);
+        auto dispName = getDisplayName(subject);
+        return getIndefArt(dispName) + " " + dispName;
       }
       if (token == "you")
       {

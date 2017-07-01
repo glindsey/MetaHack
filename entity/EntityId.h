@@ -46,7 +46,7 @@ public:
   bool operator!() const;
   operator lua_Integer() const;
   explicit operator uint64_t() const;
-  operator std::string() const;
+  explicit operator std::string() const;
   bool operator<(EntityId const& other) const;
   bool operator<=(EntityId const& other) const;
   bool operator>(EntityId const& other) const;

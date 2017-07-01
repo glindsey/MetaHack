@@ -35,6 +35,7 @@ public:
 
 protected:
   TileSheet& getTileSheet();
+  bool hasTilesFor(std::string category);
   bool needToLoadFilesFor(std::string category);
   UintVec2 const& getTileSheetCoords(std::string category);
 
@@ -42,8 +43,8 @@ private:
   /// A map associating category names with tilesheet coordinates.
   std::unordered_map<std::string, UintVec2> m_tileCoords;
 
-  /// A set indicating which categories have no graphics, so don't try to load them again.
-  std::unordered_set<std::string> m_noTilesAvailable;
+  /// A set indicating which categories we've already tried to load.
+  std::unordered_set<std::string> m_triedToLoad;
 
   /// The tilesheet that these views are drawn from.
   std::unique_ptr<TileSheet> m_tileSheet;

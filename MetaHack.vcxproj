@@ -811,7 +811,6 @@
     <None Include="resources\entity\template\HasMemory.json" />
     <None Include="resources\entity\template\Lockable.json" />
     <None Include="resources\entity\template\Mobile.json" />
-    <None Include="resources\entity\Mu.json" />
     <None Include="resources\entity\Rock.json" />
     <None Include="resources\entity\RockLichen.json" />
     <None Include="resources\entity\SackCloth.json" />
@@ -851,7 +850,6 @@
     <Image Include="resources\entity\GridBug.png" />
     <Image Include="resources\entity\Human.png" />
     <Image Include="resources\entity\LightOrb.png" />
-    <Image Include="resources\entity\Mu.png" />
     <Image Include="resources\entity\OpenSpace.png" />
     <Image Include="resources\entity\Pit.png" />
     <Image Include="resources\entity\Rock.png" />

@@ -160,6 +160,9 @@ void MapTileStandard2DView::addMemoryVerticesTo(sf::VertexArray& vertices,
     
     std::string category = components["category"].get<std::string>();
 
+    // Bail if the object has no associated tiles.
+    if (!m_views.hasTilesFor(category)) return;
+
     if (components.count("appearance") != 0)
     {
       auto& appearance = components["appearance"];
@@ -284,12 +287,16 @@ void MapTileStandard2DView::addEntityVertices(EntityId entityId,
                                               int frame)
 {
   auto& config = S<IConfigSettings>();
+  auto& category = COMPONENTS.category[entityId];
   sf::Vertex new_vertex;
   float ts = config.get("map-tile-size");
   float ts2 = ts * 0.5f;
 
   // If this entity doesn't have a Position component, bail.
   if (!COMPONENTS.position.existsFor(entityId)) return;
+
+  // If this entity doesn't have associated tiles, bail.
+  if (!m_views.hasTilesFor(category)) return;
 
   auto& position = COMPONENTS.position[entityId];
   IntVec2 const& coords = position.coords();
