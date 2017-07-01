@@ -52,7 +52,7 @@ public:
   ///       I don't know how this could be done, though, without basically
   ///       maintaining a journal of changes to the object, and that seems
   ///       like some *massive* overkill.
-  void applyCategoryData(EntityId id, std::string subType, std::string name);
+  void applyCategoryData(EntityId id, std::string subTypeName);
 
   /// Morph an object into a new category.
   /// Deletes the existing object components, and creates new ones based on

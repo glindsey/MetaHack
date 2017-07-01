@@ -18,27 +18,27 @@ FileSystemGameRules::FileSystemGameRules()
 FileSystemGameRules::~FileSystemGameRules()
 {}
 
-json & FileSystemGameRules::categoryData(std::string name, std::string subType)
+json & FileSystemGameRules::categoryData(std::string name)
 {
-  std::string fullName = subType.empty() ? name : subType + "." + name;
-  loadCategoryIfNecessary(name, subType);
-  return m_data["categories"][fullName];
+  bool hasSubtype = (name.find('.') != std::string::npos);
+
+  loadCategoryIfNecessary(name);
+  return m_data[name];
 }
 
-void FileSystemGameRules::loadCategoryIfNecessary(std::string name, std::string subType)
+void FileSystemGameRules::loadCategoryIfNecessary(std::string name)
 {
-  json& categories = m_data["categories"];
-  std::string fullName = subType.empty() ? name : subType + "." + name;
+  StringPair namePair = StringTransforms::splitName(name);
 
-  if (categories.count(fullName) == 0)
+  if (m_data.count(name) == 0)
   {
-    CLOG(TRACE, "GameRules") << "Loading data for " << fullName << " category...";
+    CLOG(TRACE, "GameRules") << "Loading data for " << name << " category...";
 
-    json& categoryData = categories[fullName];
+    json& categoryData = m_data[name];
 
     // Look for the various files containing this metadata.
     FileName resource_string = "resources/entity/" +
-                               (subType.empty() ? "" : subType + "/") + name;
+                               (namePair.first.empty() ? "" : namePair.first + "/") + namePair.second;
 
     FileName jsonfile_string = resource_string + ".json";
     fs::path jsonfile_path = fs::path(jsonfile_string);
@@ -69,21 +69,17 @@ void FileSystemGameRules::loadCategoryIfNecessary(std::string name, std::string 
     JSONUtils::addIfMissing(categoryData, "components", json::object());
     json& componentsJson = categoryData["components"];
 
-    std::string type = (subType.empty() ? "category" : subType);
+    std::string groupType = (namePair.first.empty() ? "category" : namePair.first);
 
-    // Populate the "type" and "full-name" components.
-    componentsJson["type"] = type;
-    componentsJson["full-name"] = fullName;
-
-    // Populate the "category" component, or if this is a subtype, the 
-    // component of that name.
-    // (If one was present already in the file, it will be overwritten.)
-    componentsJson[type] = name;
+    // Populate components used for identification.
+    componentsJson["type"] = groupType;
+    componentsJson[groupType] = namePair.second;
+    componentsJson["full-name"] = name;
 
     // *** Load templates ***
     if (categoryData.count("templates") != 0)
     {
-      loadTemplateComponents(categoryData["templates"], componentsJson);
+      loadTemplateComponentsFor(name);
     }
 
     // Material is only populated when an Entity is actually created, since
@@ -93,7 +89,7 @@ void FileSystemGameRules::loadCategoryIfNecessary(std::string name, std::string 
     if (name == "OpenSpace")
     {
       CLOG(TRACE, "GameRules") << "================================";
-      CLOG(TRACE, "GameRules") << "DEBUG: " << fullName << " JSON contents are:";
+      CLOG(TRACE, "GameRules") << "DEBUG: " << name << " JSON contents are:";
       CLOG(TRACE, "GameRules") << categoryData.dump(2);
       CLOG(TRACE, "GameRules") << "================================";
     }
@@ -113,11 +109,14 @@ void FileSystemGameRules::loadCategoryIfNecessary(std::string name, std::string 
   }
 }
 
-void FileSystemGameRules::loadTemplateComponents(json& templates, json& components)
+void FileSystemGameRules::loadTemplateComponentsFor(std::string name)
 {
-  json& categories = m_data["categories"];
+  StringPair namePair = StringTransforms::splitName(name);
 
-  std::string fullName = components["full-name"].get<std::string>();
+  auto& categoryData = m_data[name];
+
+  auto& components = categoryData["components"];
+  auto& templates = categoryData["templates"];
 
   if (templates.is_array())
   {
@@ -129,19 +128,19 @@ void FileSystemGameRules::loadTemplateComponents(json& templates, json& componen
       std::string templateFullName = "template." + templateName;
       templates[index] = templateName;
 
-      if (fullName == templateFullName)
+      if (name == templateFullName)
       {
-        CLOG(FATAL, "GameRules") << fullName << " has itself as a template -- this isn't allowed!";
+        CLOG(FATAL, "GameRules") << name << " has itself as a template -- this isn't allowed!";
       }
 
-      loadCategoryIfNecessary(templateName, "template");
-      json& subcategoryData = categories[templateFullName];
+      loadCategoryIfNecessary(templateFullName);
+      json& subcategoryData = m_data[templateFullName];
       JSONUtils::mergeArrays(templates, subcategoryData["templates"]);
       JSONUtils::addMissingKeys(components, subcategoryData["components"]);
     }
   }
   else
   {
-    CLOG(WARNING, "GameRules") << " -- " << fullName << " has a \"templates\" key, but the value is not an array. Skipping.";
+    CLOG(WARNING, "GameRules") << " -- " << name << " has a \"templates\" key, but the value is not an array. Skipping.";
   }
 }

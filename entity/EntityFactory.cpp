@@ -50,7 +50,7 @@ EntityId EntityFactory::create(EntitySpecs specs)
 
   if (!material.empty())
   {
-    json& materialData = S<IGameRules>().categoryData(material, "material");
+    json& materialData = S<IGameRules>().categoryData("material." + material);
     m_gameState.components().populate(new_id, materialData["components"]);
   }
 
@@ -86,13 +86,13 @@ EntityId EntityFactory::clone(EntityId original)
   return newId;
 }
 
-void EntityFactory::applyCategoryData(EntityId id, std::string subType, std::string name)
+void EntityFactory::applyCategoryData(EntityId id, std::string subtypeName)
 {
   if (id != EntityId::Void)
   {
-    json& data = S<IGameRules>().categoryData(name, subType);
-    auto& jsonComponents = data["components"];
-    m_gameState.components().populate(id, jsonComponents);
+    json& subtypeData = S<IGameRules>().categoryData(subtypeName);
+    auto& subtypeComponents = subtypeData["components"];
+    m_gameState.components().populate(id, subtypeComponents);
   }
   else
   {
@@ -124,7 +124,7 @@ void EntityFactory::morph(EntityId id, EntitySpecs specs)
 
   if (!specs.material.empty() && (specs.material != oldMaterial))
   {
-    json& materialData = S<IGameRules>().categoryData(specs.material, "material");
+    json& materialData = S<IGameRules>().categoryData("material." + specs.material);
     components.populate(id, materialData["components"]);
   }
 

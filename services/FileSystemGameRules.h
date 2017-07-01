@@ -1,7 +1,5 @@
 #pragma once
 
-
-
 #include "services/IGameRules.h"
 
 /// Class that encapsulates all static data in the game.
@@ -14,7 +12,7 @@ public:
 
   /// Get data for a specific Entity category or template.
   /// If it doesn't exist, attempt to load it.
-  json& categoryData(std::string name, std::string subType = "");
+  json& categoryData(std::string name);
 
   /// Get reference to game rules data.
   inline json& data()
@@ -31,9 +29,9 @@ public:
 protected:
   /// Attempt to load JSON data for an entity category.
   /// Also runs any associated Lua script.
-  void loadCategoryIfNecessary(std::string name, std::string subType = "");
+  void loadCategoryIfNecessary(std::string name);
 
-  void loadTemplateComponents(json& templates, json & components);
+  void loadTemplateComponentsFor(std::string name);
 
 private:
   /// Game rules data, as stored in a JSON object.

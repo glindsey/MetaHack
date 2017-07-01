@@ -24,4 +24,24 @@ namespace StringTransforms
       return false;
     }
   }
+
+  StringPair splitName(std::string name)
+  {
+    size_t dotLocation = name.find('.');
+    StringPair stringPair;
+
+    if ((dotLocation != std::string::npos) && (dotLocation != name.size() - 1))
+    {
+      stringPair.first = name.substr(0, dotLocation);
+      stringPair.second = name.substr(dotLocation + 1);
+    }
+    else
+    {
+      stringPair.first = "";
+      stringPair.second = name;
+    }
+
+    return stringPair;
+  }
+
 } // end namespace

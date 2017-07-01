@@ -51,6 +51,9 @@ namespace JSONUtils
   /// Duplicate values are discarded.
   /// This algorithm has O(n^2) complexity, so it shouldn't be used on
   /// really big arrays.
+  /// @todo Add a hint as to where the second array should be inserted into
+  ///       the first. This is important so that templates are traversed in
+  ///       the order we want when entity graphics are searched for.
   inline void mergeArrays(json& first, json& second)
   {
     if (!first.is_array() || !second.is_array()) return;

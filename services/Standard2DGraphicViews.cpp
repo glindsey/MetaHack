@@ -8,8 +8,10 @@
 #include "map/MapStandard2DView.h"
 #include "services/Service.h"
 #include "services/IConfigSettings.h"
+#include "services/IGameRules.h"
 #include "tilesheet/TileSheet.h"
 #include "utilities/New.h"
+#include "utilities/StringTransforms.h"
 
 // Namespace aliases
 namespace fs = boost::filesystem;
@@ -77,7 +79,9 @@ UintVec2 const& Standard2DGraphicViews::getTileSheetCoords(std::string category)
 
 void Standard2DGraphicViews::loadViewResourcesFor(std::string category)
 {
-  FileName resourceString = "resources/entity/" + category;
+  StringPair stringPair = StringTransforms::splitName(category);
+
+  FileName resourceString = "resources/entity/" + stringPair.second;
   FileName pngFileString = resourceString + ".png";
   fs::path pngFilePath = fs::path(pngFileString);
   m_triedToLoad.insert(category);
@@ -95,11 +99,43 @@ void Standard2DGraphicViews::loadViewResourcesFor(std::string category)
   }
   else
   {
-    CLOG(TRACE, "TileSheet") << "No tiles found for " << category;
+    CLOG(TRACE, "TileSheet") << "No tiles found for " << category << ", checking templates";
+
+    // No graphics for this category, so try to fall back upon templates, one at a time.
+    auto& categoryData = S<IGameRules>().categoryData(category);
+
+    // First we actually need templates for this to work...
+    if (categoryData.count("templates") != 0)
+    {
+      auto& templatesList = categoryData["templates"];
+      // And the templates list must be an array...
+      if (templatesList.is_array())
+      {
+        // For each template in the list, see if there are associated graphics.
+        for (auto templateName : templatesList)
+        {
+          if (templateName.is_string())
+          {
+            auto templateNameStr = "template." + templateName.get<std::string>();
+            if (hasTilesFor(templateNameStr))
+            {
+              CLOG(TRACE, "TileSheet") << "..." << category << " will use tiles from " << templateNameStr;
+              m_tileCoords[category] = m_tileCoords[templateNameStr];
+              return;
+            }
+          }
+        } // end for loop
+      }
+    }
+
+    CLOG(TRACE, "TileSheet") << "... no tiles found after searching entire template tree";
+
     /// @note No way to actually "erase" a tile from a tilesheet right now, so
     ///       this would end up leaving an unusable "gap" in the sheet. But
     ///       the only way this code should be called is if the PNG file were
-    ///       erased *during* program run, and the views reset.
+    ///       erased *during* program run, and no fallback graphics were found
+    ///       when scanning the template tree, *and* the views were reset. This
+    ///       is *super* unlikely.
     m_tileCoords.erase(category);
   }
 }
