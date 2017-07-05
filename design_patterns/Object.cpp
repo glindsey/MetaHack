@@ -14,7 +14,7 @@ Object::Object(std::unordered_set<EventID> const events)
   {
     CLOG(TRACE, "EventSystem") << "Registering Event 0x" <<
       std::setbase(16) << std::setfill('0') << std::setw(8) << event <<
-      " for Object " << *this;
+      " for Object " << *this << std::setw(0) << std::setbase(10);
     m_eventObservers.emplace(event, ObserversSet());
   }
 }
@@ -85,7 +85,7 @@ void Object::addObserver(Object& observer, EventID eventID)
 
     CLOG(TRACE, "EventSystem") << "Registered Observer " << observer 
       << " for EventID 0x" 
-      << std::setbase(16) << std::setfill('0') << std::setw(8) << eventID;
+      << std::setbase(16) << std::setfill('0') << std::setw(8) << eventID << std::setw(0) << std::setbase(10);
 
     observer.onEvent_NV(e);
   }
@@ -138,7 +138,7 @@ void Object::removeObserver(Object& observer, EventID eventID)
 
     CLOG(TRACE, "EventSystem") << "Deregistered Observer " << observer 
       << " for EventID 0x"
-      << std::setbase(16) << std::setfill('0') << std::setw(8) << eventID;
+      << std::setbase(16) << std::setfill('0') << std::setw(8) << eventID << std::setw(0) << std::setbase(10);
   }
 
   if (removalCount == 0)
@@ -312,8 +312,7 @@ ObserversSet& Object::getObservers(EventID eventID)
   Assert("EventSystem", (m_eventObservers.count(eventID) != 0),
          "\nReason:\tattempted to get observers for an unregistered event." <<
          "\nSubject:\t" << *this <<
-         "\nEventID:\t0x" << 
-         std::setbase(16) << std::setfill('0') << std::setw(8) << eventID);
+         "\nEventID:\t" << eventID);
 
   return m_eventObservers.at(eventID);
 }
@@ -325,8 +324,7 @@ ObserversSet const& Object::getObservers(EventID eventID) const
   Assert("EventSystem", (m_eventObservers.count(eventID) != 0),
          "\nReason:\tattempted to get observers for an unregistered event." <<
          "\nSubject:\t" << *this <<
-         "\nEventID:\t0x" <<
-         std::setbase(16) << std::setfill('0') << std::setw(8) << eventID);
+         "\nEventID:\t" << eventID);
 
   return m_eventObservers.at(eventID);
 }

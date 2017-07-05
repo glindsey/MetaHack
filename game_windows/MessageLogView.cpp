@@ -9,12 +9,13 @@
 #include "services/Service.h"
 #include "types/Color.h"
 
-MessageLogView::MessageLogView(std::string name,
+MessageLogView::MessageLogView(metagui::Desktop& desktop,
+                               std::string name,
                                IMessageLog& model,
                                IKeyBuffer& key_buffer,
                                sf::IntRect dimensions)
   :
-  metagui::Window(name, dimensions),
+  metagui::Window(desktop, name, dimensions),
   m_model(model),
   m_key_buffer(key_buffer)
 {

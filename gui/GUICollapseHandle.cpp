@@ -9,8 +9,8 @@
 
 namespace metagui
 {
-  CollapseHandle::CollapseHandle(std::string name) :
-    GUIObject(name, {})
+  CollapseHandle::CollapseHandle(Desktop& desktop, std::string name) :
+    GUIObject(desktop, name, {})
   {
   }
 

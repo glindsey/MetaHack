@@ -8,8 +8,8 @@
 
 namespace metagui
 {
-  ShrinkHandle::ShrinkHandle(std::string name) :
-    GUIObject(name, {})
+  ShrinkHandle::ShrinkHandle(Desktop& desktop, std::string name) :
+    GUIObject(desktop, name, {})
   {}
 
   ShrinkHandle::~ShrinkHandle()

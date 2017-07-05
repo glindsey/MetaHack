@@ -64,7 +64,8 @@
 #include "GUIObject.h"
 #include "GUIWindow.h"
 
-AppStateGameMode::AppStateGameMode(StateMachine& state_machine, sf::RenderWindow& m_appWindow)
+AppStateGameMode::AppStateGameMode(StateMachine& state_machine, 
+                                   sf::RenderWindow& m_appWindow)
   :
   AppState(state_machine,
            { App::EventAppWindowResized::id,
@@ -84,9 +85,20 @@ AppStateGameMode::AppStateGameMode(StateMachine& state_machine, sf::RenderWindow
 {
   App::instance().addObserver(*this, EventID::All);
 
-  the_desktop.addChild(NEW MessageLogView("MessageLogView", S<IMessageLog>(), *m_debugBuffer, calcMessageLogDims()))->setFlag("titlebar", true);
-  the_desktop.addChild(NEW InventoryArea("InventoryArea", *m_inventorySelection, calcInventoryDims(), *m_gameState))->setFlag("titlebar", true);
-  the_desktop.addChild(NEW StatusArea("StatusArea", calcStatusAreaDims(), *m_gameState))->setGlobalFocus(true);
+  the_desktop.addChild(NEW MessageLogView(the_desktop, 
+                                          "MessageLogView", 
+                                          S<IMessageLog>(), 
+                                          *m_debugBuffer, 
+                                          calcMessageLogDims()))->setFlag("titlebar", true);
+  the_desktop.addChild(NEW InventoryArea(the_desktop, 
+                                         "InventoryArea", 
+                                         *m_inventorySelection, 
+                                         calcInventoryDims(), 
+                                         *m_gameState))->setFlag("titlebar", true);
+  the_desktop.addChild(NEW StatusArea(the_desktop, 
+                                      "StatusArea", 
+                                      calcStatusAreaDims(), 
+                                      *m_gameState))->setGlobalFocus(true);
 
   // Create the standard map views provider.
   /// @todo Make this configurable.
@@ -206,7 +218,10 @@ bool AppStateGameMode::initialize()
   resetInventorySelection();
 
   // Set the map view.
-  m_mapView = the_desktop.addChild(S<IGraphicViews>().createMapView("MainMapView", game_map, the_desktop.getSize()));
+  m_mapView = the_desktop.addChild(S<IGraphicViews>().createMapView(the_desktop, 
+                                                                    "MainMapView", 
+                                                                    game_map, 
+                                                                    the_desktop.getSize()));
 
   // Get the map view ready.
   m_mapView->updateTiles(player, m_systemManager->lighting());

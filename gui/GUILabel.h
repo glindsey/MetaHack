@@ -7,7 +7,7 @@ namespace metagui
   class Label : public GUIObject
   {
   public:
-    explicit Label(std::string name, IntVec2 location = IntVec2(0, 0));
+    explicit Label(Desktop& desktop, std::string name, IntVec2 location = IntVec2(0, 0));
     virtual ~Label();
 
   protected:

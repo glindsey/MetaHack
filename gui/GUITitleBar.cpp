@@ -9,8 +9,8 @@
 
 namespace metagui
 {
-  TitleBar::TitleBar(std::string name) :
-    GUIObject(name, {})
+  TitleBar::TitleBar(Desktop& desktop, std::string name) :
+    GUIObject(desktop, name, {})
   {
   }
 

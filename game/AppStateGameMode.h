@@ -41,7 +41,8 @@ class AppStateGameMode
   };
 
 public:
-  AppStateGameMode(StateMachine& state_machine, sf::RenderWindow& app_window);
+  AppStateGameMode(StateMachine& state_machine, 
+                   sf::RenderWindow& app_window);
   virtual ~AppStateGameMode();
 
   virtual bool initialize() override;

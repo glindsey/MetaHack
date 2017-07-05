@@ -14,8 +14,8 @@
 
 namespace metagui
 {
-  Window::Window(std::string name, IntVec2 location, UintVec2 size) :
-    GUIObject(name, {}, location, size)
+  Window::Window(Desktop& desktop, std::string name, IntVec2 location, UintVec2 size) :
+    GUIObject(desktop, name, {}, location, size)
   {
     // *** TESTING CODE ***
     // Set this object to be movable and resizable.
@@ -25,9 +25,9 @@ namespace metagui
     setFlag("hasShadow", true);
   }
 
-  Window::Window(std::string name, sf::IntRect dimensions)
+  Window::Window(Desktop& desktop, std::string name, sf::IntRect dimensions)
     :
-    GUIObject(name, {}, dimensions)
+    GUIObject(desktop, name, {}, dimensions)
   {
     // *** TESTING CODE ***
     // Set this object to be movable and resizable.
@@ -107,7 +107,7 @@ namespace metagui
       {
         if (!childExists(name))
         {
-          addChild(new TitleBar(name))->setFlag("decor", true);
+          addChild(new TitleBar(desktop(), name))->setFlag("decor", true);
         }
       }
       else
@@ -122,7 +122,7 @@ namespace metagui
       {
         if (!childExists(name))
         {
-          addChild(new ResizeHandle(name))->setFlag("decor", true);
+          addChild(new ResizeHandle(desktop(), name))->setFlag("decor", true);
         }
       }
       else
@@ -137,7 +137,7 @@ namespace metagui
       {
         if (!childExists(name))
         {
-          addChild(new CloseHandle(name))->setFlag("decor", true);
+          addChild(new CloseHandle(desktop(), name))->setFlag("decor", true);
         }
       }
       else
@@ -152,7 +152,7 @@ namespace metagui
       {
         if (!childExists(name))
         {
-          addChild(new ShrinkHandle(name))->setFlag("decor", true);
+          addChild(new ShrinkHandle(desktop(), name))->setFlag("decor", true);
         }
       }
       else

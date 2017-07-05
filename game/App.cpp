@@ -69,9 +69,9 @@ App::App(sf::RenderWindow& app_window)
   SET_UP_LOGGER("Director",           false);
   SET_UP_LOGGER("Entity",             false);
   SET_UP_LOGGER("EntityFactory",      false);
-  SET_UP_LOGGER("EventSystem",        false);
+  SET_UP_LOGGER("EventSystem",        true);
   SET_UP_LOGGER("Game",               false);
-  SET_UP_LOGGER("GameRules",          true);
+  SET_UP_LOGGER("GameRules",          false);
   SET_UP_LOGGER("GameState",          false);
   SET_UP_LOGGER("Geometry",           false);
   SET_UP_LOGGER("GUI",                false);
@@ -82,7 +82,7 @@ App::App(sf::RenderWindow& app_window)
   SET_UP_LOGGER("Lua",                false);
   SET_UP_LOGGER("Map",                false);
   SET_UP_LOGGER("MapFactory",         false);
-  SET_UP_LOGGER("MapGenerator",       true);
+  SET_UP_LOGGER("MapGenerator",       false);
   SET_UP_LOGGER("Narrator",           false);
   SET_UP_LOGGER("PlayerHandler",      false);
   SET_UP_LOGGER("Property",           false);

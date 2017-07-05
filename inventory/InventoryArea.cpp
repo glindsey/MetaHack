@@ -18,11 +18,12 @@
 
 #include "entity/EntityFactory.h"
 
-InventoryArea::InventoryArea(std::string name,
+InventoryArea::InventoryArea(metagui::Desktop& desktop,
+                             std::string name,
                              InventorySelection& inventory_selection,
                              sf::IntRect dimensions,
                              GameState& gameState) :
-  metagui::Window(name, dimensions),
+  metagui::Window(desktop, name, dimensions),
   m_gameState{ gameState },
   m_inventorySelection{ inventory_selection }
 {

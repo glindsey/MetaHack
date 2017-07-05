@@ -36,7 +36,8 @@ protected:
   /// @param map	    Reference to Map object to associate with this view.
   /// @param size       Size of the view to create.
   /// @param tile_sheet Reference to tilesheet containing graphics to display.
-  MapStandard2DView(std::string name, 
+  MapStandard2DView(metagui::Desktop& desktop,
+                    std::string name, 
                     Map& map, 
                     UintVec2 size, 
                     Standard2DGraphicViews& views);

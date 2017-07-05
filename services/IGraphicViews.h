@@ -1,6 +1,10 @@
-
+#pragma once
 
 /// Forward declarations
+namespace metagui
+{
+  class Desktop;
+}
 class EntityId;
 class EntityView;
 class Map;
@@ -27,7 +31,10 @@ public:
 
   /// Return a Map view.
   /// @warning The caller assumes ownership of the created view!
-  virtual MapView* createMapView(std::string name, Map& map, UintVec2 size) = 0;
+  virtual MapView* createMapView(metagui::Desktop& desktop, 
+                                 std::string name,
+                                 Map& map,
+                                 UintVec2 size) = 0;
   
   /// Load any required view resources associated with the specified category.
   virtual void loadViewResourcesFor(std::string category) = 0;

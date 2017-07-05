@@ -14,7 +14,8 @@ class InventoryArea :
   public metagui::Window
 {
 public:
-  explicit InventoryArea(std::string name, 
+  explicit InventoryArea(metagui::Desktop& desktop,
+                         std::string name, 
                          InventorySelection& inventory_selection,
                          sf::IntRect dimensions,
                          GameState& gameState);

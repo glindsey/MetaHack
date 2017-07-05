@@ -30,9 +30,9 @@ public:
   }
 
   /// Return a Map view.
-  virtual MapView* createMapView(std::string name, Map& map, UintVec2 size) override
+  virtual MapView* createMapView(metagui::Desktop& desktop, std::string name, Map& map, UintVec2 size) override
   {
-    return NEW MapNullView(name, map, size);
+    return NEW MapNullView(desktop, name, map, size);
   }
 
   /// Load any required view resources associated with the specified category.

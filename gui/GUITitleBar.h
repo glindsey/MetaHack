@@ -12,7 +12,7 @@ namespace metagui
     virtual ~TitleBar();
 
   protected:
-    explicit TitleBar(std::string name);
+    TitleBar(Desktop& desktop, std::string name);
 
     virtual void drawPreChildren_(sf::RenderTexture& texture, int frame) override final;
     virtual bool onEvent_V(Event const& event) override;

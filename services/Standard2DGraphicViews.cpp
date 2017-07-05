@@ -39,9 +39,12 @@ MapTileView* Standard2DGraphicViews::createMapTileView(MapTile& map_tile)
   return NEW MapTileStandard2DView(map_tile, *this);
 }
 
-MapView* Standard2DGraphicViews::createMapView(std::string name, Map& map, UintVec2 size)
+MapView* Standard2DGraphicViews::createMapView(metagui::Desktop& desktop, 
+                                               std::string name, 
+                                               Map& map, 
+                                               UintVec2 size)
 {
-  return NEW MapStandard2DView(name, map, size, *this);
+  return NEW MapStandard2DView(desktop, name, map, size, *this);
 }
 
 TileSheet& Standard2DGraphicViews::getTileSheet()

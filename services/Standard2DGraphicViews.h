@@ -29,7 +29,10 @@ public:
 
   virtual MapTileView* createMapTileView(MapTile& map_tile) override;
 
-  virtual MapView* createMapView(std::string name, Map& map, UintVec2 size) override;
+  virtual MapView* createMapView(metagui::Desktop& desktop, 
+                                 std::string name, 
+                                 Map& map, 
+                                 UintVec2 size) override;
 
   virtual void loadViewResourcesFor(std::string category) override;
 

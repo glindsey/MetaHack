@@ -9,18 +9,17 @@
 
 namespace metagui
 {
+  std::unordered_set<EventID> const Desktop::s_eventsEmitted =
+  {
+    EventDragStarted::id,
+    EventDragging::id,
+    EventDragFinished::id
+  };
+
   Desktop::Desktop(Object& event_parent,
                    std::string name, 
                    UintVec2 size) :
-    GUIObject{ 
-    name, 
-    {
-      EventDragStarted::id,
-      EventDragging::id,
-      EventDragFinished::id
-    },
-    IntVec2(0, 0), 
-    size },
+    GUIObject{ *this, name, s_eventsEmitted, IntVec2(0, 0), size },
     m_event_parent{ event_parent }
   {
     App::instance().addObserver(*this, EventID::All);

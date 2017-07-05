@@ -15,12 +15,14 @@ class MessageLogView
 {
 public:
   /// Create a message log view tied to the specified model.
+  /// @param  desktop     Reference to Desktop object.
   /// @param  name        The name of the view.
   /// @param  model       The MessageLog instance to tie the view to.
   /// @param  key_buffer  The KeyBuffer instance to tie the view to.
   /// @param  dimensions  The initial dimensions of the view.
   /// @warning Lifetime of this object MUST outlast the MessageLog/KeyBuffer passed in!
-  MessageLogView(std::string name, 
+  MessageLogView(metagui::Desktop& desktop,
+                 std::string name,
                  IMessageLog& model,
                  IKeyBuffer& key_buffer,
                  sf::IntRect dimensions);

@@ -7,8 +7,8 @@ namespace metagui
   class Window : public GUIObject
   {
   public:
-    Window(std::string name, IntVec2 location, UintVec2 size = UintVec2(0, 0));
-    Window(std::string name, sf::IntRect dimensions);
+    Window(Desktop& desktop, std::string name, IntVec2 location, UintVec2 size = UintVec2(0, 0));
+    Window(Desktop& desktop, std::string name, sf::IntRect dimensions);
     virtual ~Window();
 
     /// Get the upper-left corner of this object's child area, relative to

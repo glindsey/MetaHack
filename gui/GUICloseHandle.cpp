@@ -8,8 +8,8 @@
 
 namespace metagui
 {
-  CloseHandle::CloseHandle(std::string name) :
-    GUIObject(name, {})
+  CloseHandle::CloseHandle(Desktop& desktop, std::string name) :
+    GUIObject(desktop, name, {})
   {}
 
   CloseHandle::~CloseHandle()

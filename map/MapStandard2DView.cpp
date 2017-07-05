@@ -12,12 +12,13 @@
 
 /// @todo Lighting system should not be a constructor argument, but should be passed into methods that need it instead.
 
-MapStandard2DView::MapStandard2DView(std::string name, 
+MapStandard2DView::MapStandard2DView(metagui::Desktop& desktop,
+                                     std::string name,
                                      Map& map, 
                                      UintVec2 size, 
                                      Standard2DGraphicViews& views)
   :
-  MapView(name, map, size),
+  MapView(desktop, name, map, size),
   m_views(views)
 {
   resetCachedRenderData();

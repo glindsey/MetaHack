@@ -12,7 +12,7 @@ namespace metagui
     virtual ~ResizeHandle();
 
   protected:
-    explicit ResizeHandle(std::string name);
+    ResizeHandle(Desktop& desktop, std::string name);
     virtual void drawPreChildren_(sf::RenderTexture& texture, int frame) override final;
 
     virtual bool onEvent_V(Event const& event) override;

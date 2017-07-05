@@ -7,9 +7,12 @@
 #include "services/IConfigSettings.h"
 #include "services/Service.h"
 
-MapView::MapView(std::string name, Map& map, UintVec2 size)
+MapView::MapView(metagui::Desktop& desktop,
+                 std::string name, 
+                 Map& map, 
+                 UintVec2 size)
   :
-  metagui::GUIObject(name, {}, { 0, 0 }, size),
+  metagui::GUIObject(desktop, name, {}, { 0, 0 }, size),
   m_map(map)
 {
   //startObserving(map);

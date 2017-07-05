@@ -14,34 +14,35 @@
 
 namespace metagui
 {
-  std::unordered_set<EventID> const GUIObject::s_events =
+  std::unordered_set<EventID> const GUIObject::s_eventsEmitted =
   {
     EventMoved::id,
-    EventResized::id,
-    EventDragStarted::id,
-    EventDragging::id,
-    EventDragFinished::id
+    EventResized::id
   };
 
-  GUIObject::GUIObject(std::string name,
-                       std::unordered_set<EventID> const events) :
-    Object(combine(s_events, events), name)
+  GUIObject::GUIObject(Desktop& desktop, 
+                       std::string name,
+                       std::unordered_set<EventID> const eventsEmitted) :
+    m_desktop{ desktop },
+    Object(combine(s_eventsEmitted, eventsEmitted), name)
   {
   }
 
-  GUIObject::GUIObject(std::string name,
-                       std::unordered_set<EventID> const events,
+  GUIObject::GUIObject(Desktop& desktop, 
+                       std::string name,
+                       std::unordered_set<EventID> const eventsEmitted,
                        IntVec2 location, UintVec2 size) :
-    GUIObject(name, events)
+    GUIObject(desktop, name, eventsEmitted)
   {
     setRelativeLocation(location);
     setSize(size);
   }
 
-  GUIObject::GUIObject(std::string name,
-                       std::unordered_set<EventID> const events,
+  GUIObject::GUIObject(Desktop& desktop, 
+                       std::string name,
+                       std::unordered_set<EventID> const eventsEmitted,
                        sf::IntRect dimensions) :
-    GUIObject(name, events)
+    GUIObject(desktop, name, eventsEmitted)
   {
     setRelativeDimensions(dimensions);
   }
@@ -64,8 +65,14 @@ namespace metagui
       removeObserver(*m_parent);
     }
 
-    // Unsubscribe from app events, if any.
+    // Unsubscribe from app and/or desktop events, if any.
+    m_desktop.removeObserver(*this);
     App::instance().removeObserver(*this);
+  }
+
+  Desktop& GUIObject::desktop()
+  {
+    return m_desktop;
   }
 
   void GUIObject::setFocus(bool focus)
@@ -530,7 +537,19 @@ namespace metagui
 
   bool GUIObject::handlesPoint(IntVec2 point)
   {
-    return containsPoint(point) && !childContainsPoint(point);
+    auto pointInBounds = containsPoint(point);
+    auto pointInChild = childContainsPoint(point);
+
+    if (pointInBounds)
+    {
+      CLOG(TRACE, "GUI") << "Point " << point << " is inside bounds of " << getName();
+      if (pointInChild)
+      {
+        CLOG(TRACE, "GUI") << " -- but it is inside a child's bounds, so ignoring";
+      }
+    }
+
+    return pointInBounds && !pointInChild;
   }
 
   bool GUIObject::containsPoint(IntVec2 point)
@@ -698,9 +717,14 @@ namespace metagui
     ///       that they want.
     App::instance().addObserver(*this, EventID::All);
 
+    // Subscribe to standard Desktop events here.
+    m_desktop.addObserver(*this, EventDragStarted::id);
+    m_desktop.addObserver(*this, EventDragging::id);
+    m_desktop.addObserver(*this, EventDragFinished::id);
+
     // Subscribe to standard parent events here.
-    parent.addObserver(*this, GUIObject::EventMoved::id);
-    parent.addObserver(*this, GUIObject::EventResized::id);
+    parent.addObserver(*this, EventMoved::id);
+    parent.addObserver(*this, EventResized::id);
 
     // Subscribe to any additional events.
     doEventSubscriptions_V(parent);

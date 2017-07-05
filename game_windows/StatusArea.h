@@ -9,7 +9,10 @@ class GameState;
 class StatusArea : public metagui::Window
 {
 public:
-  explicit StatusArea(std::string name, sf::IntRect dimensions, GameState& gameState);
+  StatusArea(metagui::Desktop& desktop, 
+             std::string name, 
+             sf::IntRect dimensions,
+             GameState& gameState);
   virtual ~StatusArea();
 
 protected:

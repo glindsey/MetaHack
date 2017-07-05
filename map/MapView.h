@@ -19,7 +19,10 @@ class MapView
 public:
   /// Constructor.
   /// @param map	Reference to Map object to associate with this view.
-  explicit MapView(std::string name, Map& map, UintVec2 size);
+  MapView(metagui::Desktop& desktop,
+          std::string name,
+          Map& map,
+          UintVec2 size);
 
   /// Destructor.
   virtual ~MapView();

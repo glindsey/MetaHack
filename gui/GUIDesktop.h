@@ -46,5 +46,8 @@ namespace metagui
 
     /// Constantly updated mouse location.
     IntVec2 m_mouseLocation;
+
+    /// Static set of events provided by GUIDesktop.
+    static std::unordered_set<EventID> const s_eventsEmitted;
   };
 }; // end namespace metagui

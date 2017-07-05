@@ -6,17 +6,9 @@
 
 namespace metagui
 {
-  // Forward declaration of Object class
+  // Forward declarations
   class GUIObject;
-
-  // Forward declaration of any class that can be visited
-  class CloseHandle;
   class Desktop;
-  class Label;
-  class ResizeHandle;
-  class ShrinkHandle;
-  class TitleBar;
-  class Window;
 
   /// Using declarations
   using ChildMap = std::map< std::string, std::unique_ptr<GUIObject> >;
@@ -123,10 +115,14 @@ namespace metagui
       static unsigned int const dragThreshold = 16;
     };
 
-    explicit GUIObject(std::string name, std::unordered_set<EventID> const events);
-    GUIObject(std::string name, std::unordered_set<EventID> const events, IntVec2 location, UintVec2 size);
-    GUIObject(std::string name, std::unordered_set<EventID> const events, sf::IntRect dimensions);
+    GUIObject(Desktop& desktop, std::string name, std::unordered_set<EventID> const eventsEmitted);
+    GUIObject(Desktop& desktop, std::string name, std::unordered_set<EventID> const eventsEmitted, IntVec2 location, UintVec2 size);
+    GUIObject(Desktop& desktop, std::string name, std::unordered_set<EventID> const eventsEmitted, sf::IntRect dimensions);
     virtual ~GUIObject();
+
+    /// Get a reference to the desktop object.
+    /// Returns a self-reference if this object *is* the desktop.
+    Desktop& desktop();
 
     /// Set whether this object has focus.
     /// When set to "true", will also unfocus any sibling controls.
@@ -364,15 +360,20 @@ namespace metagui
 
     virtual bool onEvent_V(Event const& event) { return false; }
 
-    /// Subscribe to parent events that all objects care about.
+    /// Subscribe to events that all objects care about.
     void doEventSubscriptions(Object& parent);
 
     /// Subscribe to any additional events that we care about which are 
-    /// emitted by a parent.
+    /// emitted by a parent (or anything else).
     /// The default behavior is to do nothing.
     virtual void doEventSubscriptions_V(Object& parent);
 
   private:
+    /// Reference to the Desktop object.
+    /// Needed because it is the Desktop which emits events such as mouse 
+    /// clicks, drags, et cetera.
+    Desktop& m_desktop;
+
     /// The parent of this object. Set to nullptr if the object has no parent.
     GUIObject* m_parent = nullptr;
 
@@ -439,7 +440,7 @@ namespace metagui
     std::multimap< uint32_t, std::string > m_zOrderMap;
 
     /// Static set of events provided by GUIObject.
-    static std::unordered_set<EventID> const s_events;
+    static std::unordered_set<EventID> const s_eventsEmitted;
 
   };
 

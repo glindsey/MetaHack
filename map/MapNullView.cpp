@@ -4,9 +4,9 @@
 #include "maptile/MapTileNullView.h"
 #include "utilities/New.h"
 
-MapNullView::MapNullView(std::string name, Map& map, UintVec2 size)
+MapNullView::MapNullView(metagui::Desktop& desktop, std::string name, Map& map, UintVec2 size)
   :
-  MapView(name, map, size)
+  MapView(desktop, name, map, size)
 {
 }
 

@@ -13,8 +13,11 @@
 #include "systems/SystemChoreographer.h"
 #include "systems/SystemTimekeeper.h"
 
-StatusArea::StatusArea(std::string name, sf::IntRect dimensions, GameState& gameState) : 
-  metagui::Window(name, dimensions),
+StatusArea::StatusArea(metagui::Desktop& desktop,
+                       std::string name, 
+                       sf::IntRect dimensions, 
+                       GameState& gameState) : 
+  metagui::Window(desktop, name, dimensions),
   m_gameState{ gameState }
 {
   //ctor

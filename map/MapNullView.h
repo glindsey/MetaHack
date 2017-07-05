@@ -28,6 +28,9 @@ protected:
   /// Private because map views should be obtained via the IGraphicViews service.
   /// @param name   The name of this view.
   /// @param map	Reference to Map object to associate with this view.
-  MapNullView(std::string name, Map& map, UintVec2 size);
+  MapNullView(metagui::Desktop& desktop, 
+              std::string name, 
+              Map& map, 
+              UintVec2 size);
 
 };

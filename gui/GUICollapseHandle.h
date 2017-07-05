@@ -12,7 +12,7 @@ namespace metagui
     virtual ~CollapseHandle();
 
   protected:
-    explicit CollapseHandle(std::string name);
+    CollapseHandle(Desktop& desktop, std::string name);
 
     virtual void drawPreChildren_(sf::RenderTexture& texture, int frame) override final;
     virtual bool onEvent_V(Event const& event) override;
