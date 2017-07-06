@@ -39,7 +39,7 @@ public:
 
   /// Render the map to a texture.
   /// @todo Get rid of this in favor of the metagui::GUIObject render methods.
-  virtual bool render_map(sf::RenderTexture& texture, int frame) = 0;
+  virtual bool renderMap(sf::RenderTexture& texture, int frame) = 0;
 
   /// Update any cached render data associated with map tiles.
   /// @param entity	ID of the entity that is percieving the map.
@@ -51,7 +51,7 @@ public:
   virtual void updateEntities(EntityId entity, Systems::Lighting& lighting, int frame) = 0;
 
 
-  virtual void draw_highlight(sf::RenderTarget& target,
+  virtual void drawHighlight(sf::RenderTarget& target,
                               RealVec2 location,
                               Color fgColor,
                               Color bgColor,

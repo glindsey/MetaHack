@@ -13,9 +13,9 @@ public:
   virtual void updateTiles(EntityId viewer, Systems::Lighting& lighting) override;
   virtual void updateEntities(EntityId viewer, Systems::Lighting& lighting, int frame) override;
 
-  virtual bool render_map(sf::RenderTexture& texture, int frame) override;
+  virtual bool renderMap(sf::RenderTexture& texture, int frame) override;
 
-  virtual void draw_highlight(sf::RenderTarget& target,
+  virtual void drawHighlight(sf::RenderTarget& target,
                               RealVec2 location,
                               Color fgColor,
                               Color bgColor,

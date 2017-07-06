@@ -71,7 +71,7 @@ AppStateGameMode::AppStateGameMode(StateMachine& state_machine,
            { App::EventAppWindowResized::id,
              UIEvents::EventKeyPressed::id },
            "AppStateGameMode",
-           std::bind(&AppStateGameMode::render_map, this, std::placeholders::_1, std::placeholders::_2)),
+           std::bind(&AppStateGameMode::renderMap, this, std::placeholders::_1, std::placeholders::_2)),
   m_appWindow{ m_appWindow },
   m_debugBuffer{ NEW KeyBuffer() },
   m_gameState{ NEW GameState({}) },
@@ -254,7 +254,7 @@ Systems::Manager& AppStateGameMode::systems()
 }
 
 // === PROTECTED METHODS ======================================================
-void AppStateGameMode::render_map(sf::RenderTexture& texture, int frame)
+void AppStateGameMode::renderMap(sf::RenderTexture& texture, int frame)
 {
   auto& config = S<IConfigSettings>();
   auto& game = gameState();
@@ -286,11 +286,11 @@ void AppStateGameMode::render_map(sf::RenderTexture& texture, int frame)
     if (m_currentInputState == GameInputState::CursorLook)
     {
       m_mapView->set_view(texture, cursor_pixel_coords, m_mapZoomLevel);
-      m_mapView->render_map(texture, frame);
+      m_mapView->renderMap(texture, frame);
 
       Color border_color = config.get("cursor-border-color");
       Color bg_color = config.get("cursor-bg-color");
-      m_mapView->draw_highlight(texture,
+      m_mapView->drawHighlight(texture,
                                 cursor_pixel_coords,
                                 border_color,
                                 bg_color,
@@ -299,7 +299,7 @@ void AppStateGameMode::render_map(sf::RenderTexture& texture, int frame)
     else
     {
       m_mapView->set_view(texture, player_pixel_coords, m_mapZoomLevel);
-      m_mapView->render_map(texture, frame);
+      m_mapView->renderMap(texture, frame);
     }
   }
 

@@ -53,7 +53,7 @@ public:
   Systems::Manager& systems();
 
 protected:
-  void render_map(sf::RenderTexture& texture, int frame);
+  void renderMap(sf::RenderTexture& texture, int frame);
   bool handle_key_press(UIEvents::EventKeyPressed const& key);
   bool handle_mouse_wheel(UIEvents::EventMouseWheelMoved const& wheel);
   sf::IntRect calcMessageLogDims();

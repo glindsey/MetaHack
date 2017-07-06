@@ -19,12 +19,12 @@ void MapNullView::updateEntities(EntityId viewer, Systems::Lighting& lighting, i
 {
 }
 
-bool MapNullView::render_map(sf::RenderTexture& texture, int frame)
+bool MapNullView::renderMap(sf::RenderTexture& texture, int frame)
 {
   return true;
 }
 
-void MapNullView::draw_highlight(sf::RenderTarget& target,
+void MapNullView::drawHighlight(sf::RenderTarget& target,
                                  RealVec2 location,
                                  Color fgColor,
                                  Color bgColor,

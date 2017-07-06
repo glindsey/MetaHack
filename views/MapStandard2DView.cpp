@@ -76,7 +76,7 @@ void MapStandard2DView::updateEntities(EntityId viewer,
   }
 }
 
-bool MapStandard2DView::render_map(sf::RenderTexture& texture, int frame)
+bool MapStandard2DView::renderMap(sf::RenderTexture& texture, int frame)
 {
   the_shader.setParameter("texture", sf::Shader::CurrentTexture);
 
@@ -96,7 +96,7 @@ bool MapStandard2DView::render_map(sf::RenderTexture& texture, int frame)
   return true;
 }
 
-void MapStandard2DView::draw_highlight(sf::RenderTarget& target,
+void MapStandard2DView::drawHighlight(sf::RenderTarget& target,
                                        RealVec2 location,
                                        Color fgColor,
                                        Color bgColor,
