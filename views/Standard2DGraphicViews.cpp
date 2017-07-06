@@ -19,7 +19,7 @@ namespace fs = boost::filesystem;
 Standard2DGraphicViews::Standard2DGraphicViews()
 {
   auto& config = S<IConfigSettings>();
-  auto tileSize = config.get("map-graphics-tile-size");
+  auto tileSize = config.get("graphics-tile-size");
   auto textureSize = config.get("tilesheet-texture-size");
 
   m_tileSheet.reset(NEW TileSheet(tileSize, textureSize));

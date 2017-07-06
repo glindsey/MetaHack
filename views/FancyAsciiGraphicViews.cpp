@@ -19,7 +19,7 @@ namespace fs = boost::filesystem;
 FancyAsciiGraphicViews::FancyAsciiGraphicViews()
 {
   auto& config = S<IConfigSettings>();
-  auto tileSize = config.get("map-ascii-tile-size");
+  auto tileSize = config.get("ascii-tile-size");
   auto textureSize = config.get("tilesheet-texture-size");
   auto textureFilename = config.get("ascii-tiles-filename").get<std::string>();
 

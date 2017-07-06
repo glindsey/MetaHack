@@ -32,8 +32,8 @@ FallbackConfigSettings::FallbackConfigSettings()
   set("inventory-area-width", 300);
   set("messagelog-area-height", 200);
   set("status-area-height", 90);
-  set("map-ascii-tile-size", UintVec2(12, 12));
-  set("map-graphics-tile-size", UintVec2(32, 32));
+  set("ascii-tile-size", UintVec2(12, 12));
+  set("graphics-tile-size", UintVec2(32, 32));
   set("map-tile-size", UintVec2(24, 24));
   set("tilesheet-texture-size", UintVec2(1024, 1024));
   set("ascii-tiles-filename", "Unknown_curses_12x12.png");

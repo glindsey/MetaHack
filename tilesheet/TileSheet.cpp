@@ -115,10 +115,12 @@ void TileSheet::addQuad(sf::VertexArray& vertices,
   vertices.append(new_vertex);
 }
 
+/// @todo Implement use of colorOverall.
 void TileSheet::addGradientQuadTo(sf::VertexArray& vertices,
                                   UintVec2 tile_coords,
                                   RealVec2 coordNW, RealVec2 coordNE,
                                   RealVec2 coordSW, RealVec2 coordSE,
+                                  Color colorOverall,
                                   Color colorNW, Color colorN, Color colorNE,
                                   Color colorW, Color colorC, Color colorE,
                                   Color colorSW, Color colorS, Color colorSE)

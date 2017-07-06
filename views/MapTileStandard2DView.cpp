@@ -223,6 +223,7 @@ void MapTileStandard2DView::addHorizontalSurfaceVerticesTo(sf::VertexArray& vert
     m_views.getTileSheet().addGradientQuadTo(vertices, floorTileCoords,
                                              vNW, vNE,
                                              vSW, vSE,
+                                             Color::White,
                                              lightNW, lightN, lightNE,
                                              lightW, light, lightE,
                                              lightSW, lightS, lightSE);
@@ -234,6 +235,7 @@ void MapTileStandard2DView::addHorizontalSurfaceVerticesTo(sf::VertexArray& vert
     m_views.getTileSheet().addGradientQuadTo(vertices, spaceTileCoords,
                                              vNW, vNE,
                                              vSW, vSE,
+                                             Color::White,
                                              lightNW, lightN, lightNE,
                                              lightW, light, lightE,
                                              lightSW, lightS, lightSE);
@@ -507,6 +509,7 @@ void MapTileStandard2DView::addVerticalSurfaceVerticesTo(sf::VertexArray& vertic
     m_views.getTileSheet().addGradientQuadTo(vertices, tileSheetCoords,
                                              vTileNW, vTileNE,
                                              vSW, vSE,
+                                             Color::White,
                                              wallNColorW, wallNColorC, wallNColorE,
                                              wallNColorW, wallNColorC, wallNColorE,
                                              wallNColorW, wallNColorC, wallNColorE);
@@ -538,6 +541,7 @@ void MapTileStandard2DView::addVerticalSurfaceVerticesTo(sf::VertexArray& vertic
     m_views.getTileSheet().addGradientQuadTo(vertices, tileSheetCoords,
                                              vNW, vTileNE,
                                              vSW, vTileSE,
+                                             Color::White,
                                              wallEColorN, wallEColorN, wallEColorN,
                                              wallEColorC, wallEColorC, wallEColorC,
                                              wallEColorS, wallEColorS, wallEColorS);
@@ -569,6 +573,7 @@ void MapTileStandard2DView::addVerticalSurfaceVerticesTo(sf::VertexArray& vertic
     m_views.getTileSheet().addGradientQuadTo(vertices, tileSheetCoords,
                                              vNW, vNE,
                                              vTileSW, vTileSE,
+                                             Color::White,
                                              wallSColorW, wallSColorC, wallSColorE,
                                              wallSColorW, wallSColorC, wallSColorE,
                                              wallSColorW, wallSColorC, wallSColorE);
@@ -600,6 +605,7 @@ void MapTileStandard2DView::addVerticalSurfaceVerticesTo(sf::VertexArray& vertic
     m_views.getTileSheet().addGradientQuadTo(vertices, tileSheetCoords,
                                              vTileNW, vNE,
                                              vTileSW, vSE,
+                                             Color::White,
                                              wallWColorN, wallWColorN, wallWColorN,
                                              wallWColorC, wallWColorC, wallWColorC,
                                              wallWColorS, wallWColorS, wallWColorS);

@@ -1,7 +1,9 @@
-#ifndef TILESHEET_H
-#define TILESHEET_H
+#pragma once
 
+#include <boost/dynamic_bitset.hpp>
 
+#include "types/Color.h"
+#include "types/Vec2.h"
 
 // Forward declarations
 class Color;
@@ -31,41 +33,42 @@ public:
   /// by the four coordinate pairs passed in.  This allows for pseudo-3D
   /// walls to be drawn.
   /// @param vertices Vertex array to add to.
-  /// @param tile_coords Coordinates of the tile to render.
-  /// @param bg_color Color to blend with (for lighting).
-  /// @param ul_coord Upper-left coordinates.
-  /// @param ur_coord Upper-right coordinates.
-  /// @param ll_coord Lower-left coordinates.
-  /// @param lr_coord Lower-right coordinates.
+  /// @param tileCoords Coordinates of the tile to render.
+  /// @param bgColor Color to blend with (for lighting).
+  /// @param ulCoord Upper-left coordinates.
+  /// @param urCoord Upper-right coordinates.
+  /// @param llCoord Lower-left coordinates.
+  /// @param lrCoord Lower-right coordinates.
   void addQuad(sf::VertexArray& vertices,
-                UintVec2 tile_coords, Color bg_color,
-                RealVec2 ul_coord, RealVec2 ur_coord,
-                RealVec2 ll_coord, RealVec2 lr_coord);
+                UintVec2 tileCoords, Color bgColor,
+                RealVec2 ulCoord, RealVec2 urCoord,
+                RealVec2 llCoord, RealVec2 lrCoord);
 
   /// Add a quad with colors specified in a 3x3 grid.
   void addGradientQuadTo(sf::VertexArray& vertices,
-                         UintVec2 tile_coords,
+                         UintVec2 tileCoords,
                          RealVec2 coordNW, RealVec2 coordNE,
                          RealVec2 coordSW, RealVec2 coordSE,
+                         Color colorOverall,
                          Color colorNW, Color colorN, Color colorNE,
                          Color colorW, Color colorC, Color colorE,
                          Color colorSW, Color colorS, Color colorSE);
 
   /// Add outline vertices to the requested vertex array.
   /// This method draws a hollow quadrilateral in the color specified by
-  /// bg_color.
+  /// bgColor.
   /// @param vertices Vertex array to add to.
-  /// @param bg_color Color to blend with (for lighting).
-  /// @param ul_coord Upper-left coordinates.
-  /// @param ur_coord Upper-right coordinates.
-  /// @param lr_coord Lower-right coordinates.
-  /// @param ll_coord Lower-left coordinates.
+  /// @param bgColor Color to blend with (for lighting).
+  /// @param ulCoord Upper-left coordinates.
+  /// @param urCoord Upper-right coordinates.
+  /// @param lrCoord Lower-right coordinates.
+  /// @param llCoord Lower-left coordinates.
   void addOutlineVertices(sf::VertexArray& vertices,
-                            Color bg_color,
-                            RealVec2 ul_coord,
-                            RealVec2 ur_coord,
-                            RealVec2 lr_coord,
-                            RealVec2 ll_coord);
+                            Color bgColor,
+                            RealVec2 ulCoord,
+                            RealVec2 urCoord,
+                            RealVec2 lrCoord,
+                            RealVec2 llCoord);
 
 protected:
   /// Return bitset index based on coordinates.
@@ -93,5 +96,3 @@ private:
   boost::dynamic_bitset<size_t> m_used; // size_t gets rid of 64-bit compile warning
 
 };
-
-#endif // TILESHEET_H
