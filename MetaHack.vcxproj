@@ -396,6 +396,7 @@
     <ClInclude Include="types\BodyPart.h" />
     <ClInclude Include="types\Clamped.h" />
     <ClInclude Include="types\Color.h" />
+    <ClInclude Include="types\DirGrid.h" />
     <ClInclude Include="types\EntitySpecs.h" />
     <ClInclude Include="types\ModifiableBool.h" />
     <ClInclude Include="types\ModifiableInt.h" />

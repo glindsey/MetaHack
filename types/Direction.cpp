@@ -5,6 +5,7 @@
 // === STATIC INSTANCES =======================================================
 Direction const Direction::None;
 Direction const Direction::Self{ 0, 0 };
+Direction const Direction::Center{ 0, 0 };
 Direction const Direction::North{ 0, -1 };
 Direction const Direction::Northeast{ 1, -1 };
 Direction const Direction::East{ 1, 0 };
@@ -15,6 +16,60 @@ Direction const Direction::West{ -1, 0 };
 Direction const Direction::Northwest{ -1, -1 };
 Direction const Direction::Up{ 0, 0, -1 };
 Direction const Direction::Down{ 0, 0, 1 };
+
+/// Map of Direction to DirectionIndex.
+std::map<Direction, DirectionIndex> const Direction::m_dirToIndex
+{
+  { Direction::None,      DirectionIndex::None      },
+  { Direction::Self,      DirectionIndex::Self      },
+  { Direction::Center,    DirectionIndex::Center    },
+  { Direction::North,     DirectionIndex::North     },
+  { Direction::Northeast, DirectionIndex::Northeast },
+  { Direction::East,      DirectionIndex::East      },
+  { Direction::Southeast, DirectionIndex::Southeast },
+  { Direction::South,     DirectionIndex::South     },
+  { Direction::Southwest, DirectionIndex::Southwest },
+  { Direction::West,      DirectionIndex::West      },
+  { Direction::Northwest, DirectionIndex::Northwest },
+  { Direction::Up,        DirectionIndex::Up        },
+  { Direction::Down,      DirectionIndex::Down      }
+};
+
+/// Map of DirectionIndex to Direction.
+std::map<DirectionIndex, Direction> const Direction::m_indexToDir
+{
+  { DirectionIndex::None,      Direction::None      },
+  { DirectionIndex::Self,      Direction::Self      },
+  { DirectionIndex::Center,    Direction::Center    },
+  { DirectionIndex::North,     Direction::North     },
+  { DirectionIndex::Northeast, Direction::Northeast },
+  { DirectionIndex::East,      Direction::East      },
+  { DirectionIndex::Southeast, Direction::Southeast },
+  { DirectionIndex::South,     Direction::South     },
+  { DirectionIndex::Southwest, Direction::Southwest },
+  { DirectionIndex::West,      Direction::West      },
+  { DirectionIndex::Northwest, Direction::Northwest },
+  { DirectionIndex::Up,        Direction::Up        },
+  { DirectionIndex::Down,      Direction::Down      }
+};
+
+/// A vector of the four cardinal directions, starting with north and proceeding clockwise.
+std::vector<Direction> const Direction::CardinalDirections
+{
+  Direction::North, Direction::East, Direction::South, Direction::West
+};
+
+/// A vector of the four diagonal directions, starting with northwest and proceeding clockwise.
+std::vector<Direction> const Direction::DiagonalDirections
+{
+  Direction::Northwest, Direction::Northeast, Direction::Southeast, Direction::Southwest
+};
+
+/// A vector of the eight compass directions, starting with northwest and proceeding clockwise.
+std::vector<Direction> const Direction::CompassDirections
+{
+  Direction::Northwest, Direction::North, Direction::East, Direction::Southeast, Direction::South, Direction::Southwest, Direction::West
+};
 
 Direction::Direction()
   :
@@ -53,10 +108,19 @@ Direction::Direction(IntVec3 vec)
   Direction(vec.x, vec.y, vec.z)
 {}
 
+Direction::Direction(DirectionIndex index)
+{
+  auto& dir = (m_indexToDir.count(index) != 0) ? m_indexToDir.at(index) : m_indexToDir.at(DirectionIndex::None);
+  this->m_exists = dir.m_exists;
+  this->m_x = dir.m_x;
+  this->m_y = dir.m_y;
+  this->m_z = dir.m_z;
+}
+
 // Equality operators
 bool Direction::operator==(Direction const& other) const
 {
-  return 
+  return
     (this->m_exists == other.m_exists) &&
     (this->m_x == other.m_x) &&
     (this->m_y == other.m_y) &&
@@ -116,22 +180,14 @@ Direction::operator Vec3f() const
 }
 
 // Other methods
-unsigned int Direction::get_map_index() const
+Direction::operator DirectionIndex() const
 {
-  if (*this == Direction::None) return 1;
-  if (*this == Direction::North) return 2;
-  if (*this == Direction::Northeast) return 3;
-  if (*this == Direction::East) return 4;
-  if (*this == Direction::Southeast) return 5;
-  if (*this == Direction::South) return 6;
-  if (*this == Direction::Southwest) return 7;
-  if (*this == Direction::West) return 8;
-  if (*this == Direction::Northwest) return 9;
-  if (*this == Direction::Up) return 10;
-  if (*this == Direction::Down) return 11;
-  if (*this == Direction::Self) return 12;
+  for (auto& pair : m_dirToIndex)
+  {
+    if (pair.first == *this) return pair.second;
+  }
 
-  return 0;
+  return DirectionIndex::None;
 }
 
 Direction Direction::get_approx(int xSrc, int ySrc, int xDst, int yDst)

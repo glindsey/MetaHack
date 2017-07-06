@@ -1,8 +1,25 @@
 #pragma once
 
-
-
 #include "utilities/MathUtils.h"
+
+/// Enum used for storing directional indices, i.e. when a Direction needs
+/// to be used as a map key.
+enum class DirectionIndex
+{
+  None, 
+  Self, 
+  Center, 
+  North, 
+  Northeast, 
+  East, 
+  Southeast, 
+  South, 
+  Southwest, 
+  West, 
+  Northwest, 
+  Up, 
+  Down
+};
 
 /// Directional vector in 3-D space.
 /// A std::vector or IntVec3 could be used here, but I'd like to keep
@@ -17,6 +34,7 @@ public:
   Direction(int x, int y);
   Direction(IntVec2 vec);
   Direction(IntVec3 vec);
+  Direction(DirectionIndex dir);
 
   // Explicit defaults not specifically needed, but here for completeness
   Direction(Direction const&) = default;
@@ -46,7 +64,12 @@ public:
   explicit operator Vec3f() const;
 
   // Other methods
-  unsigned int get_map_index() const;
+  operator DirectionIndex() const;
+
+  unsigned int get_map_index() const 
+  {
+    return static_cast<unsigned int>(DirectionIndex(*this));
+  }
 
   // Static methods
   static Direction get_approx(int xSrc, int ySrc, int xDst, int yDst);
@@ -55,6 +78,7 @@ public:
   // Static directions used for common directions
   static Direction const None;
   static Direction const Self;
+  static Direction const Center;    ///< Alias for Direction::Self
   static Direction const North;
   static Direction const Northeast;
   static Direction const East;
@@ -66,7 +90,22 @@ public:
   static Direction const Up;
   static Direction const Down;
 
+  /// A vector of the four cardinal directions, starting with north and proceeding clockwise.
+  static std::vector<Direction> const CardinalDirections;
+
+  /// A vector of the four diagonal directions, starting with northwest and proceeding clockwise.
+  static std::vector<Direction> const DiagonalDirections;
+
+  /// A vector of the eight compass directions, starting with northwest and proceeding clockwise.
+  static std::vector<Direction> const CompassDirections;
+
 private:
+  /// Map of Direction to DirectionIndex.
+  static std::map<Direction, DirectionIndex> const m_dirToIndex;
+
+  /// Map of DirectionIndex to Direction.
+  static std::map<DirectionIndex, Direction> const m_indexToDir;
+
   bool m_exists;
   int m_x;
   int m_y;
