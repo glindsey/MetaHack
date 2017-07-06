@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include "views/EntityStandard2DView.h"
+#include "views/EntityFancyAsciiView.h"
 
 #include "components/ComponentManager.h"
 #include "game/GameState.h"
@@ -13,27 +13,27 @@
 #include "tilesheet/TileSheet.h"
 #include "types/ShaderEffect.h"
 #include "utilities/RNGUtils.h"
-#include "views/Standard2DGraphicViews.h"
+#include "views/FancyAsciiGraphicViews.h"
 
-EntityStandard2DView::EntityStandard2DView(EntityId entity,
-                                           Standard2DGraphicViews& views)
+EntityFancyAsciiView::EntityFancyAsciiView(EntityId entity,
+                                           FancyAsciiGraphicViews& views)
   :
   EntityView(entity),
   m_views{ views }
 {
 }
 
-bool EntityStandard2DView::onEvent(Event const& event)
+bool EntityFancyAsciiView::onEvent(Event const& event)
 {
   /// @todo WRITE ME
   return false;
 }
 
-EntityStandard2DView::~EntityStandard2DView()
+EntityFancyAsciiView::~EntityFancyAsciiView()
 {
 }
 
-void EntityStandard2DView::draw(sf::RenderTarget& target,
+void EntityFancyAsciiView::draw(sf::RenderTarget& target,
                                 Systems::Lighting* lighting,
                                 bool use_smoothing,
                                 int frame)
@@ -101,12 +101,12 @@ void EntityStandard2DView::draw(sf::RenderTarget& target,
   }
 }
 
-std::string EntityStandard2DView::getViewName()
+std::string EntityFancyAsciiView::getViewName()
 {
-  return "standard2D";
+  return "fancyASCII";
 }
 
-UintVec2 EntityStandard2DView::getTileSheetCoords(int frame) const
+UintVec2 EntityFancyAsciiView::getTileSheetCoords(int frame) const
 {
   auto& entity = getEntity();
   auto& categoryData = S<IGameRules>().categoryData(COMPONENTS.category[entity]);

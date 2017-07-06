@@ -34,7 +34,8 @@
 #include "utilities/GetLetterKey.h"
 #include "utilities/Shortcuts.h"
 #include "utilities/StringTransforms.h"
-#include "views/MapStandard2DView.h"
+#include "views/MapView.h"
+#include "views/FancyAsciiGraphicViews.h"
 #include "views/Standard2DGraphicViews.h"
 
 /// Actions that can be performed.

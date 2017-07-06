@@ -403,6 +403,7 @@
     <ClInclude Include="types\MouseButtonInfo.h" />
     <ClInclude Include="utilities\CommonFunctions.h" />
     <ClInclude Include="types\common.h" />
+    <ClInclude Include="views\EntityFancyAsciiView.h" />
     <ClInclude Include="views\EntityNullView.h" />
     <ClInclude Include="services\FallbackConfigSettings.h" />
     <ClInclude Include="types\Direction.h" />
@@ -414,8 +415,11 @@
     <ClInclude Include="inventory\InventorySelection.h" />
     <ClInclude Include="services\IStrings.h" />
     <ClInclude Include="types\MapMemoryChunk.h" />
+    <ClInclude Include="views\FancyAsciiGraphicViews.h" />
+    <ClInclude Include="views\MapFancyAsciiView.h" />
     <ClInclude Include="views\MapNullView.h" />
     <ClInclude Include="views\MapStandard2DView.h" />
+    <ClInclude Include="views\MapTileFancyAsciiView.h" />
     <ClInclude Include="views\MapTileNullView.h" />
     <ClInclude Include="views\MapTileStandard2DView.h" />
     <ClInclude Include="views\MapTileView.h" />
@@ -658,6 +662,7 @@
     <ClCompile Include="game\AppStateGameMode.cpp" />
     <ClCompile Include="game\AppStateMainMenu.cpp" />
     <ClCompile Include="game\AppStateSplashScreen.cpp" />
+    <ClCompile Include="views\EntityFancyAsciiView.cpp" />
     <ClCompile Include="views\EntityNullView.cpp" />
     <ClCompile Include="services\FallbackConfigSettings.cpp" />
     <ClCompile Include="services\IGameRules.cpp" />
@@ -728,9 +733,12 @@
     <ClCompile Include="map\MapGenerator.cpp" />
     <ClCompile Include="map\MapLRoom.cpp" />
     <ClCompile Include="map\MapRoom.cpp" />
+    <ClCompile Include="views\FancyAsciiGraphicViews.cpp" />
+    <ClCompile Include="views\MapFancyAsciiView.cpp" />
     <ClCompile Include="views\MapNullView.cpp" />
     <ClCompile Include="views\MapStandard2DView.cpp" />
     <ClCompile Include="maptile\MapTile.cpp" />
+    <ClCompile Include="views\MapTileFancyAsciiView.cpp" />
     <ClCompile Include="views\MapTileNullView.cpp" />
     <ClCompile Include="views\MapTileStandard2DView.cpp" />
     <ClCompile Include="views\MapView.cpp" />

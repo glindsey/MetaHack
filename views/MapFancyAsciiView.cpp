@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include "views/MapStandard2DView.h"
+#include "views/MapFancyAsciiView.h"
 
 #include "game/App.h"
 #include "services/Service.h"
@@ -8,14 +8,14 @@
 #include "tilesheet/TileSheet.h"
 #include "types/ShaderEffect.h"
 #include "utilities/New.h"
-#include "views/MapTileStandard2DView.h"
-#include "views/Standard2DGraphicViews.h"
+#include "views/MapTileFancyAsciiView.h"
+#include "views/FancyAsciiGraphicViews.h"
 
-MapStandard2DView::MapStandard2DView(metagui::Desktop& desktop,
+MapFancyAsciiView::MapFancyAsciiView(metagui::Desktop& desktop,
                                      std::string name,
                                      Map& map, 
                                      UintVec2 size, 
-                                     Standard2DGraphicViews& views)
+                                     FancyAsciiGraphicViews& views)
   :
   MapView(desktop, name, map, size),
   m_views(views)
@@ -23,15 +23,15 @@ MapStandard2DView::MapStandard2DView(metagui::Desktop& desktop,
   resetCachedRenderData();
 
   // Create a grid of tile views, each tied to a map tile.
-  m_map_tile_views.reset(new Grid2D<MapTileStandard2DView>(map.getSize(), 
-                                                           [&](IntVec2 coords) -> MapTileStandard2DView*
+  m_map_tile_views.reset(new Grid2D<MapTileFancyAsciiView>(map.getSize(), 
+                                                           [&](IntVec2 coords) -> MapTileFancyAsciiView*
   {
-    return NEW MapTileStandard2DView(map.getTile(coords), views);
+    return NEW MapTileFancyAsciiView(map.getTile(coords), views);
   }));
 
 }
 
-void MapStandard2DView::updateTiles(EntityId viewer, Systems::Lighting& lighting)
+void MapFancyAsciiView::updateTiles(EntityId viewer, Systems::Lighting& lighting)
 {
   auto& map = getMap();
   auto& map_size = map.getSize();
@@ -56,7 +56,7 @@ void MapStandard2DView::updateTiles(EntityId viewer, Systems::Lighting& lighting
   }
 }
 
-void MapStandard2DView::updateEntities(EntityId viewer, 
+void MapFancyAsciiView::updateEntities(EntityId viewer,
                                        Systems::Lighting& lighting,
                                        int frame)
 {
@@ -77,7 +77,7 @@ void MapStandard2DView::updateEntities(EntityId viewer,
   }
 }
 
-bool MapStandard2DView::renderMap(sf::RenderTexture& texture, int frame)
+bool MapFancyAsciiView::renderMap(sf::RenderTexture& texture, int frame)
 {
   the_shader.setParameter("texture", sf::Shader::CurrentTexture);
 
@@ -97,7 +97,7 @@ bool MapStandard2DView::renderMap(sf::RenderTexture& texture, int frame)
   return true;
 }
 
-void MapStandard2DView::drawHighlight(sf::RenderTarget& target,
+void MapFancyAsciiView::drawHighlight(sf::RenderTarget& target,
                                        RealVec2 location,
                                        Color fgColor,
                                        Color bgColor,
@@ -127,18 +127,18 @@ void MapStandard2DView::drawHighlight(sf::RenderTarget& target,
   target.draw(box_shape);
 }
 
-std::string MapStandard2DView::getViewName()
+std::string MapFancyAsciiView::getViewName()
 {
-  return "standard2D";
+  return "fancyASCII";
 }
 
 
-void MapStandard2DView::drawPreChildren_(sf::RenderTexture & texture, int frame)
+void MapFancyAsciiView::drawPreChildren_(sf::RenderTexture & texture, int frame)
 {
   /// @todo WRITE ME
 }
 
-void MapStandard2DView::resetCachedRenderData()
+void MapFancyAsciiView::resetCachedRenderData()
 {
   auto& map = getMap();
   auto map_size = map.getSize();
