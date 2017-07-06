@@ -20,7 +20,7 @@ MapView::MapView(metagui::Desktop& desktop,
 MapView::~MapView()
 {}
 
-void MapView::set_view(sf::RenderTarget & target, RealVec2 center, float zoom_level)
+void MapView::setView(sf::RenderTarget & target, RealVec2 center, float zoom_level)
 {
   auto& config = S<IConfigSettings>();
   UintVec2 screen_size = target.getSize();

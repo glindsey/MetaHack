@@ -103,8 +103,8 @@ AppStateGameMode::AppStateGameMode(StateMachine& state_machine,
 
   // Create the standard map views provider.
   /// @todo Make this configurable.
-  //Service<IGraphicViews>::provide(NEW FancyAsciiGraphicViews());
-  Service<IGraphicViews>::provide(NEW Standard2DGraphicViews());
+  Service<IGraphicViews>::provide(NEW FancyAsciiGraphicViews());
+  //Service<IGraphicViews>::provide(NEW Standard2DGraphicViews());
 }
 
 AppStateGameMode::~AppStateGameMode()
@@ -287,7 +287,7 @@ void AppStateGameMode::renderMap(sf::RenderTexture& texture, int frame)
 
     if (m_currentInputState == GameInputState::CursorLook)
     {
-      m_mapView->set_view(texture, cursor_pixel_coords, m_mapZoomLevel);
+      m_mapView->setView(texture, cursor_pixel_coords, m_mapZoomLevel);
       m_mapView->renderMap(texture, frame);
 
       Color border_color = config.get("cursor-border-color");
@@ -300,7 +300,7 @@ void AppStateGameMode::renderMap(sf::RenderTexture& texture, int frame)
     }
     else
     {
-      m_mapView->set_view(texture, player_pixel_coords, m_mapZoomLevel);
+      m_mapView->setView(texture, player_pixel_coords, m_mapZoomLevel);
       m_mapView->renderMap(texture, frame);
     }
   }

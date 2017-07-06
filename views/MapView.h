@@ -33,7 +33,7 @@ public:
   /// @todo Not sure this actually belongs here. It seems more specific to
   ///       AppStateGameMode itself; or possibly the interface is fine but
   ///       the implementation should go into MapStandard2DView.
-  void set_view(sf::RenderTarget& target,
+  void setView(sf::RenderTarget& target,
                 RealVec2 center,
                 float zoom_level);
 

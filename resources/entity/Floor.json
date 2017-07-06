@@ -8,7 +8,8 @@
 
   "components": {
     "appearance": {
-      "opacity": [ "color", 0, 0, 0 ]
+      "ascii": 176,
+      "opacity": [ "color", 255, 255, 255 ]
     },
     "inventory": {
       "max-size": -1

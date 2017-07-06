@@ -39,7 +39,6 @@ public:
 protected:
   TileSheet& getTileSheet();
   bool hasTilesFor(std::string category);
-  bool needToLoadFilesFor(std::string category);
   UintVec2 const& getTileSheetCoords(std::string category);
 
 private:
