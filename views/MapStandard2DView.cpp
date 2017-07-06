@@ -1,16 +1,14 @@
 #include "stdafx.h"
 
 #include "game/App.h"
-#include "map/MapStandard2DView.h"
-#include "maptile/MapTileStandard2DView.h"
 #include "services/Service.h"
 #include "services/IConfigSettings.h"
-#include "services/Standard2DGraphicViews.h"
 #include "tilesheet/TileSheet.h"
 #include "types/ShaderEffect.h"
 #include "utilities/New.h"
-
-/// @todo Lighting system should not be a constructor argument, but should be passed into methods that need it instead.
+#include "views/MapStandard2DView.h"
+#include "views/MapTileStandard2DView.h"
+#include "views/Standard2DGraphicViews.h"
 
 MapStandard2DView::MapStandard2DView(metagui::Desktop& desktop,
                                      std::string name,

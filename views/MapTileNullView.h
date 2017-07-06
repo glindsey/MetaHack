@@ -1,10 +1,8 @@
 #pragma once
 
-
-
 #include <SFML/Graphics.hpp>
 
-#include "maptile/MapTileView.h"
+#include "views/MapTileView.h"
 
 // Forward declarations
 

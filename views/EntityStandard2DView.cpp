@@ -1,18 +1,18 @@
 #include "stdafx.h"
 
 #include "components/ComponentManager.h"
-#include "entity/EntityStandard2DView.h"
 #include "game/GameState.h"
 #include "lua/LuaObject.h"
 #include "map/Map.h"
 #include "services/Service.h"
 #include "services/IConfigSettings.h"
 #include "services/IGameRules.h"
-#include "services/Standard2DGraphicViews.h"
 #include "systems/SystemLighting.h"
 #include "tilesheet/TileSheet.h"
 #include "types/ShaderEffect.h"
 #include "utilities/RNGUtils.h"
+#include "views/EntityStandard2DView.h"
+#include "views/Standard2DGraphicViews.h"
 
 EntityStandard2DView::EntityStandard2DView(EntityId entity,
                                            Standard2DGraphicViews& views)

@@ -1,11 +1,10 @@
 #include "stdafx.h"
 
-#include "map/MapView.h"
-
 #include "game/App.h"
 #include "game/GameState.h"
 #include "services/IConfigSettings.h"
 #include "services/Service.h"
+#include "views/MapView.h"
 
 MapView::MapView(metagui::Desktop& desktop,
                  std::string name, 

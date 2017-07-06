@@ -5,7 +5,6 @@
 #include "components/ComponentInventory.h"
 #include "components/ComponentManager.h"
 #include "components/ComponentPhysical.h"
-#include "entity/EntityView.h"
 #include "game/App.h"
 #include "game/GameState.h"
 #include "inventory/InventorySelection.h"
@@ -15,6 +14,7 @@
 #include "services/IGraphicViews.h"
 #include "systems/Manager.h"
 #include "systems/SystemNarrator.h"
+#include "views/EntityView.h"
 
 #include "entity/EntityFactory.h"
 

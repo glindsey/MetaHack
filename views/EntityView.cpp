@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include "entity/EntityView.h"
+#include "views/EntityView.h"
 
 #include "game/App.h"
 #include "game/GameState.h"

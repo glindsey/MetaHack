@@ -4,10 +4,10 @@
 
 #include "services/IGraphicViews.h"
 
-#include "entity/EntityNullView.h"
-#include "map/MapNullView.h"
-#include "maptile/MapTileNullView.h"
 #include "utilities/New.h"
+#include "views/EntityNullView.h"
+#include "views/MapNullView.h"
+#include "views/MapTileNullView.h"
 
 /// Implementation of the standard 2D (pseudo-3D) graphic views service.
 class NullGraphicViews : public IGraphicViews

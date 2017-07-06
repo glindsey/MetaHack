@@ -1,8 +1,9 @@
 #include "stdafx.h"
 
-#include "map/MapNullView.h"
-#include "maptile/MapTileNullView.h"
+#include "views/MapNullView.h"
+
 #include "utilities/New.h"
+#include "views/MapTileNullView.h"
 
 MapNullView::MapNullView(metagui::Desktop& desktop, std::string name, Map& map, UintVec2 size)
   :

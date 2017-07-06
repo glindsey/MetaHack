@@ -2,7 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "entity/EntityView.h"
+#include "views/EntityView.h"
 
 /// Class representing a null view of a Entity object.
 class EntityNullView : public EntityView

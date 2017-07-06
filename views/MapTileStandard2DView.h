@@ -4,10 +4,10 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "maptile/MapTileView.h"
+#include "views/MapTileView.h"
 
-#include "entity/EntityStandard2DView.h"
 #include "tilesheet/TileSheet.h"
+#include "views/EntityStandard2DView.h"
 
 // Forward declarations
 namespace Systems

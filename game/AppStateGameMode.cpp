@@ -18,12 +18,10 @@
 #include "lua/LuaObject.h"
 #include "map/Map.h"
 #include "map/MapFactory.h"
-#include "map/MapStandard2DView.h"
 #include "maptile/MapTile.h"
 #include "services/Service.h"
 #include "services/IConfigSettings.h"
 #include "services/IGameRules.h"
-#include "services/Standard2DGraphicViews.h"
 #include "services/IStrings.h"
 #include "services/MessageLog.h"
 #include "state_machine/StateMachine.h"
@@ -36,6 +34,8 @@
 #include "utilities/GetLetterKey.h"
 #include "utilities/Shortcuts.h"
 #include "utilities/StringTransforms.h"
+#include "views/MapStandard2DView.h"
+#include "views/Standard2DGraphicViews.h"
 
 /// Actions that can be performed.
 #include "actions/ActionAttack.h"

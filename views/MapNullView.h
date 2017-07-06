@@ -2,7 +2,7 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "map/MapView.h"
+#include "views/MapView.h"
 
 /// Class representing a null view of a Map object.
 class MapNullView : public MapView

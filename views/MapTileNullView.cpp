@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include "maptile/MapTileNullView.h"
+#include "views/MapTileNullView.h"
 
 std::string MapTileNullView::getViewName()
 {

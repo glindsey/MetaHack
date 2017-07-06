@@ -1,17 +1,17 @@
 #include "stdafx.h"
 
-#include "services/Standard2DGraphicViews.h"
+#include "views/Standard2DGraphicViews.h"
 
 #include "AssertHelper.h"
-#include "entity/EntityStandard2DView.h"
-#include "maptile/MapTileStandard2DView.h"
-#include "map/MapStandard2DView.h"
 #include "services/Service.h"
 #include "services/IConfigSettings.h"
 #include "services/IGameRules.h"
 #include "tilesheet/TileSheet.h"
 #include "utilities/New.h"
 #include "utilities/StringTransforms.h"
+#include "views/EntityStandard2DView.h"
+#include "views/MapTileStandard2DView.h"
+#include "views/MapStandard2DView.h"
 
 // Namespace aliases
 namespace fs = boost::filesystem;

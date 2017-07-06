@@ -1,7 +1,5 @@
 #pragma once
 
-
-
 #include "maptile/MapTile.h"
 
 // Forward declarations

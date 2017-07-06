@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include "maptile/MapTileStandard2DView.h"
+#include "views/MapTileStandard2DView.h"
 
 #include "components/ComponentManager.h"
 #include "lua/LuaObject.h"
@@ -8,7 +8,6 @@
 #include "services/Service.h"
 #include "services/IConfigSettings.h"
 #include "services/IGameRules.h"
-#include "services/Standard2DGraphicViews.h"
 #include "systems/Manager.h"
 #include "systems/SystemLighting.h"
 #include "systems/SystemSenseSight.h"
@@ -16,6 +15,7 @@
 #include "types/Color.h"
 #include "types/ShaderEffect.h"
 #include "utilities/RNGUtils.h"
+#include "views/Standard2DGraphicViews.h"
 
 std::string MapTileStandard2DView::getViewName()
 {

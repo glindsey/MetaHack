@@ -1,7 +1,7 @@
 #include "stdafx.h"
 
 #include "utilities/New.h"
-#include "services/NullGraphicViews.h"
+#include "views/NullGraphicViews.h"
 
 IGraphicViews::~IGraphicViews()
 {}

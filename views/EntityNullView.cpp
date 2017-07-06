@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include "entity/EntityNullView.h"
+#include "views/EntityNullView.h"
 
 EntityNullView::EntityNullView(EntityId entity)
   :

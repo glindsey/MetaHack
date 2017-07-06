@@ -2,10 +2,10 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "types/Grid2D.h"
-#include "map/MapView.h"
 #include "systems/SystemLighting.h"
 #include "tilesheet/TileSheet.h"
+#include "types/Grid2D.h"
+#include "views/MapView.h"
 
 // Forward declarations
 class MapTileStandard2DView;
