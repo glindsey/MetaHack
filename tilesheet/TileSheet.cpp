@@ -5,26 +5,31 @@
 #include "types/Color.h"
 #include "utilities/MathUtils.h"
 
-TileSheet::TileSheet(unsigned int tileSize, unsigned int textureSize)
+TileSheet::TileSheet(UintVec2 tileSize, UintVec2 textureSize)
   :
   m_tileSize{ tileSize },
   m_textureSize{ textureSize }
 {
-  if (m_textureSize == 0) m_textureSize = m_texture.getMaximumSize();
+  if (m_textureSize.x == 0 && m_textureSize.y == 0)
+  {
+    auto maxSize = m_texture.getMaximumSize();
+    m_textureSize.x = maxSize;
+    m_textureSize.y = maxSize;
+  }
 
-  bool success = m_texture.create(m_textureSize, m_textureSize);
+  bool success = m_texture.create(m_textureSize.x, m_textureSize.y);
 
   Assert("TileSheet", success, "could not create TileSheet texture; now we're sad.");
   
-  uint32_t texture_dimension_in_tiles = m_textureSize / m_tileSize;
-  uint32_t used_map_size = texture_dimension_in_tiles * texture_dimension_in_tiles;
-  m_used.resize(used_map_size);
+  UintVec2 textureSizeInTiles = { m_textureSize.x / m_tileSize.x, m_textureSize.y / m_tileSize.y };
+  uint32_t usedMapSize = textureSizeInTiles.x * textureSizeInTiles.y;
+  m_used.resize(usedMapSize);
 
-  CLOG(TRACE, "TileSheet") << "Created " << m_textureSize << " x " << m_textureSize << " tilesheet texture";
+  CLOG(TRACE, "TileSheet") << "Created " << m_textureSize.x << " x " << m_textureSize.y << " tilesheet texture";
   CLOG(TRACE, "TileSheet") << "Fits "
-    << texture_dimension_in_tiles << " x " << texture_dimension_in_tiles
+    << textureSizeInTiles.x << " x " << textureSizeInTiles.y
     << " tiles of size "
-    << m_tileSize << " x " << m_tileSize;
+    << m_tileSize.x << " x " << m_tileSize.y;
 }
 
 TileSheet::~TileSheet()
@@ -42,28 +47,28 @@ UintVec2 TileSheet::loadCollection(FileName const& filename)
 
   image.createMaskFromColor(sf::Color(255, 0, 255));
 
-  UintVec2 image_size = image.getSize();
+  UintVec2 imageSize = image.getSize();
 
-  UintVec2 image_size_in_tiles =
-    UintVec2(Math::divideAndRoundUp(image_size.x, m_tileSize),
-             Math::divideAndRoundUp(image_size.y, m_tileSize));
+  UintVec2 imageSizeInTiles =
+    UintVec2(Math::divideAndRoundUp(imageSize.x, m_tileSize.x),
+             Math::divideAndRoundUp(imageSize.y, m_tileSize.y));
 
-  UintVec2 free_coords = findUnusedArea(image_size_in_tiles);
+  UintVec2 freeSpaceCoords = findUnusedArea(imageSizeInTiles);
 
-  m_texture.update(image, free_coords.x * m_tileSize, free_coords.y * m_tileSize);
+  m_texture.update(image, freeSpaceCoords.x * m_tileSize.x, freeSpaceCoords.y * m_tileSize.y);
 
-  markTilesUsed(free_coords, image_size_in_tiles);
+  markTilesUsed(freeSpaceCoords, imageSizeInTiles);
 
-  return free_coords;
+  return freeSpaceCoords;
 }
 
 sf::IntRect TileSheet::getTile(UintVec2 tile) const
 {
   sf::IntRect rect;
-  rect.left = tile.x * m_tileSize;
-  rect.top = tile.y * m_tileSize;
-  rect.width = m_tileSize;
-  rect.height = m_tileSize;
+  rect.left = tile.x * m_tileSize.x;
+  rect.top = tile.y * m_tileSize.y;
+  rect.width = m_tileSize.x;
+  rect.height = m_tileSize.y;
 
 #ifdef _DEBUG
   if ((rect.left < 0) || (rect.top < 0) ||
@@ -88,8 +93,8 @@ void TileSheet::addQuad(sf::VertexArray& vertices,
                          RealVec2 ll_coord, RealVec2 lr_coord)
 {
   sf::Vertex new_vertex;
-  float ts{ static_cast<float>(m_tileSize) };
-  RealVec2 texNW(tile_coords.x * ts, tile_coords.y * ts);
+  RealVec2 ts{ static_cast<float>(m_tileSize.x), static_cast<float>(m_tileSize.y) };
+  RealVec2 texNW(tile_coords.x * ts.x, tile_coords.y * ts.y);
 
   new_vertex.color = bg_color;
 
@@ -98,15 +103,15 @@ void TileSheet::addQuad(sf::VertexArray& vertices,
   vertices.append(new_vertex);
 
   new_vertex.position = ur_coord;
-  new_vertex.texCoords = RealVec2(texNW.x + ts, texNW.y);
+  new_vertex.texCoords = RealVec2(texNW.x + ts.x, texNW.y);
   vertices.append(new_vertex);
 
   new_vertex.position = lr_coord;
-  new_vertex.texCoords = RealVec2(texNW.x + ts, texNW.y + ts);
+  new_vertex.texCoords = RealVec2(texNW.x + ts.x, texNW.y + ts.y);
   vertices.append(new_vertex);
 
   new_vertex.position = ll_coord;
-  new_vertex.texCoords = RealVec2(texNW.x, texNW.y + ts);
+  new_vertex.texCoords = RealVec2(texNW.x, texNW.y + ts.y);
   vertices.append(new_vertex);
 }
 
@@ -118,8 +123,8 @@ void TileSheet::addGradientQuadTo(sf::VertexArray& vertices,
                                   Color colorW, Color colorC, Color colorE,
                                   Color colorSW, Color colorS, Color colorSE)
 {
-  float ts{ static_cast<float>(m_tileSize) };
-  float half_ts{ ts / 2.0f };
+  RealVec2 ts{ static_cast<float>(m_tileSize.x), static_cast<float>(m_tileSize.y) };
+  RealVec2 halfTs{ ts.x / 2.0f, ts.y / 2.0f };
 
   RealVec2 coordC((coordNW.x + coordNE.x + coordSE.x + coordSW.x) / 4, (coordNW.y + coordNE.y + coordSE.y + coordSW.y) / 4);
   RealVec2 coordN((coordNW.x + coordNE.x) / 2, (coordNW.y + coordNE.y) / 2);
@@ -127,15 +132,15 @@ void TileSheet::addGradientQuadTo(sf::VertexArray& vertices,
   RealVec2 coordS((coordSW.x + coordSE.x) / 2, (coordSW.y + coordSE.y) / 2);
   RealVec2 coordW((coordNW.x + coordSW.x) / 2, (coordNW.y + coordSW.y) / 2);
 
-  RealVec2 texNW(tile_coords.x * ts, tile_coords.y * ts);
-  RealVec2 texN(texNW.x + half_ts, texNW.y);
-  RealVec2 texNE(texNW.x + ts, texNW.y);
-  RealVec2 texE(texNW.x + ts, texNW.y + half_ts);
-  RealVec2 texSE(texNW.x + ts, texNW.y + ts);
-  RealVec2 texS(texNW.x + half_ts, texNW.y + ts);
-  RealVec2 texSW(texNW.x, texNW.y + ts);
-  RealVec2 texW(texNW.x, texNW.y + half_ts);
-  RealVec2 texC(texNW.x + half_ts, texNW.y + half_ts);
+  RealVec2 texNW(tile_coords.x * ts.x, tile_coords.y * ts.y);
+  RealVec2 texN(texNW.x + halfTs.x, texNW.y);
+  RealVec2 texNE(texNW.x + ts.x, texNW.y);
+  RealVec2 texE(texNW.x + ts.x, texNW.y + halfTs.y);
+  RealVec2 texSE(texNW.x + ts.x, texNW.y + ts.y);
+  RealVec2 texS(texNW.x + halfTs.x, texNW.y + ts.y);
+  RealVec2 texSW(texNW.x, texNW.y + ts.y);
+  RealVec2 texW(texNW.x, texNW.y + halfTs.y);
+  RealVec2 texC(texNW.x + halfTs.x, texNW.y + halfTs.y);
 
   // Upper left
   vertices.append(sf::Vertex(coordNW, colorNW, texNW));
@@ -196,16 +201,16 @@ void TileSheet::addOutlineVertices(sf::VertexArray& vertices,
 
 unsigned int TileSheet::getIndex(UintVec2 coords)
 {
-  uint32_t textureSizeInTiles = m_textureSize / m_tileSize;
-  return (coords.y * textureSizeInTiles) + coords.x;
+  UintVec2 textureSizeInTiles = { m_textureSize.x / m_tileSize.x, m_textureSize.y / m_tileSize.y };
+  return (coords.y * textureSizeInTiles.x) + coords.x;
 }
 
 bool TileSheet::areaIsUnused(UintVec2 start, UintVec2 size)
 {
-  uint32_t textureSizeInTiles = m_textureSize / m_tileSize;
+  UintVec2 textureSizeInTiles = { m_textureSize.x / m_tileSize.x, m_textureSize.y / m_tileSize.y };
 
-  if (((start.x + size.x) > textureSizeInTiles) ||
-    ((start.y + size.y) > textureSizeInTiles))
+  if (((start.x + size.x) > textureSizeInTiles.x) ||
+    ((start.y + size.y) > textureSizeInTiles.y))
   {
     return false;
   }
@@ -227,11 +232,11 @@ UintVec2 TileSheet::findUnusedArea(UintVec2 size)
 {
   UintVec2 start(0, 0);
 
-  uint32_t textureSizeInTiles = m_textureSize / m_tileSize;
+  UintVec2 textureSizeInTiles = { m_textureSize.x / m_tileSize.x, m_textureSize.y / m_tileSize.y };
 
-  while (start.y < textureSizeInTiles)
+  while (start.y < textureSizeInTiles.y)
   {
-    while (start.x < textureSizeInTiles)
+    while (start.x < textureSizeInTiles.x)
     {
       if (areaIsUnused(start, size))
       {

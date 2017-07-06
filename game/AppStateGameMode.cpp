@@ -103,6 +103,7 @@ AppStateGameMode::AppStateGameMode(StateMachine& state_machine,
 
   // Create the standard map views provider.
   /// @todo Make this configurable.
+  //Service<IGraphicViews>::provide(NEW FancyAsciiGraphicViews());
   Service<IGraphicViews>::provide(NEW Standard2DGraphicViews());
 }
 

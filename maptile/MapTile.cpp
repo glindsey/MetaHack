@@ -150,10 +150,10 @@ bool MapTile::isTotallyTransparent() const
 RealVec2 MapTile::getPixelCoords(IntVec2 tile)
 {
   auto& config = S<IConfigSettings>();
-  float map_tile_size = config.get("map-tile-size");
+  RealVec2 mapTileSize = config.get("map-tile-size");
 
-  return RealVec2(static_cast<float>(tile.x) * map_tile_size,
-                  static_cast<float>(tile.y) * map_tile_size);
+  return RealVec2(static_cast<float>(tile.x) * mapTileSize.x,
+                  static_cast<float>(tile.y) * mapTileSize.y);
 }
 
 // === PROTECTED METHODS ======================================================

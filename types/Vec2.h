@@ -58,6 +58,20 @@ public:
     return lhs;
   }
 
+  friend Vec2 operator*(Vec2 lhs, T rhs)
+  {
+    lhs.x *= rhs;
+    lhs.y *= rhs;
+    return *this;
+  }
+
+  friend Vec2 operator/(Vec2 lhs, T rhs)
+  {
+    lhs.x /= rhs;
+    lhs.y /= rhs;
+    return *this;
+  }
+
   friend bool operator==(Vec2 const& lhs, Vec2 const& rhs)
   {
     return ((lhs.x == rhs.x) && (lhs.y == rhs.y));
@@ -75,16 +89,38 @@ public:
   }
 
   template<typename T>
-  friend void to_json(json& j, Vec2<T> const& obj);
+  friend void to_json(json& j, Vec2<T> const& obj); // explicit instantiations are in the CPP file
 
   friend void from_json(json const& j, Vec2& obj)
   {
-    Assert("Types",
-           j.is_array() && (j[0] == "realvec2" || j[0] == "uintvec2" || j[0] == "intvec2"),
-           "Attempted to create a Vec2<> out of an invalid JSON object");
+    if (j.is_number())
+    {
+      T number = j;
+      LOG(WARNING) << "Converting number " << number << 
+        " into a Vec2<>(" << number << ", " << number << 
+        "); this will work but may not be what you were looking for!";
+      obj.x = number;
+      obj.y = number;
+    }
+    else if (j.is_array() && (j[0] == "realvec2" || j[0] == "uintvec2" || j[0] == "intvec2"))
+    {
+      obj.x = j[1];
+      obj.y = j[2];
+    }
+    else
+    {
+      LOG(FATAL) << "Attempted to create a Vec2<> out of an invalid JSON object: " << j.dump();
+    }
+  }
 
-    obj.x = j[1];
-    obj.y = j[2];
+  T area()
+  {
+    return x * y;
+  }
+
+  T perimeter()
+  {
+    return (x * 2) + (y * 2);
   }
 
   T r()

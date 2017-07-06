@@ -104,27 +104,27 @@ void MapFancyAsciiView::drawHighlight(sf::RenderTarget& target,
                                        int frame)
 {
   auto& config = S<IConfigSettings>();
-  float map_tile_size = config.get("map-tile-size");
+  RealVec2 mapTileSize = config.get("map-tile-size");
 
-  float half_ts(map_tile_size * 0.5f);
-  RealVec2 vSW(location.x - half_ts, location.y + half_ts);
-  RealVec2 vSE(location.x + half_ts, location.y + half_ts);
-  RealVec2 vNW(location.x - half_ts, location.y - half_ts);
-  RealVec2 vNE(location.x + half_ts, location.y - half_ts);
+  RealVec2 halfTs = { mapTileSize.x * 0.5f, mapTileSize.y * 0.5f };
+  RealVec2 vSW(location.x - halfTs.x, location.y + halfTs.y);
+  RealVec2 vSE(location.x + halfTs.x, location.y + halfTs.y);
+  RealVec2 vNW(location.x - halfTs.x, location.y - halfTs.y);
+  RealVec2 vNE(location.x + halfTs.x, location.y - halfTs.y);
 
-  sf::RectangleShape box_shape;
-  RealVec2 box_position;
-  RealVec2 box_size(map_tile_size, map_tile_size);
-  RealVec2 box_half_size(box_size.x / 2, box_size.y / 2);
-  box_position.x = (location.x - box_half_size.x);
-  box_position.y = (location.y - box_half_size.y);
-  box_shape.setPosition(box_position);
-  box_shape.setSize(box_size);
-  box_shape.setOutlineColor(fgColor);
-  box_shape.setOutlineThickness(config.get("tile-highlight-border-width"));
-  box_shape.setFillColor(bgColor);
+  sf::RectangleShape boxShape;
+  RealVec2 boxPosition;
+  RealVec2 boxSize = mapTileSize;
+  RealVec2 boxHalfSize(boxSize.x / 2, boxSize.y / 2);
+  boxPosition.x = (location.x - boxHalfSize.x);
+  boxPosition.y = (location.y - boxHalfSize.y);
+  boxShape.setPosition(boxPosition);
+  boxShape.setSize(boxSize);
+  boxShape.setOutlineColor(fgColor);
+  boxShape.setOutlineThickness(config.get("tile-highlight-border-width"));
+  boxShape.setFillColor(bgColor);
 
-  target.draw(box_shape);
+  target.draw(boxShape);
 }
 
 std::string MapFancyAsciiView::getViewName()

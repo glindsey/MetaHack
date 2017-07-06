@@ -119,14 +119,14 @@ void MapTileFancyAsciiView::addMemoryVerticesTo(sf::VertexArray& vertices,
 
   auto& spacialMemory = COMPONENTS.spacialMemory[viewer].ofMap(map);
   static sf::Vertex new_vertex;
-  float ts = config.get("map-tile-size");
-  float ts2 = ts * 0.5f;
+  RealVec2 ts = config.get("map-tile-size");
+  RealVec2 ts2 = { ts.x * 0.5f, ts.y * 0.5f };
 
-  RealVec2 location(coords.x * ts, coords.y * ts);
-  RealVec2 vSW(location.x - ts2, location.y + ts2);
-  RealVec2 vSE(location.x + ts2, location.y + ts2);
-  RealVec2 vNW(location.x - ts2, location.y - ts2);
-  RealVec2 vNE(location.x + ts2, location.y - ts2);
+  RealVec2 location(coords.x * ts.x, coords.y * ts.y);
+  RealVec2 vSW(location.x - ts2.x, location.y + ts2.y);
+  RealVec2 vSE(location.x + ts2.x, location.y + ts2.y);
+  RealVec2 vNW(location.x - ts2.x, location.y - ts2.y);
+  RealVec2 vNE(location.x + ts2.x, location.y - ts2.y);
 
   if (!spacialMemory.contains(coords)) return;
 
@@ -186,8 +186,8 @@ void MapTileFancyAsciiView::addHorizontalSurfaceVerticesTo(sf::VertexArray& vert
   if (!canSee(coords)) return;
 
   sf::Vertex new_vertex;
-  float ts = config.get("map-tile-size");
-  float half_ts = ts * 0.5f;
+  RealVec2 ts = config.get("map-tile-size");
+  RealVec2 halfTs = { ts.x * 0.5f, ts.y * 0.5f };
 
   Color colorN{ lighting.getLightLevel(coords + static_cast<IntVec2>(Direction::North)) };
   Color colorNE{ lighting.getLightLevel(coords + static_cast<IntVec2>(Direction::Northeast)) };
@@ -208,11 +208,11 @@ void MapTileFancyAsciiView::addHorizontalSurfaceVerticesTo(sf::VertexArray& vert
   Color lightW = average(light, colorW);
   Color lightNW = average(light, colorW, colorNW, colorN);
   
-  RealVec2 location{ coords.x * ts, coords.y * ts };
-  RealVec2 vNE{ location.x + half_ts, location.y - half_ts };
-  RealVec2 vSE{ location.x + half_ts, location.y + half_ts };
-  RealVec2 vSW{ location.x - half_ts, location.y + half_ts };
-  RealVec2 vNW{ location.x - half_ts, location.y - half_ts };
+  RealVec2 location{ coords.x * ts.x, coords.y * ts.y };
+  RealVec2 vNE{ location.x + halfTs.x, location.y - halfTs.y };
+  RealVec2 vSE{ location.x + halfTs.x, location.y + halfTs.y };
+  RealVec2 vSW{ location.x - halfTs.x, location.y + halfTs.y };
+  RealVec2 vNW{ location.x - halfTs.x, location.y - halfTs.y };
 
   auto opaque = getMapTile().isTotallyOpaque();
   auto transparent = getMapTile().isTotallyTransparent();
@@ -279,8 +279,8 @@ void MapTileFancyAsciiView::addEntityVertices(EntityId entityId,
   auto& config = S<IConfigSettings>();
   auto& category = COMPONENTS.category[entityId];
   sf::Vertex new_vertex;
-  float ts = config.get("map-tile-size");
-  float ts2 = ts * 0.5f;
+  RealVec2 ts = config.get("map-tile-size");
+  RealVec2 ts2 = { ts.x * 0.5f, ts.y * 0.5f };
 
   // If this entity doesn't have a Position component, bail.
   if (!COMPONENTS.position.existsFor(entityId)) return;
@@ -302,11 +302,11 @@ void MapTileFancyAsciiView::addEntityVertices(EntityId entityId,
     thingColor = Color::White;
   }
 
-  RealVec2 location(coords.x * ts, coords.y * ts);
-  RealVec2 vSW(location.x - ts2, location.y + ts2);
-  RealVec2 vSE(location.x + ts2, location.y + ts2);
-  RealVec2 vNW(location.x - ts2, location.y - ts2);
-  RealVec2 vNE(location.x + ts2, location.y - ts2);
+  RealVec2 location(coords.x * ts.x, coords.y * ts.y);
+  RealVec2 vSW(location.x - ts2.x, location.y + ts2.y);
+  RealVec2 vSE(location.x + ts2.x, location.y + ts2.y);
+  RealVec2 vNW(location.x - ts2.x, location.y - ts2.y);
+  RealVec2 vNE(location.x + ts2.x, location.y - ts2.y);
   UintVec2 tileCoords = getEntityTileSheetCoords(entityId, frame);
 
   m_views.getTileSheet().addQuad(vertices,
@@ -326,7 +326,7 @@ void MapTileFancyAsciiView::addVerticalSurfaceVerticesTo(sf::VertexArray& vertic
   auto& y = coords.y;
 
   auto& config = S<IConfigSettings>();
-  float mapTileSize = config.get("map-tile-size");
+  RealVec2 mapTileSize = config.get("map-tile-size");
 
   auto canSee = [viewer](IntVec2 coords) -> bool
   {
@@ -396,13 +396,14 @@ void MapTileFancyAsciiView::addVerticalSurfaceVerticesTo(sf::VertexArray& vertic
   Color wallWColorS{ Color::White };
 
   // Full tile size.
-  float ts(mapTileSize);
+  RealVec2 ts = mapTileSize;
 
   // Half of the tile size.
-  float halfTs(mapTileSize * 0.5f);
+  RealVec2 halfTs = { mapTileSize.x * 0.5f, mapTileSize.y * 0.5f };
 
   // Wall size (configurable).
-  float ws(mapTileSize * 0.4f);
+  /// @todo Make this configurable.
+  RealVec2 ws = { mapTileSize.x * 0.4f, mapTileSize.y * 0.4f };
 
   // Adjacent tile coordinates
   IntVec2 coordsN = coords + static_cast<IntVec2>(Direction::North);
@@ -411,15 +412,15 @@ void MapTileFancyAsciiView::addVerticalSurfaceVerticesTo(sf::VertexArray& vertic
   IntVec2 coordsW = coords + static_cast<IntVec2>(Direction::West);
 
   // Tile vertices.
-  RealVec2 location(coords.x * ts, coords.y * ts);
-  RealVec2 vTileN(location.x, location.y - halfTs);
-  RealVec2 vTileNE(location.x + halfTs, location.y - halfTs);
-  RealVec2 vTileE(location.x + halfTs, location.y);
-  RealVec2 vTileSE(location.x + halfTs, location.y + halfTs);
-  RealVec2 vTileS(location.x, location.y + halfTs);
-  RealVec2 vTileSW(location.x - halfTs, location.y + halfTs);
-  RealVec2 vTileW(location.x - halfTs, location.y);
-  RealVec2 vTileNW(location.x - halfTs, location.y - halfTs);
+  RealVec2 location(coords.x * ts.x, coords.y * ts.y);
+  RealVec2 vTileN(location.x, location.y - halfTs.y);
+  RealVec2 vTileNE(location.x + halfTs.x, location.y - halfTs.y);
+  RealVec2 vTileE(location.x + halfTs.x, location.y);
+  RealVec2 vTileSE(location.x + halfTs.x, location.y + halfTs.y);
+  RealVec2 vTileS(location.x, location.y + halfTs.y);
+  RealVec2 vTileSW(location.x - halfTs.x, location.y + halfTs.y);
+  RealVec2 vTileW(location.x - halfTs.x, location.y);
+  RealVec2 vTileNW(location.x - halfTs.x, location.y - halfTs.y);
 
   UintVec2 tileSheetCoords = this->getSpaceTileSheetCoords();
 
@@ -483,24 +484,24 @@ void MapTileFancyAsciiView::addVerticalSurfaceVerticesTo(sf::VertexArray& vertic
   // NORTH WALL
   if (nEmpty)
   {
-    RealVec2 vS(vTileN.x, vTileN.y + ws);
-    RealVec2 vSW(vTileNW.x, vTileNW.y + ws);
+    RealVec2 vS(vTileN.x, vTileN.y + ws.y);
+    RealVec2 vSW(vTileNW.x, vTileNW.y + ws.y);
     if (wEmpty)
     {
-      vSW.x += ws;
+      vSW.x += ws.x;
     }
     else if (!nwEmpty)
     {
-      vSW.x -= ws;
+      vSW.x -= ws.x;
     }
-    RealVec2 vSE(vTileNE.x, vTileNE.y + ws);
+    RealVec2 vSE(vTileNE.x, vTileNE.y + ws.y);
     if (eEmpty)
     {
-      vSE.x -= ws;
+      vSE.x -= ws.x;
     }
     else if (!neEmpty)
     {
-      vSE.x += ws;
+      vSE.x += ws.x;
     }
 
     m_views.getTileSheet().addGradientQuadTo(vertices, tileSheetCoords,
@@ -514,24 +515,24 @@ void MapTileFancyAsciiView::addVerticalSurfaceVerticesTo(sf::VertexArray& vertic
   // EAST WALL
   if (eEmpty)
   {
-    RealVec2 vW(vTileE.x - ws, vTileE.y);
-    RealVec2 vNW(vTileNE.x - ws, vTileNE.y);
+    RealVec2 vW(vTileE.x - ws.x, vTileE.y);
+    RealVec2 vNW(vTileNE.x - ws.x, vTileNE.y);
     if (nEmpty)
     {
-      vNW.y += ws;
+      vNW.y += ws.y;
     }
     else if (!neEmpty)
     {
-      vNW.y -= ws;
+      vNW.y -= ws.y;
     }
-    RealVec2 vSW(vTileSE.x - ws, vTileSE.y);
+    RealVec2 vSW(vTileSE.x - ws.x, vTileSE.y);
     if (sEmpty)
     {
-      vSW.y -= ws;
+      vSW.y -= ws.y;
     }
     else if (!seEmpty)
     {
-      vSW.y += ws;
+      vSW.y += ws.y;
     }
 
     m_views.getTileSheet().addGradientQuadTo(vertices, tileSheetCoords,
@@ -545,24 +546,24 @@ void MapTileFancyAsciiView::addVerticalSurfaceVerticesTo(sf::VertexArray& vertic
   // SOUTH WALL
   if (sEmpty)
   {
-    RealVec2 vN(vTileS.x, vTileS.y - ws);
-    RealVec2 vNW(vTileSW.x, vTileSW.y - ws);
+    RealVec2 vN(vTileS.x, vTileS.y - ws.y);
+    RealVec2 vNW(vTileSW.x, vTileSW.y - ws.y);
     if (wEmpty)
     {
-      vNW.x += ws;
+      vNW.x += ws.x;
     }
     else if (!swEmpty)
     {
-      vNW.x -= ws;
+      vNW.x -= ws.x;
     }
-    RealVec2 vNE(vTileSE.x, vTileSE.y - ws);
+    RealVec2 vNE(vTileSE.x, vTileSE.y - ws.y);
     if (eEmpty)
     {
-      vNE.x -= ws;
+      vNE.x -= ws.x;
     }
     else if (!seEmpty)
     {
-      vNE.x += ws;
+      vNE.x += ws.x;
     }
 
     m_views.getTileSheet().addGradientQuadTo(vertices, tileSheetCoords,
@@ -576,24 +577,24 @@ void MapTileFancyAsciiView::addVerticalSurfaceVerticesTo(sf::VertexArray& vertic
   // WEST WALL
   if (wEmpty)
   {
-    RealVec2 vE(vTileW.x + ws, vTileW.y);
-    RealVec2 vNE(vTileNW.x + ws, vTileNW.y);
+    RealVec2 vE(vTileW.x + ws.x, vTileW.y);
+    RealVec2 vNE(vTileNW.x + ws.x, vTileNW.y);
     if (nEmpty)
     {
-      vNE.y += ws;
+      vNE.y += ws.y;
     }
     else if (!nwEmpty)
     {
-      vNE.y -= ws;
+      vNE.y -= ws.y;
     }
-    RealVec2 vSE(vTileSW.x + ws, vTileSW.y);
+    RealVec2 vSE(vTileSW.x + ws.x, vTileSW.y);
     if (sEmpty)
     {
-      vSE.y -= ws;
+      vSE.y -= ws.y;
     }
     else if (!swEmpty)
     {
-      vSE.y += ws;
+      vSE.y += ws.y;
     }
 
     m_views.getTileSheet().addGradientQuadTo(vertices, tileSheetCoords,

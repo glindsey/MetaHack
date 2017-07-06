@@ -1,7 +1,8 @@
 #include "stdafx.h"
 
 #include "services/FallbackConfigSettings.h"
-#include "Types/Color.h"
+#include "types/Color.h"
+#include "types/Vec2.h"
 
 FallbackConfigSettings::FallbackConfigSettings()
 {
@@ -31,8 +32,9 @@ FallbackConfigSettings::FallbackConfigSettings()
   set("inventory-area-width", 300);
   set("messagelog-area-height", 200);
   set("status-area-height", 90);
-  set("map-tile-size", 32);
-  set("tilesheet-texture-size", 1024);
+  set("map-ascii-tile-size", UintVec2(12, 12));
+  set("map-tile-size", UintVec2(32, 32));
+  set("tilesheet-texture-size", UintVec2(1024, 1024));
 
   set("player-name", "Clongus Burpo");
 }

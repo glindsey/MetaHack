@@ -53,24 +53,24 @@ void EntityStandard2DView::draw(sf::RenderTarget& target,
   MapTile& tile = MAPS.get(position.map()).getTile(position.coords());
 
   sf::RectangleShape rectangle;
-  sf::IntRect texture_coords;
+  sf::IntRect textureCoords;
 
-  auto target_coords = getLocation();
-  auto target_size = getSize();
-  unsigned int tile_size = config.get("map-tile-size");
-  if (target_size == RealVec2(0, 0))
+  auto targetCoords = getLocation();
+  auto targetSize = getSize();
+  UintVec2 tileSize = config.get("map-tile-size");
+  if (targetSize == RealVec2(0, 0))
   {
-    target_size = { 
-      static_cast<float>(tile_size), 
-      static_cast<float>(tile_size)
+    targetSize = { 
+      static_cast<float>(tileSize.x), 
+      static_cast<float>(tileSize.y)
     };
   }
 
-  UintVec2 tile_coords = getTileSheetCoords(frame);
-  texture_coords.left = tile_coords.x * tile_size;
-  texture_coords.top = tile_coords.y * tile_size;
-  texture_coords.width = tile_size;
-  texture_coords.height = tile_size;
+  UintVec2 tileCoords = getTileSheetCoords(frame);
+  textureCoords.left = tileCoords.x * tileSize.x;
+  textureCoords.top = tileCoords.y * tileSize.y;
+  textureCoords.width = tileSize.x;
+  textureCoords.height = tileSize.y;
 
   Color thing_color;
   if (lighting != nullptr)
@@ -87,10 +87,10 @@ void EntityStandard2DView::draw(sf::RenderTarget& target,
     texture.setSmooth(true);
   }
 
-  rectangle.setPosition(target_coords);
-  rectangle.setSize(target_size);
+  rectangle.setPosition(targetCoords);
+  rectangle.setSize(targetSize);
   rectangle.setTexture(&texture);
-  rectangle.setTextureRect(texture_coords);
+  rectangle.setTextureRect(textureCoords);
   rectangle.setFillColor(sf::Color(thing_color));
 
   target.draw(rectangle);
