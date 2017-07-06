@@ -98,6 +98,15 @@ uint8_t Color::g() const { return m_g; }
 uint8_t Color::b() const { return m_b; }
 uint8_t Color::a() const { return m_a; }
 
+Color& Color::operator*=(Color const& rhs)
+{
+  m_r *= rhs.m_r;
+  m_g *= rhs.m_g;
+  m_b *= rhs.m_b;
+  m_a *= rhs.m_a;
+  return *this;
+}
+
 Color& Color::operator+=(Color const& rhs)
 {
   m_r += rhs.m_r;
@@ -126,6 +135,12 @@ Color::operator std::string() const
   std::stringstream ss;
   ss << *this;
   return ss.str();
+}
+
+Color operator*(Color lhs, Color const& rhs)
+{
+  lhs *= rhs;
+  return lhs;
 }
 
 Color operator+(Color lhs, Color const& rhs)

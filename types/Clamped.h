@@ -80,16 +80,15 @@ public:
   {
     uint16_t result = static_cast<uint16_t>(m_value) * static_cast<uint16_t>(rhs.m_value);
 
-    uint8_t hi = static_cast<uint8_t>(result >> 8);
-    uint8_t lo = static_cast<uint8_t>(result);
+    // Clamped8 instead does fixed-point arithmetic, acting as though a value
+    // of 255 is 1.0. So after multiplication we divide by 255 to get the result.
+    m_value = static_cast<uint8_t>(result / 255);
 
-    m_value = (lo | -!!hi);
-    return *this;
-  }
+    // Instead of the above, this would be used for "proper" multiplication.
+    //uint8_t hi = static_cast<uint8_t>(result >> 8);
+    //uint8_t lo = static_cast<uint8_t>(result);
+    //m_value = (lo | -!!hi);
 
-  inline Clamped8& Clamped8::operator/=(Clamped8 const& rhs)
-  {
-    m_value = (m_value / rhs.m_value);
     return *this;
   }
 
@@ -108,12 +107,6 @@ public:
   friend Clamped8 operator*(Clamped8 lhs, Clamped8 const& rhs)
   {
     lhs *= rhs;
-    return lhs;
-  }
-
-  friend Clamped8 operator/(Clamped8 lhs, Clamped8 const& rhs)
-  {
-    lhs /= rhs;
     return lhs;
   }
 

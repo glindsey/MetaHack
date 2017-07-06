@@ -145,28 +145,28 @@ void TileSheet::addGradientQuadTo(sf::VertexArray& vertices,
   RealVec2 texC(texNW.x + halfTs.x, texNW.y + halfTs.y);
 
   // Upper left
-  vertices.append(sf::Vertex(coordNW, colorNW, texNW));
-  vertices.append(sf::Vertex(coordN, colorN, texN));
-  vertices.append(sf::Vertex(coordC, colorC, texC));
-  vertices.append(sf::Vertex(coordW, colorW, texW));
+  vertices.append(sf::Vertex(coordNW, colorNW * colorOverall, texNW));
+  vertices.append(sf::Vertex(coordN, colorN * colorOverall, texN));
+  vertices.append(sf::Vertex(coordC, colorC * colorOverall, texC));
+  vertices.append(sf::Vertex(coordW, colorW * colorOverall, texW));
 
   // Upper right
-  vertices.append(sf::Vertex(coordN, colorN, texN));
-  vertices.append(sf::Vertex(coordNE, colorNE, texNE));
-  vertices.append(sf::Vertex(coordE, colorE, texE));
-  vertices.append(sf::Vertex(coordC, colorC, texC));
+  vertices.append(sf::Vertex(coordN, colorN * colorOverall, texN));
+  vertices.append(sf::Vertex(coordNE, colorNE * colorOverall, texNE));
+  vertices.append(sf::Vertex(coordE, colorE * colorOverall, texE));
+  vertices.append(sf::Vertex(coordC, colorC * colorOverall, texC));
 
   // Lower right
-  vertices.append(sf::Vertex(coordC, colorC, texC));
-  vertices.append(sf::Vertex(coordE, colorE, texE));
-  vertices.append(sf::Vertex(coordSE, colorSE, texSE));
-  vertices.append(sf::Vertex(coordS, colorS, texS));
+  vertices.append(sf::Vertex(coordC, colorC * colorOverall, texC));
+  vertices.append(sf::Vertex(coordE, colorE * colorOverall, texE));
+  vertices.append(sf::Vertex(coordSE, colorSE * colorOverall, texSE));
+  vertices.append(sf::Vertex(coordS, colorS * colorOverall, texS));
 
   // Lower left
-  vertices.append(sf::Vertex(coordW, colorW, texW));
-  vertices.append(sf::Vertex(coordC, colorC, texC));
-  vertices.append(sf::Vertex(coordS, colorS, texS));
-  vertices.append(sf::Vertex(coordSW, colorSW, texSW));
+  vertices.append(sf::Vertex(coordW, colorW * colorOverall, texW));
+  vertices.append(sf::Vertex(coordC, colorC * colorOverall, texC));
+  vertices.append(sf::Vertex(coordS, colorS * colorOverall, texS));
+  vertices.append(sf::Vertex(coordSW, colorSW * colorOverall, texSW));
 }
 
 void TileSheet::addOutlineVertices(sf::VertexArray& vertices,

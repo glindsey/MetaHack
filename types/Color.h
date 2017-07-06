@@ -43,9 +43,11 @@ public:
   template<typename T> uint8_t setA(T value) { m_a = value; return m_a; }
 
   // Mutator operators
+  Color& operator*=(Color const& rhs);
   Color& operator+=(Color const& rhs);
   Color& operator-=(Color const& rhs);
 
+  friend Color operator*(Color lhs, Color const& rhs);
   friend Color operator+(Color lhs, Color const& rhs);
   friend Color operator-(Color lhs, Color const& rhs);
 
