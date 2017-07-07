@@ -17,8 +17,8 @@ namespace Systems
   Geometry::Geometry(Systems::Janitor& janitor,
                      Systems::Narrator& narrator,
                      Components::ComponentGlobals const& globals,
-                     Components::ComponentMap<Components::ComponentInventory>& inventory,
-                     Components::ComponentMap<Components::ComponentPosition>& position) :
+                     Components::ComponentMapConcrete<Components::ComponentInventory>& inventory,
+                     Components::ComponentMapConcrete<Components::ComponentPosition>& position) :
     CRTP<Geometry>({ EventEntityMoved::id, EventEntityChangedMaps::id }),
     m_janitor{ janitor },
     m_narrator{ narrator },

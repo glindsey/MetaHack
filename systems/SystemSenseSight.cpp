@@ -19,10 +19,10 @@ namespace Systems
 {
 
   SenseSight::SenseSight(GameState const& gameState,
-                         Components::ComponentMap<Components::ComponentInventory> const& inventory,
-                         Components::ComponentMap<Components::ComponentPosition> const& position,
-                         Components::ComponentMap<Components::ComponentSenseSight>& senseSight,
-                         Components::ComponentMap<Components::ComponentSpacialMemory>& spacialMemory) :
+                         Components::ComponentMapConcrete<Components::ComponentInventory> const& inventory,
+                         Components::ComponentMapConcrete<Components::ComponentPosition> const& position,
+                         Components::ComponentMapConcrete<Components::ComponentSenseSight>& senseSight,
+                         Components::ComponentMapConcrete<Components::ComponentSpacialMemory>& spacialMemory) :
     CRTP<SenseSight>({}),
     m_gameState{ gameState },
     m_inventory{ inventory },

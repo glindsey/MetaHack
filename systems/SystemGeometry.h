@@ -64,8 +64,8 @@ namespace Systems
     Geometry(Systems::Janitor& janitor,
              Systems::Narrator& narrator,
              Components::ComponentGlobals const& globals,
-             Components::ComponentMap<Components::ComponentInventory>& inventory,
-             Components::ComponentMap<Components::ComponentPosition>& position);
+             Components::ComponentMapConcrete<Components::ComponentInventory>& inventory,
+             Components::ComponentMapConcrete<Components::ComponentPosition>& position);
 
     virtual ~Geometry();
 
@@ -108,8 +108,8 @@ namespace Systems
     Systems::Janitor& m_janitor;
     Systems::Narrator& m_narrator;
     Components::ComponentGlobals const& m_globals;
-    Components::ComponentMap<Components::ComponentInventory>& m_inventory;
-    Components::ComponentMap<Components::ComponentPosition>& m_position;
+    Components::ComponentMapConcrete<Components::ComponentInventory>& m_inventory;
+    Components::ComponentMapConcrete<Components::ComponentPosition>& m_position;
   };
 
 } // end namespace Systems

@@ -22,10 +22,10 @@ namespace Systems
   {
   public:
     SenseSight(GameState const& gameState,
-               Components::ComponentMap<Components::ComponentInventory> const& inventory,
-               Components::ComponentMap<Components::ComponentPosition> const& position,
-               Components::ComponentMap<Components::ComponentSenseSight>& senseSight,
-               Components::ComponentMap<Components::ComponentSpacialMemory>& spacialMemory);
+               Components::ComponentMapConcrete<Components::ComponentInventory> const& inventory,
+               Components::ComponentMapConcrete<Components::ComponentPosition> const& position,
+               Components::ComponentMapConcrete<Components::ComponentSenseSight>& senseSight,
+               Components::ComponentMapConcrete<Components::ComponentSpacialMemory>& spacialMemory);
 
     virtual ~SenseSight();
 
@@ -53,10 +53,10 @@ namespace Systems
     GameState const& m_gameState;
 
     // Components used by this system.
-    Components::ComponentMap<Components::ComponentInventory> const& m_inventory;
-    Components::ComponentMap<Components::ComponentPosition> const& m_position;
-    Components::ComponentMap<Components::ComponentSenseSight>& m_senseSight;
-    Components::ComponentMap<Components::ComponentSpacialMemory>& m_spacialMemory;
+    Components::ComponentMapConcrete<Components::ComponentInventory> const& m_inventory;
+    Components::ComponentMapConcrete<Components::ComponentPosition> const& m_position;
+    Components::ComponentMapConcrete<Components::ComponentSenseSight>& m_senseSight;
+    Components::ComponentMapConcrete<Components::ComponentSpacialMemory>& m_spacialMemory;
 
     /// Set of entities to update on the next cycle.
     std::set<EntityId> m_needsUpdate;

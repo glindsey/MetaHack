@@ -10,17 +10,47 @@ using json = ::nlohmann::json;
 
 namespace Components
 {
+  /// The generic interface that concrete ComponentMap instances derive from.
+  /// Only really used for iterating through multiple components.
+  class ComponentMap
+  {
+  public:
+    virtual ~ComponentMap() = default;
+
+    /// Add an entity to this component map, with the default component value.
+    virtual void addDefault(EntityId id) = 0;
+
+    /// Clone a value from one key to another, if the first key exists.
+    virtual void cloneIfExists(EntityId first, EntityId second) = 0;
+
+    /// Return whether this component exists for the specified ID.
+    virtual bool existsFor(EntityId id) const = 0;
+
+    /// Update the component for a specific ID depending on the provided JSON.
+    ///   * If the JSON is empty (null):
+    ///     * If the component already exists, do nothing.
+    ///     * If the component doesn't exist, add it using default values.
+    ///   * If the JSON is the string "DELETE" (case sensitive), remove the existing component data for that ID.
+    ///   * Otherwise, replace the component data with the provided JSON.
+    virtual void update(EntityId id, json const& newData) = 0;
+
+    /// Remove an entity from this component map.
+    /// If the entity isn't already present, just returns without doing anything.
+    virtual void remove(EntityId id) = 0;
+
+    virtual ComponentMap& operator=(json const& j) = 0;
+
+  };
 
   /// Represents a collection of a particular component mapped to the entities that contain it.
   template <typename T>
-  class ComponentMap final
+  class ComponentMapConcrete final : public ComponentMap
   {
   public:
-    ComponentMap() {}
-    ~ComponentMap() {}
+    ComponentMapConcrete() = default;
+    virtual ~ComponentMapConcrete() = default;
 
-    /// Add an entity to this component map, with the default component value.
-    void addDefault(EntityId id)
+    virtual void addDefault(EntityId id) override
     {
       std::string className = typeid(T).name();
       CLOG(TRACE, "Component") << "Creating new " << typeid(T).name() << " for ID " << id;
@@ -28,7 +58,7 @@ namespace Components
     }
 
     /// Clone a value from one key to another, if the first key exists.
-    void cloneIfExists(EntityId first, EntityId second)
+    virtual void cloneIfExists(EntityId first, EntityId second) override
     {
       if (existsFor(first))
       {
@@ -36,7 +66,7 @@ namespace Components
       }
     }
 
-    bool existsFor(EntityId id) const
+    virtual bool existsFor(EntityId id) const override
     {
       return m_componentMap.count(id) != 0ULL;
     }
@@ -53,13 +83,7 @@ namespace Components
       return m_componentMap.at(id);
     }
 
-    /// Update the component for a specific ID depending on the provided JSON.
-    ///   * If the JSON is empty (null):
-    ///     * If the component already exists, do nothing.
-    ///     * If the component doesn't exist, add it using default values.
-    ///   * If the JSON is the string "DELETE" (case sensitive), remove the existing component data for that ID.
-    ///   * Otherwise, replace the component data with the provided JSON.
-    void update(EntityId id, json const& newData)
+    virtual void update(EntityId id, json const& newData) override
     {
       if (newData.is_null())
       {
@@ -85,9 +109,7 @@ namespace Components
       }
     }
 
-    /// Remove an entity from this component map.
-    /// If the entity isn't already present, just returns without doing anything.
-    void remove(EntityId id)
+    virtual void remove(EntityId id) override
     {
       m_componentMap.erase(id);
     }
@@ -126,6 +148,12 @@ namespace Components
       return m_componentMap.at(id);
     }
 
+    virtual ComponentMap& operator=(json const& j) override
+    {
+      from_json(j, *this);
+      return *this;
+    }
+
     /// Get the map itself for iterating through.
     std::unordered_map<EntityId, T>& data()
     {
@@ -137,7 +165,7 @@ namespace Components
       return m_componentMap;
     }
 
-    friend void from_json(json const& j, ComponentMap& obj)
+    friend void from_json(json const& j, ComponentMapConcrete& obj)
     {
       obj.m_componentMap.clear();
 
@@ -150,7 +178,7 @@ namespace Components
       }
     }
 
-    friend void to_json(json& j, ComponentMap const& obj)
+    friend void to_json(json& j, ComponentMapConcrete const& obj)
     {
       j = json::object();
       for (auto& pair : obj.m_componentMap)

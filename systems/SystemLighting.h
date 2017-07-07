@@ -26,10 +26,10 @@ namespace Systems
   {
   public:
     Lighting(GameState& gameState,
-             Components::ComponentMap<Components::ComponentAppearance> const& appearance,
-             Components::ComponentMap<Components::ComponentHealth> const& health,
-             Components::ComponentMap<Components::ComponentLightSource>& lightSource,
-             Components::ComponentMap<Components::ComponentPosition> const& position);
+             Components::ComponentMapConcrete<Components::ComponentAppearance> const& appearance,
+             Components::ComponentMapConcrete<Components::ComponentHealth> const& health,
+             Components::ComponentMapConcrete<Components::ComponentLightSource>& lightSource,
+             Components::ComponentMapConcrete<Components::ComponentPosition> const& position);
 
     virtual ~Lighting();
 
@@ -96,10 +96,10 @@ namespace Systems
     GameState& m_gameState;
 
     // Components used by this system.
-    Components::ComponentMap<Components::ComponentAppearance> const& m_appearance;
-    Components::ComponentMap<Components::ComponentHealth> const& m_health;
-    Components::ComponentMap<Components::ComponentLightSource>& m_lightSource;
-    Components::ComponentMap<Components::ComponentPosition> const& m_position;
+    Components::ComponentMapConcrete<Components::ComponentAppearance> const& m_appearance;
+    Components::ComponentMapConcrete<Components::ComponentHealth> const& m_health;
+    Components::ComponentMapConcrete<Components::ComponentLightSource>& m_lightSource;
+    Components::ComponentMapConcrete<Components::ComponentPosition> const& m_position;
 
     /// Boolean indicating if all tiles should be recalculated.
     bool m_recalculateAllTiles = true;
