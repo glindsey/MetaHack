@@ -100,45 +100,8 @@ namespace Components
     ComponentMapConcrete<ComponentSenseSight>      senseSight;
     ComponentMapConcrete<ComponentSpacialMemory>   spacialMemory;
 
-    /// Map of JSON component names to component references.
-    std::map<std::string, ComponentMap&> const nameToComponent
-    {
-        { "category"           , category        },
-        { "material"           , material        },
-        { "position"           , position        },
-
-        { "proper-name"        , properName      },
-        { "noun"               , noun            },
-        { "adjective-material" , adjMaterial     },
-
-        { "activity"           , activity        },
-        { "appearance"         , appearance      },
-        { "bodyparts"          , bodyparts       },
-        { "combustible"        , combustible     },
-        { "corrodible"         , corrodible      },
-        { "digestive-system"   , digestiveSystem },
-        { "equippable"         , equippable      },
-        { "gender"             , gender          },
-        { "health"             , health          },
-        { "inventory"          , inventory       },
-        { "light-source"       , lightSource     },
-        { "lockable"           , lockable        },
-        { "magical-binding"    , magicalBinding  },
-        { "material-flags"     , materialFlags   },
-        { "matter-state"       , matterState     },
-        { "mobility"           , mobility        },
-        { "openable"           , openable        },
-        { "physical"           , physical        },
-        { "quantity"           , quantity        },
-        { "sapience"           , sapience        },
-        { "sense-sight"        , senseSight      },
-        { "spacial-memory"     , spacialMemory   }
-    };
-
     /// Map of component pointers to JSON component names.
     /// (Pointers because using a reference as a map key is... non-trivial.)
-    /// Could combine this with above and use boost::bimap... but I don't like
-    /// the boost::bimap syntax.
     std::map<ComponentMap*, std::string> const componentToName
     {
         { &category        , "category"           },
