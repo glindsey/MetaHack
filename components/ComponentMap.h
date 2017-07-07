@@ -34,6 +34,12 @@ namespace Components
     ///   * Otherwise, replace the component data with the provided JSON.
     virtual void update(EntityId id, json const& newData) = 0;
 
+    /// Create JSON from the entire component map.
+    virtual json toJSON() = 0;
+
+    /// Create JSON from the component for a specific ID.
+    virtual json toJSON(EntityId id) = 0;
+
     /// Remove an entity from this component map.
     /// If the entity isn't already present, just returns without doing anything.
     virtual void remove(EntityId id) = 0;
@@ -107,6 +113,19 @@ namespace Components
           operator[](id) = newData;
         }
       }
+    }
+
+    virtual json toJSON() override
+    {
+      json result = *this;
+      return result;
+    }
+
+    virtual json toJSON(EntityId id) override
+    {
+      Assert("Component", existsFor(id), "Non-existent component of entity " << id << " requested");
+      json result = m_componentMap.at(id);
+      return result;
     }
 
     virtual void remove(EntityId id) override
