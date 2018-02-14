@@ -17,7 +17,7 @@ namespace Actions
     {
       std::unique_ptr<Action> action{ new Derived{ subject } };
 
-      return std::move(action);
+        return action;
     }
   };
 }

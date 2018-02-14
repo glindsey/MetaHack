@@ -58,7 +58,7 @@ public:
     return !(*this == other);
   }
 
-  inline Clamped8& Clamped8::operator+=(Clamped8 const& rhs)
+  inline Clamped8& operator+=(Clamped8 const& rhs)
   {
     uint8_t result = m_value + rhs.m_value;
     result |= -(result < m_value);
@@ -67,7 +67,7 @@ public:
     return *this;
   }
 
-  inline Clamped8& Clamped8::operator-=(Clamped8 const& rhs)
+  inline Clamped8& operator-=(Clamped8 const& rhs)
   {
     uint8_t result = m_value - rhs.m_value;
     result &= -(result <= m_value);
@@ -76,7 +76,7 @@ public:
     return *this;
   }
 
-  inline Clamped8& Clamped8::operator*=(Clamped8 const& rhs)
+  inline Clamped8& operator*=(Clamped8 const& rhs)
   {
     uint16_t result = static_cast<uint16_t>(m_value) * static_cast<uint16_t>(rhs.m_value);
 

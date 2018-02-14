@@ -16,7 +16,7 @@ namespace Systems
     virtual ~Mechanics();
 
     /// Recalculate whatever needs recalculating.
-    void doCycleUpdate();
+    virtual void doCycleUpdate() override;
 
   protected:
     virtual void setMap_V(MapID newMap) override;

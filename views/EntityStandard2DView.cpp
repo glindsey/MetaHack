@@ -39,7 +39,7 @@ void EntityStandard2DView::draw(sf::RenderTarget& target,
                                 int frame)
 {
   auto& config = S<IConfigSettings>();
-  auto& entity = getEntity();
+  auto entity = getEntity();
   auto& texture = m_views.getTileSheet().getTexture();
 
   // Can't render if it doesn't have a Position component.

@@ -170,7 +170,6 @@ SET(PROJECT_SOURCES
   ${PROJECT_SOURCE_DIR}/main.cpp
   ${PROJECT_SOURCE_DIR}/map/Map.cpp
   ${PROJECT_SOURCE_DIR}/map/MapCorridor.cpp
-  ${PROJECT_SOURCE_DIR}/map/MapCrossCorridor.cpp
   ${PROJECT_SOURCE_DIR}/map/MapDiamond.cpp
   ${PROJECT_SOURCE_DIR}/map/MapDonutRoom.cpp
   ${PROJECT_SOURCE_DIR}/map/MapFactory.cpp
@@ -329,7 +328,6 @@ SET(PROJECT_INCLUDES
   ${PROJECT_SOURCE_DIR}/lua/LuaTemplates.h
   ${PROJECT_SOURCE_DIR}/map/Map.h
   ${PROJECT_SOURCE_DIR}/map/MapCorridor.h
-  ${PROJECT_SOURCE_DIR}/map/MapCrossCorridor.h
   ${PROJECT_SOURCE_DIR}/map/MapDiamond.h
   ${PROJECT_SOURCE_DIR}/map/MapDonutRoom.h
   ${PROJECT_SOURCE_DIR}/map/MapFactory.h

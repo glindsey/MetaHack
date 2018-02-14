@@ -37,7 +37,8 @@ void MessageLog::add(std::string message)
     pImpl->message_queue.pop_back();
   }
 
-  broadcast(EventMessageAdded(message));
+  EventMessageAdded event(message);
+  broadcast(event);
 }
 
 unsigned int MessageLog::getMessageQueueSize()

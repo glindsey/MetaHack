@@ -3,8 +3,8 @@
 #include "MapCrossCorridor.h"
 
 #include "game/App.h"
-#include "map/MapTile.h"
-#include "utilities/JSONHelpers.h"
+#include "maptile/MapTile.h"
+#include "utilities/JSONUtils.h"
 
 // Static declarations
 /// @todo These should be passed in as arguments
@@ -28,7 +28,7 @@ MapCrossCorridor::MapCrossCorridor(Map& m, PropertyDictionary const& s, GeoVecto
   unsigned int numTries = 0;
   uniform_int_dist lenDist(minLength, maxLength);
 
-  sf::Vector2i& startingCoords = vec.start_point;
+  IntVec2& startingCoords = vec.start_point;
   Direction& direction = vec.direction;
 
   while (numTries < maxRetries)

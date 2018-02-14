@@ -31,7 +31,7 @@ namespace Systems
     virtual ~Timekeeper();
 
     /// Recalculate whatever needs recalculating.
-    void doCycleUpdate();
+    virtual void doCycleUpdate() override;
 
     ElapsedTicks clock() const;
 

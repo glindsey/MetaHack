@@ -113,7 +113,7 @@ namespace Actions
   {
     auto subject = getSubject();
     auto& components = gameState.components();
-    auto& arguments = makeJSONArgumentsObject();
+    auto arguments = makeJSONArgumentsObject();
 
     if (!components.activity.existsFor(subject)) return false;
 
@@ -709,7 +709,7 @@ namespace Actions
       if (targetDirection != Direction::None) action->setTarget(targetDirection);
       if (quantity != 0) action->setQuantity(quantity);
 
-      return std::move(action);
+      return action;
     }
     else
     {

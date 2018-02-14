@@ -33,7 +33,7 @@ namespace Systems
     virtual ~Director();
 
     /// Recalculate whatever needs recalculating.
-    void doCycleUpdate();
+    void doCycleUpdate() override;
 
     /// Queue an action for an entity to perform.
     /// @param id     The ID of the entity performing the action.

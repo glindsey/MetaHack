@@ -68,7 +68,7 @@ public:
 
   friend std::ostream& operator<<(std::ostream& os, Vec3 const& obj)
   {
-    os << "(" << obj.x << ", " << obj.y << ", " << obj.z ")";
+    os << "(" << obj.x << ", " << obj.y << ", " << obj.z << ")";
     return os;
   }
 

@@ -20,7 +20,8 @@ namespace Systems
     {
       auto entityToDelete = m_entitiesPendingDeletion.front();
       m_components.erase(entityToDelete);
-      broadcast(EventEntityDestroyed(entityToDelete));
+      EventEntityDestroyed event(entityToDelete);
+      broadcast(event);
       m_entitiesPendingDeletion.pop_front();
     }
   }
@@ -34,7 +35,8 @@ namespace Systems
       m_entitiesPendingDeletion.push_back(entity);
       /// @todo Other systems should see the EventMarkedForDeletion event and
       ///       do whatever is necessary for that system to finalize the deletion.
-      broadcast(EventEntityMarkedForDeletion(entity));
+      EventEntityMarkedForDeletion event(entity);
+      broadcast(event);
     }
   }
 

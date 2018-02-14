@@ -25,7 +25,7 @@ namespace Systems
     virtual ~LuaLiaison();
 
     /// Recalculate whatever needs recalculating.
-    void doCycleUpdate();
+    virtual void doCycleUpdate() override;
 
     /// Get the static GameState reference.
     static GameState& gameState();

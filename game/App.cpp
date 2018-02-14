@@ -198,14 +198,16 @@ void App::handleSFMLEvent(sf::Event& sfmlEvent)
     case sf::Event::EventType::GainedFocus:
     {
       m_hasWindowFocus = true;
-      broadcast(EventAppWindowFocusChanged({ true }));
+      EventAppWindowFocusChanged event(true);
+      broadcast(event);
       break;
     }
 
     case sf::Event::EventType::LostFocus:
     {
       m_hasWindowFocus = false;
-      broadcast(EventAppWindowFocusChanged({ false }));
+      EventAppWindowFocusChanged event(false);
+      broadcast(event);
       break;
     }
 
@@ -217,15 +219,16 @@ void App::handleSFMLEvent(sf::Event& sfmlEvent)
         sf::FloatRect(0, 0, 
                       static_cast<float>(sfmlEvent.size.width), 
                       static_cast<float>(sfmlEvent.size.height))));
-
-      broadcast(EventAppWindowResized({ sfmlEvent.size.width, sfmlEvent.size.height }));
+      EventAppWindowResized event({ sfmlEvent.size.width, sfmlEvent.size.height });
+      broadcast(event);
       break;
     }
 
     case sf::Event::EventType::Closed:
     {
       m_isRunning = false;
-      broadcast(EventAppWindowClosed());
+      EventAppWindowClosed event;
+      broadcast(event);
       break;
     }
 
@@ -239,7 +242,8 @@ void App::handleSFMLEvent(sf::Event& sfmlEvent)
           if (sfmlEvent.key.alt && sfmlEvent.key.control)
           {
             m_isRunning = false;
-            broadcast(EventAppQuitRequested());
+            EventAppQuitRequested event;
+            broadcast(event);
             do_key_broadcast = false;
           }
           break;
@@ -250,11 +254,12 @@ void App::handleSFMLEvent(sf::Event& sfmlEvent)
 
       if (do_key_broadcast)
       {
-        broadcast(UIEvents::EventKeyPressed(sfmlEvent.key.code,
-                                            sfmlEvent.key.alt,
-                                            sfmlEvent.key.control,
-                                            sfmlEvent.key.shift,
-                                            sfmlEvent.key.system));
+        UIEvents::EventKeyPressed event(sfmlEvent.key.code,
+                                        sfmlEvent.key.alt,
+                                        sfmlEvent.key.control,
+                                        sfmlEvent.key.shift,
+                                        sfmlEvent.key.system);
+        broadcast(event);
       }
 
       break;
@@ -293,9 +298,10 @@ void App::handleSFMLEvent(sf::Event& sfmlEvent)
 
     case sf::Event::EventType::MouseWheelMoved:
     {
-      broadcast(UIEvents::EventMouseWheelMoved(sfmlEvent.mouseWheel.delta,
-                                               sfmlEvent.mouseWheel.x,
-                                               sfmlEvent.mouseWheel.y));
+      UIEvents::EventMouseWheelMoved event(sfmlEvent.mouseWheel.delta,
+                                           sfmlEvent.mouseWheel.x,
+                                           sfmlEvent.mouseWheel.y);
+      broadcast(event);
       break;
     }
 

@@ -26,7 +26,8 @@ namespace Systems
   void Timekeeper::setClock(ElapsedTicks clock)
   {
     m_clock = clock;
-    broadcast(EventClockChanged(clock));
+    EventClockChanged event(clock);
+    broadcast(event);
   }
 
   void Timekeeper::incrementClock(ElapsedTicks addedTime)

@@ -34,7 +34,7 @@ MapTileStandard2DView::MapTileStandard2DView(MapTile& map_tile,
 UintVec2 MapTileStandard2DView::getFloorTileSheetCoords() const
 {
   /// @todo Deal with selecting one of the other tiles.
-  auto& entity = getMapTile().getFloorEntity();
+  auto entity = getMapTile().getFloorEntity();
   auto& categoryData = S<IGameRules>().categoryData(COMPONENTS.category[entity]);
   UintVec2 offset;
 
@@ -48,7 +48,7 @@ UintVec2 MapTileStandard2DView::getFloorTileSheetCoords() const
 UintVec2 MapTileStandard2DView::getSpaceTileSheetCoords() const
 {
   /// @todo Deal with selecting one of the other tiles.
-  auto& entity = getMapTile().getSpaceEntity();
+  auto entity = getMapTile().getSpaceEntity();
   auto& categoryData = S<IGameRules>().categoryData(COMPONENTS.category[entity]);
   UintVec2 offset;
 

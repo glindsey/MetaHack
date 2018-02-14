@@ -26,15 +26,15 @@ namespace Components
   }
 
   ComponentPosition::ComponentPosition()
-    : m_map{ "" }, m_coords{ 0, 0 }, m_parent{ EntityId::Void }
+    : m_parent{ EntityId::Void }, m_map{ "" }, m_coords{ 0, 0 }
   {}
 
   ComponentPosition::ComponentPosition(EntityId id)
-    : m_map{ "" }, m_coords{ 0, 0 }, m_parent{ id }
+    : m_parent{ id }, m_map{ "" }, m_coords{ 0, 0 }
   {}
 
   ComponentPosition::ComponentPosition(MapID map, IntVec2 coords)
-    : m_map{ map }, m_coords{ coords }, m_parent{ EntityId::Void }
+    : m_parent{ EntityId::Void }, m_map{ map }, m_coords{ coords }
   {}
 
   ComponentPosition::~ComponentPosition()
@@ -106,7 +106,7 @@ namespace Components
       return false;
     }
 
-    auto& grandparent = COMPONENTS.position[m_parent].parent();
+    auto grandparent = COMPONENTS.position[m_parent].parent();
     if (grandparent == EntityId::Void)
     {
       // Entity is directly on the floor.

@@ -194,7 +194,7 @@ namespace Systems
 
     auto& lightData = m_lightSource[source];
     auto& lightPosition = m_position.of(source);
-    auto& lightCoords = lightPosition.coords();
+    auto lightCoords = lightPosition.coords();
     if (lightData.lit())
     {
       float dist_squared = static_cast<float>(Math::distSquared(tileCoords, lightCoords));

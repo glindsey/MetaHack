@@ -46,7 +46,7 @@ namespace Systems
     virtual ~Janitor();
 
     /// Recalculate whatever needs recalculating.
-    void doCycleUpdate();
+    void doCycleUpdate() override;
 
     /// Mark an entity for deletion.
     void markForDeletion(EntityId id);

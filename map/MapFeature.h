@@ -28,7 +28,7 @@ public:
   virtual ~MapFeatureException()
   {}
 
-  virtual const char* what() const
+  virtual const char* what() const noexcept
   {
     return m_what;
   }

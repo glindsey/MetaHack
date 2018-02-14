@@ -70,11 +70,13 @@ namespace Systems
         MapID newMapID = position.map();
         if (oldMapID != newMapID)
         {
-          broadcast(EventEntityChangedMaps(entity));
+          EventEntityChangedMaps event(entity);
+          broadcast(event);
         }
         else
         {
-          broadcast(EventEntityMoved(entity, oldPosition));
+          EventEntityMoved event(entity, oldPosition);
+          broadcast(event);
         }
         return true;
       } // end if (add to new inventory was successful)
@@ -148,7 +150,7 @@ namespace Systems
     // If entity is missing a position component, bail.
     if (!m_position.existsFor(entity)) return false;
     auto& position = m_position.of(entity);
-    auto& parent = position.parent();
+    auto parent = position.parent();
 
     if (parent == EntityId::Void)
     {
@@ -156,7 +158,7 @@ namespace Systems
       return false;
     }
 
-    auto& grandparent = m_position.of(parent).parent();
+    auto grandparent = m_position.of(parent).parent();
     if (grandparent == EntityId::Void)
     {
       // Entity is directly on the floor.
@@ -177,7 +179,7 @@ namespace Systems
     auto& secondPosition = m_position.of(second);
 
     // If first has a parent...
-    auto& firstParent = firstPosition.parent();
+    auto firstParent = firstPosition.parent();
     if (firstParent != EntityId::Void)
     {
       // If the other entity is our parent, return true.
@@ -200,7 +202,7 @@ namespace Systems
     auto& secondPosition = m_position.of(second);
 
     // If first has a parent...
-    auto& firstParent = firstPosition.parent();
+    auto firstParent = firstPosition.parent();
     if (firstParent != EntityId::Void)
     {
       // If the other entity is our parent, return true.

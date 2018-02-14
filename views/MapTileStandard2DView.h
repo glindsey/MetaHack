@@ -8,6 +8,7 @@
 
 #include "tilesheet/TileSheet.h"
 #include "views/EntityStandard2DView.h"
+#include "views/Standard2DGraphicViews.h"
 
 // Forward declarations
 namespace Systems

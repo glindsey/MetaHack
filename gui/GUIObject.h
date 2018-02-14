@@ -251,10 +251,10 @@ namespace metagui
     /// If no children are present, returns zero.
     uint32_t getHighestChildZOrder();
 
-    template< typename ...args >
-    void visitChildren(std::function<void(GUIObject&, args...)> functor)
+    template< typename ...Args >
+    void visitChildren(std::function<void(GUIObject&, Args...)> functor, Args... args)
     {
-      for (auto& child_pair : children)
+      for (auto& child_pair : m_children)
       {
         functor(*(child_pair.second), args...);
       }

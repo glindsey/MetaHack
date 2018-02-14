@@ -27,8 +27,8 @@ public:
   friend void from_json(json const& j, Color& color);
 
   // Equality operators
-  bool Color::operator==(Color const& other) const;
-  bool Color::operator!=(Color const& other) const;
+  bool operator==(Color const& other) const;
+  bool operator!=(Color const& other) const;
 
   // Getters  
   uint8_t r() const;

@@ -143,10 +143,13 @@ void Object::removeObserver(Object& observer, EventID eventID)
 
   if (removalCount == 0)
   {
+    std::stringstream ss;
+    ss << "Event " << eventID;
+    
     CLOG(WARNING, "EventSystem") 
       << "Observer " << observer 
       << " was not registered for " 
-      << ((eventID == EventID::All) ? "any Events" : ("Event " + eventID))
+      << ((eventID == EventID::All) ? "any Events" : ss.str())
       << " from Subject " << *this;
   }
 
@@ -307,7 +310,7 @@ void Object::unicast(Event& event, Object& observer)
 
 ObserversSet& Object::getObservers(EventID eventID)
 {
-  auto& eventObserversIter = m_eventObservers.find(eventID);
+  //auto eventObserversIter = m_eventObservers.find(eventID);
 
   Assert("EventSystem", (m_eventObservers.count(eventID) != 0),
          "\nReason:\tattempted to get observers for an unregistered event." <<
@@ -319,7 +322,7 @@ ObserversSet& Object::getObservers(EventID eventID)
 
 ObserversSet const& Object::getObservers(EventID eventID) const
 {
-  auto& eventObserversIter = m_eventObservers.find(eventID);
+  //auto eventObserversIter = m_eventObservers.find(eventID);
 
   Assert("EventSystem", (m_eventObservers.count(eventID) != 0),
          "\nReason:\tattempted to get observers for an unregistered event." <<

@@ -8,6 +8,7 @@
 
 #include "tilesheet/TileSheet.h"
 #include "views/EntityFancyAsciiView.h"
+#include "views/FancyAsciiGraphicViews.h"
 
 // Forward declarations
 namespace Systems

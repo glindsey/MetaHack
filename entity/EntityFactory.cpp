@@ -96,7 +96,7 @@ void EntityFactory::applyCategoryData(EntityId id, std::string subtypeName)
   }
   else
   {
-    throw std::exception("Attempted to apply category data to Void object!");
+    throw std::runtime_error("Attempted to apply category data to Void object!");
   }
 }
 
@@ -107,7 +107,7 @@ void EntityFactory::morph(EntityId id, EntitySpecs specs)
 
   if (id == EntityId::Void)
   {
-    throw std::exception("Attempted to morph Void object!");
+    throw std::runtime_error("Attempted to morph Void object!");
   }
 
   // First, check if category is being changed.
@@ -151,6 +151,6 @@ void EntityFactory::destroy(EntityId id)
   }
   else
   {
-    throw std::exception("Attempted to destroy Void object!");
+    throw std::runtime_error("Attempted to destroy Void object!");
   }
 }

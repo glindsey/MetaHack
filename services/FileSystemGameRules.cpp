@@ -66,7 +66,8 @@ void FileSystemGameRules::loadCategoryIfNecessary(std::string name)
 
     // If there's no "components" key, create one. 
     // (There should be, but do it just to be sure.)
-    JSONUtils::addIfMissing(categoryData, "components", json::object());
+    json blankKey;
+    JSONUtils::addIfMissing(categoryData, "components", blankKey);
     json& componentsJson = categoryData["components"];
 
     std::string groupType = (namePair.first.empty() ? "category" : namePair.first);

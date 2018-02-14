@@ -70,7 +70,7 @@ namespace Systems
     virtual ~Geometry();
 
     /// Recalculate whatever needs recalculating.
-    void doCycleUpdate();
+    void doCycleUpdate() override;
 
     /// Move an entity into a location, if possible.
     bool moveEntityInto(EntityId entity, EntityId newLocation);

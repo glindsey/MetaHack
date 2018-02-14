@@ -1,7 +1,7 @@
 #pragma once
 
 #include "systems/CRTP.h"
-#include "types/Bodypart.h"
+#include "types/BodyPart.h"
 #include "types/Direction.h"
 #include "types/Gender.h"
 
@@ -274,7 +274,7 @@ namespace Systems
     std::string getVerbable(std::string verb) const;
 
     /// Recalculate whatever needs recalculating.
-    void doCycleUpdate();
+    void doCycleUpdate() override;
 
   protected:
     virtual void setMap_V(MapID newMap) override;

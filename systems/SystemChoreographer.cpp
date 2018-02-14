@@ -29,7 +29,8 @@ namespace Systems
     m_globals.setPlayer(entity);
     if (oldPlayer != entity)
     {
-      broadcast(EventPlayerChanged(entity));
+      EventPlayerChanged event(entity);
+      broadcast(event);
     }
   }
 

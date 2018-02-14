@@ -64,7 +64,7 @@ void MapTile::setTileType(EntitySpecs floor, EntitySpecs space)
 EntitySpecs MapTile::getTileFloorSpecs() const
 {
   auto& category = m_components.category.of(m_tileFloor);
-  auto& material = m_components.material.existsFor(m_tileFloor) ? 
+  auto material = m_components.material.existsFor(m_tileFloor) ?
     m_components.material.of(m_tileFloor) : "";
   return { category, material };
 }
@@ -72,7 +72,7 @@ EntitySpecs MapTile::getTileFloorSpecs() const
 EntitySpecs MapTile::getTileSpaceSpecs() const
 {
   auto& category = m_components.category.of(m_tileSpace);
-  auto& material = m_components.material.existsFor(m_tileSpace) ?
+  auto material = m_components.material.existsFor(m_tileSpace) ?
     m_components.material.of(m_tileSpace) : "";
   return { category, material };
 }
@@ -166,10 +166,10 @@ MapTile::MapTile(IntVec2 coords,
                  std::string spaceCategory)
   :
   Object({}),
-  m_entities{ entities },
-  m_components{ components },
+  m_coords{ coords },
   m_mapID{ mapID },
-  m_coords{ coords }
+  m_entities{ entities },
+  m_components{ components }
 {
   if (!initialized)
   {

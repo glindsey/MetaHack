@@ -134,7 +134,8 @@ size_t KeyBuffer::get_cursor_position() const
 void KeyBuffer::set_cursor_position(size_t position)
 {
   m_cursorPosition = std::min(m_buffer.length(), position);
-  broadcast(EventCursorMoved(position));
+  EventCursorMoved event(position);
+  broadcast(event);
 }
 
 std::string const& KeyBuffer::get_buffer() const
@@ -145,16 +146,19 @@ std::string const& KeyBuffer::get_buffer() const
 void KeyBuffer::set_buffer(std::string buf)
 {
   m_buffer = buf;
-  broadcast(EventBufferChanged(m_buffer));
+  EventBufferChanged event(m_buffer);
+  broadcast(event);
   set_cursor_position(buf.length());
 }
 
 void KeyBuffer::clear_buffer()
 {
   m_buffer.clear();
-  broadcast(EventBufferChanged(m_buffer));
+  EventBufferChanged bcEvent(m_buffer);
+  broadcast(bcEvent);
   m_cursorPosition = 0;
-  broadcast(EventCursorMoved(m_cursorPosition));
+  EventCursorMoved cmEvent(m_cursorPosition);
+  broadcast(cmEvent);
   m_enter = false;
 }
 
@@ -264,8 +268,11 @@ void KeyBuffer::set_character(char const c)
   }
   m_cursorPosition = position + 1;
 
-  broadcast(EventBufferChanged(m_buffer));
-  broadcast(EventCursorMoved(m_cursorPosition));
+  EventBufferChanged bcEvent(m_buffer);
+  EventCursorMoved cmEvent(m_cursorPosition);
+  
+  broadcast(bcEvent);
+  broadcast(cmEvent);
 }
 
 /// Delete character at cursor location.
@@ -281,8 +288,11 @@ void KeyBuffer::del_character()
   m_buffer.erase(position, 1);
   m_cursorPosition = position;
 
-  broadcast(EventBufferChanged(m_buffer));
-  broadcast(EventCursorMoved(m_cursorPosition));
+  EventBufferChanged bcEvent(m_buffer);
+  EventCursorMoved cmEvent(m_cursorPosition);
+  
+  broadcast(bcEvent);
+  broadcast(cmEvent);
 }
 
 /// Move cursor left.
@@ -293,7 +303,8 @@ bool KeyBuffer::left_cursor()
     return false;
   }
   --m_cursorPosition;
-  broadcast(EventCursorMoved(m_cursorPosition));
+  EventCursorMoved event(m_cursorPosition);
+  broadcast(event);
 
   return true;
 }
@@ -306,7 +317,8 @@ bool KeyBuffer::right_cursor()
     return false;
   }
   ++m_cursorPosition;
-  broadcast(EventCursorMoved(m_cursorPosition));
+  EventCursorMoved event(m_cursorPosition);
+  broadcast(event);
 
   return true;
 }

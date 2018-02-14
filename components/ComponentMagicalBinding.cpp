@@ -12,7 +12,7 @@ namespace Components
   {
     obj = ComponentMagicalBinding();
 
-    JSONUtils::doIfPresent(j, "binder", [&](auto& value) { obj.m_binder = EntityId(value.get<unsigned int>()); });
+    JSONUtils::doIfPresent(j, "binder", [&](auto& value) { obj.m_binder = EntityId(value.template get<unsigned int>()); });
     JSONUtils::doIfPresent(j, "against", [&](auto& value) { obj.m_against = value; }); // ComponentMagicalBinding::Against(value.get<Bits32>());
     JSONUtils::doIfPresent(j, "active", [&](auto& value) { obj.m_active = value; });
     JSONUtils::doIfPresent(j, "auto-expiration-time", [&](auto& value) { obj.m_autoExpirationTime = value; });

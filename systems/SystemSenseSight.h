@@ -30,7 +30,7 @@ namespace Systems
     virtual ~SenseSight();
 
     /// Recalculate whatever needs recalculating.
-    void doCycleUpdate();
+    virtual void doCycleUpdate() override;
 
     /// Returns true if first entity can see second.
     bool subjectCanSeeCoords(EntityId subject, IntVec2 coords) const;

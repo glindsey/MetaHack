@@ -20,7 +20,7 @@ namespace Components
         obj.m_burnResults.clear();
         for (auto citer = value.cbegin(); citer != value.cend(); ++citer)
         {
-          obj.m_burnResults.push_back(value.get<std::string>());
+            obj.m_burnResults.push_back(value.template get<std::string>());
         }
       }
     });

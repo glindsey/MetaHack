@@ -353,7 +353,7 @@ bool AppStateGameMode::handle_key_press(UIEvents::EventKeyPressed const& key)
     {
       std::unique_ptr<Actions::Action> p_action;
 
-      std::vector<EntityId>& entities = m_inventorySelection->getSelectedThings();
+      std::vector<EntityId> entities = m_inventorySelection->getSelectedThings();
       int key_number = get_letter_key(key);
       Direction key_direction = get_direction_key(key);
 
@@ -1096,7 +1096,7 @@ sf::IntRect AppStateGameMode::calcStatusAreaDims()
   statusAreaDims.width = m_appWindow.getSize().x -
     (invAreaDims.width + 24);
   statusAreaDims.height = config.get("status-area-height");
-  statusAreaDims.top = m_appWindow.getSize().y - (config.get("status-area-height") + 5);
+  statusAreaDims.top = m_appWindow.getSize().y - (statusAreaDims.height + 5);
   statusAreaDims.left = 12;
   return statusAreaDims;
 }

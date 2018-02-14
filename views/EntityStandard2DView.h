@@ -4,6 +4,7 @@
 
 #include "tilesheet/TileSheet.h"
 #include "views/EntityView.h"
+#include "views/Standard2DGraphicViews.h"
 
 /// Forward declarations
 

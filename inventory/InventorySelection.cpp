@@ -39,7 +39,8 @@ void InventorySelection::setViewed(EntityId entity)
   m_viewed = entity;
   m_selectedSlots.clear();
 
-  broadcast(EventEntityChanged(entity));
+  EventEntityChanged event(entity);
+  broadcast(event);
 }
 
 void InventorySelection::toggleSelection(InventorySlot selection)
@@ -108,7 +109,8 @@ std::vector<EntityId> InventorySelection::getSelectedThings()
 void InventorySelection::clearSelectedSlots()
 {
   m_selectedSlots.clear();
-  broadcast(EventSelectionChanged(m_selectedSlots, m_selectedQuantity));
+  EventSelectionChanged event(m_selectedSlots, m_selectedQuantity);
+  broadcast(event);
 }
 
 unsigned int InventorySelection::getSelectedQuantity() const
@@ -151,7 +153,8 @@ unsigned int InventorySelection::getMaxQuantity() const
 unsigned int InventorySelection::resetSelectedQuantity()
 {
   m_selectedQuantity = getMaxQuantity();
-  broadcast(EventSelectionChanged(m_selectedSlots, m_selectedQuantity));
+  EventSelectionChanged event(m_selectedSlots, m_selectedQuantity);
+  broadcast(event);
   return m_selectedQuantity;
 }
 
@@ -163,7 +166,8 @@ bool InventorySelection::setSelectedQuantity(unsigned int amount)
     if (amount <= maximum)
     {
       m_selectedQuantity = amount;
-      broadcast(EventSelectionChanged(m_selectedSlots, m_selectedQuantity));
+      EventSelectionChanged event(m_selectedSlots, m_selectedQuantity);
+      broadcast(event);
       return true;
     }
   }
@@ -176,7 +180,8 @@ bool InventorySelection::incSelectedQuantity()
   if (m_selectedQuantity < maximum)
   {
     ++(m_selectedQuantity);
-    broadcast(EventSelectionChanged(m_selectedSlots, m_selectedQuantity));
+    EventSelectionChanged event(m_selectedSlots, m_selectedQuantity);
+    broadcast(event);
     return true;
   }
   return false;
@@ -187,7 +192,8 @@ bool InventorySelection::decSelectedQuantity()
   if (m_selectedQuantity > 1)
   {
     --(m_selectedQuantity);
-    broadcast(EventSelectionChanged(m_selectedSlots, m_selectedQuantity));
+    EventSelectionChanged event(m_selectedSlots, m_selectedQuantity);
+    broadcast(event);
     return true;
   }
   return false;

@@ -21,7 +21,7 @@ namespace Components
         obj.m_corrosionResults.clear();
         for (auto citer = value.cbegin(); citer != value.cend(); ++citer)
         {
-          obj.m_corrosionResults.push_back(value.get<std::string>());
+          obj.m_corrosionResults.push_back(value.template get<std::string>());
         }
       }
     });

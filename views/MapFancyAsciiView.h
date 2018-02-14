@@ -6,6 +6,7 @@
 #include "tilesheet/TileSheet.h"
 #include "types/Grid2D.h"
 #include "views/MapView.h"
+#include "views/FancyAsciiGraphicViews.h"
 
 // Forward declarations
 class MapTileFancyAsciiView;

@@ -47,8 +47,8 @@ public:
   friend void from_json(json const& j, Direction& direction);
 
   // Equality operators
-  bool Direction::operator==(Direction const& other) const;
-  bool Direction::operator!=(Direction const& other) const;
+  bool operator==(Direction const& other) const;
+  bool operator!=(Direction const& other) const;
 
   // Getters
   bool exists() const;

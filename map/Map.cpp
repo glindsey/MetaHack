@@ -4,7 +4,7 @@
 
 #include "AssertHelper.h"
 #include "components/ComponentInventory.h"
-#include "Components/ComponentManager.h"
+#include "components/ComponentManager.h"
 #include "game/App.h"
 #include "game/GameState.h"
 #include "entity/EntityFactory.h"

@@ -38,8 +38,8 @@ namespace Components
   ComponentBodyparts::ComponentBodyparts(ComponentBodyparts const & other) :
     m_bodypartCount{ other.m_bodypartCount },
     m_bodypartExistence{ other.m_bodypartExistence },
-    m_wieldedItems{}, // do NOT copy
-    m_wornItems{} // do NOT copy
+    m_wornItems{}, // do NOT copy
+    m_wieldedItems{} // do NOT copy
   {}
 
   ComponentBodyparts & ComponentBodyparts::operator=(ComponentBodyparts const & other)

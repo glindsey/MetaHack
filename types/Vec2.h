@@ -62,14 +62,14 @@ public:
   {
     lhs.x *= rhs;
     lhs.y *= rhs;
-    return *this;
+    return *lhs;
   }
 
   friend Vec2 operator/(Vec2 lhs, T rhs)
   {
     lhs.x /= rhs;
     lhs.y /= rhs;
-    return *this;
+    return *lhs;
   }
 
   friend bool operator==(Vec2 const& lhs, Vec2 const& rhs)
@@ -88,7 +88,6 @@ public:
     return os;
   }
 
-  template<typename T>
   friend void to_json(json& j, Vec2<T> const& obj); // explicit instantiations are in the CPP file
 
   friend void from_json(json const& j, Vec2& obj)
@@ -130,7 +129,7 @@ public:
 
   double theta()
   {
-    return arctan(static_cast<double>(y) / static_cast<double>(x));
+    return atan(static_cast<double>(y) / static_cast<double>(x));
   }
 
   static T square_distance(Vec2 const& first, Vec2 const& second)

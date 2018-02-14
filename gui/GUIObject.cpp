@@ -23,8 +23,8 @@ namespace metagui
   GUIObject::GUIObject(Desktop& desktop, 
                        std::string name,
                        std::unordered_set<EventID> const eventsEmitted) :
-    m_desktop{ desktop },
-    Object(combine(s_eventsEmitted, eventsEmitted), name)
+    Object(combine(s_eventsEmitted, eventsEmitted), name),
+    m_desktop{ desktop }
   {
   }
 
@@ -143,7 +143,8 @@ namespace metagui
       m_parent->flagForRedraw();
     }
 
-    broadcast(EventMoved(old_location, location));
+    EventMoved event(old_location, location);
+    broadcast(event);
   }
 
   UintVec2 GUIObject::getSize()
@@ -189,7 +190,8 @@ namespace metagui
 
     // Set "dirty" for both this object and its parent chain.
     flagForRedraw();
-    broadcast(GUIObject::EventResized(oldSize, size));
+    GUIObject::EventResized event(oldSize, size);
+    broadcast(event);
   }
 
   sf::IntRect GUIObject::getRelativeDimensions()
@@ -329,7 +331,7 @@ namespace metagui
       m_children.erase(name);
 
       // This finds the child name in the Z-order map and gets rid of it.
-      for (auto& iter = m_zOrderMap.begin(); iter != m_zOrderMap.end(); ++iter)
+      for (auto iter = m_zOrderMap.begin(); iter != m_zOrderMap.end(); ++iter)
       {
         if (iter->second == name)
         {
@@ -346,7 +348,7 @@ namespace metagui
         "\" from parent \"" << getName() << "\"";
 
       // This returns the object we removed.
-      return std::move(movedObject);
+      return movedObject;
     }
 
     // Didn't find the object, so return an empty unique_ptr.

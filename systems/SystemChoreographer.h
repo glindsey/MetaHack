@@ -32,7 +32,7 @@ namespace Systems
     virtual ~Choreographer();
 
     /// Recalculate whatever needs recalculating.
-    void doCycleUpdate();
+    virtual void doCycleUpdate() override;
 
     /// Get current player.
     EntityId player() const;
