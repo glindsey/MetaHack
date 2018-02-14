@@ -1,6 +1,8 @@
 #ifndef NEW_H
 #define NEW_H
 
+#ifdef WIN32
+
 #define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>  
 #include <crtdbg.h> 
@@ -13,5 +15,12 @@
 #else
 #define NEW new
 #endif  // _DEBUG
+
+#else // !WIN32
+#ifndef NEW
+#define NEW new
+#endif
+
+#endif // WIN32
 
 #endif // NEW_H

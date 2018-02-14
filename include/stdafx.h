@@ -8,7 +8,7 @@
 #define NOMINMAX
 
 // EasyLogging++ includes
-#include "third_party/easyloggingpp/easylogging++.h"
+#include "easylogging++.h"
 
 // JSON includes
 #include "json.hpp"
@@ -66,9 +66,9 @@ using json = ::nlohmann::json;
 #include <boost/serialization/strong_typedef.hpp>
 
 // Cereal includes
-#include <third_party/cereal/archives/xml.hpp>
-#include <third_party/cereal/types/memory.hpp>
-#include <third_party/cereal/types/polymorphic.hpp>
+#include <cereal/archives/xml.hpp>
+#include <cereal/types/memory.hpp>
+#include <cereal/types/polymorphic.hpp>
 
 // SFML includes
 #include <SFML/Graphics.hpp>
