@@ -88,7 +88,7 @@ public:
     return os;
   }
 
-  friend void to_json(json& j, Vec2<T> const& obj); // explicit instantiations are in the CPP file
+  friend void to_json(json& j, Vec2<T> const& obj);
 
   friend void from_json(json const& j, Vec2& obj)
   {
@@ -173,6 +173,10 @@ namespace std
 
 template<typename T>
 void to_json(json& j, Vec2<T> const& obj);
+
+void to_json(json& j, Vec2<float> const& obj);
+void to_json(json& j, Vec2<unsigned int> const& obj);
+void to_json(json& j, Vec2<int> const& obj);
 
 using RealVec2 = Vec2<float>;
 using IntVec2 = Vec2<int32_t>;

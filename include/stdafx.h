@@ -93,4 +93,4 @@ extern "C"
 #include "utilities/New.h"
 
 // Namespace directives
-namespace bl = boost::locale;
+//namespace bl = boost::locale;

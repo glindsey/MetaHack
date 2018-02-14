@@ -19,8 +19,8 @@ int main(int argc, char* argv[])
   // causes false positives (due to global destructors running after the
   // memory leak report is generated).
   // EDIT: Unfortunately that doesn't seem to fix the problem. Argh.
-  bl::generator gen;
-  std::locale::global(gen("en_US.UTF-8"));
+  //bl::generator gen;
+  //std::locale::global(gen("en_US.UTF-8"));
 
 #ifdef _DEBUG
   _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);

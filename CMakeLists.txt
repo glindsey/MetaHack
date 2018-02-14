@@ -73,11 +73,12 @@ SET(ADDITIONAL_SOURCES
 SET(LIBRARIES
   ${PROJECT_SOURCE_DIR}/libraries/boost-1.65.1/${TARGET_PLATFORM}/${TARGET_LIBRARY_PREFIX}boost_chrono.${TARGET_LIBRARY_EXTENSION}
   ${PROJECT_SOURCE_DIR}/libraries/boost-1.65.1/${TARGET_PLATFORM}/${TARGET_LIBRARY_PREFIX}boost_filesystem.${TARGET_LIBRARY_EXTENSION}
-  ${PROJECT_SOURCE_DIR}/libraries/boost-1.65.1/${TARGET_PLATFORM}/${TARGET_LIBRARY_PREFIX}boost_locale.${TARGET_LIBRARY_EXTENSION}
+#  ${PROJECT_SOURCE_DIR}/libraries/boost-1.65.1/${TARGET_PLATFORM}/${TARGET_LIBRARY_PREFIX}boost_locale.${TARGET_LIBRARY_EXTENSION}
   ${PROJECT_SOURCE_DIR}/libraries/boost-1.65.1/${TARGET_PLATFORM}/${TARGET_LIBRARY_PREFIX}boost_random.${TARGET_LIBRARY_EXTENSION}
   ${PROJECT_SOURCE_DIR}/libraries/boost-1.65.1/${TARGET_PLATFORM}/${TARGET_LIBRARY_PREFIX}boost_system.${TARGET_LIBRARY_EXTENSION}
   ${PROJECT_SOURCE_DIR}/libraries/boost-1.65.1/${TARGET_PLATFORM}/${TARGET_LIBRARY_PREFIX}boost_thread.${TARGET_LIBRARY_EXTENSION}
   ${PROJECT_SOURCE_DIR}/libraries/sfgui-0.3.2/${TARGET_PLATFORM}/${TARGET_LIBRARY_PREFIX}sfgui-s${LIBRARY_SUFFIX}.${TARGET_LIBRARY_EXTENSION}
+  ${PROJECT_SOURCE_DIR}/libraries/luajit-2.0/${TARGET_PLATFORM}/${TARGET_LIBRARY_PREFIX}luajit.${TARGET_LIBRARY_EXTENSION}
 )
 
 MESSAGE("LIBRARY_LINKDIRS = ${LIBRARY_LINKDIRS}")
@@ -219,15 +220,15 @@ SET(PROJECT_SOURCES
   ${PROJECT_SOURCE_DIR}/types/Vec2.cpp
   ${PROJECT_SOURCE_DIR}/utilities/MathUtils.cpp
   ${PROJECT_SOURCE_DIR}/utilities/StringTransforms.cpp
-  ${PROJECT_SOURCE_DIR}/views/EntityFancyAsciiView.cpp
+#  ${PROJECT_SOURCE_DIR}/views/EntityFancyAsciiView.cpp
   ${PROJECT_SOURCE_DIR}/views/EntityNullView.cpp
   ${PROJECT_SOURCE_DIR}/views/EntityStandard2DView.cpp
   ${PROJECT_SOURCE_DIR}/views/EntityView.cpp
-  ${PROJECT_SOURCE_DIR}/views/FancyAsciiGraphicViews.cpp
-  ${PROJECT_SOURCE_DIR}/views/MapFancyAsciiView.cpp
+#  ${PROJECT_SOURCE_DIR}/views/FancyAsciiGraphicViews.cpp
+#  ${PROJECT_SOURCE_DIR}/views/MapFancyAsciiView.cpp
   ${PROJECT_SOURCE_DIR}/views/MapNullView.cpp
   ${PROJECT_SOURCE_DIR}/views/MapStandard2DView.cpp
-  ${PROJECT_SOURCE_DIR}/views/MapTileFancyAsciiView.cpp
+#  ${PROJECT_SOURCE_DIR}/views/MapTileFancyAsciiView.cpp
   ${PROJECT_SOURCE_DIR}/views/MapTileNullView.cpp
   ${PROJECT_SOURCE_DIR}/views/MapTileStandard2DView.cpp
   ${PROJECT_SOURCE_DIR}/views/MapView.cpp
@@ -406,15 +407,15 @@ SET(PROJECT_INCLUDES
   ${PROJECT_SOURCE_DIR}/utilities/RNGUtils.h
   ${PROJECT_SOURCE_DIR}/utilities/Shortcuts.h
   ${PROJECT_SOURCE_DIR}/utilities/StringTransforms.h
-  ${PROJECT_SOURCE_DIR}/views/EntityFancyAsciiView.h
+#  ${PROJECT_SOURCE_DIR}/views/EntityFancyAsciiView.h
   ${PROJECT_SOURCE_DIR}/views/EntityNullView.h
   ${PROJECT_SOURCE_DIR}/views/EntityStandard2DView.h
   ${PROJECT_SOURCE_DIR}/views/EntityView.h
-  ${PROJECT_SOURCE_DIR}/views/FancyAsciiGraphicViews.h
-  ${PROJECT_SOURCE_DIR}/views/MapFancyAsciiView.h
+#  ${PROJECT_SOURCE_DIR}/views/FancyAsciiGraphicViews.h
+#  ${PROJECT_SOURCE_DIR}/views/MapFancyAsciiView.h
   ${PROJECT_SOURCE_DIR}/views/MapNullView.h
   ${PROJECT_SOURCE_DIR}/views/MapStandard2DView.h
-  ${PROJECT_SOURCE_DIR}/views/MapTileFancyAsciiView.h
+#  ${PROJECT_SOURCE_DIR}/views/MapTileFancyAsciiView.h
   ${PROJECT_SOURCE_DIR}/views/MapTileNullView.h
   ${PROJECT_SOURCE_DIR}/views/MapTileStandard2DView.h
   ${PROJECT_SOURCE_DIR}/views/MapTileView.h
