@@ -165,7 +165,11 @@ bool Lua::add_enum(const char* tname, ...)
   // Execute lua code
   if (luaL_loadbuffer(L_, code.str().c_str(), code.str().length(), 0) || lua_pcall(L_, 0, 0, 0))
   {
-    fprintf(stderr, "%s\n", lua_tostring(L_, -1));
+    std::string errorString{ lua_tostring(L_, -1) };
+    
+    CLOG(FATAL, "Lua") << "Could not add enum to Lua: " << errorString << "\nString was:\n" << code.str();
+    
+    // Should not actually get here due to fatal error log
     lua_pop(L_, 1);
     return false;
   }
