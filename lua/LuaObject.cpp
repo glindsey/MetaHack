@@ -122,60 +122,6 @@ void Lua::stackDump() const
   printf("\n");  /* end the listing */
 }
 
-bool Lua::add_enum(const char* tname, ...)
-{
-  /// @note Here's the Lua code we're building and executing to define the
-  ///       enum.
-  /// ```
-  /// <tname> = setmetatable( {}, {
-  ///      __index = {
-  ///          <name1> = {
-  ///              value = <value1>,
-  ///              type = \"<tname>\"
-  ///          },
-  ///          ...
-  ///      },
-  ///      __newindex = function(table, key, value)
-  ///          error(\"Attempt to modify read-only table\")
-  ///      end,
-  ///      __metatable = false
-  /// });
-  /// ```
-
-  va_list args;
-  std::stringstream code;
-  char* ename;
-
-  code << tname << " = setmetatable({}, {";
-  code << "__index = {";
-
-  // Iterate over the variadic arguments adding the enum values.
-  va_start(args, tname);
-  while ((ename = va_arg(args, char*)) != 0)
-  {
-    int evalue = va_arg(args, int);
-    code << ename << "={value=" << evalue << ",type=\"" << tname << "\"},";
-  }
-  va_end(args);
-
-  code << "},";
-  code << "__newindex = function(table, key, value) error(\"Attempt to modify read-only table\") end,";
-  code << "__metatable = false});";
-
-  // Execute lua code
-  if (luaL_loadbuffer(L_, code.str().c_str(), code.str().length(), 0) || lua_pcall(L_, 0, 0, 0))
-  {
-    std::string errorString{ lua_tostring(L_, -1) };
-    
-    CLOG(FATAL, "Lua") << "Could not add enum to Lua: " << errorString << "\nString was:\n" << code.str();
-    
-    // Should not actually get here due to fatal error log
-    lua_pop(L_, 1);
-    return false;
-  }
-  return true;
-}
-
 bool Lua::check_enum_type(const char* tname, int index) const
 {
   if (!lua_istable(L_, index))
@@ -375,6 +321,7 @@ Lua::Type Lua::pop_type()
   {
     stackDump();
     CLOG(FATAL, "Lua") << "Expected LuaType on the Lua stack, not found";
+    return Lua::Type::Unknown;
   }
   else
   {
@@ -715,38 +662,40 @@ int Lua::LUA_trace(lua_State* L)
 
 void Lua::addGenderEnumToLua()
 {
-  add_enum("Gender",
-           "None", Gender::None,
-           "Male", Gender::Male,
-           "Female", Gender::Female,
-           "Neuter", Gender::Neuter,
-           "Spivak", Gender::Spivak,
-           "FirstPerson", Gender::FirstPerson,
-           "SecondPerson", Gender::SecondPerson,
-           "Plural", Gender::Plural,
-           "Hanar", Gender::Hanar,
-           "UnknownEntity", Gender::UnknownEntity,
-           "UnknownPerson", Gender::UnknownPerson,
-           "Count", Gender::Count,
-           0
-  );
+  add_enum<Gender>("Gender",
+           {
+             { "None", Gender::None },
+             { "Male", Gender::Male },
+             { "Female", Gender::Female },
+             { "Neuter", Gender::Neuter },
+             { "Spivak", Gender::Spivak },
+             { "FirstPerson", Gender::FirstPerson },
+             { "SecondPerson", Gender::SecondPerson },
+             { "Plural", Gender::Plural },
+             { "Hanar", Gender::Hanar },
+             { "UnknownEntity", Gender::UnknownEntity },
+             { "UnknownPerson", Gender::UnknownPerson },
+             { "Count", Gender::Count }
+           });
 }
 
 void Lua::addLuaTypeEnumToLua()
 {
-  add_enum("LuaType",
-           "Null", Lua::Type::Null,
-           "Boolean", Lua::Type::Boolean,
-           "String", Lua::Type::String,
-           "Integer", Lua::Type::Integer,
-           "Unsigned", Lua::Type::Unsigned,
-           "Number", Lua::Type::Number,
-           "IntVec2", Lua::Type::IntVec2,
-           "UintVec2", Lua::Type::UintVec2,
-           "RealVec2", Lua::Type::RealVec2,
-           "Direction", Lua::Type::Direction,
-           "Color", Lua::Type::Color,
-           "Type", Lua::Type::Type,
-           "Unknown", Lua::Type::Unknown,
-           0);
+  add_enum<Lua::Type>("LuaType",
+           {
+             { "Null", Lua::Type::Null },
+             { "Boolean", Lua::Type::Boolean },
+             { "String", Lua::Type::String },
+             { "Integer", Lua::Type::Integer },
+             { "Unsigned", Lua::Type::Unsigned },
+             { "Number", Lua::Type::Number },
+             { "IntVec2", Lua::Type::IntVec2 },
+             { "UintVec2", Lua::Type::UintVec2 },
+             { "RealVec2", Lua::Type::RealVec2 },
+             { "Direction", Lua::Type::Direction },
+             { "Color", Lua::Type::Color },
+             { "Type", Lua::Type::Type },
+             { "Unknown", Lua::Type::Unknown },
+             { "Count", Lua::Type::Count }
+           });
 }

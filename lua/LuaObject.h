@@ -33,6 +33,14 @@ public:
     Unknown,        ///< Internally represented by a string, but only to contain the unknown Lua type
     Count           ///< Just for bookkeeping, doesn't need to be in LuaObject
   };
+  
+  /// Struct used when defining enums.
+  template<typename T>
+  struct EnumPair
+  {
+    std::string name;
+    T value;
+  };
 
   friend std::ostream& operator<<(std::ostream& os, Type const& type)
   {
@@ -80,8 +88,7 @@ public:
   void stackDump() const;
 
 
-  /// Adds an enumerated type into Lua.
-  ///
+  /// Adds a C++ enumerated type into Lua.
   /// L - Lua state.
   /// tname - The name of the enum type.
   /// <name:string><value:int> pairs, terminated by a null (0).
@@ -92,11 +99,10 @@ public:
   ///
   /// To map this to Lua, do the following:
   ///
-  ///  add_enum_to_lua( L, "type",
-  ///    "foo", TYPE_FOO,
-  ///    "bar", TYPE_BAR,
-  ///    "baz", TYPE_BAZ,
-  ///    0);
+  ///  add_enum( "type",
+  ///    { { "foo", TYPE_FOO },
+  ///      { "bar", TYPE_BAR },
+  ///      { "baz", TYPE_BAZ } });
   ///
   /// In Lua, you can access the enum as:
   ///  type.foo
@@ -106,7 +112,57 @@ public:
   /// You can print the actual value in Lua by:
   ///  > print(type.foo.value)
   ///
-  bool add_enum(const char* tname, ...);
+  template <typename T>
+  bool add_enum(std::string tname, std::vector<EnumPair<T>> pairs)
+  {
+    /// @note Here's the Lua code we're building and executing to define the
+    ///       enum.
+    /// ```
+    /// <tname> = setmetatable( {}, {
+    ///      __index = {
+    ///          <name1> = {
+    ///              value = <value1>,
+    ///              type = \"<tname>\"
+    ///          },
+    ///          ...
+    ///      },
+    ///      __newindex = function(table, key, value)
+    ///          error(\"Attempt to modify read-only table\")
+    ///      end,
+    ///      __metatable = false
+    /// });
+    /// ```
+    
+    std::stringstream code;
+    
+    code << tname << " = setmetatable({}, {";
+    code << "__index = {";
+    
+    // Iterate over the pairs adding the enum values.
+    for (auto& pair : pairs)
+    {
+      code << pair.name << "={value=" << static_cast<int>(pair.value) << ",type=\"" << tname << "\"},";
+    }
+    
+    code << "},";
+    code << "__newindex = function(table, key, value) error(\"Attempt to modify read-only table\") end,";
+    code << "__metatable = false});";
+    
+    // Execute lua code
+    std::string codeString = code.str();
+    
+    if (luaL_loadbuffer(L_, codeString.c_str(), codeString.length(), 0) || lua_pcall(L_, 0, 0, 0))
+    {
+      std::string errorString{ lua_tostring(L_, -1) };
+      
+      CLOG(FATAL, "Lua") << "Could not add enum to Lua: " << errorString << "\nString was:\n" << codeString;
+      
+      // Should not actually get here due to fatal error log
+      lua_pop(L_, 1);
+      return false;
+    }
+    return true;
+  }
 
   /// Validates that the specified value is the correct enumerated type.
   ///
