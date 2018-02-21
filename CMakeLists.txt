@@ -35,7 +35,9 @@ ELSEIF (APPLE)
   SET(TARGET_LIBRARY_PREFIX lib)
   SET(TARGET_LIBRARY_EXTENSION a)
   #SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} <whatever else we want here>")
-  SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework CoreFoundation -framework CoreGraphics -framework IOKit -framework OpenGL -framework Cocoa -framework Carbon -framework freetype")
+  # pagezero_size, image_base are needed for LuaJIT to work properly
+  # See: https://stackoverflow.com/questions/20858911/lua-open-returns-null-using-luajit
+  SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pagezero_size 10000 -image_base 100000000 -framework CoreFoundation -framework CoreGraphics -framework IOKit -framework OpenGL -framework Cocoa -framework Carbon -framework freetype")
   SET(TARGET_SPECIFIC_LIBS /usr/local/lib/libjpeg.a iconv)
 ELSEIF (LINUX)
   SET(TARGET_PLATFORM linux-gcc-64bit)
