@@ -435,6 +435,10 @@ INCLUDE_DIRECTORIES(
 SET(EXECUTABLE_NAME "MetaHack")
 ADD_EXECUTABLE(MetaHack ${PROJECT_SOURCES} ${PROJECT_INCLUDES} ${ADDITIONAL_SOURCES})
 
+ADD_CUSTOM_COMMAND(TARGET MetaHack POST_BUILD 
+                   COMMAND ${CMAKE_COMMAND} -E copy_directory
+                      ${PROJECT_SOURCE_DIR}/resources $<TARGET_FILE_DIR:MetaHack>/resources)
+
 # Detect and add SFML
 SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules" ${CMAKE_MODULE_PATH})
 FIND_PACKAGE(SFML 2 REQUIRED network audio graphics window system)
