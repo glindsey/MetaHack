@@ -39,6 +39,7 @@ ELSEIF (APPLE)
   # See: https://stackoverflow.com/questions/20858911/lua-open-returns-null-using-luajit
   SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pagezero_size 10000 -image_base 100000000 -framework CoreFoundation -framework CoreGraphics -framework IOKit -framework OpenGL -framework Cocoa -framework Carbon -framework freetype")
   SET(TARGET_SPECIFIC_LIBS /usr/local/lib/libjpeg.a iconv)
+  SET(CMAKE_MACOSX_BUNDLE TRUE)
 ELSEIF (LINUX)
   SET(TARGET_PLATFORM linux-gcc-64bit)
   SET(TARGET_LIBRARY_PREFIX lib)
