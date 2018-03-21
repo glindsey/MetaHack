@@ -6,40 +6,40 @@
 
 /// Definition of a rectangle.
 template <typename T>
-class Rect
+class Rectangle
 {
 public:
-  Rect()
+  Rectangle()
   {}
 
-  Rect(T x_, T y_, T width_, T height_)
+  Rectangle(T x_, T y_, T width_, T height_)
     :
     x{ x_ }, y{ y_ }, width{ width_ }, height{ height_ }
   {}
 
-  Rect(sf::Rect<T> rect)
+  Rectangle(sf::Rect<T> rect)
     :
     x{ rect.left }, y{ rect.top }, width{ rect.width }, height{ rect.height }
   {}
 
-  virtual ~Rect() = default;
-  Rect(Rect const& other) = default;
-  Rect(Rect&& other) = default;
-  Rect& operator=(Rect const& other) = default;
-  Rect& operator=(Rect&& other) = default;
+  virtual ~Rectangle() = default;
+  Rectangle(Rectangle const& other) = default;
+  Rectangle(Rectangle&& other) = default;
+  Rectangle& operator=(Rectangle const& other) = default;
+  Rectangle& operator=(Rectangle&& other) = default;
 
-  friend bool operator==(Rect const& lhs, Rect const& rhs)
+  friend bool operator==(Rectangle const& lhs, Rectangle const& rhs)
   {
     return ((lhs.x == rhs.x) && (lhs.y == rhs.y) && (lhs.width == rhs.width) && (lhs.height == rhs.height));
   }
 
 
-  friend bool operator!=(Rect const& lhs, Rect const& rhs)
+  friend bool operator!=(Rectangle const& lhs, Rectangle const& rhs)
   {
     return !(lhs == rhs);
   }
 
-  friend std::ostream& operator<<(std::ostream& os, Rect const& obj)
+  friend std::ostream& operator<<(std::ostream& os, Rectangle const& obj)
   {
     os << "(" << obj.x << ", " << obj.y << ")+(" << obj.width << ", " << obj.height << ")";
     return os;
@@ -88,5 +88,5 @@ public:
   T x, y, width, height;
 };
 
-using Rectf = Rect<float>;
-using Recti = Rect<int>;
+using Rectf = Rectangle<float>;
+using Recti = Rectangle<int>;

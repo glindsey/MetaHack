@@ -2,9 +2,9 @@
 
 #include "game/App.h"
 
-//#ifdef __APPLE__
-//#include "CoreFoundation/CoreFoundation.h"
-//#endif
+#ifdef __APPLE__
+#include "CoreFoundation/CoreFoundation.h"
+#endif
 
 INITIALIZE_EASYLOGGINGPP
 
@@ -28,19 +28,19 @@ int main(int argc, char* argv[])
 
   // If in MacOS, change working directory to the Resources folder.
   // (See https://stackoverflow.com/questions/516200/relative-paths-not-working-in-xcode-c?rq=1 for details)
-//#ifdef __APPLE__
-//  CFBundleRef mainBundle = CFBundleGetMainBundle();
-//  CFURLRef resourcesURL = CFBundleCopyResourcesDirectoryURL(mainBundle);
-//  char path[PATH_MAX];
-//  if (!CFURLGetFileSystemRepresentation(resourcesURL, TRUE, (UInt8 *)path, PATH_MAX))
-//  {
-//    // error!
-//  }
-//  CFRelease(resourcesURL);
-//
-//  chdir(path);
-//  std::cout << "Current Path: " << path << std::endl;
-//#endif
+#ifdef __APPLE__
+  CFBundleRef mainBundle = CFBundleGetMainBundle();
+  CFURLRef resourcesURL = CFBundleCopyResourcesDirectoryURL(mainBundle);
+  char path[PATH_MAX];
+  if (!CFURLGetFileSystemRepresentation(resourcesURL, TRUE, (UInt8 *)path, PATH_MAX))
+  {
+    // error!
+  }
+  CFRelease(resourcesURL);
+
+  chdir(path);
+  std::cout << "Current Path: " << path << std::endl;
+#endif
   
 #ifdef _DEBUG
   _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
