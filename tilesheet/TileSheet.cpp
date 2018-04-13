@@ -7,8 +7,8 @@
 
 TileSheet::TileSheet(UintVec2 tileSize, UintVec2 textureSize)
   :
-  m_tileSize{ tileSize },
-  m_textureSize{ textureSize }
+  m_textureSize{ textureSize },
+  m_tileSize{ tileSize }
 {
   if (m_textureSize.x == 0 && m_textureSize.y == 0)
   {

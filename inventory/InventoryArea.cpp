@@ -100,7 +100,7 @@ void InventoryArea::drawContents_(sf::RenderTexture& texture, int frame)
       render_text.setCharacterSize(config.get("text-mono-default-size"));
       render_text.setString(selection_number.str());
       render_text.setPosition(text_coord_x + 26, text_coord_y);
-      render_text.setColor(fg_color);
+      render_text.setFillColor(fg_color);
       texture.draw(render_text);
     }
 
@@ -117,7 +117,7 @@ void InventoryArea::drawContents_(sf::RenderTexture& texture, int frame)
       render_text.setCharacterSize(config.get("text-mono-default-size"));
       render_text.setString(slot_id.str());
       render_text.setPosition(text_coord_x + 55, text_coord_y);
-      render_text.setColor(fg_color);
+      render_text.setFillColor(fg_color);
       texture.draw(render_text);
     }
 
@@ -142,7 +142,7 @@ void InventoryArea::drawContents_(sf::RenderTexture& texture, int frame)
       render_text.setCharacterSize(config.get("text-mono-default-size"));
       render_text.setString("W");
       render_text.setPosition(text_coord_x + 11, text_coord_y);
-      render_text.setColor(fg_color);
+      render_text.setFillColor(fg_color);
       texture.draw(render_text);
     }
     else if (wearing)
@@ -151,7 +151,7 @@ void InventoryArea::drawContents_(sf::RenderTexture& texture, int frame)
       render_text.setCharacterSize(config.get("text-mono-default-size"));
       render_text.setString("E");
       render_text.setPosition(text_coord_x + 11, text_coord_y);
-      render_text.setColor(fg_color);
+      render_text.setFillColor(fg_color);
       texture.draw(render_text);
     }
 
@@ -183,7 +183,7 @@ void InventoryArea::drawContents_(sf::RenderTexture& texture, int frame)
     render_text.setString(item_name.str());
     render_text.setPosition(text_coord_x + 80 + line_spacing_y,
                             text_coord_y + 1);
-    render_text.setColor(fg_color);
+    render_text.setFillColor(fg_color);
     texture.draw(render_text);
 
     if (text_coord_y > pane_dims.height) break;

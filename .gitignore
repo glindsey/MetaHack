@@ -225,3 +225,7 @@ doxygen/
 *.VC.db
 *.db-shm
 *.db-wal
+
+# Debugging artifacts
+dump.json
+

@@ -180,7 +180,7 @@ void KeyBuffer::render(sf::RenderTexture& texture,
 
   render_text.setFont(font);
   render_text.setCharacterSize(font_size);
-  render_text.setColor(fg_color);
+  render_text.setFillColor(fg_color);
 
   // *** PROMPT ***************************************************************
   render_text.setString("> ");

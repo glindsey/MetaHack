@@ -67,7 +67,7 @@ namespace metagui
       title_text.setFont(the_default_bold_font);
       title_text.setCharacterSize(config.get("text-default-size"));
 
-      title_text.setColor(text_color);
+      title_text.setFillColor(text_color);
       title_text.setPosition(text_position);
       texture.draw(title_text);
     }

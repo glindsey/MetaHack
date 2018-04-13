@@ -79,19 +79,19 @@ void MapStandard2DView::updateEntities(EntityId viewer,
 
 bool MapStandard2DView::renderMap(sf::RenderTexture& texture, int frame)
 {
-  the_shader.setParameter("texture", sf::Shader::CurrentTexture);
+  the_shader.setUniform("texture", sf::Shader::CurrentTexture);
 
   sf::RenderStates render_states = sf::RenderStates::Default;
   render_states.shader = &the_shader;
   render_states.texture = &(m_views.getTileSheet().getTexture());
 
-  the_shader.setParameter("effect", ShaderEffect::Lighting);
+  the_shader.setUniform("effect", ShaderEffect::Lighting);
   texture.draw(m_mapHorizVertices, render_states);
-  the_shader.setParameter("effect", ShaderEffect::Sepia);
+  the_shader.setUniform("effect", ShaderEffect::Sepia);
   texture.draw(m_mapMemoryVertices, render_states);
-  the_shader.setParameter("effect", ShaderEffect::Lighting);
+  the_shader.setUniform("effect", ShaderEffect::Lighting);
   texture.draw(m_entityVertices, render_states);
-  the_shader.setParameter("effect", ShaderEffect::Lighting);
+  the_shader.setUniform("effect", ShaderEffect::Lighting);
   texture.draw(m_mapVertVertices, render_states);
 
   return true;

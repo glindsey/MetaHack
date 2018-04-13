@@ -69,7 +69,7 @@ void StatusArea::drawContents_(sf::RenderTexture& texture, int frame)
 
     // Render HP
     render_text.setFont(the_default_mono_font);
-    render_text.setColor(text_dim_color);
+    render_text.setFillColor(text_dim_color);
     render_text.setPosition({ origin.x, origin.y + line_spacing });
     render_text.setString("HP");
     texture.draw(render_text);
@@ -82,15 +82,15 @@ void StatusArea::drawContents_(sf::RenderTexture& texture, int frame)
 
     if (hp_percentage > 0.6)
     {
-      render_text.setColor(text_color);
+      render_text.setFillColor(text_color);
     }
     else if (hp_percentage > 0.3)
     {
-      render_text.setColor(text_warning_color);
+      render_text.setFillColor(text_warning_color);
     }
     else
     {
-      render_text.setColor(text_danger_color);
+      render_text.setFillColor(text_danger_color);
     }
 
     std::string hp_string = boost::lexical_cast<std::string>(hp) + "/" + boost::lexical_cast<std::string>(max_hp);
@@ -152,7 +152,7 @@ void StatusArea::render_attribute(sf::RenderTarget& target,
 
   // Render attribute
   render_text.setFont(the_default_mono_font);
-  render_text.setColor(text_dim_color);
+  render_text.setFillColor(text_dim_color);
   render_text.setCharacterSize(config.get("text-default-size"));
   render_text.setPosition(location.x, location.y);
   render_text.setString(abbrev + ":");
@@ -161,7 +161,7 @@ void StatusArea::render_attribute(sf::RenderTarget& target,
   /// @todo reimplement me
   std::string attr_string = "TODO"; // std::to_string((player->getModifiedProperty(key, 0)).get<int>());
 
-  render_text.setColor(text_color);
+  render_text.setFillColor(text_color);
   render_text.setPosition(location.x + 40, location.y);
   render_text.setString(attr_string);
   target.draw(render_text);

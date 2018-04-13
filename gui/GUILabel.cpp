@@ -39,7 +39,7 @@ namespace metagui
     {
       sf::Text text{ str, the_default_font, static_cast<unsigned int>(config.get("text-default-size")) };
       auto text_color = config.get("text-color").get<Color>();
-      text.setColor(text_color);
+      text.setFillColor(text_color);
       text.setPosition(offset);
 
       // Resize vertically if "resize_to_fit" is true.

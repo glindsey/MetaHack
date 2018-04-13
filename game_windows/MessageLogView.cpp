@@ -76,7 +76,7 @@ void MessageLogView::drawContents_(sf::RenderTexture& texture, int frame)
     auto text_color = config.get("text-color").get<Color>();
     render_text.setString(*iter);
     render_text.setPosition(text_coord_x, text_coord_y);
-    render_text.setColor(text_color);
+    render_text.setFillColor(text_color);
     texture.draw(render_text);
     if (text_coord_y < text_offset.y) break;
     text_coord_y -= lineSpacing;
