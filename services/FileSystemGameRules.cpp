@@ -6,6 +6,7 @@
 #include "lua/LuaObject.h"
 #include "services/Service.h"
 #include "services/IGraphicViews.h"
+#include "services/IPaths.h"
 #include "utilities/JSONUtils.h"
 #include "utilities/StringTransforms.h"
 
@@ -37,12 +38,13 @@ void FileSystemGameRules::loadCategoryIfNecessary(std::string name)
     json& categoryData = m_data[name];
 
     // Look for the various files containing this metadata.
-    FileName resource_string = "resources/entity/" +
+    std::string resourcesPath = S<IPaths>().resources();
+    FileName resource_string = "entity/" +
                                (namePair.first.empty() ? "" : namePair.first + "/") + namePair.second;
 
-    FileName jsonfile_string = resource_string + ".json";
+    FileName jsonfile_string = resourcesPath + "/" + resource_string + ".json";
     fs::path jsonfile_path = fs::path(jsonfile_string);
-    FileName luafile_string = resource_string + ".lua";
+    FileName luafile_string = resourcesPath + "/" + resource_string + ".lua";
     fs::path luafile_path = fs::path(luafile_string);
 
     /// Try to load this Entity's JSON metadata.

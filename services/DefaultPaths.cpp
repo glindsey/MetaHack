@@ -39,6 +39,9 @@ DefaultPaths::DefaultPaths()
   
   std::cout << "Log directory is " << logDirectory << std::endl;
   std::cout << "Resources directory is " << resourcesDirectory << std::endl;
+  
+  m_logsPath = logDirectory;
+  m_resourcesPath = resourcesDirectory;
 }
 
 DefaultPaths::~DefaultPaths()

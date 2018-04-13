@@ -335,6 +335,9 @@ protected:
   /// Helper method for `find_lua_function`.
   std::string find_lua_function_(std::string category, std::string suffix) const;
 
+  /// Helper method to set a Lua path.
+  void addToLuaPath(std::string path);
+  
 private:
   /// Private Lua state.
   lua_State mutable* L_;

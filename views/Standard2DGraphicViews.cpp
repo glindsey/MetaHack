@@ -6,6 +6,7 @@
 #include "services/Service.h"
 #include "services/IConfigSettings.h"
 #include "services/IGameRules.h"
+#include "services/IPaths.h"
 #include "tilesheet/TileSheet.h"
 #include "utilities/New.h"
 #include "utilities/StringTransforms.h"
@@ -84,7 +85,7 @@ void Standard2DGraphicViews::loadViewResourcesFor(std::string category)
 {
   StringPair stringPair = StringTransforms::splitName(category);
 
-  FileName resourceString = "resources/entity/" + stringPair.second;
+  FileName resourceString = S<IPaths>().resources() + "/entity/" + stringPair.second;
   FileName pngFileString = resourceString + ".png";
   fs::path pngFilePath = fs::path(pngFileString);
   m_triedToLoad.insert(category);

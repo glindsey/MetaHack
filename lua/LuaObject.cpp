@@ -20,6 +20,9 @@ Lua::Lua()
   // Load the base libraries.
   luaL_openlibs(L_);
 
+  // Add the resources path to the Lua package path.
+  addToLuaPath(S<IPaths>().resources() + "/?.lua");
+  
   // Register enums.
   addGenderEnumToLua();
   addLuaTypeEnumToLua();
@@ -28,7 +31,7 @@ Lua::Lua()
   register_function("print_trace", Lua::LUA_trace);
 
   // Run the initial Lua script.
-  require(S<IPaths>().resources() + "default", true);
+  require("default", true);
 }
 
 Lua::~Lua()
@@ -699,4 +702,18 @@ void Lua::addLuaTypeEnumToLua()
              { "Unknown", Lua::Type::Unknown },
              { "Count", Lua::Type::Count }
            });
+}
+
+void Lua::addToLuaPath( std::string path )
+{
+  lua_getglobal( L_, "package" );
+  lua_getfield( L_, -1, "path" ); // get field "path" from table at top of stack (-1)
+  std::string cur_path = lua_tostring( L_, -1 ); // grab path string from top of stack
+  path.append( ";" ); // do your path magic here
+  path.append( cur_path );
+  std::cout << "*** Current Lua package path is now " << path << std::endl;
+  lua_pop( L_, 1 ); // get rid of the string on the stack we just pushed on line 5
+  lua_pushstring( L_, path.c_str() ); // push the new one
+  lua_setfield( L_, -2, "path" ); // set the field "path" in table at -2 with value at top of stack
+  lua_pop( L_, 1 ); // get rid of package table from top of stack
 }

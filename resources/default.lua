@@ -1,6 +1,6 @@
 -- Default Lua script read when EntityPool is first initialized.
 
---require "resources/deepcopy"
+--require "deepcopy"
 
 -- Seed the RNG.
 -- (TODO: Probably should improve upon this in the future.)
@@ -139,6 +139,6 @@ end
 -- === USEFUL GLOBALS =========================================================
 Void = 0
 
-require('resources/entity/template/GameObject')
+require('entity/template/GameObject')
 
 print("*** Default Lua script executed.")

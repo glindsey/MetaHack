@@ -11,6 +11,7 @@
 #include "maptile/MapTile.h"
 #include "services/Service.h"
 #include "services/IGameRules.h"
+#include "services/IPaths.h"
 #include "types/Color.h"
 #include "types/LightInfluence.h"
 #include "types/ShaderEffect.h"
@@ -63,7 +64,7 @@ void Map::initialize()
     ///       this will do.
     CLOG(TRACE, "Map") << "Executing Map Lua script.";
     m_gameState.lua().set_global("current_map_id", m_id);
-    m_gameState.lua().require("resources/script/map");
+    m_gameState.lua().require(S<IPaths>().resources() + "/script/map");
   }
 
   CLOG(TRACE, "Map") << "Map initialized.";
