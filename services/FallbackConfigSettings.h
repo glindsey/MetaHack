@@ -1,7 +1,5 @@
 #pragma once
 
-
-
 #include "services/IConfigSettings.h"
 
 /// Hardcoded fallback config settings for the game.

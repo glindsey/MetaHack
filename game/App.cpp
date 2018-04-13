@@ -7,6 +7,7 @@
 #include "game/AppStateMainMenu.h"
 #include "game/AppStateSplashScreen.h"
 #include "services/Service.h"
+#include "services/DefaultPaths.h"
 #include "services/FallbackConfigSettings.h"
 #include "services/FileSystemGameRules.h"
 #include "services/MessageLog.h"
@@ -33,9 +34,7 @@ sf::IntRect calc_message_log_dimensions(sf::RenderWindow& window)
   return messageLogDims;
 }
 
-App::App(sf::RenderWindow& appWindow,
-         std::string resourcesDirectory,
-         std::string logDirectory)
+App::App(sf::RenderWindow& appWindow)
   :
   Object({
   EventAppQuitRequested::id,
@@ -49,8 +48,6 @@ App::App(sf::RenderWindow& appWindow,
   UIEvents::EventMouseLeft::id,
   UIEvents::EventMouseWheelMoved::id }),
   m_appWindow{ appWindow },
-  m_resourcesDirectory{ resourcesDirectory },
-  m_logDirectory{ logDirectory },
   m_appTexture{ NEW sf::RenderTexture() },
   m_isRunning{ false },
   m_hasWindowFocus{ false }
@@ -99,11 +96,12 @@ App::App(sf::RenderWindow& appWindow,
   SET_UP_LOGGER("Types",              false);
   SET_UP_LOGGER("Utilities",          false);
 
-
   // Load config settings.
   Service<IConfigSettings>::provide(NEW FallbackConfigSettings());
 
   auto& config = S<IConfigSettings>();
+  
+  auto& resourcesPath = S<IPaths>().resources();
 
   // Create the app state machine.
   m_stateMachine.reset(NEW StateMachine("app_state_machine", this)),
@@ -120,7 +118,7 @@ App::App(sf::RenderWindow& appWindow,
   // Create the default fonts.
   m_fontDefault.reset(NEW sf::Font());
   std::string defaultFont = config.get("font-name-default");
-  FileName fontName = resourcesDirectory + "/font/" + defaultFont + ".ttf";
+  FileName fontName = resourcesPath + "/font/" + defaultFont + ".ttf";
   if (m_fontDefault->loadFromFile(fontName) == false)
   {
     CLOG(FATAL, "App") << "Could not load the default font";
@@ -128,7 +126,7 @@ App::App(sf::RenderWindow& appWindow,
 
   m_fontDefaultBold.reset(NEW sf::Font());
   std::string defaultBoldFont = config.get("font-name-bold");
-  fontName = resourcesDirectory + "/font/" + defaultBoldFont + ".ttf";
+  fontName = resourcesPath + "/font/" + defaultBoldFont + ".ttf";
   if (m_fontDefaultBold->loadFromFile(fontName) == false)
   {
     CLOG(FATAL, "App") << "Could not load the default bold font";
@@ -136,7 +134,7 @@ App::App(sf::RenderWindow& appWindow,
 
   m_fontDefaultMono.reset(NEW sf::Font());
   std::string defaultMonoFont = config.get("font-name-mono");
-  fontName = resourcesDirectory + "/font/" + defaultMonoFont + ".ttf";
+  fontName = resourcesPath + "/font/" + defaultMonoFont + ".ttf";
   if (m_fontDefaultMono->loadFromFile(fontName) == false)
   {
     CLOG(FATAL, "App") << "Could not load the default monospace font";
@@ -144,7 +142,7 @@ App::App(sf::RenderWindow& appWindow,
 
   m_fontDefaultUnicode.reset(NEW sf::Font());
   std::string defaultUnicodeFont = config.get("font-name-unicode");
-  fontName = resourcesDirectory + "/font/" + defaultUnicodeFont + ".ttf";
+  fontName = resourcesPath + "/font/" + defaultUnicodeFont + ".ttf";
   if (m_fontDefaultUnicode->loadFromFile(fontName) == false)
   {
     CLOG(FATAL, "App") << "Could not load the default Unicode font";
@@ -152,8 +150,8 @@ App::App(sf::RenderWindow& appWindow,
 
   // Create the shader program.
   m_shader.reset(NEW sf::Shader());
-  if (m_shader->loadFromFile(resourcesDirectory + "/shader/default.vert",
-                             resourcesDirectory + "/shader/default.frag") == false)
+  if (m_shader->loadFromFile(resourcesPath + "/shader/default.vert",
+                             resourcesPath + "/shader/default.frag") == false)
   {
     CLOG(FATAL, "App") << "Could not load the default shaders";
   }
@@ -166,7 +164,7 @@ App::App(sf::RenderWindow& appWindow,
 
   // Create the string dictionary, and try to load the default translation file.
   /// @todo Change this so language can be specified.
-  Service<IStrings>::provide(NEW Strings(resourcesDirectory + "/strings.en"));
+  Service<IStrings>::provide(NEW Strings(resourcesPath + "/strings.en"));
 
   /// @note Standard map views provider creation has been moved to AppStateGameMode.
 

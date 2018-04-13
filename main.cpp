@@ -2,10 +2,6 @@
 
 #include "game/App.h"
 
-#ifdef __APPLE__
-#include "CoreFoundation/CoreFoundation.h"
-#endif
-
 INITIALIZE_EASYLOGGINGPP
 
 int main(int argc, char* argv[])
@@ -25,37 +21,7 @@ int main(int argc, char* argv[])
   // EDIT: Unfortunately that doesn't seem to fix the problem. Argh.
   bl::generator gen;
   std::locale::global(gen("en_US.UTF-8"));
-
-  std::string workingDirectory { argv[0] };
-  std::string logDirectory { workingDirectory + "/log" };
-  std::string resourcesDirectory { workingDirectory + "/resources" };
-  
-  // If in MacOS, we get these in a somewhat different manner, because Apple has to be different.
-  // (See https://stackoverflow.com/questions/516200/relative-paths-not-working-in-xcode-c?rq=1 for details)
-#ifdef __APPLE__
-  CFBundleRef mainBundle = CFBundleGetMainBundle();
-  char path[PATH_MAX];
-  
-  CFURLRef executableURL = CFBundleCopyExecutableURL(mainBundle);
-  if (!CFURLGetFileSystemRepresentation(executableURL, TRUE, (UInt8 *)path, PATH_MAX))
-  {
-    LOG(FATAL) << "Could not obtain resources directory name from CoreFoundation!";
-  }
-  logDirectory = std::string(path) + "/log";
-  CFRelease(executableURL);
-  
-  CFURLRef resourcesURL = CFBundleCopyResourcesDirectoryURL(mainBundle);
-  if (!CFURLGetFileSystemRepresentation(resourcesURL, TRUE, (UInt8 *)path, PATH_MAX))
-  {
-    LOG(FATAL) << "Could not obtain resources directory name from CoreFoundation!";
-  }
-  resourcesDirectory = std::string(path);
-  CFRelease(resourcesURL);
-#endif
-
-  std::cout << "Log directory is " << logDirectory << std::endl;
-  std::cout << "Resources directory is " << resourcesDirectory << std::endl;
-  
+ 
 #ifdef _DEBUG
   _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
@@ -86,9 +52,7 @@ int main(int argc, char* argv[])
       LOG(INFO) << "attributeFlags = 0x" << hexify<uint32_t>(settings.attributeFlags);
 
       // Create and run the app instance.
-      app.reset(NEW App(*app_window,
-                        resourcesDirectory,
-                        logDirectory));
+      app.reset(NEW App(*app_window));
       app->run();
     }
 #ifdef NDEBUG

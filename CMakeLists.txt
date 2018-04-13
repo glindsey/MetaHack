@@ -361,24 +361,28 @@ SET(PROJECT_INCLUDES_MAP
 )
 
 SET(PROJECT_SOURCES_SERVICES
+  ${PROJECT_SOURCE_DIR}/services/DefaultPaths.cpp
   ${PROJECT_SOURCE_DIR}/services/FallbackConfigSettings.cpp
   ${PROJECT_SOURCE_DIR}/services/FileSystemGameRules.cpp
   ${PROJECT_SOURCE_DIR}/services/IConfigSettings.cpp
   ${PROJECT_SOURCE_DIR}/services/IGameRules.cpp
   ${PROJECT_SOURCE_DIR}/services/IGraphicViews.cpp
   ${PROJECT_SOURCE_DIR}/services/IMessageLog.cpp
+  ${PROJECT_SOURCE_DIR}/services/IPaths.cpp
   ${PROJECT_SOURCE_DIR}/services/IStrings.cpp
   ${PROJECT_SOURCE_DIR}/services/MessageLog.cpp
   ${PROJECT_SOURCE_DIR}/services/Strings.cpp
 )
 
 SET(PROJECT_INCLUDES_SERVICES
+  ${PROJECT_SOURCE_DIR}/services/DefaultPaths.h
   ${PROJECT_SOURCE_DIR}/services/FallbackConfigSettings.h
   ${PROJECT_SOURCE_DIR}/services/FileSystemGameRules.h
   ${PROJECT_SOURCE_DIR}/services/IConfigSettings.h
   ${PROJECT_SOURCE_DIR}/services/IGameRules.h
   ${PROJECT_SOURCE_DIR}/services/IGraphicViews.h
   ${PROJECT_SOURCE_DIR}/services/IMessageLog.h
+  ${PROJECT_SOURCE_DIR}/services/IPaths.h
   ${PROJECT_SOURCE_DIR}/services/IStrings.h
   ${PROJECT_SOURCE_DIR}/services/MessageLog.h
   ${PROJECT_SOURCE_DIR}/services/NullGameRules.h

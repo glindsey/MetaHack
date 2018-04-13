@@ -10,6 +10,7 @@
 #include "types/Gender.h"
 #include "services/Service.h"
 #include "services/IGameRules.h"
+#include "services/IPaths.h"
 
 Lua::Lua()
 {
@@ -27,7 +28,7 @@ Lua::Lua()
   register_function("print_trace", Lua::LUA_trace);
 
   // Run the initial Lua script.
-  require("resources/default", true);
+  require(S<IPaths>().resources() + "default", true);
 }
 
 Lua::~Lua()

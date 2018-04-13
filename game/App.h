@@ -86,9 +86,7 @@ public:
     }
   };
 
-  explicit App(sf::RenderWindow& appWindow,
-               std::string resourcesDirectory,
-               std::string logDirectory);
+  explicit App(sf::RenderWindow& appWindow);
   App(App const&) = delete;
   App(App&&) = delete;
   App& operator=(App const&) = delete;
@@ -138,8 +136,6 @@ protected:
 
 private:
   sf::RenderWindow& m_appWindow;
-  std::string m_resourcesDirectory;
-  std::string m_logDirectory;
 
   /// Pointer to off-screen buffer for drawing composition.
   std::unique_ptr<sf::RenderTexture> m_appTexture;
