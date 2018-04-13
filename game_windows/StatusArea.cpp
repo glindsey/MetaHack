@@ -51,7 +51,7 @@ void StatusArea::drawContents_(sf::RenderTexture& texture, int frame)
   // Text offsets relative to the background rectangle.
   sf::Text render_text;
   render_text.setFont(the_default_font);
-  render_text.setColor(text_color);
+  render_text.setFillColor(text_color);
   render_text.setCharacterSize(text_default_size);
   render_text.setPosition(origin);
 

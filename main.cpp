@@ -26,21 +26,35 @@ int main(int argc, char* argv[])
   bl::generator gen;
   std::locale::global(gen("en_US.UTF-8"));
 
-  // If in MacOS, change working directory to the Resources folder.
+  std::string workingDirectory { argv[0] };
+  std::string logDirectory { workingDirectory + "/log" };
+  std::string resourcesDirectory { workingDirectory + "/resources" };
+  
+  // If in MacOS, we get these in a somewhat different manner, because Apple has to be different.
   // (See https://stackoverflow.com/questions/516200/relative-paths-not-working-in-xcode-c?rq=1 for details)
 #ifdef __APPLE__
   CFBundleRef mainBundle = CFBundleGetMainBundle();
-  CFURLRef resourcesURL = CFBundleCopyResourcesDirectoryURL(mainBundle);
   char path[PATH_MAX];
+  
+  CFURLRef executableURL = CFBundleCopyExecutableURL(mainBundle);
+  if (!CFURLGetFileSystemRepresentation(executableURL, TRUE, (UInt8 *)path, PATH_MAX))
+  {
+    LOG(FATAL) << "Could not obtain resources directory name from CoreFoundation!";
+  }
+  logDirectory = std::string(path) + "/log";
+  CFRelease(executableURL);
+  
+  CFURLRef resourcesURL = CFBundleCopyResourcesDirectoryURL(mainBundle);
   if (!CFURLGetFileSystemRepresentation(resourcesURL, TRUE, (UInt8 *)path, PATH_MAX))
   {
-    // error!
+    LOG(FATAL) << "Could not obtain resources directory name from CoreFoundation!";
   }
+  resourcesDirectory = std::string(path);
   CFRelease(resourcesURL);
-
-  chdir(path);
-  std::cout << "Current Path: " << path << std::endl;
 #endif
+
+  std::cout << "Log directory is " << logDirectory << std::endl;
+  std::cout << "Resources directory is " << resourcesDirectory << std::endl;
   
 #ifdef _DEBUG
   _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
@@ -72,7 +86,9 @@ int main(int argc, char* argv[])
       LOG(INFO) << "attributeFlags = 0x" << hexify<uint32_t>(settings.attributeFlags);
 
       // Create and run the app instance.
-      app.reset(NEW App(*app_window));
+      app.reset(NEW App(*app_window,
+                        resourcesDirectory,
+                        logDirectory));
       app->run();
     }
 #ifdef NDEBUG

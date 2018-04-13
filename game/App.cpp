@@ -33,7 +33,9 @@ sf::IntRect calc_message_log_dimensions(sf::RenderWindow& window)
   return messageLogDims;
 }
 
-App::App(sf::RenderWindow& app_window)
+App::App(sf::RenderWindow& appWindow,
+         std::string resourcesDirectory,
+         std::string logDirectory)
   :
   Object({
   EventAppQuitRequested::id,
@@ -46,7 +48,9 @@ App::App(sf::RenderWindow& app_window)
   UIEvents::EventMouseMoved::id,
   UIEvents::EventMouseLeft::id,
   UIEvents::EventMouseWheelMoved::id }),
-  m_appWindow{ app_window },
+  m_appWindow{ appWindow },
+  m_resourcesDirectory{ resourcesDirectory },
+  m_logDirectory{ logDirectory },
   m_appTexture{ NEW sf::RenderTexture() },
   m_isRunning{ false },
   m_hasWindowFocus{ false }
@@ -116,40 +120,40 @@ App::App(sf::RenderWindow& app_window)
   // Create the default fonts.
   m_fontDefault.reset(NEW sf::Font());
   std::string defaultFont = config.get("font-name-default");
-  FileName font_name = "resources/font/" + defaultFont + ".ttf";
-  if (m_fontDefault->loadFromFile(font_name) == false)
+  FileName fontName = resourcesDirectory + "/font/" + defaultFont + ".ttf";
+  if (m_fontDefault->loadFromFile(fontName) == false)
   {
     CLOG(FATAL, "App") << "Could not load the default font";
   }
 
   m_fontDefaultBold.reset(NEW sf::Font());
   std::string defaultBoldFont = config.get("font-name-bold");
-  font_name = "resources/font/" + defaultBoldFont + ".ttf";
-  if (m_fontDefaultBold->loadFromFile(font_name) == false)
+  fontName = resourcesDirectory + "/font/" + defaultBoldFont + ".ttf";
+  if (m_fontDefaultBold->loadFromFile(fontName) == false)
   {
     CLOG(FATAL, "App") << "Could not load the default bold font";
   }
 
   m_fontDefaultMono.reset(NEW sf::Font());
   std::string defaultMonoFont = config.get("font-name-mono");
-  font_name = "resources/font/" + defaultMonoFont + ".ttf";
-  if (m_fontDefaultMono->loadFromFile(font_name) == false)
+  fontName = resourcesDirectory + "/font/" + defaultMonoFont + ".ttf";
+  if (m_fontDefaultMono->loadFromFile(fontName) == false)
   {
     CLOG(FATAL, "App") << "Could not load the default monospace font";
   }
 
   m_fontDefaultUnicode.reset(NEW sf::Font());
   std::string defaultUnicodeFont = config.get("font-name-unicode");
-  font_name = "resources/font/" + defaultUnicodeFont + ".ttf";
-  if (m_fontDefaultUnicode->loadFromFile(font_name) == false)
+  fontName = resourcesDirectory + "/font/" + defaultUnicodeFont + ".ttf";
+  if (m_fontDefaultUnicode->loadFromFile(fontName) == false)
   {
     CLOG(FATAL, "App") << "Could not load the default Unicode font";
   }
 
   // Create the shader program.
   m_shader.reset(NEW sf::Shader());
-  if (m_shader->loadFromFile("resources/shader/default.vert",
-                             "resources/shader/default.frag") == false)
+  if (m_shader->loadFromFile(resourcesDirectory + "/shader/default.vert",
+                             resourcesDirectory + "/shader/default.frag") == false)
   {
     CLOG(FATAL, "App") << "Could not load the default shaders";
   }
@@ -162,7 +166,7 @@ App::App(sf::RenderWindow& app_window)
 
   // Create the string dictionary, and try to load the default translation file.
   /// @todo Change this so language can be specified.
-  Service<IStrings>::provide(NEW Strings("resources/strings.en"));
+  Service<IStrings>::provide(NEW Strings(resourcesDirectory + "/strings.en"));
 
   /// @note Standard map views provider creation has been moved to AppStateGameMode.
 
@@ -170,9 +174,9 @@ App::App(sf::RenderWindow& app_window)
   StateMachine& sm = *m_stateMachine;
 
   // Add states to the state machine.
-  sm.add_state(NEW AppStateSplashScreen(sm, app_window));
-  sm.add_state(NEW AppStateMainMenu(sm, app_window));
-  sm.add_state(NEW AppStateGameMode(sm, app_window));
+  sm.add_state(NEW AppStateSplashScreen(sm, appWindow));
+  sm.add_state(NEW AppStateMainMenu(sm, appWindow));
+  sm.add_state(NEW AppStateGameMode(sm, appWindow));
 
   // Switch to initial state.
   // DEBUG: Go right to game mode for now.
