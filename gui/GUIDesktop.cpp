@@ -17,17 +17,17 @@ namespace metagui
   };
 
   Desktop::Desktop(Object& event_parent,
-                   std::string name, 
+                   std::string name,
                    UintVec2 size) :
     GUIObject{ *this, name, s_eventsEmitted, IntVec2(0, 0), size },
     m_event_parent{ event_parent }
   {
-    App::instance().addObserver(*this, EventID::All);
+    subscribeTo(App::instance(), EventID::All);
   }
 
   Desktop::~Desktop()
   {
-    App::instance().removeObserver(*this, EventID::All);
+    unsubscribeFrom(App::instance(), EventID::All);
   }
 
   // === PROTECTED METHODS ======================================================

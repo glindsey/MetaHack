@@ -1,5 +1,3 @@
-#include "stdafx.h"
-
 #include "actions/ActionQueue.h"
 
 #include "actions/Action.h"
@@ -61,7 +59,7 @@ namespace Actions
 
   void to_json(json& j, ActionQueue const& obj)
   {
-    j = json::array();    
+    j = json::array();
     /// @todo WRITE ME
   }
 

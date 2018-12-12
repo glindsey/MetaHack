@@ -1,8 +1,6 @@
 #ifndef STATEMACHINE_H
 #define STATEMACHINE_H
 
-
-
 #include "Object.h"
 #include "types/IRenderable.h"
 

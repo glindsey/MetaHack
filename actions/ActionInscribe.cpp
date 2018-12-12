@@ -1,6 +1,5 @@
-#include "stdafx.h"
-
 #include "ActionInscribe.h"
+
 #include "services/IMessageLog.h"
 #include "services/IStrings.h"
 #include "services/Service.h"

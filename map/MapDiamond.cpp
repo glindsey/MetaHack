@@ -11,8 +11,8 @@ MapDiamond::MapDiamond(Map& m, PropertyDictionary const& s, GeoVector vec)
   : MapFeature{ m, s, vec }
 {
   unsigned int numTries = 0;
-  UniformIntDist hsDist(s.get("min_half_size", 2),
-                          s.get("max_half_size", 4));
+  unsigned int minHsDist = s.get("min_half_size", 2);
+  unsigned int maxHsDist = s.get("max_half_size", 4);
   unsigned int max_retries = s.get("max_retries", 100);
   std::string floorMaterial = s.get("floor_type", "Dirt");
   std::string wallMaterial = s.get("wall_type", "Stone");
@@ -22,7 +22,7 @@ MapDiamond::MapDiamond(Map& m, PropertyDictionary const& s, GeoVector vec)
 
   while (numTries < max_retries)
   {
-    int diamondHalfSize = hsDist(the_RNG);
+    int diamondHalfSize = the_RNG.pick_uniform(minHsDist, maxHsDist);
 
     int xCenter, yCenter;
 

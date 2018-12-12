@@ -1,6 +1,5 @@
-#include "stdafx.h"
-
 #include "ActionWear.h"
+
 #include "components/ComponentManager.h"
 #include "lua/LuaObject.h"
 #include "services/IMessageLog.h"

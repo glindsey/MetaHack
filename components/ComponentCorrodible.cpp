@@ -1,5 +1,3 @@
-#include "stdafx.h"
-
 #include "components/ComponentCorrodible.h"
 
 #include "game/GameState.h"
@@ -41,12 +39,12 @@ namespace Components
     j["corrosion-results"] = results;
   }
 
-  ModifiableBool& ComponentCorrodible::corrodesForever()
+  bool& ComponentCorrodible::corrodesForever()
   {
     return m_corrodesForever;
   }
 
-  ModifiableBool const& ComponentCorrodible::corrodesForever() const
+  bool const& ComponentCorrodible::corrodesForever() const
   {
     return m_corrodesForever;
   }
@@ -71,12 +69,12 @@ namespace Components
     incCorrosionAmount(-decAmount);
   }
 
-  ModifiableInt& ComponentCorrodible::corrosionSpeed()
+  int& ComponentCorrodible::corrosionSpeed()
   {
     return m_corrosionSpeed;
   }
 
-  ModifiableInt const& ComponentCorrodible::corrosionSpeed() const
+  int const& ComponentCorrodible::corrosionSpeed() const
   {
     return m_corrosionSpeed;
   }

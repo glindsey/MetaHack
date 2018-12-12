@@ -1,5 +1,3 @@
-#include "stdafx.h"
-
 #include "components/ComponentMatterState.h"
 
 #include <boost/algorithm/string.hpp>

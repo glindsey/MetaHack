@@ -1,6 +1,7 @@
-#include "stdafx.h"
-
 #include "services/MessageLog.h"
+
+#include <cctype>
+#include <deque>
 
 #include "game/App.h"
 

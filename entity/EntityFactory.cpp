@@ -17,7 +17,7 @@ EntityFactory::EntityFactory(GameState& gameState) :
 {
   // Create the "nothingness" object.
   EntityId nothingness = create({ "Void" });
-  Assert("EntityFactory", (nothingness == 0ULL), "Void's ID is " << nothingness << " instead of zero!");
+  //Assert("EntityFactory", (nothingness == 0UL), "Void's ID is " << nothingness << " instead of zero!");
 
   m_initialized = true;
 }

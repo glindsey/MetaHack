@@ -1,6 +1,5 @@
-#include "stdafx.h"
-
 #include "ActionPutInto.h"
+
 #include "components/ComponentManager.h"
 #include "game/GameState.h"
 #include "lua/LuaObject.h"

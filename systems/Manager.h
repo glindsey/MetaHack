@@ -12,6 +12,7 @@ namespace Systems
   // Forward declarations
   class Choreographer;
   class Director;
+  class Editor;
   class Fluidics;
   class Geometry;
   class GrimReaper;
@@ -39,6 +40,7 @@ namespace Systems
     // Get references to systems.
     Choreographer& choreographer() { return *m_choreographer; }
     Director& director() { return *m_director; }
+    Editor& editor() { return *m_editor; }
     Fluidics& fluidics() { return *m_fluidics; }
     Geometry& geometry() { return *m_geometry; }
     GrimReaper& grimReaper() { return *m_grimReaper; }
@@ -57,6 +59,7 @@ namespace Systems
     // System instances.
     std::unique_ptr<Choreographer> m_choreographer;
     std::unique_ptr<Director> m_director;
+    std::unique_ptr<Editor> m_editor;
     std::unique_ptr<Fluidics> m_fluidics;
     std::unique_ptr<Geometry> m_geometry;
     std::unique_ptr<GrimReaper> m_grimReaper;

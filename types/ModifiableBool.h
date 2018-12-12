@@ -10,7 +10,7 @@
 using json = ::nlohmann::json;
 
 /// An boolean value that can have modifiers tacked onto it.
-/// The current value of the boolean is determined by the 
+/// The current value of the boolean is determined by the
 /// following truth table:
 /// baseValue falseOverride trueOverride  trueComesFirst  result
 /// ========= ============= ============= =============== ======
@@ -47,14 +47,14 @@ using json = ::nlohmann::json;
 ///
 ///     value = (baseValue & ~falseOverride) | (trueOverride & (~falseOverride | trueComesFirst))
 ///
-class ModifiableBool
+class bool
 {
 public:
-  ModifiableBool();
-  explicit ModifiableBool(bool baseValue);
+  bool();
+  explicit bool(bool baseValue);
 
   bool value() const;
-  
+
   bool baseValue() const;
   void setBaseValue(bool baseValue);
 
@@ -70,12 +70,12 @@ public:
 
   bool trueComesFirst() const;
   void setTrueComesFirst(bool trueComesFirst);
-  
+
   void clearAllOverridesFrom(EntityId id);
   void clearAllOverrides();
 
-  friend void from_json(json const& j, ModifiableBool& obj);
-  friend void to_json(json& j, ModifiableBool const& obj);
+  friend void from_json(json const& j, bool& obj);
+  friend void to_json(json& j, bool const& obj);
 
 protected:
 

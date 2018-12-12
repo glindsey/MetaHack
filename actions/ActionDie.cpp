@@ -1,6 +1,5 @@
-#include "stdafx.h"
-
 #include "ActionDie.h"
+
 #include "components/ComponentManager.h"
 #include "lua/LuaObject.h"
 #include "services/Service.h"

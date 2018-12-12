@@ -10,8 +10,8 @@ MapCorridor::MapCorridor(Map& m, PropertyDictionary const& s, GeoVector vec)
   : MapFeature{ m, s, vec }
 {
   unsigned int numTries = 0;
-  UniformIntDist lenDist(s.get("min_length", 3), 
-                           s.get("max_length", 48));
+  unsigned int minLength = s.get("min_length", 3);
+  unsigned int maxLength = s.get("max_length", 48);
   unsigned int maxRetries = s.get("max_retries", 100);
   std::string floorMaterial = s.get("floor_type", "Dirt");
   std::string wallMaterial = s.get("wall_type", "Stone");
@@ -21,7 +21,7 @@ MapCorridor::MapCorridor(Map& m, PropertyDictionary const& s, GeoVector vec)
 
   while (numTries < maxRetries)
   {
-    int corridorLen(lenDist(the_RNG));
+    int corridorLen = the_RNG.pick_uniform(minLength, maxLength);
 
     int xMin, xMax, yMin, yMax;
 

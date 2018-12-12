@@ -4,11 +4,17 @@
 
 #include "game/App.h"
 
-AppStateSplashScreen::AppStateSplashScreen(StateMachine& state_machine, sf::RenderWindow& app_window)
+AppStateSplashScreen::AppStateSplashScreen(StateMachine& stateMachine,
+                                           sf::RenderWindow& appWindow,
+                                           sfg::SFGUI& sfgui,
+                                           sfg::Desktop& desktop)
   :
-  AppState(state_machine, {},
+  AppState(stateMachine, {},
            "AppStateSplashScreen",
-           std::bind(&AppStateSplashScreen::render_splash, this, std::placeholders::_1, std::placeholders::_2))
+           std::bind(&AppStateSplashScreen::render_splash, this, std::placeholders::_1, std::placeholders::_2)),
+  m_appWindow{ appWindow },
+  m_sfgui{ sfgui },
+  m_desktop{ desktop }
 {
 }
 

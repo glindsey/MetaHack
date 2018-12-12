@@ -1,6 +1,8 @@
 #ifndef MAP_H
 #define MAP_H
 
+#include <boost/ptr_container/ptr_deque.hpp>
+
 #include "Object.h"
 #include "map/MapFactory.h"
 #include "types/Direction.h"

@@ -1,0 +1,48 @@
+User Interface Notes
+===============================================================================
+
+Reorient more towards the mouse instead of the keyboard
+
+Message log remains at the top of the screen
+Status area at the bottom of the screen
+"Things Here" on the left side of the screen
+Map view on the right side of the screen
+
+InventoryView
+- "Things Here" is an example of an InventoryView that remains static on the screen and is always pointing at the map tile the player is occupying.
+- InventoryView can be one of the following layouts:
+    + Grid: Grid of icons representing items. Hover over item to have its description show in the status bar
+    + List: List of icons followed by descriptions. Hovering still shows description in status bar
+- Scroll bar or scroll wheel can be used to scroll up/down
+
+ItemView
+- Left-clicking on any item performs the "default" action for the item. For a container (or the player), this action is "view", which is a free action that opens a new window (see below).
+- Right-clicking (or long-pressing) on any item icon shows an ActionWheel. Might also allow a click+hold action to bring up the ActionWheel, with a release on an action icon closing it.
+
+MapView
+- Hovering over anything on the grid shows its name in the status bar, and an icon showing the "default" action taken by the left mouse button.
+- Each square on the grid is a MapTileView.
+
+MapTileView
+- Similar to an ItemView, but with a few modifications.
+    + If the tile is not directly adjacent to the player, the default action is "view"; however, no actions can be performed on the items shown in the window.
+    + If the tile *is* adjacent to the player, the default action will depend on the primary (largest) occupant of the tile, e.g.:
+        * A blank wall: "view".
+        * A wall with writing on it: "read".
+        * A closed door: "open".
+        * An open door, or any other passable object: "move".
+
+Actions::View (free action)
+- Brings up a new window with its own InventoryView.
+    + New window is centered around the click location if possible; at the least the click location should be contained inside the new window
+    + Clicking outside this new window automatically closes it, to keep clutter down.
+    + Might allow a "pin" control to keep the window open if desired.
+
+ActionWheelView
+- Expands out from the item summoning it
+- Contains icons representing all the actions that can be performed on/with this item by the player
+- Might allow for multiple layers of items, to support larger numbers of them
+- Contains an "X" action icon to close the wheel
+- Also closes if anywhere outside the wheel is clicked
+- May be rotatable by left/right arrow keys, layers switched by up/down arrow keys, action picked by Enter key, and closed by Esc key.
+

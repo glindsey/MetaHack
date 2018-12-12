@@ -31,7 +31,7 @@ FallbackConfigSettings::FallbackConfigSettings()
   set("tile-highlight-border-width", 2);
   set("inventory-area-width", 300);
   set("messagelog-area-height", 200);
-  set("status-area-height", 90);
+  set("status-area-height", 110);
   set("ascii-tile-size", UintVec2(12, 12));
   set("graphics-tile-size", UintVec2(32, 32));
   set("map-tile-size", UintVec2(24, 24));

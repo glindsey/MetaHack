@@ -1,20 +1,20 @@
 #include "stdafx.h"
-#include "ModifiableBool.h"
+#include "bool.h"
 
 #include "utilities/JSONUtils.h"
 
 
-ModifiableBool::ModifiableBool()
+bool::bool()
   : m_baseValue{ 0 }
 {
 }
 
-ModifiableBool::ModifiableBool(bool baseValue)
+bool::bool(bool baseValue)
   : m_baseValue{ baseValue }
 {
 }
 
-bool ModifiableBool::value() const
+bool bool::value() const
 {
   auto falseOverrides = (m_falseOverrides.size() != 0);
   auto trueOverrides = (m_trueOverrides.size() != 0);
@@ -22,83 +22,83 @@ bool ModifiableBool::value() const
   return (m_baseValue && !falseOverrides) || (trueOverrides && (!falseOverrides || m_trueComesFirst));
 }
 
-bool ModifiableBool::baseValue() const
+bool bool::baseValue() const
 {
   return m_baseValue;
 }
 
-void ModifiableBool::setBaseValue(bool baseValue)
+void bool::setBaseValue(bool baseValue)
 {
   m_baseValue = baseValue;
 }
 
-bool ModifiableBool::setFalseOverrideFrom(EntityId id, Modifier<bool> modifier)
+bool bool::setFalseOverrideFrom(EntityId id, Modifier<bool> modifier)
 {
   bool hasOverride = hasFalseOverrideFrom(id);
   m_falseOverrides[id] = modifier;
   return hasOverride;
 }
 
-bool ModifiableBool::hasFalseOverrideFrom(EntityId id)
+bool bool::hasFalseOverrideFrom(EntityId id)
 {
   return (m_falseOverrides.count(id) != 0);
 }
 
-bool ModifiableBool::clearFalseOverrideFrom(EntityId id)
+bool bool::clearFalseOverrideFrom(EntityId id)
 {
   return (m_falseOverrides.erase(id) != 0);
 }
 
-void ModifiableBool::clearAllFalseOverrides()
+void bool::clearAllFalseOverrides()
 {
   m_falseOverrides.clear();
 }
 
-bool ModifiableBool::setTrueOverrideFrom(EntityId id, Modifier<bool> modifier)
+bool bool::setTrueOverrideFrom(EntityId id, Modifier<bool> modifier)
 {
   bool hasOverride = hasTrueOverrideFrom(id);
   m_trueOverrides[id] = modifier;
   return hasOverride;
 }
 
-bool ModifiableBool::hasTrueOverrideFrom(EntityId id)
+bool bool::hasTrueOverrideFrom(EntityId id)
 {
   return (m_trueOverrides.count(id) != 0);
 }
 
-bool ModifiableBool::clearTrueOverrideFrom(EntityId id)
+bool bool::clearTrueOverrideFrom(EntityId id)
 {
   return (m_trueOverrides.erase(id) != 0);
 }
 
-void ModifiableBool::clearAllTrueOverrides()
+void bool::clearAllTrueOverrides()
 {
   m_trueOverrides.clear();
 }
 
-bool ModifiableBool::trueComesFirst() const
+bool bool::trueComesFirst() const
 {
   return m_trueComesFirst;
 }
 
-void ModifiableBool::setTrueComesFirst(bool trueComesFirst)
+void bool::setTrueComesFirst(bool trueComesFirst)
 {
   trueComesFirst = m_trueComesFirst;
 }
 
-void ModifiableBool::clearAllOverridesFrom(EntityId id)
+void bool::clearAllOverridesFrom(EntityId id)
 {
   clearFalseOverrideFrom(id);
   clearTrueOverrideFrom(id);
 }
 
-void ModifiableBool::clearAllOverrides()
+void bool::clearAllOverrides()
 {
   clearAllFalseOverrides();
   clearAllFalseOverrides();
 }
 
-void from_json(json const & j, ModifiableBool & obj)
+void from_json(json const & j, bool & obj)
 {
   if (j.is_object())
   {
@@ -135,7 +135,7 @@ void from_json(json const & j, ModifiableBool & obj)
   }
 }
 
-void to_json(json & j, ModifiableBool const & obj)
+void to_json(json & j, bool const & obj)
 {
   if (obj.m_falseOverrides.size() == 0 &&
       obj.m_trueOverrides.size() == 0)

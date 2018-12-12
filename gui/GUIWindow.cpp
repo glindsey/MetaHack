@@ -3,9 +3,6 @@
 #include "GUIWindow.h"
 
 #include "GUITitleBar.h"
-#include "GUICloseHandle.h"
-#include "GUIResizeHandle.h"
-#include "GUIShrinkHandle.h"
 
 #include "game/App.h"
 #include "services/IConfigSettings.h"
@@ -108,51 +105,6 @@ namespace metagui
         if (!childExists(name))
         {
           addChild(new TitleBar(desktop(), name))->setFlag("decor", true);
-        }
-      }
-      else
-      {
-        removeChild(name);
-      }
-    }
-    else if (name == "resizable")
-    {
-      std::string name = getName() + "_resizehandle";
-      if (enabled)
-      {
-        if (!childExists(name))
-        {
-          addChild(new ResizeHandle(desktop(), name))->setFlag("decor", true);
-        }
-      }
-      else
-      {
-        removeChild(name);
-      }
-    }
-    else if (name == "closable")
-    {
-      std::string name = getName() + "_closehandle";
-      if (enabled)
-      {
-        if (!childExists(name))
-        {
-          addChild(new CloseHandle(desktop(), name))->setFlag("decor", true);
-        }
-      }
-      else
-      {
-        removeChild(name);
-      }
-    }
-    else if (name == "shrinkable")
-    {
-      std::string name = getName() + "_shrinkhandle";
-      if (enabled)
-      {
-        if (!childExists(name))
-        {
-          addChild(new ShrinkHandle(desktop(), name))->setFlag("decor", true);
         }
       }
       else

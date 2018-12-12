@@ -1,5 +1,6 @@
 #pragma once
 
+#include "components/ComponentCRTP.h"
 #include "types/Gender.h"
 
 #include "json.hpp"
@@ -9,7 +10,7 @@ namespace Components
 {
 
   /// Gender and sex of an entity. Maybe also sexual preferences.
-  class ComponentGender
+  class ComponentGender : public ComponentCRTP<ComponentGender>
   {
   public:
 

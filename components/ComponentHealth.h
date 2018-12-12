@@ -1,7 +1,5 @@
 #pragma once
 
-#include "types/ModifiableInt.h"
-
 #include "json.hpp"
 using json = ::nlohmann::json;
 
@@ -28,7 +26,7 @@ namespace Components
     bool hasHpBelowZero() const;
 
     /// Returns the "dead" flag.
-    /// (This is different from `isDead` so that "just died" actions can be 
+    /// (This is different from `isDead` so that "just died" actions can be
     /// performed.)
     bool isDead() const;
     void setDead(bool dead);
@@ -42,7 +40,7 @@ namespace Components
 
   private:
     int m_hp = 1;
-    ModifiableInt m_maxHp = ModifiableInt(1);
+    int m_maxHp = int(1);
     bool m_dead = false;
     bool m_livingCreature = true;
 

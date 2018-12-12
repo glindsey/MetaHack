@@ -1,6 +1,5 @@
-#include "stdafx.h"
-
 #include "ActionRead.h"
+
 #include "lua/LuaObject.h"
 #include "services/IMessageLog.h"
 #include "services/IStrings.h"

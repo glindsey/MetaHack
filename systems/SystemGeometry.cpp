@@ -46,6 +46,8 @@ namespace Systems
     MapID oldMapID = position.map();
     EntityId oldLocation = position.parent();
 
+    CLOG(TRACE, "Geometry") << "Moving entity " << entity << " into location " << newLocation << " (was at " << oldLocation << ")";
+
     if (newLocation == oldLocation)
     {
       // We're already there!
@@ -96,7 +98,7 @@ namespace Systems
     auto entityParent = entityPosition.parent();
     std::string message;
     bool success = false;
-  
+
     // Create a copy of this entity's inventory, since we'll be modifying it
     // as we go along.
     auto tempInventoryCopy = entityInventory;
@@ -128,7 +130,7 @@ namespace Systems
             m_janitor.markForDeletion(item);
           }
           //notifyObservers(Event::Updated);
-  
+
         } // end if (canContain)
       } // end if (container location is not Void)
       else

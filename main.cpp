@@ -1,6 +1,10 @@
-#include "stdafx.h"
+#include <boost/algorithm/string.hpp>
+#include <boost/locale.hpp>
 
 #include "game/App.h"
+#include "utilities/CommonFunctions.h"
+
+namespace bl = boost::locale;
 
 INITIALIZE_EASYLOGGINGPP
 
@@ -19,9 +23,9 @@ int main(int argc, char* argv[])
   // causes false positives (due to global destructors running after the
   // memory leak report is generated).
   // EDIT: Unfortunately that doesn't seem to fix the problem. Argh.
-  bl::generator gen;
-  std::locale::global(gen("en_US.UTF-8"));
- 
+  //bl::generator gen;
+  //std::locale::global(gen("en_US.UTF-8"));
+
 #ifdef _DEBUG
   _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
@@ -29,12 +33,14 @@ int main(int argc, char* argv[])
   // Scoping everything here so it is properly destroyed before checking for memory leaks.
   {
     std::unique_ptr<sf::RenderWindow> app_window;
+    std::unique_ptr<sfg::SFGUI> sfgui;
+    std::unique_ptr<sfg::Desktop> desktop;
     std::unique_ptr<App> app;
 
 #ifdef NDEBUG
     try
 #endif
-    {     
+    {
       // Check to make sure shaders are available.
       if (!sf::Shader::isAvailable())
       {
@@ -45,14 +51,18 @@ int main(int argc, char* argv[])
       app_window.reset(NEW sf::RenderWindow(sf::VideoMode(1066, 600), "Magicule Saga"));
 
       auto settings = app_window->getSettings();
-      LOG(INFO) << "depthBits = " << settings.depthBits;
-      LOG(INFO) << "stencilBits = " << settings.stencilBits;
-      LOG(INFO) << "antialiasingLevel = " << settings.antialiasingLevel;
-      LOG(INFO) << "version = " << settings.majorVersion << "." << settings.minorVersion;
-      LOG(INFO) << "attributeFlags = 0x" << hexify<uint32_t>(settings.attributeFlags);
+      //LOG(INFO) << "depthBits = " << settings.depthBits;
+      //LOG(INFO) << "stencilBits = " << settings.stencilBits;
+      //LOG(INFO) << "antialiasingLevel = " << settings.antialiasingLevel;
+      //LOG(INFO) << "version = " << settings.majorVersion << "." << settings.minorVersion;
+      //LOG(INFO) << "attributeFlags = 0x" << hexify<uint32_t>(settings.attributeFlags);
+
+      // Instantiate SFGUI and the SFGUI desktop.
+      sfgui.reset(NEW sfg::SFGUI());
+      desktop.reset(NEW sfg::Desktop());
 
       // Create and run the app instance.
-      app.reset(NEW App(*app_window));
+      app.reset(NEW App(*app_window, *sfgui, *desktop));
       app->run();
     }
 #ifdef NDEBUG

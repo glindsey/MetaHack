@@ -5,7 +5,6 @@
 #include "entity/EntityId.h"
 #include "types/Direction.h"
 #include "types/EntitySpecs.h"
-#include "types/GameObject.h"
 #include "types/LightInfluence.h"
 #include "map/MapFactory.h"
 #include "Object.h"
@@ -21,7 +20,6 @@ class EntityFactory;
 /// @todo Add notifyObservers calls where needed
 class MapTile
   :
-  public GameObject,
   public Object
 {
   friend class Map;
@@ -44,7 +42,7 @@ public:
   EntityId getDisplayEntity() const;
 
   /// Return this tile's description.
-  virtual std::string getDisplayName() const override final;
+  std::string getDisplayName() const;
 
   /// Sets the space entity for this tile (e.g. "TileSpace", "TileWall", etc.)
   /// Optionally also sets the material to use.

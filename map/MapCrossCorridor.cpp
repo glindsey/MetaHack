@@ -26,15 +26,14 @@ MapCrossCorridor::MapCrossCorridor(Map& m, PropertyDictionary const& s, GeoVecto
   pImpl(NEW Impl())
 {
   unsigned int numTries = 0;
-  uniform_int_dist lenDist(minLength, maxLength);
 
   IntVec2& startingCoords = vec.start_point;
   Direction& direction = vec.direction;
 
   while (numTries < maxRetries)
   {
-    int mainCorridorLen(lenDist(the_RNG));
-    int subCorridorLen(lenDist(the_RNG));
+    int mainCorridorLen = the_RNG.pick_uniform(minLength, maxLength);
+    int subCorridorLen = the_RNG.pick_uniform(minLength, maxLength);
 
     int mainXMin, mainXMax, mainYMin, mainYMax;
     int subXMin, subXMax, subYMin, subYMax;
@@ -84,22 +83,16 @@ MapCrossCorridor::MapCrossCorridor(Map& m, PropertyDictionary const& s, GeoVecto
     // Create sub corridor bounds.
     if ((direction == Direction::North) || (direction == Direction::South))
     {
-      uniform_int_dist subXDist(mainXMin - subCorridorLen, mainXMin + subCorridorLen);
-      uniform_int_dist subYDist(mainYMin, mainYMax);
-
-      subXMin = subXDist(the_RNG);
+      subXMin = the_RNG.pick_uniform(mainXMin - subCorridorLen, mainXMin + subCorridorLen);
       subXMax = subXMin + (subCorridorLen - 1);
-      subYMin = subYDist(the_RNG);
+      subYMin = the_RNG.pick_uniform(mainYMin, mainYMax);
       subYMax = subYMin;
     }
     else if ((direction == Direction::East) || (direction == Direction::West))
     {
-      uniform_int_dist subXDist(mainXMin, mainXMax);
-      uniform_int_dist subYDist(mainYMin - subCorridorLen, mainYMin + subCorridorLen);
-
-      subXMin = subXDist(the_RNG);
+      subXMin = the_RNG.pick_uniform(mainXMin, mainXMax);
       subXMax = subXMin;
-      subYMin = subYDist(the_RNG);
+      subYMin = the_RNG.pick_uniform(mainYMin - subCorridorLen, mainYMin + subCorridorLen);
       subYMax = subYMin + (subCorridorLen - 1);
 
     }

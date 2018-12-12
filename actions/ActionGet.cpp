@@ -1,6 +1,5 @@
-#include "stdafx.h"
-
 #include "ActionGet.h"
+
 #include "ActionMove.h"
 #include "components/ComponentManager.h"
 #include "game/GameState.h"

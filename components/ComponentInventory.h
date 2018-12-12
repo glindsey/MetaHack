@@ -1,5 +1,8 @@
 #pragma once
 
+#include <map>
+#include <utility>
+
 #include "inventory/InventorySlot.h"
 #include "entity/EntityId.h"
 
@@ -37,6 +40,10 @@ namespace Components
     /// Gets the current count of this inventory.
     /// @return The number of items in the inventory.
     size_t count();
+
+    /// Gets a vector representing the entities map.
+    /// @todo This is temporary until I get rid of InventorySlots altogether.
+    std::vector<EntityId> getCollection();
 
     /// Gets a beginning iterator to the entities map.
     EntityMap::iterator begin();

@@ -1,5 +1,3 @@
-#include "stdafx.h"
-
 #include "ActionWield.h"
 
 #include "ActionUnwield.h"

@@ -4,6 +4,8 @@
 
 #include "entity/EntityFactory.h"
 #include "game/GameState.h"
+#include "systems/Manager.h"
+#include "systems/SystemNarrator.h"
 
 /// Static constant referring to the Void entity.
 EntityId const EntityId::Void = EntityId(0);
@@ -128,6 +130,6 @@ EntityId EntityId::operator--(int)
 
 std::ostream& operator<<(std::ostream& stream, EntityId const& entity)
 {
-  stream << entity.m_id;
+  stream << entity.m_id << " (" << SYSTEMS.narrator().getDisplayName(entity.m_id) << ")";
   return stream;
 }

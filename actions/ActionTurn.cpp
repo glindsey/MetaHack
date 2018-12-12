@@ -1,5 +1,3 @@
-#include "stdafx.h"
-
 #include "ActionTurn.h"
 
 #include "ActionAttack.h"
@@ -26,7 +24,7 @@ namespace Actions
     auto subject = getSubject();
     bool isTurnable = (components.mobility.existsFor(subject) && components.mobility.of(subject).turnSpeed() > 0);
     std::string reason = isTurnable ? "" : "YOU_HAVE_NO_WAY_OF_TURNING"; ///< @todo Add translation key
-    return { isTurnable, reason };      
+    return { isTurnable, reason };
   }
 
   std::unordered_set<Trait> const & ActionTurn::getTraits() const

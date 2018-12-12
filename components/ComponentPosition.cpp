@@ -1,9 +1,10 @@
-#include "stdafx.h"
-
 #include "components/ComponentPosition.h"
 
 #include "components/ComponentManager.h"
 #include "game/GameState.h"
+#include "map/Map.h"
+#include "map/MapFactory.h"
+#include "maptile/MapTile.h"
 #include "utilities/JSONUtils.h"
 
 namespace Components
@@ -72,6 +73,20 @@ namespace Components
   EntityId ComponentPosition::parent() const
   {
     return m_parent;
+  }
+
+  EntityId ComponentPosition::location() const
+  {
+    if(m_parent != EntityId::Void)
+    {
+      CLOG(TRACE, "Component") << "Entity is inside " << m_parent;
+      return m_parent;
+    }
+    else
+    {
+      CLOG(TRACE, "Component") << "Entity is at Map \"" << m_map << "\", Coords " << m_coords;
+      return MAPS.get(m_map).getTile(m_coords).getSpaceEntity();
+    }
   }
 
   MapID ComponentPosition::map() const

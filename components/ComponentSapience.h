@@ -1,6 +1,5 @@
 #pragma once
 
-#include <boost/ptr_container/ptr_deque.hpp>
 #include <deque>
 
 #include "actions/Action.h"

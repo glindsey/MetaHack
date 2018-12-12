@@ -26,12 +26,22 @@
 #include "components/ComponentSenseSight.h"
 #include "components/ComponentSpacialMemory.h"
 
+#include "components/modifiers/Collection.h"
+
+#include "components/modifiers/Combustible.h"
+#include "components/modifiers/Physical.h"
+
 // Forward declarations
 class EntityId;
 class GameState;
 
 namespace Components
 {
+  struct ModifiersGroup
+  {
+      Modifiers::CollectionConcrete<Modifiers::Combustible>   combustible;
+      Modifiers::CollectionConcrete<Modifiers::Physical>      physical;
+  };
 
   class ComponentManager final
   {
@@ -100,6 +110,8 @@ namespace Components
     ComponentMapConcrete<ComponentSenseSight>      senseSight;
     ComponentMapConcrete<ComponentSpacialMemory>   spacialMemory;
 
+    ModifiersGroup modifiers;
+
     /// Map of component pointers to JSON component names.
     /// (Pointers because using a reference as a map key is... non-trivial.)
     std::map<ComponentMap*, std::string> const componentToName
@@ -134,6 +146,14 @@ namespace Components
         { &sapience        , "sapience"           },
         { &senseSight      , "sense-sight"        },
         { &spacialMemory   , "spacial-memory"     }
+    };
+
+    /// Map of modifier pointers to JSON component names.
+    /// (Pointers because using a reference as a map key is... non-trivial.)
+    std::map<Modifiers::Collection*, std::string> const modifierToName
+    {
+        { &(modifiers.combustible)  , "combustible"        },
+        { &(modifiers.physical)     , "physical"           }
     };
 
   private:

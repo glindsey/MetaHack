@@ -1,5 +1,3 @@
-#include "stdafx.h"
-
 #include "components/ComponentLightSource.h"
 
 #include "game/GameState.h"

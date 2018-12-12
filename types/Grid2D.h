@@ -1,6 +1,6 @@
 #pragma once
 
-
+#include <boost/ptr_container/ptr_vector.hpp>
 
 #include "types/Vec2.h"
 
@@ -26,7 +26,7 @@ public:
       }
     }
   }
-  
+
   /// Constructor for a grid of objects that are passed coordinates.
   /// @param size   The size of the grid to construct.
   /// @param ctor   A function that takes a IntVec2 as an input and

@@ -14,14 +14,14 @@ MapLRoom::MapLRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
 {
   unsigned int num_tries = 0;
 
-  UniformIntDist horiz_width_dist(s.get("horiz_leg_min_width", 10),
-                                    s.get("horiz_leg_max_width", 20));
-  UniformIntDist horiz_height_dist(s.get("horiz_leg_min_height", 3),
-                                     s.get("horiz_leg_max_height", 7));
-  UniformIntDist vert_width_dist(s.get("vert_leg_min_width", 10),
-                                   s.get("vert_leg_max_width", 20));
-  UniformIntDist vert_height_dist(s.get("vert_leg_min_height", 3),
-                                    s.get("vert_leg_max_height", 7));
+  unsigned int horizLegMinWidth = s.get("horiz_leg_min_width", 10);
+  unsigned int horizLegMaxWidth = s.get("horiz_leg_max_width", 20);
+  unsigned int horizLegMinHeight = s.get("horiz_leg_min_height", 3);
+  unsigned int horizLegMaxHeight = s.get("horiz_leg_max_height", 7);
+  unsigned int vertLegMinWidth = s.get("vert_leg_min_width", 10);
+  unsigned int vertLegMaxWidth = s.get("vert_leg_max_width", 20);
+  unsigned int vertLegMinHeight = s.get("vert_leg_min_height", 3);
+  unsigned int vertLegMaxHeight = s.get("vert_leg_max_height", 7);
   unsigned int max_retries = s.get("max_retries", 500);
   std::string floorMaterial = s.get("floor_type", "Dirt");
   std::string wallMaterial = s.get("wall_type", "Stone");
@@ -34,59 +34,55 @@ MapLRoom::MapLRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
     sf::IntRect horiz_rect;
     sf::IntRect vert_rect;
 
-    horiz_rect.width = horiz_width_dist(the_RNG);
-    horiz_rect.height = horiz_height_dist(the_RNG);
-    vert_rect.width = vert_width_dist(the_RNG);
-    vert_rect.height = vert_height_dist(the_RNG);
+    horiz_rect.width = the_RNG.pick_uniform(horizLegMinWidth, horizLegMaxWidth);
+    horiz_rect.height = the_RNG.pick_uniform(horizLegMinHeight, horizLegMaxHeight);
+    vert_rect.width = the_RNG.pick_uniform(vertLegMinWidth, vertLegMaxWidth);
+    vert_rect.height = the_RNG.pick_uniform(vertLegMinHeight, vertLegMaxHeight);
 
     if (direction == Direction::North)
     {
-      UniformIntDist offset_dist(0, horiz_rect.width - 1);
-      int offset = offset_dist(the_RNG);
+      int offset = the_RNG.pick_uniform(0, horiz_rect.width - 1);
 
       horiz_rect.top = starting_coords.y - horiz_rect.height;
       horiz_rect.left = starting_coords.x - offset;
 
       vert_rect.top = horiz_rect.top - vert_rect.height;
-      vert_rect.left = (flip_coin() ?
+      vert_rect.left = (the_RNG.flip_coin() ?
                         horiz_rect.left :
                         horiz_rect.left + horiz_rect.width - vert_rect.width);
     }
     else if (direction == Direction::South)
     {
-      UniformIntDist offset_dist(0, horiz_rect.width - 1);
-      int offset = offset_dist(the_RNG);
+      int offset = the_RNG.pick_uniform(0, horiz_rect.width - 1);
 
       horiz_rect.top = starting_coords.y + 1;
       horiz_rect.left = starting_coords.x - offset;
 
       vert_rect.top = horiz_rect.top + horiz_rect.height;
-      vert_rect.left = (flip_coin() ?
+      vert_rect.left = (the_RNG.flip_coin() ?
                         horiz_rect.left :
                         horiz_rect.left + horiz_rect.width - vert_rect.width);
     }
     else if (direction == Direction::West)
     {
-      UniformIntDist offset_dist(0, vert_rect.height - 1);
-      int offset = offset_dist(the_RNG);
+      int offset = the_RNG.pick_uniform(0, vert_rect.height - 1);
 
       vert_rect.top = starting_coords.y - offset;
       vert_rect.left = starting_coords.x - vert_rect.width;
 
-      horiz_rect.top = (flip_coin() ?
+      horiz_rect.top = (the_RNG.flip_coin() ?
                         vert_rect.top :
                         vert_rect.top + vert_rect.height - horiz_rect.height);
       horiz_rect.left = vert_rect.left - horiz_rect.width;
     }
     else if (direction == Direction::East)
     {
-      UniformIntDist offset_dist(0, vert_rect.height - 1);
-      int offset = offset_dist(the_RNG);
+      int offset = the_RNG.pick_uniform(0, vert_rect.height - 1);
 
       vert_rect.top = starting_coords.y - offset;
       vert_rect.left = starting_coords.x + 1;
 
-      horiz_rect.top = (flip_coin() ?
+      horiz_rect.top = (the_RNG.flip_coin() ?
                         vert_rect.top :
                         vert_rect.top + vert_rect.height - horiz_rect.height);
       horiz_rect.left = vert_rect.left + vert_rect.width;

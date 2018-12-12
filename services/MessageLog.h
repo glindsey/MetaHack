@@ -1,8 +1,6 @@
 #ifndef MESSAGELOG_H
 #define MESSAGELOG_H
 
-
-
 #include "services/IMessageLog.h"
 
 /// A class that keeps track of game messages, and is renderable on-screen.

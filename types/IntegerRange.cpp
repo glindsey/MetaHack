@@ -3,6 +3,7 @@
 #include "types/IntegerRange.h"
 
 #include "game/App.h"
+#include "utilities/RNGUtils.h"
 
 IntegerRange::IntegerRange()
   :
@@ -25,8 +26,7 @@ int IntegerRange::pick()
 {
   if (m_uniform)
   {
-    boost::random::uniform_int_distribution<> dist(m_start, m_end);
-    return dist(the_RNG);
+    return the_RNG.pick_uniform(m_start, m_end);
   }
   else
   {
@@ -38,8 +38,7 @@ int IntegerRange::pick()
 
     // To map the normal curve to the range I want, mean = 0.5 and
     // sigma = 0.125. This puts 4*sigma at (0.5 - 0.5) to (0.5 + 0.5), or 0 to 1.
-    boost::random::normal_distribution<> dist(0.5, 0.125);
-    double value = dist(the_RNG);
+    double value = the_RNG.pick_normal(0.5, 0.125);
 
     // Trim the outliers.
     if (value < 0) value = 0;

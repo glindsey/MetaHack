@@ -1,38 +1,128 @@
-#include "stdafx.h"
-
 #include "inventory/InventoryArea.h"
+
+#include <cctype>
 
 #include "components/ComponentInventory.h"
 #include "components/ComponentManager.h"
 #include "components/ComponentPhysical.h"
 #include "game/App.h"
 #include "game/GameState.h"
+#include "entity/EntityFactory.h"
 #include "inventory/InventorySelection.h"
+#include "map/Map.h"
 #include "maptile/MapTile.h"
 #include "services/Service.h"
 #include "services/IConfigSettings.h"
 #include "services/IGraphicViews.h"
 #include "systems/Manager.h"
+#include "systems/SystemChoreographer.h"
+#include "systems/SystemGeometry.h"
 #include "systems/SystemNarrator.h"
+#include "types/common.h"
 #include "views/EntityView.h"
+#include "views/EntityCollectionGUIListView.h"
 
-#include "entity/EntityFactory.h"
 
-InventoryArea::InventoryArea(metagui::Desktop& desktop,
+InventoryArea::InventoryArea(metagui::Desktop& mgDesktop,
+                             sfg::SFGUI& sfgui,
+                             sfg::Desktop& desktop,
                              std::string name,
                              InventorySelection& inventory_selection,
                              sf::IntRect dimensions,
                              GameState& gameState) :
-  metagui::Window(desktop, name, dimensions),
+  metagui::Window(mgDesktop, name, dimensions),
+  m_sfgui{ sfgui },
+  m_desktop{ desktop },
   m_gameState{ gameState },
   m_inventorySelection{ inventory_selection }
 {
-  m_inventorySelection.addObserver(*this, EventID::All);
+  // Create a FloatRect out of the IntRect dimensions.
+  /// @todo Just pass the FloatRect directly instead.
+  sf::FloatRect floatDims = sf::FloatRect(dimensions.left,
+                                          dimensions.top,
+                                          dimensions.width,
+                                          dimensions.height);
+
+  m_window = sfg::Window::Create();
+  m_window->SetTitle("Inventory of (whatever)");
+
+  // ==========================================================================
+  // The window for showing the inventory is going to have the following
+  // hierarchy:
+  //
+  // - Window
+  //   - m_layout: Box (VERTICAL)
+  //     - m_buttonsBox: Box (HORIZONTAL)
+  //       - (Various config buttons will go here eventually, blank for now)
+  //     - m_inventoryWindow: ScrolledWindow
+  //       - m_guiView.getWidget(): Table
+  //         - In list view:
+  //           - Each row is an item, with a header row at the top
+  //           - Column 0 is an icon representing the item
+  //           - Column 1 is the item letter
+  //           - Column 2 is the item description
+  //         - In grid view:
+  //           - Each cell is an item containing an icon representing the item
+  //           - Possibly also shows the item letter in the corner
+  //           - Hovering over the item gives you the description
+
+  m_layout = sfg::Box::Create(sfg::Box::Orientation::VERTICAL);
+  m_buttonsBox = sfg::Box::Create(sfg::Box::Orientation::HORIZONTAL);
+  m_inventoryWindow = sfg::ScrolledWindow::Create();
+
+  /// @note Not sure if this be created by default or not.
+  /// And in any case, m_inventorySelection will be going away.
+  m_guiView.reset(
+    NEW EntityCollectionGUIListView(
+      m_sfgui,
+      m_gameState.components().inventory[m_inventorySelection.getViewed()].getCollection()
+    )
+  );
+
+  // Set the scrolled window's scrollbar policies.
+  m_inventoryWindow->SetScrollbarPolicy(sfg::ScrolledWindow::HORIZONTAL_AUTOMATIC |
+                                        sfg::ScrolledWindow::VERTICAL_AUTOMATIC);
+
+  // Add the layout box to the scrolled window using a viewport.
+  m_inventoryWindow->AddWithViewport(m_guiView->getWidget());
+
+  // Set the scrolled window's minimum size; for X this should be the width of
+  // the containing box, minus 2 * spacing.
+  m_inventoryWindow->SetRequisition({ 80.f, 40.f });
+
+  // Set the input box's minimum size; for X this should be the width of the
+  // containing box, minus 2 * spacing.
+  m_inventoryWindow->SetRequisition({ 80.f, 20.f });
+
+  /// @todo Add child items to the inventory layout (for the various inventory items).
+
+  // Pack the child items into the overall layout.
+  m_layout->Pack(m_buttonsBox, false, true);
+  m_layout->Pack(m_inventoryWindow, true, true);
+
+  // Add the box to the window, and the window to the desktop.
+  m_window->Add(m_layout);
+  m_desktop.Add(m_window);
+
+  // Set initial window size. (Has to be done after a widget is added to a hierarchy.)
+  m_window->SetAllocation(floatDims);
+
+  // Start observing the Choreographer for "player changed" events, and the Geometry system
+  // for "entity moved" / "entity changed maps" events.
+  subscribeTo(SYSTEMS.choreographer(), Systems::Choreographer::EventPlayerChanged::id);
+  subscribeTo(SYSTEMS.geometry(), Systems::Geometry::EventEntityMoved::id);
+  subscribeTo(SYSTEMS.geometry(), Systems::Geometry::EventEntityChangedMaps::id);
+
+  // Add an observer to the inventory selection model.
+  subscribeTo(m_inventorySelection, EventID::All);
+
+  /// TEMPORARY: Hide the SFGUI window for the time being, while we work on other stuff.
+  //m_window->Show(false);
 }
 
 InventoryArea::~InventoryArea()
 {
-  m_inventorySelection.removeObserver(*this);
+  unsubscribeFrom(m_inventorySelection);
 }
 
 void InventoryArea::drawContents_(sf::RenderTexture& texture, int frame)
@@ -210,10 +300,67 @@ void InventoryArea::drawContents_(sf::RenderTexture& texture, int frame)
   return;
 }
 
-bool InventoryArea::onEvent_V(Event const& event) 
-{ 
+/// @note This becomes straight-up `onEvent` once we switch this to being a raw Object.
+bool InventoryArea::onEvent_V(Event const& event)
+{
+  EntityId player = SYSTEMS.choreographer().player();
+  EntityId location = EntityId::Void;
+
+  auto id = event.getId();
+  bool recreateInventoryView = false;
+
+  if (id == Systems::Choreographer::EventPlayerChanged::id)
+  {
+    recreateInventoryView = true;
+  }
+  else if (id == Systems::Geometry::EventEntityMoved::id)
+  {
+    auto info = static_cast<Systems::Geometry::EventEntityMoved const&>(event);
+    if (info.entity == player)
+    {
+      recreateInventoryView = true;
+    }
+  }
+  else if (id == Systems::Geometry::EventEntityChangedMaps::id)
+  {
+    auto info = static_cast<Systems::Geometry::EventEntityChangedMaps const&>(event);
+    if (info.entity == player)
+    {
+      recreateInventoryView = true;
+    }
+  }
+
+  /// @todo We'll also have to handle when the viewed collection (i.e. the inventory) changes.
+
+  if (recreateInventoryView == true)
+  {
+    CLOG(TRACE, "InventoryArea") << "Got event " << event;
+
+    auto& components = m_gameState.components();
+
+    if (components.position.existsFor(player))
+    {
+      location = components.position[player].location();
+      CLOG(TRACE, "InventoryArea") << "New player location is " << location;
+    }
+
+    sf::String title_string = SYSTEMS.narrator().getPossessiveString(location, "inventory");
+    title_string[0] = toupper(title_string[0]);
+    m_window->SetTitle(title_string);
+
+    m_inventoryWindow->Remove(m_guiView->getWidget());
+    m_guiView.reset(
+      NEW EntityCollectionGUIListView(
+        m_sfgui,
+        m_gameState.components().inventory[location].getCollection()
+      )
+    );
+    m_inventoryWindow->AddWithViewport(m_guiView->getWidget());
+
+  }
+
   /// @todo Flesh this out a bit more.
   ///       Right now we just set the "dirty" flag for the view so it is redrawn.
   flagForRedraw();
-  return false; 
+  return false;
 }

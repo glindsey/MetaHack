@@ -1,6 +1,8 @@
-#include "stdafx.h"
-
 #include "utilities/StringTransforms.h"
+
+#include <algorithm>
+#include <cctype>
+#include <string>
 
 namespace StringTransforms
 {

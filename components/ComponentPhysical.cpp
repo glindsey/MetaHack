@@ -1,5 +1,3 @@
-#include "stdafx.h"
-
 #include "components/ComponentPhysical.h"
 
 #include "components/ComponentManager.h"
@@ -23,22 +21,22 @@ namespace Components
     j["volume"] = obj.m_volume;
   }
 
-  ModifiableInt& ComponentPhysical::mass()
+  int& ComponentPhysical::mass()
   {
     return m_mass;
   }
 
-  ModifiableInt const& ComponentPhysical::mass() const
+  int const& ComponentPhysical::mass() const
   {
     return m_mass;
   }
 
-  ModifiableInt& ComponentPhysical::volume()
+  int& ComponentPhysical::volume()
   {
     return m_volume;
   }
 
-  ModifiableInt const& ComponentPhysical::volume() const
+  int const& ComponentPhysical::volume() const
   {
     return m_volume;
   }

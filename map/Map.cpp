@@ -39,7 +39,7 @@ Map::Map(GameState& gameState, MapID id, int width, int height)
                                     [&](IntVec2 coords) -> MapTile*
   {
     MapTile* new_tile = NEW MapTile(coords, id,
-                                    gameState.entities(), 
+                                    gameState.entities(),
                                     gameState.components());
     return new_tile;
   }));
@@ -161,8 +161,7 @@ MapFeature& Map::getRandomMapFeature()
 {
   Assert("MapGenerator", m_features.size() >= 1, "getRandomMapFeature() called but map doesn't contain any features yet!");
 
-  UniformIntDist featureDist(0, static_cast<int>(m_features.size() - 1));
-  int featureIndex = featureDist(the_RNG);
+  int featureIndex = the_RNG.pick_uniform(0, static_cast<int>(m_features.size() - 1));
   return m_features[featureIndex];
 }
 

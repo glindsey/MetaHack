@@ -1,5 +1,3 @@
-#include "stdafx.h"
-
 #include "components/ComponentManager.h"
 
 #include "entity/EntityId.h"
@@ -38,7 +36,7 @@ int LUA_get_mass(lua_State* L)
 {
   return LUA_getValue<int>(L, [&](EntityId entity) -> int
   {
-    return COMPONENTS.physical.existsFor(entity) ? COMPONENTS.physical[entity].mass().value() : 0;
+    return COMPONENTS.physical.existsFor(entity) ? COMPONENTS.physical[entity].mass() : 0;
   });
 }
 
@@ -79,7 +77,7 @@ int LUA_get_volume(lua_State* L)
 {
   return LUA_getValue<int>(L, [&](EntityId entity) -> int
   {
-    return COMPONENTS.physical.existsFor(entity) ? COMPONENTS.physical[entity].volume().value() : 0;
+    return COMPONENTS.physical.existsFor(entity) ? COMPONENTS.physical[entity].volume() : 0;
   });
 }
 

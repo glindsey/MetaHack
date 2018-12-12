@@ -1,5 +1,7 @@
 #include "stdafx.h"
 
+#include <boost/ptr_container/ptr_vector.hpp>
+
 #include "Vec3.h"
 
 /// Three-dimensional grid of some sort of object.

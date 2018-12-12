@@ -1,6 +1,5 @@
-#include "stdafx.h"
-
 #include "ActionTakeOut.h"
+
 #include "components/ComponentManager.h"
 #include "game/GameState.h"
 #include "lua/LuaObject.h"

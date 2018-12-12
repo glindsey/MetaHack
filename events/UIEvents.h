@@ -1,6 +1,7 @@
 #pragma once
 
 #include "design_patterns/Event.h"
+#include "types/common.h"
 
 namespace UIEvents
 {

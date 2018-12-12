@@ -1,19 +1,18 @@
 #include "stdafx.h"
-#include "ModifiableInt.h"
 
 #include "utilities/JSONUtils.h"
 
-ModifiableInt::ModifiableInt()
+int::int()
   : m_baseValue{ 0 }
 {
 }
 
-ModifiableInt::ModifiableInt(int baseValue)
+int::int(int baseValue)
   : m_baseValue{ baseValue }
 {
 }
 
-int ModifiableInt::value() const
+int int::value() const
 {
   if (m_preMultipliers.size() == 0 && m_postMultipliers.size() == 0)
   {
@@ -44,17 +43,17 @@ int ModifiableInt::value() const
   }
 }
 
-int ModifiableInt::baseValue() const
+int int::baseValue() const
 {
   return m_baseValue;
 }
 
-void ModifiableInt::setBaseValue(int baseValue)
+void int::setBaseValue(int baseValue)
 {
   m_baseValue = baseValue;
 }
 
-bool ModifiableInt::setPreMultiplierFrom(EntityId id, Modifier<float> modifier)
+bool int::setPreMultiplierFrom(EntityId id, Modifier<float> modifier)
 {
   bool hasPreMultiplier = hasPreMultiplierFrom(id);
 
@@ -72,22 +71,22 @@ bool ModifiableInt::setPreMultiplierFrom(EntityId id, Modifier<float> modifier)
   return hasPreMultiplier;
 }
 
-bool ModifiableInt::hasPreMultiplierFrom(EntityId id)
+bool int::hasPreMultiplierFrom(EntityId id)
 {
   return (m_preMultipliers.count(id) != 0);
 }
 
-bool ModifiableInt::clearPreMultiplierFrom(EntityId id)
+bool int::clearPreMultiplierFrom(EntityId id)
 {
   return (m_preMultipliers.erase(id) != 0);
 }
 
-void ModifiableInt::clearAllPreMultipliers()
+void int::clearAllPreMultipliers()
 {
   m_preMultipliers.clear();
 }
 
-bool ModifiableInt::setAdderFrom(EntityId id, Modifier<int> modifier)
+bool int::setAdderFrom(EntityId id, Modifier<int> modifier)
 {
   bool hasAdder = hasAdderFrom(id);
 
@@ -105,22 +104,22 @@ bool ModifiableInt::setAdderFrom(EntityId id, Modifier<int> modifier)
   return hasAdder;
 }
 
-bool ModifiableInt::hasAdderFrom(EntityId id)
+bool int::hasAdderFrom(EntityId id)
 {
   return (m_adders.count(id) != 0);
 }
 
-bool ModifiableInt::clearAdderFrom(EntityId id)
+bool int::clearAdderFrom(EntityId id)
 {
   return (m_adders.erase(id) != 0);
 }
 
-void ModifiableInt::clearAllAdders()
+void int::clearAllAdders()
 {
   m_adders.clear();
 }
 
-bool ModifiableInt::setPostMultiplierFrom(EntityId id, Modifier<float> modifier)
+bool int::setPostMultiplierFrom(EntityId id, Modifier<float> modifier)
 {
   bool hasPostMultiplier = hasPostMultiplierFrom(id);
 
@@ -138,36 +137,36 @@ bool ModifiableInt::setPostMultiplierFrom(EntityId id, Modifier<float> modifier)
   return hasPostMultiplier;
 }
 
-bool ModifiableInt::hasPostMultiplierFrom(EntityId id)
+bool int::hasPostMultiplierFrom(EntityId id)
 {
   return (m_postMultipliers.count(id) != 0);
 }
 
-bool ModifiableInt::clearPostMultiplierFrom(EntityId id)
+bool int::clearPostMultiplierFrom(EntityId id)
 {
   return (m_postMultipliers.erase(id) != 0);
 }
 
-void ModifiableInt::clearAllPostMultipliers()
+void int::clearAllPostMultipliers()
 {
   m_postMultipliers.clear();
 }
 
-void ModifiableInt::clearAllModifiersFrom(EntityId id)
+void int::clearAllModifiersFrom(EntityId id)
 {
   clearPreMultiplierFrom(id);
   clearAdderFrom(id);
   clearPostMultiplierFrom(id);
 }
 
-void ModifiableInt::clearAllModifiers()
+void int::clearAllModifiers()
 {
   clearAllPreMultipliers();
   clearAllAdders();
   clearAllPostMultipliers();
 }
 
-void from_json(json const & j, ModifiableInt & obj)
+void from_json(json const & j, int & obj)
 {
   if (j.is_object())
   {
@@ -214,10 +213,10 @@ void from_json(json const & j, ModifiableInt & obj)
   }
 }
 
-void to_json(json & j, ModifiableInt const & obj)
+void to_json(json & j, int const & obj)
 {
-  if (obj.m_preMultipliers.size() == 0 && 
-      obj.m_adders.size() == 0 && 
+  if (obj.m_preMultipliers.size() == 0 &&
+      obj.m_adders.size() == 0 &&
       obj.m_postMultipliers.size() == 0)
   {
     j = obj.m_baseValue;

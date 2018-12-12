@@ -3,8 +3,6 @@
 #include "json.hpp"
 using json = ::nlohmann::json;
 
-#include "types/ModifiableInt.h"
-
 namespace Components
 {
 
@@ -19,14 +17,14 @@ namespace Components
     /// Get this entity's mass in grams.
     /// If the entity also has a Quantity component, this is the mass of a
     /// *single* piece of the aggregate, not the whole.
-    ModifiableInt& mass();
-    ModifiableInt const& mass() const;
+    int& mass();
+    int const& mass() const;
 
     /// Get this entity's volume in cubic centimeters.
     /// If the entity also has a Quantity component, this is the volume of a
     /// *single* piece of the aggregate, not the whole.
-    ModifiableInt& volume();
-    ModifiableInt const& volume() const;
+    int& volume();
+    int const& volume() const;
 
     /// Upper limit of volume that can fit in a single map tile.
     /// Each tile on the map is roughly 8 m^3 (e.g. a cube with 2m sides).
@@ -37,8 +35,8 @@ namespace Components
   protected:
 
   private:
-    ModifiableInt m_mass = ModifiableInt(1000);
-    ModifiableInt m_volume = ModifiableInt(1000);
+    int m_mass = int(1000);
+    int m_volume = int(1000);
   };
 
 } // end namespace Components

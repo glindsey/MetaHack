@@ -1,5 +1,8 @@
 #pragma once
 
+#include <SFGUI/SFGUI.hpp>
+#include <SFGUI/Desktop.hpp>
+
 #include "events/UIEvents.h"
 #include "game/App.h"
 #include "game/AppState.h"
@@ -14,8 +17,8 @@ class Direction;
 class EntityId;
 class GameState;
 class InventorySelection;
-class KeyBuffer;
 class MapView;
+class StatusArea;
 
 namespace Systems
 {
@@ -41,8 +44,10 @@ class AppStateGameMode
   };
 
 public:
-  AppStateGameMode(StateMachine& state_machine, 
-                   sf::RenderWindow& app_window);
+  AppStateGameMode(StateMachine& state_machine,
+                   sf::RenderWindow& appWindow,
+                   sfg::SFGUI& sfgui,
+                   sfg::Desktop& desktop);
   virtual ~AppStateGameMode();
 
   virtual bool initialize() override;
@@ -72,8 +77,17 @@ private:
   /// Application window.
   sf::RenderWindow& m_appWindow;
 
-  /// The debug key buffer.
-  std::unique_ptr<KeyBuffer> m_debugBuffer;
+  /// The SFGUI instance.
+  sfg::SFGUI& m_sfgui;
+
+  /// The SFGUI desktop.
+  sfg::Desktop& m_desktop;
+
+  /// The MessageLogView instance.
+  std::unique_ptr<MessageLogView> m_messageLogView;
+
+  /// The StatusArea instance.
+  std::unique_ptr<StatusArea> m_statusArea;
 
   /// The current game state.
   std::unique_ptr<GameState> m_gameState;

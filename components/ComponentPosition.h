@@ -25,9 +25,14 @@ namespace Components
 
     friend std::ostream& operator<<(std::ostream& os, Components::ComponentPosition const& obj)
     {
-      os << "[Map: " << obj.m_map <<
-        ", Coords: " << obj.m_coords <<
-        ", Parent: " << obj.m_parent << "]";
+      if (obj.m_parent != EntityId::Void)
+      {
+        os << "[Parent: " << obj.m_parent << "]";
+      }
+      else
+      {
+        os << "[Map: \"" << obj.m_map << "\", Coords: " << obj.m_coords << "]";
+      }
       return os;
     }
 
@@ -47,6 +52,13 @@ namespace Components
     /// Get surrounding entity, if any.
     /// If there's no surrounding entity, returns Void.
     EntityId parent() const;
+
+    /// Gets this entity's location.
+    /// If the entity is inside another, returns the surrounding entity.
+    /// If the entity is on a map, returns the space entity of the
+    /// corresponding floor tile.
+    /// Otherwise, returns Void.
+    EntityId location() const;
 
     /// Get map.
     /// If this entity is inside another, returns the ID of the parent's map.

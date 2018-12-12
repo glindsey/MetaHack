@@ -4,11 +4,17 @@
 
 #include "game/App.h"
 
-AppStateMainMenu::AppStateMainMenu(StateMachine& state_machine, sf::RenderWindow& app_window)
+AppStateMainMenu::AppStateMainMenu(StateMachine& stateMachine,
+                                   sf::RenderWindow& appWindow,
+                                   sfg::SFGUI& sfgui,
+                                   sfg::Desktop& desktop)
   :
-  AppState(state_machine, {},
+  AppState(stateMachine, {},
            "AppStateMainMenu",
-           std::bind(&AppStateMainMenu::render_title, this, std::placeholders::_1, std::placeholders::_2))
+           std::bind(&AppStateMainMenu::render_title, this, std::placeholders::_1, std::placeholders::_2)),
+  m_appWindow{ appWindow },
+  m_sfgui{ sfgui },
+  m_desktop{ desktop }
 {
 }
 

@@ -11,16 +11,7 @@ public:
   virtual ~Serializable() = default;
 
 protected:
-  friend std::ostream& operator << (std::ostream& o, const Serializable& object)
-  {
-    o << "<";
-    object.serialize(o);
-    o << ">";
-    return o;
-  }
+  friend std::ostream& operator<<(std::ostream& o, const Serializable& object);
 
-  virtual void serialize(std::ostream& o) const
-  {
-    o << typeid(*this).name() << ": " << this;
-  }
+  virtual void serialize(std::ostream& o) const;
 };

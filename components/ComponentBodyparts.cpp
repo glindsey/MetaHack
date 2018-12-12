@@ -1,5 +1,3 @@
-#include "stdafx.h"
-
 #include "components/ComponentBodyparts.h"
 
 #include "game/GameState.h"

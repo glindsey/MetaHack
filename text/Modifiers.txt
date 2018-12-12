@@ -1,0 +1,26 @@
+Thoughts on Temporary Modifiers
+===============================================================================
+
+**Description**: Temporary modifiers are objects that modify the state of other objects. For example, a ring that grants +1 strength to the wearer. The question is how to implement them in a way that is fast, relatively simple, powerful, and serializable?
+
+**Ownership**: Modifiers will have to be owned by their own ComponentMaps (or possibly ModifierMaps -- we'll see). Specifically, they'll have to be in a ComponentMap<ComponentModifier<M>> where M is the Component they are modifying. This is because there will need to be a SystemModifiers which updates all of them, and if they were owned by the Components themselves, the System would have to iterate through every single Component to see if it has Modifiers. The Map itself is tied to an Entity, not a Component.
+
+**Updating modifiers**: When SystemModifiers runs for each Modifier map, it has to do several things:
+1. Run the update methods for each Modifier. These update methods may change their value, or may flag themselves for removal.
+2. Check if any Modifiers have been flagged for removal. If so, remove them, and flag the corresponding Component for an update.
+3. Check if any Modifiers have been added to a Component. If so, flag the corresponding Component for an update.
+4. For each Component that needs an update, take the Component's base attributes, run each of the modifiers on it in order, and store it as the Component's "modified" attributes.
+
+**Getting/setting values**: Each Component will need methods to get both the "base" attributes and the "modified" ones. The "modified" ones are the ones that are typically used by the various Systems; "base" ones are present for informational purposes (e.g. for status readouts).
+
+**Modifier information to save**: Each Modifier will need to keep a record of the following information:
+- ID of the owning Entity (which we get for free, since it's the key to the ComponentMap)
+- ID of the Entity responsible for the modifier
+- Length of modifier's lifespan, in ticks (if any)
+- Other conditions upon which the modifier is destroyed (e.g. the responsible Entity is destroyed, the Entity is no longer worn by the owner, et cetera).
+    + This is best accomplished via an event subscription system of some sort, but I'm not sure my existing event system is the best choice. It is very low-level, and we're more talking game-level events here. In fact I'd say I need to implement some sort of ComponentMailbox and SystemMailman to handle these and other game events.
+
+Corner Cases to Consider (mmm, alliteration)
+===============================================================================
+- Modifier effects don't "ripple down" inventories in this setup, although it would be possible to add a flag allowing them to do so. In such a case, though, you'd either need to duplicate the modifier at creation for each inventory item, rippling down the tree, or you'd need to have each modifier check bubble *up* the tree to look for parent modifiers that might be having effects. The former seems like a better choice since the delay would be front-loaded at creation instead of on each System tick (and an event system would ensure all the duplicated modifiers would handle deletion *et al* properly).
+- It would be nice to be able to support modifying a set of modifiers... for example, "all temporary effects last 10% longer". But in order to do this, Modifiers would have to become first-class Entities in their own right, since a Modifier is owned by a specific Entity. And that would get *hairy*.

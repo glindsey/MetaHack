@@ -12,7 +12,7 @@ class EntityId;
 class Property;
 
 /// This class encapsulates the Lua state and interface as an object.
-class Lua : public boost::noncopyable
+class Lua
 {
 public:
   /// The type of objects passed back and forth to Lua.
@@ -21,9 +21,9 @@ public:
     Null = 0,
     Boolean,
     String,
-    Integer,        
+    Integer,
     Unsigned,
-    Number,         
+    Number,
     IntVec2,
     UintVec2,
     RealVec2,
@@ -33,7 +33,7 @@ public:
     Unknown,        ///< Internally represented by a string, but only to contain the unknown Lua type
     Count           ///< Just for bookkeeping, doesn't need to be in LuaObject
   };
-  
+
   /// Struct used when defining enums.
   template<typename T>
   struct EnumPair
@@ -132,31 +132,31 @@ public:
     ///      __metatable = false
     /// });
     /// ```
-    
+
     std::stringstream code;
-    
+
     code << tname << " = setmetatable({}, {";
     code << "__index = {";
-    
+
     // Iterate over the pairs adding the enum values.
     for (auto& pair : pairs)
     {
       code << pair.name << "={value=" << static_cast<int>(pair.value) << ",type=\"" << tname << "\"},";
     }
-    
+
     code << "},";
     code << "__newindex = function(table, key, value) error(\"Attempt to modify read-only table\") end,";
     code << "__metatable = false});";
-    
+
     // Execute lua code
     std::string codeString = code.str();
-    
+
     if (luaL_loadbuffer(L_, codeString.c_str(), codeString.length(), 0) || lua_pcall(L_, 0, 0, 0))
     {
       std::string errorString{ lua_tostring(L_, -1) };
-      
+
       CLOG(FATAL, "Lua") << "Could not add enum to Lua: " << errorString << "\nString was:\n" << codeString;
-      
+
       // Should not actually get here due to fatal error log
       lua_pop(L_, 1);
       return false;
@@ -268,7 +268,7 @@ public:
                            json default_result);
 
   /// Call Lua function associated with a reflexive action.
-  /// 
+  ///
   /// @param subject  The subject of the action.
   /// @param action   The action to be performed.
   /// @return Bool indicating whether the action succeeded.
@@ -337,7 +337,7 @@ protected:
 
   /// Helper method to set a Lua path.
   void addToLuaPath(std::string path);
-  
+
 private:
   /// Private Lua state.
   lua_State mutable* L_;

@@ -1,5 +1,3 @@
-#include "stdafx.h"
-
 #include "components/ComponentGender.h"
 
 #include "game/GameState.h"

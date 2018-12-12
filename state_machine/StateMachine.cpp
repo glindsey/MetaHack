@@ -1,5 +1,7 @@
 #include "stdafx.h"
 
+#include <boost/ptr_container/ptr_map.hpp>
+
 #include "state_machine/StateMachine.h"
 
 #include "state_machine/State.h"
@@ -7,8 +9,8 @@
 struct StateMachine::Impl
 {
   Impl(Object* parent_)
-    : 
-    parent{ parent_ } 
+    :
+    parent{ parent_ }
   {}
 
   Object* const parent;
@@ -19,19 +21,19 @@ struct StateMachine::Impl
 
 StateMachine::StateMachine(std::string const& machine_name,
                            Object* parent)
-  : 
+  :
   RenderableToTexture(),
   Object({}),
   pImpl(NEW Impl(parent))
 {
   pImpl->current_state = nullptr;
   pImpl->machine_name = machine_name;
-  if (pImpl->parent) pImpl->parent->addObserver(*this, EventID::All);
+  if (pImpl->parent) subscribeTo(pImpl->parent, EventID::All);
 }
 
 StateMachine::~StateMachine()
 {
-  if (pImpl->parent) pImpl->parent->removeObserver(*this, EventID::All);
+  if (pImpl->parent) unsubscribeFrom(pImpl->parent, EventID::All);
   change_to(nullptr);
 }
 

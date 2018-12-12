@@ -1,6 +1,6 @@
-#include "stdafx.h"
-
 #include "Event.h"
+
+#include "Object.h"
 
 /// Event implementation for observer pattern.
 /// Adapted from http://0xfede.io/2015/12/13/T-C++-ObserverPattern.html
@@ -14,5 +14,7 @@ EventID Event::getId() const
 void Event::serialize(std::ostream& os) const
 {
   Serializable::serialize(os);
-  os << " | subject: <" << subject << ">";
+  os << " | subject: <";
+  subject->serialize(os);
+  os << ">";
 };

@@ -36,6 +36,7 @@ EntityId MapTile::getDisplayEntity() const
   return (isTotallyOpaque() ? getSpaceEntity() : getFloorEntity());
 }
 
+/// @todo Move this into SystemNarrator, doesn't belong here
 std::string MapTile::getDisplayName() const
 {
   auto& spaceCategory = m_components.category.of(m_tileSpace);
@@ -101,7 +102,7 @@ bool MapTile::isPassable() const
   }
 
   // Return whether the volume of the tile fills the entire tile.
-  return (physical.volume().value() < Components::ComponentPhysical::VOLUME_MAX_CC);
+  return (physical.volume() < Components::ComponentPhysical::VOLUME_MAX_CC);
 }
 
 /// @todo: Implement this to cover different entity types.
@@ -158,8 +159,8 @@ RealVec2 MapTile::getPixelCoords(IntVec2 tile)
 
 // === PROTECTED METHODS ======================================================
 
-MapTile::MapTile(IntVec2 coords, 
-                 MapID mapID, 
+MapTile::MapTile(IntVec2 coords,
+                 MapID mapID,
                  EntityFactory& entities,
                  Components::ComponentManager& components,
                  std::string floorCategory,

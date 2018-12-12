@@ -1,5 +1,3 @@
-#include "stdafx.h"
-
 #include "components/ComponentSpacialMemory.h"
 
 #include "game/GameState.h"

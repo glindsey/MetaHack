@@ -65,9 +65,8 @@ void MapGenerator::generate()
   {
     GeoVector nextGrowthVector;
 
-    UniformIntDist chooseAFeature(0, 8);
     feature_settings.clear();
-    int chosen_feature = chooseAFeature(the_RNG);
+    int chosen_feature = the_RNG.pick_uniform(0, 8);
     switch (chosen_feature)
     {
       case 0:
@@ -232,12 +231,9 @@ bool MapGenerator::getGrowthVector(GeoVector& growthVector)
 IntVec2 MapGenerator::getRandomSquare()
 {
   IntVec2 mapSize = m_game_map.getSize();
-  UniformIntDist xDist(1, mapSize.x - 2);
-  UniformIntDist yDist(1, mapSize.y - 2);
-
   IntVec2 coords;
-  coords.x = xDist(the_RNG);
-  coords.y = yDist(the_RNG);
+  coords.x = the_RNG.pick_uniform(1, mapSize.x - 2);
+  coords.y = the_RNG.pick_uniform(1, mapSize.y - 2);
   return coords;
 }
 
@@ -247,15 +243,12 @@ IntVec2 MapGenerator::getRandomSquare()
 IntVec2 MapGenerator::getRandomFilledSquare()
 {
   IntVec2 mapSize = m_game_map.getSize();
-  UniformIntDist xDist(1, mapSize.x - 2);
-  UniformIntDist yDist(1, mapSize.y - 2);
-
   IntVec2 coords;
 
   do
   {
-    coords.x = xDist(the_RNG);
-    coords.y = yDist(the_RNG);
+    coords.x = the_RNG.pick_uniform(1, mapSize.x - 2);
+    coords.y = the_RNG.pick_uniform(1, mapSize.y - 2);
   } while (m_game_map.getTile(coords).isPassable());
 
   return coords;

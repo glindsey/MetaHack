@@ -6,6 +6,7 @@
 
 #include "AssertHelper.h"
 #include "game/App.h"
+#include "gui/GUIDesktop.h"
 #include "services/IConfigSettings.h"
 #include "services/Service.h"
 #include "types/Color.h"
@@ -20,7 +21,7 @@ namespace metagui
     EventResized::id
   };
 
-  GUIObject::GUIObject(Desktop& desktop, 
+  GUIObject::GUIObject(Desktop& desktop,
                        std::string name,
                        std::unordered_set<EventID> const eventsEmitted) :
     Object(combine(s_eventsEmitted, eventsEmitted), name),
@@ -28,7 +29,7 @@ namespace metagui
   {
   }
 
-  GUIObject::GUIObject(Desktop& desktop, 
+  GUIObject::GUIObject(Desktop& desktop,
                        std::string name,
                        std::unordered_set<EventID> const eventsEmitted,
                        IntVec2 location, UintVec2 size) :
@@ -38,7 +39,7 @@ namespace metagui
     setSize(size);
   }
 
-  GUIObject::GUIObject(Desktop& desktop, 
+  GUIObject::GUIObject(Desktop& desktop,
                        std::string name,
                        std::unordered_set<EventID> const eventsEmitted,
                        sf::IntRect dimensions) :
@@ -717,16 +718,16 @@ namespace metagui
     // Subscribe to standard App events here.
     /// @todo Limit this to specific events and have subclasses add others
     ///       that they want.
-    App::instance().addObserver(*this, EventID::All);
+    subscribeTo(App::instance(), EventID::All);
 
     // Subscribe to standard Desktop events here.
-    m_desktop.addObserver(*this, EventDragStarted::id);
-    m_desktop.addObserver(*this, EventDragging::id);
-    m_desktop.addObserver(*this, EventDragFinished::id);
+    subscribeTo(m_desktop, EventDragStarted::id);
+    subscribeTo(m_desktop, EventDragging::id);
+    subscribeTo(m_desktop, EventDragFinished::id);
 
     // Subscribe to standard parent events here.
-    parent.addObserver(*this, EventMoved::id);
-    parent.addObserver(*this, EventResized::id);
+    subscribeTo(parent, EventMoved::id);
+    subscribeTo(parent, EventResized::id);
 
     // Subscribe to any additional events.
     doEventSubscriptions_V(parent);

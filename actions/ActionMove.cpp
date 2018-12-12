@@ -1,5 +1,3 @@
-#include "stdafx.h"
-
 #include "ActionMove.h"
 
 #include "ActionAttack.h"
@@ -30,7 +28,7 @@ namespace Actions
     auto subject = getSubject();
     bool isMobile = (components.mobility.existsFor(subject) && components.mobility.of(subject).moveSpeed() > 0);
     std::string reason = isMobile ? "" : "YOU_HAVE_NO_WAY_OF_MOVING"; /// @todo Add translation key
-    return { isMobile, reason };      
+    return { isMobile, reason };
   }
 
   std::unordered_set<Trait> const & ActionMove::getTraits() const

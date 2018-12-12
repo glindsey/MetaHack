@@ -14,7 +14,6 @@
 #include "game_windows/StatusArea.h"
 #include "inventory/InventoryArea.h"
 #include "inventory/InventorySelection.h"
-#include "keybuffer/KeyBuffer.h"
 #include "lua/LuaObject.h"
 #include "map/Map.h"
 #include "map/MapFactory.h"
@@ -65,16 +64,19 @@
 #include "GUIObject.h"
 #include "GUIWindow.h"
 
-AppStateGameMode::AppStateGameMode(StateMachine& state_machine, 
-                                   sf::RenderWindow& m_appWindow)
+AppStateGameMode::AppStateGameMode(StateMachine& stateMachine,
+                                   sf::RenderWindow& appWindow,
+                                   sfg::SFGUI& sfgui,
+                                   sfg::Desktop& desktop)
   :
-  AppState(state_machine,
+  AppState(stateMachine,
            { App::EventAppWindowResized::id,
              UIEvents::EventKeyPressed::id },
            "AppStateGameMode",
            std::bind(&AppStateGameMode::renderMap, this, std::placeholders::_1, std::placeholders::_2)),
-  m_appWindow{ m_appWindow },
-  m_debugBuffer{ NEW KeyBuffer() },
+  m_appWindow{ appWindow },
+  m_sfgui{ sfgui },
+  m_desktop{ desktop },
   m_gameState{ NEW GameState({}) },
   m_systemManager{ NEW Systems::Manager(*m_gameState) },
   m_inventorySelection{ NEW InventorySelection() },
@@ -84,22 +86,29 @@ AppStateGameMode::AppStateGameMode(StateMachine& state_machine,
   m_currentInputState{ GameInputState::Map },
   m_cursorCoords{ 0, 0 }
 {
-  App::instance().addObserver(*this, EventID::All);
+  subscribeTo(App::instance(), EventID::All);
 
-  the_desktop.addChild(NEW MessageLogView(the_desktop, 
-                                          "MessageLogView", 
-                                          S<IMessageLog>(), 
-                                          *m_debugBuffer, 
-                                          calcMessageLogDims()))->setFlag("titlebar", true);
-  the_desktop.addChild(NEW InventoryArea(the_desktop, 
-                                         "InventoryArea", 
-                                         *m_inventorySelection, 
-                                         calcInventoryDims(), 
+  m_messageLogView.reset(NEW MessageLogView(m_sfgui,
+                                            m_desktop,
+                                            "MessageLogView",
+                                            S<IMessageLog>(),
+                                            calcMessageLogDims()));
+
+  subscribeTo(m_messageLogView.get(), EventID::All);
+
+  the_desktop.addChild(NEW InventoryArea(the_desktop,
+                                         m_sfgui,
+                                         m_desktop,
+                                         "InventoryArea",
+                                         *m_inventorySelection,
+                                         calcInventoryDims(),
                                          *m_gameState))->setFlag("titlebar", true);
-  the_desktop.addChild(NEW StatusArea(the_desktop, 
-                                      "StatusArea", 
-                                      calcStatusAreaDims(), 
-                                      *m_gameState))->setGlobalFocus(true);
+
+  m_statusArea.reset(NEW StatusArea(m_sfgui,
+                                    m_desktop,
+                                    "StatusArea",
+                                    calcStatusAreaDims(),
+                                    *m_gameState));
 
   // Create the standard map views provider.
   /// @todo Make this configurable.
@@ -109,10 +118,9 @@ AppStateGameMode::AppStateGameMode(StateMachine& state_machine,
 
 AppStateGameMode::~AppStateGameMode()
 {
-  the_desktop.removeChild("StatusArea");
   the_desktop.removeChild("InventoryArea");
-  the_desktop.removeChild("MessageLogView");
 
+  m_messageLogView->removeObserver(*this, EventID::All);
   App::instance().removeObserver(*this, EventID::All);
 }
 
@@ -121,40 +129,10 @@ void AppStateGameMode::execute()
   auto& game = gameState();
   auto& components = game.components();
 
-  // First, check for debug commands ready to be run.
-  if (m_debugBuffer->get_enter())
-  {
-    /// Call the Lua interpreter with the command.
-    std::string luaCommand = m_debugBuffer->get_buffer();
-    S<IMessageLog>().add("> " + luaCommand);
-
-    /// DEBUG: If the command is "dump", write out gamestate JSON to a file.
-    /// @todo Remove this, or make it a Lua function instead.
-    std::string command = boost::to_lower_copy(luaCommand);
-    if (command == "dump")
-    {
-      S<IMessageLog>().add("Dumping game state to dump.json...");
-      json gameStateJSON = game;
-      std::ofstream of("dump.json");
-      of << gameStateJSON.dump(2);
-      S<IMessageLog>().add("...Dump complete.");
-    }
-    else
-    {
-      if (luaL_dostring(m_gameState->lua().state(), luaCommand.c_str()))
-      {
-        std::string result = lua_tostring(m_gameState->lua().state(), -1);
-        S<IMessageLog>().add(result);
-      }
-    }
-
-    m_debugBuffer->clear_buffer();
-  }
-
   EntityId player = components.globals.player();
 
   // If there's a player action waiting or in progress...
-  if (components.activity.existsFor(player) && 
+  if (components.activity.existsFor(player) &&
       components.activity[player].actionPendingOrInProgress())
   {
     // Update map used for systems that care about it.
@@ -171,7 +149,7 @@ void AppStateGameMode::execute()
     m_mapView->updateTiles(player, m_systemManager->lighting());
 
     // If the action completed, reset the inventory selection.
-    if (!components.activity.existsFor(player) || 
+    if (!components.activity.existsFor(player) ||
         !components.activity[player].actionPendingOrInProgress())
     {
       resetInventorySelection();
@@ -220,9 +198,9 @@ bool AppStateGameMode::initialize()
   resetInventorySelection();
 
   // Set the map view.
-  m_mapView = the_desktop.addChild(S<IGraphicViews>().createMapView(the_desktop, 
-                                                                    "MainMapView", 
-                                                                    game_map, 
+  m_mapView = the_desktop.addChild(S<IGraphicViews>().createMapView(the_desktop,
+                                                                    "MainMapView",
+                                                                    game_map,
                                                                     the_desktop.getSize()));
 
   // Get the map view ready.
@@ -326,12 +304,12 @@ bool AppStateGameMode::handle_key_press(UIEvents::EventKeyPressed const& key)
       {
         case GameInputState::Map:
           m_currentInputState = GameInputState::MessageLog;
-          the_desktop.getChild("MessageLogView").setGlobalFocus(true);
+          //the_desktop.getChild("MessageLogView").setGlobalFocus(true);
           return false;
 
         case GameInputState::MessageLog:
           m_currentInputState = GameInputState::Map;
-          the_desktop.getChild("StatusArea").setGlobalFocus(true);
+          //the_desktop.getChild("StatusArea").setGlobalFocus(true);
           return false;
 
         default:
@@ -1022,9 +1000,40 @@ bool AppStateGameMode::onEvent(Event const& event)
   {
     auto info = static_cast<App::EventAppWindowResized const&>(event);
     the_desktop.setSize({ info.newSize.x, info.newSize.y });
-    the_desktop.getChild("MessageLogView").setRelativeDimensions(calcMessageLogDims());
+    //the_desktop.getChild("MessageLogView").setRelativeDimensions(calcMessageLogDims());
     the_desktop.getChild("InventoryArea").setRelativeDimensions(calcInventoryDims());
-    the_desktop.getChild("StatusArea").setRelativeDimensions(calcStatusAreaDims());
+    //the_desktop.getChild("StatusArea").setRelativeDimensions(calcStatusAreaDims());
+    return false;
+  }
+  else if (id == MessageLogView::EventCommandReady::id)
+  {
+    auto info = static_cast<MessageLogView::EventCommandReady const&>(event);
+    CLOG(TRACE, "Game") << "Got EventCommandReady" << event;
+
+    /// @todo Re-enable this part
+    /// Call the Lua interpreter with the command.
+    S<IMessageLog>().add("> " + info.command);
+
+    /// DEBUG: If the command is "dump", write out gamestate JSON to a file.
+    /// @todo Remove this, or make it a Lua function instead.
+    std::string command = boost::to_lower_copy(info.command);
+    if (command == "dump")
+    {
+      S<IMessageLog>().add("Dumping game state to dump.json...");
+      json gameStateJSON = gameState();
+      std::ofstream of("dump.json");
+      of << gameStateJSON.dump(2);
+      S<IMessageLog>().add("...Dump complete.");
+    }
+    else
+    {
+      if (luaL_dostring(m_gameState->lua().state(), info.command.c_str()))
+      {
+        std::string result = lua_tostring(m_gameState->lua().state(), -1);
+        S<IMessageLog>().add(result);
+      }
+    }
+
     return false;
   }
   else if (id == UIEvents::EventKeyPressed::id)
@@ -1103,7 +1112,7 @@ sf::IntRect AppStateGameMode::calcStatusAreaDims()
 
 sf::IntRect AppStateGameMode::calcInventoryDims()
 {
-  sf::IntRect messageLogDims = the_desktop.getChild("MessageLogView").getRelativeDimensions();
+  //sf::IntRect messageLogDims = the_desktop.getChild("MessageLogView").getRelativeDimensions();
   sf::IntRect inventoryAreaDims;
   auto& config = S<IConfigSettings>();
 
@@ -1120,7 +1129,7 @@ bool AppStateGameMode::moveCursor(Direction direction)
   auto& game = gameState();
   auto& components = game.components();
   EntityId player = components.globals.player();
-  
+
   bool result = false;
 
   if (components.position.existsFor(player))

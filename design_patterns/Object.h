@@ -5,6 +5,7 @@
 #include <queue>
 #include <unordered_map>
 #include <unordered_set>
+#include <utility>
 
 #include "Event.h"
 #include "Serializable.h"
@@ -33,6 +34,66 @@ public:
 
   std::string const& getName();
 
+  /// Subscribes to an event emitted by an object.
+  /// @param subject    Reference to object to subscribe to.
+  /// @param eventID    ID of event to subscribe to, or EventID::All to
+  ///                   subscribe to all events from this object.
+  inline void subscribeTo(Object& subject, EventID eventID = EventID::All)
+  {
+    subject.addObserver(*this, eventID);
+  }
+
+  /// Subscribes to an event emitted by an object.
+  /// @param subject    Pointer to object to subscribe to.
+  /// @param eventID    ID of event to subscribe to, or EventID::All to
+  ///                   subscribe to all events from this object.
+  inline void subscribeTo(Object* subject, EventID eventID = EventID::All)
+  {
+    if (!subject) return;
+    subject->addObserver(*this, eventID);
+  }
+
+  /// Subscribes to an event emitted by an object.
+  /// @param subject    Ref to unique_ptr to object to subscribe to.
+  /// @param eventID    ID of event to subscribe to, or EventID::All to
+  ///                   subscribe to all events from this object.
+  inline void subscribeTo(std::unique_ptr<Object>& subject, EventID eventID = EventID::All)
+  {
+    auto ptr = subject.get();
+    if (!ptr) return;
+    subject->addObserver(*this, eventID);
+  }
+
+  /// Unsubscribes from an event emitted by an object.
+  /// @param subject    Reference to object to unsubscribe from.
+  /// @param eventID    ID of event to unsubscribe to, from EventID::All to
+  ///                   unsubscribe from all events from this object.
+  inline void unsubscribeFrom(Object& subject, EventID eventID = EventID::All)
+  {
+    subject.removeObserver(*this, eventID);
+  }
+
+  /// Unsubscribes from an event emitted by an object.
+  /// @param subject    Pointer to object to unsubscribe from.
+  /// @param eventID    ID of event to unsubscribe to, from EventID::All to
+  ///                   unsubscribe from all events from this object.
+  inline void unsubscribeFrom(Object* subject, EventID eventID = EventID::All)
+  {
+    if (!subject) return;
+    subject->removeObserver(*this, eventID);
+  }
+
+  /// Unsubscribes from an event emitted by an object.
+  /// @param subject    Ref to unique_ptr to object to unsubscribe from.
+  /// @param eventID    ID of event to unsubscribe to, from EventID::All to
+  ///                   unsubscribe from all events from this object.
+  inline void unsubscribeFrom(std::unique_ptr<Object>& subject, EventID eventID = EventID::All)
+  {
+    auto ptr = subject.get();
+    if (!ptr) return;
+    ptr->removeObserver(*this, eventID);
+  }
+
   /// Adds an observer of an event emitted by this object.
   /// @param observer   Reference to observing object to add.
   /// @param eventID    ID of event to observe, or EventID::All to
@@ -49,6 +110,8 @@ public:
   ///                   unsubscribe from all events.
   void removeObserver(Object& observer, EventID eventID = EventID::All);
 
+  virtual void serialize(std::ostream& o) const override;
+
 protected:
   bool onEvent_NV(Event const& event);
 
@@ -58,8 +121,6 @@ protected:
   /// @note If the event was handled BUT you still want it to keep being
   ///       broadcast, return false!
   virtual bool onEvent(Event const& event);
-
-  virtual void serialize(std::ostream& o) const override;
 
   using BroadcastDelegate = std::function<bool(Event& event, bool shouldSend)>;
   using UnicastDelegate = std::function<void(Event& event, Object& observer, bool shouldSend)>;

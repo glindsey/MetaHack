@@ -1,10 +1,6 @@
-#include "stdafx.h"
-
-#include "types/common.h"
-
 #include "Action.h"
-#include "ActionMove.h"
 
+#include "actions/ActionMove.h"
 #include "components/ComponentManager.h"
 #include "entity/EntityId.h"
 #include "game/GameState.h"
@@ -14,6 +10,8 @@
 #include "systems/Manager.h"
 #include "systems/SystemNarrator.h"
 #include "systems/SystemGeometry.h"
+#include "types/common.h"
+#include "utilities/CommonFunctions.h"
 #include "utilities/Shortcuts.h"
 #include "utilities/StringTransforms.h"
 
@@ -402,7 +400,7 @@ namespace Actions
           if (!systems.geometry()->firstCanReachSecond(subject, object))
           {
             printMessageTry(systems, arguments);
-            putMsg(narrator.makeTr("CONJUNCTION_HOWEVER", arguments) + " " + 
+            putMsg(narrator.makeTr("CONJUNCTION_HOWEVER", arguments) + " " +
                    narrator.makeTr("FOO_PRO_SUB_IS_OUT_OF_REACH", arguments));
             return StateResult::Failure();
           }
@@ -414,8 +412,8 @@ namespace Actions
           if (!components.inventory[subject].contains(object))
           {
             printMessageTry(systems, arguments);
-            auto message = 
-              narrator.makeTr("CONJUNCTION_HOWEVER", arguments) + " " + 
+            auto message =
+              narrator.makeTr("CONJUNCTION_HOWEVER", arguments) + " " +
               narrator.makeTr("FOO_PRO_SUB_IS_NOT_IN_YOUR_INVENTORY", arguments);
             if (systems.geometry()->firstCanReachSecond(subject, object))
             {
@@ -694,7 +692,7 @@ namespace Actions
     return Action::s_actionMap.count(key) != 0;
   }
 
-  std::unique_ptr<Action> Action::create(std::string key, 
+  std::unique_ptr<Action> Action::create(std::string key,
                                          EntityId subject,
                                          std::vector<EntityId> objects,
                                          EntityId targetThing,

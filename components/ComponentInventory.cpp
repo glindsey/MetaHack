@@ -1,6 +1,6 @@
-#include "stdafx.h"
-
 #include "components/ComponentInventory.h"
+
+#include <algorithm>
 
 #include "components/ComponentManager.h"
 #include "components/ComponentPhysical.h"
@@ -112,6 +112,18 @@ namespace Components
   size_t ComponentInventory::count()
   {
     return m_entities.size();
+  }
+
+  std::vector<EntityId> ComponentInventory::getCollection()
+  {
+    std::vector<EntityId> ids;
+    for (auto iter = m_entities.cbegin();
+      iter != m_entities.cend();
+      ++iter)
+    {
+      ids.push_back(iter->second);
+    }
+    return ids;
   }
 
   EntityMap::iterator ComponentInventory::begin()
@@ -346,8 +358,8 @@ namespace Components
     auto firstQuantity = COMPONENTS.quantity.valueOr(a, 1);
     auto secondQuantity = COMPONENTS.quantity.valueOr(b, 1);
 
-    auto firstVolume = COMPONENTS.physical[a].volume().value() * firstQuantity;
-    auto secondVolume = COMPONENTS.physical[b].volume().value() * secondQuantity;
+    auto firstVolume = COMPONENTS.physical[a].volume() * firstQuantity;
+    auto secondVolume = COMPONENTS.physical[b].volume() * secondQuantity;
 
     return (firstVolume < secondVolume);
   }

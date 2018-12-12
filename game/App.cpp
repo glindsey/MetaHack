@@ -34,7 +34,7 @@ sf::IntRect calc_message_log_dimensions(sf::RenderWindow& window)
   return messageLogDims;
 }
 
-App::App(sf::RenderWindow& appWindow)
+App::App(sf::RenderWindow& appWindow, sfg::SFGUI& sfgui, sfg::Desktop& desktop)
   :
   Object({
   EventAppQuitRequested::id,
@@ -48,6 +48,8 @@ App::App(sf::RenderWindow& appWindow)
   UIEvents::EventMouseLeft::id,
   UIEvents::EventMouseWheelMoved::id }),
   m_appWindow{ appWindow },
+  m_sfgui{ sfgui },
+  m_desktop{ desktop },
   m_appTexture{ NEW sf::RenderTexture() },
   m_isRunning{ false },
   m_hasWindowFocus{ false }
@@ -71,13 +73,13 @@ App::App(sf::RenderWindow& appWindow)
   SET_UP_LOGGER("Entity",             false);
   SET_UP_LOGGER("EntityFactory",      false);
   SET_UP_LOGGER("EventSystem",        false);
-  SET_UP_LOGGER("Game",               false);
+  SET_UP_LOGGER("Game",               true);
   SET_UP_LOGGER("GameRules",          false);
   SET_UP_LOGGER("GameState",          false);
   SET_UP_LOGGER("Geometry",           false);
-  SET_UP_LOGGER("GUI",                false);
+  SET_UP_LOGGER("GUI",                true);
   SET_UP_LOGGER("Inventory",          false);
-  SET_UP_LOGGER("InventoryArea",      false);
+  SET_UP_LOGGER("InventoryArea",      true);
   SET_UP_LOGGER("InventorySelection", false);
   SET_UP_LOGGER("Lighting",           false);
   SET_UP_LOGGER("Lua",                false);
@@ -92,7 +94,8 @@ App::App(sf::RenderWindow& appWindow)
   SET_UP_LOGGER("StateMachine",       false);
   SET_UP_LOGGER("Strings",            false);
   SET_UP_LOGGER("StringTransforms",   false);
-  SET_UP_LOGGER("TileSheet",          true);
+  SET_UP_LOGGER("Systems",            true);
+  SET_UP_LOGGER("TileSheet",          false);
   SET_UP_LOGGER("Types",              false);
   SET_UP_LOGGER("Utilities",          false);
 
@@ -100,7 +103,7 @@ App::App(sf::RenderWindow& appWindow)
   Service<IConfigSettings>::provide(NEW FallbackConfigSettings());
 
   auto& config = S<IConfigSettings>();
-  
+
   auto& resourcesPath = S<IPaths>().resources();
 
   // Create the app state machine.
@@ -111,9 +114,6 @@ App::App(sf::RenderWindow& appWindow)
 
   // Create the GUI desktop.
   m_guiDesktop.reset(NEW metagui::Desktop(*this, "Desktop", m_appWindow.getSize()));
-
-  // Create the random number generator and seed it with the current time.
-  m_rng.reset(NEW boost::random::mt19937(static_cast<unsigned int>(std::time(0))));
 
   // Create the default fonts.
   m_fontDefault.reset(NEW sf::Font());
@@ -172,9 +172,9 @@ App::App(sf::RenderWindow& appWindow)
   StateMachine& sm = *m_stateMachine;
 
   // Add states to the state machine.
-  sm.add_state(NEW AppStateSplashScreen(sm, appWindow));
-  sm.add_state(NEW AppStateMainMenu(sm, appWindow));
-  sm.add_state(NEW AppStateGameMode(sm, appWindow));
+  sm.add_state(NEW AppStateSplashScreen(sm, appWindow, sfgui, desktop));
+  sm.add_state(NEW AppStateMainMenu(sm, appWindow, sfgui, desktop));
+  sm.add_state(NEW AppStateGameMode(sm, appWindow, sfgui, desktop));
 
   // Switch to initial state.
   // DEBUG: Go right to game mode for now.
@@ -218,8 +218,8 @@ void App::handleSFMLEvent(sf::Event& sfmlEvent)
       m_appTexture.reset(NEW sf::RenderTexture());
       m_appTexture->create(sfmlEvent.size.width, sfmlEvent.size.height);
       m_appWindow.setView(sf::View(
-        sf::FloatRect(0, 0, 
-                      static_cast<float>(sfmlEvent.size.width), 
+        sf::FloatRect(0, 0,
+                      static_cast<float>(sfmlEvent.size.width),
                       static_cast<float>(sfmlEvent.size.height))));
       EventAppWindowResized event({ sfmlEvent.size.width, sfmlEvent.size.height });
       broadcast(event);
@@ -322,11 +322,6 @@ bool App::hasWindowFocus()
   return m_hasWindowFocus;
 }
 
-boost::random::mt19937 & App::rng()
-{
-  return *m_rng;
-}
-
 sf::Font & App::fontDefault()
 {
   return *m_fontDefault;
@@ -381,12 +376,14 @@ App & App::instance()
 
 void App::run()
 {
-  static sf::Clock frame_clock;
+  static sf::Clock frameClock;
+  static sf::Clock guiClock;
 
   // Set running boolean.
   m_isRunning = true;
 
-  frame_clock.restart();
+  frameClock.restart();
+  guiClock.restart();
 
   // Start the loop
   while (m_isRunning)
@@ -395,26 +392,39 @@ void App::run()
     sf::Event event;
     while (m_appWindow.pollEvent(event))
     {
+      m_desktop.HandleEvent(event);
+
       handleSFMLEvent(event);
     }
 
     m_stateMachine->execute();
 
-    // Limit frame rate to 60 fps.
-    if (frame_clock.getElapsedTime().asMicroseconds() > 16667)
+    // Update SFGUI with elapsed seconds since last call.
+    m_desktop.Update(guiClock.restart().asSeconds());
+
+    // Update frame counter if necessary.
+    unsigned int elapsedFrameUsec = frameClock.getElapsedTime().asMicroseconds();
+
+    // Limit to 60fps.
+    if (elapsedFrameUsec >= 16667)
     {
-      frame_clock.restart();
-      m_appWindow.clear();
-      m_appTexture->clear(Color::Red);
-
-      m_stateMachine->render(*m_appTexture, m_frameCounter);
-
-      m_appTexture->display();
-      sf::Sprite sprite(m_appTexture->getTexture());
-      m_appWindow.draw(sprite);
-
-      m_appWindow.display();
+      elapsedFrameUsec -= 16667;
+      frameClock.restart();
       ++m_frameCounter;
     }
+
+    // Rendering...
+    m_appWindow.clear();
+    m_appTexture->clear(Color::Red);
+
+    m_stateMachine->render(*m_appTexture, m_frameCounter);
+
+    m_appTexture->display();
+    sf::Sprite sprite(m_appTexture->getTexture());
+    m_appWindow.draw(sprite);
+
+    m_sfgui.Display(m_appWindow);
+
+    m_appWindow.display();
   }
 }

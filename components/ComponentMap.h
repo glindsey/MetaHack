@@ -4,6 +4,7 @@
 #include "entity/EntityId.h"
 
 #include <boost/optional.hpp>
+#include <typeinfo>
 
 #include "json.hpp"
 using json = ::nlohmann::json;

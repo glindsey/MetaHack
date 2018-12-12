@@ -14,10 +14,10 @@ MapRoom::MapRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
 {
   unsigned int num_tries = 0;
 
-  UniformIntDist width_dist(s.get("min_width", 2),
-                              s.get("max_width", 15));
-  UniformIntDist height_dist(s.get("min_height", 2),
-                               s.get("max_height", 15));
+  unsigned int minWidth = s.get("min_width", 2);
+  unsigned int maxWidth = s.get("max_width", 15);
+  unsigned int minHeight = s.get("min_height", 2);
+  unsigned int maxHeight = s.get("max_height", 15);
   unsigned int max_retries = s.get("max_retries", 100);
   std::string floorMaterial = s.get("floor_type", "Dirt");
   std::string wallMaterial = s.get("wall_type", "Stone");
@@ -29,48 +29,41 @@ MapRoom::MapRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
   {
     sf::IntRect rect;
 
-    rect.width = width_dist(the_RNG);
-    rect.height = height_dist(the_RNG);
+    rect.width = the_RNG.pick_uniform(minWidth, maxWidth);
+    rect.height = the_RNG.pick_uniform(minHeight, maxHeight);
 
     if (direction == Direction::North)
     {
-      UniformIntDist offset_dist(0, rect.width - 1);
-      int offset = offset_dist(the_RNG);
+      int offset = the_RNG.pick_uniform(0, rect.width - 1);
 
       rect.top = starting_coords.y - rect.height;
       rect.left = starting_coords.x - offset;
     }
     else if (direction == Direction::South)
     {
-      UniformIntDist offset_dist(0, rect.width - 1);
-      int offset = offset_dist(the_RNG);
+      int offset = the_RNG.pick_uniform(0, rect.width - 1);
 
       rect.top = starting_coords.y + 1;
       rect.left = starting_coords.x - offset;
     }
     else if (direction == Direction::West)
     {
-      UniformIntDist offset_dist(0, rect.height - 1);
-      int offset = offset_dist(the_RNG);
+      int offset = the_RNG.pick_uniform(0, rect.height - 1);
 
       rect.top = starting_coords.y - offset;
       rect.left = starting_coords.x - rect.width;
     }
     else if (direction == Direction::East)
     {
-      UniformIntDist offset_dist(0, rect.height - 1);
-      int offset = offset_dist(the_RNG);
+      int offset = the_RNG.pick_uniform(0, rect.height - 1);
 
       rect.top = starting_coords.y - offset;
       rect.left = starting_coords.x + 1;
     }
     else if (direction == Direction::Self)
     {
-      UniformIntDist height_offset_dist(0, rect.height - 1);
-      UniformIntDist width_offset_dist(0, rect.width - 1);
-
-      rect.top = starting_coords.y - height_offset_dist(the_RNG);
-      rect.left = starting_coords.x - width_offset_dist(the_RNG);
+      rect.top = starting_coords.y - the_RNG.pick_uniform(0, rect.height - 1);
+      rect.left = starting_coords.x - the_RNG.pick_uniform(0, rect.width - 1);
     }
     else
     {

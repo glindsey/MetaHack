@@ -10,8 +10,8 @@ namespace Systems
 }
 
 /// Abstract class representing a view of a single Entity object.
-class EntityView 
-  : 
+class EntityView
+  :
   public Object
 {
   friend class NullGraphicViews;

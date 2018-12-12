@@ -14,10 +14,10 @@ MapDonutRoom::MapDonutRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
 {
   unsigned int num_tries = 0;
 
-  UniformIntDist width_dist(s.get("min_width", 7),
-                              s.get("max_width", 20));
-  UniformIntDist height_dist(s.get("min_height", 7),
-                               s.get("max_height", 20));
+  unsigned int minWidth = s.get("min_width", 7);
+  unsigned int maxWidth = s.get("max_width", 20);
+  unsigned int minHeight = s.get("min_height", 7);
+  unsigned int maxHeight = s.get("max_height", 20);
   unsigned int min_hole_size = s.get("min_hole_size", 5);
   unsigned int max_retries = s.get("max_retries", 500);
   std::string floorMaterial = s.get("floor_type", "Dirt");
@@ -31,37 +31,33 @@ MapDonutRoom::MapDonutRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
   {
     sf::IntRect rect;
 
-    rect.width = width_dist(the_RNG);
-    rect.height = height_dist(the_RNG);
+    rect.width = the_RNG.pick_uniform(minWidth, maxWidth);
+    rect.height = the_RNG.pick_uniform(minHeight, maxHeight);
 
     if (direction == Direction::North)
     {
-      UniformIntDist offset_dist(0, rect.width - 1);
-      int offset = offset_dist(the_RNG);
+      int offset = the_RNG.pick_uniform(0, rect.width - 1);
 
       rect.top = starting_coords.y - rect.height;
       rect.left = starting_coords.x - offset;
     }
     else if (direction == Direction::South)
     {
-      UniformIntDist offset_dist(0, rect.width - 1);
-      int offset = offset_dist(the_RNG);
+      int offset = the_RNG.pick_uniform(0, rect.width - 1);
 
       rect.top = starting_coords.y + 1;
       rect.left = starting_coords.x - offset;
     }
     else if (direction == Direction::West)
     {
-      UniformIntDist offset_dist(0, rect.height - 1);
-      int offset = offset_dist(the_RNG);
+      int offset = the_RNG.pick_uniform(0, rect.height - 1);
 
       rect.top = starting_coords.y - offset;
       rect.left = starting_coords.x - rect.width;
     }
     else if (direction == Direction::East)
     {
-      UniformIntDist offset_dist(0, rect.height - 1);
-      int offset = offset_dist(the_RNG);
+      int offset = the_RNG.pick_uniform(0, rect.height - 1);
 
       rect.top = starting_coords.y - offset;
       rect.left = starting_coords.x + 1;
@@ -82,13 +78,11 @@ MapDonutRoom::MapDonutRoom(Map& m, PropertyDictionary const& s, GeoVector vec)
 
       // Create the hole location.
       sf::IntRect hole;
-      UniformIntDist hole_x_dist(rect.left + 1, rect.left + rect.width - 2);
-      UniformIntDist hole_y_dist(rect.top + 1, rect.top + rect.height - 2);
 
-      int x_hole_left = hole_x_dist(the_RNG);
-      int x_hole_right = hole_x_dist(the_RNG);
-      int y_hole_top = hole_y_dist(the_RNG);
-      int y_hole_bottom = hole_y_dist(the_RNG);
+      int x_hole_left = the_RNG.pick_uniform(rect.left + 1, rect.left + rect.width - 2);
+      int x_hole_right = the_RNG.pick_uniform(rect.left + 1, rect.left + rect.width - 2);
+      int y_hole_top = the_RNG.pick_uniform(rect.top + 1, rect.top + rect.height - 2);
+      int y_hole_bottom = the_RNG.pick_uniform(rect.top + 1, rect.top + rect.height - 2);
 
       // Make sure the hole isn't TOO small.
       // GSL GRUMBLE: WHY does abs() return a signed value?!?

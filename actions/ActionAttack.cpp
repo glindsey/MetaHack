@@ -1,6 +1,5 @@
-#include "stdafx.h"
-
 #include "ActionAttack.h"
+
 #include "components/ComponentManager.h"
 #include "game/GameState.h"
 #include "map/Map.h"
@@ -22,7 +21,7 @@ namespace Actions
 
   std::unordered_set<Trait> const & ActionAttack::getTraits() const
   {
-    static std::unordered_set<Trait> traits = 
+    static std::unordered_set<Trait> traits =
     {
       Trait::CanBeSubjectVerbObject,
       Trait::CanBeSubjectVerbDirection,

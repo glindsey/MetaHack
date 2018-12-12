@@ -1,5 +1,8 @@
 #pragma once
 
+#include <string>
+#include <utility>
+
 /// Using declarations
 using StringPair = std::pair<std::string, std::string>;
 

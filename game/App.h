@@ -1,22 +1,13 @@
 #ifndef APP_H
 #define APP_H
 
-#include <boost/random/mersenne_twister.hpp>
-#include <boost/random/normal_distribution.hpp>
-#include <boost/random/uniform_int_distribution.hpp>
+#include <SFGUI/SFGUI.hpp>
+#include <SFGUI/Widgets.hpp>
 
-// Lua includes
-extern "C"
-{
-#include <lua.h>
-#include <lualib.h>
-#include <lauxlib.h>
-}
+#include <SFML/Graphics.hpp>
 
 #include "Object.h"
-#include "types/MouseButtonInfo.h"
-
-#include "GUIDesktop.h"
+#include "types/common.h"
 
 // Forward declarations
 class ConfigSettings;
@@ -25,6 +16,10 @@ class MessageLogView;
 class StateMachine;
 class Strings;
 class TileSheet;
+namespace metagui
+{
+  class Desktop;
+}
 
 /// Class that defines the overall application.
 /// @todo Possibly split all the rendering-specific stuff out into a separate
@@ -86,7 +81,9 @@ public:
     }
   };
 
-  explicit App(sf::RenderWindow& appWindow);
+  explicit App(sf::RenderWindow& appWindow,
+               sfg::SFGUI& sfgui,
+               sfg::Desktop& desktop);
   App(App const&) = delete;
   App(App&&) = delete;
   App& operator=(App const&) = delete;
@@ -100,9 +97,6 @@ public:
   sf::RenderWindow& renderWindow();
 
   bool hasWindowFocus();
-
-  /// Get the random number generator.
-  boost::random::mt19937& rng();
 
   /// Get the default font.
   sf::Font& fontDefault();
@@ -136,6 +130,8 @@ protected:
 
 private:
   sf::RenderWindow& m_appWindow;
+  sfg::SFGUI& m_sfgui;
+  sfg::Desktop& m_desktop;
 
   /// Pointer to off-screen buffer for drawing composition.
   std::unique_ptr<sf::RenderTexture> m_appTexture;
@@ -147,9 +143,6 @@ private:
   std::unique_ptr<StateMachine> m_stateMachine;
   bool m_isRunning;
   bool m_hasWindowFocus;
-
-  /// The RNG instance.
-  std::unique_ptr<boost::random::mt19937> m_rng;
 
   /// The default font instance.
   std::unique_ptr<sf::Font> m_fontDefault;
@@ -184,6 +177,5 @@ private:
 #define the_default_unicode_font  (App::instance().fontDefaultUnicode())
 #define the_desktop               (App::instance().guiDesktop())
 #define the_shader                (App::instance().shader())
-#define the_RNG                   (App::instance().rng())
 
 #endif // APP_H

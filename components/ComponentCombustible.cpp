@@ -1,5 +1,3 @@
-#include "stdafx.h"
-
 #include "components/ComponentCombustible.h"
 
 #include "game/GameState.h"
@@ -41,12 +39,12 @@ namespace Components
   }
 
 
-  ModifiableBool& ComponentCombustible::burnsForever()
+  bool& ComponentCombustible::burnsForever()
   {
     return m_burnsForever;
   }
 
-  ModifiableBool const& ComponentCombustible::burnsForever() const
+  bool const& ComponentCombustible::burnsForever() const
   {
     return m_burnsForever;
   }
@@ -75,12 +73,12 @@ namespace Components
   }
 
 
-  ModifiableInt& ComponentCombustible::burnSpeed()
+  int& ComponentCombustible::burnSpeed()
   {
     return m_burnSpeed;
   }
 
-  ModifiableInt const& ComponentCombustible::burnSpeed() const
+  int const& ComponentCombustible::burnSpeed() const
   {
     return m_burnSpeed;
   }

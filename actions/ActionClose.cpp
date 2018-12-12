@@ -1,6 +1,5 @@
-#include "stdafx.h"
-
 #include "ActionClose.h"
+
 #include "components/ComponentManager.h"
 #include "services/IMessageLog.h"
 #include "services/IStrings.h"

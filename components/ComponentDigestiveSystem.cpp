@@ -1,5 +1,3 @@
-#include "stdafx.h"
-
 #include "components/ComponentDigestiveSystem.h"
 
 #include "game/GameState.h"

@@ -1,7 +1,5 @@
 #pragma once
 
-
-
 #include "stdint.h"
 
 #include "utilities/MathUtils.h"
@@ -30,7 +28,7 @@ public:
   Clamped8& operator=(Clamped8 const&) = default;
   Clamped8& operator=(Clamped8&&) = default;
   virtual ~Clamped8() = default;
-  
+
   friend void to_json(json& j, Clamped8 const& clamped)
   {
     j = clamped.m_value;

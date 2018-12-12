@@ -2,14 +2,20 @@
 
 #include "Object.h"
 
+#include <boost/core/demangle.hpp>
+#include <typeinfo>
+
 #include "AssertHelper.h"
 #include "Event.h"
+#include "ObjectRegistry.h"
 
 Object::Object(std::unordered_set<EventID> const events)
   :
   m_eventQueue{},
   m_eventObservers{}
 {
+  REGISTRY.add(this);
+
   for (EventID const event : events)
   {
     CLOG(TRACE, "EventSystem") << "Registering Event 0x" <<
@@ -19,7 +25,7 @@ Object::Object(std::unordered_set<EventID> const events)
   }
 }
 
-Object::Object(std::unordered_set<EventID> const events, std::string name) : 
+Object::Object(std::unordered_set<EventID> const events, std::string name) :
   Object(events)
 {
   m_name = name;
@@ -27,10 +33,11 @@ Object::Object(std::unordered_set<EventID> const events, std::string name) :
 
 Object::~Object()
 {
+  CLOG(TRACE, "EventSystem") << "Destroying Object " << *this;
   while (!m_observations.empty())
   {
     auto iter = m_observations.begin();
-    CLOG(WARNING, "EventSystem") << "Deregistering Observer " << *this << " from Subject " << *(iter->first);
+    CLOG(TRACE, "EventSystem") << "Removing Observer " << *this << " from Subject " << *(iter->first);
     iter->first->removeObserver(*this);
   }
 
@@ -52,6 +59,8 @@ Object::~Object()
     CLOG(WARNING, "EventSystem") << "Clearing all observers of this subject";
     removeAllObservers();
   }
+
+  REGISTRY.remove(this);
 }
 
 std::string const& Object::getName()
@@ -83,8 +92,8 @@ void Object::addObserver(Object& observer, EventID eventID)
     e.state = Registration::State::Registered;
     e.subject = this;
 
-    CLOG(TRACE, "EventSystem") << "Registered Observer " << observer 
-      << " for EventID 0x" 
+    CLOG(TRACE, "EventSystem") << "Registered Observer " << observer
+      << " for EventID 0x"
       << std::setbase(16) << std::setfill('0') << std::setw(8) << eventID << std::setw(0) << std::setbase(10);
 
     observer.onEvent_NV(e);
@@ -136,7 +145,7 @@ void Object::removeObserver(Object& observer, EventID eventID)
 
     removalCount = observersSet.erase(&observer);
 
-    CLOG(TRACE, "EventSystem") << "Deregistered Observer " << observer 
+    CLOG(TRACE, "EventSystem") << "Deregistered Observer " << observer
       << " for EventID 0x"
       << std::setbase(16) << std::setfill('0') << std::setw(8) << eventID << std::setw(0) << std::setbase(10);
   }
@@ -145,10 +154,10 @@ void Object::removeObserver(Object& observer, EventID eventID)
   {
     std::stringstream ss;
     ss << "Event " << eventID;
-    
-    CLOG(WARNING, "EventSystem") 
-      << "Observer " << observer 
-      << " was not registered for " 
+
+    CLOG(WARNING, "EventSystem")
+      << "Observer " << observer
+      << " was not registered for "
       << ((eventID == EventID::All) ? "any Events" : ss.str())
       << " from Subject " << *this;
   }
@@ -195,15 +204,11 @@ bool Object::onEvent(Event const& event)
 
 void Object::serialize(std::ostream & o) const
 {
-  o << typeid(*this).name() << ": ";
-  if (m_name.empty())
-  {
-    o << this;
-  }
-  else
-  {
-    o << m_name << "(" << this << ")";
-  }
+  auto mangledName = typeid(*this).name();
+  auto demangledName = boost::core::demangle(mangledName);
+
+  o << demangledName << ": ";
+  o << this << " (" << (m_name.empty() ? "<unnamed>" : m_name) << ")";
 }
 
 bool Object::broadcast(Event& event)

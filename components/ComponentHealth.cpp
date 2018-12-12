@@ -1,5 +1,3 @@
-#include "stdafx.h"
-
 #include "components/ComponentHealth.h"
 
 #include "game/GameState.h"
@@ -13,8 +11,8 @@ namespace Components
     obj = ComponentHealth();
 
     // Max HP: If it's an array, pick from a uniform range. Otherwise, set it.
-    JSONUtils::doIfPresent(j, "max-hp", [&](auto& value) { obj.m_maxHp = ModifiableInt(JSONUtils::getFancyInteger(value)); });
-    obj.m_hp = obj.m_maxHp.value();
+    JSONUtils::doIfPresent(j, "max-hp", [&](auto& value) { obj.m_maxHp = int(JSONUtils::getFancyInteger(value)); });
+    obj.m_hp = obj.m_maxHp;
     JSONUtils::doIfPresent(j, "hp", [&](auto& value) { obj.m_hp = JSONUtils::getFancyInteger(value); });
     JSONUtils::doIfPresent(j, "dead", [&](auto& value) { obj.m_dead = value; });
     JSONUtils::doIfPresent(j, "living-creature", [&](auto& value) { obj.m_livingCreature = value; });
@@ -41,12 +39,12 @@ namespace Components
 
   int ComponentHealth::maxHp() const
   {
-    return m_maxHp.value();
+    return m_maxHp;
   }
 
   void ComponentHealth::setMaxHp(int maxHp)
   {
-    m_maxHp.setBaseValue(maxHp);
+    m_maxHp = maxHp;
   }
 
   bool ComponentHealth::hasHpBelowZero() const

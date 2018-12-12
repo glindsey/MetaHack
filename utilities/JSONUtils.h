@@ -186,7 +186,7 @@ namespace JSONUtils
     {
       if (j.size() >= 2)
       {
-        result = pick_uniform(j[0].get<int>(), j[1].get<int>());
+        result = the_RNG.pick_uniform(j[0].get<int>(), j[1].get<int>());
       }
       else
       {
@@ -195,7 +195,7 @@ namespace JSONUtils
     }
     else if (j.is_object())
     {
-      CLOG(WARNING, "Utilities") << "JSON object was passed in, which is unsupported -- returning 0";      
+      CLOG(WARNING, "Utilities") << "JSON object was passed in, which is unsupported -- returning 0";
     }
     else
     {

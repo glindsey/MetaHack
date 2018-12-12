@@ -46,14 +46,12 @@ GeoVector const& MapFeature::getRandomGrowthVector() const
 {
   if (m_highPriorityVecs.size() > 0)
   {
-    UniformIntDist vecDist(0, static_cast<int>(m_highPriorityVecs.size() - 1));
-    int randomVector = vecDist(the_RNG);
+    int randomVector = the_RNG.pick_uniform(0, static_cast<int>(m_highPriorityVecs.size() - 1));
     return m_highPriorityVecs[randomVector];
   }
   else if (m_lowPriorityVecs.size() > 0)
   {
-    UniformIntDist vecDist(0, static_cast<int>(m_lowPriorityVecs.size() - 1));
-    int randomVector = vecDist(the_RNG);
+    int randomVector = the_RNG.pick_uniform(0, static_cast<int>(m_lowPriorityVecs.size() - 1));
     return m_lowPriorityVecs[randomVector];
   }
   else
@@ -145,7 +143,7 @@ void MapFeature::clearGrowthVectors()
 
 void MapFeature::addGrowthVector(GeoVector vec, bool highPriority)
 {
-  (highPriority == true ? 
+  (highPriority == true ?
    m_highPriorityVecs :
    m_lowPriorityVecs).push_back(vec);
 }

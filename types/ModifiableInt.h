@@ -15,14 +15,14 @@ using json = ::nlohmann::json;
 ///
 /// Pre- and post-multipliers are floats; adders are integers. The resulting
 /// value is rounded back to an integer.
-class ModifiableInt
+class int
 {
 public:
-  ModifiableInt();
-  explicit ModifiableInt(int baseValue);
+  int();
+  explicit int(int baseValue);
 
   int value() const;
-  
+
   int baseValue() const;
   void setBaseValue(int baseValue);
 
@@ -44,8 +44,8 @@ public:
   void clearAllModifiersFrom(EntityId id);
   void clearAllModifiers();
 
-  friend void from_json(json const& j, ModifiableInt& obj);
-  friend void to_json(json& j, ModifiableInt const& obj);
+  friend void from_json(json const& j, int& obj);
+  friend void to_json(json& j, int const& obj);
 
 protected:
 

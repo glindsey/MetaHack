@@ -3,116 +3,139 @@
 #include "game_windows/MessageLogView.h"
 
 #include "game/App.h"
-#include "keybuffer/IKeyBuffer.h"
 #include "services/IConfigSettings.h"
 #include "services/IMessageLog.h"
 #include "services/Service.h"
 #include "types/Color.h"
 
-MessageLogView::MessageLogView(metagui::Desktop& desktop,
+MessageLogView::MessageLogView(sfg::SFGUI& sfgui,
+                               sfg::Desktop& desktop,
                                std::string name,
                                IMessageLog& model,
-                               IKeyBuffer& key_buffer,
                                sf::IntRect dimensions)
   :
-  metagui::Window(desktop, name, dimensions),
-  m_model(model),
-  m_key_buffer(key_buffer)
+  Object({ EventCommandReady::id }),
+  m_sfgui{ sfgui },
+  m_desktop{ desktop },
+  m_model{ model }
 {
-  setText("Message Log");
-  m_model.addObserver(*this, EventID::All);
-  m_key_buffer.addObserver(*this, EventID::All);
+  // Create a FloatRect out of the IntRect dimensions.
+  /// @todo Just pass the FloatRect directly instead.
+  sf::FloatRect floatDims = sf::FloatRect(dimensions.left,
+                                          dimensions.top,
+                                          dimensions.width,
+                                          dimensions.height);
+
+  m_window = sfg::Window::Create();
+  m_window->SetTitle("Message Log");
+
+  // ==========================================================================
+  // The window for showing the message log is going to have the following
+  // hierarchy:
+  //
+  // - Window
+  //   - m_layout: Box (VERTICAL)
+  //     - m_listbox: ScrolledWindow
+  //       - m_listboxLayout: Box (VERTICAL)
+  //         - m_labels[n]: Label -- one per message in the buffer
+  //     - m_inputbox: EntryPlus
+
+  m_layout = sfg::Box::Create(sfg::Box::Orientation::VERTICAL);
+  m_listbox = sfg::ScrolledWindow::Create();
+  m_listboxLayout = sfg::Box::Create(sfg::Box::Orientation::VERTICAL);
+  m_inputbox = sfg::EntryPlus::Create();
+
+  // Set the scrolled window's scrollbar policies.
+  m_listbox->SetScrollbarPolicy(sfg::ScrolledWindow::HORIZONTAL_AUTOMATIC |
+                                sfg::ScrolledWindow::VERTICAL_AUTOMATIC);
+
+  // Add the layout box to the scrolled window using a viewport.
+  m_listbox->AddWithViewport(m_listboxLayout);
+
+  // Set the scrolled window's minimum size; for X this should be the width of
+  // the containing box, minus 2 * spacing.
+  m_listbox->SetRequisition({ 80.f, 40.f });
+
+  // Set the input box's minimum size; for X this should be the width of the
+  // containing box, minus 2 * spacing.
+  m_inputbox->SetRequisition({ 80.f, 20.f });
+
+  // Link the debug input box "key press" signal to a method.
+  m_inputbox->GetSignal(sfg::Widget::OnKeyPress)
+   .Connect(std::bind(&MessageLogView::handleKeyPressed, this));
+
+  // Link the debug input box "text changed" signal to a method.
+  m_inputbox->GetSignal(sfg::Entry::OnTextChanged)
+    .Connect(std::bind(&MessageLogView::handleTextChanged, this));
+
+  // Link the window's "resized" event to a method.
+  m_window->GetSignal(sfg::Widget::OnSizeAllocate)
+    .Connect(std::bind(&MessageLogView::handleWindowResized, this));
+
+  // Add child objects to the view: a scrollable listbox, and an input box.
+  m_layout->Pack(m_listbox, true, true);
+  m_layout->Pack(m_inputbox, false, true);
+  m_layout->SetSpacing(5.f);
+
+  // Add the box to the window, and the window to the desktop.
+  m_window->Add(m_layout);
+  m_desktop.Add(m_window);
+
+  // Set initial window size. (Has to be done after a widget is added to a hierarchy.)
+  m_window->SetAllocation(floatDims);
+
+  // Add an observer to the MessageLog model.
+  subscribeTo(m_model, EventID::All);
 }
 
 MessageLogView::~MessageLogView()
 {
-  m_key_buffer.removeObserver(*this);
   m_model.removeObserver(*this);
 }
 
-void MessageLogView::drawContents_(sf::RenderTexture& texture, int frame)
+bool MessageLogView::onEvent(Event const& event)
 {
-  auto& config = S<IConfigSettings>();
-  unsigned int text_default_size = config.get("text-default-size");
-
-  // Dimensions of the pane.
-  sf::IntRect pane_dims = getRelativeDimensions();
-
-  float lineSpacing = the_default_font.getLineSpacing(text_default_size);
-
-  // Text offsets relative to the background rectangle.
-  RealVec2 text_offset = config.get("window-text-offset");
-
-  // Start at the bottom, most recent text and work upwards.
-  float text_coord_x = text_offset.x;
-  float text_coord_y = pane_dims.height - (lineSpacing + text_offset.y);
-
-  sf::Text render_text;
-
-  render_text.setFont(the_default_font);
-  render_text.setCharacterSize(text_default_size);
-
-  // If we have the focus, put the current command at the bottom of the log.
-  if (getFocus() == true)
-  {
-    json highlight_color = config.get("text-highlight-color");
-    m_key_buffer.render(
-      texture,
-      RealVec2(text_coord_x, text_coord_y),
-      frame,
-      the_default_font,
-      text_default_size,
-      highlight_color);
-
-    text_coord_y -= lineSpacing;
-  }
-
-  // Draw each of the message_queue in the queue.
-  /// @todo Split lines that are too long instead of truncating them.
-  auto& message_queue = m_model.getMessageQueue();
-
-  for (auto iter = message_queue.begin(); iter != message_queue.end(); ++iter)
-  {
-    auto text_color = config.get("text-color").get<Color>();
-    render_text.setString(*iter);
-    render_text.setPosition(text_coord_x, text_coord_y);
-    render_text.setFillColor(text_color);
-    texture.draw(render_text);
-    if (text_coord_y < text_offset.y) break;
-    text_coord_y -= lineSpacing;
-  }
-
-  return;
-}
-
-bool MessageLogView::onEvent_V(Event const& event) 
-{ 
   auto id = event.getId();
 
-  /// @todo Flesh this out a bit more.
-  ///       Right now we just always set the "dirty" flag for the view so it is redrawn.
-  flagForRedraw();
-
-  if (id == UIEvents::EventKeyPressed::id)
+  if (id == IMessageLog::EventMessageAdded::id)
   {
-    return handleKeyPress(static_cast<UIEvents::EventKeyPressed const&>(event));
+    auto info = static_cast<IMessageLog::EventMessageAdded const&>(event);
+    CLOG(TRACE, "GUI") << "MessageLogView::onEvent(Event const&) fired " << event;
+    auto newLabel = sfg::Label::Create();
+    newLabel->SetText(info.message);
+    newLabel->SetAlignment({ 0.0f, 0.5f });
+    m_labels.push_back(newLabel);
+    m_listboxLayout->Pack(newLabel, true, true);
   }
 
-  return false; 
+  return false;
 }
 
-bool MessageLogView::handleKeyPress(UIEvents::EventKeyPressed const& event)
+void MessageLogView::handleKeyPressed()
 {
-  CLOG(TRACE, "GUI") << "MessageLogView::handleKeyPress(UIEvents::EventKeyPressed const&) called";
+  auto key = m_inputbox->GetLastPressedKey();
+  if (sf::Keyboard::Enter == key)
+  {
+    EventCommandReady event(m_inputbox->GetText());
+    broadcast(event);
+    m_inputbox->SetText("");
+  }
+}
 
-  /// @todo This is ugly, fix later
-  if (getGlobalFocus() == true)
-  {
-    flagForRedraw();
-    return m_key_buffer.handle_key_press(event);
-  }
-  else
-  {
-    return false;
-  }
+void MessageLogView::handleTextChanged()
+{
+  CLOG(TRACE, "GUI") << "MessageLogView::handleTextChanged() fired";
+}
+
+void MessageLogView::handleWindowResized()
+{
+  // auto newSize = m_window->GetAllocation();
+
+  // // Set the scrolled window's minimum size; for X this should be the width of
+  // // the containing box, minus 2 * spacing.
+  // m_listbox->SetRequisition(sf::Vector2f(newSize.width - 10, 40.f));
+
+  // // Set the input box's minimum size; for X this should be the width of the
+  // // containing box, minus 2 * spacing.
+  // m_inputbox->SetRequisition(sf::Vector2f(newSize.width - 10, 20.f));
 }

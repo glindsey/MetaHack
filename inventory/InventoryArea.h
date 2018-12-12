@@ -1,7 +1,12 @@
 #pragma once
 
+#include <SFGUI/SFGUI.hpp>
+#include <SFGUI/Widgets.hpp>
+#include <memory>
+
 #include "GUIWindow.h"
 #include "inventory/InventorySlot.h"
+#include "views/EntityCollectionGUIView.h"
 
 // Forward declarations
 class Container;
@@ -14,8 +19,10 @@ class InventoryArea :
   public metagui::Window
 {
 public:
-  explicit InventoryArea(metagui::Desktop& desktop,
-                         std::string name, 
+  explicit InventoryArea(metagui::Desktop& mgDesktop,
+                         sfg::SFGUI& sfgui,
+                         sfg::Desktop& desktop,
+                         std::string name,
                          InventorySelection& inventory_selection,
                          sf::IntRect dimensions,
                          GameState& gameState);
@@ -27,6 +34,32 @@ protected:
   virtual bool onEvent_V(Event const& event) override;
 
 private:
+  /// Reference to the SFGUI API.
+  sfg::SFGUI& m_sfgui;
+
+  /// Reference to the SFGUI desktop.
+  sfg::Desktop& m_desktop;
+
+  /// The main SFGUI window.
+  sfg::Window::Ptr m_window;
+
+  /// The box layout widget for the window.
+  sfg::Box::Ptr m_layout;
+
+  /// The box containing config buttons.
+  sfg::Box::Ptr m_buttonsBox;
+
+  /// The scrolled window for viewing the inventory.
+  sfg::ScrolledWindow::Ptr m_inventoryWindow;
+
+  /// The EntityCollectionGUIView object that provides the layout widget that attaches
+  /// to the scrolled window.
+  std::unique_ptr<EntityCollectionGUIView> m_guiView;
+
+  sfg::Table::Ptr m_inventoryLayout;
+
+  /// @todo Support a list *or* a grid layout.
+
   GameState& m_gameState;
 
   /// Inventory selection we are bound to.

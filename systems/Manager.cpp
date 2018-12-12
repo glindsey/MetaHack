@@ -5,6 +5,7 @@
 #include "components/ComponentManager.h"
 #include "systems/SystemChoreographer.h"
 #include "systems/SystemDirector.h"
+#include "systems/SystemEditor.h"
 #include "systems/SystemFluidics.h"
 #include "systems/SystemGeometry.h"
 #include "systems/SystemGrimReaper.h"
@@ -47,6 +48,9 @@ namespace Systems
 
     m_director.reset(NEW Director(m_gameState, *this));
 
+    m_editor.reset(NEW Editor(components.globals,
+                              components.modifiers));
+
     m_fluidics.reset(NEW Fluidics());
 
     m_geometry.reset(NEW Geometry(*m_janitor,
@@ -76,15 +80,15 @@ namespace Systems
     m_timekeeper.reset(NEW Timekeeper(components.globals));
 
     // Link system events.
-    m_janitor->addObserver(*m_geometry, Janitor::EventEntityMarkedForDeletion::id);
+    m_geometry->subscribeTo(m_janitor.get(), Janitor::EventEntityMarkedForDeletion::id);
 
-    m_geometry->addObserver(*m_director, Geometry::EventEntityChangedMaps::id);
+    m_director->subscribeTo(m_geometry.get(), Geometry::EventEntityChangedMaps::id);
 
-    m_geometry->addObserver(*m_lighting, Geometry::EventEntityChangedMaps::id);
-    m_geometry->addObserver(*m_lighting, Geometry::EventEntityMoved::id);
+    m_lighting->subscribeTo(m_geometry.get(), Geometry::EventEntityChangedMaps::id);
+    m_lighting->subscribeTo(m_geometry.get(), Geometry::EventEntityMoved::id);
 
-    m_geometry->addObserver(*m_senseSight, Geometry::EventEntityChangedMaps::id);
-    m_geometry->addObserver(*m_senseSight, Geometry::EventEntityMoved::id);
+    m_senseSight->subscribeTo(m_geometry.get(), Geometry::EventEntityChangedMaps::id);
+    m_senseSight->subscribeTo(m_geometry.get(), Geometry::EventEntityMoved::id);
 
   }
 
@@ -92,6 +96,7 @@ namespace Systems
   {
     // Dissolve links.
     m_geometry->removeAllObservers();
+    m_janitor->removeAllObservers();
 
     s_instance = nullptr;
   }
@@ -100,6 +105,7 @@ namespace Systems
   {
     m_director->doCycleUpdate();
     m_choreographer->doCycleUpdate();
+    m_editor->doCycleUpdate();
 
     m_lighting->doCycleUpdate();
     m_senseSight->doCycleUpdate();
