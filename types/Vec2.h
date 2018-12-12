@@ -23,7 +23,7 @@ public:
   template <typename U>
   Vec2(sf::Vector2<U> vec)
     :
-    x{ static_cast<T>(vec.x) }, y{ static_cast<T>(vec.y) } 
+    x{ static_cast<T>(vec.x) }, y{ static_cast<T>(vec.y) }
   {}
 
   virtual ~Vec2() = default;
@@ -88,15 +88,16 @@ public:
     return os;
   }
 
-  friend void to_json(json& j, Vec2<T> const& obj);
+  template<typename X>
+  friend void to_json(json& j, Vec2<X> const& obj);
 
   friend void from_json(json const& j, Vec2& obj)
   {
     if (j.is_number())
     {
       T number = j;
-      LOG(WARNING) << "Converting number " << number << 
-        " into a Vec2<>(" << number << ", " << number << 
+      LOG(WARNING) << "Converting number " << number <<
+        " into a Vec2<>(" << number << ", " << number <<
         "); this will work but may not be what you were looking for!";
       obj.x = number;
       obj.y = number;
