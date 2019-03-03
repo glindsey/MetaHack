@@ -65,17 +65,19 @@ find_package(OpenGL REQUIRED)
 # Detect and add ICU
 find_package(ICU COMPONENTS uc i18n REQUIRED) # can't find io on windows... ARGH
 include_directories(${ICU_INCLUDE_DIRS})
-target_link_libraries(${EXECUTABLE_NAME} PRIVATE ${ICU_LIBRARIES})
+target_link_libraries(MetaHack PRIVATE ${ICU_LIBRARIES})
 
 # Detect and add SFML to the include and library paths
-find_package(SFML 2 REQUIRED network audio graphics window system)
+find_package(SFML 2 COMPONENTS network audio graphics window system REQUIRED)
 include_directories(${SFML_INCLUDE_DIR})
-target_link_libraries(MetaHack PRIVATE ${SFML_LIBRARIES} ${SFML_DEPENDENCIES})
-
-# Detect and add SFGUI to the include and library paths
-find_package(SFGUI 0.3 REQUIRED)
-include_directories(${SFGUI_INCLUDE_DIR})
-target_link_libraries(MetaHack PRIVATE ${SFGUI_LIBRARY} ${SFGUI_DEPENDENCIES})
+target_link_libraries(
+    MetaHack PRIVATE
+    sfml-network
+    sfml-audio
+    sfml-graphics
+    sfml-window
+    sfml-system
+)
 
 # Detect and add Boost to the include and library paths
 set(Boost_USE_STATIC_LIBS       OFF)
@@ -83,7 +85,7 @@ set(Boost_USE_MULTITHREADED      ON)
 set(Boost_USE_STATIC_RUNTIME    OFF)
 find_package(Boost 1.69 REQUIRED COMPONENTS chrono filesystem locale random system thread)
 target_link_libraries(
-    ${EXECUTABLE_NAME} PRIVATE
+    MetaHack PRIVATE
     Boost::chrono
     Boost::filesystem
     Boost::locale
@@ -91,6 +93,14 @@ target_link_libraries(
     Boost::system
     Boost::thread
 )
+
+# Detect and add SFGUI to the include and library paths
+find_package(SFGUI 0.3 CONFIG REQUIRED)
+if(NOT SFGUI_FOUND)
+  message(FATAL_ERROR "Could not find SFGUI library")
+endif()
+include_directories(${SFGUI_INCLUDE_DIR})
+target_link_libraries(MetaHack PRIVATE SFGUI::SFGUI)
 
 # === LuaJIT Sources ==========================================================
 find_library(LUAJIT_LIBRARY luajit libluajit lua51
@@ -612,6 +622,9 @@ source_group("Systems"
              ${PROJECT_INCLUDES_SYSTEMS})
 source_group("Types" FILES ${PROJECT_SOURCES_TYPES} ${PROJECT_INCLUDES_TYPES})
 source_group("Views" FILES ${PROJECT_SOURCES_VIEWS} ${PROJECT_INCLUDES_VIEWS})
+
+set_property(TARGET MetaHack PROPERTY
+             VS_DEBUGGER_WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}")
 
 add_custom_command(TARGET MetaHack POST_BUILD
                    COMMAND ${CMAKE_COMMAND} -E copy_directory
