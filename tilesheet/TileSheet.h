@@ -28,6 +28,9 @@ public:
   /// Get a reference to the texture to render.
   sf::Texture& getTexture(void);
 
+  /// Get a reference to the tilesheet image.
+  sf::Image& getImage(void);
+
   /// Add vertices to the requested vertex array.
   /// This method maps the requested tile onto a quadrilateral specified
   /// by the four coordinate pairs passed in.  This allows for pseudo-3D
@@ -91,6 +94,7 @@ protected:
 
 private:
   sf::Texture m_texture;
+  sf::Image m_image;  // required for stuff like SFGUI that can't access textures directly
   UintVec2 m_textureSize;
   UintVec2 m_tileSize;
   boost::dynamic_bitset<size_t> m_used; // size_t gets rid of 64-bit compile warning

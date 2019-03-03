@@ -30,6 +30,8 @@ TileSheet::TileSheet(UintVec2 tileSize, UintVec2 textureSize)
     << textureSizeInTiles.x << " x " << textureSizeInTiles.y
     << " tiles of size "
     << m_tileSize.x << " x " << m_tileSize.y;
+
+  m_image.create(m_textureSize.x, m_textureSize.y);
 }
 
 TileSheet::~TileSheet()
@@ -39,15 +41,14 @@ TileSheet::~TileSheet()
 
 UintVec2 TileSheet::loadCollection(FileName const& filename)
 {
-  sf::Image image;
-  if (!image.loadFromFile(filename))
+  if (!m_image.loadFromFile(filename))
   {
     throw std::runtime_error("Tile collection file not found: \"" + filename + "\"");
   }
 
-  image.createMaskFromColor(sf::Color(255, 0, 255));
+  m_image.createMaskFromColor(sf::Color(255, 0, 255));
 
-  UintVec2 imageSize = image.getSize();
+  UintVec2 imageSize = m_image.getSize();
 
   UintVec2 imageSizeInTiles =
     UintVec2(Math::divideAndRoundUp(imageSize.x, m_tileSize.x),
@@ -55,7 +56,7 @@ UintVec2 TileSheet::loadCollection(FileName const& filename)
 
   UintVec2 freeSpaceCoords = findUnusedArea(imageSizeInTiles);
 
-  m_texture.update(image, freeSpaceCoords.x * m_tileSize.x, freeSpaceCoords.y * m_tileSize.y);
+  m_texture.update(m_image, freeSpaceCoords.x * m_tileSize.x, freeSpaceCoords.y * m_tileSize.y);
 
   markTilesUsed(freeSpaceCoords, imageSizeInTiles);
 
@@ -85,6 +86,11 @@ sf::IntRect TileSheet::getTile(UintVec2 tile) const
 sf::Texture& TileSheet::getTexture(void)
 {
   return m_texture;
+}
+
+sf::Image& TileSheet::getImage(void)
+{
+  return m_image;
 }
 
 void TileSheet::addQuad(sf::VertexArray& vertices,

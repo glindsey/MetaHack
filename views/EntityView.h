@@ -45,6 +45,8 @@ public:
                     bool use_smoothing,
                     int frame) = 0;
 
+  virtual sf::RectangleShape drawRectangle(int frame) = 0;
+
   virtual std::string getViewName() = 0;
 
 protected:
@@ -58,7 +60,7 @@ protected:
 
 private:
   /// ID of Entity associated with this view.
-  EntityId const& m_entityId;
+  EntityId const m_entityId;
 
   /// Target coordinates for the Entity.
   RealVec2 m_target_coords;

@@ -24,6 +24,11 @@ void EntityNullView::draw(sf::RenderTarget& target,
 {
 }
 
+sf::RectangleShape EntityNullView::drawRectangle(int frame)
+{
+  return sf::RectangleShape();
+}
+
 std::string EntityNullView::getViewName()
 {
   return "null";

@@ -1,6 +1,10 @@
 #include "stdafx.h"
 
 #include "views/EntityCollectionGUIListView.h"
+#include "views/EntityView.h"
+#include "services/IConfigSettings.h"
+#include "services/IGraphicViews.h"
+#include "services/Service.h"
 #include "systems/Manager.h"
 #include "systems/SystemNarrator.h"
 
@@ -9,29 +13,46 @@ EntityCollectionGUIListView::EntityCollectionGUIListView(sfg::SFGUI& sfgui, std:
   EntityCollectionGUIView(sfgui, ids)
 {
   auto& narrator = SYSTEMS.narrator();
+  auto& config = S<IConfigSettings>();
+  auto& graphicViews = S<IGraphicViews>();
+  RealVec2 tileSize = config.get("graphics-tile-size");
 
   auto const fillAndExpand = sfg::Table::FILL | sfg::Table::EXPAND;
   auto const fill = sfg::Table::FILL;
   auto const padding = sf::Vector2f(5.f, 5.f);
 
   /// @todo Flesh me out
-  auto widget = sfg::Table::Create();
+  auto tableWidget = sfg::Table::Create();
 
-  unsigned int counter = 0;
-  for(auto iter = ids.cbegin(); iter != ids.cend(); ++iter, ++counter)
+  for(unsigned int counter = 0; counter < ids.size(); ++counter)
   {
+    auto& id = ids[counter];
+
     /// @todo These should maybe be their own widgets eventually
     /// Column 0: Icon representation of item
     /// @todo Add the icon representation of the item
 
+    // This is inefficient, to say the least, but for now it will suffice.
+    auto canvas = sfg::Canvas::Create();
+    auto entityView = std::unique_ptr<EntityView>(graphicViews.createEntityView(id));
+    canvas->SetRequisition(tileSize);
+    entityView->setLocation({ 0.0f, 0.0f });
+    entityView->setSize(tileSize);
+    auto rectangle = entityView->drawRectangle(0);
+    canvas->Bind();
+    canvas->Draw(rectangle);
+    canvas->Display();
+    canvas->Unbind();
+    tableWidget->Attach(canvas, { 0, counter, 1, 1 }, sfg::Table::EXPAND, sfg::Table::EXPAND, padding);
+
     /// Column N: Description of item
     auto descLabel = sfg::Label::Create();
-    descLabel->SetText(narrator.getDescriptiveString(*iter, ArticleChoice::Indefinite, UsePossessives::Yes));
+    descLabel->SetText(narrator.getDescriptiveString(id, ArticleChoice::Indefinite, UsePossessives::Yes));
     descLabel->SetAlignment({ 0.0f, 0.5f });
-    widget->Attach(descLabel, { 1, counter, 1, 1 }, fillAndExpand, fillAndExpand, padding);
+    tableWidget->Attach(descLabel, { 1, counter, 1, 1 }, fillAndExpand, fillAndExpand, padding);
   }
 
-  setWidget(widget);
+  setWidget(tableWidget);
 }
 
 EntityCollectionGUIListView::~EntityCollectionGUIListView()

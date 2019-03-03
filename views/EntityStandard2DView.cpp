@@ -57,7 +57,7 @@ void EntityStandard2DView::draw(sf::RenderTarget& target,
 
   auto targetCoords = getLocation();
   auto targetSize = getSize();
-  UintVec2 tileSize = config.get("map-tile-size");
+  UintVec2 tileSize = config.get("graphics-tile-size");
   if (targetSize == RealVec2(0, 0))
   {
     targetSize = { 
@@ -99,6 +99,41 @@ void EntityStandard2DView::draw(sf::RenderTarget& target,
   {
     texture.setSmooth(false);
   }
+}
+
+sf::RectangleShape EntityStandard2DView::drawRectangle(int frame)
+{
+  auto& config = S<IConfigSettings>();
+  auto entity = getEntity();
+  auto& texture = m_views.getTileSheet().getTexture();
+
+  sf::RectangleShape rectangle;
+  sf::IntRect textureCoords;
+
+  auto targetCoords = getLocation();
+  auto targetSize = getSize();
+  UintVec2 tileSize = config.get("graphics-tile-size");
+  if (targetSize == RealVec2(0, 0))
+  {
+    targetSize = {
+      static_cast<float>(tileSize.x),
+      static_cast<float>(tileSize.y)
+    };
+  }
+
+  UintVec2 tileCoords = getTileSheetCoords(frame);
+  textureCoords.left = tileCoords.x * tileSize.x;
+  textureCoords.top = tileCoords.y * tileSize.y;
+  textureCoords.width = tileSize.x;
+  textureCoords.height = tileSize.y;
+
+  rectangle.setPosition(targetCoords);
+  rectangle.setSize(targetSize);
+  rectangle.setTexture(&texture);
+  rectangle.setTextureRect(textureCoords);
+  rectangle.setFillColor(Color::White);
+
+  return rectangle;
 }
 
 std::string EntityStandard2DView::getViewName()

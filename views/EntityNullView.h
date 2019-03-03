@@ -18,6 +18,8 @@ public:
                     bool use_smoothing,
                     int frame) override;
 
+  virtual sf::RectangleShape drawRectangle(int frame) override;
+
   virtual std::string getViewName() override;
 
 protected:
