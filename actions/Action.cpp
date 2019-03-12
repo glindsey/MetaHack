@@ -2,9 +2,9 @@
 
 #include "actions/ActionMove.h"
 #include "components/ComponentManager.h"
+#include "config/Strings.h"
 #include "entity/EntityId.h"
 #include "game/GameState.h"
-#include "services/IStrings.h"
 #include "services/MessageLog.h"
 #include "services/Service.h"
 #include "systems/Manager.h"

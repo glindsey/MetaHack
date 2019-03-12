@@ -251,6 +251,14 @@ set(PROJECT_INCLUDES_COMPONENT_MODIFIERS
     ${PROJECT_SOURCE_DIR}/components/modifiers/Combustible.h
     ${PROJECT_SOURCE_DIR}/components/modifiers/Physical.h)
 
+set(PROJECT_SOURCES_CONFIG
+    ${PROJECT_SOURCE_DIR}/config/Paths.cpp
+    ${PROJECT_SOURCE_DIR}/config/Strings.cpp)
+
+set(PROJECT_INCLUDES_CONFIG
+    ${PROJECT_SOURCE_DIR}/config/Paths.h
+    ${PROJECT_SOURCE_DIR}/config/Strings.h)
+
 set(PROJECT_SOURCES_ENTITY ${PROJECT_SOURCE_DIR}/entity/EntityFactory.cpp
     ${PROJECT_SOURCE_DIR}/entity/EntityId.cpp)
 
@@ -376,34 +384,25 @@ set(PROJECT_INCLUDES_MAP
     ${PROJECT_SOURCE_DIR}/maptile/MapTile.h)
 
 set(PROJECT_SOURCES_SERVICES
-    ${PROJECT_SOURCE_DIR}/services/DefaultPaths.cpp
     ${PROJECT_SOURCE_DIR}/services/FallbackConfigSettings.cpp
     ${PROJECT_SOURCE_DIR}/services/FileSystemGameRules.cpp
     ${PROJECT_SOURCE_DIR}/services/IConfigSettings.cpp
     ${PROJECT_SOURCE_DIR}/services/IGameRules.cpp
     ${PROJECT_SOURCE_DIR}/services/IGraphicViews.cpp
     ${PROJECT_SOURCE_DIR}/services/IMessageLog.cpp
-    ${PROJECT_SOURCE_DIR}/services/IPaths.cpp
-    ${PROJECT_SOURCE_DIR}/services/IStrings.cpp
-    ${PROJECT_SOURCE_DIR}/services/MessageLog.cpp
-    ${PROJECT_SOURCE_DIR}/services/Strings.cpp)
+    ${PROJECT_SOURCE_DIR}/services/MessageLog.cpp)
 
 set(PROJECT_INCLUDES_SERVICES
-    ${PROJECT_SOURCE_DIR}/services/DefaultPaths.h
     ${PROJECT_SOURCE_DIR}/services/FallbackConfigSettings.h
     ${PROJECT_SOURCE_DIR}/services/FileSystemGameRules.h
     ${PROJECT_SOURCE_DIR}/services/IConfigSettings.h
     ${PROJECT_SOURCE_DIR}/services/IGameRules.h
     ${PROJECT_SOURCE_DIR}/services/IGraphicViews.h
     ${PROJECT_SOURCE_DIR}/services/IMessageLog.h
-    ${PROJECT_SOURCE_DIR}/services/IPaths.h
-    ${PROJECT_SOURCE_DIR}/services/IStrings.h
     ${PROJECT_SOURCE_DIR}/services/MessageLog.h
     ${PROJECT_SOURCE_DIR}/services/NullGameRules.h
     ${PROJECT_SOURCE_DIR}/services/NullMessageLog.h
-    ${PROJECT_SOURCE_DIR}/services/NullStrings.h
-    ${PROJECT_SOURCE_DIR}/services/Service.h
-    ${PROJECT_SOURCE_DIR}/services/Strings.h)
+    ${PROJECT_SOURCE_DIR}/services/Service.h)
 
 set(PROJECT_SOURCES_SFGUI_EXTENSIONS
     ${PROJECT_SOURCE_DIR}/sfgui_extensions/EntryPlus.cpp)
@@ -530,6 +529,7 @@ set(PROJECT_SOURCES
     ${PROJECT_SOURCES_ACTIONS}
     ${PROJECT_SOURCES_COMPONENTS}
     ${PROJECT_SOURCES_COMPONENT_MODIFIERS}
+    ${PROJECT_SOURCES_CONFIG}
     ${PROJECT_SOURCES_ENTITY}
     ${PROJECT_SOURCES_GAME}
     ${PROJECT_SOURCES_GAME_WINDOWS}
@@ -548,6 +548,7 @@ set(PROJECT_INCLUDES
     ${PROJECT_INCLUDES_ACTIONS}
     ${PROJECT_INCLUDES_COMPONENTS}
     ${PROJECT_INCLUDES_COMPONENT_MODIFIERS}
+    ${PROJECT_INCLUDES_CONFIG}
     ${PROJECT_INCLUDES_ENTITY}
     ${PROJECT_INCLUDES_GAME}
     ${PROJECT_INCLUDES_GAME_WINDOWS}
@@ -589,6 +590,10 @@ source_group("Components"
              ${PROJECT_INCLUDES_COMPONENTS}
              ${PROJECT_SOURCES_COMPONENT_MODIFIERS}
              ${PROJECT_INCLUDES_COMPONENT_MODIFIERS})
+source_group("Config"
+             FILES
+             ${PROJECT_SOURCES_CONFIG}
+             ${PROJECT_INCLUDES_CONFIG})
 source_group("Entities"
              FILES
              ${PROJECT_SOURCES_ENTITY}

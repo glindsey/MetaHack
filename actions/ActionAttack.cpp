@@ -1,12 +1,12 @@
 #include "ActionAttack.h"
 
 #include "components/ComponentManager.h"
+#include "config/Strings.h"
 #include "game/GameState.h"
 #include "map/Map.h"
 #include "map/MapFactory.h"
 #include "maptile/MapTile.h"
 #include "services/IMessageLog.h"
-#include "services/IStrings.h"
 #include "services/Service.h"
 #include "systems/Manager.h"
 #include "systems/SystemNarrator.h"

@@ -4,13 +4,13 @@
 
 #include "actions/Action.h"
 #include "components/ComponentManager.h"
+#include "config/Paths.h"
 #include "entity/EntityId.h"
 #include "types/Direction.h"
 #include "types/Color.h"
 #include "types/Gender.h"
 #include "services/Service.h"
 #include "services/IGameRules.h"
-#include "services/IPaths.h"
 
 Lua::Lua()
 {
@@ -21,8 +21,8 @@ Lua::Lua()
   luaL_openlibs(L_);
 
   // Add the resources path to the Lua package path.
-  addToLuaPath(S<IPaths>().resources() + "/?.lua");
-  
+  addToLuaPath(Config::paths().resources() + "/?.lua");
+
   // Register enums.
   addGenderEnumToLua();
   addLuaTypeEnumToLua();
@@ -164,7 +164,7 @@ int Lua::push_value(json value)
 {
   if (value.is_null())
   {
-    lua_pushnil(L_); 
+    lua_pushnil(L_);
     return 1;
   }
   else if (value.is_boolean())
@@ -349,7 +349,7 @@ json Lua::pop_value(Lua::Type type)
       lua_pop(L_, 1);
       break;
 
-    case Type::String: 
+    case Type::String:
       value = std::string(lua_tostring(L_, -1));
       lua_pop(L_, 1);
       break;
@@ -370,32 +370,32 @@ json Lua::pop_value(Lua::Type type)
       break;
 
     case Type::IntVec2:
-      value = IntVec2(static_cast<int32_t>(lua_tointeger(L_, -2)), 
+      value = IntVec2(static_cast<int32_t>(lua_tointeger(L_, -2)),
                       static_cast<int32_t>(lua_tointeger(L_, -1)));
       lua_pop(L_, 2);
       break;
 
     case Type::UintVec2:
-      value = UintVec2(static_cast<uint32_t>(lua_tointeger(L_, -2)), 
+      value = UintVec2(static_cast<uint32_t>(lua_tointeger(L_, -2)),
                        static_cast<uint32_t>(lua_tointeger(L_, -1)));
       lua_pop(L_, 2);
       break;
 
     case Type::RealVec2:
-      value = RealVec2(static_cast<float>(lua_tonumber(L_, -2)), 
+      value = RealVec2(static_cast<float>(lua_tonumber(L_, -2)),
                        static_cast<float>(lua_tonumber(L_, -1)));
       lua_pop(L_, 2);
       break;
 
     case Type::Direction:
-      value = Direction(static_cast<int>(lua_tointeger(L_, -3)), 
+      value = Direction(static_cast<int>(lua_tointeger(L_, -3)),
                         static_cast<int>(lua_tointeger(L_, -2)),
                         static_cast<int>(lua_tointeger(L_, -1)));
       lua_pop(L_, 3);
       break;
 
-    case Type::Color: 
-      value = Color(static_cast<uint8_t>(lua_tointeger(L_, -4)), 
+    case Type::Color:
+      value = Color(static_cast<uint8_t>(lua_tointeger(L_, -4)),
                     static_cast<uint8_t>(lua_tointeger(L_, -3)),
                     static_cast<uint8_t>(lua_tointeger(L_, -2)),
                     static_cast<uint8_t>(lua_tointeger(L_, -1)));
@@ -474,7 +474,7 @@ std::string Lua::find_lua_function_(std::string category, std::string suffix) co
   }
 }
 
-json Lua::callEntityFunction(std::string function_name, 
+json Lua::callEntityFunction(std::string function_name,
                              EntityId caller,
                              json const& args,
                              json default_result)
@@ -490,7 +490,7 @@ json Lua::callEntityFunction(std::string function_name,
   // Get full function name (with type prefixed).
   auto full_function_name = find_lua_function(caller_type, function_name);
 
-  // If it doesn't exist after going all the way up the family tree, return 
+  // If it doesn't exist after going all the way up the family tree, return
   // the default result.
   if (full_function_name.empty())
   {
@@ -532,7 +532,7 @@ json Lua::callEntityFunction(std::string function_name,
   {
     // Get the error message.
     char const* error_message = lua_tostring(L_, -1);
-    CLOG(ERROR, "Lua") << "Error calling " << full_function_name << 
+    CLOG(ERROR, "Lua") << "Error calling " << full_function_name <<
       " (" << original_function_name << "): " << error_message;
 
     // Pop the error message off the stack. (-1)
@@ -544,7 +544,7 @@ json Lua::callEntityFunction(std::string function_name,
   if (start_stack != end_stack)
   {
     CLOG(FATAL, "Lua") << "*** LUA STACK MISMATCH (" << full_function_name <<
-      " (" << original_function_name << "): Started at " << start_stack << 
+      " (" << original_function_name << "): Started at " << start_stack <<
       ", ended at " << end_stack;
   }
 
@@ -593,7 +593,7 @@ json Lua::callModifierFunction(std::string property_name,
   // Get full function name (with type prefixed).
   auto full_function_name = find_lua_function(responsible_group, function_name);
 
-  // If it doesn't exist after going all the way up the family tree, return 
+  // If it doesn't exist after going all the way up the family tree, return
   // the default result.
   if (full_function_name.empty())
   {

@@ -4,14 +4,14 @@
 
 #include <string>
 
+#include "config/Strings.h"
 #include "services/Service.h"
 #include "services/IMessageLog.h"
-#include "services/IStrings.h"
 
 // Global helper functions.
 inline std::string tr(std::string key)
 {
-  return S<IStrings>().get(key);
+  return Config::strings().get(key);
 }
 
 inline void putMsg(std::string message)

@@ -2,16 +2,16 @@
 
 #include "game/App.h"
 
+#include "config/Paths.h"
+#include "config/Strings.h"
 #include "events/UIEvents.h"
 #include "game/AppStateGameMode.h"
 #include "game/AppStateMainMenu.h"
 #include "game/AppStateSplashScreen.h"
 #include "services/Service.h"
-#include "services/DefaultPaths.h"
 #include "services/FallbackConfigSettings.h"
 #include "services/FileSystemGameRules.h"
 #include "services/MessageLog.h"
-#include "services/Strings.h"
 #include "state_machine/StateMachine.h"
 #include "tilesheet/TileSheet.h"
 #include "types/Color.h"
@@ -104,7 +104,7 @@ App::App(sf::RenderWindow& appWindow, sfg::SFGUI& sfgui, sfg::Desktop& desktop)
 
   auto& config = S<IConfigSettings>();
 
-  auto& resourcesPath = S<IPaths>().resources();
+  auto& resourcesPath = Config::paths().resources();
 
   // Create the app state machine.
   m_stateMachine.reset(NEW StateMachine("app_state_machine", this)),
@@ -164,7 +164,7 @@ App::App(sf::RenderWindow& appWindow, sfg::SFGUI& sfgui, sfg::Desktop& desktop)
 
   // Create the string dictionary, and try to load the default translation file.
   /// @todo Change this so language can be specified.
-  Service<IStrings>::provide(NEW Strings(resourcesPath + "/strings.en"));
+  Config::strings().loadFile(resourcesPath + "/strings.en");
 
   /// @note Standard map views provider creation has been moved to AppStateGameMode.
 

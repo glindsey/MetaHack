@@ -3,10 +3,10 @@
 #include "views/Standard2DGraphicViews.h"
 
 #include "AssertHelper.h"
+#include "config/Paths.h"
 #include "services/Service.h"
 #include "services/IConfigSettings.h"
 #include "services/IGameRules.h"
-#include "services/IPaths.h"
 #include "tilesheet/TileSheet.h"
 #include "utilities/New.h"
 #include "utilities/StringTransforms.h"
@@ -40,9 +40,9 @@ MapTileView* Standard2DGraphicViews::createMapTileView(MapTile& map_tile)
   return NEW MapTileStandard2DView(map_tile, *this);
 }
 
-MapView* Standard2DGraphicViews::createMapView(metagui::Desktop& desktop, 
-                                               std::string name, 
-                                               Map& map, 
+MapView* Standard2DGraphicViews::createMapView(metagui::Desktop& desktop,
+                                               std::string name,
+                                               Map& map,
                                                UintVec2 size)
 {
   return NEW MapStandard2DView(desktop, name, map, size, *this);
@@ -85,7 +85,7 @@ void Standard2DGraphicViews::loadViewResourcesFor(std::string category)
 {
   StringPair stringPair = StringTransforms::splitName(category);
 
-  FileName resourceString = S<IPaths>().resources() + "/entity/" + stringPair.second;
+  FileName resourceString = Config::paths().resources() + "/entity/" + stringPair.second;
   FileName pngFileString = resourceString + ".png";
   fs::path pngFilePath = fs::path(pngFileString);
   m_triedToLoad.insert(category);

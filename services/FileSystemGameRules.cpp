@@ -2,11 +2,11 @@
 
 #include "services/FileSystemGameRules.h"
 
+#include "config/Paths.h"
 #include "game/GameState.h" // needed for LUA
 #include "lua/LuaObject.h"
 #include "services/Service.h"
 #include "services/IGraphicViews.h"
-#include "services/IPaths.h"
 #include "utilities/JSONUtils.h"
 #include "utilities/StringTransforms.h"
 
@@ -38,7 +38,7 @@ void FileSystemGameRules::loadCategoryIfNecessary(std::string name)
     json& categoryData = m_data[name];
 
     // Look for the various files containing this metadata.
-    std::string resourcesPath = S<IPaths>().resources();
+    std::string resourcesPath = Config::paths().resources();
     FileName resource_string = "entity/" +
                                (namePair.first.empty() ? "" : namePair.first + "/") + namePair.second;
 
@@ -66,7 +66,7 @@ void FileSystemGameRules::loadCategoryIfNecessary(std::string name)
       CLOG(FATAL, "GameRules") << "Can't find " << jsonfile_string;
     }
 
-    // If there's no "components" key, create one. 
+    // If there's no "components" key, create one.
     // (There should be, but do it just to be sure.)
     json blankKey;
     JSONUtils::addIfMissing(categoryData, "components", blankKey);

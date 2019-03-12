@@ -1,8 +1,8 @@
 #include "ActionClose.h"
 
 #include "components/ComponentManager.h"
+#include "config/Strings.h"
 #include "services/IMessageLog.h"
-#include "services/IStrings.h"
 #include "services/Service.h"
 #include "utilities/Shortcuts.h"
 

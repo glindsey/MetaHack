@@ -1,10 +1,10 @@
 #include "ActionQuaff.h"
 
 #include "components/ComponentManager.h"
+#include "config/Strings.h"
 #include "game/GameState.h"
 #include "lua/LuaObject.h"
 #include "services/IMessageLog.h"
-#include "services/IStrings.h"
 #include "services/Service.h"
 #include "systems/SystemJanitor.h"
 #include "systems/Manager.h"

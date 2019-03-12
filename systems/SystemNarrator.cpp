@@ -9,11 +9,11 @@
 #include "components/ComponentMap.h"
 #include "components/ComponentManager.h"
 #include "components/ComponentPosition.h"
+#include "config/Strings.h"
 #include "entity/EntityId.h"
 #include "services/Service.h"
 #include "services/IConfigSettings.h"
 #include "services/IGameRules.h"
-#include "services/IStrings.h"
 #include "utilities/JSONUtils.h"
 #include "utilities/Ordinal.h"
 #include "utilities/Shortcuts.h"
@@ -807,7 +807,7 @@ namespace Systems
     boost::to_upper(fancyPartName);
     boost::to_upper(partName);
 
-    bool fancyNameExists = S<IStrings>().contains(fancyPartName);
+    bool fancyNameExists = Config::strings().contains(fancyPartName);
 
     return (fancyNameExists ? tr(fancyPartName) : tr(partName));
   }
@@ -823,7 +823,7 @@ namespace Systems
     boost::to_upper(fancyPartName);
     boost::to_upper(partName);
 
-    bool fancyNameExists = S<IStrings>().contains(fancyPartName);
+    bool fancyNameExists = Config::strings().contains(fancyPartName);
 
     return (fancyNameExists ? tr(fancyPartName) : tr(partName));
   }
@@ -992,37 +992,37 @@ namespace Systems
 
   std::string Narrator::getVerb2(std::string verb) const
   {
-    auto& dict = S<IStrings>();
+    auto& dict = Config::strings();
     return dict.get("VERB_" + verb + "_2");
   }
 
   std::string Narrator::getVerb3(std::string verb) const
   {
-    auto& dict = S<IStrings>();
+    auto& dict = Config::strings();
     return dict.get("VERB_" + verb + "_3");
   }
 
   std::string Narrator::getVerbing(std::string verb) const
   {
-    auto& dict = S<IStrings>();
+    auto& dict = Config::strings();
     return dict.get("VERB_" + verb + "_GER");
   }
 
   std::string Narrator::getVerbed(std::string verb) const
   {
-    auto& dict = S<IStrings>();
+    auto& dict = Config::strings();
     return dict.get("VERB_" + verb + "_P2");
   }
 
   std::string Narrator::getVerbPP(std::string verb) const
   {
-    auto& dict = S<IStrings>();
+    auto& dict = Config::strings();
     return dict.get("VERB_" + verb + "_PP");
   }
 
   std::string Narrator::getVerbable(std::string verb) const
   {
-    auto& dict = S<IStrings>();
+    auto& dict = Config::strings();
     return dict.get("VERB_" + verb + "_ABLE");
   }
 
