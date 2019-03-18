@@ -5,13 +5,12 @@
 #include "AssertHelper.h"
 #include "components/ComponentManager.h"
 #include "components/ComponentPhysical.h"
+#include "config/Bible.h"
+#include "config/Settings.h"
 #include "entity/EntityFactory.h"
 #include "game/App.h"
 #include "game/GameState.h"
 #include "map/Map.h"
-#include "services/Service.h"
-#include "services/IConfigSettings.h"
-#include "services/IGameRules.h"
 #include "types/Color.h"
 #include "utilities/MathUtils.h"
 #include "utilities/RNGUtils.h"
@@ -150,7 +149,7 @@ bool MapTile::isTotallyTransparent() const
 
 RealVec2 MapTile::getPixelCoords(IntVec2 tile)
 {
-  auto& config = S<IConfigSettings>();
+  auto& config = Config::settings();
   RealVec2 mapTileSize = config.get("map-tile-size");
 
   return RealVec2(static_cast<float>(tile.x) * mapTileSize.x,

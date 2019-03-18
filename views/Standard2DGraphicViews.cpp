@@ -3,10 +3,9 @@
 #include "views/Standard2DGraphicViews.h"
 
 #include "AssertHelper.h"
+#include "config/Bible.h"
 #include "config/Paths.h"
-#include "services/Service.h"
-#include "services/IConfigSettings.h"
-#include "services/IGameRules.h"
+#include "config/Settings.h"
 #include "tilesheet/TileSheet.h"
 #include "utilities/New.h"
 #include "utilities/StringTransforms.h"
@@ -19,7 +18,7 @@ namespace fs = boost::filesystem;
 
 Standard2DGraphicViews::Standard2DGraphicViews()
 {
-  auto& config = S<IConfigSettings>();
+  auto& config = Config::settings();
   auto tileSize = config.get("graphics-tile-size");
   auto textureSize = config.get("tilesheet-texture-size");
 
@@ -106,7 +105,7 @@ void Standard2DGraphicViews::loadViewResourcesFor(std::string category)
     CLOG(TRACE, "TileSheet") << "No tiles found for " << category << ", checking templates";
 
     // No graphics for this category, so try to fall back upon templates, one at a time.
-    auto& categoryData = S<IGameRules>().categoryData(category);
+    auto& categoryData = Config::bible().categoryData(category);
 
     // First we actually need templates for this to work...
     if (categoryData.count("templates") != 0)

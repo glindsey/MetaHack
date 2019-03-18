@@ -2,8 +2,8 @@
 
 #include "GUILabel.h"
 
+#include "config/Settings.h"
 #include "game/App.h"
-#include "services/IConfigSettings.h"
 #include "services/Service.h"
 #include "types/Color.h"
 
@@ -21,7 +21,7 @@ namespace metagui
   // === PROTECTED METHODS ======================================================
   void Label::drawPreChildren_(sf::RenderTexture& texture, int frame)
   {
-    auto& config = S<IConfigSettings>();
+    auto& config = Config::settings();
     float line_spacing_y = the_default_font.getLineSpacing(config.get("text-default-size"));
 
     // Text offsets relative to the background rectangle.

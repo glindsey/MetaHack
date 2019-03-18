@@ -252,11 +252,15 @@ set(PROJECT_INCLUDES_COMPONENT_MODIFIERS
     ${PROJECT_SOURCE_DIR}/components/modifiers/Physical.h)
 
 set(PROJECT_SOURCES_CONFIG
+    ${PROJECT_SOURCE_DIR}/config/Bible.cpp
     ${PROJECT_SOURCE_DIR}/config/Paths.cpp
+    ${PROJECT_SOURCE_DIR}/config/Settings.cpp
     ${PROJECT_SOURCE_DIR}/config/Strings.cpp)
 
 set(PROJECT_INCLUDES_CONFIG
+    ${PROJECT_SOURCE_DIR}/config/Bible.h
     ${PROJECT_SOURCE_DIR}/config/Paths.h
+    ${PROJECT_SOURCE_DIR}/config/Settings.h
     ${PROJECT_SOURCE_DIR}/config/Strings.h)
 
 set(PROJECT_SOURCES_ENTITY ${PROJECT_SOURCE_DIR}/entity/EntityFactory.cpp
@@ -384,23 +388,14 @@ set(PROJECT_INCLUDES_MAP
     ${PROJECT_SOURCE_DIR}/maptile/MapTile.h)
 
 set(PROJECT_SOURCES_SERVICES
-    ${PROJECT_SOURCE_DIR}/services/FallbackConfigSettings.cpp
-    ${PROJECT_SOURCE_DIR}/services/FileSystemGameRules.cpp
-    ${PROJECT_SOURCE_DIR}/services/IConfigSettings.cpp
-    ${PROJECT_SOURCE_DIR}/services/IGameRules.cpp
     ${PROJECT_SOURCE_DIR}/services/IGraphicViews.cpp
     ${PROJECT_SOURCE_DIR}/services/IMessageLog.cpp
     ${PROJECT_SOURCE_DIR}/services/MessageLog.cpp)
 
 set(PROJECT_INCLUDES_SERVICES
-    ${PROJECT_SOURCE_DIR}/services/FallbackConfigSettings.h
-    ${PROJECT_SOURCE_DIR}/services/FileSystemGameRules.h
-    ${PROJECT_SOURCE_DIR}/services/IConfigSettings.h
-    ${PROJECT_SOURCE_DIR}/services/IGameRules.h
     ${PROJECT_SOURCE_DIR}/services/IGraphicViews.h
     ${PROJECT_SOURCE_DIR}/services/IMessageLog.h
     ${PROJECT_SOURCE_DIR}/services/MessageLog.h
-    ${PROJECT_SOURCE_DIR}/services/NullGameRules.h
     ${PROJECT_SOURCE_DIR}/services/NullMessageLog.h
     ${PROJECT_SOURCE_DIR}/services/Service.h)
 
@@ -487,17 +482,13 @@ set(PROJECT_INCLUDES_TYPES
 set(PROJECT_SOURCES_VIEWS
     ${PROJECT_SOURCE_DIR}/views/EntityCollectionGUIListView.cpp
     ${PROJECT_SOURCE_DIR}/views/EntityCollectionGUIView.cpp
-    # ${PROJECT_SOURCE_DIR}/views/EntityFancyAsciiView.cpp
     ${PROJECT_SOURCE_DIR}/views/EntityGUIIconView.cpp
     ${PROJECT_SOURCE_DIR}/views/EntityGUIView.cpp
     ${PROJECT_SOURCE_DIR}/views/EntityNullView.cpp
     ${PROJECT_SOURCE_DIR}/views/EntityStandard2DView.cpp
     ${PROJECT_SOURCE_DIR}/views/EntityView.cpp
-    # ${PROJECT_SOURCE_DIR}/views/FancyAsciiGraphicViews.cpp
-    # ${PROJECT_SOURCE_DIR}/views/MapFancyAsciiView.cpp
     ${PROJECT_SOURCE_DIR}/views/MapNullView.cpp
     ${PROJECT_SOURCE_DIR}/views/MapStandard2DView.cpp
-    # ${PROJECT_SOURCE_DIR}/views/MapTileFancyAsciiView.cpp
     ${PROJECT_SOURCE_DIR}/views/MapTileNullView.cpp
     ${PROJECT_SOURCE_DIR}/views/MapTileStandard2DView.cpp
     ${PROJECT_SOURCE_DIR}/views/MapView.cpp
@@ -506,17 +497,13 @@ set(PROJECT_SOURCES_VIEWS
 set(PROJECT_INCLUDES_VIEWS
     ${PROJECT_SOURCE_DIR}/views/EntityCollectionGUIListView.h
     ${PROJECT_SOURCE_DIR}/views/EntityCollectionGUIView.h
-    # ${PROJECT_SOURCE_DIR}/views/EntityFancyAsciiView.h
     ${PROJECT_SOURCE_DIR}/views/EntityGUIIconView.h
     ${PROJECT_SOURCE_DIR}/views/EntityGUIView.h
     ${PROJECT_SOURCE_DIR}/views/EntityNullView.h
     ${PROJECT_SOURCE_DIR}/views/EntityStandard2DView.h
     ${PROJECT_SOURCE_DIR}/views/EntityView.h
-    # ${PROJECT_SOURCE_DIR}/views/FancyAsciiGraphicViews.h
-    # ${PROJECT_SOURCE_DIR}/views/MapFancyAsciiView.h
     ${PROJECT_SOURCE_DIR}/views/MapNullView.h
     ${PROJECT_SOURCE_DIR}/views/MapStandard2DView.h
-    # ${PROJECT_SOURCE_DIR}/views/MapTileFancyAsciiView.h
     ${PROJECT_SOURCE_DIR}/views/MapTileNullView.h
     ${PROJECT_SOURCE_DIR}/views/MapTileStandard2DView.h
     ${PROJECT_SOURCE_DIR}/views/MapTileView.h

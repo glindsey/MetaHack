@@ -2,15 +2,15 @@
 
 #include "game/App.h"
 
+#include "config/Bible.h"
 #include "config/Paths.h"
+#include "config/Settings.h"
 #include "config/Strings.h"
 #include "events/UIEvents.h"
 #include "game/AppStateGameMode.h"
 #include "game/AppStateMainMenu.h"
 #include "game/AppStateSplashScreen.h"
 #include "services/Service.h"
-#include "services/FallbackConfigSettings.h"
-#include "services/FileSystemGameRules.h"
 #include "services/MessageLog.h"
 #include "state_machine/StateMachine.h"
 #include "tilesheet/TileSheet.h"
@@ -23,7 +23,7 @@ App* App::s_instance;
 sf::IntRect calc_message_log_dimensions(sf::RenderWindow& window)
 {
   sf::IntRect messageLogDims;
-  auto& config = S<IConfigSettings>();
+  auto& config = Config::settings();
 
   int inventory_area_width = config.get("inventory-area-width");
   int messagelog_area_height = config.get("messagelog-area-height");
@@ -99,10 +99,7 @@ App::App(sf::RenderWindow& appWindow, sfg::SFGUI& sfgui, sfg::Desktop& desktop)
   SET_UP_LOGGER("Types",              false);
   SET_UP_LOGGER("Utilities",          false);
 
-  // Load config settings.
-  Service<IConfigSettings>::provide(NEW FallbackConfigSettings());
-
-  auto& config = S<IConfigSettings>();
+  auto& config = Config::settings();
 
   auto& resourcesPath = Config::paths().resources();
 
@@ -155,9 +152,6 @@ App::App(sf::RenderWindow& appWindow, sfg::SFGUI& sfgui, sfg::Desktop& desktop)
   {
     CLOG(FATAL, "App") << "Could not load the default shaders";
   }
-
-  // Create the game rules provider.
-  Service<IGameRules>::provide(NEW FileSystemGameRules());
 
   // Create the message log.
   Service<IMessageLog>::provide(NEW MessageLog());

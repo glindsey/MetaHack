@@ -14,12 +14,11 @@ extern "C"
 
 #include "AssertHelper.h"
 #include "components/ComponentManager.h"
+#include "config/Bible.h"
 #include "game/GameState.h"
 #include "entity/EntityFactory.h"
 #include "entity/EntityId.h"
 #include "lua/LuaObject.h"
-#include "services/Service.h"
-#include "services/IGameRules.h"
 #include "systems/Manager.h"
 #include "systems/SystemDirector.h"
 #include "systems/SystemGeometry.h"
@@ -49,7 +48,7 @@ namespace LuaFunctions
 
     // Check to make sure the Entity is actually creatable.
     /// @todo Might want the ability to disable this check for debugging purposes?
-    //json& thing_data = S<IGameRules>().categoryData(newEntityType);
+    //json& thing_data = Config::bible().categoryData(newEntityType);
     bool is_creatable = true; // thing_data.value("creatable", false);
 
     if (is_creatable)
@@ -59,7 +58,7 @@ namespace LuaFunctions
 
       if (success && (num_args > 2))
       {
-        /// @todo Possibly disallow adding Quantity component if category 
+        /// @todo Possibly disallow adding Quantity component if category
         ///       doesn't already have it.
         unsigned int quantity = static_cast<unsigned int>(lua_tointeger(L, 3));
         if (quantity > 1)
@@ -191,7 +190,7 @@ namespace LuaFunctions
 
     EntityId entity = EntityId(lua_tointeger(L, 1));
     const char* key = lua_tostring(L, 2);
-    auto result = S<IGameRules>().categoryData(gameState.components().category[entity]).value(key, json());
+    auto result = Config::bible().categoryData(gameState.components().category[entity]).value(key, json());
     auto slot_count = gameState.lua().push_value(result);
 
     return slot_count;

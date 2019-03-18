@@ -1,14 +1,14 @@
 #include "stdafx.h"
 
+#include "config/Settings.h"
 #include "game/App.h"
 #include "game/GameState.h"
-#include "services/IConfigSettings.h"
 #include "services/Service.h"
 #include "views/MapView.h"
 
 MapView::MapView(metagui::Desktop& desktop,
-                 std::string name, 
-                 Map& map, 
+                 std::string name,
+                 Map& map,
                  UintVec2 size)
   :
   metagui::GUIObject(desktop, name, {}, { 0, 0 }, size),
@@ -22,7 +22,7 @@ MapView::~MapView()
 
 void MapView::setView(sf::RenderTarget & target, RealVec2 center, float zoom_level)
 {
-  auto& config = S<IConfigSettings>();
+  auto& config = Config::settings();
   UintVec2 screen_size = target.getSize();
   unsigned int inventory_area_width = config.get("inventory-area-width");
   unsigned int status_area_height = config.get("status-area-height");

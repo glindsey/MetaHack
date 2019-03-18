@@ -9,11 +9,10 @@
 #include "components/ComponentMap.h"
 #include "components/ComponentManager.h"
 #include "components/ComponentPosition.h"
+#include "config/Bible.h"
+#include "config/Settings.h"
 #include "config/Strings.h"
 #include "entity/EntityId.h"
-#include "services/Service.h"
-#include "services/IConfigSettings.h"
-#include "services/IGameRules.h"
 #include "utilities/JSONUtils.h"
 #include "utilities/Ordinal.h"
 #include "utilities/Shortcuts.h"
@@ -202,7 +201,7 @@ namespace Systems
                                              ArticleChoice articles,
                                              UsePossessives possessives) const
   {
-    auto& config = S<IConfigSettings>();
+    auto& config = Config::settings();
 
     EntityId location = (m_components.position.existsFor(id) ? m_components.position.of(id).parent() : EntityId::Void);
     unsigned int quantity = m_components.quantity.valueOr(id, 1);
@@ -308,7 +307,7 @@ namespace Systems
 
   json const& Narrator::getCategoryData(EntityId id) const
   {
-    return S<IGameRules>().categoryData(m_components.category.valueOr(id, ""));
+    return Config::bible().categoryData(m_components.category.valueOr(id, ""));
   }
 
   std::string Narrator::getDisplayAdjectives(EntityId id) const

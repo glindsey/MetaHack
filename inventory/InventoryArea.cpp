@@ -5,6 +5,7 @@
 #include "components/ComponentInventory.h"
 #include "components/ComponentManager.h"
 #include "components/ComponentPhysical.h"
+#include "config/Settings.h"
 #include "game/App.h"
 #include "game/GameState.h"
 #include "entity/EntityFactory.h"
@@ -12,7 +13,6 @@
 #include "map/Map.h"
 #include "maptile/MapTile.h"
 #include "services/Service.h"
-#include "services/IConfigSettings.h"
 #include "services/IGraphicViews.h"
 #include "systems/Manager.h"
 #include "systems/SystemChoreographer.h"
@@ -127,7 +127,7 @@ InventoryArea::~InventoryArea()
 
 void InventoryArea::drawContents_(sf::RenderTexture& texture, int frame)
 {
-  auto& config = S<IConfigSettings>();
+  auto& config = Config::settings();
   auto& views = S<IGraphicViews>();
   auto& entity_pool = m_gameState.entities();
 

@@ -3,14 +3,13 @@
 #include "entity/EntityFactory.h"
 
 #include "components/ComponentManager.h"
+#include "config/Bible.h"
 #include "entity/EntityId.h"
 #include "game/App.h"
 #include "game/GameState.h"
 #include "lua/LuaObject.h"
 #include "map/Map.h"
 #include "maptile/MapTile.h"
-#include "services/Service.h"
-#include "services/IGameRules.h"
 
 EntityFactory::EntityFactory(GameState& gameState) :
   m_gameState{ gameState }
@@ -30,7 +29,7 @@ EntityId EntityFactory::create(EntitySpecs specs)
 {
   EntityId new_id = EntityId(m_nextEntityId);
   ++m_nextEntityId;
-  json& data = S<IGameRules>().categoryData(specs.category);
+  json& data = Config::bible().categoryData(specs.category);
 
   auto& jsonComponents = data["components"];
   m_gameState.components().populate(new_id, jsonComponents);
@@ -50,7 +49,7 @@ EntityId EntityFactory::create(EntitySpecs specs)
 
   if (!material.empty())
   {
-    json& materialData = S<IGameRules>().categoryData("material." + material);
+    json& materialData = Config::bible().categoryData("material." + material);
     m_gameState.components().populate(new_id, materialData["components"]);
   }
 
@@ -90,7 +89,7 @@ void EntityFactory::applyCategoryData(EntityId id, std::string subtypeName)
 {
   if (id != EntityId::Void)
   {
-    json& subtypeData = S<IGameRules>().categoryData(subtypeName);
+    json& subtypeData = Config::bible().categoryData(subtypeName);
     auto& subtypeComponents = subtypeData["components"];
     m_gameState.components().populate(id, subtypeComponents);
   }
@@ -115,7 +114,7 @@ void EntityFactory::morph(EntityId id, EntitySpecs specs)
 
   if (specs.category != oldCategory)
   {
-    json& data = S<IGameRules>().categoryData(specs.category);
+    json& data = Config::bible().categoryData(specs.category);
     components.populate(id, data["components"]);
   }
 
@@ -124,7 +123,7 @@ void EntityFactory::morph(EntityId id, EntitySpecs specs)
 
   if (!specs.material.empty() && (specs.material != oldMaterial))
   {
-    json& materialData = S<IGameRules>().categoryData("material." + specs.material);
+    json& materialData = Config::bible().categoryData("material." + specs.material);
     components.populate(id, materialData["components"]);
   }
 

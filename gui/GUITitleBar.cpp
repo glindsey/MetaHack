@@ -2,8 +2,8 @@
 
 #include "GUITitleBar.h"
 
+#include "config/Settings.h"
 #include "game/App.h"
-#include "services/IConfigSettings.h"
 #include "services/Service.h"
 #include "types/Color.h"
 
@@ -22,7 +22,7 @@ namespace metagui
   // === PROTECTED METHODS ======================================================
   void TitleBar::drawPreChildren_(sf::RenderTexture& texture, int frame)
   {
-    auto& config = S<IConfigSettings>();
+    auto& config = Config::settings();
 
     if (getParent() == nullptr)
     {
@@ -84,16 +84,16 @@ namespace metagui
       if (event.subject == getParent())
       {
         auto& castEvent = static_cast<EventResized const&>(event);
-        auto& config = S<IConfigSettings>();
+        auto& config = Config::settings();
         float line_spacing_y = the_default_font.getLineSpacing(config.get("text-default-size"));
 
         // Text offsets relative to the background rectangle.
         RealVec2 text_offset = config.get("window-text-offset");
 
         UintVec2 our_size
-        { 
-          castEvent.newSize.x, 
-          static_cast<unsigned int>(line_spacing_y + (text_offset.y * 2)) 
+        {
+          castEvent.newSize.x,
+          static_cast<unsigned int>(line_spacing_y + (text_offset.y * 2))
         };
 
         setSize(our_size);

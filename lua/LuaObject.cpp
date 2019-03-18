@@ -4,13 +4,12 @@
 
 #include "actions/Action.h"
 #include "components/ComponentManager.h"
+#include "config/Bible.h"
 #include "config/Paths.h"
 #include "entity/EntityId.h"
 #include "types/Direction.h"
 #include "types/Color.h"
 #include "types/Gender.h"
-#include "services/Service.h"
-#include "services/IGameRules.h"
 
 Lua::Lua()
 {
@@ -441,7 +440,7 @@ std::string Lua::find_lua_function(std::string category, std::string suffix) con
   if (result.empty())
   {
     // Get this entity category's templates.
-    json const& templates = S<IGameRules>().categoryData(category).value("templates", json::array());
+    json const& templates = Config::bible().categoryData(category).value("templates", json::array());
     for (size_t index = 0; index < templates.size(); ++index)
     {
       result = find_lua_function_(templates[index].get<std::string>(), suffix);

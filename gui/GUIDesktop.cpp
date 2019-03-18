@@ -2,9 +2,9 @@
 
 #include "GUIDesktop.h"
 
+#include "config/Settings.h"
 #include "design_patterns/Object.h"
 #include "game/App.h"
-#include "services/IConfigSettings.h"
 #include "services/Service.h"
 
 namespace metagui

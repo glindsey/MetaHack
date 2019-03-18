@@ -3,12 +3,11 @@
 #include "views/EntityStandard2DView.h"
 
 #include "components/ComponentManager.h"
+#include "config/Bible.h"
+#include "config/Settings.h"
 #include "game/GameState.h"
 #include "lua/LuaObject.h"
 #include "map/Map.h"
-#include "services/Service.h"
-#include "services/IConfigSettings.h"
-#include "services/IGameRules.h"
 #include "systems/SystemLighting.h"
 #include "tilesheet/TileSheet.h"
 #include "types/ShaderEffect.h"
@@ -38,7 +37,7 @@ void EntityStandard2DView::draw(sf::RenderTarget& target,
                                 bool use_smoothing,
                                 int frame)
 {
-  auto& config = S<IConfigSettings>();
+  auto& config = Config::settings();
   auto entity = getEntity();
   auto& texture = m_views.getTileSheet().getTexture();
 
@@ -60,8 +59,8 @@ void EntityStandard2DView::draw(sf::RenderTarget& target,
   UintVec2 tileSize = config.get("graphics-tile-size");
   if (targetSize == RealVec2(0, 0))
   {
-    targetSize = { 
-      static_cast<float>(tileSize.x), 
+    targetSize = {
+      static_cast<float>(tileSize.x),
       static_cast<float>(tileSize.y)
     };
   }
@@ -103,7 +102,7 @@ void EntityStandard2DView::draw(sf::RenderTarget& target,
 
 sf::RectangleShape EntityStandard2DView::drawRectangle(int frame)
 {
-  auto& config = S<IConfigSettings>();
+  auto& config = Config::settings();
   auto entity = getEntity();
   auto& texture = m_views.getTileSheet().getTexture();
 
@@ -144,7 +143,7 @@ std::string EntityStandard2DView::getViewName()
 UintVec2 EntityStandard2DView::getTileSheetCoords(int frame) const
 {
   auto& entity = getEntity();
-  auto& categoryData = S<IGameRules>().categoryData(COMPONENTS.category[entity]);
+  auto& categoryData = Config::bible().categoryData(COMPONENTS.category[entity]);
   UintVec2 offset;
 
   // Get tile coordinates on the sheet.

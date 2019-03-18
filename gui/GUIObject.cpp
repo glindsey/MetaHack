@@ -5,9 +5,9 @@
 #include <exception>
 
 #include "AssertHelper.h"
+#include "config/Settings.h"
 #include "game/App.h"
 #include "gui/GUIDesktop.h"
-#include "services/IConfigSettings.h"
 #include "services/Service.h"
 #include "types/Color.h"
 #include "utilities/CommonFunctions.h"

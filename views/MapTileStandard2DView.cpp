@@ -3,11 +3,10 @@
 #include "views/MapTileStandard2DView.h"
 
 #include "components/ComponentManager.h"
+#include "config/Bible.h"
+#include "config/Settings.h"
 #include "lua/LuaObject.h"
 #include "map/Map.h"
-#include "services/Service.h"
-#include "services/IConfigSettings.h"
-#include "services/IGameRules.h"
 #include "systems/Manager.h"
 #include "systems/SystemLighting.h"
 #include "systems/SystemSenseSight.h"
@@ -22,7 +21,7 @@ std::string MapTileStandard2DView::getViewName()
   return "standard2D";
 }
 
-MapTileStandard2DView::MapTileStandard2DView(MapTile& map_tile, 
+MapTileStandard2DView::MapTileStandard2DView(MapTile& map_tile,
                                              Standard2DGraphicViews& views)
   :
   MapTileView(map_tile),
@@ -35,7 +34,7 @@ UintVec2 MapTileStandard2DView::getFloorTileSheetCoords() const
 {
   /// @todo Deal with selecting one of the other tiles.
   auto entity = getMapTile().getFloorEntity();
-  auto& categoryData = S<IGameRules>().categoryData(COMPONENTS.category[entity]);
+  auto& categoryData = Config::bible().categoryData(COMPONENTS.category[entity]);
   UintVec2 offset;
 
   // Get tile coordinates on the sheet.
@@ -49,7 +48,7 @@ UintVec2 MapTileStandard2DView::getSpaceTileSheetCoords() const
 {
   /// @todo Deal with selecting one of the other tiles.
   auto entity = getMapTile().getSpaceEntity();
-  auto& categoryData = S<IGameRules>().categoryData(COMPONENTS.category[entity]);
+  auto& categoryData = Config::bible().categoryData(COMPONENTS.category[entity]);
   UintVec2 offset;
 
   // Get tile coordinates on the sheet.
@@ -103,10 +102,10 @@ void MapTileStandard2DView::addTileVertices(EntityId viewer,
 void MapTileStandard2DView::addMemoryVerticesTo(sf::VertexArray& vertices,
                                                 EntityId viewer)
 {
-  if (!COMPONENTS.position.existsFor(viewer) || 
+  if (!COMPONENTS.position.existsFor(viewer) ||
       !COMPONENTS.spacialMemory.existsFor(viewer)) return;
 
-  auto& config = S<IConfigSettings>();
+  auto& config = Config::settings();
   auto& tile = getMapTile();
   auto coords = tile.getCoords();
   auto& viewerPosition = COMPONENTS.position[viewer];
@@ -134,11 +133,11 @@ void MapTileStandard2DView::addMemoryVerticesTo(sf::VertexArray& vertices,
 
   for (auto& memory : memories)
   {
-    json& tileCategoryData = S<IGameRules>().categoryData(memory.category);
+    json& tileCategoryData = Config::bible().categoryData(memory.category);
 
     Color opacity = Color::White;
     auto& components = tileCategoryData["components"]; // guaranteed to be there by FileSystemGameRules::loadCategoryIfNecessary
-    
+
     std::string category = components["category"].get<std::string>();
 
     // Bail if the object has no associated tiles.
@@ -147,8 +146,8 @@ void MapTileStandard2DView::addMemoryVerticesTo(sf::VertexArray& vertices,
     if (components.count("appearance") != 0)
     {
       auto& appearance = components["appearance"];
-      if (appearance.is_object() && 
-          appearance.count("opacity") != 0 && 
+      if (appearance.is_object() &&
+          appearance.count("opacity") != 0 &&
           appearance["opacity"].is_object())
       {
         opacity = appearance["opacity"];
@@ -173,7 +172,7 @@ void MapTileStandard2DView::addHorizontalSurfaceVerticesTo(sf::VertexArray& vert
                                                            EntityId viewer,
                                                            Systems::Lighting& lighting)
 {
-  auto& config = S<IConfigSettings>();
+  auto& config = Config::settings();
 
   auto& tile = getMapTile();
   auto& coords = tile.getCoords();
@@ -273,12 +272,12 @@ void MapTileStandard2DView::addEntitiesVertices(EntityId viewer,
   }
 }
 
-void MapTileStandard2DView::addEntityVertices(EntityId entityId, 
+void MapTileStandard2DView::addEntityVertices(EntityId entityId,
                                               sf::VertexArray& vertices,
                                               Systems::Lighting* lighting,
                                               int frame)
 {
-  auto& config = S<IConfigSettings>();
+  auto& config = Config::settings();
   auto& category = COMPONENTS.category[entityId];
   sf::Vertex new_vertex;
   RealVec2 ts = config.get("map-tile-size");
@@ -327,7 +326,7 @@ void MapTileStandard2DView::addVerticalSurfaceVerticesTo(sf::VertexArray& vertic
   auto& x = coords.x;
   auto& y = coords.y;
 
-  auto& config = S<IConfigSettings>();
+  auto& config = Config::settings();
   RealVec2 mapTileSize = config.get("map-tile-size");
 
   auto canSee = [viewer](IntVec2 coords) -> bool

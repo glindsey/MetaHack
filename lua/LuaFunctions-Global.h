@@ -13,10 +13,10 @@ extern "C"
 }
 
 #include "AssertHelper.h"
+#include "config/Settings.h"
 #include "game/App.h"
 #include "lua/LuaObject.h"
 #include "services/Service.h"
-#include "services/IConfigSettings.h"
 #include "services/IMessageLog.h"
 #include "systems/Manager.h"
 #include "systems/SystemLuaLiaison.h"
@@ -26,7 +26,7 @@ namespace LuaFunctions
   int get_config(lua_State* L)
   {
     int num_args = lua_gettop(L);
-    auto& config = S<IConfigSettings>();
+    auto& config = Config::settings();
 
     if (num_args != 1)
     {

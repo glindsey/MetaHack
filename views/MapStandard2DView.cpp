@@ -2,9 +2,9 @@
 
 #include "views/MapStandard2DView.h"
 
+#include "config/Settings.h"
 #include "game/App.h"
 #include "services/Service.h"
-#include "services/IConfigSettings.h"
 #include "tilesheet/TileSheet.h"
 #include "types/ShaderEffect.h"
 #include "utilities/New.h"
@@ -13,8 +13,8 @@
 
 MapStandard2DView::MapStandard2DView(metagui::Desktop& desktop,
                                      std::string name,
-                                     Map& map, 
-                                     UintVec2 size, 
+                                     Map& map,
+                                     UintVec2 size,
                                      Standard2DGraphicViews& views)
   :
   MapView(desktop, name, map, size),
@@ -23,7 +23,7 @@ MapStandard2DView::MapStandard2DView(metagui::Desktop& desktop,
   resetCachedRenderData();
 
   // Create a grid of tile views, each tied to a map tile.
-  m_map_tile_views.reset(new Grid2D<MapTileStandard2DView>(map.getSize(), 
+  m_map_tile_views.reset(new Grid2D<MapTileStandard2DView>(map.getSize(),
                                                            [&](IntVec2 coords) -> MapTileStandard2DView*
   {
     return NEW MapTileStandard2DView(map.getTile(coords), views);
@@ -47,8 +47,8 @@ void MapStandard2DView::updateTiles(EntityId viewer, Systems::Lighting& lighting
   {
     for (int x = 0; x < map_size.x; ++x)
     {
-      m_map_tile_views->get({ x, y }).addTileVertices(viewer, 
-                                                      m_mapHorizVertices, 
+      m_map_tile_views->get({ x, y }).addTileVertices(viewer,
+                                                      m_mapHorizVertices,
                                                       m_mapVertVertices,
                                                       m_mapMemoryVertices,
                                                       lighting);
@@ -56,7 +56,7 @@ void MapStandard2DView::updateTiles(EntityId viewer, Systems::Lighting& lighting
   }
 }
 
-void MapStandard2DView::updateEntities(EntityId viewer, 
+void MapStandard2DView::updateEntities(EntityId viewer,
                                        Systems::Lighting& lighting,
                                        int frame)
 {
@@ -69,7 +69,7 @@ void MapStandard2DView::updateEntities(EntityId viewer,
   {
     for (int x = 0; x < map_size.x; ++x)
     {
-      m_map_tile_views->get({ x, y }).addEntitiesVertices(viewer, 
+      m_map_tile_views->get({ x, y }).addEntitiesVertices(viewer,
                                                           m_entityVertices,
                                                           &lighting,
                                                           frame);
@@ -103,7 +103,7 @@ void MapStandard2DView::drawHighlight(sf::RenderTarget& target,
                                        Color bgColor,
                                        int frame)
 {
-  auto& config = S<IConfigSettings>();
+  auto& config = Config::settings();
   RealVec2 mapTileSize = config.get("map-tile-size");
 
   RealVec2 halfTs = { mapTileSize.x * 0.5f, mapTileSize.y * 0.5f };

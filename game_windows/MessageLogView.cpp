@@ -2,8 +2,8 @@
 
 #include "game_windows/MessageLogView.h"
 
+#include "config/Settings.h"
 #include "game/App.h"
-#include "services/IConfigSettings.h"
 #include "services/IMessageLog.h"
 #include "services/Service.h"
 #include "types/Color.h"

@@ -1,8 +1,8 @@
 #include "stdafx.h"
 
+#include "config/Settings.h"
 #include "views/EntityCollectionGUIListView.h"
 #include "views/EntityView.h"
-#include "services/IConfigSettings.h"
 #include "services/IGraphicViews.h"
 #include "services/Service.h"
 #include "systems/Manager.h"
@@ -13,7 +13,7 @@ EntityCollectionGUIListView::EntityCollectionGUIListView(sfg::SFGUI& sfgui, std:
   EntityCollectionGUIView(sfgui, ids)
 {
   auto& narrator = SYSTEMS.narrator();
-  auto& config = S<IConfigSettings>();
+  auto& config = Config::settings();
   auto& graphicViews = S<IGraphicViews>();
   RealVec2 tileSize = config.get("graphics-tile-size");
 

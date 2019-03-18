@@ -5,6 +5,8 @@
 #include "actions/Action.h"
 #include "AssertHelper.h"
 #include "components/ComponentManager.h"
+#include "config/Bible.h"
+#include "config/Settings.h"
 #include "config/Strings.h"
 #include "design_patterns/Event.h"
 #include "entity/EntityFactory.h"
@@ -20,8 +22,6 @@
 #include "map/MapFactory.h"
 #include "maptile/MapTile.h"
 #include "services/Service.h"
-#include "services/IConfigSettings.h"
-#include "services/IGameRules.h"
 #include "services/MessageLog.h"
 #include "state_machine/StateMachine.h"
 #include "systems/Manager.h"
@@ -34,7 +34,6 @@
 #include "utilities/Shortcuts.h"
 #include "utilities/StringTransforms.h"
 #include "views/MapView.h"
-#include "views/FancyAsciiGraphicViews.h"
 #include "views/Standard2DGraphicViews.h"
 
 /// Actions that can be performed.
@@ -112,7 +111,6 @@ AppStateGameMode::AppStateGameMode(StateMachine& stateMachine,
 
   // Create the standard map views provider.
   /// @todo Make this configurable.
-  //Service<IGraphicViews>::provide(NEW FancyAsciiGraphicViews());
   Service<IGraphicViews>::provide(NEW Standard2DGraphicViews());
 }
 
@@ -159,7 +157,7 @@ void AppStateGameMode::execute()
 
 bool AppStateGameMode::initialize()
 {
-  auto& config = S<IConfigSettings>();
+  auto& config = Config::settings();
   auto& game = gameState();
 
   // Create the player.
@@ -236,7 +234,7 @@ Systems::Manager& AppStateGameMode::systems()
 // === PROTECTED METHODS ======================================================
 void AppStateGameMode::renderMap(sf::RenderTexture& texture, int frame)
 {
-  auto& config = S<IConfigSettings>();
+  auto& config = Config::settings();
   auto& game = gameState();
 
   texture.clear();
@@ -1056,7 +1054,7 @@ bool AppStateGameMode::onEvent(Event const& event)
 sf::IntRect AppStateGameMode::calcMessageLogDims()
 {
   sf::IntRect messageLogDims;
-  auto& config = S<IConfigSettings>();
+  auto& config = Config::settings();
 
   int inventory_area_width = config.get("inventory-area-width");
   int messagelog_area_height = config.get("messagelog-area-height");
@@ -1100,7 +1098,7 @@ sf::IntRect AppStateGameMode::calcStatusAreaDims()
 {
   sf::IntRect statusAreaDims;
   sf::IntRect invAreaDims = the_desktop.getChild("InventoryArea").getRelativeDimensions();
-  auto& config = S<IConfigSettings>();
+  auto& config = Config::settings();
 
   statusAreaDims.width = m_appWindow.getSize().x -
     (invAreaDims.width + 24);
@@ -1114,7 +1112,7 @@ sf::IntRect AppStateGameMode::calcInventoryDims()
 {
   //sf::IntRect messageLogDims = the_desktop.getChild("MessageLogView").getRelativeDimensions();
   sf::IntRect inventoryAreaDims;
-  auto& config = S<IConfigSettings>();
+  auto& config = Config::settings();
 
   inventoryAreaDims.width = config.get("inventory-area-width");
   inventoryAreaDims.height = m_appWindow.getSize().y - 10;
