@@ -387,16 +387,19 @@ set(PROJECT_INCLUDES_MAP
     ${PROJECT_SOURCE_DIR}/map/MapRoom.h
     ${PROJECT_SOURCE_DIR}/maptile/MapTile.h)
 
+set(PROJECT_SOURCES_OBJECTS
+    ${PROJECT_SOURCE_DIR}/objects/GameLog.cpp
+    )
+
+set(PROJECT_INCLUDES_OBJECTS
+    ${PROJECT_SOURCE_DIR}/objects/GameLog.h
+    )
+
 set(PROJECT_SOURCES_SERVICES
-    ${PROJECT_SOURCE_DIR}/services/IGraphicViews.cpp
-    ${PROJECT_SOURCE_DIR}/services/IMessageLog.cpp
-    ${PROJECT_SOURCE_DIR}/services/MessageLog.cpp)
+    ${PROJECT_SOURCE_DIR}/services/IGraphicViews.cpp)
 
 set(PROJECT_INCLUDES_SERVICES
     ${PROJECT_SOURCE_DIR}/services/IGraphicViews.h
-    ${PROJECT_SOURCE_DIR}/services/IMessageLog.h
-    ${PROJECT_SOURCE_DIR}/services/MessageLog.h
-    ${PROJECT_SOURCE_DIR}/services/NullMessageLog.h
     ${PROJECT_SOURCE_DIR}/services/Service.h)
 
 set(PROJECT_SOURCES_SFGUI_EXTENSIONS
@@ -524,6 +527,7 @@ set(PROJECT_SOURCES
     ${PROJECT_SOURCES_INFRASTRUCTURE}
     ${PROJECT_SOURCES_INVENTORY}
     ${PROJECT_SOURCES_MAP}
+    ${PROJECT_SOURCES_OBJECTS}
     ${PROJECT_SOURCES_SERVICES}
     ${PROJECT_SOURCES_SFGUI_EXTENSIONS}
     ${PROJECT_SOURCES_SYSTEMS}
@@ -543,6 +547,7 @@ set(PROJECT_INCLUDES
     ${PROJECT_INCLUDES_INFRASTRUCTURE}
     ${PROJECT_INCLUDES_INVENTORY}
     ${PROJECT_INCLUDES_MAP}
+    ${PROJECT_INCLUDES_OBJECTS}
     ${PROJECT_INCLUDES_SERVICES}
     ${PROJECT_INCLUDES_SFGUI_EXTENSIONS}
     ${PROJECT_INCLUDES_SYSTEMS}
@@ -585,12 +590,18 @@ source_group("Entities"
              FILES
              ${PROJECT_SOURCES_ENTITY}
              ${PROJECT_INCLUDES_ENTITY})
-source_group("Game" FILES ${PROJECT_SOURCES_GAME} ${PROJECT_INCLUDES_GAME})
+source_group("Game"
+             FILES
+             ${PROJECT_SOURCES_GAME}
+             ${PROJECT_INCLUDES_GAME})
 source_group("Game Windows"
              FILES
              ${PROJECT_SOURCES_GAME_WINDOWS}
              ${PROJECT_INCLUDES_GAME_WINDOWS})
-source_group("GUI" FILES ${PROJECT_SOURCES_GUI} ${PROJECT_INCLUDES_GUI})
+source_group("GUI"
+             FILES
+             ${PROJECT_SOURCES_GUI}
+             ${PROJECT_INCLUDES_GUI})
 source_group("Infrastructure"
              FILES
              ${PROJECT_SOURCES_INFRASTRUCTURE}
@@ -599,7 +610,14 @@ source_group("Inventory"
              FILES
              ${PROJECT_SOURCES_INVENTORY}
              ${PROJECT_INCLUDES_INVENTORY})
-source_group("Map" FILES ${PROJECT_SOURCES_MAP} ${PROJECT_INCLUDES_MAP})
+source_group("Map"
+             FILES
+             ${PROJECT_SOURCES_MAP}
+             ${PROJECT_INCLUDES_MAP})
+source_group("Objects"
+             FILES
+             ${PROJECT_SOURCES_OBJECTS}
+             ${PROJECT_INCLUDES_OBJECTS})
 source_group("Services"
              FILES
              ${PROJECT_SOURCES_SERVICES}
@@ -612,8 +630,14 @@ source_group("Systems"
              FILES
              ${PROJECT_SOURCES_SYSTEMS}
              ${PROJECT_INCLUDES_SYSTEMS})
-source_group("Types" FILES ${PROJECT_SOURCES_TYPES} ${PROJECT_INCLUDES_TYPES})
-source_group("Views" FILES ${PROJECT_SOURCES_VIEWS} ${PROJECT_INCLUDES_VIEWS})
+source_group("Types"
+             FILES
+             ${PROJECT_SOURCES_TYPES}
+             ${PROJECT_INCLUDES_TYPES})
+source_group("Views"
+             FILES
+             ${PROJECT_SOURCES_VIEWS}
+             ${PROJECT_INCLUDES_VIEWS})
 
 set_property(TARGET MetaHack PROPERTY
              VS_DEBUGGER_WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}")

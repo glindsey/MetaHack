@@ -9,7 +9,7 @@
 #include "sfgui_extensions/Widgets.hpp"
 
 /// Forward declarations
-class IMessageLog;
+class GameLog;
 
 /// A class that acts as a View for a MessageLog model instance.
 class MessageLogView
@@ -37,13 +37,13 @@ public:
   /// @param  sfgui       Reference to the SFGUI API.
   /// @param  desktop     Reference to the SFGUI Desktop object.
   /// @param  name        The name of the view.
-  /// @param  model       The MessageLog instance to tie the view to.
+  /// @param  model       The GameLog instance to tie the view to.
   /// @param  dimensions  The initial dimensions of the view.
-  /// @warning Lifetime of this object MUST outlast the MessageLog passed in!
+  /// @warning Lifetime of this object MUST outlast the GameLog passed in!
   MessageLogView(sfg::SFGUI& sfgui,
                  sfg::Desktop& desktop,
                  std::string name,
-                 IMessageLog& model,
+                 GameLog& model,
                  sf::IntRect dimensions);
 
   virtual ~MessageLogView();
@@ -87,8 +87,8 @@ private:
   /// the console window.
   sfg::EntryPlus::Ptr m_inputbox;
 
-  /// Reference to the associated MessageLog model.
-  IMessageLog& m_model;
+  /// Reference to the associated GameLog model.
+  GameLog& m_model;
 };
 
 #endif // MESSAGELOGVIEW_H

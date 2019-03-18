@@ -4,8 +4,6 @@
 #include "config/Strings.h"
 #include "game/GameState.h"
 #include "lua/LuaObject.h"
-#include "services/IMessageLog.h"
-#include "services/Service.h"
 #include "systems/Manager.h"
 #include "systems/SystemNarrator.h"
 #include "utilities/Shortcuts.h"

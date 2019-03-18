@@ -11,6 +11,7 @@ namespace Components
   class ComponentManager;
 }
 class EntityFactory;
+class GameLog;
 class Lua;
 class MapFactory;
 
@@ -64,6 +65,13 @@ public:
   Lua& lua();
   Lua const& lua() const;
 
+  /// Add a message to the game log.
+  void addMessage(std::string message);
+
+  /// Get the game log object.
+  GameLog& gameLog();
+  GameLog const& gameLog() const;
+
   /// Get the current GameState instance. This should only be used by functions
   /// exported to Lua, since there's no other simple way to provide it.
   static GameState& instance();
@@ -82,6 +90,9 @@ private:
 
   /// Pointer to the Components Manager object.
   std::unique_ptr<Components::ComponentManager> m_components;
+
+  /// Pointer to the Game Log object.
+  std::unique_ptr<GameLog> m_gameLog;
 
   /// Static pointer to the singleton instance of the GameState.
   static GameState* s_instance;

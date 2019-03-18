@@ -5,8 +5,7 @@
 #include <string>
 
 #include "config/Strings.h"
-#include "services/Service.h"
-#include "services/IMessageLog.h"
+#include "game/GameState.h"
 
 // Global helper functions.
 inline std::string tr(std::string key)
@@ -16,5 +15,5 @@ inline std::string tr(std::string key)
 
 inline void putMsg(std::string message)
 {
-  S<IMessageLog>().add(message);
+  GAME.addMessage(message);
 }

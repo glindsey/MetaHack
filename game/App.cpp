@@ -10,8 +10,6 @@
 #include "game/AppStateGameMode.h"
 #include "game/AppStateMainMenu.h"
 #include "game/AppStateSplashScreen.h"
-#include "services/Service.h"
-#include "services/MessageLog.h"
 #include "state_machine/StateMachine.h"
 #include "tilesheet/TileSheet.h"
 #include "types/Color.h"
@@ -152,9 +150,6 @@ App::App(sf::RenderWindow& appWindow, sfg::SFGUI& sfgui, sfg::Desktop& desktop)
   {
     CLOG(FATAL, "App") << "Could not load the default shaders";
   }
-
-  // Create the message log.
-  Service<IMessageLog>::provide(NEW MessageLog());
 
   // Create the string dictionary, and try to load the default translation file.
   /// @todo Change this so language can be specified.

@@ -11,7 +11,6 @@
 
 // Forward declarations
 class ConfigSettings;
-class MessageLog;
 class MessageLogView;
 class StateMachine;
 class Strings;

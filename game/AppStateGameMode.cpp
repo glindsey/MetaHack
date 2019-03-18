@@ -21,8 +21,8 @@
 #include "map/Map.h"
 #include "map/MapFactory.h"
 #include "maptile/MapTile.h"
+#include "objects/GameLog.h"
 #include "services/Service.h"
-#include "services/MessageLog.h"
 #include "state_machine/StateMachine.h"
 #include "systems/Manager.h"
 #include "systems/SystemDirector.h"
@@ -90,7 +90,7 @@ AppStateGameMode::AppStateGameMode(StateMachine& stateMachine,
   m_messageLogView.reset(NEW MessageLogView(m_sfgui,
                                             m_desktop,
                                             "MessageLogView",
-                                            S<IMessageLog>(),
+                                            m_gameState->gameLog(),
                                             calcMessageLogDims()));
 
   subscribeTo(m_messageLogView.get(), EventID::All);
@@ -1010,25 +1010,25 @@ bool AppStateGameMode::onEvent(Event const& event)
 
     /// @todo Re-enable this part
     /// Call the Lua interpreter with the command.
-    S<IMessageLog>().add("> " + info.command);
+    m_gameState->addMessage("> " + info.command);
 
     /// DEBUG: If the command is "dump", write out gamestate JSON to a file.
     /// @todo Remove this, or make it a Lua function instead.
     std::string command = boost::to_lower_copy(info.command);
     if (command == "dump")
     {
-      S<IMessageLog>().add("Dumping game state to dump.json...");
+      m_gameState->addMessage("Dumping game state to dump.json...");
       json gameStateJSON = gameState();
       std::ofstream of("dump.json");
       of << gameStateJSON.dump(2);
-      S<IMessageLog>().add("...Dump complete.");
+      m_gameState->addMessage("...Dump complete.");
     }
     else
     {
       if (luaL_dostring(m_gameState->lua().state(), info.command.c_str()))
       {
         std::string result = lua_tostring(m_gameState->lua().state(), -1);
-        S<IMessageLog>().add(result);
+        m_gameState->addMessage(result);
       }
     }
 

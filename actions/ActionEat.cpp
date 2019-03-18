@@ -2,8 +2,6 @@
 
 #include "config/Strings.h"
 #include "lua/LuaObject.h"
-#include "services/IMessageLog.h"
-#include "services/Service.h"
 #include "systems/SystemJanitor.h"
 #include "systems/Manager.h"
 #include "systems/SystemNarrator.h"

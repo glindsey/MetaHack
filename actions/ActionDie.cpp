@@ -3,8 +3,6 @@
 #include "components/ComponentManager.h"
 #include "config/Strings.h"
 #include "lua/LuaObject.h"
-#include "services/Service.h"
-#include "services/IMessageLog.h"
 #include "systems/Manager.h"
 #include "systems/SystemNarrator.h"
 #include "utilities/Shortcuts.h"

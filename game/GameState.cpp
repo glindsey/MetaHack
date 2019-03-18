@@ -8,6 +8,7 @@
 #include "lua/LuaObject.h"
 #include "map/Map.h"
 #include "map/MapFactory.h"
+#include "objects/GameLog.h"
 #include "services/Service.h"
 #include "services/IGraphicViews.h"
 #include "utilities/JSONUtils.h"
@@ -52,6 +53,10 @@ void GameState::initialize(json const& j)
     m_entityPool.reset(NEW EntityFactory(*this));
     m_mapFactory.reset(NEW MapFactory(*this));
   }
+
+  /// Reset the message log.
+  /// @todo Save the log as part of the game state -- this is not yet done.
+  m_gameLog.reset(NEW GameLog());
 }
 
 void from_json(json const& j, GameState& obj)
@@ -104,6 +109,20 @@ Lua const& GameState::lua() const
   return *m_lua;
 }
 
+void GameState::addMessage(std::string message)
+{
+  m_gameLog->add(message);
+}
+
+GameLog& GameState::gameLog()
+{
+  return *m_gameLog;
+}
+
+GameLog const& GameState::gameLog() const
+{
+  return *m_gameLog;
+}
 
 GameState& GameState::instance()
 {

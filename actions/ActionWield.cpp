@@ -3,8 +3,6 @@
 #include "ActionUnwield.h"
 #include "components/ComponentManager.h"
 #include "lua/LuaObject.h"
-#include "services/IMessageLog.h"
-#include "services/Service.h"
 #include "systems/Manager.h"
 #include "systems/SystemDirector.h"
 #include "systems/SystemNarrator.h"

@@ -2,8 +2,6 @@
 
 #include "components/ComponentManager.h"
 #include "config/Strings.h"
-#include "services/IMessageLog.h"
-#include "services/Service.h"
 #include "utilities/Shortcuts.h"
 
 namespace Actions

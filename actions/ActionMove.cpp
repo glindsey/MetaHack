@@ -7,8 +7,6 @@
 #include "lua/LuaObject.h"
 #include "map/Map.h"
 #include "maptile/MapTile.h"
-#include "services/Service.h"
-#include "services/IMessageLog.h"
 #include "systems/Manager.h"
 #include "systems/SystemDirector.h"
 #include "systems/SystemNarrator.h"

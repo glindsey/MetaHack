@@ -15,9 +15,8 @@ extern "C"
 #include "AssertHelper.h"
 #include "config/Settings.h"
 #include "game/App.h"
+#include "game/GameState.h"
 #include "lua/LuaObject.h"
-#include "services/Service.h"
-#include "services/IMessageLog.h"
 #include "systems/Manager.h"
 #include "systems/SystemLuaLiaison.h"
 
@@ -78,7 +77,7 @@ namespace LuaFunctions
     else
     {
       std::string str = lua_tostring(L, 1);
-      S<IMessageLog>().add(str);
+      GAME.addMessage(str);
     }
 
     return 0;
@@ -93,7 +92,7 @@ namespace LuaFunctions
       if (lua_isstring(L, i))
       {
         std::string str = lua_tostring(L, i);
-        S<IMessageLog>().add(str);
+        GAME.addMessage(str);
       }
       else
       {

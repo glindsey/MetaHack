@@ -4,14 +4,13 @@
 
 #include "config/Settings.h"
 #include "game/App.h"
-#include "services/IMessageLog.h"
-#include "services/Service.h"
+#include "objects/GameLog.h"
 #include "types/Color.h"
 
 MessageLogView::MessageLogView(sfg::SFGUI& sfgui,
                                sfg::Desktop& desktop,
                                std::string name,
-                               IMessageLog& model,
+                               GameLog& model,
                                sf::IntRect dimensions)
   :
   Object({ EventCommandReady::id }),
@@ -84,7 +83,7 @@ MessageLogView::MessageLogView(sfg::SFGUI& sfgui,
   // Set initial window size. (Has to be done after a widget is added to a hierarchy.)
   m_window->SetAllocation(floatDims);
 
-  // Add an observer to the MessageLog model.
+  // Add an observer to the GameLog model.
   subscribeTo(m_model, EventID::All);
 }
 
@@ -97,9 +96,9 @@ bool MessageLogView::onEvent(Event const& event)
 {
   auto id = event.getId();
 
-  if (id == IMessageLog::EventMessageAdded::id)
+  if (id == GameLog::EventMessageAdded::id)
   {
-    auto info = static_cast<IMessageLog::EventMessageAdded const&>(event);
+    auto info = static_cast<GameLog::EventMessageAdded const&>(event);
     CLOG(TRACE, "GUI") << "MessageLogView::onEvent(Event const&) fired " << event;
     auto newLabel = sfg::Label::Create();
     newLabel->SetText(info.message);
