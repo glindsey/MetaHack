@@ -33,12 +33,19 @@ Object::Object(std::unordered_set<EventID> const events, std::string name) :
 
 Object::~Object()
 {
-  CLOG(TRACE, "EventSystem") << "Destroying Object " << *this;
+  CLOG(TRACE, "EventSystem") << "Destroying Object " << *this << " and removing from observed Subjects";
   while (!m_observations.empty())
   {
     auto iter = m_observations.begin();
-    CLOG(TRACE, "EventSystem") << "Removing Observer " << *this << " from Subject " << *(iter->first);
-    iter->first->removeObserver(*this);
+    if (REGISTRY.contains(iter->first))
+    {
+      CLOG(TRACE, "EventSystem") << "Removing from Subject " << *(iter->first);
+      iter->first->removeObserver(*this);
+    }
+    else
+    {
+      CLOG(TRACE, "EventSystem") << "Subject " << *(iter->first) << " already deleted, skipping";
+    }
   }
 
   bool observersRemain = false;
@@ -70,6 +77,16 @@ std::string const& Object::getName()
 
 void Object::addObserver(Object& observer, EventID eventID)
 {
+  if (!REGISTRY.contains(&observer))
+  {
+    CLOG(WARNING, "EventSystem") << "Attempted to add destroyed Observer " << observer
+      << " for EventID 0x"
+      << std::setbase(16) << std::setfill('0') << std::setw(8) << eventID << std::setw(0) << std::setbase(10)
+      << ", skipping";
+
+    return;
+  }
+
   if (eventID == EventID::All)
   {
     for (auto& pair : m_eventObservers)
@@ -92,7 +109,7 @@ void Object::addObserver(Object& observer, EventID eventID)
     e.state = Registration::State::Registered;
     e.subject = this;
 
-    CLOG(TRACE, "EventSystem") << "Registered Observer " << observer
+    CLOG(TRACE, "EventSystem") << "Added Observer " << observer
       << " for EventID 0x"
       << std::setbase(16) << std::setfill('0') << std::setw(8) << eventID << std::setw(0) << std::setbase(10);
 
@@ -111,17 +128,30 @@ void Object::removeAllObservers()
     auto& observersSet = eventObservers.second;
     for (auto& observer : observersSet)
     {
-      observer->onEvent_NV(e);
+      if (REGISTRY.contains(observer))
+      {
+        observer->onEvent_NV(e);
+      }
     }
 
     observersSet.clear();
   }
 
-  CLOG(TRACE, "EventSystem") << "Deregistered all Observers for all Events";
+  CLOG(TRACE, "EventSystem") << "Removed all Observers for all Events";
 }
 
 void Object::removeObserver(Object& observer, EventID eventID)
 {
+  if (!REGISTRY.contains(&observer))
+  {
+    CLOG(TRACE, "EventSystem") << "Attempted to remove destroyed Observer " << observer
+      << " for EventID 0x"
+      << std::setbase(16) << std::setfill('0') << std::setw(8) << eventID << std::setw(0) << std::setbase(10)
+      << ", ignoring";
+
+    return;
+  }
+
   size_t removalCount = 0;
   if (eventID == EventID::All)
   {
@@ -131,7 +161,7 @@ void Object::removeObserver(Object& observer, EventID eventID)
       removalCount += observersSet.erase(&observer);
     }
 
-    CLOG(TRACE, "EventSystem") << "Deregistered Observer " << observer << " for all Events";
+    CLOG(TRACE, "EventSystem") << "Removed Observer " << observer << " for all Events";
   }
   else
   {
@@ -145,7 +175,7 @@ void Object::removeObserver(Object& observer, EventID eventID)
 
     removalCount = observersSet.erase(&observer);
 
-    CLOG(TRACE, "EventSystem") << "Deregistered Observer " << observer
+    CLOG(TRACE, "EventSystem") << "Removed Observer " << observer
       << " for EventID 0x"
       << std::setbase(16) << std::setfill('0') << std::setw(8) << eventID << std::setw(0) << std::setbase(10);
   }
@@ -243,7 +273,16 @@ bool Object::broadcast(Event& event)
         {
           for (auto& observer : observersSet)
           {
-            handled = observer->onEvent_NV(*copiedEvent);
+            if (!REGISTRY.contains(observer))
+            {
+              CLOG(TRACE, "EventSystem") << "Attempted to broadcast to destroyed Observer " << observer << ", skipping";
+              handled = true;
+            }
+            else
+            {
+              handled = observer->onEvent_NV(*copiedEvent);
+            }
+
             if (handled)
             {
               CLOG(TRACE, "EventSystem") << "Broadcast Halted: " << *copiedEvent << " by " << *observer;
@@ -281,6 +320,12 @@ void Object::unicast(Event& event, Object& observer)
   {
     if (shouldSend)
     {
+      if (!REGISTRY.contains(&observer))
+      {
+        CLOG(TRACE, "EventSystem") << "Attempted to unicast to destroyed Observer " << observer << ", skipping";
+        return;
+      }
+
       auto finalEvent = event.heapClone();
 
       auto dispatchBlock = [=, &observer]() mutable -> bool

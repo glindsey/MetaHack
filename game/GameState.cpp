@@ -27,6 +27,9 @@ GameState::GameState(json const& j) :
 
 GameState::~GameState()
 {
+  // Destroy the GameLog instance.
+  m_gameLog.reset();
+
   // Destroy the Lua state.
   m_lua.reset();
 

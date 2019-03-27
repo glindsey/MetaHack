@@ -7,6 +7,8 @@
 #include "objects/GameLog.h"
 #include "types/Color.h"
 
+#include "ObjectRegistry.h"
+
 MessageLogView::MessageLogView(sfg::SFGUI& sfgui,
                                sfg::Desktop& desktop,
                                std::string name,
@@ -89,7 +91,10 @@ MessageLogView::MessageLogView(sfg::SFGUI& sfgui,
 
 MessageLogView::~MessageLogView()
 {
-  m_model.removeObserver(*this);
+  if (REGISTRY.contains(&m_model))
+  {
+    m_model.removeObserver(*this);
+  }
 }
 
 bool MessageLogView::onEvent(Event const& event)
