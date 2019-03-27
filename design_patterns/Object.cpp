@@ -33,7 +33,8 @@ Object::Object(std::unordered_set<EventID> const events, std::string name) :
 
 Object::~Object()
 {
-  CLOG(TRACE, "EventSystem") << "Destroying Object " << *this << " and removing from observed Subjects";
+  CLOG(TRACE, "EventSystem") << "Destroying Object " << *this;
+  CLOG(TRACE, "EventSystem") << "Removing from observed Subjects";
   while (!m_observations.empty())
   {
     auto iter = m_observations.begin();
@@ -48,24 +49,7 @@ Object::~Object()
     }
   }
 
-  bool observersRemain = false;
-  for (auto& prioritizedObservers : m_eventObservers)
-  {
-    auto eventID = prioritizedObservers.first;
-    auto observersSet = getObservers(eventID);
-
-    if (!observersSet.empty())
-    {
-      CLOG(WARNING, "EventSystem") << "Subject " << *this << " was deleted while " << observersSet.size() << " objects were still observing event " << eventID;
-      observersRemain = true;
-    }
-  }
-
-  if (observersRemain)
-  {
-    CLOG(WARNING, "EventSystem") << "Clearing all observers of this subject";
-    removeAllObservers();
-  }
+  removeAllObservers();
 
   REGISTRY.remove(this);
 }
@@ -137,7 +121,7 @@ void Object::removeAllObservers()
     observersSet.clear();
   }
 
-  CLOG(TRACE, "EventSystem") << "Removed all Observers for all Events";
+  CLOG(TRACE, "EventSystem") << "Removed all Observers of " << *this << " for all Events";
 }
 
 void Object::removeObserver(Object& observer, EventID eventID)
@@ -185,11 +169,10 @@ void Object::removeObserver(Object& observer, EventID eventID)
     std::stringstream ss;
     ss << "Event " << eventID;
 
-    CLOG(WARNING, "EventSystem")
-      << "Observer " << observer
-      << " was not registered for "
-      << ((eventID == EventID::All) ? "any Events" : ss.str())
-      << " from Subject " << *this;
+    CLOG(TRACE, "EventSystem")
+      << "Tried to remove Observer " << observer
+      << " of Subject " << *this << ", but it was not registered for "
+      << ((eventID == EventID::All) ? "any Events" : ss.str());
   }
 
   Registration e;

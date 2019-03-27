@@ -117,9 +117,6 @@ AppStateGameMode::AppStateGameMode(StateMachine& stateMachine,
 AppStateGameMode::~AppStateGameMode()
 {
   the_desktop.removeChild("InventoryArea");
-
-  m_messageLogView->removeObserver(*this, EventID::All);
-  App::instance().removeObserver(*this, EventID::All);
 }
 
 void AppStateGameMode::execute()
@@ -216,7 +213,6 @@ bool AppStateGameMode::initialize()
 bool AppStateGameMode::terminate()
 {
   auto mapView = the_desktop.removeChild("MainMapView");
-  mapView->removeObserver(the_desktop, EventID::All);
 
   return true;
 }

@@ -90,12 +90,7 @@ MessageLogView::MessageLogView(sfg::SFGUI& sfgui,
 }
 
 MessageLogView::~MessageLogView()
-{
-  if (REGISTRY.contains(&m_model))
-  {
-    m_model.removeObserver(*this);
-  }
-}
+{}
 
 bool MessageLogView::onEvent(Event const& event)
 {

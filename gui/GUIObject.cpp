@@ -49,27 +49,7 @@ namespace metagui
   }
 
   GUIObject::~GUIObject()
-  {
-    // Remove child subject/observer relationships, if any.
-    for (auto& childPair : m_children)
-    {
-      childPair.second->removeObserver(*this);
-      removeObserver(*(childPair.second));
-    }
-
-    m_children.clear();
-
-    // Remove parent subject/observer relationships, if any.
-    if (m_parent != nullptr)
-    {
-      m_parent->removeObserver(*this);
-      removeObserver(*m_parent);
-    }
-
-    // Unsubscribe from app and/or desktop events, if any.
-    m_desktop.removeObserver(*this);
-    App::instance().removeObserver(*this);
-  }
+  {}
 
   Desktop& GUIObject::desktop()
   {
