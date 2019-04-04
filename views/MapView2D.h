@@ -6,17 +6,22 @@
 #include "tilesheet/TileSheet.h"
 #include "types/Grid2D.h"
 #include "views/MapView.h"
-#include "views/Standard2DGraphicViews.h"
 
 // Forward declarations
-class MapTileStandard2DView;
+class MapTileView2D;
 
 /// Class representing the standard 2D (pseudo-3D) view of a Map object.
-class MapStandard2DView : public MapView
+class MapView2D : public MapView
 {
-  friend class Standard2DGraphicViews;
-
 public:
+  /// Constructor.
+  /// @param name     Name of this view.
+  /// @param map      Reference to Map object to associate with this view.
+  MapView2D(std::string name,
+            Map& map);
+
+  virtual ~MapView2D();
+
   virtual bool renderMap(sf::RenderTexture& texture, int frame) override;
 
   virtual void updateTiles(EntityId viewer, Systems::Lighting& lighting) override;
@@ -31,21 +36,9 @@ public:
   virtual std::string getViewName() override;
 
 protected:
-  /// Constructor.
-  /// Private because map views should be obtained via the IGraphicViews service.
-  /// @param name       Name of this view.
-  /// @param map	    Reference to Map object to associate with this view.
-  /// @param size       Size of the view to create.
-  /// @param tile_sheet Reference to tilesheet containing graphics to display.
-  MapStandard2DView(metagui::Desktop& desktop,
-                    std::string name, 
-                    Map& map, 
-                    UintVec2 size, 
-                    Standard2DGraphicViews& views);
-
   /// Called before rendering the object's children.
   /// Default behavior is to do nothing.
-  virtual void drawPreChildren_(sf::RenderTexture& texture, int frame) override;
+  virtual void drawPreChildren_(sf::RenderTexture& texture, int frame);
 
   /// Reinitialize cached map render data.
   void resetCachedRenderData();
@@ -65,8 +58,5 @@ private:
   sf::VertexArray m_entityVertices;
 
   /// Grid of tile views.
-  std::unique_ptr< Grid2D< MapTileStandard2DView > > m_map_tile_views;
-
-  /// Reference to parent views object.
-  Standard2DGraphicViews& m_views;
+  std::unique_ptr< Grid2D< MapTileView2D > > m_map_tile_views;
 };

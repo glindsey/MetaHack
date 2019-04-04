@@ -1,10 +1,8 @@
-#include "stdafx.h"
+#include "views/EntityCollectionGUIListView.h"
 
 #include "config/Settings.h"
-#include "views/EntityCollectionGUIListView.h"
-#include "views/EntityView.h"
-#include "services/IGraphicViews.h"
-#include "services/Service.h"
+#include "utilities/New.h"
+#include "views/EntityView2D.h"
 #include "systems/Manager.h"
 #include "systems/SystemNarrator.h"
 
@@ -14,7 +12,6 @@ EntityCollectionGUIListView::EntityCollectionGUIListView(sfg::SFGUI& sfgui, std:
 {
   auto& narrator = SYSTEMS.narrator();
   auto& config = Config::settings();
-  auto& graphicViews = S<IGraphicViews>();
   RealVec2 tileSize = config.get("graphics-tile-size");
 
   auto const fillAndExpand = sfg::Table::FILL | sfg::Table::EXPAND;
@@ -34,7 +31,7 @@ EntityCollectionGUIListView::EntityCollectionGUIListView(sfg::SFGUI& sfgui, std:
 
     // This is inefficient, to say the least, but for now it will suffice.
     auto canvas = sfg::Canvas::Create();
-    auto entityView = std::unique_ptr<EntityView>(graphicViews.createEntityView(id));
+    auto entityView = std::unique_ptr<EntityView>(NEW EntityView2D(id));
     canvas->SetRequisition(tileSize);
     entityView->setLocation({ 0.0f, 0.0f });
     entityView->setSize(tileSize);

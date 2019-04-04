@@ -15,10 +15,6 @@ class MessageLogView;
 class StateMachine;
 class Strings;
 class TileSheet;
-namespace metagui
-{
-  class Desktop;
-}
 
 /// Class that defines the overall application.
 /// @todo Possibly split all the rendering-specific stuff out into a separate
@@ -112,9 +108,6 @@ public:
   /// Get the shader.
   sf::Shader& shader();
 
-  /// Get the Desktop instance.
-  metagui::Desktop& guiDesktop();
-
   /// Get the TileSheet instance.
   TileSheet& tileSheet();
 
@@ -134,9 +127,6 @@ private:
 
   /// Pointer to off-screen buffer for drawing composition.
   std::unique_ptr<sf::RenderTexture> m_appTexture;
-
-  /// The GUI desktop.
-  std::unique_ptr<metagui::Desktop> m_guiDesktop;
 
   /// The state machine.
   std::unique_ptr<StateMachine> m_stateMachine;
@@ -174,7 +164,7 @@ private:
 #define the_default_bold_font     (App::instance().fontDefaultBold())
 #define the_default_mono_font     (App::instance().fontDefaultMono())
 #define the_default_unicode_font  (App::instance().fontDefaultUnicode())
-#define the_desktop               (App::instance().guiDesktop())
 #define the_shader                (App::instance().shader())
+#define the_tilesheet             (App::instance().tileSheet())
 
 #endif // APP_H

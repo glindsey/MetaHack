@@ -23,7 +23,7 @@ public:
   virtual bool terminate() override;
 
 protected:
-  void render_title(sf::RenderTexture& texture, int frame);
+  virtual bool render(sf::RenderTexture& texture, int frame) override;
 
   virtual bool onEvent(Event const& event) override;
 

@@ -11,9 +11,6 @@ class MapTileView
   :
   public Object
 {
-  friend class NullGraphicViews;
-  friend class Standard2DGraphicViews;
-
 public:
   /// Destructor.
   virtual ~MapTileView() {}

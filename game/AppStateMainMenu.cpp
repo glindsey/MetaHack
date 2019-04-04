@@ -9,9 +9,7 @@ AppStateMainMenu::AppStateMainMenu(StateMachine& stateMachine,
                                    sfg::SFGUI& sfgui,
                                    sfg::Desktop& desktop)
   :
-  AppState(stateMachine, {},
-           "AppStateMainMenu",
-           std::bind(&AppStateMainMenu::render_title, this, std::placeholders::_1, std::placeholders::_2)),
+  AppState(stateMachine, {}, "AppStateMainMenu"),
   m_appWindow{ appWindow },
   m_sfgui{ sfgui },
   m_desktop{ desktop }
@@ -75,11 +73,12 @@ bool AppStateMainMenu::terminate()
 
 // === PROTECTED METHODS ======================================================
 
-void AppStateMainMenu::render_title(sf::RenderTexture & texture, int frame)
+bool AppStateMainMenu::render(sf::RenderTexture& texture, int frame)
 {
   texture.draw(m_title);
   texture.draw(m_subtitle);
   texture.display();
+  return true;
 }
 
 bool AppStateMainMenu::onEvent(Event const& event)

@@ -293,20 +293,6 @@ set(PROJECT_INCLUDES_GAME_WINDOWS
     ${PROJECT_SOURCE_DIR}/game_windows/MessageLogView.h
     ${PROJECT_SOURCE_DIR}/game_windows/StatusArea.h)
 
-set(PROJECT_SOURCES_GUI
-    ${PROJECT_SOURCE_DIR}/gui/GUIDesktop.cpp
-    ${PROJECT_SOURCE_DIR}/gui/GUILabel.cpp
-    ${PROJECT_SOURCE_DIR}/gui/GUIObject.cpp
-    ${PROJECT_SOURCE_DIR}/gui/GUITitleBar.cpp
-    ${PROJECT_SOURCE_DIR}/gui/GUIWindow.cpp)
-
-set(PROJECT_INCLUDES_GUI
-    ${PROJECT_SOURCE_DIR}/gui/GUIDesktop.h
-    ${PROJECT_SOURCE_DIR}/gui/GUILabel.h
-    ${PROJECT_SOURCE_DIR}/gui/GUIObject.h
-    ${PROJECT_SOURCE_DIR}/gui/GUITitleBar.h
-    ${PROJECT_SOURCE_DIR}/gui/GUIWindow.h)
-
 set(PROJECT_SOURCES_INFRASTRUCTURE
     ${PROJECT_SOURCE_DIR}/design_patterns/AssertHelper.cpp
     ${PROJECT_SOURCE_DIR}/design_patterns/Event.cpp
@@ -395,13 +381,6 @@ set(PROJECT_INCLUDES_OBJECTS
     ${PROJECT_SOURCE_DIR}/objects/GameLog.h
     )
 
-set(PROJECT_SOURCES_SERVICES
-    ${PROJECT_SOURCE_DIR}/services/IGraphicViews.cpp)
-
-set(PROJECT_INCLUDES_SERVICES
-    ${PROJECT_SOURCE_DIR}/services/IGraphicViews.h
-    ${PROJECT_SOURCE_DIR}/services/Service.h)
-
 set(PROJECT_SOURCES_SFGUI_EXTENSIONS
     ${PROJECT_SOURCE_DIR}/sfgui_extensions/EntryPlus.cpp)
 
@@ -487,32 +466,23 @@ set(PROJECT_SOURCES_VIEWS
     ${PROJECT_SOURCE_DIR}/views/EntityCollectionGUIView.cpp
     ${PROJECT_SOURCE_DIR}/views/EntityGUIIconView.cpp
     ${PROJECT_SOURCE_DIR}/views/EntityGUIView.cpp
-    ${PROJECT_SOURCE_DIR}/views/EntityNullView.cpp
-    ${PROJECT_SOURCE_DIR}/views/EntityStandard2DView.cpp
+    ${PROJECT_SOURCE_DIR}/views/EntityView2D.cpp
     ${PROJECT_SOURCE_DIR}/views/EntityView.cpp
-    ${PROJECT_SOURCE_DIR}/views/MapNullView.cpp
-    ${PROJECT_SOURCE_DIR}/views/MapStandard2DView.cpp
-    ${PROJECT_SOURCE_DIR}/views/MapTileNullView.cpp
-    ${PROJECT_SOURCE_DIR}/views/MapTileStandard2DView.cpp
-    ${PROJECT_SOURCE_DIR}/views/MapView.cpp
-    ${PROJECT_SOURCE_DIR}/views/Standard2DGraphicViews.cpp)
+    ${PROJECT_SOURCE_DIR}/views/MapView2D.cpp
+    ${PROJECT_SOURCE_DIR}/views/MapTileView2D.cpp
+    ${PROJECT_SOURCE_DIR}/views/MapView.cpp)
 
 set(PROJECT_INCLUDES_VIEWS
     ${PROJECT_SOURCE_DIR}/views/EntityCollectionGUIListView.h
     ${PROJECT_SOURCE_DIR}/views/EntityCollectionGUIView.h
     ${PROJECT_SOURCE_DIR}/views/EntityGUIIconView.h
     ${PROJECT_SOURCE_DIR}/views/EntityGUIView.h
-    ${PROJECT_SOURCE_DIR}/views/EntityNullView.h
-    ${PROJECT_SOURCE_DIR}/views/EntityStandard2DView.h
+    ${PROJECT_SOURCE_DIR}/views/EntityView2D.h
     ${PROJECT_SOURCE_DIR}/views/EntityView.h
-    ${PROJECT_SOURCE_DIR}/views/MapNullView.h
-    ${PROJECT_SOURCE_DIR}/views/MapStandard2DView.h
-    ${PROJECT_SOURCE_DIR}/views/MapTileNullView.h
-    ${PROJECT_SOURCE_DIR}/views/MapTileStandard2DView.h
+    ${PROJECT_SOURCE_DIR}/views/MapView2D.h
     ${PROJECT_SOURCE_DIR}/views/MapTileView.h
-    ${PROJECT_SOURCE_DIR}/views/MapView.h
-    ${PROJECT_SOURCE_DIR}/views/NullGraphicViews.h
-    ${PROJECT_SOURCE_DIR}/views/Standard2DGraphicViews.h)
+    ${PROJECT_SOURCE_DIR}/views/MapTileView2D.h
+    ${PROJECT_SOURCE_DIR}/views/MapView.h)
 
 set(PROJECT_SOURCES
     ${EXTERNAL_SOURCES}
@@ -523,12 +493,10 @@ set(PROJECT_SOURCES
     ${PROJECT_SOURCES_ENTITY}
     ${PROJECT_SOURCES_GAME}
     ${PROJECT_SOURCES_GAME_WINDOWS}
-    ${PROJECT_SOURCES_GUI}
     ${PROJECT_SOURCES_INFRASTRUCTURE}
     ${PROJECT_SOURCES_INVENTORY}
     ${PROJECT_SOURCES_MAP}
     ${PROJECT_SOURCES_OBJECTS}
-    ${PROJECT_SOURCES_SERVICES}
     ${PROJECT_SOURCES_SFGUI_EXTENSIONS}
     ${PROJECT_SOURCES_SYSTEMS}
     ${PROJECT_SOURCES_TYPES}
@@ -543,12 +511,10 @@ set(PROJECT_INCLUDES
     ${PROJECT_INCLUDES_ENTITY}
     ${PROJECT_INCLUDES_GAME}
     ${PROJECT_INCLUDES_GAME_WINDOWS}
-    ${PROJECT_INCLUDES_GUI}
     ${PROJECT_INCLUDES_INFRASTRUCTURE}
     ${PROJECT_INCLUDES_INVENTORY}
     ${PROJECT_INCLUDES_MAP}
     ${PROJECT_INCLUDES_OBJECTS}
-    ${PROJECT_INCLUDES_SERVICES}
     ${PROJECT_INCLUDES_SFGUI_EXTENSIONS}
     ${PROJECT_INCLUDES_SYSTEMS}
     ${PROJECT_INCLUDES_TYPES}
@@ -556,7 +522,6 @@ set(PROJECT_INCLUDES
 
 include_directories(${PROJECT_SOURCE_DIR}
                     ${PROJECT_SOURCE_DIR}/design_patterns
-                    ${PROJECT_SOURCE_DIR}/gui
                     ${PROJECT_SOURCE_DIR}/include
                     ${EXTERNAL_INCLUDES})
 
@@ -598,10 +563,6 @@ source_group("Game Windows"
              FILES
              ${PROJECT_SOURCES_GAME_WINDOWS}
              ${PROJECT_INCLUDES_GAME_WINDOWS})
-source_group("GUI"
-             FILES
-             ${PROJECT_SOURCES_GUI}
-             ${PROJECT_INCLUDES_GUI})
 source_group("Infrastructure"
              FILES
              ${PROJECT_SOURCES_INFRASTRUCTURE}
@@ -618,10 +579,6 @@ source_group("Objects"
              FILES
              ${PROJECT_SOURCES_OBJECTS}
              ${PROJECT_INCLUDES_OBJECTS})
-source_group("Services"
-             FILES
-             ${PROJECT_SOURCES_SERVICES}
-             ${PROJECT_INCLUDES_SERVICES})
 source_group("SFGUI Extensions"
              FILES
              ${PROJECT_SOURCES_SFGUI_EXTENSIONS}

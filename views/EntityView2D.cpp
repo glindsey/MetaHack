@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include "views/EntityStandard2DView.h"
+#include "views/EntityView2D.h"
 
 #include "components/ComponentManager.h"
 #include "config/Bible.h"
@@ -12,34 +12,31 @@
 #include "tilesheet/TileSheet.h"
 #include "types/ShaderEffect.h"
 #include "utilities/RNGUtils.h"
-#include "views/Standard2DGraphicViews.h"
 
-EntityStandard2DView::EntityStandard2DView(EntityId entity,
-                                           Standard2DGraphicViews& views)
+EntityView2D::EntityView2D(EntityId entity)
   :
-  EntityView(entity),
-  m_views{ views }
+  EntityView(entity)
 {
 }
 
-bool EntityStandard2DView::onEvent(Event const& event)
+bool EntityView2D::onEvent(Event const& event)
 {
   /// @todo WRITE ME
   return false;
 }
 
-EntityStandard2DView::~EntityStandard2DView()
+EntityView2D::~EntityView2D()
 {
 }
 
-void EntityStandard2DView::draw(sf::RenderTarget& target,
-                                Systems::Lighting* lighting,
-                                bool use_smoothing,
-                                int frame)
+void EntityView2D::draw(sf::RenderTarget& target,
+                        Systems::Lighting* lighting,
+                        bool use_smoothing,
+                        int frame)
 {
   auto& config = Config::settings();
   auto entity = getEntity();
-  auto& texture = m_views.getTileSheet().getTexture();
+  auto& texture = the_tilesheet.getTexture();
 
   // Can't render if it doesn't have a Position component.
   if (!COMPONENTS.position.existsFor(entity)) return;
@@ -100,11 +97,11 @@ void EntityStandard2DView::draw(sf::RenderTarget& target,
   }
 }
 
-sf::RectangleShape EntityStandard2DView::drawRectangle(int frame)
+sf::RectangleShape EntityView2D::drawRectangle(int frame)
 {
   auto& config = Config::settings();
   auto entity = getEntity();
-  auto& texture = m_views.getTileSheet().getTexture();
+  auto& texture = the_tilesheet.getTexture();
 
   sf::RectangleShape rectangle;
   sf::IntRect textureCoords;
@@ -135,19 +132,19 @@ sf::RectangleShape EntityStandard2DView::drawRectangle(int frame)
   return rectangle;
 }
 
-std::string EntityStandard2DView::getViewName()
+std::string EntityView2D::getViewName()
 {
   return "standard2D";
 }
 
-UintVec2 EntityStandard2DView::getTileSheetCoords(int frame) const
+UintVec2 EntityView2D::getTileSheetCoords(int frame) const
 {
   auto& entity = getEntity();
   auto& categoryData = Config::bible().categoryData(COMPONENTS.category[entity]);
   UintVec2 offset;
 
   // Get tile coordinates on the sheet.
-  UintVec2 start_coords = m_views.getTileSheetCoords(COMPONENTS.category[entity]);
+  UintVec2 start_coords = the_tilesheet.getTileSheetCoords(COMPONENTS.category[entity]);
 
   // If the entity has the "animated" component, call the Lua function to get the offset (tile to choose).
   if (categoryData["components"].count("animated") > 0)

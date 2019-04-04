@@ -40,11 +40,11 @@ public:
   /// @param  model       The GameLog instance to tie the view to.
   /// @param  dimensions  The initial dimensions of the view.
   /// @warning Lifetime of this object MUST outlast the GameLog passed in!
-  MessageLogView(sfg::SFGUI& sfgui,
+  MessageLogView(sf::RenderWindow& renderWindow,
+                 sfg::SFGUI& sfgui,
                  sfg::Desktop& desktop,
                  std::string name,
-                 GameLog& model,
-                 sf::IntRect dimensions);
+                 GameLog& model);
 
   virtual ~MessageLogView();
 
@@ -61,6 +61,9 @@ protected:
   void handleWindowResized();
 
 private:
+  /// Reference to the render window.
+  sf::RenderWindow& m_renderWindow;
+
   /// Reference to the SFGUI API.
   sfg::SFGUI& m_sfgui;
 

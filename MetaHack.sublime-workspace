@@ -96,28 +96,145 @@
 	"buffers":
 	[
 		{
-			"file": "game/App.cpp",
+			"contents": "Searching 353 files for \"MessageLog\" (case sensitive, whole word)\n\n/home/greglindsey/personal/projects/MetaHack/game/AppStateGameMode.cpp:\n   23  #include \"maptile/MapTile.h\"\n   24  #include \"services/Service.h\"\n   25: #include \"services/MessageLog.h\"\n   26  #include \"state_machine/StateMachine.h\"\n   27  #include \"systems/Manager.h\"\n   ..\n  302        {\n  303          case GameInputState::Map:\n  304:           m_currentInputState = GameInputState::MessageLog;\n  305            //the_desktop.getChild(\"MessageLogView\").setGlobalFocus(true);\n  306            return false;\n  307  \n  308:         case GameInputState::MessageLog:\n  309            m_currentInputState = GameInputState::Map;\n  310            //the_desktop.getChild(\"StatusArea\").setGlobalFocus(true);\n\n/home/greglindsey/personal/projects/MetaHack/game/AppStateGameMode.h:\n   41      TargetSelection,\n   42      CursorLook,\n   43:     MessageLog\n   44    };\n   45  \n\n/home/greglindsey/personal/projects/MetaHack/game_windows/MessageLogView.cpp:\n    5  #include \"config/Settings.h\"\n    6  #include \"game/App.h\"\n    7: #include \"objects/MessageLog.h\"\n    8  #include \"types/Color.h\"\n    9  \n   ..\n   11                                 sfg::Desktop& desktop,\n   12                                 std::string name,\n   13:                                MessageLog& model,\n   14                                 sf::IntRect dimensions)\n   15    :\n   ..\n   84    m_window->SetAllocation(floatDims);\n   85  \n   86:   // Add an observer to the MessageLog model.\n   87    subscribeTo(m_model, EventID::All);\n   88  }\n\n/home/greglindsey/personal/projects/MetaHack/game_windows/MessageLogView.h:\n   10  \n   11  /// Forward declarations\n   12: class MessageLog;\n   13  \n   14: /// A class that acts as a View for a MessageLog model instance.\n   15  class MessageLogView\n   16    :\n   ..\n   38    /// @param  desktop     Reference to the SFGUI Desktop object.\n   39    /// @param  name        The name of the view.\n   40:   /// @param  model       The MessageLog instance to tie the view to.\n   41    /// @param  dimensions  The initial dimensions of the view.\n   42:   /// @warning Lifetime of this object MUST outlast the MessageLog passed in!\n   43    MessageLogView(sfg::SFGUI& sfgui,\n   44                   sfg::Desktop& desktop,\n   45                   std::string name,\n   46:                  MessageLog& model,\n   47                   sf::IntRect dimensions);\n   48  \n   ..\n   88    sfg::EntryPlus::Ptr m_inputbox;\n   89  \n   90:   /// Reference to the associated MessageLog model.\n   91:   MessageLog& m_model;\n   92  };\n   93  \n\n/home/greglindsey/personal/projects/MetaHack/systems/SystemGeometry.cpp:\n    4  #include \"components/ComponentInventory.h\"\n    5  #include \"components/ComponentPosition.h\"\n    6: #include \"objects/MessageLog.h\"\n    7  #include \"systems/SystemGeometry.h\"\n    8  #include \"systems/SystemJanitor.h\"\n\n15 matches across 5 files\n\n\nSearching 353 files for \"GameLog\" (case sensitive, whole word)\n\n/home/greglindsey/personal/projects/MetaHack/actions/Action.cpp:\n    6  #include \"entity/EntityId.h\"\n    7  #include \"game/GameState.h\"\n    8: #include \"objects/GameLog.h\"\n    9  #include \"systems/Manager.h\"\n   10  #include \"systems/SystemNarrator.h\"\n\n/home/greglindsey/personal/projects/MetaHack/game/AppStateGameMode.cpp:\n   22  #include \"map/MapFactory.h\"\n   23  #include \"maptile/MapTile.h\"\n   24: #include \"objects/GameLog.h\"\n   25  #include \"services/Service.h\"\n   26  #include \"state_machine/StateMachine.h\"\n\n/home/greglindsey/personal/projects/MetaHack/game/GameState.cpp:\n    9  #include \"map/Map.h\"\n   10  #include \"map/MapFactory.h\"\n   11: #include \"objects/GameLog.h\"\n   12  #include \"services/Service.h\"\n   13  #include \"services/IGraphicViews.h\"\n   ..\n   57    /// Reset the message log.\n   58    /// @todo Save the log as part of the game state -- this is not yet done.\n   59:   m_gameLog.reset(NEW GameLog());\n   60  }\n   61  \n   ..\n  115  }\n  116  \n  117: GameLog& GameState::gameLog()\n  118  {\n  119    return *m_gameLog;\n  120  }\n  121  \n  122: GameLog const& GameState::gameLog() const\n  123  {\n  124    return *m_gameLog;\n\n/home/greglindsey/personal/projects/MetaHack/game/GameState.h:\n   12  }\n   13  class EntityFactory;\n   14: class GameLog;\n   15  class Lua;\n   16  class MapFactory;\n   ..\n   70  \n   71    /// Get the game log object.\n   72:   GameLog& gameLog();\n   73:   GameLog const& gameLog() const;\n   74  \n   75    /// Get the current GameState instance. This should only be used by functions\n   ..\n   93  \n   94    /// Pointer to the Game Log object.\n   95:   std::unique_ptr<GameLog> m_gameLog;\n   96  \n   97    /// Static pointer to the singleton instance of the GameState.\n\n/home/greglindsey/personal/projects/MetaHack/game_windows/MessageLogView.cpp:\n    5  #include \"config/Settings.h\"\n    6  #include \"game/App.h\"\n    7: #include \"objects/GameLog.h\"\n    8  #include \"types/Color.h\"\n    9  \n   ..\n   11                                 sfg::Desktop& desktop,\n   12                                 std::string name,\n   13:                                std::shared_ptr<GameLog> model,\n   14                                 sf::IntRect dimensions)\n   15    :\n   ..\n   84    m_window->SetAllocation(floatDims);\n   85  \n   86:   // Add an observer to the GameLog model.\n   87    subscribeTo(m_model, EventID::All);\n   88  }\n   ..\n   97    auto id = event.getId();\n   98  \n   99:   if (id == GameLog::EventMessageAdded::id)\n  100    {\n  101:     auto info = static_cast<GameLog::EventMessageAdded const&>(event);\n  102      CLOG(TRACE, \"GUI\") << \"MessageLogView::onEvent(Event const&) fired \" << event;\n  103      auto newLabel = sfg::Label::Create();\n\n/home/greglindsey/personal/projects/MetaHack/game_windows/MessageLogView.h:\n   10  \n   11  /// Forward declarations\n   12: class GameLog;\n   13  \n   14  /// A class that acts as a View for a MessageLog model instance.\n   ..\n   38    /// @param  desktop     Reference to the SFGUI Desktop object.\n   39    /// @param  name        The name of the view.\n   40:   /// @param  model       Shared pointer to the GameLog instance to tie the view to.\n   41    /// @param  dimensions  The initial dimensions of the view.\n   42:   /// @warning Lifetime of this object MUST outlast the GameLog passed in!\n   43    MessageLogView(sfg::SFGUI& sfgui,\n   44                   sfg::Desktop& desktop,\n   45                   std::string name,\n   46:                  std::shared_ptr<GameLog> model,\n   47                   sf::IntRect dimensions);\n   48  \n   ..\n   88    sfg::EntryPlus::Ptr m_inputbox;\n   89  \n   90:   /// Shared pointer to the associated GameLog model.\n   91:   std::shared_ptr<GameLog> m_model;\n   92  };\n   93  \n\n/home/greglindsey/personal/projects/MetaHack/objects/GameLog.cpp:\n    1: #include \"objects/GameLog.h\"\n    2  \n    3  #include <cctype>\n    .\n    6  #include \"game/App.h\"\n    7  \n    8: GameLog::GameLog()\n    9    :\n   10:   Object({ GameLog::EventMessageAdded::id }, \"GameLog\")\n   11  {\n   12    m_messageQueueSize = 250;  ///< @todo Move to ConfigSettings\n   13  }\n   14  \n   15: GameLog::~GameLog()\n   16  {\n   17    //dtor\n   18  }\n   19  \n   20: std::shared_ptr<GameLog> create()\n   21  {\n   22:   return std::shared_ptr<GameLog>(new GameLog());\n   23  }\n   24  \n   25: void GameLog::add(std::string message)\n   26  {\n   27    message[0] = toupper(message[0], std::locale());\n   ..\n   38  }\n   39  \n   40: unsigned int GameLog::getMessageQueueSize()\n   41  {\n   42    return m_messageQueueSize;\n   43  }\n   44  \n   45: std::deque<std::string>& GameLog::getMessageQueue()\n   46  {\n   47    return m_messageQueue;\n\n/home/greglindsey/personal/projects/MetaHack/objects/GameLog.h:\n    8  \n    9  /// Definition of the game message log.\n   10: class GameLog : public Object\n   11  {\n   12  public:\n   ..\n   27    };\n   28  \n   29:   virtual ~GameLog();\n   30  \n   31:   /// Create a GameLog and return a shared pointer to the new instance.\n   32:   static std::shared_ptr<GameLog> create();\n   33  \n   34    /// Add a message to the game log.\n   ..\n   43  \n   44  protected:\n   45:   GameLog();\n   46  \n   47  private:\n\n/home/greglindsey/personal/projects/MetaHack/systems/SystemGeometry.cpp:\n    4  #include \"components/ComponentInventory.h\"\n    5  #include \"components/ComponentPosition.h\"\n    6: #include \"objects/GameLog.h\"\n    7  #include \"systems/SystemGeometry.h\"\n    8  #include \"systems/SystemJanitor.h\"\n\n40 matches across 9 files\n\n\nSearching 353 files for \"GameLog\" (case sensitive, whole word)\n\n/home/greglindsey/personal/projects/MetaHack/actions/Action.cpp:\n    6  #include \"entity/EntityId.h\"\n    7  #include \"game/GameState.h\"\n    8: #include \"objects/GameLog.h\"\n    9  #include \"systems/Manager.h\"\n   10  #include \"systems/SystemNarrator.h\"\n\n/home/greglindsey/personal/projects/MetaHack/game/AppStateGameMode.cpp:\n   22  #include \"map/MapFactory.h\"\n   23  #include \"maptile/MapTile.h\"\n   24: #include \"objects/GameLog.h\"\n   25  #include \"services/Service.h\"\n   26  #include \"state_machine/StateMachine.h\"\n\n/home/greglindsey/personal/projects/MetaHack/game/GameState.cpp:\n    9  #include \"map/Map.h\"\n   10  #include \"map/MapFactory.h\"\n   11: #include \"objects/GameLog.h\"\n   12  #include \"services/Service.h\"\n   13  #include \"services/IGraphicViews.h\"\n   ..\n   57    /// Reset the message log.\n   58    /// @todo Save the log as part of the game state -- this is not yet done.\n   59:   m_gameLog = GameLog::create();\n   60  }\n   61  \n   ..\n  115  }\n  116  \n  117: std::shared_ptr<GameLog> GameState::gameLog()\n  118  {\n  119    return m_gameLog;\n\n/home/greglindsey/personal/projects/MetaHack/game/GameState.h:\n   12  }\n   13  class EntityFactory;\n   14: class GameLog;\n   15  class Lua;\n   16  class MapFactory;\n   ..\n   70  \n   71    /// Get a shared pointer to the game log object.\n   72:   std::shared_ptr<GameLog> gameLog();\n   73  \n   74    /// Get the current GameState instance. This should only be used by functions\n   ..\n   92  \n   93    /// Pointer to the Game Log object.\n   94:   std::unique_ptr<GameLog> m_gameLog;\n   95  \n   96    /// Static pointer to the singleton instance of the GameState.\n\n/home/greglindsey/personal/projects/MetaHack/game_windows/MessageLogView.cpp:\n    5  #include \"config/Settings.h\"\n    6  #include \"game/App.h\"\n    7: #include \"objects/GameLog.h\"\n    8  #include \"types/Color.h\"\n    9  \n   ..\n   11                                 sfg::Desktop& desktop,\n   12                                 std::string name,\n   13:                                std::shared_ptr<GameLog> model,\n   14                                 sf::IntRect dimensions)\n   15    :\n   ..\n   84    m_window->SetAllocation(floatDims);\n   85  \n   86:   // Add an observer to the GameLog model.\n   87    subscribeTo(m_model, EventID::All);\n   88  }\n   ..\n   97    auto id = event.getId();\n   98  \n   99:   if (id == GameLog::EventMessageAdded::id)\n  100    {\n  101:     auto info = static_cast<GameLog::EventMessageAdded const&>(event);\n  102      CLOG(TRACE, \"GUI\") << \"MessageLogView::onEvent(Event const&) fired \" << event;\n  103      auto newLabel = sfg::Label::Create();\n\n/home/greglindsey/personal/projects/MetaHack/game_windows/MessageLogView.h:\n   10  \n   11  /// Forward declarations\n   12: class GameLog;\n   13  \n   14  /// A class that acts as a View for a MessageLog model instance.\n   ..\n   38    /// @param  desktop     Reference to the SFGUI Desktop object.\n   39    /// @param  name        The name of the view.\n   40:   /// @param  model       Shared pointer to the GameLog instance to tie the view to.\n   41    /// @param  dimensions  The initial dimensions of the view.\n   42:   /// @warning Lifetime of this object MUST outlast the GameLog passed in!\n   43    MessageLogView(sfg::SFGUI& sfgui,\n   44                   sfg::Desktop& desktop,\n   45                   std::string name,\n   46:                  std::shared_ptr<GameLog> model,\n   47                   sf::IntRect dimensions);\n   48  \n   ..\n   88    sfg::EntryPlus::Ptr m_inputbox;\n   89  \n   90:   /// Shared pointer to the associated GameLog model.\n   91:   std::shared_ptr<GameLog> m_model;\n   92  };\n   93  \n\n/home/greglindsey/personal/projects/MetaHack/objects/GameLog.cpp:\n    1: #include \"objects/GameLog.h\"\n    2  \n    3  #include <cctype>\n    .\n    6  #include \"game/App.h\"\n    7  \n    8: GameLog::GameLog()\n    9    :\n   10:   Object({ GameLog::EventMessageAdded::id }, \"GameLog\")\n   11  {\n   12    m_messageQueueSize = 250;  ///< @todo Move to ConfigSettings\n   13  }\n   14  \n   15: GameLog::~GameLog()\n   16  {\n   17    //dtor\n   18  }\n   19  \n   20: std::shared_ptr<GameLog> create()\n   21  {\n   22:   return std::shared_ptr<GameLog>(new GameLog());\n   23  }\n   24  \n   25: void GameLog::add(std::string message)\n   26  {\n   27    message[0] = toupper(message[0], std::locale());\n   ..\n   38  }\n   39  \n   40: unsigned int GameLog::getMessageQueueSize()\n   41  {\n   42    return m_messageQueueSize;\n   43  }\n   44  \n   45: std::deque<std::string>& GameLog::getMessageQueue()\n   46  {\n   47    return m_messageQueue;\n\n/home/greglindsey/personal/projects/MetaHack/objects/GameLog.h:\n    8  \n    9  /// Definition of the game message log.\n   10: class GameLog : public Object\n   11  {\n   12  public:\n   ..\n   27    };\n   28  \n   29:   virtual ~GameLog();\n   30  \n   31:   /// Create a GameLog and return a shared pointer to the new instance.\n   32:   static std::shared_ptr<GameLog> create();\n   33  \n   34    /// Add a message to the game log.\n   ..\n   43  \n   44  protected:\n   45:   GameLog();\n   46  \n   47  private:\n\n/home/greglindsey/personal/projects/MetaHack/systems/SystemGeometry.cpp:\n    4  #include \"components/ComponentInventory.h\"\n    5  #include \"components/ComponentPosition.h\"\n    6: #include \"objects/GameLog.h\"\n    7  #include \"systems/SystemGeometry.h\"\n    8  #include \"systems/SystemJanitor.h\"\n\n38 matches across 9 files\n\n\nSearching 353 files for \"removeObserver\" (case sensitive, whole word)\n\n/home/greglindsey/personal/projects/MetaHack/design_patterns/Object.cpp:\n   41      {\n   42        CLOG(TRACE, \"EventSystem\") << \"Removing from Subject \" << *(iter->first);\n   43:       iter->first->removeObserver(*this);\n   44      }\n   45      else\n   ..\n  141  }\n  142  \n  143: void Object::removeObserver(Object& observer, EventID eventID)\n  144  {\n  145    if (!REGISTRY.contains(&observer))\n\n/home/greglindsey/personal/projects/MetaHack/design_patterns/Object.h:\n   71    inline void unsubscribeFrom(Object& subject, EventID eventID = EventID::All)\n   72    {\n   73:     subject.removeObserver(*this, eventID);\n   74    }\n   75  \n   ..\n   81    {\n   82      if (!subject) return;\n   83:     subject->removeObserver(*this, eventID);\n   84    }\n   85  \n   ..\n   92      auto ptr = subject.get();\n   93      if (!ptr) return;\n   94:     ptr->removeObserver(*this, eventID);\n   95    }\n   96  \n   ..\n  109    /// @param eventID    ID of event to remove from, or EventID::All to\n  110    ///                   unsubscribe from all events.\n  111:   void removeObserver(Object& observer, EventID eventID = EventID::All);\n  112  \n  113    virtual void serialize(std::ostream& o) const override;\n\n/home/greglindsey/personal/projects/MetaHack/game/AppStateGameMode.cpp:\n  119    the_desktop.removeChild(\"InventoryArea\");\n  120  \n  121:   m_messageLogView->removeObserver(*this, EventID::All);\n  122:   App::instance().removeObserver(*this, EventID::All);\n  123  }\n  124  \n  ...\n  217  {\n  218    auto mapView = the_desktop.removeChild(\"MainMapView\");\n  219:   mapView->removeObserver(the_desktop, EventID::All);\n  220  \n  221    return true;\n\n/home/greglindsey/personal/projects/MetaHack/game_windows/MessageLogView.cpp:\n   94    if (REGISTRY.contains(&m_model))\n   95    {\n   96:     m_model.removeObserver(*this);\n   97    }\n   98  }\n\n/home/greglindsey/personal/projects/MetaHack/gui/GUIObject.cpp:\n   54      for (auto& childPair : m_children)\n   55      {\n   56:       childPair.second->removeObserver(*this);\n   57:       removeObserver(*(childPair.second));\n   58      }\n   59  \n   ..\n   63      if (m_parent != nullptr)\n   64      {\n   65:       m_parent->removeObserver(*this);\n   66:       removeObserver(*m_parent);\n   67      }\n   68  \n   69      // Unsubscribe from app and/or desktop events, if any.\n   70:     m_desktop.removeObserver(*this);\n   71:     App::instance().removeObserver(*this);\n   72    }\n   73  \n   ..\n  589      if (m_parent != nullptr)\n  590      {\n  591:       m_parent->removeObserver(*this);\n  592:       App::instance().removeObserver(*this);\n  593      }\n  594  \n\n18 matches across 5 files\n",
 			"settings":
 			{
-				"buffer_size": 11589,
+				"buffer_size": 16536,
+				"line_ending": "Unix",
+				"name": "Find Results",
+				"scratch": true
+			}
+		},
+		{
+			"file": "game/AppStateGameMode.cpp",
+			"settings":
+			{
+				"buffer_size": 42446,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "CMakeLists.txt",
+			"file": "objects/GameLog.cpp",
 			"settings":
 			{
-				"buffer_size": 26781,
+				"buffer_size": 713,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "services/FileSystemGameRules.h",
+			"file": "objects/GameLog.h",
 			"settings":
 			{
-				"buffer_size": 862,
+				"buffer_size": 1104,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "game/GameState.cpp",
+			"settings":
+			{
+				"buffer_size": 2616,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "game/GameState.h",
+			"settings":
+			{
+				"buffer_size": 2760,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "gui/GUIObject.cpp",
+			"settings":
+			{
+				"buffer_size": 17923,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "gui/GUIObject.h",
+			"settings":
+			{
+				"buffer_size": 16056,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "game_windows/MessageLogView.cpp",
+			"settings":
+			{
+				"buffer_size": 4704,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "game_windows/MessageLogView.h",
+			"settings":
+			{
+				"buffer_size": 2469,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "design_patterns/Object.cpp",
+			"settings":
+			{
+				"buffer_size": 9807,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "design_patterns/Object.h",
+			"settings":
+			{
+				"buffer_size": 5648,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "",
+			"file": "design_patterns/ObjectPtr.h",
+			"file_size": 0,
+			"file_write_time": 131981787294183108,
+			"settings":
+			{
+				"buffer_size": 0,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "design_patterns/ObjectRegistry.h",
+			"settings":
+			{
+				"buffer_size": 1128,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "utilities/Shortcuts.h",
+			"settings":
+			{
+				"buffer_size": 346,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "systems/SystemGeometry.cpp",
+			"settings":
+			{
+				"buffer_size": 8100,
+				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		}
@@ -199,52 +316,99 @@
 	"expanded_folders":
 	[
 		"/home/greglindsey/personal/projects/MetaHack",
-		"/home/greglindsey/personal/projects/MetaHack/config",
+		"/home/greglindsey/personal/projects/MetaHack/design_patterns",
+		"/home/greglindsey/personal/projects/MetaHack/objects",
 		"/home/greglindsey/personal/projects/MetaHack/services"
 	],
 	"file_history":
 	[
-		"/home/greglindsey/personal/projects/MetaHack/systems/SystemNarrator.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/config/Strings.h",
-		"/home/greglindsey/personal/projects/MetaHack/config/Strings.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/utilities/Shortcuts.h",
-		"/home/greglindsey/personal/projects/MetaHack/config/Paths.h",
-		"/home/greglindsey/personal/projects/MetaHack/config/Paths.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/map/Map.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/game/AppStateGameMode.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/game/App.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/actions/ActionWield.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/design_patterns/ObjectPtr.h",
+		"/home/greglindsey/personal/projects/MetaHack/actions/ActionAttack.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/actions/ActionClose.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/actions/ActionDie.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/actions/ActionDrop.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/actions/ActionEat.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/actions/ActionFill.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/actions/ActionGet.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/actions/ActionHurl.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/actions/ActionInscribe.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/actions/ActionLock.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/actions/ActionMove.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/actions/ActionOpen.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/actions/ActionPutInto.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/actions/ActionQuaff.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/actions/ActionRead.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/actions/ActionShoot.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/actions/ActionTakeOff.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/actions/ActionTakeOut.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/actions/ActionTurn.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/actions/ActionUnlock.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/actions/ActionUnwield.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/actions/ActionUse.cpp",
 		"/home/greglindsey/personal/projects/MetaHack/actions/ActionWear.cpp",
 		"/home/greglindsey/personal/projects/MetaHack/actions/ActionWait.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/actions/ActionUse.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/actions/ActionUnwield.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/actions/ActionUnlock.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/actions/ActionTurn.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/actions/ActionTakeOut.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/actions/ActionTakeOff.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/actions/ActionShoot.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/actions/ActionRead.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/actions/ActionQuaff.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/actions/ActionPutInto.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/actions/ActionOpen.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/actions/ActionMove.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/actions/ActionLock.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/actions/ActionInscribe.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/actions/ActionFill.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/actions/ActionEat.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/actions/ActionDrop.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/actions/ActionDie.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/actions/ActionClose.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/actions/ActionAttack.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/actions/ActionWield.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/game/App.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/game/App.h",
+		"/home/greglindsey/personal/projects/MetaHack/game/AppStateGameMode.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/CMakeLists.txt",
+		"/home/greglindsey/personal/projects/MetaHack/utilities/Shortcuts.h",
+		"/home/greglindsey/personal/projects/MetaHack/lua/LuaFunctions-Global.h",
 		"/home/greglindsey/personal/projects/MetaHack/actions/Action.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/actions/Action.h",
+		"/home/greglindsey/personal/projects/MetaHack/game_windows/MessageLogView.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/game_windows/MessageLogView.h",
+		"/home/greglindsey/personal/projects/MetaHack/systems/SystemGeometry.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/game/GameState.h",
+		"/home/greglindsey/personal/projects/MetaHack/game/GameState.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/objects/GameLog.h",
+		"/home/greglindsey/personal/projects/MetaHack/objects/GameLog.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/config/Bible.h",
+		"/home/greglindsey/personal/projects/MetaHack/config/Bible.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/game/AppStateGameMode.h",
+		"/home/greglindsey/personal/projects/MetaHack/services/MessageLog.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/services/IMessageLog.h",
+		"/home/greglindsey/personal/projects/MetaHack/systems/SystemNarrator.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/views/Standard2DGraphicViews.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/views/MapTileStandard2DView.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/lua/LuaObject.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/lua/LuaFunctions-Entity.h",
+		"/home/greglindsey/personal/projects/MetaHack/views/EntityStandard2DView.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/entity/EntityFactory.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/config/Settings.h",
+		"/home/greglindsey/personal/projects/MetaHack/config/Settings.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/maptile/MapTile.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/map/Map.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/views/EntityFancyAsciiView.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/services/NullGameRules.h",
+		"/home/greglindsey/personal/projects/MetaHack/services/IGameRules.h",
+		"/home/greglindsey/personal/projects/MetaHack/services/FileSystemGameRules.h",
+		"/home/greglindsey/personal/projects/MetaHack/services/FileSystemGameRules.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/config/Strings.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/game_windows/StatusArea.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/views/MapView.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/views/MapTileFancyAsciiView.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/views/MapStandard2DView.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/views/MapFancyAsciiView.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/inventory/InventoryArea.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/services/IConfigSettings.h",
+		"/home/greglindsey/personal/projects/MetaHack/services/IConfigSettings.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/gui/GUIWindow.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/gui/GUITitleBar.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/gui/GUIObject.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/gui/GUILabel.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/gui/GUIDesktop.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/views/FancyAsciiGraphicViews.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/services/FallbackConfigSettings.h",
+		"/home/greglindsey/personal/projects/MetaHack/views/EntityCollectionGUIListView.cpp",
+		"/home/greglindsey/personal/projects/MetaHack/config/Strings.h",
+		"/home/greglindsey/personal/projects/MetaHack/config/Paths.h",
+		"/home/greglindsey/personal/projects/MetaHack/config/Paths.cpp",
 		"/home/greglindsey/personal/projects/MetaHack/services/Strings.cpp",
 		"/home/greglindsey/personal/projects/MetaHack/services/Strings.h",
 		"/home/greglindsey/personal/projects/MetaHack/services/NullStrings.h",
 		"/home/greglindsey/personal/projects/MetaHack/services/IStrings.h",
 		"/home/greglindsey/personal/projects/MetaHack/include/stdafx.h",
-		"/home/greglindsey/personal/projects/MetaHack/views/Standard2DGraphicViews.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/lua/LuaObject.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/services/FileSystemGameRules.cpp",
 		"/home/greglindsey/personal/projects/MetaHack/services/DefaultPaths.cpp",
 		"/home/greglindsey/personal/projects/MetaHack/services/DefaultPaths.h",
 		"/home/greglindsey/personal/projects/MetaHack/services/IPaths.cpp",
@@ -256,22 +420,15 @@
 		"/home/greglindsey/personal/projects/MetaHack/components/ComponentManager.h",
 		"/home/greglindsey/personal/projects/MetaHack/systems/SystemNarrator.h",
 		"/home/greglindsey/personal/projects/MetaHack/components/modifiers/Physical.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/views/EntityCollectionGUIListView.cpp",
 		"/home/greglindsey/personal/projects/MetaHack/views/EntityCollectionGUIListView.h",
 		"/home/greglindsey/personal/projects/MetaHack/views/EntityCollectionGUIView.cpp",
 		"/home/greglindsey/personal/projects/MetaHack/views/EntityCollectionGUIView.h",
-		"/home/greglindsey/personal/projects/MetaHack/game/GameState.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/inventory/InventoryArea.cpp",
 		"/home/greglindsey/personal/projects/MetaHack/inventory/InventoryArea.h",
 		"/home/greglindsey/personal/projects/MetaHack/inventory/InventorySlot.h",
-		"/home/greglindsey/personal/projects/MetaHack/gui/GUIWindow.cpp",
 		"/home/greglindsey/personal/projects/MetaHack/sfgui_extensions/DecoratedWidget.hpp",
 		"/home/greglindsey/personal/projects/MetaHack/sfgui_extensions/Decorated.hpp",
-		"/home/greglindsey/personal/projects/MetaHack/game/App.h",
 		"/home/greglindsey/personal/projects/MetaHack/design_patterns/Event.cpp",
 		"/home/greglindsey/personal/projects/MetaHack/design_patterns/Event.h",
-		"/home/greglindsey/personal/projects/MetaHack/game/GameState.h",
-		"/home/greglindsey/personal/projects/MetaHack/gui/GUIObject.cpp",
 		"/home/greglindsey/personal/projects/MetaHack/views/InventoryGUIView.cpp",
 		"/home/greglindsey/personal/projects/MetaHack/main.cpp",
 		"/home/greglindsey/personal/projects/MetaHack/systems/Manager.cpp",
@@ -283,55 +440,16 @@
 		"/home/greglindsey/personal/projects/MetaHack/design_patterns/Serializable.cpp",
 		"/home/greglindsey/personal/projects/MetaHack/sfgui_extensions/Decorator.inc",
 		"/home/greglindsey/personal/projects/MetaHack/state_machine/StateMachine.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/game_windows/StatusArea.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/game_windows/MessageLogView.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/gui/GUIDesktop.cpp",
 		"/home/greglindsey/personal/projects/MetaHack/systems/SystemGeometry.h",
-		"/home/greglindsey/personal/projects/MetaHack/systems/SystemGeometry.cpp",
 		"/home/greglindsey/personal/projects/MetaHack/systems/SystemChoreographer.cpp",
 		"/home/greglindsey/personal/projects/MetaHack/views/InventoryGUIListView.cpp",
 		"/home/greglindsey/personal/projects/MetaHack/entity/EntityId.h",
 		"/home/greglindsey/personal/projects/MetaHack/entity/EntityId.cpp",
 		"/home/greglindsey/personal/projects/MetaHack/components/ComponentPosition.h",
 		"/home/greglindsey/personal/projects/MetaHack/components/ComponentPosition.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/game/AppStateGameMode.h",
 		"/home/greglindsey/personal/projects/MetaHack/gui/GUIObject.h",
 		"/home/greglindsey/personal/projects/MetaHack/text/UI.txt",
-		"/home/greglindsey/personal/projects/MetaHack/inventory/InventorySelection.h",
-		"/home/greglindsey/personal/projects/MetaHack/views/InventoryGUIView.h",
-		"/home/greglindsey/personal/projects/MetaHack/views/EntityView.h",
-		"/home/greglindsey/personal/projects/MetaHack/views/EntityView.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/views/EntityGUIView.h",
-		"/home/greglindsey/personal/projects/MetaHack/views/EntityGUIView.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/views/EntityGUIIconView.h",
-		"/home/greglindsey/personal/projects/MetaHack/views/EntityGUIIconView.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/CMakeLists.txt",
-		"/home/greglindsey/personal/projects/MetaHack/views/InventoryGUIListView.h",
-		"/home/greglindsey/personal/projects/MetaHack/views/Standard2DGraphicViews.h",
-		"/home/greglindsey/personal/projects/MetaHack/game_windows/StatusArea.h",
-		"/home/greglindsey/personal/projects/MetaHack/game_windows/MessageLogView.h",
-		"/home/greglindsey/personal/projects/MetaHack/services/FallbackConfigSettings.cpp",
-		"/home/greglindsey/personal/projects/SFGUI/CMakeLists.txt",
-		"/home/greglindsey/personal/projects/SFGUI/cmake/Modules/FindSFML.cmake",
-		"/home/greglindsey/personal/projects/MetaHack/cmake_modules/FindSFML.cmake",
-		"/home/greglindsey/personal/projects/MetaHack/SFGUI/CMakeLists.txt",
-		"/home/greglindsey/personal/projects/MetaHack/.gitmodules",
-		"/home/greglindsey/personal/projects/MetaHack/game/AppState.h",
-		"/home/greglindsey/personal/projects/MetaHack/keybuffer/KeyBuffer.h",
-		"/home/greglindsey/personal/projects/MetaHack/services/IMessageLog.h",
-		"/home/greglindsey/personal/projects/MetaHack/services/IMessageLog.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/services/MessageLog.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/state_machine/State.h",
-		"/home/greglindsey/personal/projects/MetaHack/keybuffer/KeyBuffer.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/gui/GUIWindow.h",
-		"/home/greglindsey/personal/projects/MetaHack/sfgui_extensions/Widgets.hpp",
-		"/home/greglindsey/personal/projects/MetaHack/sfgui_extensions/ListBox.hpp",
-		"/home/greglindsey/personal/projects/MetaHack/sfgui_extensions/ListBox.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/sfgui_extensions/EntryPlus.hpp",
-		"/home/greglindsey/personal/projects/MetaHack/sfgui_extensions/EntryPlus.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/game/AppStateMainMenu.cpp",
-		"/home/greglindsey/personal/projects/MetaHack/game/AppStateMainMenu.h",
-		"/home/greglindsey/personal/projects/MetaHack/game/AppStateSplashScreen.cpp"
+		"/home/greglindsey/personal/projects/MetaHack/inventory/InventorySelection.h"
 	],
 	"find":
 	{
@@ -343,6 +461,8 @@
 		"where_history":
 		[
 			"*.c,*.cpp,*.h",
+			"Config::settings()",
+			"*.c,*.cpp,*.h",
 			"",
 			"types",
 			""
@@ -353,6 +473,23 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"removeObserver",
+			"GameLog",
+			"m_model",
+			"MessageLog",
+			"IMessageLog",
+			"GAME",
+			"#include \"services/IMessageLog.h\"",
+			"IMessageLog",
+			"Ascii",
+			"IGameRules",
+			"S<IGameRules>()",
+			"IGameRules",
+			"#include \"services/IGameRules.h\"",
+			"S<IConfigSettings>()",
+			"IConfigSettings",
+			"#include \"services/IConfigSettings.h\"",
+			"IConfigSettings",
 			"m_layout#include",
 			"IStrings",
 			"S<IStrings>()",
@@ -436,6 +573,8 @@
 		"regex": false,
 		"replace_history":
 		[
+			"Config::bible()",
+			"Config::settings()",
 			"#include",
 			"Config::strings()",
 			"m_layout",
@@ -452,515 +591,495 @@
 		"reverse": false,
 		"show_context": true,
 		"use_buffer2": true,
-		"whole_word": false,
+		"whole_word": true,
 		"wrap": true
 	},
 	"groups":
 	[
 		{
-			"selected": 0,
+			"selected": 12,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "game/App.cpp",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 11589,
+						"buffer_size": 16536,
 						"regions":
 						{
+							"match":
+							{
+								"flags": 112,
+								"regions":
+								[
+									[
+										238,
+										248
+									],
+									[
+										452,
+										462
+									],
+									[
+										619,
+										629
+									],
+									[
+										900,
+										910
+									],
+									[
+										1100,
+										1110
+									],
+									[
+										1315,
+										1325
+									],
+									[
+										1501,
+										1511
+									],
+									[
+										1703,
+										1713
+									],
+									[
+										1768,
+										1778
+									],
+									[
+										2004,
+										2014
+									],
+									[
+										2176,
+										2186
+									],
+									[
+										2354,
+										2364
+									],
+									[
+										2526,
+										2536
+									],
+									[
+										2553,
+										2563
+									],
+									[
+										2790,
+										2800
+									],
+									[
+										3143,
+										3150
+									],
+									[
+										3402,
+										3409
+									],
+									[
+										3651,
+										3658
+									],
+									[
+										3896,
+										3903
+									],
+									[
+										3955,
+										3962
+									],
+									[
+										4046,
+										4053
+									],
+									[
+										4239,
+										4246
+									],
+									[
+										4352,
+										4359
+									],
+									[
+										4381,
+										4388
+									],
+									[
+										4592,
+										4599
+									],
+									[
+										4861,
+										4868
+									],
+									[
+										5089,
+										5096
+									],
+									[
+										5272,
+										5279
+									],
+									[
+										5408,
+										5415
+									],
+									[
+										5486,
+										5493
+									],
+									[
+										5798,
+										5805
+									],
+									[
+										6075,
+										6082
+									],
+									[
+										6244,
+										6251
+									],
+									[
+										6435,
+										6442
+									],
+									[
+										6609,
+										6616
+									],
+									[
+										6649,
+										6656
+									],
+									[
+										6777,
+										6784
+									],
+									[
+										6871,
+										6878
+									],
+									[
+										6880,
+										6887
+									],
+									[
+										6919,
+										6926
+									],
+									[
+										6954,
+										6961
+									],
+									[
+										7067,
+										7074
+									],
+									[
+										7077,
+										7084
+									],
+									[
+										7152,
+										7159
+									],
+									[
+										7211,
+										7218
+									],
+									[
+										7224,
+										7231
+									],
+									[
+										7265,
+										7272
+									],
+									[
+										7409,
+										7416
+									],
+									[
+										7534,
+										7541
+									],
+									[
+										7735,
+										7742
+									],
+									[
+										7827,
+										7834
+									],
+									[
+										7868,
+										7875
+									],
+									[
+										7957,
+										7964
+									],
+									[
+										8069,
+										8076
+									],
+									[
+										8302,
+										8309
+									],
+									[
+										8652,
+										8659
+									],
+									[
+										8911,
+										8918
+									],
+									[
+										9160,
+										9167
+									],
+									[
+										9397,
+										9404
+									],
+									[
+										9479,
+										9486
+									],
+									[
+										9659,
+										9666
+									],
+									[
+										9808,
+										9815
+									],
+									[
+										10007,
+										10014
+									],
+									[
+										10276,
+										10283
+									],
+									[
+										10504,
+										10511
+									],
+									[
+										10687,
+										10694
+									],
+									[
+										10823,
+										10830
+									],
+									[
+										10901,
+										10908
+									],
+									[
+										11213,
+										11220
+									],
+									[
+										11490,
+										11497
+									],
+									[
+										11659,
+										11666
+									],
+									[
+										11850,
+										11857
+									],
+									[
+										12024,
+										12031
+									],
+									[
+										12064,
+										12071
+									],
+									[
+										12192,
+										12199
+									],
+									[
+										12286,
+										12293
+									],
+									[
+										12295,
+										12302
+									],
+									[
+										12334,
+										12341
+									],
+									[
+										12369,
+										12376
+									],
+									[
+										12482,
+										12489
+									],
+									[
+										12492,
+										12499
+									],
+									[
+										12567,
+										12574
+									],
+									[
+										12626,
+										12633
+									],
+									[
+										12639,
+										12646
+									],
+									[
+										12680,
+										12687
+									],
+									[
+										12824,
+										12831
+									],
+									[
+										12949,
+										12956
+									],
+									[
+										13150,
+										13157
+									],
+									[
+										13242,
+										13249
+									],
+									[
+										13283,
+										13290
+									],
+									[
+										13372,
+										13379
+									],
+									[
+										13484,
+										13491
+									],
+									[
+										13717,
+										13724
+									],
+									[
+										14112,
+										14126
+									],
+									[
+										14207,
+										14221
+									],
+									[
+										14498,
+										14512
+									],
+									[
+										14619,
+										14633
+									],
+									[
+										14758,
+										14772
+									],
+									[
+										14967,
+										14981
+									],
+									[
+										15265,
+										15279
+									],
+									[
+										15327,
+										15341
+									],
+									[
+										15478,
+										15492
+									],
+									[
+										15702,
+										15716
+									],
+									[
+										15900,
+										15914
+									],
+									[
+										15936,
+										15950
+									],
+									[
+										16072,
+										16086
+									],
+									[
+										16108,
+										16122
+									],
+									[
+										16243,
+										16257
+									],
+									[
+										16293,
+										16307
+									],
+									[
+										16413,
+										16427
+									],
+									[
+										16465,
+										16479
+									]
+								],
+								"scope": ""
+							}
 						},
 						"selection":
 						[
 							[
-								353,
-								353
-							]
-						],
-						"settings":
-						{
-							"SL.686.region_keys":
-							[
-							],
-							"bracket_highlighter.busy": false,
-							"bracket_highlighter.clone": -1,
-							"bracket_highlighter.clone_locations":
-							{
-								"close":
-								{
-								},
-								"icon":
-								{
-								},
-								"open":
-								{
-								},
-								"unmatched":
-								{
-								}
-							},
-							"bracket_highlighter.clone_regions":
-							[
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_angle_content",
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content"
-							],
-							"bracket_highlighter.locations":
-							{
-								"close":
-								{
-								},
-								"icon":
-								{
-								},
-								"open":
-								{
-								},
-								"unmatched":
-								{
-								}
-							},
-							"bracket_highlighter.regions":
-							[
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_angle_content",
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content"
-							],
-							"git_gutter_is_enabled": true,
-							"syntax": "Packages/C++/C++.sublime-syntax",
-							"tab_size": 2,
-							"tabs_extra_last_activated": 1552403758.95,
-							"tabs_extra_last_activated_sheet_index": 0,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "CMakeLists.txt",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 26781,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								16717,
-								16717
-							]
-						],
-						"settings":
-						{
-							"SL.35.region_keys":
-							[
-							],
-							"bracket_highlighter.busy": false,
-							"bracket_highlighter.clone": -1,
-							"bracket_highlighter.clone_locations":
-							{
-								"close":
-								{
-									"1":
-									[
-										16771,
-										16772
-									]
-								},
-								"icon":
-								{
-									"1":
-									[
-										"Packages/BracketHighlighter/icons/round_bracket.png",
-										"region.yellowish"
-									]
-								},
-								"open":
-								{
-									"1":
-									[
-										16366,
-										16367
-									]
-								},
-								"unmatched":
-								{
-								}
-							},
-							"bracket_highlighter.clone_regions":
-							[
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_angle_content",
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content"
-							],
-							"bracket_highlighter.locations":
-							{
-								"close":
-								{
-									"1":
-									[
-										16771,
-										16772
-									]
-								},
-								"icon":
-								{
-									"1":
-									[
-										"Packages/BracketHighlighter/icons/round_bracket.png",
-										"region.yellowish"
-									]
-								},
-								"open":
-								{
-									"1":
-									[
-										16366,
-										16367
-									]
-								},
-								"unmatched":
-								{
-								}
-							},
-							"bracket_highlighter.regions":
-							[
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_angle_content",
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content"
-							],
-							"git_gutter_is_enabled": true,
-							"syntax": "Packages/CMake/CMake.sublime-syntax",
-							"tab_size": 4,
-							"tabs_extra_last_activated": 1552403557.25,
-							"tabs_extra_last_activated_sheet_index": 0,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 8282.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "services/FileSystemGameRules.h",
-					"semi_transient": true,
-					"settings":
-					{
-						"buffer_size": 862,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								156,
-								156
+								15909,
+								15909
 							]
 						],
 						"settings":
 						{
 							"bracket_highlighter.busy": false,
 							"bracket_highlighter.clone": -1,
-							"bracket_highlighter.clone_locations":
-							{
-								"close":
-								{
-								},
-								"icon":
-								{
-								},
-								"open":
-								{
-								},
-								"unmatched":
-								{
-								}
-							},
-							"bracket_highlighter.clone_regions":
-							[
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_angle_content",
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_curly",
-								"bh_curly_center",
-								"bh_curly_open",
-								"bh_curly_close",
-								"bh_curly_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
-								"bh_unmatched",
-								"bh_unmatched_center",
-								"bh_unmatched_open",
-								"bh_unmatched_close",
-								"bh_unmatched_content",
-								"bh_single_quote",
-								"bh_single_quote_center",
-								"bh_single_quote_open",
-								"bh_single_quote_close",
-								"bh_single_quote_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content"
-							],
 							"bracket_highlighter.locations":
 							{
 								"close":
 								{
 									"1":
 									[
-										860,
-										861
+										15984,
+										15985
 									]
 								},
 								"icon":
@@ -975,8 +1094,8 @@
 								{
 									"1":
 									[
-										155,
-										156
+										15867,
+										15868
 									]
 								},
 								"unmatched":
@@ -985,26 +1104,21 @@
 							},
 							"bracket_highlighter.regions":
 							[
-								"bh_default",
-								"bh_default_center",
-								"bh_default_open",
-								"bh_default_close",
-								"bh_default_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
 								"bh_double_quote",
 								"bh_double_quote_center",
 								"bh_double_quote_open",
 								"bh_double_quote_close",
 								"bh_double_quote_content",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_angle_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
 								"bh_c_define",
 								"bh_c_define_center",
 								"bh_c_define_open",
@@ -1015,11 +1129,21 @@
 								"bh_curly_open",
 								"bh_curly_close",
 								"bh_curly_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
 								"bh_round",
 								"bh_round_center",
 								"bh_round_open",
@@ -1030,21 +1154,430 @@
 								"bh_unmatched_open",
 								"bh_unmatched_close",
 								"bh_unmatched_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content"
+							],
+							"default_dir": "/home/greglindsey/personal/projects/MetaHack/actions",
+							"detect_indentation": false,
+							"git_gutter_is_enabled": false,
+							"line_numbers": false,
+							"output_tag": 4,
+							"result_base_dir": "",
+							"result_file_regex": "^([^ \t].*):$",
+							"result_line_regex": "^ +([0-9]+):",
+							"scroll_past_end": true,
+							"syntax": "Packages/Default/Find Results.hidden-tmLanguage",
+							"tabs_extra_last_activated": 1553704563.78,
+							"tabs_extra_last_activated_sheet_index": 0,
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 10626.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 7,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "game/AppStateGameMode.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 42446,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								7276,
+								7276
+							]
+						],
+						"settings":
+						{
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.clone": -1,
+							"bracket_highlighter.clone_locations":
+							{
+								"close":
+								{
+									"1":
+									[
+										4243,
+										4244
+									]
+								},
+								"icon":
+								{
+									"1":
+									[
+										"Packages/BracketHighlighter/icons/curly_bracket.png",
+										"region.purplish"
+									]
+								},
+								"open":
+								{
+									"1":
+									[
+										4084,
+										4085
+									]
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.clone_regions":
+							[
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
 								"bh_single_quote",
 								"bh_single_quote_center",
 								"bh_single_quote_open",
 								"bh_single_quote_close",
 								"bh_single_quote_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content"
+							],
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+									"1":
+									[
+										7292,
+										7293
+									]
+								},
+								"icon":
+								{
+									"1":
+									[
+										"Packages/BracketHighlighter/icons/curly_bracket.png",
+										"region.purplish"
+									]
+								},
+								"open":
+								{
+									"1":
+									[
+										7217,
+										7218
+									]
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content"
+							],
+							"git_gutter_is_enabled": true,
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"tab_size": 2,
+							"tabs_extra_last_activated": 1553704533.03,
+							"tabs_extra_last_activated_sheet_index": 1,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 4141.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 9,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "objects/GameLog.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 713,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								357,
+								357
+							]
+						],
+						"settings":
+						{
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.clone": -1,
+							"bracket_highlighter.clone_locations":
+							{
+								"close":
+								{
+								},
+								"icon":
+								{
+								},
+								"open":
+								{
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.clone_regions":
+							[
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
 								"bh_tag",
 								"bh_tag_center",
 								"bh_tag_open",
 								"bh_tag_close",
 								"bh_tag_content"
 							],
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+									"1":
+									[
+										356,
+										357
+									]
+								},
+								"icon":
+								{
+									"1":
+									[
+										"Packages/BracketHighlighter/icons/curly_bracket.png",
+										"region.purplish"
+									]
+								},
+								"open":
+								{
+									"1":
+									[
+										304,
+										305
+									]
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content"
+							],
 							"git_gutter_is_enabled": true,
 							"syntax": "Packages/C++/C++.sublime-syntax",
 							"tab_size": 2,
-							"tabs_extra_last_activated": 1552403756.61,
+							"tabs_extra_last_activated": 1553698404.18,
 							"tabs_extra_last_activated_sheet_index": 1,
 							"translate_tabs_to_spaces": true
 						},
@@ -1052,7 +1585,2344 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
+					"stack_index": 14,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "objects/GameLog.h",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1104,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								535,
+								535
+							]
+						],
+						"settings":
+						{
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.clone": -1,
+							"bracket_highlighter.clone_locations":
+							{
+								"close":
+								{
+								},
+								"icon":
+								{
+								},
+								"open":
+								{
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.clone_regions":
+							[
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content"
+							],
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+									"1":
+									[
+										1101,
+										1102
+									]
+								},
+								"icon":
+								{
+									"1":
+									[
+										"Packages/BracketHighlighter/icons/curly_bracket.png",
+										"region.purplish"
+									]
+								},
+								"open":
+								{
+									"1":
+									[
+										156,
+										157
+									]
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content"
+							],
+							"git_gutter_is_enabled": true,
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"tab_size": 2,
+							"tabs_extra_last_activated": 1553698540.75,
+							"tabs_extra_last_activated_sheet_index": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 11,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "game/GameState.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2616,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								649,
+								649
+							]
+						],
+						"settings":
+						{
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.clone": -1,
+							"bracket_highlighter.clone_locations":
+							{
+								"close":
+								{
+									"1":
+									[
+										2246,
+										2247
+									]
+								},
+								"icon":
+								{
+									"1":
+									[
+										"Packages/BracketHighlighter/icons/curly_bracket.png",
+										"region.purplish"
+									]
+								},
+								"open":
+								{
+									"1":
+									[
+										2218,
+										2219
+									]
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.clone_regions":
+							[
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content"
+							],
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+									"1":
+									[
+										721,
+										722
+									]
+								},
+								"icon":
+								{
+									"1":
+									[
+										"Packages/BracketHighlighter/icons/curly_bracket.png",
+										"region.purplish"
+									]
+								},
+								"open":
+								{
+									"1":
+									[
+										592,
+										593
+									]
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content"
+							],
+							"git_gutter_is_enabled": true,
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"tab_size": 2,
+							"tabs_extra_last_activated": 1553698540.7,
+							"tabs_extra_last_activated_sheet_index": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 335.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 12,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "game/GameState.h",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2760,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1816,
+								1816
+							]
+						],
+						"settings":
+						{
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.clone": -1,
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+									"1":
+									[
+										2557,
+										2558
+									]
+								},
+								"icon":
+								{
+									"1":
+									[
+										"Packages/BracketHighlighter/icons/curly_bracket.png",
+										"region.purplish"
+									]
+								},
+								"open":
+								{
+									"1":
+									[
+										515,
+										516
+									]
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content"
+							],
+							"git_gutter_is_enabled": true,
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"tab_size": 2,
+							"tabs_extra_last_activated": 1553698479.55,
+							"tabs_extra_last_activated_sheet_index": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 13,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "gui/GUIObject.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 17923,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								998,
+								998
+							]
+						],
+						"settings":
+						{
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.clone": -1,
+							"bracket_highlighter.clone_locations":
+							{
+								"close":
+								{
+									"1":
+									[
+										1528,
+										1529
+									]
+								},
+								"icon":
+								{
+									"1":
+									[
+										"Packages/BracketHighlighter/icons/curly_bracket.png",
+										"region.purplish"
+									]
+								},
+								"open":
+								{
+									"1":
+									[
+										1432,
+										1433
+									]
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.clone_regions":
+							[
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content"
+							],
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+									"1":
+									[
+										1001,
+										1002
+									]
+								},
+								"icon":
+								{
+									"1":
+									[
+										"Packages/BracketHighlighter/icons/curly_bracket.png",
+										"region.purplish"
+									]
+								},
+								"open":
+								{
+									"1":
+									[
+										943,
+										944
+									]
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content"
+							],
+							"git_gutter_is_enabled": true,
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"tab_size": 2,
+							"tabs_extra_last_activated": 1553704571.23,
+							"tabs_extra_last_activated_sheet_index": 6,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 660.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "gui/GUIObject.h",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 16056,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.clone": -1,
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+								},
+								"icon":
+								{
+								},
+								"open":
+								{
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content"
+							],
+							"git_gutter_is_enabled": true,
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"tab_size": 2,
+							"tabs_extra_last_activated": 1553704569.95,
+							"tabs_extra_last_activated_sheet_index": 7,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "game_windows/MessageLogView.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4704,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3398,
+								3398
+							]
+						],
+						"settings":
+						{
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.clone": -1,
+							"bracket_highlighter.clone_locations":
+							{
+								"close":
+								{
+								},
+								"icon":
+								{
+								},
+								"open":
+								{
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.clone_regions":
+							[
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content"
+							],
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+									"1":
+									[
+										3857,
+										3858
+									]
+								},
+								"icon":
+								{
+									"1":
+									[
+										"Packages/BracketHighlighter/icons/curly_bracket.png",
+										"region.purplish"
+									]
+								},
+								"open":
+								{
+									"1":
+									[
+										3398,
+										3399
+									]
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content"
+							],
+							"git_gutter_is_enabled": true,
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"tab_size": 2,
+							"tabs_extra_last_activated": 1553704547.71,
+							"tabs_extra_last_activated_sheet_index": 6,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1435.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 8,
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"file": "game_windows/MessageLogView.h",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2469,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1824,
+								1824
+							]
+						],
+						"settings":
+						{
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.clone": -1,
+							"bracket_highlighter.clone_locations":
+							{
+								"close":
+								{
+									"1":
+									[
+										2461,
+										2466
+									]
+								},
+								"icon":
+								{
+									"1":
+									[
+										"Packages/BracketHighlighter/icons/hash.png",
+										"region.yellowish"
+									]
+								},
+								"open":
+								{
+									"1":
+									[
+										1,
+										7
+									]
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.clone_regions":
+							[
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content"
+							],
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+									"1":
+									[
+										2438,
+										2439
+									]
+								},
+								"icon":
+								{
+									"1":
+									[
+										"Packages/BracketHighlighter/icons/curly_bracket.png",
+										"region.purplish"
+									]
+								},
+								"open":
+								{
+									"1":
+									[
+										361,
+										362
+									]
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content"
+							],
+							"git_gutter_is_enabled": true,
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"tab_size": 2,
+							"tabs_extra_last_activated": 1553704505.4,
+							"tabs_extra_last_activated_sheet_index": 6,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 660.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 10,
+					"type": "text"
+				},
+				{
+					"buffer": 10,
+					"file": "design_patterns/Object.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 9807,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4484,
+								4484
+							]
+						],
+						"settings":
+						{
+							"SL.185.region_keys":
+							[
+							],
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.clone": -1,
+							"bracket_highlighter.clone_locations":
+							{
+								"close":
+								{
+									"1":
+									[
+										1864,
+										1865
+									]
+								},
+								"icon":
+								{
+									"1":
+									[
+										"Packages/BracketHighlighter/icons/curly_bracket.png",
+										"region.purplish"
+									]
+								},
+								"open":
+								{
+									"1":
+									[
+										1756,
+										1757
+									]
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.clone_regions":
+							[
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content"
+							],
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+									"1":
+									[
+										4621,
+										4622
+									]
+								},
+								"icon":
+								{
+									"1":
+									[
+										"Packages/BracketHighlighter/icons/curly_bracket.png",
+										"region.purplish"
+									]
+								},
+								"open":
+								{
+									"1":
+									[
+										4344,
+										4345
+									]
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content"
+							],
+							"git_gutter_is_enabled": true,
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"tab_size": 2,
+							"tabs_extra_last_activated": 1553705106.87,
+							"tabs_extra_last_activated_sheet_index": 10,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 2574.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 11,
+					"file": "design_patterns/Object.h",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 5648,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								5642,
+								5642
+							]
+						],
+						"settings":
+						{
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.clone": -1,
+							"bracket_highlighter.clone_locations":
+							{
+								"close":
+								{
+								},
+								"icon":
+								{
+								},
+								"open":
+								{
+								},
+								"unmatched":
+								{
+									"1":
+									[
+										631,
+										632
+									]
+								}
+							},
+							"bracket_highlighter.clone_regions":
+							[
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content"
+							],
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+								},
+								"icon":
+								{
+								},
+								"open":
+								{
+								},
+								"unmatched":
+								{
+									"1":
+									[
+										5645,
+										5646
+									]
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content"
+							],
+							"git_gutter_is_enabled": true,
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"tab_size": 2,
+							"tabs_extra_last_activated": 1553705129.38,
+							"tabs_extra_last_activated_sheet_index": 11,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 2376.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 12,
+					"file": "design_patterns/ObjectPtr.h",
+					"semi_transient": true,
+					"settings":
+					{
+						"buffer_size": 0,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.clone": -1,
+							"bracket_highlighter.clone_locations":
+							{
+								"close":
+								{
+								},
+								"icon":
+								{
+								},
+								"open":
+								{
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.clone_regions":
+							[
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content"
+							],
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+								},
+								"icon":
+								{
+								},
+								"open":
+								{
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content"
+							],
+							"git_gutter_is_enabled": false,
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"tabs_extra_last_activated": 1553705233.6,
+							"tabs_extra_last_activated_sheet_index": 12
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 13,
+					"file": "design_patterns/ObjectRegistry.h",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1128,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1127,
+								1127
+							]
+						],
+						"settings":
+						{
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.clone": -1,
+							"bracket_highlighter.clone_locations":
+							{
+								"close":
+								{
+								},
+								"icon":
+								{
+								},
+								"open":
+								{
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.clone_regions":
+							[
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content"
+							],
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+									"1":
+									[
+										1126,
+										1127
+									]
+								},
+								"icon":
+								{
+									"1":
+									[
+										"Packages/BracketHighlighter/icons/round_bracket.png",
+										"region.yellowish"
+									]
+								},
+								"open":
+								{
+									"1":
+									[
+										1125,
+										1126
+									]
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content"
+							],
+							"git_gutter_is_enabled": true,
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"tab_size": 2,
+							"tabs_extra_last_activated": 1553705229.3,
+							"tabs_extra_last_activated_sheet_index": 12,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 247.0,
+						"zoom_level": 1.0
+					},
 					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 14,
+					"file": "utilities/Shortcuts.h",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 346,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								192,
+								192
+							]
+						],
+						"settings":
+						{
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.clone": -1,
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+								},
+								"icon":
+								{
+								},
+								"open":
+								{
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content"
+							],
+							"git_gutter_is_enabled": true,
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"tabs_extra_last_activated": 1553705111.38,
+							"tabs_extra_last_activated_sheet_index": 13
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 15,
+					"file": "systems/SystemGeometry.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 8100,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2343,
+								2343
+							]
+						],
+						"settings":
+						{
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.clone": -1,
+							"bracket_highlighter.clone_locations":
+							{
+								"close":
+								{
+								},
+								"icon":
+								{
+								},
+								"open":
+								{
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.clone_regions":
+							[
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content"
+							],
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+									"1":
+									[
+										2659,
+										2660
+									]
+								},
+								"icon":
+								{
+									"1":
+									[
+										"Packages/BracketHighlighter/icons/curly_bracket.png",
+										"region.purplish"
+									]
+								},
+								"open":
+								{
+									"1":
+									[
+										2026,
+										2027
+									]
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content"
+							],
+							"syntax": "Packages/C++/C++.sublime-syntax",
+							"tab_size": 2,
+							"tabs_extra_last_activated": 1552920132.16,
+							"tabs_extra_last_activated_sheet_index": 32,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1386.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 15,
 					"type": "text"
 				}
 			]
@@ -1060,7 +3930,7 @@
 	],
 	"incremental_find":
 	{
-		"height": 31.0
+		"height": 33.0
 	},
 	"input":
 	{
@@ -1119,6 +3989,42 @@
 		"selected_items":
 		[
 			[
+				"GUIObject.h",
+				"gui/GUIObject.h"
+			],
+			[
+				"Message",
+				"game_windows/MessageLogView.h"
+			],
+			[
+				"GameState.h",
+				"game/GameState.h"
+			],
+			[
+				"CMakeLists",
+				"CMakeLists.txt"
+			],
+			[
+				"Action.h",
+				"actions/Action.h"
+			],
+			[
+				"MessageLogView.cpp",
+				"game_windows/MessageLogView.cpp"
+			],
+			[
+				"Attack",
+				"actions/ActionAttack.cpp"
+			],
+			[
+				"AppStateGameMode.cpp",
+				"game/AppStateGameMode.cpp"
+			],
+			[
+				"CMake",
+				"CMakeLists.txt"
+			],
+			[
 				"App.cpp",
 				"game/App.cpp"
 			],
@@ -1147,10 +4053,6 @@
 				"components/ComponentInventory.h"
 			],
 			[
-				"CMake",
-				"CMakeLists.txt"
-			],
-			[
 				"Event.cpp",
 				"design_patterns/Event.cpp"
 			],
@@ -1169,10 +4071,6 @@
 			[
 				"Event.h",
 				"design_patterns/Event.h"
-			],
-			[
-				"AppStateGameMode.cpp",
-				"game/AppStateGameMode.cpp"
 			],
 			[
 				"Object.cpp",
@@ -1223,10 +4121,6 @@
 				"text/UI.txt"
 			],
 			[
-				"CMakeLists",
-				"SFGUI/CMakeLists.txt"
-			],
-			[
 				".gitmodules",
 				".gitmodules"
 			],
@@ -1271,10 +4165,6 @@
 				"game/App.cpp"
 			],
 			[
-				"MessageLogView.cpp",
-				"game_windows/MessageLogView.cpp"
-			],
-			[
 				"MapTile.cpp",
 				"maptile/MapTile.cpp"
 			],
@@ -1293,10 +4183,6 @@
 			[
 				"ActionCRTP.h",
 				"actions/ActionCRTP.h"
-			],
-			[
-				"Action.h",
-				"actions/Action.h"
 			],
 			[
 				"CMakeL",
@@ -1613,22 +4499,6 @@
 			[
 				"session_repository.rb",
 				"lib/events/session_repository.rb"
-			],
-			[
-				"users/repository.rb",
-				"lib/users/repository.rb"
-			],
-			[
-				"session_attendance.rb",
-				"app/models/session_attendance.rb"
-			],
-			[
-				"document_converter.rb",
-				"app/models/document_converter.rb"
-			],
-			[
-				"strong_parameters.rb",
-				"config/initializers/strong_parameters.rb"
 			]
 		],
 		"width": 0.0

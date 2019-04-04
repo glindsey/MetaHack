@@ -7,30 +7,22 @@
 #include "entity/EntityFactory.h"
 #include "game/App.h"
 #include "game/GameState.h"
-#include "gui/GUILabel.h"
-#include "services/Service.h"
 #include "systems/Manager.h"
 #include "systems/SystemChoreographer.h"
 #include "systems/SystemTimekeeper.h"
 
-StatusArea::StatusArea(sfg::SFGUI& sfgui,
+StatusArea::StatusArea(sf::RenderWindow& renderWindow,
+                       sfg::SFGUI& sfgui,
                        sfg::Desktop& desktop,
                        std::string name,
-                       sf::IntRect dimensions,
                        GameState& gameState)
   :
   Object({}),
+  m_renderWindow{ renderWindow },
   m_sfgui{ sfgui },
   m_desktop{ desktop },
   m_gameState{ gameState }
 {
-  // Create a FloatRect out of the IntRect dimensions.
-  /// @todo Just pass the FloatRect directly instead.
-  sf::FloatRect floatDims = sf::FloatRect(dimensions.left,
-                                          dimensions.top,
-                                          dimensions.width,
-                                          dimensions.height);
-
   m_window = sfg::Window::Create();
   m_window->SetTitle("Player Stats");
 
@@ -139,8 +131,8 @@ StatusArea::StatusArea(sfg::SFGUI& sfgui,
   m_desktop.Add(m_window);
 
   // Set initial window size. (Has to be done after a widget is added to a hierarchy.)
-  m_window->SetAllocation(floatDims);
-
+  auto deskSize = m_renderWindow.getSize();
+  m_window->SetAllocation(sf::FloatRect(0.0f, deskSize.y * 0.7f, deskSize.x, deskSize.y * 0.3f));
 
   // Add requisite observers.
   subscribeTo(SYSTEMS.timekeeper(), Systems::Timekeeper::EventClockChanged::id);

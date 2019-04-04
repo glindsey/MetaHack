@@ -9,9 +9,7 @@ AppStateSplashScreen::AppStateSplashScreen(StateMachine& stateMachine,
                                            sfg::SFGUI& sfgui,
                                            sfg::Desktop& desktop)
   :
-  AppState(stateMachine, {},
-           "AppStateSplashScreen",
-           std::bind(&AppStateSplashScreen::render_splash, this, std::placeholders::_1, std::placeholders::_2)),
+  AppState(stateMachine, {}, "AppStateSplashScreen"),
   m_appWindow{ appWindow },
   m_sfgui{ sfgui },
   m_desktop{ desktop }
@@ -46,10 +44,11 @@ bool AppStateSplashScreen::terminate()
   return true;
 }
 
-void AppStateSplashScreen::render_splash(sf::RenderTexture& texture, int frame)
+bool AppStateSplashScreen::render(sf::RenderTexture& texture, int frame)
 {
   texture.draw(m_splash_sprite);
   texture.display();
+  return true;
 }
 
 bool AppStateSplashScreen::onEvent(Event const& event)
