@@ -132,7 +132,7 @@ StatusArea::StatusArea(sf::RenderWindow& renderWindow,
 
   // Set initial window size. (Has to be done after a widget is added to a hierarchy.)
   auto deskSize = m_renderWindow.getSize();
-  m_window->SetAllocation(sf::FloatRect(0.0f, deskSize.y * 0.7f, deskSize.x, deskSize.y * 0.3f));
+  m_window->SetAllocation(sf::FloatRect(0.0f, deskSize.y * 0.7f, deskSize.x * 0.7f, deskSize.y * 0.3f));
 
   // Add requisite observers.
   subscribeTo(SYSTEMS.timekeeper(), Systems::Timekeeper::EventClockChanged::id);
