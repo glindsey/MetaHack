@@ -27,9 +27,9 @@ public:
     EventAppQuitRequested()
     {}
 
-    void serialize(std::ostream& os) const
+    void printToStream(std::ostream& os) const
     {
-      Event::serialize(os);
+      Event::printToStream(os);
     }
   };
 
@@ -42,9 +42,9 @@ public:
 
     UintVec2 const newSize;
 
-    void serialize(std::ostream& os) const
+    void printToStream(std::ostream& os) const
     {
-      Event::serialize(os);
+      Event::printToStream(os);
       os << " | new size: " << newSize;
     }
   };
@@ -54,9 +54,9 @@ public:
     EventAppWindowClosed()
     {}
 
-    void serialize(std::ostream& os) const
+    void printToStream(std::ostream& os) const
     {
-      Event::serialize(os);
+      Event::printToStream(os);
     }
   };
 
@@ -69,9 +69,9 @@ public:
 
     bool const focused;
 
-    void serialize(std::ostream& os) const
+    void printToStream(std::ostream& os) const
     {
-      Event::serialize(os);
+      Event::printToStream(os);
       os << " | focused: " << (focused ? "true" : "false");
     }
   };

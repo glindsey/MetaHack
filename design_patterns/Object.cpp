@@ -215,7 +215,7 @@ bool Object::onEvent(Event const& event)
   return false;
 }
 
-void Object::serialize(std::ostream & o) const
+void Object::printToStream(std::ostream & o) const
 {
   auto mangledName = typeid(*this).name();
   auto demangledName = boost::core::demangle(mangledName);
@@ -381,9 +381,9 @@ void Object::unicast_(Event& event, Object& observer, UnicastDelegate do_unicast
   do_unicast(event, observer, true);
 }
 
-void Object::Registration::serialize(std::ostream& o) const
+void Object::Registration::printToStream(std::ostream& o) const
 {
-  Event::serialize(o);
+  Event::printToStream(o);
   o << " | registration state: " <<
     (state == State::Registered ? "Registered" : "Unregistered");
 }

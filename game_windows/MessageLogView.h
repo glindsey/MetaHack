@@ -26,9 +26,9 @@ public:
 
     std::string const command;
 
-    void serialize(std::ostream& os) const
+    void printToStream(std::ostream& os) const
     {
-      Event::serialize(os);
+      Event::printToStream(os);
       os << " | string: \"" << command << "\"";
     }
   };

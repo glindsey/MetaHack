@@ -22,9 +22,9 @@ namespace UIEvents
     bool const shift;
     bool const system;
 
-    void serialize(std::ostream& os) const
+    void printToStream(std::ostream& os) const
     {
-      Event::serialize(os);
+      Event::printToStream(os);
       os << " | code: " << code <<
         " | alt: " << (alt ? "true" : "false") <<
         " | control: " << (control ? "true" : "false") <<
@@ -44,7 +44,7 @@ namespace UIEvents
     sf::Mouse::Button const button;
     IntVec2 const location;
 
-    /// @todo write serialize()
+    /// @todo write printToStream()
   };
 
   struct EventMouseUp : public ConcreteEvent<EventMouseUp, EventID(0x80000002)>
@@ -58,7 +58,7 @@ namespace UIEvents
     sf::Mouse::Button const button;
     IntVec2 const location;
 
-    /// @todo write serialize()
+    /// @todo write printToStream()
   };
 
   struct EventMouseMoved : public ConcreteEvent<EventMouseMoved, EventID(0x80000003)>
@@ -70,7 +70,7 @@ namespace UIEvents
 
     IntVec2 const location;
 
-    /// @todo write serialize()
+    /// @todo write printToStream()
   };
 
   struct EventMouseLeft : public ConcreteEvent<EventMouseLeft, EventID(0x80000004)>
@@ -78,7 +78,7 @@ namespace UIEvents
     EventMouseLeft()
     {}
 
-    /// @todo write serialize()
+    /// @todo write printToStream()
   };
 
   struct EventMouseWheelMoved : public ConcreteEvent<EventMouseWheelMoved, EventID(0x80000005)>
@@ -90,7 +90,7 @@ namespace UIEvents
     int const delta;
     int const x, y;
 
-    void serialize(std::ostream& os) const
+    void printToStream(std::ostream& os) const
     {
       os << " | delta: " << delta <<
         " | x: " << x <<

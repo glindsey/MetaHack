@@ -298,7 +298,7 @@ set(PROJECT_SOURCES_INFRASTRUCTURE
     ${PROJECT_SOURCE_DIR}/design_patterns/Event.cpp
     ${PROJECT_SOURCE_DIR}/design_patterns/Object.cpp
     ${PROJECT_SOURCE_DIR}/design_patterns/ObjectRegistry.cpp
-    ${PROJECT_SOURCE_DIR}/design_patterns/Serializable.cpp
+    ${PROJECT_SOURCE_DIR}/design_patterns/Printable.cpp
     ${PROJECT_SOURCE_DIR}/lua/LuaObject.cpp
     ${PROJECT_SOURCE_DIR}/properties/PropertyDictionary.cpp
     ${PROJECT_SOURCE_DIR}/src/stdafx.cpp
@@ -314,7 +314,7 @@ set(PROJECT_INCLUDES_INFRASTRUCTURE
     ${PROJECT_SOURCE_DIR}/design_patterns/Event.h
     ${PROJECT_SOURCE_DIR}/design_patterns/Object.h
     ${PROJECT_SOURCE_DIR}/design_patterns/ObjectRegistry.h
-    ${PROJECT_SOURCE_DIR}/design_patterns/Serializable.h
+    ${PROJECT_SOURCE_DIR}/design_patterns/Printable.h
     ${PROJECT_SOURCE_DIR}/design_patterns/Visitor.h
     ${PROJECT_SOURCE_DIR}/events/UIEvents.h
     ${PROJECT_SOURCE_DIR}/include/stdafx.h
