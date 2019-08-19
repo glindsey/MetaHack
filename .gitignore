@@ -229,3 +229,5 @@ doxygen/
 # Debugging artifacts
 dump.json
 
+
+*.sublime-workspace
