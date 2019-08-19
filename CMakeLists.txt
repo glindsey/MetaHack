@@ -6,6 +6,9 @@ else()
     cmake_policy(VERSION 3.13)
 endif()
 
+set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules")
+include(cotire)
+
 project(MetaHack VERSION 0.1
                  DESCRIPTION "Roguelike engine designed to be easily extensible"
                  LANGUAGES CXX)
@@ -602,6 +605,8 @@ set_property(TARGET MetaHack PROPERTY
 add_custom_command(TARGET MetaHack POST_BUILD
                    COMMAND ${CMAKE_COMMAND} -E copy_directory
                            ${PROJECT_SOURCE_DIR}/resources ${RESOURCES_PATH})
+
+cotire(MetaHack)
 
 # get_cmake_property(_variableNames VARIABLES)
 # list (SORT _variableNames)
