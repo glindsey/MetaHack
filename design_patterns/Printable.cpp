@@ -5,7 +5,14 @@
 
 void Printable::printToStream(std::ostream& o) const
 {
-   o << boost::core::demangle(typeid(*this).name()) << ": " << this;
+   o << toString();
+}
+
+std::string Printable::toString() const
+{
+  std::stringstream ss;
+  ss << boost::core::demangle(typeid(*this).name()) << ": " << this;
+  return ss.str();
 }
 
 std::ostream& operator<<(std::ostream& o, const Printable& object)

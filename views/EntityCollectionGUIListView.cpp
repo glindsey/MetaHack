@@ -58,5 +58,6 @@ EntityCollectionGUIListView::~EntityCollectionGUIListView()
 bool EntityCollectionGUIListView::onEvent(Event const& event)
 {
   /// @todo STUFF
+  CLOG(TRACE, "InventoryArea") << "Got event " << event;
   return false;
 }

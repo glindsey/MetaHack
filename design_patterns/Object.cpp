@@ -212,6 +212,7 @@ bool Object::onEvent_NV(Event const& event)
 
 bool Object::onEvent(Event const& event)
 {
+  CLOG(TRACE, "Object") << this->toString() << " got unhandled event " << event;
   return false;
 }
 

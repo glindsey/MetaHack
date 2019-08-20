@@ -493,8 +493,7 @@ json Lua::callEntityFunction(std::string function_name,
   // the default result.
   if (full_function_name.empty())
   {
-    /// @todo Probably don't need a warning here, that's what the default result is for
-    CLOG(WARNING, "Lua") << "Could not find Lua function "
+    CLOG(TRACE, "Lua") << "Could not find Lua function "
       << original_function_name << " after traversing family tree";
 
     return default_result;
@@ -596,8 +595,7 @@ json Lua::callModifierFunction(std::string property_name,
   // the default result.
   if (full_function_name.empty())
   {
-    /// @todo Probably don't need a warning here, that's what the default result is for
-    CLOG(WARNING, "Lua") << "Could not find Lua function "
+    CLOG(TRACE, "Lua") << "Could not find Lua function "
       << original_function_name << " after traversing family tree";
 
     return return_value;

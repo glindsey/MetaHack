@@ -291,67 +291,71 @@ void InventoryArea::drawContents_(sf::RenderTexture& texture, int frame)
   return;
 }
 
-/// @note This becomes straight-up `onEvent` once we switch this to being a raw Object.
-bool InventoryArea::onEvent_V(Event const& event)
+bool InventoryArea::onEvent(Event const& event)
 {
-  // EntityId player = SYSTEMS.choreographer().player();
-  // EntityId location = EntityId::Void;
+  EntityId player = SYSTEMS.choreographer().player();
+  EntityId location = EntityId::Void;
 
-  // auto id = event.getId();
-  // bool recreateInventoryView = false;
+  auto id = event.getId();
+  bool recreateInventoryView = false;
 
-  // if (id == Systems::Choreographer::EventPlayerChanged::id)
-  // {
-  //   recreateInventoryView = true;
-  // }
-  // else if (id == Systems::Geometry::EventEntityMoved::id)
-  // {
-  //   auto info = static_cast<Systems::Geometry::EventEntityMoved const&>(event);
-  //   if (info.entity == player)
-  //   {
-  //     recreateInventoryView = true;
-  //   }
-  // }
-  // else if (id == Systems::Geometry::EventEntityChangedMaps::id)
-  // {
-  //   auto info = static_cast<Systems::Geometry::EventEntityChangedMaps const&>(event);
-  //   if (info.entity == player)
-  //   {
-  //     recreateInventoryView = true;
-  //   }
-  // }
+  if (id == Systems::Choreographer::EventPlayerChanged::id)
+  {
+    recreateInventoryView = true;
+  }
+  else if (id == Systems::Geometry::EventEntityMoved::id)
+  {
+    auto info = static_cast<Systems::Geometry::EventEntityMoved const&>(event);
+    if (info.entity == player)
+    {
+      recreateInventoryView = true;
+    }
+  }
+  else if (id == Systems::Geometry::EventEntityChangedMaps::id)
+  {
+    auto info = static_cast<Systems::Geometry::EventEntityChangedMaps const&>(event);
+    if (info.entity == player)
+    {
+      recreateInventoryView = true;
+    }
+  }
+  else
+  {
+    return Object::onEvent(event);
+  }
 
-  // /// @todo We'll also have to handle when the viewed collection (i.e. the inventory) changes.
+  /// @todo We'll also have to handle when the viewed collection (i.e. the inventory) changes.
 
-  // if (recreateInventoryView == true)
-  // {
-  //   CLOG(TRACE, "InventoryArea") << "Got event " << event;
+  if (recreateInventoryView == true)
+  {
+    CLOG(TRACE, "InventoryArea") << "Got event " << event;
 
-  //   auto& components = m_gameState.components();
+    auto& components = m_gameState.components();
 
-  //   if (components.position.existsFor(player))
-  //   {
-  //     location = components.position[player].location();
-  //     CLOG(TRACE, "InventoryArea") << "New player location is " << location;
-  //   }
+    if (components.position.existsFor(player))
+    {
+      location = components.position[player].location();
+      CLOG(TRACE, "InventoryArea") << "New player location is " << location;
+    }
 
-  //   sf::String title_string = SYSTEMS.narrator().getPossessiveString(location, "inventory");
-  //   title_string[0] = toupper(title_string[0]);
-  //   m_window->SetTitle(title_string);
+    sf::String title_string = SYSTEMS.narrator().getPossessiveString(location, "inventory");
+    title_string[0] = toupper(title_string[0]);
+    m_window->SetTitle(title_string);
 
-  //   m_inventoryWindow->Remove(m_guiView->getWidget());
-  //   m_guiView.reset(
-  //     NEW EntityCollectionGUIListView(
-  //       m_sfgui,
-  //       m_gameState.components().inventory[location].getCollection()
-  //     )
-  //   );
-  //   m_inventoryWindow->AddWithViewport(m_guiView->getWidget());
+    m_inventoryWindow->Remove(m_guiView->getWidget());
+    m_guiView.reset(
+      NEW EntityCollectionGUIListView(
+        m_sfgui,
+        m_gameState.components().inventory[location].getCollection()
+      )
+    );
+    m_inventoryWindow->AddWithViewport(m_guiView->getWidget());
 
-  // }
+  }
 
-  // /// @todo Flesh this out a bit more.
-  // ///       Right now we just set the "dirty" flag for the view so it is redrawn.
-  // flagForRedraw();
+  /// @todo Flesh this out a bit more.
+  ///       Right now we just set the "dirty" flag for the view so it is redrawn.
+  //flagForRedraw();
+
   return false;
 }

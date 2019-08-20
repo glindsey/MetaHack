@@ -432,7 +432,6 @@ set(PROJECT_SOURCES_TYPES
     ${PROJECT_SOURCE_DIR}/types/Direction.cpp
     ${PROJECT_SOURCE_DIR}/types/EntitySpecs.cpp
     ${PROJECT_SOURCE_DIR}/types/Gender.cpp
-    ${PROJECT_SOURCE_DIR}/types/IntegerRange.cpp
     ${PROJECT_SOURCE_DIR}/types/MapMemoryChunk.cpp
     ${PROJECT_SOURCE_DIR}/types/Vec2.cpp)
 
@@ -450,12 +449,9 @@ set(PROJECT_INCLUDES_TYPES
     ${PROJECT_SOURCE_DIR}/types/GeoVector.h
     ${PROJECT_SOURCE_DIR}/types/Grid2D.h
     ${PROJECT_SOURCE_DIR}/types/Grid3D.h
-    ${PROJECT_SOURCE_DIR}/types/IntegerRange.h
     ${PROJECT_SOURCE_DIR}/types/IRenderable.h
     ${PROJECT_SOURCE_DIR}/types/LightInfluence.h
     ${PROJECT_SOURCE_DIR}/types/MapMemoryChunk.h
-    ${PROJECT_SOURCE_DIR}/types/ModifiableBool.h
-    ${PROJECT_SOURCE_DIR}/types/ModifiableInt.h
     ${PROJECT_SOURCE_DIR}/types/Modifier.h
     ${PROJECT_SOURCE_DIR}/types/MouseButtonInfo.h
     ${PROJECT_SOURCE_DIR}/types/Rect.h

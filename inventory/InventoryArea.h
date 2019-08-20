@@ -30,7 +30,7 @@ public:
 protected:
   virtual void drawContents_(sf::RenderTexture& texture, int frame);
 
-  virtual bool onEvent_V(Event const& event);
+  virtual bool onEvent(Event const& event);
 
 private:
   /// Reference to the render window.
